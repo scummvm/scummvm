@@ -59,8 +59,8 @@ int SagaEngine::textDraw(int font_id, SURFACE *ds, const char *string, int text_
 			text_x = TEXT_CENTERLIMIT;
 		}
 
-		if (text_x > ds->buf_w - TEXT_CENTERLIMIT) {
-			text_x = ds->buf_w - TEXT_CENTERLIMIT;
+		if (text_x > ds->w - TEXT_CENTERLIMIT) {
+			text_x = ds->w - TEXT_CENTERLIMIT;
 		}
 
 		if (text_x < (TEXT_MARGIN * 2)) {
@@ -70,12 +70,12 @@ int SagaEngine::textDraw(int font_id, SURFACE *ds, const char *string, int text_
 
 		string_w = _font->getStringWidth(font_id, string, string_len, flags);
 
-		if (text_x < (ds->buf_w / 2)) {
+		if (text_x < (ds->w / 2)) {
 			// Fit to right side
 			fit_w = (text_x - TEXT_MARGIN) * 2;
 		} else {
 			// Fit to left side
-			fit_w = ((ds->buf_w - TEXT_MARGIN) - text_x) * 2;
+			fit_w = ((ds->w - TEXT_MARGIN) - text_x) * 2;
 		}
 
 		if (fit_w >= string_w) {

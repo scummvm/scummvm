@@ -422,7 +422,7 @@ int Font::outFont(FONT_STYLE * draw_font, SURFACE * ds, const char *draw_str, si
 	int c_bit;
 	int ct;
 
-	if ((text_x > ds->buf_w) || (text_y > ds->buf_h)) {
+	if ((text_x > ds->w) || (text_y > ds->h)) {
 		// Output string can't be visible
 		return SUCCESS;
 	}
@@ -458,7 +458,7 @@ int Font::outFont(FONT_STYLE * draw_font, SURFACE * ds, const char *draw_str, si
 
 		// Get length of character in bytes
 		c_byte_len = ((draw_font->fce[c_code].width - 1) / 8) + 1;
-		row_limit = (ds->buf_h < (text_y + draw_font->hdr.c_height)) ? ds->buf_h : text_y + draw_font->hdr.c_height;
+		row_limit = (ds->h < (text_y + draw_font->hdr.c_height)) ? ds->h : text_y + draw_font->hdr.c_height;
 		char_row = 0;
 
 		for (row = text_y; row < row_limit; row++, char_row++) {
@@ -467,9 +467,9 @@ int Font::outFont(FONT_STYLE * draw_font, SURFACE * ds, const char *draw_str, si
 				continue;
 			}
 
-			output_ptr = ds->buf + (ds->buf_pitch * row) + text_x;
-			output_ptr_min = ds->buf + (ds->buf_pitch * row) + (text_x > 0 ? text_x : 0);
-			output_ptr_max = output_ptr + (ds->buf_pitch - text_x);
+			output_ptr = (byte *)ds->pixels + (ds->pitch * row) + text_x;
+			output_ptr_min = (byte *)ds->pixels + (ds->pitch * row) + (text_x > 0 ? text_x : 0);
+			output_ptr_max = output_ptr + (ds->pitch - text_x);
 
 			// If character starts off the screen, jump to next character
 			if (output_ptr < output_ptr_min) {

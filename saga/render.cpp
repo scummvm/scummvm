@@ -155,7 +155,7 @@ int Render::drawScene() {
 	if (_flags & RF_SHOW_FPS) {
 		sprintf(txt_buf, "%d", _fps);
 		fps_width = _vm->_font->getStringWidth(SMALL_FONT_ID, txt_buf, 0, FONT_NORMAL);
-		_vm->_font->draw(SMALL_FONT_ID, backbuf_surface, txt_buf, 0, backbuf_surface->buf_w - fps_width, 2,
+		_vm->_font->draw(SMALL_FONT_ID, backbuf_surface, txt_buf, 0, backbuf_surface->w - fps_width, 2,
 					_vm->_gfx->getWhite(), _vm->_gfx->getBlack(), FONT_OUTLINE);
 	}
 
@@ -164,7 +164,7 @@ int Render::drawScene() {
 		int msg_len = strlen(PAUSEGAME_MSG);
 		int msg_w = _vm->_font->getStringWidth(BIG_FONT_ID, PAUSEGAME_MSG, msg_len, FONT_OUTLINE);
 		_vm->_font->draw(BIG_FONT_ID, backbuf_surface, PAUSEGAME_MSG, msg_len,
-				(backbuf_surface->buf_w - msg_w) / 2, 90, _vm->_gfx->getWhite(), _vm->_gfx->getBlack(), FONT_OUTLINE);
+				(backbuf_surface->w - msg_w) / 2, 90, _vm->_gfx->getWhite(), _vm->_gfx->getBlack(), FONT_OUTLINE);
 	}
 
 	// Update user interface
@@ -185,8 +185,8 @@ int Render::drawScene() {
 	// Draw console
 	_vm->_console->draw(backbuf_surface);
 
-	_system->copyRectToScreen(backbuf_surface->buf, backbuf_surface->buf_w, 0, 0, 
-							  backbuf_surface->buf_w, backbuf_surface->buf_h);
+	_system->copyRectToScreen((byte *)backbuf_surface->pixels, backbuf_surface->w, 0, 0, 
+							  backbuf_surface->w, backbuf_surface->h);
 
 	_system->updateScreen();
 	return SUCCESS;

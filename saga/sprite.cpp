@@ -219,19 +219,19 @@ int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, int spr_x
 
 	decodeRLESprite(sprite_data_p, 64000, _decodeBuf, s_width * s_height);
 
-	buf_row_p = ds->buf + ds->buf_pitch * spr_y;
+	buf_row_p = (byte *)ds->pixels + ds->pitch * spr_y;
 	src_row_p = _decodeBuf;
 
 	// Clip to right side of surface
 	clip_width = s_width;
-	if (s_width > (ds->buf_w - spr_x)) {
-		clip_width = (ds->buf_w - spr_x);
+	if (s_width > (ds->w - spr_x)) {
+		clip_width = (ds->w - spr_x);
 	}
 
 	// Clip to bottom side of surface
 	clip_height = s_height;
-	if (s_height > (ds->buf_h - spr_y)) {
-		clip_height = (ds->buf_h - spr_y);
+	if (s_height > (ds->h - spr_y)) {
+		clip_height = (ds->h - spr_y);
 	}
 
 	for (i = 0; i < clip_height; i++) {
@@ -240,7 +240,7 @@ int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, int spr_x
 				*(buf_row_p + j + spr_x) = *(src_row_p + j);
 			}
 		}
-		buf_row_p += ds->buf_pitch;
+		buf_row_p += ds->pitch;
 		src_row_p += s_width;
 	}
 
@@ -360,7 +360,7 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, i
 	// Finally, draw the occluded sprite
 	src_row_p = _decodeBuf + ci.src_draw_x + (ci.src_draw_y * s_width);
 
-	dst_row_p = ds->buf + ci.dst_draw_x + (ci.dst_draw_y * ds->buf_pitch);
+	dst_row_p = (byte *)ds->pixels + ci.dst_draw_x + (ci.dst_draw_y * ds->pitch);
 	mask_row_p = mask_buf + ci.dst_draw_x + (ci.dst_draw_y * mask_w);
 
 	for (y = 0; y < ci.draw_h; y++) {
@@ -378,7 +378,7 @@ int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, i
 			dst_p++;
 			mask_p++;
 		}
-		dst_row_p += ds->buf_pitch;
+		dst_row_p += ds->pitch;
 		mask_row_p += mask_w;
 		src_row_p += s_width;
 	}

@@ -26,6 +26,8 @@
 #ifndef SAGA_GFX_H_
 #define SAGA_GFX_H_
 
+#include <graphics/surface.h>
+
 namespace Saga {
 
 using Common::Point;
@@ -60,11 +62,7 @@ struct COLOR {
 	int alpha;
 };
 
-struct SURFACE {
-	byte *buf;
-	int buf_w;
-	int buf_h;
-	int buf_pitch;
+struct SURFACE : Graphics::Surface {
 	Rect clip_rect;
 };
 

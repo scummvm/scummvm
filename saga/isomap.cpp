@@ -236,7 +236,7 @@ int IsoMap::drawTile(SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y) {
 	tile_h = _tile_tbl[tile_i].tile_h;
 
 	read_p = tile_p;
-	draw_p = dst_s->buf + tile_x + (tile_y * dst_s->buf_pitch);
+	draw_p = (byte *)dst_s->pixels + tile_x + (tile_y * dst_s->pitch);
 
 	draw_x = tile_x;
 	draw_y = tile_y;
@@ -251,7 +251,7 @@ int IsoMap::drawTile(SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y) {
 	}
 
 	for (row = 0; row < tile_h; row++) {
-		draw_p = dst_s->buf + draw_x + ((draw_y + row) * dst_s->buf_pitch);
+		draw_p = (byte *)dst_s->pixels + draw_x + ((draw_y + row) * dst_s->pitch);
 		w_count = 0;
 
 		// temporary y clip

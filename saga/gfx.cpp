@@ -43,10 +43,10 @@ Gfx::Gfx(OSystem *system, int width, int height) {
 
 	debug(0, "Init screen %dx%d", width, height);
 	// Convert surface data to R surface data
-	back_buf.buf = (byte *)calloc(1, width * height);
-	back_buf.buf_w = width;
-	back_buf.buf_h = height;
-	back_buf.buf_pitch = width;
+	back_buf.pixels = calloc(1, width * height);
+	back_buf.w = width;
+	back_buf.h = height;
+	back_buf.pitch = width;
 
 	back_buf.clip_rect.left = 0;
 	back_buf.clip_rect.top = 0;
@@ -66,7 +66,7 @@ Gfx::Gfx(OSystem *system, int width, int height) {
 
 /*
 ~Gfx() {
-  free(GfxModule.r_back_buf->buf);
+  free(GfxModule.r_back_buf->pixels);
 }
  */
 
@@ -99,16 +99,16 @@ int Gfx::simpleBlit(SURFACE *dst_s, SURFACE *src_s) {
 	int y, w, p;
 
 	assert((dst_s != NULL) && (src_s != NULL));
-	assert(dst_s->buf_w == src_s->buf_w);
-	assert(dst_s->buf_h == src_s->buf_h);
+	assert(dst_s->w == src_s->w);
+	assert(dst_s->h == src_s->h);
 
-	src_p = src_s->buf;
-	dst_p = dst_s->buf;
+	src_p = (byte *)src_s->pixels;
+	dst_p = (byte *)dst_s->pixels;
 
-	w = src_s->buf_w;
-	p = src_s->buf_pitch;
+	w = src_s->w;
+	p = src_s->pitch;
 
-	for (y = 0; y < src_s->buf_h; y++) {
+	for (y = 0; y < src_s->h; y++) {
 		memcpy(dst_p, src_p, w);
 
 		dst_p += p;
@@ -176,12 +176,12 @@ int Gfx::bufToSurface(SURFACE *ds, const byte *src, int src_w, int src_h,
 
 	if (clip.left == clip.right) {
 		clip.left = 0;
-		clip.right = ds->buf_w;
+		clip.right = ds->w;
 	}
 
 	if (clip.top == clip.bottom) {
 		clip.top = 0;
-		clip.bottom = ds->buf_h;
+		clip.bottom = ds->h;
 	}
 
 	// Clip source rectangle to destination surface
@@ -244,12 +244,12 @@ int Gfx::bufToSurface(SURFACE *ds, const byte *src, int src_w, int src_h,
 
 	// Transfer buffer data to surface
 	read_p = (src + src_off_x) + (src_w * src_off_y);
-	write_p = (ds->buf + dst_off_x) + (ds->buf_pitch * dst_off_y);
+	write_p = ((byte *)ds->pixels + dst_off_x) + (ds->pitch * dst_off_y);
 
 	for (row = 0; row < src_draw_h; row++) {
 		memcpy(write_p, read_p, src_draw_w);
 
-		write_p += ds->buf_pitch;
+		write_p += ds->pitch;
 		read_p += src_w;
 	}
 
@@ -387,7 +387,7 @@ int Gfx::drawRect(SURFACE *ds, Rect *dst_rect, int color) {
 	int left, top, right, bottom;
 
 	if (dst_rect != NULL) {
-		dst_rect->clip(ds->buf_w, ds->buf_h);
+		dst_rect->clip(ds->w, ds->h);
 
 		left = dst_rect->left;
 		top = dst_rect->top;
@@ -401,18 +401,18 @@ int Gfx::drawRect(SURFACE *ds, Rect *dst_rect, int color) {
 	} else {
 		left = 0;
 		top = 0;
-		right = ds->buf_w;
-		bottom = ds->buf_h;
+		right = ds->w;
+		bottom = ds->h;
 	}
 
 	w = right - left;
 	h = bottom - top;
 
-	write_p = ds->buf + (ds->buf_pitch * top) + left;
+	write_p = (byte *)ds->pixels + (ds->pitch * top) + left;
 
 	for (row = 0; row < h; row++) {
 		memset(write_p, color, w);
-		write_p += ds->buf_pitch;
+		write_p += ds->pitch;
 	}
 
 	return SUCCESS;
@@ -681,7 +681,7 @@ void Gfx::drawLine(SURFACE *ds, const Point *p1, const Point *p2, int color) {
 		right = temp;
 	}
 
-	write_p = ds->buf + (top * ds->buf_pitch) + left;
+	write_p = (byte *)ds->pixels + (top * ds->pitch) + left;
 	dx = right - left;
 
 	if (dx < 0) {
@@ -696,7 +696,7 @@ void Gfx::drawLine(SURFACE *ds, const Point *p1, const Point *p2, int color) {
 	if (dx == 0) {
 		for (i = 0; i <= dy; i++) {
 			*write_p = (byte) color;
-			write_p += ds->buf_pitch;
+			write_p += ds->pitch;
 		}
 		return;
 	}
@@ -710,7 +710,7 @@ void Gfx::drawLine(SURFACE *ds, const Point *p1, const Point *p2, int color) {
 	if (dx == dy) {
 		for (i = 0; i <= dx; i++) {
 			*write_p = (byte) color;
-			write_p += x_vector + ds->buf_pitch;
+			write_p += x_vector + ds->pitch;
 		}
 		return;
 	}
@@ -735,7 +735,7 @@ void Gfx::drawLine(SURFACE *ds, const Point *p1, const Point *p2, int color) {
 			*write_p = (byte) color;
 			write_p += x_vector;
 		}
-		write_p += ds->buf_pitch;
+		write_p += ds->pitch;
 
 		for (i = 0; i < (dy - 1); i++) {
 			run = min_run;
@@ -750,7 +750,7 @@ void Gfx::drawLine(SURFACE *ds, const Point *p1, const Point *p2, int color) {
 				*write_p = (byte) color;
 				write_p += x_vector;
 			}
-			write_p += ds->buf_pitch;
+			write_p += ds->pitch;
 		}
 
 		// Horiz. seg
@@ -758,7 +758,7 @@ void Gfx::drawLine(SURFACE *ds, const Point *p1, const Point *p2, int color) {
 			*write_p = (byte) color;
 			write_p += x_vector;
 		}
-		write_p += ds->buf_pitch;
+		write_p += ds->pitch;
 		return;
 
 	} else {
@@ -781,7 +781,7 @@ void Gfx::drawLine(SURFACE *ds, const Point *p1, const Point *p2, int color) {
 		// Vertical seg
 		for (k = 0; k < init_run; k++) {
 			*write_p = (byte) color;
-			write_p += ds->buf_pitch;
+			write_p += ds->pitch;
 		}
 		write_p += x_vector;
 
@@ -795,7 +795,7 @@ void Gfx::drawLine(SURFACE *ds, const Point *p1, const Point *p2, int color) {
 			// Vertical seg
 			for (k = 0; k < run; k++) {
 				*write_p = (byte) color;
-				write_p += ds->buf_pitch;
+				write_p += ds->pitch;
 			}
 			write_p += x_vector;
 		}
@@ -803,7 +803,7 @@ void Gfx::drawLine(SURFACE *ds, const Point *p1, const Point *p2, int color) {
 		// Vertical seg
 		for (k = 0; k < end_run; k++) {
 			*write_p = (byte) color;
-			write_p += ds->buf_pitch;
+			write_p += ds->pitch;
 		}
 		write_p += x_vector;
 		return;
