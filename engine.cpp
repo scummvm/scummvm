@@ -155,14 +155,8 @@ void Engine::mainLoop() {
 				(*i)->draw();
 			}
 
-			if (SHOWFPS_GLOBAL) {
-				if (timeAccum > 1000) {
-					sprintf(fps, "%7.2f", (double)(frameCounter * 1000) / (double)timeAccum );
-					frameCounter = 0;
-					timeAccum = 0;
-				}
+			if (SHOWFPS_GLOBAL)
 				g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
-			}
 
 			currScene_->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 			
@@ -177,11 +171,6 @@ void Engine::mainLoop() {
 		frameTime_ = newStart - frameStart_;
 		frameStart_ = newStart;
 
-		if (SHOWFPS_GLOBAL) {
-			frameCounter++;
-			timeAccum += frameTime_;
-		}
-
 		lua_beginblock();
 		set_frameTime(frameTime_);
 		lua_endblock();
@@ -189,6 +178,16 @@ void Engine::mainLoop() {
 		lua_beginblock();
 		set_movieTime(movieTime_);
 		lua_endblock();
+
+		if (SHOWFPS_GLOBAL) {
+			frameCounter++;
+			timeAccum += frameTime_;
+			if (timeAccum > 1000) {
+				sprintf(fps, "%7.2f", (double)(frameCounter * 1000) / (double)timeAccum );
+				frameCounter = 0;
+				timeAccum = 0;
+			}
+		}
 	}
 }
 
