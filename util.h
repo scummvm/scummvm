@@ -144,6 +144,11 @@ public:
 	String& operator +=(const String& str);
 	String& operator +=(char c);
 
+	bool operator ==(const String& x);
+	bool operator ==(const char* x);
+	bool operator !=(const String& x);
+	bool operator !=(const char* x);
+
 //	operator char *()				{ return _str; }
 	operator const char *()	const	{ return _str; }
 	const char *c_str() const		{ return _str; }
@@ -159,6 +164,9 @@ protected:
 	void decRefCount();
 };
 
+// Some useful additional comparision operators for Strings
+bool operator == (const char* x, const String& y);
+bool operator != (const char* x, const String& y);
 
 class StringList : public List<String> {
 public:

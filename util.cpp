@@ -229,6 +229,35 @@ String& String::operator +=(char c)
 	return *this;
 }
 
+bool String::operator ==(const String& x)
+{
+	return (_len == x._len) && ((_len == 0) || (0 == strcmp(_str, x._str)));
+}
+
+bool String::operator ==(const char* x)
+{
+	if (_str == 0)
+		return (x == 0) || (*x == 0);
+	if (x == 0)
+		return (_len == 0);
+	return (0 != strcmp(_str, x));
+}
+
+bool String::operator !=(const String& x)
+{
+	return (_len != x._len) || ((_len != 0) && (0 != strcmp(_str, x._str)));
+}
+
+bool String::operator !=(const char* x)
+{
+	if (_str == 0)
+		return (x != 0) && (*x != 0);
+	if (x == 0)
+		return (_len != 0);
+	return (0 == strcmp(_str, x));
+}
+
+
 void String::deleteLastChar() {
 	if (_len > 0) {
 		ensureCapacity(_len - 1, true);
@@ -268,6 +297,16 @@ void String::ensureCapacity(int new_len, bool keep_old)
 	_refCount = new int(1);
 	_capacity = newCapacity;
 	_str = newStr;
+}
+
+bool operator == (const char* y, const String& x)
+{
+	return x == y;
+}
+
+bool operator != (const char* y, const String& x)
+{
+	return x != y;
 }
 
 };	// End of namespace ScummVM
