@@ -1,5 +1,5 @@
 Residual: A LucasArts 3D game interpreter            Version 0.01-CVS
-(C) 2003- The ScummVM-Residual team                  Last Updated: 21st Sept 2003
+(C) 2003- The ScummVM-Residual team                  Last Updated: 10th Oct 2003
 --------------------------------------------------------------------------------
 
 What is Residual?
@@ -47,16 +47,26 @@ unable to upgrade or Windows users are stuck.
 We do have a possible solution (-screenblocks), however it is experimental
 untested, and currently will thrash memory and potentially crash.
 
-What is the state of Residual?
--------------------------------
-Many features are not yet supported. 2D graphics and text are not yet drawn,
-although you can interact with objects that do not appear (eg, the mail tube)
-It may crash. You can walk off the screen and into places you should not be
-able to. There is no lighting. Basically, not all that great.
+What is the state of Residual? 
+------------------------------- 
+Many features are not yet supported. 2D graphics are not yet drawn, nor do we
+use the built-in fonts. You can, however, still interact with objects that are
+not drawn (such as the mail tube). It may crash. You can walk off the screen and
+into places you should not be able to. There is no lighting.
 
-However, the game itself is in a fairly decent state. You can (using the
-default Grim keys, such as 'e' for examine, 'u' to use, 'p' to pickup and
-'i' for inventory) interact with things and actually 'play' it.
+The game itself is in a fairly decent state, and you can play at least up until
+you retrieve your first customer. The default Grim keys 
+use, 'p' to pickup and 'i' for inventory) will let you interact with things and
+actually 'play' it.
+
+What are the default keys?
+--------------------------
+Arrow keys : Movement
+e,u,p,i    : Examine, Use, Pickup, Inventory
+Shift      : Hold while moving, to 'Run'
+Enter      : Selects items in inventory, conversation, etc
+Escape     : Exits out of some screens
+q          : Quit 
 
 How do I report bugs?
 ---------------------
@@ -73,9 +83,9 @@ ScummVM-Residual Team Credits:
 ScummVM-Residual Team Credits:
  Daniel Schepler         Initial engine codebase & LUA upgrades
  James Brown          	 ScummVM project leader, core engine developer
- Vincent Hamm            Core engine developer
+ Vincent Hamm            Some core engine code
  Lionel Ulmer            OpenGL optimisations
- Pawel Kolodziejski      SMUSH/iMUSE implemention
+ Pawel Kolodziejski      Future SMUSH/iMUSE implemention
 
 Special Thanks To:
 ------------------ 

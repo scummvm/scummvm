@@ -896,7 +896,6 @@ static void KillTextObject() {
 
  textID = lua_getstring(lua_getparam(1));
 
- warning("killTextObject(%s)", textID);
  for (Engine::text_list_type::const_iterator i = Engine::instance()->textsBegin();
       i != Engine::instance()->textsEnd(); i++) {
    TextObject *textO = *i;
@@ -909,9 +908,48 @@ static void KillTextObject() {
  }
 }
 
+// Called from both Callback and Main CTO functions. This routine is NOT
+// thread safe.
+static void ChangeTextObject_Real(char *keyName, void *data) {
+ static TextObject *modifyObject = NULL; // Set by main CTO call 'object'
+ lua_Object *keyValue = NULL;
+
+ if (strstr(keyName, "object")) {
+  modifyObject = (TextObject*)data;
+  return;
+ }
+
+ if (!modifyObject)	// We *need* a modify object for remaining calls
+  return;
+
+ keyValue = (lua_Object*)data;
+
+// FIXME: X/Y sets depend on GetTextObjectDimensions
+
+ if (strstr(keyName, "fgcolor"))
+   modifyObject->setColor(check_color(2));
+ else if (strstr(keyName, "x"))
+  ; // modifyObject->setX( atoi(lua_getstring(keyValue)) );
+ else if (strstr(keyName, "y")) 
+  ; // modifyObject->setY( atoi(lua_getstring(keyValue)) );
+ else 
+  printf("ChangeTextObject() - Unknown key %s\n", keyName);
+}
+
+// Callback from table walk method in Main CTO function
+static void ChangeTextObject_CB(void) {
+ char *keyName = NULL;
+ lua_Object keyValue;
+
+ keyName = lua_getstring(lua_getparam(1));
+ keyValue = lua_getresult(2);
+ ChangeTextObject_Real(keyName, &keyValue);
+};
+
+// Main CTO handler and LUA interface
 static void ChangeTextObject() {
- char *textID = lua_getstring(lua_getparam(1)), *keyText = NULL;
- lua_Object tableObj = lua_getparam(2), tableKey;
+ char *textID = lua_getstring(lua_getparam(1));
+ lua_Object tableObj = lua_getparam(2);
  TextObject *modifyObject = NULL;
 
  for (Engine::text_list_type::const_iterator i = Engine::instance()->textsBegin();
@@ -927,25 +965,13 @@ static void ChangeTextObject() {
  if (!modifyObject)
   error("ChangeTextObject(%s): Cannot find active text object", textID);
 
- while(1) {
-   lua_pushobject(tableObj);
-   if (keyText) lua_pushobject(tableKey); else lua_pushnil();
-   lua_call("next");
-   tableKey=lua_getresult(1);
-   if (lua_isnil(tableKey)) 
-    break;
+ if (!lua_istable(tableObj))
+  return;
 
-   keyText=lua_getstring(tableKey);
-
-   if (strstr(keyText, "fgcolor"))
-    modifyObject->setColor(check_color(2));
-   else if (strstr(keyText, "x"))
-    ; // modifyObject->setX(atoi(lua_getstring(lua_getresult(2))));
-   else if (strstr(keyText, "y"))
-    ; // modifyObject->setY(atoi(lua_getstring(lua_getresult(2))));
-   else 
-    printf("ChangeTextObject(%s) - Unknown key %s\n", textID, keyText);
- }
+ ChangeTextObject_Real("object", modifyObject);
+ lua_pushobject(tableObj);
+ lua_pushcfunction(ChangeTextObject_CB);	// Callback handler
+ lua_call("foreach");
 }
 
 static void GetTextObjectDimensions() {
