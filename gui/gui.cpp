@@ -596,10 +596,10 @@ void Gui::handleSoundDialogCommand(int cmd)
 		_s->_mixer->setVolume(_s->_sound->_sound_volume_sfx);
 		_s->_mixer->setMusicVolume(_s->_sound->_sound_volume_music);
 
-		scummcfg->setInt("master_volume", _s->_sound->_sound_volume_master);
-		scummcfg->setInt("music_volume", _s->_sound->_sound_volume_music);
-		scummcfg->setInt("sfx_volume", _s->_sound->_sound_volume_sfx);
-		scummcfg->flush();
+		g_config->setInt("master_volume", _s->_sound->_sound_volume_master);
+		g_config->setInt("music_volume", _s->_sound->_sound_volume_music);
+		g_config->setInt("sfx_volume", _s->_sound->_sound_volume_sfx);
+		g_config->flush();
 
 		close();
 	} else {

@@ -30,9 +30,14 @@
 #include "common/config-file.h"
 
 
+
 #ifdef _MSC_VER
+
 #	pragma warning( disable : 4068 )
+
 #endif
+
+
 
 
 struct ResString {
@@ -423,10 +428,10 @@ void SoundDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		_scumm->_mixer->setVolume(_soundVolumeSfx);
 		_scumm->_mixer->setMusicVolume(_soundVolumeMusic);
 		
-		scummcfg->setInt("master_volume", _soundVolumeMaster);
-		scummcfg->setInt("music_volume", _soundVolumeMusic);
-		scummcfg->setInt("sfx_volume", _soundVolumeSfx);
-		scummcfg->flush();
+		g_config->setInt("master_volume", _soundVolumeMaster);
+		g_config->setInt("music_volume", _soundVolumeMusic);
+		g_config->setInt("sfx_volume", _soundVolumeSfx);
+		g_config->flush();
 		}
 	case kCancelCmd:
 		close();

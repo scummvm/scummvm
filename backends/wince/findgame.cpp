@@ -31,7 +31,7 @@
 #include "scumm.h"
 #include "config-file.h"
 
-extern Config *scummcfg;
+extern Config *g_config;
 
 #define MAX_GAMES 20
 
@@ -211,14 +211,14 @@ bool loadGameSettings() {
 
 	prescanning = FALSE;
 
-	current = scummcfg->get("GamesInstalled", "wince");
+	current = g_config->get("GamesInstalled", "wince");
 	if (!current)
 		return FALSE;
 	index = atoi(current);
 
 	installedGamesNumber = index;
 
-	current = scummcfg->get("GamesReferences", "wince");
+	current = g_config->get("GamesReferences", "wince");
 	if (!current)
 		return FALSE;
 	for (i=0; i<index; i++) {
@@ -232,7 +232,7 @@ bool loadGameSettings() {
 		gamesInstalled[i].reference = j;
 	}
 
-	current = scummcfg->get("BasePath", "wince");
+	current = g_config->get("BasePath", "wince");
 	if (!current)
 		return FALSE;
 	MultiByteToWideChar(CP_ACP, 0, current, strlen(current) + 1, basePath, sizeof(basePath));
@@ -241,7 +241,7 @@ bool loadGameSettings() {
 		char keyName[100];
 
 		sprintf(keyName, "GamesDirectory%d", i);
-		current = scummcfg->get(keyName, "wince");
+		current = g_config->get(keyName, "wince");
 		if (!current)
 			return FALSE;
 		MultiByteToWideChar(CP_ACP, 0, current, strlen(current) + 1, gamesInstalled[i].directory, sizeof(gamesInstalled[i].directory));
@@ -416,7 +416,7 @@ void startFindGame() {
 	// Save the results in the registry
 	SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Saving the results"));
 
-	scummcfg->set("GamesInstalled", index, "wince");
+	g_config->set("GamesInstalled", index, "wince");
 
 	tempo[0] = '\0';
 	for (i=0; i<index; i++) {
@@ -425,21 +425,21 @@ void startFindGame() {
 		strcat(tempo, x);
 	}	
 
-	scummcfg->set("GamesReferences", tempo, "wince");
+	g_config->set("GamesReferences", tempo, "wince");
 
 	WideCharToMultiByte(CP_ACP, 0, basePath, wcslen(basePath) + 1, workdir, sizeof(workdir), NULL, NULL);
 
-	scummcfg->set("BasePath", workdir, "wince");
+	g_config->set("BasePath", workdir, "wince");
 
 	for (i=0; i<index; i++) {
 		char keyName[100];
 
 		sprintf(keyName, "GamesDirectory%d", i);
 		WideCharToMultiByte(CP_ACP, 0, gamesInstalled[i].directory, wcslen(gamesInstalled[i].directory) + 1, workdir, sizeof(workdir), NULL, NULL);
-		scummcfg->set(keyName, workdir, "wince");
+		g_config->set(keyName, workdir, "wince");
 	}
 
-	scummcfg->flush();
+	g_config->flush();
 
 	SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Scan finished"));
 

@@ -35,8 +35,8 @@ namespace ScummVM {
 String::String(const char *str, int len)
 {
 	_refCount = new int(1);
-	if (str) {
-		if (len)
+	if (str && len != 0) {
+		if (len > 0)
 			_capacity = _len = len;
 		else
 			_capacity = _len = resStrLen(str);

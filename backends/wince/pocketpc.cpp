@@ -57,7 +57,7 @@ typedef int (*tTimeCallback)(int);
 typedef void SoundProc(void *param, byte *buf, int len);
 
 GameDetector detector;
-Config *scummcfg;
+Config *g_config;
 tTimeCallback timer_callback;
 int timer_interval;
 
@@ -283,9 +283,9 @@ extern void own_soundProc(void *buffer, byte *samples, int len);
 bool monkey2_keyboard;
 
 void do_quit() {
-	scummcfg->set("Sound", sound_activated, "wince");
-	scummcfg->set("DisplayMode", GetScreenMode(), "wince");
-	scummcfg->flush();
+	g_config->set("Sound", sound_activated, "wince");
+	g_config->set("DisplayMode", GetScreenMode(), "wince");
+	g_config->flush();
 	GXCloseInput();
 	GXCloseDisplay();
 	SDL_AudioQuit();
@@ -402,10 +402,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 
 	hide_toolbar = false;
 
-	scummcfg = new Config("scummvm.ini", "scummvm");
-	scummcfg->set_writing(true);
+	g_config = new Config("scummvm.ini", "scummvm");
+	g_config->set_writing(true);
 
-	sound = scummcfg->get("Sound", "wince");
+	sound = g_config->get("Sound", "wince");
 	if (sound) 
 		sound_activated = (atoi(sound) == 1);
 	else
@@ -881,9 +881,9 @@ void load_key_mapping() {
 	 
 	 memset(actions_keys, 0, sizeof(actions_keys));
 	 
-	 version = scummcfg->get("KeysVersion", "wince");
+	 version = g_config->get("KeysVersion", "wince");
 
-	 current = scummcfg->get("ActionKeys", "wince");
+	 current = g_config->get("ActionKeys", "wince");
 	 if (current && version) {
 		for (i=0; i<NUMBER_ACTIONS; i++) {
 			char x[6];
@@ -905,7 +905,7 @@ void load_key_mapping() {
 	 actions[3] = ACTION_SKIP;
 	 actions[4] = ACTION_HIDE;
 
-	 current = scummcfg->get("ActionTypes", "wince");
+	 current = g_config->get("ActionTypes", "wince");
 	 if (current && version) {
 		for (i=0; i<NUMBER_ACTIONS; i++) {
 			char x[6];
@@ -920,8 +920,8 @@ void load_key_mapping() {
 	 setActionTypes(actions);
 
 	 if (!version) {
-		 scummcfg->set("KeysVersion", "2", "wince");
-		 scummcfg->flush();
+		 g_config->set("KeysVersion", "2", "wince");
+		 g_config->flush();
 	 }
 }
 					
@@ -938,7 +938,7 @@ void save_key_mapping() {
 		 sprintf(x, "%.4x ", work_keys[i]);
 		 strcat(tempo, x);
 	 }
-	 scummcfg->set("ActionKeys", tempo, "wince");
+	 g_config->set("ActionKeys", tempo, "wince");
 	 tempo[0] = '\0';
 	 work = getActionTypes();
 	 for (i=0; i<NUMBER_ACTIONS; i++) {
@@ -946,9 +946,9 @@ void save_key_mapping() {
 		 sprintf(x, "%.2x ", work[i]);
 		 strcat(tempo, x);
 	 }
-	 scummcfg->set("ActionTypes", tempo, "wince");
+	 g_config->set("ActionTypes", tempo, "wince");
 
-	 scummcfg->flush();
+	 g_config->flush();
 }
 
 /*************** Hardware keys support ***********/
@@ -1001,9 +1001,9 @@ void action_quit() {
 void action_boss() {
 	SHELLEXECUTEINFO se;    
 
-	scummcfg->set("Sound", sound_activated, "wince");
-	scummcfg->set("DisplayMode", GetScreenMode(), "wince");
-	scummcfg->flush();
+	g_config->set("Sound", sound_activated, "wince");
+	g_config->set("DisplayMode", GetScreenMode(), "wince");
+	g_config->flush();
 	sound_activated = false;
 	toolbar_drawn = false;
 	hide_toolbar = true;
@@ -1159,7 +1159,7 @@ OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
 	drawWait();
 
 	// Set mode, portrait or landscape
-	display_mode = scummcfg->get("DisplayMode", "wince");
+	display_mode = g_config->get("DisplayMode", "wince");
 	if (display_mode)
 		SetScreenMode(atoi(display_mode));
 

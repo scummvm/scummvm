@@ -43,24 +43,24 @@ MessageDialog::MessageDialog(NewGui *gui, const String &message)
 			tmp = String(start, str - start);
 			lines.push_back(tmp);
 			lineWidth = _gui->getStringWidth(tmp);
-			if (maxlineWidth < lineWidth) 
+			if (maxlineWidth < lineWidth)
 				maxlineWidth = lineWidth;
 			start = str + 1;
 		}
 		
 		++str;
 	}
-	if (*start) {
-		tmp = String(start, str - start);
-		lines.push_back(tmp);
-		lineWidth = _gui->getStringWidth(tmp);
-		if (maxlineWidth < lineWidth) 
-			maxlineWidth = lineWidth;
-	}
+
+	// Add in the last line
+	tmp = String(start, str - start);
+	lines.push_back(tmp);
+	lineWidth = _gui->getStringWidth(tmp);
+	if (maxlineWidth < lineWidth)
+		maxlineWidth = lineWidth;
 	
 	// TODO - we should probably check for over/underflows here
 	_w = maxlineWidth + 20;
-	_h = lines.size() * kLineHeight + 30;
+	_h = lines.size() * kLineHeight + 34;
 	_x = (320 - _w) / 2;
 	
 	for (int i = 0; i < lines.size(); i++) {
@@ -69,5 +69,5 @@ MessageDialog::MessageDialog(NewGui *gui, const String &message)
 	}
 
 	// FIXME - the vertical position has to be adjusted
-	addButton((_w - 54)/2, _h - 20, 54, 16, "OK", kCloseCmd, '\n');	// Confirm dialog
+	addButton((_w - 54)/2, _h - 24, 54, 16, "OK", kCloseCmd, '\n');	// Confirm dialog
 }

@@ -46,7 +46,7 @@ protected:
 
 public:
 	ConstString() : _str(0), _len(0) {}
-	ConstString(const char *str, int len = 0) : _str((char*)str) { _len = str ? (len ? len : strlen(str)) : 0; }
+	ConstString(const char *str, int len = -1) : _str((char*)str) { _len = str ? (len >= 0 ? len : strlen(str)) : 0; }
 	virtual ~ConstString() {}
 	
 	bool operator ==(const ConstString& x) const;
@@ -77,7 +77,7 @@ protected:
 
 public:
 	String() : _capacity(0) { _refCount = new int(1); }
-	String(const char *str, int len = 0);
+	String(const char *str, int len = -1);
 	String(const ConstString &str);
 	String(const String &str);
 	virtual ~String();

@@ -22,13 +22,15 @@
 
 #include "stdafx.h"
 #include "engine.h"
-#include "sound/mididrv.h"
 #include "gameDetector.h"
 #include "config-file.h"
+#include "gui/newgui.h"
+#include "gui/message.h"
 
 GameDetector detector;
 
-Config *scummcfg = 0;
+Config *g_config = 0;
+NewGui *g_gui = 0;
 
 
 #if defined(QTOPIA)
@@ -122,8 +124,8 @@ int main(int argc, char *argv[])
 #endif
 
 	// Read the config file
-	scummcfg = new Config(scummhome, "scummvm");
-	scummcfg->set("versioninfo", SCUMMVM_VERSION);
+	g_config = new Config(scummhome, "scummvm");
+	g_config->set("versioninfo", SCUMMVM_VERSION);
 	
 	// Parse the command line information
 	result = detector.detectMain(argc, argv);
@@ -145,6 +147,23 @@ int main(int argc, char *argv[])
 	prop.caption = (char *)detector.getGameName();
 	system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 
+	// Create the GUI manager
+	// TODO - move this up for the launcher dialog?
+	g_gui = new NewGui(system);
+
+#if 0
+	// FIXME - we need to be able to do an init_size() call on the system object here
+	// so that we can display stuff. But right now, init_size() can't safely be called
+	// multiple times (at least not for the SDL backend). So either we have to modify
+	// all the backends to allow for this, or come up with some other solution.
+	const char *message = "This dialog is shown before the Engine is even created!\n"
+						  "Wow! Ain't e cool?\n";
+	Dialog *dlg = new MessageDialog(g_gui, message);
+	dlg->open();
+	g_gui->runLoop();
+	delete dlg;
+#endif
+
 	// Create the game engine
 	Engine *engine = Engine::createFromDetector(&detector, system);
 
@@ -153,7 +172,8 @@ int main(int argc, char *argv[])
 	
 	// Free up memory
 	delete engine;
-	delete scummcfg;
+	delete g_gui;
+	delete g_config;
 	
 	// ...and quit (the return 0 should never be reached)
 	system->quit();

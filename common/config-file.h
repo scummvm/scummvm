@@ -60,6 +60,6 @@ protected:
 };
 
 // The global config object
-extern Config *scummcfg;
+extern Config *g_config;
 
 #endif

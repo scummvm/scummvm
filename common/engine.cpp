@@ -63,11 +63,11 @@ const char *Engine::getSavePath() const
 
 	// If SCUMMVM_SAVEPATH was not specified, try to use game specific savepath from config
 	if (!dir || dir[0] == 0)
-		dir = scummcfg->get("savepath");
+		dir = g_config->get("savepath");
 
 	// If SCUMMVM_SAVEPATH was not specified, try to use general path from config
 	if (!dir || dir[0] == 0)
-		dir = scummcfg->get("savepath", "scummvm");
+		dir = g_config->get("savepath", "scummvm");
 
 	// If no save path was specified, use no directory prefix
 	if (dir == NULL)

@@ -74,42 +74,42 @@ void GameDetector::updateconfig()
 {
 	const char * val;
 
-	_amiga = scummcfg->getBool("amiga", _amiga);
+	_amiga = g_config->getBool("amiga", _amiga);
 
-	_save_slot = scummcfg->getInt("save_slot", _save_slot);
+	_save_slot = g_config->getInt("save_slot", _save_slot);
 
-	_cdrom = scummcfg->getInt("cdrom", _cdrom);
+	_cdrom = g_config->getInt("cdrom", _cdrom);
 
-	if ((val = scummcfg->get("music_driver")))
+	if ((val = g_config->get("music_driver")))
 		if (!parseMusicDriver(val)) {
 			printf("Error in the config file: invalid music_driver.\n");
 			printf(USAGE_STRING);
 			exit(-1);
 		}
 
-	_fullScreen = scummcfg->getBool("fullscreen", _fullScreen);
+	_fullScreen = g_config->getBool("fullscreen", _fullScreen);
 
-	if ((val = scummcfg->get("gfx_mode")))
+	if ((val = g_config->get("gfx_mode")))
 		if ((_gfx_mode = parseGraphicsMode(val)) == -1) {
 			printf("Error in the config file: invalid gfx_mode.\n");
 			printf(USAGE_STRING);
 			exit(-1);
 		}
 
-	_music_volume = scummcfg->getInt("music_volume", _music_volume);
+	_music_volume = g_config->getInt("music_volume", _music_volume);
 
-	_noSubtitles = scummcfg->getBool("nosubtitles", _noSubtitles ? true : false);
+	_noSubtitles = g_config->getBool("nosubtitles", _noSubtitles ? true : false);
 
-	if ((val = scummcfg->get("path")))
+	if ((val = g_config->get("path")))
 		_gameDataPath = strdup(val);
 
-	_sfx_volume = scummcfg->getInt("sfx_volume", _sfx_volume);
+	_sfx_volume = g_config->getInt("sfx_volume", _sfx_volume);
 
 	// We use strtol for the tempo to allow it to be specified in hex.
-	if ((val = scummcfg->get("tempo")))
+	if ((val = g_config->get("tempo")))
 		_gameTempo = strtol(val, NULL, 0);
 
-	_talkSpeed = scummcfg->getInt("talkspeed", _talkSpeed);
+	_talkSpeed = g_config->getInt("talkspeed", _talkSpeed);
 }
 
 void GameDetector::parseCommandLine(int argc, char **argv)
@@ -127,7 +127,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 		//exit(1);
 	}
 
-	scummcfg->set_domain("game-specific");
+	g_config->set_domain("game-specific");
 	/* Parse the arguments */
 	for (i = argc - 1; i >= 1; i--) {
 		s = argv[i];
@@ -139,7 +139,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 			case 'a':
 				CHECK_OPTION();
 				_amiga = (c == 'a');
-				scummcfg->setBool("amiga", _amiga);
+				g_config->setBool("amiga", _amiga);
 				break;
 			case 'b':
 				HANDLE_OPTION();
@@ -148,7 +148,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 			case 'c':
 				HANDLE_OPTION();
 				_cdrom = atoi(option);
-				scummcfg->setInt("cdrom", _cdrom);
+				g_config->setInt("cdrom", _cdrom);
 				break;
 			case 'd':
 				_debugMode = true;
@@ -161,25 +161,25 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				HANDLE_OPTION();
 				if (!parseMusicDriver(option))
 					goto ShowHelpAndExit;
-				scummcfg->set("music_driver", option);
+				g_config->set("music_driver", option);
 				break;
 			case 'f':
 				CHECK_OPTION();
 				_fullScreen = (c == 'f');
-				scummcfg->setBool("fullscreen", _fullScreen, "scummvm");
+				g_config->setBool("fullscreen", _fullScreen, "scummvm");
 				break;
 			case 'g':
 				HANDLE_OPTION();
 				_gfx_mode = parseGraphicsMode(option);
 				if (_gfx_mode == -1)
 					goto ShowHelpAndExit;
-				scummcfg->set("gfx_mode", option, "scummvm");
+				g_config->set("gfx_mode", option, "scummvm");
 				break;
 			case 'l':
 				HANDLE_OPTION();
 				{
 					Config * newconfig = new Config(option, "scummvm");
-					scummcfg->merge_config(*newconfig);
+					g_config->merge_config(*newconfig);
 					delete newconfig;
 					updateconfig();
 					break;
@@ -188,17 +188,17 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 			case 'm':
 				HANDLE_OPTION();
 				_music_volume = atoi(option);
-				scummcfg->setInt("music_volume", _music_volume);
+				g_config->setInt("music_volume", _music_volume);
 				break;
 			case 'n':
 				CHECK_OPTION();
 				_noSubtitles = (c == 'n');
-				scummcfg->setBool("nosubtitles", _noSubtitles ? true : false);
+				g_config->setBool("nosubtitles", _noSubtitles ? true : false);
 				break;
 			case 'p':
 				HANDLE_OPTION();
 				_gameDataPath = option;
-				scummcfg->set("path", _gameDataPath);
+				g_config->set("path", _gameDataPath);
 				break;
 			case 'r':
 				HANDLE_OPTION();
@@ -207,12 +207,12 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 			case 's':
 				HANDLE_OPTION();
 				_sfx_volume = atoi(option);
-				scummcfg->setInt("sfx_volume", _sfx_volume);
+				g_config->setInt("sfx_volume", _sfx_volume);
 				break;
 			case 't':
 				HANDLE_OPTION();
 				_gameTempo = strtol(option, 0, 0);
-				scummcfg->set("tempo", option);
+				g_config->set("tempo", option);
 				break;
 			case 'v':
 				CHECK_OPTION();
@@ -224,23 +224,23 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				exit(1);
 			case 'w':
 				_saveconfig = true;
-				scummcfg->set_writing(true);
+				g_config->set_writing(true);
 				HANDLE_OPT_OPTION();
 				if (option != NULL)
-					scummcfg->set_filename(option);
+					g_config->set_filename(option);
 				break;
 			case 'x':
 				_save_slot = 0;
 				HANDLE_OPT_OPTION();
 				if (option != NULL) {
 					_save_slot = atoi(option);
-					scummcfg->setInt("save_slot", _save_slot);
+					g_config->setInt("save_slot", _save_slot);
 				}
 				break;
 			case 'y':
 				HANDLE_OPTION();
 				_talkSpeed = atoi(option);				
-				scummcfg->setInt("talkspeed", _talkSpeed);
+				g_config->setInt("talkspeed", _talkSpeed);
 				break;
 			default:
 				goto ShowHelpAndExit;
@@ -248,9 +248,9 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 		} else {
 			if (i == (argc - 1)) {
 				_exe_name = s;
-				scummcfg->set_domain(s);
-				scummcfg->rename_domain("game-specific");
-				scummcfg->rename_domain(s);
+				g_config->set_domain(s);
+				g_config->rename_domain("game-specific");
+				g_config->rename_domain(s);
 				updateconfig();
 			} else {
 				if (current_option == NULL)
@@ -262,7 +262,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 	}
 	
 	if (_exe_name)
-		scummcfg->flush();
+		g_config->flush();
 
 	return;
 
