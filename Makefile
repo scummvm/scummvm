@@ -2,7 +2,7 @@
 
 CC       = g++
 CFLAGS   = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar
-DEFINES  = -DUNIX
+DEFINES  =
 LDFLAGS :=
 INCLUDES:= `sdl-config --cflags` -I./ -I./sound
 LIBS	 = -lncurses
@@ -23,6 +23,7 @@ LIBS	 = -lncurses
 OBJS	 = sdl.o
 INCLUDE += `sdl-config --cflags`
 LIBS    += `sdl-config --libs`
+DEFINES += -DUNIX
 
 # Uncomment this if you rather want X11 output
 # OBJS     = x11.o
