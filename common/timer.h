@@ -24,7 +24,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
-#define MAX_TIMERS 5
+#define MAX_TIMERS 2
 
 typedef void (*TimerProc)(void *refCon);
 
