@@ -27,7 +27,7 @@
 #include <dos/dos.h>
 #include <exec/memory.h>
 #include <devices/ahi.h>
-#include <devices/amidi.h>
+#include <devices/etude.h>
 
 #include <clib/alib_protos.h>
 #include <proto/exec.h>
@@ -53,41 +53,38 @@ static char			*ahiBuf[2]	   = { NULL, NULL };
 static MsgPort 	   *ScummMidiPort = NULL;
 		 IOMidiRequest *ScummMidiRequest = NULL;
 
-		 Device        *AMidiBase = NULL;
+		 Device        *EtudeBase = NULL;
 
-bool init_morphos_music(ULONG MidiUnit)
+bool init_morphos_music(ULONG MidiUnit, ULONG DevFlags)
 {
-	if (ScummMusicDriver && !stricmp(ScummMusicDriver, "-eamidi"))	  // just as ugly as the line below ...
+	MidiUnit = ScummMidiUnit;	// Ugly fix, but ...
+	ScummMidiPort = CreateMsgPort();
+	if (ScummMidiPort)
 	{
-		MidiUnit = ScummMidiUnit;	// Ugly fix, but ...
-		ScummMidiPort = CreateMsgPort();
-		if (ScummMidiPort)
+		ScummMidiRequest = (IOMidiRequest *) CreateIORequest(ScummMidiPort, sizeof (IOMidiRequest));
+		if (ScummMidiRequest)
 		{
-			ScummMidiRequest = (IOMidiRequest *) CreateIORequest(ScummMidiPort, sizeof (IOMidiRequest));
-			if (ScummMidiRequest)
+			ScummMidiRequest->emr_Version = 1;
+			if (OpenDevice(ETUDENAME, MidiUnit, (IORequest *) ScummMidiRequest, DevFlags))
 			{
-				ScummMidiRequest->amr_Version = 2;
-				if (OpenDevice("amidi.device", MidiUnit, (IORequest *) ScummMidiRequest, 0))
-				{
-					DeleteIORequest((IORequest *) ScummMidiRequest);
-					DeleteMsgPort(ScummMidiPort);
-					ScummMidiRequest = NULL;
-					ScummMidiPort = NULL;
-				}
-				AMidiBase = ScummMidiRequest->amr_Std.io_Device;
-			}
-			else
-			{
+				DeleteIORequest((IORequest *) ScummMidiRequest);
 				DeleteMsgPort(ScummMidiPort);
+				ScummMidiRequest = NULL;
 				ScummMidiPort = NULL;
 			}
+			EtudeBase = ScummMidiRequest->emr_Std.io_Device;
 		}
-
-		if (!ScummMidiRequest)
+		else
 		{
-			warning("Could not open AMidi - music will not play");
-			return false;
+			DeleteMsgPort(ScummMidiPort);
+			ScummMidiPort = NULL;
 		}
+	}
+
+	if (!ScummMidiRequest)
+	{
+		warning("Could not open Etude - music will not play");
+		return false;
 	}
 
 	return true;
@@ -101,7 +98,9 @@ void exit_morphos_music()
 		CloseDevice((IORequest *) ScummMidiRequest);
 		DeleteIORequest((IORequest *) ScummMidiRequest);
 		DeleteMsgPort(ScummMidiPort);
-		AMidiBase = NULL;
+		ScummMidiRequest = NULL;
+		ScummMidiPort = NULL;
+		EtudeBase = NULL;
 	}
 }
 

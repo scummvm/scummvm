@@ -117,7 +117,7 @@ void close_resources()
 static STRPTR FindMusicDriver(STRPTR argval)
 {
 	if (!stricmp(argval, "off"))  	return "-enull";
-	if (!stricmp(argval, "midi"))	 	return "-eamidi";
+	if (!stricmp(argval, "midi"))	 	return "-eetude";
 	if (!stricmp(argval, "midiemu"))	return "-emidiemu";
 	if (!stricmp(argval, "adlib")) 	return "-eadlib";
 

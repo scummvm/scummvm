@@ -181,8 +181,8 @@ void MidiDriver_WIN::fill_all()
 					error("Invalid event type passed");
 				}
 
-				/* increase stream pointer by 12 bytes 
-				 * (need to be 12 bytes, and sizeof(MIDIEVENT) is 16) 
+				/* increase stream pointer by 12 bytes
+				 * (need to be 12 bytes, and sizeof(MIDIEVENT) is 16)
 				 */
 				ev = (MIDIEVENT *)((byte *)ev + 12);
 			}
@@ -299,17 +299,18 @@ MidiDriver *MidiDriver_WIN_create()
 #endif // WIN32
 
 #ifdef __MORPHOS__
+#include <exec/memory.h>
 #include <exec/types.h>
-#include <devices/amidi.h>
+#include <devices/etude.h>
 
 #include <clib/alib_protos.h>
 #include <proto/exec.h>
-#include <proto/amidi.h>
+#include <proto/etude.h>
 
 #include "morphos_sound.h"
 
 /* MorphOS MIDI driver */
-class MidiDriver_AMIDI:public MidiDriver {
+class MidiDriver_ETUDE:public MidiDriver {
 public:
 	int open(int mode);
 	void close();
@@ -318,34 +319,94 @@ public:
 	void set_stream_callback(void *param, StreamCallback *sc);
 
 private:
+	enum {
+		NUM_BUFFERS = 2,
+		MIDI_EVENT_SIZE = 64,
+		BUFFER_SIZE = MIDI_EVENT_SIZE * 12,
+	};
+
+	static void midi_callback(ULONG msg, struct IOMidiRequest *req, APTR user_data);
+	void fill_all();
+	uint32 property(int prop, uint32 param);
+
 	StreamCallback *_stream_proc;
 	void *_stream_param;
+	IOMidiRequest *_stream_req[NUM_BUFFERS];
+	void *_stream_buf[NUM_BUFFERS];
+	bool _req_sent[NUM_BUFFERS];
 	int _mode;
+	uint16 _time_div;
 };
 
-void MidiDriver_AMIDI::set_stream_callback(void *param, StreamCallback *sc)
+void MidiDriver_ETUDE::set_stream_callback(void *param, StreamCallback *sc)
 {
 	_stream_param = param;
 	_stream_proc = sc;
 }
 
-int MidiDriver_AMIDI::open(int mode)
+int MidiDriver_ETUDE::open(int mode)
 {
+	if (_mode != 0)
+		return MERR_ALREADY_OPEN;
 	_mode = mode;
-	init_morphos_music(0);
+	if (!init_morphos_music(0, _mode == MO_STREAMING ? ETUDEF_STREAMING : ETUDEF_DIRECT))
+		return MERR_DEVICE_NOT_AVAILABLE;
+
+	if (_mode == MO_STREAMING && ScummMidiRequest) {
+		_stream_req[0] = ScummMidiRequest;
+		_stream_req[1] = (IOMidiRequest *) AllocVec(sizeof (IOMidiRequest), MEMF_PUBLIC);
+		_stream_buf[0] = AllocVec(BUFFER_SIZE, MEMF_PUBLIC);
+		_stream_buf[1] = AllocVec(BUFFER_SIZE, MEMF_PUBLIC);
+		_req_sent[0] = _req_sent[1] = false;
+
+		if (_stream_req[1] == NULL || _stream_buf[0] == NULL || _stream_buf[1] == NULL) {
+			close();
+			return MERR_DEVICE_NOT_AVAILABLE;
+		}
+
+		if (ScummMidiRequest)
+		{
+			memcpy(_stream_req[1], _stream_req[0], sizeof (IOMidiRequest));
+			struct TagItem MidiStreamTags[] = { { ESA_Callback, (ULONG) &midi_callback },
+															{ ESA_UserData, (ULONG) this },
+															{ ESA_TimeDiv, _time_div },
+															{ TAG_DONE, 0 }
+														 };
+			SetMidiStreamAttrsA(ScummMidiRequest, MidiStreamTags);
+			fill_all();
+		}
+	}
+
 	return 0;
 }
 
-void MidiDriver_AMIDI::close()
+void MidiDriver_ETUDE::close()
 {
+	if (_mode == MO_STREAMING) {
+		if (_req_sent[0]) {
+			AbortIO((IORequest *) _stream_req[0]);
+			WaitIO((IORequest *) _stream_req[0]);
+			_req_sent[0] = false;
+		}
+		if (_req_sent[1]) {
+			AbortIO((IORequest *) _stream_req[1]);
+			WaitIO((IORequest *) _stream_req[1]);
+			_req_sent[1] = false;
+		}
+
+		if (_stream_req[1]) FreeVec(_stream_req[1]);
+		if (_stream_buf[0]) FreeVec(_stream_buf[0]);
+		if (_stream_buf[1]) FreeVec(_stream_buf[1]);
+	}
+
 	exit_morphos_music();
 	_mode = 0;
 }
 
-void MidiDriver_AMIDI::send(uint32 b)
+void MidiDriver_ETUDE::send(uint32 b)
 {
 	if (_mode != MO_SIMPLE)
-		error("MidiDriver_AMIDI:send called but driver is not in simple mode");
+		error("MidiDriver_ETUDE::send called but driver is not in simple mode");
 
 	if (ScummMidiRequest) {
 		ULONG midi_data = READ_LE_UINT32(&b);
@@ -353,15 +414,101 @@ void MidiDriver_AMIDI::send(uint32 b)
 	}
 }
 
-void MidiDriver_AMIDI::pause(bool pause)
+void MidiDriver_ETUDE::midi_callback(ULONG msg, struct IOMidiRequest *req, APTR user_data)
 {
-	if (_mode == MO_STREAMING) {
+	switch (msg) {
+		case ETUDE_STREAM_MSG_BLOCKEND: {
+			MidiDriver_ETUDE *md = ((MidiDriver_ETUDE *) user_data);
+			if (md && md->_mode)
+				md->fill_all();
+			break;
+		}
 	}
 }
 
-MidiDriver *MidiDriver_AMIDI_create()
+void MidiDriver_ETUDE::fill_all()
 {
-	return new MidiDriver_AMIDI();
+	if (_stream_proc == NULL) {
+		error("MidiDriver_ETUDE::fill_all() called, but _stream_proc == NULL");
+	}
+
+	uint buf;
+	MidiEvent my_evs[64];
+
+	for (buf = 0; buf < NUM_BUFFERS; buf++) {
+		if (!_req_sent[buf] || CheckIO((IORequest *) _stream_req[buf])) {
+			int num = _stream_proc(_stream_param, my_evs, 64);
+
+			if (_req_sent[buf]) {
+				WaitIO((IORequest *) _stream_req[buf]);
+				_req_sent[buf] = false;
+			}
+
+			/* end of stream? */
+			if (num == 0)
+				break;
+
+			MIDIEVENT *ev = (MIDIEVENT *) _stream_buf[buf];
+			MidiEvent *my_ev = my_evs;
+
+			for (int i = 0; i < num; i++, my_ev++) {
+				ev->me_StreamID = 0;
+				ev->me_DeltaTime = my_ev->delta;
+
+				switch (my_ev->event >> 24) {
+				case 0:
+					ev->me_Event = my_ev->event;
+					break;
+				case ME_TEMPO:
+					/* change tempo event */
+					ev->me_Event = (MEVT_TEMPO << 24) | (my_ev->event & 0xFFFFFF);
+					break;
+				default:
+					error("Invalid event type passed");
+				}
+
+				/* increase stream pointer by 12 bytes 
+				 * (need to be 12 bytes, and sizeof(MIDIEVENT) is 16) 
+				 */
+				ev = (MIDIEVENT *)((byte *)ev + 12);
+			}
+
+			ConvertWindowsMidiStream(_stream_buf[buf], num * 12);
+
+			_stream_req[buf]->emr_Std.io_Command = CMD_WRITE;
+			_stream_req[buf]->emr_Std.io_Data = _stream_buf[buf];
+			_stream_req[buf]->emr_Std.io_Length = num * 12;
+		   SendIO((IORequest *) _stream_req[buf]);
+			_req_sent[buf] = true;
+		}
+	}
+}
+
+void MidiDriver_ETUDE::pause(bool pause)
+{
+	if (_mode == MO_STREAMING && ScummMidiRequest) {
+		if (pause)
+			PauseMidiStream(ScummMidiRequest);
+		else
+			RestartMidiStream(ScummMidiRequest);
+	}
+}
+
+uint32 MidiDriver_ETUDE::property(int prop, uint32 param)
+{
+	switch (prop) {
+		/* 16-bit time division according to standard midi specification */
+		case PROP_TIMEDIV:
+			_time_div = (uint16)param;
+			return 1;
+	}
+
+	return 0;
+}
+
+MidiDriver *MidiDriver_ETUDE_create()
+{
+	return new MidiDriver_ETUDE();
 }
 
 #endif // __MORPHOS__
