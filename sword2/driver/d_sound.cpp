@@ -992,11 +992,9 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 
 	    //  Open the speech cluster and find the data offset & size
 		fp = fopen(filename, "rb");
-		if (fp == NULL) {
-			error("PlayCompSpeech()");
+		if (fp == NULL) 
 			return(RDERR_INVALIDFILENAME);
-		}
-
+		
 		if (fseek(fp, (++speechid) * 8, SEEK_SET))
 		{
 			fclose(fp);
@@ -1116,7 +1114,7 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 //			IDirectSoundBuffer_Play(dsbSpeech, 0, 0, 0);
 			
 			uint32 flags = SoundMixer::FLAG_16BITS;
-                        flags |= SoundMixer::FLAG_AUTOFREE;
+			flags |= SoundMixer::FLAG_AUTOFREE;
 
 			//Until the mixer supports LE samples natively, we need to convert our LE ones to BE
 			for (uint j = 0; j < (bufferSize / 2); j++)
