@@ -638,6 +638,8 @@ MidiDriver *MidiDriver_QT_create() {
 /* Based on code by Benjamin W. Zale */
 class MidiDriver_CORE : public MidiDriver {
 public:
+	MidiDriver_CORE() : au_MusicDevice(NULL), au_output(NULL) {}
+
 	int open(int mode);
 	void close();
 	void send(uint32 b);
@@ -646,11 +648,13 @@ public:
 
 private:
 	AudioUnit au_MusicDevice;
+	AudioUnit au_output;
 
 	StreamCallback *_stream_proc;
-	void  *_stream_param;
-	int 	 _mode;
+	void *_stream_param;
+	int _mode;
 };
+
 
 void MidiDriver_CORE::set_stream_callback(void *param, StreamCallback *sc) {
 	_stream_param = param;
@@ -658,36 +662,39 @@ void MidiDriver_CORE::set_stream_callback(void *param, StreamCallback *sc) {
 }
 
 int MidiDriver_CORE::open(int mode) {
+
+	if (au_output != NULL)
+		return MERR_ALREADY_OPEN;
+
 	_mode = mode;
-	
-	AudioUnit au_output;
 	
 	int err;
 	struct AudioUnitConnection	auconnect;
 	ComponentDescription compdesc;
 	Component compid;
 	
-	au_MusicDevice=au_output=NULL;
-	
-	//Open the Music Device
-	compdesc.componentType=kAudioUnitComponentType;
-	compdesc.componentSubType=kAudioUnitSubType_MusicDevice;
-	compdesc.componentManufacturer=kAudioUnitID_DLSSynth;
-	compdesc.componentFlags=0;
-	compdesc.componentFlagsMask=0;
-	compid=FindNextComponent(NULL,&compdesc);
-	au_MusicDevice=(AudioUnit)OpenComponent(compid);
+	// Open the Music Device
+	compdesc.componentType = kAudioUnitComponentType;
+	compdesc.componentSubType = kAudioUnitSubType_MusicDevice;
+	compdesc.componentManufacturer = kAudioUnitID_DLSSynth;
+	compdesc.componentFlags = 0;
+	compdesc.componentFlagsMask = 0;
+	compid = FindNextComponent(NULL,&compdesc);
+	au_MusicDevice = (AudioUnit)OpenComponent(compid);
 	
 	// open the output unit
-	au_output=(AudioUnit)OpenDefaultComponent(kAudioUnitComponentType,kAudioUnitSubType_Output);
+	au_output = (AudioUnit)OpenDefaultComponent(kAudioUnitComponentType,kAudioUnitSubType_Output);
+
 	// connect the units
-	auconnect.sourceAudioUnit=au_MusicDevice;
-	auconnect.sourceOutputNumber=0;
-	auconnect.destInputNumber=0;
-	err=AudioUnitSetProperty(au_output,kAudioUnitProperty_MakeConnection,kAudioUnitScope_Input,0,(void*)&auconnect,sizeof(struct AudioUnitConnection));
+	auconnect.sourceAudioUnit = au_MusicDevice;
+	auconnect.sourceOutputNumber = 0;
+	auconnect.destInputNumber = 0;
+	err = AudioUnitSetProperty(au_output,kAudioUnitProperty_MakeConnection,kAudioUnitScope_Input,0,(void*)&auconnect,sizeof(struct AudioUnitConnection));
+
 	// initialize the units
 	AudioUnitInitialize(au_MusicDevice);
 	AudioUnitInitialize(au_output);
+	
 	// start the output
 	AudioOutputUnitStart(au_output);
 	
@@ -695,6 +702,14 @@ int MidiDriver_CORE::open(int mode) {
 }
 
 void MidiDriver_CORE::close() {
+
+	// Stop the output
+	AudioOutputUnitStop(au_output);
+	
+	// Cleanup
+	CloseComponent(au_output);
+	CloseComponent(au_MusicDevice);
+
 	_mode = 0;
 }
 
