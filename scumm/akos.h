@@ -126,7 +126,7 @@ public:
 	void c1_spec2();
 	void c1_spec3();
 	void akos16SetupBitReader(byte *src);
-	void akos16PutOnScreen(byte * dest, byte * src, int32 transparency, int32 count);
+	void akos16PutOnScreen(byte * dest, byte * src, byte transparency, int32 count);
 	void akos16SkipData(int32 numskip);
 	void akos16DecodeLine(byte *buf, int32 numbytes, int32 dir);
 	void akos16ApplyMask(byte * dest, byte * maskptr, byte bits, int32 count, byte fillwith);
