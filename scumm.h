@@ -40,11 +40,7 @@ enum {
 	NUM_SCRIPT_SLOT = 25,
 	NUM_LOCALSCRIPT = 60,
 	NUM_SHADOW_PALETTE = 8,
-#if defined(FULL_THROTTLE)
 	NUM_ACTORS = 30
-#else
-	NUM_ACTORS = 13
-#endif
 };
 
 

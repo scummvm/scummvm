@@ -385,8 +385,6 @@ void *Scumm::openSfxFile() {
 	return file;
 }
 
-#define NUM_MIXER 4
-
 MixerChannel *Scumm::allocateMixer() {
 	int i;
 	MixerChannel *mc = _mixer_channel;

@@ -1762,6 +1762,7 @@ void Scumm::o6_actorSet() {
 	}
 	
 	a = derefActorSafe(_curActor, "o6_actorSet");
+	if (!a) return;
 
 	switch(b) {
 	case 76: /* actor-costume */
