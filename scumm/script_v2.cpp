@@ -2962,7 +2962,6 @@ void Scumm::o6_kernelFunction()
 		push(_objs[i].height);
 		break;
 	case 211:
-		warning("o6_kernelFunction: getInput(%d)", args[1]);
 		/*
 		   13 = thrust
 		   336 = thrust
@@ -2973,6 +2972,15 @@ void Scumm::o6_kernelFunction()
 		   115 = right
 		   333 = tight
 		 */
+
+		//FIXME: this is hack to allow turn on light bridge, 
+		//How to check is left button pressed ?
+		if ((_gameId == GID_DIG) && (args[1] == 13)) {
+			push(1);
+			break;
+		}
+
+		warning("o6_kernelFunction: getInput(%d)", args[1]);
 		push(0);
 		break;
 	case 212:
