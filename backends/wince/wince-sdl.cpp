@@ -83,8 +83,20 @@ int SDL_main(int argc, char **argv) {
 
 // ********************************************************************************************
 
+void pumpMessages() {
+	MSG msg;
+	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+}
+
 void drawError(char *error) {
-	OutputDebugString(TEXT("Error !\r\n"));
+	TCHAR errorUnicode[200];
+	MultiByteToWideChar(CP_ACP, 0, error, strlen(error) + 1, errorUnicode, sizeof(errorUnicode));
+	pumpMessages();
+	MessageBox(GetActiveWindow(), errorUnicode, TEXT("ScummVM error"), MB_OK | MB_ICONERROR);
+	pumpMessages();
 }
 
 bool isSmartphone(void) {
@@ -131,6 +143,7 @@ void OSystem_WINCE3::swap_panel_visibility() {
 }
 
 void OSystem_WINCE3::swap_panel() {
+	_toolbarHighDrawn = false;
 	if (!_panelStateForced) {
 		if (_toolbarHandler.activeName() == NAME_PANEL_KEYBOARD)
 			_toolbarHandler.setActive(NAME_MAIN_PANEL);
@@ -354,6 +367,7 @@ void OSystem_WINCE3::load_gfx_mode() {
 	_scaleFactorXd = -1;
 	_scaleFactorYm = -1;    
 	_scaleFactorYd = -1;  
+	_scaleFactor = 0;
 
 	_newOrientation = _orientationLandscape = ConfMan.getBool("CE_landscape");
 
@@ -689,7 +703,6 @@ void OSystem_WINCE3::update_screen() {
 				// Check if the toolbar is overwritten
 				if (!_forceFull && toolbarVisible && r->y + r->h >= toolbarOffset)  {
 					_toolbarHandler.forceRedraw();
-					_toolbarHighDrawn = true;
 				}
 
 				if (_overlayVisible) {
@@ -726,7 +739,6 @@ void OSystem_WINCE3::update_screen() {
 				// Check if the toolbar is overwritten			
 				if (!_forceFull && toolbarVisible && r->y + r->h >= toolbarOffset) {
 					_toolbarHandler.forceRedraw();
-					_toolbarHighDrawn = true;
 				}
 				
 				if (dst_y < _screenHeight) {
@@ -781,9 +793,8 @@ void OSystem_WINCE3::update_screen() {
 				Normal2x((byte*)_toolbarLow->pixels, _toolbarLow->pitch, (byte*)_toolbarHigh->pixels, _toolbarHigh->pitch, toolbar_rect[0].w, toolbar_rect[0].h);
 				SDL_UnlockSurface(_toolbarHigh);
 				SDL_UnlockSurface(_toolbarLow);
+				_toolbarHighDrawn = true;
 			}
-			else
-				_toolbarHighDrawn = false;
 			toolbar_rect[0].w *= 2;
 			toolbar_rect[0].h *= 2;
 			toolbarSurface = _toolbarHigh;
@@ -824,20 +835,23 @@ uint32 OSystem_WINCE3::property(int param, Property *value) {
 
 	if (param == PROP_TOGGLE_FULLSCREEN) {
 		// FIXME
+		/*
 		assert(_hwscreen != 0);
 		_full_screen ^= true;
 		if (!SDL_WM_ToggleFullScreen(_hwscreen)) {
-			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
+			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode			
 			hotswap_gfx_mode();
 		}
+		*/
 		return 1;
 	} else if (param == PROP_SET_GFX_MODE) {
 		if (value->gfx_mode > 11)	// FIXME! HACK, hard coded threshold, not good
 			return 0;
 
-		_mode = value->gfx_mode;
-		hotswap_gfx_mode();
-
+		if (_mode != value->gfx_mode) {
+			_mode = value->gfx_mode;
+			hotswap_gfx_mode();
+		}
 		return 1;
 	} else if (param == PROP_TOGGLE_ASPECT_RATIO) {
 		if (_screenHeight == 200) {
@@ -847,7 +861,8 @@ uint32 OSystem_WINCE3::property(int param, Property *value) {
 		}
 		return 1;
 	} else if (param == PROP_TOGGLE_VIRTUAL_KEYBOARD) {
-		if (value->show_keyboard) {
+		_toolbarHighDrawn = false;
+		if (value->show_keyboard) {			
 			_panelStateForced = true;
 			_saveToolbarState = _toolbarHandler.visible();
 			_saveActiveToolbar = _toolbarHandler.activeName();
