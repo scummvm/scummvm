@@ -1352,13 +1352,8 @@ void IMuseDigital::bundleMusicHandler() {
 				case MKID_BE('REGN'):
 				case MKID_BE('STOP'):
 				case MKID_BE('JUMP'):
-					size = READ_BE_UINT32(ptr); ptr += size + 4;
-					break;
 				case MKID_BE('SYNC'):
-					size = READ_BE_UINT32(ptr);
-					printf("bundleMusicHandler: Lip sync data:\n");
-					Common::hexdump(ptr, size + 4);
-					ptr += size + 4;
+					size = READ_BE_UINT32(ptr); ptr += size + 4;
 					break;
 				case MKID_BE('DATA'):
 					size = READ_BE_UINT32(ptr); ptr += 4;
