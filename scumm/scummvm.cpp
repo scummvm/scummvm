@@ -1948,28 +1948,29 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	else
 		loadRoomObjects();
 
-	if (!(_features & GF_NEW_CAMERA)) {
-		camera._mode = CM_NORMAL;
-		camera._cur.x = camera._dest.x = _screenWidth / 2;
-		camera._cur.y = camera._dest.y = _screenHeight / 2;
-	}
-
-	if (VAR_V6_SCREEN_WIDTH != 0xFF && VAR_V6_SCREEN_HEIGHT != 0xFF) {
-		VAR(VAR_V6_SCREEN_WIDTH) = _roomWidth;
-		VAR(VAR_V6_SCREEN_HEIGHT) = _roomHeight;
-	}
-
-	VAR(VAR_CAMERA_MIN_X) = _screenWidth / 2;
-	VAR(VAR_CAMERA_MAX_X) = _roomWidth - (_screenWidth / 2);
-
-	if (_features & GF_NEW_CAMERA) {
-		VAR(VAR_CAMERA_MIN_Y) = _screenHeight / 2;
-		VAR(VAR_CAMERA_MAX_Y) = _roomHeight - (_screenHeight / 2);
-		setCameraAt(_screenWidth / 2, _screenHeight / 2);
+	if (_version > 2) {
+	
+		if (VAR_V6_SCREEN_WIDTH != 0xFF && VAR_V6_SCREEN_HEIGHT != 0xFF) {
+			VAR(VAR_V6_SCREEN_WIDTH) = _roomWidth;
+			VAR(VAR_V6_SCREEN_HEIGHT) = _roomHeight;
+		}
+	
+		if (_features & GF_NEW_CAMERA) {
+			VAR(VAR_CAMERA_MIN_Y) = _screenHeight / 2;
+			VAR(VAR_CAMERA_MAX_Y) = _roomHeight - (_screenHeight / 2);
+			setCameraAt(_screenWidth / 2, _screenHeight / 2);
+		} else {
+			camera._mode = CM_NORMAL;
+			camera._cur.x = camera._dest.x = _screenWidth / 2;
+			camera._cur.y = camera._dest.y = _screenHeight / 2;
+		}
 	}
 
 	if (_roomResource == 0)
 		return;
+
+	VAR(VAR_CAMERA_MIN_X) = _screenWidth / 2;
+	VAR(VAR_CAMERA_MAX_X) = _roomWidth - (_screenWidth / 2);
 
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
 
@@ -1991,8 +1992,9 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	runEntryScript();
 	if (_version <= 2)
 		runScript(5, 0, 0, 0);
-
-	if (_version < 7) {
+	else if (_version <= 4 && _version <= 6) {
+		// FIXME: The check above maybe should only trigger for V5&V6 games (i.e. not
+		// for V4). More investigation (ASM) needed. See also o5_loadRoomWithEgo().
 		if (a && !_egoPositioned) {
 			int x, y;
 			getObjectXYPos(objectNr, x, y);
