@@ -106,7 +106,7 @@ void Router::allocateRouteMem(void) {
 	if (_routeSlots[slotNo])
 		freeRouteMem();
 
-	_routeSlots[slotNo] = _vm->_memory->allocMemory(sizeof(WalkData) * O_WALKANIM_SIZE, MEM_locked, UID_walk_anim);
+	_routeSlots[slotNo] = _vm->_memory->allocMemory(sizeof(WalkData) * O_WALKANIM_SIZE, MEM_locked, (uint32)UID_walk_anim);
 
 	// 12000 bytes were used for this in Sword1 mega compacts, based on
 	// 20 bytes per 'WalkData' frame

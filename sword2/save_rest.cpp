@@ -94,7 +94,7 @@ uint32 Sword2Engine::saveGame(uint16 slotNo, uint8 *desc) {
 	// allocate the savegame buffer
 
 	bufferSize = findBufferSize();
-	saveBufferMem = _memory->allocMemory(bufferSize, MEM_locked, UID_savegame_buffer);
+	saveBufferMem = _memory->allocMemory(bufferSize, MEM_locked, (uint32)UID_savegame_buffer);
 
 	fillSaveBuffer(saveBufferMem, bufferSize, desc);
 
@@ -224,7 +224,7 @@ uint32 Sword2Engine::restoreGame(uint16 slotNo) {
 	// allocate the savegame buffer
 
 	bufferSize = findBufferSize();
-	saveBufferMem = _memory->allocMemory(bufferSize, MEM_locked, UID_savegame_buffer);
+	saveBufferMem = _memory->allocMemory(bufferSize, MEM_locked, (uint32)UID_savegame_buffer);
 
 	// read the savegame file into our buffer
 

@@ -82,7 +82,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	end = file.size();
 
 	//get some space for the incoming resource file - soon to be trashed
-	temp = _vm->_memory->allocMemory(end, MEM_locked, UID_temp);
+	temp = _vm->_memory->allocMemory(end, MEM_locked, (uint32)UID_temp);
 
 	if (file.read(temp->ad, end) != end) {
 		file.close();

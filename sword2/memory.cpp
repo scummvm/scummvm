@@ -72,7 +72,7 @@ MemoryManager::MemoryManager(Sword2Engine *vm) : _vm(vm) {
 	_memList[0].size = _totalFreeMemory;
 	_memList[0].parent = -1;		// we are base - for now
 	_memList[0].child = -1;			// we are the end as well
-	_memList[0].uid = UID_memman;		// init id
+	_memList[0].uid = (uint32)UID_memman;		// init id
 
 	_baseMemBlock = 0;			// for now
 }
@@ -205,7 +205,7 @@ Memory *MemoryManager::lowLevelAlloc(uint32 size, uint32 type, uint32 unique_id)
 	}
 
 	_memList[spawn].state = MEM_free;	// new block is free
-	_memList[spawn].uid = UID_memman;	// a memman created bloc
+	_memList[spawn].uid = (uint32)UID_memman;	// a memman created bloc
 
 	// size of the existing parent free block minus the size of the new
 	// space Talloc'ed.
@@ -252,7 +252,7 @@ void MemoryManager::freeMemory(Memory *block) {
 	// once you've done this the memory may be recycled
 
 	block->state = MEM_free;
-	block->uid = UID_memman;	// belongs to the memory manager again
+	block->uid = (uint32)UID_memman;	// belongs to the memory manager again
 
 #ifdef	MEMDEBUG
 	debugMemory();
