@@ -1331,7 +1331,8 @@ void ScummEngine::initScummVars() {
 		VAR(VAR_VIDEOMODE) = 0x13;
 		if (_gameId == GID_LOOM && _features & GF_OLD_BUNDLE) {
 			// Set number of sound resources
-			VAR(39) = 80;
+			if (!(_features & GF_MACINTOSH))
+				VAR(39) = 80;
 			VAR(VAR_HEAPSPACE) = 1400;
 		} else if (_version >= 4) {
 			VAR(VAR_HEAPSPACE) = 1400;
