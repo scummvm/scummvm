@@ -1087,7 +1087,7 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 		// of the ticks value.
 		if (_gameId == GID_INDY3) {
 			// Note: since we fix ppqn at 480, ppqn/473 is almost 1
-			dw = 500000 * 256 * ppqn / 473 / ticks;
+			dw = 500000 * 256 / 473 * ppqn / ticks;
 		} else if (_gameId == GID_LOOM) {
 			dw = 500000 * ppqn / 4 / ticks;
 		} else {
