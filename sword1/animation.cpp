@@ -63,44 +63,41 @@ bool AnimationState::init(const char *basename) {
 	uint i, p;
 
 	// Load lookup palettes
-	// TODO: Binary format so we can use File class
 	sprintf(tempFile, "%s.pal", basename);
-	FILE *f = fopen(tempFile, "r");
+	File f;
 
-	if (!f) {
+	if (!f.open(tempFile)) {
 		warning("Cutscene: %s.pal palette missing", basename);
 		return false;
 	}
 
 	p = 0;
-	while (!feof(f)) {
-		int end, cnt;
+	while (1) {
+		int end = f.readUint16LE();
+		int cnt = f.readUint16LE();
 
-		if (fscanf(f, "%i %i", &end, &cnt) != 2)
+		if (f.ioFailed())
 			break;
 
-		palettes[p].end = (uint) end;
-		palettes[p].cnt = (uint) cnt;
-
-		for (i = 0; i < palettes[p].cnt; i++) {
-			int r, g, b;
-			fscanf(f, "%i", &r);
-			fscanf(f, "%i", &g);
-			fscanf(f, "%i", &b);
-			palettes[p].pal[4 * i] = r;
-			palettes[p].pal[4 * i + 1] = g;
-			palettes[p].pal[4 * i + 2] = b;
+		for (i = 0; i < cnt; i++) {
+			palettes[p].pal[4 * i] = f.readByte();
+			palettes[p].pal[4 * i + 1] = f.readByte();
+			palettes[p].pal[4 * i + 2] = f.readByte();
 			palettes[p].pal[4 * i + 3] = 0;
 		}
+
 		for (; i < 256; i++) {
 			palettes[p].pal[4 * i] = 0;
 			palettes[p].pal[4 * i + 1] = 0;
 			palettes[p].pal[4 * i + 2] = 0;
 			palettes[p].pal[4 * i + 3] = 0;
 		}
+		palettes[p].end = end;
+		palettes[p].cnt = cnt;
+
 		p++;
 	}
-	fclose(f);
+	f.close();
 
 	palnum = 0;
 	maxPalnum = p;
@@ -233,6 +230,15 @@ bool AnimationState::checkPaletteSwitch() {
 #else
 
 NewGuiColor *AnimationState::lookup = 0;
+
+void AnimationState::invalidateLookup() {
+	// The screen has changed; the lookup table may be obsolete
+	// TODO: Add heuristic to determine if the table really needs to be
+	// rebuilt.
+	free(lookup);
+	lookup = 0;
+	buildLookup();
+}
 
 void AnimationState::buildLookup() {
 	if (lookup)
@@ -403,16 +409,27 @@ void MoviePlayer::play(const char *filename) {
 #ifndef BACKEND_8BIT
 			_sys->update_screen();
 #endif
-			// FIXME: check for ESC and abbort animation be just returning from the function
+			// FIXME: check for ESC and abort animation be just returning from the function
 			OSystem::Event event;
 			while (_sys->poll_event(&event)) {
-				if ((event.event_code == OSystem::EVENT_KEYDOWN) &&
-				    (event.kbd.keycode == 27)) {
-					delete anim;
-					return;
-				}
-				if (event.event_code == OSystem::EVENT_QUIT)
+				switch (event.event_code) {
+#ifndef BACKEND_8BIT
+				case OSystem::EVENT_SCREEN_CHANGED:
+					anim->invalidateLookup();
+					break;
+#endif
+				case OSystem::EVENT_KEYDOWN:
+					if (event.kbd.keycode == 27) {
+						delete anim;
+						return;
+					}
+					break;
+				case OSystem::EVENT_QUIT:
 					_sys->quit();
+					break;
+				default:
+					break;
+				}
 			}
 		}
 	}

@@ -21,7 +21,6 @@
 
 #ifndef ANIMATION_H
 #define ANIMATION_H
-
 #include "sound/mixer.h"
 
 // Uncomment this if you are using libmpeg2 0.3.1.
@@ -122,6 +121,7 @@ public:
 	void drawTextObject(SpriteInfo *s, uint8 *src);
 	void clearDisplay();
 	void updateDisplay(void);
+	void invalidateLookup();
 #endif
 
 private:

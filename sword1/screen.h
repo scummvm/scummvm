@@ -21,7 +21,6 @@
 
 #ifndef BSSCREEN_H
 #define BSSCREEN_H
-
 #include "sworddefs.h"
 
 class OSystem;

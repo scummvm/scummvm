@@ -65,48 +65,44 @@ bool AnimationState::init(const char *name) {
 	bgSoundStream = NULL;
 
 #ifdef BACKEND_8BIT
-
 	uint i, p;
 
 	// Load lookup palettes
-	// TODO: Binary format so we can use File class
-	sprintf(tempFile, "%s/%s.pal", _vm->getGameDataPath(), name);
-	FILE *f = fopen(tempFile, "r");
+	File f;
 
-	if (!f) {
+	sprintf(tempFile, "%s.pal", name);
+	if (!f.open(tempFile)) {
 		warning("Cutscene: %s.pal palette missing", name);
 		return false;
 	}
-
+        
 	p = 0;
-	while (!feof(f)) {
-		int end, cnt;
+	while (1) {
+		int end = f.readUint16LE();
+		int cnt = f.readUint16LE();
 
-		if (fscanf(f, "%i %i", &end, &cnt) != 2)
+		if (f.ioFailed())
 			break;
-
-		palettes[p].end = (uint) end;
-		palettes[p].cnt = (uint) cnt;
-
-		for (i = 0; i < palettes[p].cnt; i++) {
-			int r, g, b;
-			fscanf(f, "%i", &r);
-			fscanf(f, "%i", &g);
-			fscanf(f, "%i", &b);
-			palettes[p].pal[4 * i] = r;
-			palettes[p].pal[4 * i + 1] = g;
-			palettes[p].pal[4 * i + 2] = b;
+	
+		for (i = 0; i < cnt; i++) {
+			palettes[p].pal[4 * i] = f.readByte();
+			palettes[p].pal[4 * i + 1] = f.readByte();
+			palettes[p].pal[4 * i + 2] = f.readByte();
 			palettes[p].pal[4 * i + 3] = 0;
 		}
+
 		for (; i < 256; i++) {
 			palettes[p].pal[4 * i] = 0;
 			palettes[p].pal[4 * i + 1] = 0;
 			palettes[p].pal[4 * i + 2] = 0;
 			palettes[p].pal[4 * i + 3] = 0;
 		}
+		palettes[p].end = end;
+		palettes[p].cnt = cnt;
+
 		p++;
 	}
-	fclose(f);
+	f.close();
 
 	palnum = 0;
 	maxPalnum = p;
@@ -240,6 +236,15 @@ bool AnimationState::checkPaletteSwitch() {
 #else
 
 NewGuiColor *AnimationState::lookup = 0;
+
+void AnimationState::invalidateLookup() {
+	// TODO: Add heuristic to check if rebuilding the lookup table is
+	// actually necessary. If the screen format remains the same, then the
+	// current lookup table should be fine.
+	free(lookup);
+	lookup = 0;
+	buildLookup();
+}
 
 void AnimationState::buildLookup() {
 	if (lookup)
@@ -528,7 +533,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 	if (i == ARRAYSIZE(_movies))
 		warning("Unknown movie, '%s'", filename);
 
-	while (anim->decodeFrame()) {
+	while (!skipCutscene && anim->decodeFrame()) {
 		if (text && text[textCounter]) {
 			if (frameCounter == text[textCounter]->startFrame) {
 				openTextObject(text[textCounter]);
@@ -558,27 +563,42 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 		if (frameCounter == leadOutFrame && musicOut)
 			_vm->_sound->playFx(0, musicOut, 0, 0, RDSE_FXLEADOUT);
 
-#ifdef BACKEND_8BIT
-		_vm->_graphics->updateDisplay(true);
-#else
-		anim->updateDisplay();
-		_vm->_graphics->updateDisplay(false);
+		#ifdef BACKEND_8BIT
+			_vm->_graphics->updateDisplay(true);
+		#else
+                	anim->updateDisplay();
+			_vm->_graphics->updateDisplay(false);
+		#endif
+
+//		_vm->_system->update_screen();
+
+		OSystem::Event event;
+		while (_vm->_system->poll_event(&event)) {
+			switch (event.event_code) {
+#ifndef BACKEND_8BIT
+			case OSystem::EVENT_SCREEN_CHANGED:
+				anim->invalidateLookup();
+				break;
 #endif
-
-		KeyboardEvent ke;
-
-		if ((_vm->_input->readKey(&ke) == RD_OK && ke.keycode == 27) || _vm->_quit) {
-			_vm->_mixer->stopHandle(handle);
-			skipCutscene = true;
-			break;
+			case OSystem::EVENT_KEYDOWN:
+				if (event.kbd.keycode == 27)
+					skipCutscene = true;
+				break;
+			case OSystem::EVENT_QUIT:
+				_vm->closeGame();
+				skipCutscene = true;
+				break;
+			default:
+				break;
+			}
 		}
-
 	}
 
 	if (!skipCutscene) {
 		// Sleep for one frame so that the last frame is displayed.
 		_vm->_system->delay_msecs(1000 / 12);
-	}
+	} else
+		_vm->_mixer->stopHandle(handle);
 
 #ifndef BACKEND_8BIT
 	// Most movies fade to black on their own, but not all of them. Since
@@ -603,7 +623,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 #ifndef BACKEND_8BIT
 	anim->updateDisplay();
 #else
-	_vm->_graphics->updateDisplay(true);
+	_vm->_graphics->updateDisplay();
 #endif
 
 	// Wait for the voice to stop playing. This is to make sure
