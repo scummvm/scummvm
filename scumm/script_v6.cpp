@@ -314,13 +314,13 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_bor),
 		/* D8 */
 		OPCODE(o6_isRoomScriptRunning),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_closeFile),
+		OPCODE(o6_openFile),
 		OPCODE(o6_invalid),
 		/* DC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_deleteFile),
 		OPCODE(o6_invalid),
 		/* E0 */
 		OPCODE(o6_invalid),
@@ -2902,6 +2902,28 @@ void Scumm_v6::o6_unknownCD() {
 
 void Scumm_v6::o6_stopTalking() {
 	warning("o6_stopTalking: stub");
+}
+
+void Scumm_v6::o6_openFile() {
+	int a, b, len;
+	a = pop();
+	len = resStrLen(_scriptPointer);
+	warning("stub o6_openFile(\"%s\", %d)", _scriptPointer, a);
+	_scriptPointer += len + 1;
+	// -1 open failed, otherwise file handle?
+	push(0);
+}
+
+void Scumm_v6::o6_closeFile() {
+	// pop'd variable should be that pushed in o6_openFile()
+	warning("stub o6_closeFile(%d)", pop());
+}
+	
+void Scumm_v6::o6_deleteFile() {
+	int len;
+	len = resStrLen(_scriptPointer);
+	warning("stub o6_deleteFile(\"%s\")", _scriptPointer);
+	_scriptPointer += len + 1;
 }
 
 void Scumm_v6::decodeParseString(int m, int n)

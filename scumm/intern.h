@@ -366,6 +366,9 @@ protected:
 	void o6_bor();
 	void o6_band();
 	void o6_stopTalking();
+	void o6_openFile();
+	void o6_closeFile();
+	void o6_deleteFile();
 };
 
 class Scumm_v7 : public Scumm_v6
