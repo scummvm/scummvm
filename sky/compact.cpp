@@ -19,6 +19,7 @@
  *
  */
 
+#include "stdafx.h"
 #include "sky/compact.h"
 
 #include "sky/compacts/0compact.h"

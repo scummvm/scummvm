@@ -19,6 +19,7 @@
  *
  */
 
+#include "stdafx.h"
 #include "sky/debug.h"
 
 static const char *section_0_compacts[] = {
