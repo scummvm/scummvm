@@ -26,15 +26,17 @@
 #include "scumm.h"
 #include "gui.h"
 #include "SDL_thread.h"
+#include "gameDetecter.h"
 
 #include "cdmusic.h"
 
 static unsigned int scale;
 
-Scumm scumm;
+Scumm *scumm;
 ScummDebugger debugger;
 Gui gui;
 OSystem _system;
+GameDetecter detecter;
 
 SoundEngine sound;
 SOUND_DRIVER_TYPE snd_driv;
@@ -664,7 +666,7 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool vis
 }
 
 void fill_sound(void *userdata, Uint8 *stream, int len) {
-	scumm.mixWaves((int16*)stream, len>>1);
+	scumm->mixWaves((int16*)stream, len>>1);
 }
 
 static int cd_track, cd_num_loops = 0, cd_start_frame, cd_end_frame;
@@ -678,7 +680,7 @@ void cd_play(int track, int num_loops, int start_frame, int end_frame) {
 	// warning("cd_play(%d,%d,%d,%d)", track, num_loops, start_frame, end_frame);
 	if (!cdrom) return;
 
-	scumm._vars[14] = 0;
+	scumm->_vars[14] = 0;
 	cd_track = track;
 	cd_num_loops = num_loops;
 	cd_start_frame = start_frame;
@@ -787,7 +789,7 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
 
 	char buf[512], *gameName;
 	
-	sprintf(buf, "ScummVM - %s", gameName = s->getGameName());
+	sprintf(buf, "ScummVM - %s", gameName = detecter.getGameName());
 	free(gameName);
 
 	desired.freq = SAMPLES_PER_SEC;
@@ -849,7 +851,7 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
 void setWindowName(Scumm *s) {
   char buf[512], *gameName;
   
-  sprintf(buf, "ScummVM - %s", gameName = s->getGameName());
+  sprintf(buf, "ScummVM - %s", gameName = detecter.getGameName());
   free(gameName);
   SDL_WM_SetCaption(buf,buf);
 }
@@ -866,10 +868,10 @@ void launcherLoop() {
 
 	gui.launcher();
 	do {
-		updateScreen(&scumm);
+		updateScreen(scumm);
 
 		new_time = SDL_GetTicks();
-		waitForTimer(&scumm, delta * 15 + last_time - new_time);
+		waitForTimer(scumm, delta * 15 + last_time - new_time);
 		last_time = SDL_GetTicks();
 
 		if (gui._active) {
@@ -916,20 +918,41 @@ int main(int argc, char* argv[]) {
 	
 #endif
 
-	scumm._gui = &gui;
-	gui.init(&scumm);
-	sound.initialize(&scumm, &snd_driv);
+	detecter.detectMain(argc, argv);
+	
+	scumm = new Scumm;
+
+	scumm->_fullScreen = detecter._fullScreen;
+	scumm->_debugMode = detecter._debugMode;
+	scumm->_bootParam = detecter._bootParam;
+	scumm->_scale = detecter._scale;
+	scumm->_gameDataPath = detecter._gameDataPath;
+	scumm->_gameTempo = detecter._gameTempo;
+	scumm->_soundEngine = detecter._soundEngine;
+	scumm->_videoMode = detecter._videoMode;
+	scumm->_exe_name = detecter._exe_name;
+	scumm->_gameId = detecter._gameId;
+	scumm->_gameText = detecter._gameText;
+	scumm->_features = detecter._features;
+	scumm->_soundCardType = detecter._soundCardType;
+
+	
+	scumm->_gui = &gui;
+//	gui.init(scumm);
+	sound.initialize(scumm, &snd_driv);
     
-	scumm.delta=0;
-	scumm._system = &_system;
+	scumm->delta=0;
+	scumm->_system = &_system;
+
+	scumm->launch();
 	
-	scumm.scummMain(argc, argv); // Todo: need to change that as well
+//	scumm->scummMain(argc, argv); // Todo: need to change that as well
 	
-	gui.init(&scumm);	/* Reinit GUI after loading a game */
+	gui.init(scumm);	/* Reinit GUI after loading a game */
 
 	_system.last_time = SDL_GetTicks();
 	
-	scumm.mainRun();
+	scumm->mainRun();
 
 	return 0;
 }
@@ -1130,7 +1153,7 @@ void BoxTest(int num) {
 	BoxCoords box;
 	Sint16 rx1[4], ry1[4];
 	
-	scumm.getBoxCoordinates(num,  &box);
+	scumm->getBoxCoordinates(num,  &box);
 	rx1[0] = box.ul.x*2; ry1[0] = box.ul.y*2+32;
 	rx1[1] = box.ur.x*2; ry1[1] = box.ur.y*2+32;
 	rx1[2] = box.ll.x*2; ry1[2] = box.ll.y*2+32;
@@ -1953,9 +1976,9 @@ void Scale_2xSaI (uint8 *srcPtr, uint32 srcPitch, uint8 * /* deltaPtr */,
 
 int OSystem::waitTick(int delta)
 {
-	updateScreen(&scumm);
+	updateScreen(scumm);
 	new_time = SDL_GetTicks();
-	waitForTimer(&scumm, delta * 15 + last_time - new_time);
+	waitForTimer(scumm, delta * 15 + last_time - new_time);
 	last_time = SDL_GetTicks();
 	if (gui._active) { 
 		gui.loop();

@@ -135,9 +135,9 @@ void Scumm::getObjectXYPos(int object) {
 	ImageHeader *imhd;
 	int x,y;
 	
-        if(!(_features & GF_SMALL_HEADER)) {
-                if (_features&GF_AFTER_V6) {
-                        state = getState(object)-1;
+	if(!(_features & GF_SMALL_HEADER)) {
+		if (_features&GF_AFTER_V6) {
+			state = getState(object)-1;
                         if (state<0)
                                 state = 0;
 
@@ -159,14 +159,14 @@ void Scumm::getObjectXYPos(int object) {
 			}
                 } else {
                         x = od->walk_x;
-						y = od->walk_y;
+			y = od->walk_y;
                 }
 		_xPos = x;
 		_yPos = y;
 		_dir = oldDirToNewDir(od->actordir&3);
         } else {
                 x = od->walk_x;
-				y = od->walk_y;
+		y = od->walk_y;
                 _xPos = x;
                 _yPos = y;
 		_dir= oldDirToNewDir(od->actordir&3);

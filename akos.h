@@ -91,6 +91,7 @@ struct AkosRenderer {
 	byte *akcd;
 
 	byte palette[256];
+
 };
 
 enum AkosOpcodes{

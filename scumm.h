@@ -21,6 +21,7 @@
 
 #include "scummsys.h"
 #include "system.h"
+
 #ifdef COMPRESSED_SOUND_FILE
 #include <mad.h>
 #endif
@@ -893,44 +894,6 @@ public:
 	byte *getOBCDFromObject(int obj);	
 	int getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f);
 
-	/* Should be in akos class */
-	bool akos_drawCostume(AkosRenderer *ar);
-	void akos_setPalette(AkosRenderer *ar, byte *palette);
-	void akos_setCostume(AkosRenderer *ar, int costume);
-	void akos_setFacing(AkosRenderer *ar, Actor *a);
-	bool akos_drawCostumeChannel(AkosRenderer *ar, int chan);
-	void akos_codec1(AkosRenderer *ar);
-	void akos_codec5(AkosRenderer *ar);
-	void akos_codec16(AkosRenderer *ar);
-	void akos_codec1_ignorePakCols(AkosRenderer *ar, int num);
-	void akos_c1_spec2(AkosRenderer *ar);
-	void akos_c1_spec3(AkosRenderer *ar);
-
-	void akos_c1_0_decode(AkosRenderer *ar);
-	void akos_c1_12_decode(AkosRenderer *ar);
-	void akos_c1_12y_decode(AkosRenderer *ar);
-	void akos_c1_3_decode(AkosRenderer *ar);
-	void akos_c1_4_decode(AkosRenderer *ar);
-	void akos_c1_4y_decode(AkosRenderer *ar);
-	void akos_c1_56_decode(AkosRenderer *ar);
-	void akos_c1_56y_decode(AkosRenderer *ar);
-	void akos_c1_7_decode(AkosRenderer *ar);
-
-	bool akos_increaseAnims(byte *akos, Actor *a);
-	bool akos_increaseAnim(Actor *a, int i, byte *aksq, uint16 *akfo, int numakfo);
-
-	int getAnimVar(Actor *a, byte var);
-	void setAnimVar(Actor *a, byte var, int value);
-
-	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
-	bool akos_compare(int a, int b, byte cmd);
-	void akos_decodeData(Actor *a, int frame, uint usemask);
-	int akos_frameToAnim(Actor *a, int frame);
-	bool akos_hasManyDirections(Actor *a);
-	int akos_findManyDirection(int16 ManyDirection, uint16 facing);
-
-
-
 	/* Should be in Costume class */
 	void loadCostume(LoadedCostume *lc, int costume);
 	void cost_setPalette(CostumeRenderer *cr, byte *palette);
@@ -1080,6 +1043,41 @@ public:
 	void actorTalk();
 	void stopTalk();	
 
+	/* Akos Class */
+        bool akos_drawCostume(AkosRenderer *ar);
+        void akos_setPalette(AkosRenderer *ar, byte *palette);
+        void akos_setCostume(AkosRenderer *ar, int costume);
+        void akos_setFacing(AkosRenderer *ar, Actor *a);
+        bool akos_drawCostumeChannel(AkosRenderer *ar, int chan);
+        void akos_codec1(AkosRenderer *ar);
+        void akos_codec5(AkosRenderer *ar);
+        void akos_codec16(AkosRenderer *ar);
+        void akos_codec1_ignorePakCols(AkosRenderer *ar, int num);
+        void akos_c1_spec2(AkosRenderer *ar);
+        void akos_c1_spec3(AkosRenderer *ar);
+
+        void akos_c1_0_decode(AkosRenderer *ar);
+        void akos_c1_12_decode(AkosRenderer *ar);
+        void akos_c1_12y_decode(AkosRenderer *ar);
+        void akos_c1_3_decode(AkosRenderer *ar);
+        void akos_c1_4_decode(AkosRenderer *ar);
+        void akos_c1_4y_decode(AkosRenderer *ar);
+        void akos_c1_56_decode(AkosRenderer *ar);
+        void akos_c1_56y_decode(AkosRenderer *ar);
+        void akos_c1_7_decode(AkosRenderer *ar);
+
+        bool akos_increaseAnims(byte *akos, Actor *a);
+        bool akos_increaseAnim(Actor *a, int i, byte *aksq, uint16 *akfo, int numakfo);
+
+        int getAnimVar(Actor *a, byte var);
+        void setAnimVar(Actor *a, byte var, int value);
+
+        void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
+        bool akos_compare(int a, int b, byte cmd);
+        void akos_decodeData(Actor *a, int frame, uint usemask);
+        int akos_frameToAnim(Actor *a, int frame);
+        bool akos_hasManyDirections(Actor *a);
+        int akos_findManyDirection(int16 ManyDirection, uint16 facing);
 
 
 
@@ -1663,8 +1661,25 @@ public:
 
 	byte VAR_DEFAULT_TALK_DELAY;
 	byte VAR_CHARSET_MASK;
+
+	void launch();
+
+	virtual void test1() const { return; };
 };
 
+class Scumm_v7 : public Scumm
+{
+public:
+  //	Scumm_v7();
+//	const static int test = 1;
+	void test1v7() const { printf("Test1"); }
+	void test1() const { test1v7(); }
+};
+
+class Scumm_v3 : public Scumm
+{
+public:
+};
 
 struct ScummDebugger {
 	Scumm *_s;
