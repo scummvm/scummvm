@@ -326,7 +326,7 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_pickVarRandom),
 		/* E4 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -2947,6 +2947,21 @@ void Scumm_v6::o6_findAllObjects() {
 	}
 	
 	push(readVar(0));
+}
+
+void Scumm_v6::o6_pickVarRandom() {
+	int args[16];
+	int a, b;
+
+	warning("stub: o6_pickVarRandom()");
+	getStackList(args, sizeof(args) / sizeof(args[0]));
+	a = fetchScriptWord();
+	b = readVar(a);
+	// readArray(a, 0, 0);
+	// push(readVar(a));
+
+	// readArray(a, 0, ?);
+	push(2);
 }
 
 void Scumm_v6::decodeParseString(int m, int n)
