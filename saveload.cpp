@@ -470,6 +470,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 
 	int i,j;
 	int var120Backup;
+	int var98Backup;
 	
 	s->saveLoadEntries(this,mainEntries);
 
@@ -496,10 +497,17 @@ void Scumm::saveOrLoad(Serializer *s) {
 		s->saveLoadArrayOf(_shadowPalette, _shadowPaletteSize, 1, sleByte);
 
 	s->saveLoadArrayOf(_classData, _numGlobalObjects, sizeof(_classData[0]), sleUint32);
+	
 	var120Backup=_vars[120];
+	var98Backup=_vars[98];
+	
 	s->saveLoadArrayOf(_vars, _numVariables, sizeof(_vars[0]), sleInt16);
+
 	if(_gameId == GID_TENTACLE) // Maybe misplaced, but that's the main idea
 		_vars[120]=var120Backup;
+	if(_gameId == GID_INDY4)
+		_vars[98]=var98Backup;;
+	
 	s->saveLoadArrayOf(_bitVars, _numBitVariables>>3, 1, sleByte);
 
 	/* Save or load a list of the locked objects */

@@ -875,7 +875,7 @@ void Scumm::dumpResource(char *tag, int index, byte *ptr) {
         else
                 size = READ_BE_UINT32_UNALIGNED(ptr+4);
 
-	sprintf(buf, "dumps\\%s%d.dmp", tag,index);
+	sprintf(buf, "dumps/%s%d.dmp", tag,index);
 
 	out = fopen(buf,"rb");
 	if (!out) {
