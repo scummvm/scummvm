@@ -1293,7 +1293,8 @@ typedef struct
 	uint16 startFrame;
 	uint16 endFrame;
 	_spriteInfo *textSprite;
-	_wavHeader *speech;
+	uint32 speechBufferSize;
+	uint16 *speech;
 } _movieTextObject;
 
 

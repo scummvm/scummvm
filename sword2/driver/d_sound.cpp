@@ -330,53 +330,25 @@ int32 Sword2Sound::AmISpeaking() {
 	return RDSE_QUIET;
 }
 
-int32 Sword2Sound::GetCompSpeechSize(const char *filename, uint32 speechid) {
-	uint32 speechIndex[2];
-	File fp;
-	
-	// Open the speech cluster and find the data offset & size
-	fp.open(filename);
-	if (fp.isOpen() == false)
-		return 0;
-
-	fp.seek((++speechid) * 8, SEEK_SET);
-
-	if (fp.read(speechIndex, sizeof(uint32) * 2) != (sizeof(uint32) * 2)) {
-		fp.close();
-		return 0;
-	}
-
-	fp.close();
-
-#ifdef SCUMM_BIG_ENDIAN
-	speechIndex[0] = SWAP_BYTES_32(speechIndex[0]);
-	speechIndex[1] = SWAP_BYTES_32(speechIndex[1]);
-#endif
-
-	if (!speechIndex[0] || !speechIndex[1])
-		return 0;
-
-	return (speechIndex[1] - 1) * 2 + sizeof(_wavHeader) + 8;
-}
-
-int32 Sword2Sound::PreFetchCompSpeech(const char *filename, uint32 speechid, uint8 *waveMem) {
+uint32 Sword2Sound::PreFetchCompSpeech(const char *filename, uint32 speechid, uint16 **buf) {
 	uint32 i;
-	uint16 *data16;
 	uint8 *data8;
 	uint32 speechIndex[2];
-	_wavHeader *pwf = (_wavHeader *) waveMem;
 	File fp;
+	uint32 bufferSize;
+
+	*buf = NULL;
 
 	// Open the speech cluster and find the data offset & size
 	fp.open(filename);
-	if (fp.isOpen() == false)
-		return RDERR_INVALIDFILENAME;
+	if (!fp.isOpen())
+		return 0;
 
-	fp.seek((++speechid) * 8, SEEK_SET);
+	fp.seek((speechid + 1) * 8, SEEK_SET);
 
 	if (fp.read(speechIndex, sizeof(uint32) * 2) != (sizeof(uint32) * 2)) {
 		fp.close();
-		return RDERR_READERROR;
+		return 0;
 	}
 
 #ifdef SCUMM_BIG_ENDIAN
@@ -386,128 +358,72 @@ int32 Sword2Sound::PreFetchCompSpeech(const char *filename, uint32 speechid, uin
 
 	if (!speechIndex[0] || !speechIndex[1]) {
 		fp.close();
-		return RDERR_INVALIDID;
+		return 0;
 	}
 
-	data16 = (uint16 *) (waveMem + sizeof(_wavHeader));
+	// Create a temporary buffer for compressed speech
+	if ((data8 = (uint8 *) malloc(speechIndex[1])) == NULL) {
+		fp.close();
+		return 0;
+	}
 
-	memset(pwf, 0, sizeof(_wavHeader));
-
-	pwf->riff = MKID('RIFF');
-	pwf->wavID = MKID('WAVE');
-	pwf->format = MKID('fmt ');
-
-	pwf->formatLen = TO_LE_32(0x00000010);
-	pwf->formatTag = TO_LE_16(0x0001);
-	pwf->channels = TO_LE_16(0x0001);
-	pwf->samplesPerSec = TO_LE_16(0x5622);
-	pwf->avgBytesPerSec = TO_LE_16(0x0000);
-	pwf->blockAlign = TO_LE_16(0xAC44);
-	pwf->unknown1 = TO_LE_16(0x0000);
-	pwf->unknown2 = TO_LE_16(0x0002);
-	pwf->bitsPerSample = TO_LE_16(0x0010);
-
-	*((uint32 *) data16) = MKID('data');
-
-	data16 += 2;
-
-	*((uint32 *) data16) = TO_LE_32((speechIndex[1] - 1) * 2);
-
-	data16 += 2;
-
-	pwf->fileLength = (speechIndex[1] - 1) * 2 + sizeof(_wavHeader) + 8;
-
-	// Calculate position in buffer to load compressed sound into
-	data8 = (uint8 *) data16 + (speechIndex[1] - 1);
-	
 	fp.seek(speechIndex[0], SEEK_SET);
 
 	if (fp.read(data8, speechIndex[1]) != speechIndex[1]) {
 		fp.close();
-		return RDERR_INVALIDID;
+		free(data8);
+		return 0;
 	}
 
 	fp.close();
 
+	// Decompress data into speech buffer.
+
+	bufferSize = (speechIndex[1] - 1) * 2;
+
+	*buf = (uint16 *) malloc(bufferSize);
+	if (!*buf) {
+		free(data8);
+		return 0;
+	}
+
+	uint16 *data16 = *buf;
+
 	// Starting Value
 	data16[0] = READ_LE_UINT16(data8);
 
-	for (i = 1; i < (speechIndex[1] - 1); i++) {
+	for (i = 1; i < speechIndex[1] - 1; i++) {
 		if (GetCompressedSign(data8[i + 1]))
 			data16[i] = data16[i - 1] - (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
 		else
 			data16[i] = data16[i - 1] + (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
 	}
 
-	return RD_OK;
+	free(data8);
+
+#ifndef SCUMM_BIG_ENDIAN
+	// Until the mixer supports LE samples natively, we need to convert
+	// our LE ones to BE
+	for (uint j = 0; j < bufferSize / 2; j++)
+		data16[j] = SWAP_BYTES_16(data16[j]);
+#endif
+
+	return bufferSize;
 }
 
 int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan) {
-	uint32 i;
 	uint16 *data16;
-	uint8 *data8;
-	uint32 speechIndex[2];
-	File fp;
 	uint32 bufferSize;
 	
 	if (!speechMuted) {
 		if (GetSpeechStatus() == RDERR_SPEECHPLAYING)
 			return RDERR_SPEECHPLAYING;
 
-		//  Open the speech cluster and find the data offset & size
-		fp.open(filename);
-		if (fp.isOpen() == false) 
-			return RDERR_INVALIDFILENAME;
-		
-		fp.seek((++speechid) * 8, SEEK_SET);
+		bufferSize = PreFetchCompSpeech(filename, speechid, &data16);
 
-		if (fp.read(speechIndex, sizeof(uint32) * 2) != (sizeof(uint32) * 2)) {
-			fp.close();
-			return RDERR_READERROR;
-		}
-
-#ifdef SCUMM_BIG_ENDIAN
-		speechIndex[0] = SWAP_BYTES_32(speechIndex[0]);
-		speechIndex[1] = SWAP_BYTES_32(speechIndex[1]);
-#endif
-
-		if (speechIndex[0] == 0 || speechIndex[1] == 0) {
-			fp.close();
-			return RDERR_INVALIDID;
-		}
-
-		bufferSize = (speechIndex[1] - 1) * 2;
-
-		// Create tempory buffer for compressed speech
-		if ((data8 = (uint8 *) malloc(speechIndex[1])) == NULL) {
-			fp.close();
-			return(RDERR_OUTOFMEMORY);
-		}
-
-		fp.seek(speechIndex[0], SEEK_SET);
-
-		if (fp.read(data8, speechIndex[1]) != speechIndex[1]) {
-			fp.close();
-			free(data8);
-			return RDERR_INVALIDID;
-		}
-
-		fp.close();
-
-		// Decompress data into speech buffer.
-		data16 = (uint16 *) malloc(bufferSize);
-
-		// Starting Value
-		data16[0] = READ_LE_UINT16(data8);
-
-		for (i = 1; i < bufferSize / 2; i++) {
-			if (GetCompressedSign(data8[i + 1]))
-				data16[i] = data16[i - 1] - (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
-			else
-				data16[i] = data16[i - 1] + (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
-		}
-
-		free(data8);
+		// We don't know exactly what went wrong here.
+		if (bufferSize == 0)
+			return RDERR_OUTOFMEMORY;
 
 		// Modify the volume according to the master volume
 
@@ -519,13 +435,6 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 		speechPaused = 1;
 			
 		uint32 flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
-
-#ifndef SCUMM_BIG_ENDIAN
-		// Until the mixer supports LE samples natively, we need to
-		// convert our LE ones to BE
-		for (uint j = 0; j < (bufferSize / 2); j++)
-			data16[j] = SWAP_BYTES_16(data16[j]);
-#endif
 
 		_mixer->playRaw(&soundHandleSpeech, data16, bufferSize, 22050, flags, -1, volume, p);
 
@@ -667,6 +576,7 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 			i++;
 			data++;
 		}
+
 		if (!data32)
 			return RDERR_INVALIDWAV;
 

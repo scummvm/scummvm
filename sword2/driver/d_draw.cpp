@@ -23,6 +23,8 @@
 #include "bs2/header.h"		// HACK: For cutscenes instruction message
 #include "bs2/memory.h"		// HACK: For cutscenes instruction message
 #include "bs2/maketext.h"	// HACK: For cutscenes instruction message
+#include "bs2/sword2.h"
+#include "sound/mixer.h"
 #include "rdwin.h"
 #include "_mouse.h"
 #include "d_draw.h"
@@ -542,8 +544,6 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 	// WORKAROUND: For now, we just do the voice-over parts of the
 	// movies, since they're separate from the actual smacker files.
 
-	// TODO: Play the voice-over sounds.
-
 	// Do we really need to pre-cache the text sprites and speech data
 	// like this? It'd be simpler to just store the text id and construct
 	// the data as we go along.
@@ -600,6 +600,8 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 		BS2_SetPalette(0, 256, tmpPal, RDPAL_INSTANT);
 
 		while (1) {
+			PlayingSoundHandle handle;
+
 			if (!text[textCounter])
 				break;
 
@@ -607,8 +609,9 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 				EraseBackBuffer();
 				OpenTextObject(text[textCounter]);
 				DrawTextObject(text[textCounter]);
-				if (text[textCounter]->speech)
-					debug(0, "FIXME: Play subtitle speech");
+				if (text[textCounter]->speech) {
+					g_sword2->_mixer->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, SoundMixer::FLAG_16BITS);
+				}
 			}
 
 			if (frameCounter == text[textCounter]->endFrame) {
@@ -624,7 +627,7 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 			char key;
 
 			if (ReadKey(&key) == RD_OK && key == 27) {
-				// StopWavSpeech()
+				g_sword2->_mixer->stopHandle(handle);
 				break;
 			}
 

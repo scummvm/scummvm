@@ -479,7 +479,8 @@ typedef struct {
 	uint16 startFrame;
 	uint16 endFrame;
 	mem *text_mem;
-	mem *speech_mem;
+	uint32 speechBufferSize;
+	uint16 *speech_mem;
 } _sequenceTextInfo;
 
 // keeps count of number of text lines to disaply during the sequence
@@ -513,10 +514,9 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {	// (James23may97)
  	uint32 local_text;
 	uint32 text_res;
 	uint8 *text;
-	int16 wavId;	// ie. offical text number (actor text number)
+	uint32 wavId;	// ie. offical text number (actor text number)
 	uint8 speechRunning;
  	char speechFile[256];
-	int32 wavSize;
 
 	// for each sequence text line that's been logged
 	for (line = 0; line < sequenceTextLines; line++) {
@@ -568,45 +568,10 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {	// (James23may97)
 			else
 				strcpy(speechFile, "speech.clu");
 
-			wavSize = g_sound->GetCompSpeechSize(speechFile, wavId);
-			if (wavSize) {
-				// if we've got the wav
-				// allocate memory for speech buffer
-				// last param is an optional id for type of
-				// mem block
-
-				sequence_text_list[line].speech_mem = Twalloc(wavSize, MEM_locked, UID_temp);
-
-				// if mem allocated ok (should be fine, but
-				// worth checking)
-
-				if (sequence_text_list[line].speech_mem) {
-					// Load speech & decompress to our
-					// buffer
-
-					if (g_sound->PreFetchCompSpeech(speechFile, wavId, sequence_text_list[line].speech_mem->ad) == RD_OK) {
-						// ok, we've got speech!
-
-						// now float this buffer so we
-						// can make space for the next
-						// text sprites and/or speech
-						// samples
-
-						Float_mem(sequence_text_list[line].speech_mem);
-						speechRunning = 1;
-					} else {
-						// whoops, sample didn't load
-						// & decompress for some
-						// reason...
-
-						// may as well free up speech
-						// buffer now, rather than in
-						// ClearSequenceSpeech();
-
-						Free_mem(sequence_text_list[line].speech_mem);
-						sequence_text_list[line].speech_mem = NULL;
-					}
-				}
+			sequence_text_list[line].speechBufferSize = g_sound->PreFetchCompSpeech((char *) speechFile, wavId, &sequence_text_list[line].speech_mem);
+			if (sequence_text_list[line].speechBufferSize) {
+				// ok, we've got speech!
+				speechRunning = 1;
 			}
 		}
 
@@ -664,12 +629,11 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {	// (James23may97)
 		// if we've loaded a speech sample for this line...
 
  		if (sequence_text_list[line].speech_mem) {
-			Lock_mem(sequence_text_list[line].speech_mem);
-
 			// for drivers: set up pointer to decompressed wav in
 			// memory
 
-			sequenceText[line]->speech = (_wavHeader *) sequence_text_list[line].speech_mem->ad;
+			sequenceText[line]->speechBufferSize = sequence_text_list[line].speechBufferSize;
+			sequenceText[line]->speech = sequence_text_list[line].speech_mem;
 		}
 	}
 }
@@ -689,7 +653,7 @@ void ClearSequenceSpeech(_movieTextObject *textSprites[]) {	// (James27may97)
 
 		// free up the mem block containing this speech sample
 		if (sequence_text_list[line].speech_mem)
-			Free_mem(sequence_text_list[line].speech_mem);
+			free(sequence_text_list[line].speech_mem);
 	}
 
 	// IMPORTANT! Reset the line count ready for the next sequence!

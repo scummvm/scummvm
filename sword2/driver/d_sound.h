@@ -74,8 +74,7 @@ class Sword2Sound {
 		void FxServer(void);
 		int32 PlaySpeech(uint8 *data, uint8 vol, int8 pan);
 		int32 PlayCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan);
-		int32 PreFetchCompSpeech(const char *filename, uint32 speechid, uint8 *waveMem);
-		int32 GetCompSpeechSize(const char *filename, uint32 speechid);
+		uint32 PreFetchCompSpeech(const char *filename, uint32 speechid, uint16 **buf);
 		int32 AmISpeaking();
 		int32 StopSpeechSword2(void);
 		int32 GetSpeechStatus(void);
