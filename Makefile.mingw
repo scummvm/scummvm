@@ -22,6 +22,6 @@ install:   residual
 dist:   install
 	cp COPYING $(RESIDUALPATH)/copying.txt
 	cp README $(RESIDUALPATH)/readme.txt
-	cp SDL/README-SDL.txt $(RESIDUALPATH)
-	cp SDL/lib/SDL.dll $(RESIDUALPATH)
+	cp /usr/local/README-SDL.txt $(RESIDUALPATH)
+	cp /usr/local/bin/SDL.dll $(RESIDUALPATH)
 	u2d $(RESIDUALPATH)/*.txt
