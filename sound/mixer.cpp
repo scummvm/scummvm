@@ -249,13 +249,8 @@ void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, u
 #ifdef USE_MAD
 void SoundMixer::playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume, int8 pan, int id) {
 	// Create the input stream
-	AudioInputStream *input = makeMP3Stream(file, mad_timer_zero, size);
+	AudioInputStream *input = makeMP3Stream(file, size);
 	playInputStream(handle, input, false, volume, pan, id);
-}
-void SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan, int id) {
-	// Create the input stream
-	AudioInputStream *input = makeMP3Stream(file, duration, 0);
-	playInputStream(handle, input, true, volume, pan, id);
 }
 #endif
 

@@ -26,105 +26,6 @@
 
 #ifdef USE_MAD
 
-MP3TrackInfo::MP3TrackInfo(File *file) {
-	struct mad_stream stream;
-	struct mad_frame frame;
-	unsigned char buffer[8192];
-	unsigned int buflen = 0;
-	int count = 0;
-
-	// Check the format and bitrate
-	mad_stream_init(&stream);
-	mad_frame_init(&frame);
-
-	while (1) {
-		if (buflen < sizeof(buffer)) {
-			int bytes;
-
-			bytes = file->read(buffer + buflen, sizeof(buffer) - buflen);
-			if (bytes <= 0) {
-				if (bytes == -1) {
-					warning("Invalid file format");
-					goto error;
-				}
-				break;
-			}
-
-			buflen += bytes;
-		}
-
-		mad_stream_buffer(&stream, buffer, buflen);
-
-		while (1) {
-			if (mad_frame_decode(&frame, &stream) == -1) {
-				if (!MAD_RECOVERABLE(stream.error))
-					break;
-
-				if (stream.error != MAD_ERROR_BADCRC)
-					continue;
-			}
-
-			if (count++)
-				break;
-		}
-
-		if (count || stream.error != MAD_ERROR_BUFLEN)
-			break;
-
-		memmove(buffer, stream.next_frame,
-		        buflen = &buffer[buflen] - stream.next_frame);
-	}
-
-	if (count)
-		memcpy(&_mad_header, &frame.header, sizeof(mad_header));
-	else {
-		warning("Invalid file format");
-		goto error;
-	}
-
-	mad_frame_finish(&frame);
-	mad_stream_finish(&stream);
-	// Get file size
-	_size = file->size();
-	_file = file;
-	_error_flag = false;
-	return;
-
-error:
-	mad_frame_finish(&frame);
-	mad_stream_finish(&stream);
-	_error_flag = true;
-	delete file;
-}
-
-void MP3TrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration) {
-	unsigned int offset;
-	mad_timer_t durationTime;
-
-	// Calc offset. As all bitrates are in kilobit per seconds, the division by 200 is always exact
-	offset = (startFrame * (_mad_header.bitrate / (8 * 25))) / 3;
-	_file->seek(offset, SEEK_SET);
-
-	// Calc delay
-	if (!duration) {
-		// FIXME: Using _size here is a problem if offset (or equivalently
-		// startFrame) is non-zero.
-		mad_timer_set(&durationTime, (_size * 8) / _mad_header.bitrate,
-					(_size * 8) % _mad_header.bitrate, _mad_header.bitrate);
-	} else {
-		mad_timer_set(&durationTime, duration / 75, duration % 75, 75);
-	}
-
-	// Play it
-	mixer->playMP3CDTrack(handle, _file, durationTime);
-}
-
-MP3TrackInfo::~MP3TrackInfo() {
-	if (! _error_flag)
-		_file->close();
-}
-
-
 #pragma mark -
 #pragma mark --- MP3 (MAD) stream ---
 #pragma mark -
@@ -354,8 +255,112 @@ int MP3InputStream::readBuffer(int16 *buffer, const int numSamples) {
 	return samples;
 }
 
-AudioInputStream *makeMP3Stream(File *file, mad_timer_t duration, uint size) {
-	return new MP3InputStream(file, duration, size);
+AudioInputStream *makeMP3Stream(File *file, uint size) {
+	return new MP3InputStream(file, mad_timer_zero, size);
+}
+
+
+#pragma mark -
+#pragma mark --- MP3 Audio CD emulation ---
+#pragma mark -
+
+MP3TrackInfo::MP3TrackInfo(File *file) {
+	struct mad_stream stream;
+	struct mad_frame frame;
+	unsigned char buffer[8192];
+	unsigned int buflen = 0;
+	int count = 0;
+
+	// Check the format and bitrate
+	mad_stream_init(&stream);
+	mad_frame_init(&frame);
+
+	while (1) {
+		if (buflen < sizeof(buffer)) {
+			int bytes;
+
+			bytes = file->read(buffer + buflen, sizeof(buffer) - buflen);
+			if (bytes <= 0) {
+				if (bytes == -1) {
+					warning("Invalid file format");
+					goto error;
+				}
+				break;
+			}
+
+			buflen += bytes;
+		}
+
+		mad_stream_buffer(&stream, buffer, buflen);
+
+		while (1) {
+			if (mad_frame_decode(&frame, &stream) == -1) {
+				if (!MAD_RECOVERABLE(stream.error))
+					break;
+
+				if (stream.error != MAD_ERROR_BADCRC)
+					continue;
+			}
+
+			if (count++)
+				break;
+		}
+
+		if (count || stream.error != MAD_ERROR_BUFLEN)
+			break;
+
+		memmove(buffer, stream.next_frame,
+		        buflen = &buffer[buflen] - stream.next_frame);
+	}
+
+	if (count)
+		memcpy(&_mad_header, &frame.header, sizeof(mad_header));
+	else {
+		warning("Invalid file format");
+		goto error;
+	}
+
+	mad_frame_finish(&frame);
+	mad_stream_finish(&stream);
+	// Get file size
+	_size = file->size();
+	_file = file;
+	_error_flag = false;
+	return;
+
+error:
+	mad_frame_finish(&frame);
+	mad_stream_finish(&stream);
+	_error_flag = true;
+	delete file;
+}
+
+void MP3TrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration) {
+	unsigned int offset;
+	mad_timer_t durationTime;
+
+	// Calc offset. As all bitrates are in kilobit per seconds, the division by 200 is always exact
+	offset = (startFrame * (_mad_header.bitrate / (8 * 25))) / 3;
+	_file->seek(offset, SEEK_SET);
+
+	// Calc delay
+	if (!duration) {
+		// FIXME: Using _size here is a problem if offset (or equivalently
+		// startFrame) is non-zero.
+		mad_timer_set(&durationTime, (_size * 8) / _mad_header.bitrate,
+					(_size * 8) % _mad_header.bitrate, _mad_header.bitrate);
+	} else {
+		mad_timer_set(&durationTime, duration / 75, duration % 75, 75);
+	}
+
+	// Play it
+	AudioInputStream *input = new MP3InputStream(_file, durationTime, 0);
+	mixer->playInputStream(handle, input, true);
+}
+
+MP3TrackInfo::~MP3TrackInfo() {
+	if (! _error_flag)
+		_file->close();
 }
 
 

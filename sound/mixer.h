@@ -27,9 +27,6 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
-#ifdef USE_MAD
-#include <mad.h>
-#endif
 #ifdef USE_VORBIS
 #include <vorbis/vorbisfile.h>
 #endif
@@ -115,7 +112,6 @@ public:
 				int id = -1, byte volume = 255, int8 pan = 0, uint32 loopStart = 0, uint32 loopEnd = 0);
 #ifdef USE_MAD
 	void playMP3(PlayingSoundHandle *handle, File *file, uint32 size, byte volume = 255, int8 pan = 0, int id = -1);
-	void playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume = 255, int8 pan = 0, int id = -1);
 #endif
 #ifdef USE_VORBIS
 	void playVorbis(PlayingSoundHandle *handle, File *file, uint32 size, byte volume = 255, int8 pan = 0, int id = -1);
