@@ -57,7 +57,7 @@ Driver::Driver(int screenW, int screenH, int screenBPP) {
 
 }
 
-void Driver::setupCamera(float fov, float fclip, float nclip) {
+void Driver::setupCamera(float fov, float nclip, float fclip, float roll) {
   // Set perspective transformation
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -68,12 +68,13 @@ void Driver::setupCamera(float fov, float fclip, float nclip) {
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
+
+  Vector3d up_vec(0, 0, 1);
+  glRotatef(roll, 0, 0, -1);
 }
 
-void Driver::positionCamera(float roll, Vector3d pos, Vector3d interest) {
+void Driver::positionCamera(Vector3d pos, Vector3d interest) {
   Vector3d up_vec(0, 0, 1);
-
-  glRotatef(roll, 0, 0, -1);
 
   if (pos.x() == interest.x() && pos.y() == interest.y())
     up_vec = Vector3d(0, 1, 0);
@@ -102,7 +103,7 @@ void Driver::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
 }
 
 void Driver::finishActorDraw() {
-	    glPopMatrix();
+    glPopMatrix();
 }
 
 void Driver::drawDepthBitmap(int num, int x, int y, int w, int h, char **data) {
@@ -121,7 +122,7 @@ void Driver::drawDepthBitmap(int num, int x, int y, int w, int h, char **data) {
     */
     for (int row = 0; row < h; row++) {
       glRasterPos2i(x, y + row + 1);
-      glDrawPixels(w, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, data[num] + (2 * row * w));
+//      glDrawPixels(w, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, data[num] + (2 * row * w));
     }
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glDepthFunc(GL_LESS);
