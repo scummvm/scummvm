@@ -24,7 +24,7 @@
 #include <mad.h>
 #endif
 
-#ifdef macintosh
+#if defined(macintosh) && !defined(__APPLE__CW)
 	#define Point SCUMM_Point
 #endif
 
