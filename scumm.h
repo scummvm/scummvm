@@ -2294,7 +2294,7 @@ struct Serializer {
 
 
 
-	bool Serializer::checkEOFLoadStream();
+	bool checkEOFLoadStream();
 
 };
 
