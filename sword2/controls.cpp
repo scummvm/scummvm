@@ -1567,7 +1567,9 @@ uint32 Gui::restoreControl(void) {
 
 void Gui::saveControl(void) {
 	SaveLoadDialog saveDialog(this, kSaveDialog);
+	_vm->_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	saveDialog.run();
+	_vm->_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
 void Gui::quitControl(void) {
