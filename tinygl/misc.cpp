@@ -1,7 +1,7 @@
 #include "tinygl/zgl.h"
 #include "msghandling.h"
 
-void glopViewport(GLContext *c,GLParam *p)
+void glopViewport(GLContext *c,TGLParam *p)
 {
   int xsize,ysize,xmin,ymin,xsize_req,ysize_req;
   
@@ -42,45 +42,45 @@ void glopViewport(GLContext *c,GLParam *p)
   }
 }
 
-void glopEnableDisable(GLContext *c,GLParam *p)
+void glopEnableDisable(GLContext *c,TGLParam *p)
 {
   int code=p[1].i;
   int v=p[2].i;
 
   switch(code) {
-  case GL_CULL_FACE:
+  case TGL_CULL_FACE:
     c->cull_face_enabled=v;
     break;
-  case GL_LIGHTING:
+  case TGL_LIGHTING:
     c->lighting_enabled=v;
     break;
-  case GL_COLOR_MATERIAL:
+  case TGL_COLOR_MATERIAL:
     c->color_material_enabled=v;
       break;
-  case GL_TEXTURE_2D:
+  case TGL_TEXTURE_2D:
     c->texture_2d_enabled=v;
     break;
-  case GL_NORMALIZE:
+  case TGL_NORMALIZE:
     c->normalize_enabled=v;
     break;
-  case GL_DEPTH_TEST:
+  case TGL_DEPTH_TEST:
     c->depth_test = v;
     break;
-  case GL_POLYGON_OFFSET_FILL:
+  case TGL_POLYGON_OFFSET_FILL:
     if (v) c->offset_states |= TGL_OFFSET_FILL;
     else c->offset_states &= ~TGL_OFFSET_FILL;
     break; 
-  case GL_POLYGON_OFFSET_POINT:
+  case TGL_POLYGON_OFFSET_POINT:
     if (v) c->offset_states |= TGL_OFFSET_POINT;
     else c->offset_states &= ~TGL_OFFSET_POINT;
     break; 
-  case GL_POLYGON_OFFSET_LINE:
+  case TGL_POLYGON_OFFSET_LINE:
     if (v) c->offset_states |= TGL_OFFSET_LINE;
     else c->offset_states &= ~TGL_OFFSET_LINE;
     break; 
   default:
-    if (code>=GL_LIGHT0 && code<GL_LIGHT0+MAX_LIGHTS) {
-      gl_enable_disable_light(c,code - GL_LIGHT0, v);
+    if (code>=TGL_LIGHT0 && code<TGL_LIGHT0+MAX_LIGHTS) {
+      gl_enable_disable_light(c,code - TGL_LIGHT0, v);
     } else {
       /*
       fprintf(stderr,"glEnableDisable: 0x%X not supported.\n",code);
@@ -90,37 +90,37 @@ void glopEnableDisable(GLContext *c,GLParam *p)
   }
 }
 
-void glopShadeModel(GLContext *c,GLParam *p)
+void glopShadeModel(GLContext *c,TGLParam *p)
 {
   int code=p[1].i;
   c->current_shade_model=code;
 }
 
-void glopCullFace(GLContext *c,GLParam *p)
+void glopCullFace(GLContext *c,TGLParam *p)
 {
   int code=p[1].i;
   c->current_cull_face=code;
 }
 
-void glopFrontFace(GLContext *c,GLParam *p)
+void glopFrontFace(GLContext *c,TGLParam *p)
 {
   int code=p[1].i;
   c->current_front_face=code;
 }
 
-void glopPolygonMode(GLContext *c,GLParam *p)
+void glopPolygonMode(GLContext *c,TGLParam *p)
 {
   int face=p[1].i;
   int mode=p[2].i;
   
   switch(face) {
-  case GL_BACK:
+  case TGL_BACK:
     c->polygon_mode_back=mode;
     break;
-  case GL_FRONT:
+  case TGL_FRONT:
     c->polygon_mode_front=mode;
     break;
-  case GL_FRONT_AND_BACK:
+  case TGL_FRONT_AND_BACK:
     c->polygon_mode_front=mode;
     c->polygon_mode_back=mode;
     break;
@@ -129,7 +129,7 @@ void glopPolygonMode(GLContext *c,GLParam *p)
   }
 }
 
-void glopHint(GLContext *c,GLParam *p)
+void glopHint(GLContext *c,TGLParam *p)
 {
 #if 0
   int target=p[1].i;
@@ -140,7 +140,7 @@ void glopHint(GLContext *c,GLParam *p)
 }
 
 void 
-glopPolygonOffset(GLContext *c, GLParam *p)
+glopPolygonOffset(GLContext *c, TGLParam *p)
 {
   c->offset_factor = p[1].f;
   c->offset_units = p[2].f;

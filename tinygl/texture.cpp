@@ -67,7 +67,7 @@ void glInitTextures(GLContext *c)
   c->current_texture=find_texture(c,0);
 }
 
-void glGenTextures(int n, unsigned int *textures)
+void tglGenTextures(int n, unsigned int *textures)
 {
   GLContext *c=gl_get_context();
   int max,i;
@@ -88,7 +88,7 @@ void glGenTextures(int n, unsigned int *textures)
 }
 
 
-void glDeleteTextures(int n, const unsigned int *textures)
+void tglDeleteTextures(int n, const unsigned int *textures)
 {
   GLContext *c=gl_get_context();
   int i;
@@ -98,7 +98,7 @@ void glDeleteTextures(int n, const unsigned int *textures)
     t=find_texture(c,textures[i]);
     if (t!=NULL && t!=0) {
       if (t==c->current_texture) {
-	glBindTexture(GL_TEXTURE_2D,0);
+	tglBindTexture(TGL_TEXTURE_2D,0);
       }
       free_texture(c,textures[i]);
     }
@@ -106,13 +106,13 @@ void glDeleteTextures(int n, const unsigned int *textures)
 }
 
 
-void glopBindTexture(GLContext *c,GLParam *p)
+void glopBindTexture(GLContext *c,TGLParam *p)
 {
   int target=p[1].i;
   int texture=p[2].i;
   GLTexture *t;
 
-  assert(target == GL_TEXTURE_2D && texture >= 0);
+  assert(target == TGL_TEXTURE_2D && texture >= 0);
 
   t=find_texture(c,texture);
   if (t==NULL) {
@@ -121,7 +121,7 @@ void glopBindTexture(GLContext *c,GLParam *p)
   c->current_texture=t;
 }
 
-void glopTexImage2D(GLContext *c,GLParam *p)
+void glopTexImage2D(GLContext *c,TGLParam *p)
 {
   int target=p[1].i;
   int level=p[2].i;
@@ -136,9 +136,9 @@ void glopTexImage2D(GLContext *c,GLParam *p)
   unsigned char *pixels1;
   int do_free;
 
-  if (!(target == GL_TEXTURE_2D && level == 0 && components == 3 && 
-        border == 0 && format == GL_RGB &&
-        type == GL_UNSIGNED_BYTE)) {
+  if (!(target == TGL_TEXTURE_2D && level == 0 && components == 3 && 
+        border == 0 && format == TGL_RGB &&
+        type == TGL_UNSIGNED_BYTE)) {
     gl_fatal_error("glTexImage2D: combinaison of parameters not handled");
   }
   
@@ -181,48 +181,48 @@ void glopTexImage2D(GLContext *c,GLParam *p)
 
 
 /* TODO: not all tests are done */
-void glopTexEnv(GLContext *c,GLParam *p)
+void glopTexEnv(GLContext *c,TGLParam *p)
 {
   int target=p[1].i;
   int pname=p[2].i;
   int param=p[3].i;
 
-  if (target != GL_TEXTURE_ENV) {
+  if (target != TGL_TEXTURE_ENV) {
   error:
     gl_fatal_error("glTexParameter: unsupported option");
   }
 
-  if (pname != GL_TEXTURE_ENV_MODE) goto error;
+  if (pname != TGL_TEXTURE_ENV_MODE) goto error;
 
-  if (param != GL_DECAL) goto error;
+  if (param != TGL_DECAL) goto error;
 }
 
 /* TODO: not all tests are done */
-void glopTexParameter(GLContext *c,GLParam *p)
+void glopTexParameter(GLContext *c,TGLParam *p)
 {
   int target=p[1].i;
   int pname=p[2].i;
   int param=p[3].i;
   
-  if (target != GL_TEXTURE_2D) {
+  if (target != TGL_TEXTURE_2D) {
   error:
     gl_fatal_error("glTexParameter: unsupported option");
   }
 
   switch(pname) {
-  case GL_TEXTURE_WRAP_S:
-  case GL_TEXTURE_WRAP_T:
-    if (param != GL_REPEAT) goto error;
+  case TGL_TEXTURE_WRAP_S:
+  case TGL_TEXTURE_WRAP_T:
+    if (param != TGL_REPEAT) goto error;
     break;
   }
 }
 
-void glopPixelStore(GLContext *c,GLParam *p)
+void glopPixelStore(GLContext *c,TGLParam *p)
 {
   int pname=p[1].i;
   int param=p[2].i;
 
-  if (pname != GL_UNPACK_ALIGNMENT ||
+  if (pname != TGL_UNPACK_ALIGNMENT ||
       param != 1) {
     gl_fatal_error("glPixelStore: unsupported option");
   }

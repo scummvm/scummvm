@@ -1,7 +1,7 @@
 #include "tinygl/zgl.h"
 #include "tinygl/msghandling.h"
 
-void glopMaterial(GLContext *c,GLParam *p)
+void glopMaterial(GLContext *c,TGLParam *p)
 {
   int mode=p[1].i;
   int type=p[2].i;
@@ -9,36 +9,36 @@ void glopMaterial(GLContext *c,GLParam *p)
   int i;
   GLMaterial *m;
 
-  if (mode == GL_FRONT_AND_BACK) {
-    p[1].i=GL_FRONT;
+  if (mode == TGL_FRONT_AND_BACK) {
+    p[1].i=TGL_FRONT;
     glopMaterial(c,p);
-    mode=GL_BACK;
+    mode=TGL_BACK;
   }
-  if (mode == GL_FRONT) m=&c->materials[0];
+  if (mode == TGL_FRONT) m=&c->materials[0];
   else m=&c->materials[1];
 
   switch(type) {
-  case GL_EMISSION:
+  case TGL_EMISSION:
     for(i=0;i<4;i++)
       m->emission.v[i]=v[i];
     break;
-  case GL_AMBIENT:
+  case TGL_AMBIENT:
     for(i=0;i<4;i++)
       m->ambient.v[i]=v[i];
     break;
-  case GL_DIFFUSE:
+  case TGL_DIFFUSE:
     for(i=0;i<4;i++)
       m->diffuse.v[i]=v[i];
     break;
-  case GL_SPECULAR:
+  case TGL_SPECULAR:
     for(i=0;i<4;i++)
       m->specular.v[i]=v[i];
     break;
-  case GL_SHININESS:
+  case TGL_SHININESS:
     m->shininess=v[0];
     m->shininess_i = (v[0]/128.0f)*SPECULAR_BUFFER_RESOLUTION;
     break;
-  case GL_AMBIENT_AND_DIFFUSE:
+  case TGL_AMBIENT_AND_DIFFUSE:
     for(i=0;i<4;i++)
       m->diffuse.v[i]=v[i];
     for(i=0;i<4;i++)
@@ -49,7 +49,7 @@ void glopMaterial(GLContext *c,GLParam *p)
   }
 }
 
-void glopColorMaterial(GLContext *c,GLParam *p)
+void glopColorMaterial(GLContext *c,TGLParam *p)
 {
   int mode=p[1].i;
   int type=p[2].i;
@@ -58,7 +58,7 @@ void glopColorMaterial(GLContext *c,GLParam *p)
   c->current_color_material_type=type;
 }
 
-void glopLight(GLContext *c,GLParam *p)
+void glopLight(GLContext *c,TGLParam *p)
 {
   int light=p[1].i;
   int type=p[2].i;
@@ -66,23 +66,23 @@ void glopLight(GLContext *c,GLParam *p)
   GLLight *l;
   int i;
   
-  assert(light >= GL_LIGHT0 && light < GL_LIGHT0+MAX_LIGHTS );
+  assert(light >= TGL_LIGHT0 && light < TGL_LIGHT0+MAX_LIGHTS );
 
-  l=&c->lights[light-GL_LIGHT0];
+  l=&c->lights[light-TGL_LIGHT0];
 
   for(i=0;i<4;i++) v.v[i]=p[3+i].f;
 
   switch(type) {
-  case GL_AMBIENT:
+  case TGL_AMBIENT:
     l->ambient=v;
     break;
-  case GL_DIFFUSE:
+  case TGL_DIFFUSE:
     l->diffuse=v;
     break;
-  case GL_SPECULAR:
+  case TGL_SPECULAR:
     l->specular=v;
     break;
-  case GL_POSITION:
+  case TGL_POSITION:
     {
       V4 pos;
       gl_M4_MulV4(&pos,c->matrix_stack_ptr[0],&v);
@@ -98,17 +98,17 @@ void glopLight(GLContext *c,GLParam *p)
       }
     }
     break;
-  case GL_SPOT_DIRECTION:
+  case TGL_SPOT_DIRECTION:
     for(i=0;i<3;i++) {
       l->spot_direction.v[i]=v.v[i];
       l->norm_spot_direction.v[i]=v.v[i];
     }
     gl_V3_Norm(&l->norm_spot_direction);
     break;
-  case GL_SPOT_EXPONENT:
+  case TGL_SPOT_EXPONENT:
     l->spot_exponent=v.v[0];
     break;
-  case GL_SPOT_CUTOFF:
+  case TGL_SPOT_CUTOFF:
     {
       float a=v.v[0];
       assert(a == 180 || (a>=0 && a<=90));
@@ -116,13 +116,13 @@ void glopLight(GLContext *c,GLParam *p)
       if (a != 180) l->cos_spot_cutoff=cos(a * PI / 180.0);
     }
     break;
-  case GL_CONSTANT_ATTENUATION:
+  case TGL_CONSTANT_ATTENUATION:
     l->attenuation[0]=v.v[0];
     break;
-  case GL_LINEAR_ATTENUATION:
+  case TGL_LINEAR_ATTENUATION:
     l->attenuation[1]=v.v[0];
     break;
-  case GL_QUADRATIC_ATTENUATION:
+  case TGL_QUADRATIC_ATTENUATION:
     l->attenuation[2]=v.v[0];
     break;
   default:
@@ -131,21 +131,21 @@ void glopLight(GLContext *c,GLParam *p)
 }
   
 
-void glopLightModel(GLContext *c,GLParam *p)
+void glopLightModel(GLContext *c,TGLParam *p)
 {
   int pname=p[1].i;
   float *v=&p[2].f;
   int i;
 
   switch(pname) {
-  case GL_LIGHT_MODEL_AMBIENT:
+  case TGL_LIGHT_MODEL_AMBIENT:
     for(i=0;i<4;i++) 
       c->ambient_light_model.v[i]=v[i];
     break;
-  case GL_LIGHT_MODEL_LOCAL_VIEWER:
+  case TGL_LIGHT_MODEL_LOCAL_VIEWER:
     c->local_light_model=(int)v[0];
     break;
-  case GL_LIGHT_MODEL_TWO_SIDE:
+  case TGL_LIGHT_MODEL_TWO_SIDE:
     c->light_model_two_side = (int)v[0];
     break;
   default:

@@ -1,7 +1,7 @@
 #include "tinygl/zgl.h"
 #include <string.h>
 
-void glopNormal(GLContext * c, GLParam * p)
+void glopNormal(GLContext * c, TGLParam * p)
 {
     V3 v;
 
@@ -15,7 +15,7 @@ void glopNormal(GLContext * c, GLParam * p)
     c->current_normal.W = 0;
 }
 
-void glopTexCoord(GLContext * c, GLParam * p)
+void glopTexCoord(GLContext * c, TGLParam * p)
 {
     c->current_tex_coord.X = p[1].f;
     c->current_tex_coord.Y = p[2].f;
@@ -23,12 +23,12 @@ void glopTexCoord(GLContext * c, GLParam * p)
     c->current_tex_coord.W = p[4].f;
 }
 
-void glopEdgeFlag(GLContext * c, GLParam * p)
+void glopEdgeFlag(GLContext * c, TGLParam * p)
 {
     c->current_edge_flag = p[1].i;
 }
 
-void glopColor(GLContext * c, GLParam * p)
+void glopColor(GLContext * c, TGLParam * p)
 {
 
     c->current_color.X = p[1].f;
@@ -40,7 +40,7 @@ void glopColor(GLContext * c, GLParam * p)
     c->longcurrent_color[2] = p[7].ui;
 
     if (c->color_material_enabled) {
-	GLParam q[7];
+	TGLParam q[7];
 	q[0].op = OP_Material;
 	q[1].i = c->current_color_material_mode;
 	q[2].i = c->current_color_material_type;
@@ -69,7 +69,7 @@ void gl_eval_viewport(GLContext * c)
     v->scale.Z = -((zsize - 0.5) / 2.0);
 }
 
-void glopBegin(GLContext * c, GLParam * p)
+void glopBegin(GLContext * c, TGLParam * p)
 {
     int type;
     M4 tmp;
@@ -111,15 +111,15 @@ void glopBegin(GLContext * c, GLParam * p)
 	c->viewport.updated = 0;
     }
     /* triangle drawing functions */
-    if (c->render_mode == GL_SELECT) {
+    if (c->render_mode == TGL_SELECT) {
 	c->draw_triangle_front = gl_draw_triangle_select;
 	c->draw_triangle_back = gl_draw_triangle_select;
     } else {
 	switch (c->polygon_mode_front) {
-	case GL_POINT:
+	case TGL_POINT:
 	    c->draw_triangle_front = gl_draw_triangle_point;
 	    break;
-	case GL_LINE:
+	case TGL_LINE:
 	    c->draw_triangle_front = gl_draw_triangle_line;
 	    break;
 	default:
@@ -128,10 +128,10 @@ void glopBegin(GLContext * c, GLParam * p)
 	}
 
 	switch (c->polygon_mode_back) {
-	case GL_POINT:
+	case TGL_POINT:
 	    c->draw_triangle_back = gl_draw_triangle_point;
 	    break;
-	case GL_LINE:
+	case TGL_LINE:
 	    c->draw_triangle_back = gl_draw_triangle_line;
 	    break;
 	default:
@@ -204,7 +204,7 @@ static inline void gl_vertex_transform(GLContext * c, GLVertex * v)
     v->clip_code = gl_clipcode(v->pc.X, v->pc.Y, v->pc.Z, v->pc.W);
 }
 
-void glopVertex(GLContext * c, GLParam * p)
+void glopVertex(GLContext * c, TGLParam * p)
 {
     GLVertex *v;
     int n, i, cnt;
@@ -265,19 +265,19 @@ void glopVertex(GLContext * c, GLParam * p)
     v->edge_flag = c->current_edge_flag;
 
     switch (c->begin_type) {
-    case GL_POINTS:
+    case TGL_POINTS:
 	gl_draw_point(c, &c->vertex[0]);
 	n = 0;
 	break;
 
-    case GL_LINES:
+    case TGL_LINES:
 	if (n == 2) {
 	    gl_draw_line(c, &c->vertex[0], &c->vertex[1]);
 	    n = 0;
 	}
 	break;
-    case GL_LINE_STRIP:
-    case GL_LINE_LOOP:
+    case TGL_LINE_STRIP:
+    case TGL_LINE_LOOP:
 	if (n == 1) {
 	    c->vertex[2] = c->vertex[0];
 	} else if (n == 2) {
@@ -287,13 +287,13 @@ void glopVertex(GLContext * c, GLParam * p)
 	}
 	break;
 
-    case GL_TRIANGLES:
+    case TGL_TRIANGLES:
 	if (n == 3) {
 	    gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
 	    n = 0;
 	}
 	break;
-    case GL_TRIANGLE_STRIP:
+    case TGL_TRIANGLE_STRIP:
 	if (cnt >= 3) {
 	    if (n == 3)
 		n = 0;
@@ -309,7 +309,7 @@ void glopVertex(GLContext * c, GLParam * p)
             }
 	}
 	break;
-    case GL_TRIANGLE_FAN:
+    case TGL_TRIANGLE_FAN:
 	if (n == 3) {
 	    gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
 	    c->vertex[1] = c->vertex[2];
@@ -317,7 +317,7 @@ void glopVertex(GLContext * c, GLParam * p)
 	}
 	break;
 
-    case GL_QUADS:
+    case TGL_QUADS:
 	if (n == 4) {
 	    c->vertex[2].edge_flag = 0;
 	    gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
@@ -328,7 +328,7 @@ void glopVertex(GLContext * c, GLParam * p)
 	}
 	break;
 
-    case GL_QUAD_STRIP:
+    case TGL_QUAD_STRIP:
 	if (n == 4) {
 	    gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
 	    gl_draw_triangle(c, &c->vertex[1], &c->vertex[3], &c->vertex[2]);
@@ -337,7 +337,7 @@ void glopVertex(GLContext * c, GLParam * p)
 	    n = 2;
 	}
 	break;
-    case GL_POLYGON:
+    case TGL_POLYGON:
 	break;
     default:
 	gl_fatal_error("glBegin: type %x not handled\n", c->begin_type);
@@ -346,15 +346,15 @@ void glopVertex(GLContext * c, GLParam * p)
     c->vertex_n = n;
 }
 
-void glopEnd(GLContext * c, GLParam * param)
+void glopEnd(GLContext * c, TGLParam * param)
 {
     assert(c->in_begin == 1);
 
-    if (c->begin_type == GL_LINE_LOOP) {
+    if (c->begin_type == TGL_LINE_LOOP) {
 	if (c->vertex_cnt >= 3) {
 	    gl_draw_line(c, &c->vertex[0], &c->vertex[2]);
 	}
-    } else if (c->begin_type == GL_POLYGON) {
+    } else if (c->begin_type == TGL_POLYGON) {
 	int i = c->vertex_cnt;
 	while (i >= 3) {
 	    i--;

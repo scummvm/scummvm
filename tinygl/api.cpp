@@ -2,9 +2,9 @@
 #include <stdio.h>
 /* glVertex */
 
-void glVertex4f(float x,float y,float z,float w)
+void tglVertex4f(float x,float y,float z,float w)
 {
-  GLParam p[5];
+  TGLParam p[5];
 
   p[0].op=OP_Vertex;
   p[1].f=x;
@@ -15,26 +15,26 @@ void glVertex4f(float x,float y,float z,float w)
   gl_add_op(p);
 }
 
-void glVertex2f(float x,float y) 
+void tglVertex2f(float x,float y) 
 {
-  glVertex4f(x,y,0,1);
+  tglVertex4f(x,y,0,1);
 }
 
-void glVertex3f(float x,float y,float z) 
+void tglVertex3f(float x,float y,float z) 
 {
-  glVertex4f(x,y,z,1);
+  tglVertex4f(x,y,z,1);
 }
 
-void glVertex3fv(float *v) 
+void tglVertex3fv(float *v) 
 {
-  glVertex4f(v[0],v[1],v[2],1);
+  tglVertex4f(v[0],v[1],v[2],1);
 }
 
 /* glNormal */
 
-void glNormal3f(float x,float y,float z)
+void tglNormal3f(float x,float y,float z)
 {
-  GLParam p[4];
+  TGLParam p[4];
 
   p[0].op=OP_Normal;
   p[1].f=x;
@@ -44,16 +44,16 @@ void glNormal3f(float x,float y,float z)
   gl_add_op(p);
 }
 
-void glNormal3fv(float *v) 
+void tglNormal3fv(float *v) 
 {
-  glNormal3f(v[0],v[1],v[2]);
+  tglNormal3f(v[0],v[1],v[2]);
 }
 
 /* glColor */
 
-void glColor4f(float r,float g,float b,float a)
+void tglColor4f(float r,float g,float b,float a)
 {
-  GLParam p[8];
+  TGLParam p[8];
 
   p[0].op=OP_Color;
   p[1].f=r;
@@ -70,9 +70,9 @@ void glColor4f(float r,float g,float b,float a)
   gl_add_op(p);
 }
 
-void glColor4fv(float *v)
+void tglColor4fv(float *v)
 {
-  GLParam p[8];
+  TGLParam p[8];
 
   p[0].op=OP_Color;
   p[1].f=v[0];
@@ -89,22 +89,22 @@ void glColor4fv(float *v)
   gl_add_op(p);
 }
 
-void glColor3f(float x,float y,float z) 
+void tglColor3f(float x,float y,float z) 
 {
-  glColor4f(x,y,z,1);
+  tglColor4f(x,y,z,1);
 }
 
 void glColor3fv(float *v) 
 {
-  glColor4f(v[0],v[1],v[2],1);
+  tglColor4f(v[0],v[1],v[2],1);
 }
 
 
 /* TexCoord */
 
-void glTexCoord4f(float s,float t,float r,float q)
+void tglTexCoord4f(float s,float t,float r,float q)
 {
-  GLParam p[5];
+  TGLParam p[5];
 
   p[0].op=OP_TexCoord;
   p[1].f=s;
@@ -115,19 +115,19 @@ void glTexCoord4f(float s,float t,float r,float q)
   gl_add_op(p);
 }
 
-void glTexCoord2f(float s,float t)
+void tglTexCoord2f(float s,float t)
 {
-  glTexCoord4f(s,t,0,1);
+  tglTexCoord4f(s,t,0,1);
 }
 
-void glTexCoord2fv(float *v)
+void tglTexCoord2fv(float *v)
 {
-  glTexCoord4f(v[0],v[1],0,1);
+  tglTexCoord4f(v[0],v[1],0,1);
 }
 
-void glEdgeFlag(int flag)
+void tglEdgeFlag(int flag)
 {
-  GLParam p[2];
+  TGLParam p[2];
 
   p[0].op=OP_EdgeFlag;
   p[1].i=flag;
@@ -137,11 +137,11 @@ void glEdgeFlag(int flag)
 
 /* misc */
 
-void glShadeModel(int mode)
+void tglShadeModel(int mode)
 {
-  GLParam p[2];
+  TGLParam p[2];
 
-  assert(mode == GL_FLAT || mode == GL_SMOOTH);
+  assert(mode == TGL_FLAT || mode == TGL_SMOOTH);
 
   p[0].op=OP_ShadeModel;
   p[1].i=mode;
@@ -149,13 +149,13 @@ void glShadeModel(int mode)
   gl_add_op(p);
 }
 
-void glCullFace(int mode)
+void tglCullFace(int mode)
 {
-  GLParam p[2];
+  TGLParam p[2];
 
-  assert(mode == GL_BACK || 
-         mode == GL_FRONT || 
-         mode == GL_FRONT_AND_BACK);
+  assert(mode == TGL_BACK || 
+         mode == TGL_FRONT || 
+         mode == TGL_FRONT_AND_BACK);
 
   p[0].op=OP_CullFace;
   p[1].i=mode;
@@ -163,13 +163,13 @@ void glCullFace(int mode)
   gl_add_op(p);
 }
 
-void glFrontFace(int mode)
+void tglFrontFace(int mode)
 {
-  GLParam p[2];
+  TGLParam p[2];
 
-  assert(mode == GL_CCW || mode == GL_CW);
+  assert(mode == TGL_CCW || mode == TGL_CW);
 
-  mode = (mode != GL_CCW);
+  mode = (mode != TGL_CCW);
 
   p[0].op=OP_FrontFace;
   p[1].i=mode;
@@ -177,14 +177,14 @@ void glFrontFace(int mode)
   gl_add_op(p);
 }
 
-void glPolygonMode(int face,int mode)
+void tglPolygonMode(int face,int mode)
 {
-  GLParam p[3];
+  TGLParam p[3];
 
-  assert(face == GL_BACK || 
-         face == GL_FRONT || 
-         face == GL_FRONT_AND_BACK);
-  assert(mode == GL_POINT || mode == GL_LINE || mode==GL_FILL);
+  assert(face == TGL_BACK || 
+         face == TGL_FRONT || 
+         face == TGL_FRONT_AND_BACK);
+  assert(mode == TGL_POINT || mode == TGL_LINE || mode==TGL_FILL);
 
   p[0].op=OP_PolygonMode;
   p[1].i=face;
@@ -196,9 +196,9 @@ void glPolygonMode(int face,int mode)
 
 /* glEnable / glDisable */
 
-void glEnable(int cap)
+void tglEnable(int cap)
 {
-  GLParam p[3];
+  TGLParam p[3];
 
   p[0].op=OP_EnableDisable;
   p[1].i=cap;
@@ -207,9 +207,9 @@ void glEnable(int cap)
   gl_add_op(p);
 }
 
-void glDisable(int cap)
+void tglDisable(int cap)
 {
-  GLParam p[3];
+  TGLParam p[3];
 
   p[0].op=OP_EnableDisable;
   p[1].i=cap;
@@ -220,9 +220,9 @@ void glDisable(int cap)
 
 /* glBegin / glEnd */
 
-void glBegin(int mode)
+void tglBegin(int mode)
 {
-  GLParam p[2];
+  TGLParam p[2];
 
   p[0].op=OP_Begin;
   p[1].i=mode;
@@ -230,9 +230,9 @@ void glBegin(int mode)
   gl_add_op(p);
 }
 
-void glEnd(void)
+void tglEnd(void)
 {
-  GLParam p[1];
+  TGLParam p[1];
 
   p[0].op=OP_End;
 
@@ -241,9 +241,9 @@ void glEnd(void)
 
 /* matrix */
 
-void glMatrixMode(int mode)
+void tglMatrixMode(int mode)
 {
-  GLParam p[2];
+  TGLParam p[2];
 
   p[0].op=OP_MatrixMode;
   p[1].i=mode;
@@ -251,9 +251,9 @@ void glMatrixMode(int mode)
   gl_add_op(p);
 }
 
-void glLoadMatrixf(const float *m)
+void tglLoadMatrixf(const float *m)
 {
-  GLParam p[17];
+  TGLParam p[17];
   int i;
 
   p[0].op=OP_LoadMatrix;
@@ -262,18 +262,18 @@ void glLoadMatrixf(const float *m)
   gl_add_op(p);
 }
 
-void glLoadIdentity(void)
+void tglLoadIdentity(void)
 {
-  GLParam p[1];
+  TGLParam p[1];
 
   p[0].op=OP_LoadIdentity;
 
   gl_add_op(p);
 }
 
-void glMultMatrixf(const float *m)
+void tglMultMatrixf(const float *m)
 {
-  GLParam p[17];
+  TGLParam p[17];
   int i;
 
   p[0].op=OP_MultMatrix;
@@ -282,27 +282,27 @@ void glMultMatrixf(const float *m)
   gl_add_op(p);
 }
 
-void glPushMatrix(void)
+void tglPushMatrix(void)
 {
-  GLParam p[1];
+  TGLParam p[1];
 
   p[0].op=OP_PushMatrix;
 
   gl_add_op(p);
 }
 
-void glPopMatrix(void)
+void tglPopMatrix(void)
 {
-  GLParam p[1];
+  TGLParam p[1];
 
   p[0].op=OP_PopMatrix;
 
   gl_add_op(p);
 }
 
-void glRotatef(float angle,float x,float y,float z)
+void tglRotatef(float angle,float x,float y,float z)
 {
-  GLParam p[5];
+  TGLParam p[5];
 
   p[0].op=OP_Rotate;
   p[1].f=angle;
@@ -313,9 +313,9 @@ void glRotatef(float angle,float x,float y,float z)
   gl_add_op(p);
 }
 
-void glTranslatef(float x,float y,float z)
+void tglTranslatef(float x,float y,float z)
 {
-  GLParam p[4];
+  TGLParam p[4];
 
   p[0].op=OP_Translate;
   p[1].f=x;
@@ -325,9 +325,9 @@ void glTranslatef(float x,float y,float z)
   gl_add_op(p);
 }
 
-void glScalef(float x,float y,float z)
+void tglScalef(float x,float y,float z)
 {
-  GLParam p[4];
+  TGLParam p[4];
 
   p[0].op=OP_Scale;
   p[1].f=x;
@@ -338,9 +338,9 @@ void glScalef(float x,float y,float z)
 }
 
 
-void glViewport(int x,int y,int width,int height)
+void tglViewport(int x,int y,int width,int height)
 {
-  GLParam p[5];
+  TGLParam p[5];
 
   p[0].op=OP_Viewport;
   p[1].i=x;
@@ -351,10 +351,10 @@ void glViewport(int x,int y,int width,int height)
   gl_add_op(p);
 }
 
-void glFrustum(double left,double right,double bottom,double top,
+void tglFrustum(double left,double right,double bottom,double top,
                double near,double farv)
 {
-  GLParam p[7];
+  TGLParam p[7];
 
   p[0].op=OP_Frustum;
   p[1].f=left;
@@ -369,27 +369,27 @@ void glFrustum(double left,double right,double bottom,double top,
 
 /* lightening */
 
-void glMaterialfv(int mode,int type,float *v)
+void tglMaterialfv(int mode,int type,float *v)
 {
-  GLParam p[7];
+  TGLParam p[7];
   int i,n;
 
-  assert(mode == GL_FRONT  || mode == GL_BACK || mode==GL_FRONT_AND_BACK);
+  assert(mode == TGL_FRONT  || mode == TGL_BACK || mode==TGL_FRONT_AND_BACK);
 
   p[0].op=OP_Material;
   p[1].i=mode;
   p[2].i=type;
   n=4;
-  if (type == GL_SHININESS) n=1;
+  if (type == TGL_SHININESS) n=1;
   for(i=0;i<4;i++) p[3+i].f=v[i];
   for(i=n;i<4;i++) p[3+i].f=0;
 
   gl_add_op(p);
 }
 
-void glMaterialf(int mode,int type,float v)
+void tglMaterialf(int mode,int type,float v)
 {
-  GLParam p[7];
+  TGLParam p[7];
   int i;
 
   p[0].op=OP_Material;
@@ -401,9 +401,9 @@ void glMaterialf(int mode,int type,float v)
   gl_add_op(p);
 }
 
-void glColorMaterial(int mode,int type)
+void tglColorMaterial(int mode,int type)
 {
-  GLParam p[3];
+  TGLParam p[3];
 
   p[0].op=OP_ColorMaterial;
   p[1].i=mode;
@@ -412,9 +412,9 @@ void glColorMaterial(int mode,int type)
   gl_add_op(p);
 }
 
-void glLightfv(int light,int type,float *v)
+void tglLightfv(int light,int type,float *v)
 {
-  GLParam p[7];
+  TGLParam p[7];
   int i;
 
   p[0].op=OP_Light;
@@ -427,9 +427,9 @@ void glLightfv(int light,int type,float *v)
 }
 
 
-void glLightf(int light,int type,float v)
+void tglLightf(int light,int type,float v)
 {
-  GLParam p[7];
+  TGLParam p[7];
   int i;
 
   p[0].op=OP_Light;
@@ -441,9 +441,9 @@ void glLightf(int light,int type,float v)
   gl_add_op(p);
 }
 
-void glLightModeli(int pname,int param)
+void tglLightModeli(int pname,int param)
 {
-  GLParam p[6];
+  TGLParam p[6];
   int i;
 
   p[0].op=OP_LightModel;
@@ -454,9 +454,9 @@ void glLightModeli(int pname,int param)
   gl_add_op(p);
 }
 
-void glLightModelfv(int pname,float *param)
+void tglLightModelfv(int pname,float *param)
 {
-  GLParam p[6];
+  TGLParam p[6];
   int i;
 
   p[0].op=OP_LightModel;
@@ -468,9 +468,9 @@ void glLightModelfv(int pname,float *param)
 
 /* clear */
 
-void glClear(int mask)
+void tglClear(int mask)
 {
-  GLParam p[2];
+  TGLParam p[2];
 
   p[0].op=OP_Clear;
   p[1].i=mask;
@@ -478,9 +478,9 @@ void glClear(int mask)
   gl_add_op(p);
 }
 
-void glClearColor(float r,float g,float b,float a)
+void tglClearColor(float r,float g,float b,float a)
 {
-  GLParam p[5];
+  TGLParam p[5];
 
   p[0].op=OP_ClearColor;
   p[1].f=r;
@@ -491,9 +491,9 @@ void glClearColor(float r,float g,float b,float a)
   gl_add_op(p);
 }
 
-void glClearDepth(double depth)
+void tglClearDepth(double depth)
 {
-  GLParam p[2];
+  TGLParam p[2];
 
   p[0].op=OP_ClearDepth;
   p[1].f=depth;
@@ -504,11 +504,11 @@ void glClearDepth(double depth)
 
 /* textures */
 
-void glTexImage2D( int target, int level, int components,
+void tglTexImage2D( int target, int level, int components,
                    int width, int height, int border,
                    int format, int type, void *pixels)
 {
-  GLParam p[10];
+  TGLParam p[10];
 
   p[0].op=OP_TexImage2D;
   p[1].i=target;
@@ -525,9 +525,9 @@ void glTexImage2D( int target, int level, int components,
 }
 
 
-void glBindTexture(int target,int texture)
+void tglBindTexture(int target,int texture)
 {
-  GLParam p[3];
+  TGLParam p[3];
 
   p[0].op=OP_BindTexture;
   p[1].i=target;
@@ -536,9 +536,9 @@ void glBindTexture(int target,int texture)
   gl_add_op(p);
 }
 
-void glTexEnvi(int target,int pname,int param)
+void tglTexEnvi(int target,int pname,int param)
 {
-  GLParam p[8];
+  TGLParam p[8];
   
   p[0].op=OP_TexEnv;
   p[1].i=target;
@@ -552,9 +552,9 @@ void glTexEnvi(int target,int pname,int param)
   gl_add_op(p);
 }
 
-void glTexParameteri(int target,int pname,int param)
+void tglTexParameteri(int target,int pname,int param)
 {
-  GLParam p[8];
+  TGLParam p[8];
   
   p[0].op=OP_TexParameter;
   p[1].i=target;
@@ -568,9 +568,9 @@ void glTexParameteri(int target,int pname,int param)
   gl_add_op(p);
 }
 
-void glPixelStorei(int pname,int param)
+void tglPixelStorei(int pname,int param)
 {
-  GLParam p[3];
+  TGLParam p[3];
 
   p[0].op=OP_PixelStore;
   p[1].i=pname;
@@ -581,18 +581,18 @@ void glPixelStorei(int pname,int param)
 
 /* selection */
 
-void glInitNames(void)
+void tglInitNames(void)
 {
-  GLParam p[1];
+  TGLParam p[1];
 
   p[0].op=OP_InitNames;
 
   gl_add_op(p);
 }
 
-void glPushName(unsigned int name)
+void tglPushName(unsigned int name)
 {
-  GLParam p[2];
+  TGLParam p[2];
 
   p[0].op=OP_PushName;
   p[1].i=name;
@@ -600,18 +600,18 @@ void glPushName(unsigned int name)
   gl_add_op(p);
 }
 
-void glPopName(void)
+void tglPopName(void)
 {
-  GLParam p[1];
+  TGLParam p[1];
 
   p[0].op=OP_PopName;
 
   gl_add_op(p);
 }
 
-void glLoadName(unsigned int name)
+void tglLoadName(unsigned int name)
 {
-  GLParam p[2];
+  TGLParam p[2];
 
   p[0].op=OP_LoadName;
   p[1].i=name;
@@ -620,9 +620,9 @@ void glLoadName(unsigned int name)
 }
 
 void 
-glPolygonOffset(GLfloat factor, GLfloat units)
+tglPolygonOffset(TGLfloat factor, TGLfloat units)
 {
-  GLParam p[3];
+  TGLParam p[3];
   p[0].op = OP_PolygonOffset;
   p[1].f = factor;
   p[2].f = units;
@@ -630,9 +630,9 @@ glPolygonOffset(GLfloat factor, GLfloat units)
 
 /* Special Functions */
 
-void glCallList(unsigned int list)
+void tglCallList(unsigned int list)
 {
-  GLParam p[2];
+  TGLParam p[2];
 
   p[0].op=OP_CallList;
   p[1].i=list;
@@ -640,14 +640,14 @@ void glCallList(unsigned int list)
   gl_add_op(p);
 }
 
-void glFlush(void)
+void tglFlush(void)
 {
   /* nothing to do */
 }
 
-void glHint(int target,int mode)
+void tglHint(int target,int mode)
 {
-  GLParam p[3];
+  TGLParam p[3];
 
   p[0].op=OP_Hint;
   p[1].i=target;
@@ -658,7 +658,7 @@ void glHint(int target,int mode)
 
 /* Non standard functions */
 
-void glDebug(int mode)
+void tglDebug(int mode)
 {
   GLContext *c=gl_get_context();
   c->print_flag=mode;

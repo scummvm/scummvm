@@ -7,7 +7,7 @@ static char *op_table_str[]=
 #include "opinfo.h"
 };
 
-static void (*op_table_func[])(GLContext *,GLParam *)=
+static void (*op_table_func[])(GLContext *,TGLParam *)=
 {
 #define ADD_OP(a,b,c) glop ## a ,
 
@@ -34,7 +34,7 @@ static GLList *find_list(GLContext *c,unsigned int list)
 
 static void delete_list(GLContext *c,int list)
 {
-  GLParamBuffer *pb,*pb1;
+  TGLParamBuffer *pb,*pb1;
   GLList *l;
 
   l=find_list(c,list);
@@ -55,10 +55,10 @@ static void delete_list(GLContext *c,int list)
 static GLList *alloc_list(GLContext *c,int list)
 {
   GLList *l;
-  GLParamBuffer *ob;
+  TGLParamBuffer *ob;
 
   l=(GLList *)gl_zalloc(sizeof(GLList));
-  ob=(GLParamBuffer *)gl_zalloc(sizeof(GLParamBuffer));
+  ob=(TGLParamBuffer *)gl_zalloc(sizeof(TGLParamBuffer));
 
   ob->next=NULL;
   l->first_op_buffer=ob;
@@ -70,7 +70,7 @@ static GLList *alloc_list(GLContext *c,int list)
 }
 
 
-void gl_print_op(FILE *f,GLParam *p)
+void gl_print_op(FILE *f,TGLParam *p)
 {
   int op;
   char *s;
@@ -99,10 +99,10 @@ void gl_print_op(FILE *f,GLParam *p)
 }
 
 
-void gl_compile_op(GLContext *c,GLParam *p)
+void gl_compile_op(GLContext *c,TGLParam *p)
 {
   int op,op_size;
-  GLParamBuffer *ob,*ob1;
+  TGLParamBuffer *ob,*ob1;
   int index,i;
 
   op=p[0].op;
@@ -113,7 +113,7 @@ void gl_compile_op(GLContext *c,GLParam *p)
   /* we should be able to add a NextBuffer opcode */
   if ((index + op_size) > (OP_BUFFER_MAX_SIZE-2)) {
 
-    ob1=(GLParamBuffer *)gl_zalloc(sizeof(GLParamBuffer));
+    ob1=(TGLParamBuffer *)gl_zalloc(sizeof(TGLParamBuffer));
     ob1->next=NULL;
 
     ob->next=ob1;
@@ -132,7 +132,7 @@ void gl_compile_op(GLContext *c,GLParam *p)
   c->current_op_buffer_index=index;
 }
 
-void gl_add_op(GLParam *p)
+void gl_add_op(TGLParam *p)
 {
   GLContext *c=gl_get_context();
   int op;
@@ -150,19 +150,19 @@ void gl_add_op(GLParam *p)
 }
 
 /* this opcode is never called directly */
-void glopEndList(GLContext *c,GLParam *p)
+void glopEndList(GLContext *c,TGLParam *p)
 {
   assert(0);
 }
 
 /* this opcode is never called directly */
-void glopNextBuffer(GLContext *c,GLParam *p)
+void glopNextBuffer(GLContext *c,TGLParam *p)
 {
   assert(0);
 }
 
 
-void glopCallList(GLContext *c,GLParam *p)
+void glopCallList(GLContext *c,TGLParam *p)
 {
   GLList *l;
   int list,op;
@@ -176,7 +176,7 @@ void glopCallList(GLContext *c,GLParam *p)
     op=p[0].op;
     if (op == OP_EndList) break;
     if (op == OP_NextBuffer) {
-      p=(GLParam *)p[1].p;
+      p=(TGLParam *)p[1].p;
     } else {
       op_table_func[op](c,p);
       p+=op_table_size[op];
@@ -191,7 +191,7 @@ void glNewList(unsigned int list,int mode)
   GLList *l;
   GLContext *c=gl_get_context();
 
-  assert(mode == GL_COMPILE || mode == GL_COMPILE_AND_EXECUTE);
+  assert(mode == TGL_COMPILE || mode == TGL_COMPILE_AND_EXECUTE);
   assert(c->compile_flag == 0);
 
   l=find_list(c,list);
@@ -202,13 +202,13 @@ void glNewList(unsigned int list,int mode)
   c->current_op_buffer_index=0;
   
   c->compile_flag=1;
-  c->exec_flag=(mode == GL_COMPILE_AND_EXECUTE);
+  c->exec_flag=(mode == TGL_COMPILE_AND_EXECUTE);
 }
 
 void glEndList(void)
 {
   GLContext *c=gl_get_context();
-  GLParam p[1];
+  TGLParam p[1];
 
   assert(c->compile_flag == 1);
   

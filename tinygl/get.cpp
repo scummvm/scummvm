@@ -5,25 +5,25 @@ void glGetIntegerv(int pname,int *params)
   GLContext *c=gl_get_context();
 
   switch(pname) {
-  case GL_VIEWPORT:
+  case TGL_VIEWPORT:
     params[0]=c->viewport.xmin;
     params[1]=c->viewport.ymin;
     params[2]=c->viewport.xsize;
     params[3]=c->viewport.ysize;
     break;
-  case GL_MAX_MODELVIEW_STACK_DEPTH:
+  case TGL_MAX_MODELVIEW_STACK_DEPTH:
     *params = MAX_MODELVIEW_STACK_DEPTH;
     break;
-  case GL_MAX_PROJECTION_STACK_DEPTH:
+  case TGL_MAX_PROJECTION_STACK_DEPTH:
     *params = MAX_PROJECTION_STACK_DEPTH;
     break;
-  case GL_MAX_LIGHTS:
+  case TGL_MAX_LIGHTS:
     *params = MAX_LIGHTS;
     break;
-  case GL_MAX_TEXTURE_SIZE:
+  case TGL_MAX_TEXTURE_SIZE:
     *params = 256; /* not completely true, but... */
     break;
-  case GL_MAX_TEXTURE_STACK_DEPTH:
+  case TGL_MAX_TEXTURE_STACK_DEPTH:
     *params = MAX_TEXTURE_STACK_DEPTH;
     break;
   default:
@@ -38,11 +38,11 @@ void glGetFloatv(int pname, float *v)
   int mnr = 0; /* just a trick to return the correct matrix */
   GLContext *c = gl_get_context();
   switch (pname) {
-  case GL_TEXTURE_MATRIX:
+  case TGL_TEXTURE_MATRIX:
     mnr++; 
-  case GL_PROJECTION_MATRIX:
+  case TGL_PROJECTION_MATRIX:
     mnr++; 
-  case GL_MODELVIEW_MATRIX:
+  case TGL_MODELVIEW_MATRIX:
     {
       float *p = &c->matrix_stack_ptr[mnr]->m[0][0];;
       for (i = 0; i < 4; i++) {
@@ -54,16 +54,16 @@ void glGetFloatv(int pname, float *v)
       }
     } 
     break;
-  case GL_LINE_WIDTH:
+  case TGL_LINE_WIDTH:
     *v = 1.0f;
     break;
-  case GL_LINE_WIDTH_RANGE:
+  case TGL_LINE_WIDTH_RANGE:
     v[0] = v[1] = 1.0f;
     break;
-  case GL_POINT_SIZE:
+  case TGL_POINT_SIZE:
     *v = 1.0f;
     break;
-  case GL_POINT_SIZE_RANGE:
+  case TGL_POINT_SIZE_RANGE:
     v[0] = v[1] = 1.0f;
   default:
     fprintf(stderr,"warning: unknown pname in glGetFloatv()\n");

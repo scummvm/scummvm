@@ -27,7 +27,7 @@ void endSharedState(GLContext *c)
 }
 
 
-void glInit(void *zbuffer1)
+void tglInit(void *zbuffer1)
 {
   ZBuffer *zbuffer=(ZBuffer *)zbuffer1;
   GLContext *c;
@@ -94,8 +94,8 @@ void glInit(void *zbuffer1)
     m->specular=gl_V4_New(0,0,0,1);
     m->shininess=0;
   }
-  c->current_color_material_mode=GL_FRONT_AND_BACK;
-  c->current_color_material_type=GL_AMBIENT_AND_DIFFUSE;
+  c->current_color_material_mode=TGL_FRONT_AND_BACK;
+  c->current_color_material_type=TGL_AMBIENT_AND_DIFFUSE;
   c->color_material_enabled=0;
 
   /* textures */
@@ -122,12 +122,12 @@ void glInit(void *zbuffer1)
   c->current_tex_coord.Z=0;
   c->current_tex_coord.W=1;
 
-  c->polygon_mode_front=GL_FILL;
-  c->polygon_mode_back=GL_FILL;
+  c->polygon_mode_front=TGL_FILL;
+  c->polygon_mode_back=TGL_FILL;
 
   c->current_front_face=0; /* 0 = GL_CCW  1 = GL_CW */
-  c->current_cull_face=GL_BACK;
-  c->current_shade_model=GL_SMOOTH;
+  c->current_cull_face=TGL_BACK;
+  c->current_shade_model=TGL_SMOOTH;
   c->cull_face_enabled=0;
   
   /* clear */
@@ -138,7 +138,7 @@ void glInit(void *zbuffer1)
   c->clear_depth=0;
 
   /* selection */
-  c->render_mode=GL_RENDER;
+  c->render_mode=TGL_RENDER;
   c->select_buffer=NULL;
   c->name_stack_size=0;
 
@@ -154,12 +154,12 @@ void glInit(void *zbuffer1)
     c->matrix_stack_ptr[i]=c->matrix_stack[i];
   }
 
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glMatrixMode(GL_TEXTURE);
-  glLoadIdentity();
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
+  tglMatrixMode(TGL_PROJECTION);
+  tglLoadIdentity();
+  tglMatrixMode(TGL_TEXTURE);
+  tglLoadIdentity();
+  tglMatrixMode(TGL_MODELVIEW);
+  tglLoadIdentity();
 
   c->matrix_model_projection_updated=1;
 
@@ -181,7 +181,7 @@ void glInit(void *zbuffer1)
   c->depth_test = 0;
 }
 
-void glClose(void)
+void tglClose(void)
 {
   GLContext *c=gl_get_context();
   endSharedState(c);

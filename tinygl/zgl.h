@@ -99,15 +99,15 @@ typedef union {
   int i;
   unsigned int ui;
   void *p;
-} GLParam;
+} TGLParam;
 
-typedef struct GLParamBuffer {
-  GLParam ops[OP_BUFFER_MAX_SIZE];
-  struct GLParamBuffer *next;
-} GLParamBuffer;
+typedef struct TGLParamBuffer {
+  TGLParam ops[OP_BUFFER_MAX_SIZE];
+  struct TGLParamBuffer *next;
+} TGLParamBuffer;
 
 typedef struct GLList {
-  GLParamBuffer *first_op_buffer;
+  TGLParamBuffer *first_op_buffer;
   /* TODO: extensions for an hash table or a better allocating scheme */
 } GLList;
 
@@ -181,7 +181,7 @@ typedef struct GLContext {
   GLSharedState shared_state;
 
   /* current list */
-  GLParamBuffer *current_op_buffer;
+  TGLParamBuffer *current_op_buffer;
   int current_op_buffer_index;
   int exec_flag,compile_flag,print_flag;
 
@@ -278,7 +278,7 @@ typedef struct GLContext {
 
 extern GLContext *gl_ctx;
 
-void gl_add_op(GLParam *p);
+void gl_add_op(TGLParam *p);
 
 /* clip.c */
 void gl_transform_to_viewport(GLContext *c,GLVertex *v);
@@ -298,8 +298,8 @@ void gl_draw_triangle_select(GLContext *c,
 /* matrix.c */
 void gl_print_matrix(const float *m);
 /*
-void glopLoadIdentity(GLContext *c,GLParam *p);
-void glopTranslate(GLContext *c,GLParam *p);*/
+void glopLoadIdentity(GLContext *c,TGLParam *p);
+void glopTranslate(GLContext *c,TGLParam *p);*/
 
 /* light.c */
 void gl_add_select(GLContext *c,unsigned int zmin,unsigned int zmax);
@@ -344,7 +344,7 @@ GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i,
 
 /* glopXXX functions */
 
-#define ADD_OP(a,b,c) void glop ## a (GLContext *,GLParam *);
+#define ADD_OP(a,b,c) void glop ## a (GLContext *,TGLParam *);
 #include "opinfo.h"
 
 /* this clip epsilon is needed to avoid some rounding errors after

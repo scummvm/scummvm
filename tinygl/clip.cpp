@@ -65,7 +65,7 @@ static void gl_add_select1(GLContext *c,int z1,int z2,int z3)
 void gl_draw_point(GLContext *c,GLVertex *p0)
 {
   if (p0->clip_code == 0) {
-    if (c->render_mode == GL_SELECT) {
+    if (c->render_mode == TGL_SELECT) {
       gl_add_select(c,p0->zp.z,p0->zp.z);
     } else {
       ZB_plot(c->zb,&p0->zp);
@@ -120,7 +120,7 @@ void gl_draw_line(GLContext *c,GLVertex *p1,GLVertex *p2)
   cc2=p2->clip_code;
 
   if ( (cc1 | cc2) == 0) {
-    if (c->render_mode == GL_SELECT) {
+    if (c->render_mode == TGL_SELECT) {
       gl_add_select1(c,p1->zp.z,p2->zp.z,p2->zp.z);
     } else {
         if (c->depth_test)
@@ -215,7 +215,7 @@ float (*clip_proc[6])(V4 *,V4 *,V4 *)=  {
 static inline void updateTmp(GLContext *c,
 			     GLVertex *q,GLVertex *p0,GLVertex *p1,float t)
 {
-  if (c->current_shade_model == GL_SMOOTH) {
+  if (c->current_shade_model == TGL_SMOOTH) {
     q->color.v[0]=p0->color.v[0] + (p1->color.v[0]-p0->color.v[0])*t;
     q->color.v[1]=p0->color.v[1] + (p1->color.v[1]-p0->color.v[1])*t;
     q->color.v[2]=p0->color.v[2] + (p1->color.v[2]-p0->color.v[2])*t;
@@ -264,10 +264,10 @@ void gl_draw_triangle(GLContext *c,
       /* back face culling */
       if (c->cull_face_enabled) {
         /* most used case first */
-        if (c->current_cull_face == GL_BACK) {
+        if (c->current_cull_face == TGL_BACK) {
           if (front == 0) return;
           c->draw_triangle_front(c,p0,p1,p2);
-        } else if (c->current_cull_face == GL_FRONT) {
+        } else if (c->current_cull_face == TGL_FRONT) {
           if (front != 0) return;
           c->draw_triangle_back(c,p0,p1,p2);
         } else {
@@ -406,7 +406,7 @@ void gl_draw_triangle_fill(GLContext *c,
 #endif
     ZB_setTexture(c->zb,(PIXEL *)c->current_texture->images[0].pixmap);
     ZB_fillTriangleMappingPerspective(c->zb,&p0->zp,&p1->zp,&p2->zp);
-  } else if (c->current_shade_model == GL_SMOOTH) {
+  } else if (c->current_shade_model == TGL_SMOOTH) {
     ZB_fillTriangleSmooth(c->zb,&p0->zp,&p1->zp,&p2->zp);
   } else {
     ZB_fillTriangleFlat(c->zb,&p0->zp,&p1->zp,&p2->zp);
