@@ -985,6 +985,11 @@ void SmushPlayer::parseNextFrame() {
 		error("Unknown Chunk found at %x: %x, %d", _base->tell(), sub->getType(), sub->getSize());
 	}
 	delete sub;
+
+	if (_insanity)
+		_vm->_sound->processSoundQues();
+
+	_vm->_imuseDigital->flushTracks();
 }
 
 void SmushPlayer::setPalette(const byte *palette) {
@@ -1145,9 +1150,6 @@ void SmushPlayer::play(const char *filename, const char *directory, int32 offset
 			_vm->_system->updateScreen();
 			_updateNeeded = false;
 
-			if (_insanity)
-				_vm->_sound->processSoundQues();
-
 			end_time = _vm->_system->get_msecs();
 
 			debug(4, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
@@ -1156,7 +1158,6 @@ void SmushPlayer::play(const char *filename, const char *directory, int32 offset
 		if (_vm->_videoFinished || _vm->_quit || _vm->_saveLoadFlag)
 			break;
 		_vm->_system->delay_msecs(10);
-		_vm->_imuseDigital->flushTracks();
 	};
 
 	release();
