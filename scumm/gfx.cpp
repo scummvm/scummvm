@@ -1270,8 +1270,8 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		}
 		CHECK_HEAP;
 
-		// COMI only uses flag value
-		if (_vm->_version == 8)
+		// COMI and HE games only uses flag value
+		if (_vm->_version == 8 || (_vm->_features & GF_HUMONGOUS))
 			useOrDecompress = true;
 
 		if (_vm->_version == 1) {
@@ -1764,8 +1764,8 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 			unkDecode11(dst, dstPitch, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
 			break;
 	
-		// 8/9 used in 3do version of puttputt joins the parade maybe others
 		case 8:
+			// Used in 3DO versions of HE games
 			useOrDecompress = true;
 			drawStrip3DO(dst, dstPitch, src, numLinesToProcess, true);
 			break;
@@ -1774,8 +1774,8 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 			drawStrip3DO(dst, dstPitch, src, numLinesToProcess, false);
 			break;
 	
-		// used in amiga version of Monkey Island
 		case 10:
+			// Used in Amiga version of Monkey Island 1
 			drawStripEGA(dst, dstPitch, src, numLinesToProcess);
 			break;
 
