@@ -106,12 +106,6 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 		// next_stretch:
 		routeCalc--;
 		bitsLeft--;
-		if (!bitsLeft) {
-			gridData = screenGrid[0] | (screenGrid[1] << 8) |
-				(screenGrid[2] << 16) | (screenGrid[3] << 24);
-			screenGrid -= 4;
-			bitsLeft = 32;
-		}
 		// still bits:
 		gridCntX--;
 		if (gridCntX == 0) {
@@ -121,6 +115,12 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 			gridCntX = ROUTE_GRID_WIDTH - 2;
 			stretch1 = 0; // clear stretch factor
 			gridCntY--;
+		}
+		if (gridCntY && (!bitsLeft)) {
+			gridData = screenGrid[0] | (screenGrid[1] << 8) |
+				(screenGrid[2] << 16) | (screenGrid[3] << 24);
+			screenGrid -= 4;
+			bitsLeft = 32;
 		}
 	} while(gridCntY);
 	for (cnt = 0; cnt < ROUTE_GRID_WIDTH - 1; cnt++) 
