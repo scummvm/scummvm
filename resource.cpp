@@ -524,7 +524,11 @@ void Scumm::loadCharset(int no) {
                         openRoom(98+no);
                 else
                         openRoom(900+no);
-                size = fileReadDword();
+				
+				if (_features & GF_OLD256)
+					size = fileReadWordLE();
+				else
+					size = fileReadDword();
                 fileRead(_fileHandle, createResource(6, no, size), size);
                 openRoom(-1);
         } else {

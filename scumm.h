@@ -591,6 +591,7 @@ struct CharsetRenderer {
 
 	void drawBits();
 	void printChar(int chr);
+	void printCharOld(int chr);
 	int getStringWidth(int a, byte *str, int pos);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 };

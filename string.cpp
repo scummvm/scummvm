@@ -27,12 +27,15 @@ int CharsetRenderer::getStringWidth(int arg, byte *text, int pos) {
 	int width,offs,w;
 	byte chr;
 
+	if (_vm->_features & GF_OLD256)
+		return strlen((char *)text) * 8;
+
 	width = 1;
 	ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
         if(_vm->_features & GF_SMALL_HEADER)
                 ptr-=12;
 
-	while ( (chr = text[pos++]) != 0) {
+	while ((chr = text[pos++]) != 0) {
 		if (chr==0xD)
 			break;
 		if (chr=='@')
@@ -84,6 +87,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	int offs,w;
 	byte *ptr;
 	byte chr;
+	if (_vm->_features & GF_OLD256) return;
 
 	ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
         if(_vm->_features & GF_SMALL_HEADER)
@@ -288,7 +292,7 @@ void Scumm::CHARSET_1() {
 	buffer = charset._buffer + charset._bufPos;
 	if(_features & GF_OLD256) {
 		debug(1, "CHARSET_1: %s", buffer);
-		return;
+		//return;
 	}
 	charset.addLinebreaks(0, buffer,0, t);
 
@@ -327,8 +331,9 @@ newLine:;
 		if (c!=0xFF) {
 			charset._left = charset._xpos2;
 			charset._top = charset._ypos2;
-			
-			if (!(_features&GF_AFTER_V6)) {
+			if (_features & GF_OLD256) 
+				charset.printCharOld(c);
+			else  if (!(_features&GF_AFTER_V6)) {
 //                                if (!_vars[VAR_V5_CHARFLAG]) { /* FIXME */
 					charset.printChar(c);
 //                                }
@@ -419,21 +424,23 @@ void Scumm::drawString(int a) {
 	_bkColor = 0;
 	charset._unk12 = 1;
 	charset._disableOffsX = 1;
+
 	if(!(_features & GF_OLD256)) {
-	charsetptr = getResourceAddress(rtCharset, charset._curId);
-	assert(charsetptr);
-	charsetptr += 29;
+		charsetptr = getResourceAddress(rtCharset, charset._curId);
+		assert(charsetptr);
+		charsetptr += 29;
         if(_features & GF_SMALL_HEADER)
                 charsetptr-=12;
 
-	for(i=0; i<4; i++)
+		for(i=0; i<4; i++)
                 if(_features & GF_SMALL_HEADER)
                         charset._colorMap[i] = _charsetData[charset._curId][i-12];
                 else
                         charset._colorMap[i] = _charsetData[charset._curId][i];
 
-	byte1 = charsetptr[1];
+		byte1 = charsetptr[1];
 	}
+
 	_msgPtrToAdd = buf;
 
 	/* trim from the right */
@@ -447,10 +454,6 @@ void Scumm::drawString(int a) {
 		_msgPtrToAdd++;
 	}
 	if(space) *space='\0';
-	if(_features & GF_OLD256) {
-		debug(1, "DRAWSTRING: %s", buf);
-		return;
-	}
 	if (charset._center) {
 		charset._left -= charset.getStringWidth(a, buf, 0) >> 1;
 	}
@@ -491,7 +494,10 @@ void Scumm::drawString(int a) {
 		} else {
 			if (a==1 && (_features&GF_AFTER_V6))
 				charset._blitAlso = true;
-			charset.printChar(chr);
+			if (_features & GF_OLD256)
+				charset.printCharOld(chr);
+			else
+				charset.printChar(chr);
 			charset._blitAlso = false;
 		}
 	}
@@ -654,13 +660,12 @@ void Scumm::unkAddMsgToStack5(int var) {
 
 void Scumm::initCharset(int charsetno) {
 	int i;
-	if(_features & GF_OLD256) return; // FIXME
-
-        if (_features & GF_SMALL_HEADER)
-                loadCharset(charsetno);
-        else
-                if (!getResourceAddress(rtCharset, charsetno))
-                        loadCharset(charsetno);
+	
+    if (_features & GF_SMALL_HEADER)
+           loadCharset(charsetno);
+    else
+           if (!getResourceAddress(rtCharset, charsetno))
+                    loadCharset(charsetno);
 
 	string[0].t_charset = charsetno;
 	string[1].t_charset = charsetno;
@@ -671,6 +676,37 @@ void Scumm::initCharset(int charsetno) {
                 else
                         charset._colorMap[i] = _charsetData[charset._curId][i];
 }
+
+void CharsetRenderer::printCharOld(int chr) { // Loom3 / Zak256
+	VirtScreen *vs;
+	byte *char_ptr, *dest_ptr;
+	unsigned int buffer, mask=0, x, y;
+	unsigned char color;
+
+	_vm->checkRange(_vm->_maxCharsets-1, 0, _curId, "Printing with bad charset %d");
+
+	if ((vs=_vm->findVirtScreen(_top)) == NULL)
+		return;
+
+	if (chr=='@')
+		return;
+
+	char_ptr = _vm->getResourceAddress(rtCharset, _curId) + 224 + (chr + 1)*8;
+	dest_ptr = _vm->getResourceAddress(rtBuffer, vs->number+1) + vs->xstart + (_top - vs->topline) * 320 + _left;
+	_vm->updateDirtyRect(vs->number, _left, _left + 8, _top - vs->topline, _top - vs->topline + 8, 0);
+
+	for(y=0;y<8;y++) {
+		for(x=0;x<8;x++) {			
+    		if ((mask >>= 1) == 0) {buffer = *char_ptr++;  mask = 0x80;}
+			color = ((buffer & mask) != 0);
+			if (color)
+				*(dest_ptr + y*320 + x) = color;
+		}
+	}
+		
+	_left+=8;
+}
+
 
 void CharsetRenderer::printChar(int chr) {
 	int d,right;
