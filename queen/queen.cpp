@@ -122,7 +122,7 @@ void QueenEngine::registerDefaultSettings() {
 	ConfMan.registerDefault("music_mute", false);
 	ConfMan.registerDefault("sfx_mute", false);
 	ConfMan.registerDefault("talkspeed", Logic::DEFAULT_TALK_SPEED);
-	ConfMan.registerDefault("speech_mute", _resource->isFloppy());
+	ConfMan.registerDefault("speech_mute", false);
 	ConfMan.registerDefault("subtitles", true);
 }
 
@@ -135,11 +135,6 @@ void QueenEngine::checkOptionSettings() {
 	}
 
 	// XXX check master_volume value
-
-	// only CD-ROM version has speech
-	if (_resource->isFloppy() && _sound->speechOn()) {
-		_sound->speechToggle(false);
-	}
 
 	// ensure text is always on when voice is off
 	if (!_sound->speechOn()) {
