@@ -1154,8 +1154,11 @@ void Scumm::drawEnqueuedObject(EnqueuedObject *eo) {
 		return;
 	}
 
+	if(eo->l == 0)
+		eo->l = 1;
+	
 	assert(ptr);
-	ptr = findResource(MKID('IM01'), ptr);
+	ptr = findResource(IMxx_tags[eo->l], ptr);
 	assert(ptr);
 	bomp = findResourceData(MKID('BOMP'), ptr);
 

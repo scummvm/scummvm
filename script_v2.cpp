@@ -2704,7 +2704,7 @@ void Scumm::o6_kernelFunction() {
 		push(_objs[i].height);
 		break;
 	case 211:
-		warning("o6_kernelFunction: stub211(%d)", args[1]);
+		warning("o6_kernelFunction: getInput(%d)", args[1]);
 		push(0);
 		break;
 	case 212:
