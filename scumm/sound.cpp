@@ -534,7 +534,8 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 
 void Sound::stopTalkSound() {
 	if (_sfxMode & 2) {
-		stopSfxSound();
+		if (_talkChannel != -1)
+			_scumm->_mixer->stop(_talkChannel);
 		_sfxMode &= ~2;
 	}
 }
