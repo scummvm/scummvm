@@ -1200,9 +1200,9 @@ void getTextObjectParams(lua_Object table_obj, Font **font, int &x, int &y, int 
 }
 
 static void MakeTextObject() {
-	int x = 0, y = 0, height = 0, width = 0, duration = 0;
-	bool center = false, ljustify = false, rjustify = false;
-	Color *fgColor = NULL, *bgColor = NULL, *fxColor = NULL;
+	int x = 0, y = 0, height = 0, width = 0;
+	bool center = false, ljustify = false;
+	Color *fgColor = NULL;
 	Font *font = NULL;
 
 	char *line = lua_getstring(lua_getparam(1));
