@@ -1461,7 +1461,6 @@ void ScummEngine_v6::o6_resourceRoutines() {
 	int resid, op;
 	op = fetchScriptByte();
 
-	debug(0, "resourceRoutines op: %d", op);
 	switch (op) {
 	case 100:		// SO_LOAD_SCRIPT
 		resid = pop();

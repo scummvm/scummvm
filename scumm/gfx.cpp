@@ -467,7 +467,7 @@ void ScummEngine::initBGBuffers(int height) {
 	}
 
 	if (_heversion >= 70)
-		room = getResourceAddress(rtLast, _roomResource);
+		room = getResourceAddress(rtRoomStart, _roomResource);
 	else
 		room = getResourceAddress(rtRoom, _roomResource);
 
