@@ -590,6 +590,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 			best = (uint) 0xFFFF;
 			b = 0;
 
+			if (!(_vm->_features & GF_OLD256) || box)
 			for (j = box; j >= firstValidBox; j--) {
 				flags = _vm->getBoxFlags(j);
 				if (flags & 0x80 && (!(flags & 0x20) || isInClass(31)))
