@@ -40,15 +40,27 @@ struct EventInfo {
 		struct {
 			byte   type; // Used for METAs
 			byte * data; // Used for SysEx and METAs
-			uint32 length; // Used for SysEx and METAs
 		} ext;
 	};
+	uint32 length; // Used for SysEx and METAs, and note lengths
 
 	byte channel() { return event & 0x0F; }
 	byte command() { return event >> 4; }
 };
 
+struct NoteTimer {
+	byte channel;
+	byte note;
+	uint32 time_left;
+	NoteTimer() : channel(0), note(0), time_left(0) {}
+};
+
 class MidiParser {
+private:
+	uint16    _active_notes[128]; // Each uint16 is a bit mask for channels that have that note on
+	NoteTimer _hanging_notes[32]; // Supports "smart" jump with notes still playing
+	byte      _hanging_notes_count;
+
 protected:
 	MidiDriver *_driver;
 	uint32 _timer_rate;
@@ -56,6 +68,7 @@ protected:
 	uint32 _tempo;          // Microseconds per quarter note
 	uint32 _psec_per_tick;  // Microseconds per tick (_tempo / _ppqn)
 	bool   _autoLoop;       // For lightweight clients that don't monitor events
+	bool   _smartJump;      // Support smart expiration of hanging notes when jumping
 
 	byte * _tracks[16];
 	byte   _num_tracks;
@@ -63,9 +76,10 @@ protected:
 
 	byte * _play_pos;
 	uint32 _play_time;
+	uint32 _play_tick;
 	uint32 _last_event_time;
 	uint32 _last_event_tick;
-	byte   _running_status; // Cache of last MIDI command, used in compressed streams
+	byte   _running_status;
 	EventInfo _next_event;
 
 protected:
@@ -73,6 +87,9 @@ protected:
 	virtual void resetTracking();
 	virtual void allNotesOff();
 	virtual void parseNextEvent (EventInfo &info) = 0;
+
+	void activeNote (byte channel, byte note, bool active);
+	void hangingNote (byte channel, byte note, uint32 ticks_left);
 
 	// Multi-byte read helpers
 	uint32 read4high (byte * &data) {
@@ -91,7 +108,8 @@ protected:
 public:
 	enum {
 		mpMalformedPitchBends = 1,
-		mpAutoLoop = 2
+		mpAutoLoop = 2,
+		mpSmartJump = 3
 	};
 
 public:

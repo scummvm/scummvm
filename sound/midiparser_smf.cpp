@@ -97,7 +97,7 @@ void MidiParser_SMF::parseNextEvent (EventInfo &info) {
 	if (info.event < 0x80)
 		return;
 
-	switch (info.event >> 4) {
+	switch (info.command()) {
 	case 0xC: case 0xD:
 		info.basic.param1 = *(_play_pos++);
 		info.basic.param2 = 0;
@@ -106,6 +106,9 @@ void MidiParser_SMF::parseNextEvent (EventInfo &info) {
 	case 0x8: case 0x9: case 0xA: case 0xB: case 0xE:
 		info.basic.param1 = *(_play_pos++);
 		info.basic.param2 = *(_play_pos++);
+		if (info.command() == 0x9 && info.basic.param2 == 0)
+			info.event = info.channel() | 0x80;
+		info.length = 0;
 		break;
 
 	case 0xF: // System Common, Meta or SysEx event
@@ -125,16 +128,16 @@ void MidiParser_SMF::parseNextEvent (EventInfo &info) {
 			break;
 
 		case 0x0: // SysEx
-			info.ext.length = readVLQ (_play_pos);
+			info.length = readVLQ (_play_pos);
 			info.ext.data = _play_pos;
-			_play_pos += info.ext.length;
+			_play_pos += info.length;
 			break;
 
 		case 0xF: // META event
 			info.ext.type = *(_play_pos++);
-			info.ext.length = readVLQ (_play_pos);
+			info.length = readVLQ (_play_pos);
 			info.ext.data = _play_pos;
-			_play_pos += info.ext.length;
+			_play_pos += info.length;
 			break;
 		}
 	}

@@ -32,13 +32,6 @@
 //
 //////////////////////////////////////////////////
 
-struct NoteTimer {
-	byte channel;
-	byte note;
-	uint32 off_time;
-	NoteTimer() : channel(0), note(0), off_time(0) {}
-};
-
 class MidiParser_XMIDI : public MidiParser {
 protected:
 	byte *_data;
@@ -47,7 +40,6 @@ protected:
 
 protected:
 	uint32 readVLQ2 (byte * &data);
-	void allNotesOff();
 	void resetTracking();
 	void parseNextEvent (EventInfo &info);
 
@@ -87,30 +79,6 @@ void MidiParser_XMIDI::parseNextEvent (EventInfo &info) {
 	info.start = _play_pos;
 	info.delta = readVLQ2 (_play_pos) - _inserted_delta;
 
-	// Scan our active notes for the note
-	// with the nearest off time. It might turn out
-	// to be closer than the next regular event.
-	uint32 note_length;
-	NoteTimer *best = 0;
-	NoteTimer *ptr = &_notes_cache[0];
-	int i;
-	for (i = ARRAYSIZE(_notes_cache); i; --i, ++ptr) {
-		if (ptr->off_time && ptr->off_time >= _last_event_tick && (!best || ptr->off_time < best->off_time))
-			best = ptr;
-	}
-
-	// See if we need to simulate a note off event.
-	if (best && (best->off_time - _last_event_tick) <= info.delta) {
-		_play_pos = info.start;
-		info.delta = best->off_time - _last_event_tick;
-		info.event = 0x80 | best->channel;
-		info.basic.param1 = best->note;
-		info.basic.param2 = 0;
-		best->off_time = 0;
-		_inserted_delta += info.delta;
-		return;
-	}
-
 	// Process the next event.
 	_inserted_delta = 0;
 	info.event = *(_play_pos++);
@@ -118,20 +86,10 @@ void MidiParser_XMIDI::parseNextEvent (EventInfo &info) {
 	case 0x9: // Note On
 		info.basic.param1 = *(_play_pos++);
 		info.basic.param2 = *(_play_pos++);
-		note_length = readVLQ (_play_pos);
-
-		// In addition to sending this back, we must
-		// store a note timer so we know when to turn it off.
-		ptr = &_notes_cache[0];
-		for (i = ARRAYSIZE(_notes_cache); i; --i, ++ptr) {
-			if (!ptr->off_time)
-				break;
-		}
-
-		if (i) {
-			ptr->channel = info.channel();
-			ptr->note = info.basic.param1;
-			ptr->off_time = _last_event_tick + info.delta + note_length;
+		info.length = readVLQ (_play_pos);
+		if (info.basic.param2 == 0) {
+			info.event = info.channel() | 0x80;
+			info.length = 0;
 		}
 		break;
 
@@ -162,17 +120,17 @@ void MidiParser_XMIDI::parseNextEvent (EventInfo &info) {
 			break;
 
 		case 0x0: // SysEx
-			info.ext.length = readVLQ (_play_pos);
+			info.length = readVLQ (_play_pos);
 			info.ext.data = _play_pos;
-			_play_pos += info.ext.length;
+			_play_pos += info.length;
 			break;
 
 		case 0xF: // META event
 			info.ext.type = *(_play_pos++);
-			info.ext.length = readVLQ (_play_pos);
+			info.length = readVLQ (_play_pos);
 			info.ext.data = _play_pos;
-			_play_pos += info.ext.length;
-			if (info.ext.type == 0x51 && info.ext.length == 3) {
+			_play_pos += info.length;
+			if (info.ext.type == 0x51 && info.length == 3) {
 				// Tempo event. We want to make these constant 500,000.
 				info.ext.data[0] = 0x07;
 				info.ext.data[1] = 0xA1;
@@ -334,15 +292,6 @@ void MidiParser_XMIDI::unloadMusic() {
 	_data = 0;
 	_num_tracks = 0;
 	_active_track = 255;
-}
-
-void MidiParser_XMIDI::allNotesOff() {
-	MidiParser::allNotesOff();
-
-	// Reset the list of active notes.
-	int i;
-	for (i = 0; i < ARRAYSIZE(_notes_cache); ++i)
-		_notes_cache[i].off_time = 0;
 }
 
 void MidiParser_XMIDI::resetTracking() {
