@@ -38,7 +38,7 @@ class ABoxFilesystemNode : public AbstractFilesystemNode {
 		bool _isDirectory;
 		bool _isValid;
 		String _path;
-        
+
 	public:
 		ABoxFilesystemNode();
 		ABoxFilesystemNode(BPTR lock, CONST_STRPTR display_name = NULL);
@@ -140,7 +140,7 @@ ABoxFilesystemNode::~ABoxFilesystemNode()
 FSList ABoxFilesystemNode::listDir(ListMode mode) const
 {
 	FSList myList;
-        
+
 	if (!_isValid)
 		error("listDir() called on invalid node");
 
@@ -207,18 +207,15 @@ AbstractFilesystemNode *ABoxFilesystemNode::parent() const
 	if (!_isDirectory)
 		error("parent() called on file node");
 
-	if (_lock == NULL)
+	if (_lock == NULL) {
 		/* Parent of the root is the root itself */
-		node = clone();
-	else
-	{
+		node = 0;
+	} else {
 		BPTR parent_lock = ParentDir(_lock);
-		if (parent_lock)
-		{
+		if (parent_lock) {
 			node = new ABoxFilesystemNode(parent_lock);
 			UnLock(parent_lock);
-		}
-		else
+		} else
 			node = new ABoxFilesystemNode();
 	}
 

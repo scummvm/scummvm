@@ -139,6 +139,17 @@ public:
 	{
 		return scumm_stricmp(displayName().c_str(), node.displayName().c_str()) < 0;
 	}
+
+
+	/* TODO:
+	bool exists();
+
+	bool isDirectory();
+	bool isFile();
+
+	bool isReadable();
+	bool isWriteable();
+	*/
 };
 
 class FilesystemNode : public AbstractFilesystemNode {

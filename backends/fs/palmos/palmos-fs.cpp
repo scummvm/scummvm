@@ -136,13 +136,13 @@ const char *lastPathComponent(const Common::String &str) {
 }
 
 AbstractFilesystemNode *PalmOSFilesystemNode::parent() const {
-
-	PalmOSFilesystemNode *p = new PalmOSFilesystemNode();
-
+	PalmOSFilesystemNode *p = 0;
+	
 	if (!_isPseudoRoot) {
-        const char *start = _path.c_str();
-        const char *end = lastPathComponent(_path);
-
+		const char *start = _path.c_str();
+		const char *end = lastPathComponent(_path);
+	
+		p = new PalmOSFilesystemNode();
 		p->_path = String(start, end - start);
 		p->_isValid = true;
 		p->_isDirectory = true;

@@ -185,22 +185,19 @@ FSList POSIXFilesystemNode::listDir(ListMode mode) const {
 }
 
 AbstractFilesystemNode *POSIXFilesystemNode::parent() const {
+	if (_path == "/")
+		return 0;
+
 	POSIXFilesystemNode *p = new POSIXFilesystemNode();
+	const char *start = _path.c_str();
+	const char *end = lastPathComponent(_path);
 
-	// Root node is its own parent. Still we can't just return this
-	// as the GUI code will call delete on the old node.
-	if (_path != "/") {
-		const char *start = _path.c_str();
-		const char *end = lastPathComponent(_path);
+	p->_path = String(start, end - start);
+	p->_displayName = lastPathComponent(p->_path);
 
-		p->_path = String(start, end - start);
-		p->_displayName = lastPathComponent(p->_path);
-	} else {
-		p->_path = _path;
-		p->_displayName = _displayName;
-	}
 	p->_isValid = true;
 	p->_isDirectory = true;
+
 	return p;
 }
 

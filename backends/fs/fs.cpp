@@ -72,7 +72,10 @@ FilesystemNode &FilesystemNode::operator  =(const FilesystemNode &node) {
 }
 
 FilesystemNode FilesystemNode::getParent() const {
-	FilesystemNode wrapper;
-	wrapper._realNode = _realNode->parent();
-	return wrapper;
+	AbstractFilesystemNode *node = _realNode->parent();
+	if (node == 0)
+		return *this;
+	else {
+		return AbstractFilesystemNode::wrap(node);
+	}
 }

@@ -197,11 +197,12 @@ const char *lastPathComponent(const Common::String &str) {
 
 AbstractFilesystemNode *WindowsFilesystemNode::parent() const {
 	assert(_isValid || _isPseudoRoot);
-	WindowsFilesystemNode *p = new WindowsFilesystemNode();
+	WindowsFilesystemNode *p = 0;
 	if (!_isPseudoRoot && _path.size() > 3) {
 		const char *start = _path.c_str();
 		const char *end = lastPathComponent(_path);
 
+		p = new WindowsFilesystemNode();
 		p->_path = String(start, end - start);
 		p->_isValid = true;
 		p->_isDirectory = true;
