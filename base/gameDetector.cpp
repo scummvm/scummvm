@@ -539,7 +539,8 @@ int GameDetector::detectMusicDriver(int midiFlags) {
 				#else
 				    musicDriver = MD_NULL;
 				#endif
-			}
+			} else
+				musicDriver = MD_ADLIB;
 		} else
 			musicDriver = MD_TOWNS;
 	}
