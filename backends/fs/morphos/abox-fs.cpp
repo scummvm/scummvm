@@ -64,7 +64,7 @@ FilesystemNode *FilesystemNode::getRoot()
 
 ABoxFilesystemNode::ABoxFilesystemNode()
 {
-	_displayName = "All Drives";
+	_displayName = "Mounted Volumes";
 	_isValid = true;
 	_isDirectory = true;
 	_path = "";
@@ -108,6 +108,8 @@ ABoxFilesystemNode::ABoxFilesystemNode(BPTR lock, CONST_STRPTR display_name)
 		_isDirectory = fib->fib_EntryType > 0;
 		if (_isDirectory)
 		{
+			if (fib->fib_EntryType != ST_ROOT)
+				_path += "/";
 			_lock = DupLock(lock);
 			_isValid = (_lock != NULL);
 		}
@@ -164,14 +166,24 @@ FSList *ABoxFilesystemNode::listDir() const
 	{
 		while (ExNext(_lock, fib) != DOSFALSE)
 		{
-			ABoxFilesystemNode entry;
-			entry._displayName = fib->fib_FileName;
-			entry._isDirectory = fib->fib_EntryType > 0;
-			entry._path = _path;
-			entry._path += fib->fib_FileName;
-			if (entry._isDirectory)
-				entry._path += "/";
-			myList->push_back(entry);
+			ABoxFilesystemNode *entry;
+			String full_path;
+			BPTR lock;
+
+			full_path = _path;
+			full_path += fib->fib_FileName;
+			lock = Lock(full_path.c_str(), SHARED_LOCK);
+			if (lock)
+			{
+				entry = new ABoxFilesystemNode(lock);
+				if (entry)
+				{
+					if (entry->isValid())
+						myList->push_back(*entry);
+					delete entry;
+				}
+				UnLock(lock);
+			}
 		}
 
 		if (IoErr() != ERROR_NO_MORE_ENTRIES)
@@ -242,8 +254,12 @@ FSList *ABoxFilesystemNode::listRoot()
 			{
 				sprintf(name, "%s (%s)", volume_name, device_name);
 				entry = new ABoxFilesystemNode(volume_lock, name);
-				if (entry->isValid())
-					myList->push_back(*entry);
+				if (entry)
+				{
+					if (entry->isValid())
+						myList->push_back(*entry);
+					delete entry;
+				}
 				UnLock(volume_lock);
 			}
 		}
