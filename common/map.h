@@ -177,8 +177,8 @@ public:
 		// different walk order (infix comes to mind).
 		if (map.isEmpty())
 			return;
-		Iterator x(map.begin()), end(map.end());
-		for (; x != end; ++x) {
+		Iterator x(map.begin()), e(map.end());
+		for (; x != e; ++x) {
 			(*this)[x->_key] = x->_value;
 		}
 	}
