@@ -137,7 +137,7 @@ public:
 	void converseDisplayText(int pos);
 	void converseSetTextLines(int row, int textcolor, bool btnDown);
 	void converseChangePos(int chg);
-	void converseSetPos(void);
+	void converseSetPos(int key);
 
 private:
 	void converseDisplayTextLine(int textcolor, bool btnUp, bool rebuild);

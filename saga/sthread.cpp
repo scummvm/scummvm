@@ -771,28 +771,40 @@ void Script::runThread(ScriptThread *thread, int instr_limit) {
 				}
 			}
 			break;
-			// (DLGS): Initialize dialogue interface
-		case 0x54:
-			warning("dialog_begin opcode: stub");
+
+		case opDialogBegin: // (DLGS): Initialize dialogue interface
+			if (_conversingThread) {
+				thread->wait(kWaitTypeDialogBegin);
+				return;
+			}
+			_conversingThread = thread;
+			_vm->_interface->converseClear();
 			break;
-			// (DLGX): Run dialogue interface
-		case 0x55:
-			if (0) {
+
+		case opDialogEnd: // (DLGX): Run dialogue interface
+			if (thread == _conversingThread) {
 				_vm->_interface->activate();
 				_vm->_interface->setMode(kPanelConverse);
+				thread->wait(kWaitTypeDialogEnd);
+				return;
 			}
-			warning("dialog_end opcode: stub");
 			break;
-			// (DLGO): Add a dialogue option to interface
-		case 0x56:
+
+		case opReply: // (DLGO): Add a dialogue option to interface
 			{
-				ScriptDataWord param3 = 0;
-				param1 = scriptS.readByte();
-				param2 = scriptS.readByte();
-				if (param2 & 1) {
-					param3 = scriptS.readUint16LE();
+				ScriptDataWord n = 0;
+				const char *str;
+				int replyNum = scriptS.readByte();
+				int flags = scriptS.readByte();
+
+				if (flags & kReplyOnce) {
+					n = scriptS.readUint16LE();
+					// TODO:
 				}
-				debug(2, "DLGO | %02X %02X %04X", param1, param2, param3);
+
+				str = getScriptString(thread->pop());
+				if (_vm->_interface->converseAddText(str, replyNum, flags, n))
+					warning("Error adding ConverseText (%s, %d, %d, %d)", str, replyNum, flags, n);
 			}
 			break;
 		case 0x57: // animate

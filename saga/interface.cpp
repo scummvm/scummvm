@@ -252,6 +252,29 @@ bool Interface::processKeyCode(int keyCode) {
 			}
 		}
 		break;
+	case kPanelConverse:
+		switch (keyCode) {
+		case 'x':
+			setMode(kPanelInventory);
+			// FIXME: puzzle
+			break;
+
+		case 'u':
+			converseChangePos(-1);
+			break;
+
+		case 'd':
+			converseChangePos(1);
+			break;
+
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+			converseSetPos(keyCode);
+			break;
+
+		}
 	}
 	return false;
 }
@@ -324,6 +347,7 @@ int Interface::draw() {
 
 		bufToSurface(backBuffer, _conversePanel.image, _conversePanel.imageWidth,
 						_conversePanel.imageHeight, NULL, &origin);
+		converseDisplayText(0);
 	}
 
 	if (_panelMode == kPanelMain || _panelMode == kPanelConverse ||
@@ -904,9 +928,9 @@ void Interface::converseChangePos(int chg) {
 	}
 }
 
-void Interface::converseSetPos(void) {
+void Interface::converseSetPos(int key) {
 	Converse *ct;
-	int selection = 1; // = keyStroke - '1'; // FIXME
+	int selection = key - '1';
 
 	if (selection >= _converseTextCount)
 		return;
@@ -915,6 +939,8 @@ void Interface::converseSetPos(void) {
 	converseSetTextLines(selection, kColorBrightWhite, false);
 
 	ct = &_converseText[_conversePos];
+
+	//finishDialog( ct->replyID, ct->replyFlags, ct->replyBit );
 	// FIXME: TODO: finish dialog thread
 
 	// FIXME: TODO: Puzzle

@@ -262,6 +262,8 @@ int SagaEngine::init(GameDetector &detector) {
 		debug(0, "Sound disabled.");
 	}
 
+	_interface->converseClear();
+
 	return 0;
 }
 

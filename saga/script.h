@@ -110,21 +110,30 @@ enum OpCodes {
 	opReturn = 0x1B,
 	opReturnV = 0x1C,
 //...
-	opSpeak = 0x53
+	opSpeak = 0x53,
+	opDialogBegin = 0x54,
+	opDialogEnd = 0x55,
+	opReply = 0x56
 };
 
 enum CycleFlags {
-	kCyclePong = (1 << 0),
-	kCycleOnce = (1 << 1),
-	kCycleRandom = (1 << 2),
-	kCycleReverse = (1 << 3)
+	kCyclePong    = 1 << 0,
+	kCycleOnce    = 1 << 1,
+	kCycleRandom  = 1 << 2,
+	kCycleReverse = 1 << 3
 };
 
 enum WalkFlags {
-	kWalkBackPedal = (1<<0),
-	kWalkAsync = (1<<1),
-	kWalkUseAngle = (1<<2),
-	kWalkFace = (1<<5)
+	kWalkBackPedal = 1 << 0,
+	kWalkAsync     = 1 << 1,
+	kWalkUseAngle  = 1 << 2,
+	kWalkFace      = 1 << 5
+};
+
+enum ReplyFlags {
+	kReplyOnce      = 1 << 0,
+	kReplySummary   = 1 << 1,
+	kReplyCondition = 1 << 2
 };
 
 struct ScriptThread {
@@ -331,6 +340,9 @@ private:
 	size_t SThreadGetReadLen(ScriptThread *thread);
 	void runThread(ScriptThread *thread, int instr_limit);
 	void setThreadEntrypoint(ScriptThread *thread, int entrypointNumber);
+
+private:
+	ScriptThread *_conversingThread;
 
 private:
 	typedef int (Script::*ScriptFunctionType)(SCRIPTFUNC_PARAMS);

@@ -62,6 +62,7 @@ Script::Script() {
 	_currentScript = 0;
 	_abortEnabled = true;
 	_skipSpeeches = false;
+	_conversingThread = NULL;
 
 	_firstObjectSet = false;
 	_secondObjectNeeded = false;
