@@ -165,9 +165,12 @@ void IMuseDigital::callback() {
 				int bits = _sound->getBits(_track[l]->soundHandle);
 				int channels = _sound->getChannels(_track[l]->soundHandle);
 
-				int32 mixer_size = _track[l]->stream->getFreeSpace() - 4;
-				if ((_track[l]->iteration / 2) > mixer_size)
+				int32 freeSpace = _track[l]->stream->getFreeSpace() - 4;
+				int32 bufferMin = (_track[l]->iteration * 3) / 4;
+				if (bufferMin > freeSpace)
 					continue;
+
+				int32 mixer_size = freeSpace;
 
 				if ((bits == 12) || (bits == 16)) {
 					if (channels == 1)
