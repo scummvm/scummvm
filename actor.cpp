@@ -1008,7 +1008,7 @@ void Actor::drawActorCostume()
 		setupActorScale();
 
 		/* First, zero initialize all fields */
-		memset(&ar, 0, sizeof(ar));
+		//memset(&ar, 0, sizeof(ar));
 
 		ar.x = x - _vm->virtscr->xstart;
 		ar.y = y - elevation;

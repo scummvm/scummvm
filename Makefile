@@ -21,7 +21,7 @@ LIBS	 = -lncurses
 
 # Comment this if you want to disable SDL output
 OBJS	 = sdl.o
-INCLUDE += `sdl-config --cflags`
+INCLUDES += `sdl-config --cflags`
 LIBS    += `sdl-config --libs`
 DEFINES += -DUNIX
 
