@@ -24,6 +24,8 @@
 #include "sworddefs.h"
 #include "common/util.h"
 
+namespace Sword1 {
+
 EventManager::EventManager(void) {
 	for (uint8 cnt = 0; cnt < TOTAL_EVENT_SLOTS; cnt++)
 		_eventPendingList[cnt].delay = _eventPendingList[cnt].eventNumber = 0;
@@ -35,7 +37,7 @@ void EventManager::serviceGlobalEventList(void) {
 			_eventPendingList[slot].delay--;
 }
 
-void EventManager::checkForEvent(BsObject *compact) {
+void EventManager::checkForEvent(Object *compact) {
 	for (uint8 objCnt = 0; objCnt < O_TOTAL_EVENTS; objCnt++) {
 		if (compact->o_event_list[objCnt].o_event)
 			for (uint8 globCnt = 0; globCnt < TOTAL_EVENT_SLOTS; globCnt++) {
@@ -61,7 +63,7 @@ bool EventManager::eventValid(int32 event) {
 	return false;
 }
 
-int EventManager::fnCheckForEvent(BsObject *cpt, int32 id, int32 pause) {
+int EventManager::fnCheckForEvent(Object *cpt, int32 id, int32 pause) {
 	if (pause) {
 		cpt->o_pause = pause;
 		cpt->o_logic = LOGIC_pause_for_event;
@@ -87,7 +89,7 @@ int EventManager::fnCheckForEvent(BsObject *cpt, int32 id, int32 pause) {
 	return SCRIPT_CONT;
 }
 
-void EventManager::fnIssueEvent(BsObject *compact, int32 id, int32 event, int32 delay) {
+void EventManager::fnIssueEvent(Object *compact, int32 id, int32 event, int32 delay) {
 	uint8 evSlot = 0;
 	while (_eventPendingList[evSlot].delay)
 		evSlot++;
@@ -97,3 +99,4 @@ void EventManager::fnIssueEvent(BsObject *compact, int32 id, int32 event, int32 
 	_eventPendingList[evSlot].eventNumber = event;
 }
 
+} // End of namespace Sword1

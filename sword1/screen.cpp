@@ -32,12 +32,14 @@
 #include "menu.h"
 #include "sword1.h"
 
+namespace Sword1 {
+
 #define SCROLL_FRACTION 16
 #define MAX_SCROLL_DISTANCE 8
 #define FADE_UP 1
 #define FADE_DOWN -1
 
-SwordScreen::SwordScreen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
+Screen::Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_system = system;
 	_resMan = pResMan;
 	_objMan = pObjMan;
@@ -46,51 +48,51 @@ SwordScreen::SwordScreen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_fadingStep = 0;
 }
 
-void SwordScreen::useTextManager(SwordText *pTextMan) {
+void Screen::useTextManager(Text *pTextMan) {
 	_textMan = pTextMan;
 }
 
-int32 SwordScreen::inRange(int32 a, int32 b, int32 c) { // return b(!) so that: a <= b <= c
+int32 Screen::inRange(int32 a, int32 b, int32 c) { // return b(!) so that: a <= b <= c
 	return (a > b) ? (a) : ((b < c) ? b : c);
 }
 
-void SwordScreen::setScrolling(int16 offsetX, int16 offsetY) {
-	if (!SwordLogic::_scriptVars[SCROLL_FLAG])
+void Screen::setScrolling(int16 offsetX, int16 offsetY) {
+	if (!Logic::_scriptVars[SCROLL_FLAG])
 		return ; // screen is smaller than 640x400 => no need for scrolling
 
-	offsetX = inRange(0, offsetX, SwordLogic::_scriptVars[MAX_SCROLL_OFFSET_X]);
-	offsetY = inRange(0, offsetY, SwordLogic::_scriptVars[MAX_SCROLL_OFFSET_Y]);
+	offsetX = inRange(0, offsetX, Logic::_scriptVars[MAX_SCROLL_OFFSET_X]);
+	offsetY = inRange(0, offsetY, Logic::_scriptVars[MAX_SCROLL_OFFSET_Y]);
 
-	if (SwordLogic::_scriptVars[SCROLL_FLAG] == 2) { // first time on this screen - need absolute scroll immediately!
-		_oldScrollX = SwordLogic::_scriptVars[SCROLL_OFFSET_X] = (uint32)offsetX;
-		_oldScrollY = SwordLogic::_scriptVars[SCROLL_OFFSET_Y] = (uint32)offsetY;
-		SwordLogic::_scriptVars[SCROLL_FLAG] = 1;
+	if (Logic::_scriptVars[SCROLL_FLAG] == 2) { // first time on this screen - need absolute scroll immediately!
+		_oldScrollX = Logic::_scriptVars[SCROLL_OFFSET_X] = (uint32)offsetX;
+		_oldScrollY = Logic::_scriptVars[SCROLL_OFFSET_Y] = (uint32)offsetY;
+		Logic::_scriptVars[SCROLL_FLAG] = 1;
 		_fullRefresh = true;
-	} else if (SwordLogic::_scriptVars[SCROLL_FLAG] == 1) {
-		_oldScrollX = SwordLogic::_scriptVars[SCROLL_OFFSET_X];
-		_oldScrollY = SwordLogic::_scriptVars[SCROLL_OFFSET_Y];
+	} else if (Logic::_scriptVars[SCROLL_FLAG] == 1) {
+		_oldScrollX = Logic::_scriptVars[SCROLL_OFFSET_X];
+		_oldScrollY = Logic::_scriptVars[SCROLL_OFFSET_Y];
 		int32 distX = inRange(-MAX_SCROLL_DISTANCE, _oldScrollX - offsetX, MAX_SCROLL_DISTANCE);
 		int32 distY = inRange(-MAX_SCROLL_DISTANCE, _oldScrollY - offsetY, MAX_SCROLL_DISTANCE);
 		if ((distX != 0) || (distY != 0))
 			_fullRefresh = true;
-		SwordLogic::_scriptVars[SCROLL_OFFSET_X] -= distX;
-		SwordLogic::_scriptVars[SCROLL_OFFSET_Y] -= distY;
+		Logic::_scriptVars[SCROLL_OFFSET_X] -= distX;
+		Logic::_scriptVars[SCROLL_OFFSET_Y] -= distY;
 	}
 }
 
-void SwordScreen::fadeDownPalette(void) {
+void Screen::fadeDownPalette(void) {
 	if (!_isBlack) { // don't fade down twice
 		_fadingStep = 15;
 		_fadingDirection = FADE_DOWN;
 	}
 }
 
-void SwordScreen::fadeUpPalette(void) {
+void Screen::fadeUpPalette(void) {
 	_fadingStep = 1;
 	_fadingDirection = FADE_UP;
 }
 
-void SwordScreen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp) {
+void Screen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp) {
 	uint8 *palData = (uint8*)_resMan->openFetchRes(id);
 	if (start == 0) // force color 0 to black
 		palData[0] = palData[1] = palData[2] = 0;
@@ -110,45 +112,45 @@ void SwordScreen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeU
 		_system->set_palette(_targetPalette + 4 * start, start, length);
 }
 
-void SwordScreen::fullRefresh(void) {
+void Screen::fullRefresh(void) {
 	_fullRefresh = true;
 	_system->set_palette(_targetPalette, 0, 256);
 }
 
-bool SwordScreen::stillFading(void) {
+bool Screen::stillFading(void) {
 	return (_fadingStep != 0);
 }
 
-bool SwordScreen::showScrollFrame(void) {
-	if ((!_fullRefresh) || SwordLogic::_scriptVars[NEW_PALETTE] || (!SwordLogic::_scriptVars[SCROLL_FLAG]))
+bool Screen::showScrollFrame(void) {
+	if ((!_fullRefresh) || Logic::_scriptVars[NEW_PALETTE] || (!Logic::_scriptVars[SCROLL_FLAG]))
 		return false; // don't draw an additional frame if we aren't scrolling or have to change the palette
-	if ((_oldScrollX == SwordLogic::_scriptVars[SCROLL_OFFSET_X]) &&
-		(_oldScrollY == SwordLogic::_scriptVars[SCROLL_OFFSET_Y]))
+	if ((_oldScrollX == Logic::_scriptVars[SCROLL_OFFSET_X]) &&
+		(_oldScrollY == Logic::_scriptVars[SCROLL_OFFSET_Y]))
 		return false; // check again if we *really* are scrolling.
 
-	uint16 avgScrlX = (uint16)(_oldScrollX + SwordLogic::_scriptVars[SCROLL_OFFSET_X]) / 2;
-	uint16 avgScrlY = (uint16)(_oldScrollY + SwordLogic::_scriptVars[SCROLL_OFFSET_Y]) / 2;
+	uint16 avgScrlX = (uint16)(_oldScrollX + Logic::_scriptVars[SCROLL_OFFSET_X]) / 2;
+	uint16 avgScrlY = (uint16)(_oldScrollY + Logic::_scriptVars[SCROLL_OFFSET_Y]) / 2;
 
 	_system->copy_rect(_screenBuf + avgScrlY * _scrnSizeX + avgScrlX, _scrnSizeX, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
 	_system->update_screen();
 	return true;
 }
 
-void SwordScreen::updateScreen(void) {
-	if (SwordLogic::_scriptVars[NEW_PALETTE]) {
+void Screen::updateScreen(void) {
+	if (Logic::_scriptVars[NEW_PALETTE]) {
 		_fadingStep = 1;
 		_fadingDirection = FADE_UP;
 		fnSetPalette(0, 184, _roomDefTable[_currentScreen].palettes[0], true);
 		fnSetPalette(184, 72, _roomDefTable[_currentScreen].palettes[1], true);
-		SwordLogic::_scriptVars[NEW_PALETTE] = 0;
+		Logic::_scriptVars[NEW_PALETTE] = 0;
 	}
 	if (_fadingStep) {
 		fadePalette();
 		_system->set_palette(_currentPalette, 0, 256);
 	}
 
-	uint16 scrlX = (uint16)SwordLogic::_scriptVars[SCROLL_OFFSET_X];
-	uint16 scrlY = (uint16)SwordLogic::_scriptVars[SCROLL_OFFSET_Y];
+	uint16 scrlX = (uint16)Logic::_scriptVars[SCROLL_OFFSET_X];
+	uint16 scrlY = (uint16)Logic::_scriptVars[SCROLL_OFFSET_Y];
 	if (_fullRefresh) {
 		_fullRefresh = false;
 		uint16 copyWidth = SCREEN_WIDTH;
@@ -241,7 +243,7 @@ void SwordScreen::updateScreen(void) {
 	_system->update_screen();
 }
 
-void SwordScreen::newScreen(uint32 screen) {
+void Screen::newScreen(uint32 screen) {
 	uint8 cnt;
 	// set sizes and scrolling, initialize/load screengrid, force screen refresh
 	_currentScreen = screen;
@@ -252,15 +254,15 @@ void SwordScreen::newScreen(uint32 screen) {
 	if ((_scrnSizeX % SCRNGRID_X) || (_scrnSizeY % SCRNGRID_Y))
 		error("Illegal screensize: %d: %d/%d", screen, _scrnSizeX, _scrnSizeY);
 	if ((_scrnSizeX > SCREEN_WIDTH) || (_scrnSizeY > SCREEN_DEPTH)) {
-		SwordLogic::_scriptVars[SCROLL_FLAG] = 2;
-		SwordLogic::_scriptVars[MAX_SCROLL_OFFSET_X] = _scrnSizeX - SCREEN_WIDTH;
-		SwordLogic::_scriptVars[MAX_SCROLL_OFFSET_Y] = _scrnSizeY - SCREEN_DEPTH;
+		Logic::_scriptVars[SCROLL_FLAG] = 2;
+		Logic::_scriptVars[MAX_SCROLL_OFFSET_X] = _scrnSizeX - SCREEN_WIDTH;
+		Logic::_scriptVars[MAX_SCROLL_OFFSET_Y] = _scrnSizeY - SCREEN_DEPTH;
 	} else {
-		SwordLogic::_scriptVars[SCROLL_FLAG] = 0;
-		SwordLogic::_scriptVars[MAX_SCROLL_OFFSET_X] = 0;
-		SwordLogic::_scriptVars[MAX_SCROLL_OFFSET_Y] = 0;
-		SwordLogic::_scriptVars[SCROLL_OFFSET_X] = 0;
-		SwordLogic::_scriptVars[SCROLL_OFFSET_Y] = 0;
+		Logic::_scriptVars[SCROLL_FLAG] = 0;
+		Logic::_scriptVars[MAX_SCROLL_OFFSET_X] = 0;
+		Logic::_scriptVars[MAX_SCROLL_OFFSET_Y] = 0;
+		Logic::_scriptVars[SCROLL_OFFSET_X] = 0;
+		Logic::_scriptVars[SCROLL_OFFSET_Y] = 0;
 	}
 	_screenBuf = (uint8*)malloc(_scrnSizeX * _scrnSizeY);
 	_screenGrid = (uint8*)malloc(_gridSizeX * _gridSizeY);
@@ -287,7 +289,7 @@ void SwordScreen::newScreen(uint32 screen) {
 	_fullRefresh = true;
 }
 
-void SwordScreen::quitScreen(void) {
+void Screen::quitScreen(void) {
 	uint8 cnt;
 	for (cnt = 0; cnt < _roomDefTable[_currentScreen].totalLayers; cnt++)
 		_resMan->resClose(_roomDefTable[_currentScreen].layers[cnt]);
@@ -299,7 +301,7 @@ void SwordScreen::quitScreen(void) {
 		_resMan->resClose(_roomDefTable[_currentScreen].parallax[1]);
 }
 
-void SwordScreen::draw(void) {
+void Screen::draw(void) {
 	uint8 cnt;
 	if (_currentScreen == 54) {
 		// rm54 has a BACKGROUND parallax layer in parallax[0]
@@ -339,8 +341,8 @@ void SwordScreen::draw(void) {
 	_backLength = _sortLength = _foreLength = 0;
 }
 
-void SwordScreen::processImage(uint32 id) {
-	BsObject *compact;
+void Screen::processImage(uint32 id) {
+	Object *compact;
 	FrameHeader *frameHead;
 	int scale;
 
@@ -419,7 +421,7 @@ void SwordScreen::processImage(uint32 id) {
 		free(tonyBuf);
 }
 
-void SwordScreen::verticalMask(uint16 x, uint16 y, uint16 bWidth, uint16 bHeight) {
+void Screen::verticalMask(uint16 x, uint16 y, uint16 bWidth, uint16 bHeight) {
 	if (_roomDefTable[_currentScreen].totalLayers <= 1)
 		return;
 
@@ -457,7 +459,7 @@ void SwordScreen::verticalMask(uint16 x, uint16 y, uint16 bWidth, uint16 bHeight
 	}
 }
 
-void SwordScreen::blitBlockClear(uint16 x, uint16 y, uint8 *data) {
+void Screen::blitBlockClear(uint16 x, uint16 y, uint8 *data) {
 	uint8 *dest = _screenBuf + (y * SCRNGRID_Y) * _scrnSizeX + (x * SCRNGRID_X);
 	for (uint8 cnty = 0; cnty < SCRNGRID_Y; cnty++) {
 		for (uint8 cntx = 0; cntx < SCRNGRID_X; cntx++)
@@ -468,7 +470,7 @@ void SwordScreen::blitBlockClear(uint16 x, uint16 y, uint8 *data) {
 	}
 }
 
-void SwordScreen::renderParallax(uint8 *data) {
+void Screen::renderParallax(uint8 *data) {
 	ParallaxHeader *header = (ParallaxHeader*)data;
 	uint32 *lineIndexes = (uint32*)(data + sizeof(ParallaxHeader));
 	assert((FROM_LE_16(header->sizeX) >= SCREEN_WIDTH) && (FROM_LE_16(header->sizeY) >= SCREEN_DEPTH));
@@ -479,10 +481,10 @@ void SwordScreen::renderParallax(uint8 *data) {
 	uint16 scrnWidth, scrnHeight;
 
 	// we have to render more than the visible screen part for displaying scroll frames
-	scrnScrlX = MIN((uint32)_oldScrollX, SwordLogic::_scriptVars[SCROLL_OFFSET_X]);
-	scrnWidth = SCREEN_WIDTH + ABS((int32)_oldScrollX - (int32)SwordLogic::_scriptVars[SCROLL_OFFSET_X]);
-	scrnScrlY = MIN((uint32)_oldScrollY, SwordLogic::_scriptVars[SCROLL_OFFSET_Y]);
-	scrnHeight = SCREEN_DEPTH + ABS((int32)_oldScrollY - (int32)SwordLogic::_scriptVars[SCROLL_OFFSET_Y]);
+	scrnScrlX = MIN((uint32)_oldScrollX, Logic::_scriptVars[SCROLL_OFFSET_X]);
+	scrnWidth = SCREEN_WIDTH + ABS((int32)_oldScrollX - (int32)Logic::_scriptVars[SCROLL_OFFSET_X]);
+	scrnScrlY = MIN((uint32)_oldScrollY, Logic::_scriptVars[SCROLL_OFFSET_Y]);
+	scrnHeight = SCREEN_DEPTH + ABS((int32)_oldScrollY - (int32)Logic::_scriptVars[SCROLL_OFFSET_Y]);
 
 	if (_scrnSizeX != SCREEN_WIDTH) {
 		double scrlfx = (FROM_LE_16(header->sizeX) - SCREEN_WIDTH) / ((double)(_scrnSizeX - SCREEN_WIDTH));
@@ -549,7 +551,7 @@ void SwordScreen::renderParallax(uint8 *data) {
 	}
 }
 
-void SwordScreen::drawSprite(uint8 *sprData, uint16 sprX, uint16 sprY, uint16 sprWidth, uint16 sprHeight, uint16 sprPitch) {
+void Screen::drawSprite(uint8 *sprData, uint16 sprX, uint16 sprY, uint16 sprWidth, uint16 sprHeight, uint16 sprPitch) {
 	uint8 *dest = _screenBuf + (sprY * _scrnSizeX) + sprX;
 	for (uint16 cnty = 0; cnty < sprHeight; cnty++) {
 		for (uint16 cntx = 0; cntx < sprWidth; cntx++)
@@ -561,7 +563,7 @@ void SwordScreen::drawSprite(uint8 *sprData, uint16 sprX, uint16 sprY, uint16 sp
 }
 
 // nearest neighbor filter:
-void SwordScreen::fastShrink(uint8 *src, uint32 width, uint32 height, uint32 scale, uint8 *dest) {
+void Screen::fastShrink(uint8 *src, uint32 width, uint32 height, uint32 scale, uint8 *dest) {
 	uint32 resHeight = (height * scale) >> 8;
 	uint32 resWidth = (width * scale) >> 8;
 	uint32 step = 0x10000 / scale;
@@ -600,14 +602,14 @@ void SwordScreen::fastShrink(uint8 *src, uint32 width, uint32 height, uint32 sca
 	}
 }
 
-void SwordScreen::addToGraphicList(uint8 listId, uint32 objId) {
+void Screen::addToGraphicList(uint8 listId, uint32 objId) {
 	if (listId == 0) {
 		_foreList[_foreLength++] = objId;
 		if (_foreLength > MAX_FORE)
 			error("foreList exceeded!");
 	}
 	if (listId == 1) {
-		BsObject *cpt = _objMan->fetchObject(objId);
+		Object *cpt = _objMan->fetchObject(objId);
 		_sortList[_sortLength].id = objId;
 		_sortList[_sortLength].y = cpt->o_anim_y; // gives feet coords if boxed mega, otherwise top of sprite box
 		if (!(cpt->o_status & STAT_SHRINK)) {     // not a boxed mega using shrinking
@@ -627,7 +629,7 @@ void SwordScreen::addToGraphicList(uint8 listId, uint32 objId) {
 	}
 }
 
-void SwordScreen::decompressTony(uint8 *src, uint32 compSize, uint8 *dest) {
+void Screen::decompressTony(uint8 *src, uint32 compSize, uint8 *dest) {
 	uint8 *endOfData = src + compSize;
 	while (src < endOfData) {
 		uint8 numFlat = *src++;
@@ -645,7 +647,7 @@ void SwordScreen::decompressTony(uint8 *src, uint32 compSize, uint8 *dest) {
 	}
 }
 
-void SwordScreen::decompressRLE7(uint8 *src, uint32 compSize, uint8 *dest) {
+void Screen::decompressRLE7(uint8 *src, uint32 compSize, uint8 *dest) {
 	uint8 *compBufEnd = src + compSize;
 	while (src < compBufEnd) {
 		uint8 code = *src++;
@@ -659,7 +661,7 @@ void SwordScreen::decompressRLE7(uint8 *src, uint32 compSize, uint8 *dest) {
 	}
 }
 
-void SwordScreen::decompressRLE0(uint8 *src, uint32 compSize, uint8 *dest) {
+void Screen::decompressRLE0(uint8 *src, uint32 compSize, uint8 *dest) {
 	uint8 *srcBufEnd = src + compSize;
 	while (src < srcBufEnd) {
 		uint8 color = *src++;
@@ -673,7 +675,7 @@ void SwordScreen::decompressRLE0(uint8 *src, uint32 compSize, uint8 *dest) {
 	}
 }
 
-void SwordScreen::fadePalette(void) {
+void Screen::fadePalette(void) {
 	if (_fadingStep == 16)
 		memcpy(_currentPalette, _targetPalette, 256 * 4);
 	else if ((_fadingStep == 1) && (_fadingDirection == FADE_DOWN)) {
@@ -690,13 +692,13 @@ void SwordScreen::fadePalette(void) {
 		_isBlack = true;
 }
 
-void SwordScreen::fnSetParallax(uint32 screen, uint32 resId) {
+void Screen::fnSetParallax(uint32 screen, uint32 resId) {
 	if ((screen == _currentScreen) && (resId != _roomDefTable[screen].parallax[0]))
 		warning("fnSetParallax: setting parallax for current room!!");
 	_roomDefTable[screen].parallax[0] = resId;
 }
 
-void SwordScreen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWidth, uint16 *pSprHeight, uint16 *incr) {
+void Screen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWidth, uint16 *pSprHeight, uint16 *incr) {
 	int16 sprX = *pSprX - SCREEN_LEFT_EDGE;
 	int16 sprY = *pSprY - SCREEN_TOP_EDGE;
 	int16 sprW = *pSprWidth;
@@ -751,13 +753,13 @@ void SwordScreen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWid
 	}
 }
 
-void SwordScreen::fnFlash(uint8 color) {
-	warning("stub: SwordScreen::fnFlash(%d)", color);
+void Screen::fnFlash(uint8 color) {
+	warning("stub: Screen::fnFlash(%d)", color);
 }
 
-// ------------------- SwordMenu screen interface ---------------------------
+// ------------------- Menu screen interface ---------------------------
 
-void SwordScreen::showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, const byte *fadeMask, int8 fadeStatus) {
+void Screen::showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, const byte *fadeMask, int8 fadeStatus) {
 	uint8 frame[40 * 40];
 	int i, j;
 
@@ -790,17 +792,17 @@ void SwordScreen::showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, co
 
 // ------------------- router debugging code --------------------------------
 
-void SwordScreen::vline(uint16 x, uint16 y1, uint16 y2) {
+void Screen::vline(uint16 x, uint16 y1, uint16 y2) {
 	for (uint16 cnty = y1; cnty <= y2; cnty++)
 		_screenBuf[x + _scrnSizeX * cnty] = 0;
 }
 
-void SwordScreen::hline(uint16 x1, uint16 x2, uint16 y) {
+void Screen::hline(uint16 x1, uint16 x2, uint16 y) {
 	for (uint16 cntx = x1; cntx <= x2; cntx++)
 		_screenBuf[y * _scrnSizeX + cntx] = 0;
 }
 
-void SwordScreen::bsubline_1(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void Screen::bsubline_1(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int x, y, ddx, ddy, e;
 	ddx = ABS(x2 - x1);
 	ddy = ABS(y2 - y1) << 1;
@@ -824,7 +826,7 @@ void SwordScreen::bsubline_1(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	}
 }
 
-void SwordScreen::bsubline_2(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void Screen::bsubline_2(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int x, y, ddx, ddy, e;
 	ddx = ABS(x2 - x1) << 1;
 	ddy = ABS(y2 - y1);
@@ -848,7 +850,7 @@ void SwordScreen::bsubline_2(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	}
 }
 
-void SwordScreen::bsubline_3(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void Screen::bsubline_3(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int x, y, ddx, ddy, e;
 	ddx = ABS(x1 - x2) << 1;
 	ddy = ABS(y2 - y1);
@@ -872,7 +874,7 @@ void SwordScreen::bsubline_3(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	}
 }
 
-void SwordScreen::bsubline_4(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void Screen::bsubline_4(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	int x, y, ddx, ddy, e;
 	ddy = ABS(y2 - y1) << 1;
 	ddx = ABS(x1 - x2);
@@ -896,7 +898,7 @@ void SwordScreen::bsubline_4(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	}
 }
 
-void SwordScreen::drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
+void Screen::drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	if ((x1 == x2) && (y1 == y2)) {
 		_screenBuf[x1 + y1 * _scrnSizeX] = 0;
 	}
@@ -922,3 +924,5 @@ void SwordScreen::drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 		bsubline_3(x1, y1, x2, y2);
 	}
 }
+
+} // End of namespace Sword1

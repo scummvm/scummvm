@@ -27,6 +27,8 @@
 #include "swordres.h"
 #include "sworddefs.h"
 
+namespace Sword1 {
+
 #define OVERLAP 3
 #define SPACE ' '
 #define BORDER_COL		200
@@ -35,7 +37,7 @@
 #define MAX_LINES		30
 
 
-SwordText::SwordText(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion) {
+Text::Text(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion) {
 	_objMan = pObjMan;
 	_resMan = pResMan;
 	_textCount = 0;
@@ -48,17 +50,17 @@ SwordText::SwordText(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion) {
 	_textBlocks[0] = _textBlocks[1] = NULL;
 }
 
-SwordText::~SwordText(void) {
+Text::~Text(void) {
 	if (_textBlocks[0])
 		free(_textBlocks[0]);
 	if (_textBlocks[1])
 		free(_textBlocks[1]);
 }
 
-uint32 SwordText::lowTextManager(uint8 *ascii, int32 width, uint8 pen) {
+uint32 Text::lowTextManager(uint8 *ascii, int32 width, uint8 pen) {
 	_textCount++;
 	if (_textCount > MAX_TEXT_OBS)
-		error("SwordText::lowTextManager: MAX_TEXT_OBS exceeded!");
+		error("Text::lowTextManager: MAX_TEXT_OBS exceeded!");
 	uint32 textObjId = (TEXT_sect * ITM_PER_SEC) - 1;
 	do {
 		textObjId++;
@@ -71,7 +73,7 @@ uint32 SwordText::lowTextManager(uint8 *ascii, int32 width, uint8 pen) {
 	return textObjId;
 }
 
-void SwordText::makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 pen) {
+void Text::makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 pen) {
 	LineInfo lines[MAX_LINES];
 	uint16 numLines = analyzeSentence(text, maxWidth, lines);
 	
@@ -82,7 +84,7 @@ void SwordText::makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 p
 			sprWidth = lines[lineCnt].width;
 	uint16 sprHeight = _charHeight * numLines;
 	uint32 sprSize = sprWidth * sprHeight;
-	assert(!_textBlocks[slot]); // if this triggers, the speechDriver failed to call SwordText::releaseText.
+	assert(!_textBlocks[slot]); // if this triggers, the speechDriver failed to call Text::releaseText.
 	_textBlocks[slot] = (FrameHeader*)malloc(sprSize + sizeof(FrameHeader));
 
 	memcpy( _textBlocks[slot]->runTimeComp, "Nu  ", 4);
@@ -103,13 +105,13 @@ void SwordText::makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 p
 	}
 }
 
-uint16 SwordText::charWidth(uint8 ch) {
+uint16 Text::charWidth(uint8 ch) {
 	if (ch < SPACE)
 		ch = 64;
 	return FROM_LE_16(_resMan->fetchFrame(_font, ch - SPACE)->width);
 }
 
-uint16 SwordText::analyzeSentence(uint8 *text, uint16 maxWidth, LineInfo *line) {
+uint16 Text::analyzeSentence(uint8 *text, uint16 maxWidth, LineInfo *line) {
 	uint16 lineNo = 0;
 
 	bool firstWord = true;
@@ -149,7 +151,7 @@ uint16 SwordText::analyzeSentence(uint8 *text, uint16 maxWidth, LineInfo *line) 
 	return lineNo+1;	// return no of lines
 }
 
-uint16 SwordText::copyChar(uint8 ch, uint8 *sprPtr, uint16 sprWidth, uint8 pen) {
+uint16 Text::copyChar(uint8 ch, uint8 *sprPtr, uint16 sprWidth, uint8 pen) {
 	FrameHeader *chFrame = _resMan->fetchFrame(_font, ch - SPACE);
 	uint8 *chData = ((uint8*)chFrame) + sizeof(FrameHeader);
 	uint8 *dest = sprPtr;
@@ -166,7 +168,7 @@ uint16 SwordText::copyChar(uint8 ch, uint8 *sprPtr, uint16 sprWidth, uint8 pen) 
 	return FROM_LE_16(chFrame->width);
 }
 
-FrameHeader *SwordText::giveSpriteData(uint32 textTarget) {
+FrameHeader *Text::giveSpriteData(uint32 textTarget) {
 	// textTarget is the resource ID of the Compact linking the textdata.
 	// that's 0x950000 for slot 0 and 0x950001 for slot 1. easy, huh? :)
 	textTarget &= ITM_ID;
@@ -175,7 +177,7 @@ FrameHeader *SwordText::giveSpriteData(uint32 textTarget) {
 	return _textBlocks[textTarget];
 }
 
-void SwordText::releaseText(uint32 id) {
+void Text::releaseText(uint32 id) {
 	id &= ITM_ID;
 	assert(id <= 1);
 	if (_textBlocks[id]) {
@@ -184,3 +186,5 @@ void SwordText::releaseText(uint32 id) {
 		_textCount--;
 	}
 }
+
+} // End of namespace Sword1

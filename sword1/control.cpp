@@ -32,8 +32,9 @@
 #include "common/util.h"
 #include "mouse.h"
 #include "music.h"
-#include "sound.h" 
-#include <math.h> // for sqrt()
+#include "sound.h"
+
+namespace Sword1 {
 
 #define SAVEFILE_WRITE true
 #define SAVEFILE_READ false
@@ -152,7 +153,7 @@ void ControlButton::setSelected(uint8 selected) {
 	draw();
 }
 
-SwordControl::SwordControl(ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, SwordMouse *pMouse, SwordSound *pSound, SwordMusic *pMusic, const char *savePath) {
+Control::Control(ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic, const char *savePath) {
 	_resMan = pResMan;
 	_objMan = pObjMan;
 	_system = system;
@@ -163,7 +164,7 @@ SwordControl::SwordControl(ResMan *pResMan, ObjectMan *pObjMan, OSystem *system,
 	_lStrings = _languageStrings + MIN(SwordEngine::_systemVars.language, (uint8)BS1_SPANISH) * 20;
 }
 
-void SwordControl::askForCd(void) {
+void Control::askForCd(void) {
 	_screenBuf = (uint8*)malloc(640 * 480);
 	uint32 fontId = SR_FONT;
 	if (SwordEngine::_systemVars.language == BS1_CZECH)
@@ -217,7 +218,7 @@ void SwordControl::askForCd(void) {
 	free(_screenBuf);
 }
 
-uint8 SwordControl::runPanel(void) {
+uint8 Control::runPanel(void) {
 	_mouseDown = false;
 	_restoreBuf = NULL;
 	_keyPressed = _numButtons = 0;
@@ -291,11 +292,11 @@ uint8 SwordControl::runPanel(void) {
 	_system->copy_rect(_screenBuf, 640, 0, 0, 640, 480);
 	free(_screenBuf);
 	_mouse->controlPanel(false);
-	_music->startMusic(SwordLogic::_scriptVars[CURRENT_MUSIC], 1);
+	_music->startMusic(Logic::_scriptVars[CURRENT_MUSIC], 1);
 	return retVal;
 }
 
-uint8 SwordControl::getClicks(uint8 mode, uint8 *retVal) {
+uint8 Control::getClicks(uint8 mode, uint8 *retVal) {
 	uint8 checkButtons = _numButtons;
 	if (mode == BUTTON_VOLUME_PANEL) {
 		handleVolumeClicks();
@@ -332,7 +333,7 @@ uint8 SwordControl::getClicks(uint8 mode, uint8 *retVal) {
 	return 0;
 }
 
-uint8 SwordControl::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
+uint8 Control::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 	switch(mode) {
 		case BUTTON_MAIN_PANEL:
 			if (id == BUTTON_RESTART) {
@@ -380,12 +381,12 @@ uint8 SwordControl::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 	return 0;
 }
 
-void SwordControl::deselectSaveslots(void) {
+void Control::deselectSaveslots(void) {
 	for (uint8 cnt = 0; cnt < 8; cnt++)
 		_buttons[cnt]->setSelected(0);
 }
 
-void SwordControl::setupMainPanel(void) {
+void Control::setupMainPanel(void) {
 	uint32 panelId;
 	
 	if (SwordEngine::_systemVars.deathScreenFlag == 1)
@@ -426,7 +427,7 @@ void SwordControl::setupMainPanel(void) {
 	}
 }
 
-void SwordControl::setupSaveRestorePanel(bool saving) {
+void Control::setupSaveRestorePanel(bool saving) {
 	FrameHeader *savePanel = _resMan->fetchFrame(_resMan->openFetchRes(SR_WINDOW), 0);
 	uint16 panelX = (640 - FROM_LE_16(savePanel->width)) / 2;
 	uint16 panelY = (480 - FROM_LE_16(savePanel->height)) / 2;
@@ -446,7 +447,7 @@ void SwordControl::setupSaveRestorePanel(bool saving) {
 	showSavegameNames();
 }
 
-void SwordControl::setupVolumePanel(void) {
+void Control::setupVolumePanel(void) {
 	ControlButton *panel = new ControlButton( 0, 0, SR_VOLUME, 0, _resMan, _screenBuf, _system);
 	panel->draw();
 	delete panel;
@@ -467,7 +468,7 @@ void SwordControl::setupVolumePanel(void) {
 	renderVolumeBar(3, volL, volR);
 }
 
-void SwordControl::handleVolumeClicks(void) {
+void Control::handleVolumeClicks(void) {
 	if (_mouseDown) {
 		uint8 clickedId = 0;
 		for (uint8 cnt = 1; cnt < 4; cnt++)
@@ -511,7 +512,7 @@ void SwordControl::handleVolumeClicks(void) {
 	}
 }
 
-void SwordControl::changeVolume(uint8 id, uint8 action) {
+void Control::changeVolume(uint8 id, uint8 action) {
 	// ids: 1 = music, 2 = speech, 3 = sfx
 	uint8 volL = 0, volR = 0;
 	if (id == 1)
@@ -552,7 +553,7 @@ void SwordControl::changeVolume(uint8 id, uint8 action) {
 	renderVolumeBar(id, volL, volR);
 }
 
-bool SwordControl::getConfirm(const uint8 *title) {
+bool Control::getConfirm(const uint8 *title) {
 	ControlButton *panel = new ControlButton( 0, 0, SR_CONFIRM, 0, _resMan, _screenBuf, _system);
 	panel->draw();
 	delete panel;
@@ -592,7 +593,7 @@ bool SwordControl::getConfirm(const uint8 *title) {
 	return retVal == 1;
 }
 
-bool SwordControl::keyAccepted(uint8 key) {
+bool Control::keyAccepted(uint8 key) {
 	// this routine needs changes for Czech keys... No idea how to do that, though.
 	static const char allowedSpecials[] = "יטבאתשהצüִײÜß,.:-()?! \"\'";
 	if (((key >= 'A') && (key <= 'Z')) ||
@@ -604,7 +605,7 @@ bool SwordControl::keyAccepted(uint8 key) {
 		return false;
 }
 
-void SwordControl::handleSaveKey(uint8 key) {
+void Control::handleSaveKey(uint8 key) {
 	if (_selectedSavegame < 255) {
 		uint8 len = strlen((char*)_saveNames[_selectedSavegame]);
 		if ((key == 8) && len)  // backspace
@@ -617,7 +618,7 @@ void SwordControl::handleSaveKey(uint8 key) {
 	}
 }
 
-bool SwordControl::saveToFile(void) {
+bool Control::saveToFile(void) {
 	if ((_selectedSavegame == 255) || !strlen((char*)_saveNames[_selectedSavegame]))
 		return false; // no saveslot selected or no name entered
 	saveGameToFile(_selectedSavegame);
@@ -625,14 +626,14 @@ bool SwordControl::saveToFile(void) {
 	return true;
 }
 
-bool SwordControl::restoreFromFile(void) {
+bool Control::restoreFromFile(void) {
 	if (_selectedSavegame < 255) {
 		return restoreGameFromFile(_selectedSavegame);
 	} else
 		return false;
 }
 
-void SwordControl::readSavegameDescriptions(void) {
+void Control::readSavegameDescriptions(void) {
 	SaveFileManager *mgr = _system->get_savefile_manager();
 	SaveFile *inf;
 	inf = mgr->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_READ);
@@ -663,7 +664,7 @@ void SwordControl::readSavegameDescriptions(void) {
 	delete mgr;
 }
 
-void SwordControl::writeSavegameDescriptions(void) {
+void Control::writeSavegameDescriptions(void) {
 	SaveFileManager *mgr = _system->get_savefile_manager();
 	SaveFile *outf;
 	outf = mgr->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_WRITE);
@@ -682,7 +683,7 @@ void SwordControl::writeSavegameDescriptions(void) {
 	delete mgr;
 }
 
-bool SwordControl::savegamesExist(void) {
+bool Control::savegamesExist(void) {
 	bool retVal = false;
 	SaveFileManager *mgr = _system->get_savefile_manager();
 	SaveFile *inf;
@@ -694,7 +695,7 @@ bool SwordControl::savegamesExist(void) {
 	return retVal;
 }
 
-void SwordControl::showSavegameNames(void) {
+void Control::showSavegameNames(void) {
 	for (uint8 cnt = 0; cnt < 8; cnt++) {
 		_buttons[cnt]->draw();
 		uint8 textMode = TEXT_LEFT_ALIGN;
@@ -707,7 +708,7 @@ void SwordControl::showSavegameNames(void) {
 	}
 }
 
-void SwordControl::saveNameSelect(uint8 id, bool saving) {
+void Control::saveNameSelect(uint8 id, bool saving) {
 	deselectSaveslots();
 	_buttons[id - BUTTON_SAVE_SELECT1]->setSelected(1);
 	uint8 num = (id - BUTTON_SAVE_SELECT1) + _saveScrollPos;
@@ -729,7 +730,7 @@ void SwordControl::saveNameSelect(uint8 id, bool saving) {
 	showSavegameNames();
 }
 
-void SwordControl::saveNameScroll(uint8 scroll, bool saving) {
+void Control::saveNameScroll(uint8 scroll, bool saving) {
 	uint16 maxScroll;
 	if (saving)
 		maxScroll = 64;
@@ -757,7 +758,7 @@ void SwordControl::saveNameScroll(uint8 scroll, bool saving) {
 	showSavegameNames();
 }
 
-void SwordControl::createButtons(const ButtonInfo *buttons, uint8 num) {
+void Control::createButtons(const ButtonInfo *buttons, uint8 num) {
 	for (uint8 cnt = 0; cnt < num; cnt++) {
 		_buttons[cnt] = new ControlButton(buttons[cnt].x, buttons[cnt].y, buttons[cnt].resId, buttons[cnt].id, _resMan, _screenBuf, _system);
 		_buttons[cnt]->draw();
@@ -765,13 +766,13 @@ void SwordControl::createButtons(const ButtonInfo *buttons, uint8 num) {
 	_numButtons = num;
 }
 
-void SwordControl::destroyButtons(void) {
+void Control::destroyButtons(void) {
 	for (uint8 cnt = 0; cnt < _numButtons; cnt++)
 		delete _buttons[cnt];
 	_numButtons = 0;
 }
 
-uint16 SwordControl::getTextWidth(const uint8 *str) {
+uint16 Control::getTextWidth(const uint8 *str) {
 	uint16 width = 0;
 	while (*str) {
 		width += FROM_LE_16(_resMan->fetchFrame(_font, *str - 32)->width) - 3;
@@ -780,7 +781,7 @@ uint16 SwordControl::getTextWidth(const uint8 *str) {
 	return width;
 }
 
-void SwordControl::renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode) {
+void Control::renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode) {
 	uint8 *font = _font;
 	if (mode & TEXT_RED_FONT)
 		font = _redFont;
@@ -811,7 +812,7 @@ void SwordControl::renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode) 
 	_system->copy_rect(_screenBuf + y * SCREEN_WIDTH + x, SCREEN_WIDTH, x, y, (destX - x) + 3, 28);
 }
 
-void SwordControl::renderVolumeBar(uint8 id, uint8 volL, uint8 volR) {
+void Control::renderVolumeBar(uint8 id, uint8 volL, uint8 volR) {
 	uint16 destX = _volumeButtons[id].x + 20;
 	uint16 destY = _volumeButtons[id].y + 116;
 	
@@ -831,7 +832,7 @@ void SwordControl::renderVolumeBar(uint8 id, uint8 volL, uint8 volR) {
 	}
 }
 
-void SwordControl::saveGameToFile(uint8 slot) {
+void Control::saveGameToFile(uint8 slot) {
 	char fName[15];
 	uint16 cnt;
 	sprintf(fName, "SAVEGAME.%03d", slot);
@@ -846,17 +847,17 @@ void SwordControl::saveGameToFile(uint8 slot) {
 	for (cnt = 0; cnt < TOTAL_SECTIONS; cnt++)
 		outf->writeUint16LE(liveBuf[cnt]);
 
-	BsObject *cpt = _objMan->fetchObject(PLAYER);
-	SwordLogic::_scriptVars[CHANGE_DIR] = cpt->o_dir;
-	SwordLogic::_scriptVars[CHANGE_X] = cpt->o_xcoord;
-	SwordLogic::_scriptVars[CHANGE_Y] = cpt->o_ycoord;
-	SwordLogic::_scriptVars[CHANGE_STANCE] = STAND;
-	SwordLogic::_scriptVars[CHANGE_PLACE] = cpt->o_place;
+	Object *cpt = _objMan->fetchObject(PLAYER);
+	Logic::_scriptVars[CHANGE_DIR] = cpt->o_dir;
+	Logic::_scriptVars[CHANGE_X] = cpt->o_xcoord;
+	Logic::_scriptVars[CHANGE_Y] = cpt->o_ycoord;
+	Logic::_scriptVars[CHANGE_STANCE] = STAND;
+	Logic::_scriptVars[CHANGE_PLACE] = cpt->o_place;
 
 	for (cnt = 0; cnt < NUM_SCRIPT_VARS; cnt++)
-		outf->writeUint32LE(SwordLogic::_scriptVars[cnt]);
+		outf->writeUint32LE(Logic::_scriptVars[cnt]);
 
-	uint32 playerSize = (sizeof(BsObject) - 12000) / 4;
+	uint32 playerSize = (sizeof(Object) - 12000) / 4;
 	uint32 *playerRaw = (uint32*)cpt;
 	for (uint32 cnt2 = 0; cnt2 < playerSize; cnt2++)
 		outf->writeUint32LE(playerRaw[cnt2]);
@@ -864,7 +865,7 @@ void SwordControl::saveGameToFile(uint8 slot) {
 	delete mgr;
 }
 
-bool SwordControl::restoreGameFromFile(uint8 slot) {
+bool Control::restoreGameFromFile(uint8 slot) {
 	char fName[15];
 	uint16 cnt;
 	sprintf(fName, "SAVEGAME.%03d", slot);
@@ -880,7 +881,7 @@ bool SwordControl::restoreGameFromFile(uint8 slot) {
 	_restoreBuf = (uint8*)malloc(
 		TOTAL_SECTIONS * 2 + 
 		NUM_SCRIPT_VARS * 4 +
-		(sizeof(BsObject) - 12000));
+		(sizeof(Object) - 12000));
 
 	uint16 *liveBuf = (uint16*)_restoreBuf;
 	uint32 *scriptBuf = (uint32*)(_restoreBuf + 2 * TOTAL_SECTIONS);
@@ -892,7 +893,7 @@ bool SwordControl::restoreGameFromFile(uint8 slot) {
 	for (cnt = 0; cnt < NUM_SCRIPT_VARS; cnt++)
 		scriptBuf[cnt] = inf->readUint32LE();
 
-	uint32 playerSize = (sizeof(BsObject) - 12000) / 4;
+	uint32 playerSize = (sizeof(Object) - 12000) / 4;
 	for (uint32 cnt2 = 0; cnt2 < playerSize; cnt2++)
 		playerBuf[cnt2] = inf->readUint32LE();
 
@@ -901,32 +902,32 @@ bool SwordControl::restoreGameFromFile(uint8 slot) {
 	return true;
 }
 
-void SwordControl::doRestore(void) {
+void Control::doRestore(void) {
 	uint8 *bufPos = _restoreBuf;
 	_objMan->loadLiveList((uint16*)bufPos);
 	bufPos += TOTAL_SECTIONS * 2;
 	for (uint16 cnt = 0; cnt < NUM_SCRIPT_VARS; cnt++) {
-		SwordLogic::_scriptVars[cnt] = *(uint32*)bufPos;
+		Logic::_scriptVars[cnt] = *(uint32*)bufPos;
 		bufPos += 4;
 	}
-	uint32 playerSize = (sizeof(BsObject) - 12000) / 4;
+	uint32 playerSize = (sizeof(Object) - 12000) / 4;
 	uint32 *playerRaw = (uint32*)_objMan->fetchObject(PLAYER);
-	BsObject *cpt = _objMan->fetchObject(PLAYER);
+	Object *cpt = _objMan->fetchObject(PLAYER);
 	for (uint32 cnt2 = 0; cnt2 < playerSize; cnt2++) {
 		*playerRaw = *(uint32*)bufPos;
 		playerRaw++;
 		bufPos += 4;
 	}
 	free(_restoreBuf);
-	SwordLogic::_scriptVars[CHANGE_DIR] = cpt->o_dir;
-	SwordLogic::_scriptVars[CHANGE_X] = cpt->o_xcoord;
-	SwordLogic::_scriptVars[CHANGE_Y] = cpt->o_ycoord;
-	SwordLogic::_scriptVars[CHANGE_STANCE] = STAND;
-	SwordLogic::_scriptVars[CHANGE_PLACE] = cpt->o_place;
+	Logic::_scriptVars[CHANGE_DIR] = cpt->o_dir;
+	Logic::_scriptVars[CHANGE_X] = cpt->o_xcoord;
+	Logic::_scriptVars[CHANGE_Y] = cpt->o_ycoord;
+	Logic::_scriptVars[CHANGE_STANCE] = STAND;
+	Logic::_scriptVars[CHANGE_PLACE] = cpt->o_place;
 	SwordEngine::_systemVars.justRestoredGame = 1;
 }
 
-void SwordControl::delay(uint32 msecs) {
+void Control::delay(uint32 msecs) {
 	OSystem::Event event;
 
 	uint32 endTime = _system->get_msecs() + msecs;
@@ -971,13 +972,13 @@ void SwordControl::delay(uint32 msecs) {
 	} while (_system->get_msecs() < endTime);
 }
 
-const ButtonInfo SwordControl::_deathButtons[3] = {
+const ButtonInfo Control::_deathButtons[3] = {
 	{250, 224 + 40, SR_BUTTON, BUTTON_RESTORE_PANEL },
 	{250, 260 + 40, SR_BUTTON, BUTTON_RESTART },
 	{250, 296 + 40, SR_BUTTON, BUTTON_QUIT }
 };
 
-const ButtonInfo SwordControl::_panelButtons[7] = {
+const ButtonInfo Control::_panelButtons[7] = {
 	{145, 188 + 40, SR_BUTTON, BUTTON_SAVE_PANEL },
 	{145, 224 + 40, SR_BUTTON, BUTTON_RESTORE_PANEL },
 	{145, 260 + 40, SR_BUTTON, BUTTON_RESTART },
@@ -987,7 +988,7 @@ const ButtonInfo SwordControl::_panelButtons[7] = {
 	{475, 332 + 40, SR_BUTTON, BUTTON_DONE }
 };
 
-const ButtonInfo SwordControl::_saveButtons[16] = { 
+const ButtonInfo Control::_saveButtons[16] = { 
 	{114,  32 + 40, SR_SLAB1, BUTTON_SAVE_SELECT1 },
 	{114,  68 + 40, SR_SLAB2, BUTTON_SAVE_SELECT2 },
 	{114, 104 + 40, SR_SLAB3, BUTTON_SAVE_SELECT3 },
@@ -1006,14 +1007,14 @@ const ButtonInfo SwordControl::_saveButtons[16] = {
 	{462, 338 + 40, SR_BUTTON, BUTTON_SAVE_CANCEL}
 };
 
-const ButtonInfo SwordControl::_volumeButtons[4] = {
+const ButtonInfo Control::_volumeButtons[4] = {
 	{ 478, 338 + 40, SR_BUTTON, BUTTON_MAIN_PANEL },
 	{ 138, 135, SR_VKNOB, 0 },
 	{ 273, 135, SR_VKNOB, 0 },
 	{ 404, 135, SR_VKNOB, 0 },
 };
 
-const uint8 SwordControl::_languageStrings[8 * 20][43] = {
+const uint8 Control::_languageStrings[8 * 20][43] = {
 	// BS1_ENGLISH:
 	"PAUSED",
 	"PLEASE INSERT CD-",
@@ -1162,3 +1163,5 @@ const uint8 SwordControl::_languageStrings[8 * 20][43] = {
 	"Fim",
 	"UNIDADE CHEIA!",
 };
+
+} // End of namespace Sword1

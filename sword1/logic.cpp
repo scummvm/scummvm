@@ -35,13 +35,15 @@
 
 #include "debug.h"
 
+namespace Sword1 {
+
 #define MAX_STACK_SIZE 10
 #define SCRIPT_VERSION  13
 #define LAST_FRAME 999
 
-uint32 SwordLogic::_scriptVars[NUM_SCRIPT_VARS];
+uint32 Logic::_scriptVars[NUM_SCRIPT_VARS];
 
-SwordLogic::SwordLogic(ObjectMan *pObjMan, ResMan *resMan, SwordScreen *pScreen, SwordMouse *pMouse, SwordSound *pSound, SwordMusic *pMusic, SwordMenu *pMenu) {
+Logic::Logic(ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Music *pMusic, Menu *pMenu) {
 	_objMan = pObjMan;
 	_resMan = resMan;
 	_screen = pScreen;
@@ -51,11 +53,11 @@ SwordLogic::SwordLogic(ObjectMan *pObjMan, ResMan *resMan, SwordScreen *pScreen,
 	_menu = pMenu;
 	_textMan = NULL;
 	_screen->useTextManager(_textMan);
-	_router = new SwordRouter(_objMan, _resMan);
+	_router = new Router(_objMan, _resMan);
 	_eventMan = NULL;
 }
 
-void SwordLogic::initialize(void) {
+void Logic::initialize(void) {
 	memset(_scriptVars, 0, NUM_SCRIPT_VARS * sizeof(uint32));
 	for (uint8 cnt = 0; cnt < NON_ZERO_SCRIPT_VARS; cnt++)
 		_scriptVars[_scriptVarInit[cnt][0]] = _scriptVarInit[cnt][1];
@@ -64,7 +66,7 @@ void SwordLogic::initialize(void) {
 	_eventMan = new EventManager();
 
 	delete _textMan;
-	_textMan = new SwordText(_objMan, _resMan, 
+	_textMan = new Text(_objMan, _resMan, 
 		(SwordEngine::_systemVars.language == BS1_CZECH) ? true : false);
 	_screen->useTextManager(_textMan);
 	_textRunning = _speechRunning = false;
@@ -72,8 +74,8 @@ void SwordLogic::initialize(void) {
 	_router->resetExtraData();
 }
 
-void SwordLogic::newScreen(uint32 screen) {
-	BsObject *compact = (BsObject*)_objMan->fetchObject(PLAYER);
+void Logic::newScreen(uint32 screen) {
+	Object *compact = (Object*)_objMan->fetchObject(PLAYER);
 
 	if (SwordEngine::_systemVars.justRestoredGame) { // if we've just restored a game - we want George to be exactly as saved
 		fnAddHuman(NULL, 0, 0, 0, 0, 0, 0, 0);
@@ -92,7 +94,7 @@ void SwordLogic::newScreen(uint32 screen) {
 	}
 }
 
-void SwordLogic::engine(void) {
+void Logic::engine(void) {
 	debug(8, "\n\nNext logic cycle");
 	_eventMan->serviceGlobalEventList();
 
@@ -101,7 +103,7 @@ void SwordLogic::engine(void) {
 			uint32 numCpts = _objMan->fetchNoObjects(sectCnt);
 			for (uint32 cptCnt = 0; cptCnt < numCpts; cptCnt++) {
 				uint32 currentId = sectCnt * ITM_PER_SEC + cptCnt;
-				BsObject *compact = _objMan->fetchObject(currentId);
+				Object *compact = _objMan->fetchObject(currentId);
 
 				if (compact->o_status & STAT_LOGIC) { // does the object want to be processed?
 					if (compact->o_status & STAT_EVENTS) {
@@ -114,7 +116,7 @@ void SwordLogic::engine(void) {
 								break;
 						}
 					}
-					debug(7, "SwordLogic::engine: handling compact %d (%X)", currentId, currentId);
+					debug(7, "Logic::engine: handling compact %d (%X)", currentId, currentId);
 					processLogic(compact, currentId);
 					compact->o_sync = 0; // syncs are only available for 1 cycle.
 				}
@@ -137,7 +139,7 @@ void SwordLogic::engine(void) {
 
 }
 
-void SwordLogic::processLogic(BsObject *compact, uint32 id) {
+void Logic::processLogic(Object *compact, uint32 id) {
 	int logicRet;
 	do {
 		switch(compact->o_logic) {
@@ -222,8 +224,8 @@ void SwordLogic::processLogic(BsObject *compact, uint32 id) {
 	} while(logicRet);
 }
 
-int SwordLogic::logicWaitTalk(BsObject *compact) {
-	BsObject *target = _objMan->fetchObject(compact->o_down_flag);
+int Logic::logicWaitTalk(Object *compact) {
+	Object *target = _objMan->fetchObject(compact->o_down_flag);
 	
 	if (target->o_status & STAT_TALK_WAIT) {
 		compact->o_logic = LOGIC_script;
@@ -233,8 +235,8 @@ int SwordLogic::logicWaitTalk(BsObject *compact) {
 	}
 }
 
-int SwordLogic::logicStartTalk(BsObject *compact) {
-	BsObject *target = _objMan->fetchObject(compact->o_down_flag); //holds id of person we're waiting for
+int Logic::logicStartTalk(Object *compact) {
+	Object *target = _objMan->fetchObject(compact->o_down_flag); //holds id of person we're waiting for
 	if (target->o_status & STAT_TALK_WAIT) { //response?
 		compact->o_logic = LOGIC_script; //back to script again
 		return SCRIPT_CONT;
@@ -247,7 +249,7 @@ int SwordLogic::logicStartTalk(BsObject *compact) {
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::logicArAnimate(BsObject *compact, uint32 id) {
+int Logic::logicArAnimate(Object *compact, uint32 id) {
 	WalkData *route;
 	int32 walkPc;
 	if ((_scriptVars[GEORGE_WALKING] == 0) && (id == PLAYER))
@@ -298,7 +300,7 @@ int SwordLogic::logicArAnimate(BsObject *compact, uint32 id) {
 	return 0;
 }
 
-int SwordLogic::speechDriver(BsObject *compact) {
+int Logic::speechDriver(Object *compact) {
 	if ((!_speechClickDelay) && (_mouse->testEvent() & BS1L_BUTTON_DOWN))
 		_speechFinished = true;
 	if (_speechClickDelay)
@@ -345,7 +347,7 @@ int SwordLogic::speechDriver(BsObject *compact) {
 	return 0;
 }
 
-int SwordLogic::fullAnimDriver(BsObject *compact) {
+int Logic::fullAnimDriver(Object *compact) {
 	if (compact->o_sync) { // return to script immediately if we've received a sync
 		compact->o_logic = LOGIC_script;
 		return 1;
@@ -367,7 +369,7 @@ int SwordLogic::fullAnimDriver(BsObject *compact) {
 	return 0;
 }
 
-int SwordLogic::animDriver(BsObject *compact) {
+int Logic::animDriver(Object *compact) {
 	if (compact->o_sync) {
 		compact->o_logic = LOGIC_script;
 		return 1;
@@ -390,18 +392,18 @@ int SwordLogic::animDriver(BsObject *compact) {
 	return 0;
 }
 
-void SwordLogic::updateScreenParams(void) {
-	BsObject *compact = (BsObject*)_objMan->fetchObject(PLAYER);
+void Logic::updateScreenParams(void) {
+	Object *compact = (Object*)_objMan->fetchObject(PLAYER);
 	_screen->setScrolling((int16)(compact->o_xcoord - _scriptVars[FEET_X]), 
 						  (int16)(compact->o_ycoord - _scriptVars[FEET_Y]));
 }
 
-int SwordLogic::scriptManager(BsObject *compact, uint32 id) {
+int Logic::scriptManager(Object *compact, uint32 id) {
 	int ret;
 	do {
 		uint32 level = compact->o_tree.o_script_level;
 		uint32 script = compact->o_tree.o_script_id[level];
-		SwordDebug::interpretScript(id, level, script, compact->o_tree.o_script_pc[level] & ITM_ID);
+		Debug::interpretScript(id, level, script, compact->o_tree.o_script_pc[level] & ITM_ID);
 		ret = interpretScript(compact, id, _resMan->lockScript(script), script, compact->o_tree.o_script_pc[level] & ITM_ID);
 		_resMan->unlockScript(script);
 		if (!ret) {
@@ -422,14 +424,14 @@ int SwordLogic::scriptManager(BsObject *compact, uint32 id) {
 	//an FN_quit becomes slightly more convoluted, but so what you might ask.
 }
 
-void SwordLogic::runMouseScript(BsObject *cpt, int32 scriptId) {
+void Logic::runMouseScript(Object *cpt, int32 scriptId) {
 	Header *script = _resMan->lockScript(scriptId);
 	debug(9, "running mouse script %d", scriptId);
 	interpretScript(cpt, _scriptVars[SPECIAL_ITEM], script, scriptId, scriptId);
 	_resMan->unlockScript(scriptId);
 }
 
-int SwordLogic::interpretScript(BsObject *compact, int id, Header *scriptModule, int scriptBase, int scriptNum) {
+int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int scriptBase, int scriptNum) {
 	int32 *scriptCode = (int32*)(((uint8*)scriptModule) + sizeof(Header));
 	int32 stack[MAX_STACK_SIZE];
 	int32 stackIdx = 0;
@@ -468,7 +470,7 @@ int SwordLogic::interpretScript(BsObject *compact, int id, Header *scriptModule,
 					case 2: b = stack[--stackIdx];
 					case 1: a = stack[--stackIdx];
 					case 0:
-						SwordDebug::callMCode(mCodeNumber, mCodeArguments, a, b, c, d, e, f);
+						Debug::callMCode(mCodeNumber, mCodeArguments, a, b, c, d, e, f);
 						mCodeReturn = (this->*_mcodeTable[mCodeNumber])(compact, id, a, b, c, d, e, f);
 						break;
 					default:
@@ -641,140 +643,140 @@ int SwordLogic::interpretScript(BsObject *compact, int id, Header *scriptModule,
 	}
 }
 
-BSMcodeTable SwordLogic::_mcodeTable[100] = {
-	&SwordLogic::fnBackground,
-	&SwordLogic::fnForeground,
-	&SwordLogic::fnSort,
-	&SwordLogic::fnNoSprite,
-	&SwordLogic::fnMegaSet,
-	&SwordLogic::fnAnim,
-	&SwordLogic::fnSetFrame,
-	&SwordLogic::fnFullAnim,
-	&SwordLogic::fnFullSetFrame,
-	&SwordLogic::fnFadeDown,
-	&SwordLogic::fnFadeUp,
-	&SwordLogic::fnCheckFade,
-	&SwordLogic::fnSetSpritePalette,
-	&SwordLogic::fnSetWholePalette,
-	&SwordLogic::fnSetFadeTargetPalette,
-	&SwordLogic::fnSetPaletteToFade,
-	&SwordLogic::fnSetPaletteToCut,
-	&SwordLogic::fnPlaySequence,
-	&SwordLogic::fnIdle,
-	&SwordLogic::fnPause,
-	&SwordLogic::fnPauseSeconds,
-	&SwordLogic::fnQuit,
-	&SwordLogic::fnKillId,
-	&SwordLogic::fnSuicide,
-	&SwordLogic::fnNewScript,
-	&SwordLogic::fnSubScript,
-	&SwordLogic::fnRestartScript,
-	&SwordLogic::fnSetBookmark,
-	&SwordLogic::fnGotoBookmark,
-	&SwordLogic::fnSendSync,
-	&SwordLogic::fnWaitSync,
-	&SwordLogic::cfnClickInteract,
-	&SwordLogic::cfnSetScript,
-	&SwordLogic::cfnPresetScript,
-	&SwordLogic::fnInteract,
-	&SwordLogic::fnIssueEvent,
-	&SwordLogic::fnCheckForEvent,
-	&SwordLogic::fnWipeHands,
-	&SwordLogic::fnISpeak,
-	&SwordLogic::fnTheyDo,
-	&SwordLogic::fnTheyDoWeWait,
-	&SwordLogic::fnWeWait,
-	&SwordLogic::fnChangeSpeechText,
-	&SwordLogic::fnTalkError,
-	&SwordLogic::fnStartTalk,
-	&SwordLogic::fnCheckForTextLine,
-	&SwordLogic::fnAddTalkWaitStatusBit,
-	&SwordLogic::fnRemoveTalkWaitStatusBit,
-	&SwordLogic::fnNoHuman,
-	&SwordLogic::fnAddHuman,
-	&SwordLogic::fnBlankMouse,
-	&SwordLogic::fnNormalMouse,
-	&SwordLogic::fnLockMouse,
-	&SwordLogic::fnUnlockMouse,
-	&SwordLogic::fnSetMousePointer,
-	&SwordLogic::fnSetMouseLuggage,
-	&SwordLogic::fnMouseOn,
-	&SwordLogic::fnMouseOff,
-	&SwordLogic::fnChooser,
-	&SwordLogic::fnEndChooser,
-	&SwordLogic::fnStartMenu,
-	&SwordLogic::fnEndMenu,
-	&SwordLogic::cfnReleaseMenu,
-	&SwordLogic::fnAddSubject,
-	&SwordLogic::fnAddObject,
-	&SwordLogic::fnRemoveObject,
-	&SwordLogic::fnEnterSection,
-	&SwordLogic::fnLeaveSection,
-	&SwordLogic::fnChangeFloor,
-	&SwordLogic::fnWalk,
-	&SwordLogic::fnTurn,
-	&SwordLogic::fnStand,
-	&SwordLogic::fnStandAt,
-	&SwordLogic::fnFace,
-	&SwordLogic::fnFaceXy,
-	&SwordLogic::fnIsFacing,
-	&SwordLogic::fnGetTo,
-	&SwordLogic::fnGetToError,
-	&SwordLogic::fnGetPos,
-	&SwordLogic::fnGetGamepadXy,
-	&SwordLogic::fnPlayFx,
-	&SwordLogic::fnStopFx,
-	&SwordLogic::fnPlayMusic,
-	&SwordLogic::fnStopMusic,
-	&SwordLogic::fnInnerSpace,
-	&SwordLogic::fnRandom,
-	&SwordLogic::fnSetScreen,
-	&SwordLogic::fnPreload,
-	&SwordLogic::fnCheckCD,
-	&SwordLogic::fnRestartGame,
-	&SwordLogic::fnQuitGame,
-	&SwordLogic::fnDeathScreen,
-	&SwordLogic::fnSetParallax,
-	&SwordLogic::fnTdebug,
-	&SwordLogic::fnRedFlash,
-	&SwordLogic::fnBlueFlash,
-	&SwordLogic::fnYellow,
-	&SwordLogic::fnGreen,
-	&SwordLogic::fnPurple,
-	&SwordLogic::fnBlack
+BSMcodeTable Logic::_mcodeTable[100] = {
+	&Logic::fnBackground,
+	&Logic::fnForeground,
+	&Logic::fnSort,
+	&Logic::fnNoSprite,
+	&Logic::fnMegaSet,
+	&Logic::fnAnim,
+	&Logic::fnSetFrame,
+	&Logic::fnFullAnim,
+	&Logic::fnFullSetFrame,
+	&Logic::fnFadeDown,
+	&Logic::fnFadeUp,
+	&Logic::fnCheckFade,
+	&Logic::fnSetSpritePalette,
+	&Logic::fnSetWholePalette,
+	&Logic::fnSetFadeTargetPalette,
+	&Logic::fnSetPaletteToFade,
+	&Logic::fnSetPaletteToCut,
+	&Logic::fnPlaySequence,
+	&Logic::fnIdle,
+	&Logic::fnPause,
+	&Logic::fnPauseSeconds,
+	&Logic::fnQuit,
+	&Logic::fnKillId,
+	&Logic::fnSuicide,
+	&Logic::fnNewScript,
+	&Logic::fnSubScript,
+	&Logic::fnRestartScript,
+	&Logic::fnSetBookmark,
+	&Logic::fnGotoBookmark,
+	&Logic::fnSendSync,
+	&Logic::fnWaitSync,
+	&Logic::cfnClickInteract,
+	&Logic::cfnSetScript,
+	&Logic::cfnPresetScript,
+	&Logic::fnInteract,
+	&Logic::fnIssueEvent,
+	&Logic::fnCheckForEvent,
+	&Logic::fnWipeHands,
+	&Logic::fnISpeak,
+	&Logic::fnTheyDo,
+	&Logic::fnTheyDoWeWait,
+	&Logic::fnWeWait,
+	&Logic::fnChangeSpeechText,
+	&Logic::fnTalkError,
+	&Logic::fnStartTalk,
+	&Logic::fnCheckForTextLine,
+	&Logic::fnAddTalkWaitStatusBit,
+	&Logic::fnRemoveTalkWaitStatusBit,
+	&Logic::fnNoHuman,
+	&Logic::fnAddHuman,
+	&Logic::fnBlankMouse,
+	&Logic::fnNormalMouse,
+	&Logic::fnLockMouse,
+	&Logic::fnUnlockMouse,
+	&Logic::fnSetMousePointer,
+	&Logic::fnSetMouseLuggage,
+	&Logic::fnMouseOn,
+	&Logic::fnMouseOff,
+	&Logic::fnChooser,
+	&Logic::fnEndChooser,
+	&Logic::fnStartMenu,
+	&Logic::fnEndMenu,
+	&Logic::cfnReleaseMenu,
+	&Logic::fnAddSubject,
+	&Logic::fnAddObject,
+	&Logic::fnRemoveObject,
+	&Logic::fnEnterSection,
+	&Logic::fnLeaveSection,
+	&Logic::fnChangeFloor,
+	&Logic::fnWalk,
+	&Logic::fnTurn,
+	&Logic::fnStand,
+	&Logic::fnStandAt,
+	&Logic::fnFace,
+	&Logic::fnFaceXy,
+	&Logic::fnIsFacing,
+	&Logic::fnGetTo,
+	&Logic::fnGetToError,
+	&Logic::fnGetPos,
+	&Logic::fnGetGamepadXy,
+	&Logic::fnPlayFx,
+	&Logic::fnStopFx,
+	&Logic::fnPlayMusic,
+	&Logic::fnStopMusic,
+	&Logic::fnInnerSpace,
+	&Logic::fnRandom,
+	&Logic::fnSetScreen,
+	&Logic::fnPreload,
+	&Logic::fnCheckCD,
+	&Logic::fnRestartGame,
+	&Logic::fnQuitGame,
+	&Logic::fnDeathScreen,
+	&Logic::fnSetParallax,
+	&Logic::fnTdebug,
+	&Logic::fnRedFlash,
+	&Logic::fnBlueFlash,
+	&Logic::fnYellow,
+	&Logic::fnGreen,
+	&Logic::fnPurple,
+	&Logic::fnBlack
 };
 
-int SwordLogic::fnBackground(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnBackground(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	
 	cpt->o_status &= ~(STAT_FORE | STAT_SORT);
 	cpt->o_status |= STAT_BACK;
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnForeground(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnForeground(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_status &= ~(STAT_BACK | STAT_SORT);
 	cpt->o_status |= STAT_FORE;
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnSort(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnSort(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_status &= ~(STAT_BACK | STAT_FORE);
 	cpt->o_status |= STAT_SORT;
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnNoSprite(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnNoSprite(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_status &= ~(STAT_BACK | STAT_FORE | STAT_SORT);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnMegaSet(BsObject *cpt, int32 id, int32 walk_data, int32 spr, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnMegaSet(Object *cpt, int32 id, int32 walk_data, int32 spr, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_mega_resource = walk_data;
 	cpt->o_walk_resource = spr;
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnAnim(BsObject *cpt, int32 id, int32 cdt, int32 spr, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnAnim(Object *cpt, int32 id, int32 cdt, int32 spr, int32 e, int32 f, int32 z, int32 x) {
 	AnimSet *animTab;
 
 	if (cdt && (!spr)) {
@@ -808,7 +810,7 @@ int SwordLogic::fnAnim(BsObject *cpt, int32 id, int32 cdt, int32 spr, int32 e, i
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnSetFrame(BsObject *cpt, int32 id, int32 cdt, int32 spr, int32 frameNo, int32 f, int32 z, int32 x) {
+int Logic::fnSetFrame(Object *cpt, int32 id, int32 cdt, int32 spr, int32 frameNo, int32 f, int32 z, int32 x) {
 	
 	AnimUnit   *animPtr;
 
@@ -830,7 +832,7 @@ int SwordLogic::fnSetFrame(BsObject *cpt, int32 id, int32 cdt, int32 spr, int32 
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnFullAnim(BsObject *cpt, int32 id, int32 anim, int32 graphic, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnFullAnim(Object *cpt, int32 id, int32 anim, int32 graphic, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_logic = LOGIC_full_anim;
 
 	cpt->o_anim_pc = 0;
@@ -841,7 +843,7 @@ int SwordLogic::fnFullAnim(BsObject *cpt, int32 id, int32 anim, int32 graphic, i
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnFullSetFrame(BsObject *cpt, int32 id, int32 cdt, int32 spr, int32 frameNo, int32 f, int32 z, int32 x) {
+int Logic::fnFullSetFrame(Object *cpt, int32 id, int32 cdt, int32 spr, int32 frameNo, int32 f, int32 z, int32 x) {
 	uint8 *data = (uint8*)_resMan->openFetchRes(cdt) + sizeof(Header);
 
 	if (frameNo == LAST_FRAME)
@@ -860,47 +862,47 @@ int SwordLogic::fnFullSetFrame(BsObject *cpt, int32 id, int32 cdt, int32 spr, in
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnFadeDown(BsObject *cpt, int32 id, int32 speed, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnFadeDown(Object *cpt, int32 id, int32 speed, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_screen->fadeDownPalette();
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnFadeUp(BsObject *cpt, int32 id, int32 speed, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnFadeUp(Object *cpt, int32 id, int32 speed, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_screen->fadeUpPalette();
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnCheckFade(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnCheckFade(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_scriptVars[RETURN_VALUE] = (uint8)_screen->stillFading();
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnSetSpritePalette(BsObject *cpt, int32 id, int32 spritePal, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnSetSpritePalette(Object *cpt, int32 id, int32 spritePal, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_screen->fnSetPalette(184, 72, spritePal, false);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnSetWholePalette(BsObject *cpt, int32 id, int32 spritePal, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnSetWholePalette(Object *cpt, int32 id, int32 spritePal, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_screen->fnSetPalette(0, 256, spritePal, false);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnSetFadeTargetPalette(BsObject *cpt, int32 id, int32 spritePal, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnSetFadeTargetPalette(Object *cpt, int32 id, int32 spritePal, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_screen->fnSetPalette(0, 184, spritePal, true);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnSetPaletteToFade(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnSetPaletteToFade(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	SwordEngine::_systemVars.wantFade = true;
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnSetPaletteToCut(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnSetPaletteToCut(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	SwordEngine::_systemVars.wantFade = false;
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnPlaySequence(BsObject *cpt, int32 id, int32 sequenceId, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnPlaySequence(Object *cpt, int32 id, int32 sequenceId, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	warning("fnPlaySequence(%d) called", sequenceId);
 	//_scriptVars[NEW_PALETTE] = 1;
 	/* the logic usually calls fnFadeDown before playing the sequence, so we have to
@@ -908,48 +910,48 @@ int SwordLogic::fnPlaySequence(BsObject *cpt, int32 id, int32 sequenceId, int32 
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnIdle(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnIdle(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_tree.o_script_level = 0; // force to level 0
 	cpt->o_logic = LOGIC_idle;
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnPause(BsObject *cpt, int32 id, int32 pause, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnPause(Object *cpt, int32 id, int32 pause, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_pause = pause;
 	cpt->o_logic = LOGIC_pause;
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnPauseSeconds(BsObject *cpt, int32 id, int32 pause, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnPauseSeconds(Object *cpt, int32 id, int32 pause, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_pause = pause * FRAME_RATE;
 	cpt->o_logic = LOGIC_pause;
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnQuit(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnQuit(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_logic = LOGIC_quit;
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnKillId(BsObject *cpt, int32 id, int32 target, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	BsObject *targetObj = _objMan->fetchObject(target);
+int Logic::fnKillId(Object *cpt, int32 id, int32 target, int32 d, int32 e, int32 f, int32 z, int32 x) {
+	Object *targetObj = _objMan->fetchObject(target);
 	targetObj->o_status = 0;
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnSuicide(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnSuicide(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_status = 0;
 	cpt->o_logic = LOGIC_quit;
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnNewScript(BsObject *cpt, int32 id, int32 script, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnNewScript(Object *cpt, int32 id, int32 script, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_logic = LOGIC_new_script;
 	_newScript = script;
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnSubScript(BsObject *cpt, int32 id, int32 script, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnSubScript(Object *cpt, int32 id, int32 script, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_tree.o_script_level++;
 	if (cpt->o_tree.o_script_level == TOTAL_script_levels)
 		error("Compact %d: script level exceeded in fnSubScript.", id);
@@ -958,34 +960,34 @@ int SwordLogic::fnSubScript(BsObject *cpt, int32 id, int32 script, int32 d, int3
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnRestartScript(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnRestartScript(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_logic = LOGIC_restart;
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnSetBookmark(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnSetBookmark(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	memcpy(&cpt->o_bookmark.o_script_level, &cpt->o_tree.o_script_level, sizeof(ScriptTree));
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnGotoBookmark(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnGotoBookmark(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_logic = LOGIC_bookmark;
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnSendSync(BsObject *cpt, int32 id, int32 sendId, int32 syncValue, int32 e, int32 f, int32 z, int32 x) {
-	BsObject *target = _objMan->fetchObject(sendId);
+int Logic::fnSendSync(Object *cpt, int32 id, int32 sendId, int32 syncValue, int32 e, int32 f, int32 z, int32 x) {
+	Object *target = _objMan->fetchObject(sendId);
 	target->o_sync = syncValue;
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnWaitSync(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnWaitSync(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_logic = LOGIC_wait_for_sync;
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::cfnClickInteract(BsObject *cpt, int32 id, int32 target, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	BsObject *tar = _objMan->fetchObject(target);
+int Logic::cfnClickInteract(Object *cpt, int32 id, int32 target, int32 d, int32 e, int32 f, int32 z, int32 x) {
+	Object *tar = _objMan->fetchObject(target);
 	cpt = _objMan->fetchObject(PLAYER);
 	cpt->o_tree.o_script_level = 0;
 	cpt->o_tree.o_script_pc[0] = tar->o_interact;
@@ -994,8 +996,8 @@ int SwordLogic::cfnClickInteract(BsObject *cpt, int32 id, int32 target, int32 d,
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::cfnSetScript(BsObject *cpt, int32 id, int32 target, int32 script, int32 e, int32 f, int32 z, int32 x) {
-	BsObject *tar = _objMan->fetchObject(target);
+int Logic::cfnSetScript(Object *cpt, int32 id, int32 target, int32 script, int32 e, int32 f, int32 z, int32 x) {
+	Object *tar = _objMan->fetchObject(target);
 	tar->o_tree.o_script_level = 0;
 	tar->o_tree.o_script_pc[0] = script;
 	tar->o_tree.o_script_id[0] = script;
@@ -1003,8 +1005,8 @@ int SwordLogic::cfnSetScript(BsObject *cpt, int32 id, int32 target, int32 script
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::cfnPresetScript(BsObject *cpt, int32 id, int32 target, int32 script, int32 e, int32 f, int32 z, int32 x) {
-	BsObject *tar = _objMan->fetchObject(target);
+int Logic::cfnPresetScript(Object *cpt, int32 id, int32 target, int32 script, int32 e, int32 f, int32 z, int32 x) {
+	Object *tar = _objMan->fetchObject(target);
 	tar->o_tree.o_script_level = 0;
 	tar->o_tree.o_script_pc[0] = script;
 	tar->o_tree.o_script_id[0] = script;
@@ -1013,11 +1015,11 @@ int SwordLogic::cfnPresetScript(BsObject *cpt, int32 id, int32 target, int32 scr
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnInteract(BsObject *cpt, int32 id, int32 target, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	BsObject *tar = _objMan->fetchObject(target);
+int Logic::fnInteract(Object *cpt, int32 id, int32 target, int32 d, int32 e, int32 f, int32 z, int32 x) {
+	Object *tar = _objMan->fetchObject(target);
 	cpt->o_place = tar->o_place;
 
-	BsObject *floorObject = _objMan->fetchObject(tar->o_place);
+	Object *floorObject = _objMan->fetchObject(tar->o_place);
 	cpt->o_scale_a = floorObject->o_scale_a;
 	cpt->o_scale_b = floorObject->o_scale_b;
 
@@ -1028,23 +1030,23 @@ int SwordLogic::fnInteract(BsObject *cpt, int32 id, int32 target, int32 d, int32
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnIssueEvent(BsObject *cpt, int32 id, int32 event, int32 delay, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnIssueEvent(Object *cpt, int32 id, int32 event, int32 delay, int32 e, int32 f, int32 z, int32 x) {
 	_eventMan->fnIssueEvent(cpt, id, event, delay);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnCheckForEvent(BsObject *cpt, int32 id, int32 pause, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnCheckForEvent(Object *cpt, int32 id, int32 pause, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	return _eventMan->fnCheckForEvent(cpt, id, pause);
 }
 
-int SwordLogic::fnWipeHands(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnWipeHands(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_scriptVars[OBJECT_HELD] = 0;
 	_mouse->setLuggage(0, 0);
 	_menu->refresh(MENU_TOP);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnISpeak(BsObject *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, int32 f, int32 z, int32 x) {
+int Logic::fnISpeak(Object *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, int32 f, int32 z, int32 x) {
 	_speechClickDelay = 3;
 	if (((textNo & ~1) == 0x3f0012) && (!cdt) && (!spr)) {
 		cdt = GEOSTDLCDT; // workaround for missing animation when examining
@@ -1094,11 +1096,11 @@ int SwordLogic::fnISpeak(BsObject *cpt, int32 id, int32 cdt, int32 textNo, int32
 		uint32 textCptId = _textMan->lowTextManager((uint8*)text, cpt->o_speech_width, (uint8)cpt->o_speech_pen);
 		_objMan->unlockText(textNo);
 
-		BsObject * textCpt = _objMan->fetchObject(textCptId);
+		Object * textCpt = _objMan->fetchObject(textCptId);
 		textCpt->o_screen = cpt->o_screen;
 		textCpt->o_target = textCptId;
 
-		// the graphic is a property of SwordText, so we don't lock/unlock it.
+		// the graphic is a property of Text, so we don't lock/unlock it.
 		uint16 textSpriteWidth  = FROM_LE_16(_textMan->giveSpriteData(textCpt->o_target)->width);
 		uint16 textSpriteHeight = FROM_LE_16(_textMan->giveSpriteData(textCpt->o_target)->height);
 
@@ -1136,8 +1138,8 @@ int SwordLogic::fnISpeak(BsObject *cpt, int32 id, int32 cdt, int32 textNo, int32
 
 //send instructions to mega in conversation with player
 //the instruction is interpreted by the script mega_interact
-int SwordLogic::fnTheyDo(BsObject *cpt, int32 id, int32 tar, int32 instruc, int32 param1, int32 param2, int32 param3, int32 x) {
-	BsObject *target;
+int Logic::fnTheyDo(Object *cpt, int32 id, int32 tar, int32 instruc, int32 param1, int32 param2, int32 param3, int32 x) {
+	Object *target;
 	target = _objMan->fetchObject(tar);
 	target->o_down_flag = instruc; // instruction for the mega
 	target->o_ins1 = param1;
@@ -1148,8 +1150,8 @@ int SwordLogic::fnTheyDo(BsObject *cpt, int32 id, int32 tar, int32 instruc, int3
 
 //send an instruction to mega we're talking to and wait
 //until it has finished before returning to script
-int SwordLogic::fnTheyDoWeWait(BsObject *cpt, int32 id, int32 tar, int32 instruc, int32 param1, int32 param2, int32 param3, int32 x) {
-	BsObject *target;
+int Logic::fnTheyDoWeWait(Object *cpt, int32 id, int32 tar, int32 instruc, int32 param1, int32 param2, int32 param3, int32 x) {
+	Object *target;
 	target = _objMan->fetchObject(tar);
 	target->o_down_flag = instruc; // instruction for the mega
 	target->o_ins1 = param1;
@@ -1162,8 +1164,8 @@ int SwordLogic::fnTheyDoWeWait(BsObject *cpt, int32 id, int32 tar, int32 instruc
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnWeWait(BsObject *cpt, int32 id, int32 tar, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	BsObject *target = _objMan->fetchObject(tar);
+int Logic::fnWeWait(Object *cpt, int32 id, int32 tar, int32 d, int32 e, int32 f, int32 z, int32 x) {
+	Object *target = _objMan->fetchObject(tar);
 	target->o_status &= ~STAT_TALK_WAIT;
 
 	cpt->o_logic = LOGIC_wait_for_talk;
@@ -1172,8 +1174,8 @@ int SwordLogic::fnWeWait(BsObject *cpt, int32 id, int32 tar, int32 d, int32 e, i
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnChangeSpeechText(BsObject *cpt, int32 id, int32 tar, int32 width, int32 pen, int32 f, int32 z, int32 x) {
-	BsObject *target = _objMan->fetchObject(tar);
+int Logic::fnChangeSpeechText(Object *cpt, int32 id, int32 tar, int32 width, int32 pen, int32 f, int32 z, int32 x) {
+	Object *target = _objMan->fetchObject(tar);
 	target->o_speech_width = width;
 	target->o_speech_pen = pen;
 	return SCRIPT_STOP;
@@ -1181,123 +1183,123 @@ int SwordLogic::fnChangeSpeechText(BsObject *cpt, int32 id, int32 tar, int32 wid
 
 //mega_interact has received an instruction it does not understand -
 //The game is halted for debugging. Maybe we'll remove this later.
-int SwordLogic::fnTalkError(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnTalkError(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	error("fnTalkError for id %d, instruction %d", id, cpt->o_down_flag);
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnStartTalk(BsObject *cpt, int32 id, int32 target, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnStartTalk(Object *cpt, int32 id, int32 target, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_down_flag = target;
 	cpt->o_logic = LOGIC_start_talk;
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnCheckForTextLine(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnCheckForTextLine(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_scriptVars[RETURN_VALUE] = _objMan->fnCheckForTextLine(id);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnAddTalkWaitStatusBit(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnAddTalkWaitStatusBit(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_status |= STAT_TALK_WAIT;
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnRemoveTalkWaitStatusBit(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnRemoveTalkWaitStatusBit(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_status &= ~STAT_TALK_WAIT;
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnNoHuman(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnNoHuman(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_mouse->fnNoHuman();
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnAddHuman(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnAddHuman(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_mouse->fnAddHuman();
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnBlankMouse(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnBlankMouse(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_mouse->fnBlankMouse();
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnNormalMouse(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnNormalMouse(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_mouse->fnNormalMouse();
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnLockMouse(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnLockMouse(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_mouse->fnLockMouse();
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnUnlockMouse(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnUnlockMouse(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_mouse->fnUnlockMouse();
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnSetMousePointer(BsObject *cpt, int32 id, int32 tag, int32 rate, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnSetMousePointer(Object *cpt, int32 id, int32 tag, int32 rate, int32 e, int32 f, int32 z, int32 x) {
 	_mouse->setPointer(tag, rate);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnSetMouseLuggage(BsObject *cpt, int32 id, int32 tag, int32 rate, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnSetMouseLuggage(Object *cpt, int32 id, int32 tag, int32 rate, int32 e, int32 f, int32 z, int32 x) {
 	_mouse->setLuggage(tag, rate);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnMouseOn(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnMouseOn(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_status |= STAT_MOUSE;
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnMouseOff(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnMouseOff(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_status &= ~STAT_MOUSE;
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnChooser(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnChooser(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_menu->fnChooser(cpt);
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnEndChooser(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnEndChooser(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_menu->fnEndChooser();
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnStartMenu(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnStartMenu(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_menu->fnStartMenu();
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnEndMenu(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnEndMenu(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_menu->fnEndMenu();
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::cfnReleaseMenu(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::cfnReleaseMenu(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_menu->cfnReleaseMenu();
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnAddSubject(BsObject *cpt, int32 id, int32 sub, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnAddSubject(Object *cpt, int32 id, int32 sub, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_menu->fnAddSubject(sub);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnAddObject(BsObject *cpt, int32 id, int32 objectNo, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnAddObject(Object *cpt, int32 id, int32 objectNo, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_scriptVars[POCKET_1 + objectNo - 1] = 1; // basically means: carrying object objectNo = true;
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnRemoveObject(BsObject *cpt, int32 id, int32 objectNo, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnRemoveObject(Object *cpt, int32 id, int32 objectNo, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	_scriptVars[POCKET_1 + objectNo - 1] = 0;
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnEnterSection(BsObject *cpt, int32 id, int32 screen, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnEnterSection(Object *cpt, int32 id, int32 screen, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	if (screen >= TOTAL_SECTIONS)
 		error("mega %d tried entering section %d", id, screen);
 
@@ -1312,22 +1314,22 @@ int SwordLogic::fnEnterSection(BsObject *cpt, int32 id, int32 screen, int32 d, i
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnLeaveSection(BsObject *cpt, int32 id, int32 oldScreen, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnLeaveSection(Object *cpt, int32 id, int32 oldScreen, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	if (oldScreen >= TOTAL_SECTIONS)
 		error("mega %d leaving section %d", id, oldScreen);
 	_objMan->megaLeaving(oldScreen, id);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnChangeFloor(BsObject *cpt, int32 id, int32 floor, int32 d, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnChangeFloor(Object *cpt, int32 id, int32 floor, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	cpt->o_place = floor;
-	BsObject *floorCpt = _objMan->fetchObject(floor);
+	Object *floorCpt = _objMan->fetchObject(floor);
 	cpt->o_scale_a = floorCpt->o_scale_a;
 	cpt->o_scale_b = floorCpt->o_scale_b;
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnWalk(BsObject *cpt, int32 id, int32 x, int32 y, int32 dir, int32 stance, int32 a, int32 b) {
+int Logic::fnWalk(Object *cpt, int32 id, int32 x, int32 y, int32 dir, int32 stance, int32 a, int32 b) {
 	if (stance > 0)
 		dir = 9;
 	cpt->o_walk_pc = 0;
@@ -1371,7 +1373,7 @@ int SwordLogic::fnWalk(BsObject *cpt, int32 id, int32 x, int32 y, int32 dir, int
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnTurn(BsObject *cpt, int32 id, int32 dir, int32 stance, int32 c, int32 d, int32 a, int32 b) {
+int Logic::fnTurn(Object *cpt, int32 id, int32 dir, int32 stance, int32 c, int32 d, int32 a, int32 b) {
 	if (stance > 0)
 		dir = 9;
 	int route = _router->routeFinder(id, cpt, cpt->o_xcoord, cpt->o_ycoord, dir);
@@ -1387,7 +1389,7 @@ int SwordLogic::fnTurn(BsObject *cpt, int32 id, int32 dir, int32 stance, int32 c
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnStand(BsObject *cpt, int32 id, int32 dir, int32 stance, int32 c, int32 d, int32 a, int32 b) {
+int Logic::fnStand(Object *cpt, int32 id, int32 dir, int32 stance, int32 c, int32 d, int32 a, int32 b) {
 	if ((dir < 0) || (dir > 8)) {
 		warning("fnStand:: invalid direction %d", dir);
 		return SCRIPT_CONT;
@@ -1403,7 +1405,7 @@ int SwordLogic::fnStand(BsObject *cpt, int32 id, int32 dir, int32 stance, int32 
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnStandAt(BsObject *cpt, int32 id, int32 x, int32 y, int32 dir, int32 stance, int32 a, int32 b) {
+int Logic::fnStandAt(Object *cpt, int32 id, int32 x, int32 y, int32 dir, int32 stance, int32 a, int32 b) {
 	if ((dir < 0) || (dir > 8)) {
 		warning("fnStandAt:: invalid direction %d", dir);
 		return SCRIPT_CONT;
@@ -1415,8 +1417,8 @@ int SwordLogic::fnStandAt(BsObject *cpt, int32 id, int32 x, int32 y, int32 dir, 
 	return fnStand(cpt, id, dir, stance, 0, 0, 0, 0);
 }
 
-int SwordLogic::fnFace(BsObject *cpt, int32 id, int32 targetId, int32 b, int32 c, int32 d, int32 a, int32 z) {
-	BsObject *target = _objMan->fetchObject(targetId);
+int Logic::fnFace(Object *cpt, int32 id, int32 targetId, int32 b, int32 c, int32 d, int32 a, int32 z) {
+	Object *target = _objMan->fetchObject(targetId);
 	int32 x, y;
 	if ((target->o_type == TYPE_MEGA) || (target->o_type == TYPE_PLAYER)) {
 		x = target->o_xcoord;
@@ -1430,14 +1432,14 @@ int SwordLogic::fnFace(BsObject *cpt, int32 id, int32 targetId, int32 b, int32 c
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnFaceXy(BsObject *cpt, int32 id, int32 x, int32 y, int32 c, int32 d, int32 a, int32 b) {
+int Logic::fnFaceXy(Object *cpt, int32 id, int32 x, int32 y, int32 c, int32 d, int32 a, int32 b) {
 	int megaTarDir = whatTarget(cpt->o_xcoord, cpt->o_ycoord, x, y);
 	fnTurn(cpt, id, megaTarDir, 0, 0, 0, 0, 0);
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnIsFacing(BsObject *cpt, int32 id, int32 targetId, int32 b, int32 c, int32 d, int32 a, int32 z) {
-	BsObject *target = _objMan->fetchObject(targetId);
+int Logic::fnIsFacing(Object *cpt, int32 id, int32 targetId, int32 b, int32 c, int32 d, int32 a, int32 z) {
+	Object *target = _objMan->fetchObject(targetId);
 	int32 x, y, dir;
 	if ((target->o_type == TYPE_MEGA) || (target->o_type == TYPE_PLAYER)) {
 		x = target->o_xcoord;
@@ -1457,8 +1459,8 @@ int SwordLogic::fnIsFacing(BsObject *cpt, int32 id, int32 targetId, int32 b, int
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnGetTo(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
-	BsObject *place = _objMan->fetchObject(cpt->o_place);
+int Logic::fnGetTo(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
+	Object *place = _objMan->fetchObject(cpt->o_place);
 	
 	cpt->o_tree.o_script_level++;
 	cpt->o_tree.o_script_pc[cpt->o_tree.o_script_level] = place->o_get_to_script;
@@ -1466,18 +1468,18 @@ int SwordLogic::fnGetTo(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int3
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnGetToError(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnGetToError(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	debug(1, "fnGetToError: compact %d at place %d no get-to for target %d, click_id %d\n", id, cpt->o_place, cpt->o_target, _scriptVars[CLICK_ID]);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnRandom(BsObject *compact, int32 id, int32 min, int32 max, int32 e, int32 f, int32 z, int32 x) {
+int Logic::fnRandom(Object *compact, int32 id, int32 min, int32 max, int32 e, int32 f, int32 z, int32 x) {
 	_scriptVars[RETURN_VALUE] = _rnd.getRandomNumberRng(min, max);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnGetPos(BsObject *cpt, int32 id, int32 targetId, int32 b, int32 c, int32 d, int32 z, int32 x) {
-	BsObject *target = _objMan->fetchObject(targetId);
+int Logic::fnGetPos(Object *cpt, int32 id, int32 targetId, int32 b, int32 c, int32 d, int32 z, int32 x) {
+	Object *target = _objMan->fetchObject(targetId);
 	if ((target->o_type == TYPE_MEGA) || (target->o_type == TYPE_PLAYER)) {
 		_scriptVars[RETURN_VALUE]   = target->o_xcoord;
 		_scriptVars[RETURN_VALUE_2] = target->o_ycoord;
@@ -1503,23 +1505,23 @@ int SwordLogic::fnGetPos(BsObject *cpt, int32 id, int32 targetId, int32 b, int32
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnGetGamepadXy(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnGetGamepadXy(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	// playstation only
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnPlayFx(BsObject *cpt, int32 id, int32 fxNo, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnPlayFx(Object *cpt, int32 id, int32 fxNo, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	_scriptVars[RETURN_VALUE] = _sound->addToQueue(fxNo);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnStopFx(BsObject *cpt, int32 id, int32 fxNo, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnStopFx(Object *cpt, int32 id, int32 fxNo, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	_sound->fnStopFx(fxNo);
 	//_sound->removeFromQueue(fxNo);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnPlayMusic(BsObject *cpt, int32 id, int32 tuneId, int32 loopFlag, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnPlayMusic(Object *cpt, int32 id, int32 tuneId, int32 loopFlag, int32 c, int32 d, int32 z, int32 x) {
 	if (tuneId == 153)
 		return SCRIPT_CONT;
 	if (loopFlag == LOOPED)
@@ -1531,46 +1533,46 @@ int SwordLogic::fnPlayMusic(BsObject *cpt, int32 id, int32 tuneId, int32 loopFla
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnStopMusic(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnStopMusic(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	_scriptVars[CURRENT_MUSIC] = 0;
 	_music->fadeDown();
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnInnerSpace(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnInnerSpace(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	error("fnInnerSpace() not working.");
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnSetScreen(BsObject *cpt, int32 id, int32 target, int32 screen, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnSetScreen(Object *cpt, int32 id, int32 target, int32 screen, int32 c, int32 d, int32 z, int32 x) {
 	_objMan->fetchObject(target)->o_screen = screen;
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnPreload(BsObject *cpt, int32 id, int32 resId, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnPreload(Object *cpt, int32 id, int32 resId, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	_resMan->resOpen(resId);
 	_resMan->resClose(resId);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnCheckCD(BsObject *cpt, int32 id, int32 screen, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnCheckCD(Object *cpt, int32 id, int32 screen, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	// only a dummy, here.
 	// the check is done in the mainloop
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnRestartGame(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnRestartGame(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	SwordEngine::_systemVars.forceRestart = true;
 	cpt->o_logic = LOGIC_quit;
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnQuitGame(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnQuitGame(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	error("fnQuitGame() called");
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnDeathScreen(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnDeathScreen(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 
 	if (_scriptVars[FINALE_OPTION_FLAG] == 4) // successful end of game!
 		SwordEngine::_systemVars.deathScreenFlag = 2;
@@ -1581,51 +1583,51 @@ int SwordLogic::fnDeathScreen(BsObject *cpt, int32 id, int32 a, int32 b, int32 c
 	return SCRIPT_STOP;
 }
 
-int SwordLogic::fnSetParallax(BsObject *cpt, int32 id, int32 screen, int32 resId, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnSetParallax(Object *cpt, int32 id, int32 screen, int32 resId, int32 c, int32 d, int32 z, int32 x) {
 	_screen->fnSetParallax(screen, resId);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnTdebug(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnTdebug(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	debug(1, "Script TDebug id %d code %d, %d", id, a, b);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnRedFlash(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnRedFlash(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	_screen->fnFlash(FLASH_RED);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnBlueFlash(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnBlueFlash(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	_screen->fnFlash(FLASH_BLUE);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnYellow(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnYellow(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	_screen->fnFlash(BORDER_YELLOW);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnGreen(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnGreen(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	_screen->fnFlash(BORDER_GREEN);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnPurple(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnPurple(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	_screen->fnFlash(BORDER_PURPLE);
 	return SCRIPT_CONT;
 }
 
-int SwordLogic::fnBlack(BsObject *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
+int Logic::fnBlack(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	_screen->fnFlash(BORDER_BLACK);
 	return SCRIPT_CONT;
 }
 
-uint16 SwordLogic::inRange(uint16 a, uint16 b, uint16 c) {
+uint16 Logic::inRange(uint16 a, uint16 b, uint16 c) {
 	return (a > b)? a : (((b > c) ? c : b));
 }
 
-const uint32 SwordLogic::_scriptVarInit[NON_ZERO_SCRIPT_VARS][2] = {
+const uint32 Logic::_scriptVarInit[NON_ZERO_SCRIPT_VARS][2] = {
 	{  42,  448}, {  43,  378}, {  51,    1}, {  92,    1}, { 147,   71}, { 201,   1},
 	{ 209,    1}, { 215,    1}, { 242,    2}, { 244,    1}, { 246,    3}, { 247,   1},
 	{ 253,    1}, { 297,    1}, { 398,    1}, { 508,    1}, { 605,    1}, { 606,   1},
@@ -1643,3 +1645,5 @@ const uint32 SwordLogic::_scriptVarInit[NON_ZERO_SCRIPT_VARS][2] = {
 	{1116,   63}, {1117,   64}, {1118,   65}, {1119,   66}, {1120,   67}, {1121,  68},
 	{1122,   69}, {1123,   71}, {1124,   72}, {1125,   73}, {1126,   74}
 };
+
+} // End of namespace Sword1

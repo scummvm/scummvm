@@ -28,6 +28,8 @@
 #include "objectman.h"
 #include "resman.h"
 
+namespace Sword1 {
+
 /****************************************************************************
  *    JROUTER.C				polygon router with modular walks
  *       							using a tree of modules
@@ -61,37 +63,6 @@
  *
  ****************************************************************************/
 
-
-
- 
-/*
- * Include Files
- */
-
-/*#include  <stdio.h>
-#include  <conio.h>
-#include  <stdlib.h>
-#include  <io.h>
-#include  <dos.h>
-#include  <string.h>
-
-#include	"coredata.h"
-#include	"utypes.h"
-#include	"header.h"
-#include	"object.h"
-#include	"varnames.h"
-#include	"jrouter.h"
-#include	"svga.h"
-#include	"protocol.h"
-#include	"memman.h"
-#include	"resman.h"
-#include	"tdebug.h"
-#include	"blit.h"
-#include	"line.h"
-#include	"pc.h"
-#include	"vblank.h"*/
-
-//#define		MAX_FRAMES_PER_CHAR		128
 #define		NO_DIRECTIONS					8
 #define		SLOW_IN								3
 #define		SLOW_OUT							7
@@ -99,7 +70,7 @@
 //#define		PLOT_PATHS						1
 #undef		PLOT_PATHS
 
-SwordRouter::SwordRouter(ObjectMan *pObjMan, ResMan *pResMan) {
+Router::Router(ObjectMan *pObjMan, ResMan *pResMan) {
 	_objMan = pObjMan;
 	_resMan = pResMan;
 	_numExtraBars = _numExtraNodes = 0;
@@ -109,20 +80,10 @@ SwordRouter::SwordRouter(ObjectMan *pObjMan, ResMan *pResMan) {
 }
 
 /*
- * 
- */
-
-/*
  *    CODE
  */
 
-// **************************************************************************
-// **************************************************************************
-// **************************************************************************
-// **************************************************************************
-// **************************************************************************
-
-int32 SwordRouter::routeFinder(int32 id, BsObject *megaObject, int32 x, int32 y, int32 dir)
+int32 Router::routeFinder(int32 id, Object *megaObject, int32 x, int32 y, int32 dir)
 {
 /****************************************************************************
  *    RouteFinder.C				polygon router with modular walks
@@ -242,14 +203,11 @@ int32 SwordRouter::routeFinder(int32 id, BsObject *megaObject, int32 x, int32 y,
 	return routeFlag;	// send back null route
 }
 
-/*******************************************************************************
- *******************************************************************************
- * 														GET A ROUTE
- *******************************************************************************
- *******************************************************************************/
+// ****************************************************************************
+// * GET A ROUTE
+// ****************************************************************************
 
-
-int32 SwordRouter::GetRoute()
+int32 Router::GetRoute()
 {
  /****************************************************************************
   *    GetRoute.C				extract a path from walk grid
@@ -303,15 +261,11 @@ int32 SwordRouter::GetRoute()
 	return routeGot;
 }
 
+// ****************************************************************************
+// * THE SLIDY PATH ROUTINES
+// ****************************************************************************
 
-/*******************************************************************************
- *******************************************************************************
- * 														THE SLIDY PATH ROUTINES
- *******************************************************************************
- *******************************************************************************/
-
-
-int32 SwordRouter::SmoothestPath()
+int32 Router::SmoothestPath()
 {
 /*
  *	This is the second big part of the route finder and the the only bit that tries to be clever
@@ -506,7 +460,7 @@ int32 SwordRouter::SmoothestPath()
 
 
 
-int32 SwordRouter::SmoothCheck(int32 best, int32 p, int32 dirS, int32 dirD)
+int32 Router::SmoothCheck(int32 best, int32 p, int32 dirS, int32 dirD)
 /****************************************************************************
  *	Slip sliding away
  *  This path checker checks to see if a walk that exactly follows the path
@@ -667,7 +621,7 @@ int32 SwordRouter::SmoothCheck(int32 best, int32 p, int32 dirS, int32 dirD)
 	return tempK;	
 }
 
-int32 SwordRouter::SlidyPath()
+int32 Router::SlidyPath()
 {
 /****************************************************************************
  *  SlidyPath creates a path based on part steps with no sliding to get
@@ -734,7 +688,7 @@ int32 SwordRouter::SlidyPath()
 
 }
 
-void SwordRouter::SlidyWalkAnimator(WalkData *walkAnim)
+void Router::SlidyWalkAnimator(WalkData *walkAnim)
 /****************************************************************************
  *  Skidding every where HardWalk creates an animation that exactly fits the
  *	smoothPath and uses foot slipping to fit whole steps into the route
@@ -1143,14 +1097,11 @@ void SwordRouter::SlidyWalkAnimator(WalkData *walkAnim)
 	return;
 }
 
+// ****************************************************************************
+// * THE SOLID PATH ROUTINES
+// ****************************************************************************
 
-/*******************************************************************************
- *******************************************************************************
- * 														THE SOLID PATH ROUTINES
- *******************************************************************************
- *******************************************************************************/
-
-int32 SwordRouter::SolidPath()
+int32 Router::SolidPath()
 {
 /****************************************************************************
  *  SolidPath creates a path based on whole steps with no sliding to get
@@ -1216,7 +1167,7 @@ int32 SwordRouter::SolidPath()
 
 }
 
-int32 SwordRouter::SolidWalkAnimator(WalkData *walkAnim)
+int32 Router::SolidWalkAnimator(WalkData *walkAnim)
 {
 /****************************************************************************
  *  SolidWalk creates an animation based on whole steps with no sliding to get
@@ -1631,25 +1582,21 @@ int32 SwordRouter::SolidWalkAnimator(WalkData *walkAnim)
 	return p;
 }
 
+// ****************************************************************************
+// * THE SCAN ROUTINES
+// ****************************************************************************
 
-/*******************************************************************************
- *******************************************************************************
- * 														THE SCAN ROUTINES
- *******************************************************************************
- *******************************************************************************/
-
-int32 SwordRouter::Scan(int32 level)
-/*******************************************************************************
+int32 Router::Scan(int32 level)
+/******************************************************************************
  * Called successively from RouteFinder	until no more changes take place in the
  * grid array	ie he best path has been found
  *
  * Scans through every point in the node array and checks if there is a route
  * between each point and if this route gives a new route.
  *
- * This routine could probably halve its processing time if it doubled up on the
- * checks after	each route check
- *
- *******************************************************************************/
+ * This routine could probably halve its processing time if it doubled up on
+ * the checks after each route check
+ *****************************************************************************/
 {
 	int32	i;
 	int32	k;
@@ -1708,8 +1655,8 @@ int32 SwordRouter::Scan(int32 level)
 }
 
 
-int32 SwordRouter::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
-/*******************************************************************************
+int32 Router::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
+/******************************************************************************
  * NewCheck routine checks if the route between two points can be achieved
  * without crossing any of the bars in the Bars array. 
  *
@@ -1719,7 +1666,7 @@ int32 SwordRouter::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 
  * Note distance doesnt take account of shrinking ??? 
  *
  * Note Bars array must be properly calculated ie min max dx dy co
- *******************************************************************************/
+ *****************************************************************************/
 {
 	int32   dx;
 	int32   dy;
@@ -1989,15 +1936,11 @@ int32 SwordRouter::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 
 	return status;
 }
 
+// ****************************************************************************
+// * CHECK ROUTINES
+// ****************************************************************************
 
-/*******************************************************************************
- *******************************************************************************
- * 														CHECK ROUTINES
- *******************************************************************************
- *******************************************************************************/
-
-
-int32 SwordRouter::Check(int32 x1 , int32 y1 , int32 x2 ,int32 y2)
+int32 Router::Check(int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 {
 //call the fastest line check for the given line 
 //returns 1 if line didn't cross any bars
@@ -2024,7 +1967,7 @@ int32 SwordRouter::Check(int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 }
 
 
-int32 SwordRouter::LineCheck(int32 x1 , int32 y1 , int32 x2 ,int32 y2)
+int32 Router::LineCheck(int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 {
 	int32   dirx;
 	int32   diry;
@@ -2108,8 +2051,7 @@ int32 SwordRouter::LineCheck(int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 	return linesCrossed;
 }
 
-
-int32 SwordRouter::HorizCheck(int32 x1 , int32 y , int32 x2)
+int32 Router::HorizCheck(int32 x1 , int32 y , int32 x2)
 {
 	int32   dy;
 	int32   i;
@@ -2164,7 +2106,7 @@ int32 SwordRouter::HorizCheck(int32 x1 , int32 y , int32 x2)
 }
 
 
-int32 SwordRouter::VertCheck(int32 x, int32 y1, int32 y2)
+int32 Router::VertCheck(int32 x, int32 y1, int32 y2)
 {
 	int32   dx;
 	int32   i;
@@ -2216,9 +2158,7 @@ int32 SwordRouter::VertCheck(int32 x, int32 y1, int32 y2)
 	return linesCrossed;
 }
 
-int32 SwordRouter::CheckTarget(int32 x , int32 y)
-/*******************************************************************************
- *******************************************************************************/
+int32 Router::CheckTarget(int32 x , int32 y)
 {
 	int32   dx;
 	int32   dy;
@@ -2294,15 +2234,11 @@ int32 SwordRouter::CheckTarget(int32 x , int32 y)
 	return onLine;
 }
 
-/*******************************************************************************
- *******************************************************************************
- * 														THE SETUP ROUTINES
- *******************************************************************************
- *******************************************************************************/
+// ****************************************************************************
+// * THE SETUP ROUTINES
+// ****************************************************************************
 
-
-
-int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int32 dir)
+int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
 {
 	WalkGridHeader	floorHeader;
 	int32 	i;
@@ -2312,15 +2248,12 @@ int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int
 
 	int32 	floorId;
 	int32		walkGridResourceId;
-	BsObject *floorObject;
+	Object *floorObject;
 
 	int32  cnt;
 	uint32 cntu;
 
-
-
 	// load in floor grid for current mega
-
 
 	floorId = megaObject->o_place;
 
@@ -2415,7 +2348,6 @@ int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int
 		nnodes += _numExtraNodes;
 	}
 
-
 // copy the mega structure into the local variables for use in all subroutines
 
 	startX = megaObject->o_xcoord;
@@ -2471,7 +2403,6 @@ int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int
 
 // mega data ready
 
-
 // finish setting grid by putting mega node at begining
 // and target node at end	and reset current values
 	node[0].x = startX;
@@ -2497,14 +2428,11 @@ int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int
 	return 1;
 }
 
+// ****************************************************************************
+// * THE ROUTE EXTRACTOR
+// ****************************************************************************
 
-/*******************************************************************************
- *******************************************************************************
- * 														THE ROUTE EXTRACTOR
- *******************************************************************************
- *******************************************************************************/
-
-void	SwordRouter::ExtractRoute()
+void	Router::ExtractRoute()
 /****************************************************************************
  *    ExtractRoute	gets route from the node data after a full scan, route is
  *		written with just the basic way points and direction options for heading
@@ -2611,13 +2539,13 @@ void	SwordRouter::ExtractRoute()
 #define screen_ad NULL
 #define pixel_size_y 1
 #define true_pixel_size_x 1
-void SwordRouter::RouteLine(int32 x1,int32 y1,int32 x2,int32 y2 ,int32 colour)
+void Router::RouteLine(int32 x1,int32 y1,int32 x2,int32 y2 ,int32 colour)
 {
 	BresenhamLine(x1-128, y1-128, x2-128, y2-128, (uint8*)screen_ad, true_pixel_size_x, pixel_size_y, colour);
 	return;
 }
 
-void SwordRouter::BresenhamLine(int32 x1,int32 y1,int32 x2,int32 y2, uint8 *screen, int32 width, int32 height, int32 colour) {
+void Router::BresenhamLine(int32 x1,int32 y1,int32 x2,int32 y2, uint8 *screen, int32 width, int32 height, int32 colour) {
 
 }
 
@@ -2663,13 +2591,15 @@ int whatTarget(int32 startX, int32 startY, int32 destX, int32 destY) {
 	return tar_dir;
 }
 
-void SwordRouter::resetExtraData(void) {
+void Router::resetExtraData(void) {
 	_numExtraBars = _numExtraNodes = 0;
 }
 
-void SwordRouter::setPlayerTarget(int32 x, int32 y, int32 dir, int32 stance) {
+void Router::setPlayerTarget(int32 x, int32 y, int32 dir, int32 stance) {
 	_playerTargetX = x;
 	_playerTargetY = y;
 	_playerTargetDir = dir;
 	_playerTargetStance = stance;
 }
+
+} // End of namespace Sword1

@@ -22,6 +22,8 @@
 #ifndef SWORDRES_H
 #define SWORDRES_H
 
+namespace Sword1 {
+
 // scripts
 	// standard
 #define SCRIPT0 				 0x01000000
@@ -5214,5 +5216,7 @@
 #define ROSTLK79 				 0x0E090010
 #define ROSTLK79CDT 			 0x0E090011
 	// 18 entities in TXTs, 18 in datafiles.
+
+} // End of namespace Sword1
 
 #endif //SWORDRES_H

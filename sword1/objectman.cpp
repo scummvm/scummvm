@@ -27,6 +27,8 @@
 #include "swordres.h"
 #include "sword1.h"
 
+namespace Sword1 {
+
 ObjectMan::ObjectMan(ResMan *pResourceMan) {
 	_resMan = pResourceMan;
 }
@@ -117,13 +119,13 @@ uint32 ObjectMan::lastTextNumber(int section) {
 	return result;
 }
 
-BsObject *ObjectMan::fetchObject(uint32 id) {
+Object *ObjectMan::fetchObject(uint32 id) {
 	uint8 *addr = _cptData[id / ITM_PER_SEC];
 	if (!addr)
 		error("fetchObject: section %d is not open!", id / ITM_PER_SEC);
 	id &= ITM_ID;
 	// DON'T do endian conversion here. it's already done.
-	return (BsObject*)(addr + *(uint32*)(addr + (id + 1)*4));
+	return (Object*)(addr + *(uint32*)(addr + (id + 1)*4));
 }
 
 uint32 ObjectMan::fetchNoObjects(int section) {
@@ -152,3 +154,5 @@ void ObjectMan::loadLiveList(uint16 *src) {
 void ObjectMan::saveLiveList(uint16 *dest) {
 	memcpy(dest, _liveList, TOTAL_SECTIONS * sizeof(uint16));
 }
+
+} // End of namespace Sword1

@@ -26,24 +26,26 @@
 #include "file.h"
 #include "sworddefs.h"
 
+namespace Sword1 {
+
 #define MAX_LABEL_SIZE (31+1)
 
-struct BsGrp {
+struct Grp {
 	uint32 noRes;
-	BsMemHandle *resHandle;
+	MemHandle *resHandle;
 	uint32 *offset;
 	uint32 *length;
 };
 
-struct BsClu {
+struct Clu {
 	char label[MAX_LABEL_SIZE];
 	uint32 noGrp;
-	BsGrp **grp;
+	Grp **grp;
 };
 
-struct BsPrj {
+struct Prj {
 	uint32 noClu;
-	BsClu **clu;
+	Clu **clu;
 };
 
 class ResMan {
@@ -63,7 +65,7 @@ public:
 private:
 	uint32 filesInGroup(uint32 id);
 	uint32 resLength(uint32 id);
-	BsMemHandle *resHandle(uint32 id);
+	MemHandle *resHandle(uint32 id);
 	uint32 resOffset(uint32 id);
 	void openCptResourceBigEndian(uint32 id);
 	void openScriptResourceBigEndian(uint32 id);
@@ -71,10 +73,12 @@ private:
 	File *openClusterFile(uint32 id);
 	void loadCluDescript(const char *fileName);
 	void freeCluDescript(void);
-	BsPrj _prj;
+	Prj _prj;
 	MemMan *_memMan;
 	static const uint32 _scriptList[TOTAL_SECTIONS];	//a table of resource tags
 	static uint32 _srIdList[29];
 };
+
+} // End of namespace Sword1 
 
 #endif //RESMAN_H

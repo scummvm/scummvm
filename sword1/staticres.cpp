@@ -30,6 +30,8 @@
 #include "sound.h"
 #include "sword1.h"
 
+namespace Sword1 {
+
 const uint8 SwordEngine::_cdList[TOTAL_SECTIONS] = {
 	0,		// 0		inventory
 
@@ -199,7 +201,7 @@ const uint8 SwordEngine::_cdList[TOTAL_SECTIONS] = {
 	1,		// 146	ALBERT'S TEXT	- on CD1
 };
 
-const MenuObject SwordMenu::_objectDefs[TOTAL_pockets + 1] = {
+const MenuObject Menu::_objectDefs[TOTAL_pockets + 1] = {
 	{	// 0 can't use
 		0, 0, 0, 0, 0
 	},
@@ -569,7 +571,7 @@ const MenuObject SwordMenu::_objectDefs[TOTAL_pockets + 1] = {
 	}
 };
 
-const Subject SwordMenu::_subjectList[TOTAL_subjects] = {
+const Subject Menu::_subjectList[TOTAL_subjects] = {
 	{	// 256
 		0,								// subject_res
 		0									// subject_frame
@@ -1541,7 +1543,7 @@ const uint32 ObjectMan::_textList[TOTAL_SECTIONS][7] = {
 };
 
 
-RoomDef SwordScreen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
+RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 	{
 		0,						//total_layers  --- room 0 NOT USED
 		0,						//size_x			= width
@@ -2584,7 +2586,7 @@ RoomDef SwordScreen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 	}
 };
 
-const char SwordMusic::_tuneList[TOTAL_TUNES][8] = {
+const char Music::_tuneList[TOTAL_TUNES][8] = {
 	"",				// 0	SPARE
 	"1m2",		// DONE 1	George picks up the newspaper
 	"1m3",		// DONE 2	In the alley for the first time
@@ -2887,7 +2889,7 @@ const char SwordMusic::_tuneList[TOTAL_TUNES][8] = {
 	"rm3d",		// DONE 269 ONe the scene change after the Grand Master says, "George, we have watched you..." This one might need a bit of fiddling to get it to match to the fisticuffs.
 };
 
-const FxDef SwordSound::_fxList[312] = {
+const FxDef Sound::_fxList[312] = {
 		// 0
 	{
 		0,						// sampleId
@@ -6440,7 +6442,7 @@ const FxDef SwordSound::_fxList[312] = {
 
 // NB. There must be a list for each room number, even if location doesn't exist in game
 
-const uint16 SwordSound::_roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM] =
+const uint16 Sound::_roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM] =
 {
 	{0},											// 0
 
@@ -6561,3 +6563,5 @@ const uint16 SwordSound::_roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM] =
 	{0},											// 98
 	{0},											// 99
 };
+
+} // End of namespace Sword1

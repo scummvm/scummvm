@@ -24,12 +24,14 @@
 
 #include "scummsys.h"
 
-struct BsMemHandle {
+namespace Sword1 {
+
+struct MemHandle {
 	void *data;
 	uint32 size;
 	uint32 refCount;
 	uint16 cond;
-	BsMemHandle *next, *prev;
+	MemHandle *next, *prev;
 };
 // mem conditions:
 #define MEM_FREED		0
@@ -42,18 +44,20 @@ class MemMan {
 public:
 	MemMan(void);
 	~MemMan(void);
-	void alloc(BsMemHandle *bsMem, uint32 pSize, uint16 pCond = MEM_DONT_FREE);
-	void setCondition(BsMemHandle *bsMem, uint16 pCond);
-	void freeNow(BsMemHandle *bsMem);
-	void initHandle(BsMemHandle *bsMem);
+	void alloc(MemHandle *bsMem, uint32 pSize, uint16 pCond = MEM_DONT_FREE);
+	void setCondition(MemHandle *bsMem, uint16 pCond);
+	void freeNow(MemHandle *bsMem);
+	void initHandle(MemHandle *bsMem);
 	void flush(void);
 private:
-	void addToFreeList(BsMemHandle *bsMem);
-	void removeFromFreeList(BsMemHandle *bsMem);
+	void addToFreeList(MemHandle *bsMem);
+	void removeFromFreeList(MemHandle *bsMem);
 	void checkMemoryUsage(void);
 	uint32 _alloced;  //currently allocated memory
-	BsMemHandle *_memListFree;
-	BsMemHandle *_memListFreeEnd;
+	MemHandle *_memListFree;
+	MemHandle *_memListFreeEnd;
 };
+
+} // End of namespace Sword1 
 
 #endif //MEMMAN_H

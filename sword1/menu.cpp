@@ -29,6 +29,8 @@
 #include "screen.h"
 #include "logic.h"
 
+namespace Sword1 {
+
 enum {
 	MENU_CLOSED,
 	MENU_CLOSING,
@@ -36,7 +38,7 @@ enum {
 	MENU_OPEN
 };
 
-const byte SwordMenu::_fadeEffectTop[64] = {
+const byte Menu::_fadeEffectTop[64] = {
 	1, 7, 5, 3, 2, 4, 6, 0,
 	3, 1, 7, 5, 4, 6, 0, 2,
 	5, 3, 1, 7, 6, 0, 2, 4,
@@ -47,7 +49,7 @@ const byte SwordMenu::_fadeEffectTop[64] = {
 	1, 7, 5, 3, 2, 4, 6, 0
 };
 
-const byte SwordMenu::_fadeEffectBottom[64] = {
+const byte Menu::_fadeEffectBottom[64] = {
 	7, 6, 5, 4, 3, 2, 1, 0,
 	0, 7, 6, 5, 4, 3, 2, 1,
 	1, 0, 7, 6, 5, 4, 3, 2,
@@ -58,7 +60,7 @@ const byte SwordMenu::_fadeEffectBottom[64] = {
 	6, 5, 4, 3, 2, 1, 0, 7 
 };
 
-SwordMenuIcon::SwordMenuIcon(uint8 menuType, uint8 menuPos, uint32 resId, uint32 frame, SwordScreen *screen) {
+MenuIcon::MenuIcon(uint8 menuType, uint8 menuPos, uint32 resId, uint32 frame, Screen *screen) {
 	_menuType = menuType;
 	_menuPos = menuPos;
 	_resId = resId;
@@ -67,7 +69,7 @@ SwordMenuIcon::SwordMenuIcon(uint8 menuType, uint8 menuPos, uint32 resId, uint32
 	_selected = false;
 }
 
-bool SwordMenuIcon::wasClicked(uint16 mouseX, uint16 mouseY) {
+bool MenuIcon::wasClicked(uint16 mouseX, uint16 mouseY) {
 	if (((_menuType == MENU_TOP) && (mouseY >= 40)) || ((_menuType == MENU_BOT) && (mouseY < 440)))
 		return false;
 	if ((mouseX >= _menuPos * 40) && (mouseX < (_menuPos + 1) * 40))
@@ -76,17 +78,17 @@ bool SwordMenuIcon::wasClicked(uint16 mouseX, uint16 mouseY) {
 		return false;
 }
 
-void SwordMenuIcon::setSelect(bool pSel) {
+void MenuIcon::setSelect(bool pSel) {
 	_selected = pSel;
 }
 
-void SwordMenuIcon::draw(const byte *fadeMask, int8 fadeStatus) {
+void MenuIcon::draw(const byte *fadeMask, int8 fadeStatus) {
 	uint16 x = _menuPos * 40;
 	uint16 y = (_menuType == MENU_TOP)?(0):(440);
 	_screen->showFrame(x, y, _resId, _frame + (_selected ? 1 : 0), fadeMask, fadeStatus);
 }
 
-SwordMenu::SwordMenu(SwordScreen *pScreen, SwordMouse *pMouse) {
+Menu::Menu(Screen *pScreen, Mouse *pMouse) {
 	uint8 cnt;
 	_screen = pScreen;
 	_mouse = pMouse;
@@ -101,7 +103,7 @@ SwordMenu::SwordMenu(SwordScreen *pScreen, SwordMouse *pMouse) {
 	_inMenu = 0;
 }
 
-void SwordMenu::refreshMenus() {
+void Menu::refreshMenus() {
 	if (_objectBarStatus == MENU_OPEN) {
 		buildMenu();
 		for (uint8 cnt = 0; cnt < 16; cnt++) {
@@ -122,7 +124,7 @@ void SwordMenu::refreshMenus() {
 	}
 }
 
-uint8 SwordMenu::checkMenuClick(uint8 menuType) {
+uint8 Menu::checkMenuClick(uint8 menuType) {
 	uint16 mouseEvent = _mouse->testEvent();
 	if (!mouseEvent)
 		return 0;
@@ -132,30 +134,30 @@ uint8 SwordMenu::checkMenuClick(uint8 menuType) {
 		// Conversation mode. Icons are highlighted on mouse-down, but
 		// the actual response is made on mouse-up.
 		if (menuType == MENU_BOT) {
-			if (SwordLogic::_scriptVars[OBJECT_HELD] && (mouseEvent & BS1L_BUTTON_UP)) {
-				for (uint8 cnt = 0; cnt < SwordLogic::_scriptVars[IN_SUBJECT]; cnt++) {
-					if (_subjectBar[cnt] == SwordLogic::_scriptVars[OBJECT_HELD])
+			if (Logic::_scriptVars[OBJECT_HELD] && (mouseEvent & BS1L_BUTTON_UP)) {
+				for (uint8 cnt = 0; cnt < Logic::_scriptVars[IN_SUBJECT]; cnt++) {
+					if (_subjectBar[cnt] == Logic::_scriptVars[OBJECT_HELD])
 						return cnt + 1;
 				}
 			} else if (mouseEvent & BS1L_BUTTON_DOWN) {
-				for (uint8 cnt = 0; cnt < SwordLogic::_scriptVars[IN_SUBJECT]; cnt++) {
+				for (uint8 cnt = 0; cnt < Logic::_scriptVars[IN_SUBJECT]; cnt++) {
 					if (_subjects[cnt]->wasClicked(x, y)) {
-						SwordLogic::_scriptVars[OBJECT_HELD] = _subjectBar[cnt];
+						Logic::_scriptVars[OBJECT_HELD] = _subjectBar[cnt];
 						refreshMenus();
 						break;
 					}
 				}
 			}
 		} else {
-			if (SwordLogic::_scriptVars[OBJECT_HELD] && (mouseEvent & BS1L_BUTTON_UP)) {
+			if (Logic::_scriptVars[OBJECT_HELD] && (mouseEvent & BS1L_BUTTON_UP)) {
 				for (uint8 cnt = 0; cnt < _inMenu; cnt++) {
-					if (_menuList[cnt] == SwordLogic::_scriptVars[OBJECT_HELD])
+					if (_menuList[cnt] == Logic::_scriptVars[OBJECT_HELD])
 						return cnt + 1;
 				}
 			} else if (mouseEvent & BS1L_BUTTON_DOWN) {
 				for (uint8 cnt = 0; cnt < _inMenu; cnt++) {
 					if (_objects[cnt]->wasClicked(x, y)) {
-						SwordLogic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
+						Logic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
 						refreshMenus();
 						break;
 					}
@@ -168,21 +170,21 @@ uint8 SwordMenu::checkMenuClick(uint8 menuType) {
 			for (uint8 cnt = 0; cnt < _inMenu; cnt++) {
 				if (_objects[cnt]->wasClicked(x, y)) {
 					if (mouseEvent & BS1R_BUTTON_DOWN) { // looking at item
-						SwordLogic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
-						SwordLogic::_scriptVars[MENU_LOOKING] = 1;
-						SwordLogic::_scriptVars[DEFAULT_ICON_TEXT] = _objectDefs[_menuList[cnt]].textDesc;
+						Logic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
+						Logic::_scriptVars[MENU_LOOKING] = 1;
+						Logic::_scriptVars[DEFAULT_ICON_TEXT] = _objectDefs[_menuList[cnt]].textDesc;
 					} else if (mouseEvent & BS1L_BUTTON_DOWN) {
-						if (SwordLogic::_scriptVars[OBJECT_HELD]) {
-							if (SwordLogic::_scriptVars[OBJECT_HELD] == _menuList[cnt]) {
+						if (Logic::_scriptVars[OBJECT_HELD]) {
+							if (Logic::_scriptVars[OBJECT_HELD] == _menuList[cnt]) {
 								_mouse->setLuggage(0, 0);
-								SwordLogic::_scriptVars[OBJECT_HELD] = 0; // reselected => deselect it
+								Logic::_scriptVars[OBJECT_HELD] = 0; // reselected => deselect it
 							} else { // the player is clicking another item on this one.
 								   // run its use-script, if there is one
-								SwordLogic::_scriptVars[SECOND_ITEM] = _menuList[cnt];
+								Logic::_scriptVars[SECOND_ITEM] = _menuList[cnt];
 								_mouse->setLuggage(0, 0);
 							}
 						} else {
-							SwordLogic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
+							Logic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
 							_mouse->setLuggage(_objectDefs[_menuList[cnt]].luggageIconRes, 0);
 						}
 					}
@@ -195,25 +197,25 @@ uint8 SwordMenu::checkMenuClick(uint8 menuType) {
 	return 0;
 }
 
-void SwordMenu::buildSubjects(void) {
+void Menu::buildSubjects(void) {
 	uint8 cnt;
 	for (cnt = 0; cnt < 16; cnt++)
 		if (_subjects[cnt]) {
 			delete _subjects[cnt];
 			_subjects[cnt] = NULL;
 		}
-	for (cnt = 0; cnt < SwordLogic::_scriptVars[IN_SUBJECT]; cnt++) {
+	for (cnt = 0; cnt < Logic::_scriptVars[IN_SUBJECT]; cnt++) {
 		uint32 res = _subjectList[(_subjectBar[cnt] & 65535) - BASE_SUBJECT].subjectRes;
 		uint32 frame = _subjectList[(_subjectBar[cnt] & 65535) - BASE_SUBJECT].frameNo;
-		_subjects[cnt] = new SwordMenuIcon(MENU_BOT, cnt, res, frame, _screen);
-		if (SwordLogic::_scriptVars[OBJECT_HELD])
-			_subjects[cnt]->setSelect(_subjectBar[cnt] == SwordLogic::_scriptVars[OBJECT_HELD]);
+		_subjects[cnt] = new MenuIcon(MENU_BOT, cnt, res, frame, _screen);
+		if (Logic::_scriptVars[OBJECT_HELD])
+			_subjects[cnt]->setSelect(_subjectBar[cnt] == Logic::_scriptVars[OBJECT_HELD]);
 		else
 			_subjects[cnt]->setSelect(true);
 	}
 }
 
-void SwordMenu::refresh(uint8 menuType) {
+void Menu::refresh(uint8 menuType) {
 	uint i;
 
 	if (menuType == MENU_TOP) {
@@ -259,7 +261,7 @@ void SwordMenu::refresh(uint8 menuType) {
 			if (_fadeSubject > 0)
 				_fadeSubject--;
 			else {
-				for (i = 0; i < SwordLogic::_scriptVars[IN_SUBJECT]; i++) {
+				for (i = 0; i < Logic::_scriptVars[IN_SUBJECT]; i++) {
 					delete _subjects[i];
 					_subjects[i] = NULL;
 				}
@@ -269,8 +271,8 @@ void SwordMenu::refresh(uint8 menuType) {
 	}
 }
 
-void SwordMenu::buildMenu(void) {
-	uint32 *pockets = SwordLogic::_scriptVars + POCKET_1;
+void Menu::buildMenu(void) {
+	uint32 *pockets = Logic::_scriptVars + POCKET_1;
 	for (uint8 cnt = 0; cnt < _inMenu; cnt++)
 		if (_objects[cnt]) {
 			delete _objects[cnt];
@@ -283,15 +285,15 @@ void SwordMenu::buildMenu(void) {
 			_inMenu++;
 		}
 	for (uint32 menuSlot = 0; menuSlot < _inMenu; menuSlot++) {
-		_objects[menuSlot] = new SwordMenuIcon(MENU_TOP, menuSlot, _objectDefs[_menuList[menuSlot]].bigIconRes, _objectDefs[_menuList[menuSlot]].bigIconFrame, _screen);
-		uint32 objHeld = SwordLogic::_scriptVars[OBJECT_HELD];
+		_objects[menuSlot] = new MenuIcon(MENU_TOP, menuSlot, _objectDefs[_menuList[menuSlot]].bigIconRes, _objectDefs[_menuList[menuSlot]].bigIconFrame, _screen);
+		uint32 objHeld = Logic::_scriptVars[OBJECT_HELD];
 
 		// check highlighting
-		if (SwordLogic::_scriptVars[MENU_LOOKING] || _subjectBarStatus == MENU_OPEN) { // either we're in the chooser or we're doing a 'LOOK AT'
+		if (Logic::_scriptVars[MENU_LOOKING] || _subjectBarStatus == MENU_OPEN) { // either we're in the chooser or we're doing a 'LOOK AT'
 			if ((!objHeld) || (objHeld == _menuList[menuSlot]))
 				_objects[menuSlot]->setSelect(true);
-		} else if (SwordLogic::_scriptVars[SECOND_ITEM]) { // clicked luggage onto 2nd icon - we need to colour-highlight the 2 relevant icons & grey out the rest
-			if ((_menuList[menuSlot] == objHeld) || (_menuList[menuSlot] == SwordLogic::_scriptVars[SECOND_ITEM]))
+		} else if (Logic::_scriptVars[SECOND_ITEM]) { // clicked luggage onto 2nd icon - we need to colour-highlight the 2 relevant icons & grey out the rest
+			if ((_menuList[menuSlot] == objHeld) || (_menuList[menuSlot] == Logic::_scriptVars[SECOND_ITEM]))
 				_objects[menuSlot]->setSelect(true);
 		} else { // this object is selected - ie. GREYED OUT
 			if (objHeld != _menuList[menuSlot])
@@ -300,7 +302,7 @@ void SwordMenu::buildMenu(void) {
 	}
 }
 
-void SwordMenu::showMenu(uint8 menuType) {
+void Menu::showMenu(uint8 menuType) {
 	if (menuType == MENU_TOP) {
 		if (_objectBarStatus == MENU_OPEN) {
 			for (uint8 cnt = 0; cnt < 16; cnt++) {
@@ -317,21 +319,21 @@ void SwordMenu::showMenu(uint8 menuType) {
 	}
 }
 
-void SwordMenu::fnStartMenu(void) {
-	SwordLogic::_scriptVars[OBJECT_HELD]  = 0; // icon no longer selected
-	SwordLogic::_scriptVars[SECOND_ITEM]  = 0; // second icon no longer selected (after using one on another)
-	SwordLogic::_scriptVars[MENU_LOOKING] = 0; // no longer 'looking at' an icon
+void Menu::fnStartMenu(void) {
+	Logic::_scriptVars[OBJECT_HELD]  = 0; // icon no longer selected
+	Logic::_scriptVars[SECOND_ITEM]  = 0; // second icon no longer selected (after using one on another)
+	Logic::_scriptVars[MENU_LOOKING] = 0; // no longer 'looking at' an icon
 	buildMenu();
 	showMenu(MENU_TOP);
 }
 
-void SwordMenu::fnEndMenu(void) {
+void Menu::fnEndMenu(void) {
 	if (_objectBarStatus != MENU_CLOSED)
 		_objectBarStatus = MENU_CLOSING;
 }
 
-void SwordMenu::fnChooser(BsObject *compact) {
-	SwordLogic::_scriptVars[OBJECT_HELD] = 0;
+void Menu::fnChooser(Object *compact) {
+	Logic::_scriptVars[OBJECT_HELD] = 0;
 	_mouse->setLuggage(0, 0);
 	buildSubjects();
 	compact->o_logic = LOGIC_choose;
@@ -339,20 +341,20 @@ void SwordMenu::fnChooser(BsObject *compact) {
 	_subjectBarStatus = MENU_OPENING;
 }
 
-void SwordMenu::fnEndChooser(void) {
-	SwordLogic::_scriptVars[OBJECT_HELD] = 0;
+void Menu::fnEndChooser(void) {
+	Logic::_scriptVars[OBJECT_HELD] = 0;
 	_subjectBarStatus = MENU_CLOSING;
 	_objectBarStatus = MENU_CLOSING;
 	_mouse->controlPanel(false);
 	_mouse->setLuggage(0, 0);
 }
 
-void SwordMenu::checkTopMenu(void) {
+void Menu::checkTopMenu(void) {
 	if (_objectBarStatus == MENU_OPEN)
 		checkMenuClick(MENU_TOP);
 }
 
-int SwordMenu::logicChooser(BsObject *compact) {
+int Menu::logicChooser(Object *compact) {
 	uint8 objSelected = 0;
 	if (_objectBarStatus == MENU_OPEN)
 		objSelected = checkMenuClick(MENU_TOP);
@@ -365,11 +367,13 @@ int SwordMenu::logicChooser(BsObject *compact) {
 	return 0;
 }
 
-void SwordMenu::fnAddSubject(int32 sub) {
-	_subjectBar[SwordLogic::_scriptVars[IN_SUBJECT]] = sub;
-	SwordLogic::_scriptVars[IN_SUBJECT]++;
+void Menu::fnAddSubject(int32 sub) {
+	_subjectBar[Logic::_scriptVars[IN_SUBJECT]] = sub;
+	Logic::_scriptVars[IN_SUBJECT]++;
 }
 
-void SwordMenu::cfnReleaseMenu(void) {
+void Menu::cfnReleaseMenu(void) {
 	_objectBarStatus = MENU_CLOSING;
 }
+
+} // End of namespace Sword1

@@ -3,6 +3,8 @@
 
 #include "scummsys.h"
 
+namespace Sword1 {
+
 #define LOOPED 1
 
 #define	FRAME_RATE			12						// number of frames per second (max rate)
@@ -1554,4 +1556,6 @@ enum ScriptVariableNames {
 #define SCR_menu_look (0*0x10000 + 24)
 #define SCR_icon_combine_script (0*0x10000 + 25)
 
+} // End of namespace Sword1
+ 
 #endif //SWORDDEFS_H

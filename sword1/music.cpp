@@ -25,13 +25,15 @@
 #include "common/util.h"
 #include "common/file.h"
 
+namespace Sword1 {
+
 // This means fading takes 3 seconds.
 #define FADE_LENGTH 3
 
-// These functions are only called from SwordMusic, so I'm just going to
+// These functions are only called from Music, so I'm just going to
 // assume that if locking is needed it has already been taken care of.
 
-void SwordMusicHandle::fadeDown() {
+void MusicHandle::fadeDown() {
 	if (_fading < 0)
 		_fading = -_fading;
 	else if (_fading == 0)
@@ -39,7 +41,7 @@ void SwordMusicHandle::fadeDown() {
 	_fadeSamples = FADE_LENGTH * getRate();
 }
 
-void SwordMusicHandle::fadeUp() {
+void MusicHandle::fadeUp() {
 	if (_fading > 0)
 		_fading = -_fading;
 	else if (_fading == 0)
@@ -47,11 +49,11 @@ void SwordMusicHandle::fadeUp() {
 	_fadeSamples = FADE_LENGTH * getRate();
 }
 
-bool SwordMusicHandle::endOfData() const {
+bool MusicHandle::endOfData() const {
 	return !streaming();
 }
 
-int SwordMusicHandle::readBuffer(int16 *buffer, const int numSamples) {
+int MusicHandle::readBuffer(int16 *buffer, const int numSamples) {
 	int samples;
 	for (samples = 0; samples < numSamples && !endOfData(); samples++) {
 		int16 sample = _file.readUint16LE();
@@ -80,7 +82,7 @@ int SwordMusicHandle::readBuffer(int16 *buffer, const int numSamples) {
 	return samples;
 }
 
-bool SwordMusicHandle::play(const char *filename, bool loop) {
+bool MusicHandle::play(const char *filename, bool loop) {
 	uint8 wavHeader[WAVEHEADERSIZE];
 	stop();
 	_file.open(filename);
@@ -96,14 +98,14 @@ bool SwordMusicHandle::play(const char *filename, bool loop) {
 	return true;
 }
 
-void SwordMusicHandle::stop() {
+void MusicHandle::stop() {
 	if (_file.isOpen())
 		_file.close();
 	_fading = 0;
 	_looping = false;
 }
 
-SwordMusic::SwordMusic(OSystem *system, SoundMixer *pMixer) {
+Music::Music(OSystem *system, SoundMixer *pMixer) {
 	_system = system;
 	_mixer = pMixer;
 	_mixer->setupPremix(passMixerFunc, this);
@@ -113,7 +115,7 @@ SwordMusic::SwordMusic(OSystem *system, SoundMixer *pMixer) {
 	_volumeL = _volumeR = 192;
 }
 
-SwordMusic::~SwordMusic() {
+Music::~Music() {
 	_mixer->setupPremix(0, 0);
 	delete _converter[0];
 	delete _converter[1];
@@ -121,28 +123,28 @@ SwordMusic::~SwordMusic() {
 		_system->delete_mutex(_mutex);
 }
 
-void SwordMusic::passMixerFunc(void *param, int16 *buf, uint len) {
-	((SwordMusic*)param)->mixer(buf, len);
+void Music::passMixerFunc(void *param, int16 *buf, uint len) {
+	((Music*)param)->mixer(buf, len);
 }
 
-void SwordMusic::mixer(int16 *buf, uint32 len) {
+void Music::mixer(int16 *buf, uint32 len) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i < ARRAYSIZE(_handles); i++)
 		if (_handles[i].streaming() && _converter[i])
 			_converter[i]->flow(_handles[i], buf, len, _volumeL, _volumeR);
 }
 
-void SwordMusic::setVolume(uint8 volL, uint8 volR) {
+void Music::setVolume(uint8 volL, uint8 volR) {
 	_volumeL = (st_volume_t)volL;
 	_volumeR = (st_volume_t)volR;
 }
 
-void SwordMusic::giveVolume(uint8 *volL, uint8 *volR) {
+void Music::giveVolume(uint8 *volL, uint8 *volR) {
 	*volL = (uint8)_volumeL;
 	*volR = (uint8)_volumeR;
 }
 
-void SwordMusic::startMusic(int32 tuneId, int32 loopFlag) {
+void Music::startMusic(int32 tuneId, int32 loopFlag) {
 	Common::StackLock lock(_mutex);
 	if (strlen(_tuneList[tuneId]) > 0) {
 		int newStream = 0;
@@ -175,9 +177,11 @@ void SwordMusic::startMusic(int32 tuneId, int32 loopFlag) {
 	}
 }
 
-void SwordMusic::fadeDown() {
+void Music::fadeDown() {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i < ARRAYSIZE(_handles); i++)
 		if (_handles[i].streaming())
 			_handles[i].fadeDown();
 }
+
+} // End of namespace Sword1

@@ -1,16 +1,39 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2003-2004 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header$
+ *
+ */
+
 #include "stdafx.h"
 #include "debug.h"
 #include "common/util.h"
 
-void SwordDebug::interpretScript(uint32 id, uint32 level, uint32 script, uint32 pc) {
+namespace Sword1 {
+
+void Debug::interpretScript(uint32 id, uint32 level, uint32 script, uint32 pc) {
 	debug(8, "\nInterpreting %d@%d: script %X from %X", id, level, script, pc);
 }
 
-void SwordDebug::callMCode(uint32 mcodeNum, uint32 paramCount, int32 a, int32 b, int32 c, int32 d, int32 e, int32 f) {
+void Debug::callMCode(uint32 mcodeNum, uint32 paramCount, int32 a, int32 b, int32 c, int32 d, int32 e, int32 f) {
 	debug(9, "mcode: %s(%d, %d, %d, %d, %d, %d) [%d]", _mCodeNames[mcodeNum], a, b, c, d, e, f, paramCount);
 }
 
-const char SwordDebug::_mCodeNames[100][35] = {
+const char Debug::_mCodeNames[100][35] = {
 	"fnBackground",
 	"fnForeground",
 	"fnSort",
@@ -112,3 +135,5 @@ const char SwordDebug::_mCodeNames[100][35] = {
 	"fnPurple",
 	"fnBlack"
 };
+
+} // End of namespace Sword1

@@ -28,6 +28,10 @@
 #include "sound/mixer.h"
 #include "common/util.h"
 
+class SoundMixer;
+
+namespace Sword1 {
+
 #define	TOTAL_FX_PER_ROOM	7		// total loop & random fx per room (see fx_list.c)
 #define	MAX_ROOMS_PER_FX	7		// max no. of rooms in the fx's room,vol list
 #define	MAX_FXQ_LENGTH		32		// max length of sound queue - ie. max number of fx that can be stored up/playing together
@@ -50,15 +54,14 @@ struct FxDef {
 	RoomVol roomVolList[MAX_ROOMS_PER_FX];
 };
 
-class SoundMixer;
 class ResMan;
 #define WAVE_VOL_TAB_LENGTH 480
 #define WAVE_VOL_THRESHOLD 190000 //120000
 
-class SwordSound {
+class Sound {
 public:
-	SwordSound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan);
-	~SwordSound(void);
+	Sound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan);
+	~Sound(void);
 	void setSpeechVol(uint8 volL, uint8 volR) { _speechVolL = volL; _speechVolR = volR; };
 	void setSfxVol(uint8 volL, uint8 volR) { _sfxVolL = volL; _sfxVolR = volR; };
 	void giveSpeechVol(uint8 *volL, uint8 *volR) { *volL = _speechVolL; *volR = _speechVolR; };
@@ -102,5 +105,7 @@ private:
 	static const uint16 _roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM];
 	static const FxDef _fxList[312];
 };
+
+} // End of namespace Sword1 
 
 #endif //BSSOUND_H

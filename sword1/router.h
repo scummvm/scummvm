@@ -25,6 +25,8 @@
 #include "scummsys.h"
 #include "object.h"
 
+namespace Sword1 {
+
 #define EXTRA_GRID_SIZE 20
 #define O_GRID_SIZE 200
 
@@ -87,19 +89,19 @@ struct PathData {
 
 class ObjectMan;
 class ResMan;
-class SwordScreen;
+class Screen;
 
 extern int whatTarget(int32 startX, int32 startY, int32 destX, int32 destY);
 
-class SwordRouter {
+class Router {
 public:
-	SwordRouter(ObjectMan *pObjMan, ResMan *pResMan);
-	~SwordRouter(void);
-	int32 routeFinder(int32 id, BsObject *mega, int32 x, int32 y, int32 dir);
+	Router(ObjectMan *pObjMan, ResMan *pResMan);
+	~Router(void);
+	int32 routeFinder(int32 id, Object *mega, int32 x, int32 y, int32 dir);
 	void setPlayerTarget(int32 x, int32 y, int32 dir, int32 stance);
 	void resetExtraData(void);
 
-	// these should be private but are read by SwordScreen for debugging:
+	// these should be private but are read by Screen for debugging:
 	BarData   bars[O_GRID_SIZE+EXTRA_GRID_SIZE];
 	NodeData  node[O_GRID_SIZE+EXTRA_GRID_SIZE];
 	int32 nbars, nnodes;
@@ -148,7 +150,7 @@ private:
 	int32		slowInFrames, slowOutFrames;
 
 
-	int32 LoadWalkResources(BsObject *mega, int32 x, int32 y, int32 targetDir);
+	int32 LoadWalkResources(Object *mega, int32 x, int32 y, int32 targetDir);
 	int32 GetRoute(void);
 	int32 CheckTarget(int32 x, int32 y);
 	
@@ -172,5 +174,7 @@ private:
 	void RouteLine(int32 x1,int32 y1,int32 x2,int32 y2 ,int32 colour);
 	void BresenhamLine(int32 x1,int32 y1,int32 x2,int32 y2, uint8 *screen, int32 width, int32 height, int32 colour);
 };
+
+} // End of namespace Sword1 
 
 #endif //BSROUTER_H

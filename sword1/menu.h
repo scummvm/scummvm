@@ -25,8 +25,10 @@
 #include "sworddefs.h"
 #include "object.h"
 
-class SwordScreen;
-class SwordMouse;
+namespace Sword1 {
+
+class Screen;
+class Mouse;
 class ResMan;
 
 #define MENU_TOP 0
@@ -45,9 +47,9 @@ struct MenuObject {
 	uint32 useScript;
 };
 
-class SwordMenuIcon {
+class MenuIcon {
 public:
-	SwordMenuIcon(uint8 menuType, uint8 menuPos, uint32 resId, uint32 frame, SwordScreen *screen);
+	MenuIcon(uint8 menuType, uint8 menuPos, uint32 resId, uint32 frame, Screen *screen);
 	bool wasClicked(uint16 mouseX, uint16 mouseY);
 	void setSelect(bool pSel);
 	void draw(const byte *fadeMask = NULL, int8 fadeStatus = 0);
@@ -56,17 +58,17 @@ private:
 	uint8 _menuType, _menuPos;
 	uint32 _resId, _frame;
 	bool _selected;
-	SwordScreen *_screen;
+	Screen *_screen;
 };
 
-class SwordMenu {
+class Menu {
 public:
-	SwordMenu(SwordScreen *pScreen, SwordMouse *pMouse);
-	void fnChooser(BsObject *compact);
+	Menu(Screen *pScreen, Mouse *pMouse);
+	void fnChooser(Object *compact);
 	void fnEndChooser(void);
 	void fnAddSubject(int32 sub);
 	void cfnReleaseMenu(void);
-	int logicChooser(BsObject *compact);
+	int logicChooser(Object *compact);
 	void engine(void);
 	void refresh(uint8 menuType);
 	void fnStartMenu(void);
@@ -85,19 +87,21 @@ private:
 	void refreshMenus(void);
 	uint8 checkMenuClick(uint8 menuType);
 	//- lower menu, speech subjects:
-	SwordMenuIcon *_subjects[16];
+	MenuIcon *_subjects[16];
 	uint32 _subjectBar[16];
 	//- top menu, items
-	SwordMenuIcon *_objects[TOTAL_pockets];
+	MenuIcon *_objects[TOTAL_pockets];
 	uint32 _menuList[TOTAL_pockets];
 	uint32 _inMenu;
 
-	SwordScreen *_screen;
-	SwordMouse *_mouse;
+	Screen *_screen;
+	Mouse *_mouse;
 	static const Subject _subjectList[TOTAL_subjects];
 
 	static const byte _fadeEffectTop[64];
 	static const byte _fadeEffectBottom[64];
 };
+
+} // End of namespace Sword1 
 
 #endif //BSMENU_H

@@ -28,13 +28,15 @@
 #include "sound/audiostream.h"
 #include "sound/rate.h"
 
+class SoundMixer;
+
+namespace Sword1 {
+
 #define TOTAL_TUNES 270
 
 #define WAVEHEADERSIZE 0x2C
 
-class SoundMixer;
-
-class SwordMusicHandle : public AudioStream {
+class MusicHandle : public AudioStream {
 private:
 	File _file;
 	bool _looping;
@@ -43,7 +45,7 @@ private:
 	int _rate;
 	bool _stereo;
 public:
-	SwordMusicHandle() : _looping(false), _fading(0) {}
+	MusicHandle() : _looping(false), _fading(0) {}
 	virtual int readBuffer(int16 *buffer, const int numSamples);
 	bool play(const char *filename, bool loop);
 	void stop();
@@ -57,17 +59,17 @@ public:
 	int getRate() const { return _rate; }
 };
 
-class SwordMusic {
+class Music {
 public:
-	SwordMusic(OSystem *system, SoundMixer *pMixer);
-	~SwordMusic();
+	Music(OSystem *system, SoundMixer *pMixer);
+	~Music();
 	void startMusic(int32 tuneId, int32 loopFlag);
 	void fadeDown();
 	void setVolume(uint8 volL, uint8 volR);
 	void giveVolume(uint8 *volL, uint8 *volR);
 private:
 	st_volume_t _volumeL, _volumeR;
-	SwordMusicHandle _handles[2];
+	MusicHandle _handles[2];
 	RateConverter *_converter[2];
 	OSystem *_system;
 	SoundMixer *_mixer;
@@ -76,5 +78,7 @@ private:
 	void mixer(int16 *buf, uint32 len);
 	static const char _tuneList[TOTAL_TUNES][8]; // in staticres.cpp
 };
+
+} // End of namespace Sword1 
 
 #endif // BSMUSIC_H

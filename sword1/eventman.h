@@ -24,6 +24,8 @@
 
 #include "object.h"
 
+namespace Sword1 {
+
 #define TOTAL_EVENT_SLOTS 20
 
 struct GlobalEvent {
@@ -35,12 +37,14 @@ class EventManager {
 public:
 	EventManager(void);
 	void serviceGlobalEventList(void);
-	void checkForEvent(BsObject *compact);
-	int fnCheckForEvent(BsObject *cpt, int32 id, int32 pause);
-	void fnIssueEvent(BsObject *compact, int32 id, int32 event, int32 delay);
+	void checkForEvent(Object *compact);
+	int fnCheckForEvent(Object *cpt, int32 id, int32 pause);
+	void fnIssueEvent(Object *compact, int32 id, int32 event, int32 delay);
 	bool eventValid(int32 event);
 private:
 	GlobalEvent _eventPendingList[TOTAL_EVENT_SLOTS];
 };
+
+} // End of namespace Sword1 
 
 #endif // BSEVENTMAN_H

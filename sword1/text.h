@@ -22,10 +22,13 @@
 #ifndef BSTEXT_H
 #define BSTEXT_H
 
-#define MAX_TEXT_OBS 2
-
 #include "object.h"
 #include "sworddefs.h"
+
+namespace Sword1 {
+
+#define MAX_TEXT_OBS 2
+
 class ObjectMan;
 class ResMan;
 
@@ -34,10 +37,10 @@ struct LineInfo {
 	uint16	length;	// length of line in characters
 };
 
-class SwordText {
+class Text {
 public:
-	SwordText(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion);
-	~SwordText(void);
+	Text(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion);
+	~Text(void);
 	FrameHeader *giveSpriteData(uint32 textTarget);
 	uint32 lowTextManager(uint8 *text, int32 width, uint8 pen);
 	void releaseText(uint32 id);
@@ -54,5 +57,7 @@ private:
 	ResMan *_resMan;
 	FrameHeader *_textBlocks[MAX_TEXT_OBS];
 };
+
+} // End of namespace Sword1 
 
 #endif //BSTEXT_H

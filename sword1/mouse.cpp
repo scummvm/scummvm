@@ -31,16 +31,18 @@
 #include "swordres.h"
 #include "menu.h"
 
-SwordMouse::SwordMouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
+namespace Sword1 {
+
+Mouse::Mouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_resMan = pResMan;
 	_objMan = pObjMan;
 	_system = system;
 	_currentPtr = NULL;
 }
 
-void SwordMouse::initialize(void) {
+void Mouse::initialize(void) {
 	_numObjs = 0;
-	SwordLogic::_scriptVars[MOUSE_STATUS] = 0; // mouse off and unlocked
+	Logic::_scriptVars[MOUSE_STATUS] = 0; // mouse off and unlocked
 	_getOff = 0;
 	_inTopMenu = false;
 	_mouseOverride = false;
@@ -53,7 +55,7 @@ void SwordMouse::initialize(void) {
 	createPointer(0, 0);
 }
 
-void SwordMouse::controlPanel(bool on) { // true on entering cpanel, false when leaving
+void Mouse::controlPanel(bool on) { // true on entering cpanel, false when leaving
 	static uint32 savedPtrId = 0;
 	if (on) {
 		savedPtrId = _currentPtrId;
@@ -68,18 +70,18 @@ void SwordMouse::controlPanel(bool on) { // true on entering cpanel, false when 
 	}
 }
 
-void SwordMouse::useLogicAndMenu(SwordLogic *pLogic, SwordMenu *pMenu) {
+void Mouse::useLogicAndMenu(Logic *pLogic, Menu *pMenu) {
 	_logic = pLogic;
 	_menu = pMenu;
 }
 
-void SwordMouse::addToList(int id, BsObject *compact) {
+void Mouse::addToList(int id, Object *compact) {
 	_objList[_numObjs].id = id;
 	_objList[_numObjs].compact = compact;
 	_numObjs++;
 }
 
-void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
+void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 	_state = 0; // all mouse events are flushed after one cycle.
 	if (_lastState) { // delay all events by one cycle to notice L_button + R_button clicks correctly.
 		_state = _lastState | eventFlags;
@@ -96,22 +98,22 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 
 	_mouseX = x;
 	_mouseY = y;
-	if (!(SwordLogic::_scriptVars[MOUSE_STATUS] & 1)) {  // no human?
+	if (!(Logic::_scriptVars[MOUSE_STATUS] & 1)) {  // no human?
 		_numObjs = 0;
 		return;	// no human, so we don't want the mouse engine
 	}
 
-	if (!SwordLogic::_scriptVars[TOP_MENU_DISABLED]) {
+	if (!Logic::_scriptVars[TOP_MENU_DISABLED]) {
 		if (y < 40) { // okay, we are in the top menu.
 			if (!_inTopMenu) { // are we just entering it?
-				if (!SwordLogic::_scriptVars[OBJECT_HELD])
+				if (!Logic::_scriptVars[OBJECT_HELD])
 					_menu->fnStartMenu();
 				setPointer(MSE_POINTER, 0);
 			}
 			_menu->checkTopMenu();
 			_inTopMenu = true;
 		} else if (_inTopMenu) { // we're not in the menu. did we just leave it?
-			if (!SwordLogic::_scriptVars[OBJECT_HELD])
+			if (!Logic::_scriptVars[OBJECT_HELD])
 				_menu->fnEndMenu();
 			_inTopMenu = false;
 		}
@@ -120,8 +122,8 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 		_inTopMenu = false;
 	}
 
-	SwordLogic::_scriptVars[MOUSE_X] = SwordLogic::_scriptVars[SCROLL_OFFSET_X] + x + 128;
-	SwordLogic::_scriptVars[MOUSE_Y] = SwordLogic::_scriptVars[SCROLL_OFFSET_Y] + y + 128 - 40;
+	Logic::_scriptVars[MOUSE_X] = Logic::_scriptVars[SCROLL_OFFSET_X] + x + 128;
+	Logic::_scriptVars[MOUSE_Y] = Logic::_scriptVars[SCROLL_OFFSET_Y] + y + 128 - 40;
 
 	//-
 	int32 touchedId = 0;
@@ -130,17 +132,17 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 		for (uint16 priority = 0; (priority < 10) && (!touchedId); priority++) {
 			for (uint16 cnt = 0; (cnt < _numObjs) && (!touchedId); cnt++) {
 				if ((_objList[cnt].compact->o_priority == priority) && 
-					(SwordLogic::_scriptVars[MOUSE_X] >= (uint32)_objList[cnt].compact->o_mouse_x1) &&
-					(SwordLogic::_scriptVars[MOUSE_X] <= (uint32)_objList[cnt].compact->o_mouse_x2) &&
-					(SwordLogic::_scriptVars[MOUSE_Y] >= (uint32)_objList[cnt].compact->o_mouse_y1) &&
-					(SwordLogic::_scriptVars[MOUSE_Y] <= (uint32)_objList[cnt].compact->o_mouse_y2)) {
+					(Logic::_scriptVars[MOUSE_X] >= (uint32)_objList[cnt].compact->o_mouse_x1) &&
+					(Logic::_scriptVars[MOUSE_X] <= (uint32)_objList[cnt].compact->o_mouse_x2) &&
+					(Logic::_scriptVars[MOUSE_Y] >= (uint32)_objList[cnt].compact->o_mouse_y1) &&
+					(Logic::_scriptVars[MOUSE_Y] <= (uint32)_objList[cnt].compact->o_mouse_y2)) {
 						touchedId = _objList[cnt].id;
 						clicked = cnt;
 				}
 			}
 		}
-		if (touchedId != (int)SwordLogic::_scriptVars[SPECIAL_ITEM]) { //the mouse collision situation has changed in one way or another
-			SwordLogic::_scriptVars[SPECIAL_ITEM] = touchedId;
+		if (touchedId != (int)Logic::_scriptVars[SPECIAL_ITEM]) { //the mouse collision situation has changed in one way or another
+			Logic::_scriptVars[SPECIAL_ITEM] = touchedId;
 			if (_getOff) { // there was something else selected before, run its get-off script
 				_logic->runMouseScript(NULL, _getOff);
 				_getOff = 0;
@@ -153,29 +155,29 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 			}
 		}
 	} else
-		SwordLogic::_scriptVars[SPECIAL_ITEM] = 0;
+		Logic::_scriptVars[SPECIAL_ITEM] = 0;
 	if (_state & MOUSE_DOWN_MASK) {
 		if (_inTopMenu) {
-			if (SwordLogic::_scriptVars[SECOND_ITEM])
-				_logic->runMouseScript(NULL, _menu->_objectDefs[SwordLogic::_scriptVars[SECOND_ITEM]].useScript);
-			if (SwordLogic::_scriptVars[MENU_LOOKING])
+			if (Logic::_scriptVars[SECOND_ITEM])
+				_logic->runMouseScript(NULL, _menu->_objectDefs[Logic::_scriptVars[SECOND_ITEM]].useScript);
+			if (Logic::_scriptVars[MENU_LOOKING])
 				_logic->cfnPresetScript(NULL, -1, PLAYER, SCR_menu_look, 0, 0, 0, 0);
 		}
 		
-		SwordLogic::_scriptVars[MOUSE_BUTTON] = _state & MOUSE_DOWN_MASK;
-		if (SwordLogic::_scriptVars[SPECIAL_ITEM]) {
-			BsObject *compact = _objMan->fetchObject(SwordLogic::_scriptVars[SPECIAL_ITEM]);
+		Logic::_scriptVars[MOUSE_BUTTON] = _state & MOUSE_DOWN_MASK;
+		if (Logic::_scriptVars[SPECIAL_ITEM]) {
+			Object *compact = _objMan->fetchObject(Logic::_scriptVars[SPECIAL_ITEM]);
 			_logic->runMouseScript(compact, compact->o_mouse_click);
 		}
 	}
 	_numObjs = 0;
 }
 
-uint16 SwordMouse::testEvent(void) {
+uint16 Mouse::testEvent(void) {
 	return _state;
 }
 
-void SwordMouse::createPointer(uint32 ptrId, uint32 luggageId) {
+void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 	if (_currentPtr) {
 		free(_currentPtr);
 		_currentPtr = NULL;
@@ -230,13 +232,13 @@ void SwordMouse::createPointer(uint32 ptrId, uint32 luggageId) {
 	}
 }
 
-void SwordMouse::setPointer(uint32 resId, uint32 rate) {
+void Mouse::setPointer(uint32 resId, uint32 rate) {
 	_currentPtrId = resId;
 	_frame = 0;
 
 	createPointer(resId, _currentLuggageId);
 
-	if ((resId == 0) || (!(SwordLogic::_scriptVars[MOUSE_STATUS] & 1) && (!_mouseOverride))) {
+	if ((resId == 0) || (!(Logic::_scriptVars[MOUSE_STATUS] & 1) && (!_mouseOverride))) {
 		_system->set_mouse_cursor(NULL, 0, 0, 0, 0);
 		_system->show_mouse(false);
 	} else {
@@ -245,14 +247,14 @@ void SwordMouse::setPointer(uint32 resId, uint32 rate) {
 	}
 }
 
-void SwordMouse::setLuggage(uint32 resId, uint32 rate) {
+void Mouse::setLuggage(uint32 resId, uint32 rate) {
 	_currentLuggageId = resId;
 	_frame = 0;
 	createPointer(_currentPtrId, resId);
 }
 
-void SwordMouse::animate(void) {
-	if ((SwordLogic::_scriptVars[MOUSE_STATUS] == 1) || (_mouseOverride && _currentPtr)) {
+void Mouse::animate(void) {
+	if ((Logic::_scriptVars[MOUSE_STATUS] == 1) || (_mouseOverride && _currentPtr)) {
 		_frame = (_frame + 1) % _currentPtr->numFrames;
 		uint8 *ptrData = (uint8*)_currentPtr + sizeof(MousePtr);
 		ptrData += _frame * _currentPtr->sizeX * _currentPtr->sizeY;
@@ -260,40 +262,42 @@ void SwordMouse::animate(void) {
 	}
 }
 
-void SwordMouse::fnNoHuman(void) {
-	if (SwordLogic::_scriptVars[MOUSE_STATUS] & 2) // locked, can't do anything
+void Mouse::fnNoHuman(void) {
+	if (Logic::_scriptVars[MOUSE_STATUS] & 2) // locked, can't do anything
 		return ;
-	SwordLogic::_scriptVars[MOUSE_STATUS] = 0; // off & unlocked
+	Logic::_scriptVars[MOUSE_STATUS] = 0; // off & unlocked
 	setLuggage(0, 0);
 	setPointer(0, 0);
 }
 
-void SwordMouse::fnAddHuman(void) {
-	if (SwordLogic::_scriptVars[MOUSE_STATUS] & 2) // locked, can't do anything
+void Mouse::fnAddHuman(void) {
+	if (Logic::_scriptVars[MOUSE_STATUS] & 2) // locked, can't do anything
 		return ;
-	SwordLogic::_scriptVars[MOUSE_STATUS] = 1;
-	SwordLogic::_scriptVars[SPECIAL_ITEM] = 0;
+	Logic::_scriptVars[MOUSE_STATUS] = 1;
+	Logic::_scriptVars[SPECIAL_ITEM] = 0;
 	_getOff = SCR_std_off;
 	setPointer(MSE_POINTER, 0);
 }
 
-void SwordMouse::fnBlankMouse(void) {
+void Mouse::fnBlankMouse(void) {
 	setPointer(0, 0);
 }
 
-void SwordMouse::fnNormalMouse(void) {
+void Mouse::fnNormalMouse(void) {
 	setPointer(MSE_POINTER, 0);
 }
 
-void SwordMouse::fnLockMouse(void) {
-	SwordLogic::_scriptVars[MOUSE_STATUS] |= 2;
+void Mouse::fnLockMouse(void) {
+	Logic::_scriptVars[MOUSE_STATUS] |= 2;
 }
 
-void SwordMouse::fnUnlockMouse(void) {
-	SwordLogic::_scriptVars[MOUSE_STATUS] &= 1;
+void Mouse::fnUnlockMouse(void) {
+	Logic::_scriptVars[MOUSE_STATUS] &= 1;
 }
 
-void SwordMouse::giveCoords(uint16 *x, uint16 *y) {
+void Mouse::giveCoords(uint16 *x, uint16 *y) {
 	*x = _mouseX;
 	*y = _mouseY;
 }
+
+} // End of namespace Sword1

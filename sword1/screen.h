@@ -24,6 +24,10 @@
 
 #include "sworddefs.h"
 
+class OSystem;
+
+namespace Sword1 {
+
 #define MAX_FORE 20
 #define MAX_BACK 20
 #define MAX_SORT 20
@@ -57,15 +61,14 @@ struct RoomDef {
 
 class ResMan;
 class ObjectMan;
-class SwordText; // Text objects use sprites that are created internally at run-time
-				 // the buffer belongs to SwordText, so we need a reference here.
-class OSystem;
+class Text; // Text objects use sprites that are created internally at run-time
+				 // the buffer belongs to Text, so we need a reference here.
 
-class SwordScreen {
+class Screen {
 public:
-	SwordScreen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan);
-	void useTextManager(SwordText *pTextMan);
-	~SwordScreen(void);
+	Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan);
+	void useTextManager(Text *pTextMan);
+	~Screen(void);
 	void draw(void);
 
 	void quitScreen(void);
@@ -114,7 +117,7 @@ private:
 	OSystem *_system;
 	ResMan *_resMan;
 	ObjectMan *_objMan;
-	SwordText *_textMan;
+	Text *_textMan;
 
 	uint16 _currentScreen;
 	uint8  *_screenBuf;
@@ -142,6 +145,8 @@ private:
 	bool _isBlack; // if the logic already faded down the palette, this is set to show the
 				   // mainloop that no further fading is necessary.
 };
+
+} // End of namespace Sword1 
 
 #endif //BSSCREEN_H
 

@@ -24,6 +24,8 @@
 
 #include "scummsys.h"
 
+namespace Sword1 {
+
 #define	O_TOTAL_EVENTS	5
 #define	O_WALKANIM_SIZE	600			//max number of nodes in router output
 #define	O_GRID_SIZE		200
@@ -56,7 +58,7 @@ struct WalkData {
 	int32	dir;
 } GCC_PACK;	// size = 5*int32 = 20 bytes
 
-struct BsObject {
+struct Object {
 	int32	o_type;						// 0  broad description of type - object, floor, etc.
 	int32	o_status;					// 4  bit flags for logic, graphics, mouse, etc.
 	int32	o_logic;					// 8  logic type
@@ -115,11 +117,13 @@ struct BsObject {
 };
 
 struct CollisionData {
-	BsObject  *compact;
+	Object  *compact;
 	int32	w[24];
 	int32	h[24];
 	WalkData route[24];
 };
+
+} // End of namespace Sword1 
 
 #endif //BSOBJECT_H
 

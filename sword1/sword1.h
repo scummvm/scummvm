@@ -19,22 +19,26 @@
  *
  */
 
-#include <stdio.h>
+#ifndef BSSWORD1_H
+#define BSSWORD1_H
+
 #include "base/engine.h"
 #include "common/util.h"
 #include "base/gameDetector.h"
 #include "sworddefs.h"
 
-class SwordScreen;
-class SwordSound;
-class SwordLogic;
-class SwordMouse;
+namespace Sword1 {
+
+class Screen;
+class Sound;
+class Logic;
+class Mouse;
 class ResMan;
 class MemMan;
 class ObjectMan;
-class SwordMenu;
-class SwordMusic;
-class SwordControl;
+class Menu;
+class Music;
+class Control;
 
 struct SystemVars {
 	bool	runningFromCd;
@@ -46,8 +50,8 @@ struct SystemVars {
 	bool	forceRestart;
 	bool	wantFade;			// when true => fade during scene change, else cut.
 	uint8	playSpeech;
-	uint8   showText;
-    uint8	language;
+	uint8	showText;
+	uint8	language;
 };
 
 class SwordEngine : public Engine {
@@ -74,12 +78,16 @@ private:
 	MemMan		*_memMan;
 	ResMan		*_resMan;
 	ObjectMan	*_objectMan;
-	SwordScreen	*_screen;
-	SwordMouse	*_mouse;
-	SwordLogic	*_logic;
-	SwordSound	*_sound;
-	SwordMenu	*_menu;
-	SwordMusic  *_music;
-	SwordControl *_control;
+	Screen		*_screen;
+	Mouse		*_mouse;
+	Logic		*_logic;
+	Sound		*_sound;
+	Menu		*_menu;
+	Music		*_music;
+	Control		*_control;
 	static const uint8 _cdList[TOTAL_SECTIONS];
 };
+
+} // End of namespace Sword1
+
+#endif //BSSWORD1_H

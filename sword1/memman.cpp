@@ -23,6 +23,8 @@
 #include "memman.h"
 #include "common/util.h"
 
+namespace Sword1 {
+
 MemMan::MemMan(void) {
 	_alloced = 0;
 	_memListFree = _memListFreeEnd = NULL;
@@ -31,7 +33,7 @@ MemMan::MemMan(void) {
 MemMan::~MemMan(void) {
 }
 
-void MemMan::alloc(BsMemHandle *bsMem, uint32 pSize, uint16 pCond) {
+void MemMan::alloc(MemHandle *bsMem, uint32 pSize, uint16 pCond) {
 	_alloced += pSize;
 	bsMem->data = (void*)malloc(pSize);
 	if (!bsMem->data)
@@ -46,7 +48,7 @@ void MemMan::alloc(BsMemHandle *bsMem, uint32 pSize, uint16 pCond) {
 	checkMemoryUsage();
 }
 
-void MemMan::freeNow(BsMemHandle *bsMem) {
+void MemMan::freeNow(MemHandle *bsMem) {
 	if (bsMem->cond != MEM_FREED) {
 		_alloced -= bsMem->size;
 		removeFromFreeList(bsMem);
@@ -55,7 +57,7 @@ void MemMan::freeNow(BsMemHandle *bsMem) {
 	}
 }
 
-void MemMan::setCondition(BsMemHandle *bsMem, uint16 pCond) {
+void MemMan::setCondition(MemHandle *bsMem, uint16 pCond) {
 	if ((pCond == MEM_FREED) || (pCond > MEM_DONT_FREE))
 		error("MemMan::setCondition: program tried to set illegal memory condition");
 	if (bsMem->cond != pCond) {
@@ -89,7 +91,7 @@ void MemMan::checkMemoryUsage(void) {
 	}
 }
 
-void MemMan::addToFreeList(BsMemHandle *bsMem) {
+void MemMan::addToFreeList(MemHandle *bsMem) {
 	if (bsMem->next || bsMem->prev) {
 		warning("addToFreeList: mem block is already in freeList");
 		return;
@@ -103,7 +105,7 @@ void MemMan::addToFreeList(BsMemHandle *bsMem) {
 		_memListFreeEnd = _memListFree;
 }
 
-void MemMan::removeFromFreeList(BsMemHandle *bsMem) {
+void MemMan::removeFromFreeList(MemHandle *bsMem) {
 	if (_memListFree == bsMem)
 		_memListFree = bsMem->next;
 	if (_memListFreeEnd == bsMem)
@@ -116,7 +118,8 @@ void MemMan::removeFromFreeList(BsMemHandle *bsMem) {
 	bsMem->next = bsMem->prev = NULL;
 }
 
-void MemMan::initHandle(BsMemHandle *bsMem) {
-	memset(bsMem, 0, sizeof(BsMemHandle));
+void MemMan::initHandle(MemHandle *bsMem) {
+	memset(bsMem, 0, sizeof(MemHandle));
 }
 
+} // End of namespace Sword1

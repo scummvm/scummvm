@@ -26,6 +26,10 @@
 #include "sworddefs.h"
 #include "object.h"
 
+class OSystem;
+
+namespace Sword1 {
+
 #define MAX_MOUSE 30
 
 #define BS1L_BUTTON_DOWN		2
@@ -38,7 +42,7 @@
 
 struct MouseObj {
 	int id;
-	BsObject *compact;
+	Object *compact;
 };
 
 #if !defined(__GNUC__)
@@ -58,18 +62,17 @@ struct MousePtr {
 	#pragma END_PACK_STRUCTS
 #endif
 
-class SwordLogic;
-class SwordMenu;
+class Logic;
+class Menu;
 class ResMan;
 class ObjectMan;
-class OSystem;
 
-class SwordMouse {
+class Mouse {
 public:
-	SwordMouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan);
+	Mouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan);
 	void initialize(void);
-	void addToList(int id, BsObject *compact);
-	void useLogicAndMenu(SwordLogic *pLogic, SwordMenu *pMenu);
+	void addToList(int id, Object *compact);
+	void useLogicAndMenu(Logic *pLogic, Menu *pMenu);
 	void setLuggage(uint32 resID, uint32 rate);
 	void setPointer(uint32 resID, uint32 rate);
 	void animate(void);
@@ -86,8 +89,8 @@ public:
 private:
 	void createPointer(uint32 ptrId, uint32 luggageId);
 	OSystem *_system;
-	SwordLogic *_logic;
-	SwordMenu *_menu;
+	Logic *_logic;
+	Menu *_menu;
 	MouseObj _objList[MAX_MOUSE];
 	ResMan *_resMan;
 	ObjectMan *_objMan;
@@ -101,4 +104,6 @@ private:
 	bool _inTopMenu, _mouseOverride;
 };
 
+} // End of namespace Sword1
+ 
 #endif //BSMOUSE_H

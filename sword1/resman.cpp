@@ -21,14 +21,14 @@
 
 #include "stdafx.h"
 #include "scummsys.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include "memman.h"
 #include "resman.h"
 #include "sworddefs.h"
 #include "base/engine.h"
 #include "common/util.h"
 #include "swordres.h"
+
+namespace Sword1 {
 
 #define MAX_PATH_LEN 260
 
@@ -48,27 +48,27 @@ void ResMan::loadCluDescript(const char *fileName) {
 		error("ResMan::loadCluDescript(): File %s not found!", fileName);
 	
 	_prj.noClu = resFile.readUint32LE();
-	_prj.clu = new BsClu*[_prj.noClu];
+	_prj.clu = new Clu*[_prj.noClu];
 
 	uint32 *cluIndex = (uint32*)malloc(_prj.noClu * 4);
 	resFile.read(cluIndex, _prj.noClu * 4);
 
 	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++)
 		if (cluIndex[clusCnt]) {
-			BsClu *cluster = _prj.clu[clusCnt] = new BsClu;
+			Clu *cluster = _prj.clu[clusCnt] = new Clu;
 			resFile.read(cluster->label, MAX_LABEL_SIZE);
 
 			cluster->noGrp = resFile.readUint32LE();
-			cluster->grp = new BsGrp*[cluster->noGrp];
+			cluster->grp = new Grp*[cluster->noGrp];
 
 			uint32 *grpIndex = (uint32*)malloc(cluster->noGrp * 4);
 			resFile.read(grpIndex, cluster->noGrp * 4);
 
 			for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++)
 				if (grpIndex[grpCnt]) {
-					BsGrp *group = cluster->grp[grpCnt] = new BsGrp;
+					Grp *group = cluster->grp[grpCnt] = new Grp;
 					group->noRes = resFile.readUint32LE();
-					group->resHandle = new BsMemHandle[group->noRes];
+					group->resHandle = new MemHandle[group->noRes];
 					group->offset = new uint32[group->noRes];
 					group->length = new uint32[group->noRes];
 					uint32 *resIdIdx = (uint32*)malloc(group->noRes * 4);
@@ -101,9 +101,9 @@ void ResMan::loadCluDescript(const char *fileName) {
 void ResMan::freeCluDescript(void) {
 	
 	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++)
-		if (BsClu *cluster = _prj.clu[clusCnt]) {
+		if (Clu *cluster = _prj.clu[clusCnt]) {
 			for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++)
-				if (BsGrp *group = cluster->grp[grpCnt]) {
+				if (Grp *group = cluster->grp[grpCnt]) {
 					for (uint32 resCnt = 0; resCnt < group->noRes; resCnt++)
 						_memMan->freeNow(group->resHandle + resCnt);
 					delete[] group->resHandle;
@@ -119,9 +119,9 @@ void ResMan::freeCluDescript(void) {
 
 void ResMan::flush(void) {
 	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++)
-		if (BsClu *cluster = _prj.clu[clusCnt])
+		if (Clu *cluster = _prj.clu[clusCnt])
 			for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++)
-				if (BsGrp *group = cluster->grp[grpCnt])
+				if (Grp *group = cluster->grp[grpCnt])
 					for (uint32 resCnt = 0; resCnt < group->noRes; resCnt++)
 						if (group->resHandle[resCnt].cond != MEM_FREED) {
 							_memMan->setCondition(group->resHandle + resCnt, MEM_CAN_FREE);
@@ -130,7 +130,7 @@ void ResMan::flush(void) {
 }
 
 void *ResMan::fetchRes(uint32 id) {
-	BsMemHandle *memHandle = resHandle(id);
+	MemHandle *memHandle = resHandle(id);
 	if (!memHandle->data)
 		error("fetchRes:: resource %d is not open!", id);
 	return memHandle->data;
@@ -146,7 +146,7 @@ void ResMan::dumpRes(uint32 id) {
 	sprintf(outn, "DUMP%08X.BIN", id);
 	FILE *outf = fopen( outn, "wb");
 	resOpen(id);
-	BsMemHandle *memHandle = resHandle(id);
+	MemHandle *memHandle = resHandle(id);
 	fwrite(memHandle->data, 1, memHandle->size, outf);
 	fclose(outf);
 	resClose(id);
@@ -157,7 +157,7 @@ Header *ResMan::lockScript(uint32 scrID) {
 		error("Script id %d not found.\n", scrID);
 	scrID = _scriptList[scrID / ITM_PER_SEC];
 #ifdef SCUMM_BIG_ENDIAN
-	BsMemHandle *memHandle = resHandle(scrID);
+	MemHandle *memHandle = resHandle(scrID);
 	if (memHandle->cond == MEM_FREED)
 		openScriptResourceBigEndian(scrID);
 	else
@@ -174,7 +174,7 @@ void ResMan::unlockScript(uint32 scrID) {
 
 void *ResMan::cptResOpen(uint32 id) {
 #ifdef SCUMM_BIG_ENDIAN
-	BsMemHandle *memHandle = resHandle(id);
+	MemHandle *memHandle = resHandle(id);
 	if (memHandle->cond == MEM_FREED)
 		openCptResourceBigEndian(id);
 	else
@@ -186,7 +186,7 @@ void *ResMan::cptResOpen(uint32 id) {
 }
 
 void ResMan::resOpen(uint32 id) {  // load resource ID into memory
-	BsMemHandle *memHandle = resHandle(id);
+	MemHandle *memHandle = resHandle(id);
 	if (memHandle->cond == MEM_FREED) { // memory has been freed
 		uint32 size = resLength(id);
 		_memMan->alloc(memHandle, size);
@@ -206,7 +206,7 @@ void ResMan::resOpen(uint32 id) {  // load resource ID into memory
 }
 
 void ResMan::resClose(uint32 id) {
-	BsMemHandle *handle = resHandle(id);
+	MemHandle *handle = resHandle(id);
 	if (!handle->refCount) {
 		warning("Resource Manager fail: unlocking object with refCount 0. Id: %d\n", id);		
 	} else {
@@ -235,7 +235,7 @@ File *ResMan::openClusterFile(uint32 id) {
 	return clusFile;
 }
 
-BsMemHandle *ResMan::resHandle(uint32 id) {
+MemHandle *ResMan::resHandle(uint32 id) {
 	if ((id >> 16) == 0x0405)
 		id = _srIdList[id & 0xFFFF];
 	uint8 cluster = (uint8)((id >> 24) - 1);
@@ -264,7 +264,7 @@ uint32 ResMan::resOffset(uint32 id) {
 
 void ResMan::openCptResourceBigEndian(uint32 id) {
 	resOpen(id);
-	BsMemHandle *handle = resHandle(id);
+	MemHandle *handle = resHandle(id);
 	uint32 totSize = handle->size;
 	uint32 *data = (uint32*)((uint8*)handle->data + sizeof(Header));
 	totSize -= sizeof(Header);
@@ -279,7 +279,7 @@ void ResMan::openCptResourceBigEndian(uint32 id) {
 
 void ResMan::openScriptResourceBigEndian(uint32 id) {
 	resOpen(id);
-	BsMemHandle *handle = resHandle(id);
+	MemHandle *handle = resHandle(id);
 	// uint32 totSize = handle->size;
 	Header *head = (Header*)handle->data;
 	head->comp_length = FROM_LE_32(head->comp_length);
@@ -327,3 +327,5 @@ uint32 ResMan::_srIdList[29] = { // the file numbers differ for the control pane
 	0x04050019,			// SR_DEATHPANEL
 	0,
 };
+
+} // End of namespace Sword1

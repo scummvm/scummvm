@@ -26,10 +26,12 @@
 #include "logic.h"
 #include "sword1.h"
 
+namespace Sword1 {
+
 #define SOUND_SPEECH_ID 1
 #define SPEECH_FLAGS (SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LITTLE_ENDIAN)
 
-SwordSound::SwordSound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan) {
+Sound::Sound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan) {
 	strcpy(_filePath, searchPath);
 	_mixer = mixer;
 	_resMan = pResMan;
@@ -39,7 +41,7 @@ SwordSound::SwordSound(const char *searchPath, SoundMixer *mixer, ResMan *pResMa
 	_speechVolL = _speechVolR = _sfxVolL = _sfxVolR = 192;
 }
 
-int SwordSound::addToQueue(int32 fxNo) {
+int Sound::addToQueue(int32 fxNo) {
 	bool alreadyInQueue = false;
 	for (uint8 cnt = 0; (cnt < _endOfQueue) && (!alreadyInQueue); cnt++)
 		if (_fxQueue[cnt].id == (uint32)fxNo)
@@ -61,10 +63,10 @@ int SwordSound::addToQueue(int32 fxNo) {
 	return 0;
 }
 
-void SwordSound::engine(void) {
+void Sound::engine(void) {
 	// first of all, add any random sfx to the queue...
 	for (uint16 cnt = 0; cnt < TOTAL_FX_PER_ROOM; cnt++) {
-		uint16 fxNo = _roomsFixedFx[SwordLogic::_scriptVars[SCREEN]][cnt];
+		uint16 fxNo = _roomsFixedFx[Logic::_scriptVars[SCREEN]][cnt];
 		if (fxNo) {
 			if (_fxList[fxNo].type == FX_RANDOM) {
 				if (_rnd.getRandomNumber(_fxList[fxNo].delay) == 0)
@@ -90,8 +92,7 @@ void SwordSound::engine(void) {
 	}
 }
 
-void SwordSound::fnStopFx(int32 fxNo) {
-
+void Sound::fnStopFx(int32 fxNo) {
 	_mixer->stopID(fxNo);
 	for (uint8 cnt = 0; cnt < _endOfQueue; cnt++)
 		if (_fxQueue[cnt].id == (uint32)fxNo) {
@@ -105,16 +106,16 @@ void SwordSound::fnStopFx(int32 fxNo) {
 	debug(8, "fnStopFx: id not found in queue");
 }
 
-bool SwordSound::amISpeaking(void) {
+bool Sound::amISpeaking(void) {
 	_waveVolPos++;
 	return _waveVolume[_waveVolPos - 1];
 }
 
-bool SwordSound::speechFinished(void) {
+bool Sound::speechFinished(void) {
 	return !_speechHandle.isActive();
 }
 
-void SwordSound::newScreen(uint32 screen) {
+void Sound::newScreen(uint32 screen) {
 	if (_currentCowFile != SwordEngine::_systemVars.currentCD) {
 		if (_currentCowFile)
 			closeCowSystem();
@@ -122,17 +123,17 @@ void SwordSound::newScreen(uint32 screen) {
 	}
 }
 
-void SwordSound::quitScreen(void) {
+void Sound::quitScreen(void) {
 	// stop all running SFX
 	while (_endOfQueue)
 		fnStopFx(_fxQueue[0].id);
 }
 
-void SwordSound::playSample(QueueElement *elem) {
+void Sound::playSample(QueueElement *elem) {
 	uint8 *sampleData = (uint8*)_resMan->fetchRes(_fxList[elem->id].sampleId);
 	for (uint16 cnt = 0; cnt < MAX_ROOMS_PER_FX; cnt++) {
 		if (_fxList[elem->id].roomVolList[cnt].roomNo) {
-			if ((_fxList[elem->id].roomVolList[cnt].roomNo == (int)SwordLogic::_scriptVars[SCREEN]) ||
+			if ((_fxList[elem->id].roomVolList[cnt].roomNo == (int)Logic::_scriptVars[SCREEN]) ||
 				(_fxList[elem->id].roomVolList[cnt].roomNo == -1)) {
 
 					uint8 volL = (_fxList[elem->id].roomVolList[cnt].leftVol * 10 * _sfxVolL) / 255;
@@ -154,9 +155,9 @@ void SwordSound::playSample(QueueElement *elem) {
 	}
 }
 
-bool SwordSound::startSpeech(uint16 roomNo, uint16 localNo) {
+bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 	if (_cowHeader == NULL) {
-		warning("SwordSound::startSpeech: COW file isn't open!");
+		warning("Sound::startSpeech: COW file isn't open!");
 		return false;
 	}
 
@@ -176,7 +177,7 @@ bool SwordSound::startSpeech(uint16 roomNo, uint16 localNo) {
 		return false;
 }
 
-int16 *SwordSound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
+int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 	uint8 *fBuf = (uint8*)malloc(cSize);
 	_cowFile.seek(index);
 	_cowFile.read(fBuf, cSize);
@@ -210,13 +211,13 @@ int16 *SwordSound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 		return dstData;
 	} else {
 		free(fBuf);
-		warning("SwordSound::uncompressSpeech(): DATA tag not found in wave header");
+		warning("Sound::uncompressSpeech(): DATA tag not found in wave header");
 		*size = 0;
 		return NULL;
 	}
 }
 
-void SwordSound::calcWaveVolume(int16 *data, uint32 length) {
+void Sound::calcWaveVolume(int16 *data, uint32 length) {
 	int16 *blkPos = data + 918;
 	for (uint32 cnt = 0; cnt < WAVE_VOL_TAB_LENGTH; cnt++)
 		_waveVolume[cnt] = false;
@@ -241,11 +242,11 @@ void SwordSound::calcWaveVolume(int16 *data, uint32 length) {
 	}
 }
 
-void SwordSound::stopSpeech(void) {
+void Sound::stopSpeech(void) {
 	_mixer->stopID(SOUND_SPEECH_ID);
 }
 
-void SwordSound::initCowSystem(void) {
+void Sound::initCowSystem(void) {
 	char cowName[25];
 	/* look for speech1/2.clu in the data dir
 	   and speech/speech.clu (running from cd or using cd layout)
@@ -264,10 +265,10 @@ void SwordSound::initCowSystem(void) {
 			_cowHeader[cnt] = _cowFile.readUint32LE();
 		_currentCowFile = SwordEngine::_systemVars.currentCD;
 	} else
-		warning("SwordSound::initCowSystem: Can't open SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);	
+		warning("Sound::initCowSystem: Can't open SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);	
 }
 
-void SwordSound::closeCowSystem(void) {
+void Sound::closeCowSystem(void) {
 	if (_cowFile.isOpen())
 		_cowFile.close();
 	if (_cowHeader)
@@ -276,3 +277,4 @@ void SwordSound::closeCowSystem(void) {
 	_currentCowFile = 0;
 }
 
+} // End of namespace Sword1

@@ -24,12 +24,14 @@
 
 /*#include "objectman.h"
 
-class SwordLogic;
+namespace Sword1 {
 
-class SwordCollision {
+class Logic;
+
+class Collision {
 public:
-	SwordCollision(ObjectMan *pObjMan, SwordLogic *pLogic);
-	~SwordCollision(void);
+	Collision(ObjectMan *pObjMan, Logic *pLogic);
+	~Collision(void);
 	void checkCollisions(void);
 	void fnBumpOff(void);
 	void fnBumpOn(void);
@@ -37,8 +39,11 @@ private:
 	int32 getIntersect(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3);
 	int noCol;
 	ObjectMan *_objMan;
-	SwordLogic *_logic; // for CFN_preset_script
-};*/
-// maybe it's better to make this part of SwordRouter
+	Logic *_logic; // for CFN_preset_script
+};
+
+} // End of namespace Sword1
+*/
+// maybe it's better to make this part of Router
 
 #endif // BSCOLLISION_H

@@ -25,12 +25,15 @@
 #include "scummsys.h"
 #include "sworddefs.h"
 
+class OSystem;
+
+namespace Sword1 {
+
 class ObjectMan;
 class ResMan;
-class OSystem;
-class SwordMouse;
-class SwordMusic;
-class SwordSound;
+class Mouse;
+class Music;
+class Sound;
 
 #define MAX_BUTTONS 16
 
@@ -62,10 +65,10 @@ struct ButtonInfo {
 	uint32 resId, id;
 };
 
-class SwordControl {
+class Control {
 public:
-	SwordControl(ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, SwordMouse *pMouse, SwordSound *pSound, SwordMusic *pMusic, const char *savePath);
-	~SwordControl(void);
+	Control(ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic, const char *savePath);
+	~Control(void);
 	uint8 runPanel(void);
 	void doRestore(void);
 	void askForCd(void);
@@ -115,9 +118,9 @@ private:
 	ObjectMan *_objMan;
 	ResMan *_resMan;
 	OSystem *_system;
-	SwordMouse *_mouse;
-	SwordMusic *_music;
-	SwordSound *_sound;
+	Mouse *_mouse;
+	Music *_music;
+	Sound *_sound;
 	char _savePath[256];
 	uint8 *_font, *_redFont;
 	uint8 *_screenBuf;
@@ -127,6 +130,7 @@ private:
 	bool _mouseDown;
 };
 
-
+} // End of namespace Sword1
+ 
 #endif //BSCONTROL_H
 
