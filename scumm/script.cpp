@@ -377,7 +377,7 @@ int Scumm::readVar(uint var) {
 			checkRange(_numVariables - 1, 0, var, "Variable %d out of range(rzb)");
 #if defined(BYPASS_COPY_PROT)
 			// INDY3 checks this during the game...
-			if (var == 94 && _gameId == GID_INDY3) {
+			if (var == 94 && _gameId == GID_INDY3 && b == 4) {
 				return 0;
 			} else
 #endif
