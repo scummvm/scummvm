@@ -296,6 +296,8 @@ Broken Sword 2
 * Support cutscenes in some kind of open video format. (Partly done.)
 * Fix the credits so they look more like the original. (Did we ever get the
   source code for that?)
+* Find out what the propery "copyright" statement in our source files
+  should be [joostp will contact Revolution regarding that].
 
 SIMON
 =====
