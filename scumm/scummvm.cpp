@@ -170,8 +170,6 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_FBEAR, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	//{"puttwin", "Putt-Putt Joins The Parade (Windows)", GID_PUTTPUTT, 6, MDT_NONE,
-	// GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, "puttputt"},
 
 	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY, 0},
@@ -211,7 +209,10 @@ static const ScummGameSettings scumm_settings[] = {
 
 	 /* Note that both full versions of Humongous games and demos were often released for
 	  * several interpreter versions... */
-/*
+#ifdef HEGAMES
+	{"puttwin", "Putt-Putt Joins The Parade (Windows)", GID_PUTTPUTT, 6, MDT_NONE,
+	GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, "puttputt"},
+
 	// Humongous Entertainment Scumm Version 7 
 	{"catalog", "Humongous Interactive Catalog", GID_PUTTPUTT, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
@@ -296,7 +297,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"spyozon", "Spyfox 3: Operation Ozone", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-*/
+#endif
 	{NULL, NULL, 0, 0, MDT_NONE, 0, 0}
 };
 
