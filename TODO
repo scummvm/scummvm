@@ -312,7 +312,8 @@ SAGA
  * Remove any traces of the additional level of abstraction reinherit used
  * Remove homerolled high level data structures like stacks that should
    be provided by ScummVM if they aren't already.
- * OO'ify (blah_mod.h contains public stuff, blah.h private stuff) [almost done]
+ * OO'ify (blah_mod.h contains public stuff, blah.h private stuff) [almost
+   done]
 
 - bugs/misfeatures -
  * Make actor animation Event-driven. See FIXME in actor.cpp. Maybe it
@@ -323,10 +324,10 @@ SAGA
    e.g. a rectangle covering the entire ITE screen should have right=320 and
    bottom=200. (eriktorbjorn, partly - mostly? - done)
  * Inspect Font module - free memory, GameFontIds <-> FONT_ID
- * Walk bug. When announcer puts medallion on Rif he should go backwards instead
-   of turning and walking faced to screen
- * In many places RSC_LoadResource() is called but memory is not freed afterwards,
-   i.e. there is a huge leak
+ * Walk bug. When announcer puts medallion on Rif he should go backwards
+   instead of turning and walking faced to screen
+ * In many places RSC_LoadResource() is called but memory is not freed
+   afterwards, i.e. there is a huge leak
  * Optimize screen output. Now we blit whole screen for each frame.
  * When using the original XMIDI music resources, some songs play at the wrong
    speed. The worst example I've heard of this is the "Elk Fanfare" during the
@@ -335,9 +336,10 @@ SAGA
    header instead...?
  * In the dog's castle at guards' room (scene_change 177 ang go down) subtitles
    aren't shown. In floppy version there is complete silence both textual and
-   audial.
- * Sound in old Win demo is all wrong -- either there is some unique sound format
-   or I didn't guess it correctly
+   audial. Looks to me as if subtitles are drawn outside the screen. Are the
+   coordinates calculated wrong, or should the text drawing code compensate?
+ * Sound in old Win demo is all wrong -- either there is some unique sound
+   format or I didn't guess it correctly
  * Up and down keys ('u' and 'd') in converse panel do not work properly
 
 - plans -
@@ -348,17 +350,15 @@ SAGA
  * Finish inventory code
  * Implement ISO path finder
  * Hook conversations to scripts (partly done)
- * Change script buffer so that its point to the appropriate data.
-   (eriktorbjorn - mostly done)
  * ISO - tile scene implementation
  * Puzzle
 
 - features -
  * Add sound/voices compression. Should _considerably_ save space.
- * Add support for Mac versions. All data is in BE mode and structures are aligned.
-   (h00ligan, partly done)
- * Support for later Win32/Mac/Linux demos where some scenes are substituted with LBM
-   images, tables are in place.
+ * Add support for Mac versions. All data is in BE mode and structures are
+   aligned. (h00ligan, partly done)
+ * Support for later Win32/Mac/Linux demos where some scenes are substituted
+   with LBM images, tables are in place.
  * Amiga ITE support
  * Support for Dream Guild's Mac ITE
  * Support IHNM
