@@ -122,6 +122,11 @@ protected:
 	void decRefCount();
 };
 
+// Append two strings to form a new (temp) string
+String operator +(const String &x, const String &y);
+String operator +(const char *x, const String &y);
+String operator +(const String &x, const char *y);
+
 // Some useful additional comparision operators for Strings
 bool operator == (const char *x, const ConstString &y);
 bool operator != (const char *x, const ConstString &y);

@@ -255,6 +255,28 @@ bool ConstString::operator >= (const ConstString &x) const {
 	return (x <= *this);
 }
 
+#pragma mark -
+
+String operator +(const String &x, const String &y) {
+	String temp(x);
+	temp += y;
+	return temp;
+}
+
+String operator +(const char *x, const String &y) {
+	String temp(x);
+	temp += y;
+	return temp;
+}
+
+String operator +(const String &x, const char *y) {
+	String temp(x);
+	temp += y;
+	return temp;
+}
+
+#pragma mark -
+
 bool operator == (const char* y, const ConstString &x) {
 	return (x == y);
 }
