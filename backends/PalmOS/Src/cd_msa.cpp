@@ -20,7 +20,7 @@
  *
  */
 #include <SonyClie.h>
-
+#include "stdafx.h"
 #include "scumm.h"
 #include "common/system.h"
 #include "cd_msa.h"
