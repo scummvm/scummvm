@@ -135,8 +135,7 @@ void Scumm_v3::readIndexFile()
 			break;
 
 		default:
-			error("Bad ID %c%c found in directory!", blocktype & 0xFF,
-						blocktype >> 8);
+			error("Bad ID %c%c found in directory!", blocktype & 0xFF, blocktype >> 8);
 			return;
 		}
 	}
