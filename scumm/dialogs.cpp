@@ -464,17 +464,28 @@ enum {
 	kAboutCmd = 'ABOU'
 };
 
+#ifndef _WIN32_WCE
 OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
 	: ScummDialog(gui, scumm, 40, 30, 240, 124) {
+#else
+OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
+	: ScummDialog(gui, scumm, 40, 30, 240, 124 + kButtonHeight + 4) {
+#endif
 	//
 	// Add the buttons
 	//
+#ifdef _WIN32_WCE
+	addButton(_w-kButtonWidth-8, _h-24 - kButtonHeight - 4, "OK", kOKCmd, 'O');
+	addButton(_w-2*kButtonWidth-12, _h-24 - kButtonHeight - 4, "Cancel", kCancelCmd, 'C');
+
+	addButton(8, _h-24 - kButtonHeight - 4, "About", kAboutCmd, 'A');
+
+	addButton(kButtonWidth+12, _h-24, "Keys", kKeysCmd, 'K');
+#else
 	addButton(_w-kButtonWidth-8, _h-24, "OK", kOKCmd, 'O');
 	addButton(_w-2*kButtonWidth-12, _h-24, "Cancel", kCancelCmd, 'C');
 
 	addButton(8, _h-24, "About", kAboutCmd, 'A');
-#ifdef _WIN32_WCE
-	addButton(kButtonWidth+12, _h-24, "Keys", kKeysCmd, 'K');
 #endif
 
 	//
@@ -658,11 +669,11 @@ enum {
 
 KeysDialog::KeysDialog(NewGui *gui, Scumm *scumm)
 	: ScummDialog(gui, scumm, 30, 20, 260, 160) {
-	addButton(200, 20, queryCustomString(24), kMapCmd, 'M');	// Map
-	addButton(200, 40, "OK", kOKCmd, 'O');						// OK
-	addButton(200, 60, "Cancel", kCancelCmd, 'C');				// Cancel
+	addButton(160, 20, queryCustomString(24), kMapCmd, 'M');	// Map
+	addButton(160, 40, "OK", kOKCmd, 'O');						// OK
+	addButton(160, 60, "Cancel", kCancelCmd, 'C');				// Cancel
 
-	_actionsList = new ListWidget(this, 10, 20, 180, 90);
+	_actionsList = new ListWidget(this, 10, 20, 140, 90);
 	_actionsList->setNumberingMode(kListNumberingZero);
 
 	_actionTitle = new StaticTextWidget(this, 10, 120, 240, 16, queryCustomString(25), kTextAlignCenter);
