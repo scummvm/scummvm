@@ -1484,20 +1484,7 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		}
 	}
 
-	if (ro_offs != 0) {
-		_fileHandle.seek(ro_offs - 2, SEEK_SET);
-		_fileHandle.read(createResource(type, idx, ro_size + 2), ro_size + 2);
-		return 1;
-	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && wa_offs != 0) {
-		if (_features & GF_OLD_BUNDLE) {
-			_fileHandle.seek(wa_offs, SEEK_SET);
-			_fileHandle.read(createResource(type, idx, wa_size), wa_size);
-		} else {
-			_fileHandle.seek(wa_offs - 6, SEEK_SET);
-			_fileHandle.read(createResource(type, idx, wa_size + 6), wa_size + 6);
-		}
-		return 1;
-	} else if (ad_offs != 0) {
+	if ((_midiDriver == MD_ADLIB) && ad_offs != 0) {
 		// AD resources have a header, instrument definitions and one MIDI track.
 		// We build an 'ADL ' resource from that:
 		//   8 bytes resource header
@@ -1518,6 +1505,19 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 			_fileHandle.read(ptr, ad_size - 6);
 			return convertADResource(type, idx, ptr, ad_size - 6);
 		} 
+	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && wa_offs != 0) {
+		if (_features & GF_OLD_BUNDLE) {
+			_fileHandle.seek(wa_offs, SEEK_SET);
+			_fileHandle.read(createResource(type, idx, wa_size), wa_size);
+		} else {
+			_fileHandle.seek(wa_offs - 6, SEEK_SET);
+			_fileHandle.read(createResource(type, idx, wa_size + 6), wa_size + 6);
+		}
+		return 1;
+	} else if (ro_offs != 0) {
+		_fileHandle.seek(ro_offs - 2, SEEK_SET);
+		_fileHandle.read(createResource(type, idx, ro_size + 2), ro_size + 2);
+		return 1;
 	}
 	res.roomoffs[type][idx] = 0xFFFFFFFF;
 	return 0;
