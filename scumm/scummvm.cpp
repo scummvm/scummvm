@@ -164,6 +164,7 @@ static const VersionSettings scumm_settings[] = {
 	{"dig", "The Dig", GID_DIG, 7, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
 
+#ifndef __PALM_OS__ // these are SVGA games not supported under PalmOS
 	/* Scumm Version 8 */
 	{"comi", "The Curse of Monkey Island", GID_CMI, 8, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER, 0},
@@ -222,7 +223,8 @@ static const VersionSettings scumm_settings[] = {
 	{"pj3-demo", "Pajama Sam 3: You Are What You Eat (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	// bunch of backyard sports games...
-	 
+
+#endif
 	{NULL, NULL, 0, 0, MDT_NONE, 0, NULL}
 };
 

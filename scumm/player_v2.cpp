@@ -37,6 +37,16 @@
 #define FB_WNOISE 0x12000       /* feedback for white noise */
 #define FB_PNOISE 0x08000       /* feedback for periodic noise */
 
+#ifdef __PALM_OS__
+const uint8 *note_lengths;
+static const uint16 *hull_offsets;
+static const int16 *hulls;
+static const uint16 *freqmod_lengths;
+static const uint16 *freqmod_offsets;
+static const int8 *freqmod_table;
+static const uint16 *spk_freq_table;
+static const uint16 *pcjr_freq_table;
+#else
 const uint8 note_lengths[] = {
 	0,  
 	0,  0,  2,
@@ -310,6 +320,7 @@ static const int8 freqmod_table[0x502] = {
    -90, 102,  83,  51,  11, -53, -95,  16
 };
 
+
 static const uint16  spk_freq_table[12] = {
 	36484, 34436, 32503, 30679, 28957, 27332, 
 	25798, 24350, 22983, 21693, 20476, 19326
@@ -319,7 +330,7 @@ static const uint16 pcjr_freq_table[12] = {
 	65472, 61760, 58304, 55040, 52032, 49024, 
 	46272, 43648, 41216, 38912, 36736, 34624
 };
-
+#endif
 
 ////////////////////////////////////////
 //
@@ -962,3 +973,29 @@ void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 		lowPassFilter(data, len);
 }
 
+#ifdef __PALM_OS__
+#include "scumm_globals.h"
+
+_GINIT(PlayerV2)
+_GSETPTR(note_lengths, GBVARS_NOTELENGTHS_INDEX, uint8, GBVARS_SCUMM)
+_GSETPTR(hull_offsets, GBVARS_HULLOFFSETS_INDEX, uint16, GBVARS_SCUMM)
+_GSETPTR(hulls, GBVARS_HULLS_INDEX, int16, GBVARS_SCUMM)
+_GSETPTR(freqmod_lengths, GBVARS_FREQMODLENGTHS_INDEX, uint16, GBVARS_SCUMM)
+_GSETPTR(freqmod_offsets, GBVARS_FREQMODOFFSETS_INDEX, uint16, GBVARS_SCUMM)
+_GSETPTR(freqmod_table, GBVARS_FREQMODTABLE_INDEX, int8, GBVARS_SCUMM)
+_GSETPTR(spk_freq_table, GBVARS_SPKFREQTABLE_INDEX, uint16, GBVARS_SCUMM)
+_GSETPTR(pcjr_freq_table, GBVARS_PCJRFREQTABLE_INDEX, uint16, GBVARS_SCUMM)
+_GEND
+
+_GRELEASE(PlayerV2)
+_GRELEASEPTR(GBVARS_NOTELENGTHS_INDEX, GBVARS_SCUMM)
+_GRELEASEPTR(GBVARS_HULLOFFSETS_INDEX, GBVARS_SCUMM)
+_GRELEASEPTR(GBVARS_HULLS_INDEX, GBVARS_SCUMM)
+_GRELEASEPTR(GBVARS_FREQMODLENGTHS_INDEX, GBVARS_SCUMM)
+_GRELEASEPTR(GBVARS_FREQMODOFFSETS_INDEX, GBVARS_SCUMM)
+_GRELEASEPTR(GBVARS_FREQMODTABLE_INDEX, GBVARS_SCUMM)
+_GRELEASEPTR(GBVARS_SPKFREQTABLE_INDEX, GBVARS_SCUMM)
+_GRELEASEPTR(GBVARS_PCJRFREQTABLE_INDEX, GBVARS_SCUMM)
+_GEND
+
+#endif
