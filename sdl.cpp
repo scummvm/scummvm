@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.10  2001/10/17 11:30:19  strigeus
+ * *** empty log message ***
+ *
  * Revision 1.9  2001/10/16 20:31:27  strigeus
  * misc fixes
  *
@@ -223,9 +226,9 @@ void updateScreen(Scumm *s) {
 	}
 	
 	if(s->_palDirtyMax != -1) {
-		/* this updates the screen automatically */
 		updatePalette(s);
-	} else if (fullRedraw) {
+	}
+	if (fullRedraw) {
 		SDL_UpdateRect(screen, 0,0,0,0);
 #if defined(SHOW_AREA)
 		debug(2,"update area 100 %%");
