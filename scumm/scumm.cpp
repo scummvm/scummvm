@@ -1163,7 +1163,7 @@ void ScummEngine::scummInit() {
 
 	if ((_gameId == GID_MANIAC) && (_version == 1)) {
 		initScreens(16, 152);
-	} else if (_version >= 7) {
+	} else if (_version >= 7 || _heversion >= 71) {
 		initScreens(0, _screenHeight);
 	} else {
 		initScreens(16, 144);
