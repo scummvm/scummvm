@@ -170,7 +170,6 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page,
 			break;
 		case GID_MONKEY_EGA:
 		case GID_MONKEY_VGA:
-		case GID_MONKEY_SEGA:
 			ADD_BIND("o", "Open");
 			ADD_BIND("c", "Close");
 			ADD_BIND("s", "puSh");
@@ -185,6 +184,7 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page,
 			ADD_BIND("f", "turn oFf");
 			break;
 		case GID_MONKEY:
+		case GID_MONKEY_SEGA:
 		case GID_MONKEY2:
 		case GID_INDY4:
 		case GID_TENTACLE:
