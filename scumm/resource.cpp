@@ -1534,12 +1534,8 @@ void Scumm::readMAXS()
 		_numNewNames = _fileHandle.readUint32LE();			// 100
 		_numFlObject = _fileHandle.readUint32LE();			// 128
 		_numInventory = _fileHandle.readUint32LE();			// 80
-		_numStrings = _fileHandle.readUint32LE();				// 200
+		_numArray = _fileHandle.readUint32LE();				// 200
 		_numVerbs = _fileHandle.readUint32LE();					// 50
-
-		// FIXME - uhm... COMI seems to have an ARRY with 143 entries, but
-		// indeed _numArray gets set to 50 ?!?
-		_numArray = 150;
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 		_numGlobalScripts = 2000;
