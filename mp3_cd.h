@@ -40,6 +40,6 @@ enum {
   XING_SCALE  = 0x00000008L
 };
 
-BOOL mp3_cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_frame);
+bool mp3_cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_frame);
 
 #endif

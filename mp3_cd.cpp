@@ -89,7 +89,7 @@ int xing_parse(struct xing *xing, struct mad_bitptr ptr, unsigned int bitlen)
 
 // Borrowed from Winamp plugin in_mad.c
 
-BOOL parse_xing_vbr_tag()
+bool parse_xing_vbr_tag()
 {
   struct mad_stream stream;
   struct mad_frame frame;
@@ -197,7 +197,7 @@ uint32 calc_cd_file_offset(int start_frame) {
 	return offset;
 }
 
-BOOL mp3_cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_frame) {
+bool mp3_cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_frame) {
 
 	// See if we are already playing this track, else try to open it
 
