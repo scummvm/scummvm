@@ -222,6 +222,44 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 						Gmask,
 						Bmask,
 						Amask);
+
+		tmpBlackRect.x = 0;
+		tmpBlackRect.y = 0;
+		tmpBlackRect.w = _screenWidth;
+		tmpBlackRect.h = 256-_screenHeight-_glScreenStart;
+
+		if (!_adjustAspectRatio) {
+			// Don't use the whole screen (black borders)
+			fb2gl.init(0, 0, 0, 15, _glFlags);
+			_glScreenStart = _glBorderHeight;
+
+			// Top black border
+			SDL_Rect blackrect = {
+			  0, 
+			  0, // _glScreenStart, 
+			  _screenWidth, 
+			  _newShakePos + _glScreenStart
+			};
+	
+			SDL_FillRect(tmpSurface, &blackrect, 0);
+			fb2gl.blit16(tmpSurface, 1, &blackrect, 0, 0);
+		
+			// Bottom black border
+			int _glBottomOfGameScreen = _screenHeight + 
+			  _glScreenStart + _currentShakePos; 
+
+			tmpBlackRect.h = _glBottomOfTexture - 
+			  _glBottomOfGameScreen;
+			
+			SDL_FillRect(tmpSurface, &tmpBlackRect, 0);
+			fb2gl.blit16(tmpSurface, 1, &tmpBlackRect, 0,
+			  _glBottomOfGameScreen);
+		} else {
+			// Use the whole screen
+			fb2gl.init(0, 0, 0, 72, _glFlags);
+			_glScreenStart = 0;
+		}
+
 	} else { // SDL backend
 		_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
 						_tmpScreenWidth, 
@@ -242,12 +280,7 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 						Gmask,
 						Bmask,
 						Amask);
-
-	tmpBlackRect.x = 0;
-	tmpBlackRect.y = 0;
-	tmpBlackRect.w = _screenWidth;
-	tmpBlackRect.h = 256-_screenHeight-_glScreenStart;
-
+	
 	if (_tmpscreen == NULL)
 		error("_tmpscreen failed");
 
@@ -546,10 +579,11 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 
 		_adjustAspectRatio ^= true;
 		if (_usingOpenGL) {
-			if (_adjustAspectRatio) {
+			if (!_adjustAspectRatio) {
 				// Don't use the whole screen (black borders)
 				fb2gl.init(0, 0, 0, 15, _glFlags);
 				_glScreenStart = _glBorderHeight;
+
 				// Top black border
 				SDL_Rect blackrect = {
 				  0, 
