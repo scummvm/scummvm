@@ -84,3 +84,17 @@ Broken Sword 2
 SIMON
 =====
 * Add support for Amiga decompressor and music
+
+
+Descumm
+=======
+* Merge descumm & descumm6
+* Turn it into a library, to be used by a command line frontend (like now),
+  ScummVM debugger, and ScummEX. Basically, the API could consist of a single
+  function, which takes a pointer to a memory buffer, its length, the Scumm
+  version and optionally a game id. Also, it would get a pointer to a print
+  function (in the case of the CLI tool, print to stdout; for ScummVM, print
+  to our GUI console; for ScummEX, append to some window/widget)
+* Rewrite code to use 2 passes; first pass builds an intermediate graph, the
+  second pass then tries to detect loops, break/continue statements etc.
+
