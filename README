@@ -336,23 +336,28 @@ quality. These are the same filters used in many other emulators, such as
 MAME.
 
 They are:
-        -gnormal     - No filtering, original 320x200 resolution. Fastest.
-        -g2x         - No filtering, double screen/window size to 640x400 (default)
-        -g3x         - No filtering, triple screen/window size to 800x600
-        -g2xsai      - 2xsai filtering, double screen/window size to 640x400
-        -gsuper2xsai - Enhanced 2xsai filtering. 640x400 screen/window size
-        -gsupereagle - Less blurry than 2xsai, but slower. Also 640x400
-        -gadvmame2x  - 640x400 scaling. Doesn't rely on blurring like 2xSAI.
+        normal     - No filtering, original 320x200 resolution. Fastest.
+        2x         - No filtering, double screen/window size to 640x400 (default)
+        3x         - No filtering, triple screen/window size to 800x600
+        2xsai      - 2xsai filtering, double screen/window size to 640x400
+        super2xsai - Enhanced 2xsai filtering. 640x400 screen/window size
+        supereagle - Less blurry than 2xsai, but slower. Also 640x400
+        advmame2x  - 640x400 scaling. Doesn't rely on blurring like 2xSAI.
 
-Note that filters are very slow when ScummVM is compiled in a debug
+To select a graphics filter, pass its name via the '-g' option to scummvm, for example:
+
+    scummvm -g advmame2x monkey2
+
+Note #1: Bot all backends support all or any filters. The ones listed above
+are for the default SDL backend.
+
+Note #2: Filters can be very slow when ScummVM is compiled in a debug
 configuration without optimizations. And there is always a speed impact when
-using any form of anti-aliasing/linear filtering. Also note that the FmTowns
-Zak (zak256 target) uses an original resolution of 320x480 - hence for this
-game scalers will be 640x480 and 960x720.
+using any form of anti-aliasing/linear filtering.
 
-The alternative to these scalers is to try using the SDL_gl.cpp target. This
-will allow you to use hardware accelerated functions, like bilinear filtering
-and FSAA, on suitable OpenGL capable cards.
+Note #3: The FmTowns version of Zak (zak256 target) uses an original resolution
+of 320x240 - hence for this game scalers will scale to 640x480 or 960x720.
+
 
 Autosaves:
 ----------
@@ -388,15 +393,18 @@ emulation. MIDI may not be available on all operating systems or may need
 manual configuration. If you ARE using MIDI, you have several different
 choices of output, depending on your operating system and configuration.
         
-        -eadlib     - Uses internal Adlib Emulation (default) 
-        -ewindows   - Windows MIDI. Uses built-in sequencer, for Windows users
-        -eseq       - Uses /dev/sequencer for MIDI, *nix users. See below.
-        -eqt        - Quicktime sound, for Macintosh users.
-        -ecore      - CoreAudio sound, for MacOS X users.
-        -eamidi     - Uses the MorphOS MIDI system, for MorphOS users
-        -ealsa      - Output using ALSA sequencer device. See below.
-        -enull      - Null output. Don't play any music.
-        
+        adlib     - Uses internal Adlib Emulation (default) 
+        windows   - Windows MIDI. Uses built-in sequencer, for Windows users
+        seq       - Uses /dev/sequencer for MIDI, *nix users. See below.
+        qt        - Quicktime sound, for Macintosh users.
+        core      - CoreAudio sound, for MacOS X users.
+        amidi     - Uses the MorphOS MIDI system, for MorphOS users
+        alsa      - Output using ALSA sequencer device. See below.
+        null      - Null output. Don't play any music.
+
+To select a sound driver, pass its name via the '-e' option to scummvm, for example:
+
+    scummvm -e adlib monkey2
 
 Playing sound with Adlib emulation:
 -----------------------------------
