@@ -383,7 +383,7 @@ int Scumm::readVar(uint var) {
 		var &= ~0x2000;
 	}
 
-	if (!(_features & GF_AFTER_V2) && !(var & 0xF000))
+	if (!(var & 0xF000))
 			return _vars[var];
 
 	if (var & 0x8000) {
