@@ -58,7 +58,7 @@ SkyLogic::SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusi
 	_gameVersion = gameVersion;
 	_skyAutoRoute = new SkyAutoRoute(_skyGrid);
 
-	for (uint i = 0; i < sizeof(_moduleList)/sizeof(uint16*); i++)
+	for (int i = 0; i < ARRAYSIZE(_moduleList); i++)
 		_moduleList[i] = 0;
 	_stackPtr = 0;
 	
@@ -630,15 +630,15 @@ void SkyLogic::checkModuleLoaded(uint16 moduleNo) {
 }
 
 void SkyLogic::push(uint32 a) {
-	assert(_stackPtr < 19);
-	_stack[_stackPtr] = a;
-	_stackPtr++;
+	if (_stackPtr > ARRAYSIZE(_stack) - 2)
+		error("Stack overflow");
+	_stack[_stackPtr++] = a;
 }
 
 uint32 SkyLogic::pop() {
-	assert(_stackPtr > 0);
-	--_stackPtr;
-	return _stack[_stackPtr];
+	if (_stackPtr < 1 || _stackPtr > ARRAYSIZE(_stack) - 1)
+		error("No items on Stack to pop");
+	return _stack[--_stackPtr];
 }
 
 typedef uint32 (SkyLogic::*McodeTable) (uint32, uint32, uint32);
@@ -757,7 +757,7 @@ static  McodeTable mcodeTable[] = {
 	&SkyLogic::fnQuitToDos,
 	&SkyLogic::fnPauseFx,
 	&SkyLogic::fnUnPauseFx,
-	&SkyLogic::fnPrintf,
+	&SkyLogic::fnPrintf
 };
 
 static const uint32 forwardList1b[] = {
@@ -823,7 +823,7 @@ static const uint32 forwardList1b[] = {
 	LINK_28_31,
 	LINK_31_28,
 	EXIT_LINC,
-	DEATH_SCRIPT,
+	DEATH_SCRIPT
 };
 
 static const uint32 forwardList2b[] = {
@@ -833,7 +833,7 @@ static const uint32 forwardList2b[] = {
 	ADVISOR_188,
 	SHOUT_ACTION,
 	MEGA_CLICK,
-	MEGA_ACTION,
+	MEGA_ACTION
 };
 
 static const uint32 forwardList3b[] = {
@@ -857,7 +857,7 @@ static const uint32 forwardList3b[] = {
 	GALL_SPEECH,
 	BABS_SPEECH,
 	CHUTNEY_SPEECH,
-	FOSTER_ENTER_COURT,
+	FOSTER_ENTER_COURT
 };
 
 static const uint32 forwardList4b[] = {
@@ -874,7 +874,7 @@ static const uint32 forwardList4b[] = {
 	BORED_ROOM,
 	FOSTER_ENTER_NEW_BOARDROOM,
 	HOBS_END,
-	SC82_JOBS_SSS,
+	SC82_JOBS_SSS
 };
 
 static const uint32 forwardList5b[] = {
@@ -883,11 +883,11 @@ static const uint32 forwardList5b[] = {
 	UP_MOUSE,
 	DOWN_MOUSE,
 	LEFT_MOUSE,
-	RIGHT_MOUSE,
+	RIGHT_MOUSE
 };
 
 void SkyLogic::initScriptVariables() {
-	for (uint i = 0; i < sizeof(_scriptVariables)/sizeof(uint32); i++)
+	for (int i = 0; i < ARRAYSIZE(_scriptVariables); i++)
 		_scriptVariables[i] = 0;
 
 	_scriptVariables[2] = 141;
@@ -954,8 +954,6 @@ script:
 
 	uint32 a, b, c;
 	uint16 command, s;
-	uint16 *tmp;
-	int16 t;
 
 	for (;;) {
 		command = READ_LE_UINT16(scriptData++); // get a command
@@ -963,8 +961,7 @@ script:
 
 		switch (command) {
 		case 0: // push_variable
-			s = READ_LE_UINT16(scriptData++); // get variable number
-			push( _scriptVariables[s/4] );
+			push( _scriptVariables[READ_LE_UINT16(scriptData++)/4] );
 			break;
 		case 1: // less_than
 			a = pop();
@@ -1001,8 +998,7 @@ script:
 				scriptData += s/2;
 			break;
 		case 6: // pop_var
-			s = READ_LE_UINT16(scriptData++);
-			_scriptVariables[s/4] = pop();
+			_scriptVariables[READ_LE_UINT16(scriptData++)/4] = pop();
 			break;
 		case 7: // minus
 			a = pop();
@@ -1028,13 +1024,11 @@ script:
 			break;
 		case 11: // call_mcode
 			{
-				s = READ_LE_UINT16(scriptData++);
-
-				a = s;
+				a = READ_LE_UINT16(scriptData++);
 				b = c = 0;
-				assert(s <= 3);
+				assert(a <= 3);
 				// No, I did not forget the "break"s
-				switch (s) {
+				switch (a) {
 				case 3:
 					c = pop();
 				case 2:
@@ -1069,7 +1063,7 @@ script:
 
 			do {
 				if (a == *scriptData) {
-					scriptData += *(scriptData + 1)/2;
+					scriptData += READ_LE_UINT16(scriptData + 1)/2;
 					scriptData++;
 					break;
 				}
@@ -1081,16 +1075,11 @@ script:
 			scriptData--;
 			break;
 		case 15: // push_offset
-			// Push a compact access
-			s = READ_LE_UINT16(scriptData++);
-			tmp = (uint16 *)SkyCompact::getCompactElem(_compact, s);
-			push(*tmp);
+			push( *(uint16 *)SkyCompact::getCompactElem(_compact, READ_LE_UINT16(scriptData++)) );
 			break;
 		case 16: // pop_offset
 			// pop a value into a compact
-			s = READ_LE_UINT16(scriptData++);
-			tmp = (uint16 *)SkyCompact::getCompactElem(_compact, s);
-			*tmp = (uint16)pop();
+			*(uint16 *)SkyCompact::getCompactElem(_compact, READ_LE_UINT16(scriptData++)) = (uint16)pop();
 			break;
 		case 17: // is_equal
 			a = pop();
@@ -1100,12 +1089,13 @@ script:
 			else
 				push(0);
 			break;
-		case 18: // skip_nz
-			t = READ_LE_UINT16(scriptData++);
-			a = pop();
-			if (a)
-				scriptData += t/2;
-			break;
+		case 18: { // skip_nz
+				int16 t = READ_LE_UINT16(scriptData++);
+				a = pop();
+				if (a)
+					scriptData += t/2;
+				break;
+			}
 		case 13:
 		case 19: // script_exit
 			return scriptNo;
