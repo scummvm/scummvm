@@ -437,19 +437,20 @@ void Sound::playSound(int soundID) {
 	// Used in Amiga verisons of indy3ega and loom
 	// Used in Mac. version of indy3ega
 	if (((_scumm->_features & GF_OLD_BUNDLE) && (_scumm->_gameId == GID_INDY3)) || ((_scumm->_features & GF_AMIGA) && (_scumm->_version == 3))) {
-		if ((READ_BE_UINT16(ptr + 26) == 0x0001) || READ_BE_UINT16(ptr + 26) == 0x00FF) {
+		if (ptr[26] == 00) {
 			size = READ_BE_UINT16(ptr + 12);
-			rate = 11000;
+			rate = 3579545 / READ_BE_UINT16(ptr + 20);
 			sound = (char *)malloc(size);
+			int vol = ptr[24] << 1;
 			memcpy(sound,ptr + READ_BE_UINT16(ptr + 8),size);
 			if ((_scumm->_features & GF_AMIGA) && (READ_BE_UINT16(ptr + 16) || READ_BE_UINT16(ptr + 6))) {
 				// the first check is for pitch-bending looped sounds (i.e. "pouring liquid", "biplane dive", etc.)
 				// the second check is for simple looped sounds
 				_scumm->_mixer->playRaw(NULL, sound, size, rate,
-							SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP, 255, 0, soundID,
+							SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP, vol, 0, soundID,
 							READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8),READ_BE_UINT16(ptr + 14));
 			} else {
-				_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, 255, 0, soundID);
+				_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, vol, 0, soundID);
 			}
 			return;
 		}
@@ -461,17 +462,25 @@ void Sound::playSound(int soundID) {
 			size = READ_BE_UINT16(ptr + 6);
 			int start = READ_BE_UINT16(ptr + 8);
 			start +=10;
+
 			rate = 11000;
+			if ((READ_BE_UINT16(ptr + 50) == 0x357c) && (ptr[55] == 6))
+				rate = 3579545 / READ_BE_UINT16(ptr + 52);
+
+			int vol = 255;
+			if ((READ_BE_UINT16(ptr + 56) == 0x357c) && (ptr[61] == 8)) 
+				vol = READ_BE_UINT16(ptr + 58) * 2;
+
 			sound = (char *)malloc(size);
 			memcpy(sound,ptr + start,size);
 
 			// Experimental sound looping support
 			if (start == 108 || start == 106)
 				_scumm->_mixer->playRaw(NULL, sound, size, rate,
-						SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP, 255, 0, soundID,
+						SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP, vol, 0, soundID,
 						start,size);
 			else
-				_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, 255, 0, soundID);
+				_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, vol, 0, soundID);
 			return;
 		}
 	}
