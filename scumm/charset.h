@@ -33,12 +33,6 @@ struct VirtScreen;
 class CharsetRenderer {
 public:
 	
-	/**
-	 * Charset mask - rectangle covering the parts of the screen which are 
-	 * currently (partially) masked.
-	 */
-	Common::Rect _mask;
-
 	Common::Rect _str;
 	int _nextLeft, _nextTop;
 

@@ -338,23 +338,6 @@ void ScummEngine::cameraMoved() {
 #else
 	virtscr[0].xstart = _screenStartStrip * 8;
 #endif
-
-	if (_charset->_hasMask && _version > 3) {
-		int dx = camera._cur.x - camera._last.x;
-		int dy = camera._cur.y - camera._last.y;
-
-		// Fixes subtitle glitches during room scrolling in two cut scenes
-		// When talking to Rusty for first time
-		// When sleeping in straw at Blacksmith's Guild.
-		if ((_gameId == GID_LOOM256 || _gameId == GID_PASS) && dx)
-			_charset->_mask.left -= 8;
-		else if (dx || dy) {
-			_charset->_mask.left -= dx;
-			_charset->_mask.right -= dx;
-			_charset->_mask.top -= dy;
-			_charset->_mask.bottom -= dy;
-		}
-	}
 }
 
 void ScummEngine::panCameraTo(int x, int y) {

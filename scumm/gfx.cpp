@@ -608,10 +608,20 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 
 void CharsetRenderer::restoreCharsetBg() {
 	if (_hasMask) {
-		_vm->restoreBG(_mask);
+		// Restore background on the whole text area. To do this, we simply
+		// pass a large rect to restoreBG, and then rely on it clipping that
+		// rect. Also, restoreBG() will use findVirtScreen(rect.top) to
+		// determine the virtual screen on which to operate. This is fine
+		// for us, since we pass in rect.top, so in older games, the text
+		// display area is used; in newer games, the main virtscreen gets
+		// restored. That's exactly what we need.
+		//
+		// Of course this will break down if one of the older games (with
+		// multiple virtual screens in use) draw text outside the text virtual
+		// screen (verbs are excluded, they are handled in a special fashion).
+		// But I have no indication that this does ever happen.
+		_vm->restoreBG(Common::Rect(5000, 5000));
 		_hasMask = false;
-		_mask.top = _mask.left = 32767;
-		_mask.right = _mask.bottom = 0;
 		_str.left = -1;
 		_left = -1;
 	}
@@ -622,14 +632,10 @@ void CharsetRenderer::restoreCharsetBg() {
 
 void CharsetRenderer::clearCharsetMask() {
 	memset(_vm->getResourceAddress(rtBuffer, 9), 0, _vm->gdi._imgBufOffs[1]);
-	_mask.top = _mask.left = 32767;
-	_mask.right = _mask.bottom = 0;
 }
 
 bool CharsetRenderer::hasCharsetMask(int left, int top, int right, int bottom) {
-	Common::Rect rect(left, top, right, bottom);
-	
-	return _hasMask && rect.intersects(_mask);
+	return _hasMask;
 }
 
 byte *ScummEngine::getMaskBuffer(int x, int y, int z) {
@@ -1652,6 +1658,7 @@ void Gdi::draw8Col(byte *dst, const byte *src, int height) {
 		src += _vm->_screenWidth;
 	} while (--height);
 }
+
 void Gdi::clear8Col(byte *dst, int height)
 {
 	do {

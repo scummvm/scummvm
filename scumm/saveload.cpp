@@ -265,8 +265,6 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	_completeScreenRedraw = true;
 
 	// Reset charset mask
-	_charset->_mask.top = _charset->_mask.left = 32767;
-	_charset->_mask.right = _charset->_mask.bottom = 0;
 	_charset->_hasMask = false;
 
 	// With version 22, we replaced the scale items with scale slots. So when
