@@ -52,8 +52,8 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_breakHere),
 		/* 08 */
 		OPCODE(o6_delayFrames),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o90_shl),
+		OPCODE(o90_shr),
 		OPCODE(o6_invalid),
 		/* 0C */
 		OPCODE(o6_setCameraAt),
@@ -451,6 +451,10 @@ void ScummEngine_v100he::o100_actorOps() {
 		break;
 	case 27:		// SO_DEFAULT
 		a->initActor(0);
+		break;
+	case 32:
+		i = pop();
+		debug(1,"o100_actorOps: case 32 (%d)", i);
 		break;
 	case 52:		// SO_ACTOR_NAME
 		copyScriptString(string);
