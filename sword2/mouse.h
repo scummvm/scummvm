@@ -22,68 +22,83 @@
 #ifndef MOUSE_H
 #define MOUSE_H
 
-//#include	"src\driver96.h"
-#include	"object.h"
+#include "object.h"
 
-//---------------------------------------------------------------------------------
 #define	TOTAL_mouse_list	50
 
 #define	MOUSE_normal		0
-#define	MOUSE_top			1
-#define	MOUSE_drag			2
+#define	MOUSE_top		1
+#define	MOUSE_drag		2
 #define	MOUSE_system_menu	3
 #define	MOUSE_holding		4
-//---------------------------------------------------------------------------------
-// mouse unit - like Object_mouse, but with anim resource & pc (needed if sprite is to act as mouse detection mask)
-typedef	struct
-{
-	int32	x1;				// top-left of mouse area is (x1,y1)
-	int32	y1;
-	int32	x2;				// bottom-right of area is (x2,y2)	(these coords are inclusive)
-	int32	y2;
-	int32	priority;
-	int32	pointer;		// type (or resource id?) of pointer used over this area
-	// up to here, this is basically a copy of the Object_mouse structure, but then we have...
-	int32	id;				// object id, used when checking mouse list
-	int32	anim_resource;	// resource id of animation file (if sprite to be used as mask) - otherwise 0
-	int32	anim_pc;		// current frame number of animation
-	int32	pointer_text;	// local id of text line to print when pointer highlights an object
+
+// mouse unit - like Object_mouse, but with anim resource & pc (needed if
+// sprite is to act as mouse detection mask)
+
+typedef	struct {
+	// Top-left and bottom-right of mouse area. These coords are inclusive
+	int32 x1;
+	int32 y1;
+	int32 x2;
+	int32 y2;
+
+	int32 priority;
+
+	// type (or resource id?) of pointer used over this area
+	int32 pointer;
+
+	// up to here, this is basically a copy of the Object_mouse
+	// structure, but then we have...
+
+	// object id, used when checking mouse list
+	int32 id;
+
+	// resource id of animation file (if sprite to be used as mask) -
+	// otherwise 0
+	int32 anim_resource;
+
+	// current frame number of animation
+	int32 anim_pc;
+
+	// local id of text line to print when pointer highlights an object
+	int32 pointer_text;
 } Mouse_unit;
-//---------------------------------------------------------------------------------
-extern	uint32	cur_mouse;
-extern	Mouse_unit mouse_list[TOTAL_mouse_list];
-extern	uint32	mouse_touching;
-extern	uint32	mouse_mode;
-extern	uint8	examining_menu_icon;
 
-extern	uint32	mouse_status;	//human 0 on/1 off
-extern	uint32	mouse_mode_locked;	//0 not !0 mode cannot be changed from normal mouse to top menu (i.e. when carrying big objects)
+extern uint32 cur_mouse;
+extern Mouse_unit mouse_list[TOTAL_mouse_list];
+extern uint32 mouse_touching;
+extern uint32 mouse_mode;
+extern uint8 examining_menu_icon;
 
-extern	uint32	real_luggage_item;	//last minute for pause mode
+// human 0 on/1 off
+extern uint32 mouse_status;
 
-extern	uint32	pointerTextSelected;
+// 0 not !0 mode cannot be changed from normal mouse to top menu (i.e. when
+// carrying big objects)
+extern uint32 mouse_mode_locked;
 
-//---------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------
-void	Reset_mouse_list(void);	//Tony26Sept96
+//last minute for pause mode
+extern uint32 real_luggage_item;
 
-void	Normal_mouse(void);	//Tony30Sept96
-void	Top_menu_mouse(void);	//Tony3Oct96
-void	Drag_mouse(void);	//Tony21Nov96
-void	System_menu(void);	//Tony19Mar97
+extern uint32 pointerTextSelected;
 
-void	Mouse_on_off(void);	//Tony30Sept96
-uint32	Check_mouse_list(void);	//Tony30Sept96
-void	Mouse_engine(void);	//Tony30Sept96
+void Reset_mouse_list(void);
 
-void	Set_mouse(uint32 res);
-void	Set_luggage(uint32	res);	//Tony26Nov96
+void Normal_mouse(void);
+void Top_menu_mouse(void);
+void Drag_mouse(void);
+void System_menu(void);
 
-int32 FN_no_human(int32 *params);	//Tony30Sept96
-int32 FN_add_human(int32 *params);	//Tony30Sept96
+void Mouse_on_off(void);
+uint32 Check_mouse_list(void);
+void Mouse_engine(void);
 
-void ClearPointerText(void);		// James16jun97
-//---------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------
+void Set_mouse(uint32 res);
+void Set_luggage(uint32 res);
+
+int32 FN_no_human(int32 *params);
+int32 FN_add_human(int32 *params);
+
+void ClearPointerText(void);
+
 #endif
