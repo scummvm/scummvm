@@ -319,7 +319,7 @@ int32 Bundle::decompressCodec(int32 codec, byte * comp_input, byte * comp_output
 
 	switch(codec) {
 		case 0:
-			memcpy(comp_input, comp_output, output_size);
+			memcpy(comp_output, comp_input, output_size);
 		break;
 
 		case 1:
