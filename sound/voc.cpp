@@ -68,7 +68,6 @@ byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops) {
 			} break;
 		case 6:	// begin of loop
 			loops = (uint16)READ_LE_UINT16(ptr + offset);
-			warning("voc loops: %d", loops);
 			break;
 		case 7:	// end of loop
 			break;
