@@ -215,11 +215,11 @@ int32 Logic::executeOpcode(int i, int32 *params) {
 #define POPOFFSTACK(x) { x = stack2[stackPointer2 - 1]; stackPointer2--; CHECKSTACKPOINTER2 }
 #define DOOPERATION(x) { stack2[stackPointer2 - 2] = (x); stackPointer2--; CHECKSTACKPOINTER2 }
 
-void SetGlobalInterpreterVariables(int32 *vars) {
+void Logic::setGlobalInterpreterVariables(int32 *vars) {
 	globalInterpreterVariables2 = vars;
 }
 
-int RunScript(char *scriptData, char *objectData, uint32 *offset) {
+int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 	#define STACK_SIZE		10
 
 	_standardHeader *header = (_standardHeader *) scriptData;
@@ -329,7 +329,7 @@ int RunScript(char *scriptData, char *objectData, uint32 *offset) {
 			Read8ip(value);
 			debug(5, "Call mcode %d with stack = %x", parameter, stack2 + stackPointer2 - value);
 
-			retVal = g_logic.executeOpcode(parameter, stack2 + stackPointer2 - value);
+			retVal = executeOpcode(parameter, stack2 + stackPointer2 - value);
 
 			stackPointer2 -= value;
 			CHECKSTACKPOINTER2

@@ -129,7 +129,7 @@ uint32 Init_start_menu(void) {
 			debug(5, "- resource %d ok", res);
 			raw_script = (char*) res_man.open(res);
 			null_pc = 0;
-			RunScript(raw_script, raw_script, &null_pc);
+			g_logic.runScript(raw_script, raw_script, &null_pc);
 			res_man.close(res);
 		} else
 			debug(5, "- resource %d invalid", res);
@@ -267,7 +267,7 @@ uint32 Con_start(uint8 *input) {
 
 			// reopen global variables resource & send address to
 			// interpreter - it won't be moving
-			SetGlobalInterpreterVariables((int32 *) (res_man.open(1) + sizeof(_standardHeader)));
+			g_logic.setGlobalInterpreterVariables((int32 *) (res_man.open(1) + sizeof(_standardHeader)));
 			res_man.close(1);
 
 			// free all the route memory blocks from previous game
@@ -289,7 +289,7 @@ uint32 Con_start(uint8 *input) {
 			null_pc = start_list[start].key & 0xffff;
 
 			Print_to_console("running start %d", start);
-			RunScript(raw_script, raw_data_ad, &null_pc);
+			g_logic.runScript(raw_script, raw_data_ad, &null_pc);
 
 			res_man.close(start_list[start].start_res_id);
 

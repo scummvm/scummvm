@@ -1427,7 +1427,7 @@ void Gui::restartControl(void) {
 
 	// reopen global variables resource & send address to interpreter -
 	// it won't be moving
-	SetGlobalInterpreterVariables((int32 *) (res_man.open(1) + sizeof(_standardHeader)));
+	g_logic.setGlobalInterpreterVariables((int32 *) (res_man.open(1) + sizeof(_standardHeader)));
 	res_man.close(1);
 
 	DEMO = temp_demo_flag;

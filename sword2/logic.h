@@ -61,6 +61,9 @@ public:
 		setupOpcodes();
 	}
 
+	void setGlobalInterpreterVariables(int32 *vars);
+	int runScript(char *scriptData, char *objectData, uint32 *offset);
+
 	int32 executeOpcode(int op, int32 *params);
 
 	int32 fnTestFunction(int32 *params);

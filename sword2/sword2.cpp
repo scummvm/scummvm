@@ -184,7 +184,7 @@ int32 Sword2Engine::InitialiseGame(void) {
 	// res 1 is the globals list
 	file = res_man.open(1);
 	debug(5, "CALLING: SetGlobalInterpreterVariables");
-	SetGlobalInterpreterVariables((int32 * ) (file + sizeof(_standardHeader)));
+	g_logic.setGlobalInterpreterVariables((int32 * ) (file + sizeof(_standardHeader)));
 
 	// DON'T CLOSE VARIABLES RESOURCE - KEEP IT OPEN AT VERY START OF
 	// MEMORY SO IT CAN'T MOVE!
@@ -466,7 +466,7 @@ void Sword2Engine::Start_game(void) {
 	raw_script = (char *) res_man.open(screen_manager_id);
 
 	// run the start script now (because no console)
-	RunScript(raw_script, raw_data_ad, &null_pc);
+	g_logic.runScript(raw_script, raw_data_ad, &null_pc);
 
 	// close the ScreenManager object
 	res_man.close(screen_manager_id);

@@ -23,6 +23,7 @@
 
 #include "stdafx.h"
 #include "bs2/sword2.h"
+#include "bs2/debug.h"
 #include "bs2/build_display.h"
 #include "bs2/console.h"
 #include "bs2/defs.h"

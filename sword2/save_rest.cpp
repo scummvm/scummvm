@@ -520,7 +520,7 @@ void GetPlayerStructures(void) {
 		Con_fatal_error("incorrect CUR_PLAYER_ID=%d", CUR_PLAYER_ID);
 
 	raw_script_ad = (char *) head;
-	RunScript(raw_script_ad, raw_script_ad, &null_pc);
+	g_logic.runScript(raw_script_ad, raw_script_ad, &null_pc);
 	res_man.close(CUR_PLAYER_ID);
 }
 
@@ -543,12 +543,12 @@ void PutPlayerStructures(void) {
 	// script no. 8 - 'george_savedata_return' calls fnGetPlayerSaveData
 
 	null_pc = 8;
-	RunScript(raw_script_ad, raw_script_ad, &null_pc);
+	g_logic.runScript(raw_script_ad, raw_script_ad, &null_pc);
 
 	// script no. 14 - 'set_up_nico_anim_tables'
 
 	null_pc = 14;
-	RunScript(raw_script_ad, raw_script_ad, &null_pc);
+	g_logic.runScript(raw_script_ad, raw_script_ad, &null_pc);
 
 	// which megaset was the player at the time of saving?
 
@@ -570,7 +570,7 @@ void PutPlayerStructures(void) {
 		break;
 	}
 
-	RunScript(raw_script_ad, raw_script_ad, &null_pc);
+	g_logic.runScript(raw_script_ad, raw_script_ad, &null_pc);
 	res_man.close(CUR_PLAYER_ID);
 }
 

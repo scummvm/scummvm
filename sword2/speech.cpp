@@ -365,8 +365,8 @@ int32 Logic::fnTheyDo(int32 *params) {
 
 	raw_script_ad = (char *) head;
 
-	//call the base script - this is the graphic/mouse service call
-	RunScript(raw_script_ad, raw_script_ad, &null_pc);
+	// call the base script - this is the graphic/mouse service call
+	runScript(raw_script_ad, raw_script_ad, &null_pc);
 
 	res_man.close(target);
 
@@ -428,7 +428,7 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 	raw_script_ad = (char *) head;
 
 	// call the base script - this is the graphic/mouse service call
-	RunScript(raw_script_ad, raw_script_ad, &null_pc);
+	runScript(raw_script_ad, raw_script_ad, &null_pc);
 
 	res_man.close(target);
 
@@ -508,7 +508,7 @@ int32 Logic::fnWeWait(int32 *params) {
 	raw_script_ad = (char *) head;
 
 	// call the base script - this is the graphic/mouse service call
-	RunScript(raw_script_ad, raw_script_ad, &null_pc);
+	runScript(raw_script_ad, raw_script_ad, &null_pc);
 
 	res_man.close(target);
 
@@ -556,7 +556,7 @@ int32 Logic::fnTimedWait(int32 *params) {
 	raw_script_ad = (char *) head;
 
 	// call the base script - this is the graphic/mouse service call
-	RunScript(raw_script_ad, raw_script_ad, &null_pc);
+	runScript(raw_script_ad, raw_script_ad, &null_pc);
 
 	res_man.close(target);
 

@@ -611,7 +611,7 @@ int32 Logic::fnFaceMega(int32 *params) {
 		raw_script_ad = (char *) head;
 
 		//call the base script - this is the graphic/mouse service call
-		RunScript(raw_script_ad, raw_script_ad, &null_pc);
+		runScript(raw_script_ad, raw_script_ad, &null_pc);
 
 		res_man.close(params[4]);
 
@@ -674,7 +674,7 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 
 		// call the base script - this is the graphic/mouse service
 		// call
-		RunScript(raw_script_ad, raw_script_ad, &null_pc);
+		runScript(raw_script_ad, raw_script_ad, &null_pc);
 
 		res_man.close(params[4]);
 

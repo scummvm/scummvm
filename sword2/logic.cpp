@@ -126,7 +126,7 @@ int Logic::processSession(void) {
 				raw_script_ad = (char*) head;
 
 				// script and data object are us/same
-				ret = RunScript(raw_script_ad, raw_script_ad, &_curObjectHub->script_pc[LEVEL]);
+				ret = runScript(raw_script_ad, raw_script_ad, &_curObjectHub->script_pc[LEVEL]);
 			} else {
 				// we're running the script of another game
 				// object - get our data object address
@@ -147,7 +147,7 @@ int Logic::processSession(void) {
 
 				raw_script_ad = (char*) far_head;
 
-				ret = RunScript(raw_script_ad, raw_data_ad, &_curObjectHub->script_pc[LEVEL]);
+				ret = runScript(raw_script_ad, raw_data_ad, &_curObjectHub->script_pc[LEVEL]);
 
 				// close foreign object again
 				res_man.close(script / SIZE);
@@ -199,7 +199,7 @@ int Logic::processSession(void) {
 			// call the base script - this is the graphic/mouse
 			// service call
 
-			RunScript(raw_script_ad, raw_script_ad, &null_pc);
+			runScript(raw_script_ad, raw_script_ad, &null_pc);
 		}
 
 		// made for all live objects

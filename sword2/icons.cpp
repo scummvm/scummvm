@@ -98,7 +98,7 @@ void Build_menu(void) {
 	// objects. Run the 'build_menu' script in the 'menu_master' object
 
 	head = res_man.open(MENU_MASTER_OBJECT);
-	RunScript((char*) head, (char*) head, &null_pc);
+	g_logic.runScript((char*) head, (char*) head, &null_pc);
 	res_man.close(MENU_MASTER_OBJECT);
 
 	// Compare new with old. Anything in master thats not in new gets
