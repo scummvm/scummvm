@@ -3276,7 +3276,7 @@ void SimonState::showmessage_helper_2()
 
 void SimonState::readSfxFile(const char *filename)
 {
-	if (!(_game & GAME_SIMON2) && (_game & GAME_WIN)) { 		/* simon 1 win */
+	if (_game == GAME_SIMON1WIN) { 			/* simon 1 win */
 		uint32 size;
 
 		if (_effects_file->isOpen() == true)
@@ -3299,7 +3299,7 @@ void SimonState::readSfxFile(const char *filename)
 		_effects_file->seek(0, SEEK_SET);
 		_effects_file->read(_effects_offsets, size);
 
-	} else if (_game & GAME_SIMON2) { 				/* simon 2 */
+	} else if (_game & GAME_SIMON2) { 			/* simon 2 */
 		int num_per_set[] = {0, 188, 223, 217, 209, 179, 187, 189, 116, 174, 203,
 				173, 176, 38, 205, 134, 213, 212, 167, 141};
 
@@ -4531,7 +4531,11 @@ char *SimonState::gen_savename(int slot)
 {
 	static char buf[256];
 
-	sprintf(buf, "SAVE.%.3d", slot);
+	if (_game & GAME_SIMON2) {
+	sprintf(buf, "simon2.%.3d", slot);
+	} else {
+	sprintf(buf, "simon1.%.3d", slot);
+	}
 	return buf;
 }
 
@@ -4652,7 +4656,7 @@ bool SimonState::load_game(uint slot)
 void SimonState::initSound()
 {
 	/* only read voice file in windows game */
-	if (_game & GAME_TALKIE || _game & GAME_WIN) {
+	if (_game & GAME_TALKIE) {
 		const char *s;
 		const char *e;
 
@@ -4922,7 +4926,7 @@ void SimonState::playSound(uint sound)
 	if (_effects_sound != 0)
 		_mixer->stop(_effects_sound);
 
-	if (_game == GAME_SIMON1TALKIE) {			/* sound simon 1 dos talkie */
+	if (_game == GAME_SIMON1TALKIE) {		/* simon 1 talkie */
 #ifdef USE_MAD
 		if (_effects_type == FORMAT_MP3) {
 			playMP3(_effects_file, _effects_offsets, sound, &_effects_sound);
@@ -4932,12 +4936,14 @@ void SimonState::playSound(uint sound)
 #ifdef USE_MAD
 		}
 #endif
-	} else if (_game == GAME_SIMON1WIN){ /* simon 1 win */
+	} else if (_game == GAME_SIMON1WIN){ 		/* simon 1 win */
 		playWav(_effects_file, _effects_offsets, sound, &_effects_sound);
-	} else if (_game == GAME_SIMON2WIN) {	/* simon 2 win */
+	} else if (_game == GAME_SIMON2WIN) {		/* simon 2 win */
 		playWav(_game_file, _effects_offsets, sound, &_effects_sound);
-	} else {	/* simon 2 dos talkie */
+	} else if (_game & GAME_SIMON2) {		/* simon 2 dos / talkie */
 		playVoc(_game_file, _effects_offsets, sound, &_effects_sound);
+	} else {					/* simon 1 dos */
+		warning("playSound(%d)", sound);
 	}
 }
 
