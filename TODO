@@ -29,6 +29,8 @@ General
   of the subdirs). Better would be to introduce a somewhat higher level API,
   a replacement for File::open() which (optionally) takes a list of subdirs.
   E.g. for Scumm, only certain files are to be expected in the VIDEO subdir).
+* Default to saving games in $HOME if in savepath is not defined maybe something
+  like ~/Library/ScummVM/ for OS X and ~/.scummvm/ for everything else
 
 Build System
 ============
