@@ -224,7 +224,7 @@ int SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer
 
 #ifdef USE_VORBIS
 int SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track) {
-	return insertChannel(handle, -1, new ChannelVorbis(this, ov_file, duration, is_cd_track));
+	return insertChannel(handle, new ChannelVorbis(this, ov_file, duration, is_cd_track));
 }
 #endif
 
