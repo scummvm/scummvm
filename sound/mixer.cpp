@@ -670,13 +670,13 @@ void SoundMixer::Channel_STREAM::mix(int16 *data, uint len)
 	if (_pos < end_of_data) {
 		mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, end_of_data);
 	} else {
-		mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab,
-																			 _ptr + _buffer_size);
-		if (len != 0) {
-			_pos = _ptr;
-			mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab,
-																				 end_of_data);
-		} else
+//		mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab,
+//																			 _ptr + _buffer_size);
+//		if (len != 0) {
+//			_pos = _ptr;
+//			mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab,
+//																				 end_of_data);
+//		} else
 			_to_be_destroyed = true;
 	}
 	if (len != 0) {
