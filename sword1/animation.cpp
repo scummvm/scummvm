@@ -307,6 +307,16 @@ bool AnimationState::decodeFrame() {
 				 * dropping frames if we run behind and delaying if we are too fast
 				 */
 
+				/* FIXME: We shouldn't use delay_msecs() here.
+				 * We should use something like the delay()
+				 * function in SwordEngine, so that events are
+				 * handled properly. For now, at least call the
+				 * backend's event handler so that redraw
+				 * events are processed.
+				 */
+
+				OSystem::Event event;
+
 #ifdef BACKEND_8BIT
 				if (checkPaletteSwitch() || (bgSoundStream == NULL) ||
                                     (bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < (framenum+3)){
@@ -320,8 +330,7 @@ bool AnimationState::decodeFrame() {
 						while (_sys->get_msecs() < ticks)
 							_sys->delay_msecs(10);
 					}
-
-
+					_sys->poll_event(&event);
 
 				} else
 					warning("dropped frame %i", framenum);
@@ -341,6 +350,7 @@ bool AnimationState::decodeFrame() {
 						while (_sys->get_msecs() < ticks)
 							_sys->delay_msecs(10);
 					}
+					_sys->poll_event(&event);
 
 				} else
 					warning("dropped frame %i", framenum);
