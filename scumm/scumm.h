@@ -890,8 +890,6 @@ protected:
 	void initBGBuffers(int height);
 	void initCycl(const byte *ptr);	// Color cycle
 
-	void setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor, int start, int end);
-
 	void drawObject(int obj, int arg);	
 	void drawRoomObjects(int arg);
 	void drawRoomObject(int i, int arg);
@@ -932,6 +930,7 @@ public:
 protected:
 	void moveMemInPalRes(int start, int end, byte direction);
 	void setupShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor);
+	void setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor, int start, int end);
 	void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 

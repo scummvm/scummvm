@@ -1357,9 +1357,6 @@ void Insane::smlayer_setActorFacing(int actornum, int actnum, int frame, int dir
 }
 
 const char *Insane::handleTrsTag(int32 trsId) {
-	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) 
-		return 0;
-
 	debugC(DEBUG_INSANE, "Insane::handleTrsTag(%d)", trsId);
 	return _player->getString(trsId);
 }
