@@ -2221,7 +2221,7 @@ void Scumm_v5::o5_startMusic() {
 			result = _sound->getCurrentCDSound();
 			break;
 		case 0xFF:
-			// Unknown, but apparently never used.
+			// Unknown, used in Loom.
 			break;
 		default:
 			// TODO: return track length in seconds. We'll have to extend Sound and OSystem for this.
