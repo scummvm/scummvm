@@ -121,6 +121,7 @@ SoundMixer::SoundMixer() {
 	_musicVolume = 0;
 
 	_paused = false;
+	_channelsPaused = false;
 
 	for (i = 0; i != NUM_CHANNELS; i++)
 		_channels[i] = NULL;
@@ -237,7 +238,7 @@ void SoundMixer::mix(int16 *buf, uint len) {
 		memset(buf, 0, 2 * len * sizeof(int16));
 	}
 
-	if (!_paused) {
+	if (!_paused && !_channelsPaused) {
 		// now mix all channels
 		for (int i = 0; i != NUM_CHANNELS; i++)
 			if (_channels[i])
@@ -312,6 +313,10 @@ void SoundMixer::stopHandle(PlayingSoundHandle handle) {
 
 void SoundMixer::pause(bool paused) {
 	_paused = paused;
+}
+
+void SoundMixer::pauseChannels(bool paused) {
+	_channelsPaused = paused;
 }
 
 bool SoundMixer::hasActiveSFXChannel() {

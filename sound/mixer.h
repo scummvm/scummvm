@@ -73,7 +73,7 @@ private:
 	int _globalVolume;
 	int _musicVolume;
 
-	bool _paused;
+	bool _paused, _channelsPaused;
 
 	Channel *_channels[NUM_CHANNELS];
 
@@ -126,6 +126,9 @@ public:
 
 	/** pause - unpause */
 	void pause(bool paused);
+
+	/** pause - unpause channels, keep adlib music running */
+	void pauseChannels(bool paused);
 
 	/** set the global volume, 0-256 */
 	void setVolume(int volume);
