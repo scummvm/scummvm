@@ -82,7 +82,7 @@ void Scumm_v3::readIndexFile()
 	_numGlobalScripts = 200;
 
 	_shadowPaletteSize = 256;
-	_shadowPalette = (byte *)alloc(_shadowPaletteSize);	// stupid for now. Need to be removed later
+	_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);	// stupid for now. Need to be removed later
 	_numFlObject = 50;
 	allocateArrays();
 

@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
 	{
 		char *s = detector.getGameName();
 		system->property(OSystem::PROP_SET_WINDOW_CAPTION, (long)s);
-		Scumm::free(s);
+		free(s);
 	}
 
 	/* Simon the Sorcerer? */

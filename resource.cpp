@@ -403,12 +403,12 @@ void Scumm::allocResTypeData(int id, uint32 tag, int num, const char *name,
 	res.num[id] = num;
 	res.tags[id] = tag;
 	res.name[id] = name;
-	res.address[id] = (byte **)alloc(num * sizeof(void *));
-	res.flags[id] = (byte *)alloc(num * sizeof(byte));
+	res.address[id] = (byte **)calloc(num, sizeof(void *));
+	res.flags[id] = (byte *)calloc(num, sizeof(byte));
 
 	if (mode) {
-		res.roomno[id] = (byte *)alloc(num * sizeof(byte));
-		res.roomoffs[id] = (uint32 *)alloc(num * sizeof(uint32));
+		res.roomno[id] = (byte *)calloc(num, sizeof(byte));
+		res.roomoffs[id] = (uint32 *)calloc(num, sizeof(uint32));
 	}
 }
 
@@ -750,7 +750,7 @@ byte *Scumm::createResource(int type, int idx, uint32 size)
 
 	expireResources(size);
 
-	CHECK_HEAP ptr = (byte *)alloc(size + sizeof(MemBlkHeader) + SAFETY_AREA);
+	CHECK_HEAP ptr = (byte *)calloc(size + sizeof(MemBlkHeader) + SAFETY_AREA, 1);
 	if (ptr == NULL) {
 		error("Out of memory while allocating %d", size);
 	}
@@ -1133,7 +1133,7 @@ void Scumm::readMAXS()
 		_numCharsets = fileReadWordLE();
 		_numCostumes = fileReadWordLE();
 
-		_objectRoomTable = (byte *)alloc(_numGlobalObjects);
+		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 		_numGlobalScripts = 2000;
 
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
@@ -1182,7 +1182,7 @@ void Scumm::readMAXS()
 	}
 
 	if (_shadowPaletteSize)
-		_shadowPalette = (byte *)alloc(_shadowPaletteSize);
+		_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
 
 	allocateArrays();
 	_dynamicRoomOffsets = 1;
@@ -1193,17 +1193,17 @@ void Scumm::allocateArrays()
 	// Note: Buffers are now allocated in scummMain to allow for
 	//     early GUI init.
 
-	_objectOwnerTable = (byte *)alloc(_numGlobalObjects);
-	_objectStateTable = (byte *)alloc(_numGlobalObjects);
-	_classData = (uint32 *)alloc(_numGlobalObjects * sizeof(uint32));
-	_arrays = (byte *)alloc(_numArray);
-	_newNames = (uint16 *)alloc(_numNewNames * sizeof(uint16));
+	_objectOwnerTable = (byte *)calloc(_numGlobalObjects, 1);
+	_objectStateTable = (byte *)calloc(_numGlobalObjects, 1);
+	_classData = (uint32 *)calloc(_numGlobalObjects, sizeof(uint32));
+	_arrays = (byte *)calloc(_numArray, 1);
+	_newNames = (uint16 *)calloc(_numNewNames, sizeof(uint16));
 
-	_inventory = (uint16 *)alloc(_numInventory * sizeof(uint16));
-	_verbs = (VerbSlot *)alloc(_numVerbs * sizeof(VerbSlot));
-	_objs = (ObjectData *)alloc(_numLocalObjects * sizeof(ObjectData));
-	_vars = (int16 *) alloc(_numVariables * sizeof(int16));
-	_bitVars = (byte *)alloc(_numBitVariables >> 3);
+	_inventory = (uint16 *)calloc(_numInventory, sizeof(uint16));
+	_verbs = (VerbSlot *)calloc(_numVerbs, sizeof(VerbSlot));
+	_objs = (ObjectData *)calloc(_numLocalObjects, sizeof(ObjectData));
+	_vars = (int16 *) calloc(_numVariables, sizeof(int16));
+	_bitVars = (byte *)calloc(_numBitVariables >> 3, 1);
 
 	allocResTypeData(rtCostume,
 									 (_features & GF_NEW_COSTUMES) ? MKID('AKOS') :

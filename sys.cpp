@@ -201,50 +201,11 @@ uint32 Scumm::fileReadDwordBE(void *handle)
 	return (b << 16) | a;
 }
 
-byte *Scumm::alloc(int size)
-{
-	byte *me = (byte *)::calloc(size + 4, 1);
-	if (me == NULL)
-		return NULL;
-
-	*((uint32 *)me) = 0xDEADBEEF;
-	return me + 4;
-}
-
-void Scumm::free(void *mem)
-{
-	if (mem) {
-		byte *me = (byte *)mem - 4;
-		if (*((uint32 *)me) != 0xDEADBEEF) {
-			error("Freeing invalid block.");
-		}
-
-		*((uint32 *)me) = 0xC007CAFE;
-		::free(me);
-	}
-}
-
-byte *Scumm::realloc(void *mem, int size)
-{
-	byte * me = (byte *) mem;
-	if (mem) {
-		if (size) {
-			me = (byte *) ::realloc((me - 4), size + 4);
-			return me + 4;
-		} else {
-			free(me);
-			return NULL;
-		}
-	} else {
-		return alloc(size);
-	}
-}
-
 char *Scumm::Strdup(const char *s)
 {
 	if (s) {
 		int l = strlen(s) + 1;
-		char * r = (char *) alloc(l);
+		char * r = (char *) malloc(l);
 		memcpy(r, s, l);
 		return r;
 	}

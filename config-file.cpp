@@ -72,7 +72,7 @@ keys(0), values(0), nkeys(0)
 
 hashconfig::~hashconfig()
 {
-	Scumm::free(domain);
+	free(domain);
 }
 
 bool hashconfig::is_domain(const char *d) const
@@ -99,14 +99,14 @@ const char *hashconfig::set(const char *key, const char *value)
 
 	for (i = 0; i < nkeys; i++) {
 		if (!strcmp(key, keys[i])) {
-			Scumm::free(values[i]);
+			free(values[i]);
 			return values[i] = value ? Scumm::Strdup(value) : 0;
 		}
 	}
 
 	nkeys++;
-	keys = (char **)Scumm::realloc(keys, nkeys * sizeof(char *));
-	values = (char **)Scumm::realloc(values, nkeys * sizeof(char *));
+	keys = (char **)realloc(keys, nkeys * sizeof(char *));
+	values = (char **)realloc(values, nkeys * sizeof(char *));
 	keys[nkeys - 1] = Scumm::Strdup(key);
 	return values[nkeys - 1] = value ? Scumm::Strdup(value) : 0;
 }
@@ -135,7 +135,7 @@ void hashconfig::flush(FILE * cfg_file) const
 
 void hashconfig::rename(const char *d)
 {
-	Scumm::free(domain);
+	free(domain);
 	domain = d ? Scumm::Strdup(d) : 0;
 }
 
@@ -208,13 +208,13 @@ Config::~Config()
 {
 	int i;
 
-	Scumm::free(filename);
-	Scumm::free(domain);
+	free(filename);
+	free(domain);
 
 	for (i = 0; i < ndomains; i++) {
 		delete hash[i];
 	}
-	Scumm::free(hash);
+	free(hash);
 }
 
 const char *Config::get(const char *key, const char *d) const
@@ -248,7 +248,7 @@ const char *Config::set(const char *key, const char *value, const char *d)
 
 	ndomains++;
 	hash =
-		(hashconfig **) Scumm::realloc(hash, ndomains * sizeof(hashconfig *));
+		(hashconfig **) realloc(hash, ndomains * sizeof(hashconfig *));
 	hash[ndomains - 1] = new hashconfig(domain);
 
 	return hash[ndomains - 1]->set(key, value);
@@ -272,7 +272,7 @@ const char *Config::set(const char *key, int value_i, const char *d)
 
 	ndomains++;
 	hash =
-		(hashconfig **) Scumm::realloc(hash, ndomains * sizeof(hashconfig *));
+		(hashconfig **) realloc(hash, ndomains * sizeof(hashconfig *));
 	hash[ndomains - 1] = new hashconfig(domain);
 
 	return hash[ndomains - 1]->set(key, value);
@@ -281,7 +281,7 @@ const char *Config::set(const char *key, int value_i, const char *d)
 void Config::set_domain(const char *d)
 {
 	int i;
-	Scumm::free(domain);
+	free(domain);
 	domain = d ? Scumm::Strdup(d) : 0;
 
 	for (i = 0; i < ndomains; i++) {
@@ -290,7 +290,7 @@ void Config::set_domain(const char *d)
 	}
 	ndomains++;
 	hash =
-		(hashconfig **) Scumm::realloc(hash, ndomains * sizeof(hashconfig *));
+		(hashconfig **) realloc(hash, ndomains * sizeof(hashconfig *));
 	hash[ndomains - 1] = new hashconfig(domain);
 }
 
@@ -346,7 +346,7 @@ void Config::delete_domain(const char *d)
 
 void Config::change_filename(const char *f)
 {
-	Scumm::free(filename);
+	free(filename);
 	filename = f ? Scumm::Strdup(f) : 0;
 }
 
@@ -367,7 +367,7 @@ void Config::merge_config(const Config * c)
 		if (!found) {
 			ndomains++;
 			hash =
-				(hashconfig **) Scumm::realloc(hash, ndomains * sizeof(hashconfig *));
+				(hashconfig **) realloc(hash, ndomains * sizeof(hashconfig *));
 			hash[ndomains - 1] = new hashconfig(domain);
 			hash[ndomains - 1]->merge(c->hash[i]);
 		}

@@ -1351,9 +1351,6 @@ public:
 	uint fileReadWordLE(void *handle);
 	uint fileReadWordBE(void *handle);
 
-	static byte *alloc(int size);
-	static byte *realloc(void *mem, int size);
-	static void free(void *mem);
 	static char *Strdup(const char *);
 
 	/* Version 5 script opcodes */

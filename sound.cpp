@@ -711,8 +711,8 @@ void Scumm::decompressBundleSound(int index) {
 		unsigned char *p;
 		fileSeek(_sfxFile, bundle_table[index].offset + table[i].offset, SEEK_SET);
 
-		CompInput  = (unsigned char *)alloc(table[i].size);
-		CompOutput = (unsigned char *)alloc(10000);
+		CompInput  = (unsigned char *)malloc(table[i].size);
+		CompOutput = (unsigned char *)malloc(10000);
 		
 		fileRead((FILE *)_sfxFile, CompInput, table[i].size);
 
