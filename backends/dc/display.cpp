@@ -582,11 +582,6 @@ bool OSystem_Dreamcast::setGraphicsMode(int mode)
   return mode == 0;
 }
 
-bool OSystem_Dreamcast::setGraphicsMode(const char *name)
-{
-  return strcmp(name, "default") == 0;
-}
-
 int OSystem_Dreamcast::getGraphicsMode() const
 {
   return 0;

@@ -46,9 +46,6 @@ class OSystem_Dreamcast : public OSystem {
   // Switch to the specified graphics mode.
   bool setGraphicsMode(int mode);
 
-  // Switch to the specified graphics mode.
-  bool setGraphicsMode(const char *name);
-
   // Determine which graphics mode is currently active.
   int getGraphicsMode() const;
 
