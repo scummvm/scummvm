@@ -941,11 +941,11 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 	if (numobj > _numLocalObjects)
 		error("findObjectInRoom: More (%d) than %d objects in room %d", numobj, _numLocalObjects, room);
 
-	if (_features & GF_AFTER_V8) {
-		roomptr = getResourceAddress(rtRoomScripts, room);
-	}
 	if (findWhat & foCodeHeader) {
-		searchptr = roomptr;
+		if (_features & GF_AFTER_V8)
+			searchptr = getResourceAddress(rtRoomScripts, room);
+		else
+			searchptr = roomptr;
 		assert(searchptr);
 		for (i = 0;;) {
 			if (_features & GF_SMALL_HEADER)
@@ -1654,7 +1654,7 @@ void Scumm::loadFlObject(uint object, uint room)
 	FindObjectInRoom foir;
 	int slot, objslot;
 	ObjectData *od;
-	byte *flob, *roomptr;
+	byte *flob;
 	uint32 obcd_size, obim_size, flob_size;
 
 	// Don't load an already loaded object
@@ -1688,9 +1688,11 @@ void Scumm::loadFlObject(uint object, uint room)
 	obim_size = READ_BE_UINT32_UNALIGNED(foir.obim + 4);
 	flob_size = obcd_size + obim_size + 8;
 
-	// Get room pointer
-	roomptr = getResourceAddress(rtRoom, room);
-	assert(roomptr);
+	// Lock room/roomScripts for the given room. They contains the OBCD/OBIM
+	// data, and a call to createResource might expire them, hence we lock them.
+	lock(rtRoom, room);
+	if (_features & GF_AFTER_V8)
+		lock(rtRoomScripts, room);
 
 	// Allocate slot & memory for floating object
 	slot = findFlObjectSlot();
@@ -1702,8 +1704,13 @@ void Scumm::loadFlObject(uint object, uint room)
 	((uint32 *)flob)[0] = MKID('FLOB');
 	((uint32 *)flob)[1] = TO_BE_32(flob_size);
 
-	memcpy(flob + 8, roomptr - foir.roomptr + foir.obcd, obcd_size);
-	memcpy(flob + 8 + obcd_size, roomptr - foir.roomptr + foir.obim, obim_size);
+	memcpy(flob + 8, foir.obcd, obcd_size);
+	memcpy(flob + 8 + obcd_size, foir.obim, obim_size);
+
+	// Unlock room/roomScripts
+	unlock(rtRoom, room);
+	if (_features & GF_AFTER_V8)
+		unlock(rtRoomScripts, room);
 
 	// Setup local object flags
 	setupRoomObject(od, flob, flob);
