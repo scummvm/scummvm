@@ -810,10 +810,11 @@ void SkyControl::handleKeyPress(uint8 key, uint8 *textBuf) {
 
 void SkyControl::setUpGameSprites(uint8 *nameBuf, dataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame) {
 
+	char cursorChar[2] = "-";
 	nameBuf += firstNum * MAX_TEXT_LEN;
 	displayText_t textSpr;
 	if (!nameSprites[MAX_ON_SCREEN]) {
-		textSpr = _skyText->displayText("-", NULL, false, 15, 0);
+		textSpr = _skyText->displayText(cursorChar, NULL, false, 15, 0);
 		nameSprites[MAX_ON_SCREEN] = (dataFileHeader*)textSpr.textData;
 	}
 	for (uint16 cnt = 0; cnt < MAX_ON_SCREEN; cnt++) {
