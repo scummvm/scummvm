@@ -326,6 +326,7 @@ protected:
 	int getStackList(int *args, uint maxnum);
 	int popRoomAndObj(int *room);
 	void shuffleArray(int num, int minIdx, int maxIdx);
+	void unknownEA_func(int a, int b, int c, int d, int e);
 
 	/* Version 6 script opcodes */
 	void o6_setBlastObjectWindow();
@@ -494,6 +495,7 @@ protected:
 	void o6_localizeArray();
 	void o6_shuffle();
 	void o6_unknownFA();
+	void o6_unknownEA();
 
 	byte VAR_VIDEONAME;
 

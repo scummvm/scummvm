@@ -334,7 +334,7 @@ void Scumm_v6::setupOpcodes() {
 		/* E8 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_unknownEA),
 		OPCODE(o6_invalid),
 		/* EC */
 		OPCODE(o6_getActorLayer),
@@ -783,8 +783,9 @@ void Scumm_v6::o6_freezeUnfreeze() {
 void Scumm_v6::o6_cursorCommand() {
 	int a, i;
 	int args[16];
+	int op = fetchScriptByte();
 
-	switch (fetchScriptByte()) {
+	switch (op) {
 	case 0x90:
 		_cursor.state = 1;
 		verbMouseOver(0);
@@ -816,6 +817,10 @@ void Scumm_v6::o6_cursorCommand() {
 		_userPut--;
 		break;
 	case 0x99:{
+			if (_features & GF_AFTER_HEV7) {
+				warning("cursorCommand 0x99 PC_SetCursorToID(%d) stub", pop());
+				break;
+			}
 			int room, obj = popRoomAndObj(&room);
 			setCursorImg(obj, room, 1);
 			break;
@@ -836,7 +841,7 @@ void Scumm_v6::o6_cursorCommand() {
 		makeCursorColorTransparent(pop());
 		break;
 	default:
-		error("o6_cursorCommand: default case");
+		error("o6_cursorCommand: default case %x", op);
 	}
 
 	VAR(VAR_CURSORSTATE) = _cursor.state;
@@ -1353,9 +1358,10 @@ void Scumm_v6::o6_createBoxMatrix() {
 }
 
 void Scumm_v6::o6_resourceRoutines() {
-	int resid;
+	int resid, op;
+	op = fetchScriptByte();
 
-	switch (fetchScriptByte()) {
+	switch (op) {
 	case 100:										/* load script */
 		resid = pop();
 		if (_features & GF_AFTER_V7)
@@ -1453,7 +1459,7 @@ void Scumm_v6::o6_resourceRoutines() {
 			break;
 		}
 	default:
-		error("o6_resourceRoutines: default case");
+		error("o6_resourceRoutines: default case %d", op);
 	}
 }
 
@@ -2769,8 +2775,8 @@ void Scumm_v6::o6_pickOneOf() {
 
 	num = getStackList(args, ARRAYSIZE(args));
 	i = pop();
-	if (i < 0 || i >= num)
-		error("o6_pickOneOf: out of range");
+	if (i < 0 || i > num)
+		error("o6_pickOneOf: %d out of range (0, %d)", i, num - 1);
 	push(args[i]);
 }
 
@@ -3010,6 +3016,34 @@ void Scumm_v6::o6_unknownFA() {
 	len = resStrLen(_scriptPointer);
 	warning("stub o6_unknownFA(%d, \"%s\")", a, _scriptPointer);
 	_scriptPointer += len + 1;
+}
+
+void Scumm_v6::o6_unknownEA() {
+	int edi, esi, eax;
+	edi = pop();
+	esi = pop();
+
+	if (edi == 0) {
+		eax = esi;
+		esi = edi;
+		edi = eax;
+	}
+
+	eax = fetchScriptByte();
+	switch (eax) {
+		case 197:
+			unknownEA_func(5, esi, edi, fetchScriptWord(), eax);
+			break;
+		case 202:
+			unknownEA_func(3, esi, edi, fetchScriptWord(), eax);
+			break;
+		default:
+			break;
+	}
+}
+
+void Scumm_v6::unknownEA_func(int a, int b, int c, int d, int e) {
+	warning("unknownEA_func(%d, %d, %d, %d, %d) stub\n", a, b, c, d, e);
 }
 
 void Scumm_v6::o6_localizeArray() {
