@@ -18,6 +18,8 @@
  * $Header$
  *
  */
+#ifndef __SCUMMSYS_H_
+#define __SCUMMSYS_H_
 
 #if defined(HAVE_NO_BOOL)
 typedef int bool;
@@ -385,3 +387,4 @@ char *strdup(const char *s);
 /* Initialized operator new */
 void * operator new(size_t size);
 
+#endif
