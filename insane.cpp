@@ -132,14 +132,142 @@ void SmushPlayer::parseAHDR()
 
 
 void SmushPlayer::parseIACT() {
-	unsigned char *src = _cur;
-	int size, codec;
-	_cur-=8;	/* Move back to beginning of IACT block */
-	
-	_cur+=4; size = READ_BE_UINT32(_cur) - 18;
-	_cur+=10; codec = READ_LE_UINT16(_cur);	
+	unsigned int pos, bpos, tag, sublen, subpos, trk, idx, flags;
+	byte * buf;
 
-	_cur = src;
+	flags = SoundMixer::FLAG_AUTOFREE;
+
+	pos = 0;
+	pos += 6;
+
+	trk = READ_LE_UINT32(_cur + pos); /* FIXME: is this correct ? */
+	pos += 4;
+
+	/* FIXME: number 8 should be replaced with a sensible literal */
+
+	for (idx = 0; idx < 8; idx++) {
+		if (_imusTrk[idx] == trk)
+			break;
+	}
+
+	if (idx == 8) {
+		for (idx = 0; idx < 8; idx++) {
+			if (_imusTrk[idx] == 0) {
+				_imusTrk[idx] = trk;
+				_imusSize[idx] = 0;
+				break;
+			}
+		}
+	}
+
+	if (idx == 8) {
+		warning("iMUS table full\n");
+		return;
+	}
+
+	pos += 8; /* FIXME: what are these ? */	
+
+	while (pos < _frmeSize) {
+
+		if (_imusSize[idx] == 0) {
+			tag = READ_BE_UINT32(_cur + pos);
+			pos += 4;
+			if (tag != 'iMUS')
+				error("trk %d: iMUS tag not found", trk);
+			_imusSize[idx] = READ_BE_UINT32(_cur + pos);
+			pos += 4;
+		}
+		if (_imusSubSize[idx] == 0) {
+			_imusSubTag[idx] = READ_BE_UINT32(_cur + pos);
+			pos += 4;
+			_imusSubSize[idx] = READ_BE_UINT32(_cur + pos);
+			pos += 4;
+			_imusSize[idx] -= 8;
+			debug(3, "trk %d: tag '%4s' size %x",
+			      trk, _cur + pos - 8, _imusSubSize[idx]);
+		}
+
+		sublen = _imusSubSize[idx] < (_frmeSize - pos) ?
+			_imusSubSize[idx] : (_frmeSize - pos);
+				
+		switch (_imusSubTag[idx]) {
+		case 'MAP ' :
+			tag = READ_BE_UINT32(_cur + pos);
+			if (tag != 'FRMT')
+				error("trk %d: no FRMT section");
+			_imusCodec[idx] = READ_BE_UINT32(_cur + pos + 16);
+			_imusRate[idx] = READ_BE_UINT32(_cur + pos + 20);
+			_imusPos[idx] = 0;
+			break;
+		case 'DATA' :
+			switch (_imusCodec[idx]) {
+			case 8 :
+				flags |= SoundMixer::FLAG_UNSIGNED;
+				buf = (byte *) malloc(sublen);
+				memcpy(buf, _cur + pos, sublen);
+				bpos = sublen;
+				break;
+			case 12 :
+				buf = (byte *) malloc(2 * sublen);
+
+				bpos = 0;
+				subpos = 0;
+
+				while (subpos < sublen) {
+					
+					while (_imusPos[idx] < 3 && subpos < sublen) {
+						_imusData[idx][_imusPos[idx]] = _cur[pos + subpos];
+						_imusPos[idx]++;
+						subpos++;
+					}
+
+					if (_imusPos[idx] == 3) {
+						uint32 temp;
+
+						temp = (_imusData[idx][1] & 0x0f) << 8;
+						temp = (temp | _imusData[idx][0]) << 4;
+						temp -= 0x8000;
+
+						//buf[bpos++] = temp & 0xff;
+						buf[bpos++] = (temp >> 8) & 0xff;
+
+						temp = (_imusData[idx][1] & 0xf0) << 4;
+						temp = (temp | _imusData[idx][2]) << 4;
+						temp -= 0x8000;
+
+						//buf[bpos++] = temp & 0xff;
+						buf[bpos++] = (temp >> 8) & 0xff;
+						_imusPos[idx] = 0;
+					}
+				}
+				break;
+			default :
+				error("trk %d: unknown iMUS codec %d",
+				      trk, _imusCodec[idx]);
+			}
+
+			debug(3, "trk %d: iMUSE play part, len 0x%x rate %d remain 0x%x",
+			      trk, bpos, _imusRate[idx], _imusSubSize[idx]);
+
+			g_scumm->_mixer->append(idx, buf, bpos,
+						_imusRate[idx], flags);
+
+			/* FIXME: append with re-used idx may cause problems
+			   with signed/unsigned issues */
+
+			break;
+		default :
+			error("trk %d: unknown tag inside iMUS %08x",
+			      trk, _imusSubTag[idx]);
+		}
+
+		_imusSubSize[idx] -= sublen;
+		_imusSize[idx] -= sublen;				
+		pos += sublen;	
+	}
+
+	if (_imusSubSize[idx] == 0 && _imusSubTag[idx] == 'DATA')
+		_imusTrk[idx] = 0;
 }
 
 void SmushPlayer::parseNPAL()
@@ -663,6 +791,7 @@ void SmushPlayer::parsePSAD()	// FIXME: Needs to append to
 		for (idx = 0; idx < 8; idx++) {
 			if (_psadTrk[idx] == 0) {
 				_psadTrk[idx] = trk;
+				_saudSize[idx] = 0;
 				break;
 			}
 		}
@@ -806,10 +935,15 @@ void SmushPlayer::init()
 	_renderBitmap = sm->_videoBuffer;
 	codec37_init(&pcd37, 320, 200);
 
-	_mixer_num = -1;
 	memset(_saudSize, 0, sizeof(_saudSize));
 	memset(_saudSubSize, 0, sizeof(_saudSubSize));
 	memset(_psadTrk, 0, sizeof(_psadTrk));
+
+	memset(_imusSize, 0, sizeof(_imusSize));
+	memset(_imusSubSize, 0, sizeof(_imusSubSize));
+	memset(_imusTrk, 0, sizeof(_imusTrk));
+	memset(_imusData, 0, sizeof(_imusData));
+	memset(_imusPos, 0, sizeof(_imusPos));
 }
 
 void SmushPlayer::go()
