@@ -35,6 +35,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="OpenGL32.Lib GlAux.Lib GLU32.Lib SDL.Lib SDLMain.Lib
 /NODEFAULTLIB:LIBCMTD"
+				AdditionalDependencies="sdl.lib libz.lib"
 				OutputFile="$(OutDir)/residual.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
@@ -83,6 +84,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="OpenGL32.Lib GlAux.Lib GLU32.Lib SDL.Lib SDLMain.Lib
 /NODEFAULTLIB:LIBCMTD"
+				AdditionalDependencies="sdl.lib libz.lib"
 				OutputFile="$(OutDir)/residual.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
@@ -148,6 +150,12 @@
 			</File>
 			<File
 				RelativePath="debug.h">
+			</File>
+			<File
+				RelativePath="driver_gl.cpp">
+			</File>
+			<File
+				RelativePath="driver_gl.h">
 			</File>
 			<File
 				RelativePath="engine.cpp">
