@@ -875,7 +875,25 @@ void Scumm_v2::o2_doSentence() {
 }
 
 void Scumm_v2::o2_drawSentence() {
-	warning("TODO o2_drawSentence()");
+	byte *verb_bit = getResourceAddress(rtVerb, getVerbSlot(_scummVars[26],0));
+	byte *name_bit, *name2_bit;
+
+	if (_scummVars[27] > 0) {
+		name_bit = getObjOrActorName(_scummVars[27]);
+	} else {
+		name_bit = NULL;
+//(byte*)strdup("");
+	}
+
+	if (_scummVars[28] > 0) {
+		name2_bit = getObjOrActorName(_scummVars[28]);
+	} else {
+		name2_bit = NULL;
+//(byte*)strdup("");
+	}
+
+	warning("TODO o2_drawSentence(%s, %s, %s)", 
+		verb_bit, name_bit, name2_bit);
 }
 
 void Scumm_v2::o2_ifClassOfIs() {
