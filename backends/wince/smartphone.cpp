@@ -636,6 +636,7 @@ void doPaint() {
 	HBITMAP bitmap;
 	char dateString[100];
 	TCHAR dateStringUnicode[100];
+	TCHAR scummVMVersionUnicode[100];
 
 	GetClientRect (_hWnd, &rcClient);
 	hDC = BeginPaint (_hWnd, &ps); 
@@ -653,7 +654,8 @@ void doPaint() {
 	DrawText(hDC, TEXT("http://www.scummvm.org"), -1, &rcClient, DT_CENTER | DT_SINGLELINE);
 	rcClient.left = 0;
 	rcClient.top = 90;
-	DrawText(hDC, TEXT(gScummVMVersion), -1, &rcClient, DT_CENTER | DT_SINGLELINE);
+	MultiByteToWideChar(CP_ACP, 0, gScummVMVersion, strlen(gScummVMVersion) + 1, scummVMVersionUnicode, sizeof(scummVMVersionUnicode));
+	DrawText(hDC, scummVMVersionUnicode, -1, &rcClient, DT_CENTER | DT_SINGLELINE);
 	rcClient.left = 0;
 	rcClient.top = 110;
 	DrawText(hDC, TEXT("http://arisme.free.fr"), -1, &rcClient, DT_CENTER | DT_SINGLELINE);
