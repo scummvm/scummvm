@@ -23,7 +23,6 @@
 #include <common/scummsys.h>
 #include <common/stdafx.h>
 #include <common/engine.h>
-#include <common/gameDetector.h>
 #include "dc.h"
 #include "icon.h"
 #include <scumm/saveload.h>
@@ -45,7 +44,7 @@ enum vmsaveResult {
 
 static int lastvm=-1;
 
-static vmsaveResult trySave(GameDetector *d, const char *data, int size,
+static vmsaveResult trySave(const char *gamename, const char *data, int size,
 			    const char *filename, class Icon &icon, int vm)
 {
   struct vmsinfo info;
@@ -69,7 +68,7 @@ static vmsaveResult trySave(GameDetector *d, const char *data, int size,
 
   memset(&header, 0, sizeof(header));
   strncpy(header.shortdesc, "ScummVM savegame", 16);
-  strncpy(header.longdesc, d->getGameName(), 32);
+  strncpy(header.longdesc, gamename, 32);
   strncpy(header.id, "ScummVM", 16);
   icon.create_vmicon(iconbuffer);
   header.numicons = 1;
@@ -126,17 +125,17 @@ static bool tryLoad(char *&buffer, int &size, const char *filename, int vm)
   return false;
 }
 
-vmsaveResult writeSaveGame(GameDetector *d, const char *data, int size,
+vmsaveResult writeSaveGame(const char *gamename, const char *data, int size,
 			   const char *filename, class Icon &icon)
 {
   vmsaveResult r, res = VMSAVE_NOVM;
 
   if(lastvm >= 0 &&
-     (res = trySave(d, data, size, filename, icon, lastvm)) == VMSAVE_OK)
+     (res = trySave(gamename, data, size, filename, icon, lastvm)) == VMSAVE_OK)
     return res;
 
   for(int i=0; i<24; i++)
-    if((r = trySave(d, data, size, filename, icon, i)) == VMSAVE_OK) {
+    if((r = trySave(gamename, data, size, filename, icon, i)) == VMSAVE_OK) {
       lastvm = i;
       return r;
     } else if(r > res)
@@ -201,7 +200,7 @@ bool SerializerStream::fopen(const char *filename, const char *mode)
 
 void SerializerStream::fclose()
 {
-  extern GameDetector detector;
+  extern const char *gGameName;
   extern Icon icon;
 
   if(context) {
@@ -217,7 +216,7 @@ void SerializerStream::fclose()
 	  c->pos = destlen;
 	} else delete compbuf;
       }
-      writeSaveGame(&detector, c->buffer, c->pos,
+      writeSaveGame(gGameName, c->buffer, c->pos,
 		    c->filename, icon);
     }
     delete c->buffer;
