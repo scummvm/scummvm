@@ -30,7 +30,6 @@
 #define MAX_BANKS_NUMBER    18
 
 
-
 struct ObjectFrame {
   uint16 width, height;
   uint16 xhotspot, yhotspot;
@@ -44,8 +43,8 @@ public:
 	QueenGraphics(QueenResource *resource);
 
 	void bankLoad(const char *bankname, uint32 bankslot);
-	void bankUnpack(uint srcframe, uint dstframe, uint32 bankslot);
-	void bankOverpack(uint srcframe, uint dstframe, uint32 bankslot);
+	void bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot);
+	void bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot);
 	void bankErase(uint32 bankslot);
 	
 private:
@@ -62,5 +61,5 @@ private:
 	
 };
 
-
 #endif
+

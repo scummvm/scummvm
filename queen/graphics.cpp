@@ -58,9 +58,9 @@ void QueenGraphics::bankLoad(const char *bankname, uint32 bankslot) {
 
 void QueenGraphics::bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	
-	uint8* p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
+	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
 		
-	ObjectFrame* pof = &_frames[dstframe];
+	ObjectFrame *pof = &_frames[dstframe];
 	delete[] pof->data;
 
 	pof->width    = READ_LE_UINT16(p + 0);
@@ -68,13 +68,12 @@ void QueenGraphics::bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot
 	pof->xhotspot = READ_LE_UINT16(p + 4);
 	pof->yhotspot = READ_LE_UINT16(p + 6);
 	
-	uint size = pof->width * pof->height;
+	uint32 size = pof->width * pof->height;
 	pof->data = new uint8[ size ];
 	memcpy(pof->data, p, size);
 	
 	debug(5, "Unpacked frame %d from bank slot %d to frame slot %d", srcframe, bankslot, dstframe);
 }
-
 
 void QueenGraphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	
