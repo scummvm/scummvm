@@ -14,6 +14,7 @@ unpack()					Graphics::bankUnpack
 
 COMMAND
 =======
+ALTER_DEFAULT()
 CLEAR_COMMAND()
 EXECUTE_ACTION()
 OPEN_CLOSE_OTHER()
@@ -21,6 +22,10 @@ P1_SET_CONDITIONS()
 P2_SET_AREAS()
 P3_SET_OBJECTS()
 P4_SET_ITEMS()
+SELECT()
+SELECT_ITEM()
+SELECT_NOUN()
+SELECT_VERB()
 -
 ACTION,ACTION2
 CLEVEL
@@ -106,7 +111,7 @@ Box()
 calc_screen_scroll()		Display::horizontalScrollUpdate
 CHECK_PARALLAX()			Graphics::bobCustomParallax
 clearallbobs()				Graphics::bobClearAll
-clearbob()					Graphisc::bobClear
+clearbob()					Graphics::bobClear
 clearpanel()				Display::prepareUpdate
 drawbobs()					Graphics::bobDrawAll
 drawbackdrop()				Display::prepareUpdate
@@ -212,10 +217,6 @@ P3_COPY_FROM()				Cutaway::objectCopy
 R_MAP()						// handle map 'm1' 
 REDISP_OBJECT()				Logic::roomRefreshObject
 restart_game()
-SELECT()
-SELECT_ITEM()
-SELECT_NOUN()
-SELECT_VERB()
 SETUP_BOBS()				Graphics::bobSetupControl
 SETUP_FURNITURE()			Logic::roomSetupFurniture
 SETUP_ROOM()				QueenEngine::roomChanged
@@ -347,8 +348,7 @@ VOLUME
 
 STATE
 =====
-ALTER_DEFAULT()
-ALTER_STATE()
+ALTER_STATE()				Logic::alterState*
 FIND_STATE()				Logic::findState*
 -
 Gstr						// grab state
