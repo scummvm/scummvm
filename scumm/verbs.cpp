@@ -527,6 +527,10 @@ void ScummEngine::setVerbObject(uint room, uint object, uint verb) {
 	FindObjectInRoom foir;
 	int i;
 
+	if (_heversion >= 70) { // Windows titles. Here we always ignore room
+		room = getObjectRoom(object);
+	}
+
 	if (whereIsObject(object) == WIO_FLOBJECT)
 		error("Can't grab verb image from flobject");
 

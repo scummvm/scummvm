@@ -216,7 +216,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_animateActor),
 		OPCODE(o6_doSentence),
 		/* 84 */
-		OPCODE(o6_pickupObject),
+		OPCODE(o7_pickupObject),
 		OPCODE(o6_loadRoomWithEgo),
 		OPCODE(o6_invalid),
 		OPCODE(o6_getRandomNumber),
@@ -625,5 +625,23 @@ void ScummEngine_v7he::o7_quitPauseRestart() {
 		error("o7_quitPauseRestart invalid case %d", subOp);
 	}
 }
+
+void ScummEngine_v7he::o7_pickupObject() {
+	int obj, room;
+
+	room = pop();
+	obj = pop();
+	if (room == 0)
+		room = getObjectRoom(obj);
+
+	addObjectToInventory(obj, room);
+	putOwner(obj, VAR(VAR_EGO));
+	putClass(obj, kObjectClassUntouchable, 1);
+	putState(obj, 1);
+	markObjectRectAsDirty(obj);
+	clearDrawObjectQueue();
+	runInventoryScript(obj);									/* Difference */
+}
+
 
 } // End of namespace Scumm

@@ -80,7 +80,7 @@ void ScummEngine::openRoom(int room) {
 		}
 		if (!(_features & GF_SMALL_HEADER)) {
 
-			if ((_features & GF_HUMONGOUS) && (_features & GF_WINDOWS)) {
+			if (_heversion >= 70) { // Windows titles
 				sprintf(buf, "%s.he%.1d", _gameName.c_str(), room == 0 ? 0 : 1);
 			} else if (_version >= 7) {
 				if (room > 0 && (_version == 8))
@@ -185,7 +185,7 @@ void ScummEngine::readRoomsOffsets() {
 	if (_features & GF_SMALL_NAMES)
 		return;
 
-	if ((_features & GF_HUMONGOUS) && (_features & GF_WINDOWS)) {
+	if (_heversion >= 70) { // Windows titles
 		num = READ_LE_UINT16(_HEV7RoomOffsets);
 		ptr = _HEV7RoomOffsets + 2;
 		for (i = 0; i < num; i++) {
@@ -350,16 +350,15 @@ void ScummEngine::readIndexFile() {
 				_fileHandle.read(_objectStateTable, num);
 				_fileHandle.read(_objectRoomTable, num);
 				memset(_objectOwnerTable, 0xFF, num);
+			} else if (_heversion >= 70) { // Windows titles
+				_fileHandle.read(_objectStateTable, num);
+				_fileHandle.read(_objectOwnerTable, num);
+				_fileHandle.read(_objectRoomTable, num);
 			} else {
 				_fileHandle.read(_objectOwnerTable, num);
 				for (i = 0; i < num; i++) {
 					_objectStateTable[i] = _objectOwnerTable[i] >> OF_STATE_SHL;
 					_objectOwnerTable[i] &= OF_OWNER_MASK;
-				}
-				if ((_features & GF_HUMONGOUS) && (_features & GF_WINDOWS)) {
-					// _objectRoomTable
-					_fileHandle.seek(num * 4, SEEK_CUR);
-					//_fileHandle.read(_objectRoomTable, num * 4);
 				}
 			}
 			
@@ -506,9 +505,10 @@ void ScummEngine::readResTypeList(int id, uint32 tag, const char *name) {
 		for (i = 0; i < num; i++) {
 			res.roomoffs[id][i] = _fileHandle.readUint32LE();
 		}
-		if ((_features & GF_HUMONGOUS) && (_features & GF_WINDOWS)) {
-			_fileHandle.seek(4 * num, SEEK_CUR); // FIXME what are these additional offsets
-		}
+		// FIXME: these are related to globs
+
+		//_fileHandle.read(_globSize, num);
+		_fileHandle.seek(4 * num, SEEK_CUR);
 	}
 }
 
@@ -2057,7 +2057,7 @@ void ScummEngine::readMAXS() {
 			_numGlobalScripts = 2000;
 
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
-	} else if (_heversion >= 72) {
+	} else if (_heversion >= 72) { // sputm7.2
 		_fileHandle.readUint16LE();
 		_numVariables = _fileHandle.readUint16LE();
 		_numBitVariables = _fileHandle.readUint16LE();
@@ -2073,13 +2073,16 @@ void ScummEngine::readMAXS() {
 		_numCharsets = _fileHandle.readUint16LE();
 		_numCostumes = _fileHandle.readUint16LE();
 		_numGlobalObjects = _fileHandle.readUint16LE();
-		_fileHandle.readUint16LE(); 
+		_fileHandle.readUint16LE();
+
+		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 
 		// FIXME: Is this correct??? A V6+ game which doesn't use object name
 		// resources seems odd...
 		_numNewNames = 0;
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects * 4, 1);
+
 		_numGlobalScripts = 200;
 		_shadowPaletteSize = 256;
 	} else if (_version == 6) {
@@ -2104,6 +2107,10 @@ void ScummEngine::readMAXS() {
 		_numGlobalScripts = 200;
 
 		_shadowPaletteSize = 256;
+
+		if (_heversion >= 70) {
+			_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+		}
 	} else {
 		_numVariables = _fileHandle.readUint16LE();      // 800
 		_fileHandle.readUint16LE();                      // 16

@@ -674,6 +674,9 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_screenWidth = 320;
 		_screenHeight = 240;
 	} else if (_features & GF_DEFAULT_TO_1X_SCALER) {
+		// FIXME: a dirty hack. Currently this is checked before engine
+		//  creation.
+		_system->setGraphicsMode("1x");
 		_screenWidth = 640;
 		_screenHeight = 480;
 	} else if (_features & GF_NES) {

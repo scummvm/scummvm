@@ -637,6 +637,7 @@ protected:
 	void o7_unknownFA();
 	void o7_unknownFB();
 	void o7_quitPauseRestart();
+	void o7_pickupObject();
 };
 
 class ScummEngine_v7 : public ScummEngine_v6 {

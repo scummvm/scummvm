@@ -560,6 +560,16 @@ void ScummEngine_v6he::o6_actorOps() {
 		return;
 
 	switch (b) {
+	case 30:
+		if (_heversion <= 70) {
+			error("o6_actorOps: default case %d", b);
+		}
+
+		k = pop();
+		j = pop();
+		i = pop();
+		warning("o6_actorOps: stub case %d", b);
+		break;
 	case 76:		// SO_COSTUME
 		a->setActorCostume(pop());
 		break;
@@ -630,7 +640,6 @@ void ScummEngine_v6he::o6_actorOps() {
 	case 93:		// SO_NEVER_ZCLIP
 		a->forceClip = 0;
 		break;
-	case 225:		// SO_ALWAYS_ZCLIP
 	case 94:		// SO_ALWAYS_ZCLIP
 		a->forceClip = pop();
 		break;
@@ -693,6 +702,23 @@ void ScummEngine_v6he::o6_actorOps() {
 			a->bottom = top_actor;
 		}
 		break;
+	case 219:
+		if (_heversion <= 70) {
+			error("o6_actorOps: default case %d", b);
+		}
+
+		a->forceClip = false;
+		a->needRedraw = true;
+		a->needBgReset = true;
+		break;
+	case 225:		// SO_ALWAYS_ZCLIP
+		if (_heversion < 70) {
+			a->forceClip = pop(); // FIXME: where does this come from?
+		} else {
+			i = pop(); // talkie slot
+			warning("o6_actorOps: stub case %d", b);
+		}
+		break;
 	default:
 		error("o6_actorOps: default case %d", b);
 	}
@@ -704,6 +730,7 @@ void ScummEngine_v6he::o6_verbOps() {
 	byte op;
 
 	op = fetchScriptByte();
+
 	if (op == 196) {
 		_curVerb = pop();
 		_curVerbSlot = getVerbSlot(_curVerb, 0);

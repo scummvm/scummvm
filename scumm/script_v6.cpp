@@ -394,6 +394,7 @@ int ScummEngine_v6::popRoomAndObj(int *room) {
 		obj = pop();
 	}
 
+
 	return obj;
 }
 
@@ -930,8 +931,9 @@ void ScummEngine_v6::o6_cursorCommand() {
 	case 0x97:		// SO_USERPUT_SOFT_OFF
 		_userPut--;
 		break;
-	case 0x99:{		// SO_CURSOR_IMAGE Set cursor image
-			if ((_features & GF_HUMONGOUS) && (_features & GF_WINDOWS)) {
+	case 0x99: 		// SO_CURSOR_IMAGE Set cursor image
+		{
+			if (_heversion >= 70) { // Windows titles
 				warning("cursorCommand 0x99 PC_SetCursorToID(%d) stub", pop());
 				break;
 			}
@@ -1557,11 +1559,43 @@ void ScummEngine_v6::o6_resourceRoutines() {
 			loadFlObject(obj, room);
 			break;
 		}
-	case 120:{										/* queue ? for load */
-			 warning("stub queueload resource %d", pop());
-			 // QL_QueGlobForLoad(2, pop(), 1);
-			 break;
-		
+	case 120: 					/* queue ? for load */
+		{
+			if (_heversion < 70)
+				error("o6_resourceRoutines: default case %d", op);
+			
+			warning("stub queueload resource 2, %d", pop());
+			// QL_QueGlobForLoad(2, pop(), 1);
+			break;
+		}
+	case 121: 
+		{
+			if (_heversion < 70)
+				error("o6_resourceRoutines: default case %d", op);
+
+			warning("stub queueload resource 4, %d", pop());
+			// QL_QueGlobForLoad(4, pop(), 1);
+			break;
+		}
+	case 122: 
+		{
+			if (_heversion < 70)
+				error("o6_resourceRoutines: default case %d", op);
+
+			warning("stub queueload resource 3, %d", pop());
+			// QL_QueGlobForLoad(3, pop(), 1);
+			break;
+		}
+	case 123: 
+		{
+			if (_heversion < 70)
+				error("o6_resourceRoutines: default case %d", op);
+
+			resid = pop();
+			warning("stub queueload resource 18, %d", resid);
+			// QL_QueGlobForLoad(18, resid, 1);
+			// QL_QueGlobForLoad(1, resid, 1);
+			break;
 		}
 	default:
 		error("o6_resourceRoutines: default case %d", op);
