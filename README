@@ -71,25 +71,25 @@ features that sometimes make it impossible to finish the game. Save often,
 and please file a bug report (details on submitted bug reports are below)
 if you discover such a bug.
 
-Simon the Sorcercer 1 and 2 games note
+Simon the Sorcerer 1 and 2 games note
 --------------------------------------
 
-The Simon the Sorcercer 1 & 2 games were split into six targets to make 
+The Simon the Sorcerer 1 & 2 games were split into six targets to make 
 coding easier and to make it more clear which target should be used:
-simon1dos - Use for Simon the Sorcercer 1 for DOS (Disk)
-simon2dos - Use for Simon the Sorcercer 2 for DOS (Disk)
-simon1talkie - Use for Simon the Sorcercer 1 Talkie for DOS (CD)
-simon2talkie - Use for Simon the Sorcercer 2 Talkie for DOS (CD)
-simon1win - Use for Simon the Sorcercer 1 Talkie for Windows (CD)
-simon2win - Use for Simon the Sorcercer 2 Talkie for Windows (CD)
+simon1dos - Use for Simon the Sorcerer 1 for DOS (Disk)
+simon2dos - Use for Simon the Sorcerer 2 for DOS (Disk)
+simon1talkie - Use for Simon the Sorcerer 1 Talkie for DOS (CD)
+simon2talkie - Use for Simon the Sorcerer 2 Talkie for DOS (CD)
+simon1win - Use for Simon the Sorcerer 1 Talkie for Windows (CD)
+simon2win - Use for Simon the Sorcerer 2 Talkie for Windows (CD)
 
-If you have the dual verison of Simon the Sorcercer 1 or 2 on CD,
-than you will find the Windows verison in the main directory of CD
-and the DOS Talkie verison in the DOS directory of the CD.
+If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
+than you will find the Windows version in the main directory of CD
+and the DOS Talkie version in the DOS directory of the CD.
 
-The filenames of saved games for Simon the Sorcercer 1 & 2 were changed too:
-Simon the Sorcercer 1 uses simon1.00x (Where x is the slot number) 
-Simon the Sorcercer 2 uses simon2.00x (Where x is the slot number) 
+The filenames of saved games for Simon the Sorcerer 1 & 2 were changed too:
+Simon the Sorcerer 1 uses simon1.00x (Where x is the slot number) 
+Simon the Sorcerer 2 uses simon2.00x (Where x is the slot number) 
 So if you have any old save games you will need to change their filenames to use them
 
 Supported Platforms:
