@@ -152,6 +152,7 @@ void Bitmap::draw() const {
     glDepthMask(GL_TRUE);
     glEnable(GL_DEPTH_TEST);
   } else if (format_ == 5) {
+#if 0
     if (curr_image_ != 0) {
       warning("Animation not handled yet in GL texture path !\n");
     }
@@ -169,6 +170,7 @@ void Bitmap::draw() const {
     }
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); 
     glDepthFunc(GL_LESS);
+#endif
   }
 }
 
