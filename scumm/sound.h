@@ -37,7 +37,11 @@ enum {
 };
 
 class Sound {
+#ifdef __PALM_OS__
+public:
+#else
 protected:
+#endif
 	enum SoundMode {
 		kVOCMode,
 		kMP3Mode,
@@ -45,6 +49,9 @@ protected:
 		kFlacMode
 	};
 
+#ifdef __PALM_OS__
+protected:
+#endif
 	ScummEngine *_vm;
 
 	int16 _soundQuePos, _soundQue[0x100];
@@ -109,4 +116,3 @@ protected:
 } // End of namespace Scumm
 
 #endif
-
