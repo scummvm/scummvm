@@ -851,6 +851,8 @@ void Scumm::initRoomSubBlocks()
 	roomResPtr = roomptr = getResourceAddress(rtRoom, _roomResource);
 	if (_features & GF_AFTER_V8)
 		roomResPtr = getResourceAddress(rtRoomScripts, _roomResource);
+	if (!roomptr || !roomResPtr)
+		error("Room %d: data not found (" __FILE__  ":%d)", _roomResource, __LINE__);
 
 	rmhd = (RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
 

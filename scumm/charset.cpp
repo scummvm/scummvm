@@ -394,7 +394,7 @@ CharsetRendererNut::CharsetRendererNut(Scumm *vm)
 	 : CharsetRenderer(vm)
 {
 	_current = 0;
-	
+
 	for (int i = 0; i < 5; i++) {
 		char fontname[256];
 		sprintf(fontname, "font%d.nut", i);
@@ -417,6 +417,7 @@ void CharsetRendererNut::setCurID(byte id)
 	assert(id < 5);
 	_curId = id;
 	_current = _fr[id];
+	assert(_current);
 }
 
 int CharsetRendererNut::getCharWidth(byte chr)

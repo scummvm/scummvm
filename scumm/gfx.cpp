@@ -844,6 +844,7 @@ byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem)
 void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 										 int stripnr, int numstrip, byte flag)
 {
+	assert(ptr);
 	assert(h > 0);
 	byte *backbuff_ptr, *bgbak_ptr, *smap_ptr;
 	int i;
@@ -2849,6 +2850,9 @@ void Scumm::createSpecialPalette(int16 from, int16 to, int16 redScale, int16 gre
 
 void Scumm::darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor)
 {
+	if (_roomResource == 0) // FIXME - HACK to get COMI demo working
+		return;
+
 	if (startColor <= endColor) {
 		byte *cptr, *cur;
 		int j;
@@ -2986,8 +2990,6 @@ void Scumm::setPalette(int palindex)
 
 	_curPalIndex = palindex;
 	pals = getPalettePtr();
-	if (pals == NULL)
-		error("invalid palette %d", palindex);
 	setPaletteFromPtr(pals);
 }
 
@@ -3017,11 +3019,13 @@ byte *Scumm::getPalettePtr()
 	byte *cptr;
 
 	cptr = getResourceAddress(rtRoom, _roomResource);
+	assert(cptr);
 	if (_CLUT_offs) {
 		cptr += _CLUT_offs;
 	} else {
 		cptr = findPalInPals(cptr + _PALS_offs, _curPalIndex);
 	}
+	assert(cptr);
 	return cptr;
 }
 
