@@ -1991,9 +1991,8 @@ bool SkyLogic::fnSetFont(uint32 font, uint32 b, uint32 c) {
 	return true;
 }
 
-bool SkyLogic::fnStartFx(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnStartFx");
-	return true;
+bool SkyLogic::fnStartFx(uint32 sound, uint32 b, uint32 c) {
+	return _skySound->fnStartFx(sound);
 }
 
 bool SkyLogic::fnStopFx(uint32 a, uint32 b, uint32 c) {

@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef SKYSOUND_H
+#define SKYSOUND_H
+
 #include "sound/mixer.h"
 #include "sky/disk.h"
 #include "common/engine.h"
@@ -46,12 +49,14 @@ public:
 
 	void loadSection(uint8 pSection);
 	void playSound(uint16 sound, uint16 volume);
+	bool fnStartFx(uint32 sound);
 
 private:
 	SkyDisk *_skyDisk;
 	uint8 _soundsTotal;
 	uint16 _sfxBaseOfs;
-    uint8 *_soundData;
+	uint8 *_soundData;
 	uint8 *_sampleRates, *_sfxInfo;
 };
 
+#endif
