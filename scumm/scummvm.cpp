@@ -729,24 +729,22 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		const char *fontFile = NULL;
 		switch(_language) {
 		case Common::KO_KOR:
-			_CJKMode = true;
 			fontFile = "korean.fnt";
 			break;
 		case Common::JA_JPN:
-			_CJKMode = true;
 			fontFile = (_gameId == GID_DIG) ? "kanji16.fnt" : "japanese.fnt";
 			break;
 		case Common::ZH_TWN:
 			if (_gameId == GID_CMI) {
-				_CJKMode = true;
 				fontFile = "chinese.fnt";
 			}
 			break;
 		}
-		if (_CJKMode && fp.open(fontFile, getGameDataPath(), 1)) {
+		if (fontFile && fp.open(fontFile, getGameDataPath(), 1)) {
 			debug(2, "Loading CJK Font");
-			fp.seek(2,SEEK_CUR);
-			_2byteWidth = fp.readByte(); //FIXME: is this correct?
+			_CJKMode = true;
+			fp.seek(2, SEEK_CUR);
+			_2byteWidth = fp.readByte();
 			_2byteHeight = fp.readByte();
 
 			int numChar = 0;
@@ -755,14 +753,27 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 				numChar = 2350;
 				break;
 			case Common::JA_JPN:
-				numChar = (_gameId == GID_DIG) ? 1 : 1; //FIXME
+				numChar = (_gameId == GID_DIG) ? 1024 : 2048; //FIXME
 				break;
 			case Common::ZH_TWN:
 				numChar = 1; //FIXME
 				break;
 			}
-			_2byteFontPtr = new byte[2 * _2byteHeight * numChar];
-			fp.read(_2byteFontPtr, 2 * _2byteHeight * numChar);
+			_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
+			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
+			fp.close();
+		}
+	} else if (_language == Common::JA_JPN && _version <= 5) { //FM Towns Kanji
+		File fp;
+		int numChar = 256 * 32;
+		_2byteWidth = 16;
+		_2byteHeight = 16;
+		//use FM Towns font rom, since game files don't have kanji font resources
+		if (fp.open("fmt_fnt.rom", "./", 1)) { //FIXME: use getGameDataPath()?
+			_CJKMode = true;
+			debug(2, "Loading FM Towns Kanji rom");
+			_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
+			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
 			fp.close();
 		}
 	}
@@ -2494,18 +2505,93 @@ char ScummEngine::displayError(bool showCancel, const char *message, ...) {
 #pragma mark --- Miscellaneous ---
 #pragma mark -
 
+int SJIStoFMTChunk(int f, int s) //convert sjis code to fmt font offset
+{
+	enum {KANA = 0, KANJI = 1, EKANJI = 2};
+	int base = s - (s % 32) - 1;
+	int c = 0, p = 0, chunk_f = 0, chunk = 0, cr, kanjiType = KANA;
+
+	if(f >= 0x81 && f <= 0x84) kanjiType = KANA;
+	if(f >= 0x88 && f <= 0x9f) kanjiType = KANJI;
+	if(f >= 0xe0 && f <= 0xea) kanjiType = EKANJI;
+
+	if((f > 0xe8 || (f == 0xe8 && base >= 0x9f)) || (f > 0x90 || (f == 0x90 && base >= 0x9f))) {
+		c = 48; //correction
+		p = -8; //correction
+	}
+
+	if(kanjiType == KANA) {//Kana
+		chunk_f = (f - 0x81) * 2;
+	} else if(kanjiType == KANJI) {//Standard Kanji
+		p += f - 0x88;
+		chunk_f = c + 2 * p;
+	} else if(kanjiType == EKANJI) {//Enhanced Kanji
+		p += f - 0xe0;
+		chunk_f = c + 2 * p;
+	}
+
+	if(base == 0x7f && s == 0x7f)
+		base -= 0x20; //correction
+	if((base == 0x7f && s == 0x9e) || (base == 0x9f && s == 0xbe) || (base == 0xbf && s == 0xde))
+		base += 0x20; //correction
+
+	switch(base) {
+	case 0x3f:
+		cr = 0; //3f
+		if(kanjiType == KANA) chunk = 1;
+		else if(kanjiType == KANJI) chunk = 31;
+		else if(kanjiType == EKANJI) chunk = 111;
+		break;
+	case 0x5f:
+		cr = 0; //5f
+		if(kanjiType == KANA) chunk = 17;
+		else if(kanjiType == KANJI) chunk = 47;
+		else if(kanjiType == EKANJI) chunk = 127;
+		break;
+	case 0x7f:
+		cr = -1; //80
+		if(kanjiType == KANA) chunk = 9;
+		else if(kanjiType == KANJI) chunk = 63;
+		else if(kanjiType == EKANJI) chunk = 143;
+		break;
+	case 0x9f:
+		cr = 1; //9e
+		if(kanjiType == KANA) chunk = 2;
+		else if(kanjiType == KANJI) chunk = 32;
+		else if(kanjiType == EKANJI) chunk = 112;
+		break;
+	case 0xbf:
+		cr = 1; //be
+		if(kanjiType == KANA) chunk = 18;
+		else if(kanjiType == KANJI) chunk = 48;
+		else if(kanjiType == EKANJI) chunk = 128;
+		break;
+	case 0xdf:
+		cr = 1; //de
+		if(kanjiType == KANA) chunk = 10;
+		else if(kanjiType == KANJI) chunk = 64;
+		else if(kanjiType == EKANJI) chunk = 144;
+		break;
+	default:
+		return 0;
+	}
+	
+	return ((chunk_f + chunk) * 32 + (s - base)) + cr;
+}
+
 byte *ScummEngine::get2byteCharPtr(int idx) {
-	/*
-		switch(language)
-		case korean:
-			return ( (idx % 256) - 0xb0) * 94 + (idx / 256) - 0xa1;
-		case japanese:
-			...
-		case taiwan:
-			...
-	*/
-	idx = ( (idx % 256) - 0xb0) * 94 + (idx / 256) - 0xa1; // only for korean
-	return 	_2byteFontPtr + 2 * _2byteHeight * idx;
+	switch(_language) {
+	case Common::KO_KOR:
+		idx = ((idx % 256) - 0xb0) * 94 + (idx / 256) - 0xa1;
+		break;
+	case Common::JA_JPN:
+		idx = SJIStoFMTChunk((idx % 256), (idx / 256));
+		break;
+	case Common::ZH_TWN:
+	default:
+		idx = 0;
+	}
+	return 	_2byteFontPtr + ((_2byteWidth + 7) / 8) * _2byteHeight * idx;
 }
 
 
