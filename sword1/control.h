@@ -26,6 +26,7 @@
 #include "sworddefs.h"
 
 class OSystem;
+class SaveFileManager;
 
 namespace Sword1 {
 
@@ -67,7 +68,7 @@ struct ButtonInfo {
 
 class Control {
 public:
-	Control(ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic, const char *savePath);
+	Control(SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic, const char *savePath);
 	~Control(void);
 	uint8 runPanel(void);
 	void doRestore(void);
@@ -119,6 +120,7 @@ private:
 	static const ButtonInfo _deathButtons[3], _panelButtons[7], _saveButtons[16], _volumeButtons[4];
 	static const uint8 _languageStrings[8 * 20][43];
 	const uint8 (*_lStrings)[43];
+	SaveFileManager *_saveFileMan;
 	ObjectMan *_objMan;
 	ResMan *_resMan;
 	OSystem *_system;

@@ -37,8 +37,6 @@
 #include "sword1/sworddefs.h"
 #include "sword1/swordres.h"
 
-#include <memory>
-
 namespace Sword1 {
 
 #define SAVEFILE_WRITE true
@@ -158,7 +156,8 @@ void ControlButton::setSelected(uint8 selected) {
 	draw();
 }
 
-Control::Control(ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic, const char *savePath) {
+Control::Control(SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic, const char *savePath) {
+	_saveFileMan = saveFileMan;
 	_resMan = pResMan;
 	_objMan = pObjMan;
 	_system = system;
@@ -667,10 +666,8 @@ bool Control::restoreFromFile(void) {
 }
 
 void Control::readSavegameDescriptions(void) {
-	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
-
 	SaveFile *inf;
-	inf = mgr->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_READ);
+	inf = _saveFileMan->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_READ);
 	_saveScrollPos = _saveFiles = 0;
 	_selectedSavegame = 255;
 	if (inf && inf->isOpen()) {
@@ -714,10 +711,8 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 }
 
 void Control::writeSavegameDescriptions(void) {
-	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
-
 	SaveFile *outf;
-	outf = mgr->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_WRITE);
+	outf = _saveFileMan->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_WRITE);
 	
 	if (!outf) {
 		// Display an error message, and do nothing
@@ -741,10 +736,8 @@ void Control::writeSavegameDescriptions(void) {
 
 bool Control::savegamesExist(void) {
 	bool retVal = false;
-	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
-
 	SaveFile *inf;
-	inf = mgr->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_READ);
+	inf = _saveFileMan->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_READ);
 	if (inf && inf->isOpen())
 		retVal = true;
 	delete inf;
@@ -900,10 +893,8 @@ void Control::saveGameToFile(uint8 slot) {
 	uint16 cnt;
 	sprintf(fName, "SAVEGAME.%03d", slot);
 	uint16 liveBuf[TOTAL_SECTIONS];
-	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
-
 	SaveFile *outf;
-	outf = mgr->open_savefile(fName, _savePath, SAVEFILE_WRITE);
+	outf = _saveFileMan->open_savefile(fName, _savePath, SAVEFILE_WRITE);
 	if (!outf || !outf->isOpen()) {
 		// Display an error message, and do nothing
 		displayMessage(0, "Unable to create file '%s' in directory '%s'", fName, _savePath);
@@ -935,10 +926,8 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	char fName[15];
 	uint16 cnt;
 	sprintf(fName, "SAVEGAME.%03d", slot);
-	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
-
 	SaveFile *inf;
-	inf = mgr->open_savefile(fName, _savePath, SAVEFILE_READ);
+	inf = _saveFileMan->open_savefile(fName, _savePath, SAVEFILE_READ);
 	if (!inf || !inf->isOpen()) {
 		// Display an error message, and do nothing
 		displayMessage(0, "Can't open file '%s' in directory '%s'", fName, _savePath);

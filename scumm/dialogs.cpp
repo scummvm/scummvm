@@ -44,8 +44,6 @@
 #include "backends/wince/CEKeysDialog.h"
 #endif
 
-#include <memory>
-
 using GUI::CommandSender;
 using GUI::StaticTextWidget;
 using GUI::kButtonWidth;
@@ -257,12 +255,10 @@ Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
 	uint i = saveMode ? 1 : 0;
 	bool avail_saves[81];
 
-	const std::auto_ptr<SaveFileManager> mgr(OSystem::instance()->get_savefile_manager());
-
-	scumm->listSavegames(avail_saves, ARRAYSIZE(avail_saves), mgr.get());
+	scumm->listSavegames(avail_saves, ARRAYSIZE(avail_saves));
 	for (; i < ARRAYSIZE(avail_saves); i++) {
 		if (avail_saves[i])
-			scumm->getSavegameName(i, name, mgr.get());
+			scumm->getSavegameName(i, name);
 		else
 			name[0] = 0;
 		l.push_back(name);

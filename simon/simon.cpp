@@ -42,8 +42,6 @@
 #include <errno.h>
 #include <time.h>
 
-#include <memory>
-
 #ifdef __PALM_OS__
 #include "globals.h"
 #endif
@@ -2625,15 +2623,13 @@ int SimonEngine::count_savegames() {
 	uint i = 1;
 	bool marks[256];
 
-	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
-
 	char *prefix = gen_savename(999);
 	prefix[strlen(prefix)-3] = '\0';
-	mgr->list_savefiles(prefix, getSavePath(), marks, 256);
+	_saveFileMan->list_savefiles(prefix, getSavePath(), marks, 256);
 
 	while (i < 256) {
 		if (marks[i] &&
-		    (f = mgr->open_savefile(gen_savename(i), getSavePath(),
+		    (f = _saveFileMan->open_savefile(gen_savename(i), getSavePath(),
 					    false))) {
 			i++;
 			delete f;
@@ -2653,11 +2649,8 @@ int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 
 	slot = curpos;
 
-	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
-
-
 	while (curpos + 6 > slot) {
-		if(!(in = mgr->open_savefile(gen_savename(slot), getSavePath(), false)))
+		if(!(in = _saveFileMan->open_savefile(gen_savename(slot), getSavePath(), false)))
 			break;
 
 		in->read(dst, 18);
@@ -2681,7 +2674,7 @@ int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 		}
 	} else {
 		if (curpos + 6 == slot) {
-			if((in = mgr->open_savefile(gen_savename(slot), getSavePath(), false))) {
+			if((in = _saveFileMan->open_savefile(gen_savename(slot), getSavePath(), false))) {
 				slot++;
 				delete in;
 			}
@@ -4807,10 +4800,8 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 	errno = 0;
 #endif
 
-	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
 
-
-	f = mgr->open_savefile(gen_savename(slot), getSavePath(), true);
+	f = _saveFileMan->open_savefile(gen_savename(slot), getSavePath(), true);
 	if (f == NULL) {
 		_lock_word &= ~0x100;
 		return false;
@@ -4910,10 +4901,8 @@ bool SimonEngine::load_game(uint slot) {
 	errno = 0;
 #endif
 
-	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
 
-
-	f = mgr->open_savefile(gen_savename(slot), getSavePath(), false);
+	f = _saveFileMan->open_savefile(gen_savename(slot), getSavePath(), false);
 	if (f == NULL) {
 		_lock_word &= ~0x100;
 		return false;

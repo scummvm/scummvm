@@ -518,8 +518,8 @@ protected:
 	int getKeyState(int key);
 
 public:
-	bool getSavegameName(int slot, char *desc, SaveFileManager *mgr);
-	void listSavegames(bool *marks, int num, SaveFileManager *mgr);
+	bool getSavegameName(int slot, char *desc);
+	void listSavegames(bool *marks, int num);
 	
 	void requestSave(int slot, const char *name, bool compatible = false);
 	void requestLoad(int slot);

@@ -29,8 +29,6 @@
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
 
-#include <memory>
-
 namespace Scumm {
 
 #define OPCODE(x)	{ &ScummEngine_v5::x, #x }
@@ -1174,11 +1172,10 @@ void ScummEngine_v5::o5_saveLoadGame() {
 	case 0xC0: // test if save exists
 		bool avail_saves[100];
 		char filename[256];
-		const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
 
-		listSavegames(avail_saves, ARRAYSIZE(avail_saves), mgr.get());
+		listSavegames(avail_saves, ARRAYSIZE(avail_saves));
 		makeSavegameName(filename, slot, false);
-		if (avail_saves[slot] && (mgr->open_savefile(filename, getSavePath(), false)))
+		if (avail_saves[slot] && (_saveFileMan->open_savefile(filename, getSavePath(), false)))
 			result = 6; // save file exists
 		else
 			result = 7; // save file does not exist
@@ -1941,9 +1938,7 @@ void ScummEngine_v5::o5_roomOps() {
 			s = filename;
 			while ((*s++ = fetchScriptByte()));
 
-			const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
-
-			file = mgr->open_savefile(filename, getSavePath(), true);
+			file = _saveFileMan->open_savefile(filename, getSavePath(), true);
 			if (file != NULL) {
 				byte *ptr;
 				ptr = getResourceAddress(rtString, a);
@@ -1961,9 +1956,7 @@ void ScummEngine_v5::o5_roomOps() {
 			s = filename;
 			while ((*s++ = fetchScriptByte()));
 
-			const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
-
-			file = mgr->open_savefile(filename, getSavePath(), false);
+			file = _saveFileMan->open_savefile(filename, getSavePath(), false);
 			if (file != NULL) {
 				byte *ptr;
 				int len = 256, cnt = 0;

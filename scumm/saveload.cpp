@@ -38,8 +38,6 @@
 #include "sound/audiocd.h"
 #include "sound/mixer.h"
 
-#include <memory>
-
 namespace Scumm {
 
 struct SaveGameHeader {
@@ -65,15 +63,13 @@ void ScummEngine::requestLoad(int slot) {
 }
 
 bool ScummEngine::saveState(int slot, bool compat) {
-	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
-
 	char filename[256];
 	SaveFile *out;
 	SaveGameHeader hdr;
 
 	makeSavegameName(filename, slot, compat);
 
-	if (!(out = mgr->open_savefile(filename, getSavePath(), true)))
+	if (!(out = _saveFileMan->open_savefile(filename, getSavePath(), true)))
 		return false;
 
 	memcpy(hdr.name, _saveLoadName, sizeof(hdr.name));
@@ -92,8 +88,6 @@ bool ScummEngine::saveState(int slot, bool compat) {
 }
 
 bool ScummEngine::loadState(int slot, bool compat) {
-	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
-
 	char filename[256];
 	SaveFile *in;
 	int i, j;
@@ -101,7 +95,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	byte *roomptr;
 
 	makeSavegameName(filename, slot, compat);
-	if (!(in = mgr->open_savefile(filename, getSavePath(), false)))
+	if (!(in = _saveFileMan->open_savefile(filename, getSavePath(), false)))
 		return false;
 
 	in->read(&hdr, sizeof(hdr));
@@ -300,21 +294,21 @@ void ScummEngine::makeSavegameName(char *out, int slot, bool compatible) {
 	sprintf(out, "%s.%c%.2d", _targetName.c_str(), compatible ? 'c' : 's', slot);
 }
 
-void ScummEngine::listSavegames(bool *marks, int num, SaveFileManager *mgr) {
+void ScummEngine::listSavegames(bool *marks, int num) {
 	char prefix[256];
 	makeSavegameName(prefix, 99, false);
 	prefix[strlen(prefix)-2] = 0;
-	mgr->list_savefiles(prefix, getSavePath(), marks, num);
+	_saveFileMan->list_savefiles(prefix, getSavePath(), marks, num);
 }
 
-bool ScummEngine::getSavegameName(int slot, char *desc, SaveFileManager *mgr) {
+bool ScummEngine::getSavegameName(int slot, char *desc) {
 	char filename[256];
 	SaveFile *out;
 	SaveGameHeader hdr;
 	int len;
 
 	makeSavegameName(filename, slot, false);
-	if (!(out = mgr->open_savefile(filename, getSavePath(), false))) {
+	if (!(out = _saveFileMan->open_savefile(filename, getSavePath(), false))) {
 		strcpy(desc, "");
 		return false;
 	}

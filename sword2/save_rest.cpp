@@ -33,8 +33,6 @@
 #include "sword2/logic.h"
 #include "sword2/resman.h"
 
-#include <memory>
-
 namespace Sword2 {
 
 // A savegame consists of a header and the global variables
@@ -165,11 +163,9 @@ uint32 Sword2Engine::saveData(uint16 slotNo, byte *buffer, uint32 bufferSize) {
 
 	sprintf(saveFileName, "%s.%.3d", _targetName, slotNo);
 
-	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
-
 	SaveFile *out;
 
-	if (!(out = mgr->open_savefile(saveFileName, getSavePath(), true))) {
+	if (!(out = _saveFileMan->open_savefile(saveFileName, getSavePath(), true))) {
 		return SR_ERR_FILEOPEN;
 	}
 
@@ -214,11 +210,9 @@ uint32 Sword2Engine::restoreData(uint16 slotNo, byte *buffer, uint32 bufferSize)
 
 	sprintf(saveFileName, "%s.%.3d", _targetName, slotNo);
 
-	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
-
 	SaveFile *in;
 
-	if (!(in = mgr->open_savefile(saveFileName, getSavePath(), false))) {
+	if (!(in = _saveFileMan->open_savefile(saveFileName, getSavePath(), false))) {
 		// error: couldn't open file
 		return SR_ERR_FILEOPEN;
 	}
@@ -361,11 +355,9 @@ uint32 Sword2Engine::getSaveDescription(uint16 slotNo, byte *description) {
 
 	sprintf(saveFileName, "%s.%.3d", _targetName, slotNo);
 
-	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
-
 	SaveFile *in;
 
-	if (!(in = mgr->open_savefile(saveFileName, getSavePath(), false))) {
+	if (!(in = _saveFileMan->open_savefile(saveFileName, getSavePath(), false))) {
 		return SR_ERR_FILEOPEN;
 	}
 
@@ -390,11 +382,9 @@ bool Sword2Engine::saveExists(uint16 slotNo) {
 
 	sprintf(saveFileName, "%s.%.3d", _targetName, slotNo);
 
-	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
-
 	SaveFile *in;
 
-	if (!(in = mgr->open_savefile(saveFileName, getSavePath(), false))) {
+	if (!(in = _saveFileMan->open_savefile(saveFileName, getSavePath(), false))) {
 		return false;
 	}
 

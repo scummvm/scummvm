@@ -296,7 +296,7 @@ void SkyEngine::initialise(void) {
 	// initialize timer *after* _skyScreen has been initialized.
 	_timer->installTimerProc(&timerHandler, 1000000 / 50, this); //call 50 times per second
 
-	_skyControl = new Control(_skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _skySound, _system, getSavePath());
+	_skyControl = new Control(_saveFileMan, _skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _skySound, _system, getSavePath());
 	_skyLogic->useControlInstance(_skyControl);
 
 	if (_systemVars.gameVersion == 288)

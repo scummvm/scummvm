@@ -45,11 +45,14 @@ Engine::Engine(OSystem *syst)
 	File::setDefaultDirectory(_gameDataPath);
 
 	g_debugLevel = ConfMan.getInt("debuglevel");
+
+	_saveFileMan = _system->get_savefile_manager();
 }
 
 Engine::~Engine() {
 	delete _mixer;
 	delete _timer;
+	delete _saveFileMan;
 }
 
 const char *Engine::getSavePath() const {

@@ -114,7 +114,6 @@ QueenEngine::~QueenEngine() {
 	delete _music;
 	delete _sound;
 	delete _walk;
-	delete _saveFileMan;
 }
 
 void QueenEngine::registerDefaultSettings() {
@@ -358,7 +357,6 @@ void QueenEngine::initialise(void) {
 	
 	_sound = Sound::giveSound(_mixer, this, _resource->compression());
 	_walk = new Walk(this);
-	_saveFileMan = _system->get_savefile_manager();
 }
 
 } // End of namespace Queen

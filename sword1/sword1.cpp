@@ -161,7 +161,7 @@ void SwordEngine::initialize(void) {
 	_logic->initialize();
 	_objectMan->initialize();
 	_mouse->initialize();
-	_control = new Control(_resMan, _objectMan, _system, _mouse, _sound, _music, getSavePath());
+	_control = new Control(_saveFileMan, _resMan, _objectMan, _system, _mouse, _sound, _music, getSavePath());
 }
 
 void SwordEngine::reinitialize(void) {

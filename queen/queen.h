@@ -135,7 +135,6 @@ protected:
 	Resource *_resource;
 	Sound *_sound;
 	Walk *_walk;
-	SaveFileManager *_saveFileMan;
 };
 
 } // End of namespace Queen

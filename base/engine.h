@@ -36,6 +36,7 @@ public:
 
 protected:
 	const Common::String _gameDataPath;
+	SaveFileManager *_saveFileMan;
 
 public:
 	Engine(OSystem *syst);

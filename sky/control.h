@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 
 class OSystem;
+class SaveFileManager;
 
 namespace Sky {
 
@@ -174,7 +175,7 @@ private:
 
 class Control {
 public:
-	Control(Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, OSystem *system, const char *savePath);
+	Control(SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, OSystem *system, const char *savePath);
 	void doControlPanel(void);
 	void doLoadSavePanel(void);
 	void restartGame(void);
@@ -242,6 +243,7 @@ private:
 	void appendMemList(uint16 *pMem);
 	void freeMemList(void);
 
+	SaveFileManager *_saveFileMan;
 	Screen *_skyScreen;
 	Disk *_skyDisk;
 	Mouse *_skyMouse;
