@@ -28,6 +28,8 @@ namespace Scumm {
 BundleDirCache::BundleDirCache() {
 	for (int fileId = 0; fileId < ARRAYSIZE(_budleDirCache); fileId++) {
 		_budleDirCache[fileId].bundleTable = NULL;
+		_budleDirCache[fileId].fileName[0] = 0;
+		_budleDirCache[fileId].numFiles = 0;
 	}
 }
 
