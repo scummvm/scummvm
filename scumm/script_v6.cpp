@@ -2478,14 +2478,15 @@ void Scumm_v6::o6_kernelSetFunctions() {
 			_smushFrameRate = args[1];
 			break;
 		case 16:
-		case 17:
+		case 17:{
+			byte *message = getStringAddressVar(VAR_STRING2DRAW);
 			if (_gameId == GID_DIG) {
 				byte buf_input[300], buf_output[300], buf_trans[300], *ptr = buf_input;
 				char *t_ptr = (char *)ptr;
 				_msgPtrToAdd = buf_input;
 				buf_output[0] = 0;
-				addMessageToStack(getStringAddressVar(VAR_STRING2DRAW));
-				while (true) {
+				addMessageToStack(message);
+				while (t_ptr != NULL) {
 					if (*t_ptr == '/') {
 						translateText((byte *)t_ptr, buf_trans);
 						// hack 
@@ -2499,32 +2500,31 @@ void Scumm_v6::o6_kernelSetFunctions() {
 					if (t_ptr == NULL)
 						break;
 					t_ptr = strchr((char *)t_ptr + 1, '/');
-					if (t_ptr == NULL)
-						break;
 				}
+				message = buf_output;
 #if 0
 				setStringVars(0);
 				_string[0].charset = (byte)args[1];
 				_string[0].color = (byte)args[2];
 				_string[0].xpos = args[3];
 				_string[0].ypos = args[4];
-				drawDescString(buf_output);
+				drawDescString(message);
 #else
-				enqueueText(buf_output, args[3], args[4] + camera._cur.y - (_screenHeight / 2), args[2], args[1], true);
+				enqueueText(message, args[3], args[4] + camera._cur.y - (_screenHeight / 2), args[2], args[1], true);
 #endif
 			} else { 
-#if 0
+#if 1
 				setStringVars(0);
 				_string[0].charset = (byte)args[1];
 				_string[0].color = (byte)args[2];
 				_string[0].xpos = args[3];
 				_string[0].ypos = args[4];
-				drawDescString(getStringAddressVar(VAR_STRING2DRAW));
+				drawDescString(message);
 #else
-				enqueueText(getStringAddressVar(VAR_STRING2DRAW) + camera._cur.y - (_screenHeight / 2), args[3], args[4], args[2], args[1], true);
+				enqueueText(message + camera._cur.y - (_screenHeight / 2), args[3], args[4], args[2], args[1], true);
 #endif
 			}
-			break;
+			break;}
 		case 20:
 			// Occurs in The Dig, at the alien pyramid. See bug #742979.
 			// Also occurs in the first scene of The Dig.
