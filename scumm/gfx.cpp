@@ -1771,7 +1771,7 @@ void Gdi::unkDecodeA(byte *dst, const byte *src, int height) {
 				cl -= 3;
 				bits >>= 3;
 				if (incm) {
-					color = (byte)((color + incm) & 0xFF);
+					color += incm;
 				} else {
 					FILL_BITS;
 					reps = bits & 0xFF;
