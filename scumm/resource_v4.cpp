@@ -204,7 +204,6 @@ void ScummEngine_v8::readGlobalObjects() {
 }
 
 void ScummEngine_v7::readGlobalObjects() {
-	int i;
 	int num = _fileHandle->readUint16LE();
 	assert(num == _numGlobalObjects);
 
@@ -216,7 +215,7 @@ void ScummEngine_v7::readGlobalObjects() {
 
 #if defined(SCUMM_BIG_ENDIAN)
 	// Correct the endianess if necessary
-	for (i = 0; i != num; i++)
+	for (int i = 0; i != num; i++)
 		_classData[i] = FROM_LE_32(_classData[i]);
 #endif
 }
