@@ -31,8 +31,7 @@
 
 namespace Saga {
 
-#define SCRIPT_DATABUF_NUM 5
-#define SCRIPT_DATABUF_LEN 1024
+#define COMMON_BUFFER_SIZE 1024
 
 #define S_LUT_ENTRYLEN_ITECD 22
 #define S_LUT_ENTRYLEN_ITEDISK 16
@@ -48,8 +47,18 @@ namespace Saga {
 #define S_WARN_PREFIX "SWarning: "
 
 #define SCRIPT_FUNCTION_MAX 78
+#define DEFAULT_THREAD_STACK_SIZE 256
 
-typedef unsigned int ScriptDataWord;
+enum AddressTypes {
+	kAddressCommon     = 0,	// offset from global variables
+	kAddressStatic     = 1,	// offset from global variables
+	kAddressModule     = 2,	// offset from start of module
+	kAddressStack      = 3,	// offset from stack
+	kAddressThread     = 4,	// offset from thread structure
+/*	kAddressId         = 5,	// offset from const id object
+	kAddressIdIndirect = 6,	// offset from stack id object
+	kAddressIndex      = 7	// index from id*/
+};
 
 enum VerbTypes {
 //todo: LUT for drawing
@@ -74,11 +83,13 @@ enum VerbTypes {
 
 #define STHREAD_TIMESLICE 8
 
-enum {
-	kVarObject = 0,
-	kVarWithObject,
-	kVarAction,
-	kVarActor
+enum ThreadVarTypes {
+	kThreadVarObject = 0,
+	kThreadVarWithObject = 1,
+	kThreadVarAction = 2,
+	kThreadVarActor = 3,
+
+	kThreadVarMax = kThreadVarActor + 1
 };
 
 enum ThreadFlags {
@@ -136,104 +147,141 @@ enum ReplyFlags {
 	kReplyCondition = 1 << 2
 };
 
-struct ScriptThread {
-	int flags;				// ThreadFlags
-	int waitType;			// ThreadWaitTypes
-	void *threadObj;		// which object we're handling
+struct EntryPoint {
+	uint16 nameOffset;
+	uint16 offset;
+};
 
-	uint sleepTime;
-	int entrypointNumber; // Entrypoint number
-	unsigned long entrypointOffset; // Entrypoint offset
-	unsigned long instructionOffset; // Instruction offset
+struct VoiceLUT {
+	uint16 voicesCount;
+	uint16 *voices;
+	void freeMem() {
+		free(voices);
+	}
+};
 
-	// The scripts are allowed to access the stack like any other memory
-	// area. It's therefore probably quite important that our stacks work
-	// the same as in the original interpreter.
+struct ModuleData {
+	bool loaded;			// is it loaded or not?
+	int scriptResourceId;
+	int stringsResourceId;
+	int voicesResourceId;
 
-	ScriptDataWord stackBuf[64];
+	byte *moduleBase;				// all base module
+	uint16 moduleBaseSize;			// base module size
+	uint16 staticSize;				// size of static data
+	uint staticOffset;				// offset of static data begining in _commonBuffer
 
-	int stackPtr;
-	int framePtr;
+	uint16 entryPointsTableOffset;	// offset of entrypoint table in moduleBase
+	uint16 entryPointsCount;
+	EntryPoint *entryPoints;
 
-	ScriptDataWord threadVars[4];
+	StringsTable strings;
+	VoiceLUT voiceLUT;
+	void freeMem() {
+		strings.freeMem();
+		voiceLUT.freeMem();
+		free(moduleBase);
+		free(entryPoints);
+		memset(this, 0x0, sizeof(*this)); 
+	}
+};
 
-	ScriptDataWord retVal;
+class ScriptThread {
+public:
+	uint16 *_stackBuf;
+	uint16 _stackSize;					// stack size in uint16
+	
+	uint16 _stackTopIndex;
+	uint16 _frameIndex;
 
-	ScriptDataWord stackTop() {
-		return stackBuf[stackPtr];
+	uint16 _threadVars[kThreadVarMax];
+
+	byte *_moduleBase;					//
+	uint16 _moduleBaseSize;
+
+	byte *_commonBase;					// 
+	byte *_staticBase;					// 
+	VoiceLUT *_voiceLUT;				//
+	StringsTable *_strings;				//
+
+	int _flags;							// ThreadFlags
+	int _waitType;						// ThreadWaitTypes
+	uint _sleepTime;
+	void *_threadObj;					// which object we're handling
+
+	uint16 _returnValue;
+
+	uint16 _instructionOffset;			// Instruction offset
+
+
+public:
+	byte *baseAddress(byte addrMode) {
+		switch(addrMode) {
+			case kAddressCommon:
+				return _commonBase;
+			case kAddressStatic:
+				return _staticBase;
+			case kAddressModule:
+				return _moduleBase;
+/*			case kAddressStack:
+				return _stackBuf + framePtr;*/
+			case kAddressThread:
+				return (byte*)_threadVars;
+			default:
+				return _commonBase;
+		}
 	}
 
-	int stackSize() {
-		return ARRAYSIZE(stackBuf) - stackPtr - 1;
+	int16 stackTop() {
+		return (int16)_stackBuf[_stackTopIndex];
 	}
 
-	void push(ScriptDataWord n) {
-		assert(stackPtr > 0);
-		stackBuf[--stackPtr] = n;
+	uint pushedSize() {
+		return _stackSize - _stackTopIndex - 1;
 	}
 
-	ScriptDataWord pop() {
-		assert(stackPtr < ARRAYSIZE(stackBuf));
-		return stackBuf[stackPtr++];
+	void push(int16 value) {
+		if (_stackTopIndex <= 0) {
+			error("ScriptThread::push() stack overflow");
+		}
+		_stackBuf[--_stackTopIndex] = (uint16)value;
+	}
+
+	int16 pop() {
+		if (_stackTopIndex >= _stackSize) {
+			error("ScriptThread::push() stack underflow");
+		}
+		return (int16)_stackBuf[_stackTopIndex++];
 	}
 	
-	void wait(int aWaitType) {
-		waitType = aWaitType;
-		flags |= kTFlagWaiting;
+
+// wait stuff
+	void wait(int waitType) {
+		_waitType = waitType;
+		_flags |= kTFlagWaiting;
 	}
 
-	void waitWalk(void *aThreadObj) {
+	void waitWalk(void *threadObj) {
 		wait(kWaitTypeWalk);
-		threadObj = aThreadObj;
+		_threadObj = threadObj;
 	}
 
-	void waitDelay(int aSleepTime) {
+	void waitDelay(int sleepTime) {
 		wait(kWaitTypeDelay);
-		sleepTime = aSleepTime;
+		_sleepTime = sleepTime;
 	}
 
 	ScriptThread() {
-		memset(this, 0, sizeof(*this)); 
+		memset(this, 0xFE, sizeof(*this)); 
+		_stackBuf = NULL;
+	}
+	~ScriptThread() {
+		free(_stackBuf);
 	}
 };
 
 typedef SortedList<ScriptThread> ScriptThreadList;
 
-struct PROC_TBLENTRY {
-	size_t name_offset;
-	size_t offset;
-};
-
-struct SCRIPT_BYTECODE {
-	unsigned char *bytecode_p;
-	size_t bytecode_len;
-	size_t ep_tbl_offset;
-	unsigned long n_entrypoints;
-	PROC_TBLENTRY *entrypoints;
-};
-
-struct VOICE_LUT {
-	int n_voices;
-	int *voices;
-};
-
-struct ScriptData {
-	int loaded;
-	SCRIPT_BYTECODE *bytecode;
-	StringsTable strings;
-	VOICE_LUT *voice;
-};
-
-struct SCRIPT_LUT_ENTRY {
-	int script_rn;
-	int diag_list_rn;
-	int voice_lut_rn;
-};
-
-struct ScriptDataBuf {
-	ScriptDataWord *data;
-	int length;
-};
 
 #define SCRIPTFUNC_PARAMS ScriptThread *thread, int nArgs
 
@@ -246,20 +294,17 @@ public:
 	
 	void CF_script_togglestep();
 
-	int loadScript(int scriptNum);
-	int freeScript();
-	SCRIPT_BYTECODE *loadBytecode(byte *bytecode_p, size_t bytecode_len);
-	VOICE_LUT *loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, ScriptData *script);
+	void loadModule(int scriptModuleNumber);
+	void freeModules();
 
 	bool isInitialized() const { return _initialized;  }
 	bool isVoiceLUTPresent() const { return _voiceLUTPresent; }
-	ScriptData *currentScript() { return _currentScript; }
-	ScriptDataBuf *dataBuffer(int idx) { return &_dataBuf[idx]; }
+/*	ScriptData *currentScript() { return _currentScript; }
 	int getWord(int bufNumber, int wordNumber, ScriptDataWord *data);
 	int putWord(int bufNumber, int wordNumber, ScriptDataWord data);
 	int setBit(int bufNumber, ScriptDataWord bitNumber, int bitState);
-	int getBit(int bufNumber, ScriptDataWord bitNumber, int *bitState);	
-	const char * getScriptString(int index) const { return _currentScript->strings.getString(index); }
+	int getBit(int bufNumber, ScriptDataWord bitNumber, int *bitState);	*/
+//	const char * getScriptString(int index) const { return _currentScript->strings.getString(index); }
 
 	void doVerb();
 	void showVerb(int statuscolor = -1);
@@ -288,17 +333,22 @@ public:
 	void scriptInfo();
 	void scriptExec(int argc, const char **argv);
 	
-protected:
+private:
 	bool _initialized;
 	bool _voiceLUTPresent;
 	RSCFILE_CONTEXT *_scriptContext;
-	SCRIPT_LUT_ENTRY *_scriptLUT;
-	int _scriptLUTMax;
-	uint16 _scriptLUTEntryLen;
-	ScriptData *_currentScript;
-	ScriptDataBuf _dataBuf[SCRIPT_DATABUF_NUM];
+	
+	uint16 _modulesLUTEntryLen;
+	ModuleData *_modules;
+	int _modulesCount;
+	
+	byte* _commonBuffer;
+	uint _commonBufferSize;
+	uint _staticSize;
+
 	ScriptThreadList _threadList;
 	
+	ScriptThread *_conversingThread;
 
 //verb	
 	bool _firstObjectSet;
@@ -315,7 +365,6 @@ public:
 	int _pendingVerb;
 	uint16 _pointerObject;	
 
-public:
 	bool _skipSpeeches;
 	bool _abortEnabled;
 
@@ -325,7 +374,7 @@ public:
 	TEXTLIST_ENTRY *_dbg_txtentry;
 
 public:
-	ScriptThread *createThread();
+	ScriptThread *createThread(uint16 scriptModuleNumber, uint16 scriptEntryPointNumber);
 	int executeThread(ScriptThread *thread, int entrypointNumber);
 	int executeThreads(uint msec);
 	int SThreadDebugStep();
@@ -336,20 +385,17 @@ public:
 	void wakeUpThreadsDelayed(int waitType, int sleepTime);
 
 private:
-	void setFramePtr(ScriptThread *thread, int newPtr);
-	unsigned char *SThreadGetReadPtr(ScriptThread *thread);
-	unsigned long SThreadGetReadOffset(const byte *read_p);
-	size_t SThreadGetReadLen(ScriptThread *thread);
-	void runThread(ScriptThread *thread, int instr_limit);
-	void setThreadEntrypoint(ScriptThread *thread, int entrypointNumber);
+	void loadModuleBase(ModuleData &module, const byte *resourcePointer, size_t resourceLength);
+	void loadModuleVoiceLUT(ModuleData &module, const byte *resourcePointer, size_t resourceLength);
 
-private:
-	ScriptThread *_conversingThread;
+	void runThread(ScriptThread *thread, uint instructionLimit);
+	void setThreadEntrypoint(ScriptThread *thread, int entrypointNumber);
 
 public:
 	void finishDialog(int replyID, int flags, int bitOffset);
 
 private:
+
 	typedef int (Script::*ScriptFunctionType)(SCRIPTFUNC_PARAMS);
 
 	struct ScriptFunctionDescription {
@@ -442,7 +488,7 @@ private:
 	int SF_playVoice(SCRIPTFUNC_PARAMS);
 };
 
-inline int getSWord(ScriptDataWord word) {
+/*inline int getSWord(ScriptDataWord word) {
 	uint16 uInt = word;
 	int sInt;
 
@@ -458,7 +504,7 @@ inline int getSWord(ScriptDataWord word) {
 inline uint getUWord(ScriptDataWord word) {
 	return (uint16) word;
 }
-
+*/
 
 } // End of namespace Saga
 

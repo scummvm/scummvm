@@ -67,11 +67,6 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		return;
 	}
 
-	_iThread = _vm->_script->createThread();
-	if (_iThread == NULL) {
-		error("Interface::Interface(): Error creating script thread for game interface module");
-	}
-
 	// Load interface module resource file context
 	_interfaceContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
 	if (_interfaceContext == NULL) {

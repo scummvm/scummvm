@@ -75,6 +75,8 @@ class PalAnim;
 #define OBJECT_TYPE_SHIFT 13
 #define OBJECT_TYPE_MASK ((1 << OBJECT_TYPE_SHIFT) - 1)
 
+#define memoryError(Place) error(Place##" Memory allocation error.")
+
 struct RSCFILE_CONTEXT;
 struct StringList;
 
@@ -293,7 +295,7 @@ struct GameFontDescription {
 
 struct GameResourceDescription {
 	uint32 scene_lut_rn;
-	uint32 script_lut_rn;
+	uint32 moduleLUTResourceId;
 	uint32 mainPanelResourceId;
 	uint32 conversePanelResourceId;
 };

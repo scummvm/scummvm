@@ -65,12 +65,12 @@ int Script::SDebugPrintInstr(ScriptThread *thread) {
 	tl_e.string = disp_buf;
 	tl_e.display = 1;
 
-	MemoryReadStream readS(currentScript()->bytecode->bytecode_p 
-							 + thread->instructionOffset, 
-							 currentScript()->bytecode->bytecode_len 
-							 - thread->instructionOffset);
+	MemoryReadStream readS(thread->_moduleBase 
+							 + thread->_instructionOffset, 
+							 thread->_moduleBaseSize 
+							 - thread->_instructionOffset);
 	in_char = readS.readByte();
-	sprintf(tmp_buf, "%04lX | %02X | ", thread->instructionOffset, in_char);
+	sprintf(tmp_buf, "%04lX | %02X | ", thread->_instructionOffset, in_char);
 	strncat(disp_buf, tmp_buf, SD_DISPLAY_LEN);
 
 	switch (in_char) {

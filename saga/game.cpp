@@ -854,7 +854,7 @@ int SagaEngine::loadGame(int gameNumber) {
 	_gameFileContexts = (RSCFILE_CONTEXT **)realloc(_gameFileContexts, gameFileCount * sizeof(*_gameFileContexts));
 	//TODO: on exit - FREE!
 	if (_gameFileContexts == NULL) {
-		error("SagaEngine::loadGame not enough memory");
+		memoryError("SagaEngine::loadGame");
 	}
 
 

@@ -59,7 +59,7 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 	_bg_buf = (byte *)calloc(_vm->getDisplayWidth(), _vm->getDisplayHeight());
 
 	if (_bg_buf == NULL) {
-		error("Render::Render not enough memory");
+		memoryError("Render::Render");
 	}
 
 	// Allocate temp buffer for animation decoding, 

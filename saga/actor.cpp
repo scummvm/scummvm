@@ -308,7 +308,7 @@ bool Actor::loadActorResources(ActorData *actor) {
 	
 	framesPointer = (ActorFrameSequence *)malloc(sizeof(ActorFrameSequence) * framesCount);
 	if (framesPointer == NULL) {
-		error("Couldn't allocate memory for sprite frames");
+		memoryError("Actor::loadActorResources");
 	}
 
 	MemoryReadStreamEndian readS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
@@ -394,11 +394,12 @@ void Actor::stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, 
 			event.code = SCRIPT_EVENT;
 			event.op = EVENT_EXEC_NONBLOCKING;
 			event.time = 0;
-			event.param = hitZone->getScriptNumber();
-			event.param2 = kVerbEnter;		// Action
-			event.param3 = ID_NOTHING;		// Object
-			event.param4 = ID_NOTHING;		// With Object
-			event.param5 = ID_PROTAG;		// Actor
+			event.param = _vm->_scene->getScriptModuleNumber(); // module number
+			event.param2 = hitZone->getScriptNumber();			// script entry point number
+			event.param3 = kVerbEnter;		// Action
+			event.param4 = ID_NOTHING;		// Object
+			event.param5 = ID_NOTHING;		// With Object
+			event.param6 = ID_PROTAG;		// Actor
 
 			_vm->_events->queue(&event);
 		}

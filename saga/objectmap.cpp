@@ -51,7 +51,7 @@ HitZone::HitZone(MemoryReadStreamEndian *readStream, int index): _index(index) {
 	_clickAreas = (HitZone::ClickArea *)malloc(_clickAreasCount * sizeof(*_clickAreas));
 
 	if (_clickAreas == NULL) {
-		error("HitZone::HitZone Memory allocation failed");
+		memoryError("HitZone::HitZone");
 	}
 
 	for (i = 0; i < _clickAreasCount; i++) {
@@ -62,7 +62,7 @@ HitZone::HitZone(MemoryReadStreamEndian *readStream, int index): _index(index) {
 
 		clickArea->points = (Point *)malloc(clickArea->pointsCount * sizeof(*(clickArea->points)));
 		if (clickArea->points == NULL) {
-			error("HitZone::HitZone Memory allocation failed");
+			memoryError("HitZone::HitZone");
 		}
 
 		for (j = 0; j < clickArea->pointsCount; j++) {
@@ -169,7 +169,7 @@ void ObjectMap::load(const byte *resourcePointer, size_t resourceLength) {
 
 	_hitZoneList = (HitZone **) malloc(_hitZoneListCount * sizeof(HitZone *));
 	if (_hitZoneList == NULL) {
-		error("ObjectMap::load Memory allocation failure");
+		memoryError("ObjectMap::load");
 	}
 
 	for (i = 0; i < _hitZoneListCount; i++) {

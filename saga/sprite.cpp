@@ -99,7 +99,7 @@ int Sprite::loadList(int resourceId, SpriteList &spriteList) {
 
 	spriteList.infoList = (SpriteInfo *)realloc(spriteList.infoList, newSpriteCount * sizeof(*spriteList.infoList));
 	if (spriteList.infoList == NULL) {
-		error("Sprite::loadList Not enough memory");
+		memoryError("Sprite::loadList");		
 	}
 
 	spriteList.spriteCount = newSpriteCount;
@@ -138,7 +138,7 @@ int Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		decodeRLEBuffer(spriteDataPointer, 64000, outputLength); //todo: 64000 - should be replace by real input length
 		spriteInfo->decodedBuffer = (byte *) malloc(outputLength);
 		if (spriteInfo->decodedBuffer == NULL) {
-			error("Sprite::loadList Not enough memory");
+			memoryError("Sprite::loadList");
 		}
 		memcpy(spriteInfo->decodedBuffer, _decodeBuf, outputLength);
 	}

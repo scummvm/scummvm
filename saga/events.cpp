@@ -395,20 +395,20 @@ int Events::handleOneShot(EVENT *event) {
 		switch (event->op) {
 		case EVENT_EXEC_BLOCKING:
 		case EVENT_EXEC_NONBLOCKING:
-			debug(0, "Starting start script #%d", event->param);
+			debug(0, "Exec module number %d script entry number %d", event->param, event->param2);
 		
-			sthread = _vm->_script->createThread();
+			sthread = _vm->_script->createThread(event->param, event->param2);
 			if (sthread == NULL) {
 				_vm->_console->DebugPrintf("Thread creation failed.\n");
 				break;
 			}
 
-			sthread->threadVars[kVarAction] = TO_LE_16(event->param2);
-			sthread->threadVars[kVarObject] = TO_LE_16(event->param3);
-			sthread->threadVars[kVarWithObject] = TO_LE_16(event->param4);
-			sthread->threadVars[kVarActor] = TO_LE_16(event->param5);
+			sthread->_threadVars[kThreadVarAction] = TO_LE_16(event->param3);
+			sthread->_threadVars[kThreadVarObject] = TO_LE_16(event->param4);
+			sthread->_threadVars[kThreadVarWithObject] = TO_LE_16(event->param5);
+			sthread->_threadVars[kThreadVarActor] = TO_LE_16(event->param6);
 
-			_vm->_script->executeThread(sthread, event->param);
+//			_vm->_script->executeThread(sthread, event->param);
 
 			if (event->op == EVENT_EXEC_BLOCKING)
 				_vm->_script->completeThread();
@@ -463,45 +463,35 @@ int Events::handleInterval(EVENT *event) {
 // Schedules an event in the event list; returns a pointer to the scheduled
 // event suitable for chaining if desired.
 EVENT *Events::queue(EVENT *event) {
-	EVENT *queued_event;
+	EVENT *queuedEvent;
 
-	event->chain = NULL;
-	queued_event = _eventList.pushBack(*event).operator->();
+	queuedEvent = _eventList.pushBack(*event).operator->();
+	initializeEvent(queuedEvent);
 
-	initializeEvent(queued_event);
-
-	return queued_event;
+	return queuedEvent;
 }
 
 // Places a 'add_event' on the end of an event chain given by 'head_event'
 // (head_event may be in any position in the event chain)
-EVENT *Events::chain(EVENT *head_event, EVENT *add_event) {
-	EVENT *walk_event;
-	EVENT *new_event;
-
-	// Allocate space for new event
-	new_event = (EVENT *)malloc(sizeof(*new_event));
-	if (new_event == NULL) {
-		return NULL;
+EVENT *Events::chain(EVENT *headEvent, EVENT *addEvent) {
+	if (headEvent == NULL) {
+		return queue(addEvent);
 	}
 
-	// Copy event data to new event
-	*new_event = *add_event;
-
-	// Walk to end of chain
-	for (walk_event = head_event; walk_event->chain != NULL; walk_event = walk_event->chain) {
+	EVENT *walkEvent;
+	for (walkEvent = headEvent; walkEvent->chain != NULL; walkEvent = walkEvent->chain) {
 		continue;
 	}
 
-	// Place new event
-	walk_event->chain = new_event;
-	new_event->chain = NULL;
-	initializeEvent(new_event);
+	walkEvent->chain = (EVENT *)malloc(sizeof(*walkEvent->chain));
+	*walkEvent->chain = *addEvent;
+	initializeEvent(walkEvent->chain);
 
-	return new_event;
+	return walkEvent->chain;
 }
 
 int Events::initializeEvent(EVENT *event) {
+	event->chain = NULL;
 	switch (event->type) {
 	case ONESHOT_EVENT:
 		break;

@@ -79,7 +79,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_sceneMax = _sceneCount - 1;
 	_sceneLUT = (int *)malloc(_sceneMax * sizeof(*_sceneLUT));
 	if (_sceneLUT == NULL) {
-		error("Scene::Scene(): Memory allocation failed");
+		memoryError("Scene::Scene()");
 	}
 
 	MemoryReadStreamEndian readS(scene_lut_p, scene_lut_len, IS_BIG_ENDIAN);
@@ -508,6 +508,9 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 	uint32 res_number = 0;
 	int result;
 	int i;
+	EVENT event;
+	EVENT *q_event;
+	static PALENTRY current_pal[PAL_ENTRIES];
 
 	assert(_initialized);
 
@@ -578,20 +581,18 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 		return FAILURE;
 	}
 
-	// Load scene script data
+/*	// Load scene script data
 	if (_desc.scriptModuleNumber > 0) {
 		if (_vm->_script->loadScript(_desc.scriptModuleNumber) != SUCCESS) {
 			warning("Scene::loadScene(): Error loading scene script");
 			return FAILURE;
 		}
 	}
-
+*/
 	_sceneLoaded = true;
-
+	
+	q_event = NULL;
 	if (fadeType == SCENE_FADE || fadeType == SCENE_FADE_NO_INTERFACE) {
-		EVENT event;
-		EVENT *q_event;
-		static PALENTRY current_pal[PAL_ENTRIES];
 
 		_vm->_interface->rememberMode();
 		_vm->_interface->setMode(kPanelFade, true);
@@ -632,22 +633,25 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 		event.time = 0;
 		event.duration = 0;
 		q_event = _vm->_events->chain(q_event, &event);
+	}
 
-		// Start the scene pre script, but stay with black palette
-		if (_desc.startScriptEntrypointNumber > 0) {
-			event.type = ONESHOT_EVENT;
-			event.code = SCRIPT_EVENT;
-			event.op = EVENT_EXEC_BLOCKING;
-			event.time = 0;
-			event.param = _desc.startScriptEntrypointNumber;
-			event.param2 = 0;		// Action
-			event.param3 = _sceneNumber;	// Object
-			event.param4 = 0;		// With Object - TODO: should be 'entrance'
-			event.param5 = 0;		// Actor
+	// Start the scene pre script, but stay with black palette
+	if (_desc.startScriptEntrypointNumber > 0) {
+		event.type = ONESHOT_EVENT;
+		event.code = SCRIPT_EVENT;
+		event.op = EVENT_EXEC_BLOCKING;
+		event.time = 0;
+		event.param = _desc.scriptModuleNumber;
+		event.param2 = _desc.startScriptEntrypointNumber;
+		event.param3 = 0;		// Action
+		event.param4 = _sceneNumber;	// Object
+		event.param5 = 0;		// With Object - TODO: should be 'entrance'
+		event.param6 = 0;		// Actor
 
-			q_event = _vm->_events->chain(q_event, &event);
-		}
+		q_event = _vm->_events->chain(q_event, &event);
+	}
 
+	if (fadeType == SCENE_FADE || fadeType == SCENE_FADE_NO_INTERFACE) {
 		// Fade in from black to the scene background palette
 		event.type = IMMEDIATE_EVENT;
 		event.code = PAL_EVENT;
@@ -922,9 +926,9 @@ int Scene::endScene() {
 
 	_sceneProc(SCENE_END, &scene_info, this);
 
-	if (_desc.scriptModuleNumber > 0) {
+/*	if (_desc.scriptModuleNumber > 0) {
 		_vm->_script->freeScript();
-	}
+	}*/
 
 	// Free scene background
 	if (_bg.loaded) {
@@ -1082,11 +1086,12 @@ int Scene::defaultScene(int param, SCENE_INFO *scene_info) {
 			event.code = SCRIPT_EVENT;
 			event.op = EVENT_EXEC_NONBLOCKING;
 			event.time = 0;
-			event.param = _desc.sceneScriptEntrypointNumber;
-			event.param2 = 0;		// Action
-			event.param3 = _sceneNumber;	// Object
-			event.param4 = 0;		// With Object - TODO: should be 'entrance'
-			event.param5 = 0;		// Actor - TODO: should be VERB_ENTER
+			event.param = _desc.scriptModuleNumber;
+			event.param2 = _desc.sceneScriptEntrypointNumber;
+			event.param3 = 0;		// Action
+			event.param4 = _sceneNumber;	// Object
+			event.param5 = 0;		// With Object - TODO: should be 'entrance'
+			event.param6 = 0;		// Actor - TODO: should be VERB_ENTER
 
 			_vm->_events->queue(&event);
 		}
@@ -1116,7 +1121,7 @@ void Scene::loadSceneEntryList(const byte* resourcePointer, size_t resourceLengt
 
 	_entryList.entryList = (SceneEntry *) malloc(_entryList.entryListCount * sizeof(*_entryList.entryList));
 	if (_entryList.entryList == NULL) {
-		error("Scene::loadSceneEntryList Memory allocation failure");
+		memoryError("Scene::loadSceneEntryList");
 	}
 
 	for (i = 0; i < _entryList.entryListCount; i++) {

@@ -169,7 +169,6 @@ private:
 	InterfacePanel _conversePanel;
 	SpriteList _defPortraits;
 	SpriteList _scenePortraits;
-	ScriptThread *_iThread;
 	PanelButton *_verbTypeToPanelButton[kVerbTypesMax];
 
 	bool _active;

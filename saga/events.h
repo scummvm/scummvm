@@ -30,7 +30,7 @@
 
 namespace Saga {
 
-enum EVENT_TYPES {
+enum EventTypes {
 	ONESHOT_EVENT,    // Event takes no time
 	CONTINUOUS_EVENT, // Event takes time; next event starts immediately
 	INTERVAL_EVENT,   // Not yet implemented
@@ -42,7 +42,7 @@ enum EVENT_FLAGS {
 	NODESTROY = 0x4000
 };
 
-enum EVENT_CODES {
+enum EventCodes {
 	BG_EVENT = 1,
 	ANIM_EVENT,
 	MUSIC_EVENT,
@@ -124,13 +124,16 @@ struct EVENT {
 	long param3;
 	long param4;
 	long param5;
+	long param6;
 	void *data;        // Optional event data
 	long time;         // Elapsed time until event
 	long duration;     // Duration of event
 	long d_reserved;
 
 	EVENT *chain;    // Event chain (For consecutive events)
-	EVENT() { memset(this, 0, sizeof(*this)); }
+	EVENT() {
+		memset(this, 0, sizeof(*this)); 
+	}
 };
 
 typedef SortedList<EVENT> EventList;
@@ -138,7 +141,7 @@ typedef SortedList<EVENT> EventList;
 #define EVENT_WARNINGCOUNT 1000
 #define EVENT_MASK 0x00FF
 
-enum EVENT_STATUSCODE {
+enum EventStatusCode {
 	EVENT_INVALIDCODE = 0,
 	EVENT_DELETE,
 	EVENT_CONTINUE,
@@ -153,7 +156,7 @@ class Events {
 	int clearList();
 	int freeList();
 	EVENT *queue(EVENT *event);
-	EVENT *chain(EVENT *eead_event, EVENT *add_event);
+	EVENT *chain(EVENT *headEvent, EVENT *addEvent);
 
  private:
 	int handleContinuous(EVENT * event);

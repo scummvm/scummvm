@@ -47,7 +47,7 @@ Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 	_fonts = (FONT **)malloc(_vm->getFontsCount() * sizeof(*_fonts));
 	if (_fonts == NULL) {
-		error("Font::Font(): Memory allocation failure.");
+		memoryError("Font::Font");
 	}
 
 	for (i = 0; i < _vm->getFontsCount(); i++) {
@@ -104,7 +104,7 @@ int Font::loadFont(uint32 fontResourceId) {
 	// Create new font structure
 	font = (FONT *)malloc(sizeof(*font));
 	if (font == NULL) {
-		error("Font:loadFont(): Memory allocation error.");
+		memoryError("Font::loadFont");
 	}
 
 	// Read font header
@@ -121,7 +121,7 @@ int Font::loadFont(uint32 fontResourceId) {
 	// Create normal font style
 	normal_font = (FONT_STYLE *)malloc(sizeof(*normal_font));
 	if (normal_font == NULL) {
-		error("Font::loadFont(): Memory allocation error.");
+		memoryError("Font::loadFont");
 	}
 
 	normal_font->font_free_p = fontres_p;
@@ -207,7 +207,7 @@ FONT_STYLE *Font::createOutline(FONT_STYLE *src_font) {
 	new_font = (FONT_STYLE *)malloc(sizeof(*new_font));
 
 	if (new_font == NULL) {
-		error("Font::createOutline(): Memory allocation error.");
+		memoryError("Font::createOutline");
 	}
 
 	memset(new_font, 0, sizeof(*new_font));
@@ -250,7 +250,7 @@ FONT_STYLE *Font::createOutline(FONT_STYLE *src_font) {
 	new_font_data = (unsigned char *)malloc(new_font_data_len);
 
 	if (new_font_data == NULL) {
-		error("Font::createOutline(): Memory allocation error.");
+		memoryError("Font::createOutline");
 	}
 
 	memset(new_font_data, 0, new_font_data_len);
