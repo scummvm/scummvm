@@ -1571,8 +1571,12 @@ bool SkyLogic::fnSpeakWaitDir(uint32 a, uint32 b, uint32 c) {
 	_compact->logic = L_LISTEN;
 
 	Compact *speaker = SkyState::fetchCompact(a);
-	if (c) c += speaker->extCompact->dir << 1;
-	stdSpeak(speaker, b, c, speaker->extCompact->dir << 1);
+	if (c) {
+		c += speaker->extCompact->dir << 1;
+		stdSpeak(speaker, b, c, speaker->extCompact->dir << 1);
+	} else
+		stdSpeak(speaker, b, c, 0);
+
 	return false;
 }
 
@@ -1596,20 +1600,19 @@ bool SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
 		uint8 *data = lowText.textData;
 
 		// stipple the text
-		uint16 height = ((dataFileHeader *)data)->s_height;
-		uint16 width = ((dataFileHeader *)data)->s_width;
-		width >>= 1;
+		
+		uint32 size = ((dataFileHeader *)data)->s_height * ((dataFileHeader*)data)->s_width;
+		uint32 index = 0;
+		uint32 width = ((dataFileHeader*)data)->s_width;
 
 		data += sizeof(dataFileHeader);
 
-        width--;
-		for (uint16 i = 0; i < height; i++) {
-			for (uint16 j = 0; j < width; j++) {
-				if (!*data) // only change 0's
-					*data = 1;
-				data += 2;
-			}
-			data++;
+		while (index < size) {
+			if (index % width <= 1) 
+				index ^= 1; //index++;
+			if (!data[index])
+				data[index] = 1;
+			index += 2;
 		}
 
 		Compact *textCompact = SkyState::fetchCompact(lowText.compactNum);
@@ -2036,21 +2039,10 @@ bool SkyLogic::fnTestList(uint32 id, uint32 x, uint32 y) {
 	_scriptVariables[RESULT] = 0; // assume fail
 	uint16 *list = (uint16 *)SkyState::fetchCompact(id);
 
-	while (*list) { // end of list?
-		if (*list++ >= x) // left x
-			continue;
-			
-		if (*list++ < x) // right x
-			continue;
-
-		if (*list++ >= y) // top y
-			continue;
-
-		if (*list++ < y) // bottom y
-			continue;
-
-		// get value
-		_scriptVariables[RESULT] = *list++;
+	while (*list) {
+		if ((x >= list[0]) && (x < list[1]) && (y >= list[2]) && (y < list[3]))
+			_scriptVariables[RESULT] = list[4];
+		list += 5;
 	}
 	return true;
 }
