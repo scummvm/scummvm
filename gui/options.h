@@ -23,7 +23,6 @@
 
 #include "gui/dialog.h"
 #include "common/str.h"
-#include "common/list.h"
 
 class GameDetector;
 

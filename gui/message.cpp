@@ -20,7 +20,6 @@
 
 #include "stdafx.h"
 #include "common/str.h"
-#include "common/list.h"
 #include "gui/message.h"
 #include "gui/newgui.h"
 #include "gui/widget.h"

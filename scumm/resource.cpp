@@ -21,7 +21,6 @@
  */
 
 #include "stdafx.h"
-#include "common/map.h"
 #include "common/str.h"
 #include "scumm/dialogs.h"
 #include "scumm/imuse.h"
