@@ -563,7 +563,7 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, const Verb &v, bool
 			_logic->joeFace();
 		}
 		else {
-			p = _walk->joeMove(facing, x, y, false); // XXX inCutaway parameter
+			p = _walk->moveJoe(facing, x, y, false); // XXX inCutaway parameter
 			// XXX if(P != 0) P = FIND_VERB
 		}
 	}
@@ -843,7 +843,8 @@ bool Command::executeIfCutaway(const char *description) {
 	if (strlen(description) > 4 && 
 		scumm_stricmp(description + strlen(description) - 4, ".cut") == 0) {
 
-		_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
+//		_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
+		clear(true);
 
 		char nextCutaway[20];
 		memset(nextCutaway, 0, sizeof(nextCutaway));
@@ -863,7 +864,8 @@ bool Command::executeIfDialog(const char *description) {
 			scumm_stricmp(description + strlen(description) - 4, ".dog") == 0) {
 		char cutaway[20];
 
-		_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
+//		_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
+		clear(true);
 
 		_logic->dialogue(description, _selCmd.noun, cutaway);
 
@@ -891,7 +893,8 @@ bool Command::handleBadCommand(bool walk) {
 		if (_selCmd.action.isNone()) {
 			_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 		}
-		_walk->joeMove(0, _selPosX, _selPosY, false); // XXX inCutaway parameter
+debug(0, "_walk->moveJoe(%d, %d)", _selPosX, _selPosY);
+		_walk->moveJoe(0, _selPosX, _selPosY, false); // XXX inCutaway parameter
 		return true;
 	}
 	// check to see if one of the objects is hidden

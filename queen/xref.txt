@@ -74,13 +74,12 @@ Czone
 
 CUTAWAY
 =======
-action_special_move			Cutaway::actionSpecialMove
+action_special_move()		Cutaway::actionSpecialMove
 CUTAWAY()					Cutaway::run
 MAKE_COMPLEX_ANIM()			Cutaway::makeComplexAnimation
 SCENE_START()				Logic::sceneStart
 SCENE_END()					Logic::sceneStop
 -
-CUTJOEF
 CUTON						Input::_cutawayRunning
 CUTQUIT						Input::_cutawayQuit
 FINAL_ROOM					Cutaway::_finalRoom
@@ -130,7 +129,7 @@ freeframes()				Graphics::frameEraseAll(false)
 invbob()					Graphics::bobDrawInventoryItem
 loadbackdrop()				Graphics::loadBackdrop
 loadpanel()					Graphics::loadPanel
-MAKE_SPEAK_BOB				Graphics::bobSetText
+MAKE_SPEAK_BOB()			Graphics::bobSetText
 makeanim()					Graphics::bobAnimNormal
 movebob()					Graphics::bobMove
 pastebob()					Graphics::bobPaste
@@ -181,9 +180,10 @@ USE_UNDERWEAR()				Logic::joeUseUnderwear
 USE_CLOTHES()				Logic::joeUseClothes
 USE_DRESS()					Logic::joeUseDress
 -
+CUTJOEF
 JOE_RESPstr 				Logic::_joeResponse
 JOEF,JX,JY,JDIR				Logic::_joe.*
-JOEWALK						Logic::_joe.walk (legal values = 0,1,2,3)
+JOEWALK						Logic::_joe.walk
 
 
 JOURNAL
@@ -199,9 +199,9 @@ waitmousezone()				*not needed*
 -
 choice						Journal::_currentSaveSlot
 decbase						Journal::_currentSavePage
-in_journal					*not needed ?*
+in_journal					*not needed* (the hack in puttext() seems useless and CHECK_PARALLAX() is never called)
 save_descriptions			Journal::_saveDescriptions
-walkgameload
+walkgameload				*not needed ?*
 
 
 LOGIC
@@ -270,11 +270,11 @@ WALK_OFF_MAX				Logic::_numWalkOffs
 
 PERSONS
 =======
-ALLOCATE_PERSON				Logic::personAllocate
+ALLOCATE_PERSON()			Logic::personAllocate
 CREATE_ANIM()				Logic::animCreate
-SET_PERSON_DATA				Logic::personSetData
-SETUP_PERSON				Logic::personSetup
-OBJ_PERSON					Logic::objectForPerson
+SET_PERSON_DATA()			Logic::personSetData
+SETUP_PERSON()				Logic::personSetup
+OBJ_PERSON()				Logic::objectForPerson
 -
 PERSON_FACE
 PERSON_FACE_MAX
@@ -358,11 +358,11 @@ FIND_STATE()				State::findState*
 TALK
 ====
 FIND_SACTION()				Talk::findSpeechParameters
-MOVE_SPEAK
-SPEAK						Talk::speak
-SPEAK_SUB					Talk::speakSegment
-talk						Talk::talk
-TALK_PROC					Talk::talk
+MOVE_SPEAK()
+SPEAK()						Talk::speak
+SPEAK_SUB()					Talk::speakSegment
+talk()						Talk::talk
+TALK_PROC()					Talk::talk
 -
 A1,A12
 actiondata					Talk::_speechParameters
@@ -405,8 +405,8 @@ CALCSCALE()					Area::calcScale
 FIND_FREE_AREA				Walk::findFreeArea
 FIND_NEWP()					Walk::findAreaPosition
 FIND_OLDP()					Walk::findAreaPosition
-MOVE_JOE()					Walk::joeMove
-MOVE_OTHER()				Walk::personMove
+MOVE_JOE()					Walk::moveJoe
+MOVE_OTHER()				Walk::movePerson
 -
 AREALIST					Walk::_areaList
 AREASTRIKE					Walk::_areaStrike
@@ -430,7 +430,7 @@ zones						Logic::_zones
 ==========
 in()						defs.h InRange() macro
 find_cd_cut()				findCdCut
-find_cd_desc()				*not needed, see Logic::joeSpeak()*
+find_cd_desc()				*not needed* (see Logic::joeSpeak())
 -
 Kstr				
 bank9

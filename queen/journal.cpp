@@ -32,7 +32,6 @@ namespace Queen {
 // - misc
 //   * better Journal integration in Logic
 //   * get rid of g_engine global
-//   * walking issues (try to get rid of walkgameload)
 // - save/load code related
 //   * new format (SCVM [ver]32 [flags]32) all BE
 //   * move code from Resource to Journal
@@ -92,6 +91,8 @@ void Journal::use() {
 		g_system->delay_msecs(20);
 	}
 
+	_graphics->textClear(0, GAME_SCREEN_HEIGHT - 1);
+	_graphics->cameraBob(0);
 	if (_quitCleanly) {
 		restore();
 	}
@@ -145,12 +146,7 @@ void Journal::prepare() {
 
 void Journal::restore() {
 
-	_graphics->textClear(0, GAME_SCREEN_HEIGHT - 1);
-
-    // XXX in_journal=0;
-
 	_display->fullscreen(false);
-	_graphics->cameraBob(0);
 
 	_logic->joeX(_prevJoeX);
 	_logic->joeY(_prevJoeY);

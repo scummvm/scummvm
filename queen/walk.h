@@ -71,18 +71,20 @@ public:
 
 	Walk(Logic *logic, Graphics *graphics);
 
-	int16 joeMove(int direction, int16 endx, int16 endy, bool inCutaway);
-	
-	int16 personMove(const Person *pp, int16 endx, int16 endy, uint16 curImage, int direction);
+	int16 moveJoe(int direction, int16 endx, int16 endy, bool inCutaway);
+	int16 movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage, int direction);
+
+	void stopJoe();
 
 	enum {
 		MAX_WALK_DATA = 16
 	};
 
+
 private:
 
 	void animateJoePrepare();
-	bool animateJoe();
+	void animateJoe();
 
 	void animatePersonPrepare(const MovePersonData *mpd, int direction);
 	void animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum, uint16 bankNum, int direction);
@@ -120,6 +122,8 @@ private:
 
 	uint16 _areaList[MAX_WALK_DATA];
 	uint16 _areaListCount;
+
+	bool _joeInterrupted;
 
 	//! set if customMoveJoe() is called in joeAnimate()
 	bool _joeMoveBlock;

@@ -101,7 +101,7 @@ void Walk::animateJoePrepare() {
 }
 
 
-bool Walk::animateJoe() {
+void Walk::animateJoe() {
 	// queen.c l.2789-2835
 	uint16 lastDirection = 0;
 	uint16 i;
@@ -109,8 +109,7 @@ bool Walk::animateJoe() {
 	_logic->joeFacing(_walkData[1].anim.facing);
 	_logic->joeScale(_walkData[1].area->calcScale(pbs->y));
 	_logic->joeFace();
-	bool interrupted = false;
-	for (i = 1; i <= _walkDataCount && !interrupted; ++i) {
+	for (i = 1; i <= _walkDataCount && !_joeInterrupted; ++i) {
 
 		WalkData *pwd = &_walkData[i];
 
@@ -119,7 +118,7 @@ bool Walk::animateJoe() {
 			// queen.c l.2838-2911
 			_logic->customMoveJoe(pwd->anim.facing, pwd->areaNum, i);
 			_joeMoveBlock = true;
-			return interrupted;
+			return;
 		}
 		if (lastDirection != pwd->anim.facing) {
 			_graphics->bobAnimNormal(0, pwd->anim.firstFrame, pwd->anim.lastFrame, 1, false, false);
@@ -142,16 +141,17 @@ bool Walk::animateJoe() {
 				pbs->speed = 1;
 			}
 			_logic->checkPlayer();
+			// FIXME it would nice to be able to get rid of these 3 lines
+			// as stopJoe() should be do the same...
 			if (_logic->joeWalk() == JWM_EXECUTE) { // XXX || cutQuit 
 				// we are about to do something else, so stop walking
-				interrupted = true;
+				_joeInterrupted = true;
 				pbs->moving = false;
 			}
 		}
 		lastDirection = pwd->anim.facing;
 	}
 	_logic->joeFacing(lastDirection);
-	return interrupted;
 }
 
 
@@ -290,11 +290,13 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 }
 
 
-int16 Walk::joeMove(int direction, int16 endx, int16 endy, bool inCutaway) {
+int16 Walk::moveJoe(int direction, int16 endx, int16 endy, bool inCutaway) {
 
 	_joeMoveBlock = false;
 	int16 can = 0;
 	initWalkData();
+
+	_joeInterrupted = false;
 
 	uint16 oldx = _graphics->bob(0)->x;
 	uint16 oldy = _graphics->bob(0)->y;
@@ -304,7 +306,7 @@ int16 Walk::joeMove(int direction, int16 endx, int16 endy, bool inCutaway) {
 	uint16 oldPos = _logic->zoneInArea(ZONE_ROOM, oldx, oldy);
 	uint16 newPos = _logic->zoneInArea(ZONE_ROOM, endx, endy);
 
-	debug(9, "Walk::joeMove(%d, %d, %d, %d, %d) - old = %d, new = %d", direction, oldx, oldy, endx, endy, oldPos, newPos);
+	debug(9, "Walk::moveJoe(%d, %d, %d, %d, %d) - old = %d, new = %d", direction, oldx, oldy, endx, endy, oldPos, newPos);
 
 	// if in cutaway, allow Joe to walk anywhere
 	if(newPos == 0 && inCutaway) {
@@ -314,7 +316,8 @@ int16 Walk::joeMove(int direction, int16 endx, int16 endy, bool inCutaway) {
 		if (calc(oldPos, newPos, oldx, oldy, endx, endy)) {
 			if (_walkDataCount > 0) {
 				animateJoePrepare();
-				if(animateJoe()) {
+				animateJoe(); 
+				if (_joeInterrupted) {
 					can = -1;
 				}
 			}
@@ -343,14 +346,10 @@ int16 Walk::joeMove(int direction, int16 endx, int16 endy, bool inCutaway) {
 }
 
 
-int16 Walk::personMove(const Person *pp, int16 endx, int16 endy, uint16 curImage, int direction) {
-
-	if (curImage > MAX_FRAMES_NUMBER) {
-		error("[Walk::personMove] curImage is invalid: %i", curImage);
-	}
+int16 Walk::movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage, int direction) {
 
 	if (endx == 0 && endy == 0) {
-		warning("Walk::personMove() - endx == 0 && endy == 0");
+		warning("Walk::movePerson() - endx == 0 && endy == 0");
 		return 0;
 	}
 
@@ -373,7 +372,7 @@ int16 Walk::personMove(const Person *pp, int16 endx, int16 endy, uint16 curImage
 	uint16 oldPos = _logic->zoneInArea(ZONE_ROOM, oldx, oldy);
 	uint16 newPos = _logic->zoneInArea(ZONE_ROOM, endx, endy);
 
-	debug(9, "Walk::personMove(%d, %d, %d, %d, %d) - old = %d, new = %d", direction, oldx, oldy, endx, endy, oldPos, newPos);
+	debug(9, "Walk::movePerson(%d, %d, %d, %d, %d) - old = %d, new = %d", direction, oldx, oldy, endx, endy, oldPos, newPos);
 
 	// find MovePersonData associated to Person
 	const MovePersonData *mpd = _moveData;
@@ -399,7 +398,7 @@ int16 Walk::personMove(const Person *pp, int16 endx, int16 endy, uint16 curImage
 		standingFrame = 29 + FRAMES_JOE_XTRA + bobNum;
 	}
 	else {
-		warning("Walk::personMove() - Wrong bob number : %d", bobNum);
+		warning("Walk::movePerson() - Wrong bob number : %d", bobNum);
 	}
 	// make other person face the right direction
 	BobSlot *pbs = _graphics->bob(bobNum);
@@ -424,6 +423,14 @@ int16 Walk::personMove(const Person *pp, int16 endx, int16 endy, uint16 curImage
 	}
 	pbs->frameNum = standingFrame;
 	return can;
+}
+
+
+void Walk::stopJoe() {
+
+	_graphics->bob(0)->moving = false;
+	_joeInterrupted = true;
+
 }
 
 

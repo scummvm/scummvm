@@ -1244,7 +1244,7 @@ void Logic::roomDisplay(const char *room, RoomDisplayMode mode, uint16 scale, in
 		}
 //	}
 	if (pod != NULL) {
-		_walk->joeMove(0, pod->x, pod->y, inCutaway);
+		_walk->moveJoe(0, pod->x, pod->y, inCutaway);
 	}
 }
 
@@ -2556,15 +2556,26 @@ void Logic::useJournal() {
 		Talk::speak("This is a demo, so I can't load or save games*14", NULL, "", _graphics, _input, this, _resource, _sound);
 	}
 	else {
-		// XXX (execute.c l.428-437 & queen.c l.350-365)
+
 		// XXX save some vars
+		// 
+		// XXX tmpbamflag=bamflag;
+		// XXX bamflag=0;
+		// XXX in_journal=1;
+
+		_cmd->clear(false);
+
 		Journal j(this, _graphics, _display, _sound, &_settings);
 		j.use();
-		// XXX restore vars
 
-		// _graphics->bob(0)->moving = false;
-		// joeWalk(JWM_EXECUTE); // make sure we exit Move_Joe()
-		// XXX _walk->stopJoe();
+		_walk->stopJoe();
+
+		// XXX restore vars
+		// 
+		// XXX in_journal=0;
+		// XXX bamflag=tmpbamflag;
+		// XXX TALKQUIT=CUTQUIT=0; Make sure that we turn off cut stuff in case we use Journal during cutaways
+
 	}
 }
 

@@ -1129,7 +1129,7 @@ void Cutaway::handlePersonRecord(
 
 	if (object.objectNumber == OBJECT_JOE) {
 		if (object.moveToX || object.moveToY) {
-			_walk->joeMove(0, object.moveToX, object.moveToY, true);
+			_walk->moveJoe(0, object.moveToX, object.moveToY, true);
 		} 
 	}
 	else {
@@ -1145,7 +1145,7 @@ void Cutaway::handlePersonRecord(
 		}
 
 		if (object.moveToX || object.moveToY)
-			_walk->personMove(
+			_walk->movePerson(
 					&p, 
 					object.moveToX, object.moveToY,
 					_currentImage + 1, 		// XXX CI+1
@@ -1181,6 +1181,7 @@ void Cutaway::handlePersonRecord(
 
 			char voiceFilePrefix[MAX_STRING_SIZE];
 			findCdCut(_basename, index, voiceFilePrefix);
+			
 			Talk::speak(sentence, (object.objectNumber == OBJECT_JOE) ? NULL : &p, voiceFilePrefix,
 				_graphics, _input, _logic, _resource, _sound);
 		}
