@@ -2806,10 +2806,10 @@ restart:;
 				// do_backspace
 				if (name_len != 0) {
 					int x;
-					byte b;
+					byte m;
 
 					name_len--;
-					b = name[name_len];
+					m = name[name_len];
 
 					if (_language == 20) //Hebrew
 						x = 8;
@@ -2818,7 +2818,7 @@ restart:;
 
 					name[name_len] = 0;
 
-					o_unk_132_helper_2(_fcs_ptr_array_3[5], x, b);
+					o_unk_132_helper_2(_fcs_ptr_array_3[5], x, m);
 				}
 			} else if (i >= 32 && name_len != 17) {
 				name[name_len++] = i;
