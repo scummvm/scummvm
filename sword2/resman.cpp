@@ -256,31 +256,36 @@ void resMan::Close_ResMan(void) { //Tony29May96
 }
 
 #ifdef SCUMM_BIG_ENDIAN
+// Quick macro to make swapping in-place easier to write
+#define SWAP16_S(x)	x = (int16)SWAP_BYTES_16(x)
+#define SWAP16(x)	x = SWAP_BYTES_16(x)
+#define SWAP32_S(x)	x = (int16)SWAP_BYTES_32(x)
+#define SWAP32(x)	x = SWAP_BYTES_32(x)
 static void convertEndian(uint8 *file, uint32 len) {
 	int i;
 	_standardHeader *hdr = (_standardHeader *)file;
 	
 	file += sizeof(_standardHeader);
 
-	hdr->compSize = SWAP_BYTES_32(hdr->compSize);
-	hdr->decompSize = SWAP_BYTES_32(hdr->decompSize);
+	SWAP32(hdr->compSize);
+	SWAP32(hdr->decompSize);
 
 	switch(hdr->fileType) {
 		case ANIMATION_FILE: {
 			_animHeader *animHead = (_animHeader *)file;
 
-			animHead->noAnimFrames = SWAP_BYTES_16(animHead->noAnimFrames);
-			animHead->feetStartX = SWAP_BYTES_16(animHead->feetStartX);
-			animHead->feetStartY = SWAP_BYTES_16(animHead->feetStartY);
-			animHead->feetEndX = SWAP_BYTES_16(animHead->feetEndX);
-			animHead->feetEndY = SWAP_BYTES_16(animHead->feetEndY);
-			animHead->blend = SWAP_BYTES_16(animHead->blend);
+			SWAP16(animHead->noAnimFrames);
+			SWAP16(animHead->feetStartX);
+			SWAP16(animHead->feetStartY);
+			SWAP16(animHead->feetEndX);
+			SWAP16(animHead->feetEndY);
+			SWAP16(animHead->blend);
 
 			_cdtEntry *cdtEntry = (_cdtEntry *) (file + sizeof(_animHeader));
 			for (i = 0; i < animHead->noAnimFrames; i++, cdtEntry++) {
-				cdtEntry->x = (int16)SWAP_BYTES_16(cdtEntry->x);
-				cdtEntry->y = (int16)SWAP_BYTES_16(cdtEntry->y);
-				cdtEntry->frameOffset = SWAP_BYTES_32(cdtEntry->frameOffset);
+				SWAP16_S(cdtEntry->x);
+				SWAP16_S(cdtEntry->y);
+				SWAP32(cdtEntry->frameOffset);
 
 				_frameHeader *frameHeader = (_frameHeader *) (file + cdtEntry->frameOffset);
 				// Quick trick to prevent us from incorrectly applying the endian
@@ -289,9 +294,9 @@ static void convertEndian(uint8 *file, uint32 len) {
 				if ((frameHeader->compSize & 0xFFF00000) ||
 					(frameHeader->width & 0xF000) ||
 					(frameHeader->height & 0xF000)) {
-					frameHeader->compSize = SWAP_BYTES_32(frameHeader->compSize);
-					frameHeader->width = SWAP_BYTES_16(frameHeader->width);
-					frameHeader->height = SWAP_BYTES_16(frameHeader->height);
+					SWAP32(frameHeader->compSize);
+					SWAP16(frameHeader->width);
+					SWAP16(frameHeader->height);
 				}
 			}
 			break;
@@ -299,32 +304,32 @@ static void convertEndian(uint8 *file, uint32 len) {
 		case SCREEN_FILE: {
 			_multiScreenHeader *mscreenHeader = (_multiScreenHeader *)file;
 
-			mscreenHeader->palette = SWAP_BYTES_32(mscreenHeader->palette);
-			mscreenHeader->bg_parallax[0] = SWAP_BYTES_32(mscreenHeader->bg_parallax[0]);
-			mscreenHeader->bg_parallax[1] = SWAP_BYTES_32(mscreenHeader->bg_parallax[1]);
-			mscreenHeader->screen = SWAP_BYTES_32(mscreenHeader->screen);
-			mscreenHeader->fg_parallax[0] = SWAP_BYTES_32(mscreenHeader->fg_parallax[0]);
-			mscreenHeader->fg_parallax[1] = SWAP_BYTES_32(mscreenHeader->fg_parallax[1]);
-			mscreenHeader->layers = SWAP_BYTES_32(mscreenHeader->layers);
-			mscreenHeader->paletteTable = SWAP_BYTES_32(mscreenHeader->paletteTable);
-			mscreenHeader->maskOffset = SWAP_BYTES_32(mscreenHeader->maskOffset);
+			SWAP32(mscreenHeader->palette);
+			SWAP32(mscreenHeader->bg_parallax[0]);
+			SWAP32(mscreenHeader->bg_parallax[1]);
+			SWAP32(mscreenHeader->screen);
+			SWAP32(mscreenHeader->fg_parallax[0]);
+			SWAP32(mscreenHeader->fg_parallax[1]);
+			SWAP32(mscreenHeader->layers);
+			SWAP32(mscreenHeader->paletteTable);
+			SWAP32(mscreenHeader->maskOffset);
 
 			// screenHeader
 			_screenHeader *screenHeader = (_screenHeader*) (file + mscreenHeader->screen);
 
-			screenHeader->width = SWAP_BYTES_16(screenHeader->width);
-			screenHeader->height = SWAP_BYTES_16(screenHeader->height);
-			screenHeader->noLayers = SWAP_BYTES_16(screenHeader->noLayers);
+			SWAP16(screenHeader->width);
+			SWAP16(screenHeader->height);
+			SWAP16(screenHeader->noLayers);
 
 			// layerHeader
 			_layerHeader *layerHeader = (_layerHeader *) (file + mscreenHeader->layers);
 			for (i = 0; i < screenHeader->noLayers; i++, layerHeader++) {
-				layerHeader->x = SWAP_BYTES_16(layerHeader->x);
-				layerHeader->y = SWAP_BYTES_16(layerHeader->y);
-				layerHeader->width = SWAP_BYTES_16(layerHeader->width);
-				layerHeader->height = SWAP_BYTES_16(layerHeader->height);
-				layerHeader->maskSize = SWAP_BYTES_32(layerHeader->maskSize);
-				layerHeader->offset = SWAP_BYTES_32(layerHeader->offset);
+				SWAP16(layerHeader->x);
+				SWAP16(layerHeader->y);
+				SWAP16(layerHeader->width);
+				SWAP16(layerHeader->height);
+				SWAP32(layerHeader->maskSize);
+				SWAP32(layerHeader->offset);
 			}
 
 			// backgroundParallaxLayer
@@ -333,38 +338,38 @@ static void convertEndian(uint8 *file, uint32 len) {
 			offset = mscreenHeader->bg_parallax[0];
 			if (offset > 0) {
 				parallax = (_parallax *) (file + offset);
-				parallax->w = SWAP_BYTES_16(parallax->w);
-				parallax->h = SWAP_BYTES_16(parallax->h);
+				SWAP16(parallax->w);
+				SWAP16(parallax->h);
 			}
 
 			offset = mscreenHeader->bg_parallax[1];
 			if (offset > 0) {
 				parallax = (_parallax *) (file + offset);
-				parallax->w = SWAP_BYTES_16(parallax->w);
-				parallax->h = SWAP_BYTES_16(parallax->h);
+				SWAP16(parallax->w);
+				SWAP16(parallax->h);
 			}
 
 			// backgroundLayer
 			offset = mscreenHeader->screen + sizeof(_screenHeader);
 			if (offset > 0) {
 				parallax = (_parallax *) (file + offset);
-				parallax->w = SWAP_BYTES_16(parallax->w);
-				parallax->h = SWAP_BYTES_16(parallax->h);
+				SWAP16(parallax->w);
+				SWAP16(parallax->h);
 			}
 
 			// foregroundParallaxLayer
 			offset = mscreenHeader->fg_parallax[0];
 			if (offset > 0) {
 				parallax = (_parallax *) (file + offset);
-				parallax->w = SWAP_BYTES_16(parallax->w);
-				parallax->h = SWAP_BYTES_16(parallax->h);
+				SWAP16(parallax->w);
+				SWAP16(parallax->h);
 			}
 
 			offset = mscreenHeader->fg_parallax[1];
 			if (offset > 0) {
 				parallax = (_parallax *) (file + offset);
-				parallax->w = SWAP_BYTES_16(parallax->w);
-				parallax->h = SWAP_BYTES_16(parallax->h);
+				SWAP16(parallax->w);
+				SWAP16(parallax->h);
 			}
 			break;
 		}
@@ -372,20 +377,20 @@ static void convertEndian(uint8 *file, uint32 len) {
 			_object_hub *objectHub = (_object_hub *)file;
 
 			objectHub->type = (int)SWAP_BYTES_32(objectHub->type);
-			objectHub->logic_level = SWAP_BYTES_32(objectHub->logic_level);
+			SWAP32(objectHub->logic_level);
 
 			for (i = 0; i < TREE_SIZE; i++) {
-				objectHub->logic[i] = SWAP_BYTES_32(objectHub->logic[i]);
-				objectHub->script_id[i] = SWAP_BYTES_32(objectHub->script_id[i]);
-				objectHub->script_pc[i] = SWAP_BYTES_32(objectHub->script_pc[i]);
+				SWAP32(objectHub->logic[i]);
+				SWAP32(objectHub->script_id[i]);
+				SWAP32(objectHub->script_pc[i]);
 			}
 			break;
 		}
 		case WALK_GRID_FILE: {
 			_walkGridHeader	*walkGridHeader = (_walkGridHeader *)file;
 
-			walkGridHeader->numBars = SWAP_BYTES_32(walkGridHeader->numBars);
-			walkGridHeader->numNodes = SWAP_BYTES_32(walkGridHeader->numNodes);
+			SWAP32(walkGridHeader->numBars);
+			SWAP32(walkGridHeader->numNodes);
 			break;
 		}
 		case GLOBAL_VAR_FILE:
@@ -396,7 +401,7 @@ static void convertEndian(uint8 *file, uint32 len) {
 			break;
 		case TEXT_FILE: {
 			_textHeader *textHeader = (_textHeader *)file;
-			textHeader->noOfLines = SWAP_BYTES_32(textHeader->noOfLines);
+			SWAP32(textHeader->noOfLines);
 			break;
 		}
 		case SCREEN_MANAGER:
