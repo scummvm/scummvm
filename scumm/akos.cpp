@@ -60,7 +60,7 @@ enum AkosOpcodes {
 	AKC_CmdQue3 = 0xC015,
 	AKC_ComplexChan = 0xC020,
 	AKC_Unk3 = 0xC021,
-	AKC_Unk2 = 0xC025,
+	AKC_ComplexChan2 = 0xC025,
 	AKC_Jump = 0xC030,
 	AKC_JumpIfSet = 0xC031,
 	AKC_AddVar = 0xC040,
@@ -286,7 +286,7 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 
 	// Code 0xC025 reads 4 bytes of extra information
 
-	if (code != AKC_ComplexChan && code != 0xC025) {
+	if (code != AKC_ComplexChan && code != AKC_ComplexChan2) {
 		off = akof + (code & 0xFFF);
 
 		assert((code & 0xFFF) * 6 < READ_BE_UINT32((const byte *)akof - 4) - 8);
@@ -316,6 +316,9 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 			error("akos_drawLimb: invalid codec %d", codec);
 		}
 	} else {
+		if (code == AKC_ComplexChan2)
+			p += 4;
+
 		extra = p[2];
 		p += 3;
 
@@ -1170,7 +1173,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			case AKC_Unk4:
 				curpos += 4;
 				break;
-			case AKC_Unk2:
+			case AKC_ComplexChan2:
 				curpos += 4;
 				// Fall through
 			case AKC_ComplexChan:
@@ -1307,7 +1310,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 		case AKC_EndSeq:
 		case AKC_ComplexChan:
 		case AKC_Unk1:
-		case AKC_Unk2:
+		case AKC_ComplexChan2:
 		case AKC_Unk3:
 			break;
 
@@ -1340,7 +1343,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 	int code2 = aksq[curpos];
 	if (code2 & 0x80)
 		code2 = (code2 << 8) | aksq[curpos + 1];
-	assert((code2 & 0xC000) != 0xC000 || code2 == AKC_ComplexChan || code2 == AKC_Return || code2 == AKC_EndSeq || code2 == AKC_Unk1 || code2 == AKC_Unk2);
+	assert((code2 & 0xC000) != 0xC000 || code2 == AKC_ComplexChan || code2 == AKC_Return || code2 == AKC_EndSeq || code2 == AKC_Unk1 || code2 == AKC_ComplexChan2);
 
 	a->cost.curpos[chan] = curpos;
 
