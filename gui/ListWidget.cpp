@@ -68,8 +68,8 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount)
 		_selectedItem = (y - 2) / LINE_HEIGHT + _currentPos;
 
 		if (_editMode && oldSelectedItem != _selectedItem) {
-			// loose caret
-			_list[_selectedItem].deleteLastChar();
+			// undo any changes made
+			_list[oldSelectedItem] = _backupString;
 			_editMode = false;
 		}
 		draw();
