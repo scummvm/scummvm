@@ -818,7 +818,7 @@ void Scumm::redrawBGAreas()
 	_BgNeedsRedraw = false;
 }
 
-const uint32 zplane_tags[] = {
+static const uint32 zplane_tags[] = {
 	MKID('ZP00'),
 	MKID('ZP01'),
 	MKID('ZP02'),
@@ -2428,7 +2428,7 @@ void Scumm::moveCamera()
 		}
 
 		/* a is set a bit above */
-		if (camera._movingToActor && camera._cur.x >> 3 == a->x >> 3) {
+		if (camera._movingToActor && (camera._cur.x >> 3) == (a->x >> 3)) {
 			camera._movingToActor = false;
 		}
 
