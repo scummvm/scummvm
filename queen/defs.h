@@ -256,6 +256,9 @@ enum {
 	FRANK_HEAD                = 107
 };
 
+#define IS_ALT_INTRO_ROOM(x) ((x) >= 90 && (x) <= 94)
+#define IS_CD_INTRO_ROOM(x) ((x) >= 115 && (x) <= 125)
+
 
 //! GameState vars
 enum {

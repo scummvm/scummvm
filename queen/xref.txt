@@ -263,6 +263,7 @@ OLDROOM,ROOM,NEW_ROOM  		Logic::_*oom
 ROOMTOT						Logic::_numRooms
 ROOM_DATA					Logic::_roomData
 ROOM_NAMEstr				Logic::_roomName
+SFACTOR						Logic::_joe.scale
 VERB_NAMEstr				Verb::_verbName
 WALK_OFF_DATA				Logic::_walkOffData
 WALK_OFF_MAX				Logic::_numWalkOffs
@@ -471,7 +472,6 @@ AREAMAXv
 CURRY
 OMAX,OMAXA
 TEMPA
-SFACTOR, // shrink factor, used to scale (down) the bobs
 BANK,BNUM
 DIFF // LOOK local var
 RET // P1_SET_CONDITIONS local var

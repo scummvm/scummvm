@@ -146,8 +146,8 @@ void Display::dynalumInit(Resource *resource, const char *roomName, uint16 roomN
 	memset(_dynalum.msk, 0, sizeof(_dynalum.msk));
 	memset(_dynalum.lum, 0, sizeof(_dynalum.lum));
 	_dynalum.valid = false;
-	// FIXME: are these tests really needed ?
-	if (roomNum < 90 || ((roomNum > 94) && (roomNum < 114))) {
+
+	if (!(IS_ALT_INTRO_ROOM(roomNum) || IS_CD_INTRO_ROOM(roomNum))) {
 		char filename[20];
 
 		sprintf(filename, "%s.msk", roomName);
@@ -259,7 +259,7 @@ void Display::palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 
 
 	debug(9, "Display::palFadeIn(%d, %d)", start, end);
 	memcpy(_pal.screen, _pal.room, 256 * 3);
-	if (roomNum < 90 || (roomNum > 94 && roomNum < 114)) {
+	if (!(IS_ALT_INTRO_ROOM(roomNum) || IS_CD_INTRO_ROOM(roomNum))) {
 		if (dynalum) {
 			dynalumUpdate(dynaX, dynaY);
 		}
@@ -279,7 +279,7 @@ void Display::palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 
 		}
 	}
 	_pal.dirtyMin = 0;
-	_pal.dirtyMax = 255; // (roomNum >= 114) ? 255 : 223; // FIXME: only for tests
+	_pal.dirtyMax = IS_CD_INTRO_ROOM(roomNum) ? 255 : 223;
 	_pal.scrollable = true;
 }
 
@@ -289,7 +289,7 @@ void Display::palFadeOut(int start, int end, uint16 roomNum) {
 	debug(9, "Display::palFadeOut(%d, %d)", start, end);
 	_pal.scrollable = false;
 	int n = end - start + 1;
-	if (!(roomNum < 90 || (roomNum > 94 && roomNum < 114))) {
+	if (IS_ALT_INTRO_ROOM(roomNum) || IS_CD_INTRO_ROOM(roomNum)) {
 		memset(_pal.screen + start * 3, 0, n * 3);
 		palSet(_pal.screen, start, end, true);
 	}
@@ -308,7 +308,6 @@ void Display::palFadeOut(int start, int end, uint16 roomNum) {
 			}
 			palSet(_pal.screen, start, end, true);
 		}
-
 	}
 }
 
@@ -337,7 +336,6 @@ void Display::palScroll(int start, int end) {
 	uint8 g = *palEnd++;
 	uint8 b = *palEnd;
 
-	// scroll palette entries to the left
 	int n = (end - start) * 3;
 	while (n--) {
 		*palEnd = *(palEnd - 3);

@@ -990,7 +990,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 	}
 	else {
 		// We need to display Joe on screen
-		if (_roomFade == 1)
+		if (_roomFade)
 			mode = RDM_NOFADE_JOE;
 		else
 			mode = RDM_FADE_JOE_XY;
@@ -1538,19 +1538,17 @@ void Cutaway::run(char *nextFilename) {
 		if (_input->cutawayQuit())
 			break;
 
-		// XXX
-#if 0
-		if(ROOMFADE==1)
-		{
-			update();
-			//CR 2 - CD-Rom
-			if(ROOM>=114)
-				fadein(0,255);
-			else
-				fadein(0,223);
-			ROOMFADE=0;
+		if (_roomFade) {
+			_logic->update();
+			int end = 223;
+			if (IS_CD_INTRO_ROOM(_logic->currentRoom())) {
+				end = 255;
+			}
+			BobSlot *j = _graphics->bob(0);
+			_logic->display()->palFadeIn(0, end, _logic->currentRoom(), j->active, j->x, j->y);
+			_roomFade = false;
 		}
-#endif 
+
 	} // for()
 
 	stop();
@@ -1787,7 +1785,7 @@ void Cutaway::stop() {
 
 		joeBob->x = joeX;
 		joeBob->y = joeY;
-		joeBob->scale = _logic->findScale(joeX, joeY);
+		_logic->joeScale(_logic->findScale(joeX, joeY));
 		_logic->joeFace();
 	}
 }

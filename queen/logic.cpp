@@ -1236,21 +1236,16 @@ void Logic::roomDisplay(uint16 room, RoomDisplayMode mode, uint16 scale, int com
 	if (mode != RDM_FADE_NOJOE) {
 		pod = joeSetupInRoom(mode != RDM_FADE_JOE_XY, scale);
 	}
-	// FIXME: for now, always display room even if mode tells us
-	// to not do so. This is necessary as actual Cutaway code 
-	// doesn't do any of the needed palFadeIn() calls. The only
-	// noticeable problem is the initial display of the pinnacle 
-	// room which is faded 2 times.
-//	if (mode != RDM_NOFADE_JOE) {
+	if (mode != RDM_NOFADE_JOE) {
 		update();
 		BobSlot *joe = _graphics->bob(0);
-		if (_currentRoom >= 114) {
+		if (IS_CD_INTRO_ROOM(_currentRoom)) {
 			_display->palFadeIn(0, 255, _currentRoom, joe->active, joe->x, joe->y);
 		}
 		else {
 			_display->palFadeIn(0, 223, _currentRoom, joe->active, joe->x, joe->y);
 		}
-//	}
+	}
 	if (pod != NULL) {
 		_walk->moveJoe(0, pod->x, pod->y, inCutaway);
 	}
@@ -1649,15 +1644,15 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 	debug(0, "Logic::joeSetupInRoom() - oldx=%d, oldy=%d scale=%d", oldx, oldy, scale);
 
 	if (scale > 0 && scale < 100) {
-		_joe.scale = scale;
+		joeScale(scale);
 	}
 	else {
 		uint16 a = zoneInArea(ZONE_ROOM, oldx, oldy);
 		if (a > 0) {
-			_joe.scale = currentRoomArea(a)->calcScale(oldy);
+			joeScale(currentRoomArea(a)->calcScale(oldy));
 		}
 		else {
-			_joe.scale = 100;
+			joeScale(100);
 		}
 	}
 
@@ -1685,7 +1680,7 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 	joePrevFacing(joeFacing());
 
 	BobSlot *pbs = _graphics->bob(0);
-	pbs->scale = _joe.scale;
+	pbs->scale = joeScale();
 
 	if (_currentRoom == 108) {
 		_graphics->cameraBob(-1);
@@ -1745,7 +1740,7 @@ uint16 Logic::joeFace() {
 			update();
 		}
 		pbs->frameNum = frame + FRAMES_JOE_XTRA;
-		pbs->scale = _joe.scale;
+		pbs->scale = joeScale();
 		pbs->xflip = (joeFacing() == DIR_LEFT);
 		update();
 		joePrevFacing(joeFacing());
@@ -1788,10 +1783,10 @@ void Logic::joeGrabDirection(StateGrab grab, uint16 speed) {
 		break;
 
 	case STATE_GRAB_MID:
-		if (_joe.facing == DIR_BACK) {
+		if (joeFacing() == DIR_BACK) {
 			frame = 6;
 		}
-		else if (_joe.facing == DIR_FRONT) {
+		else if (joeFacing() == DIR_FRONT) {
 			frame = 4;
 		}
 		else {
@@ -1800,7 +1795,7 @@ void Logic::joeGrabDirection(StateGrab grab, uint16 speed) {
 		break;
 
 	case STATE_GRAB_DOWN:
-		if (_joe.facing == DIR_BACK) {
+		if (joeFacing() == DIR_BACK) {
 			frame = 9;
 		}
 		else {
@@ -1811,13 +1806,13 @@ void Logic::joeGrabDirection(StateGrab grab, uint16 speed) {
 	case STATE_GRAB_UP:
 		// turn back
 		_graphics->bankUnpack(5, 29 + FRAMES_JOE_XTRA, 7);
-		bobJoe->xflip = (_joe.facing == DIR_LEFT);
-		bobJoe->scale = _joe.scale;
+		bobJoe->xflip = (joeFacing() == DIR_LEFT);
+		bobJoe->scale = joeScale();
 		update();
 		// grab up
 		_graphics->bankUnpack(7, 29 + FRAMES_JOE_XTRA, 7);
-		bobJoe->xflip = (_joe.facing == DIR_LEFT);
-		bobJoe->scale = _joe.scale;
+		bobJoe->xflip = (joeFacing() == DIR_LEFT);
+		bobJoe->scale = joeScale();
 		update();
 		// turn back
 		if (speed == 0) {
@@ -1831,8 +1826,8 @@ void Logic::joeGrabDirection(StateGrab grab, uint16 speed) {
 
 	if (frame != 0) {
 		_graphics->bankUnpack(frame, 29 + FRAMES_JOE_XTRA, 7);
-		bobJoe->xflip = (_joe.facing == DIR_LEFT);
-		bobJoe->scale = _joe.scale;
+		bobJoe->xflip = (joeFacing() == DIR_LEFT);
+		bobJoe->scale = joeScale();
 		update();
 
 		// extra delay for grab down
