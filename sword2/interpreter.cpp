@@ -22,6 +22,7 @@
 #include "sword2/sword2.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
+#include "sword2/memory.h"
 
 namespace Sword2 {
 

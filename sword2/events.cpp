@@ -23,6 +23,7 @@
 #include "sword2/console.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
+#include "sword2/memory.h"
 #include "sword2/resman.h"
 
 #define Debug_Printf _vm->_debugger->DebugPrintf

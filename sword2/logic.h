@@ -22,9 +22,6 @@
 #ifndef _LOGIC
 #define _LOGIC
 
-#include "sword2/header.h"
-#include "sword2/memory.h"
-#include "sword2/router.h"
 #include "sword2/speech.h"
 #include "sword2/startup.h"
 
@@ -43,6 +40,7 @@ namespace Sword2 {
 #define MAX_SEQUENCE_TEXT_LINES 15
 
 class Sword2Engine;
+class Router;
 
 class Logic {
 private:
@@ -164,24 +162,8 @@ private:
 	ObjectMega _engineMega;
 
 public:
-	Logic(Sword2Engine *vm) :
-		  _vm(vm), _kills(0), _smackerLeadOut(0),
-		  _sequenceTextLines(0), _speechTime(0), _animId(0),
-		  _speechAnimType(0), _leftClickDelay(0), _rightClickDelay(0),
-		  _defaultResponseId(0), _totalStartups(0),
-		  _totalScreenManagers(0), _officialTextNumber(0),
-		  _speechTextBlocNo(0), _choosing(false) {
-		_scriptVars = NULL;
-		memset(_subjectList, 0, sizeof(_subjectList));
-		memset(_eventList, 0, sizeof(_eventList));
-		memset(_syncList, 0, sizeof(_syncList));
-		_router = new Router(_vm);
-		initStartMenu();
-	}
-
-	~Logic() {
-		delete _router;
-	}
+	Logic(Sword2Engine *vm);
+	~Logic();
 
 	// Point to the global variable data
 	static uint32 *_scriptVars;

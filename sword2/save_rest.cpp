@@ -31,7 +31,9 @@
 #include "sword2/defs.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
+#include "sword2/memory.h"
 #include "sword2/resman.h"
+#include "sword2/sound.h"
 
 namespace Sword2 {
 

@@ -28,18 +28,15 @@
 #define RIGHT_CLICK_CLEARS_LUGGAGE 0
 
 #include "base/engine.h"
-#include "common/util.h"
 
 #include "sword2/driver/driver96.h"
 #include "sword2/build_display.h"
 #include "sword2/header.h"
 #include "sword2/icons.h"
 #include "sword2/layers.h"
-#include "sword2/memory.h"
 #include "sword2/mouse.h"
 #include "sword2/object.h"
 #include "sword2/save_rest.h"
-#include "sword2/sound.h"
 
 class GameDetector;
 
@@ -49,6 +46,7 @@ enum {
 	GF_DEMO	= 1 << 0
 };
 
+class MemoryManager;
 class ResourceManager;
 class Sound;
 class Graphics;

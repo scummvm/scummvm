@@ -43,6 +43,7 @@
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
 #include "sword2/console.h"
+#include "sword2/memory.h"
 
 namespace Sword2 {
 

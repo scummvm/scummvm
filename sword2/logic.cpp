@@ -24,12 +24,31 @@
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/resman.h"
+#include "sword2/router.h"
 
 #define LEVEL (_curObjectHub->logic_level)
 
 #define Debug_Printf _vm->_debugger->DebugPrintf
 
 namespace Sword2 {
+
+Logic::Logic(Sword2Engine *vm) :
+	_vm(vm), _kills(0), _smackerLeadOut(0), _sequenceTextLines(0),
+	_speechTime(0), _animId(0), _speechAnimType(0), _leftClickDelay(0),
+	_rightClickDelay(0), _defaultResponseId(0), _totalStartups(0),
+	_totalScreenManagers(0), _officialTextNumber(0), _speechTextBlocNo(0),
+	_choosing(false) {
+	_scriptVars = NULL;
+	memset(_subjectList, 0, sizeof(_subjectList));
+	memset(_eventList, 0, sizeof(_eventList));
+	memset(_syncList, 0, sizeof(_syncList));
+	_router = new Router(_vm);
+	initStartMenu();
+}
+
+Logic::~Logic() {
+	delete _router;
+}
 
 /**
  * Do one cycle of the current session.

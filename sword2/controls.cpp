@@ -25,6 +25,7 @@
 #include "sword2/defs.h"
 #include "sword2/logic.h"
 #include "sword2/resman.h"
+#include "sword2/router.h"
 #include "sword2/driver/d_draw.h"
 #include "sword2/driver/d_sound.h"
 

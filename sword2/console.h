@@ -22,7 +22,6 @@
 
 #include "common/debugger.h"
 #include "sword2/debug.h"
-#include "sword2/object.h"
 
 namespace Sword2 {
 
