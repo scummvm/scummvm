@@ -2061,6 +2061,16 @@ void Player::parse_sysex(byte *p, uint len)
 	len -= 2;
 
 	switch (code = *p++) {
+	case 0:												/* part on/off? */
+		// This seems to do the right thing for Monkey 2, at least.
+		a = *p++ & 0x0F;
+		part = get_part(a);
+		if (part) {
+			debug(2, "%d => turning %s part %d", p[1], (p[1] == 2) ? "OFF" : "ON", a);
+			part->set_onoff(p[1] != 2);
+		}
+		break;
+		
 	case 16:											/* set instrument in part */
 		a = *p++ & 0x0F;
 		if (_se->_hardware_type != *p++)
