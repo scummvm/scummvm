@@ -71,6 +71,7 @@ protected:
 	Player_MOD *_mod;
 };
 
+// unsupported sound effect, print warning message to console
 class V2A_Sound_Unsupported : public V2A_Sound {
 public:
 	V2A_Sound_Unsupported() { }
@@ -81,6 +82,7 @@ public:
 	virtual void stop() { }
 };
 
+// template, automatically stops all channels when a sound is silenced
 template<int numChan>
 class V2A_Sound_Base : public V2A_Sound {
 public:
@@ -101,6 +103,7 @@ protected:
 	char *_data;
 };
 
+// plays a music track
 class V2A_Sound_Music : public V2A_Sound {
 public:
 	V2A_Sound_Music(uint16 instoff, uint16 voloff, uint16 chan1off, uint16 chan2off, uint16 chan3off, uint16 chan4off, uint16 sampoff, bool looped) :
@@ -228,6 +231,7 @@ private:
 	} _chan[4];
 };
 
+// plays a single waveform
 class V2A_Sound_Single : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Single(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
@@ -256,6 +260,7 @@ private:
 	int _ticks;
 };
 
+// plays a single looped waveform
 class V2A_Sound_SingleLooped : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_SingleLooped(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint16 loopoffset, uint16 loopsize) :
@@ -281,6 +286,7 @@ private:
 	const uint8 _vol;
 };
 
+// plays two looped waveforms
 class V2A_Sound_MultiLooped : public V2A_Sound_Base<2> {
 public:
 	V2A_Sound_MultiLooped(uint16 offset, uint16 size, uint16 freq1, uint8 vol1, uint16 freq2, uint8 vol2) :
@@ -308,6 +314,7 @@ private:
 	const uint8 _vol2;
 };
 
+// plays two looped waveforms for a fixed number of frames
 class V2A_Sound_MultiLoopedDuration : public V2A_Sound_MultiLooped {
 public:
 	V2A_Sound_MultiLoopedDuration(uint16 offset, uint16 size, uint16 freq1, uint8 vol1, uint16 freq2, uint8 vol2, uint16 numframes) :
@@ -329,6 +336,7 @@ private:
 	int _ticks;
 };
 
+// plays a single looped waveform which starts at one frequency and bends to another frequency, where it remains until stopped
 class V2A_Sound_SingleLoopedPitchbend : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_SingleLoopedPitchbend(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 vol, uint8 step) :
@@ -368,6 +376,7 @@ private:
 	uint16 _curfreq;
 };
 
+// plays a single looped waveform starting at a specific frequency/volume, dropping in frequency and fading volume to zero
 class V2A_Sound_Special_FastPitchbendDownAndFadeout : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_FastPitchbendDownAndFadeout(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
@@ -379,7 +388,7 @@ public:
 		memcpy(tmp_data, data + _offset, _size);
 		_curvol = (_vol << 3) | (_vol >> 3);
 		_curfreq = _freq;
-		_mod->startChannel(_id, tmp_data, _size, BASE_FREQUENCY / _curfreq, _curvol, 0, _size);
+		_mod->startChannel(_id, tmp_data, _size, BASE_FREQUENCY / _curfreq, _curvol >> 1, 0, _size);
 	}
 	virtual bool update() {
 		assert(_id);
@@ -399,6 +408,7 @@ private:
 	uint16 _curvol;
 };
 
+// plays a single looped waveform, fading the volume from zero to maximum at one rate, then back to zero at another rate
 class V2A_Sound_Special_LoopedFadeinFadeout : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_LoopedFadeinFadeout(uint16 offset, uint16 size, uint16 freq, uint8 fadeinrate, uint8 fadeoutrate) :
@@ -410,7 +420,7 @@ public:
 		memcpy(tmp_data, data + _offset, _size);
 		_curvol = 1;
 		_dir = 0;
-		_mod->startChannel(_id, tmp_data, _size, BASE_FREQUENCY / _freq, 1, 0, _size);
+		_mod->startChannel(_id, tmp_data, _size, BASE_FREQUENCY / _freq, _curvol, 0, _size);
 	}
 	virtual bool update() {
 		assert(_id);
@@ -437,6 +447,7 @@ private:
 	int _dir;
 };
 
+// plays two looped waveforms, fading the volume from zero to maximum at one rate, then back to zero at another rate
 class V2A_Sound_Special_MultiLoopedFadeinFadeout : public V2A_Sound_Base<2> {
 public:
 	V2A_Sound_Special_MultiLoopedFadeinFadeout(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 fadeinrate, uint8 fadeoutrate) :
@@ -480,6 +491,7 @@ private:
 	int _dir;
 };
 
+// plays a single looped waveform, starting at one frequency and at full volume, bending down to another frequency, and then fading volume to zero
 class V2A_Sound_Special_PitchbendDownThenFadeout : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_PitchbendDownThenFadeout(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 step) :
@@ -513,6 +525,7 @@ private:
 	int _curvol;
 };
 
+// plays a single looped waveform, starting at one frequency, bending down to another frequency, and then back up to the original frequency
 class V2A_Sound_Special_PitchbendDownAndBackUp : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_PitchbendDownAndBackUp(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 step, uint8 vol) :
@@ -556,6 +569,7 @@ private:
 	int _dir;
 };
 
+// plays a single looped waveform, simultaneously bending the frequency downward and slowly fading volume to zero
 class V2A_Sound_Special_SlowPitchbendDownAndFadeout : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_SlowPitchbendDownAndFadeout(uint16 offset, uint16 size, uint16 freq1, uint16 freq2) :
@@ -588,6 +602,7 @@ private:
 	uint8 _curvol;
 };
 
+// intermittently plays two looped waveforms for a specific duration (ringing phone)
 class V2A_Sound_Special_MultiLoopedDurationMulti : public V2A_Sound_Base<2> {
 public:
 	V2A_Sound_Special_MultiLoopedDurationMulti(uint16 offset, uint16 size, uint16 freq1, uint8 vol1, uint16 freq2, uint8 vol2, uint16 numframes, uint8 playwidth, uint8 loopwidth) :
@@ -641,6 +656,7 @@ private:
 	}
 };
 
+// intermittently plays a single waveform for a specified duration (using wrench on pipe)
 class V2A_Sound_Special_SingleDurationMulti : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_SingleDurationMulti(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 loopwidth, uint8 numloops) :
@@ -683,6 +699,7 @@ private:
 	}
 };
 
+// plays a single waveform at irregular intervals for a specified number of frames, possibly looped (typewriter)
 class V2A_Sound_Special_SingleDurationMultiDurations : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_SingleDurationMultiDurations(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 numdurs, const uint8 *durations, bool looped) :
@@ -729,6 +746,7 @@ private:
 	}
 };
 
+// plays two looped waveforms pitch bending up at various predefined rates (siren)
 class V2A_Sound_Special_TwinSirenMulti : public V2A_Sound_Base<2> {
 public:
 	V2A_Sound_Special_TwinSirenMulti(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq1, uint16 freq2, uint8 vol) :
@@ -792,6 +810,7 @@ private:
 	}
 };
 
+// plays 4 looped waveforms, each at modulating frequencies (siren)
 class V2A_Sound_Special_QuadSiren : public V2A_Sound_Base<4> {
 public:
 	V2A_Sound_Special_QuadSiren(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint8 vol) :
@@ -863,6 +882,7 @@ private:
 	}
 };
 
+// plays 4 looped waveforms
 class V2A_Sound_Special_QuadFreqLooped : public V2A_Sound_Base<4> {
 public:
 	V2A_Sound_Special_QuadFreqLooped(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 freq3, uint16 freq4, uint8 vol) :
@@ -896,6 +916,7 @@ protected:
 	const uint8 _vol;
 };
 
+// plays 4 looped waveforms and fades volume to zero after a specific delay
 class V2A_Sound_Special_QuadFreqFadeout : public V2A_Sound_Special_QuadFreqLooped {
 public:
 	V2A_Sound_Special_QuadFreqFadeout(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 freq3, uint16 freq4, uint8 vol, uint16 dur) :
@@ -922,6 +943,7 @@ private:
 	int _ticks;
 };
 
+// plays a single looped waveform and slowly fades volume to zero
 class V2A_Sound_Special_SingleFadeout : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_SingleFadeout(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
@@ -932,7 +954,7 @@ public:
 		char *tmp_data = (char *)malloc(_size);
 		memcpy(tmp_data, data + _offset, _size);
 		_curvol = _vol << 2;
-		_mod->startChannel(_id, tmp_data, _size, BASE_FREQUENCY / _freq, (_curvol << 2) | (_curvol >> 4), 0, _size);
+		_mod->startChannel(_id, tmp_data, _size, BASE_FREQUENCY / _freq, _curvol, 0, _size);
 	}
 	virtual bool update() {
 		assert(_id);
@@ -948,6 +970,7 @@ private:
 	int _curvol;
 };
 
+// plays a single looped waveform, slowly bending from one frequency to another and then slowly fading volume from max to zero
 class V2A_Sound_Special_SlowPitchbendThenSlowFadeout : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_SlowPitchbendThenSlowFadeout(uint16 offset, uint16 size, uint16 freq1, uint16 freq2) :
@@ -1050,6 +1073,7 @@ private:
 	uint8 _vol;
 };
 
+// plays a single looped waveform, bending the frequency upward at a varying rate (slowly accelerating vehicle)
 class V2A_Sound_Special_SteppedPitchbendAndHold : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_SteppedPitchbendAndHold(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 vol) :
@@ -1093,7 +1117,6 @@ private:
 	uint16 _bendrate;
 	uint16 _bendctr;
 	uint16 _holdctr;
-
 };
 
 // plays one waveform, then switches to a different looped waveform and slowly fades volume to zero
