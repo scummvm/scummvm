@@ -29,6 +29,7 @@
 #include "scumm/resource.h"
 #include "scumm/resource_v7he.h"
 #include "common/stream.h"
+#include "common/system.h"
 
 namespace Scumm {
 
@@ -51,6 +52,49 @@ Win32ResExtractor::Win32ResExtractor(ScummEngine_v70he *scumm) {
 	_vm = scumm;
 
 	snprintf(_fileName, 256, "%s.he3", _vm->getGameName());
+	memset(_cursorCache, 0, sizeof(_cursorCache));
+}
+
+Win32ResExtractor::~Win32ResExtractor() {
+	for (int i = 0; i < MAX_CACHED_CURSORS; ++i) {
+		CachedCursor *cc = &_cursorCache[i];
+		if (cc->valid) {
+			free(cc->bitmap);
+			cc->bitmap = NULL;
+			cc->valid = false;
+		}
+	}
+}
+
+Win32ResExtractor::CachedCursor *Win32ResExtractor::findCachedCursor(int id) {
+	for (int i = 0; i < MAX_CACHED_CURSORS; ++i) {
+		CachedCursor *cc = &_cursorCache[i];
+		if (cc->valid && cc->id == id) {
+			return cc;
+		}
+	}
+	return NULL;
+}
+
+Win32ResExtractor::CachedCursor *Win32ResExtractor::getCachedCursorSlot() {
+	uint32 min_last_used = 0;
+	CachedCursor *r = NULL;
+	for (int i = 0; i < MAX_CACHED_CURSORS; ++i) {
+		CachedCursor *cc = &_cursorCache[i];
+		if (!cc->valid) {
+			return cc;
+		} else {
+			if (min_last_used == 0 || cc->last_used < min_last_used) {
+				min_last_used = cc->last_used;
+				r = cc;
+			}
+		}
+	}
+	assert(r);
+	free(r->bitmap);
+	r->bitmap = NULL;
+	r->valid = false;
+	return r;
 }
 
 void Win32ResExtractor::setCursor(int id) {
@@ -58,18 +102,30 @@ void Win32ResExtractor::setCursor(int id) {
 	byte *cursorRes = 0, *cursor = 0;
 	int cursorsize;
 	int w = 0, h = 0, hotspot_x = 0, hotspot_y = 0, keycolor = 0;
-
-	snprintf(buf, 20, "%d", id);
-
-	cursorsize = extractResource("group_cursor", buf, &cursorRes);
-
-	convertIcons(cursorRes, cursorsize, &cursor, &w, &h, &hotspot_x, &hotspot_y,
-				 &keycolor);
-
-	_vm->setCursorHotspot(hotspot_x, hotspot_y);
-	_vm->setCursorFromBuffer(cursor, w, h, w);
-	free(cursorRes);
-	free(cursor);
+	CachedCursor *cc = findCachedCursor(id);
+	if (cc != NULL) {
+		debug(7, "Found cursor %d in cache slot %d", id, cc - _cursorCache);
+		_vm->setCursorHotspot(cc->hotspot_x, cc->hotspot_y);
+		_vm->setCursorFromBuffer(cc->bitmap, cc->w, cc->h, cc->w);
+	} else {
+		snprintf(buf, 20, "%d", id);
+		cursorsize = extractResource("group_cursor", buf, &cursorRes);
+		convertIcons(cursorRes, cursorsize, &cursor, &w, &h, &hotspot_x, &hotspot_y, &keycolor);
+		cc = getCachedCursorSlot();
+		assert(cc && !cc->valid);
+		debug(7, "Adding cursor %d to cache slot %d", id, cc - _cursorCache);
+		_vm->setCursorHotspot(hotspot_x, hotspot_y);
+		_vm->setCursorFromBuffer(cursor, w, h, w);
+		free(cursorRes);
+		cc->valid = true;
+		cc->id = id;
+		cc->bitmap = cursor;
+		cc->w = w;
+		cc->h = h;
+		cc->hotspot_x = hotspot_x;
+		cc->hotspot_y = hotspot_y;
+		cc->last_used = g_system->getMillis();
+	}
 }
 
 int Win32ResExtractor::extractResource(const char *resType, char *resName, byte **data) {

@@ -123,10 +123,27 @@ class Win32ResExtractor {
 	int convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
 					 int *hotspot_x, int *hotspot_y, int *keycolor);
 
+	enum {
+		MAX_CACHED_CURSORS = 10
+	};
+
+	struct CachedCursor {
+		bool valid;
+		int id;
+		byte *bitmap;
+		int w, h;
+		int hotspot_x, hotspot_y;
+		uint32 last_used;
+	};
+
  private:
+	Win32ResExtractor::CachedCursor *findCachedCursor(int id);
+	Win32ResExtractor::CachedCursor *getCachedCursorSlot();
+
 	bool _arg_raw;
 	ScummEngine_v70he *_vm;
 	char _fileName[256];
+	CachedCursor _cursorCache[MAX_CACHED_CURSORS];
 
 	typedef Common::MemoryReadStream MemoryReadStream;
 
