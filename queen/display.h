@@ -136,8 +136,10 @@ private:
 
 	struct Dynalum {
 		bool valid;
-		uint8 msk[50 * 160];
-		int8 lum[8 * 3];
+		uint8 *mskBuf;
+		uint32 mskSize;
+		int8 *lumBuf;
+		uint32 lumSize;
 		uint8 prevColMask;
 	};
 

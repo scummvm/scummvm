@@ -324,11 +324,9 @@ static const byte mt32_to_gm[128] = {
 
 	Music::Music(MidiDriver *driver, QueenEngine *vm) : _vToggle(false) {
 		if (vm->resource()->isDemo()) {
-			_musicData = vm->resource()->loadFile("AQ8.RL", 0, NULL);
-			_musicDataSize = vm->resource()->fileSize("AQ8.RL");
+			_musicData = vm->resource()->loadFile("AQ8.RL", 0, &_musicDataSize);
 		} else {
-			_musicData = vm->resource()->loadFile("AQ.RL", 0, NULL);
-			_musicDataSize = vm->resource()->fileSize("AQ.RL");
+			_musicData = vm->resource()->loadFile("AQ.RL", 0, &_musicDataSize);
 		}
 		
 		_player = new MusicPlayer(driver, _musicData, _musicDataSize);

@@ -77,15 +77,13 @@ private:
 class Resource {
 
 public:
-	Resource(const Common::String &datafilePath);
-	~Resource(void);
+	Resource();
+	~Resource();
 
-	uint8 *loadFile(const char *filename, uint32 skipBytes = 0, byte *dstBuf = NULL);
-	uint8 *loadFileMalloc(const char *filename, uint32 skipBytes = 0, byte *dstBuf = NULL);
+	uint8 *loadFile(const char *filename, uint32 skipBytes = 0, uint32 *size = NULL, bool useMalloc = false);
 	bool fileExists(const char *filename) const { return resourceEntry(filename) != NULL; }
-	uint32 fileSize(const char *filename) const { return resourceEntry(filename)->size; }
 
-	File *giveCompressedSound(const char *filename);
+	File *giveCompressedSound(const char *filename, uint32 *size);
 
 	bool isDemo() const { return !strcmp(_versionString, "PE100"); }
 	bool isInterview() const { return !strcmp(_versionString, "PEint"); }
@@ -104,9 +102,7 @@ public:
 protected:
 	File *_resourceFile;
 	uint8 _compression;
-	const Common::String _datafilePath;
 	char _versionString[6];
-	const char *_savePath;
 	uint32 _resourceEntries;
 	ResourceEntry *_resourceTable;
 

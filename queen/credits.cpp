@@ -30,9 +30,9 @@ namespace Queen {
 
 Credits::Credits(QueenEngine *vm, const char* filename) : 
 	_vm(vm), _running(true), _count(0), _pause(0), _justify(0), _fontSize(0), _color(0), _zone(0) {
-	_credits = new LineReader(
-		(char *)_vm->resource()->loadFile(filename),
-		_vm->resource()->fileSize(filename));
+	uint32 size;
+	char *buf = (char *)_vm->resource()->loadFile(filename, 0, &size);
+	_credits = new LineReader(buf, size);
 }
 
 Credits::~Credits() {

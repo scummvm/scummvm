@@ -39,7 +39,6 @@ static const uint8 *_palJoeDress;
 Display::Display(QueenEngine *vm, OSystem *system)
 	: _fullscreen(true), _horizontalScroll(0), _bdWidth(0), _bdHeight(0), 
 	_system(system), _vm(vm) {
-	_dynalum.prevColMask = 0xFF;
 
 	if (vm->resource()->getLanguage() == HEBREW)
 		_font = _fontHebrew;
@@ -76,6 +75,8 @@ Display::Display(QueenEngine *vm, OSystem *system)
 	_pal.dirtyMin = 0;
 	_pal.dirtyMax = 255;
 	_pal.scrollable = true;
+	
+	memset(&_dynalum, 0, sizeof(_dynalum));
 }
 
 Display::~Display() {
@@ -96,23 +97,24 @@ Display::~Display() {
 
 void Display::dynalumInit(const char *roomName, uint16 roomNum) {
 	debug(9, "Display::dynalumInit(%s, %d)", roomName, roomNum);
-	memset(_dynalum.msk, 0, sizeof(_dynalum.msk));
-	memset(_dynalum.lum, 0, sizeof(_dynalum.lum));
+
 	_dynalum.valid = false;
-	_dynalum.prevColMask = 0xFF;
+	delete[] _dynalum.mskBuf;
+	_dynalum.mskBuf = NULL;
+	delete[] _dynalum.lumBuf;
+	_dynalum.lumBuf = NULL;
 
 	if (!(Logic::isAltIntroRoom(roomNum) || Logic::isIntroRoom(roomNum))) {
 		char filename[20];
-
 		sprintf(filename, "%s.msk", roomName);
-		_dynalum.valid = _vm->resource()->fileExists(filename);
-		if (_dynalum.valid)
-			_vm->resource()->loadFile(filename, 0, (uint8*)_dynalum.msk);
-
-		sprintf(filename, "%s.lum", roomName);
-		_dynalum.valid = _vm->resource()->fileExists(filename);
-		if (_dynalum.valid)
-			_vm->resource()->loadFile(filename, 0, (uint8*)_dynalum.lum);
+		if (_vm->resource()->fileExists(filename)) {
+			_dynalum.mskBuf = (uint8 *)_vm->resource()->loadFile(filename, 0, &_dynalum.mskSize);
+			sprintf(filename, "%s.lum", roomName);
+			if (_vm->resource()->fileExists(filename)) {
+				_dynalum.lumBuf = (int8 *)_vm->resource()->loadFile(filename, 0, &_dynalum.lumSize);
+				_dynalum.valid = true;
+			}
+		}
 	}
 }
 
@@ -131,17 +133,17 @@ void Display::dynalumUpdate(int16 x, int16 y) {
 		y = ROOM_ZONE_HEIGHT - 1;
 	}
 
-	uint offset = (y / 4) * 160 + (x / 4);
-	assert(offset < sizeof(_dynalum.msk));
+	uint32 offset = (y / 4) * 160 + (x / 4);
+	assert(offset < _dynalum.mskSize);
 
-	uint8 colMask = _dynalum.msk[offset];
+	uint8 colMask = _dynalum.mskBuf[offset];
 	debug(9, "Display::dynalumUpdate(%d, %d) - colMask = %d", x, y, colMask);
 	if (colMask != _dynalum.prevColMask) {
 		uint8 i;
 		for (i = 144; i < 160; ++i) {
 			uint8 j;
 			for (j = 0; j < 3; ++j) {
-				int16 c = (int16)(_pal.room[i * 3 + j] + _dynalum.lum[colMask * 3 + j] * 4);
+				int16 c = (int16)(_pal.room[i * 3 + j] + _dynalum.lumBuf[colMask * 3 + j] * 4);
 				if (c < 0) {
 					c = 0;
 				} else if (c > 255) {
@@ -635,8 +637,8 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 }
 
 void Display::setupPanel() {
-	uint8 *pcxBuf = _vm->resource()->loadFile("panel.pcx");
-	uint32 size = _vm->resource()->fileSize("panel.pcx");
+	uint32 size;
+	uint8 *pcxBuf = _vm->resource()->loadFile("panel.pcx", 0, &size);
 	uint8 *dst = _panelBuf + PANEL_W * 10;
 	readPCX(dst, PANEL_W, pcxBuf + 128, PANEL_W, PANEL_H - 10);
 	const uint8 *pal = pcxBuf + size - 768 + 144 * 3;
@@ -648,11 +650,10 @@ void Display::setupPanel() {
 
 void Display::setupNewRoom(const char *name, uint16 room) {
 	dynalumInit(name, room);
-
+	uint32 size;
 	char filename[20];
 	sprintf(filename, "%s.PCX", name);
-	uint8 *pcxBuf = _vm->resource()->loadFile(filename);
-	uint32 size = _vm->resource()->fileSize(filename);
+	uint8 *pcxBuf = _vm->resource()->loadFile(filename, 0, &size);
 	_bdWidth  = READ_LE_UINT16(pcxBuf + 12);
 	_bdHeight = READ_LE_UINT16(pcxBuf + 14);
 	readPCX(_backdropBuf, BACKDROP_W, pcxBuf + 128, _bdWidth, _bdHeight);

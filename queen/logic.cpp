@@ -181,10 +181,9 @@ void Logic::initialise() {
 
 	delete[] jas;
 
-
-	_queen2jas = new LineReader(
-		(char *)_vm->resource()->loadFile("QUEEN2.JAS"),
-		_vm->resource()->fileSize("QUEEN2.JAS"));
+	uint32 size;
+	char *buf = (char *)_vm->resource()->loadFile("QUEEN2.JAS", 0, &size);
+	_queen2jas = new LineReader(buf, size);
 	
 	_objDescription = new char*[_numDescriptions + 1];
 	_objDescription[0] = 0;

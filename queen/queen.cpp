@@ -329,7 +329,7 @@ void QueenEngine::go() {
 
 void QueenEngine::initialise(void) {
 	_bam = new BamScene(this);
-	_resource = new Resource(_gameDataPath);
+	_resource = new Resource();
 	_bankMan = new BankManager(_resource);
 	_command = new Command(this);
 	_debugger = new Debugger(this);

@@ -52,11 +52,11 @@ static int compareResourceEntry(const void *a, const void *b) {
 	return strcmp(filename, entry->filename);
 }
 
-Resource::Resource(const Common::String &datafilePath)
-	: _datafilePath(datafilePath), _resourceEntries(0), _resourceTable(NULL) {
+Resource::Resource()
+	: _resourceEntries(0), _resourceTable(NULL) {
 	_resourceFile = new File();
 	if (!findCompressedVersion() && !findNormalVersion())
-		error("Could not open resource file '%s%s'", _datafilePath.c_str(), "queen.1");
+		error("Could not open resource file '%s'", "queen.1");
 	checkJASVersion();
 	debug(5, "Detected game version: %s, which has %d resource entries", _versionString, _resourceEntries);
 }
@@ -98,24 +98,26 @@ ResourceEntry *Resource::resourceEntry(const char *filename) const {
 	return re;
 }
 
-uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, byte *dstBuf) {
+uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, uint32 *size, bool useMalloc) {
 	ResourceEntry *re = resourceEntry(filename);
 	assert(re != NULL);
-	uint32 size = re->size - skipBytes;
+	uint32 sz = re->size - skipBytes;
+	if (size != NULL) {
+		*size = sz;
+	}
+	byte *dstBuf;
 #ifndef __PALM_OS__
-	if (dstBuf == NULL)
-		dstBuf = new byte[size];
+	if (useMalloc) {
+		dstBuf = (byte *)malloc(sz);
+	} else {
+		dstBuf = new byte[sz];
+	}
 #else
-	if (dstBuf == NULL)
-		dstBuf = (byte *)calloc(size, sizeof(byte));
+	dstBuf = (byte *)calloc(sz, sizeof(byte));
 #endif
 	_resourceFile->seek(re->offset + skipBytes);
-	_resourceFile->read(dstBuf, size);
+	_resourceFile->read(dstBuf, sz);
 	return dstBuf;
-}
-
-uint8 *Resource::loadFileMalloc(const char *filename, uint32 skipBytes, byte *dstBuf) {
-	return loadFile(filename, skipBytes, (byte *)malloc(fileSize(filename) - skipBytes));
 }
 
 bool Resource::findNormalVersion() {
@@ -139,7 +141,7 @@ bool Resource::findNormalVersion() {
 			_resourceEntries = 1076;
 			_resourceTable = _resourceTablePEM10;
 		} else {
-			error("Could not find tablefile '%s%s'",  _datafilePath.c_str(), _tableFilename);
+			error("Could not find tablefile '%s'", _tableFilename);
 		}
 	}
 	return true;
@@ -239,10 +241,13 @@ const GameVersion *Resource::detectGameVersion(uint32 size) const {
 	return NULL;
 }
 
-File *Resource::giveCompressedSound(const char *filename) {
+File *Resource::giveCompressedSound(const char *filename, uint32 *size) {
 	assert(strstr(filename, ".SB"));
 	ResourceEntry *re = resourceEntry(filename);
 	assert(re != NULL);
+	if (size != NULL) {
+		*size = re->size;
+	}
 	_resourceFile->seek(re->offset);
 	return _resourceFile;
 }
