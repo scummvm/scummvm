@@ -77,12 +77,13 @@ void Actor::initActor(int mode) {
 		_pos.x = 0;
 		_pos.y = 0;
 		facing = 180;
+		condMask = 1;
 		if (_vm->_version >= 7)
 			visible = false;
 	} else if (mode == 2) {
 		facing = 180;
+		condMask = 1;
 	}
-	condMask = 1;
 	elevation = 0;
 	skipLimb = false;
 	width = 24;
