@@ -4,10 +4,18 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 0.??
  New Games:
    - Added SAGA engine (for the games and "I Have No Mouth and I Must Scream"
-     and "Inherit the Earth")
+     and "Inherit the Earth").
 
  General:
-   - Added a MT-32 emulator
+   - Added a MT-32 emulator. (It was actually added in 0.7.0 but we forgot to
+     put it into the NEWS file :-).
+
+ <ENGINE #1 NEWS>
+   - ...
+
+
+ <PORT #1 NEWS>
+   - ...
 
 0.7.0 (2004-12-24)
  New Games:
