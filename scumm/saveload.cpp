@@ -256,7 +256,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		setDirtyColors(0, 255);
 
 
-	if (_gameId == GID_MANIAC && _version == 1)
+	if (hdr.ver < VER(35) && _gameId == GID_MANIAC && _version == 1)
 		setupV1ActorTalkColor();
 
 	// Regenerate strip table (for V1/V2 games)
