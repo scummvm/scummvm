@@ -150,10 +150,6 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 						"Features of the game that depend on sound synchronization will most likely break");
 	set_volume(detector->_sfx_volume);
 
-	_effects_sound = 0;
-	_voice_sound = 0;
-	_ambient_sound = 0;
-
 	_effects_paused = false;
 	_ambient_paused = false;
 	_music_paused = false;
@@ -818,7 +814,12 @@ void SimonState::loadTablesIntoMem(uint subr_id)
 				closeTablesFile(in);
 
 				memcpy(filename, "SFXXXX", 6);
-				readSfxFile(filename);
+				if (_game == GAME_SIMON1WIN )
+					_sound->readSfxFile(filename, _gameDataPath);
+				else if (_game & GAME_SIMON2) {
+					int set = atoi(filename + 6) - 1;
+					_sound->loadSfxTable(_game_file, _game_offsets_ptr[set + gss->SOUND_INDEX_BASE], set);
+				}
 
 				alignTableMem();
 
@@ -3422,9 +3423,7 @@ void SimonState::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte 
 
 bool SimonState::vc_59_helper()
 {
-	if (_voice_file == NULL)
-		return true;
-	return _voice_sound == 0;
+	return _sound->_voice_handle == 0;
 }
 
 void SimonState::video_copy_if_flag_0x8_c(FillOrCopyStruct *fcs)
@@ -3464,75 +3463,6 @@ void SimonState::showmessage_helper_2()
 		return;
 
 	_fcs_ptr_1 = fcs_alloc(8, 0x90, 0x18, 6, 1, 0, 0xF);
-}
-
-void SimonState::readSfxFile(const char *filename)
-{
-	uint num = 0;
-	if (_game == GAME_SIMON1WIN) { 			/* simon 1 win */
-		uint32 size;
-
-		if (_effects_offsets)
-			free(_effects_offsets);
-
-		if (_effects_file->isOpen() == true)
-			_effects_file->close();
-
-		_effects_file->open(filename, _gameDataPath);
-
-		if (_effects_file->isOpen() == false) {
-			warning("readSfxFile: Cannot load sfx file %s", filename);
-			return;
-		}
-
-		vc_29_stop_all_sounds();
-
-		_effects_file->seek(4, SEEK_SET);
-		size = _effects_file->readUint32LE();
-
-		num = size / sizeof(uint32);
-
-		_effects_offsets = (uint32 *)malloc(size);
-
-		_effects_file->seek(0, SEEK_SET);
-		_effects_file->read(_effects_offsets, size);
-
-#if defined(SCUMM_BIG_ENDIAN)
-		for (uint r = 0; r < num; r++)
-			_effects_offsets[r] = FROM_LE_32(_effects_offsets[r]);
-#endif
-	} else if (_game & GAME_SIMON2) { 			/* simon 2 */
-		int num_per_set[] = {0, 188, 223, 217, 209, 179, 187, 189, 116, 174, 203,
-				173, 176, 38, 205, 134, 213, 212, 167, 141};
-
-		int set;
-		uint32 offs;
-		uint i;
-
-		vc_29_stop_all_sounds();
-
-		if (_effects_offsets)
-			free(_effects_offsets);
-
-		set = atoi(filename + 6) - 1;
-		offs = _game_offsets_ptr[set + gss->SOUND_INDEX_BASE];
-		num = num_per_set[set];
-
-		if (num == 0)
-			return;
-
-		_effects_offsets = (uint32 *)malloc(num * sizeof(uint32));
-
-		_game_file->seek(offs, SEEK_SET);
-		_game_file->read(_effects_offsets, num * sizeof(uint32));
-
-		for (i = 0; i < num; i++) {
-#if defined(SCUMM_BIG_ENDIAN)
-			_effects_offsets[i] = FROM_LE_32(_effects_offsets[i]);
-#endif
-			_effects_offsets[i] += offs;
-		}
-	}
 }
 
 void SimonState::video_putchar(FillOrCopyStruct *fcs, byte c)
@@ -3796,7 +3726,7 @@ void SimonState::talk_with_speech(uint speech_id, uint num_1)
 			o_unk_99_simon1(num_1 + 201);
 		}
 
-		playVoice(speech_id);
+		_sound->playVoice(speech_id);
 
 		if (num_1 < 100) {
 			start_vga_code(4, 2, num_1 + 201, 0, 0, 0);
@@ -3819,7 +3749,7 @@ void SimonState::talk_with_speech(uint speech_id, uint num_1)
 				o_unk_99_simon2(2, 5);
 			}
 			o_unk_99_simon2(2, num_1 + 2);
-			playVoice(speech_id);
+			_sound->playVoice(speech_id);
 
 			start_vga_code(4, 2, num_1 + 2, 0, 0, 0);
 		}
@@ -4540,7 +4470,7 @@ void SimonState::go()
 
 	setup_vga_file_buf_pointers();
 
-	initSound();
+	_sound = new SimonSound(_game, gss, _gameDataPath, _mixer);
 
 	if (!loadGamePcFile(gss->gamepc_filename))
 		error("Error loading gamepc file '%s' (or one of the files it depends on)",
@@ -4554,12 +4484,7 @@ void SimonState::go()
 	
 	_mainscript_toggle = false;
 	_vgascript_toggle = false;
-	
-	if (_voice_type != FORMAT_NONE) {
-		_vk_t_toggle = false;
-	} else {
-		_vk_t_toggle = true;
-	}
+	_vk_t_toggle = false;
 
 	while (1) {
 		hitarea_stuff();
@@ -4613,16 +4538,9 @@ void SimonState::delay(uint amount)
 				} else if (event.kbd.ascii == 'm') {
 					midi.pause(_music_paused ^= 1);
 				} else if (event.kbd.ascii == 's') {
-					_effects_paused ^= 1;
+					_sound->effectsPause(_effects_paused ^= 1);
 				} else if (event.kbd.ascii == 'b') {
-					_ambient_paused ^= 1;
-					if (_ambient_paused && _ambient_playing) {
-						_mixer->stop(_ambient_index);
-					} else if (_ambient_playing) {
-						uint tmp = _ambient_playing;
-						_ambient_playing = 0;
-						playAmbient(tmp);
-					}
+					_sound->ambientPause(_ambient_paused ^= 1);
 				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
 					if (event.kbd.ascii == 'f') {
 						_fast_mode ^= 1;
@@ -4878,322 +4796,6 @@ bool SimonState::load_game(uint slot)
 #endif
 
 	return true;
-}
-
-void SimonState::initSound()
-{
-#ifdef SCUMM_BIG_ENDIAN
-	uint i;
-#endif
-	/* only read voice file in windows game */
-	if (_game & GAME_TALKIE) {
-		const char *s;
-		const char *e;
-
-		//
-		// Load voice file
-		//
-		_voice_offsets = NULL;
-		_voice_file = new File();
-		_voice_type = FORMAT_NONE;
-
-#ifdef USE_MAD
-		s = gss->mp3_filename;
-		_voice_file->open(s, _gameDataPath);
-		if (_voice_file->isOpen() == false) {
-#endif
-			if (_game & GAME_WIN) {
-				s = gss->wav_filename;
-				_voice_file->open(s, _gameDataPath);
-				if (_voice_file->isOpen() == false) {
-					warning("Cannot open voice file %s", s);
-				} else	{
-					_voice_type = FORMAT_WAV;
-				}
-			} else {
-				s = gss->voc_filename;
-				_voice_file->open(s, _gameDataPath);
-				if (_voice_file->isOpen() == false) {
-					warning("Cannot open voice file %s", s);
-				} else {
-					_voice_type = FORMAT_VOC;
-				}
-			}
-#ifdef USE_MAD
-		} else
-			_voice_type = FORMAT_MP3;
-#endif
-
-		if (_voice_type != FORMAT_NONE) {
-#ifdef USE_MAD
-			if (_voice_type == FORMAT_MP3) {
-				_voice_offsets = (uint32 *)malloc((gss->NUM_VOICE_RESOURCES + 1) * sizeof(uint32));
-			 } else {
-#endif
-				_voice_offsets = (uint32 *)malloc(gss->NUM_VOICE_RESOURCES * sizeof(uint32));
-#ifdef USE_MAD
-			}
-#endif
-			if (_voice_offsets == NULL)
-				error("Out of memory for voice offsets");
-	
-			if (_voice_file->read(_voice_offsets, gss->NUM_VOICE_RESOURCES * sizeof(uint32)) != gss->NUM_VOICE_RESOURCES * sizeof(uint32))
-				error("Cannot read voice offsets");
-#ifdef SCUMM_BIG_ENDIAN
-			for (i = 0; i < gss->NUM_VOICE_RESOURCES; i++)
-				_voice_offsets[i] = FROM_LE_32(_voice_offsets[i]);
-#endif
-#ifdef USE_MAD
-			if (_voice_type == FORMAT_MP3) {
-				_voice_file->seek(0, SEEK_END);
-				_voice_offsets[gss->NUM_EFFECTS_RESOURCES] = _voice_file->pos();
-			}
-#endif
-		}
-
-		//
-		// Load effects
-		//
-		_effects_offsets = NULL;
-		_effects_file = new File();
-		_effects_type = FORMAT_VOC;
-
-#ifdef USE_MAD
-		e = gss->mp3_effects_filename;
-		_effects_file->open(e, _gameDataPath);
-		if (_effects_file->isOpen() == false ) {
-#endif
-			e = gss->voc_effects_filename;
-			_effects_file->open(e, _gameDataPath);
-#ifdef USE_MAD
-		} else {
-			_effects_type = FORMAT_MP3;
-		}
-#endif
-		if (_effects_file->isOpen() == true)
-		{
-#ifdef USE_MAD
-			if (_effects_type == FORMAT_MP3) {
-				_effects_offsets = (uint32 *)malloc((gss->NUM_EFFECTS_RESOURCES + 1) * sizeof(uint32));
-			} else {
-#endif
-				_effects_offsets = (uint32 *)malloc(gss->NUM_EFFECTS_RESOURCES * sizeof(uint32));
-#ifdef USE_MAD
-			}
-#endif
-			if (_effects_offsets == NULL)
-				error("Out of memory for effects offsets");
-
-			if (_effects_file->read(_effects_offsets, gss->NUM_EFFECTS_RESOURCES * sizeof(uint32)) != gss->NUM_EFFECTS_RESOURCES * sizeof(uint32))
-				error("Cannot read effects offsets");
-#ifdef SCUMM_BIG_ENDIAN
-			for (i = 0; i < gss->NUM_EFFECTS_RESOURCES; i++)
-				_effects_offsets[i] = FROM_LE_32(_effects_offsets[i]);
-#endif
-#ifdef USE_MAD
-			if (_effects_type == FORMAT_MP3) {
-				_effects_file->seek(0, SEEK_END);
-				_effects_offsets[gss->NUM_EFFECTS_RESOURCES] = _effects_file->pos();
-			}
-#endif
-		} else {
-			_effects_type = FORMAT_NONE;
-		}
-
-	}
-}
-
-#if !defined(__GNUC__)
-#pragma START_PACK_STRUCTS
-#endif
-
-struct WaveHeader {
-	uint32 riff;
-	uint32 unk;
-	uint32 wave;
-	uint32 fmt;
-
-	uint32 size;
-
-	uint16 format_tag;
-	uint16 channels;
-	uint32 samples_per_sec;
-	uint32 avg_bytes;
-
-	uint16 block_align;
-	uint16 bits_per_sample;
-} GCC_PACK;
-
-struct VocHeader {
-	uint8 desc[20];
-	uint16 datablock_offset;
-	uint16 version;
-	uint16 id;
-} GCC_PACK;
-
-struct VocBlockHeader {
-	uint8 blocktype;
-	uint8 size[3];
-	uint8 sr;
-	uint8 pack;
-} GCC_PACK;
-
-
-#if !defined(__GNUC__)
-#pragma END_PACK_STRUCTS
-#endif
-
-
-#ifdef USE_MAD
-int SimonState::playMP3(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle, byte flags)
-{
-	sound_file->seek(offsets[sound], SEEK_SET);
-
-	uint32 size = offsets[sound+1] - offsets[sound];
-
-	byte *buffer = (byte *)malloc(size);
-	sound_file->read(buffer, size);
-
-	return _mixer->playMP3(sound_handle, buffer, size, flags);
-}
-#endif
-
-int SimonState::playVoc(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle, byte flags)
-{
-	VocHeader voc_hdr;
-	VocBlockHeader voc_block_hdr;
-	uint32 size;
-
-	sound_file->seek(offsets[sound], SEEK_SET);
-
-	if (sound_file->read(&voc_hdr, sizeof(voc_hdr)) != sizeof(voc_hdr) ||
-			strncmp((char *)voc_hdr.desc, "Creative Voice File\x1A", 10) != 0) {
-		error("playVoc(%d): cannot read voc header", sound);
-	}
-
-	sound_file->read(&voc_block_hdr, sizeof(voc_block_hdr));
-
-	size = voc_block_hdr.size[0] + (voc_block_hdr.size[1] << 8) + (voc_block_hdr.size[2] << 16) - 2;
-	uint32 samples_per_sec;
-
-	/* workaround for voc weakness */
-	if (voc_block_hdr.sr == 0xa6) {
-		samples_per_sec = 11025;
-	} else if (voc_block_hdr.sr == 0xd2) {
-		samples_per_sec = 22050;
-	} else {
-		samples_per_sec = 1000000L / (256L - (long)voc_block_hdr.sr);
-		warning("inexact sample rate used: %i", samples_per_sec);
-	}
-
-	byte *buffer = (byte *)malloc(size);
-	sound_file->read(buffer, size);
-
-	return _mixer->playRaw(sound_handle, buffer, size, samples_per_sec, flags);
-}
-
-int SimonState::playWav(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle, byte flags)
-{
-	WaveHeader wave_hdr;
-	uint32 data[2];
-
-	sound_file->seek(offsets[sound], SEEK_SET);
-
-	if (sound_file->read(&wave_hdr, sizeof(wave_hdr)) != sizeof(wave_hdr) ||
-			wave_hdr.riff != MKID('RIFF') || wave_hdr.wave != MKID('WAVE')
-			|| wave_hdr.fmt != MKID('fmt ') || READ_LE_UINT16(&wave_hdr.format_tag) != 1
-			|| READ_LE_UINT16(&wave_hdr.channels) != 1
-			|| READ_LE_UINT16(&wave_hdr.bits_per_sample) != 8) {
-		error("playWav(%d): cannot read RIFF header", sound);
-	}
-
-	sound_file->seek(FROM_LE_32(wave_hdr.size) - sizeof(wave_hdr) + 20, SEEK_CUR);
-
-	data[0] = sound_file->readUint32LE();
-	data[1] = sound_file->readUint32LE();
-	if (												//fread(data, sizeof(data), 1, sound_file) != 1 ||
-			 data[0] != 'atad') {
-		error("playWav(%d): cannot read data header", sound);
-	}
-
-	byte *buffer = (byte *)malloc(data[1]);
-	sound_file->read(buffer, data[1]);
-
-	return _mixer->playRaw(sound_handle, buffer, data[1], FROM_LE_32(wave_hdr.samples_per_sec), flags);
-}
-
-void SimonState::playVoice(uint voice)
-{
-	if (_voice_offsets == NULL)
-		return;
-	
-#ifdef USE_MAD
-	if (_voice_type == FORMAT_MP3) {
-		playMP3(_voice_file, _voice_offsets, voice, &_voice_sound, SoundMixer::FLAG_AUTOFREE);
-	} else {
-#endif
-		if (_voice_type == FORMAT_WAV) {            /* WAVE audio */
-			playWav(_voice_file, _voice_offsets, voice, &_voice_sound, SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
-		} else if (_voice_type == FORMAT_VOC) {      /* VOC audio */
-			playVoc(_voice_file, _voice_offsets, voice, &_voice_sound, SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
-		}
-#ifdef USE_MAD
-	}
-#endif
-}
-
-void SimonState::playEffects(uint sound)
-{
-	if (_effects_offsets == NULL)
-		return;
-
-	if (_effects_paused)
-		return;
-
-	if (_game == GAME_SIMON1TALKIE) {		/* simon 1 talkie */
-#ifdef USE_MAD
-		if (_effects_type == FORMAT_MP3) {
-			playMP3(_effects_file, _effects_offsets, sound, &_effects_sound, SoundMixer::FLAG_AUTOFREE);
-		} else {
-#endif
-			playVoc(_effects_file, _effects_offsets, sound, &_effects_sound, SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
-#ifdef USE_MAD
-		}
-#endif
-	} else if (_game == GAME_SIMON1WIN){ 		/* simon 1 win */
-		playWav(_effects_file, _effects_offsets, sound, &_effects_sound, SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
-	} else if (_game == GAME_SIMON2WIN) {		/* simon 2 win */
-		playWav(_game_file, _effects_offsets, sound, &_effects_sound, SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
-	} else if (_game & GAME_SIMON2) {		/* simon 2 dos / talkie */
-		playVoc(_game_file, _effects_offsets, sound, &_effects_sound, SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
-	} else {					/* simon 1 dos */
-		warning("playEffects(%d)", sound);
-	}
-}
-
-void SimonState::playAmbient(uint sound)
-{
-	if (_effects_offsets == NULL)
-		return;
-
-	if (_ambient_paused)
-		return;
-
-	if (sound == _ambient_playing)
-		return;
-
-	_ambient_playing = sound;
-
-	if (_ambient_sound)
-		_mixer->stop(_ambient_index);
-
-	if (_game & GAME_WIN) {
-		_ambient_index = playWav(_game_file, _effects_offsets, sound, &_ambient_sound,
-			SoundMixer::FLAG_LOOP|SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
-	} else {
-		_ambient_index = playVoc(_game_file, _effects_offsets, sound, &_ambient_sound,
-			SoundMixer::FLAG_LOOP|SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE);
-	}
 }
 
 void SimonState::playMusic(uint music)

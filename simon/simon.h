@@ -26,6 +26,7 @@
 #include "common/engine.h"
 #include "simon/midi.h"
 #include "sound/mixer.h"
+#include "simon/simonsound.h"
 
 /* Various other settings */
 //#define DRAW_IMAGES_DEBUG
@@ -332,11 +333,7 @@ public:
 	int _num_screen_updates;
 	int _vga_tick_counter;
 
-	PlayingSoundHandle _effects_sound;
-	PlayingSoundHandle _voice_sound;
-	PlayingSoundHandle _ambient_sound;
-	int _ambient_index;
-	uint _ambient_playing;
+	SimonSound *_sound;
 
 	bool _effects_paused;
 	bool _ambient_paused;
@@ -521,8 +518,6 @@ public:
 	uint loadTextFile_gme(const char *filename, byte *dst);
 	File *openTablesFile_gme(const char *filename);
 	void closeTablesFile_gme(File *in);
-
-	void readSfxFile(const char *filename);
 
 	void invokeTimeEvent(TimeEvent *te);
 	bool kickoffTimeEvents();
@@ -772,15 +767,6 @@ public:
 
 	void video_putchar_newline(FillOrCopyStruct *fcs);
 	void video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, byte chr);
-
-	void initSound();
-	void playVoice(uint voice);
-	void playEffects(uint sound);
-	void playAmbient(uint sound);
-
-	int playVoc(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle, byte flags);
-	int playWav(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle, byte flags);
-	int playMP3(File *sound_file, uint32 *offsets, uint sound, PlayingSoundHandle *sound_handle, byte flags);
 
 	void playMusic(uint music);
 	void checkTimerCallback();

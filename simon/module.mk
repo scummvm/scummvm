@@ -5,9 +5,10 @@ MODULE_OBJS = \
 	simon/items.o \
 	simon/midi.o \
 	simon/res.o \
+	simon/simonsound.o \
 	simon/simon.o \
 	simon/verb.o \
-	simon/vga.o
+	simon/vga.o \
 
 # Include common rules 
 include common.rules
