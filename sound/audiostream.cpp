@@ -67,7 +67,7 @@ static const StreamFileFormat STREAM_FILEFORMATS[] = {
 	{ NULL, NULL, NULL } // Terminator
 };
 
-AudioStream* AudioStream::openStreamFile(const char* filename, File *fileHandle)
+AudioStream* AudioStream::openStreamFile(const char* filename)
 {
 	char buffer[1024];
 	const uint len = strlen(filename);
@@ -78,6 +78,7 @@ AudioStream* AudioStream::openStreamFile(const char* filename, File *fileHandle)
 	char *ext = &buffer[len+1];
 
 	AudioStream* stream = NULL;
+	File *fileHandle = new File();
 
 	for (int i = 0; i < ARRAYSIZE(STREAM_FILEFORMATS)-1 && stream == NULL; ++i) {
 		strcpy(ext, STREAM_FILEFORMATS[i].fileExtension);
@@ -85,9 +86,12 @@ AudioStream* AudioStream::openStreamFile(const char* filename, File *fileHandle)
 		if (fileHandle->isOpen())
 			stream = STREAM_FILEFORMATS[i].openStreamFile(fileHandle, fileHandle->size());
 	}
+	
+	// Do not reference the file anymore. If the stream didn't incRef the file,
+	// the object will be deleted (and the file be closed).
+	fileHandle->decRef();
 
 	if (stream == NULL) {
-		fileHandle->close();
 		debug(1, "AudioStream: Could not open compressed AudioFile %s", filename);
 	}
 

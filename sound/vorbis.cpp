@@ -102,7 +102,7 @@ static int seek_wrap(void *datasource, ogg_int64_t offset, int whence) {
 static int close_wrap(void *datasource) {
 	file_info *f = (file_info *) datasource;
 
-	f->file->close();
+	f->file->decRef();
 	delete f;
 	return 0;
 }
@@ -193,6 +193,8 @@ class VorbisInputStream : public AudioStream {
 	inline bool eosIntern() const;
 public:
 	VorbisInputStream(OggVorbis_File *file, int duration);
+	~VorbisInputStream();
+
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	int16 read();
@@ -223,6 +225,10 @@ VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration)
 
 	// Read in initial data
 	refill();
+}
+
+VorbisInputStream::~VorbisInputStream() {
+	ov_clear(_ov_file);
 }
 
 inline int16 VorbisInputStream::read() {
@@ -309,8 +315,10 @@ AudioStream *makeVorbisStream(File *file, uint32 size) {
 		delete ov_file;
 		delete f;
 		return 0;
-	} else
+	} else {
+		file->incRef();
 		return new VorbisInputStream(ov_file, 0);
+	}
 }
 
 #endif

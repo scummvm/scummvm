@@ -97,6 +97,8 @@ MP3InputStream::MP3InputStream(File *file, mad_timer_t duration, uint size) {
 	// If a size is specified, we do not perform any further read operations
 	if (size) {
 		_file = 0;
+	} else {
+		_file->incRef();
 	}
 }
 
@@ -106,6 +108,9 @@ MP3InputStream::~MP3InputStream() {
 	mad_stream_finish(&_stream);
 
 	free(_ptr);
+
+	if (_file)
+		_file->decRef();
 }
 
 bool MP3InputStream::init() {

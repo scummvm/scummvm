@@ -36,13 +36,11 @@ BaseAnimationState::~BaseAnimationState() {
 	if (decoder)
 		mpeg2_close(decoder);
 	delete mpgfile;
-	delete sndfile;
 #ifndef BACKEND_8BIT
 	_sys->hideOverlay();
 	free(overlay);
 #endif
-	if (bgSoundStream)
-		delete bgSoundStream;
+	delete bgSoundStream;
 #endif
 }
 
@@ -53,7 +51,6 @@ bool BaseAnimationState::init(const char *name) {
 
 	decoder = NULL;
 	mpgfile = NULL;
-	sndfile = NULL;
 	bgSoundStream = NULL;
 
 #ifdef BACKEND_8BIT
@@ -132,8 +129,7 @@ bool BaseAnimationState::init(const char *name) {
 	ticks = _sys->get_msecs();
 
 	// Play audio
-	sndfile = new File();
-	bgSoundStream = AudioStream::openStreamFile(name, sndfile);
+	bgSoundStream = AudioStream::openStreamFile(name);
 
 	if (bgSoundStream != NULL) {
 		_snd->playInputStream(&bgSound, bgSoundStream, false, 255, 0, -1, false);

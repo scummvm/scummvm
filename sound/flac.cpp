@@ -166,6 +166,8 @@ FlacInputStream::FlacInputStream(File *sourceFile, const uint32 fileStart)
 	_fileInfo.fileStartPos = fileStart;
 	_fileInfo.filePos = fileStart;
 	_fileInfo.fileEndPos = sourceFile->size();
+	
+	_fileInfo.fileHandle->incRef();
 }
 
 FlacInputStream::FlacInputStream(File *sourceFile, const uint32 fileStart, const uint32 fileStop)	
@@ -186,6 +188,8 @@ FlacInputStream::FlacInputStream(File *sourceFile, const uint32 fileStart, const
 	_fileInfo.fileStartPos = fileStart;
 	_fileInfo.filePos = fileStart;
 	_fileInfo.fileEndPos = fileStop;
+	
+	_fileInfo.fileHandle->incRef();
 }
 
 FlacInputStream::~FlacInputStream() {
@@ -195,6 +199,8 @@ FlacInputStream::~FlacInputStream() {
 	}
 	if (_preBuffer.bufData != NULL)
 		delete[] _preBuffer.bufData;
+	
+	_fileInfo.fileHandle->decRef();
 }
 
 inline FLAC__SeekableStreamDecoderState FlacInputStream::getState() const {
@@ -789,10 +795,8 @@ void FlacTrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int star
 
 FlacTrackInfo::~FlacTrackInfo()
 {
-	if (_firstStream)
-		delete _firstStream;
-	if (_file)
-		delete _file;
+	delete _firstStream;
+	delete _file;
 }
 
 DigitalTrackInfo* getFlacTrack(int track)

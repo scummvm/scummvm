@@ -90,7 +90,6 @@ protected:
 #endif
 
 	File *mpgfile;
-	File *sndfile;
 
 	byte buffer[BUFFER_SIZE];
 

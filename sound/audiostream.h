@@ -86,7 +86,7 @@ public:
 	 * @return	an Audiostream ready to use in case of success; 
 	 *			NULL in case of an error (e.g. invalid/nonexisting file)
 	 */
-	static AudioStream* openStreamFile(const char* filename, File *fileHandle);
+	static AudioStream* openStreamFile(const char* filename);
 };
 
 class AppendableAudioStream : public AudioStream {
