@@ -108,7 +108,14 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_noSubtitles = detector->_noSubtitles;
 	_defaultTalkDelay = detector->_talkSpeed;
 	_use_adlib = detector->_use_adlib;
-	
+	memset(&res, 0, sizeof(res));
+	_allocatedSize = 0;
+	_roomResource = 0;
+	_lastLoadedRoom = 0;
+	_expire_counter = 0;
+	_dynamicRoomOffsets = 0;
+	_shakeEnabled = 0;
+
 	if (_gameId == GID_ZAK256) {	// FmTowns is 320x240
 		_realWidth = 320;
 		_realHeight = 240;

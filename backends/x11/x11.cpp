@@ -322,7 +322,7 @@ OSystem_X11::OSystem_X11()
 	current_shake_pos = 0;
 	new_shake_pos = 0;
 	_palette_changed = false;
-	num_of_dirty_square = MAX_NUMBER_OF_DIRTY_SQUARES;
+	num_of_dirty_square = 0;
 	_overlay_visible = false;
 	_mouse_state_changed = true;
 	_mouse_visible = true;
