@@ -991,7 +991,7 @@ int SimonState::runScript()
 					uint d = _array_4[a];
 					if (d != 0)
 						talk_with_speech(d, b);
-				} else if (_game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS || _game == GAME_SIMON2DOS) {
+				} else if (!(_game & GAME_TALKIE)) {
 					const char *s = (const char *)getStringPtrByID(_stringid_array_3[a]);
 					ThreeValues *tv = getThreeValues(b);
 
@@ -1244,7 +1244,7 @@ void SimonState::o_177()
 			offs = getOffsetOfChild2Param(child, 0x100);
 			talk_with_speech(child->array[offs] + 3550, a);
 		}
-	} else if (_game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS || _game == GAME_SIMON2DOS) {
+	} else if (!(_game & GAME_TALKIE)) {
 		if (child != NULL && child->avail_props & 1) {
 			const char *s = (const char *)getStringPtrByID(child->array[0]);
 			char buf[256];
