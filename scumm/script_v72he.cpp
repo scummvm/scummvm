@@ -48,7 +48,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 00 */
 		OPCODE(o6_pushByte),
 		OPCODE(o6_pushWord),
-		OPCODE(o6_pushByteVar),
+		OPCODE(o72_pushDWordVar),
 		OPCODE(o6_pushWordVar),
 		/* 04 */
 		OPCODE(o72_getString),
@@ -379,6 +379,17 @@ const char *ScummEngine_v72he::getOpcodeDesc(byte i) {
 	return _opcodesV72he[i].desc;
 }
 
+void ScummEngine_v72he::o72_pushDWordVar() {
+	int a;
+	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
+		uint32 oldoffs = _scriptPointer - _scriptOrgPointer;
+		getScriptBaseAddress();
+		_scriptPointer = _scriptOrgPointer + oldoffs;
+	}
+	a = READ_LE_UINT32(_scriptPointer);
+	_scriptPointer += 4;
+	push(a);
+}
 
 void ScummEngine_v72he::o72_getString() {
 	int len;

@@ -654,6 +654,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	/* Version 7 script opcodes */
+	void o72_pushDWordVar();
 	void o72_getString();
 	void o72_compareStackList();
 	void o72_objectX();
