@@ -29,6 +29,7 @@ void handleInput(struct mapledev *pad, int16 &mouse_x, int16 &mouse_y,
 {
   int lmb=0, rmb=0, newkey=0;
   static int lastkey = 0;
+  static byte lastlmb = 0, lastrmb = 0;
   for(int i=0; i<4; i++, pad++)
     if(pad->func & MAPLE_FUNC_CONTROLLER) {
       int buttons = pad->cond.controller.buttons;
@@ -104,14 +105,20 @@ void handleInput(struct mapledev *pad, int16 &mouse_x, int16 &mouse_y,
       }
     }
 
-  if(lmb)
+  if(lmb && !lastlmb) {
     leftBtnPressed |= msClicked|msDown;
-  else
+    lastlmb = 1;
+  } else if(lastlmb && !lmb) {
     leftBtnPressed &= ~msDown;
-  if(rmb)
+    lastlmb = 0;
+  }
+  if(rmb && !lastrmb) {
     rightBtnPressed |= msClicked|msDown;
-  else
+    lastrmb = 1;
+  } else if(lastrmb && !rmb) {
     rightBtnPressed &= ~msDown;    
+    lastrmb = 0;
+  }
 
   if(!newkey)
     lastkey = 0;
