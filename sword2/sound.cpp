@@ -38,16 +38,18 @@
 
 namespace Sword2 {
 
-// initialise the fxq by clearing all the entries
+/**
+ * Initialise the fxq by clearing all the entries.
+ */
 
 void Sword2Engine::initFxQueue(void) {
-	for (int i = 0; i < FXQ_LENGTH; i++) {
-		_fxQueue[i].resource = 0;	// 0 resource means 'empty' slot
-		_fxQueue[i].fetchId = 0;	// Not being fetched.
-	}
+	for (int i = 0; i < FXQ_LENGTH; i++)
+		_fxQueue[i].resource = 0;
 }
 
-// process the fx queue once every game cycle
+/**
+ * Process the fx queue once every game cycle
+ */
 
 void Sword2Engine::processFxQueue(void) {
 	for (int i = 0; i < FXQ_LENGTH; i++) {
@@ -78,8 +80,6 @@ void Sword2Engine::processFxQueue(void) {
 		}
 	}
 }
-
-// called from processFxQueue only
 
 void Sword2Engine::triggerFx(uint8 j) {
 	byte *data;
@@ -114,7 +114,9 @@ void Sword2Engine::triggerFx(uint8 j) {
 		debug(5, "SFX ERROR: playFx() returned %.8x", rv);
 }
 
-// Stops all looped & random fx and clears the entire queue
+/**
+ * Stop all looped & random fx and clear the entire queue
+ */
 
 void Sword2Engine::clearFxQueue(void) {
 	// stop all fx & remove the samples from sound memory
@@ -140,8 +142,6 @@ void Sword2Engine::unpauseAllSound(void) {
 	_sound->unpauseSpeech();
 	_sound->unpauseFx();
 }
-
-// called from script only
 
 int32 Logic::fnPlayFx(int32 *params) {
 	// params:	0 sample resource id
@@ -269,7 +269,9 @@ int32 Logic::fnSoundFetch(int32 *params) {
 	return IR_CONT;
 }
 
-// to alter the volume and pan of a currently playing fx
+/**
+ * Alter the volume and pan of a currently playing fx
+ */
 
 int32 Logic::fnSetFxVolAndPan(int32 *params) {
 	// params:	0 id of fx (ie. the id returned in 'result' from
@@ -285,7 +287,9 @@ int32 Logic::fnSetFxVolAndPan(int32 *params) {
 	return IR_CONT;
 }
 
-// to alter the volume  of a currently playing fx
+/**
+ * Alter the volume of a currently playing fx
+ */
 
 int32 Logic::fnSetFxVol(int32 *params) {
 	// params:	0 id of fx (ie. the id returned in 'result' from
@@ -296,8 +300,6 @@ int32 Logic::fnSetFxVol(int32 *params) {
 	_vm->_sound->setFxIdVolume(1 + params[0], params[1]);
 	return IR_CONT;
 }
-
-// called from script only
 
 int32 Logic::fnStopFx(int32 *params) {
 	// params:	0 position in queue
@@ -326,8 +328,6 @@ int32 Logic::fnStopFx(int32 *params) {
 	return IR_CONT;
 }
 
-// called from script only
-
 int32 Logic::fnStopAllFx(int32 *params) {
 	// Stops all looped & random fx and clears the entire queue
 
@@ -342,8 +342,10 @@ int32 Logic::fnPrepareMusic(int32 *params) {
 	return IR_CONT;
 }
 
-// Start a tune playing, to play once or to loop until stopped or next one
-// played
+/**
+ * Start a tune playing, to play once or to loop until stopped or next one
+ * played.
+ */
 
 int32 Logic::fnPlayMusic(int32 *params) {
 	// params:	0 tune id
@@ -391,8 +393,6 @@ int32 Logic::fnPlayMusic(int32 *params) {
 
 	return IR_CONT;
 }
-
-// called from script only
 
 int32 Logic::fnStopMusic(int32 *params) {
 	// params:	none

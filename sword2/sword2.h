@@ -323,7 +323,6 @@ public:
 
 	struct FxQueueEntry {
 		uint32 resource;	// resource id of sample
-		uint32 fetchId;		// Id of resource in PSX CD queue. :)
 		uint16 delay;		// cycles to wait before playing (or 'random chance' if FX_RANDOM)
 		uint8 volume;		// 0..16
 		int8 pan;		// -16..16
