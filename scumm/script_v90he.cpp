@@ -452,7 +452,7 @@ void ScummEngine_v90he::o90_getSegmentAngle() {
 }
 
 void ScummEngine_v90he::o90_startScriptUnk() {
-	int args[24];
+	int args[25];
 	int script, cycle;
 	byte flags;
 
@@ -464,7 +464,7 @@ void ScummEngine_v90he::o90_startScriptUnk() {
 }
 
 void ScummEngine_v90he::o90_jumpToScriptUnk() {
-	int args[24];
+	int args[25];
 	int script, cycle;
 	byte flags;
 

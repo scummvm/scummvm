@@ -819,7 +819,7 @@ void ScummEngine_v6::o6_jump() {
 }
 
 void ScummEngine_v6::o6_startScript() {
-	int args[24];
+	int args[25];
 	int script, flags;
 
 	getStackList(args, ARRAYSIZE(args));
@@ -857,7 +857,7 @@ void ScummEngine_v6::o6_startScript() {
 }
 
 void ScummEngine_v6::o6_jumpToScript() {
-	int args[24];
+	int args[25];
 	int script, flags;
 
 	getStackList(args, ARRAYSIZE(args));
@@ -868,7 +868,7 @@ void ScummEngine_v6::o6_jumpToScript() {
 }
 
 void ScummEngine_v6::o6_startScriptQuick() {
-	int args[24];
+	int args[25];
 	int script;
 	getStackList(args, ARRAYSIZE(args));
 	script = pop();
@@ -876,7 +876,7 @@ void ScummEngine_v6::o6_startScriptQuick() {
 }
 
 void ScummEngine_v6::o6_startScriptQuick2() {
-	int args[24];
+	int args[25];
 	int script;
 	getStackList(args, ARRAYSIZE(args));
 	script = pop();
@@ -884,7 +884,7 @@ void ScummEngine_v6::o6_startScriptQuick2() {
 }
 
 void ScummEngine_v6::o6_startObject() {
-	int args[24];
+	int args[25];
 	int script, entryp;
 	int flags;
 	getStackList(args, ARRAYSIZE(args));
@@ -895,7 +895,7 @@ void ScummEngine_v6::o6_startObject() {
 }
 
 void ScummEngine_v6::o6_startObjectQuick() {
-	int args[24];
+	int args[25];
 	int script, entryp;
 	getStackList(args, ARRAYSIZE(args));
 	entryp = pop();
@@ -930,7 +930,7 @@ void ScummEngine_v6::o6_endCutscene() {
 }
 
 void ScummEngine_v6::o6_cutscene() {
-	int args[24];
+	int args[25];
 	getStackList(args, ARRAYSIZE(args));
 	beginCutscene(args);
 }
