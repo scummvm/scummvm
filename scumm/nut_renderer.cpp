@@ -254,8 +254,6 @@ void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask, 
 	// This way we achieve the exact look as the original CMI had. However,
 	// the question remains whether they did it this way, too, or if there is
 	// some "font shadow" resource we don't know yet.
-	// One problem remains: the fonts on the save/load screen don't have a
-	// shadow. So how do we know whether to draw text with or without shadow?
 
 	int offsetX[7] = { -1,  0, 1, 0, 1, 2, 0 };
 	int offsetY[7] = {  0, -1, 0, 1, 2, 1, 0 };

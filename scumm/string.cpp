@@ -160,12 +160,6 @@ void ScummEngine::CHARSET_1() {
 	_talkDelay = 60;
 
 	if (!_keepText) {
-		if (_version <= 3 && _gameId != GID_LOOM) {
-// FIXME: Remove this commented out code eventually
-//			if (!_charset->_hasMask)
-//				warning("_hasMask mismatch (case C) - please report to Fingolfin");
-//			_charset->_hasMask = true;
-		}
 		_charset->restoreCharsetBg();
 	}
 
@@ -313,10 +307,9 @@ void ScummEngine::CHARSET_1() {
 
 	_charsetBufPos = buffer - _charsetBuffer;
 
-	// FIXME: Remove this and the next three lines eventually!
+	// FIXME: Remove this and the next two lines eventually!
 	if (_charset->_hasMask != (_charset->_str.left != -1))
 		warning("_hasMask mismatch (case A %d) - please report to Fingolfin", _charset->_hasMask);
-//	_charset->_hasMask = (_charset->_str.left != -1);
 }
 
 
@@ -445,10 +438,9 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	_string[a].xpos = _charset->_str.right + 8;	// Indy3: Fixes Grail Diary text positioning
 
 	if (_version >= 7) {
-		// FIXME: Remove this and the next three lines eventually!
+		// FIXME: Remove this and the next two lines eventually!
 		if (!_charset->_hasMask)
 			warning("_hasMask mismatch (case B %d) - please report to Fingolfin", _charset->_hasMask);
-		_charset->_hasMask = true;
 	}
 }
 
