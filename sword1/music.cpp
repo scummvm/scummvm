@@ -63,12 +63,34 @@ WaveAudioStream::~WaveAudioStream(void) {
 
 int WaveAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = ((int)_samplesLeft < numSamples) ? (int)_samplesLeft : numSamples;
+
+#ifdef __PALM_OS__
+	int cnt = samples;
+	int size = (_bitsPerSample == 16 ? samples * 2 : samples);
+	void *sound = malloc(size);
+	
+	_sourceFile->read(sound, size);
+
+	if (_bitsPerSample == 16) {
+		int16 *src = (int16 *)sound;
+		while(cnt--)
+			*buffer++ = (int16)READ_LE_UINT16(src++);
+
+	} else {
+		int8 *src = (int8 *)sound;
+		while(cnt--)
+			*buffer++ = (int16)*src++ << 8;
+	}
+
+	free(sound);
+#else
 	if (_bitsPerSample == 16)
 		for (int cnt = 0; cnt < samples; cnt++)
 			*buffer++ = (int16)_sourceFile->readUint16LE();
 	else
 		for (int cnt = 0; cnt < samples; cnt++)
 			*buffer++ = (int16)_sourceFile->readByte() << 8;
+#endif
 	_samplesLeft -= samples;
 	return samples;
 }
