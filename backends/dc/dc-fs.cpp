@@ -18,6 +18,7 @@
  * $Header$
  */
 
+#include <common/stdafx.h>
 #include <backends/fs/fs.h>
 #include <common/engine.h>
 
