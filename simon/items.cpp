@@ -698,7 +698,7 @@ int SimonState::runScript() {
 			break;
 
 		case 127:{									/* deals with music */
-				o_unk_127();
+				o_play_music_resource();
 			}
 			break;
 
@@ -750,10 +750,8 @@ int SimonState::runScript() {
 			break;
 
 		case 134:{
-				_vc70_var2 = -1;
 				midi.stop();
 				_last_music_played = -1;
-				_vc72_var1 = -1;
 			}
 			break;
 
@@ -1431,7 +1429,7 @@ void SimonState::o_unk_132_helper_2(FillOrCopyStruct *fcs, int x) {
 	video_putchar(fcs, 8);
 }
 
-void SimonState::o_unk_127() {
+void SimonState::o_play_music_resource() {
 	int music = getVarOrWord();
 	int track = getVarOrWord();
 
@@ -1446,32 +1444,18 @@ void SimonState::o_unk_127() {
 	if (_game & GF_SIMON2) {
 		int loop = getVarOrByte();
 
-		if (_debugMode)
-			debug (0, "o_unk_127 (%d, %d, %d): Load/play music resource", music, track, loop);
-
 		midi.setLoop (loop != 0);
-
 		if (_last_music_played != music) {
-			playMusic (music);
+			loadMusic (music);
 			_last_music_played = music;
 			_next_music_to_play = -1;
-			_vc72_var1 = _vc72_var2 = _vc72_var3 = -1;
 		}
-
-		if (track == _vc72_var1 || track == 999)
-			return;
-
-		_vc72_var1 = track;
-		_vc70_var1 = -1;
-		_vc70_var2 = -1;
-		_vc72_var2 = -1;
-		_vc72_var3 = -1;
-		midi_play (track);
+		midi.jump (track, 0);
 	} else {
 		if (music != _last_music_played) {
 			_last_music_played = music;
-			playMusic (music);
-			midi_play (track);
+			loadMusic (music);
+			midi.jump (track, 0);
 		}
 	}
 }

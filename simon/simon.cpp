@@ -256,11 +256,6 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 	_vga_var5 = 0;
 	_vga_var8 = 0;
 
-	_vc72_var1 = 0;
-	_vc72_var2 = 0;
-	_vc72_var3 = 0;
-	_vc70_var1 = 0;
-	_vc70_var2 = 0;
 	_vga_var7 = 0;
 
 	_script_cond_a = 0;
@@ -3327,7 +3322,7 @@ void SimonState::processSpecialKeys() {
 				if (midi._midi_sfx_toggle)
 					midi.stop();
 				else
-					playMusic(_last_music_played);
+					loadMusic(_last_music_played);
 			} else
 				_sound->effectsPause(_effects_paused ^= 1);
 			break;
@@ -5277,14 +5272,7 @@ bool SimonState::load_game(uint slot) {
 	return true;
 }
 
-void SimonState::midi_play (uint track) {
-	if (track == 999)
-		return;
-	midi.jump (track, 0);
-}
-
-
-void SimonState::playMusic (uint music) {
+void SimonState::loadMusic (uint music) {
 	if (midi._midi_sfx_toggle)
 		return;
 
@@ -5298,9 +5286,6 @@ void SimonState::playMusic (uint music) {
 		}
 
 		_last_music_played = music;
-		_vc72_var1 = 999;
-		_vc70_var1 = -1;
-		_vc72_var3 = -1;
 		_next_music_to_play = -1;
 	} else { // Simon 1 music
 		if (_game & GF_AMIGAS) {

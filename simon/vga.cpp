@@ -99,10 +99,10 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_66_skip_if_nz,
 	&SimonState::vc_67_skip_if_ge,
 	&SimonState::vc_68_skip_if_le,
-	&SimonState::vc_69,
-	&SimonState::vc_70,
-	&SimonState::vc_71,
-	&SimonState::vc_72,
+	&SimonState::vc_69_play_track,
+	&SimonState::vc_70_queue_music,
+	&SimonState::vc_71_check_music_queue,
+	&SimonState::vc_72_play_track_2,
 	&SimonState::vc_73_set_op189_flag,
 	&SimonState::vc_74_clear_op189_flag,
 };
@@ -1693,7 +1693,7 @@ void SimonState::vc_62_palette_thing() {
 	if (!_video_var_3) {
 		if (_game & GF_SIMON2) {
 			if (_next_music_to_play != -1)
-				playMusic(_next_music_to_play);
+				loadMusic(_next_music_to_play);
 		}
 	} else
 		_video_var_3 = true;
@@ -1802,13 +1802,10 @@ void SimonState::vc_68_skip_if_le() {
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_69() {
+void SimonState::vc_69_play_track() {
 	// Simon2
 	int16 track = vc_read_next_word();
 	int16 loop = vc_read_next_word();
-
-	if (_debugMode)
-		debug (0, "vc_69(%d,%d): Play track", track, loop);
 
 	// Jamieson630:
 	// This is a "play track". The original
@@ -1825,29 +1822,11 @@ void SimonState::vc_69() {
 	// specifying a non-valid track number (999 or -1)
 	// as a means of stopping what music is currently
 	// playing.
-	if (_vc72_var1 != track) {
-		midi.setLoop (loop != 0);
-		midi_play (track);
-		_vc72_var1 = track;
-		_vc72_var2 = -1;
-		_vc72_var3 = -1;
-		_vc70_var1 = -1;
-		_vc70_var2 = loop;
-	}
-/*
-	// ORIGINAL TRANSLATION FROM DISASSEMBLY
-	if (_vc72_var1 == 999 || _vc72_var1 == -1) {
-		_vc70_var2 = loop;
-		midi_play (track);
-		_vc72_var1 = track;
-	} else if (_vc72_var1 != track) {
-		_vc72_var3 = track;
-		_vc72_var2 = loop; // (a & 0xFF) << 8 | (a >> 8);
-	}
-*/
+	midi.setLoop (loop != 0);
+	midi.jump (track, 0);
 }
 
-void SimonState::vc_70() {
+void SimonState::vc_70_queue_music() {
 	// Simon2
 	uint16 track = vc_read_next_word();
 	uint16 loop = vc_read_next_word();
@@ -1857,50 +1836,27 @@ void SimonState::vc_70() {
 	// It specifies whether to loop the current
 	// track and, if not, whether to switch to
 	// a different track upon completion.
-	_vc70_var1 = track;
-	_vc70_var2 = loop;
-
 	midi.setLoop (loop != 0);
-	if (_vc70_var1 != -1 && _vc70_var1 != 999)
+	if (track != -1 && track != 999)
 		midi.queueTrack ((byte) track, 0);
-
-	if (_debugMode)
-		debug (0, "vc_70 (%d,%d): Set end of track conditions", track, loop);
 }
 
-void SimonState::vc_71() {
+void SimonState::vc_71_check_music_queue() {
 	// Simon2
 	// Jamieson630:
 	// This command skips the next instruction
 	// unless (1) there is a track playing, AND
 	// (2) there is a track queued to play after it.
-	if (_debugMode)
-		debug (0, "vc_71(): Is music playing? %s", midi.isPlaying(true) ? "YES" : "NO");
-
 	if (!midi.isPlaying (true))
 		vc_skip_next_instruction();
-/*
-	// ORIGINAL TRANSLATION FROM DISASSEMBLY
-	if (_vc72_var3 == -1 && _vc70_var1 == -1)
-		vc_skip_next_instruction();
-*/
 }
 
-void SimonState::vc_72() {
+void SimonState::vc_72_play_track_2() {
 	// Simon2
 	// Jamieson630:
-	// This is a "play or stop track". The original
-	// design stored the track to play if one was
-	// already in progress, so that the next time a
-	// "fill MIDI stream" event occured, the MIDI
-	// player would find the change and switch
-	// tracks. We use a different architecture that
-	// allows for an immediate response here, but
-	// we'll simulate the variable changes so other
-	// scripts don't get thrown off.
-
-	// NOTE: This opcode looks very similar in function
-	// to vc_72(), except that this opcode may allow
+	// This is a "play or stop track". Note that
+	// this opcode looks very similar in function
+	// to vc_69(), except that this opcode may allow
 	// for specifying a track of 999 or -1 in order to
 	// stop the music. We'll code it that way for now.
 
@@ -1913,30 +1869,12 @@ void SimonState::vc_72() {
 	int16 track = vc_read_next_word();
 	int16 loop = vc_read_next_word();
 
-	if (_debugMode)
-		debug (0, "vc_72 (%d, %d): Play or stop track", track, loop);
-
-	if (track != _vc72_var1) {
-		if (track == -1 || track == 999) {
-			midi.stop();
-			_vc72_var1 = -1;
-		} else {
-			midi.setLoop (loop != 0);
-			midi_play (track);
-			_vc72_var1 = track;
-			_vc70_var2 = loop;
-		}
-		_vc72_var3 = -1;
+	if (track == -1 || track == 999) {
+		midi.stop();
+	} else {
+		midi.setLoop (loop != 0);
+		midi.jump (track, 0);
 	}
-/*
-	// ORIGINAL TRANSLATION FROM DISASSEMBLY
-	uint16 a = vc_read_next_word();
-	uint16 b = vc_read_next_word();
-	if (a != _vc72_var1) {
-		_vc72_var2 = b;
-		_vc72_var3 = a;
-	}
-*/
 }
 
 void SimonState::vc_73_set_op189_flag() {

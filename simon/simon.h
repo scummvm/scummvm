@@ -198,8 +198,6 @@ public:
 	int _x_scroll, _vga_var1, _vga_var2, _vga_var3, _vga_var5;
 	byte _vga_var8;
 
-	int16 _vc72_var1, _vc72_var2, _vc72_var3;
-	int16 _vc70_var1, _vc70_var2;
 	byte *_vga_var7;
 
 	int16 _script_cond_a, _script_cond_b, _script_cond_c;
@@ -468,7 +466,7 @@ public:
 	void skip_speech();
 	void o_unk_120(uint a);
 	void o_unk_126();
-	void o_unk_127();
+	void o_play_music_resource();
 	void o_save_game();
 	void o_load_game();
 	void o_quit_if_user_presses_y();
@@ -670,10 +668,10 @@ public:
 	void vc_66_skip_if_nz();
 	void vc_67_skip_if_ge();
 	void vc_68_skip_if_le();
-	void vc_69();
-	void vc_70();
-	void vc_71();
-	void vc_72();
+	void vc_69_play_track();
+	void vc_70_queue_music();
+	void vc_71_check_music_queue();
+	void vc_72_play_track_2();
 	void vc_73_set_op189_flag();
 	void vc_74_clear_op189_flag();
 
@@ -768,8 +766,7 @@ public:
 	void video_putchar_newline(FillOrCopyStruct *fcs);
 	void video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, byte chr);
 
-	void midi_play(uint music);
-	void playMusic(uint music);
+	void loadMusic(uint music);
 	void checkTimerCallback();
 	void delay(uint delay);
 
