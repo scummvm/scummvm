@@ -59,7 +59,7 @@ int BrowserDialog::runModal() {
 	err = NavGetDefaultDialogCreationOptions(&options);
 	assert(err == noErr);
 	options.windowTitle = _titleRef;
-	options.message = CFSTR("This is a test!");
+	options.message = CFSTR("Select your game directory");
 	options.modality = kWindowModalityAppModal;
 	
 	err = NavCreateChooseFolderDialog(&options, 0, 0, 0, &dialogRef);
