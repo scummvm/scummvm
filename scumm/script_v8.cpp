@@ -829,7 +829,7 @@ void Scumm_v8::o8_cursorCommand() {
 		break;
 	case 0xE5:		// SO_CURSOR_HOTSPOT Set cursor hotspot
 		a = pop();
-		setCursorHotspot2(pop(), a);
+		setCursorHotspot(pop(), a);
 		break;
 	case 0xE6:		// SO_CURSOR_TRANSPARENT Set cursor transparent color
 		makeCursorColorTransparent(pop());

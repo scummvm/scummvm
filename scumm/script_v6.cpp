@@ -820,7 +820,7 @@ void Scumm_v6::o6_cursorCommand() {
 		}
 	case 0x9A:
 		a = pop();
-		setCursorHotspot2(pop(), a);
+		setCursorHotspot(pop(), a);
 		break;
 	case 0x9C:										/* init charset */
 		initCharset(pop());

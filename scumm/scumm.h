@@ -815,7 +815,7 @@ public:
 
 	void setCursor(int cursor);
 	void setCursorImg(uint img, uint room, uint imgindex);
-	void setCursorHotspot2(int x, int y);
+	void setCursorHotspot(int x, int y);
 	void grabCursor(int x, int y, int w, int h);
 	void grabCursor(byte *ptr, int width, int height);
 	void makeCursorColorTransparent(int a);

@@ -633,7 +633,7 @@ void Scumm_v5::o5_cursorCommand() {
 		i = getVarOrDirectByte(0x80);
 		j = getVarOrDirectByte(0x40);
 		k = getVarOrDirectByte(0x20);
-		setCursorHotspot2(j, k);
+		setCursorHotspot(j, k);
 		break;
 	case 12:											/* init cursor */
 		setCursor(getVarOrDirectByte(0x80));

@@ -3218,7 +3218,7 @@ void Scumm::setCursor(int cursor) {
 		warning("setCursor(%d)", cursor);
 }
 
-void Scumm::setCursorHotspot2(int x, int y) {
+void Scumm::setCursorHotspot(int x, int y) {
 	_cursor.hotspotX = x;
 	_cursor.hotspotY = y;
 	// FIXME this hacks around offset cursor in the humongous games
@@ -3230,7 +3230,7 @@ void Scumm::setCursorHotspot2(int x, int y) {
 
 void Scumm::updateCursor() {
 	_system->set_mouse_cursor(_grabbedCursor, _cursor.width, _cursor.height,
-														_cursor.hotspotX, _cursor.hotspotY);
+	                          _cursor.hotspotX, _cursor.hotspotY);
 }
 
 void Scumm::animateCursor() {
@@ -3272,14 +3272,18 @@ void Scumm::decompressDefaultCursor(int idx) {
 	// FIXME: None of the stock cursors are right for Loom. Why is that?
 
 	if ((_gameId == GID_LOOM256) || (_gameId == GID_LOOM)) {
-		int w;
+		int w = 0;
 
 		_cursor.width = 8;
 		_cursor.height = 8;
 		_cursor.hotspotX = 0;
 		_cursor.hotspotY = 0;
+		
+		// FIXME - this corrects the cursor hotspot in Loom (EGA)
+		if (_gameId == GID_LOOM)
+			_cursor.hotspotY = 15;
 
-		for (i = 0, w = 0; i < 8; i++) {
+		for (i = 0; i < 8; i++) {
 			w += (i >= 6) ? -2 : 1;
 			for (j = 0; j < w; j++)
 				_grabbedCursor[i * 8 + j] = color;

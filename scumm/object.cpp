@@ -1250,17 +1250,17 @@ void Scumm::setCursorImg(uint img, uint room, uint imgindex) {
 	findObjectInRoom(&foir, foCodeHeader | foImageHeader | foCheckAlreadyLoaded, img, room);
 
 	if (_features & GF_AFTER_V8) {
-		setCursorHotspot2(READ_LE_UINT32(&foir.imhd->v8.hotspot[0].x),
+		setCursorHotspot(READ_LE_UINT32(&foir.imhd->v8.hotspot[0].x),
 		                  READ_LE_UINT32(&foir.imhd->v8.hotspot[0].y));
 		w = READ_LE_UINT32(&foir.imhd->v8.width) >> 3;
 		h = READ_LE_UINT32(&foir.imhd->v8.height) >> 3;
 	} else if (_features & GF_AFTER_V7) {
-		setCursorHotspot2(READ_LE_UINT16(&foir.imhd->v7.hotspot[0].x),
+		setCursorHotspot(READ_LE_UINT16(&foir.imhd->v7.hotspot[0].x),
 		                  READ_LE_UINT16(&foir.imhd->v7.hotspot[0].y));
 		w = READ_LE_UINT16(&foir.imhd->v7.width) >> 3;
 		h = READ_LE_UINT16(&foir.imhd->v7.height) >> 3;
 	} else {
-		setCursorHotspot2(READ_LE_UINT16(&foir.imhd->old.hotspot[0].x),
+		setCursorHotspot(READ_LE_UINT16(&foir.imhd->old.hotspot[0].x),
 		                  READ_LE_UINT16(&foir.imhd->old.hotspot[0].y));
 		w = READ_LE_UINT16(&foir.cdhd->v6.w) >> 3;
 		h = READ_LE_UINT16(&foir.cdhd->v6.h) >> 3;
