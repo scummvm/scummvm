@@ -815,7 +815,7 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 
 	clip.clip(maxw, maxh);
 
-	if (!clip.isValidRect())
+	if ((clip.left >= clip.right) || (clip.top >= clip.bottom))
 		return 0;
 
 	if (_draw_top > clip.top)
@@ -1020,7 +1020,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 		clip.bottom = maxh;
 	}
 
-	if (!clip.isValidRect())
+	if ((clip.left >= clip.right) || (clip.top >= clip.bottom))
 		return 0;
 
 	if (_draw_top > clip.top)
