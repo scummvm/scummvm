@@ -836,7 +836,6 @@ void ScummEngine_v72he::o72_unknownCE() {
 	int c =	pop();
 	int d =	pop();
 	warning("o72_unknownCE stub (%d, %d, %d, %d)", d, c, b, a);
-	push(4000);
 }
 
 void ScummEngine_v72he::shuffleArray(int num, int minIdx, int maxIdx) {
