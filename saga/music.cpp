@@ -148,6 +148,7 @@ void MusicPlayer::stopMusic() {
 	if (_parser) {
 		_parser->unloadMusic();
 		delete _parser;
+		_parser = NULL;
 	}
 }
 
