@@ -38,10 +38,23 @@ enum {
 
 class Sound {
 protected:
+	enum SoundMode {
+		kVOCMode,
+		kMP3Mode,
+		kVorbisMode,
+		kFlacMode
+	};
+
+	ScummEngine *_vm;
+
 	int16 _soundQuePos, _soundQue[0x100];
 	int16 _soundQue2Pos, _soundQue2[10];
 
 	File *_sfxFile;
+	SoundMode _soundMode;	
+	MP3OffsetTable *_offsetTable;	// For compressed audio
+	int _numSoundEffects;		// For compressed audio
+
 	uint32 _talk_sound_a1, _talk_sound_a2, _talk_sound_b1, _talk_sound_b2;
 	byte _talk_sound_mode;
 	int _talk_sound_frame;
@@ -50,14 +63,7 @@ protected:
 	uint16 _mouthSyncTimes[64];
 	uint _curSoundPos;
 
-	MP3OffsetTable *offset_table;	// SO3 MP3 compressed audio
-	int num_sound_effects;		// SO3 MP3 compressed audio
-	enum {  kMP3Mode, kVorbisMode, kFlacMode } _sound_mode;	
-
 	int _currentCDSound;
-
-	ScummEngine *_vm;
-
 public:
 	PlayingSoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
 	bool _soundsPaused;
