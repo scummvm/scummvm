@@ -726,7 +726,8 @@ byte CostumeRenderer::drawOneSlot(Actor *a, int slot) {
 	_srcptr = _loaded._ptr + READ_LE_UINT16(_frameptr + code*2);
 
 	if (code != 0x7B) {
-		return mainRoutine(a, slot, code);
+		if( _vm->_features & GF_OLD256 && code <0x79)
+			return mainRoutine(a, slot, code);
 	}
 #endif
 
@@ -786,9 +787,6 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	int anim;
 	LoadedCostume lc;
 
-	if(_gameId == GID_INDY3_256) /*FIXME*/
-		return;
-	
 	loadCostume(&lc, a->costume);
 
 	anim = cost_frameToAnim(a, frame);
@@ -813,9 +811,12 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	i = 0;
 	do {
 		if (mask&0x8000) {
-			if(_features & GF_OLD256) {
+			if(_features & GF_OLD256 ) {
+				j = 0;
 				j = *(r);
 				r++;
+				if(j==0xFF)
+					j=0xFFFF;
 			} else {
 				j = READ_LE_UINT16(r);
 				r+=2;
