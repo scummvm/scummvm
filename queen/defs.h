@@ -57,10 +57,11 @@ enum Direction {
 
 
 enum {
-	INK_BG_PANEL      = 0xE2,
-	INK_SELECT        = 17,
+	INK_BG_PANEL      = 226,
 	INK_JOURNAL       = 16,
-	INK_NORMAL        = 1,
+	INK_CMD_SELECT    = 17,
+	INK_CMD_NORMAL    = 1,
+	INK_CMD_LOCK      = 234,
 	INK_TALK_NORMAL   = 1,
 	INK_JOE           = 17,
 	INK_OUTLINED_TEXT = 16

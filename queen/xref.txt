@@ -16,12 +16,13 @@ COMMAND
 =======
 ALTER_DEFAULT()				Command::alterDefault
 CLEAR_COMMAND()				Command::clear
+CHECK_PLAYER()				Command::checkPlayer
 EXECUTE_ACTION()			Command::executeCurrentAction
 FIND_DEFAULT()				Command::findDefault
-LOOK()
-LOOK_ICON()
+LOOK()						Command::look
+LOOK_ICON()					Command::lookCurrentIcon
 LOOK_ITEM()					Command::lookCurrentItem
-LOOK_ROOM()
+LOOK_ROOM()					Command::lookCurrentRoom
 OPEN_CLOSE_OTHER()			Command::openOrCloseAssociatedObject
 P1_SET_CONDITIONS()			Command::setConditions
 P2_SET_AREAS()				Command::setAreas
@@ -34,16 +35,16 @@ SELECT_VERB()				Command::grabSelectedVerb
 -
 ACTION,ACTION2				Command::_action*
 CLEVEL						Command::_commandLevel
-COM_A						Logic::_cmdArea
-COM_A_MAX					Logic::_numCmdArea
-COM_O						Logic::_cmdObject
-COM_O_MAX					Logic::_numCmdObject
-COM_G						Logic::_cmdGameState
-COM_G_MAX					Logic::_numCmdGameState
-COM_I						Logic::_cmdInventory
-COM_I_MAX					Logic::_numCmdInventory
-COM_LIST					Logic::_cmdList
-COM_LIST_MAX				Logic::_numCmdList
+COM_A						Command::_cmdArea
+COM_A_MAX					Command::_numCmdArea
+COM_O						Command::_cmdObject
+COM_O_MAX					Command::_numCmdObject
+COM_G						Command::_cmdGameState
+COM_G_MAX					Command::_numCmdGameState
+COM_I						Command::_cmdInventory
+COM_I_MAX					Command::_numCmdInventory
+COM_LIST					Command::_cmdList
+COM_LIST_MAX				Command::_numCmdList
 COMMANDstr					Command::_command
 DEFCOMM						Command::_defaultVerb
 OLDVERB,VERB				Command::_*verb*
@@ -418,9 +419,8 @@ zones						Logic::_zones
 (UNSORTED)
 ==========
 in()						defs.h InRange() macro
-CHECK_PLAYER()
 find_cd_cut()				findCdCut
-find_cd_desc()
+find_cd_desc()				*not needed, see Logic::joeSpeak()*
 -
 Kstr				
 bank9

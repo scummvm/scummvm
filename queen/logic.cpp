@@ -26,6 +26,7 @@
 #include "queen/display.h"
 #include "queen/graphics.h"
 #include "queen/input.h"
+#include "queen/talk.h"
 #include "queen/walk.h"
 
 
@@ -167,6 +168,57 @@ void State::alterDefaultVerb(uint16 *objState, Verb v) {
 }
 
 
+void Command_::readAllCommandsFrom(byte *&ptr) {
+
+	uint16 i;
+
+	// Command List Data
+	_numCmdList = READ_BE_UINT16(ptr); ptr += 2;
+
+	_cmdList = new CmdListData[_numCmdList + 1];
+	memset(&_cmdList[0], 0, sizeof(CmdListData));
+	for (i = 1; i <= _numCmdList; i++) {
+		_cmdList[i].readFrom(ptr);
+	}
+	
+	// Command AREA
+	_numCmdArea = READ_BE_UINT16(ptr); ptr += 2;
+
+	_cmdArea = new CmdArea[_numCmdArea + 1];
+	memset(&_cmdArea[0], 0, sizeof(CmdArea));
+	for (i = 1; i <= _numCmdArea; i++) {
+		_cmdArea[i].readFrom(ptr);
+	}
+	
+	// Command OBJECT
+	_numCmdObject = READ_BE_UINT16(ptr); ptr += 2;
+
+	_cmdObject = new CmdObject[_numCmdObject + 1];
+	memset(&_cmdObject[0], 0, sizeof(CmdObject));
+	for (i = 1; i <= _numCmdObject; i++) {
+		_cmdObject[i].readFrom(ptr);
+	}
+
+	// Command INVENTORY
+	_numCmdInventory = READ_BE_UINT16(ptr);	ptr += 2;
+
+	_cmdInventory = new CmdInventory[_numCmdInventory + 1];
+	memset(&_cmdInventory[0], 0, sizeof(CmdInventory));
+	for (i = 1; i <= _numCmdInventory; i++) {
+		_cmdInventory[i].readFrom(ptr);
+	}
+	
+	// Command GAMESTATE
+	_numCmdGameState = READ_BE_UINT16(ptr);	ptr += 2;
+	_cmdGameState = new CmdGameState[_numCmdGameState + 1];
+	memset(&_cmdGameState[0], 0, sizeof(CmdGameState));
+	for (i = 1; i <= _numCmdGameState; i++) {
+		_cmdGameState[i].readFrom(ptr);
+	}
+}
+
+
+
 Logic::Logic(Resource *resource, Graphics *graphics, Display *theDisplay, Input *input, Sound *sound)
 	: _resource(resource), _graphics(graphics), _display(theDisplay), 
 	_input(input), _sound(sound) {
@@ -280,49 +332,7 @@ void Logic::initialise() {
 		_objectDescription[i].readFrom(ptr);
 	}
 
-	// Command List Data
-	_numCmdList = READ_BE_UINT16(ptr); ptr += 2;
-
-	_cmdList = new CmdListData[_numCmdList + 1];
-	memset(&_cmdList[0], 0, sizeof(CmdListData));
-	for (i = 1; i <= _numCmdList; i++) {
-		_cmdList[i].readFrom(ptr);
-	}
-	
-	// Command AREA
-	_numCmdArea = READ_BE_UINT16(ptr); ptr += 2;
-
-	_cmdArea = new CmdArea[_numCmdArea + 1];
-	memset(&_cmdArea[0], 0, sizeof(CmdArea));
-	for (i = 1; i <= _numCmdArea; i++) {
-		_cmdArea[i].readFrom(ptr);
-	}
-	
-	// Command OBJECT
-	_numCmdObject = READ_BE_UINT16(ptr); ptr += 2;
-
-	_cmdObject = new CmdObject[_numCmdObject + 1];
-	memset(&_cmdObject[0], 0, sizeof(CmdObject));
-	for (i = 1; i <= _numCmdObject; i++) {
-		_cmdObject[i].readFrom(ptr);
-	}
-
-	// Command INVENTORY
-	_numCmdInventory = READ_BE_UINT16(ptr);	ptr += 2;
-
-	_cmdInventory = new CmdInventory[_numCmdInventory + 1];
-	memset(&_cmdInventory[0], 0, sizeof(CmdInventory));
-	for (i = 1; i <= _numCmdInventory; i++) {
-		_cmdInventory[i].readFrom(ptr);
-	}
-	
-	// Command GAMESTATE
-	_numCmdGameState = READ_BE_UINT16(ptr);	ptr += 2;
-	_cmdGameState = new CmdGameState[_numCmdGameState + 1];
-	memset(&_cmdGameState[0], 0, sizeof(CmdGameState));
-	for (i = 1; i <= _numCmdGameState; i++) {
-		_cmdGameState[i].readFrom(ptr);
-	}
+	Command_ cmd; cmd.readAllCommandsFrom(ptr); // TEMP
 
 	_entryObj = READ_BE_UINT16(ptr); ptr += 2;
 
@@ -1911,6 +1921,20 @@ void Logic::playCutaway(const char* cutFile) {
 }
 
 
+void Logic::joeSpeak(uint16 descNum, bool objectType) {
+
+	// joeSpeak(k, false) == SPEAK(JOE_RESPstr[k],"JOE",find_cd_desc(k)) 
+	// joeSpeak(k, true)  == SPEAK(OBJECT_DESCRstr[k],"JOE",find_cd_desc(JOERESPMAX+k))
+	const char *text = objectType ? _objDescription[descNum] : _joeResponse[descNum];
+	if (objectType) {
+		descNum += JOE_RESPONSE_MAX;
+	}
+	char descFilePrefix[10];
+	sprintf(descFilePrefix, "JOE%04i", descNum);
+	Talk::speak(text, NULL, descFilePrefix, _graphics, _input, this, _resource, _sound);
+}
+
+
 const char* Logic::objectOrItemName(int16 obj) const {
 
 	uint16 name;
@@ -1925,9 +1949,20 @@ const char* Logic::objectOrItemName(int16 obj) const {
 }
 
 
-Verb Logic::findVerb(int16 cursorx, int16 cursory) const {
+Verb Logic::findVerbUnderCursor(int16 cursorx, int16 cursory) const {
 
 	return PANEL_VERBS[zoneIn(ZONE_PANEL, cursorx, cursory)];
+}
+
+
+uint16 Logic::findObjectUnderCursor(int16 cursorx, int16 cursory) const {
+
+	uint16 roomObj = 0;
+	if (cursory < ROOM_ZONE_HEIGHT) {
+		int16 x = cursorx + _display->horizontalScroll();
+		roomObj = zoneIn(ZONE_ROOM, x, cursory);
+	}
+	return roomObj;
 }
 
 
@@ -1956,6 +1991,7 @@ uint16 Logic::findObjectGlobalNumber(uint16 zoneNum) const {
 
 const char *Logic::verbName(Verb v) const {
 
+	// FIXME: rewrite this test with future VerbCommand methods
 	if (v != VERB_NONE && v < 13) {
 		return _verbName[v];
 	}

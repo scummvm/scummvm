@@ -40,9 +40,27 @@ struct ZoneSlot {
 	Box box;
 };
 
+// Temporary class
 struct Command_ {
 	Verb action, action2;
 	uint16 noun, noun2;
+
+	CmdListData *_cmdList;
+	uint16 _numCmdList;	//COM_LIST_MAX
+
+	CmdArea *_cmdArea;
+	uint16 _numCmdArea;	//COM_A_MAX
+
+	CmdObject *_cmdObject;
+	uint16 _numCmdObject;	//COM_O_MAX
+
+	CmdInventory *_cmdInventory;
+	uint16 _numCmdInventory;	//COM_I_MAX
+
+	CmdGameState *_cmdGameState;
+	uint16 _numCmdGameState;	//COM_G_MAX
+
+	void readAllCommandsFrom(byte *&ptr);
 };
 
 struct GameSettings {
@@ -137,6 +155,7 @@ public:
 	uint16 roomData(int room);
 	uint16 objMax(int room);
 	GraphicData *graphicData(int index);
+	ItemData *itemData(int index) const { return &_itemData[index]; }
 
 	uint16 findBob(uint16 obj);
 	uint16 findFrame(uint16 obj);
@@ -150,6 +169,9 @@ public:
 	uint16 walkOffCount();
 	WalkOffData *walkOffData(int index);
 	uint16 currentRoomObjMax() const { return _objMax[_currentRoom]; }
+	uint16 currentRoomData() const { return _roomData[_currentRoom]; }
+	ObjectDescription *objectDescription(uint16 objNum) const { return &_objectDescription[objNum]; }
+	uint16 objectDescriptionCount() const { return _numDescriptions; }
 
 	uint16 joeFacing()	{ return _joe.facing; }
 	uint16 joeX()		{ return _joe.x; }
@@ -168,8 +190,9 @@ public:
 	int16 gameState(int index);
 	void gameState(int index, int16 newValue);
 
-	const char *roomName(uint16 roomNum)	{ return _roomName[roomNum] ; }
-	const char *objectName(uint16 objNum)	{ return _objName[objNum]; }
+	const char *roomName(uint16 roomNum) const { return _roomName[roomNum] ; }
+	const char *objectName(uint16 objNum) const { return _objName[objNum]; }
+	const char *objectTextualDescription(uint16 objNum) const { return _objDescription[objNum]; }
 
 	uint16 numFrames() { return _numFrames; }
 
@@ -233,12 +256,14 @@ public:
 	//! USE_UNDERWEAR
 	void joeUseUnderwear();
 
+	void joeSpeak(uint16 descNum, bool objectType = false);
+
 	void playCutaway(const char* cutFile);
 
 	const char* objectOrItemName(int16 obj) const;
 
-	//! return selected verb in panel
-	Verb findVerb(int16 cursorx, int16 cursory) const;
+	Verb findVerbUnderCursor(int16 cursorx, int16 cursory) const;
+	uint16 findObjectUnderCursor(int16 cursorx, int16 cursory) const;
 
 	Walk *walk() { return _walk; }
 	Display *display() { return _display; }
@@ -247,6 +272,7 @@ public:
 	uint16 findObjectGlobalNumber(uint16 zoneNum) const;
 
 	const char *verbName(Verb v) const;
+	const char *lockedVerbPrefix() const { return _joeResponse[39]; }
 
 	void update();
 
@@ -311,21 +337,6 @@ protected:
 	//! Walk off point for an object
 	WalkOffData *_walkOffData;
 	uint16 _numWalkOffs;
-
-	CmdListData *_cmdList;
-	uint16 _numCmdList;	//COM_LIST_MAX
-
-	CmdArea *_cmdArea;
-	uint16 _numCmdArea;	//COM_A_MAX
-
-	CmdObject *_cmdObject;
-	uint16 _numCmdObject;	//COM_O_MAX
-
-	CmdInventory *_cmdInventory;
-	uint16 _numCmdInventory;	//COM_I_MAX
-
-	CmdGameState *_cmdGameState;
-	uint16 _numCmdGameState;	//COM_G_MAX
 
 	FurnitureData *_furnitureData;
 	uint16 _numFurniture;	//FURN_DATA_MAX
@@ -403,8 +414,6 @@ protected:
 
 	//! Verbs (in order) available in panel
 	static const Verb PANEL_VERBS[];
-
-	friend class Command; // TEMP
 };
 
 } // End of namespace Queen
