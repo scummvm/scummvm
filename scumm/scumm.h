@@ -744,6 +744,7 @@ public:
 	int _sentenceNum;
 	SentenceTab _sentence[NUM_SENTENCE];
 	StringTab _string[6];
+	int16 _talkDelay;
 	void actorTalk();
 	void stopTalk();
 	
@@ -760,11 +761,15 @@ public:
 	int akos_frameToAnim(Actor *a, int frame);
 	bool akos_hasManyDirections(Actor *a);
 
+protected:
 	/* Should be in Graphics class? */
 	uint16 _screenB, _screenH;
-	int _roomHeight, _roomWidth, _screenHeight, _screenWidth;
+	int _roomHeight, _roomWidth;
+public:
+	int _screenHeight, _screenWidth;
 	VirtScreen virtscr[4];		// Virtual screen areas
 	CameraData camera;			// 'Camera' - viewport
+protected:
 	ColorCycle _colorCycle[16];	// Palette cycles
 
 	uint32 _ENCD_offs, _EXCD_offs;
@@ -832,7 +837,9 @@ public:
 	void stopCycle(int i);
 	void palManipulateInit(int start, int end, int string_id, int time);
 	void palManipulate();
-	int remapPaletteColor(int r, int g, int b, uint threshold);
+public:
+	int remapPaletteColor(int r, int g, int b, uint threshold);		// Used by Actor::remapActorPalette
+protected:
 	void moveMemInPalRes(int start, int end, byte direction);
 	void setupShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor);
 	void setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
@@ -851,16 +858,22 @@ public:
 	void useBompCursor(byte *im, int w, int h);
 
 
+public:
 	void updateDirtyRect(int virt, int left, int right, int top, int bottom, int dirtybit);
+protected:
 	void setDirtyRange(int slot, int a, int height);
 	void drawDirtyScreenParts();
 	void updateDirtyScreen(int slot);
 
+public:
 	VirtScreen *findVirtScreen(int y);
+protected:
 	void setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom);
 
+public:
 	bool isMaskActiveAt(int l, int t, int r, int b, byte *mem);
 
+protected:
 	void drawFlashlight();
 	
 	void fadeIn(int effect);
@@ -875,8 +888,16 @@ public:
 	void blit(byte *dst, byte *src, int w, int h);
 
 	// bomp
-	void decompressBomp(byte *dst, byte *src, int w, int h);
+protected:
+	int32 _bompScaleRight, _bompScaleBottom;
+public:
+	byte *_bompScallingXPtr, *_bompScallingYPtr;
+	byte *_bompMaskPtr;
+	byte *_bompActorPalletePtr;
+
 	void drawBomp(BompDrawData *bd, int decode_mode, int mask);
+protected:
+	void decompressBomp(byte *dst, byte *src, int w, int h);
 	int32 setupBompScale(byte *scalling, int32 size, byte scale);
 	void bompScaleFuncX(byte *line_buffer, byte *scalling_x_ptr, byte skip, int32 size);
 	int32 bompDecodeLineMode0(byte *src, byte *line_buffer, int32 size);
@@ -888,18 +909,15 @@ public:
 	void bompApplyShadow3(byte *line_buffer, byte *dst, int32 size);
 	void bompApplyActorPalette(byte *line_buffer, int32 size);
 
-	int32 _bompScaleRight, _bompScaleBottom;
-	byte *_bompScallingXPtr, *_bompScallingYPtr;
-	byte *_bompMaskPtr;
-	byte *_bompActorPalletePtr;
-
 	bool _shakeEnabled;
 	uint _shakeFrame;
 	void setShake(int mode);
 
+public:
 	int _screenStartStrip, _screenEndStrip;
 	int _screenLeft, _screenTop;
 
+protected:
 	int _blastObjectQueuePos; 
 	BlastObject _blastObjectQueue[128];
 
@@ -938,11 +956,20 @@ public:
 	 */
 	uint32 gfxUsageBits[410 * 3];
 	
+	void upgradeGfxUsageBits();
+	void setGfxUsageBit(int strip, int bit);
+	void clearGfxUsageBit(int strip, int bit);
+	bool testGfxUsageBit(int strip, int bit);
+	bool testGfxAnyUsageBits(int strip);
+	bool testGfxOtherUsageBits(int strip, int bit);
+
+public:
+	byte _proc_special_palette[256];
 	byte *_shadowPalette;
+protected:
 	int _shadowPaletteSize;
 	byte _currentPalette[3 * 256];
 
-	byte _proc_special_palette[256];
 	int _palDirtyMin, _palDirtyMax;
 
 	byte _haveMsg;
@@ -950,42 +977,18 @@ public:
 	uint16 _defaultTalkDelay;
 	bool _use_adlib;
 	int tempMusic;
-	bool _silentDigitalImuse, _noDigitalSamples;
 	int _saveSound;
-	int current_cd_sound;
+public:
+	bool _silentDigitalImuse, _noDigitalSamples;
+	int current_cd_sound;	// Used in class Sound
 
+protected:
 	/* Walkbox / Navigation class */
 	int _maxBoxVertexHeap, _boxPathVertexHeapIndex, _boxMatrixItem;
 	byte *_boxPathVertexHeap, *_boxMatrixPtr1, *_boxMatrixPtr3;	
 
+public:
 	uint16 _extraBoxFlags[65];
-
-	PathNode *unkMatrixProc2(PathVertex *vtx, int i);
-	bool areBoxesNeighbours(int i, int j);
-	void addToBoxMatrix(byte b);
-	bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3);
-	void *addToBoxVertexHeap(int size);
-	PathVertex *addPathVertex();
-	bool checkXYInBoxBounds(int box, int x, int y);
-	uint distanceFromPt(int x, int y, int ptx, int pty);
-	ScummVM::Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
-	void getBoxCoordinates(int boxnum, BoxCoords *bc);
-	byte getMaskFromBox(int box);
-	Box *getBoxBaseAddr(int box);
-	byte getBoxFlags(int box);
-	int getBoxScale(int box);
-
-	int getScale(int box, int x, int y);
-	void setScaleItem(int slot, int a, int b, int c, int d);
-
-	// V8 scaling stuff: should be in V8 class
-	struct ScaleSlot {
-		int x1, y1, scale1;
-		int x2, y2, scale2;
-	};
-	ScaleSlot _scaleSlots[20];	// FIXME - not sure if this limit is right, but based on my observations it is
-	void setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2);
-	void setBoxScaleSlot(int box, int slot);
 
 	byte getNumBoxes();
 	byte *getBoxMatrixBaseAddr();
@@ -999,23 +1002,57 @@ public:
 	
 	void setBoxFlags(int box, int val);
 	void setBoxScale(int box, int b);
-	void createBoxMatrix();
 
+	bool checkXYInBoxBounds(int box, int x, int y);
+	uint distanceFromPt(int x, int y, int ptx, int pty);
+	ScummVM::Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
+	void getBoxCoordinates(int boxnum, BoxCoords *bc);
+	byte getMaskFromBox(int box);
+	Box *getBoxBaseAddr(int box);
+	byte getBoxFlags(int box);
+	int getBoxScale(int box);
+
+	int getScale(int box, int x, int y);
+	void setScaleItem(int slot, int a, int b, int c, int d);
+
+protected:
+	// V8 scaling stuff: should be in V8 class
+	struct ScaleSlot {
+		int x1, y1, scale1;
+		int x2, y2, scale2;
+	};
+	ScaleSlot _scaleSlots[20];	// FIXME - not sure if this limit is right, but based on my observations it is
+	void setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2);
+	void setBoxScaleSlot(int box, int slot);
+
+	void createBoxMatrix();
+	void addToBoxMatrix(byte b);
+	bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3);
+	PathNode *unkMatrixProc2(PathVertex *vtx, int i);
+	void *addToBoxVertexHeap(int size);
+	PathVertex *addPathVertex();
+	bool areBoxesNeighbours(int i, int j);
 
 	/* String class */
 	CharsetRenderer *_charset;
 	byte _charsetColor;
+public:
 	byte _charsetColorMap[16];
+protected:
 	byte _charsetData[15][16];
 
 	int _charsetBufPos;
 	byte _charsetBuffer[512];
 
+public:
 	bool _noSubtitles;	// Whether to skip all subtitles
+protected:
 
 	void initCharset(int charset);
 	void restoreCharsetBg();
+public:
 	bool hasCharsetMask(int left, int top, int right, int bottom);
+protected:
 	void CHARSET_1();
 	void drawString(int a);
 	void drawDescString(byte *msg);
@@ -1026,21 +1063,25 @@ public:
 	void addStringToStack(int var);
 	void unkMessage1();
 	void unkMessage2();
-	void clearMsgQueue();
+public:
+	void clearMsgQueue();	// Used by Actor::putActor
+protected:
 
 	int _numInMsgStack;
 	byte *_msgPtrToAdd;
 	const byte *_messagePtr;
-	int16 _talkDelay;
 	bool _keepText;
 	uint16 _language;
 	bool _existLanguageFile;
 	char *_languageBuffer;
 	struct langIndexNode *_languageIndex;
 	int _languageStrCount;
-	void loadLanguageBundle();
-	void translateText(const byte *text, byte *trans_buff);
 	byte _transText[500];
+
+	void loadLanguageBundle();
+public:
+	void translateText(const byte *text, byte *trans_buff);	// Used by class ScummDialog
+protected:
 
 #if defined(SCUMM_LITTLE_ENDIAN)
 	uint32 fileReadDword() { return _fileHandle.readUint32LE(); }
@@ -1048,12 +1089,7 @@ public:
 	uint32 fileReadDword() { return _fileHandle.readUint32BE(); }
 #endif
 
-	void upgradeGfxUsageBits();
-	void setGfxUsageBit(int strip, int bit);
-	void clearGfxUsageBit(int strip, int bit);
-	bool testGfxUsageBit(int strip, int bit);
-	bool testGfxAnyUsageBits(int strip);
-	bool testGfxOtherUsageBits(int strip, int bit);
+public:
 
 	/* Scumm Vars */
 	byte VAR_LANGUAGE;
