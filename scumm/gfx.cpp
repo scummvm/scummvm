@@ -107,7 +107,7 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 	vs->backBuf = NULL;
 
 	if (vs->scrollable)
-		size += _realWidth * 4;
+		size += _realWidth * 8;
 
 	createResource(rtBuffer, slot + 1, size);
 	vs->screenPtr = getResourceAddress(rtBuffer, slot + 1);

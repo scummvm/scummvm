@@ -878,7 +878,7 @@ public:
 	uint16 _palManipCounter;
 	byte *_palManipPalette;
 	byte *_palManipIntermediatePal;
-	uint32 gfxUsageBits[200];
+	uint32 gfxUsageBits[240];
 	byte *_shadowPalette;
 	int _shadowPaletteSize;
 	byte _currentPalette[0x300];
