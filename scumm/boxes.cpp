@@ -194,7 +194,7 @@ int ScummEngine::getScale(int box, int x, int y) {
 			if (s.y1 == s.y2) {
 				scale = scaleX;
 			} else {
-				scale = (scaleX + scaleY - s.x1) / 2;
+				scale = (scaleX + scaleY) / 2;
 			}
 		}
 
