@@ -665,6 +665,7 @@ void ScummEngine_v72he::o72_drawObject() {
 		state = 1;
 		y = pop();
 		x = pop();
+		break;
 	default:
 		warning("o72_drawObject: default case %d", subOp);
 	}
