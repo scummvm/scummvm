@@ -212,6 +212,8 @@ void Logic::setGlobalInterpreterVariables(int32 *vars) {
 }
 
 int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
+	bool checkPyramidBug = false;
+
 	#define STACK_SIZE		10
 
 	_standardHeader *header = (_standardHeader *) scriptData;
@@ -256,6 +258,27 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		debug(5, "Start script with offset %d", ip);
 	}
 
+	// WORKAROUND: The dreaded pyramid makes the torch untakeable when you
+	// speak to Titipoco. This is because one of the conditions for the
+	// torch to be takeable is that Titipoco isn't doing anything out of
+	// the ordinary. Global variable 913 has to be 0 to signify that he is
+	// in his "idle" state.
+	//
+	// Unfortunately, simply the act of speaking to him sets variable 913
+	// to 1 (probably to stop him from turning around every now and then).
+	// The script may then go on to set the variable to different values
+	// to trigger various behaviours in him, but if you have run out of
+	// these cases the script won't ever set it back to 0 again.
+	//
+	// So if his click hander (action script number 2) finishes, and
+	// variable 913 is 1, we set it back to 0 manually.
+
+	if (strcmp((char *) header->name, "titipoco_81") == 0 &&
+	    ip >= (int32) READ_LE_UINT32((const int *) code + 3) &&
+	    ip < (int32) READ_LE_UINT32((const int *) code + 4)) {
+		checkPyramidBug = true;
+	}
+
 	code += noScripts * sizeof(int32) + sizeof(int32);
 
 #ifdef DONTPROCESSSCRIPTCHECKSUM
@@ -290,8 +313,16 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		switch (curCommand) {
 		case CP_END_SCRIPT:
 			// End the script
-			debug(5, "End script",0);
+			debug(5, "End script");
 			runningScript = 0;
+
+			// WORKAROUND: Pyramid Bug. See explanation above.
+
+			if (checkPyramidBug && _globals[913] == 1) {
+				warning("Working around Titipoco script bug (the \"Pyramid Bug\")");
+				_globals[913] = 0;
+			}
+
 			break;
 		case CP_PUSH_LOCAL_VAR32:
 			// Push the contents of a local variable
