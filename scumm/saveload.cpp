@@ -717,19 +717,7 @@ void Serializer::loadBytes(void *b, int len) {
 	_saveLoadStream->fread(b, 1, len);
 }
 
-#ifdef _WIN32_WCE
-
-// Perhaps not necessary anymore with latest checks
-
-bool Serializer::checkEOFLoadStream() {
-	if (!_saveLoadStream->fseek(1, SEEK_CUR))
-		return true;
-	if (_saveLoadStream->feof())
-		return true;
-	_saveLoadStream->fseek(-1, SEEK_CUR);
-	return false;
-}
-#elif defined(__PALM_OS__)
+#if defined(__PALM_OS__)
 bool Serializer::checkEOFLoadStream() {
 
 	if (_saveLoadStream->feof())

@@ -1321,10 +1321,7 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 		MKEND()
 	};
 
-#ifdef _WIN32_WCE // Don't break savegames made with andys' build
-	if (!ser->isSaving() && ser->checkEOFLoadStream())
-		return 0;
-#elif defined(__PALM_OS__) //	previous PalmOS ver. without imuse implementation or not saved(Oopps...forgot it !), is this really working ? will we have sound with old saved game ?
+#if defined(__PALM_OS__) //	previous PalmOS ver. without imuse implementation or not saved(Oopps...forgot it !), is this really working ? will we have sound with old saved game ?
 	if (!ser->isSaving() && ser->checkEOFLoadStream())
 		return 0;	//palmfixme
 
