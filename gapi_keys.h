@@ -11,7 +11,8 @@ enum ActionType {
 	ACTION_HIDE = 5,
 	ACTION_KEYBOARD = 6,
 	ACTION_SOUND = 7,
-	ACTION_RIGHTCLICK = 8
+	ACTION_RIGHTCLICK = 8,
+	ACTION_CURSOR = 9
 };
 
 struct oneAction {
@@ -20,8 +21,8 @@ struct oneAction {
 };
 
 
-#define NUMBER_ACTIONS 5
-#define TOTAL_ACTIONS 8
+#define NUMBER_ACTIONS 10
+#define TOTAL_ACTIONS 9
 
 #define GAPI_KEY_BASE 1000
 #define GAPI_KEY_VKA 1
@@ -32,6 +33,10 @@ struct oneAction {
 #define GAPI_KEY_CONTACTS 6
 #define GAPI_KEY_INBOX 7
 #define GAPI_KEY_ITASK 8
+#define GAPI_KEY_VKUP 9
+#define GAPI_KEY_VKDOWN 10
+#define GAPI_KEY_VKLEFT 11
+#define GAPI_KEY_VKRIGHT 12
 
 #define INTERNAL_KEY_CALENDAR 0xc1
 #define INTERNAL_KEY_CONTACTS 0xc2

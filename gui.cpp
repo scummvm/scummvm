@@ -27,7 +27,7 @@
 #include "guimaps.h"
 
 #ifdef _WIN32_WCE
-// Additional variables for Win32 specific GUI
+// Additional variables for WinCE specific GUI
 #include "gapi_keys.h"
 extern bool toolbar_drawn;
 extern bool draw_keyboard;
@@ -35,6 +35,7 @@ extern bool get_key_mapping;
 extern struct keyops keyMapping;
 extern void registry_save(void);
 uint16 _key_mapping_required;
+uint16 _current_page;
 #else
 #define registry_save() ;
 bool get_key_mapping;
@@ -190,12 +191,19 @@ void Gui::drawWidget(const GuiWidget * w)
 #ifdef _WIN32_WCE
 			case GUI_KEYTEXT:
 				strcpy(text,
-							 getGAPIKeyName(getAction(w->_string_number - 1)->action_key));
+							 getGAPIKeyName(getAction((_current_page * 5) + w->_string_number - 1)->action_key));
 				break;
 			case GUI_ACTIONTEXT:
 				strcpy(text,
-							 getActionName(getAction(w->_string_number - 1)->action_type));
+							 getActionName(getAction((_current_page * 5) + w->_string_number - 1)->action_type));
 				break;
+			case GUI_NEXTTEXT:
+				if (_current_page == 0)
+					strcpy(text, "Next");
+				else
+					strcpy(text, "Prev");
+				break;
+
 #endif
 			}
 
@@ -359,54 +367,43 @@ const GuiWidget launcher_dialog[] = {
 	{0, 0, 0, 0, 0, 0, 0, 0, 0}
 };
 const GuiWidget keys_dialog[] = {
-	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 10, 260, 130, 0, 0},
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 10, 260, 130, 0, 0 },
 
 	// First action
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10, 15, 15, 10, 3},	// CUSTOMTEXT_PLUS
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10, 15, 15, 11, 4},	// CUSTOMTEXT_MINUS
-	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 11 + 33 + 10, 10 + 10, 100, 15, 100,
-	 1},
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10, 15, 15, 10, 3}, // CUSTOMTEXT_PLUS
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10, 15, 15, 11, 4}, // CUSTOMTEXT_MINUS
+	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 11 + 33 + 10, 10 + 10, 100, 15, 100, 1},
 	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 3, 100, 15, 1, 1},
 
 	//Second action
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5, 15, 15, 20, 3},	// CUSTOMTEXT_PLUS
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5, 15, 15, 21, 4},	// CUSTOMTEXT_MINUS
-	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5, 100,
-	 15, 101, 2},
-	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 3, 100, 15, 2,
-	 2},
-
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5, 15, 15, 20, 3}, // CUSTOMTEXT_PLUS
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5, 15, 15, 21, 4}, // CUSTOMTEXT_MINUS
+	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5, 100, 15, 101, 2},
+	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 3, 100, 15, 2,  2},
+	
 	//Third action
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5, 15, 15, 30, 3},	// CUSTOMTEXT_PLUS
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5, 15, 15, 31, 4},	// CUSTOMTEXT_MINUS
-	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10,
-	 10 + 10 + 15 + 5 + 15 + 5, 100, 15, 102, 3},
-	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 15 + 5 + 3,
-	 100, 15, 3, 3},
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5, 15, 15, 30, 3},// CUSTOMTEXT_PLUS
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5, 15, 15, 31, 4}, // CUSTOMTEXT_MINUS
+	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5 + 15 + 5, 100, 15, 102, 3},
+	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 15 + 5 + 3, 100, 15, 3, 3},
 
 	//Fourth action
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11,
-	 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 40, 3},
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33,
-	 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 41, 4},
-	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10,
-	 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 100, 15, 103, 4},
-	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120,
-	 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 3, 100, 15, 4, 4},
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 40, 3},
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 41, 4},
+	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 100, 15, 103, 4},
+	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 3, 100, 15, 4, 4},
 
 	//Fifth action
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11,
-	 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 50, 3},
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33,
-	 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 51, 4},
-	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10,
-	 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 100, 15, 104, 5},
-	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120,
-	 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5 + 3, 100, 15, 5, 5},
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 50, 3},
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 51, 4},
+	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 100, 15, 104, 5},
+	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5 + 3, 100, 15, 5, 5},
 
 	//OK
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 113, 10 + 106, 54, 16, 60, 9},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0}
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 60, 10 + 106, 54, 16, 60, 9 },
+	//Previous-Next
+	{GUI_NEXTTEXT, 0x01, GWF_BUTTON, 30 + 120, 10 + 106, 54, 16, 61, 0 }, 
+	{0,0,0,0,0,0,0,0,0}
 };
 
 
@@ -551,22 +548,33 @@ void Gui::handleKeysDialogCommand(int cmd)
 	if (cmd < 100 && cmd != 60) {
 
 		if ((cmd % 10) == 1)
-			setNextType((cmd / 10) - 1);
+			setNextType((_current_page * 5) + (cmd / 10) - 1);
 		else
-			setPreviousType((cmd / 10) - 1);
+			setPreviousType((_current_page * 5) + (cmd / 10) - 1);
 
 		draw(0, 200);
 
 		return;
 	}
 
-	_key_mapping_required = cmd;
+	if (cmd >= 100)
+		_key_mapping_required = cmd;
 
 	if (cmd == 60) {
 		get_key_mapping = false;
 		registry_save();
 		close();
 	}
+
+	if (cmd == 61) {
+		if (!_current_page)
+			_current_page = 1;
+		else
+			_current_page = 0;
+		draw(0, 200);
+		return;
+	}
+
 #else
 	close();
 #endif
@@ -574,7 +582,7 @@ void Gui::handleKeysDialogCommand(int cmd)
 
 void Gui::handleLauncherDialogCommand(int cmd)
 {
-	printf("handle launcher command\n");
+	debug(9, "handle launcher command\n");
 	switch (cmd) {
 	case 20:
 		close();
@@ -589,10 +597,10 @@ void Gui::handleLauncherDialogCommand(int cmd)
 		_return_to = LAUNCHER_DIALOG;
 		_dialog = ABOUT_DIALOG;
 		draw(0, 100);
-		printf("about dialog\n");
+		debug(9, "about dialog\n");
 		break;
 	default:
-		printf("default\n");
+		debug(9, "default\n");
 		close();
 	}
 }
@@ -805,7 +813,7 @@ void Gui::addLetter(byte letter)
 	case KEYS_DIALOG:
 		clearActionKey(letter);
 		if (_key_mapping_required)
-			getAction(_key_mapping_required - 100)->action_key = letter;
+			getAction((_current_page * 5) + _key_mapping_required - 100)->action_key = letter;
 		_key_mapping_required = 0;
 		draw(0, 200);
 		break;
@@ -901,6 +909,9 @@ void Gui::pause()
 
 void Gui::options()
 {
+#ifdef _WIN32_WCE
+	_current_page = 0;
+#endif
 	_widgets[0] = options_dialog;
 	_active = true;
 	_cur_page = 0;

@@ -18,6 +18,7 @@ struct GXKeyList _keys;
 pAction *_action_functions;
 
 const char* ActionsText[] = {
+	"None",
 	"Pause",
 	"Save",
 	"Quit",
@@ -25,7 +26,8 @@ const char* ActionsText[] = {
 	"Hide",
 	"Keyboard",
 	"Sound",
-	"Right click"
+	"Right click",
+	"Cursor on/off"
 };
 
 bool _typeExists(int x) {
@@ -40,7 +42,7 @@ bool _typeExists(int x) {
 
 
 const char* getActionName(int action) {
-	return ActionsText[action - 1];
+	return ActionsText[action];
 }
 
 void GAPIKeysInit(pAction *functions) {
@@ -84,6 +86,18 @@ const unsigned char getGAPIKeyMapping(short key) {
 	if (key == _keys.vkStart)
 			return GAPI_KEY_VKSTART;
 
+	if (key == _keys.vkUp)
+			return GAPI_KEY_VKUP;
+
+	if (key == _keys.vkDown)
+			return GAPI_KEY_VKDOWN;
+
+	if (key == _keys.vkLeft)
+			return GAPI_KEY_VKLEFT;
+
+	if (key == _keys.vkRight)
+			return GAPI_KEY_VKRIGHT;
+
 	switch (key) {
 		// then the "unsupported" keys 
 		case INTERNAL_KEY_CALENDAR:
@@ -117,6 +131,14 @@ const char* getGAPIKeyName(unsigned char key) {
 			return "Button Inbox";
 		case GAPI_KEY_ITASK:
 			return "Button ITask";
+		case GAPI_KEY_VKUP:
+			return "Pad Up";
+		case GAPI_KEY_VKDOWN:
+			return "Pad Down";
+		case GAPI_KEY_VKLEFT:
+			return "Pad Left";
+		case GAPI_KEY_VKRIGHT:
+			return "Pad Right";
 		default:
 			return "Not mapped";
 	}
