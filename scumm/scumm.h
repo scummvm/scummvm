@@ -748,7 +748,7 @@ public:
 	void useBompCursor(byte *im, int w, int h);
 
 
-	void updateDirtyRect(int virt, int left, int right, int top, int bottom, uint32 dirtybits);
+	void updateDirtyRect(int virt, int left, int right, int top, int bottom, int dirtybit);
 	void setDirtyRange(int slot, int a, int height);
 	void drawDirtyScreenParts();
 	void updateDirtyScreen(int slot);
@@ -810,12 +810,18 @@ public:
 	byte *_palManipPalette;
 	byte *_palManipIntermediatePal;
 	
-	/* For each screen strip, gfxUsageBits contains a bitmask.
-	 * The lower 30 bits each correspond to one actor and signify if any part
-	 * of that actor is currently contained in that strip.
-	 * If the left most bit is set, the strip (background) is dirty needs to be redrawn.
+	/* For each of the 410 screen strips, gfxUsageBits contains a
+	 * bitmask. The lower 80 bits each correspond to one actor and
+	 * signify if any part of that actor is currently contained in
+	 * that strip.
+	 * 
+	 * If the leftmost bit is set, the strip (background) is dirty
+	 * needs to be redrawn.
+	 * 
+	 * The second leftmost bit is set by removeBlastObject() and
+	 * restoreBG(), but I'm not yet sure why.
 	 */
-	uint32 gfxUsageBits[410];
+	uint32 gfxUsageBits[410 * 3];
 	
 	byte *_shadowPalette;
 	int _shadowPaletteSize;
@@ -923,6 +929,13 @@ public:
 #elif defined(SCUMM_BIG_ENDIAN)
 	uint32 fileReadDword() { return _fileHandle.readUint32BE(); }
 #endif
+
+	void upgradeGfxUsageBits();
+	void setGfxUsageBit(int strip, int bit);
+	void clearGfxUsageBit(int strip, int bit);
+	bool testGfxUsageBit(int strip, int bit);
+	bool testGfxAnyUsageBits(int strip);
+	bool testGfxOtherUsageBits(int strip, int bit);
 
 	/* Scumm Vars */
 	byte VAR_KEYPRESS;

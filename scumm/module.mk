@@ -27,6 +27,7 @@ SCUMM_OBJS = \
 	scumm/scummvm.o \
 	scumm/sound.o \
 	scumm/string.o \
+	scumm/usage_bits.o \
 	scumm/vars.o \
 	scumm/verbs.o
 

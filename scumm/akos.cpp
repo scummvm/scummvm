@@ -829,7 +829,7 @@ void AkosRenderer::codec1()
 	if (v1.skip_width <= 0 || _height <= 0)
 		return;
 
-	_vm->updateDirtyRect(0, x_left, x_right, y_top, y_bottom, 1 << _dirty_id);
+	_vm->updateDirtyRect(0, x_left, x_right, y_top, y_bottom, _dirty_id);
 
 	y_clipping = ((uint) y_bottom > outheight || y_top < 0);
 
@@ -949,7 +949,7 @@ void AkosRenderer::codec5() {
 	if ((clip_right <= clip_left) || (clip_top >= clip_bottom))
 		return;
 
-	_vm->updateDirtyRect(0, clip_left, clip_right + 1, clip_top, clip_bottom + 1, 1 << _dirty_id);
+	_vm->updateDirtyRect(0, clip_left, clip_right + 1, clip_top, clip_bottom + 1, _dirty_id);
 
 	if (_draw_top > clip_top)
 		_draw_top = clip_top;
@@ -1280,7 +1280,7 @@ void AkosRenderer::codec16() {
 	if ((clip_left >= clip_right) || (clip_top >= clip_bottom))
 		return;
 
-	_vm->updateDirtyRect(0, clip_left, clip_right + 1, clip_top, clip_bottom + 1, 1 << _dirty_id);
+	_vm->updateDirtyRect(0, clip_left, clip_right + 1, clip_top, clip_bottom + 1, _dirty_id);
 
 	if (_draw_top > clip_top)
 		_draw_top = clip_top;

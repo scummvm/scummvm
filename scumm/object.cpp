@@ -25,6 +25,7 @@
 #include "actor.h"
 #include "object.h"
 #include "resource.h"
+#include "usage_bits.h"
 
 bool Scumm::getClass(int obj, int cls)
 {
@@ -393,7 +394,7 @@ void Scumm::drawObject(int obj, int arg)
 			continue;
 		if (tmp < _screenStartStrip || tmp > _screenEndStrip)
 			continue;
-		gfxUsageBits[tmp] |= 0x80000000;
+		setGfxUsageBit(tmp, USAGE_BIT_DIRTY);
 		if (tmp < x)
 			x = tmp;
 		numstrip++;
@@ -762,17 +763,13 @@ void Scumm::clearOwnerOf(int obj)
 
 void Scumm::removeObjectFromRoom(int obj)
 {
-	int i, cnt;
-	uint32 *ptr;
+	int i, j;
 
 	for (i = 1; i < _numLocalObjects; i++) {
 		if (_objs[i].obj_nr == (uint16)obj) {
 			if (_objs[i].width != 0) {
-				ptr = &gfxUsageBits[_objs[i].x_pos >> 3];
-				cnt = _objs[i].width >> 3;
-				do {
-					*ptr++ |= 0x80000000;
-				} while (--cnt);
+				for (j = 0; j < _objs[i].width; j++)
+					setGfxUsageBit((_objs[i].x_pos >> 3) + j, USAGE_BIT_DIRTY);
 			}
 			_BgNeedsRedraw = true;
 			return;
@@ -1619,7 +1616,7 @@ void Scumm::removeBlastObject(BlastObject *eo)
 	for (i = left_strip; i <= right_strip; i++)
 		gdi.resetBackground(top, bottom, i);
 
-	updateDirtyRect(0, left, right, top, bottom, 0x40000000);
+	updateDirtyRect(0, left, right, top, bottom, USAGE_BIT_RESTORED);
 }
 
 int Scumm::findLocalObjectSlot()

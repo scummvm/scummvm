@@ -424,9 +424,10 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 		MKLINE(Scumm, _palManipEnd, sleByte, VER_V10),
 		MKLINE(Scumm, _palManipCounter, sleUint16, VER_V10),
 
-		// gfxUsageBits grew from 200 to 410 entries:
+		// gfxUsageBits grew from 200 to 410 entries. Then 3 * 410 entries:
 		MKARRAY_OLD(Scumm, gfxUsageBits[0], sleUint32, 200, VER_V8, VER_V9),
-		MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 410, VER_V10),
+		MKARRAY_OLD(Scumm, gfxUsageBits[0], sleUint32, 410, VER_V10, VER_V13),
+		MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 3 * 410, VER_V14),
 
 		MKLINE(Scumm, gdi._transparentColor, sleByte, VER_V8),
 		MKARRAY(Scumm, _currentPalette[0], sleByte, 768, VER_V8),
@@ -557,7 +558,14 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion)
 		}
 	}
 
+	// Because old savegames won't fill the entire gfxUsageBits[] array,
+	// clear it here just to be sure it won't hold any unforseen garbage.
+	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
+
 	s->saveLoadEntries(this, mainEntries);
+
+	if (!s->isSaving() && savegameVersion < VER_V14)
+		upgradeGfxUsageBits();
 
 	s->saveLoadArrayOf(_actors, NUM_ACTORS, sizeof(_actors[0]), actorEntries);
 

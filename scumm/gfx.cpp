@@ -24,6 +24,7 @@
 #include "actor.h"
 #include "charset.h"
 #include "resource.h"
+#include "usage_bits.h"
 #include "util.h"
 
 
@@ -295,12 +296,10 @@ VirtScreen *Scumm::findVirtScreen(int y)
 	return NULL;
 }
 
-void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, uint32 dirtybits)
+void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, int dirtybit)
 {
 	VirtScreen *vs = &virtscr[virt];
 	int lp, rp;
-	uint32 *sp;
-	int num;
 
 	if (top > vs->height || left > vs->width || right < 0 || bottom < 0)
 		return;
@@ -314,7 +313,7 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 	if (right > vs->width)
 		right = vs->width;
 
-	if (virt == 0 && dirtybits) {
+	if (virt == 0 && dirtybit) {
 		lp = (left >> 3) + _screenStartStrip;
 		if (lp < 0)
 			lp = 0;
@@ -331,13 +330,8 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 			if (rp >= 200)
 				rp = 200;
 		}
-		if (lp <= rp) {
-			num = rp - lp + 1;
-			sp = &gfxUsageBits[lp];
-			do {
-				*sp++ |= dirtybits;
-			} while (--num);
-		}
+		for (; lp <= rp; lp++)
+			setGfxUsageBit(lp, dirtybit);
 	}
 
 	setVirtscreenDirty(vs, left, top, right, bottom);
@@ -632,7 +626,7 @@ void Scumm::drawFlashlight()
 
 	// Redraw any actors "under" the flashlight
 	for (i = _flashlight.x/8; i < (_flashlight.x+_flashlight.w)/8; i++) {
-		gfxUsageBits[_screenStartStrip + i] |= 0x80000000;
+		setGfxUsageBit(_screenStartStrip + i, USAGE_BIT_DIRTY);
 		virtscr[0].tdirty[i] = 0;
 		virtscr[0].bdirty[i] = virtscr[0].height;
 	}
@@ -682,7 +676,7 @@ void Scumm::redrawBGAreas()
 	// Redraw parts of the background which are marked as dirty.
 	if (!_fullRedraw && _BgNeedsRedraw) {
 		for (i = 0; i != gdi._numStrips; i++) {
-			if (gfxUsageBits[_screenStartStrip + i] & 0x80000000) {
+			if (testGfxUsageBit(_screenStartStrip + i, USAGE_BIT_DIRTY)) {
 				redrawBGStrip(i, 1);
 			}
 		}
@@ -723,10 +717,10 @@ void Scumm::redrawBGStrip(int start, int num)
 {
 	int s = _screenStartStrip + start;
 
-	assert(s >= 0 && (size_t) s < sizeof(gfxUsageBits) / sizeof(gfxUsageBits[0]));
+	assert(s >= 0 && (size_t) s < sizeof(gfxUsageBits) / (3 * sizeof(gfxUsageBits[0])));
 
 	for (int i = 0; i < num; i++)
-		gfxUsageBits[s + i] |= 0x80000000;
+		setGfxUsageBit(s + i, USAGE_BIT_DIRTY);
 
 	gdi.drawBitmap(getResourceAddress(rtRoom, _roomResource) + _IM00_offs,
 	               &virtscr[0], s, 0, virtscr[0].height, s, num, 0);
@@ -775,7 +769,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom, byte backColor)
 	if (bottom >= height)
 		bottom = height;
 
-	updateDirtyRect(vs->number, left, right, top - topline, bottom - topline, 0x40000000);
+	updateDirtyRect(vs->number, left, right, top - topline, bottom - topline, USAGE_BIT_RESTORED);
 
 	int offset = (top - topline) * _realWidth + vs->xstart + left;
 	backbuff = vs->screenPtr + offset;

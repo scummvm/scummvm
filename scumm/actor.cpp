@@ -28,6 +28,7 @@
 #include "costume.h"
 #include "resource.h"
 #include "sound.h"
+#include "usage_bits.h"
 
 #include <math.h>
 
@@ -1100,7 +1101,6 @@ void Actor::animateLimb(int limb, int f)
 void Scumm::setActorRedrawFlags(bool fg, bool bg)
 {
 	int i, j;
-	uint32 bits;
 
 	if (_fullRedraw) {
 		for (j = 0; j < NUM_ACTORS; j++) {
@@ -1112,10 +1112,10 @@ void Scumm::setActorRedrawFlags(bool fg, bool bg)
 		}
 	} else {
 		for (i = 0; i < gdi._numStrips; i++) {
-			bits = gfxUsageBits[_screenStartStrip + i];
-			if (bits & 0x3FFFFFFF) {
+			int strip = _screenStartStrip + i;
+			if (testGfxAnyUsageBits(strip)) {
 				for (j = 0; j < NUM_ACTORS; j++) {
-					if ((bits & (1 << j)) && bits != (uint32)(1 << j)) {
+					if (testGfxUsageBit(strip, j) && testGfxOtherUsageBits(strip, j)) {
 						Actor *a = derefActor(j);
 						if (fg)
 							a->needRedraw = true;
@@ -1130,15 +1130,13 @@ void Scumm::setActorRedrawFlags(bool fg, bool bg)
 
 int Scumm::getActorFromPos(int x, int y)
 {
-	uint32 drawbits;
 	int i;
 
-	drawbits = gfxUsageBits[x >> 3];
-	if (!(drawbits & 0x3FFFFFFF))
+	if (!testGfxAnyUsageBits(x >> 3))
 		return 0;
 	for (i = 1; i < NUM_ACTORS; i++) {
 		Actor *a = derefActor(i);
-		if (drawbits & (1 << i) && !getClass(i, 32) && y >= a->top && y <= a->bottom) {
+		if (testGfxUsageBit(x >> 3, i) && !getClass(i, 32) && y >= a->top && y <= a->bottom) {
 			return i;
 		}
 	}
@@ -1541,23 +1539,17 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 void Scumm::resetActorBgs()
 {
 	Actor *a;
-	int i;
-	uint32 onlyActorFlags, bitpos;
+	int i, j;
 
 	for (i = 0; i < gdi._numStrips; i++) {
-		onlyActorFlags = (gfxUsageBits[_screenStartStrip + i] &= 0x3FFFFFFF);
+		int strip = _screenStartStrip + i;
 		a = getFirstActor();
-		bitpos = 1;
-
-		while (onlyActorFlags) {
-			if (onlyActorFlags & 1 && a->top != 0xFF && a->needBgReset) {
-				gfxUsageBits[_screenStartStrip + i] ^= bitpos;
-
+		for (j = 0; j < NUM_ACTORS; j++) {
+			if (testGfxUsageBit(strip, j) && a->top != 0xFF && a->needBgReset) {
+				clearGfxUsageBit(strip, j);
 				if ((a->bottom - a->top) >= 0)
 					gdi.resetBackground(a->top, a->bottom, i);
 			}
-			bitpos <<= 1;
-			onlyActorFlags >>= 1;
 			a++;
 		}
 	}

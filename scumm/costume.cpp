@@ -213,7 +213,7 @@ byte CostumeRenderer::mainRoutine(int slot, int frame)
 		_scaleIndexXStep = 1;
 	_ypostop = _ypos;
 
-	_vm->updateDirtyRect(0, _left, _right + 1, _top, _bottom, 1 << _dirty_id);
+	_vm->updateDirtyRect(0, _left, _right + 1, _top, _bottom, _dirty_id);
 
 	if (_top >= (int)_outheight || _bottom <= 0)
 		return 0;
