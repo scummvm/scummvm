@@ -37,7 +37,7 @@ namespace Saga {
 
 void Script::setFramePtr(R_SCRIPT_THREAD *thread, int newPtr) {
 	thread->framePtr = newPtr;
-	dataBuffer(3)->len = 2 * (ARRAYSIZE(thread->stackBuf) - thread->framePtr);
+	dataBuffer(3)->len = ARRAYSIZE(thread->stackBuf) - thread->framePtr;
 	dataBuffer(3)->data = (SDataWord_T *) &(thread->stackBuf[newPtr]);
 }
 
@@ -54,17 +54,18 @@ R_SCRIPT_THREAD *Script::SThreadCreate() {
 		return NULL;
 	}
 
+	new_node = ys_dll_add_head(threadList(), new_thread, sizeof *new_thread);
+	free(new_thread);
+
+	new_thread = (R_SCRIPT_THREAD *)ys_dll_get_data(new_node);
+
 	new_thread->stackPtr = ARRAYSIZE(new_thread->stackBuf) - 1;
 	setFramePtr(new_thread, new_thread->stackPtr);
 
-	dataBuffer(4)->len = sizeof(new_thread->threadVars);
+	dataBuffer(4)->len = ARRAYSIZE(new_thread->threadVars);
 	dataBuffer(4)->data = new_thread->threadVars;
 
-	new_node = ys_dll_add_head(threadList(), new_thread, sizeof *new_thread);
-
-	free(new_thread);
-
-	return (R_SCRIPT_THREAD *)ys_dll_get_data(new_node);
+	return new_thread;
 }
 
 int Script::SThreadDestroy(R_SCRIPT_THREAD *thread) {
@@ -208,7 +209,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 
 	MemoryReadStream scriptS(currentScript()->bytecode->bytecode_p, currentScript()->bytecode->bytecode_len);
 
-	dataBuffer(2)->len = currentScript()->bytecode->bytecode_len;
+	dataBuffer(2)->len = currentScript()->bytecode->bytecode_len / sizeof(SDataWord_T);
 	dataBuffer(2)->data = (SDataWord_T *) currentScript()->bytecode->bytecode_p;
 
 	scriptS.seek(thread->i_offset);
