@@ -187,20 +187,7 @@ static void do_memory_test(void) {
 
 int gDebugLevel = 0;
 
-static bool launcherDialog(GameDetector &detector, OSystem &system) {
-
-	system.beginGFXTransaction();
-		// Set the user specified graphics mode (if any).
-		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
-	
-		// GUI is (currently) always running at 320x200
-		system.initSize(320, 200);
-	system.endGFXTransaction();
-
-	
-	// Clear the main screen
-	system.clearScreen();
-
+static void setupDummyPalette(OSystem &system) {
 	// FIXME - mouse cursors are currently always set via 8 bit data.
 	// Thus for now we need to setup a dummy palette. On the long run, we might
 	// want to add a setMouseCursor_overlay() method to OSystem, which would serve
@@ -227,6 +214,24 @@ static bool launcherDialog(GameDetector &detector, OSystem &system) {
 	};
 
 	system.setPalette(dummy_palette, 0, 16);
+}
+
+static bool launcherDialog(GameDetector &detector, OSystem &system) {
+
+	system.beginGFXTransaction();
+		// Set the user specified graphics mode (if any).
+		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+	
+		// GUI is (currently) always running at 320x200
+		system.initSize(320, 200);
+	system.endGFXTransaction();
+
+	
+	// Clear the main screen
+	system.clearScreen();
+
+	// Setup a dummy palette, for the mouse cursor
+	setupDummyPalette(system);
 
 #if defined(_WIN32_WCE)
 	CELauncherDialog dlg(detector);
@@ -383,6 +388,10 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 	// Unless a game was specified, show the launcher dialog
 	if (detector._targetName.isEmpty())
 		running = launcherDialog(detector, system);
+	else
+		// Setup a dummy palette, for the mouse cursor, in case an error
+		// dialog has to be shown. See bug #1097467.
+		setupDummyPalette(system);
 
 	// FIXME: We're now looping the launcher. This, of course, doesn't
 	// work as well as it should. In theory everything should be destroyed
