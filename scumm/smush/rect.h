@@ -34,19 +34,19 @@ private:
 	int _y;	//!< The vertical part of the point
 public:
 	Point() : _x(0), _y(0) {};
-	Point(const Point & p) : _x(p.getX()), _y(p.getY()) {};
+	Point(const Point & p) : _x(p._x), _y(p._y) {};
 	explicit Point(int x, int y) : _x(x), _y(y) {};
-	Point & operator=(const Point & p) { _x = p.getX(); _y = p.getY(); return *this; };
-	bool operator==(const Point & p) const { return _x == p.getX() && _y == p.getY(); };
+	Point & operator=(const Point & p) { _x = p._x; _y = p._y; return *this; };
+	bool operator==(const Point & p) const { return _x == p._x && _y == p._y; };
 	const int & getX() const { return _x; };
 	const int & getY() const { return _y; };
 	int & getX() { return _x; };
 	int & getY() { return _y; };
-	Point operator+(const Point & p) const { return Point(_x + p.getX(), _y+p.getY()); };
-	Point operator-(const Point & p) const { return Point(_x - p.getX(), _y-p.getY()); };
-	Point & operator+=(const Point & p) { _x += p.getX(); _y += p.getY(); return *this; };
-	Point & operator-=(const Point & p) { _x -= p.getX(); _y -= p.getY(); return *this; };
-	bool isOrigin() const { return *this == Point(0, 0); };
+	Point operator+(const Point & p) const { return Point(_x + p._x, _y+p._y); };
+	Point operator-(const Point & p) const { return Point(_x - p._x, _y-p._y); };
+	Point & operator+=(const Point & p) { _x += p._x; _y += p._y; return *this; };
+	Point & operator-=(const Point & p) { _x -= p._x; _y -= p._y; return *this; };
+	bool isOrigin() const { return _x == 0 && _y == 0; };
 	void set(int x, int y) { _x = x; _y = y; }
 };
 

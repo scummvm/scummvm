@@ -20,6 +20,7 @@
  */
 
 #include <stdafx.h>
+#include "common/util.h"
 #include "scumm_renderer.h"
 #include "channel.h"
 
@@ -246,8 +247,8 @@ bool ScummRenderer::setPalette(const Palette & pal) {
 }
 
 void ScummRenderer::save(int frame) {
-	int width = min(getWidth(), _scumm->_realWidth); 
-	int height = min(getHeight(), _scumm->_realHeight);
+	int width = MIN(getWidth(), _scumm->_realWidth); 
+	int height = MIN(getHeight(), _scumm->_realHeight);
 	
 	_scumm->_system->copy_rect((const byte *)data(), getWidth(), 0, 0, width, height);
 	_scumm->_system->update_screen();

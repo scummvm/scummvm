@@ -36,14 +36,12 @@ private:
 	value_type _g;	//!< The green component.
 	value_type _b;	//!< The blue component.
 public:
-	Color();
-	Color(value_type, value_type, value_type);
-	Color(const Color &);
-	Color & operator=(const Color &);
-	virtual ~Color();
-	value_type red() const;
-	value_type green() const;
-	value_type blue() const;
+	Color() : _r(0), _g(0), _b(0) {}
+	Color(value_type r, value_type g, value_type b) : _r(r), _g(g), _b(b) {}
+
+	inline value_type red() const { return _r; }
+	inline value_type green() const { return _g; }
+	inline value_type blue() const { return _b; }
 	/*!	@brief handle delta palette modification
 
 		This method is used specifically by player::handleDeltaPalette().
