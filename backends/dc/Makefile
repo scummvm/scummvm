@@ -25,6 +25,7 @@ RM_REC = rm -rf
 AR = sh-elf-ar cru
 RANLIB = sh-elf-ranlib
 HAVE_GCC3 = true
+DISABLE_SCALERS = true
 
 ifdef BUILD_PLUGINS
 DEFINES += -DDYNAMIC_MODULES
