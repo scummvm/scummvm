@@ -42,6 +42,7 @@ class ActionMap {
  public:
 	int reg(void);
 	ActionMap(void);
+	~ActionMap(void);
 
 	int load(const byte *exmap_res, size_t exmap_res_len);
 	int draw(R_SURFACE *ds, int color);

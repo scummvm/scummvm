@@ -245,6 +245,7 @@ void SagaEngine::shutdown() {
 	EVENT_Shutdown();
 
 	delete _render;
+	delete _actionMap;
 	delete _sndRes;
 	// Shutdown system modules */
 	delete _music;
