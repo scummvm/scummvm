@@ -115,10 +115,10 @@ static GAME_FONTDESC ITEDISK_GameFonts[] = {
 };
 
 static GAME_RESOURCEDESC ITE_Resources = {
-	ITE_SCENE_LUT,  // Scene lookup table RN
-	ITE_SCRIPT_LUT, // Script lookup table RN
-	ITE_COMMAND_PANEL,
-	ITE_DIALOGUE_PANEL
+	RID_ITE_SCENE_LUT,  // Scene lookup table RN
+	RID_ITE_SCRIPT_LUT, // Script lookup table RN
+	RID_ITE_COMMAND_PANEL,
+	RID_ITE_DIALOGUE_PANEL
 };
 
 static GAME_SOUNDINFO ITE_GameSound = {
@@ -181,10 +181,10 @@ static GAME_FONTDESC IHNMCD_GameFonts[] = {
 };
 
 static GAME_RESOURCEDESC IHNM_Resources = {
-	IHNM_SCENE_LUT,  // Scene lookup table RN
-	IHNM_SCRIPT_LUT, // Script lookup table RN
-	IHNM_COMMAND_PANEL,
-	IHNM_DIALOGUE_PANEL
+	RID_IHNM_SCENE_LUT,  // Scene lookup table RN
+	RID_IHNM_SCRIPT_LUT, // Script lookup table RN
+	RID_IHNM_COMMAND_PANEL,
+	RID_IHNM_DIALOGUE_PANEL
 };
 
 static GAME_SOUNDINFO IHNM_GameSound = {

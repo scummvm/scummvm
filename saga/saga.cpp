@@ -45,7 +45,6 @@
 #include "saga/isomap.h"
 #include "saga/script.h"
 #include "saga/scene.h"
-#include "saga/sdata.h"
 #include "saga/sndres.h"
 #include "saga/sprite.h"
 #include "saga/sound.h"
@@ -151,7 +150,6 @@ int SagaEngine::init(GameDetector &detector) {
 	_sprite = new Sprite(this);
 	_anim = new Anim(this);
 	_script = new Script();
-	_sdata = new SData();
 	_interface = new Interface(this); // requires script module
 	_actor = new Actor(this);
 	_palanim = new PalAnim(this);
@@ -218,7 +216,7 @@ int SagaEngine::go() {
 
 	_previousTicks = _system->getMillis();
 
-	_sprite->loadList(ITE_MAIN_SPRITES, &_mainSprites);
+	_sprite->loadList(RID_ITE_MAIN_SPRITES, &_mainSprites);
 
 	// Begin Main Engine Loop
 
@@ -270,7 +268,6 @@ void SagaEngine::shutdown() {
 	delete _render;
 	delete _isoMap;
 	delete _sndRes;
-	delete _sdata;
 	// Shutdown system modules */
 	delete _music;
 	delete _sound;

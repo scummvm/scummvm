@@ -52,7 +52,14 @@ Script::Script() {
 	_currentScript = 0;
 	_abortEnabled = true;
 	_skipSpeeches = false;
-	memset(_dataBuf, 0, sizeof(_dataBuf));
+
+	_dataBuf[0].data = _dataBuf[1].data = (ScriptDataWord *)calloc(SCRIPT_DATABUF_LEN, sizeof(ScriptDataWord));;
+	_dataBuf[0].length = _dataBuf[1].length = SCRIPT_DATABUF_LEN;
+
+	for (i = 2; i < SCRIPT_DATABUF_NUM; i++) {
+		_dataBuf[i].length = 0;
+		_dataBuf[i].data = NULL;
+	}
 
 	gr_desc = _vm->getResourceInfo();
 	
@@ -138,7 +145,94 @@ Script::~Script() {
 	// Free script lookup table
 	free(_scriptLUT);
 	
+	free(_dataBuf[0].data);
+
 	_initialized = false;
+}
+
+int Script::getWord(int bufNumber, int wordNumber, ScriptDataWord *data) {
+	if ((bufNumber < 0) || (bufNumber >= SCRIPT_DATABUF_NUM)) {
+		return FAILURE;
+	}
+
+	if ((wordNumber < 0) || (wordNumber >= _dataBuf[bufNumber].length)) {
+		return FAILURE;
+	}
+
+	if (data == NULL) {
+		return FAILURE;
+	}
+
+	*data = _dataBuf[bufNumber].data[wordNumber];
+
+	return SUCCESS;
+}
+
+int Script::putWord(int bufNumber, int wordNumber, ScriptDataWord data) {
+	if ((bufNumber < 0) || (bufNumber >= SCRIPT_DATABUF_NUM)) {
+		return FAILURE;
+	}
+
+	if ((wordNumber < 0) || (wordNumber >= _dataBuf[bufNumber].length)) {
+		return FAILURE;
+	}
+
+	_dataBuf[bufNumber].data[wordNumber] = data;
+
+	return SUCCESS;
+}
+
+int Script::setBit(int bufNumber, ScriptDataWord bitNumber, int bitState) {
+	int wordNumber;
+	int bitPos;
+
+	ScriptDataWord bitPattern = 0x01;
+
+	if ((bufNumber < 0) || (bufNumber >= SCRIPT_DATABUF_NUM)) {
+		return FAILURE;
+	}
+
+	if (bitNumber >= (unsigned long)_dataBuf[bufNumber].length * (sizeof(ScriptDataWord) * CHAR_BIT)) {
+		return FAILURE;
+	}
+	
+	wordNumber = bitNumber / (sizeof(ScriptDataWord) * CHAR_BIT);
+	bitPos = bitNumber % (sizeof(ScriptDataWord) * CHAR_BIT);
+
+	bitPattern <<= ((sizeof(ScriptDataWord) * CHAR_BIT) - (bitPos + 1));
+
+	if (bitState) {
+		_dataBuf[bufNumber].data[wordNumber] |= bitPattern;
+	} else {
+		_dataBuf[bufNumber].data[wordNumber] &= ~bitPattern;
+	}
+
+	return SUCCESS;
+}
+
+int Script::getBit(int bufNumber, ScriptDataWord bitNumber, int *bitState) {
+	int wordNumber;
+	int bitPos;
+
+	ScriptDataWord bitPattern = 0x01;
+
+	if ((bufNumber < 0) || (bufNumber >= SCRIPT_DATABUF_NUM)) {
+		return FAILURE;
+	}
+
+	if (bitNumber >= (unsigned long)_dataBuf[bufNumber].length * (sizeof(ScriptDataWord) * CHAR_BIT)) {
+		return FAILURE;
+	}
+
+	wordNumber = bitNumber / (sizeof(ScriptDataWord) * CHAR_BIT);
+	bitPos = bitNumber % (sizeof(ScriptDataWord) * CHAR_BIT);
+
+	bitPattern <<= ((sizeof(ScriptDataWord) * CHAR_BIT) - (bitPos + 1));
+
+
+	*bitState = (_dataBuf[bufNumber].data[wordNumber] & bitPattern) ? 1 : 0;
+
+	return SUCCESS;
 }
 
 // Loads a script; including script bytecode and dialogue list 

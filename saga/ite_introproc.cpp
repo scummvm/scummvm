@@ -42,82 +42,82 @@ namespace Saga {
 
 static INTRO_DIALOGUE IntroDiag[] = {
 	{
-		CAVE_VOICE_0, "intro1a",
+		RID_CAVE_VOICE_0, "intro1a",
 		"We see the sky, we see the land, we see the water, "
 		"and we wonder: Are we the only ones?"
 	},
 	{
-		CAVE_VOICE_1, "intro2a",
+		RID_CAVE_VOICE_1, "intro2a",
 		"Long before we came to exist, the humans ruled "
 		"the Earth."
 	},
 	{
-		CAVE_VOICE_2, "intro3a",
+		RID_CAVE_VOICE_2, "intro3a",
 		"They made marvelous things, and moved whole " "mountains."
 	},
 	{
-		CAVE_VOICE_3, "intro4a",
+		RID_CAVE_VOICE_3, "intro4a",
 		"They knew the Secret of Flight, the Secret of "
 		"Happiness, and other secrets beyond our imagining."
 	},
 	{
-		CAVE_VOICE_4, "intro1b",
+		RID_CAVE_VOICE_4, "intro1b",
 		"The humans also knew the Secret of Life, "
 		"and they used it to give us the Four Great Gifts:"
 	},
 	{
-		CAVE_VOICE_5, "intro2b",
+		RID_CAVE_VOICE_5, "intro2b",
 		"Thinking minds, feeling hearts, speaking "
 		"mouths, and reaching hands."
 	},
 	{
-		CAVE_VOICE_6, "intro3b",
+		RID_CAVE_VOICE_6, "intro3b",
 		"We are their children."
 	},
 	{
-		CAVE_VOICE_7, "intro1c",
+		RID_CAVE_VOICE_7, "intro1c",
 		"They taught us how to use our hands, and how " "to speak."
 	},
 	{
-		CAVE_VOICE_8, "intro2c",
+		RID_CAVE_VOICE_8, "intro2c",
 		"They showed us the joy of using our minds."
 	},
 	{
-		CAVE_VOICE_9, "intro3c",
+		RID_CAVE_VOICE_9, "intro3c",
 		"They loved us, and when we were ready, they "
 		"surely would have given us the Secret of Happiness."
 	},
 	{
-		CAVE_VOICE_10, "intro1d",
+		RID_CAVE_VOICE_10, "intro1d",
 		"And now we see the sky, the land, and the water "
 		"that we are heirs to, and we wonder: why did "
 		"they leave?"
 	},
 	{
-		CAVE_VOICE_11, "intro2d",
+		RID_CAVE_VOICE_11, "intro2d",
 		"Do they live still, in the stars? In the oceans "
 		"depths? In the wind?"
 	},
 	{
-		CAVE_VOICE_12, "intro3d",
+		RID_CAVE_VOICE_12, "intro3d",
 		"We wonder, was their fate good or evil?"
 	},
 	{
-		CAVE_VOICE_13, "intro4d",
+		RID_CAVE_VOICE_13, "intro4d",
 		"And will we also share the same fate one day?"
 	},
 };
 
 SCENE_QUEUE ITE_IntroList[] = {
-	{ITE_INTRO_ANIM_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroAnimProc, 0, SCENE_NOFADE},
-	{ITE_CAVE_SCENE_1, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave1Proc, 0, SCENE_FADE_NO_INTERFACE},
-	{ITE_CAVE_SCENE_2, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave2Proc, 0, SCENE_NOFADE},
-	{ITE_CAVE_SCENE_3, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave3Proc, 0, SCENE_NOFADE},
-	{ITE_CAVE_SCENE_4, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave4Proc, 0, SCENE_NOFADE},
-	{ITE_VALLEY_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroValleyProc, 0, SCENE_FADE_NO_INTERFACE},
-	{ITE_TREEHOUSE_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroTreeHouseProc, 0, SCENE_NOFADE},
-	{ITE_FAIREPATH_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroFairePathProc, 0, SCENE_NOFADE},
-	{ITE_FAIRETENT_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroFaireTentProc, 0, SCENE_NOFADE}
+	{RID_ITE_INTRO_ANIM_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroAnimProc, 0, SCENE_NOFADE},
+	{RID_ITE_CAVE_SCENE_1, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave1Proc, 0, SCENE_FADE_NO_INTERFACE},
+	{RID_ITE_CAVE_SCENE_2, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave2Proc, 0, SCENE_NOFADE},
+	{RID_ITE_CAVE_SCENE_3, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave3Proc, 0, SCENE_NOFADE},
+	{RID_ITE_CAVE_SCENE_4, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave4Proc, 0, SCENE_NOFADE},
+	{RID_ITE_VALLEY_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroValleyProc, 0, SCENE_FADE_NO_INTERFACE},
+	{RID_ITE_TREEHOUSE_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroTreeHouseProc, 0, SCENE_NOFADE},
+	{RID_ITE_FAIREPATH_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroFairePathProc, 0, SCENE_NOFADE},
+	{RID_ITE_FAIRETENT_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroFaireTentProc, 0, SCENE_NOFADE}
 };
 
 int Scene::ITEStartProc() {

@@ -44,9 +44,9 @@
 namespace Saga {
 
 static int actorCompare(const ActorDataPointer& actor1, const ActorDataPointer& actor2) {
-	if (actor1->actorY == actor2->actorY) {
+	if (actor1->location.y == actor2->location.y) {
 		return 0;
-	} else if (actor1->actorY < actor2->actorY) {
+	} else if (actor1->location.y < actor2->location.y) {
 		return -1;
 	} else {
 		return 1;
@@ -59,10 +59,24 @@ ACTIONTIMES ActionTDeltas[] = {
 	{ ACTION_SPEAK, 200 }
 };
 
+// Lookup table to convert 8 cardinal directions to 4
+int ActorDirectectionsLUT[8] = {
+	ACTOR_DIRECTION_BACK,	// kDirUp
+	ACTOR_DIRECTION_RIGHT,	// kkDirUpRight
+	ACTOR_DIRECTION_RIGHT,	// kDirRight
+	ACTOR_DIRECTION_RIGHT,	// kDirDownRight
+	ACTOR_DIRECTION_FORWARD,// kDirDown
+	ACTOR_DIRECTION_LEFT,	// kDirDownLeft
+	ACTOR_DIRECTION_LEFT,	// kDirLeft
+	ACTOR_DIRECTION_LEFT,	// kDirUpLeft
+};
+
 Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	int i;
 	ActorData *actor;
 	debug(9, "Actor::Actor()");
+
+	_centerActor = _protagonist = NULL;
 
 	// Get actor resource file context
 	_actorContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
@@ -80,15 +94,16 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 		actor->frameListResourceId = ActorTable[i].frameListResourceId;
 		actor->speechColor = ActorTable[i].speechColor;
 		actor->sceneNumber = ActorTable[i].sceneIndex;
-	
 		actor->flags = ActorTable[i].flags;
-		actor->orient = ACTOR_DEFAULT_ORIENT;
-		actor->def_action = 0;
-		actor->def_action_flags = 0;
-		actor->action = 0;
-		actor->action_flags = 0;
-		actor->action_time = 0;
-		actor->action_frame = 0;
+		actor->currentAction = ActorTable[i].currentAction;
+		actor->facingDirection = ActorTable[i].facingDirection;
+		actor->actionDirection = ActorTable[i].actionDirection;
+		actor->frameNumber = 0;
+		actor->targetObject = ID_NOTHING;
+
+		actor->location.x = ActorTable[i].x;
+		actor->location.y = ActorTable[i].y;
+		actor->location.z = ActorTable[i].z;
 
 		actor->disabled = !loadActorResources(actor);
 		if (actor->disabled) {
@@ -114,7 +129,7 @@ bool Actor::loadActorResources(ActorData * actor) {
 	byte *resourcePointer;
 	size_t resourceLength;
 	int framesCount;
-	ActorFrame *framesPointer;
+	ActorFrameSequence *framesPointer;
 	int lastFrame;
 	int i, orient;
 	int result;
@@ -129,7 +144,7 @@ bool Actor::loadActorResources(ActorData * actor) {
 	framesCount = resourceLength / 16;
 	debug(9, "Frame resource contains %d frames", framesCount);
 	
-	framesPointer = (ActorFrame *)malloc(sizeof(ActorFrame) * framesCount);
+	framesPointer = (ActorFrameSequence *)malloc(sizeof(ActorFrameSequence) * framesCount);
 	if (framesPointer == NULL) {
 		error("Couldn't allocate memory for sprite frames");
 	}
@@ -139,12 +154,12 @@ bool Actor::loadActorResources(ActorData * actor) {
 	lastFrame = 0;
 
 	for (i = 0; i < framesCount; i++) {
-		for (orient = 0; orient < ACTOR_ORIENTATION_COUNT; orient++) {
+		for (orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
 			// Load all four orientations
-			framesPointer[i].dir[orient].frameIndex = readS.readUint16();
-			framesPointer[i].dir[orient].frameCount = readS.readUint16();
-			if (framesPointer[i].dir[orient].frameIndex > lastFrame) {
-				lastFrame = framesPointer[i].dir[orient].frameIndex;
+			framesPointer[i].directions[orient].frameIndex = readS.readUint16();
+			framesPointer[i].directions[orient].frameCount = readS.readUint16();
+			if (framesPointer[i].directions[orient].frameIndex > lastFrame) {
+				lastFrame = framesPointer[i].directions[orient].frameIndex;
 			}
 		}
 	}
@@ -191,13 +206,40 @@ ActorData *Actor::getActor(uint16 actorId) {
 void Actor::updateActorsScene() {
 	int i;
 	ActorData *actor;
+	
+	_activeSpeech.stringsCount = 0;
 
 	for (i = 0; i < ACTORCOUNT; i++) {
-		actor = &_actors[i];
+		actor = &_actors[i];		
 		if (actor->flags & (kProtagonist | kFollower)) {
 			actor->sceneNumber = _vm->_scene->currentSceneNumber();
+			if (actor->flags & kProtagonist) {
+//				actor->finalTarget = a->obj.loc;
+				_centerActor = _protagonist = actor;
+			}
+
 		}
+		if (actor->sceneNumber == _vm->_scene->currentSceneNumber())
+			actor->actionCycle = (rand() & 7) * 4;
 	}
+
+	handleActions(0, true);
+}
+
+ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
+	ActorData *actor;
+
+	actor = getActor(actorId);
+	if (actor->disabled)
+		error("Actor::getActorFrameRange Wrong actorId 0x%X", actorId);
+
+	if (frameType >= actor->framesCount)
+		error("Actor::getActorFrameRange Wrong frameType 0x%X actorId 0x%X", frameType, actorId);
+	
+	if ((actor->facingDirection < kDirUp) || (actor->facingDirection > kDirUpLeft))
+		error("Actor::getActorFrameRange Wrong direction 0x%X actorId 0x%X", actor->facingDirection, actorId);
+
+	return &actor->frames[frameType].directions[actor->facingDirection];
 }
 
 void Actor::handleSpeech(int msec) {
@@ -283,8 +325,157 @@ void Actor::handleSpeech(int msec) {
 		_vm->_script->wakeUpThreadsDelayed(kWaitTypeSpeech, ticksToMSec(kScriptTimeTicksPerSecond / 3));
 }
 
-int Actor::direct(int msec) {
+void Actor::handleActions(int msec, bool setup) {
 	int i;
+	ActorData *actor;
+	ActorFrameRange *frameRange;
+	int state;
+	
+	for (i = 0; i < ACTORCOUNT; i++) {
+		actor = &_actors[i];
+		if (actor->disabled) continue;
+		if (actor->sceneNumber != _vm->_scene->currentSceneNumber()) continue;
+		
+		//todo: dragon stuff
+
+		switch(actor->currentAction) {
+			case kActionWait: {
+				if (!setup && (actor->flags & kFollower)) {
+					//todo: followProtagonist
+					if (actor->currentAction != kActionWait)
+						break;
+				}
+
+				if (actor->targetObject != ID_NOTHING) {
+					//todo: facetowardsobject
+				}
+
+				if (actor->flags & kCycle) {
+					frameRange = getActorFrameRange( actor->actorId, kFrameStand);
+					if (frameRange->frameCount > 0) {
+						actor->actionCycle = (++actor->actionCycle) % frameRange->frameCount;
+					} else {
+						actor->actionCycle = 0;
+					}
+					actor->frameNumber = frameRange->frameIndex + actor->actionCycle;
+					break;
+				}
+
+				if ((actor->actionCycle & 3) == 0) {
+					actor->cycleWrap(100);
+
+					frameRange = getActorFrameRange( actor->actorId, kFrameWait);
+					if ((frameRange->frameCount < 1 || actor->actionCycle > 33))
+						frameRange = getActorFrameRange( actor->actorId, kFrameStand);
+
+					if (frameRange->frameCount) {
+						actor->frameNumber = frameRange->frameIndex + (uint16)rand() % frameRange->frameCount;
+					} else {
+						actor->frameNumber = frameRange->frameIndex;
+					}
+				}
+				actor->actionCycle++;
+			} break;
+			case kActionWalkToPoint:
+			case kActionWalkToLink: {
+					//todo: do it
+				debug(9,"kActionWalk* not implemented");
+			} break;
+			case kActionWalkDir: {
+				debug(9,"kActionWalkDir not implemented");
+				//todo: do it
+			} break;
+			case kActionSpeak: {
+				actor->actionCycle++;
+				actor->cycleWrap(64);
+
+				frameRange = getActorFrameRange( actor->actorId, kFrameGesture);
+				if (actor->actionCycle >= frameRange->frameCount) {
+					if (actor->actionCycle & 1) break;
+					frameRange = getActorFrameRange( actor->actorId, kFrameSpeak);
+					state = (uint16)rand() % (frameRange->frameCount + 1);
+
+					if (state == 0) {
+						frameRange = getActorFrameRange( actor->actorId, kFrameStand);
+					} else {
+						state--;
+					}
+				} else {
+					state = actor->actionCycle;
+				}
+
+				actor->frameNumber = frameRange->frameIndex + state;
+			} break;
+
+			case kActionAccept:
+			case kActionStoop:
+				break;
+
+			case kActionCycleFrames:
+			case kActionPongFrames: {
+				if (actor->cycleTimeCount > 0) {
+					actor->cycleTimeCount--;
+					break;
+				}
+
+				actor->cycleTimeCount = actor->cycleDelay;
+				actor->actionCycle++;
+
+				frameRange = getActorFrameRange( actor->actorId, actor->cycleFrameNumber);
+				
+				if (actor->currentAction == kActionPongFrames) {
+					if (actor->actionCycle >= frameRange->frameCount * 2 - 2) {
+						if (actor->actorFlags & kActorContinuous) {
+							actor->actionCycle = 0;
+						} else {
+							actor->currentAction = kActionFreeze;
+							break;
+						}
+					}
+
+					state = actor->actionCycle;
+					if (state >= frameRange->frameCount) {
+						state = frameRange->frameCount * 2 - 2 - state;
+					}
+				} else {
+					if (actor->actionCycle >= frameRange->frameCount) {
+						if (actor->actorFlags & kActorContinuous) {
+							actor->actionCycle = 0;
+						} else {
+							actor->currentAction = kActionFreeze;
+							break;
+						}
+					}
+					state = actor->actionCycle;
+				}
+
+				if (frameRange->frameCount && (actor->actorFlags & kActorRandom)) {
+					state = rand() % frameRange->frameCount;
+				}
+
+				if (actor->actorFlags & kActorBackwards) {
+					actor->frameNumber = frameRange->frameIndex + frameRange->frameCount - 1 - state;
+				} else {
+					actor->frameNumber = frameRange->frameIndex + state;
+				}
+			} break;
+			case kActionFall: {
+				debug(9,"kActionFall not implemented");
+
+				//todo: do it
+			} break;
+			case kActionClimb: {
+				debug(9,"kActionClimb not implemented");
+
+				//todo: do it
+			} break;
+		}
+	}
+
+}
+
+int Actor::direct(int msec) {
+/*	int i;
 	ActorData *actor;
 
 	ActorIntentList::iterator actorIntentIterator;
@@ -351,6 +542,9 @@ int Actor::direct(int msec) {
 			}
 		}
 	}
+*/
+//process actions
+	handleActions(msec, false);
 
 //process speech
 	handleSpeech(msec);
@@ -370,7 +564,7 @@ void Actor::createDrawOrderList() {
 
 		_drawOrderList.pushBack(actor, actorCompare);
 
-		middle = ITE_STATUS_Y - actor->actorY / ACTOR_LMULT,
+		middle = ITE_STATUS_Y - actor->location.y / ACTOR_LMULT,
 
 		_vm->_scene->getSlopes(beginSlope, endSlope);
 
@@ -388,19 +582,16 @@ void Actor::createDrawOrderList() {
 			}
 		}
 
-		actor->screenPosition.x = (actor->actorX / ACTOR_LMULT);
-		actor->screenPosition.y = (actor->actorY / ACTOR_LMULT) - actor->actorZ;
+		actor->screenPosition.x = (actor->location.x / ACTOR_LMULT);
+		actor->screenPosition.y = (actor->location.y / ACTOR_LMULT) - actor->location.z;
 	}
 }
 
 int Actor::drawActors() {
 	ActorOrderList::iterator actorDrawOrderIterator;
 	ActorData *actor;
-
-
-	int o_idx; //Orientation index
-	int sprite_num;
-
+	int frameNumber;
+	SPRITELIST *spriteList;
 
 	SURFACE *back_buf;
 
@@ -410,19 +601,25 @@ int Actor::drawActors() {
 
 	for (actorDrawOrderIterator = _drawOrderList.begin(); actorDrawOrderIterator != _drawOrderList.end(); ++actorDrawOrderIterator) {
 		actor =  actorDrawOrderIterator.operator*();
-		if (actor->framesCount == 0) {
-			warning("actor->framesCount == 0 actorId 0x%X", actor->actorId);
+
+		if (_vm->_scene->currentSceneNumber() == RID_ITE_OVERMAP_SCENE) {
+			if (!(actor->flags & kProtagonist)){
+				warning("not protagonist");
+				continue;
+			}
+			frameNumber = 8;			
+			spriteList = _vm->_mainSprites;
+		} else {
+			frameNumber = actor->frameNumber;			
+			spriteList = actor->spriteList;
+		}
+		
+		if ((frameNumber < 0) || (spriteList->sprite_count <= frameNumber)) {
+			warning("Actor::drawActors frameNumber invalid for actorId 0x%X", actor->actorId);
 			continue;
 		}
 
-		o_idx = ActorOrientationLUT[actor->orient];
-		sprite_num = actor->frames[actor->action].dir[o_idx].frameIndex;
-		sprite_num += actor->action_frame;
-		if (actor->spriteList->sprite_count <= sprite_num) {
-			warning("(actor->spriteList->sprite_count <= sprite_num) actorId 0x%X", actor->actorId);
-			continue;
-		}
-		_vm->_sprite->drawOccluded(back_buf, actor->spriteList, sprite_num, actor->screenPosition, actor->screenScale, actor->screenDepth);
+		_vm->_sprite->drawOccluded(back_buf, spriteList, frameNumber, actor->screenPosition, actor->screenScale, actor->screenDepth);
 	}
 
 // draw speeches
@@ -470,7 +667,7 @@ int Actor::drawActors() {
 
 	return SUCCESS;
 }
-
+/*
 void Actor::setOrientation(uint16 actorId, int orient) {
 	ActorData *actor;
 	
@@ -540,7 +737,7 @@ void Actor::walkTo(uint16 actorId, const Point *walk_pt, uint16 flags, SEMAPHORE
 		_vm->_script->SThreadHoldSem(sem);
 	}
 }
-
+*/
 int Actor::setPathNode(WALKINTENT *walk_int, const Point &src_pt, Point *dst_pt, SEMAPHORE *sem) {
 	WALKNODE new_node;
 
@@ -556,7 +753,7 @@ int Actor::setPathNode(WALKINTENT *walk_int, const Point &src_pt, Point *dst_pt,
 	
 	return SUCCESS;
 }
-
+/*
 int Actor::handleWalkIntent(ActorData *actor, WALKINTENT *a_walkint, int *complete_p, int delta_time) {
 	WalkNodeList::iterator walkNodeIterator;
 	WalkNodeList::iterator nextWalkNodeIterator;
@@ -722,7 +919,7 @@ void Actor::moveRelative(uint16 actorId, const Point &movePoint) {
 	actor->actorX += movePoint.x; 
 	actor->actorY += movePoint.y;
 }
-
+*/
 void Actor::StoA(Point &actorPoint, const Point &screenPoint) {
 	actorPoint.x = (screenPoint.x * ACTOR_LMULT);
 	actorPoint.y = (screenPoint.y * ACTOR_LMULT);
@@ -768,10 +965,11 @@ void Actor::nonActorSpeech(const char **strings, int stringsCount, int speechFla
 
 void Actor::simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount, int speechFlags) {
 	int i;
-
+	
 	for (i = 0; i < actorIdsCount; i++) {		
 		_activeSpeech.actorIds[i] = actorIds[i];
 	}
+	_activeSpeech.actorsCount = actorIdsCount;
 	_activeSpeech.strings[0] = string;
 	_activeSpeech.stringsCount = 1;
 	_activeSpeech.speechFlags = speechFlags;
@@ -797,6 +995,7 @@ void Actor::abortSpeech() {
 	_activeSpeech.playingTime = 0;
 }
 
+/*
 // Console wrappers - must be safe to run
 // TODO - checkup ALL arguments, cause wrong arguments may fall function with "error"
 
@@ -841,7 +1040,6 @@ void Actor::CF_actor_seto(int argc, const char **argv) {
 		return;
 	}
 
-	setOrientation(actorId, orient);
 }
 
 void Actor::CF_actor_setact(int argc, const char **argv) {
@@ -856,7 +1054,7 @@ void Actor::CF_actor_setact(int argc, const char **argv) {
 	}
 
 //TODO action_n check
-/*	if ((action_n < 0) || (action_n >= actor->action_ct)) {
+	if ((action_n < 0) || (action_n >= actor->action_ct)) {
 		_vm->_console->DebugPrintf("Invalid action number.\n");
 		return;
 	}
@@ -866,8 +1064,8 @@ void Actor::CF_actor_setact(int argc, const char **argv) {
 			actor->act_tbl[action_n].dir[1].frame_count,
 			actor->act_tbl[action_n].dir[2].frame_count,
 			actor->act_tbl[action_n].dir[3].frame_count);
-*/
+
 	setAction(actorId, action_n, ACTION_LOOP);
 }
-
+*/
 } // End of namespace Saga

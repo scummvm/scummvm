@@ -47,9 +47,9 @@ namespace Saga {
 #define S_ERROR_PREFIX "SError: "
 #define S_WARN_PREFIX "SWarning: "
 
-#define SFUNC_NUM 78
+#define SCRIPT_FUNCTION_MAX 78
 
-typedef unsigned int SDataWord_T;
+typedef unsigned int ScriptDataWord;
 
 enum SCRIPT_VERBS {
 	S_VERB_WALKTO = 0,
@@ -95,9 +95,20 @@ enum ThreadWaitTypes {
 };
 
 enum OpCodes {
+
+//...
+	opCcall = 0x18,
+	opCcallV = 0x19,
+//...
 	opSpeak = 0x53
 };
 
+enum CycleFlags {
+	kCyclePong = (1 << 0),
+	kCycleOnce = (1 << 1),
+	kCycleRandom = (1 << 2),
+	kCycleReverse = (1 << 3)
+};
 struct SCRIPT_THREAD {
 	int flags;				// ThreadFlags
 	int waitType;			// ThreadWaitTypes
@@ -113,16 +124,16 @@ struct SCRIPT_THREAD {
 	// area. It's therefore probably quite important that our stacks work
 	// the same as in the original interpreter.
 
-	SDataWord_T stackBuf[64];
+	ScriptDataWord stackBuf[64];
 
 	int stackPtr;
 	int framePtr;
 
-	SDataWord_T threadVars[4];
+	ScriptDataWord threadVars[4];
 
-	SDataWord_T retVal;
+	ScriptDataWord retVal;
 
-	SDataWord_T stackTop() {
+	ScriptDataWord stackTop() {
 		return stackBuf[stackPtr];
 	}
 
@@ -130,12 +141,12 @@ struct SCRIPT_THREAD {
 		return ARRAYSIZE(stackBuf) - stackPtr - 1;
 	}
 
-	void push(SDataWord_T n) {
+	void push(ScriptDataWord n) {
 		assert(stackPtr > 0);
 		stackBuf[--stackPtr] = n;
 	}
 
-	SDataWord_T pop() {
+	ScriptDataWord pop() {
 		assert(stackPtr < ARRAYSIZE(stackBuf));
 		return stackBuf[stackPtr++];
 	}
@@ -186,9 +197,9 @@ struct SCRIPT_LUT_ENTRY {
 	int voice_lut_rn;
 };
 
-struct SCRIPT_DATABUF {
-	SDataWord_T *data;
-	int len;
+struct ScriptDataBuf {
+	ScriptDataWord *data;
+	int length;
 };
 
 #define SCRIPTFUNC_PARAMS SCRIPT_THREAD *thread, int nArgs
@@ -210,8 +221,11 @@ public:
 	bool isInitialized() const { return _initialized;  }
 	bool isVoiceLUTPresent() const { return _voiceLUTPresent; }
 	SCRIPTDATA *currentScript() { return _currentScript; }
-	void setBuffer(int idx, SCRIPT_DATABUF *ptr) { _dataBuf[idx] = ptr; }
-	SCRIPT_DATABUF *dataBuffer(int idx) { return _dataBuf[idx]; }
+	ScriptDataBuf *dataBuffer(int idx) { return &_dataBuf[idx]; }
+	int getWord(int bufNumber, int wordNumber, ScriptDataWord *data);
+	int putWord(int bufNumber, int wordNumber, ScriptDataWord data);
+	int setBit(int bufNumber, ScriptDataWord bitNumber, int bitState);
+	int getBit(int bufNumber, ScriptDataWord bitNumber, int *bitState);	
 	const char *getString(int index);
 
 	void scriptInfo();
@@ -225,7 +239,7 @@ protected:
 	int _scriptLUTMax;
 	uint16 _scriptLUTEntryLen;
 	SCRIPTDATA *_currentScript;
-	SCRIPT_DATABUF *_dataBuf[SCRIPT_DATABUF_NUM];
+	ScriptDataBuf _dataBuf[SCRIPT_DATABUF_NUM];
 	ScriptThreadList _threadList;
 
 
@@ -260,29 +274,29 @@ private:
 	int SThreadSetEntrypoint(SCRIPT_THREAD *thread, int ep_num);
 
 private:
-	typedef int (Script::*SFunc_T)(SCRIPTFUNC_PARAMS);
+	typedef int (Script::*ScriptFunctionType)(SCRIPTFUNC_PARAMS);
 
-	const SFunc_T *_SFuncList;
+	const ScriptFunctionType *_scriptFunctionsList;
 
 	void setupScriptFuncList(void);
 	int SDebugPrintInstr(SCRIPT_THREAD *thread);
 
 	int SF_putString(SCRIPTFUNC_PARAMS);
-	int SF_sleep(SCRIPTFUNC_PARAMS);
+	int sfWait(SCRIPTFUNC_PARAMS);
 	int SF_takeObject(SCRIPTFUNC_PARAMS);
 	int SF_objectIsCarried(SCRIPTFUNC_PARAMS);
 	int SF_setStatusText(SCRIPTFUNC_PARAMS);
 	int SF_commandMode(SCRIPTFUNC_PARAMS);
 	int SF_actorWalkTo(SCRIPTFUNC_PARAMS);
 	int SF_doAction(SCRIPTFUNC_PARAMS);
-	int SF_setFacing(SCRIPTFUNC_PARAMS);
+	int sfSetActorFacing(SCRIPTFUNC_PARAMS);
 	int SF_startBgdAnim(SCRIPTFUNC_PARAMS);
 	int SF_stopBgdAnim(SCRIPTFUNC_PARAMS);
 	int SF_freezeInterface(SCRIPTFUNC_PARAMS);
 	int SF_dialogMode(SCRIPTFUNC_PARAMS);
 	int SF_killActorThreads(SCRIPTFUNC_PARAMS);
 	int SF_faceTowards(SCRIPTFUNC_PARAMS);
-	int SF_setFollower(SCRIPTFUNC_PARAMS);
+	int sfSetFollower(SCRIPTFUNC_PARAMS);
 	int SF_gotoScene(SCRIPTFUNC_PARAMS);
 	int SF_setObjImage(SCRIPTFUNC_PARAMS);
 	int SF_setObjName(SCRIPTFUNC_PARAMS);
@@ -297,20 +311,20 @@ private:
 	int SF_actorWalkToAsync(SCRIPTFUNC_PARAMS);
 	int SF_enableZone(SCRIPTFUNC_PARAMS);
 	int SF_setActorState(SCRIPTFUNC_PARAMS);
-	int SF_moveTo(SCRIPTFUNC_PARAMS);
+	int scriptMoveTo(SCRIPTFUNC_PARAMS);
 	int SF_sceneEq(SCRIPTFUNC_PARAMS);
 	int SF_dropObject(SCRIPTFUNC_PARAMS);
 	int SF_finishBgdAnim(SCRIPTFUNC_PARAMS);
-	int SF_swapActors(SCRIPTFUNC_PARAMS);
-	int SF_simulSpeech(SCRIPTFUNC_PARAMS);
+	int sfSwapActors(SCRIPTFUNC_PARAMS);
+	int sfSimulSpeech(SCRIPTFUNC_PARAMS);
 	int SF_actorWalk(SCRIPTFUNC_PARAMS);
-	int SF_cycleActorFrames(SCRIPTFUNC_PARAMS);
-	int SF_setFrame(SCRIPTFUNC_PARAMS);
+	int sfCycleFrames(SCRIPTFUNC_PARAMS);
+	int sfSetFrame(SCRIPTFUNC_PARAMS);
 	int SF_setRightPortrait(SCRIPTFUNC_PARAMS);
 	int SF_setLeftPortrait(SCRIPTFUNC_PARAMS);
 	int SF_linkAnim(SCRIPTFUNC_PARAMS);
 	int SF_scriptSpecialWalk(SCRIPTFUNC_PARAMS);
-	int SF_placeActor(SCRIPTFUNC_PARAMS);
+	int sfPlaceActor(SCRIPTFUNC_PARAMS);
 	int SF_checkUserInterrupt(SCRIPTFUNC_PARAMS);
 	int SF_walkRelative(SCRIPTFUNC_PARAMS);
 	int SF_moveRelative(SCRIPTFUNC_PARAMS);
@@ -346,6 +360,24 @@ private:
 	int SF_fadeMusic(SCRIPTFUNC_PARAMS);
 	int SF_playVoice(SCRIPTFUNC_PARAMS);
 };
+
+inline int getSWord(ScriptDataWord word) {
+	uint16 uInt = word;
+	int sInt;
+
+	if (uInt & 0x8000U) {
+		sInt = (int)(uInt - 0x8000U) - 0x7FFF - 1;
+	} else {
+		sInt = uInt;
+	}
+
+	return sInt;
+}
+
+inline uint getUWord(ScriptDataWord word) {
+	return (uint16) word;
+}
+
 
 } // End of namespace Saga
 

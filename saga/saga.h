@@ -49,7 +49,6 @@ class Anim;
 class Render;
 class IsoMap;
 class Gfx;
-class SData;
 class Script;
 class Actor;
 class Font;
@@ -217,7 +216,6 @@ public:
 	Render *_render;
 	IsoMap *_isoMap;
 	Gfx *_gfx;
-	SData *_sdata;
 	Script *_script;
 	Actor *_actor;
 	Font *_font;
@@ -263,7 +261,7 @@ public:
 	int processInput(void);
 	Point getMousePos();
 
-private:
+ private:
 	Point _mousePos;
 
 public:

@@ -36,7 +36,6 @@
 #include "saga/sprite.h"
 
 #include "saga/interface.h"
-#include "saga/sdata.h"
 
 namespace Saga {
 
@@ -214,9 +213,9 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 		return;
 	}
 
-	_vm->_sprite->loadList(ITE_COMMAND_BUTTONSPRITES, &_cPanel.sprites);
+	_vm->_sprite->loadList(RID_ITE_COMMAND_BUTTONSPRITES, &_cPanel.sprites);
 
-	_vm->_sprite->loadList(ITE_DEFAULT_PORTRAITS, &_defPortraits);
+	_vm->_sprite->loadList(RID_ITE_DEFAULT_PORTRAITS, &_defPortraits);
 
 	_vm->decodeBGImage(_cPanel.res, _cPanel.res_len, &_cPanel.img,
 					&_cPanel.img_len, &_cPanel.img_w, &_cPanel.img_h);
@@ -356,13 +355,13 @@ int Interface::draw() {
 	lportrait.x = xbase + _iDesc.lportrait_x;
 	lportrait.y = ybase + _iDesc.lportrait_y;
 
-	_vm->_sprite->draw(back_buf, _defPortraits, _leftPortrait, lportrait, 1);
+	_vm->_sprite->draw(back_buf, _defPortraits, _leftPortrait, lportrait, 256);
 
 	if (_panelMode == kPanelDialogue && _iDesc.rportrait_x >= 0) {
 		rportrait.x = xbase + _iDesc.rportrait_x;
 		rportrait.y = ybase + _iDesc.rportrait_y;
 
-		_vm->_sprite->draw(back_buf, _scenePortraits, _rightPortrait, rportrait, 1);
+		_vm->_sprite->draw(back_buf, _scenePortraits, _rightPortrait, rportrait, 256);
 	}
 
 	drawInventory();
@@ -480,7 +479,7 @@ int Interface::handleCommandClick(SURFACE *ds, const Point& imousePt) {
 			button.y = y_base + _cPanel.buttons[set_button].y1;
 
 			_vm->_sprite->draw(ds, _cPanel.sprites, _cPanel.buttons[set_button].
-						active_sprite - 1, button, 1);
+						active_sprite - 1, button, 256);
 		}
 
 		if (_cPanel.buttons[old_set_button].flags & BUTTON_BITMAP) {
@@ -488,7 +487,7 @@ int Interface::handleCommandClick(SURFACE *ds, const Point& imousePt) {
 			button.y = y_base + _cPanel.buttons[old_set_button].y1;
 
 			_vm->_sprite->draw(ds, _cPanel.sprites, _cPanel.buttons[old_set_button].
-						inactive_sprite - 1, button, 1);
+						inactive_sprite - 1, button, 256);
 		}
 	}
 
@@ -548,7 +547,7 @@ int Interface::handleCommandUpdate(SURFACE *ds, const Point& imousePt) {
 
 		if ((i == _cPanel.set_button) && (_cPanel.buttons[i].flags & BUTTON_BITMAP)) {
 			_vm->_sprite->draw(ds, _cPanel.sprites, _cPanel.buttons[i].active_sprite - 1,
-						button, 1);
+						button, 256);
 		}
 	}
 
@@ -576,7 +575,7 @@ int Interface::handlePlayfieldClick(SURFACE *ds, const Point& imousePt) {
 	if (object_flags & OBJECT_EXIT) { // FIXME. This is wrong
 		if ((script_num = _vm->_scene->_objectMap->getEPNum(objectNum)) != -1) {
 			// Set active verb in script module
-			_vm->_sdata->putWord(4, 4, I_VerbData[_activeVerb].s_verb);
+			_vm->_script->putWord(4, 4, I_VerbData[_activeVerb].s_verb);
 
 			// Execute object script if present
 			if (script_num != 0) {
@@ -708,7 +707,7 @@ void Interface::drawInventory() {
 
 		_vm->_sprite->draw(back_buf, _vm->_mainSprites,
 			ObjectTable[_inventory[i]].spritelistRn,
-			drawPoint, 1);
+			drawPoint, 256);
 
 		if (++col >= _iDesc.inv_columns) {
 			if (++row >= _iDesc.inv_rows) {

@@ -43,10 +43,17 @@ namespace Saga {
 
 #define ACTOR_LMULT 4
 
-#define ACTOR_ORIENTATION_COUNT 4
+#define ACTOR_DIRECTIONS_COUNT	4	// for ActorFrameSequence
+#define ACTOR_DIRECTION_RIGHT	0
+#define ACTOR_DIRECTION_LEFT	1
+#define ACTOR_DIRECTION_BACK	2
+#define ACTOR_DIRECTION_FORWARD	3
 
-#define ACTOR_SPEECH_STRING_MAX 16
+#define ACTOR_SPEECH_STRING_MAX 16	// speech const
 #define ACTOR_SPEECH_ACTORS_MAX 8
+
+#define ID_NOTHING 0
+#define ID_PROTAG 1
 
 #define IS_VALID_ACTOR_INDEX(index) ((index >= 0) && (index < ACTORCOUNT))
 #define IS_VALID_ACTOR_ID(id) ((id == 1) || (id >= 0x2000) && (id < (0x2000 | ACTORCOUNT)))
@@ -74,6 +81,44 @@ enum SpeechFlags {
 	kSpeakNoAnimate = 1,
 	kSpeakAsync = 2,
 	kSpeakSlow = 4
+};
+
+enum ActorDirections {
+	kDirUp = 0,
+	kDirUpRight = 1,
+	kDirRight = 2,
+	kDirDownRight = 3,
+	kDirDown = 4,
+	kDirDownLeft = 5,
+	kDirLeft = 6,
+	kDirUpLeft = 7
+};
+
+enum ActorFrameTypes {
+	kFrameStand = 0,
+	kFrameWalk = 1,
+	kFrameSpeak = 2,
+	kFrameGive = 3,
+	kFrameGesture = 4,
+	kFrameWait = 5,
+	kFramePickUp = 6,
+	kFrameLook = 7
+//...some special
+};
+
+enum ActorFlagsEx {
+	kActorNoCollide = (1 << 0),
+	kActorNoFollow = (1 << 1),
+	kActorCollided = (1 << 2),
+	kActorBackwards = (1 << 3),
+	kActorContinuous = (1 << 4),
+	kActorFinalFace = (1 << 5),
+	kActorFinishLeft = ((1 << 5) | (kDirLeft << 6)),
+	kActorFinishRight = ((1 << 5) | (kDirRight << 6)),
+	kActorFinishUp = ((1 << 5) | (kDirUp << 6)),
+	kActorFinishDown = ((1 << 5) | (kDirDown << 6)),
+	kActorFacing = (0xf << 5),
+	kActorRandom = (1 << 10)
 };
 
 enum ACTOR_INTENTS {
@@ -109,13 +154,13 @@ enum ACTOR_ACTIONFLAGS {
 	ACTION_LOOP = 0x01
 };
 
-struct ActorOrientation {
+struct ActorFrameRange {
 	int frameIndex;
 	int frameCount;
 };
 
-struct ActorFrame {
-	ActorOrientation dir[ACTOR_ORIENTATION_COUNT];
+struct ActorFrameSequence {
+	ActorFrameRange directions[ACTOR_DIRECTIONS_COUNT];
 };
 
 struct WALKNODE {
@@ -159,9 +204,6 @@ struct WALKINTENT {
 	}
 };
 
-
-
-
 struct ACTORINTENT {
 	int a_itype;
 	uint16 a_iflags;
@@ -178,7 +220,11 @@ struct ACTORINTENT {
 
 typedef Common::List<ACTORINTENT> ActorIntentList;
 
-
+struct ActorLocation {
+	int x;					// Actor's logical coordinates
+	int y;					// 
+	int z;					// 
+};
 struct ActorData {
 	bool disabled;				// Actor disabled in init section
 	int index;					// Actor index
@@ -189,9 +235,7 @@ struct ActorData {
 	
 
 	int sceneNumber;			// scene of actor
-	int actorX;					// Actor's logical coordinates
-	int actorY;					// 
-	int actorZ;					// 
+	ActorLocation location;		// Actor's logical coordinates
 
 	Point screenPosition;		// Actor's screen coordinates
 	int screenDepth;			//
@@ -203,62 +247,73 @@ struct ActorData {
 	int actionDirection;
 	int actionCycle;
 	int frameNumber;			// current actor frame number
+	uint16 targetObject;		
 	
+	int cycleFrameNumber;
+	uint8 cycleDelay;
+	uint8 cycleTimeCount;
+	uint8 cycleFlags;
+
 	SPRITELIST *spriteList;		// Actor's sprite list data
 	int spriteListResourceId;	// Actor's sprite list resource id
 
-	ActorFrame *frames;			// Actor's frames
+	ActorFrameSequence *frames;	// Actor's frames
 	int framesCount;			// Actor's frames count
 	int frameListResourceId;	// Actor's frame list resource id
 
 
 
-
+///old stuff
 	int idle_time;
 	int orient;
 	int speaking;
-
-	
-	// The actor intent list describes what the actor intends to do;
-	// multiple intents can be queued. The actor must complete an 
-	// intent before moving on to the next; thus actor movements, esp
-	// as described from scripts, can be serialized
-
 	ActorIntentList a_intentlist;
-
-	// WALKPATH path;
-
 	int def_action;
 	uint16 def_action_flags;
-
 	int action;
 	uint16 action_flags;
 	int action_frame;
 	int action_time;
-
+/// end old stuff 
+	
+	void cycleWrap(int cycleLimit) {
+		if (actionCycle >= cycleLimit)
+			actionCycle = 0;
+	}
 
 	ActorData() {
 		disabled = false;
 		index = 0;
 		actorId = 0;
+
 		nameIndex = 0;
 		speechColor = 0;
+		
 		frames = NULL;
 		framesCount = 0;
 		frameListResourceId = 0;
+		
 		spriteList = NULL;
 		spriteListResourceId = 0;
+
 		flags = 0;
 		sceneNumber = 0;
-		actorX = 0;
-		actorY = 0;
-		actorZ = 0;
+		location.x = 0;
+		location.y = 0;
+		location.z = 0;
 		screenDepth = 0;
 		
 		actorFlags = 0;
 		currentAction = 0;
 		facingDirection = 0;
 		actionDirection = 0;
+		actionCycle = 0;
+		targetObject = ID_NOTHING;
+
+		cycleFrameNumber = 0;
+		cycleDelay = 0;
+		cycleTimeCount = 0;
+		cycleFlags = 0;
 
 		idle_time = 0;
 		orient = 0;
@@ -301,30 +356,31 @@ struct SpeechData {
 
 class Actor {
 public:
+	ActorData *_centerActor;
+	ActorData *_protagonist;
+
 	Actor(SagaEngine *vm);
 	~Actor();
-
+/*
 	void CF_actor_move(int argc, const char **argv);
 	void CF_actor_moverel(int argc, const char **argv);
 	void CF_actor_seto(int argc, const char **argv);
 	void CF_actor_setact(int argc, const char **argv);
-
+*/
 	int direct(int msec);
 	int drawActors();
 	void updateActorsScene();			// calls from scene loading to update Actors info
 
 	void StoA(Point &actorPoint, const Point &screenPoint);
 
-	void move(uint16 actorId, const Point &movePoint);
-	void moveRelative(uint16 actorId, const Point &movePoint);
+	void move(uint16 actorId, const Point &movePoint){}
+	void moveRelative(uint16 actorId, const Point &movePoint){}
 
-	void walkTo(uint16 actorId, const Point *walk_pt, uint16 flags, SEMAPHORE *sem);
-		
-	
-	
-	void setOrientation(uint16 actorId, int orient);
-	void setAction(uint16 actorId, int action_n, uint16 action_flags);
-	void setDefaultAction(uint16 actorId, int action_n, uint16 action_flags);
+	void walkTo(uint16 actorId, const Point *walk_pt, uint16 flags, SEMAPHORE *sem) {}
+			
+	ActorData *getActor(uint16 actorId);
+//  action
+	ActorFrameRange *getActorFrameRange(uint16 actorId, int frameType);
 
 //	speech 
 	void actorSpeech(uint16 actorId, const char **strings, int stringsCount, uint16 sampleResourceId, int speechFlags);
@@ -342,14 +398,13 @@ public:
 	
 private:
 	int handleWalkIntent(ActorData *actor, WALKINTENT *a_walk_int, int *complete_p, int msec);
-	int handleSpeakIntent(ActorData *actor, ACTORINTENT *a_aintent, int *complete_p, int msec);
 	int setPathNode(WALKINTENT *walk_int, const Point &src_pt, Point *dst_pt, SEMAPHORE *sem);
 
-	ActorData *getActor(uint16 actorId);
 	bool loadActorResources(ActorData * actor);
 	
 	void createDrawOrderList();
 	void handleSpeech(int msec);
+	void handleActions(int msec, bool setup);
 
 	SagaEngine *_vm;
 	RSCFILE_CONTEXT *_actorContext;

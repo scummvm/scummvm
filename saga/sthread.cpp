@@ -30,7 +30,6 @@
 
 #include "saga/script.h"
 
-#include "saga/sdata.h"
 #include "saga/stream.h"
 #include "saga/scene.h"
 #include "saga/resnames.h"
@@ -39,8 +38,8 @@ namespace Saga {
 
 void Script::setFramePtr(SCRIPT_THREAD *thread, int newPtr) {
 	thread->framePtr = newPtr;
-	dataBuffer(3)->len = ARRAYSIZE(thread->stackBuf) - thread->framePtr;
-	dataBuffer(3)->data = (SDataWord_T *) &(thread->stackBuf[newPtr]);
+	dataBuffer(3)->length = ARRAYSIZE(thread->stackBuf) - thread->framePtr;
+	dataBuffer(3)->data = (ScriptDataWord *) &(thread->stackBuf[newPtr]);
 }
 
 SCRIPT_THREAD *Script::SThreadCreate() {
@@ -58,7 +57,7 @@ SCRIPT_THREAD *Script::SThreadCreate() {
 	new_thread->flags = kTFlagWaiting;
 	new_thread->waitType = kWaitTypePause;
 
-	dataBuffer(4)->len = ARRAYSIZE(new_thread->threadVars);
+	dataBuffer(4)->length = ARRAYSIZE(new_thread->threadVars);
 	dataBuffer(4)->data = new_thread->threadVars;
 
 	return new_thread;
@@ -218,14 +217,14 @@ int Script::SThreadDebugStep() {
 int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 	int instr_count;
 	uint32 saved_offset;
-	SDataWord_T param1;
-	SDataWord_T param2;
+	ScriptDataWord param1;
+	ScriptDataWord param2;
 	long iparam1;
 	long iparam2;
 	long iresult;
 
-	SDataWord_T data;
-	SDataWord_T scriptRetVal = 0;
+	ScriptDataWord data;
+	ScriptDataWord scriptRetVal = 0;
 	int debug_print = 0;
 	int n_buf;
 	int bitstate;
@@ -247,8 +246,8 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 
 	MemoryReadStream/*Endian*/ scriptS(currentScript()->bytecode->bytecode_p, currentScript()->bytecode->bytecode_len/*, IS_BIG_ENDIAN*/);
 
-	dataBuffer(2)->len = currentScript()->bytecode->bytecode_len / sizeof(SDataWord_T);
-	dataBuffer(2)->data = (SDataWord_T *) currentScript()->bytecode->bytecode_p;
+	dataBuffer(2)->length = currentScript()->bytecode->bytecode_len / sizeof(ScriptDataWord);
+	dataBuffer(2)->data = (ScriptDataWord *) currentScript()->bytecode->bytecode_p;
 
 	scriptS.seek(thread->i_offset);
 
@@ -285,7 +284,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			break;
 		case 0x06: // Push word (PUSH)
 		case 0x08: // Push word (PSHD) (dialogue string index)
-			param1 = (SDataWord_T)scriptS.readUint16LE();
+			param1 = (ScriptDataWord)scriptS.readUint16LE();
 			thread->push(param1);
 			break;
 
@@ -293,49 +292,49 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 
 		case 0x0B: // Test flag (TSTF)
 			n_buf = scriptS.readByte();
-			param1 = (SDataWord_T)scriptS.readUint16LE();
-			_vm->_sdata->getBit(n_buf, param1, &bitstate);
+			param1 = (ScriptDataWord)scriptS.readUint16LE();
+			getBit(n_buf, param1, &bitstate);
 			thread->push(bitstate);
 			break;
 		case 0x0C: // Get word (GETW)
 			n_buf = scriptS.readByte();
 			param1 = scriptS.readUint16LE();
-			_vm->_sdata->getWord(n_buf, param1, &data);
+			getWord(n_buf, param1, &data);
 			thread->push(data);
 			break;
 		case 0x0F: // Modify flag (MODF)
 			n_buf = scriptS.readByte();
-			param1 = (SDataWord_T)scriptS.readUint16LE();
-			bitstate = _vm->_sdata->readWordU(param1);
+			param1 = (ScriptDataWord)scriptS.readUint16LE();
+			bitstate = getUWord(param1);
 			data = thread->stackTop();
 			if (bitstate) {
-				_vm->_sdata->setBit(n_buf, data, 1);
+				setBit(n_buf, data, 1);
 			} else {
-				_vm->_sdata->setBit(n_buf, data, 0);
+				setBit(n_buf, data, 0);
 			}
 			break;
 		case 0x10: // Put word (PUTW)
 			n_buf = scriptS.readByte();
-			param1 = (SDataWord_T)scriptS.readUint16LE();
+			param1 = (ScriptDataWord)scriptS.readUint16LE();
 			data = thread->stackTop();
-			_vm->_sdata->putWord(n_buf, param1, data);
+			putWord(n_buf, param1, data);
 			break;
 		case 0x13: // Modify flag and pop (MDFP)
 			n_buf = scriptS.readByte();
-			param1 = (SDataWord_T)scriptS.readUint16LE();
+			param1 = (ScriptDataWord)scriptS.readUint16LE();
 			param1 = thread->pop();
-			bitstate = _vm->_sdata->readWordU(param1);
+			bitstate = getUWord(param1);
 			if (bitstate) {
-				_vm->_sdata->setBit(n_buf, param1, 1);
+				setBit(n_buf, param1, 1);
 			} else {
-				_vm->_sdata->setBit(n_buf, param1, 0);
+				setBit(n_buf, param1, 0);
 			}
 			break;
 		case 0x14: // Put word and pop (PTWP)
 			n_buf = scriptS.readByte();
-			param1 = (SDataWord_T)scriptS.readUint16LE();
+			param1 = (ScriptDataWord)scriptS.readUint16LE();
 			data = thread->stackTop();
-			_vm->_sdata->putWord(n_buf, param1, data);
+			putWord(n_buf, param1, data);
 			break;
 
 // CONTROL INSTRUCTIONS    
@@ -349,7 +348,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				temp = scriptS.readByte();
 				if (temp != 2)
 					error("Calling dynamically generated script? Wow");
-				param1 = (SDataWord_T)scriptS.readUint16LE();
+				param1 = (ScriptDataWord)scriptS.readUint16LE();
 				data = scriptS.pos();
 				thread->push(n_args);
 				// NOTE: The original pushes the program
@@ -359,29 +358,30 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				thread->i_offset = (unsigned long)param1;
 			}
 			break;
-		case 0x18: // (CALL): Call function
-		case 0x19: // (CALL_V): Call function and discard return value
+		case opCcall: // (CALL): Call function
+		case opCcallV: // (CALL_V): Call function and discard return value
 			{
-				int n_args;
-				uint16 func_num;
-				int sfuncRetVal;
-				SFunc_T sfunc;
+				int argumentsCount;
+				uint16 functionNumber;
+				int scriptFunctionReturnValue;
+				ScriptFunctionType scriptFunction;
 
-				n_args = scriptS.readByte();
-				func_num = scriptS.readUint16LE();
-				if (func_num >= SFUNC_NUM) {
-					_vm->_console->DebugPrintf(S_ERROR_PREFIX "Invalid script function number: (%X)\n", func_num);
+				argumentsCount = scriptS.readByte();
+				functionNumber = scriptS.readUint16LE();
+				debug(9, "opCCall* 0x%X", functionNumber);
+				if (functionNumber >= SCRIPT_FUNCTION_MAX) {
+					_vm->_console->DebugPrintf(S_ERROR_PREFIX "Invalid script function number: (%X)\n", functionNumber);
 					thread->flags |= kTFlagAborted;
 					break;
 				}
 
-				sfunc = _SFuncList[func_num];
-				sfuncRetVal = (this->*sfunc)(thread, n_args);
-				if (sfuncRetVal != SUCCESS) {
-					_vm->_console->DebugPrintf(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->i_offset, func_num);
+				scriptFunction = _scriptFunctionsList[functionNumber];
+				scriptFunctionReturnValue = (this->*scriptFunction)(thread, argumentsCount);
+				if (scriptFunctionReturnValue != SUCCESS) {
+					_vm->_console->DebugPrintf(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->i_offset, scriptFunctionReturnValue);
 				}
 
-				if (func_num == 16) { // SF_gotoScene
+				if (functionNumber == 16) { // SF_gotoScene
 					instr_count = instr_limit; // break the loop
 					break;
 				}
@@ -470,7 +470,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 					switch_num = scriptS.readUint16LE();
 					switch_jmp = scriptS.readUint16LE();
 					// Found the specified case
-					if (data == (SDataWord_T) switch_num) {
+					if (data == (ScriptDataWord) switch_num) {
 						thread->i_offset = switch_jmp;
 						case_found = 1;
 						break;
@@ -566,7 +566,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			iresult = iparam1 + iparam2;
-			thread->push((SDataWord_T) iresult);
+			thread->push((ScriptDataWord) iresult);
 			break;
 			// (SUB): Subtraction
 		case 0x2D:
@@ -575,7 +575,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			iresult = iparam1 - iparam2;
-			thread->push((SDataWord_T) iresult);
+			thread->push((ScriptDataWord) iresult);
 			break;
 			// (MULT): Integer multiplication
 		case 0x2E:
@@ -584,7 +584,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			iresult = iparam1 * iparam2;
-			thread->push((SDataWord_T) iresult);
+			thread->push((ScriptDataWord) iresult);
 			break;
 			// (DIV): Integer division
 		case 0x2F:
@@ -593,7 +593,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			iresult = iparam1 / iparam2;
-			thread->push((SDataWord_T) iresult);
+			thread->push((ScriptDataWord) iresult);
 			break;
 			// (MOD) Modulus
 		case 0x30:
@@ -602,7 +602,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			iparam2 = (long)param2;
 			iparam1 = (long)param1;
 			iresult = iparam1 % iparam2;
-			thread->push((SDataWord_T) iresult);
+			thread->push((ScriptDataWord) iresult);
 			break;
 			// (EQU) Test equality
 		case 0x33:
@@ -728,10 +728,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			break;
 
 // GAME INSTRUCTIONS  
-
-			// (opSpeak): Play Character Speech
-		case opSpeak:
-			{
+		case opSpeak: {	// (opSpeak): Play Character Speech
 				int stringsCount;
 				uint16 actorId;
 				int speechFlags;
@@ -752,7 +749,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				if (stringsCount == 0)
 					error("opSpeak stringsCount == 0");
 
-				if (stringsCount >= ACTOR_SPEECH_STRING_MAX)
+				if (stringsCount > ACTOR_SPEECH_STRING_MAX)
 					error("opSpeak stringsCount=0x%X exceed ACTOR_SPEECH_STRING_MAX", stringsCount);
 				
 				data = first = thread->stackTop();
@@ -763,8 +760,8 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				// now data contains last string index
 
 				if (_vm->_gameId == GID_ITE_DISK_G) { // special ITE dos
-					if ((_vm->_scene->currentSceneNumber() == ITE_DEFAULT_SCENE) && (data >= 288) && (data <= (SCENE1_VOICE_138 - SCENE1_VOICE_009 + 288))) {
-						sampleResourceId = SCENE1_VOICE_009 + data - 288;
+					if ((_vm->_scene->currentSceneNumber() == ITE_DEFAULT_SCENE) && (data >= 288) && (data <= (RID_SCENE1_VOICE_138 - RID_SCENE1_VOICE_009 + 288))) {
+						sampleResourceId = RID_SCENE1_VOICE_009 + data - 288;
 					}
 				} else {
 					if (isVoiceLUTPresent()) {
@@ -792,7 +789,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			// (DLGO): Add a dialogue option to interface
 		case 0x56:
 			{
-				SDataWord_T param3 = 0;
+				ScriptDataWord param3 = 0;
 				param1 = scriptS.readByte();
 				param2 = scriptS.readByte();
 				if (param2 & 1) {

@@ -28,7 +28,7 @@
 
 namespace Saga {
 
-enum {
+enum ActorFlags {
 	kProtagonist	= 0x01,	// Actor is protagonist
 	kFollower		= 0x02,	// Actor is follower
 	kCycle			= 0x04, // Actor stand has a cycle
@@ -51,14 +51,13 @@ struct ActorTableData {
 	int32 frameListResourceId;
 	byte scriptResourceId;
 	byte speechColor;
-	byte action;
-	byte facing_dir;
-	byte action_dir;
+	byte currentAction;
+	byte facingDirection;
+	byte actionDirection;
 };
 
 #define ACTORCOUNT 181
 
-extern int ActorOrientationLUT[];
 extern ActorTableData ActorTable[ACTORCOUNT];
 
 } // End of namespace Saga

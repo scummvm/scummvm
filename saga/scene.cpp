@@ -409,6 +409,7 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SCENE_
 
 	_sceneMode = 0;
 	_loadDesc = true;
+	_sceneNumber = -1;
 
 	switch (load_flag) {
 	case BY_RESOURCE:

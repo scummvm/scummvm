@@ -36,7 +36,6 @@
 #include "saga/sndres.h"
 
 #include "saga/script.h"
-#include "saga/sdata.h"
 
 #include "saga/scene.h"
 
@@ -45,23 +44,23 @@ namespace Saga {
 #define OPCODE(x) &Script::x
 
 void Script::setupScriptFuncList(void) {
-	static const SFunc_T SFuncList[SFUNC_NUM] = {
+	static const ScriptFunctionType scriptFunctionsList[SCRIPT_FUNCTION_MAX] = {
 		OPCODE(SF_putString),
-		OPCODE(SF_sleep),
+		OPCODE(sfWait),
 		OPCODE(SF_takeObject),
 		OPCODE(SF_objectIsCarried),
 		OPCODE(SF_setStatusText),
 		OPCODE(SF_commandMode),
 		OPCODE(SF_actorWalkTo),
 		OPCODE(SF_doAction),
-		OPCODE(SF_setFacing),
+		OPCODE(sfSetActorFacing),
 		OPCODE(SF_startBgdAnim),
 		OPCODE(SF_stopBgdAnim),
 		OPCODE(SF_freezeInterface),
 		OPCODE(SF_dialogMode),
 		OPCODE(SF_killActorThreads),
 		OPCODE(SF_faceTowards),
-		OPCODE(SF_setFollower),
+		OPCODE(sfSetFollower),
 		OPCODE(SF_gotoScene),
 		OPCODE(SF_setObjImage),
 		OPCODE(SF_setObjName),
@@ -76,20 +75,20 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_actorWalkToAsync),
 		OPCODE(SF_enableZone),
 		OPCODE(SF_setActorState),
-		OPCODE(SF_moveTo),
+		OPCODE(scriptMoveTo),
 		OPCODE(SF_sceneEq),
 		OPCODE(SF_dropObject),
 		OPCODE(SF_finishBgdAnim),
-		OPCODE(SF_swapActors),
-		OPCODE(SF_simulSpeech),
+		OPCODE(sfSwapActors),
+		OPCODE(sfSimulSpeech),
 		OPCODE(SF_actorWalk),
-		OPCODE(SF_cycleActorFrames),
-		OPCODE(SF_setFrame),
+		OPCODE(sfCycleFrames),
+		OPCODE(sfSetFrame),
 		OPCODE(SF_setRightPortrait),
 		OPCODE(SF_setLeftPortrait),
 		OPCODE(SF_linkAnim),
 		OPCODE(SF_scriptSpecialWalk),
-		OPCODE(SF_placeActor),
+		OPCODE(sfPlaceActor),
 		OPCODE(SF_checkUserInterrupt),
 		OPCODE(SF_walkRelative),
 		OPCODE(SF_moveRelative),
@@ -125,27 +124,25 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_fadeMusic),
 		OPCODE(SF_playVoice)
 	};
-	_SFuncList = SFuncList;
+	_scriptFunctionsList = scriptFunctionsList;
 }
 
 // Script function #0 (0x00)
 // Print a debugging message
 int Script::SF_putString(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop();
+	ScriptDataWord param = thread->pop();
 
 	_vm->_console->DebugPrintf(getString(param));
 	return SUCCESS;
 }
 
 // Script function #1 (0x01) blocking
-// Suspends thread execution for the specified time period
-int Script::SF_sleep(SCRIPTFUNC_PARAMS) {
-	SDataWord_T time_param;
-	long time;
+// Param1: time in ticks
+int Script::sfWait(SCRIPTFUNC_PARAMS) {
+	int time;
+	time = getUWord(thread->pop());
 
 	if (!_skipSpeeches) {
-		time_param = thread->pop();
-		time = _vm->_sdata->readWordU(time_param);
 		thread->wait(kWaitTypeDelay); // put thread to sleep
 		thread->sleepTime = ticksToMSec(time);
 	}
@@ -154,7 +151,7 @@ int Script::SF_sleep(SCRIPTFUNC_PARAMS) {
 
 // Script function #2 (0x02)
 int Script::SF_takeObject(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop();
+	ScriptDataWord param = thread->pop();
 	int index = param & 0x1FFF;
 
 	if (index >= ARRAYSIZE(ObjectTable)) {
@@ -172,7 +169,7 @@ int Script::SF_takeObject(SCRIPTFUNC_PARAMS) {
 // Script function #3 (0x03)
 // Check if an object is carried.
 int Script::SF_objectIsCarried(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop();
+	ScriptDataWord param = thread->pop();
 	int index = param & 0x1FFF;
 
 	if (index >= ARRAYSIZE(ObjectTable)) {
@@ -188,7 +185,7 @@ int Script::SF_objectIsCarried(SCRIPTFUNC_PARAMS) {
 // Set the command display to the specified text string
 // Param1: dialogue index of string
 int Script::SF_setStatusText(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop();
+	ScriptDataWord param = thread->pop();
 
 	return _vm->_interface->setStatusText(getString(param));
 }
@@ -204,9 +201,9 @@ int Script::SF_commandMode(SCRIPTFUNC_PARAMS) {
 // Param2: actor destination x
 // Param3: actor destination y
 int Script::SF_actorWalkTo(SCRIPTFUNC_PARAMS) {
-	SDataWord_T actor_parm;
-	SDataWord_T x_parm;
-	SDataWord_T y_parm;
+	ScriptDataWord actor_parm;
+	ScriptDataWord x_parm;
+	ScriptDataWord y_parm;
 	uint16 actorId;
 	Point pt;
 
@@ -214,10 +211,10 @@ int Script::SF_actorWalkTo(SCRIPTFUNC_PARAMS) {
 	x_parm = thread->pop();
 	y_parm = thread->pop();
 
-	actorId = _vm->_sdata->readWordS(actor_parm);
+	actorId = getSWord(actor_parm);
 
-	pt.x = _vm->_sdata->readWordS(x_parm);
-	pt.y = _vm->_sdata->readWordS(y_parm);
+	pt.x = getSWord(x_parm);
+	pt.y = getSWord(y_parm);
 
 	_vm->_actor->walkTo(actorId, &pt, 0, &thread->sem);
 
@@ -226,10 +223,10 @@ int Script::SF_actorWalkTo(SCRIPTFUNC_PARAMS) {
 
 // Script function #7 (0x07)
 int Script::SF_doAction(SCRIPTFUNC_PARAMS) {
-	SDataWord_T actor_parm = thread->pop();
-	SDataWord_T action_parm = thread->pop();
-	SDataWord_T obj_parm = thread->pop();
-	SDataWord_T withobj_parm = thread->pop();
+	ScriptDataWord actor_parm = thread->pop();
+	ScriptDataWord action_parm = thread->pop();
+	ScriptDataWord obj_parm = thread->pop();
+	ScriptDataWord withobj_parm = thread->pop();
 
 	// The parameters correspond with the thread variables.
 
@@ -238,29 +235,26 @@ int Script::SF_doAction(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #8 (0x08) nonblocking
-// Sets the orientation of the specified actor.
 // Param1: actor id
 // Param2: actor orientation
-int Script::SF_setFacing(SCRIPTFUNC_PARAMS) {
-	SDataWord_T actor_parm;
-	SDataWord_T orient_parm;
+int Script::sfSetActorFacing(SCRIPTFUNC_PARAMS) {
 	uint16 actorId;
-	int orientation;
+	int actorDirection;
+	ActorData *actor;
 
-	actor_parm = thread->pop();
-	orient_parm = thread->pop();
+	actorId = getSWord(thread->pop());
+	actorDirection =  getSWord(thread->pop());
 
-	actorId = _vm->_sdata->readWordS(actor_parm);
-	orientation = _vm->_sdata->readWordS(orient_parm);
+	actor = _vm->_actor->getActor(actorId);
+	actor->facingDirection = actor->actionDirection = actorDirection;
 
-	_vm->_actor->setOrientation(actorId, orientation);
 	return SUCCESS;
 }
 
 // Script function #9 (0x09)
 int Script::SF_startBgdAnim(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param1 = thread->pop();
-	SDataWord_T param2 = thread->pop();
+	ScriptDataWord param1 = thread->pop();
+	ScriptDataWord param2 = thread->pop();
 
 	debug(1, "stub: SF_startBgdAnim(%d, %d)", param1, param2);
 	return SUCCESS;
@@ -268,7 +262,7 @@ int Script::SF_startBgdAnim(SCRIPTFUNC_PARAMS) {
 
 // Script function #10 (0x0A)
 int Script::SF_stopBgdAnim(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop();
+	ScriptDataWord param = thread->pop();
 
 	debug(1, "stub: SF_stopBgdAnim(%d)", param);
 	return SUCCESS;
@@ -280,7 +274,7 @@ int Script::SF_stopBgdAnim(SCRIPTFUNC_PARAMS) {
 // reenabled.
 // Param1: boolean
 int Script::SF_freezeInterface(SCRIPTFUNC_PARAMS) {
-	SDataWord_T b_param;
+	ScriptDataWord b_param;
 
 	b_param = thread->pop();
 
@@ -310,26 +304,41 @@ int Script::SF_killActorThreads(SCRIPTFUNC_PARAMS) {
 
 // Script function #14 (0x0E)
 int Script::SF_faceTowards(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param1 = thread->pop();
-	SDataWord_T param2 = thread->pop();
+	ScriptDataWord param1 = thread->pop();
+	ScriptDataWord param2 = thread->pop();
 
 	debug(1, "stub: SF_faceTowards(%d, %d)", param1, param2);
 	return SUCCESS;
 }
 
 // Script function #15 (0x0F)
-int Script::SF_setFollower(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param1 = thread->pop();
-	SDataWord_T param2 = thread->pop();
+// Param1: actor id
+// Param2: target object
+int Script::sfSetFollower(SCRIPTFUNC_PARAMS) {
+	uint16 actorId;
+	uint16 targetObject;
 
-	debug(1, "stub: SF_setFollower(%d, %d)", param1, param2);
+	ActorData *actor;
+
+	actorId = getSWord(thread->pop());
+	targetObject = getSWord(thread->pop());
+	
+	actor = _vm->_actor->getActor(actorId);
+	actor->targetObject = targetObject;
+	if (targetObject != ID_NOTHING) {
+		actor->flags |= kFollower;
+		actor->actorFlags &= ~kActorNoFollow;
+	} else {
+		actor->flags &= ~kFollower;
+	}
+	
 	return SUCCESS;
 }
 
 // Script function #16 (0x10)
 int Script::SF_gotoScene(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param1 = thread->pop();
-	SDataWord_T param2 = thread->pop();
+	ScriptDataWord param1 = thread->pop();
+	ScriptDataWord param2 = thread->pop();
 
 	debug(1, "stub: SF_gotoScene(%d, %d)", param1, param2);
 	return SUCCESS;
@@ -337,8 +346,8 @@ int Script::SF_gotoScene(SCRIPTFUNC_PARAMS) {
 
 // Script function #17 (0x11)
 int Script::SF_setObjImage(SCRIPTFUNC_PARAMS) {
-	SDataWord_T obj_param = thread->pop();
-	SDataWord_T sprite_param = thread->pop();
+	ScriptDataWord obj_param = thread->pop();
+	ScriptDataWord sprite_param = thread->pop();
 
 	int index = obj_param & 0x1FFF;
 
@@ -354,8 +363,8 @@ int Script::SF_setObjImage(SCRIPTFUNC_PARAMS) {
 
 // Script function #18 (0x12)
 int Script::SF_setObjName(SCRIPTFUNC_PARAMS) {
-	SDataWord_T obj_param = thread->pop();
-	SDataWord_T name_param = thread->pop();
+	ScriptDataWord obj_param = thread->pop();
+	ScriptDataWord name_param = thread->pop();
 
 	int index = obj_param & 0x1FFF;
 
@@ -369,7 +378,7 @@ int Script::SF_setObjName(SCRIPTFUNC_PARAMS) {
 
 // Script function #19 (0x13)
 int Script::SF_getObjImage(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop();
+	ScriptDataWord param = thread->pop();
 	int index = param & 0x1FFF;
 
 	if (index >= ARRAYSIZE(ObjectTable)) {
@@ -410,8 +419,8 @@ int Script::SF_closeDoor(SCRIPTFUNC_PARAMS) {
 
 // Script function #23 (0x17)
 int Script::SF_setBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param1 = thread->pop();
-	SDataWord_T param2 = thread->pop();
+	ScriptDataWord param1 = thread->pop();
+	ScriptDataWord param2 = thread->pop();
 
 	debug(1, "stub: SF_setBgdAnimSpeed(%d, %d)", param1, param2);
 	return SUCCESS;
@@ -428,7 +437,7 @@ int Script::SF_cycleColors(SCRIPTFUNC_PARAMS) {
 
 // Script function #25 (0x19)
 int Script::SF_centerActor(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop();
+	ScriptDataWord param = thread->pop();
 
 	debug(1, "stub: SF_centerActor(%d)", param);
 	return SUCCESS;
@@ -441,9 +450,9 @@ int Script::SF_centerActor(SCRIPTFUNC_PARAMS) {
 // Param3: animation id
 int Script::SF_startAnim(SCRIPTFUNC_PARAMS) {
 // FIXME: implementation is wrong. Should link animation
-	SDataWord_T timer_parm;
-	SDataWord_T frame_parm;
-	SDataWord_T anim_id_parm;
+	ScriptDataWord timer_parm;
+	ScriptDataWord frame_parm;
+	ScriptDataWord anim_id_parm;
 	int frame_count;
 	int anim_id;
 
@@ -451,8 +460,8 @@ int Script::SF_startAnim(SCRIPTFUNC_PARAMS) {
 	frame_parm = thread->pop();
 	timer_parm = thread->pop();
 
-	frame_count = _vm->_sdata->readWordS(frame_parm);
-	anim_id = _vm->_sdata->readWordS(anim_id_parm);
+	frame_count = getSWord(frame_parm);
+	anim_id = getSWord(anim_id_parm);
 
 	if (_vm->_anim->play(anim_id, 0) != SUCCESS) {
 		_vm->_console->DebugPrintf(S_WARN_PREFIX "SF.26: Anim::play() failed. Anim id: %u\n", anim_id);
@@ -468,9 +477,9 @@ int Script::SF_startAnim(SCRIPTFUNC_PARAMS) {
 // Param2: actor destination x
 // Param3: actor destination y
 int Script::SF_actorWalkToAsync(SCRIPTFUNC_PARAMS) {
-	SDataWord_T actor_parm;
-	SDataWord_T x_parm;
-	SDataWord_T y_parm;
+	ScriptDataWord actor_parm;
+	ScriptDataWord x_parm;
+	ScriptDataWord y_parm;
 	uint16 actorId;
 	Point pt;
 
@@ -479,10 +488,10 @@ int Script::SF_actorWalkToAsync(SCRIPTFUNC_PARAMS) {
 	x_parm = thread->pop();
 	y_parm = thread->pop();
 
-	actorId = _vm->_sdata->readWordS(actor_parm);
+	actorId = getSWord(actor_parm);
 
-	pt.x = _vm->_sdata->readWordS(x_parm);
-	pt.y = _vm->_sdata->readWordS(y_parm);
+	pt.x = getSWord(x_parm);
+	pt.y = getSWord(y_parm);
 	_vm->_actor->walkTo(actorId, &pt, 0, NULL);
 
 	return SUCCESS;
@@ -499,42 +508,37 @@ int Script::SF_enableZone(SCRIPTFUNC_PARAMS) {
 
 // Script function #29 (0x1D)
 int Script::SF_setActorState(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param1 = thread->pop();
-	SDataWord_T param2 = thread->pop();
+	ScriptDataWord param1 = thread->pop();
+	ScriptDataWord param2 = thread->pop();
 
 	debug(1, "stub: SF_setActorState(%d, %d)", param1, param2);
 	return SUCCESS;
 }
 
 // Script function #30 (0x1E) nonblocking
-// Positions an actor at the specified location; actor is created if the 
-// actor does not already exist.
 // Param1: actor id
 // Param2: actor pos x
 // Param3: actor pos y
-int Script::SF_moveTo(SCRIPTFUNC_PARAMS) {
-	SDataWord_T actor_parm;
-	SDataWord_T x_parm;
-	SDataWord_T y_parm;
+int Script::scriptMoveTo(SCRIPTFUNC_PARAMS) {
 	uint16 actorId;
-	Point pt;
+	ActorLocation actorLocation;
+	ActorData *actor;
 
-	actor_parm = thread->pop();
-	x_parm = thread->pop();
-	y_parm = thread->pop();
+	actorId = getSWord(thread->pop());
+	actorLocation.x = getSWord(thread->pop());
+	actorLocation.y = getSWord(thread->pop());
 
-	actorId = _vm->_sdata->readWordS(actor_parm);
-	pt.x = _vm->_sdata->readWordS(x_parm);
-	pt.y = _vm->_sdata->readWordS(y_parm);
+	actor = _vm->_actor->getActor(actorId);
 
-	_vm->_actor->move(actorId, pt);
+	actor->location.x = actorLocation.x;
+	actor->location.y = actorLocation.y;
 
 	return SUCCESS;
 }
 
 // Script function #31 (0x21)
 int Script::SF_sceneEq(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop();
+	ScriptDataWord param = thread->pop();
 
 	if (_vm->_scene->getSceneLUT(param) == _vm->_scene->currentSceneNumber())
 		thread->retVal = 1;
@@ -545,10 +549,10 @@ int Script::SF_sceneEq(SCRIPTFUNC_PARAMS) {
 
 // Script function #32 (0x20)
 int Script::SF_dropObject(SCRIPTFUNC_PARAMS) {
-	SDataWord_T obj_param = thread->pop();
-	SDataWord_T sprite_param = thread->pop();
-	SDataWord_T x_param = thread->pop();
-	SDataWord_T y_param = thread->pop();
+	ScriptDataWord obj_param = thread->pop();
+	ScriptDataWord sprite_param = thread->pop();
+	ScriptDataWord x_param = thread->pop();
+	ScriptDataWord y_param = thread->pop();
 
 	int index = obj_param & 0x1FFF;
 
@@ -570,27 +574,73 @@ int Script::SF_dropObject(SCRIPTFUNC_PARAMS) {
 
 // Script function #33 (0x21)
 int Script::SF_finishBgdAnim(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop();
+	ScriptDataWord param = thread->pop();
 
 	debug(1, "stub: SF_finishBgdAnim(%d)", param);
 	return SUCCESS;
 }
 
 // Script function #34 (0x22)
-int Script::SF_swapActors(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param1 = thread->pop();
-	SDataWord_T param2 = thread->pop();
+// Param1: actor id 1
+// Param2: actor id 2
+int Script::sfSwapActors(SCRIPTFUNC_PARAMS) {
+	uint16 actorId1;
+	uint16 actorId2;
+	ActorData *actor1;
+	ActorData *actor2;
+	ActorLocation location;
 
-	debug(1, "stub: SF_swapActors(%d, %d)", param1, param2);
+	actorId1 = getSWord(thread->pop());
+	actorId2 = getSWord(thread->pop());
+
+	actor1 = _vm->_actor->getActor(actorId1);
+	actor2 = _vm->_actor->getActor(actorId2);
+	location = actor1->location;
+	actor1->location = actor2->location;
+	actor2->location = location;
+	
+
+	if (actor1->flags & kProtagonist) {
+		actor1->flags &= ~kProtagonist;
+		actor2->flags |= kProtagonist;
+		_vm->_actor->_protagonist = _vm->_actor->_centerActor = actor2;
+	} else {
+		if (actor2->flags & kProtagonist) {
+		actor2->flags &= ~kProtagonist;
+		actor1->flags |= kProtagonist;
+		_vm->_actor->_protagonist = _vm->_actor->_centerActor = actor1;
+		}
+	}
+
+
 	return SUCCESS;
 }
 
 // Script function #35 (0x23)
-int Script::SF_simulSpeech(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+// Param1: string rid
+// Param2: actorscount
+// Param3: actor id1
+///....
+// Param3: actor idN
+int Script::sfSimulSpeech(SCRIPTFUNC_PARAMS) {
+	ScriptDataWord stringId;
+	int actorsCount;
+	int i;
+	uint16 actorsIds[ACTOR_SPEECH_ACTORS_MAX];
+	const char *string;
 
-	debug(1, "stub: SF_simulSpeech(), %d args", nArgs);
+	stringId = thread->pop();
+	actorsCount = getSWord(thread->pop());
+
+	if (actorsCount > ACTOR_SPEECH_ACTORS_MAX)
+		error("sfSimulSpeech actorsCount=0x%X exceed ACTOR_SPEECH_ACTORS_MAX", actorsCount);
+
+	for (i = 0; i < actorsCount; i++)
+		actorsIds[i] = getSWord(thread->pop());
+	
+	string = getString(stringId);
+
+	_vm->_actor->simulSpeech(string, actorsIds, actorsCount, 0);
 	return SUCCESS;
 }
 
@@ -602,10 +652,10 @@ int Script::SF_simulSpeech(SCRIPTFUNC_PARAMS) {
 // Param4: flags telling how to walk
 int Script::SF_actorWalk(SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
-	SDataWord_T actor_parm;
-	SDataWord_T x_parm;
-	SDataWord_T y_parm;
-	SDataWord_T flags_parm;
+	ScriptDataWord actor_parm;
+	ScriptDataWord x_parm;
+	ScriptDataWord y_parm;
+	ScriptDataWord flags_parm;
 	uint16 actorId;
 	Point pt;
 
@@ -614,10 +664,10 @@ int Script::SF_actorWalk(SCRIPTFUNC_PARAMS) {
 	y_parm = thread->pop();
 	flags_parm = thread->pop();
 
-	actorId = _vm->_sdata->readWordS(actor_parm);
+	actorId = getSWord(actor_parm);
 
-	pt.x = _vm->_sdata->readWordS(x_parm);
-	pt.y = _vm->_sdata->readWordS(y_parm);
+	pt.x = getSWord(x_parm);
+	pt.y = getSWord(y_parm);
 
 #if 1
 	_vm->_actor->walkTo(actorId, &pt, 0, NULL);
@@ -629,56 +679,76 @@ int Script::SF_actorWalk(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #37 (0x25) nonblocking
-// Sets an actor to the specified action state
 // Param1: actor id
 // Param2: flags telling how to cycle the frames
-// Param3: actor action state
-// Param4: some kind of delay/speed thing?
-int Script::SF_cycleActorFrames(SCRIPTFUNC_PARAMS) {
-	// INCOMPLETE
-	SDataWord_T actor_parm;
-	SDataWord_T flags_parm;
-	SDataWord_T delay_parm;
-	SDataWord_T action_parm;
+// Param3: cycle frame number
+// Param4: cycle delay
+int Script::sfCycleFrames(SCRIPTFUNC_PARAMS) {
 	uint16 actorId;
-	int action;
-	//uint16 flags;
+	int flags;
+	int cycleFrameNumber;
+	int cycleDelay;
+	ActorData *actor;
 
-	actor_parm = thread->pop();
-	flags_parm = thread->pop();
-	action_parm = thread->pop();
-	delay_parm = thread->pop();
-	actorId = _vm->_sdata->readWordS(actor_parm);
-	action = _vm->_sdata->readWordS(action_parm);
+	actorId = getSWord(thread->pop());
+	flags = getUWord(thread->pop());
+	cycleFrameNumber = getUWord(thread->pop());
+	cycleDelay =  getUWord(thread->pop());
 
-	_vm->_actor->setAction(actorId, action, ACTION_NONE);
+	actor = _vm->_actor->getActor(actorId);
+
+	if (flags & kCyclePong) {
+		actor->currentAction = kActionPongFrames;
+	} else {
+		actor->currentAction = kActionCycleFrames;
+	}
+
+	actor->actorFlags &= ~(kActorContinuous | kActorRandom | kActorBackwards);
+
+	if (!(flags & kCycleOnce)) {
+		actor->actorFlags |= kActorContinuous;
+	}
+	if (flags & kCycleRandom) {
+		actor->actorFlags |= kActorRandom;
+	}
+	if (flags & kCycleReverse) {
+		actor->actorFlags |= kActorBackwards;
+	}
+
+	actor->cycleFrameNumber	= cycleFrameNumber;
+	actor->cycleTimeCount = 0;
+	actor->cycleDelay = cycleDelay;
+	actor->actionCycle = 0;
 
 	return SUCCESS;
 }
 
 // Script function #38 (0x26) nonblocking
-// Sets an actor to the specified action state
 // Param1: actor id
-// Param2: actor action state
-// Param3: which frame of the action to use
-int Script::SF_setFrame(SCRIPTFUNC_PARAMS) {
-	// INCOMPLETE
-
-	SDataWord_T actorParam;
-	SDataWord_T actionParam;
-	SDataWord_T frameParam;
-
+// Param2: frame type
+// Param3: frame offset
+int Script::sfSetFrame(SCRIPTFUNC_PARAMS) {
 	uint16 actorId;
-	int action;
+	int frameType;
+	int frameOffset;
+	ActorData *actor;
+	ActorFrameRange *frameRange;
 
-	actorParam = thread->pop();
-	actionParam = thread->pop();
-	frameParam = thread->pop();
+	actorId = getSWord(thread->pop());
+	frameType = getSWord(thread->pop());
+	frameOffset = getSWord(thread->pop());
 
-	actorId = _vm->_sdata->readWordS(actorParam);
-	action = _vm->_sdata->readWordS(actionParam);
+	actor = _vm->_actor->getActor(actorId);
 
-	_vm->_actor->setAction(actorId, action, ACTION_NONE);
+	frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);
+
+	if (frameRange->frameCount <= frameOffset)
+		error("Wrong frameOffset 0x%X", frameOffset);
+	actor->frameNumber = frameRange->frameIndex + frameOffset;
+
+	if (actor->currentAction != kActionFall) {
+		actor->currentAction = kActionFreeze;
+	}
 
 	return SUCCESS;
 }
@@ -686,7 +756,7 @@ int Script::SF_setFrame(SCRIPTFUNC_PARAMS) {
 // Script function #39 (0x27)
 // Sets the right-hand portrait
 int Script::SF_setRightPortrait(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop();
+	ScriptDataWord param = thread->pop();
 
 	return _vm->_interface->setRightPortrait(param);
 }
@@ -694,7 +764,7 @@ int Script::SF_setRightPortrait(SCRIPTFUNC_PARAMS) {
 // Script function #40 (0x28)
 // Sets the left-hand portrait
 int Script::SF_setLeftPortrait(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop();
+	ScriptDataWord param = thread->pop();
 
 	return _vm->_interface->setLeftPortrait(param);
 }
@@ -707,10 +777,10 @@ int Script::SF_setLeftPortrait(SCRIPTFUNC_PARAMS) {
 // Param3: animation id link target
 // Param4: animation id link source
 int Script::SF_linkAnim(SCRIPTFUNC_PARAMS) {
-	SDataWord_T timer_parm;
-	SDataWord_T tframes_parm;
-	SDataWord_T anim1_parm;
-	SDataWord_T anim2_parm;
+	ScriptDataWord timer_parm;
+	ScriptDataWord tframes_parm;
+	ScriptDataWord anim1_parm;
+	ScriptDataWord anim2_parm;
 	int tframes;
 	uint16 anim_id1;
 	uint16 anim_id2;
@@ -719,9 +789,9 @@ int Script::SF_linkAnim(SCRIPTFUNC_PARAMS) {
 	anim2_parm = thread->pop();
 	tframes_parm = thread->pop();
 	timer_parm = thread->pop();
-	tframes = _vm->_sdata->readWordS(tframes_parm);
-	anim_id1 = _vm->_sdata->readWordU(anim1_parm);
-	anim_id2 = _vm->_sdata->readWordU(anim2_parm);
+	tframes = getSWord(tframes_parm);
+	anim_id1 = getUWord(anim1_parm);
+	anim_id2 = getUWord(anim2_parm);
 
 	if (_vm->_anim->link(anim_id1, anim_id2) != SUCCESS) {
 		_vm->_console->DebugPrintf(S_WARN_PREFIX "SF.41: Anim::link() failed. (%u->%u)\n", anim_id1, anim_id2);
@@ -733,54 +803,55 @@ int Script::SF_linkAnim(SCRIPTFUNC_PARAMS) {
 
 // Script function #42 (0x2A)
 int Script::SF_scriptSpecialWalk(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param1 = thread->pop();
-	SDataWord_T param2 = thread->pop();
-	SDataWord_T param3 = thread->pop();
-	SDataWord_T param4 = thread->pop();
+	ScriptDataWord param1 = thread->pop();
+	ScriptDataWord param2 = thread->pop();
+	ScriptDataWord param3 = thread->pop();
+	ScriptDataWord param4 = thread->pop();
 
 	debug(1, "stub: SF_scriptSpecialWalk(%d, %d, %d, %d)", param1, param2, param3, param4);
 	return SUCCESS;
 }
 
 // Script function #43 (0x2B) nonblocking
-// Positions an actor at the specified location; actor is created if the 
-//  actor does not already exist.
 // Param1: actor id
-// Param2: actor pos x
-// Param3: actor pos y
-// Param4: ?
+// Param2: actor x
+// Param3: actor y
+// Param4: actor direction
 // Param5: actor action
-// Param6: ?
-int Script::SF_placeActor(SCRIPTFUNC_PARAMS) {
-	// INCOMPLETE
-	SDataWord_T actor_parm;
-	SDataWord_T x_parm;
-	SDataWord_T y_parm;
-	SDataWord_T orient_parm;
-	SDataWord_T action_parm;
-	SDataWord_T frame_parm;
+// Param6: actor frame number
+int Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	uint16 actorId;
-	int action_state;
-	Point pt;
+	ActorLocation actorLocation;
+	int actorDirection;
+	int frameType;
+	int frameOffset;
+	ActorData *actor;
+	ActorFrameRange *frameRange;
 
-	actor_parm = thread->pop();
-	x_parm = thread->pop();
-	y_parm = thread->pop();
-	orient_parm = thread->pop();
-	action_parm = thread->pop();
-	frame_parm = thread->pop();
+	actorId = getSWord(thread->pop());
+	actorLocation.x = getSWord(thread->pop());
+	actorLocation.y = getSWord(thread->pop());
+	actorDirection =  getSWord(thread->pop());
+	frameType =  getSWord(thread->pop());
+	frameOffset =  getSWord(thread->pop());
+	
+	actor = _vm->_actor->getActor(actorId);
+	actor->location.x = actorLocation.x;
+	actor->location.y = actorLocation.y;
+	actor->facingDirection = actor->actionDirection = actorDirection;
+	if (frameType >= 0) {
+		frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);
+	
+		if (frameRange->frameCount <= frameOffset)
+			error("Wrong frameOffset 0x%X", frameOffset);
 
-	actorId = _vm->_sdata->readWordS(actor_parm);
-	pt.x = _vm->_sdata->readWordS(x_parm);
-	pt.y = _vm->_sdata->readWordS(y_parm);
-	action_state = _vm->_sdata->readWordS(action_parm);
+		actor->frameNumber = frameRange->frameIndex + frameOffset;
+		actor->currentAction = kActionFreeze;
+	} else {
+		actor->currentAction = kActionWait;
+	}
 
-	_vm->_actor->move(actorId, pt);
-
-	if (action_state < 0)
-		action_state = ACTION_IDLE;
- 	_vm->_actor->setDefaultAction(actorId, action_state, ACTION_NONE);
-	_vm->_actor->setAction(actorId, action_state, ACTION_NONE);
+	actor->targetObject = ID_NOTHING;
 
 	return SUCCESS;
 }
@@ -797,11 +868,11 @@ int Script::SF_checkUserInterrupt(SCRIPTFUNC_PARAMS) {
 
 // Script function #45 (0x2D)
 int Script::SF_walkRelative(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param1 = thread->pop();
-	SDataWord_T param2 = thread->pop();
-	SDataWord_T param3 = thread->pop();
-	SDataWord_T param4 = thread->pop();
-	SDataWord_T param5 = thread->pop();
+	ScriptDataWord param1 = thread->pop();
+	ScriptDataWord param2 = thread->pop();
+	ScriptDataWord param3 = thread->pop();
+	ScriptDataWord param4 = thread->pop();
+	ScriptDataWord param5 = thread->pop();
 
 	debug(1, "stub: SF_walkRelative(%d, %d, %d, %d, %d)", param1, param2, param3, param4, param5);
 	return SUCCESS;
@@ -809,11 +880,11 @@ int Script::SF_walkRelative(SCRIPTFUNC_PARAMS) {
 
 // Script function #46 (0x2E)
 int Script::SF_moveRelative(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param1 = thread->pop();
-	SDataWord_T param2 = thread->pop();
-	SDataWord_T param3 = thread->pop();
-	SDataWord_T param4 = thread->pop();
-	SDataWord_T param5 = thread->pop();
+	ScriptDataWord param1 = thread->pop();
+	ScriptDataWord param2 = thread->pop();
+	ScriptDataWord param3 = thread->pop();
+	ScriptDataWord param4 = thread->pop();
+	ScriptDataWord param5 = thread->pop();
 
 	debug(1, "stub: SF_moveRelative(%d, %d, %d, %d, %d)", param1, param2, param3, param4, param5);
 	return SUCCESS;
@@ -860,12 +931,12 @@ int Script::SF_resumeBgdAnim(SCRIPTFUNC_PARAMS) {
 
 // Script function #52 (0x34)
 int Script::SF_throwActor(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param1 = thread->pop();
-	SDataWord_T param2 = thread->pop();
-	SDataWord_T param3 = thread->pop();
-	SDataWord_T param4 = thread->pop();
-	SDataWord_T param5 = thread->pop();
-	SDataWord_T param6 = thread->pop();
+	ScriptDataWord param1 = thread->pop();
+	ScriptDataWord param2 = thread->pop();
+	ScriptDataWord param3 = thread->pop();
+	ScriptDataWord param4 = thread->pop();
+	ScriptDataWord param5 = thread->pop();
+	ScriptDataWord param6 = thread->pop();
 
 	debug(1, "stub: SF_throwActor(%d, %d, %d, %d, %d, %d)", param1, param2, param3, param4, param5, param6);
 	return SUCCESS;
@@ -873,7 +944,7 @@ int Script::SF_throwActor(SCRIPTFUNC_PARAMS) {
 
 // Script function #53 (0x35)
 int Script::SF_waitWalk(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop();
+	ScriptDataWord param = thread->pop();
 
 	debug(1, "stub: SF_waitWalk(%d)", param);
 	return SUCCESS;
@@ -887,8 +958,8 @@ int Script::SF_sceneID(SCRIPTFUNC_PARAMS) {
 
 // Script function #55 (0x37)
 int Script::SF_changeActorScene(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param1 = thread->pop();
-	SDataWord_T param2 = thread->pop();
+	ScriptDataWord param1 = thread->pop();
+	ScriptDataWord param2 = thread->pop();
 
 	debug(1, "stub: SF_changeActorScene(%d, %d)", param1, param2);
 	return SUCCESS;
@@ -896,10 +967,10 @@ int Script::SF_changeActorScene(SCRIPTFUNC_PARAMS) {
 
 // Script function #56 (0x38)
 int Script::SF_climb(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param1 = thread->pop();
-	SDataWord_T param2 = thread->pop();
-	SDataWord_T param3 = thread->pop();
-	SDataWord_T param4 = thread->pop();
+	ScriptDataWord param1 = thread->pop();
+	ScriptDataWord param2 = thread->pop();
+	ScriptDataWord param3 = thread->pop();
+	ScriptDataWord param4 = thread->pop();
 
 	debug(1, "stub: SF_climb(%d, %d, %d, %d)", param1, param2, param3, param4);
 	return SUCCESS;
@@ -916,8 +987,8 @@ int Script::SF_setDoorState(SCRIPTFUNC_PARAMS) {
 
 // Script function #58 (0x3A)
 int Script::SF_setActorZ(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param1 = thread->pop();
-	SDataWord_T param2 = thread->pop();
+	ScriptDataWord param1 = thread->pop();
+	ScriptDataWord param2 = thread->pop();
 
 	debug(1, "stub: SF_setActorZ(%d, %d)", param1, param2);
 	return SUCCESS;
@@ -934,7 +1005,7 @@ int Script::SF_text(SCRIPTFUNC_PARAMS) {
 
 // Script function #60 (0x3C)
 int Script::SF_getActorX(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop();
+	ScriptDataWord param = thread->pop();
 
 	debug(1, "stub: SF_getActorX(%d)", param);
 	return SUCCESS;
@@ -942,7 +1013,7 @@ int Script::SF_getActorX(SCRIPTFUNC_PARAMS) {
 
 // Script function #61 (0x3D)
 int Script::SF_getActorY(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop();
+	ScriptDataWord param = thread->pop();
 
 	debug(1, "stub: SF_getActorY(%d)", param);
 	return SUCCESS;
@@ -959,7 +1030,7 @@ int Script::SF_eraseDelta(SCRIPTFUNC_PARAMS) {
 
 // Script function #63 (0x3F)
 int Script::SF_playMusic(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop() + 9;
+	ScriptDataWord param = thread->pop() + 9;
 
 	if (param >= 9 && param <= 34)
 		_vm->_music->play(param);
@@ -1099,7 +1170,7 @@ static struct {
 
 // Script function #70 (0x46)
 int Script::SF_playSound(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop() - 13;
+	ScriptDataWord param = thread->pop() - 13;
 
 	if (/* param >= 0 && */ param < ARRAYSIZE(sfxTable))
 		_vm->_sndRes->playSound(sfxTable[param].res, sfxTable[param].vol, false);
@@ -1147,7 +1218,7 @@ int Script::SF_protectResult(SCRIPTFUNC_PARAMS) {
 
 // Script function #75 (0x4d)
 int Script::SF_rand(SCRIPTFUNC_PARAMS) {
-	SDataWord_T param = thread->pop();
+	ScriptDataWord param = thread->pop();
 
 	thread->retVal = (_vm->_rnd.getRandomNumber(param));
 
