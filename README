@@ -1,6 +1,6 @@
 ScummVM README
 Last updated:    $Date$
-Release version: 0.5.7-cvs
+Release version: 0.7.0-CVS
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -217,66 +217,14 @@ The cutscenes should be placed in the main game data directory. Note that
 currently this requires either copying the game to harddisk or reburning
 customised versions of the game CDs.
 
-3.4) Known Problems in ScummVM 0.5.7-CVS
+3.4) Known Problems in ScummVM 0.7.0CVS
 ---- -----------------------------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
 listed here, nor in the compatibility table on the web site, please see
 the section on Reporting Bugs.
 
-       Indiana Jones & the Last Crusade (EGA):
-                - No inventory in Macintosh version
-
-       Monkey Island 1 (EGA):
-       Loom (EGA):
-                - MIDI support requires the Roland update from LucasArts
-
-       Indiana Jones & the Fate of Atlantis:
-       Monkey Island 2:
-               - Palette issues in Amiga versions
-
-       Sam and Max:
-                - Highway subgame does not behave correctly.
-                - Music is broken under Dreamcast, causing game freezes
-
-       Curse of Monkey Island
-                - Demo does not work correctly
-                - Some minor graphical glitches remain
-
-       Beneath a Steel Sky:
-                - Floppy demo does not work at all
-                - Amiga versions aren't supported and probably never will be
-                - Not a bug: CD version is missing speech for some dialog
-                - ScummVM 0.5.0 contained a bug in the savegame system.
-                  If you experience problems using an old savegame, it may be
-                  corrupt, and you will need to start a new game using this
-                  version.
-
-       Broken Sword 1:
-                - Demo does not work correctly
-                - Macintosh version isn't supported
-
-       Simon the Sorcerer 2:
-                - Combined speech and subtitles will often cause speech to be
-                  cut off early, this is limitation of original game.
-                - Only default language (English) in data files is supported 
-                  in simon2mac
-                - F10 key animation in simon2mac is different compared to
-                  original game
-
-       FM-TOWNS versions:
-                - Kanji versions require the FM-TOWNS Font ROM
-                - All the FM-TOWNS versions of games are extremely rare,
-                  And as the ScummVM team does not encourage piracy in any
-                  way, we don't know where to buy or download a copy of these
-                  games. Petition LucasArts to re-release them :)
-
-       All CD games:
-               - If you are experiencing random crashes, and your game
-                 plays music from CD, you have encountered a Windows bug.
-                 Try copying the data files from CD to your hard disk, and
-                 running them from there.
-
+This is a development version. It probably has a LOT of problems. 
 
 4.0) Supported Platforms:
 ---- --------------------
