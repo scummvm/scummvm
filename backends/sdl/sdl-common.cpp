@@ -635,6 +635,12 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				return true;
 			}
 #else
+			// Ctrl-b toggles mouse capture
+			if (b == KBD_CTRL && ev.key.keysym.sym == 'm') {
+				property(PROP_TOGGLE_MOUSE_GRAB, NULL);
+				break;
+			}
+
 			// Ctrl-z and Alt-X quit
 			if ((b == KBD_CTRL && ev.key.keysym.sym == 'z') || (b == KBD_ALT && ev.key.keysym.sym == 'x')) {
 				event->event_code = EVENT_QUIT;
@@ -642,7 +648,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 			}
 #endif
 
-			// Ctr-Alt-<key> will change the GFX mode
+			// Ctrl-Alt-<key> will change the GFX mode
 			if ((b & (KBD_CTRL|KBD_ALT)) == (KBD_CTRL|KBD_ALT)) {
 				static const int gfxModes[][4] = {
 						{ GFX_NORMAL, GFX_DOUBLESIZE, GFX_TRIPLESIZE, -1 },
@@ -676,7 +682,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				Property prop;
 				int factor = _scaleFactor - 1;
 
-				// Ctr-Alt-a toggles aspect ratio correction
+				// Ctrl-Alt-a toggles aspect ratio correction
 				if (ev.key.keysym.sym == 'a') {
 					property(PROP_TOGGLE_ASPECT_RATIO, NULL);
 					break;
@@ -1020,6 +1026,13 @@ uint32 OSystem_SDL_Common::property(int param, Property *value) {
 
 	case PROP_GET_SAMPLE_RATE:
 		return SAMPLES_PER_SEC;
+
+	case PROP_TOGGLE_MOUSE_GRAB:
+		if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_OFF)
+			SDL_WM_GrabInput(SDL_GRAB_ON);
+		else
+			SDL_WM_GrabInput(SDL_GRAB_OFF);
+		break;
 	}
 
 	return 0;
