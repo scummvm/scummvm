@@ -2162,8 +2162,7 @@ void Scumm::updatePalette() {
 
 void Scumm::mainRun() {
 	int delta = 0;
-	int last_time = _system->get_msecs(); 
-	int new_time;
+	int diff = 0;
 
 	for(;;) {
 #ifdef __PALM_OS__
@@ -2171,12 +2170,14 @@ void Scumm::mainRun() {
 		return;
 #endif
 		updatePalette();
-		
 		_system->update_screen();		
-		new_time = _system->get_msecs();
-		waitForTimer(delta * 15 + last_time - new_time);
-		last_time = _system->get_msecs();
+
+		waitForTimer(delta * 15 + diff);
+
+		diff = _system->get_msecs();
 		delta = scummLoop(delta);
+		diff -= _system->get_msecs();
+
 		if (delta < 1)	// Ensure we don't get into a loop
 			delta = 1;  // by not decreasing sleepers.
 	}
