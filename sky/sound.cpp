@@ -1252,3 +1252,15 @@ bool SkySound::startSpeech(uint16 textNum) {
 	_mixer->playRaw(&_ingameSpeech, playBuffer, speechSize, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, SOUND_SPEECH);
 	return true;
 }
+
+void SkySound::fnPauseFx(void) {
+
+	_mixer->pauseChannel(SOUND_CH0, true);
+	_mixer->pauseChannel(SOUND_CH1, true);
+}
+
+void SkySound::fnUnPauseFx(void) {
+
+	_mixer->pauseChannel(SOUND_CH0, false);
+	_mixer->pauseChannel(SOUND_CH1, false);
+}
