@@ -1789,7 +1789,7 @@ void SimonState::vc_62()
 
 	vc_29_stop_all_sounds();
 
-	if (!_video_var_3) {
+	if (((_game & GAME_SIMON2)) && (!_video_var_3)) {
 		warning("vc_62: music stuff?");
 	}
 
