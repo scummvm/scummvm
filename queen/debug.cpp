@@ -139,7 +139,7 @@ bool Debugger::Cmd_Bob(int argc, const char **argv) {
 			}
 		}
 	} else {
-		DebugPrintf("Usage: %s bobnum command paramter\n", argv[0]);
+		DebugPrintf("Usage: %s bobnum command parameter\n", argv[0]);
 	}
 	return true;
 }
