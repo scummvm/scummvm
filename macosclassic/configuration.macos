@@ -1,15 +1,21 @@
-scummvm monkey
+scummvm atlantis
 
-This setup file is needed to configure the scummvm parameters on the Macintosh. The first line is the same as the command line in a shell-like environment.
+This setup file is needed to configure the scummvm parameters on the Macintosh. This first line is the same as the command line in a shell-like environment.
 
 Syntax:
 scummvm [-b<num> -f] game 
 
-scummvm - the program itself
-b<num> - start in that room
-f - fullscreen mode
-game - game id
+		scummvm		- the program itself
+			-p<path>		- path to where the game is installed
+			-b<num>		 - start in that room
+      -s<num>		 - set the scale factor, 1-3   (default is '2')
+      -m<num>		- set the music volume, 0-100   (default is '60')
+      -t<num>		 - set music tempo   (default is '2031616')
+			-f 						 - fullscreen mode
+      -n              - disable subtitles
+		game						- the game ID
 
+Note for the path: On the Macintosh you should use the semicolon instead of the slash to specify the gamepath. (i.e. -p:monkeyisland2:   or   -pSystem:Games:Indy3:)
 
 Game IDs:
 indy3 - Indiana Jones and the Last Crusade (256 color version)
@@ -26,11 +32,15 @@ dottdemo - Day Of The Tenctacle (Demo)
 samnmax - Sam & Max
 snmdemo - Sam & Max (Demo)
 ft - Full Throttle
+dig - The Dig
 
 The game IDs must be in lowercase!
 
 
 Examples:
 scummvm -b10 -f monkey
-scummvm -f monkey2
+scummvm -p:lechuck: -f monkey2
 scummvm playfate
+
+
+Please refer to readme.txt for other infos.
