@@ -105,7 +105,7 @@ void SkyScreen::setPaletteEndian(uint8 *pal) {
 	uint8 endPalette[256 * 3];
 	for (uint16 cnt = 0; cnt < 256 * 3; cnt++)
 		endPalette[cnt] = pal[cnt ^ 1];
-	convertPalette(endPal, _palette);
+	convertPalette(endPalette, _palette);
 #else
 	convertPalette(pal, _palette);
 #endif
