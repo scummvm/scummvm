@@ -1,8 +1,5 @@
 #include "enum_globals.h"
 
-// define this to limit memory request on Simon
-#define SMALL_MEMORY
-
 void writeRecord(MemPtr ptr, UInt32 size, UInt16 index, UInt16 dbID);
 void buildAll();
 
