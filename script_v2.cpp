@@ -2812,8 +2812,7 @@ void Scumm::o6_miscOps()
 			break;
 
 		case 112:									/* palette shift? */
-			warning("stub o6_miscOps_112(%d,%d,%d,%d,%d,%d,%d)",
-							args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+			createSpecialPalette(args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
 			break;
 
 		case 114:									/* palette? */
