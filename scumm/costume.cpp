@@ -271,7 +271,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	if (_vm->_version == 1)
 		procC64();
-	else if (_vm->_features & GF_AMIGA && (_vm->_gameId == GID_INDY4 || _vm->_gameId == GID_MONKEY2))
+	else if (_vm->_features & GF_AMIGA && _vm->_version == 5)
 		proc3_ami();
 	else
 		proc3();
