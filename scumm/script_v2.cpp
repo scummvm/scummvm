@@ -56,7 +56,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_getObjectOwner),
 		OPCODE(o5_animateActor),
 		OPCODE(o5_panCameraTo),
-		OPCODE(o5_actorSet),
+		OPCODE(o2_actorSet),
 		/* 14 */
 		OPCODE(o5_print),
 		OPCODE(o5_actorFromPos),
@@ -559,6 +559,33 @@ void Scumm_v2::o2_waitForActor() {
 	}
 }
 
+void Scumm_v2::o2_actorSet() {
+	int arg1 = getVarOrDirectByte(0x80);
+	int arg2 = getVarOrDirectByte(0x40);
+
+	switch (fetchScriptByte()) {
+		case 1:
+			warning("o2_actorSet(%d, %d) - SoundThingy Not Implemented", arg1, arg2);
+			break;
+
+		case 2:
+			warning("o2_actorSet(%d, %d) - Init(?) Not Implemented", arg1, arg2);
+			break;
+
+		case 3:
+			warning("o2_actorSet(%d, %d) - SetName Not Implemented", arg1, arg2);
+			break;
+
+		case 4:
+			warning("o2_actorSet(%d, %d) - Costume Not Implemented", arg1, arg2);
+			break;
+
+		case 5:
+			warning("o2_actorSet(%d, %d) - TextColor Not Implemented", arg1, arg2);
+			break;
+	}
+}
+
 void Scumm_v2::o2_waitForSentence() {
 	if (_sentenceNum) {
 		if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
@@ -572,3 +599,5 @@ void Scumm_v2::o2_waitForSentence() {
 
 void Scumm_v2::o2_restart() {
 }
+
+

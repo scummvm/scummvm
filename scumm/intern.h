@@ -224,6 +224,7 @@ protected:
 	void o2_ifNotState20();
 	void o2_ifState10();
 	void o2_ifNotState10();
+	void o2_actorSet();
 	void o2_waitForActor();
 	void o2_waitForSentence();
 	void o2_restart();
