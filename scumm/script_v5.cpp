@@ -1524,16 +1524,17 @@ void Scumm_v5::o5_resourceRoutines() {
 	_opcode = fetchScriptByte();
 	if (_opcode != 17)
 		resid = getVarOrDirectByte(0x80);
+	int op = _opcode;
 	if (_gameId == GID_ZAK256)
-		_opcode &= 0x3F;
+		op &= 0x3F;
 	else
-		_opcode &= 0x1F;
+		op &= 0x1F;
 
-	switch (_opcode) {
+	switch (op) {
 	case 1:											// load script
 	case 2:											// load sound
 	case 3:											// load costume
-		ensureResourceLoaded(resType[_opcode-1], resid);
+		ensureResourceLoaded(resType[op-1], resid);
 		break;
 	case 4:											// load room 
 		if (_features == GF_AFTER_V3) {
@@ -1553,9 +1554,9 @@ void Scumm_v5::o5_resourceRoutines() {
 	case 7:											// nuke costume
 	case 8:											// nuke room
 		if (_gameId == GID_ZAK256)
-			warning("o5_resourceRoutines %d should not occur in Zak256", _opcode);
+			warning("o5_resourceRoutines %d should not occur in Zak256", op);
 		else
-			setResourceCounter(resType[_opcode-5], resid, 0x7F);
+			setResourceCounter(resType[op-5], resid, 0x7F);
 		break;
 
 	case 9:											// lock script
