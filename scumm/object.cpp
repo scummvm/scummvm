@@ -850,7 +850,12 @@ void ScummEngine::clearOwnerOf(int obj) {
 	}
 }
 
-void ScummEngine::removeObjectFromRoom(int obj) {
+/**
+ * Force a screen redraw at the location of the specifed object. This is
+ * typically called when an object was just removed from the room, or when its
+ * state changed.
+ */
+void ScummEngine::forceObjectRedraw(int obj) {
 	int i, j, strip;
 
 	for (i = 1; i < _numLocalObjects; i++) {

@@ -916,7 +916,7 @@ void ScummEngine_v6::o6_setState() {
 	}
 
 	putState(obj, state);
-	removeObjectFromRoom(obj);
+	forceObjectRedraw(obj);
 	if (_BgNeedsRedraw)
 		clearDrawObjectQueue();
 }
@@ -1151,7 +1151,7 @@ void ScummEngine_v6::o6_pickupObject() {
 	putOwner(obj, VAR(VAR_EGO));
 	putClass(obj, kObjectClassUntouchable, 1);
 	putState(obj, 1);
-	removeObjectFromRoom(obj);
+	forceObjectRedraw(obj);
 	clearDrawObjectQueue();
 	runInventoryScript(obj);									/* Difference */
 }
