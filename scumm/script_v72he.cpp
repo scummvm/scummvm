@@ -2381,7 +2381,7 @@ void ScummEngine_v72he::o72_copyString() {
 	appendSubstring(dst, src, -1, -1);
 
 	push(dst);
-	debug(1,"stub o72_copyString");
+	debug(1,"o72_copyString");
 }
 
 void ScummEngine_v72he::o72_appendString() {
@@ -2402,7 +2402,7 @@ void ScummEngine_v72he::o72_appendString() {
 	appendSubstring(dst, src, srcOffs, len);
 
 	push(dst);
-	debug(1,"stub o72_appendString");
+	debug(1,"o72_appendString");
 }
 
 void ScummEngine_v72he::o72_concatString() {
@@ -2424,7 +2424,7 @@ void ScummEngine_v72he::o72_concatString() {
 	appendSubstring(dst, src2, 0, -1);
 
 	push(dst);
-	debug(1,"stub o72_concatString");
+	debug(1,"o72_concatString");
 }
 
 void ScummEngine_v72he::o72_checkGlobQueue() {

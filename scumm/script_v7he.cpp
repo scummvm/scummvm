@@ -741,7 +741,7 @@ void ScummEngine_v70he::o70_getStringWidth() {
 	}
 
 	push(width);
-	debug(1,"stub o70_getStringWidth (%d)", width);
+	debug(1,"o70_getStringWidth (%d)", width);
 }
 
 void ScummEngine_v70he::o70_kernelSetFunctions() {
@@ -831,7 +831,7 @@ void ScummEngine_v70he::o70_appendString() {
 	appendSubstring(dst, src, srcOffs, len);
 
 	push(dst);
-	debug(1,"stub o70_appendString");
+	debug(1,"o70_appendString");
 }
 
 void ScummEngine_v70he::o70_compareString() {
@@ -873,7 +873,7 @@ void ScummEngine_v70he::o70_compareString() {
 	}
 
 	push (i);
-	debug(1,"o70_compareString stub (%d, %d, %d)", id, id2, i);
+	debug(1,"o70_compareString (%d, %d, %d)", id, id2, i);
 }
 
 void ScummEngine_v70he::o70_readINI() {
@@ -956,7 +956,7 @@ void ScummEngine_v70he::o70_getStringLenForWidth() {
 	}
 
 	push(len);
-	debug(1,"stub o70_getStringLenForWidth (%d)", len);
+	debug(1,"o70_getStringLenForWidth (%d)", len);
 }
 
 void ScummEngine_v70he::o70_getCharIndexInString() {
@@ -998,7 +998,7 @@ void ScummEngine_v70he::o70_getCharIndexInString() {
 	}
 
 	push(-1);
-	debug(1,"stub o70_getCharIndexInString");
+	debug(1,"o70_getCharIndexInString");
 }
 
 void ScummEngine_v70he::o70_setFilePath() {
