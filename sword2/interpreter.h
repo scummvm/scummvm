@@ -54,11 +54,11 @@ enum {
 	CP_SKIPALWAYS			= 8,	// Skip a block of code
 	CP_SWITCH			= 9,	// Switch on last stack value
 	CP_ADDNPOP_LOCAL_VAR32		= 10,	// Add to a local varible
-	CP_SUBNPOP_LOCAL_VAR32		= 11,	// Subtract to a local variable
+	CP_SUBNPOP_LOCAL_VAR32		= 11,	// Subtract from a local variable
 	CP_SKIPONTRUE			= 12,	// Skip if the bottom value on the stack is true
 	CP_POP_GLOBAL_VAR32		= 13,	// Pop a global variable
-	CP_ADDNPOP_GLOBAL_VAR32		= 14,
-	CP_SUBNPOP_GLOBAL_VAR32		= 15,
+	CP_ADDNPOP_GLOBAL_VAR32		= 14,	// Add to a global variable
+	CP_SUBNPOP_GLOBAL_VAR32		= 15,	// Subtract from a global variable
 	CP_DEBUGON			= 16,	// Turn debugging on
 	CP_DEBUGOFF			= 17,	// Turn debugging off
 	CP_QUIT				= 18,	// Quit for a cycle

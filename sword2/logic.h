@@ -30,6 +30,8 @@
 
 namespace Sword2 {
 
+#define STACK_SIZE 10
+
 #define	MAX_events 10
 
 // There won't be many, will there? Probably 2 at most i reckon
@@ -59,14 +61,6 @@ private:
 	// Set this to turn debugging on
 	bool _debugFlag;
 
-	typedef int32 (Logic::*OpcodeProc)(int32 *);
-	struct OpcodeEntry {
-		OpcodeProc proc;
-		const char *desc;
-	};
-
-	const OpcodeEntry *_opcodes;
-
 	// denotes the res id of the game-object-list in current use
 	uint32 _currentRunList;
 
@@ -76,7 +70,6 @@ private:
 	// each object has one of these tacked onto the beginning
 	_object_hub *_curObjectHub;
 
-	void setupOpcodes(void);
 	void processKillList(void);
 
 	// Stores resource id of the wav to use as lead-out from smacker
@@ -180,7 +173,6 @@ public:
 		memset(_eventList, 0, sizeof(_eventList));
 		memset(_syncList, 0, sizeof(_syncList));
 		_router = new Router(_vm);
-		setupOpcodes();
 		initStartMenu();
 	}
 
@@ -209,8 +201,6 @@ public:
 
 	void setGlobalInterpreterVariables(int32 *vars);
 	int runScript(char *scriptData, char *objectData, uint32 *offset);
-
-	int32 executeOpcode(int op, int32 *params);
 
 	struct _event_unit {
 		uint32 id;

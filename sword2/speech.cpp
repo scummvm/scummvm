@@ -126,7 +126,7 @@ int32 Logic::fnChoose(int32 *params) {
 		OBJECT_HELD = 0; // clear it so it doesn't keep happening!
 		IN_SUBJECT = 0;	 // clear the subject list
 
-		return IR_CONT + (response << 3);
+		return IR_CONT | (response << 3);
 	}
 
 	// new thing for skipping chooser with "nothing else to say" text
@@ -140,7 +140,7 @@ int32 Logic::fnChoose(int32 *params) {
 
 		// return special subject chosen code (same as in normal
 		// chooser routine below)
-		return IR_CONT + (_subjectList[0].ref << 3);
+		return IR_CONT | (_subjectList[0].ref << 3);
 	}
 
 	if (!_choosing) {
@@ -232,7 +232,7 @@ int32 Logic::fnChoose(int32 *params) {
 	RESULT = _subjectList[hit].res;
 
 	// return special subject chosen code
-	return IR_CONT + (_subjectList[hit].ref << 3);
+	return IR_CONT | (_subjectList[hit].ref << 3);
 }
 
 int32 Logic::fnStartConversation(int32 *params) {
