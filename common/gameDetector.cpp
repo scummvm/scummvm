@@ -174,13 +174,6 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 	char c;
 	_save_slot = -1;
 
-	// check for arguments
-	if (argc < 2) {
-		printf(USAGE_STRING);
-		//exit(1);
-	}
-
-	g_config->set_domain("game-specific");
 	/* Parse the arguments */
 	for (i = argc - 1; i >= 1; i--) {
 		s = argv[i];
