@@ -327,13 +327,15 @@ static const uint16 pcjr_freq_table[12] = {
 ////////////////////////////////////////
 
 
-Player_V2::Player_V2(Scumm *scumm) : _scumm(scumm) {
+Player_V2::Player_V2(Scumm *scumm) {
 	int i;
 	
 	// This simulates the pc speaker sound, which is driven
 	// by the 8253 (square wave generator) and a low-band filter.
 	
+	_isV3Game = (scumm->_version == 3);
 	_system = scumm->_system;
+	_mixer = scumm->_mixer;
 	_sample_rate = _system->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
 	_mutex = _system->create_mutex();
 
@@ -362,18 +364,18 @@ Player_V2::Player_V2(Scumm *scumm) : _scumm(scumm) {
 	set_pcjr(true);
 	set_master_volume(255);
 
-	scumm->_mixer->setupPremix(this, premix_proc);
+	_mixer->setupPremix(this, premix_proc);
 }
 
 Player_V2::~Player_V2() {
 	mutex_up();
 	// Detach the premix callback handler
-	_scumm->_mixer->setupPremix (0, 0);
+	_mixer->setupPremix(0, 0);
 	mutex_down();
 	_system->delete_mutex (_mutex);
 }
 
-void Player_V2::set_pcjr (bool pcjr) {
+void Player_V2::set_pcjr(bool pcjr) {
 	mutex_up();
 	_pcjr = pcjr;
 
@@ -526,7 +528,7 @@ void Player_V2::restartSound() {
 	}
 }
 
-int Player_V2::getSoundStatus(int nr) {
+bool Player_V2::getSoundStatus(int nr) const {
 	return current_nr == nr || next_nr == nr;
 }
 
@@ -556,8 +558,8 @@ void Player_V2::clear_channel(int i) {
 	channel->d.freqmod_modulo = 0;
 }
 
-int Player_V2::getMusicTimer() {
-	if (_scumm->_version == 3)
+int Player_V2::getMusicTimer() const {
+	if (_isV3Game)
 		return _music_timer;
 	else
 		return channels[0].d.music_timer;

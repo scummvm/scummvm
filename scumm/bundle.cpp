@@ -437,7 +437,7 @@ int32 Bundle::getNumberOfMusicSamplesByName(const char *name) {
 									bitsleft = 16;									\
 								}
 
-int32 Bundle::compDecode(byte *src, byte *dst) {
+static int32 compDecode(byte *src, byte *dst) {
 	byte *result, *srcptr = src, *dstptr = dst;
 	int data, size, bit, bitsleft = 16, mask = READ_LE_UINT16(srcptr);
 	srcptr += 2;

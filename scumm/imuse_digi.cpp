@@ -1136,7 +1136,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 						debug(5, "Play imuse music: %s, %s, %s", _digStateMusicTable[music].name, _digStateMusicTable[music].title, _digStateMusicTable[music].filename);
 						if ((_digStateMusicTable[music].filename[0] != 0) && 
 							(strcmp(_digStateMusicTable[_digStateMusicTable[music].unk3].filename, _scumm->_sound->_nameBundleMusic) != 0) ) {
-							_scumm->_sound->playBundleMusic((const char *)_digStateMusicTable[music].filename);
+							_scumm->_sound->playBundleMusic(_digStateMusicTable[music].filename);
 						}
 						return 0;
 					}
@@ -1155,7 +1155,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					if ((_comiStateMusicTable[l].id == b)) {
 						debug(5, "Play imuse music: %s, %s, %s", _comiStateMusicTable[l].name, _comiStateMusicTable[l].title, _comiStateMusicTable[l].filename);
 						if (_comiStateMusicTable[l].filename[0] != 0) {
-							_scumm->_sound->playBundleMusic((const char *)_comiStateMusicTable[l].filename);
+							_scumm->_sound->playBundleMusic(_comiStateMusicTable[l].filename);
 						}
 						return 0;
 					}
@@ -1189,7 +1189,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					if ((_digSeqMusicTable[l].room == b)) {
 						debug(5, "Play imuse music: %s, %s, %s", _digSeqMusicTable[l].name, _digSeqMusicTable[l].title, _digSeqMusicTable[l].filename);
 						if (_digSeqMusicTable[l].filename[0] != 0) {
-							_scumm->_sound->playBundleMusic((const char *)_digSeqMusicTable[l].filename);
+							_scumm->_sound->playBundleMusic(_digSeqMusicTable[l].filename);
 						}
 						return 0;
 					}
@@ -1202,7 +1202,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					if ((_comiSeqMusicTable[l].id == b)) {
 						debug(5, "Play imuse music: %s, %s, %s", _comiSeqMusicTable[l].name, _comiSeqMusicTable[l].title, _comiSeqMusicTable[l].filename);
 						if (_comiSeqMusicTable[l].filename[0] != 0) {
-							_scumm->_sound->playBundleMusic((const char *)_comiSeqMusicTable[l].filename);
+							_scumm->_sound->playBundleMusic(_comiSeqMusicTable[l].filename);
 						}
 						return 0;
 					}

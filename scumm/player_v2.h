@@ -80,13 +80,13 @@ public:
 	void startSound(int nr, byte *data);
 	void stopSound(int nr);
 	void stopAllSounds();
-	int  getSoundStatus(int nr);
-	int  getMusicTimer();
+	bool getSoundStatus(int nr) const;
+	int  getMusicTimer() const;
 
 private:
+	bool _isV3Game;
 	SoundMixer *_mixer;
-	Scumm *_scumm;
-
+	OSystem *_system;
 
 	bool _pcjr;
 	int _header_len;
@@ -116,7 +116,6 @@ private:
 	byte *next_data;
 	byte *retaddr;
 
-	OSystem *_system;
 	void *_mutex;
 	void mutex_up() { _system->lock_mutex (_mutex); }
 	void mutex_down() { _system->unlock_mutex (_mutex); }

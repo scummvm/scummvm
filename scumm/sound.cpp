@@ -968,7 +968,7 @@ bool Sound::isSfxFinished() const {
 uint32 Sound::decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo = false) {
 	uint32 s_size = (size / 3) * 4;
 	uint32 loop_size = s_size / 4;
-	if (stereo == true) {
+	if (stereo) {
 		s_size *= 2;
 	}
 	byte *ptr = *dst = (byte *)malloc(s_size);
@@ -981,14 +981,14 @@ uint32 Sound::decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo
 		tmp = ((((v2 & 0x0f) << 8) | v1) << 4) - 0x8000;
 		*ptr++ = (byte)((tmp >> 8) & 0xff);
 		*ptr++ = (byte)(tmp & 0xff);
-		if (stereo == true) {
+		if (stereo) {
 			*ptr++ = (byte)((tmp >> 8) & 0xff);
 			*ptr++ = (byte)(tmp & 0xff);
 		}
 		tmp = ((((v2 & 0xf0) << 4) | v3) << 4) - 0x8000;
 		*ptr++ = (byte)((tmp >> 8) & 0xff);
 		*ptr++ = (byte)(tmp & 0xff);
-		if (stereo == true) {
+		if (stereo) {
 			*ptr++ = (byte)((tmp >> 8) & 0xff);
 			*ptr++ = (byte)(tmp & 0xff);
 		}
@@ -1001,7 +1001,7 @@ static void music_handler (void *engine) {
 }
 
 void Sound::playBundleMusic(const char *song) {
-	if (_scumm->_silentDigitalImuse == true) {
+	if (_scumm->_silentDigitalImuse) {
 		return;
 	}
 
@@ -1083,7 +1083,7 @@ void Sound::bundleMusicHandler(Scumm *scumm) {
 		return;
 	}
 
-	if (_musicBundleToBeChanged == true) {
+	if (_musicBundleToBeChanged) {
 		_nameBundleMusic = _newNameBundleMusic;
 		_numberSamplesBundleMusic = _bundle->getNumberOfMusicSamplesByName(_nameBundleMusic);
 		_currentSampleBundleMusic = 0;

@@ -56,7 +56,6 @@ private:
 
 	void initializeImcTables();
 
-	int32 compDecode(byte *src, byte *dst);
 	int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 size);
 
 	int32 decompressVoiceSampleByIndex(int32 index, byte **comp_final);
