@@ -103,7 +103,7 @@ SCUMM Games:
      Loom (16 color floppy version)                  [Game: loom]
      Loom (256 FM Towns)                             [Game: loomtowns]
      Loom (256 color CD version)                     [Game: loomcd]
-     Zak McKracken (256 FM Towns)                    [Game: zak256]
+     Zak McKracken (256 FM Towns)                    [Game: zaktowns]
      Monkey Island 1 (EGA)                           [Game: monkeyega]
      Monkey Island 1 (VGA)                           [Game: monkeyvga]
      Monkey Island 1 (CD)                            [Game: monkey/monkey1]
@@ -465,8 +465,9 @@ Note #2: Filters can be very slow when ScummVM is compiled in a debug
 configuration without optimizations. And there is always a speed impact when
 using any form of anti-aliasing/linear filtering.
 
-Note #3: The Fm Towns version of Zak (zak256 target) uses an original resolution
-of 320x240 - hence for this game scalers will scale to 640x480 or 960x720.
+Note #3: The Fm Towns version of Zak (zaktowns target) uses an original 
+resolution of 320x240 - hence for this game scalers will scale to 
+640x480 or 960x720.
 
 Note #4: The OpenGL filter is included as a curiosity only. It's use is
 unsupported, and unrecommended. The only benefit is hardware accelerated
