@@ -130,7 +130,7 @@ int MidiDriver_ALSA::open()
 
 void MidiDriver_ALSA::close()
 {
-	_mode = 0;
+	_isOpen = false;
 	if (seq_handle)
 		snd_seq_close(seq_handle);
 }
