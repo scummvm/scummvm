@@ -172,7 +172,7 @@ uint8 *FetchTextLine(uint8 *file, uint32 text_line) {
 
 	if (text_line >= text_header->noOfLines) {
 		fileHeader = (_standardHeader*)file;
-		sprintf((char*) errorLine, "xxMissing line %d of %s (only 0..%d)", text_line, fileHeader->name, text_header->noOfLines - 1);
+		sprintf((char *) errorLine, "xxMissing line %d of %s (only 0..%d)", text_line, fileHeader->name, text_header->noOfLines - 1);
 
 
 		// first 2 chars are NULL so that actor-number comes out as '0'
@@ -182,9 +182,9 @@ uint8 *FetchTextLine(uint8 *file, uint32 text_line) {
 	}
 
 	//point to the lookup table
-	point = (uint32*) text_header + 1;
+	point = (uint32 *) text_header + 1;
 
-	return (uint8*) (file + READ_LE_UINT32(point + text_line));
+	return (uint8 *) (file + READ_LE_UINT32(point + text_line));
 }
 
 
@@ -204,7 +204,7 @@ uint8 CheckTextLine(uint8 *file, uint32	text_line) {
 uint8 *FetchObjectName(int32 resourceId) {
 	_standardHeader *header;
 	
-	header = (_standardHeader*) res_man.open(resourceId);
+	header = (_standardHeader *) res_man.open(resourceId);
 	res_man.close(resourceId);
 
 	// note this pointer is no longer valid, but it should be ok until

@@ -22,6 +22,7 @@
 // ---------------------------------------------------------------------------
 
 #include "stdafx.h"
+#include "bs2/sword2.h"
 #include "bs2/build_display.h"
 #include "bs2/console.h"
 #include "bs2/defs.h"
@@ -106,7 +107,7 @@ void Send_fore_par1_frames(void);
 //
 // ---------------------------------------------------------------------------
 
-void Build_display(void) {	//Tony21Sept96
+void Build_display(void) {
 	bool end;
 #ifdef _SWORD2_DEBUG
 	uint8 pal[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 0, 0 };
@@ -324,8 +325,6 @@ void DisplayMsg(uint8 *text, int time) {
 	_spriteInfo spriteInfo;
 	_palEntry pal[256];
 	_palEntry oldPal[256];
-	int16 oldY;
-	int16 oldX;
 	uint32 rv;	// drivers error return value
 
 	warning("DisplayMsg: %s", (char *) text);
@@ -336,16 +335,16 @@ void DisplayMsg(uint8 *text, int time) {
 	}
 
 	Set_mouse(0);
-	Set_luggage(0);			//tw28Aug
+	Set_luggage(0);
 
 	CloseMenuImmediately();
 	EraseBackBuffer();
 
 	text_spr = MakeTextSprite(text, 640, 187, speech_font_id);
 
-	frame = (_frameHeader*) text_spr->ad;
+	frame = (_frameHeader *) text_spr->ad;
 
-	spriteInfo.x = screenWide/2 - frame->width/2;
+	spriteInfo.x = screenWide / 2 - frame->width / 2;
 	if (!time)
 		spriteInfo.y = screenDeep / 2 - frame->height / 2 - RDMENU_MENUDEEP;
 	else
@@ -359,19 +358,14 @@ void DisplayMsg(uint8 *text, int time) {
 	spriteInfo.blend = 0;
 	spriteInfo.data = text_spr->ad + sizeof(_frameHeader);
 	spriteInfo.colourTable = 0;
-	oldX = spriteInfo.x;
-	oldY = spriteInfo.y;
 
 	rv = DrawSprite(&spriteInfo);
 	if (rv)
 		error("Driver Error %.8x (in DisplayMsg)", rv);
 
-	spriteInfo.x = oldX;
-	spriteInfo.y = oldY;
-
 	memcpy((char *) oldPal, (char *) palCopy, 256 * sizeof(_palEntry));
 
-	memset(pal, 0, 256*sizeof(_palEntry));
+	memset(pal, 0, 256 * sizeof(_palEntry));
 	pal[187].red = 255;
 	pal[187].green = 255;
 	pal[187].blue = 255;
@@ -385,19 +379,11 @@ void DisplayMsg(uint8 *text, int time) {
 
 	uint32 targetTime = SVM_timeGetTime() + (time * 1000);
 
-	while (SVM_timeGetTime() < targetTime) {
-		ServiceWindows();
+	rv = DrawSprite(&spriteInfo);	// Keep the message there even when the user task swaps.
+	if (rv)
+		error("Driver Error %.8x (in DisplayMsg)", rv);
 
-		EraseBackBuffer();
-
-		rv = DrawSprite(&spriteInfo);	// Keep the message there even when the user task swaps.
-		if (rv)
-			error("Driver Error %.8x (in DisplayMsg)", rv);
-
-		// Drivers change the y co-ordinate, don't know why...
-		spriteInfo.y = oldY;
-		spriteInfo.x = oldX;
-	}
+	sleepUntil(targetTime);
 
 	BS2_SetPalette(0, 256, (uint8 *) oldPal, RDPAL_FADE);
 }
@@ -688,12 +674,10 @@ void Process_image(buildit *build_unit) {
 	res_man.close(build_unit->anim_resource);
 }
 
-void Reset_render_lists(void) {		//Tony18Sept96
+void Reset_render_lists(void) {
 	// reset the sort lists - do this before a logic loop
 	// takes into account the fact that the start of the list is pre-built
 	// with the special sortable layers
-
-	uint32 j;
 
 	cur_bgp0 = 0;
 	cur_bgp1 = 0;
@@ -707,7 +691,7 @@ void Reset_render_lists(void) {		//Tony18Sept96
 	if (cur_sort) {
 		// there are some layers - so rebuild the sort order
 		// positioning
-		for (j = 0; j < cur_sort; j++)
+		for (uint j = 0; j < cur_sort; j++)
 			sort_order[j] = j;	//rebuild the order list
 	}
 }
@@ -719,15 +703,11 @@ void Sort_the_sort_list(void) {
 	if (cur_sort <= 1)
 		return;
 
-	uint16 i, j, swap;
-
-	for (i = 0; i < cur_sort - 1; i++) {
-		for (j = 0; j < cur_sort - 1; j++) {
+	for (uint i = 0; i < cur_sort - 1; i++) {
+		for (uint j = 0; j < cur_sort - 1; j++) {
 			//this > next then swap
-			if (sort_list[sort_order[j]].sort_y > sort_list[sort_order[j+1]].sort_y) {
-				swap = sort_order[j];
-				sort_order[j] = sort_order[j + 1];
-				sort_order[j + 1] = swap;
+			if (sort_list[sort_order[j]].sort_y > sort_list[sort_order[j + 1]].sort_y) {
+				SWAP(sort_order[j], sort_order[j + 1]);
 			}
 		}
 	}
@@ -854,7 +834,6 @@ void Register_frame(int32 *params, buildit *build_unit)	{
  			mouse_list[cur_mouse].priority = ob_mouse->priority;
 			mouse_list[cur_mouse].pointer = ob_mouse->pointer;
 
-			// (James17jun97)
 			// check if pointer text field is set due to previous
 			// object using this slot (ie. not correct for this
 			// one)
@@ -862,6 +841,7 @@ void Register_frame(int32 *params, buildit *build_unit)	{
 			// if 'pointer_text' field is set, but the 'id' field
 			// isn't same is current id
 			// then we don't want this "left over" pointer text
+
 			if (mouse_list[cur_mouse].pointer_text && mouse_list[cur_mouse].id != (int32) ID)
 				mouse_list[cur_mouse].pointer_text=0;
 
@@ -1075,7 +1055,6 @@ void SetFullPalette(int32 palRes) {
 			palRes = lastPaletteRes;
 		}
 	} else {
-		// (James 03sep97)
 		// check if we're just restoring the current screen palette
 		// because we might actually need to use a separate palette
 		// file anyway eg. for pausing & unpausing during the eclipse
@@ -1091,11 +1070,10 @@ void SetFullPalette(int32 palRes) {
 	}
 	//----------------------------------
 
-
 	// non-zero: set palette to this separate palette file
 	if (palRes) {
 		// open the palette file
-		head = (_standardHeader*) res_man.open(palRes);
+		head = (_standardHeader *) res_man.open(palRes);
 
 #ifdef _SWORD2_DEBUG
 		if (head->fileType != PALETTE_FILE)
@@ -1151,7 +1129,7 @@ int32 FN_restore_game(int32 *params) {
 int32 FN_change_shadows(int32 *params) {
 	uint32 rv;
 
-	// if last screen was using a shading mask (see below) (James 08apr97)
+	// if last screen was using a shading mask (see below)
 	if (this_screen.mask_flag) {
 		rv = CloseLightMask();
 

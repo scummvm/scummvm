@@ -26,6 +26,7 @@
 #include "stdafx.h"
 #include "common/scummsys.h"
 #include "bs2/driver/driver96.h"
+#include "bs2/driver/d_draw.h"
 #include "bs2/anims.h"
 #include "bs2/console.h"
 #include "bs2/controls.h"		// for 'speechSelected' & 'subtitles'
@@ -748,10 +749,12 @@ int32 FN_play_sequence(int32 *params) {
 	// pause sfx during sequence, except the one used for lead-in music
 	g_sound->pauseFxForSequence();
 
+	MoviePlayer player; 
+
 	if (sequenceTextLines && g_sword2->_gameId == GID_SWORD2)
-		rv = PlaySmacker(filename, sequenceSpeechArray, leadOut);
+		rv = player.play(filename, sequenceSpeechArray, leadOut);
 	else
-		rv = PlaySmacker(filename, NULL, leadOut);
+		rv = player.play(filename, NULL, leadOut);
 
 	// unpause sound fx again, in case we're staying in same location
 	g_sound->unpauseFx();

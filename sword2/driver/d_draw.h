@@ -26,6 +26,18 @@ namespace Sword2 {
 
 extern byte *lpBackBuffer;
 
+class MoviePlayer {
+private:
+	uint8 *_textSurface;
+	void openTextObject(_movieTextObject *obj);
+	void closeTextObject(_movieTextObject *obj);
+	void drawTextObject(_movieTextObject *obj);
+
+public:
+	MoviePlayer() : _textSurface(NULL) {}
+	int32 play(char *filename, _movieTextObject *text[], uint8 *musicOut);
+};
+
 } // End of namespace Sword2
 
 #endif

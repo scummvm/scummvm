@@ -72,10 +72,13 @@ _walkData* LockRouteMem(void);
 void FloatRouteMem(void);
 void FreeRouteMem(void);
 void FreeAllRouteMem(void);
-void PlotWalkGrid(void);
 void AddWalkGrid(int32 gridResource);
 void RemoveWalkGrid(int32 gridResource);
 void ClearWalkGridList(void);
+
+#ifdef _SWORD2_DEBUG 
+void PlotWalkGrid(void);
+#endif 
 
 } // End of namespace Sword2
 

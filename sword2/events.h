@@ -41,7 +41,10 @@ void Start_event(void);
 int32 FN_start_event(void);
 uint32 Check_event_waiting(void);
 void Kill_all_ids_events(uint32 id);
+
+#ifdef _SWORD2_DEBUG 
 uint32 CountEvents(void);
+#endif 
 
 } // End of namespace Sword2
 

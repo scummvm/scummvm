@@ -50,6 +50,8 @@ void Close_game();
 void PauseGame(void);
 void UnpauseGame(void);
 
+void sleepUntil(int32 time);
+
 #define HEAD_LEN 8
 
 extern uint8 version_string[];		// for displaying from the console

@@ -43,47 +43,6 @@ int16 scrolly;
 
 int32 renderCaps = 0;
 
-int32 PlotDots(int16 x, int16 y, int16 count) {
-
-	warning("stub PlotDots( %d, %d, %d )", x, y, count);
-/*
-	int16			i;
-	uint8			*dst;
-
-	DDSURFACEDESC	ddDescription;
-	HRESULT			hr;
-
-	ddDescription.dwSize = sizeof(ddDescription);
-	
-	hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddDescription, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
-	if (hr != DD_OK)
-	{
-		hr = IDirectDrawSurface2_Lock(lpBackBuffer, NULL, &ddDescription, DDLOCK_SURFACEMEMORYPTR | DDLOCK_WAIT, NULL);
-	}
-
-	if (hr == DD_OK)
-	{
-
-		dst = (uint8 *) ddDescription.lpSurface + y * ddDescription.lPitch + x;
-
-		for (i=0; i<=count; i++)
-		{
-			*dst = 184;
-			dst += 2;
-		}
-		dst = (uint8 *) ddDescription.lpSurface + (y+1) * ddDescription.lPitch + x;
-		for (i=0; i<=count/10; i++)
-		{
-			*dst = 184;
-			dst += 20;
-		}
-		IDirectDrawSurface2_Unlock(lpBackBuffer, ddDescription.lpSurface);
-	}
-*/
-
-	return RD_OK;
-}
-
 /**
  * Initialise the display with the sizes passed in.
  * @return RD_OK, or an error code if the display cannot be set up.
@@ -168,30 +127,21 @@ int32 EraseBackBuffer( void ) {
 	return RD_OK;
 }
 
-
-int32 NextSmackerFrame(void) {
-	warning("stub NextSmackerFrame");
-	return RD_OK;
-}
-
-
-static uint8 *textSurface = NULL;
-
-void OpenTextObject(_movieTextObject *obj) {
+void MoviePlayer::openTextObject(_movieTextObject *obj) {
 	if (obj->textSprite)
-		CreateSurface(obj->textSprite, &textSurface);
+		CreateSurface(obj->textSprite, &_textSurface);
 }
 
-void CloseTextObject(_movieTextObject *obj) {
-	if (textSurface) {
-		DeleteSurface(textSurface);
-		textSurface = 0;
+void MoviePlayer::closeTextObject(_movieTextObject *obj) {
+	if (_textSurface) {
+		DeleteSurface(_textSurface);
+		_textSurface = NULL;
 	}
 }
 
-void DrawTextObject(_movieTextObject *obj) {
-	if (obj->textSprite && textSurface)
-		DrawSurface(obj->textSprite, textSurface);
+void MoviePlayer::drawTextObject(_movieTextObject *obj) {
+	if (obj->textSprite && _textSurface)
+		DrawSurface(obj->textSprite, _textSurface);
 }
 
 /**
@@ -201,7 +151,7 @@ void DrawTextObject(_movieTextObject *obj) {
  * @param musicOut lead-out music
  */
 
-int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
+int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 	warning("semi-stub PlaySmacker %s", filename);
 
 	// WORKAROUND: For now, we just do the voice-over parts of the
@@ -268,15 +218,15 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 
 			if (frameCounter == text[textCounter]->startFrame) {
 				EraseBackBuffer();
-				OpenTextObject(text[textCounter]);
-				DrawTextObject(text[textCounter]);
+				openTextObject(text[textCounter]);
+				drawTextObject(text[textCounter]);
 				if (text[textCounter]->speech) {
 					g_sword2->_mixer->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, SoundMixer::FLAG_16BITS);
 				}
 			}
 
 			if (frameCounter == text[textCounter]->endFrame) {
-				CloseTextObject(text[textCounter]);
+				closeTextObject(text[textCounter]);
 				EraseBackBuffer();
 				textCounter++;
 			}
@@ -300,7 +250,7 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 			g_system->delay_msecs(90);
 		}
 
-		CloseTextObject(text[textCounter]);
+		closeTextObject(text[textCounter]);
 
 		EraseBackBuffer();
 		SetNeedRedraw();

@@ -398,7 +398,7 @@ int32 FN_stop_music(int32 *params) {	// called from script only
 	return IR_CONT;
 }
 
-void Kill_music(void) {			// James22aug97
+void Kill_music(void) {
 	looping_music_id = 0;		// clear the 'looping' flag
 	g_sound->stopMusic();
 }

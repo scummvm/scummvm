@@ -95,7 +95,6 @@ uint8 border_pen;	// output pen colour of character borders
 uint32 speech_font_id;
 uint32 controls_font_id;
 uint32 red_font_id;
-uint32 death_font_id;
 
 mem* MakeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes) {
 	mem *line;		// handle for the memory block which will
@@ -450,11 +449,11 @@ typedef	struct {
 	// correct size!
 	uint16 type;
 	mem *text_mem;
-}	text_bloc;
+} text_bloc;
 
 text_bloc text_sprite_list[MAX_text_blocs];
 
-void Init_text_bloc_system(void) {	//Tony16Oct96
+void Init_text_bloc_system(void) {
 	for (int j = 0; j < MAX_text_blocs; j++)
 		text_sprite_list[j].text_mem = 0;
 }
@@ -492,7 +491,7 @@ uint32 Build_new_block(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, 
 
   	// debug text just to be printed normally from point (x,y)
 
-	// JUSTIFICATION & POSITIONING (James updated 20jun97)
+	// JUSTIFICATION & POSITIONING
 
 	// 'NO_JUSTIFICATION' means print sprite with top-left at (x,y)
 	// without margin checking - used for debug text
@@ -637,9 +636,9 @@ void InitialiseFontResourceFlags(void) {
 	// "talenna"	Finnish for "save"
 	// "zapisz"	Polish for "save"
 
-	if (strcmp((char*) textLine, "tallenna") == 0)
+	if (strcmp((char *) textLine, "tallenna") == 0)
 		language = FINNISH_TEXT;
-	else if (strcmp((char*) textLine, "zapisz") == 0)
+	else if (strcmp((char *) textLine, "zapisz") == 0)
 		language = POLISH_TEXT;
 	else
 		language = DEFAULT_TEXT;
@@ -659,7 +658,7 @@ void InitialiseFontResourceFlags(void) {
 	else
 		textLine = FetchTextLine(textFile, 54) + 2;
 
-	SetWindowName((char*) textLine);
+	SetWindowName((char *) textLine);
 
 	// now ok to close the text file
 	res_man.close(TEXT_RES);

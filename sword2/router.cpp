@@ -133,7 +133,10 @@ static void ExtractRoute(void);
 static void LoadWalkGrid(void);
 static void SetUpWalkGrid(Object_mega *ob_mega, int32 x, int32 y, int32 dir);
 static void LoadWalkData(Object_walkdata *ob_walkdata);
+
+#ifdef _SWORD2_DEBUG
 static void PlotCross(int16 x, int16 y, uint8 colour);
+#endif
 
 static int32 Scan(int32 level);
 static int32 NewCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2);
@@ -483,7 +486,7 @@ int32 GetRoute(void) {
 		do {
 			changed = Scan(level);
 			level++;
-		} while(changed == 1);
+		} while (changed == 1);
 
 		// Check to see if the route reached the target
 
@@ -680,7 +683,7 @@ int32 SmoothestPath() {
 
 		// route.X route.Y route.dir and bestTurns start at far end
 		p++;
-	} while (p < (routeLength));
+	} while (p < routeLength);
 
 	// best turns will end heading as near as possible to target dir rest
 	// is down to anim for now
@@ -987,7 +990,7 @@ void EarlySlowOut(Object_mega *ob_mega, Object_walkdata *ob_walkdata) {
 			walkAnim[walk_pc].step = 0;
 			debug(5, "SLOW-OUT FRAME: walkAnim[%d].frame = %d",walk_pc, walkAnim[walk_pc].frame);
 			walk_pc++;
-		} while(walkAnim[walk_pc].step > 0);
+		} while (walkAnim[walk_pc].step > 0);
 
 		// add stationary frame(s) (OPTIONAL)
 
@@ -1050,7 +1053,7 @@ void AddSlowOutFrames(_walkData *walkAnim) {
 
 			debug(5, "walkAnim[%d].frame = %d",slowOutFrameNo,walkAnim[slowOutFrameNo].frame);
 			slowOutFrameNo++;
-		} while(slowOutFrameNo < lastCount);
+		} while (slowOutFrameNo < lastCount);
 	
 		// add stationary frame(s) (OPTIONAL)
 
@@ -1264,7 +1267,7 @@ void SlidyWalkAnimator(_walkData *walkAnim) {
 				stepCount++;
 				step++;
 				module++;
-			} while(module < moduleEnd);
+			} while (module < moduleEnd);
 
 			stepX = modX[modularPath[p].dir];
 			stepY = modY[modularPath[p].dir];
@@ -1323,7 +1326,7 @@ void SlidyWalkAnimator(_walkData *walkAnim) {
 					do {
 						frameCount++;
 						walkAnim[lastCount + frameCount - 1].x += errorX * frameCount / frames;
-					} while(frameCount < frames);	
+					} while (frameCount < frames);	
 				}
 
 				if (errorY != 0) {
@@ -1332,7 +1335,7 @@ void SlidyWalkAnimator(_walkData *walkAnim) {
 					do {
 						frameCount++;
 						walkAnim[lastCount + frameCount - 1].y += errorY * frameCount / frames;
-					} while(frameCount < frames);	
+					} while (frameCount < frames);	
 				}
 
 				// Now is the time to put in the turn frames
@@ -1375,7 +1378,7 @@ void SlidyWalkAnimator(_walkData *walkAnim) {
 							// turning right
 							walkAnim[frame].frame += firstWalkingTurnRightFrame;
 							frame++;
-						} while(frame < lastCount);
+						} while (frame < lastCount);
 					}
 					lastDir = currentDir;
 				}
@@ -1735,7 +1738,7 @@ int32 SolidWalkAnimator(_walkData *walkAnim) {
 	currentDir = 99;
 
 	do {
-		while(modularPath[p].num > 0) {
+		while (modularPath[p].num > 0) {
 			currentDir = modularPath[p].dir;
 			if (currentDir< NO_DIRECTIONS) {
 				module = currentDir * framesPerStep * 2 + left;
@@ -1762,7 +1765,7 @@ int32 SolidWalkAnimator(_walkData *walkAnim) {
 					stepCount++;
 					module++;
 					step++;
-				} while( module < moduleEnd);
+				} while (module < moduleEnd);
 
 				errorX = modularPath[p].x - moduleX;
 				errorX = errorX * modX[modularPath[p].dir];
@@ -1797,8 +1800,8 @@ int32 SolidWalkAnimator(_walkData *walkAnim) {
 						// walk
 
 						if (slowStart == 1) {
-							stepCount -= numberOfSlowInFrames[currentDir];	// (James08sep97)
-							lastCount -= numberOfSlowInFrames[currentDir];	// (James08sep97)
+							stepCount -= numberOfSlowInFrames[currentDir];
+							lastCount -= numberOfSlowInFrames[currentDir];
 							slowStart = 0;
 						}
 
@@ -2254,7 +2257,7 @@ int32 LineCheck(int32 x1, int32 y1, int32 x2, int32 y2) {
 			}
 		}
 		i++;
-	} while(i < nbars && linesCrossed);
+	} while (i < nbars && linesCrossed);
 
 	return linesCrossed;
 }
@@ -2301,7 +2304,7 @@ int32 HorizCheck(int32 x1, int32 y, int32 x2) {
 			}
 		}
 		i++;
-	} while(i < nbars && linesCrossed);
+	} while (i < nbars && linesCrossed);
 
 	return linesCrossed;
 }
@@ -2351,7 +2354,7 @@ int32 VertCheck(int32 x, int32 y1, int32 y2) {
 			}
 		}
 		i++;
-	} while(i < nbars && linesCrossed);
+	} while (i < nbars && linesCrossed);
 
 	return linesCrossed;
 }
@@ -2418,7 +2421,7 @@ int32 CheckTarget(int32 x, int32 y) {
 			}
 		}
 	 	i++;
-	} while(i < nbars && onLine == 0);
+	} while (i < nbars && onLine == 0);
 
 	return onLine;
 }
@@ -2694,6 +2697,7 @@ void SetUpWalkGrid(Object_mega *ob_mega, int32 x, int32 y, int32 dir) {
 	node[nnodes].dist = 9999;
 }
 
+#ifdef _SWORD2_DEBUG
 void PlotWalkGrid(void) {
 	int32 j;
 
@@ -2716,6 +2720,7 @@ void PlotCross(int16 x, int16 y, uint8 colour) {
 	DrawLine(x - 1, y - 1, x + 1, y + 1, colour);
 	DrawLine(x + 1, y - 1, x - 1, y + 1, colour);	
 }
+#endif
 
 void LoadWalkGrid(void) {
 	_walkGridHeader floorHeader;

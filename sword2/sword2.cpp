@@ -462,6 +462,20 @@ void Sword2Engine::Start_game(void) {
 	debug(5, "Start_game() DONE.");
 }
 
+// FIXME: Move this to some better place?
+
+void sleepUntil(int32 time) {
+	while ((int32) SVM_timeGetTime() < time) {
+		g_sword2->parseEvents();
+
+		// Make sure menu animations and fades don't suffer
+		ProcessMenu();
+		ServiceWindows();
+
+		g_system->delay_msecs(10);
+	}
+}
+
 void PauseGame(void) {
 	// uint8 *text;
 

@@ -162,7 +162,7 @@ int32 FN_walk(int32 *params) {
 		// it in script to check if a 2nd-click came along
 		// EXIT_FADING = 0;
 
-		// finished walk (James23jun97)
+		// finished walk
 		ob_mega->currently_walking = 0;
 
 		// (see FN_get_player_savedata() in save_rest.cpp
@@ -207,7 +207,7 @@ int32 FN_walk(int32 *params) {
 		ob_logic->looping = 0;	// so script loop stops
 		FreeRouteMem();		// free up the walkdata mem block
 
-		// finished walk(James23jun97)
+		// finished walk
 		ob_mega->currently_walking = 0;
 
 		// (see FN_get_player_savedata() in save_rest.cpp

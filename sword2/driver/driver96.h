@@ -361,7 +361,6 @@ extern int32 PlotPoint(uint16 x, uint16 y, uint8 colour);
 extern int32 DrawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 colour);
 extern int32 InitialiseBackgroundLayer(_parallax *p);
 extern int32 CloseBackgroundLayer(void);
-extern int32 PlotDots(int16 x, int16 y, int16 count);
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

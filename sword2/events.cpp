@@ -39,6 +39,7 @@ void Init_event_system(void) {
 	}
 }
 
+#ifdef _SWORD2_DEBUG
 uint32 CountEvents(void) {
 	uint32 count = 0;
 
@@ -49,6 +50,7 @@ uint32 CountEvents(void) {
 
 	return count;
 }
+#endif
 
 int32 FN_request_speech(int32 *params) {
 	// change current script - must be followed by a TERMINATE script
@@ -86,12 +88,6 @@ int32 FN_request_speech(int32 *params) {
 void Set_player_action_event(uint32 id, uint32 interact_id) {
 	uint32 j = 0;
 
-//	if (event_list[j].id != id && event_list[j].id)
-//		// zip along until we find a free slot
-//		while (event_list[j].id!=id || event_list[j].id) {
-//			j++;
-//		}
-
 	while (1) {
 		if (event_list[j].id == id)
 			break;
@@ -107,10 +103,10 @@ void Set_player_action_event(uint32 id, uint32 interact_id) {
 
 	// found that slot
 
-	//id of person to stop
+	// id of person to stop
 	event_list[j].id = id;
 
-	//full script id of action script number 2
+	// full script id of action script number 2
 	event_list[j].interact_id = (interact_id * 65536) + 2;
 }
 

@@ -782,20 +782,6 @@ int32 StartRenderCycle(void) {
 	return RD_OK;
 }
 
-// FIXME: Move this to some better place?
-
-void sleepUntil(int32 time) {
-	while ((int32) SVM_timeGetTime() < time) {
-		g_sword2->parseEvents();
-
-		// Make sure menu animations and fades don't suffer
-		ProcessMenu();
-		ServiceWindows();
-
-		g_system->delay_msecs(10);
-	}
-}
-
 /**
  * This function should be called at the end of the render cycle.
  * @param end the function sets this to true if the render cycle is to be
