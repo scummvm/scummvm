@@ -20,7 +20,6 @@
 #ifndef	_ANIM_S
 #define	_ANIM_S
 
-
 #include "driver/driver96.h"
 
 int32 FN_anim(int32 *params);
