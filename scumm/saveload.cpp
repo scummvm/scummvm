@@ -61,7 +61,7 @@ bool Scumm::saveState(int slot, bool compat, SaveFileManager *mgr) {
 
 	makeSavegameName(filename, slot, compat);
 
-	if (!(out = mgr->open_savefile(filename, true)))
+	if (!(out = mgr->open_savefile(filename, getSavePath(), true)))
 		return false;
 
 	memcpy(hdr.name, _saveLoadName, sizeof(hdr.name));
@@ -70,7 +70,7 @@ bool Scumm::saveState(int slot, bool compat, SaveFileManager *mgr) {
 	hdr.size = 0;
 	hdr.ver = TO_LE_32(CURRENT_VER);
 
-	out->fwrite(&hdr, sizeof(hdr), 1);
+	out->write(&hdr, sizeof(hdr));
 
 	Serializer ser(out, true, CURRENT_VER);
 	saveOrLoad(&ser, CURRENT_VER);
@@ -88,10 +88,10 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	byte *roomptr;
 
 	makeSavegameName(filename, slot, compat);
-	if (!(out = mgr->open_savefile(filename, false)))
+	if (!(out = mgr->open_savefile(filename, getSavePath(), false)))
 		return false;
 
-	out->fread(&hdr, sizeof(hdr), 1);
+	out->read(&hdr, sizeof(hdr));
 	if (hdr.type != MKID('SCVM')) {
 		warning("Invalid savegame '%s'", filename);
 		delete out;
@@ -221,12 +221,11 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 }
 
 void Scumm::makeSavegameName(char *out, int slot, bool compatible) {
-	const char *dir = getSavePath();
 
 #ifndef __PALM_OS__
-	sprintf(out, "%s%s.%c%.2d", dir, _game_name, compatible ? 'c' : 's', slot);
+	sprintf(out, "%s.%c%.2d", _game_name, compatible ? 'c' : 's', slot);
 #else
-	sprintf(out, "%s%s.%s%.2d", dir, _game_name, compatible ? "c" : "s", slot);
+	sprintf(out, "%s.%s%.2d", _game_name, compatible ? "c" : "s", slot);
 #endif
 }
 
@@ -234,7 +233,7 @@ void Scumm::listSavegames(bool *marks, int num, SaveFileManager *mgr) {
 	char prefix[256];
 	makeSavegameName(prefix, 99, false);
 	prefix[strlen(prefix)-2] = 0;
-	mgr->list_savefiles(prefix, marks, num);
+	mgr->list_savefiles(prefix, getSavePath(), marks, num);
 }
 
 bool Scumm::getSavegameName(int slot, char *desc, SaveFileManager *mgr) {
@@ -244,14 +243,14 @@ bool Scumm::getSavegameName(int slot, char *desc, SaveFileManager *mgr) {
 	int len;
 
 	makeSavegameName(filename, slot, false);
-	if (!(out = mgr->open_savefile(filename, false))) {
+	if (!(out = mgr->open_savefile(filename, getSavePath(), false))) {
 		strcpy(desc, "");
 		return false;
 	}
-	len = out->fread(&hdr, sizeof(hdr), 1);
+	len = out->read(&hdr, sizeof(hdr));
 	delete out;
 
-	if (len != 1 || hdr.type != MKID('SCVM')) {
+	if (len != sizeof(hdr) || hdr.type != MKID('SCVM')) {
 		strcpy(desc, "Invalid savegame");
 		return false;
 	}
@@ -710,43 +709,35 @@ void Scumm::saveLoadResource(Serializer *ser, int type, int idx) {
 }
 
 void Serializer::saveBytes(void *b, int len) {
-	_saveLoadStream->fwrite(b, 1, len);
+	_saveLoadStream->write(b, len);
 }
 
 void Serializer::loadBytes(void *b, int len) {
-	_saveLoadStream->fread(b, 1, len);
+	_saveLoadStream->read(b, len);
 }
 
 void Serializer::saveUint32(uint32 d) {
-	uint32 e = FROM_LE_32(d);
-	saveBytes(&e, 4);
+	_saveLoadStream->writeUint32LE(d);
 }
 
 void Serializer::saveWord(uint16 d) {
-	uint16 e = FROM_LE_16(d);
-	saveBytes(&e, 2);
+	_saveLoadStream->writeUint16LE(d);
 }
 
 void Serializer::saveByte(byte b) {
-	saveBytes(&b, 1);
+	_saveLoadStream->writeByte(b);
 }
 
 uint32 Serializer::loadUint32() {
-	uint32 e;
-	loadBytes(&e, 4);
-	return FROM_LE_32(e);
+	return _saveLoadStream->readUint32LE();
 }
 
 uint16 Serializer::loadWord() {
-	uint16 e;
-	loadBytes(&e, 2);
-	return FROM_LE_16(e);
+	return _saveLoadStream->readUint16LE();
 }
 
 byte Serializer::loadByte() {
-	byte e;
-	loadBytes(&e, 1);
-	return e;
+	return _saveLoadStream->readByte();
 }
 
 void Serializer::saveArrayOf(void *b, int len, int datasize, byte filetype) {

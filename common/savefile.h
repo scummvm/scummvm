@@ -23,14 +23,34 @@
 #ifndef COMMON_SAVEFILE_H
 #define COMMON_SAVEFILE_H
 
+#include "stdafx.h"
+#include "common/scummsys.h"
+
 #include <stdio.h>
 #include <string.h>
 
 class SaveFile {
 public:
 	virtual ~SaveFile() {}
+
+	/* Compatible with File API */
+	uint32 read(void *ptr, uint32 size);
+	byte readByte();
+	uint16 readUint16LE();
+	uint32 readUint32LE();
+	uint16 readUint16BE();
+	uint32 readUint32BE();
+	uint32 write(const void *ptr, uint32 size);
+	void writeByte(byte value);
+	void writeUint16LE(uint16 value);
+	void writeUint32LE(uint32 value);
+	void writeUint16BE(uint16 value);
+	void writeUint32BE(uint32 value);
+
+protected:
+	/* Only for internal use, use File compatible API above instead */
 	virtual int fread(void *buf, int size, int cnt) = 0;
-	virtual int fwrite(void *buf, int size, int cnt) = 0;
+	virtual int fwrite(const void *buf, int size, int cnt) = 0;
 };
 
 class StdioSaveFile : public SaveFile {
@@ -45,10 +65,10 @@ public:
 
 	bool is_open() { return fh != NULL; }
 
-
+protected:
 	int fread(void *buf, int size, int cnt)
 		{ return ::fread(buf, size, cnt, fh); }
-	int fwrite(void *buf, int size, int cnt)
+	int fwrite(const void *buf, int size, int cnt)
 		{ return ::fwrite(buf, size, cnt, fh); }	
 };
 
@@ -57,19 +77,15 @@ class SaveFileManager {
 public:
 	virtual ~SaveFileManager() {}
 
-	virtual SaveFile *open_savefile(const char *filename, bool saveOrLoad) {
-		StdioSaveFile *sf = new StdioSaveFile(filename,
-						      (saveOrLoad? "wb":"rb"));
-		if (!sf->is_open()) {
-			delete sf;
-			sf = NULL;
-		}
-		return sf;
-	}
+	virtual SaveFile *open_savefile(const char *filename, const char *directory, bool saveOrLoad);
 
-	virtual void list_savefiles(const char * /* prefix */,  bool *marks, int num) {
+	virtual void list_savefiles(const char * /* prefix */,  const char *directory, bool *marks, int num) {
 		memset(marks, true, num * sizeof(bool));
 	}
+
+protected:
+	void join_paths(const char *filename, const char *directory,
+			char *buf, int bufsize);
 
 };
 

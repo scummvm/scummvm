@@ -224,6 +224,10 @@ private:
   int pos, size;
   char filename[16];
 
+protected:
+  virtual int fread(void *buf, int size, int cnt);
+  virtual int fwrite(const void *buf, int size, int cnt);
+
 public:
   VMSave(const char *_filename, bool _saveOrLoad) 
     : issave(_saveOrLoad), pos(0), buffer(NULL)
@@ -234,9 +238,6 @@ public:
   }
 
   ~VMSave();
-
-  virtual int fread(void *buf, int size, int cnt);
-  virtual int fwrite(void *buf, int size, int cnt);
 
   bool readSaveGame()
   { return ::readSaveGame(buffer, size, filename); }
@@ -257,11 +258,11 @@ public:
 };
 
 class VMSaveManager : public SaveFileManager {
-  virtual SaveFile *open_savefile(const char *filename, bool saveOrLoad);
-  virtual void list_savefiles(const char *prefix, bool *marks, int num);
+  virtual SaveFile *open_savefile(const char *filename, const char *directory, bool saveOrLoad);
+  virtual void list_savefiles(const char *prefix, const char *directory, bool *marks, int num);
 };
 
-SaveFile *VMSaveManager::open_savefile(const char *filename,
+SaveFile *VMSaveManager::open_savefile(const char *filename, const char *directory,
 				       bool saveOrLoad)
 {
   VMSave *s = new VMSave(filename, saveOrLoad);
@@ -314,7 +315,7 @@ int VMSave::fread(void *buf, int sz, int cnt)
   return cnt;
 }
 
-int VMSave::fwrite(void *buf, int sz, int cnt)
+int VMSave::fwrite(const void *buf, int sz, int cnt)
 {
   if (!issave)
     return -1;
@@ -331,7 +332,7 @@ int VMSave::fwrite(void *buf, int sz, int cnt)
 }
 
 
-void VMSaveManager::list_savefiles(const char *prefix,
+void VMSaveManager::list_savefiles(const char *prefix, const char *directory,
 				   bool *marks, int num)
 {
   memset(marks, false, num*sizeof(bool));

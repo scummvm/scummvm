@@ -36,10 +36,9 @@ public:
 	~PalmSaveFile();
 	
 	bool is_open() { return file != NULL; }
+protected:
 	int fread(void *buf, int size, int cnt);
-	int fwrite(void *buf, int size, int cnt);
-// must be removed
-	int feof() { return ::feof(file); }
+	int fwrite(const void *buf, int size, int cnt);
 
 private :
 	FILE *file;
@@ -71,7 +70,7 @@ int PalmSaveFile::fread(void *buf, int size, int cnt) {
 	return ::fread(buf, size, cnt, file);
 }
 
-int PalmSaveFile::fwrite(void *buf, int size, int cnt) {
+int PalmSaveFile::fwrite(const void *buf, int size, int cnt) {
 	UInt32 fullsize = size*cnt;
 
 	if (fullsize <= MAX_BLOCK)
@@ -104,8 +103,12 @@ public:
 	void list_savefiles(const char *prefix, bool *marks, int num);
 };
 
-SaveFile *PalmSaveFileManager::open_savefile(const char *filename, bool saveOrLoad) {
-	PalmSaveFile *sf = new PalmSaveFile(filename, (saveOrLoad? "wb":"rb"));
+SaveFile *PalmSaveFileManager::open_savefile(const char *filename, const char *dirname, bool saveOrLoad) {
+	char buf[256];
+
+	join_paths(filename, dirname, buf, sizeof(buf));
+
+	PalmSaveFile *sf = new PalmSaveFile(buf, (saveOrLoad? "wb":"rb"));
 
 	if(!sf->is_open()) {
 		delete sf;
@@ -115,21 +118,20 @@ SaveFile *PalmSaveFileManager::open_savefile(const char *filename, bool saveOrLo
 	return sf;
 }
 
-void PalmSaveFileManager::list_savefiles(const char *prefix, bool *marks, int num) {
+void PalmSaveFileManager::list_savefiles(const char *prefix, const char *direcory, bool *marks, int num) {
 	FileRef fileRef;
 	// try to open the dir
-	Err e = VFSFileOpen(gVars->volRefNum, SCUMMVM_SAVEPATH, vfsModeRead, &fileRef);
+	Err e = VFSFileOpen(gVars->volRefNum, directory, vfsModeRead, &fileRef);
 	memset(marks, false, num*sizeof(bool));
 
 	if (e != errNone)
 		return;
 
 	// enumerate all files
-	Char *nameonly = strrchr(prefix,'/') + 1;
 	UInt32 dirEntryIterator = vfsIteratorStart;
 	Char filename[32];
 	FileInfoType info = {0, filename, 32};
-	UInt16 length = StrLen(nameonly);
+	UInt16 length = StrLen(prefix);
 	int slot = 0;
 
 	while (dirEntryIterator != vfsIteratorStop) {
@@ -138,7 +140,7 @@ void PalmSaveFileManager::list_savefiles(const char *prefix, bool *marks, int nu
 		if (e != expErrEnumerationEmpty) {										// there is something
 
 			if (StrLen(info.nameP) == (length + 2)) {						// consider max 99, filename length is ok
-				if (StrNCaselessCompare(nameonly, info.nameP, length) == 0) { // this seems to be a save file
+				if (StrNCaselessCompare(prefix, info.nameP, length) == 0) { // this seems to be a save file
 					if (isdigit(info.nameP[length]) && isdigit(info.nameP[length+1])) {
 
 						slot = StrAToI(filename + length);

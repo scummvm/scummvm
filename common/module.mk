@@ -8,7 +8,8 @@ MODULE_OBJS = \
 	common/scaler.o \
 	common/str.o \
 	common/timer.o \
-	common/util.o
+	common/util.o \
+	common/savefile.o
 
 # Include common rules 
 include common.rules
