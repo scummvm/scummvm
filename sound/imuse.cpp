@@ -23,9 +23,11 @@
 #include "scumm.h"
 #include "fmopl.h"
 #include "mididrv.h"
+#include "imuse.h"
 
-int num_mix;
-
+/*
+ * Some constants
+ */
 #define TICKS_PER_BEAT 480
 
 #define SYSEX_ID 0x7D
@@ -38,22 +40,8 @@ int num_mix;
 #define MDHD_TAG "MDhd"
 
 
-
-/* Roland to General Midi patch table. Still needs much work. */
+/* Roland to General Midi patch table. Still needs some work. */
 static const byte mt32_to_gmidi[128] = {
-	/*
-  0,   1,   2,   4,   4,   5,   5,   3,  16,  17,  18,  18,  19,
-  19,  20,  21,   6,   6,   6,   7,   7,   7,   8,   8,  62,  63,
-  62,  63,  38,  39,  38,  39,  88,  89,  52, 113,  97,  96,  91,
-  85,  14, 101,  68,  95,  86, 103,  88,  80,  48,  49,  51,  45,
-  40,  40,  42,  42,  43,  46,  46,  24,  25,  26,  27, 104,  32,
-  33,  34,  39,  36,  37,  38,  35,  79,  73,  72,  72,  74,  75,
-  64,  65,  66,  67,  71,  71,  68,  69,  70,  22,  56,  59,  57,
-  63,  60,  60,  58,  61,  61,  11,  11,  12,  88,   9,  14,  13,
-  12, 107, 111,  77,  78,  78,  76, 121,  47, 117, 127, 115, 118,
- 116, 118,  94, 115,   9,  55, 124, 123, 125, 126, 127
- */
-
 //    0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
 	  0,   1,   0,   2,   4,   4,   5,   3,  16,  17,  18,  16,  16,  19,  20,  21, // 0x
 	  6,   6,   6,   7,   7,   7,   8, 112,  62,  62,  63,  63,  38,  38,  39,  39, // 1x
@@ -71,7 +59,6 @@ static const byte mt32_to_gmidi[128] = {
  * they will only be used from this file, so it will reduce
  * compile time */
 
-class IMuse;
 class IMuseDriver;
 
 struct Part;
@@ -93,7 +80,7 @@ struct HookDatas {
 
 
 struct Player {
-	IMuse *_se;
+	IMuseInternal *_se;
 
 	Part *_parts;
 	bool _active;
@@ -289,7 +276,7 @@ struct Part {
 	void changed(byte what);
 };
 
-/* Abstract IMuse driver class */
+/* Abstract IMuseInternal driver class */
 class IMuseDriver {
 public:
 	enum {
@@ -307,7 +294,7 @@ public:
 	virtual void on_timer() = 0;
 	virtual uint32 get_base_tempo() = 0;
 	virtual byte get_hardware_type() = 0;
-	virtual void init(IMuse *eng, OSystem *syst) = 0;
+	virtual void init(IMuseInternal *eng, OSystem *syst) = 0;
 	virtual void update_pris() = 0;
 	virtual void set_instrument(uint slot, byte *instr) = 0;
 	virtual void part_set_instrument(Part *part, Instrument *instr) = 0;
@@ -323,7 +310,7 @@ public:
 // WARNING: This is the internal variant of the IMUSE class.
 // imuse.h contains a public version of the same class.
 // the public version, only contains a set of methods.
-class IMuse {
+class IMuseInternal {
 friend struct Player;
 private:
 	IMuseDriver *_driver;
@@ -405,8 +392,8 @@ private:
 	void fix_parts_after_load();
 	void fix_players_after_load(Scumm *scumm);
 
-	static int saveReference(IMuse *me, byte type, void *ref);
-	static void *loadReference(IMuse *me, byte type, int ref);
+	static int saveReference(IMuseInternal *me, byte type, void *ref);
+	static void *loadReference(IMuseInternal *me, byte type, int ref);
 
 	void lock();
 	void unlock();
@@ -418,11 +405,6 @@ public:
 	int initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
 
 	/* Public interface */
-	
-	enum {
-		PROP_TEMPO_BASE = 1,
-		PROP_MT32_EMULATE = 2,
-	};
 	
 	void on_timer();
 	void pause(bool paused);
@@ -442,7 +424,7 @@ public:
 
 	uint32 property(int prop, uint32 value);
 	
-	static IMuse *create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
+	static IMuseInternal *create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
 };
 
 
@@ -516,7 +498,7 @@ struct IMuseAdlib : public IMuseDriver {
 private:
 	FM_OPL *_opl;
 	byte *_adlib_reg_cache;
-	IMuse *_se;
+	IMuseInternal *_se;
 	SoundMixer *_mixer;
 
 	int _adlib_timer_counter;
@@ -560,7 +542,7 @@ private:
 public:
 	IMuseAdlib(SoundMixer *mixer) { _mixer = mixer; }
 	void uninit();
-	void init(IMuse *eng, OSystem *syst);
+	void init(IMuseInternal *eng, OSystem *syst);
 	void update_pris() { }
 	void generate_samples(int16 *buf, int len);	
 	void on_timer();	
@@ -589,7 +571,7 @@ public:
 /* IMuseGM classes */
 
 class IMuseGM : public IMuseDriver {	
-	IMuse *_se;
+	IMuseInternal *_se;
 	OSystem *_system;
 	MidiDriver *_md;
 	MidiChannelGM _midi_channels[9];
@@ -621,7 +603,7 @@ public:
 	IMuseGM(MidiDriver *midi) { _md = midi; }
 
 	void uninit();
-	void init(IMuse *eng, OSystem *os);
+	void init(IMuseInternal *eng, OSystem *os);
 	void update_pris();
 	void part_off(Part *part);
 	int part_update_active(Part *part,uint16 *active);
@@ -753,17 +735,17 @@ static int is_note_cmd(byte **a, IsNoteCmdData * isnote)
 
 /**********************************************************************/
 
-void IMuse::lock()
+void IMuseInternal::lock()
 {
 	_locked++;
 }
 
-void IMuse::unlock()
+void IMuseInternal::unlock()
 {
 	_locked--;
 }
 
-byte *IMuse::findTag(int sound, char *tag, int index)
+byte *IMuseInternal::findTag(int sound, char *tag, int index)
 {
 	byte *ptr = NULL;
 	int32 size, pos;
@@ -772,7 +754,7 @@ byte *IMuse::findTag(int sound, char *tag, int index)
 		ptr = _base_sounds[sound];
 
 	if (ptr == NULL) {
-	//	debug(1, "IMuse::findTag completely failed finding sound %d",
+	//	debug(1, "IMuseInternal::findTag completely failed finding sound %d",
 	//				sound);
 		return NULL;
 
@@ -790,12 +772,12 @@ byte *IMuse::findTag(int sound, char *tag, int index)
 		pos += READ_BE_UINT32_UNALIGNED(ptr + pos + 4) + 8;
 	}
 	
-	debug(1, "IMuse::findTag failed finding sound %d", sound);
+	debug(1, "IMuseInternal::findTag failed finding sound %d", sound);
 	return NULL;
 
 }
 
-bool IMuse::start_sound(int sound)
+bool IMuseInternal::start_sound(int sound)
 {
 	Player *player;
 	void *mdhd;
@@ -817,7 +799,7 @@ bool IMuse::start_sound(int sound)
 }
 
 
-Player *IMuse::allocate_player(byte priority)
+Player *IMuseInternal::allocate_player(byte priority)
 {
 	Player *player = _players, *best = NULL;
 	int i;
@@ -839,7 +821,7 @@ Player *IMuse::allocate_player(byte priority)
 	return NULL;
 }
 
-void IMuse::init_players()
+void IMuseInternal::init_players()
 {
 	Player *player = _players;
 	int i;
@@ -850,7 +832,7 @@ void IMuse::init_players()
 	}
 }
 
-void IMuse::init_sustaining_notes()
+void IMuseInternal::init_sustaining_notes()
 {
 	SustainingNotes *next = NULL, *sn = _sustaining_notes;
 	int i;
@@ -865,7 +847,7 @@ void IMuse::init_sustaining_notes()
 	_sustain_notes_free = next;
 }
 
-void IMuse::init_volume_fader()
+void IMuseInternal::init_volume_fader()
 {
 	VolumeFader *vf = _volume_fader;
 	int i;
@@ -876,7 +858,7 @@ void IMuse::init_volume_fader()
 	_active_volume_faders = false;
 }
 
-void IMuse::init_parts()
+void IMuseInternal::init_parts()
 {
 	Part *part;
 	int i;
@@ -887,7 +869,7 @@ void IMuse::init_parts()
 	}
 }
 
-int IMuse::stop_sound(int sound)
+int IMuseInternal::stop_sound(int sound)
 {
 	Player *player = _players;
 	int i;
@@ -902,7 +884,7 @@ int IMuse::stop_sound(int sound)
 	return r;
 }
 
-int IMuse::stop_all_sounds()
+int IMuseInternal::stop_all_sounds()
 {
 	Player *player = _players;
 	int i;
@@ -914,7 +896,7 @@ int IMuse::stop_all_sounds()
 	return 0;
 }
 
-void IMuse::on_timer()
+void IMuseInternal::on_timer()
 {
 	if (_locked || _paused)
 		return;
@@ -929,7 +911,7 @@ void IMuse::on_timer()
 	unlock();
 }
 
-void IMuse::sequencer_timers()
+void IMuseInternal::sequencer_timers()
 {
 	Player *player = _players;
 	int i;
@@ -980,7 +962,7 @@ void Player::sequencer_timer()
 	}
 }
 
-void IMuse::handle_marker(uint id, byte data)
+void IMuseInternal::handle_marker(uint id, byte data)
 {
 	uint16 *p;
 	uint pos;
@@ -1018,14 +1000,14 @@ void IMuse::handle_marker(uint id, byte data)
 	_queue_end = pos;
 }
 
-int IMuse::get_channel_volume(uint a)
+int IMuseInternal::get_channel_volume(uint a)
 {
 	if (a < 8)
 		return _channel_volume_eff[a];
 	return _master_volume;
 }
 
-Part *IMuse::allocate_part(byte pri)
+Part *IMuseInternal::allocate_part(byte pri)
 {
 	Part *part, *best = NULL;
 	int i;
@@ -1046,7 +1028,7 @@ Part *IMuse::allocate_part(byte pri)
 	return best;
 }
 
-void IMuse::expire_sustain_notes()
+void IMuseInternal::expire_sustain_notes()
 {
 	SustainingNotes *sn, *next;
 	Player *player;
@@ -1078,7 +1060,7 @@ void IMuse::expire_sustain_notes()
 	}
 }
 
-void IMuse::expire_volume_faders()
+void IMuseInternal::expire_volume_faders()
 {
 	VolumeFader *vf;
 	int i;
@@ -1126,7 +1108,7 @@ void VolumeFader::on_timer()
 	}
 }
 
-int IMuse::get_sound_status(int sound)
+int IMuseInternal::get_sound_status(int sound)
 {
 	int i;
 	Player *player;
@@ -1138,7 +1120,7 @@ int IMuse::get_sound_status(int sound)
 	return get_queue_sound_status(sound);
 }
 
-int IMuse::get_queue_sound_status(int sound)
+int IMuseInternal::get_queue_sound_status(int sound)
 {
 	uint16 *a;
 	int i, j;
@@ -1155,7 +1137,7 @@ int IMuse::get_queue_sound_status(int sound)
 	return 0;
 }
 
-int IMuse::set_volchan(int sound, int volchan)
+int IMuseInternal::set_volchan(int sound, int volchan)
 {
 	int r;
 	int i;
@@ -1201,7 +1183,7 @@ int IMuse::set_volchan(int sound, int volchan)
 	}
 }
 
-int IMuse::clear_queue()
+int IMuseInternal::clear_queue()
 {
 	_queue_adding = false;
 	_queue_cleared = true;
@@ -1211,7 +1193,7 @@ int IMuse::clear_queue()
 	return 0;
 }
 
-int IMuse::enqueue_command(int a, int b, int c, int d, int e, int f,
+int IMuseInternal::enqueue_command(int a, int b, int c, int d, int e, int f,
 																 int g)
 {
 	uint16 *p;
@@ -1249,7 +1231,7 @@ int IMuse::enqueue_command(int a, int b, int c, int d, int e, int f,
 	}
 }
 
-int IMuse::query_queue(int param)
+int IMuseInternal::query_queue(int param)
 {
 	switch (param) {
 	case 0:											/* get trigger count */
@@ -1267,12 +1249,12 @@ int IMuse::query_queue(int param)
 	}
 }
 
-int IMuse::get_music_volume()
+int IMuseInternal::get_music_volume()
 {
 	return _music_volume;
 }
 
-int IMuse::set_music_volume(uint vol)
+int IMuseInternal::set_music_volume(uint vol)
 {
 	if (vol > 100)
 		vol = 100;
@@ -1284,7 +1266,7 @@ int IMuse::set_music_volume(uint vol)
 	return 0;
 }
 
-int IMuse::set_master_volume(uint vol)
+int IMuseInternal::set_master_volume(uint vol)
 {
 	int i;
 	if (vol > 127)
@@ -1301,19 +1283,19 @@ int IMuse::set_master_volume(uint vol)
 	return 0;
 }
 
-int IMuse::get_master_volume()
+int IMuseInternal::get_master_volume()
 {
 	return _master_volume;
 }
 
-int IMuse::terminate()
+int IMuseInternal::terminate()
 {
 	return 0;
 	/* not implemented */
 }
 
 
-int IMuse::enqueue_trigger(int sound, int marker)
+int IMuseInternal::enqueue_trigger(int sound, int marker)
 {
 	uint16 *p;
 	uint pos;
@@ -1338,7 +1320,7 @@ int IMuse::enqueue_trigger(int sound, int marker)
 	return 0;
 }
 
-int32 IMuse::do_command(int a, int b, int c, int d, int e, int f, int g,
+int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 															int h)
 {
 	byte cmd = a & 0xFF;
@@ -1382,7 +1364,7 @@ int32 IMuse::do_command(int a, int b, int c, int d, int e, int f, int g,
 		case 3:
 			return 0;
 		default:
-			warning("IMuse::do_command invalid command %d", cmd);
+			warning("IMuseInternal::do_command invalid command %d", cmd);
 		}
 	} else if (param == 1) {
 
@@ -1453,7 +1435,7 @@ int32 IMuse::do_command(int a, int b, int c, int d, int e, int f, int g,
 		case 24:
 			return 0;
 		default:
-			warning("IMuse::do_command default midi command %d", cmd);
+			warning("IMuseInternal::do_command default midi command %d", cmd);
 			return -1;
 		}
 	}
@@ -1461,7 +1443,7 @@ int32 IMuse::do_command(int a, int b, int c, int d, int e, int f, int g,
 	return -1;
 }
 
-int IMuse::set_channel_volume(uint chan, uint vol)
+int IMuseInternal::set_channel_volume(uint chan, uint vol)
 {
 	if (chan >= 8 || vol > 127)
 		return -1;
@@ -1472,7 +1454,7 @@ int IMuse::set_channel_volume(uint chan, uint vol)
 	return 0;
 }
 
-void IMuse::update_volumes()
+void IMuseInternal::update_volumes()
 {
 	Player *player;
 	int i;
@@ -1483,7 +1465,7 @@ void IMuse::update_volumes()
 	}
 }
 
-int IMuse::set_volchan_entry(uint a, uint b)
+int IMuseInternal::set_volchan_entry(uint a, uint b)
 {
 	if (a >= 8)
 		return -1;
@@ -1551,7 +1533,7 @@ int HookDatas::set(byte cls, byte value, byte chan)
 }
 
 
-VolumeFader *IMuse::allocate_volume_fader()
+VolumeFader *IMuseInternal::allocate_volume_fader()
 {
 	VolumeFader *vf;
 	int i;
@@ -1568,7 +1550,7 @@ VolumeFader *IMuse::allocate_volume_fader()
 	return vf;
 }
 
-Player *IMuse::get_player_byid(int id)
+Player *IMuseInternal::get_player_byid(int id)
 {
 	int i;
 	Player *player, *found = NULL;
@@ -1583,39 +1565,39 @@ Player *IMuse::get_player_byid(int id)
 	return found;
 }
 
-int IMuse::get_volchan_entry(uint a)
+int IMuseInternal::get_volchan_entry(uint a)
 {
 	if (a < 8)
 		return _volchan_table[a];
 	return -1;
 }
 
-uint32 IMuse::property(int prop, uint32 value) {
+uint32 IMuseInternal::property(int prop, uint32 value) {
 	switch(prop) {
-	case PROP_TEMPO_BASE:
+	case IMuse::PROP_TEMPO_BASE:
 		_game_tempo = value;
 		break;
 
-	case PROP_MT32_EMULATE:
+	case IMuse::PROP_MT32_EMULATE:
 		_mt32emulate = !!value;
 		break;
 	}
 	return 0;
 }
 
-void IMuse::setBase(byte **base) {
+void IMuseInternal::setBase(byte **base) {
 	_base_sounds = base;
 }
 
 
-IMuse *IMuse::create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer) {
-	IMuse *i = new IMuse;
+IMuseInternal *IMuseInternal::create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer) {
+	IMuseInternal *i = new IMuseInternal;
 	i->initialize(syst, midi, mixer);
 	return i;
 }
 
 
-int IMuse::initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer)
+int IMuseInternal::initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer)
 {
 	int i;
 	
@@ -1651,7 +1633,7 @@ int IMuse::initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer)
 	return 0;
 }
 
-void IMuse::init_queue()
+void IMuseInternal::init_queue()
 {
 	_queue_adding = false;
 	_queue_pos = 0;
@@ -1659,7 +1641,7 @@ void IMuse::init_queue()
 	_trigger_count = 0;
 }
 
-void IMuse::pause(bool paused)
+void IMuseInternal::pause(bool paused)
 {
 	lock();
 
@@ -2761,7 +2743,7 @@ enum {
 	TYPE_PLAYER = 2,
 };
 
-int IMuse::saveReference(IMuse *me, byte type, void *ref)
+int IMuseInternal::saveReference(IMuseInternal *me, byte type, void *ref)
 {
 	switch (type) {
 	case TYPE_PART:
@@ -2773,7 +2755,7 @@ int IMuse::saveReference(IMuse *me, byte type, void *ref)
 	}
 }
 
-void *IMuse::loadReference(IMuse *me, byte type, int ref)
+void *IMuseInternal::loadReference(IMuseInternal *me, byte type, int ref)
 {
 	switch (type) {
 	case TYPE_PART:
@@ -2785,19 +2767,19 @@ void *IMuse::loadReference(IMuse *me, byte type, int ref)
 	}
 }
 
-int IMuse::save_or_load(Serializer * ser, Scumm *scumm)
+int IMuseInternal::save_or_load(Serializer * ser, Scumm *scumm)
 {
 	const SaveLoadEntry mainEntries[] = {
-		MKLINE(IMuse, _queue_end, sleUint8),
-		MKLINE(IMuse, _queue_pos, sleUint8),
-		MKLINE(IMuse, _queue_sound, sleUint16),
-		MKLINE(IMuse, _queue_adding, sleByte),
-		MKLINE(IMuse, _queue_marker, sleByte),
-		MKLINE(IMuse, _queue_cleared, sleByte),
-		MKLINE(IMuse, _master_volume, sleByte),
-		MKLINE(IMuse, _trigger_count, sleUint16),
-		MKARRAY(IMuse, _channel_volume[0], sleUint16, 8),
-		MKARRAY(IMuse, _volchan_table[0], sleUint16, 8),
+		MKLINE(IMuseInternal, _queue_end, sleUint8),
+		MKLINE(IMuseInternal, _queue_pos, sleUint8),
+		MKLINE(IMuseInternal, _queue_sound, sleUint16),
+		MKLINE(IMuseInternal, _queue_adding, sleByte),
+		MKLINE(IMuseInternal, _queue_marker, sleByte),
+		MKLINE(IMuseInternal, _queue_cleared, sleByte),
+		MKLINE(IMuseInternal, _master_volume, sleByte),
+		MKLINE(IMuseInternal, _trigger_count, sleUint16),
+		MKARRAY(IMuseInternal, _channel_volume[0], sleUint16, 8),
+		MKARRAY(IMuseInternal, _volchan_table[0], sleUint16, 8),
 		MKEND()
 	};
 
@@ -2908,7 +2890,7 @@ int IMuse::save_or_load(Serializer * ser, Scumm *scumm)
 #undef MKLINE
 #undef MKEND
 
-void IMuse::fix_parts_after_load()
+void IMuseInternal::fix_parts_after_load()
 {
 	Part *part;
 	int i;
@@ -2921,7 +2903,7 @@ void IMuse::fix_parts_after_load()
 
 /* Only call this routine from the main thread,
  * since it uses getResourceAddress */
-void IMuse::fix_players_after_load(Scumm *scumm)
+void IMuseInternal::fix_players_after_load(Scumm *scumm)
 {
 	Player *player = _players;
 	int i;
@@ -3236,7 +3218,7 @@ void IMuseAdlib::premix_proc(void *param, int16 *buf, uint len) {
 	((IMuseAdlib*)param)->generate_samples(buf, len);
 }
 
-void IMuseAdlib::init(IMuse *eng, OSystem *syst)
+void IMuseAdlib::init(IMuseInternal *eng, OSystem *syst)
 {
 	int i;
 	MidiChannelAdl *mc;
@@ -4297,7 +4279,7 @@ int IMuseGM::midi_driver_thread( void *param )
 }
 #endif
 
-void IMuseGM::init(IMuse *eng, OSystem *syst)
+void IMuseGM::init(IMuseInternal *eng, OSystem *syst)
 {
 	int i;
 	MidiChannelGM *mc;
@@ -4449,3 +4431,100 @@ void IMuseGM::part_off(Part *part)
 	}
 }
 
+
+
+/*
+ * Implementation of the dummy IMuse class that acts as a proxy for
+ * our real IMuseInternal class. This way we reduce the compile time
+ * and inter source dependencies.
+ */
+IMuse::IMuse() : _imuse(NULL)
+{
+}
+
+IMuse::~IMuse()
+{
+	if (_imuse)
+		delete _imuse;
+}
+
+void IMuse::on_timer()
+{
+	_imuse->on_timer();
+}
+
+void IMuse::pause(bool paused)
+{
+	_imuse->pause(paused);
+}
+
+int IMuse::save_or_load(Serializer *ser, Scumm *scumm)
+{
+	return _imuse->save_or_load(ser, scumm);
+}
+
+int IMuse::set_music_volume(uint vol)
+{
+	return _imuse->set_music_volume(vol);
+}
+
+int IMuse::get_music_volume()
+{
+	return _imuse->get_music_volume();
+}
+
+int IMuse::set_master_volume(uint vol)
+{
+	return _imuse->set_master_volume(vol);
+}
+
+int IMuse::get_master_volume()
+{
+	return _imuse->get_master_volume();
+}
+
+bool IMuse::start_sound(int sound)
+{
+	return _imuse->start_sound(sound);
+}
+
+int IMuse::stop_sound(int sound)
+{
+	return _imuse->stop_sound(sound);
+}
+
+int IMuse::stop_all_sounds()
+{
+	return _imuse->stop_all_sounds();
+}
+
+int IMuse::get_sound_status(int sound)
+{
+	return _imuse->get_sound_status(sound);
+}
+
+int32 IMuse::do_command(int a, int b, int c, int d, int e, int f, int g, int h)
+{
+	return _imuse->do_command(a, b, c, d, e, f, g, h);
+}
+
+int IMuse::clear_queue()
+{
+	return _imuse->clear_queue();
+}
+
+void IMuse::setBase(byte **base)
+{
+	_imuse->setBase(base);
+}
+
+uint32 IMuse::property(int prop, uint32 value)
+{
+	return _imuse->property(prop, value);
+}
+
+IMuse *IMuse::create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer) {
+	IMuse *i = new IMuse;
+	i->_imuse = IMuseInternal::create(syst, midi, mixer);
+	return i;
+}
