@@ -309,7 +309,7 @@ void DrawMouse(void) {
 	if (mouseAnim)
 		DecompressMouse(_mouseData, mouseSprite, mouseAnim->mousew, mouseAnim->mouseh, mouse_width);
 
-	g_sword2->_system->set_mouse_cursor(_mouseData, mouse_width, mouse_height, hotspot_x, hotspot_y);
+	g_system->set_mouse_cursor(_mouseData, mouse_width, mouse_height, hotspot_x, hotspot_y);
 }
 
 
@@ -379,12 +379,12 @@ int32 SetMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
 		AnimateMouse();
 		DrawMouse();
 
-		g_sword2->_system->show_mouse(true);
+		g_system->show_mouse(true);
 	} else {
 		if (luggageAnim)
 			DrawMouse();
 		else
-			g_sword2->_system->show_mouse(false);
+			g_system->show_mouse(false);
 	}
 	return RD_OK;
 }
@@ -406,12 +406,12 @@ int32 SetLuggageAnim(uint8 *ma, int32 size) {
 		AnimateMouse();
 		DrawMouse();
 
-		g_sword2->_system->show_mouse(true);
+		g_system->show_mouse(true);
 	} else {
 		if (mouseAnim)
 			DrawMouse();
 		else
-			g_sword2->_system->show_mouse(false);
+			g_system->show_mouse(false);
 	}
 	return RD_OK;
 }
