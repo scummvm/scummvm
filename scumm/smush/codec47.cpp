@@ -525,7 +525,7 @@ void Codec47Decoder::init(int width, int height) {
 Codec47Decoder::Codec47Decoder() {
 	_tableBig = (byte *)malloc(99328);
 	_tableSmall = (byte *)malloc(32768);
-	_deltaBuf = 0;
+	_deltaBuf = NULL;
 }
 
 void Codec47Decoder::deinit() {
@@ -533,15 +533,15 @@ void Codec47Decoder::deinit() {
 	if (_deltaBuf) {
 		free(_deltaBuf);
 		_deltaSize = 0;
-		_deltaBuf = 0;
-		_deltaBufs[0] = 0;
-		_deltaBufs[1] = 0;
+		_deltaBuf = NULL;
+		_deltaBufs[0] = NULL;
+		_deltaBufs[1] = NULL;
 	}
-	if (_tableBig == NULL) {
+	if (_tableBig) {
 		free(_tableBig);
 		_tableBig = NULL;
 	}
-	if (_tableSmall == NULL) {
+	if (_tableSmall) {
 		free(_tableSmall);
 		_tableSmall = NULL;
 	}
