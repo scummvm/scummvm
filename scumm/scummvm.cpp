@@ -687,6 +687,7 @@ void Scumm::scummInit() {
 
 	if (!(_features & GF_SMALL_NAMES) && !(_features & GF_AFTER_V8))
 		loadCharset(1);
+		
 	if (_features & GF_OLD_BUNDLE)
 		loadCharset(0);	// FIXME - HACK ?
 
@@ -818,9 +819,9 @@ void Scumm::initScummVars() {
 		VAR(VAR_VIDEOMODE) = 0x13;
 		VAR(VAR_HEAPSPACE) = 1400;
 		VAR(VAR_MOUSEPRESENT) = true; // FIXME - used to be 0, but that seems odd?!?
-//		if (_features & GF_HUMONGOUS) // FIXME uncomment when XMI support is added
-//			VAR(VAR_SOUNDPARAM) = 1; // soundblaster for music
-//		else
+		if ((_features & GF_HUMONGOUS) && (_gameId != GID_PUTTDEMO))
+			VAR(VAR_SOUNDPARAM) = 1; // soundblaster for music
+		else 
 			VAR(VAR_SOUNDPARAM) = 0;
 		VAR(VAR_SOUNDPARAM2) = 0;
 		VAR(VAR_SOUNDPARAM3) = 0;

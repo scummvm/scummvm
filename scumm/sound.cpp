@@ -234,7 +234,7 @@ void Sound::playSound(int soundID) {
 			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 			return;
 		}
-		// XMI MIDI
+		// XMIDI 
 		else if ((READ_UINT32_UNALIGNED(ptr) == MKID('MIDI')) && (_scumm->_features & GF_HUMONGOUS)) {
 			// skip HSHD
 			ptr += 8 + READ_BE_UINT32_UNALIGNED(ptr+12);
@@ -244,8 +244,8 @@ void Sound::playSound(int soundID) {
 			size = READ_BE_UINT32_UNALIGNED(ptr+4) - 8;
 			ptr += 8; // don't need SDAT block anymore
 
-			// XMI playing stuff goes here
-			// ptr should be pointing to XMI file in memory
+			// XMIDI playing stuff goes here
+			// ptr should be pointing to XMIDI file in memory
 			// HACK (Jamieson630): Just to see if it works.
 			static MidiParser *parser = 0;
 
@@ -632,6 +632,14 @@ int Sound::isSoundRunning(int sound) {
 
 	if (sound == _scumm->current_cd_sound)
 		return pollCD();
+	
+	if (_scumm->_features & GF_HUMONGOUS) {
+			if (sound == -2) {
+				return isSfxFinished();
+			// FIXME are we playing music?
+			} else if (sound == -1)
+				return 1;
+	}
 	
 	_scumm->_mixer->stopID(sound);
 	
