@@ -2,7 +2,9 @@ MODULE := gui
 
 MODULE_OBJS = \
 	gui/browser.o \
+	gui/chooser.o \
 	gui/dialog.o \
+	gui/EditTextWidget.o \
 	gui/launcher.o \
 	gui/ListWidget.o \
 	gui/message.o \

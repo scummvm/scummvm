@@ -117,6 +117,9 @@ public:
 	int16 _textcolor;
 	int16 _textcolorhi;
 
+	// Misc util
+	uint32 get_time() const { return _system->get_msecs(); }
+
 	// Drawing primitives
 	int16 *getBasePtr(int x, int y);
 	void box(int x, int y, int width, int height, bool inverted = false);

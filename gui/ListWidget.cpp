@@ -23,7 +23,6 @@
 #include "ScrollBarWidget.h"
 #include "dialog.h"
 #include "newgui.h"
-#include "common/engine.h"
 
 
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h)
@@ -91,7 +90,7 @@ void ListWidget::scrollBarRecalc()
 
 void ListWidget::handleTickle()
 {
-	uint32 time = g_system->get_msecs();
+	uint32 time = _boss->getGui()->get_time();
 	if (_editMode && _caretTime < time) {
 		_caretTime = time + 300;
 		if (_caretVisible) {

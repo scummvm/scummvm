@@ -18,78 +18,39 @@
  * $Header$
  */
 
-#ifndef LISTWIDGET_H
-#define LISTWIDGET_H
+#ifndef EDITTEXTWIDGET_H
+#define EDITTEXTWIDGET_H
 
 #include "widget.h"
 #include "common/str.h"
 #include "common/list.h"
 
-class ScrollBarWidget;
-
-enum {
-	kListNumberingOff	= -1,
-	kListNumberingZero	= 0,
-	kListNumberingOne	= 1
-};
-
-// Some special commands
-enum {
-	kListItemDoubleClickedCmd	= 'LIdb',	// double click on item - 'data' will be item index
-	kListItemActivatedCmd		= 'LIac',	// item activated by return/enter - 'data' will be item index
-	kListSelectionChangedCmd	= 'Lsch',	// selection changed - 'data' will be item index
-};
-
-/* ListWidget */
-class ListWidget : public Widget, public CommandReceiver, public CommandSender {
+/* EditTextWidget */
+class EditTextWidget : public StaticTextWidget {
 	typedef ScummVM::StringList StringList;
 	typedef ScummVM::String String;
 protected:
-	StringList		_list;
-	bool			_editable;
-	bool			_editMode;
-	int				_numberingMode;
-	int				_currentPos;
-	int				_entriesPerPage;
-	int				_selectedItem;
-	ScrollBarWidget	*_scrollBar;
 	int				_currentKeyDown;
 	String			_backupString;
 	bool			_caretVisible;
 	uint32			_caretTime;
 public:
-	ListWidget(Dialog *boss, int x, int y, int w, int h);
-	virtual ~ListWidget();
-	
-	void setList(const StringList& list);
-	const StringList& getList()	const			{ return _list; }
-	int getSelected() const						{ return _selectedItem; }
-	const String& getSelectedString() const		{ return _list[_selectedItem]; }
-	void setNumberingMode(int numberingMode)	{ _numberingMode = numberingMode; }
-	bool isEditable() const						{ return _editable; }
-	void setEditable(bool editable)				{ _editable = editable; }
-	void scrollTo(int item);
-	
+	EditTextWidget(Dialog *boss, int x, int y, int w, int h);
+	virtual ~EditTextWidget();
+
 	virtual void handleTickle();
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleMouseUp(int x, int y, int button, int clickCount);
-	virtual void handleMouseWheel(int x, int y, int direction);
 	virtual bool handleKeyDown(char key, int modifiers);
 	virtual bool handleKeyUp(char key, int modifiers);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 	virtual bool wantsFocus() { return true; };
 
-	void scrollBarRecalc();
-	
-	void startEditMode();
-	void abortEditMode();
-
 protected:
 	void drawWidget(bool hilite);
 	void drawCaret(bool erase);
 	void lostFocusWidget();
-	void scrollToCurrent();
 };
 
 #endif

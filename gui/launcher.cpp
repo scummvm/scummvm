@@ -21,6 +21,7 @@
 #include "stdafx.h"
 #include "launcher.h"
 #include "browser.h"
+#include "chooser.h"
 #include "newgui.h"
 #include "ListWidget.h"
 
@@ -28,67 +29,6 @@
 #include "common/config-file.h"
 #include "common/engine.h"
 #include "common/gameDetector.h"
-
-enum {
-	kChooseCmd = 'Chos'
-};
-
-/*
- * A dialog that allows the user to choose between a selection of items
- */
-
-class ChooserDialog : public Dialog {
-	typedef ScummVM::String String;
-	typedef ScummVM::StringList StringList;
-public:
-	ChooserDialog(NewGui *gui, const StringList& list);
-
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-
-protected:
-	ListWidget		*_list;
-	ButtonWidget	*_chooseButton;
-};
-
-ChooserDialog::ChooserDialog(NewGui *gui, const StringList& list)
-	: Dialog(gui, 40, 30, 320-2*40, 200-2*30)
-{
-	// Headline
-	new StaticTextWidget(this, 10, 8, _w-2*10, kLineHeight,
-		"Pick the game:", kTextAlignCenter);
-	
-	// Add choice list
-	_list = new ListWidget(this, 10, 22, _w-2*10, _h-22-24-10);
-	_list->setNumberingMode(kListNumberingOff);
-	_list->setList(list);
-	
-	// Buttons
-	addButton(_w-2*(kButtonWidth+10), _h-24, "Cancel", kCloseCmd, 0);
-	_chooseButton = addButton(_w-(kButtonWidth+10), _h-24, "Choose", kChooseCmd, 0);
-	_chooseButton->setEnabled(false);
-	
-	// Result = -1 -> no choice was made
-	setResult(-1);
-}
-
-void ChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
-{
-	int item = _list->getSelected();
-	switch (cmd) {
-	case kChooseCmd:
-	case kListItemDoubleClickedCmd:
-		setResult(item);
-		close();
-		break;
-	case kListSelectionChangedCmd:
-		_chooseButton->setEnabled(item >= 0);
-		_chooseButton->draw();
-		break;
-	default:
-		Dialog::handleCommand(sender, cmd, data);
-	}
-}
-
 
 enum {
 	kStartCmd = 'STRT',
@@ -279,7 +219,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 				for (i = 0; i < candidates.size(); i++)
 					list.push_back(candidates[i]->gamename);
 				
-				ChooserDialog dialog(_gui, list);
+				ChooserDialog dialog(_gui, "Pick the game:", list);
 				i = dialog.runModal();
 				if (0 <= i && i < candidates.size())
 					v = candidates[i];

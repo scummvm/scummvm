@@ -127,7 +127,7 @@ void NewGui::runLoop()
 		_system->update_screen();		
 
 		OSystem::Event event;
-		uint32 time = _system->get_msecs();
+		uint32 time = get_time();
 
 		while (_system->poll_event(&event)) {
 			switch(event.event_code) {
@@ -475,7 +475,7 @@ void NewGui::drawBitmap(uint32 bitmap[8], int x, int y, int16 color)
 //
 void NewGui::animateCursor()
 {
-	int time = _system->get_msecs(); 
+	int time = get_time(); 
 	if (time > _cursorAnimateTimer + kCursorAnimateDelay) {
 		const byte colors[4] = { 15, 15, 7, 8 };
 		const byte color = colors[_cursorAnimateCounter];
