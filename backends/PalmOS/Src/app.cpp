@@ -6,6 +6,7 @@
 #include "StarterRsc.h"
 #include "start.h"
 #include "globals.h"
+#include "rumble.h"
 
 #include "mathlib.h"
 #include "formCards.h"
@@ -13,7 +14,8 @@
 #include "extend.h"
 
 #ifndef DISABLE_TAPWAVE
-// Tapwave code will come here
+#define __TWKEYS_H__
+#include "tapwave.h"
 #endif
 
 #define kOS5Version		sysMakeROMVersion(5,0,0,sysROMStageRelease,0)
@@ -63,7 +65,7 @@ static Err AppStartCheckHRmode()
 
 		width = hrWidth;
 		height= hrHeight;
-		depth = 8;
+		depth = (OPTIONS_TST(kOptMode16Bit) && OPTIONS_TST(kOptDeviceOS5)) ? 16 : 8;
 		color = true;
 
 		if (gVars->HRrefNum != sysInvalidRefNum) {
@@ -186,6 +188,9 @@ static void AppStopMathLib() {
 void WinScreenGetPitch() {
 	if (OPTIONS_TST(kOptModeHiDensity)) {
 		WinScreenGetAttribute(winScreenRowBytes, &(gVars->screenPitch));
+		if (OPTIONS_TST(kOptMode16Bit))
+			gVars->screenPitch /= 2;	// this value is used only in-game and in 8bit mode, so if we are in 16Bit 8bit = 16bit/2
+		
 		// FIXME : hack for TT3 simulator (and real ?) return 28 on landscape mode
 		if (gVars->screenPitch < gVars->screenFullWidth)
 			gVars->screenPitch = gVars->screenFullWidth;
@@ -211,6 +216,7 @@ void PINGetScreenDimensions() {
 			OPTIONS_RST(kOptModeWide);
 			OPTIONS_RST(kOptModeLandscape);
 
+			PINSetInputTriggerState(pinInputTriggerEnabled);
 			PINSetInputAreaState(pinInputAreaClosed);
 			StatHide();
 
@@ -227,6 +233,7 @@ void PINGetScreenDimensions() {
 			
 			StatShow();
 			PINSetInputAreaState(pinInputAreaOpen);
+			PINSetInputTriggerState(pinInputTriggerDisabled);
 		}
 	}
 
@@ -353,7 +360,10 @@ Err AppStart(void) {
 	gVars->options = kOptNone;
 
 #ifndef DISABLE_TAPWAVE
-// Tapwave code will come here
+	// Tapwave Zodiac libs ?
+	if (!FtrGet(sysFileCSystem, sysFtrNumOEMCompanyID, &manufacturer))
+		if (manufacturer == twCreatorID)
+			OPTIONS_SET(kOptDeviceZodiac);
 #endif
 
 	// Hi-Density present ?
@@ -406,19 +416,10 @@ Err AppStart(void) {
 		gPrefs->card.volRefNum = sysInvalidRefNum;
 
 		gPrefs->autoOff = true;
-		gPrefs->vibrator = CheckVibratorExists();
+		gPrefs->vibrator = RumbleExists();
 		gPrefs->debug = false;
 
 		gPrefs->stdPalette = OPTIONS_TST(kOptDeviceOS5);
-		
-		gPrefs->volume.master = 192;
-		gPrefs->volume.music = 192;
-		gPrefs->volume.sfx = 192;
-		gPrefs->volume.speech = 192;
-		
-		gPrefs->sound.tempo = 100;
-		gPrefs->sound.defaultTrackLength = 10;
-		gPrefs->sound.firstTrack = 1;
 		
 	} else {
 		PrefGetAppPreferences(appFileCreator, appPrefID, gPrefs, &dataSize, true);
