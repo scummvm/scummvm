@@ -598,7 +598,6 @@ protected:
 	void o6_writeFile();
 	void o6_setVolume();
 	void o6_seekFilePos();
-	void o6_unknownE1();
 	void o6_localizeArray();
 	void o6_redimArray();
 	void o6_readFilePos();

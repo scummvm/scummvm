@@ -1151,37 +1151,6 @@ void ScummEngine_v6he::o6_setVolume() {
 	}
 }
 
-void ScummEngine_v6he::o6_unknownE1() {
-	int x = pop();
-	int y = pop();
-
-	if (x > _screenWidth - 1) {
-		push(-1);
-		return;
-	}
-	if (x < 0) {
-		push(-1);
-		return;
-	}
-
-	if (y < 0) {
-		push(-1);
-		return;
-	}
-	
-	VirtScreen *vs = findVirtScreen(y);
-
-	if (vs == NULL) {
-		push(-1);
-		return;
-	}
-
-	int offset = (y - vs->topline) * vs->width + x + _screenLeft;
-
-	byte area = *(vs->screenPtr + offset);
-	push(area);
-}
-
 void ScummEngine_v6he::o6_localizeArray() {
 	int stringID = pop();
 

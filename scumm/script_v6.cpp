@@ -3040,8 +3040,15 @@ void ScummEngine_v6::o6_getDateTime() {
 
 void ScummEngine_v6::o6_unknownE1() {
 	// this opcode check ground area in minigame "Asteroid Lander" in the dig
-	int y = pop();
-	int x = pop();
+	int x, y;
+
+	if (_features & GF_HUMONGOUS) {
+		x = pop();
+		y = pop();
+	} else {
+		y = pop();
+		x = pop();
+	}
 
 	if (x > _screenWidth - 1) {
 		push(-1);
@@ -3057,8 +3064,6 @@ void ScummEngine_v6::o6_unknownE1() {
 		return;
 	}
 	
-	// FIXME: Actually, there is only one virtscr in V7/V8 games anyway.
-	// And topline is always 0 for it.
 	VirtScreen *vs = findVirtScreen(y);
 
 	if (vs == NULL) {
