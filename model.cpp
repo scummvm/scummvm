@@ -739,8 +739,8 @@ void Model::Mesh::draw() const {
 	glEnd(); 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D ); 
-	glPopMatrix();
 	*/
+ 	glPopMatrix();
 	}
 
 void Model::Face::draw(float *vertices, float *vertNormals, float *textureVerts) const {
