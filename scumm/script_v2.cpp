@@ -291,7 +291,7 @@ void Scumm::setupOpcodes2()
 		&Scumm::o6_pickOneOf,
 		/* CC */
 		&Scumm::o6_pickOneOfDefault,
-		&Scumm::o6_invalid,
+		&Scumm::o6_unknownCD,
 		&Scumm::o6_invalid,
 		&Scumm::o6_invalid,
 		/* D0 */
@@ -3125,6 +3125,15 @@ void Scumm::o6_getActorPriority()
 	a = derefActorSafe(pop(), "getActorPriority");
 
 	push(a->layer);
+}
+
+void Scumm::o6_unknownCD() {
+	int a, b, c, d;
+	a = pop();
+	b = pop();
+	c = pop();
+	d = pop();
+	warning("o6_unknownCD: stub(%d, %d, %d, %d)", a, b, c, d);
 }
 
 void Scumm::decodeParseString2(int m, int n)

@@ -1230,6 +1230,7 @@ public:
 	void o6_getAnimateVariable();
 	void o6_drawBlastObject();
 	void o6_getActorPriority();
+	void o6_unknownCD();
 
 	/* Scumm Vars */
 	byte VAR_EGO;
