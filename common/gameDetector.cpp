@@ -382,10 +382,10 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				g_config->setBool("nosubtitles", _noSubtitles ? true : false);
 				break;
  			case 'o':
- 				HANDLE_OPTION(); 
- 				_master_volume = atoi(option); 
- 				g_config->setInt("master_volume", _master_volume); 
- 				break; 
+ 				HANDLE_OPTION();
+ 				_master_volume = atoi(option);
+ 				g_config->setInt("master_volume", _master_volume);
+ 				break;
 			case 'p':
 				HANDLE_OPTION();
 				_gameDataPath = option;

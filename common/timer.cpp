@@ -75,7 +75,7 @@ bool Timer::init() {
 		return false;
 	}
 
-	if (_initialized == true) 
+	if (_initialized) 
 		return true;
 
 	for (l = 0; l < MAX_TIMERS; l++) {
