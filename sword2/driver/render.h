@@ -25,13 +25,7 @@
 namespace Sword2 {
 
 #define RENDERWIDE		640
-#define ALIGNRENDERDEEP		480
-#define RENDERDEEP		(ALIGNRENDERDEEP - (MENUDEEP * 2))
-
-struct ParallaxLine {
-	uint16 packets;
-	uint16 offset;
-};
+#define RENDERDEEP		(480 - (MENUDEEP * 2))
 
 } // End of namespace Sword2
 

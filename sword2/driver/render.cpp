@@ -28,9 +28,6 @@ namespace Sword2 {
 
 #define MILLISECSPERCYCLE	83
 
-#define BLOCKWBITS		6
-#define BLOCKHBITS		6
-
 void Graphics::updateRect(Common::Rect *r) {
 	_vm->_system->copyRectToScreen(_buffer + r->top * _screenWide + r->left,
 		_screenWide, r->left, r->top, r->right - r->left,
@@ -57,11 +54,11 @@ void Graphics::blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *
 		r->right = clipRect->right;
 
 	byte *dst = _buffer + r->top * _screenWide + r->left;
-	int i, j;
+	int i;
 
 	if (s->transparent) {
 		for (i = 0; i < r->bottom - r->top; i++) {
-			for (j = 0; j < r->right - r->left; j++) {
+			for (int j = 0; j < r->right - r->left; j++) {
 				if (src[j])
 					dst[j] = src[j];
 			}
@@ -195,16 +192,15 @@ void Graphics::scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth, uint1
  * @param colour colour of the point
  */
 
-void Graphics::plotPoint(uint16 x, uint16 y, uint8 colour) {
-	byte *buf = _buffer + 40 * RENDERWIDE;
-	int16 newx, newy;
-	
-	newx = x - _scrollX;
-	newy = y - _scrollY;
+void Graphics::plotPoint(int16 x, int16 y, uint8 colour) {
+	byte *buf = _buffer + MENUDEEP * RENDERWIDE;
 
-	if (newx >= 0 && newx < RENDERWIDE && newy >= 0 && newy < RENDERDEEP) {
-		buf[newy * RENDERWIDE + newx] = colour;
-		markAsDirty(newx, newy + 40, newx, newy + 40);
+	x -= _scrollX;
+	y -= _scrollY;
+
+	if (x >= 0 && x < RENDERWIDE && y >= 0 && y < RENDERDEEP) {
+		buf[y * RENDERWIDE + x] = colour;
+		markAsDirty(x, y + MENUDEEP, x, y + MENUDEEP);
 	}
 }
 
@@ -218,21 +214,13 @@ void Graphics::plotPoint(uint16 x, uint16 y, uint8 colour) {
  */
 
 // Uses Bressnham's incremental algorithm!
+
 void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
-	byte *buf = _buffer + 40 * RENDERWIDE;
-	int dx, dy;
 	int dxmod, dymod;
 	int ince, incne;
 	int d;
 	int x, y;
 	int addTo;
-
-	x1 -= _scrollX;
-	y1 -= _scrollY;
-	x0 -= _scrollX;
-	y0 -= _scrollY;
-
-	markAsDirty(MIN(x0, x1), MIN(y0, y1) + 40, MAX(x0, x1), MAX(y0, y1) + 40);
 
 	// Make sure we're going from left to right
 
@@ -241,8 +229,8 @@ void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 		SWAP(y0, y1);
 	}
 
-	dx = x1 - x0;
-	dy = y1 - y0;
+	int dx = x1 - x0;
+	int dy = y1 - y0;
 	
 	if (dx < 0)
 		dxmod = -dx;
@@ -261,8 +249,8 @@ void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 			incne = 2 * (dy - dx);
 			x = x0;
 			y = y0;
-			if (x >= 0 && x < RENDERWIDE && y >= 0 && y < RENDERDEEP)
-				buf[y * RENDERWIDE + x] = colour;
+
+			plotPoint(x, y, colour);
 
 			while (x < x1) {
 				if (d <= 0) {
@@ -273,8 +261,8 @@ void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 					x++;
 					y++;
 				}
-				if (x >= 0 && x < RENDERWIDE && y >= 0 && y < RENDERDEEP)
-					buf[y * RENDERWIDE + x] = colour;
+
+				plotPoint(x, y, colour);
 			}
 		} else {
 			addTo = y0;
@@ -288,8 +276,8 @@ void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 			incne = 2 * (dy - dx);
 			x = x0;
 			y = y0;
-			if (x >= 0 && x < RENDERWIDE && addTo - y >= 0 && addTo - y < RENDERDEEP)
-				buf[(addTo - y) * RENDERWIDE + x] = colour;
+
+			plotPoint(x, addTo - y, colour);
 
 			while (x < x1) {
 				if (d <= 0) {
@@ -300,8 +288,8 @@ void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 					x++;
 					y++;
 				}
-				if (x >= 0 && x < RENDERWIDE && addTo - y >= 0 && addTo - y < RENDERDEEP)
-					buf[(addTo - y) * RENDERWIDE + x] = colour;
+
+				plotPoint(x, addTo - y, colour);
 			}
 		}
 	} else {
@@ -320,8 +308,8 @@ void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 			incne = 2 * (dx - dy);
 			x = x0;
 			y = y0;
-			if (x >= 0 && x < RENDERWIDE && y >= 0 && y < RENDERDEEP)
-				buf[y * RENDERWIDE + x] = colour;
+
+			plotPoint(x, y, colour);
 
 			while (y < y1) {
 				if (d <= 0) {
@@ -332,8 +320,8 @@ void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 					x++;
 					y++;
 				}
-				if (x >= 0 && x < RENDERWIDE && y >= 0 && y < RENDERDEEP)
-					buf[y * RENDERWIDE + x] = colour;
+
+				plotPoint(x, y, colour);
 			}
 		} else {
 			addTo = x0;
@@ -347,8 +335,8 @@ void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 			incne = 2 * (dx - dy);
 			x = x0;
 			y = y0;
-			if (addTo - x >= 0 && addTo - x < RENDERWIDE && y >= 0 && y < RENDERDEEP)
-				buf[y * RENDERWIDE + addTo - x] = colour;
+
+			plotPoint(addTo - x, y, colour);
 
 			while (y < y1) {
 				if (d <= 0) {
@@ -359,8 +347,8 @@ void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 					x++;
 					y++;
 				}
-				if (addTo - x >= 0 && addTo - x < RENDERWIDE && y >= 0 && y < RENDERDEEP)
-					buf[y * RENDERWIDE + addTo - x] = colour;
+
+				plotPoint(addTo - x, y, colour);
 			}
 		}
 	}
@@ -412,7 +400,7 @@ void Graphics::renderParallax(Parallax *p, int16 l) {
 			if (_blockSurfaces[l][i + j * _xBlocks[l]]) {
 				r.left = i * BLOCKWIDTH - x;
 				r.right = r.left + BLOCKWIDTH;
-				r.top = j * BLOCKHEIGHT - y + 40;
+				r.top = j * BLOCKHEIGHT - y + MENUDEEP;
 				r.bottom = r.top + BLOCKHEIGHT;
 				blitBlockSurface(_blockSurfaces[l][i + j * _xBlocks[l]], &r, &clipRect);
 			}
@@ -558,31 +546,21 @@ void Graphics::setScrollTarget(int16 sx, int16 sy) {
  */
 
 int32 Graphics::initialiseBackgroundLayer(Parallax *p) {
-	byte *memchunk;
-	uint8 zeros;
-	uint16 count;
 	uint16 i, j, k;
-	uint16 x;
 	byte *data;
 	byte *dst;
-	ParallaxLine line;
-	byte *pLine;
 
 	debug(2, "initialiseBackgroundLayer");
 
-	// This function is called to re-initialise the layers if they have
-	// been lost. We know this if the layers have already been assigned.
-
-	if (_layer == MAXLAYERS)
-		closeBackgroundLayer();
+	assert(_layer < MAXLAYERS);
 
 	if (!p) {
 		_layer++;
 		return RD_OK;
 	}
 
-	_xBlocks[_layer] = (p->w + BLOCKWIDTH - 1) >> BLOCKWBITS;
-	_yBlocks[_layer] = (p->h + BLOCKHEIGHT - 1) >> BLOCKHBITS;
+	_xBlocks[_layer] = (p->w + BLOCKWIDTH - 1) / BLOCKWIDTH;
+	_yBlocks[_layer] = (p->h + BLOCKHEIGHT - 1) / BLOCKHEIGHT;
 
 	_blockSurfaces[_layer] = (BlockSurface **) calloc(_xBlocks[_layer] * _yBlocks[_layer], sizeof(BlockSurface *));
 	if (!_blockSurfaces[_layer])
@@ -590,66 +568,70 @@ int32 Graphics::initialiseBackgroundLayer(Parallax *p) {
 
 	// Decode the parallax layer into a large chunk of memory
 
-	memchunk = (byte *) calloc(_xBlocks[_layer] * _yBlocks[_layer], BLOCKWIDTH * BLOCKHEIGHT);
+	byte *memchunk = (byte *) calloc(_xBlocks[_layer] * _yBlocks[_layer], BLOCKWIDTH * BLOCKHEIGHT);
 	if (!memchunk)
 		return RDERR_OUTOFMEMORY;
 
 	for (i = 0; i < p->h; i++) {
-		if (p->offset[i] == 0)
+		if (!p->offset[i])
 			continue;
 
-		pLine = (byte *) p + FROM_LE_32(p->offset[i]);
-		line.packets = READ_LE_UINT16(pLine);
-		line.offset = READ_LE_UINT16(pLine + 2);
-		data = pLine + sizeof(ParallaxLine);
-		x = line.offset;
+		byte *pLine = (byte *) p + FROM_LE_32(p->offset[i]);
+		uint16 packets = READ_LE_UINT16(pLine);
+		uint16 offset = READ_LE_UINT16(pLine + 2);
 
-		dst = memchunk + i * p->w + x;
+		data = pLine + 4;
+		dst = memchunk + i * p->w + offset;
 
-		zeros = 0;
-		if (line.packets == 0)	{
+		if (!packets) {
 			memcpy(dst, data, p->w);
 			continue;
 		}
 
-		for (j = 0; j < line.packets; j++) {
+		bool zeros = false;
+
+		for (j = 0; j < packets; j++) {
 			if (zeros) {
 				dst += *data;
-				x += *data;
+				offset += *data;
 				data++;
-				zeros = 0;
-			} else if (*data == 0) {
+				zeros = false;
+			} else if (!*data) {
 				data++;
-				zeros = 1;
+				zeros = true;
 			} else {
-				count = *data++;
+				uint16 count = *data++;
 				memcpy(dst, data, count);
 				data += count;
 				dst += count;
-				x += count;
-				zeros = 1;
+				offset += count;
+				zeros = true;
 			}
 		}
 	}
 
-	// Now create the surfaces!
+	// The large memory chunk is now divided into a number of smaller
+	// surfaces. For most parallax layers, we'll end up using less memory
+	// this way, and it will be faster to draw since completely transparent
+	// surfaces are discarded.
 
 	for (i = 0; i < _xBlocks[_layer] * _yBlocks[_layer]; i++) {
 		bool block_has_data = false;
 		bool block_is_transparent = false;
 
-		data = memchunk + (p->w * BLOCKHEIGHT * (i / _xBlocks[_layer])) + BLOCKWIDTH * (i % _xBlocks[_layer]);
+		int x = BLOCKWIDTH * (i % _xBlocks[_layer]);
+		int y = BLOCKHEIGHT * (i / _xBlocks[_layer]);
 
-		// FIXME: The 'block_is_transparent' flag should only consider
-		// data that is inside the parallax layer. Still, it won't do
-		// any harm to leave it this way...
+		data = memchunk + p->w * y + x;
 
 		for (j = 0; j < BLOCKHEIGHT; j++) {
 			for (k = 0; k < BLOCKWIDTH; k++) {
-				if (data[j * p->w + k])
-					block_has_data = true;
-				else
-					block_is_transparent = true;
+				if (x + k < p->w && y + j < p->h) {
+					if (data[j * p->w + k])
+						block_has_data = true;
+					else
+						block_is_transparent = true;
+				}
 			}
 		}
 
@@ -685,13 +667,13 @@ int32 Graphics::initialiseBackgroundLayer(Parallax *p) {
 void Graphics::closeBackgroundLayer(void) {
 	debug(2, "CloseBackgroundLayer");
 
-	for (int j = 0; j < MAXLAYERS; j++) {
-		if (_blockSurfaces[j]) {
-			for (int i = 0; i < _xBlocks[j] * _yBlocks[j]; i++)
-				if (_blockSurfaces[j][i])
-					free(_blockSurfaces[j][i]);
-			free(_blockSurfaces[j]);
-			_blockSurfaces[j] = NULL;
+	for (int i = 0; i < MAXLAYERS; i++) {
+		if (_blockSurfaces[i]) {
+			for (int j = 0; j < _xBlocks[i] * _yBlocks[i]; j++)
+				if (_blockSurfaces[i][j])
+					free(_blockSurfaces[i][j]);
+			free(_blockSurfaces[i]);
+			_blockSurfaces[i] = NULL;
 		}
 	}
 
@@ -710,7 +692,7 @@ void Graphics::plotYUV(byte *lut, int width, int height, byte *const *dat) {
 
 	for (y = 0; y < height; y += 2) {
 		for (x = 0; x < width; x += 2) {
-			int i = ((((dat[2][cpos] + ROUNDADD) >> SHIFT) * (BITDEPTH+1)) + ((dat[1][cpos] + ROUNDADD)>>SHIFT)) * (BITDEPTH+1);
+			int i = ((((dat[2][cpos] + ROUNDADD) >> SHIFT) * (BITDEPTH + 1)) + ((dat[1][cpos] + ROUNDADD) >> SHIFT)) * (BITDEPTH + 1);
 			cpos++;
 
 			buf[linepos               ] = lut[i + ((dat[0][        ypos  ] + ROUNDADD) >> SHIFT)];

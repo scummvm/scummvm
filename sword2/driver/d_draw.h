@@ -221,7 +221,7 @@ public:
 	int32 initialiseBackgroundLayer(Parallax *p);
 	void closeBackgroundLayer(void);
 
-	void plotPoint(uint16 x, uint16 y, uint8 colour);
+	void plotPoint(int16 x, int16 y, uint8 colour);
 	void drawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 colour);
 #ifdef BACKEND_8BIT
 	void plotYUV(byte *lut, int width, int height, byte *const *dat);
