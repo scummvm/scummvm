@@ -104,13 +104,15 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 	if (!SwordLogic::_scriptVars[TOP_MENU_DISABLED]) {
 		if (y < 40) { // okay, we are in the top menu.
 			if (!_inTopMenu) { // are we just entering it?
-				_menu->fnStartMenu();
+				if (!SwordLogic::_scriptVars[OBJECT_HELD])
+					_menu->fnStartMenu();
 				setPointer(MSE_POINTER, 0);
 			}
 			_menu->checkTopMenu();
 			_inTopMenu = true;
 		} else if (_inTopMenu) { // we're not in the menu. did we just leave it?
-			_menu->fnEndMenu();
+			if (!SwordLogic::_scriptVars[OBJECT_HELD])
+				_menu->fnEndMenu();
 			_inTopMenu = false;
 		}
 	} else if (_inTopMenu) {
@@ -144,7 +146,7 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 				_getOff = 0;
 			}
 			if (touchedId) { // there's something new selected, now.
-				if	(_objList[clicked].compact->o_mouse_on)	//run its get on
+				if (_objList[clicked].compact->o_mouse_on)	//run its get on
 					_logic->runMouseScript(_objList[clicked].compact, _objList[clicked].compact->o_mouse_on);
 
 				_getOff = _objList[clicked].compact->o_mouse_off; //setup get-off for later

@@ -82,7 +82,6 @@ public:
 
 	void updateScreen(void);
 	void showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, const byte *fadeMask = NULL, int8 fadeStatus = 0);
-	void clearMenu(uint8 menuType);
 
 	void fnSetParallax(uint32 screen, uint32 resId);
 	void fnFlash(uint8 color);

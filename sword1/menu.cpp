@@ -128,47 +128,66 @@ uint8 SwordMenu::checkMenuClick(uint8 menuType) {
 		return 0;
 	uint16 x, y;
 	_mouse->giveCoords(&x, &y);
-	if (menuType == MENU_BOT) {
-		for (uint8 cnt = 0; cnt < SwordLogic::_scriptVars[IN_SUBJECT]; cnt++) {
-			if (_subjects[cnt]->wasClicked(x, y)) {
-				if (mouseEvent & BS1L_BUTTON_DOWN) {
-					SwordLogic::_scriptVars[OBJECT_HELD] = _subjectBar[cnt];
-					refreshMenus();
-				} else if (mouseEvent & BS1L_BUTTON_UP) {
-					if (SwordLogic::_scriptVars[OBJECT_HELD] == _subjectBar[cnt])
+	if (_subjectBarStatus == MENU_OPEN) {
+		// Conversation mode. Icons are highlighted on mouse-down, but
+		// the actual response is made on mouse-up.
+		if (menuType == MENU_BOT) {
+			if (SwordLogic::_scriptVars[OBJECT_HELD] && (mouseEvent & BS1L_BUTTON_UP)) {
+				for (uint8 cnt = 0; cnt < SwordLogic::_scriptVars[IN_SUBJECT]; cnt++) {
+					if (_subjectBar[cnt] == SwordLogic::_scriptVars[OBJECT_HELD])
 						return cnt + 1;
-					else {
-						SwordLogic::_scriptVars[OBJECT_HELD] = 0;
+				}
+			} else if (mouseEvent & BS1L_BUTTON_DOWN) {
+				for (uint8 cnt = 0; cnt < SwordLogic::_scriptVars[IN_SUBJECT]; cnt++) {
+					if (_subjects[cnt]->wasClicked(x, y)) {
+						SwordLogic::_scriptVars[OBJECT_HELD] = _subjectBar[cnt];
 						refreshMenus();
+						break;
+					}
+				}
+			}
+		} else {
+			if (SwordLogic::_scriptVars[OBJECT_HELD] && (mouseEvent & BS1L_BUTTON_UP)) {
+				for (uint8 cnt = 0; cnt < _inMenu; cnt++) {
+					if (_menuList[cnt] == SwordLogic::_scriptVars[OBJECT_HELD])
+						return cnt + 1;
+				}
+			} else if (mouseEvent & BS1L_BUTTON_DOWN) {
+				for (uint8 cnt = 0; cnt < _inMenu; cnt++) {
+					if (_objects[cnt]->wasClicked(x, y)) {
+						SwordLogic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
+						refreshMenus();
+						break;
 					}
 				}
 			}
 		}
 	} else {
-		for (uint8 cnt = 0; cnt < _inMenu; cnt++) {
-			if (_objects[cnt]->wasClicked(x, y)) {
-				if (mouseEvent & BS1R_BUTTON_DOWN) { // looking at item
-					SwordLogic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
-					SwordLogic::_scriptVars[MENU_LOOKING] = 1;
-					SwordLogic::_scriptVars[DEFAULT_ICON_TEXT] = _objectDefs[_menuList[cnt]].textDesc;
-					refreshMenus();
-				} else if (mouseEvent & BS1L_BUTTON_DOWN) {
-					if (SwordLogic::_scriptVars[OBJECT_HELD]) {
-						if (SwordLogic::_scriptVars[OBJECT_HELD] == _menuList[cnt]) {
-							_mouse->setLuggage(0, 0);
-							SwordLogic::_scriptVars[OBJECT_HELD] = 0; // reselected => deselect it
-						} else { // the player is clicking another item on this one.
-							   // run its use-script, if there is one
-							SwordLogic::_scriptVars[SECOND_ITEM] = _menuList[cnt];
-							_mouse->setLuggage(0, 0);
-						}
-					} else {
+		// Normal use, i.e. inventory. Things happen on mouse-down.
+		if (menuType == MENU_TOP) {
+			for (uint8 cnt = 0; cnt < _inMenu; cnt++) {
+				if (_objects[cnt]->wasClicked(x, y)) {
+					if (mouseEvent & BS1R_BUTTON_DOWN) { // looking at item
 						SwordLogic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
-						_mouse->setLuggage(_objectDefs[_menuList[cnt]].luggageIconRes, 0);
-						refreshMenus();
-						return cnt + 1;
+						SwordLogic::_scriptVars[MENU_LOOKING] = 1;
+						SwordLogic::_scriptVars[DEFAULT_ICON_TEXT] = _objectDefs[_menuList[cnt]].textDesc;
+					} else if (mouseEvent & BS1L_BUTTON_DOWN) {
+						if (SwordLogic::_scriptVars[OBJECT_HELD]) {
+							if (SwordLogic::_scriptVars[OBJECT_HELD] == _menuList[cnt]) {
+								_mouse->setLuggage(0, 0);
+								SwordLogic::_scriptVars[OBJECT_HELD] = 0; // reselected => deselect it
+							} else { // the player is clicking another item on this one.
+								   // run its use-script, if there is one
+								SwordLogic::_scriptVars[SECOND_ITEM] = _menuList[cnt];
+								_mouse->setLuggage(0, 0);
+							}
+						} else {
+							SwordLogic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
+							_mouse->setLuggage(_objectDefs[_menuList[cnt]].luggageIconRes, 0);
+						}
 					}
 					refreshMenus();
+					break;
 				}
 			}
 		}
@@ -352,5 +371,5 @@ void SwordMenu::fnAddSubject(int32 sub) {
 }
 
 void SwordMenu::cfnReleaseMenu(void) {
-	_screen->clearMenu(MENU_TOP);
+	_objectBarStatus = MENU_CLOSING;
 }

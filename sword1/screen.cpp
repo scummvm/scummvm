@@ -763,17 +763,6 @@ void SwordScreen::showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, co
 	_system->copy_rect(frame, 40, x, y, 40, 40);
 }
 
-void SwordScreen::clearMenu(uint8 menuType) {
-	// isn't there a better way to do this?
-	uint8 *tmp = (uint8*)malloc(640 * 40);
-	memset(tmp, 0, 640 * 40);
-	if (menuType == MENU_BOT)
-		_system->copy_rect(tmp, 640, 0, 440, 640, 40);
-	else
-		_system->copy_rect(tmp, 640, 0, 0, 640, 40);
-	free(tmp);
-}
-
 // ------------------- router debugging code --------------------------------
 
 void SwordScreen::vline(uint16 x, uint16 y1, uint16 y2) {
