@@ -2626,28 +2626,6 @@ void Scumm::setupV1ZakPalette() {
 	setPalColor(15, 168, 168, 168);
 }
 
-/* Old palette used in Commodore 64 versions
-
-void Scumm::setupC64Palette() {
-	setPalColor( 0,   0,   0,   0);
-	setPalColor( 1, 252, 252, 252);
-	setPalColor( 2, 204,   0,   0);
-	setPalColor( 3,   0, 252, 204);
-	setPalColor( 4, 252,   0, 252);
-	setPalColor( 5,   0, 204,   0);
-	setPalColor( 6,   0,   0, 204);
-	setPalColor( 7, 252, 252,   0);
-	setPalColor( 8, 252, 136,   0);
-	setPalColor( 9, 136,  68,   0);
-	setPalColor(10, 252, 136, 136);
-	setPalColor(11,  68,  68,  68);
-	setPalColor(12, 136, 136, 136);
-	setPalColor(13, 136, 252, 136);
-	setPalColor(14, 136, 136, 252);
-	setPalColor(15, 204, 204, 204);
-}
-*/
-
 void Scumm::setPaletteFromPtr(const byte *ptr) {
 	int i;
 	byte *dest, r, g, b;
