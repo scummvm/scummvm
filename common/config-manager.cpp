@@ -211,7 +211,7 @@ bool ConfigManager::hasKey(const String &key) const {
 	// 3) All global domains
 	// The defaults domain is explicitly *not* checked.
 	
-//	if (_runtimeDomain.contain(key))
+//	if (_transientDomain.contain(key))
 //		return true;
 	
 	if (!_activeDomain.isEmpty() && _gameDomains[_activeDomain].contains(key))
@@ -226,7 +226,6 @@ bool ConfigManager::hasKey(const String &key) const {
 	return false;
 }
 
-
 bool ConfigManager::hasKey(const String &key, const String &dom) const {
 	assert(!dom.isEmpty());
 
@@ -237,7 +236,6 @@ bool ConfigManager::hasKey(const String &key, const String &dom) const {
 	
 	return false;
 }
-
 
 void ConfigManager::removeKey(const String &key, const String &dom) {
 	assert(!dom.isEmpty());
@@ -261,7 +259,7 @@ const String & ConfigManager::get(const String &key) const {
 	// 3) All global domains
 	// 4) The defaults 
 
-//	if (_runtimeDomain.contain(key))
+//	if (_transientDomain.contain(key))
 //		return true;
 	
 	if (!_activeDomain.isEmpty() && _gameDomains[_activeDomain].contains(key))
@@ -284,12 +282,22 @@ const String & ConfigManager::get(const String &key, const String &dom) const {
 	// is not found, or were dom is found, but doesn't contain 'key' ?
 	// Right now we just return an empty string. But might want to print
 	// out a warning, or even error out?
-	if (_gameDomains.contains(dom))
+	if (_gameDomains.contains(dom)) {
+		// Return the value, if any; defaults to the empty string if the key is
+		// not present in the domain. We purposely do not return the registered
+		// default value.
+		// 
 		return _gameDomains[dom].get(key);
-	if (_globalDomains.contains(dom))
-		return _globalDomains[dom].get(key);
-
-	return String::emptyString;
+	} else if (_globalDomains.contains(dom)) {
+		if (_globalDomains[dom].contains(key))
+			return _globalDomains[dom].get(key);
+		// For global domains, we *do* use the registered default value.
+		return _defaultsDomain.get(key);
+	} else {
+		// Domain was not found. Do *not* return the registered default
+		// value, see above for the reasons.
+		return String::emptyString;
+	}
 }
 
 int ConfigManager::getInt(const String &key, const String &dom) const {
@@ -316,7 +324,7 @@ bool ConfigManager::getBool(const String &key, const String &dom) const {
 void ConfigManager::set(const String &key, const String &value) {
 #if 0
 	// TODO ?!?
-//	_runtimeDomain[key] = value;
+//	_transientDomain[key] = value;
 #else
 	if (_activeDomain.isEmpty())
 		_globalDomains[kApplicationDomain][key] = value;

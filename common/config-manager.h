@@ -107,7 +107,7 @@ private:
 	void			loadFile(const String &filename);
 	void			writeDomain(FILE *file, const String &name, const Domain &domain);
 	
-//	Domain			_runtimeDomain;
+//	Domain			_transientDomain;
 	DomainMap		_gameDomains;
 	DomainMap		_globalDomains;
 	Domain			_defaultsDomain;
