@@ -184,8 +184,11 @@ void Scumm_v3::loadCharset(int no) {
 	File file;
 	char buf[20];
 
-	sprintf(buf, "%02d.LFL", 99 - no);
-//	sprintf(buf, "%02d.LFL", 98 + no);
+	if (_gameId == GID_ZAK256)
+		sprintf(buf, "%02d.LFL", 98 + no);
+	else
+		sprintf(buf, "%02d.LFL", 99 - no);
+	
 	file.open(buf, _gameDataPath);
 		
 	if (file.isOpen() == false) {

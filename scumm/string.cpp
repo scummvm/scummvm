@@ -749,10 +749,9 @@ void Scumm::addStringToStack(int var) {
 void Scumm::initCharset(int charsetno) {
 	int i;
 
-	if (_gameId == GID_ZAK256) {
-		debug(0, "initCharset: FIXME using incorrect charset");
+	// FIXME why is this required? see also Scumm_v3::loadCharset
+	if (_gameId == GID_ZAK256)
 		charsetno = !charsetno;
-	}
 
 	if (_features & GF_SMALL_HEADER)
 		loadCharset(charsetno);
