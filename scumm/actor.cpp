@@ -78,6 +78,13 @@ void Actor::initActor(int mode) {
 	talk_script = 0;
 
 	if (_vm) {
+		if (_vm->_features & GF_AFTER_V2) {
+			initFrame = 1;
+			walkFrame = 0;
+			standFrame = 1;
+			talkFrame1 = 5;
+			talkFrame2 = 4;
+		}
 		_vm->_classData[number] = (_vm->_features & GF_AFTER_V7) ? _vm->_classData[0] : 0;
 	}
 }
