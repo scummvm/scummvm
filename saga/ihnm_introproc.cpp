@@ -31,13 +31,17 @@
 #include "saga/cvar_mod.h"
 #include "saga/events_mod.h"
 #include "saga/rscfile_mod.h"
-#include "saga/scene_mod.h"
 #include "saga/palanim_mod.h"
 
 #include "saga/scene.h"
 #include "saga/ihnm_introproc.h"
 
 namespace Saga {
+
+int IHNM_IntroMovieProc1(int param, R_SCENE_INFO *scene_info);
+int IHNM_IntroMovieProc2(int param, R_SCENE_INFO *scene_info);
+int IHNM_IntroMovieProc3(int param, R_SCENE_INFO *scene_info);
+int IHNM_HateProc(int param, R_SCENE_INFO *scene_info);
 
 R_SCENE_RESLIST IHNM_IntroMovie1RL[] = {
 	{30, SAGA_BG_IMAGE, 0, 0} ,
@@ -97,7 +101,7 @@ int IHNM_StartProc() {
 	n_introscenes = ARRAYSIZE(IHNM_IntroList);
 
 	for (i = 0; i < n_introscenes; i++) {
-		SCENE_Queue(&IHNM_IntroList[i]);
+		_vm->_scene->queueScene(&IHNM_IntroList[i]);
 	}
 
 	return R_SUCCESS;
@@ -159,7 +163,7 @@ int IHNM_IntroMovieProc2(int param, R_SCENE_INFO *scene_info) {
 		q_event = EVENT_Chain(q_event, &event);
 
 		// Fade in from black to the scene background palette
-		SCENE_GetBGPal(&pal);
+		_vm->_scene->getBGPal(&pal);
 
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_PAL_EVENT;
@@ -219,7 +223,7 @@ int IHNM_IntroMovieProc3(int param, R_SCENE_INFO *scene_info) {
 		q_event = EVENT_Chain(q_event, &event);
 
 		// Fade in from black to the scene background palette
-		SCENE_GetBGPal(&pal);
+		_vm->_scene->getBGPal(&pal);
 
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_PAL_EVENT;

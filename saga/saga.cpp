@@ -48,7 +48,7 @@
 #include "saga/isomap.h"
 #include "saga/script.h"
 #include "saga/script_mod.h"
-#include "saga/scene_mod.h"
+#include "saga/scene.h"
 #include "saga/sdata.h"
 #include "saga/sndres.h"
 #include "saga/sprite.h"
@@ -109,7 +109,6 @@ void SagaEngine::go() {
 	CON_Register(); // Register console cvars first
 
 	GAME_Register();
-	SCENE_Register();
 
 	_soundEnabled = 1;
 	_musicEnabled = 1;
@@ -148,8 +147,9 @@ void SagaEngine::go() {
 	_sdata = new SData();
 	INTERFACE_Init(); // requires script module
 	_actor = new Actor(this);
+	_scene = new Scene(this);
 
-	if (SCENE_Init() != R_SUCCESS) {
+	if (!_scene->initialized()) {
 		warning("Couldn't initialize scene module");
 		return;
 	}
@@ -194,6 +194,7 @@ void SagaEngine::go() {
 		debug(0, "Sound disabled.");
 	}
 
+	_scene->reg();
 	_actor->reg();
 	_script->reg();
 	_render->reg();
@@ -205,7 +206,7 @@ void SagaEngine::go() {
 
 	// Begin Main Engine Loop
 
-	SCENE_Start();
+	_scene->startScene();
 	uint32 currentTicks;
 
 	for (;;) {
@@ -235,7 +236,7 @@ void SagaEngine::go() {
 }
 
 void SagaEngine::shutdown() {
-	SCENE_Shutdown();
+	delete _scene;
 	delete _actor;
 	delete _script;
 	delete _sprite;

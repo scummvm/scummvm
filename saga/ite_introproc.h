@@ -75,6 +75,8 @@ struct INTRO_CREDIT {
 	int font_id;
 };
 
+int ITE_StartProc();
+
 } // End of namespace Saga
 
 #endif				/* SAGA_ITE_INTRO_H_ */

@@ -34,7 +34,6 @@
 #include "saga/font.h"
 #include "saga/game_mod.h"
 #include "saga/rscfile_mod.h"
-#include "saga/scene_mod.h"
 #include "saga/sndres.h"
 #include "saga/text.h"
 #include "saga/palanim_mod.h"
@@ -44,6 +43,17 @@
 #include "saga/ite_introproc.h"
 
 namespace Saga {
+
+int ITE_IntroAnimProc(int param, R_SCENE_INFO *scene_info);
+int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info);
+int ITE_IntroCave2Proc(int param, R_SCENE_INFO *scene_info);
+int ITE_IntroCave3Proc(int param, R_SCENE_INFO *scene_info);
+int ITE_IntroCave4Proc(int param, R_SCENE_INFO *scene_info);
+int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info);
+int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO *scene_info);
+int ITE_IntroFairePathProc(int param, R_SCENE_INFO *scene_info);
+int ITE_IntroFaireTentProc(int param, R_SCENE_INFO *scene_info);
+int initialScene(int param, R_SCENE_INFO *scene_info);
 
 static R_INTRO_DIALOGUE IntroDiag[] = {
 	{
@@ -135,7 +145,7 @@ int ITE_StartProc() {
 	n_introscenes = ARRAYSIZE(ITE_IntroList);
 
 	for (i = 0; i < n_introscenes; i++) {
-		SCENE_Queue(&ITE_IntroList[i]);
+		_vm->_scene->queueScene(&ITE_IntroList[i]);
 	}
 
 	GAME_GetSceneInfo(&gs_desc);
@@ -145,7 +155,7 @@ int ITE_StartProc() {
 	first_scene.scene_skiptarget = 1;
 	first_scene.scene_proc = initialScene;
 
-	SCENE_Queue(&first_scene);
+	_vm->_scene->queueScene(&first_scene);
 
 	return R_SUCCESS;
 }
@@ -258,7 +268,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 		q_event = EVENT_Chain(q_event, &event);
 
 		// Fade in from black to the scene background palette
-		SCENE_GetBGPal(&pal);
+		_vm->_scene->getBGPal(&pal);
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_PAL_EVENT;
 		event.op = EVENT_BLACKTOPAL;
@@ -986,5 +996,82 @@ int ITE_IntroFaireTentProc(int param, R_SCENE_INFO *scene_info) {
 
 	return 0;
 }
+
+int initialScene(int param, R_SCENE_INFO *scene_info) {
+	R_EVENT event;
+	R_EVENT *q_event;
+	int delay_time = 0;
+	static PALENTRY current_pal[R_PAL_ENTRIES];
+	PALENTRY *pal;
+
+	switch (param) {
+	case SCENE_BEGIN:
+		_vm->_music->stop();
+		_vm->_sound->stopVoice();
+
+		// Fade palette to black from intro scene
+		_vm->_gfx->getCurrentPal(current_pal);
+
+		event.type = R_CONTINUOUS_EVENT;
+		event.code = R_PAL_EVENT;
+		event.op = EVENT_PALTOBLACK;
+		event.time = 0;
+		event.duration = PALETTE_FADE_DURATION;
+		event.data = current_pal;
+
+		delay_time += PALETTE_FADE_DURATION;
+
+		q_event = EVENT_Queue(&event);
+
+		// Activate user interface
+		event.type = R_ONESHOT_EVENT;
+		event.code = R_INTERFACE_EVENT;
+		event.op = EVENT_ACTIVATE;
+		event.time = 0;
+
+		q_event = EVENT_Chain(q_event, &event);
+
+		// Set first scene background w/o changing palette
+		event.type = R_ONESHOT_EVENT;
+		event.code = R_BG_EVENT;
+		event.op = EVENT_DISPLAY;
+		event.param = NO_SET_PALETTE;
+		event.time = 0;
+
+		q_event = EVENT_Chain(q_event, &event);
+
+		// Fade in to first scene background palette
+		_vm->_scene->getBGPal(&pal);
+
+		event.type = R_CONTINUOUS_EVENT;
+		event.code = R_PAL_EVENT;
+		event.op = EVENT_BLACKTOPAL;
+		event.time = delay_time;
+		event.duration = PALETTE_FADE_DURATION;
+		event.data = pal;
+
+		q_event = EVENT_Chain(q_event, &event);
+
+		event.code = R_PALANIM_EVENT;
+		event.op = EVENT_CYCLESTART;
+		event.time = 0;
+
+		q_event = EVENT_Chain(q_event, &event);
+
+		_vm->_anim->setFlag(0, ANIM_LOOP);
+		_vm->_anim->play(0, delay_time);
+
+		debug(0, "Scene started");
+		break;
+	case SCENE_END:
+		break;
+	default:
+		warning("Scene::initialScene(): Illegal scene procedure parameter");
+		break;
+	}
+
+	return 0;
+}
+
 
 } // End of namespace Saga

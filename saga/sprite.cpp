@@ -26,7 +26,7 @@
 
 #include "saga/game_mod.h"
 #include "saga/gfx.h"
-#include "saga/scene_mod.h"
+#include "saga/scene.h"
 #include "saga/rscfile_mod.h"
 
 #include "saga/text.h"
@@ -288,7 +288,7 @@ int Sprite::drawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_nu
 		return R_FAILURE;
 	}
 
-	if (!SCENE_IsBGMaskPresent()) {
+	if (!_vm->_scene->isBGMaskPresent()) {
 		return draw(ds, sprite_list, sprite_num, spr_x, spr_y);
 	}
 
@@ -317,7 +317,7 @@ int Sprite::drawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_nu
 	sprite_data_p = sprite_p + readS.pos();
 
 	// Create actor Z occlusion LUT
-	SCENE_GetZInfo(&zinfo);
+	_vm->_scene->getZInfo(&zinfo);
 
 	e_slope = zinfo.end_slope;
 
@@ -327,7 +327,7 @@ int Sprite::drawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_nu
 
 	actor_z = spr_y;
 
-	SCENE_GetBGMaskInfo(&mask_w, &mask_h, &mask_buf, &mask_buf_len);
+	_vm->_scene->getBGMaskInfo(&mask_w, &mask_h, &mask_buf, &mask_buf_len);
 
 	spr_src_rect.left = 0;
 	spr_src_rect.top = 0;

@@ -26,7 +26,39 @@
 #ifndef SAGA_SCENE_H
 #define SAGA_SCENE_H
 
+#include "saga/text.h"
+
 namespace Saga {
+
+enum R_SCENE_MODES {
+	R_SCENE_MODE_INVALID,
+	R_SCENE_MODE_NORMAL,
+	R_SCENE_MODE_ISO
+};
+
+struct SCENE_ZINFO {
+	int begin_slope;
+	int end_slope;
+
+};
+
+struct SCENE_BGINFO {
+	int bg_x;
+	int bg_y;
+	int bg_w;
+	int bg_h;
+	int bg_p;
+	byte *bg_buf;
+	size_t bg_buflen;
+};
+
+struct R_SCENE_INFO {
+	SCENE_ZINFO z_info;
+	SCENE_BGINFO bg_info;
+	R_TEXTLIST *text_list;
+};
+
+typedef int (R_SCENE_PROC) (int, R_SCENE_INFO *);
 
 #define PALETTE_FADE_DURATION 1000
 
@@ -111,63 +143,66 @@ struct R_SCENE_QUEUE {
 	int scene_skiptarget;
 };
 
-struct R_SCENE_MODULE {
-	int init;
-	R_RSCFILE_CONTEXT *scene_ctxt;
-	int *scene_lut;
-	int scene_count;
-	int scene_max;
-	YS_DL_LIST *scene_queue;
-	int first_scene;
-	int scene_loaded;
-	int scene_mode;
-	int scene_number;
-	int scene_rn;
-	int in_game;
-	int load_desc;
-	R_SCENE_DESC desc;
-	int reslist_loaded;
-	int reslist_entries;
-	R_SCENE_RESLIST *reslist;
-	int anim_entries;
-	YS_DL_LIST *anim_list;
-	R_SCENE_PROC *scene_proc;
-	R_TEXTLIST *text_list;
-	SCENE_IMAGE bg;
-	SCENE_IMAGE bg_mask;
+class Scene {
+ public:
+	Scene(SagaEngine *vm);
+	~Scene();
+	int reg();
+
+	int startScene();
+	int nextScene();
+	int skipScene();
+	int endScene();
+	int queueScene(R_SCENE_QUEUE *scene_queue);
+	int draw(R_SURFACE *);
+	int getMode();
+	int getBGMaskInfo(int *w, int *h, byte **buf, size_t *buf_len);
+	int isBGMaskPresent(void);
+	int getBGInfo(SCENE_BGINFO *bginfo);
+	int getZInfo(SCENE_ZINFO *zinfo);
+	int getBGPal(PALENTRY **pal);
+	int getInfo(R_SCENE_INFO *si);
+
+	int clearSceneQueue(void);
+	int changeScene(int scene_num);
+
+	bool initialized() { return _initialized; }
+
+	void sceneInfoCmd(int argc, char *argv[]);
+	void sceneChangeCmd(int argc, char *argv[]);
+
+ private:
+	int loadScene(int scene, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DESC *);
+	int loadSceneDescriptor(uint32 res_number);
+	int loadSceneResourceList(uint32 res_number);
+	int processSceneResources();
+
+ private:
+	SagaEngine *_vm;
+	bool _initialized;
+
+	R_RSCFILE_CONTEXT *_sceneContext;
+	int *_sceneLUT;
+	int _sceneCount;
+	int _sceneMax;
+	YS_DL_LIST *_sceneQueue;
+	int _firstScene;
+	bool _sceneLoaded;
+	int _sceneMode;
+	int _sceneNumber;
+	int _sceneResNum;
+	bool _inGame;
+	bool _loadDesc;
+	R_SCENE_DESC _desc;
+	int _resListEntries;
+	R_SCENE_RESLIST *_resList;
+	int _animEntries;
+	YS_DL_LIST *_animList;
+	R_SCENE_PROC *_sceneProc;
+	R_TEXTLIST *_textList;
+	SCENE_IMAGE _bg;
+	SCENE_IMAGE _bgMask;
 };
-
-int SCENE_Queue(R_SCENE_QUEUE * scene_queue);
-int SCENE_ClearQueue(void);
-
-int SCENE_Load(int scene, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DESC *);
-int LoadSceneDescriptor(uint32 res_number);
-int LoadSceneResourceList(uint32 res_number);
-int ProcessSceneResources();
-void CF_scenechange(int argc, char *argv[], void *refCon);
-void CF_sceneinfo(int argc, char *argv[], void *refCon);
-
-int IHNM_StartProc();
-
-int initialScene(int param, R_SCENE_INFO *scene_info);
-int defaultScene(int param, R_SCENE_INFO *scene_info);
-
-int ITE_StartProc();
-int ITE_IntroAnimProc(int param, R_SCENE_INFO *scene_info);
-int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info);
-int ITE_IntroCave2Proc(int param, R_SCENE_INFO *scene_info);
-int ITE_IntroCave3Proc(int param, R_SCENE_INFO *scene_info);
-int ITE_IntroCave4Proc(int param, R_SCENE_INFO *scene_info);
-int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info);
-int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO *scene_info);
-int ITE_IntroFairePathProc(int param, R_SCENE_INFO *scene_info);
-int ITE_IntroFaireTentProc(int param, R_SCENE_INFO *scene_info);
-
-int IHNM_StartProc();
-int IHNM_IntroMovieProc1(int param, R_SCENE_INFO *scene_info);
-int IHNM_IntroMovieProc2(int param, R_SCENE_INFO *scene_info);
-int IHNM_IntroMovieProc3(int param, R_SCENE_INFO *scene_info);
-int IHNM_HateProc(int param, R_SCENE_INFO *scene_info);
 
 } // End of namespace Saga
 

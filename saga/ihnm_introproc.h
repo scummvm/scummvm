@@ -23,8 +23,8 @@
 
 // Intro sequence scene procedures header file
 
-#ifndef SAGA_ITE_INTRO_H_
-#define SAGA_ITE_INTRO_H_
+#ifndef SAGA_IHNM_INTRO_H_
+#define SAGA_IHNM_INTRO_H_
 
 namespace Saga {
 
@@ -32,6 +32,8 @@ namespace Saga {
 #define R_IHNM_INTRO_FRAMETIME 80
 #define R_IHNM_DGLOGO_TIME     8000
 #define R_IHNM_TITLE_TIME      16000
+
+int IHNM_StartProc();
 
 } // End of namespace Saga
 

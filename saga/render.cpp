@@ -31,7 +31,7 @@
 #include "saga/font.h"
 #include "saga/game_mod.h"
 #include "saga/interface_mod.h"
-#include "saga/scene_mod.h"
+#include "saga/scene.h"
 #include "saga/text.h"
 
 #include "saga/actionmap.h"
@@ -126,13 +126,13 @@ int Render::drawScene() {
 	// Get mouse coordinates
 	mouse_pt = SYSINPUT_GetMousePos();
 
-	SCENE_GetBGInfo(&bg_info);
+	_vm->_scene->getBGInfo(&bg_info);
 	GAME_GetDisplayInfo(&disp_info);
 	bg_pt.x = 0;
 	bg_pt.y = 0;
 
 	// Display scene background
-	SCENE_Draw(backbuf_surface);
+	_vm->_scene->draw(backbuf_surface);
 
 	// Display scene maps, if applicable
 	if (getFlags() & RF_OBJECTMAP_TEST) {
@@ -144,7 +144,7 @@ int Render::drawScene() {
 	_vm->_actor->drawList();
 
 	// Draw queued text strings
-	SCENE_GetInfo(&scene_info);
+	_vm->_scene->getInfo(&scene_info);
 
 	_vm->textDrawList(scene_info.text_list, backbuf_surface);
 

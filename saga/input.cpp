@@ -27,7 +27,7 @@
 #include "saga/console_mod.h"
 #include "saga/interface_mod.h"
 #include "saga/render.h"
-#include "saga/scene_mod.h"
+#include "saga/scene.h"
 #include "saga/script_mod.h"
 
 namespace Saga {
@@ -106,7 +106,7 @@ int SYSINPUT_ProcessInput() {
 				break;
 			case 27: // Esc
 				// Skip to next scene skip target
-				SCENE_Skip();
+				_vm->_scene->skipScene();
 				break;
 			default:
 				break;

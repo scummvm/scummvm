@@ -27,7 +27,7 @@
 #include "saga/gfx.h"
 #include "saga/console_mod.h"
 #include "saga/text.h"
-#include "saga/scene_mod.h"
+#include "saga/scene.h"
 #include "saga/font.h"
 
 #include "saga/script.h"
@@ -48,7 +48,7 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 	int i;
 	R_SCENE_INFO si;
 
-	SCENE_GetInfo(&si);
+	_vm->_scene->getInfo(&si);
 
 	disp_buf[0] = 0;
 

@@ -31,7 +31,7 @@
 
 #include "saga/animation.h"
 #include "saga/console_mod.h"
-#include "saga/scene_mod.h"
+#include "saga/scene.h"
 #include "saga/interface_mod.h"
 #include "saga/text.h"
 #include "saga/palanim_mod.h"
@@ -174,7 +174,7 @@ int HandleContinuous(R_EVENT *event) {
 		switch (event->op) {
 		case EVENT_DISSOLVE:
 			_vm->_render->getBufferInfo(&buf_info);
-			SCENE_GetBGInfo(&bg_info);
+			_vm->_scene->getBGInfo(&bg_info);
 			TRANSITION_Dissolve(buf_info.r_bg_buf, buf_info.r_bg_buf_w, buf_info.r_bg_buf_h,
 								buf_info.r_bg_buf_w, bg_info.bg_buf, bg_info.bg_p, 0, event_pc);
 			break;
@@ -226,7 +226,7 @@ static int HandleOneShot(R_EVENT *event) {
 		case EVENT_REMOVE:
 			{
 				R_SCENE_INFO scene_info;
-				SCENE_GetInfo(&scene_info);
+				_vm->_scene->getInfo(&scene_info);
 				_vm->textDeleteEntry(scene_info.text_list, (R_TEXTLIST_ENTRY *)event->data);
 			}
 			break;
@@ -246,12 +246,12 @@ static int HandleOneShot(R_EVENT *event) {
 			R_BUFFER_INFO rbuf_info;
 			R_POINT bg_pt;
 
-			if (SCENE_GetMode() == R_SCENE_MODE_NORMAL) {
+			if (_vm->_scene->getMode() == R_SCENE_MODE_NORMAL) {
 
 				back_buf = _vm->_gfx->getBackBuffer();
 
 				_vm->_render->getBufferInfo(&rbuf_info);
-				SCENE_GetBGInfo(&bginfo);
+				_vm->_scene->getBGInfo(&bginfo);
 
 				bg_pt.x = bginfo.bg_x;
 				bg_pt.y = bginfo.bg_y;
@@ -260,7 +260,7 @@ static int HandleOneShot(R_EVENT *event) {
 								bginfo.bg_buf, bginfo.bg_w, bginfo.bg_h, NULL, &bg_pt);
 				if (event->param == SET_PALETTE) {
 					PALENTRY *pal_p;
-					SCENE_GetBGPal(&pal_p);
+					_vm->_scene->getBGPal(&pal_p);
 					_vm->_gfx->setPalette(back_buf, pal_p);
 				}
 			}
@@ -278,7 +278,7 @@ static int HandleOneShot(R_EVENT *event) {
 	case R_SCENE_EVENT:
 		switch (event->op) {
 		case EVENT_END:
-			SCENE_Next();
+			_vm->_scene->nextScene();
 			return R_EVENT_BREAK;
 			break;
 		default:
