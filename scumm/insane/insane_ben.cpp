@@ -217,15 +217,6 @@ int32 Insane::processBenOnRoad(bool flag) {
 		if (_actor[0].speed < -8)
 			_actor[0].speed = -8;
 
-		// FIXME: is it abs(/2) ?
-		// mov   eax, insane_actor0.speed
-		// mov   edx, eax
-		// sar   edx, 1Fh
-		// sub   eax, edx
-		// sar   eax, 1
-		// add   eax, insane_actor0.speed
-		// add   insane_actor0.x, eax
-
 		_actor[0].x += _actor[0].speed / 2 + _actor[0].speed;
 
 		if (_actor[0].x < 0)
