@@ -202,7 +202,6 @@ struct StripTable;
 #define CHARSET_MASK_TRANSPARENCY	253
 
 class Gdi {
-//	friend class ScummEngine;	// Mostly for the code in saveload.cpp ...
 	ScummEngine *_vm;
 
 public:

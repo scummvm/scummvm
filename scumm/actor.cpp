@@ -27,6 +27,7 @@
 #include "scumm/boxes.h"
 #include "scumm/charset.h"
 #include "scumm/costume.h"
+#include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/saveload.h"
 #include "scumm/sound.h"

@@ -103,16 +103,6 @@ enum GameFeatures {
 	GF_EXTERNAL_CHARSET    = GF_SMALL_HEADER
 };
 
-enum ObjectClass {
-	kObjectClassNeverClip = 20,
-	kObjectClassAlwaysClip = 21,
-	kObjectClassIgnoreBoxes = 22,
-	kObjectClassYFlip = 29,
-	kObjectClassXFlip = 30,
-	kObjectClassPlayer = 31,	// Actor is controlled by the player
-	kObjectClassUntouchable = 32
-};
-
 /* SCUMM Debug Channels */
 void CDECL debugC(int level, const char *s, ...);
 
