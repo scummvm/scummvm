@@ -21,7 +21,7 @@
 
 #ifdef _WIN32_WCE
 
-#define POCKETSCUMM_VERSION "alpha build 11.17.02"
+#define POCKETSCUMM_VERSION "official build 0.3.0"
 
 /* Original GFX code by Vasyl Tsvirkunov */
 
@@ -85,6 +85,7 @@ extern bool sound_activated;
 extern bool hide_toolbar;
 bool toolbar_drawn;
 bool draw_keyboard;
+bool wide_screen;
 
 GXDisplayProperties gxdp;
 int active;
@@ -494,6 +495,9 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 		maxMode = 0; // portrait only!
 
 	active = 1;
+
+	wide_screen = GetSystemMetrics(SM_CXSCREEN) >= 320;
+
 	return 0;
 }
 
@@ -759,7 +763,7 @@ void reducePortraitGeometry() {
 void drawAllToolbar() {
 	int x,y;
 
-	if (currentScreenMode) {
+	if (currentScreenMode || wide_screen) {
 
 		if (draw_keyboard) {
 			pBlt_part(image_expand(item_keyboard), 0, 200, 320, 40, item_keyboard_colors, 0);
@@ -809,7 +813,7 @@ void drawAllToolbar() {
 }
 
 void redrawSoundItem() {
-	drawSoundItem(10 + 40 + 40, (currentScreenMode ? 204 : 240));
+	drawSoundItem(10 + 40 + 40, (currentScreenMode || wide_screen ? 204 : 240));
 }
 
 bool isInBox(int x, int y, int x1, int y1, int x2, int y2) {
@@ -828,7 +832,7 @@ ToolbarSelected getToolbarSelection (int x, int y) {
 		return ToolbarNone;
 	
 	test_x = 10;
-	test_y = (currentScreenMode ? 204 : 240);
+	test_y = (currentScreenMode || wide_screen ? 204 : 240);
 	if (isInBox(x, y, test_x, test_y, test_x + 32, test_y + 32))
 		return ToolbarSaveLoad;
 	test_x += 40;
@@ -859,13 +863,21 @@ void Blt(UBYTE * scr_ptr)
 
 void Blt_part(UBYTE * src_ptr, int x, int y, int width, int height, int pitch, bool check) {
 
+	if (check && (y > _geometry_h || (y + height) > _geometry_h))
+		return;
+
 	if (toolbar_available && !toolbar_drawn && !hide_toolbar)
 		drawAllToolbar();
 
 	pBlt_part(src_ptr, x, y, width, height, NULL, pitch);
 
-	if (check && (y > _geometry_h || (y + height) > _geometry_h))
+	if (check && (y > _geometry_h || (y + height) > _geometry_h)) {
+		char message[100];
+		sprintf(message, "Override geometry : h %d y %d height %d", _geometry_h, y, height);
+		drawError(message);
+		exit(1);
 		toolbar_drawn = false;
+	}
 
 }
 
@@ -2081,12 +2093,12 @@ void noGAPI_Cls() {
 
 	GetWindowRect(hWndMain, &rc);
 	memset(noGAPI_video_buffer, 0x00, sizeof(noGAPI_video_buffer));
-	if (currentScreenMode)
+	if (currentScreenMode || wide_screen)
 		hb = CreateBitmap(320, 240, 1, 16, noGAPI_video_buffer);
 	else
 		hb = CreateBitmap(240, 320, 1, 16, noGAPI_video_buffer);
 	old = (HBITMAP)SelectObject(noGAPI_compat, hb);
-	if (currentScreenMode)
+	if (currentScreenMode || wide_screen)
 		BitBlt(hdc, 0, 0, 320, 240, noGAPI_compat, 0, 0, SRCCOPY);
 	else
 		BitBlt(hdc, 0, 0, 240, 320, noGAPI_compat, 0, 0, SRCCOPY);
@@ -2116,7 +2128,7 @@ void noGAPI_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int heigh
 
 	work_buffer = noGAPI_video_buffer;
 	unsigned short *work_buffer_2 = (unsigned short*)work_buffer;
-	if (currentScreenMode) {
+	if (currentScreenMode || wide_screen) {
 	
 		for (i=0; i<width; i++) {
 			for (j=0; j<height; j++) {
@@ -2134,12 +2146,12 @@ void noGAPI_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int heigh
 		}
 	}
 
-	if (currentScreenMode)
+	if (currentScreenMode || wide_screen)
 		hb = CreateBitmap(height, width, 1, 16, noGAPI_video_buffer);
 	else
 		hb = CreateBitmap(width, height, 1, 16, noGAPI_video_buffer);
 	old = (HBITMAP)SelectObject(noGAPI_compat, hb);
-	if (currentScreenMode)
+	if (currentScreenMode || wide_screen)
 		BitBlt(hdc, y , 320 - (x + width), height, width, noGAPI_compat, 0, 0, SRCCOPY);
 	else
 		BitBlt(hdc, x, y, width, height, noGAPI_compat, 0, 0, SRCCOPY);
@@ -2165,7 +2177,7 @@ void noGAPI_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 	GetWindowRect(hWndMain, &rc);
 
 	work_buffer = noGAPI_video_buffer;
-	if (currentScreenMode) {
+	if (currentScreenMode || wide_screen) {
 		unsigned short *work_buffer_2 = (unsigned short*)work_buffer;
 		for (i=0; i<width; i++)
 			for (j=0; j<height; j++) 
@@ -2195,12 +2207,12 @@ void noGAPI_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 	}
 	}
 
-	if (currentScreenMode)
+	if (currentScreenMode || wide_screen)
 		hb = CreateBitmap(height, width, 1, 16, noGAPI_video_buffer);
 	else
 		hb = CreateBitmap(width, height, 1, 16, noGAPI_video_buffer);
 	old = (HBITMAP)SelectObject(noGAPI_compat, hb);
-	if (currentScreenMode)
+	if (currentScreenMode || wide_screen)
 		BitBlt(hdc, y , 320 - (x + width), height, width, noGAPI_compat, 0, 0, SRCCOPY);
 	else
 		BitBlt(hdc, x, y, width, height, noGAPI_compat, 0, 0, SRCCOPY);
@@ -2217,11 +2229,12 @@ void Translate(int* px, int* py)
 {
 	int x, y;
 	
+	if (wide_screen)
+		return;
+
 	switch(currentScreenMode)
 	{
 	case 0: /* portrait */
-		if (!_gfx_mode_switch)
-			break;
 		*px = *px*4/3;
 		break;
 	case 1: /* landscape left */
