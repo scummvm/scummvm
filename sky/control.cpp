@@ -788,14 +788,21 @@ uint16 SkyControl::shiftUp(uint8 speed) {
 
 bool SkyControl::autoSaveExists(void) {
 
-	File test;
+	bool test = false;
+	SaveFile *f;
 	char fName[20];
 	if (SkyState::isCDVersion())
 		strcpy(fName, "SKY-VM-CD.ASD");
 	else
         sprintf(fName, "SKY-VM%03d.ASD", SkyState::_systemVars.gameVersion);
-	test.open(fName, _savePath);
-	return test.isOpen();
+	SaveFileManager *mgr = _system->get_savefile_manager();
+	f = mgr->open_savefile(fName, _savePath, false);
+	if (f != NULL) {
+	  test = true;
+	  delete f;
+	}
+	delete mgr;
+	return test;
 }
 
 uint16 SkyControl::saveRestorePanel(bool allowSave) {
@@ -1011,11 +1018,12 @@ void SkyControl::loadDescriptions(uint8 *destBuf) {
 
 	memset(destBuf, 0, MAX_SAVE_GAMES * MAX_TEXT_LEN);
 
-	File inf;
-	inf.open("SKY-VM.SAV",_savePath);
-	if (inf.isOpen()) {
-		uint8 *tmpBuf = (uint8 *)malloc(inf.size());
-		inf.read(tmpBuf, inf.size());
+	SaveFileManager *mgr = _system->get_savefile_manager();
+	SaveFile *inf;
+	inf = mgr->open_savefile("SKY-VM.SAV",_savePath,false);
+	if (inf != NULL) {
+		uint8 *tmpBuf = (uint8 *)malloc(MAX_SAVE_GAMES * MAX_TEXT_LEN);
+		inf->read(tmpBuf, MAX_SAVE_GAMES * MAX_TEXT_LEN);
 		uint8 *destPos = destBuf;
 		uint8 *inPos = tmpBuf;
 		for (uint16 cnt = 0; cnt < MAX_SAVE_GAMES; cnt++) {
@@ -1027,7 +1035,7 @@ void SkyControl::loadDescriptions(uint8 *destBuf) {
 			inPos += nameCnt + 1;
 		}
 		free(tmpBuf);
-		inf.close();
+		delete inf;
 	} else {
 		uint8 *destPos = destBuf;
 		for (uint16 cnt = 0; cnt < MAX_SAVE_GAMES; cnt++) {
@@ -1035,6 +1043,7 @@ void SkyControl::loadDescriptions(uint8 *destBuf) {
 			destPos += MAX_TEXT_LEN;
 		}
 	}
+	delete mgr;
 }
 
 bool SkyControl::loadSaveAllowed(void) {
@@ -1069,10 +1078,14 @@ void SkyControl::saveDescriptions(uint8 *srcBuf) {
 		tmpPos++;
 		srcPos += MAX_TEXT_LEN;
 	}
-	File outf;
-	outf.open("SKY-VM.SAV", _savePath, File::kFileWriteMode);
-	outf.write(tmpBuf, tmpPos - tmpBuf);
-	outf.close();
+	SaveFile *outf;
+	SaveFileManager *mgr = _system->get_savefile_manager();
+	outf = mgr->open_savefile("SKY-VM.SAV", _savePath, true);
+	if (outf != NULL) {
+		outf->write(tmpBuf, tmpPos - tmpBuf);
+		delete outf;
+	}
+	delete mgr;
 	free(tmpBuf);	
 }
 
@@ -1082,17 +1095,21 @@ void SkyControl::doAutoSave(void) {
 		strcpy(fName, "SKY-VM-CD.ASD");
 	else
         sprintf(fName, "SKY-VM%03d.ASD", SkyState::_systemVars.gameVersion);
-	File outf;
-	if (!outf.open(fName, _savePath, File::kFileWriteMode)) {
+	SaveFile *outf;
+	SaveFileManager *mgr = _system->get_savefile_manager();
+	outf = mgr->open_savefile(fName, _savePath, true);
+	if (outf == NULL) {
 		warning("Can't create file %s for autosaving", fName);
+		delete mgr;
 		return;
 	}
 	uint8 *saveData = (uint8 *)malloc(0x20000);
 	uint32 fSize = prepareSaveData(saveData);
 
-	if (outf.write(saveData, fSize) != fSize)
+	if (outf->write(saveData, fSize) != fSize)
 		warning("Can't write file %s for autosaving. Disk full?", fName);
-	outf.close();
+	delete outf;
+	delete mgr;
 	free(saveData);
 }
 
@@ -1100,19 +1117,25 @@ uint16 SkyControl::saveGameToFile(void) {
 
 	char fName[20];
 	sprintf(fName,"SKY-VM.%03d", _selectedGame);
-	File outf;
-	if (!outf.open(fName, _savePath, File::kFileWriteMode)) {
+	SaveFileManager *mgr = _system->get_savefile_manager();
+	SaveFile *outf;
+	outf = mgr->open_savefile(fName, _savePath, true);
+	if (outf == NULL) {
+		delete mgr;
 		return NO_DISK_SPACE;
 	}
 
 	uint8 *saveData = (uint8 *)malloc(0x20000);
 	uint32 fSize = prepareSaveData(saveData);
 
-	if (outf.write(saveData, fSize) != fSize) {
+	if (outf->write(saveData, fSize) != fSize) {
 		free(saveData);
+		delete outf;
+		delete mgr;
 		return NO_DISK_SPACE;
 	}
-	outf.close();
+	delete outf;
+	delete mgr;
 	free(saveData);
 	return GAME_SAVED;
 }
@@ -1501,30 +1524,31 @@ uint16 SkyControl::restoreGameFromFile(bool autoSave) {
 	} else
 		sprintf(fName,"SKY-VM.%03d", _selectedGame);
 
-	File inf;
-	if (!inf.open(fName, _savePath)) {
+	SaveFileManager *mgr = _system->get_savefile_manager();
+	SaveFile *inf;
+	inf = mgr->open_savefile(fName, _savePath, false);
+	if (inf == NULL) {
+		delete mgr;
 		return RESTORE_FAILED;
 	}
 
-	uint32 fSize = inf.size();
-	uint8 *saveData = (uint8 *)malloc(fSize);
-	uint32 infSize = inf.readUint32LE();
-	inf.seek(0, SEEK_SET);
+	uint32 infSize = inf->readUint32LE();
+	if (infSize < 4) infSize = 4;
+	uint8 *saveData = (uint8 *)malloc(infSize);
+	*(uint32 *)saveData = TO_LE_32(infSize);
 
-	if (fSize != infSize) {
-		warning("File size doesn't match expected data size!");
-		free(saveData);
-		return RESTORE_FAILED;
-	}
-	if (inf.read(saveData, fSize) != fSize) {
+	if (inf->read(saveData+4, infSize-4) != infSize-4) {
 		warning("Can't read from file!");
 		free(saveData);
+		delete inf;
+		delete mgr;
 		return RESTORE_FAILED;
 	}
 
 	uint16 res = parseSaveData(saveData);
 	SkyState::_systemVars.pastIntro = true;
-	inf.close();
+	delete inf;
+	delete mgr;
 	free(saveData);
 	return res;
 }

@@ -2541,23 +2541,31 @@ void SimonEngine::o_load_game() {
 }
 
 int SimonEngine::count_savegames() {
-	File f;
+	SaveFile *f;
 	uint i = 1;
+	bool marks[256];
+
+	SaveFileManager *mgr = _system->get_savefile_manager();
+	char *prefix = gen_savename(999);
+	prefix[strlen(prefix)-3] = '\0';
+	mgr->list_savefiles(prefix, getSavePath(), marks, 256);
 
 	while (i < 256) {
-		f.open(gen_savename(i), getSavePath());
-		if (f.isOpen() == false)
+		if (marks[i] &&
+		    (f = mgr->open_savefile(gen_savename(i), getSavePath(),
+					    false))) {
+			i++;
+			delete f;
+		} else
 			break;
-
-		f.close();
-		i++;
 	}
+	delete mgr;
 	return i;
 }
 
 int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 	int slot, last_slot;
-	File in;
+	SaveFile *in;
 
 	showMessageFormat("\xC");
 
@@ -2565,13 +2573,14 @@ int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 
 	slot = curpos;
 
+	SaveFileManager *mgr = _system->get_savefile_manager();
+
 	while (curpos + 6 > slot) {
-		in.open(gen_savename(slot), getSavePath());
-		if (in.isOpen() == false)
+		if(!(in = mgr->open_savefile(gen_savename(slot), getSavePath(), false)))
 			break;
 
-		in.read(dst, 18);
-		in.close();
+		in->read(dst, 18);
+		delete in;
 		last_slot = slot;
 		if (slot < 10)
 			showMessageFormat(" ");
@@ -2591,13 +2600,14 @@ int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 		}
 	} else {
 		if (curpos + 6 == slot) {
-			in.open(gen_savename(slot), getSavePath());
-			if (in.isOpen() == true) {
+			if((in = mgr->open_savefile(gen_savename(slot), getSavePath(), false))) {
 				slot++;
-				in.close();
+				delete in;
 			}
 		}
 	}
+
+	delete mgr;
 
 	return slot - curpos;
 }
@@ -4579,7 +4589,7 @@ void SimonEngine::delay(uint amount) {
 }
 
 bool SimonEngine::save_game(uint slot, char *caption) {
-	File f;
+	SaveFile *f;
 	uint item_index, num_item, i, j;
 	TimeEvent *te;
 
@@ -4589,51 +4599,54 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 	errno = 0;
 #endif
 
-	f.open(gen_savename(slot), getSavePath(), 2);
-	if (f.isOpen() == false) {
+	SaveFileManager *mgr = _system->get_savefile_manager();
+
+	f = mgr->open_savefile(gen_savename(slot), getSavePath(), true);
+	if (f == NULL) {
+		delete mgr;
 		_lock_word &= ~0x100;
 		return false;
 	}
 
-	f.write(caption, 0x12);
+	f->write(caption, 0x12);
 
-	f.writeUint32BE(_itemarray_inited - 1);
-	f.writeUint32BE(0xFFFFFFFF);
-	f.writeUint32BE(0);
-	f.writeUint32BE(0);
+	f->writeUint32BE(_itemarray_inited - 1);
+	f->writeUint32BE(0xFFFFFFFF);
+	f->writeUint32BE(0);
+	f->writeUint32BE(0);
 
 	i = 0;
 	for (te = _first_time_struct; te; te = te->next)
 		i++;
-	f.writeUint32BE(i);
+	f->writeUint32BE(i);
 
 	for (te = _first_time_struct; te; te = te->next) {
-		f.writeUint32BE(te->time + _base_time);
-		f.writeUint16BE(te->subroutine_id);
+		f->writeUint32BE(te->time + _base_time);
+		f->writeUint16BE(te->subroutine_id);
 	}
 
 	item_index = 1;
 	for (num_item = _itemarray_inited - 1; num_item; num_item--) {
 		Item *item = _itemarray_ptr[item_index++];
 
-		f.writeUint16BE(item->parent);
-		f.writeUint16BE(item->sibling);
-		f.writeUint16BE(item->unk3);
-		f.writeUint16BE(item->unk4);
+		f->writeUint16BE(item->parent);
+		f->writeUint16BE(item->sibling);
+		f->writeUint16BE(item->unk3);
+		f->writeUint16BE(item->unk4);
 
 		Child1 *child1 = (Child1 *)findChildOfType(item, 1);
 		if (child1) {
-			f.writeUint16BE(child1->fr2);
+			f->writeUint16BE(child1->fr2);
 		}
 
 		Child2 *child2 = (Child2 *)findChildOfType(item, 2);
 		if (child2) {
-			f.writeUint32BE(child2->avail_props);
+			f->writeUint32BE(child2->avail_props);
 			i = child2->avail_props & 1;
 
 			for (j = 1; j < 16; j++) {
 				if ((1 << j) & child2->avail_props) {
-					f.writeUint16BE(child2->array[i++]);
+					f->writeUint16BE(child2->array[i++]);
 				}
 			}
 		}
@@ -4641,26 +4654,27 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 		Child9 *child9 = (Child9 *) findChildOfType(item, 9);
 		if (child9) {
 			for (i = 0; i != 4; i++) {
-				f.writeUint16BE(child9->array[i]);
+				f->writeUint16BE(child9->array[i]);
 			}
 		}
 	}
 
 	// write the 255 variables
 	for (i = 0; i != 255; i++) {
-		f.writeUint16BE(readVariable(i));
+		f->writeUint16BE(readVariable(i));
 	}
 
 	// write the items in array 6
 	for (i = 0; i != 10; i++) {
-		f.writeUint16BE(itemPtrToID(_item_array_6[i]));
+		f->writeUint16BE(itemPtrToID(_item_array_6[i]));
 	}
 
 	// Write the bits in array 1 & 2
 	for (i = 0; i != 32; i++)
-		f.writeUint16BE(_bit_array[i]);
+		f->writeUint16BE(_bit_array[i]);
 
-	f.close();
+	delete f;
+	delete mgr;
 
 	_lock_word &= ~0x100;
 
@@ -4680,7 +4694,7 @@ char *SimonEngine::gen_savename(int slot) {
 
 bool SimonEngine::load_game(uint slot) {
 	char ident[18];
-	File f;
+	SaveFile *f;
 	uint num, item_index, i, j;
 
 	_lock_word |= 0x100;
@@ -4689,32 +4703,36 @@ bool SimonEngine::load_game(uint slot) {
 	errno = 0;
 #endif
 
-	f.open(gen_savename(slot), getSavePath(), 1);
-	if (f.isOpen() == false) {
+	SaveFileManager *mgr = _system->get_savefile_manager();
+
+	f = mgr->open_savefile(gen_savename(slot), getSavePath(), false);
+	if (f == NULL) {
+		delete mgr;
 		_lock_word &= ~0x100;
 		return false;
 	}
 
-	f.read(ident, 18);
+	f->read(ident, 18);
 
-	num = f.readUint32BE();
+	num = f->readUint32BE();
 
-	if (f.readUint32BE() != 0xFFFFFFFF || num != _itemarray_inited - 1) {
-		f.close();
+	if (f->readUint32BE() != 0xFFFFFFFF || num != _itemarray_inited - 1) {
+		delete f;
+		delete mgr;
 		_lock_word &= ~0x100;
 		return false;
 	}
 
-	f.readUint32BE();
-	f.readUint32BE();
+	f->readUint32BE();
+	f->readUint32BE();
 	_no_parent_notify = true;
 
 
 	// add all timers
 	killAllTimers();
-	for (num = f.readUint32BE(); num; num--) {
-		uint32 timeout = f.readUint32BE();
-		uint16 func_to_call = f.readUint16BE();
+	for (num = f->readUint32BE(); num; num--) {
+		uint32 timeout = f->readUint32BE();
+		uint16 func_to_call = f->readUint16BE();
 		addTimeEvent(timeout, func_to_call);
 	}
 
@@ -4722,8 +4740,8 @@ bool SimonEngine::load_game(uint slot) {
 	for (num = _itemarray_inited - 1; num; num--) {
 		Item *item = _itemarray_ptr[item_index++], *parent_item;
 
-		uint parent = f.readUint16BE();
-		uint sibling = f.readUint16BE();
+		uint parent = f->readUint16BE();
+		uint sibling = f->readUint16BE();
 
 		parent_item = derefItem(parent);
 
@@ -4734,22 +4752,22 @@ bool SimonEngine::load_game(uint slot) {
 			item->sibling = sibling;
 		}
 
-		item->unk3 = f.readUint16BE();
-		item->unk4 = f.readUint16BE();
+		item->unk3 = f->readUint16BE();
+		item->unk4 = f->readUint16BE();
 
 		Child1 *child1 = (Child1 *)findChildOfType(item, 1);
 		if (child1 != NULL) {
-			child1->fr2 = f.readUint16BE();
+			child1->fr2 = f->readUint16BE();
 		}
 
 		Child2 *child2 = (Child2 *)findChildOfType(item, 2);
 		if (child2 != NULL) {
-			child2->avail_props = f.readUint32BE();
+			child2->avail_props = f->readUint32BE();
 			i = child2->avail_props & 1;
 
 			for (j = 1; j < 16; j++) {
 				if ((1 << j) & child2->avail_props) {
-					child2->array[i++] = f.readUint16BE();
+					child2->array[i++] = f->readUint16BE();
 				}
 			}
 		}
@@ -4757,7 +4775,7 @@ bool SimonEngine::load_game(uint slot) {
 		Child9 *child9 = (Child9 *) findChildOfType(item, 9);
 		if (child9) {
 			for (i = 0; i != 4; i++) {
-				child9->array[i] = f.readUint16BE();
+				child9->array[i] = f->readUint16BE();
 			}
 		}
 	}
@@ -4765,19 +4783,20 @@ bool SimonEngine::load_game(uint slot) {
 
 	// read the 255 variables
 	for (i = 0; i != 255; i++) {
-		writeVariable(i, f.readUint16BE());
+		writeVariable(i, f->readUint16BE());
 	}
 
 	// write the items in array 6
 	for (i = 0; i != 10; i++) {
-		_item_array_6[i] = derefItem(f.readUint16BE());
+		_item_array_6[i] = derefItem(f->readUint16BE());
 	}
 
 	// Write the bits in array 1 & 2
 	for (i = 0; i != 32; i++)
-		_bit_array[i] = f.readUint16BE();
+		_bit_array[i] = f->readUint16BE();
 
-	f.close();
+	delete f;
+	delete mgr;
 
 	_no_parent_notify = false;
 

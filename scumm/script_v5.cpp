@@ -1757,7 +1757,7 @@ void Scumm_v5::o5_roomOps() {
 		break;
 
 	case 13:{										/* save-string */
-			File file;
+			SaveFile *file;
 			char filename[256], *s;
 
 			a = getVarOrDirectByte(0x80);
@@ -1765,16 +1765,19 @@ void Scumm_v5::o5_roomOps() {
 			s = filename;
 			while ((*s++ = fetchScriptByte()));
 
-			file.open(filename, getSavePath(), File::kFileWriteMode);
-			if (file.isOpen()) {
+			SaveFileManager *mgr = _system->get_savefile_manager();
+			file = mgr->open_savefile(filename, getSavePath(), true);
+			if (file != NULL) {
 				byte *ptr;
 				ptr = getResourceAddress(rtString, a);
-				file.write(ptr, resStrLen(ptr) + 1);
+				file->write(ptr, resStrLen(ptr) + 1);
+				delete file;
 			}
+			delete mgr;
 			break;
 		}
 	case 14:{										/* load-string */
-			File file;
+			SaveFile *file;
 			char filename[256], *s;
 
 			a = getVarOrDirectByte(0x80);
@@ -1782,12 +1785,18 @@ void Scumm_v5::o5_roomOps() {
 			s = filename;
 			while ((*s++ = fetchScriptByte()));
 
-			file.open(filename, getSavePath(), File::kFileReadMode);
-			if (file.isOpen()) {
+			SaveFileManager *mgr = _system->get_savefile_manager();
+			file = mgr->open_savefile(filename, getSavePath(), false);
+			if (file != NULL) {
 				byte *ptr;
-				int len = file.size();
-				ptr = (byte *)calloc(len + 1, 1);	// Create a zero terminated buffer
-				file.read(ptr, len);	// Read in the data
+				int len = 256, cnt = 0;
+				ptr = (byte *)malloc(len);
+				while (ptr) {
+				  int r = file->read(ptr+cnt, len-cnt);
+				  if ((cnt += r) < len) break;
+				  ptr = (byte *)realloc(ptr, len<<=1);
+				}
+				ptr[cnt] = '\0';
 				loadPtrToResource(rtString, a, ptr);
 				free(ptr);
 			}
