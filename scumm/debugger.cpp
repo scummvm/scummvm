@@ -303,6 +303,7 @@ bool ScummDebugger::Cmd_SaveGame(int argc, const char **argv) {
 bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 	Actor *a;
 	int actnum;
+	int value;
 
 	if (argc < 3) {
 		Debug_Printf("Syntax: actor <actornum> <command> <parameter>\n");
@@ -321,8 +322,13 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 			a->ignoreBoxes = atoi(argv[3]);
 			Debug_Printf("Actor[%d].ignoreBoxes = %d\n", actnum, a->ignoreBoxes);
 	} else if (!strcmp(argv[2], "costume")) {
-			a->setActorCostume( atoi(argv[3]) );
-			Debug_Printf("Actor[%d].costume = %d\n", actnum, a->costume);
+			value = atoi(argv[3]);
+			if (value >= _s->res.num[rtCostume])
+					Debug_Printf("Costume not changed as %d exceeds max of %d\n", value, _s->res.num[rtCostume]);
+			else {
+				a->setActorCostume( value );
+				Debug_Printf("Actor[%d].costume = %d\n", actnum, a->costume);
+			}
 	} else {
 			Debug_Printf("Unknown actor command '%s'\n", argv[2]);
 	}
