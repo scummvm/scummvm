@@ -38,6 +38,7 @@ At the moment the following games have been reported to work, and should
 be playable to the end:
 
         Indiana Jones & the Last Crusade (256)     [Game: indy3]
+        Loom (16 color floppy version)             [Game: loom]
         Loom (256 color CD version)                [Game: loomcd]
         Zak McKracken (256 color FM Towns version) [Game: zak256]
         Monkey Island 1 (EGA version)              [Game: monkeyega]
@@ -73,7 +74,6 @@ The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
         Maniac Mansion
         Zak McKracken (16 color floppy version)
-        Loom (16 color floppy version)
         Putt-Putt Joins the Parade
         Most other Humongous Entertainment titles
 
