@@ -151,11 +151,13 @@
 #include <stdio.h>
 //#include <mmsystem.h>
 
-//#include "ddraw.h"
 
-#include "stdafx.h"
-#include "driver96.h"
+#include "common/util.h"
+#include "common/engine.h"
 #include "d_draw.h"
+#include "driver96.h"
+#include "stdafx.h"
+#include "../sword2.h"
 
 #define PALTABLESIZE 64*64*64
 
@@ -350,7 +352,7 @@ int32 SetPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, uint8 fa
 
 int32 DimPalette(void)
 {
-	warning("stub DimpPalette");
+	warning("stub DimPalette");
 /*
 	uint8 *p;
 	uint32 i;
@@ -407,10 +409,50 @@ uint8 GetFadeStatus(void)
 }
 
 
-void FadeServer(void)
+void FadeServer(void *)
 
 {
-	warning("stub FadeServer");
+	int32 currentTime;
+	int16 fadeMultiplier;
+	int16 i;
+
+	StackLock lock(g_sword2->_paletteMutex);
+	
+	switch (fadeStatus) {
+		case RDFADE_UP:
+			currentTime = SVM_timeGetTime();
+			if (currentTime >= fadeStartTime + fadeTotalTime) {
+				fadeStatus = RDFADE_NONE;
+				g_sword2->_syst->set_palette((const byte *) palCopy, 0, 256);
+			} else {
+				fadeMultiplier = (int16) (((int32) (currentTime - fadeStartTime) * 256) / fadeTotalTime);
+				for (i=0; i<256; i++) {
+					fadePalette[i][0] = (palCopy[i][0] * fadeMultiplier) >> 8;
+					fadePalette[i][1] = (palCopy[i][1] * fadeMultiplier) >> 8;
+					fadePalette[i][2] = (palCopy[i][2] * fadeMultiplier) >> 8;
+				}
+				g_sword2->_syst->set_palette((const byte *) fadePalette, 0, 256);
+			}
+			break;
+
+		case RDFADE_DOWN:
+			currentTime = SVM_timeGetTime();
+			if (currentTime >= fadeStartTime + fadeTotalTime) {
+				memset(fadePalette, 0, sizeof(fadePalette));
+				fadeStatus = RDFADE_BLACK;
+			} else {
+				fadeMultiplier = (int16) (((int32) (fadeTotalTime - (currentTime - fadeStartTime)) * 256) / fadeTotalTime);
+				for (i=0; i<256; i++) {
+					fadePalette[i][0] = (palCopy[i][0] * fadeMultiplier) >> 8;
+					fadePalette[i][1] = (palCopy[i][1] * fadeMultiplier) >> 8;
+					fadePalette[i][2] = (palCopy[i][2] * fadeMultiplier) >> 8;
+				}
+			}
+			g_sword2->_syst->set_palette((const byte *) fadePalette, 0, 256);
+			break;
+		}
+
+
 /*
 	int32 currentTime;
 	int16 fadeMultiplier;

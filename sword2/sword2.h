@@ -62,6 +62,7 @@ class Sword2State : public Engine {
 		uint32 _features;
 		byte _gameId;
 		Sword2Sound *_sound;
+		OSystem::MutexRef _paletteMutex; // put in a gfx class?
 	private:
 		bool _quit;
 };

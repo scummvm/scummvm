@@ -24,7 +24,9 @@
 
 #include "stdafx.h"
 #include "driver/driver96.h"
+#include "driver/palette.h"
 #include "common/gameDetector.h"
+#include "common/timer.h"
 #include "build_display.h"
 #include "console.h"
 #include "controls.h"
@@ -268,6 +270,11 @@ void Sword2State::go()
 		return;
 	}
 
+	_paletteMutex = _syst->create_mutex();
+	_timer->installProcedure(&FadeServer, 40000 / 25);
+
+
+	
 	Zdebug("CALLING: InitialiseDisplay");
 	// rv = InitialiseDisplay(640, 480, 8, RD_FULLSCREEN);
 	_syst->init_size(640, 480);
