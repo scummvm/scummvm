@@ -625,11 +625,12 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 		bestDist = (uint) 0xFFFF;
 		bestBox = kInvalidBox;
 
-		// We iterate (backwards) over all boxes, searching the one closes
+		// We iterate (backwards) over all boxes, searching the one closest
 		// to the desired coordinates.
 		for (box = numBoxes; box >= firstValidBox; box--) {
 			flags = _vm->getBoxFlags(box);
 
+			// Skip over invisible boxes
 			if (flags & kBoxInvisible && !(flags & kBoxPlayerOnly && !isInClass(kObjectClassPlayer)))
 				continue;
 			

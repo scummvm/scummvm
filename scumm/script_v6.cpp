@@ -1686,21 +1686,22 @@ void Scumm_v6::o6_actorOps() {
 		break;
 	case 95:
 		a->ignoreBoxes = 1;
-		if (_features & GF_AFTER_V7)	// yazoo: I don't know if it's supposed to be 100 in other games too...
+		if (_features & GF_AFTER_V7)
 			a->forceClip = 100;
 		else
 			a->forceClip = 0;
-	FixRooms:;
 		if (a->isInCurrentRoom())
 			a->putActor(a->x, a->y, a->room);
 		break;
 	case 96:
 		a->ignoreBoxes = 0;
-		if (_features & GF_AFTER_V7)	// yazoo: I don't know if it's supposed to be 100 in other games too...
+		if (_features & GF_AFTER_V7)
 			a->forceClip = 100;
 		else
 			a->forceClip = 0;
-		goto FixRooms;
+		if (a->isInCurrentRoom())
+			a->putActor(a->x, a->y, a->room);
+		break;
 	case 97:
 		a->animSpeed = pop();
 		a->animProgress = 0;

@@ -401,8 +401,10 @@ void Scumm_v5::o5_actorSet() {
 	Actor *a;
 	int i, j;
 
-	if (act == 0)
+	if (act == 0) {
 		act = 1;
+		warning("o5_actorSet: act = 0, setting to 1 as a workaround");
+	}
 
 	a = derefActorSafe(act, "actorSet");
 
@@ -536,17 +538,16 @@ void Scumm_v5::o5_setClass() {
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		newClass = getVarOrDirectWord(0x80);
 		if (newClass == 0) {
+			// Class '0' means: clean all class data
 			_classData[obj] = 0;
 			if ((_features & GF_SMALL_HEADER) && obj <= _numActors) {
 				Actor *a;
 				a = derefActorSafe(obj, "setClass");
-				a->ignoreBoxes = 0;
+				a->ignoreBoxes = false;
 				a->forceClip = 0;
 			}
-			continue;
-		}
-
-		putClass(obj, newClass, (newClass & 0x80) ? true : false);
+		} else
+			putClass(obj, newClass, (newClass & 0x80) ? true : false);
 	}
 }
 
