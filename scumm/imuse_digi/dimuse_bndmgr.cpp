@@ -104,7 +104,7 @@ int BundleDirCache::matchFile(const char *filename, const char *directory) {
 			name[z] = '\0';
 			strcpy(_budleDirCache[freeSlot].bundleTable[i].filename, name);
 			_budleDirCache[freeSlot].bundleTable[i].offset = file.readUint32BE();
-			file.seek(4);
+			file.seek(4, SEEK_CUR);
 		}
 		return freeSlot;
 	} else {
@@ -185,7 +185,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 		_file.seek(_bundleTable[index].offset, SEEK_SET);
 		tag = _file.readUint32BE();
 		_numCompItems = num = _file.readUint32BE();
-		_file.seek(8);
+		_file.seek(8, SEEK_CUR);
 
 		if (tag != MKID_BE('COMP')) {
 			warning("BundleMgr::decompressSampleByIndex() Compressed sound %d invalid (%s)", index, tag2str(tag));
@@ -198,7 +198,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 			_compTable[i].offset = _file.readUint32BE();
 			_compTable[i].size = _file.readUint32BE();
 			_compTable[i].codec = _file.readUint32BE();
-			_file.seek(4);
+			_file.seek(4, SEEK_CUR);
 			if (_compTable[i].size > maxSize)
 				maxSize = _compTable[i].size;
 		}
