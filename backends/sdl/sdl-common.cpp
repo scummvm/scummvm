@@ -660,8 +660,8 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				event->event_code = EVENT_WHEELDOWN;
 			else
 				break;
-			km.x = event->mouse.x = ev.motion.x;
-			km.y = event->mouse.y = ev.motion.y;
+			km.x = event->mouse.x = ev.button.x;
+			km.y = event->mouse.y = ev.button.y;
 			event->mouse.x /= _scaleFactor;
 			event->mouse.y /= _scaleFactor;
 
