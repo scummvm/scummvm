@@ -33,7 +33,7 @@ private:
 	bool _ioFailed;
 	byte _encbyte;
 
-FILE *fopenNoCase(const char *filename, const char *directory, const char *mode);
+	FILE *fopenNoCase(const char *filename, const char *directory, const char *mode);
 
 public:
 	enum {
