@@ -96,11 +96,14 @@ public:
 	/** stop all currently playing sounds */
 	void stopAll();
 
-	/** stop playing a specific sound */
-	void stop(int index);
+	/** stop playing the given channel */
+	void stop(int channel);
 
-	/** stop playing a specific sound */
+	/** stop playing the sound with given ID  */
 	void stopID(int id);
+
+	/** stop playing the channel for the given handle */
+	void stopHandle(PlayingSoundHandle handle);
 
 	/** Start a new stream. */
 	int newStream(void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size);
@@ -114,7 +117,7 @@ public:
 	/** Check whether any SFX channel is active.*/
 	bool hasActiveSFXChannel();
 	
-	/** Check whether the specified channel si active. */
+	/** Check whether the specified channel is active. */
 	bool isActiveChannel(int index);
 
 	/** bind to the OSystem object => mixer will be

@@ -241,7 +241,7 @@ int SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 }
 
 int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id) {
-	StackLock lock(_mutex);	
+	StackLock lock(_mutex);
 
 	// Prevent duplicate sounds
 	if (id != -1) {
@@ -254,31 +254,31 @@ int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, ui
 }
 
 int SoundMixer::newStream(void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size) {
-	StackLock lock(_mutex);	
+	StackLock lock(_mutex);
 	return insertChannel(NULL, new ChannelStream(this, 0, sound, size, rate, flags, buffer_size));
 }
 
 #ifdef USE_MAD
 int SoundMixer::playMP3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags) {
-	StackLock lock(_mutex);	
+	StackLock lock(_mutex);
 	return insertChannel(handle, new ChannelMP3(this, handle, _syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0), sound, size, flags));
 }
 int SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration) {
-	StackLock lock(_mutex);	
+	StackLock lock(_mutex);
 	return insertChannel(handle, new ChannelMP3CDMusic(this, handle, _syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0), file, duration));
 }
 #endif
 
 #ifdef USE_VORBIS
 int SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track) {
-	StackLock lock(_mutex);	
+	StackLock lock(_mutex);
 	return insertChannel(handle, new ChannelVorbis(this, handle, ov_file, duration, is_cd_track));
 }
 #endif
 
 void SoundMixer::mix(int16 *buf, uint len) {
 	StackLock lock(_mutex);
-	
+
 	if (_premixProc && !_paused) {
 		int i;
 		_premixProc(_premixParam, buf, len);
@@ -293,7 +293,7 @@ void SoundMixer::mix(int16 *buf, uint len) {
 	if (!_paused) {
 		// now mix all channels
 		for (int i = 0; i != NUM_CHANNELS; i++)
-			if (_channels[i]) 
+			if (_channels[i])
 				_channels[i]->mix(buf, len);
 	}
 }
@@ -315,7 +315,8 @@ bool SoundMixer::bindToSystem(OSystem *syst) {
 }
 
 void SoundMixer::stopAll() {
-	StackLock lock(_mutex);	
+	StackLock lock(_mutex);
+printf("->SoundMixer::stopAll()\n");
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i])
 			_channels[i]->destroy();
@@ -327,13 +328,14 @@ void SoundMixer::stop(int index) {
 		return;
 	}
 
-	StackLock lock(_mutex);	
+	StackLock lock(_mutex);
+printf("->SoundMixer::stop(%d)\n", index);
 	if (_channels[index])
 		_channels[index]->destroy();
 }
 
 void SoundMixer::stopID(int id) {
-	StackLock lock(_mutex);	
+	StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] != NULL && _channels[i]->_id == id) {
 			_channels[i]->destroy();
@@ -341,6 +343,25 @@ void SoundMixer::stopID(int id) {
 		}
 	}
 }
+
+void SoundMixer::stopHandle(PlayingSoundHandle handle) {
+	StackLock lock(_mutex);
+	
+	// Simply ignore stop requests for handles of sounds that already terminated
+	if (handle == 0)
+		return;
+
+	int index = handle - 1;
+	if ((index < 0) || (index >= NUM_CHANNELS)) {
+		warning("soundMixer::stopHandle has invalid index %d", index);
+		return;
+	}
+
+printf("->SoundMixer::stopHandle(%d)\n", index);
+	if (_channels[index])
+		_channels[index]->destroy();
+}
+
 
 void SoundMixer::pause(bool paused) {
 	_paused = paused;
@@ -351,7 +372,7 @@ bool SoundMixer::hasActiveSFXChannel() {
 	// (and maybe also voice) here to work properly in iMuseDigital
 	// games. In the past that was achieve using the _beginSlots hack.
 	// Since we don't have that anymore, it's not that simple anymore.
-	StackLock lock(_mutex);	
+	StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i] && !_channels[i]->isMusicChannel())
 			return true;
@@ -359,14 +380,14 @@ bool SoundMixer::hasActiveSFXChannel() {
 }
 
 bool SoundMixer::isActiveChannel(int index) {
-	StackLock lock(_mutex);	
+	StackLock lock(_mutex);
 	if (_channels[index])
 		return _channels[index]->isActive();
 	return false;
 }
 
 void SoundMixer::setupPremix(void *param, PremixProc *proc) {
-	StackLock lock(_mutex);	
+	StackLock lock(_mutex);
 	_premixParam = param;
 	_premixProc = proc;
 }
@@ -407,13 +428,13 @@ class CubicInterpolator {
 protected:
 	int x0, x1, x2, x3;
 	int a, b, c, d;
-	
+
 public:
 	CubicInterpolator(int a0, int b0, int c0) : x0(2 * a0 - b0), x1(a0), x2(b0), x3(c0) {
 		// We use a simple linear interpolation for x0
 		updateCoefficients();
 	}
-	
+
 	inline void feedData() {
 		x0 = x1;
 		x1 = x2;
@@ -429,7 +450,7 @@ public:
 		x3 = xNew;
 		updateCoefficients();
 	}
-	
+
 	/* t must be a 16.16 fixed point number between 0 and 1 */
 	inline int interpolate(uint32 fpPos) {
 		int result = 0;
@@ -438,10 +459,10 @@ public:
 		result = (result * t + c) >> 8;
 		result = (result * t + d) >> 8;
 		result = (result / 3 + 1) >> 1;
-		
+
 		return result;
 	}
-		
+
 protected:
 	inline void updateCoefficients() {
 		a = ((-x0 * 2) + (x1 * 5) - (x2 * 4) + x3);
@@ -470,19 +491,19 @@ static void mix_signed_mono_8(int16 *data, uint &len, byte *&s, uint32 &fp_pos,
 	do {
 		do {
 			result = interp.interpolate(fp_pos);
-			
+
 			*data = clamped_add_16(*data, result);
 			data++;
 			*data = clamped_add_16(*data, result);
 			data++;
-	
+
 			fp_pos += fp_speed;
 			inc = fp_pos >> 16;
 			s += inc;
 			len--;
 			fp_pos &= 0x0000FFFF;
 		} while (!inc && len && (s < s_end));
-		
+
 		if (s + 2 < s_end)
 			interp.feedData(vol_tab[*(s + 2)]);
 		else
@@ -499,12 +520,12 @@ static void mix_unsigned_mono_8(int16 *data, uint &len, byte *&s, uint32 &fp_pos
 	do {
 		do {
 			result = interp.interpolate(fp_pos);
-	
+
 			*data = clamped_add_16(*data, result);
 			data++;
 			*data = clamped_add_16(*data, result);
 			data++;
-	
+
 			fp_pos += fp_speed;
 			inc = fp_pos >> 16;
 			s += inc;
@@ -614,15 +635,15 @@ typedef void MixProc(int16 *data, uint &len, byte *&s,
                       uint32 &fp_pos, int fp_speed, const int16 *vol_tab,
                       byte *s_end, bool reverse_stereo);
 
-static MixProc *mixer_helper_table[8] = { 
-	mix_signed_mono_8, mix_unsigned_mono_8, 
+static MixProc *mixer_helper_table[8] = {
+	mix_signed_mono_8, mix_unsigned_mono_8,
 	mix_signed_stereo_8, mix_unsigned_stereo_8,
-	mix_signed_mono_16, mix_unsigned_mono_16, 
+	mix_signed_mono_16, mix_unsigned_mono_16,
 	mix_signed_stereo_16, mix_unsigned_stereo_16
 };
 
 static int16 mixer_element_size[] = {
-	1, 1, 
+	1, 1,
 	2, 2,
 	2, 2,
 	4, 4
@@ -727,7 +748,7 @@ void ChannelStream::append(void *data, uint32 len) {
 	if (_endOfData + len > _endOfBuffer) {
 		/* Wrap-around case */
 		uint32 size_to_end_of_buffer = _endOfBuffer - _endOfData;
-		uint32 new_size = len - size_to_end_of_buffer; 
+		uint32 new_size = len - size_to_end_of_buffer;
 		if ((_endOfData < _pos) || (_ptr + new_size >= _pos)) {
 			debug(2, "Mixer full... Trying to not break too much (A)");
 			return;
@@ -763,7 +784,7 @@ void ChannelStream::mix(int16 *data, uint len) {
 
 		return;
 	}
-	
+
 	const int16 *vol_tab = _mixer->_volumeTable;
 	MixProc *mixProc = mixer_helper_table[_flags & 0x07];
 
@@ -780,7 +801,7 @@ void ChannelStream::mix(int16 *data, uint len) {
 			assert(wrapOffset <= WARP_WORKAROUND);
 			memcpy(_endOfBuffer, _ptr, wrapOffset);
 		}
-			 
+
 		mixProc(data, len, _pos, _fpPos, _fpSpeed, vol_tab, _endOfBuffer + wrapOffset, (_flags & SoundMixer::FLAG_REVERSE_STEREO) ? true : false);
 
 		// recover from wrap
@@ -819,7 +840,7 @@ ChannelMP3Common::~ChannelMP3Common() {
 	mad_stream_finish(&_stream);
 }
 
-ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, uint32 rate, void *sound, uint size, byte flags) 
+ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, uint32 rate, void *sound, uint size, byte flags)
 	: ChannelMP3Common(mixer, handle, rate) {
 	_posInFrame = 0xFFFFFFFF;
 	_position = 0;
@@ -867,7 +888,7 @@ void ChannelMP3::mix(int16 *data, uint len) {
 		/* Skip _silence_cut a the start */
 		if ((_posInFrame < _synth.pcm.length) && (_silenceCut > 0)) {
 			uint32 diff = _synth.pcm.length - _posInFrame;
-			
+
 			if (diff > _silenceCut)
 				diff = _silenceCut;
 			_silenceCut -= diff;
@@ -969,7 +990,7 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 	}
 
 	while (1) {
-		// Get samples, play samples ... 
+		// Get samples, play samples ...
 		ch = _synth.pcm.samples[0] + _posInFrame;
 		while ((_posInFrame < _synth.pcm.length) && (len > 0)) {
 			int16 sample = (int16)((scale_sample(*ch++) * volume) / 32);
@@ -985,7 +1006,7 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 		}
 		// See if we have finished
 		// May be incorrect to check the size at the end of a frame but I suppose
-		// they are short enough :)   
+		// they are short enough :)
 		frame_duration = _frame.header.duration;
 		mad_timer_negate(&frame_duration);
 		mad_timer_add(&_duration, frame_duration);
@@ -1062,7 +1083,7 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 #else
 				      0,
 #endif
-				      2, 1, 
+				      2, 1,
 #endif
 					  NULL);
 		if (result == 0) {
