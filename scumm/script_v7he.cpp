@@ -504,6 +504,9 @@ void ScummEngine_v7he::o7_startSound() {
 	case 9:
 		_heSndLoop |= 4;
 		break;
+	case 23:
+		debug(1,"o7_startSound: case 29 (%d, %d, %d)", pop(), pop(), pop());
+		break;
 	case 164:
 		_heSndLoop |= 2;
 		break;
@@ -814,46 +817,49 @@ void ScummEngine_v7he::o7_stringLen() {
 	push(len);
 }
 
-void ScummEngine_v7he::o7_unknownEF() {
-	int value;
-	int array, array2, len, len2, len3, offset;
-	int b, size;
-	len = pop();
-	b = pop();
-	array2 = pop();
+void ScummEngine_v7he::arrrays_unk2(int dst, int src, int len2, int len) {
+	int edi, value;
+	int i = 0;
 
-	size = len - b + 2;
+	if (len == -1) {
+		len = resStrLen(getStringAddress(src));
+		len2 = 0;
+	}
+
+	edi = resStrLen(getStringAddress(dst));
+
+	len -= len2;
+	len++;
+
+	while (i < len) {
+		writeVar(0, src);
+		value = readArray(0, 0, len2 + i);
+		writeVar(0, dst);
+		writeArray(0, 0, edi + i, value);
+		i++;
+	}
+
+	writeArray(0, 0, edi + i, 0);
+}
+
+void ScummEngine_v7he::o7_unknownEF() {
+	int dst, size;
+	int b = pop();
+	int a = pop();
+	int src = pop();
+
+	size = b - a + 2;
 
 	writeVar(0, 0);
 	defineArray(0, kStringArray, 0, size);
 	writeArray(0, 0, 0, 0);
 
-	array = readVar(0);
+	dst = readVar(0);
 
-	len2 = len;
-	if (len == -1) {
-		len2 = resStrLen(getStringAddress(array2));
-		len = 0;
-	} else {
-		len = b;
-	}
-	len3 = resStrLen(getStringAddress(array));
+	arrrays_unk2(dst, src, a, b);
 
-	offset = 0;
-	len2 -= len;
-	len2++;
-	while (offset < len2) {
-		writeVar(0, array2);
-		value = readArray(0, 0, offset + len);
-		writeVar(0, array);
-		writeArray(0, 0, offset + len3, value);
-		offset++;
-	}
-
-	writeArray(0, 0, len3 + offset, 0);
-
-	push(array);
-	debug(1,"stub o7_unknownEF (array %d, array2 %d)", array, array2);
+	push(dst);
+	debug(1,"stub o7_unknownEF");
 }
 
 void ScummEngine_v7he::o7_readINI() {
@@ -939,39 +945,39 @@ void ScummEngine_v7he::o7_unknownF5() {
 }
 
 void ScummEngine_v7he::o7_unknownF6() {
-	int len, len2, pos, value, array;
+	int len, edi, pos, value, id;
 	value = pop();
-	len = pop();
+	edi = pop();
 	pos = pop();
-	array = pop();
+	id = pop();
 
-	if (len >= 0) {
-		len2 = resStrLen(getStringAddress(array));
-		if (len2 < len)
-			len = len2;
+	if (edi >= 0) {
+		len = resStrLen(getStringAddress(id));
+		if (len < edi)
+			edi = len;
 	} else {
-		len = 12;
+		edi = 0;
 	}
 
 	if (pos < 0)
 		pos = 0;
 
-	writeVar(0, array);
-	if (pos > len) {
-		while (pos > len) {
-			if (readArray(0, 0, pos) == value) {
-				push(pos);
-				return;
-			}
-			pos--;
-		}
-	} else {
-		while (pos < len) {
+	writeVar(0, id);
+	if (edi > pos) {
+		while (edi >= pos) {
 			if (readArray(0, 0, pos) == value) {
 				push(pos);
 				return;
 			}
 			pos++;
+		}
+	} else {
+		while (edi <= pos) {
+			if (readArray(0, 0, pos) == value) {
+				push(pos);
+				return;
+			}
+			pos--;
 		}
 	}
 

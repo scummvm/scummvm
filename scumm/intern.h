@@ -617,6 +617,7 @@ protected:
 
 	byte stringLen(byte *);
 	int getCharsetOffset(int letter);
+	void arrrays_unk2(int dst, int src, int len2, int len);
 
 	/* HE version 70 script opcodes */
 	void o7_cursorCommand();
