@@ -120,7 +120,14 @@ void Scene::Setup::load(TextSplitter &ts) {
 
 void Scene::Light::load(TextSplitter &ts) {
   char buf[256];
-  ts.scanString(" light %256s", 1, buf);
+
+ // Light names can be null, but ts doesn't seem flexible enough to allow this
+ if (strlen(ts.currentLine()) > strlen(" light"))
+   ts.scanString(" light %256s", 1, buf);
+  else {
+   ts.nextLine();
+   strcpy(buf, "");
+  }
   name_ = buf;
 
   ts.scanString(" type %256s", 1, buf);
