@@ -128,6 +128,14 @@ void SimonEngine::run_vga_script() {
 			opcode = *_vc_ptr++;
 		}
 
+		// HACK Stop ScummVM error when Simon talks to Golum about Stew
+		// in French version of Simon the Sorcerer 1. This was a bug in
+		// the original game, which just ignored the invalid opcodes.
+		// Unfortunately causes no subtitles and a stack of wait timeouts,
+		// which also occured in original game.
+		if (!(_game & GF_SIMON2) && (_language == 2) && opcode == 207)
+			return;
+
 		if (opcode >= NUM_VIDEO_OP_CODES)
 			error("Invalid VGA opcode '%d' encountered", opcode);
 
