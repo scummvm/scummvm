@@ -879,6 +879,19 @@ protected:
 	int spriteInfoGet_flags_6(int spriteNum);
 	int spriteInfoGet_flags_7(int spriteNum);	
 	int spriteInfoGet_flags_8(int spriteNum);
+	int spriteInfoGet_resId(int spriteNun);
+	int spriteInfoGet_resState(int spriteNun);
+	int spriteInfoGet_groupNum(int spriteNun);
+	int spriteInfoGet_field_18(int spriteNun);
+	int spriteInfoGet_grp_tx(int spriteNun);
+	int spriteInfoGet_grp_ty(int spriteNun);
+	int spriteInfoGet_field_44(int spriteNun);
+	int spriteInfoGet_field_54(int spriteNun);
+	int spriteInfoGet_wizSize(int spriteNun);
+	int spriteInfoGet_zoom(int spriteNun);
+	int spriteInfoGet_field_78(int spriteNun);
+	int spriteInfoGet_field_80(int spriteNun);
+
 	void spritesAllocTables(int numSprites, int numGroups, int numImgSprites);
 	void spritesResetTables(bool refreshScreen);
 	void spriteGroupCheck(int sprGrpId);

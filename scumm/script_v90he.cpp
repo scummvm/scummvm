@@ -723,16 +723,32 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		pop();
 		break;
 	case 6:
-		pop();
+		eax = pop();
+		if (eax)
+			push(spriteInfoGet_wizSize(eax));
+		else
+			push(0);
 		break;
 	case 7:
-		pop();
+		eax = pop();
+		if (eax)
+			push(spriteInfoGet_groupNum(eax));
+		else
+			push(0);
 		break;
 	case 8:
-		pop();
+		eax = pop();
+		if (eax)
+			push(spriteInfoGet_grp_tx(eax));
+		else
+			push(0);
 		break;
 	case 9:
-		pop();
+		eax = pop();
+		if (eax)
+			push(spriteInfoGet_grp_ty(eax));
+		else
+			push(0);
 		break;
 	case 12:
 		esi = pop();
@@ -762,7 +778,11 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		}
 		break;
 	case 13:
-		pop();
+		eax = pop();
+		if (eax)
+			push(spriteInfoGet_field_18(eax));
+		else
+			push(0);
 		break;
 	case 15:
 		if (_heversion == 99) {
@@ -783,13 +803,25 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		}
 		break;
 	case 22:
-		pop();
+		eax = pop();
+		if (eax)
+			push(spriteInfoGet_resState(eax));
+		else
+			push(0);
 		break;
 	case 33:
-		pop();
+		eax = pop();
+		if (eax)
+			push(spriteInfoGet_resId(eax));
+		else
+			push(0);
 		break;
 	case 38:
-		pop();
+		eax = pop();
+		if (eax)
+			push(spriteInfoGet_flags_8(eax));
+		else
+			push(1);
 		break;
 	case 52:
 		eax = pop();
@@ -799,13 +831,25 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 			push(0);
 		break;
 	case 62:
-		pop();
+		eax = pop();
+		if (eax)
+			push(spriteInfoGet_zoom(eax));
+		else
+			push(0);
 		break;
 	case 67:
-		pop();
+		eax = pop();
+		if (eax)
+			push(spriteInfoGet_field_78(eax));
+		else
+			push(0);
 		break;
 	case 68:
-		pop();
+		eax = pop();
+		if (eax)
+			push(spriteInfoGet_field_54(eax));
+		else
+			push(0);
 		break;
 	case 94:
 		eax = pop();
@@ -818,9 +862,25 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		getStackList(args, ARRAYSIZE(args));
 		pop();
 		break;
+	case 109:
+		// dummy case
+		pop();
+		push(0);
+		break;
+	case 110:
+		eax = pop();
+		if (eax)
+			push(spriteInfoGet_field_80(eax));
+		else
+			push(0);
+		break;
 	case 168:
 		pop();
-		pop();
+		eax = pop();
+		if (eax)
+			push(spriteInfoGet_field_44(eax));
+		else
+			push(0);
 		break;
 	default:
 		error("o90_getSpriteInfo: Unknown case %d", subOp);
