@@ -121,12 +121,12 @@ struct RoomHeader {
 			uint32 version;
 			uint16 width,height;
 			uint16 numObjects;
-		} v7;
+		} GCC_PACK v7;
 		struct {
 			uint16 width,height;
 			uint16 numObjects;
-		} old;
-	};
+		} GCC_PACK old;
+	} GCC_PACK;
 } GCC_PACK;
 
 struct BompHeader {
@@ -164,7 +164,7 @@ struct CodeHeader {
 			uint16 walk_x;
 			uint16 walk_y;
 			byte actordir;
-		} v5;
+		} GCC_PACK v5;
 
 		struct {
 			uint16 obj_id;
@@ -174,16 +174,16 @@ struct CodeHeader {
 			uint16 unk1;
 			uint16 unk2;
 			byte actordir;
-		} v6;
+		} GCC_PACK v6;
 
 		struct {
 			uint32 version;
 			uint16 obj_id;
 			byte parent;
 			byte parentstate;
-		} v7;
+		} GCC_PACK v7;
 							
-	};
+	} GCC_PACK;
 } GCC_PACK;
 
 struct ImageHeader { /* file format */
@@ -196,8 +196,8 @@ struct ImageHeader { /* file format */
 			uint16 unk_2;
 			struct {
 				int16 x,y;
-			} hotspot[15];
-		} old;
+			} GCC_PACK hotspot[15];
+		} GCC_PACK old;
 
 		struct {
 			uint32 version;
@@ -210,9 +210,9 @@ struct ImageHeader { /* file format */
 			uint16 unk_2;
 			struct {
 				int16 x,y;
-			} hotspot[15];
-		} v7;
-	};
+			} GCC_PACK hotspot[15];
+		} GCC_PACK v7;
+	} GCC_PACK;
 } GCC_PACK;
 #pragma END_PACK_STRUCTS
 
