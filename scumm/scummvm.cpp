@@ -1957,6 +1957,9 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 
 	clearMsgQueue();
 
+	if (_gameId == GID_FT)
+		_imuseDigital->stopAllSounds();
+
 	fadeOut(_switchRoomEffect2);
 	_newEffect = _switchRoomEffect;
 
