@@ -472,7 +472,7 @@ static const byte gm_percussion_lookup[128] = {
 };
 
 static byte lookup_table[64][32];
-const const byte volume_table[] = {
+static const byte volume_table[] = {
 	0, 4, 7, 11,
 	13, 16, 18, 20,
 	22, 24, 26, 27,
