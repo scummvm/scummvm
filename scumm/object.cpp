@@ -101,12 +101,6 @@ void Scumm::putClass(int obj, int cls, bool set) {
 		}
 	}
 
-	// FIXME: It isn't enough for the Indy3 intro to make the
-	// little trains ignore boxes, they have to always clip as
-	// well. Is this yet another walkbox 0 error?
-	if (_gameId == GID_INDY3_256 && cls == kObjectClassIgnoreBoxes && _currentRoom == 76)
-		putClass(obj, kObjectClassAlwaysClip, set);
-
 	if (set)
 		_classData[obj] |= (1 << (cls - 1));
 	else
