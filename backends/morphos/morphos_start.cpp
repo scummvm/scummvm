@@ -38,6 +38,7 @@
 #include "scumm.h"
 #include "morphos.h"
 #include "morphos_scaler.h"
+#include "morphos_sound.h"
 
 extern "C" WBStartup *_WBenchMsg;
 

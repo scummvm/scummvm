@@ -292,8 +292,9 @@ MidiDriver *MidiDriver_WIN_create()
 
 #include <clib/alib_protos.h>
 #include <proto/exec.h>
+#include <proto/amidi.h>
 
-extern struct IOMidiRequest *ScummMidiRequest;
+#include "morphos_sound.h"
 
 /* MorphOS MIDI driver */
 class MidiDriver_AMIDI:public MidiDriver {
@@ -319,11 +320,13 @@ void MidiDriver_AMIDI::set_stream_callback(void *param, StreamCallback *sc)
 int MidiDriver_AMIDI::open(int mode)
 {
 	_mode = mode;
+	init_morphos_music(0);
 	return 0;
 }
 
 void MidiDriver_AMIDI::close()
 {
+	exit_morphos_music();
 	_mode = 0;
 }
 
@@ -333,11 +336,8 @@ void MidiDriver_AMIDI::send(uint32 b)
 		error("MidiDriver_AMIDI:send called but driver is not in simple mode");
 
 	if (ScummMidiRequest) {
-		ULONG midi_data = b;				// you never know about an int's size ;-)
-		ScummMidiRequest->amr_Std.io_Command = CMD_WRITE;
-		ScummMidiRequest->amr_Std.io_Data = &midi_data;
-		ScummMidiRequest->amr_Std.io_Length = 4;
-		DoIO((struct IORequest *)ScummMidiRequest);
+		ULONG midi_data = READ_LE_UINT32(&b);
+		SendShortMidiMsg(ScummMidiRequest, midi_data);
 	}
 }
 

@@ -24,8 +24,6 @@
 #ifndef MORPHOS_MORPHOS_H
 #define MORPHOS_MORPHOS_H
 
-#include <exec/semaphores.h>
-#include <devices/amidi.h>
 #include <graphics/regions.h>
 #include <intuition/intuition.h>
 #include <intuition/screens.h>
@@ -187,20 +185,9 @@ class OSystem_MorphOS : public OSystem
 		int   GameID;
 };
 
-int morphos_sound_thread(OSystem_MorphOS *syst, ULONG SampleType);
-bool init_morphos_music(ULONG MidiUnit);
-void exit_morphos_music();
-
 int morphos_main(int argc, char *argv[]);
 
 extern OSystem_MorphOS *TheSystem;
-extern SignalSemaphore ScummMusicThreadRunning;
-extern SignalSemaphore ScummSoundThreadRunning;
-
-extern STRPTR ScummMusicDriver;
-extern LONG   ScummMidiUnit;
-extern IOMidiRequest *ScummMidiRequest;
-extern timerequest   *MusicTimerIORequest;
 
 #endif
 

@@ -35,6 +35,7 @@
 #include <proto/ahi.h>
 
 #include "morphos.h"
+#include "morphos_sound.h"
 
 #define AHI_BUF_SIZE	 (8*1024)
 
@@ -51,8 +52,8 @@ static char			*ahiBuf[2]	   = { NULL, NULL };
 
 static MsgPort 	   *ScummMidiPort = NULL;
 		 IOMidiRequest *ScummMidiRequest = NULL;
-static MsgPort       *MusicTimerMsgPort = NULL;
-		 timerequest   *MusicTimerIORequest = NULL;
+
+		 Device        *AMidiBase = NULL;
 
 bool init_morphos_music(ULONG MidiUnit)
 {
@@ -73,6 +74,7 @@ bool init_morphos_music(ULONG MidiUnit)
 					ScummMidiRequest = NULL;
 					ScummMidiPort = NULL;
 				}
+				AMidiBase = ScummMidiRequest->amr_Std.io_Device;
 			}
 			else
 			{
@@ -88,33 +90,6 @@ bool init_morphos_music(ULONG MidiUnit)
 		}
 	}
 
-	MusicTimerMsgPort = CreateMsgPort();
-	if (MusicTimerMsgPort)
-	{
-		MusicTimerIORequest = (timerequest *) CreateIORequest(MusicTimerMsgPort, sizeof (timerequest));
-		if (MusicTimerIORequest)
-		{
-			if (OpenDevice("timer.device", UNIT_MICROHZ, (IORequest *) MusicTimerIORequest, 0))
-			{
-				DeleteIORequest((IORequest *) MusicTimerIORequest);
-				DeleteMsgPort(MusicTimerMsgPort);
-				MusicTimerIORequest = NULL;
-				MusicTimerMsgPort = NULL;
-			}
-		}
-		else
-		{
-			DeleteMsgPort(MusicTimerMsgPort);
-			MusicTimerMsgPort = NULL;
-		}
-	}
-
-	if (!MusicTimerIORequest)
-	{
-		warning("Could not open timer device - music will not play");
-		return false;
-	}
-
 	return true;
 }
 
@@ -126,13 +101,7 @@ void exit_morphos_music()
 		CloseDevice((IORequest *) ScummMidiRequest);
 		DeleteIORequest((IORequest *) ScummMidiRequest);
 		DeleteMsgPort(ScummMidiPort);
-	}
-
-	if (MusicTimerIORequest)
-	{
-		CloseDevice((IORequest *) MusicTimerIORequest);
-		DeleteIORequest((IORequest *) MusicTimerIORequest);
-		DeleteMsgPort(MusicTimerMsgPort);
+		AMidiBase = NULL;
 	}
 }
 

@@ -154,6 +154,7 @@ Scumm::~Scumm ()
 	delete _bundle;
 	delete _timer;
 	delete _sound;
+	delete _imuse;
 }
 
 void Scumm::scummInit()

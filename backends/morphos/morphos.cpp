@@ -50,6 +50,7 @@
 #include <time.h>
 
 #include "morphos.h"
+#include "morphos_sound.h"
 #include "morphos_scaler.h"
 
 static TagItem FindCDTags[] = { { CDFA_VolumeName, 0 },

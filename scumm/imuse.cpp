@@ -298,6 +298,7 @@ public:
 	virtual uint32 get_base_tempo() = 0;
 	virtual byte get_hardware_type() = 0;
 	virtual void init(IMuseInternal *eng, OSystem *syst) = 0;
+	virtual void uninit() = 0;
 	virtual void update_pris() = 0;
 	virtual void set_instrument(uint slot, byte *instr) = 0;
 	virtual void part_set_instrument(Part *part, Instrument * instr) = 0;
@@ -408,7 +409,7 @@ public:
 	IMuseDriver *driver() {
 		return _driver;
 	}
-
+	
 	int initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
 
 	/* Public interface */
@@ -553,7 +554,7 @@ public:
 	IMuseAdlib(SoundMixer *mixer) {
 		_mixer = mixer;
 	}
-	void uninit();
+	void uninit() {}
 	void init(IMuseInternal *eng, OSystem *syst);
 	void update_pris() {
 	}
@@ -1297,6 +1298,11 @@ int IMuseInternal::get_master_volume()
 
 int IMuseInternal::terminate()
 {
+	if (_driver) {
+		_driver->uninit();
+		delete _driver;
+		_driver = NULL;
+	}
 	return 0;
 	/* not implemented */
 }
@@ -4278,30 +4284,31 @@ int IMuseGM::midi_driver_thread(void *param)
 	}
 }
 #else
-#include <exec/semaphores.h>
 #include <proto/exec.h>
 #include <proto/dos.h>
-#include "../morphos/morphos.h"
+#include "morphos.h"
+#include "morphos_sound.h"
 int IMuseGM::midi_driver_thread(void *param)
 {
 	IMuseGM *mid = (IMuseGM *) param;
 	int old_time, cur_time;
-	bool initialized;
+	MsgPort *music_timer_port = NULL;
+	timerequest *music_timer_request = NULL;
 
 	ObtainSemaphore(&ScummMusicThreadRunning);
 
-	initialized = init_morphos_music(0);
-
-	old_time = mid->_system->get_msecs();
-
-	if (!initialized)
+	if (!OSystem_MorphOS::OpenATimer(&music_timer_port, (IORequest **) &music_timer_request, UNIT_MICROHZ, false)) {
+		warning("Could not open a timer - music will not play");
 		Wait(SIGBREAKF_CTRL_C);
+	}
 	else {
+		old_time = mid->_system->get_msecs();
+
 		for (;;) {
-			MusicTimerIORequest->tr_time.tv_micro = 10000;
-			MusicTimerIORequest->tr_node.io_Command = TR_ADDREQUEST;
-			MusicTimerIORequest->tr_time.tv_secs = 0;
-			DoIO((struct IORequest *)MusicTimerIORequest);
+			music_timer_request->tr_node.io_Command = TR_ADDREQUEST;
+			music_timer_request->tr_time.tv_secs = 0;
+			music_timer_request->tr_time.tv_micro = 10000;
+			DoIO((struct IORequest *)music_timer_request);
 
 			if (CheckSignal(SIGBREAKF_CTRL_C))
 				break;
@@ -4313,8 +4320,6 @@ int IMuseGM::midi_driver_thread(void *param)
 			}
 		}
 	}
-
-	exit_morphos_music();
 
 	ReleaseSemaphore(&ScummMusicThreadRunning);
 	RemTask(NULL);
@@ -4340,6 +4345,11 @@ void IMuseGM::init(IMuseInternal *eng, OSystem *syst)
 
 	for (i = 0, mc = _midi_channels; i != ARRAYSIZE(_midi_channels); i++, mc++)
 		mc->_chan = i;
+}
+
+void IMuseGM::uninit()
+{
+	_md->close();
 }
 
 void IMuseGM::update_pris()
@@ -4493,8 +4503,10 @@ IMuse::IMuse():_imuse(NULL)
 
 IMuse::~IMuse()
 {
-	if (_imuse)
+	if (_imuse) {
+		_imuse->terminate();
 		delete _imuse;
+	}
 }
 
 void IMuse::on_timer()
