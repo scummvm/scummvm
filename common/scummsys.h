@@ -40,6 +40,7 @@
 	//#pragma warning (disable: 4101)
 
 	#define scumm_stricmp stricmp
+	#define scumm_strnicmp strnicmp
 	#define snprintf _snprintf
 
 	#if defined(CHECK_HEAP)
@@ -76,6 +77,7 @@
 #elif defined(__MINGW32__)
 
 	#define scumm_stricmp stricmp
+	#define scumm_strnicmp strnicmp
 	#define CHECK_HEAP
 	#define SCUMM_LITTLE_ENDIAN
 
@@ -99,6 +101,7 @@
 #elif defined(UNIX)
 
 	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
 
 	#define CHECK_HEAP
 
@@ -161,6 +164,7 @@
 	
 	#define __PALM_OS__
 	#define scumm_stricmp stricmp// FIXME - this is definitly wrong. Try strcasecmp?
+	#define scumm_strnicmp strnicmp// FIXME - this is definitly wrong. Try strncasecmp?
 	
 	#define CHECK_HEAP
 	#define SCUMM_BIG_ENDIAN
@@ -219,6 +223,7 @@
 
 #elif defined(__MORPHOS__)
 	#define scumm_stricmp stricmp
+	#define scumm_strnicmp strnicmp
 	#define CHECK_HEAP
 
 	#define SCUMM_BIG_ENDIAN
@@ -252,6 +257,7 @@
 #elif defined(__DC__)
 
 	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
 	#define CHECK_HEAP
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
@@ -279,6 +285,7 @@
 	#define SCUMM_LITTLE_ENDIAN 
 
 	#define scumm_stricmp stricmp
+	#define scumm_strnicmp strnicmp
 	#define CHECK_HEAP
 
 	#define FORCEINLINE inline
