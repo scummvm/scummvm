@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../;../../common"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;USE_MAD;INSANE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;USE_MAD"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="TRUE"
 				BasicRuntimeChecks="3"
@@ -131,12 +131,6 @@
 				RelativePath="..\..\scumm\smush\imuse_channel.cpp">
 			</File>
 			<File
-				RelativePath="..\..\scumm\smush\insane.cpp">
-			</File>
-			<File
-				RelativePath="..\..\scumm\smush\insane.h">
-			</File>
-			<File
 				RelativePath="..\..\scumm\smush\saud_channel.cpp">
 			</File>
 			<File
@@ -187,6 +181,40 @@
 			</File>
 			<File
 				RelativePath="..\..\scumm\imuse_digi\dimuse_tables.cpp">
+			</File>
+		</Filter>
+		<Filter
+			Name="insane"
+			Filter="">
+			<File
+				RelativePath="..\..\scumm\insane\insane.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\scumm\insane\insane.h">
+			</File>
+			<File
+				RelativePath="..\..\scumm\insane\insane_ben.cpp">
+			</File>
+			<File
+				RelativePath="..\..\scumm\insane\insane_enemy.cpp">
+			</File>
+			<File
+				RelativePath="..\..\scumm\insane\insane_iact.cpp">
+			</File>
+			<File
+				RelativePath="..\..\scumm\insane\insane_scenes.cpp">
 			</File>
 		</Filter>
 		<File

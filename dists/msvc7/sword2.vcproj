@@ -102,6 +102,12 @@
 				RelativePath="..\..\sword2\driver\_mouse.cpp">
 			</File>
 			<File
+				RelativePath="..\..\sword2\driver\animation.cpp">
+			</File>
+			<File
+				RelativePath="..\..\sword2\driver\animation.h">
+			</File>
+			<File
 				RelativePath="..\..\sword2\driver\d_draw.cpp">
 			</File>
 			<File
