@@ -75,7 +75,7 @@ static const SimonGameSettings simon_settings[] = {
 	{"simon1win", "Simon the Sorcerer 1 Talkie (Windows)", GAME_SIMON1WIN, "SIMON.GME"},
 	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)", GAME_SIMON1CD32, "gameamiga"},
 	{"simon2win", "Simon the Sorcerer 2 Talkie (Windows)", GAME_SIMON2WIN, "GSPTR30"},
-	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", GAME_SIMON2MAC, "GSPTR30"},
+	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", GAME_SIMON2MAC, "simon2.dic"},
 	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", GAME_SIMON1DEMO, "GDEMO"}, 
 
 	{NULL, NULL, 0, NULL}
