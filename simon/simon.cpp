@@ -458,6 +458,8 @@ SimonEngine::~SimonEngine() {
 	delete _dummy_item_3;
 	
 	delete [] _fcs_list;
+	
+	delete _sound;
 }
 
 void SimonEngine::errorString(const char *buf1, char *buf2) {
@@ -1082,10 +1084,9 @@ void SimonEngine::playSting(uint a) {
 		return;
 
 	char filename[11];
-	uint16 size;
 
 	File mus_file;
-	uint16 *mus_offsets;
+	uint16 mus_offset;
 
 	sprintf(filename, "STINGS%i.MUS", _midi_sfx);
 	mus_file.open(filename, _gameDataPath);
@@ -1094,16 +1095,16 @@ void SimonEngine::playSting(uint a) {
 		return;
 	}
 
-	size = mus_file.readUint16LE();
-	mus_offsets = (uint16 *)malloc(size);
+	//uint16 size = mus_file.readUint16LE();
 
-	mus_file.seek(0, SEEK_SET);
-	if (mus_file.read(mus_offsets, size) != size)
-		error("Can't read offsets");
+	mus_file.seek(a * 2, SEEK_SET);
+	mus_offset = mus_file.readUint16LE();
+	if (mus_file.ioFailed())
+		error("Can't read sting %d offset", a);
 
-	mus_file.seek(mus_offsets[a], SEEK_SET);
-	midi.loadSMF (&mus_file, a, true);
-	midi.startTrack (0);
+	mus_file.seek(mus_offset, SEEK_SET);
+	midi.loadSMF(&mus_file, a, true);
+	midi.startTrack(0);
 }
 
 Subroutine *SimonEngine::getSubroutineByID(uint subroutine_id) {
