@@ -23,6 +23,7 @@
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/charset.h"
+#include "scumm/intern.h"
 #include "scumm/resource.h"
 #include "scumm/usage_bits.h"
 
@@ -585,31 +586,10 @@ void ScummEngine::redrawBGAreas() {
 	int i;
 	int diff;
 	int val = 0;
-	bool cont = true;
 
 	if (!(_features & GF_NEW_CAMERA))
 		if (camera._cur.x != camera._last.x && _charset->_hasMask && (_version > 3 && _gameId != GID_PASS))
 			stopTalk();
-
-	if (_heversion >= 70) {
-		byte *room = getResourceAddress(rtRoomImage, _roomResource) + _IM00_offs;
-		if (findResource(MKID('BMAP'), room) != NULL) {
-			if (_fullRedraw) {
-				_bgNeedsRedraw = false;
-				gdi.drawBMAPBg(room, &virtscr[0], _screenStartStrip);
-			}
-			cont = false;
-		} else if (findResource(MKID('SMAP'), room) == NULL) {
-			warning("redrawBGAreas(): Both SMAP and BMAP are missing...");
-			cont = false;
-		}
-
-		if (!cont) {
-			drawRoomObjects(val);
-			_bgNeedsRedraw = false;
-			return;
-		}
-	}
 
 	// Redraw parts of the background which are marked as dirty.
 	if (!_fullRedraw && _bgNeedsRedraw) {
@@ -648,6 +628,30 @@ void ScummEngine::redrawBGAreas() {
 
 	drawRoomObjects(val);
 	_bgNeedsRedraw = false;
+}
+
+void ScummEngine_v70he::redrawBGAreas() {
+	int val = 0;
+	if (camera._cur.x != camera._last.x && _charset->_hasMask)
+		stopTalk();
+
+	byte *room = getResourceAddress(rtRoomImage, _roomResource) + _IM00_offs;
+	if (findResource(MKID('BMAP'), room) != NULL) {
+		if (_fullRedraw) {
+			_bgNeedsRedraw = false;
+			gdi.drawBMAPBg(room, &virtscr[0], _screenStartStrip);
+		}
+	} else if (findResource(MKID('SMAP'), room) == NULL) {
+		warning("redrawBGAreas(): Both SMAP and BMAP are missing...");
+	}
+
+	drawRoomObjects(val);
+	_bgNeedsRedraw = false;
+}
+
+void ScummEngine_v72he::redrawBGAreas() {
+	ScummEngine_v70he::redrawBGAreas();
+	flushWizBuffer();
 }
 
 void ScummEngine::redrawBGStrip(int start, int num) {

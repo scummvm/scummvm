@@ -2043,11 +2043,6 @@ void ScummEngine_v72he::drawWizPolygon(int resnum, int state, int id, int flags)
 	}
 }
 
-void ScummEngine_v72he::redrawBGAreas() {
-	ScummEngine_v70he::redrawBGAreas();
-	flushWizBuffer();
-}
-
 void ScummEngine_v72he::flushWizBuffer() {
 	for (int i = 0; i < _wizImagesNum; ++i) {
 		WizImage *pwi = &_wizImages[i];

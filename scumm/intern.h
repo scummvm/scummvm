@@ -621,6 +621,8 @@ protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
+	
+	virtual void redrawBGAreas();
 
 	void arrrays_unk2(int dst, int src, int len2, int len);
 

@@ -632,21 +632,6 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 		}
 		break;
 	case 6:
-		if (params->processFlags & 0x40) {
-			int state = (params->processFlags & 0x400) ? params->img.state : 0;
-			int num = params->remapNum;
-			const uint8 *index = params->remapIndex;
-			uint8 *iwiz = getResourceAddress(rtImage, params->img.resNum);
-			assert(iwiz);
-			uint8 *rmap = findWrappedBlock(MKID('RMAP'), iwiz, state, 0) ;
-			assert(rmap);
-			*(uint32 *)(rmap + 8) = TO_BE_32(0x12345678);
-			while (num--) {
-				uint8 idx = *index++;
-				rmap[0xC + idx] = params->remapColor[idx];
-			}
-		}
-		break;
 	// HE 99+
 	case 7:
 	case 8:

@@ -405,11 +405,15 @@ void ScummEngine_v60he::o60_setState() {
 	int state = pop();
 	int obj = pop();
 
+	if (_heversion >= 72) {
+		putState(obj, state & 0x7FFF);
+		removeObjectFromDrawQue(obj);
+		return;
+	}
+
 	if (state & 0x8000) {
 		state &= 0x7FFF;
 		putState(obj, state);
-		if (_heversion >= 72)
-			removeObjectFromDrawQue(obj);
 		return;
 	}
 
