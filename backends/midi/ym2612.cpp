@@ -333,9 +333,9 @@ void Operator2612::nextTick(const int *phasebuf, int *outbuf, int buflen) {
 		_state = _s_decaying;
 	}
 
-	int32 levelIncrement;
-	int32 target;
-	State next_state;
+	int32 levelIncrement = 0;
+	int32 target = 0;
+	State next_state = _s_ready;
 	const int32 zero_level = ((int32)0x7f << 15);
 	const int phaseIncrement = (_multiple > 0) ? (_frequency * _multiple) : (_frequency / 2);
 
