@@ -63,24 +63,24 @@ static const GameSettings saga_games[] = {
 static const char *interfaceTextStrings[][39] = {
 	{
 		"Walk to", "Look At", "Pick Up", "Talk to", "Open",
-		"Close", "Use",	"Give", "Options", "Test",
+		"Close", "Use", "Give", "Options", "Test",
 		"Demo", "Help", "Quit Game", "Fast", "Slow",
 		"On", "Off", "Continue Playing", "Load", "Save",
 		"Game Options", "Reading Speed", "Music", "Sound", "Cancel",
 		"Quit", "OK", "Mid", "Click",
 		"10%", "20%", "30%", "40%", "50%",
-		"60%", 	"70%", "80%", "90%", "Max"
+		"60%", "70%", "80%", "90%", "Max"
 	},
 	// German
 	{
 		"Gehe zu", "Schau an", "Nimm", "Rede mit", "\231ffne",
-		"Schlie$e", "Benutze",	"Gib", "Optionen", "Test",
+		"Schlie$e", "Benutze", "Gib", "Optionen", "Test",
 		"Demo", "Hilfe", "Spiel beenden", "S", "L",
 		"An", "Aus", "Weiterspielen", "Laden", "Sichern",
 		"Spieleoptionen", "Lesegeschw.", "Musik", "Sound", "Abbr.",
-		"Beenden", "OK", "M", "Klick",
-		"10%", "20%", "30%", "40%", "50%",
-		"60%", 	"70%", "80%", "90%", "Max"
+		"Beenden", NULL, "M", "Klick",
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL
 	}
 };
 
@@ -358,10 +358,14 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 }
 
 const char *SagaEngine::getTextString(int textStringId) {
-
+	const char *string;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
 
-	return interfaceTextStrings[lang][textStringId];
+	string = interfaceTextStrings[lang][textStringId];
+	if (!string)
+		string = interfaceTextStrings[0][textStringId];
+
+	return string;
 }
 
 } // End of namespace Saga
