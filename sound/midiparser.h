@@ -36,12 +36,12 @@ struct EventInfo {
 		struct {
 			byte param1;
 			byte param2;
-		};
+		} basic;
 		struct {
 			byte   type; // Used for METAs
 			byte * data; // Used for SysEx and METAs
 			uint32 length; // Used for SysEx and METAs
-		};
+		} ext;
 	};
 
 	byte channel() { return event & 0x0F; }

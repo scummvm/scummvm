@@ -98,42 +98,42 @@ void MidiParser_SMF::parseNextEvent (EventInfo &info) {
 
 	switch (info.event >> 4) {
 	case 0xC: case 0xD:
-		info.param1 = *(_play_pos++);
-		info.param2 = 0;
+		info.basic.param1 = *(_play_pos++);
+		info.basic.param2 = 0;
 		break;
 
 	case 0x8: case 0x9: case 0xA: case 0xB: case 0xE:
-		info.param1 = *(_play_pos++);
-		info.param2 = *(_play_pos++);
+		info.basic.param1 = *(_play_pos++);
+		info.basic.param2 = *(_play_pos++);
 		break;
 
 	case 0xF: // System Common, Meta or SysEx event
 		switch (info.event & 0x0F) {
 		case 0x2: // Song Position Pointer
-			info.param1 = *(_play_pos++);
-			info.param2 = *(_play_pos++);
+			info.basic.param1 = *(_play_pos++);
+			info.basic.param2 = *(_play_pos++);
 			break;
 
 		case 0x3: // Song Select
-			info.param1 = *(_play_pos++);
-			info.param2 = 0;
+			info.basic.param1 = *(_play_pos++);
+			info.basic.param2 = 0;
 			break;
 
 		case 0x6: case 0x8: case 0xA: case 0xB: case 0xC: case 0xE:
-			info.param1 = info.param2 = 0;
+			info.basic.param1 = info.basic.param2 = 0;
 			break;
 
 		case 0x0: // SysEx
-			info.length = readVLQ (_play_pos);
-			info.data = _play_pos;
-			_play_pos += info.length;
+			info.ext.length = readVLQ (_play_pos);
+			info.ext.data = _play_pos;
+			_play_pos += info.ext.length;
 			break;
 
 		case 0xF: // META event
-			info.type = *(_play_pos++);
-			info.length = readVLQ (_play_pos);
-			info.data = _play_pos;
-			_play_pos += info.length;
+			info.ext.type = *(_play_pos++);
+			info.ext.length = readVLQ (_play_pos);
+			info.ext.data = _play_pos;
+			_play_pos += info.ext.length;
 			break;
 		}
 	}

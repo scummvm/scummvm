@@ -100,8 +100,8 @@ void MidiParser_XMIDI::parseNextEvent (EventInfo &info) {
 		_play_pos = info.start;
 		info.delta = best->off_time - _last_event_tick;
 		info.event = 0x80 | best->channel;
-		info.param1 = best->note;
-		info.param2 = 0;
+		info.basic.param1 = best->note;
+		info.basic.param2 = 0;
 		best->off_time = 0;
 		_inserted_delta += info.delta;
 		return;
@@ -112,8 +112,8 @@ void MidiParser_XMIDI::parseNextEvent (EventInfo &info) {
 	info.event = *(_play_pos++);
 	switch (info.event >> 4) {
 	case 0x9: // Note On
-		info.param1 = *(_play_pos++);
-		info.param2 = *(_play_pos++);
+		info.basic.param1 = *(_play_pos++);
+		info.basic.param2 = *(_play_pos++);
 		note_length = readVLQ (_play_pos);
 
 		// In addition to sending this back, we must
@@ -126,53 +126,53 @@ void MidiParser_XMIDI::parseNextEvent (EventInfo &info) {
 
 		if (i) {
 			ptr->channel = info.channel();
-			ptr->note = info.param1;
+			ptr->note = info.basic.param1;
 			ptr->off_time = _last_event_tick + info.delta + note_length;
 		}
 		break;
 
 	case 0xC: case 0xD:
-		info.param1 = *(_play_pos++);
-		info.param2 = 0;
+		info.basic.param1 = *(_play_pos++);
+		info.basic.param2 = 0;
 		break;
 
 	case 0x8: case 0xA: case 0xB: case 0xE:
-		info.param1 = *(_play_pos++);
-		info.param2 = *(_play_pos++);
+		info.basic.param1 = *(_play_pos++);
+		info.basic.param2 = *(_play_pos++);
 		break;
 
 	case 0xF: // Meta or SysEx event
 		switch (info.event & 0x0F) {
 		case 0x2: // Song Position Pointer
-			info.param1 = *(_play_pos++);
-			info.param2 = *(_play_pos++);
+			info.basic.param1 = *(_play_pos++);
+			info.basic.param2 = *(_play_pos++);
 			break;
 
 		case 0x3: // Song Select
-			info.param1 = *(_play_pos++);
-			info.param2 = 0;
+			info.basic.param1 = *(_play_pos++);
+			info.basic.param2 = 0;
 			break;
 
 		case 0x6: case 0x8: case 0xA: case 0xB: case 0xC: case 0xE:
-			info.param1 = info.param2 = 0;
+			info.basic.param1 = info.basic.param2 = 0;
 			break;
 
 		case 0x0: // SysEx
-			info.length = readVLQ (_play_pos);
-			info.data = _play_pos;
-			_play_pos += info.length;
+			info.ext.length = readVLQ (_play_pos);
+			info.ext.data = _play_pos;
+			_play_pos += info.ext.length;
 			break;
 
 		case 0xF: // META event
-			info.type = *(_play_pos++);
-			info.length = readVLQ (_play_pos);
-			info.data = _play_pos;
-			_play_pos += info.length;
-			if (info.type == 0x51 && info.length == 3) {
+			info.ext.type = *(_play_pos++);
+			info.ext.length = readVLQ (_play_pos);
+			info.ext.data = _play_pos;
+			_play_pos += info.ext.length;
+			if (info.ext.type == 0x51 && info.ext.length == 3) {
 				// Tempo event. We want to make these constant 500,000.
-				info.data[0] = 0x07;
-				info.data[1] = 0xA1;
-				info.data[2] = 0x20;
+				info.ext.data[0] = 0x07;
+				info.ext.data[1] = 0xA1;
+				info.ext.data[2] = 0x20;
 			}
 			break;
 		}

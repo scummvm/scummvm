@@ -98,10 +98,10 @@ void MidiParser::onTimer() {
 
 		if (info.event == 0xF0) {
 			// SysEx event
-			_driver->sysEx (info.data, (uint16) info.length);
+			_driver->sysEx (info.ext.data, (uint16) info.ext.length);
 		} else if (info.event == 0xFF) {
 			// META event
-			if (info.type == 0x2F) {
+			if (info.ext.type == 0x2F) {
 				// End of Track must be processed by us,
 				// as well as sending it to the output device.
 				allNotesOff();
@@ -110,18 +110,18 @@ void MidiParser::onTimer() {
 					parseNextEvent (_next_event);
 				} else {
 					_play_pos = 0;
-					_driver->metaEvent (info.type, info.data, (uint16) info.length);
+					_driver->metaEvent (info.ext.type, info.ext.data, (uint16) info.ext.length);
 				}
 				return;
-			} else if (info.type == 0x51) {
-				if (info.length >= 3) {
-					_tempo = info.data[0] << 16 | info.data[1] << 8 | info.data[2];
+			} else if (info.ext.type == 0x51) {
+				if (info.ext.length >= 3) {
+					_tempo = info.ext.data[0] << 16 | info.ext.data[1] << 8 | info.ext.data[2];
 					_psec_per_tick = (_tempo + (_ppqn >> 2)) / _ppqn;
 				}
 			}
-			_driver->metaEvent (info.type, info.data, (uint16) info.length);
+			_driver->metaEvent (info.ext.type, info.ext.data, (uint16) info.ext.length);
 		} else {
-			_driver->send (info.event | info.param1 << 8 | info.param2 << 16);
+			_driver->send (info.event | info.basic.param1 << 8 | info.basic.param2 << 16);
 		}
 
 
@@ -185,18 +185,18 @@ void MidiParser::jumpToTick (uint32 tick) {
 		_last_event_time = _play_time;
 
 		if (info.event == 0xFF) {
-			if (info.type == 0x2F) { // End of track
+			if (info.ext.type == 0x2F) { // End of track
 				if (_autoLoop) {
 					_play_pos = _tracks[_active_track];
 					parseNextEvent (_next_event);
 				} else {
 					_play_pos = 0;
-					_driver->metaEvent (0x2F, info.data, (uint16) info.length);
+					_driver->metaEvent (0x2F, info.ext.data, (uint16) info.ext.length);
 				}
 				break;
-			} else if (info.type == 0x51) { // Tempo
-				if (info.length >= 3) {
-					_tempo = info.data[0] << 16 | info.data[1] << 8 | info.data[2];
+			} else if (info.ext.type == 0x51) { // Tempo
+				if (info.ext.length >= 3) {
+					_tempo = info.ext.data[0] << 16 | info.ext.data[1] << 8 | info.ext.data[2];
 					_psec_per_tick = (_tempo + (_ppqn >> 2)) / _ppqn;
 				}
 			}
