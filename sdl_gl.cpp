@@ -591,6 +591,13 @@ bool OSystem_SDL::poll_event(Event *event) {
 				return true;
 			}
 
+		case SDL_KEYUP: 
+			event->event_code = EVENT_KEYUP;
+			event->kbd.keycode = ev.key.keysym.sym;
+			event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod);
+
+			return true;
+
 		case SDL_MOUSEMOTION:
 			event->event_code = EVENT_MOUSEMOVE;
 			event->mouse.x = ev.motion.x;

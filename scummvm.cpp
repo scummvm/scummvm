@@ -1262,7 +1262,6 @@ void Scumm::waitForTimer(int msec_delay) {
 	for(;;) {
 		while (_system->poll_event(&event)) {
 
-
 			// if newgui is running, copy event to EventList, and let the GUI handle it itself
 			// we might consider this approach for ScummLoop as well, and clean up the current mess
 			if (_newgui->isActive())

@@ -116,8 +116,8 @@ void NewGui::loop()
 				case OSystem::EVENT_KEYDOWN:
 					activeDialog->handleKeyDown(t.kbd.ascii, t.kbd.flags);
 					break;
-//				case OSystem::EVENT_KEYUP:
-//					activeDialog->handleKeyUp(t.kbd.ascii, t.kbd.flags);
+				case OSystem::EVENT_KEYUP:
+					activeDialog->handleKeyUp(t.kbd.ascii, t.kbd.flags);
 					break;
 				case OSystem::EVENT_MOUSEMOVE:
 					activeDialog->handleMouseMoved(t.mouse.x - activeDialog->_x, t.mouse.y - activeDialog->_y, 0);

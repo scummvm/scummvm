@@ -835,27 +835,27 @@ bool OSystem_SDL::poll_event(Event *event) {
 				if (ev.key.keysym.mod & KMOD_CTRL) b |= KBD_CTRL;
 				if (ev.key.keysym.mod & KMOD_ALT) b |= KBD_ALT;
 				event->kbd.flags = b;
-
+	
 				/* internal keypress? */				
 				if (b == KBD_ALT && ev.key.keysym.sym==SDLK_RETURN) {
 					property(PROP_TOGGLE_FULLSCREEN, NULL);
 					break;
 				}
-
+	
 				if ((b == KBD_CTRL && ev.key.keysym.sym=='z') || (b == KBD_ALT && ev.key.keysym.sym=='x')) {
 					quit();
 					break;
 				}
-
+	
 				if (b == (KBD_CTRL|KBD_ALT) && 
-				    (ev.key.keysym.sym>='1') && (ev.key.keysym.sym<='7')) {
+					(ev.key.keysym.sym>='1') && (ev.key.keysym.sym<='7')) {
 					Property prop;
 					prop.gfx_mode = ev.key.keysym.sym - '1';
 					property(PROP_SET_GFX_MODE, &prop);
 					break;
 				}
-
-
+	
+	
 				event->event_code = EVENT_KEYDOWN;
 				event->kbd.keycode = ev.key.keysym.sym;
 				event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod);
@@ -879,11 +879,15 @@ bool OSystem_SDL::poll_event(Event *event) {
 					default:
 					break;
 				}
-
+	
 				return true;
 			}
 
-			case SDL_KEYUP: {
+		case SDL_KEYUP: {
+				event->event_code = EVENT_KEYUP;
+				event->kbd.keycode = ev.key.keysym.sym;
+				event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod);
+
 				switch(ev.key.keysym.sym){
 					case SDLK_LEFT:                
 						if (km.x_vel < 0) {
@@ -956,6 +960,7 @@ bool OSystem_SDL::poll_event(Event *event) {
 			quit();
 		}
 	}
+
 }
 	
 bool OSystem_SDL::set_sound_proc(void *param, SoundProc *proc, byte format) {
