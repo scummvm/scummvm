@@ -1621,9 +1621,9 @@ Sound::VorbisTrackInfo::VorbisTrackInfo(File *file) {
 }
 
 int Sound::VorbisTrackInfo::play(SoundMixer *mixer, int start, int delay) {
-	ov_pcm_seek(&_ov_file, start * ov_info(&_ov_file, -1)->rate / 75);
+	ov_pcm_seek(&_ov_file, start * ov_info(&_ov_file, -1)->rate / 75.0);
 	return mixer->playVorbis(NULL, &_ov_file,
-				 delay * ov_info(&_ov_file, -1)->rate / 75,
+				 delay * ov_info(&_ov_file, -1)->rate / 75.0,
 				 true);
 }
 
