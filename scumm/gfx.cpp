@@ -1371,7 +1371,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 		if (_vm->_version == 1) {
 			if (_vm->_features & GF_NES)
-				drawStripNES(dstPtr, vs->pitch, stripnr, height);
+				drawStripNES(dstPtr, vs->pitch, stripnr, y, height, _C64ObjectMode);
 			else if (_C64ObjectMode)
 				drawStripC64Object(dstPtr, vs->pitch, stripnr, width, height);
 			else
@@ -1872,22 +1872,40 @@ void Gdi::decodeNESGfx(const byte *room) {
 	// there's another pointer at room + 0x0E, but I don't know what data it points at
 }
 
-void Gdi::drawStripNES(byte *dst, int dstPitch, int stripnr, int height) {
+void Gdi::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int height) {
+	int y;
+
+	_NESObj_x = xpos;
+	ypos /= 8;
+	height /= 8;
+
+	for (y = ypos; y < ypos + height; y++) {
+		int x = xpos;
+		while (x < xpos + width) {
+			byte len = *ptr++;
+			for (int i = 0; i < (len & 0x7F); i++)
+				_NESNametableObj[y][2 + x++] = (len & 0x80) ? (*ptr++) : (*ptr);
+			if (!(len & 0x80))
+				ptr++;
+		}
+	}
+}
+
+void Gdi::drawStripNES(byte *dst, int dstPitch, int stripnr, int top, int height, bool isObject) {
 //	printf("drawStripNES, pitch=%i, strip=%i, height=%i\n",dstPitch,stripnr,height);
+	top /= 8;
 	height /= 8;
 	int x = stripnr + 2;	// NES version has a 2 tile gap on each edge
 
-	if (height > 16) {
-//		debug(0,"NES room data %i (not 128) pixels high!\n",height);
-		height = 16;
-	}
+	if (isObject)
+		x += _NESObj_x; // for objects, need to start at the left edge of the object, not the screen
 	if (x > 63) {
 		debug(0,"NES tried to render invalid strip %i",stripnr);
 		return;
 	}
-	for (int y = 0; y < height; y++) {
+	for (int y = top; y < top + height; y++) {
 		int palette = (_NESAttributes[((y << 2) & 0x30) | ((x >> 2) & 0xF)] >> (((y & 2) << 1) | (x & 2))) & 0x3;
-		int tile = _NESNametable[y][x];
+		int tile = isObject ? _NESNametableObj[y][x] : _NESNametable[y][x];
 
 		for (int i = 0; i < 8; i++) {
 			byte c0 = _NESPatTable[tile * 16 + i];

@@ -231,6 +231,8 @@ protected:
 
 	byte _NESPatTable[4096], _NESNametable[16][64], _NESAttributes[64], _NESPalette[16];
 	byte _NESBaseTiles;
+	byte _NESNametableObj[16][64];
+	int _NESObj_x;
 
 	/* Bitmap decompressors */
 	bool decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLinesToProcess);
@@ -238,7 +240,7 @@ protected:
 	void drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) const;
 	void drawStripC64Object(byte *dst, int dstPitch, int stripnr, int width, int height);
 	void drawStripC64Background(byte *dst, int dstPitch, int stripnr, int height);
-	void drawStripNES(byte *dst, int dstPitch, int stripnr, int height);
+	void drawStripNES(byte *dst, int dstPitch, int stripnr, int top, int height, bool isObject);
 
 	void drawStripComplex(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
 	void drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
@@ -280,6 +282,7 @@ public:
 	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table) const;
 	void decodeC64Gfx(const byte *src, byte *dst, int size) const;
 	void decodeNESGfx(const byte *room);
+	void decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int height);
 
 	void drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip);
 	void drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h);

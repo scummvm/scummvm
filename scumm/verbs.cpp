@@ -55,19 +55,32 @@ void ScummEngine_v2::initV2MouseOver() {
 	// Inventory items
 
 	for (i = 0; i < 2; i++) {
-		v2_mouseover_boxes[2 * i].rect.left = 0;
-		v2_mouseover_boxes[2 * i].rect.right = 144;
-		v2_mouseover_boxes[2 * i].rect.top = 32 + 8 * i;
-		v2_mouseover_boxes[2 * i].rect.bottom = v2_mouseover_boxes[2 * i].rect.top + 8;
+		if (_features & GF_NES) {
+			v2_mouseover_boxes[2 * i].rect.left = 0;
+			v2_mouseover_boxes[2 * i].rect.right = 96;
+			v2_mouseover_boxes[2 * i].rect.top = 48 + 8 * i;
+			v2_mouseover_boxes[2 * i].rect.bottom = v2_mouseover_boxes[2 * i].rect.top + 8;
+		} else {
+			v2_mouseover_boxes[2 * i].rect.left = 0;
+			v2_mouseover_boxes[2 * i].rect.right = 144;
+			v2_mouseover_boxes[2 * i].rect.top = 32 + 8 * i;
+			v2_mouseover_boxes[2 * i].rect.bottom = v2_mouseover_boxes[2 * i].rect.top + 8;
+		}
 
 		v2_mouseover_boxes[2 * i].color = color;
 		v2_mouseover_boxes[2 * i].hicolor = hi_color;
 
-
-		v2_mouseover_boxes[2 * i + 1].rect.left = 176;
-		v2_mouseover_boxes[2 * i + 1].rect.right = 320;
-		v2_mouseover_boxes[2 * i + 1].rect.top = v2_mouseover_boxes[2 * i].rect.top;
-		v2_mouseover_boxes[2 * i + 1].rect.bottom = v2_mouseover_boxes[2 * i].rect.bottom;
+		if (_features & GF_NES) {
+			v2_mouseover_boxes[2 * i + 1].rect.left = 128;
+			v2_mouseover_boxes[2 * i + 1].rect.right = 224;
+			v2_mouseover_boxes[2 * i + 1].rect.top = v2_mouseover_boxes[2 * i].rect.top;
+			v2_mouseover_boxes[2 * i + 1].rect.bottom = v2_mouseover_boxes[2 * i].rect.bottom;
+		} else {
+			v2_mouseover_boxes[2 * i + 1].rect.left = 176;
+			v2_mouseover_boxes[2 * i + 1].rect.right = 320;
+			v2_mouseover_boxes[2 * i + 1].rect.top = v2_mouseover_boxes[2 * i].rect.top;
+			v2_mouseover_boxes[2 * i + 1].rect.bottom = v2_mouseover_boxes[2 * i].rect.bottom;
+		}
 
 		v2_mouseover_boxes[2 * i + 1].color = color;
 		v2_mouseover_boxes[2 * i + 1].hicolor = hi_color;
@@ -75,18 +88,32 @@ void ScummEngine_v2::initV2MouseOver() {
 
 	// Inventory arrows
 
-	v2_mouseover_boxes[kInventoryUpArrow].rect.left = 144;
-	v2_mouseover_boxes[kInventoryUpArrow].rect.right = 176;
-	v2_mouseover_boxes[kInventoryUpArrow].rect.top = 32;
-	v2_mouseover_boxes[kInventoryUpArrow].rect.bottom = 40;
+	if (_features & GF_NES) {
+		v2_mouseover_boxes[kInventoryUpArrow].rect.left = 96;
+		v2_mouseover_boxes[kInventoryUpArrow].rect.right = 128;
+		v2_mouseover_boxes[kInventoryUpArrow].rect.top = 48;
+		v2_mouseover_boxes[kInventoryUpArrow].rect.bottom = 56;
+	} else {
+		v2_mouseover_boxes[kInventoryUpArrow].rect.left = 144;
+		v2_mouseover_boxes[kInventoryUpArrow].rect.right = 176;
+		v2_mouseover_boxes[kInventoryUpArrow].rect.top = 32;
+		v2_mouseover_boxes[kInventoryUpArrow].rect.bottom = 40;
+	}
 
 	v2_mouseover_boxes[kInventoryUpArrow].color = arrow_color;
 	v2_mouseover_boxes[kInventoryUpArrow].hicolor = hi_color;
 
-	v2_mouseover_boxes[kInventoryDownArrow].rect.left = 144;
-	v2_mouseover_boxes[kInventoryDownArrow].rect.right = 176;
-	v2_mouseover_boxes[kInventoryDownArrow].rect.top = 40;
-	v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 48;
+	if (_features & GF_NES) {
+		v2_mouseover_boxes[kInventoryDownArrow].rect.left = 96;
+		v2_mouseover_boxes[kInventoryDownArrow].rect.right = 128;
+		v2_mouseover_boxes[kInventoryDownArrow].rect.top = 56;
+		v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 64;
+	} else {
+		v2_mouseover_boxes[kInventoryDownArrow].rect.left = 144;
+		v2_mouseover_boxes[kInventoryDownArrow].rect.right = 176;
+		v2_mouseover_boxes[kInventoryDownArrow].rect.top = 40;
+		v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 48;
+	}
 
 	v2_mouseover_boxes[kInventoryDownArrow].color = arrow_color;
 	v2_mouseover_boxes[kInventoryDownArrow].hicolor = hi_color;
@@ -94,7 +121,10 @@ void ScummEngine_v2::initV2MouseOver() {
 	// Sentence line
 
 	v2_mouseover_boxes[kSentenceLine].rect.left = 0;
-	v2_mouseover_boxes[kSentenceLine].rect.right = 320;
+	if (_features & GF_NES)
+		v2_mouseover_boxes[kSentenceLine].rect.right = 224;
+	else
+		v2_mouseover_boxes[kSentenceLine].rect.right = 320;
 	v2_mouseover_boxes[kSentenceLine].rect.top = 0;
 	v2_mouseover_boxes[kSentenceLine].rect.bottom = 8;
 

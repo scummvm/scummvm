@@ -482,7 +482,11 @@ void ScummEngine::drawObject(int obj, int arg) {
 
 		if (_version == 1) {
 			gdi._C64ObjectMode = true;
-			gdi.decodeC64Gfx(ptr, gdi._C64ObjectMap, width * (height / 8) * 3);
+			if (_features & GF_NES) {
+				gdi.decodeNESObject(ptr, xpos, ypos, width, height);
+			} else {
+				gdi.decodeC64Gfx(ptr, gdi._C64ObjectMap, width * (height / 8) * 3);
+			}
 		}
 		// Sam & Max needs this to fix object-layering problems with
 		// the inventory and conversation icons.

@@ -842,7 +842,7 @@ void ScummEngine::cost_decodeData(Actor *a, int frame, uint usemask) {
 	if (_features & GF_NES) {
 		a->_cost.curpos[0] = 0;
 		a->_cost.start[0] = 0;
-		a->_cost.end[0] = getResourceAddress(rtCostume,a->_costume)[2+0*2+1];
+		a->_cost.end[0] = getResourceAddress(rtCostume, a->_costume)[2 + 8 * frame + 2 * newDirToOldDir(a->getFacing()) + 1];
 		a->_cost.frame[0] = frame;
 		return;
 	}
