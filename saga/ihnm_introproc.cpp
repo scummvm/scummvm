@@ -140,7 +140,14 @@ int Scene::IHNMIntroMovieProc1(int param, SCENE_INFO *scene_info) {
 
 		_vm->_anim->setFrameTime(0, IHNM_INTRO_FRAMETIME);
 		_vm->_anim->setFlag(0, ANIM_ENDSCENE);
-		_vm->_anim->play(0, 0);
+
+		event.type = ONESHOT_EVENT;
+		event.code = ANIM_EVENT;
+		event.op = EVENT_PLAY;
+		event.param = 0;
+		event.time = 0;
+
+		q_event = _vm->_events->chain(q_event, &event);
 		break;
 	default:
 		break;
@@ -186,10 +193,6 @@ int Scene::IHNMIntroMovieProc2(int param, SCENE_INFO *scene_info) {
 
 		_vm->_anim->setCycles(0, -1);
 
-		// The "Dreamer's Guild" animation has to be started by an
-		// event, or the first frame will be drawn before the palette
-		// fades down.
-		//
 		// Unlike the original, we keep the logo spinning during the
 		// palette fades. We don't have to, but I think it looks better
 		// that way.
@@ -275,7 +278,7 @@ int Scene::IHNMIntroMovieProc3(int param, SCENE_INFO *scene_info) {
 		event.op = EVENT_PLAY;
 		event.time = 0;
 
-		q_event = _vm->_events->queue(&event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Background for intro scene is the first frame of the intro
 		// animation; display it but don't set palette
@@ -299,7 +302,13 @@ int Scene::IHNMIntroMovieProc3(int param, SCENE_INFO *scene_info) {
 
 		q_event = _vm->_events->chain(q_event, &event);
 
-		_vm->_anim->play(0, 0);
+		event.type = ONESHOT_EVENT;
+		event.code = ANIM_EVENT;
+		event.op = EVENT_PLAY;
+		event.param = 0;
+		event.time = 0;
+
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue end of scene after a while
 		// TODO: I've increased the delay so the speech won't start
@@ -331,9 +340,7 @@ int Scene::IHNMHateProc(int param, SCENE_INFO *scene_info) {
 	case SCENE_BEGIN:
 		_vm->_anim->setCycles(0, -1);
 
-		// The "hate" animation also needs to be started from an event,
-		// or the first frame will be drawn too early.
-
+		// Start "hate" animation
 		event.type = ONESHOT_EVENT;
 		event.code = ANIM_EVENT;
 		event.op = EVENT_PLAY;
