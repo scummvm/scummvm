@@ -51,18 +51,21 @@ struct DCmd {
 
 class ScummDebugger {
 public:
-	ScummDebugger();
+	ScummDebugger(ScummEngine *s);
 	
-	void on_frame();
-	void attach(ScummEngine *s, char *entry);
+	void onFrame();
+	void attach(const char *entry = 0);
+	
+	bool isAttached() const { return _isAttached; }
 
 protected:
-	ScummEngine *_s;
+	ScummEngine *_vm;
 	int _frame_countdown, _dvar_count, _dcmd_count;
 	DVar _dvars[256];
 	DCmd _dcmds[256];
 	bool _detach_now;
-	char *errStr;
+	bool _isAttached;
+	char *_errStr;
 
 	void enter();
 	void detach();

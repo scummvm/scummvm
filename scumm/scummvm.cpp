@@ -75,7 +75,6 @@ enum MouseButtonStatus {
 
 // Use g_scumm from error() ONLY
 ScummEngine *g_scumm = 0;
-ScummDebugger *g_debugger;
 
 static const TargetSettings scumm_settings[] = {
 	/* Scumm Version 1 */
@@ -340,7 +339,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	_objectOwnerTable = NULL;
 	_objectRoomTable = NULL;
 	_objectStateTable = NULL;
-	memset(&_objectIDMap, 0, sizeof(ObjectIDMap));
 	_numObjectsInRoom = 0;
 	_userPut = 0;
 	_userState = 0;
@@ -365,7 +363,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	memset(_scummStack, 0, sizeof(_scummStack));
 	_keyScriptKey = 0;
 	_keyScriptNo = 0;
-	memset(&_fileHandle, 0, sizeof(File));
 	_fileOffset = 0;
 	_exe_name = NULL;
 	_game_name = NULL;
@@ -592,7 +589,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
 
-	g_debugger = new ScummDebugger;
+	_debugger = new ScummDebugger(this);
 
 	_debugMode = detector->_debugMode;
 	_debugLevel = ConfMan.getInt("debuglevel");
@@ -795,7 +792,7 @@ ScummEngine::~ScummEngine() {
 	free(_roomStrips);
 	free(_languageIndex);
 
-	delete g_debugger;
+	delete _debugger;
 }
 
 void ScummEngine::go() {
@@ -1212,8 +1209,8 @@ void ScummEngine::waitForTimer(int msec_delay) {
 }
 
 int ScummEngine::scummLoop(int delta) {
-	if (_debugger)
-		_debugger->on_frame();
+	if (_debugger->isAttached())
+		_debugger->onFrame();
 
 	// Randomize the PRNG by calling it at regular intervals. This ensures
 	// that it will be in a different state each time you run the program.
@@ -1534,7 +1531,7 @@ void ScummEngine::parseEvents() {
 				else if (event.kbd.keycode == 'g')
 					_fastMode ^= 2;
 				else if (event.kbd.keycode == 'd')
-					g_debugger->attach(this, NULL);
+					_debugger->attach();
 				else if (event.kbd.keycode == 's')
 					resourceStats();
 				else
@@ -1822,7 +1819,7 @@ void ScummEngine::processKbd() {
 
 		VAR(VAR_CHARINC) = _defaultTalkDelay / 20;
 	} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console
-		g_debugger->attach(this, NULL);
+		_debugger->attach();
 	} else if (_version <= 2) {
 		// Store the input type. So far we can't distinguish
 		// between 1, 3 and 5.
@@ -2547,10 +2544,10 @@ void ScummEngine::errorString(const char *buf1, char *buf2) {
 
 	// Unless an error -originated- within the debugger, spawn the debugger. Otherwise
 	// exit out normally.
-	if (!_debugger) {
-		printf("%s", buf2);	// (Print it again in-case debugger segfaults)
-		g_debugger->attach(this, buf2);
-		g_debugger->on_frame();
+	if (!_debugger->isAttached()) {
+		printf("%s\n", buf2);	// (Print it again in case debugger segfaults)
+		_debugger->attach(buf2);
+		_debugger->onFrame();
 	}
 }
 
