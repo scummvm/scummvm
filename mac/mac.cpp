@@ -20,8 +20,6 @@
  *
  */
 
-#define __APPLE__CW
-
 #include <Carbon.h>
 #include <CarbonEvents.h>
 
@@ -115,6 +113,7 @@ public:
 	
 	void init();
 	
+	void ChangeScaling(short scaling);
 	bool handleMessage();
 	void run();
 	void writeToScreen();
@@ -324,8 +323,10 @@ void WndMan::init()
 {
 	Rect			rectWin;
 	
-	DEST_WIDTH = 320 * scale;
-	DEST_HEIGHT = 200 * scale;
+	_scumm->_scale = scale;
+	
+	DEST_WIDTH = 320 * _scumm->_scale;
+	DEST_HEIGHT = 200 * _scumm->_scale;
 	
 	MenuRef AppleMenu = GetMenu(1000);
 	InsertMenu(AppleMenu, 0);
@@ -375,6 +376,23 @@ void WndMan::init()
 						NULL, &theTimer);
 }
 
+void WndMan::ChangeScaling(short scaling)
+{
+	_scumm->_scale = scaling;
+	scale = scaling;
+	
+	Rect rectWin;
+	
+	DEST_WIDTH = 320 * _scumm->_scale;
+	DEST_HEIGHT = 200 * _scumm->_scale;
+	
+	SetRect(&rectWin, 0, 0, DEST_WIDTH, DEST_HEIGHT);
+	
+	SetWindowBounds(wPtr, kWindowContentRgn, &rectWin);
+	RepositionWindow(wPtr, NULL, kWindowCenterOnMainScreen);
+	dstRect = rectWin;
+}
+
 bool WndMan::handleMessage()
 {
 	EventRef theEvent;
@@ -399,7 +417,7 @@ void WndMan::writeToScreen()
 	NewGWorldFromPtr(&screenBuf, 8, &srcRect, pal, nil, 0, (char *)_vgabuf, SRC_WIDTH);
 	CopyBits(GetPortBitMapForCopyBits(screenBuf),
 			GetPortBitMapForCopyBits(GetWindowPort(wPtr)), 
-			&srcRect, &dstRect, srcCopy, 0L);	
+			&srcRect, &dstRect, srcCopy, 0L);
 }
 
 void waitForTimer(Scumm *s, int delay)
@@ -460,6 +478,7 @@ void updateScreen(Scumm *s)
 
 
 void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
+	s->_scale = scaleFactor;
 	wm->init();
 }
 
@@ -747,6 +766,8 @@ void About()
     osError = RunAppModalLoopForWindow(aboutWin);
 }
 
+ControlRef radioGroupRef;
+
 OSStatus prefsEventHandler(EventHandlerCallRef eventHandlerCallRef,EventRef eventRef,
                              void *userData)
 {
@@ -770,6 +791,9 @@ OSStatus prefsEventHandler(EventHandlerCallRef eventHandlerCallRef,EventRef even
       if(controlID.id == 'okay')
       {
         wm->_scumm->_noSubtitles = (Boolean)!GetControlValue(checkBoxControlRef);
+        short scale = GetControlValue(radioGroupRef);
+        if(scale != wm->_scumm->_scale)
+        	wm->ChangeScaling(scale);
         QuitAppModalLoopForWindow((WindowRef)userData);
         DisposeWindow((WindowRef)userData);
         result = noErr;
@@ -808,6 +832,27 @@ void Preferences()
     if(wm->_scumm->_noSubtitles)
     	SetControlValue(checkBoxControlRef, false);
     
+    Rect RadioGroupRect;
+    SetRect(&RadioGroupRect, 120, 10, 290, 120);
+    CreateRadioGroupControl(prefsWin, &RadioGroupRect, &radioGroupRef);
+    AutoEmbedControl(radioGroupRef, prefsWin);
+    
+    ControlRef radioButton;
+    
+    Rect RadioButtonRect;	
+    SetRect(&RadioButtonRect, 125, 30, 285, 45);
+    CreateRadioButtonControl(prefsWin, &RadioButtonRect, CFSTR("Scaling 1x"), 0, true, &radioButton);
+    AutoEmbedControl(radioButton, prefsWin);
+    	
+    OffsetRect(&RadioButtonRect, 0, 20);
+    CreateRadioButtonControl(prefsWin, &RadioButtonRect, CFSTR("Scaling 2x"), 0, true, &radioButton);
+    AutoEmbedControl(radioButton, prefsWin);
+    
+    OffsetRect(&RadioButtonRect, 0, 20);
+    CreateRadioButtonControl(prefsWin, &RadioButtonRect, CFSTR("Scaling 3x"), 0, true, &radioButton);
+    AutoEmbedControl(radioButton, prefsWin);
+    
+    SetControlValue(radioGroupRef, wm->_scumm->_scale);
     InstallWindowEventHandler(prefsWin, NewEventHandlerUPP((EventHandlerProcPtr) prefsEventHandler),
                               GetEventTypeCount(dialogEvents),dialogEvents,prefsWin,NULL);
     ShowWindow(prefsWin);
