@@ -326,6 +326,7 @@ void Scumm::readIndexFileSmall() {
        uint32 itemsize;
        int numblock = 0;
        int num, i;
+       byte* _oldClass;
 
        debug(9, "readIndexFile()");
 
@@ -420,10 +421,12 @@ void Scumm::readIndexFileSmall() {
                        num = fileReadWordLE();
                        assert(num == _numGlobalObjects);
                        for (i=0; i<num; i++) { /* not too sure about all that */
-                               _classData[i] = fileReadByte() + 256*fileReadByte()+ 256*256*fileReadByte();
-                     //          fileReadByte();
-                               _objectOwnerTable[i] = fileReadByte();
-                               _objectStateTable[i] = _objectOwnerTable[i]>>OF_STATE_SHL;
+				_oldClass=(byte*)&_classData[i];			       
+				_oldClass[0]=fileReadByte();
+				_oldClass[1]=fileReadByte();
+				_oldClass[2]=fileReadByte();
+				_objectOwnerTable[i] = fileReadByte();
+                            //   _objectStateTable[i] = fileReadByte();
                                _objectOwnerTable[i] &= OF_OWNER_MASK;
                        }
                

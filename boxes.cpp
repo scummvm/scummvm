@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "math.h"
 
 byte Scumm::getMaskFromBox(int box) {
 	Box *ptr = getBoxBaseAddr(box);
@@ -121,10 +122,22 @@ void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box) {
 	box->ul.y = (int16)FROM_LE_16(bp->uly);
 	box->ur.x = (int16)FROM_LE_16(bp->urx);
 	box->ur.y = (int16)FROM_LE_16(bp->ury);
-	box->ll.x = (int16)FROM_LE_16(bp->llx);
-	box->ll.y = (int16)FROM_LE_16(bp->lly);
-	box->lr.x = (int16)FROM_LE_16(bp->lrx);
-	box->lr.y = (int16)FROM_LE_16(bp->lry);
+
+	if(_features & GF_OLD256)
+	{
+		box->ll.x = (int16)FROM_LE_16(bp->lrx);
+		box->ll.y = (int16)FROM_LE_16(bp->lry);
+		box->lr.x = (int16)FROM_LE_16(bp->llx);
+		box->lr.y = (int16)FROM_LE_16(bp->lly);
+	}
+	else
+	{
+		box->ll.x = (int16)FROM_LE_16(bp->llx);
+		box->ll.y = (int16)FROM_LE_16(bp->lly);
+		box->lr.x = (int16)FROM_LE_16(bp->lrx);
+		box->lr.y = (int16)FROM_LE_16(bp->lry);
+	}
+	
 }
 
 uint Scumm::distanceFromPt(int x, int y, int ptx, int pty) {
@@ -465,8 +478,6 @@ int Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr) {
 		box2.ll = box2.lr;
 		box2.lr = tmp;
 	}
-	warning("findPathTowards: default"); // FIXME: ZAK256
-	findPathTowardsOld(a, box1nr, box2nr, box3nr);
 	return 0;
 }
 void Scumm::setBoxFlags(int box, int val) {
@@ -804,149 +815,181 @@ void *Scumm::addToBoxVertexHeap(int size) {
 PathVertex *Scumm::addPathVertex() {
 	_boxMatrixPtr4 = getResourceAddress(rtMatrix, 4);
 	_boxPathVertexHeapIndex = 0;
+
 	return (PathVertex*)addToBoxVertexHeap(sizeof(PathVertex));
 }
 
-int Scumm::findPathTowardsOld(Actor *a, byte box1nr, byte box2nr, byte box3nr) {
-        BoxCoords box1;
-        BoxCoords box2;
-        ScummPoint tmp;
-        int i,j;
-        int flag;
-        int q,pos;
-	int threshold=1;
+int Scumm::findPathTowardsOld(Actor *a, byte trap1, byte trap2, byte final_trap)
+{
+        GetGates(trap1,trap2);
+	ScummPoint pt;
 
-        getBoxCoordinates(box1nr,&box1);
-        getBoxCoordinates(box2nr,&box2);
+        p[1].x = actor->x;
+        p[1].y = actor->y;
+        p[2].x = 32000;
+        p[3].x = 32000;
+        p[4].x = 32000;
 
-	do{
-        for(i=0; i<4; i++) {
-                for(j=0; j<4; j++) {
-                        if (abs(box1.ul.x-box1.ur.x)<threshold &&
-                                        abs(box1.ul.x-box2.ul.x)<threshold &&
-                                        abs(box1.ul.x-box2.ur.x)<threshold ) {
-                                flag = 0;
-                                if (box1.ul.y > box1.ur.y) {
-                                        SWAP(box1.ul.y, box1.ur.y);
-                                        flag |= 1;
-                                }
+        if (trap2 == final_trap) {                                                              /* next = final box? */
+                p[4].x = actor->walkdata.destx;
+                p[4].y = actor->walkdata.desty;
 
-                                if (box2.ul.y > box2.ur.y) {
-                                        SWAP(box2.ul.y, box2.ur.y);
-                                        flag |= 2;
-                                }
-
-                                if (box1.ul.y > box2.ur.y || box2.ul.y > box1.ur.y ||
-                                                (box1.ur.y==box2.ul.y || box2.ur.y==box1.ul.y) &&
-                                                box1.ul.y!=box1.ur.y && box2.ul.y!=box2.ur.y) {
-                                        if (flag&1)
-                                                SWAP(box1.ul.y, box1.ur.y);
-                                        if (flag&2)
-                                                SWAP(box2.ul.y, box2.ur.y);
-                                } else {
-                                        if (box2nr == box3nr) {
-                                                int diffX = a->walkdata.destx - a->x;
-                                                int diffY = a->walkdata.desty - a->y;
-                                                int boxDiffX = box1.ul.x - a->x;
-
-                                                if (diffX!=0) {
-                                                        int t;
-
-                                                        diffY *= boxDiffX;
-                                                        t = diffY / diffX;
-                                                        if (t==0 && (diffY<=0 || diffX<=0) && (diffY>=0 || diffX>=0))
-                                                                t = -1;
-                                                        pos = a->y + t;
-                                                } else {
-                                                        pos = a->y;
-                                                }
-                                        } else {
-                                                pos = a->y;
-                                        }
-
-                                        q = pos;
-                                        if (q < box2.ul.y)
-                                        q = box2.ul.y;
-                                        if (q > box2.ur.y)
-                                                q = box2.ur.y;
-                                        if (q < box1.ul.y)
-                                                q = box1.ul.y;
-                                        if (q > box1.ur.y)
-                                                q = box1.ur.y;
-                                        if (q==pos && box2nr==box3nr)
-                                                return 1;
-                                        _foundPathY = q;
-                                        _foundPathX = box1.ul.x;
-                                        return 0;
-                                }
+                if (getMaskFromBox(trap1) == getMaskFromBox(trap2) || 1) {
+                        if (CompareSlope(p[1].x,p[1].y,p[4].x,p[4].y, gate1ax,gate1ay) !=
+                                 CompareSlope(p[1].x,p[1].y,p[4].x,p[4].y, gate1bx,gate1by) &&
+                                 CompareSlope(p[1].x,p[1].y,p[4].x,p[4].y, gate2ax,gate2ay) !=
+                                 CompareSlope(p[1].x,p[1].y,p[4].x,p[4].y, gate2bx,gate2by)) {
+                                return 0;         /* same zplane and between both gates? */
                         }
-
-                        if (abs(box1.ul.y-box1.ur.y)<threshold &&
-                                        abs(box1.ul.y-box2.ul.y)<threshold &&
-                                        abs(box1.ul.y-box2.ur.y)<threshold ){
-                                flag = 0;
-                                if (box1.ul.x > box1.ur.x) {
-                                        SWAP(box1.ul.x, box1.ur.x);
-                                        flag |= 1;
-                                }
-
-                                if (box2.ul.x > box2.ur.x) {
-                                        SWAP(box2.ul.x, box2.ur.x);
-                                        flag |= 2;
-                                }
-
-                                if (box1.ul.x > box2.ur.x || box2.ul.x > box1.ur.x ||
-                                                (box1.ur.x==box2.ul.x || box2.ur.x==box1.ul.x) &&
-                                                box1.ul.x!=box1.ur.x && box2.ul.x!=box2.ur.x) {
-                                        if (flag&1)
-                                                SWAP(box1.ul.x, box1.ur.x);
-                                        if (flag&2)
-                                                SWAP(box2.ul.x, box2.ur.x);
-                                } else {
-
-                                        if (box2nr == box3nr) {
-                                                int diffX = a->walkdata.destx - a->x;
-                                                int diffY = a->walkdata.desty - a->y;
-                                                int boxDiffY = box1.ul.y - a->y;
-
-                                                pos = a->x;
-                                                if (diffY!=0) {
-                                                        pos += diffX * boxDiffY / diffY;
-                                                }
-                                        } else {
-                                                pos = a->x;
-                                        }
-
-                                        q = pos;
-                                        if (q < box2.ul.x)
-                                                q = box2.ul.x;
-                                        if (q > box2.ur.x)
-                                                q = box2.ur.x;
-                                        if (q < box1.ul.x)
-                                                q = box1.ul.x;
-                                        if (q > box1.ur.x)
-                                                q = box1.ur.x;
-                                        if (q==pos && box2nr==box3nr)
-                                                return 1;
-                                        _foundPathX = q;
-                                        _foundPathY = box1.ul.y;
-                                        return 0;
-                                }
-                        }
-                        tmp = box1.ul;
-                        box1.ul = box1.ur;
-                        box1.ur = box1.ll;
-                        box1.ll = box1.lr;
-                        box1.lr = tmp;
                 }
-                tmp = box2.ul;
-                box2.ul = box2.ur;
-                box2.ur = box2.ll;
-                box2.ll = box2.lr;
-                box2.lr = tmp;
         }
-	threshold++;
-	}while(threshold<10);
-        error("findPathTowardsOld: default"); // FIXME: ZAK256
+
+       	pt=closestPtOnLine(gate2ax,gate2ay,gate2bx,gate2by,p[1].x,p[1].y);
+        p[3].x = pt.x;
+        p[3].y = pt.y;
+
+        if (CompareSlope(p[1].x,p[1].y,p[3].x,p[3].y, gate1ax,gate1ay) ==
+                 CompareSlope(p[1].x,p[1].y,p[3].x,p[3].y, gate1bx,gate1by)) {
+                closestPtOnLine(gate1ax,gate1ay,gate1bx,gate1by,p[1].x,p[1].y);
+                p[2].x = pt.x;                       /* if point 2 between gates, ignore! */
+                p[2].y = pt.y;
+        }
+
         return 0;
+}
+
+void Scumm::GetGates(int trap1,int trap2) {
+int   i;
+int    Closest1,Closest2,Closest3;
+int    Dist[8];
+int Dist1,Dist2,Dist3;
+int Box1,Box2,Box3;
+BoxCoords box;
+int polyx[8];
+int polyy[8];
+AdjustBoxResult pt;
+
+        getBoxCoordinates(trap1,&box);
+        polyx[0] = box.ul.x;
+        polyy[0] = box.ul.y;
+        polyx[1] = box.ur.x;
+        polyy[1] = box.ur.y;
+        polyx[2] = box.ll.x;
+        polyy[2] = box.ll.y;
+        polyx[3] = box.lr.x;
+        polyy[3] = box.lr.y;
+        for (i = 0 ; i < 4 ; i++) { 
+		pt = getClosestPtOnBox(trap2,polyx[i],polyy[i]);
+		Dist[i] = pt.dist;
+                CloX[i] = pt.x;
+                CloY[i] = pt.y;
+        }
+
+        getBoxCoordinates(trap2,&box);
+        polyx[4] = box.ul.x;
+        polyy[4] = box.ul.y;
+        polyx[5] = box.ur.x;
+        polyy[5] = box.ur.y;
+        polyx[6] = box.ll.x;
+        polyy[6] = box.ll.y;
+        polyx[7] = box.lr.x;
+        polyy[7] = box.lr.y;
+        for (i = 4 ; i < 8 ; i++) {
+                pt = getClosestPtOnBox(trap1,polyx[i],polyy[i]);
+                Dist[i] = pt.dist;
+                CloX[i] = pt.x;
+                CloY[i] = pt.y;
+        }
+
+
+        Dist1 = 0xFFFF;
+        for (i = 0 ; i < 8 ; i++) {
+                if (Dist[i] < Dist1) {
+                        Dist1 = Dist[i];
+                        Closest1 = i;
+                }
+        }
+        Dist[Closest1] = 0xFFFF;
+
+        Dist2 = 0xFFFF;
+        for (i = 0 ; i < 8 ; i++) {
+                if (Dist[i] < Dist2) {
+                        Dist2 = Dist[i];
+                        Closest2 = i;
+                }
+        }
+        Dist[Closest2] = 0xFFFF;
+
+        Dist3 = 0xFFFF;
+        for (i = 0 ; i < 8 ; i++) {
+                if (Dist[i] < Dist3) {
+                        Dist3 = Dist[i];
+                        Closest3 = i;
+                }
+        }
+
+        Box1 = (Closest1 > 3);
+        Box2 = (Closest2 > 3);
+        Box3 = (Closest3 > 3);
+
+        Dist1 = (int)sqrt(Dist1);
+        Dist2 = (int)sqrt(Dist2);
+        Dist3 = (int)sqrt(Dist3);
+        
+	if (Box1 == Box2 && abs(Dist1-Dist2) < 4) {
+                SetGate(Closest1,Closest2,polyx,polyy);
+
+        } else if (Box1 == Box2 && Dist1 == Dist2) {                            /* parallel */
+                SetGate(Closest1,Closest2,polyx,polyy);
+        } else if (Box1 == Box3 && Dist1 == Dist3) {                            /* parallel */
+                SetGate(Closest1,Closest3,polyx,polyy);
+        } else if (Box2 == Box3 && Dist2 == Dist3) {                            /* parallel */
+                SetGate(Closest2,Closest3,polyx,polyy);
+
+
+        } else if (Box1 == Box3 && abs(Dist1-Dist3) < 4) {
+                SetGate(Closest1,Closest3,polyx,polyy);
+        } else if (abs(Dist1-Dist3) < 4) {  /* if 1 close to 3 then use 2-3 */
+                SetGate(Closest2,Closest3,polyx,polyy);
+        } else if (abs(Dist1-Dist2) < 4) {
+                SetGate(Closest1,Closest2,polyx,polyy);
+        } else {
+                SetGate(Closest1,Closest1,polyx,polyy);
+        }
+}
+
+int Scumm::CompareSlope(int X1,int Y1,int X2,int Y2,int X3,int Y3)
+{
+        if ((Y2 - Y1) * (X3 - X1) > (Y3 - Y1) * (X2 - X1)) return(0);
+        return(1);
+}
+
+void Scumm::SetGate(int line1,int line2, int polyx[8], int polyy[8])
+{
+
+        if (line1 < 4) {                                                                /* from box 1 to box 2 */
+                gate1ax = polyx[line1];
+                gate1ay = polyy[line1];
+                gate2ax = CloX[line1];
+                gate2ay = CloY[line1];
+
+        } else {
+                gate2ax = polyx[line1];
+                gate2ay = polyy[line1];
+                gate1ax = CloX[line1];
+                gate1ay = CloY[line1];
+        }
+
+        if (line2 < 4) {                                                                /* from box */
+                gate1bx = polyx[line2];
+                gate1by = polyy[line2];
+                gate2bx = CloX[line2];
+                gate2by = CloY[line2];
+
+        } else {
+                gate2bx = polyx[line2];
+                gate2by = polyy[line2];
+                gate1bx = CloX[line2];
+                gate1by = CloY[line2];
+        }
 }

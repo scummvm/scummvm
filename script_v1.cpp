@@ -804,9 +804,14 @@ FixRoom:
 	}
 }
 
+const short int bit_table[16] =
+{1,2,4,8,0x10,0x20,0x40,0x80,0x100,0x200,0x400,0x800,0x1000,0x2000,0x4000,0x8000};
+
+
 void Scumm::o5_actorSetClass() {
 	int act = getVarOrDirectWord(0x80);
 	int newClass;
+	byte *oldClassData;
 
 	while ( (_opcode=fetchScriptByte()) != 0xFF) {
 		newClass = getVarOrDirectWord(0x80);
@@ -814,10 +819,18 @@ void Scumm::o5_actorSetClass() {
 			_classData[act] = 0;
 			continue;
 		}
-		if (newClass&0x80)
-			putClass(act, newClass, 1);
-		else
-			putClass(act, newClass, 0);
+		if(_features & GF_SMALL_HEADER) {
+			oldClassData=(byte*)&_classData[act];
+			if (newClass&0x80)
+				oldClassData[((newClass-1)&0x7f)/8] |= bit_table[((newClass-1)&0x07)];
+			else
+				oldClassData[((newClass-1)&0x7f)/8] &= bit_table[((newClass-1)&0x07)]^0xff;
+		} else {
+			if (newClass&0x80)
+				putClass(act, newClass, 1);
+			else
+				putClass(act, newClass, 0);
+		}
 	}
 }
 
@@ -1331,11 +1344,16 @@ void Scumm::o5_getVerbEntrypoint() {
 void Scumm::o5_ifClassOfIs() {
 	int act,cls;
 	bool cond = true, b;
+	byte *oldClass;
 
 	act = getVarOrDirectWord(0x80);
 	while ( (_opcode = fetchScriptByte()) != 0xFF) {
 		cls = getVarOrDirectWord(0x80);
-		b = getClass(act, cls);
+		oldClass = (byte*)&_classData[act];
+		if(_features & GF_SMALL_HEADER)
+			b = oldClass[((cls-1)&0x7f)/8] & bit_table[((cls-1)&0x07)];
+		else
+			b = getClass(act, cls);
 
 		if (cls&0x80 && !b || !(cls&0x80) && b)
 			cond = false;

@@ -646,6 +646,9 @@ void Scumm::walkActors() {
 	for (i=1; i<NUM_ACTORS; i++) {
 		a = derefActor(i);
 		if (a->room==_currentRoom)
+		if(_features & GF_OLD256)
+			walkActorOld(a);
+		else
 			walkActor(a);
 	}
 }
@@ -753,6 +756,7 @@ void Scumm::walkActor(Actor *a) {
 	}
 
 	a->walkdata.curbox = j;
+	
 	if (findPathTowards(a, a->walkbox, j, a->walkdata.destbox)) {
 		a->moving |= 8;
 		calcMovementFactor(a, a->walkdata.destx, a->walkdata.desty);
@@ -777,10 +781,33 @@ void Scumm::walkActor(Actor *a) {
 			return;
 		}
 		a->walkdata.curbox = j;
-		if (findPathTowards(a, a->walkbox, j, a->walkdata.destbox))
-			break;
-		if (calcMovementFactor(a, _foundPathX, _foundPathY))
-			return;
+		if(_features & GF_OLD256)
+		{
+			findPathTowardsOld(a, a->walkbox, j, a->walkdata.destbox);
+		        if (p[2].x == 32000 && p[3].x == 32000)
+			{
+				a->moving |= 8;
+				calcMovementFactor(a, a->walkdata.destx, a->walkdata.desty);
+				return;
+			}
+		
+			if (p[2].x != 32000) {
+				if (calcMovementFactor(a, p[2].x, p[2].y)){
+					a->walkdata.destx = p[3].x;
+					a->walkdata.desty = p[3].y;
+					return;													
+				}
+			}
+
+			if (calcMovementFactor(a, p[3].x, p[3].y))
+				return;
+			
+		} else {
+			if (findPathTowards(a, a->walkbox, j, a->walkdata.destbox))
+				break;
+			if (calcMovementFactor(a, _foundPathX, _foundPathY))
+				return;
+		}
 
 		setActorBox(a, a->walkdata.curbox);
 	} while (1);
@@ -1078,6 +1105,8 @@ void Scumm::startWalkActor(Actor *a, int x, int y, int dir) {
 	a->walkdata.destbox = (byte)abr.dist; /* a box */
 	a->walkdata.destdir = dir;
 	a->moving = (a->moving&2)|1;
+	a->walkdata.point3x = 32000;
+	
 	a->walkdata.curbox = a->walkbox;
 }
 
@@ -1179,4 +1208,110 @@ void Scumm::setupShadowPalette(int slot,int rfact,int gfact,int bfact,int from,i
 			(uint)-1);
 		curpal+=3;
 	} while (--num);
+}
+
+void Scumm::walkActorOld(Actor *a) {
+	int new_dir,next_box,goto_x,goto_y;
+
+	if(!a->moving)
+		return;
+
+	if(a->moving&1)
+	{
+restart:
+		a->moving &= ~1;
+
+		if (a->walkbox==0xFF)
+		{
+			a->walkbox = a->walkdata.destbox;
+			a->walkdata.curbox = a->walkdata.destbox;
+			a->moving |=8;
+			calcMovementFactor(a, a->walkdata.destx, a->walkdata.desty);
+			return;
+		}
+
+		if (a->walkbox==a->walkdata.destbox)
+		{
+			a->moving |=8;
+			calcMovementFactor(a, a->walkdata.destx, a->walkdata.desty);
+			return;
+		}
+
+		next_box = getPathToDestBox(a->walkbox,a->walkdata.destbox);
+
+		if( next_box == -1)
+		{
+			a->moving |=8;
+			return;
+		}
+
+		a->walkdata.curbox = next_box;
+
+		findPathTowardsOld(a, a->walkbox, next_box, a->walkdata.destbox);
+		if(p[2].x == 32000 && p[3].x == 32000)
+		{
+			a->moving |=8;
+			calcMovementFactor(a, a->walkdata.destx, a->walkdata.desty);
+			return;
+		}
+
+		if(p[2].x != 32000)
+		{
+			if(calcMovementFactor(a, p[2].x, p[2].y))
+			{
+				actor->walkdata.point3x=p[3].x;
+				actor->walkdata.point3y=p[3].y;
+				return;
+			}
+		}
+
+		if(calcMovementFactor(a,p[3].x,p[3].y))
+			return;
+		
+		a->walkbox = a->walkdata.destbox;
+		a->mask = getMaskFromBox(a->walkbox);
+		goto restart;
+
+	}
+
+	if(a->moving & 2)
+	{
+		if(actorWalkStep(a))
+			return;
+	}
+
+	if(a->moving & 8)
+	{
+		a->moving = 0;
+		startWalkAnim(a, 3, a->walkdata.destdir);
+		return;
+	}
+
+	if(a->moving & 4)
+	{
+		new_dir = updateActorDirection(a);
+		if (a->facing != new_dir)
+		{
+			fixActorDirection(a,new_dir);
+			return;
+		}
+		a->moving=0;
+		return;
+	}
+
+	if(a->walkdata.point3x != 32000)
+	{
+		if(calcMovementFactor(a,a->walkdata.point3x,a->walkdata.point3y))
+		{
+			a->walkdata.point3x=32000;
+			return;
+		}
+		a->walkdata.point3x=32000;
+	}
+
+	a->walkbox = a->walkdata.curbox;
+	a->mask = getMaskFromBox(a->walkbox);
+	a->moving &= 2;
+	a->moving |= 1;
+goto restart;
 }

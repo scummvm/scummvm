@@ -37,6 +37,12 @@
 struct Scumm;
 struct Actor;
 
+struct gate_location
+{
+	int     x;
+	int     y;
+};
+
 #include "smush.h"
 
 typedef void (Scumm::*OpcodeProc)();
@@ -329,6 +335,7 @@ struct ActorWalkData {
 	int16 x,y,newx,newy;
 	int32 XYFactor, YXFactor;
 	uint16 xfrac,yfrac;
+	int point3x, point3y;
 };
 
 struct MouseCursor {
@@ -2155,6 +2162,8 @@ struct Scumm {
 
 	byte VAR_UNK_SCRIPT;
 	byte VAR_UNK_SCRIPT_2;
+
+	void GetGates(int trap1,int trap2);
 	
 	byte VAR_DEFAULT_TALK_DELAY;
 	byte VAR_CHARSET_MASK;
@@ -2162,6 +2171,21 @@ struct Scumm {
 	int NUM_ACTORS;
 
 	byte _videoPath[50];
+
+	gate_location p[5];
+
+	int CompareSlope(int X1,int Y1,int X2,int Y2,int X3,int Y3);
+	void SetGate(int line1,int line2, int polyx[8], int polyy[8]);
+
+	int gate1ax, gate1ay;
+	int gate1bx, gate1by;
+	int gate2ax, gate2ay;
+	int gate2bx, gate2by;
+
+	int CloX[8];
+	int CloY[8];
+
+	void walkActorOld(Actor *a);
 };
 
 enum AkosOpcodes{
