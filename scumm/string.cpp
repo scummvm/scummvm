@@ -749,9 +749,6 @@ void Scumm::addStringToStack(int var) {
 void Scumm::initCharset(int charsetno) {
 	int i;
 
-	if (_features & GF_OLD256)
-		charsetno = !charsetno;
-
 	if (_features & GF_SMALL_HEADER)
 		loadCharset(charsetno);
 	else if (!getResourceAddress(rtCharset, charsetno))
