@@ -2543,7 +2543,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			startManiac();
 			break;
 		case 9:
-			warning("o6_kernelSetFunctions: stub9()");
+			error("o6_kernelSetFunctions: stub9()");
 			break;
 		case 104:									/* samnmax */
 			nukeFlObjects(args[2], args[3]);
