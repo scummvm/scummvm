@@ -506,6 +506,7 @@ const VersionSettings version_settings[] = {
 	{"simon2dos", "Simon the Sorcerer 2 for DOS", GID_SIMON_FIRST+1, 99, 99, 99, 0},
 	{"simon1win", "Simon the Sorcerer 1 for Windows", GID_SIMON_FIRST+2, 99, 99, 99, 0},	
 	{"simon2win", "Simon the Sorcerer 2 for Windows", GID_SIMON_FIRST+3, 99, 99, 99, 0},
+	{"simon1demo", "Simon the Sorcerer 1 for DOS (demo)", GID_SIMON_FIRST+4, 99, 99, 99, 0}, 
 
 	/* Scumm Version 8 */
 	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 1, 0,

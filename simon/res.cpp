@@ -265,6 +265,9 @@ byte *SimonState::readSingleOpcode(File *in, byte *ptr)
 	case GAME_SIMON1DOS:
 		table = opcode_arg_table_simon1dos;
 		break;
+	case GAME_SIMON1DEMO:
+		table = opcode_arg_table_simon1dos;
+		break;
 	default:
 		error("Invalid game specified");
 	}

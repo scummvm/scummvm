@@ -121,6 +121,7 @@ public:
 		GAME_SIMON1WIN = 2,
 		GAME_SIMON2DOS = 1,
 		GAME_SIMON2WIN = 3,
+		GAME_SIMON1DEMO = 4,
 	};
 
 

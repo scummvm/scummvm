@@ -1015,7 +1015,7 @@ int SimonState::runScript()
 					uint d = _array_4[a];
 					if (d != 0)
 						talk_with_speech(d, b);
-				} else if (_game == GAME_SIMON1DOS) {
+				} else if ((_game == GAME_SIMON1DEMO) || (_game == GAME_SIMON1DOS)) {
 					uint b = getVarOrByte();
 					uint c = getVarOrByte();
 					uint a = getVarOrByte();
@@ -1289,7 +1289,7 @@ void SimonState::o_177()
 			offs = getOffsetOfChild2Param(child, 0x100);
 			talk_with_speech(child->array[offs] + 3550, a);
 		}
-	} else if (_game == GAME_SIMON1DOS) {
+	} else if ((_game == GAME_SIMON1DEMO) || (_game == GAME_SIMON1DOS)) {
 		uint a = getVarOrByte();
 		uint b = getVarOrByte();
 		Child2 *child = findChildOfType2(getNextItemPtr());

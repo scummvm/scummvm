@@ -135,7 +135,7 @@ void MidiPlayer::read_one_song(File *in, Song *s)
 		break;
 
 	default:
-		error("Midi song has no 'MThd'");
+		warning("Midi song has no 'MThd'");
 	}
 
 }

@@ -276,7 +276,7 @@ enum GameId {
 
 	/* Simon the Sorcerer */
 	GID_SIMON_FIRST = 20,
-	GID_SIMON_LAST = GID_SIMON_FIRST + 3,
+	GID_SIMON_LAST = GID_SIMON_FIRST + 4,
 };
 
 enum GameFeatures {
