@@ -252,6 +252,8 @@ void Scumm_v8::setupScummVars()
 	VAR_CAMERA_ACCEL_X = 109;
 	VAR_CAMERA_ACCEL_Y = 110;
 
+	VAR_EGO = 126;
+
 	VAR_DEBUGMODE = 130;
 	
 	// var 266, 290 and 301 have something to do with cursor images, since various scripts

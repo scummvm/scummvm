@@ -1106,8 +1106,18 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 
 int Sound::playBundleSound(char *sound) {
 	byte * ptr;
+	bool result;
+	
+	if (_scumm->_gameId == GID_CMI)
+		// FIXME: HACK! There are actually two voice files in COMI... I dunno how to do this
+		// right, though :-/
+		result = _scumm->_bundle->openVoiceFile("voxdisk1.bun", _scumm->getGameDataPath());
+	else if (_scumm->_gameId == GID_DIG)
+		result = _scumm->_bundle->openVoiceFile("digvoice.bun", _scumm->getGameDataPath());
+	else
+		error("Don't know which bundle file to load");
 
-	if (_scumm->_bundle->openVoiceFile("digvoice.bun", _scumm->getGameDataPath()) == false) {
+	if (!result) {
 		return -1;
 	}
 

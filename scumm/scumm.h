@@ -510,7 +510,7 @@ public:
 	bool isResourceLoaded(int type, int index);
 	void initRoomSubBlocks();
 	void loadRoomObjects();
-    void loadRoomObjectsSmall();
+	void loadRoomObjectsSmall();
 	void readArrayFromIndexFile();
 	void readMAXS();
 	bool isGlobInMemory(int type, int index);
@@ -783,7 +783,7 @@ public:
 	BlastObject _enqueuedObjects[128];
 
 	void enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth,
-                       int objectHeight, int scaleX, int scaleY, int image, int mode);
+	                   int objectHeight, int scaleX, int scaleY, int image, int mode);
 	void clearEnqueue() { _enqueuePos = 0; }
 	void drawBlastObjects();
 	void drawBlastObject(BlastObject *eo);

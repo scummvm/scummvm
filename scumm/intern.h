@@ -209,7 +209,7 @@ protected:
 
 	int popRoomAndObj(int *room);
 
-	void decodeParseString(int a, int b);
+	virtual void decodeParseString(int a, int b);
 	int getStackList(int *args, uint maxnum);
 
 	/* Version 6 script opcodes */
@@ -332,8 +332,8 @@ protected:
 	void o6_quitPauseRestart();
 	void o6_isActorInBox();
 	void o6_delay();
-	void o6_delayLonger();
-	void o6_delayVeryLong();
+	void o6_delaySeconds();
+	void o6_delayMinutes();
 	void o6_stopSentence();
 	void o6_print_0();
 	void o6_print_1();
@@ -404,7 +404,7 @@ protected:
 	virtual int readVar(uint var);
 	virtual void writeVar(uint var, int value);
 
-	void decodeParseString(int m, int n);
+	virtual void decodeParseString(int m, int n);
 
 	/* Version 8 script opcodes */
 	void o8_mod();
@@ -418,9 +418,6 @@ protected:
 	void o8_printDebug();
 	void o8_printSystem();
 	void o8_blastText();
-
-	void o8_talkActor();
-	void o8_talkActorSimple();
 
 	void o8_cursorCommand();
 	void o8_resourceRoutines();

@@ -490,7 +490,8 @@ void Scumm::loadRoomObjectsSmall()
 	byte *room, *searchptr;
 	RoomHeader *roomhdr;
 
-	CHECK_HEAP room = getResourceAddress(rtRoom, _roomResource);
+	CHECK_HEAP
+	room = getResourceAddress(rtRoom, _roomResource);
 	roomhdr = (RoomHeader *)findResourceData(MKID('RMHD'), room);
 
 	_numObjectsInRoom = READ_LE_UINT16(&(roomhdr->old.numObjects));
@@ -825,7 +826,8 @@ void Scumm::addObjectToInventory(uint obj, uint room)
 
 	debug(1, "Adding object %d from room %d into inventory", obj, room);
 
-	CHECK_HEAP if (whereIsObject(obj) == WIO_FLOBJECT) {
+	CHECK_HEAP
+	if (whereIsObject(obj) == WIO_FLOBJECT) {
 		i = getObjectIndex(obj);
 		ptr = getResourceAddress(rtFlObject, _objs[i].fl_object_index) + 8;
 		size = READ_BE_UINT32_UNALIGNED(ptr + 4);

@@ -264,8 +264,8 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_isActorInBox),
 		/* B0 */
 		OPCODE(o6_delay),
-		OPCODE(o6_delayLonger),
-		OPCODE(o6_delayVeryLong),
+		OPCODE(o6_delaySeconds),
+		OPCODE(o6_delayMinutes),
 		OPCODE(o6_stopSentence),
 		/* B4 */
 		OPCODE(o6_print_0),
@@ -2188,22 +2188,27 @@ void Scumm_v6::o6_isActorInBox()
 
 void Scumm_v6::o6_delay()
 {
+	// FIXME - what exactly are we measuring here? In order for the other two
+	// delay functions to be right, it should be 1/60th of a second. But for
+	// CMI it would seem this should delay for 1/10th of a second...
 	uint32 delay = (uint16)pop();
 	vm.slot[_currentScript].delay = delay;
 	vm.slot[_currentScript].status = 1;
 	o6_breakHere();
 }
 
-void Scumm_v6::o6_delayLonger()
+void Scumm_v6::o6_delaySeconds()
 {
+	// FIXME - are we really measuring minutes here?
 	uint32 delay = (uint16)pop() * 60;
 	vm.slot[_currentScript].delay = delay;
 	vm.slot[_currentScript].status = 1;
 	o6_breakHere();
 }
 
-void Scumm_v6::o6_delayVeryLong()
+void Scumm_v6::o6_delayMinutes()
 {
+	// FIXME - are we really measuring minutes here?
 	uint32 delay = (uint16)pop() * 3600;
 	vm.slot[_currentScript].delay = delay;
 	vm.slot[_currentScript].status = 1;
@@ -2254,39 +2259,7 @@ void Scumm_v6::o6_talkActor()
 	_actorToPrintStrFor = pop();
 	_messagePtr = _scriptPointer;
 
-	if ((_gameId == GID_DIG) && (_messagePtr[0] == '/')) {
-		char pointer[20];
-		int i, j;
-
-		_scriptPointer += resStrLen((char*)_scriptPointer) + 1;
-		translateText(_messagePtr, _transText);
-		for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
-			if (_messagePtr[i] != '/')
-				pointer[j++] = _messagePtr[i];
-		}
-		pointer[j] = 0;
-
-		// Stop any talking that's still going on
-		if (_sound->_talkChannel > -1)
-			_mixer->stop(_sound->_talkChannel);		
-
-		_sound->_talkChannel = _sound->playBundleSound(pointer);
-		_messagePtr = _transText;
-		setStringVars(0);
-		actorTalk();
-	} else {
-		setStringVars(0);
-		actorTalk();
-		_scriptPointer = _messagePtr;
-	}
-}
-
-void Scumm_v6::o6_talkEgo()
-{
-	_actorToPrintStrFor = (unsigned char)_vars[VAR_EGO];
-	_messagePtr = _scriptPointer;
-
-	if ((_gameId == GID_DIG) && (_messagePtr[0] == '/')) {
+	if (((_gameId == GID_DIG) || (_features & GF_AFTER_V8)) && (_messagePtr[0] == '/')) {
 		char pointer[20];
 		int i, j;
 
@@ -2311,6 +2284,12 @@ void Scumm_v6::o6_talkEgo()
 		actorTalk();
 		_scriptPointer = _messagePtr;
 	}
+}
+
+void Scumm_v6::o6_talkEgo()
+{
+	push(_vars[VAR_EGO]);
+	o6_talkActor();
 }
 
 void Scumm_v6::o6_dim()

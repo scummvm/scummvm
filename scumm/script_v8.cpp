@@ -175,10 +175,10 @@ void Scumm_v8::setupOpcodes()
 		/* 68 */
 		OPCODE(o6_delayFrames),
 		OPCODE(o8_wait),
-		OPCODE(o6_delay),			// FIXME - is the delay period right?
-		OPCODE(o6_delayLonger),		// FIXME - is the delay period right?
+		OPCODE(o6_delay),
+		OPCODE(o6_delaySeconds),
 		/* 6C */
-		OPCODE(o6_delayVeryLong),	// FIXME - is the delay period right?
+		OPCODE(o6_delayMinutes),
 		OPCODE(o6_writeWordVar),
 		OPCODE(o6_wordVarInc),
 		OPCODE(o6_wordVarDec),
@@ -200,7 +200,7 @@ void Scumm_v8::setupOpcodes()
 		/* 7C */
 		OPCODE(o6_stopScript),
 		OPCODE(o6_jumpToScript),		// FIXME - is this right? "O_CHAIN_SCRIPT"
-		OPCODE(o6_dummy),
+		OPCODE(o6_dummy),				// FIXME - O_RETURN ? WTF is this, why don't they use the stack?
 		OPCODE(o6_startObject),
 		/* 80 */
 		OPCODE(o6_stopObjectScript),	// FIXME - is this right?
@@ -221,11 +221,11 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_panCameraTo),
 		OPCODE(o6_actorFollowCamera),
 		OPCODE(o6_setCameraAt),
-		OPCODE(o8_talkActor),
+		OPCODE(o6_printActor),
 		/* 90 */
-		OPCODE(o6_invalid),
-		OPCODE(o8_talkActorSimple),
-		OPCODE(o6_invalid),
+		OPCODE(o6_printEgo),
+		OPCODE(o6_talkActor),
+		OPCODE(o6_talkEgo),
 		OPCODE(o8_printLine),
 		/* 94 */
 		OPCODE(o8_printCursor),
@@ -269,7 +269,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_system),
 		/* B4 */
 		OPCODE(o6_saveRestoreVerbs),
-		OPCODE(o6_invalid),
+		OPCODE(o6_setObjectName),
 		OPCODE(o6_invalid),
 		OPCODE(o6_drawBox),
 		/* B8 */
@@ -293,7 +293,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		/* C8 */
-		OPCODE(o6_startScript),
+		OPCODE(o6_startScript),	// FIXME - this function returns something in V8 !
 		OPCODE(o6_startObject),
 		OPCODE(o6_pickOneOf),
 		OPCODE(o6_pickOneOfDefault),
@@ -592,7 +592,7 @@ void Scumm_v8::decodeParseString(int m, int n)
 				_mixer->stop(_sound->_talkChannel);
 
 			// FIXME: no 'digvoice.bun' in COMI
-			// _sound->_talkChannel = _sound->playBundleSound(pointer);
+			_sound->_talkChannel = _sound->playBundleSound(pointer);
 
 			_messagePtr = _transText;
 			_msgPtrToAdd = (byte *)buffer;
@@ -693,8 +693,8 @@ void Scumm_v8::o8_wait()
 		error("o8_wait: default case %d", subOp);
 	}
 
-        _scriptPointer -= 2;
-        o6_breakHere();
+	_scriptPointer -= 2;
+	o6_breakHere();
 }
 
 void Scumm_v8::o8_dim()
@@ -788,62 +788,6 @@ void Scumm_v8::o8_arrayOps()
 	default:
 		error("o8_arrayOps: default case %d (array %d)", subOp, array);
 	}
-}
-
-void Scumm_v8::o8_talkActor() {
-	int _actorToPrintStrFor = pop();
-
-	_messagePtr = _scriptPointer;
-	if (_messagePtr[0] == '/') {
-		char pointer[20];
-		int i, j;
-
-		_scriptPointer += resStrLen((char*)_scriptPointer)+ 1;
-		translateText(_messagePtr, _transText);
-		for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
-			if (_messagePtr[i] != '/')
-				pointer[j++] = _messagePtr[i];
-       		}
-		pointer[j] = 0;
-
-		_messagePtr = _transText;
-                //setStringVars(0);
-                //actorTalk(); // FIXME - This crashes
-        } else {
-                //setStringVars(0);
-                //actorTalk(); // FIXME - This crashes
-                _scriptPointer = _messagePtr;
-        }
-
-	printf("o8_talkActor(%d, %s)\n", _actorToPrintStrFor, _messagePtr);
-}
-
-void Scumm_v8::o8_talkActorSimple() {
-	int _actorToPrintStrFor = pop();
-
-	_messagePtr = _scriptPointer;
-	if (_messagePtr[0] == '/') {
-		char pointer[20];
-		int i, j;
-
-		_scriptPointer += resStrLen((char*)_scriptPointer)+ 1;
-		translateText(_messagePtr, _transText);
-		for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
-			if (_messagePtr[i] != '/')
-				pointer[j++] = _messagePtr[i];
-       		}
-		pointer[j] = 0;
-
-		_messagePtr = _transText;
-                //setStringVars(0);
-                //actorTalk(); // FIXME - This crashes
-        } else {
-                //setStringVars(0);
-                //actorTalk(); // FIXME - This crashes
-                _scriptPointer = _messagePtr;
-        }
-
-	printf("o8_talkActorSimple(%d, %s)\n", _actorToPrintStrFor, _messagePtr);
 }
 
 void Scumm_v8::o8_printLine()
@@ -1336,16 +1280,16 @@ void Scumm_v8::o8_system()
 
 void Scumm_v8::o8_startVideo()
 {
-        char dirName[255];
+	char dirName[255];
 	int len = resStrLen((char*)_scriptPointer);
-
-        sprintf(dirName, "%s/resource/", getGameDataPath());
-        warning("o8_startVideo(%s/%s)\n", dirName, (char*)_scriptPointer);
-
-        ScummRenderer * sr = new ScummRenderer(this, 1000/14);
-        SmushPlayer * sp = new SmushPlayer(sr);
-        //sp->play((char*)_scriptPointer, dirName);
-
+	
+	sprintf(dirName, "%s/resource/", getGameDataPath());
+	warning("o8_startVideo(%s/%s)\n", dirName, (char*)_scriptPointer);
+	
+	//ScummRenderer * sr = new ScummRenderer(this, 1000/14);
+	//SmushPlayer * sp = new SmushPlayer(sr);
+	//sp->play((char*)_scriptPointer, dirName);
+	
 	_scriptPointer += len + 1;
 }
 
