@@ -66,7 +66,7 @@ public:
 		return _str[idx];
 	}
 
-	const char *c_str() const		{ return _str; }
+	const char *c_str() const		{ return _str ? _str : ""; }
 	int size() const				{ return _len; }
 
 	bool isEmpty() const	{ return (_len == 0); }

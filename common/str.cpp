@@ -221,39 +221,29 @@ void String::ensureCapacity(int new_len, bool keep_old) {
 #pragma mark -
 
 bool ConstString::operator ==(const ConstString &x) const {
-	return (_len == x._len) && ((_len == 0) || (0 == strcmp(_str, x._str)));
+	return (0 == strcmp(c_str(), x.c_str()));
 }
 
 bool ConstString::operator ==(const char *x) const {
-	if (_str == 0)
-		return (x == 0) || (*x == 0);
-	if (x == 0)
-		return (_len == 0);
-	return (0 == strcmp(_str, x));
+	assert(x != 0);
+	return (0 == strcmp(c_str(), x));
 }
 
 bool ConstString::operator !=(const ConstString &x) const {
-	return (_len != x._len) || ((_len != 0) && (0 != strcmp(_str, x._str)));
+	return (0 != strcmp(c_str(), x.c_str()));
 }
 
 bool ConstString::operator !=(const char *x) const {
-	if (_str == 0)
-		return (x != 0) && (*x != 0);
-	if (x == 0)
-		return (_len != 0);
-	return (0 != strcmp(_str, x));
+	assert(x != 0);
+	return (0 != strcmp(c_str(), x));
 }
 
 bool ConstString::operator < (const ConstString &x) const {
-	if (!_len || !x._len)	// Any or both empty?
-		return !_len && x._len;	// Less only if this string is empty and the other isn't
-	return scumm_stricmp(_str, x._str) < 0;
+	return strcmp(c_str(), x.c_str()) < 0;
 }
 
 bool ConstString::operator <= (const ConstString &x) const {
-	if (!_len || !x._len)	// Any or both empty?
-		return !_len;	// Less or equal unless the other string is empty and this one isn't
-	return scumm_stricmp(_str, x._str) <= 0;
+	return strcmp(c_str(), x.c_str()) <= 0;
 }
 
 bool ConstString::operator > (const ConstString &x) const {
