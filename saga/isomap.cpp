@@ -51,6 +51,40 @@ enum MaskRules {
 	kMaskRuleUandV
 };
 
+
+static const IsoMap::TilePoint normalDirTable[8] = {
+	{ 1, 1, 0, SAGA_DIAG_NORMAL_COST},
+	{ 1, 0, 0, SAGA_STRAIGHT_NORMAL_COST},
+	{ 1,-1, 0, SAGA_DIAG_NORMAL_COST},
+	{ 0,-1, 0, SAGA_STRAIGHT_NORMAL_COST},
+	{-1,-1, 0, SAGA_DIAG_NORMAL_COST},
+	{-1, 0, 0, SAGA_STRAIGHT_NORMAL_COST},
+	{-1, 1, 0, SAGA_DIAG_NORMAL_COST},
+	{ 0, 1, 0, SAGA_STRAIGHT_NORMAL_COST},
+};
+
+static const IsoMap::TilePoint easyDirTable[8] = {
+	{ 1, 1, 0, SAGA_DIAG_EASY_COST},
+	{ 1, 0, 0, SAGA_STRAIGHT_EASY_COST},
+	{ 1,-1, 0, SAGA_DIAG_EASY_COST},
+	{ 0,-1, 0, SAGA_STRAIGHT_EASY_COST},
+	{-1,-1, 0, SAGA_DIAG_EASY_COST},
+	{-1, 0, 0, SAGA_STRAIGHT_EASY_COST},
+	{-1, 1, 0, SAGA_DIAG_EASY_COST},
+	{ 0, 1, 0, SAGA_STRAIGHT_EASY_COST},
+};
+
+static const IsoMap::TilePoint hardDirTable[8] = {
+	{ 1, 1, 0, SAGA_DIAG_HARD_COST},
+	{ 1, 0, 0, SAGA_STRAIGHT_HARD_COST},
+	{ 1,-1, 0, SAGA_DIAG_HARD_COST},
+	{ 0,-1, 0, SAGA_STRAIGHT_HARD_COST},
+	{-1,-1, 0, SAGA_DIAG_HARD_COST},
+	{-1, 0, 0, SAGA_STRAIGHT_HARD_COST},
+	{-1, 1, 0, SAGA_DIAG_HARD_COST},
+	{ 0, 1, 0, SAGA_STRAIGHT_HARD_COST},
+};
+
 IsoMap::IsoMap(SagaEngine *vm) : _vm(vm) {
 	_tileData = NULL;
 	_tilesCount = 0;
@@ -97,7 +131,7 @@ void IsoMap::loadImages(const byte *resourcePointer, size_t resourceLength) {
 		tileData->attributes = readS.readByte();
 		tileData->offset = readS.readUint16();
 		tileData->terrainMask = readS.readSint16();
-		tileData->FGBGAttr = readS.readByte();
+		tileData->FGDBGDAttr = readS.readByte();
 		readS.readByte(); //skip
 	}
 
@@ -603,7 +637,7 @@ void IsoMap::drawSpritePlatform(SURFACE *ds, uint16 platformIndex, const Point &
 						tileIndex = findMulti(tileIndex, absU + u, absU + v, absH);
 					}
 
-					drawSpriteTile(ds, tileIndex, location, s);
+					drawTile(ds, tileIndex, s, &location);
 				}
 			}
 		}
@@ -655,111 +689,18 @@ void IsoMap::drawPlatform(SURFACE *ds, uint16 platformIndex, const Point &point,
 						tileIndex = findMulti(tileIndex, absU + u, absU + v, absH);
 					}
 
-					drawTile(ds, tileIndex, s);
+					drawTile(ds, tileIndex, s, NULL);
 				}
 			}
 		}
 	}
 }
 
-void IsoMap::drawTile(SURFACE *ds, uint16 tileIndex, const Point &point) {
-	const byte *tilePointer;
-	const byte *readPointer;
-	byte *drawPointer;
-	Point drawPoint;
-	int height;
-	int widthCount = 0;
-	int row, col, count, lowBound;
-	int bgRunCount;
-	int fgRunCount;
-
-
-	if (tileIndex >= _tilesCount) {
-		error("IsoMap::drawTile wrong tileIndex");
-	}
-
-
-	if (point.x + SAGA_ISOTILE_WIDTH < _tileClip.left) {
-		return;
-	}
-
-	if (point.x - SAGA_ISOTILE_WIDTH >= _tileClip.right) {
-		return;
-	}
-
-	tilePointer = _tileData + _tilesTable[tileIndex].offset;
-	height = _tilesTable[tileIndex].height;
-
-
-
-	if ((height <= 8) || (height > 64)) {
-		return;
-	}
-
-	drawPoint = point;
-	drawPoint.y -= height;
-
-	if (drawPoint.y >= _tileClip.bottom) {
-		return;
-	}
-
-	readPointer = tilePointer;
-	lowBound = MIN((int)(drawPoint.y + height), (int)_tileClip.bottom);
-	for (row = drawPoint.y; row < lowBound; row++) {
-		widthCount = 0;
-		if (row >= _tileClip.top) {
-			drawPointer = (byte *)ds->pixels + drawPoint.x + (row * ds->pitch);
-			col = drawPoint.x;
-			for (;;) {
-				bgRunCount = *readPointer++;
-				widthCount += bgRunCount;
-				if (widthCount >= SAGA_ISOTILE_WIDTH) {
-					break;
-				}
-
-				drawPointer += bgRunCount;
-				col += bgRunCount;
-				fgRunCount = *readPointer++;
-				widthCount += fgRunCount;
-				
-				count = 0;
-				while ((col < _tileClip.left) && (count < fgRunCount)) {
-					count++;
-					col++;
-				}
-				while ((col < _tileClip.right) && (count < fgRunCount)) {
-					assert((uint)ds->pixels <= (uint)(drawPointer + count));
-					assert(((uint)ds->pixels + (_vm->getDisplayWidth() * _vm->getDisplayHeight())) > (uint)(drawPointer + count));
-					drawPointer[count] = readPointer[count];
-					count++;
-					col++;
-				}
-				readPointer += fgRunCount;
-				drawPointer += fgRunCount;
-			}
-		} else {
-			for (;;) {
-				bgRunCount = *readPointer++;
-				widthCount += bgRunCount;
-				if (widthCount >= SAGA_ISOTILE_WIDTH) {
-					break;
-				}
-
-				fgRunCount = *readPointer++;
-				widthCount += fgRunCount;
-				
-				readPointer += fgRunCount;
-			}
-		}
-	}
-
-}
-
-#define THRESH0		0
-#define THRESH8		8
+#define THRESH0			0
+#define THRESH8			8
 #define THRESH16		16
 
-void IsoMap::drawSpriteTile(SURFACE *ds, uint16 tileIndex, const Location &location, const Point &point) {
+void IsoMap::drawTile(SURFACE *ds, uint16 tileIndex, const Point &point, const Location *location) {
 	const byte *tilePointer;
 	const byte *readPointer;
 	byte *drawPointer;
@@ -769,6 +710,7 @@ void IsoMap::drawSpriteTile(SURFACE *ds, uint16 tileIndex, const Location &locat
 	int row, col, count, lowBound;
 	int bgRunCount;
 	int fgRunCount;
+
 
 	if (tileIndex >= _tilesCount) {
 		error("IsoMap::drawTile wrong tileIndex");
@@ -786,8 +728,6 @@ void IsoMap::drawSpriteTile(SURFACE *ds, uint16 tileIndex, const Location &locat
 	tilePointer = _tileData + _tilesTable[tileIndex].offset;
 	height = _tilesTable[tileIndex].height;
 
-
-
 	if ((height <= 8) || (height > 64)) {
 		return;
 	}
@@ -799,95 +739,96 @@ void IsoMap::drawSpriteTile(SURFACE *ds, uint16 tileIndex, const Location &locat
 		return;
 	}
 
-	if (location.z <= -16) {
-		if (location.z <= -48) {
-			if (location.u() < -THRESH8 || location.v() < -THRESH8) {
-				return;
+	if (location != NULL) {
+		if (location->z <= -16) {
+			if (location->z <= -48) {
+				if (location->u() < -THRESH8 || location->v() < -THRESH8) {
+					return;
+				}
+			} else {
+				if (location->u() < THRESH0 || location->v() < THRESH0) {
+					return;
+				}
 			}
 		} else {
-			if (location.u() < THRESH0 || location.v() < THRESH0) {
+			if (location->z >= 16) {
 				return;
-			}
-		}
-	} else {
-		if (location.z >= 16) {
-			return;
-		} else {
-			switch (_tilesTable[tileIndex].GetMaskRule()) {
+			} else {
+				switch (_tilesTable[tileIndex].GetMaskRule()) {
 			case kMaskRuleNever:
 				return;
 			case kMaskRuleAlways:
 				break;
 			case kMaskRuleUMIN:
-				if (location.u() < THRESH0) {
+				if (location->u() < THRESH0) {
 					return; 
 				}
 				break;
 			case kMaskRuleUMID:	
-				if (location.u() < THRESH8) {
+				if (location->u() < THRESH8) {
 					return;
 				}
 				break;
 			case kMaskRuleUMAX:
-				if (location.u() < THRESH16) {
+				if (location->u() < THRESH16) {
 					return; 
 				}
 				break;
 			case kMaskRuleVMIN:
-				if (location.v() < THRESH0) {
+				if (location->v() < THRESH0) {
 					return;
 				}
 				break;
 			case kMaskRuleVMID:
-				if (location.v() < THRESH8) {
+				if (location->v() < THRESH8) {
 					return; 
 				}
 				break;
 			case kMaskRuleVMAX:
-				if (location.v() < THRESH16) {
+				if (location->v() < THRESH16) {
 					return; 
 				}
 				break;
 			case kMaskRuleYMIN:
-				if (location.u() + location.v() < THRESH0 * 2) {
+				if (location->u() + location->v() < THRESH0 * 2) {
 					return;
 				}
 				break;
 			case kMaskRuleYMID:
-				if (location.u() + location.v() < THRESH8 * 2) {
+				if (location->u() + location->v() < THRESH8 * 2) {
 					return;
 				}
 				break;
 			case kMaskRuleYMAX:
-				if (location.u() + location.v() < THRESH16 * 2) {
+				if (location->u() + location->v() < THRESH16 * 2) {
 					return;
 				}
 				break;
 			case kMaskRuleUVMAX:
-				if (location.u() < THRESH16 && location.v() < THRESH16) {
+				if (location->u() < THRESH16 && location->v() < THRESH16) {
 					return;
 				}
 				break;
 			case kMaskRuleUVMIN:
-				if (location.u() < THRESH0 || location.v() < THRESH0) {
+				if (location->u() < THRESH0 || location->v() < THRESH0) {
 					return;
 				}
 				break;
 			case kMaskRuleUorV:
-				if (location.u() < THRESH8 && location.v() < THRESH8) {
+				if (location->u() < THRESH8 && location->v() < THRESH8) {
 					return;
 				}
 				break;
 			case kMaskRuleUandV:
-				if (location.u() < THRESH8 || location.v() < THRESH8) {
+				if (location->u() < THRESH8 || location->v() < THRESH8) {
 					return;
 				}
 				break;
+				}
 			}
 		}
 	}
 
-///
 	readPointer = tilePointer;
 	lowBound = MIN((int)(drawPoint.y + height), (int)_tileClip.bottom);
 	for (row = drawPoint.y; row < lowBound; row++) {
@@ -906,7 +847,7 @@ void IsoMap::drawSpriteTile(SURFACE *ds, uint16 tileIndex, const Location &locat
 				col += bgRunCount;
 				fgRunCount = *readPointer++;
 				widthCount += fgRunCount;
-
+				
 				count = 0;
 				while ((col < _tileClip.left) && (count < fgRunCount)) {
 					count++;
@@ -932,12 +873,327 @@ void IsoMap::drawSpriteTile(SURFACE *ds, uint16 tileIndex, const Location &locat
 
 				fgRunCount = *readPointer++;
 				widthCount += fgRunCount;
-
+				
 				readPointer += fgRunCount;
 			}
 		}
 	}
 
 }
+
+//
+
+void IsoMap::pushPoint(int16 u, int16 v, uint16 cost, uint16 direction) {
+	int16 upper;
+	int16 lower;
+	int16 mid;
+	TilePoint *tilePoint;
+	PathCell *pathCell;
+	
+	upper = _queueCount;
+	lower = 0;
+
+	if ((u < 1) || (u >= SAGA_SEARCH_DIAMETER - 1) || (v < 1) || (v >= SAGA_SEARCH_DIAMETER - 1)) {
+			return;
+	}
+		
+	pathCell = _searchArray.getPathCell(u, v);
+
+	if ((pathCell->visited) && (pathCell->cost <= cost)) {
+		return;
+	}
+
+	if (_queueCount >= SAGA_SEARCH_QUEUE_SIZE) {
+		return;
+	}
+
+	while(1) {
+		mid = (upper + lower) / 2;
+		tilePoint = _searchArray.getQueue(mid);
+
+		if (upper <= lower) {
+			break;
+		}
+
+		if (cost < tilePoint->cost) {
+			lower = mid + 1;
+		} else {
+			upper = mid;
+		}
+	}
+
+	if (mid < _queueCount ) {
+		memmove(tilePoint + 1, tilePoint, (_queueCount - mid) * sizeof (*tilePoint));
+	}
+	_queueCount++;
+
+	tilePoint->u = u;
+	tilePoint->v = v;
+	tilePoint->cost = cost;
+	tilePoint->direction = direction;
+
+	pathCell->visited = 1;
+	pathCell->direction = direction;
+	pathCell->cost = cost;
+}
+
+IsoTileData *IsoMap::getTile(int16 u, int16 v, int16 z) {
+	int16 mtileU;
+	int16 mtileV;
+	int16 uc;
+	int16 vc;
+	int16 u0;
+	int16 v0;
+	int16 tileIndex;
+	int16 platformIndex;
+	int16 metaTileIndex;
+
+	mtileU = u >> 3;
+	mtileV = v >> 3;
+	uc = mtileU & (SAGA_TILEMAP_W - 1);
+	vc = mtileV & (SAGA_TILEMAP_W - 1);
+	u0 = u & (SAGA_PLATFORM_W - 1);
+	v0 = v & (SAGA_PLATFORM_W - 1);
+
+	if ((uc != mtileU) || (vc != mtileV)) {
+		metaTileIndex = 0;
+		switch ( _tileMap.edgeType) {
+		case kEdgeTypeBlack: 
+			return NULL;
+		case kEdgeTypeFill0: 
+			break;
+		case kEdgeTypeFill1:
+			metaTileIndex = 1; 
+			break;
+		case kEdgeTypeRpt:
+			uc = clamp( 0, mtileU, SAGA_TILEMAP_W - 1);
+			vc = clamp( 0, mtileV, SAGA_TILEMAP_W - 1);
+			metaTileIndex = _tileMap.tilePlatforms[uc][vc];
+			break;
+		case kEdgeTypeWrap:
+			metaTileIndex = _tileMap.tilePlatforms[uc][vc];
+			break;
+		}
+	} else {
+		metaTileIndex = _tileMap.tilePlatforms[uc][vc];
+	}
+
+	if (_metaTilesCount <= metaTileIndex) {
+		error("IsoMap::getTile wrong metaTileIndex");
+	}
+
+	platformIndex = _metaTileList[metaTileIndex].stack[z];
+	if (platformIndex < 0) {
+		return NULL;
+	}
+
+	if (_tilePlatformsCount <= platformIndex) {
+		error("IsoMap::getTile wrong platformIndex");
+	}
+
+	tileIndex = _tilePlatformList[platformIndex].tiles[u0][v0];
+
+	if (tileIndex == 0) {
+		return NULL;
+	}
+
+	if (tileIndex & SAGA_MULTI_TILE) {
+		tileIndex = findMulti(tileIndex, u, v, z);
+	}
+
+	return &_tilesTable[tileIndex];
+}
+
+void IsoMap::testPossibleDirections(int16 u, int16 v, uint16 terraComp[8], int skipCenter) {
+	IsoTileData *tile;
+	uint16 fgdMask;
+	uint16 bgdMask;
+	uint16 mask;
+
+
+	memset(terraComp, 0, 8 * sizeof(uint16));
+
+#define FILL_MASK(index, testMask)		\
+	if ( mask & testMask) {				\
+		terraComp[index] |= fgdMask;	\
+	}									\
+	if (~mask & testMask) {				\
+		terraComp[index] |= bgdMask;	\
+	}
+
+#define TEST_TILE_PROLOG(offsetU, offsetV)						\
+	tile = getTile(u + offsetU, v + offsetV , _platformHeight);	\
+	if (tile != NULL) {											\
+		fgdMask = tile->GetFGDMask();							\
+		bgdMask = tile->GetBGDMask();							\
+		mask = tile->terrainMask;
+
+#define TEST_TILE_EPILOG(index)									\
+	} else {													\
+		if (_vm->_actor->_protagonist->location.z > 0) {		\
+			terraComp[index] = SAGA_IMPASSABLE;					\
+		}														\
+	}	
+
+	
+	TEST_TILE_PROLOG(0, 0)
+		if (skipCenter) {
+			if ((mask & 0x0660) && (fgdMask & SAGA_IMPASSABLE)) {
+				fgdMask = 0;
+			}
+			if ((~mask & 0x0660) && (bgdMask & SAGA_IMPASSABLE)) {
+				bgdMask = 0;
+			}
+		}
+		
+		FILL_MASK(0, 0xcc00)
+		FILL_MASK(1, 0x6600)
+		FILL_MASK(2, 0x3300)
+		FILL_MASK(3, 0x0330)
+		FILL_MASK(4, 0x0033)
+		FILL_MASK(5, 0x0066)
+		FILL_MASK(6, 0x00cc)
+		FILL_MASK(7, 0x0cc0)
+	}
+
+	TEST_TILE_PROLOG(1, 1)
+		FILL_MASK(0, 0x0673)
+	TEST_TILE_EPILOG(0)
+
+
+	TEST_TILE_PROLOG(1, 0)
+		FILL_MASK(0, 0x0008)
+		FILL_MASK(1, 0x0666)
+		FILL_MASK(2, 0x0001)
+	TEST_TILE_EPILOG(1)
+
+
+	TEST_TILE_PROLOG(1, -1)
+		FILL_MASK(2, 0x06ec)
+	TEST_TILE_EPILOG(2)
+
+	TEST_TILE_PROLOG(0, 1)
+		FILL_MASK(0, 0x1000)
+		FILL_MASK(7, 0x0770)
+		FILL_MASK(6, 0x0001)
+	TEST_TILE_EPILOG(7)
+
+
+	TEST_TILE_PROLOG(0, -1)
+		FILL_MASK(2, 0x8000)
+		FILL_MASK(3, 0x0ee0)
+		FILL_MASK(4, 0x0008)
+	TEST_TILE_EPILOG(3)
+
+
+	TEST_TILE_PROLOG(-1, 1)
+		FILL_MASK(6, 0x3670)
+	TEST_TILE_EPILOG(6)
+
+
+	TEST_TILE_PROLOG(-1, 0)
+		FILL_MASK(6, 0x8000)
+		FILL_MASK(5, 0x6660)
+		FILL_MASK(4, 0x1000)
+	TEST_TILE_EPILOG(5)
+
+	TEST_TILE_PROLOG(-1, -1)
+		FILL_MASK(4, 0xce60)
+	TEST_TILE_EPILOG(4)
+}
+
+void IsoMap::placeOnTileMap(const Location &start, Location &result, int16 distance, uint16 direction) {
+	int16 bestDistance;
+	int16 bestU;
+	int16 bestV;
+	int16 uBase;
+	int16 vBase;
+	int16 u;
+	int16 v;
+	int i;
+	ActorData *actor;
+	TilePoint tilePoint;
+	uint16 dir;
+	int16 dist;
+	uint16 terraComp[8];
+	const TilePoint *tdir;
+	uint16 terrainMask;
+
+	bestDistance = 0;
+
+
+	uBase = (start.u() >> 4) - SAGA_SEARCH_CENTER;
+	vBase = (start.v() >> 4) - SAGA_SEARCH_CENTER;
+
+	bestU = SAGA_SEARCH_CENTER;
+	bestV = SAGA_SEARCH_CENTER;
+
+	_platformHeight = _vm->_actor->_protagonist->location.z / 8;
+
+	memset( &_searchArray, 0, sizeof(_searchArray));
+
+	for (i = 0; i < _vm->_actor->_actorsCount; i++) {
+		actor = _vm->_actor->_actors[i];
+		if (actor->disabled) continue;
+		if (actor->sceneNumber != _vm->_scene->currentSceneNumber()) continue;
+
+		u = (actor->location.u() >> 4) - uBase;
+		v = (actor->location.v() >> 4) - vBase;
+		if ((u >= 0) && (u < SAGA_SEARCH_DIAMETER) &&
+			(v >= 0) && (v < SAGA_SEARCH_DIAMETER) && 
+			((u != SAGA_SEARCH_CENTER) || (v != SAGA_SEARCH_CENTER))) {
+			_searchArray.getPathCell(u, v)->visited = 1;
+		}
+	}
+
+	_queueCount = 0;
+	pushPoint(SAGA_SEARCH_CENTER, SAGA_SEARCH_CENTER, 0, 0);
+
+	while (_queueCount > 0) {	
+
+		_queueCount--;
+		tilePoint = *_searchArray.getQueue(_queueCount);
+
+
+		dist = ABS(tilePoint.u - SAGA_SEARCH_CENTER) + ABS(tilePoint.v - SAGA_SEARCH_CENTER);
+
+		if (dist > bestDistance) {
+			bestU = tilePoint.u;
+			bestV = tilePoint.v;
+			bestDistance = dist;
+
+			if (dist >= distance) {
+				break;
+			}
+		}
+
+		testPossibleDirections(uBase + tilePoint.u, vBase + tilePoint.v, terraComp, 0);
+
+
+		for (dir = 0; dir < 8; dir++) {
+			terrainMask = terraComp[dir];
+
+			if (terrainMask & SAGA_IMPASSABLE ) {
+				continue;
+			}
+
+			if (dir == direction) {
+				tdir = &easyDirTable[ dir ];
+			} else {
+				if (dir + 1 == direction || dir - 1 == direction) {
+					tdir = &normalDirTable[ dir ];
+				} else {
+					tdir = &hardDirTable[ dir ];
+				}
+			}
+
+			pushPoint(tilePoint.u + tdir->u,tilePoint.v + tdir->v, tilePoint.cost + tdir->cost, dir);
+		}
+	}
+
+	result.u() = ((uBase + bestU) << 4) + 8;
+	result.v() = ((vBase + bestV) << 4) + 8;
+}
+
 
 } // End of namespace Saga

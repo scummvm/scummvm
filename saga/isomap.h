@@ -53,6 +53,29 @@ namespace Saga {
 #define SAGA_SCROLL_LIMIT_Y1 8
 #define SAGA_SCROLL_LIMIT_Y2 32
 
+#define SAGA_SEARCH_CENTER     15
+#define SAGA_SEARCH_DIAMETER   (SAGA_SEARCH_CENTER * 2)
+#define SAGA_SEARCH_QUEUE_SIZE 128
+#define SAGA_IMPASSABLE                              ((1 << kTerrBlock) | (1 << kTerrWater))
+
+#define SAGA_STRAIGHT_NORMAL_COST			4
+#define SAGA_DIAG_NORMAL_COST				6
+
+#define SAGA_STRAIGHT_EASY_COST				2
+#define SAGA_DIAG_EASY_COST					3
+
+#define SAGA_STRAIGHT_HARD_COST				9
+#define SAGA_DIAG_HARD_COST					10
+
+enum TerrainTypes {
+	kTerrNone	= 0,
+	kTerrPath	= 1,
+	kTerrRough	= 2,
+	kTerrBlock	= 3,
+	kTerrWater	= 4,
+	kTerrLast	= 5
+};
+
 enum TileMapEdgeType {
 	kEdgeTypeBlack	= 0,
 	kEdgeTypeFill0	= 1,
@@ -66,9 +89,21 @@ struct IsoTileData {
 	int8 attributes;
 	size_t offset;
 	uint16 terrainMask;
-	byte FGBGAttr;
+	byte FGDBGDAttr;
 	int8 GetMaskRule() {
 		return attributes & 0x0F;
+	}
+	byte GetFGDAttr() {
+		return FGDBGDAttr >> 4;
+	}
+	byte GetBGDAttr() {
+		return FGDBGDAttr & 0x0F;
+	}
+	uint16 GetFGDMask() {
+		return 1 << GetFGDAttr();
+	}
+	uint16 GetBGDMask() {
+		return 1 << GetBGDAttr();
 	}
 };
 
@@ -103,6 +138,10 @@ struct MultiTileEntryData {
 	byte currentState;
 };
 
+
+
+
+
 class IsoMap {
 public:
 	IsoMap(SagaEngine *vm);
@@ -122,6 +161,7 @@ public:
 		position.x = location.u() - location.v() + (128 * SAGA_TILEMAP_W) - _viewScroll.x + 16;
 		position.y = -((location.u() + location.v()) >> 1) + (128 * SAGA_TILEMAP_W) - _viewScroll.y - location.z;
 	}
+	void placeOnTileMap(const Location &start, Location &result, int16 distance, uint16 direction);
 	
 private:
 	void drawTiles(SURFACE *ds, const Location *location);
@@ -129,8 +169,7 @@ private:
 	void drawSpriteMetaTile(SURFACE *ds, uint16 metaTileIndex, const Point &point, Location &location, int16 absU, int16 absV);
 	void drawPlatform(SURFACE *ds, uint16 platformIndex, const Point &point, int16 absU, int16 absV, int16 absH);	
 	void drawSpritePlatform(SURFACE *ds, uint16 platformIndex, const Point &point, const Location &location, int16 absU, int16 absV, int16 absH);	
-	void drawTile(SURFACE *ds, uint16 tileIndex, const Point &point);
-	void drawSpriteTile(SURFACE *ds, uint16 tileIndex, const Location &location, const Point &point);
+	void drawTile(SURFACE *ds, uint16 tileIndex, const Point &point, const Location *location);
 	int16 smoothSlide(int16 value, int16 min, int16 max) {
 		if (value < min) {
 			if (value < min - 100 || value > min - 4) {
@@ -149,7 +188,10 @@ private:
 		}
 		return value;
 	}	
-	int16 findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH );
+	int16 findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH);
+	void pushPoint(int16 u, int16 v, uint16 cost, uint16 direction);
+	void testPossibleDirections(int16 u, int16 v, uint16 terraComp[8], int skipCenter);
+	IsoTileData *getTile(int16 u, int16 v, int16 z);
 
 
 	byte *_tileData;
@@ -170,7 +212,37 @@ private:
 	TileMapData _tileMap;
 	
 	Point _mapPosition;
+
+// path finding stuff
+	uint16 _platformHeight;
+
+	struct PathCell {
+		uint16 visited:1,direction:3,cost:12;
+	};
+
 public:
+	struct TilePoint {
+		int8 u, v;
+		uint16 direction:4,cost:12;
+	};
+
+private:
+	struct SearchArray {
+		PathCell cell[SAGA_SEARCH_DIAMETER][SAGA_SEARCH_DIAMETER];
+		TilePoint queue[SAGA_SEARCH_QUEUE_SIZE];
+		TilePoint *getQueue(uint16 i) {
+			assert(i < SAGA_SEARCH_QUEUE_SIZE);
+			return &queue[i];
+		}
+		PathCell *getPathCell(uint16 u, uint16 v) {
+			assert((u < SAGA_SEARCH_DIAMETER) && (v < SAGA_SEARCH_DIAMETER));
+			return &cell[u][v];
+		}
+	};
+	
+	int16 _queueCount;
+	SearchArray _searchArray;
+
 	int _viewDiff;
 	Point _viewScroll;
 	Rect _tileClip;

@@ -406,9 +406,12 @@ private:
 	RSCFILE_CONTEXT *_actorContext;
 	CommonObjectOrderList _drawOrderList;
 	
+protected:
+	friend IsoMap;
 	int _actorsCount;
 	ActorData **_actors;
 
+private:
 	int _objsCount;
 	ObjectData **_objs;
 

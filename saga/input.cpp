@@ -64,9 +64,9 @@ int SagaEngine::processInput() {
 			case 275:
 			case 276:
 				if (_vm->_scene->getFlags() & kSceneFlagISO) {
-					_vm->_isoMap->_viewDiff += (event.kbd.keycode == 270) - (event.kbd.keycode == 269);
+/*					_vm->_isoMap->_viewDiff += (event.kbd.keycode == 270) - (event.kbd.keycode == 269);
 					_vm->_isoMap->_viewScroll.y += (_vm->_isoMap->_viewDiff * (event.kbd.keycode == 274) - _vm->_isoMap->_viewDiff * (event.kbd.keycode == 273));
-					_vm->_isoMap->_viewScroll.x += (_vm->_isoMap->_viewDiff * (event.kbd.keycode == 275) - _vm->_isoMap->_viewDiff * (event.kbd.keycode == 276));
+					_vm->_isoMap->_viewScroll.x += (_vm->_isoMap->_viewDiff * (event.kbd.keycode == 275) - _vm->_isoMap->_viewDiff * (event.kbd.keycode == 276));*/
 				}
 				break;
 			case 282: // F1

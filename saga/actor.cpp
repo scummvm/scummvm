@@ -58,7 +58,7 @@ static int commonObjectCompare(const CommonObjectDataPointer& obj1, const Common
 }
 
 // Lookup table to convert 8 cardinal directions to 4
-int actorDirectectionsLUT[8] = {
+static const int actorDirectectionsLUT[8] = {
 	ACTOR_DIRECTION_BACK,	// kDirUp
 	ACTOR_DIRECTION_RIGHT,	// kDirUpRight
 	ACTOR_DIRECTION_RIGHT,	// kDirRight
@@ -69,7 +69,7 @@ int actorDirectectionsLUT[8] = {
 	ACTOR_DIRECTION_LEFT,	// kDirUpLeft
 };
 
-PathDirectionData pathDirectionLUT[8][3] = {
+static const PathDirectionData pathDirectionLUT[8][3] = {
 	{{0,  0, -1}, {7, -1, -1}, {4,  1, -1}},
 	{{1,  1,  0}, {4,  1, -1}, {5,  1,  1}},
 	{{2,  0,  1}, {5,  1,  1}, {6, -1,  1}},
@@ -80,7 +80,7 @@ PathDirectionData pathDirectionLUT[8][3] = {
 	{{3, -1,  0}, {0,  0, -1}, {7, -1, -1}}
 };
 
-int pathDirectionLUT2[8][2] = {
+static const int pathDirectionLUT2[8][2] = {
 	{ 0, -1},
 	{ 1,  0},
 	{ 0,  1},
@@ -91,7 +91,7 @@ int pathDirectionLUT2[8][2] = {
 	{-1, -1}
 };
 
-int angleLUT[16][2] = {
+static const int angleLUT[16][2] = {
 	{   0, -256},
 	{  98, -237},
 	{ 181, -181},
@@ -110,7 +110,7 @@ int angleLUT[16][2] = {
 	{ -98, -237}
 };
 
-int directionLUT[8][2] = {
+static const int directionLUT[8][2] = {
 	{ 0*2, -2*2},
 	{ 2*2, -1*2},
 	{ 3*2,  0*2},
@@ -121,7 +121,7 @@ int directionLUT[8][2] = {
 	{-2*2, -1*2}
 };
 
-int tileDirectionLUT[8][2] = {
+static const int tileDirectionLUT[8][2] = {
 	{ 1,  1},
 	{ 2,  0},
 	{ 1, -1},
@@ -592,7 +592,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 				
 
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
-				//todo: it
+				_vm->_isoMap->placeOnTileMap(_protagonist->location, actor->location, 3, followerDirection & 0x07);
 			} else {
 				followerDirection &= 0x07;
 				
@@ -1746,7 +1746,7 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 	int startDirection;	
 	PathDirectionData *pathDirection;
 	PathDirectionData *newPathDirection;
-	PathDirectionData *samplePathDirection;
+	const PathDirectionData *samplePathDirection;
 	Point nextPoint;
 	int directionCount;
 
