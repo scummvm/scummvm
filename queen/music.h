@@ -46,7 +46,6 @@ protected:
 	uint32 _musicDataSize;
 	MidiDriver *_driver;
 	MidiParser *_midi;
-	QueenEngine *_vm;
 	
 	uint32 songOffset(uint16 songNum);
 	uint32 songLength(uint16 songNum);
