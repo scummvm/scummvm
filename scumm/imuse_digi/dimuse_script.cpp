@@ -272,8 +272,11 @@ int IMuseDigital::getSoundStatus(int sound) const {
 	debug(5, "IMuseDigital::getSoundStatus(%d)", sound);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && (track->soundId == sound)) {
-			return 1;
+		if (track->soundId == sound) {
+			if ((track->stream2 && track->handle.isActive()) ||
+				(track->stream && track->used)) {
+					return 1;
+			}
 		}
 	}
 
