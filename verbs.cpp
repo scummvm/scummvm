@@ -267,10 +267,8 @@ void Scumm::setVerbObject(uint room, uint object, uint verb) {
 			if(_objs[i].obj_nr == object) {
 				findObjectInRoom(&foir, foImageHeader, object, room);
 				size = READ_LE_UINT32(foir.obim);
-				printf("Size= %d",size);
 				obcdptr = getResourceAddress(rtRoom, room) + getOBCDOffs(object);
 				size2 = READ_LE_UINT32(obcdptr);
-				printf("Size2= %d",size2);
 				createResource(rtVerb, verb, size+size2);
 				obimptr = getResourceAddress(rtRoom, room) - foir.roomptr + foir.obim;
 				obcdptr = getResourceAddress(rtRoom, room) + getOBCDOffs(object);
