@@ -174,10 +174,13 @@ int ScummEngine::getObjectImageCount(int object) {
 	int objnum;
 
 	objnum = getObjectIndex(object);
-	assert(objnum != -1);
+	if (objnum == -1);
+		return 0;
 
 	ptr = getOBIMFromObject(_objs[objnum]);
 	imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), ptr);
+	if (!imhd)
+		return 0;
 
 	if (_version == 8)
 		return (READ_LE_UINT32(&imhd->v8.image_count));
