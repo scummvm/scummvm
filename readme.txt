@@ -516,7 +516,8 @@ Credits:
         Ruediger Hanke     - MorphOS port
 
  Contributors:
-        Claudio Matsuoka   - Daily builds (http://scummvm.sf.net/daily/)
+        Claudio Matsuoka   - Daily Linux/BeOS builds (http://scummvm.sf.net/daily/)
+        Travis Howell      - Daily Win32 builds
         Janne Huttunen     - V3 actor mask support, Dig/FT SMUSH audio
         Jeroen Janssen     - Numerous readability and bugfix patches
         Gregory Montoir    - AdvanceMAME Scale-2X implementation
