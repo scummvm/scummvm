@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@
 #include <algorithm>
 
 static void makeLower(std::string& s) {
-  std::transform(s.begin(), s.end(), s.begin(), tolower);
+	std::transform(s.begin(), s.end(), s.begin(), tolower);
 }
 
 ResourceLoader *ResourceLoader::instance_ = NULL;
@@ -95,162 +95,161 @@ ResourceLoader::ResourceLoader() {
 }
 
 const Lab *ResourceLoader::findFile(const char *filename) const {
-  for (LabList::const_iterator i = labs_.begin(); i != labs_.end(); i++)
-    if ((*i)->fileExists(filename))
-      return *i;
-  return NULL;
+	for (LabList::const_iterator i = labs_.begin(); i != labs_.end(); i++)
+		if ((*i)->fileExists(filename))
+			return *i;
+	return NULL;
 }
 
 bool ResourceLoader::fileExists(const char *filename) const {
-  return findFile(filename) != NULL;
+	return findFile(filename) != NULL;
 }
 
 Block *ResourceLoader::getFileBlock(const char *filename) const {
-  const Lab *l = findFile(filename);
-  if (l == NULL)
-    return NULL;
-  else
-    return l->getFileBlock(filename);
+	const Lab *l = findFile(filename);
+	if (l == NULL)
+		return NULL;
+	else
+		return l->getFileBlock(filename);
 }
 
 std::FILE *ResourceLoader::openNewStream(const char *filename) const {
-  const Lab *l = findFile(filename);
+	const Lab *l = findFile(filename);
 
-  if (l == NULL)
-    return NULL;
-  else
-    return l->openNewStream(filename);
+	if (l == NULL)
+		return NULL;
+	else
+		return l->openNewStream(filename);
 }
 
 int ResourceLoader::fileLength(const char *filename) const {
-  const Lab *l = findFile(filename);
-  if (l == NULL)
-    return 0;
-  else
-    return l->fileLength(filename);
+	const Lab *l = findFile(filename);
+	if (l == NULL)
+		return 0;
+	else
+		return l->fileLength(filename);
 }
 
 Bitmap *ResourceLoader::loadBitmap(const char *filename) {
-  std::string fname = filename;
-  makeLower(fname);
-  cache_type::iterator i = cache_.find(fname);
-  if (i != cache_.end()) {
-    return dynamic_cast<Bitmap *>(i->second);
-  }
+	std::string fname = filename;
+	makeLower(fname);
+	cache_type::iterator i = cache_.find(fname);
+	if (i != cache_.end()) {
+		return dynamic_cast<Bitmap *>(i->second);
+	}
 
-  Block *b = getFileBlock(filename);
-  if (b == NULL) {	// Grim sometimes asks for non-existant bitmaps (eg, ha_overhead)
-    warning("Could not find bitmap %s\n", filename);
-    return NULL;
-  }
+	Block *b = getFileBlock(filename);
+	if (b == NULL) {	// Grim sometimes asks for non-existant bitmaps (eg, ha_overhead)
+		warning("Could not find bitmap %s\n", filename);
+	return NULL;
+}
 
-  Bitmap *result = new Bitmap(filename, b->data(), b->len());
-  delete b;
-  cache_[fname] = result;
-  return result;
+Bitmap *result = new Bitmap(filename, b->data(), b->len());
+	delete b;
+	cache_[fname] = result;
+	return result;
 }
 
 CMap *ResourceLoader::loadColormap(const char *filename) {
-  std::string fname = filename;
-  makeLower(fname);
-  cache_type::iterator i = cache_.find(fname);
-  if (i != cache_.end()) {
-    return dynamic_cast<CMap *>(i->second);
-  }
+	std::string fname = filename;
+	makeLower(fname);
+	cache_type::iterator i = cache_.find(fname);
+	if (i != cache_.end()) {
+		return dynamic_cast<CMap *>(i->second);
+	}
 
-  Block *b = getFileBlock(filename);
-  if (b == NULL)
-    error("Could not find colormap %s\n", filename);
-  CMap *result = new CMap(filename, b->data(), b->len());
-  delete b;
-  cache_[fname] = result;
-  return result;
+	Block *b = getFileBlock(filename);
+	if (b == NULL)
+		error("Could not find colormap %s\n", filename);
+	CMap *result = new CMap(filename, b->data(), b->len());
+	delete b;
+	cache_[fname] = result;
+	return result;
 }
 
 Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
-  std::string fname = filename;
-  makeLower(fname);
-  Block *b = getFileBlock(filename);
-  if (b == NULL)
-    error("Could not find costume %s\n", filename);
-  Costume *result = new Costume(filename, b->data(), b->len(), prevCost);
-  delete b;
-  return result;
+	std::string fname = filename;
+	makeLower(fname);
+	Block *b = getFileBlock(filename);
+	if (b == NULL)
+		error("Could not find costume %s\n", filename);
+	Costume *result = new Costume(filename, b->data(), b->len(), prevCost);
+	delete b;
+	return result;
 }
 
 KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
-  std::string fname = filename;
-  makeLower(fname);
-  cache_type::iterator i = cache_.find(fname);
-  if (i != cache_.end()) {
-    return dynamic_cast<KeyframeAnim *>(i->second);
-  }
+	std::string fname = filename;
+	makeLower(fname);
+	cache_type::iterator i = cache_.find(fname);
+	if (i != cache_.end()) {
+		return dynamic_cast<KeyframeAnim *>(i->second);
+	}
 
-  Block *b = getFileBlock(filename);
-  if (b == NULL)
-    error("Could not find keyframe file %s\n", filename);
-  KeyframeAnim *result = new KeyframeAnim(filename, b->data(), b->len());
-  delete b;
-  cache_[fname] = result;
-  return result;
+	Block *b = getFileBlock(filename);
+	if (b == NULL)
+		error("Could not find keyframe file %s\n", filename);
+	KeyframeAnim *result = new KeyframeAnim(filename, b->data(), b->len());
+	delete b;
+	cache_[fname] = result;
+	return result;
 }
 
-Material *ResourceLoader::loadMaterial(const char *filename,
-				       const CMap &c) {
-  std::string fname = filename;
-  makeLower(fname);
-  cache_type::iterator i = cache_.find(fname);
-  if (i != cache_.end()) {
-    return dynamic_cast<Material *>(i->second);
-  }
+Material *ResourceLoader::loadMaterial(const char *filename, const CMap &c) {
+	std::string fname = filename;
+	makeLower(fname);
+	cache_type::iterator i = cache_.find(fname);
+	if (i != cache_.end()) {
+		return dynamic_cast<Material *>(i->second);
+	}
 
-  Block *b = getFileBlock(filename);
-  if (b == NULL)
-    error("Could not find material %s\n", filename);
-  Material *result = new Material(filename, b->data(), b->len(), c);
-  delete b;
-  cache_[fname] = result;
-  return result;
+	Block *b = getFileBlock(filename);
+	if (b == NULL)
+		error("Could not find material %s\n", filename);
+	Material *result = new Material(filename, b->data(), b->len(), c);
+	delete b;
+	cache_[fname] = result;
+	return result;
 }
 
 Model *ResourceLoader::loadModel(const char *filename, const CMap &c) {
-  std::string fname = filename;
-  makeLower(fname);
-  cache_type::iterator i = cache_.find(fname);
-  if (i != cache_.end()) {
-    return dynamic_cast<Model *>(i->second);
-  }
+	std::string fname = filename;
+	makeLower(fname);
+	cache_type::iterator i = cache_.find(fname);
+	if (i != cache_.end()) {
+		return dynamic_cast<Model *>(i->second);
+	}
 
-  Block *b = getFileBlock(filename);
-  if (b == NULL)
-    error("Could not find model %s\n", filename);
-  Model *result = new Model(filename, b->data(), b->len(), c);
-  delete b;
-  cache_[fname] = result;
-  return result;
+	Block *b = getFileBlock(filename);
+	if (b == NULL)
+		error("Could not find model %s\n", filename);
+	Model *result = new Model(filename, b->data(), b->len(), c);
+	delete b;
+	cache_[fname] = result;
+	return result;
 }
 
 Sound *ResourceLoader::loadSound(const char *filename) {
-  std::string fname = filename;
-  makeLower(fname);
-  cache_type::iterator i = cache_.find(fname);
-  if (i != cache_.end()) {
-    return dynamic_cast<Sound *>(i->second);
-  }
+	std::string fname = filename;
+	makeLower(fname);
+	cache_type::iterator i = cache_.find(fname);
+	if (i != cache_.end()) {
+		return dynamic_cast<Sound *>(i->second);
+	}
 
-  Block *b = getFileBlock(filename);
-  if (b == NULL)
-    return NULL;
-  Sound *result = new Sound(filename, b->data(), b->len());
-  delete b;
-  cache_[fname] = result;
-  return result;
+	Block *b = getFileBlock(filename);
+	if (b == NULL)
+		return NULL;
+	Sound *result = new Sound(filename, b->data(), b->len());
+	delete b;
+	cache_[fname] = result;
+	return result;
 }
 
 void ResourceLoader::uncache(const char *filename) {
-  std::string fname = filename;
-  makeLower(fname);
-  cache_type::iterator i = cache_.find(fname);
-  if (i != cache_.end())
-    cache_.erase(i);
+	std::string fname = filename;
+	makeLower(fname);
+	cache_type::iterator i = cache_.find(fname);
+	if (i != cache_.end())
+		cache_.erase(i);
 }

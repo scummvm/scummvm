@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -23,21 +23,21 @@
 
 class Registry {
 public:
-  static Registry *instance();
+	static Registry *instance();
 
-  const char * get(const char *key) const;
-  void set(const char *key, const char *val);
-  void save();
+	const char * get(const char *key) const;
+	void set(const char *key, const char *val);
+	void save();
 
 private:
-  Registry();
-  ~Registry() { }
+	Registry();
+	~Registry() { }
 
-  static Registry *instance_;
+	static Registry *instance_;
 
-  typedef std::map<std::string, std::string> group;
-  group settings_;
-  bool dirty_;
+	typedef std::map<std::string, std::string> group;
+	group settings_;
+	bool dirty_;
 };
 
 #endif
