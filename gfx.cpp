@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.3  2001/10/10 12:52:21  strigeus
+ * fixed bug in GDI_UnkDecode7()
+ *
  * Revision 1.2  2001/10/10 10:02:33  strigeus
  * alternative mouse cursor
  * basic save&load
@@ -1142,6 +1145,7 @@ void Scumm::GDI_UnkDecode7() {
 		((uint32*)dst)[1] = ((uint32*)src)[1];
 #endif
 		dst += 320;
+		src += 8;
 	} while (--height);
 }
 
