@@ -77,12 +77,12 @@ void GetMemory(UInt32* storageMemoryP, UInt32* dynamicMemoryP, UInt32 *storageFr
 	if (storageFreeP) *storageFreeP = storageFree;
 }
 
-static void VersionTabPreInit(FormType *frmP) {
-	FrmNewLabel(&frmP, 4210, gScummVMVersion, 49, 12, stdFont);
-	FrmNewLabel(&frmP, 4211, gScummVMBuildDate, 49, 24, stdFont);
+static void VersionTabDraw() {
+	WinDrawChars(gScummVMVersion, StrLen(gScummVMVersion), 47, 12 + 30);
+	WinDrawChars(gScummVMBuildDate, StrLen(gScummVMBuildDate), 47, 24 + 30);
 }
 
-static void SystemTabPreInit(FormType *frmP) {
+static void SystemTabDraw() {
 	Coord x;
 	UInt32 dm, sm, df, sf, stack;
 	Char num[10];
@@ -94,28 +94,28 @@ static void SystemTabPreInit(FormType *frmP) {
 	FntSetFont(stdFont);
 	
 	StrIToA(num, dm);
-	x = 149 - FntCharsWidth(num, StrLen(num)) + 5;
-	FrmNewLabel(&frmP, 4308, num, x, 12, stdFont);
+	x = 147 - FntCharsWidth(num, StrLen(num)) + 5;
+	WinDrawChars(num, StrLen(num), x, 12 + 30);
 
 	StrIToA(num, sm);
-	x = 149 - FntCharsWidth(num, StrLen(num)) + 5;
-	FrmNewLabel(&frmP, 4309, num, x, 24, stdFont);
+	x = 147 - FntCharsWidth(num, StrLen(num)) + 5;
+	WinDrawChars(num, StrLen(num), x, 24 + 30);
 
 	StrIToA(num, stack);
-	x = 149 - FntCharsWidth(num, StrLen(num)) + 5;
-	FrmNewLabel(&frmP, 4310, num, x, 36, stdFont);
+	x = 147 - FntCharsWidth(num, StrLen(num)) + 5;
+	WinDrawChars(num, StrLen(num), x, 36 + 30);
 
 	StrIToA(num, df);
-	x = 109 - FntCharsWidth(num, StrLen(num)) + 5;
-	FrmNewLabel(&frmP, 4311, num, x, 12, stdFont);
+	x = 107 - FntCharsWidth(num, StrLen(num)) + 5;
+	WinDrawChars(num, StrLen(num), x, 12 + 30);
 
 	StrIToA(num, sf);
-	x = 109 - FntCharsWidth(num, StrLen(num)) + 5;
-	FrmNewLabel(&frmP, 4312, num, x, 24, stdFont);
+	x = 107 - FntCharsWidth(num, StrLen(num)) + 5;
+	WinDrawChars(num, StrLen(num), x, 24 + 30);
 
 	StrCopy(num,"-");
-	x = 109 - FntCharsWidth(num, StrLen(num)) + 5;
-	FrmNewLabel(&frmP, 4313, num, x, 36, stdFont);
+	x = 107 - FntCharsWidth(num, StrLen(num)) + 5;
+	WinDrawChars(num, StrLen(num), x, 36 + 30);
 }
 
 static void InfoFormSave() {
@@ -123,23 +123,16 @@ static void InfoFormSave() {
 	FrmReturnToMain();
 }
 
-static void AboutTabInit(Boolean draw) {
-	if (!draw) {
-		RectangleType r = {2, 40, 154, 45};
-		WinSetBackColor(UIColorGetTableEntryIndex(UIFormFill));
-		WinEraseRectangle(&r, 0);
-		
-	} else {
-		MemHandle hTemp;
-		BitmapPtr bmpTemp;
+static void AboutTabDraw() {
+	MemHandle hTemp;
+	BitmapPtr bmpTemp;
 
-		hTemp = DmGetResource (bitmapRsc, 1200);
-		if (hTemp) {
-			bmpTemp = (BitmapType *)MemHandleLock(hTemp);
-			WinDrawBitmap(bmpTemp,3,44);
-			MemPtrUnlock(bmpTemp);
-			DmReleaseResource(hTemp);
-		}
+	hTemp = DmGetResource (bitmapRsc, 1200);
+	if (hTemp) {
+		bmpTemp = (BitmapType *)MemHandleLock(hTemp);
+		WinDrawBitmap(bmpTemp,3,44);
+		MemPtrUnlock(bmpTemp);
+		DmReleaseResource(hTemp);
 	}
 }
 
@@ -148,15 +141,13 @@ static void InfoFormInit() {
 	FormType *frmP = FrmGetActiveForm();
 
 	tabP = TabNewTabs(3);
-	TabAddContent(&frmP, tabP, "About", TabInfoAboutForm);
-	TabAddContent(&frmP, tabP, "Version", TabInfoVersionForm, VersionTabPreInit);
-	TabAddContent(&frmP, tabP, "Memory", TabInfoSystemForm, SystemTabPreInit);
+	TabAddContent(&frmP, tabP, "About", TabInfoAboutForm, AboutTabDraw);
+	TabAddContent(&frmP, tabP, "Version", TabInfoVersionForm, VersionTabDraw);
+	TabAddContent(&frmP, tabP, "Memory", TabInfoSystemForm, SystemTabDraw);
 
 	lastTab = 0;
 	FrmDrawForm(frmP);
 	TabSetActive(frmP, tabP, lastTab);
-
-	AboutTabInit(true);
 
 	myTabP = tabP;
 }
@@ -177,12 +168,8 @@ Boolean InfoFormHandleEvent(EventPtr eventP) {
 				case (InfoForm + 1) :
 				case (InfoForm + 2) :
 				case (InfoForm + 3) :
-					if (lastTab == 0) AboutTabInit(false);
-
 					lastTab = (eventP->data.ctlSelect.controlID - InfoForm - 1);
 					TabSetActive(frmP, myTabP, lastTab);
-				
-					if (lastTab == 0) AboutTabInit(true);
 					break;
 
 				case InfoOKButton:
