@@ -200,8 +200,6 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y)
 	if ((vs = findVirtScreen(y)) == NULL)
 		return;
 
-	_lastXstart = virtscr[0].xstart;
-
 	gdi.disableZBuffer();
 
 	twobufs = vs->alloctwobuffers;

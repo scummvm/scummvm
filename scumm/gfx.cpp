@@ -1763,8 +1763,8 @@ void Scumm::restoreCharsetBg()
 		charset._left = -1;
 	}
 
-	charset._xpos2 = _string[0].xpos;
-	charset._ypos2 = _string[0].ypos;
+	charset._nextLeft = _string[0].xpos;
+	charset._nextTop = _string[0].ypos;
 }
 
 void Scumm::restoreBG(int left, int top, int right, int bottom, byte backColor)
@@ -1783,10 +1783,6 @@ void Scumm::restoreBG(int left, int top, int right, int bottom, byte backColor)
 
 	topline = vs->topline;
 	height = topline + vs->height;
-	if (vs->number == 0) {
-		left += _lastXstart - vs->xstart;
-		right += _lastXstart - vs->xstart;
-	}
 
 	right++;		// FIXME - why do we increment right here?!? (add comment)
 	if (left < 0)

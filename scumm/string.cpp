@@ -302,13 +302,13 @@ void CharsetRenderer::printChar(int chr)
 	if (_top < _strTop)
 		_strTop = _top;
 
-	_drawTop = _top - vs->topline;
-	if (_drawTop < 0)
-		_drawTop = 0;
+	int drawTop = _top - vs->topline;
+	if (drawTop < 0)
+		drawTop = 0;
 
-	_bottom = _drawTop + _height + _offsY;
+	_bottom = drawTop + _height + _offsY;
 
-	_vm->updateDirtyRect(vs->number, _left, right, _drawTop, _bottom, 0);
+	_vm->updateDirtyRect(vs->number, _left, right, drawTop, _bottom, 0);
 
 	if (vs->number != 0)
 		_blitAlso = false;
@@ -319,20 +319,20 @@ void CharsetRenderer::printChar(int chr)
 	_charPtr += 4;
 
 	byte *mask = _vm->getResourceAddress(rtBuffer, 9)
-		+ _drawTop * _vm->gdi._numStrips + _left / 8 + _vm->_screenStartStrip;
+		+ drawTop * _vm->gdi._numStrips + _left / 8 + _vm->_screenStartStrip;
 
-	byte *dst = vs->screenPtr + vs->xstart + _drawTop * _vm->_realWidth + _left;
+	byte *dst = vs->screenPtr + vs->xstart + drawTop * _vm->_realWidth + _left;
 
 	if (_blitAlso) {
 		byte *back = dst;
 		dst = _vm->getResourceAddress(rtBuffer, vs->number + 5)
-			+ vs->xstart + _drawTop * _vm->_realWidth + _left;
+			+ vs->xstart + drawTop * _vm->_realWidth + _left;
 
-		drawBits(dst, mask);
+		drawBits(dst, mask, drawTop);
 
 		_vm->blit(back, dst, _width, _height);
 	} else {
-		drawBits(dst, mask);
+		drawBits(dst, mask, drawTop);
 	}
 	
 	_left += _width;
@@ -345,7 +345,7 @@ void CharsetRenderer::printChar(int chr)
 	_top -= _offsY;
 }
 
-void CharsetRenderer::drawBits(byte *dst, byte *mask)
+void CharsetRenderer::drawBits(byte *dst, byte *mask, int drawTop)
 {
 	bool usemask;
 	byte maskmask;
@@ -354,14 +354,14 @@ void CharsetRenderer::drawBits(byte *dst, byte *mask)
 	int color;
 	byte numbits, bits;
 
-	usemask = (_vm->_curVirtScreen->number == 0 && _ignoreCharsetMask == 0);
+	usemask = (_vm->_curVirtScreen->number == 0 && !_ignoreCharsetMask);
 
 	bits = *_charPtr++;
 	numbits = 8;
 
 	y = 0;
 
-	for (y = 0; y < _height && y + _drawTop < _virtScreenHeight;) {
+	for (y = 0; y < _height && y + drawTop < _virtScreenHeight;) {
 		maskmask = revBitMask[_left & 7];
 		maskpos = 0;
 
@@ -492,8 +492,7 @@ void Scumm::CHARSET_1()
 	}
 
 	charset._top = _string[0].ypos;
-	charset._left = _string[0].xpos;
-	charset._startLeft = _string[0].xpos;
+	charset._startLeft = charset._left = _string[0].xpos;
 
 	if (a && a->charset)
 		charset.setCurID(a->charset);
@@ -555,19 +554,18 @@ void Scumm::CHARSET_1()
 
 	t = charset._right - _string[0].xpos - 1;
 	if (charset._center) {
-		if (t > charset._xpos2)
-			t = charset._xpos2;
+		if (t > charset._nextLeft)
+			t = charset._nextLeft;
 		t <<= 1;
 	}
 
 	buffer = charset._buffer + charset._bufPos;
 	charset.addLinebreaks(0, buffer, 0, t);
 
-	_lastXstart = virtscr[0].xstart;
 	if (charset._center) {
-		charset._xpos2 -= charset.getStringWidth(0, buffer, 0) >> 1;
-		if (charset._xpos2 < 0)
-			charset._xpos2 = 0;
+		charset._nextLeft -= charset.getStringWidth(0, buffer, 0) >> 1;
+		if (charset._nextLeft < 0)
+			charset._nextLeft = 0;
 	}
 
 	charset._disableOffsX = charset._firstChar = !_keepText;
@@ -584,15 +582,15 @@ void Scumm::CHARSET_1()
 		if (c == 13) {
 		newLine:;
 			if (_features & GF_OLD256) {
-				charset._ypos2 = 8;
-				charset._xpos2 = 0;
+				charset._nextTop = 8;
+				charset._nextLeft = 0;
 				continue;
 			} else {
-				charset._xpos2 = _string[0].xpos;
+				charset._nextLeft = _string[0].xpos;
 				if (charset._center) {
-					charset._xpos2 -= charset.getStringWidth(0, buffer, 0) >> 1;
+					charset._nextLeft -= charset.getStringWidth(0, buffer, 0) >> 1;
 				}
-				charset._ypos2 += charset.getFontPtr()[1];
+				charset._nextTop += charset.getFontPtr()[1];
 				charset._disableOffsX = true;
 				continue;
 			}
@@ -602,8 +600,8 @@ void Scumm::CHARSET_1()
 			c = 0xFF;
 
 		if (c != 0xFF) {
-			charset._left = charset._xpos2;
-			charset._top = charset._ypos2;
+			charset._left = charset._nextLeft;
+			charset._top = charset._nextTop;
 			if (_features & GF_OLD256)
 				charset.printCharOld(c);
 			else if (!(_features & GF_AFTER_V6)) {
@@ -616,8 +614,8 @@ void Scumm::CHARSET_1()
 					charset.printChar(c);
 			}
 
-			charset._xpos2 = charset._left;
-			charset._ypos2 = charset._top;
+			charset._nextLeft = charset._left;
+			charset._nextTop = charset._top;
 			_talkDelay += _vars[VAR_CHARINC];
 			continue;
 		}
@@ -669,7 +667,7 @@ void Scumm::CHARSET_1()
 			buffer += 2;
 			for (i = 0; i < 4; i++)
 				charset._colorMap[i] = _charsetData[charset.getCurID()][i];
-			charset._ypos2 -= charset.getFontPtr()[1] - oldy;
+			charset._nextTop -= charset.getFontPtr()[1] - oldy;
 			break;
 			}
 		default:
@@ -704,29 +702,26 @@ void Scumm::description()
 	byte *buffer;
 
 	buffer = charset._buffer;
-	charset._bufPos = 0;
 	_string[0].ypos = camera._cur.y + 88;
 	_string[0].xpos = (_realWidth / 2) - (charset.getStringWidth(0, buffer, 0) >> 1);
 	if (_string[0].xpos < 0)
 		_string[0].xpos = 0;
 
+	charset._bufPos = 0;
 	charset._top = _string[0].ypos;
-	charset._left = _string[0].xpos;
-	charset._startLeft = _string[0].xpos;
+	charset._startLeft = charset._left = _string[0].xpos;
 	charset._right = _realWidth - 1;
-	charset._xpos2 = _string[0].xpos;
-	charset._ypos2 = _string[0].ypos;
-	charset._disableOffsX = charset._firstChar = true;
-	charset.setCurID(3);
 	charset._center = false;
 	charset._color = 15;
+	charset._disableOffsX = charset._firstChar = true;
+	charset.setCurID(3);
+	charset._nextLeft = _string[0].xpos;
+	charset._nextTop = _string[0].ypos;
 	// FIXME: _talkdelay = 1 - display description, not correct ego actor talking,
 	// 0 - no display, correct ego actor talking
 	_talkDelay = 0;
 
 	restoreCharsetBg();
-
-	_lastXstart = virtscr[0].xstart;
 
 	do {
 		c = *buffer++;
@@ -735,11 +730,11 @@ void Scumm::description()
 			break;
 		}
 		if (c != 0xFF) {
-			charset._left = charset._xpos2;
-			charset._top = charset._ypos2;
+			charset._left = charset._nextLeft;
+			charset._top = charset._nextTop;
 			charset.printChar(c);
-			charset._xpos2 = charset._left;
-			charset._ypos2 = charset._top;
+			charset._nextLeft = charset._left;
+			charset._nextTop = charset._top;
 			continue;
 		}
 	} while (1);
@@ -759,21 +754,20 @@ void Scumm::drawDescString(byte *msg)
 
 	charset._bufPos = 0;
 	charset._top = _string[0].ypos;
-	charset._left = _string[0].xpos;
-	charset._startLeft = _string[0].xpos;
+	charset._startLeft = charset._left = _string[0].xpos;
 	charset._right = _realWidth - 1;
-	charset._xpos2 = _string[0].xpos;
-	charset._ypos2 = _string[0].ypos;
-	charset.setCurID(_string[0].charset);
 	charset._center = _string[0].center;
 	charset._color = _string[0].color;
+	charset._disableOffsX = charset._firstChar = true;
+	charset.setCurID(_string[0].charset);
+	charset._nextLeft = _string[0].xpos;
+	charset._nextTop = _string[0].ypos;
 
 	// Center text
-	charset._xpos2 -= charset.getStringWidth(0, buffer, 0) >> 1;
-	if (charset._xpos2 < 0)
-		charset._xpos2 = 0;
+	charset._nextLeft -= charset.getStringWidth(0, buffer, 0) >> 1;
+	if (charset._nextLeft < 0)
+		charset._nextLeft = 0;
 
-	charset._disableOffsX = charset._firstChar = true;
 	_talkDelay = 1;
 
 	restoreCharsetBg();
@@ -785,11 +779,11 @@ void Scumm::drawDescString(byte *msg)
 			break;
 		}
 		if (c != 0xFF) {
-			charset._left = charset._xpos2;
-			charset._top = charset._ypos2;
+			charset._left = charset._nextLeft;
+			charset._top = charset._nextTop;
 			charset.printChar(c);
-			charset._xpos2 = charset._left;
-			charset._ypos2 = charset._top;
+			charset._nextLeft = charset._left;
+			charset._nextTop = charset._top;
 			continue;
 		}
 	} while (1);
@@ -811,13 +805,13 @@ void Scumm::drawString(int a)
 	_msgPtrToAdd = buf;
 	_messagePtr = addMessageToStack(_messagePtr);
 
-	charset._startLeft = charset._left = _string[a].xpos;
 	charset._top = _string[a].ypos;
-	charset.setCurID(_string[a].charset);
-	charset._center = _string[a].center;
+	charset._startLeft = charset._left = _string[a].xpos;
 	charset._right = _string[a].right;
+	charset._center = _string[a].center;
 	charset._color = _string[a].color;
 	charset._disableOffsX = charset._firstChar = true;
+	charset.setCurID(_string[a].charset);
 
 	if (!(_features & GF_OLD256)) {
 		for (i = 0; i < 4; i++)
@@ -828,7 +822,7 @@ void Scumm::drawString(int a)
 
 	_msgPtrToAdd = buf;
 
-	/* trim from the right */
+	// trim from the right
 	space = NULL;
 	while (*_msgPtrToAdd) {
 		if (*_msgPtrToAdd == ' ') {
@@ -846,7 +840,7 @@ void Scumm::drawString(int a)
 	}
 
 	if (!(_features & GF_AFTER_V7))
-		charset._ignoreCharsetMask = 1;
+		charset._ignoreCharsetMask = true;
 
 
 	// In Full Throttle (and other games?), verb text should always mask
@@ -904,11 +898,11 @@ void Scumm::drawString(int a)
 		}
 	}
 
-	charset._ignoreCharsetMask = 0;
+	charset._ignoreCharsetMask = false;
 
 	if (a == 0) {
-		charset._xpos2 = charset._left;
-		charset._ypos2 = charset._top;
+		charset._nextLeft = charset._left;
+		charset._nextTop = charset._top;
 	} 
 
 

@@ -1214,8 +1214,6 @@ void Scumm::drawBlastObject(BlastObject *eo)
 
 	vs = &virtscr[0];
 
-	_lastXstart = vs->xstart;
-
 	checkRange(_numGlobalObjects - 1, 30, eo->number, "Illegal Blast object %d");
 
 	idx = _objs[getObjectIndex(eo->number)].fl_object_index;

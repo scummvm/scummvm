@@ -178,8 +178,10 @@ protected:
 
 public:
 	Scumm *_vm;
+	int _strLeft, _strRight, _strTop, _strBottom;
+	int _nextLeft, _nextTop;
+
 	int _top;
-	int _drawTop;
 	int _left, _startLeft;
 	byte _center;
 	int _right;
@@ -187,13 +189,13 @@ public:
 	bool _hasMask;
 	bool _blitAlso;
 	
-	int _strLeft, _strRight, _strTop, _strBottom;
-
-	int _xpos2, _ypos2;
-	
 	int _bufPos;
 	bool _firstChar;
 	bool _disableOffsX;
+
+	bool _ignoreCharsetMask;
+
+protected:
 	byte _bpp;
 	uint32 _charOffs;
 	byte *_charPtr;
@@ -202,12 +204,13 @@ public:
 	int _bottom;
 	int _virtScreenHeight;
 
-	byte _ignoreCharsetMask;
 
+	void drawBits(byte *dst, byte *mask, int drawTop);
+
+public:
 	byte _colorMap[16];
 	byte _buffer[512];
 
-	void drawBits(byte *dst, byte *mask);
 	void printChar(int chr);
 	void printCharOld(int chr);
 	int getSpacing(byte chr, byte *charset);
@@ -844,7 +847,6 @@ public:
 
 	byte _proc_special_palette[256];
 	int _palDirtyMin, _palDirtyMax;
-	uint16 _lastXstart;
 
 	byte _haveMsg;
 	bool _useTalkAnims;
