@@ -1,6 +1,6 @@
 ScummVM README
 Last updated:    $Date$
-Release version: 0.6.0
+Release version: 0.6.1
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -231,7 +231,7 @@ and thus removing the run-time dependency on the 'queen.tbl' file.
 This tool also allows you to compress the speech and sound effects with MP3
 or OGG.
 
-3.5) Known Problems in ScummVM 0.6.0
+3.5) Known Problems in ScummVM 0.6.1
 ---- -----------------------------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
@@ -250,10 +250,6 @@ the section on Reporting Bugs.
                 - Floppy demo does not work at all
                 - Amiga versions aren't supported and probably never will be
                 - Not a bug: CD version is missing speech for some dialog
-                - ScummVM 0.5.0 contained a bug in the savegame system.
-                  If you experience problems using an old savegame, it may be
-                  corrupt, and you will need to start a new game using this
-                  version.
 
        Broken Sword 1:
                 - Demo does not work correctly
@@ -264,14 +260,13 @@ the section on Reporting Bugs.
                   cut off early, this is limitation of original game.
                 - Only default language (English) in data files is supported 
                   in simon2mac
-                - F10 key animation in simon2mac is different compared to
-                  original game
 
        FM-TOWNS versions:
-                - Kanji versions require the FM-TOWNS Font ROM
-                - All the FM-TOWNS versions of games are extremely rare,
-                  And as the ScummVM team does not encourage piracy in any
-                  way, we don't know where to buy or download a copy of these
+                - Most Kanji versions are unsupported at this time, and
+                  supported games require the FM-TOWNS Font ROM
+                - FM-TOWNS versions of games are extremely rare, and as the
+                  ScummVM team does not encourage piracy in any form please
+                  do not ask us where to buy or download a copy of these
                   games. Petition LucasArts to re-release them :)
 
        All CD games:
@@ -329,6 +324,9 @@ the in-built launcher will activate. From this, you can add games (click
 
 ScummVM can also be launched into a game directly using Command Line
 arguments - see the next section.
+
+The next major release of ScummVM will contain an easier-to-follow
+manual.
 
 5.1) Command Line Options:
 ---- ---------------------
@@ -646,7 +644,8 @@ in these cases they are either identical or, in one case, so nearly identical
 that it makes little difference.
 
 ScummVM does not support the original cutscene files, so there is no need to
-copy them.
+copy them. These should be replaced by the cutscenes available from the
+ScummVM download page.
 
 5.6.3) Broken Sword 2:
 ------ ---------------
@@ -663,7 +662,8 @@ In addition, you will need the cd.bin, cd.inf and startup.inf files from the
 sword2 directory on CD 1.
 
 ScummVM does not support the original cutscene files, so there is no need to
-copy them.
+copy them. These should be replaced by the cutscenes available from the
+ScummVM download page.
 
 6.0) Savegames:
 ---- ----------
@@ -1063,9 +1063,10 @@ X.X Credits:
         Max Horn             - Lead developer
         Torbjorn Andersson   - Engine: SCUMM, Broken Sword II
         David Eriksson       - Engine: Flight of the Amazon Queen
-        Robert Goeffringmann - Engine: Beneath a Steel Sky (maintainer)
+        Robert Goeffringmann - Engine: Beneath a Steel Sky,
                                        Broken Sword I
         Jonathan Gray        - Engine: SCUMM, Broken Sword II
+        Travis Howell        - Engine: SCUMM, Simon the Sorcerer
         Oliver Kiehl         - Engine: Beneath a Steel Sky, Simon
         Pawel Kolodziejski   - Engine: SCUMM (Codecs, iMUSE, Smush, etc.)
         Gregory Montoir      - Engine: Flight of the Amazon Queen
@@ -1076,7 +1077,6 @@ X.X Credits:
         Nicolas Bacca        - Port: PocketPC/WinCE port
         Marcus Comstedt      - Port: Dreamcast
         Ruediger Hanke       - Port: MorphOS
-        Travis Howell        - Port: Win32, Engine: Simon (maintainer)
         Peter Moraliyski     - Port: GP32
         Lionel Ulmer         - Port: X11
         Jamieson Christian   - iMUSE, MIDI, all things musical.
