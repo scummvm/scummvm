@@ -61,7 +61,7 @@ void SwordSound::engine(void) {
 	// first of all, add any random sfx to the queue...
 	for (uint16 cnt = 0; cnt < TOTAL_FX_PER_ROOM; cnt++) {
 		uint16 fxNo;
-		if (fxNo = _roomsFixedFx[SwordLogic::_scriptVars[SCREEN]][cnt]) {
+		if (fxNo == _roomsFixedFx[SwordLogic::_scriptVars[SCREEN]][cnt]) {
 			if (_fxList[fxNo].type == FX_RANDOM) {
 				if (_rnd.getRandomNumber(_fxList[fxNo].delay) == 0)
 					addToQueue(fxNo);
