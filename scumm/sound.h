@@ -29,7 +29,6 @@ class File;
 namespace Scumm {
 
 class Bundle;
-class DigitalTrackInfo;
 class ScummEngine;
 
 struct MP3OffsetTable;
@@ -74,26 +73,7 @@ protected:
 	int num_sound_effects;		// SO3 MP3 compressed audio
 	bool _vorbis_mode;	// true if using SOG, false if using SO3
 
-	enum {
-		CACHE_TRACKS = 10
-	};
-
-	/* used for mp3 CD music */
-
 	int _currentCDSound;
-
-	int _cached_tracks[CACHE_TRACKS];
-	struct {
-		PlayingSoundHandle handle;
-		int track;
-		int start;
-		int duration;
-		int numLoops;
-		bool playing;
-	} _dig_cd;
-
-	DigitalTrackInfo *_track_info[CACHE_TRACKS];
-	int _current_cache;
 
 	ScummEngine *_scumm;
 
@@ -147,9 +127,6 @@ protected:
 	void startSfxSound(File *file, int file_size, PlayingSoundHandle *handle);
 	bool isSfxFinished() const;
 	void playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned, PlayingSoundHandle *handle);
-	void playSfxSound_Vorbis(File *file, uint32 size, PlayingSoundHandle *handle);
-
-	int getCachedTrack(int track);
 };
 
 } // End of namespace Scumm

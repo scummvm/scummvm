@@ -32,10 +32,12 @@
 #include "common/timer.h"
 #include "common/util.h"
 
+#include "sound/audiocd.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
 #include "sound/mixer.h"
 #include "sound/voc.h"
+#include "sound/vorbis.h"
 
 
 namespace Scumm {
@@ -52,45 +54,6 @@ struct MP3OffsetTable {					/* Compressed Sound (.SO3) */
 	int compressed_size;
 };
 
-class DigitalTrackInfo {
-public:
-	virtual bool error() = 0;
-	virtual int play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration) = 0;
-	virtual ~DigitalTrackInfo() { }
-};
-
-#ifdef USE_MAD
-class MP3TrackInfo : public DigitalTrackInfo {
-private:
-	struct mad_header _mad_header;
-	long _size;
-	File *_file;
-	bool _error_flag;
-
-public:
-	MP3TrackInfo(File *file);
-	~MP3TrackInfo();
-	bool error() { return _error_flag; }
-	int play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration);
-};
-#endif
-
-#ifdef USE_VORBIS
-class VorbisTrackInfo : public DigitalTrackInfo {
-private:
-	File *_file;
-	OggVorbis_File _ov_file;
-	bool _error_flag;
-
-public:
-	VorbisTrackInfo(File *file);
-	~VorbisTrackInfo();
-	bool error() { return _error_flag; }
-	int play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration);
-};
-#endif
-
-
 
 Sound::Sound(ScummEngine *parent) {
 	memset(this,0,sizeof(Sound));	// palmos
@@ -101,7 +64,6 @@ Sound::Sound(ScummEngine *parent) {
 	_musicBundleBufOutput = NULL;
 	_musicDisk = 0;
 	_talkChannelHandle = 0;
-	_current_cache = 0;
 	_currentCDSound = 0;
 
 	_sfxFile = 0;
@@ -880,7 +842,9 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle)
 
 	if (file_size > 0) {
 		if (_vorbis_mode) {
-			playSfxSound_Vorbis(file, file_size, handle);
+#ifdef USE_VORBIS
+			playSfxSound_Vorbis(_scumm->_mixer, file, file_size, handle);
+#endif
 		} else {
 #ifdef USE_MAD
 			_scumm->_mixer->playMP3(handle, file, file_size);
@@ -1360,89 +1324,6 @@ void Sound::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned, P
 	_scumm->_mixer->playRaw(handle, sound, size, rate, flags);
 }
 
-#ifdef USE_VORBIS
-// These are wrapper functions to allow using a File object to
-// provide data to the OggVorbis_File object.
-
-struct file_info {
-	File *file;
-	int start, curr_pos;
-	size_t len;
-};
-
-static size_t read_wrap(void *ptr, size_t size, size_t nmemb, void *datasource) {
-	file_info *f = (file_info *) datasource;
-	int result;
-
-	nmemb *= size;
-	if (f->curr_pos > (int) f->len)
-		nmemb = 0;
-	else if (nmemb > f->len - f->curr_pos)
-		nmemb = f->len - f->curr_pos;
-	result = f->file->read(ptr, nmemb);
-	if (result == -1) {
-		f->curr_pos = f->file->pos() - f->start;
-		return (size_t) -1;
-	} else {
-		f->curr_pos += result;
-		return result / size;
-	}
-}
-
-static int seek_wrap(void *datasource, ogg_int64_t offset, int whence) {
-	file_info *f = (file_info *) datasource;
-
-	if (whence == SEEK_SET)
-		offset += f->start;
-	else if (whence == SEEK_END) {
-		offset += f->start + f->len;
-		whence = SEEK_SET;
-	}
-
-	f->file->seek(offset, whence);
-	f->curr_pos = f->file->pos() - f->start;
-	return f->curr_pos;
-}
-
-static int close_wrap(void *datasource) {
-	file_info *f = (file_info *) datasource;
-
-	f->file->close();
-	delete f;
-	return 0;
-}
-
-static long tell_wrap(void *datasource) {
-	file_info *f = (file_info *) datasource;
-
-	return f->curr_pos;
-}
-
-static ov_callbacks g_File_wrap = {
-	read_wrap, seek_wrap, close_wrap, tell_wrap
-};
-#endif
-
-void Sound::playSfxSound_Vorbis(File *file, uint32 size, PlayingSoundHandle *handle) {
-#ifdef USE_VORBIS
-
-	OggVorbis_File *ov_file = new OggVorbis_File;
-	file_info *f = new file_info;
-
-	f->file = file;
-	f->start = file->pos();
-	f->len = size;
-	f->curr_pos = 0;
-
-	if (ov_open_callbacks((void *) f, ov_file, NULL, 0, g_File_wrap) < 0) {
-		warning("Invalid file format");
-		delete ov_file;
-		delete f;
-	} else
-		_scumm->_mixer->playVorbis(handle, ov_file, 0, false);
-#endif
-}
-
 // We use a real timer in an attempt to get better sync with CD tracks. This is
 // necessary for games like Loom CD.
 
@@ -1481,23 +1362,9 @@ void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
 	// Reset the music timer variable at the start of a new track
 	_scumm->VAR(_scumm->VAR_MUSIC_TIMER) = 0;
 
-	if (!_soundsPaused && (numLoops != 0 || startFrame != 0)) {
-		// Try to load the track from a .mp3/.ogg file, and if found, use
-		// that. If not found, attempt to do regular Audio CD playback of
-		// the requested track.
-		int index = getCachedTrack(track);
-		if (index >= 0) {
-			_scumm->_mixer->stopHandle(_dig_cd.handle);
-			_dig_cd.playing = true;
-			_dig_cd.track = track;
-			_dig_cd.numLoops = numLoops;
-			_dig_cd.start = startFrame;
-			_dig_cd.duration = duration;
-			_track_info[index]->play(_scumm->_mixer, &_dig_cd.handle, _dig_cd.start, _dig_cd.duration);
-		} else {
-			_scumm->_system->play_cdrom(track, numLoops, startFrame, duration);
-		}
-	}
+	// Play it
+	if (!_soundsPaused)
+		AudioCD.playCDTrack(track, numLoops, startFrame, duration);
 
 	// Start the timer after starting the track. Starting an MP3 track is
 	// almost instantaneous, but a CD player may take some time. Hopefully
@@ -1506,247 +1373,15 @@ void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
 }
 
 void Sound::stopCD() {
-
-	if (_dig_cd.playing) {
-		_scumm->_mixer->stopHandle(_dig_cd.handle);
-		_dig_cd.playing = false;
-	} else {
-		_scumm->_system->stop_cdrom();
-	}
+	AudioCD.stopCD();
 }
 
 int Sound::pollCD() const {
-	return _dig_cd.playing || _scumm->_system->poll_cdrom();
+	return AudioCD.pollCD();
 }
 
 void Sound::updateCD() {
-	if (_dig_cd.playing) {
-		// If the sound handle is 0, then playback stopped.
-		if (!_dig_cd.handle) {
-			// If playback just stopped, check if the current track is supposed
-			// to be repeated, and if that's the case, play it again. Else, stop
-			// the CD explicitly.
-			if (_dig_cd.numLoops == -1 || --_dig_cd.numLoops > 0) {
-				_scumm->VAR(_scumm->VAR_MUSIC_TIMER) = 0;
-				if (!_soundsPaused) {
-					int index = getCachedTrack(_dig_cd.track);
-					assert(index >= 0);
-					_track_info[index]->play(_scumm->_mixer, &_dig_cd.handle, _dig_cd.start, _dig_cd.duration);
-				}
-			} else {
-				_scumm->_mixer->stopHandle(_dig_cd.handle);
-				_dig_cd.playing = false;
-			}
-		}
-	} else {
-		_scumm->_system->update_cdrom();
-	}
+	AudioCD.updateCD();
 }
-
-int Sound::getCachedTrack(int track) {
-	int i;
-#if defined(USE_MAD) || defined(USE_VORBIS)
-	char track_name[1024];
-	File *file = new File();
-#endif
-	int current_index;
-
-	// See if we find the track in the cache
-	for (i = 0; i < CACHE_TRACKS; i++)
-		if (_cached_tracks[i] == track) {
-			if (_track_info[i])
-				return i;
-			else
-				return -1;
-		}
-	current_index = _current_cache++;
-	_current_cache %= CACHE_TRACKS;
-
-	// Not found, see if it exists
-
-	// First, delete the previous track info object
-	delete _track_info[current_index];
-	_track_info[current_index] = NULL;
-
-	_cached_tracks[current_index] = track;
-
-#ifdef USE_MAD
-	sprintf(track_name, "track%d.mp3", track);
-	file->open(track_name, _scumm->getGameDataPath());
-
-	if (file->isOpen()) {
-		_track_info[current_index] = new MP3TrackInfo(file);
-		if (_track_info[current_index]->error()) {
-			delete _track_info[current_index];
-			_track_info[current_index] = NULL;
-			return -1;
-		}
-		return current_index;
-	}
-#endif
-
-#ifdef USE_VORBIS
-	sprintf(track_name, "track%d.ogg", track);
-	file->open(track_name, _scumm->getGameDataPath());
-
-	if (file->isOpen()) {
-		_track_info[current_index] = new VorbisTrackInfo(file);
-		if (_track_info[current_index]->error()) {
-			delete _track_info[current_index];
-			_track_info[current_index] = NULL;
-			return -1;
-		}
-		return current_index;
-	}
-#endif
-
-	debug(2, "Track %d not available in compressed format", track);
-	return -1;
-}
-
-#ifdef USE_MAD
-MP3TrackInfo::MP3TrackInfo(File *file) {
-	struct mad_stream stream;
-	struct mad_frame frame;
-	unsigned char buffer[8192];
-	unsigned int buflen = 0;
-	int count = 0;
-
-	// Check the format and bitrate
-	mad_stream_init(&stream);
-	mad_frame_init(&frame);
-
-	while (1) {
-		if (buflen < sizeof(buffer)) {
-			int bytes;
-
-			bytes = file->read(buffer + buflen, sizeof(buffer) - buflen);
-			if (bytes <= 0) {
-				if (bytes == -1) {
-					warning("Invalid file format");
-					goto error;
-				}
-				break;
-			}
-
-			buflen += bytes;
-		}
-
-		mad_stream_buffer(&stream, buffer, buflen);
-
-		while (1) {
-			if (mad_frame_decode(&frame, &stream) == -1) {
-				if (!MAD_RECOVERABLE(stream.error))
-					break;
-
-				if (stream.error != MAD_ERROR_BADCRC)
-					continue;
-			}
-
-			if (count++)
-				break;
-		}
-
-		if (count || stream.error != MAD_ERROR_BUFLEN)
-			break;
-
-		memmove(buffer, stream.next_frame,
-		        buflen = &buffer[buflen] - stream.next_frame);
-	}
-
-	if (count)
-		memcpy(&_mad_header, &frame.header, sizeof(mad_header));
-	else {
-		warning("Invalid file format");
-		goto error;
-	}
-
-	mad_frame_finish(&frame);
-	mad_stream_finish(&stream);
-	// Get file size
-	_size = file->size();
-	_file = file;
-	_error_flag = false;
-	return;
-
-error:
-	mad_frame_finish(&frame);
-	mad_stream_finish(&stream);
-	_error_flag = true;
-	delete file;
-}
-
-int MP3TrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration) {
-	unsigned int offset;
-	mad_timer_t durationTime;
-
-	// Calc offset. As all bitrates are in kilobit per seconds, the division by 200 is always exact
-	offset = (startFrame * (_mad_header.bitrate / (8 * 25))) / 3;
-	_file->seek(offset, SEEK_SET);
-
-	// Calc delay
-	if (!duration) {
-		// FIXME: Using _size here is a problem if offset (or equivalently
-		// startFrame) is non-zero.
-		mad_timer_set(&durationTime, (_size * 8) / _mad_header.bitrate,
-					(_size * 8) % _mad_header.bitrate, _mad_header.bitrate);
-	} else {
-		mad_timer_set(&durationTime, duration / 75, duration % 75, 75);
-	}
-
-	// Play it
-	return mixer->playMP3CDTrack(handle, _file, durationTime);
-}
-
-MP3TrackInfo::~MP3TrackInfo() {
-	if (! _error_flag)
-		_file->close();
-}
-
-#endif
-
-#ifdef USE_VORBIS
-
-VorbisTrackInfo::VorbisTrackInfo(File *file) {
-	file_info *f = new file_info;
-
-	f->file = file;
-	f->start = 0;
-	f->len = file->size();
-	f->curr_pos = file->pos();
-
-	if (ov_open_callbacks((void *) f, &_ov_file, NULL, 0, g_File_wrap) < 0) {
-		warning("Invalid file format");
-		_error_flag = true;
-		delete f;
-		delete file;
-	} else {
-		_error_flag = false;
-		_file = file;
-	}
-}
-
-#ifdef CHUNKSIZE
-#define VORBIS_TREMOR
-#endif
-
-int VorbisTrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration) {
-#ifdef VORBIS_TREMOR
-	ov_time_seek(&_ov_file, (ogg_int64_t)(startFrame / 75.0 * 1000));
-#else
-	ov_time_seek(&_ov_file, startFrame / 75.0);
-#endif
-	return mixer->playVorbis(handle, &_ov_file,
-							duration * ov_info(&_ov_file, -1)->rate / 75, true);
-}
-
-VorbisTrackInfo::~VorbisTrackInfo() {
-	if (! _error_flag) {
-		ov_clear(&_ov_file);
-		delete _file;
-	}
-}
-
-#endif
 
 } // End of namespace Scumm
