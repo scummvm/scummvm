@@ -1110,7 +1110,7 @@ void CharsetRenderer::drawBits()
 			}
 		}
 		dst = (_dest_ptr += _vm->_realWidth);
-		mask += 40;
+		mask += _vm->gdi._numStrips;
 		y++;
 	}
 }
