@@ -897,7 +897,7 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 			debug(4, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
 
 		}
-		if (_scumm->_videoFinished)
+		if (_scumm->_videoFinished || _scumm->_quit)
 			break;
 		if (_scumm->_saveLoadFlag)
 			break;

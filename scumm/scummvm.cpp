@@ -2351,7 +2351,6 @@ void Scumm::parseEvents() {
 	
 		case OSystem::EVENT_QUIT:
 			_quit = true;
-			_videoFinished = true;
 			break;
 	
 		default:
