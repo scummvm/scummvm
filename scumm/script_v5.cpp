@@ -1976,7 +1976,9 @@ void Scumm_v5::o5_roomOps() {
 				ptr[cnt] = '\0';
 				loadPtrToResource(rtString, a, ptr);
 				free(ptr);
+				delete file;
 			}
+			delete mgr;
 			break;
 		}
 	case 15:											/* palmanip */
