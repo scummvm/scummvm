@@ -89,11 +89,12 @@ protected:
 	const String &_domain;
 	EditTextWidget *_descriptionWidget;
 	EditTextWidget *_domainWidget;
-	CheckboxWidget *_fullscreenCheckbox;
-	
 	PopUpWidget *_langPopUp;
 	PopUpWidget *_platformPopUp;
+
 	PopUpWidget *_gfxPopUp;
+	CheckboxWidget *_fullscreenCheckbox;
+	CheckboxWidget *_aspectCheckbox;
 };
 
 EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
@@ -202,7 +203,11 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	// GUI:  Full screen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(tab, 15, yoffset, 200, 16, "Fullscreen mode", 0, 'F');
 	_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
+	yoffset += 16;
 
+	_aspectCheckbox = new CheckboxWidget(tab, 15, yoffset, 200, 16, "Aspect ratio correction");
+	_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
+	yoffset += 16;
 
 	//
 	// 3) The audio tab
@@ -236,6 +241,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		}
 		ConfMan.set("description", _descriptionWidget->getLabel(), newDomain);
 		ConfMan.set("fullscreen", _fullscreenCheckbox->getState(), newDomain);
+		ConfMan.set("aspect_ratio", _aspectCheckbox->getState(), newDomain);
 
 		Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
 		if (lang < 0)

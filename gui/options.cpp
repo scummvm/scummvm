@@ -65,7 +65,6 @@ enum {
 GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	: Dialog(10, 20, 320 - 2 * 10, 200 - 2 * 20) {
 
-	CheckboxWidget *check;
 	const int vBorder = 5;
 	int yoffset;
 
@@ -80,40 +79,38 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 
 	// The GFX mode popup & a label
 	// TODO - add an API to query the list of available GFX modes, and to get/set the mode
-	//new StaticTextWidget(tab, 5, vBorder+2, 100, kLineHeight, "Graphics mode: ", kTextAlignRight);
-	PopUpWidget *gfxPopUp;
-	gfxPopUp = new PopUpWidget(tab, 5, yoffset, 280, kLineHeight, "Graphics mode: ", 100);
+	_gfxPopUp = new PopUpWidget(tab, 5, yoffset, 280, kLineHeight, "Graphics mode: ", 100);
 	yoffset += 16;
 
 	// Ender: We don't really want a <default> here at all, we want to setSelected to the current global
-	gfxPopUp->appendEntry("<default>");
-	gfxPopUp->appendEntry("");
-	gfxPopUp->appendEntry("Normal (no scaling)");
-	gfxPopUp->appendEntry("2x");
-	gfxPopUp->appendEntry("3x");
-	gfxPopUp->appendEntry("2xSAI");
-	gfxPopUp->appendEntry("Super2xSAI");
-	gfxPopUp->appendEntry("SuperEagle");
-	gfxPopUp->appendEntry("AdvMAME2x");
-	gfxPopUp->appendEntry("AdvMAME3x");
-	gfxPopUp->appendEntry("hq2x");
-	gfxPopUp->appendEntry("hq3x");
-	gfxPopUp->appendEntry("TV2x");
-	gfxPopUp->appendEntry("DotMatrix");
-	gfxPopUp->setSelected(0);
+	_gfxPopUp->appendEntry("<default>");
+	_gfxPopUp->appendEntry("");
+	_gfxPopUp->appendEntry("Normal (no scaling)");
+	_gfxPopUp->appendEntry("2x");
+	_gfxPopUp->appendEntry("3x");
+	_gfxPopUp->appendEntry("2xSAI");
+	_gfxPopUp->appendEntry("Super2xSAI");
+	_gfxPopUp->appendEntry("SuperEagle");
+	_gfxPopUp->appendEntry("AdvMAME2x");
+	_gfxPopUp->appendEntry("AdvMAME3x");
+	_gfxPopUp->appendEntry("hq2x");
+	_gfxPopUp->appendEntry("hq3x");
+	_gfxPopUp->appendEntry("TV2x");
+	_gfxPopUp->appendEntry("DotMatrix");
+	_gfxPopUp->setSelected(0);
 	
 	// FIXME - disable GFX popup for now
-	gfxPopUp->setEnabled(false);
+	_gfxPopUp->setEnabled(false);
 	
 #if 1
 	// TODO: Aspect ratio setting
 	// TODO: Fullscreen setting
-	check = new CheckboxWidget(tab, 10, yoffset, 280, 16, "Fullscreen mode");
-	check->setState(ConfMan.getBool("fullscreen"));
+	_fullscreenCheckbox = new CheckboxWidget(tab, 10, yoffset, 280, 16, "Fullscreen mode");
+	_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen"));
 	yoffset += 16;
 
-	check = new CheckboxWidget(tab, 10, yoffset, 280, 16, "Aspect ratio correction");
-	check->setState(ConfMan.getBool("aspect_ratio"));
+	_aspectCheckbox = new CheckboxWidget(tab, 10, yoffset, 280, 16, "Aspect ratio correction");
+	_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio"));
 	yoffset += 16;
 #endif
 
@@ -164,12 +161,12 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	// TODO: cd drive setting
 	// TODO: multi midi setting
 	// TODO: native mt32 setting
-	check = new CheckboxWidget(tab, 10, yoffset, 280, 16, "Mixed Adlib/MIDI mode");
-	check->setState(ConfMan.getBool("multi_midi"));
+	_multiMidiCheckbox = new CheckboxWidget(tab, 10, yoffset, 280, 16, "Mixed Adlib/MIDI mode");
+	_multiMidiCheckbox->setState(ConfMan.getBool("multi_midi"));
 	yoffset += 16;
 
-	check = new CheckboxWidget(tab, 10, yoffset, 280, 16, "True Roland MT-32 (disable GM emulation)");
-	check->setState(ConfMan.getBool("native_mt32"));
+	_mt32Checkbox = new CheckboxWidget(tab, 10, yoffset, 280, 16, "True Roland MT-32 (disable GM emulation)");
+	_mt32Checkbox->setState(ConfMan.getBool("native_mt32"));
 	yoffset += 16;
 #endif
 
@@ -220,18 +217,20 @@ GlobalOptionsDialog::~GlobalOptionsDialog() {
 
 void GlobalOptionsDialog::open() {
 	Dialog::open();
+	
+	int vol;
 
-	_soundVolumeMaster = ConfMan.getInt("master_volume");
-	_masterVolumeSlider->setValue(_soundVolumeMaster);
-	_masterVolumeLabel->setValue(_soundVolumeMaster);
+	vol = ConfMan.getInt("master_volume");
+	_masterVolumeSlider->setValue(vol);
+	_masterVolumeLabel->setValue(vol);
 
-	_soundVolumeMusic = ConfMan.getInt("music_volume");
-	_musicVolumeSlider->setValue(_soundVolumeMusic);
-	_musicVolumeLabel->setValue(_soundVolumeMusic);
+	vol = ConfMan.getInt("music_volume");
+	_musicVolumeSlider->setValue(vol);
+	_musicVolumeLabel->setValue(vol);
 
-	_soundVolumeSfx = ConfMan.getInt("sfx_volume");
-	_sfxVolumeSlider->setValue(_soundVolumeSfx);
-	_sfxVolumeLabel->setValue(_soundVolumeSfx);
+	vol = ConfMan.getInt("sfx_volume");
+	_sfxVolumeSlider->setValue(vol);
+	_sfxVolumeLabel->setValue(vol);
 }
 
 void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -245,38 +244,43 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 		break;
 	case kMasterVolumeChanged:
-		_soundVolumeMaster = _masterVolumeSlider->getValue();
-		_masterVolumeLabel->setValue(_soundVolumeMaster);
+		_masterVolumeLabel->setValue(_masterVolumeSlider->getValue());
 		_masterVolumeLabel->draw();
 		break;
 	case kMusicVolumeChanged:
-		_soundVolumeMusic = _musicVolumeSlider->getValue();
-		_musicVolumeLabel->setValue(_soundVolumeMusic);
+		_musicVolumeLabel->setValue(_musicVolumeSlider->getValue());
 		_musicVolumeLabel->draw();
 		break;
 	case kSfxVolumeChanged:
-		_soundVolumeSfx = _sfxVolumeSlider->getValue();
-		_sfxVolumeLabel->setValue(_soundVolumeSfx);
+		_sfxVolumeLabel->setValue(_sfxVolumeSlider->getValue());
 		_sfxVolumeLabel->draw();
 		break;
-	case kPopUpItemSelectedCmd:
-		if (sender == _midiPopUp) {
-			const MidiDriverDescription *md = getAvailableMidiDrivers();
-			for (; md->name; md++) {
-				if (md->id == (int) data) {
-					ConfMan.set("music_driver", md->name);
-					break;
-				}
+	case kOKCmd: {
+		setResult(1);
+		// TODO: All these settings should take effect immediately.
+		// There are two ways to ensure that:
+		// 1) Add code here which pushes the changes on to the mixer/backend
+		// 2) Implement the ConfigManager callback API; then, let the mixer/backend
+		//    and any other interested parties register for notifications sent
+		//    whenever these config values change.
+		ConfMan.set("master_volume", _masterVolumeSlider->getValue());
+		ConfMan.set("music_volume", _musicVolumeSlider->getValue());
+		ConfMan.set("sfx_volume", _sfxVolumeSlider->getValue());
+		ConfMan.set("fullscreen", _fullscreenCheckbox->getState());
+		ConfMan.set("aspect_ratio", _aspectCheckbox->getState());
+
+		const MidiDriverDescription *md = getAvailableMidiDrivers();
+		for (; md->name; md++) {
+			if (md->id == (int)_midiPopUp->getSelectedTag()) {
+				ConfMan.set("music_driver", md->name);
+				break;
 			}
 		}
-		break;
-	case kOKCmd:
-		setResult(1);
-		ConfMan.set("master_volume", _soundVolumeMaster);
-		ConfMan.set("music_volume", _soundVolumeMusic);
-		ConfMan.set("sfx_volume", _soundVolumeSfx);
+		if (!md->name)
+			ConfMan.removeKey("music_driver", Common::ConfigManager::kApplicationDomain);
+
 		close();
-		break;
+		break; }
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}

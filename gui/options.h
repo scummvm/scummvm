@@ -26,6 +26,7 @@
 #include "common/list.h"
 
 class BrowserDialog;
+class CheckboxWidget;
 class GameDetector;
 class PopUpWidget;
 class SliderWidget;
@@ -42,14 +43,14 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
-	BrowserDialog	*_browser;
-	StaticTextWidget*_savePath;
+	BrowserDialog *_browser;
+	StaticTextWidget *_savePath;
+
+	PopUpWidget *_gfxPopUp;
+	CheckboxWidget *_fullscreenCheckbox;
+	CheckboxWidget *_aspectCheckbox;
 
 	PopUpWidget *_midiPopUp;
-
-	int _soundVolumeMaster;
-	int _soundVolumeMusic;
-	int _soundVolumeSfx;
 
 	SliderWidget *_masterVolumeSlider;
 	SliderWidget *_musicVolumeSlider;
@@ -58,6 +59,9 @@ protected:
 	StaticTextWidget *_masterVolumeLabel;
 	StaticTextWidget *_musicVolumeLabel;
 	StaticTextWidget *_sfxVolumeLabel;
+
+	CheckboxWidget *_multiMidiCheckbox;
+	CheckboxWidget *_mt32Checkbox;
 };
 
 #endif
