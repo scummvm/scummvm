@@ -41,10 +41,10 @@
 
 namespace Saga {
 
-#define OPCODE(x) &Script::x
+#define OPCODE(x) {&Script::x, #x}
 
 void Script::setupScriptFuncList(void) {
-	static const ScriptFunctionType scriptFunctionsList[SCRIPT_FUNCTION_MAX] = {
+	static const ScriptFunctionDescription scriptFunctionsList[SCRIPT_FUNCTION_MAX] = {
 		OPCODE(SF_putString),
 		OPCODE(sfWait),
 		OPCODE(SF_takeObject),

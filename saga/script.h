@@ -278,7 +278,11 @@ private:
 private:
 	typedef int (Script::*ScriptFunctionType)(SCRIPTFUNC_PARAMS);
 
-	const ScriptFunctionType *_scriptFunctionsList;
+	struct ScriptFunctionDescription {
+		ScriptFunctionType scriptFunction;
+		const char *scriptFunctionName;
+	};
+	const ScriptFunctionDescription *_scriptFunctionsList;
 
 	void setupScriptFuncList(void);
 	int SDebugPrintInstr(SCRIPT_THREAD *thread);

@@ -391,14 +391,14 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 
 				argumentsCount = scriptS.readByte();
 				functionNumber = scriptS.readUint16LE();
-				debug(9, "opCCall* 0x%X", functionNumber);
 				if (functionNumber >= SCRIPT_FUNCTION_MAX) {
 					_vm->_console->DebugPrintf(S_ERROR_PREFIX "Invalid script function number: (%X)\n", functionNumber);
 					thread->flags |= kTFlagAborted;
 					break;
 				}
 
-				scriptFunction = _scriptFunctionsList[functionNumber];
+				debug(9, "opCCall* Calling 0x%X %s", functionNumber, _scriptFunctionsList[functionNumber].scriptFunctionName);
+				scriptFunction = _scriptFunctionsList[functionNumber].scriptFunction;
 				scriptFunctionReturnValue = (this->*scriptFunction)(thread, argumentsCount);
 				if (scriptFunctionReturnValue != SUCCESS) {
 					_vm->_console->DebugPrintf(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->i_offset, scriptFunctionReturnValue);
