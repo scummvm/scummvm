@@ -429,7 +429,7 @@ void Actor::setupActorScale() {
 }
 
 void Actor::startAnimActor(int f) {
-	if (_vm->_version >= 7) {
+	if (_vm->_version >= 7 && !((_vm->_gameId == GID_FT) && (_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
 		switch (f) {
 		case 1001:
 			f = initFrame;
@@ -498,7 +498,7 @@ void Actor::startAnimActor(int f) {
 void Actor::animateActor(int anim) {
 	int cmd, dir;
 
-	if (_vm->_version >= 7) {
+	if (_vm->_version >= 7 && !((_vm->_gameId == GID_FT) && (_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
 
 		if (anim == 0xFF)
 			anim = 2000;
@@ -801,6 +801,17 @@ void ScummEngine::setTalkingActor(int value) {
 		_V1_talkingActor = value;
 	else
 		VAR(VAR_TALK_ACTOR) = value;
+}
+
+void ScummEngine::putActors() {
+	Actor *a;
+	int i;
+
+	for (i = 1; i < _numActors; i++) {
+		a = &_actors[i];
+		if (a && a->isInCurrentRoom())
+			a->putActor(a->_pos.x, a->_pos.y, a->room);
+	}
 }
 
 void ScummEngine::showActors() {
@@ -1655,8 +1666,13 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 	int r, g, b;
 	byte akpl_color;
 
-	if (!isInCurrentRoom() || costume < 1 || costume >= _vm->_numCostumes - 1)
-			return;
+	if (!isInCurrentRoom()) {
+		debugC(DEBUG_ACTORS, "Remap actor %d not in current room", number);
+		return;
+	} else if (costume < 1 || costume >= _vm->_numCostumes - 1) {
+		debugC(DEBUG_ACTORS, "Remap actor %d invalid costume %d", number, costume);
+		return;
+	}
 
 	akos = _vm->getResourceAddress(rtCostume, costume);
 	if (!akos) {
@@ -1666,7 +1682,7 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 
 	akpl = findResource(MKID('AKPL'), akos);
 	if (!akpl) {
-		warning("Can't remap actor %d, costume %d doesn't contain an AKPL block", number, costume);
+		debugC(DEBUG_ACTORS, "Can't remap actor %d costume %d doesn't contain an RGB block", number, costume);
 		return;
 	}
 

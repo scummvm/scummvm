@@ -156,6 +156,15 @@ void ScummEngine_v6::setupScummVars() {
 
 	VAR_V6_SCREEN_WIDTH = 41;
 	VAR_V6_SCREEN_HEIGHT = 54;
+
+	if (!(_features & GF_HUMONGOUS)) {
+		VAR_SAVELOAD_SCRIPT = 61;
+		VAR_SAVELOAD_SCRIPT2 = 62;
+		VAR_LEFTBTN_DOWN = 74;
+		VAR_RIGHTBTN_DOWN = 75;
+
+	}
+
 	VAR_V6_EMSSPACE = 76;
 	VAR_RANDOM_NR = 118;
 	

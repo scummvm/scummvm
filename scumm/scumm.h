@@ -757,6 +757,7 @@ protected:
 	void walkActors();
 	void playActorSounds();
 	void setActorRedrawFlags();
+	void putActors();
 	void showActors();
 	void resetActorBgs();
 	void processActors();

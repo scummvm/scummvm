@@ -1798,9 +1798,14 @@ void ScummEngine::processKbd(bool smushMode) {
 			VAR(VAR_RIGHTBTN_HOLD) = 1;
 			VAR(VAR_MOUSE_HOLD) += 2;
 		}
-	} else if (_version == 7) {
-		VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
-		VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
+	} else if (_version >= 6 && !(_features & GF_HUMONGOUS)) {
+		VAR(VAR_LEFTBTN_DOWN) = (_leftBtnPressed & msClicked) != 0;
+		VAR(VAR_RIGHTBTN_DOWN) = (_rightBtnPressed & msClicked) != 0;
+
+		if (_version == 7) {
+			VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
+			VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
+		}
 	}
 
 	_leftBtnPressed &= ~msClicked;
@@ -2094,23 +2099,6 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 			a->moving = 0;
 		}
 	} else if (_version >= 7) {
-		if ((_gameId == GID_DIG) && a) {
-			// FIXME: This hack mostly is there to fix the tomb/statue room
-			// in The Dig. What happens there is that when you enter, you are
-			// placed at object 399, coords (307,141), which is in box 25.
-			// But then the entry script locks that and other boxes. Hence
-			// after the entry script runs, you basically can only do one thing
-			// in that room, and that is to leave it - which means the game
-			// is unfinishable.
-			// By calling adjustActorPos, we can solve the problem in this case:
-			// there is a very close box (box 12) which contains point (307,144).
-			// If we call adjustActorPos, Commander Low is moved into that box,
-			// and we can go on. But aqudran looked this up in his IMB DB for
-			// The DIG; and nothing like this is done there. Also I am pretty
-			// sure this used to work in 0.3.1. So apparently something broke
-			// down here, and I have no clue what that might be :-/
-			a->adjustActorPos();
-		}
 		if (camera._follows) {
 			a = derefActor(camera._follows, "startScene: follows");
 			setCameraAt(a->_pos.x, a->_pos.y);

@@ -1483,6 +1483,9 @@ void ScummEngine_v6::o6_setBoxFlags() {
 
 void ScummEngine_v6::o6_createBoxMatrix() {
 	createBoxMatrix();
+
+	if ((_gameId == GID_DIG) || (_gameId == GID_CMI))
+		putActors();
 }
 
 void ScummEngine_v6::o6_resourceRoutines() {
@@ -3143,8 +3146,8 @@ void ScummEngine_v6::o6_setBoxSet() {
 	assert(matrix);
 	memcpy(matrix, boxm, mboxSize);
 
-	if(!(_features & GF_HUMONGOUS))
-		showActors();
+	if (_version == 7)
+		putActors();
 }
 
 void ScummEngine_v6::decodeParseString(int m, int n) {
