@@ -464,11 +464,11 @@ void LauncherDialog::addGame() {
 				String desc = result.description;
 				desc += " (";
 				if (customLanguage)
-					desc += getLanguageDescription(result.language);
+					desc += Common::getLanguageDescription(result.language);
 				if (customLanguage && customPlatform)
 					desc += "/";
 				if (customPlatform)
-					desc += getPlatformDescription(result.platform);
+					desc += Common::getPlatformDescription(result.platform);
 				desc += ")";
 
 				ConfMan.set("description", desc, domain);
