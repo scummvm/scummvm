@@ -23,6 +23,14 @@
 #ifndef __GAMES_H__
 #define	__GAMES_H__
 
+#define curItemVersion sysMakeROMVersion(3,1,0,0,0)
+
+#define itemVersion_30 sysMakeROMVersion(3,0,0,0,0)
+#define itemVersion_27 sysMakeROMVersion(2,7,0,0,0)
+#define itemVersion_26 sysMakeROMVersion(2,6,0,0,0)
+#define itemVersion_25 sysMakeROMVersion(2,5,0,0,0)
+#define itemVersion_20 sysMakeROMVersion(2,0,0,0,0)
+
 // old config structs
 typedef struct {
 	UInt32	version;
@@ -125,8 +133,17 @@ typedef struct {
 	Boolean aspectRatio;	// |-	v2.7
 	
 	MusicInfoType musicInfo;// 		v3.0
+	
+	UInt8 engine;			// |-	v3.1
 
 } GameInfoType;
+
+enum {
+	ENGINE_SCUMM = 0,
+	ENGINE_SIMON,
+	ENGINE_QUEEN,
+	ENGINE_SWORD1
+};
 
 // protos
 Err		GamOpenDatabase		();

@@ -25,6 +25,7 @@
 #include <ctype.h>
 
 #include "globals.h"
+#include "palmdefs.h"
 #include "start.h"
 #include "games.h"
 #include "skin.h"
@@ -62,11 +63,12 @@ static Err GamUpdateList() {
 				frmP = FrmInitForm(ConvertForm);
 				FrmSetActiveForm(frmP);
 				FrmDrawForm(frmP);
-				SysTaskDelay(200);
+				SysTaskDelay(1 * SysTicksPerSecond());
 
 				MemSet(&gitCur, sizeof(GameInfoType), 0);
 
-				if (version == itemVersion_27 ||
+				if (version == itemVersion_30 ||
+					version == itemVersion_27 ||
 					version == itemVersion_26 ||
 					version == itemVersion_25) {
 
@@ -78,15 +80,19 @@ static Err GamUpdateList() {
 						MemMove(&gitCur, tmpP, MemHandleSize(tmpH));
 						MemHandleUnlock(tmpH);
 						
-						gitCur.musicInfo.volume.master = 192;
-						gitCur.musicInfo.volume.music = 192;
-						gitCur.musicInfo.volume.sfx = 192;
-						gitCur.musicInfo.volume.speech = 192;
-						gitCur.musicInfo.volume.audiocd = 50;
+						if (version != itemVersion_30) {
+							gitCur.musicInfo.volume.master = 192;
+							gitCur.musicInfo.volume.music = 192;
+							gitCur.musicInfo.volume.sfx = 192;
+							gitCur.musicInfo.volume.speech = 192;
+							gitCur.musicInfo.volume.audiocd = 50;
+							
+							gitCur.musicInfo.sound.tempo = 100;
+							gitCur.musicInfo.sound.defaultTrackLength = 10;
+							gitCur.musicInfo.sound.firstTrack = 1;
+						}
 						
-						gitCur.musicInfo.sound.tempo = 100;
-						gitCur.musicInfo.sound.defaultTrackLength = 10;
-						gitCur.musicInfo.sound.firstTrack = 1;
+						gitCur.engine = 0;
 
 						// simply resize the old record
 						tmpH = DmResizeRecord(gameDB, index, sizeof(GameInfoType));	// TODO : check error on resize tmpH==NULL
@@ -137,6 +143,8 @@ static Err GamUpdateList() {
 						gitCur.musicInfo.sound.tempo = 100;
 						gitCur.musicInfo.sound.defaultTrackLength = 10;
 						gitCur.musicInfo.sound.firstTrack = 1;
+						
+						gitCur.engine = 0;
 
 						tmpH = DmResizeRecord(gameDB, index, sizeof(GameInfoType));	// TODO : check error on resize tmpH==NULL
 						tmpP = MemHandleLock(tmpH);
@@ -185,6 +193,8 @@ static Err GamUpdateList() {
 						gitCur.musicInfo.sound.tempo = 100;
 						gitCur.musicInfo.sound.defaultTrackLength = 10;
 						gitCur.musicInfo.sound.firstTrack = 1;
+						
+						gitCur.engine = 0;
 
 						tmpH = DmResizeRecord(gameDB, index, sizeof(GameInfoType));	// TODO : check error on resize tmpH==NULL
 						tmpP = MemHandleLock(tmpH);
