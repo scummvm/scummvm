@@ -503,7 +503,7 @@ void Talk::initialTalk() {
 		
 		if (joe2String[0] != '0') {
 			char voiceFilePrefix[MAX_STRING_SIZE];
-			sprintf(voiceFilePrefix, "%2dSSSSJ", _talkKey);
+			sprintf(voiceFilePrefix, "%2dXXXXJ", _talkKey);
 			speak(joe2String, NULL, voiceFilePrefix);
 		}
 
