@@ -1325,7 +1325,6 @@ bool SimonState::o_unk_23(uint a)
 		return 0;
 	}
 
-	warning("opcode 24 random is been used");
 	if (((uint) (_rnd.getRandomNumber(100) >> 5)) % 100 < a) {
 		if (_script_unk_1 <= 0)
 			_script_unk_1 -= 5;
