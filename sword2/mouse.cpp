@@ -235,7 +235,7 @@ void	System_menu(void)	//Tony19Mar97
 						}
 
 					//------------------------
-					rv = g_sword2->_sound->PauseFx();
+					rv = g_sound->PauseFx();
 					if (rv != RD_OK)
 						Zdebug("ERROR: PauseFx() returned %.8x in SystemMenu()", rv);
   					//------------------------
@@ -307,7 +307,7 @@ void	System_menu(void)	//Tony19Mar97
 						this_screen.new_palette=1;
 
 					//------------------------
-					rv = g_sword2->_sound->UnpauseFx();
+					rv = g_sound->UnpauseFx();
 					if (rv != RD_OK)
 						Zdebug("ERROR: UnpauseFx() returned %.8x in SystemMenu()", rv);
 					//------------------------

@@ -279,8 +279,8 @@ uint32	Con_start(uint8 *input)	//Tony15Oct96
 			FN_stop_music(NULL);	// fade out any music that is currently playing
 			//---------------------------------------------
 
-			g_sword2->_sound->UnpauseSpeech();
-			g_sword2->_sound->StopSpeechSword2();							// halt the sample prematurely
+			g_sound->UnpauseSpeech();
+			g_sound->StopSpeechSword2();							// halt the sample prematurely
 
 			//--------------------------------------------------------------
 			// clean out all resources & flags, ready for a total restart (James24mar97)

@@ -64,7 +64,6 @@ protected:
 	uint8 *getFileInfo(uint16 fileNr);
 	void dumpFile(uint16 fileNr);
 
-	char *_gameDataPath;
 	uint32 _dinnerTableEntries;
 
 	uint8 *_dinnerTableArea, *_fixedDest, *_fileDest, *_compDest;

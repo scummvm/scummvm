@@ -23,6 +23,7 @@ General
   ideally, we should be able to drop almost all of the member variables
   in the game detector, in favor of getting all these directly from the
   config system).
+* fix the Map<> template, make it more robust; maybe use a red-black tree?
 
 GUI
 ===

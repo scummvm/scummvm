@@ -22,6 +22,10 @@
 #include "common/file.h"
 #include "common/util.h"
 
+
+char *File::_defaultDirectory = 0;
+
+
 FILE *File::fopenNoCase(const char *filename, const char *directory, const char *mode) {
 	FILE *file;
 	char buf[512];
@@ -111,6 +115,11 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 	return NULL;
 }
 
+void File::setDefaultDirectory(const char *directory) {
+	free(_defaultDirectory);
+	_defaultDirectory = strdup(directory);
+}
+
 File::File() {
 	_handle = NULL;
 	_ioFailed = false;
@@ -131,6 +140,10 @@ bool File::open(const char *filename, const char *directory, int mode, byte encb
 
 	if (filename == NULL || *filename == 0)
 		return false;
+	
+	// If no directory was specified, use the default directory (if any).
+	if (directory == NULL)
+		directory = _defaultDirectory ? _defaultDirectory : "";
 
 	clearIOFailed();
 

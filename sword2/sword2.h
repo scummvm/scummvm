@@ -50,24 +50,27 @@ enum BSGameId {
 
 // TODO move stuff into class
 class Sword2State : public Engine {
-		void errorString(const char *buf_input, char *buf_output);
-	public:
-		Sword2State(GameDetector *detector, OSystem *syst);
-		void go(void);
-		void parseEvents(void);
-		void Start_game(void);
-		int32 InitialiseGame(void);
-		GameDetector *_detector;
-		uint32 _features;
-		byte _gameId;
-		char *_game_name; // target name for saves
-		Sword2Sound *_sound;
-	private:
-		bool _quit;
-		uint32 _bootParam;
-		int32 _saveSlot;
+public:
+	Sword2State(GameDetector *detector, OSystem *syst);
+	void go(void);
+	void parseEvents(void);
+	void Start_game(void);
+	int32 InitialiseGame(void);
+	GameDetector *_detector;
+	uint32 _features;
+	byte _gameId;
+	char *_game_name; // target name for saves
+	Sword2Sound *_sound;
+private:
+	bool _quit;
+	uint32 _bootParam;
+	int32 _saveSlot;
+
+public:
+	void errorString(const char *buf_input, char *buf_output);
 };
 
 extern Sword2State *g_sword2;
+extern Sword2Sound *g_sound;
 
 #endif

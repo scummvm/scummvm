@@ -104,7 +104,7 @@ void resMan::InitResMan(void) { //Tony29May96
 
 	total_clusters = 0;
 
-	if (!file.open("resource.inf", g_sword2->getGameDataPath())) {
+	if (!file.open("resource.inf")) {
 		Zdebug("InitResMan cannot *OPEN* resource.inf");
 		ExitWithReport("InitResMan cannot *OPEN* resource.inf [file=%s line=%u]", __FILE__, __LINE__);
 	}
@@ -148,7 +148,7 @@ void resMan::InitResMan(void) { //Tony29May96
 	} while (j != end);	// using this method the Gode generated resource.inf must have #0d0a on the last entry
 
 	// now load in the binary id to res conversion table
-	if (!file.open("resource.tab", g_sword2->getGameDataPath())) {
+	if (!file.open("resource.tab")) {
 		Zdebug("InitResMan cannot *OPEN* resource.tab");
 		ExitWithReport("InitResMan cannot *OPEN* resource.tab [file=%s line=%u]", __FILE__, __LINE__);
 	}
@@ -172,7 +172,7 @@ void resMan::InitResMan(void) { //Tony29May96
 
 	file.close();
 
-	if (!file.open("cd.inf", g_sword2->getGameDataPath())) {
+	if (!file.open("cd.inf")) {
 		Zdebug("InitResMan cannot *OPEN* cd.inf");
 		ExitWithReport("InitResMan cannot *OPEN* cd.inf [file=%s line=%u]", __FILE__, __LINE__);
 	}
@@ -228,7 +228,7 @@ void resMan::InitResMan(void) { //Tony29May96
 
 	// FIXME: Is this really needed?
 
-	if (!file.open("revcd1.id", g_sword2->getGameDataPath())) {
+	if (!file.open("revcd1.id")) {
 		int index = 0;
 /*
 		// Scan for CD drives.
@@ -527,7 +527,7 @@ uint8 *resMan::Res_open(uint32 res) {	//BHTony30May96
 		}
 
 		// open the cluster file
-		if (!file.open(resource_files[parent_res_file], g_sword2->getGameDataPath()))
+		if (!file.open(resource_files[parent_res_file]))
 			Con_fatal_error("Res_open cannot *OPEN* %s", resource_files[parent_res_file]);
 
 
@@ -683,7 +683,7 @@ uint32 resMan::Res_fetch_len( uint32 res ) {	//Tony27Jan96
 	// first we have to find the file via the res_conv_table
 	// open the cluster file
 
-	if (!fh.open(resource_files[parent_res_file], g_sword2->getGameDataPath()))
+	if (!fh.open(resource_files[parent_res_file]))
 		Con_fatal_error("Res_fetch_len cannot *OPEN* %s", resource_files[parent_res_file]);
 
 	// 1st DWORD of a cluster is an offset to the look-up table
@@ -1165,8 +1165,8 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 
 	File inFile, outFile;
 	
-	inFile.open(buf, g_sword2->getGameDataPath());
-	outFile.open(resource_files[newCluster], g_sword2->getGameDataPath(), File::kFileWriteMode);
+	inFile.open(buf);
+	outFile.open(resource_files[newCluster], NULL, File::kFileWriteMode);
 
 	if (!inFile.isOpen() || !outFile.isOpen()) {
 		Zdebug("Cache new cluster could not copy %s to %s", buf, resource_files[newCluster]);

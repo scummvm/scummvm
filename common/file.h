@@ -33,17 +33,21 @@ private:
 	byte _encbyte;
 	char *_name;	// For debugging
 
-	FILE *fopenNoCase(const char *filename, const char *directory, const char *mode);
+	static FILE *fopenNoCase(const char *filename, const char *directory, const char *mode);
+	
+	static char *_defaultDirectory;
 
 public:
 	enum {
 		kFileReadMode = 1,
 		kFileWriteMode = 2
 	};
-
+	
+	static void setDefaultDirectory(const char *directory);
+	
 	File();
 	virtual ~File();
-	bool open(const char *filename, const char *directory, int mode = kFileReadMode, byte encbyte = 0);
+	bool open(const char *filename, const char *directory = NULL, int mode = kFileReadMode, byte encbyte = 0);
 	void close();
 	bool isOpen();
 	bool ioFailed();

@@ -87,6 +87,7 @@ static const TargetSettings sword2_settings[] = {
 };
 
 Sword2State *g_sword2 = NULL;
+Sword2Sound *g_sound = NULL;
 
 const TargetSettings *Engine_SWORD2_targetList() {
 	return sword2_settings;
@@ -114,7 +115,9 @@ Sword2State::Sword2State(GameDetector *detector, OSystem *syst)
 	_mixer->setVolume(kDefaultSFXVolume * kDefaultMasterVolume / 255);
 	_mixer->setMusicVolume(kDefaultMusicVolume * kDefaultMasterVolume / 255);
 
-	_sound = new Sword2Sound(_mixer);
+	g_sound = _sound = new Sword2Sound(_mixer);
+	
+	File::setDefaultDirectory(_gameDataPath);
 }
 
 

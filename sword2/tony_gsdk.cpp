@@ -36,7 +36,7 @@ uint32 Read_file(const char *name, mem **membloc, uint32 uid) {	// Tony25Apr96
 	File fh;
 	uint32 size;
 
-	if (!fh.open(name, g_sword2->getGameDataPath())) {
+	if (!fh.open(name)) {
 		Zdebug("Read_file cannot open %s", name);
 		return 0;
 	}

@@ -794,12 +794,12 @@ public:
 		_objectLabelsSwitch->setValue(pointerTextSelected != 0);
 		_subtitlesSwitch->setValue(subtitles != 0);
 		_reverseStereoSwitch->setValue(stereoReversed != 0);
-		_musicSwitch->setValue(g_sword2->_sound->IsMusicMute() == 0);
-		_speechSwitch->setValue(g_sword2->_sound->IsSpeechMute() == 0);
-		_fxSwitch->setValue(g_sword2->_sound->IsFxMute() == 0);
-		_musicSlider->setValue(g_sword2->_sound->GetMusicVolume());
-		_speechSlider->setValue(g_sword2->_sound->GetSpeechVolume());
-		_fxSlider->setValue(g_sword2->_sound->GetFxVolume());
+		_musicSwitch->setValue(g_sound->IsMusicMute() == 0);
+		_speechSwitch->setValue(g_sound->IsSpeechMute() == 0);
+		_fxSwitch->setValue(g_sound->IsFxMute() == 0);
+		_musicSlider->setValue(g_sound->GetMusicVolume());
+		_speechSlider->setValue(g_sound->GetSpeechVolume());
+		_fxSlider->setValue(g_sound->GetFxVolume());
 		_gfxSlider->setValue(GetRenderType());
 		_gfxPreview->setState(GetRenderType());
 	}
@@ -858,13 +858,13 @@ public:
 
 		if (widget == _reverseStereoSwitch) {
 			if (result != stereoReversed)
-				g_sword2->_sound->ReverseStereo();
+				g_sound->ReverseStereo();
 			stereoReversed = result;
 		} else if (widget == _musicSwitch) {
-			g_sword2->_sound->MuteMusic(result);
+			g_sound->MuteMusic(result);
 		} else if (widget == _musicSlider) {
-			g_sword2->_sound->SetMusicVolume(result);
-			g_sword2->_sound->MuteMusic(result == 0);
+			g_sound->SetMusicVolume(result);
+			g_sound->MuteMusic(result == 0);
 			_musicSwitch->setValue(result != 0);
 		} else if (widget == _speechSlider) {
 			_speechSwitch->setValue(result != 0);
@@ -875,12 +875,12 @@ public:
 			UpdateGraphicsLevel(result);
 		} else if (widget == _okButton) {
 			// Apply the changes
-			g_sword2->_sound->MuteMusic(_musicSwitch->getValue() == 0);
-			g_sword2->_sound->MuteSpeech(_speechSwitch->getValue() == 0);
-			g_sword2->_sound->MuteFx(_fxSwitch->getValue() == 0);
-			g_sword2->_sound->SetMusicVolume(_musicSlider->getValue());
-			g_sword2->_sound->SetSpeechVolume(_speechSlider->getValue());
-			g_sword2->_sound->SetFxVolume(_fxSlider->getValue());
+			g_sound->MuteMusic(_musicSwitch->getValue() == 0);
+			g_sound->MuteSpeech(_speechSwitch->getValue() == 0);
+			g_sound->MuteFx(_fxSwitch->getValue() == 0);
+			g_sound->SetMusicVolume(_musicSlider->getValue());
+			g_sound->SetSpeechVolume(_speechSlider->getValue());
+			g_sound->SetFxVolume(_fxSlider->getValue());
 
 			UpdateGraphicsLevel(_gfxSlider->getValue());
 
@@ -1472,12 +1472,12 @@ int32 ReadOptionSettings(void) {	//pete10Jun97
 	delete fp;
 	delete mgr;
 	
-	g_sword2->_sound->SetMusicVolume(buff[0]);
-	g_sword2->_sound->SetSpeechVolume(buff[1]);
-	g_sword2->_sound->SetFxVolume(buff[2]);
-	g_sword2->_sound->MuteMusic(buff[3]);
-	g_sword2->_sound->MuteSpeech(buff[4]);
-	g_sword2->_sound->MuteFx(buff[5]);
+	g_sound->SetMusicVolume(buff[0]);
+	g_sound->SetSpeechVolume(buff[1]);
+	g_sound->SetFxVolume(buff[2]);
+	g_sound->MuteMusic(buff[3]);
+	g_sound->MuteSpeech(buff[4]);
+	g_sound->MuteFx(buff[5]);
 
 	UpdateGraphicsLevel(buff[6]);	// (James13jun97)
 
@@ -1486,7 +1486,7 @@ int32 ReadOptionSettings(void) {	//pete10Jun97
 	pointerTextSelected = buff[8];
 
 	if (buff[9] != stereoReversed)
-		g_sword2->_sound->ReverseStereo();
+		g_sound->ReverseStereo();
 
 	stereoReversed = buff[9];
 	return 0;
@@ -1500,12 +1500,12 @@ int32 WriteOptionSettings(void) {	//pete10Jun97
 	
 	sprintf(filename, "%s-settings.dat", g_sword2->_game_name);
 
-	buff[0] = g_sword2->_sound->GetMusicVolume();
-	buff[1] = g_sword2->_sound->GetSpeechVolume();
-	buff[2] = g_sword2->_sound->GetFxVolume();
-	buff[3] = g_sword2->_sound->IsMusicMute();
-	buff[4] = g_sword2->_sound->IsSpeechMute();
-	buff[5] = g_sword2->_sound->IsFxMute();
+	buff[0] = g_sound->GetMusicVolume();
+	buff[1] = g_sound->GetSpeechVolume();
+	buff[2] = g_sound->GetFxVolume();
+	buff[3] = g_sound->IsMusicMute();
+	buff[4] = g_sound->IsSpeechMute();
+	buff[5] = g_sound->IsFxMute();
 	buff[6] = GetRenderType();
 	buff[7] = subtitles;
 	buff[8] = pointerTextSelected;

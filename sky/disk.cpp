@@ -32,16 +32,18 @@ static const char *dinnerFilename = "sky.dnr";
 
 SkyDisk::SkyDisk(char *gameDataPath) {
 	_prefRoot = NULL;
-	_gameDataPath = gameDataPath;
+
+	// Set default file directory
+	File::setDefaultDirectory(gameDataPath);
 
 	_dataDiskHandle = new File();
 	_dnrHandle = new File();
 
 	uint32 entriesRead;
 
-	_dnrHandle->open(dinnerFilename, _gameDataPath);
+	_dnrHandle->open(dinnerFilename);
 	if (_dnrHandle->isOpen() == false)
-			error("Could not open %s%s", _gameDataPath, dinnerFilename);
+			error("Could not open %s%s", gameDataPath, dinnerFilename);
 
 	if (!(_dinnerTableEntries = _dnrHandle->readUint32LE()))
 		error("Error reading from sky.dnr"); //even though it was opened correctly?!
@@ -52,9 +54,9 @@ SkyDisk::SkyDisk(char *gameDataPath) {
 	if (entriesRead != _dinnerTableEntries)
 		warning("entriesRead != dinnerTableEntries. [%d/%d]", entriesRead, _dinnerTableEntries);
 
-	_dataDiskHandle->open(dataFilename, _gameDataPath);
+	_dataDiskHandle->open(dataFilename);
 	if (_dataDiskHandle->isOpen() == false) 
-		error("Error opening %s%s", _gameDataPath, dataFilename);
+		error("Error opening %s%s", gameDataPath, dataFilename);
 
 	printf("Found BASS version v0.0%d (%d dnr entries)\n", determineGameVersion(), _dinnerTableEntries);
 
@@ -414,9 +416,9 @@ void SkyDisk::dumpFile(uint16 fileNr) {
 	filePtr = loadFile(fileNr, NULL);
 	sprintf(buf, "dumps/file-%d.dmp", fileNr);
 	
-	out.open(buf, "", 1);
+	out.open(buf, "", File::kFileReadMode);
 	if (out.isOpen() == false) {
-		out.open(buf, "", 2);
+		out.open(buf, "", File::kFileWriteMode);
 		if (out.isOpen() == false)
 			return;
 		out.write(filePtr, _lastLoadedFileSize);

@@ -379,7 +379,7 @@ int32 Sword2Sound::GetCompSpeechSize(const char *filename, uint32 speechid) {
 	File fp;
 	
 	// Open the speech cluster and find the data offset & size
-	fp.open(filename, g_engine->getGameDataPath());
+	fp.open(filename);
 	if (fp.isOpen() == false)
 		return 0;
 
@@ -412,7 +412,7 @@ int32 Sword2Sound::PreFetchCompSpeech(const char *filename, uint32 speechid, uin
 	File fp;
 
 	// Open the speech cluster and find the data offset & size
-	fp.open(filename, g_engine->getGameDataPath());
+	fp.open(filename);
 	if (fp.isOpen() == false)
 		return RDERR_INVALIDFILENAME;
 
@@ -499,7 +499,7 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 			return RDERR_SPEECHPLAYING;
 
 		//  Open the speech cluster and find the data offset & size
-		fp.open(filename, g_engine->getGameDataPath());
+		fp.open(filename);
 		if (fp.isOpen() == false) 
 			return RDERR_INVALIDFILENAME;
 		
@@ -1058,7 +1058,7 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 	// Always use fpMus[0] (all music in one cluster)
 	// musFilePos[primaryStream] for different pieces of music.
 	if (!fpMus.isOpen())
-		fpMus.open(filename, g_engine->getGameDataPath());
+		fpMus.open(filename);
 
 	if (!fpMus.isOpen())
 		return RDERR_INVALIDFILENAME;

@@ -73,8 +73,6 @@ public:
 	// Get the save game dir path
 	const char *getSavePath() const;
 
-	virtual const char *getGameDataPath() const { return _gameDataPath; }
-	
 	// Specific for each engine preparare of erroe string
 	virtual void errorString(const char *buf_input, char *buf_output) = 0;
 };

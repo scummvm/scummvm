@@ -582,12 +582,12 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[])	// (James23may97)
 			File fp;
 
 			sprintf(speechFile, "speech%d.clu", res_man.WhichCd());
-			if (fp.open(speechFile, g_sword2->getGameDataPath()))
+			if (fp.open(speechFile))
 				fp.close();
 			else
 				strcpy(speechFile, "speech.clu");
 
-			wavSize = g_sword2->_sound->GetCompSpeechSize(speechFile, wavId);		// returns size of decompressed wav, or 0 if wav not found
+			wavSize = g_sound->GetCompSpeechSize(speechFile, wavId);		// returns size of decompressed wav, or 0 if wav not found
 			if (wavSize)	// if we've got the wav
 			{
 				// allocate memory for speech buffer
@@ -595,7 +595,7 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[])	// (James23may97)
 
 				if (sequence_text_list[line].speech_mem)	// if mem allocated ok (should be fine, but worth checking)
 				{
-					if (g_sword2->_sound->PreFetchCompSpeech(speechFile, wavId, sequence_text_list[line].speech_mem->ad) == RD_OK)	// Load speech & decompress to our buffer
+					if (g_sound->PreFetchCompSpeech(speechFile, wavId, sequence_text_list[line].speech_mem->ad) == RD_OK)	// Load speech & decompress to our buffer
 					{
 						Float_mem (sequence_text_list[line].speech_mem);	// now float this buffer so we can make space for the next text sprites and/or speech samples
 						speechRunning=1;	// ok, we've got speech!
@@ -708,7 +708,7 @@ int32 FN_smacker_lead_in(int32 *params)	// James(21july97)
 	//-----------------------------------------
 
 	leadIn += sizeof(_standardHeader);
-	rv = g_sword2->_sound->PlayFx( 0, leadIn, 0, 0, RDSE_FXLEADIN );		// wav data gets copied to sound memory
+	rv = g_sound->PlayFx( 0, leadIn, 0, 0, RDSE_FXLEADIN );		// wav data gets copied to sound memory
 
 	//-----------------------------------------
 	#ifdef _SWORD2_DEBUG
@@ -826,7 +826,7 @@ int32 FN_play_sequence(int32 *params)	// James(09apr97)
 	// play the smacker
 
 	FN_stop_music(NULL);	// don't want to carry on streaming game music when smacker starts!
-	g_sword2->_sound->PauseFxForSequence();	// pause sfx during sequence, except the one used for lead-in music
+	g_sound->PauseFxForSequence();	// pause sfx during sequence, except the one used for lead-in music
 
 	if (sequenceTextLines && g_sword2->_gameId == GID_SWORD2)	// if we have some text to accompany this sequence
 		rv = PlaySmacker(filename, sequenceSpeechArray, leadOut);
@@ -842,7 +842,7 @@ int32 FN_play_sequence(int32 *params)	// James(09apr97)
 	}
 */
 
-	g_sword2->_sound->UnpauseFx();	// unpause sound fx again, in case we're staying in same location
+	g_sound->UnpauseFx();	// unpause sound fx again, in case we're staying in same location
 
  	//--------------------------------------
 	// close the lead-out music resource

@@ -407,7 +407,7 @@ int32 FN_play_credits(int32 *params) {
 		
 		// And wait for it to die
 		for (int i = 0; i<16; i++) {
-			g_sword2->_sound->UpdateCompSampleStreaming();
+			g_sound->UpdateCompSampleStreaming();
 		}
 #endif
 
