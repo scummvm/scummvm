@@ -132,7 +132,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o100_dim2dim2Array),
 		/* 48 */
 		OPCODE(o6_setObjectName),
-		OPCODE(o6_invalid),
+		OPCODE(o100_redim2dimArray),
 		OPCODE(o6_not),
 		OPCODE(o6_invalid),
 		/* 4C */
@@ -1097,6 +1097,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		pop();
 		pop();
 		_wizParams.compType = pop();
+		break;
 	case 64:
 		_wizParams.processFlags |= 0x800;
 		_wizParams.processMode = 4;
@@ -1246,6 +1247,31 @@ void ScummEngine_v100he::o100_dim2dim2Array() {
 	defineArray(fetchScriptWord(), data, dim2start, dim2end, dim1start, dim1end);
 }
 
+void ScummEngine_v100he::o100_redim2dimArray() {
+	int a, b, c, d;
+	d = pop();
+	c = pop();
+	b = pop();
+	a = pop();
+
+	byte subOp = fetchScriptByte();
+
+	printf("o100_redim2dimArray: a %d b %d c %d d %d\n", a, b, c, d);
+	switch (subOp) {
+	case 42:
+		redimArray(fetchScriptWord(), a, b, c, d, kIntArray);
+		break;
+	case 43:
+		redimArray(fetchScriptWord(), a, b, c, d, kDwordArray);
+		break;
+	case 45:
+		redimArray(fetchScriptWord(), a, b, c, d, kByteArray);
+		break;
+	default:
+		error("o100_redim2dimArray: default type %d", subOp);
+	}
+}
+
 void ScummEngine_v100he::o100_paletteOps() {
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
@@ -1286,7 +1312,7 @@ void ScummEngine_v100he::o100_paletteOps() {
 	default:
 		error("o100_paletteOps: Unknown case %d", subOp);
 	}
-	debug(0,"o100_paletteOps stub (%d)", subOp);
+	debug(1,"o100_paletteOps stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::o100_redimArray() {

@@ -930,6 +930,7 @@ protected:
 	void o100_actorOps();
 	void o100_arrayOps();
 	void o100_dim2dimArray();
+	void o100_redim2dimArray();
 	void o100_dimArray();
 	void o100_drawObject();
 	void o100_unknown28();
