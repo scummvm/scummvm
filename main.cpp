@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 	if (detector.detectMain(argc, argv))
 		return (-1);
 
-	OSystem *system = OSystem_SDL_create(detector._gfx_mode, false);
+	OSystem *system = OSystem_SDL_create(detector._gfx_mode, detector._fullScreen);
 
 	{
 		char *s = detector.getGameName();

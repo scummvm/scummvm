@@ -1105,18 +1105,9 @@ void Scumm::waitForTimer(int msec_delay) {
 						sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
 						_saveLoadFlag = (event.kbd.flags == OSystem::KBD_SHIFT) ? 1 : 2;
 						_saveLoadCompatible = false;
-					} else if (event.kbd.flags == OSystem::KBD_ALT|OSystem::KBD_CTRL) {
-						if (!_system->set_param(OSystem::PARAM_HOTSWAP_GFX_MODE, event.kbd.keycode - '1'))
-							warning("Unable to hotswap graphics mode");
-						redrawLines(0, 200);
-						_palDirtyMin = 0;
-						_palDirtyMax = 255;
-						updatePalette();
-					}
-				} else if (event.kbd.flags&OSystem::KBD_CTRL) {
-					if (event.kbd.keycode=='z')
-						_system->quit();
-					else if (event.kbd.keycode=='f')
+					} 
+				} else if (event.kbd.flags==OSystem::KBD_CTRL) {
+					if (event.kbd.keycode=='f')
 						_fastMode ^= 1;
 					else if (event.kbd.keycode=='g')
 						_fastMode ^= 2;
@@ -1124,9 +1115,6 @@ void Scumm::waitForTimer(int msec_delay) {
 						debugger.attach(this);
 					else if (event.kbd.keycode=='s')
 						resourceStats();
-				} else if (event.kbd.flags&OSystem::KBD_ALT) {
-					if (!_system->set_param(OSystem::PARAM_TOGGLE_FULLSCREEN, 0))
-						warning("Full screen failed");
 				}
 				break;
 

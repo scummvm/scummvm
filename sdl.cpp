@@ -61,7 +61,7 @@ public:
 	// Set a parameter
 	uint32 set_param(int param, uint32 value);
 
-	static OSystem *create(int gfx_driver, bool full_screen);
+	static OSystem *create(int gfx_mode, bool full_screen);
 
 private:
 	typedef void TwoXSaiProc(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
@@ -80,11 +80,11 @@ private:
 		DF_UPDATE_EXPAND_1_PIXEL = 16,
 	};
 
-	int _driver;
+	int _mode;
 	bool _full_screen;
 	bool _mouse_visible;
 	bool _mouse_drawn;
-	uint32 _driver_flags;
+	uint32 _mode_flags;
 
 	byte _internal_scaling;
 
@@ -128,7 +128,9 @@ private:
 
 	TwoXSaiProc *_sai_func;
 
-	void copy_rect_fullscreen(const byte *buf);
+	SDL_Color *_cur_pal;
+
+	void add_dirty_rgn_auto(const byte *buf);
 	void mk_checksums(const byte *buf);
 
 	static void fill_sound(void *userdata, Uint8 * stream, int len);
@@ -140,6 +142,8 @@ private:
 
 	void load_gfx_mode();
 	void unload_gfx_mode();
+
+	void hotswap_gfx_mode();
 };
 
 int Init_2xSaI (uint32 BitFormat);
@@ -156,9 +160,9 @@ void atexit_proc() {
 	SDL_Quit();
 }
 
-OSystem *OSystem_SDL::create(int gfx_driver, bool full_screen) {
+OSystem *OSystem_SDL::create(int gfx_mode, bool full_screen) {
 	OSystem_SDL *syst = new OSystem_SDL();
-	syst->_driver = gfx_driver;
+	syst->_mode = gfx_mode;
 	syst->_full_screen = full_screen;
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) ==-1) {
@@ -173,25 +177,24 @@ OSystem *OSystem_SDL::create(int gfx_driver, bool full_screen) {
 	return syst;
 }
 
-OSystem *OSystem_SDL_create(int gfx_driver, bool full_screen) {
-	return OSystem_SDL::create(gfx_driver, full_screen);
+OSystem *OSystem_SDL_create(int gfx_mode, bool full_screen) {
+	return OSystem_SDL::create(gfx_mode, full_screen);
 }
 
 void OSystem_SDL::set_palette(const byte *colors, uint start, uint num) {
-	SDL_Color colbuf[256];
 	const byte *b = colors;
 	uint i;
 	for(i=0;i!=num;i++) {
-		colbuf[i].r = b[0];
-		colbuf[i].g = b[1];
-		colbuf[i].b = b[2];
+		_cur_pal[i].r = b[0];
+		_cur_pal[i].g = b[1];
+		_cur_pal[i].b = b[2];
 		b += 4;
 	}
 
-	if (_driver_flags & DF_FORCE_FULL_ON_PALETTE)
+	if (_mode_flags & DF_FORCE_FULL_ON_PALETTE)
 		force_full = true;
 
-	SDL_SetColors(sdl_screen, colbuf, start, num);
+	SDL_SetColors(sdl_screen, _cur_pal, start, num);
 }
 
 void OSystem_SDL::fill_sound(void *userdata, Uint8 * stream, int len) {
@@ -206,10 +209,10 @@ void OSystem_SDL::load_gfx_mode() {
 	force_full = true;
 	scaling = 1;
 	_internal_scaling = 1;
-	_driver_flags = 0;
-	
+	_mode_flags = 0;
+
 	_sai_func = NULL;
-	switch(_driver) {
+	switch(_mode) {
 	case GFX_2XSAI:
 		_sai_func = _2xSaI;
 		break;
@@ -221,8 +224,13 @@ void OSystem_SDL::load_gfx_mode() {
 		break;
 
 	case GFX_DOUBLESIZE:
+		if (_full_screen) {
+			warning("full screen in useless in doublesize mode, reverting to normal mode");
+			goto normal_mode;
+		}
 		scaling = 2;
 		_internal_scaling = 2;
+		_mode_flags = DF_WANT_RECT_OPTIM;
 		
 		sdl_hwscreen = sdl_screen = SDL_SetVideoMode(640, 400, 8, SDL_SWSURFACE);
 		if (sdl_screen == NULL)
@@ -230,16 +238,29 @@ void OSystem_SDL::load_gfx_mode() {
 		break;
 
 	case GFX_TRIPLESIZE:
+		if (_full_screen) {
+			warning("full screen in useless in triplesize mode, reverting to normal mode");
+			goto normal_mode;
+		}
 		scaling = 3;
 		_internal_scaling = 3;
-		sdl_hwscreen = sdl_screen = SDL_SetVideoMode(960, 600, 8, SDL_SWSURFACE);
+		_mode_flags = DF_WANT_RECT_OPTIM;
+
+		sdl_hwscreen = sdl_screen = SDL_SetVideoMode(960, 600, 8, 
+			_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
+		);
 		if (sdl_screen == NULL)
 			error("sdl_screen failed");
+
+
 		break;
 
-
 	case GFX_NORMAL:
-		sdl_hwscreen = sdl_screen = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE);
+normal_mode:;
+		_mode_flags = DF_WANT_RECT_OPTIM;
+		sdl_hwscreen = sdl_screen = SDL_SetVideoMode(320, 200, 8, 
+			_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
+		);
 		if (sdl_screen == NULL)
 			error("sdl_screen failed");
 		break;
@@ -247,14 +268,16 @@ void OSystem_SDL::load_gfx_mode() {
 
 	if (_sai_func) {
 		uint16 *tmp_screen = (uint16*)calloc(320*204 + 16,sizeof(uint16));
-		_driver_flags = DF_FORCE_FULL_ON_PALETTE | DF_WANT_RECT_OPTIM | DF_2xSAI | DF_SEPARATE_HWSCREEN | DF_UPDATE_EXPAND_1_PIXEL;
+		_mode_flags = DF_FORCE_FULL_ON_PALETTE | DF_WANT_RECT_OPTIM | DF_2xSAI | DF_SEPARATE_HWSCREEN | DF_UPDATE_EXPAND_1_PIXEL;
 
 		Init_2xSaI(565);
 		sdl_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
 		if (sdl_screen == NULL)
 			error("SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0) failed");
 
-		sdl_hwscreen = SDL_SetVideoMode(640, 400, 16, SDL_SWSURFACE);
+		sdl_hwscreen = SDL_SetVideoMode(640, 400, 16, 
+			_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
+		);
 		if (sdl_hwscreen == NULL)
 			error("sdl_hwscreen failed");
 
@@ -264,7 +287,6 @@ void OSystem_SDL::load_gfx_mode() {
 		if (sdl_tmpscreen == NULL)
 			error("sdl_tmpscreen failed");
 
-		dirty_checksums = (uint32*)calloc(CKSUM_NUM*2, sizeof(uint32));
 		scaling = 2;		
 	}
 }
@@ -274,7 +296,7 @@ void OSystem_SDL::unload_gfx_mode() {
 
 	surf=sdl_screen; sdl_screen=NULL; SDL_FreeSurface(surf);
 
-	if (_driver_flags & DF_SEPARATE_HWSCREEN) {
+	if (_mode_flags & DF_SEPARATE_HWSCREEN) {
 		surf=sdl_hwscreen; sdl_hwscreen=NULL; SDL_FreeSurface(surf);
 	}
 
@@ -303,42 +325,47 @@ void OSystem_SDL::init_size(uint w, uint h, byte sound) {
 		SDL_PauseAudio(0);
 	}
 
+	/* allocate palette, it needs to be persistent across
+	 * driver changes, so i'll alloc it here */
+	_cur_pal = (SDL_Color*)calloc(sizeof(SDL_Color), 256);
+
 	load_gfx_mode();
 
 	dirty_rect_list = (SDL_Rect*)calloc(NUM_DIRTY_RECT, sizeof(SDL_Rect));
 
 	_ms_backup = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING);
+
+	dirty_checksums = (uint32*)calloc(CKSUM_NUM*2, sizeof(uint32));
 }
 
 void OSystem_SDL::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
 	if (sdl_screen == NULL)
 		return;
 
-	if (pitch == SCREEN_WIDTH && x==0 && y==0 && w==SCREEN_WIDTH && h==SCREEN_HEIGHT && _driver_flags&DF_WANT_RECT_OPTIM) {
+	if (pitch == SCREEN_WIDTH && x==0 && y==0 && w==SCREEN_WIDTH && h==SCREEN_HEIGHT && _mode_flags&DF_WANT_RECT_OPTIM) {
 		/* Special, optimized case for full screen updates.
 		 * It tries to determine what areas were actually changed,
 		 * and just updates those, on the actual display. */
-		if (buf)
-			copy_rect_fullscreen(buf);
-		return;
+	
+		add_dirty_rgn_auto(buf);
+	} else {
+		/* Clip the coordinates */
+		if (x < 0) { w+=x; buf-=x; x = 0; }
+		if (y < 0) { h+=y; buf-=y*pitch; y = 0; }
+		if (w >= SCREEN_WIDTH-x) { w = SCREEN_WIDTH - x; }
+		if (h >= SCREEN_HEIGHT-y) { h = SCREEN_HEIGHT - y; }
+			
+		if (w<=0 || h<=0)
+			return;
+
+		/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
+		if (_mouse_drawn)
+			undraw_mouse();
+			
+		cksum_valid = false;
+
+		add_dirty_rect(x, y, w, h);
 	}
-
-	/* Clip the coordinates */
-	if (x < 0) { w+=x; buf-=x; x = 0; }
-	if (y < 0) { h+=y; buf-=y*pitch; y = 0; }
-	if (w >= SCREEN_WIDTH-x) { w = SCREEN_WIDTH - x; }
-	if (h >= SCREEN_HEIGHT-y) { h = SCREEN_HEIGHT - y; }
-		
-	if (w<=0 || h<=0)
-		return;
-
-	/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
-	if (_mouse_drawn)
-		undraw_mouse();
-		
-	cksum_valid = false;
-
-	add_dirty_rect(x, y, w, h);
 
 	if (SDL_LockSurface(sdl_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
@@ -398,7 +425,7 @@ void OSystem_SDL::add_dirty_rect(int x, int y, int w, int h) {
 		
 		/* Update the dirty region by 1 pixel for graphics drivers
 		 * that "smear" the screen */
-		if (_driver_flags & DF_UPDATE_EXPAND_1_PIXEL) {
+		if (_mode_flags & DF_UPDATE_EXPAND_1_PIXEL) {
 			x--;
 			y--;
 			w+=2;
@@ -459,7 +486,7 @@ void OSystem_SDL::mk_checksums(const byte *buf) {
 #undef ROL
 
 
-void OSystem_SDL::copy_rect_fullscreen(const byte *buf) {
+void OSystem_SDL::add_dirty_rgn_auto(const byte *buf) {
 	if (_mouse_drawn)
 		undraw_mouse();
 
@@ -510,12 +537,6 @@ void OSystem_SDL::copy_rect_fullscreen(const byte *buf) {
 		/* Copy old checksums to new */
 		memcpy(dirty_checksums + CKSUM_NUM, dirty_checksums, CKSUM_NUM * sizeof(uint32));
 	}
-
-	/* Copy screen */
-	if (SDL_LockSurface(sdl_screen)==-1)
-		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
-	memcpy(sdl_screen->pixels, buf, SCREEN_WIDTH * SCREEN_HEIGHT);
-	SDL_UnlockSurface(sdl_screen);
 }
 
 void OSystem_SDL::update_screen() {
@@ -537,7 +558,7 @@ void OSystem_SDL::update_screen() {
 	if (num_dirty_rects == 0 || sdl_hwscreen == NULL)
 		return;
 		
-	if (_driver_flags & DF_2xSAI) {
+	if (_mode_flags & DF_2xSAI) {
 		SDL_Rect *r;
 		uint32 area = 0;
 
@@ -658,9 +679,27 @@ bool OSystem_SDL::poll_event(Event *event) {
 				if (ev.key.keysym.mod & KMOD_SHIFT) b |= KBD_SHIFT;
 				if (ev.key.keysym.mod & KMOD_CTRL) b |= KBD_CTRL;
 				if (ev.key.keysym.mod & KMOD_ALT) b |= KBD_ALT;
+				event->kbd.flags = b;
+
+				/* internal keypress? */				
+				if (b == KBD_ALT && ev.key.keysym.sym==SDLK_RETURN) {
+					set_param(PARAM_TOGGLE_FULLSCREEN, 0);
+					break;
+				}
+
+				if (b == KBD_CTRL && ev.key.keysym.sym=='z') {
+					quit();
+					break;
+				}
+
+				if (b == (KBD_CTRL|KBD_ALT) && 
+						ev.key.keysym.sym>='1' && ev.key.keysym.sym<='6') {
+					set_param(PARAM_HOTSWAP_GFX_MODE, ev.key.keysym.sym - '1');
+					break;
+				}
+
 
 				event->event_code = EVENT_KEYDOWN;
-				event->kbd.flags = b;
 				event->kbd.keycode = ev.key.keysym.sym;
 				event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod);
 				return true;
@@ -714,11 +753,53 @@ void OSystem_SDL::set_sound_proc(void *param, SoundProc *proc) {
 	_sound_param = param;
 }
 
+void OSystem_SDL::hotswap_gfx_mode() {
+	/* hmm, need to allocate a 320x200 bitmap
+	 * which will contain the "backup" of the screen during the change.
+	 * then draw that to the new screen right after it's setup.
+	 */
+	
+	byte *bak_mem = (byte*)malloc(320*200);
+
+	SDL_Surface *bak = SDL_CreateRGBSurfaceFrom(bak_mem, 320, 200, 8, 320, 0, 0, 0, 0);
+	if (bak == NULL) {
+		error("hotswap_gfx_mode::bak==NULL");
+	}
+
+	SDL_SetColors(bak, _cur_pal, 0, 256);
+
+	SDL_Rect src_rect = {0, 0, 320 * _internal_scaling, 200 * _internal_scaling };
+	static SDL_Rect dst_rect = {0, 0, 320, 200 };
+
+	if (SDL_BlitSurface(sdl_screen, &src_rect, bak, &dst_rect) != 0)
+		error("hotswap_gfx_mode::blit failed = %s", SDL_GetError());
+
+	/* destroy the temp surface, the backup bitmap is in bak_mem now */
+	SDL_FreeSurface(bak);
+
+	unload_gfx_mode();
+	load_gfx_mode();
+
+	/* reset palette */
+	SDL_SetColors(sdl_screen, _cur_pal, 0, 256);
+
+	/* blit image */
+	OSystem_SDL::copy_rect(bak_mem, 320, 0, 0, 320, 200);
+
+	free(bak_mem);
+}
+
 uint32 OSystem_SDL::set_param(int param, uint32 value) {
 	switch(param) {
 
 	case PARAM_TOGGLE_FULLSCREEN:
-		return SDL_WM_ToggleFullScreen(sdl_hwscreen);
+		_full_screen ^= true;
+		
+		if (!SDL_WM_ToggleFullScreen(sdl_hwscreen)) {
+			/* if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode */
+			hotswap_gfx_mode();
+		}
+		return 1;
 
 	case PARAM_WINDOW_CAPTION:
 		SDL_WM_SetCaption((char*)value, (char*)value);
@@ -740,9 +821,9 @@ uint32 OSystem_SDL::set_param(int param, uint32 value) {
 		if (value >= 6)
 			return 0;
 
-		unload_gfx_mode();
-		_driver = value;
-		load_gfx_mode();
+		_mode = value;
+		hotswap_gfx_mode();
+
 		return 1;
 
 	case PARAM_SHOW_DEFAULT_CURSOR:

@@ -7591,19 +7591,11 @@ void SimonState::delay(uint delay) {
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.keycode=='t') {
 					_vk_t_toggle ^= 1;
-				}	else if (event.kbd.keycode>='0' && event.kbd.keycode<='9' && 
-										event.kbd.flags == OSystem::KBD_ALT|OSystem::KBD_CTRL) {
-						if (!_system->set_param(OSystem::PARAM_HOTSWAP_GFX_MODE, event.kbd.keycode - '1'))
-							warning("Unable to hotswap graphics mode");
 				} else if (event.kbd.flags==OSystem::KBD_CTRL) {
-					if (event.kbd.keycode=='z')
-						_system->quit();
-					else if (event.kbd.keycode=='f') {
+					if (event.kbd.keycode=='f') {
 						_fast_mode^=1;
 					}
 				}
-
-
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
 				sdl_mouse_x = event.mouse.x;
@@ -7623,7 +7615,11 @@ void SimonState::delay(uint delay) {
 
 		if (delay==0) break;
 
-		_system->delay_msecs(_fast_mode ? 1 : 10);
+		{
+			uint this_delay = _fast_mode ? 1 : 20;
+			if (this_delay > delay) this_delay = delay;
+			_system->delay_msecs(this_delay);
+		}
 		cur = _system->get_msecs();
 	} while (cur < start + delay);
 }
