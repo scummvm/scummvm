@@ -302,10 +302,14 @@ In game Hot Keys:
         Ctrl-g                   - runs in really REALLY fast mode.
         Ctrl-d                   - starts the debugger.
         Ctrl-s                   - shows memory consumption.
-        [ and ]                  - master volume, down/up
-        - and +                  - text speed, slower / faster
+        [ and ]                  - music volume, down/up
+        - and +                  - (Simon) music volume, down/up
+        - and +                  - (SCUMM) text speed, slower/faster
         F5                       - displays a save/load box.
         Space                    - pauses
+        m                        - (Simon) music on/off
+        s                        - (Simon) sound effects on/off
+        b                        - (Simon) ambient sounds on/off
         Period (.)               - skips current line of text in some games
         Alt-Enter                - toggles full screen/windowed
         Enter                    - Left Mouse Button Press
