@@ -237,7 +237,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 	{"catalog", "Humongous Interactive Catalog", GID_HEGAME, 6, 71, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_FREDDEMO, 6, 71, MDT_NONE,
+	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_HEGAME, 6, 71, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, 0, 0},
 
 	// Humongous Entertainment Scumm Version 7.2
@@ -265,12 +265,12 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"water", "Freddi Fish and Luther's Water Worries", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"pjs-demo", "Pajama Sam 1: No Need to Hide When It's Dark Outside (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
+	{"pjs-demo", "Pajama Sam 1: No Need to Hide When It's Dark Outside (Demo)", GID_PAJAMA, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"socks", "Pajama Sam's Sock Works", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	// Resource changed for pajama
-	{"pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside", GID_HEGAME, 6, 72, MDT_NONE,
+	{"pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside", GID_PAJAMA, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 #ifdef HEGAMES
@@ -374,7 +374,7 @@ static const ScummGameSettings he_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
 	{"8d479e36f35e80257dfc102cf4b8a912", "Let's Explore the Farm with Buzzy (Demo) (farm cd)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"566165a7338fa11029e7c14d94fa70d0", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo) (spyfox cd)", GID_FREDDEMO, 6, 72, MDT_NONE,
+	{"566165a7338fa11029e7c14d94fa70d0", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo) (spyfox cd)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"8ffd618a776a4c0d8922bb28b09f8ce8", "Let's Explore the Airport with Buzzy (Demo) (farm cd)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
@@ -1080,6 +1080,8 @@ void ScummEngine::launch() {
 		_numActors = 30;
 	else if (_gameId == GID_MANIAC)
 		_numActors = 25;
+	else if (_gameId == GID_PAJAMA)
+		_numActors = 62;
 	else 
 		_numActors = 13;
 
