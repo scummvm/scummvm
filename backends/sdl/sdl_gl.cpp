@@ -100,12 +100,6 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 	_tmpScreenWidth = (_screenWidth + 3);
 
 	switch(_mode) {
-	case GFX_BILINEAR:
-		_usingOpenGL = true;
-		_mode = GFX_NORMAL;
-		// FIXME: shouldn't _scaleFactor be set here?
-		break;
-
 	case GFX_NORMAL:
 		_scaleFactor = 1;
 		_scaler_proc = Normal1x;
@@ -236,6 +230,8 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 		tmpBlackRect.h = 256-_screenHeight-_glScreenStart;
 
 		if (!_adjustAspectRatio) {
+			// Disable code for now, since it causes crash if OpenGL is used from command line
+/*
 			// Don't use the whole screen (black borders)
 			fb2gl.init(0, 0, 0, 15, _glFlags);
 			_glScreenStart = _glBorderHeight;
@@ -261,12 +257,12 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 			SDL_FillRect(tmpSurface, &tmpBlackRect, 0);
 			fb2gl.blit16(tmpSurface, 1, &tmpBlackRect, 0,
 			  _glBottomOfGameScreen);
+*/
 		} else {
 			// Use the whole screen
 			fb2gl.init(0, 0, 0, 72, _glFlags);
 			_glScreenStart = 0;
 		}
-
 	} else { // SDL backend
 		_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
 						_tmpScreenWidth, 
