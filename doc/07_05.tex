@@ -114,6 +114,28 @@ For Flac add --flac and optional parameters, i.e.
 Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy this
 file to your game dir. You can safely remove the old file.
 
+\subsubsection{Compressing speech/music in Broken Sword 1}
+
+The sword1mp3 tool from the scummvm-tools package can encode music and speech
+to mp3 as well as Ogg Vorbis.
+Easiest way to encode the files is simply copying the executable into your
+BS1 directory (together with the lame encoder) and run it from there.
+This way, it'll automatically encode everything to mp3.
+Afterwards, you can manually remove the SPEECH?.CLU files and the wave music files.
+
+Running 
+\begin{verbatim}
+  sword1mp3 --vorbis
+\end{verbatim}
+%
+will compress the files using Ogg Vorbis instead of mp3.
+
+Use 
+\begin{verbatim}
+  sword1mp3 --help
+\end{verbatim}
+%
+to get a full list of the options.
 
 \subsubsection{Compressing speech/music in Broken Sword 2}
 
