@@ -1968,7 +1968,7 @@ void Scumm_v5::o5_setVarRange() {
 	a = fetchScriptByte();
 	do {
 		if (_opcode & 0x80)
-			b = fetchScriptWord();
+			b = fetchScriptWordSigned();
 		else
 			b = fetchScriptByte();
 
