@@ -838,19 +838,20 @@ void IMuseDigital::startSound(int sound) {
 			int t;
 
 			if (READ_UINT32(ptr) == MKID('Crea')) {
+				byte *t_ptr= readCreativeVocFile(ptr, size, _channel[l].freq);
+				_channel[l].mixerSize = _channel[l].freq * 2;
+				_channel[l].size = size;
 				_channel[l].bits = 8;
 				_channel[l].channels = 2;
 				_channel[l].mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
-				_channel[l].mixerSize = _channel[l].freq * 2;
-
-				byte *t_ptr= readCreativeVocFile(ptr, size, _channel[l].freq);
 				_channel[l].data = (byte *)malloc(size);
+
 				for (t = 0; t < size / 2; t++) {
 					*(_channel[l].data + t * 2 + 0) = *(t_ptr + t);
 					*(_channel[l].data + t * 2 + 1) = *(t_ptr + t);
 				}
+
 				free(t_ptr);
-				_channel[l].size = size;
 			} else if (READ_UINT32(ptr) == MKID('iMUS')) {
 				ptr += 16;
 				for (;;) {
