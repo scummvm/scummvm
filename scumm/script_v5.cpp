@@ -954,7 +954,7 @@ void Scumm_v5::o5_getActorScale() {
 		return;
 
 	// INDY3 uses this opcode as a wait_for_actor();
-	if ((_gameId == GID_INDY3_256) || (_gameId == GID_INDY3)) {
+	if ((_gameId == GID_INDY3_256) || (_features & GF_OLD_BUNDLE)) {
 		byte *oldaddr = _scriptPointer - 1;
 		if (derefActorSafe(getVarOrDirectByte(0x80), "o5_wait")->moving) {
 			_scriptPointer = oldaddr;
@@ -2252,7 +2252,7 @@ void Scumm_v5::o5_wait() {
 
 	oldaddr = _scriptPointer - 1;
 
-	if ((_gameId == GID_INDY3_256) || (_gameId == GID_INDY3)) {
+	if ((_gameId == GID_INDY3_256) || (_features & GF_OLD_BUNDLE)) {
 		_opcode = 2;
 	} else
 		_opcode = fetchScriptByte();
