@@ -17,7 +17,7 @@ GUI_OBJS = gui/gui.o gui/newgui.o gui/widget.o gui/dialog.o gui/ListWidget.o \
 
 SCUMM_OBJS = scumm/actor.o scumm/akos.o scumm/boxes.o scumm/bundle.o \
 	scumm/costume.o scumm/debug.o scumm/debugrl.o scumm/gfx.o scumm/imuse.o \
-	scumm/object.o scumm/resource.o scumm/resource_v3.o \
+	scumm/object.o scumm/resource.o scumm/resource_v2.o scumm/resource_v3.o \
 	scumm/resource_v4.o scumm/saveload.o scumm/script.o \
 	scumm/script_v1.o scumm/script_v2.o scumm/scummvm.o scumm/string.o \
 	scumm/sys.o scumm/vars.o scumm/verbs.o \

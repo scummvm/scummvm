@@ -165,7 +165,9 @@ void Scumm::scummInit()
 	tempMusic = 0;
 	debug(9, "scummInit");
 
-	if (_features & GF_SMALL_HEADER)
+	if (_features & GF_OLD_BUNDLE)
+		_resourceHeaderSize = 2; // FIXME - to be rechecked
+	else if (_features & GF_SMALL_HEADER)
 		_resourceHeaderSize = 6;
 	else
 		_resourceHeaderSize = 8;

@@ -388,8 +388,10 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name)
 
 	if (_features & GF_AFTER_V8)
 		num = fileReadDwordLE();
-	else
+	else if (!(_features & GF_OLD_BUNDLE))
 		num = fileReadWordLE();
+	else
+		num = fileReadByte();
 
 	if (1 || _features & GF_AFTER_V6) {
 		if (num != res.num[id]) {
@@ -402,7 +404,18 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name)
 		allocResTypeData(id, tag, num, name, 1);
 	}
 
-	if (_features & GF_SMALL_HEADER) {
+	if (_features & GF_OLD_BUNDLE) {
+		if (id == rtRoom){
+			for (i = 0; i < num; i++)
+				res.roomno[id][i] = i;
+			fileSeek(_fileHandle, num, SEEK_CUR);
+		} else {
+			for (i = 0; i < num; i++)
+				res.roomno[id][i] = fileReadByte();
+		}
+		for (i = 0; i < num; i++)
+			res.roomoffs[id][i] = fileReadWordLE();
+	} else if (_features & GF_SMALL_HEADER) {
 		for (i = 0; i < num; i++) {
 			res.roomno[id][i] = fileReadByte();
 			res.roomoffs[id][i] = fileReadDword();
@@ -530,7 +543,9 @@ int Scumm::loadResource(int type, int idx)
 
 			fileSeek(_fileHandle, fileOffs + _fileOffset, SEEK_SET);
 
-			if (_features & GF_SMALL_HEADER) {
+			if (_features & GF_OLD_BUNDLE) {
+				size = fileReadWordLE();
+			} else if (_features & GF_SMALL_HEADER) {
 				if (!(_features & GF_SMALL_NAMES))
 					fileSeek(_fileHandle, 8, SEEK_CUR);
 				size = fileReadDwordLE();

@@ -273,6 +273,8 @@ enum GameId {
 	GID_DIG = 12,
 	GID_MONKEY_VGA = 13,
 	GID_CMI = 14,
+	//GID_MANIAC = 15;
+	//GID_ZAK = 16;
 
 	/* Simon the Sorcerer */
 	GID_SIMON_FIRST = 20,
@@ -1350,6 +1352,14 @@ public:
 	void updateCursor();
 	void animateCursor();
 	void updatePalette();
+};
+
+class Scumm_v2 : public Scumm
+{
+public:
+	Scumm_v2(GameDetector *detector, OSystem *syst) : Scumm(detector, syst) {}
+
+	virtual void readIndexFile();
 };
 
 class Scumm_v3 : public Scumm

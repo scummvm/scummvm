@@ -85,7 +85,9 @@ Engine *Engine::createFromDetector(GameDetector *detector, OSystem *syst)
 		engine = new SimonState(detector, syst);
 	} else {
 		// Some kind of Scumm game
-		if (detector->_features & GF_OLD256)
+		if (detector->_features & GF_OLD_BUNDLE)
+			engine = new Scumm_v2(detector, syst);
+		else if (detector->_features & GF_OLD256)
 			engine = new Scumm_v3(detector, syst);
 		else if (detector->_features & GF_SMALL_HEADER)	// this force loomCD as v4
 			engine = new Scumm_v4(detector, syst);
