@@ -83,24 +83,7 @@ void quit();
 int main(int argc, char *argv[]) {
 	int i;
 
-	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-		return 1;
-
-	atexit(quit);
-
 	g_registry = new Registry();
-	g_engine = new Engine();
-	g_resourceloader = new ResourceLoader();
-	g_localizer = new Localizer();
-	g_mixer = new SoundMixer();
-	g_mixer->setVolume(255);
-	g_timer = new Timer();
-	g_smush = new Smush();
-	if (TINYGL_GLOBAL)
-		g_driver = new DriverTinyGL(640, 480, 16);
-	else
-		g_driver = new DriverGL(640, 480, 24);
-	g_imuse = new Imuse(20);
 
 	// Parse command line
 	ZBUFFER_GLOBAL = parseBoolStr(g_registry->get("zbuffer"));
@@ -129,6 +112,24 @@ int main(int argc, char *argv[]) {
 			exit(-1);
 		}
 	}
+
+	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+		return 1;
+
+	atexit(quit);
+
+	g_engine = new Engine();
+	g_resourceloader = new ResourceLoader();
+	g_localizer = new Localizer();
+	g_mixer = new SoundMixer();
+	g_mixer->setVolume(255);
+	g_timer = new Timer();
+	g_smush = new Smush();
+	if (TINYGL_GLOBAL)
+		g_driver = new DriverTinyGL(640, 480, 16);
+	else
+		g_driver = new DriverGL(640, 480, 24);
+	g_imuse = new Imuse(20);
 
 	Bitmap *splash_bm = g_resourceloader->loadBitmap("splash.bm");
 
