@@ -1118,14 +1118,18 @@ void SkySound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 
 	byte flags = SoundMixer::FLAG_UNSIGNED;
 
-	if (dataSize == dataLoop)
+	uint32 loopSta = 0, loopEnd = 0;
+	if (dataLoop) {
+		loopSta = dataSize - dataLoop;
+		loopEnd = dataSize;
 		flags |= SoundMixer::FLAG_LOOP;
+	}
 	
 	_mixer->setVolume(volume);
 	if (channel == 0)
-		_mixer->playRaw(&_ingameSound0, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH0);
+		_mixer->playRaw(&_ingameSound0, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH0, loopSta, loopEnd);
 	else
-		_mixer->playRaw(&_ingameSound1, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH1);
+		_mixer->playRaw(&_ingameSound1, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH1, loopSta, loopEnd);
 }
 
 void SkySound::fnStartFx(uint32 sound, uint8 channel) {
