@@ -29,6 +29,7 @@
 #include "sound/vorbis.h"
 #include "sound/flac.h"
 #include "sound/rate.h"
+#include "sound/wave.h"
 #include "sword2/sword2.h"
 #include "sword2/resman.h"
 #include "sword2/driver/d_draw.h"
@@ -1127,6 +1128,16 @@ int32 Sound::playFx(int32 id, byte *data, uint8 vol, int8 pan, uint8 type) {
 	}
 
 	WavInfo wavInfo;
+
+	// TODO: use loadWAVFromStream to load the WAVE data!
+	/*
+	int rate, size;
+	bye flags;
+	// FIXME: Instead of passing an arbitrary large size for the memory stream
+	// here, we should instead determine the real size of the memory area.
+	Common::MemoryReadStream stream(data, 10000000);
+	isValidWAV = loadWAVFromStream(stream, size, rate, flags);
+	*/
 
 	if (!getWavInfo(data, &wavInfo)) {
 		warning("playFx: Not a valid WAV file");

@@ -26,6 +26,7 @@
 #include "common/file.h"
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
+#include "sound/wave.h"
 
 #define SMP_BUFSIZE 8192
 
@@ -43,6 +44,15 @@ WaveAudioStream::WaveAudioStream(File *source, uint32 pSize) {
 	_sampleBuf = (uint8*)malloc(SMP_BUFSIZE);
 	_sourceFile->incRef();
 	if (_sourceFile->isOpen()) {
+		// TODO: use loadWAVFromStream to load the WAVE data!
+		/*
+		int rate, size;
+		bye flags;
+		const uint32 initialPos = _sourceFile->pos();
+		isValidWAV = loadWAVFromStream(*_sourceFile, size, rate, flags);
+		*/
+
+
 		_sourceFile->read(wavHeader, WAVEHEADERSIZE);
 		_isStereo = (READ_LE_UINT16(wavHeader + 0x16) == 2);
 		_rate = READ_LE_UINT16(wavHeader + 0x18);

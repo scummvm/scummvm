@@ -34,6 +34,7 @@
 #include "common/file.h"
 
 #include "sound/voc.h"
+#include "sound/wave.h"
 
 namespace Saga {
 
@@ -199,6 +200,15 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf
 
 int SndRes::loadWavSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf_i) {
 	// TODO: This function should, perhaps, be made more robust.
+
+	// TODO: use loadWAVFromStream to load the WAVE data!
+	/*
+	int rate, size;
+	bye flags;
+	bool isValidWAV;
+	Common::MemoryReadStream stream(snd_res, snd_res_len);
+	isValidWAV = loadWAVFromStream(stream, size, rate, flags);
+	*/
 
 	MemoryReadStreamEndian readS(snd_res, snd_res_len, IS_BIG_ENDIAN);
 

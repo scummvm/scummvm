@@ -28,6 +28,7 @@
 #include "sound/mp3.h"
 #include "sound/voc.h"
 #include "sound/vorbis.h"
+#include "sound/wave.h"
 
 namespace Simon {
 
@@ -151,6 +152,13 @@ void WavSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	flags |= SoundMixer::FLAG_AUTOFREE;
 
 	_file->seek(_offsets[sound], SEEK_SET);
+
+	// TODO: use loadWAVFromStream to load the WAVE data!
+	/*
+	int rate, size;
+	bye flags;
+	isValidWAV = loadWAVFromStream(*_file, size, rate, flags);
+	*/
 
 	if (_file->read(&wave_hdr, sizeof(wave_hdr)) != sizeof(wave_hdr) ||
 			wave_hdr.riff != MKID('RIFF') || wave_hdr.wave != MKID('WAVE')

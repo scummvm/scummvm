@@ -28,6 +28,7 @@
 
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
+#include "sound/wave.h"
 
 namespace Sword1 {
 
@@ -221,6 +222,15 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 	_cowFile.seek(index);
 	_cowFile.read(fBuf, cSize);
 	uint32 headerPos = 0;
+
+	// TODO: use loadWAVFromStream to load the WAVE data!
+	/*
+	int rate, size;
+	bye flags;
+	Common::MemoryReadStream stream(fBuf, cSize);
+	isValidWAV = loadWAVFromStream(stream, size, rate, flags);
+	*/
+
 	while ((READ_BE_UINT32(fBuf + headerPos) != 'data') && (headerPos < 100))
 		headerPos++;
 	if (headerPos < 100) {
@@ -235,9 +245,9 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 			if (READ_LE_UINT16(fBuf + headerPos) == 1) {				
 				resSize = READ_LE_UINT16(fBuf + headerPos + 2);
 				resSize |= READ_LE_UINT16(fBuf + headerPos + 6) << 16;
-				resSize >>= 1;
 			} else
-				resSize = READ_LE_UINT32(fBuf + headerPos + 2) >> 1;
+				resSize = READ_LE_UINT32(fBuf + headerPos + 2);
+			resSize >>= 1;
 		}
 		assert(!(headerPos & 1));
 		int16 *srcData = (int16*)fBuf;
