@@ -29,7 +29,6 @@ namespace Common {
 /**
  * Simple double linked list, modelled after the list template of the standard
  * C++ library. 
- * Warning: as of now, this code is 100% untested.
  */
 template <class T>
 class List {
