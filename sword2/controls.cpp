@@ -1567,7 +1567,12 @@ uint32 Gui::restoreControl(void) {
 
 void Gui::saveControl(void) {
 	SaveLoadDialog saveDialog(this, kSaveDialog);
+	OSystem::Property prop;
+	prop.show_keyboard = true;
+	_vm->_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
 	saveDialog.run();
+	prop.show_keyboard = false;
+	_vm->_system->property(OSystem::PROP_TOGGLE_VIRTUAL_KEYBOARD, &prop);
 }
 
 void Gui::quitControl(void) {
