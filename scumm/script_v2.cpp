@@ -819,7 +819,7 @@ void ScummEngine_v2::o2_verbOps() {
 		int prep = fetchScriptByte(); // Only used in V1?
 		// V1 Maniac verbs are relative to the 'verb area' - under the sentence
 		if (_features & GF_NES)
-			x -= 8;
+			x += 8;
 		else if ((_gameId == GID_MANIAC) && (_version == 1))
 			y += 8;
 
@@ -1033,9 +1033,10 @@ void ScummEngine_v2::o2_drawSentence() {
 	_string[2].charset = 1;
 	_string[2].ypos = virtscr[2].topline;
 	_string[2].xpos = 0;
-	if (_features & GF_NES)
+	if (_features & GF_NES) {
+		_string[2].xpos = 16;
 		_string[2].color = 0;
-	else if (_version == 1)
+	} else if (_version == 1)
 		_string[2].color = 16;
 	else 
 		_string[2].color = 13;
@@ -1056,8 +1057,13 @@ void ScummEngine_v2::o2_drawSentence() {
 
 	sentenceline.top = virtscr[2].topline;
 	sentenceline.bottom = virtscr[2].topline + 8;
-	sentenceline.left = 0;
-	sentenceline.right = 319;
+	if (_features & GF_NES) {
+		sentenceline.left = 16;
+		sentenceline.right = 255;
+	} else {
+		sentenceline.left = 0;
+		sentenceline.right = 319;
+	}
 	restoreBG(sentenceline);
 
 	drawString(2, (byte*)sentence);
@@ -1525,8 +1531,13 @@ void ScummEngine_v2::setUserState(byte state) {
 	Common::Rect rect;
 	rect.top = virtscr[2].topline;
 	rect.bottom = virtscr[2].topline + 8 * 88;
-	rect.left = 0;
-	rect.right = 319;
+	if (_features & GF_NES) {
+		rect.left = 16;
+		rect.right = 255;
+	} else {
+		rect.left = 0;
+		rect.right = 319;
+	}
 	restoreBG(rect);
 
 	// Draw all verbs and inventory

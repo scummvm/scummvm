@@ -118,16 +118,16 @@ void ScummEngine_v2::initNESMouseOver() {
 	// Inventory items
 
 	for (i = 0; i < 2; i++) {
-		v2_mouseover_boxes[2 * i].rect.left = 0;
-		v2_mouseover_boxes[2 * i].rect.right = 104;
+		v2_mouseover_boxes[2 * i].rect.left = 16;
+		v2_mouseover_boxes[2 * i].rect.right = 120;
 		v2_mouseover_boxes[2 * i].rect.top = 48 + 8 * i;
 		v2_mouseover_boxes[2 * i].rect.bottom = v2_mouseover_boxes[2 * i].rect.top + 8;
 
 		v2_mouseover_boxes[2 * i].color = color;
 		v2_mouseover_boxes[2 * i].hicolor = hi_color;
 
-		v2_mouseover_boxes[2 * i + 1].rect.left = 120;
-		v2_mouseover_boxes[2 * i + 1].rect.right = 224;
+		v2_mouseover_boxes[2 * i + 1].rect.left = 152;
+		v2_mouseover_boxes[2 * i + 1].rect.right = 256;
 		v2_mouseover_boxes[2 * i + 1].rect.top = v2_mouseover_boxes[2 * i].rect.top;
 		v2_mouseover_boxes[2 * i + 1].rect.bottom = v2_mouseover_boxes[2 * i].rect.bottom;
 
@@ -137,16 +137,16 @@ void ScummEngine_v2::initNESMouseOver() {
 
 	// Inventory arrows
 
-	v2_mouseover_boxes[kInventoryUpArrow].rect.left = 104;
-	v2_mouseover_boxes[kInventoryUpArrow].rect.right = 112;
+	v2_mouseover_boxes[kInventoryUpArrow].rect.left = 128;
+	v2_mouseover_boxes[kInventoryUpArrow].rect.right = 136;
 	v2_mouseover_boxes[kInventoryUpArrow].rect.top = 48;
 	v2_mouseover_boxes[kInventoryUpArrow].rect.bottom = 56;
 
 	v2_mouseover_boxes[kInventoryUpArrow].color = arrow_color;
 	v2_mouseover_boxes[kInventoryUpArrow].hicolor = hi_color;
 
-	v2_mouseover_boxes[kInventoryDownArrow].rect.left = 112;
-	v2_mouseover_boxes[kInventoryDownArrow].rect.right = 120;
+	v2_mouseover_boxes[kInventoryDownArrow].rect.left = 136;
+	v2_mouseover_boxes[kInventoryDownArrow].rect.right = 144;
 	v2_mouseover_boxes[kInventoryDownArrow].rect.top = 48;
 	v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 56;
 
@@ -155,8 +155,8 @@ void ScummEngine_v2::initNESMouseOver() {
 
 	// Sentence line
 
-	v2_mouseover_boxes[kSentenceLine].rect.left = 0;
-	v2_mouseover_boxes[kSentenceLine].rect.right = 224;
+	v2_mouseover_boxes[kSentenceLine].rect.left = 16;
+	v2_mouseover_boxes[kSentenceLine].rect.right = 256;
 	v2_mouseover_boxes[kSentenceLine].rect.top = 0;
 	v2_mouseover_boxes[kSentenceLine].rect.bottom = 8;
 
@@ -232,10 +232,6 @@ void ScummEngine::checkV2Inventory(int x, int y) {
 
 	if ((y < inventoryArea) || !(_mouseButStat & MBS_LEFT_CLICK)) 
 		return;
-
-	// Inventory is shifted right
-	if (_features & GF_NES)
-		x -= 16;
 
 	if (v2_mouseover_boxes[kInventoryUpArrow].rect.contains(x, y)) {
 		if (_inventoryOffset >= 2) {
@@ -440,10 +436,6 @@ int ScummEngine::findVerbAtPos(int x, int y) const {
 
 	VerbSlot *vs;
 	int i = _numVerbs - 1;
-
-	// Verbs are shifted right
-	if (_features & GF_NES)
-		x -= 16;
 
 	vs = &_verbs[i];
 	do {

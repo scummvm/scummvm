@@ -552,10 +552,10 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		int x1 = x;
 
 		// HACK: This is dirty hack which renders narrow NES rooms centered
-		// NES can address negative number sprites and that poses problem for
+		// NES can address negative number strips and that poses problem for
 		// our code. So instead adding zillions of fixes and potentially break
 		// other games we shift it right on rendering stage
-		if (_features & GF_NES && ((_NESStartStrip > 0) || (vs->number != kMainVirtScreen))) {
+		if ((_features & GF_NES) && ((_NESStartStrip > 0) && (vs->number == kMainVirtScreen)) || (vs->number == kTextVirtScreen)) {
 			x += 16;
 		}
 
