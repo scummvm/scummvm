@@ -21,6 +21,9 @@ TMPO=/tmp/scummvm-conf
 TMPC=${TMPO}.cpp
 TMPLOG=config.log
 
+# use environment vars if set
+CXXFLAGS="$CXXFLAGS $CPPFLAGS"
+
 # default lib behaviour yes/no/auto
 _vorbis=auto
 _mad=auto
@@ -419,7 +422,7 @@ if test "$_vorbis" = auto ; then
 #include <vorbis/codec.h>
 int main(void) { vorbis_packet_blocksize(0,0); return 0; }
 EOF
-  cc_check $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
+  cc_check $LDFLAGS $CXXFLAGS $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
   -lvorbis -logg -lm && _vorbis=yes
 fi
 if test "$_vorbis" = yes ; then
@@ -438,7 +441,7 @@ if test "$_mad" = auto ; then
 #include <mad.h>
 int main(void) {return 0; }
 EOF
-  cc_check $MAD_CFLAGS $MAD_LIBS -lmad && _mad=yes
+  cc_check $LDFLAGS $CXXFLAGS $MAD_CFLAGS $MAD_LIBS -lmad && _mad=yes
 fi
 if test "$_mad" = yes ; then
   _def_mad='#define USE_MAD'
@@ -456,7 +459,7 @@ if test "$_alsa" = auto ; then
 #include <alsa/asoundlib.h>
 int main(void) { return (!(SND_LIB_MAJOR==0 && SND_LIB_MINOR==9)); }
 EOF
-  cc_check $ALSA_CFLAGS $ALSA_LIBS -lasound && _alsa=yes
+  cc_check $LDFLAGS $CXXFLAGS $ALSA_CFLAGS $ALSA_LIBS -lasound && _alsa=yes
 fi
 if test "$_alsa" = yes ; then
   _def_alsa='#define USE_ALSA'
