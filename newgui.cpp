@@ -39,7 +39,8 @@
 
 NewGui::NewGui(Scumm *s) : _s(s), _use_alpha_blending(true),
 	_need_redraw(false),_prepare_for_gui(true),
-	_pauseDialog(0), _saveLoadDialog(0), _aboutDialog(0), _optionsDialog(0)
+	_pauseDialog(0), _saveLoadDialog(0), _aboutDialog(0), _optionsDialog(0),
+	_currentKeyDown(0)
 {	
 }
 
@@ -115,9 +116,18 @@ void NewGui::loop()
 			switch(t.event_code) {
 				case OSystem::EVENT_KEYDOWN:
 					activeDialog->handleKeyDown(t.kbd.ascii, t.kbd.flags);
+
+					// init continuous event stream
+					_currentKeyDown = t.kbd.ascii;
+					_currentKeyDownFlags = t.kbd.flags;
+					_eventFiredCount = 1;
+					_loopCount = 0;
 					break;
 				case OSystem::EVENT_KEYUP:
 					activeDialog->handleKeyUp(t.kbd.ascii, t.kbd.flags);
+					if (t.kbd.ascii == _currentKeyDown)
+						// only stop firing events if it's the current key
+						_currentKeyDown = 0;
 					break;
 				case OSystem::EVENT_MOUSEMOVE:
 					activeDialog->handleMouseMoved(t.mouse.x - activeDialog->_x, t.mouse.y - activeDialog->_y, 0);
@@ -135,6 +145,22 @@ void NewGui::loop()
 		}
 
 		_eventList.clear();
+	}
+
+	// check if event should be sent again (keydown)
+	if (_currentKeyDown != 0)
+	{
+		// if only fired once, wait longer
+		if ( _loopCount >= ((_eventFiredCount > 1) ? 2 : 4) )
+		//                                               ^  loops to wait first event
+		//                                           ^      loops to wait after first event
+		{
+			// fire event
+			activeDialog->handleKeyDown(_currentKeyDown, _currentKeyDownFlags);
+			_eventFiredCount++;
+			_loopCount = 0;
+		}
+		_loopCount++;
 	}
 
 	_s->drawDirtyScreenParts();

@@ -47,6 +47,7 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h)
 	_selectedItem = -1;
 	_scrollBar = new ScrollBarWidget(boss, _x + _w, _y, kScrollBarWidth, _h);
 	_scrollBar->setTarget(this);
+	_currentKeyDown = 0;
 	
 	// FIXME: This flag should come from widget definition
 	_editable = true;
@@ -138,8 +139,10 @@ void ListWidget::handleKeyDown(char key, int modifiers)
 		case '\n':	// enter
 		case '\r':
 			if (_selectedItem >= 0) {
-				_editMode = true;
-				dirty = true;
+				if ((_currentKeyDown != '\n' && _currentKeyDown != '\r')) {		// override continuous enter keydown
+					_editMode = true;
+					dirty = true;
+				}
 			}
 			break;
 		case 17:	// up arrow
@@ -183,6 +186,13 @@ void ListWidget::handleKeyDown(char key, int modifiers)
 		_scrollBar->draw();
 	}
 
+	_currentKeyDown = key;
+}
+
+void ListWidget::handleKeyUp(char key, int modifiers)
+{
+	if (key == _currentKeyDown)
+		_currentKeyDown = 0;
 }
 
 void ListWidget::lostFocusWidget()

@@ -535,6 +535,7 @@ Credits:
         Felix Jakschitsc   - His hard work on Zak256
         Andre Souza        - SDL-based OpenGL renderer
         Kovacs Endre Janos - Several fixes for Simon1
+        Ralph Brorsen      - Helped write the new GUI
 
         And to all the contributors, users, and beta testers we've missed.
         Thanks!

@@ -82,6 +82,11 @@ protected:
 	Dialog		*_aboutDialog;
 	Dialog		*_optionsDialog;
 
+	// for continuous events (keyDown)
+	int			_currentKeyDown, _currentKeyDownFlags;
+	int			_loopCount;
+	int			_eventFiredCount;
+
 	// sound state
 	bool		_old_soundsPaused;
 

@@ -43,6 +43,7 @@ protected:
 	int				_entriesPerPage;
 	int				_selectedItem;
 	ScrollBarWidget	*_scrollBar;
+	int				_currentKeyDown;
 public:
 	ListWidget(Dialog *boss, int x, int y, int w, int h);
 	virtual ~ListWidget();
@@ -54,6 +55,7 @@ public:
 	
 	virtual void handleMouseDown(int x, int y, int button);
 	virtual void handleKeyDown(char key, int modifiers);
+	virtual void handleKeyUp(char key, int modifiers);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
