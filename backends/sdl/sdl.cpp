@@ -49,8 +49,8 @@ protected:
 	typedef void ScalerProc(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
-	SDL_Surface *sdl_tmpscreen;   // temporary screen (for scalers/overlay)
-	SDL_Surface *sdl_hwscreen;    // hardware screen
+	SDL_Surface *_tmpscreen;   // temporary screen (for scalers/overlay)
+	SDL_Surface *_hwscreen;    // hardware screen
 	bool _overlay_visible;
 
 	ScalerProc *_scaler_proc;
@@ -70,7 +70,7 @@ OSystem_SDL_Common *OSystem_SDL_Common::create() {
 }
 
 OSystem_SDL_Normal::OSystem_SDL_Normal()
-	 : sdl_tmpscreen(0), sdl_hwscreen(0), _overlay_visible(false),
+	 : _tmpscreen(0), _hwscreen(0), _overlay_visible(false),
 	   _scaler_proc(0), TMP_SCREEN_WIDTH(0)
 {
 }
@@ -140,13 +140,13 @@ void OSystem_SDL_Normal::draw_mouse() {
 
 	// Draw the mouse cursor; backup the covered area in "bak"
 
-	if (SDL_LockSurface(sdl_tmpscreen) == -1)
+	if (SDL_LockSurface(_tmpscreen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
 	// Mark as dirty
 	add_dirty_rect(x, y, w, h);
 
-	dst = (uint16 *)sdl_tmpscreen->pixels + (y+1) * TMP_SCREEN_WIDTH + (x+1);
+	dst = (uint16 *)_tmpscreen->pixels + (y+1) * TMP_SCREEN_WIDTH + (x+1);
 	while (h > 0) {
 		int width = w;
 		while (width > 0) {
@@ -163,7 +163,7 @@ void OSystem_SDL_Normal::draw_mouse() {
 		h--;
 	}
 
-	SDL_UnlockSurface(sdl_tmpscreen);
+	SDL_UnlockSurface(_tmpscreen);
 	
 	// Finally, set the flag to indicate the mouse has been drawn
 	_mouseDrawn = true;
@@ -178,7 +178,7 @@ void OSystem_SDL_Normal::undraw_mouse() {
 		return;
 	_mouseDrawn = false;
 
-	if (SDL_LockSurface(sdl_tmpscreen) == -1)
+	if (SDL_LockSurface(_tmpscreen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
 	uint16 *dst, *bak = (uint16 *)_mouseBackup;
@@ -190,7 +190,7 @@ void OSystem_SDL_Normal::undraw_mouse() {
 
 	// No need to do clipping here, since draw_mouse() did that already
 
-	dst = (uint16 *)sdl_tmpscreen->pixels + (old_mouse_y+1) * TMP_SCREEN_WIDTH + (old_mouse_x+1);
+	dst = (uint16 *)_tmpscreen->pixels + (old_mouse_y+1) * TMP_SCREEN_WIDTH + (old_mouse_x+1);
 	for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += TMP_SCREEN_WIDTH) {
 		for (x = 0; x < old_mouse_w; ++x) {
 			dst[x] = bak[x];
@@ -199,14 +199,14 @@ void OSystem_SDL_Normal::undraw_mouse() {
 
 	add_dirty_rect(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
 
-	SDL_UnlockSurface(sdl_tmpscreen);
+	SDL_UnlockSurface(_tmpscreen);
 }
 
 void OSystem_SDL_Normal::load_gfx_mode() {
 	_forceFull = true;
 	_mode_flags = DF_WANT_RECT_OPTIM | DF_UPDATE_EXPAND_1_PIXEL;
 
-	sdl_tmpscreen = NULL;
+	_tmpscreen = NULL;
 	TMP_SCREEN_WIDTH = (_screenWidth + 3);
 	
 	switch(_mode) {
@@ -263,33 +263,33 @@ normal_mode:;
 	//
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	//
-	sdl_hwscreen = SDL_SetVideoMode(_screenWidth * _scaleFactor, _screenHeight * _scaleFactor, 16, 
+	_hwscreen = SDL_SetVideoMode(_screenWidth * _scaleFactor, _screenHeight * _scaleFactor, 16, 
 		_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 	);
-	if (sdl_hwscreen == NULL)
-		error("sdl_hwscreen failed");
+	if (_hwscreen == NULL)
+		error("_hwscreen failed");
 	
 	//
 	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
 	//
 
 	// Distinguish 555 and 565 mode
-	if (sdl_hwscreen->format->Rmask == 0x7C00)
+	if (_hwscreen->format->Rmask == 0x7C00)
 		Init_2xSaI(555);
 	else
 		Init_2xSaI(565);
 	
 	// Need some extra bytes around when using 2xSaI
-	uint16 *tmp_screen = (uint16*)calloc(TMP_SCREEN_WIDTH*(_screenHeight+3),sizeof(uint16));
-	sdl_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
+	uint16 *tmp_screen = (uint16*)calloc(TMP_SCREEN_WIDTH*(_screenHeight+3), sizeof(uint16));
+	_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
 						TMP_SCREEN_WIDTH, _screenHeight + 3, 16, TMP_SCREEN_WIDTH*2,
-						sdl_hwscreen->format->Rmask,
-						sdl_hwscreen->format->Gmask,
-						sdl_hwscreen->format->Bmask,
-						sdl_hwscreen->format->Amask);
+						_hwscreen->format->Rmask,
+						_hwscreen->format->Gmask,
+						_hwscreen->format->Bmask,
+						_hwscreen->format->Amask);
 
-	if (sdl_tmpscreen == NULL)
-		error("sdl_tmpscreen failed");
+	if (_tmpscreen == NULL)
+		error("_tmpscreen failed");
 	
 	// keyboard cursor control, some other better place for it?
 	km.x_max = _screenWidth * _scaleFactor - 1;
@@ -305,26 +305,56 @@ void OSystem_SDL_Normal::unload_gfx_mode() {
 		_screen = NULL; 
 	}
 
-	if (sdl_hwscreen) {
-		SDL_FreeSurface(sdl_hwscreen); 
-		sdl_hwscreen = NULL;
+	if (_hwscreen) {
+		SDL_FreeSurface(_hwscreen); 
+		_hwscreen = NULL;
 	}
 	
-	if (sdl_tmpscreen) {
-		free((uint16*)sdl_tmpscreen->pixels);
-		SDL_FreeSurface(sdl_tmpscreen);
-		sdl_tmpscreen = NULL;
+	if (_tmpscreen) {
+		free(_tmpscreen->pixels);
+		SDL_FreeSurface(_tmpscreen);
+		_tmpscreen = NULL;
 	}
+}
+
+void OSystem_SDL_Normal::hotswap_gfx_mode() {
+
+
+	// Keep around the old _screen & _tmpscreen so we can restore the screen data
+	// after the mode switch.
+	SDL_Surface *old_screen = _screen;
+	SDL_Surface *old_tmpscreen = _tmpscreen;
+
+	// Release the HW screen surface
+	SDL_FreeSurface(_hwscreen); 
+
+	// Setup the new GFX mode
+	load_gfx_mode();
+
+	// reset palette
+	SDL_SetColors(_screen, _currentPalette, 0, 256);
+
+	// Restore old screen content
+	SDL_BlitSurface(old_screen, NULL, _screen, NULL);
+	SDL_BlitSurface(old_tmpscreen, NULL, _tmpscreen, NULL);
+	
+	// Free the old surfaces
+	SDL_FreeSurface(old_screen);
+	free(old_tmpscreen->pixels);
+	SDL_FreeSurface(old_tmpscreen);
+
+	// Finally, blit everything to the screen
+	update_screen();
 }
 
 void OSystem_SDL_Normal::update_screen() {
 	
-	assert(sdl_hwscreen != NULL);
+	assert(_hwscreen != NULL);
 
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
 		SDL_Rect blackrect = {0, 0, _screenWidth*_scaleFactor, _newShakePos*_scaleFactor};
-		SDL_FillRect(sdl_hwscreen, &blackrect, 0);
+		SDL_FillRect(_hwscreen, &blackrect, 0);
 
 		_currentShakePos = _newShakePos;
 
@@ -370,16 +400,16 @@ void OSystem_SDL_Normal::update_screen() {
 				dst = *r;
 				dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
 				dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
-				if (SDL_BlitSurface(_screen, r, sdl_tmpscreen, &dst) != 0)
+				if (SDL_BlitSurface(_screen, r, _tmpscreen, &dst) != 0)
 					error("SDL_BlitSurface failed: %s", SDL_GetError());
 			}
 		}
 	
-		SDL_LockSurface(sdl_tmpscreen);
-		SDL_LockSurface(sdl_hwscreen);
+		SDL_LockSurface(_tmpscreen);
+		SDL_LockSurface(_hwscreen);
 	
-		srcPitch = sdl_tmpscreen->pitch;
-		dstPitch = sdl_hwscreen->pitch;
+		srcPitch = _tmpscreen->pitch;
+		dstPitch = _hwscreen->pitch;
 	
 		for(r = _dirty_rect_list; r != last_rect; ++r) {
 			register int dst_y = r->y + _currentShakePos;
@@ -391,8 +421,8 @@ void OSystem_SDL_Normal::update_screen() {
 				
 				dst_y *= _scaleFactor;
 				
-				_scaler_proc((byte*)sdl_tmpscreen->pixels + (r->x*2+2) + (r->y+1)*srcPitch, srcPitch, NULL, 
-					(byte*)sdl_hwscreen->pixels + r->x*2*_scaleFactor + dst_y*dstPitch, dstPitch, r->w, dst_h);
+				_scaler_proc((byte*)_tmpscreen->pixels + (r->x*2+2) + (r->y+1)*srcPitch, srcPitch, NULL, 
+					(byte*)_hwscreen->pixels + r->x*2*_scaleFactor + dst_y*dstPitch, dstPitch, r->w, dst_h);
 			}
 			
 			r->x *= _scaleFactor;
@@ -401,8 +431,8 @@ void OSystem_SDL_Normal::update_screen() {
 			r->h = dst_h * _scaleFactor;
 		}
 		
-		SDL_UnlockSurface(sdl_tmpscreen);
-		SDL_UnlockSurface(sdl_hwscreen);
+		SDL_UnlockSurface(_tmpscreen);
+		SDL_UnlockSurface(_hwscreen);
 
 		// Readjust the dirty rect list in case we are doing a full update.
 		// This is necessary if shaking is active.
@@ -412,50 +442,27 @@ void OSystem_SDL_Normal::update_screen() {
 		}
 
 		// Finally, blit all our changes to the screen
-		SDL_UpdateRects(sdl_hwscreen, _num_dirty_rects, _dirty_rect_list);
+		SDL_UpdateRects(_hwscreen, _num_dirty_rects, _dirty_rect_list);
 	}
 
 	_num_dirty_rects = 0;
 	_forceFull = false;
 }
 
-void OSystem_SDL_Normal::hotswap_gfx_mode() {
-	/* We allocate a screen sized bitmap which contains a "backup"
-	 * of the screen data during the change. Then we draw that to
-	 * the new screen right after it's setup.
-	 */
-	
-	byte *bak_mem = (byte*)malloc(_screenWidth*_screenHeight);
-
-	get_screen_image(bak_mem);
-
-	unload_gfx_mode();
-	load_gfx_mode();
-
-	// reset palette
-	SDL_SetColors(_screen, _currentPalette, 0, 256);
-
-	// blit image
-	copy_rect(bak_mem, _screenWidth, 0, 0, _screenWidth, _screenHeight);
-	free(bak_mem);
-
-	update_screen();
-}
-
 uint32 OSystem_SDL_Normal::property(int param, Property *value) {
 
 	if (param == PROP_TOGGLE_FULLSCREEN) {
-		assert(sdl_hwscreen != 0);
+		assert(_hwscreen != 0);
 		_full_screen ^= true;
 
-		if (!SDL_WM_ToggleFullScreen(sdl_hwscreen)) {
+		if (!SDL_WM_ToggleFullScreen(_hwscreen)) {
 			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
 			hotswap_gfx_mode();
 		}
 		return 1;
 	} else if (param == PROP_OVERLAY_IS_565) {
-		assert(sdl_tmpscreen != 0);
-		return (sdl_tmpscreen->format->Rmask != 0x7C00);
+		assert(_tmpscreen != 0);
+		return (_tmpscreen->format->Rmask != 0x7C00);
 	}
 	
 	return OSystem_SDL_Common::property(param, value);
@@ -494,7 +501,7 @@ void OSystem_SDL_Normal::clear_overlay()
 	dst.x = dst.y = 1;
 	src.w = dst.w = _screenWidth;
 	src.h = dst.h = _screenHeight;
-	if (SDL_BlitSurface(_screen, &src, sdl_tmpscreen, &dst) != 0)
+	if (SDL_BlitSurface(_screen, &src, _tmpscreen, &dst) != 0)
 		error("SDL_BlitSurface failed: %s", SDL_GetError());
 
 	_forceFull = true;
@@ -505,16 +512,16 @@ void OSystem_SDL_Normal::grab_overlay(int16 *buf, int pitch)
 	if (!_overlay_visible)
 		return;
 
-	if (sdl_tmpscreen == NULL)
+	if (_tmpscreen == NULL)
 		return;
 
 	// hide the mouse
 	undraw_mouse();
 
-	if (SDL_LockSurface(sdl_tmpscreen) == -1)
+	if (SDL_LockSurface(_tmpscreen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	int16 *src = (int16 *)sdl_tmpscreen->pixels + TMP_SCREEN_WIDTH + 1;
+	int16 *src = (int16 *)_tmpscreen->pixels + TMP_SCREEN_WIDTH + 1;
 	int h = _screenHeight;
 	do {
 		memcpy(buf, src, _screenWidth*2);
@@ -522,7 +529,7 @@ void OSystem_SDL_Normal::grab_overlay(int16 *buf, int pitch)
 		buf += pitch;
 	} while (--h);
 
-	SDL_UnlockSurface(sdl_tmpscreen);
+	SDL_UnlockSurface(_tmpscreen);
 }
 
 void OSystem_SDL_Normal::copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h)
@@ -530,7 +537,7 @@ void OSystem_SDL_Normal::copy_rect_overlay(const int16 *buf, int pitch, int x, i
 	if (!_overlay_visible)
 		return;
 
-	if (sdl_tmpscreen == NULL)
+	if (_tmpscreen == NULL)
 		return;
 
 	// Clip the coordinates
@@ -548,17 +555,17 @@ void OSystem_SDL_Normal::copy_rect_overlay(const int16 *buf, int pitch, int x, i
 	/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
 	undraw_mouse();
 
-	if (SDL_LockSurface(sdl_tmpscreen) == -1)
+	if (SDL_LockSurface(_tmpscreen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	int16 *dst = (int16 *)sdl_tmpscreen->pixels + (y+1) * TMP_SCREEN_WIDTH + (x+1);
+	int16 *dst = (int16 *)_tmpscreen->pixels + (y+1) * TMP_SCREEN_WIDTH + (x+1);
 	do {
 		memcpy(dst, buf, w*2);
 		dst += TMP_SCREEN_WIDTH;
 		buf += pitch;
 	} while (--h);
 
-	SDL_UnlockSurface(sdl_tmpscreen);
+	SDL_UnlockSurface(_tmpscreen);
 }
 
 
