@@ -135,6 +135,7 @@ void MusicPlayer::onTimer(void *refCon) {
 }
 	
 void MusicPlayer::playMusic() {
+	_parser->setMidiDriver(this);
 	_isPlaying = true;
 }
 	
