@@ -145,6 +145,12 @@ GUI
 * Remove code duplication between EditTextWidget and ListWidget (i.e. text 
   editing code; maybe we can factor that out into a common base or aggregate
   class... not yet sure).
+* Fix EditTextWidget::drawCaret and ListWidget::drawCaret support for alternate
+  fonts (the current code overdraws chars partly, and relies on the fact that
+  our default built-in font has a seperation pixel column on the *left* side;
+  most other bitmap fonts have it on the right, though). To this end, we maybe
+  should backup the background before drawing the caret, and restore it when
+  erasing the caret.
 
 Game Detector
 =============
