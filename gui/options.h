@@ -109,6 +109,7 @@ public:
 protected:
 	BrowserDialog *_browser;
 	StaticTextWidget *_savePath;
+	StaticTextWidget *_extraPath;
 };
 
 } // End of namespace GUI

@@ -276,6 +276,9 @@ static void runGame(GameDetector &detector, OSystem *system) {
 	if (ConfMan.hasKey("extrapath"))
 		File::addDefaultDirectory(ConfMan.get("extrapath"));
 
+	if (ConfMan.hasKey("extrapath", Common::ConfigManager::kApplicationDomain))
+		File::addDefaultDirectory(ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain));
+
 	// Run the game engine
 	engine->go();
 

@@ -59,7 +59,8 @@ enum {
 	kMusicVolumeChanged		= 'muvc',
 	kSfxVolumeChanged		= 'sfvc',
 	kSpeechVolumeChanged		= 'vcvc',
-	kChooseSaveDirCmd		= 'chos'
+	kChooseSaveDirCmd		= 'chos',
+	kChooseExtraDirCmd		= 'chex'
 };
 
 OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
@@ -407,7 +408,14 @@ GlobalOptionsDialog::GlobalOptionsDialog(GameDetector &detector)
 	// Save game path
 	new ButtonWidget(tab, 5, yoffset, kButtonWidth + 14, 16, "Save Path: ", kChooseSaveDirCmd, 0);
 	_savePath = new StaticTextWidget(tab, 5 + kButtonWidth + 20, yoffset + 3, _w - (5 + kButtonWidth + 20) - 10, kLineHeight, "/foo/bar", kTextAlignLeft);
+
+	yoffset += 18;
+
+ 	new ButtonWidget(tab, 5, yoffset, kButtonWidth + 14, 16, "Extra Path:", kChooseExtraDirCmd, 0);
+	_extraPath = new StaticTextWidget(tab, 5 + kButtonWidth + 20, yoffset + 3, _w - (5 + kButtonWidth + 20) - 10, kLineHeight, "None", kTextAlignLeft);
+	yoffset += 18;
 #endif
+
 	// TODO: joystick setting
 
 
@@ -432,6 +440,8 @@ void GlobalOptionsDialog::open() {
 #if !( defined(__DC__) || defined(__GP32__) )
 	// Set _savePath to the current save path
 	Common::String dir(ConfMan.get("savepath", _domain));
+	Common::String extraPath(ConfMan.get("extrapath", _domain));
+
 	if (!dir.isEmpty()) {
 		_savePath->setLabel(dir);
 	} else {
@@ -440,6 +450,12 @@ void GlobalOptionsDialog::open() {
 		getcwd(buf, sizeof(buf));
 		_savePath->setLabel(buf);
 	}
+
+	if (extraPath.isEmpty() || !ConfMan.hasKey("extrapath", _domain)) {
+		_extraPath->setLabel("None");
+	} else {
+		_extraPath->setLabel(extraPath);
+	}
 #endif
 }
 
@@ -447,6 +463,10 @@ void GlobalOptionsDialog::close() {
 	if (getResult()) {
 		// Savepath
 		ConfMan.set("savepath", _savePath->getLabel(), _domain);
+
+		String extraPath = _extraPath->getLabel();
+		if (!extraPath.isEmpty() && (extraPath != "None"))
+			ConfMan.set("extrapath", extraPath, _domain);
 	}
 	OptionsDialog::close();
 }
@@ -459,6 +479,13 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			FilesystemNode *dir = _browser->getResult();
 			_savePath->setLabel(dir->path());
 			// TODO - we should check if the directory is writeable before accepting it
+		}
+		break;
+	case kChooseExtraDirCmd:
+		if (_browser->runModal() > 0) {
+			// User made his choice...
+			FilesystemNode *dir = _browser->getResult();
+			_extraPath->setLabel(dir->path());
 		}
 		break;
 	default:
