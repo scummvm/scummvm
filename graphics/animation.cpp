@@ -24,11 +24,17 @@
 #include "common/file.h"
 #include "sound/audiostream.h"
 #include "common/config-manager.h"
+#include "common/scaler/intern.h"
 
 namespace Graphics {
 
 BaseAnimationState::BaseAnimationState(SoundMixer *snd, OSystem *sys, int width, int height) 
 	: MOVIE_WIDTH(width), MOVIE_HEIGHT(height), _snd(snd), _sys(sys) {
+#ifndef BACKEND_8BIT
+	colortab = NULL;
+	rgb_2_pix = NULL;
+	bitFormat = 0;
+#endif
 }
 
 BaseAnimationState::~BaseAnimationState() {
@@ -40,6 +46,8 @@ BaseAnimationState::~BaseAnimationState() {
 #ifndef BACKEND_8BIT
 	_sys->hideOverlay();
 	free(overlay);
+	free(colortab);
+	free(rgb_2_pix);
 #endif
 	delete bgSoundStream;
 #endif
@@ -295,88 +303,194 @@ void BaseAnimationState::buildLookup(int p, int lines) {
 
 #else
 
-OverlayColor *BaseAnimationState::lookup = 0;
+// The YUV to RGB conversion code is derived from SDL's YUV overlay code, which
+// in turn appears to be derived from mpeg_play. The following copyright
+// notices have been included in accordance with the original license. Please
+// note that the term "software" in this context only applies to the two
+// functions buildLookup() and plotYUV() below.
 
-/**
- * This function should be called when the screen changes to invalidate and,
- * optionally, rebuild the lookup table.
- * @param rebuild If true, rebuild the table.
- */
+// Copyright (c) 1995 The Regents of the University of California.
+// All rights reserved.
+//
+// Permission to use, copy, modify, and distribute this software and its
+// documentation for any purpose, without fee, and without written agreement is
+// hereby granted, provided that the above copyright notice and the following
+// two paragraphs appear in all copies of this software.
+//
+// IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
+// DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+// OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
+// CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+// THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+// INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+// AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+// ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
+// PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
-// FIXME: We will need to call the function from the game's main event loop
-// as well, not just the cutscene players' ones.
+// Copyright (c) 1995 Erik Corry
+// All rights reserved.
+//
+// Permission to use, copy, modify, and distribute this software and its
+// documentation for any purpose, without fee, and without written agreement is
+// hereby granted, provided that the above copyright notice and the following
+// two paragraphs appear in all copies of this software.
+//
+// IN NO EVENT SHALL ERIK CORRY BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT,
+// SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OF
+// THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF ERIK CORRY HAS BEEN ADVISED
+// OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+// ERIK CORRY SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+// PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS"
+// BASIS, AND ERIK CORRY HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT,
+// UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
-// FIXME: It would be nice with a heuristic to check if the table really does
-// need to be rebuilt.
-
-void BaseAnimationState::invalidateLookup(bool rebuild) {
-	free(lookup);
-	lookup = 0;
-	if (rebuild)
-		buildLookup();
-}
+// Portions of this software Copyright (c) 1995 Brown University.
+// All rights reserved.
+//
+// Permission to use, copy, modify, and distribute this software and its
+// documentation for any purpose, without fee, and without written agreement
+// is hereby granted, provided that the above copyright notice and the
+// following two paragraphs appear in all copies of this software.
+//
+// IN NO EVENT SHALL BROWN UNIVERSITY BE LIABLE TO ANY PARTY FOR
+// DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+// OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF BROWN
+// UNIVERSITY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+// BROWN UNIVERSITY SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+// PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS"
+// BASIS, AND BROWN UNIVERSITY HAS NO OBLIGATION TO PROVIDE MAINTENANCE,
+// SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 void BaseAnimationState::buildLookup() {
-	if (lookup)
+	// Do we already have lookup tables for this bit format?
+	if (gBitFormat == bitFormat && colortab && rgb_2_pix)
 		return;
 
-	lookup = (OverlayColor *)calloc((BITDEPTH+1) * (BITDEPTH+1) * 256, sizeof(OverlayColor));
+	free(colortab);
+	free(rgb_2_pix);
 
-	if (!lookup) {
-		warning("Not enough memory to allocate LUT - cannot play sequence");
-		return;
+	colortab = (int16 *)malloc(4 * 256 * sizeof(int16));
+
+	int16 *Cr_r_tab = &colortab[0 * 256];
+	int16 *Cr_g_tab = &colortab[1 * 256];
+	int16 *Cb_g_tab = &colortab[2 * 256];
+	int16 *Cb_b_tab = &colortab[3 * 256];
+
+	rgb_2_pix = (uint16 *)malloc(3 * 768 * sizeof(uint16));
+
+	uint16 *r_2_pix_alloc = &rgb_2_pix[0 * 768];
+	uint16 *g_2_pix_alloc = &rgb_2_pix[1 * 768];
+	uint16 *b_2_pix_alloc = &rgb_2_pix[2 * 768];
+
+	int16 CR, CB;
+	int i;
+
+	// Generate the tables for the display surface
+
+	for (i = 0; i < 256; i++) {
+		// Gamma correction (luminescence table) and chroma correction
+		// would be done here. See the Berkeley mpeg_play sources.
+
+		CR = CB = (i - 128);
+		Cr_r_tab[i] = (int16) ( (0.419 / 0.299) * CR);
+		Cr_g_tab[i] = (int16) (-(0.299 / 0.419) * CR);
+		Cb_g_tab[i] = (int16) (-(0.114 / 0.331) * CB);
+		Cb_b_tab[i] = (int16) ( (0.587 / 0.331) * CB);
 	}
 
-	int y, cb, cr;
-	int r, g, b;
-	int pos = 0;
+	// Set up entries 0-255 in rgb-to-pixel value tables.
 
-	for (cr = 0; cr <= BITDEPTH; cr++) {
-		for (cb = 0; cb <= BITDEPTH; cb++) {
-			for (y = 0; y < 256; y++) {
-				r = ((y - 16) * 256 + (int) (256 * 1.596) * ((cr << SHIFT) - 128)) / 256;
-				g = ((y - 16) * 256 - (int) (0.813 * 256) * ((cr << SHIFT) - 128) - (int) (0.391 * 256) * ((cb << SHIFT) - 128)) / 256;
-				b = ((y - 16) * 256 + (int) (2.018 * 256) * ((cb << SHIFT) - 128)) / 256;
-
-				if (r < 0) r = 0;
-				else if (r > 255) r = 255;
-				if (g < 0) g = 0;
-				else if (g > 255) g = 255;
-				if (b < 0) b = 0;
-				else if (b > 255) b = 255;
-
-				lookup[pos++] = _sys->RGBToColor(r, g, b);
-			}
+	if (gBitFormat == 565) {
+		for (i = 0; i < 256; i++) {
+			r_2_pix_alloc[i + 256] = i >> (8 - 5);
+			r_2_pix_alloc[i + 256] <<= 11;
+			g_2_pix_alloc[i + 256] = i >> (8 - 6);
+			g_2_pix_alloc[i + 256] <<= 5;
+			b_2_pix_alloc[i + 256] = i >> (8 - 5);
+			// b_2_pix_alloc[i + 256] <<= 0;
 		}
+	} else if (gBitFormat == 555) {
+		for (i = 0; i < 256; i++) {
+			r_2_pix_alloc[i + 256] = i >> (8 - 5);
+			r_2_pix_alloc[i + 256] <<= 10;
+			g_2_pix_alloc[i + 256] = i >> (8 - 5);
+			g_2_pix_alloc[i + 256] <<= 5;
+			b_2_pix_alloc[i + 256] = i >> (8 - 5);
+			// b_2_pix_alloc[i + 256] <<= 0;
+		}
+	} else {
+		error("Unknown bit format %d", gBitFormat);
 	}
+
+	// Spread out the values we have to the rest of the array so that we do
+	// not need to check for overflow.
+
+	for (i = 0; i < 256; i++) {
+		r_2_pix_alloc[i] = r_2_pix_alloc[256];
+		r_2_pix_alloc[i + 512] = r_2_pix_alloc[511];
+		g_2_pix_alloc[i] = g_2_pix_alloc[256];
+		g_2_pix_alloc[i + 512] = g_2_pix_alloc[511];
+		b_2_pix_alloc[i] = b_2_pix_alloc[256];
+		b_2_pix_alloc[i + 512] = b_2_pix_alloc[511];
+	}
+
+	bitFormat = gBitFormat;
 }
 
-void BaseAnimationState::plotYUV(OverlayColor *lut, int width, int height, byte *const *dat) {
-
-	if (!lut)
-		return;
-
+void BaseAnimationState::plotYUV(int width, int height, byte *const *dat) {
 	OverlayColor *ptr = overlay + (MOVIE_HEIGHT - height) / 2 * MOVIE_WIDTH + (MOVIE_WIDTH - width) / 2;
+
+	byte *lum = dat[0];
+	byte *cr = dat[2];
+	byte *cb = dat[1];
+
+	byte *lum2 = lum + width;
+
+	int16 cr_r;
+	int16 crb_g;
+	int16 cb_b;
+
+	OverlayColor *row1 = ptr;
+	OverlayColor *row2 = ptr + MOVIE_WIDTH;
 
 	int x, y;
 
-	int ypos = 0;
-	int cpos = 0;
-	int linepos = 0;
-
 	for (y = 0; y < height; y += 2) {
 		for (x = 0; x < width; x += 2) {
-			int i = ((((dat[2][cpos] + ROUNDADD) >> SHIFT) * (BITDEPTH+1)) + ((dat[1][cpos] + ROUNDADD)>>SHIFT)) * 256;
-			cpos++;
+			register byte L;
 
-			ptr[linepos                ] = lut[i + dat[0][        ypos  ]];
-			ptr[MOVIE_WIDTH + linepos++] = lut[i + dat[0][width + ypos++]];
-			ptr[linepos                ] = lut[i + dat[0][        ypos  ]];
-			ptr[MOVIE_WIDTH + linepos++] = lut[i + dat[0][width + ypos++]];
+			cr_r  = 0 * 768 + 256 + colortab[*cr + 0 * 256];
+			crb_g = 1 * 768 + 256 + colortab[*cr + 1 * 256] + colortab[*cb + 2 * 256];
+			cb_b  = 2 * 768 + 256 + colortab[*cb + 3 * 256];
+			++cr;
+			++cb;
 
+			L = *lum++;
+			*row1++ = (rgb_2_pix[L + cr_r] | rgb_2_pix[L + crb_g] | rgb_2_pix[L + cb_b]);
+			L = *lum++;
+			*row1++ = (rgb_2_pix[L + cr_r] | rgb_2_pix[L + crb_g] | rgb_2_pix[L + cb_b]);
+
+			// Now, do second row.
+
+			L = *lum2++;
+			*row2++ = (rgb_2_pix[L + cr_r] | rgb_2_pix[L + crb_g] | rgb_2_pix[L + cb_b]);
+			L = *lum2++;
+			*row2++ = (rgb_2_pix[L + cr_r] | rgb_2_pix[L + crb_g] | rgb_2_pix[L + cb_b]);
 		}
-		linepos += (2 * MOVIE_WIDTH - width);
-		ypos += width;
+
+		// These values are at the start of the next line, (due
+		// to the ++'s above), but they need to be at the start
+		// of the line after that.
+
+		lum  += width;
+		lum2 += width;
+		row1 += (2 * MOVIE_WIDTH - width);
+		row2 += (2 * MOVIE_WIDTH - width);
 	}
 }
 

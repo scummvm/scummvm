@@ -104,7 +104,7 @@ void AnimationState::drawYUV(int width, int height, byte *const *dat) {
 #ifdef BACKEND_8BIT
 	_vm->_graphics->plotYUV(lut, width, height, dat);
 #else
-	plotYUV(lookup, width, height, dat);
+	plotYUV(width, height, dat);
 #endif
 }
 
@@ -258,7 +258,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], byte *mus
 			switch (event.type) {
 #ifndef BACKEND_8BIT
 			case OSystem::EVENT_SCREEN_CHANGED:
-				anim->invalidateLookup(true);
+				anim->buildLookup();
 				break;
 #endif
 			case OSystem::EVENT_KEYDOWN:

@@ -109,8 +109,10 @@ protected:
 		byte pal[4 * 256];
 	} palettes[50];
 #else
-	static OverlayColor *lookup;
 	OverlayColor *overlay;
+	int bitFormat;
+	int16 *colortab;
+	uint16 *rgb_2_pix;
 #endif
 
 public:
@@ -119,8 +121,9 @@ public:
 
 	bool init(const char *name, void *audioArg = NULL);
 	bool decodeFrame();
+
 #ifndef BACKEND_8BIT
-	void invalidateLookup(bool rebuild);
+	void buildLookup();
 #endif
 
 protected:
@@ -132,8 +135,7 @@ protected:
 	void buildLookup(int p, int lines);
 	virtual void setPalette(byte *pal) = 0;
 #else
-	void buildLookup(void);
-	void plotYUV(OverlayColor *lut, int width, int height, byte *const *dat);
+	void plotYUV(int width, int height, byte *const *dat);
 #endif
 };
 
