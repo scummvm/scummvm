@@ -2369,7 +2369,7 @@ void Scumm::o6_wait()
 	case 226:{										/* wait until actor drawn */
 			Actor *a = derefActorSafe(pop(), "o6_wait:226");
 			int offs = (int16) fetchScriptWord();
-			if (a->isInCurrentRoom() && a->needRedraw) {
+			if (a && a->isInCurrentRoom() && a->needRedraw) {
 				_scriptPointer += offs;
 				o6_breakHere();
 			}
@@ -2378,7 +2378,7 @@ void Scumm::o6_wait()
 	case 232:{										/* wait until actor stops turning */
 			Actor *a = derefActorSafe(pop(), "o6_wait:226");
 			int offs = (int16) fetchScriptWord();
-			if (a->isInCurrentRoom() && a->moving & MF_TURN) {
+			if (a && a->isInCurrentRoom() && a->moving & MF_TURN) {
 				_scriptPointer += offs;
 				o6_breakHere();
 			}
