@@ -2428,8 +2428,6 @@ void Scumm::o6_miscOps()
 	int i;
 	Actor *a;
 
-	IMuse *se = _imuse;						//yazoo: not very nice
-
 	getStackList(args, sizeof(args) / sizeof(args[0]));
 
 	if (_features & GF_AFTER_V7) {
@@ -2699,7 +2697,7 @@ void Scumm::o6_miscOps()
 		case 122:
 
 			_vars[VAR_SOUNDRESULT] =
-				(short)se->do_command(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]
+				(short)_imuse->do_command(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]
 				);
 			break;
 
