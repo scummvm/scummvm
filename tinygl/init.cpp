@@ -1,4 +1,4 @@
-#include "zgl.h"
+#include "tinygl/zgl.h"
 
 GLContext *gl_ctx;
 
@@ -6,8 +6,8 @@ GLContext *gl_ctx;
 void initSharedState(GLContext *c)
 {
   GLSharedState *s=&c->shared_state;
-  s->lists=gl_zalloc(sizeof(GLList *) * MAX_DISPLAY_LISTS);
-  s->texture_hash_table=
+  s->lists=(GLList **)gl_zalloc(sizeof(GLList *) * MAX_DISPLAY_LISTS);
+  s->texture_hash_table=(GLTexture **)
       gl_zalloc(sizeof(GLTexture *) * TEXTURE_HASH_TABLE_SIZE);
 
   alloc_texture(c,0);
@@ -34,14 +34,14 @@ void glInit(void *zbuffer1)
   GLViewport *v;
   int i;
 
-  c=gl_zalloc(sizeof(GLContext));
+  c=(GLContext *)gl_zalloc(sizeof(GLContext));
   gl_ctx=c;
 
   c->zb=zbuffer;
 
   /* allocate GLVertex array */
   c->vertex_max = POLYGON_MAX_VERTEX;
-  c->vertex = gl_malloc(POLYGON_MAX_VERTEX*sizeof(GLVertex));
+  c->vertex = (GLVertex *)gl_malloc(POLYGON_MAX_VERTEX*sizeof(GLVertex));
   
   /* viewport */
   v=&c->viewport;
@@ -150,7 +150,7 @@ void glInit(void *zbuffer1)
   c->matrix_stack_depth_max[2]=MAX_TEXTURE_STACK_DEPTH;
 
   for(i=0;i<3;i++) {
-    c->matrix_stack[i]=gl_zalloc(c->matrix_stack_depth_max[i] * sizeof(M4));
+    c->matrix_stack[i]=(M4*)gl_zalloc(c->matrix_stack_depth_max[i] * sizeof(M4));
     c->matrix_stack_ptr[i]=c->matrix_stack[i];
   }
 

@@ -5,10 +5,10 @@
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
-#include <GL/gl.h>
-#include "zbuffer.h"
-#include "zmath.h"
-#include "zfeatures.h"
+#include "tinygl/gl.h"
+#include "tinygl/zbuffer.h"
+#include "tinygl/zmath.h"
+#include "tinygl/zfeatures.h"
 
 #define DEBUG
 /* #define NDEBUG */
@@ -324,27 +324,23 @@ GLContext *gl_get_context(void);
 
 void gl_fatal_error(char *format, ...);
 
+#ifndef PI
+#define PI 3.14159265358979323846
+#endif
 
 /* specular buffer "api" */
 GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, 
                               const float shininess);
 
-#ifdef __BEOS__
-void dprintf(const char *, ...);
-
-#else /* !BEOS */
-
 #ifdef DEBUG
 
-#define dprintf(format, args...)  \
-  fprintf(stderr,"In '%s': " format "\n",__FUNCTION__, ##args);
+#define dprintf fprintf
 
 #else
 
-#define dprintf(format, args...)
+#define dprintf
 
 #endif
-#endif /* !BEOS */
 
 /* glopXXX functions */
 

@@ -1,4 +1,4 @@
-#include "zgl.h"
+#include "tinygl/zgl.h"
 
 static char *op_table_str[]=
 {
@@ -57,8 +57,8 @@ static GLList *alloc_list(GLContext *c,int list)
   GLList *l;
   GLParamBuffer *ob;
 
-  l=gl_zalloc(sizeof(GLList));
-  ob=gl_zalloc(sizeof(GLParamBuffer));
+  l=(GLList *)gl_zalloc(sizeof(GLList));
+  ob=(GLParamBuffer *)gl_zalloc(sizeof(GLParamBuffer));
 
   ob->next=NULL;
   l->first_op_buffer=ob;
@@ -113,7 +113,7 @@ void gl_compile_op(GLContext *c,GLParam *p)
   /* we should be able to add a NextBuffer opcode */
   if ((index + op_size) > (OP_BUFFER_MAX_SIZE-2)) {
 
-    ob1=gl_zalloc(sizeof(GLParamBuffer));
+    ob1=(GLParamBuffer *)gl_zalloc(sizeof(GLParamBuffer));
     ob1->next=NULL;
 
     ob->next=ob1;

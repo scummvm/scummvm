@@ -1,4 +1,4 @@
-#include "zgl.h"
+#include "tinygl/zgl.h"
 
 /* fill triangle profile */
 /* #define PROFILE */
@@ -404,7 +404,7 @@ void gl_draw_triangle_fill(GLContext *c,
 #ifdef PROFILE
     count_triangles_textured++;
 #endif
-    ZB_setTexture(c->zb,c->current_texture->images[0].pixmap);
+    ZB_setTexture(c->zb,(PIXEL *)c->current_texture->images[0].pixmap);
     ZB_fillTriangleMappingPerspective(c->zb,&p0->zp,&p1->zp,&p2->zp);
   } else if (c->current_shade_model == GL_SMOOTH) {
     ZB_fillTriangleSmooth(c->zb,&p0->zp,&p1->zp,&p2->zp);

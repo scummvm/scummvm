@@ -2,7 +2,7 @@
  * Texture Manager
  */
 
-#include "zgl.h"
+#include "tinygl/zgl.h"
 
 static GLTexture *find_texture(GLContext *c,int h)
 {
@@ -44,7 +44,7 @@ GLTexture *alloc_texture(GLContext *c,int h)
 {
   GLTexture *t,**ht;
   
-  t=gl_zalloc(sizeof(GLTexture));
+  t=(GLTexture *)gl_zalloc(sizeof(GLTexture));
 
   ht=&c->shared_state.texture_hash_table[h % TEXTURE_HASH_TABLE_SIZE];
 
@@ -144,14 +144,14 @@ void glopTexImage2D(GLContext *c,GLParam *p)
   
   do_free=0;
   if (width != 256 || height != 256) {
-    pixels1 = gl_malloc(256 * 256 * 3);
+    pixels1 = (unsigned char *)gl_malloc(256 * 256 * 3);
     /* no interpolation is done here to respect the original image aliasing ! */
-    gl_resizeImageNoInterpolate(pixels1,256,256,pixels,width,height);
+    gl_resizeImageNoInterpolate(pixels1,256,256,(unsigned char *)pixels,width,height);
     do_free=1;
     width=256;
     height=256;
   } else {
-    pixels1=pixels;
+    pixels1=(unsigned char *)pixels;
   }
 
   im=&c->current_texture->images[level];
@@ -171,7 +171,7 @@ void glopTexImage2D(GLContext *c,GLParam *p)
 #elif TGL_FEATURE_RENDER_BITS == 16
   im->pixmap=gl_malloc(width*height*2);
   if(im->pixmap) {
-      gl_convertRGB_to_5R6G5B(im->pixmap,pixels1,width,height);
+      gl_convertRGB_to_5R6G5B((unsigned short *)im->pixmap,pixels1,width,height);
   }
 #else
 #error TODO

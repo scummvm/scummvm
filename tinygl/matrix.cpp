@@ -1,4 +1,4 @@
-#include "zgl.h"
+#include "tinygl/zgl.h"
 
 void gl_print_matrix( const float *m)
 {
@@ -116,7 +116,7 @@ void glopRotate(GLContext *c,GLParam *p)
   float angle;
   int dir_code;
 
-  angle = p[1].f * M_PI / 180.0;
+  angle = p[1].f * PI / 180.0;
   u[0]=p[2].f;
   u[1]=p[3].f;
   u[2]=p[4].f;

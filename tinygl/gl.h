@@ -6,10 +6,6 @@
 
 #define GL_VERSION_1_1 1
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 enum {
 	/* Boolean values */
 	GL_FALSE			= 0,
@@ -830,9 +826,5 @@ void glDebug(int mode);
 
 void glInit(void *zbuffer);
 void glClose(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

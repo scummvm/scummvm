@@ -5,7 +5,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "zbuffer.h"
+#include "tinygl/zbuffer.h"
 #include <assert.h>
 
 #if defined(TGL_FEATURE_8_BITS)
@@ -45,7 +45,7 @@ void ZB_initDither(ZBuffer *zb,int nb_colors,
   for(i=0;i<nb_colors;i++) color_table[i]=0;
 
   zb->nb_colors=nb_colors;
-  zb->ctable=gl_malloc(nb_colors * sizeof(int));
+  zb->ctable=(int *)gl_malloc(nb_colors * sizeof(int));
 
   for (r = 0; r < _R; r++) {
     for (g = 0; g < _G; g++) {
@@ -61,7 +61,7 @@ void ZB_initDither(ZBuffer *zb,int nb_colors,
     }
   }
 
-  zb->dctable=gl_malloc( DITHER_TABLE_SIZE );
+  zb->dctable=(unsigned char *)gl_malloc( DITHER_TABLE_SIZE );
 
   for(i=0;i<DITHER_TABLE_SIZE;i++) {
     r=(i >> 12) & 0x7;

@@ -1,5 +1,5 @@
-#include "zgl.h"
-#include "msghandling.h"
+#include "tinygl/zgl.h"
+#include "tinygl/msghandling.h"
 
 void glopMaterial(GLContext *c,GLParam *p)
 {
@@ -113,7 +113,7 @@ void glopLight(GLContext *c,GLParam *p)
       float a=v.v[0];
       assert(a == 180 || (a>=0 && a<=90));
       l->spot_cutoff=a;
-      if (a != 180) l->cos_spot_cutoff=cos(a * M_PI / 180.0);
+      if (a != 180) l->cos_spot_cutoff=cos(a * PI / 180.0);
     }
     break;
   case GL_CONSTANT_ATTENUATION:

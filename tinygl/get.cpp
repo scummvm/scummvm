@@ -1,4 +1,4 @@
-#include "zgl.h"
+#include "tinygl/zgl.h"
 
 void glGetIntegerv(int pname,int *params)
 {

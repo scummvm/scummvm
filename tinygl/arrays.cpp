@@ -1,4 +1,4 @@
-#include "zgl.h"
+#include "tinygl/zgl.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -130,7 +130,7 @@ glopVertexPointer(GLContext *c, GLParam *p)
 {
   c->vertex_array_size = p[1].i;
   c->vertex_array_stride = p[2].i;
-  c->vertex_array = p[3].p;
+  c->vertex_array = (float *)p[3].p;
 }
 
 void 
@@ -151,7 +151,7 @@ glopColorPointer(GLContext *c, GLParam *p)
 {
   c->color_array_size = p[1].i;
   c->color_array_stride = p[2].i;
-  c->color_array = p[3].p;  
+  c->color_array = (float *)p[3].p;  
 }
 
 void 
@@ -171,7 +171,7 @@ void
 glopNormalPointer(GLContext *c, GLParam *p)
 {
   c->normal_array_stride = p[1].i;
-  c->normal_array = p[2].p;  
+  c->normal_array = (float *)p[2].p;  
 }
 
 void 
@@ -190,7 +190,7 @@ glopTexCoordPointer(GLContext *c, GLParam *p)
 {
   c->texcoord_array_size = p[1].i;
   c->texcoord_array_stride = p[2].i;
-  c->texcoord_array = p[3].p;
+  c->texcoord_array = (float *)p[3].p;
 }
 
 void 
