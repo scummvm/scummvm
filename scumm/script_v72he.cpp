@@ -860,7 +860,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		debug(1,"o72_actorOps: case 24 (%d)", k);
 		break;
 	case 43:
-		// HE 80+
+		// HE 90+
 		k = pop();
 		debug(1,"o72_actorOps: case 43 (%d)", k);
 		break;
@@ -869,6 +869,11 @@ void ScummEngine_v72he::o72_actorOps() {
 		_actorClipOverride.right = pop();
 		_actorClipOverride.top = pop();
 		_actorClipOverride.left = pop();
+		break;
+	case 68:
+		// HE 90+
+		k = pop();
+		debug(1,"o72_actorOps: case 65 (%d)", k);
 		break;
 	case 76:		// SO_COSTUME
 		a->setActorCostume(pop());

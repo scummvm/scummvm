@@ -81,8 +81,8 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o72_compareStackList),
 		/* 1C */
 		OPCODE(o90_unknown1C),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o90_getLT),
+		OPCODE(o90_getGT),
 		OPCODE(o6_invalid),
 		/* 20 */
 		OPCODE(o6_invalid),
@@ -98,7 +98,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_unknown28),
 		OPCODE(o90_unknown29),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o90_startLocalScript),
 		/* 2C */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -378,6 +378,39 @@ const char *ScummEngine_v90he::getOpcodeDesc(byte i) {
 	return _opcodesV90he[i].desc;
 }
 
+void ScummEngine_v90he::o90_getLT() {
+	int a = pop();
+	int b = pop();
+
+	if (b < a) {
+		push(b);
+	} else {
+		push(a);
+	}
+}
+
+void ScummEngine_v90he::o90_getGT() {
+	int a = pop();
+	int b = pop();
+
+	if (b > a) {
+		push(b);
+	} else {
+		push(a);
+	}
+}
+
+void ScummEngine_v90he::o90_startLocalScript() {
+	int args[16];
+	int script, entryp;
+	int flags;
+	getStackList(args, ARRAYSIZE(args));
+	entryp = pop();
+	script = pop();
+	flags = fetchScriptByte();
+	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
+}
+
 void ScummEngine_v90he::o90_unknown1C() {
 	// For Pajame Sam 2 demo
 	// Incomplete
@@ -459,40 +492,90 @@ void ScummEngine_v90he::o90_unknown1C() {
 void ScummEngine_v90he::o90_unknown25() {
 	int args[16];
 	int subOp = fetchScriptByte();
+	subOp -= 30;
+
+	debug(1,"o90_unknown25 stub (%d)", subOp);
 	switch (subOp) {
-		case 30:
-		case 31:
-		case 32:
+		case 0:
+			pop();
+			break;
+		case 1:
+			pop();
+			break;
+		case 2:
+			pop();
+			break;
+		case 3:
+			pop();
+			break;
+		case 4:
+			pop();
+			break;
+		case 5:
+			pop();
+			break;
+		case 6:
+			pop();
+			break;
+		case 7:
+			pop();
+			break;
+		case 8:
+			pop();
+			break;
+		case 9:
+			pop();
+			break;
+		case 12:
+			pop();
+			pop();
+			break;
+		case 13:
+			pop();
+			break;
+		case 15:
+			if (_heversion >= 99) {
+				getStackList(args, ARRAYSIZE(args));
+				pop();
+				pop();
+				pop();
+				pop();
+			} else {
+				pop();
+				pop();
+				pop();
+			}
+			break;
+		case 22:
+			pop();
+			break;
 		case 33:
-		case 34:
-		case 35:
-		case 36:
-		case 37:
+			pop();
+			break;
 		case 38:
-		case 39:
-		case 43:
+			pop();
+			break;
 		case 52:
-		case 63:
+			pop();
+			break;
+		case 62:
+			pop();
+			break;
+		case 67:
+			pop();
+			break;
 		case 68:
-		case 82:
-		case 92:
-		case 97:
-		case 98:
-		case 124:
 			pop();
 			break;
-		case 42:
-		case 198:
-			pop();
+		case 94:
 			pop();
 			break;
-		case 45:
-			pop();
-			pop();
-			pop();
-			break;
-		case 125:
+		case 95:
 			getStackList(args, ARRAYSIZE(args));
+			pop();
+			break;
+		case 168:
+			pop();
 			pop();
 			break;
 		default:
@@ -500,7 +583,7 @@ void ScummEngine_v90he::o90_unknown25() {
 	}
 	push(0);
 
-	debug(1,"o90_unknown25 stub (%d)", subOp);
+
 }
 
 void ScummEngine_v90he::o90_unknown26() {
