@@ -179,17 +179,31 @@ int Actor::remapDirection(int dir, bool is_walking) {
 	// why should we not honor box flags when ignoreBoxes is on? If this change
 	// breaks anything, or if you know why the if() was in originally, please
 	// tell this to Fingolfin.
-	//if (!ignoreBoxes) {
-	if (1) {
+	
+	// Addendum: it seems that at least in "The Dig" the original code
+	// does check ignoreBoxes here...
+	// I am not sure what was broken in LoomCD. I am re-enabling this for now
+	// If new breakage occurs in LoomCD, we can perform this check
+	// conditionally depending on the Scumm version being used...
+	
+	// Also at least in The Dig, it checks if the actor is in the current room, but
+	// that's not necessary here because we can never be called if the actor is
+	// not in the current room anyway.
+	
+	if (!ignoreBoxes) {
 		specdir = _vm->_extraBoxFlags[walkbox];
 		if (specdir) {
 			if (specdir & 0x8000) {
 				dir = specdir & 0x3FFF;
 			} else {
-				// FIXME make actors at top of lab walk
-				// facing the correct way in the dig
-				if (_vm->_gameId != GID_DIG)
-					error("remapDirection: special dir not implemented");
+				// FIXME - I am not 100% if this code is right (Fingolfin)
+				warning("remapDirection: special dir");
+
+				specdir = specdir & 0x3FFF;
+				if (specdir - 90 < dir && dir < specdir + 90)
+					dir = specdir;
+				else
+					dir = specdir + 180;
 			}
 		}
 
@@ -214,15 +228,29 @@ int Actor::remapDirection(int dir, bool is_walking) {
 
 		switch (flags & 7) {
 		case 1:
-			if (is_walking)	                                // Actor is walking
-				return flipX ? 90 : 270;
-			else											// Actor is standing/turning
-				return (dir == 90) ? 90 : 270;
+			if (_vm->_features & GF_AFTER_V7) {
+				if (dir < 180)
+					return 90;
+				else
+					return 270;
+			} else {
+				if (is_walking)	                       // Actor is walking
+					return flipX ? 90 : 270;
+				else	                               // Actor is standing/turning
+					return (dir == 90) ? 90 : 270;
+			}
 		case 2:
-			if (is_walking)                                 // Actor is walking
-				return flipY ? 180 : 0;
-			else											// Actor is standing/turning
-				return (dir == 0) ? 0 : 180;
+			if (_vm->_features & GF_AFTER_V7) {
+				if (dir > 90 && dir < 270)
+					return 180;
+				else
+					return 0;
+			} else {
+				if (is_walking)	                       // Actor is walking
+					return flipY ? 180 : 0;
+				else	                               // Actor is standing/turning
+					return (dir == 0) ? 0 : 180;
+			}
 		case 3:
 			return 270;
 		case 4:
@@ -1249,7 +1277,7 @@ void Actor::startWalkAnim(int cmd, int angle) {
 	 * Note: walk scripts aren't required to make the game
 	 * work as usual
 	 */
-#if 0
+#if 1
 	if (walk_script != 0) {
 		int args[16];
 		args[0] = number;
@@ -1279,8 +1307,22 @@ void Actor::walkActor() {
 	int new_dir, box;
 	int16 foundPathX, foundPathY;
 
-	if (!moving)
+	if (_vm->_features & GF_AFTER_V7 && !(_vm->_features & GF_AFTER_V8)) {
+		// FIXME - this is kind of a hack right now but it fixes the
+		// walk scripts in The Dig.
+		if (moving & MF_FROZEN) {
+			if (moving & MF_TURN) {
+				new_dir = updateActorDirection(false);
+				if (facing != new_dir)
+					setDirection(new_dir);
+				else
+					moving = 0;
+			}
+			return;
+		}
+	} else if (moving == 0) {
 		return;
+	}
 
 	if (!(moving & MF_NEW_LEG)) {
 		if (moving & MF_IN_LEG && actorWalkStep())
