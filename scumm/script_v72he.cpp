@@ -850,14 +850,19 @@ void ScummEngine_v72he::o72_actorOps() {
 
 	switch (b) {
 	case 21:
-		// HE 80 (Pajama Sam onwards)
+		// HE 80+
 		k = getStackList(args, ARRAYSIZE(args));
 		debug(1,"o72_actorOps: case 21 (%d)", k);
 		break;
 	case 24:
-		// HE 80 (Pajama Sam onwards)
+		// HE 80+
 		k = pop();
 		debug(1,"o72_actorOps: case 24 (%d)", k);
+		break;
+	case 43:
+		// HE 80+
+		k = pop();
+		debug(1,"o72_actorOps: case 43 (%d)", k);
 		break;
 	case 64:
 		_actorClipOverride.bottom = pop();
