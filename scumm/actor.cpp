@@ -989,7 +989,7 @@ void Actor::drawActorCostume()
 		ar.clipping = forceClip;
 		if (ar.clipping == 100) {
 			ar.clipping = _vm->getMaskFromBox(walkbox);
-			if (ar.clipping > (byte)_vm->gdi._numZBuffer)
+			if (ar.clipping > _vm->gdi._numZBuffer)
 				ar.clipping = _vm->gdi._numZBuffer;
 		}
 

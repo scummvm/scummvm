@@ -833,7 +833,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 		// might fail. Still, doing this properly would have the advantage of catching
 		// invalid/damaged data files, and allow us to exit gracefully instead of segfaulting.
 		for (i = 1; i < numzbuf; i++) {
-			zplane_list[i] = zplnOffsChunkStart + READ_LE_UINT32(zplnOffsChunkStart + 4 + i*4) + 12;
+			zplane_list[i] = zplnOffsChunkStart + READ_LE_UINT32(zplnOffsChunkStart + 4 + i*4) + 16;
 		}
 
 		// A small hack to skip to the BSTR->WRAP->OFFS chunk
@@ -961,6 +961,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 					} else {
 						decompressMaskImg(_mask_ptr_dest, z_plane_ptr, h);
 					}
+
 				} else {
 					if (!(useOrDecompress && (flag & dbAllowMaskOr)))
 						for (int height = 0; height < h; height++)
@@ -1184,8 +1185,8 @@ void Gdi::clear8Col(byte *dst, int height)
 void Gdi::decompressMaskImg(byte *dst, byte *src, int height)
 {
 	byte b, c;
-	
-	while (1) {
+
+	while (height) {
 		b = *src++;
 
 		if (b & 0x80) {
@@ -1195,16 +1196,14 @@ void Gdi::decompressMaskImg(byte *dst, byte *src, int height)
 			do {
 				*dst = c;
 				dst += _numStrips;
-				if (!--height)
-					return;
-			} while (--b);
+				--height;
+			} while (--b && height);
 		} else {
 			do {
 				*dst = *src++;
 				dst += _numStrips;
-				if (!--height)
-					return;
-			} while (--b);
+				--height;
+			} while (--b && height);
 		}
 	}
 }
@@ -1213,7 +1212,7 @@ void Gdi::decompressMaskImgOr(byte *dst, byte *src, int height)
 {
 	byte b, c;
 
-	while (1) {
+	while (height) {
 		b = *src++;
 		
 		if (b & 0x80) {
@@ -1223,16 +1222,14 @@ void Gdi::decompressMaskImgOr(byte *dst, byte *src, int height)
 			do {
 				*dst |= c;
 				dst += _numStrips;
-				if (!--height)
-					return;
-			} while (--b);
+				--height;
+			} while (--b && height);
 		} else {
 			do {
 				*dst |= *src++;
 				dst += _numStrips;
-				if (!--height)
-					return;
-			} while (--b);
+				--height;
+			} while (--b && height);
 		}
 	}
 }
