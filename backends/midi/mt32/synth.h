@@ -147,7 +147,7 @@ private:
 
 	SynthProperties myProp;
 
-	bool loadPreset(const char *filename);
+	bool loadPreset(File *file);
 	void initReverb(Bit8u newRevMode, Bit8u newRevTime, Bit8u newRevLevel);
 	void doRender(Bit16s * stream, Bit32u len);
 	void playMsgOnPart(unsigned char part, unsigned char code, unsigned char note, unsigned char velocity);

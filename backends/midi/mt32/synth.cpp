@@ -30,17 +30,6 @@ namespace MT32Emu {
 
 const int MAX_SYSEX_SIZE = 512;
 
-// Maps MIDI channel numbers to MT-32 parts (not to be confused with "partials")
-// This is the default (FIXME: the mapping from 11->9 is undocumented, is this correct?):
-static const Bit8s InitChanTable[16] = {
-	-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 8, -1, -1, -1, -1, -1
-};
-// This alternative configuration can be selected by holding "Master Volume"
-// and pressing "PART button 1" on the real MT-32's frontpanel.
-//static const Bit8s InitChanTable[16] = {
-//	0, 1, 2, 3, 4, 5, 6, 7, -1, 8, -1, -1, -1, -1, -1, -1
-//};
-
 float iir_filter_normal(float input,float *hist1_ptr, float *coef_ptr, int revLevel) {
 	float *hist2_ptr;
 	float output,new_hist;
@@ -177,12 +166,7 @@ void Synth::closeFile(File *file) {
 	}
 }
 
-bool Synth::loadPreset(const char *filename) {
-	File *file = openFile(filename, File::OpenMode_read);
-	if (file == NULL) {
-		printDebug("*** Error: Failed to load preset %s", filename);
-		return false;
-	}
+bool Synth::loadPreset(File *file) {
 	bool inSys = false;
 	Bit8u sysexBuf[MAX_SYSEX_SIZE];
 	Bit16u syslen = 0;
@@ -203,7 +187,7 @@ bool Synth::loadPreset(const char *filename) {
 				inSys = false;
 				syslen = 0;
 			} else if (syslen == MAX_SYSEX_SIZE) {
-				printDebug("MAX_SYSEX_SIZE (%d) exceeded while processing preset %s, ignoring message", MAX_SYSEX_SIZE, filename);
+				printDebug("MAX_SYSEX_SIZE (%d) exceeded while processing preset, ignoring message", MAX_SYSEX_SIZE);
 				inSys = false;
 				syslen = 0;
 			}
@@ -212,7 +196,6 @@ bool Synth::loadPreset(const char *filename) {
 			inSys = true;
 		}
 	}
-	closeFile(file);
 	return rc;
 }
 
@@ -305,7 +288,6 @@ struct TempPCMStruct
 
 void Synth::initPCMList() {
 	TempPCMStruct *tps = (TempPCMStruct *)&controlROMData[0x3000];
-	printDebug("********************************");
 	for (int i = 0; i < 128; i++) {
 		int rAddr = tps[i].pos * 0x800;
 		int rLenExp = (tps[i].len & 0x70) >> 4;
@@ -314,7 +296,7 @@ void Synth::initPCMList() {
 		Bit8u rFlag = tps[i].len & 0x0F;
 		Bit16u rTuneOffset = (tps[i].pitchMSB << 8) | tps[i].pitchLSB;
 		//FIXME:KG: Pick a number, any number. The one below sounded best to me in listening tests, but needs to be confirmed.
-		double STANDARDFREQ = 440.0;
+		double STANDARDFREQ = 432.1;
 		float rTune = (float)(STANDARDFREQ * pow(2.0, (0x5000 - rTuneOffset) / 4096.0 - 9.0 / 12.0));
 		//printDebug("%f,%d,%d", pTune, tps[i].pitchCoarse, tps[i].pitchFine);
 		PCMList[i].addr = rAddr;
@@ -322,7 +304,6 @@ void Synth::initPCMList() {
 		PCMList[i].loop = rLoop;
 		PCMList[i].tune = rTune;
 	}
-	printDebug("********************************");
 }
 
 void Synth::initRhythmTimbre(int timbreNum, const Bit8u *mem) {
@@ -415,7 +396,7 @@ bool Synth::open(SynthProperties &useProp) {
 
 	printDebug("Initialising System");
 	//FIXME: Confirm that these are all correct
-	// The MT-32 manual claims that "Standard pitch" is 442.0.
+	// The MT-32 manual claims that "Standard pitch" is 442Hz.
 	// I assume they mean this is the MT-32 default pitch, and not concert pitch,
 	// since the latter has been internationally defined as 440Hz for decades.
 	// Regardless, I'm setting the default masterTune to 440Hz
@@ -425,6 +406,10 @@ bool Synth::open(SynthProperties &useProp) {
 	mt32ram.system.reverbTime = 3;
 	memcpy(mt32ram.system.reserveSettings, &controlROMData[0x57E5], 9);
 	for (Bit8u i = 0; i < 9; i++) {
+		// This is the default: {1, 2, 3, 4, 5, 6, 7, 8, 9}
+		// An alternative configuration can be selected by holding "Master Volume"
+		// and pressing "PART button 1" on the real MT-32's frontpanel.
+		// The channel assignment is then {0, 1, 2, 3, 4, 5, 6, 7, 9}
 		mt32ram.system.chanAssign[i] = i + 1;
 	}
 	mt32ram.system.masterVol = 100;
