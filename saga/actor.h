@@ -405,7 +405,8 @@ private:
 	void createDrawOrderList();
 	void handleSpeech(int msec);
 	void handleActions(int msec, bool setup);
-
+	
+	int _lastTickMsec;
 	SagaEngine *_vm;
 	RSCFILE_CONTEXT *_actorContext;
 	ActorOrderList _drawOrderList;

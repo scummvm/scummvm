@@ -77,7 +77,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	debug(9, "Actor::Actor()");
 
 	_centerActor = _protagonist = NULL;
-
+	_lastTickMsec = 0;
 	// Get actor resource file context
 	_actorContext = _vm->getFileContext(GAME_RESOURCEFILE, 0);
 	if (_actorContext == NULL) {
@@ -297,7 +297,7 @@ void Actor::handleSpeech(int msec) {
 			actor = getActor(_activeSpeech.actorIds[0]);
 			if (!(_activeSpeech.speechFlags & kSpeakNoAnimate)) {
 				actor->currentAction = kActionSpeak;
-				//a->actionCycle = rand() % 64; todo
+				actor->actionCycle = rand() % 64; 
 			}
 		}
 		_activeSpeech.playing = true;			
@@ -357,7 +357,8 @@ void Actor::handleActions(int msec, bool setup) {
 				if (actor->flags & kCycle) {
 					frameRange = getActorFrameRange( actor->actorId, kFrameStand);
 					if (frameRange->frameCount > 0) {
-						actor->actionCycle = (++actor->actionCycle) % frameRange->frameCount;
+						actor->actionCycle++;
+						actor->actionCycle = (actor->actionCycle) % frameRange->frameCount;
 					} else {
 						actor->actionCycle = 0;
 					}
@@ -397,6 +398,7 @@ void Actor::handleActions(int msec, bool setup) {
 				if (actor->actionCycle >= frameRange->frameCount) {
 					if (actor->actionCycle & 1) break;
 					frameRange = getActorFrameRange( actor->actorId, kFrameSpeak);
+
 					state = (uint16)rand() % (frameRange->frameCount + 1);
 
 					if (state == 0) {
@@ -546,9 +548,14 @@ int Actor::direct(int msec) {
 			}
 		}
 	}
-*/
-//process actions
-	handleActions(msec, false);
+*/	
+	_lastTickMsec += msec;
+
+	if (_lastTickMsec > ticksToMSec(6)) { // fixme
+		_lastTickMsec = 0;
+		//process actions
+		handleActions(msec, false);
+	}
 
 //process speech
 	handleSpeech(msec);

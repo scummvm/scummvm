@@ -37,6 +37,7 @@
 #include "saga/render.h"
 #include "saga/sndres.h"
 #include "saga/music.h"
+#include "saga/actor.h"
 
 #include "saga/events.h"
 
@@ -371,7 +372,7 @@ int Events::handleOneShot(EVENT *event) {
 		break;
 	case SCRIPT_EVENT:
 		debug(0, "Starting start script #%d", event->param);
-
+		
 		sthread = _vm->_script->SThreadCreate();
 		if (sthread == NULL) {
 			_vm->_console->DebugPrintf("Thread creation failed.\n");

@@ -141,7 +141,7 @@ int SndRes::load(RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, SOUNDBUFFER *snd_buf_
 	if (result != SUCCESS) {
 		return FAILURE;
 	}
-
+	
 	switch (_snd_info.res_type) {
 	case GAME_SOUND_PCM:
 		snd_buf_i->s_freq = _snd_info.freq;
@@ -188,7 +188,7 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf
 
 	snd_buf_i->s_freq = rate;
 	snd_buf_i->s_samplebits = 8;
-			snd_buf_i->s_stereo = 0;
+	snd_buf_i->s_stereo = 0;
 	snd_buf_i->s_signed = 0;
 	snd_buf_i->s_buf = data;
 	snd_buf_i->s_buf_len = len;
@@ -304,7 +304,7 @@ int SndRes::getVoiceLength(uint32 voice_rn) {
 	} else if (res_type == GAME_SOUND_PCM) {
 		ms_f = (double)length / (_snd_info.sample_size / CHAR_BIT) / (_snd_info.freq) * 1000.0;
 		ms_i = (int)ms_f;
-	} else if (res_type == GAME_SOUND_VOC) {
+	} else if (res_type == GAME_SOUND_VOC) {		
 		// Rough hack, fix this to be accurate
 		ms_f = (double)length / 14705 * 1000.0;
 		ms_i = (int)ms_f;
