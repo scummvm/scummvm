@@ -1027,6 +1027,11 @@ void ScummEngine_v6::o6_ifClassOfIs() {
 	num = getStackList(args, ARRAYSIZE(args));
 	obj = pop();
 
+	if (_heversion >= 80 && num == 0) {
+		push(_classData[obj]);
+		return;
+	}
+
 	while (--num >= 0) {
 		cls = args[num];
 		b = getClass(obj, cls);
