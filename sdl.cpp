@@ -17,8 +17,24 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.7.2.1  2001/10/12 07:25:32  yazoo
- * Patched for indy4
+ * Revision 1.7.2.2  2001/11/12 16:20:52  yazoo
+ * The dig and Full Throttle support
+ *
+ * Revision 1.12  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
+ * Revision 1.11  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
+ * Revision 1.10  2001/10/17 11:30:19  strigeus
+ * *** empty log message ***
+ *
+ * Revision 1.9  2001/10/16 20:31:27  strigeus
+ * misc fixes
+ *
+ * Revision 1.8  2001/10/16 10:01:48  strigeus
+ * preliminary DOTT support
  *
  * Revision 1.7  2001/10/11 11:49:51  strigeus
  * Determine caption from file name.
@@ -52,6 +68,7 @@
 #define SCALEUP_2x2
 
 Scumm scumm;
+ScummDebugger debugger;
 
 static SDL_Surface *screen;
 
@@ -91,12 +108,16 @@ void waitForTimer(Scumm *s) {
 						s->_saveLoadFlag = 1;
 					else if (event.key.keysym.mod&KMOD_CTRL)
 						s->_saveLoadFlag = 2;
+					s->_saveLoadCompatible = false;
 				}
 				if (event.key.keysym.sym=='z' && event.key.keysym.mod&KMOD_CTRL) {
 					exit(1);
 				}
 				if (event.key.keysym.sym=='f' && event.key.keysym.mod&KMOD_CTRL) {
 					s->_fastMode ^= 1;
+				}
+				if (event.key.keysym.sym=='d' && event.key.keysym.mod&KMOD_CTRL) {
+					debugger.attach(s);
 				}
 				
 				break;
@@ -222,7 +243,6 @@ void updateScreen(Scumm *s) {
 	if(s->_palDirtyMax != -1) {
 		updatePalette(s);
 	}
-
 	if (fullRedraw) {
 		SDL_UpdateRect(screen, 0,0,0,0);
 #if defined(SHOW_AREA)
@@ -315,7 +335,7 @@ void initGraphics(Scumm *s) {
 	}
 
 	/* Clean up on exit */
-  	atexit(SDL_Quit);
+ 	atexit(SDL_Quit);
 
 	char buf[512], *gameName;
 	
@@ -331,23 +351,19 @@ void initGraphics(Scumm *s) {
 	screen = SDL_SetVideoMode(640, 400, 8, SDL_SWSURFACE);
 #endif
 
-	printf("%d %d, %d %d, %d %d %d, %d %d %d %d %d %d\n", 
+	printf("%d %d, %d %d, %d %d %d, %d %d %d %d %d\n", 
 		sizeof(int8), sizeof(uint8),
 		sizeof(int16), sizeof(uint16),
 		sizeof(int32), sizeof(uint32),
 		sizeof(void*),
 		sizeof(Box), sizeof(MouseCursor),sizeof(CodeHeader),
 		sizeof(ImageHeader),
-		&((CodeHeader*)0)->unk4,
 		sizeof(Scumm)
 	);
-
-
 }
 
 #undef main
 int main(int argc, char* argv[]) {
-	scumm._exe_name = "atlantis";
 	scumm._videoMode = 0x13;
 	scumm.scummMain(argc, argv);
 	return 0;

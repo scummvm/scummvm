@@ -17,8 +17,28 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.3.2.1  2001/10/12 07:17:56  yazoo
- * Patched for indy4
+ * Revision 1.3.2.2  2001/11/12 16:17:20  yazoo
+ * The dig and Full Throttle support
+ *
+ * Revision 1.9  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
+ * Revision 1.8  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
+ * Revision 1.7  2001/10/17 10:07:39  strigeus
+ * fixed verbs not saved in non dott games,
+ * implemented a screen effect
+ *
+ * Revision 1.6  2001/10/17 07:12:37  strigeus
+ * fixed nasty signed/unsigned bug
+ *
+ * Revision 1.5  2001/10/16 20:31:27  strigeus
+ * misc fixes
+ *
+ * Revision 1.4  2001/10/16 10:01:47  strigeus
+ * preliminary DOTT support
  *
  * Revision 1.3  2001/10/10 12:52:21  strigeus
  * fixed bug in GDI_UnkDecode7()
@@ -45,7 +65,7 @@ void Scumm::getGraphicsPerformance() {
 		initScreens(0, 0, 320, 200);
 	}
 
-	vm.vars[VAR_PERFORMANCE_1] = _scummTimer;
+	_vars[VAR_PERFORMANCE_1] = _scummTimer;
 	_scummTimer = 0;
 
 	for (i=10; i!=0; i--) {
@@ -53,9 +73,12 @@ void Scumm::getGraphicsPerformance() {
 		unkVirtScreen2();
 	}
 
-	vm.vars[VAR_PERFORMANCE_2] = _scummTimer;
+	_vars[VAR_PERFORMANCE_2] = _scummTimer;
 	
-	initScreens(0, 16, 320, 144);
+	if(_majorScummVersion>=7)
+		initScreens(0, 0, 320, 200);
+	else
+		initScreens(0, 16, 320, 144);
 }
 
 void Scumm::initScreens(int a, int b, int w, int h) {
@@ -69,9 +92,19 @@ void Scumm::initScreens(int a, int b, int w, int h) {
 	if (!getResourceAddress(10,4)) {
 		initVirtScreen(3, 80, 13, false, false);
 	}
-	initVirtScreen(0, b, h-b, true, true);
-	initVirtScreen(1, 0, b, false, false);
-	initVirtScreen(2, h, 200-h, false, false);
+
+	if(_majorScummVersion>=7) // I think there is a diff, but it's still unchecked
+	{
+		initVirtScreen(0, b, h-b, true, true);
+		initVirtScreen(1, 0, b, false, false);
+		initVirtScreen(2, h, 200-h, false, false);
+	}
+	else
+	{
+		initVirtScreen(0, b, h-b, true, true);
+		initVirtScreen(1, 0, b, false, false);
+		initVirtScreen(2, h, 200-h, false, false);
+	}
 
 	_screenB = b;
 	_screenH = h;
@@ -85,26 +118,23 @@ void Scumm::initVirtScreen(int slot, int top, int height, bool twobufs, bool fou
 	assert(height>=0);
 	assert(slot>=0 && slot<4);
 
+	vs->number = slot;
 	vs->unk1 = 0;
 	vs->width = 320;
 	vs->topline = top;
 	vs->height = height;
 	vs->alloctwobuffers = twobufs;
-	vs->fourlinesextra = fourextra;
+	vs->scrollable = fourextra;
 	vs->xstart = 0;
 	size = vs->width * vs->height;
 	vs->size = size;
-	if (vs->fourlinesextra)
+	if (vs->scrollable)
 		size += 320*4;
 
-	memset(
-		createResource(10, slot+1, size),
-		0,size);
+	memset(createResource(10, slot+1, size),0,size);
 
 	if (twobufs) {
-		memset(
-			createResource(10, slot+5, size),
-			0x23,size);
+		memset(createResource(10, slot+5, size),0x23,size);
 	}
 
 	if (slot != 3) {
@@ -122,122 +152,85 @@ void Scumm::setDirtyRange(int slot, int top, int bottom) {
 }
 
 void Scumm::unkVirtScreen2() {
-	dseg_3DB6 = 1;
+	int i;
+	VirtScreen *vs;
 
 	updateDirtyScreen(2);
 
-	if (_currentRoom != dseg_2456) {
-		dseg_2456 = (byte)_currentRoom;
-		dseg_4E8A = 1;
-	}
-
 	if (camera._lastPos == camera._curPos) {
 		updateDirtyScreen(0);
-		dseg_4E8A = 1;
-		dseg_4F8C = _screenStartStrip;
 	} else {
-		gdi.readPtr = getResourceAddress(10, 1);
-		gdi.readOffs = _screenStartStrip;
-		gdi.drawY = virtscr[0].topline;
-		gdi.drawHeight = virtscr[0].height;
-		
-		blitToScreen(this, gdi.readPtr + gdi.readOffs*8, 0, gdi.drawY, 320, gdi.drawHeight);
+		vs = &virtscr[0];
 
-		for (gdi.draw8xPos = 0; gdi.draw8xPos<40; gdi.draw8xPos++) {
-			virtscr[0].tdirty[gdi.draw8xPos] = (byte)gdi.drawHeight;
-			virtscr[0].bdirty[gdi.draw8xPos] = 0;
+		blitToScreen(this, getResourceAddress(10, 1) + _screenStartStrip*8,
+			0, vs->topline, 320, vs->height);
+
+		for (i = 0; i<40; i++) {
+			vs->tdirty[i] = (byte)vs->height;
+			vs->bdirty[i] = 0;
 		}
 	}
 }
 
 void Scumm::updateDirtyScreen(int slot) {
-	VirtScreen *vs = &virtscr[slot];
+	gdi.updateDirtyScreen(&virtscr[slot]);
+}
+
+void Gdi::updateDirtyScreen(VirtScreen *vs) {
 	int i;
+	int start,w,top,bottom;
 
 	if (vs->height==0)
 		return;
 
-	gdi.virtScreen = slot;
-	gdi.drawY = vs->topline;
-	gdi.drawHeight = vs->height;
-	gdi.readOffs = 0;
-	if (vs->fourlinesextra)
-		gdi.readOffs = _screenStartStrip;
+	_readOffs = 0;
+	if (vs->scrollable)
+		_readOffs = vs->xstart;
 
-	if (_videoMode==0xE) {
-		for (i=0; i<40; i++) {
-			gdi.draw8xPos = i;
-			gdi.drawBottom = vs->bdirty[i];
-			if (gdi.drawBottom) {
-				gdi.drawTop = vs->tdirty[i];
-				drawStripToScreen();
-				vs->tdirty[i] = (byte)gdi.drawHeight;
-				vs->bdirty[i] = 0;
-			}
-		}
-	} else {
-		gdi.drawWidth = 8;
-		gdi.draw8xPos = 0;
+	w = 8;
+	start = 0;
 
-		for (i=0; i<40; i++) {
-			gdi.drawBottom = vs->bdirty[i];
-			if (gdi.drawBottom) {
-				gdi.drawTop = vs->tdirty[i];
-				vs->tdirty[i] = (byte)gdi.drawHeight;
-				vs->bdirty[i] = 0;
-				if (i!=39) {
-					if (vs->bdirty[i+1] == gdi.drawBottom &&
-							vs->tdirty[i+1] == gdi.drawTop) {
-						gdi.drawWidth += 8;
-						continue;
-					}
-					drawStripToScreen();
-					gdi.drawWidth = 8;
-				} else {
-					drawStripToScreen();
-				}
+	for (i=0; i<40; i++) {
+		bottom = vs->bdirty[i];
+		if (bottom) {
+			top = vs->tdirty[i];
+			vs->tdirty[i] = (byte)vs->height;
+			vs->bdirty[i] = 0;
+			if (i!=39 && vs->bdirty[i+1] == (byte)bottom &&	vs->tdirty[i+1] == (byte)top) {
+				w += 8;
+				continue;
 			}
-			gdi.draw8xPos = i+1;
+			drawStripToScreen(vs, start, w, top, bottom);
+			w = 8;
 		}
+		start = i+1;
 	}
 }
 
-void Scumm::drawStripToScreen() {
-	if (gdi.drawBottom <= gdi.drawTop)
+void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b) {
+	byte *ptr;
+
+	if (b <= t)
 		return;
 
-	if (_videoMode==0xE) {
-		gdi.drawTop &= 0xFE;
-		if (gdi.drawBottom&1)
-			gdi.drawBottom++;
-	}
+	if (t > vs->height)
+		t = 0;
 
-	if (gdi.drawBottom <= gdi.drawTop) {
-		gdi.drawBottom = gdi.drawTop + 4;
-	}
+	if (b > vs->height)
+		b = vs->height;
 
-	if (gdi.drawHeight < gdi.drawTop) {
-		gdi.drawTop = 0;
-	}
-
-	if (gdi.drawHeight < gdi.drawBottom) {
-		gdi.drawBottom = gdi.drawHeight;
-	}
-
-	gdi.readPtr = getResourceAddress(10, gdi.virtScreen+1) + (gdi.drawTop*40+gdi.readOffs+gdi.draw8xPos)*8;
-
-	blitToScreen(this, gdi.readPtr, gdi.draw8xPos*8, gdi.drawY+gdi.drawTop, gdi.drawWidth, gdi.drawBottom-gdi.drawTop);
+	ptr = _vm->getResourceAddress(10, vs->number+1) + (t*40+x)*8 + _readOffs;
+	blitToScreen(_vm, ptr, x*8, vs->topline+t, w, b-t);
 }
 
 void blit(byte *dst, byte *src, int w, int h) {
-	while (h--)
-	{
+	assert(h>0);
+	do {
 		memcpy(dst, src, w);
 		dst += 320;
 		src += 320;
-	};
+	} while (--h);
 }
-
 
 /* TODO: writes are being done to this data */
 MouseCursor mouse_cursors[4] = {
@@ -282,21 +275,20 @@ void Scumm::setCursor(int cursor) {
 	uint32 data;
 
 	debug(1,"Loading cursor %d", cursor);
-	gdi.hotspot_x = cur->hotspot_x;
-	gdi.hotspot_y = cur->hotspot_y;
-	gdi.currentCursor = cursor;
+	gdi._hotspot_x = cur->hotspot_x;
+	gdi._hotspot_y = cur->hotspot_y;
+	gdi._currentCursor = cursor;
 
 	for (i=0; i<4; i++)
-		gdi.mouseColors[i] = cur->colors[i];
+		gdi._mouseColors[i] = cur->colors[i];
 	
-	mask = gdi.mouseMask;
+	mask = gdi._mouseMask;
 	shramount = 0;
 
 	for(j=0; j<8; j++) {
 		src = cur->data;	
 		i=16;
 		do {
-/* TODO: endian trouble */
 			data = ((src[0]<<16) | (src[1]<<8))>>shramount;
 			src += 2;
 			mask[0] = (byte)(data>>24);
@@ -318,15 +310,15 @@ void Scumm::setCameraAt(int dest) {
 	}
 	cd->_destPos = dest;
 
-	t = vm.vars[VAR_CAMERA_MIN];
+	t = _vars[VAR_CAMERA_MIN];
 	if (cd->_curPos < t) cd->_curPos = t;
 
-	t = vm.vars[VAR_CAMERA_MAX];
+	t = _vars[VAR_CAMERA_MAX];
 	if (cd->_curPos > t) cd->_curPos = t;
 
-	if (vm.vars[VAR_SCROLL_SCRIPT]) {
-		vm.vars[VAR_CAMERA_CUR_POS] = cd->_curPos;
-		runScript(vm.vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
+	if (_vars[VAR_SCROLL_SCRIPT]) {
+		_vars[VAR_CAMERA_CUR_POS] = cd->_curPos;
+		runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
 	}
 
 	if (cd->_curPos != cd->_lastPos && charset._hasMask)
@@ -367,23 +359,22 @@ void Scumm::initBGBuffers() {
 
 	room = getResourceAddress(1, _roomResource);
 
-	ptr = findResource(MKID('RMIH'), findResource(MKID('RMIM'), room));
+	ptr = findResource(MKID('RMIH'), findResource(MKID('RMIM'), room, 0), 0);
 
-	_numZBuffer = READ_LE_UINT16(ptr+8) + 1;
+	gdi._numZBuffer = READ_LE_UINT16(ptr+8) + 1;
 
-	assert(_numZBuffer>=1 && _numZBuffer<=4);
+	assert(gdi._numZBuffer>=1 && gdi._numZBuffer<=4);
 	
 	itemsize = (_scrHeight + 4) * 40;
-	size = itemsize * _numZBuffer;
+	size = itemsize * gdi._numZBuffer;
 
 	memset(createResource(10, 9, size), 0, size);
 	
 	for (i=0; i<4; i++)
-		_imgBufOffs[i] = i*itemsize;
+		gdi._imgBufOffs[i] = i*itemsize;
 }
 
-void Scumm::setPaletteFromRes() {
-	byte *ptr = getResourceAddress(1, _roomResource) + _CLUT_offs;
+void Scumm::setPaletteFromPtr(byte *ptr) {
 	uint32 size = READ_BE_UINT32_UNALIGNED(ptr+4);
 	int i, r, g, b;
 	byte *dest, *epal;
@@ -423,6 +414,12 @@ void Scumm::setPaletteFromRes() {
 	setDirtyColors(0, numcolor-1);
 }
 
+void Scumm::setPaletteFromRes() {
+	byte *ptr;
+	ptr = getResourceAddress(1, _roomResource) + _CLUT_offs;
+	setPaletteFromPtr(ptr);
+}
+
 
 void Scumm::setDirtyColors(int min, int max) {
 	if (_palDirtyMin > min)
@@ -433,34 +430,43 @@ void Scumm::setDirtyColors(int min, int max) {
 
 void Scumm::initCycl(byte *ptr) {
 	int i, j;
+	ColorCycle *cycl;
 
-	for (i=1; i<=16; i++)
-		_colorCycleDelays[i] = 0;
+	for (i=0,cycl=_colorCycle; i<16; i++,cycl++)
+		cycl->delay = 0;
 
 	while ((j=*ptr++) != 0) {
-		assert(j>=1 && j<=16);
+		if (j<1 || j>16) {
+			error("Invalid color cycle index %d", j);
+		}
+		cycl = &_colorCycle[j-1];
+
 		ptr += 2;
-		_colorCycleCounter[j] = 0;
-		_colorCycleDelays[j] = 16384 / READ_BE_UINT16_UNALIGNED(ptr);
+		cycl->counter = 0;
+		cycl->delay = 16384 / READ_BE_UINT16_UNALIGNED(ptr);
 		ptr += 2;
-		_colorCycleFlags[j] = READ_BE_UINT16_UNALIGNED(ptr);
+		cycl->flags = READ_BE_UINT16_UNALIGNED(ptr);
 		ptr += 2;
-		_colorCycleStart[j] = *ptr++;
-		_colorCycleEnd[j] = *ptr++;
+		cycl->start = *ptr++;
+		cycl->end = *ptr++;
 	}
 }
 
 void Scumm::stopCycle(int i) {
+	ColorCycle *cycl;
+
 	checkRange(16, 0, i, "Stop Cycle %d Out Of Range");
 	if (i!=0) {
-		_colorCycleDelays[i] = 0;
+		_colorCycle[i-1].delay = 0;
 		return;
 	}
-	for (i=1; i<=16; i++)
-		_colorCycleDelays[i] = 0;
+
+	for (i=0,cycl=_colorCycle; i<16; i++,cycl++)
+		cycl->delay = 0;
 }
 
 void Scumm::cyclePalette() {
+	ColorCycle *cycl;
 	int valueToAdd;
 	int i, num;
 	byte *start, *end;
@@ -469,27 +475,25 @@ void Scumm::cyclePalette() {
 	if(_videoMode != 0x13)
 		return;
 
-	valueToAdd = vm.vars[VAR_TIMER];
-	if (valueToAdd < vm.vars[VAR_TIMER_NEXT])
-		valueToAdd = vm.vars[VAR_TIMER_NEXT];
+	valueToAdd = _vars[VAR_TIMER];
+	if (valueToAdd < _vars[VAR_TIMER_NEXT])
+		valueToAdd = _vars[VAR_TIMER_NEXT];
 
-	for (i=1; i<=16; i++) {
-		if (_colorCycleDelays[i] &&
-			(_colorCycleCounter[i]+=valueToAdd) >= 
-				_colorCycleDelays[i]) {
+	for (i=0,cycl=_colorCycle; i<16; i++,cycl++) {
+		if (cycl->delay &&
+			(cycl->counter+=valueToAdd) >= cycl->delay) {
 			do {
-				_colorCycleCounter[i] -= _colorCycleDelays[i];
-			} while (_colorCycleDelays[i] <= _colorCycleCounter[i]);
+				cycl->counter -= cycl->delay;
+			} while (cycl->delay <= cycl->counter);
 
-			setDirtyColors(_colorCycleStart[i], _colorCycleEnd[i]);
-			moveMemInPalRes(_colorCycleStart[i], _colorCycleEnd[i],
-				_colorCycleFlags[i]&2);
-			start = &_currentPalette[_colorCycleStart[i]*3];
-			end = &_currentPalette[_colorCycleEnd[i]*3];
+			setDirtyColors(cycl->start, cycl->end);
+			moveMemInPalRes(cycl->start, cycl->end, cycl->flags&2);
+			start = &_currentPalette[cycl->start*3];
+			end = &_currentPalette[cycl->end*3];
 
-			num = _colorCycleEnd[i] - _colorCycleStart[i];
+			num = cycl->end - cycl->start;
 
-			if (!(_colorCycleFlags[i]&2)) {
+			if (!(cycl->flags&2)) {
 				memmove(tmp, end, 3);
 				memmove(start+3, start, num*3);
 				memmove(start, tmp, 3);
@@ -542,30 +546,26 @@ void Scumm::unkVirtScreen4(int a) {
 
 	setDirtyRange(0, 0, 0);
 	camera._lastPos = camera._curPos;
-	dseg_3DB6 = 2;
-	dseg_3DB6 = 1;
-	if (dseg_4EA0 == 0)
+	if (!_screenEffectFlag)
 		return;
-	dseg_4EA0 = 0;
+	_screenEffectFlag = false;
 	
 	if (a==0)
 		return;
 
 	vs = &virtscr[0];
-	gdi.bg_ptr = getResourceAddress(0xA, 1) + vs->xstart;
-
-	memset(gdi.bg_ptr, 0, vs->size);
+	gdi._backbuff_ptr = getResourceAddress(0xA, 1) + vs->xstart;
+	memset(gdi._backbuff_ptr, 0, vs->size);
 
 	switch(a) {
 	case 1: case 2: case 3:
-		unkVirtScreen5(a-1);
+		unkScreenEffect7(a-1);
 		break;
 	case 128:
 		unkScreenEffect6();
 		break;
 	case 129:
 		setDirtyRange(0, 0, vs->height);
-		dseg_3DB6 = 2;
 		updateDirtyScreen(0);
 		/* XXX: EGA_proc4(0); */
 		break;
@@ -575,6 +575,8 @@ void Scumm::unkVirtScreen4(int a) {
 	case 135:
 		unkScreenEffect5(1);
 		break;
+	default:
+		error("unkVirtScreen4: default case %d", a);
 	}
 }
 
@@ -603,7 +605,6 @@ void Scumm::redrawBGAreas() {
 		val = 1;
 		redrawBGStrip(0, 1);
 	} else if (_fullRedraw!=0 || cd->_curPos != cd->_lastPos) {
-		dseg_719E = 0;
 		_BgNeedsRedraw = 0;
 		redrawBGStrip(0, 40);
 	}
@@ -619,176 +620,186 @@ const uint32 zplane_tags[] = {
 	MKID('ZP03')
 };
 
-
-void Scumm::drawBmp(byte *ptr, int a, int b, int c, const char *str, int objnr) {
-	byte *smap_ptr;
+void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr, int numstrip, bool flag) {
+	byte *smap_ptr,*where_draw_ptr;
 	int i;
 	byte *zplane_list[4];
-	int t;
-	VirtScreen *vs;
+	int bottom;
 	byte twobufs;
-	int x;
-	byte *where_draw_ptr;
+	int numzbuf;
+	int sx;
+	
+	CHECK_HEAP
 
-	checkHeap();
+	smap_ptr = findResource(MKID('SMAP'), ptr, 0);
 
-	smap_ptr = findResource(MKID('SMAP'), ptr);
+	numzbuf = _disable_zbuffer ? 0 : _numZBuffer;
 
-	if (objnr==209) {
-		warning("tst");
+	for(i=1; i<numzbuf; i++) {
+		zplane_list[i] = findResource(zplane_tags[i], ptr, 0);
 	}
 
-	for(i=1; i<_numZBuffer; i++) {
-		zplane_list[i] = findResource(zplane_tags[i], ptr);
-	}
-
-	t = gdi.numLinesToProcess + _drawBmpY;
-
-	vs = &virtscr[gdi.virtScreen];
-	if (t > vs->height) {
-		error("%s %d strip drawn to %d below window bottom %d",
-			str, objnr, t, vs->height);
+	bottom = y + h;
+	if (bottom > vs->height) {
+		error("Gdi::drawBitmap, strip drawn to %d below window bottom %d", bottom, vs->height);
 	}
 
 	twobufs = vs->alloctwobuffers;
 
-	dseg_4174 = vs->size;
+	_vertStripNextInc = h * 320 - 1;
 
-	if (vs->fourlinesextra)
-		dseg_4174 += 5*256;
-	
-	gdi.vertStripNextInc = gdi.numLinesToProcess * 320 - 1;
-	
+	_numLinesToProcess = h;
+
 	do {
-		gdi.smap_ptr = smap_ptr + READ_LE_UINT32(smap_ptr + a*4 + 8);
+		_smap_ptr = smap_ptr + READ_LE_UINT32(smap_ptr + stripnr*4 + 8);
 
-		x = _drawBmpX;
-		if (vs->fourlinesextra)
-			x -= _screenStartStrip;
+		CHECK_HEAP
 
-		checkHeap();
-
-		if (x >= 40) 
+		sx = x;
+		if (vs->scrollable)
+			sx -= vs->xstart>>3;
+	
+		if ((uint)sx >= 40) 
 			return;
 
-		if (_drawBmpY < vs->tdirty[x])
-			vs->tdirty[x]=_drawBmpY;
+		if (y < vs->tdirty[sx])
+			vs->tdirty[sx]=y;
 
-		if (t > vs->bdirty[x])
-			vs->bdirty[x]=t;
+		if (bottom > vs->bdirty[sx])
+			vs->bdirty[sx] = bottom;
 		
-		gdi.bg_ptr = getResourceAddress(0xA, gdi.virtScreen+1) + (_drawBmpY*40+_drawBmpX)*8;
-		gdi.where_to_draw_ptr = getResourceAddress(0xA, gdi.virtScreen+5) + (_drawBmpY*40+_drawBmpX)*8;
+		_backbuff_ptr = _vm->getResourceAddress(0xA, vs->number+1) + (y*40+x)*8;
+		_bgbak_ptr = _vm->getResourceAddress(0xA, vs->number+5) + (y*40+x)*8;
 		if (!twobufs) {
-			gdi.where_to_draw_ptr = gdi.bg_ptr;
+			_bgbak_ptr = _backbuff_ptr;
 		}
-		gdi.mask_ptr = getResourceAddress(0xA, 9) + (_drawBmpY*40+_drawBmpX);
+		_mask_ptr = _vm->getResourceAddress(0xA, 9) + (y*40+x);
 
-		where_draw_ptr = gdi.where_to_draw_ptr;
+		where_draw_ptr = _bgbak_ptr;
 		decompressBitmap();
 
-		checkHeap();
+		CHECK_HEAP
 
 		if (twobufs) {
-			gdi.where_to_draw_ptr = where_draw_ptr;
-			if (vm.vars[VAR_DRAWFLAGS]&2) {
-				if (hasCharsetMask(x<<3, _drawBmpY, (x+1)<<3, t))
+			_bgbak_ptr = where_draw_ptr;
+			
+			if (_vm->hasCharsetMask(sx<<3, y, (sx+1)<<3, bottom)) {
+				if (_vm->_vars[VAR_V5_DRAWFLAGS]&2)
 					draw8ColWithMasking();
-				else {
-					blit(gdi.bg_ptr, gdi.where_to_draw_ptr, 8, gdi.numLinesToProcess);
-				}
-			} else {
-				if (hasCharsetMask(x<<3, _drawBmpY, (x+1)<<3, t))
+				else
 					clear8ColWithMasking();
+			} else {
+				if (_vm->_vars[VAR_V5_DRAWFLAGS]&2)
+					blit(_backbuff_ptr, _bgbak_ptr, 8, h);
 				else
 					clear8Col();
 			}
 		}
-		checkHeap();
+		CHECK_HEAP
 
-		for (i=1; i<_numZBuffer; i++) {
+		for (i=1; i<numzbuf; i++) {
 			if (!zplane_list[i])
 				continue;
-			gdi.z_plane_ptr = zplane_list[i] + READ_LE_UINT16(zplane_list[i] + a*2 + 8);
-			gdi.mask_ptr_dest = getResourceAddress(0xA, 9) + _drawBmpY*40 + _drawBmpX + _imgBufOffs[i];
-			if (dseg_4E3B!=0 && c!=0)
+			_z_plane_ptr = zplane_list[i] + READ_LE_UINT16(zplane_list[i] + stripnr*2 + 8);
+			_mask_ptr_dest = _vm->getResourceAddress(0xA, 9) + y*40 + x + _imgBufOffs[i];
+			if (dseg_4E3B!=0 && flag)
 				decompressMaskImgOr();
 			else
 				decompressMaskImg();
 		}
-		checkHeap();
-		_drawBmpX++;
-		a++;
-	} while (--b);
+		CHECK_HEAP
+		x++;
+		stripnr++;
+	} while (--numstrip);
 }
 
 
-void Scumm::decompressBitmap() {
+void Gdi::decompressBitmap() {
 	const byte decompress_table[] = {
 		0x0, 0x1, 0x3, 0x7, 0xF, 0x1F, 0x3F, 0x7F, 0xFF, 0x0,
 	};
 
 	dseg_4E3B = 0;
 
-	byte code = *gdi.smap_ptr++;
+	byte code = *_smap_ptr++;
+
+	assert(_numLinesToProcess);
 
 	switch(code) {
 	case 1:
-		GDI_UnkDecode7();
+		unkDecode7();
 		break;
 	case 14: case 15: case 16: case 17: case 18:
-		gdi.decomp_shr = code - 10;
-		gdi.decomp_mask = decompress_table[code - 10];
-		GDI_UnkDecode6();
+		_decomp_shr = code - 10;
+		_decomp_mask = decompress_table[code - 10];
+		unkDecode6();
 		break;
 
 	case 24: case 25: case 26: case 27: case 28:
-		gdi.decomp_shr = code - 20;
-		gdi.decomp_mask = decompress_table[code - 20];
-		GDI_UnkDecode5();
+		_decomp_shr = code - 20;
+		_decomp_mask = decompress_table[code - 20];
+		unkDecode5();
 		break;
 	
 	case 34: case 35: case 36: case 37: case 38:
 		dseg_4E3B = 1;
-		gdi.decomp_shr = code - 30;
-		gdi.decomp_mask = decompress_table[code - 30];
-		GDI_UnkDecode4();
+		_decomp_shr = code - 30;
+		_decomp_mask = decompress_table[code - 30 ];
+		unkDecode4();
 		break;
 
 	case 44: case 45: case 46: case 47: case 48:
 		dseg_4E3B = 1;
-		gdi.decomp_shr = code - 40;
-		gdi.decomp_mask = decompress_table[code - 40];
-		GDI_UnkDecode2();
+		_decomp_shr = code - 40;
+		_decomp_mask = decompress_table[code - 40];
+		unkDecode2();
 		break;
 
 	case 64: case 65: case 66: case 67: case 68:
-		gdi.decomp_shr = code - 60;
-		gdi.decomp_mask = decompress_table[code - 60];
-		GDI_UnkDecode1();
+		_decomp_shr = code - 60;
+		_decomp_mask = decompress_table[code - 60];
+		unkDecode1();
 		break;
 
 	case 84: case 85: case 86: case 87: case 88:
 		dseg_4E3B = 1;
-		gdi.decomp_shr = code - 80;
-		gdi.decomp_mask = decompress_table[code - 80];
-		GDI_UnkDecode3();
+		_decomp_shr = code - 80;
+		_decomp_mask = decompress_table[code - 80];
+		unkDecode3();
 		break;
+
+	/* New since version 6 */
+	case 104: case 105: case 106: case 107: case 108:
+		_decomp_shr = code - 100;
+		_decomp_mask = decompress_table[code - 100];
+		unkDecode1();
+		break;
+	
+	/* New since version 6 */
+	case 124: case 125: case 126: case 127: case 128:
+		dseg_4E3B = 1;
+		_decomp_shr = code - 120;
+		_decomp_mask = decompress_table[code - 120];
+		unkDecode3();
+		break;
+
+	default:
+		error("Gdi::decompressBitmap: default case %d", code);
 	}
 }
 
 int Scumm::hasCharsetMask(int x, int y, int x2, int y2) {
-	if (!charset._hasMask || y > charset._mask_bottom || x > charset._mask_right || 
-		y2 < charset._mask_top || x2 < charset._mask_left )	
+	if (!charset._hasMask || y > string[0].mask_bottom || x > string[0].mask_right || 
+		y2 < string[0].mask_top || x2 < string[0].mask_left )	
 		return 0;
 	return 1;
 }
 
-void Scumm::draw8ColWithMasking() {
-	int height = gdi.numLinesToProcess;
-	byte *mask = gdi.mask_ptr;
-	byte *dst = gdi.bg_ptr;
-	byte *src = gdi.where_to_draw_ptr;
+void Gdi::draw8ColWithMasking() {
+	int height = _numLinesToProcess;
+	byte *mask = _mask_ptr;
+	byte *dst = _backbuff_ptr;
+	byte *src = _bgbak_ptr;
 	byte maskbits;
 
 	do {
@@ -813,10 +824,10 @@ void Scumm::draw8ColWithMasking() {
 	} while (--height);
 }
 
-void Scumm::clear8ColWithMasking() {
-	int height = gdi.numLinesToProcess;
-	byte *mask = gdi.mask_ptr;
-	byte *dst = gdi.bg_ptr;
+void Gdi::clear8ColWithMasking() {
+	int height = _numLinesToProcess;
+	byte *mask = _mask_ptr;
+	byte *dst = _backbuff_ptr;
 	byte maskbits;
 
 	do {
@@ -838,19 +849,19 @@ void Scumm::clear8ColWithMasking() {
 	} while (--height);
 }
 
-void Scumm::clear8Col() {
-	int height = gdi.numLinesToProcess;
-	byte *dst = gdi.bg_ptr;
+void Gdi::clear8Col() {
+	int height = _numLinesToProcess;
+	byte *dst = _backbuff_ptr;
 	do {
 		((uint32*)dst)[1] = ((uint32*)dst)[0] = 0;
 		dst += 320;
 	} while (--height);
 }
 
-void Scumm::decompressMaskImg() {
-	byte *src = gdi.z_plane_ptr;
-	byte *dst = gdi.mask_ptr_dest;
-	int height = gdi.numLinesToProcess;
+void Gdi::decompressMaskImg() {
+	byte *src = _z_plane_ptr;
+	byte *dst = _mask_ptr_dest;
+	int height = _numLinesToProcess;
 	byte b, c;
 
 	while(1) {
@@ -877,10 +888,10 @@ void Scumm::decompressMaskImg() {
 	}
 }
 
-void Scumm::decompressMaskImgOr() {
-	byte *src = gdi.z_plane_ptr;
-	byte *dst = gdi.mask_ptr_dest;
-	int height = gdi.numLinesToProcess;
+void Gdi::decompressMaskImgOr() {
+	byte *src = _z_plane_ptr;
+	byte *dst = _mask_ptr_dest;
+	int height = _numLinesToProcess;
 	byte b, c;
 
 	while(1) {
@@ -909,85 +920,100 @@ void Scumm::decompressMaskImgOr() {
 void Scumm::redrawBGStrip(int start, int num) {
 	int s = _screenStartStrip + start;
 
-	gdi.virtScreen = 0;
+	assert(s>=0 && s<sizeof(actorDrawBits)/sizeof(actorDrawBits[0]));
+
+	_curVirtScreen = &virtscr[0];
+
 	actorDrawBits[s]|=0x8000;
-	_drawBmpX = s;
-	_drawBmpY = 0;
-	gdi.numLinesToProcess = virtscr[0].height;
-	if (gdi.numLinesToProcess > _scrHeight) {
-		error("Screen Y size %d > Room height %d",
-			gdi.numLinesToProcess,
+	if (_curVirtScreen->height > _scrHeight) {
+		error("Screen Y size %d < Room height %d",
+			_curVirtScreen->height,
 			_scrHeight);
 	}
-	
-	drawBmp(
-		getResourceAddress(1, _roomResource) + _IM00_offs,
-		s,
-		num,
-		0,
-		"Room",
-		_roomResource);
+
+	gdi.drawBitmap(getResourceAddress(1, _roomResource)+_IM00_offs,
+		_curVirtScreen, s, 0, _curVirtScreen->height, s, num, 0);
 }
 
 #define READ_BIT (cl--,bit = bits&1, bits>>=1,bit)
 #define FILL_BITS if (cl <= 8) { bits |= (*src++ << cl); cl += 8;}
 
-void Scumm::GDI_UnkDecode1() {
-	byte *src = gdi.smap_ptr;
-	byte *dst = gdi.where_to_draw_ptr;
+void Gdi::unkDecode1() {
+	byte *src = _smap_ptr;
+	byte *dst = _bgbak_ptr;
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
 	byte bit;
-	gdi.tempNumLines = gdi.numLinesToProcess;
+	byte incm,reps;
+	_tempNumLines = _numLinesToProcess;
 
 	do {	
-		gdi.currentX = 8;
+		_currentX = 8;
 		do {
 			FILL_BITS
 			*dst++=color;
 
+againPos:;
+
 			if (!READ_BIT) {} 
 			else if (READ_BIT) {
-				color += (bits&7)-4;
+				incm = (bits&7)-4;
 				cl-=3;
 				bits>>=3;
+				if (!incm) {
+					FILL_BITS
+					reps = bits&0xFF;
+					do {
+						if (!--_currentX) {
+							_currentX = 8;
+							dst += 312;
+							if (!--_tempNumLines)
+								return;
+						}
+						*dst++=color;
+					} while (--reps);
+					bits>>=8;
+					bits |= (*src++)<<(cl-8);
+					goto againPos;
+				} else {
+					color += incm;
+				}
 			} else {
 				FILL_BITS
-				color = bits&gdi.decomp_mask;
-				cl -= gdi.decomp_shr;
-				bits >>= gdi.decomp_shr;
+				color = bits&_decomp_mask;
+				cl -= _decomp_shr;
+				bits >>= _decomp_shr;
 			}
-		} while (--gdi.currentX);
+		} while (--_currentX);
 		dst += 312;
-	} while (--gdi.tempNumLines);
-
+	} while (--_tempNumLines);
 }
 
-void Scumm::GDI_UnkDecode2() {
-	byte *src = gdi.smap_ptr;
-	byte *dst = gdi.where_to_draw_ptr;
+void Gdi::unkDecode2() {
+	byte *src = _smap_ptr;
+	byte *dst = _bgbak_ptr;
 	byte color = *src++;
 	int8 inc = -1;
 	uint bits = *src++;
 	byte cl = 8;
 	byte bit;
 
-	gdi.tempNumLines = gdi.numLinesToProcess;
+	_tempNumLines = _numLinesToProcess;
 
 	do {	
-		gdi.currentX = 8;
+		_currentX = 8;
 		do {
 			FILL_BITS
-			if (color!=gdi.transparency)
+			if (color!=_transparency)
 				*dst=color;
 			dst++;
 			if (!READ_BIT) {}
 			else if (!READ_BIT) {
 				FILL_BITS
-				color = bits&gdi.decomp_mask;
-				bits >>= gdi.decomp_shr;
-				cl -= gdi.decomp_shr;
+				color = bits&_decomp_mask;
+				bits >>= _decomp_shr;
+				cl -= _decomp_shr;
 				inc = -1;
 			} else if (!READ_BIT) {
 				color += inc;
@@ -995,67 +1021,101 @@ void Scumm::GDI_UnkDecode2() {
 				inc = -inc;
 				color += inc;
 			}
-		} while (--gdi.currentX);
+		} while (--_currentX);
 		dst += 312;
-	} while (--gdi.tempNumLines);
+	} while (--_tempNumLines);
 }
 
-void Scumm::GDI_UnkDecode3() {
-	byte *src = gdi.smap_ptr;
-	byte *dst = gdi.where_to_draw_ptr;
+void Gdi::unkDecode3() {
+	byte *src = _smap_ptr;
+	byte *dst = _bgbak_ptr;
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
 	byte bit;
+	byte incm,reps;
 
-	gdi.tempNumLines = gdi.numLinesToProcess;
+	_tempNumLines = _numLinesToProcess;
 
 	do {	
-		gdi.currentX = 8;
+		_currentX = 8;
 		do {
 			FILL_BITS
-			if (color!=gdi.transparency) *dst=color;
+			if (color!=_transparency) *dst=color;
 			dst++;
 
+againPos:;
 			if (!READ_BIT) {}
 			else if (READ_BIT) {
-				color += (bits&7)-4;
+				incm = (bits&7)-4;
+				
 				cl-=3;
 				bits>>=3;
+				if (incm) {
+					color += incm;
+				} else {
+					FILL_BITS
+					reps = bits&0xFF;
+					if (color==_transparency) {
+						do {
+							if (!--_currentX) {
+								_currentX = 8;
+								dst += 312;
+								if (!--_tempNumLines)
+									return;
+							}
+							dst++;
+						} while (--reps);
+					} else {
+						do {
+							if (!--_currentX) {
+								_currentX = 8;
+								dst += 312;
+								if (!--_tempNumLines)
+									return;
+							}
+							*dst++=color;
+						} while (--reps);
+					}
+					bits>>=8;
+					bits |= (*src++)<<(cl-8);
+					goto againPos;
+				}
 			} else {
 				FILL_BITS
-				color = bits&gdi.decomp_mask;
-				cl -= gdi.decomp_shr;
-				bits >>= gdi.decomp_shr;
+				color = bits&_decomp_mask;
+				cl -= _decomp_shr;
+				bits >>= _decomp_shr;
 			}
-		} while (--gdi.currentX);
+		} while (--_currentX);
 		dst += 312;
-	} while (--gdi.tempNumLines);
+	} while (--_tempNumLines);
 }
 
-void Scumm::GDI_UnkDecode4() {
-	byte *src = gdi.smap_ptr;
-	byte *dst = gdi.where_to_draw_ptr;
+
+void Gdi::unkDecode4() {
+	byte *src = _smap_ptr;
+	byte *dst = _bgbak_ptr;
 	byte color = *src++;
 	int8 inc = -1;
 	uint bits = *src++;
 	byte cl = 8;
 	byte bit;
 	
-	gdi.currentX = 8;
+	_currentX = 8;
 	do {	
-		gdi.tempNumLines = gdi.numLinesToProcess;
+		_tempNumLines = _numLinesToProcess;
 		do {
 			FILL_BITS
-			if (color!=gdi.transparency)
+			if (color!=_transparency)
 				*dst=color;
 			dst+=320;
 			if (!READ_BIT) {}
 			else if (!READ_BIT) {
 				FILL_BITS
-				color = bits&gdi.decomp_mask;
-				bits >>= gdi.decomp_shr;
-				cl -= gdi.decomp_shr;
+				color = bits&_decomp_mask;
+				bits >>= _decomp_shr;
+				cl -= _decomp_shr;
 				inc = -1;
 			} else if (!READ_BIT) {
 				color += inc;
@@ -1063,33 +1123,33 @@ void Scumm::GDI_UnkDecode4() {
 				inc = -inc;
 				color += inc;
 			}
-		} while (--gdi.tempNumLines);	
-		dst -= gdi.vertStripNextInc;
-	} while (--gdi.currentX);
+		} while (--_tempNumLines);	
+		dst -= _vertStripNextInc;
+	} while (--_currentX);
 }
 
-void Scumm::GDI_UnkDecode5() {
-	byte *src = gdi.smap_ptr;
-	byte *dst = gdi.where_to_draw_ptr;
+void Gdi::unkDecode5() {
+	byte *src = _smap_ptr;
+	byte *dst = _bgbak_ptr;
 	byte color = *src++;
 	int8 inc = -1;
 	uint bits = *src++;
 	byte cl = 8;
 	byte bit;
 
-	gdi.tempNumLines = gdi.numLinesToProcess;
+	_tempNumLines = _numLinesToProcess;
 
 	do {	
-		gdi.currentX = 8;
+		_currentX = 8;
 		do {
 			FILL_BITS
 			*dst++=color;
 			if (!READ_BIT) {}
 			else if (!READ_BIT) {
 				FILL_BITS
-				color = bits&gdi.decomp_mask;
-				bits >>= gdi.decomp_shr;
-				cl -= gdi.decomp_shr;
+				color = bits&_decomp_mask;
+				bits >>= _decomp_shr;
+				cl -= _decomp_shr;
 				inc = -1;
 			} else if (!READ_BIT) {
 				color += inc;
@@ -1097,23 +1157,23 @@ void Scumm::GDI_UnkDecode5() {
 				inc = -inc;
 				color += inc;
 			}
-		} while (--gdi.currentX);
+		} while (--_currentX);
 		dst += 312;
-	} while (--gdi.tempNumLines);
+	} while (--_tempNumLines);
 }
 
-void Scumm::GDI_UnkDecode6() {
-	byte *src = gdi.smap_ptr;
-	byte *dst = gdi.where_to_draw_ptr;
+void Gdi::unkDecode6() {
+	byte *src = _smap_ptr;
+	byte *dst = _bgbak_ptr;
 	byte color = *src++;
 	int8 inc = -1;
 	uint bits = *src++;
 	byte cl = 8;
 	byte bit;
 	
-	gdi.currentX = 8;
+	_currentX = 8;
 	do {	
-		gdi.tempNumLines = gdi.numLinesToProcess;
+		_tempNumLines = _numLinesToProcess;
 		do {
 			FILL_BITS
 			*dst=color;
@@ -1121,9 +1181,9 @@ void Scumm::GDI_UnkDecode6() {
 			if (!READ_BIT) {}
 			else if (!READ_BIT) {
 				FILL_BITS
-				color = bits&gdi.decomp_mask;
-				bits >>= gdi.decomp_shr;
-				cl -= gdi.decomp_shr;
+				color = bits&_decomp_mask;
+				bits >>= _decomp_shr;
+				cl -= _decomp_shr;
 				inc = -1;
 			} else if (!READ_BIT) {
 				color += inc;
@@ -1131,15 +1191,15 @@ void Scumm::GDI_UnkDecode6() {
 				inc = -inc;
 				color += inc;
 			}
-		} while (--gdi.tempNumLines);	
-		dst -= gdi.vertStripNextInc;
-	} while (--gdi.currentX);
+		} while (--_tempNumLines);	
+		dst -= _vertStripNextInc;
+	} while (--_currentX);
 }
 
-void Scumm::GDI_UnkDecode7() {
-	byte *src = gdi.smap_ptr;
-	byte *dst = gdi.where_to_draw_ptr;
-	int height = gdi.numLinesToProcess;
+void Gdi::unkDecode7() {
+	byte *src = _smap_ptr;
+	byte *dst = _bgbak_ptr;
+	int height = _numLinesToProcess;
 	do {
 		/* Endian safe */
 #if defined(SCUMM_NEED_ALIGNMENT)
@@ -1157,32 +1217,34 @@ void Scumm::GDI_UnkDecode7() {
 #undef FILL_BITS
 
 void Scumm::restoreCharsetBg() {
-	dseg_4E3C = 0;
-	if (charset._mask_left != -1) {
-		restoreBG(charset._mask_left, charset._mask_top, charset._mask_right, charset._mask_bottom);
+	_bkColor = 0;
+	if (string[0].mask_left != -1) {
+		restoreBG(string[0].mask_left, string[0].mask_top, string[0].mask_right, string[0].mask_bottom);
 		charset._hasMask = false;
-		charset._mask_left = -1;
+		string[0].mask_left = -1;
+		charset._strLeft = -1;
+		charset._left = -1;
 	}
-	_stringXpos2[0] = _stringXPos[0];
-	_stringYpos2[0] = _stringYPos[0];
+	
+	string[0].xpos2 = string[0].xpos;
+	string[0].ypos2 = string[0].ypos;
 }
 
 void Scumm::restoreBG(int left, int top, int right, int bottom) {
 	VirtScreen *vs;
 	int topline, height, width, widthmod;
+	byte *backbuff,*bgbak,*mask;
 
 	if (left==right || top==bottom)
 		return;
 	if (top<0) top=0;
 	
-	if (findVirtScreen(top) == -1)
+	if ((vs=findVirtScreen(top)) == NULL)
 		return;
-	
-	vs = &virtscr[gdi.virtScreen];
 
 	topline = vs->topline;
 	height = topline + vs->height;
-	if (gdi.virtScreen==0) {
+	if (vs->number==0) {
 		left += _lastXstart - vs->xstart;
 		right += _lastXstart - vs->xstart;
 	}
@@ -1197,35 +1259,34 @@ void Scumm::restoreBG(int left, int top, int right, int bottom) {
 	if (bottom>=height)
 		bottom=height;
 
-	updateDirtyRect(gdi.virtScreen, left, right, top-topline,bottom-topline, 0x4000);
+	updateDirtyRect(vs->number, left, right, top-topline,bottom-topline, 0x4000);
 
-	vs = &virtscr[gdi.virtScreen];
 	height = (top-topline) * 320 + vs->xstart + left;
 	
-	gdi.bg_ptr = getResourceAddress(0xA, gdi.virtScreen+1) + height;
-	gdi.where_to_draw_ptr = getResourceAddress(0xA, gdi.virtScreen+5) + height;
-	gdi.mask_ptr = getResourceAddress(0xA, 9) + top * 40 + (left>>3) + _screenStartStrip;
-	if (gdi.virtScreen==0) {
-		gdi.mask_ptr += vs->topline * 216;
+	backbuff = getResourceAddress(0xA, vs->number+1) + height;
+	bgbak = getResourceAddress(0xA, vs->number+5) + height;
+	mask = getResourceAddress(0xA, 9) + top * 40 + (left>>3) + _screenStartStrip;
+	if (vs->number==0) {
+		mask += vs->topline * 216;
 	}
 
 	height = bottom - top;
 	width = right - left;
 	widthmod = (width >> 2) + 2;
-	
-	if (vs->alloctwobuffers && _currentRoom!=0 && vm.vars[VAR_DRAWFLAGS]&2) {
-		blit(gdi.bg_ptr, gdi.where_to_draw_ptr, width, height);
-		if (gdi.virtScreen==0 && charset._hasMask && height) {
+
+	if (vs->alloctwobuffers && _currentRoom!=0 && _vars[VAR_V5_DRAWFLAGS]&2) {
+		blit(backbuff, bgbak, width, height);
+		if (vs->number==0 && charset._hasMask && height) {
 			do {
-				memset(gdi.mask_ptr, 0, widthmod);
-				gdi.mask_ptr += 40;
+				memset(mask, 0, widthmod);
+				mask += 40;
 			} while (--height);
 		}
 	} else {
 		if (height) {
 			do {
-				memset(gdi.bg_ptr, dseg_4E3C, width);
-				gdi.bg_ptr+=320;
+				memset(backbuff, _bkColor, width);
+				backbuff+=320;
 			} while (--height);
 		}
 	}
@@ -1249,8 +1310,8 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 		rp = (right >> 3) + _screenStartStrip;
 		lp = (left >> 3) + _screenStartStrip;
 		if (lp<0) lp=0;
-		if (rp >= 160)
-			rp = 159;
+		if (rp >= 200)
+			rp = 200;
 		if (lp <= rp) {
 			num = rp - lp + 1;
 			sp = &actorDrawBits[lp];
@@ -1277,24 +1338,114 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 	}
 }
 
-int Scumm::findVirtScreen(int y) {
+VirtScreen *Scumm::findVirtScreen(int y) {
 	VirtScreen *vs = virtscr;
 	int i;
-
-	gdi.virtScreen=-1;
+	
 
 	for(i=0; i<3; i++,vs++) {
-		if (y >= vs->topline && y <= vs->topline+vs->height) {
-			gdi.virtScreen = i;
-			return i;
+		if (y >= vs->topline && y < vs->topline+vs->height) {
+			return _curVirtScreen=vs;
 		}	
 	}
-	return -1;
+	return _curVirtScreen=NULL;
 }
 
-void Scumm::unkVirtScreen5(int a) {
+void Scumm::unkScreenEffect1() {
 	/* XXX: not implemented */
-	warning("stub unkVirtScreen5(%d)", a);
+	warning("stub unkScreenEffect1()");
+}
+
+void Scumm::unkScreenEffect2() {
+	/* XXX: not implemented */
+	warning("stub unkScreenEffect2()");
+}
+
+void Scumm::unkScreenEffect3() {
+	/* XXX: not implemented */
+	warning("stub unkScreenEffect3()");
+}
+
+void Scumm::unkScreenEffect4() {
+	/* XXX: not implemented */
+	warning("stub unkScreenEffect4()");
+}
+
+static const int8 screen_eff7_table1[4][16] = {
+	{1,1,-1,1,-1,1,-1,-1,
+     1,-1,-1,-1,1,1,1,-1},
+	{0,1,2,1,2,0,2,1,
+	 2,0,2,1,0,0,0,0},
+	{-2,-1,0,-1,-2,-1,-2,0
+	-2,-1,-2,0,0,0,0,0},
+	{0,-1,-2,-1,-2,0,-2,-1
+	-2,0,-2,-1,0,0,0,0}
+};
+
+static const byte screen_eff7_table2[4][16] = {
+	{0,0,39,0,39,0,39,24,
+	0,24,39,24,0,0,0,24},
+	{0,0,0,0,0,0,0,0,
+	1,0,1,0,255,0,0,0},
+	{39,24,39,24,39,24,39,24,
+	38,24,38,24,255,0,0,0},
+	{0,24,39,24,39,0,39,24,
+	38,0,38,24,255,0,0,0}
+};
+
+static const byte screen_eff7_table3[4] = {
+	13,25,25,25
+};
+
+void Scumm::unkScreenEffect7(int a) {
+	int tab_1[16];
+	int tab_2[16];
+	int i,j;
+	int bottom;
+	int *tab2_ptr;
+	int l,t,r,b;
+
+	for (i=0; i<16; i++) {
+		tab_1[i] = screen_eff7_table1[a][i];
+		j = screen_eff7_table2[a][i];
+		if (j==24)
+			j = (virtscr[0].height>>3)-1;
+		tab_2[i] = j;
+	}
+
+	bottom = virtscr[0].height >> 3;
+	for (j=0; j < screen_eff7_table3[a]; j++) {
+		for (i=0; i<4; i++) {
+			l = tab_2[i*4];
+			t = tab_2[i*4+1];
+			r = tab_2[i*4+2];
+			b = tab_2[i*4+3];
+			if (t==b) {
+				while (l <= r) {
+					if (l>=0 && l<40 && (uint)t<(uint)bottom) {
+						virtscr[0].tdirty[l] = t<<3;
+						virtscr[0].bdirty[l] = (t+1)<<3;
+					}
+					l++;
+				}
+			} else {
+				/* DE92 */
+				if (l<0 || l>=40 || b<=t)
+					continue;
+				if (b>bottom)
+					b=bottom;
+				virtscr[0].tdirty[l] = t<<3;
+				virtscr[0].bdirty[l] = (b+1)<<3;
+			}
+			updateDirtyScreen(0);
+		}
+
+		for (i=0; i<16; i++)
+			tab_2[i] += tab_1[i];
+		
+		updateScreen(this);
+		waitForTimer(this);
+	}
 }
 
 void Scumm::unkScreenEffect6() {
@@ -1316,15 +1467,15 @@ void Scumm::setShake(int mode) {
 	warning("stub setShake(%d)",mode);
 }
 
-void Scumm::clearUpperMask() {
+void Gdi::clearUpperMask() {
 	memset(
-		getResourceAddress(0xA, 9),
+		_vm->getResourceAddress(0xA, 9),
 		0,
 		_imgBufOffs[1] - _imgBufOffs[0]
 	);
 }
 
-void Scumm::moveCamera() {
+void Scumm::moveCamera() { // This function need a big update for V7 since the screen can now scroll verticaly
 	CameraData *cd = &camera;
 	int pos = cd->_curPos;
 	int actorx, t;
@@ -1332,18 +1483,18 @@ void Scumm::moveCamera() {
 
 	cd->_curPos &= 0xFFF8;
 
-	if (cd->_curPos < vm.vars[VAR_CAMERA_MIN]) {
-		if (vm.vars[VAR_CAMERA_FAST])
-			cd->_curPos = vm.vars[VAR_CAMERA_MIN];
+	if (cd->_curPos < _vars[VAR_CAMERA_MIN]) {
+		if (_vars[VAR_CAMERA_FAST])
+			cd->_curPos = _vars[VAR_CAMERA_MIN];
 		else
 			cd->_curPos += 8;
 		cameraMoved();
 		return;
 	}
 
-	if (cd->_curPos > vm.vars[VAR_CAMERA_MAX]) {
-		if (vm.vars[VAR_CAMERA_FAST])
-			cd->_curPos = vm.vars[VAR_CAMERA_MAX];
+	if (cd->_curPos > _vars[VAR_CAMERA_MAX]) {
+		if (_vars[VAR_CAMERA_FAST])
+			cd->_curPos = _vars[VAR_CAMERA_MAX];
 		else
 			cd->_curPos-=8;
 		cameraMoved();
@@ -1357,7 +1508,7 @@ void Scumm::moveCamera() {
 		t = (actorx>>3) - _screenStartStrip;
 		
 		if (t < cd->_leftTrigger || t > cd->_rightTrigger) {
-			if (vm.vars[VAR_CAMERA_FAST]) {
+			if (_vars[VAR_CAMERA_FAST]) {
 				if (t > 35)
 					cd->_destPos = actorx + 80;
 				if (t < 5)
@@ -1372,13 +1523,13 @@ void Scumm::moveCamera() {
 		cd->_destPos = a->x;
 	}
 
-	if (cd->_destPos < vm.vars[VAR_CAMERA_MIN])
-		cd->_destPos = vm.vars[VAR_CAMERA_MIN];
+	if (cd->_destPos < _vars[VAR_CAMERA_MIN])
+		cd->_destPos = _vars[VAR_CAMERA_MIN];
 
-	if (cd->_destPos > vm.vars[VAR_CAMERA_MAX])
-		cd->_destPos = vm.vars[VAR_CAMERA_MAX];
+	if (cd->_destPos > _vars[VAR_CAMERA_MAX])
+		cd->_destPos = _vars[VAR_CAMERA_MAX];
 
-	if (vm.vars[VAR_CAMERA_FAST]) {
+	if (_vars[VAR_CAMERA_FAST]) {
 		cd->_curPos = cd->_destPos;
 	} else {
 		if (cd->_curPos < cd->_destPos)
@@ -1394,9 +1545,9 @@ void Scumm::moveCamera() {
 
 	cameraMoved();
 
-	if (pos != cd->_curPos && vm.vars[VAR_SCROLL_SCRIPT]) {
-		vm.vars[VAR_CAMERA_CUR_POS] = cd->_curPos;
-		runScript(vm.vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
+	if (pos != cd->_curPos && _vars[VAR_SCROLL_SCRIPT]) {
+		_vars[VAR_CAMERA_CUR_POS] = cd->_curPos;
+		runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
 	}
 }
 
@@ -1412,6 +1563,31 @@ void Scumm::cameraMoved() {
 	_screenStartStrip = (cd->_curPos >> 3) - 20;
 	_screenEndStrip = _screenStartStrip + 39;
 	virtscr[0].xstart = _screenStartStrip << 3;
+}
+
+void Scumm::panCameraTo(int x) {
+	CameraData *cd = &camera;
+	cd->_destPos = x;
+	cd->_mode = 3;
+	cd->_movingToActor = 0;
+}
+
+void Scumm::actorFollowCamera(int act) {
+	int old = camera._follows;
+
+	setCameraFollows(derefActorSafe(act, "actorFollowCamera"));
+	if (camera._follows != old) 
+		runHook(0);
+
+	camera._movingToActor = 0;
+}
+
+void Scumm::setCameraAtEx(int at) {
+	CameraData *cd = &camera;
+	cd->_mode = 1;
+	cd->_curPos = at;
+	setCameraAt(at);
+	cd->_movingToActor = 0;
 }
 
 void Scumm::palManipulate() {
@@ -1452,10 +1628,21 @@ void Scumm::palManipulate() {
 }
 
 void Scumm::screenEffect(int effect) {
-	dseg_3DB6 = 1;
-	warning("stub screenEffect(%d)",effect);
-	/* TODO: not implemented */
-	dseg_4EA0 = 1;
+	switch(effect) {
+	case 1:
+	case 2:
+	case 3:		unkScreenEffect7(effect-1);	break;
+	case 128:	unkScreenEffect6(); break;
+	case 130:	unkScreenEffect1(); break;
+	case 131:	unkScreenEffect2();	break;
+	case 132:	unkScreenEffect3();	break;
+	case 133:	unkScreenEffect4();	break;
+	case 134:	unkScreenEffect5(0); break;
+	case 135:	unkScreenEffect5(1); break;
+	default:
+		warning("Unknown screen effect, %d", effect);
+	}
+	_screenEffectFlag = true;
 }
 
 void Scumm::resetActorBgs() {
@@ -1463,6 +1650,7 @@ void Scumm::resetActorBgs() {
 	int i,bitpos;
 	int top,bottom;
 	uint16 onlyActorFlags;
+	int offs;
 	
 	for(i=0; i<40; i++) {
 		onlyActorFlags = (actorDrawBits[_screenStartStrip + i]&=0x3FFF);
@@ -1473,30 +1661,9 @@ void Scumm::resetActorBgs() {
 			if(onlyActorFlags&1 && a->top!=0xFF && a->needBgReset) {
 				top = a->top;
 				bottom = a->bottom;
-				if (a->top < virtscr[0].tdirty[i])
-					virtscr[0].tdirty[i] = a->top;
-
-				if (a->bottom > virtscr[0].bdirty[i])
-					virtscr[0].bdirty[i] = a->bottom;
 				actorDrawBits[_screenStartStrip + i] ^= bitpos;
-				
-				gdi.where_to_draw_ptr = getResourceAddress(0xA, 5)
-					+ ((top * 40 + _screenStartStrip + i)<<3);
-				gdi.bg_ptr = getResourceAddress(0xA, 1)
-					+ ((top * 40 + _screenStartStrip + i)<<3);
-				gdi.mask_ptr = getResourceAddress(0xA, 9)
-					+ (top * 40 + _screenStartStrip + i);
-				gdi.numLinesToProcess = bottom - top;
-				if (gdi.numLinesToProcess) {
-					if (vm.vars[VAR_DRAWFLAGS]&2) {
-						if(hasCharsetMask(i<<3, top, (i+1)<<3, bottom))
-							draw8ColWithMasking();
-						else
-							blit(gdi.bg_ptr, gdi.where_to_draw_ptr, 8, gdi.numLinesToProcess);
-					} else {
-						clear8Col();
-					}
-				}
+				gdi.resetBackground(a->top, a->bottom, i);
+
 			}
 			bitpos<<=1;
 			onlyActorFlags>>=1;
@@ -1504,8 +1671,36 @@ void Scumm::resetActorBgs() {
 		}
 	}
 
-	for(i=1,a=getFirstActor(); ++a,i<13; i++) {
+	for(i=1,a=getFirstActor(); ++a,i<_maxActors; i++) {
 		a->needBgReset = false;
+	}
+}
+
+void Gdi::resetBackground(byte top, byte bottom, int strip) {
+	VirtScreen *vs = &_vm->virtscr[0];
+	int offs;
+
+	if (top < vs->tdirty[strip])
+		vs->tdirty[strip] = top;
+
+	if (bottom > vs->bdirty[strip])
+		vs->bdirty[strip] = bottom;
+	
+	offs = (top * 40 + _vm->_screenStartStrip + strip);
+	_mask_ptr = _vm->getResourceAddress(0xA, 9)	+ offs;
+	_bgbak_ptr = _vm->getResourceAddress(0xA, 5)	+ (offs<<3);
+	_backbuff_ptr = _vm->getResourceAddress(0xA, 1)	+ (offs<<3);
+	
+	_numLinesToProcess = bottom - top;
+	if (_numLinesToProcess) {
+		if (_vm->_vars[VAR_V5_DRAWFLAGS]&2) {
+			if(_vm->hasCharsetMask(strip<<3, top, (strip+1)<<3, bottom))
+				draw8ColWithMasking();
+			else
+				blit(_backbuff_ptr, _bgbak_ptr, 8, _numLinesToProcess);
+		} else {
+			clear8Col();
+		}
 	}
 }
 
@@ -1514,6 +1709,7 @@ void Scumm::setPalColor(int index, int r, int g, int b) {
 		_currentPalette[index*3+0] = r>>2;
 		_currentPalette[index*3+1] = g>>2;
 		_currentPalette[index*3+2] = b>>2;
+		setDirtyColors(index,index);
 	}
 	if (_videoMode==0xE) {
 		/* TODO: implement this */
@@ -1525,11 +1721,11 @@ void Scumm::drawMouse() {
 	/* TODO: handle shake here */
 
 	::drawMouse(this,
-		mouse.x - gdi.hotspot_x,
-		mouse.y - gdi.hotspot_y,
-		gdi.mouseColors[((++gdi.mouseColorIndex)>>2)&3],
-		gdi.mouseMask + ((gdi.drawMouseX&7)<<6),
-		gdi.unk4>0
+		mouse.x - gdi._hotspot_x,
+		mouse.y - gdi._hotspot_y,
+		gdi._mouseColors[((++gdi._mouseColorIndex)>>2)&3],
+		gdi._mouseMask + ((gdi._drawMouseX&7)<<6),
+		gdi._unk4>0
 		);
 }
 
@@ -1539,17 +1735,33 @@ void Scumm::setCursorHotspot(int cursor, int x, int y) {
 	cur->hotspot_y = y;
 }
 
-void Scumm::setCursorImg(int cursor, int img) {
-	MouseCursor *cur = &mouse_cursors[cursor];
+void Scumm::setCursorImg(int room, int img) {
 	byte *ptr;
+	int index;
+	CodeHeader *cdhd;
+	ImageHeader *imhd;
+	int w,h;
+	byte *roomptr;
+	RoomHeader *rmhd;
 
-	ptr = getResourceAddress(6, 1);
+	if (getObjectIndex(img)!=-1) {
+		cdhd = (CodeHeader*)getObjectAddress(img);
+		ptr = (byte*)cdhd + READ_BE_UINT32(&cdhd->size);
+		cdhd = (CodeHeader*)findResource(MKID('CDHD'), (byte*)cdhd, 0);
+		w = READ_LE_UINT16(&cdhd->old.v6.w)>>3;
+		h = READ_LE_UINT16(&cdhd->old.v6.h)>>3;
+		imhd = (ImageHeader*)findResource(MKID('IMHD'), ptr, 0);
+	} else {
+//		error("setCursorImg: -1 not impl");
+	}
+
+	
 	
 //	offs = ((uint32*)ptr)[img+1];
 //	if (!offs)
 //		return;
 
-	warning("setCursorImg: not implemented");
+	warning("stub setCursorImg(%d,%d)", room, img);
 }
 
 byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
@@ -1571,87 +1783,112 @@ byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
 	return false;
 }
 
-#if 0
-void Scumm::GDI_drawMouse() {
-	byte *dst,*src,*dstorg;
-	int y,h;
-	byte color,val;
+void Scumm::setPalette(int palindex) {
+	byte *pals;
 
-	byte mask1,mask2,mask3;
-
-	int offs = gdi.drawMouseY*320 + (gdi.drawMouseX&0xFFF8);
-
-	/* XXX: check bounds here */
-	if (offs<0 || offs > 320*200 - 16*320)
-		return;
-	
-	gdi.backupIsWhere = _vgabuf + offs;
-
-	src = gdi.backupIsWhere;
-	dst = gdi.mouseBackup;
-
-	h=16;
-	do {
-		memcpy(dst,src,24);
-		dst+=24;
-		src+=320;
-	} while (--h);
-
-	src = gdi.mouseMaskPtr;
-	color = gdi.mouseColor;
-	dstorg = gdi.backupIsWhere;
-
-	h=16;
-	do {
-		src++;
-		mask1 = *src++;
-		mask2 = *src++;
-		mask3 = *src++;
-
-		y = gdi.drawMouseY++;
-		if (y>199)
-			mask1 = mask2 = 0;
-
-		val = mask1 & gdi.mouseClipMask1;
-		dst = dstorg;
-		do {
-			if(val&0x80)
-				*dst = color;
-			dst++;
-		} while (val<<=1);
-
-		val = mask2 & gdi.mouseClipMask2;
-		dst = dstorg + 8;
-		do {
-			if(val&0x80)
-				*dst = color;
-			dst++;
-		} while (val<<=1);
-
-		val = mask3 & gdi.mouseClipMask3;
-		dst = dstorg + 16;
-		do {
-			if(val&0x80)
-				*dst = color;
-			dst++;
-		} while (val<<=1);
-		
-		dstorg += 320;
-	} while (--h);
+	_curPalIndex = palindex;
+	pals = getPalettePtr();
+	if (pals==NULL)
+		error("invalid palette %d", palindex);
+	setPaletteFromPtr(pals);
 }
 
-void Scumm::GDI_removeMouse() {
-	byte *dst,*src,h;
-	if (gdi.backupIsWhere) {
-		dst = gdi.backupIsWhere;
-		gdi.backupIsWhere = NULL;
-		src = gdi.mouseBackup;
-		h=16;
-		do {
-			memcpy(dst,src,24);
-			dst+=320;
-			src+=24;
-		} while (--h);
+byte *Scumm::findPalInPals(byte *pal, int index) {
+	byte *offs;
+	uint32 size;	
+
+	pal = findResource(MKID('WRAP'), pal, 0);
+	if (pal==NULL)
+		return NULL;
+
+	offs = findResource(MKID('OFFS'),pal, 0);
+	if (offs==NULL)
+		return NULL;
+
+	size = (READ_BE_UINT32_UNALIGNED(offs+4)-8) >> 2;
+	
+	if ((uint32)index >= (uint32)size)
+		return NULL;
+
+	return offs + READ_LE_UINT32(offs + 8 + index * sizeof(uint32));
+}
+
+byte *Scumm::getPalettePtr() {
+	byte *cptr;
+
+	cptr = getResourceAddress(1, _roomResource);
+	if (_CLUT_offs) {
+		cptr += _CLUT_offs;
+	} else {
+		cptr = findPalInPals(cptr + _PALS_offs, _curPalIndex);
+	}
+	return cptr;
+}
+
+void Scumm::darkenPalette(int a, int b, int c, int d, int e) {
+	byte *cptr, *cur;
+	int num;
+	byte color;
+
+	if (_videoMode==0xE) {
+		warning("stub darkenPalette(%d,%d,%d,%d,%d)",a,b,c,d,e);
+	}
+
+	if (_videoMode==0x13) {
+		cptr = getPalettePtr();
+		if(cptr==NULL) // This isn't supposed to be
+			return;
+		cptr += 8 + a*3;
+		cur = _currentPalette + a*3;
+		if (a <= b) {
+			num = b - a + 1;
+
+			do {
+				if (c != 0xFF) {
+					color = *cptr++ * (c>>2) / 0xFF;
+				} else {
+					color = *cptr++ >> 2;
+				}
+				if(color>63) color = 63;
+				*cur++=color;
+
+				if (d != 0xFF) {
+					color = *cptr++ * (d>>2) / 0xFF;
+				} else {
+					color = *cptr++ >> 2;
+				}
+				if(color>63) color = 63;
+				*cur++=color;
+
+				if (e != 0xFF) {
+					color = *cptr++ * (e>>2) / 0xFF;
+				} else {
+					color = *cptr++ >> 2;
+				}
+				if(color>63) color = 63;
+				*cur++=color;
+			} while (--num);
+		}
+		setDirtyColors(a,b);
 	}
 }
-#endif
+
+void Scumm::unkMiscOp4(int a, int b, int c, int d) {
+	VirtScreen *vs = findVirtScreen(b);
+
+	if (vs==NULL) {
+		warning("unkMiscOp4: invalid virtscreen %d", b);
+		return;
+	}
+
+	grabCursor(
+		getResourceAddress(10, vs->number+1) + (b-vs->topline)*320 + a, 
+		c,d);
+	
+	
+	warning("stub unkMiscOp4(%d,%d,%d,%d)", a,b,c,d);
+}
+
+void Scumm::grabCursor(byte *ptr, int width, int height) {
+	
+}

@@ -17,6 +17,15 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.2.2.1  2001/11/12 16:23:01  yazoo
+ * The dig and Full Throttle support
+ *
+ * Revision 1.4  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
+ * Revision 1.3  2001/10/16 10:01:48  strigeus
+ * preliminary DOTT support
+ *
  * Revision 1.2  2001/10/09 19:02:28  strigeus
  * command line parameter support
  *
@@ -46,7 +55,7 @@ void Scumm::checkExecVerbs() {
 
 	if (_mouseButStat < 0x200) {
 		/* Check keypresses */
-		vs = &verbs[1];
+		vs = &_verbs[1];
 		for (i=1; i<_maxVerbs; i++,vs++) {
 			if (vs->verbid && vs->saveid && vs->curmode==1) {
 				if (_mouseButStat == vs->key) {
@@ -61,13 +70,13 @@ void Scumm::checkExecVerbs() {
 		if (mouse.y >= virtscr[0].topline && mouse.y < virtscr[0].topline + virtscr[0].height) {
 			over = checkMouseOver(mouse.x, mouse.y);
 			if (over != 0) {
-				runInputScript(1,verbs[over].verbid,code);
+				runInputScript(1,_verbs[over].verbid,code);
 				return;
 			}
 			runInputScript(2, 0, code);
 		} else {
 			over=checkMouseOver(mouse.x, mouse.y);
-			runInputScript(1, over!=0 ? verbs[over].verbid : 0, code);
+			runInputScript(1, over!=0 ? _verbs[over].verbid : 0, code);
 		}
 	}
 }
@@ -76,12 +85,12 @@ void Scumm::verbMouseOver(int verb) {
 	if (_verbMouseOver==verb)
 		return;
 
-	if (verbs[_verbMouseOver].type!=1) {
+	if (_verbs[_verbMouseOver].type!=1) {
 		drawVerb(_verbMouseOver, 0);
 		_verbMouseOver = verb;
 	}
 
-	if (verbs[verb].type!=1 && verbs[verb].hicolor) {
+	if (_verbs[verb].type!=1 && _verbs[verb].hicolor) {
 		drawVerb(verb, 1);
 		_verbMouseOver = verb;
 	}
@@ -89,9 +98,9 @@ void Scumm::verbMouseOver(int verb) {
 
 int Scumm::checkMouseOver(int x, int y) {
 	VerbSlot *vs;
-	int i = _maxVerbs;
+	int i = _maxVerbs-1;
 
-	vs = &verbs[i];
+	vs = &_verbs[i];
 	do {
 		if (vs->curmode!=1 || !vs->verbid || vs->saveid ||
 				y < vs->y || y >= vs->bottom)
@@ -104,7 +113,7 @@ int Scumm::checkMouseOver(int x, int y) {
 				continue;
 		}
 		return i;
-	} while (--vs, i--);
+	} while (--vs,--i);
 	return 0;
 }
 
@@ -116,7 +125,7 @@ void Scumm::drawVerb(int vrb, int mode) {
 	if (!vrb)
 		return;
 
-	vs = &verbs[vrb];
+	vs = &_verbs[vrb];
 
 	if (!vs->saveid && vs->curmode && vs->verbid) {
 		if (vs->type==1) {
@@ -125,18 +134,18 @@ void Scumm::drawVerb(int vrb, int mode) {
 		}
 		restoreVerbBG(vrb);
 
-		_stringCharset[4] = vs->charset_nr;
-		_stringXpos[4] = vs->x;
-		_stringYpos[4] = vs->y;
-		_stringRight[4] = 319;
-		_stringCenter[4] = vs->center;
+		string[4].charset = vs->charset_nr;
+		string[4].xpos = vs->x;
+		string[4].ypos = vs->y;
+		string[4].right = 319;
+		string[4].center = vs->center;
 		if (mode && vs->hicolor)
 			color = vs->hicolor;
 		else
 			color = vs->color;
-		_stringColor[4] = color;
+		string[4].color = color;
 		if (vs->curmode==2)
-			_stringColor[4] = vs->dimcolor;
+			string[4].color = vs->dimcolor;
 		_messagePtr = getResourceAddress(8, vrb);
 		assert(_messagePtr);
 		tmp = charset._center;
@@ -158,10 +167,10 @@ void Scumm::drawVerb(int vrb, int mode) {
 void Scumm::restoreVerbBG(int verb) {
 	VerbSlot *vs;
 
-	vs = &verbs[verb];
+	vs = &_verbs[verb];
 
 	if (vs->oldleft != -1) {
-		dseg_4E3C = vs->bkcolor;
+		_bkColor = vs->bkcolor;
 		restoreBG(vs->oldleft, vs->oldtop, vs->oldright, vs->oldbottom);
 		vs->oldleft = -1;
 	}
@@ -174,17 +183,16 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 	byte twobufs, *imptr;
 	int ydiff, xstrip;
 	int imgw, imgh;
-	int i;
+	int i,tmp;
 	byte *IMHD_ptr;
+	byte *obim;
 
-	if (findVirtScreen(y) == -1)
+	if ((vs=findVirtScreen(y)) == NULL)
 		return;
 
 	_lastXstart = virtscr[0].xstart;
-	nozbufs = _numZBuffer;
-	_numZBuffer = 0;
-
-	vs = &virtscr[gdi.virtScreen];
+	
+	gdi.disableZBuffer();
 
 	twobufs = vs->alloctwobuffers;
 	vs->alloctwobuffers = 0;
@@ -192,32 +200,32 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 	xstrip = x>>3;
 	ydiff = y - vs->topline;
 
-	IMHD_ptr = findResource2(MKID('IMHD'), getResourceAddress(8, vrb));
+
+	obim = getResourceAddress(8, vrb);
+	IMHD_ptr = findResource(MKID('IMHD'), obim, 0);
 
 	imgw = READ_LE_UINT16(IMHD_ptr+0x14) >> 3;
 	imgh = READ_LE_UINT16(IMHD_ptr+0x16) >> 3;
 	
-	imptr = findResource2(MKID('IM01'), NULL);
+	imptr = findResource(MKID('IM01'), obim, 0);
 	if (!imptr)
 		error("No image for verb %d", vrb);
 
 	for (i=0; i<imgw; i++) {
-		_drawBmpX = xstrip + i;
-		if (_drawBmpX < 40) {
-			_drawBmpY = ydiff;
-			gdi.numLinesToProcess = imgh<<3;
-			drawBmp(imptr, i, 1, 1, "Verb", READ_LE_UINT16(IMHD_ptr+8));
-		}
+		tmp = xstrip + i;
+		if ((uint)tmp < 40)
+			gdi.drawBitmap(imptr, vs, tmp, ydiff, imgh<<3, i, 1, true);
 	}
 
-	vst = &verbs[vrb];
+	vst = &_verbs[vrb];
 	vst->right = vst->x + imgw*8;
 	vst->bottom = vst->y + imgh*8;
 	vst->oldleft = vst->x;
 	vst->oldright = vst->right;
 	vst->oldtop = vst->y;
 	vst->oldbottom = vst->bottom;
-	_numZBuffer = nozbufs;
+	
+	gdi.enableZBuffer();
 
 	vs->alloctwobuffers = twobufs;
 }
@@ -225,7 +233,7 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 int Scumm::getVerbSlot(int id, int mode) {
 	int i;
 	for (i=1; i<_maxVerbs; i++) {
-		if (verbs[i].verbid == id && verbs[i].saveid == mode) {
+		if (_verbs[i].verbid == id && _verbs[i].saveid == mode) {
 			return i;
 		}
 	}
@@ -238,7 +246,7 @@ void Scumm::killVerb(int slot) {
 	if (slot==0)
 		return;
 
-	vs = &verbs[slot];
+	vs = &_verbs[slot];
 	vs->verbid = 0;
 	vs->curmode = 0;
 
@@ -255,30 +263,40 @@ void Scumm::setVerbObject(int room, int object, int verb) {
 	int numobj, i;
 	byte  *obimptr;
 	uint32 imoffs,size;
-	byte *roomptr,*tmp_roomptr;
+	byte *roomptr;
 	ImageHeader *imhd;
 	RoomHeader *roomhdr;
+	int temp;
 
 	if (whereIsObject(object) == 4)
 		error("Can't grab verb image from flobject");
 
 	ensureResourceLoaded(1,room);
 	roomptr = getResourceAddress(1, room);
-	roomhdr = (RoomHeader*)findResource(MKID('RMHD'), roomptr);
+	roomhdr = (RoomHeader*)findResource(MKID('RMHD'), roomptr, 0);
 
-	numobj = READ_LE_UINT16(&roomhdr->numObjects);
+	if((_majorScummVersion>=7)&&(_middleScummVersion>2))
+		numobj = READ_LE_UINT16(&roomhdr->v7.numObjects);
+	else
+		numobj = READ_LE_UINT16(&roomhdr->v5.numObjects);
+
 	if (numobj==0)
 		error("No images found in room %d", room);
 	if (numobj > 200)
 		error("More (%d) than %d objects in room %d", numobj, 200, room);
 
-	tmp_roomptr = roomptr;
-	for (i=1; i<=numobj; i++) {
-		obimptr = findResource(MKID('OBIM'), tmp_roomptr);
+	for (i=0; i<numobj; i++) {
+		obimptr = findResource(MKID('OBIM'), roomptr, i);
 		if (obimptr==NULL)
 			error("Not enough image blocks in room %d", room);
-		imhd = (ImageHeader*)findResource2(MKID('IMHD'), obimptr);
-		if ( READ_LE_UINT16(&imhd->obj_id) == object) {
+		imhd = (ImageHeader*)findResource(MKID('IMHD'), obimptr, 0);
+		
+		if((_majorScummVersion>=7)&&(_middleScummVersion>2))
+			temp=READ_LE_UINT16(&imhd->v7.obj_id);
+		else
+			temp=READ_LE_UINT16(&imhd->v5.obj_id);
+
+		if ( temp == object) {
 			imoffs = obimptr - roomptr;
 			size = READ_BE_UINT32_UNALIGNED(obimptr+4);
 			createResource(8, verb, size);
@@ -286,7 +304,6 @@ void Scumm::setVerbObject(int room, int object, int verb) {
 			memcpy(getResourceAddress(8, verb), obimptr, size);
 			return;
 		}
-		tmp_roomptr = NULL;
 	}
 	error("Image %d not found in room %d", object, room);
 }

@@ -17,6 +17,22 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.2.2.1  2001/11/12 16:16:57  yazoo
+ * The dig and Full Throttle support
+ *
+ * Revision 1.6  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
+ * Revision 1.5  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
+ * Revision 1.4  2001/10/16 20:31:27  strigeus
+ * misc fixes
+ *
+ * Revision 1.3  2001/10/16 10:01:45  strigeus
+ * preliminary DOTT support
+ *
  * Revision 1.2  2001/10/09 18:35:02  strigeus
  * fixed object parent bug
  * fixed some signed/unsigned comparisons
@@ -85,8 +101,9 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 	byte scaling;
 	byte charsetmask, masking;
 	byte unk19;
+	int ex1,ex2;
 
-	checkHeap();
+	CHECK_HEAP
 
 	_maskval = 0xF;
 	_shrval = 4;
@@ -104,6 +121,17 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 	_xmove += (int16)READ_LE_UINT16(_srcptr+8);
 	_ymove -= (int16)READ_LE_UINT16(_srcptr+10);
 	_srcptr += 12;
+
+	switch(_ptr[7]&0x7F) {
+	case 0x60: case 0x61:
+		ex1 = _srcptr[0];
+		ex2 = _srcptr[1];
+		_srcptr += 2;
+		if (ex1!=0xFF || ex2!=0xFF) {
+			ex1=READ_LE_UINT16(_ptr + _numColors + 10 + ex1*2);
+			_srcptr = _ptr + READ_LE_UINT16(_ptr + ex1 + ex2*2) + 14;
+		}
+	} 
 
 	_xpos = _actorX;
 	_ypos = _actorY;
@@ -200,10 +228,8 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 	_vscreenheight = _vm->virtscr[0].height;
 	_vm->updateDirtyRect(0, _left, _right+1,_top,_bottom,1<<a->number);
 
-	if (_top >= (int)_vscreenheight || _bottom <= 0) {
-		checkHeap();
+	if (_top >= (int)_vscreenheight || _bottom <= 0)
 		return 0;
-	}
 
 	_ypitch = _height * 320;
 	_docontinue = 0;
@@ -246,7 +272,10 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 		}
 	}
 
-	if ((uint)_top > (uint)_vscreenheight || _top < 0)
+	if (_width2==0)
+		return 0;
+
+	if ((uint)_top > (uint)_vscreenheight)
 		_top = 0;
 
 	if ((uint)_bottom > _vscreenheight)
@@ -259,31 +288,31 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 		a->bottom = _bottom;
 
 	if (_height2 + _top >= 256) {
-		checkHeap();
+		CHECK_HEAP
 		return 2;
 	}
 
-	_where_to_draw_ptr = _vm->getResourceAddress(0xA, 5) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
-	_bg_ptr = _vm->getResourceAddress(0xA, 1) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
+	_bgbak_ptr = _vm->getResourceAddress(0xA, 5) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
+	_backbuff_ptr = _vm->getResourceAddress(0xA, 1) + _vm->virtscr[0].xstart + _ypos*320 + _xpos;
 	charsetmask = _vm->hasCharsetMask(_left, _top + _vm->virtscr[0].topline, _right, _vm->virtscr[0].topline + _bottom);
 	masking = 0;
 
 	if (_zbuf) {
 		masking = _vm->isMaskActiveAt(_left, _top, _right, _bottom,
-			_vm->getResourceAddress(0xA, 9) + _vm->_imgBufOffs[_zbuf] + _vm->_screenStartStrip
+			_vm->getResourceAddress(0xA, 9) + _vm->gdi._imgBufOffs[_zbuf] + _vm->_screenStartStrip
 		);
 	}
 
 	if (_zbuf || charsetmask) {
 		_mask_ptr = _vm->getResourceAddress(0xA, 9) + _ypos*40 + _vm->_screenStartStrip;
 
-		_imgbufoffs = _vm->_imgBufOffs[_zbuf];
+		_imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
 		if (!charsetmask && _zbuf!=0)
 			_mask_ptr += _imgbufoffs;
 		_mask_ptr_dest = _mask_ptr + _xpos / 8;
 	}
 
-	checkHeap();
+	CHECK_HEAP
 
 	switch ((scaling<<2)|(masking<<1)|charsetmask) {
 	case 0: 
@@ -306,7 +335,7 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame) {
 		break;
 	}
 
-	checkHeap();
+	CHECK_HEAP
 	return b;
 }
 
@@ -321,7 +350,7 @@ void CostumeRenderer::proc6() {
 	y = _ypos;
 	len = _replen;
 	src = _srcptr;
-	dst = _bg_ptr;
+	dst = _backbuff_ptr;
 	color = _repcolor;
 	scrheight = _vscreenheight;
 	width = _width2;
@@ -368,7 +397,7 @@ void CostumeRenderer::proc5() {
 	maskbit = revBitMask[_xpos&7];
 	y = _ypos;
 	src = _srcptr;
-	dst = _bg_ptr;
+	dst = _backbuff_ptr;
 	len = _replen;
 	color = _repcolor;
 	scrheight = _vscreenheight;
@@ -428,7 +457,7 @@ void CostumeRenderer::proc4() {
 	maskbit = revBitMask[_xpos&7];
 	y = _ypos;
 	src = _srcptr;
-	dst = _bg_ptr;
+	dst = _backbuff_ptr;
 	len = _replen;
 	color = _repcolor;
 	scrheight = _vscreenheight;
@@ -479,7 +508,61 @@ StartPos:;
 }
 
 void CostumeRenderer::proc3() {
-	warning("COST_Proc3: not implemented");
+	byte *mask,*src,*dst;
+	byte maskbit,len,height,pcolor,width;
+	int color,t;
+	uint y;
+	
+	mask = _mask_ptr_dest;
+	dst = _backbuff_ptr;
+	height = _height2;
+	width = _width2;
+	len = _replen;
+	color = _repcolor;
+	src = _srcptr;
+	maskbit = revBitMask[_xpos&7];
+	y = _ypos;
+
+	if (_docontinue) goto StartPos;
+
+	do {
+		len = *src++;
+		color = len>>_shrval;
+		len &= _maskval;
+		if (!len) len = *src++;
+		do {
+			if (cost_scaleTable[_scaleIndexY++] < _scaleY) {
+				if (color && y < _vscreenheight && !((*mask|mask[_imgbufoffs])&maskbit)) {
+					pcolor = _palette[color];
+					if (pcolor==13)
+						pcolor = _transEffect[*dst];
+					*dst = pcolor;
+				}
+				dst += 320;
+				mask += 40;
+				y++;
+			}
+			if (!--height) {
+				if(!--width)
+					return;
+				height = _height;
+				y = _ypostop;
+				_scaleIndexY = _scaleIndexYTop;
+				t = _scaleIndexX;
+				_scaleIndexX = t + _scaleIndexXStep;
+				if (cost_scaleTable[t] < _scaleX) {
+					_xpos += _scaleIndexXStep;
+					if (_xpos >= 320)
+						return;
+					maskbit = revBitMask[_xpos&7];
+					_backbuff_ptr += _scaleIndexXStep;
+				}
+				dst = _backbuff_ptr;
+				mask = _mask_ptr + (_xpos>>3);
+			}
+StartPos:;
+		} while (--len);
+	} while(1);
 }
 
 void CostumeRenderer::proc2() {
@@ -489,7 +572,7 @@ void CostumeRenderer::proc2() {
 	uint y;
 	
 	mask = _mask_ptr_dest;
-	dst = _bg_ptr;
+	dst = _backbuff_ptr;
 	height = _height2;
 	width = _width2;
 	len = _replen;
@@ -530,9 +613,9 @@ void CostumeRenderer::proc2() {
 					if (_xpos >= 320)
 						return;
 					maskbit = revBitMask[_xpos&7];
-					_bg_ptr += _scaleIndexXStep;
+					_backbuff_ptr += _scaleIndexXStep;
 				}
-				dst = _bg_ptr;
+				dst = _backbuff_ptr;
 				mask = _mask_ptr + (_xpos>>3);
 			}
 StartPos:;
@@ -542,28 +625,17 @@ StartPos:;
 }
 
 void CostumeRenderer::proc1() {
-	byte *mask,*src,*dst;
+	byte *mask,*src,*dst,*dstorg;
 	byte maskbit,len,height,pcolor,width;
 	uint y;
 	int color;
 	int t;
 
-#if 0
-	debug(1, "proc1(): (%d %d),(%d %d %d),(%d %d %d),(%d %d,%d %d,%d %d),(%d %d)",
-				_xpos, _ypos, 
-				_width2, _height2, _height,
-				_replen,_repcolor,_docontinue,
-				_scaleX, _scaleY, _scaleIndexX, _scaleIndexY, 
-				_scaleIndexXStep, _scaleIndexYStep,
-				_scaleIndexYTop,_vscreenheight
-				);
-#endif
-	
 	mask = _mask_ptr = _mask_ptr_dest;
 	maskbit = revBitMask[_xpos&7];
 	y = _ypos;
 
-	dst = _bg_ptr;
+	dstorg = dst = _backbuff_ptr;
 	height = _height2;
 	width = _width2;
 	len = _replen;
@@ -601,9 +673,9 @@ void CostumeRenderer::proc1() {
 					_xpos += _scaleIndexXStep;
 					if (_xpos >= 320)
 						return;
-					_bg_ptr += _scaleIndexXStep;
+					_backbuff_ptr += _scaleIndexXStep;
 				}
-				dst = _bg_ptr;
+				dst = _backbuff_ptr;
 			}
 StartPos:;
 		} while (--len);
@@ -611,7 +683,15 @@ StartPos:;
 }
 
 void CostumeRenderer::loadCostume(int id) {
-	_ptr = _vm->getResourceAddress(3, id) + 2;
+	
+	_ptr = _vm->getResourceAddress(3, id);
+	
+	if (_vm->_majorScummVersion >= 6) {
+		_ptr += 8;
+	} else {
+		_ptr += 2;
+	}
+
 	switch(_ptr[7]&0x7F) {
 	case 0x58:
 		_numColors = 16;
@@ -619,8 +699,15 @@ void CostumeRenderer::loadCostume(int id) {
 	case 0x59:
 		_numColors = 32;
 		break;
+	case 0x60: /* New since version 6 */
+		_numColors = 16;
+		break;
+	case 0x61: /* New since version 6 */
+		_numColors = 32;
+		break;
 	default:
-		error("Costume %d is invalid", id);
+		break;
+		warning("Costume %d is invalid", id);
 	}
 
 	_dataptr = _ptr + READ_LE_UINT16(_ptr + _numColors + 8);
@@ -649,6 +736,7 @@ byte CostumeRenderer::drawOneSlot(Actor *a, int slot) {
 byte CostumeRenderer::drawCostume(Actor *a) {
 	int i;
 	byte r = 0;
+
 	_xmove = _ymove = 0;
 	for (i=0; i<16; i++)
 		r|=drawOneSlot(a, i);

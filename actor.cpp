@@ -17,6 +17,19 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.4.2.1  2001/11/12 16:14:40  yazoo
+ * The dig and Full Throttle support
+ *
+ * Revision 1.7  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
+ * Revision 1.6  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
+ * Revision 1.5  2001/10/16 10:01:44  strigeus
+ * preliminary DOTT support
+ *
  * Revision 1.4  2001/10/10 17:18:33  strigeus
  * fixed swapped parameters in o_walkActorToActor
  *
@@ -37,27 +50,65 @@
 #include "stdafx.h"
 #include "scumm.h"
 
-void Scumm::initActor(Actor *a, int mode) {
-	if (mode) {
-		a->facing = 2;
+void Scumm::initActor(Actor *a, int mode) { // A few things changed in V7 there, but the biggest part is that since the actors
+											// now face 8 directions, the a->facing var has been turned to angular
+	if (mode==1) {
 		a->costume = 0;
 		a->room = 0;
 		a->x = 0;
 		a->y = 0;
+		
+		if((_majorScummVersion>=7)&&(_middleScummVersion>=2))
+		{
+			a->facing = 180;
+			a->facing2 = 180;
+			a->visible = 0;
+		}
+		else
+			a->facing = 2;
+	} else if (mode==2) {
+		if((_majorScummVersion>=7)&&(_middleScummVersion>=2))
+		{
+			a->facing = 180;
+			a->facing2 = 180;
+		}
+		else
+			a->facing = 2;
 	}
+
+	if((_majorScummVersion>=7)&&(_middleScummVersion>=2))
+	{
+		a->data8 = 0;
+		a->V7sound = 0;
+		a->V7sound2 = 0;
+		a->script = 0;
+		a->script2 = 0;
+	}
+
 
 	a->elevation = 0;
 	a->width = 0x18;
 	a->talkColor = 0xF;
+	a->new_2 = 0;
+	a->new_1 = -80;
 	a->scaley = a->scalex = 0xFF;
 	a->charset = 0;
-	a->sound = 0;
+	a->sound[0] = 0;
+	a->sound[1] = 0;
+	a->sound[2] = 0;
+	a->sound[3] = 0;
+	a->sound[4] = 0;
+	a->sound[5] = 0;
+	a->sound[6] = 0;
+	a->sound[7] = 0;
+	a->newDirection = 0;
 	a->moving = 0;
 
 	setActorWalkSpeed(a, 8, 2);
 
 	a->ignoreBoxes = 0;
 	a->neverZClip = 0;
+	a->new_3 = 0;
 	a->initFrame = 1;
 	a->walkFrame = 2;
 	a->standFrame = 3;
@@ -415,7 +466,7 @@ void Scumm::decodeCostData(Actor *a, int frame, uint usemask) {
 }
 
 void Scumm::putActor(Actor *a, int x, int y, byte room) {
-	if (a->visible && _currentRoom!=room && vm.vars[VAR_TALK_ACTOR]==a->number) {
+	if (a->visible && _currentRoom!=room && _vars[VAR_TALK_ACTOR]==a->number) {
 		clearMsgQueue();
 	}
 
@@ -425,8 +476,8 @@ void Scumm::putActor(Actor *a, int x, int y, byte room) {
 	a->needRedraw = true;
 	a->needBgReset = true;
 
-	if (vm.vars[VAR_UNK_ACTOR]==a->number) {
-		dseg_3A76 = 1;
+	if (_vars[VAR_EGO]==a->number) {
+		_egoPositioned = true;
 	}
 
 	if (a->visible) {
@@ -576,7 +627,7 @@ void Scumm::showActors() {
 	int i;
 	Actor *a;
 	
-	for (i=1; i<13; i++) {
+	for (i=1; i<_maxActors; i++) {
 		a = derefActor(i);
 		if (a->room == _currentRoom)
 			showActor(a);
@@ -589,13 +640,13 @@ void Scumm::stopTalk() {
 	_haveMsg = 0;
 	_talkDelay = 0;
 
-	act = vm.vars[VAR_TALK_ACTOR];
+	act = _vars[VAR_TALK_ACTOR];
 	if (act && act<0x80) {
 		Actor *a = derefActorSafe(act, "stopTalk");
 		if (_currentRoom == a->room) {
 			startAnimActor(a, a->talkFrame2, a->facing);			
 		}
-		vm.vars[VAR_TALK_ACTOR] = 0xFF;
+		_vars[VAR_TALK_ACTOR] = 0xFF;
 	}
 	_keepText = false;
 	restoreCharsetBg();
@@ -609,22 +660,23 @@ void Scumm::clearMsgQueue() {
 void Scumm::walkActors() {
 	int i;
 	Actor *a;
-	for (i=1; i<13; i++) {
+	for (i=1; i<_maxActors; i++) {
 		a = derefActor(i);	
 		if (a->room==_currentRoom)
 			walkActor(a);
 	}
 }
 
+/* Used in Scumm v5 only. Play sounds associated with actors */
 void Scumm::playActorSounds() {
 	int i;
 	Actor *a;
 	
-	for (i=1; i<13; i++) {
+	for (i=1; i<13; i++) { // I left 13 instead of _maxActors since it's V5 only
 		a = derefActor(i);
 		if (a->cost.animCounter2 && a->room==_currentRoom && a->sound) {
 			_currentScript = 0xFF;
-			addSoundToQueue(a->sound);
+			addSoundToQueue(a->sound[0]);
 			for (i=1; i<13; i++) {
 				a = derefActor(i);
 				a->cost.animCounter2 = 0;
@@ -708,10 +760,10 @@ void Scumm::walkActor(Actor *a) {
 
 void Scumm::processActors() {
 	int i;
-	Actor *actors[13],*a,**ac,**ac2,*tmp;
+	Actor *actors[30],*a,**ac,**ac2,*tmp;
 	int numactors = 0, cnt,cnt2;
 
-	for (i=1; i<13; i++) {
+	for (i=1; i<_maxActors; i++) {
 		a = derefActor(i);
 		if (a->room == _currentRoom)
 			actors[numactors++] = a;
@@ -741,20 +793,84 @@ void Scumm::processActors() {
 			setupActorScale(a);
 			setupCostumeRenderer(&cost, a);
 			setActorCostPalette(a);
-			checkHeap();
+			CHECK_HEAP
 			drawActorCostume(a);
-			checkHeap();
+			CHECK_HEAP
 			actorAnimate(a);
 		}
 	} while (ac++,--cnt);
+}
+
+void Scumm::processActorsV7() {
+	int i;
+	int numactors=0;
+	Actor *actors[30];
+	Actor *a;
+	int LocalActorY[30];
+
+	for (i=1; i<_maxActors; i++) {
+		a = derefActor(i);
+		if (a->room == _currentRoom)
+		{
+			actors[numactors] = a;
+			LocalActorY[numactors++] = ((a->y)-(a->newV7));
+		}
+	}
+
+	if (!numactors)
+		return;
+
+	// TODO: There we should sort all the actors in order
+
+	for (i=0;i< numactors;i++)
+	{
+		a = actors[i];
+		if(a->costume)
+		{
+			drawAnActorV7(a->number);
+		}
+	}
+}
+
+void Scumm::drawAnActorV7(int i)
+{
+	Actor *a;
+
+	a = derefActor(i);
+
+	if(!a->costume)
+		return;
+
+	return;
+
+
+}
+
+void Scumm::animateActorsV7() { // TODO: need to activate startActorsScript()
+	int i;
+	Actor *a;
+
+	for (i=1; i<_maxActors; i++) {
+		a = derefActor(i);
+		if (a->room == _currentRoom)
+		{
+			a->AnimateStatus=animateActorV7(a);
+		}
+	}
+	//startActorsScript();
+}
+
+int Scumm::animateActorV7(Actor *a) // TODO: code the script manipulation
+{
+	return(0);
 }
 
 void Scumm::setupCostumeRenderer(CostumeRenderer *c, Actor *a) {
 	c->_actorX = a->x - virtscr->xstart;
 	c->_actorY = a->y - a->elevation;
 	c->_zbuf = a->mask;
-	if (c->_zbuf > _numZBuffer)
-		c->_zbuf = (byte)_numZBuffer;
+	if (c->_zbuf > gdi._numZBuffer)
+		c->_zbuf = (byte)gdi._numZBuffer;
 	if (a->neverZClip)
 		c->_zbuf = a->neverZClip;
 	
@@ -814,7 +930,7 @@ void Scumm::setActorRedrawFlags() {
 	for (i=0; i<40; i++) {
 		bits = actorDrawBits[_screenStartStrip+i];
 		if (bits&0x3FFF) {
-			for(j=0; j<13; j++) {
+			for(j=0; j<_maxActors; j++) {
 				if ((bits&(1<<j)) && bits!=(1<<j)) {
 					Actor *a = derefActor(j);
 					a->needRedraw = true;
@@ -832,7 +948,7 @@ int Scumm::getActorFromPos(int x, int y) {
 	drawbits = actorDrawBits[x>>3];
 	if (!(drawbits & 0x3FFF))
 		return 0;
-	for (i=1; i<13; i++) {
+	for (i=1; i<_maxActors; i++) {
 		Actor *a = derefActor(i);
 		if (drawbits&(1<<i) && !getClass(i, 32) && y >= a->top && y <= a->bottom) {
 			return i;
@@ -851,7 +967,7 @@ void Scumm::actorTalk() {
 	if (_actorToPrintStrFor==0xFF) {
 		if (!_keepText)
 			stopTalk();
-		vm.vars[VAR_TALK_ACTOR] = 0xFF;
+		_vars[VAR_TALK_ACTOR] = 0xFF;
 		oldact = 0;
 	} else {
 		a = derefActorSafe(_actorToPrintStrFor, "actorTalk");
@@ -860,24 +976,24 @@ void Scumm::actorTalk() {
 		} else {
 			if (!_keepText)
 				stopTalk();
-			vm.vars[VAR_TALK_ACTOR] = a->number;
+			_vars[VAR_TALK_ACTOR] = a->number;
 			startAnimActor(a,a->talkFrame1,a->facing);
-			oldact = vm.vars[VAR_TALK_ACTOR];
+			oldact = _vars[VAR_TALK_ACTOR];
 		}
 	}
 	if (oldact>=0x80)
 		return;
 	
-	if (vm.vars[VAR_TALK_ACTOR]>0x7F) {
-		_charsetColor = (byte)_stringColor[0];
+	if (_vars[VAR_TALK_ACTOR]>0x7F) {
+		_charsetColor = (byte)string[0].color;
 	} else {
-		a = derefActorSafe(vm.vars[VAR_TALK_ACTOR], "actorTalk(2)");
+		a = derefActorSafe(_vars[VAR_TALK_ACTOR], "actorTalk(2)");
 		_charsetColor = a->talkColor;
 	}
 	charset._bufPos = 0;
 	_talkDelay = 0;
 	_haveMsg = 0xFF;
-	vm.vars[VAR_HAVE_MSG] = 0xFF;
+	_vars[VAR_HAVE_MSG] = 0xFF;
 	CHARSET_1();
 }
 

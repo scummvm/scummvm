@@ -17,6 +17,25 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.2.2.1  2001/11/12 16:17:54  yazoo
+ * The dig and Full Throttle support
+ *
+ * Revision 1.7  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
+ * Revision 1.6  2001/10/24 20:12:52  strigeus
+ * fixed some bugs related to string handling
+ *
+ * Revision 1.5  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
+ * Revision 1.4  2001/10/16 12:20:20  strigeus
+ * made files compile on unix
+ *
+ * Revision 1.3  2001/10/16 10:01:47  strigeus
+ * preliminary DOTT support
+ *
  * Revision 1.2  2001/10/10 10:02:33  strigeus
  * alternative mouse cursor
  * basic save&load
@@ -67,12 +86,30 @@ void Scumm::openRoom(int room) {
 			_fileOffset = _roomFileOffsets[room];
 			return;
 		}
-		if (room==0) {
-			sprintf(buf, "%s.000", _exe_name);
-		} else {
-			sprintf(buf, "%s.%.3d", _exe_name, res.roomno[1][room]);
+		if ((_majorScummVersion>=7)&&(_middleScummVersion>2))
+		{
+			if (room==0) {
+				sprintf(buf, "%s.LA0", _exe_name);
+			} else {
+				sprintf(buf, "%s.LA%.1d", _exe_name, res.roomno[1][room]);
+			}
+			
+			if(_middleScummVersion<=2)
+			_encbyte = 0x69;
+			else
+			_encbyte = 0x00;
 		}
-		_encbyte = 0x69;
+		else
+		{
+			if (room==0) {
+				sprintf(buf, "%s.000", _exe_name);
+			} else {
+				sprintf(buf, "%s.%.3d", _exe_name, res.roomno[1][room]);
+			}
+
+			_encbyte = 0x69;
+		}
+		
 		if (openResourceFile(buf)) {
 			if (room==0)
 				return;
@@ -85,7 +122,7 @@ void Scumm::openRoom(int room) {
 			error("Room %d not in %s", room, buf);
 			return;
 		}
-		askForDisk();
+		askForDisk(buf);
 	}
 
 	do {
@@ -93,7 +130,7 @@ void Scumm::openRoom(int room) {
 		_encbyte = 0;
 		if (openResourceFile(buf)) 
 			break;
-		askForDisk();
+		askForDisk(buf);
 	} while(1);
 
 	deleteRoomOffsets();
@@ -159,13 +196,11 @@ bool Scumm::openResourceFile(const char *filename) {
 	return _fileHandle != NULL;
 }
 
-void Scumm::askForDisk() {
-	/* TODO: Not yet implemented */
-	error("askForDisk: not yet implemented");
+void Scumm::askForDisk(const char *filename) {
+	error("Cannot find '%s'", filename);
 }
 
-
-void Scumm::readIndexFile(int mode) {
+void Scumm::readIndexFileV5(int mode) {
 	uint32 blocktype,itemsize;
 	int numblock = 0;
 #if defined(SCUMM_BIG_ENDIAN)
@@ -192,18 +227,18 @@ void Scumm::readIndexFile(int mode) {
 			break;
 
 		case MKID('DOBJ'):
-			_maxNrObjects = fileReadWordLE();
-			_objectFlagTable = (byte*)alloc(_maxNrObjects);
+			_numGlobalObjects = fileReadWordLE();
+			_objectFlagTable = (byte*)alloc(_numGlobalObjects);
 			if (mode==1) {
 				fileSeek(_fileHandle, itemsize - 10, 1);
 				break;
 			}
 
-			_classData = (uint32*)alloc(_maxNrObjects * sizeof(uint32));
-			fileRead(_fileHandle, _objectFlagTable, _maxNrObjects);
-			fileRead(_fileHandle, _classData, _maxNrObjects * sizeof(uint32));
+			_classData = (uint32*)alloc(_numGlobalObjects * sizeof(uint32));
+			fileRead(_fileHandle, _objectFlagTable, _numGlobalObjects);
+			fileRead(_fileHandle, _classData, _numGlobalObjects * sizeof(uint32));
 #if defined(SCUMM_BIG_ENDIAN)
-			for (i=0; i<_maxNrObjects; i++)
+			for (i=0; i<_numGlobalObjects; i++)
 				_classData[i] = FROM_LE_32(_classData[i]);
 #endif
 			break;
@@ -239,7 +274,7 @@ void Scumm::readIndexFile(int mode) {
 		case MKID('DSOU'):
 			readResTypeList(4,MKID('SOUN'),"sound");
 			break;
-		
+
 		default:
 			error("Bad ID %c%c%c%c found in directory!", blocktype&0xFF, blocktype>>8, blocktype>>16, blocktype>>24);
 			return;
@@ -253,27 +288,216 @@ void Scumm::readIndexFile(int mode) {
 
 	openRoom(-1);
 	
-	_numGlobalScriptsUsed = _maxScripts;
+	_numGlobalScripts = _maxScripts;
 	_dynamicRoomOffsets = true;
+}
+
+void Scumm::readIndexFileV6() {
+	uint32 blocktype,itemsize;
+	int numblock = 0;
+	int num, i;
+
+	debug(9, "readIndexFile()");
+
+	openRoom(-1);
+	openRoom(0);
+	
+	while (1) {
+		blocktype = fileReadDword();
+
+		if (fileReadFailed(_fileHandle))
+			break;
+		itemsize = fileReadDwordBE();
+
+		numblock++;
+
+			switch(blocktype) {
+		case MKID('DCHR'):
+			readResTypeList(6,MKID('CHAR'),"charset");
+			break;
+
+		case MKID('DOBJ'):
+			 num = fileReadWordLE();
+			 assert(num == _numGlobalObjects);
+			fileRead(_fileHandle, _objectFlagTable, num);
+			fileRead(_fileHandle, _classData, num * sizeof(uint32));
+#if defined(SCUMM_BIG_ENDIAN)
+			for (i=0; i<_numGlobalObjects; i++)
+				_classData[i] = FROM_LE_32(_classData[i]);
+#endif
+			break;
+
+		case MKID('RNAM'):
+			fileSeek(_fileHandle, itemsize-8,1);
+			break;
+
+		case MKID('DROO'):
+			readResTypeList(1,MKID('ROOM'),"room");
+			break;
+
+		case MKID('DSCR'):
+			readResTypeList(2,MKID('SCRP'),"script");
+			break;
+
+		case MKID('DCOS'):
+			readResTypeList(3,MKID('COST'),"costume");
+			break;
+
+		case MKID('MAXS'):
+			readMAXS();
+			break;
+
+		case MKID('DSOU'):
+			readResTypeList(4,MKID('SOUN'),"sound");
+			break;
+
+		case MKID('AARY'):
+			readArrayFromIndexFile();
+			break;
+
+		default:
+			error("Bad ID %c%c%c%c found in directory!", blocktype&0xFF, blocktype>>8, blocktype>>16, blocktype>>24);
+			return;
+		}
+	}
+
+	clearFileReadFailed(_fileHandle);
+
+	if (numblock!=9)
+		error("Not enough blocks read from directory");
+
+	openRoom(-1);
+}
+
+void Scumm::readIndexFileV7() {
+	uint32 blocktype,itemsize;
+	int numblock = 0;
+	int num, i;
+
+	debug(9, "readIndexFile()");
+
+	openRoom(-1);
+	openRoom(0);
+	
+	while (1) {
+		blocktype = fileReadDword();
+
+		if (fileReadFailed(_fileHandle))
+			break;
+		itemsize = fileReadDwordBE();
+
+		numblock++;
+
+			switch(blocktype) {
+		case MKID('DCHR'):
+			readResTypeList(6,MKID('CHAR'),"charset");
+			break;
+
+		case MKID('DOBJ'):
+			 num = fileReadWordLE();
+			 assert(num == _numGlobalObjects);
+			fileRead(_fileHandle, _objectFlagTable, num);
+			if(_middleScummVersion>2)
+			fileRead(_fileHandle, _objsTab2, num); // Not yet identified that variable...
+			fileRead(_fileHandle, _classData, num * sizeof(uint32));
+#if defined(SCUMM_BIG_ENDIAN)
+			for (i=0; i<_numGlobalObjects; i++)
+				_classData[i] = FROM_LE_32(_classData[i]);
+#endif
+			break;
+
+		case MKID('RNAM'):
+			fileSeek(_fileHandle, itemsize-8,1); // we should read the names for the debugger....
+			break;
+
+		case MKID('ANAM'):
+			fileSeek(_fileHandle, itemsize-8,1); // we should read the names for the debugger....
+			break;
+
+		case MKID('DROO'):
+			readResTypeList(1,MKID('ROOM'),"room");
+			break;
+
+		case MKID('DSCR'):
+			readResTypeList(2,MKID('SCRP'),"script");
+			break;
+
+		case MKID('DCOS'):
+			readResTypeList(3,MKID('COST'),"costume");
+			break;
+
+		case MKID('MAXS'):
+			if(_middleScummVersion<=2)
+				readMAXS();
+			else
+				readMAXSV7(); // Well, in the original exe the maxs are read during the low level init, before starting the main loop.
+						// That part must have been changed by Aeron Giles when he added cross platform support for the scumm.
+			break;
+		case MKID('DSOU'):
+			readResTypeList(4,MKID('SOUN'),"sound");
+			break;
+
+		case MKID('AARY'):
+			readArrayFromIndexFile();
+			break;
+
+		default:
+			error("Bad ID %c%c%c%c found in directory!", blocktype&0xFF, blocktype>>8, blocktype>>16, blocktype>>24);
+			return;
+		}
+	}
+
+	clearFileReadFailed(_fileHandle);
+
+	if (_middleScummVersion>2)
+	{
+		if (numblock!=10)
+			error("Not enough blocks read from directory");
+	}
+	else
+	{
+		if (numblock!=9)
+			error("Not enough blocks read from directory");
+	}
+
+	openRoom(-1);
+}
+
+void Scumm::readArrayFromIndexFile() {
+	int num;
+	int a,b,c;
+
+	while ((num = fileReadWordLE()) != 0) {
+		a = fileReadWordLE();
+		b = fileReadWordLE();
+		c = fileReadWordLE();
+		if (c==1)
+			defineArray(num, 1, a, b);
+		else
+			defineArray(num, 5, a, b);
+	}
 }
 
 void Scumm::readResTypeList(int id, uint32 tag, const char *name) {
 	int num;
-#if defined(SCUMM_BIG_ENDIAN)
 	int i;
-#endif
 	
 	debug(9, "readResTypeList(%d,%x,%s)",id,FROM_LE_32(tag),name);
 	
 	num = fileReadWordLE();
 
-	if (num>0xFF) {
-		error("Too many %ss (%d) in directory", name, num);
+	if (_majorScummVersion >= 6) {
+		if (num != res.num[id]) {
+			error("Invalid number of %ss (%d) in directory", name, num);	
+		}
+	} else {
+		if (num>=0xFF) {
+			error("Too many %ss (%d) in directory", name, num);
+		}
+		allocResTypeData(id, tag, num, name, 1);
 	}
-
-	allocResTypeData(id, tag, num, name, 1);
 	
-	fileRead(_fileHandle, res.roomno[id], num);
+	fileRead(_fileHandle, res.roomno[id], num*sizeof(uint8));
 	fileRead(_fileHandle, res.roomoffs[id], num*sizeof(uint32));
 
 #if defined(SCUMM_BIG_ENDIAN)
@@ -282,8 +506,15 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name) {
 #endif
 }
 
+
 void Scumm::allocResTypeData(int id, uint32 tag, int num, const char *name, int mode) {
 	debug(9, "allocResTypeData(%d,%x,%d,%s,%d)",id,FROM_LE_32(tag),num,name,mode);
+	assert(id>=0 && id<sizeof(res.mode)/sizeof(res.mode[0]));
+
+/*	if (num>=512) 
+		error("Too many %ss (%d) in directory", name, num);
+	} */ // DIF
+
 	res.mode[id] = mode;
 	res.num[id] = num;
 	res.tags[id] = tag;
@@ -336,7 +567,7 @@ void Scumm::ensureResourceLoaded(int type, int i) {
 	loadResource(type, i);
 
 	if (type==1 && i==_roomResource)
-		vm.vars[VAR_ROOM_FLAG] = 1;
+		_vars[VAR_ROOM_FLAG] = 1;
 }
 
 int Scumm::loadResource(int type, int index) {
@@ -344,6 +575,8 @@ int Scumm::loadResource(int type, int index) {
 	uint32 fileOffs;
 	uint32 size, tag;
 	
+	_fileReadFailed=0;
+
 	debug(9, "loadResource(%d,%d)", type,index);
 
 	roomNr = getResourceRoomNr(type, index);
@@ -398,6 +631,7 @@ int Scumm::loadResource(int type, int index) {
 			nukeResource(type, index);
 		}
 
+		printf("Cannot Read resource type:%d index:%d\n",type,index);
 		error("Cannot read resource");
 	} while(1);
 }
@@ -436,7 +670,6 @@ int Scumm::readSoundResource(int type, int index) {
 	return 0;
 }
 
-
 int Scumm::getResourceRoomNr(int type, int index) {
 	if (type==1)
 		return index;
@@ -448,7 +681,7 @@ byte *Scumm::getResourceAddress(int type, int index) {
 
 	debug(9, "getResourceAddress(%d,%d)", type, index);
 
-	checkHeap();
+	CHECK_HEAP
 
 	validateResource("getResourceAddress", type, index);
 	
@@ -465,6 +698,16 @@ byte *Scumm::getResourceAddress(int type, int index) {
 	return ptr + sizeof(ResHeader);
 }
 
+byte *Scumm::getStringAddress(int i) {
+	byte *b = getResourceAddress(7, i);
+	if (!b)
+		return b;
+	
+	if (_majorScummVersion>=6)
+		return ((ArrayHeader*)b)->data;
+	return b;
+}
+
 void Scumm::setResourceFlags(int type, int index, byte flag) {
 	res.flags[type][index] &= 0x80;
 	res.flags[type][index] |= flag;
@@ -473,7 +716,7 @@ void Scumm::setResourceFlags(int type, int index, byte flag) {
 byte *Scumm::createResource(int type, int index, uint32 size) {
 	byte *ptr;
 
-	checkHeap();
+	CHECK_HEAP
 
 	debug(9, "createResource(%d,%d,%d)", type, index,size);
 
@@ -483,7 +726,7 @@ byte *Scumm::createResource(int type, int index, uint32 size) {
 	validateResource("allocating", type, index);
 	nukeResource(type, index);
 
-	checkHeap();
+	CHECK_HEAP
 	
 	ptr = (byte*)alloc(size + sizeof(ResHeader));
 	if (ptr==NULL) {
@@ -501,7 +744,7 @@ byte *Scumm::createResource(int type, int index, uint32 size) {
 
 void Scumm::validateResource(const char *str, int type, int index) {
 	if (type<1 || type>15 || index<0 || index >= res.num[type]) {
-		error("%d Illegal Glob type %d num %d", str, type, index);
+		error("%s Illegal Glob type %d num %d", str, type, index);
 	}
 }
 
@@ -509,7 +752,7 @@ void Scumm::nukeResource(int type, int index) {
 	
 	debug(9, "nukeResource(%d,%d)", type, index);
 
-	checkHeap();
+	CHECK_HEAP
 	assert( res.address[type] );
 	assert( index>=0 && index < res.num[type]);
 
@@ -527,20 +770,19 @@ void Scumm::unkResourceProc() {
 	warning("unkResourceProc: not implemented");
 }
 
+byte *findResource(uint32 tag, byte *searchin, int index) {
+	uint32 maxsize,curpos,totalsize,size;
 
-byte *Scumm::findResource(uint32 tag, byte *searchin) {
-	uint32 size;
+	searchin += 4;
+	totalsize = READ_BE_UINT32_UNALIGNED(searchin);
+	curpos = 8;
+	searchin += 4;
 
-	if (searchin) {
-		searchin+=4;
-		_findResSize = READ_BE_UINT32_UNALIGNED(searchin);
-		_findResHeaderSize = 8;
-		_findResPos = searchin+4;
-		goto startScan;
-	}
+	while (curpos<totalsize) {
+		if (READ_UINT32_UNALIGNED(searchin)==tag && !index--)
+			return searchin;
 
-	do {
-		size = READ_BE_UINT32_UNALIGNED(_findResPos+4);
+		size = READ_BE_UINT32_UNALIGNED(searchin+4);
 		if ((int32)size <= 0) {
 			error("(%c%c%c%c) Not found in %d... illegal block len %d", 
 				tag&0xFF,(tag>>8)&0xFF,(tag>>16)&0xFF,(tag>>24)&0xFF,
@@ -548,53 +790,17 @@ byte *Scumm::findResource(uint32 tag, byte *searchin) {
 				size);
 			return NULL;
 		}
-		_findResHeaderSize += size;
-		_findResPos += size;
-		
-startScan:;
-		if (_findResHeaderSize >= _findResSize)
-			return NULL;
-/* endian OK, tags are in native format */
-	} while (READ_UINT32_UNALIGNED(_findResPos) != tag);
 
-	return _findResPos;
-}
+		curpos += size;
+		searchin += size;
+	} 
 
-byte *Scumm::findResource2(uint32 tag, byte *searchin) {
-	uint32 size;
-
-	if (searchin) {
-		searchin+=4;
-		_findResSize2 = READ_BE_UINT32_UNALIGNED(searchin);
-		_findResHeaderSize2 = 8;
-		_findResPos2 = searchin+4;
-		goto startScan;
-	}
-
-	do {
-		size = READ_BE_UINT32_UNALIGNED(_findResPos2+4);
-		if ((int32)size <= 0) {
-			error("(%c%c%c%c) Not found in %d... illegal block len %d", 
-				tag&0xFF,(tag>>8)&0xFF,(tag>>16)&0xFF,(tag>>24)&0xFF,
-				0,
-				size);
-			return NULL;
-		}
-		_findResHeaderSize2 += size;
-		_findResPos2 += size;
-		
-startScan:;
-		if (_findResHeaderSize2 >= _findResSize2)
-			return NULL;
-/* endian OK, tags are in native format */
-	} while (READ_UINT32_UNALIGNED(_findResPos2) != tag);
-	return _findResPos2;
+	return NULL;
 }
 
 void Scumm::lock(int type, int i) {
 	validateResource("Locking", type, i);
 	res.flags[type][i] |= 0x80;
-
 }
 
 void Scumm::unlock(int type, int i) {
@@ -607,22 +813,10 @@ void Scumm::loadPtrToResource(int type, int resindex, byte *source) {
 	int i,len;
 
 	nukeResource(type, resindex);
-	if (!source) {
-		ptr = _scriptPointer;
-	} else {
-		ptr = source;
-	}
 
-	len = 0;
-	do {
-		i = *ptr++;
-		if (!i) break;
-		len++;
-		if (i==0xFF)
-			ptr += 3, len += 3;
-	} while (1);
+	len = getStringLen(source);
 
-	if (++len <= 1)
+	if (len <= 1)
 		return;
 
 	alloced = createResource(type, resindex, len);
@@ -648,7 +842,116 @@ void Scumm::unkHeapProc2(int a, int b) {
 } 
 
 void Scumm::unkResProc(int a, int b) {
-	error("unkResProc:not implemented");
+	warning("unkResProc:not implemented");
+}
+
+
+void Scumm::readMAXS() {
+	_numVariables = fileReadWordLE();
+	fileReadWordLE();
+	_numBitVariables = fileReadWordLE();
+	_numLocalObjects = fileReadWordLE();
+	_numArray = fileReadWordLE();
+	fileReadWordLE();
+	_numVerbs = fileReadWordLE();
+	_numFlObject = fileReadWordLE();
+	_numInventory = fileReadWordLE();
+	_numRooms = fileReadWordLE();
+	_numScripts = fileReadWordLE();
+	_numSounds = fileReadWordLE();
+	_numCharsets = fileReadWordLE();
+	_numCostumes = fileReadWordLE();
+	_numGlobalObjects = fileReadWordLE();
+
+	allocResTypeData(3, MKID('COST'), _numCostumes, "costume", 1);
+	allocResTypeData(1, MKID('ROOM'), _numRooms, "room", 1);
+	allocResTypeData(4, MKID('SOUN'), _numSounds, "sound", 1);
+	allocResTypeData(2, MKID('SCRP'), _numScripts, "script", 1);
+	allocResTypeData(6, MKID('CHAR'), _numCharsets, "charset", 1);
+	allocResTypeData(5, MKID('NONE'),	_numInventory, "inventory", 0);
+	allocResTypeData(8, MKID('NONE'), _numVerbs,"verb", 0);
+	allocResTypeData(7, MKID('NONE'), _numArray,"array", 0);
+	allocResTypeData(13, MKID('NONE'),_numFlObject,"flobject", 0);
+	allocResTypeData(12,MKID('NONE'),10, "temp", 0);
+	allocResTypeData(11,MKID('NONE'),5, "scale table", 0);
+	allocResTypeData(9, MKID('NONE'),13,"actor name", 0);
+	allocResTypeData(10, MKID('NONE'),10,"buffer", 0);
+	allocResTypeData(14, MKID('NONE'),10,"boxes", 0);
+	allocResTypeData(16, MKID('NONE'),50,"new name", 0);
+
+	_objectFlagTable = (byte*)alloc(_numGlobalObjects);
+	_inventory = (uint16*)alloc(_numInventory * sizeof(uint16));
+	_arrays = (byte*)alloc(_numArray);
+	_verbs = (VerbSlot*)alloc(_numVerbs * sizeof(VerbSlot));
+	_objs = (ObjectData*)alloc(_numLocalObjects * sizeof(ObjectData));
+	_vars = (int16*)alloc(_numVariables * sizeof(int16));
+	_bitVars = (byte*)alloc(_numBitVariables >> 3);
+	_newNames = (uint16*)alloc(50 * sizeof(uint16));
+	_classData = (uint32*)alloc(_numGlobalObjects * sizeof(uint32));
+
+	_numGlobalScripts = 200;
+	_dynamicRoomOffsets = 1;
+}
+
+void Scumm::readMAXSV7() {
+	int i;
+
+	for(i=0;i<50;i++)
+	{
+		fileReadByte(); // Scumm version
+	}
+	
+	for(i=0;i<50;i++)
+	{
+		fileReadByte(); // Scumm compilation date
+	}
+
+
+	_numVariables = fileReadWordLE();
+	_numBitVariables = fileReadWordLE();
+	fileReadWordLE();
+	_numGlobalObjects = fileReadWordLE();
+	_numLocalObjects = fileReadWordLE();
+	_numNewName = fileReadWordLE();
+	_numVerbs = fileReadWordLE();
+	_numFlObject = fileReadWordLE();
+	_numInventory = fileReadWordLE();
+	_numArray = fileReadWordLE();
+	_numRooms = fileReadWordLE();
+	_numScripts = fileReadWordLE();
+	_numSounds = fileReadWordLE();
+	_numCharsets = fileReadWordLE();
+	_numCostumes = fileReadWordLE();
+
+	allocResTypeData(3, MKID('AKOS'), _numCostumes, "costume", 1);
+	allocResTypeData(1, MKID('ROOM'), _numRooms, "room", 1);
+	allocResTypeData(4, MKID('SOUN'), _numSounds, "sound", 1);
+	allocResTypeData(2, MKID('SCRP'), _numScripts, "script", 1);
+	allocResTypeData(6, MKID('CHAR'), _numCharsets, "charset", 1);
+	allocResTypeData(5, MKID('NONE'),	_numInventory, "inventory", 0);
+	allocResTypeData(8, MKID('NONE'), _numVerbs,"verb", 0);
+	allocResTypeData(7, MKID('NONE'), _numArray,"array", 0);
+	allocResTypeData(13, MKID('NONE'),_numFlObject,"flobject", 0);
+	allocResTypeData(12,MKID('NONE'),10, "temp", 0);
+	allocResTypeData(11,MKID('NONE'),5, "scale table", 0);
+	allocResTypeData(9, MKID('NONE'),30,"actor name", 0); // Updated
+	allocResTypeData(10, MKID('NONE'),10,"buffer", 0);
+	allocResTypeData(14, MKID('NONE'),10,"boxes", 0);
+	allocResTypeData(16, MKID('NONE'),50,"new name", 0);
+
+	_objectFlagTable = (byte*)alloc(_numGlobalObjects);
+	_objsTab2 = (byte*)alloc(_numGlobalObjects);
+	_inventory = (uint16*)alloc(_numInventory * sizeof(uint16));
+	_arrays = (byte*)alloc(_numArray);
+	_verbs = (VerbSlot*)alloc(_numVerbs * sizeof(VerbSlot));
+	_objs = (ObjectData*)alloc(_numLocalObjects * sizeof(ObjectData));
+	_vars = (int16*)alloc(_numVariables * sizeof(int16));
+	_bitVars = (byte*)alloc(_numBitVariables >> 3);
+	_newNames = (uint16*)alloc(50 * sizeof(uint16));
+	_classData = (uint32*)alloc(_numGlobalObjects * sizeof(uint32));
+
+	_numGlobalScripts = 200;
+	_dynamicRoomOffsets = 1;
 }
 
 

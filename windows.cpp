@@ -17,6 +17,25 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.3.2.1  2001/11/12 16:23:34  yazoo
+ * The dig and Full Throttle support
+ *
+ * Revision 1.8  2001/10/26 17:34:50  strigeus
+ * bug fixes, code cleanup
+ *
+ * Revision 1.7  2001/10/23 19:51:50  strigeus
+ * recompile not needed when switching games
+ * debugger skeleton implemented
+ *
+ * Revision 1.6  2001/10/16 20:31:27  strigeus
+ * misc fixes
+ *
+ * Revision 1.5  2001/10/16 10:01:48  strigeus
+ * preliminary DOTT support
+ *
+ * Revision 1.4  2001/10/12 07:24:06  strigeus
+ * fast mode support
+ *
  * Revision 1.3  2001/10/10 10:02:33  strigeus
  * alternative mouse cursor
  * basic save&load
@@ -120,9 +139,9 @@ void Error(const char *msg) {
 
 int sel;
 Scumm scumm;
+ScummDebugger debugger;
 WndMan wm[1];
-
-
+byte veryFastMode;
 
 void modifyslot(int sel, int what);
 
@@ -136,6 +155,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 		case WM_CLOSE:
 			PostQuitMessage(0);
 			break;
+
 		case WM_CHAR:
 			wm->_scumm->_keyPressed = wParam;
 			break;
@@ -147,7 +167,21 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 					wm->_scumm->_saveLoadFlag = 1;
 				else if (GetAsyncKeyState(VK_CONTROL)<0)
 					wm->_scumm->_saveLoadFlag = 2;
+				wm->_scumm->_saveLoadCompatible = false;
 			}
+
+			if (wParam=='F') {
+				wm->_scumm->_fastMode ^= 1;
+			}
+
+			if (wParam=='G') {
+				veryFastMode ^= 1;
+			}
+
+			if (wParam=='D') {
+				debugger.attach(wm->_scumm);
+			}
+
 			break;
 
 		case WM_MOUSEMOVE:
@@ -703,7 +737,6 @@ int _declspec(naked) endpentiumtest() {
 
 
 
-#ifdef _DEBUG
 
 void decompressMask(byte *d, byte *s) {
 	int x,y;
@@ -724,12 +757,19 @@ void decompressMask(byte *d, byte *s) {
 
 void outputdisplay2(Scumm *s, int disp) {
 	byte *old = wm->_vgabuf;
+
+	byte buf[64000];
+
 	switch(disp) {
 	case 0:
-		wm->_vgabuf = s->getResourceAddress(0xA, 5);
+		wm->_vgabuf = buf;
+		memcpy(buf, wm->_vgabuf, 64000);
+		memcpy(buf+320*144,s->getResourceAddress(0xA, 7),320*56);
 		break;
 	case 1:
-		wm->_vgabuf = s->getResourceAddress(0xA, 1);
+		wm->_vgabuf = buf;
+		memcpy(buf, wm->_vgabuf, 64000);
+		memcpy(buf+320*144,s->getResourceAddress(0xA, 3),320*56);
 		break;
 	case 2:
 		wm->_vgabuf = NULL;
@@ -751,7 +791,7 @@ void outputdisplay2(Scumm *s, int disp) {
 	wm->writeToScreen();	
 	wm->_vgabuf = old;
 }
-#endif
+
 
 #if 0
 void outputdisplay(Scumm *s) {
@@ -775,6 +815,8 @@ void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 
 }
 
+int clock;
+
 void updateScreen(Scumm *s) {
 	if (s->_palDirtyMax != -1) {
 		wm->setPalette(s->_currentPalette, 0, 256);	
@@ -785,7 +827,9 @@ void updateScreen(Scumm *s) {
 }
 
 void waitForTimer(Scumm *s) {
-	Sleep(10);
+	if (!veryFastMode) {
+		Sleep(5);
+	} 
 	s->_scummTimer+=2;
 	wm->handleMessage();
 }
@@ -794,15 +838,17 @@ void initGraphics(Scumm *s) {
 
 }
 
+void drawMouse(Scumm *s, int, int, int, byte*, bool) {
+}
+
 #undef main
 int main(int argc, char* argv[]) {
 	scumm._videoMode = 0x13;
-	scumm._exe_name = "monkey2";
+
 
 	wm->init();
 	wm->_vgabuf = (byte*)calloc(320,200);
 	wm->_scumm = &scumm;
-	
 	
 	scumm.scummMain(argc, argv);
 
