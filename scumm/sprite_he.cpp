@@ -314,7 +314,12 @@ int ScummEngine_v90he::spriteInfoGet_field_88(int spriteId, int type) {
 void ScummEngine_v90he::getSpriteImageDim(int spriteId, int32 &w, int32 &h) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	getWizImageDim(_spriteTable[spriteId].res_id, _spriteTable[spriteId].res_state, w, h);
+	if (_spriteTable[spriteId].res_id) {
+		getWizImageDim(_spriteTable[spriteId].res_id, _spriteTable[spriteId].res_state, w, h);
+	} else {
+		w = 0;
+		h = 0;
+	}
 }
 
 void ScummEngine_v90he::spriteInfoGet_tx_ty(int spriteId, int32 &tx, int32 &ty) {

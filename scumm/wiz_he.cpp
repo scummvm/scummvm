@@ -843,14 +843,10 @@ void ScummEngine_v72he::displayWizImage(const WizImage *pwi) {
 
 void ScummEngine_v72he::getWizImageDim(int resnum, int state, int32 &w, int32 &h) {
 	const uint8 *dataPtr = getResourceAddress(rtImage, resnum);
-	if (dataPtr) {
-		const uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
-		w = READ_LE_UINT32(wizh + 0x4);
-		h = READ_LE_UINT32(wizh + 0x8);
-	} else {
-		w = 0;
-		h = 0;
-	}
+	assert(dataPtr);
+	const uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
+	w = READ_LE_UINT32(wizh + 0x4);
+	h = READ_LE_UINT32(wizh + 0x8);
 }
 
 uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
