@@ -110,11 +110,11 @@ credits:
 	tools/credits.pl --xml > ../docs/docbook/credits.xml
 
 md5scumm: tools/md5table$(EXEEXT)
-	./tools/md5table$(EXT) --c++ < tools/scumm-md5.txt > scumm/scumm-md5.h
-	./tools/md5table$(EXT) --php < tools/scumm-md5.txt > ../web/docs/md5.inc
+	tools/md5table$(EXEEXT) --c++ < tools/scumm-md5.txt > scumm/scumm-md5.h
+	tools/md5table$(EXEEXT) --php < tools/scumm-md5.txt > ../web/docs/md5.inc
 
 md5simon: tools/md5table$(EXEEXT)
-	./tools/md5table$(EXT) --c++ < tools/simon-md5.txt > simon/simon-md5.h
+	tools/md5table$(EXEEXT) --c++ < tools/simon-md5.txt > simon/simon-md5.h
 
 #######################################################################
 # Unit/regression tests                                               #
