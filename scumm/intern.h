@@ -784,7 +784,7 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
-	void loadImgSpot(int resId, int state, Common::Point spot);
+	void loadImgSpot(int resId, int state, Common::Point &spot);
 	void loadWizCursor(int resId, int resType, bool state);
 
 	

@@ -537,7 +537,7 @@ void ScummEngine_v80he::o80_cursorCommand() {
 	VAR(VAR_USERPUT) = _userPut;
 }
 
-void ScummEngine_v80he::loadImgSpot(int resId, int state, Common::Point spot) {
+void ScummEngine_v80he::loadImgSpot(int resId, int state, Common::Point &spot) {
 	const uint8 *dataPtr = getResourceAddress(rtImage, resId);
 	if (!dataPtr)
 		error("loadImgSpot: unknown Image %d", resId);
@@ -547,8 +547,8 @@ void ScummEngine_v80he::loadImgSpot(int resId, int state, Common::Point spot) {
 	if (!spotPtr) {
 		spot.x = spot.y = 0;
 	} else {
-		spot.x = (int16)READ_LE_UINT32(spotPtr + 8);
-		spot.y = (int16)READ_LE_UINT32(spotPtr + 12);
+		spot.x = (int16)READ_LE_UINT32(spotPtr + 0);
+		spot.y = (int16)READ_LE_UINT32(spotPtr + 4);
 	}
 }
 
