@@ -604,4 +604,4 @@ void Player_V1::generatePCjrSamples(int16 *data, uint len) {
 		lowPassFilter(data, len);
 }
 
-} // End of namespace Scumm
+} // End of namespace Scumm 

@@ -1267,4 +1267,4 @@ int Player_V2A::getSoundStatus(int nr) const {
 	return 0;
 }
 
-} // End of namespace Scumm
+} // End of namespace Scumm 
