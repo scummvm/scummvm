@@ -161,6 +161,10 @@ SOURCE=.\simon\midi.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\sdl.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\simon\simon.cpp
 # End Source File
 # Begin Source File
@@ -361,10 +365,6 @@ SOURCE=.\script_v2.cpp
 # Begin Source File
 
 SOURCE=.\scummvm.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\sdl_2.cpp
 # End Source File
 # Begin Source File
 
