@@ -99,7 +99,6 @@ listed here, nor in the compatibility table on the web site, please see
 the section on Reporting Bugs.
 
        Simon The Sorcerer:
-                - No sound effects in simon1dos
                 - No inventory scrolling arrows shown in simon1dos and simon1talkie,
                   can still move around inventory though. 
                 - simon1dos freezes briefly after Swampling leaves his house and
@@ -109,8 +108,6 @@ the section on Reporting Bugs.
        Simon The Sorcerer II:
                 - No music in simon2dos and simon2talkie
                 - Some music is missing or wrong in simon2win
-                - simon2dos freezes briefly during the sequence where Simon
-                  breaks chains and tries to escape from pirate ship.
                 - Some graphical glitches
 
        Indy 3 (The Last Crusade):
