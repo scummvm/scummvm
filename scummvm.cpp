@@ -224,6 +224,10 @@ int Scumm::scummLoop(int delta)
 		_debugger->on_frame();
 #endif
 
+	// Randomize the PRNG by calling it at regular intervals. This ensures
+	// that it will be in a different state each time you run the program.
+	getRandomNumber(2);
+
 	_vars[VAR_TMR_1] += delta;
 	_vars[VAR_TMR_2] += delta;
 	_vars[VAR_TMR_3] += delta;
