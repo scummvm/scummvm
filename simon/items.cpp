@@ -1609,7 +1609,7 @@ void SimonState::o_unk_127()
 
 		warning("o_unk_127(%d,%d,%d) not implemented properly", a, b, c);
 
-		if (a != _last_music_played) {
+		if ((a != _last_music_played) && (a < 93)) {
 			_last_music_played = a;
 			playMusic(a);
 		}
