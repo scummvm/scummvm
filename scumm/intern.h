@@ -665,10 +665,12 @@ public:
 
 protected:
 	virtual void setupScummVars();
+	virtual void readArrayFromIndexFile();
 
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
+
 	ArrayHeader *defineArray(int array, int type, int dim2start, int dim2end, int dim1start, int dim1end);
 	int readArray(int array, int idx2, int idx1);
 	void writeArray(int array, int idx2, int idx1, int value);

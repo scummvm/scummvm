@@ -488,6 +488,21 @@ void ScummEngine_v72he::writeArray(int array, int idx2, int idx1, int value) {
 	}
 }
 
+void ScummEngine_v72he::readArrayFromIndexFile() {
+	int num;
+	int a, b, c;
+
+	while ((num = _fileHandle.readUint16LE()) != 0) {
+		a = _fileHandle.readUint16LE();
+		b = _fileHandle.readUint16LE();
+		c = _fileHandle.readUint16LE();
+		if (c == 1)
+			defineArray(num, kBitArray, 0, a, 0, b);
+		else
+			defineArray(num, kDwordArray, 0, a, 0, b);
+	}
+}
+
 void ScummEngine_v72he::o72_pushDWordVar() {
 	int a;
 	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
