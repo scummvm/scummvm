@@ -180,8 +180,8 @@ private:
 	uint16 saveRestorePanel(bool allowSave);
 	void loadDescriptions(uint8 *destBuf);
 	void saveDescriptions(uint8 *srcBuf);
-	void setUpGameSprites(uint8 *nameBuf, dataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame, bool allowSave);
-	void showSprites(dataFileHeader **nameSprites);
+	void setUpGameSprites(uint8 *nameBuf, dataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame);
+	void showSprites(dataFileHeader **nameSprites, bool allowSave);
 	bool checkKeyList(uint8 key);
 	void handleKeyPress(uint8 key, uint8 *textBuf);
 

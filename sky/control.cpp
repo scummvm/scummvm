@@ -687,7 +687,8 @@ uint16 SkyControl::saveRestorePanel(bool allowSave) {
 	else lookList = _restorePanLookList;
 
 	uint8 *saveGameTexts = (uint8*)malloc(MAX_SAVE_GAMES * MAX_TEXT_LEN);
-	dataFileHeader *textSprites[MAX_ON_SCREEN];
+	dataFileHeader *textSprites[MAX_ON_SCREEN + 1];
+	textSprites[MAX_ON_SCREEN] = NULL;
 	_firstText = 0;
 
 	_savePanel->drawToScreen(NO_MASK);
@@ -701,8 +702,8 @@ uint16 SkyControl::saveRestorePanel(bool allowSave) {
 	uint16 clickRes = 0;
 	while (!quitPanel) {
 		if (refreshNames) {
-			setUpGameSprites(saveGameTexts, textSprites, _firstText, _selectedGame, allowSave);
-			showSprites(textSprites);
+			setUpGameSprites(saveGameTexts, textSprites, _firstText, _selectedGame);
+			showSprites(textSprites, allowSave);
 			refreshNames = false;
 		}
 
@@ -714,7 +715,14 @@ uint16 SkyControl::saveRestorePanel(bool allowSave) {
 			_mouseClicked = false;
 			clickRes = CANCEL_PRESSED;
 			quitPanel = true;
-		} else if (allowSave && _keyPressed) {
+		} else if ((_keyPressed == 13) || (_keyPressed == 15)) {
+			clickRes = handleClick(lookList[0]);
+			if (clickRes == GAME_SAVED)
+				saveDescriptions(saveGameTexts);
+			quitPanel = true;
+			_mouseClicked = false;
+			_keyPressed = 0;
+		} if (allowSave && _keyPressed) {
 			handleKeyPress(_keyPressed, _selectedGame * MAX_TEXT_LEN + saveGameTexts);
 			refreshNames = true;
 			_keyPressed = 0;
@@ -758,7 +766,7 @@ uint16 SkyControl::saveRestorePanel(bool allowSave) {
 		if (!haveButton) buttonControl(NULL);
 	}
 
-	for (cnt = 0; cnt < MAX_ON_SCREEN; cnt++)
+	for (cnt = 0; cnt < MAX_ON_SCREEN + 1; cnt++)
 		free(textSprites[cnt]);
 
 	free(saveGameTexts);
@@ -800,21 +808,19 @@ void SkyControl::handleKeyPress(uint8 key, uint8 *textBuf) {
 	}
 }
 
-void SkyControl::setUpGameSprites(uint8 *nameBuf, dataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame, bool allowSave) {
+void SkyControl::setUpGameSprites(uint8 *nameBuf, dataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame) {
 
 	nameBuf += firstNum * MAX_TEXT_LEN;
-
+	displayText_t textSpr;
+	if (!nameSprites[MAX_ON_SCREEN]) {
+		textSpr = _skyText->displayText("-", NULL, false, 15, 0);
+		nameSprites[MAX_ON_SCREEN] = (dataFileHeader*)textSpr.textData;
+	}
 	for (uint16 cnt = 0; cnt < MAX_ON_SCREEN; cnt++) {
-		displayText_t textSpr;
-		if (firstNum + cnt == selectedGame) {
-			char tmpLine[MAX_TEXT_LEN + 2];
-			memcpy(tmpLine, nameBuf, MAX_TEXT_LEN);
-			if (allowSave)
-				strcat(tmpLine,"_");
-			textSpr = _skyText->displayText(tmpLine, NULL, false, PAN_LINE_WIDTH, 0);
-		} else {
+		if (firstNum + cnt == selectedGame)
+			textSpr = _skyText->displayText((char*)nameBuf, NULL, false, PAN_LINE_WIDTH, 0);
+		else
 			textSpr = _skyText->displayText((char*)nameBuf, NULL, false, PAN_LINE_WIDTH, 37);
-		}
 		nameBuf += MAX_TEXT_LEN;
 		nameSprites[cnt] = (dataFileHeader*)textSpr.textData;
 		if (firstNum + cnt == selectedGame) {
@@ -825,7 +831,7 @@ void SkyControl::setUpGameSprites(uint8 *nameBuf, dataFileHeader **nameSprites, 
 	}
 }
 
-void SkyControl::showSprites(dataFileHeader **nameSprites) {
+void SkyControl::showSprites(dataFileHeader **nameSprites, bool allowSave) {
 
 	SkyConResource *drawResource = new SkyConResource(NULL, 1, 0, 0, 0, 0, 0, _system, _screenBuf);
 	for (uint16 cnt = 0; cnt < MAX_ON_SCREEN; cnt++) {
@@ -834,6 +840,9 @@ void SkyControl::showSprites(dataFileHeader **nameSprites) {
 		if (nameSprites[cnt]->flag) { // name is highlighted
 			for (uint16 cnty = GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT; cnty < GAME_NAME_Y + (cnt + 1) * PAN_CHAR_HEIGHT - 1; cnty++)
 				memset(_screenBuf + cnty * GAME_SCREEN_WIDTH + GAME_NAME_X, 37, PAN_LINE_WIDTH);
+			drawResource->drawToScreen(WITH_MASK);
+			drawResource->setSprite(nameSprites[MAX_ON_SCREEN]);
+			drawResource->setXY(GAME_NAME_X + _enteredTextWidth + 1, GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT + 4);
 			drawResource->drawToScreen(WITH_MASK);
 			_system->copy_rect(_screenBuf + (GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT) * GAME_SCREEN_WIDTH + GAME_NAME_X, GAME_SCREEN_WIDTH, GAME_NAME_X, GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT, PAN_LINE_WIDTH, PAN_CHAR_HEIGHT);
 		} else 
