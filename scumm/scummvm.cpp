@@ -82,11 +82,11 @@ static const VersionSettings scumm_settings[] = {
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, "00.LFL"},
 	{"zak256", "Zak McKracken and the Alien Mindbenders (256)", GID_ZAK256, 3, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, "00.LFL"},
-	{"loom", "Loom", GID_LOOM, 3, VersionSettings::ADLIB_ALWAYS,
+	{"loom", "Loom", GID_LOOM, 3, VersionSettings::ADLIB_PREFERRED,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, "00.LFL"},
 
 	/* Scumm Version 4 */
-	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, VersionSettings::ADLIB_ALWAYS,
+	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, VersionSettings::ADLIB_PREFERRED,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, "000.LFL"},
 	{"pass", "Passport to Adventure", GID_PASS, 4, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, "000.LFL"},

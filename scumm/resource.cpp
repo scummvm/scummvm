@@ -1426,7 +1426,20 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 
 	debug(4, "readSoundResourceSmallHeader(%s,%d)", resTypeFromId(type), idx);
 
-	if ((_features & GF_OLD_BUNDLE)) {
+	if ((_gameId == GID_LOOM) && VAR_SOUNDCARD == 4) {
+		byte *ptr, *src_ptr;
+		ro_offs = _fileHandle.pos();
+		ro_size = _fileHandle.readUint16LE();
+
+		src_ptr = (byte *) calloc(ro_size - 4, 1);
+		_fileHandle.seek(ro_offs +4, SEEK_SET);
+		_fileHandle.read(src_ptr, ro_size -4);
+
+		ptr = createResource(type, idx, ro_size + 2);
+		memcpy(ptr, "RO", 2); ptr += 2;
+		memcpy(ptr, src_ptr, ro_size - 4); ptr += ro_size - 4;
+		return 1;
+	} else if (_features & GF_OLD_BUNDLE) {
 		wa_offs = _fileHandle.pos();
 		wa_size = _fileHandle.readUint16LE();
 		_fileHandle.seek(wa_size - 2, SEEK_CUR);
