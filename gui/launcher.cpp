@@ -33,8 +33,6 @@
 #include "common/engine.h"
 #include "common/gameDetector.h"
 
-#include "scumm/scumm.h"	// FIXME: this is only for GF_HUMONGOUS and *EVIL*
-
 enum {
 	kStartCmd = 'STRT',
 	kOptionsCmd = 'OPTN',
@@ -275,6 +273,7 @@ GameList findGame(FilesystemNode *dir) {
 	const int size = files->size();
 	char detectName[128];
 	char detectName2[128];
+	char detectName3[128];
 	int i;
 
 	// Iterate over all known games and for each check if it might be
@@ -289,23 +288,26 @@ GameList findGame(FilesystemNode *dir) {
 			strcpy(detectName, v->detectname);
 			strcpy(detectName2, v->detectname);
 			strcat(detectName2, ".");
+			detectName3[0] = '\0';
 		} else {
 			strcpy(detectName, v->filename);
 			strcpy(detectName2, v->filename);
+			strcpy(detectName3, v->filename);
 			strcat(detectName, ".000");
 			if (v->version >= 7) {
 				strcat(detectName2, ".la0");
-			} else if (v->features & GF_HUMONGOUS)
-				strcat(detectName2, ".he0");
-			else
+			} else
 				strcat(detectName2, ".sm0");
+			strcat(detectName3, ".he0");
 		}
 
 		// Iterate over all files in the given directory
 		for (i = 0; i < size; i++) {
 			const char *filename = (*files)[i].displayName().c_str();
 
-			if ((0 == scumm_stricmp(detectName, filename)) || (0 == scumm_stricmp(detectName2, filename))) {
+			if ((0 == scumm_stricmp(detectName, filename))  || 
+			    (0 == scumm_stricmp(detectName2, filename)) ||
+			    (0 == scumm_stricmp(detectName3, filename))) {
 				// Match found, add to list of candidates, then abort inner loop.
 				list.push_back(v);
 				break;
