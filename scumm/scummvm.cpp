@@ -1948,22 +1948,21 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	else
 		loadRoomObjects();
 
-	if (_version > 2) {
 	
-		if (VAR_V6_SCREEN_WIDTH != 0xFF && VAR_V6_SCREEN_HEIGHT != 0xFF) {
-			VAR(VAR_V6_SCREEN_WIDTH) = _roomWidth;
-			VAR(VAR_V6_SCREEN_HEIGHT) = _roomHeight;
-		}
-	
-		if (_features & GF_NEW_CAMERA) {
-			VAR(VAR_CAMERA_MIN_Y) = _screenHeight / 2;
-			VAR(VAR_CAMERA_MAX_Y) = _roomHeight - (_screenHeight / 2);
-			setCameraAt(_screenWidth / 2, _screenHeight / 2);
-		} else {
-			camera._mode = CM_NORMAL;
+	if (VAR_V6_SCREEN_WIDTH != 0xFF && VAR_V6_SCREEN_HEIGHT != 0xFF) {
+		VAR(VAR_V6_SCREEN_WIDTH) = _roomWidth;
+		VAR(VAR_V6_SCREEN_HEIGHT) = _roomHeight;
+	}
+
+	if (_features & GF_NEW_CAMERA) {
+		VAR(VAR_CAMERA_MIN_Y) = _screenHeight / 2;
+		VAR(VAR_CAMERA_MAX_Y) = _roomHeight - (_screenHeight / 2);
+		setCameraAt(_screenWidth / 2, _screenHeight / 2);
+	} else {
+		camera._mode = CM_NORMAL;
+		if (_version > 2)
 			camera._cur.x = camera._dest.x = _screenWidth / 2;
-			camera._cur.y = camera._dest.y = _screenHeight / 2;
-		}
+		camera._cur.y = camera._dest.y = _screenHeight / 2;
 	}
 
 	if (_roomResource == 0)
