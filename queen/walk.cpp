@@ -136,7 +136,6 @@ void Walk::animateJoePrepare() {
 		}
 
 		if (ABS(pwd->dx) < k) {
-			printf("pwd->dy=%d ds=%d\n", pwd->dy, ds);
 			if (pwd->dy < 0) {
 				if (ds < 0) {
 					pwd->anim.set(17 + FRAMES_JOE_XTRA, 22 + FRAMES_JOE_XTRA, DIR_FRONT);
@@ -365,8 +364,8 @@ void Walk::joeSetup() {
 }
 
 
-void Walk::joeSetupInRoom(int state, uint16 scale, uint16 entryObj) {
-	// queen.c SETUP_HERO() + l.633-640
+ObjectData *Walk::joeSetupInRoom(int state, uint16 scale, uint16 entryObj) {
+	// queen.c SETUP_HERO()
 
 	uint16 oldx;
 	uint16 oldy;
@@ -432,8 +431,9 @@ void Walk::joeSetupInRoom(int state, uint16 scale, uint16 entryObj) {
 
 	if (pwo != NULL) {
 		// entryObj has a walk off point, then walk from there to object x,y
-//		joeMove(0, pod->x, pod->y, false);
+		return pod;
 	}
+	return NULL;
 }
 
 
@@ -594,7 +594,13 @@ uint16 Walk::calcC(uint16 c1, uint16 c2, uint16 c3, uint16 c4, uint16 lastc) {
 
 
 int16 Walk::findAreaPosition(uint16 *x, uint16 *y, bool recalibrate) {
-
+	// In order to locate the nearest available area, the original  algorithm
+	// computes the X (or Y) closest face distance for each available area. We
+	// simply added the case where the pointer is neither lying in the X range
+	// nor in the Y one.
+	// To get an example of this in action, in the room D1, make Joe walking
+	// to the wall at the right of the window (just above the radiator). On the
+	// original game, Joe will go to the left door...
 	uint16 i;
 	uint16 pos = 1;
 	uint32 minDist = ~0;

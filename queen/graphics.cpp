@@ -675,7 +675,12 @@ void Graphics::bobClear(uint32 bobnum) {
 	pbs->box.x1 = 0;
 	pbs->box.y1 = 0;
 	pbs->box.x2 = GAME_SCREEN_WIDTH - 1;
-	pbs->box.y2 = (bobnum == 16) ? GAME_SCREEN_HEIGHT - 1 : ROOM_ZONE_HEIGHT - 1; // FIXME: does bob number 16 really used ?
+	if (_fullscreen || bobnum == 16) { // FIXME: does bob number 16 really used ?
+		pbs->box.y2 = GAME_SCREEN_HEIGHT - 1;
+	}
+	else {
+		pbs->box.y2 = ROOM_ZONE_HEIGHT - 1; 
+	}
 }
 
 
@@ -1008,12 +1013,17 @@ void Graphics::journalBobPreDraw() { // GameSettings* pgs
 void Graphics::update() {
 	// FIXME: incomplete !
 	bobSortAll();
-	panelDraw();
+	if (_panelFlag) {
+		panelDraw();
+	}
+	else if (!_fullscreen) {
+		panelClear();
+	}
 	backdropDraw();
 	bobDrawAll();
 	textDrawAll();
 	displayScreen();
-	g_system->delay_msecs(100);
+	g_system->delay_msecs(100); // TEMP: move to Logic::update()
 }
 
 
@@ -1122,6 +1132,25 @@ void Graphics::displayScreen() {
 	g_system->copy_rect(_screen, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
 	g_system->update_screen();
 }
+
+
+void Graphics::setScreenMode(int comPanel, bool inCutaway) {
+	if (comPanel == 2 && inCutaway) {
+		if (_backdropHeight == GAME_SCREEN_HEIGHT) {
+			_fullscreen = true;
+			_panelFlag = false;
+		}
+		else {
+			_fullscreen = false;
+			_panelFlag = true;
+		}
+	}
+	else {
+		_fullscreen = 0;
+		_panelFlag = (comPanel == 1);
+	}
+}
+
 
 
 } // End of namespace Queen

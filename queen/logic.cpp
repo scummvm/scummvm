@@ -21,18 +21,23 @@
 
 #include "queen/logic.h"
 #include "queen/defs.h"
+#include "queen/graphics.h"
+#include "queen/walk.h"
+#include "common/str.h"
 
 namespace Queen {
 
 Logic::Logic(Resource *resource, Graphics *graphics) 
-	: _maxAnimatedFrame(0), _maxStaticFrame(0), _resource(resource), _graphics(graphics) {
+	: _resource(resource), _graphics(graphics) {
 	_jas = _resource->loadFile("QUEEN.JAS", 20);
 	_joe.x = _joe.y = 0;
+	_walk = new Walk(this, _graphics);
 	initialise();
 }
 
 Logic::~Logic() {
 	delete[] _jas;
+	delete _walk;
 	//free(_graphicData);
 }
 
@@ -214,6 +219,7 @@ void Logic::initialise() {
 
 
 	memset(_zones, 0, sizeof(_zones));
+	_oldRoom = 0;
 }
 
 uint16 Logic::currentRoom() {
@@ -345,17 +351,16 @@ uint16 Logic::findBob(uint16 obj) {
 					++idxAnimated;
 				}
 			}
-			// FIXME: _max*Frame variables should be initialized in SETUP_FURNITURE and DISP_ROOM
 			if(bobtype == 0) {
 				// static bob
 				if(idxStatic > 0) {
-					bobnum = 19 + _maxStaticFrame + idxStatic;
+					bobnum = 19 + _numFurnitureStatic + idxStatic;
 				}
 			}
 			else {
 				// animated bob
 				if(idxAnimated > 0) {
-					bobnum = 4 + _maxAnimatedFrame + idxAnimated;
+					bobnum = 4 + _numFurnitureAnimated + _numFurnitureAnimatedLen;
 				}
 			}
 		}
@@ -434,7 +439,7 @@ uint16 Logic::findFrame(uint16 obj) {
 
 		// calculate only if there are person frames
 		if(idx > 0) {
-			framenum = 36 + _maxStaticFrame + _maxAnimatedFrameLen + idx + FRAMES_JOE_XTRA;
+			framenum = 36 + _numFurnitureStatic + _numFurnitureAnimatedLen + idx + FRAMES_JOE_XTRA;
 		}
 	}
 	return framenum;
@@ -590,6 +595,193 @@ void Logic::zoneSetup() {
 	uint16 maxAreaRoom = _areaMax[_currentRoom];
 	for (zoneNum = 1; zoneNum <= maxAreaRoom; ++zoneNum) {
 		zoneSet(ZONE_ROOM, maxObjRoom + zoneNum, _area[_currentRoom][zoneNum].box);
+		_graphics->boxDraw(_area[_currentRoom][zoneNum].box, 18);
+	}
+}
+
+
+void Logic::roomErase() {
+
+	_graphics->frameEraseAll(false);
+	_graphics->bankErase(15);
+	_graphics->bankErase(11);
+	_graphics->bankErase(10);
+	_graphics->bankErase(12);
+
+	// TODO: TALKHEAD=0;
+	// TODO: _display->fadeOut();
+	// TODO: credits system
+	// TODO: person animations
+
+	uint16 cur = _roomData[_oldRoom] + 1;
+	uint16 last = _roomData[_oldRoom + 1];
+	while (cur <= last) {
+		ObjectData *pod = &_objectData[cur];
+		if (pod->name == 0) {
+			// object has been deleted, invalidate image
+			pod->image = 0;
+		}
+		else if (pod->image > -4000 && pod->image <= -10) {
+			if (_graphicData[ABS(pod->image + 10)].lastFrame == 0) {
+				// static Bob
+				pod->image = -1;
+			}
+			else {
+				// animated Bob
+				pod->image = -2;
+			}
+		}
+		++cur;
+	}
+}
+
+
+uint16 Logic::roomSetupFurniture(uint16 frames) {
+	_numFurnitureStatic = 0;
+	_numFurnitureAnimated = 0;
+	_numFurnitureAnimatedLen = 0;
+	uint16 curImage = 36 + FRAMES_JOE_XTRA;
+
+	// count the furniture and update gameState
+	uint16 furnitureTotal = 0;
+	uint16 i;
+	// FIXME: uncomment when Array< FurnitureData > available in Logic
+//	for (i = 1; i <= _numFurnitureData; ++i) {
+//		if (_furnitureData[i].room == _currentRoom) {
+//			++furnitureTotal;
+//			_gameState[furnitureTotal] = _furnitureData[i].gameStateValue;
+//		}
+//	}
+//	if (furnitureTotal == 0) {
+//		return;
+//	}
+
+	// unpack the furniture from the bank 15
+	// there are 3 kinds :
+	// - static (paste downs), gamestate range = ]0;5000]
+	// - animated (bobs), gamestate range = ]0;5000]
+	// - static (overlaying paste downs), gamestate range = [5000; [
+
+	// unpack the paste downs
+	for	(i = 1; i <= furnitureTotal; ++i) {
+		int16 obj = _gameState[i];
+		if (obj > 0 && obj <= 5000) {
+			GraphicData *pgd = &_graphicData[obj];
+			if (pgd->lastFrame == 0) {
+				++_numFurnitureStatic;
+				++curImage;
+				_graphics->bankUnpack(pgd->firstFrame, curImage, 15);
+				++frames;
+				BobSlot *pbs = _graphics->bob(19 + _numFurnitureStatic);
+				pbs->active = true;
+				pbs->x = pgd->x;
+				pbs->y = pgd->y;
+				pbs->frameNum = curImage;
+				warning("Logic::roomSetupFurniture() : static furniture instead of animated");
+			}
+		}
+	}
+
+	// unpack the animated bobs
+	uint16 curBob = 0;
+	for  (i = 1; i <= furnitureTotal; ++i) {
+		int16 obj = _gameState[i];
+		if (obj > 0 && obj <= 5000) {
+			GraphicData *pgd = &_graphicData[obj];
+
+			bool rebound = false;
+			int16 lastFrame = pgd->lastFrame;
+			if (lastFrame < 0) {
+				rebound = true;
+				lastFrame = -lastFrame;
+			}
+
+			if (lastFrame > 0) {
+				_numFurnitureAnimatedLen += lastFrame - pgd->firstFrame + 1;
+				++_numFurnitureAnimated;
+				uint16 image = curImage + 1;
+				int k;
+				for (k = pgd->firstFrame; k <= pgd->lastFrame; ++k) {
+					++curImage;
+					_graphics->bankUnpack(k, curImage, 15);
+					++frames;
+				}
+				_graphics->bobAnimNormal(5 + curBob, image, curImage, pgd->speed / 4, rebound, false);
+				BobSlot *pbs = _graphics->bob(5 + curBob);
+				pbs->x = pgd->x;
+				pbs->y = pgd->y;
+				++curBob;
+			}
+		}
+	}
+
+	// unpack the overlaying paste downs
+	++curImage;
+	for  (i = 1; i <= furnitureTotal; ++i) {
+		int16 obj = _gameState[i];
+		if (obj > 5000) {
+			obj -= 5000;
+			GraphicData *pgd = &_graphicData[obj];
+			_graphics->bankUnpack(pgd->firstFrame, curImage, 15);
+			_graphics->bobPaste(curImage, pgd->x, pgd->y);
+		}
+	}
+
+	return frames;
+}
+
+
+void Logic::roomSetupObjects() {
+	warning("Logic::roomSetupObjects() unimplemented");
+}
+
+
+void Logic::roomSetup(const char* room, int comPanel, bool inCutaway) {
+
+	// loads background image
+	Common::String bdFile(room);
+	bdFile += ".PCX";
+	_graphics->backdropLoad(bdFile.c_str(), _currentRoom);
+
+	// setup graphics to enter fullscreen/panel mode
+	_graphics->setScreenMode(comPanel, inCutaway);
+
+	// reset sprites table (bounding box...)
+	_graphics->bobClearAll();
+
+	// setup any hard-coded palette effect
+	// TODO: graphics->check_colors(_currentRoom);
+
+	// load/setup objects associated to this room
+	Common::String bkFile(room);
+	bkFile += ".BBK";
+	_graphics->bankLoad(bkFile.c_str(), 15);
+	roomSetupFurniture(37 + FRAMES_JOE_XTRA);
+	roomSetupObjects();
+}
+
+
+void Logic::roomDisplay(const char* room, int state, uint16 scale, int comPanel, bool inCutaway) {
+	// STATE = 0, Fade in, no Joe
+	//       = 1, if Joe is to be displayed
+    //       = 2, Screen does not dissolve into view
+    //       = 3, Display Joe at the current X, Y coords
+
+	roomErase();
+	// TODO: _sound->loadSFX(SFXNAME[_currentRoom]);
+	roomSetup(room, comPanel, inCutaway);
+	zoneSetup();
+	ObjectData *pod = NULL;
+	if (state != 0) {
+		_entryObj = _roomData[70] + 1; // TEMP
+		pod = _walk->joeSetupInRoom(state, scale, _entryObj);
+	}
+	if (state != 2) {
+		_graphics->update();
+		// TODO: _display->fadeIn();
+	}
+	if (pod != NULL) {
+		_walk->joeMove(0, pod->x, pod->y, inCutaway);
 	}
 }
 

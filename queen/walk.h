@@ -86,7 +86,7 @@ public:
 	void joeSetup();
 
 	//! SETUP_HERO(), places Joe at the right place when entering a room
-	void joeSetupInRoom(int state, uint16 scale, uint16 entryObj);
+	ObjectData *joeSetupInRoom(int state, uint16 scale, uint16 entryObj);
 	
 	//! MOVE_JOE()
 	void joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway);

@@ -37,6 +37,9 @@ enum Language {
 	ITALIAN  = 'I'
 };
 
+enum RoomDisplayMode {
+
+};
 
 struct ZoneSlot {
 	bool valid;
@@ -46,6 +49,7 @@ struct ZoneSlot {
 
 class Graphics;
 class Resource;
+class Walk;
 
 class Logic {
 
@@ -97,6 +101,12 @@ public:
 	void zoneClearAll(uint16 screen);
 	void zoneSetup();
 
+	void roomErase();
+	uint16 roomSetupFurniture(uint16 frames); // SETUP_FURNITURE()
+	void roomSetupObjects(); // DISP_OBJECTS
+	void roomSetup(const char* room, int comPanel, bool inCutaway);
+	void roomDisplay(const char* room, int state, uint16 joeScale, int comPanel, bool inCutaway); // DISP_ROOM
+
 	uint16 findScale(uint16 x, uint16 y);
 
 
@@ -129,6 +139,7 @@ protected:
 	Area (*_area)[11];
 	WalkOffData *_walkOffData;
 	ZoneSlot _zones[2][MAX_ZONES_NUMBER];
+	uint16 _entryObj;
 
 	enum {
 		GAME_STATE_COUNT = 211
@@ -143,10 +154,13 @@ protected:
 	
 	int16 _gameState[GAME_STATE_COUNT];
 	
-	uint16 _maxAnimatedFrame, _maxStaticFrame, _maxAnimatedFrameLen; // FMAXA, FMAX, FMAXALEN
+	uint16 _numFurnitureAnimated; // FMAXA
+	uint16 _numFurnitureStatic; // FMAX
+	uint16 _numFurnitureAnimatedLen; // FMAXLEN
 
 	Resource *_resource;
 	Graphics *_graphics;
+	Walk *_walk;
 
 	void initialise();
 };

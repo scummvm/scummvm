@@ -158,6 +158,8 @@ public:
 	void displaySetPal(uint8 *pal, int start, int end);
 	void displayScreen();
 
+	void setScreenMode(int comPanel, bool inCutaway);
+
 private:
 
 	enum {
@@ -205,6 +207,8 @@ private:
 	uint8 *_screen;
 
 	bool _fullscreen;
+
+	bool _panelFlag;
 
 	uint16 _horizontalScroll;
 
