@@ -225,6 +225,9 @@ uint32 SkyDisk::determineGameVersion() {
 	case 5099:
 		//cd (v0.0368)
 		return 368;
+	case 5097:
+		//cd (v0.0372)
+		return 372;
 	default:
 		//unknown version
 		error("Unknown game version!");

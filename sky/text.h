@@ -79,9 +79,9 @@ protected:
 	char getTextChar();
 };
 
-class SkyText_v00368 : public SkyText {
+class SkyText_v00372 : public SkyText {
 public:
-	SkyText_v00368(SkyDisk *skyDisk, uint32 gameVersion) : SkyText(skyDisk, gameVersion) {};
+	SkyText_v00372(SkyDisk *skyDisk, uint32 gameVersion) : SkyText(skyDisk, gameVersion) {};
 protected:
 	char getTextChar();
 };

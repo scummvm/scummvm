@@ -35,7 +35,7 @@ SkyText::SkyText(SkyDisk *skyDisk, uint32 gameVersion) {
 	_skyDisk = skyDisk;
 	_gameVersion = gameVersion;
 
-	_mainCharacterSet.addr = (byte *)_skyDisk->loadFile(CHAR_SET_FILE, NULL);
+	_mainCharacterSet.addr = _skyDisk->loadFile(CHAR_SET_FILE, NULL);
 	fnSetFont(0);
 	
 	if (!SkyState::isDemo(_gameVersion)) {
@@ -140,9 +140,7 @@ bool SkyText::getTBit() {
 
 char SkyText_v00267::getTextChar() {
 
-	//NOTE: The original sources only contained a text decoder that, AFAIK, is not used in 
-	//any commercially sold version, but differs only slightly from the CD (and CD Demo) implementations.
-	//The decoding code for the floppy versions (both demo and full version) is _completely_ different.
+	//NOTE: The decoding code for the floppy versions (both demo and full version) is _completely_ different.
 	//This code is based on disassembly of the v0.0267 binary.
 	
 
@@ -1173,10 +1171,10 @@ e8fb:
 
 }
 
-char SkyText_v00368::getTextChar() {
+char SkyText_v00372::getTextChar() {
 
 	//This code is based on the original sources
-	//Slightly modified to work for both the CD and CD-Demo versions.
+	//Should work for all (known) cd versions.
 
 	if (getTBit())
 		goto label_1;
@@ -1569,7 +1567,10 @@ label_73:
 	return ']';
 
 label_72:
-	return 'x';
+	if (_gameVersion == 372)
+		return '#';
+	else 
+		return 'x';
 	
 label_71:
 	if (getTBit())
@@ -1577,10 +1578,10 @@ label_71:
 	if (getTBit())
 		goto label_75;
 
-	if (_gameVersion == 365)
-		return 'x';
-	else
+	if (_gameVersion == 368)
 		return 'X';
+	else
+		return 'x';
 	
 label_75:
 	return 'X';

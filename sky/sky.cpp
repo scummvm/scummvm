@@ -202,10 +202,12 @@ SkyText *SkyState::getSkyText() {
 		//floppy - new version
 		//return new SkyText_v00331(_skyDisk, _gameVersion);
 	case 365:
-		//cd demo, uses a slightly modified version of v00368
+		//cd demo, uses a slightly modified version of v00372
 	case 368:
+		//cd version, uses a slightly modified version of v00372
+	case 372:
 		//cd version
-		return new SkyText_v00368(_skyDisk, _gameVersion);
+		return new SkyText_v00372(_skyDisk, _gameVersion);
 	default:
 		error("Unknown game version!");
 	}
@@ -223,6 +225,8 @@ bool SkyState::isDemo(uint32 version) {
 		return true;
 	case 368:
 		return false;
+	case 372:
+		return false;
 	default:
 		error("Unknown game version!");
 	}
@@ -239,6 +243,8 @@ bool SkyState::isCDVersion(uint32 version) {
 	case 365:
 		return true;
 	case 368:
+		return true;
+	case 372:
 		return true;
 	default:
 		error("Unknown game version!");
