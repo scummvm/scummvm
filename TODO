@@ -380,7 +380,6 @@ General
 * Add FLAC support to compress_sword1 (and the sword1 engine)
 * Add FLAC and MP3 support to compress_san (and the SMUSH player in the scumm
   engine)
-* Look into troubles with new lame version (see bug #934026)
 * Consider using library APIs to encode data, instead of invoking the
   lame/oggenc/flac binaries.
   Pro: Tighter integration, no need to create temporary files.
