@@ -92,6 +92,7 @@ void SkyState::go() {
 	if (!isDemo(_gameVersion) || isCDVersion(_gameVersion))
 		intro();
 
+	_grid->loadGrids();
 	while (1) {
 		delay(100);
 		_skyLogic->engine();

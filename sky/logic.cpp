@@ -62,9 +62,6 @@ SkyLogic::SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid) {
 void SkyLogic::engine() {
 	Compact *compact2 = SkyState::fetchCompact(141); // logic list
 
-	printf("XXXXXXX: loading grids\n");
-	_skyGrid->loadGrids();
-
 	while (compact2->logic) { // 0 means end of list
 		if (compact2->logic == 0xffff) {
 			// Change logic data address
