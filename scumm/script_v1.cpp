@@ -525,11 +525,6 @@ void Scumm::o5_setClass()
 			continue;
 		}
 
-		// FIXME hack to make trains in lucasfilm games logo work
-		// the way they should
-		if ((_gameId == GID_INDY3_256) && (_currentRoom == 76))
-			newClass--;
-		
 		putClass(obj, newClass, (newClass & 0x80) ? true : false);
 	}
 }
