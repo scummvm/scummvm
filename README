@@ -511,7 +511,7 @@ to use this option. You'll need to rip the file from the CD as a WAV file,
 then encode the MP3 files in Constant Bit Rate sampled at 22 kHz. This can
 be done with the following LAME command line:
 
-lame -t -q 0 -b 96 --resample 22.05 track1.wav track1.mp3
+  lame -t -q 0 -b 96 --resample 22.05 track1.wav track1.mp3
 
 
 Compressing MONSTER.SOU with MP3:.
@@ -525,6 +525,24 @@ MONSTER.SOU file to a temporary folder. Then run:
 
 In about 30 minutes or so, you will have a much smaller monster.so3 file,
 copy this file to your game dir. You can safely remove the monster.sou file.
+
+
+Using data files from Macintosh game versions
+---------------------------------------------
+All LucasArts Scumm based adventures except CMI also exist in versions for the
+Macintosh. ScummVM can use most (all?) of them, however, in some case some
+additional work is required. First off, if you are not using a Macintoh for
+this, accessing the CD/floppy data might be tricky. There are various tools on
+the net for this, though.
+
+Secondly, most of the newer games shipped only with a  single data file on the
+Macintosh. You first have to run the 'rescumm' tool from the scummvm-tools
+package to extract the data files ScummVM excpects. You invoke rescumm like
+this (where DATAFILE is the path to the single big data file):
+   rescumm DATAFILE
+
+It will extract the data into the current directory, so make sure to run it from
+a writable directory.
 
 
 Coding style:
