@@ -611,7 +611,10 @@ void ScummEngine_v6he::o6_actorOps() {
 		j = pop();
 		i = pop();
 		checkRange(255, 0, i, "Illegal palette slot %d");
-		a->remapActorPaletteColor(i, j);
+		if (_features & GF_NEW_COSTUMES)
+			a->remapActorPaletteColor(i, j);
+		else
+			a->setPalette(i, j);
 		break;
 	case 87:		// SO_TALK_COLOR
 		a->talkColor = pop();
