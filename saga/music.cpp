@@ -30,6 +30,7 @@
 #include "game_mod.h"
 #include "sound/mididrv.h"                                                      
 #include "sound/midiparser.h"
+#include "common/config-manager.h"
 
 namespace Saga {
 
@@ -66,10 +67,12 @@ void MusicPlayer::setVolume(int volume) {
 		return;
 			
 	_masterVolume = volume;
-		
+
 	for (int i = 0; i < 16; ++i) {
-		if (_channel[i])
+		if (_channel[i]) {
+			debug(0, "%d %d", _channelVolume[i], _masterVolume);
 			_channel[i]->volume(_channelVolume[i] * _masterVolume / 255);
+		}
 	}
 }
 	
@@ -135,7 +138,6 @@ void MusicPlayer::onTimer(void *refCon) {
 }
 	
 void MusicPlayer::playMusic() {
-	_parser->setMidiDriver(this);
 	_isPlaying = true;
 }
 	
@@ -188,8 +190,10 @@ int Music::play(ulong music_rn, uint flags) {
 	debug(0, "Music::play(%d, %d)", music_rn, flags);
 
 	parser->setTrack(0);	
+	parser->setMidiDriver(_player);
 	_player->_parser = parser;
-	_player->playMusic();				
+	_player->setVolume(ConfMan.getInt("music_volume") * ConfMan.getInt("master_volume") / 255);
+	_player->playMusic();
 	return R_SUCCESS;
 }
 
