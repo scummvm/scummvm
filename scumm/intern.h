@@ -365,6 +365,7 @@ protected:
 	void o6_unknownCD();
 	void o6_bor();
 	void o6_band();
+	void o6_stopTalking();
 };
 
 class Scumm_v7 : public Scumm_v6

@@ -304,7 +304,7 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_invalid),
 		/* D0 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_stopTalking),
 		OPCODE(o6_getAnimateVariable),
 		OPCODE(o6_invalid),
 		/* D4 */
@@ -2898,6 +2898,10 @@ void Scumm_v6::o6_unknownCD() {
 	c = pop();
 	d = pop();
 	warning("o6_unknownCD: stub(%d, %d, %d, %d)", a, b, c, d);
+}
+
+void Scumm_v6::o6_stopTalking() {
+	warning("o6_stopTalking: stub");
 }
 
 void Scumm_v6::decodeParseString(int m, int n)
