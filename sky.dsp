@@ -143,6 +143,10 @@ SOURCE=.\sky\disk.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\sky\disk.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\sky\grid.cpp
 # End Source File
 # Begin Source File
@@ -188,6 +192,10 @@ SOURCE=.\sky\struc.h
 # Begin Source File
 
 SOURCE=.\sky\text.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\text.h
 # End Source File
 # Begin Source File
 
