@@ -38,14 +38,14 @@
 
 class MidiDriver_MT32 : public MidiDriver_Emulated {
 private:
-	MidiChannel_MPU401 _midi_channels[16];
-	uint16 _channel_mask;
+	MidiChannel_MPU401 _midiChannels[16];
+	uint16 _channelMask;
 	MT32Emu::Synth *_synth;
 
 	int _outputRate;
 
 protected:
-	void generate_samples(int16 *buf, int len);
+	void generateSamples(int16 *buf, int len);
 
 public:
 	MidiDriver_MT32(SoundMixer *mixer);
@@ -144,10 +144,10 @@ static void report(void *userData, MT32Emu::ReportType type, void *reportData) {
 }
 
 MidiDriver_MT32::MidiDriver_MT32(SoundMixer *mixer) : MidiDriver_Emulated(mixer) {
-	_channel_mask = 0xFFFF; // Permit all 16 channels by default
+	_channelMask = 0xFFFF; // Permit all 16 channels by default
 	uint i;
-	for (i = 0; i < ARRAYSIZE(_midi_channels); ++i) {
-		_midi_channels [i].init (this, i);
+	for (i = 0; i < ARRAYSIZE(_midiChannels); ++i) {
+		_midiChannels[i].init(this, i);
 	}
 	_synth = NULL;
 
@@ -218,15 +218,15 @@ void MidiDriver_MT32::close() {
 	_synth = NULL;
 }
 
-void MidiDriver_MT32::generate_samples(int16 *data, int len) {
+void MidiDriver_MT32::generateSamples(int16 *data, int len) {
 	_synth->render(data, len);
 }
 
-uint32 MidiDriver_MT32::property (int prop, uint32 param) {
+uint32 MidiDriver_MT32::property(int prop, uint32 param) {
 	switch (prop) {
-		case PROP_CHANNEL_MASK:
-			_channel_mask = param & 0xFFFF;
-			return 1;
+	case PROP_CHANNEL_MASK:
+		_channelMask = param & 0xFFFF;
+		return 1;
 	}
 
 	return 0;
@@ -236,10 +236,10 @@ MidiChannel *MidiDriver_MT32::allocateChannel() {
 	MidiChannel_MPU401 *chan;
 	uint i;
 
-	for (i = 0; i < ARRAYSIZE(_midi_channels); ++i) {
-		if (i == 9 || !(_channel_mask & (1 << i)))
+	for (i = 0; i < ARRAYSIZE(_midiChannels); ++i) {
+		if (i == 9 || !(_channelMask & (1 << i)))
 			continue;
-		chan = &_midi_channels[i];
+		chan = &_midiChannels[i];
 		if (chan->allocate()) {
 			return chan;
 		}
@@ -248,7 +248,7 @@ MidiChannel *MidiDriver_MT32::allocateChannel() {
 }
 
 MidiChannel *MidiDriver_MT32::getPercussionChannel() {
-	return &_midi_channels [9];
+	return &_midiChannels[9];
 }
 
 ////////////////////////////////////////

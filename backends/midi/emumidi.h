@@ -31,15 +31,15 @@ protected:
 	SoundMixer *_mixer;
 
 private:
-	Timer::TimerProc _timer_proc;
-	void *_timer_param;
+	Timer::TimerProc _timerProc;
+	void *_timerParam;
 
-	int _next_tick;
-	int _samples_per_tick;
+	int _nextTick;
+	int _samplesPerTick;
 
 protected:
-	virtual void generate_samples(int16 *buf, int len) = 0;
-	virtual void on_timer() {}
+	virtual void generateSamples(int16 *buf, int len) = 0;
+	virtual void onTimer() {}
 
 	int _baseFreq;
 
@@ -47,11 +47,11 @@ public:
 	MidiDriver_Emulated(SoundMixer *mixer) : _mixer(mixer) {
 		_isOpen = false;
 	
-		_timer_proc = 0;
-		_timer_param = 0;
+		_timerProc = 0;
+		_timerParam = 0;
 	
-		_next_tick = 0;
-		_samples_per_tick = 0;
+		_nextTick = 0;
+		_samplesPerTick = 0;
 
 		_baseFreq = 250;
 	}
@@ -65,13 +65,13 @@ public:
 		// This is equivalent to (getRate() << FIXP_SHIFT) / BASE_FREQ
 		// but less prone to arithmetic overflow.
 
-		_samples_per_tick = (d << FIXP_SHIFT) + (r << FIXP_SHIFT) / _baseFreq;
+		_samplesPerTick = (d << FIXP_SHIFT) + (r << FIXP_SHIFT) / _baseFreq;
 		return 0;
 	}
 
 	void setTimerCallback(void *timer_param, Timer::TimerProc timer_proc) {
-		_timer_proc = timer_proc;
-		_timer_param = timer_param;
+		_timerProc = timer_proc;
+		_timerParam = timer_param;
 	}
 
 	uint32 getBaseTempo() { return 1000000 / _baseFreq; }
@@ -85,17 +85,17 @@ public:
 
 		do {
 			step = len;
-			if (step > (_next_tick >> FIXP_SHIFT))
-				step = (_next_tick >> FIXP_SHIFT);
+			if (step > (_nextTick >> FIXP_SHIFT))
+				step = (_nextTick >> FIXP_SHIFT);
 
-			generate_samples(data, step);
+			generateSamples(data, step);
 	
-			_next_tick -= step << FIXP_SHIFT;
-			if (!(_next_tick >> FIXP_SHIFT)) {
-				if (_timer_proc)
-					(*_timer_proc)(_timer_param);
-				on_timer();
-				_next_tick += _samples_per_tick;
+			_nextTick -= step << FIXP_SHIFT;
+			if (!(_nextTick >> FIXP_SHIFT)) {
+				if (_timerProc)
+					(*_timerProc)(_timerParam);
+				onTimer();
+				_nextTick += _samplesPerTick;
 			}
 			data += step * stereoFactor;
 			len -= step;

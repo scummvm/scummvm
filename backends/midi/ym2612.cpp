@@ -164,7 +164,7 @@ protected:
 	int volume(int val = -1) { if (val >= 0) _volume = val; return _volume; }
 	void rate(uint16 r);
 
-	void generate_samples(int16 *buf, int len);
+	void generateSamples(int16 *buf, int len);
 
 public:
 	MidiDriver_YM2612(SoundMixer *mixer);
@@ -802,7 +802,7 @@ void MidiDriver_YM2612::sysEx(byte *msg, uint16 length) {
 	_channel[msg[1]]->sysEx_customInstrument('EUP ', &msg[2]);
 }
 
-void MidiDriver_YM2612::generate_samples(int16 *data, int len) {
+void MidiDriver_YM2612::generateSamples(int16 *data, int len) {
 	memset(data, 0, 2 * sizeof(int16) * len);
 	nextTick(data, len);
 }
