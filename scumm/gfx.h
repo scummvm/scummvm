@@ -130,8 +130,6 @@ protected:
 	/* Bitmap decompressors */
 	bool decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProcess);
 	void decodeStripEGA(byte *dst, const byte *src, int height);
-	void decodeStripOldEGA(byte *dst, const byte *src, int height, int stripnr);
-	void decompressMaskImgOld(byte *dst, const byte *src, int stripnr);
 	void unkDecodeA(byte *dst, const byte *src, int height);
 	void unkDecodeA_trans(byte *dst, const byte *src, int height);
 	void unkDecodeB(byte *dst, const byte *src, int height);
