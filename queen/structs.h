@@ -54,10 +54,13 @@ struct Box {
 
 
 struct Area {
+	//! bitmask of connected areas
 	int16 mapNeighbours;
+	//! coordinates defining area limits
 	Box box;
-	uint16 bottomScaleFactor;
-	uint16 topScaleFactor;
+	//! scaling factors for bobs actors
+	uint16 bottomScaleFactor, topScaleFactor;
+	//! entry in ObjectData, object lying in this area
 	uint16 object;
 
 	void readFrom(byte *&ptr) {
@@ -85,9 +88,10 @@ struct Area {
 
 
 struct WalkOffData {
+	//! entry in ObjectData
 	int16 entryObj;
-	uint16 x;
-	uint16 y;
+	//! coordinates to reach
+	uint16 x, y;
 
 	void readFrom(byte *& ptr) {
 		entryObj = (int16)READ_BE_UINT16(ptr); ptr += 2;
@@ -98,8 +102,11 @@ struct WalkOffData {
 
 
 struct GraphicData {
+	//! coordinates of object
 	uint16 x, y;
+	//! bank bobframes
 	int16 firstFrame, lastFrame;
+	//! moving speed of object
 	uint16 speed;
 
 	void readFrom(byte *& ptr) {
@@ -113,13 +120,51 @@ struct GraphicData {
 
 
 struct ObjectData {
-	int16 name; // FIXME: rename to 'object'
-	uint16 x;
-	uint16 y;
+	//! entry in OBJECT_NAME
+	int16 name;
+	//! coordinates of object
+	uint16 x, y;
+	//! entry in OBJECT_DESCR
 	uint16 description;
+	//! associated object
 	int16 entryObj;
+	//! room in which this object is available
 	uint16 room;
+	//! state of the object (grab direction, on/off, default command...)
 	int16 state;
+	//! entry in GraphicData (can be negative)
+	/*!
+		<table>
+			<tr>
+				<td>value</td>
+				<td>description</td>
+			</tr>
+			<tr>
+				<td>-4</td>
+				<td>person object (right facing)</td>
+			</tr>
+			<tr>
+				<td>-3</td>
+				<td>person object (left facing)</td>
+			</tr>
+			<tr>
+				<td>-2</td>
+				<td>animated bob (off)</td>
+			</tr>
+			<tr>
+				<td>-1</td>
+				<td>static bob (off)</td>
+			</tr>
+			<tr>
+				<td>[0..5000]</td>
+				<td>static or animated bob (on)</td>
+			</tr>
+			<tr>
+				<td>]5000.. [</td>
+				<td>'paste down' bob</td>
+			</tr>
+		</table>
+	*/
 	int16 image;
 
 	void readFrom(byte *& ptr) {
@@ -136,49 +181,90 @@ struct ObjectData {
 
 
 struct ObjectDescription {
+	//! entry in ObjectData or ItemData
 	uint16 object;
-	uint16 type; // see select.c l.75-101
+	//! type of the description
+	/*!
+		refer to select.c l.75-101
+		<table>
+			<tr>
+				<td>value</td>
+				<td>description</td>
+			</tr>
+			<tr>
+				<td>0</td>
+				<td>random but starts at first description</td>
+			<tr>
+				<td>1</td>
+				<td>random</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>sequential with loop</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td>sequential and set description to last</td>
+			</tr>
+		</table>
+	*/
+	uint16 type;
+	//! last entry possible in OBJECT_DESCR for this object
 	uint16 lastDescription;
-	uint16 seenCount;
+	//! last description number used (in order to avoid re-using it)
+	uint16 lastSeenNumber;
 
 	void readFrom(byte *&ptr) {
 		object = READ_BE_UINT16(ptr); ptr += 2;
 		type = READ_BE_UINT16(ptr); ptr += 2;
 		lastDescription = READ_BE_UINT16(ptr); ptr += 2;
-		seenCount = READ_BE_UINT16(ptr); ptr += 2;
+		lastSeenNumber = READ_BE_UINT16(ptr); ptr += 2;
 	}
 };
 
 
 struct ItemData {
+	//! entry in OBJECT_NAME
 	int16 item;
-	int16 description;
+	//! entry in OBJECT_DESCR
+	uint16 description;
+	//! state of the object
 	int16 state;
+	//! bank bobframe 
 	uint16 bobFrame;
-	uint16 sfxDescription;
+	//! entry in OBJECT_DESCR (>0 if available)
+	int16 sfxDescription;
 
 	void readFrom(byte *&ptr) {
 		item = (int16)READ_BE_UINT16(ptr); ptr += 2;
-		description = (int16)READ_BE_UINT16(ptr); ptr += 2;
+		description = READ_BE_UINT16(ptr); ptr += 2;
 		state = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		bobFrame = READ_BE_UINT16(ptr); ptr += 2;
-		sfxDescription = READ_BE_UINT16(ptr); ptr += 2;
+		sfxDescription = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}
 };
 
 
 struct ActorData {
+	//! room in which the actor is
 	int16 room;
+	//! bob number associated to this actor
 	int16 bobNum;
+	//! entry in ACTOR_NAME
 	uint16 name;
-	int16 gameStateSlot;
-	int16 gameStateValue;
+	//! gamestate entry/value, actor is valid if GAMESTATE[slot] == value
+	int16 gameStateSlot, gameStateValue;
+	//! spoken text color
 	uint16 color;
+	//! bank bobframe for standing position of the actor
 	uint16 bobFrameStanding;
-	uint16 x;
-	uint16 y;
+	//! initial coordinates in the room
+	uint16 x, y;
+	//! entry in ACTOR_ANIM
 	uint16 anim;
+	//! bank to use to load the actor file
 	uint16 bankNum;
+	//! entry in ACTOR_FILE
 	uint16 actorFile;
 
 	void readFrom(byte *&ptr) {
@@ -200,16 +286,51 @@ struct ActorData {
 
 
 struct CmdListData {
+	//! action to perform
 	int16 verb;
+	//! first object used in the action
 	int16 nounObj1;
+	//! second object used in the action
 	int16 nounObj2;
-	int16 song; // >0: playbefore, <0: playafter
+	//! song to play (>0: playbefore, <0: playafter)
+	int16 song;
+	//! if set, P2_SET_AREAS must be called (using CmdArea)
 	bool setAreas;
+	//! if set, P3_SET_OBJECTS must be called (using CmdObject)
 	bool setObjects;
+	//! if set, P4_SET_ITEMS must be called (using CmdInventory)
 	bool setItems;
+	//! if set, P1_SET_CONDITIONS must be called (using CmdGameState)
 	bool setConditions;
+	//! graphic image of object
 	int16 image;
-	int16 specialSection; // see execute.c l.423-451
+	//! special section to execute
+	/*!
+		refer to execute.c l.423-451
+		<table>
+			<tr>
+				<td>value</td>
+				<td>description</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>use journal</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>use dress</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td>use normal clothes</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td>use underwear</td>
+			</tr>
+		</table>
+	*/
+	int16 specialSection;
 
 	void readFrom(byte *&ptr) {
 		verb = (int16)READ_BE_UINT16(ptr); ptr += 2;
@@ -227,8 +348,11 @@ struct CmdListData {
 
 
 struct CmdArea {
+	//! identifier of the command
 	int16 id;
-	int16 area; // <0: turn off, >0: turn on
+	//! area to turn off/on (<0: off, >0: on)
+	int16 area;
+	//! room in which the area must be changed
 	int16 room;
 
 	void readFrom(byte *&ptr) {
@@ -240,6 +364,7 @@ struct CmdArea {
 
 
 struct CmdObject {
+	//! identifier of the command
 	int16 id;
 	int16 dstObj; // >0: show, <0: hide
 	int16 srcObj; // >0: copy from srcObj, -1: delete dstObj
@@ -253,6 +378,7 @@ struct CmdObject {
 
 
 struct CmdInventory {
+	//! identifier of the command
 	int16 id;
 	int16 dstItem; // <0: delete, >0: add
 	int16 srcItem; // >0: valid
@@ -266,6 +392,7 @@ struct CmdInventory {
 
 
 struct CmdGameState {
+	//! identifier of the command
 	int16 id;
 	int16 gameStateSlot;
 	int16 gameStateValue;
@@ -281,7 +408,9 @@ struct CmdGameState {
 
 
 struct FurnitureData {
+	//! room in which the furniture are
 	int16 room;
+	//! value to store in GAMESTATE
 	int16 gameStateValue;
 
 	void readFrom(byte *&ptr) {
@@ -305,8 +434,11 @@ struct GraphicAnim {
 
 
 struct Person {
+	//! actor settings to use
 	const ActorData *actor; // P_ROOM, P_BNUM, P_GAMES, P_VALUE, P_COLOR, P_STAND, P_X, P_Y
+	//! name of the actor
 	const char *name; // P_NAMEstr
+	//! string animation
 	const char *anim; // P_ANIMstr
 	uint16 bobFrame; // SFRAME
 	//! As the bank number may change, we can't re-use actor->bankNum
