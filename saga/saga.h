@@ -78,7 +78,7 @@ enum SAGAGameId {
 };
 
 enum scriptTimings {
-	kScriptTimeTicksPerSecond = (728L/10L),
+	kScriptTimeTicksPerSecond = (728L/10L)
 };
 
 struct CLICKAREA {
