@@ -1033,7 +1033,9 @@ void Control::delay(uint32 msecs) {
 				break;
 			}
 		}
+#ifndef __PALM_OS__
 		_system->delayMillis(10);
+#endif
 	} while (_system->getMillis() < endTime);
 }
 
@@ -1230,3 +1232,4 @@ const uint8 Control::_languageStrings[8 * 20][43] = {
 };
 
 } // End of namespace Sword1
+
