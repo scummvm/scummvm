@@ -327,6 +327,7 @@ void ScummEngine::readIndexFile() {
 			break;
 		
 		case MKID('DOBJ'):
+			debug(9, "found DOBJ block, reading object table");
 			if (_version == 8)
 				num = _fileHandle.readUint32LE();
 			else
@@ -375,6 +376,7 @@ void ScummEngine::readIndexFile() {
 
 		case MKID('RNAM'):
 			_fileHandle.seek(itemsize - 8, SEEK_CUR);
+			debug(9, "found RNAM block, skipping");
 			break;
 		
 		case MKID('DLFL'):
@@ -382,18 +384,22 @@ void ScummEngine::readIndexFile() {
 			_fileHandle.seek(-2, SEEK_CUR);
 			_HEV7RoomOffsets = (byte *)calloc(2 + (i * 4), 1);
 			_fileHandle.read(_HEV7RoomOffsets, (2 + (i * 4)) );
+			debug(9, "found DLFL block, offsets read");
 			break;
 
 		case MKID('DIRM'):
 			_fileHandle.seek(itemsize - 8, SEEK_CUR);
+			debug(9, "found DIRM block, skipping");
 			break;
 			
 		case MKID('DIRI'):
 			num = _fileHandle.readUint16LE();
 			_fileHandle.seek(num + (8 * num), SEEK_CUR);
+			debug(9, "found DIRI block, skipping");
 			break;
 
 		case MKID('ANAM'):
+			debug(9, "found ANAM block, reading audio names");
 			_numAudioNames = _fileHandle.readUint16LE();
 			_audioNames = (char*)malloc(_numAudioNames * 9);
 			_fileHandle.read(_audioNames, _numAudioNames * 9);
