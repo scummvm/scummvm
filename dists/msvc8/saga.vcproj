@@ -167,14 +167,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\saga\actordata.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\actordata.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\saga\animation.cpp"
 			>
 		</File>
@@ -259,6 +251,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\saga\itedata.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\saga\itedata.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\saga\list.h"
 			>
 		</File>
@@ -268,14 +268,6 @@
 		</File>
 		<File
 			RelativePath="..\..\saga\music.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\objectdata.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\objectdata.h"
 			>
 		</File>
 		<File
