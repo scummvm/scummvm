@@ -1488,8 +1488,7 @@ void SimonState::o_unk_127()
 		uint a = getVarOrWord();
 		/*uint b = */ getVarOrWord();
 
-		//FIXME simon 1 attempts repeat music track 35 in ending sequences when it should only be played once
-		if ((a != _last_music_played)  && (a < 35)) {
+		if (a != _last_music_played) {
 			_last_music_played = a;
 			playMusic(a);
 		}
