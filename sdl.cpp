@@ -679,6 +679,8 @@ static Uint32 cd_end_time, cd_stop_time, cd_next_second;
 
 void cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_frame) {
 
+	scumm->_vars[14] = 0;
+
 #ifdef COMPRESSED_SOUND_FILE
 
 	if (mp3_cd_play(s, track, num_loops, start_frame, end_frame))
@@ -689,7 +691,6 @@ void cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_frame)
 	// warning("cd_play(%d,%d,%d,%d)", track, num_loops, start_frame, end_frame);
 	if (!cdrom) return;
 
-	scumm->_vars[14] = 0;
 	cd_track = track;
 	cd_num_loops = num_loops;
 	cd_start_frame = start_frame;

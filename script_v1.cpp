@@ -2479,8 +2479,15 @@ void Scumm::decodeParseString() {
 			string[textSlot].overhead = true;
 			break;
 		case 8: { /* play loom talkie sound - use in other games ? */
-			int offset = (int)(getVarOrDirectWord(0x80) * 7.5 - 22650);
-			int delay = (int)(getVarOrDirectWord(0x40) * 7.5) + 10;
+			int x = getVarOrDirectWord(0x80);
+			int offset;
+			int delay;
+
+			if (x != 0)
+				offset = (int)((x & 0xffff) * 7.5 - 22650);
+			else
+				offset = 0;
+			delay = (int)((getVarOrDirectWord(0x40) & 0xffff) * 7.5);
 
 			if (_gameId == GID_LOOM256) 
 				cd_play(this, 1, 0, offset, delay);
