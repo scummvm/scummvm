@@ -32,7 +32,7 @@ struct InstrumentExtra {
 	byte a, b, c, d, e, f, g, h;
 };
 
-struct Instrument {
+struct AdlibInstrument {
 	byte flags_1;
 	byte oplvl_1;
 	byte atdec_1;
@@ -66,7 +66,7 @@ private:
 	bool _pedal;
 	byte _program;
 	byte _pri_eff;
-	Instrument _part_instr;
+	AdlibInstrument _part_instr;
 
 private:
 	MidiDriver_ADLIB *_owner;
@@ -534,7 +534,7 @@ private:
 
 	void generate_samples(int16 *buf, int len);
 	void on_timer();
-	void part_set_instrument (AdlibPart *part, Instrument * instr);
+	void part_set_instrument (AdlibPart *part, AdlibInstrument * instr);
 	void part_key_on (AdlibPart *part, byte note, byte velocity);
 	void part_key_off (AdlibPart *part, byte note);
 
@@ -542,7 +542,7 @@ private:
 	void adlib_note_on(int chan, byte note, int mod);
 	void adlib_note_on_ex(int chan, byte note, int mod);
 	int adlib_read_param(int chan, byte data);
-	void adlib_setup_channel(int chan, Instrument * instr, byte vol_1, byte vol_2);
+	void adlib_setup_channel(int chan, AdlibInstrument * instr, byte vol_1, byte vol_2);
 	byte adlib_read(byte port) {
 		return _adlib_reg_cache[port];
 	}
@@ -606,7 +606,7 @@ void AdlibPart::programChange (byte program)
 	if (!count)
 		warning ("No Adlib instrument defined for GM program %d", (int) program);
 	_program = program;
-	_owner->part_set_instrument (this, (Instrument *) &map_gm_to_fm [program]);
+	_owner->part_set_instrument (this, (AdlibInstrument *) &map_gm_to_fm [program]);
 }
 
 void AdlibPart::pitchBend (int16 bend)
@@ -841,8 +841,8 @@ void MidiDriver_ADLIB::sysEx_customInstrument (byte channel, uint32 type, byte *
 void MidiDriver_ADLIB::sysEx_customInstrument (AdlibPart *part, uint32 type, byte *instr)
 {
 	if (type == 'ADL ') {
-		Instrument *i = &part->_part_instr;
-		memcpy(i, instr, sizeof(Instrument));
+		AdlibInstrument *i = &part->_part_instr;
+		memcpy(i, instr, sizeof(AdlibInstrument));
 	}
 }
 
@@ -1260,7 +1260,7 @@ void MidiDriver_ADLIB::mc_key_on (MidiChannelAdl * mc2, byte note, byte velocity
 {
 	MidiChannelAdl *mc = (MidiChannelAdl *)mc2;
 	AdlibPart *part = mc->_part;
-	Instrument *instr = &part->_part_instr;
+	AdlibInstrument *instr = &part->_part_instr;
 	int c;
 	byte vol_1, vol_2;
 
@@ -1303,7 +1303,7 @@ void MidiDriver_ADLIB::mc_key_on (MidiChannelAdl * mc2, byte note, byte velocity
 	}
 }
 
-void MidiDriver_ADLIB::adlib_setup_channel(int chan, Instrument * instr, byte vol_1, byte vol_2)
+void MidiDriver_ADLIB::adlib_setup_channel(int chan, AdlibInstrument * instr, byte vol_1, byte vol_2)
 {
 	byte port;
 
@@ -1445,8 +1445,8 @@ void MidiDriver_ADLIB::adlib_note_on(int chan, byte note, int mod)
 	adlib_playnote(chan, channel_table_2[chan] + code);
 }
 
-void MidiDriver_ADLIB::part_set_instrument(AdlibPart *part, Instrument * instr)
+void MidiDriver_ADLIB::part_set_instrument(AdlibPart *part, AdlibInstrument * instr)
 {
-	Instrument *i = &part->_part_instr;
-	memcpy(i, instr, sizeof(Instrument));
+	AdlibInstrument *i = &part->_part_instr;
+	memcpy(i, instr, sizeof(AdlibInstrument));
 }

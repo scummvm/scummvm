@@ -24,6 +24,7 @@
 #include "sound/fmopl.h"
 #include "sound/mididrv.h"
 #include "scumm/imuse.h"
+#include "scumm/instrument.h"
 #include "scumm/saveload.h"
 #include "scumm/sound.h"
 #include "common/util.h"
@@ -33,7 +34,6 @@
 //
 #define TICKS_PER_BEAT 480
 
-// #define FORCE_MT32_SOUNDS // Use only if you are driving an actual MT-32 or compatible
 #define IMUSE_SYSEX_ID 0x7D
 #define ROLAND_SYSEX_ID 0x41
 #define PERCUSSION_CHANNEL 9
@@ -44,20 +44,6 @@
 #define MDPG_TAG "MDpg"
 #define MDHD_TAG "MDhd"
 
-#ifndef FORCE_MT32_SOUNDS
-// Roland to General Midi patch table. Still needs some work.
-static const byte mt32_to_gmidi[128] = {
-//    0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
-	  0,   1,   0,   2,   4,   4,   5,   3,  16,  17,  18,  16,  16,  19,  20,  21, // 0x
-	  6,   6,   6,   7,   7,   7,   8, 112,  62,  62,  63,  63,  38,  38,  39,  39, // 1x
-	 88,  95,  52,  98,  97,  99,  14,  54, 102,  96,  53, 102,  81, 100,  14,  80, // 2x
- 	 48,  48,  49,  45,  41,  40,  42,  42,  43,  46,  45,  24,  25,  28,  27, 104, // 3x
-	 32,  32,  34,  33,  36,  37,  35,  35,  79,  73,  72,  72,  74,  75,  64,  65, // 4x
-	 66,  67,  71,  71,  68,  69,  70,  22,  56,  59,  57,  57,  60,  60,  58,  61, // 5x
-	 61,  11,  11,  98,  14,   9,  14,  13,  12, 107, 107,  77,  78,  78,  76,  76, // 6x
-	 47, 117, 127, 118, 118, 116, 115, 119, 115, 112,  55, 124, 123,   0,  14, 117  // 7x
-};
-#endif
 
 
 // Put IMUSE specific classes here, instead of in a .h file
@@ -99,11 +85,7 @@ public:
 };
 
 class IMuseDriver;
-
 struct Part;
-// struct MidiChannelAdl;
-// struct MidiChannelGM;
-struct Instrument;
 
 
 struct HookDatas {
@@ -274,7 +256,10 @@ struct Part {
 	byte _percussion;
 	byte _bank;
 
-	// Used to be in MidiDriverGM.
+	// New abstract instrument definition
+	Instrument _instrument;
+
+	// Used to be in MidiDriver
 	uint16 _actives[8];
 
 	void key_on(byte note, byte velocity);
@@ -286,7 +271,7 @@ struct Part {
 	void off();
 	void silence();
 	void set_instrument(uint b);
-	void set_instrument(Instrument * data);
+	void set_instrument(byte * data);
 
 	void set_transpose(int8 transpose);
 	void set_vol(uint8 volume);
@@ -318,7 +303,10 @@ struct ImTrigger {
 	byte command [4];
 };
 
-// Abstract IMuseInternal driver class
+
+
+// IMuseDriver class
+
 class IMuseDriver {
 public:
 	enum {
@@ -335,22 +323,61 @@ public:
 		pcAll = 1023,
 	};
 
-	virtual void on_timer() = 0;
-	virtual uint32 get_base_tempo() = 0;
-	virtual byte get_hardware_type() = 0;
-	virtual void init(IMuseInternal *eng, OSystem *syst) = 0;
-	virtual void uninit() = 0;
-	virtual void update_pris() = 0;
-	virtual void set_instrument(uint slot, byte *instr) = 0;
-	virtual void part_set_instrument(Part *part, Instrument * instr) = 0;
-	virtual void part_key_on(Part *part, byte note, byte velocity) = 0;
-	virtual void part_key_off(Part *part, byte note) = 0;
-	virtual void part_off(Part *part) = 0;
-	virtual void part_changed(Part *part, uint16 what) = 0;
-	virtual void part_set_param(Part *part, byte param, int value) = 0;
-	virtual int part_update_active(Part *part, uint16 *active) = 0;
-	virtual byte get_channel_program (byte channel) = 0;
+private:
+	IMuseInternal *_se;
+	OSystem *_system;
+	MidiDriver *_md;
+	Instrument _glob_instr[32]; // Adlib custom instruments
+
+	byte _midi_program_last[16];
+	int16 _midi_pitchbend_last[16];
+	byte _midi_pitchbend_factor_last[16];
+	uint8 _midi_volume_last[16];
+	bool _midi_pedal_last[16];
+	byte _midi_modwheel_last[16];
+	byte _midi_effectlevel_last[16];
+	byte _midi_chorus_last[16];
+	int8 _midi_pan_last[16];
+
+
+	void midiPitchBend(byte chan, int16 pitchbend);
+	void midiPitchBendFactor (byte chan, byte factor);
+	void midiVolume(byte chan, byte volume);
+	void midiPedal(byte chan, bool pedal);
+	void midiModWheel(byte chan, byte modwheel);
+	void midiEffectLevel(byte chan, byte level);
+	void midiChorus(byte chan, byte chorus);
+	void midiControl0(byte chan, byte value);
+	void midiPan(byte chan, int8 pan);
+	void midiNoteOn(byte chan, byte note, byte velocity);
+	void midiNoteOff(byte chan, byte note);
+	void midiSilence(byte chan);
+	void midiInit();
+
+	static void timer_callback (void *);
+
+public:
+	IMuseDriver(MidiDriver *midi);
+	void uninit();
+	void init(IMuseInternal *eng, OSystem *os);
+	void update_pris();
+	void part_off(Part *part);
+	int part_update_active(Part *part, uint16 *active);
+
+	void on_timer() {}
+	void set_instrument(uint slot, byte *instr);
+	void part_set_param(Part *part, byte param, int value) {}
+	void part_key_on(Part *part, byte note, byte velocity);
+	void part_key_off(Part *part, byte note);
+	void part_changed(Part *part, uint16 what);
+	byte get_channel_program (byte channel) { return _midi_program_last [channel]; }
+
+	static int midi_driver_thread(void *param);
+
+	uint32 get_base_tempo() { return _md->getBaseTempo(); }
+	byte get_hardware_type() { return 5; }
 };
+
 
 
 // WARNING: This is the internal variant of the IMUSE class.
@@ -483,92 +510,6 @@ public:
 	uint32 property(int prop, uint32 value);
 
 	static IMuseInternal *create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
-};
-
-
-struct InstrumentExtra {
-	byte a, b, c, d, e, f, g, h;
-};
-
-struct Instrument {
-	byte flags_1;
-	byte oplvl_1;
-	byte atdec_1;
-	byte sustrel_1;
-	byte waveform_1;
-	byte flags_2;
-	byte oplvl_2;
-	byte atdec_2;
-	byte sustrel_2;
-	byte waveform_2;
-	byte feedback;
-	byte flags_a;
-	InstrumentExtra extra_a;
-	byte flags_b;
-	InstrumentExtra extra_b;
-	byte duration;
-};
-
-// IMuseGM classes
-
-class IMuseGM : public IMuseDriver {
-	IMuseInternal *_se;
-	OSystem *_system;
-	MidiDriver *_md;
-//	MidiChannelGM _midi_channels[16];
-
-	Instrument _part_instr[32]; // Adlib custom instruments
-	Instrument _glob_instr[32]; // Adlib custom instruments
-
-	byte _midi_program_last[16];
-	int16 _midi_pitchbend_last[16];
-	byte _midi_pitchbend_factor_last[16];
-	uint8 _midi_volume_last[16];
-	bool _midi_pedal_last[16];
-	byte _midi_modwheel_last[16];
-	byte _midi_effectlevel_last[16];
-	byte _midi_chorus_last[16];
-	int8 _midi_pan_last[16];
-
-
-	void midiPitchBend(byte chan, int16 pitchbend);
-	void midiPitchBendFactor (byte chan, byte factor);
-	void midiVolume(byte chan, byte volume);
-	void midiPedal(byte chan, bool pedal);
-	void midiModWheel(byte chan, byte modwheel);
-	void midiEffectLevel(byte chan, byte level);
-	void midiChorus(byte chan, byte chorus);
-	void midiControl0(byte chan, byte value);
-	void midiProgram(MidiChannel *mc, byte program, bool mt32emulate);
-	void midiPan(byte chan, int8 pan);
-	void midiNoteOn(byte chan, byte note, byte velocity);
-	void midiNoteOff(byte chan, byte note);
-	void midiSilence(byte chan);
-	void midiInit();
-
-	static void timer_callback (void *);
-
-public:
-	IMuseGM(MidiDriver *midi);
-	void uninit();
-	void init(IMuseInternal *eng, OSystem *os);
-	void update_pris();
-	void part_off(Part *part);
-	int part_update_active(Part *part, uint16 *active);
-
-	void on_timer() {}
-	void set_instrument(uint slot, byte *instr);
-	void part_set_instrument(Part *part, Instrument * instr);
-	void part_set_param(Part *part, byte param, int value) {}
-	void part_key_on(Part *part, byte note, byte velocity);
-	void part_key_off(Part *part, byte note);
-	void part_changed(Part *part, uint16 what);
-	byte get_channel_program (byte channel) { return _midi_program_last [channel]; }
-
-	static int midi_driver_thread(void *param);
-
-	uint32 get_base_tempo() { return _md->getBaseTempo(); } // 0x4A0000; }
-	byte get_hardware_type() { return 5; }
 };
 
 
@@ -708,17 +649,8 @@ byte *IMuseInternal::findTag(int sound, char *tag, int index)
 	byte *ptr = NULL;
 	int32 size, pos;
 
-	if (_base_sounds) {
-		// The following hack was commented out because calling
-		// ensureResourceLoaded() is not safe from within this
-		// function. TODO: Make sure all Sam & Max music still works
-		// without this hack. It's very likely that changes to the
-		// resource expiration process solved whatever S&M problem
-		// this hack was originally intended to address.
-//		if (!_base_sounds[sound] && (sound > 1 || g_scumm->_gameId != GID_SAMNMAX))
-//			g_scumm->ensureResourceLoaded (rtSound, sound);
+	if (_base_sounds)
 		ptr = _base_sounds[sound];
-	}
 
 	if (ptr == NULL) {
 		  debug(1, "IMuseInternal::findTag completely failed finding sound %d", sound);
@@ -1434,7 +1366,6 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 			switch (d) {
 			case 6:
 				// Set player volume.
-				// Jamieson360: Good, this is consistent with IMuseDigital.
 				return player->set_vol (e);
 			default:
 				warning("IMuseInternal::do_command (6) unsupported sub-command %d", d);
@@ -1505,7 +1436,6 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 			// The significance of parameter b is unknown.
 			warning ("Incomplete support for iMuse::do_command(20)");
 			return do_command (c, d, e, f, g, h, 0, 0);
-			// return 0;
 		case 2:
 		case 3:
 			return 0;
@@ -1824,12 +1754,10 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer
 
 	IMuseDriver *driv;
 
-	if (midi == NULL) {
-//		driv = new IMuseAdlib(mixer);
+	if (midi == NULL)
 		driv = NULL;
-	} else {
-		driv = new IMuseGM(midi);
-	}
+	else
+		driv = new IMuseDriver (midi);
 
 	_driver = driv;
 	_hardware_type = driv->get_hardware_type();
@@ -2189,90 +2117,6 @@ byte *Player::parse_midi(byte *s)
 	return s;
 }
 
-struct {
-	char *name;
-	byte program;
-}
-roland_to_gm_map [] = {
-	// Monkey Island 2 instruments
-	// TODO: Complete
-//	{ "badspit   ", ??? },
-	{ "Big Drum  ", 116 },
-//	{ "burp      ", ??? },
-//	{ "dinkfall  ", ??? },
-//	{ "Fire Pit  ", ??? },
-//	{ "foghorn   ", ??? },
-	{ "glop      ",  39 },
-//	{ "jacob's la", ??? },
-	{ "LeshBass  ",  33 }, 
-//	{ "lowsnort  ", ??? },
-//	{ "ML explosn", ??? },
-	{ "ReggaeBass",  32 },
-//	{ "rope fall ", ??? },
-//	{ "rumble    ", ??? },
-//	{ "SdTrk Bend", ??? },
-//	{ "snort     ", ??? },
-//	{ "spitting  ", ??? },
-	{ "Swell 1   ",  95 },
-	{ "Swell 2   ",  95 }
-//	{ "thnderclap", ??? },
-
-	// Fate of Atlantis instruments
-	// TODO: Build
-//	{ "*aah!     ", ??? },
-//	{ "*ooh!     ", ??? },
-//	{ "*ShotFar4 ", ??? },
-//	{ "*splash3  ", ??? },
-//	{ "*torpedo5 ", ??? },
-//	{ "*whip3    ", ??? },
-//	{ "*woodknock", ??? },
-//	{ "35 lavabub", ??? },
-//	{ "49 bzzt!  ", ??? },
-//	{ "applause  ", ??? },
-//	{ "Arabongo  ", ??? },
-//	{ "Big Drum  ", ??? }, // DUPLICATE (todo: confirm)
-//	{ "bodythud1 ", ??? },
-//	{ "boneKLOK2 ", ??? },
-//	{ "boom10    ", ??? },
-//	{ "boom11    ", ??? },
-//	{ "boom15    ", ??? },
-//	{ "boxclik1a ", ??? },
-//	{ "brassbonk3", ??? },
-//	{ "carstart  ", ??? },
-//	{ "cb tpt 2  ", ??? },
-//	{ "cell door ", ??? },
-//	{ "chains    ", ??? },
-//	{ "crash     ", ??? },
-//	{ "crsrt/idl3", ??? },
-//	{ "Fire Pit  ", ??? }, // DUPLICATE (todo: confirm)
-//	{ "Fzooom    ", ??? },
-//	{ "Fzooom 2  ", ??? },
-//	{ "ghostwhosh", ??? },
-//	{ "glasssmash", ??? },
-//	{ "gloop2    ", ??? },
-//	{ "gunShotNea", ??? },
-//	{ "idoorclse ", ??? },
-//	{ "knife     ", ??? },
-//	{ "lavacmbl4 ", ??? },
-//	{ "Mellow Str", ??? },
-//	{ "mtlheater1", ??? },
-//	{ "pachinko5 ", ??? },
-//	{ "Ping1     ", ??? },
-//	{ "rockcrunch", ??? },
-//	{ "rumble    ", ??? }, // DUPLICATE (todo: confirm)
-//	{ "runngwatr ", ??? },
-//	{ "scrape2   ", ??? },
-//	{ "snakeHiss ", ??? },
-//	{ "snort     ", ??? }, // DUPLICATE (todo: confirm)
-//	{ "spindle4  ", ??? },
-//	{ "splash2   ", ??? },
-//	{ "squirel   ", ??? },
-//	{ "steam3    ", ??? },
-//	{ "stonwheel6", ??? },
-//	{ "street    ", ??? },
-//	{ "trickle4  ", ??? }
-};
-
 void Player::parse_sysex(byte *p, uint len)
 {
 	byte code;
@@ -2290,29 +2134,9 @@ void Player::parse_sysex(byte *p, uint len)
 			// Roland custom instrument definition.
 			part = get_part (p[0] & 0x0F);
 			if (part) {
-#ifndef FORCE_MT32_SOUNDS
-				// Convert to a GM program change.
-				memcpy (buf, p + 6, 10);
-				buf[10] = '\0';
-				for (b = 0; b < ARRAYSIZE(roland_to_gm_map); ++b) {
-					if (!memcmp (roland_to_gm_map[b].name, buf, 10)) {
-						a = roland_to_gm_map[b].program;
-						for (b = 0; b < ARRAYSIZE(mt32_to_gmidi); ++b) {
-							if (mt32_to_gmidi [b] == a) {
-								part->set_program (b);
-								return;
-							}
-						}
-						warning ("Could not map MT-32 \"%s\" to GM %d", buf, (int) a);
-						return;
-					}
-				}
-				warning ("MT-32 instrument \"%s\" not supported yet", buf);
-#else
-				// Send SysEx directly.
 				p[0] = part->_mc->getNumber();
-				part->_mc->device()->sysEx (p - 1, len);
-#endif
+				part->_instrument.roland (p - 1);
+				part->changed (IMuseDriver::pcProgram);
 			}
 		} else {
 			warning ("Unknown SysEx manufacturer 0x%02X", (int) a);
@@ -2387,7 +2211,7 @@ void Player::parse_sysex(byte *p, uint len)
 		decode_sysex_bytes(p, buf, len - 3);
 		part = get_part(a);
 		if (part)
-			part->set_instrument((Instrument *) buf);
+			part->set_instrument((byte *) buf);
 		break;
 
 	case 17: // Adlib instrument definition (Global)
@@ -3442,9 +3266,10 @@ void Part::set_onoff(bool on)
 	}
 }
 
-void Part::set_instrument(Instrument * data)
+void Part::set_instrument(byte * data)
 {
-	_drv->part_set_instrument(this, data);
+	_instrument.adlib (data);
+	changed(IMuseDriver::pcProgram);
 }
 
 void Part::key_on(byte note, byte velocity)
@@ -3493,6 +3318,7 @@ void Part::setup(Player *player)
 	_pitchbend = 0;
 	_effect_level = 64;
 	_program = player->_se->get_channel_program (_chan);
+	_instrument.program (_program, player->_mt32emulate);
 	_chorus = 0;
 	_modwheel = 0;
 	_bank = 0;
@@ -3551,6 +3377,7 @@ void Part::set_program(byte program)
 	if (_program != program || _bank != 0) {
 		_program = program;
 		_bank = 0;
+		_instrument.program (_program, _player->_mt32emulate);
 		changed(IMuseDriver::pcProgram);
 	}
 }
@@ -3559,6 +3386,7 @@ void Part::set_instrument(uint b)
 {
 	_bank = (byte)(b >> 8);
 	_program = (byte)b;
+	_instrument.program (_program, _player->_mt32emulate);
 	changed(IMuseDriver::pcProgram);
 }
 
@@ -3569,7 +3397,7 @@ void Part::set_instrument(uint b)
 //
 ////////////////////////////////////////
 
-IMuseGM::IMuseGM (MidiDriver *midi)
+IMuseDriver::IMuseDriver (MidiDriver *midi)
 {
 	int i;
 
@@ -3591,7 +3419,7 @@ IMuseGM::IMuseGM (MidiDriver *midi)
 	_md = midi;
 }
 
-void IMuseGM::midiPitchBend(byte chan, int16 pitchbend)
+void IMuseDriver::midiPitchBend(byte chan, int16 pitchbend)
 {
 	uint16 tmp;
 
@@ -3602,21 +3430,21 @@ void IMuseGM::midiPitchBend(byte chan, int16 pitchbend)
 	}
 }
 
-void IMuseGM::midiPitchBendFactor (byte chan, byte factor) {
+void IMuseDriver::midiPitchBendFactor (byte chan, byte factor) {
 	if (_midi_pitchbend_factor_last[chan] != factor) {
 		_midi_pitchbend_factor_last[chan] = factor;
 		_md->setPitchBendRange (chan, factor);
 	}
 }
 
-void IMuseGM::midiVolume(byte chan, byte volume)
+void IMuseDriver::midiVolume(byte chan, byte volume)
 {
 	if (_midi_volume_last[chan] != volume) {
 		_midi_volume_last[chan] = volume;
 		_md->send(volume << 16 | 7 << 8 | 0xB0 | chan);
 	}
 }
-void IMuseGM::midiPedal(byte chan, bool pedal)
+void IMuseDriver::midiPedal(byte chan, bool pedal)
 {
 	if (_midi_pedal_last[chan] != pedal) {
 		_midi_pedal_last[chan] = pedal;
@@ -3624,7 +3452,7 @@ void IMuseGM::midiPedal(byte chan, bool pedal)
 	}
 }
 
-void IMuseGM::midiModWheel(byte chan, byte modwheel)
+void IMuseDriver::midiModWheel(byte chan, byte modwheel)
 {
 	if (_midi_modwheel_last[chan] != modwheel) {
 		_midi_modwheel_last[chan] = modwheel;
@@ -3632,7 +3460,7 @@ void IMuseGM::midiModWheel(byte chan, byte modwheel)
 	}
 }
 
-void IMuseGM::midiEffectLevel(byte chan, byte level)
+void IMuseDriver::midiEffectLevel(byte chan, byte level)
 {
 	if (_midi_effectlevel_last[chan] != level) {
 		_midi_effectlevel_last[chan] = level;
@@ -3640,7 +3468,7 @@ void IMuseGM::midiEffectLevel(byte chan, byte level)
 	}
 }
 
-void IMuseGM::midiChorus(byte chan, byte chorus)
+void IMuseDriver::midiChorus(byte chan, byte chorus)
 {
 	if (_midi_chorus_last[chan] != chorus) {
 		_midi_chorus_last[chan] = chorus;
@@ -3648,22 +3476,13 @@ void IMuseGM::midiChorus(byte chan, byte chorus)
 	}
 }
 
-void IMuseGM::midiControl0(byte chan, byte value)
+void IMuseDriver::midiControl0(byte chan, byte value)
 {
 	_md->send(value << 16 | 0 << 8 | 0xB0 | chan);
 }
 
 
-void IMuseGM::midiProgram(MidiChannel *mc, byte program, bool mt32emulate)
-{
-#ifndef FORCE_MT32_SOUNDS
-	if (mt32emulate)
-		program = mt32_to_gmidi[program];
-#endif
-	mc->programChange (program);
-}
-
-void IMuseGM::midiPan(byte chan, int8 pan)
+void IMuseDriver::midiPan(byte chan, int8 pan)
 {
 	if (_midi_pan_last[chan] != pan) {
 		_midi_pan_last[chan] = pan;
@@ -3671,24 +3490,24 @@ void IMuseGM::midiPan(byte chan, int8 pan)
 	}
 }
 
-void IMuseGM::midiNoteOn(byte chan, byte note, byte velocity)
+void IMuseDriver::midiNoteOn(byte chan, byte note, byte velocity)
 {
 	_md->send(velocity << 16 | note << 8 | 0x90 | chan);
 }
 
-void IMuseGM::midiNoteOff(byte chan, byte note)
+void IMuseDriver::midiNoteOff(byte chan, byte note)
 {
 	_md->send(note << 8 | 0x80 | chan);
 }
 
-void IMuseGM::midiSilence(byte chan)
+void IMuseDriver::midiSilence(byte chan)
 {
 	_md->send((64 << 8) | 0xB0 | chan);
 	_md->send((123 << 8) | 0xB0 | chan);
 }
 
 
-void IMuseGM::part_key_on(Part *part, byte note, byte velocity)
+void IMuseDriver::part_key_on(Part *part, byte note, byte velocity)
 {
 	MidiChannel *mc = part->_mc;
 
@@ -3700,12 +3519,12 @@ void IMuseGM::part_key_on(Part *part, byte note, byte velocity)
 		if (!mc)
 			return;
 		mc->volume (part->_vol_eff);
-		midiProgram (mc, part->_bank, part->_player->_mt32emulate);
+		mc->programChange (part->_bank);
 		mc->noteOn (note, velocity);
 	}
 }
 
-void IMuseGM::part_key_off(Part *part, byte note)
+void IMuseDriver::part_key_off(Part *part, byte note)
 {
 	MidiChannel *mc = part->_mc;
 
@@ -3725,9 +3544,9 @@ void IMuseGM::part_key_off(Part *part, byte note)
 #include <proto/dos.h>
 #include "morphos.h"
 #include "morphos_sound.h"
-int IMuseGM::midi_driver_thread(void *param)
+int IMuseDriver::midi_driver_thread(void *param)
 {
-	IMuseGM *mid = (IMuseGM *) param;
+	IMuseDriver *mid = (IMuseDriver *) param;
 	int old_time, cur_time;
 	MsgPort *music_timer_port = NULL;
 	timerequest *music_timer_request = NULL;
@@ -3764,7 +3583,7 @@ int IMuseGM::midi_driver_thread(void *param)
 }
 #endif
 
-void IMuseGM::init(IMuseInternal *eng, OSystem *syst)
+void IMuseDriver::init(IMuseInternal *eng, OSystem *syst)
 {
 	int i;
 
@@ -3773,28 +3592,28 @@ void IMuseGM::init(IMuseInternal *eng, OSystem *syst)
 	// Open MIDI driver
 	int result = _md->open();
 	if (result)
-		error("IMuseGM::error = %s", MidiDriver::getErrorName(result));
+		error("IMuseDriver::error = %s", MidiDriver::getErrorName(result));
 
 	// Connect to the driver's timer
 	_se = eng;
-	_md->setTimerCallback (NULL, &IMuseGM::timer_callback);
+	_md->setTimerCallback (NULL, &IMuseDriver::timer_callback);
 
 	for (i = 0; i != ARRAYSIZE(_midi_program_last); i++) {
 		_midi_program_last [i] = 255;
 	}
 }
 
-void IMuseGM::timer_callback (void *) {
+void IMuseDriver::timer_callback (void *) {
 	if (g_scumm->_imuse)
 		g_scumm->_imuse->on_timer();
 }
 
-void IMuseGM::uninit()
+void IMuseDriver::uninit()
 {
 	_md->close();
 }
 
-void IMuseGM::update_pris()
+void IMuseDriver::update_pris()
 {
 	Part *part, *hipart;
 	int i;
@@ -3838,7 +3657,7 @@ void IMuseGM::update_pris()
 	}
 }
 
-int IMuseGM::part_update_active(Part *part, uint16 *active)
+int IMuseDriver::part_update_active(Part *part, uint16 *active)
 {
 	int i, j;
 	uint16 *act, mask, bits;
@@ -3864,20 +3683,15 @@ int IMuseGM::part_update_active(Part *part, uint16 *active)
 	return count;
 }
 
-void IMuseGM::part_set_instrument (Part *part, Instrument *instr)
+void IMuseDriver::set_instrument(uint slot, byte *data)
 {
-	Instrument *i = &_part_instr[part->_slot];
-	memcpy(i, instr, sizeof(Instrument));
-	part->changed (pcProgram);
+	if (slot < 32) {
+		// memcpy(&_glob_instr[slot], data, sizeof(Instrument));
+		_glob_instr[slot].adlib (data);
+	}
 }
 
-void IMuseGM::set_instrument(uint slot, byte *data)
-{
-	if (slot < 32)
-		memcpy(&_glob_instr[slot], data, sizeof(Instrument));
-}
-
-void IMuseGM::part_changed(Part *part, uint16 what)
+void IMuseDriver::part_changed(Part *part, uint16 what)
 {
 	MidiChannel *mc;
 
@@ -3919,25 +3733,8 @@ void IMuseGM::part_changed(Part *part, uint16 what)
 	if (what & pcEffectLevel)
 		mc->effectLevel (part->_effect_level);
 
-	if (what & pcProgram) {
-		if (part->_player->_isGM) {
-			if (part->_program < 128) {
-				_midi_program_last [part->_chan] = part->_program;
-				if (part->_bank) {
-					mc->controlChange (0, part->_bank);
-					midiProgram (mc, part->_program, part->_player->_mt32emulate);
-					mc->controlChange (0, 0);
-				} else {
-					midiProgram (mc, part->_program, part->_player->_mt32emulate);
-				}
-			}
-		} else {
-			if (part->_program < 32) {
-				memcpy (&_part_instr [part->_slot], &_glob_instr[part->_program], sizeof (Instrument));
-			}
-			mc->sysEx_customInstrument ('ADL ', (byte *) (&_part_instr [part->_slot]));
-		}
-	}
+	if (what & pcProgram)
+		part->_instrument.send (mc);
 
 	if (what & pcChorus)
 		mc->chorusLevel (part->_effect_level);
@@ -3947,7 +3744,7 @@ void IMuseGM::part_changed(Part *part, uint16 what)
 }
 
 
-void IMuseGM::part_off(Part *part)
+void IMuseDriver::part_off(Part *part)
 {
 	MidiChannel *mc = part->_mc;
 	if (mc) {
