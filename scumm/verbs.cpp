@@ -39,36 +39,53 @@ void Scumm::initV2MouseOver() {
 	v2_mouseover_box = -1;
 
 	// Inventory items
-	for (i = 0; i < 2; i++) {
-		v2_mouseover_boxes[2 * i].left = 0;
-		v2_mouseover_boxes[2 * i].right = 144;
-		v2_mouseover_boxes[2 * i].top = 34 + 8 * i;
-		v2_mouseover_boxes[2 * i].bottom = v2_mouseover_boxes[2 * i].top + 8;
 
-		v2_mouseover_boxes[2 * i + 1].left = 176;
-		v2_mouseover_boxes[2 * i + 1].right = 320;
-		v2_mouseover_boxes[2 * i + 1].top = v2_mouseover_boxes[2 * i].top;
-		v2_mouseover_boxes[2 * i + 1].bottom = v2_mouseover_boxes[2 * i].bottom;
+	for (i = 0; i < 2; i++) {
+		v2_mouseover_boxes[2 * i].rect.left = 0;
+		v2_mouseover_boxes[2 * i].rect.right = 144;
+		v2_mouseover_boxes[2 * i].rect.top = 34 + 8 * i;
+		v2_mouseover_boxes[2 * i].rect.bottom = v2_mouseover_boxes[2 * i].rect.top + 8;
+
+		v2_mouseover_boxes[2 * i].color = 5;
+		v2_mouseover_boxes[2 * i].hicolor = 14;
+
+
+		v2_mouseover_boxes[2 * i + 1].rect.left = 176;
+		v2_mouseover_boxes[2 * i + 1].rect.right = 320;
+		v2_mouseover_boxes[2 * i + 1].rect.top = v2_mouseover_boxes[2 * i].rect.top;
+		v2_mouseover_boxes[2 * i + 1].rect.bottom = v2_mouseover_boxes[2 * i].rect.bottom;
+
+		v2_mouseover_boxes[2 * i + 1].color = 5;
+		v2_mouseover_boxes[2 * i + 1].hicolor = 14;
 	}
 
 	// Inventory arrows
 
-	v2_mouseover_boxes[kInventoryUpArrow].left = 144;
-	v2_mouseover_boxes[kInventoryUpArrow].right = 176;
-	v2_mouseover_boxes[kInventoryUpArrow].top = 34;
-	v2_mouseover_boxes[kInventoryUpArrow].bottom = 40;
+	v2_mouseover_boxes[kInventoryUpArrow].rect.left = 144;
+	v2_mouseover_boxes[kInventoryUpArrow].rect.right = 176;
+	v2_mouseover_boxes[kInventoryUpArrow].rect.top = 34;
+	v2_mouseover_boxes[kInventoryUpArrow].rect.bottom = 42;
 
-	v2_mouseover_boxes[kInventoryDownArrow].left = 144;
-	v2_mouseover_boxes[kInventoryDownArrow].right = 176;
-	v2_mouseover_boxes[kInventoryDownArrow].top = 42;
-	v2_mouseover_boxes[kInventoryDownArrow].bottom = 50;
+	v2_mouseover_boxes[kInventoryUpArrow].color = 1;
+	v2_mouseover_boxes[kInventoryUpArrow].hicolor = 14;
+
+	v2_mouseover_boxes[kInventoryDownArrow].rect.left = 144;
+	v2_mouseover_boxes[kInventoryDownArrow].rect.right = 176;
+	v2_mouseover_boxes[kInventoryDownArrow].rect.top = 42;
+	v2_mouseover_boxes[kInventoryDownArrow].rect.bottom = 50;
+
+	v2_mouseover_boxes[kInventoryDownArrow].color = 1;
+	v2_mouseover_boxes[kInventoryDownArrow].hicolor = 14;
 
 	// Sentence line
 
-	v2_mouseover_boxes[kSentenceLine].left = 0;
-	v2_mouseover_boxes[kSentenceLine].right = 320;
-	v2_mouseover_boxes[kSentenceLine].top = 0;
-	v2_mouseover_boxes[kSentenceLine].bottom = 8;
+	v2_mouseover_boxes[kSentenceLine].rect.left = 0;
+	v2_mouseover_boxes[kSentenceLine].rect.right = 320;
+	v2_mouseover_boxes[kSentenceLine].rect.top = 0;
+	v2_mouseover_boxes[kSentenceLine].rect.bottom = 8;
+
+	v2_mouseover_boxes[kSentenceLine].color = 5;
+	v2_mouseover_boxes[kSentenceLine].hicolor = 14;
 }
 
 void Scumm::checkV2MouseOver(ScummVM::Point pos) {
@@ -85,7 +102,7 @@ void Scumm::checkV2MouseOver(ScummVM::Point pos) {
 
 	if (_cursor.state > 0) {
 		for (i = 0; i < ARRAYSIZE(v2_mouseover_boxes); i++) {
-			if (v2_mouseover_boxes[i].contains(pos.x, pos.y - vs->topline)) {
+			if (v2_mouseover_boxes[i].rect.contains(pos.x, pos.y - vs->topline)) {
 				new_box = i;
 				break;
 			}
@@ -94,15 +111,15 @@ void Scumm::checkV2MouseOver(ScummVM::Point pos) {
 
 	if (new_box != v2_mouseover_box) {
 		if (v2_mouseover_box != -1) {
-			rect = v2_mouseover_boxes[v2_mouseover_box];
+			rect = v2_mouseover_boxes[v2_mouseover_box].rect;
 
 			dst = ptr = vs->screenPtr + vs->xstart + rect.top * _screenWidth + rect.left;
 
-			// Hackish way to undo highlight: replace color 14 with color 5
+			// Remove highlight.
 			for (y = rect.height() - 1; y >= 0; y--) {
 				for (x = rect.width() - 1; x >= 0; x--) {
-					if (dst[x] == 14)
-						dst[x] = 5;
+					if (dst[x] == v2_mouseover_boxes[v2_mouseover_box].hicolor)
+						dst[x] = v2_mouseover_boxes[v2_mouseover_box].color;
 				}
 				dst += _screenWidth;
 			}
@@ -111,15 +128,15 @@ void Scumm::checkV2MouseOver(ScummVM::Point pos) {
 		}
 
 		if (new_box != -1) {
-			rect = v2_mouseover_boxes[new_box];
+			rect = v2_mouseover_boxes[new_box].rect;
 
 			dst = ptr = vs->screenPtr + vs->xstart + rect.top * _screenWidth + rect.left;
 
-			// Hackish way to apply highlight: replace color 5 with color 14
+			// Apply highlight
 			for (y = rect.height() - 1; y >= 0; y--) {
 				for (x = rect.width() - 1; x >= 0; x--) {
-					if (dst[x] == 5)
-						dst[x] = 14;
+					if (dst[x] == v2_mouseover_boxes[new_box].color)
+						dst[x] = v2_mouseover_boxes[new_box].hicolor;
 				}
 				dst += _screenWidth;
 			}
@@ -139,12 +156,12 @@ void Scumm::checkV2Inventory(int x, int y) {
 	if ((y < 34) || !(_mouseButStat & MBS_LEFT_CLICK)) 
 		return;
 
-	if (v2_mouseover_boxes[kInventoryUpArrow].contains(x, y)) {
+	if (v2_mouseover_boxes[kInventoryUpArrow].rect.contains(x, y)) {
 		_inventoryOffset -= 2;
 		if (_inventoryOffset < 0)
 			_inventoryOffset = 0;
 		redrawV2Inventory();
- 	} else if (v2_mouseover_boxes[kInventoryDownArrow].contains(x, y)) {
+ 	} else if (v2_mouseover_boxes[kInventoryDownArrow].rect.contains(x, y)) {
 		_inventoryOffset += 2;
 		if (_inventoryOffset > (getInventoryCount(_scummVars[VAR_EGO])-2))
 			_inventoryOffset = (getInventoryCount(_scummVars[VAR_EGO])-2);
@@ -152,7 +169,7 @@ void Scumm::checkV2Inventory(int x, int y) {
 	}
 
 	for (object = 0; object < 4; object++) {
-		if (v2_mouseover_boxes[object].contains(x, y)) {
+		if (v2_mouseover_boxes[object].rect.contains(x, y)) {
 			break;
 		}
 	}
@@ -184,7 +201,6 @@ void Scumm::redrawV2Inventory() {
 		return;
 
 	_string[1].charset = 1;
-	_string[1].color = 5;
 
 	max_inv = getInventoryCount(_scummVars[VAR_EGO]) - _inventoryOffset;
 	if (max_inv > 4)
@@ -194,9 +210,10 @@ void Scumm::redrawV2Inventory() {
 		if (obj == 0)
 			break;
 		
-		_string[1].ypos = v2_mouseover_boxes[i].top + virtscr[2].topline;
-		_string[1].xpos = v2_mouseover_boxes[i].left;
+		_string[1].ypos = v2_mouseover_boxes[i].rect.top + virtscr[2].topline;
+		_string[1].xpos = v2_mouseover_boxes[i].rect.left;
 
+		_string[1].color = v2_mouseover_boxes[i].color;
 		_messagePtr = getObjOrActorName(obj);
 		assert(_messagePtr);
 
@@ -214,18 +231,18 @@ void Scumm::redrawV2Inventory() {
 
 	// If necessary, draw "up" arrow
 	if (_inventoryOffset > 0) {
-		_string[1].xpos = v2_mouseover_boxes[kInventoryUpArrow].left;
-		_string[1].ypos = v2_mouseover_boxes[kInventoryUpArrow].top + virtscr[2].topline;
-	        _string[1].color = 1;
+		_string[1].xpos = v2_mouseover_boxes[kInventoryUpArrow].rect.left;
+		_string[1].ypos = v2_mouseover_boxes[kInventoryUpArrow].rect.top + virtscr[2].topline;
+	        _string[1].color = v2_mouseover_boxes[kInventoryUpArrow].color;
 		_messagePtr = (const byte *)" \1\2";
 		drawString(1);
 	}
 
 	// If necessary, draw "down" arrow
 	if (_inventoryOffset + 4 < getInventoryCount(_scummVars[VAR_EGO])) {
-		_string[1].xpos = v2_mouseover_boxes[kInventoryDownArrow].left;
-		_string[1].ypos = v2_mouseover_boxes[kInventoryDownArrow].top + virtscr[2].topline;
-	        _string[1].color = 1;
+		_string[1].xpos = v2_mouseover_boxes[kInventoryDownArrow].rect.left;
+		_string[1].ypos = v2_mouseover_boxes[kInventoryDownArrow].rect.top + virtscr[2].topline;
+	        _string[1].color = v2_mouseover_boxes[kInventoryDownArrow].color;
 		_messagePtr = (const byte *)" \3\4";
 		drawString(1);
 	}

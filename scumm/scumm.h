@@ -146,6 +146,12 @@ struct BlastText {
 	byte text[256];
 };
 
+struct V2MouseoverBox {
+	ScummVM::Rect rect;
+	byte color;
+	byte hicolor;
+};
+
 enum ResTypes {
 	rtFirst = 1,
 	rtRoom = 1,
@@ -743,7 +749,7 @@ protected:
 
 
 	// TODO: This should be moved into Scumm_v2 if possible
-	ScummVM::Rect v2_mouseover_boxes[7];
+	V2MouseoverBox v2_mouseover_boxes[7];
 	int8 v2_mouseover_box;
 
 	void initV2MouseOver();
