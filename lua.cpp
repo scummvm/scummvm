@@ -731,7 +731,7 @@ void GetControlState() {
 static void MakeTextObject() {
  char *line = lua_getstring(lua_getparam(1)), *key_text = NULL;
  lua_Object table_obj = lua_getparam(2), key;
- int x = 0, y = 0;
+ int x = 0, y = 0, height = 0, width = 0;
  Color *fgColor = NULL;
  TextObject *textObject;
 
@@ -755,6 +755,10 @@ static void MakeTextObject() {
 	y = atoi(lua_getstring(lua_getresult(2)));
    else if (strstr(key_text, "fgcolor"))
 	fgColor = check_color(2);
+   else if (strstr(key_text, "height")) // Hm, do these just force clipping?
+	height = atoi(lua_getstring(lua_getresult(2)));
+   else if (strstr(key_text, "width"))
+	width  = atoi(lua_getstring(lua_getresult(2)));
    else
 	error("Unknown MakeTextObject key %s\n", key_text);
  }
@@ -763,31 +767,42 @@ static void MakeTextObject() {
 }
 
 static void KillTextObject() {
- char *line = lua_getstring(lua_getparam(1));
+ char *line;
 
- if (!line) { // FIXME: check this.. null is kill all lines?
+ if (lua_isnil(lua_getparam(1))) { // FIXME: check this.. nil is kill all lines?
   Engine::instance()->killTextObjects();
   return;
  }
- error("Wow, a non-null killtextobject. tell ender");
+
+  line = lua_getstring(lua_getparam(1));
+
+ error("killTextObject(%s)", line);
  for (Engine::text_list_type::const_iterator i = Engine::instance()->textsBegin();
       i != Engine::instance()->textsEnd(); i++) {
    TextObject *textO = *i;
    const char *name = textO->name();
    if (name==NULL)
-    warning("nullname");
-   else
-    warning("name: %s", name);
+    error("Text object with null name!");
 
-   warning("Wanting to destroy text object %s ", line);
-   break;
+   warning("Comparing **%s** to **%s**", line, name);
+   if (strstr(name, line)) {
+     error("Wanting to destroy text object %s ", line);
+     break;
+   }
  }
 }
+
 static void ChangeTextObject() {
  char *line = lua_getstring(lua_getparam(1)), *key_text = NULL, *val_text = NULL;
  lua_Object table_obj = lua_getparam(2), key;
 
+ // FIXME: Disable this for now, as it seems to go into an infinite loop
+ // when using Don's computer?!?
+ warning("STUB: ChangeTextObject(%s)", line);
+ return;
+
  printf("STUB: ChangeTextObject(%s, ", line);
+
  while(1) {
    lua_pushobject(table_obj);
    if (key_text)
