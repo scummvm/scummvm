@@ -39,20 +39,6 @@ namespace Sword2 {
 //	resource.tab which is a table which tells us which cluster a resource
 //      is located in and the number within the cluster
 
-// If 0, resouces are expelled immediately when they are closed. At the moment
-// this causes the sound queue to run out of slots. My only theory is that it's
-// a script that gets reloaded over and over. That'd clear its local variables
-// which I guess may cause it to set up the sounds over and over.
-
-#define CACHE_CLUSTERS 1
-
-// Resources age every time a new room is entered. This constant indicates how
-// long a cached resource (i.e. one that has been closed) is allowed to live
-// before it dies of old age. This may need some tuning, but I picked three
-// because so many areas in the game seem to consist of about three rooms.
-
-#define MAX_CACHE_AGE 3
-
 enum {
 	BOTH		= 0x0,		// Cluster is on both CDs
 	CD1		= 0x1,		// Cluster is on CD1 only
@@ -471,51 +457,51 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 		if (dump) {
 			StandardHeader *header = (StandardHeader *) _resList[res].ptr;
 			char buf[256];
-			char tag[10];
+			const char *tag;
 			File out;
 
 			switch (header->fileType) {
 			case ANIMATION_FILE:
-				strcpy(tag, "anim");
+				tag = "anim";
 				break;
 			case SCREEN_FILE:
-				strcpy(tag, "layer");
+				tag = "layer";
 				break;
 			case GAME_OBJECT:
-				strcpy(tag, "object");
+				tag = "object";
 				break;
 			case WALK_GRID_FILE:
-				strcpy(tag, "walkgrid");
+				tag = "walkgrid";
 				break;
 			case GLOBAL_VAR_FILE:
-				strcpy(tag, "globals");
+				tag = "globals";
 				break;
 			case PARALLAX_FILE_null:
-				strcpy(tag, "parallax");	// Not used!
+				tag = "parallax";	// Not used!
 				break;
 			case RUN_LIST:
-				strcpy(tag, "runlist");
+				tag = "runlist";
 				break;
 			case TEXT_FILE:
-				strcpy(tag, "text");
+				tag = "text";
 				break;
 			case SCREEN_MANAGER:
-				strcpy(tag, "screen");
+				tag = "screen";
 				break;
 			case MOUSE_FILE:
-				strcpy(tag, "mouse");
+				tag = "mouse";
 				break;
 			case WAV_FILE:
-				strcpy(tag, "wav");
+				tag = "wav";
 				break;
 			case ICON_FILE:
-				strcpy(tag, "icon");
+				tag = "icon";
 				break;
 			case PALETTE_FILE:
-				strcpy(tag, "palette");
+				tag = "palette";
 				break;
 			default:
-				strcpy(tag, "unknown");
+				tag = "unknown";
 				break;
 			}
 
@@ -555,13 +541,15 @@ void ResourceManager::closeResource(uint32 res) {
 	_resList[res].refCount--;
 	_resList[res].refTime = _resTime;
 
-#if !CACHE_CLUSTERS
-	// Maybe it's useful on some platforms if memory is released as
-	// quickly as possible?
-
-	if (_resList[res].refCount == 0)
-		remove(res);
-#endif
+	// It's tempting to free the resource immediately when refCount
+	// reaches zero, but that'd be a mistake. Closing a resource does not
+	// mean "I'm not going to use this resource any more". It means that
+	// "the next time I use this resource I'm going to ask for a new
+	// pointer to it".
+	//
+	// Since the original memory manager had to deal with memory
+	// fragmentation, keeping a resource open - and thus locked down to a
+	// specific memory address - was considered a bad thing.
 }
 
 /**
@@ -633,11 +621,39 @@ uint32 ResourceManager::fetchLen(uint32 res) {
 	return file.readUint32LE();
 }
 
+// When a resource is opened, regardless of whether it was read from disk or
+// from the cache, its age is zeroed. They then age every time a new room is
+// entered. This function is responsible for cleaning out the resources that
+// have grown too old to live.
+//
+// It could use a bit more tuning, I guess. I picked a max age of three for
+// most resources, because so much of the game seems to consist of areas of
+// about three rooms. I made an exception for SCREEN_FILE resources because
+// they are so large, but maybe the exception ought to be the rule...?
+
 void ResourceManager::expireOldResources() {
 	int nuked = 0;
 
 	for (uint i = 0; i < _totalResFiles; i++) {
-		if (_resList[i].ptr && _resList[i].refCount == 0 && _resTime - _resList[i].refTime >= MAX_CACHE_AGE) {
+		if (!_resList[i].ptr || _resList[i].refCount > 0)
+			continue;
+
+		StandardHeader *head = (StandardHeader *) _resList[i].ptr;
+		uint maxCacheAge;
+
+		switch (head->fileType) {
+		case SCREEN_FILE:
+			// The resource will be read from disk once as soon as
+			// the player enters the room, and thrown away when
+			// the player enters a new room.
+			maxCacheAge = 0;
+			break;
+		default:
+			maxCacheAge = 3;
+			break;
+		}
+
+		if (_resTime - _resList[i].refTime >= maxCacheAge) {
 			remove(i);
 			nuked++;
 		}

@@ -54,7 +54,6 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	int i;
 
 	assert(res);
-	debug(1, "CHANGED TO LOCATION \"%s\"", fetchObjectName(res, buf));
 
 	// The resources age every time a new room is entered.
 	_resman->passTime();
@@ -62,6 +61,8 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 
 	clearFxQueue();
 	_graphics->waitForFade();
+
+	debug(1, "CHANGED TO LOCATION \"%s\"", fetchObjectName(res, buf));
 
 	// if last screen was using a shading mask (see below)
 	if (_thisScreen.mask_flag) {
@@ -187,7 +188,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 			_graphics->initialiseBackgroundLayer(NULL);
 	}
 
-   	_resman->closeResource(_thisScreen.background_layer_id);
+	_resman->closeResource(_thisScreen.background_layer_id);
 	return IR_CONT;
 }
 
