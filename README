@@ -39,7 +39,7 @@ be playable to the end:
 
 SCUMM Games:
         Maniac Mansion (Enhanced Version)          [Game: maniac]
-        Zak McKracken (Enhanced Version)          [Game: zak]
+        Zak McKracken (Enhanced Version)           [Game: zak]
         Indiana Jones & the Last Crusade (EGA)     [Game: indy3ega]
         Indiana Jones & the Last Crusade (256)     [Game: indy3]
         Loom (16 color floppy version)             [Game: loom]
@@ -237,9 +237,9 @@ above. We -know- those games have bugs.
 Please include the following information:
         - ScummVM version (PLEASE test the latest CVS/Daily build)
         - Bug details, including instructions on reproducing
-        - Language of game (English, German, etc)
-        - Version of game (Talkie, Floppy...)
-        - Platform and Compiler (Win32, Linux, FreeBSD, etc)
+        - Language of game (English, German, ...)
+        - Version of game (Talkie, Floppy, ...)
+        - Platform and Compiler (Win32, Linux, FreeBSD, ...)
         - Attach a save game if possible
         - If this bug only occurred recently, please note the last
           version without the bug, and the first version including
