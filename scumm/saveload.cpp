@@ -414,6 +414,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	};
 
 	const SaveLoadEntry mainEntries[] = {
+		MKARRAY(ScummEngine, _gameMD5[0], sleUint8, 16, VER(39)),
 		MKLINE(ScummEngine, _roomWidth, sleUint16, VER(8)),
 		MKLINE(ScummEngine, _roomHeight, sleUint16, VER(8)),
 		MKLINE(ScummEngine, _ENCD_offs, sleUint32, VER(8)),
@@ -661,8 +662,27 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	int i, j;
 	int var120Backup;
 	int var98Backup;
+	uint8 md5Backup[16];
+
+	// MD5 Operations: Backup on load, compare, and reset.
+	if (s->isLoading()) {
+		for (i=0; i<17; i++) md5Backup[i] = _gameMD5[i];
+	}
 
 	s->saveLoadEntries(this, mainEntries);
+
+	// MD5 Operations: Backup on load, compare, and reset.
+	if (s->isLoading()) {
+        	for (j = 0; j < 16; j++) {
+			if (_gameMD5[j] != md5Backup[j]) {
+				warning("Game was saved with different gamedata - you may encounter problems.");
+				_gameMD5[j] = md5Backup[j];
+				break;
+			}
+			_gameMD5[j] = md5Backup[j];
+		}
+	}
+
 
 	if (s->isLoading() && savegameVersion < VER(14))
 		upgradeGfxUsageBits();

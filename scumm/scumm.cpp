@@ -416,7 +416,7 @@ static int compareMD5Table(const void *a, const void *b) {
 	return strcmp(key, elem->md5);
 }
 
-ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs)
+ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
 	: Engine(syst),
 	  _gameId(gs.id),
 	  _version(gs.version),
@@ -424,6 +424,9 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	  _features(gs.features),
 	  gdi(this), _pauseDialog(0), _optionsDialog(0), _mainMenuDialog(0), _versionDialog(0),
 	  _targetName(detector->_targetName) {
+
+	// Copy md5sum
+	for (int i = 0; i < 17; i++) _gameMD5[i] = md5sum[i];
 
 	// Add default file directories.
 	if (((_features & GF_AMIGA) || (_features & GF_ATARI_ST)) && (_version <= 4)) {
@@ -1081,8 +1084,8 @@ ScummEngine::~ScummEngine() {
 	delete _debugger;
 }
 
-ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs)
- : ScummEngine(detector, syst, gs) {
+ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) 
+ : ScummEngine(detector, syst, gs, md5sum) {
 	VAR_VIDEONAME = 0xFF;
 	VAR_RANDOM_NR = 0xFF;
 	VAR_STRING2DRAW = 0xFF;
@@ -1097,8 +1100,8 @@ ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const Scum
 	_smushFrameRate = 0;
 }
 
-ScummEngine_v7he::ScummEngine_v7he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs)
- : ScummEngine_v6he(detector, syst, gs) {
+ScummEngine_v7he::ScummEngine_v7he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
+ : ScummEngine_v6he(detector, syst, gs, md5sum) {
 	 _Win32ResExtractor = new Win32ResExtractor(this);
 }
 
@@ -3271,26 +3274,39 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 	ScummGameSettings game = *g;
 
-	if (game.features & GF_MULTIPLE_VERSIONS) {
-		uint8 md5sum[16];
-		char buf[256];
-		const char *name = game.name;
-		char md5str[32+1];
-		
-		if (game.features & GF_HUMONGOUS)
-			sprintf(buf, "%s.he0", name);
-		else
-			sprintf(buf, "%s.000", name);
+	// Calculate MD5 of the games detection file, for savegames etc.
+	const char *name = g->name;
+	char detectName[256], gameMD5[32+1];
+	uint8 md5sum[16];
 
-		if (md5_file(buf, md5sum, ConfMan.get("path").c_str())) {
-			for (int j = 0; j < 16; j++) {
-				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
-			}
+	if (g->detectFilename) {
+		strcpy(detectName, game.detectFilename);
+	} else if (g->version <= 3) {
+		strcpy(detectName, "00.LFL");
+	} else if (g->version == 4) {
+		strcpy(detectName, "000.LFL");
+	} else if (g->version >= 7) {
+		strcpy(detectName, name);
+		strcat(detectName, ".la0");
+	} else if (g->features & GF_HUMONGOUS) {
+		strcpy(detectName, name);
+		strcat(detectName, ".he0");
+	} else {
+		strcpy(detectName, name);
+		strcat(detectName, ".000");
+	}
+
+	if (md5_file(detectName, md5sum, ConfMan.get("path").c_str())) {
+		for (int j = 0; j < 16; j++) {
+			sprintf(gameMD5 + j*2, "%02x", (int)md5sum[j]);
 		}
-		
+	}
+
+	// Use MD5 to determine specific game version, if required.
+	if (game.features & GF_MULTIPLE_VERSIONS) {	
 		g = he_md5_settings;
 		while (g->name) {
-			if (!scumm_stricmp(md5str, g->name))
+			if (!scumm_stricmp(gameMD5, g->name))
 				break;
 			g++;
 		}
@@ -3302,6 +3318,9 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 				g_system->setWindowCaption(game.description);
 		}
 	}
+
+	// TODO: REMOVE DEPRECATED OPTION
+	// (Perhaps GUI should display a messagebox on encountering an unknown key?)
 
 	if (ConfMan.hasKey("amiga")) {
 		warning("Configuration key 'amiga' is deprecated. Use 'platform=amiga' instead");
@@ -3350,16 +3369,16 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	switch (game.version) {
 	case 1:
 	case 2:
-		engine = new ScummEngine_v2(detector, syst, game);
+		engine = new ScummEngine_v2(detector, syst, game, md5sum);
 		break;
 	case 3:
-		engine = new ScummEngine_v3(detector, syst, game);
+		engine = new ScummEngine_v3(detector, syst, game, md5sum);
 		break;
 	case 4:
-		engine = new ScummEngine_v4(detector, syst, game);
+		engine = new ScummEngine_v4(detector, syst, game, md5sum);
 		break;
 	case 5:
-		engine = new ScummEngine_v5(detector, syst, game);
+		engine = new ScummEngine_v5(detector, syst, game, md5sum);
 		break;
 	case 6:
 		switch (game.heversion) {
@@ -3367,32 +3386,32 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		case 90:
 		case 98:
 		case 99:
-			engine = new ScummEngine_v90he(detector, syst, game);
+			engine = new ScummEngine_v90he(detector, syst, game, md5sum);
 			break;
 		case 80:
-			engine = new ScummEngine_v80he(detector, syst, game);
+			engine = new ScummEngine_v80he(detector, syst, game, md5sum);
 			break;
 		case 72:
-			engine = new ScummEngine_v72he(detector, syst, game);
+			engine = new ScummEngine_v72he(detector, syst, game, md5sum);
 			break;
 		case 71:
 		case 70:
-			engine = new ScummEngine_v7he(detector, syst, game);
+			engine = new ScummEngine_v7he(detector, syst, game, md5sum);
 			break;
 #endif
 		case 60:
-			engine = new ScummEngine_v6he(detector, syst, game);
+			engine = new ScummEngine_v6he(detector, syst, game, md5sum);
 			break;
 		default:
-			engine = new ScummEngine_v6(detector, syst, game);
+			engine = new ScummEngine_v6(detector, syst, game, md5sum);
 		}
 		break;
 	case 7:
-		engine = new ScummEngine_v7(detector, syst, game);
+		engine = new ScummEngine_v7(detector, syst, game, md5sum);
 		break;
 #ifndef __PALM_OS__
 	case 8:
-		engine = new ScummEngine_v8(detector, syst, game);
+		engine = new ScummEngine_v8(detector, syst, game, md5sum);
 		break;
 #endif
 	default:

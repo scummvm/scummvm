@@ -346,6 +346,7 @@ public:
 	byte _version;
 	byte _heversion;
 	uint32 _features;						// Should only be accessed for reading (TODO enforce it compiler-wise with making it private and creating an accessor)
+	uint8 _gameMD5[16];
 
 	/** Random number generator */
 	Common::RandomSource _rnd;
@@ -371,7 +372,7 @@ protected:
 
 public:
 	// Constructor / Destructor
-	ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs);
+	ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 	virtual ~ScummEngine();
 
 	// Init functions
