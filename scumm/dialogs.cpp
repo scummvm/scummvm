@@ -531,9 +531,10 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		
 		// Amiga palette?
 		if (amigaPalCheckbox->getState())
-			_scumm->_features |= GF_AMIGA;
+			_scumm->setFeatures (_scumm->_features | GF_AMIGA);
 		else
-			_scumm->_features &= ~GF_AMIGA;
+			_scumm->setFeatures (_scumm->_features & (~GF_AMIGA));
+
 		g_config->setBool("amiga", amigaPalCheckbox->getState());
 		
 		// Finally flush the modified config

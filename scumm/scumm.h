@@ -270,7 +270,10 @@ public:
 	IMuse *_imuse;
 	IMuseDigital *_imuseDigital;
 	Player_V2 *_playerV2;
-	uint32 _features;
+
+	uint32 _features;						// Should only be accessed for reading (TODO enforce it compiler-wise with making it private and creating an accessor)
+	void setFeatures (uint32 newFeatures);	// Changes the features set. This allows some gamewide stuff to be precalculated/prepared (ie CostumeRenderer)
+
 	VerbSlot *_verbs;
 	ObjectData *_objs;
 	ScummDebugger *_debugger;

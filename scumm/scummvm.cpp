@@ -548,7 +548,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_exe_name = strdup(detector->_gameRealName.c_str());	// FIXME: probably should use String class here
 	_game_name = strdup(detector->_gameFileName.c_str());
 	_gameId = detector->_gameId;
-	_features = detector->_features;
+	setFeatures (detector->_features);
 	_noSubtitles = detector->_noSubtitles;
 	_defaultTalkDelay = detector->_talkSpeed;
 	_use_adlib = detector->_use_adlib;
@@ -730,6 +730,11 @@ Scumm::~Scumm ()
 	destroy();
 
 	delete g_debugger;
+}
+
+void Scumm::setFeatures (uint32 newFeatures)
+{
+	_features = newFeatures;
 }
 
 void Scumm::scummInit() {
