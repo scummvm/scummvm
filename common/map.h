@@ -113,7 +113,7 @@ public:
 		if (!_root)
 			node = _root = new Node(key, _header);
 		else
-			node = createNode(_root, key);
+			node = findOrCreateNode(_root, key);
 		return node->_value;
 	}
 
@@ -134,6 +134,15 @@ public:
 
 	bool isEmpty() const {
 		return (_root == 0);
+	}
+
+	Value &addKey(const Key &key) {
+		Node *node;
+		if (!_root)
+			node = _root = new Node(key, _header);
+		else
+			node = findOrCreateNode(_root, key);
+		return node->_value;
 	}
 
 	void remove(const Key &key) {
@@ -179,17 +188,7 @@ public:
 	}
 
 	void merge(const Map<Key, Value> &map) {
-		// FIXME - this is a very bad algorithm.
-		// Right now we insert the items from 'map' using the default iterator,
-		// which gives us the objects ordered, leading to an unbalanced tree.
-		// This could be fixed by switching to a red black tree, or by using a 
-		// different walk order (infix comes to mind).
-		if (map.isEmpty())
-			return;
-		ConstIterator x(map.begin()), e(map.end());
-		for (; x != e; ++x) {
-			(*this)[x->_key] = x->_value;
-		}
+		merge(map._root);
 	}
 
 	ConstIterator	begin() const {
@@ -206,7 +205,16 @@ public:
 	}
 
 protected:
-	// Find the node matching the given key, if any
+	/** Merge the content of the given tree into this tree. */
+	void merge(const Node *node) {
+		if (!node)
+			return;
+		(*this)[node->_key] = node->_value;
+		merge(node->_left);
+		merge(node->_right);
+	}
+
+	/** Find and return the node matching the given key, if any. */
 	Node *findNode(Node *node, const Key &key) const {
 		while (node && (key != node->_key)) {
 			if (key < node->_key) {
@@ -218,7 +226,7 @@ protected:
 		return node;
 	}
 
-	Node *createNode(Node *node, const Key &key) {
+	Node *findOrCreateNode(Node *node, const Key &key) {
 		Node *prevNode = 0;
 		bool left = true;
 		while (node) {
