@@ -40,7 +40,7 @@ public:
 
 	// Draw a bitmap to screen.
 	// The screen will not be updated to reflect the new bitmap
-	void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h);
+	void copy_rect(const byte *src, int pitch, int x, int y, int w, int h);
 
 	void move_screen(int dx, int dy, int height);
 

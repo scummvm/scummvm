@@ -144,6 +144,13 @@ void OSystem_SDL::load_gfx_mode() {
 		// We need to find a way to call SDL_VideoModeOK *before*
 		// that happens and revert to all the old settings if we
 		// can't pull off the switch to the new settings.
+		//
+		// Fingolfin says: the "easy" way to do that is not to modify
+		// the member vars before we are sure everything is fine. Think
+		// of "transactions, commit, rollback" style... we use local vars
+		// in place of the member vars, do everything etc. etc.. In case
+		// of a failure, rollback is trivial. Only if everything worked fine
+		// do we "commit" the changed values to the member vars.
 		warning("SDL_SetVideoMode says we can't switch to that mode");
 		quit();
 	}
