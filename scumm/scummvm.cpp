@@ -232,6 +232,9 @@ const VersionSettings *Engine_SCUMM_targetList() {
 Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	Engine *engine;
 
+	if (detector->_amiga)
+		detector->_game.features |= GF_AMIGA;
+
 	switch (detector->_platform) {
 	case 1:
 		detector->_game.features |= GF_AMIGA;

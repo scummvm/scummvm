@@ -280,7 +280,9 @@ GameDetector::~GameDetector() {
 void GameDetector::updateconfig() {
 	const char *val;
 
-        _platform = g_config->getBool("amiga", _platform);
+	_amiga = g_config->getBool("amiga", _amiga);
+
+	_platform = g_config->getInt("platform", _platform);
 
 	_save_slot = g_config->getInt("save_slot", _save_slot);
 
@@ -513,7 +515,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 					else
 						goto ShowHelpAndExit;
 
-					g_config->setBool ("platform", _platform);
+					g_config->setInt ("platform", _platform);
 					break;
 				} 
 

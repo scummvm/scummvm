@@ -123,6 +123,7 @@ public:
 	int _master_volume;
 	int _music_volume;
 	int _sfx_volume;
+	bool _amiga;
 	int _platform;
 	int _language;
 
