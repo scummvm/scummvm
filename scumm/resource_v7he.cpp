@@ -47,7 +47,7 @@ const char *res_types[] = {
 };
 #define RES_TYPE_COUNT (sizeof(res_types)/sizeof(char *))
 
-Win32ResExtractor::Win32ResExtractor(ScummEngine *scumm) {
+Win32ResExtractor::Win32ResExtractor(ScummEngine_v7he *scumm) {
 	_vm = scumm;
 
 	snprintf(_fileName, 256, "%s.he3", _vm->getGameName());

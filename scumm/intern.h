@@ -40,10 +40,12 @@ protected:
 	};
 	
 	const OpcodeEntryV5 *_opcodesV5;
+	
+	uint16 _cursorImages[4][16];
+	byte _cursorHotspots[2 * 4];
 
 public:
-	ScummEngine_v5(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : 
-ScummEngine(detector, syst, gs, md5sum) {}
+	ScummEngine_v5(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 
 protected:
 	virtual void setupOpcodes();
@@ -60,6 +62,12 @@ protected:
 	virtual int getVar();
 	virtual int getVarOrDirectByte(byte mask);
 	virtual int getVarOrDirectWord(byte mask);
+
+	virtual void animateCursor();
+
+	void setBuiltinCursor(int index);
+	void redefineBuiltinCursorFromChar(int index, int chr);
+	void redefineBuiltinCursorHotspot(int index, int x, int y);
 
 	/* Version 5 script opcodes */
 	void o5_actorFollowCamera();
@@ -170,9 +178,6 @@ protected:
 	void o5_walkActorToObject();
 };
 
-// FIXME - maybe we should move the opcodes from v5 to v3, and change the inheritance 
-// accordingly - that would be more logical I guess. However, if you do so, take care
-// of preserving the right readIndexFile / loadCharset !!!
 class ScummEngine_v3 : public ScummEngine_v5 {
 public:
 	ScummEngine_v3(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v5(detector, syst, gs, md5sum) {}
@@ -356,9 +361,13 @@ protected:
 	void writeArray(int array, int index, int base, int value);
 	void shuffleArray(int num, int minIdx, int maxIdx);
 
+	void setCursorTransparency(int a);
+	void setCursorHotspot(int x, int y);
+
 	void setCursorFromImg(uint img, uint room, uint imgindex);
 	void useIm01Cursor(const byte *im, int w, int h);
 	void useBompCursor(const byte *im, int w, int h);
+	void grabCursor(int x, int y, int w, int h);
 
 	/* Version 6 script opcodes */
 	void o6_setBlastObjectWindow();
@@ -578,6 +587,7 @@ protected:
 	void swapObjects(int object1, int object2);
 
 	/* HE version 60 script opcodes */
+	// TODO: Rename all these methods to use prefix "o6he_" instead of "o6_"
 	void o6_setState();
 	void o6_roomOps();
 	void o6_actorOps();
@@ -598,6 +608,8 @@ protected:
 };
 
 class ScummEngine_v7he : public ScummEngine_v6he {
+	friend class Win32ResExtractor;
+
 protected:
 	typedef void (ScummEngine_v7he::*OpcodeProcV7he)();
 	struct OpcodeEntryV7he {
@@ -625,6 +637,7 @@ protected:
 	int polygonHit(int id, int x, int y);
 
 	/* HE version 70 script opcodes */
+	// TODO: Rename all these methods to use prefix "o70he_" instead of "o7_"
 	void o7_cursorCommand();
 	void o7_startSound();
 	void o7_pickupObject();

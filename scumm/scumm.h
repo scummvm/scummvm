@@ -52,7 +52,6 @@ class ScummEngine;
 class ScummDebugger;
 class Serializer;
 class Sound;
-class Win32ResExtractor;
 
 struct Box;
 struct BoxCoords;
@@ -344,7 +343,6 @@ class ScummEngine : public Engine {
 	friend class SmushPlayer;
 	friend class Insane;
 	friend class CharsetRenderer;
-	friend class Win32ResExtractor;
 	
 	void errorString(const char *buf_input, char *buf_output);
 public:
@@ -419,7 +417,7 @@ public:
 
 	// Cursor/palette
 	void updateCursor();
-	void animateCursor();
+	virtual void animateCursor() {}
 	void updatePalette();
 
 	/**
@@ -992,14 +990,8 @@ protected:
 	void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 
-	void setCursorHotspot(int x, int y);
-	void setCursorTransparency(int a);
 	void setupCursor();
 
-	void setBuiltinCursor(int index);
-	void redefineBuiltinCursorFromChar(int index, int chr);
-	void redefineBuiltinCursorHotspot(int index, int x, int y);
-	void grabCursor(int x, int y, int w, int h);
 	void setCursorFromBuffer(byte *ptr, int width, int height, int pitch);
 
 public:

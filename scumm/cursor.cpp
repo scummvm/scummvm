@@ -41,8 +41,7 @@ static const byte default_cursor_colors[4] = {
 };
 
 
-
-static uint16 default_cursor_images[5][16] = {
+static const uint16 default_cursor_images[5][16] = {
 	/* cross-hair */
 	{ 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0000, 0x7e3f,
 	  0x0000, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0000 },
@@ -64,16 +63,26 @@ static uint16 default_cursor_images[5][16] = {
 	  0x1004, 0x2002, 0x0000, 0x0080, 0x01c0, 0x02a0, 0x0080, 0x0000 },
 };
 
-static byte default_cursor_hotspots[10] = {
+static const byte default_cursor_hotspots[10] = {
 	8, 7,   8, 7,   1, 1,   5, 0,
 	8, 7, //zak256
 };
+
+ScummEngine_v5::ScummEngine_v5(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
+ : ScummEngine(detector, syst, gs, md5sum) {
+
+	for (int i = 0; i < 4; i++) {
+		memcpy(_cursorImages[i], default_cursor_images[i], 32);
+	}
+	memcpy(_cursorHotspots, default_cursor_hotspots, 8);
+}
+
 
 void ScummEngine::setupCursor() {
 	_cursor.animate = 1;
 }
 
-void ScummEngine::animateCursor() {
+void ScummEngine_v5::animateCursor() {
 	if (_cursor.animate) {
 		if (!(_cursor.animateIndex & 0x1)) {
 			setBuiltinCursor((_cursor.animateIndex >> 1) & 3);
@@ -82,12 +91,12 @@ void ScummEngine::animateCursor() {
 	}
 }
 
-void ScummEngine::setCursorHotspot(int x, int y) {
+void ScummEngine_v6::setCursorHotspot(int x, int y) {
 	_cursor.hotspotX = x;
 	_cursor.hotspotY = y;
 }
 
-void ScummEngine::setCursorTransparency(int a) {
+void ScummEngine_v6::setCursorTransparency(int a) {
 	int i, size;
 
 	size = _cursor.width * _cursor.height;
@@ -104,7 +113,7 @@ void ScummEngine::updateCursor() {
 							_cursor.hotspotX, _cursor.hotspotY);
 }
 
-void ScummEngine::grabCursor(int x, int y, int w, int h) {
+void ScummEngine_v6::grabCursor(int x, int y, int w, int h) {
 	VirtScreen *vs = findVirtScreen(y);
 
 	if (vs == NULL) {
@@ -253,7 +262,7 @@ void ScummEngine_v6::useBompCursor(const byte *im, int width, int height) {
 	updateCursor();
 }
 
-void ScummEngine::redefineBuiltinCursorFromChar(int index, int chr) {
+void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 	// Cursor image in both Looms are based on images from charset.
 	if (_gameId != GID_LOOM && _gameId != GID_LOOM256) {
 		// FIXME: Actually: is this opcode ever called by a non-Loom game?
@@ -261,7 +270,7 @@ void ScummEngine::redefineBuiltinCursorFromChar(int index, int chr) {
 		warning("V3--V5 SO_CURSOR_IMAGE(%d,%d) called - tell Fingolfin where you saw this!", index, chr);
 	}
 
-	assert(index >= 0 && index < 5);
+	assert(index >= 0 && index < 4);
 	
 //	const int oldID = _charset->getCurID(); 
 
@@ -283,7 +292,7 @@ void ScummEngine::redefineBuiltinCursorFromChar(int index, int chr) {
 	
 	_charset->drawChar(chr, s, 0, 0);
 
-	uint16 *ptr = default_cursor_images[index];
+	uint16 *ptr = _cursorImages[index];
 	memset(ptr, 0, 16 * sizeof(uint16));
 	for (int h = 0; h < s.h; h++) {
 		for (int w = 0; w < s.w; w++) {
@@ -296,7 +305,7 @@ void ScummEngine::redefineBuiltinCursorFromChar(int index, int chr) {
 //	_charset->setCurID(oldID);
 }
 
-void ScummEngine::redefineBuiltinCursorHotspot(int index, int x, int y) {
+void ScummEngine_v5::redefineBuiltinCursorHotspot(int index, int x, int y) {
 	// Cursor image in both Looms are based on images from charset.
 	if (_gameId != GID_LOOM && _gameId != GID_LOOM256) {
 		// FIXME: Actually: is this opcode ever called by a non-Loom game?
@@ -304,13 +313,13 @@ void ScummEngine::redefineBuiltinCursorHotspot(int index, int x, int y) {
 		warning("V3--V5 SO_CURSOR_HOTSPOT(%d,%d,%d) called - tell Fingolfin where you saw this!", index, x, y);
 	}
 
-	assert(index >= 0 && index < 5);
+	assert(index >= 0 && index < 4);
 
-	default_cursor_hotspots[index * 2] = x;
-	default_cursor_hotspots[index * 2 + 1] = y;
+	_cursorHotspots[index * 2] = x;
+	_cursorHotspots[index * 2 + 1] = y;
 }
 
-void ScummEngine::setBuiltinCursor(int idx) {
+void ScummEngine_v5::setBuiltinCursor(int idx) {
 	int i, j;
 	byte color;
 
@@ -367,21 +376,26 @@ void ScummEngine::setBuiltinCursor(int idx) {
 		*(hotspot + (_cursor.width * 5) - 1) = color;
 		*(hotspot + (_cursor.width * 5) + 1) = color;
 	} else {
-		byte currentCursor = _currentCursor;
+		const uint16 *src;
+		
+		_cursor.hotspotX = _cursorHotspots[2 * _currentCursor];
+		_cursor.hotspotY = _cursorHotspots[2 * _currentCursor + 1];
+		src = _cursorImages[_currentCursor];
 
 #ifdef __PALM_OS__
-		if (_gameId == GID_ZAK256 && currentCursor == 0)
-			currentCursor = 4;
+		if (_gameId == GID_ZAK256 && _currentCursor == 0) {
+			_cursor.hotspotX = default_cursor_hotspots[2 * 4];
+			_cursor.hotspotY = default_cursor_hotspots[2 * 4 + 1];
+			src = default_cursor_images[4];
+		}
 #endif
 
 		_cursor.width = 16;
 		_cursor.height = 16;
-		_cursor.hotspotX = default_cursor_hotspots[2 * currentCursor];
-		_cursor.hotspotY = default_cursor_hotspots[2 * currentCursor + 1];
 
 		for (i = 0; i < 16; i++) {
 			for (j = 0; j < 16; j++) {
-				if (default_cursor_images[currentCursor][i] & (1 << j))	
+				if (src[i] & (1 << j))	
 					_grabbedCursor[16 * i + 15 - j] = color;
 			}
 		}

@@ -116,7 +116,7 @@ namespace Scumm {
 
 class Win32ResExtractor {
  public:
-	Win32ResExtractor(ScummEngine *scumm);
+	Win32ResExtractor(ScummEngine_v7he *scumm);
 	~Win32ResExtractor();
 	int extractResource(const char *resType, char *resName, byte **data);
 	void setCursor(int id);
@@ -125,7 +125,7 @@ class Win32ResExtractor {
 
  private:
 	bool _arg_raw;
-	ScummEngine *_vm;
+	ScummEngine_v7he *_vm;
 	char _fileName[256];
 
 	typedef Common::MemoryReadStream MemoryReadStream;

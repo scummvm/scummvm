@@ -1346,12 +1346,6 @@ void ScummEngine::scummInit() {
 		_flashlight.buffer = NULL;
 	}
 
-	// HACK cursor hotspot is wrong
-	// Original games used 
-	// setCursorHotspot(8, 7);
-	if (_gameId == GID_FUNPACK)
-		setCursorHotspot(16, 16);
-
 	_mouse.x = 104;
 	_mouse.y = 56;
 
@@ -1422,6 +1416,12 @@ void ScummEngine_v6::scummInit() {
 		setCursorFromImg(697, 60, 1);
 		setCursorTransparency(1);
 	}
+
+	// HACK cursor hotspot is wrong
+	// Original games used 
+	// setCursorHotspot(8, 7);
+	if (_gameId == GID_FUNPACK)
+		setCursorHotspot(16, 16);
 }
 
 void ScummEngine::initScummVars() {
@@ -2332,8 +2332,8 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 
 		for (int y = 0; y < vs->h; y++) {
 			memcpy(dst, src, vs->w);
-			src += vs->w;
-			dst += vs->pitch;
+			src += vs->pitch;
+			dst += vs->w;
 		}
 	}
 
