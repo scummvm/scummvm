@@ -398,7 +398,11 @@ int32 Sound::playCompSpeech(const char *filename, uint32 speechid, uint8 vol, in
 
 		_speechPaused = true;
 			
-		uint32 flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN | SoundMixer::FLAG_AUTOFREE;
+		uint32 flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
+
+#ifndef SCUMM_BIG_ENDIAN
+		flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
+#endif
 
 		_vm->_mixer->playRaw(&_soundHandleSpeech, data16, bufferSize, 22050, flags, -1, volume, p);
 

@@ -177,6 +177,12 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 
 		bool skipCutscene = false;
 
+		uint32 flags = SoundMixer::FLAG_16BITS;
+
+#ifndef SCUMM_BIG_ENDIAN
+		flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
+#endif
+
 		while (1) {
 			if (!text[textCounter])
 				break;
@@ -186,7 +192,7 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 				openTextObject(text[textCounter]);
 				drawTextObject(text[textCounter]);
 				if (text[textCounter]->speech) {
-					_vm->_mixer->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN);
+					_vm->_mixer->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, flags);
 				}
 			}
 
