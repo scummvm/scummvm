@@ -68,8 +68,11 @@ int32 Screen::inRange(int32 a, int32 b, int32 c) { // return b(!) so that: a <= 
 }
 
 void Screen::setScrolling(int16 offsetX, int16 offsetY) {
-	if (!Logic::_scriptVars[SCROLL_FLAG])
+	if (!Logic::_scriptVars[SCROLL_FLAG]) {
+		Logic::_scriptVars[SCROLL_OFFSET_X] = _oldScrollX = 0;
+		Logic::_scriptVars[SCROLL_OFFSET_Y] = _oldScrollY = 0;
 		return ; // screen is smaller than 640x400 => no need for scrolling
+	}
 
 	offsetX = inRange(0, offsetX, Logic::_scriptVars[MAX_SCROLL_OFFSET_X]);
 	offsetY = inRange(0, offsetY, Logic::_scriptVars[MAX_SCROLL_OFFSET_Y]);
