@@ -62,6 +62,7 @@ void IMuseDigital::allocSlot(int priority) {
 			_track[track_id]->stream = NULL;
 			_vm->_mixer->stopHandle(_track[track_id]->handle);
 			_sound->closeSound(_track[track_id]->soundHandle);
+			_track[track_id]->soundHandle = NULL;
 			_track[track_id]->used = false;
 			assert(!_track[track_id]->handle.isActive());
 			warning("IMuseDigital::startSound(): Removed sound %d from track %d", _track[track_id]->soundId, track_id);
@@ -304,7 +305,9 @@ int IMuseDigital::cloneToFadeOutTrack(int track, int fadeDelay, int killNormalTr
 		_track[track]->used = false;
 	} else {
 		_track[track]->soundHandle = _sound->cloneSound(_track[fadeTrack]->soundHandle);
-		_track[track]->stream = makeAppendableAudioStream(_sound->getFreq(_track[track]->soundHandle), _track[track]->mixerFlags, 100000);
+		// setup 1 second mixer wrapped buffer
+		int32 mixerBufferSize = _track[track]->iteration;
+		_track[track]->stream = makeAppendableAudioStream(_sound->getFreq(_track[track]->soundHandle), _track[track]->mixerFlags, mixerBufferSize);
 		_vm->_mixer->playInputStream(&_track[track]->handle, _track[track]->stream, false, _track[track]->vol / 1000, _track[track]->pan, -1);
 		_track[track]->started = true;
 	}
