@@ -407,6 +407,9 @@ void LauncherDialog::addGame() {
 		// ...so let's determine a list of candidates, games that
 		// could be contained in the specified directory.
 		DetectedGameList candidates(PluginManager::instance().detectGames(*files));
+		
+		delete files;
+		files = 0;
 
 		int idx;
 		if (candidates.isEmpty()) {
