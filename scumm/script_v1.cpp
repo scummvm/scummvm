@@ -1455,8 +1455,21 @@ void Scumm::o5_isActorInBox()
 
 void Scumm::o5_isEqual()
 {
-	int16 a = readVar(fetchScriptWord());
-	int16 b = getVarOrDirectWord(0x80);
+	int16 a, b;
+	int var;
+
+	var = fetchScriptWord();
+	a = readVar(var);
+	b = getVarOrDirectWord(0x80);
+
+	// HACK: See bug report #602348. The sound effects for Largo's screams
+	// are only played on type 5 soundcards. However, there is at least one
+	// other sound effect (the bartender spitting) which is only played on
+	// type 3 soundcards.
+
+	if (_gameId == GID_MONKEY2 && var == VAR_SOUNDCARD && b == 5)
+		b = a;
+
 	if (b == a)
 		ignoreScriptWord();
 	else
