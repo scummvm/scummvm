@@ -214,10 +214,9 @@ class MP3InputStream : public MusicStream {
 	File *_file;
 	byte *_ptr;
 	int _rate;
-	bool _initialized;
 
 	bool init();
-	void refill();
+	void refill(bool first = false);
 	inline int16 readIntern();
 	inline bool eosIntern() const;
 public:
@@ -260,7 +259,7 @@ MP3InputStream::MP3InputStream(File *file, mad_timer_t duration, uint size) {
 	_ptr = (byte *)malloc(_bufferSize + MAD_BUFFER_GUARD);
 	_rate = 0;
 
-	_initialized = init();
+	init();
 
 	// If a size is specified, we do not perform any further read operations
 	if (size) {
@@ -291,7 +290,7 @@ bool MP3InputStream::init() {
 	mad_stream_buffer(&_stream, _ptr, _size);
 
 	// Read in initial data
-	refill();
+	refill(true);
 
 	// Check the header, determine if this is a stereo stream
 	int num;
@@ -316,7 +315,7 @@ bool MP3InputStream::init() {
 	return true;
 }
 
-void MP3InputStream::refill() {
+void MP3InputStream::refill(bool first) {
 
 	// Read the next frame (may have to retry several times, e.g.
 	// to skip over ID3 information).
@@ -363,7 +362,7 @@ void MP3InputStream::refill() {
 	mad_timer_negate(&frame_duration);
 	mad_timer_add(&_duration, frame_duration);
 
-	if (mad_timer_compare(_duration, mad_timer_zero) <= 0)
+	if (!first && _file && mad_timer_compare(_duration, mad_timer_zero) <= 0)
 		_size = -1;	// Mark for EOF
 	
 	// Synthesise the frame into PCM samples and reset the buffer position
