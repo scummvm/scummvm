@@ -825,6 +825,7 @@ void SmushPlayer::codec37Proc4(byte *dst, byte *src, int32 next_offs, int32 bw, 
 
 
 void SmushPlayer::codec37Proc5(int32 game, byte *dst, byte *src, int32 next_offs, int32 bw, int32 bh, 
+
 				  int32 pitch, int16 *table) {
 	byte code, *tmp;
 	int32 i;
@@ -1477,7 +1478,7 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile) {
 		if (_scumm->_gameId == GID_FT) {
 			for (idx = 0; idx < MAX_STREAMER; idx++) {
 				if (_psadTrk[idx] != 0) {
-					if (_strkNewMixer) {
+					if (_strkNewMixer[idx]) {
 						g_mixer->play_stream(NULL, idx, _strkBuf[idx], _strkFinalSize[idx], _strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 					} else {
 						g_mixer->append(idx, _strkBuf[idx], _strkFinalSize[idx], _strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
