@@ -316,7 +316,7 @@ enum {
 SaveLoadDialog::SaveLoadDialog(NewGui *gui, Scumm *scumm)
 	: ScummDialog(gui, scumm, 30, 20, 260, 124)
 {
-	addResText(10, 7, 240, 16, 1);
+	addResText(0, 7, 260, 16, 1);
 //  addResText(10, 7, 240, 16, 2);
 //  addResText(10, 7, 240, 16, 3);
 

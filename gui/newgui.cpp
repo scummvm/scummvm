@@ -432,6 +432,7 @@ int NewGui::getCharWidth(char c)
 
 void NewGui::drawString(const String &str, int x, int y, int w, int16 color, int align)
 {
+	const int leftX = x, rightX = x + w;
 	int width = getStringWidth(str);
 	if (align == kTextAlignCenter)
 		x = x + (w - width - 1)/2;
@@ -439,8 +440,12 @@ void NewGui::drawString(const String &str, int x, int y, int w, int16 color, int
 		x = x + w - width;
 
 	for (int i = 0; i < str.size(); ++i) {
-		drawChar(str[i], x, y, color);
-		x += getCharWidth(str[i]);
+		w = getCharWidth(str[i]);
+		if (x+w > rightX)
+			break;
+		if (x >= leftX)
+			drawChar(str[i], x, y, color);
+		x += w;
 	}
 }
 
