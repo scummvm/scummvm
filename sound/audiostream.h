@@ -24,9 +24,15 @@
 
 #include "scummsys.h"
 #include <assert.h>
+#ifdef USE_MAD
+#include <mad.h>
+#endif
 #ifdef USE_VORBIS
 #include <vorbis/vorbisfile.h>
 #endif
+
+class File;
+
 
 // TODO:
 // * maybe make readIntern return 16.16 or 24.8 fixed point values
@@ -42,10 +48,9 @@ public:
 	virtual ~AudioInputStream() {}
 
 	virtual int16 read() = 0;
-	virtual int size() const = 0;
+	//virtual int size() const = 0;
 	virtual bool isStereo() const = 0;
-
-	bool eof() const { return size() <= 0; }
+	virtual bool eof() const = 0;
 };
 
 class WrappedAudioInputStream : public AudioInputStream {
@@ -61,11 +66,36 @@ public:
 	int16 read() { assert(_len > 0); _len--; return 0; }
 	int size() const { return _len; }
 	bool isStereo() const { return false; }
+	bool eof() const { return _len <= 0; }
 };
 
-AudioInputStream *makeLinearInputStream(byte _flags, const byte *ptr, uint32 len);
-WrappedAudioInputStream *makeWrappedInputStream(byte _flags, uint32 len);
+#ifdef USE_MAD
+class MP3InputStream : public AudioInputStream {
+	struct mad_stream _stream;
+	struct mad_frame _frame;
+	struct mad_synth _synth;
+	uint32 _posInFrame;
+	int _size;
+	bool _isStereo;
+	int _curChannel;
+	File *_file;
+	byte *_ptr;
+	int _rate;
+	bool _initialized;
+	mad_timer_t _duration;
 
+	bool init();
+	void refill();
+public:
+	MP3InputStream(File *file, mad_timer_t duration);
+	~MP3InputStream();
+	int16 read();
+	bool eof() const;
+	bool isStereo() const { return _isStereo; }
+	
+	int getRate() const { return _rate; }
+};
+#endif
 
 
 #ifdef USE_VORBIS
@@ -73,20 +103,23 @@ class VorbisInputStream : public AudioInputStream {
 	OggVorbis_File *_ov_file;
 	int _end_pos;
 	bool _eof_flag;
-	int _channels;
+	int _numChannels;
 	int16 _buffer[4096];
 	int16 *_pos;
 	
 	void refill();
 public:
-	// TODO
 	VorbisInputStream(OggVorbis_File *file, int duration);
 	int16 read();
-	int size() const;
-	bool isStereo() const { return _channels >= 2; }
+	bool eof() const;
+	bool isStereo() const { return _numChannels >= 2; }
 };
 #endif
 
+
+
+AudioInputStream *makeLinearInputStream(byte _flags, const byte *ptr, uint32 len);
+WrappedAudioInputStream *makeWrappedInputStream(byte _flags, uint32 len);
 
 
 #endif

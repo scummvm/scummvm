@@ -108,9 +108,6 @@ int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size
 	ostart = obuf;
 	oend = obuf + *osamp * 2;
 
-	if (stereo)
-		assert(input.size() % 2 == 0);	// Stereo code assumes even number of input samples
-	
 	// If the input position exceeds the output position, then we aborted the
 	// previous conversion run because the output buffer was full. Resume!
 	if (rate->ipos > rate->opos)

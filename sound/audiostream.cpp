@@ -23,6 +23,7 @@
 #include "audiostream.h"
 #include "mixer.h"
 #include "common/engine.h"
+#include "common/file.h"
 #include "common/util.h"
 
 
@@ -57,8 +58,8 @@ public:
 		_ptr += (is16Bit ? 2 : 1);
 		return val;
 	}
-	int size() const {
-		return (_end - _ptr) / (is16Bit ? 2 : 1);
+	bool eof() const {
+		return _end <= _ptr;
 	}
 	bool isStereo() const {
 		return stereo;
@@ -84,7 +85,7 @@ public:
 	WrappedMemoryStream(uint bufferSize);
 	~WrappedMemoryStream() { free(_bufferStart); }
 	int16 read();
-	int size() const;
+	bool eof() const;
 	bool isStereo() const {
 		return stereo;
 	}
@@ -116,11 +117,8 @@ int16 WrappedMemoryStream<stereo, is16Bit, isUnsigned>::read() {
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
-int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::size() const {
-	int len = _end - _pos;
-	if (len < 0)
-		len += (_bufferEnd - _bufferStart);
-	return len / (is16Bit ? 2 : 1);
+bool WrappedMemoryStream<stereo, is16Bit, isUnsigned>::eof() const {
+	return _end == _pos;
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
@@ -152,27 +150,144 @@ void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, 
 #pragma mark -
 
 
-/*
 #ifdef USE_MAD
-class MP3InputStream : public AudioInputStream {
-	struct mad_stream _stream;
-	struct mad_frame _frame;
-	struct mad_synth _synth;
-	uint32 _posInFrame;
-	int _chan;
 
-	void refill();
-public:
+#define MP3_BUFFER_SIZE 131072
+
+/**
+ * Playback the MP3 data in the given file for the specified duration.
+ *
+ * @param file		file containing the MP3 data
+ * @param duration	playback duration in frames (1/75th of a second), 0 means playback until EOF
+ */
+MP3InputStream::MP3InputStream(File *file, mad_timer_t duration) {
+	// duration == 0 means: play everything till end of file
+	
+	_isStereo = false;
+	_curChannel = 0;
+	_file = file;
+	_rate = 0;
+	_posInFrame = 0;
+	
+	_duration = duration;
+
+	mad_stream_init(&_stream);
+	mad_frame_init(&_frame);
+	mad_synth_init(&_synth);
+	
+	_ptr = (byte *)malloc(MP3_BUFFER_SIZE + MAD_BUFFER_GUARD);
+	
+	_initialized = init();
+}
+
+MP3InputStream::~MP3InputStream() {
+	mad_synth_finish(&_synth);
+	mad_frame_finish(&_frame);
+	mad_stream_finish(&_stream);
+	
+	free(_ptr);
+}
+
+bool MP3InputStream::init() {
 	// TODO
-	MP3InputStream();
-};
+	
+	// Read in the first chunk of the MP3 file
+	_size = _file->read(_ptr, MP3_BUFFER_SIZE);
+	if (_size <= 0) {
+		warning("MP3InputStream: Failed to read MP3 data");
+		return false;
+	}
+	
+	// Feed the data we just read into the stream decoder
+	mad_stream_buffer(&_stream, _ptr, _size);
 
-MP3InputStream::MP3InputStream() {
-	_chan = 0;
+	// Read in initial data
+	refill();
+
+	// Check the header, determine if this is a stereo stream
+	int num;
+	switch(_frame.header.mode)
+	{
+		case MAD_MODE_SINGLE_CHANNEL:
+		case MAD_MODE_DUAL_CHANNEL:
+		case MAD_MODE_JOINT_STEREO:
+		case MAD_MODE_STEREO:
+			num = MAD_NCHANNELS(&_frame.header);
+			assert(num == 1 || num == 2);
+			_isStereo = (num == 2);
+			break;
+		default:
+			warning("MP3InputStream: Cannot determine number of channels");
+			return false;
+	}
+	
+	// Determine the sample rate
+	_rate = _frame.header.samplerate;
+
+	return true;
 }
 
 void MP3InputStream::refill() {
-	// TODO
+
+	// Read the next frame (may have to retry several times, e.g.
+	// to skip over ID3 information).
+	while (mad_frame_decode(&_frame, &_stream)) {
+		if (_stream.error == MAD_ERROR_BUFLEN) {
+			int offset;
+
+			// Give up immediately if we are at the EOF already
+			if (_size <= 0)
+				return;
+
+			if (!_stream.next_frame) {
+				offset = 0;
+				memset(_ptr, 0, MP3_BUFFER_SIZE + MAD_BUFFER_GUARD);
+			} else {
+				offset = _stream.bufend - _stream.next_frame;
+				memcpy(_ptr, _stream.next_frame, offset);
+			}
+			// Read in more data from the input file
+			_size = _file->read(_ptr + offset, MP3_BUFFER_SIZE - offset);
+			
+			// Nothing read -> EOF -> bail out
+			if (_size <= 0) {
+				return;
+			}
+			_stream.error = (enum mad_error)0;
+
+			// Feed the data we just read into the stream decoder
+			mad_stream_buffer(&_stream, _ptr, _size + offset);
+
+		} else if (MAD_RECOVERABLE(_stream.error)) {
+			// FIXME: should we do anything here?
+			warning("MP3InputStream: Recoverable error...");
+		} else {
+			error("MP3InputStream: Unrecoverable error");
+		}
+	}
+	
+	// Subtract the duration of this frame from the time left to play
+	mad_timer_t frame_duration = _frame.header.duration;
+	mad_timer_negate(&frame_duration);
+	mad_timer_add(&_duration, _frame.header.duration);
+	
+	// Synthesise the frame into PCM samples and reset the buffer position
+	mad_synth_frame(&_synth, &_frame);
+	_posInFrame = 0;
+}
+
+bool MP3InputStream::eof() const {
+	// Time over -> input steam ends
+	if (mad_timer_compare(_duration, mad_timer_zero) <= 0)
+		return true;
+	// Data left in the PCM buffer -> we are not yet done! 
+	if (_posInFrame < _synth.pcm.length)
+		return false;
+	// EOF of the input file, we are done
+	if (_size < 0)
+		return true;
+	// Otherwise, we are still good to go
+	return false;
 }
 
 static inline int scale_sample(mad_fixed_t sample) {
@@ -192,19 +307,22 @@ static inline int scale_sample(mad_fixed_t sample) {
 int16 MP3InputStream::read() {
 	if (_posInFrame >= _synth.pcm.length) {
 		refill();
+		if (_size < 0)	// EOF
+			return 0;
 	}
+
 	
 	int16 sample;
-	if (stereo) {
-		sample = (int16)scale_sample(_synth.pcm.samples[_chan][_posInFrame];
-		if (_chan == 0) {
-			_chan = 1;
+	if (_isStereo) {
+		sample = (int16)scale_sample(_synth.pcm.samples[_curChannel][_posInFrame]);
+		if (_curChannel == 0) {
+			_curChannel = 1;
 		} else {
 			_posInFrame++;
-			_chan = 0;
+			_curChannel = 0;
 		}
 	} else {
-		sample = (int16)scale_sample(_synth.pcm.samples[0][_posInFrame];
+		sample = (int16)scale_sample(_synth.pcm.samples[0][_posInFrame]);
 		_posInFrame++;
 	}
 	
@@ -212,7 +330,7 @@ int16 MP3InputStream::read() {
 }
 
 #endif
-*/
+
 
 #pragma mark -
 #pragma mark --- Ogg Vorbis stream ---
@@ -229,7 +347,7 @@ int16 MP3InputStream::read() {
 VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration) 
 	: _ov_file(file) {
 	_pos = _buffer + ARRAYSIZE(_buffer);
-	_channels = ov_info(_ov_file, -1)->channels;
+	_numChannels = ov_info(_ov_file, -1)->channels;
 
 	if (duration)
 		_end_pos = ov_pcm_tell(_ov_file) + duration;
@@ -246,10 +364,12 @@ int16 VorbisInputStream::read() {
 	return *_pos++;
 }
 
-int VorbisInputStream::size() const {
+bool VorbisInputStream::eof() const {
 	if (_eof_flag)
-		return 0;
-	return (_end_pos - ov_pcm_tell(_ov_file)) + (_buffer + ARRAYSIZE(_buffer) - _pos);
+		return true;
+	if (_pos < _buffer + ARRAYSIZE(_buffer))
+		return false;
+	return (_end_pos <= ov_pcm_tell(_ov_file));
 }
 
 void VorbisInputStream::refill() {
