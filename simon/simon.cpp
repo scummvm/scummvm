@@ -138,7 +138,9 @@ SimonState::SimonState(GameDetector *detector, OSystem *syst)
 						"Features of the game that depend on sound synchronization will most likely break");
 	midi.set_volume(detector->_music_volume);
 	set_volume(detector->_sfx_volume);
+
 	_debugMode = detector->_debugMode;
+	_debugLevel = detector->_debugLevel;
 
 	_effects_paused = false;
 	_ambient_paused = false;
@@ -4467,6 +4469,13 @@ void SimonState::go()
 	_start_mainscript = false;
 	_continous_mainscript = false;
 	_continous_vgascript = false;
+
+	if (_debugLevel == 2)
+		_continous_mainscript = true;
+	if (_debugLevel == 3)
+		_continous_vgascript = true;
+	if (_debugLevel == 4)
+		_start_mainscript = true;
 
 	if (_sound->hasVoice()) {
 		_vk_t_toggle = false;

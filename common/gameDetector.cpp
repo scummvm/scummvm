@@ -29,9 +29,6 @@
 #include "common/config-file.h"
 
 
-extern uint16 _debugLevel;
-
-
 #define CHECK_OPTION() if ((current_option != NULL) || (*s != '\0')) goto ShowHelpAndExit
 #define HANDLE_OPTION() if ((*s == '\0') && (current_option == NULL)) goto ShowHelpAndExit;  \
                         if ((*s != '\0') && (current_option != NULL)) goto ShowHelpAndExit; \
