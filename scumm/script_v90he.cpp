@@ -1992,26 +1992,26 @@ static int compareByteArrayReverse(const void *a, const void *b) {
 }
 
 static int compareIntArray(const void *a, const void *b) {
-	int va = READ_LE_UINT16((const uint8 *)a + sortArrayOffset * 2);
-	int vb = READ_LE_UINT16((const uint8 *)b + sortArrayOffset * 2);
+	int va = (int16)READ_LE_UINT16((const uint8 *)a + sortArrayOffset * 2);
+	int vb = (int16)READ_LE_UINT16((const uint8 *)b + sortArrayOffset * 2);
 	return va - vb;
 }
 
 static int compareIntArrayReverse(const void *a, const void *b) {
-	int va = READ_LE_UINT16((const uint8 *)a + sortArrayOffset * 2);
-	int vb = READ_LE_UINT16((const uint8 *)b + sortArrayOffset * 2);
+	int va = (int16)READ_LE_UINT16((const uint8 *)a + sortArrayOffset * 2);
+	int vb = (int16)READ_LE_UINT16((const uint8 *)b + sortArrayOffset * 2);
 	return vb - va;
 }
 
 static int compareDwordArray(const void *a, const void *b) {
-	int va = READ_LE_UINT32((const uint8 *)a + sortArrayOffset * 4);
-	int vb = READ_LE_UINT32((const uint8 *)b + sortArrayOffset * 4);
+	int va = (int32)READ_LE_UINT32((const uint8 *)a + sortArrayOffset * 4);
+	int vb = (int32)READ_LE_UINT32((const uint8 *)b + sortArrayOffset * 4);
 	return va - vb;
 }
 
 static int compareDwordArrayReverse(const void *a, const void *b) {
-	int va = READ_LE_UINT32((const uint8 *)a + sortArrayOffset * 4);
-	int vb = READ_LE_UINT32((const uint8 *)b + sortArrayOffset * 4);
+	int va = (int32)READ_LE_UINT32((const uint8 *)a + sortArrayOffset * 4);
+	int vb = (int32)READ_LE_UINT32((const uint8 *)b + sortArrayOffset * 4);
 	return vb - va;
 }
 
