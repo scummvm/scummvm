@@ -160,6 +160,7 @@ void ScummEngine::openRoom(int room) {
 				return;
 			if (_features & GF_EXTERNAL_CHARSET && room >= roomlimit)
 				return;
+			deleteRoomOffsets();
 			readRoomsOffsets();
 			_fileOffset = res.roomoffs[rtRoom][room];
 
@@ -205,25 +206,10 @@ void ScummEngine::deleteRoomOffsets() {
 
 /** Read room offsets */
 void ScummEngine::readRoomsOffsets() {
-	int num, room, i;
-	byte *ptr;
+	int num, room;
 
 	debug(9, "readRoomOffsets()");
 
-	deleteRoomOffsets();
-	if (_features & GF_SMALL_NAMES)
-		return;
-
-	if (_heversion >= 70) { // Windows titles
-		num = READ_LE_UINT16(_heV7RoomOffsets);
-		ptr = _heV7RoomOffsets + 2;
-		for (i = 0; i < num; i++) {
-			res.roomoffs[rtRoom][i] = READ_LE_UINT32(ptr);	
-			ptr += 4;
-		}
-		return;
-	}
-	
 	if (!(_features & GF_SMALL_HEADER)) {
 		if (!_dynamicRoomOffsets)
 			return;

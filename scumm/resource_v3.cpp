@@ -97,6 +97,9 @@ void ScummEngine_v3old::readIndexFile() {
 	closeRoom();
 }
 
+void ScummEngine_v3::readRoomsOffsets() {
+}
+
 void ScummEngine_v3::loadCharset(int no) {
 	uint32 size;
 	memset(_charsetData, 0, sizeof(_charsetData));

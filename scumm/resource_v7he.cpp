@@ -1624,4 +1624,20 @@ void MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int 
 	assert(datasize - dis.pos() == 0);
 }
 
+
+
+void ScummEngine_v70he::readRoomsOffsets() {
+	int num, i;
+	byte *ptr;
+
+	debug(9, "readRoomOffsets()");
+
+	num = READ_LE_UINT16(_heV7RoomOffsets);
+	ptr = _heV7RoomOffsets + 2;
+	for (i = 0; i < num; i++) {
+		res.roomoffs[rtRoom][i] = READ_LE_UINT32(ptr);	
+		ptr += 4;
+	}
+}
+
 } // End of namespace Scumm

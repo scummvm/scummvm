@@ -187,6 +187,9 @@ protected:
 	void o5_walkActorToObject();
 };
 
+/**
+ * Engine for version 4 SCUMM games; GF_SMALL_HEADER is always set for these.
+ */
 class ScummEngine_v4 : public ScummEngine_v5 {
 public:
 	ScummEngine_v4(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
@@ -202,14 +205,21 @@ protected:
 	void setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
 };
 
+/**
+ * Engine for version 3 SCUMM games; GF_SMALL_NAMES is always set for these.
+ */
 class ScummEngine_v3 : public ScummEngine_v4 {
 public:
 	ScummEngine_v3(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 
 protected:
+	void readRoomsOffsets();
 	void loadCharset(int no);
 };
 
+/**
+ * Engine for old format version 3 SCUMM games; GF_OLD_BUNDLE is always set for these.
+ */
 class ScummEngine_v3old : public ScummEngine_v3 {
 public:
 	ScummEngine_v3old(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
@@ -221,6 +231,9 @@ protected:
 	void loadRoomObjects();
 };
 
+/**
+ * Engine for version 2 SCUMM games.
+ */
 class ScummEngine_v2 : public ScummEngine_v3old {
 protected:
 	void readIndexFile();
@@ -674,6 +687,8 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 	
+	void readRoomsOffsets();
+
 	virtual void redrawBGAreas();
 
 	int getStringCharWidth(byte chr);

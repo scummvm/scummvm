@@ -696,7 +696,7 @@ protected:
 	void openRoom(int room);
 	void closeRoom();
 	void deleteRoomOffsets();
-	void readRoomsOffsets();
+	virtual void readRoomsOffsets();
 	void askForDisk(const char *filename, int disknum);
 	bool openResourceFile(const char *filename, byte encByte);
 
