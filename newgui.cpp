@@ -95,8 +95,9 @@ void ClearBlendCache(byte *palette, int weight) {
  * - ...
  */
 
-NewGui::NewGui(Scumm *s) : _s(s), _need_redraw(false), _pauseDialog(0),
-	_saveLoadDialog(0), _aboutDialog(0), _optionsDialog(0)
+NewGui::NewGui(Scumm *s) : _s(s), _use_alpha_blending(true),
+	_need_redraw(false),_prepare_for_gui(true),
+	_pauseDialog(0), _saveLoadDialog(0), _aboutDialog(0), _optionsDialog(0)
 {	
 }
 
@@ -109,7 +110,6 @@ void NewGui::pauseDialog()
 
 void NewGui::saveloadDialog()
 {
-	ClearBlendCache(_s->_currentPalette, 128);
 	if (!_saveLoadDialog)
 		_saveLoadDialog = new SaveLoadDialog(this);
 	openDialog(_saveLoadDialog);
@@ -133,11 +133,19 @@ void NewGui::loop()
 {
 	Dialog *activeDialog = _dialogStack.top();
 	
+	if (_prepare_for_gui) {
+		ClearBlendCache(_s->_currentPalette, 128);
+		saveState();
+		if (_use_alpha_blending)
+			activeDialog->setupScreenBuf();
+		_prepare_for_gui = false;
+	}
+	
 	if (_need_redraw) {
 		activeDialog->draw();
-		saveState();
 		_need_redraw = false;
 	}
+	
 	_s->animateCursor();
 	_s->getKeyInput(0);
 	if (_s->_mouseButStat & MBS_LEFT_CLICK) {		
@@ -194,17 +202,31 @@ void NewGui::restoreState()
 
 void NewGui::openDialog(Dialog *dialog)
 {
+	if (_dialogStack.empty())
+		_prepare_for_gui = true;
+	else if (_use_alpha_blending)
+		dialog->setupScreenBuf();
+
 	_dialogStack.push(dialog);
 	_need_redraw = true;
 }
 
 void NewGui::closeTopDialog()
 {
+	// Don't do anything if no dialog is open
+	if (_dialogStack.empty())
+		return;
+	
+	// Tear down its screenBuf
+	if (_use_alpha_blending)
+		_dialogStack.top()->teardownScreenBuf();
+	
+	// Remove the dialog from the stack
 	_dialogStack.pop();
 	if (_dialogStack.empty())
 		restoreState();
 	else
-		_dialogStack.top()->draw();
+		_need_redraw = true;
 }
 
 #pragma mark -
@@ -298,6 +320,20 @@ void NewGui::line(int x, int y, int x2, int y2, byte color)
 	}
 }
 
+void NewGui::blendArea(int x, int y, int w, int h, byte color)
+{
+	byte *ptr = getBasePtr(x, y);
+	if (ptr == NULL)
+		return;
+
+	while (h--) {
+		for (int i = 0; i < w; i++) {
+			ptr[i] = Blend(ptr[i], color, _s->_currentPalette);
+		}
+		ptr += 320;
+	}
+}
+
 void NewGui::fillArea(int x, int y, int w, int h, byte color)
 {
 	byte *ptr = getBasePtr(x, y);
@@ -306,10 +342,8 @@ void NewGui::fillArea(int x, int y, int w, int h, byte color)
 
 	while (h--) {
 		for (int i = 0; i < w; i++) {
-			int srcc = ptr[i];
-			ptr[i] = Blend(srcc, color, _s->_currentPalette);
+			ptr[i] = color;
 		}
-			//ptr[i] = color;
 		ptr += 320;
 	}
 }
@@ -392,3 +426,36 @@ void NewGui::drawBitmap(uint32 bitmap[8], int x, int y, byte color)
 		ptr += 320;
 	}
 }
+
+void NewGui::blitTo(byte buffer[320*200], int x, int y, int w, int h)
+{
+	byte *dstPtr = buffer + x + y*320;
+	byte *srcPtr = getBasePtr(x, y);
+	if (srcPtr == NULL)
+		return;
+
+	while (h--) {
+		for (int i = 0; i < w; i++) {
+			*dstPtr++ = *srcPtr++;
+		}
+		dstPtr += 320 - w;
+		srcPtr += 320 - w;
+	}
+}
+
+void NewGui::blitFrom(byte buffer[320*200], int x, int y, int w, int h)
+{
+	byte *srcPtr = buffer + x + y*320;
+	byte *dstPtr = getBasePtr(x, y);
+	if (dstPtr == NULL)
+		return;
+
+	while (h--) {
+		for (int i = 0; i < w; i++) {
+			*dstPtr++ = *srcPtr++;
+		}
+		dstPtr += 320 - w;
+		srcPtr += 320 - w;
+	}
+}
+

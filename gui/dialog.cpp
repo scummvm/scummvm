@@ -25,12 +25,52 @@
 #include "widget.h"
 #include "newgui.h"
 
+Dialog::~Dialog()
+{
+	teardownScreenBuf();
+}
+
+void Dialog::setupScreenBuf()
+{
+	// Create _screenBuf if it doesn't already exist
+	if (!_screenBuf)
+		_screenBuf = new byte[320*200];
+	
+	// Draw the fixed parts of the dialog: background and border.
+	_gui->blendArea(_x, _y, _w, _h, _gui->_bgcolor);
+	_gui->box(_x, _y, _w, _h);
+
+	// Draw a bgcolor rectangle for all widgets which have WIDGET_CLEARBG set. 
+	Widget *w = _firstWidget;
+	while (w) {
+		if (w->_flags & WIDGET_CLEARBG)
+			_gui->fillArea(_x + w->_x, _y + w->_y, w->_w, w->_h, _gui->_bgcolor);
+		// FIXME - should we also draw borders here if WIDGET_BORDER is set?
+		w = w->_next;
+	}
+	
+	// Finally blit this to _screenBuf
+	_gui->blitTo(_screenBuf, _x, _y, _w, _h); 
+}
+
+void Dialog::teardownScreenBuf()
+{
+	if (_screenBuf) {
+		delete [] _screenBuf;
+		_screenBuf = 0;
+	}
+}
+
 void Dialog::draw()
 {
 	Widget *w = _firstWidget;
 
-	_gui->fillArea(_x, _y, _w, _h, _gui->_bgcolor);
-	_gui->box(_x, _y, _w, _h);
+	if (_screenBuf) {
+		_gui->blitFrom(_screenBuf, _x, _y, _w, _h); 
+	} else {
+		_gui->fillArea(_x, _y, _w, _h, _gui->_bgcolor);
+		_gui->box(_x, _y, _w, _h);
+	}
 	_gui->setAreaDirty(_x, _y, _w, _h);
 
 	while (w) {

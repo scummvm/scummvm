@@ -43,8 +43,8 @@ void Widget::draw()
 	_x += _boss->_x;
 	_y += _boss->_y;
 
-	// Clear background
-	if (_flags & WIDGET_CLEARBG)
+	// Clear background (unless alpha blending is enabled)
+	if (_flags & WIDGET_CLEARBG && !_boss->_screenBuf)
 		gui->fillArea(_x, _y, _w, _h, gui->_bgcolor);
 
 	// Draw border
@@ -94,7 +94,7 @@ void StaticTextWidget::drawWidget(bool hilite)
 ButtonWidget::ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, x, y, w, h, label), _cmd(cmd), _hotkey(hotkey)
 {
-	_flags = WIDGET_ENABLED | WIDGET_BORDER /* | WIDGET_CLEARBG */ ;
+	_flags = WIDGET_ENABLED | WIDGET_BORDER | WIDGET_CLEARBG ;
 	_type = kButtonWidget;
 }
 
@@ -148,7 +148,7 @@ void CheckboxWidget::drawWidget(bool hilite)
 	if (_state)
 		gui->drawBitmap(checked_img, _x + 3, _y + 3, gui->_textcolor);
 	else
-		gui->fillArea(_x + 3, _y + 3, 8, 8, gui->_bgcolor);
+		gui->fillArea(_x + 2, _y + 2, 10, 10, gui->_bgcolor);
 	
 	// Finally draw the label
 	gui->drawString(_text, _x + 20, _y + 3, _w, gui->_textcolor);
@@ -159,7 +159,7 @@ void CheckboxWidget::drawWidget(bool hilite)
 SliderWidget::SliderWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey), _value(0), _old_value(1)
 {
-	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE;
+	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG;
 	_type = kSliderWidget;
 }
 

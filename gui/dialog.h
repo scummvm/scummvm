@@ -43,11 +43,13 @@ protected:
 	int16	_x, _y;
 	uint16	_w, _h;
 	Widget	*_mouseWidget;
+	byte	*_screenBuf;
 
 public:
 	Dialog(NewGui *gui, int x, int y, int w, int h)
-		: _gui(gui), _firstWidget(0), _x(x), _y(y), _w(w), _h(h), _mouseWidget(0)
+		: _gui(gui), _firstWidget(0), _x(x), _y(y), _w(w), _h(h), _mouseWidget(0), _screenBuf(0)
 		{}
+	virtual ~Dialog();
 
 	virtual void draw();
 
@@ -58,6 +60,9 @@ public:
 	virtual void handleCommand(uint32 cmd);
 	
 	NewGui	*getGui()	{ return _gui; }
+	
+	void	setupScreenBuf();
+	void	teardownScreenBuf();
 
 protected:
 	Widget* findWidget(int x, int y); // Find the widget at pos x,y if any

@@ -63,7 +63,9 @@ public:
 
 protected:
 	Scumm		*_s;
+	bool		_use_alpha_blending;
 	bool		_need_redraw;
+	bool		_prepare_for_gui;
 	DialogStack	_dialogStack;
 	
 	Dialog		*_pauseDialog;
@@ -94,12 +96,16 @@ public:
 	// Drawing
 	byte *getBasePtr(int x, int y);
 	void box(int x, int y, int width, int height);
-    void line(int x, int y, int x2, int y2, byte color);
-    void fillArea(int x, int y, int w, int h, byte color);
-    void setAreaDirty(int x, int y, int w, int h);
+	void line(int x, int y, int x2, int y2, byte color);
+	void blendArea(int x, int y, int w, int h, byte color);
+	void fillArea(int x, int y, int w, int h, byte color);
+	void setAreaDirty(int x, int y, int w, int h);
 	void drawChar(const char c, int x, int y);
 	void drawString(const char *str, int x, int y, int w, byte color);
+
 	void drawBitmap(uint32 bitmap[8], int x, int y, byte color);
+	void blitTo(byte buffer[320*200], int x, int y, int w, int h);
+	void blitFrom(byte buffer[320*200], int x, int y, int w, int h);
 
 	// Query a string from the resources
 	const char *queryResString(int stringno);
