@@ -338,9 +338,9 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* E8 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_seekFile),
+		OPCODE(o6_seekFilePos),
 		OPCODE(o6_redimArray),
-		OPCODE(o6_tellFile),
+		OPCODE(o6_readFilePos),
 		/* EC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -1132,7 +1132,7 @@ void ScummEngine_v6he::o6_unknownFA() {
 	_scriptPointer += len + 1;
 }
 
-void ScummEngine_v6he::o6_seekFile() {
+void ScummEngine_v6he::o6_seekFilePos() {
 	int mode, offset, slot;
 	mode = pop();
 	offset = pop();
@@ -1142,20 +1142,20 @@ void ScummEngine_v6he::o6_seekFile() {
 
 	switch (mode) {
 	case 1:
-		seekWrapper(slot, offset, 0);
+		seekFilePos(slot, offset, 0);
 		break;
 	case 2:
-		seekWrapper(slot, offset, 1);
+		seekFilePos(slot, offset, 1);
 		break;
 	case 3:
-		seekWrapper(slot, offset, 2);
+		seekFilePos(slot, offset, 2);
 		break;
 	default:
 		break;
 	}
 }
 
-void ScummEngine_v6he::seekWrapper(int slot, int offset, int mode) {
+void ScummEngine_v6he::seekFilePos(int slot, int offset, int mode) {
 	if (slot == 1)
 		return;
 
@@ -1172,7 +1172,7 @@ void ScummEngine_v6he::seekWrapper(int slot, int offset, int mode) {
 	}
 }
 
-void ScummEngine_v6he::o6_tellFile() {
+void ScummEngine_v6he::o6_readFilePos() {
 	int slot = pop();
 
 	debug(1, "o6_tellFile(%d)", slot);
