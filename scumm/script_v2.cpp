@@ -920,8 +920,8 @@ void Scumm_v2::o2_walkActorTo() {
 	y = getVarOrDirectByte(0x20) * 2;
 
 	assert(a);
-	a->ignoreBoxes = true;			// FIXME: Disabling walkboxes
-	a->startWalkActor(x, y, -1);		// for now, just to debug the intro
+	a->ignoreBoxes = true;	// FIXME: Disabling walkboxes for now, just to debug the intro
+	a->startWalkActor(x, y, -1);
 }
 
 void Scumm_v2::o2_putActor() {

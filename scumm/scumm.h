@@ -56,6 +56,7 @@ extern Scumm *g_scumm;
 enum {
 	NUM_SCRIPT_SLOT = 40,
 	NUM_LOCALSCRIPT = 60,
+	NUM_SENTENCE = 6,
 	NUM_SHADOW_PALETTE = 8,
 	KEY_SET_OPTIONS = 3456 // WinCE
 };
@@ -724,7 +725,7 @@ public:
 	/* Actor talking stuff */
 	byte _actorToPrintStrFor;
 	int _sentenceNum;
-	SentenceTab _sentence[6];
+	SentenceTab _sentence[NUM_SENTENCE];
 	StringTab _string[6];
 	void actorTalk();
 	void stopTalk();

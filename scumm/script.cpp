@@ -484,12 +484,12 @@ void Scumm::setResult(int value) {
 }
 
 void Scumm::push(int a) {
-	assert(_scummStackPos >= 0 && (unsigned int)_scummStackPos < ARRAYSIZE(_scummStack));
+	assert(_scummStackPos >= 0 && _scummStackPos < ARRAYSIZE(_scummStack));
 	_scummStack[_scummStackPos++] = a;
 }
 
 int Scumm::pop() {
-	if ((_scummStackPos < 1) || ((unsigned int)_scummStackPos > ARRAYSIZE(_scummStack))) {
+	if (_scummStackPos < 1 || _scummStackPos > ARRAYSIZE(_scummStack)) {
 		error("No items on stack to pop() for %s (0x%X) at [%d-%d]", getOpcodeDesc(_opcode), _opcode, _roomResource, vm.slot[_currentScript].number);
 	}
 
@@ -556,7 +556,7 @@ void Scumm::freezeScripts(int flag) {
 		}
 	}
 
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < NUM_SENTENCE; i++)
 		_sentence[i].freezeCount++;
 
 	if (vm.cutSceneScriptIndex != 0xFF) {
@@ -575,7 +575,7 @@ void Scumm::unfreezeScripts() {
 		}
 	}
 
-	for (i = 0; i < 6; i++) {
+	for (i = 0; i < NUM_SENTENCE; i++) {
 		if (_sentence[i].freezeCount > 0)
 			_sentence[i].freezeCount--;
 	}
@@ -594,7 +594,7 @@ void Scumm::runAllScripts() {
 	_currentScript = 0xFF;
 	for (_curExecScript = 0; _curExecScript < NUM_SCRIPT_SLOT; _curExecScript++) {
 		if (vm.slot[_curExecScript].status == ssRunning && vm.slot[_curExecScript].didexec == 0) {
-			_currentScript = (char)_curExecScript;
+			_currentScript = (byte)_curExecScript;
 			getScriptBaseAddress();
 			getScriptEntryPoint();
 			executeScript();
