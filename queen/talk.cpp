@@ -943,7 +943,8 @@ void Talk::speakSegment(
 	// FIXME - it seems the french talkie version has a useless voice file ; 
 	// the c30e_102 file is very similar to c30e_101, so there is no need to 
 	// play it. This voice was used in room 30 (N8) when talking to Klunk.
-	if (!(_vm->resource()->getLanguage() == FRENCH && !strcmp(voiceFileName, "c30e_102")))
+	if (!(_vm->resource()->getLanguage() == FRENCH && !strcmp(voiceFileName, "c30e_102"))
+		&& _vm->sound()->speechOn())
 		_vm->sound()->playSfx(voiceFileName);
 
 	int faceDirectionCommand = 0;
@@ -1011,7 +1012,8 @@ void Talk::speakSegment(
 	int startFrame = 0;
 
 	if (_talkHead && isJoe) {
-		_vm->graphics()->setBobText(bob, segment, textX, textY, color, true);
+		if (_vm->subtitles())
+			_vm->graphics()->setBobText(bob, segment, textX, textY, color, true);
 		defaultAnimation(segment, isJoe, parameters, startFrame, bankNum);
 	}
 	else {
@@ -1066,7 +1068,8 @@ void Talk::speakSegment(
 			headStringAnimation(parameters, bobNum, bankNum);
 		}
 
-		_vm->graphics()->setBobText(bob, segment, textX, textY, color, _talkHead);
+		if (_vm->subtitles())
+			_vm->graphics()->setBobText(bob, segment, textX, textY, color, _talkHead);
 
 		if (parameters->animation[0] != '\0' && parameters->animation[0] != 'E') {
 			stringAnimation(parameters, startFrame, bankNum);
