@@ -47,7 +47,8 @@ SkyAdlibMusic::~SkyAdlibMusic(void) {
 void SkyAdlibMusic::setVolume(uint8 volume) {
 
 	_musicVolume = volume;
-	_mixer->setMusicVolume(_musicVolume << 1);
+	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
+		_channels[cnt]->updateVolume(volume | 128);
 }
 
 void SkyAdlibMusic::premixerCall(int16 *buf, uint len) {
@@ -98,6 +99,7 @@ void SkyAdlibMusic::setupChannels(uint8 *channelData) {
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
 		uint16 chDataStart = ((channelData[(cnt << 1) | 1] << 8) | channelData[cnt << 1]) + _musicDataLoc;
 		_channels[cnt] = new SkyAdlibChannel(_musicData, chDataStart);
+		_channels[cnt]->updateVolume(_musicVolume | 128);
 	}
 }
 
