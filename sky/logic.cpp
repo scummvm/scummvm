@@ -1092,8 +1092,18 @@ uint32 SkyLogic::fnIdle(uint32 a, uint32 b, uint32 c) {
 	error("Stub: fnIdle");
 }
 
-uint32 SkyLogic::fnInteract(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnInteract");
+uint32 SkyLogic::fnInteract(uint32 targetId, uint32 b, uint32 c) {
+	_compact->mode += 4; // next level up
+	_compact->logic = L_SCRIPT;
+	Compact *cpt = SkyState::fetchCompact(targetId);
+
+	uint16 *scriptNo = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode);
+	uint16 *offset   = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2);
+
+	*scriptNo = cpt->actionScript;
+	*offset = 0;
+
+	return 0;
 }
 
 uint32 SkyLogic::fnStartSub(uint32 a, uint32 b, uint32 c) {
