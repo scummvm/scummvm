@@ -558,7 +558,7 @@ protected:
 
 	virtual void decodeParseString(int a, int b);
 
-	void unknownEA_func(int arrayId, int newX, int newY, int d);
+	void redimArray(int arrayId, int newX, int newY, int d);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
 
@@ -587,7 +587,7 @@ protected:
 	void o6_localizeArray();
 	void o6_unknownEE();
 	void o6_unknownFA();
-	void o6_unknownEA();
+	void o6_redimArray();
 	void o6_readINI();
 	void o6_unknownF9();
 };

@@ -339,7 +339,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		/* E8 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_seekFile),
-		OPCODE(o6_unknownEA),
+		OPCODE(o6_redimArray),
 		OPCODE(o6_invalid),
 		/* EC */
 		OPCODE(o6_invalid),
@@ -1110,7 +1110,7 @@ void ScummEngine_v6he::o6_seekFile() {
 	warning("stub o6_seekFile(%d, %d, %d)", a, b, c);
 }
 
-void ScummEngine_v6he::o6_unknownEA() {
+void ScummEngine_v6he::o6_redimArray() {
 	int edi, esi, eax;
 	edi = pop();
 	esi = pop();
@@ -1124,27 +1124,27 @@ void ScummEngine_v6he::o6_unknownEA() {
 	eax = fetchScriptByte();
 	switch (eax) {
 	case 199:
-		unknownEA_func(fetchScriptWord(), esi, edi, 5);
+		redimArray(fetchScriptWord(), esi, edi, 5);
 		break;
 	case 202:
-		unknownEA_func(fetchScriptWord(), esi, edi, 3);
+		redimArray(fetchScriptWord(), esi, edi, 3);
 		break;
 	default:
 		break;
 	}
 }
 
-void ScummEngine_v6he::unknownEA_func(int arrayId, int newX, int newY, int d) {
+void ScummEngine_v6he::redimArray(int arrayId, int newX, int newY, int d) {
 	// Used in mini game at Cosmic Dust Diner in puttmoon
 	int var_2, var_4, ax, cx;
 
 	if (readVar(arrayId) == 0)
-		error("unknownEA_func: Reference to zeroed array pointer");
+		error("redimArray: Reference to zeroed array pointer");
 
 	byte *ptr = getResourceAddress(rtString, readVar(arrayId));
 
 	if (!ptr)
-		error("unknownEA_func: Invalid array (%d) reference", readVar(arrayId));
+		error("redimArray: Invalid array (%d) reference", readVar(arrayId));
 
 	if (d == 5)
 		var_2 = 2;
@@ -1160,7 +1160,7 @@ void ScummEngine_v6he::unknownEA_func(int arrayId, int newX, int newY, int d) {
 	ax = var_4 * READ_LE_UINT16(ptr + 2) * READ_LE_UINT16(ptr + 4);
 
 	if (ax == cx)
-		error("unknownEA_func: array %d redim mismatch", readVar(arrayId));
+		error("redimArray: array %d redim mismatch", readVar(arrayId));
 
 	WRITE_LE_UINT16(ptr, d);
 	WRITE_LE_UINT16(ptr + 2, newX + 1);
