@@ -617,7 +617,6 @@ void Scumm_v8::o8_mod() {
 }
 
 void Scumm_v8::o8_wait() {
-	// TODO
 	int actnum, offs;
 	Actor *a;
 	byte subOp = fetchScriptByte();
@@ -768,7 +767,6 @@ void Scumm_v8::o8_blastText() {
 }
 
 void Scumm_v8::o8_cursorCommand() {
-	// TODO
 	byte subOp = fetchScriptByte();
 	int a, i;
 	int args[16];
@@ -861,7 +859,6 @@ void Scumm_v8::o8_createBoxMatrix() {
 }
 
 void Scumm_v8::o8_resourceRoutines() {
-	// TODO
 	byte subOp = fetchScriptByte();
 	int resid = pop();
 
@@ -930,7 +927,6 @@ void Scumm_v8::o8_resourceRoutines() {
 }
 
 void Scumm_v8::o8_roomOps() {
-	// TODO
 	byte subOp = fetchScriptByte();
 	int a, b, c, d, e;
 	
