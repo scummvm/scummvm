@@ -34,6 +34,7 @@
 #include "verbs.h"
 #include "common/gameDetector.h"
 #include "common/config-file.h"
+#include "gui/console.h"
 #include "gui/newgui.h"
 #include "gui/message.h"
 #include "sound/mixer.h"
@@ -1003,7 +1004,7 @@ void Scumm::saveloadDialog()
 void Scumm::debuggerDialog()
 {
 	if (!_debuggerDialog)
-		_debuggerDialog = new DebuggerDialog(_newgui, this, _realWidth, _realHeight / 5);
+		_debuggerDialog = new ConsoleDialog(_newgui);
 	runDialog(_debuggerDialog);
 }
 
@@ -1135,7 +1136,7 @@ void Scumm::processKbd()
 			_defaultTalkDelay = 5;
 
 		_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
-	} else if (_lastKeyHit == '~') { // Debug console
+	} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console
 		debuggerDialog();
 	}
 

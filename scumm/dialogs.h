@@ -134,17 +134,6 @@ public:
 	PauseDialog(NewGui *gui, Scumm *scumm);
 };
 
-class DebuggerDialog : public ScummDialog {
-protected:
-	ScummVM::StringList cmd_history;
-	String cmd_current;
-
-public:
-	DebuggerDialog(NewGui *gui, Scumm *scumm, int width, int height);
-	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
-	virtual void drawDialog();
-};
-
 #ifdef _WIN32_WCE
 
 class KeysDialog : public ScummDialog {

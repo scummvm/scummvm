@@ -670,52 +670,6 @@ PauseDialog::PauseDialog(NewGui *gui, Scumm *scumm)
 {
 }
 
-#pragma mark -
-
-DebuggerDialog::DebuggerDialog(NewGui *gui, Scumm *scumm, int width, int height)
-        : ScummDialog(gui, scumm, 0, 0, width, height)
-{
-	draw();
-}
-
-void DebuggerDialog::drawDialog()
-{
-        //int    history_len = cmd_history.size();
-
-	// Draw box and border
-	_gui->blendRect(_x, _y, _w, _h, _gui->_bgcolor);
-	/*_gui->line(_x, _y, _x, _h, _gui->_color);
-	_gui->line(_w, _y, _w, _y, _gui->_color);
-	_gui->line(_x, _h, _w, _h, _gui->_shadowcolor);*/
-
-	_gui->addDirtyRect(_x, _y, _w, _h);
-
-	// Draw items
-	//  ... history_len - ((_h / kLineHeight) * _page)
-}
-
-void DebuggerDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
- if ((ascii == '~') || (keycode == 27)) {		// Total abort on tilde or escape
-	close();
-	return;
- } else if (ascii == '\r' || ascii == '\n') {		// Run command on enter/newline
-	// TODO: Add some kind of pop() method to StringList,
-	// so we can remove old obsolete entries and not waste memory
-	cmd_history.push_back(cmd_current);
-	// _scumm.debugger.parseCommand(cmd_current, (void*)this.printCallback);
-	cmd_current.clear();
-	draw();
- } else if (keycode == 8) {				// Backspace
-	cmd_current.deleteLastChar();
-	draw();
- } else if ((keycode >= 31) && (keycode <= 122)) {	// Printable ASCII, add to string
-	cmd_current+=(char)ascii;
-	draw();
- } else {
-	debug(2, "Unhandled keycode from DebuggerDialog: %d\n", keycode);
- }
-}
-
 #ifdef _WIN32_WCE
 
 #pragma mark -
