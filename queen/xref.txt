@@ -15,14 +15,30 @@ unpack()					Graphics::bankUnpack
 COMMAND
 =======
 CLEAR_COMMAND()
+EXECUTE_ACTION()
+OPEN_CLOSE_OTHER()
+P1_SET_CONDITIONS()
+P2_SET_AREAS()
+P3_SET_OBJECTS()
+P4_SET_ITEMS()
 -
 ACTION,ACTION2
 CLEVEL
+COM
 COMMANDstr
+COMMAX
+COND
+CURRCOM
+DEFCOMM
+GSET
 OLDVERB,VERB
 OLDNOUN,NOUN,NOUN2
 PARSE
 SUBJ1,SUBJ2,SUBJECT
+TA2
+TEMPI
+TEMPstr
+WORDstr
 
 
 CREDIT SCRIPTING SYSTEM
@@ -43,18 +59,23 @@ Czone
 
 CUTAWAY
 =======
+action_special_move			Cutaway::actionSpecialMove
 CUTAWAY()					Cutaway::run
 MAKE_COMPLEX_ANIM()			Cutaway::makeComplexAnimation
 SCENE_START()
 SCENE_END()
+-
 CUTJOEF
 CUTON
 CUTQUIT						Cutaway::_quit (rename and move to Logic?)
 FINAL_ROOM					Cutaway::_finalRoom
 IROOM						Cutaway::_initialRoom
-TROOM						Cutaway::_temporaryRoom
 OBJ_CUT
 OBJ_ANIM
+OLDBANK
+PERSON_DATA
+SCENE
+TROOM						Cutaway::_temporaryRoom
 
 
 DEBUG
@@ -64,6 +85,18 @@ debuginfo()
 select_new_room()
 -
 AREAVAR						(boolean, if true display objects/areas boxes)
+
+
+GAME SETTINGS
+=============
+-
+config_request
+MUSICTOGGLE
+SFXTOGGLE
+TALKSPD						Logic::_talkSpeed
+TEXTTOGGLE
+VersionStr					Logic::language (add more functions if needed)
+VOICETOGGLE
 
 
 GRAPHICS
@@ -83,7 +116,7 @@ freeallframes()				Graphics::frameEraseAll(true)
 freeframes()				Graphics::frameEraseAll(false)
 invbob()					Graphics::bobDrawInventoryItem
 loadbackdrop()				Graphics::loadBackdrop
-loadfont()					*not needed*
+loadfont()					TextRenderer::init
 loadpanel()					Graphics::loadPanel
 MAKE_SPEAK_BOB				Graphics::bobSetText
 makeanim()					Graphics::bobAnimNormal
@@ -98,8 +131,8 @@ bobs						Graphics::_bobs
 BDxres						Display::_bdWidth
 BDyres						display::_bdHeight
 cambob						Graphics::_cameraBob
-clothespal
-dresspal
+clothespal					Display::PAL_JOE_CLOTHES
+dresspal					Display::PAL_JOE_DRESS
 font						TextRenderer::FONT
 font_sizes					TextRenderer::charWidth
 OUTLINE						*not needed*
@@ -122,11 +155,12 @@ no_check_keys
 
 INVENTORY
 =========
+DEL_ITEM_NUM()
+INS_ITEM_NUM()
 INVDWN()
 INVENTORY()
 INVUP()
-DEL_ITEM_NUM()
-INS_ITEM_NUM()
+SETUP_ITEMS()
 -
 INV1,INV2,INV3,INV4
 
@@ -136,11 +170,23 @@ JOE
 FACE_JOE()					Logic::joeFace
 GRAB_DIR()
 GRAB_JOE()
+SETUP_HERO()				Logic::joeSetupInRoom
 SETUP_JOE()					Logic::joeSetup
+WALK()
 -
 JOE_RESPstr 				Logic::_joeResponse
 JOEF,JX,JY,JDIR				Logic::_joe.*
 JOEWALK														// legal values = 0,1,2,3
+
+
+JOURNAL
+=======
+prompt_do()
+USE_JOURNAL()				Graphics::useJournal
+-
+choice
+decbase
+in_journal
 
 
 LOGIC
@@ -150,18 +196,15 @@ DISP_ROOM()					Logic::roomDisplay
 FIND_BOB()					Logic::findBob
 FIND_DEFAULT()
 FIND_FRAME()				Logic::findFrame
-FIND_GRAPHIC()
+FIND_GRAPHIC()				Logic::graphicData
 FIND_SCALE()				Logic::findScale
 FIND_VERB()
 LOOK()
 LOOK_ICON()
 LOOK_ITEM()
 LOOK_ROOM()
-P1_SET_CONDITIONS()
-P2_SET_AREAS()
-P3_SET_OBJECTS()
-P3_COPY_FROM()
-P4_SET_ITEMS()
+P3_COPY_FROM()				Cutaway::objectCopy
+R_MAP()						// handle map 'm1' 
 REDISP_OBJECT()				Logic::roomRefreshObject
 restart_game()
 SELECT()
@@ -170,15 +213,13 @@ SELECT_NOUN()
 SELECT_VERB()
 SETUP_BOBS()				Graphics::bobSetupControl
 SETUP_FURNITURE()			Logic::roomSetupFurniture
-SETUP_ITEMS()
-SETUP_ROOM()				Logic::roomChanged
-SETUP_SCRVARS()
+SETUP_ROOM()				QueenEngine::roomChanged
+SETUP_SCREENS()				*not needed* (only calls Graphics::loadPanel)
+SETUP_VARS()
 update() 					Graphics::update
 USE_UNDERWEAR()
 USE_CLOTHES()
 USE_DRESS()
-USE_JOURNAL()				Graphics::useJournal
-WALK()						Logic::joeWalk
 -
 A_ANIMstr 					Logic::_aAnim
 A_ANIM_MAX					Logic::_numAAnim
@@ -200,10 +241,12 @@ COM_I_MAX					Logic::_numCmdInventory
 COM_LIST					Logic::_cmdList
 COM_LIST_MAX				Logic::_numCmdList
 DESCTOT						Logic::_numDescriptions
+ENTRY_OBJ					Logic::_entryObj
 FMAX						Logic::_numFurnitureStatic
 FMAXA						Logic::_numFurnitureAnimated
 FMAXLEN						Logic::_numFurnitureAnimatedLen
 FRAMES						Logic::_numFrames
+FTOT						*queen.c/SETUP_FURNITURE local var*
 FURN_DATA_MAX				Logic::_numFurniture
 GAMESTATE					Logic::_gameState
 GRAPHIC_ANIM_MAX			Logic::_numGraphicAnim
@@ -213,12 +256,14 @@ ITEMTOT						Logic::_numItems
 ITEM_DATA					Logic::_itemData
 NAMETOT						Logic::_numNames
 NEW_ANIM					Logic::_newAnim
+OBJ_DESC_DATA				Logic::_objectDescription
 OBJ_DESC_MAX				Logic::_numObjDesc
 OBJECT_BOX					Logic::_objectBox
 OBJECT_DATA					Logic::_objectData
 OBJECT_DESCRstr				Logic::_objDescription
 OBJECT_NAMEstr				Logic::_objName
 OBJMAX						Logic::_objMax
+OBJMAXv						*== Logic::_objMax[Logic::_currentRoom]*
 OBJTOT						Logic::_numObjects
 OLDROOM,ROOM,NEW_ROOM  		Logic::_*oom
 ROOMTOT						Logic::_numRooms
@@ -232,11 +277,12 @@ WALK_OFF_MAX				Logic::_numWalkOffs
 PERSONS
 =======
 ALLOCATE_PERSON				Logic::personAllocate
+CREATE_ANIM()				Logic::animCreate
 SET_PERSON_DATA				Logic::personSetData
 SETUP_PERSON				Logic::personSetup
 OBJ_PERSON					Logic::objectForPerson
 -
-PERSON_FACE,
+PERSON_FACE
 PERSON_FACE_MAX
 PERSON_FRAMES				Logic::_personFrames
 P_ANIMstr					Person.anim
@@ -254,6 +300,14 @@ topen()						Resource::loadFile
 tseek() 					*not needed*
 
 
+SAVE/LOAD SYSTEM
+================
+game_load()
+game_save()
+-
+walkgameload
+
+
 SCREEN
 ======
 changejoepal()				Display::palSetJoe
@@ -268,6 +322,7 @@ setpal()					Display::palSet
 -
 COMPANEL
 FULLSCREEN					Graphics::_fullscreen
+nopalscroll					Display::_pals.scrollable
 palette						Graphics::_paletteRoom
 panelflag					Graphics::_panelFlag
 tpal						Graphics::_paletteScreen
@@ -282,6 +337,7 @@ sfxplay()
 -
 bamflag
 bamindex
+CURRSONG
 SFXNAME						Logic::_sfxName
 tmpbamflag
 VOLUME
@@ -292,6 +348,9 @@ STATE
 ALTER_DEFAULT()
 ALTER_STATE()
 FIND_STATE()				Logic::findState*
+-
+Gstr						// grab state
+Pstr						// FIND_STATE result
 
 
 TALK
@@ -304,12 +363,23 @@ talk						Talk::talk
 TALK_PROC					Talk::talk
 -
 A1,A12
-TALK_SELECTED
-OLDLEVEL,LEVEL
+actiondata					Talk::_speechParameters
+HEAD
+JMAX
+JOE2str
+JOEKEYstr
+LEVEL
+LEVELMAX
+OLDLEVEL
+OLDS
+OWALK
+PERstr
+PERSON2str
+PKEYstr
 TALKHEAD
 TALKQUIT
-TALKSPD
 TALKstr
+TALK_SELECTED
 
 
 TEXTS
@@ -318,7 +388,7 @@ blanktexts()				Graphics::textClear
 drawtext()					Graphics::textDrawAll
 Ink() 						Graphics::textCurrentColor
 menutext()
-MIDDLE() 
+MIDDLE() 					Graphics::textCenterX / Graphics::textSetCentered
 text()						Graphics::textSet
 textlen() 					Graphics::textWidth
 -
@@ -341,11 +411,13 @@ MOVE_OTHER()				Walk::personMove
 -
 AREALIST					Walk::_areaList
 AREASTRIKE					Walk::_areaStrike
+MAPC						*findFreeArea local var*
 movdata						Walk::_moveData
-NEWP,OLDP					* locals in joeMove && personMove *
-OLDX,X,OLDY,Y				* passed as arguments *
+NEWP,OLDP					*locals in joeMove && personMove*
+OLDX,X,OLDY,Y				*passed as arguments*
 WALK_DATA					Walk::_walkData
 WALKI						Walk::_walkDataCount
+X2,X1,XD,YD					*incWalkData && findFreeArea locals*
 
 
 ZONES
@@ -362,79 +434,54 @@ zones						Logic::_zones
 (UNSORTED)
 ==========
 in()						defs.h InRange() macro
-game_save()
-game_load()
-R_MAP()
-check_cut_quit()
-EXECUTE_ACTION()
 CHECK_PLAYER()
-SETUP_VARS()
-SETUP_SCREENS()
-int prompt_do()
-SETUP_HERO()				Logic::joeSetupInRoom
-find_cd_cut()
+find_cd_cut()				findCdCut
 find_cd_desc()
-OPEN_CLOSE_OTHER()
-CREATE_ANIM()				Logic::animCreate
 -
-VersionStr					Logic::language (add more functions if needed)
-Gstr
-PERstr
-Pstr
-Kstr
-WORDstr
-TEMPstr
+Kstr				
 bank9
-OBJECT_DESCRstr
-PERSON2str
-JOE2str
-PKEYstr
-JOEKEYstr
-JOEH,
 NEWDEF,
-NEWA,
-MAPC,M,A,XD,YD,RES,
+M,A,
 FRAME,
-AM,WX,WY,Y1,
-A2,PX,PY,LD,DIFF,
-SFXTOGGLE,VOICETOGGLE,MUSICTOGGLE,TEXTTOGGLE
-DESC2,DESC,
-OBJMAXv,
-OBJ_DESC_DATA,
-PERSON_DATA,
+AM,
+WX,WY,
+PX,PY,
+LD,FD
+DESC2,DESC
 PERSON_OBJ
-FS,FE,FACE,TY,DY,BS,DS,
-TEMPA,
+FS,FE,FACE,
+TY,
+DY,
 I2,
-SFACTOR, // shrink factor, used to scale (down) the bobs
-ENTRY_OBJ,
-SCENE,
-DEFCOMM,
 N,V,
-ds,bs,bx,by,dx,dy,SX,SY,IX,IY,X2,X1,IY,SFAC,FDIR,
-OBJ,E,SF2,T,
-OLDBANK,RET,OLDS,CH,GSET,OFFSET,
-OLDG,COND,COM,TEMPI,CURRCOM,TA2,COMMAX,S2,S1,ITEM,TYPE,HEAD,C,
-BANK,FD,NAME,TL,TI,TS,WC,IMAGE,OWALK,LEVELMAX,JMAX,
-BNUM,D,P,LI,R,FTOT,
-CANTQUIT,
-CURRSONG,
-walkgameload
-actiondata
-nopalscroll
-in_journal
-decbase
-choice
-config_request
+ds,bs,
+bx,by,
+dx,dy,
+SFAC,FDIR,
+OBJ,E,T,
+CH,
+OLDG,S2,S1,ITEM,TYPE,C,
+NAME,TL,TI,TS,WC,IMAGE,
+D,P,LI,R
+CANTQUIT
 
 
 (NO NEED TO BE GLOBAL)
 ===============
-Nstr,F1,F2,F3,F4,F5,F6,F7,F8,SF,BF,AS,MS ; MOVE_OTHER (struct movdata *)
-Nstr,S,F,BODY,BF,RF,AF,SANIMstr,FF ; FIND_SACTION (struct action *)
-CURRBOB ; SETUP_FURNITURE, REDISP_OBJECT, DISP_OBJECTS
-PSY,PSX,CSX,DX1,DX2,DY1,DY2,PCF,CCF,CSY ; FIND_NEWP, FIND_OLDP
-tx,ty,SFRAME,EFRAME,SPEED ; FIND_GRAPHIC
+Nstr,F1,F2,F3,F4,F5,F6,F7,F8,SF,BF,AS,MS // MOVE_OTHER (struct movdata *)
+Nstr,S,F,BODY,BF,RF,AF,SANIMstr,FF // FIND_SACTION (struct action *)
+CURRBOB // SETUP_FURNITURE, REDISP_OBJECT, DISP_OBJECTS
+PSY,PSX,CSX,DX1,DX2,DY1,DY2,PCF,CCF,CSY // FIND_NEWP, FIND_OLDP
+tx,ty,SFRAME,EFRAME,SPEED // FIND_GRAPHIC
 AREAMAXv
 CURRY
 OMAX,OMAXA
+TEMPA
+SFACTOR, // shrink factor, used to scale (down) the bobs
+BANK,BNUM
+DIFF // LOOK local var
+RET // P1_SET_CONDITIONS local var
+BS,DS // CALC_SCALE
+SX,SY,
+NEWA // FIND_FREE_AREA local
+IX,IY // Cutaway locals
