@@ -80,8 +80,14 @@ bool AnimationState::init(const char *name) {
 
 	p = 0;
 	while (!feof(f)) {
-		if (fscanf(f, "%i %i", &palettes[p].end, &palettes[p].cnt) != 2)
+		int end, cnt;
+
+		if (fscanf(f, "%i %i", &end, &cnt) != 2)
 			break;
+
+		palettes[p].end = (uint) end;
+		palettes[p].cnt = (uint) cnt;
+
 		for (i = 0; i < palettes[p].cnt; i++) {
 			int r, g, b;
 			fscanf(f, "%i", &r);
@@ -410,6 +416,26 @@ bool AnimationState::decodeFrame() {
 	return false;
 }
 
+MovieInfo MoviePlayer::_movies[] = {
+	{ "carib",    222 },
+	{ "escape",   187 },
+	{ "eye",      248 },
+	{ "finale",  1485 },
+	{ "guard",     75 },
+	{ "intro",   1800 },
+	{ "jungle",   186 },
+	{ "museum",   167 },
+	{ "pablo",     75 },
+	{ "pyramid",   60 },
+	{ "quaram",   184 },
+	{ "river",    656 },
+	{ "sailing",  138 },
+	{ "shaman",   788 },
+	{ "stone1",    34 },
+	{ "stone2",   282 },
+	{ "stone3",    65 }
+};
+
 void MoviePlayer::openTextObject(MovieTextObject *obj) {
 	if (obj->textSprite)
 		_vm->_graphics->createSurface(obj->textSprite, &_textSurface);
@@ -444,7 +470,7 @@ void MoviePlayer::drawTextObject(AnimationState *anim, MovieTextObject *obj) {
 
 int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *musicOut) {
 #ifdef USE_MPEG2
-	int frameCounter = 0, textCounter = 0;
+	uint frameCounter = 0, textCounter = 0;
 	PlayingSoundHandle handle;
 	bool skipCutscene = false, textVisible = false;
 	uint32 flags = SoundMixer::FLAG_16BITS;
@@ -454,7 +480,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 	memcpy(oldPal, _vm->_graphics->_palCopy, 1024);
 
 	AnimationState *anim = new AnimationState(_vm);
-	
+
 	if (!anim->init(filename)) {
 		delete anim;
 		// Missing Files? Use the old 'Narration Only' hack
@@ -467,6 +493,22 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 #ifndef SCUMM_BIG_ENDIAN
 	flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
 #endif
+
+	int i;
+	uint leadOutFrame = (uint) -1;
+
+	for (i = 0; i < ARRAYSIZE(_movies); i++) {
+		if (scumm_stricmp(filename, _movies[i].name) == 0) {
+			if (_movies[i].frames >= 60)
+				leadOutFrame = _movies[i].frames - 60;
+			else
+				leadOutFrame = 0;
+			break;
+		}
+	}
+
+	if (i == ARRAYSIZE(_movies))
+		warning("Unknown movie, '%s'", filename);
 
 	while (anim->decodeFrame()) {
 		if (text && text[textCounter]) {
@@ -495,6 +537,9 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 
 		frameCounter++;
 
+		if (frameCounter == leadOutFrame && musicOut)
+			_vm->_sound->playFx(0, musicOut, 0, 0, RDSE_FXLEADOUT);
+
 #ifdef BACKEND_8BIT
 		_vm->_graphics->updateDisplay(true);
 #else
@@ -512,6 +557,37 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 
 	}
 
+	if (!skipCutscene) {
+		// Sleep for one frame so that the last frame is displayed.
+		_vm->_system->delay_msecs(1000 / 12);
+	}
+
+#ifndef BACKEND_8BIT
+	// Most movies fade to black on their own, but not all of them. Since
+	// we may be hanging around in the cutscene player for a while longer,
+	// waiting for the lead-out sound to finish, paint the overlay black.
+
+	anim->clearDisplay();
+#else
+	_vm->_graphics->clearScene();
+	_vm->_graphics->setNeedFullRedraw();
+#endif
+
+	// If the speech is still playing, redraw the subtitles. At least in
+	// the English version this is most noticeable in the "carib" cutscene.
+
+	if (textVisible && handle.isActive())
+		drawTextObject(anim, text[textCounter]);
+
+	if (text)
+		closeTextObject(text[textCounter]);
+
+#ifndef BACKEND_8BIT
+	anim->updateDisplay();
+#else
+	_vm->_graphics->updateDisplay(true);
+#endif
+
 	// Wait for the voice to stop playing. This is to make sure
 	// that we don't cut off the speech in mid-sentence, and - even
 	// more importantly - that we don't free the sound buffer while
@@ -522,14 +598,9 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 		_vm->_system->delay_msecs(100);
 	}
 
-	if (text)
-		closeTextObject(text[textCounter]);
+	// Clear the screen again
 
 #ifndef BACKEND_8BIT
-	// Most movies fade to black on their own, but not all of them. Since
-	// we may be hanging around in the cutscene player for a while longer,
-	// waiting for the lead-out sound to finish, paint the overlay black.
-
 	anim->clearDisplay();
 	anim->updateDisplay();
 #endif
@@ -537,12 +608,12 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 	_vm->_graphics->clearScene();
 	_vm->_graphics->setNeedFullRedraw();
 
-	if (!skipCutscene)
-		_vm->_sound->playLeadOut(musicOut);
-
 	_vm->_graphics->setPalette(0, 256, oldPal, RDPAL_INSTANT);
 
 	delete anim;
+
+	// Wait for the lead-out to stop, if there is any.
+	_vm->_sound->waitForLeadOut();
 
 	// Lead-in and lead-out music are, as far as I can tell, only used for
 	// the animated cut-scenes, so this seems like a good place to close
@@ -688,8 +759,10 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], uint
 		// FIXME: For now, only play the lead-out music for cutscenes
 		// that have subtitles.
 
-		if (!skipCutscene)
-			_vm->_sound->playLeadOut(musicOut);
+		if (!skipCutscene && musicOut) {
+			_vm->_sound->playFx(0, musicOut, 0, 0, RDSE_FXLEADOUT);
+			_vm->_sound->waitForLeadOut();
+		}
 
 		_vm->_graphics->setPalette(0, 256, oldPal, RDPAL_INSTANT);
 	}

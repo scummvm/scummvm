@@ -131,7 +131,7 @@ public:
 	void stopMusic(void);
 	void saveMusicState(void);
 	void restoreMusicState(void);
-	void playLeadOut(uint8 *leadOut);
+	void waitForLeadOut(void);
 	int32 streamCompMusic(const char *filename, uint32 musicId, bool looping);
 	int32 musicTimeRemaining(void);
 

@@ -54,7 +54,6 @@ typedef sequence_t mpeg2_sequence_t;
 
 namespace Sword2 {
 
-
 #ifdef BACKEND_8BIT
 #define SQR(x) ((x) * (x))
 #define SHIFT 3
@@ -135,10 +134,17 @@ private:
 #endif
 };
 
+struct MovieInfo {
+	char name[9];
+	uint frames;
+};
+ 
 class MoviePlayer {
 private:
 	Sword2Engine *_vm;
 	uint8 *_textSurface;
+
+	static struct MovieInfo _movies[];
 
 	void openTextObject(MovieTextObject *obj);
 	void closeTextObject(MovieTextObject *obj);
