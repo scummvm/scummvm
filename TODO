@@ -8,12 +8,9 @@ Residual TODO list (in rough order of priority):
  * Implement bitmap costume drawing
  * Implement 2D primitives 
  * Save/Load support
- * Implement rendering of odd-sized 'overlay'(?) SMUSH animations, such as mo_ts
-   at the beginning of the first scene
+ * Fix implementation of overlay SMUSH rendering
+ * Fix speed SMUSH frame update
  * Add OpenGL lighting
  * Implement iMuse
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (MSVC, etc)
  * Cross platform GUI for debug input dialogs (ctrl+e ctrl+g etc) - original used MFC
-
-MSVC notes:
- round() function in lua.cpp's check_int does not exist in MSVC.
