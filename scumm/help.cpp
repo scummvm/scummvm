@@ -98,9 +98,10 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page,
 		ADD_BIND("Ctrl s", "Show memory consumption");
 		ADD_BIND("Ctrl f", "Run in fast mode (*)");
 		ADD_BIND("Ctrl g", "Run in really fast mode (*)");
-		ADD_BIND("Ctrl Alt 0-9", "Set graphics filter");
+		ADD_BIND("Ctrl m", "Toggle mouse capture");
+		ADD_BIND("Ctrl Alt 1-8", "Switch between graphics filters");
+		ADD_BIND("Ctrl Alt + and -", "Increase/Decrease the scale factor");
 		ADD_BIND("Ctrl Alt a", "Toggle aspect-ratio correction");
-		ADD_BIND("Ctrl Alt b", "Toggle bilinear filtering [OpenGL]");
 		ADD_LINE;
 		ADD_LINE;
 		ADD_LINE;
