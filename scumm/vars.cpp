@@ -206,6 +206,9 @@ void Scumm_v7::setupScummVars()
 
 void Scumm_v8::setupScummVars()
 {
+	// VAR_ROOM_HEIGHT = 1;
+	// VAR_ROOM_WIDTH = 2;
+
 	VAR_MOUSE_X = 3;
 	VAR_MOUSE_Y = 4;
 	VAR_VIRT_MOUSE_X = 5;
@@ -222,12 +225,22 @@ void Scumm_v8::setupScummVars()
 
 	VAR_TALK_ACTOR = 14;
 	VAR_HAVE_MSG = 15;
-	VAR_LEFTBTN_HOLD = 16;
+	VAR_LEFTBTN_HOLD = 16;	// FIXME: This is actually some kind of bitfield
 	VAR_RIGHTBTN_HOLD = 17;
 	VAR_LEFTBTN_DOWN = 18;
 	VAR_RIGHTBTN_DOWN = 19;
 
+	// VAR_TIMEDATE_YEAR = 24;
+	// VAR_TIMEDATE_MONTH = 25;
+	// VAR_TIMEDATE_DAY = 26;
+	// VAR_TIMEDATE_HOUR = 27;
+	// VAR_TIMEDATE_MINUTE = 28;
+	// VAR_TIMEDATE_SECOND = 29;
+
+	VAR_OVERRIDE = 30;
 	VAR_ROOM = 31;
+
+	//VAR_VOICE_MODE = 39; // 0 is voice, 1 is voice+text, 2 is text only
 	VAR_CURRENTDISK = 42;
 
 	VAR_ENTRY_SCRIPT = 51;
@@ -240,10 +253,10 @@ void Scumm_v8::setupScummVars()
 	VAR_CUTSCENE_START_SCRIPT = 58;
 	VAR_CUTSCENE_END_SCRIPT = 59;
 
-	VAR_CUTSCENEEXIT_KEY = 62;	// FIXME - guess based on script-1 (could also be 68)
+	VAR_CUTSCENEEXIT_KEY = 62;	// FIXME -  guess based on script-1 (could also be 68)
 
-	VAR_PAUSE_KEY = 64;				// ???
-	VAR_SAVELOADDIALOG_KEY = 65;	// ???
+	VAR_PAUSE_KEY = 64;
+	VAR_SAVELOADDIALOG_KEY = 65;
 
 
 	// FIXME - HACK: no clue where these really are located, but we need to put them
@@ -261,9 +274,8 @@ void Scumm_v8::setupScummVars()
 	VAR_CAMERA_ACCEL_Y = 110;
 
 	VAR_CUSTOMSCALETABLE = 111;	// FIXME - guess
-
-	VAR_TIMER_NEXT = 112;	// FIXME - guess based on script-1
-
+	VAR_TIMER_NEXT = 112;
+	// 113/114/115 are also TIMERs..
 	VAR_EGO = 126;
 
 	VAR_DEBUGMODE = 130;
