@@ -1061,15 +1061,15 @@ void Scumm_v2::o2_putActorAtObject() {
 }
 
 void Scumm_v2::o2_getActorElevation() {
-        getResultPos();
-        int act = getVarOrDirectByte(0x80);
-        Actor *a = derefActor(act, "o2_getActorElevation");
-        setResult(a->elevation / 2);
+	getResultPos();
+	int act = getVarOrDirectByte(0x80);
+	Actor *a = derefActor(act, "o2_getActorElevation");
+	setResult(a->elevation / 2);
 }
 
 void Scumm_v2::o2_setActorElevation() {
 	int act = getVarOrDirectByte(0x80);
-	int elevation = getVarOrDirectByte(0x40);
+	int elevation = (int8)getVarOrDirectByte(0x40);
 
 	Actor *a = derefActor(act, "o2_setActorElevation");
 	a->elevation = elevation * 2;
