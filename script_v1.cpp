@@ -2488,7 +2488,6 @@ void Scumm::decodeParseString() {
 			else
 				offset = 0;
 			delay = (int)((getVarOrDirectWord(0x40) & 0xffff) * 7.5);
-
 			if (_gameId == GID_LOOM256) 
 				cd_play(this, 1, 0, offset, delay);
 			else
