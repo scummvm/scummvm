@@ -633,7 +633,9 @@ void Display::screenMode(int comPanel, bool inCutaway) {
 	}
 	else {
 		_fullscreen = 0;
-		_panel = (comPanel == 1);
+		if (comPanel == 1) {
+			_panel = true;
+		}
 	}
 }
 

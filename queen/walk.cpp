@@ -327,6 +327,7 @@ int16 Walk::joeMove(int direction, int16 endx, int16 endy, bool inCutaway) {
 	}
 
 	_graphics->bob(0)->animating = false;
+	// cyx: the NEW_ROOM = 0 is done in Command::grabCurrentSelection()
 	// XXX if ((CAN==-1) && (walkgameload==0)) NEW_ROOM=0;
 	// XXX walkgameload=0;
 	if (_joeMoveBlock) {

@@ -136,7 +136,7 @@ void Command::clear(bool clearTexts) {
 
 	_cmdText.clear();
 	if (clearTexts) {
-		_graphics->textClear(151, 151);
+		_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 	}
 	_parse = false;
 	_curCmd.init();
@@ -528,7 +528,6 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, const Verb &v, bool
 	// Check to see if object is actually an exit to another
 	// room. If so, then set up new room
 
-
 	ObjectData *objData = _logic->objectData(objNum);
 	if (objData->x != 0 || objData->y != 0) {
 		x = objData->x;
@@ -584,7 +583,7 @@ void Command::grabCurrentSelection() {
 
 	_selPosX += _logic->display()->horizontalScroll();
 
-	debug(0, "Command::grabCurrentSelection() - _curCmd.noun = %d, _curCmd.verb = %d", _curCmd.noun, _curCmd.verb.value());
+	debug(0, "Command::grabCurrentSelection() - _curCmd.noun = %d, _curCmd.verb = %d, objMax=%d", _curCmd.noun, _curCmd.verb.value(), _logic->currentRoomObjMax());
 	if (_curCmd.verb.isAction()) {
 		grabSelectedVerb();
 	}
@@ -596,6 +595,7 @@ void Command::grabCurrentSelection() {
 	}
 	else if (_selPosY < ROOM_ZONE_HEIGHT && _curCmd.verb.isNone()) {
 		// select without a command, do a WALK
+		_logic->newRoom(0); // cancel makeJoeWalkTo, that should be equivalent to cr10 fix
 		clear(true);
 		_logic->joeWalk(2);
 	}
@@ -888,7 +888,7 @@ bool Command::handleBadCommand(bool walk) {
 	if ((_selCmd.action.value() == VERB_WALK_TO || _selCmd.action.isNone()) && 
 		(_selCmd.noun > objMax || _selCmd.noun == 0)) {
 		if (_selCmd.action.isNone()) {
-			_graphics->textClear(151, 151);
+			_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 		}
 		_walk->joeMove(0, _selPosX, _selPosY, false); // XXX inCutaway parameter
 		return true;
@@ -1554,7 +1554,7 @@ void Command::lookCurrentRoom() {
 
 	if (i <= 0) {
 		_curCmd.oldNoun = _curCmd.noun;
-		_graphics->textClear(151, 151);
+		_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 		if (!_selCmd.defaultVerb.isNone()) {
 			_cmdText.displayTemp(INK_CMD_LOCK, true, _selCmd.defaultVerb);
 		}
@@ -1594,7 +1594,7 @@ void Command::lookCurrentIcon() {
 		if (_curCmd.action.isNone()) {
 			_cmdText.clear();
 		}
-		_graphics->textClear(151, 151);
+		_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 		lookCurrentItem();
 
 		// ensure that registers when move to top screen

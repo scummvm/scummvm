@@ -1900,7 +1900,7 @@ uint16 Logic::findObjectRoomNumber(uint16 zoneNum) const {
 	if (zoneNum > objectMax) {
 		// this is an area box, check for associated object
 		uint16 obj = _area[_currentRoom][zoneNum - objectMax].object;
-		if (obj != 0) {
+		if (obj != 0 && _objectData[obj].name != 0) {
 			// there is an object, get its number
 			noun = obj - _roomData[_currentRoom];
 		}
