@@ -828,7 +828,7 @@ void Graphics::closeBackgroundLayer(void) {
 	_layer = 0;
 }
 
-
+#ifdef BACKEND_8BIT
 void Graphics::plotYUV(byte *lut, int width, int height, byte *const *dat) {
 	byte *buf = _buffer + (40 + (400 - height) / 2) * RENDERWIDE + (640 - width) / 2;
 
@@ -852,6 +852,7 @@ void Graphics::plotYUV(byte *lut, int width, int height, byte *const *dat) {
 		ypos += width;
 	}
 }
+#endif
 
 
 } // End of namespace Sword2

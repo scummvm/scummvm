@@ -225,7 +225,10 @@ public:
 
 	void plotPoint(uint16 x, uint16 y, uint8 colour);
 	void drawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 colour);
-	void plotYUV(byte *lut, int width, int height, uint8 *const *buf);
+#ifdef BACKEND_8BIT
+	void plotYUV(byte *lut, int width, int height, byte *const *dat);
+#endif
+
 
 	int32 createSurface(SpriteInfo *s, uint8 **surface);
 	void drawSurface(SpriteInfo *s, uint8 *surface, Common::Rect *clipRect = NULL);

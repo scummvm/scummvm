@@ -52,9 +52,14 @@ typedef sequence_t mpeg2_sequence_t;
 
 namespace Sword2 {
 
-#define SQR(x) ((x) * (x))
 
+#ifdef BACKEND_8BIT
+#define SQR(x) ((x) * (x))
 #define SHIFT 3
+#else
+#define SHIFT 1
+#endif
+
 #define BITDEPTH (1 << (8 - SHIFT))
 #define ROUNDADD (1 << (SHIFT - 1))
 
@@ -63,14 +68,6 @@ namespace Sword2 {
 class AnimationState {
 private:
 	Sword2Engine *_vm;
-
-	int palnum;
-	int maxPalnum;
-
-	byte lookup[2][BITDEPTH * BITDEPTH * BITDEPTH];
-	byte *lut;
-	byte *lut2;
-	int lutcalcnum;
 
 	int framenum;
 
@@ -82,6 +79,20 @@ private:
 	File *mpgfile;
 	File *sndfile;
 
+	byte buffer[BUFFER_SIZE];
+
+	PlayingSoundHandle bgSound;
+	AudioStream *bgSoundStream;
+
+#ifdef BACKEND_8BIT
+	int palnum;
+	int maxPalnum;
+
+	byte lookup[2][BITDEPTH * BITDEPTH * BITDEPTH];
+	byte *lut;
+	byte *lut2;
+	int lutcalcnum;
+
 	int curpal;
 	int cr;
 	int pos;
@@ -91,12 +102,15 @@ private:
 		int end;
 		byte pal[4 * 256];
 	} palettes[50];
+#else
+        static NewGuiColor lookup2[BITDEPTH * BITDEPTH * 256];
+        NewGuiColor * overlay;
+        static bool lookupInit;
 
-	byte buffer[BUFFER_SIZE];
-
-	PlayingSoundHandle bgSound;
+#endif
 
 public:
+
 	AnimationState(Sword2Engine *vm);
 	~AnimationState();
 
@@ -104,8 +118,14 @@ public:
 	bool decodeFrame();
 
 private:
+
+#ifdef BACKEND_8BIT
 	void buildLookup(int p, int lines);
-	void checkPaletteSwitch();
+	bool checkPaletteSwitch();
+#else
+	void buildLookup2(void);
+	void plotYUV(NewGuiColor *lut, int width, int height, byte *const *dat);
+#endif
 };
 
 class MoviePlayer {

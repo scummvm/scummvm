@@ -74,6 +74,19 @@ public:
 
 	/** Sample rate of the stream. */
 	virtual int getRate() const = 0;
+
+	/**
+	 * This function returns the number of samples that were delivered to
+	 * the mixer which is a rough estimate of how moch time of the stream
+	 * has been played.
+	 * The exact value is not available as it needs information from the
+	 * audio device on how many samples have been already played
+	 * As our buffer is relatively short the estimate is exact enough
+	 * The return -1 is kind of a hack as this function is only required
+	 * for the video audio sync in the bs2 cutscenes I am to lazy to
+	 * implement it for all subclasses
+	 */
+	virtual int getSamplesPlayed() const { return -1; }
 };
 
 class AppendableAudioStream : public AudioStream {

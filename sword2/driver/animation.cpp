@@ -27,6 +27,8 @@
 
 #include "common/file.h"
 
+#include "sound/vorbis.h"
+
 namespace Sword2 {
 
 AnimationState::AnimationState(Sword2Engine *vm)
@@ -39,7 +41,11 @@ AnimationState::~AnimationState() {
 	if (decoder)
 		mpeg2_close(decoder);
 	delete mpgfile;
-	delete sndfile;
+        delete sndfile;
+#ifndef BACKEND_8BIT
+        _vm->_system->hide_overlay();
+        delete overlay;
+#endif
 #endif
 }
 
@@ -47,14 +53,18 @@ bool AnimationState::init(const char *name) {
 #ifdef USE_MPEG2
 
 	char basename[512], tempFile[512];
-  	int i, p;
 
 	decoder = NULL;
 	mpgfile = NULL;
 	sndfile = NULL;
+        bgSoundStream = NULL;
 
 	strcpy(basename, name);
 	basename[strlen(basename) - 4] = 0;	// FIXME: hack to remove extension
+
+#ifdef BACKEND_8BIT
+
+        int i, p;
 
 	// Load lookup palettes
 	// TODO: Binary format so we can use File class
@@ -71,10 +81,10 @@ bool AnimationState::init(const char *name) {
 		if (fscanf(f, "%i %i", &palettes[p].end, &palettes[p].cnt) != 2)
 			break;
 		for (i = 0; i < palettes[p].cnt; i++) {
-  			int r, g, b;
-  			fscanf(f, "%i", &r);
-  			fscanf(f, "%i", &g);
-  			fscanf(f, "%i", &b);
+			int r, g, b;
+			fscanf(f, "%i", &r);
+			fscanf(f, "%i", &g);
+			fscanf(f, "%i", &b);
 			palettes[p].pal[4 * i] = r;
 			palettes[p].pal[4 * i + 1] = g;
 			palettes[p].pal[4 * i + 2] = b;
@@ -98,6 +108,12 @@ bool AnimationState::init(const char *name) {
 	cr = 0;
 	buildLookup(palnum, 256);
 	lut2 = lookup[1];
+	lutcalcnum = (BITDEPTH + palettes[palnum].end + 2) / (palettes[palnum].end + 2);
+#else
+	buildLookup2();
+	overlay = (NewGuiColor*)calloc(640 * 400, sizeof(NewGuiColor));
+	_vm->_system->show_overlay();
+#endif
 
 	// Open MPEG2 stream
 	mpgfile = new File();
@@ -117,9 +133,6 @@ bool AnimationState::init(const char *name) {
 	info = mpeg2_info(decoder);
 	framenum = 0;
 
-	// Load in palette data
-	lutcalcnum = (BITDEPTH + palettes[palnum].end + 2) / (palettes[palnum].end + 2);
-
 	/* Play audio - TODO: Sync with video?*/
 
 #ifdef USE_VORBIS
@@ -128,8 +141,11 @@ bool AnimationState::init(const char *name) {
 	// there?
 	sndfile = new File;
 	sprintf(tempFile, "%s.ogg", basename);
-	if (sndfile->open(tempFile))
-		_vm->_mixer->playVorbis(&bgSound, sndfile, 100000000);	// FIXME: this size value is bogus
+	if (sndfile->open(tempFile)) {
+		bgSoundStream = makeVorbisStream(sndfile, sndfile->size());
+		_vm->_mixer->playInputStream(&bgSound, bgSoundStream, false, 255, 0, -1);
+	}
+
 #endif
 
 	return true;
@@ -138,6 +154,8 @@ bool AnimationState::init(const char *name) {
 #endif
 }
 
+
+#ifdef BACKEND_8BIT
 /**
  * Build 'Best-Match' RGB lookup table
  */
@@ -188,7 +206,7 @@ void AnimationState::buildLookup(int p, int lines) {
 	}
 }
 
-void AnimationState::checkPaletteSwitch() {
+bool AnimationState::checkPaletteSwitch() {
 	// if we have reached the last image with this palette, switch to new one
 	if (framenum == palettes[palnum].end) {
 		unsigned char *l = lut2;
@@ -197,8 +215,77 @@ void AnimationState::checkPaletteSwitch() {
 		lutcalcnum = (BITDEPTH + palettes[palnum].end - (framenum + 1) + 2) / (palettes[palnum].end - (framenum + 1) + 2);
 		lut2 = lut;
 		lut = l;
+		return true;
+	}
+
+	return false;
+}
+
+
+#else
+
+bool AnimationState::lookupInit = false;
+NewGuiColor AnimationState::lookup2[BITDEPTH * BITDEPTH * 256];
+
+void AnimationState::buildLookup2() {
+
+	if (lookupInit) return;
+	lookupInit = true;
+
+	int y, cb, cr;
+	int r, g, b;
+	int pos = 0;
+
+	for (cr = 0; cr < BITDEPTH; cr++) {
+		for (cb = 0; cb < BITDEPTH; cb++) {
+			for (y = 0; y < 256; y++) {
+				r = ((y-16) * 256 + (int) (256 * 1.596) * ((cr << SHIFT) - 128)) / 256;
+				g = ((y-16) * 256 - (int) (0.813 * 256) * ((cr << SHIFT) - 128) - (int) (0.391 * 256) * ((cb << SHIFT) - 128)) / 256;
+				b = ((y-16) * 256 + (int) (2.018 * 256) * ((cb << SHIFT) - 128)) / 256;
+
+				if (r < 0) r = 0;
+				if (r > 255) r = 255;
+				if (g < 0) g = 0;
+				if (g > 255) g = 255;
+				if (b < 0) b = 0;
+				if (b > 255) b = 255;
+
+				lookup2[pos++] = _vm->_system->RGBToColor(r, g, b);
+			}
+		}
 	}
 }
+
+
+void AnimationState::plotYUV(NewGuiColor *lut, int width, int height, byte *const *dat) {
+
+	NewGuiColor *ptr = overlay + (400-height)/2 * 640 + (640-width)/2;
+
+	int x, y;
+
+	int ypos = 0;
+	int cpos = 0;
+	int linepos = 0;
+
+	for (y = 0; y < height; y += 2) {
+		for (x = 0; x < width; x += 2) {
+			int i = ((((dat[2][cpos] + ROUNDADD) >> SHIFT) * BITDEPTH) + ((dat[1][cpos] + ROUNDADD)>>SHIFT)) * 256;
+			cpos++;
+
+			ptr[linepos               ] = lut[i + dat[0][        ypos  ]];
+			ptr[RENDERWIDE + linepos++] = lut[i + dat[0][width + ypos++]];
+			ptr[linepos               ] = lut[i + dat[0][        ypos  ]];
+			ptr[RENDERWIDE + linepos++] = lut[i + dat[0][width + ypos++]];
+
+                }
+		linepos += (2 * 640 - width);
+		ypos += width;
+	}
+
+	_vm->_system->copy_rect_overlay(overlay, 640, 0, 40, 640, 400);
+}
+
+#endif
 
 bool AnimationState::decodeFrame() {
 #ifdef USE_MPEG2
@@ -219,12 +306,47 @@ bool AnimationState::decodeFrame() {
 		case STATE_SLICE:
 		case STATE_END:
 			if (info->display_fbuf) {
-				checkPaletteSwitch();
-				_vm->_graphics->plotYUV(lut, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
-				framenum++;
+				/* simple audio video sync code:
+				 * we calculate the actual frame by taking the delivered audio samples
+				 * we add 2 frames as the number of samples delivered is higher than the
+				 * number actually played due to buffering
+				 *
+				 * we then try to stay inside +- 1 frame of this calculated frame number by
+				 * dropping frames if we run behind and delaying if we are too fast
+				 */
+
+#ifdef BACKEND_8BIT
+				if (checkPaletteSwitch() ||
+                                    (bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < (framenum+3)){
+					_vm->_graphics->plotYUV(lut, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
+
+					while ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < framenum+1);
+						_vm->_system->delay_msecs(10);
+
+					_vm->_graphics->setNeedFullRedraw();
+
+				} else
+					printf("dropped frame %i\n", framenum);
+
 				buildLookup(palnum + 1, lutcalcnum);
+
+#else
+
+				if ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < (framenum+3)){
+					plotYUV(lookup2, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
+
+					while ((bgSoundStream->getSamplesPlayed()*12/bgSoundStream->getRate()) < framenum+1);
+						_vm->_system->delay_msecs(10);
+
+				} else
+					printf("dropped frame %i\n", framenum);
+
+#endif
+
+				framenum++;
 				return true;
-			}
+
+                        }
 			break;
 
 		default:
@@ -264,7 +386,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 	int frameCounter = 0, textCounter = 0;
 	PlayingSoundHandle handle;
 	bool skipCutscene = false, textVisible = false;
-	uint32 flags = SoundMixer::FLAG_16BITS, ticks = _vm->_system->get_msecs() + 83;
+	uint32 flags = SoundMixer::FLAG_16BITS;
 
 	uint8 oldPal[1024];
 	memcpy(oldPal, _vm->_graphics->_palCopy, 1024);
@@ -285,7 +407,6 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 #endif
 
 	while (anim->decodeFrame()) {
-		_vm->_graphics->setNeedFullRedraw();
 
 		if (text && text[textCounter]) {                      
 			if (frameCounter == text[textCounter]->startFrame) {
@@ -307,7 +428,11 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 
 		frameCounter++;
 
+#ifdef BACKEND_8BIT
 		_vm->_graphics->updateDisplay(true);
+#else
+		_vm->_graphics->updateDisplay(false);
+#endif
 
 		KeyboardEvent ke;
 
@@ -316,13 +441,6 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 			skipCutscene = true;
 			break;
 		}
-
-		// Simulate ~12 frames per second. I don't know what
-		// frame rate the original movies had, or even if it
-		// was constant, but this seems to work reasonably.
-
-		_vm->sleepUntil(ticks);
-		ticks += 82;
 
 	}
 
