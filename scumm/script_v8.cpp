@@ -962,12 +962,12 @@ void Scumm_v8::o8_roomOps()
 		c = pop();
 		b = pop();
 		a = pop();
-		warning("o8_roomOps: SO_ROOM_SATURATION(%d, %d, %d, %d, %d)", a, b, c, d, e);
 		// FIXME - this probably has the same format as for darkenPalette:
 		// thre values for R, G, B and a start/end palette range to modify.
 		// Now, how on earth does on modify the saturation of a single color channel?
 		// Change the hue/saturation of a color, no problem, I know how to do that,
 		// but for only a channel alone, I don't even know what that should mean... :-/
+//		warning("o8_roomOps: SO_ROOM_SATURATION(%d, %d, %d, %d, %d)", a, b, c, d, e);
 		break;
 	default:
 		error("o8_roomOps: default case %d", subOp);

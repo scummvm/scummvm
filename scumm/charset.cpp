@@ -450,6 +450,7 @@ void CharsetRendererNut::printChar(int chr)
 	int width = _current->getCharWidth(chr);
 	int height = _current->getCharHeight(chr);
 
+	_hasMask = true;
 	_current->drawChar((char)chr, _left, _top, _color);
 	_vm->updateDirtyRect(0, _left, _left + width, _top, _top + height, 0);
 

@@ -199,6 +199,11 @@ void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
 
 	byte * src = (byte*)(_dataSrc + _offsets[c] + 14);
 	byte * dst = _vm->virtscr[0].screenPtr + y * _vm->_realWidth + x + _vm->virtscr[0].xstart;
+	byte *mask = _vm->getResourceAddress(rtBuffer, 9)
+					+ (y * _vm->_realWidth + x) / 8 + _vm->_screenStartStrip;
+	byte maskmask;
+	int maskpos;
+
 	uint32 length = READ_BE_UINT32(_dataSrc + _offsets[c] - 4) - 14;
 
 	decodeCodec44(_tmpCodecBuffer, src, length);
@@ -206,8 +211,10 @@ void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
 
 	int32 width = READ_LE_UINT16(_dataSrc + _offsets[c] + 6);
 	int32 height = READ_LE_UINT16(_dataSrc + _offsets[c] + 8);
-
+	
 	for (int32 ty = 0; ty < height; ty++) {
+		maskmask = revBitMask[x & 7];
+		maskpos = 0;
 		for (int32 tx = 0; tx < width; tx++) {
 			byte pixel = *src++;
 #if 1
@@ -218,9 +225,12 @@ void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
 			// in addition to the normal font. Or maybe the created the shadows dynamically
 			// on the fly: if we draw the character several times in black, moved a bit
 			// each time, that would mostly create the shadow effect. But why would they
-			// do this, as it would increase the char drawing time by factor 5-6 ?
-			if (pixel != 0)
+			// do this, as it would increase the char drawing time by factor 5-6 ? And in
+			// fact, even then the shadow would not be 100% right.
+			if (pixel != 0) {
+				mask[maskpos] |= maskmask;
 				dst[tx] = color;
+			}
 #else
 			if (pixel != 0) {
 				if (pixel == 0x01)
@@ -230,7 +240,13 @@ void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
 				dst[tx] = pixel;
 			}
 #endif
+			maskmask >>= 1;
+			if (maskmask == 0) {
+				maskmask = 0x80;
+				maskpos++;
+			}
 		}
 		dst += _vm->_realWidth;
+		mask += _vm->gdi._numStrips;
 	}
 }
