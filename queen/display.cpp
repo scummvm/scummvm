@@ -117,7 +117,7 @@ Display::Display(QueenEngine *vm, Language language, OSystem *system)
 	_bufPitch[RB_BACKDROP] = BACKDROP_W;
 	_bufPitch[RB_PANEL]    = PANEL_W;
 	_bufPitch[RB_SCREEN]   = SCREEN_W;
-	_bufPitch[RB_MINI]     = MINI_H;
+	_bufPitch[RB_MINI]     = MINI_W;
 
 	_pal.room   = new uint8[ 256 * 3 ];
 	_pal.screen = new uint8[ 256 * 3 ];
