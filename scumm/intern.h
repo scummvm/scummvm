@@ -647,7 +647,7 @@ protected:
 	Win32ResExtractor *_win32ResExtractor;
 	MacResExtractor *_macResExtractor;
 
-	int _heSndSoundFreq, _heSndOffset, _heSndChannel, _heSndSoundId, _heSndFlags;
+	int _heSndSoundFreq, _heSndOffset, _heSndChannel, _heSndSoundId, _heSndFlags, _heSBNGId;
 
 public:
 	ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);

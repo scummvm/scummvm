@@ -1175,6 +1175,7 @@ ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, cons
 	_heSndChannel = 0;
 	_heSndFlags = 0;
 	_heSndSoundFreq = 0;
+	_heSBNGId = 0;
 }
 
 #pragma mark -

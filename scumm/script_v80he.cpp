@@ -380,17 +380,20 @@ void ScummEngine_v80he::o80_loadSBNG() {
 
 	switch (subOp) {
 	case 27:
-		pop();
 		//loadSBNG(_heSBNGId, pop();
+		pop();
 		break;
 	case 217:
 		//loadSBNG(_heSBNGId, -1);
 		break;
 	case 232:
-		//_heSBNGId = pop();
+		_heSBNGId = pop();
+		break;
+	case 255:
+		// dummy case
 		break;
 	default:
-		warning("o80_loadSBNG: default case %d", subOp);
+		error("o80_loadSBNG: default case %d", subOp);
 	}
 	debug(1,"o80_loadSBNG stub (%d)",subOp);
 }
