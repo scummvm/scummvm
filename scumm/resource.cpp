@@ -764,7 +764,7 @@ byte *Scumm::getResourceAddress(int type, int idx)
 
 	CHECK_HEAP validateResource("getResourceAddress", type, idx);
 	if (!res.address[type]) {
-		debug(1, "getResourceAddress(%s,%d), res.address[type] == NULL", resTypeFromId(type), idx);
+		debug(9, "getResourceAddress(%s,%d), res.address[type] == NULL", resTypeFromId(type), idx);
 		return NULL;
 	}
 
@@ -773,7 +773,7 @@ byte *Scumm::getResourceAddress(int type, int idx)
 	}
 
 	if (!(ptr = (byte *)res.address[type][idx])) {
-		debug(1, "getResourceAddress(%s,%d) == NULL", resTypeFromId(type), idx);
+		debug(9, "getResourceAddress(%s,%d) == NULL", resTypeFromId(type), idx);
 		return NULL;
 	}
 

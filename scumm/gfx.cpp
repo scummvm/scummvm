@@ -239,6 +239,8 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b)
 void blit(byte *dst, byte *src, int w, int h)
 {
 	assert(h > 0);
+	assert(src != NULL);
+	assert(dst != NULL);
 
 	do {
 		memcpy(dst, src, w);
@@ -539,6 +541,8 @@ void Scumm::cyclePalette()
 	}
 }
 
+// Perform color cycling on the palManipulate data, too, otherwise
+// color cycling will be disturbed by the palette fade.
 void Scumm::moveMemInPalRes(int start, int end, byte direction)
 {
 	byte *startptr, *endptr;
