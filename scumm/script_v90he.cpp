@@ -457,7 +457,7 @@ void ScummEngine_v90he::o90_unknown1C() {
 		pop();
 		break;
 	case 8:
-		_wizFlag = pop();
+		_wizFlag |= pop();
 		break;
 	case 10:
 	{
@@ -498,6 +498,10 @@ void ScummEngine_v90he::o90_unknown1C() {
 		pop();
 		break;
 	case 171: // HE99+
+		break;
+	case 200:
+		_wizFlag |= 64;
+		_wizY1 = _wizX1 = pop();
 		break;
 	case 209:
 		if (_fullRedraw) {
