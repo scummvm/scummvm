@@ -26,9 +26,8 @@
 extern const Char *SCUMMVM_SAVEPATH;
 
 int main(int argc, char **argv);
-
 UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Char *fndParamStr);
-
 void PalmFatalError(const Char *err);
+void DrawStatus(Boolean show);
 
 #endif

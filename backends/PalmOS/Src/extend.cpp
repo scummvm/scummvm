@@ -25,7 +25,7 @@
 
 #include "extend.h"
 #include "globals.h"
-#include "starterrsc.h"
+#include "enginersc.h"
 
 #include "arm/native.h"
 
@@ -107,40 +107,17 @@ UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Ch
 	return occurences;
 }
 
-MemPtr _PceInit(DmResID resID) {
-	MemHandle armH = DmGetResource('ARMC', resID);
-	NativeFuncType *armP = (NativeFuncType *)MemHandleLock(armH);
 
-	return armP;
+// This is now required since some classes are now very big :)
+#include "MemGlue.h"
+void *operator new(UInt32 size) {
+	void *ptr = MemGluePtrNew(size);
+	MemSet(ptr, 0, size);
+	return ptr;
 }
 
-UInt32 _PceCall(void *armP, void *userDataP) {
-	return PceNativeCall((NativeFuncType *)armP, userDataP);
-}
-
-void _PceFree(void *armP) {
-	MemHandle armH = MemPtrRecoverHandle(armP);
-
-	MemPtrUnlock(armP);
-	DmReleaseResource(armH);
-}
-
-MemPtr _PnoInit(DmResID resID, PnoDescriptor *pnoP) {
-	MemHandle armH = DmGetResource('ARMC', resID);
-	MemPtr armP = MemHandleLock(armH);
-	PnoLoad(pnoP, armP);
-
-	return armP;
-}
-
-UInt32 _PnoCall(PnoDescriptor *pnoP, void *userDataP) {
-	return PnoCall(pnoP, userDataP);
-}
-
-void _PnoFree(PnoDescriptor *pnoP, MemPtr armP) {
-	MemHandle armH = MemPtrRecoverHandle(armP);
-
-	PnoUnload(pnoP);
-	MemPtrUnlock(armP);
-	DmReleaseResource(armH);
+void *operator new [] (UInt32 size) {
+	void *ptr = MemGluePtrNew(size);
+	MemSet(ptr, 0, size);
+	return ptr;
 }
