@@ -265,7 +265,7 @@ void ScummEngine::redrawVerbs() {
 		return;
 
 	int i, verb = 0;
-	if (_version >= 7 || _cursor.state > 0)
+	if (_cursor.state > 0)
 		verb = checkMouseOver(_mouse.x, _mouse.y);
 
 	for (i = 0; i < _numVerbs; i++) {
@@ -413,7 +413,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 		vs->curRect.bottom = _charset->_str.bottom;
 		vs->oldRect = _charset->_str;
 		_charset->_str.left = _charset->_str.right;
-	} else {
+	} else if (_version < 7) {
 		restoreVerbBG(verb);
 	}
 }
@@ -424,7 +424,9 @@ void ScummEngine::restoreVerbBG(int verb) {
 
 	vs = &_verbs[verb];
 
-	if (vs->oldRect.left != -1) {
+	if (_version >= 7) {
+		restoreBG(vs->curRect, vs->bkcolor);
+	} else if (vs->oldRect.left != -1) {
 		restoreBG(vs->oldRect, vs->bkcolor);
 		vs->oldRect.left = -1;
 	}
