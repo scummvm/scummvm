@@ -234,9 +234,9 @@ void Sound::playSound(int sound) {
 			return;
 		}
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('Crea')) {
-			char * sound = read_creative_voc_file(ptr, size, rate);
-			if(sound != NULL) {
-				_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+			char * sounddata = read_creative_voc_file(ptr, size, rate);
+			if(sounddata != NULL) {
+				_scumm->_mixer->playRaw(NULL, sounddata, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE, sound);
 			}
 			return;
 		}
@@ -553,6 +553,15 @@ int Sound::isSoundRunning(int sound) {
 	if (_scumm->_imuseDigital) {
 		return _scumm->_imuseDigital->getSoundStatus(sound);
 	}
+
+	// Check raw mixer channels, to make sure we're not playing an exotic
+	// sound type manually.
+        for (int i = 0; i < _scumm->_mixer->NUM_CHANNELS; i++) {
+		if (_scumm->_mixer->_channels[i] && (_scumm->_mixer->_channels[i]->_id == sound)) {
+			return 1;
+                }
+        }
+
 	se = _scumm->_imuse;
 	if (!se)
 		return 0;

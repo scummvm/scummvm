@@ -84,11 +84,21 @@ int SoundMixer::insertAt(PlayingSoundHandle * handle, int index, Channel * chan)
 	return index;
 }
 
-int SoundMixer::playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate,
-												 byte flags) {
+int SoundMixer::playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags) {
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
-			return insertAt(handle, i, new ChannelRaw(this, sound, size, rate, flags));
+			return insertAt(handle, i, new ChannelRaw(this, sound, size, rate, flags, -1));
+		}
+	}
+
+	warning("SoundMixer::out of mixer slots");
+	return -1;
+}
+
+int SoundMixer::playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags, int id) {
+	for (int i = 0; i != NUM_CHANNELS; i++) {
+		if (_channels[i] == NULL) {
+			return insertAt(handle, i, new ChannelRaw(this, sound, size, rate, flags, id));
 		}
 	}
 
@@ -239,8 +249,8 @@ void SoundMixer::Channel::append(void * sound, uint32 size) {
 }
 
 /* RAW mixer */
-SoundMixer::ChannelRaw::ChannelRaw(SoundMixer * mixer, void * sound, uint32 size, uint rate,
-																 byte flags) {
+SoundMixer::ChannelRaw::ChannelRaw(SoundMixer * mixer, void * sound, uint32 size, uint rate, byte flags, int id) {
+	_id = id;
 	_mixer = mixer;
 	_flags = flags;
 	_ptr = sound;

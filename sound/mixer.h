@@ -41,6 +41,7 @@ private:
 	class Channel {
 	public:
 		bool _toBeDestroyed;
+		int _id;
 		virtual void mix(int16 *data, uint len) = 0;
 		void destroy() {
 			_toBeDestroyed = true;
@@ -63,7 +64,7 @@ private:
 		byte _flags;
 
 	public:
-		ChannelRaw(SoundMixer * mixer, void * sound, uint32 size, uint rate, byte flags);
+		ChannelRaw(SoundMixer * mixer, void * sound, uint32 size, uint rate, byte flags, int id);
 
 		void mix(int16 * data, uint len);
 		void realDestroy();
@@ -178,6 +179,7 @@ public:
 		FLAG_FILE = 16,							/* sound is a FILE * that's read from */
 	};
 	int playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags);
+	int playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags, int id);
 	int playStream(PlayingSoundHandle * handle, int index, void * sound, uint32 size, uint rate,
 									byte flags);
 #ifdef COMPRESSED_SOUND_FILE
