@@ -401,6 +401,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 	PlayingSoundHandle handle;
 	bool skipCutscene = false, textVisible = false;
 	uint32 flags = SoundMixer::FLAG_16BITS;
+  bool startNextText = false;
 
 	uint8 oldPal[1024];
 	memcpy(oldPal, _vm->_graphics->_palCopy, 1024);
@@ -426,10 +427,16 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 			if (frameCounter == text[textCounter]->startFrame) {
 				openTextObject(text[textCounter]);
 				textVisible = true;
-				if (text[textCounter]->speech) {
-					_vm->_mixer->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, flags);
+
+        if (text[textCounter]->speech) {
+          startNextText = true;
 				}
-			}
+      }
+
+      if (startNextText && !handle.isActive()) {
+        _vm->_mixer->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, flags);
+        startNextText = false;
+      }
 
 			if (frameCounter == text[textCounter]->endFrame) {
 				closeTextObject(text[textCounter]);
@@ -474,6 +481,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 	_vm->_graphics->clearScene();
 	_vm->_graphics->setNeedFullRedraw();
 
+/*
 	// HACK: Remove the instructions created above
 	Common::Rect r;
 
@@ -482,6 +490,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 	r.right = _vm->_graphics->_screenWide;
 	r.bottom = MENUDEEP;
 	_vm->_graphics->updateRect(&r);
+*/
 
 	// FIXME: For now, only play the lead-out music for cutscenes
 	// that have subtitles.
