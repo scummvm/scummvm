@@ -35,7 +35,7 @@ public:
 
 public:
 
-			OSystem_NULL();
+	OSystem_NULL();
 	virtual ~OSystem_NULL();
 
 	virtual bool hasFeature(Feature f);
@@ -103,6 +103,9 @@ public:
 
 };
 
+static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
+	{0, 0, 0}
+};
 
 OSystem_NULL::OSystem_NULL()
 {
@@ -128,7 +131,7 @@ bool OSystem_NULL::getFeatureState(Feature f)
 
 const OSystem::GraphicsMode* OSystem_NULL::getSupportedGraphicsModes() const
 {
-	return NULL;
+	return s_supportedGraphicsModes;
 }
 
 
