@@ -26,6 +26,7 @@
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/imuse.h"
+#include "scumm/imuse_digi.h"
 #include "sound/mixer.h"
 #include "smush_player.h"
 #include "smush_mixer.h"

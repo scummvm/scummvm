@@ -106,7 +106,7 @@ struct Player {
 	// Player part
 	void hook_clear();
 	void clear();
-	bool start_sound(int sound);
+	bool startSound(int sound);
 	void uninit_parts();
 	byte *parse_midi(byte *s);
 	void key_off(uint8 chan, byte data);
@@ -455,12 +455,12 @@ public:
 	int set_master_volume(uint vol);
 	int get_master_volume();
 	byte get_channel_program (byte channel) { return _driver->get_channel_program (channel); }
-	bool start_sound(int sound);
-	int stop_sound(int sound);
+	bool startSound(int sound);
+	int stopSound(int sound);
 	int stop_all_sounds();
 	int get_sound_status(int sound);
 	bool get_sound_active(int sound);
-	int32 do_command(int a, int b, int c, int d, int e, int f, int g, int h);
+	int32 doCommand(int a, int b, int c, int d, int e, int f, int g, int h);
 	int clear_queue();
 	void setBase(byte **base);
 
@@ -676,7 +676,7 @@ bool IMuseInternal::isGM(int sound) {
 	return false;
 }
 
-bool IMuseInternal::start_sound(int sound) {
+bool IMuseInternal::startSound(int sound) {
 	Player *player;
 	void *mdhd;
 
@@ -697,7 +697,7 @@ bool IMuseInternal::start_sound(int sound) {
 	if (!mdhd) {
 		mdhd = findTag(sound, MDPG_TAG, 0);
 		if (!mdhd) {
-			warning("SE::start_sound failed: Couldn't find sound %d", sound);
+			warning("SE::startSound failed: Couldn't find sound %d", sound);
 			return false;
 		}
 	}
@@ -720,7 +720,7 @@ bool IMuseInternal::start_sound(int sound) {
 		return false;
 
 	player->clear();
-	return player->start_sound(sound);
+	return player->startSound(sound);
 }
 
 
@@ -789,7 +789,7 @@ void IMuseInternal::init_parts() {
 	}
 }
 
-int IMuseInternal::stop_sound(int sound) {
+int IMuseInternal::stopSound(int sound) {
 	Player *player = _players;
 	int i;
 	int r = -1;
@@ -865,7 +865,7 @@ void IMuseInternal::handle_marker(uint id, byte data) {
 			break;
 		_queue_end = pos;
 
-		do_command(p[0], p[1], p[2], p[3], p[4], p[5], p[6], 0);
+		doCommand(p[0], p[1], p[2], p[3], p[4], p[5], p[6], 0);
 
 		if (_queue_cleared)
 			return;
@@ -1242,7 +1242,7 @@ int IMuseInternal::enqueue_trigger(int sound, int marker) {
 	return 0;
 }
 
-int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g, int h) {
+int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) {
 	int i;
 	byte cmd = a & 0xFF;
 	byte param = a >> 8;
@@ -1261,9 +1261,9 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 		case 7:
 			return _master_volume >> 1; // Convert from 0-255 to 0-127
 		case 8:
-			return start_sound(b) ? 0 : -1;
+			return startSound(b) ? 0 : -1;
 		case 9:
-			return stop_sound(b);
+			return stopSound(b);
 		case 10: // FIXME: Sam and Max - Not sure if this is correct
 			return stop_all_sounds();
 		case 11:
@@ -1282,7 +1282,7 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 				// Set player volume.
 				return player->set_vol (e);
 			default:
-				warning("IMuseInternal::do_command (6) unsupported sub-command %d", d);
+				warning("IMuseInternal::doCommand (6) unsupported sub-command %d", d);
 			}
 			return -1;
 		case 13:
@@ -1348,13 +1348,13 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 			// Sam & Max: Deferred Command
 			// FIXME: Right now this acts as an immediate command.
 			// The significance of parameter b is unknown.
-			warning ("Incomplete support for iMuse::do_command(20)");
-			return do_command (c, d, e, f, g, h, 0, 0);
+			warning ("Incomplete support for iMuse::doCommand(20)");
+			return doCommand (c, d, e, f, g, h, 0, 0);
 		case 2:
 		case 3:
 			return 0;
 		default:
-			warning("do_command (%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a, param, cmd, b, c, d, e, f, g, h);
+			warning("doCommand (%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a, param, cmd, b, c, d, e, f, g, h);
 		}
 	} else if (param == 1) {
 		if ((1 << cmd) & (0x783FFF)) {
@@ -1435,7 +1435,7 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 		case 24:
 			return 0;
 		default:
-			warning("do_command (%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a, param, cmd, b, c, d, e, f, g, h);
+			warning("doCommand (%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a, param, cmd, b, c, d, e, f, g, h);
 			return -1;
 		}
 	}
@@ -1446,7 +1446,7 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 int32 IMuseInternal::ImSetTrigger (int sound, int id, int a, int b, int c, int d) {
 	// Sam & Max: ImSetTrigger.
 	// Sets a trigger for a particular player and
-	// marker ID, along with do_command parameters
+	// marker ID, along with doCommand parameters
 	// to invoke at the marker. The marker is
 	// represented by MIDI SysEx block 00 xx (F7)
 	// where "xx" is the marker ID.
@@ -1491,7 +1491,7 @@ int32 IMuseInternal::ImSetTrigger (int sound, int id, int a, int b, int c, int d
 	// If the command is to start a sound, stop that sound if it's already playing.
 	// This fixes some carnival music problems.
 	if (trig->command [0] == 8 && get_sound_status (trig->command [1]))
-		stop_sound (trig->command [1]);
+		stopSound (trig->command [1]);
 	return 0;
 }
 
@@ -1754,14 +1754,14 @@ void Player::clear() {
 	_ticks_per_beat = TICKS_PER_BEAT;
 }
 
-bool Player::start_sound(int sound) {
+bool Player::startSound(int sound) {
 	void *mdhd;
 
 	mdhd = _se->findTag(sound, MDHD_TAG, 0);
 	if (mdhd == NULL) {
 		mdhd = _se->findTag(sound, MDPG_TAG, 0);
 		if (mdhd == NULL) {
-				warning("P::start_sound failed: Couldn't find %s", MDHD_TAG);
+				warning("P::startSound failed: Couldn't find %s", MDHD_TAG);
 				return false;
 		}
 	}
@@ -2062,7 +2062,7 @@ void Player::parse_sysex(byte *p, uint len) {
 			}
 		} else {
 			// Sam & Max: Trigger Event
-			// Triggers are set by do_command (ImSetTrigger).
+			// Triggers are set by doCommand (ImSetTrigger).
 			// When a SysEx marker is encountered whose sound
 			// ID and marker ID match what was set by ImSetTrigger,
 			// something magical is supposed to happen....
@@ -2071,7 +2071,7 @@ void Player::parse_sysex(byte *p, uint len) {
 				    _se->_snm_triggers [a].id == *p)
 				{
 					_se->_snm_triggers [a].sound = _se->_snm_triggers [a].id = 0;
-					_se->do_command (_se->_snm_triggers [a].command [0],
+					_se->doCommand (_se->_snm_triggers [a].command [0],
 					                 _se->_snm_triggers [a].command [1],
 					                 _se->_snm_triggers [a].command [2],
 					                 _se->_snm_triggers [a].command [3],
@@ -3551,12 +3551,12 @@ int IMuse::set_music_volume(uint vol) { in(); int ret = _target->set_music_volum
 int IMuse::get_music_volume() { in(); int ret = _target->get_music_volume(); out(); return ret; }
 int IMuse::set_master_volume(uint vol) { in(); int ret = _target->set_master_volume (vol); out(); return ret; }
 int IMuse::get_master_volume() { in(); int ret = _target->get_master_volume(); out(); return ret; }
-bool IMuse::start_sound(int sound) { in(); bool ret = _target->start_sound (sound); out(); return ret; }
-int IMuse::stop_sound(int sound) { in(); int ret = _target->stop_sound (sound); out(); return ret; }
+bool IMuse::startSound(int sound) { in(); bool ret = _target->startSound (sound); out(); return ret; }
+int IMuse::stopSound(int sound) { in(); int ret = _target->stopSound (sound); out(); return ret; }
 int IMuse::stop_all_sounds() { in(); int ret = _target->stop_all_sounds(); out(); return ret; }
 int IMuse::get_sound_status(int sound) { in(); int ret = _target->get_sound_status (sound); out(); return ret; }
 bool IMuse::get_sound_active(int sound) { in(); bool ret = _target->get_sound_active (sound); out(); return ret; }
-int32 IMuse::do_command(int a, int b, int c, int d, int e, int f, int g, int h) { in(); int32 ret = _target->do_command (a,b,c,d,e,f,g,h); out(); return ret; }
+int32 IMuse::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) { in(); int32 ret = _target->doCommand (a,b,c,d,e,f,g,h); out(); return ret; }
 int IMuse::clear_queue() { in(); int ret = _target->clear_queue(); out(); return ret; }
 void IMuse::setBase(byte **base) { in(); _target->setBase (base); out(); }
 uint32 IMuse::property(int prop, uint32 value) { in(); uint32 ret = _target->property (prop, value); out(); return ret; }

@@ -2604,8 +2604,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 		case 122:
 
 			_vars[VAR_SOUNDRESULT] =
-				(short)_imuse->do_command(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]
-				);
+				(short)_imuse->doCommand(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]);
 			break;
 
 		case 123:

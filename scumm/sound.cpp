@@ -25,6 +25,7 @@
 #include "sound.h"
 #include "sound/mididrv.h"
 #include "imuse.h"
+#include "imuse_digi.h"
 #include "actor.h"
 #include "bundle.h"
 #include "common/config-file.h"
@@ -71,10 +72,8 @@ void Sound::addSoundToQueue2(int sound) {
 
 void Sound::processSoundQues() {
 	int d;
-	int i, j;
 	int num;
 	int16 data[16];
-	IMuse *se;
 
 	processSfxQueues();
 
@@ -84,20 +83,17 @@ void Sound::processSoundQues() {
 			playSound(d);
 	}
 
-	for (i = 0; i < _soundQuePos;) {
+	for (int i = 0; i < _soundQuePos;) {
 		num = _soundQue[i++];
 		if (i + num > _soundQuePos) {
 			warning("processSoundQues: invalid num value");
 			break;
 		}
-		for (j = 0; j < 16; j++)
-			data[j] = 0;
+		memset(data, 0, sizeof(data));
 		if (num > 0) {
-			for (j = 0; j < num; j++)
+			for (int j = 0; j < num; j++)
 				data[j] = _soundQue[i + j];
 			i += num;
-
-			se = _scumm->_imuse;
 
 #if 0
 			debug(1, "processSoundQues(%d,%d,%d,%d,%d,%d,%d,%d,%d)",
@@ -108,15 +104,15 @@ void Sound::processSoundQues() {
 #endif
 			
 			if (!(_scumm->_features & GF_AFTER_V7)) {
-				if (se)
+				if (_scumm->_imuse)
 					_scumm->_vars[_scumm->VAR_SOUNDRESULT] =
-						(short)se->do_command(data[0], data[1], data[2], data[3], data[4],
+						(short)_scumm->_imuse->doCommand(data[0], data[1], data[2], data[3], data[4],
 																	data[5], data[6], data[7]);
 			} else {
 				if (_scumm->_imuseDigital)
 					_scumm->_vars[_scumm->VAR_SOUNDRESULT] =
 						(short)_scumm->_imuseDigital->doCommand(data[0], data[1], data[2], data[3], data[4],
-																										data[5], data[6], data[7]);
+																	data[5], data[6], data[7]);
 			}
 		}
 	}
@@ -180,8 +176,7 @@ void Sound::playSound(int soundID) {
 	int size;
 	int rate;
 	
-	debug(3,"playSound #%d (room %d)",
-		soundID, _scumm->getResourceRoomNr(rtSound, soundID));
+	debug(3,"playSound #%d (room %d)", soundID, _scumm->getResourceRoomNr(rtSound, soundID));
 	ptr = _scumm->getResourceAddress(rtSound, soundID);
 	if (ptr) {
 		if (READ_UINT32_UNALIGNED(ptr) == MKID('iMUS')){
@@ -396,10 +391,9 @@ void Sound::playSound(int soundID) {
 	
 	}
 
-	IMuse *se = _scumm->_imuse;
-	if (se) {
+	if (_scumm->_imuse) {
 		_scumm->getResourceAddress(rtSound, soundID);
-		se->start_sound(soundID);
+		_scumm->_imuse->startSound(soundID);
 	}
 }
 
@@ -457,7 +451,7 @@ void Sound::processSfxQueues() {
 	}
 }
 
-static int compar(const void *a, const void *b) {
+static int compareMP3OffsetTable(const void *a, const void *b) {
 	return ((MP3OffsetTable *)a)->org_offset - ((MP3OffsetTable *)b)->org_offset;
 }
 
@@ -510,7 +504,7 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 
 		key.org_offset = offset;
 		result = (MP3OffsetTable *)bsearch(&key, offset_table, num_sound_effects,
-																				sizeof(MP3OffsetTable), compar);
+												sizeof(MP3OffsetTable), compareMP3OffsetTable);
 
 		if (result == NULL) {
 			warning("startTalkSound: did not find sound at offset %d !", offset);
@@ -573,7 +567,6 @@ bool Sound::isMouthSyncOff(uint pos) {
 
 
 int Sound::isSoundRunning(int sound) {
-	IMuse *se;
 	int i;
 
 	if (sound == _scumm->current_cd_sound)
@@ -595,10 +588,9 @@ int Sound::isSoundRunning(int sound) {
 		return _scumm->_imuseDigital->getSoundStatus(sound);
 	}
 
-	se = _scumm->_imuse;
-	if (!se)
+	if (!_scumm->_imuse)
 		return 0;
-	return se->get_sound_status(sound);
+	return _scumm->_imuse->get_sound_status(sound);
 }
 
 // This is exactly the same as isSoundRunning except that it
@@ -606,7 +598,6 @@ int Sound::isSoundRunning(int sound) {
 // This is necessary when determining what resources to
 // expire from memory.
 bool Sound::isSoundActive(int sound) {
-	IMuse *se;
 	int i;
 
 	if (sound == _scumm->current_cd_sound)
@@ -628,10 +619,9 @@ bool Sound::isSoundActive(int sound) {
 		return _scumm->_imuseDigital->getSoundStatus(sound) != 0;
 	}
 
-	se = _scumm->_imuse;
-	if (!se)
+	if (!_scumm->_imuse)
 		return false;
-	return se->get_sound_active(sound);
+	return _scumm->_imuse->get_sound_active(sound);
 }
 
 bool Sound::isSoundInQueue(int sound) {
@@ -655,7 +645,6 @@ bool Sound::isSoundInQueue(int sound) {
 }
 
 void Sound::stopSound(int a) {
-	IMuse *se;
 	int i;
 
 	if (a != 0 && a == _scumm->current_cd_sound) {
@@ -665,10 +654,8 @@ void Sound::stopSound(int a) {
 
 	if (_scumm->_imuseDigital) {
 		_scumm->_imuseDigital->stopSound(a);
-	} else {
-		se = _scumm->_imuse;
-		if (se)
-			se->stop_sound(a);
+	} else if (_scumm->_imuse) {
+		_scumm->_imuse->stopSound(a);
 	}
 
 	for (i = 0; i < 10; i++)
@@ -677,16 +664,14 @@ void Sound::stopSound(int a) {
 }
 
 void Sound::stopAllSounds() {
-	IMuse *se = _scumm->_imuse;
-
 	if (_scumm->current_cd_sound != 0) {
 		_scumm->current_cd_sound = 0;
 		stopCD();
 	}
 
-	if (se) {
-		se->stop_all_sounds();
-		se->clear_queue();
+	if (_scumm->_imuse) {
+		_scumm->_imuse->stop_all_sounds();
+		_scumm->_imuse->clear_queue();
 	}
 	clearSoundQue();
 	stopSfxSound();
@@ -706,7 +691,7 @@ void Sound::soundKludge(int *list, int num) {
 	}
 
 	if ((_soundQuePos + num) > 0x100) {
-		warning("Sound que buffer overflow");
+		warning("Sound que buffer overflow (%d + %d = %d)", _soundQuePos, num, _soundQuePos+num);
 		return;
 	}
 
@@ -754,9 +739,8 @@ void Sound::setupSound() {
 }
 
 void Sound::pauseSounds(bool pause) {
-	IMuse *se = _scumm->_imuse;
-	if (se)
-		se->pause(pause);
+	if (_scumm->_imuse)
+		_scumm->_imuse->pause(pause);
 
 	// Don't pause sounds if the game isn't active
 	// FIXME - this is quite a nasty hack, replace with something cleaner, and w/o

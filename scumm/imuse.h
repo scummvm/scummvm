@@ -23,8 +23,6 @@
 #ifndef IMUSE_H
 #define IMUSE_H
 
-#include "imuse_digi.h"
-
 class IMuseInternal;
 class MidiDriver;
 class OSystem;
@@ -56,12 +54,12 @@ public:
 	int get_music_volume();
 	int set_master_volume(uint vol);
 	int get_master_volume();
-	bool start_sound(int sound);
-	int stop_sound(int sound);
+	bool startSound(int sound);
+	int stopSound(int sound);
 	int stop_all_sounds();
 	int get_sound_status(int sound);
 	bool get_sound_active(int sound);
-	int32 do_command(int a, int b, int c, int d, int e, int f, int g, int h);
+	int32 doCommand(int a, int b, int c, int d, int e, int f, int g, int h);
 	int clear_queue();
 	void setBase(byte **base);
 	uint32 property(int prop, uint32 value);

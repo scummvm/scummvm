@@ -28,6 +28,7 @@
 #include "debugger.h"
 #include "dialogs.h"
 #include "imuse.h"
+#include "imuse_digi.h"
 #include "intern.h"
 #include "object.h"
 #include "resource.h"

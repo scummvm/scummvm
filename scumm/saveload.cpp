@@ -24,13 +24,13 @@
 #include "actor.h"
 #include "charset.h"
 #include "imuse.h"
+#include "imuse_digi.h"
 #include "resource.h"
 #include "saveload.h"
 #include "scumm.h"
 #include "sound.h"
 #include "verbs.h"
 #include "common/config-file.h"
-#include "sound/mididrv.h"
 
 struct SaveGameHeader {
 	uint32 type;
