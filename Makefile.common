@@ -44,7 +44,7 @@ simon/libsimon.a: $(SIMON_OBJS)
 	ranlib $@ 
 
 clean:
-	rm -f $(OBJS) scummvm$(EXEEXT)
+	rm -f $(OBJS) $(SCUMM_OBJS) $(SIMON_OBJS) scummvm$(EXEEXT)
 
 .PHONY: all clean dist
 
