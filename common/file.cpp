@@ -266,9 +266,9 @@ uint32 File::readUint32BE() {
 	return (b << 16) | a;
 }
 
-uint32 File::write(void *ptr, uint32 len) {
-	byte *ptr2 = (byte *)ptr;
-
+uint32 File::write(const void *ptr, uint32 len) {
+	byte *tmp = 0;
+	
 	if (_handle == NULL) {
 		error("File is not open!");
 		return 0;
@@ -281,15 +281,20 @@ uint32 File::write(void *ptr, uint32 len) {
 		// Maybe FIXME: while it's efficient to do the encoding here,
 		// it not really nice for a write function to modify its input.
 		// Maybe we should work on a copy here...
-		uint32 t_size = len;
-		do {
-			*ptr2++ ^= _encbyte;
-		} while (--t_size);
+		tmp = (byte *)malloc(len);
+		for (uint32 i = 0; i < len; i ++) {
+			tmp[i] = ((const byte *)ptr)[i] ^ _encbyte;
+		}
+		ptr = tmp;
 	}
 
-	if ((uint32)fwrite(ptr2, 1, len, _handle) != len) {
+	if ((uint32)fwrite(ptr, 1, len, _handle) != len) {
 		clearerr(_handle);
 		_ioFailed = true;
+	}
+
+	if (_encbyte != 0) {
+		free(tmp);
 	}
 
 	return len;

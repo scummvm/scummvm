@@ -60,7 +60,7 @@ public:
 	uint32 readUint32LE();
 	uint16 readUint16BE();
 	uint32 readUint32BE();
-	uint32 write(void *ptr, uint32 size);
+	uint32 write(const void *ptr, uint32 size);
 	void writeByte(byte value);
 	void writeUint16LE(uint16 value);
 	void writeUint32LE(uint32 value);
