@@ -444,22 +444,26 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 
 	// Restore last selection
 	String last = ConfMan.get(String("lastselectedgame"), ConfigManager::kApplicationDomain);
-	if (!last.isEmpty()) {
-		int itemToSelect = 0;
-		StringList::const_iterator iter;
-		for (iter = _domains.begin(); iter != _domains.end(); ++iter, ++itemToSelect) {
-			if (last == *iter) {
-				_list->setSelected(itemToSelect);
-				break;
-			}
-		}
-	}
+	selectGame(last);
 	
 	// En-/Disable the buttons depending on the list selection
 	updateButtons();
 
 	// Create file browser dialog
 	_browser = new BrowserDialog("Select directory with game data");
+}
+
+void LauncherDialog::selectGame(const String &name) {
+	if (!name.isEmpty()) {
+		int itemToSelect = 0;
+		StringList::const_iterator iter;
+		for (iter = _domains.begin(); iter != _domains.end(); ++iter, ++itemToSelect) {
+			if (name == *iter) {
+				_list->setSelected(itemToSelect);
+				break;
+			}
+		}
+	}
 }
 
 LauncherDialog::~LauncherDialog() {
@@ -610,8 +614,9 @@ void LauncherDialog::addGame() {
 				// Write config to disk
 				ConfMan.flushToDisk();
 
-				// Update the ListWidget and force a redraw
+				// Update the ListWidget, select the new item, and force a redraw
 				updateListing();
+				selectGame(domain);
 				draw();
 			} else {
 				// User aborted, remove the the new domain again
