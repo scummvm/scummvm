@@ -75,13 +75,15 @@ protected:
 	uint32	_dtLines;	//no of lines to do
 	uint32	_dtLineSize;	//size of one line in bytes
 	uint8	*_dtData;	//address of textdata
-	uint32	_dtLetters;	//no of chars in message
 	char	*_dtText;	//pointer to text
 	uint32	_dtCharSpacing;	//character seperation adjustment
 	uint32	_dtWidth;	//width of chars in last line (for editing (?))
 	uint32	_dtLastWidth;
 	bool	_dtCentre;	//set for centre text
 	uint32	_lowTextWidth;
+
+public:
+	uint32 _dtLetters;	//no of chars in message
 };
 
 #endif

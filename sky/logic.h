@@ -121,8 +121,8 @@ public:
 	bool fnClearStop(uint32 a, uint32 b, uint32 c);
 	bool fnPointerText(uint32 a, uint32 b, uint32 c);
 	bool fnQuit(uint32 a, uint32 b, uint32 c);
-	bool fnSpeakMe(uint32 a, uint32 b, uint32 c);
-	bool fnSpeakMeDir(uint32 a, uint32 b, uint32 c);
+	bool fnSpeakMe(uint32 targetId, uint32 mesgNum, uint32 animNum);
+	bool fnSpeakMeDir(uint32 targetId, uint32 mesgNum, uint32 animNum);
 	bool fnSpeakWait(uint32 a, uint32 b, uint32 c);
 	bool fnSpeakWaitDir(uint32 a, uint32 b, uint32 c);
 	bool fnChooser(uint32 a, uint32 b, uint32 c);

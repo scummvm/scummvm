@@ -1348,14 +1348,17 @@ bool SkyLogic::fnQuit(uint32 a, uint32 b, uint32 c) {
 	return false;
 }
 
-bool SkyLogic::fnSpeakMe(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnSpeakMe");
-	return false;
+bool SkyLogic::fnSpeakMe(uint32 targetId, uint32 mesgNum, uint32 animNum) {
+	//stdSpeak(SkyState::fetchCompact(targetId), mesgNum, animNum, 0);
+	return false; 	//drop out of script
 }
 
-bool SkyLogic::fnSpeakMeDir(uint32 a, uint32 b, uint32 c) {
-	warning("Stub: fnSpeakMeDir");
-	return false;
+bool SkyLogic::fnSpeakMeDir(uint32 targetId, uint32 mesgNum, uint32 animNum) {
+	//must be player so don't cause script to drop out
+	//this function sets the directional option whereby
+	//the anim chosen is linked to c_dir
+	animNum += _compact->extCompact->dir << 1;	//2 sizes (large and small)
+	return fnSpeakMe(targetId, mesgNum, animNum);
 }
 
 bool SkyLogic::fnSpeakWait(uint32 id, uint32 message, uint32 animation) {
