@@ -466,7 +466,7 @@ uint16 sc46_mouse_list[] = {
 	ID_TEXT_MOUSE,
 };
 
-uint32 sc46_walk_grid[0];
+uint32 *sc46_walk_grid = 0;
 
 uint16 sc46_fast_list[] = {
 	12+DISK_13,

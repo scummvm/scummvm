@@ -1388,7 +1388,7 @@ Compact sc71_door69 = {
 	SC71_DOOR69_ACTION,	// actionScript
 };
 
-uint32 grid71[0];
+uint32 *grid71 = 0;
 
 Compact sc71_fake_floor = {
 	0,	// logic

@@ -1500,7 +1500,7 @@ uint16 sc79_toss_rope[] = {
 	0,
 };
 
-uint32 grid79[0];
+uint32 *grid79 = 0;
 
 uint16 sc79_logic_list[] = {
 	ID_FOSTER,

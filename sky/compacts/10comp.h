@@ -1763,7 +1763,7 @@ uint16 pod_light_seq[] = {
 	0,
 };
 
-uint32 grid10[0];
+uint32 *grid10 = 0;
 
 uint16 card2_seq[] = {
 	55*64,

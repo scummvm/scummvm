@@ -658,7 +658,7 @@ Compact dustbin_28 = {
 	DUSTBIN_ACTION,	// actionScript
 };
 
-uint32 grid28[0];
+uint32 *grid28 = 0;
 
 uint16 rs_31_28[] = {
 	C_XCOOD,

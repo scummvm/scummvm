@@ -3007,7 +3007,7 @@ uint16 sc74_usecard[] = {
 	0,
 };
 
-uint32 grid74[0];
+uint32 *grid74 = 0;
 
 uint16 sc74_fost_sit[] = {
 	92*64,

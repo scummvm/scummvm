@@ -1342,7 +1342,7 @@ uint16 s14_pal[] = {
 	16191,
 };
 
-uint32 grid14[0];
+uint32 *grid14 = 0;
 
 uint16 change3_seq[] = {
 	101*64,

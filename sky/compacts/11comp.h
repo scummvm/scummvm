@@ -1299,7 +1299,7 @@ Compact soccer_5 = {
 	SOCCER_1_ACTION,	// actionScript
 };
 
-uint32 grid11[0];
+uint32 *grid11 = 0;
 
 uint16 open_11_locker[] = {
 	29*64,

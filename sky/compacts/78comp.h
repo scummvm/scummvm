@@ -750,7 +750,7 @@ Compact sc78_pipe = {
 	FLOOR_ACTION,	// actionScript
 };
 
-uint32 grid78[0];
+uint32 *grid78 = 0;
 
 uint16 sc78_palette[] = {
 	0,

@@ -158,7 +158,7 @@ uint16 mag_away[] = {
 	0,
 };
 
-uint32 grid24[0];
+uint32 *grid24 = 0;
 
 Compact left_exit_24 = {
 	0,	// logic

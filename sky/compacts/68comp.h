@@ -933,7 +933,7 @@ Compact sc68_sensor = {
 	0,	// baseSub_off
 };
 
-uint32 grid68[0];
+uint32 *grid68 = 0;
 
 uint16 sc68_pulse1_anim[] = {
 	58*64,

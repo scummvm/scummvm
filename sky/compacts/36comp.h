@@ -3180,7 +3180,7 @@ uint16 sc36_col_blink1[] = {
 	0,
 };
 
-uint32 babs[0];
+uint32 *babs = 0;
 
 uint16 bar_wipe[] = {
 	32*64,
@@ -3739,7 +3739,7 @@ Compact sc36_floor = {
 	FLOOR_ACTION,	// actionScript
 };
 
-uint32 sc36_walk_grid[0];
+uint32 *sc36_walk_grid = 0;
 
 uint16 sc36_dooropen[] = {
 	144*64,

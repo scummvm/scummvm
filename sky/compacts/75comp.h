@@ -476,7 +476,7 @@ uint16 reset_73_75[] = {
 	65535,
 };
 
-uint32 grid75[0];
+uint32 *grid75 = 0;
 
 uint16 sc75_light1_anim[] = {
 	151*64,

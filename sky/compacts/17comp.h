@@ -171,7 +171,7 @@ Compact s17_floor = {
 	FLOOR_ACTION,	// actionScript
 };
 
-uint32 grid17[0];
+uint32 *grid17 = 0;
 
 uint16 get_card_seq[] = {
 	30*64,

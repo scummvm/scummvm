@@ -1452,7 +1452,7 @@ uint16 reset_74_73[] = {
 	65535,
 };
 
-uint32 grid73[0];
+uint32 *grid73 = 0;
 
 Compact sc73_bits2 = {
 	L_SCRIPT,	// logic
@@ -2442,7 +2442,7 @@ Compact sc73_big_door = {
 	SC73_BIG_DOOR_ACTION,	// actionScript
 };
 
-uint32 gal[0];
+uint32 *gal = 0;
 
 Compact sc73_cham4_light = {
 	L_SCRIPT,	// logic

@@ -629,7 +629,7 @@ uint16 sc30_palette[] = {
 	16191,
 };
 
-uint32 sec4_compacts[0];
+uint32 *sec4_compacts = 0;
 
 uint16 sc36_col_talk2[] = {
 	63*64,
@@ -1480,7 +1480,7 @@ uint16 sc30_mouse_list[] = {
 	ID_TEXT_MOUSE,
 };
 
-uint32 sc30_walk_grid[0];
+uint32 *sc30_walk_grid = 0;
 
 Compact sc30_exit_31 = {
 	0,	// logic

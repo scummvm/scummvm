@@ -27,7 +27,7 @@
 
 namespace SkyCompact {
 
-uint32 sc65_walk_grid[0];
+uint32 *sc65_walk_grid = 0;
 
 Compact sc65_exit_48 = {
 	0,	// logic

@@ -135,7 +135,7 @@ Compact sc40_cabinet = {
 	SC40_CABINET_ACTION,	// actionScript
 };
 
-uint32 sc40_walk_grid[0];
+uint32 *sc40_walk_grid = 0;
 
 uint16 sc40_palette[] = {
 	0,

@@ -1051,7 +1051,7 @@ uint16 rs_foster_26_27[] = {
 	65535,
 };
 
-uint32 grid27[0];
+uint32 *grid27 = 0;
 
 uint16 burke_up[] = {
 	2,
@@ -1275,7 +1275,7 @@ uint16 helmet_down[] = {
 	0,
 };
 
-uint32 heart_seq[0];
+uint32 *heart_seq = 0;
 
 uint16 squirm_seq[] = {
 	164*64,

@@ -634,7 +634,7 @@ uint16 s25_fast_list[] = {
 	0,
 };
 
-uint32 grid25[0];
+uint32 *grid25 = 0;
 
 uint16 anchor_leave_seq[] = {
 	45*64,

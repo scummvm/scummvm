@@ -144,7 +144,7 @@ uint16 s15_logic[] = {
 	ID_MENU_LOGIC,
 };
 
-uint32 grid15[0];
+uint32 *grid15 = 0;
 
 uint16 flap_seq[] = {
 	74*64,

@@ -455,7 +455,7 @@ uint16 f_ss_st_right[] = {
 	0,
 };
 
-uint32 c74[0];
+uint32 *c74 = 0;
 
 uint16 f_ss_left[] = {
 	4,
@@ -1127,7 +1127,7 @@ uint16 rs_foster_to_1[] = {
 	65535,
 };
 
-uint32 rs_jobs_4_2[0];
+uint32 *rs_jobs_4_2 = 0;
 
 uint16 monitor_seq[] = {
 	151*64,
@@ -2568,7 +2568,7 @@ uint16 s0_pal[] = {
 	16191,
 };
 
-uint32 grid3[0];
+uint32 *grid3 = 0;
 
 uint16 foster_shot[] = {
 	103*64,
@@ -2709,7 +2709,7 @@ uint16 f_ss_d_to_u[] = {
 	0,
 };
 
-uint32 grid4[0];
+uint32 *grid4 = 0;
 
 uint16 ss_smokes_3[] = {
 	108*64,
@@ -4418,7 +4418,7 @@ uint16 ss_kick[] = {
 	0,
 };
 
-uint32 grid1[0];
+uint32 *grid1 = 0;
 
 uint8 full_ss_auto[64];
 
@@ -6830,7 +6830,7 @@ uint16 fan5_seq[] = {
 	0,
 };
 
-uint32 grid2[0];
+uint32 *grid2 = 0;
 
 uint16 guard_lean_out[] = {
 	20*64,
@@ -6846,7 +6846,7 @@ uint16 guard_lean_out[] = {
 	0,
 };
 
-uint32 c101[0];
+uint32 *c101 = 0;
 
 uint16 put_bar_away[] = {
 	88*64,
@@ -9020,7 +9020,7 @@ uint16 fan2_seq[] = {
 	0,
 };
 
-uint32 grid0[0];
+uint32 *grid0 = 0;
 
 void *data_1[] = {
 	0,

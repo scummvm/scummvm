@@ -458,7 +458,7 @@ uint16 sc33_door_open[] = {
 	0,
 };
 
-uint32 sc33_walk_grid[0];
+uint32 *sc33_walk_grid = 0;
 
 uint16 reset_34_33[] = {
 	C_SCREEN,

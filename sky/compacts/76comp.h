@@ -58,7 +58,7 @@ uint16 sc76_logic_list[] = {
 	ID_STD_MENU_LOGIC,
 };
 
-uint32 grid76[0];
+uint32 *grid76 = 0;
 
 uint16 sc76_hatch_2[] = {
 	68*64,

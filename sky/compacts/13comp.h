@@ -3404,7 +3404,7 @@ uint16 new_13_chip[] = {
 	0,
 };
 
-uint32 grid13[0];
+uint32 *grid13 = 0;
 
 uint16 rs_foster_12_13[] = {
 	C_XCOOD,

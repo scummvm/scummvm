@@ -429,7 +429,7 @@ uint16 wit_u_to_d[] = {
 	0,
 };
 
-uint32 wit[0];
+uint32 *wit = 0;
 
 Compact sc72_cham2_light = {
 	L_SCRIPT,	// logic
@@ -1647,7 +1647,7 @@ uint16 wit_st_down[] = {
 	0,
 };
 
-uint32 grid72[0];
+uint32 *grid72 = 0;
 
 uint16 sc72_mouse_list[] = {
 	ID_MEDI,

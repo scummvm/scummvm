@@ -536,7 +536,7 @@ uint16 sc42_logic_list[] = {
 	ID_STD_MENU_LOGIC,
 };
 
-uint32 sc42_walk_grid[0];
+uint32 *sc42_walk_grid = 0;
 
 uint16 sc42_jdg_turn[] = {
 	167*64,

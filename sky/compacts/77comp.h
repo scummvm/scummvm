@@ -555,7 +555,7 @@ uint16 sc77_chip_list[] = {
 	0,
 };
 
-uint32 grid77[0];
+uint32 *grid77 = 0;
 
 uint16 reset_78_77[] = {
 	C_SCREEN,

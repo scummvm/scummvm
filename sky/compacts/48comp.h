@@ -716,7 +716,7 @@ Compact sc48_exit_65 = {
 	SC48_EXIT_65_ACTION,	// actionScript
 };
 
-uint32 sc48_walk_grid[0];
+uint32 *sc48_walk_grid = 0;
 
 Compact sc48_floor = {
 	0,	// logic

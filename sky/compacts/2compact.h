@@ -56,7 +56,7 @@ uint16 sml_loader_u_to_l[] = {
 	0,
 };
 
-uint32 c4121[0];
+uint32 *c4121 = 0;
 
 uint16 loader_right[] = {
 	2,
@@ -601,7 +601,7 @@ uint16 loader_l_to_d[] = {
 	0,
 };
 
-uint16 left_table2[0];
+uint16 *left_table2 = 0;
 
 uint16 sml_loaderb_u_to_d[] = {
 	24+158*64,
@@ -829,7 +829,7 @@ uint16 chip_list_s2[] = {
 	0,
 };
 
-uint32 exit_table[0];
+uint32 *exit_table = 0;
 
 uint16 sml_loaderb_r_to_l[] = {
 	23+158*64,

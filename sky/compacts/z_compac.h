@@ -1486,7 +1486,7 @@ uint16 foster_u_to_d[] = {
 	0,
 };
 
-uint32 c68[0];
+uint32 *c68 = 0;
 
 uint16 ljoey_d_to_r[] = {
 	23+173*64,
@@ -1969,7 +1969,7 @@ uint16 sml_door_table[] = {
 	GET_TO_TALK2,
 };
 
-uint32 l_talk_s2[0];
+uint32 *l_talk_s2 = 0;
 
 uint16 bfoster_r_to_l[] = {
 	45+182*64,
@@ -4556,7 +4556,7 @@ Compact foster = {
 	BASE_INTRO,	// baseSub
 	0,	// baseSub_off
 	&foster_ext,
-	foster_turnTable,
+	&foster_turnTable,
 	&foster_unk,
 };
 
@@ -4689,7 +4689,7 @@ uint16 monitor_st_down[] = {
 	0,
 };
 
-uint32 zt[0];
+uint32 *zt = 0;
 
 uint16 but_9[] = {
 	149*64,
@@ -4907,7 +4907,7 @@ uint16 rad_shrug_seq[] = {
 	0,
 };
 
-uint32 talk1[0];
+uint32 *talk1 = 0;
 
 uint16 rs_lamb_start_2[] = {
 	C_STATUS,
@@ -5616,7 +5616,7 @@ void *data_0[] = {
 	forklift2_cdt,
 };
 
-uint32 z_compact_table[0];
+uint32 *z_compact_table = 0;
 
 }; // namespace SkyCompact
 

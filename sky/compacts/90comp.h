@@ -1826,7 +1826,7 @@ void *data_6[] = {
 	linc_menu_mouse,
 };
 
-uint32 sec6_compacts[0];
+uint32 *sec6_compacts = 0;
 
 }; // namespace SkyCompact
 

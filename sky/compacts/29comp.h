@@ -118,7 +118,7 @@ Compact s29_floor = {
 	FLOOR_ACTION,	// actionScript
 };
 
-uint32 grid29[0];
+uint32 *grid29 = 0;
 
 uint16 card_slot_29_anim[] = {
 	18*64,

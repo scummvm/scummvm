@@ -712,7 +712,7 @@ Compact lamb_window = {
 	LAMB_WINDOW_ACTION,	// actionScript
 };
 
-uint32 grid20[0];
+uint32 *grid20 = 0;
 
 uint16 gal_look_down[] = {
 	90*64,

@@ -1407,7 +1407,7 @@ Compact left_exit_21 = {
 	EL21_ACTION,	// actionScript
 };
 
-uint32 grid21[0];
+uint32 *grid21 = 0;
 
 Compact inner_lamb_door = {
 	L_SCRIPT,	// logic

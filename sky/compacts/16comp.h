@@ -174,7 +174,7 @@ Compact reactor_console = {
 	0,	// baseSub_off
 };
 
-uint32 grid16[0];
+uint32 *grid16 = 0;
 
 uint16 s16_fast_list[] = {
 	12,

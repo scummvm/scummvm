@@ -862,7 +862,7 @@ uint16 sc70_exit_anim[] = {
 	0,
 };
 
-uint32 grid70[0];
+uint32 *grid70 = 0;
 
 uint16 sc70_fast_list[] = {
 	12+DISK_5,

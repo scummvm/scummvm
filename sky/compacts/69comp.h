@@ -27,7 +27,7 @@
 
 namespace SkyCompact {
 
-uint32 grid69[0];
+uint32 *grid69 = 0;
 
 uint16 sc69_logic_list[] = {
 	ID_FOSTER,

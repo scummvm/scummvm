@@ -272,7 +272,7 @@ Compact sc39_exit_41 = {
 	SC39_EXIT_41_ACTION,	// actionScript
 };
 
-uint32 sc39_walk_grid[0];
+uint32 *sc39_walk_grid = 0;
 
 uint16 sc39_descend[] = {
 	23*64,

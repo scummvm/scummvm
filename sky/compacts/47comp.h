@@ -467,7 +467,7 @@ Compact sc47_exit_48 = {
 	SC47_EXIT_48_ACTION,	// actionScript
 };
 
-uint32 sc47_walk_grid[0];
+uint32 *sc47_walk_grid = 0;
 
 uint16 sc47_fast_list[] = {
 	12+DISK_13,

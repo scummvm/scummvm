@@ -226,7 +226,7 @@ uint16 rs_magazine[] = {
 	65535,
 };
 
-uint32 grid22[0];
+uint32 *grid22 = 0;
 
 uint16 remove_pillow[] = {
 	196*64,

@@ -483,7 +483,7 @@ Compact sc32_vincent = {
 	&sc32_vincent_ext,
 };
 
-uint32 sc32_walk_grid[0];
+uint32 *sc32_walk_grid = 0;
 
 uint16 sc32_gard_turn_d[] = {
 	59*64,

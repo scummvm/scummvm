@@ -970,7 +970,7 @@ uint16 sc81_chip_list[] = {
 	0,
 };
 
-uint32 grid81[0];
+uint32 *grid81 = 0;
 
 uint16 sc81_tentwig6[] = {
 	186*64,

@@ -534,7 +534,7 @@ uint16 sc45_fast_list[] = {
 	0,
 };
 
-uint32 sc45_walk_grid[0];
+uint32 *sc45_walk_grid = 0;
 
 uint16 reset_47_45[] = {
 	C_SCREEN,

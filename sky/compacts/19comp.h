@@ -262,7 +262,7 @@ Compact top_right_19 = {
 	TOP_R19_ACTION,	// actionScript
 };
 
-uint32 grid19[0];
+uint32 *grid19 = 0;
 
 uint16 s19_pal[] = {
 	0,

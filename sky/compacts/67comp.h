@@ -1680,7 +1680,7 @@ uint16 sc67_palette[] = {
 	16191,
 };
 
-uint32 grid67[0];
+uint32 *grid67 = 0;
 
 uint16 sc67_fast_list[] = {
 	12+DISK_5,

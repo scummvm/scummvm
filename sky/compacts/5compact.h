@@ -384,7 +384,7 @@ uint16 grd_watch_seq[] = {
 	0,
 };
 
-uint32 grid18[0];
+uint32 *grid18 = 0;
 
 uint16 s7_floor_table[] = {
 	ID_S7_FLOOR,
@@ -1571,7 +1571,7 @@ Compact left_exit_s7 = {
 	EL7_ACTION,	// actionScript
 };
 
-uint32 grid7[0];
+uint32 *grid7 = 0;
 
 uint16 rs_foster_18_5[] = {
 	C_XCOOD,
@@ -2408,7 +2408,7 @@ Compact security_exit_s6 = {
 	S6_DOOR_ACTION,	// actionScript
 };
 
-uint32 grid5[0];
+uint32 *grid5 = 0;
 
 uint16 jostair2_seq[] = {
 	29*64,
@@ -2747,7 +2747,7 @@ uint16 dwn_stair2_seq[] = {
 	0,
 };
 
-uint32 grid9[0];
+uint32 *grid9 = 0;
 
 uint16 s8_fast_list[] = {
 	12,
@@ -3369,11 +3369,11 @@ uint16 s5_pal[] = {
 	16191,
 };
 
-uint32 z2[0];
+uint32 *z2 = 0;
 
-uint32 grid6[0];
+uint32 *grid6 = 0;
 
-uint32 grid8[0];
+uint32 *grid8 = 0;
 
 Compact left_exit_s5 = {
 	0,	// logic
@@ -4681,7 +4681,7 @@ void *data_2[] = {
 	&foreman,
 };
 
-uint32 table2[0];
+uint32 *table2 = 0;
 
 }; // namespace SkyCompact
 

@@ -875,7 +875,7 @@ Compact factory_exit = {
 	FACTORY_EXIT_ACTION,	// actionScript
 };
 
-uint32 grid12[0];
+uint32 *grid12 = 0;
 
 uint16 s12_pal[] = {
 	0,

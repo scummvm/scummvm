@@ -153,7 +153,7 @@ uint16 sc41_heat_1_anim[] = {
 	0,
 };
 
-uint32 sc41_walk_grid[0];
+uint32 *sc41_walk_grid = 0;
 
 uint16 sc41_fast_list[] = {
 	13+DISK_14,

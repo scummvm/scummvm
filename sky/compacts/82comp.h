@@ -226,7 +226,7 @@ uint16 sc82_fast_list[] = {
 	0,
 };
 
-uint32 grid82[0];
+uint32 *grid82 = 0;
 
 uint16 sc82_mouse_list[] = {
 	0,

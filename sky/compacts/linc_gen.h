@@ -67,7 +67,7 @@ uint16 logon[] = {
 	0,
 };
 
-uint32 grid96[0];
+uint32 *grid96 = 0;
 
 uint16 note_module[] = {
 	11,
@@ -190,7 +190,7 @@ Compact window_3 = {
 	0,	// baseSub_off
 };
 
-uint32 grid91[0];
+uint32 *grid91 = 0;
 
 Compact info_button = {
 	L_SCRIPT,	// logic
@@ -297,7 +297,7 @@ uint16 logoff[] = {
 	0,
 };
 
-uint32 grid94[0];
+uint32 *grid94 = 0;
 
 uint16 enter_top[] = {
 	135*64,
@@ -360,7 +360,7 @@ uint16 crouch_right[] = {
 	0,
 };
 
-uint32 grid95[0];
+uint32 *grid95 = 0;
 
 Compact window_1 = {
 	L_SCRIPT,	// logic
@@ -393,7 +393,7 @@ Compact window_1 = {
 	0,	// baseSub_off
 };
 
-uint32 grid90[0];
+uint32 *grid90 = 0;
 
 uint16 exit_top[] = {
 	136*64,
@@ -515,7 +515,7 @@ uint16 crouch_left[] = {
 	0,
 };
 
-uint32 grid92[0];
+uint32 *grid92 = 0;
 
 Compact window_4 = {
 	L_SCRIPT,	// logic
@@ -564,7 +564,7 @@ uint16 rs_foster_s90[] = {
 	65535,
 };
 
-uint32 grid93[0];
+uint32 *grid93 = 0;
 
 }; // namespace SkyCompact
 

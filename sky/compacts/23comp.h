@@ -27,7 +27,7 @@
 
 namespace SkyCompact {
 
-uint32 grid23[0];
+uint32 *grid23 = 0;
 
 Compact link_23 = {
 	L_SCRIPT,	// logic

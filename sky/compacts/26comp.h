@@ -955,7 +955,7 @@ uint16 s26_fast_list[] = {
 	0,
 };
 
-uint32 grid26[0];
+uint32 *grid26 = 0;
 
 uint16 joey_list_s26[] = {
 	208,
