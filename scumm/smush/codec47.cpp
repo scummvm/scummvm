@@ -269,13 +269,13 @@ static const uint32 codec47_delta[] = {
 
 static int32 last_table_width;
 
-static byte smush_mktable1[99072+100];
-static byte smush_mktable2[32768+100];
+static int16 smush_buf_big[49664];
+//static byte smush_mktable1[99072];
+static int16 smush_buf_small[16384];
+//static byte smush_mktable2[32768];
 static byte smush_buffer[65536];
 
-static int16 codec47_temp_table[256+100];
-static int16 smush_buf_big[128+100];
-static int16 smush_buf_small[32+100];
+static int16 codec47_temp_table[256];
 
 void mk_tables(int32 param) {
 	int32 variable1, variable2, variable3, variable4, count_1, count_2;
@@ -289,12 +289,12 @@ void mk_tables(int32 param) {
 	if (param == 8) {
 		table37_1 = (int32*)&codec37_table[64];
 		table37_2 = (int32*)&codec37_table[96];
-		ptr = (byte*)&smush_mktable1 + 128;
+		ptr = (byte*)&smush_buf_big + 384;
 		for (l = 0; l < 256; l++) {
 			*ptr = 0;
 			ptr += 388;
 		}
-		ptr = (byte*)&smush_mktable1 + 129;
+		ptr = (byte*)&smush_buf_big + 385;
 		for (l = 0; l < 256; l++) {
 			*ptr = 0;
 			ptr += 388;
@@ -304,12 +304,12 @@ void mk_tables(int32 param) {
 	if (param == 4) {
 		table37_1 = (int32*)&codec37_table[0];
 		table37_2 = (int32*)&codec37_table[32];
-		ptr = (byte*)&smush_mktable2 + 32;
+		ptr = (byte*)&smush_buf_small + 96;
 		for (l = 0; l < 256; l++) {
 			*ptr = 0;
 			ptr += 128;
 		}
-		ptr = (byte*)&smush_mktable2 + 33;
+		ptr = (byte*)&smush_buf_small + 97;
 		for (l = 0; l < 256; l++) {
 			*ptr = 0;
 			ptr += 128;
@@ -536,11 +536,11 @@ label27:
 					tmp_c = tmp_param_tmp;
 					do {
 						if (table[tmp_c] != 0) {
-							smush_mktable1[0 + s + smush_mktable1[128 + s]] = (byte)tmp_c;
-							smush_mktable1[128 + s]++;
+							*((byte*)&smush_buf_big + 256 + s + *((byte*)&smush_buf_big + 384 + s)) = (byte)tmp_c;
+							*((byte*)&smush_buf_big + 384 + s) = *((byte*)&smush_buf_big + 384 + s) + 1;
 						} else {
-							smush_mktable1[64 + s + smush_mktable1[129 + s]] = (byte)tmp_c;
-							smush_mktable1[129 + s]++;
+							*((byte*)&smush_buf_big + 320 + s + *((byte*)&smush_buf_big + 385 + s)) = (byte)tmp_c;
+							*((byte*)&smush_buf_big + 385 + s) = *((byte*)&smush_buf_big + 385 + s) + 1;
 						}
 					} while (tmp_c-- != 0);
 				}
@@ -548,11 +548,11 @@ label27:
 					tmp_c = tmp_param_tmp;
 					do {
 						if (table[tmp_c] != 0) {
-							smush_mktable2[0 + p + smush_mktable2[32 + p]] = (byte)tmp_c;
-							smush_mktable2[32 + p]++;
+							*((byte*)&smush_buf_small + 64 + p + *((byte*)&smush_buf_small + 96 + p)) = (byte)tmp_c;
+							*((byte*)&smush_buf_small + 96 + p) = *((byte*)&smush_buf_small + 96 + p) + 1;
 						} else {
-							smush_mktable2[16 + p + smush_mktable2[33 + p]] = (byte)tmp_c;
-							smush_mktable2[33 + p]++;
+							*((byte*)&smush_buf_small + 80 + p + *((byte*)&smush_buf_small + 97 + p)) = (byte)tmp_c;
+							*((byte*)&smush_buf_small + 97 + p) = *((byte*)&smush_buf_small + 97 + p) + 1;
 						}
 					} while (tmp_c-- != 0);
 				}
@@ -591,10 +591,10 @@ void make_tables(int32 width) {
 	tmp_value = 0;
 	do {
 		d = 0;
-		tmp = smush_mktable2[32 + c];
+		tmp = *((byte*)&smush_buf_small + 96 + c);
 		if (tmp != 0) {
 			do {
-				tmp = smush_mktable2[0 + c + d];
+				tmp = *((byte*)&smush_buf_small + 64 + c + d);
 				tmp2 = tmp;
 				tmp2 >>= 2;
 				tmp &= 3;
@@ -603,14 +603,14 @@ void make_tables(int32 width) {
 				tmp2 += tmp;
 				smush_buf_small[s + d] = tmp2;
 				d++;
-				tmp = smush_mktable2[32 + c];
+				tmp = *((byte*)&smush_buf_small + 96 + c);
 			} while (tmp > d);
 		}
 		d = 0;
-		tmp = smush_mktable2[33 + c];
+		tmp = *((byte*)&smush_buf_small + 97 + c);
 		if (tmp != 0) {
 			do {
-				tmp = smush_mktable2[16 + c + d];
+				tmp = *((byte*)&smush_buf_small + 80 + c + d);
 				tmp2 = tmp;
 				tmp2 >>= 2;
 				tmp &= 3;
@@ -619,14 +619,14 @@ void make_tables(int32 width) {
 				tmp2 += tmp;
 				smush_buf_small[16 + s + d] = tmp2;
 				d++;
-				tmp = smush_mktable2[33 + c];
+				tmp = *((byte*)&smush_buf_small + 97 + c);
 			} while (tmp > d);
 		}
 		d = 0;
-		tmp = smush_mktable1[128 + a];
+		tmp = *((byte*)&smush_buf_big + 384 + a);
 		if (tmp != 0) {
 			do {
-				tmp = smush_mktable1[0 + a + d];
+				tmp = *((byte*)&smush_buf_big + 256 + a + d);
 				tmp2 = tmp >> 3;
 				tmp = tmp & 7;
 				tmp2 &= 0xFFFF00FF;
@@ -636,14 +636,14 @@ void make_tables(int32 width) {
 				tmp_offset += d;
 				d++;
 				smush_buf_big[tmp_offset] = tmp2;
-				tmp = smush_mktable1[128 + a];
+				tmp = *((byte*)&smush_buf_big + 384 + a);
 			} while (tmp > d);
 		}
 		d = 0;
-		tmp = smush_mktable1[129 + a];
+		tmp = *((byte*)&smush_buf_big + 385 + a);
 		if (tmp != 0) {
 			do {
-				tmp = smush_mktable1[64 + a + d];
+				tmp = *((byte*)&smush_buf_big + 320 + a + d);
 				tmp2 = tmp >> 3;
 				tmp = tmp & 7;
 				tmp2 &= 0xFFFF00FF;
@@ -653,7 +653,7 @@ void make_tables(int32 width) {
 				tmp_offset += d;
 				d++;
 				smush_buf_big[64 + tmp_offset] = tmp2;
-				tmp = smush_mktable1[129 + a];
+				tmp = *((byte*)&smush_buf_big + 385 + a);
 			} while (tmp > d);
 		}
 		
