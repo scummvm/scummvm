@@ -15,44 +15,52 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include "util.h"
 
 struct lab_header {
-  long magic;
-  long magic2;
-  long num_entries;
-  long string_table_size;
+  uint32 magic;
+  uint32 magic2;
+  uint32 num_entries;
+  uint32 string_table_size;
 };
 
 struct lab_entry {
-  long fname_offset;
-  long start;
-  long size;
-  long reserved;
+  uint32 fname_offset;
+  uint32 start;
+  uint32 size;
+  uint32 reserved;
 };
+
+uint16 READ_LE_UINT16(const void *ptr) {
+	const byte *b = (const byte *)ptr;
+	return (b[1] << 8) + b[0];
+}
+uint32 READ_LE_UINT32(const void *ptr) {
+	const byte *b = (const byte *)ptr;
+	return (b[3] << 24) + (b[2] << 16) + (b[1] << 8) + (b[0]);
+}
 
 int main(int argc, char **argv) {
   FILE *infile, *outfile;
   struct lab_header head;
   struct lab_entry *entries;
   char *str_table;
-  int i;
+  uint i;
   off_t offset;
 
   infile = fopen(argv[1], "rb");
   if (infile == 0)
   {
-    printf("can't open source file: %s\n", argv[1]);
-    exit(1);
+    error("can't open source file: %s", argv[1]);
   }
 
-  fread(&head, 1, sizeof(head), infile);
-  if (head.magic != 'NBAL')
+  fread(&head.magic, 1, 4, infile);
+  fread(&head.magic2, 1, 4, infile);
+  head.num_entries = readUint32LE(infile);
+  head.string_table_size = readUint32LE(infile);
+  if (0 != memcmp(&head.magic, "LABN", 4))
   {
-    printf("its not LABN header in source file");
-    exit(1);
+    error("There is no LABN header in source file");
   }
 
   entries = (struct lab_entry *)malloc(head.num_entries * sizeof(struct lab_entry));
@@ -62,12 +70,12 @@ int main(int argc, char **argv) {
   fread(str_table, 1, head.string_table_size, infile);
 
   for (i = 0; i < head.num_entries; i++) {
-    outfile = fopen(str_table + entries[i].fname_offset, "wb");
-    offset = entries[i].start;
-    char *buf = (char *)malloc(entries[i].size);
+    outfile = fopen(str_table + READ_LE_UINT32(&entries[i].fname_offset), "wb");
+    offset = READ_LE_UINT32(&entries[i].start);
+    char *buf = (char *)malloc(READ_LE_UINT32(&entries[i].size));
     fseek(infile, offset, SEEK_SET);
-    fread(buf, 1, entries[i].size, infile);
-    fwrite(buf, 1, entries[i].size, outfile);
+    fread(buf, 1, READ_LE_UINT32(&entries[i].size), infile);
+    fwrite(buf, 1, READ_LE_UINT32(&entries[i].size), outfile);
     fclose(outfile);
   }
 
