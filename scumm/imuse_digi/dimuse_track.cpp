@@ -77,10 +77,12 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 
 	Track *track = _track[l];
 	while (track->used) {
-#if defined(_WIN32_WCE) || defined (__PALM_OS__)
-		_vm->parseEvents(); // timers are events, we need to consume them
-#endif
+		// The designated track is not yet available. So, we call flushTracks()
+		// to get it processed (and thus made ready for us). Since the actual
+		// processing is done by another thread, we also call parseEvents to
+		// give it some time (and to avoid busy waiting/looping).
 		flushTracks();
+		_vm->parseEvents();
 	}
 
 	track->pan = 64;
