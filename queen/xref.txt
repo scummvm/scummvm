@@ -172,8 +172,7 @@ INV1,INV2,INV3,INV4			Logic::_inventoryItem
 JOE
 ===
 FACE_JOE()					Logic::joeFace
-GRAB_DIR()					Logic::joeGrabDirection
-GRAB_JOE()					Logic::joeGrab
+GRAB_DIR(),GRAB_JOE()		Logic::joeGrab
 SETUP_HERO()				Logic::joeSetupInRoom
 SETUP_JOE()					Logic::joeSetup
 USE_UNDERWEAR()				Logic::joeUseUnderwear

@@ -32,6 +32,7 @@
 #include "queen/journal.h"
 #include "queen/resource.h"
 #include "queen/sound.h"
+#include "queen/state.h"
 #include "queen/talk.h"
 #include "queen/walk.h"
 
@@ -1647,23 +1648,12 @@ uint16 Logic::joeFace() {
 }
 
 
-void Logic::joeGrab(uint16 state, uint16 speed) {
-
-	StateGrab sg = State::findGrab(state);
-	if (sg != STATE_GRAB_NONE) {
-		joeGrabDirection(sg, speed);
-	}
-}
-
-
-void Logic::joeGrabDirection(StateGrab grab, uint16 speed) {
-
-	// if speed == 0, then keep Joe in position
+void Logic::joeGrab(int16 grabState) {
 
 	uint16 frame = 0;
 	BobSlot *bobJoe = _graphics->bob(0);
-
-	switch (grab) {
+	
+	switch (grabState) {
 	case STATE_GRAB_NONE:
 		break;
 
@@ -1700,12 +1690,7 @@ void Logic::joeGrabDirection(StateGrab grab, uint16 speed) {
 		bobJoe->scale = joeScale();
 		update();
 		// turn back
-		if (speed == 0) {
-			frame = 7;
-		}
-		else {
-			frame = 5;
-		}
+		frame = 7;
 		break;
 	}
 
@@ -1716,13 +1701,9 @@ void Logic::joeGrabDirection(StateGrab grab, uint16 speed) {
 		update();
 
 		// extra delay for grab down
-		if (grab == STATE_GRAB_DOWN) {
+		if (grabState == STATE_GRAB_DOWN) {
 			update();
 			update();
-		}
-
-		if (speed > 0) {
-			joeFace();
 		}
 	}
 }

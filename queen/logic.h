@@ -25,7 +25,6 @@
 #include "common/util.h"
 #include "queen/defs.h"
 #include "queen/structs.h"
-#include "queen/state.h" // for joeGrabDirection()
 #include "queen/verb.h"
 
 namespace Queen {
@@ -191,8 +190,7 @@ public:
 	ObjectData *joeSetupInRoom(bool autoPosition, uint16 scale);
 	
 	uint16 joeFace();
-	void joeGrab(uint16 state, uint16 speed);
-	void joeGrabDirection(StateGrab grab, uint16 speed);
+	void joeGrab(int16 grabState);
 
 	void joeUseDress(bool showCut);
 	void joeUseClothes(bool showCut);

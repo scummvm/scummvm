@@ -540,10 +540,10 @@ int Talk::getSpeakCommand(const char *sentence, unsigned &index) {
 		case 'G':
 			switch (sentence[index + 1]) {
 				case 'D':
-					_logic->joeGrabDirection(STATE_GRAB_DOWN, 0);
+					_logic->joeGrab(STATE_GRAB_DOWN);
 					break;
 				case 'M':
-					_logic->joeGrabDirection(STATE_GRAB_MID, 0);
+					_logic->joeGrab(STATE_GRAB_MID);
 					break; 
 				default:
 					warning("Unknown command string: '%2s'", sentence + index);

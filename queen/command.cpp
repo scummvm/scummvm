@@ -371,10 +371,10 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 	// Don't grab if action is TALK or WALK
 	if (_selCmd.action.value() != VERB_TALK_TO && _selCmd.action.value() != VERB_WALK_TO) {
 		if (_curCmd.subject1 > 0) {
-			_logic->joeGrab(_logic->objectData(_curCmd.subject1)->state, 0);
+			_logic->joeGrab(State::findGrab(_logic->objectData(_curCmd.subject1)->state));
 		}
 		if (_curCmd.subject2 > 0) {
-			_logic->joeGrab(_logic->objectData(_curCmd.subject2)->state, 0);
+			_logic->joeGrab(State::findGrab(_logic->objectData(_curCmd.subject2)->state));
 		}
 	}
 
