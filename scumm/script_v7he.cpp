@@ -405,21 +405,20 @@ void ScummEngine_v70he::arrrays_unk2(int dst, int src, int len2, int len) {
 }
 
 void ScummEngine_v70he::o70_startSound() {
-	byte op;
-	op = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
-	switch (op) {
+	switch (subOp) {
 	case 9:
-		_heSndLoop |= 4;
+		_heSndFlags |= 4;
 		break;
 	case 23:
 		debug(1,"o70_startSound: case 29 (%d, %d, %d)", pop(), pop(), pop());
 		break;
 	case 56:
-		_heSndLoop |= 2;
+		_heSndFlags |= 2;
 		break;
 	case 164:
-		_heSndLoop |= 2;
+		_heSndFlags |= 2;
 		break;
 	case 224:
 		_heSndSoundFreq = pop();
@@ -441,18 +440,18 @@ void ScummEngine_v70he::o70_startSound() {
 		break;
 
 	case 245:
-		_heSndLoop |= 1;
+		_heSndFlags |= 1;
 		break;
 
 	case 255:
-		// _sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndLoop);
+		// _sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
 		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset);
-		debug(2, "o70_startSound stub (%d, %d, %d, %d)", _heSndSoundId, _heSndOffset, _heSndChannel, _heSndLoop);
-		_heSndLoop = 0;
+		debug(2, "o70_startSound stub (%d, %d, %d, %d)", _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
+		_heSndFlags = 0;
 		break;
 
 	default:
-		error("o70_startSound invalid case %d", op);
+		error("o70_startSound invalid case %d", subOp);
 	}
 }
 
@@ -618,7 +617,7 @@ void ScummEngine_v70he::o70_quitPauseRestart() {
 	byte subOp = fetchScriptByte();
 	int par1;
 
-	switch (subOp & 0xff) {
+	switch (subOp) {
 	case 22: // HE80+
 		clearDrawObjectQueue();
 		break;
@@ -909,13 +908,13 @@ void ScummEngine_v70he::o70_unknownFA() {
 }
 
 void ScummEngine_v70he::o70_polygonOps() {
-	byte b;
-	b = fetchScriptByte();
 	int vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y;
 	int id;
 	int fromId, toId;
 
-	switch (b) {
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
 	case 68: // HE 100
 	case 69: // HE 100
 	case 246:
@@ -930,7 +929,7 @@ void ScummEngine_v70he::o70_polygonOps() {
 		vert1x = pop();
 		id = pop();
 
-		polygonStore(id, (b == 69 || b == 248), vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, 
+		polygonStore(id, (subOp == 69 || subOp == 248), vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, 
 					 vert4x, vert4y);
 		break;
 	case 28: // HE 100
@@ -940,6 +939,8 @@ void ScummEngine_v70he::o70_polygonOps() {
 
 		polygonErase(fromId, toId);
 		break;
+	default:
+		error("o70_polygonOps: default case %d", subOp);
 	}
 }
 

@@ -846,7 +846,7 @@ void ScummEngine_v72he::o72_startObject() {
 }
 
 void ScummEngine_v72he::o72_drawObject() {
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	int state = 0, y = -1, x = -1;
 
 	switch (subOp) {
@@ -895,7 +895,7 @@ void ScummEngine_v72he::o72_printWizImage() {
 }
 
 void ScummEngine_v72he::o72_getArrayDimSize() {
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	int32 val1, val2;
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(fetchScriptWord()));
 	if (!ah) {
@@ -1047,11 +1047,11 @@ void ScummEngine_v72he::o72_actorOps() {
 	Actor *a;
 	int i, j, k;
 	int args[32];
-	byte b;
+	byte subOp;
 	byte string[256];
 
-	b = fetchScriptByte();
-	if (b == 197) {
+	subOp = fetchScriptByte();
+	if (subOp == 197) {
 		_curActor = pop();
 		return;
 	}
@@ -1060,7 +1060,7 @@ void ScummEngine_v72he::o72_actorOps() {
 	if (!a)
 		return;
 
-	switch (b) {
+	switch (subOp) {
 	case 21: // HE 80+
 		k = getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < k; ++i) {
@@ -1245,7 +1245,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 		}
 	default:
-		error("o72_actorOps: default case %d", b);
+		error("o72_actorOps: default case %d", subOp);
 	}
 }
 
@@ -1995,7 +1995,7 @@ int ScummEngine_v72he::readFileToArray(int slot, int32 size) {
 void ScummEngine_v72he::o72_readFile() {
 	int slot, val;
 	int32 size;
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 4:
@@ -2037,7 +2037,7 @@ void ScummEngine_v72he::writeFileFromArray(int slot, int resID) {
 void ScummEngine_v72he::o72_writeFile() {
 	int16 resID = pop();
 	int slot = pop();
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 4:
@@ -2092,12 +2092,10 @@ void ScummEngine_v72he::o72_deleteFile() {
 
 void ScummEngine_v72he::o72_getPixel() {
 	byte area;
+
 	int x = pop();
 	int y = pop();
-	int subOp = fetchScriptByte();
-
-	if (subOp != 218 && subOp != 219)
-		return;
+	byte subOp = fetchScriptByte();
 
 	VirtScreen *vs = findVirtScreen(y);
 	if (vs == NULL || x > _screenWidth - 1 || x < 0) {
@@ -2105,10 +2103,16 @@ void ScummEngine_v72he::o72_getPixel() {
 		return;
 	}
 
-	if (subOp == 218)
+	switch (subOp) {
+	case 218:
 		area = *vs->getBackPixels(x, y - vs->topline);
-	else
+		break;
+	case 219:
 		area = *vs->getPixels(x, y - vs->topline);
+		break;
+	default:
+		error("o72_getPixel: default case %d", subOp);
+	}
 	push(area);
 }
 
@@ -2155,12 +2159,12 @@ void ScummEngine_v72he::o72_pickVarRandom() {
 }
 
 void ScummEngine_v72he::o72_redimArray() {
-	int subcode, newX, newY;
+	int newX, newY;
 	newY = pop();
 	newX = pop();
 
-	subcode = fetchScriptByte();
-	switch (subcode) {
+	byte subOp = fetchScriptByte();
+	switch (subOp) {
 	case 5:
 		redimArray(fetchScriptWord(), 0, newX, 0, newY, kIntArray);
 		break;
@@ -2171,7 +2175,7 @@ void ScummEngine_v72he::o72_redimArray() {
 		redimArray(fetchScriptWord(), 0, newX, 0, newY, kDwordArray);
 		break;
 	default:
-		error("o72_redimArray: default type %d", subcode);
+		error("o72_redimArray: default type %d", subOp);
 	}
 }
 
@@ -2321,7 +2325,7 @@ void ScummEngine_v72he::o72_unknownF1() {
 }
 
 void ScummEngine_v72he::o72_checkGlobQueue() {
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	int idx = pop();
 
 	debug(1,"o72_checkGlobQueue stub (%d, %d)", subOp, idx);

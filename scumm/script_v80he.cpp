@@ -500,7 +500,7 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 void ScummEngine_v80he::o80_cursorCommand() {
 	int a, i;
 	int args[16];
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 0x13: // Loads cursors from another resource

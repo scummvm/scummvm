@@ -272,7 +272,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o72_getNumFreeArrays),
 		OPCODE(o72_getArrayDimSize),
 		OPCODE(o72_checkGlobQueue),
-		OPCODE(o72_getResourceSize),
+		OPCODE(o100_getResourceSize),
 		/* B8 */
 		OPCODE(o100_unknown27),
 		OPCODE(o6_invalid),
@@ -381,11 +381,11 @@ void ScummEngine_v100he::o100_actorOps() {
 	Actor *a;
 	int i, j, k;
 	int args[32];
-	byte b;
+	byte subOp;
 	byte string[256];
 
-	b = fetchScriptByte();
-	if (b == 129) {
+	subOp = fetchScriptByte();
+	if (subOp == 129) {
 		_curActor = pop();
 		return;
 	}
@@ -394,7 +394,7 @@ void ScummEngine_v100he::o100_actorOps() {
 	if (!a)
 		return;
 
-	switch (b) {
+	switch (subOp) {
 	case 3:
 		pop();
 		pop();
@@ -574,7 +574,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->_walkFrame = pop();
 		break;
 	default:
-		error("o100_actorOps: default case %d", b);
+		error("o100_actorOps: default case %d", subOp);
 	}
 }
 
@@ -890,43 +890,59 @@ void ScummEngine_v100he::o100_unknown28() {
 
 void ScummEngine_v100he::o100_resourceRoutines() {
 	// Incomplete
-	int resid, op;
-	op = fetchScriptByte();
+	int obj, room;
 
-	switch (op) {
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
 	case 14:
-		// charset
-		resid = pop();
+		_heResType = rtCharset;
+		_heResId = pop();
 		break;
 	case 25:
-		// costume
-		resid = pop();
+		_heResType = rtCostume;
+		_heResId = pop();
 		break;
 	case 34:
-		// flobject
-		resid = pop();
+		_heResType = rtFlObject;
+		_heResId = pop();
 		break;
 	case 40:
-		// image
-		resid = pop();
+		_heResType = rtImage;
+		_heResId = pop();
+		break;
+	case 47:
+		if (_heResType == rtFlObject) {
+			obj = _heResId;
+			room= getObjectRoom(obj);
+			loadFlObject(obj, room);
+		} else if (_heResType == rtCharset) {
+			loadCharset(_heResId);
+		}
 		break;
 	case 62:
-		// room
-		resid = pop();
+		_heResType = rtRoom;
+		_heResId = pop();
 		break;
 	case 66:
-		// script
-		resid = pop();
+		_heResType = rtScript;
+		_heResId = pop();
 		break;
 	case 72:
-		// sound
-		resid = pop();
+		_heResType = rtSound;
+		_heResId = pop();
 		break;
 	case 128:
-		// lock
+		// lock?
+		break;
+	case 133:
+		if (_heResType == rtCharset)
+			nukeCharset(_heResId);
+		else
+			nukeResource(_heResType, _heResId);
 		break;
 	default:
-		debug(1,"o100_resourceRoutines: default case %d", op);
+		debug(1,"o100_resourceRoutines: default case %d", subOp);
 	}
 }
 
@@ -946,6 +962,15 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.processFlags |= 1;
 		_wizParams.img.y1 = pop();
 		_wizParams.img.x1 = pop();
+		break;
+	case 11:
+		_wizParams.processFlags |= 0x300;
+		_wizParams.processMode = 2;
+		_wizParams.box.bottom = pop();
+		_wizParams.box.right = pop();
+		_wizParams.box.top = pop();
+		_wizParams.box.left = pop();
+		_wizParams.unk_148 = pop();
 		break;
 	case 29:
 		_wizParams.processMode = 1;
@@ -1180,29 +1205,28 @@ void ScummEngine_v100he::o100_roomOps() {
 }
 
 void ScummEngine_v100he::o100_startSound() {
-	byte op;
-	op = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
-	switch (op) {
+	switch (subOp) {
 	case 6:
-		_heSndLoop |= 16;
+		_heSndFlags |= 16;
 		pop();
 		break;
 	case 92:
 		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset);
 		break;
 	case 128:
-		_heSndLoop |= 2;
+		_heSndFlags |= 2;
 		break;
 	case 129:
 		_heSndChannel = pop();
 		break;
 	case 130:
-		_heSndLoop |= 40;
+		_heSndFlags |= 40;
 		pop();
 		break;
 	case 131:
-		_heSndLoop |= 4;
+		_heSndFlags |= 4;
 		break;
 	case 132:
 	case 134:
@@ -1212,18 +1236,18 @@ void ScummEngine_v100he::o100_startSound() {
 		_heSndChannel = VAR(VAR_MUSIC_CHANNEL);
 		break;
 	case 133:
-		_heSndLoop |= 80;
+		_heSndFlags |= 80;
 		pop();
 		break;
 	case 135:
-		_heSndLoop |= 4;
+		_heSndFlags |= 4;
 		break;
 	case 136:
-		_heSndLoop |= 20;
+		_heSndFlags |= 20;
 		pop();
 		break;
 	default:
-		error("o100_startSound invalid case %d", op);
+		error("o100_startSound invalid case %d", subOp);
 	}
 }
 
@@ -1447,6 +1471,43 @@ void ScummEngine_v100he::o100_wait() {
 
 	_scriptPointer += offs;
 	o6_breakHere();
+}
+
+void ScummEngine_v100he::o100_getResourceSize() {
+	int size = 0, type;
+
+	int idx = pop();
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 25:
+		type = rtCostume;
+		break;
+	case 40:
+		type = rtImage;
+		break;
+	case 62:
+		type = rtRoomImage;
+		break;
+	case 66:
+		type = rtScript;
+		break;
+	case 72:
+		if (idx > _numSounds) {
+			// TODO Music resource size
+			push(100);
+			return;
+		}
+		type = rtSound;
+		break;
+	default:
+		error("o100_getResourceSize: default type %d", subOp);
+	}
+
+	const byte *ptr = getResourceAddress(type, idx);
+	if (ptr)
+		size = READ_BE_UINT32(ptr + 4) - 8;
+	push(size);
 }
 
 void ScummEngine_v100he::o100_unknown27() {

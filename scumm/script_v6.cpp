@@ -1765,10 +1765,10 @@ void ScummEngine_v6::o6_actorOps() {
 	Actor *a;
 	int i, j, k;
 	int args[8];
-	byte b;
+	byte subOp;
 
-	b = fetchScriptByte();
-	if (b == 197) {
+	subOp = fetchScriptByte();
+	if (subOp == 197) {
 		_curActor = pop();
 		return;
 	}
@@ -1777,7 +1777,7 @@ void ScummEngine_v6::o6_actorOps() {
 	if (!a)
 		return;
 
-	switch (b) {
+	switch (subOp) {
 	case 76:		// SO_COSTUME
 		a->setActorCostume(pop());
 		break;
@@ -1911,7 +1911,7 @@ void ScummEngine_v6::o6_actorOps() {
 		a->talkScript = pop();
 		break;
 	default:
-		error("o6_actorOps: default case %d", b);
+		error("o6_actorOps: default case %d", subOp);
 	}
 }
 

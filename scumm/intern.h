@@ -612,7 +612,7 @@ protected:
 
 	Win32ResExtractor *_win32ResExtractor;
 
-	int _heSndSoundFreq, _heSndOffset, _heSndChannel, _heSndSoundId, _heSndLoop;
+	int _heSndSoundFreq, _heSndOffset, _heSndChannel, _heSndSoundId, _heSndFlags;
 
 public:
 	ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
@@ -909,6 +909,8 @@ protected:
 		const char *desc;
 	};
 
+	int _heResId, _heResType;
+
 	const OpcodeEntryV100he *_opcodesV100he;
 
 public:
@@ -938,6 +940,7 @@ protected:
 	void o100_quitPauseRestart();
 	void o100_cursorCommand();
 	void o100_wait();
+	void o100_getResourceSize();
 	void o100_unknown27();
 	void o100_getPaletteData();
 	void o100_unknown25();

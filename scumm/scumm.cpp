@@ -1011,7 +1011,7 @@ ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, cons
 	_heSndSoundId = 0;
 	_heSndOffset = 0;
 	_heSndChannel = 0;
-	_heSndLoop = 0;
+	_heSndFlags = 0;
 	_heSndSoundFreq = 0;
 }
 

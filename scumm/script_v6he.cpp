@@ -595,10 +595,10 @@ void ScummEngine_v60he::o60_actorOps() {
 	Actor *a;
 	int i, j, k;
 	int args[8];
-	byte b;
+	byte subOp;
 
-	b = fetchScriptByte();
-	if (b == 197) {
+	subOp = fetchScriptByte();
+	if (subOp == 197) {
 		_curActor = pop();
 		return;
 	}
@@ -607,7 +607,7 @@ void ScummEngine_v60he::o60_actorOps() {
 	if (!a)
 		return;
 
-	switch (b) {
+	switch (subOp) {
 	case 30:
 		// _heversion >= 70
 		_actorClipOverride.bottom = pop();
@@ -762,7 +762,7 @@ void ScummEngine_v60he::o60_actorOps() {
 		break;
 		}
 	default:
-		error("o60_actorOps: default case %d", b);
+		error("o60_actorOps: default case %d", subOp);
 	}
 }
 
