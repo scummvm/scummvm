@@ -681,8 +681,7 @@ void Scumm_v5::o5_cursorCommand() {
 			// Assuming this is correct, we might not actually need it, as our
 			// initCharset automatically calls loadCharset for GF_SMALL_HEADER, if needed.
 			// Loom ega at least does need this and v2 has its own cursor command
-			// so making this for OLD_BUNDLE. Going by disassembly zak256 does not have a
-			// sub op for this case, not sure about loomcd
+			// so making this for OLD_BUNDLE.
 		} else {
 			getWordVararg(table);
 			for (i = 0; i < 16; i++)
@@ -2023,7 +2022,7 @@ void Scumm_v5::o5_startMusic() {
 		int result = 0;
 		switch (b) {
 		case 0:
-			result = _sound->pollCD() != 0;
+			result = _sound->pollCD() == 0;
 			break;
 		case 0xFC:
 			// TODO: Unpause (resume) audio track. We'll have to extend Sound and OSystem for this.

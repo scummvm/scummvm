@@ -231,7 +231,7 @@ int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, ui
 	// Prevent duplicate sounds
 	if (id != -1) {
 		for (int i = 0; i != NUM_CHANNELS; i++)
-			if (_channels[i]->_id == id && _channels[i] != NULL)
+			if (_channels[i] != NULL && _channels[i]->_id == id)
 				return -1;
 	}
 
