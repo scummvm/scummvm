@@ -25,7 +25,7 @@
 #include "base/engine.h"
 #include "dc.h"
 #include "icon.h"
-#include <scumm/saveload.h>
+#include <common/savefile.h>
 #include <gui/newgui.h>
 #include <gui/message.h>
 
