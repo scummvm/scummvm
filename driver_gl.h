@@ -23,38 +23,58 @@
 #include "bits.h"
 #include "vector3d.h"
 #include "color.h"
+#include "model.h"
+#include "colormap.h"
+#include "bitmap.h"
 
 #define BITMAP_TEXTURE_SIZE 256
 
 class Driver {
-	public:
-		Driver(int screenW, int screenH, int screenBPP);
+public:
+	Driver(int screenW, int screenH, int screenBPP);
 
-		void setupCamera(float fov, float nclip, float fclip, float roll);
-		void positionCamera(Vector3d pos, Vector3d interest);
+	void setupCamera(float fov, float nclip, float fclip, float roll);
+	void positionCamera(Vector3d pos, Vector3d interest);
 
-		void clearScreen(); 
-		void flipBuffer();
+	void clearScreen(); 
+	void flipBuffer();
 
-		void startActorDraw(Vector3d pos, float yaw, float pitch, float roll);
-		void finishActorDraw();
+	void startActorDraw(Vector3d pos, float yaw, float pitch, float roll);
+	void finishActorDraw();
+	
+	void set3DMode();
 
-		void drawDepthBitmap(int x, int y, int w, int h, char *data);
-		void drawBitmap();
+	void drawHierachyNode(const Model::HierNode *node);
+	void drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts);
+	void drawModel(const Model::Mesh *model);
 
-		void drawEmergString(int x, int y, const char *text, const Color &fgColor);
-		void loadEmergFont();
+	void updateMesh(const Model::Mesh *mesh);
+	void updateHierachyNode(const Model::HierNode *node);
 
-		void prepareSmushFrame(int width, int height, byte *bitmap);
-		void drawSmushFrame(int offsetX, int offsetY);
 
-	private:
-		GLuint emergFont;
-		int _smushNumTex;
-		GLuint *_smushTexIds;
-		int _smushWidth;
-		int _smushHeight;
+	void createMaterial(Material *material, const char *data, const CMap *cmap);
+	void selectMaterial(const Material *material);
+	void destroyMaterial(Material *material);
+
+	void createBitmap(Bitmap *bitmap);
+	void drawBitmap(const Bitmap *bitmap);
+	void destroyBitmap(Bitmap *bitmap);
+
+	void drawDepthBitmap(int x, int y, int w, int h, char *data);
+	void drawBitmap();
+
+	void drawEmergString(int x, int y, const char *text, const Color &fgColor);
+	void loadEmergFont();
+
+	void prepareSmushFrame(int width, int height, byte *bitmap);
+	void drawSmushFrame(int offsetX, int offsetY);
+
+private:
+	GLuint emergFont;
+	int _smushNumTex;
+	GLuint *_smushTexIds;
+	int _smushWidth;
+	int _smushHeight;
 };
 
 extern Driver *g_driver;
-

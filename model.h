@@ -67,7 +67,7 @@ public:
 	HierNode *copyHierarchy();
 	int numNodes() const { return numHierNodes_; }
 
-private:
+//private:
 	struct Face {
 		void loadBinary(const char *&data, ResPtr<Material> *materials);
 		void draw(float *vertices, float *vertNormals, float *textureVerts) const;

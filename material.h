@@ -41,7 +41,7 @@ public:
 
 	~Material();
 
-private:
+//private:
 	int num_images_, curr_image_;
 	int width_, height_;
 	GLuint *textures_;

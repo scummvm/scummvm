@@ -44,7 +44,7 @@ public:
 
 	~Bitmap();
 
-private:
+//private:
 	char **data_;
 	int num_images_, curr_image_;
 	int width_, height_, x_, y_;

@@ -132,21 +132,18 @@ void Engine::mainLoop() {
 					g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
 			}
 
-			glMatrixMode(GL_MODELVIEW);
+			g_driver->set3DMode();
 
-			glEnable(GL_DEPTH_TEST);
 			if (currScene_ != NULL)
 				currScene_->setupCamera();
 
 			// Draw actors
 			if (!g_smush->isPlaying()) {
-				glEnable(GL_TEXTURE_2D);
 				for (actor_list_type::iterator i = actors_.begin(); i != actors_.end(); i++) {
 					Actor *a = *i;
 					if (a->inSet(currScene_->name()) && a->visible())
 						a->draw();
 				}
-				glDisable(GL_TEXTURE_2D);
 				//screenBlocksDrawDebug();
 			}
 

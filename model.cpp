@@ -24,11 +24,10 @@
 #include "textsplit.h"
 #include <cstring>
 #include <SDL.h>
-#include <SDL_opengl.h>
 #include "screen.h"
+#include "driver_gl.h"
 
-Model::Model(const char *filename, const char *data, int len,
-			 const CMap &cmap) : Resource(filename) {
+Model::Model(const char *filename, const char *data, int len, const CMap &cmap) : Resource(filename) {
 	if (len >= 4 && std::memcmp(data, "LDOM", 4) == 0)
 		loadBinary(data, cmap);
 	else {
@@ -126,61 +125,7 @@ Model::Mesh::~Mesh() {
 }
 
 void Model::Mesh::update() {
-	GLdouble modelView[500];
-	GLdouble projection[500];
-	GLint viewPort[500];
-
-	glGetDoublev( GL_MODELVIEW_MATRIX, modelView );
-	glGetDoublev( GL_PROJECTION_MATRIX, projection );
-	glGetIntegerv( GL_VIEWPORT, viewPort);
-
-	GLdouble top = 1000;
-	GLdouble right = -1000;
-	GLdouble left = 1000;
-	GLdouble bottom = -1000;
-
-	for (int i = 0; i < numFaces_; i++) {
-		Vector3d v;
-		Matrix4 tempMatrix = matrix_;
-		float* pVertices;
-		int j;
-		float bestDepth = 0;
-
-		for( j =0; j< faces_[i].numVertices_; j++ ) {
-			pVertices = vertices_ + 3 * faces_[i].vertices_[j];
-
-			v.set( *(pVertices), *(pVertices+1), *(pVertices+2) );
-
-			tempMatrix.rot_.transform( &v );
-			v+= tempMatrix.pos_;
-
-			GLdouble winX;
-			GLdouble winY;
-			GLdouble winZ;
-
-			gluProject( v.x(), v.y(), v.z(), modelView, projection, viewPort, &winX, &winY, &winZ);
-
-			if( winX > right )
-				right = winX;
-			if( winX < left )
-				left = winX;
-			if( winY < top )
-				top = winY;
-			if( winY > bottom )
-				bottom = winY;
-
-			if( winZ> bestDepth )
-				bestDepth = winZ;
-
-		}
-
-		//screenBlocksAddRectangle( top, right, left, bottom, bestDepth );
-	}
-
-	glDisable(GL_DEPTH_TEST);
-	glPointSize( 3.f );
-	glColor4f( 1.f, 1.f, 0.f, 1.f );
-	glDisable(GL_TEXTURE_2D );
+	g_driver->updateMesh(this);
 }
 
 void Model::Face::loadBinary(const char *&data, ResPtr<Material> *materials) {
@@ -222,55 +167,54 @@ Model::Face::~Face() {
 	delete[] texVertices_;
 }
 
-void Model::HierNode::loadBinary(const char *&data,
-	Model::HierNode *hierNodes,
-	const Geoset &g) {
-		memcpy(name_, data, 64);
-		flags_ = READ_LE_UINT32(data + 64);
-		type_ = READ_LE_UINT32(data + 72);
-		int meshNum = READ_LE_UINT32(data + 76);
-		if (meshNum < 0)
-			mesh_ = NULL;
-		else
-			mesh_ = g.meshes_ + meshNum;
-		depth_ = READ_LE_UINT32(data + 80);
-		int parentPtr = READ_LE_UINT32(data + 84);
-		numChildren_ = READ_LE_UINT32(data + 88);
-		int childPtr = READ_LE_UINT32(data + 92);
-		int siblingPtr = READ_LE_UINT32(data + 96);
-		pivot_ = get_vector3d(data + 100);
-		pos_ = get_vector3d(data + 112);
-		pitch_ = get_float(data + 124);
-		yaw_ = get_float(data + 128);
-		roll_ = get_float(data + 132);
-		animPos_ = pos_;
-		animPitch_ = pitch_;
-		animYaw_ = yaw_;
-		animRoll_ = roll_;
-		priority_ = -1;
-		totalWeight_ = 1;
+void Model::HierNode::loadBinary(const char *&data, Model::HierNode *hierNodes, const Geoset &g) {
+	memcpy(name_, data, 64);
+	flags_ = READ_LE_UINT32(data + 64);
+	type_ = READ_LE_UINT32(data + 72);
+	int meshNum = READ_LE_UINT32(data + 76);
+	if (meshNum < 0)
+		mesh_ = NULL;
+	else
+		mesh_ = g.meshes_ + meshNum;
+	depth_ = READ_LE_UINT32(data + 80);
+	int parentPtr = READ_LE_UINT32(data + 84);
+	numChildren_ = READ_LE_UINT32(data + 88);
+	int childPtr = READ_LE_UINT32(data + 92);
+	int siblingPtr = READ_LE_UINT32(data + 96);
+	pivot_ = get_vector3d(data + 100);
+	pos_ = get_vector3d(data + 112);
+	pitch_ = get_float(data + 124);
+	yaw_ = get_float(data + 128);
+	roll_ = get_float(data + 132);
+	animPos_ = pos_;
+	animPitch_ = pitch_;
+	animYaw_ = yaw_;
+	animRoll_ = roll_;
+	priority_ = -1;
+	totalWeight_ = 1;
 
-		data += 184;
+	data += 184;
 
-		if (parentPtr != 0) {
-			parent_ = hierNodes + READ_LE_UINT32(data);
-			data += 4;
-		} else
-			parent_ = NULL;
-		if (childPtr != 0) {
-			child_ = hierNodes + READ_LE_UINT32(data);
-			data += 4;
-		} else
-			child_ = NULL;
-		if (siblingPtr != 0) {
-			sibling_ = hierNodes + READ_LE_UINT32(data);
-			data += 4;
-		} else
-			sibling_ = NULL;
+	if (parentPtr != 0) {
+		parent_ = hierNodes + READ_LE_UINT32(data);
+		data += 4;
+	} else
+		parent_ = NULL;
+	if (childPtr != 0) {
+		child_ = hierNodes + READ_LE_UINT32(data);
+		data += 4;
+	} else
+		child_ = NULL;
+	if (siblingPtr != 0) {
+		sibling_ = hierNodes + READ_LE_UINT32(data);
+		data += 4;
+	} else
+		sibling_ = NULL;
 
-		meshVisible_ = hierVisible_ = true;
-		totalWeight_ = 1;
-	}
+	meshVisible_ = true;
+	hierVisible_ = true;
+	totalWeight_ = 1;
+}
 
 void Model::draw() const {
 	rootHierNode_->draw();
@@ -286,8 +230,7 @@ Model::HierNode *Model::copyHierarchy() {
 		if (result[i].child_ != NULL)
 			result[i].child_ = result + (rootHierNode_[i].child_ - rootHierNode_);
 		if (result[i].sibling_ != NULL)
-			result[i].sibling_ = result + (rootHierNode_[i].sibling_ -
-		rootHierNode_);
+			result[i].sibling_ = result + (rootHierNode_[i].sibling_ - rootHierNode_);
 	}
 	return result;
 }
@@ -357,13 +300,13 @@ void Model::loadText(TextSplitter &ts, const CMap &cmap) {
 		rootHierNode_[num].yaw_ = yaw;
 		rootHierNode_[num].roll_ = roll;
 		rootHierNode_[num].pivot_ = Vector3d(pivotx, pivoty, pivotz);
-
-		rootHierNode_[num].meshVisible_ =
+		rootHierNode_[num].meshVisible_ = true;
 		rootHierNode_[num].hierVisible_ = true;
 		rootHierNode_[num].totalWeight_ = 1;
 	}
-	if (! ts.eof())
-	warning("Unexpected junk at end of model text\n");
+
+	if (!ts.eof())
+		warning("Unexpected junk at end of model text\n");
 }
 
 void Model::Geoset::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
@@ -449,8 +392,7 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 		for (int j = 0; j < verts; j++) {
 			int readlen2;
 			if (std::sscanf(ts.currentLine() + readlen, " %d, %d%n",
-				faces_[num].vertices_ + j,
-				faces_[num].texVertices_ + j, &readlen2) < 2)
+				faces_[num].vertices_ + j, faces_[num].texVertices_ + j, &readlen2) < 2)
 					error("Could not read vertex indices in line `%s'\n",
 			ts.currentLine());
 			readlen += readlen2;
@@ -468,31 +410,7 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 }
 
 void Model::HierNode::draw() const {
-	if (hierVisible_) {
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(animPos_.x() / totalWeight_, animPos_.y() / totalWeight_,
-			animPos_.z() / totalWeight_);
-		glRotatef(animYaw_ / totalWeight_, 0, 0, 1);
-		glRotatef(animPitch_ / totalWeight_, 1, 0, 0);
-		glRotatef(animRoll_ / totalWeight_, 0, 1, 0);
-
-		if (mesh_ != NULL && meshVisible_) {
-			glPushMatrix();
-			glTranslatef(pivot_.x(), pivot_.y(), pivot_.z());
-			mesh_->draw();
-			glMatrixMode(GL_MODELVIEW);
-			glPopMatrix();
-		}
-		if (child_ != NULL) {
-			child_->draw();
-			glMatrixMode(GL_MODELVIEW);
-		}
-		glPopMatrix();
-	}
-	if (sibling_ != NULL)
-		sibling_->draw();
+	g_driver->drawHierachyNode(this);
 }
 
 void Model::HierNode::addChild(HierNode *child) {
@@ -518,19 +436,8 @@ void Model::HierNode::setMatrix(Matrix4 matrix) {
 }
 
 void Model::HierNode::update() {
-
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-
-	glTranslatef(animPos_.x() / totalWeight_, animPos_.y() / totalWeight_,
-		animPos_.z() / totalWeight_);
-	glRotatef(animYaw_ / totalWeight_, 0, 0, 1);
-	glRotatef(animPitch_ / totalWeight_, 1, 0, 0);
-	glRotatef(animRoll_ / totalWeight_, 0, 1, 0);
-
-
-	localMatrix_.pos_.set( animPos_.x() / totalWeight_, animPos_.y() / totalWeight_, animPos_.z() / totalWeight_ );
-	localMatrix_.rot_.buildFromPitchYawRoll( animPitch_ / totalWeight_, animYaw_ / totalWeight_, animRoll_ / totalWeight_);
+	localMatrix_.pos_.set(animPos_.x() / totalWeight_, animPos_.y() / totalWeight_, animPos_.z() / totalWeight_);
+	localMatrix_.rot_.buildFromPitchYawRoll(animPitch_ / totalWeight_, animYaw_ / totalWeight_, animRoll_ / totalWeight_);
 
 	matrix_ *= localMatrix_;
 
@@ -538,220 +445,17 @@ void Model::HierNode::update() {
 
 	pivotMatrix.translate( pivot_.x(), pivot_.y(), pivot_.z() );
 
-	if( mesh_ != NULL ) {
-		glPushMatrix();
-		glTranslatef(pivot_.x(), pivot_.y(), pivot_.z());
-		mesh_->matrix_ = pivotMatrix;
-		mesh_->update();
-
-		glMatrixMode(GL_MODELVIEW);
-		glPopMatrix();
-	}
-
-	if( child_ != NULL ) {
-		child_->setMatrix( matrix_ );
-		child_->update();
-		glMatrixMode(GL_MODELVIEW);
-	}
-
-	glPopMatrix();
+	g_driver->updateHierachyNode(this);
 }
-
 
 void Model::Mesh::draw() const {
 	for (int i = 0; i < numFaces_; i++)
 		faces_[i].draw(vertices_, vertNormals_, textureVerts_);
 
-	GLdouble modelView[500];
-	GLdouble projection[500];
-	GLint viewPort[500];
-
-	glGetDoublev( GL_MODELVIEW_MATRIX, modelView );
-	glGetDoublev( GL_PROJECTION_MATRIX, projection );
-	glGetIntegerv( GL_VIEWPORT, viewPort);
-
-	// Yaz: debug
-	// this draw the model node in red
-	//glMatrixMode(GL_PROJECTION);
-	/*glPushMatrix();
-	glLoadIdentity();
-
-	GLdouble modelView[500];
-	GLdouble projection[500];
-	GLint viewPort[500];
-
-	glGetDoublev( GL_MODELVIEW_MATRIX, modelView );
-	glGetDoublev( GL_PROJECTION_MATRIX, projection );
-	glGetIntegerv( GL_VIEWPORT, viewPort);
-
-	glDisable(GL_DEPTH_TEST);
-	glPointSize( 3.f );
-	glColor4f( 1.f, 0.f, 0.f, 1.f );
-	glDisable(GL_TEXTURE_2D );
-	glBegin( GL_POINTS );
-	glVertex3f( matrix_.pos_.x(), matrix_.pos_.y(), matrix_.pos_.z() );
-	glEnd();
-	glEnable(GL_DEPTH_TEST);
-	glPopMatrix();
-	glEnable(GL_TEXTURE_2D );*/
-
-	// Yaz: debug
-	// this draw the poly points
-
-	/*glPushMatrix();
-	glLoadIdentity();
-	glPointSize( 3.f );
-	glColor4f( 0.f, 1.f, 0.f, 1.f );
-	glDisable(GL_TEXTURE_2D );
-	{
-		GLdouble modelView[500];
-		GLdouble projection[500];
-		GLint viewPort[500];
-
-		glGetDoublev( GL_MODELVIEW_MATRIX, modelView );
-		glGetDoublev( GL_PROJECTION_MATRIX, projection );
-		glGetIntegerv( GL_VIEWPORT, viewPort);
-	}
-
-	glBegin( GL_POINTS );
-
-	for (int i = 0; i < numFaces_; i++) {
-		Vector3d v;
-		Matrix4 tempMatrix = matrix_;
-		float* pVertices;
-		int j;
-
-		for( j =0; j< faces_[i].numVertices_; j++ ) {
-			pVertices = vertices_ + 3 * faces_[i].vertices_[j];
-
-			v.set( *(pVertices), *(pVertices+1), *(pVertices+2) );
-
-			tempMatrix.rot_.transform( &v );
-			v+= tempMatrix.pos_;
-
-			glVertex3f( v.x(), v.y(), v.z() );
-
-		}
-	}
-
-	glEnd();
-	glEnable(GL_DEPTH_TEST);
-	glPopMatrix();
-	glEnable(GL_TEXTURE_2D ); */
-
-	// Ender: HACK HACK HACK
-	// Mannys head isn't computed correctly, so bail out to prevent memory corruption.
-	// at least until it IS computed, or the DirtyScreen code has bounds checking :)
-	//if (strstr(name_, "m_head_1"))
-	//	return;
-
-	// Yaz: debug
-	// this compute the dirty rect for the mesh
-	glPushMatrix();
-	glLoadIdentity();
-
-	GLdouble top = 1000;
-	GLdouble right = -1000;
-	GLdouble left = 1000;
-	GLdouble bottom = -1000;
-
-	for (int i = 0; i < numFaces_; i++) {
-		Vector3d v;
-		Matrix4 tempMatrix = matrix_;
-		float* pVertices;
-		int j;
-		float bestDepth = 0;
-
-		for( j =0; j< faces_[i].numVertices_; j++ ) {
-			GLdouble modelView[500];
-			GLdouble projection[500];
-			GLint viewPort[500];
-
-			glGetDoublev( GL_MODELVIEW_MATRIX, modelView );
-			glGetDoublev( GL_PROJECTION_MATRIX, projection );
-			glGetIntegerv( GL_VIEWPORT, viewPort);
-
-			pVertices = vertices_ + 3 * faces_[i].vertices_[j];
-
-			v.set( *(pVertices), *(pVertices+1), *(pVertices+2) );
-
-			tempMatrix.rot_.transform( &v );
-			v+= tempMatrix.pos_;
-
-			GLdouble winX;
-			GLdouble winY;
-			GLdouble winZ;
-
-			gluProject( v.x(), v.y(), v.z(), modelView, projection, viewPort, &winX, &winY, &winZ);
-
-			if( winX > right )
-				right = winX;
-			if( winX < left )
-				left = winX;
-			if( winY < top )
-				top = winY;
-			if( winY > bottom )
-				bottom = winY;
-
-			if( winZ> bestDepth )
-				bestDepth = winZ;
-		}
-
-		if (SCREENBLOCKS_GLOBAL)
-			screenBlocksAddRectangle( (int)top, (int)right, (int)left, (int)bottom, (int)bestDepth );
-	}
-	/*
-	glDisable(GL_DEPTH_TEST);
-	glPointSize( 3.f );
-	glColor4f( 1.f, 1.f, 0.f, 1.f );
-	glDisable(GL_TEXTURE_2D );
-
-	glBegin(GL_LINES);
-
-	GLdouble objx;
-	GLdouble objy;
-	GLdouble objz;
-
-	// top
-	gluUnProject( left, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-	glVertex3f( objx, objy, objz );
-	gluUnProject( right, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-	glVertex3f( objx, objy, objz );
-
-	// bottom
-	gluUnProject( left, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-	glVertex3f( objx, objy, objz );
-	gluUnProject( right, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-	glVertex3f( objx, objy, objz );
-
-	// left
-	gluUnProject( left, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-	glVertex3f( objx, objy, objz );
-	gluUnProject( left, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-	glVertex3f( objx, objy, objz );
-
-	// right
-	gluUnProject( right, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-	glVertex3f( objx, objy, objz );
-	gluUnProject( right, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-	glVertex3f( objx, objy, objz );
-
-	glEnd(); 
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D ); 
-	*/
- 	glPopMatrix();
-	}
+	g_driver->drawModel(this);
+}
 
 void Model::Face::draw(float *vertices, float *vertNormals, float *textureVerts) const {
 	material_->select();
-	glNormal3fv(normal_.coords_);
-	glBegin(GL_POLYGON);
-	for (int i = 0; i < numVertices_; i++) {
-		glNormal3fv(vertNormals + 3 * vertices_[i]);
-		if (texVertices_ != NULL)
-			glTexCoord2fv(textureVerts + 2 * texVertices_[i]);
-		glVertex3fv(vertices + 3 * vertices_[i]);
-	}
-	glEnd();
+	g_driver->drawModelFace(this, vertices, vertNormals, textureVerts);
 }
