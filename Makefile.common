@@ -21,19 +21,18 @@ DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
 .cpp.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 
-all: scummvm
+all: scummvm$(EXEEXT)
 
-scummvm: $(OBJS)
+scummvm$(EXEEXT): $(OBJS)
 	$(CC) $(LDFLAGS) -o $(@) $(OBJS) $(LIBS)
 
-$(OBJS): Makefile
-
 clean:
-	rm -f $(OBJS) scummvm
+	rm -f $(OBJS) scummvm$(EXEEXT)
 
 dist:
 	rm -f $(ZIPFILE)
 	zip -q $(ZIPFILE) $(DISTFILES)
 
-check:
 $(OBJS): $(INCS)
+
+.PHONY: all clean dist
