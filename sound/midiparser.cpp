@@ -241,7 +241,7 @@ void MidiParser::allNotesOff() {
 		return;
 
 	int i;
-	for (i = 0; i < 15; ++i)
+	for (i = 0; i < 16; ++i)
 		_driver->send (0x007BB0 | i);
 	for (i = 0; i < ARRAYSIZE(_hanging_notes); ++i)
 		_hanging_notes[i].time_left = 0;
