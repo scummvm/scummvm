@@ -738,16 +738,24 @@ int Sound::startSfxSound(File *file, int file_size) {
 	int rate, comp;
 	byte *data;
 
-#ifdef USE_MAD
+#ifdef COMPRESSED_SOUND_FILE
 	if (file_size > 0) {
-		data = (byte *)calloc(file_size + MAD_BUFFER_GUARD, 1);
+		int alloc_size = file_size;
+#ifdef USE_MAD
+		if (! _vorbis_mode)
+			alloc_size += MAD_BUFFER_GUARD;
+#endif
+		data = (byte *)calloc(alloc_size, 1);
 
 		if (file->read(data, file_size) != (uint)file_size) {
 			/* no need to free the memory since error will shut down */
 			error("startSfxSound: cannot read %d bytes", size);
 			return -1;
 		}
-		return playSfxSound_MP3(data, file_size);
+		if (_vorbis_mode)
+			return playSfxSound_Vorbis(data, file_size);
+		else
+			return playSfxSound_MP3(data, file_size);
 	}
 #endif
 	if (file->read(ident, 8) != 8)
@@ -805,10 +813,25 @@ File * Sound::openSfxFile() {
 #ifdef COMPRESSED_SOUND_FILE
 	offset_table = NULL;
 
+#ifdef USE_MAD
 	sprintf(buf, "%s.so3", _scumm->_exe_name);
 	if (!file->open(buf, _scumm->getGameDataPath())) {
 		file->open("monster.so3", _scumm->getGameDataPath());
 	}
+	if (file->isOpen())
+		_vorbis_mode = false;
+	else
+#endif
+#ifdef USE_VORBIS
+		{
+			sprintf(buf, "%s.sog", _scumm->_exe_name);
+			if (!file->open(buf, _scumm->getGameDataPath()))
+				file->open("monster.sog", _scumm->getGameDataPath());
+			if (file->isOpen())
+				_vorbis_mode = true;
+		}
+#endif
+
 	if (file->isOpen() == true) {
 		/* Now load the 'offset' index in memory to be able to find the MP3 data
 
@@ -1120,6 +1143,91 @@ int Sound::playSfxSound_MP3(void *sound, uint32 size) {
 	if (_soundsPaused)
 		return -1;
 	return _scumm->_mixer->playMP3(NULL, sound, size, SoundMixer::FLAG_AUTOFREE);
+#endif
+	return -1;
+}
+
+#ifdef USE_VORBIS
+// Provide a virtual file to vorbisfile based on preloaded data
+struct data_file_info {
+	char *data;
+	uint32 size;
+	int curr_pos;
+};
+
+static size_t read_data(void *ptr, size_t size, size_t nmemb, void *datasource) {
+	data_file_info *f = (data_file_info *) datasource;
+
+	nmemb *= size;
+	if (f->curr_pos < 0)
+		return (size_t) -1;
+	if (f->curr_pos > (int) f->size)
+		nmemb = 0;
+	else if (f->curr_pos + nmemb > f->size)
+		nmemb = f->size - f->curr_pos;
+
+	memcpy(ptr, f->data + f->curr_pos, nmemb);
+	f->curr_pos += nmemb;
+	return nmemb / size;
+}
+
+static int seek_data(void *datasource, ogg_int64_t offset, int whence) {
+	data_file_info *f = (data_file_info *) datasource;
+
+	switch (whence) {
+	case SEEK_SET:
+		f->curr_pos = offset;
+		break;
+	case SEEK_CUR:
+		f->curr_pos += offset;
+		break;
+	case SEEK_END:
+		f->curr_pos = f->size + offset;
+		break;
+	default:
+		return -1;
+	}
+	return f->curr_pos;
+}
+
+static int close_data(void *datasource) {
+	data_file_info *f = (data_file_info *) datasource;
+
+	free(f->data);
+	delete f;
+	return 0;
+}
+
+static long tell_data(void *datasource) {
+	data_file_info *f = (data_file_info *) datasource;
+
+	return f->curr_pos;
+}
+
+static ov_callbacks data_wrap = {
+	read_data, seek_data, close_data, tell_data
+};
+#endif
+
+int Sound::playSfxSound_Vorbis(void *sound, uint32 size) {
+#ifdef USE_VORBIS
+	if (_soundsPaused)
+		return -1;
+
+	OggVorbis_File *ov_file = new OggVorbis_File;
+	data_file_info *f = new data_file_info;
+	f->data = (char *) sound;
+	f->size = size;
+	f->curr_pos = 0;
+
+	if (ov_open_callbacks((void *) f, ov_file, NULL, 0, data_wrap) < 0) {
+		warning("Invalid file format");
+		delete ov_file;
+		delete f;
+		return -1;
+	}
+
+	return _scumm->_mixer->playVorbis(NULL, ov_file, 0, false);
 #endif
 	return -1;
 }
@@ -1525,8 +1633,10 @@ Sound::VorbisTrackInfo::VorbisTrackInfo(File *file) {
 }
 
 int Sound::VorbisTrackInfo::play(SoundMixer *mixer, int start, int delay) {
-	ov_time_seek(&_ov_file, start / 75.0);
-	return mixer->playVorbisCDTrack(NULL, &_ov_file, delay / 75.0);
+	ov_pcm_seek(&_ov_file, start * ov_info(&_ov_file, -1)->rate / 75);
+	return mixer->playVorbis(NULL, &_ov_file,
+				 delay * ov_info(&_ov_file, -1)->rate / 75,
+				 true);
 }
 
 Sound::VorbisTrackInfo::~VorbisTrackInfo() {

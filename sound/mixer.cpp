@@ -145,10 +145,10 @@ int SoundMixer::playMP3CDTrack(PlayingSoundHandle * handle, File * file, mad_tim
 #endif
 
 #ifdef USE_VORBIS
-int SoundMixer::playVorbisCDTrack(PlayingSoundHandle * handle, OggVorbis_File * ov_file, double duration) {
+int SoundMixer::playVorbis(PlayingSoundHandle * handle, OggVorbis_File * ov_file, int duration, bool is_cd_track) {
 	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
-			return insertAt(handle, i, new ChannelVorbis(this, ov_file, duration));
+			return insertAt(handle, i, new ChannelVorbis(this, ov_file, duration, is_cd_track));
 		}
 	}
 
@@ -977,16 +977,17 @@ void SoundMixer::ChannelMP3CDMusic::realDestroy() {
 #endif
 
 #ifdef USE_VORBIS
-SoundMixer::ChannelVorbis::ChannelVorbis(SoundMixer * mixer, OggVorbis_File * ov_file, double duration) {
+SoundMixer::ChannelVorbis::ChannelVorbis(SoundMixer * mixer, OggVorbis_File * ov_file, int duration, bool is_cd_track) {
 	_mixer = mixer;
 	_ov_file = ov_file;
 
 	if (duration)
-		_end_pos = ov_time_tell(ov_file) + duration;
+		_end_pos = ov_pcm_tell(ov_file) + duration;
 	else
 		_end_pos = 0;
 
 	_eof_flag = false;
+	_is_cd_track = is_cd_track;
 	_toBeDestroyed = false;
 }
 
@@ -1005,7 +1006,8 @@ void SoundMixer::ChannelVorbis::mix(int16 * data, uint len) {
 	uint len_left = len * channels * 2;
 	int16 *samples = new int16[len_left / 2];
 	char *read_pos = (char *) samples;
-	int volume = _mixer->_musicVolume;
+	int volume = _is_cd_track ? _mixer->_musicVolume :
+		_mixer->_volumeTable[1];
 
 	// Read the samples
 	while (len_left > 0) {
@@ -1020,6 +1022,10 @@ void SoundMixer::ChannelVorbis::mix(int16 * data, uint len) {
 			_eof_flag = true;
 			memset(read_pos, 0, len_left);
 			break;
+		}
+		else if (result == OV_HOLE) {
+			// Possibly recoverable, just warn about it
+			warning("Corrupted data in Vorbis file");
 		}
 		else if (result < 0) {
 			debug(1, "Decode error %d in Vorbis file", result);
@@ -1045,6 +1051,9 @@ void SoundMixer::ChannelVorbis::mix(int16 * data, uint len) {
 	}
 
 	delete [] samples;
+
+	if (_eof_flag && ! _is_cd_track)
+		realDestroy();
 }
 
 void SoundMixer::ChannelVorbis::realDestroy() {
@@ -1054,7 +1063,7 @@ void SoundMixer::ChannelVorbis::realDestroy() {
 
 bool SoundMixer::ChannelVorbis::soundFinished() {
 	return _eof_flag || (_end_pos > 0 &&
-			     ov_time_tell(_ov_file) >= _end_pos);
+			     ov_pcm_tell(_ov_file) >= _end_pos);
 }
 
 #endif

@@ -36,8 +36,8 @@ DEFINES += -DUSE_MAD
 LIBS    += -lmad
 
 # Uncomment this to activate the Ogg Vorbis lib for compressed sound files
-# DEFINES += -DUSE_VORBIS
-# LIBS    += -lvorbisfile -lvorbis
+DEFINES += -DUSE_VORBIS
+LIBS    += -lvorbisfile -lvorbis -logg
 
 # Uncomment this to activate extended debugging support in Simon
 DEFINES += -DSIMONDEBUG

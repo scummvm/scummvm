@@ -146,11 +146,11 @@ private:
 	class ChannelVorbis : public Channel {
 		SoundMixer * _mixer;
 		OggVorbis_File * _ov_file;
-		double _end_pos;
-		bool _eof_flag;
+		int _end_pos;
+		bool _eof_flag, _is_cd_track;
 
 	public:
-		ChannelVorbis(SoundMixer * mixer, OggVorbis_File * ov_file, double duration);
+		ChannelVorbis(SoundMixer * mixer, OggVorbis_File * ov_file, int duration, bool is_cd_track);
 
 		void mix(int16 * data, uint len);
 		void realDestroy();
@@ -212,7 +212,7 @@ public:
 	int playMP3CDTrack(PlayingSoundHandle * handle, File * file, mad_timer_t duration);
 #endif
 #ifdef USE_VORBIS
-	int playVorbisCDTrack(PlayingSoundHandle * handle, OggVorbis_File * ov_file, double duration);
+	int playVorbis(PlayingSoundHandle * handle, OggVorbis_File * ov_file, int duration, bool is_cd_track);
 #endif
 
 	/* Premix procedure, useful when using fmopl adlib */

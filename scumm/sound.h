@@ -68,6 +68,7 @@ enum {
 #ifdef COMPRESSED_SOUND_FILE
 	MP3OffsetTable *offset_table;	// SO3 MP3 compressed audio
 	int num_sound_effects;		// SO3 MP3 compressed audio
+	bool _vorbis_mode;	// true if using SOG, false if using SO3
 
 	#define CACHE_TRACKS 10
 
@@ -171,6 +172,7 @@ public:
 	byte * readCreativeVocFile(byte * ptr, uint32 & size, uint32 & rate, uint32 & loops);
 	int playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned);
 	int playSfxSound_MP3(void *sound, uint32 size);
+	int playSfxSound_Vorbis(void *sound, uint32 size);
 
 	int readCDTimer();
 	void startCDTimer();
