@@ -76,6 +76,10 @@ extern bool draw_keyboard;
 
 #undef WITH_DEBUG_CHEATS
 
+#ifdef WITH_DEBUG_CHEATS
+#include "sky/grid.h"
+#endif
+
 static const GameSettings skySetting =
 	{"sky", "Beneath a Steel Sky", 0 };
 
