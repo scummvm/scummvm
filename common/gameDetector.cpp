@@ -554,7 +554,7 @@ bool GameDetector::parseMusicDriver(const char *s) {
 
 bool GameDetector::detectGame() {
 	const VersionSettings *gnl = version_settings;
-	char *realGame;
+	char *realGame, *basename;
 	_gameId = 0;
 	_gameText.clear();
 
@@ -565,7 +565,10 @@ bool GameDetector::detectGame() {
 	do {
 		if (!scumm_stricmp(realGame, gnl->filename)) {
 			_gameId = gnl->id;
-			_gameRealName = gnl->filename;
+			if ((basename = (char *)g_config->get("basename")))
+				_gameRealName = basename;
+			else
+				_gameRealName = gnl->filename;
 			_features = gnl->features;
 			_gameText = gnl->gamename;
 			if (gnl->major != 99)
