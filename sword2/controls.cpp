@@ -1314,7 +1314,7 @@ public:
 	}
 };
 
-uint32 Restore_control(void) {		//Tony20Mar97
+uint32 Restore_control(void) {
 	// returns 0 for no restore
 	//         1 for restored ok
 
@@ -1322,12 +1322,12 @@ uint32 Restore_control(void) {		//Tony20Mar97
 	return loadDialog.run();
 }
 
-void Save_control(void) {	//Tony1Apr97	not a joke
+void Save_control(void) {
 	Sword2SaveLoadDialog saveDialog(kSaveDialog);
 	saveDialog.run();
 }
 
-void Quit_control(void) {	//Tony2Apr97
+void Quit_control(void) {
 	Sword2MiniDialog quitDialog(149618692);	// quit text
 
 	if (!quitDialog.run()) {
@@ -1341,7 +1341,7 @@ void Quit_control(void) {	//Tony2Apr97
 	exit(0);
 }
 
-void Restart_control(void) {	//Tony4Apr97
+void Restart_control(void) {
 	uint32 temp_demo_flag;
 
 	Sword2MiniDialog restartDialog(149618693);	// restart text
@@ -1407,9 +1407,9 @@ void Restart_control(void) {	//Tony4Apr97
  	this_screen.new_palette = 99;
 }
 
-void Control_error(char* text) {	//Tony13May97
+void Control_error(char* text) {
 	// Print a message on screen. Second parameter is duration.
-	DisplayMsg((uint8*) text, 0);
+	DisplayMsg((uint8 *) text, 0);
 
 	// Wait for ESC or mouse click
 	while (1) {
@@ -1436,7 +1436,7 @@ void Control_error(char* text) {	//Tony13May97
 	RemoveMsg();
 }
 
-int32 ReadOptionSettings(void) {	//pete10Jun97
+int32 ReadOptionSettings(void) {
 	// settings file is 9 bytes long:
 	//   1 music volume
 	//   2 speech volume
@@ -1474,7 +1474,7 @@ int32 ReadOptionSettings(void) {	//pete10Jun97
 	g_sound->MuteSpeech(buff[4]);
 	g_sound->MuteFx(buff[5]);
 
-	UpdateGraphicsLevel(buff[6]);	// (James13jun97)
+	UpdateGraphicsLevel(buff[6]);
 
 	speechSelected = !buff[4];
 	subtitles = buff[7];
@@ -1487,7 +1487,7 @@ int32 ReadOptionSettings(void) {	//pete10Jun97
 	return 0;
 }
 
-int32 WriteOptionSettings(void) {	//pete10Jun97
+int32 WriteOptionSettings(void) {
 	uint8 buff[10];
 	char filename[256];
 	SaveFile *fp;
@@ -1520,14 +1520,14 @@ int32 WriteOptionSettings(void) {	//pete10Jun97
 	return 0;
 }
 
-void Option_control(void) {	//Pete6Jun97
+void Option_control(void) {
 	Sword2OptionsDialog optionsDialog;
 
 	optionsDialog.run();
 	return;
 }
 
-void UpdateGraphicsLevel(uint8 newLevel) {	// (James13jun97)
+void UpdateGraphicsLevel(uint8 newLevel) {
 	switch (newLevel) {
 	case 0:
 		// Lowest setting: no graphics fx

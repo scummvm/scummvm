@@ -45,7 +45,7 @@ uint32 res;
 
 _startup start_list[MAX_starts];
 
-uint32 Init_start_menu(void) {	// Tony13Aug96
+uint32 Init_start_menu(void) {
 	// Print out a list of all the start points available.
 	// There should be a linc produced file called startup.txt.
 	// This file should contain ascii numbers of all the resource game
@@ -140,7 +140,7 @@ uint32 Init_start_menu(void) {	// Tony13Aug96
 	return 1;
 }
 
-int32 FN_register_start_point(int32 *params) {	// Tony14Oct96
+int32 FN_register_start_point(int32 *params) {
 	// params:	0 id of startup script to call - key
 	// 		1 pointer to ascii message
 
@@ -170,7 +170,7 @@ int32 FN_register_start_point(int32 *params) {	// Tony14Oct96
 	return 1;
 }
 
-uint32 Con_print_start_menu(void) {	// Tony14Oct96
+uint32 Con_print_start_menu(void) {
 	// the console 'starts' (or 's') command which lists out all the
 	// registered start points in the game
 
@@ -216,7 +216,7 @@ uint32 Con_print_start_menu(void) {	// Tony14Oct96
 	return 1;
 }
 
-uint32 Con_start(uint8 *input) {	// Tony15Oct96
+uint32 Con_start(uint8 *input) {
 	// if the second word id is a numeric that can be applied to a
 	// genuine startup then do it
 

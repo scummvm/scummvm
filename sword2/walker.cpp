@@ -51,7 +51,7 @@ uint8 standby_dir;
 
 // walk mega to (x,y,dir)
 
-int32 FN_walk(int32 *params) {	// James (14nov96)
+int32 FN_walk(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
@@ -252,7 +252,7 @@ int32 FN_walk(int32 *params) {	// James (14nov96)
 
 // walk mega to start position of anim
 
-int32 FN_walk_to_anim(int32 *params) {	// James (14nov96)
+int32 FN_walk_to_anim(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
@@ -315,7 +315,7 @@ int32 FN_walk_to_anim(int32 *params) {	// James (14nov96)
 // just needs to call FN_walk() with current feet coords, so router can
 // produce anim of turn frames
 
-int32 FN_turn(int32 *params) {	// James (15nov96)
+int32 FN_turn(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
@@ -357,7 +357,7 @@ int32 FN_turn(int32 *params) {	// James (15nov96)
 // sets up the graphic object, but also needs to set the new 'current_dir' in
 // the mega object, so the router knows in future
 
-int32 FN_stand_at(int32 *params) {	// James
+int32 FN_stand_at(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 	//		1 pointer to object's mega structure
 	//		2 target x-coord
@@ -396,7 +396,7 @@ int32 FN_stand_at(int32 *params) {	// James
 // stand mega in <direction> at current feet coords
 // just needs to call FN_stand_at() with current feet coords
 
-int32 FN_stand(int32 *params) {		// James (15nov96)
+int32 FN_stand(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 	//		1 pointer to object's mega structure
 	//		2 target direction
@@ -416,7 +416,7 @@ int32 FN_stand(int32 *params) {		// James (15nov96)
 
 // stand mega at end position of anim
 
-int32 FN_stand_after_anim(int32 *params) {	// James (14nov96)
+int32 FN_stand_after_anim(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 	//		1 pointer to object's mega structure
 	//		2 anim resource id
@@ -463,7 +463,7 @@ int32 FN_stand_after_anim(int32 *params) {	// James (14nov96)
 
 // stand mega at start position of anim
 
-int32 FN_stand_at_anim(int32 *params) {		// James (07feb97)
+int32 FN_stand_at_anim(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 	//		1 pointer to object's mega structure
 	//		2 anim resource id
@@ -510,11 +510,11 @@ int32 FN_stand_at_anim(int32 *params) {		// James (07feb97)
 
 // Code to workout direction from start to dest
 
-// used in what_target not valid for all megas	jps 17mar95
+// used in what_target not valid for all megas
 #define	diagonalx 36
 #define	diagonaly 8
 
-int What_target(int startX, int startY, int destX, int destY) {		// S2.1(20Jul95JPS)
+int What_target(int startX, int startY, int destX, int destY) {
 	int deltaX = destX - startX;
 	int deltaY = destY - startY;
 
@@ -544,7 +544,7 @@ int What_target(int startX, int startY, int destX, int destY) {		// S2.1(20Jul95
 // just needs to call FN_walk() with current feet coords & direction computed
 // by What_target()
 
-int32 FN_face_xy(int32 *params) {	// James (29nov96)
+int32 FN_face_xy(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
@@ -580,7 +580,7 @@ int32 FN_face_xy(int32 *params) {	// James (29nov96)
 	return FN_walk(pars);
 }
 
-int32 FN_face_mega(int32 *params) {	// S2.1(3mar95jps) Tony29Nov96
+int32 FN_face_mega(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
@@ -629,7 +629,7 @@ int32 FN_face_mega(int32 *params) {	// S2.1(3mar95jps) Tony29Nov96
 	return FN_walk(pars);
 }
 
-int32 FN_walk_to_talk_to_mega(int32 *params) {	// Tony2Dec96
+int32 FN_walk_to_talk_to_mega(int32 *params) {
 	// we route to left or right hand side of target id if possible
 	// target is a shrinking mega
 
@@ -715,7 +715,7 @@ int32 FN_walk_to_talk_to_mega(int32 *params) {	// Tony2Dec96
 	return FN_walk(pars);
 }
 
-int32 FN_set_walkgrid(int32 *params) {	// (6dec96 JEL)
+int32 FN_set_walkgrid(int32 *params) {
 	Con_fatal_error("FN_set_walkgrid no longer valid");
 	return IR_CONT;
 }
@@ -723,7 +723,7 @@ int32 FN_set_walkgrid(int32 *params) {	// (6dec96 JEL)
 // add this walkgrid resource to the list of those used for routing in this
 // location - note this is ignored in the resource is already in the list
 
-int32 FN_add_walkgrid(int32 *params) {	// (03mar97 JEL)
+int32 FN_add_walkgrid(int32 *params) {
 	// params:	0 id of walkgrid resource
 
 	// all objects that add walkgrids must be restarted whenever we
@@ -749,7 +749,7 @@ int32 FN_add_walkgrid(int32 *params) {	// (03mar97 JEL)
 // this location - note that this is ignored if the resource isn't actually
 // in the list
 
-int32 FN_remove_walkgrid(int32 *params) {	// (03mar97 JEL)
+int32 FN_remove_walkgrid(int32 *params) {
 	// params:	0 id of walkgrid resource
 
 	RemoveWalkGrid(params[0]);
@@ -761,7 +761,7 @@ int32 FN_register_walkgrid(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_set_scaling(int32 *params) {	// (6dec96 JEL)
+int32 FN_set_scaling(int32 *params) {
 	// params:	0 pointer to object's mega structure
 	//		1 scale constant A
 	//		2 scale constant B
@@ -779,7 +779,7 @@ int32 FN_set_scaling(int32 *params) {	// (6dec96 JEL)
 	return IR_CONT;
 }
 
-int32 FN_set_standby_coords(int32 *params) {	// (10dec97 JEL)
+int32 FN_set_standby_coords(int32 *params) {
 	// set the standby walk coords to be used by FN_walk_to_anim &
 	// FN_stand_after_anim when the anim header's start/end coords are zero
 

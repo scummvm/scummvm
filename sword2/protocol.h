@@ -17,7 +17,7 @@
  * $Header$
  */
 
-//the usual suspects (the usual suspicions)
+// the usual suspects (the usual suspicions)
 
 #ifndef	_PROTOCOL
 #define	_PROTOCOL

@@ -29,17 +29,17 @@
 
 logic LLogic;
 
-#define	LEVEL 			(cur_object_hub->logic_level)
+#define LEVEL			(cur_object_hub->logic_level)
 
 // this must allow for the largest number of objects in a screen
-#define	OBJECT_KILL_LIST_SIZE	50
+#define OBJECT_KILL_LIST_SIZE	50
 
 uint32 object_kill_list[OBJECT_KILL_LIST_SIZE];
 
 // keeps note of no. of objects in the kill list
 uint32 kills = 0;
 
-int logic::Process_session(void) {	// Tony6June96 (first run 21Oct96)
+int logic::Process_session(void) {
 	// do one cycle of the current session
 
 	uint32 run_list;
@@ -215,7 +215,7 @@ int logic::Process_session(void) {	// Tony6June96 (first run 21Oct96)
 	return 1;
 }
 
-void logic::Express_change_session(uint32 sesh_id) {	// Tony6June96
+void logic::Express_change_session(uint32 sesh_id) {
 	// a game-object can bring an immediate halt to the session and cause
 	// a new one to start without a screen update
 
@@ -244,7 +244,7 @@ void logic::Express_change_session(uint32 sesh_id) {	// Tony6June96
 	FreeAllRouteMem();
 }
 
-void logic::Natural_change_session(uint32 sesh_id) {	// Tony7June96
+void logic::Natural_change_session(uint32 sesh_id) {
 	// a new session will begin next game cycle.
 	// the current cycle will conclude and build the screen and flip
 	// into view as normal
@@ -253,7 +253,7 @@ void logic::Natural_change_session(uint32 sesh_id) {	// Tony7June96
 	current_run_list = sesh_id;
 }
 
-uint32 logic::Return_run_list(void) {	// Tony18Sept96
+uint32 logic::Return_run_list(void) {
 	// pass back the private cur_object_list variable - not sure we need
 	// this
 
@@ -261,7 +261,7 @@ uint32 logic::Return_run_list(void) {	// Tony18Sept96
 	return current_run_list;
 }
 
-int32 FN_set_session(int32 *params) {	// Tony29Oct96
+int32 FN_set_session(int32 *params) {
 	// used by player invoked start scripts
 	// param	0 id of new run list
 
@@ -270,7 +270,7 @@ int32 FN_set_session(int32 *params) {	// Tony29Oct96
 	return IR_CONT;
 }
 
-int32 FN_end_session(int32 *params) {	// Tony21Sept96
+int32 FN_end_session(int32 *params) {
 	// causes no more objects in this logic loop to be processed
 	// the logic engine will restart at the beginning of the new list
 	// !!the current screen will not be drawn!!
@@ -285,7 +285,7 @@ int32 FN_end_session(int32 *params) {	// Tony21Sept96
 	return IR_STOP;
 }
 
-void logic::Logic_up(uint32 new_script)	{	// Tony23Sept96
+void logic::Logic_up(uint32 new_script)	{
 	// move the current object up a level
 	// called by FN_gosub command - remember, only the logic object has
 	// access to cur_object_hub
@@ -305,7 +305,7 @@ void logic::Logic_up(uint32 new_script)	{	// Tony23Sept96
 	cur_object_hub->script_pc[cur_object_hub->logic_level] = new_script & 0xffff;
 }
 
-void logic::Logic_one(uint32 new_script) {	// Tony4Dec96
+void logic::Logic_one(uint32 new_script) {
 	// force to level one
 
 	cur_object_hub->logic_level = 1;
@@ -315,7 +315,7 @@ void logic::Logic_one(uint32 new_script) {	// Tony4Dec96
 	cur_object_hub->script_pc[1] = new_script & 0xffff;
 }
 
-void logic::Logic_replace(uint32 new_script) {	// Tony13Nov96
+void logic::Logic_replace(uint32 new_script) {
 	// change current logic - script must quit with a TERMINATE directive
 	// - which does not write to &pc
 
@@ -324,7 +324,7 @@ void logic::Logic_replace(uint32 new_script) {	// Tony13Nov96
 	cur_object_hub->script_pc[cur_object_hub->logic_level] = new_script & 0xffff;
 }
 
-uint32 logic::Examine_run_list(void) {	// Tony25Oct96
+uint32 logic::Examine_run_list(void) {
 	uint32 *game_object_list;
 	_standardHeader *file_header;
 	int scrolls = 0;
@@ -373,7 +373,7 @@ uint32 logic::Examine_run_list(void) {	// Tony25Oct96
 	return 1;
 }
 
-void logic::Total_restart(void) {	// Tony18Sept96
+void logic::Total_restart(void) {
 	// reset the object restart script 1 on level 0
 
 	cur_object_hub->logic_level = 0;
@@ -383,7 +383,7 @@ void logic::Total_restart(void) {	// Tony18Sept96
 	cur_object_hub->script_pc[0] = 1;
 }
 
-int32 FN_total_restart(int32 *params) {	// Tony5Dec96
+int32 FN_total_restart(int32 *params) {
 	// mega runs this to restart its base logic again - like being cached
 	// in again
 
@@ -393,7 +393,7 @@ int32 FN_total_restart(int32 *params) {	// Tony5Dec96
 	return IR_TERMINATE;
 }
 
-int32 FN_add_to_kill_list(int32 *params) {	//James9jan97
+int32 FN_add_to_kill_list(int32 *params) {
 	// call *once* from object's logic script - ie. in startup code
 	// - so not re-called every time script drops off & restarts!
 
@@ -443,13 +443,13 @@ int32 FN_add_to_kill_list(int32 *params) {	//James9jan97
 	return IR_CONT;
 }
 
-void logic::Process_kill_list(void) {	// Tony10Jan97
+void logic::Process_kill_list(void) {
 	for (uint32 j = 0; j < kills; j++)
 		res_man.Remove_res(object_kill_list[j]);
 
 	kills = 0;
 }
 
-void logic::Reset_kill_list(void) {	// James 25mar97
+void logic::Reset_kill_list(void) {
 	kills = 0;
 }

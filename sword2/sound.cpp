@@ -53,7 +53,7 @@ typedef struct {
 _fxq_entry fxq[FXQ_LENGTH];
 
 // used to store id of tunes that loop, for save & restore
-uint32 looping_music_id=0;
+uint32 looping_music_id = 0;
 
 char musicDirectory[120];
 
@@ -98,7 +98,9 @@ void Process_fx_queue(void) {
 	}
 }
 
-void Trigger_fx(uint8 j) {	// called from Process_fx_queue only
+// called from Process_fx_queue only
+
+void Trigger_fx(uint8 j) {
 	uint8 *data;
 	int32 id;
 	uint32 rv;
@@ -133,7 +135,9 @@ void Trigger_fx(uint8 j) {	// called from Process_fx_queue only
 #endif
 }
 
-int32 FN_play_fx(int32 *params) {		// called from script only
+// called from script only
+
+int32 FN_play_fx(int32 *params) {
 	// params:	0 sample resource id
 	//		1 type		(FX_SPOT, FX_RANDOM, FX_LOOP)
 	//		2 delay		(0..65535)
@@ -229,7 +233,7 @@ int32 FN_play_fx(int32 *params) {		// called from script only
 		data += sizeof(_standardHeader);
 
 		// copy it to sound memory, using position in queue as 'id'
-		rv = g_sound->OpenFx(id,data);
+		rv = g_sound->OpenFx(id, data);
 
 #ifdef _SWORD2_DEBUG
 		if (rv)
@@ -260,6 +264,7 @@ int32 FN_sound_fetch(int32 *params) {
 }
 
 // to alter the volume and pan of a currently playing fx
+
 int32 FN_set_fx_vol_and_pan(int32 *params) {
 	// params:	0 id of fx (ie. the id returned in 'result' from
 	//		  FN_play_fx
@@ -275,6 +280,7 @@ int32 FN_set_fx_vol_and_pan(int32 *params) {
 }
 
 // to alter the volume  of a currently playing fx
+
 int32 FN_set_fx_vol(int32 *params) {
 	// params:	0 id of fx (ie. the id returned in 'result' from
 	//		  FN_play_fx
@@ -285,7 +291,9 @@ int32 FN_set_fx_vol(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_stop_fx(int32 *params) {	// called from script only
+// called from script only
+
+int32 FN_stop_fx(int32 *params) {
 	// params:	0 position in queue
 
 	// This will stop looped & random fx instantly, and remove the fx
@@ -314,7 +322,9 @@ int32 FN_stop_fx(int32 *params) {	// called from script only
 	return IR_CONT;
 }
 
-int32 FN_stop_all_fx(int32 *params) {		// called from script only
+// called from script only
+
+int32 FN_stop_all_fx(int32 *params) {
 	// Stops all looped & random fx and clears the entire queue
 	// params:	none
 
@@ -361,7 +371,7 @@ int32 FN_prepare_music(int32 *params) {
 // Start a tune playing, to play once or to loop until stopped or next one
 // played
 
-int32 FN_play_music(int32 *params) {		// updated by James on 10apr97
+int32 FN_play_music(int32 *params) {
 	// params:	0 tune id
 	//		1 loop flag (0 or 1)
 
@@ -425,15 +435,9 @@ int32 FN_stop_music(int32 *params) {	// called from script only
 void Kill_music(void) {			// James22aug97
 	looping_music_id = 0;		// clear the 'looping' flag
 	g_sound->StopMusic();
-
-/* I don't think this is needed with our music code
-	// THIS BIT CAUSES THE MUSIC TO STOP INSTANTLY!
-	for(int count=0; count<16; count++)
-		g_sound->UpdateCompSampleStreaming();
-*/
 }
 
-int32 FN_check_music_playing(int32 *params) {		// James (30july97)
+int32 FN_check_music_playing(int32 *params) {
 	// params:	none
 
 	// sets result to no. of seconds of current tune remaining
@@ -445,7 +449,7 @@ int32 FN_check_music_playing(int32 *params) {		// James (30july97)
 	return IR_CONT;
 }
 
-void PauseAllSound(void) {	// James25july97
+void PauseAllSound(void) {
 	uint32	rv;
 
 	rv = g_sound->PauseMusic();
@@ -461,7 +465,7 @@ void PauseAllSound(void) {	// James25july97
 		Zdebug("ERROR: PauseFx() returned %.8x in PauseAllSound()", rv);
 }
 
-void UnpauseAllSound(void) {	// James25july97
+void UnpauseAllSound(void) {
 	uint32	rv;
 
 	rv = g_sound->UnpauseMusic();

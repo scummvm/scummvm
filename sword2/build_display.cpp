@@ -86,19 +86,19 @@ extern uint32 mouse_status;
 // ---------------------------------------------------------------------------
 // function prototypes not needed externally
 
-void Start_new_palette(void);					//Tony25Sept96
+void Start_new_palette(void);
 
-void Register_frame(int32 *params, buildit *build_unit);	// (1nov96JEL)
-void Process_layer(uint32 layer_number);			//Tony24Sept96
-void Sort_the_sort_list(void);					//Tony18Sept96
+void Register_frame(int32 *params, buildit *build_unit);
+void Process_layer(uint32 layer_number);
+void Sort_the_sort_list(void);
 
-void Send_back_par0_frames(void);				//James23Jan97
-void Send_back_par1_frames(void);				//James23Jan97
-void Send_back_frames(void);					//Tony23Sept96
+void Send_back_par0_frames(void);
+void Send_back_par1_frames(void);
+void Send_back_frames(void);
 void Send_sort_frames(void);
 void Send_fore_frames(void);
-void Send_fore_par0_frames(void);				//James23Jan97
-void Send_fore_par1_frames(void);				//James23Jan97
+void Send_fore_par0_frames(void);
+void Send_fore_par1_frames(void);
 
 // ---------------------------------------------------------------------------
 //
@@ -123,7 +123,7 @@ void Build_display(void) {	//Tony21Sept96
 		// start the layer palette fading up
 		Start_new_palette();
 
-#ifdef _SWORD2_DEBUG				// (James23jun97)
+#ifdef _SWORD2_DEBUG
 		largest_layer_area = 0;		// should be reset to zero at start of each screen change
 		largest_sprite_area = 0;	// - " -
 #endif
@@ -269,7 +269,7 @@ void Build_display(void) {	//Tony21Sept96
 				fps = frameCount;
 				debug(2, "FPS: %d", fps);
 				frameCount = 0;
-				cycleTime = SVM_timeGetTime()+1000;
+				cycleTime = SVM_timeGetTime() + 1000;
 			}
 
  			// ---------------------------------------------------
@@ -320,7 +320,7 @@ void Build_display(void) {	//Tony21Sept96
 // Fades down and displays a message on the screen for time seconds
 //
 
-void DisplayMsg(uint8 *text, int time) { 	// Chris 15May97
+void DisplayMsg(uint8 *text, int time) {
 	mem *text_spr;
 	_frameHeader *frame;
 	_spriteInfo spriteInfo;
@@ -412,7 +412,7 @@ void DisplayMsg(uint8 *text, int time) { 	// Chris 15May97
 // Fades message down and removes it, fading up again afterwards
 //
 
-void RemoveMsg(void) {		// Chris 15May97
+void RemoveMsg(void) {
 	FadeDown((float) 0.75);
 
 	WaitForFade();
@@ -427,7 +427,7 @@ void RemoveMsg(void) {		// Chris 15May97
 	// this routine to clean up!
 }
 
-void Send_back_par0_frames(void) {	//James23Jan97
+void Send_back_par0_frames(void) {
 	uint32 j;
 
 	// could be none at all - theoretically at least
@@ -437,7 +437,7 @@ void Send_back_par0_frames(void) {	//James23Jan97
 	}
 }
 
-void Send_back_par1_frames(void) {	//James23Jan97
+void Send_back_par1_frames(void) {
 	uint32 j;
 
 	// could be none at all - theoretically at least
@@ -447,7 +447,7 @@ void Send_back_par1_frames(void) {	//James23Jan97
 	}
 }
 
-void Send_back_frames(void) {	//Tony23Sept96
+void Send_back_frames(void) {
 	uint32 j;
 
 	// could be none at all - theoretically at least
@@ -456,7 +456,7 @@ void Send_back_frames(void) {	//Tony23Sept96
 	}
 }
 
-void Send_sort_frames(void) {	//Tony23Sept96
+void Send_sort_frames(void) {
 	// send the sort frames for printing - layers, shrinkers & normal flat
 	// sprites
 
@@ -476,7 +476,7 @@ void Send_sort_frames(void) {	//Tony23Sept96
 	}
 }
 
-void Send_fore_frames(void) {	//Tony23Sept96
+void Send_fore_frames(void) {
 	uint32 j;
 
 	// could be none at all - theoretically at least
@@ -485,7 +485,7 @@ void Send_fore_frames(void) {	//Tony23Sept96
 	}
 }
 
-void Send_fore_par0_frames(void) {	//James23Jan97
+void Send_fore_par0_frames(void) {
 	uint32 j;
 
 	// could be none at all - theoretically at least
@@ -495,7 +495,7 @@ void Send_fore_par0_frames(void) {	//James23Jan97
 	}
 }
 
-void Send_fore_par1_frames(void) {	//James23Jan97
+void Send_fore_par1_frames(void) {
 	uint32 j;
 
 	// could be none at all - theoretically at least
@@ -505,7 +505,7 @@ void Send_fore_par1_frames(void) {	//James23Jan97
 	}
 }
 
-void Process_layer(uint32 layer_number) {	//Tony24Sept96
+void Process_layer(uint32 layer_number) {
 	uint8 *file;
 	_layerHeader *layer_head;
  	_spriteInfo spriteInfo;
@@ -557,7 +557,7 @@ void Process_layer(uint32 layer_number) {	//Tony24Sept96
 	res_man.Res_close(this_screen.background_layer_id);
 }
 
-void Process_image(buildit *build_unit) {	// (5nov96 JEL)
+void Process_image(buildit *build_unit) {
 	uint8 *file, *colTablePtr = NULL;
 	_animHeader *anim_head;
 	_frameHeader *frame_head;
@@ -581,12 +581,12 @@ void Process_image(buildit *build_unit) {	// (5nov96 JEL)
 	spriteType = RDSPR_TRANS;
 
 	if (anim_head->blend)
-		spriteType += RDSPR_BLEND;
+		spriteType |= RDSPR_BLEND;
 
 	// if the frame is to be flipped (only really applicable to frames
 	// using offsets)
 	if (cdt_entry->frameType & FRAME_FLIPPED)
-		spriteType += RDSPR_FLIP;
+		spriteType |= RDSPR_FLIP;
 
 	if (cdt_entry->frameType & FRAME_256_FAST) {
 		// scaling, shading & blending don't work with RLE256FAST
@@ -597,20 +597,20 @@ void Process_image(buildit *build_unit) {	// (5nov96 JEL)
 		// think we have it any more. But I'm not sure.
 
 		if (build_unit->scale || anim_head->blend || build_unit->shadingFlag)
-			spriteType += RDSPR_RLE256;
+			spriteType |= RDSPR_RLE256;
 		else
-			spriteType += RDSPR_RLE256FAST;
+			spriteType |= RDSPR_RLE256FAST;
 	} else {
 		// what compression was used?
 		switch (anim_head->runTimeComp) {
 		case NONE:
-			spriteType += RDSPR_NOCOMPRESSION;
+			spriteType |= RDSPR_NOCOMPRESSION;
 			break;
 		case RLE256:
-			spriteType += RDSPR_RLE256;
+			spriteType |= RDSPR_RLE256;
 			break;
 		case RLE16:
-			spriteType += RDSPR_RLE16;
+			spriteType |= RDSPR_RLE16;
 			// points to just after last cdt_entry, ie.
 			// start of colour table
 			colTablePtr = (uint8*) (anim_head + 1) + anim_head->noAnimFrames * sizeof(_cdtEntry);
@@ -621,7 +621,7 @@ void Process_image(buildit *build_unit) {	// (5nov96 JEL)
 	// if we want this frame to be affected by the shading mask,
 	// add the status bit
 	if (build_unit->shadingFlag == 1)
-		spriteType += RDSPR_SHADOW;
+		spriteType |= RDSPR_SHADOW;
 
 	spriteInfo.x = build_unit->x;
 	spriteInfo.y = build_unit->y;
@@ -716,7 +716,7 @@ void Reset_render_lists(void) {		//Tony18Sept96
 	}
 }
 
-void Sort_the_sort_list(void) {		//Tony18Sept96
+void Sort_the_sort_list(void) {
 	//sort the list
 
 	//cannot bubble sort 0 or 1 items!
@@ -737,7 +737,7 @@ void Sort_the_sort_list(void) {		//Tony18Sept96
 	}
 }
 
-void Register_frame(int32 *params, buildit *build_unit)	{	// (1nov96JEL)
+void Register_frame(int32 *params, buildit *build_unit)	{
 	// params: 0 pointer to mouse structure or NULL for no write to mouse
 	//           list (non-zero means write sprite-shape to mouse list)
 	//         1 pointer to graphic structure
@@ -882,7 +882,7 @@ void Register_frame(int32 *params, buildit *build_unit)	{	// (1nov96JEL)
 	res_man.Res_close(ob_graph->anim_resource);
 }
 
-int32 FN_register_frame(int32 *params) {	// (27nov96 JEL)
+int32 FN_register_frame(int32 *params) {
 	//this call would be made from an objects service script 0
 
 	// params: 0 pointer to mouse structure or NULL for no write to mouse
@@ -966,7 +966,7 @@ int32 FN_register_frame(int32 *params) {	// (27nov96 JEL)
 	return IR_CONT;
 }
 
-void Start_new_palette(void) {	//Tony25Sept96
+void Start_new_palette(void) {
 	//start layer palette fading up
 
 	uint8 *screenFile;
@@ -996,7 +996,7 @@ void Start_new_palette(void) {	//Tony25Sept96
  	this_screen.new_palette = 0;
 }
 
-int32 FN_update_player_stats(int32 *params) {	//Tony28Nov96
+int32 FN_update_player_stats(int32 *params) {
 	//engine needs to know certain info about the player
 
 	Object_mega *ob_mega = (Object_mega *) params[0];
@@ -1016,7 +1016,7 @@ int32 FN_update_player_stats(int32 *params) {	//Tony28Nov96
 	return IR_CONT;
 }
 
-int32 FN_fade_down(int32 *params) {	//Tony5Dec96
+int32 FN_fade_down(int32 *params) {
 	// NONE means up! can only be called when screen is fully faded up -
 	// multiple calls wont have strange effects
 
@@ -1026,7 +1026,7 @@ int32 FN_fade_down(int32 *params) {	//Tony5Dec96
 	return IR_CONT;
 }
 
-int32 FN_fade_up(int32 *params) {	//Chris 15May97
+int32 FN_fade_up(int32 *params) {
 	WaitForFade();
 
 	if (GetFadeStatus() == RDFADE_BLACK)
@@ -1051,12 +1051,12 @@ int32 FN_fade_up(int32 *params) {	//Chris 15May97
 //	uint8 noEntries;
 // } _paletteHeader;
 
-int32 FN_set_palette(int32 *params) {		// James05jun97
+int32 FN_set_palette(int32 *params) {
 	SetFullPalette(params[0]);
 	return IR_CONT;
 }
 
-void SetFullPalette(int32 palRes) {		// James17jun97
+void SetFullPalette(int32 palRes) {
 	// params 0 resource number of palette file
 	//          or 0 if it's to be the palette from the current screen
 

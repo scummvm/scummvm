@@ -21,7 +21,7 @@
 #define	MEMVIEW_H
 
 const char *Fetch_mem_owner(uint32 uid);
-void Console_mem_display(void);		// Tony (13Aug96)
-void Create_mem_string(char *string);	// James (21oct96 updated 4dec96)
+void Console_mem_display(void);
+void Create_mem_string(char *string);
 
 #endif

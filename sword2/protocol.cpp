@@ -30,7 +30,7 @@
 // Returns a pointer to the first palette entry, given the pointer to the
 // start of the screen file.
 
-uint8 *FetchPalette(uint8 *screenFile) {	// Chris 04Oct96
+uint8 *FetchPalette(uint8 *screenFile) {
 	uint8 *palette;
 
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
@@ -52,7 +52,7 @@ uint8 *FetchPalette(uint8 *screenFile) {	// Chris 04Oct96
 // Returns a pointer to the start of the palette match table, given the
 // pointer to the start of the screen file.
 
-uint8 *FetchPaletteMatchTable(uint8 *screenFile) {	// James 09dec96
+uint8 *FetchPaletteMatchTable(uint8 *screenFile) {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 	return (uint8 *) mscreenHeader + mscreenHeader->paletteTable;
@@ -61,7 +61,7 @@ uint8 *FetchPaletteMatchTable(uint8 *screenFile) {	// James 09dec96
 // Returns a pointer to the screen header, given the pointer to the start of
 // the screen file.
 
-_screenHeader *FetchScreenHeader(uint8 *screenFile) {	// Chris 04Oct96
+_screenHeader *FetchScreenHeader(uint8 *screenFile) {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 	_screenHeader *screenHeader = (_screenHeader*) ((uint8 *) mscreenHeader + mscreenHeader->screen);
 
@@ -90,7 +90,7 @@ _layerHeader *FetchLayerHeader(uint8 *screenFile, uint16 layerNo) {	// Chris 04O
 // Returns a pointer to the start of the shading mask, given the pointer to
 // the start of the screen file.
 
-uint8 *FetchShadingMask(uint8 *screenFile) {		// James 08apr97
+uint8 *FetchShadingMask(uint8 *screenFile) {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 	return (uint8 *) mscreenHeader + mscreenHeader->maskOffset;
@@ -99,7 +99,7 @@ uint8 *FetchShadingMask(uint8 *screenFile) {		// James 08apr97
 // Returns a pointer to the anim header, given the pointer to the start of
 // the anim file.
 
-_animHeader *FetchAnimHeader(uint8 *animFile) {		// (25sep96JEL)
+_animHeader *FetchAnimHeader(uint8 *animFile) {
 	return (_animHeader *) (animFile + sizeof(_standardHeader));
 }
 
@@ -107,7 +107,7 @@ _animHeader *FetchAnimHeader(uint8 *animFile) {		// (25sep96JEL)
 // pointer to the start of the anim file. Drops out if the requested frame
 // number exceeds the number of frames in this anim.
 
-_cdtEntry *FetchCdtEntry(uint8 *animFile, uint16 frameNo) {	// Chris 09Oct96
+_cdtEntry *FetchCdtEntry(uint8 *animFile, uint16 frameNo) {
 	_animHeader *animHead = FetchAnimHeader(animFile);
 
 #ifdef _SWORD2_DEBUG
@@ -122,14 +122,14 @@ _cdtEntry *FetchCdtEntry(uint8 *animFile, uint16 frameNo) {	// Chris 09Oct96
 // pointer to the start of the anim file. Drops out if the requested frame
 // number exceeds the number of frames in this anim
 
-_frameHeader *FetchFrameHeader(uint8 *animFile, uint16 frameNo)	{	// James 31oct96
+_frameHeader *FetchFrameHeader(uint8 *animFile, uint16 frameNo)	{
 	// required address = (address of the start of the anim header) + frameOffset
 	return (_frameHeader *) (animFile + sizeof(_standardHeader) + FetchCdtEntry(animFile, frameNo)->frameOffset);
 }
 
 // Returns a pointer to the requested parallax layer data.
 
-_parallax *FetchBackgroundParallaxLayer(uint8 *screenFile, int layer) {	// Chris 04Oct96
+_parallax *FetchBackgroundParallaxLayer(uint8 *screenFile, int layer) {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 #ifdef _SWORD2_DEBUG
@@ -140,7 +140,7 @@ _parallax *FetchBackgroundParallaxLayer(uint8 *screenFile, int layer) {	// Chris
 	return (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->bg_parallax[layer]);
 }
 
-_parallax *FetchBackgroundLayer(uint8 *screenFile) {	// Chris 04Oct96
+_parallax *FetchBackgroundLayer(uint8 *screenFile) {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 #ifdef _SWORD2_DEBUG
@@ -151,7 +151,7 @@ _parallax *FetchBackgroundLayer(uint8 *screenFile) {	// Chris 04Oct96
 	return (_parallax *) ((uint8 *) mscreenHeader + mscreenHeader->screen + sizeof(_screenHeader));
 }
 
-_parallax *FetchForegroundParallaxLayer(uint8 *screenFile, int layer) {	// Chris 04Oct96
+_parallax *FetchForegroundParallaxLayer(uint8 *screenFile, int layer) {
 	_multiScreenHeader *mscreenHeader = (_multiScreenHeader *) (screenFile + sizeof(_standardHeader));
 
 #ifdef _SWORD2_DEBUG
@@ -164,13 +164,13 @@ _parallax *FetchForegroundParallaxLayer(uint8 *screenFile, int layer) {	// Chris
 
 uint8 errorLine[128];
 
-uint8 *FetchTextLine(uint8 *file, uint32 text_line) {	// Tony24Oct96
+uint8 *FetchTextLine(uint8 *file, uint32 text_line) {
 	_standardHeader *fileHeader;
 	uint32 *point;
 
 	_textHeader *text_header = (_textHeader *) (file + sizeof(_standardHeader));
 
-	if (text_line >= text_header->noOfLines) {	// (James08aug97)
+	if (text_line >= text_header->noOfLines) {
 		fileHeader = (_standardHeader*)file;
 		sprintf((char*) errorLine, "xxMissing line %d of %s (only 0..%d)", text_line, fileHeader->name, text_header->noOfLines - 1);
 
@@ -190,7 +190,7 @@ uint8 *FetchTextLine(uint8 *file, uint32 text_line) {	// Tony24Oct96
 
 // Used for testing text & speech (see FN_I_speak in speech.cpp)
 
-uint8 CheckTextLine(uint8 *file, uint32	text_line) {	// (James26jun97)
+uint8 CheckTextLine(uint8 *file, uint32	text_line) {
 	_textHeader *text_header = (_textHeader *) (file + sizeof(_standardHeader));
 
 	// out of range => invalid
@@ -201,7 +201,7 @@ uint8 CheckTextLine(uint8 *file, uint32	text_line) {	// (James26jun97)
 	return 1;
 }
 
-uint8 *FetchObjectName(int32 resourceId) {	// James15jan97
+uint8 *FetchObjectName(int32 resourceId) {
 	_standardHeader *header;
 	
 	header = (_standardHeader*) res_man.Res_open(resourceId);

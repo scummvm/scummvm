@@ -30,7 +30,7 @@
 
 _event_unit event_list[MAX_events];
 
-void Init_event_system(void) {	//Tony4Dec96
+void Init_event_system(void) {
 	for (int j = 0; j < MAX_events; j++) {
 		//denotes free slot
 		event_list[j].id = 0;
@@ -48,7 +48,7 @@ uint32 CountEvents(void) {
 	return count;
 }
 
-int32 FN_request_speech(int32 *params) {	//Tony13Nov96
+int32 FN_request_speech(int32 *params) {
 	// change current script - must be followed by a TERMINATE script
 	// directive
 
@@ -81,7 +81,7 @@ int32 FN_request_speech(int32 *params) {	//Tony13Nov96
 	return IR_CONT;
 }
 
-void Set_player_action_event(uint32 id, uint32 interact_id) {	//Tony4Dec96
+void Set_player_action_event(uint32 id, uint32 interact_id) {
 	uint32 j = 0;
 
 //	if (event_list[j].id != id && event_list[j].id)
@@ -112,7 +112,7 @@ void Set_player_action_event(uint32 id, uint32 interact_id) {	//Tony4Dec96
 	event_list[j].interact_id = (interact_id * 65536) + 2;
 }
 
-int32 FN_set_player_action_event(int32 *params) {	//Tony10Feb97
+int32 FN_set_player_action_event(int32 *params) {
 	// we want to intercept the player character and have him interact
 	// with an object - from script this code is the same as the mouse
 	// engine calls when you click on an object - here, a third party
@@ -150,7 +150,7 @@ int32 FN_set_player_action_event(int32 *params) {	//Tony10Feb97
 	return IR_CONT;
 }
 
-int32 FN_send_event(int32 *params) {	//Tony28Feb97
+int32 FN_send_event(int32 *params) {
 	// we want to intercept the player character and have him interact
 	// with an object - from script
 
@@ -187,7 +187,7 @@ int32 FN_send_event(int32 *params) {	//Tony28Feb97
 	return IR_CONT;
 }
 
-int32 FN_check_event_waiting(int32 *params) {	//Tony4Dec96
+int32 FN_check_event_waiting(int32 *params) {
 	// returns yes/no in RESULT
 
 	// no params
@@ -207,7 +207,7 @@ int32 FN_check_event_waiting(int32 *params) {	//Tony4Dec96
 // like FN_check_event_waiting, but starts the event rather than setting
 // RESULT to 1
 
-int32 FN_check_for_event(int32 *params)	{	// James (04mar97)
+int32 FN_check_for_event(int32 *params)	{
 	// no params
 
 	for (int j = 0; j < MAX_events; j++) {
@@ -227,7 +227,7 @@ int32 FN_check_for_event(int32 *params)	{	// James (04mar97)
 // combination of FN_pause & FN_check_for_event
 // - ie. does a pause, but also checks for event each cycle
 
-int32 FN_pause_for_event(int32 *params) {	// James (04mar97)
+int32 FN_pause_for_event(int32 *params) {
 	// returns yes/no in RESULT
 
 	// params
@@ -278,7 +278,7 @@ int32 FN_pause_for_event(int32 *params) {	// James (04mar97)
 	}
 }
 
-uint32 Check_event_waiting(void) {	//Tony4Dec96
+uint32 Check_event_waiting(void) {
 	// returns yes/no
 
 	for (int j = 0; j < MAX_events; j++) {
@@ -289,7 +289,7 @@ uint32 Check_event_waiting(void) {	//Tony4Dec96
 	return 0;
 }
 
-int32 FN_clear_event(int32 *params) {	//Tony11Mar97
+int32 FN_clear_event(int32 *params) {
 //	no params
 //	no return vaule
 
@@ -304,7 +304,7 @@ int32 FN_clear_event(int32 *params) {	//Tony11Mar97
 	return IR_CONT;
 }
 
-void Start_event(void) {	//Tony4Dec96
+void Start_event(void) {
 	// call this from stuff like fn_walk
 	// you must follow with a return IR_TERMINATE
 
@@ -323,7 +323,7 @@ void Start_event(void) {	//Tony4Dec96
 	Con_fatal_error("Start_event can't find event for id %d", ID);
 }
 
-int32 FN_start_event(int32 *params) {	//Tony4Dec96
+int32 FN_start_event(int32 *params) {
 	for (int j = 0; j < MAX_events; j++)
 		if (event_list[j].id == ID) {
 			// run 3rd script of target object on level 1
@@ -334,12 +334,12 @@ int32 FN_start_event(int32 *params) {	//Tony4Dec96
 			return IR_TERMINATE;
 		}
 
-	//oh dear - stop the system
+	// oh dear - stop the system
 	Con_fatal_error("FN_start_event can't find event for id %d", ID);
 	return 0;	//never called - but lets stop them bloody errors
 }
 
-void Kill_all_ids_events(uint32 id) {	//Tony18Dec96
+void Kill_all_ids_events(uint32 id) {
 	for (int j = 0; j < MAX_events; j++) {
 		if (event_list[j].id == id) {
 			// clear the slot

@@ -27,7 +27,7 @@
 #include "sword2.h"
 #include "common/file.h"
 
-uint32 Read_file(const char *name, mem **membloc, uint32 uid) {	// Tony25Apr96
+uint32 Read_file(const char *name, mem **membloc, uint32 uid) {
 	// read the file in and place into an allocated MEM_float block
 
 	// FIXME: As far as I can see, this function is only used in debug

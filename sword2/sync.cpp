@@ -33,13 +33,13 @@ typedef	struct {
 
 _sync_unit sync_list[MAX_syncs];
 
-void Init_sync_system(void) {		// Tony27Nov96
+void Init_sync_system(void) {
 	// set list to 0's
 	for (int j = 0; j < MAX_syncs; j++)
 		sync_list[j].id = 0;
 }
 
-int32 FN_send_sync(int32 *params) {	// Tony27Nov96
+int32 FN_send_sync(int32 *params) {
 	//param	0 sync's recipient
 	//param	1 sync value
 
@@ -59,7 +59,7 @@ int32 FN_send_sync(int32 *params) {	// Tony27Nov96
 	return IR_CONT;
 }
 
-void Clear_syncs(uint32	id) {		// Tony27Nov96
+void Clear_syncs(uint32	id) {
 	// clear any syncs registered for this id
 	// call this just after the id has been processed
 	// there could in theory be more than one sync waiting for us so
@@ -73,14 +73,14 @@ void Clear_syncs(uint32	id) {		// Tony27Nov96
 	}
 }
 
-uint32 Get_sync(void) {			// Tony27Nov96
+uint32 Get_sync(void) {
 	// check for a sync waiting for this character
 	// - called from system code eg. from inside FN_anim(), to see if
 	// animation to be quit
 
 	for (int i = 0; i < MAX_syncs; i++) {
 		if (sync_list[i].id == ID) {
-			// means sync found   Tony12July97
+			// means sync found
 			return 1;
 		}
 	}
@@ -89,7 +89,7 @@ uint32 Get_sync(void) {			// Tony27Nov96
 	return 0;
 }
 
-int32 FN_get_sync(int32 *params) {	// Tony27Nov96
+int32 FN_get_sync(int32 *params) {
 	// check for a sync waiting for this character
 	// - called from script
 	// params     none
@@ -107,7 +107,7 @@ int32 FN_get_sync(int32 *params) {	// Tony27Nov96
 	return IR_CONT;
 }
 
-int32 FN_wait_sync(int32 *params) {	// Tony27Nov96
+int32 FN_wait_sync(int32 *params) {
 	// keep calling until a sync recieved
 	// params     none
 

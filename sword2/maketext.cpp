@@ -466,7 +466,7 @@ void Init_text_bloc_system(void) {	//Tony16Oct96
 // blocs are read and blitted at render time choose alignment type
 // RDSPR_DISPLAYALIGN or 0
 
-uint32 Build_new_block(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, uint32 type, uint32 fontRes, uint8 justification) {	// Tony31Oct96
+uint32 Build_new_block(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, uint32 type, uint32 fontRes, uint8 justification) {
 	uint32	j = 0;
  	_frameHeader *frame_head;
 	int16 text_left_margin;
@@ -564,9 +564,7 @@ uint32 Build_new_block(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, 
 	return j + 1;
 }
 
-// PC Version of Print_text_blocs
-
-void Print_text_blocs(void) {	// Tony16Oct96
+void Print_text_blocs(void) {
 	//called by build_display
 
 	_frameHeader *frame;
@@ -597,7 +595,7 @@ void Print_text_blocs(void) {	// Tony16Oct96
 	}
 }
 
-void Kill_text_bloc(uint32 bloc_number) {	// Tony18Oct96
+void Kill_text_bloc(uint32 bloc_number) {
 	//back to real
 	bloc_number--;
 
@@ -622,7 +620,7 @@ void Kill_text_bloc(uint32 bloc_number) {	// Tony18Oct96
 
 #define SAVE_LINE_NO	1
 
-void InitialiseFontResourceFlags(void) {	// (James31july97)
+void InitialiseFontResourceFlags(void) {
 	uint8 *textFile, *textLine;
 	uint8 language;
 
@@ -669,7 +667,7 @@ void InitialiseFontResourceFlags(void) {	// (James31july97)
 
 // called from the above function, and also from console.cpp
 
-void InitialiseFontResourceFlags(uint8 language) {	// (James31july97)
+void InitialiseFontResourceFlags(uint8 language) {
 	switch (language) {
 	case FINNISH_TEXT:	// special Finnish fonts
 		speech_font_id = FINNISH_SPEECH_FONT_ID;

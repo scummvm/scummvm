@@ -201,11 +201,11 @@ int32 Sword2State::InitialiseGame(void) {
 	return 0;
 }
 
-void Close_game() {	// Tony11Oct96
+void Close_game() {
 	// Zdebug("Close_game() STARTING:");
 	EraseBackBuffer();
 
-	// Stop music instantly! (James22aug97)
+	// Stop music instantly!
 	Kill_music();
 
 	// free the memory again
@@ -444,7 +444,7 @@ void Sword2State::go() {
 	return;			//quit the game
 }
 
-void Sword2State::Start_game(void) {	//Tony29May97
+void Sword2State::Start_game(void) {
 	// boot the game straight into a start script
 
 	int screen_manager_id;
@@ -489,7 +489,7 @@ void Sword2State::Start_game(void) {	//Tony29May97
 	Zdebug("Start_game() DONE.");
 }
 
-void PauseGame(void) {		// James17jun97
+void PauseGame(void) {
 	// uint8 *text;
 
 	// open text file & get the line "PAUSED"
@@ -535,7 +535,7 @@ void PauseGame(void) {		// James17jun97
 	gamePaused = 1;
 }
 
-void UnpauseGame(void) {	// James17jun97
+void UnpauseGame(void) {
 	// removed "PAUSED" from screen
 	// Kill_text_bloc(pause_text_bloc_no);
 

@@ -26,12 +26,12 @@
 #include "defs.h"
 #include "function.h"
 #include "interpreter.h"
-#include "layers.h"	// for 'this_screen' structure
+#include "layers.h"		// for 'this_screen' structure
 #include "logic.h"
 #include "protocol.h"
 #include "resman.h"
 #include "sound.h"
-#include "sword2.h"	// for CloseGame()
+#include "sword2.h"		// for CloseGame()
 
 Object_graphic engine_graph;	// global for engine
 Object_mega engine_mega;	// global for engine
@@ -50,7 +50,7 @@ int32 FN_test_flags(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_gosub(int32 *params) {		// Tony23Sept96
+int32 FN_gosub(int32 *params) {
 	// hurray, script subroutines
 	// param	0 id of script
 
@@ -60,7 +60,7 @@ int32 FN_gosub(int32 *params) {		// Tony23Sept96
 	return IR_GOSUB;
 }
 
-int32 FN_new_script(int32 *params) {	// Tony13Nov96
+int32 FN_new_script(int32 *params) {
 	// change current script - must be followed by a TERMINATE script
 	// directive
 	// param	0 id of script
@@ -76,7 +76,7 @@ int32 FN_new_script(int32 *params) {	// Tony13Nov96
 	return IR_TERMINATE;
 }
 
-int32 FN_interact(int32 *params) {	// Tony13Nov96
+int32 FN_interact(int32 *params) {
 	// run targets action on a subroutine
 	// called by player on his base level 0 idle, for example
 	// param	0 id of target from which we derive action script
@@ -95,7 +95,7 @@ int32 FN_interact(int32 *params) {	// Tony13Nov96
 	return IR_GOSUB;
 }
 
-int32 FN_preload(int32 *params)	{	// (1Nov96 JEL)
+int32 FN_preload(int32 *params)	{
 	// Open & close a resource.
 	// Forces a resource into memory before it's "officially" opened for
 	// use. eg. if an anim needs to run on smoothly from another,
@@ -129,7 +129,7 @@ int32 FN_release(int32 *params) {
 	return IR_CONT;
 }
 
-int32 FN_random(int32 *params) {	// (1nov96 JEL)
+int32 FN_random(int32 *params) {
 	// Generates a random number between 'min' & 'max' inclusive, and
 	// sticks it in the script flag 'result'
 
@@ -143,7 +143,7 @@ int32 FN_random(int32 *params) {	// (1nov96 JEL)
 	return IR_CONT;
 }
 
-int32 FN_pause(int32 *params) {		// (19nov96 JEL)
+int32 FN_pause(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 number of game-cycles to pause
 
@@ -174,7 +174,7 @@ int32 FN_pause(int32 *params) {		// (19nov96 JEL)
 	}
 }
 
-int32 FN_random_pause(int32 *params) {	// (26nov96 JEL)
+int32 FN_random_pause(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 minimum number of game-cycles to pause
 	//		2 maximum number of game-cycles to pause
@@ -212,7 +212,7 @@ int32 FN_pass_graph(int32 *params) {	// Tony28Nov96
 	return IR_CONT;
 }
 
-int32 FN_pass_mega(int32 *params) {	// Tony28Nov96
+int32 FN_pass_mega(int32 *params) {
 	// makes an engine local copy of passed graphic_structure and
 	// mega_structure - run script 4 of an object to request this
 	// used by FN_turn_to(id) etc
@@ -228,7 +228,7 @@ int32 FN_pass_mega(int32 *params) {	// Tony28Nov96
 	return IR_CONT;
 }
 
-int32 FN_set_value(int32 *params) {	// (02jan97 JEL)
+int32 FN_set_value(int32 *params) {
 	// temp. function!
 	// used for setting far-referenced megaset resource field in mega
 	// object, from start script
@@ -236,7 +236,7 @@ int32 FN_set_value(int32 *params) {	// (02jan97 JEL)
 	// params:	0 pointer to object's mega structure
 	//		1 value to set it to
 
-	Object_mega *ob_mega = (Object_mega *)params[0];
+	Object_mega *ob_mega = (Object_mega *) params[0];
 
 	ob_mega->megaset_res = params[1];
 
@@ -256,7 +256,7 @@ uint8 red[4]	= { 255,   0,   0,   0 };
 uint8 green[4]	= {   0, 255,   0,   0 };
 uint8 blue[4]	= {   0,   0, 255,   0 };
 
-int32 FN_flash(int32 *params) {		// (James14feb97)
+int32 FN_flash(int32 *params) {
 	// flash colour 0 (ie. border) - useful during script development
 	// eg. FN_flash(BLUE) where a text line is missed; RED when some code
 	// missing, etc
@@ -292,7 +292,7 @@ int32 FN_flash(int32 *params) {		// (James14feb97)
 }
 
 
-int32 FN_colour(int32 *params) {	// (James14feb97)
+int32 FN_colour(int32 *params) {
 	// set border colour - useful during script development
 	// eg. set to colour during a timer situation, then black when timed
 	// out
@@ -323,7 +323,7 @@ int32 FN_colour(int32 *params) {	// (James14feb97)
 	return IR_CONT;
 }
 
-int32 FN_display_msg(int32 *params) {	// (Chris 15/5/97)
+int32 FN_display_msg(int32 *params) {
 	// Display a message to the user on the screen.
 	//
 	// params	0: Text number of message to be displayed.
@@ -343,7 +343,7 @@ int32 FN_display_msg(int32 *params) {	// (Chris 15/5/97)
 	return IR_CONT;
 }
 
-int32 FN_reset_globals(int32 *params) {	// Tony29May97
+int32 FN_reset_globals(int32 *params) {
 	// FN_reset_globals is used by the demo - so it can loop back &
 	// restart itself
 

@@ -22,8 +22,8 @@
 
 #include "object.h"
 
-void Init_sync_system(void);	// Tony27Nov96
-void Clear_syncs(uint32	id);	// Tony27Nov96
-uint32 Get_sync(void);		// Tony27Nov96
+void Init_sync_system(void);
+void Clear_syncs(uint32	id);
+uint32 Get_sync(void);
 
 #endif

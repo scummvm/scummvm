@@ -48,7 +48,7 @@ public:
 	void Logic_one(uint32 new_script);
 	void Total_restart(void);
 	uint32 Examine_run_list(void);
-	void Reset_kill_list(void);	// James 25mar97
+	void Reset_kill_list(void);
 
 private:
 	// denotes the res id of the game-object-list in current use
@@ -65,6 +65,6 @@ private:
 
 extern logic LLogic;
 
-int32 FN_add_to_kill_list(int32 *params);	// James9jan97
+int32 FN_add_to_kill_list(int32 *params);
 
 #endif

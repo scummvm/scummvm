@@ -69,7 +69,7 @@ void Close_memory_manager(void) {	// Tony2Oct96
 	free(free_memman);
 }
 
-void Init_memory_manager(void) {	// Tony9April96
+void Init_memory_manager(void) {
 	uint32 j;
 	uint8 *memory_base;
 
@@ -118,7 +118,7 @@ void Init_memory_manager(void) {	// Tony9April96
 
 // This is the low-level memory allocator
 
-mem *Talloc(uint32 size, uint32 type, uint32 unique_id) {	// Tony10Apr96
+mem *Talloc(uint32 size, uint32 type, uint32 unique_id) {
 	// allocate a block of memory - locked or float
 
 	// returns 0 if fails to allocate the memory
@@ -252,7 +252,7 @@ mem *Talloc(uint32 size, uint32 type, uint32 unique_id) {	// Tony10Apr96
 	return &mem_list[nu_block];
 }
 
-void Free_mem(mem *block) {	// Tony10Apr96
+void Free_mem(mem *block) {
 	// kill a block of memory - which was presumably floating or locked
 	// once you've done this the memory may be recycled
 
@@ -264,7 +264,7 @@ void Free_mem(mem *block) {	// Tony10Apr96
 #endif
 }
 
-void Float_mem(mem *block) {	// Tony10Apr96
+void Float_mem(mem *block) {
 	// set a block to float
 	// wont be trashed but will move around in memory
 
@@ -275,7 +275,7 @@ void Float_mem(mem *block) {	// Tony10Apr96
 #endif
 }
 
-void Lock_mem(mem *block) {	// Tony11Apr96
+void Lock_mem(mem *block) {
 	// set a block to lock
 	// wont be moved - don't lock memory for any longer than necessary
 	// unless you know the locked memory is at the bottom of the heap
@@ -290,7 +290,7 @@ void Lock_mem(mem *block) {	// Tony11Apr96
 #endif
 }
 
-int32 Defrag_mem(uint32 req_size) {	// Tony10Apr96
+int32 Defrag_mem(uint32 req_size) {
 	// moves floating blocks down and/or merges free blocks until a large
 	// enough space is found or there is nothing left to do and a big
 	// enough block cannot be found we stop when we find/create a large
@@ -449,7 +449,7 @@ int32 Defrag_mem(uint32 req_size) {	// Tony10Apr96
 	return -1;	//no luck, couldn't find a big enough block
 }
 
-void Mem_debug(void) {	//Tony11Apr96
+void Mem_debug(void) {
 	// gets called with Talloc, Mem_free, Mem_lock & Mem_float if
 	// MEMDEBUG has been #defined otherwise can be called at any time
 	// anywhere else
@@ -487,7 +487,7 @@ void Mem_debug(void) {	//Tony11Apr96
 	} while (j != -1);
 }
 
-mem *Twalloc(uint32 size, uint32 type, uint32 unique_id) {	// tony12Feb97
+mem *Twalloc(uint32 size, uint32 type, uint32 unique_id) {
 	// the high level Talloc
 	// can ask the resman to remove old resources to make space - will
 	// either do it or halt the system
@@ -527,7 +527,7 @@ mem *Twalloc(uint32 size, uint32 type, uint32 unique_id) {	// tony12Feb97
 // Maximum allowed wasted memory.
 #define MAX_WASTAGE 51200
 
-int32 VirtualDefrag(uint32 size) {	// Chris - 07 April '97
+int32 VirtualDefrag(uint32 size) {
 	// Virutually defrags memory...
 	//
 	// Used to determine if there is potentially are large enough free

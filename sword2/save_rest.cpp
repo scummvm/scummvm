@@ -58,7 +58,7 @@ static uint32 RestoreData(uint16 slotNo, uint8 *buffer, uint32 bufferSize);
 
 static uint32 CalcChecksum(uint8 *buffer, uint32 size);
 
-// savegame file header		(James06feb97)
+// savegame file header
 
 typedef	struct {
 	// sum of all bytes in file, excluding this uint32
@@ -135,7 +135,7 @@ static void convertHeaderEndian(_savegameHeader &header) {
 
 // SAVE GAME
 
-uint32 SaveGame(uint16 slotNo, uint8 *desc) {		// (James05feb97)
+uint32 SaveGame(uint16 slotNo, uint8 *desc) {
 	mem *saveBufferMem;
 	uint32 bufferSize;
 	uint32 errorCode;
@@ -265,7 +265,7 @@ uint32 SaveData(uint16 slotNo, uint8 *buffer, uint32 bufferSize) {
 
 // RESTORE GAME
 
-uint32 RestoreGame(uint16 slotNo) {		// (James05feb97)
+uint32 RestoreGame(uint16 slotNo) {
 	mem *saveBufferMem;
 	uint32 bufferSize;
 	uint32 errorCode;
@@ -472,7 +472,7 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 
 // GetSaveDescription - PC version...
 
-uint32 GetSaveDescription(uint16 slotNo, uint8 *description) {		// (James05feb97)
+uint32 GetSaveDescription(uint16 slotNo, uint8 *description) {
 	char saveFileName[MAX_FILENAME_LEN];
 	_savegameHeader dummy;
 	SaveFile *in;
@@ -515,7 +515,7 @@ bool SaveExists(uint16 slotNo) {
 	return true;
 }
 
-void GetPlayerStructures(void) {	// James27feb97
+void GetPlayerStructures(void) {
 	 // request the player object structures which need saving
 
 	// script no. 7 - 'george_savedata_request' calls
@@ -535,7 +535,7 @@ void GetPlayerStructures(void) {	// James27feb97
 	res_man.Res_close(CUR_PLAYER_ID);
 }
 
-void PutPlayerStructures(void) {	// James27feb97 (updated by James on 29july97)
+void PutPlayerStructures(void) {
 	// fill out the player object structures from the savegame structures
 	// also run the appropriate scripts to set up george's anim tables &
 	// walkdata, and nico's anim tables
@@ -585,7 +585,7 @@ void PutPlayerStructures(void) {	// James27feb97 (updated by James on 29july97)
 	res_man.Res_close(CUR_PLAYER_ID);
 }
 
-int32 FN_pass_player_savedata(int32 *params) {	// James27feb97
+int32 FN_pass_player_savedata(int32 *params) {
 	// copies the 4 essential player structures into the savegame header
 	// - run script 7 of player object to request this
 
@@ -606,7 +606,7 @@ int32 FN_pass_player_savedata(int32 *params) {	// James27feb97
 	return IR_CONT;
 }
 
-int32 FN_get_player_savedata(int32 *params) {	// James27feb97
+int32 FN_get_player_savedata(int32 *params) {
 	// reverse of FN_pass_player_savedata
 	// - run script 8 of player object
 
@@ -655,7 +655,7 @@ int32 FN_get_player_savedata(int32 *params) {	// James27feb97
 	return IR_CONT;
 }
 
-uint32 CalcChecksum(uint8 *buffer, uint32 size) {	// (James05aug97)
+uint32 CalcChecksum(uint8 *buffer, uint32 size) {
 	uint32 total = 0;
 
 	for (uint32 pos = 0; pos < size; pos++)

@@ -90,7 +90,7 @@ typedef struct {
 
 // ---------------------------------------------------------------------------
 
-void resMan::InitResMan(void) { //Tony29May96
+void resMan::InitResMan(void) {
 	// We read in the resource info which tells us the names of the
 	// resource cluster files ultimately, although there might be groups
 	// within the clusters at this point it makes no difference. We only
@@ -256,7 +256,7 @@ char *resMan::GetCdPath(void) {
 	return cdPath;
 }
 
-void resMan::Close_ResMan(void) { //Tony29May96
+void resMan::Close_ResMan(void) {
 	// free up our mallocs
 	free(resList);
 	free(age);
@@ -448,7 +448,7 @@ void convertEndian(uint8 *file, uint32 len) {
 	}
 }
 
-uint8 *resMan::Res_open(uint32 res) {	//BHTony30May96
+uint8 *resMan::Res_open(uint32 res) {
 	// returns ad of resource. Loads if not in memory
 	// retains a count
 	// resource can be aged out of memory if count = 0
@@ -583,7 +583,7 @@ uint8 *resMan::Res_open(uint32 res) {	//BHTony30May96
 	return (uint8 *) resList[res]->ad;
 }
 
-uint8 resMan::Res_check_valid(uint32 res) {	// James 12mar97
+uint8 resMan::Res_check_valid(uint32 res) {
 	// returns '1' if resource is valid, otherwise returns '0'
 	// used in startup.cpp to ignore invalid screen-manager resources
 
@@ -604,7 +604,7 @@ uint8 resMan::Res_check_valid(uint32 res) {	// James 12mar97
 	return 1;
 }
 
-void resMan::Res_next_cycle(void) {	//Tony8Feb97
+void resMan::Res_next_cycle(void) {
 	// increment the cycle and calculate actual per-cycle memory useage
 
 #ifdef _SWORD2_DEBUG
@@ -634,12 +634,12 @@ void resMan::Res_next_cycle(void) {	//Tony8Feb97
 		resTime++;
 }
 
-uint32 resMan::Res_fetch_useage(void) {		//Tony8Feb97
+uint32 resMan::Res_fetch_useage(void) {
 	// returns memory usage previous cycle
 	return current_memory_useage;
 }
 
-void resMan::Res_close(uint32 res) {		//Tony30May96
+void resMan::Res_close(uint32 res) {
 	// decrements the count
 	// resource floats when count = 0
 
@@ -662,7 +662,7 @@ void resMan::Res_close(uint32 res) {		//Tony30May96
 	}
 }
 
-uint32 resMan::Res_fetch_len(uint32 res) {	//Tony27Jan96
+uint32 resMan::Res_fetch_len(uint32 res) {
 	// returns the total file length of a resource - i.e. all headers are
 	// included too
 
@@ -695,23 +695,23 @@ uint32 resMan::Res_fetch_len(uint32 res) {	//Tony27Jan96
 	return len;
 }
 
-char *resMan::Fetch_cluster(uint32 res) {	//Tony3June96
+char *resMan::Fetch_cluster(uint32 res) {
 	// returns a pointer to the ascii name of the cluster file which
 	// contains resource res
 	return resource_files[res_conv_table[res * 2]];
 }
 
-uint32 resMan::Fetch_age(uint32 res) {		//Tony3June96
+uint32 resMan::Fetch_age(uint32 res) {
 	// return the age of res
 	return age[res];
 }
 
-uint32 resMan::Fetch_count(uint32 res) {	//Tony3June96
+uint32 resMan::Fetch_count(uint32 res) {
 	// return the open count of res
 	return count[res];
 }
 
-uint32 resMan::Help_the_aged_out(void) {	//Tony10Oct96
+uint32 resMan::Help_the_aged_out(void) {
 	// remove from memory the oldest closed resource
 
 	uint32 oldest_res;	//holds id of oldest found so far when we have to chuck stuff out of memory
@@ -753,7 +753,7 @@ uint32 resMan::Help_the_aged_out(void) {	//Tony10Oct96
 	return resList[oldest_res]->size;	//return bytes freed
 }
 
-void resMan::Print_console_clusters(void) {	//Tony10Oct96
+void resMan::Print_console_clusters(void) {
 	uint32 j;
 
 	if (total_clusters) {
@@ -766,7 +766,7 @@ void resMan::Print_console_clusters(void) {	//Tony10Oct96
 	Scroll_console();
 }
 
-void resMan::Examine_res(uint8 *input) {	//Tony23Oct96
+void resMan::Examine_res(uint8 *input) {
 	uint32 j = 0;
 	uint32 res;
 	_standardHeader	*file_header;
@@ -879,7 +879,7 @@ void resMan::Examine_res(uint8 *input) {	//Tony23Oct96
 	}
 }
 
-void resMan::Kill_res(uint8 *input) {	//Tony23Oct96
+void resMan::Kill_res(uint8 *input) {
 	int j = 0;
 	uint32 res;
 
@@ -917,7 +917,7 @@ void resMan::Kill_res(uint8 *input) {	//Tony23Oct96
 	}
 }
 
-void resMan::Remove_res(uint32 res) {	//Tony10Jan97
+void resMan::Remove_res(uint32 res) {
 	if (age[res]) {
 		age[res] = 0;		//effectively gone from resList
 		Free_mem(resList[res]);	//release the memory too
@@ -926,7 +926,7 @@ void resMan::Remove_res(uint32 res) {	//Tony10Jan97
 		Zdebug("Remove_res(%d) not even in memory!",res);
 }
 
-void resMan::Remove_all_res(void) {	// James24mar97
+void resMan::Remove_all_res(void) {
 	// remove all res files from memory - ready for a total restart
 	// including player object & global variables resource
 
@@ -946,7 +946,7 @@ void resMan::Remove_all_res(void) {	// James24mar97
 	} while	(j != -1);
 }
 
-void resMan::Kill_all_res(uint8 wantInfo) {	//Tony29Nov96
+void resMan::Kill_all_res(uint8 wantInfo) {
 	// remove all res files from memory
 	// its quicker to search the mem blocs for res files than search
 	// resource lists for those in memory
@@ -1019,7 +1019,7 @@ void resMan::Kill_all_res(uint8 wantInfo) {	//Tony29Nov96
 // disappear forever, or some plaster-filled holes in sand to crash the game &
 // get James in trouble again.
 
-void resMan::Kill_all_objects(uint8 wantInfo) {		// James17jan97
+void resMan::Kill_all_objects(uint8 wantInfo) {
 	// remove all object res files from memory, excluding George
 	// its quicker to search the mem blocs for res files than search
 	// resource lists for those in memory
@@ -1093,7 +1093,7 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	// down - but if we restored to a different CD the music is stopped
 	// in GetCd() when it asks for the CD
 
-	FN_stop_music(NULL);	// (James16sep97)
+	FN_stop_music(NULL);
 
 	Clear_fx_queue();	// stops all fx & clears the queue (James22july97)
 	GetCd(cdTab[newCluster] & 3);
@@ -1279,12 +1279,7 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 		} else
 			step++;
 
-
-		//--------------------------------------------------
-		// Service windows
-
 		ServiceWindows();
- 		//--------------------------------------------------
 	} while ((read % BUFFERSIZE) == 0);
 
 	if (read != size) {
@@ -1412,7 +1407,7 @@ void resMan::GetCd(int cd) {
 	// current CD - otherwise when we take out the CD, Windows will
 	// complain!
 
-	FN_stop_music(NULL);	// (James29aug97)
+	FN_stop_music(NULL);
 
 	textRes = res_man.Res_open(2283);
 	DisplayMsg(FetchTextLine(textRes, 5 + cd) + 2, 0);

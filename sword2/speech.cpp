@@ -100,12 +100,12 @@ uint8 WantSpeechForLine(uint32 wavId);
 void GetCorrectCdForSpeech(int32 wavId);	// for testing speech & text
 #endif
 
-int32 FN_add_subject(int32 *params) {	// James12nov96 / Tony18Nov96
+int32 FN_add_subject(int32 *params) {
 	// params:	0 id
 	//		1 daves reference number
 
 	if (IN_SUBJECT == 0) {
-		// This is the start of the new subject list (James 07may97)
+		// This is the start of the new subject list
 		// Set the default repsonse id to zero in case we're never
 		// passed one
 		default_response_id = 0;
@@ -139,7 +139,7 @@ int32 FN_add_subject(int32 *params) {	// James12nov96 / Tony18Nov96
 // could alternately use logic->looping of course
 int choosing = 0;
 
-int32 FN_choose(int32 *params) {	//Tony19Nov96
+int32 FN_choose(int32 *params) {
 	// params:	none
 
 	// the human is switched off so there will be no normal mouse engine
@@ -151,7 +151,7 @@ int32 FN_choose(int32 *params) {	//Tony19Nov96
 
 	// Zdebug("into choose");
 
-	AUTO_SELECTED = 0;	// see below (James23may97)
+	AUTO_SELECTED = 0;	// see below
 
 	// new thing to intercept objects held at time of clicking on a person
 	// (James 06may97)
@@ -317,7 +317,7 @@ int32 FN_choose(int32 *params) {	//Tony19Nov96
 	}
 }
 
-int32 FN_start_conversation(int32 *params) {	// Tony27Nov96
+int32 FN_start_conversation(int32 *params) {
 	// Start conversation
 
 	// FN_no_human();		// an FN_no_human
@@ -341,7 +341,7 @@ int32 FN_start_conversation(int32 *params) {	// Tony27Nov96
 	return IR_CONT;
 }
 
-int32 FN_end_conversation(int32 *params) {	// Tony27Nov96
+int32 FN_end_conversation(int32 *params) {
 	// end conversation
 	// talk_flag=0;
 	// FN_end_chooser();
@@ -369,7 +369,7 @@ int32 FN_end_conversation(int32 *params) {	// Tony27Nov96
 	return IR_CONT;
 }
 
-int32 FN_they_do(int32	*params) {	// S2.1(18Jan95tw)	Tony3Dec96
+int32 FN_they_do(int32	*params) {
 	// doesn't send the command until target is waiting - once sent we
 	// carry on
 
@@ -425,7 +425,7 @@ int32 FN_they_do(int32	*params) {	// S2.1(18Jan95tw)	Tony3Dec96
 	return IR_REPEAT;
 }
 
-int32 FN_they_do_we_wait(int32	*params) {	//Tony3Dec96
+int32 FN_they_do_we_wait(int32	*params) {
 	// give target a command and wait for it to register as finished
 
 	// params:	0 pointer to ob_logic
@@ -519,7 +519,7 @@ int32 FN_they_do_we_wait(int32	*params) {	//Tony3Dec96
 	return IR_REPEAT;
 }
 
-int32 FN_we_wait(int32 *params) {	// Tony3Dec96
+int32 FN_we_wait(int32 *params) {
 	// loop until the target is free
 	// params:	0 target
 
@@ -556,7 +556,7 @@ int32 FN_we_wait(int32 *params) {	// Tony3Dec96
 	return IR_REPEAT;
 }
 
-int32 FN_timed_wait(int32 *params) {	// Tony12Dec96
+int32 FN_timed_wait(int32 *params) {
 	// loop until the target is free but only while the timer is high
 	// useful when clicking on a target to talk to them - if they never
 	// reply then this'll fall out avoiding a lock up
@@ -630,7 +630,7 @@ int32 FN_timed_wait(int32 *params) {	// Tony12Dec96
 	return IR_REPEAT;
 }
 
-int32	FN_speech_process(int32	*params) {	// Tony5Dec96
+int32 FN_speech_process(int32 *params) {
 	// Recieve and sequence the commands sent from the conversation
 	// script.
 
@@ -924,7 +924,7 @@ int32	FN_speech_process(int32	*params) {	// Tony5Dec96
 
 uint32 unpause_zone = 0;
 
-int32 FN_i_speak(int32 *params) {	// Tony18Oct96 (revamped by James01july97)
+int32 FN_i_speak(int32 *params) {
 	// its the super versatile FN_speak
 	// text and wavs can be selected in any combination
 
@@ -952,13 +952,13 @@ int32 FN_i_speak(int32 *params) {	// Tony18Oct96 (revamped by James01july97)
 	uint8 *text;
 	static uint8 textRunning, speechRunning;
 	int32 *anim_table;
-	uint8 speechFinished = 0;	// James25feb97
+	uint8 speechFinished = 0;
 	int8 speech_pan;
 	char speechFile[256];
 	static uint8 cycle_skip = 0;
   	uint32	rv;
 
-#ifdef _SWORD2_DEBUG			// (James26jun97)
+#ifdef _SWORD2_DEBUG
 	// for text/speech testing & checking for correct file type
 	_standardHeader	*head;
 	// for text/speech testing - keeping track of text resource currently being tested
@@ -975,12 +975,12 @@ int32 FN_i_speak(int32 *params) {	// Tony18Oct96 (revamped by James01july97)
 
 	if (!ob_logic->looping) {
 		// New fudge to wait for smacker samples to finish
-		// (James31july97) since they can over-run into the game
+		// since they can over-run into the game
 
 		if (g_sound->GetSpeechStatus() != RDSE_SAMPLEFINISHED)
 			return IR_REPEAT;
 		
-		// New fudge for 'fx' subtitles (James 29july97)
+		// New fudge for 'fx' subtitles
 		// If subtitles switched off, and we don't want to use a wav
 		// for this line either, then just quit back to script right
 		// now!
@@ -988,7 +988,7 @@ int32 FN_i_speak(int32 *params) {	// Tony18Oct96 (revamped by James01july97)
 		if (subtitles == 0 && WantSpeechForLine(params[S_WAV]) == 0)
 			return IR_CONT;
 
-		if (cycle_skip == 0) {	// (James 17july97)
+		if (cycle_skip == 0) {
 			// drop out for 1st cycle to allow walks/anims to end
 			// & display last frame/ before system locks while
 			// speech loaded
@@ -998,10 +998,10 @@ int32 FN_i_speak(int32 *params) {	// Tony18Oct96 (revamped by James01july97)
 		} else
 			cycle_skip = 0;
 
-#ifdef _SWORD2_DEBUG			// (James26jun97)
+#ifdef _SWORD2_DEBUG
  		textNumber = params[S_TEXT];	// for debug info
 
-		// For testing all text & speech!	(James26jun97)
+		// For testing all text & speech!
 		// A script loop can send any text number to FN_I_speak & it
 		// will only run the valid ones or return with 'result' equal
 		// to '1' or '2' to mean 'invalid text resource' and 'text
@@ -1063,7 +1063,7 @@ int32 FN_i_speak(int32 *params) {	// Tony18Oct96 (revamped by James01july97)
 		// now ok to close the text file
 		res_man.Res_close(text_res);
 
-#ifdef _SWORD2_DEBUG			// (James09jul97)
+#ifdef _SWORD2_DEBUG
 		// prevent dud lines from appearing while testing text & speech
 		// since these will not occur in the game anyway
 
@@ -1152,7 +1152,7 @@ int32 FN_i_speak(int32 *params) {	// Tony18Oct96 (revamped by James01july97)
 		// assume not running until know otherwise
 		speechRunning = 0;
 
-		// New fudge for 'fx' subtitles (James 29july97)
+		// New fudge for 'fx' subtitles
 		// if speech is selected, and this line is allowed speech
 		// (not if it's an fx subtitle!)
 
@@ -1397,7 +1397,7 @@ int32 FN_i_speak(int32 *params) {	// Tony18Oct96 (revamped by James01july97)
 		// this number comes from the text line)
 		officialTextNumber = 0;
 
-		RESULT = 0;	// ok (James09july97)
+		RESULT = 0;	// ok
 		return IR_CONT;
 	}
 
@@ -1418,7 +1418,7 @@ int32 FN_i_speak(int32 *params) {	// Tony18Oct96 (revamped by James01july97)
 
 #define GAP_ABOVE_HEAD	20	// distance kept above talking sprite
 
-void LocateTalker(int32	*params) {	// (James 01july97)
+void LocateTalker(int32	*params) {
 	// sets 'text_x' & 'text_y' for position of text sprite
 	// but 'text_x' also used to calculate speech-pan
 
@@ -1507,7 +1507,7 @@ void LocateTalker(int32	*params) {	// (James 01july97)
 	}
 }
 
-void Form_text(int32 *params) {		// Tony18Oct96
+void Form_text(int32 *params) {
 	// its the first time in so we build the text block if we need one
 	// we also bring in the wav if there is one
 	// also setup the animation if there is one
@@ -1608,7 +1608,7 @@ void GetCorrectCdForSpeech(int32 wavId) {
 // speech samples too
 // - and we only want the subtitles if selected, not if samples can't be found!
 
-uint8 WantSpeechForLine(uint32 wavId) {	// James (29july97)
+uint8 WantSpeechForLine(uint32 wavId) {
 	switch (wavId) {
 	case 1328:	// AttendantSpeech
 			//	SFX(Phone71);

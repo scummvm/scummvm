@@ -29,12 +29,12 @@
 #include "interpreter.h"
 #include "layers.h"
 #include "maketext.h"
-#include "mouse.h"	//assure integrety
+#include "mouse.h"
 #include "object.h"
 #include "protocol.h"
 #include "resman.h"
 #include "sound.h"
-#include "sword2.h"	// for PauseGame() & UnpauseGame()
+#include "sword2.h"
 
 // pointer resource id's
 
@@ -111,14 +111,14 @@ void Monitor_player_activity(void);
 
 void No_human(void);
 
-void Reset_mouse_list(void) {	// Tony26Sept96
+void Reset_mouse_list(void) {
 	// call at beginning of gameloop
 	cur_mouse = 1;
 }
 
-void Mouse_engine(void) {	// Tony30Sept96
-	Monitor_player_activity();	// James23july97
-	ClearPointerText();		// James16jun97
+void Mouse_engine(void) {
+	Monitor_player_activity();
+	ClearPointerText();
 
 	if (DEAD) {	//George is dead ;)
 		if (mouse_mode != MOUSE_system_menu) {
@@ -132,7 +132,7 @@ void Mouse_engine(void) {	// Tony30Sept96
 			}
 
 			Set_mouse(NORMAL_MOUSE_ID);
-			Build_system_menu();	// Tony19Mar97
+			Build_system_menu();
 		}
 		System_menu();
 		return;
@@ -167,7 +167,7 @@ void Mouse_engine(void) {	// Tony30Sept96
 	}
 }
 
-void System_menu(void) {	// Tony19Mar97
+void System_menu(void) {
 	uint32 safe_looping_music_id;
 	_mouseEvent *me;
 	int j, hit;
@@ -321,7 +321,7 @@ void System_menu(void) {	// Tony19Mar97
 	}
 }
 
-void Drag_mouse(void) {		// Tony21Nov96
+void Drag_mouse(void) {
 	_mouseEvent *me;
 	uint32 pos;
 //	uint32 null_pc = 1;	//script 1 is combine script
@@ -440,7 +440,7 @@ void Drag_mouse(void) {		// Tony21Nov96
 	}
 }
 
-void Top_menu_mouse(void) {	// Tony3Oct96
+void Top_menu_mouse(void) {
 	// top menu is down
 
 	_mouseEvent *me;
@@ -531,7 +531,7 @@ void Top_menu_mouse(void) {	// Tony3Oct96
 	}
 }
 
-void Normal_mouse(void) {	// Tony30Sept96
+void Normal_mouse(void) {
 	// The gane is playing and none of the menus are activated - but, we
 	// need to check if the top menu is to start. Note, wont have luggage
 
@@ -550,7 +550,7 @@ void Normal_mouse(void) {	// Tony30Sept96
 		// reset mouse cursor - in case we're between mice
 		Set_mouse(NORMAL_MOUSE_ID);
 
-		Build_system_menu();	//Tony19Mar97
+		Build_system_menu();
 	}
 
 	if (mousey > 399 && !menu_status && !mouse_mode_locked) {
@@ -709,7 +709,7 @@ void Normal_mouse(void) {	// Tony30Sept96
 #endif
 }
 
-void Mouse_on_off(void) {	// Tony30Sept96
+void Mouse_on_off(void) {
 	// this handles the cursor graphic when moving on and off mouse areas
 	// it also handles the luggage thingy
 
@@ -806,7 +806,7 @@ void Mouse_on_off(void) {	// Tony30Sept96
 	// screens
 }
 
-void Set_mouse(uint32 res) {	// (4dec96 JEL)
+void Set_mouse(uint32 res) {
 	uint8 *icon;
 	uint32 len;
 
@@ -832,7 +832,7 @@ void Set_mouse(uint32 res) {	// (4dec96 JEL)
 	}
 }
 
-void Set_luggage(uint32	res) {	//Tony26Nov96
+void Set_luggage(uint32	res) {
 	uint8 *icon;
 	uint32 len;
 
@@ -849,7 +849,7 @@ void Set_luggage(uint32	res) {	//Tony26Nov96
 		SetLuggageAnim(NULL, 0);
 }
 
-uint32 Check_mouse_list(void) {		// Tony30Sept96
+uint32 Check_mouse_list(void) {
 	int32 priority = 0;
 	uint32 j = 1;
 
@@ -871,7 +871,7 @@ uint32 Check_mouse_list(void) {		// Tony30Sept96
 				if (mouse_list[j].pointer == USE)
 					mouse_list[j].pointer = CROSHAIR;
 
-				CreatePointerText(mouse_list[j].pointer_text, mouse_list[j].pointer);	// James16jun97
+				CreatePointerText(mouse_list[j].pointer_text, mouse_list[j].pointer);
 
 				// return pointer type
 				return(mouse_list[j].pointer);
@@ -894,7 +894,7 @@ uint32 Check_mouse_list(void) {		// Tony30Sept96
 #define POINTER_TEXT_WIDTH	640		// just in case!
 #define POINTER_TEXT_PEN	184		// white
 
-void CreatePointerText(uint32 textId, uint32 pointerRes) {	// James16jun97
+void CreatePointerText(uint32 textId, uint32 pointerRes) {
 	uint32 local_text;
 	uint32 text_res;
 	uint8 *text;
@@ -1050,7 +1050,7 @@ void CreatePointerText(uint32 textId, uint32 pointerRes) {	// James16jun97
 	}
 }
 
-void ClearPointerText(void) {	// James16jun97
+void ClearPointerText(void) {
 	if (pointer_text_bloc_no) {
 		Kill_text_bloc(pointer_text_bloc_no);
 		pointer_text_bloc_no = 0;
@@ -1060,7 +1060,7 @@ void ClearPointerText(void) {	// James16jun97
 int32 FN_no_human(int32 *params) {	// Tony30Sept96
 	// param	none
 
-	// for logic scripts (James21may97)
+	// for logic scripts
 	MOUSE_AVAILABLE = 0;
 
 	ClearPointerText();
@@ -1088,12 +1088,12 @@ int32 FN_no_human(int32 *params) {	// Tony30Sept96
 	return IR_CONT;
 }
 
-void No_human(void) {	// Tony4June97
+void No_human(void) {
 	// leaves the menus open
 	// used by the system when clicking right on a menu item to examine
 	// it and when combining objects
 
-	// for logic scripts (James21may97)
+	// for logic scripts
 	MOUSE_AVAILABLE = 0;
 
 	// human/mouse off
@@ -1103,10 +1103,10 @@ void No_human(void) {	// Tony4June97
 	Set_luggage(0);
 }
 
-int32 FN_add_human(int32 *params) {	// Tony30Sept96
+int32 FN_add_human(int32 *params) {
 	// param	none
 
-	// for logic scripts (James21may97)
+	// for logic scripts
 	MOUSE_AVAILABLE = 1;
 
 	//off
@@ -1119,7 +1119,7 @@ int32 FN_add_human(int32 *params) {	// Tony30Sept96
 	CLICKED_ID = 0;
 
 	// this is now done outside the OBJECT_HELD check in case it's set to
-	// zero before now! (James 10july97)
+	// zero before now!
 
 	// unlock the mouse from possible large object lock situtations - see
 	// syphon in rm 3
@@ -1178,7 +1178,7 @@ int32 FN_add_human(int32 *params) {	// Tony30Sept96
 	return IR_CONT;
 }
 
-int32 FN_register_mouse(int32 *params) {	// Tony29Oct96
+int32 FN_register_mouse(int32 *params) {
 	// this call would be made from an objects service script 0
 	// the object would be one with no graphic but with a mouse - i.e. a
 	// floor or one whose mouse area is manually defined rather than
@@ -1239,7 +1239,7 @@ int32 FN_register_mouse(int32 *params) {	// Tony29Oct96
 // ie. before FN_register_mouse or FN_register_frame
 // - best if kept at very top of service script
 
-int32 FN_register_pointer_text(int32 *params) {		// James16jun97
+int32 FN_register_pointer_text(int32 *params) {
 	// param	0 local id of text line to use as pointer text
 
 #ifdef _SWORD2_DEBUG
@@ -1256,7 +1256,7 @@ int32 FN_register_pointer_text(int32 *params) {		// James16jun97
 	return IR_CONT;
 }
 
-int32 FN_blank_mouse(int32 *params) {	//Tony29Oct96
+int32 FN_blank_mouse(int32 *params) {
 	//set mouse to normal pointer - used in speech
 	//no params
 
@@ -1264,7 +1264,7 @@ int32 FN_blank_mouse(int32 *params) {	//Tony29Oct96
 	return IR_CONT;
 }
 
-int32 FN_init_floor_mouse(int32 *params) {	// James29nov96
+int32 FN_init_floor_mouse(int32 *params) {
 	// params	0 pointer to object's mouse structure
 
  	Object_mouse *ob_mouse = (Object_mouse *) params[0];
@@ -1281,10 +1281,9 @@ int32 FN_init_floor_mouse(int32 *params) {	// James29nov96
 	return IR_CONT;
 }
 
-// James13feb97 (updated by James 25mar97)
-#define SCROLL_MOUSE_WIDTH	20
+#define SCROLL_MOUSE_WIDTH 20
 
-int32 FN_set_scroll_left_mouse(int32 *params) {	// James13feb97
+int32 FN_set_scroll_left_mouse(int32 *params) {
 	// params	0 pointer to object's mouse structure
 
  	Object_mouse	*ob_mouse = (Object_mouse *) params[0];
@@ -1308,7 +1307,7 @@ int32 FN_set_scroll_left_mouse(int32 *params) {	// James13feb97
 	return IR_CONT;
 }
 
-int32 FN_set_scroll_right_mouse(int32 *params) {	// James13feb97
+int32 FN_set_scroll_right_mouse(int32 *params) {
 	// params	0 pointer to object's mouse structure
 
  	Object_mouse	*ob_mouse = (Object_mouse *) params[0];
@@ -1332,7 +1331,7 @@ int32 FN_set_scroll_right_mouse(int32 *params) {	// James13feb97
 	return IR_CONT;
 }
 
-int32 FN_set_object_held(int32 *params) {	//tony19May97
+int32 FN_set_object_held(int32 *params) {
 	// params	0 luggage icon to set
 
 	Set_luggage(params[0]);
@@ -1349,12 +1348,12 @@ int32 FN_set_object_held(int32 *params) {	//tony19May97
 // called from speech scripts to remove the chooser bar when it's not
 // appropriate to keep it displayed
 
-int32 FN_remove_chooser(int32 *params) {	// James13aug97
+int32 FN_remove_chooser(int32 *params) {
 	HideMenu(RDMENU_BOTTOM);
 	return(IR_CONT);
 }
 
-int32 FN_disable_menu(int32 *params) {	// Tony1Oct96
+int32 FN_disable_menu(int32 *params) {
 	// mode locked - no top menu available
 	mouse_mode_locked = 1;
 	mouse_mode = MOUSE_normal;
@@ -1365,13 +1364,13 @@ int32 FN_disable_menu(int32 *params) {	// Tony1Oct96
 	return IR_CONT;
 }
 
-int32 FN_enable_menu(int32 *params) {	// tony4June97
+int32 FN_enable_menu(int32 *params) {
 	//mode locked - no top menu available
 	mouse_mode_locked = 0;
 	return IR_CONT;
 }
 
-int32 FN_check_player_activity(int32 *params) {		// James23july97
+int32 FN_check_player_activity(int32 *params) {
 	// Used to decide when to trigger music cues described as "no player
 	// activity for a while"
 
@@ -1393,7 +1392,7 @@ int32 FN_check_player_activity(int32 *params) {		// James23july97
 	return IR_CONT;
 }
 
-int32 FN_reset_player_activity_delay(int32 *params) {	// James23july97
+int32 FN_reset_player_activity_delay(int32 *params) {
 	// Use if you want to deliberately reset the "no player activity"
 	// counter for any reason
 	// no params
@@ -1402,7 +1401,7 @@ int32 FN_reset_player_activity_delay(int32 *params) {	// James23july97
 	return IR_CONT;
 }
 
-void Monitor_player_activity(void) {	// James23july97
+void Monitor_player_activity(void) {
 	// if there is at least one mouse event outstanding
 	if (CheckForMouseEvents()) {
 		// reset activity delay counter

@@ -470,7 +470,7 @@ int32 FN_unshaded_sprite(int32 *params) {
 //		_wavHeader *speech;
 //	} _movieTextObject;
 
-// FOR TEXT LINES IN SEQUENCE PLAYER (James22may97)
+// FOR TEXT LINES IN SEQUENCE PLAYER
 
 #define MAX_SEQUENCE_TEXT_LINES 15
 
@@ -488,7 +488,7 @@ uint32 sequenceTextLines = 0;
 
 static _sequenceTextInfo sequence_text_list[MAX_SEQUENCE_TEXT_LINES];
 
-int32 FN_add_sequence_text(int32 *params) {	// (James22may97)
+int32 FN_add_sequence_text(int32 *params) {
 //	params	0	text number
 //		1	frame number to start the text displaying
 //		2	frame number to stop the text dispalying
@@ -507,8 +507,7 @@ int32 FN_add_sequence_text(int32 *params) {	// (James22may97)
 	return IR_CONT;
 }
 
-// speech sample code added by James on 16july97
-void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {	// (James23may97)
+void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
 	uint32 line;
  	_frameHeader *frame;
  	uint32 local_text;
@@ -638,9 +637,7 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {	// (James23may97)
 	}
 }
 
-// speech sample code added by James on 16july97
-
-void ClearSequenceSpeech(_movieTextObject *textSprites[]) {	// (James27may97)
+void ClearSequenceSpeech(_movieTextObject *textSprites[]) {
 	uint32 line;
 
 	for (line = 0; line < sequenceTextLines; line++) {
@@ -660,7 +657,7 @@ void ClearSequenceSpeech(_movieTextObject *textSprites[]) {	// (James27may97)
 	sequenceTextLines = 0;
 }
 
-int32 FN_smacker_lead_in(int32 *params) {	// James(21july97)
+int32 FN_smacker_lead_in(int32 *params) {
 	uint8 *leadIn;
 	uint32 rv;
 #ifdef _SWORD2_DEBUG
@@ -693,7 +690,7 @@ int32 FN_smacker_lead_in(int32 *params) {	// James(21july97)
 	return IR_CONT;
 }
 
-int32 FN_smacker_lead_out(int32 *params) {	// James(21july97)
+int32 FN_smacker_lead_out(int32 *params) {
 	// ready for use in FN_play_sequence
 	smackerLeadOut = params[0];
 
@@ -701,7 +698,7 @@ int32 FN_smacker_lead_out(int32 *params) {	// James(21july97)
 	return IR_CONT;
 }
 
-int32 FN_play_sequence(int32 *params) {		// James(09apr97)
+int32 FN_play_sequence(int32 *params) {
 	// params	0 pointer to null-terminated ascii filename
 	// 		1 number of frames in the sequence, used for PSX.
 

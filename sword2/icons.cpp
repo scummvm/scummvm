@@ -30,7 +30,7 @@ uint32 total_temp = 0;
 menu_object master_menu_list[TOTAL_engine_pockets];
 uint32 total_masters=0;
 
-int32 FN_add_menu_object(int32 *params) {	// Tony1Oct96
+int32 FN_add_menu_object(int32 *params) {
 	// param	0 pointer to a menu_object structure to copy down
 
 	// Zdebug("FN_add_menu_object icon res");
@@ -48,7 +48,7 @@ int32 FN_add_menu_object(int32 *params) {	// Tony1Oct96
 	return IR_CONT;
 }
 
-int32 FN_refresh_inventory(int32 *params) {	// (James28aug97)
+int32 FN_refresh_inventory(int32 *params) {
 	// called from 'menu_look_or_combine' script in 'menu_master' object
 	// to update the menu to display a combined object while George runs
 	// voice-over. Note that 'object_held' must be set to the graphic of
@@ -67,7 +67,7 @@ int32 FN_refresh_inventory(int32 *params) {	// (James28aug97)
 	return IR_CONT;
 }
 
-void Build_top_menu(void) {	// Tony19Nov96
+void Build_top_menu(void) {
 	// create and start the inventory menu - NOW AT THE BOTTOM OF THE
 	// SCREEN!
 
@@ -216,7 +216,7 @@ void Build_top_menu(void) {	// Tony19Nov96
 	ShowMenu(RDMENU_BOTTOM);
 }
 
-void Build_system_menu(void) {	// Tony19Mar97
+void Build_system_menu(void) {
 	// start a fresh top system menu
 
 	uint8 *icon;

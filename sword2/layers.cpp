@@ -32,19 +32,19 @@
 #include "layers.h"
 #include "protocol.h"
 #include "resman.h"
-#include "sound.h"	// (James22july97) for Clear_fx_queue() called from FN_init_background()
+#include "sound.h"	// for Clear_fx_queue() called from FN_init_background()
 
 // this_screen describes the current back buffer and its in-game scroll
 // positions, etc.
 
 screen_info this_screen;
 
-int32 FN_init_background(int32 *params)	{	// Tony11Sept96
-	// param     0 res id of normal background layer - cannot be 0
-	// param     1 1 yes 0 no for a new palette
+int32 FN_init_background(int32 *params)	{
+	// params:	0 res id of normal background layer - cannot be 0
+	//		1 1 yes 0 no for a new palette
 	// this screen defines the size of the back buffer
 
-	_multiScreenHeader *screenLayerTable;	// James 06feb97
+	_multiScreenHeader *screenLayerTable;
 	_screenHeader *screen_head;
 	_layerHeader *layer;
  	_spriteInfo spriteInfo;
@@ -66,7 +66,7 @@ int32 FN_init_background(int32 *params)	{	// Tony11Sept96
  	//--------------------------------------
 #endif
 
-	// stop all fx & clears the queue (James22july97)
+	// stop all fx & clears the queue
 	Clear_fx_queue();
 
 #ifdef _SWORD2_DEBUG
@@ -80,14 +80,14 @@ int32 FN_init_background(int32 *params)	{	// Tony11Sept96
 	// if the screen is still fading down then wait for black
 	WaitForFade();
 
-	// if last screen was using a shading mask (see below) (James 08apr97)
+	// if last screen was using a shading mask (see below)
 	if (this_screen.mask_flag) {
 		rv = CloseLightMask();
 		if (rv)
 			ExitWithReport("Driver Error %.8x [%s line %u]", rv, __FILE__, __LINE__);
 	}
 	
-	// New stuff for faster screen drivers (James 06feb97)
+	// New stuff for faster screen drivers
 
 	// for drivers: close the previous screen if one is open
 	if (this_screen.background_layer_id)
@@ -208,8 +208,8 @@ int32 FN_init_background(int32 *params)	{	// Tony11Sept96
 
 // called from FN_init_background & also from control panel
 
-void SetUpBackgroundLayers(void) {		// James(13jun97)
-	_multiScreenHeader *screenLayerTable;	// James 06feb97
+void SetUpBackgroundLayers(void) {
+	_multiScreenHeader *screenLayerTable;
 	_screenHeader *screen_head;
 	uint8 *file;
 	int i;

@@ -20,7 +20,6 @@
 #ifndef	RESMAN_H
 #define	RESMAN_H
 
-//#include "src\driver96.h"
 #include "memory.h"
 
 #define	MAX_res_files	20
@@ -29,72 +28,87 @@
 #define	RES_perm	2
 
 
-class	resMan
-{
-	public:
+class resMan {
+public:
+	void InitResMan(void);		// read in the config file
+	void Close_ResMan(void);
 
-		void	InitResMan(void);				//read in the config file
-		void	Close_ResMan(void);				//Tony29May96
-//----
-		uint8	*Res_open(uint32 res);			//returns ad of resource. Loads if not in memory
-												//retains a count
-												//resource can be aged out of memory if count=0
-												//the resource is locked while count!=0
+	// Returns ad of resource. Loads if not in memory. Retains a count.
+	// Resource can be aged out of memory if count = 0
+	// The resource is locked while count != 0
+	// Resource floats when count = 0
 
-		void	Res_close(uint32 res);			//decrements the count
+	uint8 *Res_open(uint32 res);
+	void Res_close(uint32 res);	// decrements the count
 
-//----
-		uint8	Res_check_valid( uint32 res );	// returns '0' if resource out of range or null, otherwise '1' for ok
+	// returns '0' if resource out of range or null, otherwise '1' for ok
 
-												//resource floats when count=0
-//----
-		char	*Fetch_cluster(uint32 res);		//for mem_view to query the owners of mem blocs
-		uint32	Fetch_age(uint32 res);			//
-		uint32	Fetch_count(uint32 count);		//
+	uint8 Res_check_valid(uint32 res);
 
-		uint32	Help_the_aged_out(void);		//Tony10Oct96
+	//for mem_view to query the owners of mem blocs
 
-		uint32	Res_fetch_len( uint32 res );	//Tony27Jan96
+	char *Fetch_cluster(uint32 res);
+	uint32 Fetch_age(uint32 res);
+	uint32 Fetch_count(uint32 count);
 
-		void	Res_next_cycle( void );
-		uint32	Res_fetch_useage( void );
+	uint32 Help_the_aged_out(void);
 
-		void	GetCd(int cd);				// Prompts the user for the specified CD.
-		int		WhichCd() {return curCd;}
+	uint32 Res_fetch_len(uint32 res);
 
-//----console commands
-		void	Print_console_clusters(void);	//Tony10Oct96
-		void	Examine_res(uint8 *input);		//Tony23Oct96
-		void	Kill_all_res(uint8 wantInfo);	//Tony29Nov96
-		void	Kill_all_objects(uint8 wantInfo);	// James17jan97
-		void	Remove_res(uint32	res);		//Tony10Jan97
-		void	Remove_all_res(void);			// James24mar97
-		void	Kill_res(uint8 *res);			//Tony23Oct96
-		char	*GetCdPath( void );				// Chris 9Apr97
+	void Res_next_cycle( void );
+	uint32 Res_fetch_useage( void );
 
+	// Prompts the user for the specified CD.
+	void GetCd(int cd);
 
-		mem	**resList;	//pointer to a pointer (or list of pointers in-fact)
+	int WhichCd() {
+		return curCd;
+	}
 
-	private:
+	// ----console commands
 
-		int		curCd;
-		uint32	total_res_files;
-		uint32	total_clusters;
-		uint32	current_memory_useage;
-		uint32	resTime;	//inc's each time Res_open is called and is given to resource as its age
-							//cannot be allowed to start at 0! (a pint if you can tell me why)
-		uint32	*age;
-		uint16	*res_conv_table;	//Gode generated res-id to res number/rel number conversion table
-		uint16	*count;
-		char	resource_files[MAX_res_files][20];
-		uint8	cdTab[MAX_res_files];		// Location of each cluster.
-		char	cdPath[256];				// Drive letter of the CD-ROM drive or false CD path.
-		void	CacheNewCluster(uint32 newCluster);
-		char	cdDrives[24];
+	void Print_console_clusters(void);
+	void Examine_res(uint8 *input);
+	void Kill_all_res(uint8 wantInfo);
+	void Kill_all_objects(uint8 wantInfo);
+	void Remove_res(uint32 res);
+	void Remove_all_res(void);
+	void Kill_res(uint8 *res);
+	char *GetCdPath(void);
+
+	// pointer to a pointer (or list of pointers in-fact)
+	mem **resList;
+
+private:
+	int curCd;
+	uint32 total_res_files;
+	uint32 total_clusters;
+	uint32 current_memory_useage;
+
+	// Inc's each time Res_open is called and is given to resource as its
+	// age. Ccannot be allowed to start at 0! (A pint if you can tell me
+	// why)
+
+	uint32 resTime;
+
+	uint32 *age;
+
+	// Gode generated res-id to res number/rel number conversion table
+
+	uint16 *res_conv_table;
+
+	uint16 *count;
+	char resource_files[MAX_res_files][20];
+	uint8 cdTab[MAX_res_files];		// Location of each cluster.
+
+	// Drive letter of the CD-ROM drive or false CD path.
+
+	char cdPath[256];
+
+	void CacheNewCluster(uint32 newCluster);
+	char cdDrives[24];
 };							
 
-
-
-extern	resMan	res_man;	//declare the object global
+extern resMan res_man;	//declare the object global
 
 #endif

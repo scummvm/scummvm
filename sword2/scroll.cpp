@@ -31,7 +31,7 @@
 // used to be a define, but now it's flexible (see new functions below)
 uint8 scroll_fraction = 16;
 
-void Set_scrolling(void) {	// S2.1(2Mar94jel) refurnished Tony25Sept96 :-)
+void Set_scrolling(void) {
 	// normally we aim to get George's feet at (320,250) from top left
 	// of screen window
 	// feet_x = 128 + 320
@@ -45,7 +45,7 @@ void Set_scrolling(void) {	// S2.1(2Mar94jel) refurnished Tony25Sept96 :-)
 	uint16 scroll_distance_x;	// how much we want to scroll
 	uint16 scroll_distance_y;
 
-	// if the scroll offsets are being forced in script (05feb97 JAMES)
+	// if the scroll offsets are being forced in script
 	if (SCROLL_X || SCROLL_Y) {
 		// ensure not too far right
 		if (this_screen.max_scroll_offset_x > SCROLL_X)
@@ -143,7 +143,7 @@ void Set_scrolling(void) {	// S2.1(2Mar94jel) refurnished Tony25Sept96 :-)
 	}
 }
 
-int32 FN_set_scroll_coordinate(int32 *params) {		// Tony25Sept96
+int32 FN_set_scroll_coordinate(int32 *params) {
 	// set the special scroll offset variables
 
 	// call when starting screens and to change the camera within screens
@@ -164,12 +164,12 @@ int32 FN_set_scroll_coordinate(int32 *params) {		// Tony25Sept96
 	return IR_CONT;
 }
 
-int32 FN_set_scroll_speed_normal(int32 *params) {	// James08aug97
+int32 FN_set_scroll_speed_normal(int32 *params) {
 	scroll_fraction = 16;
 	return IR_CONT;
 }
 
-int32 FN_set_scroll_speed_slow(int32 *params) {		// James08aug97
+int32 FN_set_scroll_speed_slow(int32 *params) {
 	scroll_fraction = 32;
 	return IR_CONT;
 }
