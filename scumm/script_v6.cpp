@@ -1027,7 +1027,7 @@ void ScummEngine_v6::o6_startSound() {
 	if (_features & GF_DIGI_IMUSE)
 		_imuseDigital->startSfx(pop(), 64);
 	else {
-		if (_features & GF_HUMONGOUS) {
+		if (_gameId == GID_HEGAME) {
 			// Seems to range between 952 - 9000
 			// In Fatty Bear's Birthday Surprise the piano uses offsets 1 - 23 to
 			// indicate which note to play, but only when using the standard piano
