@@ -664,14 +664,12 @@ void ScummEngine_v6he::o6_actorOps() {
 		break;
 	case 218:		
 		{
-			// TODO: this opcode is used in the putt-putt fun pack, in 'checkers" mini game
-
 			int top_actor = a->top;
 			int bottom_actor = a->bottom;
-			a->forceClip = 1;
+			a->actorDrawVirScr = 1;
 			a->needRedraw = true;
 			a->drawActorCostume();
-			a->forceClip = 0;
+			a->actorDrawVirScr = 0;
 			a->needRedraw = true;
 			a->drawActorCostume();
 			a->needRedraw = false;
@@ -681,9 +679,12 @@ void ScummEngine_v6he::o6_actorOps() {
 			if (a->bottom < bottom_actor)
 				a->bottom = bottom_actor;
 
-			//FIXME Trigger redraw
-			a->bottom = top_actor;
 		}
+		break;
+	case 219:
+		a->actorDrawVirScr = false;
+		a->needRedraw = true;
+		a->needBgReset = true;
 		break;
 	default:
 		error("o6_actorOps: default case %d", b);
@@ -981,10 +982,7 @@ int ScummEngine_v6he::virtScreenSave(byte *dst, int x1, int y1, int x2, int y2) 
 	int vs = 0; // XXX = gdi_virtScreen;
 
 	for (int j = y1; j <= y2; ++j) {
-		// FIXME - to match the disassembly, we should save buffer (vs + 5),
-		// but if we do that, then the cake decoration in Fatty Bear's Birthday 
-		// Surprise is not saved at all
-		uint8 *p = getResourceAddress(rtBuffer, vs + 1);
+		uint8 *p = getResourceAddress(rtBuffer, vs + 5);
 		p += virtscr[kMainVirtScreen].xstart;
 		p += (j - virtscr[kMainVirtScreen].topline) * 320 + x1;
 		
