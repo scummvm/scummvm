@@ -17,7 +17,7 @@ CFLAGS   = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-m
 DEFINES  =
 LDFLAGS :=
 INCLUDES:= -I. -Icommon -Iscumm
-LIBS	 = -lncurses
+LIBS	 =
 OBJS	 =
 
 # Load the build rules & settings for the chosen backend
