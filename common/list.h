@@ -78,6 +78,16 @@ public:
 		_size++;
 	}
 
+	T& remove_at(int idx) {
+		T& tmp;
+
+		assert(idx >= 0 && idx < _size);
+		tmp = _data[idx];
+		for (int i = idx; i < _size - 1; i++)
+			_data[i] = _data[i+1];
+		_size--;
+		return tmp;
+	}
 
 	// TODO: insert, remove, ...
 
