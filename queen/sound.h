@@ -41,7 +41,7 @@ public:
 
 protected:
 	SoundMixer *_mixer;
-  Input *_input;
+	Input *_input;
 	Resource *_resource;
 
 	PlayingSoundHandle _sfxHandle;
@@ -56,8 +56,9 @@ public:
 class SBSound : public Sound {
 public:
 	SBSound(SoundMixer *mixer, Input *input, Resource *resource) : Sound(mixer, input, resource) {};
-	int playSound(byte *sound, uint32 size);
 	void sfxPlay(const char *base);
+protected:
+	int playSound(byte *sound, uint32 size);
 };
 
 #ifdef USE_MAD
@@ -68,6 +69,13 @@ public:
 };
 #endif
 
+#ifdef USE_VORBIS
+class OGGSound : public Sound {
+public:
+	OGGSound(SoundMixer *mixer, Input *input, Resource *resource) : Sound(mixer, input, resource) {};
+	void sfxPlay(const char *base);
+};
+#endif
 } // End of namespace Queen
 
 #endif

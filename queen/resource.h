@@ -68,7 +68,8 @@ public:
 	bool isFloppy();
 	uint8 compression()	{ return _compression; }
 	uint32 fileSize(const char *filename);
-	File *giveMP3(const char *filename);
+	uint32 fileOffset(const char *filename);
+	File *giveCompressedSound(const char *filename);
 	Language getLanguage();
 	const char *JASVersion();
 
@@ -85,7 +86,6 @@ protected:
 	static ResourceEntry _resourceTablePEM10[];
 
 	int32 resourceIndex(const char *filename);
-	uint32 fileOffset(const char *filename);
 	bool readTableFile();
 	void readTableCompResource();
 	static const GameVersion *detectGameVersion(uint32 dataFilesize);

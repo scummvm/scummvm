@@ -276,7 +276,7 @@ void Resource::readTableCompResource() {
 	}
 }
 
-File *Resource::giveMP3(const char *filename) {
+File *Resource::giveCompressedSound(const char *filename) {
 	assert(strstr(filename, ".SB"));
 	_resourceFile->seek(fileOffset(filename), SEEK_SET);
 	return _resourceFile;
