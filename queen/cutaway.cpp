@@ -365,7 +365,7 @@ void Cutaway::actionSpecialMove(int index) {
 					_logic->update();
 				}
 
- 				planeBob->scale = 100;
+				planeBob->scale = 100;
 				_logic->display()->horizontalScroll(0);
 
 				planeBob->x -= -8;
@@ -380,7 +380,7 @@ void Cutaway::actionSpecialMove(int index) {
 				_graphics->bankUnpack(18, lightningBob->frameNum, 15);
 				_graphics->bankUnpack(4,  planeBob    ->frameNum, 15);
 
-                // Plane plunges into the jungle!
+				// Plane plunges into the jungle!
 
 				BobSlot *fireBob = _graphics->bob(6);
 
@@ -517,7 +517,7 @@ void Cutaway::actionSpecialMove(int index) {
 				_input->fastMode(false);
 			}
 			break;
-		
+
 		// cdint.cut - flash white
 		case 37:
 			_logic->display()->palCustomFlash();
@@ -1105,7 +1105,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 
 static void findCdCut(const char *basename, int index, char *result) {
 	// Function find_cd_cut, lines 5-15 in execute.c
-	
+
 	strcpy(result, basename);
 	for (int i = strlen(basename); i < 5; i++)
 		result[i] = '_';
@@ -1122,7 +1122,7 @@ void Cutaway::handlePersonRecord(
 	Person p;
 
 	_personFaceCount = 0;	//Hello, please verify me. (Fixes crash on OSX)
-	
+
 	if (object.objectNumber == OBJECT_JOE) {
 		if (object.moveToX || object.moveToY) {
 			_walk->joeMove(0, object.moveToX, object.moveToY, true);
@@ -1735,7 +1735,7 @@ int Cutaway::scale(CutawayObject &object) {
 	else if (!object.objectNumber) {
 		// Only scale Joe 
 		int x, y;
-		
+
 		if (object.bobStartX > 0 || object.bobStartY > 0) {
 			x = object.bobStartX;
 			y = object.bobStartY;

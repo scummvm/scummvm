@@ -60,7 +60,7 @@ class Talk {
 	//! Read a string from ptr and return new ptr
 	static byte *getString(byte *ptr, char *str, int maxLength, int align = 2);
 
-  private:
+private:
 	//!  Collection of constants used by Talk
 	enum {
 	  LINE_HEIGHT = 10,
@@ -77,29 +77,29 @@ class Talk {
 
 	//! Special commands for speech
 	enum {
-	  SPEAK_DEFAULT      =  0,
-	  SPEAK_FACE_LEFT    = -1,
-	  SPEAK_FACE_RIGHT   = -2,
-	  SPEAK_FACE_FRONT   = -3,
-	  SPEAK_FACE_BACK    = -4,
-	  SPEAK_ORACLE       = -5,
-	  SPEAK_UNKNOWN_6    = -6,
-	  SPEAK_AMAL_ON      = -7,
-	  SPEAK_PAUSE        = -8,
-	  SPEAK_NONE         = -9
+		SPEAK_DEFAULT      =  0,
+		SPEAK_FACE_LEFT    = -1,
+		SPEAK_FACE_RIGHT   = -2,
+		SPEAK_FACE_FRONT   = -3,
+		SPEAK_FACE_BACK    = -4,
+		SPEAK_ORACLE       = -5,
+		SPEAK_UNKNOWN_6    = -6,
+		SPEAK_AMAL_ON      = -7,
+		SPEAK_PAUSE        = -8,
+		SPEAK_NONE         = -9
 	};
 
 	//! TODO Move this to struct.h later!
 	struct TalkSelected {
-	  int16 hasTalkedTo;
-	  int16 values[4];
+		int16 hasTalkedTo;
+		int16 values[4];
 	};
 
 	struct DialogueNode {
-	  int16 head;
-	  int16 dialogueNodeValue1;
-	  int16 gameStateIndex;
-	  int16 gameStateValue;
+		int16 head;
+		int16 dialogueNodeValue1;
+		int16 gameStateIndex;
+		int16 gameStateValue;
 	};
 
 	struct SpeechParameters {

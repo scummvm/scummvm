@@ -100,16 +100,16 @@ Verb State::findDefaultVerb(uint16 state) {
 	case 8:
 		v = Verb(VERB_GIVE);
 		break;
-    case 12:
+	case 12:
 		v = Verb(VERB_USE);
 		break;
-    case 14:
+	case 14:
 		v = Verb(VERB_PICK_UP);
 		break;
-    case 9:
+	case 9:
 		v = Verb(VERB_TALK_TO);
 		break;
-    case 6:
+	case 6:
 		v = Verb(VERB_LOOK_AT);
 		break;
 	default:
@@ -151,16 +151,16 @@ void State::alterDefaultVerb(uint16 *objState, Verb v) {
 	case VERB_GIVE:
 		val = 8;
 		break;
-    case VERB_USE:
+	case VERB_USE:
 		val = 12;
 		break;
-    case VERB_PICK_UP:
+	case VERB_PICK_UP:
 		val = 14;
 		break;
-    case VERB_TALK_TO:
+	case VERB_TALK_TO:
 		val = 9;
 		break;
-    case VERB_LOOK_AT:
+	case VERB_LOOK_AT:
 		val = 6;
 		break;
 	default:
@@ -196,19 +196,19 @@ Logic::~Logic() {
 void Logic::initialise() {
 	int16 i, j;
 	uint8 *ptr = _jas;
-	
+
 	_numRooms = READ_BE_UINT16(ptr); ptr += 2;
 	_numNames = READ_BE_UINT16(ptr); ptr += 2;
 	_numObjects = READ_BE_UINT16(ptr); ptr += 2;
 	_numDescriptions = READ_BE_UINT16(ptr); ptr += 2;
-	
+
 	// Object data
 	_objectData = new ObjectData[_numObjects + 1];
 	memset(&_objectData[0], 0, sizeof(ObjectData));
 	for (i = 1; i <= _numObjects; i++) {
 		_objectData[i].readFrom(ptr);
 	}
-	
+
 	// Room data
 	_roomData = new uint16[_numRooms + 2];
 	_roomData[0] = 0;
@@ -238,7 +238,7 @@ void Logic::initialise() {
 	for (i = 1; i <= _numItems; i++) {
 		_itemData[i].readFrom(ptr);
 	}
-		
+
 	// Graphic Image Data
 	_numGraphics = READ_BE_UINT16(ptr); ptr += 2;
 
@@ -247,7 +247,7 @@ void Logic::initialise() {
 	for (i = 1; i <= _numGraphics; i++) {
 		_graphicData[i].readFrom(ptr);
 	}
-	
+
 	_objMax   = new int16[_numRooms + 1];
 	_areaMax  = new int16[_numRooms + 1];
 	_area     = new Area[_numRooms + 1][MAX_AREAS_NUMBER];
@@ -454,7 +454,7 @@ uint16 Logic::findBob(uint16 obj) {
 	if (room >= _numRooms) {
 		warning("room (%i) > _numRooms (%i)", room, _numRooms);
 	}
-	
+
 	int16 img = _objectData[obj].image;
 	if(img != 0) {
 		if(img == -3 || img == -4) {
@@ -1242,7 +1242,7 @@ uint16 Logic::findScale(uint16 x, uint16 y) {
 
 
 void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Person *pp) {
-	
+
 	if (noun <= 0) {
 		warning("Logic::personSetData() - Invalid object number: %i", noun);
 	}
@@ -1292,7 +1292,7 @@ void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Pers
 	else {
 		pp->anim = NULL;
 	}
-	
+
 	if (loadBank) {
 		const char *actorFile = _aFile[pp->actor->actorFile];
 		if (actorFile) {
@@ -1302,7 +1302,7 @@ void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Pers
 			pp->bankNum = 15;
 		}		
 	}
-	
+
 	if (pp->actor->bobNum >= 1 && pp->actor->bobNum <= 3) {
 		pp->bobFrame = 29 + FRAMES_JOE_XTRA + pp->actor->bobNum;
 	}
@@ -1338,7 +1338,7 @@ uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
 	pbs->y = pad->y;
 	pbs->frameNum = p.bobFrame;
 	pbs->xflip = xflip;
-	
+
 	if (p.anim != NULL) {
 		_personFrames[pad->bobNum] = curImage + 1;
 		curImage = animCreate(curImage, &p);
@@ -1351,7 +1351,7 @@ uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
 
 
 uint16 Logic::personAllocate(uint16 noun, uint16 curImage) {
-	
+
 	uint16 i;
 	uint16 person = _roomData[_currentRoom] + noun;
 
@@ -1363,7 +1363,7 @@ uint16 Logic::personAllocate(uint16 noun, uint16 curImage) {
 			++bobNum;
 		}
 	}
-		
+
 	// search for a matching actor
 	uint16 actor = 0;
 	for (i = 1; i <= _numActors; ++i) {
@@ -1377,7 +1377,7 @@ uint16 Logic::personAllocate(uint16 noun, uint16 curImage) {
 			}
 		}
 	}
-	
+
 	if (actor > 0) {
 		const char *animStr = _aAnim[_actorData[actor].anim];
 		if (animStr) {
@@ -1415,7 +1415,7 @@ uint16 Logic::animCreate(uint16 curImage, const Person *person) {
 		sscanf(p, "%3hu,%3hu", &f1, &f2);
 		animFrames[frame].frame = f1;
 		animFrames[frame].speed = f2;
-		
+
 		if (f1 > 500) {
 			// SFX
 			allocatedFrames[f1 - 500] = 1;
@@ -1446,7 +1446,7 @@ uint16 Logic::animCreate(uint16 curImage, const Person *person) {
 			animFrames[i].frame = curImage + allocatedFrames[frameNum];
 		}
 	}
-	
+
 	// unpack necessary frames
 	for (i = 1; i <= 255; ++i) {
 		if (allocatedFrames[i] != 0) {
@@ -1454,10 +1454,10 @@ uint16 Logic::animCreate(uint16 curImage, const Person *person) {
 			_graphics->bankUnpack(i, curImage, person->bankNum);
 		}
 	}
-	
+
 	// start animation
 	_graphics->bobAnimString(person->actor->bobNum, animFrames);
-	
+
 	return curImage;
 }
 
@@ -1620,7 +1620,7 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 
 	// TODO: cutawayJoeFacing
 
-    // check to see which way Joe entered room
+	// check to see which way Joe entered room
 	_joe.facing = State::findDirection(pod->state);
 	_joe.prevFacing = _joe.facing;
 
@@ -1739,10 +1739,10 @@ void Logic::joeGrabDirection(StateGrab grab, uint16 speed) {
 		bobJoe->scale = _joe.scale;
 		update();
 		// grab up
-        _graphics->bankUnpack(7, 29 + FRAMES_JOE_XTRA, 7);
+		_graphics->bankUnpack(7, 29 + FRAMES_JOE_XTRA, 7);
 		bobJoe->xflip = (_joe.facing == DIR_LEFT);
 		bobJoe->scale = _joe.scale;
-        update();
+		update();
 		// turn back
 		if (speed == 0) {
 			frame = 7;
@@ -1752,7 +1752,7 @@ void Logic::joeGrabDirection(StateGrab grab, uint16 speed) {
 		}
 		break;
 	}
-   
+
 	if (frame != 0) {
 		_graphics->bankUnpack(frame, 29 + FRAMES_JOE_XTRA, 7);
 		bobJoe->xflip = (_joe.facing == DIR_LEFT);
@@ -1913,7 +1913,7 @@ uint16 Logic::findInventoryItem(int invSlot) const {
 
 
 void Logic::inventorySetup() {
-	
+
 	_graphics->bankLoad("objects.BBK", 14);
 	_inventoryItem[0] = ITEM_BAT;
 	_inventoryItem[1] = _resource->isDemo() ? ITEM_JOURNAL_DEMO : ITEM_JOURNAL;
@@ -1922,7 +1922,7 @@ void Logic::inventorySetup() {
 }
 
 void Logic::inventoryRefresh() {
-	
+
 	int16 i;
 	uint16 x = 182;
 	for (i = 0; i < 4; ++i) {
@@ -1993,7 +1993,7 @@ void Logic::inventoryInsertItem(uint16 itemNum, bool refresh) {
 		_inventoryItem[i] = item;
 		removeDuplicateItems();
 	}
-	
+
 	if (refresh)
 		inventoryRefresh();
 }
@@ -2007,7 +2007,7 @@ void Logic::inventoryDeleteItem(uint16 itemNum, bool refresh) {
 		_inventoryItem[i] = item;
 		removeDuplicateItems();
 	}
-	
+
 	if (refresh)
 		inventoryRefresh();
 }
@@ -2105,7 +2105,7 @@ void Logic::customMoveJoe(int facing, uint16 areaNum, uint16 walkDataNum) {
 	// Stop animating Joe
 	_graphics->bob(0)->animating = false;
 
-    // Make Joe face the right direction
+	// Make Joe face the right direction
 	joeFacing(facing);
 	joeFace();
 
@@ -2328,7 +2328,7 @@ void Logic::sceneStart(bool showMouseCursor) {
 		_display->panel(false);
 		_display->palFadePanel();
 	}
-	
+
 	update();
 }
 

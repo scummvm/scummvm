@@ -205,10 +205,10 @@ void Input::checkKeys() {
 				_keyVerb = Verb(VERB_USE);
 			break;
 	}
-	
+
 	_inKey = 0;	//reset
 }
 
-  
+
 } // End of namespace Queen
 

@@ -128,7 +128,7 @@ public:
 		else
 			error("Invalid room number: %i", room);
 	}
-	
+
 	uint16 oldRoom() const { return _oldRoom; }
 	void oldRoom(uint16 room) { 
 		if (room <= _numRooms)
@@ -136,7 +136,7 @@ public:
 		else
 			error("Invalid room number: %i", room);
 	}
-	
+
 	uint16 newRoom() const { return _newRoom; }
 	void newRoom(uint16 room) { 
 		if (room <= _numRooms)
@@ -190,7 +190,7 @@ public:
 		else
 			error("Invalid room number: %i", roomNum);
 	}
-	
+
 	const char *objectName(uint16 objNum) const { return _objName[objNum]; }
 	const char *objectTextualDescription(uint16 objNum) const { return _objDescription[objNum]; }
 

@@ -53,13 +53,13 @@ Resource::Resource(const Common::String &datafilePath, const char *datafileName)
 	_resourceFile->open(datafileName, _datafilePath);
 	if (_resourceFile->isOpen() == false)
 		error("Could not open resource file '%s%s'", _datafilePath.c_str(), datafileName);
-	
+
 	if (_resourceFile->readUint32BE() == 'QTBL') {
 		readTableCompResource();
 	} else {
 		_compression = COMPRESSION_NONE;
 		_gameVersion = detectGameVersion(_resourceFile->size());
-	
+
 		if (!readTableFile()) {
 			//check if it is the english floppy version, for which we have a hardcoded version of the tables
 			if (!strcmp(_gameVersion->versionString, _gameVersions[VER_ENG_FLOPPY].versionString)) {
@@ -90,7 +90,7 @@ int32 Resource::resourceIndex(const char *filename) {
 
 	char entryName[14];
 	char *ptr = entryName;
-	
+
 	assert(strlen(filename));
 	strcpy(entryName, filename);
 	do
@@ -128,13 +128,13 @@ int32 Resource::resourceIndex(const char *filename) {
 }
 
 char *Resource::getJAS2Line() {
-        char *startOfLine = _JAS2Ptr + _JAS2Pos;
-        char *curPos = startOfLine;
-        while (*curPos++ != 0xd) ;
-        *(curPos-1) = '\0';     // '\r'
-        *curPos = '\0';         // '\n'
-        _JAS2Pos = (curPos - _JAS2Ptr) + 1;
-        return startOfLine;
+	char *startOfLine = _JAS2Ptr + _JAS2Pos;
+	char *curPos = startOfLine;
+	while (*curPos++ != 0xd) ;
+	*(curPos - 1) = '\0';     // '\r'
+	*curPos = '\0';           // '\n'
+	_JAS2Pos = (curPos - _JAS2Ptr) + 1;
+	return startOfLine;
 }
 
 uint32 Resource::fileSize(const char *filename) {

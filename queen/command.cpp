@@ -240,8 +240,8 @@ void Command::executeCurrentAction(bool walk) {
 		return;
 	}
 
-    // process each associated command for the Object, until all done
-    // or one of the Gamestate tests fails...
+	// process each associated command for the Object, until all done
+	// or one of the Gamestate tests fails...
 	int16 cond = 0;
 	CmdListData *com = &_cmdList[0];
 	uint16 comId = 0;
@@ -361,14 +361,13 @@ void Command::executeCurrentAction(bool walk) {
 		}
 	}
 
-    // don't play music on an OPEN/CLOSE command - in case the command fails
+	// don't play music on an OPEN/CLOSE command - in case the command fails
 	if (_selCmd.action.value() != VERB_OPEN && _selCmd.action.value() != VERB_CLOSE) {
 		// only play song if it's a PLAY BEFORE type
 		if (com->song > 0) {
 			// XXX playsong(com->song);
 		}
 	}
-
 
 	// do a special hardcoded section
 	// l.419-452 execute.c
@@ -402,8 +401,8 @@ void Command::executeCurrentAction(bool walk) {
 
 	if (cond > 0) {
 		const char *desc = _logic->objectTextualDescription(cond);
-       // Joe needs to say something as a result of a Gamestate
-       // check first to see if it is a cutaway scene!
+		// Joe needs to say something as a result of a Gamestate
+		// check first to see if it is a cutaway scene!
 		if (executeIfCutaway(desc)) {
 		}
 		else if (executeIfDialog(desc)) {
@@ -422,7 +421,7 @@ void Command::executeCurrentAction(bool walk) {
 			cleanupCurrentAction();
 			return;
 		}
-    }
+	}
 
 	// only play song if it's a PLAY AFTER type
 	if (com->song > 0) {
@@ -495,7 +494,7 @@ void Command::readCommandsFrom(byte *&ptr) {
 	for (i = 1; i <= _numCmdArea; i++) {
 		_cmdArea[i].readFrom(ptr);
 	}
-	
+
 	// Command OBJECT
 	_numCmdObject = READ_BE_UINT16(ptr); ptr += 2;
 
@@ -513,7 +512,7 @@ void Command::readCommandsFrom(byte *&ptr) {
 	for (i = 1; i <= _numCmdInventory; i++) {
 		_cmdInventory[i].readFrom(ptr);
 	}
-	
+
 	// Command GAMESTATE
 	_numCmdGameState = READ_BE_UINT16(ptr);	ptr += 2;
 	_cmdGameState = new CmdGameState[_numCmdGameState + 1];
@@ -611,7 +610,7 @@ void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) 
 	
 	_curCmd.addObject(objNum);
 
-    // if first noun and it's a 2 level command then set up action word
+	// if first noun and it's a 2 level command then set up action word
 	if (_curCmd.action.value() == VERB_USE && _curCmd.commandLevel == 1) {
 		if (State::findUse(objState) == STATE_USE_ON) {
 			// object supports 2 levels
@@ -644,7 +643,6 @@ void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) 
 		_selCmd.action = _curCmd.action;
 		_curCmd.action = Verb(VERB_NONE);
 	}
-
 }
 
 
@@ -732,9 +730,9 @@ void Command::grabSelectedNoun() {
 
 	// if the NOUN has been selected from screen then it is positive
 	// otherwise it has been selected from inventory and is negative
-    // set PARSE to TRUE, default FALSE if command half complete
-    // click object without a command, if DEFAULT then
-    // do that, otherwise do a WALK!
+	// set PARSE to TRUE, default FALSE if command half complete
+	// click object without a command, if DEFAULT then
+	// do that, otherwise do a WALK!
 
 	uint16 objNum = _logic->currentRoomData() + _curCmd.noun;
 	int16 objName = _logic->objectData(objNum)->name;
@@ -769,7 +767,7 @@ void Command::grabSelectedNoun() {
 			}
 
 			if (_cmdText.isEmpty()) {
-                // Ensures that Right Mkey will select correct default
+				// Ensures that Right Mkey will select correct default
 				_curCmd.verb = findDefault(objNum, false);
 				if (!_curCmd.verb.isNone()) {
 					// no match made, redefine as Walk To
@@ -805,12 +803,12 @@ void Command::grabSelectedNoun() {
 	_selCmd.noun = 0;
 	grabSelectedObject(objNum, _logic->objectData(objNum)->state, objName);
 }
-	
+
 
 void Command::grabSelectedVerb() {
 
 	if (_curCmd.verb.isScrollInventory()) {
-	    // move through inventory (by four if right mouse button)
+		// move through inventory (by four if right mouse button)
 		uint16 scroll = _mouseKey == Input::MOUSE_RBUTTON ? 4 : 1;
 		_logic->inventoryScroll(scroll, _curCmd.verb.value() == VERB_SCROLL_UP);
 	}
@@ -823,7 +821,7 @@ void Command::grabSelectedVerb() {
 		if (_mouseKey == Input::MOUSE_RBUTTON) {
 			_selCmd.defaultVerb = _curCmd.verb;
 			_cmdText.displayTemp(11, true, _curCmd.verb);
-		 }
+		}
 		else {
 			_selCmd.defaultVerb = Verb(VERB_NONE);
 			if (_logic->joeWalk() == 1 && !_curCmd.verb.isNone()) {
@@ -875,7 +873,6 @@ bool Command::executeIfDialog(const char *description) {
 }
 
 
-
 bool Command::handleBadCommand(bool walk) {
 
 	// l.96-141 execute.c
@@ -899,7 +896,7 @@ bool Command::handleBadCommand(bool walk) {
 		_curCmd.subject2 > 0 && _logic->objectData(_curCmd.subject2)->name <= 0) {
 		return true;
 	}
-    // check for USE command on exists
+	// check for USE command on exists
 	if (_selCmd.action.value() == VERB_USE && 
 		_curCmd.subject1 > 0 && _logic->objectData(_curCmd.subject1)->entryObj > 0) {
 		_selCmd.action = Verb(VERB_WALK_TO);
@@ -927,7 +924,7 @@ void Command::executeStandardStuff(const Verb& action, int16 subj1, int16 subj2)
 	case VERB_LOOK_AT:
 		look();
 		break;
-	
+
 	case VERB_OPEN:
 		// 'it doesn't seem to open'
 		_logic->joeSpeak(1);
@@ -947,11 +944,11 @@ void Command::executeStandardStuff(const Verb& action, int16 subj1, int16 subj2)
 			_logic->joeSpeak(1);
 		}
 		break;
-	
+
 	case VERB_TALK_TO:
 		_logic->joeSpeak(24 + Logic::randomizer.getRandomNumber(2));
 		break;
-	
+
 	case VERB_CLOSE:
 		_logic->joeSpeak(2);
 		break;
@@ -1048,7 +1045,7 @@ void Command::changeObjectState(const Verb& action, int16 obj, int16 song, bool 
 			}
 
 			if (objData->entryObj != 0) {
-                // if it's a door, then update door that it links to
+				// if it's a door, then update door that it links to
 				openOrCloseAssociatedObject(action, objData->entryObj);
 				objData->entryObj = ABS(objData->entryObj);
 			}
@@ -1070,7 +1067,7 @@ void Command::changeObjectState(const Verb& action, int16 obj, int16 song, bool 
 			}
 
 			if (objData->entryObj != 0) {
-                // if it's a door, then update door that it links to
+				// if it's a door, then update door that it links to
 				openOrCloseAssociatedObject(action, objData->entryObj);
 				objData->entryObj = -ABS(objData->entryObj);
 			}
@@ -1084,7 +1081,6 @@ void Command::changeObjectState(const Verb& action, int16 obj, int16 song, bool 
 		State::alterOn(&objData->state, STATE_ON_OFF);
 	}
 }
-
 
 void Command::cleanupCurrentAction() {
 
@@ -1142,8 +1138,6 @@ void Command::alterDefault(const Verb& def, bool itemType) {
 }
 
 
-
-
 void Command::openOrCloseAssociatedObject(const Verb& action, int16 otherObj) {
 
 	CmdListData *cmdList = &_cmdList[1];
@@ -1197,6 +1191,7 @@ void Command::openOrCloseAssociatedObject(const Verb& action, int16 otherObj) {
 		}
 	}
 }
+
 
 int16 Command::setConditions(uint16 command, bool lastCmd) {
 
@@ -1283,7 +1278,7 @@ void Command::setAreas(uint16 command) {
 
 
 void Command::setObjects(uint16 command) {
-	
+
 	debug(9, "Command::setObjects(%d)", command);
 
 	CmdObject *cmdObj = &_cmdObject[1];
@@ -1614,8 +1609,4 @@ void Command::lookCurrentIcon() {
 	}
 }
 
-
 }
-
-
-

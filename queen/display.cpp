@@ -48,8 +48,8 @@ void TextRenderer::init() {
 		}
 		charWidth[i] += 2;
 	}
-    charWidth[(uint8)' '] = 4;
-    --charWidth[(uint8)'^'];
+	charWidth[(uint8)' '] = 4;
+	--charWidth[(uint8)'^'];
 }
 
 
@@ -351,7 +351,7 @@ void Display::palCustomColors(uint16 roomNum) {
 
 	debug(9, "Display::palCustomColors(%d)", roomNum);
 	int i;
-    switch (roomNum) {
+	switch (roomNum) {
 	case 31:
 		for(i = 72; i < 84; i++) {
 			_pals.room[i * 3 + 1] = _pals.room[i * 3 + 1] * 90 / 100;
@@ -369,7 +369,7 @@ void Display::palCustomColors(uint16 roomNum) {
 			_pals.room[i * 3 + 0] = _pals.room[i * 3 + 0] * 60 / 100;
 			_pals.room[i * 3 + 1] = _pals.room[i * 3 + 1] * 80 / 100;
 		}
-        break;
+		break;
 	case 28:
 		for(i = 72; i < 84; i++) {
 			_pals.room[i * 3 + 0] = _pals.room[i * 3 + 0] * 80 / 100;
@@ -381,7 +381,7 @@ void Display::palCustomColors(uint16 roomNum) {
 
 
 void Display::palCustomScroll(uint16 roomNum) {
-	
+
 	debug(9, "Display::palCustomScroll(%d)", roomNum);
 	static int16 scrollx = 0;
 
@@ -456,7 +456,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 	case 62:
 		if(scrollx & 1) {
 			palScroll(0x6c, 0x77);
-            loPal = 0x6c;
+			loPal = 0x6c;
 			hiPal = 0x77;
 		}
 		break;
@@ -589,7 +589,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 		loPal = 101;
 		hiPal = 127;
 		break;
-    }
+	}
 	_pals.dirtyMin = MIN(_pals.dirtyMin, loPal);
 	_pals.dirtyMax = MAX(_pals.dirtyMax, hiPal);
 }
@@ -680,7 +680,7 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 
 
 void Display::blit(RenderingBuffer dst, uint16 dstX, uint16 dstY, const uint8 *srcBuf, uint16 srcW, uint16 srcH, uint16 srcPitch, bool xflip, bool masked) {
- 
+
 	uint16 dstPitch = _bufPitch[dst];
 	uint8 *dstBuf = _buffers[dst] + dstPitch * dstY + dstX;
 

@@ -95,7 +95,7 @@ static ov_callbacks g_File_wrap = {
 #endif
 
 Sound::Sound(SoundMixer *mixer, Input *input, Resource  *resource) : 
-  _mixer(mixer), _input(input), _resource(resource), _lastOverride(0), _currentSong(0), _sfxHandle(0) {
+	_mixer(mixer), _input(input), _resource(resource), _lastOverride(0), _currentSong(0), _sfxHandle(0) {
 }
 
 Sound::~Sound() {
@@ -281,18 +281,18 @@ void Sound::playSong(int16 songNum) {
 			// Volume normal
 			case 5:
 				warning("Sound::playSong() -> alter_current_volume() not implemented yet");
-    				//alter_current_volume();
-    				return;
+					//alter_current_volume();
+					return;
 	
 			// Volume soft
 			case 15:
-    				//volumecontrol(-1,(20*VOLUME)/100);
-    				return;
+					//volumecontrol(-1,(20*VOLUME)/100);
+					return;
 		
 			// Volume medium
 			case 14:
-    				//volumecontrol(-1,(32*VOLUME)/100);
-    				return;
+					//volumecontrol(-1,(32*VOLUME)/100);
+					return;
 
 			// Open door
 			case 25:
@@ -301,7 +301,7 @@ void Sound::playSong(int16 songNum) {
 
 			// Close door
 			case 26:
-    				sfxPlay("105ASSSS");
+					sfxPlay("105ASSSS");
 				return;
 
 			// Light switch

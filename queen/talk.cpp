@@ -57,7 +57,7 @@ bool Talk::speak(
 		Input *input,
 		Logic *logic,
 		Resource *resource,
-	       	Sound *sound) {
+		Sound *sound) {
 	Talk *talk = new Talk(graphics, input, logic, resource, sound);
 	bool result;
 	if (sentence)
@@ -93,7 +93,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	_oldSelectedSentenceValue = 0;
 
 	debug(0, "----- talk(\"%s\") -----", filename);
-	
+
 	cutawayFilename[0] = '\0';
 
 	// XXX S=SUBJECT[1];
@@ -133,7 +133,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	if (NULL == person.name) {
 		error("Invalid person object");
 	}
-	
+
 	int16 oldLevel = 0;
 	bool personWalking = false;		// OWALK in talk.c
 
@@ -278,8 +278,8 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			else {
 				disableSentence(oldLevel, selectedSentence);
 			}
-		} 
-		
+		}
+
 		// Check selected person to see if any Gamestates need setting
 
 		int16 index = _dialogueTree[level][0].gameStateIndex;
@@ -1081,8 +1081,8 @@ void Talk::speakSegment(
 		}
 	}
 
-    // Moved here so that Text is cleared when a Torso command done!
-    _graphics->textClear(0,198);
+	// Moved here so that Text is cleared when a Torso command done!
+	_graphics->textClear(0,198);
 
 	if (oracle) {
 		// lines 1831-1339 in talk.c

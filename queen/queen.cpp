@@ -94,7 +94,7 @@ QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 		warning("Sound initialisation failed.");
 
 	_mixer->setVolume(ConfMan.getInt("sfx_volume"));
-	
+
 	_debugMode = ConfMan.hasKey("debuglevel");
 	_debugLevel = ConfMan.getInt("debuglevel");
 	_detector = detector;

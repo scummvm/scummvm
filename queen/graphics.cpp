@@ -96,7 +96,7 @@ void Graphics::bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	pbf->height   = READ_LE_UINT16(p + 2);
 	pbf->xhotspot = READ_LE_UINT16(p + 4);
 	pbf->yhotspot = READ_LE_UINT16(p + 6);
-	
+
 	uint32 size = pbf->width * pbf->height;
 	pbf->data = new uint8[ size ];
 	memcpy(pbf->data, p + 8, size);
@@ -111,7 +111,7 @@ void Graphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
 	uint16 src_w = READ_LE_UINT16(p + 0);
 	uint16 src_h = READ_LE_UINT16(p + 2);
-	
+
 	// unpack if destination frame is smaller than source one
 	if (_frames[dstframe].width < src_w || _frames[dstframe].height < src_h) {
 		bankUnpack(srcframe, dstframe, bankslot);
@@ -392,7 +392,7 @@ void Graphics::bobDraw(uint32 bobnum, int16 x, int16 y, uint16 scale, bool xflip
 			x += w_new - 1;
 			_display->blit(RB_SCREEN, x, y, src, w_new, h_new, w, xflip, true);
 		}
-    }
+	}
 
 }
 
