@@ -5065,74 +5065,74 @@ static const imuse_music_table _digStateMusicTable[] = {
 };
 
 static const imuse_music_table _digSeqMusicTable[] = {
-	{0,		"SEQ_NULL",							"",												""						},
-	{1,		"seqLogo",							"",												""						},
-	{2,		"seqIntro",							"",												""						},
-	{3,		"seqExplosion1b",				"",												""						},
-	{4,		"seqAstTunnel1a",				"Seq (ast tunnel 1a)",		"SEQ(AS~1.IMU"},
-	{5,		"seqAstTunnel2b",				"",												""						},
-	{6,		"seqAstTunnel3a",				"Seq (ast tunnel 3a)",		"SEQ(AS~2.IMU"},
-	{7,		"seqToPlanet1b",				"",												""						},
-	{8,		"seqArgBegin",					"Seq (arg begin)",				"SEQ(AR~1.IMU"},
-	{9,		"seqArgEnd",						"Seq (arg end)",					"SEQ(AR~2.IMU"},
-	{10,	"seqWreckGhost",				"Seq (ghost-wreck)",			"SEQ(GH~1.IMU"},
-	{11,	"seqCanyonGhost",				"Seq (ghost-canyon)",			"SEQ(GH~2.IMU"},
-	{12,	"seqBrinkFall",					"",												""						},
-	{13,	"seqPanUpCanyon",				"Seq (pan up canyon)",		"SEQ(PA~1.IMU"},
-	{14,	"seqAirlockTunnel1b",		"",												""						},
-	{15,	"seqTramToMu",					"",												""						},
-	{16,	"seqTramFromMu",				"",												""						},
-	{17,	"seqTramToTomb",				"",												""						},
-	{18,	"seqTramFromTomb",			"",												""						},
-	{19,	"seqTramToPlan",				"",												""						},
-	{20,	"seqTramFromPlan",			"",												""						},
-	{21,	"seqTramToMap",					"",												""						},
-	{22,	"seqTramFromMap",				"",												""						},
-	{23,	"seqTramToCath",				"",												""						},
-	{24,	"seqTramFromCath",			"",												""						},
-	{25,	"seqMuseumGhost",				"",												""						},
-	{26,	"seqSerpentAppears",		"",												""						},
-	{27,	"seqSerpentEats",				"",												""						},
-	{28,	"seqBrinkRes1b",				"",												""						},
-	{29,	"seqBrinkRes2a",				"Seq (brink's madness)",	"SEQ(BR~1.IMU"},
-	{30,	"seqLockupEntry",				"Seq (brink's madness)",	"SEQ(BR~1.IMU"},
-	{31,	"seqSerpentExplodes",		"",												""						},
-	{32,	"seqSwimUnderwater",		"Seq (descent)",					"SEQ(DE~1.IMU"},
-	{33,	"seqWavesPlunge",				"Seq (plunge)",						"SEQ(PL~1.IMU"},
-	{34,	"seqCryptOpens",				"",												""						},
-	{35,	"seqGuardsFight",				"",												""						},
-	{36,	"seqCreatorRes1.1a",		"Seq (creator res 1.1a)",	"SEQ(CR~1.IMU"},
-	{37,	"seqCreatorRes1.2b",		"",												""						},
-	{38,	"seqMaggieCapture1b",		"",												""						},
-	{39,	"seqStealCrystals",			"Seq (brink's madness)",	"SEQ(BR~1.IMU"},
-	{40,	"seqGetByMonster",			"",												""						},
-	{41,	"seqKillMonster1b",			"",												""						},
-	{42,	"seqCreatorRes2.1a",		"Seq (creator res 2.1a)",	"SEQ(CR~2.IMU"},
-	{43,	"seqCreatorRes2.2b",		"",												""						},
-	{44,	"seqCreatorRes2.3a",		"Seq (creator res 2.3a)",	"SEQ(CR~3.IMU"},
-	{45,	"seqMaggieInsists",			"",												""						},
-	{46,	"seqBrinkHelpCall",			"",												""						},
-	{47,	"seqBrinkCrevice1a",		"Seq (brink crevice 1a)",	"SEQ(BR~2.IMU"},
-	{48,	"seqBrinkCrevice2a",		"Seq (brink crevice 2a)",	"SEQ(BR~3.IMU"},
-	{49,	"seqCathAccess1b",			"",												""						},
-	{50,	"seqCathAccess2a",			"Seq (cath access 2a)",		"SEQ(CA~1.IMU"},
-	{51,	"seqBrinkAtGenerator",	"Seq (brink's madness)",	"SEQ(BR~1.IMU"},
-	{52,	"seqFightBrink1b",			"",												""						},
-	{53,	"seqMaggieDies1b",			"",												""						},
-	{54,	"seqMaggieRes1b",				"",												""						},
-	{55,	"seqMaggieRes2a",				"Seq (maggie res 2a)",		"SEQ(MA~1.IMU"},
-	{56,	"seqCreatureFalls",			"",												""						},
-	{57,	"seqFinale1b",					"",												""						},
-	{58,	"seqFinale2a",					"Seq (finale 2a)",				"SEQ(FI~1.IMU"},
-	{59,	"seqFinale3b1",					"",												""						},
-	{60,	"seqFinale3b2",					"",												""						},
-	{61,	"seqFinale4a",					"Seq (finale 4a)",				"SEQ(FI~2.IMU"},
-	{62,	"seqFinale5a",					"Seq (finale 5a)",				"SEQ(FI~3.IMU"},
-	{63,	"seqFinale6a",					"Seq (finale 6a)",				"SEQ(FI~4.IMU"},
-	{64,	"seqFinale7a",					"Seq (finale 7a)",				"SE3D2B~5.IMU"},
-	{65,	"seqFinale8b",					"",												""						},
-	{66,	"seqFinale9a",					"Seq (finale 9a)",				"SE313B~5.IMU"},
-	{-1,	"",											"",												""						},
+	{2000,	"SEQ_NULL",							"",												""						},
+	{2005,	"seqLogo",							"",												""						},
+	{2010,	"seqIntro",							"",												""						},
+	{2020,	"seqExplosion1b",				"",												""						},
+	{2030,	"seqAstTunnel1a",				"Seq (ast tunnel 1a)",		"SEQ(AS~1.IMU"},
+	{2031,	"seqAstTunnel2b",				"",												""						},
+	{2032,	"seqAstTunnel3a",				"Seq (ast tunnel 3a)",		"SEQ(AS~2.IMU"},
+	{2040,	"seqToPlanet1b",				"",												""						},
+	{2045,	"seqArgBegin",					"Seq (arg begin)",				"SEQ(AR~1.IMU"},
+	{2046,	"seqArgEnd",						"Seq (arg end)",					"SEQ(AR~2.IMU"},
+	{2050,	"seqWreckGhost",				"Seq (ghost-wreck)",			"SEQ(GH~1.IMU"},
+	{2060,	"seqCanyonGhost",				"Seq (ghost-canyon)",			"SEQ(GH~2.IMU"},
+	{2070,	"seqBrinkFall",					"",												""						},
+	{2080,	"seqPanUpCanyon",				"Seq (pan up canyon)",		"SEQ(PA~1.IMU"},
+	{2091,	"seqAirlockTunnel1b",		"",												""						},
+	{2100,	"seqTramToMu",					"",												""						},
+	{2101,	"seqTramFromMu",				"",												""						},
+	{2102,	"seqTramToTomb",				"",												""						},
+	{2103,	"seqTramFromTomb",			"",												""						},
+	{2104,	"seqTramToPlan",				"",												""						},
+	{2105,	"seqTramFromPlan",			"",												""						},
+	{2106,	"seqTramToMap",					"",												""						},
+	{2107,	"seqTramFromMap",				"",												""						},
+	{2108,	"seqTramToCath",				"",												""						},
+	{2109,	"seqTramFromCath",			"",												""						},
+	{2110,	"seqMuseumGhost",				"",												""						},
+	{2120,	"seqSerpentAppears",		"",												""						},
+	{2130,	"seqSerpentEats",				"",												""						},
+	{2140,	"seqBrinkRes1b",				"",												""						},
+	{2141,	"seqBrinkRes2a",				"Seq (brink's madness)",	"SEQ(BR~1.IMU"},
+	{2150,	"seqLockupEntry",				"Seq (brink's madness)",	"SEQ(BR~1.IMU"},
+	{2160,	"seqSerpentExplodes",		"",												""						},
+	{2170,	"seqSwimUnderwater",		"Seq (descent)",					"SEQ(DE~1.IMU"},
+	{2175,	"seqWavesPlunge",				"Seq (plunge)",						"SEQ(PL~1.IMU"},
+	{2180,	"seqCryptOpens",				"",												""						},
+	{2190,	"seqGuardsFight",				"",												""						},
+	{2200,	"seqCreatorRes1.1a",		"Seq (creator res 1.1a)",	"SEQ(CR~1.IMU"},
+	{2201,	"seqCreatorRes1.2b",		"",												""						},
+	{2210,	"seqMaggieCapture1b",		"",												""						},
+	{2220,	"seqStealCrystals",			"Seq (brink's madness)",	"SEQ(BR~1.IMU"},
+	{2230,	"seqGetByMonster",			"",												""						},
+	{2240,	"seqKillMonster1b",			"",												""						},
+	{2250,	"seqCreatorRes2.1a",		"Seq (creator res 2.1a)",	"SEQ(CR~2.IMU"},
+	{2251,	"seqCreatorRes2.2b",		"",												""						},
+	{2252,	"seqCreatorRes2.3a",		"Seq (creator res 2.3a)",	"SEQ(CR~3.IMU"},
+	{2260,	"seqMaggieInsists",			"",												""						},
+	{2270,	"seqBrinkHelpCall",			"",												""						},
+	{2280,	"seqBrinkCrevice1a",		"Seq (brink crevice 1a)",	"SEQ(BR~2.IMU"},
+	{2281,	"seqBrinkCrevice2a",		"Seq (brink crevice 2a)",	"SEQ(BR~3.IMU"},
+	{2290,	"seqCathAccess1b",			"",												""						},
+	{2291,	"seqCathAccess2a",			"Seq (cath access 2a)",		"SEQ(CA~1.IMU"},
+	{2300,	"seqBrinkAtGenerator",	"Seq (brink's madness)",	"SEQ(BR~1.IMU"},
+	{2320,	"seqFightBrink1b",			"",												""						},
+	{2340,	"seqMaggieDies1b",			"",												""						},
+	{2346,	"seqMaggieRes1b",				"",												""						},
+	{2347,	"seqMaggieRes2a",				"Seq (maggie res 2a)",		"SEQ(MA~1.IMU"},
+	{2350,	"seqCreatureFalls",			"",												""						},
+	{2360,	"seqFinale1b",					"",												""						},
+	{2370,	"seqFinale2a",					"Seq (finale 2a)",				"SEQ(FI~1.IMU"},
+	{2380,	"seqFinale3b1",					"",												""						},
+	{2390,	"seqFinale3b2",					"",												""						},
+	{2400,	"seqFinale4a",					"Seq (finale 4a)",				"SEQ(FI~2.IMU"},
+	{2410,	"seqFinale5a",					"Seq (finale 5a)",				"SEQ(FI~3.IMU"},
+	{2420,	"seqFinale6a",					"Seq (finale 6a)",				"SEQ(FI~4.IMU"},
+	{2430,	"seqFinale7a",					"Seq (finale 7a)",				"SE3D2B~5.IMU"},
+	{2440,	"seqFinale8b",					"",												""						},
+	{2450,	"seqFinale9a",					"Seq (finale 9a)",				"SE313B~5.IMU"},
+	{-1,		"",											"",												""						},
 };
 
 void IMuseDigital::handler() {
@@ -5533,24 +5533,41 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 		switch (cmd) {
 		case 0: // play music (state)
 			debug(1, "IMuseDigital::doCommand 0x1000 (%d)", b);
-			if (_scumm->_gameId == GID_FT)
-				return 0;
-			for(l = 0;; l++) {
-				if (_digStateMusicMap[l].room == -1) {
-					return 1;
-				}
-				if ((_digStateMusicMap[l].room == b)) {
-					int16 music = _digStateMusicMap[l].table_index;
-					debug(1, "Play imuse music: %s, %s, %s", _digStateMusicTable[music].name, _digStateMusicTable[music].title, _digStateMusicTable[music].filename);
-					if (_digStateMusicTable[music].filename[0] != 0) {
-						_scumm->_sound->playBundleMusic((char*)&_digStateMusicTable[music].filename);
+			return 0;
+			if (_scumm->_gameId == GID_DIG) {
+				for(l = 0;; l++) {
+					if (_digStateMusicMap[l].room == -1) {
+						return 1;
 					}
-					return 0;
+					if ((_digStateMusicMap[l].room == b)) {
+						int16 music = _digStateMusicMap[l].table_index;
+						debug(1, "Play imuse music: %s, %s, %s", _digStateMusicTable[music].name, _digStateMusicTable[music].title, _digStateMusicTable[music].filename);
+						if (_digStateMusicTable[music].filename[0] != 0) {
+							_scumm->_sound->playBundleMusic((char*)&_digStateMusicTable[music].filename);
+						}
+						return 0;
+					}
 				}
+			} else if (_scumm->_gameId == GID_FT) {
 			}
 			return 0;
 		case 1: // play music (seq)
 			debug(1, "IMuseDigital::doCommand 0x1001 (%d)", b);
+			if (_scumm->_gameId == GID_DIG) {
+				for(l = 0;; l++) {
+					if (_digSeqMusicTable[l].index == -1) {
+						return 1;
+					}
+					if ((_digSeqMusicTable[l].index == b)) {
+						debug(1, "Play imuse music: %s, %s, %s", _digSeqMusicTable[l].name, _digSeqMusicTable[l].title, _digSeqMusicTable[l].filename);
+						if (_digSeqMusicTable[l].filename[0] != 0) {
+							_scumm->_sound->playBundleMusic((char*)&_digSeqMusicTable[l].filename);
+						}
+						return 0;
+					}
+				}
+			} else if (_scumm->_gameId == GID_FT) {
+			}
 			return 0;
 		case 2: // dummy in DIG and CMI
 			debug(2, "IMuseDigital::doCommand 0x1002 (%d)", b);
