@@ -132,7 +132,7 @@ normal_mode:;
 		_scaler_proc = Normal1x;
 		break;
 	default:
-		error("unknown gfx mode");
+		error("unknown gfx mode %d", _mode);
 		_scaleFactor = 1;
 		_scaler_proc = NULL;
 	}

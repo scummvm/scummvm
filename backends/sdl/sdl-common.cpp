@@ -572,6 +572,22 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				}
 			}
 
+			// Ctr-Alt-a will change aspect ratio in OpenGL backend
+			if (b == (KBD_CTRL|KBD_ALT) && ev.key.keysym.sym=='a') {
+					Property prop;
+					prop.gfx_mode = 11;
+					property(PROP_SET_GFX_MODE, &prop);
+					break;
+			}
+
+			// Ctr-Alt-b will change bilinear filtering in OpenGL backend
+			if (b == (KBD_CTRL|KBD_ALT) && ev.key.keysym.sym=='b') {
+					Property prop;
+					prop.gfx_mode = 12;
+					property(PROP_SET_GFX_MODE, &prop);
+					break;
+			}
+
 #ifdef QTOPIA
 			// quit on fn+backspace on zaurus
 			if (ev.key.keysym.sym == 127) {

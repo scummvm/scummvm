@@ -378,15 +378,11 @@ simon games.
         Keyboard Arrow Keys    - simulate mouse movement
         Ctrl-f                 - runs in fast mode.
         Ctrl-Alt 0-9           - Switch between graphics filters
-        Ctrl-Alt 1             - Switch beetwen bilinear and non-linear
+        Ctrl-Alt b             - Switch beetwen bilinear and non-linear
                                  filtering [OpenGL backend]
-        Ctrl-Alt 2             - Don't fit the game in the whole screen 
-                                 (black borders) [OpenGL backend]
-        Ctrl-Alt 3             - Fit the game in the whole screen
-                                 (no black borders) [OpenGL backend]
-        Ctrl-Alt 4-7           - Switch between graphics filters 
-                                 [OpenGL backend]
-
+        Ctrl-Alt a             - Switch between: [OpenGL backend]
+                                 - Fit the game in the whole screen (No black borders)
+                                 - Don't fit the game in the whole screen (Black borders) 
     Scumm:
         Ctrl 0-9 and Alt 0-9   - load and save game state
         Ctrl-g                 - runs in really REALLY fast mode.
