@@ -48,6 +48,7 @@ void Input::delay(uint amount) {
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
 				case OSystem::EVENT_KEYDOWN:
+#if 0
 					if (event.kbd.flags == OSystem::KBD_CTRL) {
 						if (event.kbd.keycode == 'f') {
 							_fastMode ^= 1;
@@ -58,6 +59,7 @@ void Input::delay(uint amount) {
 							break;
 						}
 					}
+#endif
 
 					debug(1, "event.kbd.keycode = %i (%c)", 
 							event.kbd.keycode,
