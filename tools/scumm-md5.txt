@@ -225,7 +225,7 @@ Backyard Baseball 2001
 	Demo	Windows	en	a194f15f51ee62badab74b9e7da97693	bb2demo	khalek, sev
 
 Backyard Football 2002
-	Demo	Windows	en	5bd335265a61caa3d78956ad9f88ba23	FOOTDEMO	sev
+	Demo	All	en	5bd335265a61caa3d78956ad9f88ba23	FOOTDEMO	sev
 
 Big Thinkers: Kindergarten
 	-	Windows	en	92fc0073a4cf259ff36070ecb8628ba8	thinkerk	Kirben
@@ -262,25 +262,25 @@ Freddi Fish 1: The Case of the Missing Kelp Seeds
 	Demo	Mac	en	c8aac5e3e701874e2fa4117896f9e1b1	freddemo	khalek, sev
 
 Freddi Fish 2: The Case of the Haunted Schoolhouse
-	-	Windows	en	51305e929e330e24a75a0351c8f9975e	freddi2	Kirben
+	-	All	en	51305e929e330e24a75a0351c8f9975e	freddi2	Kirben
 	-	Windows	All	5057fb0e99e5aa29df1836329232f101	freddi2	sev
 	-	Windows	nl	ac62d50e39492ee3738b4e83a5ac780f	freddi2	joostp
 	Demo	All	en	fc8d197a22146e74766e9cb0cfcaf1da	ff2-demo	khalek, sev
 	Demo	All	en	d37c55388294b66e53e7ced3af88fa68	ffhsdemo	khalek
 
 Freddi Fish 3: The Case of the Stolen Conch Shell
-	-	Windows	All	8368f552b1e3eba559f8d559bcc4cadb	freddi3	Kirben, sev
+	-	All	All	8368f552b1e3eba559f8d559bcc4cadb	freddi3	Kirben, sev
 	Demo	All	en	cb1559e8405d17a5a278a6b5ad9338d1	f3-mdemo	khalek, sev
 
 Freddie Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
-	-	Windows	All	4f580a021eee026f3b4589e17d130d78	freddi4	Kirben, sev
+	-	All	All	4f580a021eee026f3b4589e17d130d78	freddi4	Kirben, sev
 	Demo	All	en	7c2e76087027eeee9c8f8985f93a1cc5	f4-demo	khalek
 	Demo	Windows	en	c25755b08a8d0d47695e05f1e2111bfc	f4-demo	sev
-	Demo	Windows	en	ebd324dcf06a4c49e1ba5c231eee1060	f4-demo	sev
+	Demo	All	en	ebd324dcf06a4c49e1ba5c231eee1060	f4-demo	sev
 	Demo	Windows	nl	16effd200aa6b8abe9c569c3e578814d	ff4demo	joostp
 
 Freddi Fish 5: The Case of the Creature of Coral Cave
-	-	Windows	en	590e6546aacd0d374b7f3a4f53013ab1	freddicove	cyx
+	-	All	en	590e6546aacd0d374b7f3a4f53013ab1	freddicove	cyx
 	-	Windows	ru	21abe302e1b1e2b66d6f5c12e241ebfd	freddicove	sev
 	Demo	Windows	nl	6b257bb2827dd894b8109a50a1a18b5a	FF5Demo	Kirben
 
@@ -324,7 +324,7 @@ Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	-	Windows	en	f7711f9264d4d43c2a1518ec7c10a607	pajama3	Kirben
 	Demo	Windows	en	a654fb60c3b67d6317a7894ffd9f25c5	pj3-demo	sev
-	Demo	Windows	en	a9f2f04b1ecaab9495b59befffe9bf88	pj3-demo	sev
+	Demo	All	en	a9f2f04b1ecaab9495b59befffe9bf88	pj3-demo	sev
 	Demo	Windows	en	cf90b4db5486ef798db78fe6fbf897e5	pj3-demo	khalek
 	Demo	Windows	en	d7ab7cd6105546016e6a0d46fb36b964	PjSamDemo	khalek, sev
 	Demo	All	nl	f08145577e4f13584cc90b3d6e9caa55	pj3demo	joostp
@@ -403,12 +403,12 @@ Spy Fox 1: Dry Cereal
 
 Spy Fox 2: Some Assembly Required
 	-	All	en	f79e60c17cca601e411f1f75e8ee9b5a	spyfox2	Kirben
-	Demo	Windows	en	7222f260253f325c21fcfa68b5bfab67	sf2-demo	Kirben
+	Demo	All	en	7222f260253f325c21fcfa68b5bfab67	sf2-demo	Kirben
 	Demo	All	nl	1c792d28376d45e145cb916bca0400a2	sf2demo	joostp
 
 Spy Fox 3: Operation Ozone
-	-	Windows	en	600abd3e9f47e63e670188b7e4e86ac7	spyozon	Kirben
-	Demo	Windows	en	ebd0b2c8a387f18887282afe6cad894a	sf3-demo	Kirben
+	-	All	en	600abd3e9f47e63e670188b7e4e86ac7	spyozon	Kirben
+	Demo	All	en	ebd0b2c8a387f18887282afe6cad894a	sf3-demo	Kirben
 
 Spy Fox in Cheese Chase Game
 	-	All	en	589601b676c98b1c0c987bc031ab68b3	chase	Kirben
