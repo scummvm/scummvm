@@ -37,6 +37,7 @@ void ScummEngine::setupScummVars() {
 	VAR_MACHINE_SPEED = 6;
 	VAR_ME = 7;
 	VAR_NUM_ACTOR = 8;
+	VAR_CURRENTDRIVE = 10;
 	VAR_TMR_1 = 11;
 	VAR_TMR_2 = 12;
 	VAR_TMR_3 = 13;
