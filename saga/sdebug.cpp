@@ -104,10 +104,10 @@ int Script::SDebugPrintInstr(SCRIPT_THREAD *thread) {
 			SD_ADDTXT(tmp_buf);
 /*
 			if(( param >= 0 ) && ( param < diag_list->n_dialogue )) {
-				printf(" ; \"%.*s\"", SCRIPT_STRINGLIMIT, diag_list->str[param] );
+				debug(2, " ; \"%.*s\"", SCRIPT_STRINGLIMIT, diag_list->str[param] );
 			}
 			else {
-				printf(" ; Invalid dialogue string.\n" );
+				debug(2, " ; Invalid dialogue string.\n" );
 			}
 */
 		}
@@ -245,7 +245,7 @@ int Script::SDebugPrintInstr(SCRIPT_THREAD *thread) {
 /*
 			for( i = 0 ; i < script_list->n_scripts ; i++ ) {
 				if( op_offset == script_list->scripts[i].offset ) {
-					printf("; Entrypoint \"%s\".", script_list->scriptl_p + script_list->scripts[i].name_offset );
+					debug(2, "; Entrypoint \"%s\".", script_list->scriptl_p + script_list->scripts[i].name_offset );
 					break;
 				}
 			}
@@ -348,10 +348,9 @@ int Script::SDebugPrintInstr(SCRIPT_THREAD *thread) {
 			sprintf(tmp_buf, "%04X", n_switch2);
 			SD_ADDTXT(tmp_buf);
 			for (i = 0; i < n_switch2; i++) {
-				//printf("\n");
 				switch_num = readS.readUint16LE();
 				switch_jmp = readS.readUint16LE();
-				//printf( TAB "WEIGHT %04X, %04X", switch_num, switch_jmp);
+				//debug(2, "WEIGHT %04X, %04X", switch_num, switch_jmp);
 			}
 		}
 		break;

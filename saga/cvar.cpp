@@ -226,7 +226,7 @@ int CVAR_SetValue(CVAR_P cvar, char *value) {
 		*(cvar->t.i.var_p) = (cv_int_t) int_param;
 
 #ifdef CVAR_TRACE
-		printf("Set cvar to value %ld.\n", int_param);
+		debug(2, "Set cvar to value %ld.\n", int_param);
 #endif
 
 		break;
@@ -274,7 +274,7 @@ int CVAR_SetValue(CVAR_P cvar, char *value) {
 
 		*(cvar->t.ui.var_p) = (cv_uint16_t) uint16_param;
 #ifdef CVAR_TRACE
-		printf("Set cvar to value %lu.\n", uint16_param);
+		debug(2, "Set cvar to value %lu.\n", uint16_param);
 #endif
 		break;
 	case CVAR_FLOAT:
@@ -291,7 +291,7 @@ int CVAR_SetValue(CVAR_P cvar, char *value) {
 			cvar->t.s.var_str[cvar->t.s.ubound] = 0;
 		}
 #ifdef CVAR_TRACE
-		printf("Set cvar to value \"%s\".\n", cvar->t.s.var_str);
+		debug(2, "Set cvar to value \"%s\".\n", cvar->t.s.var_str);
 #endif
 		break;
 	default:
@@ -311,7 +311,7 @@ CVAR_P CVAR_Find(const char *var_str) {
 
 	hash = CVAR_HashString(var_str);
 #ifdef CVAR_TRACE
-	printf("Performing lookup on hash bucket %d.\n", hash);
+	debug(2, "Performing lookup on hash bucket %d.\n", hash);
 #endif
 	walk_ptr = CVHashTbl[hash];
 	while (walk_ptr != NULL) {
@@ -350,7 +350,7 @@ int CVAR_RegisterFunc(cv_func_t func, const char *func_name,
 	hash = CVAR_HashString(func_name);
 
 #ifdef CVAR_TRACE
-	printf("Added FUNC cvar to hash bucket %d.\n", hash);
+	debug(2, "Added FUNC cvar to hash bucket %d.\n", hash);
 #endif
 
 	return CVAR_Add(hash, &new_cvar);
@@ -373,7 +373,7 @@ int CVAR_Register_I(cv_int_t * var_p, const char *var_name,
 	hash = CVAR_HashString(var_name);
 
 #ifdef CVAR_TRACE
-	printf("Added INT cvar to hash bucket %d.\n", hash);
+	debug(2, "Added INT cvar to hash bucket %d.\n", hash);
 #endif
 
 	return CVAR_Add(hash, &new_cvar);
@@ -395,7 +395,7 @@ int CVAR_Register_UI(cv_uint16_t * var_p, const char *var_name,
 	hash = CVAR_HashString(var_name);
 
 #ifdef CVAR_TRACE
-	printf("Added UNSIGNED INT ccvar to hash bucket %d.\n", hash);
+	debug(2, "Added UNSIGNED INT ccvar to hash bucket %d.\n", hash);
 #endif
 
 	return CVAR_Add(hash, &new_cvar);
@@ -417,7 +417,7 @@ int CVAR_Register_F(cv_float_t * var_p, const char *var_name,
 	hash = CVAR_HashString(var_name);
 
 #ifdef CVAR_TRACE
-	printf("Added FLOAT cvar to hash bucket %d.\n", hash);
+	debug(2, "Added FLOAT cvar to hash bucket %d.\n", hash);
 #endif
 
 	return CVAR_Add(hash, &new_cvar);
@@ -438,7 +438,7 @@ int CVAR_Register_S(cv_char_t * var_str, const char *var_name, const char *secti
 	hash = CVAR_HashString(var_name);
 
 #ifdef CVAR_TRACE
-	printf("Added UNSIGNED INT var to hash bucket %d.\n", hash);
+	debug(2, "Added UNSIGNED INT var to hash bucket %d.\n", hash);
 #endif
 
 	return CVAR_Add(hash, &new_cvar);

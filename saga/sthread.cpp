@@ -556,25 +556,25 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			break;
 		case 0x28: // inc_v increment, don't push
 			unhandled = 1;
-			printf("??? ");
+			//debug(2, "??? ");
 			scriptS.readByte();
 			scriptS.readUint16LE();
 			break;
 		case 0x29: // dec_v decrement, don't push
 			unhandled = 1;
-			printf("??? ");
+			//debug(2, "??? ");
 			scriptS.readByte();
 			scriptS.readUint16LE();
 			break;
 		case 0x2A: // postinc
 			unhandled = 1;
-			printf("??? ");
+			//debug(2, "??? ");
 			scriptS.readByte();
 			scriptS.readUint16LE();
 			break;
 		case 0x2B: // postdec
 			unhandled = 1;
-			printf("??? ");
+			//debug(2, "??? ");
 			scriptS.readByte();
 			scriptS.readUint16LE();
 			break;
@@ -793,15 +793,13 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			// (DLGO): Add a dialogue option to interface
 		case 0x56:
 			{
-				printf("DLGO | ");
+				SDataWord_T param3 = 0;
 				param1 = scriptS.readByte();
 				param2 = scriptS.readByte();
-				printf("%02X %02X ", param1, param2);
-
 				if (param2 > 0) {
-					SDataWord_T param3 = scriptS.readUint16LE();
-					printf("%04X", param3);
+					param3 = scriptS.readUint16LE();
 				}
+				debug(2, "DLGO | %02X %02X %04X", param1, param2, param3);
 			}
 			break;
 		case 0x57: // animate
