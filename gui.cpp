@@ -362,7 +362,7 @@ const GuiWidget about_dialog[] = {
 	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 68, 20 + 10 + 15 + 5, 160, 15, 0, 9}, // Build
 	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 10, 20 + 10 + 15 + 5 + 15, 230, 15, 0, 10},	 // ScummVM Url
 	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 75, 20 + 10 + 15 + 5 + 15 + 15 + 15, 150, 15, 0, 11}, // Lucasarts
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 113, 20 + 96, 54, 16, 40, 9 },
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 113, 20 + 96, 54, 16, 40, 9 },
 	{0}
 };
 
@@ -391,7 +391,7 @@ const GuiWidget sound_dialog[] = {
 };
 
 const GuiWidget save_load_dialog[] = {
-	{GUI_STAT,0xFF,GWF_DEFAULT|GWF_PARENT,30,20,260,150,0,0},
+	{GUI_STAT,0xFF,GWF_DEFAULT|GWF_PARENT,30,20,260,125,0,0},
 	{GUI_RESTEXT,0x01,0,40,5,128,16,0,1}, /* How may I serve you? */
 	{GUI_RESTEXT,0x02,0,40,5,128,16,0,2}, /* Select a game to LOAD */
 	{GUI_RESTEXT,0x04,0,40,5,128,16,0,3}, /* Name your SAVE game */
@@ -774,7 +774,8 @@ void Gui::close() {
 	_active = false;
 
 #ifdef _WIN32_WCE
-	if (_dialog == SAVELOAD_DIALOG) {
+	// Option dialog can be accessed from the file dialog now, always check
+	if (draw_keyboard) {
 		draw_keyboard = false;
 		toolbar_drawn = false;
 	}
