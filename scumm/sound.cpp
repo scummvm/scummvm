@@ -1189,7 +1189,14 @@ int Sound::playBundleSound(char *sound) {
 	
 	byte * final = (byte *)malloc(size);
 	memcpy(final, ptr, size);
-	return _scumm->_mixer->playRaw(NULL, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+	if (bits == 8) {
+		return _scumm->_mixer->playRaw(NULL, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+	} else if (bits == 16){
+		return _scumm->_mixer->playRaw(NULL, final, size, rate, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE);
+	} else {
+		warning("Sound::playBundleSound() to do more options to playRaw...");
+		return -1;
+	}
 }
 
 int Sound::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned) {
