@@ -186,10 +186,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\sword2\driver\d_sound.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\sword2\driver\driver96.h"
 				>
 			</File>
@@ -384,10 +380,6 @@
 		</File>
 		<File
 			RelativePath="..\..\sword2\startup.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\sword2\startup.h"
 			>
 		</File>
 		<File
