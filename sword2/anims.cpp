@@ -530,7 +530,7 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
 		res_man.close(text_res);
 
 		// 1st word of text line is the official line number
-		debug(5,"(%d) SEQUENCE TEXT: %s", *(uint16 *) text, text + 2);
+		debug(5,"(%d) SEQUENCE TEXT: %s", READ_LE_UINT16(text), text + 2);
 
 		// is it to be speech or subtitles or both?
 		// assume speech is not running until know otherwise
