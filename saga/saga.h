@@ -93,6 +93,9 @@ public:
 
 	void shutdown();
 
+	int _soundEnabled;
+	int _musicEnabled;
+
 	SndRes *_sndRes;
 	Sound *_sound;
 	Music *_music;

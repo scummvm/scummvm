@@ -75,15 +75,8 @@ namespace Saga {
 
 #define R_MAX_TIME_DELTA 100
 
-struct R_MAIN_DATA {
-	int sound_enabled;
-	int music_enabled;
-};
-
 static void CF_quitfunc(int argc, char *argv[], void *refCon);
 static void CF_testfunc(int argc, char *argv[], void *refCon);
-
-static R_MAIN_DATA MainData;
 
 SagaEngine *_vm = NULL;
 
@@ -118,14 +111,14 @@ void SagaEngine::go() {
 	GAME_Register();
 	SCENE_Register();
 
-	MainData.sound_enabled = 1;
-	MainData.music_enabled = 1;
+	_soundEnabled = 1;
+	_musicEnabled = 1;
 
 	CVAR_RegisterFunc(CF_testfunc, "testfunc", "foo [ optional foo ]", R_CVAR_NONE, 0, -1, this);
 
-	CVAR_Register_I(&MainData.sound_enabled, "sound", NULL, R_CVAR_CFG, 0, 1);
+	CVAR_Register_I(&_soundEnabled, "sound", NULL, R_CVAR_CFG, 0, 1);
 
-	CVAR_Register_I(&MainData.music_enabled, "music", NULL, R_CVAR_CFG, 0, 1);
+	CVAR_Register_I(&_musicEnabled, "music", NULL, R_CVAR_CFG, 0, 1);
 
 	CVAR_RegisterFunc(CF_quitfunc, "quit", NULL, R_CVAR_NONE, 0, 0, this);
 
@@ -174,10 +167,10 @@ void SagaEngine::go() {
 	else if (ConfMan.getBool("native_mt32"))
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	_music = new Music(driver, MainData.music_enabled);
+	_music = new Music(driver, _musicEnabled);
 	_music->hasNativeMT32(ConfMan.getBool("native_mt32"));
 
-	if (!MainData.music_enabled) {
+	if (!_musicEnabled) {
 		debug(0, "Music disabled.");
 	}
 
@@ -196,8 +189,8 @@ void SagaEngine::go() {
 	}
 
 	// Initialize system specific sound
-	_sound = new Sound(this, _mixer, MainData.sound_enabled);
-	if (!MainData.sound_enabled) {
+	_sound = new Sound(this, _mixer, _soundEnabled);
+	if (!_soundEnabled) {
 		debug(0, "Sound disabled.");
 	}
 
