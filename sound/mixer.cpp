@@ -52,7 +52,7 @@ public:
 	int _id;
 
 	Channel(SoundMixer *mixer, PlayingSoundHandle *handle)
-		: _mixer(mixer), _handle(handle), _converter(0), _input(0), _id(-1), _paused(false) {
+		: _mixer(mixer), _handle(handle), _converter(0), _input(0), _paused(false), _id(-1) {
 		assert(mixer);
 	}
 	virtual ~Channel();
