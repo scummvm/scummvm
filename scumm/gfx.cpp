@@ -643,7 +643,7 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	if (vs->hasTwoBuffers && _currentRoom != 0 && isLightOn()) {
 		blit(screenBuf, vs->pitch, vs->getBackPixels(rect.left, rect.top), vs->pitch, width, height);
 		if (vs->number == kMainVirtScreen && _charset->_hasMask) {
-			byte *mask = (byte *)gdi._textSurface.pixels + gdi._textSurface.pitch * rect.top + rect.left;
+			byte *mask = (byte *)gdi._textSurface.pixels + gdi._textSurface.pitch * (rect.top - _screenTop) + rect.left;
 			fill(mask, gdi._textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
 		}
 	} else {
