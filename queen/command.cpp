@@ -214,7 +214,6 @@ void Command::updatePlayer() {
 
 		if (_vm->input()->keyVerb() == VERB_USE_JOURNAL) {
 			_vm->logic()->useJournal();
-			_vm->input()->clearKeyVerb();
 		} else if (_vm->input()->keyVerb() != VERB_SKIP_TEXT) {
 			_state.verb = _vm->input()->keyVerb();
 			if (isVerbInv(_state.verb)) {

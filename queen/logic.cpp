@@ -2105,6 +2105,8 @@ bool LogicInterview::handleSpecialMove(uint16 sm) {
 }
 
 void LogicGame::useJournal() {
+	_vm->input()->clearMouseButton();
+	_vm->input()->clearKeyVerb();
 	_vm->command()->clear(false);
 	_journal->use();
 	_vm->walk()->stopJoe();
