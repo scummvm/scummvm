@@ -624,6 +624,8 @@ protected:
 					  int vert3x, int vert3y, int vert4x, int vert4y);
 	void polygonErase(int fromId, int toId);
 	bool polygonContains(WizPolygon &pol, int x, int y);
+	bool polygonDefined(int id);
+	int polygonHit(int id, int x, int y);
 
 
 	/* HE version 70 script opcodes */

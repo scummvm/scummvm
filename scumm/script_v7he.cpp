@@ -1070,8 +1070,8 @@ void ScummEngine_v7he::polygonStore(int id, bool flag, int vert1x, int vert1y, i
 	for (int j = 0; j < 4; j++) {
 		_WizPolygons[i].bound.left = MIN(_WizPolygons[i].bound.left, _WizPolygons[i].vert[j].x);
 		_WizPolygons[i].bound.top = MIN(_WizPolygons[i].bound.top, _WizPolygons[i].vert[j].y);
-		_WizPolygons[i].bound.right = MAX(_WizPolygons[i].bound.left, _WizPolygons[i].vert[j].x);
-		_WizPolygons[i].bound.bottom = MAX(_WizPolygons[i].bound.left, _WizPolygons[i].vert[j].y);
+		_WizPolygons[i].bound.right = MAX(_WizPolygons[i].bound.right, _WizPolygons[i].vert[j].x);
+		_WizPolygons[i].bound.bottom = MAX(_WizPolygons[i].bound.bottom, _WizPolygons[i].vert[j].y);
 	}
 }
 
@@ -1090,16 +1090,27 @@ void ScummEngine_v7he::o7_polygonHit() {
 
 	debug(1, "o7_polygonHit(%d, %d)", x, y);
 
+	push(polygonHit(0, x, y));
+}
+
+int ScummEngine_v7he::polygonHit(int id, int x, int y) {
 	for (int i = 0; i < _WizNumPolygons; i++) {
-		if (_WizPolygons[i].bound.contains(x, y)) {
+		if ((!id || id == i) && _WizPolygons[i].bound.contains(x, y)) {
 			if (polygonContains(_WizPolygons[i], x, y)) {
-				push(_WizPolygons[i].id);
-				return;
+				return _WizPolygons[i].id;
 			}
 		}
 	}
 
-	push(0);
+	return 0;
+}
+
+bool ScummEngine_v7he::polygonDefined(int id) {
+	for (int i = 0; i < _WizNumPolygons; i++)
+		if (_WizPolygons[i].id == id)
+			return true;
+
+	return false;
 }
 
 bool ScummEngine_v7he::polygonContains(WizPolygon &pol, int x, int y) {
@@ -1108,7 +1119,7 @@ bool ScummEngine_v7he::polygonContains(WizPolygon &pol, int x, int y) {
 	bool curdir;
 	bool r = false;
 
-	for (int i = 0; i < pol.numVerts; i++) {
+	for (int i = 0; i < pol.numVerts - 1; i++) {
 		curdir = (y <= pol.vert[i].y);
 
 		if (curdir != diry) {
@@ -1120,6 +1131,9 @@ bool ScummEngine_v7he::polygonContains(WizPolygon &pol, int x, int y) {
 		pi = i;
 		diry = curdir;
 	}
+
+	//r = true;
+
 	return r;
 }
 
