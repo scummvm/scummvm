@@ -305,11 +305,11 @@ int32 UpdatePaletteMatchTable(uint8 *data)
 }
 
 
+// FIXME: This used to be inlined - probably a good idea - but the
+// linker complained when I tried to use it in sprite.cpp.
 
-__inline uint8 QuickMatch(uint8 r, uint8 g, uint8 b)
-
-{
-	return(paletteMatch[((int32) (r >> 2) << 12) + ((int32) (g >> 2) << 6) + (b >> 2)]);
+uint8 QuickMatch(uint8 r, uint8 g, uint8 b) {
+	return paletteMatch[((int32) (r >> 2) << 12) + ((int32) (g >> 2) << 6) + (b >> 2)];
 }
 
 

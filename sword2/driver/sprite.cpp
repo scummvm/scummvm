@@ -1466,7 +1466,7 @@ uint16 yScale[SCALE_MAXHEIGHT];
 int32 DrawSprite(_spriteInfo *s) {
 	uint8 *src, *dst;
 	uint8 *sprite, *newSprite;
-	uint8 pixel, red, green, blue;
+	uint8 red, green, blue;
 	uint16 scale;
 	int16 i, j;
 	uint16 srcPitch;
@@ -1477,8 +1477,6 @@ int32 DrawSprite(_spriteInfo *s) {
 	// original did:
 	//
 	// * Anti-aliasing sprites when upscaling them.
-	// * The light mask. If a room has one the sprite should be colored
-	//   by it, simulating light sources in the room.
 	// * We don't implement the various graphics quality settings at all.
 	//
 	// But it should be good enough for now.
@@ -1615,11 +1613,45 @@ int32 DrawSprite(_spriteInfo *s) {
 	}
 
 	// -----------------------------------------------------------------
+	// Light masking
+	// -----------------------------------------------------------------
+
+	// The light mask is an optional layer that covers the entire room
+	// and which is used to simulate light and shadows.
+
+	if (lightMask && (scale != 256 || (s->type & RDSPR_SHADOW))) {
+		uint8 *lightMap;
+
+		if (!freeSprite) {
+			newSprite = (uint8 *) malloc(s->w * s->h);
+			memcpy(newSprite, sprite, s->w * s->h);
+			sprite = newSprite;
+			freeSprite = true;
+		}
+
+		src = sprite + rs.top * srcPitch + rs.left;
+		lightMap = lightMask + (rd.top + scrolly - 40) * locationWide + rd.left + scrollx;
+
+		for (i = 0; i < rs.bottom - rs.top; i++) {
+			for (j = 0; j < rs.right - rs.left; j++) {
+				if (src[j] && lightMap[j]) {
+					uint8 r = ((32 - lightMap[j]) * palCopy[src[j]][0]) >> 5;
+					uint8 g = ((32 - lightMap[j]) * palCopy[src[j]][1]) >> 5;
+					uint8 b = ((32 - lightMap[j]) * palCopy[src[j]][2]) >> 5;
+					src[j] = QuickMatch(r, g, b);
+				}
+			}
+			src += srcPitch;
+			lightMap += locationWide;
+		}
+	}
+
+	// -----------------------------------------------------------------
 	// Drawing
 	// -----------------------------------------------------------------
 
-	src = sprite + rs.top * s->w + rs.left;
-	dst = (uint8 *) lpBackBuffer->_pixels + lpBackBuffer->_width * rd.top + rd.left;
+	src = sprite + rs.top * srcPitch + rs.left;
+	dst = lpBackBuffer->_pixels + lpBackBuffer->_width * rd.top + rd.left;
 
 	if (s->type & RDSPR_BLEND) {
 		if (s->blend & 0x01) {
@@ -1627,26 +1659,36 @@ int32 DrawSprite(_spriteInfo *s) {
 			for (i = 0; i < rs.bottom - rs.top; i++) {
 				for (j = 0; j < rs.right - rs.left; j++) {
 					if (src[j]) {
-						pixel = dst[j];
-						dst[j] = paletteMatch[(((palCopy[src[j]][0] * red + palCopy[pixel][0] * (8 - red)) >> 5) << 12) +
-							(((palCopy[src[j]][1] * red + palCopy[pixel][1] * (8 - red)) >> 5) << 6) +
-							(((palCopy[src[j]][2] * red + palCopy[pixel][2] * (8 - red)) >> 5))];
+						uint8 r = (palCopy[src[j]][0] * red + palCopy[dst[j]][0] * (8 - red)) >> 3;
+						uint8 g = (palCopy[src[j]][1] * red + palCopy[dst[j]][1] * (8 - red)) >> 3;
+						uint8 b = (palCopy[src[j]][2] * red + palCopy[dst[j]][2] * (8 - red)) >> 3;
+						dst[j] = QuickMatch(r, g, b);
 					}
 				}
 				src += srcPitch;
 				dst += lpBackBuffer->_width;
 			}
 		} else if (s->blend & 0x02) {
+			// FIXME: This case looks bogus to me. The same value
+			// for the red, green and blue parameters, and we
+			// multiply with the source color's palette index
+			// rather than its color component.
+			//
+			// But as far as I can see, that's how the original
+			// code did it.
+			//
+			// Does anyone know where this case was used anyway?
+
 			red = palCopy[s->blend >> 8][0];
 			green = palCopy[s->blend >> 8][0];
 			blue = palCopy[s->blend >> 8][0];
 			for (i = 0; i < rs.bottom - rs.top; i++) {
 				for (j = 0; j < rs.right - rs.left; j++) {
 					if (src[j]) {
-						pixel = dst[j];
-						dst[j] = paletteMatch[((((src[j] * red + (16 - src[j]) * palCopy[pixel][0]) >> 4) >> 2) << 12) +
-							((((src[j] * green + (16 - src[j]) * palCopy[pixel][1]) >> 4) >> 2) << 6) +
-							(((src[j] * blue + (16 - src[j]) * palCopy[pixel][2]) >> 4) >> 2)];
+						uint8 r = (src[j] * red + (16 - src[j]) * palCopy[dst[j]][0]) >> 4;
+						uint8 g = (src[j] * green + (16 - src[j]) * palCopy[dst[j]][1]) >> 4;
+						uint8 b = (src[j] * blue + (16 - src[j]) * palCopy[dst[j]][2]) >> 4;
+						dst[j] = QuickMatch(r, g, b);
 					}
 				}
 				src += srcPitch;
