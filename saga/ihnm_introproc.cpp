@@ -100,9 +100,11 @@ int Scene::IHNMStartProc() {
 	}
 
 	// FIXME: I suspect the "hate" speech is actually scripted and that we
-	// start at the wrong scene, but the one I think is correct currently
-	// causes ScummVM to crash. Also, the end titles music to plays over
-	// the scene, which is wrong. (But hey, it's a nice piece of music!)
+	// start at the wrong scene, but the one I think is correct (151
+	// instead of 152) currently doesn't work. Probably partly because
+	// actors - in particularly actor speech - isn't implemented for
+	// IHNM yet. Also, the end titles music to plays over the scene, which
+	// is wrong. (But hey, it's a nice piece of music!)
 
 	first_scene.load_flag = BY_SCENE;
 	first_scene.scene_n = _vm->getStartSceneNumber();
