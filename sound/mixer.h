@@ -33,17 +33,7 @@ class Channel;
 class File;
 class OSystem;
 
-class SoundHandle {
-	friend class Channel;
-	friend class SoundMixer;
-	int val;
-	int getIndex() const { return val - 1; }
-	void setIndex(int i) { val = i + 1; }
-	void resetIndex() { val = 0; }
-	bool isActive() const { return val > 0; }
-public:
-	SoundHandle() { resetIndex(); }
-};
+typedef uint32 SoundHandle;
 
 class SoundMixer {
 public:
@@ -99,6 +89,7 @@ private:
 
 	bool _paused;
 	
+	uint32 _handleSeed;
 	Channel *_channels[NUM_CHANNELS];
 
 	bool _mixerReady;
@@ -212,9 +203,7 @@ public:
 	 * @param handle the sound to query
 	 * @return true if the sound is active
 	 */
-	bool isSoundHandleActive(SoundHandle handle) {
-		return handle.isActive();
-	}
+	bool isSoundHandleActive(SoundHandle handle);
 
 	/**
 	 * Check if the mixer is paused (using pauseAll).
