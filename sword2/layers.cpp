@@ -50,10 +50,11 @@ int32 Logic::fnInitBackground(int32 *params) {
  */
 
 int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
+	byte buf[NAME_LEN];
 	int i;
 
 	assert(res);
-	debug(1, "CHANGED TO LOCATION \"%s\"", fetchObjectName(res));
+	debug(1, "CHANGED TO LOCATION \"%s\"", fetchObjectName(res, buf));
 
 	// The resources age every time a new room is entered.
 	_resman->passTime();

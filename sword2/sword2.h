@@ -275,7 +275,7 @@ public:
 	byte *fetchTextLine(byte *file, uint32 text_line);
 	bool checkTextLine(byte *file, uint32 text_line);
 	byte *fetchPaletteMatchTable(byte *screenFile);
-	byte *fetchObjectName(int32 resourceId);
+	byte *fetchObjectName(int32 resourceId, byte *buf);
 
 	// savegame file header
 

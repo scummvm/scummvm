@@ -186,7 +186,9 @@ int32 Logic::fnPlayFx(int32 *params) {
 			break;
 		}
 
-		debug(0, "SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", _vm->fetchObjectName(params[0]), params[3], params[4], params[2], type);
+		byte buf[NAME_LEN];
+
+		debug(0, "SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", _vm->fetchObjectName(params[0], buf), params[3], params[4], params[2], type);
 	}
 
 	while (j < FXQ_LENGTH && _vm->_fxQueue[j].resource != 0)

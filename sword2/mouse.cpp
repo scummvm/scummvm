@@ -258,6 +258,7 @@ void Sword2Engine::systemMenuMouse(void) {
 }
 
 void Sword2Engine::dragMouse(void) {
+	byte buf1[NAME_LEN], buf2[NAME_LEN];
 	MouseEvent *me;
 	int hit;
 
@@ -329,8 +330,8 @@ void Sword2Engine::dragMouse(void) {
 		_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
 
 		debug(2, "Used \"%s\" on \"%s\"",
-			fetchObjectName(Logic::_scriptVars[OBJECT_HELD]),
-			fetchObjectName(Logic::_scriptVars[CLICKED_ID]));
+			fetchObjectName(Logic::_scriptVars[OBJECT_HELD], buf1),
+			fetchObjectName(Logic::_scriptVars[CLICKED_ID], buf2));
 
 		// Hide menu - back to normal menu mode
 
@@ -370,8 +371,8 @@ void Sword2Engine::dragMouse(void) {
 		noHuman();
 
 		debug(2, "Used \"%s\" on \"%s\"",
-			fetchObjectName(Logic::_scriptVars[OBJECT_HELD]),
-			fetchObjectName(Logic::_scriptVars[COMBINE_BASE]));
+			fetchObjectName(Logic::_scriptVars[OBJECT_HELD], buf1),
+			fetchObjectName(Logic::_scriptVars[COMBINE_BASE], buf2));
 	}
 
 	// Refresh the menu
@@ -380,6 +381,7 @@ void Sword2Engine::dragMouse(void) {
 }
 
 void Sword2Engine::menuMouse(void) {
+	byte buf[NAME_LEN];
 	MouseEvent *me;
 	int hit;
 
@@ -427,7 +429,7 @@ void Sword2Engine::menuMouse(void) {
 		noHuman();
 
 		debug(2, "Right-click on \"%s\" icon",
-			fetchObjectName(Logic::_scriptVars[OBJECT_HELD]));
+			fetchObjectName(Logic::_scriptVars[OBJECT_HELD], buf));
 
 		return;
 	}
@@ -455,7 +457,7 @@ void Sword2Engine::menuMouse(void) {
 		setLuggage(_masterMenuList[hit].luggage_resource);
 
 		debug(2, "Left-clicked on \"%s\" icon - switch to drag mode",
-			fetchObjectName(Logic::_scriptVars[OBJECT_HELD]));
+			fetchObjectName(Logic::_scriptVars[OBJECT_HELD], buf));
 	}
 }
 
@@ -664,16 +666,18 @@ void Sword2Engine::normalMouse(void) {
 		} else
 			_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
 
+		byte buf1[NAME_LEN], buf2[NAME_LEN];
+
 		if (Logic::_scriptVars[OBJECT_HELD])
 			debug(2, "Used \"%s\" on \"%s\"",
-				fetchObjectName(Logic::_scriptVars[OBJECT_HELD]),
-				fetchObjectName(Logic::_scriptVars[CLICKED_ID]));
+				fetchObjectName(Logic::_scriptVars[OBJECT_HELD], buf1),
+				fetchObjectName(Logic::_scriptVars[CLICKED_ID], buf2));
 		else if (Logic::_scriptVars[LEFT_BUTTON])
 			debug(2, "Left-clicked on \"%s\"",
-				fetchObjectName(Logic::_scriptVars[CLICKED_ID]));
+				fetchObjectName(Logic::_scriptVars[CLICKED_ID], buf1));
 		else	// RIGHT BUTTON
 			debug(2, "Right-clicked on \"%s\"",
-				fetchObjectName(Logic::_scriptVars[CLICKED_ID]));
+				fetchObjectName(Logic::_scriptVars[CLICKED_ID], buf1));
 	}
 }
 
@@ -731,8 +735,11 @@ void Sword2Engine::mouseOnOff(void) {
 			if (Logic::_scriptVars[OBJECT_HELD]) {
 				setLuggage(_currentLuggageResource);
 			}
-		} else
-			error("ERROR: mouse.pointer==0 for object %d (%s) - update logic script!", _mouseTouching, fetchObjectName(_mouseTouching));
+		} else {
+			byte buf[NAME_LEN];
+
+			error("ERROR: mouse.pointer==0 for object %d (%s) - update logic script!", _mouseTouching, fetchObjectName(_mouseTouching, buf));
+		}
 	} else if (_oldMouseTouching && !_mouseTouching) {
 		// the cursor has moved off something - reset cursor to
 		// normal pointer

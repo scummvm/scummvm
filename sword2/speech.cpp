@@ -208,9 +208,11 @@ int32 Logic::fnChoose(int32 *params) {
 
 	debug(5, "Icons available:");
 
+	byte buf[NAME_LEN];
+
 	// change icons
 	for (i = 0; i < _scriptVars[IN_SUBJECT]; i++) {
-		debug(5, "%s", _vm->fetchObjectName(_subjectList[i].res));
+		debug(5, "%s", _vm->fetchObjectName(_subjectList[i].res, buf));
 
 		// change all others to grey
 		if (i != (uint32) hit) {
@@ -220,7 +222,7 @@ int32 Logic::fnChoose(int32 *params) {
 		}
 	}
 
-	debug(2, "Selected: %s", _vm->fetchObjectName(_subjectList[hit].res));
+	debug(2, "Selected: %s", _vm->fetchObjectName(_subjectList[hit].res, buf));
 
 	// this is our looping flag
 	_choosing = false;
@@ -982,8 +984,11 @@ int32 Logic::fnISpeak(int32 *params) {
 
 		if (_scriptVars[PLAYER_ID] != CUR_PLAYER_ID)
 			debug(5, "(%d) Nico: %s", _officialTextNumber, text + 2);
-		else
-			debug(5, "(%d) %s: %s", _officialTextNumber, _vm->fetchObjectName(_scriptVars[ID]), text + 2);
+		else {
+			byte buf[NAME_LEN];
+
+			debug(5, "(%d) %s: %s", _officialTextNumber, _vm->fetchObjectName(_scriptVars[ID], buf), text + 2);
+		}
 
 		// Set up the speech animation
 

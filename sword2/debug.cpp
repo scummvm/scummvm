@@ -158,6 +158,8 @@ void Debugger::buildDebugText(void) {
 	// general debug info
 
 	if (_displayDebugText) {
+		byte name[NAME_LEN];
+
 /*
 		// CD in use
 		sprintf(buf, "CD-%d", currentCD);
@@ -171,7 +173,7 @@ void Debugger::buildDebugText(void) {
 				Logic::_scriptVars[MOUSE_X],
 				Logic::_scriptVars[MOUSE_Y],
 				Logic::_scriptVars[CLICKED_ID],
-				_vm->fetchObjectName(Logic::_scriptVars[CLICKED_ID]));
+				_vm->fetchObjectName(Logic::_scriptVars[CLICKED_ID], name));
 		else
 			sprintf(buf, "last click at %d,%d (---)",
 				Logic::_scriptVars[MOUSE_X],
@@ -184,7 +186,7 @@ void Debugger::buildDebugText(void) {
 				_vm->_input->_mouseX + _vm->_thisScreen.scroll_offset_x,
 				_vm->_input->_mouseY + _vm->_thisScreen.scroll_offset_y,
 				_vm->_mouseTouching,
-				_vm->fetchObjectName(_vm->_mouseTouching));
+				_vm->fetchObjectName(_vm->_mouseTouching, name));
 		else
 			sprintf(buf, "mouse %d,%d (not touching)",
 				_vm->_input->_mouseX + _vm->_thisScreen.scroll_offset_x,
@@ -199,7 +201,7 @@ void Debugger::buildDebugText(void) {
 			sprintf(buf, "player %d,%d %s (%d) #%d/%d",
 				_vm->_thisScreen.player_feet_x,
 				_vm->_thisScreen.player_feet_y,
-				_vm->fetchObjectName(_playerGraphic.anim_resource),
+				_vm->fetchObjectName(_playerGraphic.anim_resource, name),
 				_playerGraphic.anim_resource,
 				_playerGraphic.anim_pc,
 				_playerGraphicNoFrames);
@@ -265,7 +267,7 @@ void Debugger::buildDebugText(void) {
 
 		if (_vm->_logic->_speechScriptWaiting) {
 			sprintf(buf, "script waiting for %s (%d)",
-				_vm->fetchObjectName(_vm->_logic->_speechScriptWaiting),
+				_vm->fetchObjectName(_vm->_logic->_speechScriptWaiting, name),
 				_vm->_logic->_speechScriptWaiting);
 			makeDebugTextBlock(buf, 0, 90);
 		}

@@ -243,11 +243,13 @@ int32 Logic::fnWalkToAnim(int32 *params) {
 		// coords (which should be set beforehand in the script).
 
 		if (pars[4] == 0 && pars[5] == 0) {
+			byte buf[NAME_LEN];
+
 			pars[4] = _standbyX;
 			pars[5] = _standbyY;
 			pars[6] = _standbyDir;
 
-			debug(3, "WARNING: fnWalkToAnim(%s) used standby coords", _vm->fetchObjectName(params[4]));
+			debug(3, "WARNING: fnWalkToAnim(%s) used standby coords", _vm->fetchObjectName(params[4], buf));
 		}
 
 		assert(pars[6] >= 0 && pars[6] <= 7);
@@ -374,11 +376,13 @@ int32 Logic::fnStandAfterAnim(int32 *params) {
 	// should be set beforehand in the script)
 
 	if (pars[2] == 0 && pars[3] == 0) {
+		byte buf[NAME_LEN];
+
 		pars[2] = _standbyX;
 		pars[3] = _standbyY;
 		pars[4] = _standbyDir;
 
-		debug(3, "WARNING: fnStandAfterAnim(%s) used standby coords", _vm->fetchObjectName(params[2]));
+		debug(3, "WARNING: fnStandAfterAnim(%s) used standby coords", _vm->fetchObjectName(params[2], buf));
 	}
 
 	assert(pars[4] >= 0 && pars[4] <= 7);
@@ -412,11 +416,13 @@ int32 Logic::fnStandAtAnim(int32 *params) {
 	// be set beforehand in the script)
 
 	if (pars[2] == 0 && pars[3] == 0) {
+		byte buf[NAME_LEN];
+
 		pars[2] = _standbyX;
 		pars[3] = _standbyY;
 		pars[4] = _standbyDir;
 
-		debug(3, "WARNING: fnStandAtAnim(%s) used standby coords", _vm->fetchObjectName(params[2]));
+		debug(3, "WARNING: fnStandAtAnim(%s) used standby coords", _vm->fetchObjectName(params[2], buf));
 	}
 
 	assert(pars[4] >= 0 && pars[4] <= 7);

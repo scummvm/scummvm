@@ -208,19 +208,12 @@ bool Sword2Engine::checkTextLine(byte *file, uint32 text_line) {
 	return text_line < text_header->noOfLines;
 }
 
-byte *Sword2Engine::fetchObjectName(int32 resourceId) {
-	StandardHeader *header;
-	
-	header = (StandardHeader *) _resman->openResource(resourceId);
+byte *Sword2Engine::fetchObjectName(int32 resourceId, byte *buf) {
+	StandardHeader *header = (StandardHeader *) _resman->openResource(resourceId);
+
+	memcpy(buf, header->name, NAME_LEN);
 	_resman->closeResource(resourceId);
-
-	// Note this pointer is no longer valid, but it should be ok until
-	// another resource is opened!
-
-	// FIXME: I don't like the sound of this at all. Though thanks to the
-	// resource caching, at least it will still point to malloced memory.
-
-	return header->name;
+	return buf;
 }
 
 } // End of namespace Sword2

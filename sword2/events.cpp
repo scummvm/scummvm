@@ -194,11 +194,12 @@ void Logic::printEventList(void) {
 
 	for (uint32 i = 0; i < MAX_events; i++) {
 		if (_eventList[i].id) {
+			byte buf[NAME_LEN];
 			uint32 target = _eventList[i].id;
 			uint32 script = _eventList[i].interact_id;
 
-			Debug_Printf("slot %2d: id = %s (%d)\n", i, _vm->fetchObjectName(target), target);
-			Debug_Printf("         script = %s (%d) pos %d\n", _vm->fetchObjectName(script / 65536), script / 65536, script % 65536);
+			Debug_Printf("slot %2d: id = %s (%d)\n", i, _vm->fetchObjectName(target, buf), target);
+			Debug_Printf("         script = %s (%d) pos %d\n", _vm->fetchObjectName(script / 65536, buf), script / 65536, script % 65536);
 		}
 	}
 }
