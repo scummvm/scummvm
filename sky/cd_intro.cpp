@@ -822,7 +822,7 @@ void SkyState::doCDIntro() {
 	cd2_seq_data_1 = _skyDisk->loadFile(cd_104, NULL);
 	WAIT_SEQUENCE; //103
 
-	//fn_start_music(2);
+	_music->startMusic(2);
 	fnFadeDown(0);
 	COPY_SCREEN;
 	showScreen();

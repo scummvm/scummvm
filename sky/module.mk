@@ -11,6 +11,8 @@ MODULE_OBJS = \
 	sky/rnc_deco.o \
 	sky/grid.o \
 	sky/sound.o \
+	sky/skychannel.o \
+	sky/skymusic.o \
 
 # Include common rules 
 include common.rules

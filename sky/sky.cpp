@@ -83,6 +83,7 @@ void SkyState::go() {
 		_dump_file = stdout;
 
 	initialise();
+	
 	if (!isDemo(_gameVersion) || isCDVersion(_gameVersion))
 		intro();
 	
@@ -95,11 +96,10 @@ void SkyState::initialise(void) {
 
 	//initialise_memory();
 	initTimer();
-	//init_music(); 
 
 	_sound = new SkySound(_mixer);
-
 	_skyDisk = new SkyDisk(_gameDataPath);
+	_music = new SkyMusic(_mixer,_skyDisk);
 	_gameVersion = _skyDisk->determineGameVersion();
 	_skyText = getSkyText();
 	

@@ -30,6 +30,7 @@
 #include "sky/sound.h"
 #include "sky/text.h"
 #include "sky/disk.h"
+#include "sky/skymusic.h"
 
 class SkyState : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
@@ -67,6 +68,7 @@ protected:
 
 	SkySound *_sound;
 	SkyDisk *_skyDisk;
+	SkyMusic *_music;
 	
 	byte *_workScreen;
 	byte *_backScreen;
