@@ -1162,7 +1162,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			if (_C64ObjectMode) {
 				// FIXME/TODO: V1 object masks are stored separately
 			} else {
-				//drawStripC64Mask(mask_ptr, stripnr, height);
+				drawStripC64Mask(mask_ptr, stripnr, height);
 			}
 		} else if (_vm->_version == 2) {
 			// Do nothing here for V2 games - zplane was handled already.
@@ -1370,18 +1370,16 @@ void Gdi::drawStripC64Object(byte *dst, int stripnr, int width, int height) {
 
 void Gdi::drawStripC64Mask(byte *dst, int stripnr, int height) {
 	height >>= 3;
-	// FIXME: this code seems bogus to me. Our masks are *bitmasks*
-	// after all, and this code does treat it like a normal graphics
-	// buffer. In particular, it writes bytes which only have the
-	// lower two bits set... uhh, that can not be correct.
 	for (int y = 0; y < height; y++) {
 		for (int i = 0; i < 8; i++) {
 			byte c = _C64MaskChar[_C64MaskMap[y + stripnr * height] * 8 + i];
-			dst[0] = dst[1] = (c >> 6) & 3;
-			dst[2] = dst[3] = (c >> 4) & 3;
-			dst[4] = dst[5] = (c >> 2) & 3;
-			dst[6] = dst[7] = (c >> 0) & 3;
-			dst += _vm->_screenWidth;	// FIXME: this probably should be _numStrips, once the rest of drawStripC64Mask is fixed
+			byte tmp1 = ((c >> 6) & 3) == 0;
+			byte tmp2 = ((c >> 4) & 3) == 0;
+			byte tmp3 = ((c >> 2) & 3) == 0;
+			byte tmp4 = ((c >> 0) & 3) == 0;
+			*dst = (tmp1 << 7) | (tmp1 << 6) | (tmp2 << 5) | (tmp2 << 4) |
+						 (tmp3 << 3) | (tmp3 << 2) | (tmp4 << 1) | (tmp4 << 0);
+			dst += _numStrips;
 		}
 	}
 }
