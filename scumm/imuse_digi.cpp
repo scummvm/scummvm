@@ -821,13 +821,14 @@ void IMuseDigital::handler() {
 
 			if (_scumm->_silentDigitalImuse == false) {
 				if (_channel[l]._initialized == false) {
-					_scumm->_mixer->playStream(NULL, l, buf, mixer_size,
+					_scumm->_mixer->playStream(l, buf, mixer_size,
 					                           _channel[l]._freq, _channel[l]._mixerFlags, 3, 100000);
 					_channel[l]._initialized = true;
 				} else {
-					_scumm->_mixer->append(l, buf, mixer_size, _channel[l]._freq, _channel[l]._mixerFlags);
+					_scumm->_mixer->append(l, buf, mixer_size);
 				}
 			}
+			free(buf);
 		}
 	}
 }
@@ -860,7 +861,7 @@ void IMuseDigital::startSound(int sound) {
 				_channel[l]._bits = 8;
 				_channel[l]._channels = 2;
 				_channel[l]._mixerSize = (22050 / 5) * 2;
-				_channel[l]._mixerFlags = SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED;
+				_channel[l]._mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED;
 				byte * t_ptr= readCreativeVocFile(ptr, size, _channel[l]._freq, _channel[l]._numLoops);
 
 				if (_channel[l]._freq == 22222) {
@@ -960,7 +961,7 @@ void IMuseDigital::startSound(int sound) {
 					}
 				}
 				_channel[l]._mixerSize = (22050 / 5) * 2;
-				_channel[l]._mixerFlags = SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
+				_channel[l]._mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
 				if (_channel[l]._bits == 12) {
 					_channel[l]._mixerSize *= 2;
 					_channel[l]._mixerFlags |= SoundMixer::FLAG_16BITS;

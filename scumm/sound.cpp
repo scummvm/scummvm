@@ -1170,18 +1170,18 @@ void Sound::bundleMusicHandler(Scumm *scumm) {
 		final_size = _outputMixerSize;
 		memcpy(buffer, ptr, _outputMixerSize);
 	} else {
-		warning("Sound::bundleMusicHandler  to do more playStream options...");
+		warning("Sound::bundleMusicHandler TODO: more playStream options...");
 		return;
 	}
 
 	_bundleMusicPosition += final_size;
 	if (_bundleMusicTrack == -1) {
-		_bundleMusicTrack = _scumm->_mixer->playStream(NULL, _scumm->_mixer->_beginSlots - 1, buffer, final_size, rate,
-															SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO, -1, 300000);
+		_bundleMusicTrack = _scumm->_mixer->playStream(_scumm->_mixer->_beginSlots - 1, buffer, final_size, rate,
+															SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO, -1, 300000);
 	} else {
-		_scumm->_mixer->append(_bundleMusicTrack, buffer, final_size, rate,
-														SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
+		_scumm->_mixer->append(_bundleMusicTrack, buffer, final_size);
 	}
+	free(buffer);
 }
 
 int Sound::playBundleSound(char *sound) {

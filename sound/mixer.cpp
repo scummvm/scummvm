@@ -157,18 +157,14 @@ void SoundMixer::unInsert(Channel *chan) {
 	error("SoundMixer::channel_deleted chan not found");
 }
 
-int SoundMixer::append(int index, void *sound, uint32 size, uint rate, byte flags) {
+int SoundMixer::append(int index, void *sound, uint32 size) {
 	_syst->lock_mutex(_mutex);
 
 	Channel *chan = _channels[index];
 	if (!chan) {
-		debug(2, "Trying to stream to an unexistant streamer : %d", index);
-		playStream(NULL, index, sound, size, rate, flags);
-		chan = _channels[index];
+		error("Trying to stream to a nonexistant streamer : %d", index);
 	} else {
-		chan->append(sound, size);
-		if (flags & FLAG_AUTOFREE)
-			free(sound);
+		dynamic_cast<ChannelStream *>(chan)->append(sound, size);
 	}
 
 	_syst->unlock_mutex(_mutex);
@@ -205,9 +201,9 @@ int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, ui
 	return -1;
 }
 
-int SoundMixer::playStream(PlayingSoundHandle *handle, int idx, void *sound, uint32 size,
+int SoundMixer::playStream(int idx, void *sound, uint32 size,
 													uint rate, byte flags, int32 timeout, int32 buffer_size) {
-	return insertAt(handle, idx, new ChannelStream(this, sound, size, rate, flags, timeout, buffer_size));
+	return insertAt(NULL, idx, new ChannelStream(this, sound, size, rate, flags, timeout, buffer_size));
 }
 
 void SoundMixer::beginSlots(int index) {
@@ -648,10 +644,6 @@ bool Channel::soundFinished() {
 	return false;
 }
 
-void Channel::append(void *sound, uint32 size) {
-	error("append method should never be called on something else than a _STREAM mixer ");
-}
-
 /* RAW mixer */
 ChannelRaw::ChannelRaw(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags, int id) {
 	_id = id;
@@ -734,8 +726,6 @@ ChannelStream::ChannelStream(SoundMixer *mixer, void *sound, uint32 size, uint r
 	memcpy(_ptr, sound, size);
 	_endOfData = _ptr + size;
 	_endOfBuffer = _ptr + _bufferSize;
-	if (_flags & SoundMixer::FLAG_AUTOFREE)
-		free(sound);
 	_pos = _ptr;
 	_fpPos = 0;
 	_fpSpeed = (1 << 16) * rate / mixer->_outputRate;

@@ -54,7 +54,6 @@ public:
 		_toBeDestroyed = true;
 	}
 	virtual void realDestroy() = 0;
-	virtual void append(void *sound, uint32 size);
 	virtual bool soundFinished();
 };
 
@@ -94,7 +93,6 @@ public:
 	~SoundMixer();
 
 	int insertAt(PlayingSoundHandle *handle, int index, Channel *chan);
-	void append(void *data, uint32 len);
 	void unInsert(Channel *chan);
 	void beginSlots(int index);
 
@@ -109,7 +107,7 @@ public:
 		FLAG_LOOP = 1 << 5              // loop the audio
 	};
 	int playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id = -1);
-	int playStream(PlayingSoundHandle *handle, int index, void *sound, uint32 size, uint rate,
+	int playStream(int index, void *sound, uint32 size, uint rate,
 									byte flags, int32 timeout = 3, int32 buffer_size = 2000000);
 #ifdef USE_MAD
 	int playMP3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags);
@@ -135,7 +133,7 @@ public:
 	void stopID(int id);
 
 	/** append to existing sound */
-	int append(int index, void * sound, uint32 size, uint rate, byte flags);
+	int append(int index, void * sound, uint32 size);
 
 	/** is any channel active? */
 	bool hasActiveChannel();
