@@ -28,7 +28,7 @@ void Scumm::setupOpcodes() {
 	/* 00 */
 	&Scumm::o5_stopObjectCode,
 	&Scumm::o5_putActor,
-	&Scumm::o5_startMusic,
+	&Scumm::o5_tartMusic,
 	&Scumm::o5_getActorRoom,
 	/* 04 */
 	&Scumm::o5_isGreaterEqual,
@@ -1684,12 +1684,6 @@ void Scumm::o5_startObject() {
 	obj = getVarOrDirectWord(0x80);
 	script = getVarOrDirectByte(0x40);
 
-	if(_gameId == GID_INDY3_256) /*FIXME*/
-	{
-		fetchScriptByte();
-		return;
-	}
-	
 	getWordVararg(data);
 	runVerbCode(obj, script, 0, 0, data);
 }
@@ -2140,9 +2134,10 @@ void Scumm::o5_pickupObjectOld() {
 
 	if(getObjectIndex(obj) != 1)
 		return;
-
+	
+	addObjectToInventory(obj,_currentRoom);	/*FIXME: the implementation is not quite acurate */
 
 	
-	warning("Unsupported pickupObjectOld");
+	warning("pickupObjectOld(%d) not fully supported",obj);
 
 }

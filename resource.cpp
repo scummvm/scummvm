@@ -419,8 +419,8 @@ void Scumm::readIndexFileSmall() {
                                _classData[i] = fileReadByte() + 256*fileReadByte()+ 256*256*fileReadByte();
                      //          fileReadByte();
                                _objectOwnerTable[i] = fileReadByte();
-                     //          _objectStateTable[i] = _objectOwnerTable[i]>>OF_STATE_SHL;
-                     //          _objectOwnerTable[i] &= OF_OWNER_MASK;
+                               _objectStateTable[i] = _objectOwnerTable[i]>>OF_STATE_SHL;
+                               _objectOwnerTable[i] &= OF_OWNER_MASK;
                        }
                
 #if defined(SCUMM_BIG_ENDIAN)
