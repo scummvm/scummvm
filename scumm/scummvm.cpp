@@ -764,7 +764,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_2byteWidth = 16;
 		_2byteHeight = 16;
 		//use FM Towns font rom, since game files don't have kanji font resources
-		if (fp.open("fmt_fnt.rom", "./", 1)) { //FIXME: use getGameDataPath()?
+		if (fp.open("fmt_fnt.rom", getGameDataPath(), 1) || fp.open("fmt_fnt.rom", "./", 1)) { 
 			_CJKMode = true;
 			debug(2, "Loading FM Towns Kanji rom");
 			_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
