@@ -1023,7 +1023,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 			}
 
 			if (objAnim[i].object < 4)
-				bob->frameNum = 29 + bob->frameNum + FRAMES_JOE_XTRA;
+				bob->frameNum = 29 + objAnim[i].object + FRAMES_JOE_XTRA;
 
 			if (objAnim[i].unpackFrame == 0) {
 				// Turn off the bob
@@ -1033,7 +1033,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 				if (object.animType == 2 || object.animType == 0) {
 					// Unpack animation, but do not unpack moving people
 
-					if (!((objAnim[i].mx || objAnim[i].my) && InRange(objAnim[i].object, 0, 3))) {
+					if (!((objAnim[i].mx > 0 || objAnim[i].my > 0) && InRange(objAnim[i].object, 1, 3))) {
 						/*debug(0, "Animation - bankUnpack(%i, %i, %i);",
 								objAnim[i].unpackFrame, 
 								objAnim[i].originalFrame,
@@ -1056,12 +1056,14 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 				}
 
 				// Only flip if we are not moving or it is not a person object
-				if (!(objAnim[i].mx || objAnim[i].my) ||
-						!(objAnim[i].object > 0 && objAnim[i].object < 4))
+				if (!(objAnim[i].object > 0 && objAnim[i].object < 4) ||
+						!(objAnim[i].mx || objAnim[i].my) )
 					bob->xflip = objAnim[i].flip;
 
 				// Add frame alteration
-				bob->frameNum = objAnim[i].originalFrame;
+				if (!(objAnim[i].object > 0 && objAnim[i].object < 4)) {
+					bob->frameNum = objAnim[i].originalFrame;
+				}
 
 				int j;
 				for (j = 0; j < objAnim[i].speed; j++)
