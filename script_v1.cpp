@@ -2116,16 +2116,28 @@ void Scumm::o5_setObjectName()
 	int obj = getVarOrDirectWord(0x80);
 	int size;
 	int a;
-	int i;
-	byte *name;
+	int i = 0;
+	byte *name = NULL;
 	unsigned char work[255];
 
 	if (obj < NUM_ACTORS)
 		error("Can't set actor %d name with new-name-of", obj);
 
-	if (!getOBCDFromObject(obj))
-		error("Can't set name of object %d", obj);
+	if (!getOBCDFromObject(obj)) {
+		// FIXME for bug 587553. This is an odd one and looks more
+		// like an actual bug in the original script.
+		while ((a = fetchScriptByte()) != 0) {
+               		work[i++] = a;
 
+	                if (a == 0xFF) {
+        	                work[i++] = fetchScriptByte();
+                	        work[i++] = fetchScriptByte();
+				work[i++] = fetchScriptByte();
+                	}
+		}
+		warning("Can't find OBCD to rename object %d to %s", obj, name);
+		return;
+	}
 	name = getObjOrActorName(obj);
 
 	if (_features & GF_SMALL_HEADER) {
