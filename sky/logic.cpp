@@ -984,6 +984,72 @@ static const uint32 forwardList1b[] = {
 	DEATH_SCRIPT
 };
 
+static uint32 forwardList1b288[] = {
+	JOBS_SPEECH,
+	JOBS_S4,
+	JOBS_ALARMED,
+	JOEY_RECYCLE,
+	SHOUT_SSS,
+	JOEY_MISSION,
+	TRANS_MISSION,
+	SLOT_MISSION,
+	CORNER_MISSION,
+	JOEY_LOGIC,
+	GORDON_SPEECH,
+	JOEY_BUTTON_MISSION,
+	LOB_DAD_SPEECH,
+	LOB_SON_SPEECH,
+	GUARD_SPEECH,
+	0x68,
+	WRECK_SPEECH,
+	ANITA_SPEECH,
+	LAMB_FACTORY,
+	FORE_SPEECH,
+	JOEY_42_MISS,
+	JOEY_JUNCTION_MISS,
+	WELDER_MISSION,
+	JOEY_WELD_MISSION,
+	RADMAN_SPEECH,
+	LINK_7_29,
+	LINK_29_7,
+	LAMB_TO_3,
+	LAMB_TO_2,
+	0x3147,
+	0x3100,
+	0x3101,
+	0x3102,
+	0x3148,
+	0x3149,
+	0x314A,
+	0x30C5,
+	0x30C6,
+	0x30CB,
+	0x314B,
+	JOEY_FACTORY,
+	0x314C,
+	0x30E2,
+	0x314D,
+	0x310C,
+	LAMB_FACT_RETURN,
+	0x3139,
+	0x313A,
+	0x004F,
+	CABLE_MISSION,
+	FOSTER_TOUR,
+	LAMB_TOUR,
+	FOREMAN_LOGIC,
+	LAMB_LEAVE_FACTORY,
+	0x3138,
+	LAMB_FACT_2,
+	0x004D,
+	0,
+	0,
+	LINK_28_31,
+	LINK_31_28,
+	0x004E,
+	DEATH_SCRIPT
+};
+
 static const uint32 forwardList2b[] = {
 	STD_ON,
 	STD_EXIT_LEFT_ON,
@@ -1077,7 +1143,11 @@ void SkyLogic::initScriptVariables() {
 	_scriptVariables[820] = 1;
 	_scriptVariables[821] = 1;
 
-	memcpy(_scriptVariables + 352, forwardList1b, sizeof(forwardList1b));
+	if (SkyState::_systemVars.gameVersion == 288)
+		memcpy(_scriptVariables + 352, forwardList1b288, sizeof(forwardList1b288));
+	else
+        memcpy(_scriptVariables + 352, forwardList1b, sizeof(forwardList1b));
+		
 	memcpy(_scriptVariables + 656, forwardList2b, sizeof(forwardList2b));
 	memcpy(_scriptVariables + 721, forwardList3b, sizeof(forwardList3b));
 	memcpy(_scriptVariables + 663, forwardList4b, sizeof(forwardList4b));

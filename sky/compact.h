@@ -31,6 +31,24 @@ namespace SkyCompact {
 	uint16 **getTurnTable(Compact *cpt, uint16 megaSet, uint16 dir);
 	uint16 *getSub(Compact *cpt, uint16 mode);
 	void *getCompactElem(Compact *cpt, uint32 off);
+	void patchFor288(void);
+
+	extern uint16 s11_fl_tab288[33];
+	extern uint16 s19_fl_tab288[17];
+	extern uint16 s20_fl_tab288[37]; 
+	extern uint16 s21_fl_tab288[31]; 
+	extern uint16 s22_fl_tab288[31];
+	extern uint16 s23_fl_tab288[27]; 
+	extern uint16 s24_fl_tab288[23]; 
+	extern uint16 s25_fl_tab288[19]; 
+	extern uint16 s26_fl_tab288[29];
+	extern uint16 s27_fl_tab288[29];
+	extern uint16 s28_fl_tab288[27];
+	extern uint16 s28_sml_tab288[13];
+	extern uint16 s29_fl_tab288[27];
+	extern uint16 s29_sml_tab288[13];
+	extern uint16 body_tab288[7];
+	extern uint16 chair_tab288[23];
 
 	extern uint16 slide2_seq[];
 	extern uint16 m_ss_st_up[];

@@ -128,8 +128,7 @@ void SkyState::go() {
 		if (_key_pressed == 63) {
 			_key_pressed = 0;
 			_skyControl->doControlPanel();
-		}
-
+		}			
 		/*if ((_key_pressed == 27) && (!_systemVars.pastIntro))
 			_skyControl->restartGame();*/
 
@@ -188,6 +187,9 @@ void SkyState::initialise(void) {
 
 	_skyControl = new SkyControl(_skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _system, getSavePath());
 	_skyLogic->useControlInstance(_skyControl);
+
+	if (_systemVars.gameVersion == 288)
+		SkyCompact::patchFor288();
 }
 
 void SkyState::initItemList() {
