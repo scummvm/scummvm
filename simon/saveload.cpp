@@ -21,6 +21,13 @@
 
 #include "stdafx.h"
 
+#ifndef _WIN32_WCE
+// FIXME TODO FIXME: Using errno is not really portable!
+// We should get rid of this, possibly by adding (clear)ioFailed methods
+// to the SaveFile class.
+#include <errno.h>
+#endif
+
 #include "gui/about.h"
 #include "gui/message.h"
 
