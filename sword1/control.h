@@ -30,6 +30,7 @@ class ResMan;
 class OSystem;
 class SwordMouse;
 class SwordMusic;
+class SwordSound;
 
 #define MAX_BUTTONS 16
 
@@ -63,16 +64,13 @@ struct ButtonInfo {
 
 class SwordControl {
 public:
-	SwordControl(ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, SwordMouse *pMouse, SwordMusic *pMusic, const char *savePath);
+	SwordControl(ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, SwordMouse *pMouse, SwordSound *pSound, SwordMusic *pMusic, const char *savePath);
 	~SwordControl(void);
 	uint8 runPanel(void);
 	void doRestore(void);
 	void askForCd(void);
 	bool savegamesExist(void);
 private:
-	void initData(void);
-	void closeData(void);
-
 	void saveGameToFile(uint8 slot);
 	bool restoreGameFromFile(uint8 slot);
 	void readSavegameDescriptions(void);
@@ -88,6 +86,8 @@ private:
 
 	uint8 getClicks(uint8 mode, uint8 *retVal);
 	uint8 handleButtonClick(uint8 id, uint8 mode, uint8 *retVal);
+	void handleVolumeClicks(void);
+	void changeVolume(uint8 id, uint8 action);
 
 	void setupMainPanel(void);
 	void setupSaveRestorePanel(bool saving);
@@ -101,7 +101,7 @@ private:
 	bool keyAccepted(uint8 key);
 	void handleSaveKey(uint8 key);
 
-	void renderVolumeBar(uint8 id);
+	void renderVolumeBar(uint8 id, uint8 volL, uint8 volR);
 	uint16 getTextWidth(const uint8 *str);
 	void renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode);
 	uint8 _numButtons;
@@ -109,7 +109,7 @@ private:
 	void createButtons(const ButtonInfo *buttons, uint8 num);
 	void destroyButtons(void);
 	ControlButton *_buttons[MAX_BUTTONS];
-	static const ButtonInfo _deathButtons[3], _panelButtons[7], _saveButtons[16], _volumeButtons[1];
+	static const ButtonInfo _deathButtons[3], _panelButtons[7], _saveButtons[16], _volumeButtons[4];
 	static const uint8 _languageStrings[8 * 20][43];
 	const uint8 (*_lStrings)[43];
 	ObjectMan *_objMan;
@@ -117,12 +117,14 @@ private:
 	OSystem *_system;
 	SwordMouse *_mouse;
 	SwordMusic *_music;
+	SwordSound *_sound;
 	char _savePath[256];
 	uint8 *_font, *_redFont;
 	uint8 *_screenBuf;
 	uint8 _keyPressed;
 	void delay(uint32 msecs);
 	uint16 _mouseX, _mouseY, _mouseState;
+	bool _mouseDown;
 };
 
 

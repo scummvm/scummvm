@@ -64,9 +64,10 @@ public:
 	~SwordMusic();
 	void startMusic(int32 tuneId, int32 loopFlag);
 	void fadeDown();
-	void setVolume(uint8 vol);
+	void setVolume(uint8 volL, uint8 volR);
+	void giveVolume(uint8 *volL, uint8 *volR);
 private:
-	st_volume_t _volume;
+	st_volume_t _volumeL, _volumeR;
 	SwordMusicHandle _handles[2];
 	RateConverter *_converter[2];
 	OSystem *_system;

@@ -32,6 +32,8 @@
 #include "common/util.h"
 #include "mouse.h"
 #include "music.h"
+#include "sound.h" 
+#include <math.h> // for sqrt()
 
 #define SAVEFILE_WRITE true
 #define SAVEFILE_READ false
@@ -150,12 +152,13 @@ void ControlButton::setSelected(uint8 selected) {
 	draw();
 }
 
-SwordControl::SwordControl(ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, SwordMouse *pMouse, SwordMusic *pMusic, const char *savePath) {
+SwordControl::SwordControl(ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, SwordMouse *pMouse, SwordSound *pSound, SwordMusic *pMusic, const char *savePath) {
 	_resMan = pResMan;
 	_objMan = pObjMan;
 	_system = system;
 	_mouse = pMouse;
 	_music = pMusic;
+	_sound = pSound;
 	strcpy(_savePath, savePath);
 	_lStrings = _languageStrings + MIN(SwordEngine::_systemVars.language, (uint8)BS1_SPANISH) * 20;
 }
@@ -212,6 +215,7 @@ void SwordControl::askForCd(void) {
 }
 
 uint8 SwordControl::runPanel(void) {
+	_mouseDown = false;
 	_restoreBuf = NULL;
 	_keyPressed = _numButtons = 0;
 	_screenBuf = (uint8*)malloc(640 * 480);
@@ -283,10 +287,16 @@ uint8 SwordControl::runPanel(void) {
 }
 
 uint8 SwordControl::getClicks(uint8 mode, uint8 *retVal) {
+	uint8 checkButtons = _numButtons;
+	if (mode == BUTTON_VOLUME_PANEL) {
+		handleVolumeClicks();
+		checkButtons = 1;
+	}
+
 	if (!_mouseState)
 		return 0;
 	if (_mouseState & BS1L_BUTTON_DOWN)
-		for (uint8 cnt = 0; cnt < _numButtons; cnt++)
+		for (uint8 cnt = 0; cnt < checkButtons; cnt++)
 			if (_buttons[cnt]->wasClicked(_mouseX, _mouseY)) {
 				_selectedButton = cnt;
 				_buttons[cnt]->setSelected(1);
@@ -294,7 +304,7 @@ uint8 SwordControl::getClicks(uint8 mode, uint8 *retVal) {
 					showSavegameNames();
 			}
 	if (_mouseState & BS1L_BUTTON_UP) {
-		for (uint8 cnt = 0; cnt < _numButtons; cnt++)
+		for (uint8 cnt = 0; cnt < checkButtons; cnt++)
 			if (_buttons[cnt]->wasClicked(_mouseX, _mouseY))
 				if (_selectedButton == cnt) {
 					// saveslots stay selected after clicking
@@ -303,7 +313,7 @@ uint8 SwordControl::getClicks(uint8 mode, uint8 *retVal) {
 					_selectedButton = 255;
 					return handleButtonClick(_buttons[cnt]->_id, mode, retVal);
 				}
-		if (_selectedButton < _numButtons) {
+		if (_selectedButton < checkButtons) {
 			_buttons[_selectedButton]->setSelected(0);
 			if (_buttons[_selectedButton]->isSaveslot())
 				showSavegameNames();
@@ -436,10 +446,101 @@ void SwordControl::setupVolumePanel(void) {
 	renderText(_lStrings[STR_SPEECH], 320, 39 + 40, TEXT_CENTER);
 	renderText(_lStrings[STR_FX], 438, 39 + 40, TEXT_LEFT_ALIGN);
 
-	renderText((const uint8*)"NOT YET IMPLEMENTED", 320, 240, TEXT_CENTER);
-
-	createButtons(_volumeButtons, 1);
+	createButtons(_volumeButtons, 4);
 	renderText(_lStrings[STR_DONE], _volumeButtons[0].x - 10, _volumeButtons[0].y, TEXT_RIGHT_ALIGN);
+
+	uint8 volL, volR;
+	_music->giveVolume(&volL, &volR);
+	renderVolumeBar(1, volL, volR);
+	_sound->giveSpeechVol(&volL, &volR);
+	renderVolumeBar(2, volL, volR);
+	_sound->giveSfxVol(&volL, &volR);
+	renderVolumeBar(3, volL, volR);
+}
+
+void SwordControl::handleVolumeClicks(void) {
+	if (_mouseDown) {
+		uint8 clickedId = 0;
+		for (uint8 cnt = 1; cnt < 4; cnt++)
+			if (_buttons[cnt]->wasClicked(_mouseX, _mouseY))
+				clickedId = cnt;
+		if (clickedId) { // these are circle shaped, so check again if it was clicked.
+			uint8 clickDest = 0;
+			int16 mouseDiffX = _mouseX - (_volumeButtons[clickedId].x + 48);
+			int16 mouseDiffY = _mouseY - (_volumeButtons[clickedId].y + 48);
+			int16 mouseOffs = (int16)sqrt(mouseDiffX * mouseDiffX + mouseDiffY * mouseDiffY);
+			// check if the player really hit the button (but not the center).
+			if ((mouseOffs <= 42) && (mouseOffs >= 8)) {
+				if (mouseDiffX > 8) { // right part
+					if (mouseDiffY < -8) // upper right
+						clickDest = 2;
+					else if (ABS(mouseDiffY) <= 8) // right
+						clickDest = 3;
+					else				 // lower right
+						clickDest = 4;
+				} else if (mouseDiffX < -8) { // left part
+					if (mouseDiffY < -8) // upper left
+						clickDest = 8;
+					else if (ABS(mouseDiffY) <= 8) // left
+						clickDest = 7;
+					else				 // lower left
+						clickDest = 6;
+				} else { // middle
+					if (mouseDiffY < -8)
+						clickDest = 1; // upper
+					else if (mouseDiffY > 8)
+						clickDest = 5; // lower
+				}
+			}
+			_buttons[clickedId]->setSelected(clickDest);
+			changeVolume(clickedId, clickDest);
+		}
+	} else if (_mouseState & BS1L_BUTTON_UP) {
+		_buttons[1]->setSelected(0);
+		_buttons[2]->setSelected(0);
+		_buttons[3]->setSelected(0);
+	}
+}
+
+void SwordControl::changeVolume(uint8 id, uint8 action) {
+	// ids: 1 = music, 2 = speech, 3 = sfx
+	uint8 volL = 0, volR = 0;
+	if (id == 1)
+		_music->giveVolume(&volL, &volR);	
+	else if (id == 2)
+		_sound->giveSpeechVol(&volL, &volR);
+	else if (id == 3)
+		_sound->giveSfxVol(&volL, &volR);
+	
+	int8 direction = 0;
+	if ((action >= 4) && (action <= 6)) // lower part of the button => decrease volume
+		direction = -1;
+	else if ((action == 8) || (action == 1) || (action == 2)) // upper part => increase volume
+		direction = 1;
+	else if ((action == 3) || (action == 7)) // middle part => pan volume
+		direction = 1;
+	int8 factorL = 8, factorR = 8;
+	if ((action >= 6) && (action <= 8)) { // left part => left pan
+		factorL = 8;
+		factorR = (action == 7) ? -8 : 0;
+	} else if ((action >= 2) && (action <= 4)) { // right part
+		factorR = 8;
+		factorL = (action == 3) ? -8 : 0;
+	}
+	int16 resVolL = volL + direction * factorL;
+	int16 resVolR = volR + direction * factorR;
+
+	volL = (uint8)MAX((int16)0, MIN(resVolL, (int16)255));
+	volR = (uint8)MAX((int16)0, MIN(resVolR, (int16)255));	
+
+	if (id == 1)
+		_music->setVolume(volL, volR);
+	else if (id == 2)
+		_sound->setSpeechVol(volL, volR);
+	else if (id == 3)
+		_sound->setSfxVol(volL, volR);
+
+	renderVolumeBar(id, volL, volR);
 }
 
 bool SwordControl::getConfirm(const uint8 *title) {
@@ -701,8 +802,24 @@ void SwordControl::renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode) 
 	_system->copy_rect(_screenBuf + y * SCREEN_WIDTH + x, SCREEN_WIDTH, x, y, (destX - x) + 3, 28);
 }
 
-void SwordControl::renderVolumeBar(uint8 id) {
-
+void SwordControl::renderVolumeBar(uint8 id, uint8 volL, uint8 volR) {
+	uint16 destX = _volumeButtons[id].x + 20;
+	uint16 destY = _volumeButtons[id].y + 116;
+	
+	for (uint8 chCnt = 0; chCnt < 2; chCnt++) {
+		uint8 vol = (chCnt == 0) ? volL : volR;
+		FrameHeader *frHead = _resMan->fetchFrame(_resMan->openFetchRes(SR_VLIGHT), (vol + 15) >> 4);
+		uint8 *destMem = _screenBuf + destY * SCREEN_WIDTH + destX;
+		uint8 *srcMem = (uint8*)frHead + sizeof(FrameHeader);
+		for (uint16 cnty = 0; cnty < FROM_LE_16(frHead->height); cnty++) {
+			memcpy(destMem, srcMem, FROM_LE_16(frHead->width));
+			srcMem += FROM_LE_16(frHead->width);
+			destMem += SCREEN_WIDTH;
+		}
+		_system->copy_rect(_screenBuf + destY * SCREEN_WIDTH + destX, SCREEN_WIDTH, destX, destY, FROM_LE_16(frHead->width), FROM_LE_16(frHead->height));
+		_resMan->resClose(SR_VLIGHT);
+		destX += 32;
+	}
 }
 
 void SwordControl::saveGameToFile(uint8 slot) {
@@ -823,6 +940,7 @@ void SwordControl::delay(uint32 msecs) {
 				_mouseY = event.mouse.y;
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
+				_mouseDown = true;
 				_mouseState |= BS1L_BUTTON_DOWN;
 #ifdef _WIN32_WCE
 				_mouseX = event.mouse.x;
@@ -830,6 +948,7 @@ void SwordControl::delay(uint32 msecs) {
 #endif
 				break;
 			case OSystem::EVENT_LBUTTONUP:
+				_mouseDown = false;
 				_mouseState |= BS1L_BUTTON_UP;
 				break;
 			case OSystem::EVENT_QUIT:
@@ -878,8 +997,11 @@ const ButtonInfo SwordControl::_saveButtons[16] = {
 	{462, 338 + 40, SR_BUTTON, BUTTON_SAVE_CANCEL}
 };
 
-const ButtonInfo SwordControl::_volumeButtons[1] = {
-	{ 478, 338 + 40, SR_BUTTON, BUTTON_MAIN_PANEL } 
+const ButtonInfo SwordControl::_volumeButtons[4] = {
+	{ 478, 338 + 40, SR_BUTTON, BUTTON_MAIN_PANEL },
+	{ 138, 135, SR_VKNOB, 0 },
+	{ 273, 135, SR_VKNOB, 0 },
+	{ 404, 135, SR_VKNOB, 0 },
 };
 
 const uint8 SwordControl::_languageStrings[8 * 20][43] = {

@@ -59,7 +59,10 @@ class SwordSound {
 public:
 	SwordSound(const char *searchPath, SoundMixer *mixer, ResMan *pResMan);
 	~SwordSound(void);
-	void setVolume(uint8 sfxVol, uint8 speechVol);
+	void setSpeechVol(uint8 volL, uint8 volR) { _speechVolL = volL; _speechVolR = volR; };
+	void setSfxVol(uint8 volL, uint8 volR) { _sfxVolL = volL; _sfxVolR = volR; };
+	void giveSpeechVol(uint8 *volL, uint8 *volR) { *volL = _speechVolL; *volR = _speechVolR; };
+	void giveSfxVol(uint8 *volL, uint8 *volR) { *volL = _sfxVolL; *volR = _sfxVolR; };
 	void newScreen(uint32 screen);
 	void quitScreen(void);
 	void closeCowSystem(void);
@@ -75,7 +78,7 @@ public:
 	void engine(void);
 
 private:
-	uint8 _sfxVol, _speechVol;
+	uint8 _sfxVolL, _sfxVolR, _speechVolL, _speechVolR;
 	void playSample(QueueElement *elem);
 	void initCowSystem(void);
 
