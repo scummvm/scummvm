@@ -48,6 +48,7 @@ SCUMM Games:
      Indiana Jones & the Last Crusade (256)          [Game: indy3]
      Indiana Jones & the Last Crusade (256 FM Towns) [Game: indy3towns]
      Loom (16 color floppy version)                  [Game: loom]
+     Loom (256 FM Towns)                             [Game: loomtowns]
      Loom (256 color CD version)                     [Game: loomcd]
      Zak McKracken (256 FM Towns)                    [Game: zak256]
      Monkey Island 1 (EGA version)                   [Game: monkeyega]
@@ -73,7 +74,6 @@ prevent them from being fully supported at this time. Please do not file bug
 reports about them.
         
      Full Throttle                                 [Game: ft]
-     Zak McKracken (256 FM Towns Kanji version)    [Game: zak256]
 
 The following games should load, but are not yet fully playable. Play these at
 your own risk, and please do not file bug reports about them. If you want
@@ -86,6 +86,7 @@ compatibility chart.
      Putt-Putt's Fun Pack                          [Game: funpack]
      Fatty Bear's Birthday Surprise                [Game: fbear]
      Fatty Bear's Fun Pack                         [Game: fbpack]
+     Broken Sword II                               [Game: sword2]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
