@@ -2385,8 +2385,35 @@ void Scumm_v5::o5_verbOps() {
 		case 5:										/* set xy */
 			vs->x = getVarOrDirectWord(0x80);
 			vs->y = getVarOrDirectWord(0x40);
+			// Macintosh verison of indy3ega used different interface, so adjust values.
+			if ((_features & GF_MACINTOSH) && (_gameId == GID_INDY3)) {
+				if ((verb > 0) && (verb < 14) || (verb > 31) && (verb < 35)) {
+					switch (verb) {
+					case 1:
+					case 2:
+					case 9:
+						vs->x += 16;
+						break;
+					case 10:
+					case 11:
+					case 12:
+						vs->x += 36;
+						break;
+					case 4:
+					case 5:
+					case 8:
+						vs->x += 60;
+						break;
+					case 13:
+					case 32:
+					case 33:
+					case 34:
+						vs->x += 90;
+						break;
+					}
+				}
+			} else 	if (_gameId == GID_LOOM256) {
 			// FIXME: hack loom notes into right spot
-			if (_gameId == GID_LOOM256) {
 				if ((verb >= 90) && (verb <= 97)) {	// Notes
 					switch (verb) {
 					case 90:
