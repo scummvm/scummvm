@@ -258,6 +258,7 @@ void Sound::playSound(int soundID) {
 		
 		return;
 	}	
+/*
 	// XMIDI 
 	else if ((READ_UINT32(ptr) == MKID('MIDI')) && (_scumm->_features & GF_HUMONGOUS)) {
 		// Pass XMIDI on to IMuse unprocessed.
@@ -267,6 +268,7 @@ void Sound::playSound(int soundID) {
 		// played as MIDI, just to make perhaps the later use
 		// of WA possible (see "else if" with GF_OLD256 below)
 	}
+*/
 	// Support for sampled sound effects in Monkey Island 1 and 2
 	else if (READ_UINT32(ptr) == MKID('SBL ')) {
 		debug(2, "Using SBL sound effect");
@@ -325,7 +327,8 @@ void Sound::playSound(int soundID) {
 		memcpy(sound, ptr + 33, size);
 		_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 		return;
-	} else if (_scumm->_features & GF_FMTOWNS) {
+	}
+	else if (_scumm->_features & GF_FMTOWNS) {
 		size = READ_LE_UINT32(ptr);
 		rate = 11025;
 		int type = *(ptr + 0x0D);
@@ -405,8 +408,7 @@ void Sound::playSound(int soundID) {
 		}
 		return;
 	}
-
-	if ((_scumm->_gameId == GID_LOOM) && (_scumm->_features & GF_MACINTOSH))  {
+	else if ((_scumm->_gameId == GID_LOOM) && (_scumm->_features & GF_MACINTOSH))  {
 		// Mac version of Loom uses yet another sound format
 		/*
 		playSound #9 (room 70)
@@ -430,21 +432,16 @@ void Sound::playSound(int soundID) {
 		*/
 		return;
 	}
-	
-
-	if ((_scumm->_features & GF_MACINTOSH) && (_scumm->_gameId == GID_INDY3)) {
-		if (ptr[26] == 00) {
-			size = READ_BE_UINT16(ptr + 12);
-			rate = 3579545 / READ_BE_UINT16(ptr + 20);
-			sound = (char *)malloc(size);
-			int vol = ptr[24] * 4;
-			memcpy(sound,ptr + READ_BE_UINT16(ptr + 8), size);
-			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
-			return;
-		}
+	else if ((_scumm->_features & GF_MACINTOSH) && (_scumm->_gameId == GID_INDY3) && (ptr[26] == 0)) {
+		size = READ_BE_UINT16(ptr + 12);
+		rate = 3579545 / READ_BE_UINT16(ptr + 20);
+		sound = (char *)malloc(size);
+		int vol = ptr[24] * 4;
+		memcpy(sound,ptr + READ_BE_UINT16(ptr + 8), size);
+		_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
+		return;
 	}
-
-	if ((_scumm->_features & GF_AMIGA) && (_scumm->_version <= 2) && READ_BE_UINT16(ptr + 14) == 0x0880) {
+	else if ((_scumm->_features & GF_AMIGA) && (_scumm->_version <= 2) && READ_BE_UINT16(ptr + 14) == 0x0880) {
 		size = READ_BE_UINT16(ptr + 6);
 		int start = READ_BE_UINT16(ptr + 8);
 		start += 10;
@@ -467,7 +464,7 @@ void Sound::playSound(int soundID) {
 		_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, soundID, vol, 0);
 		return;
 	}
-
+	
 	if (_scumm->_gameId == GID_MONKEY_VGA || _scumm->_gameId == GID_MONKEY_EGA) {
 		// Sound is currently not supported at all in the amiga versions of these games
 		if (_scumm->_features & GF_AMIGA)
@@ -483,15 +480,8 @@ void Sound::playSound(int soundID) {
 		}
 	}
 
-	if (_scumm->_playerV2) {
-		_scumm->_playerV2->startSound(soundID);
-	}
-
-	if (_scumm->_playerV3A)
-		_scumm->_playerV3A->startSound(soundID);
-
-	if (_scumm->_imuse) {
-		_scumm->_imuse->startSound(soundID);
+	if (_scumm->_musicEngine) {
+		_scumm->_musicEngine->startSound(soundID);
 	}
 }
 
@@ -759,14 +749,8 @@ void Sound::stopSound(int a) {
 
 	if (_scumm->_features & GF_FMTOWNS) {
 		_scumm->_mixer->stopID(a);
-	} else if (_scumm->_imuseDigital) {
-		_scumm->_imuseDigital->stopSound(a);
-	} else if (_scumm->_imuse) {
-		_scumm->_imuse->stopSound(a);
-	} else if (_scumm->_playerV2) {
-		_scumm->_playerV2->stopSound (a);
-	} else 	if (_scumm->_playerV3A) {
-		_scumm->_playerV3A->stopSound(a);
+	} else if (_scumm->_musicEngine) {
+		_scumm->_musicEngine->stopSound(a);
 	}
 
 	for (i = 0; i < 10; i++)
