@@ -68,7 +68,7 @@ static void displaySaveResult(vmsaveResult res)
     break;
   }
 
-  MessageDialog dialog(buf);
+  GUI::MessageDialog dialog(buf);
   dialog.runModal();
 }
 
