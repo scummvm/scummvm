@@ -42,8 +42,8 @@ struct BundleAudioTable {
 
 	int32 compDecode(byte *src, byte *dst);
 	int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 size, int32 index, int32 & channels);
-	CompTable _compVoiceTable[50];
-	CompTable _compMusicTable[3361];
+	CompTable *_compVoiceTable;
+	CompTable *_compMusicTable;
 	File _voiceFile;
 	BundleAudioTable *_bundleVoiceTable;
 	BundleAudioTable *_bundleMusicTable;

@@ -360,8 +360,6 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 }
 
 bool ScummDebugger::Cmd_DebugLevel(int argc, const char **argv) {
-	int level;
-	
 	if (argc == 1) {
 		if (_s->_debugMode == false)
 			Debug_Printf("Debugging is not enabled at this time\n");

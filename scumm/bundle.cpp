@@ -260,7 +260,10 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final, int32 
 		return 0;
 	}
 
-	assert(num <= 50);
+	if (_compVoiceTable)
+		free(_compVoiceTable);
+
+	_compVoiceTable = (CompTable*)malloc(sizeof(CompTable) * num);
 	for (i = 0; i < num; i++) {
 		_compVoiceTable[i].offset = _voiceFile.readUint32BE();
 		_compVoiceTable[i].size = _voiceFile.readUint32BE();
@@ -315,7 +318,10 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 			return 0;
 		}
 
-		assert(num <= 3361);
+		if (_compMusicTable)
+			free(_compMusicTable);
+		_compMusicTable = (CompTable*)malloc(sizeof(CompTable) * num);
+
 		for (i = 0; i < num; i++) {
 			_compMusicTable[i].offset = _musicFile.readUint32BE();
 			_compMusicTable[i].size = _musicFile.readUint32BE();
