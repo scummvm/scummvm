@@ -636,7 +636,7 @@ void Scumm::drawFlashlight() {
 		return;
 
 	// Calculate the area of the flashlight
-	if (_gameId == GID_ZAK256 || _gameId == GID_ZAK) {
+	if (_gameId == GID_ZAK256 || _features & GF_AFTER_V2) {
 		x = _mouse.x + virtscr[0].xstart;
 		y = _mouse.y - virtscr[0].topline;
 	} else {
