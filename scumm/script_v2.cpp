@@ -2377,16 +2377,19 @@ void Scumm::o6_wait()
 			return;
 		break;
 	case 226:{										/* wait until actor drawn */
-			Actor *a = derefActorSafe(pop(), "o6_wait:226");
+			int actnum = pop();
+			Actor *a = derefActorSafe(actnum, "o6_wait:226");
 			int offs = (int16)fetchScriptWord();
 			
-			return; // FIXME
-			// This wait command doesn't return at the 
+			// FIXME: This wait command doesn't return at the 
 			// correct times, which causes several script freezes
 			// in The Dig. Eg, planetarium lightbridge,
 			// and taking the rod in the museum AFTER looking at
-			// all the displays. Why? Is our code too optimised
-			// vs. the original?
+			// all the displays. This is testing actor 3 (Ego),
+			// so I'm guessing it's something to do with the way
+			// ego doesn't always stop his mouth moving.
+			if (actnum == 3)
+				return;
 
 			if (a && a->isInCurrentRoom() && a->needRedraw) {
 				_scriptPointer += offs;
