@@ -79,13 +79,13 @@ void Scumm::openRoom(int room) {
 		}
 		if (!(_features & GF_SMALL_HEADER)) {
 
-			if (_version >= 7) {
+			if (_features & GF_AFTER_HEV7) {
+				sprintf(buf, "%s.he%.1d", _exe_name, room == 0 ? 0 : 1);
+			} else if (_version >= 7) {
 				if (room > 0 && (_version == 8))
 					VAR(VAR_CURRENTDISK) = res.roomno[rtRoom][room];
 				sprintf(buf, "%s.la%d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
 				sprintf(buf2, "%s.%.3d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
-			} else if (_features & GF_AFTER_HEV7) {
-				sprintf(buf, "%s.he%.1d", _exe_name, room == 0 ? 0 : 1);
 			} else if (_features & GF_HUMONGOUS)
 				sprintf(buf, "%s.he%.1d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
 			else {
@@ -341,7 +341,8 @@ void Scumm::readIndexFile() {
 				}
 				if (_features & GF_AFTER_HEV7) {
 					// _objectRoomTable
-					_fileHandle.seek(num * 4, SEEK_CUR);
+					//_fileHandle.seek(num * 4, SEEK_CUR);
+					_fileHandle.read(_objectRoomTable, num * 4);
 				}
 			}
 			
@@ -367,6 +368,10 @@ void Scumm::readIndexFile() {
 			_fileHandle.read(_HEV7RoomOffsets, (2 + (i * 4)) );
 			break;
 
+		case MKID('DIRM'):
+			_fileHandle.seek(itemsize - 8, SEEK_CUR);
+			break;
+			
 		case MKID('DIRI'):
 			num = _fileHandle.readUint16LE();
 			_fileHandle.seek(num + (8 * num), SEEK_CUR);
@@ -1928,7 +1933,29 @@ void Scumm::readMAXS() {
 		_numGlobalScripts = 2000;
 
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
-	} else if (_version == 6) {
+	// FIXME better check for the more recent windows based humongous games...
+	} else if (_gameId == GID_PJSDEMO) {
+		_fileHandle.readUint16LE();
+		_numVariables = _fileHandle.readUint16LE();
+		_numBitVariables = _fileHandle.readUint16LE();
+		_numLocalObjects = _fileHandle.readUint16LE();
+		_numArray = _fileHandle.readUint16LE();
+		_fileHandle.readUint16LE();
+		_fileHandle.readUint16LE();
+		_numFlObject = _fileHandle.readUint16LE();
+		_numInventory = _fileHandle.readUint16LE();
+		_numRooms = _fileHandle.readUint16LE();
+		_numScripts = _fileHandle.readUint16LE();
+		_numSounds = _fileHandle.readUint16LE();
+		_numCharsets = _fileHandle.readUint16LE();
+		_numCostumes = _fileHandle.readUint16LE();
+		_numGlobalObjects = _fileHandle.readUint16LE();
+		_fileHandle.readUint16LE(); 
+
+		_objectRoomTable = (byte *)calloc(_numGlobalObjects * 4, 1);
+		_numGlobalScripts = 200;
+		_shadowPaletteSize = 256;
+	} else if (_version == 6 && _gameId != GID_PJSDEMO) {
 		_numVariables = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE();                      // 16 in Sam/DOTT
 		_numBitVariables = _fileHandle.readUint16LE();

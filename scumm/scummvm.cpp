@@ -155,9 +155,11 @@ static const VersionSettings scumm_settings[] = {
 	{"test", "Test demo game", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE, GF_NEW_OPCODES, 0},
 
 	/* Humongous Entertainment Scumm Version 7 */
-	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_SAMNMAX, 6, MDT_NONE,
+	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
+	{"pjs-demo", "Pajama Sam (Demo)", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	/* Scumm Version 7 */
 	{"ft", "Full Throttle", GID_FT, 7, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
