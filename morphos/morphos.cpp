@@ -16,6 +16,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * MorphOS interface
+ *
+ * $Header$
+ *
  */
 
 #include <devices/timer.h>
@@ -49,9 +52,7 @@
 #include <proto/cdda.h>
 #include <proto/cybergraphics.h>
 
-#ifdef __MORPHOS__
 #include <emul/emulinterface.h>
-#endif
 
 #include <time.h>
 
@@ -192,29 +193,6 @@ int GetTicks()
 	ticks *= (1000/CLOCKS_PER_SEC);
 	return ticks;
 }
-
-/*void cd_playtrack( int track, int offset, int delay )
-{
-	if( !CDrive && CDDABase )
-	{
-		CDrive = CDDA_FindNextDrive( NULL, FindCDTags );
-		if( CDrive )
-		{
-			if( !CDDA_ObtainDrive( CDrive, CDDA_SHARED_ACCESS, NULL ) )
-				CDrive = NULL;
-		}
-	}
-
-	if( CDrive && offset && delay )
-	{
-		double offs, del;
-		offs = offset;
-		del = delay;
-		PlayTags[ 1 ].ti_Data = (ULONG)((offs * 7.5) - CDDATrackOffset);
-		PlayTags[ 3 ].ti_Data = PlayTags[ 1 ].ti_Data + (ULONG)(del * 7.5);
-		CDDA_Play( CDrive, PlayTags );
-	}
-}*/
 
 static int   cd_track = 0, cd_num_loops = 0, cd_start_frame = 0;
 static ULONG cd_end_time = 0;
@@ -426,7 +404,7 @@ uint32 makeColForPixFmt( int pixfmt, int r, int g, int b )
 	if( pixfmt == PIXFMT_RGB15PC || pixfmt == PIXFMT_BGR15PC ||
 		 pixfmt == PIXFMT_RGB16PC || pixfmt == PIXFMT_BGR16PC
 	  )
-		col = ((col >> 8) & 0xff) | ((col << 8) & 0xff00);
+		col = ((col >> 8) & 0xff) | ((col << 8) & 0xff00);	/* Not really sure about this?!?! */
 
 
 	return col;
@@ -496,18 +474,6 @@ void createScreen( CS_DSPTYPE dspType )
 
 	if( fullScreen )
 	{
-		UBYTE depthstr[ 10 ];
-		if( (ScummScale == 1) && (GetVar( "SCUMMVM_DEPTH", depthstr, 10, GVF_GLOBAL_ONLY ) > 0) )
-		{
-			ScummDepth = atoi( (char *)depthstr );
-			mode = BestCModeIDTags( CYBRBIDTG_NominalWidth, 	ScummScrWidth,
-											CYBRBIDTG_NominalHeight,   ScummScrHeight,
-											CYBRBIDTG_Depth,   			ScummDepth,
-											TAG_DONE
-										 );
-		}
-		else
-		{
 		for( i = ScummScale; mode == INVALID_ID && depths[ i ]; i++ )
 			mode = BestCModeIDTags( CYBRBIDTG_NominalWidth, 	ScummScrWidth,
 											CYBRBIDTG_NominalHeight,   ScummScrHeight,
@@ -515,7 +481,6 @@ void createScreen( CS_DSPTYPE dspType )
 											TAG_DONE
 										 );
 		ScummDepth = depths[ i-1 ];
-		}
 
 		if( mode == INVALID_ID )
 		{

@@ -16,6 +16,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * MorphOS sound support
+ *
+ * $Header$
+ *
  */
 
 #include <devices/timer.h>
@@ -163,11 +166,7 @@ void exit_morphos_sound()
 }
 
 
-#ifdef __MORPHOS__
 int morphos_music_thread( Scumm *s, ULONG MidiUnit, bool NoMusic )
-#else
-int morphos_music_thread()
-#endif
 {
 	int  old_time, cur_time;
 	bool initialized;
@@ -261,7 +260,7 @@ int morphos_music_thread()
 				req->ahir_Std.io_Data    = ahiBuf[ ahiCurBuf ];
 				req->ahir_Std.io_Length  = AHI_BUF_SIZE;
 				req->ahir_Type				 = AHIST_M16S;
-				req->ahir_Frequency		 = SAMPLES_PER_SEC/2;
+				req->ahir_Frequency		 = SAMPLES_PER_SEC;
 				req->ahir_Position  		 = 0x8000;
 				req->ahir_Volume			 = 0x10000;
 				req->ahir_Link				 = (ahiReqSent[ ahiOtherBuf ] && !CheckIO( (struct IORequest *)ahiReq[ ahiOtherBuf ] )) ? ahiReq[ ahiOtherBuf ] : NULL;
