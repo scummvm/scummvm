@@ -608,11 +608,11 @@ if test "$_build_sky" = yes ; then
   echo "    Beneath a Steel Sky"
 fi
 if test "$_build_bs1" = yes ; then
-  echo "    Broken Sword I"
+  echo -n "    Broken Sword I"
   if test "$_mpeg2" = yes ; then
 	echo " (w/ mpeg2 cutscenes)"
   else
-	echo " (without mpeg2 cutscenes)"
+	echo "  (without mpeg2 cutscenes)"
   fi
 fi
 if test "$_build_bs2" = yes ; then
