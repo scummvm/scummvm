@@ -278,6 +278,7 @@ public:
 	void drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip);
 	void drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h);
 	void copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect);
+	void copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor);
 	void decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect);
 	void copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect);
 	void decompressAuxImage(uint8 *dst1, uint8 *dst2, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect);

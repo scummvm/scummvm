@@ -1468,18 +1468,51 @@ static bool calcClipRects(int dst_w, int dst_h, int src_x, int src_y, int src_w,
 	dstRect.clip(r3);
 	srcRect = dstRect;
 	srcRect.moveTo(0, 0);
-	return true;
+	return srcRect.isValidRect() && dstRect.isValidRect();
 }
 
 void Gdi::copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect) {
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
-		if (r1.isValidRect() && r2.isValidRect()) {
-			uint8 *dstPtr = dst + r2.left + r2.top * dstw;
-			for (int i = 0; i < 256; i++)
-				_wizImagePalette[i] = i;
+		for (int i = 0; i < 256; i++)
+			_wizImagePalette[i] = i;
+		dst += r2.left + r2.top * dstw;
+		decompressWizImage(dst, dstw, r2, src, r1);
+	}
+}
 
-			decompressWizImage(dstPtr, dstw, r2, src, r1);
+void Gdi::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor) {
+	Common::Rect r1, r2;
+	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
+		if (flags & 0x40) {
+			int l = r1.left;
+			int r = r1.right;
+			r1.left = srcw - r;
+			r1.right = srcw - l;
+		}
+		if (flags & 0x80) {
+			int t = r1.top;
+			int b = r1.bottom;
+			r1.top = srch - b;
+			r1.bottom = srch - t;
+		}
+		if (!palPtr) {
+			for (int i = 0; i < 256; i++) {
+				_wizImagePalette[i] = i;
+			}
+			palPtr = _wizImagePalette;
+		}
+		int h = r1.height();
+		int w = r1.width();
+		dst += r2.top * dstw;
+		while (h--) {
+			for (int i = 0; i < w; ++i) {
+				uint8 col = *src++;
+				if (transColor == -1 || transColor != col) {
+					dst[r2.left + i] = palPtr[col];
+				}
+			}
+			dst += dstw;
 		}
 	}
 }
@@ -1593,9 +1626,7 @@ dec_next:
 void Gdi::copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect) {
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
-		if (r1.isValidRect() && r2.isValidRect()) {
-			decompressAuxImage(dst1, dst2, dstw, r2, src, r1);
-		}
+		decompressAuxImage(dst1, dst2, dstw, r2, src, r1);
 	}
 }
 

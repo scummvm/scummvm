@@ -1231,7 +1231,7 @@ void ScummEngine_v90he::o90_unknown29() {
 		pop();
 		push(0);
 		break;
-	case 100:
+	case 100: // SO_GET_WIZ_HISTOGRAM
 		pop();
 		pop();
 		pop();
@@ -1240,6 +1240,11 @@ void ScummEngine_v90he::o90_unknown29() {
 		pop();
 		push(0);
 		break;
+	case 109:
+		pop();
+		pop();
+		push(0);
+		break;		
 	default:
 		error("o90_unknown29: Unknown case %d", subOp);
 	}

@@ -1742,15 +1742,16 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 	uint8 *dst = NULL;
 	const uint8 *dataPtr = getResourceAddress(restype, pwi->resNum);
 	if (dataPtr) {
+		const uint8 *rmap = NULL;
+		const uint8 *xmap = findWrappedBlock(MKID('XMAP'), dataPtr, pwi->state, 0);
+		
 		const uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, pwi->state, 0);
 		assert(wizh);
 		uint32 comp   = READ_LE_UINT32(wizh + 0x0);
 		uint32 width  = READ_LE_UINT32(wizh + 0x4);
 		uint32 height = READ_LE_UINT32(wizh + 0x8);
-		if (comp != 1) {
-			warning("%d has invalid compression type %d", pwi->resNum, comp);
-			return 0;
-		}
+		assert(comp == 0 || comp == 1 || comp == 2 || comp == 3 || comp == 10 || comp == 11);
+		
 		const uint8 *wizd = findWrappedBlock(MKID('WIZD'), dataPtr, pwi->state, 0);
 		assert(wizd);
 		if (pwi->flags & 1) {
@@ -1759,12 +1760,12 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 			setPaletteFromPtr(pal, 256);
 		}
 		if (pwi->flags & 2) {
-			const uint8 *rmap = findWrappedBlock(MKID('RMAP'), dataPtr, pwi->state, 0);
+			rmap = findWrappedBlock(MKID('RMAP'), dataPtr, pwi->state, 0);
 			assert(rmap);
 			const uint8 *rgbs = findWrappedBlock(MKID('RGBS'), dataPtr, pwi->state, 0);
 			assert(rgbs);
-//			drawWizImageHelper1(rmap + 4, _currentPalette, rgbs);
 			warning("drawWizImage() unhandled flag 0x2");
+			// XXX modify 'RMAP' buffer
 		}
 		uint32 cw, ch;
 		if (pwi->flags & 0x24) { // printing (0x4) or rendering to memory (0x20)
@@ -1786,23 +1787,35 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 			ch = pvs->h;
 		}
 		Common::Rect rScreen(cw, ch);
-		if (pwi->flags & 0x80) {
-//  		drawWizImageHelper2(p, wizd, cw, ch, x1, y1, width, height, &rScreen, 0, 2);
-			warning("drawWizImage() unhandled flag 0x80");
-		} else if (pwi->flags & 0x100) {
-//  		drawWizImageHelper2(p, wizd, cw, ch, x1, y1, width, height, &rScreen, 0, 1);  			
-			warning("drawWizImage() unhandled flag 0x100");
+		// XXX handle 'XMAP' / 'RMAP' data
+		if (comp == 1) {
+			if (pwi->flags & 0x80) {
+				warning("drawWizImage() unhandled flag 0x80");
+			} else if (pwi->flags & 0x100) {
+				warning("drawWizImage() unhandled flag 0x100");
+			} else {
+				gdi.copyWizImage(dst, wizd, cw, ch, pwi->x1, pwi->y1, width, height, &rScreen);
+			}
+		} else if (comp == 0 || comp == 2) {
+			const uint8 *trns = findWrappedBlock(MKID('TRNS'), dataPtr, pwi->state, 0);
+			int color = (trns == NULL) ? VAR(VAR_WIZ_TCOLOR) : -1;
+			const uint8 *pal = xmap;
+			if (pwi->flags & 2) {
+				pal = rmap + 4;
+			}
+			gdi.copyRawWizImage(dst, wizd, cw, ch, pwi->x1, pwi->y1, width, height, &rScreen, pwi->flags, pal, color);
 		} else {
-			gdi.copyWizImage(dst, wizd, cw, ch, pwi->x1, pwi->y1, width, height, &rScreen);
+			warning("unhandled wiz compression type %d", comp);
 		}
 		if (pwi->flags & 4) {
-			warning("printing Wiz image is unimplemented");
+			warning("WizImage printing is unimplemented");
+			free(dst);
 			dst = NULL;
 		} else if (!(pwi->flags & 0x20)) {
 			Common::Rect rImage(pwi->x1, pwi->y1, pwi->x1 + width, pwi->y1 + height);
 			if (rImage.intersects(rScreen)) {
 				rImage.clip(rScreen);
-				if (pwi->flags & 0x18) {
+				if (!(pwi->flags & 8) && pwi->flags & 0x18) {
 					++rImage.bottom;
 					markRectAsDirty(kMainVirtScreen, rImage);
 				} else {
