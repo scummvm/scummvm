@@ -1644,6 +1644,13 @@ void Scumm::nukeResource(int type, int idx) {
 	if (!res.address[type])
 		return;
 
+	// FIXME hack around insanely high string resource idx's
+	if ((_features & GF_HUMONGOUS) && (type == 7 && idx > res.num[7])) {
+		warning("nukeResource: type %d index %d > max %d", type, idx,
+				res.num[7]);
+		return;
+	}
+
 	assert(idx >= 0 && idx < res.num[type]);
 
 	if ((ptr = res.address[type][idx]) != NULL) {
