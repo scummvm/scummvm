@@ -89,6 +89,8 @@ enum {
 // Sprite defines
 
 enum {
+	// This is the low byte part of the sprite type.
+
 	RDSPR_TRANS			= 0x0001,
 	RDSPR_BLEND			= 0x0004,
 	RDSPR_FLIP			= 0x0008,
@@ -97,8 +99,8 @@ enum {
 	RDSPR_NOCOMPRESSION		= 0x0040,
 	RDSPR_EDGEBLEND			= 0x0080,	// Unused
 
-	// This defines what type of compression is used, as long as
-	// RDSPR_NOCOMPRESSION is not defined.
+	// This is the high byte part of the sprite type, which defines what
+	// type of compression is used. Unless RDSPR_NOCOMPRESSION is set.
 
 	RDSPR_RLE16			= 0x0000,
 	RDSPR_RLE256			= 0x0100,
