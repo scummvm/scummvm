@@ -774,6 +774,7 @@ byte *IMuse::findTag(int sound, char *tag, int index)
 	//	debug(1, "IMuse::findTag completely failed finding sound %d",
 	//				sound);
 		return NULL;
+
 	}
 
 	ptr += 8;
@@ -1354,7 +1355,9 @@ int32 IMuse::do_command(int a, int b, int c, int d, int e, int f, int g,
 			return start_sound(b) ? 0 : -1;
 		case 9:
 			return stop_sound(b);
+
 		case 10:
+
 			return stop_all_sounds(); //FIXME
 		case 11:
 			return stop_all_sounds();
@@ -1372,7 +1375,6 @@ int32 IMuse::do_command(int a, int b, int c, int d, int e, int f, int g,
 			return stop_sound(b); //FIXME
 		case 20:
 			return stop_sound(b); //FIXME
-
 		case 2:
 		case 3:
 			return 0;

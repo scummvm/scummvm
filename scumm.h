@@ -506,9 +506,9 @@ enum GameId {
 	GID_LOOM = 10,
 	GID_FT = 11,
 	GID_DIG = 12,
-
+	GID_MONKEY_VGA = 13,
 	/* Simon the Sorcerer */
-	GID_SIMON_FIRST = 13,
+	GID_SIMON_FIRST = 14,
 	GID_SIMON_LAST = GID_SIMON_FIRST+3,
 };
 

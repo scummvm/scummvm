@@ -778,6 +778,13 @@ void Scumm::o5_actorSet()
 			a->width = getVarOrDirectByte(0x80);
 			break;
 		case 17:										/* scale */
+			// FIXME: 0x11 is definitly an one byte opcode in MI1 256 col Floppy !
+			//              but it's not 1, 9, 16, 19, 22 or 23 (testet), what else ?
+			if (_gameId & GID_MONKEY_VGA) {
+				warning("o5_actorset: unk opcode 0x11 (%d)", getVarOrDirectByte(0x80));
+				break;
+			}
+
 			a->scalex = getVarOrDirectByte(0x80);
 			a->scaley = getVarOrDirectByte(0x40);
 			if (a->scalex > 255 || a->scaley > 255)
