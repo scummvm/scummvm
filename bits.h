@@ -46,6 +46,11 @@ inline uint32_t get_BE_uint32(const char *data) {
   return *(reinterpret_cast<const uint32_t *>(data));
 }
 
+inline float get_float(const char *data) {
+  #error get_float not implemented on BE machines yet
+  return *(reinterpret_cast<const float *>(data));
+}
+
 #else
 
 inline uint32_t get_LE_uint32(const char *data) {
@@ -66,18 +71,9 @@ inline uint32_t get_BE_uint32(const char *data) {
   return (udata[0] << 24) | (udata[1] << 16) | (udata[2] << 8) | udata[3];
 }
 
-#endif
-
-#ifdef i386
-
 inline float get_float(const char *data) {
   return *(reinterpret_cast<const float *>(data));
 }
-
-#else
-
-#error get_float not implemented on non-i386 machines yet
-
 #endif
 
 inline Vector3d get_vector3d(const char *data) {
