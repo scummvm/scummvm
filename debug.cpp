@@ -112,6 +112,7 @@ bool ScummDebugger::do_command()
 			int num, i = 0;
 			BoxCoords box;
 			byte *boxm = _s->getBoxMatrixBaseAddr();
+			int flags;
 			num = _s->getNumBoxes();
 
 			printf("Walk matrix:\n");
@@ -126,11 +127,12 @@ bool ScummDebugger::do_command()
 
 			printf("\nWalk boxes:\n");
 			for (i = 0; i < num; i++) {
-				warning("BoxTest currently unimplemented in new graphics code\n");
+				//warning("BoxTest currently unimplemented in new graphics code\n");
 				/*BoxTest(i); */
 				_s->getBoxCoordinates(i, &box);
-				printf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d]\n", i,
-							 box.ul.x, box.ul.y, box.ll.x, box.ll.y, box.ur.x, box.ur.y, box.lr.x, box.lr.y);
+				flags = _s->getBoxFlags(i);
+				printf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d], flags=0x%02x\n", i,
+							 box.ul.x, box.ul.y, box.ll.x, box.ll.y, box.ur.x, box.ur.y, box.lr.x, box.lr.y), flags;
 			}
 		}
 		return true;
