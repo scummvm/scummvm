@@ -1392,6 +1392,25 @@ void Scumm::resetActorBgs()
 	}
 }
 
+void Actor::classChanged(int cls, bool value)
+{
+	switch(cls) {
+	case 20:	// Never clip
+		break;
+	case 21:	// Always clip
+		break;
+	case 22:	// Ignore boxes
+		ignoreBoxes = value;
+		break;
+	case 29:	// Y flip
+		break;
+	case 30:	// X flip
+		break;
+	case 31:	// ??
+		break;
+	}
+}
+
 bool Actor::isInClass(int cls)
 {
 	return _vm->getClass(number, cls);

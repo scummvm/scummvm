@@ -169,6 +169,8 @@ public:
 	void setAnimVar(byte var, int value) {
 		animVariable[var] = value;
 	}
+	
+	void classChanged(int cls, bool value);
 
 protected:
 	bool isInClass(int cls);

@@ -61,6 +61,10 @@ void Scumm::putClass(int obj, int cls, bool set)
 		_classData[obj] |= (1 << (cls - 1));
 	else
 		_classData[obj] &= ~(1 << (cls - 1));
+
+	if (1 <= obj && obj < NUM_ACTORS) {
+		_actors[obj].classChanged(cls, set);
+	}
 }
 
 int Scumm::getOwner(int obj)
