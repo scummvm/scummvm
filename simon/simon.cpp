@@ -131,7 +131,7 @@ FILE *fopen_maybe_lowercase(const char *filename) {
 
 byte *SimonState::allocateItem(uint size) {
 	byte *org = _itemheap_ptr;
-	size = (size + 1) & ~1;
+	size = (size + 3) & ~3;
 
 	_itemheap_ptr += size;
 	_itemheap_curpos += size;
@@ -142,8 +142,16 @@ byte *SimonState::allocateItem(uint size) {
 	return org;
 }
 
+void SimonState::alignTableMem() {
+	if ((uint32)_tablesheap_ptr & 3) {
+		_tablesheap_ptr += 2;
+		_tablesheap_curpos += 2;
+	}
+}
+
 byte *SimonState::allocateTable(uint size) {
 	byte *org = _tablesheap_ptr;
+	
 	size = (size + 1) & ~1;
 
 	_tablesheap_ptr += size;
@@ -527,7 +535,11 @@ void SimonState::readSubroutine(FILE *in, Subroutine *sub) {
 }
 
 Subroutine *SimonState::createSubroutine(uint id) {
-	Subroutine *sub = (Subroutine*)allocateTable(sizeof(Subroutine));
+	Subroutine *sub;
+	
+	alignTableMem();
+
+	sub = (Subroutine*)allocateTable(sizeof(Subroutine));
 	sub->id = id;
 	sub->first = 0;
 	sub->next = _subroutine_list;

@@ -341,6 +341,12 @@ int GameDetector::detectMain(int argc, char **argv)
 
 	_gfx_mode = GFX_DOUBLESIZE;
 
+	_gfx_driver = GD_AUTO;
+
+#ifdef USE_NULL_DRIVER
+	_gfx_driver = GD_NULL;
+#endif
+
 	_gameDataPath = NULL;
 	_gameTempo = 0;
 	_soundCardType = 3;
@@ -392,6 +398,9 @@ OSystem *GameDetector::createSystem() {
 	case GD_X:
 		/* not implemented yet */
 		break;
+
+	case GD_NULL:
+		return OSystem_NULL_create();
 	}
 
 	error("Invalid graphics driver");

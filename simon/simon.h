@@ -592,6 +592,7 @@ public:
 
 	byte *allocateItem(uint size);
 	byte *allocateTable(uint size);
+	void alignTableMem();
 
 	Child *findChildOfType(Item *i, uint child);
 	Child *allocateChildBlock(Item *i, uint type, uint size);

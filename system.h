@@ -102,6 +102,7 @@ public:
 
 /* OSystem_SDL */
 OSystem *OSystem_SDL_create(int gfx_driver, bool full_screen);
+OSystem *OSystem_NULL_create();
 
 enum {
 	GFX_NORMAL = 0,
@@ -119,6 +120,7 @@ enum {
 	GD_SDL = 1,
 	GD_WIN32 = 2,
 	GD_X = 3,
+	GD_NULL = 4,
 };
 
 

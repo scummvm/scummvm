@@ -1020,6 +1020,80 @@ void OSystem_SDL::undraw_mouse() {
 	SDL_UnlockSurface(sdl_screen);
 }
 
+
+#ifdef USE_NULL_DRIVER
+
+/* NULL video driver */
+class OSystem_NULL : public OSystem {
+public:
+	void set_palette(const byte *colors, uint start, uint num) {}
+	void init_size(uint w, uint h, byte sound);
+	void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {}
+	void update_screen() {}
+	bool show_mouse(bool visible) { return false; }
+	void set_mouse_pos(int x, int y) {}
+	void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {}
+	void set_shake_pos(int shake_pos) {}
+	uint32 get_msecs();
+	void delay_msecs(uint msecs);
+	void *create_thread(ThreadProc *proc, void *param) { return NULL; }
+	bool poll_event(Event *event) { return false; }
+	void set_sound_proc(void *param, SoundProc *proc) {}
+	void quit() { exit(1); }
+	uint32 set_param(int param, uint32 value) { return 0; }
+	static OSystem *create(int gfx_mode, bool full_screen);
+private:
+
+	uint msec_start;
+
+	uint32 get_ticks();
+};
+
+void OSystem_NULL::init_size(uint w, uint h, byte sound) {
+	msec_start = get_ticks();
+}
+
+uint32 OSystem_NULL::get_ticks() {
+	uint a = 0;
+#ifdef WIN32
+	a = GetTickCount();
+#endif
+
+#ifdef UNIX
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	a = tv.tv_sec * 1000 + tv.tv_usec/1000;
+#endif
+
+	return a;
+}
+
+void OSystem_NULL::delay_msecs(uint msecs) {
+#ifdef WIN32
+	Sleep(msecs);
+#endif
+#ifdef UNIX
+	usleep(msecs*1000);
+#endif
+}
+
+uint32 OSystem_NULL::get_msecs() {
+	return get_ticks() - msec_start;
+}
+
+OSystem *OSystem_NULL_create() {
+	return new OSystem_NULL();
+}
+#else /* USE_NULL_DRIVER */
+
+OSystem *OSystem_NULL_create() {
+	return NULL;
+}
+
+#endif
+
+
+
 void cd_stop() {
 }
 
