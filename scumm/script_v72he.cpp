@@ -506,10 +506,10 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 	int num;
 	int a, b, c;
 
-	while ((num = _fileHandle.readUint16LE()) != 0) {
-		a = _fileHandle.readUint16LE();
-		b = _fileHandle.readUint16LE();
-		c = _fileHandle.readUint16LE();
+	while ((num = _fileHandle->readUint16LE()) != 0) {
+		a = _fileHandle->readUint16LE();
+		b = _fileHandle->readUint16LE();
+		c = _fileHandle->readUint16LE();
 
 		if (c == 1)
 			defineArray(num, kBitArray, 0, a, 0, b);

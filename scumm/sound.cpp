@@ -1239,24 +1239,24 @@ int ScummEngine::readSoundResource(int type, int idx) {
 
 	pos = 0;
 
-	_fileHandle.readUint32LE();
-	max_total_size = _fileHandle.readUint32BE() - 8;
+	_fileHandle->readUint32LE();
+	max_total_size = _fileHandle->readUint32BE() - 8;
 	basetag = fileReadDword();
-	total_size = _fileHandle.readUint32BE();
+	total_size = _fileHandle->readUint32BE();
 
 	debugC(DEBUG_RESOURCE, "  basetag: %s, total_size=%d", tag2str(TO_BE_32(basetag)), total_size);
 
 	if (basetag == MKID('MIDI') || basetag == MKID('iMUS')) {
 		if (_midiDriver != MD_PCSPK && _midiDriver != MD_PCJR) {
-			_fileHandle.seek(-8, SEEK_CUR);
-			_fileHandle.read(createResource(type, idx, total_size + 8), total_size + 8);
+			_fileHandle->seek(-8, SEEK_CUR);
+			_fileHandle->read(createResource(type, idx, total_size + 8), total_size + 8);
 			return 1;
 		}
 	} else if (basetag == MKID('SOU ')) {
 		best_pri = -1;
 		while (pos < total_size) {
 			tag = fileReadDword();
-			size = _fileHandle.readUint32BE() + 8;
+			size = _fileHandle->readUint32BE() + 8;
 			pos += size;
 
 			pri = -1;
@@ -1303,50 +1303,50 @@ int ScummEngine::readSoundResource(int type, int idx) {
 			if (pri > best_pri) {
 				best_pri = pri;
 				best_size = size;
-				best_offs = _fileHandle.pos();
+				best_offs = _fileHandle->pos();
 			}
 
-			_fileHandle.seek(size - 8, SEEK_CUR);
+			_fileHandle->seek(size - 8, SEEK_CUR);
 		}
 
 		if (best_pri != -1) {
-			_fileHandle.seek(best_offs - 8, SEEK_SET);
-			_fileHandle.read(createResource(type, idx, best_size), best_size);
+			_fileHandle->seek(best_offs - 8, SEEK_SET);
+			_fileHandle->read(createResource(type, idx, best_size), best_size);
 			return 1;
 		}
 	} else if (basetag == MKID('Mac0')) {
-		_fileHandle.seek(-12, SEEK_CUR);
-		total_size = _fileHandle.readUint32BE() - 8;
+		_fileHandle->seek(-12, SEEK_CUR);
+		total_size = _fileHandle->readUint32BE() - 8;
 		byte *ptr = (byte *)calloc(total_size, 1);
-		_fileHandle.read(ptr, total_size);
+		_fileHandle->read(ptr, total_size);
 //		dumpResource("sound-", idx, ptr);
 		convertMac0Resource(type, idx, ptr, total_size);
 		free(ptr);
 		return 1;
 	} else if (basetag == MKID('Mac1')) {
-		_fileHandle.seek(-12, SEEK_CUR);
-		total_size = _fileHandle.readUint32BE();
-		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
+		_fileHandle->seek(-12, SEEK_CUR);
+		total_size = _fileHandle->readUint32BE();
+		_fileHandle->read(createResource(type, idx, total_size), total_size - 8);
 		return 1;
 	} else if (basetag == MKID('RIFF')) {
-		_fileHandle.seek(-12, SEEK_CUR);
-		total_size = _fileHandle.readUint32BE();
-		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
+		_fileHandle->seek(-12, SEEK_CUR);
+		total_size = _fileHandle->readUint32BE();
+		_fileHandle->read(createResource(type, idx, total_size), total_size - 8);
 		return 1;
 	} else if (basetag == MKID('HSHD')) {
-		_fileHandle.seek(-12, SEEK_CUR);
-		total_size = _fileHandle.readUint32BE();
-		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
+		_fileHandle->seek(-12, SEEK_CUR);
+		total_size = _fileHandle->readUint32BE();
+		_fileHandle->read(createResource(type, idx, total_size), total_size - 8);
 		return 1;
 	} else if (basetag == MKID('TALK')) {
-		_fileHandle.seek(-12, SEEK_CUR);
-		total_size = _fileHandle.readUint32BE();
-		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
+		_fileHandle->seek(-12, SEEK_CUR);
+		total_size = _fileHandle->readUint32BE();
+		_fileHandle->read(createResource(type, idx, total_size), total_size - 8);
 		return 1;
 	} else if (basetag == MKID('DIGI')) {
-		_fileHandle.seek(-12, SEEK_CUR);
-		total_size = _fileHandle.readUint32BE();
-		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
+		_fileHandle->seek(-12, SEEK_CUR);
+		total_size = _fileHandle->readUint32BE();
+		_fileHandle->read(createResource(type, idx, total_size), total_size - 8);
 		return 1;
 	} else if (basetag == MKID('FMUS')) {
 		// Used in 3DO version of puttputt joins the parade and probably others
@@ -1355,18 +1355,18 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		File dmuFile;
 		char buffer[128];
 		debugC(DEBUG_SOUND, "Found base tag FMUS in sound %d, size %d", idx, total_size);
-		debugC(DEBUG_SOUND, "It was at position %d", _fileHandle.pos());
+		debugC(DEBUG_SOUND, "It was at position %d", _fileHandle->pos());
 		
-		_fileHandle.seek(4, SEEK_CUR);
+		_fileHandle->seek(4, SEEK_CUR);
 		// HSHD size
-		tmpsize = _fileHandle.readUint32BE();
+		tmpsize = _fileHandle->readUint32BE();
 		// skip to size part of the SDAT block
-		_fileHandle.seek(tmpsize - 4, SEEK_CUR);
+		_fileHandle->seek(tmpsize - 4, SEEK_CUR);
 		// SDAT size
-		tmpsize = _fileHandle.readUint32BE();
+		tmpsize = _fileHandle->readUint32BE();
 		
 		// SDAT contains name of file we want
-		_fileHandle.read(buffer, tmpsize - 8);
+		_fileHandle->read(buffer, tmpsize - 8);
 		// files seem to be 11 chars (8.3) unused space is replaced by spaces
 		*(strstr(buffer, " ")) = '\0';
 		
@@ -1384,15 +1384,15 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		dmuFile.close();
 		return 1;
 	} else if (basetag == MKID('Crea')) {
-		_fileHandle.seek(-12, SEEK_CUR);
-		total_size = _fileHandle.readUint32BE();
-		_fileHandle.read(createResource(type, idx, total_size), total_size - 8);
+		_fileHandle->seek(-12, SEEK_CUR);
+		total_size = _fileHandle->readUint32BE();
+		_fileHandle->read(createResource(type, idx, total_size), total_size - 8);
 		return 1;
 	} else if (FROM_LE_32(basetag) == max_total_size) {
-		_fileHandle.seek(-12, SEEK_CUR);
-		total_size = _fileHandle.readUint32BE();
-		_fileHandle.seek(-8, SEEK_CUR);
-		_fileHandle.read(createResource(type, idx, total_size), total_size);
+		_fileHandle->seek(-12, SEEK_CUR);
+		total_size = _fileHandle->readUint32BE();
+		_fileHandle->seek(-8, SEEK_CUR);
+		_fileHandle->read(createResource(type, idx, total_size), total_size);
 		return 1;
 	} else {
 		warning("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
@@ -2164,42 +2164,42 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 		// Roland resources in Loom are tagless
 		// So we add an RO tag to allow imuse to detect format
 		byte *ptr, *src_ptr;
-		ro_offs = _fileHandle.pos();
-		ro_size = _fileHandle.readUint16LE();
+		ro_offs = _fileHandle->pos();
+		ro_size = _fileHandle->readUint16LE();
 
 		src_ptr = (byte *) calloc(ro_size - 4, 1);
-		_fileHandle.seek(ro_offs + 4, SEEK_SET);
-		_fileHandle.read(src_ptr, ro_size -4);
+		_fileHandle->seek(ro_offs + 4, SEEK_SET);
+		_fileHandle->read(src_ptr, ro_size -4);
 
 		ptr = createResource(type, idx, ro_size + 2);
 		memcpy(ptr, "RO", 2); ptr += 2;
 		memcpy(ptr, src_ptr, ro_size - 4); ptr += ro_size - 4;
 		return 1;
 	} else if (_features & GF_OLD_BUNDLE) {
-		wa_offs = _fileHandle.pos();
-		wa_size = _fileHandle.readUint16LE();
-		_fileHandle.seek(wa_size - 2, SEEK_CUR);
+		wa_offs = _fileHandle->pos();
+		wa_size = _fileHandle->readUint16LE();
+		_fileHandle->seek(wa_size - 2, SEEK_CUR);
 
 		if (!(_features & GF_ATARI_ST || _features & GF_MACINTOSH)) {
-			ad_offs = _fileHandle.pos();
-			ad_size = _fileHandle.readUint16LE();
+			ad_offs = _fileHandle->pos();
+			ad_size = _fileHandle->readUint16LE();
 		}
-		_fileHandle.seek(4, SEEK_CUR);
+		_fileHandle->seek(4, SEEK_CUR);
 		total_size = wa_size + ad_size;
 	} else {
-		total_size = size = _fileHandle.readUint32LE();
-		tag = _fileHandle.readUint16LE();
+		total_size = size = _fileHandle->readUint32LE();
+		tag = _fileHandle->readUint16LE();
 		debug(4, "  tag='%c%c', size=%d", (char) (tag & 0xff),
 				(char) ((tag >> 8) & 0xff), size);
 
 		if (tag == 0x4F52) { // RO
-			ro_offs = _fileHandle.pos();
+			ro_offs = _fileHandle->pos();
 			ro_size = size;
 		} else {
 			pos = 6;
 			while (pos < total_size) {
-				size = _fileHandle.readUint32LE();
-				tag = _fileHandle.readUint16LE();
+				size = _fileHandle->readUint32LE();
+				tag = _fileHandle->readUint16LE();
 				debug(4, "  tag='%c%c', size=%d", (char) (tag & 0xff),
 						(char) ((tag >> 8) & 0xff), size);
 				pos += size;
@@ -2208,10 +2208,10 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 				// resources.
 				if ((tag == 0x4441) && !(ad_offs)) { // AD
 					ad_size = size;
-					ad_offs = _fileHandle.pos();
+					ad_offs = _fileHandle->pos();
 				} else if ((tag == 0x4157) && !(wa_offs)) { // WA
 					wa_size = size;
-					wa_offs = _fileHandle.pos();
+					wa_offs = _fileHandle->pos();
 				} else { // other AD, WA and nested SO resources
 					if (tag == 0x4F53) { // SO
 						pos -= size;
@@ -2219,7 +2219,7 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 						pos += 6;
 					}
 				}
-				_fileHandle.seek(size - 6, SEEK_CUR);
+				_fileHandle->seek(size - 6, SEEK_CUR);
 			}
 		}
 	}
@@ -2236,31 +2236,31 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 		byte *ptr;
 		if (_features & GF_OLD_BUNDLE) {
 			ptr = (byte *) calloc(ad_size - 4, 1);
-			_fileHandle.seek(ad_offs + 4, SEEK_SET);
-			_fileHandle.read(ptr, ad_size - 4);
+			_fileHandle->seek(ad_offs + 4, SEEK_SET);
+			_fileHandle->read(ptr, ad_size - 4);
 			convertADResource(type, idx, ptr, ad_size - 4);
 			free(ptr);
 			return 1;
 		} else {
 			ptr = (byte *) calloc(ad_size - 6, 1);
-			_fileHandle.seek(ad_offs, SEEK_SET);
-			_fileHandle.read(ptr, ad_size - 6);
+			_fileHandle->seek(ad_offs, SEEK_SET);
+			_fileHandle->read(ptr, ad_size - 6);
 			convertADResource(type, idx, ptr, ad_size - 6);
 			free(ptr);
 			return 1;
 		} 
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && wa_offs != 0) {
 		if (_features & GF_OLD_BUNDLE) {
-			_fileHandle.seek(wa_offs, SEEK_SET);
-			_fileHandle.read(createResource(type, idx, wa_size), wa_size);
+			_fileHandle->seek(wa_offs, SEEK_SET);
+			_fileHandle->read(createResource(type, idx, wa_size), wa_size);
 		} else {
-			_fileHandle.seek(wa_offs - 6, SEEK_SET);
-			_fileHandle.read(createResource(type, idx, wa_size + 6), wa_size + 6);
+			_fileHandle->seek(wa_offs - 6, SEEK_SET);
+			_fileHandle->read(createResource(type, idx, wa_size + 6), wa_size + 6);
 		}
 		return 1;
 	} else if (ro_offs != 0) {
-		_fileHandle.seek(ro_offs - 2, SEEK_SET);
-		_fileHandle.read(createResource(type, idx, ro_size - 4), ro_size - 4);
+		_fileHandle->seek(ro_offs - 2, SEEK_SET);
+		_fileHandle->read(createResource(type, idx, ro_size - 4), ro_size - 4);
 		return 1;
 	}
 	res.roomoffs[type][idx] = 0xFFFFFFFF;

@@ -617,13 +617,13 @@ protected:
 	void doSentence(int c, int b, int a);
 
 	/* Should be in Resource class */
-	ScummFile _fileHandle;
+	BaseScummFile *_fileHandle;
 	uint32 _fileOffset;
 public:
 	/** The name of the (macintosh/rescumm style) container file, if any. */
 	Common::String _containerFile;
 	
-	bool openFile(ScummFile &file, const char *filename);
+	bool openFile(BaseScummFile &file, const char *filename);
 
 protected:
 	int _resourceHeaderSize;
@@ -1169,9 +1169,9 @@ protected:
 
 	
 #if defined(SCUMM_LITTLE_ENDIAN)
-	uint32 fileReadDword() { return _fileHandle.readUint32LE(); }
+	uint32 fileReadDword() { return _fileHandle->readUint32LE(); }
 #elif defined(SCUMM_BIG_ENDIAN)
-	uint32 fileReadDword() { return _fileHandle.readUint32BE(); }
+	uint32 fileReadDword() { return _fileHandle->readUint32BE(); }
 #endif
 
 public:

@@ -62,7 +62,7 @@ void ScummEngine_v2::readClassicIndexFile() {
 		_numSounds = 120;
 	}
 
-	_fileHandle.seek(0, SEEK_SET);
+	_fileHandle->seek(0, SEEK_SET);
 
 	readMAXS();
 
@@ -71,9 +71,9 @@ void ScummEngine_v2::readClassicIndexFile() {
 	_palManipPalette = 0; // Will allocate when needed
 	_palManipIntermediatePal = 0; // Will allocate when needed
 
-	_fileHandle.readUint16LE(); /* version magic number */
+	_fileHandle->readUint16LE(); /* version magic number */
 	for (i = 0; i != _numGlobalObjects; i++) {
-		byte tmp = _fileHandle.readByte();
+		byte tmp = _fileHandle->readByte();
 		_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
 		_objectStateTable[i] = tmp >> OF_STATE_SHL;
 	}
@@ -81,36 +81,36 @@ void ScummEngine_v2::readClassicIndexFile() {
 	for (i = 0; i < _numRooms; i++) {
 		res.roomno[rtRoom][i] = i;
 	}
-	_fileHandle.seek(_numRooms, SEEK_CUR);
+	_fileHandle->seek(_numRooms, SEEK_CUR);
 	for (i = 0; i < _numRooms; i++) {
-		res.roomoffs[rtRoom][i] = _fileHandle.readUint16LE();
+		res.roomoffs[rtRoom][i] = _fileHandle->readUint16LE();
 		if (res.roomoffs[rtRoom][i] == 0xFFFF)
 			res.roomoffs[rtRoom][i] = 0xFFFFFFFF;
 	}
 
 	for (i = 0; i < _numCostumes; i++) {
-		res.roomno[rtCostume][i] = _fileHandle.readByte();
+		res.roomno[rtCostume][i] = _fileHandle->readByte();
 	}
 	for (i = 0; i < _numCostumes; i++) {
-		res.roomoffs[rtCostume][i] = _fileHandle.readUint16LE();
+		res.roomoffs[rtCostume][i] = _fileHandle->readUint16LE();
 		if (res.roomoffs[rtCostume][i] == 0xFFFF)
 			res.roomoffs[rtCostume][i] = 0xFFFFFFFF;
 	}
 
 	for (i = 0; i < _numScripts; i++) {
-		res.roomno[rtScript][i] = _fileHandle.readByte();
+		res.roomno[rtScript][i] = _fileHandle->readByte();
 	}
 	for (i = 0; i < _numScripts; i++) {
-		res.roomoffs[rtScript][i] = _fileHandle.readUint16LE();
+		res.roomoffs[rtScript][i] = _fileHandle->readUint16LE();
 		if (res.roomoffs[rtScript][i] == 0xFFFF)
 			res.roomoffs[rtScript][i] = 0xFFFFFFFF;
 	}
 
 	for (i = 0; i < _numSounds; i++) {
-		res.roomno[rtSound][i] = _fileHandle.readByte();
+		res.roomno[rtSound][i] = _fileHandle->readByte();
 	}
 	for (i = 0; i < _numSounds; i++) {
-		res.roomoffs[rtSound][i] = _fileHandle.readUint16LE();
+		res.roomoffs[rtSound][i] = _fileHandle->readUint16LE();
 		if (res.roomoffs[rtSound][i] == 0xFFFF)
 			res.roomoffs[rtSound][i] = 0xFFFFFFFF;
 	}
@@ -121,18 +121,18 @@ void ScummEngine_v2::readEnhancedIndexFile() {
 	if (!(_features & GF_AMIGA))
 		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);
 
-	_numGlobalObjects = _fileHandle.readUint16LE();
-	_fileHandle.seek(_numGlobalObjects, SEEK_CUR); // Skip object flags
-	_numRooms = _fileHandle.readByte();
-	_fileHandle.seek(_numRooms * 3, SEEK_CUR);
-	_numCostumes = _fileHandle.readByte();
-	_fileHandle.seek(_numCostumes * 3, SEEK_CUR);
-	_numScripts = _fileHandle.readByte();
-	_fileHandle.seek(_numScripts * 3, SEEK_CUR);
-	_numSounds = _fileHandle.readByte();
+	_numGlobalObjects = _fileHandle->readUint16LE();
+	_fileHandle->seek(_numGlobalObjects, SEEK_CUR); // Skip object flags
+	_numRooms = _fileHandle->readByte();
+	_fileHandle->seek(_numRooms * 3, SEEK_CUR);
+	_numCostumes = _fileHandle->readByte();
+	_fileHandle->seek(_numCostumes * 3, SEEK_CUR);
+	_numScripts = _fileHandle->readByte();
+	_fileHandle->seek(_numScripts * 3, SEEK_CUR);
+	_numSounds = _fileHandle->readByte();
 
-	_fileHandle.clearIOFailed();
-	_fileHandle.seek(0, SEEK_SET);
+	_fileHandle->clearIOFailed();
+	_fileHandle->seek(0, SEEK_SET);
 
 	readMAXS();
 
@@ -141,11 +141,11 @@ void ScummEngine_v2::readEnhancedIndexFile() {
 	_palManipPalette = 0; // Will allocate when needed
 	_palManipIntermediatePal = 0; // Will allocate when needed
 
-	_fileHandle.readUint16LE(); /* version magic number */
-	int num = _fileHandle.readUint16LE();
+	_fileHandle->readUint16LE(); /* version magic number */
+	int num = _fileHandle->readUint16LE();
 	assert(num == _numGlobalObjects);
 	for (int i = 0; i != num; i++) {
-		byte tmp = _fileHandle.readByte();
+		byte tmp = _fileHandle->readByte();
 		_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
 		_objectStateTable[i] = tmp >> OF_STATE_SHL;
 	}
@@ -162,7 +162,7 @@ void ScummEngine_v2::readIndexFile() {
 	closeRoom();
 	openRoom(0);
 
-	magic = _fileHandle.readUint16LE();
+	magic = _fileHandle->readUint16LE();
 
 	switch (magic) {
 		case 0x0100:

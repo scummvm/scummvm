@@ -422,10 +422,12 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // FIXME: number of actors
 	{"4dbff3787aedcd96b0b325f2d92d7ad9", "Freddi Fish and Luther's Maze Madness (Updated)", GID_HEGAME, 6, 100, 60, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"4f101be44a2a2323ae679e34a7c3f634", "Maniac Mansion (NES SW)", GID_MANIAC, 1, 0, 25, MDT_NONE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, "Maniac Mansion (SW).nes"},
 	{"51305e929e330e24a75a0351c8f9975e", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Updated)", GID_HEGAME, 6, 99, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"635b821a347728268ca0636c45143ab2", "Maniac Mansion (NES U)", GID_MANIAC, 1, 0, 25, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, 0},
+	{"59293b8524faee354f6ce7db9b5460d4", "Maniac Mansion (NES F)", GID_MANIAC, 1, 0, 25, MDT_NONE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, "Maniac Mansion (F).nes"},
 	{"6a30a07f353a75cdc602db27d73e1b42", "Putt-Putt Joins The Parade (Windows)", GID_HEGAME, 6, 70, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
 	{"6af2419fe3db5c2fdb091ae4e5833770", "Putt-Putt Enters the Race (Demo Alt)", GID_FREDDI4, 6, 98, 61, MDT_NONE,
@@ -450,8 +452,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"92e7727e67f5cd979d8a1070e4eb8cb3", "Putt-Putt Saves the Zoo (Updated)", GID_FREDDI4, 6, 98, 30, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"92fc0b874e44177215336568d9e6b9d5", "Maniac Mansion (NES SW)", GID_MANIAC, 1, 0, 25, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, 0},
+	{"9a7f9443a7372f09f325c96176d9fec3", "Maniac Mansion (NES E)", GID_MANIAC, 1, 0, 25, MDT_NONE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, "Maniac Mansion (E).nes"},
 	{"9c143c5905055d5df7a0f014ab379aee", "Putt-Putt Goes To The Moon (Windows Demo)", GID_HEGAME, 6, 70, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0, 0},
 	{"9c92eeaf517a31b7221ec2546ab669fd", "Putt-Putt Goes To The Moon (Windows)", GID_HEGAME, 6, 70, 13, MDT_NONE,
@@ -464,8 +466,6 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"b23f7cd7c304d7dff08e92a96120d5b4", "Zak McKracken and the Alien Mindbenders (v1)", GID_ZAK, 1, 0, 13, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, 0, 0},
-	{"b5fa3b53523c849fbbcaeff86d5fd1ee", "Maniac Mansion (NES E)", GID_MANIAC, 1, 0, 25, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, 0},
 	{"bf8b52fdd9a69c67f34e8e9fec72661c", "Let's Explore the Farm with Buzzy (Demo) (puttputt cd)", GID_HEGAME, 6, 71, 13, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"d37c55388294b66e53e7ced3af88fa68", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo Updated)", GID_HEGAME, 6, 100, 30, MDT_NONE,
@@ -478,8 +478,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // PJSamDemo
 	{"e41de1c2a15abbcdbf9977e2d7e8a340", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Updated Ru)", GID_HEGAME, 6, 100, 61, MDT_NONE, // FIXME: number of actors
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0}, // FreddiCHSH
-	{"f77d2f0224042a21387899a54844fded", "Maniac Mansion (NES F)", GID_MANIAC, 1, 0, 25, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, 0},
+	{"fcd1fb5aaae86dc0d23c624cd66c0aef", "Maniac Mansion (NES U)", GID_MANIAC, 1, 0, 25, MDT_NONE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES, 0, "Maniac Mansion (U).nes"},
 #endif
 	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0, 0, 0}
 };
@@ -487,7 +487,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 enum genMethods {
 	kGenMac,
 	kGenMacNoParens,
-	kGenPC
+	kGenPC,
+	kGenAsIs
 };
 
 struct SubstResFileNames {
@@ -498,6 +499,10 @@ struct SubstResFileNames {
 
 static SubstResFileNames substResFileNameTable[] = {
 	{ "Intentionally/left/blank", "", kGenMacNoParens},
+	{ "00.LFL", "Maniac Mansion (E).nes", kGenAsIs },
+	{ "00.LFL", "Maniac Mansion (F).nes", kGenAsIs },
+	{ "00.LFL", "Maniac Mansion (SW).nes", kGenAsIs },
+	{ "00.LFL", "Maniac Mansion (U).nes", kGenAsIs },
 	{ "racedemo", "500demo", kGenPC},
 	{ "Spydemo", "foxdemo", kGenPC},
 	{ "Spydemo", "FoxDemo", kGenMac },
@@ -654,6 +659,13 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		File::addDefaultDirectory(_gameDataPath + "data/");
 	}
 
+	// We read data directly from NES ROM instead of extracting it with
+	// external tool
+	if (_features & GF_NES)
+		_fileHandle = new ScummNESFile();
+	else
+		_fileHandle = new ScummFile();
+
 	// The mac versions of Sam&Max, DOTT, FT and The Dig used a special meta
 	// (container) file format to store the actual SCUMM data files. The
 	// rescumm utility used to be used to extract those files. While that is
@@ -662,7 +674,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// here); the rest is handled by the  ScummFile class and code in
 	// openResourceFile() (and in the Sound class, for MONSTER.SOU handling).
 	if (gs.detectFilename) {
-		if (_fileHandle.open(gs.detectFilename)) {
+		if (_fileHandle->open(gs.detectFilename)) {
 			_containerFile = gs.detectFilename;
 		}
 	}
@@ -1150,6 +1162,7 @@ ScummEngine::~ScummEngine() {
 	delete _pauseDialog;
 	delete _mainMenuDialog;
 	delete _versionDialog;
+	delete _fileHandle;
 
 	delete _sound;
 	free(_languageBuffer);
@@ -2880,6 +2893,8 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 		} else if (g->features & GF_HUMONGOUS) {
 			strcpy(detectName, base);
 			strcat(detectName, ".he0");
+		} else if (g->features & GF_NES) {
+			strcpy(detectName, base);
 		} else {
 			strcpy(detectName, base);
 			strcat(detectName, ".000");
@@ -3009,6 +3024,10 @@ static int generateSubstResFileName_(const char *filename, char *buf, int bufsiz
 
 			case kGenPC:
 				snprintf(buf, bufsize, "%s%s", substResFileNameTable[i].macName, ext);
+				break;
+
+			case kGenAsIs:
+				strncpy(buf, substResFileNameTable[i].macName, bufsize);
 				break;
 
 			default:

@@ -23,10 +23,26 @@
 #define SCUMM_UTIL_H
 
 #include "common/file.h"
+#include "common/stream.h"
 
 namespace Scumm {
 
-class ScummFile : public File {
+class BaseScummFile : public File {
+public:
+	virtual void setEnc(byte value) = 0;
+	
+	virtual bool open(const char *filename, AccessMode mode = kFileReadMode) = 0;
+	virtual bool openSubFile(const char *filename) = 0;
+
+	virtual bool eof() = 0;
+	virtual uint32 pos() = 0;
+	virtual uint32 size() = 0;
+	virtual void seek(int32 offs, int whence = SEEK_SET) = 0;
+	virtual uint32 read(void *ptr, uint32 size) = 0;
+	virtual uint32 write(const void *ptr, uint32 size) = 0;
+};
+
+class ScummFile : public BaseScummFile {
 private:
 	byte _encbyte;
 	uint32	_subFileStart;
@@ -46,6 +62,71 @@ public:
 	uint32 size();
 	void seek(int32 offs, int whence = SEEK_SET);
 	uint32 read(void *ptr, uint32 size);
+	uint32 write(const void *ptr, uint32 size);
+};
+
+
+typedef enum _res_type {
+	NES_UNKNOWN,
+	NES_GLOBDATA,
+	NES_ROOM,
+	NES_SCRIPT, 
+	NES_SOUND,
+	NES_COSTUME,
+	NES_ROOMGFX,
+	NES_COSTUMEGFX,
+	NES_SPRPALS,
+	NES_SPRDESC,
+	NES_SPRLENS,
+	NES_SPROFFS,
+	NES_SPRDATA 
+} res_type;
+
+class ScummNESFile : public BaseScummFile {
+	typedef	enum _romset {
+		kROMsetUSA,
+		kROMsetEurope,
+		kROMsetSweden,
+		kROMsetFrance,
+		kROMsetNum 
+	} t_romset;
+
+public:
+
+	typedef	struct	_resource {
+		uint32 offset[kROMsetNum];
+		uint16 length[kROMsetNum];
+		res_type type;
+	}	t_resource, *p_resource;
+
+private:
+	Common::MemoryReadStream *_stream;
+	t_romset _ROMset;
+	byte *_buf;
+
+	bool generateIndex();
+	bool generateResource(int res);
+	uint16 extractResource(Common::MemoryWriteStream *out, p_resource res);
+
+	uint32 resOffset(p_resource res);
+	uint16 resLength(p_resource res);
+
+	byte FileReadByte();
+	uint16 FileReadUint16LE();
+
+public:
+	ScummNESFile();
+	void setEnc(byte value);
+	
+	bool open(const char *filename, AccessMode mode = kFileReadMode);
+	bool openSubFile(const char *filename);
+
+	void close();
+	bool eof() { return _stream->eof(); }
+	uint32 pos() { return _stream->pos(); }
+	uint32 size() { return _stream->size(); }
+	void seek(int32 offs, int whence = SEEK_SET) { return _stream->seek(offs, whence); }
+	uint32 read(void *ptr, uint32 len) { return _stream->read(ptr, len); }
 	uint32 write(const void *ptr, uint32 size);
 };
 

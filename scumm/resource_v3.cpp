@@ -35,22 +35,22 @@ void ScummEngine_v3::readIndexFile() {
 		closeRoom();
 		openRoom(0);
 
-		magic = _fileHandle.readUint16LE();
+		magic = _fileHandle->readUint16LE();
 		if (magic != 0x0100)
 			warning("The magic id doesn't match (0x%X)", magic);
 
-		_numGlobalObjects = _fileHandle.readUint16LE();
-		_fileHandle.seek(_numGlobalObjects * 4, SEEK_CUR);
-		_numRooms = _fileHandle.readByte();
-		_fileHandle.seek(_numRooms * 3, SEEK_CUR);
-		_numCostumes = _fileHandle.readByte();
-		_fileHandle.seek(_numCostumes * 3, SEEK_CUR);
-		_numScripts = _fileHandle.readByte();
-		_fileHandle.seek(_numScripts * 3, SEEK_CUR);
-		_numSounds = _fileHandle.readByte();
+		_numGlobalObjects = _fileHandle->readUint16LE();
+		_fileHandle->seek(_numGlobalObjects * 4, SEEK_CUR);
+		_numRooms = _fileHandle->readByte();
+		_fileHandle->seek(_numRooms * 3, SEEK_CUR);
+		_numCostumes = _fileHandle->readByte();
+		_fileHandle->seek(_numCostumes * 3, SEEK_CUR);
+		_numScripts = _fileHandle->readByte();
+		_fileHandle->seek(_numScripts * 3, SEEK_CUR);
+		_numSounds = _fileHandle->readByte();
 
-		_fileHandle.clearIOFailed();
-		_fileHandle.seek(0, SEEK_SET);
+		_fileHandle->clearIOFailed();
+		_fileHandle->seek(0, SEEK_SET);
 
 		readMAXS();
 
@@ -59,7 +59,7 @@ void ScummEngine_v3::readIndexFile() {
 		_palManipPalette = 0; // Will allocate when needed
 		_palManipIntermediatePal = 0; // Will allocate when needed
 
-		_fileHandle.readUint16LE(); /* version magic number */
+		_fileHandle->readUint16LE(); /* version magic number */
 		readGlobalObjects();
 		readResTypeList(rtRoom, MKID('ROOM'), "room");
 		readResTypeList(rtCostume, MKID('COST'), "costume");
@@ -77,37 +77,37 @@ void ScummEngine_v3::readIndexFile() {
 		closeRoom();
 		openRoom(0);
 
-		while (!_fileHandle.eof()) {
-			itemsize = _fileHandle.readUint32LE();
-			blocktype = _fileHandle.readUint16LE();
-			if (_fileHandle.ioFailed())
+		while (!_fileHandle->eof()) {
+			itemsize = _fileHandle->readUint32LE();
+			blocktype = _fileHandle->readUint16LE();
+			if (_fileHandle->ioFailed())
 				break;
 
 			switch (blocktype) {
 			case 0x4E52:	// 'NR'
-				_fileHandle.readUint16LE();
+				_fileHandle->readUint16LE();
 				break;
 			case 0x5230:	// 'R0'
-				_numRooms = _fileHandle.readUint16LE();
+				_numRooms = _fileHandle->readUint16LE();
 				break;
 			case 0x5330:	// 'S0'
-				_numScripts = _fileHandle.readUint16LE();
+				_numScripts = _fileHandle->readUint16LE();
 				break;
 			case 0x4E30:	// 'N0'
-				_numSounds = _fileHandle.readUint16LE();
+				_numSounds = _fileHandle->readUint16LE();
 				break;
 			case 0x4330:	// 'C0'
-				_numCostumes = _fileHandle.readUint16LE();
+				_numCostumes = _fileHandle->readUint16LE();
 				break;
 			case 0x4F30:	// 'O0'
-				_numGlobalObjects = _fileHandle.readUint16LE();
+				_numGlobalObjects = _fileHandle->readUint16LE();
 				break;
 			}
-			_fileHandle.seek(itemsize - 8, SEEK_CUR);
+			_fileHandle->seek(itemsize - 8, SEEK_CUR);
 		}
 
-		_fileHandle.clearIOFailed();
-		_fileHandle.seek(0, SEEK_SET);
+		_fileHandle->clearIOFailed();
+		_fileHandle->seek(0, SEEK_SET);
 
 		readMAXS();
 
@@ -117,19 +117,19 @@ void ScummEngine_v3::readIndexFile() {
 		_palManipIntermediatePal = 0; // Will allocate when needed
 
 		while (1) {
-			itemsize = _fileHandle.readUint32LE();
+			itemsize = _fileHandle->readUint32LE();
 
-			if (_fileHandle.ioFailed())
+			if (_fileHandle->ioFailed())
 				break;
 
-			blocktype = _fileHandle.readUint16LE();
+			blocktype = _fileHandle->readUint16LE();
 
 			numblock++;
 
 			switch (blocktype) {
 
 			case 0x4E52:	// 'NR'
-				_fileHandle.seek(itemsize - 6, SEEK_CUR);
+				_fileHandle->seek(itemsize - 6, SEEK_CUR);
 				break;
 
 			case 0x5230:	// 'R0'
@@ -213,15 +213,15 @@ void ScummEngine_v3::readMAXS() {
 }
 
 void ScummEngine_v3::readGlobalObjects() {
-	int num = _fileHandle.readUint16LE();
+	int num = _fileHandle->readUint16LE();
 	assert(num == _numGlobalObjects);
 	for (int i = 0; i != num; i++) {
-		uint32 bits = _fileHandle.readByte();
+		uint32 bits = _fileHandle->readByte();
 		byte tmp;
-		bits |= _fileHandle.readByte() << 8;
-		bits |= _fileHandle.readByte() << 16;
+		bits |= _fileHandle->readByte() << 8;
+		bits |= _fileHandle->readByte() << 16;
 		_classData[i] = bits;
-		tmp = _fileHandle.readByte();
+		tmp = _fileHandle->readByte();
 		_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
 		_objectStateTable[i] = tmp >> OF_STATE_SHL;
 	}

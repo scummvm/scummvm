@@ -223,16 +223,29 @@ private:
 	const byte * const _ptrOrig;
 	const uint32 _bufSize;
 	uint32 _pos;
+	byte _encbyte;
+
 public:
 	MemoryReadStream(const byte *buf, uint32 len) : _ptr(buf), _ptrOrig(buf), _bufSize(len), _pos(0) {}
+
+	void setEnc(byte value) { _encbyte = value; }
 
 	uint32 read(void *ptr, uint32 len) {
 		// Read at most as many bytes as are still available...
 		if (len > _bufSize - _pos)
 			len = _bufSize - _pos;
 		memcpy(ptr, _ptr, len);
+
+		if (_encbyte) {
+			byte *p = (byte *)ptr;
+			byte *end = p + len;
+			while (p < end)
+				*p++ ^= _encbyte;
+		}
+
 		_ptr += len;
 		_pos += len;
+
 		return len;
 	}
 
@@ -241,6 +254,34 @@ public:
 	uint32 size() const { return _bufSize; }
 
 	void seek(int32 offs, int whence = SEEK_SET);
+};
+
+/**
+ * Simple memory based 'stream', which implements the WriteStream interface for
+ * a plain memory block.
+ */
+class MemoryWriteStream : public WriteStream {
+private:
+	byte *_ptr;
+	const byte * const _ptrOrig;
+	const uint32 _bufSize;
+	uint32 _pos;
+public:
+	MemoryWriteStream(byte *buf, uint32 len) : _ptr(buf), _ptrOrig(buf), _bufSize(len), _pos(0) {}
+
+	uint32 write(const void *ptr, uint32 len) {
+		// Write at most as many bytes as are still available...
+		if (len > _bufSize - _pos)
+			len = _bufSize - _pos;
+		memcpy(_ptr, ptr, len);
+		_ptr += len;
+		_pos += len;
+		return len;
+	}
+
+	bool eof() const { return _pos == _bufSize; }
+	uint32 pos() const { return _pos; }
+	uint32 size() const { return _bufSize; }
 };
 
 }	// End of namespace Common

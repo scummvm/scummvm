@@ -519,9 +519,9 @@ void ScummEngine_v8::readArrayFromIndexFile() {
 	int num;
 	int a, b;
 
-	while ((num = _fileHandle.readUint32LE()) != 0) {
-		a = _fileHandle.readUint32LE();
-		b = _fileHandle.readUint32LE();
+	while ((num = _fileHandle->readUint32LE()) != 0) {
+		a = _fileHandle->readUint32LE();
+		b = _fileHandle->readUint32LE();
 		
 		if (b != 0)
 			defineArray(num, kIntArray, b, a);
