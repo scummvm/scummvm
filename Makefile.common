@@ -87,12 +87,12 @@ clean:
 #$(OBJS): $(INCS)
 
 
-ifndef HAVE_GCC3
-# If you use GCC, disable the above and enable this for intelligent
-# dependency tracking. 
 DEPDIRS = $(addsuffix /$(DEPDIR),$(MODULES))
 DEPFILES = $(wildcard $(addsuffix /*.d,$(DEPDIRS)))
 
+ifndef HAVE_GCC3
+# If you use GCC, disable the above and enable this for intelligent
+# dependency tracking. 
 .cpp.o:
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
