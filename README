@@ -662,18 +662,18 @@ emulation. MIDI may not be available on all operating systems or may need
 manual configuration. If you ARE using MIDI, you have several different
 choices of output, depending on your operating system and configuration.
         
-        adlib     - Uses internal Adlib Emulation (default)
-        mt32      - Uses internal MT-32 Emulation
-        pcjr      - Uses internal PCjr Emulation 
-        pcspk     - Uses internal PC Speaker Emulation
-        towns     - Uses FM-TOWNS YM2612 Emulation
-        windows   - Windows MIDI. Uses built-in sequencer, for Windows users
-        seq       - Uses /dev/sequencer for MIDI, *nix users. See below.
-        qt        - Quicktime sound, for Macintosh users.
-        core      - CoreAudio sound, for MacOS X users.
-        amidi     - Uses the MorphOS MIDI system, for MorphOS users
+        adlib     - Internal Adlib emulation (default)
         alsa      - Output using ALSA sequencer device. See below.
+        amidi     - Use the MorphOS MIDI system, for MorphOS users
+        core      - CoreAudio sound, for MacOS X users.
+        mt32      - Internal MT-32 emulation
         null      - Null output. Don't play any music.
+        pcjr      - Internal PCjr emulation 
+        pcspk     - Internal PC Speaker emulation
+        qt        - Quicktime sound, for Macintosh users.
+        seq       - Use /dev/sequencer for MIDI, *nix users. See below.
+        towns     - FM-TOWNS YM2612 emulation
+        windows   - Windows MIDI. Uses built-in sequencer, for Windows users
 
 To select a sound driver, pass its name via the '-e' option to scummvm,
 for example:
