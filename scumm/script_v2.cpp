@@ -1292,7 +1292,7 @@ void Scumm_v2::o2_pickupObject() {
 
 void Scumm_v2::o2_setObjectName() {
 	int obj = getVarOrDirectWord(0x80);
-	int size;
+	int size = 0;
 	int a;
 	int i = 0;
 	byte *name = NULL;
@@ -1303,7 +1303,6 @@ void Scumm_v2::o2_setObjectName() {
 		a = fetchScriptByte();
 		work[i++] = a;
 	} while (a);
-	work[i] = 0;
 
 	if (obj < _numActors)
 		error("Can't set actor %d name with new-name-of", obj);
@@ -1312,19 +1311,21 @@ void Scumm_v2::o2_setObjectName() {
 	if (name == NULL)
 		return;	// Silently abort
 
-	byte *objptr;
-	byte offset = 0;
+  while(name[size++])
+    ;
 
-	objptr = getOBCDFromObject(obj);
-	offset = *(objptr + 14);
-	size = READ_LE_UINT16(objptr) - offset;
-
-	if (i >= size) {
+	if (i > size) {
 		warning("New name of object %d too long (old *%s* new *%s*)", obj, name, work);
-		i = size - 1;
+		i = size;
 	}
 
-	memcpy(name, work, i + 1);
+  while (i < size) {
+    work[i-1] = '@';
+    i++;
+  }
+  work[i-1] = 0;
+
+	memcpy(name, work, i);
 	redrawV2Inventory();
 }
 
