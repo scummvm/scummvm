@@ -123,7 +123,7 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *syst)
 
 KyraEngine::~KyraEngine() {
 	delete _resMgr;
-	delete _screen;
+	delete[] _screen;
 	delete _mouse;
 	delete _items;
 	delete _npcScript;

@@ -36,626 +36,356 @@ namespace Kyra {
 		
 		// now we create a list of all Command/Opcode procs and so
 		static CommandEntry commandProcs[] = {
-			// 0
+			// 0x00
 			COMMAND(c1_goToLine),
 			COMMAND(c1_setReturn),
 			COMMAND(c1_pushRetRec),
 			COMMAND(c1_push),
+			// 0x04
 			COMMAND(c1_push),			
 			COMMAND(c1_pushVar),
 			COMMAND(c1_pushFrameNeg),
 			COMMAND(c1_pushFramePos),
+			// 0x08
 			COMMAND(c1_popRetRec),
 			COMMAND(c1_popVar),
-			
-			// 10
 			COMMAND(c1_popFrameNeg),
 			COMMAND(c1_popFramePos),
+			// 0x0C
 			COMMAND(c1_addToSP),
 			COMMAND(c1_subFromSP),
 			COMMAND(c1_execOpcode),			
 			COMMAND(c1_ifNotGoTo),
+			// 0x10
 			COMMAND(c1_negate),
-			COMMAND(c1_evaluate),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 20
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 30
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 40
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 50
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 60
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 70
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 80
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 90
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 100
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 110
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 120
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 130
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 140
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 150
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 160
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 170
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 180
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 190
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 200
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 210
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 220
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 230
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 240
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),			
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			
-			// 250
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			COMMAND(c1_unknownCommand),
-			{ 0, 0 }
+			COMMAND(c1_evaluate)
 		};
+		_numCommands = ARRAYSIZE(commandProcs);
 		_commands = commandProcs;
+		
 		static OpcodeEntry opcodeProcs[] = {
-			// 0
+			// 0x00
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
+			// 0x04
 			COMMAND(o1_unknownOpcode),			
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			
-			// 10
+			// 0x08
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			
-			// 20
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
+			// 0x0C
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),			
 			COMMAND(o1_unknownOpcode),
+			// 0x10
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			
-			// 30
+			// 0x14
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
+			// 0x18
 			COMMAND(o1_unknownOpcode),			
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			
-			// 40
+			// 0x1C
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			
-			// 50
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
+			// 0x20
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),			
 			COMMAND(o1_unknownOpcode),
+			// 0x24
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			
-			// 60
+			// 0x28
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
+			// 0x2C
 			COMMAND(o1_unknownOpcode),			
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			
-			// 70
+			// 0x30
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			
-			// 80
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
+			// 0x34
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),			
 			COMMAND(o1_unknownOpcode),
+			// 0x38
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			
-			// 90
+			// 0x3C
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
+			// 0x40
 			COMMAND(o1_unknownOpcode),			
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			
-			// 100
+			// 0x44
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
+			// 0x48
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			// 0x4C
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			// 0x50
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			// 0x54
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			// 0x58
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			// 0x5C
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			// 0x60
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			// 0x64
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			// 0x68
 			COMMAND(o1_0x68),			
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			
-			// 110
+			// 0x6C
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			
-			// 120
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
+			// 0x70
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),			
 			COMMAND(o1_unknownOpcode),
+			// 0x74
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			
-			// 130
+			// 0x78
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
+			// 0x7C
 			COMMAND(o1_unknownOpcode),			
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			
-			// 140
+			// 0x80
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			
-			// 150
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
+			// 0x84
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),			
 			COMMAND(o1_unknownOpcode),
+			// 0x88
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			
-			// 160
+			// 0x8C
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
+			// 0x90
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			// 0x94
 			COMMAND(o1_unknownOpcode),			
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			
-			// 170
+			// 0x98
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			
-			// 180
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
+			// 0x9C
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),			
 			COMMAND(o1_unknownOpcode),
+			// 0xA0
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			
-			// 190
+			// 0xA4
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
+			// 0xA8
 			COMMAND(o1_unknownOpcode),			
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			
-			// 200
+			// 0xAC
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),			
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			
-			// 210
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
+			// 0xB0
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),			
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			
-			// 220
-			COMMAND(o1_unknownOpcode),
+			// 0xB4
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),			
+			// 0xB8
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			
-			// 230
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
-			COMMAND(o1_unknownOpcode),
+			// 0xBC
 			COMMAND(o1_unknownOpcode),			
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
+			// 0xC0
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			
-			// 240
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
+			// 0xC4
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),			
 			COMMAND(o1_unknownOpcode),
+			// 0xC8
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			
-			// 250
+			// 0xCC
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
+			// 0xD0
+			COMMAND(o1_unknownOpcode),			
 			COMMAND(o1_unknownOpcode),
 			COMMAND(o1_unknownOpcode),
-			{ 0, 0 }
+			COMMAND(o1_unknownOpcode),
+			// 0xD4
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			// 0xD8
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			// 0xDC
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			// 0xE0
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			// 0xE4
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			// 0xE8
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			// 0xEC
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			// 0xF0
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			// 0xF4
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			// 0xF8
+			COMMAND(o1_unknownOpcode),			
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			// 0xFC
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode),
+			COMMAND(o1_unknownOpcode)
 		};
+		_numOpcodes = ARRAYSIZE(opcodeProcs);
 		_opcodes = opcodeProcs;
 
 		_scriptFile = NULL;
@@ -692,11 +422,11 @@ namespace Kyra {
 			debug("chunk name(4 chars): '%s'", chunkName);
 			
 			// check name of chunk
-			if (!scumm_stricmp((char*)chunkName, "FORM")) {			
+			if (!scumm_stricmp((const char *)chunkName, "FORM")) {			
 				// FreeKyra swaps the size I only read it in BigEndian :)
 				_chunks[kForm]._size = script.readUint32BE();	
 				debug("_chunks[kForm]._size = %d", _chunks[kForm]._size);				
-			} else if (!scumm_stricmp((char*)chunkName, "TEXT")) {
+			} else if (!scumm_stricmp((const char *)chunkName, "TEXT")) {
 				uint32 text_size = script.readUint32BE();
 				text_size += text_size % 2 != 0 ? 1 : 0;
 				
@@ -706,7 +436,7 @@ namespace Kyra {
 				debug("_chunks[kText]._size = %d, real chunk size = %d", _chunks[kText]._size, text_size);	
 				
 				script.seek(script.pos() + text_size);
-			} else if (!scumm_stricmp((char*)chunkName, "DATA")) {
+			} else if (!scumm_stricmp((const char *)chunkName, "DATA")) {
 				_chunks[kData]._size = script.readUint32BE();
 				_chunks[kData]._data = _scriptFile + script.pos();				
 				debug("_chunks[kData]._size = %d", _chunks[kData]._size);
@@ -719,7 +449,7 @@ namespace Kyra {
 				chunkName[8] = '\0';
 				debug("chunk name(8 chars): '%s'", chunkName);
 				
-				if (!scumm_stricmp((char*)chunkName, "EMC2ORDR")) {
+				if (!scumm_stricmp((const char *)chunkName, "EMC2ORDR")) {
 					_chunks[kEmc2Ordr]._size = script.readUint32BE() >> 1;
 					_chunks[kEmc2Ordr]._data = _scriptFile + script.pos();					
 					debug("_chunks[kEmc2Ordr]._size = %d, real chunk size = %d", _chunks[kEmc2Ordr]._size, _chunks[kEmc2Ordr]._size * 2);
@@ -746,7 +476,7 @@ namespace Kyra {
 		if (index < 0 || (uint32)index >= _chunks[kText]._size)
 			return 0;
 		
-		return (char*)(_chunks[kText]._additional + _chunks[kText]._data[index]);
+		return (const char *)(_chunks[kText]._additional + _chunks[kText]._data[index]);
 	}
 	
 	bool VMContext::startScript(int32 func) {
@@ -798,9 +528,12 @@ namespace Kyra {
 			}
 			
 			_currentCommand &= 0x1f;
-		
-			CommandProc currentProc = _commands[_currentCommand].proc;
-			(this->*currentProc)();
+			if (_currentCommand < _numCommands) {
+				CommandProc currentProc = _commands[_currentCommand].proc;
+				(this->*currentProc)();
+			} else {
+				c1_unknownCommand();
+			}
 			
 			if (_error) {
 				_scriptState = kScriptError;

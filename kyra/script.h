@@ -121,7 +121,9 @@ namespace Kyra {
 			const char* desc;
 		};
 		
+		uint16 _numCommands;
 		const CommandEntry* _commands;
+		uint16 _numOpcodes;
 		const OpcodeEntry* _opcodes;
   
 	protected:

@@ -103,8 +103,12 @@ namespace Kyra {
 	}
 	
 	void VMContext::c1_execOpcode(void) {
-		OpcodeProc proc = _opcodes[_argument].proc;
-		(this->*proc)();
+		if (_argument < _numOpcodes) {
+			OpcodeProc proc = _opcodes[_argument].proc;
+			(this->*proc)();
+		} else {
+			error("Invalid opcode 0x%X", _argument);
+		}
 	}
 	
 	void VMContext::c1_ifNotGoTo(void) {
