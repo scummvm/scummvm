@@ -592,7 +592,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 
 	_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), mode, 0, _comPanel, true);
 
-	// XXX CI=FRAMES;
+	_currentImage = _logic->numFrames();
 
 	_temporaryRoom = _logic->currentRoom();
 
@@ -669,6 +669,14 @@ Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
 
 byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 	// lines 1531-1607 in cutaway.c
+
+	debug(0, "[Cutaway::getCutawayAnim] header=%i", header);
+
+	// XXX why is Joe flying???
+	if (_logic->currentRoom() == 112 && header == 0) {
+		warning("Hack to show airplane instead of Joe at last credit scene");
+		header = 763;
+	}
 
 	anim.currentFrame = 0;
 	anim.originalFrame = 0;
@@ -796,6 +804,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 			error("Header too large");
 
 		ptr = getCutawayAnim(ptr, header, objAnim[frameCount]);
+		//dumpCutawayAnim(objAnim[frameCount]);
 
 		frameCount++;
 
@@ -813,8 +822,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 			warning("The oracle is not yet handled");
 		}
 		else {
-			int currentImage = 0;
-			currentImage = makeComplexAnimation(currentImage, objAnim, frameCount);
+			_currentImage = makeComplexAnimation(_currentImage, objAnim, frameCount);
 		}
 
 		if (object.bobStartX || object.bobStartY) {
@@ -879,10 +887,10 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 					// Unpack animation, but do not unpack moving people
 
 					if (!((objAnim[i].mx || objAnim[i].my) && InRange(objAnim[i].object, 0, 3))) {
-						/*debug(0, "Animation - bankUnpack(%i, %i, %i);",
+						debug(0, "Animation - bankUnpack(%i, %i, %i);",
 								objAnim[i].unpackFrame, 
 								objAnim[i].originalFrame,
-								objAnim[i].bank);*/
+								objAnim[i].bank);
 						_graphics->bankUnpack(
 								objAnim[i].unpackFrame, 
 								objAnim[i].originalFrame,
@@ -956,7 +964,8 @@ static void findCdCut(const char *basename, int index, char *result) {
 	strcpy(result, basename);
 	for (int i = strlen(basename); i < 5; i++)
 		result[i] = '_';
-	snprintf(result + 5, 2, "%02i", index);
+	snprintf(result + 5, 3, "%02i", index);
+	//debug(0, "findCdCut(\"%s\", %i, \"%s\")", basename, index, result);
 }
 
 void Cutaway::handlePersonRecord(
@@ -990,7 +999,7 @@ void Cutaway::handlePersonRecord(
 			_walk->personMove(
 					&p, 
 					object.moveToX, object.moveToY,
-					_logic->numFrames() + 1, 		// XXX CI+1
+					_currentImage + 1, 		// XXX CI+1
 					_logic->objectData(object.objectNumber)->image
 					);
 	}
@@ -1045,7 +1054,7 @@ void Cutaway::run(char *nextFilename) {
 	for (int i = 0; i < _cutawayObjectCount; i++) {
 		CutawayObject object;
 		ptr = getCutawayObject(ptr, object);
-//		dumpCutawayObject(i, object);
+		//dumpCutawayObject(i, object);
 
 		if (!object.moveToX && 
 				!object.moveToY && 
@@ -1096,7 +1105,7 @@ void Cutaway::run(char *nextFilename) {
 				break;
 
 			case OBJECT_TYPE_PERSON:
-				handlePersonRecord(i, object, sentence);
+				handlePersonRecord(i + 1, object, sentence);
 				break;
 
 			case OBJECT_TYPE_NO_ANIMATION:

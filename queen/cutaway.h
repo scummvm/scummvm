@@ -202,6 +202,8 @@ class Cutaway {
 		//! Song played before running comic.cut
 		int16 _songBeforeComic;
 
+		int16 _currentImage;
+
 
 		Cutaway(
 				const char *filename, 
