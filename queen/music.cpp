@@ -55,10 +55,9 @@ static const byte mt32_to_gm[128] = {
 	}
 	
 	MusicPlayer::~MusicPlayer() {
-		_driver->setTimerCallback(NULL, NULL);
 		_parser->unloadMusic();
-		this->close();
 		delete _parser;
+		this->close();
 		delete[] _buf;
 	}
 	
@@ -124,7 +123,7 @@ static const byte mt32_to_gm[128] = {
 	}
 	
 	void MusicPlayer::close() {
-		stopMusic();
+		_driver->setTimerCallback(NULL, NULL);
 		if (_driver)
 			_driver->close();
 		_driver = 0;
