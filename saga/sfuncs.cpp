@@ -918,11 +918,17 @@ int Script::SF_simulSpeech2(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #48 (0x30)
+// Param1: string rid
 int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
+	int stringId;
+	const char *string;
 	GAME_DISPLAYINFO disp;
 	SURFACE *back_buf = _vm->_gfx->getBackBuffer();
 	PALENTRY cur_pal[PAL_ENTRIES];
 	PALENTRY *pal;
+	
+	stringId = thread->pop();
+	string = getString(stringId);
 
 	_vm->getDisplayInfo(&disp);
 
@@ -941,7 +947,7 @@ int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	// It doesn't end up in exactly the same spot as the original did it,
 	// but it's close enough for now at least.
 
-	_vm->textDraw(MEDIUM_FONT_ID, back_buf, getString(thread->pop()),
+	_vm->textDraw(MEDIUM_FONT_ID, back_buf, string,
 		disp.logical_w / 2,
 		(disp.scene_h - _vm->_font->getHeight(MEDIUM_FONT_ID)) / 2,
 		_vm->_gfx->getWhite(), _vm->_gfx->getBlack(),

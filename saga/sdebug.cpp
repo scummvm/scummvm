@@ -65,10 +65,10 @@ int Script::SDebugPrintInstr(SCRIPT_THREAD *thread) {
 	tl_e.string = disp_buf;
 	tl_e.display = 1;
 
-	MemoryReadStream/*Endian*/ readS(currentScript()->bytecode->bytecode_p 
+	MemoryReadStream readS(currentScript()->bytecode->bytecode_p 
 							 + thread->i_offset, 
 							 currentScript()->bytecode->bytecode_len 
-							 - thread->i_offset/*, IS_BIG_ENDIAN*/);
+							 - thread->i_offset);
 	in_char = readS.readByte();
 	sprintf(tmp_buf, "%04lX | %02X | ", thread->i_offset, in_char);
 	strncat(disp_buf, tmp_buf, SD_DISPLAY_LEN);
@@ -219,46 +219,20 @@ int Script::SDebugPrintInstr(SCRIPT_THREAD *thread) {
 		}
 		break;
 		// Call function
-	case 0x19:
-	case 0x18:
-		{
-			int func_num;
-			int param;
-
-			SD_ADDTXT("CALL | ");
-			func_num = readS.readByte();
-			sprintf(tmp_buf, "%02X ", func_num);
-			SD_ADDTXT(tmp_buf);
-			param = readS.readUint16LE();
-			sprintf(tmp_buf, "%04X ", param);
-			SD_ADDTXT(tmp_buf);
-		}
+	case opCcall:
+		SD_ADDTXT("opCall");
 		break;
-		// Begin subscript
-	case 0x1A:
-		{
-			int param;
-
-			SD_ADDTXT("ENTR | ");
-			param = readS.readUint16LE();
-			sprintf(tmp_buf, "%04X ", param);
-			SD_ADDTXT(tmp_buf);
-/*
-			for(i = 0 ; i < script_list->n_scripts ; i++) {
-				if(op_offset == script_list->scripts[i].offset) {
-					debug(2, "; Entrypoint \"%s\".", script_list->scriptl_p + script_list->scripts[i].name_offset);
-					break;
-				}
-			}
-*/
-		}
+	case opCcallV:
+		SD_ADDTXT("opCallV");
 		break;
-	case 0x1B:
-		SD_ADDTXT("??? ");
+	case opEnter:
+		SD_ADDTXT("opEnter");
 		break;
-		// End subscript
-	case 0x1C:
-		SD_ADDTXT("EXIT |");
+	case opReturn:
+		SD_ADDTXT("opReturn");
+		break;
+	case opReturnV:
+		SD_ADDTXT("opReturnV");
 		break;
 		// Unconditional jump
 	case 0x1D:
@@ -453,20 +427,7 @@ int Script::SDebugPrintInstr(SCRIPT_THREAD *thread) {
 		SD_ADDTXT("LXOR |");
 		break;
 	case opSpeak:
-		{
-			int stringsCount;
-			uint16 actorId;
-			int speechFlags;
-
-			SD_ADDTXT("opSpeak | ");
-			stringsCount = readS.readByte();
-			actorId = readS.readUint16LE();
-			speechFlags = readS.readByte();
-			// ignored ?
-			readS.readUint16LE();
-			sprintf(tmp_buf, "%02X %04X %02X", stringsCount, actorId, speechFlags);
-			SD_ADDTXT(tmp_buf);
-		}
+		SD_ADDTXT("opSpeak");
 		break;
 	case 0x54:
 		SD_ADDTXT("DLGS |");
@@ -505,10 +466,6 @@ int Script::SDebugPrintInstr(SCRIPT_THREAD *thread) {
 			sprintf(tmp_buf, "%04X %04X %02X", param1, param2, param3);
 			SD_ADDTXT(tmp_buf);
 		}
-		break;
-	default:
-		sprintf(tmp_buf, "Invalid opcode.\n");
-		SD_ADDTXT(tmp_buf);
 		break;
 	}
 

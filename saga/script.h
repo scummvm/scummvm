@@ -84,7 +84,7 @@ enum ThreadFlags {
 	kTFlagWaiting = 1,	// wait for even denoted in waitType
 	kTFlagFinished = 2,
 	kTFlagAborted = 4,
-	kTFlagAsleep = 7	// Combination of all flags which can halt a thread
+	kTFlagAsleep = kTFlagWaiting | kTFlagFinished | kTFlagAborted	// Combination of all flags which can halt a thread
 };
 
 enum ThreadWaitTypes {
@@ -103,6 +103,9 @@ enum OpCodes {
 //...
 	opCcall = 0x18,
 	opCcallV = 0x19,
+	opEnter = 0x1A,
+	opReturn = 0x1B,
+	opReturnV = 0x1C,
 //...
 	opSpeak = 0x53
 };
@@ -279,7 +282,6 @@ public:
 	int executeThreads(uint msec);
 	int SThreadDebugStep();
 	void SThreadCompleteThread(void);
-	int SThreadDestroy(SCRIPT_THREAD *thread);
 
 	void wakeUpActorThread(int waitType, void *threadObj);
 	void wakeUpThreads(int waitType);
@@ -290,7 +292,7 @@ private:
 	unsigned char *SThreadGetReadPtr(SCRIPT_THREAD *thread);
 	unsigned long SThreadGetReadOffset(const byte *read_p);
 	size_t SThreadGetReadLen(SCRIPT_THREAD *thread);
-	int SThreadRun(SCRIPT_THREAD *thread, int instr_limit);
+	void runThread(SCRIPT_THREAD *thread, int instr_limit);
 	int SThreadSetEntrypoint(SCRIPT_THREAD *thread, int ep_num);
 
 private:
@@ -303,6 +305,7 @@ private:
 	const ScriptFunctionDescription *_scriptFunctionsList;
 
 	void setupScriptFuncList(void);
+	void scriptError(SCRIPT_THREAD *thread, const char *format, ...);
 	int SDebugPrintInstr(SCRIPT_THREAD *thread);
 
 	int SF_putString(SCRIPTFUNC_PARAMS);

@@ -35,8 +35,6 @@ public:
 	Console(SagaEngine *vm);
 	~Console(void);
 
-	int DebugPrintf(const char *format, ...);
-
 protected:
 	virtual void preEnter();
 	virtual void postEnter();

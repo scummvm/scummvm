@@ -96,7 +96,7 @@ Script::Script() {
 	_scriptLUTMax = rsc_len / _scriptLUTEntryLen;
 
 	debug(0, "LUT has %d entries.", _scriptLUTMax);
-
+	
 	// Allocate space for logical LUT
 	_scriptLUT = (SCRIPT_LUT_ENTRY *)malloc(_scriptLUTMax * sizeof(SCRIPT_LUT_ENTRY));
 	if (_scriptLUT == NULL) {
@@ -527,6 +527,19 @@ VOICE_LUT *Script::loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, SCR
 	}
 
 	return voice_lut;
+}
+
+void Script::scriptError(SCRIPT_THREAD *thread, const char *format, ...) {
+	char buf[STRINGBUFLEN];
+	va_list	argptr;
+
+	va_start(argptr, format);
+	vsprintf(buf, format, argptr);
+	va_end (argptr);
+
+	thread->flags |= kTFlagAborted;
+	debug(0, "Script::scriptError %X: %s", thread->i_offset, buf);
+	_vm->_console->DebugPrintf("Script::scriptError %X: %s", thread->i_offset, buf);	
 }
 
 void Script::scriptInfo() {

@@ -59,7 +59,6 @@ SCRIPT_THREAD *Script::SThreadCreate() {
 
 	dataBuffer(4)->length = ARRAYSIZE(new_thread->threadVars);
 	dataBuffer(4)->data = new_thread->threadVars;
-
 	return new_thread;
 }
 
@@ -144,7 +143,7 @@ int Script::executeThreads(uint msec) {
 		}
 
 		if (!(thread->flags & kTFlagWaiting))
-			SThreadRun(thread, STHREAD_TIMESLICE);
+			runThread(thread, STHREAD_TIMESLICE);
 
 		++threadIterator;
 	}
@@ -216,7 +215,7 @@ int Script::SThreadDebugStep() {
 	return SUCCESS;
 }
 
-int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
+void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 	int instr_count;
 	uint32 saved_offset;
 	ScriptDataWord param1;
@@ -242,7 +241,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			instr_limit = 1;
 			_dbg_dostep = 0;
 		} else {
-			return SUCCESS;
+			return;
 		}
 	}
 
@@ -254,11 +253,13 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 	scriptS.seek(thread->i_offset);
 
 	for (instr_count = 0; instr_count < instr_limit; instr_count++) {
-		if (thread->flags & kTFlagWaiting)
+		if (thread->flags & (kTFlagAsleep))
 			break;
 
 		saved_offset = thread->i_offset;
 		operandChar = scriptS.readByte();
+//		debug print (opCode name etc) should be placed here
+//		SDebugPrintInstr(thread)
 
 //		debug(2, "Executing thread offset: %lu (%x) stack: %d", thread->i_offset, operandChar, thread->stackSize());
 		switch (operandChar) {
@@ -357,9 +358,8 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				thread->i_offset = (unsigned long)param1;
 			}
 			break;
-		case opCcall: // (CALL): Call function
-		case opCcallV: // (CALL_V): Call function and discard return value
-			{
+		case opCcall:		// Call function
+		case opCcallV: {	// Call function and discard return value
 				int argumentsCount;
 				uint16 functionNumber;
 				int scriptFunctionReturnValue;
@@ -368,9 +368,8 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				argumentsCount = scriptS.readByte();
 				functionNumber = scriptS.readUint16LE();
 				if (functionNumber >= SCRIPT_FUNCTION_MAX) {
-					_vm->_console->DebugPrintf(S_ERROR_PREFIX "Invalid script function number: (%X)\n", functionNumber);
-					thread->flags |= kTFlagAborted;
-					break;
+					scriptError(thread, "Invalid script function number");
+					return;
 				}
 
 				debug(9, "opCCall* Calling 0x%X %s", functionNumber, _scriptFunctionsList[functionNumber].scriptFunctionName);
@@ -385,32 +384,32 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 					break;
 				}
 
-				if (operandChar == 0x18) // CALL function
+				if (operandChar == opCcall) // CALL function
 					thread->push(thread->retVal);
 
 				if (thread->flags & kTFlagAsleep)
 					instr_count = instr_limit;	// break out of loop!
 			}
 			break;
-		case 0x1A: // (ENTR) Enter the dragon
+		case opEnter: // Enter a function
 			thread->push(thread->framePtr);
 			setFramePtr(thread, thread->stackPtr);
 			param1 = scriptS.readUint16LE();
 			thread->stackPtr -= (param1 / 2);
 			break;
-		case 0x1B: // Return with value
+		case opReturn: // Return with value
 			scriptRetVal = thread->pop();
-			// FALL THROUGH
-		case 0x1C: // Return with void
+		case opReturnV: // Return with void
 			thread->stackPtr = thread->framePtr;
 			setFramePtr(thread, thread->pop());
 			if (thread->stackSize() == 0) {
 				_vm->_console->DebugPrintf("Script execution complete.\n");
 				thread->flags |= kTFlagFinished;
+				return;
 			} else {
 				thread->i_offset = thread->pop();
 				/* int n_args = */ thread->pop();
-				if (operandChar == 0x1B)
+				if (operandChar == opReturn)
 					thread->push(scriptRetVal);
 			}
 			break;
@@ -737,7 +736,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 
 				if (_vm->_actor->isSpeaking()) {
 					thread->wait(kWaitTypeSpeech);
-					return SUCCESS;
+					return;
 				}
 
 				stringsCount = scriptS.readByte();
@@ -774,6 +773,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 
 				if (!(speechFlags & kSpeakAsync)) {
 					thread->wait(kWaitTypeSpeech);
+					return;
 				}
 			}
 			break;
@@ -807,9 +807,8 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 // End instruction list
 
 		default:
-			_vm->_console->DebugPrintf(S_ERROR_PREFIX "%X: Invalid opcode encountered: (%X).\n", thread->i_offset, operandChar);
-			thread->flags |= kTFlagAborted;
-			break;
+			scriptError(thread, "Invalid opcode encountered");
+			return;
 		}
 
 		// Set instruction offset only if a previous instruction didn't branch
@@ -817,22 +816,17 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			thread->i_offset = scriptS.pos();
 		} else {
 			if (thread->i_offset >= scriptS.size()) {
-				_vm->_console->DebugPrintf("Out of range script execution at %x size %x\n", thread->i_offset, scriptS.size());
-				thread->flags |= kTFlagFinished;
-			}
-			else
+				scriptError(thread, "Out of range script execution");
+				return;
+			} else {
 				scriptS.seek(thread->i_offset);
+			}
 		}
-		if (unhandled) {
-			_vm->_console->DebugPrintf(S_ERROR_PREFIX "%X: Unhandled opcode.\n", thread->i_offset);
-			thread->flags |= kTFlagAborted;
-		}
-		if ((thread->flags == kTFlagNone) && debug_print) {
-			SDebugPrintInstr(thread);
+
+		if (unhandled) { // TODO: remove it
+			scriptError(thread, "Unhandled opcode");
 		}
 	}
-
-	return SUCCESS;
 }
 
 } // End of namespace Saga
