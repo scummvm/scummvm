@@ -332,7 +332,7 @@ int Scumm::readVar(uint var) {
 			var = 518;
 		}
 
-		if (var == 179 && _gameId == GID_MONKEY_VGA && !copyprotbypassed) {
+		if (var == 179 && (_gameId == GID_MONKEY_VGA || _gameId == GID_MONKEY_EGA) && !copyprotbypassed) {
 			copyprotbypassed = true;
 			var = 266;
 		}
