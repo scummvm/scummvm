@@ -69,12 +69,15 @@ void Bitmap::prepareGL() {
 
 void Bitmap::draw() const {
   glRasterPos2i(x_, y_);
+
+  // FIXME: glDrawPixels is SLOW, we should be splitting the image into precached textures
+  // and mapping them onto rectangles, or something.
   if (format_ == 1)
-    glDrawPixels(width_, height_, GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
-		 data_[curr_image_]);
-  else if (format_ == 5)
-    glDrawPixels(width_, height_, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT,
-		 data_[curr_image_]);
+    glDrawPixels(width_, height_, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, data_[curr_image_]);
+  else if (format_ == 5) {
+    printf("format2\n");
+    glDrawPixels(width_, height_, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, data_[curr_image_]);
+  }
 }
 
 Bitmap::~Bitmap() {
