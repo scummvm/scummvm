@@ -1,6 +1,6 @@
 ScummVM README
 Last updated:    2003-05-05
-Release version: 0.4.1cvs
+Release version: 0.4.0pre
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -37,8 +37,8 @@ Supported Games:
 At the moment the following games have been reported to work, and should
 be playable to the end:
 
-        Indiana Jones & the Last Crusade (256)     [Game: indy3]
         Indiana Jones & the Last Crusade (EGA)     [Game: indy3ega]
+        Indiana Jones & the Last Crusade (256)     [Game: indy3]
         Loom (16 color floppy version)             [Game: loom]
         Loom (256 color CD version)                [Game: loomcd]
         Zak McKracken (256 color FM Towns version) [Game: zak256]
@@ -46,12 +46,12 @@ be playable to the end:
         Monkey Island 1 (VGA version)              [Game: monkeyvga]
         Monkey Island 1 (CD version)               [Game: monkey/monkey1]
         Monkey Island 2                            [Game: monkey2]
-        Indiana Jones And The Fate Of Atlantis     [Game: atlantis]
-        Day Of The Tentacle                        [Game: tentacle]
+        Indiana Jones and the Fate of Atlantis     [Game: atlantis]
+        Day of the Tentacle                        [Game: tentacle]
         Sam & Max                                  [Game: samnmax]
         The Dig                                    [Game: dig]
-        Simon The Sorcerer                         [Game: simon1dos/simon1talkie/simon1win]
-        Simon the Sorcerer II                      [Game: simon2dos/simon2talkie/simon2win/simon2mac]
+        Simon the Sorcerer 1                       [Game: simon1dos/simon1talkie/simon1win]
+        Simon the Sorcerer 2                       [Game: simon2dos/simon2talkie/simon2win/simon2mac]
 
 The following games should be finishable, but have some criticial problems that
 prevent them from being fully supported at this time. Please do not file bug reports
@@ -69,6 +69,9 @@ compatibility chart.
         Putt-Putt's Fun Pack                       [Game: funpack]
         Fatty Bear's Birthday Surprise             [Game: fbear]
         Fatty Bear's Fun Pack                      [Game: fbpack]
+
+The following game has been disabled for this release.
+
         Beneath A Steel Sky                        [Game: sky]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
@@ -112,7 +115,37 @@ although patches to fix them are welcome. If you discover a bug that is not
 listed here, nor in the compatibility table on the web site, please see
 the section on Reporting Bugs.
 
-       Simon The Sorcerer:
+
+       Indiana Jones & the Last Crusade (EGA):
+                - No music or sound effects
+                - In some rooms Indy may be able to walk to odd places
+                - There are some minor graphical glitches
+
+       Indiana Jones & the Last Crusade (256):
+                - No sound effects
+                - In some rooms Indy may be able to walk to odd places
+                - There are some minor graphical glitches
+
+       Loom (16 color floppy version):
+                - No music or sound effects
+
+       Zak McKracken Fm Towns:
+                - The Fm Towns 256 color version of Zak McKracken is rare,
+                  And as the ScummVM team does not encourage piracy in any
+                  way, we do not know where to buy or download a copy of this
+                  game. Petition LucasArts to re-release it :)
+
+       Monkey Island (EGA & VGA versions):
+                - No sound effects
+
+       Indiana Jones and the Fate of Atlantis:
+                - Keyboard fighting does not work. ScummVM now defaults to
+                  using mouse fighting.
+
+       Sam and Max:
+                - Highway subgame does not behave correctly.
+
+       Simon the Sorcerer 1:
                 - No inventory scrolling arrows shown in simon1dos and simon1talkie,
                   can still move around inventory though. 
                 - simon1dos freezes briefly after Swampling leaves his house and
@@ -120,33 +153,13 @@ the section on Reporting Bugs.
                 - Minor graphical glitches when using ring
                 - Minor graphical glitch with Sordid statue after leaving room
 
-       Simon The Sorcerer II:
+       Simon the Sorcerer 2:
+                - Text in copy protection screen of simon2dos is only shown for short time
                 - No music in simon2dos and simon2talkie
                 - Some music is missing or wrong in simon2win
                 - Minor graphical glitch when giving items to baby
                 - Only default language in data files is supported in simon2mac
                 - F10 key animation in simon2mac is different compared to original game
-
-       Indy 3 (The Last Crusade):
-                - No sound effects
-                - In some rooms Indy may be able to walk to odd places
-                - There are some minor graphical glitches
-
-       Monkey Island (EGA Version):
-                - No sound effects
-
-       Indy 4 (Fate Of Atlantis):
-                - Keyboard fighting does not work. ScummVM now defaults to
-                  using mouse fighting.
-
-       Sam and Max:
-                - Highway subgame does not behave correctly.
-
-       Zak McKracken Fm Towns:
-                - The Fm Towns 256 color version of Zak McKracken is rare,
-                  And as the ScummVM team does not encourage piracy in any
-                  way, we do not know where to buy or download a copy of this
-                  game. Petition LucasArts to re-release it :)
 
        All CD games:
                - If you are experiencing random crashes, and your game
@@ -171,7 +184,7 @@ If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
 then you will find the Windows version in the main directory of CD
 and the DOS Talkie version in the DOS directory of the CD.
 
-The filenames of saved games for Simon the Sorcerer 1 & 2 were changed in 0.3.0 to:
+The filenames of saved games for Simon the Sorcerer 1 & 2 were changed in 0.3.0 too:
 Simon the Sorcerer 1 uses simon1.00x (Where x is the slot number) 
 Simon the Sorcerer 2 uses simon2.00x (Where x is the slot number) 
 So if you have any pre 0.3.0 save games you will need to change their filenames to use them
