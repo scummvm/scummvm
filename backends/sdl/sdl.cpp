@@ -23,7 +23,6 @@
 #include "sdl-common.h"
 #include "common/scaler.h"
 #include "common/util.h"
-#include "common/engine.h"	// Only #included for error() and warning()
 
 class OSystem_SDL : public OSystem_SDL_Common {
 public:

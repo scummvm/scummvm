@@ -21,7 +21,6 @@
 
 #include "common/savefile.h"
 #include "common/util.h"
-#include "common/engine.h"	// For debug/warning/error
 
 uint32 SaveFile::read(void *ptr, uint32 size)
 {

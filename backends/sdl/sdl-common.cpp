@@ -22,7 +22,6 @@
 #include "sdl-common.h"
 #include "sound/mididrv.h"
 #include "common/scaler.h"
-#include "common/engine.h"	// Only #included for error() and warning()
 #include "common/util.h"
 
 #include "scummvm.xpm"
