@@ -1149,7 +1149,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	uint8 *loadingBar;
 	_cdtEntry *cdt;
 
-	text_spr = MakeTextSprite(FetchTextLine(res_man.open(2283), 8) + 2, 640, 187, speech_font_id);
+	text_spr = fontRenderer.makeTextSprite(FetchTextLine(res_man.open(2283), 8) + 2, 640, 187, g_sword2->_speechFontId);
 
 	frame = (_frameHeader*) text_spr->ad;
 
@@ -1160,7 +1160,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	textSprite.scale = 0;
 	textSprite.scaledWidth	= 0;
 	textSprite.scaledHeight	= 0;
-	textSprite.type = RDSPR_DISPLAYALIGN + RDSPR_NOCOMPRESSION + RDSPR_TRANS;
+	textSprite.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
 	textSprite.blend = 0;
 	textSprite.colourTable	= 0;
 
@@ -1178,7 +1178,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	barSprite.scale = 0;
 	barSprite.scaledWidth = 0;
 	barSprite.scaledHeight = 0;
-	barSprite.type = RDSPR_RLE256FAST + RDSPR_TRANS;
+	barSprite.type = RDSPR_RLE256FAST | RDSPR_TRANS;
 	barSprite.blend = 0;
 	barSprite.colourTable = 0;
 
@@ -1375,7 +1375,7 @@ void ResourceManager::getCd(int cd) {
 
 	textRes = res_man.open(2283);
 	DisplayMsg(FetchTextLine(textRes, 5 + cd) + 2, 0);
-	text_spr = MakeTextSprite(FetchTextLine(textRes, 5 + cd) + 2, 640, 187, speech_font_id);
+	text_spr = fontRenderer.makeTextSprite(FetchTextLine(textRes, 5 + cd) + 2, 640, 187, g_sword2->_speechFontId);
 
 	frame = (_frameHeader*) text_spr->ad;
 
@@ -1386,7 +1386,7 @@ void ResourceManager::getCd(int cd) {
 	spriteInfo.scale = 0;
 	spriteInfo.scaledWidth	= 0;
 	spriteInfo.scaledHeight	= 0;
-	spriteInfo.type = RDSPR_DISPLAYALIGN + RDSPR_NOCOMPRESSION + RDSPR_TRANS;
+	spriteInfo.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
 	spriteInfo.blend = 0;
 	spriteInfo.data = text_spr->ad + sizeof(_frameHeader);
 	spriteInfo.colourTable	= 0;

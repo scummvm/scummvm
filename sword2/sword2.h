@@ -73,6 +73,10 @@ public:
 	Sound *_sound;
 	Common::RandomSource _rnd;
 
+	uint32 _speechFontId;
+	uint32 _controlsFontId;
+	uint32 _redFontId;
+
 private:
 	bool _quit;
 	uint32 _bootParam;
@@ -80,6 +84,8 @@ private:
 
 public:
 	void errorString(const char *buf_input, char *buf_output);
+	void initialiseFontResourceFlags(void);
+	void initialiseFontResourceFlags(uint8 language);
 };
 
 extern Sword2Engine *g_sword2;

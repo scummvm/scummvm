@@ -1016,11 +1016,11 @@ void CreatePointerText(uint32 textId, uint32 pointerRes) {
 			// 'text+2' to skip the first 2 bytes which form the
 			// line reference number
 
-			pointer_text_bloc_no = Build_new_block(
+			pointer_text_bloc_no = fontRenderer.buildNewBloc(
 				text + 2, mousex + xOffset, mousey + yOffset,
 				POINTER_TEXT_WIDTH, POINTER_TEXT_PEN,
 				RDSPR_TRANS | RDSPR_DISPLAYALIGN,
-				speech_font_id, justification);
+				g_sword2->_speechFontId, justification);
 
 			// now ok to close the text file
 			res_man.close(text_res);
@@ -1030,7 +1030,7 @@ void CreatePointerText(uint32 textId, uint32 pointerRes) {
 
 void ClearPointerText(void) {
 	if (pointer_text_bloc_no) {
-		Kill_text_bloc(pointer_text_bloc_no);
+		fontRenderer.killTextBloc(pointer_text_bloc_no);
 		pointer_text_bloc_no = 0;
 	}
 }

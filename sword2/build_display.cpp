@@ -250,7 +250,7 @@ void Build_display(void) {
 			// text blocks
 
 			// speech blocks and headup debug text
-			Print_text_blocs();
+			fontRenderer.printTextBlocs();
 
  			// ---------------------------------------------------
 			// menu bar & icons
@@ -297,7 +297,7 @@ void Build_display(void) {
 		spriteInfo.scale = 0;
 		spriteInfo.scaledWidth = 0;
 		spriteInfo.scaledHeight = 0;
-		spriteInfo.type = RDSPR_DISPLAYALIGN + RDSPR_NOCOMPRESSION;
+		spriteInfo.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION;
 		spriteInfo.blend = 0;
 		spriteInfo.data = console_sprite->ad;
 		spriteInfo.colourTable = 0;
@@ -340,7 +340,7 @@ void DisplayMsg(uint8 *text, int time) {
 	CloseMenuImmediately();
 	EraseBackBuffer();
 
-	text_spr = MakeTextSprite(text, 640, 187, speech_font_id);
+	text_spr = fontRenderer.makeTextSprite(text, 640, 187, g_sword2->_speechFontId);
 
 	frame = (_frameHeader *) text_spr->ad;
 
@@ -354,7 +354,7 @@ void DisplayMsg(uint8 *text, int time) {
 	spriteInfo.scale = 0;
 	spriteInfo.scaledWidth = 0;
 	spriteInfo.scaledHeight	= 0;
-	spriteInfo.type = RDSPR_DISPLAYALIGN + RDSPR_NOCOMPRESSION + RDSPR_TRANS;
+	spriteInfo.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
 	spriteInfo.blend = 0;
 	spriteInfo.data = text_spr->ad + sizeof(_frameHeader);
 	spriteInfo.colourTable = 0;
@@ -494,7 +494,7 @@ void Process_layer(uint32 layer_number) {
 	spriteInfo.scaledWidth = 0;
 	spriteInfo.scaledHeight = 0;
 	spriteInfo.h = layer_head->height;
-	spriteInfo.type = RDSPR_TRANS + RDSPR_RLE256FAST;
+	spriteInfo.type = RDSPR_TRANS | RDSPR_RLE256FAST;
 	spriteInfo.blend = 0;
 	spriteInfo.data = file + sizeof(_standardHeader) + layer_head->offset;
 	spriteInfo.colourTable = 0;

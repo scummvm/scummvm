@@ -171,7 +171,7 @@ int32 MoviePlayer::play(char *filename, _movieTextObject *text[], uint8 *musicOu
 		memset(lpBackBuffer, 0, screenWide * MENUDEEP);
 
 		uint8 msg[] = "Cutscene - Press ESC to exit";
-		mem *data = MakeTextSprite(msg, 640, 255, speech_font_id);
+		mem *data = fontRenderer.makeTextSprite(msg, 640, 255, g_sword2->_speechFontId);
 		_frameHeader *frame = (_frameHeader *) data->ad;
 		_spriteInfo msgSprite;
 		uint8 *msgSurface;

@@ -657,14 +657,14 @@ public:
 class MiniDialog : public Dialog {
 private:
 	int _textId;
-	FontRendererGui *_fontRenderer;
+	FontRendererGui *_fr;
 	Widget *_panel;
 	Button *_okButton;
 	Button *_cancelButton;
 
 public:
 	MiniDialog(uint32 textId) : _textId(textId) {
-		_fontRenderer = new FontRendererGui(controls_font_id);
+		_fr = new FontRendererGui(g_sword2->_controlsFontId);
 
 		_panel = new Widget(this, 1);
 		_panel->createSurfaceImages(1996, 203, 104);
@@ -681,15 +681,15 @@ public:
 	}
 
 	~MiniDialog() {
-		delete _fontRenderer;
+		delete _fr;
 	}
 
 	virtual void paint() {
 		Dialog::paint();
 
-		_fontRenderer->drawText(_textId, 310, 134, kAlignCenter);
-		_fontRenderer->drawText(149618688, 270, 214);	// ok
-		_fontRenderer->drawText(149618689, 270, 276);	// cancel
+		_fr->drawText(_textId, 310, 134, kAlignCenter);
+		_fr->drawText(149618688, 270, 214);	// ok
+		_fr->drawText(149618689, 270, 276);	// cancel
 	}
 
 	virtual void onAction(Widget *widget, int result = 0) {
@@ -702,7 +702,7 @@ public:
 
 class OptionsDialog : public Dialog {
 private:
-	FontRendererGui *_fontRenderer;
+	FontRendererGui *_fr;
 	Widget *_panel;
 	Switch *_objectLabelsSwitch;
 	Switch *_subtitlesSwitch;
@@ -722,7 +722,7 @@ private:
 
 public:
 	OptionsDialog() {
-		_fontRenderer = new FontRendererGui(controls_font_id);
+		_fr = new FontRendererGui(g_sword2->_controlsFontId);
 
 		_panel = new Widget(this, 1);
 		_panel->createSurfaceImages(3405, 0, 40);
@@ -793,7 +793,7 @@ public:
 	}
 
 	~OptionsDialog() {
-		delete _fontRenderer;
+		delete _fr;
 	}
 
 	virtual void paint() {
@@ -812,31 +812,31 @@ public:
 		};
 
 		for (int i = 0; i < ARRAYSIZE(alignTextIds); i++) {
-			width = _fontRenderer->getTextWidth(alignTextIds[i]);
+			width = _fr->getTextWidth(alignTextIds[i]);
 			if (width > maxWidth)
 				maxWidth = width;
 		}
 
 		// Options
-		_fontRenderer->drawText(149618698, 321, 55, kAlignCenter);
+		_fr->drawText(149618698, 321, 55, kAlignCenter);
 		// Subtitles
-		_fontRenderer->drawText(149618699, 500, 103, kAlignRight);
+		_fr->drawText(149618699, 500, 103, kAlignRight);
 		// Object labels
-		_fontRenderer->drawText(149618700, 299 - maxWidth, 103);
+		_fr->drawText(149618700, 299 - maxWidth, 103);
 		// Music volume
-		_fontRenderer->drawText(149618702, 299 - maxWidth, 161);
+		_fr->drawText(149618702, 299 - maxWidth, 161);
 		// Speech volume
-		_fontRenderer->drawText(149618703, 299 - maxWidth, 208);
+		_fr->drawText(149618703, 299 - maxWidth, 208);
 		// FX volume
-		_fontRenderer->drawText(149618704, 299 - maxWidth, 254);
+		_fr->drawText(149618704, 299 - maxWidth, 254);
 		// Reverse stereo
-		_fontRenderer->drawText(149618709, 299 - maxWidth, 296);
+		_fr->drawText(149618709, 299 - maxWidth, 296);
 		// Graphics quality
-		_fontRenderer->drawText(149618705, 299 - maxWidth, 341);
+		_fr->drawText(149618705, 299 - maxWidth, 341);
 		// Ok
-		_fontRenderer->drawText(149618688, 193, 382, kAlignRight);
+		_fr->drawText(149618688, 193, 382, kAlignRight);
 		// Cancel
-		_fontRenderer->drawText(149618689, 385, 382, kAlignRight);
+		_fr->drawText(149618689, 385, 382, kAlignRight);
 	}
 
 	virtual void onAction(Widget *widget, int result = 0) {
@@ -1032,8 +1032,8 @@ private:
 	int _editPos, _firstPos;
 	int _cursorTick;
 
-	FontRendererGui *_fontRenderer1;
-	FontRendererGui *_fontRenderer2;
+	FontRendererGui *_fr1;
+	FontRendererGui *_fr2;
 	Widget *_panel;
 	Slot *_slotButton[8];
 	ScrollButton *_zupButton;
@@ -1052,8 +1052,8 @@ public:
 		// FIXME: The "control font" and the "red font" are currently
 		// always the same font, so one should be eliminated.
 
-		_fontRenderer1 = new FontRendererGui(controls_font_id);
-		_fontRenderer2 = new FontRendererGui(red_font_id);
+		_fr1 = new FontRendererGui(g_sword2->_controlsFontId);
+		_fr2 = new FontRendererGui(g_sword2->_redFontId);
 
 		_panel = new Widget(this, 1);
 		_panel->createSurfaceImages(2016, 0, 40);
@@ -1101,8 +1101,8 @@ public:
 	}
 
 	~SaveLoadDialog() {
-		delete _fontRenderer1;
-		delete _fontRenderer2;
+		delete _fr1;
+		delete _fr2;
 	}
 
 	// There aren't really a hundred different button objects of course,
@@ -1119,11 +1119,11 @@ public:
 			if (gui._baseSlot + i == _selectedSlot) {
 				slot->setEditable(_mode == kSaveDialog);
 				slot->setState(1);
-				fr = _fontRenderer2;
+				fr = _fr2;
 			} else {
 				slot->setEditable(false);
 				slot->setState(0);
-				fr = _fontRenderer1;
+				fr = _fr1;
 			}
 
 			if (GetSaveDescription(gui._baseSlot + i, description) == SR_OK) {
@@ -1211,7 +1211,7 @@ public:
 
 					tmp = _editBuffer[_editPos];
 					_editBuffer[_editPos] = 0;
-					textWidth = _fontRenderer2->getTextWidth(_editBuffer);
+					textWidth = _fr2->getTextWidth(_editBuffer);
 					_editBuffer[_editPos] = tmp;
 
 					if (textWidth < 340 && _editPos < SAVE_DESCRIPTION_LEN - 2) {
@@ -1251,7 +1251,7 @@ public:
 		// but I doubt that will make any noticeable difference.
 
 		slot->paint();
-		_fontRenderer2->drawText(_editBuffer, 130, 78 + (_selectedSlot - gui._baseSlot) * 36);
+		_fr2->drawText(_editBuffer, 130, 78 + (_selectedSlot - gui._baseSlot) * 36);
 	}
 
 	virtual void paint() {
@@ -1259,13 +1259,13 @@ public:
 
 		if (_mode == kLoadDialog) {
 			// Restore
-			_fontRenderer1->drawText(149618690, 165, 377);
+			_fr1->drawText(149618690, 165, 377);
 		} else {
 			// Save
-			_fontRenderer1->drawText(149618691, 165, 377);
+			_fr1->drawText(149618691, 165, 377);
 		}
 		// Cancel
-		_fontRenderer1->drawText(149618689, 382, 377);
+		_fr1->drawText(149618689, 382, 377);
 	}
 
 	virtual void setResult(int result) {

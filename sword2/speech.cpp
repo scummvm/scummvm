@@ -1356,7 +1356,7 @@ int32 FN_i_speak(int32 *params) {
 		// if there is text
 		if (speech_text_bloc_no) {
 			// kill the text block
-			Kill_text_bloc(speech_text_bloc_no);
+			fontRenderer.killTextBloc(speech_text_bloc_no);
 			speech_text_bloc_no = 0;
 		}
 
@@ -1547,10 +1547,11 @@ void Form_text(int32 *params) {
 		// 'text + 2' to skip the first 2 bytes which form the line
 		// reference number
 
-		speech_text_bloc_no = Build_new_block(text + 2, text_x, text_y,
+		speech_text_bloc_no = fontRenderer.buildNewBloc(
+			text + 2, text_x, text_y,
 			textWidth, ob_speech->pen,
-			RDSPR_TRANS | RDSPR_DISPLAYALIGN, speech_font_id,
-			POSITION_AT_CENTRE_OF_BASE);
+			RDSPR_TRANS | RDSPR_DISPLAYALIGN,
+			g_sword2->_speechFontId, POSITION_AT_CENTRE_OF_BASE);
 
 		// now ok to close the text file
 		res_man.close(text_res);

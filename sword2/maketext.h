@@ -59,40 +59,105 @@
 
 #include "bs2/memory.h"
 
+#ifdef _SWORD2_DEBUG
+#include "bs2/debug.h"
+#endif
+
+// Output colour for character border - should be be black but note that we
+// have to use a different pen number during sequences
+
+#define BORDER_PEN 194
+
 namespace Sword2 {
 
-// only for debug text, since it doesn't keep text inside the screen margin!
-#define	NO_JUSTIFICATION		0
-// these all force text inside the screen edge margin when necessary
-#define POSITION_AT_CENTRE_OF_BASE	1
-#define POSITION_AT_CENTRE_OF_TOP	2
-#define POSITION_AT_LEFT_OF_TOP		3
-#define POSITION_AT_RIGHT_OF_TOP	4
-#define POSITION_AT_LEFT_OF_BASE	5
-#define POSITION_AT_RIGHT_OF_BASE	6
-#define POSITION_AT_LEFT_OF_CENTRE	7
-#define POSITION_AT_RIGHT_OF_CENTRE	8
+#ifdef _SWORD2_DEBUG
+// allow enough for all the debug text blocks (see debug.cpp)
+#define MAX_text_blocs MAX_DEBUG_TEXT_BLOCKS + 1
+#else
+// only need one for speech, and possibly one for "PAUSED"
+#define MAX_text_blocs 2
+#endif
 
-mem* MakeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes);
-void Init_text_bloc_system(void);
+enum {
+	// only for debug text, since it doesn't keep text inside the screen
+	// margin!
+	NO_JUSTIFICATION = 0,
 
-void Kill_text_bloc(uint32 bloc_number);
-void Print_text_blocs(void);
+	// these all force text inside the screen edge margin when necessary
+	POSITION_AT_CENTRE_OF_BASE = 1,
+	POSITION_AT_CENTRE_OF_TOP = 2,
+	POSITION_AT_LEFT_OF_TOP = 3,
+	POSITION_AT_RIGHT_OF_TOP = 4,
+	POSITION_AT_LEFT_OF_BASE = 5,
+	POSITION_AT_RIGHT_OF_BASE = 6,
+	POSITION_AT_LEFT_OF_CENTRE = 7,
+	POSITION_AT_RIGHT_OF_CENTRE = 8
+};
 
-uint32 Build_new_block(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, uint32 type, uint32 fontRes, uint8 justification);
+enum {
+	DEFAULT_TEXT = 0,
+	FINNISH_TEXT = 1,
+	POLISH_TEXT = 2
+};
 
-#define	DEFAULT_TEXT	0
-#define FINNISH_TEXT	1
-#define POLISH_TEXT	2
+typedef	struct {
+	int16 x;
+	int16 y;
+	// RDSPR_ status bits - see defintion of _spriteInfo structure for
+	// correct size!
+	uint16 type;
+	mem *text_mem;
+} TextBloc;
+
+typedef struct {
+	uint16 width;	// width of line in pixels
+	uint16 length;	// length of line in characters
+} LineInfo;
+
+class FontRenderer {
+private:
+	TextBloc _blocList[MAX_text_blocs];
+
+	// layout variables - these used to be defines, but now we're dealing
+	// with 2 character sets
+
+	int8 _lineSpacing;	// no. of pixels to separate lines of
+				// characters in the output sprite - negative
+				// for overlap
+	int8 _charSpacing;	// no. of pixels to separate characters along
+				// each line - negative for overlap
+	uint8 _borderPen;	// output pen colour of character borders
+
+	uint16 analyseSentence(uint8 *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line);
+	mem* buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines);
+	uint16 charWidth(uint8 ch, uint32 fontRes);
+	uint16 charHeight(uint32 fontRes);
+	_frameHeader* findChar(uint8 ch, uint8 *charSet);
+	void copyChar(_frameHeader *charPtr, uint8 *spritePtr, uint16 spriteWidth, uint8 pen);
+	
+public:
+	FontRenderer() {
+		for (int i = 0; i < MAX_text_blocs; i++)
+			_blocList[i].text_mem = NULL;
+	}
+
+	mem* makeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes, uint8 border = BORDER_PEN);
+
+	void killTextBloc(uint32 bloc_number);
+	void printTextBlocs(void);
+
+	uint32 buildNewBloc(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, uint32 type, uint32 fontRes, uint8 justification);
+};
+
+extern 
 
 // this one works out the language from the text cluster
-void InitialiseFontResourceFlags(void);
-// this one allow you to select the fonts yourself
-void InitialiseFontResourceFlags(uint8 language);
+void initialiseFontResourceFlags(void);
 
-extern uint32 speech_font_id;
-extern uint32 controls_font_id;
-extern uint32 red_font_id;
+// this one allow you to select the fonts yourself
+void initialiseFontResourceFlags(uint8 language);
+
+extern FontRenderer fontRenderer;
 
 } // End of namespace Sword2
 

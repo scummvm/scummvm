@@ -157,8 +157,8 @@ int32 Sword2Engine::InitialiseGame(void) {
 
 	// Set up font resource variables for this language version
 
-	debug(5, "CALLING: InitialiseFontResourceFlags");
-	InitialiseFontResourceFlags();
+	debug(5, "CALLING: initialiseFontResourceFlags");
+	initialiseFontResourceFlags();
 
 	// set up the console system
 
@@ -171,11 +171,6 @@ int32 Sword2Engine::InitialiseGame(void) {
 	debug(5, "CALLING: Init_start_menu");
 	Init_start_menu();
 #endif
-
-	// no blocs live
-
-	debug(5, "CALLING: Init_text_bloc_system");
-	Init_text_bloc_system();
 
 	debug(5, "CALLING: Init_sync_system");
 	Init_sync_system();

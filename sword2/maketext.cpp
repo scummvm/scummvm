@@ -40,10 +40,6 @@
 #define BORDER_COL	200	// source colour for character border (only
 				// needed for remapping colours)
 #define LETTER_COL	193	// source colour for bulk of character ( " )
-#define BORDER_PEN	194	// output colour for character border - should
-				// be black ( " ) but note that we have to use
-				// a different pen number during sequences
-
 #define NO_COL		0	// sprite background - 0 for transparency!
 #define SPACE		' '
 #define FIRST_CHAR	SPACE	// first character in character set
@@ -64,39 +60,11 @@
 
 namespace Sword2 {
 
-extern uint32 sequenceTextLines;	// see anims.cpp
+FontRenderer fontRenderer;
 
 // info for each line of words in the output text sprite
 
-typedef struct {
-	uint16 width;	// width of line in pixels
-	uint16 length;	// length of line in characters
-} _lineInfo;
-
-uint16 AnalyseSentence(uint8 *sentence, uint16 maxWidth, uint32 fontRes, _lineInfo *line);
-mem* BuildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, _lineInfo *line, uint16 noOfLines);
-uint16 CharWidth(uint8 ch, uint32 fontRes);
-uint16 CharHeight(uint32 fontRes);
-_frameHeader* FindChar(uint8 ch, uint8 *charSet);
-void CopyChar(_frameHeader *charPtr, uint8 *spritePtr, uint16 spriteWidth, uint8 pen);
-
-// global layout variables - these used to be defines, but now we're dealing
-// with 2 character sets (10dec96 JEL)
-
-int8 line_spacing;	// no. of pixels to separate lines of characters in
-			// the output sprite - negative for overlap
-int8 char_spacing;	// no. of pixels to separate characters along each
-			// line - negative for overlap
-uint8 border_pen;	// output pen colour of character borders
-
-// Global font resource id variables, set up in 'SetUpFontResources()' at
-// bottom of this file
-
-uint32 speech_font_id;
-uint32 controls_font_id;
-uint32 red_font_id;
-
-mem* MakeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes) {
+mem* FontRenderer::makeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes, uint8 border) {
 	mem *line;		// handle for the memory block which will
 				// contain the array of lineInfo structures
 	mem *textSprite;	// handle for the block to contain the text
@@ -104,45 +72,39 @@ mem* MakeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes)
 	uint16 noOfLines;	// no of lines of text required to fit within
 				// a sprite of width 'maxWidth' pixels
 
-	debug(5, "MakeTextSprite(\"%s\", maxWidth=%u)", sentence, maxWidth);
+	debug(5, "makeTextSprite(\"%s\", maxWidth=%u)", sentence, maxWidth);
+
+	_borderPen = border;
 
 	// NB. ensure sentence contains no leading/tailing/extra spaces - if
 	// necessary, copy to another array first, missing the extra spaces.
 
-	// set the global layout variables (10dec96 JEL)
+	// set the global layout variables
 
-	if (fontRes == speech_font_id) {
-		line_spacing = -6;  // overlap lines by 6 pixels
-		char_spacing = -3;  // overlap characters by 3 pixels
+	if (fontRes == g_sword2->_speechFontId) {
+		_lineSpacing = -6;  // overlap lines by 6 pixels
+		_charSpacing = -3;  // overlap characters by 3 pixels
 	} else if (fontRes == CONSOLE_FONT_ID) {
-		line_spacing = 0;   // no space or overlap between lines
-		char_spacing = 1;   // 1 pixel spacing between each character
+		_lineSpacing = 0;   // no space or overlap between lines
+		_charSpacing = 1;   // 1 pixel spacing between each character
 	} else {
-		line_spacing = 0;
-		char_spacing = 0;
+		_lineSpacing = 0;
+		_charSpacing = 0;
 	}
-
-	// If rendering text over a sequence we need a different colour for
-	// the border.
-
-	if (sequenceTextLines)
-		border_pen = 1;
-	else
-		border_pen = BORDER_PEN;
 
 	// allocate memory for array of lineInfo structures
 
-	line = memory.allocMemory(MAX_LINES * sizeof(_lineInfo), MEM_locked, UID_temp);
+	line = memory.allocMemory(MAX_LINES * sizeof(LineInfo), MEM_locked, UID_temp);
 
-	// get details of sentence breakdown into array of _lineInfo structures
+	// get details of sentence breakdown into array of LineInfo structures
 	// and get the no of lines involved
 
-	noOfLines = AnalyseSentence(sentence, maxWidth, fontRes, (_lineInfo *) line->ad);
+	noOfLines = analyseSentence(sentence, maxWidth, fontRes, (LineInfo *) line->ad);
 
 	// construct the sprite based on the info gathered - returns floating
 	// mem block
 
-	textSprite = BuildTextSprite(sentence, fontRes, pen, (_lineInfo *) line->ad, noOfLines);
+	textSprite = buildTextSprite(sentence, fontRes, pen, (LineInfo *) line->ad, noOfLines);
 
 	// free up the lineInfo array now
 	memory.freeMemory(line);
@@ -150,17 +112,17 @@ mem* MakeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes)
 	return textSprite;
 }
 
-uint16 AnalyseSentence(uint8 *sentence, uint16 maxWidth, uint32 fontRes, _lineInfo *line) {
+uint16 FontRenderer::analyseSentence(uint8 *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line) {
 	uint16 pos = 0, wordWidth, wordLength, spaceNeeded;
 	uint16 lineNo = 0;
 	uint8 ch;
 	bool firstWord = true;
 
 	// joinWidth = how much extra space is needed to append a word to a
-	// line. NB. SPACE requires TWICE the 'char_spacing' to join a word
+	// line. NB. SPACE requires TWICE the '_charSpacing' to join a word
 	// to line
 
-	uint16 joinWidth = CharWidth(SPACE, fontRes) + 2 * char_spacing;
+	uint16 joinWidth = charWidth(SPACE, fontRes) + 2 * _charSpacing;
 	
 	// while not reached the NULL terminator
 
@@ -175,13 +137,13 @@ uint16 AnalyseSentence(uint8 *sentence, uint16 maxWidth, uint32 fontRes, _lineIn
 		// while not SPACE or NULL terminator
 
 		while ((ch != SPACE) && ch) {
-			wordWidth += CharWidth(ch, fontRes) + char_spacing;
+			wordWidth += charWidth(ch, fontRes) + _charSpacing;
 			wordLength++;
 			ch = sentence[pos++];
 		}
 
-		// no char_spacing after final letter of word!
-		wordWidth -= char_spacing;
+		// no _charSpacing after final letter of word!
+		wordWidth -= _charSpacing;
 
 		// 'ch' is now the SPACE or NULL following the word
 		// 'pos' indexes to the position following 'ch'
@@ -209,7 +171,7 @@ uint16 AnalyseSentence(uint8 *sentence, uint16 maxWidth, uint32 fontRes, _lineIn
 				// put word (without separating SPACE) at
 				// start of next line
 
-				// for next _lineInfo structure in the array
+				// for next LineInfo structure in the array
 				lineNo++;
 
 				// exception if lineNo >= MAX_LINES
@@ -228,16 +190,16 @@ uint16 AnalyseSentence(uint8 *sentence, uint16 maxWidth, uint32 fontRes, _lineIn
 // Returns a handle to a floating memory block containing a text sprite, given
 // a pointer to a null-terminated string, pointer to required character set,
 // required text pen colour (or zero to use source colours), pointer to the
-// array of linInfo structures created by 'AnalyseSentence()', and the number
+// array of linInfo structures created by 'analyseSentence()', and the number
 // of lines (ie. no. of elements in the 'line' array).
 
 // PC Version of BuildTextSprite
 
-mem* BuildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, _lineInfo *line, uint16 noOfLines) {
+mem* FontRenderer::buildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines) {
 	uint8 *linePtr, *spritePtr;
 	uint16 lineNo, pos = 0, posInLine, spriteWidth = 0, spriteHeight;
 	uint16 sizeOfSprite;
-	uint16 charHeight = CharHeight(fontRes);
+	uint16 char_height = charHeight(fontRes);
 	_frameHeader *frameHeadPtr, *charPtr;
 	mem *textSprite;
 	uint8 *charSet;
@@ -251,7 +213,7 @@ mem* BuildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, _lineInfo *line
 	// spriteHeight = tot height of char lines + tot height of separating
 	// lines
 
-	spriteHeight = charHeight * noOfLines + line_spacing * (noOfLines - 1);
+	spriteHeight = char_height * noOfLines + _lineSpacing * (noOfLines - 1);
 
 	// total size (no of pixels)
 	sizeOfSprite = spriteWidth * spriteHeight;
@@ -286,7 +248,7 @@ mem* BuildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, _lineInfo *line
 
 	// fill sprite with characters, one line at a time
 
-	for(lineNo = 0; lineNo < noOfLines; lineNo++) {
+	for (lineNo = 0; lineNo < noOfLines; lineNo++) {
 		// position the start of the line so that it is centred
 		// across the sprite
 
@@ -297,22 +259,22 @@ mem* BuildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, _lineInfo *line
 		// width minus the 'overlap'
 
 		for (posInLine = 0; posInLine < line[lineNo].length; posInLine++) {
-			charPtr = FindChar(sentence[pos++], charSet);
+			charPtr = findChar(sentence[pos++], charSet);
 
 #ifdef _SWORD2_DEBUG			
-			if (charPtr->height != charHeight)
+			if (charPtr->height != char_height)
 				Con_fatal_error("FONT ERROR: '%c' is not same height as the space", sentence[pos - 1]);
 #endif
 
-			CopyChar(charPtr, spritePtr, spriteWidth, pen);
-			spritePtr += charPtr->width + char_spacing;
+			copyChar(charPtr, spritePtr, spriteWidth, pen);
+			spritePtr += charPtr->width + _charSpacing;
 		}
 
 		// skip space at end of last word in this line
 		pos++;
 
 		// move to start of next character line in text sprite
-		linePtr += (charHeight + line_spacing) * spriteWidth;
+		linePtr += (char_height + _lineSpacing) * spriteWidth;
 	}
 
 	// close font file
@@ -327,7 +289,7 @@ mem* BuildTextSprite(uint8 *sentence, uint32 fontRes, uint8 pen, _lineInfo *line
 // Returns the width of a character sprite, given the character's ASCII code
 // and a pointer to the start of the character set.
 
-uint16 CharWidth(uint8 ch, uint32 fontRes) {
+uint16 FontRenderer::charWidth(uint8 ch, uint32 fontRes) {
 	_frameHeader *charFrame;
 	uint8 *charSet;
 	uint16 width;
@@ -336,7 +298,7 @@ uint16 CharWidth(uint8 ch, uint32 fontRes) {
 	charSet = res_man.open(fontRes);
 
 	// move to approp. sprite (header)
-	charFrame = FindChar(ch, charSet);
+	charFrame = findChar(ch, charSet);
 	width = charFrame->width;
 
 	// close font file
@@ -349,7 +311,7 @@ uint16 CharWidth(uint8 ch, uint32 fontRes) {
 // Returns the height of a character sprite, given the character's ASCII code
 // and a pointer to the start of the character set.
 
-uint16 CharHeight(uint32 fontRes) {
+uint16 FontRenderer::charHeight(uint32 fontRes) {
 	_frameHeader *charFrame;
 	uint8 *charSet;
 	uint16 height;
@@ -358,7 +320,7 @@ uint16 CharHeight(uint32 fontRes) {
 	charSet = res_man.open(fontRes);
 
 	// assume all chars the same height, i.e. FIRST_CHAR is as good as any
-	charFrame = FindChar(FIRST_CHAR, charSet);
+	charFrame = findChar(FIRST_CHAR, charSet);
 	height = charFrame->height;
 
 	// close font file
@@ -371,7 +333,7 @@ uint16 CharHeight(uint32 fontRes) {
 // Returns a pointer to the header of a character sprite, given the character's
 // ASCII code and a pointer to the start of the character set.
 
-_frameHeader* FindChar(uint8 ch, uint8 *charSet) {
+_frameHeader* FontRenderer::findChar(uint8 ch, uint8 *charSet) {
 	// if 'ch' out of range, print the 'dud' character (chequered flag)
 	if (ch < FIRST_CHAR)
 		ch = DUD;
@@ -381,10 +343,10 @@ _frameHeader* FindChar(uint8 ch, uint8 *charSet) {
 
 // Copies a character sprite from 'charPtr' to the sprite buffer at 'spritePtr'
 // of width 'spriteWidth'. If pen is zero, it copies the data across directly,
-// otherwise it maps pixels of BORDER_COL to 'border_pen', and LETTER_COL to
+// otherwise it maps pixels of BORDER_COL to '_borderPen', and LETTER_COL to
 // 'pen'.
 
-void CopyChar(_frameHeader *charPtr, uint8 *spritePtr, uint16 spriteWidth, uint8 pen) {
+void FontRenderer::copyChar(_frameHeader *charPtr, uint8 *spritePtr, uint16 spriteWidth, uint8 pen) {
 	uint8 *rowPtr, *source, *dest;
 	uint16 rows, cols;
 
@@ -412,7 +374,7 @@ void CopyChar(_frameHeader *charPtr, uint8 *spritePtr, uint16 spriteWidth, uint8
 					// underneath (for overlapping!)
 
 					if (!*dest)
-						*dest = border_pen;
+						*dest = _borderPen;
 					break;
 
 					// do nothing if source pixel is zero,
@@ -434,30 +396,6 @@ void CopyChar(_frameHeader *charPtr, uint8 *spritePtr, uint16 spriteWidth, uint8
 	}
 }
 
-#ifdef _SWORD2_DEBUG
-// allow enough for all the debug text blocks (see debug.cpp)
-#define MAX_text_blocs MAX_DEBUG_TEXT_BLOCKS + 1
-#else
-// only need one for speech, and possibly one for "PAUSED"
-#define MAX_text_blocs 2
-#endif
-
-typedef	struct {
-	int16 x;
-	int16 y;
-	// RDSPR_ status bits - see defintion of _spriteInfo structure for
-	// correct size!
-	uint16 type;
-	mem *text_mem;
-} text_bloc;
-
-static text_bloc text_sprite_list[MAX_text_blocs];
-
-void Init_text_bloc_system(void) {
-	for (int j = 0; j < MAX_text_blocs; j++)
-		text_sprite_list[j].text_mem = 0;
-}
-
 // distance to keep speech text from edges of screen
 #define TEXT_MARGIN 12
 
@@ -465,7 +403,7 @@ void Init_text_bloc_system(void) {
 // blocs are read and blitted at render time choose alignment type
 // RDSPR_DISPLAYALIGN or 0
 
-uint32 Build_new_block(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, uint32 type, uint32 fontRes, uint8 justification) {
+uint32 FontRenderer::buildNewBloc(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, uint32 type, uint32 fontRes, uint8 justification) {
 	uint32	j = 0;
  	_frameHeader *frame_head;
 	int16 text_left_margin;
@@ -474,7 +412,7 @@ uint32 Build_new_block(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, 
 	int16 text_bottom_margin;
 
 	// find a free slot
-	while(j < MAX_text_blocs && text_sprite_list[j].text_mem)
+	while (j < MAX_text_blocs && _blocList[j].text_mem)
 		j++;
 
 #ifdef _SWORD2_DEBUG
@@ -484,7 +422,7 @@ uint32 Build_new_block(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, 
 #endif
 
 	// make the sprite!
-	text_sprite_list[j].text_mem = MakeTextSprite(ascii, width, pen, fontRes);
+	_blocList[j].text_mem = makeTextSprite(ascii, width, pen, fontRes);
 
 	// speech to be centred above point (x,y), but kept on-screen
 	// where (x,y) is a point somewhere just above the talker's head
@@ -497,7 +435,7 @@ uint32 Build_new_block(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, 
 	// without margin checking - used for debug text
 
 	if (justification != NO_JUSTIFICATION) {
-		frame_head = (_frameHeader *) text_sprite_list[j].text_mem->ad;
+		frame_head = (_frameHeader *) _blocList[j].text_mem->ad;
 
 		switch (justification) {
 		// this one is always used for SPEECH TEXT; possibly
@@ -554,16 +492,16 @@ uint32 Build_new_block(uint8 *ascii, int16 x, int16 y, uint16 width, uint8 pen, 
 			y = text_bottom_margin;
 	}
 
-	text_sprite_list[j].x = x;
-	text_sprite_list[j].y = y;
+	_blocList[j].x = x;
+	_blocList[j].y = y;
 
 	// always uncompressed
-  	text_sprite_list[j].type = type | RDSPR_NOCOMPRESSION;
+  	_blocList[j].type = type | RDSPR_NOCOMPRESSION;
 
 	return j + 1;
 }
 
-void Print_text_blocs(void) {
+void FontRenderer::printTextBlocs(void) {
 	//called by build_display
 
 	_frameHeader *frame;
@@ -572,19 +510,19 @@ void Print_text_blocs(void) {
 	uint32 j;
 
 	for (j = 0; j < MAX_text_blocs; j++) {
-		if (text_sprite_list[j].text_mem) {
-			frame = (_frameHeader*) text_sprite_list[j].text_mem->ad;
+		if (_blocList[j].text_mem) {
+			frame = (_frameHeader*) _blocList[j].text_mem->ad;
 
-			spriteInfo.x = text_sprite_list[j].x;
-			spriteInfo.y = text_sprite_list[j].y;
+			spriteInfo.x = _blocList[j].x;
+			spriteInfo.y = _blocList[j].y;
 			spriteInfo.w = frame->width;
 			spriteInfo.h = frame->height;
 			spriteInfo.scale = 0;
 			spriteInfo.scaledWidth = 0;
 			spriteInfo.scaledHeight = 0;
-			spriteInfo.type = text_sprite_list[j].type;
+			spriteInfo.type = _blocList[j].type;
 			spriteInfo.blend = 0;
-			spriteInfo.data = text_sprite_list[j].text_mem->ad + sizeof(_frameHeader);
+			spriteInfo.data = _blocList[j].text_mem->ad + sizeof(_frameHeader);
 			spriteInfo.colourTable = 0;
 
 			rv = DrawSprite(&spriteInfo);
@@ -594,19 +532,21 @@ void Print_text_blocs(void) {
 	}
 }
 
-void Kill_text_bloc(uint32 bloc_number) {
+void FontRenderer::killTextBloc(uint32 bloc_number) {
 	//back to real
 	bloc_number--;
 
-	if (text_sprite_list[bloc_number].text_mem) {
+	if (_blocList[bloc_number].text_mem) {
 		// release the floating memory and mark it as free
-		memory.freeMemory(text_sprite_list[bloc_number].text_mem);
-		text_sprite_list[bloc_number].text_mem = 0;
+		memory.freeMemory(_blocList[bloc_number].text_mem);
+		_blocList[bloc_number].text_mem = 0;
 	} else {
 		// illegal kill - stop the system
 		Con_fatal_error("closing closed text bloc number %d", bloc_number);
 	}
 }
+
+// The rest of this file doesn't belong in the FontRenderer class!
 
 // called from InitialiseGame() in sword2.cpp
 
@@ -619,7 +559,7 @@ void Kill_text_bloc(uint32 bloc_number) {
 
 #define SAVE_LINE_NO	1
 
-void InitialiseFontResourceFlags(void) {
+void Sword2Engine::initialiseFontResourceFlags(void) {
 	uint8 *textFile, *textLine;
 	uint8 language;
 
@@ -644,7 +584,7 @@ void InitialiseFontResourceFlags(void) {
 		language = DEFAULT_TEXT;
 
 	// Set the game to use the appropriate fonts
-	InitialiseFontResourceFlags(language);
+	initialiseFontResourceFlags(language);
 
 	// Get the game name for the windows application
 
@@ -671,22 +611,22 @@ void InitialiseFontResourceFlags(void) {
 
 // called from the above function, and also from console.cpp
 
-void InitialiseFontResourceFlags(uint8 language) {
+void Sword2Engine::initialiseFontResourceFlags(uint8 language) {
 	switch (language) {
 	case FINNISH_TEXT:	// special Finnish fonts
-		speech_font_id = FINNISH_SPEECH_FONT_ID;
-		controls_font_id = FINNISH_CONTROLS_FONT_ID;
-		red_font_id = FINNISH_RED_FONT_ID;
+		_speechFontId = FINNISH_SPEECH_FONT_ID;
+		_controlsFontId = FINNISH_CONTROLS_FONT_ID;
+		_redFontId = FINNISH_RED_FONT_ID;
 		break;
 	case POLISH_TEXT:	// special Polish fonts
-		speech_font_id = POLISH_SPEECH_FONT_ID;
-		controls_font_id = POLISH_CONTROLS_FONT_ID;
-		red_font_id = POLISH_RED_FONT_ID;
+		_speechFontId = POLISH_SPEECH_FONT_ID;
+		_controlsFontId = POLISH_CONTROLS_FONT_ID;
+		_redFontId = POLISH_RED_FONT_ID;
 		break;
 	default:		// DEFAULT_TEXT	- regular fonts
-		speech_font_id = ENGLISH_SPEECH_FONT_ID;
-		controls_font_id = ENGLISH_CONTROLS_FONT_ID;
-		red_font_id = ENGLISH_RED_FONT_ID;
+		_speechFontId = ENGLISH_SPEECH_FONT_ID;
+		_controlsFontId = ENGLISH_CONTROLS_FONT_ID;
+		_redFontId = ENGLISH_RED_FONT_ID;
 		break;
 	}
 }

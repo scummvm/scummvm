@@ -33,7 +33,7 @@
 #include "bs2/defs.h"
 #include "bs2/header.h"
 #include "bs2/interpreter.h"
-#include "bs2/maketext.h"		// for MakeTextSprite used by FN_play_sequence ultimately
+#include "bs2/maketext.h"		// for makeTextSprite used by FN_play_sequence ultimately
 #include "bs2/object.h"
 #include "bs2/protocol.h"
 #include "bs2/resman.h"
@@ -475,7 +475,7 @@ typedef struct {
 } _sequenceTextInfo;
 
 // keeps count of number of text lines to disaply during the sequence
-uint32 sequenceTextLines = 0;
+static uint32 sequenceTextLines = 0;
 
 static _sequenceTextInfo sequence_text_list[MAX_SEQUENCE_TEXT_LINES];
 
@@ -574,7 +574,10 @@ void CreateSequenceSpeech(_movieTextObject *sequenceText[]) {
 			// NB. The mem block containing the text sprite is
 			// currently FLOATING!
 
-			sequence_text_list[line].text_mem = MakeTextSprite(text + 2, 600, 255, speech_font_id);
+			// When rendering text over a sequence we need a
+			// different colour for the border.
+
+			sequence_text_list[line].text_mem = fontRenderer.makeTextSprite(text + 2, 600, 255, g_sword2->_speechFontId, 1);
 
 			// ok to close the text resource now
 			res_man.close(text_res);

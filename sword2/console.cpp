@@ -36,7 +36,7 @@ uint32	console_status = 0;	//0 off		// LEFT IN RELEASE VERSION
 #include "bs2/header.h"
 #include "bs2/layers.h"
 #include "bs2/logic.h"
-#include "bs2/maketext.h"	// for InitialiseFontResourceFlags()
+#include "bs2/maketext.h"	// for initialiseFontResourceFlags()
 #include "bs2/mouse.h"
 #include "bs2/mem_view.h"
 #include "bs2/memory.h"
@@ -672,15 +672,15 @@ uint32 Parse_user_input(void) {
 						Print_to_console("SFX logging deactivated");
 					return 0;
 				case 44:	// ENGLISH
-					InitialiseFontResourceFlags(DEFAULT_TEXT);
+					initialiseFontResourceFlags(DEFAULT_TEXT);
 					Print_to_console("Default fonts selected");
 					return 0;
 				case 45:	// FINNISH
-					InitialiseFontResourceFlags(FINNISH_TEXT);
+					initialiseFontResourceFlags(FINNISH_TEXT);
 					Print_to_console("Finnish fonts selected");
 					return 0;
 				case 46:	// POLISH
-					InitialiseFontResourceFlags(POLISH_TEXT);
+					initialiseFontResourceFlags(POLISH_TEXT);
 					Print_to_console("Polish fonts selected");
 					return 0;
 				default:

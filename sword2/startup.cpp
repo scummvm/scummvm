@@ -225,14 +225,14 @@ uint32 Con_start(uint8 *input) {
 	char *raw_data_ad;
 	uint32 null_pc;
 
-	// so that typing 'S' then <enter> works on NT (James26feb97)
+	// so that typing 'S' then <enter> works on NT
 	if (input[0] == 0) {
 		Con_print_start_menu();
 		return 1;
 	}
 
 	while (input[j]) {
-		if (input[j] >= '0' && input[j] <= '9')
+		if (isdigit(input[j]))
 			j++;
 		else
 			break;
@@ -276,15 +276,15 @@ uint32 Con_start(uint8 *input) {
 
 			// if there was speech text, kill the text block
 			if (speech_text_bloc_no) {
-				Kill_text_bloc(speech_text_bloc_no);
-				speech_text_bloc_no=0;
+				fontRenderer.killTextBloc(speech_text_bloc_no);
+				speech_text_bloc_no = 0;
 			}
 
 			// set the key
 
 			// Open George
-			raw_data_ad = (char*) (res_man.open(8));
-			raw_script = (char*) (res_man.open(start_list[start].start_res_id));
+			raw_data_ad = (char *) (res_man.open(8));
+			raw_script = (char *) (res_man.open(start_list[start].start_res_id));
 
 			// denotes script to run
 			null_pc = start_list[start].key & 0xffff;
