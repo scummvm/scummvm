@@ -2885,7 +2885,7 @@ void SimonEngine::o_file_error(FillOrCopyStruct *fcs, bool save_error) {
 		video_putchar(fcs, *string);
 
 	ha = findEmptyHitArea();
-	ha->x = (fcs->width >> 1) + fcs->x - 3 << 3;
+	ha->x = ((fcs->width >> 1) + (fcs->x - 3)) << 3;
 	ha->y = (fcs->height << 3) + fcs->y - 8;
 	ha->width = 48;
 	ha->height = 8;
