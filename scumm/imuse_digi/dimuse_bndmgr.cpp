@@ -204,11 +204,13 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 
 	int skip = offset - (first_block * 0x2000) + header_size;
 
+	// CMI hack: one more zero byte at the end of input buffer
+	comp_input = (byte *)malloc(0x2000);
+	comp_input[0x2000-1] = 0;
+
 	for (i = first_block; i <= last_block; i++) {
 		assert(size);
-		// CMI hack: one more zero byte at the end of input buffer
-		comp_input = (byte *)malloc(_compTable[i].size + 1);
-		comp_input[_compTable[i].size] = 0;
+		assert(0x2000 >= _compTable[i].size + 1);
 
 		byte *curBuf;
 		if (_lastBlock != i) {
@@ -236,9 +238,8 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 		final_size += output_size;
 		size -= output_size;
 		skip = 0;
-
-		free(comp_input);
 	}
+	free(comp_input);
 	free(comp_output);
 
 	return final_size;
