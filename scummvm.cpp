@@ -788,7 +788,10 @@ void Scumm::processKbd() {
 	}
 
 	if (_lastKeyHit==_vars[VAR_CUTSCENEEXIT_KEY]) {
-		exitCutscene();
+		if (_insaneState) {
+			videoFinished=1;
+		} else
+			exitCutscene();
 	} else if (_lastKeyHit==_vars[VAR_SAVELOADDIALOG_KEY]) {
 		if ( _features & GF_AFTER_V7)
 			runScript(_vars[VAR_UNK_SCRIPT],0,0,0);

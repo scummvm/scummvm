@@ -414,7 +414,7 @@ void codec37(CodecData *cd, PersistentCodecData37 *pcd) {
 
 	case 1:
 	case 4:
-		printf("code %d", cd->src[0]);
+		warning("code %d", cd->src[0]);
 		return;
 
 	default:
@@ -596,6 +596,9 @@ void SmushPlayer::startVideo(short int arg, byte* videoFile)
 
 	fileSize=fileReadBE32();
 
+	sm->videoFinished = 0;
+	sm->_insaneState = 1;
+
 	do {
 		if(ftell(_in)>=fileSize )
 			return;
@@ -613,10 +616,12 @@ void SmushPlayer::startVideo(short int arg, byte* videoFile)
 		updateScreen(sm);
 
 		sm->delta = sm->_system->waitTick(sm->delta);
+	
+		sm->processKbd();
 		
-		if(sm->_keyPressed == sm->_vars[sm->VAR_CUTSCENEEXIT_KEY])
-			return;
-	} while (1);
+	} while (!sm->videoFinished);
+
+	sm->_insaneState = 0;
 }
 
 
