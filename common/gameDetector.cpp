@@ -162,6 +162,10 @@ const VersionSettings version_settings[] = {
 	{"dig", "The Dig", GID_DIG, 7, 5, 0,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_V7 | GF_NEW_COSTUMES, 0},
 
+	/* Scumm Version 8 */
+	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 1, 0,
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_V7 | GF_AFTER_V8 | GF_NEW_COSTUMES, 0},
+
 	/* Simon the Sorcerer 1 & 2 (not SCUMM games) */
 	{"simon1dos", "Simon the Sorcerer 1 for DOS", GID_SIMON_FIRST+0, 99, 99, 99, 0, "GAMEPC"},
 	{"simon1amiga", "Simon the Sorcerer 1 for Amiga", GID_SIMON_FIRST+32, 99, 99, 99, 0, "gameamiga"},
@@ -177,11 +181,6 @@ const VersionSettings version_settings[] = {
 	{"simon2mac", "Simon the Sorcerer 2 Talkie for Mac", GID_SIMON_FIRST+23, 99, 99, 99, 0, "GSPTR30"},
 	{"simon1demo", "Simon the Sorcerer 1 for DOS (Demo)", GID_SIMON_FIRST+8, 99, 99, 99, 0, "GDEMO"}, 
 	{"simon2demo", "Simon the Sorcerer 2 Talkie for DOS (Demo)", GID_SIMON_FIRST+5, 99, 99, 99, 0, "GSPTR30"}, 
-
-
-	/* Scumm Version 8 */
-	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 1, 0,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_V7 | GF_AFTER_V8 | GF_NEW_COSTUMES, 0},
 
 	{NULL, NULL, 0, 0, 0, 0, 0, NULL}
 };
@@ -427,6 +426,8 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 					goto ShowHelpAndExit;
 				g_config->set("gfx_mode", option, "scummvm");
 				break;
+			// case 'h': reserved for help
+			// case 'j': reserved for joystick select
 			case 'l':
 				HANDLE_OPTION();
 				{
