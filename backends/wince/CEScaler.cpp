@@ -53,7 +53,6 @@ void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 							int width, int height) {
 	uint8 *work;
 	int i;
-	int dec;
 	uint16 srcPitch16 = (uint16)(srcPitch / sizeof(uint16));
 
 	while ((height-=2) >= 0) {
@@ -61,12 +60,12 @@ void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 		work = dstPtr;
 
 		for (int i=0; i<width; i+=2) {
-			// Work with 2 pixels on a row and one below
+			// Another lame filter attempt :) 
 			uint16 color1 = *(((const uint16 *)srcPtr) + i);
 			uint16 color2 = *(((const uint16 *)srcPtr) + (i + 1));
 			uint16 color3 = *(((const uint16 *)srcPtr) + (i + srcPitch16));
-		
-			*(((uint16 *)work) + 0) = interpolate16_3<565, 2, 1, 1>(color1, color2, color3);
+			uint16 color4 = *(((const uint16 *)srcPtr) + (i + srcPitch16 + 1));
+			*(((uint16 *)work) + 0) = interpolate16_4<565, 1, 1, 1, 1>(color1, color2, color3, color4);
 			
 			work += sizeof(uint16);
 		}
