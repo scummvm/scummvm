@@ -1239,7 +1239,7 @@ bool SkyLogic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
 bool SkyLogic::fnSetToStand(uint32 a, uint32 b, uint32 c) {
 	_compact->mood = 1; // high level stood still
 
-	uint16 *p = (uint16 *)SkyCompact::getCompactElem(_compact, C_STAND_UP
+	uint16 *p = *(uint16 **)SkyCompact::getCompactElem(_compact, C_STAND_UP
 			+ _compact->extCompact->megaSet + _compact->extCompact->dir * 4); 
 
 	_compact->offset = *p++; // get frames offset
