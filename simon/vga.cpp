@@ -115,12 +115,8 @@ void SimonState::run_vga_script()
 
 if (_continous_vgascript) {
 		if ((void *)_vc_ptr != (void *)&vc_get_out_of_code) {
-//      if (_vga_cur_sprite_id==62 && _vga_cur_file_id==68 ||
-//          _vga_cur_sprite_id==1 && _vga_cur_file_id==2) {
-			fprintf(_dump_file, "%.5d %.5X: %5d %4d ", _vga_tick_counter, _vc_ptr - _cur_vga_file_1,
-							_vga_cur_sprite_id, _vga_cur_file_id);
+			fprintf(_dump_file, "%.5d %.5X: %5d %4d ", _vga_tick_counter, _vc_ptr - _cur_vga_file_1, _vga_cur_sprite_id, _vga_cur_file_id);
 			dump_video_script(_vc_ptr, true);
-//      }
 		}
 }
 
