@@ -264,10 +264,10 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_soundKludge),
 		OPCODE(o8_system),
 		/* B4 */
+		OPCODE(o6_saveRestoreVerbs),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_drawBox),
 		/* B8 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -311,7 +311,7 @@ void Scumm_v8::setupOpcodes()
 		/* D8 */
 		OPCODE(o8_kludge2),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o6_getVerbEntrypoint),
 		OPCODE(o6_getActorFromXY),
 		/* DC */
 		OPCODE(o6_findObject),
@@ -493,6 +493,7 @@ void Scumm_v8::decodeParseString(int m, int n)
 		break;
 	case 0xCD:		// SO_PRINT_CHARSET Set print character set
 		// FIXME - TODO
+		pop();
 		break;
 	case 0xCE:
 		_string[m].center = false;
@@ -1171,13 +1172,24 @@ void Scumm_v8::o8_kludge2()
 	getStackList(args, sizeof(args) / sizeof(args[0]));
 
 	switch (args[0]) {
-	case 0xE0:
-		// TODO - ReadRegistryValue
-		push(0);
-		break;
+	case 0xCE:		// getRGBSlot
+	case 0xD3:		// getKeyState
+	case 0xD7:		// getBox
+	case 0xD8:		// findBlastObject
+	case 0xD9:		// actorHit
+	case 0xDA:		// lipSyncWidth
+	case 0xDB:		// lipSyncHeight
+	case 0xDC:		// actorTalkAnimation
+	case 0xDD:		// getMasterSFXVol
+	case 0xDE:		// getMasterVoiceVol
+	case 0xDF:		// getMasterMusicVol
+	case 0xE0:		// readRegistryValue
 	default:
+		// FIXME - hack!
+		push(0);
 		warning("o8_kludge2: default case %d", args[0]);
 	}
+
 }
 
 void Scumm_v8::o8_getObjectImageX()
