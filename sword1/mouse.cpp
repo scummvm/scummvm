@@ -35,35 +35,35 @@ SwordMouse::SwordMouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_resMan = pResMan;
 	_objMan = pObjMan;
 	_system = system;
+	_currentPtr = NULL;
 }
 
 void SwordMouse::initialize(void) {
 	_numObjs = 0;
 	SwordLogic::_scriptVars[MOUSE_STATUS] = 0; // mouse off and unlocked
 	_getOff = 0;
-	_specialPtrId = 0;
 	_inTopMenu = false;
 	_mouseOverride = false;
+	_currentPtrId = _currentLuggageId = 0;
 
-	for (uint8 cnt = 0; cnt < 17; cnt++)
-		_pointers[cnt] = (MousePtr*)_resMan->mouseResOpen(MSE_POINTER + cnt);
+	for (uint8 cnt = 0; cnt < 17; cnt++)	 // force res manager to keep mouse 
+		_resMan->resOpen(MSE_POINTER + cnt); // cursors in memory all the time
+	
+	createPointer(0, 0);
 }
 
 void SwordMouse::controlPanel(bool on) { // true on entering cpanel, false when leaving
-	static uint32 savedPtrId = 0, savedSpecialId = 0;
+	static uint32 savedPtrId = 0;
 	if (on) {
 		savedPtrId = _currentPtrId;
-		savedSpecialId = _specialPtrId;
 		_mouseOverride = true;
+		setLuggage(0, 0);
 		setPointer(MSE_POINTER, 0);
 	} else {
 		_currentPtrId = savedPtrId;
-		_specialPtrId = savedSpecialId;
 		_mouseOverride = false;
-		if (_specialPtrId)
-			setPointer(_specialPtrId, 0);
-		else
-			setPointer(_currentPtrId + MSE_POINTER, 0);
+		setLuggage(_currentLuggageId, 0);
+		setPointer(_currentPtrId, 0);
 	}
 }
 
@@ -76,10 +76,6 @@ void SwordMouse::addToList(int id, BsObject *compact) {
 	_objList[_numObjs].id = id;
 	_objList[_numObjs].compact = compact;
 	_numObjs++;
-}
-
-void SwordMouse::flushEvents(void) {
-	_lastState = _state = 0;
 }
 
 void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
@@ -100,13 +96,6 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 	_mouseX = x;
 	_mouseY = y;
 	if (!(SwordLogic::_scriptVars[MOUSE_STATUS] & 1)) {  // no human?
-		// if the mouse is turned off, I want the menu automatically removed,
-		// except while in conversation, while examining a menu object or while combining two menu objects!
-		/*if ((!subject_status)&&(!menu_looking)&&(!second_icon))
-		{
-			HideMenu(TOP_MENU);
-			menu_status=0;
-		}*/
 		_numObjs = 0;
 		return;	// no human, so we don't want the mouse engine
 	}
@@ -177,44 +166,88 @@ uint16 SwordMouse::testEvent(void) {
 	return _state;
 }
 
-void SwordMouse::setLuggage(uint32 resId, uint32 rate) {
-	warning("stub: SwordMouse::setLuggage(%d, %d)", resId, rate);
+void SwordMouse::createPointer(uint32 ptrId, uint32 luggageId) {
+	if (_currentPtr) {
+		free(_currentPtr);
+		_currentPtr = NULL;
+	}
+	if (ptrId) {
+		MousePtr *lugg = NULL;
+		MousePtr *ptr = (MousePtr*)_resMan->openFetchRes(ptrId);
+		uint16 resSizeX = FROM_LE_16(ptr->sizeX);
+		uint16 resSizeY = FROM_LE_16(ptr->sizeY);
+		uint16 noFrames = FROM_LE_16(ptr->numFrames);
+		if (luggageId) {
+			lugg = (MousePtr*)_resMan->openFetchRes(luggageId);
+			resSizeX = MAX(resSizeX, (uint16)((resSizeX / 2) + FROM_LE_16(lugg->sizeX)));
+			resSizeY = MAX(resSizeY, (uint16)((resSizeY / 2) + FROM_LE_16(lugg->sizeY)));
+		}
+		_currentPtr = (MousePtr*)malloc(sizeof(MousePtr) + resSizeX * resSizeY * noFrames);
+		_currentPtr->hotSpotX = FROM_LE_16(ptr->hotSpotX);
+		_currentPtr->hotSpotY = FROM_LE_16(ptr->hotSpotY);
+		_currentPtr->numFrames = noFrames;
+		_currentPtr->sizeX = resSizeX;
+		_currentPtr->sizeY = resSizeY;
+		uint8 *ptrData = (uint8*)_currentPtr + sizeof(MousePtr);
+		memset(ptrData, 255, resSizeX * resSizeY * noFrames);
+		uint8 *dstData = ptrData;
+		uint8 *srcData = (uint8*)ptr + sizeof(MousePtr);
+		for (uint32 frameCnt = 0; frameCnt < noFrames; frameCnt++) {
+			for (uint32 cnty = 0; cnty < FROM_LE_16(ptr->sizeY); cnty++) {
+				for (uint32 cntx = 0; cntx < FROM_LE_16(ptr->sizeX); cntx++)
+					if (srcData[cntx])
+						dstData[cntx] = srcData[cntx];
+				srcData += FROM_LE_16(ptr->sizeX);
+				dstData += resSizeX;
+			}
+			dstData += (resSizeY - FROM_LE_16(ptr->sizeY)) * resSizeX;
+		}
+		if (luggageId) {
+			dstData = ptrData + resSizeX - FROM_LE_16(lugg->sizeX);
+			for (uint32 frameCnt = 0; frameCnt < noFrames; frameCnt++) {
+				uint8 *luggSrc = (uint8*)lugg + sizeof(MousePtr);
+				dstData += (resSizeY - FROM_LE_16(lugg->sizeY)) * resSizeX;
+				for (uint32 cnty = 0; cnty < FROM_LE_16(lugg->sizeY); cnty++) {
+					for (uint32 cntx = 0; cntx < FROM_LE_16(lugg->sizeX); cntx++)
+						if (luggSrc[cntx])
+							dstData[cntx] = luggSrc[cntx];
+					dstData += resSizeX;
+					luggSrc += FROM_LE_16(lugg->sizeX);
+				}
+			}
+			_resMan->resClose(luggageId);
+		}
+		_resMan->resClose(ptrId);
+	}
 }
 
 void SwordMouse::setPointer(uint32 resId, uint32 rate) {
-	if (_specialPtrId) {
-		_resMan->resClose(_specialPtrId);
-		_specialPtrId = 0;
-	}
+	_currentPtrId = resId;
 	_frame = 0;
+
+	createPointer(resId, _currentLuggageId);
 
 	if ((resId == 0) || (!(SwordLogic::_scriptVars[MOUSE_STATUS] & 1) && (!_mouseOverride))) {
 		_system->set_mouse_cursor(NULL, 0, 0, 0, 0);
 		_system->show_mouse(false);
 	} else {
-		if (resId <= MSE_ARROW9)
-			_currentPtrId = resId - MSE_POINTER;
-		else {
-			_currentPtrId = 0;
-			_specialPtrId = resId;
-			_specialPtr = (MousePtr*)_resMan->mouseResOpen(resId);
-		}
 		animate();
 		_system->show_mouse(true);
 	}
 }
 
-void SwordMouse::animate(void) {
-	MousePtr *currentPtr;
-	if ((SwordLogic::_scriptVars[MOUSE_STATUS] == 1) || _mouseOverride) {
-		if (_specialPtrId)
-			currentPtr = _specialPtr;
-		else
-			currentPtr = _pointers[_currentPtrId];
+void SwordMouse::setLuggage(uint32 resId, uint32 rate) {
+	_currentLuggageId = resId;
+	_frame = 0;
+	createPointer(_currentPtrId, resId);
+}
 
-		_frame = (_frame + 1) % currentPtr->numFrames;
-		uint16 size = currentPtr->sizeX * currentPtr->sizeY;
-		_system->set_mouse_cursor(currentPtr->data + 0x30 + _frame * size, currentPtr->sizeX, currentPtr->sizeY, currentPtr->hotSpotX, currentPtr->hotSpotY);
+void SwordMouse::animate(void) {
+	if ((SwordLogic::_scriptVars[MOUSE_STATUS] == 1) || _mouseOverride) {
+		_frame = (_frame + 1) % _currentPtr->numFrames;
+		uint8 *ptrData = (uint8*)_currentPtr + sizeof(MousePtr);
+		ptrData += _frame * _currentPtr->sizeX * _currentPtr->sizeY;
+		_system->set_mouse_cursor(ptrData, _currentPtr->sizeX, _currentPtr->sizeY, _currentPtr->hotSpotX, _currentPtr->hotSpotY);
 	}
 }
 
@@ -230,11 +263,9 @@ void SwordMouse::fnAddHuman(void) {
 	if (SwordLogic::_scriptVars[MOUSE_STATUS] & 2) // locked, can't do anything
 		return ;
 	SwordLogic::_scriptVars[MOUSE_STATUS] = 1;
-	SwordLogic::_scriptVars[SPECIAL_ITEM] = 0; // _scriptVars is unsigned...
+	SwordLogic::_scriptVars[SPECIAL_ITEM] = 0;
 	_getOff = SCR_std_off;
 	setPointer(MSE_POINTER, 0);
-	_mouseCount = 3;
-
 }
 
 void SwordMouse::fnBlankMouse(void) {

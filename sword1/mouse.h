@@ -51,7 +51,7 @@ struct MousePtr {
 	uint16 sizeY;
 	uint16 hotSpotX;
 	uint16 hotSpotY;
-	uint8  data[2]; // arbitrary number.
+	uint8  dummyData[0x30];
 } GCC_PACK;
 
 #if !defined(__GNUC__)
@@ -75,7 +75,7 @@ public:
 	void animate(void);
 	void engine(uint16 x, uint16 y, uint16 eventFlags);
 	uint16 testEvent(void);
-	void flushEvents(void);
+	//void flushEvents(void);
 	void giveCoords(uint16 *x, uint16 *y);
 	void fnNoHuman(void);
 	void fnAddHuman(void);
@@ -85,7 +85,7 @@ public:
 	void fnUnlockMouse(void);
 	void controlPanel(bool on);
 private:
-	MousePtr *_pointers[17];
+	void createPointer(uint32 ptrId, uint32 luggageId);
 	OSystem *_system;
 	SwordLogic *_logic;
 	SwordMenu *_menu;
@@ -94,13 +94,15 @@ private:
 	ObjectMan *_objMan;
 	uint16 _mouseX, _mouseY;
 
-	uint32 _currentPtrId, _frame;
-	uint8 _mouseCount;
+	uint32 _currentPtrId, _currentLuggageId, _frame;
+	MousePtr *_currentPtr;
+	//uint8 _mouseCount;
 	uint16 _numObjs;
 	uint16 _lastState, _state;
 	uint32 _getOff;
-	uint32 _specialPtrId; // for special mouse cursors which aren't in the _pointers[] array.
-	MousePtr *_specialPtr;
+	//uint32 _specialPtrId; // for special mouse cursors which aren't in the _pointers[] array.
+	//MousePtr *_specialPtr;
+	//MousePtr *_pointers[17];
 	bool _inTopMenu, _mouseOverride;
 };
 

@@ -127,9 +127,10 @@ uint8 SwordMenu::checkMenuClick(uint8 menuType) {
 			if (_objects[cnt]->wasClicked(x, y))
 				if (mouseEvent & BS1L_BUTTON_DOWN) {
 					if (SwordLogic::_scriptVars[OBJECT_HELD]) {
-						if (SwordLogic::_scriptVars[OBJECT_HELD] == _menuList[cnt])
+						if (SwordLogic::_scriptVars[OBJECT_HELD] == _menuList[cnt]) {
+							_mouse->setLuggage(0, 0);
 							SwordLogic::_scriptVars[OBJECT_HELD] = 0; // reselected => deselect it
-						else { // the player is clicking another item on this one.
+						} else { // the player is clicking another item on this one.
 							   // run its use-script, if there is one
 							SwordLogic::_scriptVars[SECOND_ITEM] = _menuList[cnt];
 						}
@@ -138,8 +139,10 @@ uint8 SwordMenu::checkMenuClick(uint8 menuType) {
 					refreshMenus = true;
 				} else if (mouseEvent & BS1L_BUTTON_UP) {
 					if (SwordLogic::_scriptVars[OBJECT_HELD] == _menuList[cnt]) {
+						_mouse->setLuggage(_objectDefs[_menuList[cnt]].luggageIconRes, 0);
 						return cnt + 1;
 					} else {
+						_mouse->setLuggage(0, 0);
 						SwordLogic::_scriptVars[OBJECT_HELD] = 0;
 						refreshMenus = true;
 					}

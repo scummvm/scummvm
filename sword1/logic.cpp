@@ -1049,7 +1049,6 @@ int SwordLogic::fnISpeak(BsObject *cpt, int32 id, int32 cdt, int32 textNo, int32
 		cdt = GEOSTDLCDT; // workaround for missing animation when examining
 		spr = GEOSTDL;    // the conductor on the train roof
 	}
-	_mouse->flushEvents(); // prevent player from accidently clicking text away within first three frames
 	cpt->o_logic = LOGIC_speech;
 
 	// first setup the talk animation
@@ -1348,7 +1347,6 @@ int SwordLogic::fnWalk(BsObject *cpt, int32 id, int32 x, int32 y, int32 dir, int
 		cpt->o_down_flag = 1; // 1 means okay.
 		// if both mouse buttons were pressed on an exit => skip george's walk
 		if ((id == GEORGE) && (_mouse->testEvent() == MOUSE_BOTH_BUTTONS)) {
-			_mouse->flushEvents();
 			int32 target = _scriptVars[CLICK_ID];
 			// exceptions: compacts that use hand pointers but are not actually exits
 			if ((target != LEFT_SCROLL_POINTER) && (target != RIGHT_SCROLL_POINTER) &&
