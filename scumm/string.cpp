@@ -347,6 +347,7 @@ void Scumm::drawDescString(byte *msg) {
 	addMessageToStack(msg);
 
 	_charsetBufPos = 0;
+	_string[0].ypos += camera._cur.y - (_realHeight / 2);
 	_charset->_top = _string[0].ypos;
 	_charset->_startLeft = _charset->_left = _string[0].xpos;
 	_charset->_right = _realWidth - 1;
