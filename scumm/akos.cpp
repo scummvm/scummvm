@@ -1366,11 +1366,13 @@ void ScummEngine::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) 
 	}
 }
 
+} // End of namespace Scumm
+
 #ifdef __PALM_OS__
 #include "scumm_globals.h"
 
 _GINIT(Akos)
-_GSETPTR(defaultScaleTable, GBVARS_DEFAULTSCALETABLE_INDEX, byte, GBVARS_SCUMM)
+_GSETPTR(Scumm::defaultScaleTable, GBVARS_DEFAULTSCALETABLE_INDEX, byte, GBVARS_SCUMM)
 _GEND
 
 _GRELEASE(Akos)
@@ -1378,5 +1380,3 @@ _GRELEASEPTR(GBVARS_DEFAULTSCALETABLE_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
-
-} // End of namespace Scumm

@@ -986,18 +986,20 @@ void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 		lowPassFilter(data, len);
 }
 
+} // End of namespace Scumm
+
 #ifdef __PALM_OS__
 #include "scumm_globals.h"
 
 _GINIT(PlayerV2)
-_GSETPTR(note_lengths, GBVARS_NOTELENGTHS_INDEX, uint8, GBVARS_SCUMM)
-_GSETPTR(hull_offsets, GBVARS_HULLOFFSETS_INDEX, uint16, GBVARS_SCUMM)
-_GSETPTR(hulls, GBVARS_HULLS_INDEX, int16, GBVARS_SCUMM)
-_GSETPTR(freqmod_lengths, GBVARS_FREQMODLENGTHS_INDEX, uint16, GBVARS_SCUMM)
-_GSETPTR(freqmod_offsets, GBVARS_FREQMODOFFSETS_INDEX, uint16, GBVARS_SCUMM)
-_GSETPTR(freqmod_table, GBVARS_FREQMODTABLE_INDEX, int8, GBVARS_SCUMM)
-_GSETPTR(spk_freq_table, GBVARS_SPKFREQTABLE_INDEX, uint16, GBVARS_SCUMM)
-_GSETPTR(pcjr_freq_table, GBVARS_PCJRFREQTABLE_INDEX, uint16, GBVARS_SCUMM)
+_GSETPTR(Scumm::note_lengths, GBVARS_NOTELENGTHS_INDEX, uint8, GBVARS_SCUMM)
+_GSETPTR(Scumm::hull_offsets, GBVARS_HULLOFFSETS_INDEX, uint16, GBVARS_SCUMM)
+_GSETPTR(Scumm::hulls, GBVARS_HULLS_INDEX, int16, GBVARS_SCUMM)
+_GSETPTR(Scumm::freqmod_lengths, GBVARS_FREQMODLENGTHS_INDEX, uint16, GBVARS_SCUMM)
+_GSETPTR(Scumm::freqmod_offsets, GBVARS_FREQMODOFFSETS_INDEX, uint16, GBVARS_SCUMM)
+_GSETPTR(Scumm::freqmod_table, GBVARS_FREQMODTABLE_INDEX, int8, GBVARS_SCUMM)
+_GSETPTR(Scumm::spk_freq_table, GBVARS_SPKFREQTABLE_INDEX, uint16, GBVARS_SCUMM)
+_GSETPTR(Scumm::pcjr_freq_table, GBVARS_PCJRFREQTABLE_INDEX, uint16, GBVARS_SCUMM)
 _GEND
 
 _GRELEASE(PlayerV2)
@@ -1013,4 +1015,3 @@ _GEND
 
 #endif
 
-} // End of namespace Scumm

@@ -3634,12 +3634,13 @@ void ScummEngine::makeCursorColorTransparent(int a) {
 	updateCursor();
 }
 
+} // End of namespace Scumm
 
 #ifdef __PALM_OS__
 #include "scumm_globals.h"
 
 _GINIT(Gfx)
-_GSETPTR(transitionEffects, GBVARS_TRANSITIONEFFECTS_INDEX, TransitionEffect, GBVARS_SCUMM)
+_GSETPTR(Scumm::transitionEffects, GBVARS_TRANSITIONEFFECTS_INDEX, Scumm::TransitionEffect, GBVARS_SCUMM)
 _GEND
 
 _GRELEASE(Gfx)
@@ -3647,5 +3648,3 @@ _GRELEASEPTR(GBVARS_TRANSITIONEFFECTS_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
-
-} // End of namespace Scumm

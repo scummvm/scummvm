@@ -617,11 +617,13 @@ bool Codec47Decoder::decode(byte *dst, const byte *src) {
 	return true;
 }
 
+} // End of namespace Scumm
+
 #ifdef __PALM_OS__
 #include "scumm_globals.h"
 
 _GINIT(Codec47)
-_GSETPTR(codec47_table, GBVARS_CODEC47TABLE_INDEX, int8, GBVARS_SCUMM)
+_GSETPTR(Scumm::codec47_table, GBVARS_CODEC47TABLE_INDEX, int8, GBVARS_SCUMM)
 _GEND
 
 _GRELEASE(Codec47)
@@ -630,4 +632,4 @@ _GEND
 
 #endif
 
-} // End of namespace Scumm
+

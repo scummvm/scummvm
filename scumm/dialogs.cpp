@@ -789,13 +789,15 @@ void KeysDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 
 #endif
 
+} // End of namespace Scumm
+
 #ifdef __PALM_OS__
 #include "scumm_globals.h"
 
 _GINIT(Dialogs)
-_GSETPTR(string_map_table_v7, GBVARS_STRINGMAPTABLEV7_INDEX, ResString, GBVARS_SCUMM)
-_GSETPTR(string_map_table_v6, GBVARS_STRINGMAPTABLEV6_INDEX, ResString, GBVARS_SCUMM)
-_GSETPTR(string_map_table_v5, GBVARS_STRINGMAPTABLEV5_INDEX, ResString, GBVARS_SCUMM)
+_GSETPTR(Scumm::string_map_table_v7, GBVARS_STRINGMAPTABLEV7_INDEX, Scumm::ResString, GBVARS_SCUMM)
+_GSETPTR(Scumm::string_map_table_v6, GBVARS_STRINGMAPTABLEV6_INDEX, Scumm::ResString, GBVARS_SCUMM)
+_GSETPTR(Scumm::string_map_table_v5, GBVARS_STRINGMAPTABLEV5_INDEX, Scumm::ResString, GBVARS_SCUMM)
 _GEND
 
 _GRELEASE(Dialogs)
@@ -805,5 +807,3 @@ _GRELEASEPTR(GBVARS_STRINGMAPTABLEV5_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
-
-} // End of namespace Scumm

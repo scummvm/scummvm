@@ -858,11 +858,13 @@ bool ScummEngine::isCostumeInUse(int cost) const {
 	return false;
 }
 
+} // End of namespace Scumm
+
 #ifdef __PALM_OS__
 #include "scumm_globals.h"
 
 _GINIT(Costume)
-_GSETPTR(cost_scaleTable, GBVARS_COSTSCALETABLE_INDEX, byte, GBVARS_SCUMM)
+_GSETPTR(Scumm::cost_scaleTable, GBVARS_COSTSCALETABLE_INDEX, byte, GBVARS_SCUMM)
 _GEND
 
 _GRELEASE(Costume)
@@ -871,4 +873,3 @@ _GEND
 
 #endif
 
-} // End of namespace Scumm

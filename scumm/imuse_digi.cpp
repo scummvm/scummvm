@@ -1164,18 +1164,19 @@ int IMuseDigital::getSoundStatus(int sound) const {
 	return 0;
 }
 
+} // End of namespace Scumm
 
 #ifdef __PALM_OS__
 #include "scumm_globals.h"
 
 _GINIT(IMuseDigital)
-_GSETPTR(_digStateMusicMap,		GBVARS_DIGSTATEMUSICMAP_INDEX,		imuse_music_map		, GBVARS_SCUMM)
-_GSETPTR(_digStateMusicTable,	GBVARS_DIGSTATEMUSICTABLE_INDEX,	imuse_music_table	, GBVARS_SCUMM)
-_GSETPTR(_comiStateMusicTable,	GBVARS_COMISTATEMUSICTABLE_INDEX,	imuse_music_table	, GBVARS_SCUMM)
-_GSETPTR(_comiSeqMusicTable,	GBVARS_COMISEQMUSICTABLE_INDEX,		imuse_music_table	, GBVARS_SCUMM)
-_GSETPTR(_digSeqMusicTable,		GBVARS_DIGSEQMUSICTABLE_INDEX,		imuse_music_table	, GBVARS_SCUMM)
-_GSETPTR(_ftStateMusicTable,	GBVARS_FTSTATEMUSICTABLE_INDEX,		imuse_ft_music_table, GBVARS_SCUMM)
-_GSETPTR(_ftSeqMusicTable,		GBVARS_FTSEQMUSICTABLE_INDEX,		imuse_ft_music_table, GBVARS_SCUMM)
+_GSETPTR(Scumm::_digStateMusicMap,		GBVARS_DIGSTATEMUSICMAP_INDEX,		Scumm::imuse_music_map		, GBVARS_SCUMM)
+_GSETPTR(Scumm::_digStateMusicTable,	GBVARS_DIGSTATEMUSICTABLE_INDEX,	Scumm::imuse_music_table	, GBVARS_SCUMM)
+_GSETPTR(Scumm::_comiStateMusicTable,	GBVARS_COMISTATEMUSICTABLE_INDEX,	Scumm::imuse_music_table	, GBVARS_SCUMM)
+_GSETPTR(Scumm::_comiSeqMusicTable,		GBVARS_COMISEQMUSICTABLE_INDEX,		Scumm::imuse_music_table	, GBVARS_SCUMM)
+_GSETPTR(Scumm::_digSeqMusicTable,		GBVARS_DIGSEQMUSICTABLE_INDEX,		Scumm::imuse_music_table	, GBVARS_SCUMM)
+_GSETPTR(Scumm::_ftStateMusicTable,		GBVARS_FTSTATEMUSICTABLE_INDEX,		Scumm::imuse_ft_music_table	, GBVARS_SCUMM)
+_GSETPTR(Scumm::_ftSeqMusicTable,		GBVARS_FTSEQMUSICTABLE_INDEX,		Scumm::imuse_ft_music_table	, GBVARS_SCUMM)
 _GEND
 
 _GRELEASE(IMuseDigital)
@@ -1189,5 +1190,3 @@ _GRELEASEPTR(GBVARS_FTSEQMUSICTABLE_INDEX		, GBVARS_SCUMM)
 _GEND
 
 #endif
-
-} // End of namespace Scumm

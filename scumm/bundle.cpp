@@ -946,11 +946,13 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 	return output_size;
 }
 
+} // End of namespace Scumm
+
 #ifdef __PALM_OS__
 #include "scumm_globals.h"
 
 _GINIT(Bundle)
-_GSETPTR(imcTable, GBVARS_IMCTABLE_INDEX, int16, GBVARS_SCUMM)
+_GSETPTR(Scumm::imcTable, GBVARS_IMCTABLE_INDEX, int16, GBVARS_SCUMM)
 _GEND
 
 _GRELEASE(Bundle)
@@ -959,4 +961,4 @@ _GEND
 
 #endif
 
-} // End of namespace Scumm
+
