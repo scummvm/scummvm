@@ -58,7 +58,7 @@ struct WizParameters {
 	int unk_134;
 	int unk_138;
 	int compType;
-	int unk_14C;
+	int fileWriteMode;
 	int angle;
 	int zoom;
 	int unk_15C;

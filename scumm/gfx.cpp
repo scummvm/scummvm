@@ -785,7 +785,7 @@ void ScummEngine_v70he::redrawBGAreas() {
 	if (findResource(MKID('BMAP'), room) != NULL) {
 		if (_fullRedraw) {
 			_bgNeedsRedraw = false;
-			gdi.drawBMAPBg(room, &virtscr[0], _screenStartStrip);
+			gdi.drawBMAPBg(room, &virtscr[0]);
 		}
 	} else if (findResource(MKID('SMAP'), room) == NULL) {
 		warning("redrawBGAreas(): Both SMAP and BMAP are missing...");
@@ -1538,18 +1538,17 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
  * @note This function essentially is a stripped down & special cased version of
  * the generic Gdi::drawBitmap() method.
  */
-void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip) {
-	assert(ptr);
-	const byte *bmap_ptr;
-	byte code;
+void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 	const byte *z_plane_ptr;
 	byte *mask_ptr;
 	const byte *zplane_list[9];
 
-	bmap_ptr = _vm->findResourceData(MKID('BMAP'), ptr);
+	const byte *bmap_ptr = _vm->findResourceData(MKID('BMAP'), ptr);
 	assert(bmap_ptr);
 
-	code = *bmap_ptr++;
+	byte code = *bmap_ptr++;
+	int scrX = _vm->_screenStartStrip * 8;
+	byte *dst = (byte *)_vm->virtscr[0].backBuf + scrX;
 
 	// The following few lines more or less duplicate decompressBitmap(), only
 	// for an area spanning multiple strips. In particular, the codecs 13 & 14
@@ -1560,13 +1559,13 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip) {
 		
 	switch (code) {
 	case 13:	
-		drawStripHE((byte *)vs->backBuf, vs->pitch, bmap_ptr, vs->w, vs->h, false);
+		drawStripHE(dst, vs->pitch, bmap_ptr, vs->w, vs->h, false);
 		break;
 	case 14:
-		drawStripHE((byte *)vs->backBuf, vs->pitch, bmap_ptr, vs->w, vs->h, true);
+		drawStripHE(dst, vs->pitch, bmap_ptr, vs->w, vs->h, true);
 		break;
 	case 15:
-		fill((byte *)vs->backBuf, vs->pitch, *bmap_ptr, vs->w, vs->h);
+		fill(dst, vs->pitch, *bmap_ptr, vs->w, vs->h);
 		break;
 	default:
 		// Alternayive russian freddi3 uses badly formatted bitmaps
@@ -1612,6 +1611,7 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 	Common::Rect rect2(scrX, 0, vs->w + scrX, vs->h);
 
 	if (rect1.intersects(rect2)) {
+		rect1.clip(rect2);
 		rect1.left -= rect2.left;
 		rect1.right -= rect2.left;
 		rect1.top -= rect2.top;

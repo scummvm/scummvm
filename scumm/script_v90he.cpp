@@ -546,10 +546,10 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.processFlags |= kWPFUseFile;
 		_wizParams.processMode = 4;
 		copyScriptString(_wizParams.filename);
-		_wizParams.unk_14C = pop();
+		_wizParams.fileWriteMode = pop();
 		break;
 	case 5:
-		_wizParams.processFlags |= 0x300;
+		_wizParams.processFlags |= kWPFClipBox | 0x100;
 		_wizParams.processMode = 2;
 		_wizParams.box.bottom = pop();
 		_wizParams.box.right = pop();
@@ -628,7 +628,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.unk_15C = pop();
 		break;
 	case 85: // HE99+
-		_wizParams.processFlags |= 0x1102;
+		_wizParams.processFlags |= 0x1000 | 0x100 | 0x2;
 		_wizParams.processMode = 7;
 		_wizParams.unk_164 = pop();
 		_wizParams.unk_160 = pop();

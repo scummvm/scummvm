@@ -1193,7 +1193,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.unk_178  = pop();
 		break;
 	case 11:
-		_wizParams.processFlags |= 0x300;
+		_wizParams.processFlags |= kWPFClipBox | 0x100;
 		_wizParams.processMode = 2;
 		_wizParams.box.bottom = pop();
 		_wizParams.box.right = pop();
@@ -1267,7 +1267,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.unk_174 = pop();
 		break;
 	case 58:
-		_wizParams.processFlags |= 0x1102;
+		_wizParams.processFlags |= 0x1000 | 0x100 | 0x2;
 		_wizParams.processMode = 7;
 		_wizParams.unk_164 = pop();
 		_wizParams.unk_160 = pop();
@@ -1277,7 +1277,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.processFlags |= kWPFUseFile;
 		_wizParams.processMode = 4;
 		copyScriptString(_wizParams.filename);
-		_wizParams.unk_14C = pop();
+		_wizParams.fileWriteMode = pop();
 		break;
 	case 65:
 		_wizParams.processFlags |= kWPFZoom;

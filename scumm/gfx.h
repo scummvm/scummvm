@@ -292,7 +292,7 @@ public:
 	void decodeNESGfx(const byte *room);
 	void decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int height);
 
-	void drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip);
+	void drawBMAPBg(const byte *ptr, VirtScreen *vs);
 	void drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h);
 	
 	void copyVirtScreenBuffers(Common::Rect rect);

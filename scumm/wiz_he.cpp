@@ -1388,11 +1388,14 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 		if (params->processFlags & kWPFUseFile) {
 			File f;
 			if (!f.open((const char *)params->filename, File::kFileReadMode)) {
+				VAR(VAR_GAME_LOADED) = -3;
+				VAR(119) = -3;
 				warning("Unable to open for read '%s'", params->filename);
 			} else {
 				uint32 id = f.readUint32BE();
 				if (id != MKID('AWIZ') && id != MKID('MULT')) {
 					VAR(VAR_GAME_LOADED) = -1;
+					VAR(119) = -1;
 				} else {
 					uint32 size = f.readUint32BE();
 					f.seek(0, SEEK_SET);
@@ -1401,8 +1404,10 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 						nukeResource(rtImage, params->img.resNum);
 						warning("i/o error when reading '%s'", params->filename);
 						VAR(VAR_GAME_LOADED) = -2;
+						VAR(119) = -2;
 					} else {
 						VAR(VAR_GAME_LOADED) = 0;
+						VAR(119) = 0;
 					}
 				}
 				f.close();
@@ -1411,10 +1416,16 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 		break;
 	case 4:
 		if (params->processFlags & kWPFUseFile) {
-			if (params->unk_14C != 0) {
+			File f;
+
+			switch(params->fileWriteMode) {
+			case 2:
 				VAR(119) = -1;
-			} else {
-				File f;
+				break;
+			case 1:
+				// TODO Write image to file
+				break;
+			case 0:
 				if (!f.open((const char *)params->filename, File::kFileWriteMode)) {
 					warning("Unable to open for write '%s'", params->filename);
 					VAR(119) = -3;
@@ -1429,6 +1440,9 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 					}
 					f.close();
 				}
+				break;
+			default:
+				error("processWizImage: processMode 4 unhandled fileWriteMode %d", params->fileWriteMode);
 			}
 		}
 		break;
