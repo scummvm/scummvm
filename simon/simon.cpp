@@ -4054,7 +4054,10 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vga_sprite_id) {
 			}
 			_skip_vga_wait = true;
 		} else {
-			if (_subtitles && _scriptvar_2) {
+			if (_subtitles && _language != 20) {
+				_sound->playVoice(speech_id);
+				return;
+			} else if (_subtitles && _scriptvar_2) {
 				start_vga_code(4, 2, 5, 0, 0, 0);
 				o_wait_for_vga(205);
 				o_kill_sprite_simon2(2,5);

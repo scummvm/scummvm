@@ -1793,7 +1793,7 @@ void SimonEngine::vc_63_palette_thing_2() {
 
 void SimonEngine::vc_64_skip_if_no_speech() {
 	// Simon2
-	if (!_sound->_voice_handle.isActive())
+	if (!_sound->_voice_handle.isActive() || (_subtitles && _language != 20))
 		vc_skip_next_instruction();
 }
 
