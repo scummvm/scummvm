@@ -248,8 +248,18 @@ uint16 AutoRoute::autoRoute(Compact *cpt) {
 	if ((startX == destX) && (startY == destY))
 		return 2;
 
-	if (_routeGrid[(destY + 1) * ROUTE_GRID_WIDTH + destX + 1])
-		return 1; // AR destination is an unaccessible block
+	if (_routeGrid[(destY + 1) * ROUTE_GRID_WIDTH + destX + 1]) {
+		if ((cpt == &Sky::SkyCompact::foster) && (cptScreen == 12) && (destX == 2) && (destY == 14)) {
+			/* workaround for Scriptbug #1043047
+			   In screen 12 (the pipe factory) Joey can block Foster's target
+			   coordinates (2/14). This is normally not too tragic, but in the
+			   scene when foster gets thrown out by Lamb (first time you enter
+			   the pipe factory), the game would enter an infinite loop. */
+			_routeGrid[(destY + 1) * ROUTE_GRID_WIDTH + destX + 1] = 0; 
+			// hide this part joey from the grid
+		} else
+			return 1; // AR destination is an unaccessible block
+	}
 
 	if (!calcWalkGrid(startX, startY, destX, destY))
 		return 1; // can't find route to block
