@@ -31,13 +31,11 @@ void TextObject::setX(int x) {_x = x; }
 void TextObject::setY(int y) {_y = y; }
 void TextObject::setColor(Color *newcolor) { _fgColor = newcolor; }
 
+std::string parseMsgText(char *msg, char *msgId);
+
 void TextObject::draw() {
-	const char *localString = g_localizer->localize(_textID).c_str();
-	// This is also used for things like debugging in addition
-	// to dialogue so there aren't always translations
-	if (strrchr(localString, '/') != NULL) {
-		g_driver->drawEmergString(_x, _y, strrchr(localString, '/') + 1, _fgColor);
-	} else {
-		g_driver->drawEmergString(_x, _y, localString, _fgColor);
-	}
+	char msgId[32];
+
+	std::string msg = parseMsgText(_textID, msgId);
+	g_driver->drawEmergString(_x, _y, msg.c_str(), _fgColor);
 }

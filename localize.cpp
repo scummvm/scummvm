@@ -81,7 +81,9 @@ Localizer::Localizer() {
 }
 
 std::string Localizer::localize(const char *str) const {
-	if (str[0] != '/')
+	assert(str);
+
+	if ((str[0] != '/') || (str[0] == 0))
 		return str;
 
 	const char *slash2 = std::strchr(str + 1, '/');
@@ -91,7 +93,7 @@ std::string Localizer::localize(const char *str) const {
 	std::string key(str + 1, slash2 - str - 1);
 	StringMap::const_iterator i = _entries.find(key);
 	if (i == _entries.end())
-		return str;
+		return slash2 + 1;
 
-	return "/" + key + '/' + i->second;
+	return i->second;
 }

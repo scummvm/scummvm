@@ -67,7 +67,7 @@ public:
 	Vector3d puckVector() const;
 	void turn(int dir);
 
-	void sayLine(const char *msg);
+	void sayLine(const char *msg, const char *msgId);
 	void shutUp();
 	bool talking();
 

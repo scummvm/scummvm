@@ -230,14 +230,6 @@ static void WriteRegistryValue() {
 	g_registry->set(key, val);
 }
 
-// Localization function
-
-static void LocalizeString() {
-	char *str = luaL_check_string(1);
-	std::string result = g_localizer->localize(str);
-	lua_pushstring(const_cast<char *>(result.c_str()));
-}
-
 // Actor functions
 
 static void LoadActor() {
@@ -658,10 +650,70 @@ static void GetVisibleThings() {
 	lua_pushobject(result);
 }
 
+// 0 - translate from '/msgId/'
+// 1 - don't translate - message after '/msgId'
+// 2 - return '/msgId/'
+int translationMode = 0;
+
+std::string parseMsgText(char *msg, char *msgId) {
+	std::string translation = g_localizer->localize(msg);
+	char *secondSlash = NULL;
+
+	if ((msg[0] == '/') && (msgId)) {
+		secondSlash = std::strchr(msg + 1, '/');
+		if (secondSlash != NULL) {
+		 	strncpy(msgId, msg + 1, secondSlash - msg - 1);
+			msgId[secondSlash - msg - 1] = 0;
+		} else {
+			msgId[0] = 0;
+		}
+	}
+
+	if (translationMode == 1)
+		return secondSlash;
+
+	if (translationMode == 2)
+		return msg;
+
+	return translation;
+}
+
+// Localization function
+
+static void LocalizeString() {
+	char msgId[32];
+	char buf[640];
+
+	char *str = luaL_check_string(1);
+	std::string msg = parseMsgText(str, msgId);
+	sprintf(buf, "/%s/%s", msgId, msg.c_str());
+	lua_pushstring(const_cast<char *>(buf));
+}
+
 static void SayLine() {
+	char msgId[32];
+	int pan = 64;
+
 	Actor *act = check_actor(1);
-	const char *msg = luaL_check_string(2);
-	act->sayLine(msg);
+
+	int param_number = 2;
+	lua_Object param2 = lua_getparam(param_number++);
+	std::string msg;
+	if (!lua_isnil(param2)) {
+		do {
+			if (lua_isstring(param2)) {
+				char *str = lua_getstring(param2);
+				msg = parseMsgText(str, msgId);
+			} else if (lua_isnumber(param2)) {
+				pan = 0;
+			} else if (lua_istable(param2)) {
+			} else {
+				error("SayLine() unknown type of param");
+			}
+			param2 = lua_getparam(param_number++);
+		} while (!lua_isnil(param2));
+		act->sayLine(msg.c_str(), msgId);
+	}
 }
 
 static void InputDialog() {
@@ -1278,43 +1330,6 @@ static int RestoreCallback(int tag, int value, SaveRestoreFunc saveFunc) {
 	return value;
 }
 
-// Stub function for builtin functions not yet implemented
-
-static void stubWarning(char *funcName) {
-	fprintf(stderr, "WARNING: Stub function %s(", funcName);
-	for (int i = 1; ; i++) {
-		if (lua_getparam(i) == LUA_NOOBJECT)
-			break;
-		if (lua_isnil(lua_getparam(i)))
-			fprintf(stderr, "nil");
-		else if (lua_istable(lua_getparam(i)))
-			fprintf(stderr, "{...}");
-		else if (lua_isuserdata(lua_getparam(i))) {
-			if (lua_tag(lua_getparam(i)) == actor_tag) {
-				Actor *a = check_actor(i);
-				fprintf(stderr, "<actor \"%s\">", a->name());
-			} else if (lua_tag(lua_getparam(i)) == color_tag) {
-				Color *c = check_color(i);
-				fprintf(stderr, "<color #%02x%02x%02x>", c->red(), c->green(), c->blue());
-			} else
-				fprintf(stderr, "<userdata %p>", lua_getuserdata(lua_getparam(i)));
-		} else if (lua_isfunction(lua_getparam(i)))
-			fprintf(stderr, "<function>");
-		else if (lua_isnumber(lua_getparam(i)))
-			fprintf(stderr, "%g", lua_getnumber(lua_getparam(i)));
-		else if (lua_isstring(lua_getparam(i)))
-			fprintf(stderr, "\"%s\"", lua_getstring(lua_getparam(i)));
-		else
-			fprintf(stderr, "<unknown>");
-		if (lua_getparam(i+1) != LUA_NOOBJECT)
-			fprintf(stderr, ", ");
-	}
-	fprintf(stderr, ") called\n");
-#if 0
-	lua_call("print_stack");
-#endif
-}
-
 static void BlastText() {
 	char * str = luaL_check_string(1), *key_text = NULL;
 	lua_Object table_obj = lua_getparam(2), key;
@@ -1352,7 +1367,46 @@ static void BlastText() {
 			error("Unknown BlastText key %s\n", key_text);
 	}
 
-	warning("STUB: BlastText(\"%s\", x = %d, y = %d)\n", g_localizer->localize(str).c_str(), x, y);
+	char msgId[32];
+	std::string msg = parseMsgText(str, msgId);
+	warning("STUB: BlastText(\"%s\", x = %d, y = %d)\n", msg.c_str(), x, y);
+}
+
+// Stub function for builtin functions not yet implemented
+
+static void stubWarning(char *funcName) {
+	fprintf(stderr, "WARNING: Stub function %s(", funcName);
+	for (int i = 1; ; i++) {
+		if (lua_getparam(i) == LUA_NOOBJECT)
+			break;
+		if (lua_isnil(lua_getparam(i)))
+			fprintf(stderr, "nil");
+		else if (lua_istable(lua_getparam(i)))
+			fprintf(stderr, "{...}");
+		else if (lua_isuserdata(lua_getparam(i))) {
+			if (lua_tag(lua_getparam(i)) == actor_tag) {
+				Actor *a = check_actor(i);
+				fprintf(stderr, "<actor \"%s\">", a->name());
+			} else if (lua_tag(lua_getparam(i)) == color_tag) {
+				Color *c = check_color(i);
+				fprintf(stderr, "<color #%02x%02x%02x>", c->red(), c->green(), c->blue());
+			} else
+				fprintf(stderr, "<userdata %p>", lua_getuserdata(lua_getparam(i)));
+		} else if (lua_isfunction(lua_getparam(i)))
+			fprintf(stderr, "<function>");
+		else if (lua_isnumber(lua_getparam(i)))
+			fprintf(stderr, "%g", lua_getnumber(lua_getparam(i)));
+		else if (lua_isstring(lua_getparam(i)))
+			fprintf(stderr, "\"%s\"", lua_getstring(lua_getparam(i)));
+		else
+			fprintf(stderr, "<unknown>");
+		if (lua_getparam(i+1) != LUA_NOOBJECT)
+			fprintf(stderr, ", ");
+	}
+	fprintf(stderr, ") called\n");
+#if 0
+	lua_call("print_stack");
+#endif
 }
 
 #define STUB_FUNC(name) static void name() { stubWarning(#name); }

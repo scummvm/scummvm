@@ -210,29 +210,26 @@ float Actor::yawTo(Vector3d p) const {
 		return std::atan2(-dpos.x(), dpos.y()) * (180 / M_PI);
 }
 
-void Actor::sayLine(const char *msg) {
-	// TODO - Display text
+void Actor::sayLine(const char *msg, const char *msgId) {
+	assert(msg);
+	assert(msgId);
 
-	// Find the message identifier
-	if (msg[0] != '/')
+	if (msg[0] == '/' || msg[0] == 0 || msgId[0] == 0)
 		return;
 
-	const char *secondSlash = std::strchr(msg + 1, '/');
+	std::string soundName = msgId;
+	std::string soundLip = msgId;
+	soundName += ".wav";
+	soundLip += ".lip";
 
-	if (secondSlash == NULL)
-		return;
-
-	std::string msgText = g_localizer->localize(secondSlash + 1);
- 	std::string msgId(msg + 1, secondSlash);
-
-	if (_talkSoundName == (msgId + ".wav"))
+	if (_talkSoundName == soundName)
 		return;
 
 	if (g_imuse->getSoundStatus(_talkSoundName.c_str()))
 		shutUp();
 
-	_lipSynch = g_resourceloader->loadLipSynch((msgId + ".lip").c_str());
-	_talkSoundName = msgId + ".wav";
+	_lipSynch = g_resourceloader->loadLipSynch(soundLip.c_str());
+	_talkSoundName = soundName;
 	g_imuse->startVoice(_talkSoundName.c_str());
 	_talkAnim = -1;
 }
@@ -249,6 +246,7 @@ void Actor::shutUp() {
 		_lipSynch = NULL;
 	} else if (_mumbleChore >= 0)
 		_mumbleCostume->stopChore(_mumbleChore);
+	_talkSoundName = "";
 }
 
 void Actor::pushCostume(const char *name) {
