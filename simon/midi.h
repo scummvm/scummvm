@@ -54,7 +54,7 @@ public:
 	MidiPlayer (OSystem *system);
 	virtual ~MidiPlayer();
 
-	void playSMF (File *in);
+	void playSMF (File *in, int song);
 	void playMultipleSMF (File *in);
 	void playXMIDI (File *in);
 	void jump (uint16 track, uint16 tick);

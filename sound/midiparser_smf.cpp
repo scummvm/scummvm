@@ -39,6 +39,7 @@ protected:
 	uint16 _num_tracks;
 	byte *_tracks [16];
 
+	bool _malformedPitchBends;
 	byte _active_track;
 	byte *_play_pos;
 	uint32 _play_time;
@@ -73,6 +74,7 @@ public:
 	bool loadMusic (byte *data, uint32 size);
 	void unloadMusic();
 
+	void property (int property, int value);
 	void setMidiDriver (MidiDriver *driver) { _driver = driver; }
 	void setTimerRate (uint32 rate) { _timer_rate = rate; }
 	void onTimer();
@@ -92,9 +94,19 @@ public:
 //
 //////////////////////////////////////////////////
 
+static byte command_lengths[8] = { 3, 3, 3, 3, 2, 2, 3, 0 };
+static byte special_lengths[16] = { 0, 1, 1, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 };
+
 MidiParser_SMF::~MidiParser_SMF() {
 	if (_buffer)
 		free (_buffer);
+}
+
+void MidiParser_SMF::property (int property, int value) {
+	switch (property) {
+	case mpMalformedPitchBends:
+		_malformedPitchBends = (value > 0);
+	}
 }
 
 // This is the conventional (i.e. SMF) variable length quantity
@@ -141,10 +153,12 @@ void MidiParser_SMF::playToTime (uint32 psec, bool transmit) {
 		}
 
 		// Process the next event.
-		if ((pos[0] & 0xF0) >= 0x80)
-			event = *pos++;
-		else
-			event = _running_status;
+		do {
+			if ((pos[0] & 0xF0) >= 0x80)
+				event = *pos++;
+			else
+				event = _running_status;
+		} while (_malformedPitchBends && (event & 0xF0) == 0xE0 && pos++);
 
 		if (event < 0x80) {
 			printf ("ERROR! Bad command or running status %02X", event);
@@ -237,12 +251,13 @@ void MidiParser_SMF::playToTime (uint32 psec, bool transmit) {
 
 bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 	uint32 len;
-	bool isGMD = false; // Indicates an older GMD file without block headers
 	byte midi_type;
 	uint32 total_size;
+	bool isGMF;
 
 	unloadMusic();
 	byte *pos = data;
+	isGMF = false;
 
 	if (!memcmp (pos, "RIFF", 4)) {
 		// Skip the outer RIFF header.
@@ -272,7 +287,7 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 	} else if (!memcmp (pos, "GMF\x1", 4)) {
 		// Older GMD/MUS file with no header info.
 		// Assume 1 track, 192 PPQN, and no MTrk headers.
-		isGMD = true;
+		isGMF = true;
 		midi_type = 0;
 		_num_tracks = 1;
 		_ppqn = 192;
@@ -291,15 +306,15 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 	total_size = 0;
 	int tracks_read = 0;
 	while (tracks_read < _num_tracks) {
-		if (memcmp (pos, "MTrk", 4) && !isGMD) {
+		if (memcmp (pos, "MTrk", 4) && !isGMF) {
 			printf ("Position: %p ('%c')\n", pos, *pos);
 			printf ("Hit invalid block '%c%c%c%c' while scanning for track locations\n", pos[0], pos[1], pos[2], pos[3]);
 			return false;
 		}
 
 		// If needed, skip the MTrk and length bytes
-		_tracks[tracks_read] = pos + (isGMD ? 0 : 8);
-		if (!isGMD) {
+		_tracks[tracks_read] = pos + (isGMF ? 0 : 8);
+		if (!isGMF) {
 			pos += 4;
 			len = read4high (pos);
 			total_size += len;
@@ -307,10 +322,10 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 		} else {
 			// An SMF End of Track meta event must be placed
 			// at the end of the stream.
-			data[size] = 0xFF;
-			data[size+1] = 0x2F;
-			data[size+2] = 0x00;
-			data[size+3] = 0x00;
+			data[size++] = 0xFF;
+			data[size++] = 0x2F;
+			data[size++] = 0x00;
+			data[size++] = 0x00;
 		}
 		++tracks_read;
 	}
@@ -343,8 +358,6 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 void MidiParser_SMF::compressToType0() {
 	// We assume that _buffer has been allocated
 	// to sufficient size for this operation.
-	byte command_lengths[8] = { 3, 3, 3, 3, 2, 2, 3, 0 };
-	byte special_lengths[16] = { 0, 1, 1, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 };
 	byte *track_pos[16];
 	byte running_status[16];
 	uint32 track_timer[16];
@@ -389,9 +402,11 @@ void MidiParser_SMF::compressToType0() {
 		// Process MIDI event.
 		copy_bytes = 0;
 		pos = track_pos[best_i];
-		event = *(pos++);
-		if (event < 0x80)
-			event = running_status[best_i];
+		do {
+			event = *(pos++);
+			if (event < 0x80)
+				event = running_status[best_i];
+		} while (_malformedPitchBends && (event & 0xF0) == 0xE0 && pos++);
 		running_status[best_i] = event;
 
 		if (command_lengths [(event >> 4) - 8] > 0) {
@@ -487,11 +502,61 @@ void MidiParser_SMF::jumpToTick (uint32 tick) {
 	_play_pos = _tracks[_active_track];
 	_play_time = 0;
 	_last_event_time = 0;
-	if (tick > 0) {
-		printf ("jumpToTick (%ld) not completely implemented!\n", (long) tick);
-		playToTime (tick * _psec_per_tick - 1, false);
-	}
 	allNotesOff();
+	if (tick == 0)
+		return;
+
+	uint32 current_tick = 0;
+	byte *start;
+	uint32 event_count = 0;
+
+	while (current_tick < tick) {
+		start = _play_pos;
+		uint32 delta = readVLQ (_play_pos);
+
+		if (current_tick + delta >= tick) {
+			_play_pos = start;
+			_play_time += (tick - current_tick) * _psec_per_tick;
+			break;
+		}
+
+		++event_count;
+		current_tick += delta;
+		_play_time += delta * _psec_per_tick;
+		_last_event_time = _play_time;
+
+		byte event;
+		do {
+			event = *_play_pos;
+			if (event < 0x80)
+				event = _running_status;
+		} while (_malformedPitchBends && (event & 0xF0) == 0xE0 && _play_pos++);
+		_running_status = event;
+
+		byte bytes_to_skip = 0;
+		if (command_lengths[(event >> 4) - 8] > 0) {
+			_play_pos += command_lengths[(event >> 4) - 8];
+		} else if (special_lengths[event & 0xF] > 0) {
+			_play_pos += special_lengths[event & 0xF];
+		} else if (event == 0xF0) {
+			uint32 length = readVLQ (++_play_pos);
+			_play_pos += length;
+		} else if (event == 0xFF) {
+			event = *(++_play_pos);
+			uint32 length = readVLQ (++_play_pos);
+			if (event == 0x2F) { // End of track
+				_play_pos = 0;
+				_driver->metaEvent (event, _play_pos, (uint16) length);
+				break;
+			} else if (event == 0x51) { // Tempo
+				if (length >= 3) {
+					delta = _play_pos[0] << 16 | _play_pos[1] << 8 | _play_pos[2];
+					_psec_per_tick = (delta + (_ppqn >> 2)) / _ppqn;
+				}
+			}
+			_play_pos += length;
+		}
+	}
 }
 
 MidiParser *MidiParser::createParser_SMF() { return new MidiParser_SMF; }

@@ -71,11 +71,14 @@ void MidiPlayer::close() {
 void MidiPlayer::send (uint32 b) {
 	byte volume;
 
-	// Only thing we care about is volume control changes.
 	if ((b & 0xFFF0) == 0x07B0) {
+		// Adjust volume changes by master volume.
 		volume = (byte) ((b >> 16) & 0xFF) * _masterVolume / 255;
 		_volumeTable [b & 0xF] = volume;
 		b = (b & 0xFF00FFFF) | (volume << 16);
+	} else if ((b & 0xF0) == 0xE0) {
+		// Skip pitch bends completely. They're screwed up in Simon games.
+		return;
 	}
 
 	_driver->send (b);
@@ -116,6 +119,7 @@ void MidiPlayer::jump (uint16 track, uint16 tick) {
 		}
 
 		MidiParser *parser = MidiParser::createParser_SMF();
+		parser->property (MidiParser::mpMalformedPitchBends, 1);
 		parser->setMidiDriver (this);
 		parser->setTimerRate (_driver->getBaseTempo());
 		if (!parser->loadMusic (_songs[track], _song_sizes[track])) {
@@ -206,7 +210,14 @@ void MidiPlayer::clearConstructs() {
 	}
 }
 
-void MidiPlayer::playSMF (File *in) {
+static int simon1_gmf_size[] = {
+	8900, 12166, 2848, 3442, 4034, 4508, 7064, 9730, 6014, 4742, 3138,
+	6570, 5384, 8909, 6457, 16321, 2742, 8968, 4804, 8442, 7717,
+	9444, 5800, 1381, 5660, 6684, 2456, 4744, 2455, 1177, 1232,
+	17256, 5103, 8794, 4884, 16
+};
+
+void MidiPlayer::playSMF (File *in, int song) {
 	_system->lock_mutex (_mutex);
 	clearConstructs();
 	uint32 size = in->size() - in->pos();
@@ -215,7 +226,15 @@ void MidiPlayer::playSMF (File *in) {
 	_data = (byte *) calloc (size, 1);
 	in->read (_data, size);
 
+	// For GMF files, we're going to have to use
+	// hardcoded size tables.
+	if (!memcmp (_data, "GMF\x1", 4) && size == 64000) {
+		size = simon1_gmf_size [song];
+		_data[size++] = 0x00; // Trailing 0 makes this match the standalone GMF files
+	}
+
 	MidiParser *parser = MidiParser::createParser_SMF();
+	parser->property (MidiParser::mpMalformedPitchBends, 1);
 	parser->setMidiDriver (this);
 	parser->setTimerRate (_driver->getBaseTempo());
 	if (!parser->loadMusic (_data, size)) {

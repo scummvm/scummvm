@@ -34,10 +34,16 @@ protected:
 	uint32 _timer_rate;
 
 public:
+	enum {
+		mpMalformedPitchBends = 1
+	};
+
+public:
 	virtual ~MidiParser() { }
 
 	virtual bool loadMusic (byte *data, uint32 size) = 0;
 	virtual void unloadMusic() = 0;
+	virtual void property (int property, int value) { }
 
 	void setMidiDriver (MidiDriver *driver) { _driver = driver; }
 	void setTimerRate (uint32 rate) { _timer_rate = rate / 500; }
@@ -48,6 +54,7 @@ public:
 
 	static MidiParser *createParser_SMF();
 	static MidiParser *createParser_XMIDI();
+	static void timerCallback (void *data) { ((MidiParser *) data)->onTimer(); }
 };
 
 #endif
