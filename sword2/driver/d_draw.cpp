@@ -296,12 +296,13 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 			// frame rate the original movies had, or even if it
 			// was constant, but this seems to work reasonably.
 
-			g_system->delay_msecs(80);
+			g_system->delay_msecs(90);
 		}
 
-		BS2_SetPalette(0, 256, oldPal, RDPAL_INSTANT);
-
 		CloseTextObject(text[textCounter]);
+
+		EraseBackBuffer();
+		SetNeedRedraw();
 
 		// HACK: Remove the instructions created above
 		ScummVM::Rect r;
@@ -317,6 +318,8 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 
 		if (!skipCutscene)
 			g_sound->playLeadOut(musicOut);
+
+		BS2_SetPalette(0, 256, oldPal, RDPAL_INSTANT);
 	}
 
 	return RD_OK;
