@@ -27,14 +27,16 @@
 #include "scumm_globals.h"
 
 enum {
-	optNone				=	0,
-	optIsARMDevice		=	1 <<	0,
-	optIsOS5Device		=	1 <<	1,
-	optIsClieDevice		=	1 <<	2,
-	optIsZodiacDevice	=	1 <<	3,
-	optHasWideMode		=	1 <<	4,
-	optIsLandscapeMode	=	1 <<	5,
-	optHas16BitMode		=	1 <<	6,
+	optNone					=	0,
+	optIsARMDevice			=	1 <<	0,
+	optIsOS5Device			=	1 <<	1,
+	optIsClieDevice			=	1 <<	2,
+	optIsZodiacDevice		=	1 <<	3,
+	optIsCollapsible		=	1 <<	4,
+	optHasWideMode			=	1 <<	5,
+	optIsLandscapeDisplay	=	1 <<	6,	// screen pitch is always based on Landscape mode (portrait/landscape)
+	optHasLandscapeMode		=	1 <<	7,	// screen pitch can be based on portrait or landscape
+	optHas16BitMode			=	1 <<	8,
 };
 
 typedef struct {
@@ -47,6 +49,7 @@ typedef struct {
 	UInt16 slkRefNum;
 	UInt32 slkVersion;
 	Boolean skinSet;
+	Boolean pinUpdate;
 
 	FileRef	logFile;
 
@@ -56,6 +59,7 @@ typedef struct {
 	Boolean stdPalette;
 	Coord screenWidth, screenHeight;			// silkarea shown
 	Coord screenFullWidth, screenFullHeight;	// silkarea hidden
+	UInt32 screenPitch;
 
 	struct {
 		UInt8 on;
