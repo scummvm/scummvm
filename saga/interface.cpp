@@ -237,8 +237,9 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 	_activeVerb = I_VERB_WALKTO;
 
-	_active = 0;
-	_panelMode = _savedMode = _lockedMode = kPanelNull;
+	_active = false;
+	_panelMode = _lockedMode = kPanelNull;
+	_savedMode = -1;
 	_inMainMode = false;
 	*_statusText = 0;
 
@@ -259,29 +260,64 @@ Interface::~Interface(void) {
 }
 
 int Interface::activate() {
-	_active = 1;
-	draw();
+	if (!_active) {
+		_active = true;
+		_vm->_script->_skipSpeeches = false;
+		_vm->_gfx->showCursor(true);
+		unlockMode();
+		if (_panelMode == kPanelMain)
+			;// show save reminder
+		draw();
+	}
 
 	return SUCCESS;
 }
 
 int Interface::deactivate() {
-	_active = 0;
+	if (_active) {
+		_active = false;
+		_vm->_gfx->showCursor(false);
+		lockMode();
+		setMode(kPanelNull);
+	}
 
 	return SUCCESS;
 }
 
-int Interface::setMode(int mode) {
-	// TODO: Is this where we should hide/show the mouse cursor?
+void Interface::rememberMode() {
+	assert (_savedMode == -1);
 
-	_panelMode = mode;
+	_savedMode = _panelMode; 
+}
+
+void Interface::restoreMode() {
+	assert (_savedMode != -1);
+
+	_panelMode = _savedMode;
+	_savedMode = -1;
+
+	draw();
+}
+
+int Interface::setMode(int mode, bool force) {
+	// TODO: Is this where we should hide/show the mouse cursor?
+	int newmode = mode;
 
 	if (_panelMode == kPanelConverse)
 		_inMainMode = false;
 	else if (_panelMode == kPanelInventory) {
 		_inMainMode = true;
-		_panelMode = kPanelMain;
+		newmode = kPanelMain;
 	}
+
+	// This lets us to prevents actors to pop up during initial
+	// scene fade in.
+	if (_savedMode != -1 && !force) {
+		_savedMode = newmode;
+		debug(0, "Saved mode: %d. my mode is %d", newmode, _panelMode);
+	}
+	else
+		_panelMode = newmode;
 
 	draw();
 

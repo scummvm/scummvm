@@ -611,6 +611,9 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SCENE_
 		EVENT *q_event;
 		static PALENTRY current_pal[PAL_ENTRIES];
 
+		_vm->_interface->rememberMode();
+		_vm->_interface->setMode(kPanelFade, true);
+
 		// Fade to black out
 		_vm->_gfx->getCurrentPal(current_pal);
 		event.type = IMMEDIATE_EVENT;
@@ -640,6 +643,14 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SCENE_
 		event.duration = 0;
 		q_event = _vm->_events->chain(q_event, &event);
 
+		// Restore interface mode
+		event.type = IMMEDIATE_EVENT;
+		event.code = INTERFACE_EVENT;
+		event.op = EVENT_RESTORE_MODE;
+		event.time = 0;
+		event.duration = 0;
+		q_event = _vm->_events->chain(q_event, &event);
+
 		// Start the scene pre script, but stay with black palette
 		if (_desc.startScriptNum > 0) {
 			event.type = ONESHOT_EVENT;
@@ -652,7 +663,7 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SCENE_
 			event.param4 = 0;		// With Object - TODO: should be 'entrance'
 			event.param5 = 0;		// Actor
 
-			_vm->_events->chain(q_event, &event);
+			q_event = _vm->_events->chain(q_event, &event);
 		}
 
 		// Fade in from black to the scene background palette
@@ -1046,7 +1057,10 @@ int Scene::defaultScene(int param, SCENE_INFO *scene_info) {
 	EVENT event;
 	EVENT *q_event;
 
-	_inGame = true;
+	if (!_inGame) {
+		_inGame = true;
+		_vm->_interface->setMode(kPanelInventory);
+	}
 
 	switch (param) {
 	case SCENE_BEGIN:

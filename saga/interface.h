@@ -113,7 +113,8 @@ enum PANEL_MODES {
 	kPanelProtect,
 	kPanelPlacard,
 	kPanelMap,
-	kPanelInventory
+	kPanelInventory,
+	kPanelFade
 };
 
 enum BUTTON_FLAGS {
@@ -208,10 +209,10 @@ public:
 	int registerLang();
 	int activate();
 	int deactivate();
-	int setMode(int mode);
+	int setMode(int mode, bool force = false);
 	int getMode(void) { return _panelMode; }
-	void rememberMode() { _savedMode = _panelMode; }
-	void restoreMode() { _panelMode = _savedMode; }
+	void rememberMode();
+	void restoreMode();
 	void lockMode() { _lockedMode = _panelMode; }
 	void unlockMode() { _panelMode = _lockedMode; }
 	bool isInMainMode() { return _inMainMode; }
@@ -239,7 +240,7 @@ private:
 	SagaEngine *_vm;
 
 	bool _initialized;
-	int _active;
+	bool _active;
 	RSCFILE_CONTEXT *_interfaceContext;
 	INTERFACE_DESC _iDesc;
 	int _panelMode;

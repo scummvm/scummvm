@@ -126,18 +126,20 @@ int Render::drawScene() {
 		// Display scene background
 		_vm->_scene->draw(backbuf_surface);
 
-		// Display scene maps, if applicable
-		if (getFlags() & RF_OBJECTMAP_TEST) {
-			if (_vm->_scene->_objectMap)
-				_vm->_scene->_objectMap->draw(backbuf_surface, mouse_pt, _vm->_gfx->getWhite(), _vm->_gfx->getBlack());
-			if (_vm->_scene->_actionMap)
-				_vm->_scene->_actionMap->draw(backbuf_surface, _vm->_gfx->matchColor(RGB_RED));
-		}
+		if (_vm->_interface->getMode() != kPanelFade) {
+			// Display scene maps, if applicable
+			if (getFlags() & RF_OBJECTMAP_TEST) {
+				if (_vm->_scene->_objectMap)
+					_vm->_scene->_objectMap->draw(backbuf_surface, mouse_pt, _vm->_gfx->getWhite(), _vm->_gfx->getBlack());
+				if (_vm->_scene->_actionMap)
+					_vm->_scene->_actionMap->draw(backbuf_surface, _vm->_gfx->matchColor(RGB_RED));
+			}
 
-		// Draw queued actors
-		_vm->_actor->drawActors();
-		if (getFlags() & RF_ACTOR_PATH_TEST) {
-			_vm->_actor->drawPathTest();
+			// Draw queued actors
+			_vm->_actor->drawActors();
+			if (getFlags() & RF_ACTOR_PATH_TEST) {
+				_vm->_actor->drawPathTest();
+			}
 		}
 	}
 

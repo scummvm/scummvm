@@ -87,7 +87,7 @@ int SagaEngine::processInput() {
 				switch (_interface->getMode()) {
 				case kPanelNull:
 					if (_scene->isInDemo())
-					_scene->skipScene();
+						_scene->skipScene();
 					else
 						_actor->abortAllSpeeches();
 					break;

@@ -366,19 +366,77 @@ int Script::sfSetFollower(SCRIPTFUNC_PARAMS) {
 	return SUCCESS;
 }
 
+static struct SceneSubstitutes {
+    int sceneId;
+    const char *message;
+    const char *name;
+    const char *image;
+} sceneSubstitutes[] = {
+    { 
+		7,
+		"Tycho says he knows much about the northern lands. Can Rif convince "
+		"the Dog to share this knowledge?",
+		"The Home of Tycho Northpaw",
+		"tycho.bbm"
+	},
+
+    {
+		27,
+		"The scene of the crime may hold many clues, but will the servants of "
+		"the Sanctuary trust Rif?",
+		"The Sanctuary of the Orb",
+		"sanctuar.bbm"
+	},
+
+    {
+		5,
+		"The Rats hold many secrets that could guide Rif on his quest -- assuming "
+		"he can get past the doorkeeper.",
+		"The Rat Complex",
+		"ratdoor.bbm"
+	},
+
+    {
+		2,
+		"The Ferrets enjoy making things and have the materials to do so. How can "
+		"that help Rif?",
+		"The Ferret Village",
+		"ferrets.bbm"
+	},
+
+    {
+		67,
+		"What aid can the noble King of the Elks provide to Rif and his companions?",
+		"The Realm of the Forest King",
+		"elkenter.bbm"
+	},
+
+    {
+		3,
+		"The King holds Rif's sweetheart hostage. Will the Boar provide any "
+		"assistance to Rif?",
+		"The Great Hall of the Boar King",
+		"boarhall.bbm"
+	}
+};
+
 // Script function #16 (0x10)
 int Script::SF_gotoScene(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord param1 = thread->pop();
-	ScriptDataWord param2 = thread->pop();
+	int16 sceneNum = getSWord(thread->pop());
+	int16 entrance = getSWord(thread->pop());
 
-	debug(1, "stub: SF_gotoScene(%d, %d)", param1, param2);
+	for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++)
+		if (sceneSubstitutes[i].sceneId == sceneNum)
+			debug(0, "Scene %d substitute exists", sceneNum);
+
+	debug(1, "stub: SF_gotoScene(%d, %d)", sceneNum, entrance);
 	return SUCCESS;
 }
 
 // Script function #17 (0x11)
 int Script::SF_setObjImage(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord obj_param = thread->pop();
-	ScriptDataWord sprite_param = thread->pop();
+	int16 obj_param = getSWord(thread->pop());
+	int16 sprite_param = getSWord(thread->pop());
 
 	int index = obj_param & 0x1FFF;
 
@@ -394,8 +452,8 @@ int Script::SF_setObjImage(SCRIPTFUNC_PARAMS) {
 
 // Script function #18 (0x12)
 int Script::SF_setObjName(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord obj_param = thread->pop();
-	ScriptDataWord name_param = thread->pop();
+	int obj_param = getSWord(thread->pop());
+	int name_param = getSWord(thread->pop());
 
 	int index = obj_param & 0x1FFF;
 
@@ -409,7 +467,7 @@ int Script::SF_setObjName(SCRIPTFUNC_PARAMS) {
 
 // Script function #19 (0x13)
 int Script::SF_getObjImage(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord param = thread->pop();
+	int param = getSWord(thread->pop());
 	int index = param & 0x1FFF;
 
 	if (index >= ARRAYSIZE(ObjectTable)) {

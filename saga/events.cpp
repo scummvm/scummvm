@@ -384,6 +384,9 @@ int Events::handleOneShot(EVENT *event) {
 			_vm->_interface->setStatusText("");
 			_vm->_interface->drawStatusBar(_vm->_gfx->getBackBuffer());
 			break;
+		case EVENT_RESTORE_MODE:
+			_vm->_interface->restoreMode();
+			break;
 		default:
 			break;
 		}
