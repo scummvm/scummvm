@@ -85,8 +85,9 @@ public:
 	SaveLoadDialog(NewGui *gui);
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+
 protected:
-	ListWidget* _savegameList;
+	ListWidget	*_savegameList;
 };
 
 
@@ -140,7 +141,11 @@ public:
 		kMasterVolumeChanged	= 'mavc',
 		kMusicVolumeChanged		= 'muvc',
 		kSfxVolumeChanged		= 'sfvc',
+		kOKCmd					= 'ok  ',
+		kCancelCmd				= 'cncl',
 	};
+
+	virtual void open();
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
@@ -149,9 +154,13 @@ protected:
 	int _soundVolumeMusic;
 	int _soundVolumeSfx;
 
-	SliderWidget *widgetMasterVolume;
-	SliderWidget *widgetMusicVolume;
-	SliderWidget *widgetSfxVolume;
+	SliderWidget *masterVolumeSlider;
+	SliderWidget *musicVolumeSlider;
+	SliderWidget *sfxVolumeSlider;
+	
+	StaticTextWidget *masterVolumeLabel;
+	StaticTextWidget *musicVolumeLabel;
+	StaticTextWidget *sfxVolumeLabel;
 };
 
 

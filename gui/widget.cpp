@@ -104,6 +104,16 @@ void StaticTextWidget::setLabel(const char *label)
 		_label = 0;
 }
 
+void StaticTextWidget::setValue(int value)
+{
+	// Free old label if any
+	if (_label)
+		free(_label);
+
+	_label = (char *)malloc(10);
+	sprintf(_label, "%d", value);
+}
+
 void StaticTextWidget::drawWidget(bool hilite)
 {
 	NewGui *gui = _boss->getGui();
@@ -197,7 +207,7 @@ SliderWidget::SliderWidget(Dialog *boss, int x, int y, int w, int h, const char 
 }
 
 void SliderWidget::handleMouseMoved(int x, int y, int button) { 
-	if (_isDragging) {
+	if ((_flags & WIDGET_ENABLED) && _isDragging) {
 		int newValue = posToValue(x);
 		
 		if (newValue < _valueMin)
@@ -208,25 +218,28 @@ void SliderWidget::handleMouseMoved(int x, int y, int button) {
 		if (newValue != _value) {
 			_value = newValue; 
 			draw();
+			sendCommand(_cmd, _value);	// FIXME - hack to allow for "live update" in sound dialog
 		}
 	}
 }
 
 void SliderWidget::handleMouseDown(int x, int y, int button) {
-	int barx;
 	
-	barx = valueToPos(_value);
-	
-	// only start dragging if mouse is over bar
-	if (x > (barx - 3) && x < (barx + 3))
-		_isDragging = true;
+	if (_flags & WIDGET_ENABLED) {
+		int barx;
+		
+		barx = valueToPos(_value);
+		
+		// only start dragging if mouse is over bar
+		if (x > (barx - 3) && x < (barx + 3))
+			_isDragging = true;
+	}
 }
 
 void SliderWidget::handleMouseUp(int x, int y, int button) {
 
-	if (_isDragging) {
-		if (_flags & WIDGET_ENABLED)
-			sendCommand(_cmd, 0);
+	if ((_flags & WIDGET_ENABLED) && _isDragging) {
+		sendCommand(_cmd, _value);
 	}
 
 	_isDragging = false;

@@ -287,9 +287,6 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui)
 	
 	// FIXME - test
 	new CheckboxWidget(this, 10, 20, 90, 16, "Toggle me", 0);
-
-	// FIXME - test
-	new SliderWidget(this, 110, 20, 80, 16, "Volume", 0);
 	
 	// FIXME - test
 	_savegameList = new ListWidget(this, 10, 40, 180, 74);
@@ -304,7 +301,7 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui)
 		l.push_back(name);
 	}
 
-	((ListWidget *)_savegameList)->setList(l);
+	_savegameList->setList(l);
 }
 
 void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
@@ -356,11 +353,11 @@ enum {
 OptionsDialog::OptionsDialog(NewGui *gui)
 	: Dialog (gui, 50, 80, 210, 60)
 {
-	addButton( 10, 10, 40, 15, CUSTOM_STRING(5), kSoundCmd, 'S');	// Sound
-	addButton( 80, 10, 40, 15, CUSTOM_STRING(6), kKeysCmd, 'K');	// Keys
-	addButton(150, 10, 40, 15, CUSTOM_STRING(7), kAboutCmd, 'A');	// About
-	addButton( 10, 35, 40, 15, CUSTOM_STRING(18), kMiscCmd, 'M');	// Misc
-	addButton(150, 35, 40, 15, CUSTOM_STRING(23), kCloseCmd, 'C');	// Close dialog - FIXME
+	addButton( 10, 10, 40, 16, CUSTOM_STRING(5), kSoundCmd, 'S');	// Sound
+	addButton( 80, 10, 40, 16, CUSTOM_STRING(6), kKeysCmd, 'K');	// Keys
+	addButton(150, 10, 40, 16, CUSTOM_STRING(7), kAboutCmd, 'A');	// About
+	addButton( 10, 35, 40, 16, CUSTOM_STRING(18), kMiscCmd, 'M');	// Misc
+	addButton(150, 35, 40, 16, CUSTOM_STRING(23), kCloseCmd, 'C');	// Close dialog - FIXME
 }
 
 void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
@@ -387,7 +384,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 AboutDialog::AboutDialog(NewGui *gui)
 	: Dialog (gui, 30, 10, 260, 134)
 {
-	addButton(110, 110, 40, 15, CUSTOM_STRING(23), kCloseCmd, 'C');	// Close dialog - FIXME
+	addButton(110, 110, 40, 16, CUSTOM_STRING(23), kCloseCmd, 'C');	// Close dialog - FIXME
 	new StaticTextWidget(this, 10, 17, 240, 16, "Build " SCUMMVM_VERSION " (" SCUMMVM_CVS ")", true);
 	new StaticTextWidget(this, 10, 37, 240, 16, "ScummVM http://scummvm.sourceforge.net", true);
 	new StaticTextWidget(this, 10, 67, 240, 16, "All games (c) LucasArts", true);
@@ -406,40 +403,81 @@ SoundDialog::SoundDialog(NewGui *gui)
 {
 
 	// set up dialog
-	addButton(110, 90, 40, 15, CUSTOM_STRING(23), kCloseCmd, 'C');	// Close dialog - FIXME
-	new StaticTextWidget(this, 10, 17, 140, 16, "Master volume", false);
-	new StaticTextWidget(this, 10, 37, 140, 16, "Music volume", false);
-	new StaticTextWidget(this, 10, 57, 140, 16, "SFX volume", false);
+	addButton(70, 90, 54, 16, "OK", kOKCmd, 'O');	// Confirm dialog
+	addButton(136, 90, 54, 16, "Cancel", kCancelCmd, 'C');	// Abort dialog
+	new StaticTextWidget(this, 10, 17, 140, 16, "Master volume:", false);
+	new StaticTextWidget(this, 10, 37, 140, 16, "Music volume:", false);
+	new StaticTextWidget(this, 10, 57, 140, 16, "SFX volume:", false);
+
+	masterVolumeSlider = new SliderWidget(this, 100, 13, 80, 16, "Volume1", kMasterVolumeChanged);
+	musicVolumeSlider = new SliderWidget(this, 100, 33, 80, 16, "Volume2", kMusicVolumeChanged);
+	sfxVolumeSlider = new SliderWidget(this, 100, 53, 80, 16, "Volume3", kSfxVolumeChanged);
+
+	masterVolumeSlider->setMinValue(0);	masterVolumeSlider->setMaxValue(255);
+	musicVolumeSlider->setMinValue(0);	musicVolumeSlider->setMaxValue(255);
+	sfxVolumeSlider->setMinValue(0);	sfxVolumeSlider->setMaxValue(255);
+
+	masterVolumeLabel = new StaticTextWidget(this, 190, 16, 60, 16, "Volume1");
+	musicVolumeLabel = new StaticTextWidget(this, 190, 36, 60, 16, "Volume2");
+	sfxVolumeLabel = new StaticTextWidget(this, 190, 56, 60, 16, "Volume3");
+}
+
+void SoundDialog::open()
+{
+	Scumm	*scumm = _gui->getScumm();
+	
+	Dialog::open();
 
 	// get current variables
-	_soundVolumeMaster = _gui->getScumm()->_sound_volume_master;
-	_soundVolumeMusic = _gui->getScumm()->_sound_volume_music;
-	_soundVolumeSfx = _gui->getScumm()->_sound_volume_sfx;
+	_soundVolumeMaster = scumm->_sound_volume_master;
+	_soundVolumeMusic = scumm->_sound_volume_music;
+	_soundVolumeSfx = scumm->_sound_volume_sfx;
 
-	widgetMasterVolume = new SliderWidget(this, 100, 13, 80, 16, "Volume1", kMasterVolumeChanged);
-	widgetMusicVolume = new SliderWidget(this, 100, 33, 80, 16, "Volume2", kMusicVolumeChanged);
-	widgetSfxVolume = new SliderWidget(this, 100, 53, 80, 16, "Volume3", kSfxVolumeChanged);
+	masterVolumeSlider->setValue(_soundVolumeMaster);
+	musicVolumeSlider->setValue(_soundVolumeMusic);
+	sfxVolumeSlider->setValue(_soundVolumeSfx);
 
-	widgetMasterVolume->setMinValue(0);	widgetMasterVolume->setMaxValue(255);
-	widgetMusicVolume->setMinValue(0);	widgetMusicVolume->setMaxValue(255);
-	widgetSfxVolume->setMinValue(0);	widgetSfxVolume->setMaxValue(255);
-
-	widgetMasterVolume->setValue(_soundVolumeMaster);
-	widgetMusicVolume->setValue(_soundVolumeMusic);
-	widgetSfxVolume->setValue(_soundVolumeSfx);
+	masterVolumeLabel->setValue(_soundVolumeMaster);
+	musicVolumeLabel->setValue(_soundVolumeMusic);
+	sfxVolumeLabel->setValue(_soundVolumeSfx);
 }
+
 
 void SoundDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 {
 	switch (cmd) {
 	case kMasterVolumeChanged:
-		_soundVolumeMaster = widgetMasterVolume->getValue();
+		_soundVolumeMaster = masterVolumeSlider->getValue();
+		masterVolumeLabel->setValue(_soundVolumeMaster);
 		break;
 	case kMusicVolumeChanged:
-		_soundVolumeMusic = widgetMusicVolume->getValue();
+		_soundVolumeMusic = musicVolumeSlider->getValue();
+		musicVolumeLabel->setValue(_soundVolumeMusic);
 		break;
 	case kSfxVolumeChanged:
-		_soundVolumeSfx = widgetSfxVolume->getValue();
+		_soundVolumeSfx = sfxVolumeSlider->getValue();
+		sfxVolumeLabel->setValue(_soundVolumeSfx);
+		break;
+	case kOKCmd: {
+		Scumm	*scumm = _gui->getScumm();
+		
+		// FIXME: Look at Fingolfins comments in Gui::handleSoundDialogCommand(), gui.cpp 
+		scumm->_sound_volume_master = _soundVolumeMaster;	// Master
+		scumm->_sound_volume_music = _soundVolumeMusic;	// Music
+		scumm->_sound_volume_sfx = _soundVolumeSfx;	// SFX
+		
+		scumm->_imuse->set_music_volume(_soundVolumeMusic);
+		scumm->_imuse->set_master_volume(_soundVolumeMaster);
+		scumm->_mixer->set_volume(_soundVolumeSfx);
+		scumm->_mixer->set_music_volume(_soundVolumeMusic);
+		
+		scummcfg->set("master_volume", _soundVolumeMaster);
+		scummcfg->set("music_volume", _soundVolumeMusic);
+		scummcfg->set("sfx_volume", _soundVolumeSfx);
+		scummcfg->flush();
+		}
+	case kCancelCmd:
+		close();
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
@@ -447,18 +485,4 @@ void SoundDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 
 	draw();
 
-	// FIXME: Look at Fingolfins comments in Gui::handleSoundDialogCommand(), gui.cpp 
-	_gui->getScumm()->_sound_volume_master = _soundVolumeMaster;	// Master
-	_gui->getScumm()->_sound_volume_music = _soundVolumeMusic;	// Music
-	_gui->getScumm()->_sound_volume_sfx = _soundVolumeSfx;	// SFX
-
-	_gui->getScumm()->_imuse->set_music_volume(_gui->getScumm()->_sound_volume_music);
-	_gui->getScumm()->_imuse->set_master_volume(_gui->getScumm()->_sound_volume_master);
-	_gui->getScumm()->_mixer->set_volume(_gui->getScumm()->_sound_volume_sfx);
-	_gui->getScumm()->_mixer->set_music_volume(_gui->getScumm()->_sound_volume_music);
-
-	scummcfg->set("master_volume", _gui->getScumm()->_sound_volume_master);
-	scummcfg->set("music_volume", _gui->getScumm()->_sound_volume_music);
-	scummcfg->set("sfx_volume", _gui->getScumm()->_sound_volume_sfx);
-	scummcfg->flush();
 }
