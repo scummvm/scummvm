@@ -270,6 +270,9 @@ void	Build_display(void)	//Tony21Sept96
 			// check if we've got time to render the screen again this cycle
 			// (so drivers can smooth out the scrolling in between normal game cycles)
 
+			// FIXME: If we have already reached the scroll target,
+			// we should sleep for the rest of the render cycle.
+
 			EndRenderCycle(&end);
 
 			if (end)	// if we haven't got time to render again this cycle, drop out of 'render cycle' while-loop
