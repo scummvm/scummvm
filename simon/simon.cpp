@@ -3184,8 +3184,11 @@ void SimonState::fcs_unk1(uint fcs_index) {
 
 // ok
 void SimonState::fcs_unk_5(FillOrCopyStruct *fcs, uint fcs_index) {
-	if (!(_game & GF_SIMON2)) {
+	if (_game == GAME_SIMON1WIN) {
 		o_kill_sprite_simon1(0x80);
+	} else if (!(_game & GF_SIMON2)) {
+		o_kill_sprite_simon1(0x81);
+		start_vga_code(0, 1, 0x81, 0, 0, 0xE);
 	}
 }
 
