@@ -135,10 +135,10 @@ int KyraEngine::init(GameDetector &detector) {
 	_screen = new uint8[320*200];
 	memset(_screen, 0, sizeof(uint8) * 320 * 200);
 
-	int midiDrv = GameDetector::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE);
+	int midiDrv = MidiDriver::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE);
 	bool native_mt32 = (ConfMan.getBool("native_mt32") || (midiDrv == MD_MT32));
 
-	MidiDriver *driver = GameDetector::createMidi(midiDrv);
+	MidiDriver *driver = MidiDriver::createMidi(midiDrv);
 	if (!driver) {
 		// In this case we should play the Adlib tracks, but for now
 		// the automagic MIDI-to-Adlib conversion will do.
