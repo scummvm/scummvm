@@ -1,35 +1,32 @@
-/* ENDER: Not GPLed. Replace or relicense before 0.2.0 */
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 1999/2000 Tatsuyuki Satoh
+ * Copyright (C) 2001/2002 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header$
+ *
+ * LGPL licensed version of MAMEs fmopl (V0.37a modified) by
+ * Tatsuyuki Satoh. Included from LGPL'ed AdPlug.
+ */
 
 #ifndef __FMOPL_H_
 #define __FMOPL_H_
+#include "scummsys.h"
 
-/* --- select emulation chips --- */
-#define BUILD_YM3812 (HAS_YM3812)
-#define BUILD_YM3526 (HAS_YM3526)
-#define BUILD_Y8950  (HAS_Y8950)
-
-/* --- system optimize --- */
-/* select bit size of output : 8 or 16 */
-#define OPL_OUTPUT_BIT 16
-
-/* compiler dependence */
-#ifndef OSD_CPU_H
-#define OSD_CPU_H
-typedef unsigned char	UINT8;   /* unsigned  8bit */
-typedef unsigned short	UINT16;  /* unsigned 16bit */
-typedef unsigned int	UINT32;  /* unsigned 32bit */
-typedef signed char		INT8;    /* signed  8bit   */
-typedef signed short	INT16;   /* signed 16bit   */
-typedef signed int		INT32;   /* signed 32bit   */
-#endif
-
-#if (OPL_OUTPUT_BIT==16)
-typedef INT16 OPLSAMPLE;
-#endif
-#if (OPL_OUTPUT_BIT==8)
-typedef unsigned char  OPLSAMPLE;
-#endif
-
+typedef int16 OPLSAMPLE;
 
 typedef void (*OPL_TIMERHANDLER)(int channel,double interval_Sec);
 typedef void (*OPL_IRQHANDLER)(int param,int irq);
@@ -47,79 +44,79 @@ typedef unsigned char (*OPL_PORTHANDLER_R)(int param);
 /* Saving is necessary for member of the 'R' mark for suspend/resume */
 /* ---------- OPL one of slot  ---------- */
 typedef struct fm_opl_slot {
-	INT32 TL;		/* total level     :TL << 8            */
-	INT32 TLL;		/* adjusted now TL                     */
-	UINT8  KSR;		/* key scale rate  :(shift down bit)   */
-	INT32 *AR;		/* attack rate     :&AR_TABLE[AR<<2]   */
-	INT32 *DR;		/* decay rate      :&DR_TALBE[DR<<2]   */
-	INT32 SL;		/* sustin level    :SL_TALBE[SL]       */
-	INT32 *RR;		/* release rate    :&DR_TABLE[RR<<2]   */
-	UINT8 ksl;		/* keyscale level  :(shift down bits)  */
-	UINT8 ksr;		/* key scale rate  :kcode>>KSR         */
-	UINT32 mul;		/* multiple        :ML_TABLE[ML]       */
-	UINT32 Cnt;		/* frequency count :                   */
-	UINT32 Incr;	/* frequency step  :                   */
+	int32 TL;		/* total level     :TL << 8            */
+	int32 TLL;		/* adjusted now TL                     */
+	uint8  KSR;		/* key scale rate  :(shift down bit)   */
+	int32 *AR;		/* attack rate     :&AR_TABLE[AR<<2]   */
+	int32 *DR;		/* decay rate      :&DR_TALBE[DR<<2]   */
+	int32 SL;		/* sustin level    :SL_TALBE[SL]       */
+	int32 *RR;		/* release rate    :&DR_TABLE[RR<<2]   */
+	uint8 ksl;		/* keyscale level  :(shift down bits)  */
+	uint8 ksr;		/* key scale rate  :kcode>>KSR         */
+	uint32 mul;		/* multiple        :ML_TABLE[ML]       */
+	uint32 Cnt;		/* frequency count :                   */
+	uint32 Incr;	/* frequency step  :                   */
 	/* envelope generator state */
-	UINT8 eg_typ;	/* envelope type flag                  */
-	UINT8 evm;		/* envelope phase                      */
-	INT32 evc;		/* envelope counter                    */
-	INT32 eve;		/* envelope counter end point          */
-	INT32 evs;		/* envelope counter step               */
-	INT32 evsa;	/* envelope step for AR :AR[ksr]           */
-	INT32 evsd;	/* envelope step for DR :DR[ksr]           */
-	INT32 evsr;	/* envelope step for RR :RR[ksr]           */
+	uint8 eg_typ;	/* envelope type flag                  */
+	uint8 evm;		/* envelope phase                      */
+	int32 evc;		/* envelope counter                    */
+	int32 eve;		/* envelope counter end point          */
+	int32 evs;		/* envelope counter step               */
+	int32 evsa;	/* envelope step for AR :AR[ksr]           */
+	int32 evsd;	/* envelope step for DR :DR[ksr]           */
+	int32 evsr;	/* envelope step for RR :RR[ksr]           */
 	/* LFO */
-	UINT8 ams;		/* ams flag                            */
-	UINT8 vib;		/* vibrate flag                        */
+	uint8 ams;		/* ams flag                            */
+	uint8 vib;		/* vibrate flag                        */
 	/* wave selector */
-	INT32 **wavetable;
+	int32 **wavetable;
 }OPL_SLOT;
 
 /* ---------- OPL one of channel  ---------- */
 typedef struct fm_opl_channel {
 	OPL_SLOT SLOT[2];
-	UINT8 CON;			/* connection type                     */
-	UINT8 FB;			/* feed back       :(shift down bit)   */
-	INT32 *connect1;	/* slot1 output pointer                */
-	INT32 *connect2;	/* slot2 output pointer                */
-	INT32 op1_out[2];	/* slot1 output for selfeedback        */
+	uint8 CON;			/* connection type                     */
+	uint8 FB;			/* feed back       :(shift down bit)   */
+	int32 *connect1;	/* slot1 output pointer                */
+	int32 *connect2;	/* slot2 output pointer                */
+	int32 op1_out[2];	/* slot1 output for selfeedback        */
 	/* phase generator state */
-	UINT32  block_fnum;	/* block+fnum      :                   */
-	UINT8 kcode;		/* key code        : KeyScaleCode      */
-	UINT32  fc;			/* Freq. Increment base                */
-	UINT32  ksl_base;	/* KeyScaleLevel Base step             */
-	UINT8 keyon;		/* key on/off flag                     */
+	uint32  block_fnum;	/* block+fnum      :                   */
+	uint8 kcode;		/* key code        : KeyScaleCode      */
+	uint32  fc;			/* Freq. Increment base                */
+	uint32  ksl_base;	/* KeyScaleLevel Base step             */
+	uint8 keyon;		/* key on/off flag                     */
 } OPL_CH;
 
 /* OPL state */
 struct FM_OPL {
-	UINT8 type;			/* chip type                         */
+	uint8 type;			/* chip type                         */
 	int clock;			/* master clock  (Hz)                */
 	int rate;			/* sampling rate (Hz)                */
 	double freqbase;	/* frequency base                    */
 	double TimerBase;	/* Timer base time (==sampling time) */
-	UINT8 address;		/* address register                  */
-	UINT8 status;		/* status flag                       */
-	UINT8 statusmask;	/* status mask                       */
-	UINT32 mode;		/* Reg.08 : CSM , notesel,etc.       */
+	uint8 address;		/* address register                  */
+	uint8 status;		/* status flag                       */
+	uint8 statusmask;	/* status mask                       */
+	uint32 mode;		/* Reg.08 : CSM , notesel,etc.       */
 	/* Timer */
 	int T[2];			/* timer counter                     */
-	UINT8 st[2];		/* timer enable                      */
+	uint8 st[2];		/* timer enable                      */
 	/* FM channel slots */
 	OPL_CH *P_CH;		/* pointer of CH                     */
 	int	max_ch;			/* maximum channel                   */
 	/* Rythm sention */
-	UINT8 rythm;		/* Rythm mode , key flag */
+	uint8 rythm;		/* Rythm mode , key flag */
 	/* time tables */
 	/* LFO */
-	INT32 *ams_table;
-	INT32 *vib_table;
-	INT32 amsCnt;
-	INT32 amsIncr;
-	INT32 vibCnt;
-	INT32 vibIncr;
+	int32 *ams_table;
+	int32 *vib_table;
+	int32 amsCnt;
+	int32 amsIncr;
+	int32 vibCnt;
+	int32 vibIncr;
 	/* wave selector enable flag */
-	UINT8 wavesel;
+	uint8 wavesel;
 	/* external event callback handler */
 	OPL_TIMERHANDLER  TimerHandler;		/* TIMER handler   */
 	int TimerParam;						/* TIMER parameter */
@@ -127,9 +124,9 @@ struct FM_OPL {
 	int IRQParam;						/* IRQ parameter  */
 	OPL_UPDATEHANDLER UpdateHandler;	/* stream update handler   */
 	int UpdateParam;					/* stream update parameter */
-	INT32 AR_TABLE[75];	/* atttack rate tables */
-	INT32 DR_TABLE[75];	/* decay rate tables   */
-	UINT32 FN_TABLE[1024];  /* fnumber -> increment counter */
+	int32 AR_TABLE[75];	/* atttack rate tables */
+	int32 DR_TABLE[75];	/* decay rate tables   */
+	uint32 FN_TABLE[1024];  /* fnumber -> increment counter */
 };
 
 /* ---------- Generic interface section ---------- */
@@ -151,6 +148,6 @@ int OPLTimerOver(FM_OPL *OPL,int c);
 void OPLWriteReg(FM_OPL *OPL, int r, int v);
 
 /* YM3626/YM3812 local section */
-void YM3812UpdateOne(FM_OPL *OPL, INT16 *buffer, int length);
+void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length);
 
 #endif

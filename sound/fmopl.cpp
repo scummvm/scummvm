@@ -1,3 +1,27 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 1999/2000 Tatsuyuki Satoh
+ * Copyright (C) 2001/2002 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header$
+ *
+ * LGPL licensed version of MAMEs fmopl (V0.37a modified) by
+ * Tatsuyuki Satoh. Included from LGPL'ed AdPlug.
+ */
+
 /*
 **
 ** File: fmopl.c -- software implementation of FM sound generator
@@ -31,8 +55,6 @@
 /* attack/decay rate time rate */
 #define OPL_ARRATE     141280		/* RATE 4 =  2826.24ms @ 3.6MHz */
 #define OPL_DRRATE    1956000		/* RATE 4 = 39280.64ms @ 3.6MHz */
-
-#define DELTAT_MIXING_LEVEL (1)	/* DELTA-T ADPCM MIXING LEVEL */
 
 #define FREQ_BITS 24						/* frequency turn          */
 
@@ -97,9 +119,9 @@ static const int slot_array[32] = {
 /* key scale level */
 /* table is 3dB/OCT , DV converts this in TL step at 6dB/OCT */
 
-#define SC(mydb) ((UINT32) (mydb / (EG_STEP/2)))
+#define SC(mydb) ((uint32) (mydb / (EG_STEP/2)))
 
-static const UINT32 KSL_TABLE[8 * 16] = {
+static const uint32 KSL_TABLE[8 * 16] = {
 	/* OCT 0 */
 	SC(0.000), SC(0.000), SC(0.000), SC(0.000),
 	SC(0.000), SC(0.000), SC(0.000), SC(0.000),
@@ -146,7 +168,7 @@ static const UINT32 KSL_TABLE[8 * 16] = {
 /* sustain lebel table (3db per step) */
 /* 0 - 15: 0, 3, 6, 9,12,15,18,21,24,27,30,33,36,39,42,93 (dB)*/
 #define SC(db) ((int) (db*((3/EG_STEP)*(1<<ENV_BITS)))+EG_DST)
-static const INT32 SL_TABLE[16] = {
+static const int32 SL_TABLE[16] = {
 	SC(0), SC(1), SC(2), SC(3), SC(4), SC(5), SC(6), SC(7),
 	SC(8), SC(9), SC(10), SC(11), SC(12), SC(13), SC(14), SC(31)
 };
@@ -156,22 +178,22 @@ static const INT32 SL_TABLE[16] = {
 /* TotalLevel : 48 24 12  6  3 1.5 0.75 (dB) */
 /* TL_TABLE[ 0      to TL_MAX          ] : plus  section */
 /* TL_TABLE[ TL_MAX to TL_MAX+TL_MAX-1 ] : minus section */
-static INT32 *TL_TABLE;
+static int32 *TL_TABLE;
 
 /* pointers to TL_TABLE with sinwave output offset */
-static INT32 **SIN_TABLE;
+static int32 **SIN_TABLE;
 
 /* LFO table */
-static INT32 *AMS_TABLE;
-static INT32 *VIB_TABLE;
+static int32 *AMS_TABLE;
+static int32 *VIB_TABLE;
 
 /* envelope output curve table */
 /* attack + decay + OFF */
-static INT32 ENV_CURVE[2 * EG_ENT + 1];
+static int32 ENV_CURVE[2 * EG_ENT + 1];
 
 /* multiple table */
-#define ML(x) (UINT32)(2*(x))
-static const UINT32 MUL_TABLE[16] = {
+#define ML(x) (uint32)(2*(x))
+static const uint32 MUL_TABLE[16] = {
 /* 1/2, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15 */
 	ML(0.50), ML(1.00), ML(2.00), ML(3.00), ML(4.00), ML(5.00), ML(6.00),
 	ML(7.00),
@@ -181,7 +203,7 @@ static const UINT32 MUL_TABLE[16] = {
 #undef ML
 
 /* dummy attack / decay rate ( when rate == 0 ) */
-static INT32 RATE_0[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static int32 RATE_0[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 /* -------------------- static state --------------------- */
 
@@ -196,14 +218,14 @@ static OPL_CH *S_CH;
 static OPL_CH *E_CH;
 OPL_SLOT *SLOT7_1, *SLOT7_2, *SLOT8_1, *SLOT8_2;
 
-static INT32 outd[1];
-static INT32 ams;
-static INT32 vib;
-INT32 *ams_table;
-INT32 *vib_table;
-static INT32 amsIncr;
-static INT32 vibIncr;
-static INT32 feedback2;					/* connect for SLOT 2 */
+static int32 outd[1];
+static int32 ams;
+static int32 vib;
+int32 *ams_table;
+int32 *vib_table;
+static int32 amsIncr;
+static int32 vibIncr;
+static int32 feedback2;					/* connect for SLOT 2 */
 
 /* --------------------- subroutines  --------------------- */
 
@@ -283,7 +305,7 @@ INLINE void OPL_KEYOFF(OPL_SLOT * SLOT)
 
 /* ---------- calcrate Envelope Generator & Phase Generator ---------- */
 /* return : envelope output */
-INLINE UINT32 OPL_CALC_SLOT(OPL_SLOT * SLOT)
+INLINE uint32 OPL_CALC_SLOT(OPL_SLOT * SLOT)
 {
 	/* calcrate envelope generator */
 	if ((SLOT->evc += SLOT->evs) >= SLOT->eve) {
@@ -319,7 +341,7 @@ INLINE UINT32 OPL_CALC_SLOT(OPL_SLOT * SLOT)
 /* set algorythm connection */
 static void set_algorythm(OPL_CH * CH)
 {
-	INT32 *carrier = &outd[0];
+	int32 *carrier = &outd[0];
 	CH->connect1 = CH->CON ? carrier : &feedback2;
 	CH->connect2 = carrier;
 }
@@ -365,7 +387,7 @@ INLINE void set_ksl_tl(FM_OPL * OPL, int slot, int v)
 	int ksl = v >> 6;							/* 0 / 1.5 / 3 / 6 db/OCT */
 
 	SLOT->ksl = ksl ? 3 - ksl : 31;
-	SLOT->TL = (INT32) ((v & 0x3f) * (0.75 / EG_STEP));	/* 0.75db step */
+	SLOT->TL = (int32) ((v & 0x3f) * (0.75 / EG_STEP));	/* 0.75db step */
 
 	if (!(OPL->mode & 0x80)) {		/* not CSM latch total level */
 		SLOT->TLL = SLOT->TL + (CH->ksl_base >> SLOT->ksl);
@@ -413,7 +435,7 @@ INLINE void set_sl_rr(FM_OPL * OPL, int slot, int v)
 /* ---------- calcrate one of channel ---------- */
 INLINE void OPL_CALC_CH(OPL_CH * CH)
 {
-	UINT32 env_out;
+	uint32 env_out;
 	OPL_SLOT *SLOT;
 
 	feedback2 = 0;
@@ -456,9 +478,9 @@ INLINE void OPL_CALC_CH(OPL_CH * CH)
 #define WHITE_NOISE_db 6.0
 INLINE void OPL_CALC_RH(OPL_CH * CH)
 {
-	UINT32 env_tam, env_sd, env_top, env_hh;
+	uint32 env_tam, env_sd, env_top, env_hh;
 	int whitenoise = (int)((rand() & 1) * (WHITE_NOISE_db / EG_STEP));
-	INT32 tone8;
+	int32 tone8;
 
 	OPL_SLOT *SLOT;
 	int env_out;
@@ -575,18 +597,18 @@ static int OPLOpenTable(void)
 	double pom;
 
 	/* allocate dynamic tables */
-	if ((TL_TABLE = (INT32 *) malloc(TL_MAX * 2 * sizeof(INT32))) == NULL)
+	if ((TL_TABLE = (int32 *) malloc(TL_MAX * 2 * sizeof(int32))) == NULL)
 		return 0;
-	if ((SIN_TABLE = (INT32 **) malloc(SIN_ENT * 4 * sizeof(INT32 *))) == NULL) {
+	if ((SIN_TABLE = (int32 **) malloc(SIN_ENT * 4 * sizeof(int32 *))) == NULL) {
 		free(TL_TABLE);
 		return 0;
 	}
-	if ((AMS_TABLE = (INT32 *) malloc(AMS_ENT * 2 * sizeof(INT32))) == NULL) {
+	if ((AMS_TABLE = (int32 *) malloc(AMS_ENT * 2 * sizeof(int32))) == NULL) {
 		free(SIN_TABLE);
 		free(TL_TABLE);
 		return 0;
 	}
-	if ((VIB_TABLE = (INT32 *) malloc(VIB_ENT * 2 * sizeof(INT32))) == NULL) {
+	if ((VIB_TABLE = (int32 *) malloc(VIB_ENT * 2 * sizeof(int32))) == NULL) {
 		free(AMS_TABLE);
 		free(TL_TABLE);
 		free(SIN_TABLE);
@@ -699,10 +721,10 @@ static void OPL_initalize(FM_OPL * OPL)
 	}
 	/* LFO freq.table */
 	OPL->amsIncr =
-		(INT32) (OPL->rate ? (double)AMS_ENT * (1 << AMS_SHIFT) / OPL->rate *
+		(int32) (OPL->rate ? (double)AMS_ENT * (1 << AMS_SHIFT) / OPL->rate *
 						 3.7 * ((double)OPL->clock / 3600000) : 0);
 	OPL->vibIncr =
-		(INT32) (OPL->rate ? (double)VIB_ENT * (1 << VIB_SHIFT) / OPL->rate *
+		(int32) (OPL->rate ? (double)VIB_ENT * (1 << VIB_SHIFT) / OPL->rate *
 						 6.4 * ((double)OPL->clock / 3600000) : 0);
 }
 
@@ -740,8 +762,8 @@ void OPLWriteReg(FM_OPL * OPL, int r, int v)
 			if (v & 0x80) {						/* IRQ flag clear */
 				OPL_STATUS_RESET(OPL, 0x7f);
 			} else {									/* set IRQ mask ,timer enable */
-				UINT8 st1 = v & 1;
-				UINT8 st2 = (v >> 1) & 1;
+				uint8 st1 = v & 1;
+				uint8 st2 = (v >> 1) & 1;
 				/* IRQRST,T1MSK,t2MSK,EOSMSK,BRMSK,x,ST2,ST1 */
 				OPL_STATUS_RESET(OPL, v & 0x78);
 				OPL_STATUSMASK_SET(OPL, ((~v) & 0x78) | 0x01);
@@ -792,7 +814,7 @@ void OPLWriteReg(FM_OPL * OPL, int r, int v)
 		case 0xbd:
 			/* amsep,vibdep,r,bd,sd,tom,tc,hh */
 			{
-				UINT8 rkey = OPL->rythm ^ v;
+				uint8 rkey = OPL->rythm ^ v;
 				OPL->ams_table = &AMS_TABLE[v & 0x80 ? AMS_ENT : 0];
 				OPL->vib_table = &VIB_TABLE[v & 0x40 ? VIB_ENT : 0];
 				OPL->rythm = v & 0x3f;
@@ -870,7 +892,7 @@ void OPLWriteReg(FM_OPL * OPL, int r, int v)
 
 			CH->ksl_base = KSL_TABLE[block_fnum >> 6];
 			CH->fc = OPL->FN_TABLE[fnum] >> blockRv;
-			CH->kcode = CH->block_fnum >> 9;
+			CH->kcode = (uint8)(CH->block_fnum >> 9);
 			if ((OPL->mode & 0x40) && CH->block_fnum & 0x100)
 				CH->kcode |= 1;
 			CALC_FCSLOT(CH, &CH->SLOT[SLOT1]);
@@ -934,14 +956,14 @@ static void OPL_UnLockTable(void)
 /*******************************************************************************/
 
 /* ---------- update one of chip ----------- */
-void YM3812UpdateOne(FM_OPL * OPL, INT16 * buffer, int length)
+void YM3812UpdateOne(FM_OPL * OPL, int16 * buffer, int length)
 {
 	int i;
 	int data;
 	OPLSAMPLE *buf = buffer;
-	UINT32 amsCnt = OPL->amsCnt;
-	UINT32 vibCnt = OPL->vibCnt;
-	UINT8 rythm = OPL->rythm & 0x20;
+	uint32 amsCnt = OPL->amsCnt;
+	uint32 vibCnt = OPL->vibCnt;
+	uint8 rythm = OPL->rythm & 0x20;
 	OPL_CH *CH, *R_CH;
 
 	if ((void *)OPL != cur_chip) {
