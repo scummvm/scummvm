@@ -1310,12 +1310,9 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		break;
 	case 32:	// writeRegistryValue
 		{
-		int array = args[1];
+		int idx = args[1];
 		int value = args[2];
-		// FIXME - hack: for some reasons the wrong variable ID arrives here, compared to the
-		// scripts. Probably a wrong push/pop somewhere. For now override to correct value.
-		array = 658;
-		ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
+		ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, idx);
 
 		debugC(DEBUG_GENERAL,"o8_kernelSetFunctions: writeRegistryValue(%s, %d)", (char *)ah->data, value);
 		}
@@ -1412,11 +1409,8 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		break;
 	case 0xE0:		// readRegistryValue
 		{
-		int array = args[1];
-		// FIXME - hack: for some reasons the wrong variable ID arrives here, compared to the
-		// scripts. Probably a wrong push/pop somewhere. For now override to correct value.
-		array = 658;
-		ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
+		int idx = args[1];
+		ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, idx);
 		if (!strcmp((char *)ah->data, "SFX Volume"))
 			push(ConfMan.getInt("sfx_volume") / 2);
 		else if (!strcmp((char *)ah->data, "Voice Volume"))
