@@ -1308,14 +1308,22 @@ void Scumm::o5_getActorX()
 {
 	int actor;
 	getResultPos();
-	actor = getVarOrDirectWord(0x80);
+	if(_gameId == GID_INDY3_256)
+		actor = getVarOrDirectByte(0x80);
+	else
+		actor = getVarOrDirectWord(0x80);
 	setResult(getObjX(actor));
 }
 
 void Scumm::o5_getActorY()
 {
+	int actor;
 	getResultPos();
-	setResult(getObjY(getVarOrDirectWord(0x80)));
+	if(_gameId == GID_INDY3_256)
+		actor = getVarOrDirectByte(0x80);
+	else
+		actor = getVarOrDirectWord(0x80);
+	setResult(actor);
 }
 
 void Scumm::o5_getAnimCounter()
