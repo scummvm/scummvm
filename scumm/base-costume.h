@@ -77,7 +77,12 @@ public:
 		int i;
 		byte result = 0;
 	
-		_xmove = _ymove = 0;
+		if (_vm->_features & GF_OLD_BUNDLE) {
+			_xmove = -72;
+			_ymove = -100;
+		} else {
+			_xmove = _ymove = 0;
+		}
 		for (i = 0; i < 16; i++)
 			result |= drawLimb(cost, i);
 		return result;
