@@ -33,7 +33,7 @@ DEFINES +=
 LDFLAGS :=
 INCLUDES:= -I$(srcdir) -I$(srcdir)/common $(SDL_CFLAGS)
 LIBS	+= $(SDL_LIBS) -lmingw32 -lwinmm
-OBJS	:= scummvmico.o backends/sdl/sdl-common.o backends/sdl/sdl.o 
+OBJS	:= scummvmico.o backends/sdl/events.o backends/sdl/graphics.o backends/sdl/sdl.o 
 EXEEXT	:=.exe
 
 #######################################################################
