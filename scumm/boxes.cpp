@@ -238,9 +238,15 @@ Box *Scumm::getBoxBaseAddr(int box) {
 	// this also seems to be incorrect for atari st demo of zak
 	// and assumingly other v2 games
 	// The same happens in Indy3EGA (see bug #770351)
-	if (_gameId == GID_MONKEY_EGA || _gameId == GID_INDY3) {
-		if (box < 0 || box > ptr[0] - 1)
-			warning("Illegal box %d", box);
+	// Also happend in ZakEGA (see bug #771803).
+	//
+	// This *might* mean that we have a bug in our box implementation
+	// OTOH, the original engine, unlike ScummVM, performed no bound
+	// checking at all. All the problems so far have been cases where
+	// the value was exactly one more than what we consider the maximum.
+	// So it's very well possible that all of these are script errors.
+	if (_gameId == GID_MONKEY_EGA || _gameId == GID_INDY3 || _gameId == GID_ZAK) {
+		checkRange(ptr[0], 0, box, "Illegal box %d");
 	} else
 		checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
 
