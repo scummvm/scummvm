@@ -138,6 +138,7 @@ private:
 
 	bool isVerbAction(Verb v) const { return (v >= VERB_PANEL_COMMAND_FIRST && v <= VERB_PANEL_COMMAND_LAST) || (v == VERB_WALK_TO); };
 	bool isVerbInv(Verb v) const { return v >= VERB_INV_FIRST && v <= VERB_INV_LAST; }
+	bool isVerbInvScroll(Verb v) const { return v == VERB_SCROLL_UP || v == VERB_SCROLL_DOWN; }
  
 	CmdListData *_cmdList;
 	uint16 _numCmdList;
