@@ -43,6 +43,8 @@ Debugger::Debugger(QueenEngine *vm)
 	DCmd_Register("help", &Debugger::Cmd_Help);
 	DCmd_Register("areas", &Debugger::Cmd_Areas);
 	DCmd_Register("asm", &Debugger::Cmd_Asm);
+	DCmd_Register("bob", &Debugger::Cmd_Bob);
+	DCmd_Register("bobs", &Debugger::Cmd_PrintBobs);
 	DCmd_Register("gs", &Debugger::Cmd_GameState);
 	DCmd_Register("info", &Debugger::Cmd_Info);
 	DCmd_Register("items", &Debugger::Cmd_Items);
@@ -93,8 +95,8 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 bool Debugger::Cmd_Asm(int argc, const char **argv) {
 	if (argc == 2) {
 		uint16 sm = atoi(argv[1]);
-		DebugPrintf("Executing special move %d\n", sm);
 		_vm->logic()->executeSpecialMove(sm);
+		return false;
 	} else {
 		DebugPrintf("Usage: %s smnum\n", argv[0]);
 	}
@@ -105,6 +107,40 @@ bool Debugger::Cmd_Asm(int argc, const char **argv) {
 bool Debugger::Cmd_Areas(int argc, const char **argv) {
 	_drawAreas = !_drawAreas;
 	DebugPrintf("Room areas display %s\n", _drawAreas ? "on" : "off");
+	return true;
+}
+
+
+bool Debugger::Cmd_Bob(int argc, const char **argv) {
+	if (argc >= 3) {
+		int bobNum = atoi(argv[1]);
+		if (bobNum >= Graphics::MAX_BOBS_NUMBER) {
+			DebugPrintf("Bob %d is out of range (range: 0 - %d)\n", bobNum, Graphics::MAX_BOBS_NUMBER);
+		} else {
+			int param = (argc > 3) ? atoi(argv[3]) : 0;
+			BobSlot *bob = _vm->graphics()->bob(bobNum);
+			if (!strcmp(argv[2], "toggle")) {
+				bob->active = !bob->active;
+				DebugPrintf("bob[%d].active = %d\n", bobNum, bob->active);
+			} else if (!strcmp(argv[2], "x")) {
+				bob->x = param;
+				DebugPrintf("bob[%d].x = %d\n", bobNum, bob->x);
+			} else if (!strcmp(argv[2], "y")) {
+				bob->y = param;
+				DebugPrintf("bob[%d].y = %d\n", bobNum, bob->y);
+			} else if (!strcmp(argv[2], "frame")) {
+				bob->frameNum = param;
+				DebugPrintf("bob[%d].frameNum = %d\n", bobNum, bob->frameNum);
+			} else if (!strcmp(argv[2], "speed")) {
+				bob->speed = param;
+				DebugPrintf("bob[%d].speed = %d\n", bobNum, bob->speed);
+			} else {
+				DebugPrintf("Unknown bob command '%s'\n", argv[2]);
+			}
+		}
+	} else {
+		DebugPrintf("Usage: %s bobnum command paramter\n", argv[0]);
+	}
 	return true;
 }
 
@@ -134,8 +170,7 @@ bool Debugger::Cmd_GameState(int argc, const char **argv) {
 
 bool Debugger::Cmd_Info(int argc, const char **argv) {
 	DebugPrintf("Version: %s\n", _vm->resource()->JASVersion());
-	DebugPrintf("Room number: %d\n", _vm->logic()->currentRoom());
-	DebugPrintf("Room name: %s\n", _vm->logic()->roomName(_vm->logic()->currentRoom()));	
+	DebugPrintf("Audio compression: %d\n", _vm->resource()->compression());
 	return true;
 }
 
@@ -152,17 +187,38 @@ bool Debugger::Cmd_Items(int argc, const char **argv) {
 }
 
 
-bool Debugger::Cmd_Room(int argc, const char **argv) {
+bool Debugger::Cmd_PrintBobs(int argc, const char**argv) {
+	int i;
+	BobSlot *bob = _vm->graphics()->bob(0);
+	DebugPrintf("+--------------------------------+\n");
+	DebugPrintf("|# |  x|  y|f|scl|frm|a|m| ex| ey|\n");
+	DebugPrintf("+--+---+---+-+---+---+-+-+---+---+\n");
+	for (i = 0; i < Graphics::MAX_BOBS_NUMBER; ++i, ++bob) {
+		if (bob->active) {
+			DebugPrintf("|%2d|%3d|%3d|%1d|%3d|%3d|%1d|%1d|%3d|%3d|\n", 
+				i, bob->x, bob->y, bob->xflip, bob->scale, bob->frameNum,
+				bob->animating, bob->moving, bob->speed, bob->endx, bob->endy);
+		}
+	}
+	DebugPrintf("+--------------------------------+\n");
+	return true;
+}
+
+
+bool Debugger::Cmd_Room(int argc, const char **argv) {	
 	if (argc == 2) {
 		uint16 roomNum = atoi(argv[1]);
 		_vm->logic()->joePos(0, 0);
 		_vm->logic()->newRoom(roomNum);
 		_vm->logic()->entryObj(_vm->logic()->roomData(roomNum) + 1);
-		DebugPrintf("Changing from room %d to %d\n", _vm->logic()->currentRoom(), roomNum);
+		return false;
 	} else {
-		DebugPrintf("Usage: %s roomnum\n", argv[0]);
+		DebugPrintf("Current room: %d (%s), use '%s <roomnum>' to switch\n", 
+			_vm->logic()->currentRoom(), 
+			_vm->logic()->roomName(_vm->logic()->currentRoom()),
+			argv[0]);
 	}
-	return true;
+	return true;	
 }
 
 bool Debugger::Cmd_Song(int argc, const char **argv) {

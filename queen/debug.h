@@ -44,9 +44,11 @@ protected:
 	bool Cmd_Help(int argc, const char **argv);
 	bool Cmd_Areas(int argc, const char **argv);
 	bool Cmd_Asm(int argc, const char **argv);
+	bool Cmd_Bob(int argc, const char **argv);
 	bool Cmd_GameState(int argc, const char **argv);
 	bool Cmd_Info(int argc, const char **argv);
 	bool Cmd_Items(int argc, const char **argv);
+	bool Cmd_PrintBobs(int argc, const char **argv);
 	bool Cmd_Room(int argc, const char **argv);
 	bool Cmd_Song(int argc, const char **argv);
 	
