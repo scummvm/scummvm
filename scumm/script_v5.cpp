@@ -1779,7 +1779,7 @@ void Scumm_v5::o5_resourceRoutines() {
 		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
 	case 35:
-		// TODO
+		// Might be used to set CD volume
 		foo = getVarOrDirectByte(0x40);
 		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
@@ -2221,7 +2221,7 @@ void Scumm_v5::o5_startMusic() {
 			result = _sound->getCurrentCDSound();
 			break;
 		case 0xFF:
-			// Unknown, used in Loom.
+			// Might return current CD volume, used in Loom.
 			break;
 		default:
 			// TODO: return track length in seconds. We'll have to extend Sound and OSystem for this.
