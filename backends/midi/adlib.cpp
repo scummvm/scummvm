@@ -573,8 +573,6 @@ private:
 	bool _isOpen;
 	bool _game_SmallHeader;
 
-	static Common::RandomSource _rnd;
-
 	FM_OPL *_opl;
 	byte *_adlib_reg_cache;
 	SoundMixer *_mixer;
@@ -626,6 +624,7 @@ private:
 	void struct10_init(Struct10 * s10, InstrumentExtra * ie);
 	static byte struct10_ontimer(Struct10 * s10, Struct11 * s11);
 	static void struct10_setup(Struct10 * s10);
+	static int random_nr(int a);
 	void mc_key_on(AdlibVoice *voice, AdlibInstrument *instr, byte note, byte velocity);
 
 	static void premix_proc(void *param, int16 *buf, uint len);
@@ -1231,7 +1230,7 @@ void MidiDriver_ADLIB::struct10_setup(Struct10 *s10) {
 	t = s10->table_a[f];
 	e = num_steps_table[lookup_table[t & 0x7F][b]];
 	if (t & 0x80) {
-		e = _rnd.getRandomNumber(e);
+		e = random_nr(e);
 	}
 	if (e == 0)
 		e++;
@@ -1244,7 +1243,7 @@ void MidiDriver_ADLIB::struct10_setup(Struct10 *s10) {
 		t = s10->table_b[f];
 		d = lookup_volume(c, (t & 0x7F) - 31);
 		if (t & 0x80) {
-			d = _rnd.getRandomNumber(d);
+			d = random_nr(d);
 		}
 		if (d + g > c) {
 			h = c - g;
@@ -1304,6 +1303,21 @@ void MidiDriver_ADLIB::adlib_playnote(int channel, int note) {
 	i = (notex << 3) + ((note >> 4) & 0x7);
 	adlib_write(channel + 0xA0, note_to_f_num[i]);
 	adlib_write(channel + 0xB0, oct | 0x20);
+}
+
+// TODO: Replace this with RandomSource? But if so, please note that this
+// function will be called with negative parameters - getRandomNumber(-1) will
+// crash ScummVM, random_nr(-1) won't.
+
+int MidiDriver_ADLIB::random_nr(int a) {
+	static byte _rand_seed = 1;
+	if (_rand_seed & 1) {
+		_rand_seed >>= 1;
+		_rand_seed ^= 0xB8;
+	} else {
+		_rand_seed >>= 1;
+	}
+	return _rand_seed * a >> 8;
 }
 
 void MidiDriver_ADLIB::part_key_off(AdlibPart *part, byte note) {
@@ -1554,5 +1568,3 @@ void MidiDriver_ADLIB::adlib_note_on(int chan, byte note, int mod) {
 	curnote_table[chan] = code;
 	adlib_playnote(chan, (int16) channel_table_2[chan] + code);
 }
-
-Common::RandomSource MidiDriver_ADLIB::_rnd;
