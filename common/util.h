@@ -30,8 +30,7 @@ template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
 /**
  * Template method which swaps the vaulues of its two parameters.
  */
-template<class T>
-static inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
+template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 
