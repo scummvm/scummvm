@@ -28,7 +28,7 @@ class SmushFont {
 private:
 
 	int _nbChars;
-	byte _color;
+	int16 _color;
 	bool _new_colors;
 	bool _original;
 	byte *_dataSrc;
