@@ -28,6 +28,7 @@
 #include "queen/display.h"
 #include "queen/graphics.h"
 #include "queen/input.h"
+#include "queen/journal.h"
 #include "queen/sound.h"
 #include "queen/talk.h"
 #include "queen/walk.h"
@@ -688,7 +689,7 @@ int16 Logic::gameState(int index) {
 
 void Logic::gameState(int index, int16 newValue) {
 	if (index >= 0 && index < GAME_STATE_COUNT) {
-		debug(0, "Logic::gameState() - GAMESTATE[%d] = %d", index, newValue);
+//		debug(0, "Logic::gameState() - GAMESTATE[%d] = %d", index, newValue);
 		_gameState[index] = newValue;
 	}
 	else
@@ -1188,7 +1189,7 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 }
 
 
-void Logic::roomSetup(const char* room, int comPanel, bool inCutaway) {
+void Logic::roomSetup(const char *room, int comPanel, bool inCutaway) {
 
 	char filename[20];
 
@@ -1216,7 +1217,7 @@ void Logic::roomSetup(const char* room, int comPanel, bool inCutaway) {
 }
 
 
-void Logic::roomDisplay(const char* room, RoomDisplayMode mode, uint16 scale, int comPanel, bool inCutaway) {
+void Logic::roomDisplay(const char *room, RoomDisplayMode mode, uint16 scale, int comPanel, bool inCutaway) {
 
 	debug(9, "Logic::roomDisplay(%s, %d, %d, %d, %d)", room, mode, scale, comPanel, inCutaway);
 
@@ -1645,7 +1646,7 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 		}
 	}
 
-	// TODO: cutawayJoeFacing
+	// XXX CUTJOEF (queen.c l.266-271)
 
 	// check to see which way Joe entered room
 	_joe.facing = State::findDirection(pod->state);
@@ -1662,7 +1663,7 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 	BobSlot *pbs = _graphics->bob(0);
 	pbs->scale = _joe.scale;
 
-	// TODO: room 108 specific
+	// XXX room 108 specific (queen.c l.283-292)
 
 	joeFace();
 	pbs->active = true;
@@ -2551,17 +2552,19 @@ void Logic::sceneStop() {
 
 void Logic::useJournal() {
 
-	warning("Journal unimplemented");
 	if (_resource->isDemo()) {
 		Talk::speak("This is a demo, so I can't load or save games*14", NULL, "", _graphics, _input, this, _resource, _sound);
 	}
 	else {
-		// FIXME: add Journal code, suggestion :
-		// (execute.c l.428-437 & queen.c l.350-365)
-		// save some vars
-		// Journal j(this, _graphics...);
-		// j.run();
-		// restore vars
+		// XXX (execute.c l.428-437 & queen.c l.350-365)
+		// XXX save some vars
+		Journal j(this, _graphics, _display, _sound, &_settings);
+		j.use();
+		// XXX restore vars
+
+		// _graphics->bob(0)->moving = false;
+		// joeWalk(JWM_EXECUTE); // make sure we exit Move_Joe()
+		// XXX _walk->stopJoe();
 	}
 }
 

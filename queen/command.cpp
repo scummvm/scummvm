@@ -442,6 +442,7 @@ void Command::updatePlayer() {
 	if (!_input->keyVerb().isNone()) {
 
 		if (_input->keyVerb().isJournal()) {
+			_input->clearKeyVerb();
 			_logic->useJournal();
 		}
 		else if (!_input->keyVerb().isSkipText()) {

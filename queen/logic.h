@@ -180,6 +180,8 @@ public:
 	void joeScale(uint16 scale);
 	void joePrevFacing(uint16 dir);
 	
+	const char *joeResponse(int i) const { return _joeResponse[i]; }
+
 	int16 gameState(int index);
 	void gameState(int index, int16 newValue);
 
@@ -213,8 +215,8 @@ public:
 	void roomSetupFurniture(); // SETUP_FURNITURE()
 	void roomSetupObjects(); // DISP_OBJECTS
 	uint16 roomRefreshObject(uint16 obj); // REDISP_OBJECT
-	void roomSetup(const char* room, int comPanel, bool inCutaway);
-	void roomDisplay(const char* room, RoomDisplayMode mode, uint16 joeScale, int comPanel, bool inCutaway); // DISP_ROOM
+	void roomSetup(const char *room, int comPanel, bool inCutaway);
+	void roomDisplay(const char *room, RoomDisplayMode mode, uint16 joeScale, int comPanel, bool inCutaway); // DISP_ROOM
 
 	uint16 findScale(uint16 x, uint16 y);
 
