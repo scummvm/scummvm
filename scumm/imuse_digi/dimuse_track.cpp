@@ -205,7 +205,11 @@ void IMuseDigital::setPan(int soundId, int pan) {
 void IMuseDigital::selectVolumeGroup(int soundId, int volGroupId) {
 	Common::StackLock lock(_mutex, "IMuseDigital::setGroupVolume()");
 	debug(5, "IMuseDigital::setGroupVolume(%d, %d)", soundId, volGroupId);
-	assert((volGroupId >= 1) && (volGroupId <= 3));
+	assert((volGroupId >= 1) && (volGroupId <= 4));
+
+	if (volGroupId == 4)
+		volGroupId = 3;
+
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		if ((_track[l].soundId == soundId) && _track[l].used) {
 			_track[l].volGroupId = volGroupId;
