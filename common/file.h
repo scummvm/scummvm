@@ -71,6 +71,7 @@ public:
 	void writeUint32LE(uint32 value);
 	void writeUint16BE(uint16 value);
 	void writeUint32BE(uint32 value);
+	void setEnc(byte value) { _encbyte = value; }
 };
 
 #endif
