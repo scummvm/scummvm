@@ -194,6 +194,9 @@ protected:
 	virtual const char *getOpcodeDesc(int i);
 	virtual void getResultPos();
 	virtual void getResultPosDirect();
+	virtual int getVar();
+	virtual int getVarOrDirectByte(byte mask);
+	virtual int getVarOrDirectWord(byte mask);
 	virtual void ifStateCommon(byte type);
 	virtual void ifNotStateCommon(byte type);
 	virtual void setStateCommon(byte type);

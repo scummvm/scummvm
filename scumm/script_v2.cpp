@@ -366,6 +366,25 @@ const char *Scumm_v2::getOpcodeDesc(int i) {
 	return _opcodesV2[i].desc;
 }
 
+int Scumm_v2::getVar() {
+	int var_id = fetchScriptByte();
+	if ((var_id >= 14) && (var_id <= 16))
+		return _vars[_vars[var_id]];
+	return _vars[var_id];
+}
+
+int Scumm_v2::getVarOrDirectByte(byte mask) {
+	if (_opcode & mask)
+		return getVar();
+	return fetchScriptByte();
+}
+
+int Scumm_v2::getVarOrDirectWord(byte mask) {
+	if (_opcode & mask)
+		return getVar();
+	return fetchScriptWord();
+}
+
 void Scumm_v2::setStateCommon(byte type) {
 	int obj = getVarOrDirectWord(0x80);
 	putState(obj, getState(obj) | type);
@@ -473,9 +492,9 @@ void Scumm_v2::o2_setBitVar() {
   bit_var >>= 4;
 
 	if (getVarOrDirectByte(0x80))
-		_bitVars[bit_var >> 3] |= (1 << bit_offset);
+		_vars[bit_var] |= (1 << bit_offset);
 	else
-		_bitVars[bit_var >> 3] &= ~(1 << bit_offset);
+		_vars[bit_var] &= ~(1 << bit_offset);
 }
 
 void Scumm_v2::o2_getBitVar() {
@@ -488,7 +507,7 @@ void Scumm_v2::o2_getBitVar() {
 	int bit_offset = bit_var & 0x0f;
   bit_var >>= 4;
 
-	_vars[_resultVarNumber] = (_bitVars[bit_var >> 3] & (1 << bit_offset)) ? 1 : 0;
+	_vars[_resultVarNumber] = (_vars[bit_var] & (1 << bit_offset)) ? 1 : 0;
 }
 
 void Scumm_v2::ifStateCommon(byte type) {
