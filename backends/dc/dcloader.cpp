@@ -300,7 +300,8 @@ bool DLObject::load(int fd)
 
   for(int i=0; i<ehdr.e_shnum; i++)
     if(shdr[i].sh_type == 4 && shdr[i].sh_entsize == sizeof(Elf32_Rela) &&
-       shdr[i].sh_link == symtab_sect)
+       shdr[i].sh_link == symtab_sect && shdr[i].sh_info < ehdr.e_shnum &&
+       (shdr[shdr[i].sh_info].sh_flags & 2))
       if(!relocate(fd, shdr[i].sh_offset, shdr[i].sh_size)) {
 	free(shdr);
 	return false;
