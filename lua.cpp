@@ -1198,6 +1198,8 @@ void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 			textObject->setJustify(1);
 		else if (strstr(key_text, "ljustify"))
 			textObject->setJustify(2);
+		else if (strstr(key_text, "disabled"))
+			warning("getTextObjectParams: key %s\n not implemented yet", key_text);
 		else
 			error("Unknown getTextObjectParams key %s\n", key_text);
 	}
@@ -1282,6 +1284,20 @@ static void GetTextObjectDimensions() {
 	lua_pushnumber(textObjectParam->getBitmapHeight());
 }
 
+static void ExpireText() {
+	for (Engine::TextListType::const_iterator i = g_engine->textsBegin(); i != g_engine->textsEnd(); i++) {
+		TextObject *textO = *i;
+		g_engine->killTextObject(textO);
+		delete textO;
+	}
+}
+
+static void GetTextCharPosition() {
+	TextObject *textObjectParam = check_textobject(1);
+	int pos = lua_getnumber(lua_getparam(2));
+	lua_pushnumber(textObjectParam->getTextCharPosition(pos));
+}
+
 static void BlastText() {
 	// there is some diffrence to MakeTextObject
 	// it draw directly to gfx buffer from here, not from main loop
@@ -1334,11 +1350,6 @@ static void StopMovie() {
 
 static void PauseMovie() {
 	g_smush->pause(lua_isnil(lua_getparam(1)) != 0);
-}
-
-static void GetTextCharPosition() {
-	warning("STUB GetTextCharPosition(\"%s\", %d)", lua_getstring(lua_getparam(1)), lua_getnumber(lua_getparam(2)));
-	lua_pushnumber(0);
 }
 
 static void GetDiskFreeSpace() {
@@ -1597,7 +1608,6 @@ STUB_FUNC(SetOffscreenTextPos)
 STUB_FUNC(SetEmergencyFont)
 STUB_FUNC(GetTranslationMode)
 STUB_FUNC(SetTranslationMode)
-STUB_FUNC(ExpireText)
 STUB_FUNC(PrintLine)
 STUB_FUNC(PurgePrimitiveQueue)
 STUB_FUNC(KillPrimitive)

@@ -579,6 +579,10 @@ Driver::TextObjectHandle *DriverGL::createTextBitmap(uint8 *data, int width, int
 	byte *texData = new byte[4 * width * height];
 	byte *texDataPtr = texData;
 	uint8 *bitmapData = data;
+	uint8 r = fgColor.red();
+	uint8 g = fgColor.green();
+	uint8 b = fgColor.blue();
+
 	for (int i = 0; i < width * height; i++, texDataPtr += 4, bitmapData++) {
 		byte pixel = *bitmapData;
 		if (pixel == 0x00) {
@@ -592,9 +596,9 @@ Driver::TextObjectHandle *DriverGL::createTextBitmap(uint8 *data, int width, int
 			texDataPtr[2] = 0;
 			texDataPtr[3] = 255;
 		} else if (pixel == 0xFF) {
-			texDataPtr[0] = fgColor.red();
-			texDataPtr[1] = fgColor.green();
-			texDataPtr[2] = fgColor.blue();
+			texDataPtr[0] = r;
+			texDataPtr[1] = g;
+			texDataPtr[2] = b;
 			texDataPtr[3] = 255;
 		}
 	}

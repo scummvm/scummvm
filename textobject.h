@@ -53,8 +53,10 @@ public:
 	void setFGColor(Color *fgColor) { _fgColor = fgColor; }
 	void setFont(Font *font) { _font = font; }
 	void setJustify(int justify) { _justify = justify; }
+	void setDim() { _dim = true; }
 	int getBitmapWidth() { return _bitmapWidth; }
 	int getBitmapHeight() { return _bitmapHeight; }
+	int getTextCharPosition(int pos);
 
 	const char *name() const { return _textID; }
 	void draw();
@@ -67,6 +69,7 @@ public:
 
 protected:
 	bool _created;
+	bool _dim;
 	Color _fgColor;
 	int _x, _y;
 	uint _width, _height;

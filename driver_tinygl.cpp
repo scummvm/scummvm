@@ -428,6 +428,10 @@ Driver::TextObjectHandle *DriverTinyGL::createTextBitmap(uint8 *data, int width,
 	uint16 *texDataPtr = texData;
 	handle->bitmapData = texData;
 	uint8 *bitmapData = data;
+	uint8 r = fgColor.red();
+	uint8 g = fgColor.green();
+	uint8 b = fgColor.blue();
+
 	for (int i = 0; i < width * height; i++, texDataPtr++, bitmapData++) {
 		byte pixel = *bitmapData;
 		if (pixel == 0x00) {
@@ -435,8 +439,8 @@ Driver::TextObjectHandle *DriverTinyGL::createTextBitmap(uint8 *data, int width,
 		} else if (pixel == 0x80) {
 			*texDataPtr = 0;
 		} else if (pixel == 0xFF) {
-			WRITE_LE_UINT16(texDataPtr, ((fgColor.red() & 0xF8) << 8) |
-				((fgColor.green() & 0xFC) << 3) | (fgColor.blue() >> 3));
+			WRITE_LE_UINT16(texDataPtr, ((r & 0xF8) << 8) |
+				((g & 0xFC) << 3) | (b >> 3));
 		}
 	}
 

@@ -28,7 +28,7 @@ TextObjectDefaults printLineDefaults;
 TextObjectDefaults textObjectDefaults;
 
 TextObject::TextObject() :
-		_created(false), _x(0), _y(0), _width(0), _height(0), _justify(0),
+		_created(false), _dim(false), _x(0), _y(0), _width(0), _height(0), _justify(0),
 		_font(NULL), _textBitmap(NULL), _bitmapWidth(0),
 		_bitmapHeight(0), _textObjectHandle(NULL) {
 	memset(_textID, 0, sizeof(_textID));
@@ -49,6 +49,16 @@ void TextObject::setDefaults(TextObjectDefaults *defaults) {
 	_font = defaults->font;
 	_fgColor = defaults->fgColor;
 	_justify = defaults->justify;
+}
+
+int TextObject::getTextCharPosition(int pos) {
+	int width = 0;
+	std::string msg = parseMsgText(_textID, NULL);
+	for (int i = 0; (msg[i] != '\0') && (i < pos); ++i) {
+		width += _font->getCharLogicalWidth(msg[i]) + _font->getCharStartingCol(msg[i]);
+	}
+
+	return width;
 }
 
 void TextObject::createBitmap() {
@@ -107,5 +117,11 @@ void TextObject::destroyBitmap() {
 }
 
 void TextObject::draw() {
-	g_driver->drawTextBitmap(_x, _y, _textObjectHandle);
+	int x = _x;
+
+	if (_justify == 1) {
+		x = 320 - (_bitmapWidth / 2);
+	}
+
+	g_driver->drawTextBitmap(x, _y, _textObjectHandle);
 }
