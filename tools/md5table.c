@@ -264,9 +264,17 @@ int main(int argc, char *argv[])
 		fprintf(outFile, c_header, generationDate);
 		/* Now sort the MD5 table (this allows for binary searches) */
 		qsort(entriesBuffer, numEntries, entrySize, strcmp_wrapper);
-		/* Output the table */
-		for (i = 0; i < numEntries; ++i)
-			fprintf(outFile, entriesBuffer + i * entrySize);
+		/* Output the table and emit warnings if duplicate md5s are found */
+		buffer[0] = '\0';
+		for (i = 0; i < numEntries; ++i) {
+			const char *currentEntry = entriesBuffer + i * entrySize;
+			fprintf(outFile, currentEntry);
+			if (strncmp(currentEntry + 4, buffer, 32) == 0) {
+				warning("Duplicate MD5 found '%.32s'", buffer);
+			} else {
+				strncpy(buffer, currentEntry + 4, 32);
+			}
+		}
 		/* Finally, print the footer */
 		fprintf(outFile, c_footer);
 	}
