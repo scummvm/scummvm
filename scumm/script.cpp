@@ -398,9 +398,9 @@ void Scumm::writeVar(uint var, int value)
 
 		if ((_varwatch == (int)var) || (_varwatch == 0)) {
 			if (vm.slot[_currentScript].number < 100)
-				debug(0, "vars[%d] = %d (via script-%d)", var, value, vm.slot[_currentScript].number);
+				debug(1, "vars[%d] = %d (via script-%d)", var, value, vm.slot[_currentScript].number);
 			else
-				debug(0, "vars[%d] = %d (via room-%d-%d)", var, value, _currentRoom,
+				debug(1, "vars[%d] = %d (via room-%d-%d)", var, value, _currentRoom,
 							vm.slot[_currentScript].number);
 		}
 		return;
@@ -1016,7 +1016,7 @@ int Scumm::defineArray(int array, int type, int dim2, int dim1)
 	writeVar(array, id);
 
 	if (_features & GF_AFTER_V8) {
-		size = 32;	// FIXME - this is just a guess
+		size = (type == 5) ? 32 : 8;
 	} else {
 		size = (type == 5) ? 16 : 8;
 	}

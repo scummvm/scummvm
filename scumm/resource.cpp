@@ -367,13 +367,10 @@ void Scumm::readArrayFromIndexFile()
 	int a, b, c;
 
 	if (_features & GF_AFTER_V8) {
-		// FIXME - this is just a guess
 		while ((num = _fileHandle.readUint32LE()) != 0) {
 			a = _fileHandle.readUint32LE();
 			b = _fileHandle.readUint32LE();
-			
-			printf("Reading array (0x%08x,%d,%d) - (pos = 0x%08x)\n", num, a, b, _fileHandle.pos());
-			defineArray(num, 0, a, b);
+			defineArray(num, 5, a, b);
 		}
 	} else {
 		while ((num = _fileHandle.readUint16LE()) != 0) {
