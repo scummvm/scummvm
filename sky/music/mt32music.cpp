@@ -26,8 +26,8 @@ void SkyMT32Music::passTimerFunc(void *param) {
 	((SkyMT32Music*)param)->timerCall();
 }
 
-SkyMT32Music::SkyMT32Music(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk)
-	: SkyMusicBase(pSkyDisk) {
+SkyMT32Music::SkyMT32Music(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk, OSystem *system)
+	: SkyMusicBase(pSkyDisk, system) {
 
 	_driverFileBase = 60200;
     _midiDrv = pMidiDrv;

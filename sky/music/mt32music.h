@@ -30,7 +30,7 @@
 
 class SkyMT32Music : public SkyMusicBase {
 public:
-	SkyMT32Music(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk);
+	SkyMT32Music(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk, OSystem *system);
 	~SkyMT32Music(void);
 private:
 	static void passTimerFunc(void *param);

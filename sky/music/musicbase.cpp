@@ -21,13 +21,15 @@
 
 #include "musicbase.h"
 
-SkyMusicBase::SkyMusicBase(SkyDisk *pSkyDisk) {
+SkyMusicBase::SkyMusicBase(SkyDisk *pSkyDisk, OSystem *system) {
 
 	_musicData = NULL;
 	_allowedCommands = 0;
 	_skyDisk = pSkyDisk;
 	_currentMusic = 0;
 	_musicVolume = 127;
+	_system = system;
+	_mutex = _system->create_mutex();
 }
 
 SkyMusicBase::~SkyMusicBase(void)
@@ -37,6 +39,7 @@ SkyMusicBase::~SkyMusicBase(void)
 
 void SkyMusicBase::loadSection(uint8 pSection)
 {
+	_system->lock_mutex(_mutex);
 	if (_currentMusic) stopMusic();
 	if (_musicData) free(_musicData);
 	_currentSection = pSection;
@@ -51,6 +54,7 @@ void SkyMusicBase::loadSection(uint8 pSection)
 	_numberOfChannels = _currentMusic = 0;
 	setupPointers();
 	startDriver();
+	_system->unlock_mutex(_mutex);
 }
 
 void SkyMusicBase::musicCommand(uint16 command)
@@ -145,6 +149,7 @@ void SkyMusicBase::loadNewMusic(void)
 
 void SkyMusicBase::pollMusic(void)
 {
+	_system->lock_mutex(_mutex);
 	uint8 newTempo;
 	if (_onNextPoll.doReInit) startDriver();
 	if (_onNextPoll.doStopMusic) stopMusic();
@@ -160,5 +165,6 @@ void SkyMusicBase::pollMusic(void)
 			updateTempo();
 		}
 	}
+	_system->unlock_mutex(_mutex);
 	_aktTime &= 0xFFFF;
 }

@@ -30,7 +30,7 @@
 
 class SkyGmMusic : public SkyMusicBase {
 public:
-	SkyGmMusic(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk);
+	SkyGmMusic(MidiDriver *pMidiDrv, SkyDisk *pSkyDisk, OSystem *system);
 	~SkyGmMusic(void);
 	virtual void setVolume(uint8 volume);
 private:

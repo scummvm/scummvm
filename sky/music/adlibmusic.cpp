@@ -27,8 +27,8 @@ void SkyAdlibMusic::passMixerFunc(void *param, int16 *buf, uint len) {
 	((SkyAdlibMusic*)param)->premixerCall(buf, len);
 }
 
-SkyAdlibMusic::SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk)
-	: SkyMusicBase(pSkyDisk) {
+SkyAdlibMusic::SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk, OSystem *system)
+	: SkyMusicBase(pSkyDisk, system) {
 
 	_driverFileBase = 60202;
     _mixer = pMixer;

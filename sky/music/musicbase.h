@@ -43,7 +43,7 @@ private:
 
 class SkyMusicBase {
 public:
-	SkyMusicBase(SkyDisk *pSkyDisk);
+	SkyMusicBase(SkyDisk *pSkyDisk, OSystem *system);
 	virtual ~SkyMusicBase(void);
 	void loadSection(uint8 pSection);
 	void musicCommand(uint16 command);
@@ -54,6 +54,7 @@ public:
 	
 protected:
 
+	OSystem *_system;
 	SkyDisk *_skyDisk;
 	uint8 *_musicData;
 	uint8 _allowedCommands;
@@ -68,6 +69,7 @@ protected:
 	uint32 _aktTime;
 	Actions _onNextPoll;
 	SkyChannelBase *_channels[10];
+	void *_mutex;
 	
 	virtual void setupPointers(void) = 0;
 	virtual void setupChannels(uint8 *channelData) = 0;
