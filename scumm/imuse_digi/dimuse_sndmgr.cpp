@@ -220,7 +220,8 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 
 	int slot = allocSlot();
 	if (slot == -1) {
-		error("ImuseDigiSndMgr::openSound() can't alloc free sound slot");
+		warning("ImuseDigiSndMgr::openSound() can't alloc free sound slot");
+		return NULL;
 	}
 
 	bool result = false;
