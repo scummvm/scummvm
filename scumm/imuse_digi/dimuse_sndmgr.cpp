@@ -118,7 +118,7 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 				size = READ_BE_UINT32(ptr); ptr += 4;
 				break;
 			default:
-				error("ImuseDigiSndMgr::prepareSound() Unknown sfx header '%s'", tag2str(tag));
+				error("ImuseDigiSndMgr::prepareSound(%s) Unknown sfx header '%s'",  _sounds[slot].name, tag2str(tag));
 			}
 		} while (tag != MKID_BE('DATA'));
 		_sounds[slot].offsetData =  ptr - s_ptr;
