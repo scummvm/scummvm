@@ -201,6 +201,11 @@ void SoundMixer::set_volume(int volume)
 		_volume_table[i] = ((int8)i) * volume;
 }
 
+void SoundMixer::set_music_volume(int volume)
+{
+	_music_volume = volume;
+}
+
 #ifdef COMPRESSED_SOUND_FILE
 bool SoundMixer::Channel::sound_finished()
 {
@@ -710,8 +715,7 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len)
 {
 	mad_fixed_t const *ch;
 	mad_timer_t frame_duration;
-	const int16 *vol_tab = _mixer->_volume_table;
-	unsigned char volume = ((int)vol_tab[1]) * 32 / 255;
+	unsigned char volume = _mixer->_music_volume * 32 / 255;
 
 	if (_to_be_destroyed) {
 		real_destroy();

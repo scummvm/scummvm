@@ -1525,6 +1525,7 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 		}   
 	} 
 	scumm->_mixer->set_volume(128);
+	scumm->_mixer->set_music_volume(128);
 
 	/* HACK !!! */
 	g_scumm = scumm;

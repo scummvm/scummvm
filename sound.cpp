@@ -527,6 +527,7 @@ void Scumm::setupSound()
 		se->set_master_volume(_sound_volume_master);
 		se->set_music_volume(_sound_volume_music);
 		_mixer->set_volume(_sound_volume_sfx);
+		_mixer->set_music_volume(_sound_volume_music);
 	}
 	_sfxFile = openSfxFile();
 }

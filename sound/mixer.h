@@ -131,6 +131,7 @@ public:
 	uint _output_rate;
 
 	int16 *_volume_table;
+	int _music_volume;
 
 	bool _paused;
 
@@ -192,6 +193,7 @@ public:
 
 	/* set the volume, 0-256 */
 	void set_volume(int volume);
+	void set_music_volume(int volume);
 
 	/* pause - unpause */
 	void pause(bool paused);
