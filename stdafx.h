@@ -2,6 +2,9 @@
  * $Id$
  *
  * $Log$
+ * Revision 1.18  2002/07/08 13:33:10  fingolfin
+ * two more small QNX fixes
+ *
  * Revision 1.17  2002/06/02 20:28:09  bbrox
  * Small warning fix + double inclusion protection (can always be useful
  * :) ).
@@ -118,6 +121,9 @@
 #endif
 #if !defined (__BEOS__)
 #include <unistd.h>
+#endif
+#if defined(__QNXNTO__)
+#include <strings.h>	/* For strcasecmp */
 #endif
 #include <stdio.h>
 #include <fcntl.h>
