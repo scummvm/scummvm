@@ -51,8 +51,8 @@ protected:
 public:
 	bool _midi_sfx_toggle;
 
-	 MidiPlayer (OSystem *system);
-	~MidiPlayer();
+	MidiPlayer (OSystem *system);
+	virtual ~MidiPlayer();
 
 	void playSMF (File *in);
 	void playMultipleSMF (File *in);
