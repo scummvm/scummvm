@@ -888,11 +888,11 @@ int SimonEngine::runScript() {
 			break;
 
 		case 161:{									/* setup text */
-				ThreeValues *tv = getThreeValues(getVarOrByte());
+				TextLocation *tl = getTextLocation(getVarOrByte());
 
-				tv->a = getVarOrWord();
-				tv->b = getVarOrByte();
-				tv->c = getVarOrWord();
+				tl->x = getVarOrWord();
+				tl->y = getVarOrByte();
+				tl->width = getVarOrWord();
 			}
 			break;
 
@@ -974,14 +974,14 @@ int SimonEngine::runScript() {
 				uint speech_id = 0;
 
 				const char *string_ptr = (const char *)getStringPtrByID(_stringid_array_3[string_id]);
-				ThreeValues *tv = getThreeValues(vga_sprite_id);
+				TextLocation *tl = getTextLocation(vga_sprite_id);
 				if (_game & GF_TALKIE) 
 					speech_id = _speechid_array_4[string_id];
 
 				if (_speech && speech_id != 0)
 					talk_with_speech(speech_id, vga_sprite_id);
 				if (string_ptr != NULL && _subtitles)
-					talk_with_text(vga_sprite_id, color, string_ptr, tv->a, tv->b, tv->c);
+					talk_with_text(vga_sprite_id, color, string_ptr, tl->x, tl->y, tl->width);
 			}
 			break;
 
@@ -1211,13 +1211,13 @@ void SimonEngine::o_inventory_descriptions() {
 	uint vga_sprite_id = getVarOrByte();
 	uint color = getVarOrByte();
 	const char *string_ptr = NULL;
-	ThreeValues *tv = NULL;
+	TextLocation *tl = NULL;
 	char buf[256];
 
 	Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
 	if (child != NULL && child->avail_props & 1) {
 		string_ptr = (const char *)getStringPtrByID(child->array[0]);
-		tv = getThreeValues(vga_sprite_id);
+		tl = getTextLocation(vga_sprite_id);
 	}
 
 	if ((_game & GF_SIMON2) && (_game & GF_TALKIE)) {
@@ -1288,7 +1288,7 @@ void SimonEngine::o_inventory_descriptions() {
 			string_ptr = buf;
 		}
 		if (string_ptr != NULL)
-			talk_with_text(vga_sprite_id, color, string_ptr, tv->a, tv->b, tv->c);
+			talk_with_text(vga_sprite_id, color, string_ptr, tl->x, tl->y, tl->width);
 	}
 }
 

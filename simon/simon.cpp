@@ -2157,18 +2157,16 @@ void SimonEngine::handle_verb_clicked(uint verb) {
 	startUp_helper_2();
 }
 
-ThreeValues *SimonEngine::getThreeValues(uint a) {
+TextLocation *SimonEngine::getTextLocation(uint a) {
 	switch (a) {
 	case 1:
-		return &_threevalues_1;
+		return &_textlocation_1;
 	case 2:
-		return &_threevalues_2;
+		return &_textlocation_2;
 	case 101:
-		return &_threevalues_3;
-		break;
+		return &_textlocation_3;
 	case 102:
-		return &_threevalues_4;
-		break;
+		return &_textlocation_4;
 	default:
 		error("text, invalid value %d", a);
 	}
@@ -2180,7 +2178,7 @@ void SimonEngine::o_print_str() {
 	uint string_id = getNextStringID();
 	const byte *string_ptr = NULL;
 	uint speech_id = 0;
-	ThreeValues *tv;
+	TextLocation *tl;
 
 	if (string_id != 0xFFFF)
 		string_ptr = getStringPtrByID(string_id);
@@ -2188,7 +2186,7 @@ void SimonEngine::o_print_str() {
 	if (_game & GF_TALKIE)
 		speech_id = (uint16)getNextWord();
 
-	tv = getThreeValues(vga_sprite_id);
+	tl = getTextLocation(vga_sprite_id);
 
 	if (_speech && speech_id != 0)
 		talk_with_speech(speech_id, vga_sprite_id);
@@ -2196,7 +2194,7 @@ void SimonEngine::o_print_str() {
 		o_kill_sprite_simon2(2, vga_sprite_id + 2);
 
 	if (string_ptr != NULL && (speech_id == 0 || _subtitles))
-		talk_with_text(vga_sprite_id, color, (const char *)string_ptr, tv->a, tv->b, tv->c);
+		talk_with_text(vga_sprite_id, color, (const char *)string_ptr, tl->x, tl->y, tl->width);
 
 }
 
@@ -3001,6 +2999,7 @@ void SimonEngine::timer_vga_sprites() {
 	}
 
 	vsp = _vga_sprites;
+
 	while (vsp->id != 0) {
 		vsp->unk6 &= 0x7FFF;
 
@@ -4073,7 +4072,7 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vga_sprite_id) {
 	}
 }
 
-void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *string_ptr, uint threeval_a, int threeval_b, uint width) {
+void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *string_ptr, int16 x, int16 y, int16 width) {
 	char print_str_buf[0x140];
 	char *char_buf;
 	const char *string_ptr_2, *string_ptr_3;
@@ -4127,7 +4126,7 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 			*char_buf++ = 10;
 
 			height += 10;
-			threeval_b -= 10;
+			y -= 10;
 			j = -1;
 		} else {
 			// else_1
@@ -4182,7 +4181,7 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 				char_buf += m;
 				*char_buf++ = 10;
 				height += 20;
-				threeval_b -= 20;
+				y -= 20;
 				j = -1;
 			} else {
 				// else_6
@@ -4255,7 +4254,7 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 					char_buf += m;
 					*char_buf++ = '\n';
 					height += 30;
-					threeval_b -= 30;
+					y -= 30;
 					j = -1;
 				} else {
 					// else_15
@@ -4297,7 +4296,7 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 			char_buf += m;
 			*char_buf++ = 10;
 			height += 10;
-			threeval_b -= 10;
+			y -= 10;
 			string_ptr = string_ptr_2;
 		}
 	}
@@ -4322,17 +4321,19 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 		render_string(vga_sprite_id, color, width, height, print_str_buf);
 		
 
-	num_of_rows = 4;
-	if (!(_bit_array[8] & 0x20))
-		num_of_rows = 3;
+	uint b;
+	if (_bit_array[8] & 0x20)
+		b = 4;
+	else
+		b = 3;
 
-	if (threeval_b < 2)
-		threeval_b = 2;
+	if (y < 2)
+		y = 2;
 
 	if (!(_game & GF_SIMON2)) {
-		start_vga_code(num_of_rows, 2, 199 + vga_sprite_id, threeval_a >> 3, threeval_b, 12);
+		start_vga_code(b, 2, 199 + vga_sprite_id, x >> 3, y, 12);
 	} else {
-		start_vga_code(num_of_rows, 2, vga_sprite_id, threeval_a >> 3, threeval_b, 12);
+		start_vga_code(b, 2, vga_sprite_id, x >> 3, y, 12);
 	}
 }
 

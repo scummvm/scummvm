@@ -50,9 +50,9 @@ struct Subroutine;
 struct SubroutineLine;
 struct TimeEvent;
 
-struct ThreeValues {
-	int16 a, b, c;
-	ThreeValues() { memset(this, 0, sizeof(*this)); }
+struct TextLocation {
+	int16 x, y, width;
+	TextLocation() { memset(this, 0, sizeof(*this)); }
 };
 
 struct HitArea {
@@ -311,7 +311,7 @@ protected:
 	byte _fcs_data_1[8];
 	bool _fcs_data_2[8];
 
-	ThreeValues _threevalues_1, _threevalues_2, _threevalues_3, _threevalues_4;
+	TextLocation _textlocation_1, _textlocation_2, _textlocation_3, _textlocation_4;
 
 	int _free_string_slot;
 
@@ -509,7 +509,7 @@ protected:
 	void o_unk_186();
 	void o_fade_to_black();
 
-	ThreeValues *getThreeValues(uint a);
+	TextLocation *getTextLocation(uint a);
 	void o_print_str();
 	void o_setup_cond_c();
 	void setup_cond_c_helper();
@@ -597,7 +597,7 @@ protected:
 	void start_vga_code(uint b, uint vga_res, uint vga_sprite_id, uint x, uint y, uint base_color);
 	void o_unk26_helper(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h);
 	void talk_with_speech(uint speech_id, uint vga_sprite_id);
-	void talk_with_text(uint vga_sprite_id, uint color, const char *string_ptr, uint threeval_a, int threeval_b, uint width);
+	void talk_with_text(uint vga_sprite_id, uint color, const char *string_ptr, int16 x, int16 y, int16 width);
 	FillOrCopyStruct *fcs_alloc(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint unk4);
 
 	void render_string_amiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
