@@ -902,8 +902,7 @@ int Scumm::getCachedTrack(int track) {
 
 int Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	int index;
-	long offset;
-	float frame_size;
+	unsigned int offset;
 	mad_timer_t duration;
 
 	g_scumm->_vars[g_scumm->VAR_MI1_TIMER] = 0;
@@ -919,9 +918,8 @@ int Scumm::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	if (index < 0)
 		return -1;
 
-	// Calc offset
-	frame_size = (float)(144 * _mad_header[index].bitrate / _mad_header[index].samplerate);
-	offset = (long)( (float)start / (float)75 * ((float)_mad_header[index].bitrate/(float)8));
+	// Calc offset. As all bitrates are in kilobit per seconds, the division by 200 is always exact
+	offset = (start * (_mad_header[index].bitrate / (8 * 25))) / 3;
 
 	// Calc delay
 	if (!delay) {
