@@ -289,11 +289,7 @@ void Scumm::CHARSET_1() {
 		t <<= 1;
 	}
 
-	buffer = charset._buffer + charset._bufPos;
-	if(_features & GF_OLD256) {
-		debug(1, "CHARSET_1: %s", buffer);
-		//return;
-	}
+	buffer = charset._buffer + charset._bufPos;	
 	charset.addLinebreaks(0, buffer,0, t);
 
 	_lastXstart = virtscr[0].xstart;
