@@ -57,7 +57,7 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroupId, in
 				continue;
 		}
 
-		if (d != 0) {
+		if (d) {
 			if (spi->bbox.left > spi->bbox.right)
 				continue;
 			if (spi->bbox.top > spi->bbox.bottom)
@@ -341,7 +341,7 @@ void ScummEngine_v90he::spriteInfoGet_dx_dy(int spriteId, int32 &dx, int32 &dy) 
 int ScummEngine_v90he::spriteGroupGet_allocateGroupSpritesList(int spriteGroupId) {
 	int i, j = 0, sprites = 0;
 
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	for (i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group_num == spriteGroupId)
@@ -364,43 +364,43 @@ int ScummEngine_v90he::spriteGroupGet_allocateGroupSpritesList(int spriteGroupId
 }
 
 int ScummEngine_v90he::spriteGroupGet_zorderPriority(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	return _spriteGroups[spriteGroupId].zorderPriority;
 }
 
 int ScummEngine_v90he::spriteGroupGet_field_20(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	return _spriteGroups[spriteGroupId].field_20;
 }
 
 int ScummEngine_v90he::spriteGroupGet_scale_x_ratio_mul(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	return _spriteGroups[spriteGroupId].scale_x_ratio_mul;
 }
 
 int ScummEngine_v90he::spriteGroupGet_scale_x_ratio_div(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	return _spriteGroups[spriteGroupId].scale_x_ratio_div;
 }
 
 int ScummEngine_v90he::spriteGroupGet_scale_y_ratio_mul(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	return _spriteGroups[spriteGroupId].scale_y_ratio_mul;
 }
 
 int ScummEngine_v90he::spriteGroupGet_scale_y_ratio_div(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	return _spriteGroups[spriteGroupId].scale_y_ratio_div;
 }
 
 void ScummEngine_v90he::spriteGroupGet_tx_ty(int spriteGroupId, int32 &tx, int32 &ty) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	tx = _spriteGroups[spriteGroupId].tx;
 	ty = _spriteGroups[spriteGroupId].ty;
@@ -764,7 +764,7 @@ void ScummEngine_v90he::redrawSpriteGroup(int spriteGroupId) {
 }
 
 void ScummEngine_v90he::spriteGroupSet_case0_0(int spriteGroupId, int value1, int value2) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group_num == spriteGroupId) {
@@ -778,7 +778,7 @@ void ScummEngine_v90he::spriteGroupSet_case0_0(int spriteGroupId, int value1, in
 }
 
 void ScummEngine_v90he::spriteGroupSet_case0_1(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group_num == spriteGroupId)
@@ -787,7 +787,7 @@ void ScummEngine_v90he::spriteGroupSet_case0_1(int spriteGroupId, int value) {
 }
 
 void ScummEngine_v90he::spriteGroupSet_case0_2(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group_num == spriteGroupId) {
@@ -798,7 +798,7 @@ void ScummEngine_v90he::spriteGroupSet_case0_2(int spriteGroupId, int value) {
 }
 
 void ScummEngine_v90he::spriteGroupSet_case0_3(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group_num == spriteGroupId) {
@@ -811,7 +811,7 @@ void ScummEngine_v90he::spriteGroupSet_case0_3(int spriteGroupId, int value) {
 }
 
 void ScummEngine_v90he::spriteGroupSet_case0_4(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group_num == spriteGroupId)
@@ -820,7 +820,7 @@ void ScummEngine_v90he::spriteGroupSet_case0_4(int spriteGroupId) {
 }
 
 void ScummEngine_v90he::spriteGroupSet_case0_5(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group_num == spriteGroupId) {
@@ -831,7 +831,7 @@ void ScummEngine_v90he::spriteGroupSet_case0_5(int spriteGroupId, int value) {
 }
 
 void ScummEngine_v90he::spriteGroupSet_case0_6(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group_num == spriteGroupId) {
@@ -844,7 +844,7 @@ void ScummEngine_v90he::spriteGroupSet_case0_6(int spriteGroupId, int value) {
 }
 
 void ScummEngine_v90he::spriteGroupSet_case0_7(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group_num == spriteGroupId) {
@@ -856,7 +856,7 @@ void ScummEngine_v90he::spriteGroupSet_case0_7(int spriteGroupId, int value) {
 }
 
 void ScummEngine_v90he::spriteGroupSet_case5_0(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	if (_spriteGroups[spriteGroupId].scale_x_ratio_mul == value)
 		return;
@@ -873,7 +873,7 @@ void ScummEngine_v90he::spriteGroupSet_case5_0(int spriteGroupId, int value) {
 }
 
 void ScummEngine_v90he::spriteGroupSet_case5_1(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	if (_spriteGroups[spriteGroupId].scale_x_ratio_div == value)
 		return;
@@ -890,7 +890,7 @@ void ScummEngine_v90he::spriteGroupSet_case5_1(int spriteGroupId, int value) {
 }
 
 void ScummEngine_v90he::spriteGroupSet_case5_2(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	if (_spriteGroups[spriteGroupId].scale_y_ratio_mul == value)
 		return;
@@ -907,7 +907,7 @@ void ScummEngine_v90he::spriteGroupSet_case5_2(int spriteGroupId, int value) {
 }
 
 void ScummEngine_v90he::spriteGroupSet_case5_3(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	if (_spriteGroups[spriteGroupId].scale_y_ratio_div == value)
 		return;
@@ -924,7 +924,7 @@ void ScummEngine_v90he::spriteGroupSet_case5_3(int spriteGroupId, int value) {
 }
 
 void ScummEngine_v90he::spriteGroupSet_zorderPriority(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	if (_spriteGroups[spriteGroupId].zorderPriority == value)
 		return;
@@ -935,7 +935,7 @@ void ScummEngine_v90he::spriteGroupSet_zorderPriority(int spriteGroupId, int val
 }
 
 void ScummEngine_v90he::spriteGroupSet_tx_ty(int spriteGroupId, int value1, int value2) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	_spriteGroups[spriteGroupId].tx += value1;
 	_spriteGroups[spriteGroupId].ty += value2;
@@ -944,7 +944,7 @@ void ScummEngine_v90he::spriteGroupSet_tx_ty(int spriteGroupId, int value1, int 
 }
 
 void ScummEngine_v90he::spriteGroupSet_case26(int spriteGroupId, int value) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	if (_spriteGroups[spriteGroupId].field_20 == value)
 		return;
@@ -955,7 +955,7 @@ void ScummEngine_v90he::spriteGroupSet_case26(int spriteGroupId, int value) {
 }
 
 void ScummEngine_v90he::spriteGroupSet_case28(int spriteGroupId, int value1, int value2) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	if (_spriteGroups[spriteGroupId].tx == value1 && _spriteGroups[spriteGroupId].ty == value2)
 		return;
@@ -967,7 +967,7 @@ void ScummEngine_v90he::spriteGroupSet_case28(int spriteGroupId, int value1, int
 }
 
 void ScummEngine_v90he::spriteGroupSet_bbox(int spriteGroupId, int x1, int y1, int x2, int y2) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	_spriteGroups[spriteGroupId].flags |= kSGFClipBox;
 	_spriteGroups[spriteGroupId].bbox.left = x1;
@@ -979,7 +979,7 @@ void ScummEngine_v90he::spriteGroupSet_bbox(int spriteGroupId, int x1, int y1, i
 }
 
 void ScummEngine_v90he::spriteGroupSet_case56(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
 
 	_spriteGroups[spriteGroupId].flags &= ~(kSGFNeedRedraw);
 
@@ -999,49 +999,23 @@ void ScummEngine_v90he::spritesAllocTables(int numSprites, int numGroups, int nu
 }
 
 void ScummEngine_v90he::spritesResetGroup(int spriteGroupId) {
-	int i;
-
 	SpriteGroup *spg = &_spriteGroups[spriteGroupId];
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
-	if (spg->zorderPriority != 0) {
-		spg->zorderPriority = 0;
-		spriteGroupCheck(spriteGroupId);
-		for (i = 0; i < _numSpritesToProcess; ++i) {
-			SpriteInfo *spi = _activeSpritesTable[i];
-			if (spi->group_num == spriteGroupId) {
-				spi->flags |= kSFChanged | kSFNeedRedraw;
-			}
-		}
-	}
-	if (spg->tx != 0 || spg->ty != 0) {
-		spg->tx = spg->ty = 0;
-		spriteGroupCheck(spriteGroupId);
-		for (i = 0; i < _numSpritesToProcess; ++i) {
-		SpriteInfo *spi = _activeSpritesTable[i];
-			if (spi->group_num == spriteGroupId) {
-				spi->flags |= kSFChanged | kSFNeedRedraw;
-			}
-		}
-	}
-	spg->flags &= ~kSGFClipBox;
-	spriteMarkIfInGroup(spriteGroupId, kSFChanged | kSFNeedRedraw);
-	if (spg->field_20 != 0) {
-		spriteGroupCheck(spriteGroupId);
-		for (i = 0; i < _numSpritesToProcess; ++i) {
-			SpriteInfo *spi = _activeSpritesTable[i];
-			if (spi->group_num == spriteGroupId) {
-				spi->flags |= kSFChanged | kSFNeedRedraw;
-			}
-		}
-	}
-	spriteGroupCheck(spriteGroupId);
+	checkRange(_varNumSpriteGroups, 64, spriteGroupId, "Invalid sprite group %d");
+
+	spg->zorderPriority = 0;
+	spg->tx = spg->ty = 0;
+
+	spg->flags &= ~kSGFNeedRedraw;
+	redrawSpriteGroup(spriteGroupId);
+
+	spg->field_20 = 0;
 	spg->scaling = 0;
 	spg->scale_x = 0x3F800000;
-	spg->scale_x_ratio_mul = 0;
-	spg->scale_x_ratio_div = 0;
+	spg->scale_x_ratio_mul = 1;
+	spg->scale_x_ratio_div = 1;
 	spg->scale_y = 0x3F800000;
-	spg->scale_y_ratio_mul = 0;
-	spg->scale_y_ratio_div = 0;
+	spg->scale_y_ratio_mul = 1;
+	spg->scale_y_ratio_div = 1;
 }
 
 void ScummEngine_v90he::spritesResetTables(bool refreshScreen) {
@@ -1059,20 +1033,6 @@ void ScummEngine_v90he::spritesResetTables(bool refreshScreen) {
 		gdi.copyVirtScreenBuffers(Common::Rect(_screenWidth, _screenHeight));
 	}
 	_numSpritesToProcess = 0;
-}
-
-void ScummEngine_v90he::spriteGroupCheck(int spriteGroupId) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
-}
-
-void ScummEngine_v90he::spriteMarkIfInGroup(int spriteGroupId, uint32 flags) {
-	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
-	for (int i = 0; i < _numSpritesToProcess; ++i) {
-		SpriteInfo *spi = _activeSpritesTable[i];
-		if (spi->group_num == spriteGroupId) {
-			spi->flags |= flags;
-		}		
-	}
 }
 
 void ScummEngine_v90he::spritesBlitToScreen() {
@@ -1148,7 +1108,7 @@ void ScummEngine_v90he::spritesMarkDirty(bool unkFlag) {
 void ScummEngine_v90he::spritesUpdateImages() {
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
 		SpriteInfo *spi = _activeSpritesTable[i];
-		if (spi->dx != 0 || spi->dy != 0) {
+		if (spi->dx || spi->dy) {
 			checkRange(_varNumSprites, 1, i, "Invalid sprite %d");
 			int tx = spi->tx;
 			int ty = spi->ty;
@@ -1159,7 +1119,7 @@ void ScummEngine_v90he::spritesUpdateImages() {
 			}			
 		}
 		if (spi->flags & kSFYFlipped) {
-			if (spi->field_78 != 0) {
+			if (spi->field_78) {
 				--spi->field_64;
 				if (spi->field_64) 
 					continue;
@@ -1170,7 +1130,7 @@ void ScummEngine_v90he::spritesUpdateImages() {
 			++spi->res_state;
 			if (spi->res_state >= spi->res_wiz_states) {
 				spi->res_state = 0;
-				if (spi->imglist_num != 0) {
+				if (spi->imglist_num) {
 					if (!(spi->flags & kSF25)) {
 						checkRange(_varMaxSprites, 1, spi->imglist_num, "Image list %d out of range");
 						uint16 img1 = _imageListTable[0x21 * spi->imglist_num - 1];
@@ -1251,9 +1211,6 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 	int rot_angle, zoom;
 	int32 w, h;
 	WizParameters wiz;
-
-	if (!_numSpritesToProcess)
-		return;
 
 	for (int i = 0; i < _numSpritesToProcess; i++) {
 		SpriteInfo *spi = _activeSpritesTable[i];

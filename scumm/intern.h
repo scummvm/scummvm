@@ -988,8 +988,6 @@ protected:
 	void spritesAllocTables(int numSprites, int numGroups, int numMaxSprites);
 	void spritesResetGroup(int spriteGroupId);
 	void spritesResetTables(bool refreshScreen);
-	void spriteGroupCheck(int spriteGroupId);
-	void spriteMarkIfInGroup(int spriteGroupId, uint32 flags);
 	void spriteAddImageToList(int spriteId, int imageNum, int *spriteIdptr);
 
 public:
