@@ -258,8 +258,8 @@ void MidiPlayer::clearConstructs() {
 }
 
 void MidiPlayer::clearConstructs (MusicInfo &info) {
+	int i;
 	if (info.num_songs > 0) {
-		byte i;
 		for (i = 0; i < info.num_songs; ++i)
 			free (info.songs [i]);
 	}
@@ -267,6 +267,12 @@ void MidiPlayer::clearConstructs (MusicInfo &info) {
 		free (info.data);
 	if (info.parser)
 		delete info.parser;
+	if (_driver) {
+		for (i = 0; i < 16; ++i) {
+			if (info.in_use[i])
+				_driver->send (0x007BB0 | i); // All Notes Off
+		}
+	}
 	info.clear();
 }
 
