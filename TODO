@@ -1,0 +1,26 @@
+General
+=======
+* add plugin system (both dynamic & static plugin support)
+  [if you want to work on it, ask Fingolfin about this, he already has done
+  some planning. Also make sure that your system support 'static' plugins, too]
+* revise the way "quit" is handled. Maybe add a global variable "g_quit" which
+  we set when the application should be quit (e.g. when an EVENT_QUIT is
+  received). This is useful if multiple levels of event loops have to be ended
+
+GUI
+===
+* LAUNCHER: fix global options dialog to be properly persistent
+* LAUNCHER: add more options to global options dialog
+* LAUNCHER: add more options to game options dialog 
+
+Audio
+=====
+* get the high quality resample code to work
+   [Fingolfin has started work on this]
+* add a command line/config file option for the output sample rate (to allow
+  for output sample rates other than 22050 Hz, e.g. 44100). Code should do
+  sanity checking (e.g. restrict to rates between 8000 - 65535 Hz)
+
+SCUMM
+=====
+* fix C64 costume code
