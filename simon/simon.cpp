@@ -1226,21 +1226,21 @@ File *SimonEngine::openTablesFile_simon1(const char *filename) {
 }
 
 uint SimonEngine::loadTextFile(const char *filename, byte *dst) {
-	if (_game & GF_AMIGA || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
+	if (_game & GF_OLD_BUNDLE)
 		return loadTextFile_simon1(filename, dst);
 	else
 		return loadTextFile_gme(filename, dst);
 }
 
 File *SimonEngine::openTablesFile(const char *filename) {
-	if (_game & GF_AMIGA || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS)
+	if (_game & GF_OLD_BUNDLE)
 		return openTablesFile_simon1(filename);
 	else
 		return openTablesFile_gme(filename);
 }
 
 void SimonEngine::closeTablesFile(File *in) {
-	if (_game & GF_AMIGA || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
+	if (_game & GF_OLD_BUNDLE) {
 		in->close();
 		delete in;
 	}
@@ -3294,7 +3294,8 @@ void SimonEngine::fcs_unk1(uint fcs_index) {
 
 	if (fcs->fcs_data->unk4 != -1) {
 		delete_hitarea_by_index(fcs->fcs_data->unk4);
-		fcs_unk_5(fcs, fcs_index);
+		if (!(_game & GF_SIMON2))
+			fcs_unk_5(fcs, fcs_index);
 	}
 
 	free(fcs->fcs_data);
@@ -3308,7 +3309,7 @@ void SimonEngine::fcs_unk1(uint fcs_index) {
 void SimonEngine::fcs_unk_5(FillOrCopyStruct *fcs, uint fcs_index) {
 	if (_game == GAME_SIMON1WIN) {
 		o_kill_sprite_simon1(0x80);
-	} else if (!(_game & GF_SIMON2)) {
+	} else {
 		o_kill_sprite_simon1(0x81);
 		start_vga_code(0, 1, 0x81, 0, 0, 0xE);
 	}
@@ -4362,7 +4363,7 @@ static bool decrunch_file_amiga (byte *src, byte *dst, uint32 size) {
 #undef SD_TYPE_MATCH
 
 void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
-	if (_game & GF_AMIGA || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
+	if (_game & GF_OLD_BUNDLE) {
 		File in;
 		char buf[50];
 		uint32 size;
@@ -4404,7 +4405,7 @@ void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 }
 
 byte *SimonEngine::read_vga_from_datfile_2(uint id) {
-	if (_game & GF_AMIGA || _game == GAME_SIMON1DEMO || _game == GAME_SIMON1DOS) {
+	if (_game & GF_OLD_BUNDLE) {
 		File in;
 		char buf[50];
 		uint32 size;
@@ -4456,7 +4457,7 @@ void SimonEngine::resfile_read(void *dst, uint32 offs, uint32 size) {
 }
 
 void SimonEngine::openGameFile() {
-	if (!(_game & GF_AMIGA) && _game != GAME_SIMON1DEMO && _game != GAME_SIMON1DOS) {
+	if (!(_game & GF_OLD_BUNDLE)) {
 		_game_file = new File();
 		_game_file->open(gss->gme_filename, _gameDataPath);
 
