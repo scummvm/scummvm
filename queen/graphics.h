@@ -23,16 +23,17 @@
 #define QUEENGRAPHICS_H
 
 #include "queen/queen.h"
+#include "queen/defs.h"
 #include "queen/structs.h"
 
 namespace Queen {
+
 
 #define MAX_BANK_SIZE      110
 #define MAX_FRAMES_NUMBER  256
 #define MAX_BANKS_NUMBER    18
 #define MAX_BOBS_NUMBER     64
 
-#define BOB_SHRINK_BUF_SIZE  60000
 
 
 struct BobFrame {
@@ -43,13 +44,18 @@ struct BobFrame {
 
 
 struct BobSlot {
-	bool active; 
-	uint16 x, y;     //! current position
-	Box box;         //! bounding box
+	bool active;
+	//! current position
+	uint16 x, y;
+	//! bounding box
+	Box box;
 	bool xflip;
-	uint16 scale;    //! shrinking percentage
-	uint16 frameNum; //! associated BobFrame
-	uint8 frameDir;  //! 'direction' for the next frame (-1, 1)
+	//! shrinking percentage
+	uint16 scale;
+	//! associated BobFrame
+	uint16 frameNum;
+	//! 'direction' for the next frame (-1, 1)
+	uint8 frameDir;
 
 	//! animation stuff
 	bool animating;
@@ -71,10 +77,14 @@ struct BobSlot {
 	} anim;
 
 	bool moving;
-	uint16 speed;      //! moving speed
-	bool xmajor;       //! move along x axis instead of y
-	int8 xdir, ydir;   //! moving direction
-	uint16 endx, endy; //! destination point
+	//! moving speed
+	uint16 speed;
+	//! move along x axis instead of y
+	bool xmajor;
+	//! moving direction
+	int8 xdir, ydir;
+	//! destination point
+	uint16 endx, endy;
 	uint16 dx, dy;
 	uint16 total;
 
@@ -82,6 +92,8 @@ struct BobSlot {
 	void animOneStep();
 };
 
+
+//class Display;
 
 class Graphics {
 public:
@@ -105,12 +117,28 @@ public:
 	void bobSortAll(); // sortbobs()
 	void bobDrawAll(); // drawbobs()
 	void bobClearAll(); // clearallbobs()
-
 	BobSlot *bob(int index);
 
 	void frameErase(uint32 fslot);
+	void frameEraseAll(bool joe); // freeframes, freeallframes
+
+	void loadBackdrop(const char* name, uint16 room); // loadbackdrop
+	void loadPanel(); // loadpanel
+
+	void useJournal();
+	void journalBobSetup(uint32 bobnum, uint16 x, uint16 y, uint16 frame);
+	void journalBobPreDraw();
+
 
 private:
+
+	enum {
+		BACKDROP_W = 640,
+		BACKDROP_H = 200,
+		PANEL_W = 320,
+		PANEL_H = 50,
+		BOB_SHRINK_BUF_SIZE = 60000
+	};
 	
 	struct PackedBank {
 		uint32 indexes[MAX_BANK_SIZE];
@@ -120,11 +148,20 @@ private:
 	BobFrame _frames[MAX_FRAMES_NUMBER]; //! unbanked bob frames
 	PackedBank _banks[MAX_BANKS_NUMBER]; //! banked bob frames
 	BobSlot _bobs[MAX_BOBS_NUMBER];
-	BobSlot *_sortedBobs[MAX_BOBS_NUMBER + 1]; //! bobs displayed
-	BobFrame _shrinkBuffer;
+	BobSlot *_sortedBobs[MAX_BOBS_NUMBER]; //! bobs displayed
+	BobFrame _shrinkBuffer; //! used to scale a BobFrame
+	uint16 _sortedBobsCount;
+
+	uint16 _cameraBob; // cambob
+	uint16 _backdropWidth, _backdropHeight; //! current room dimensions
+	uint8 *_backdrop; //! current room bitmap
+	uint8 *_panel; //! panel storage area
 
 	Resource *_resource;
-	
+//	Display *_display;
+
+	void readPCX(const uint8 *src, uint8 *dst, uint16 dstPitch, uint16 w, uint16 h);
+
 };
 
 } // End of namespace Queen

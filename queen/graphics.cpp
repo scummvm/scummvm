@@ -21,15 +21,20 @@
 
 #include "queen/graphics.h"
 
+
 namespace Queen {
 
+
 Graphics::Graphics(Resource *resource)
-	:_resource(resource) {
+	: _cameraBob(0), _resource(resource) {
 		
 	memset(_frames, 0, sizeof(_frames));
 	memset(_banks, 0, sizeof(_banks));
+	memset(_bobs, 0, sizeof(_bobs));
 	memset(_sortedBobs, 0, sizeof(_sortedBobs));
-	_shrinkBuffer.data = new uint8[BOB_SHRINK_BUF_SIZE];
+	_shrinkBuffer.data = new uint8[ BOB_SHRINK_BUF_SIZE ];
+	_backdrop = new uint8[ BACKDROP_W * BACKDROP_H ];
+	_panel = new uint8[ PANEL_W * PANEL_H ];
 
 }
 
@@ -41,6 +46,8 @@ Graphics::~Graphics() {
 	}
 //	frameClearAll();
 	delete[] _shrinkBuffer.data;
+	delete[] _backdrop;
+	delete[] _panel;
 }
 
 
@@ -48,11 +55,12 @@ void Graphics::bankLoad(const char *bankname, uint32 bankslot) {
 	
 	int16 i;
 	
-	if (!_resource->exists(bankname)) {
-	  error("Unable to open bank '%s'", bankname);	
-	}
 	bankErase(bankslot);
 	_banks[bankslot].data = _resource->loadFile(bankname);
+	if (!_banks[bankslot].data) {
+	  error("Unable to open bank '%s'", bankname);	
+	}
+
 	int16 entries = (int16)READ_LE_UINT16(_banks[bankslot].data);
 	if (entries < 0 || entries >= MAX_BANK_SIZE) {
 	  error("Maximum bank size exceeded or negative bank size : %d", entries);
@@ -86,7 +94,7 @@ void Graphics::bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	
 	uint32 size = pbf->width * pbf->height;
 	pbf->data = new uint8[ size ];
-	memcpy(pbf->data, p, size);
+	memcpy(pbf->data, p + 8, size);
 	
 	debug(5, "Unpacked frame %d from bank slot %d to frame slot %d", srcframe, bankslot, dstframe);
 }
@@ -276,20 +284,20 @@ void BobSlot::animOneStep() {
 void Graphics::bobDraw(uint32 bobnum, uint16 x, uint16 y, uint16 scale, bool xflip, const Box& box) {
 
 	uint16 w, h;
-	uint8 *src;
+
+	debug(5, "Preparing to draw frame %d, scale = %d", bobnum, scale);
 
 	BobFrame *pbf = &_frames[bobnum];
 	if (scale < 100) {  // Note: scale is unsigned, hence always >= 0
 		bobShrink(pbf, scale);
 		pbf = &_shrinkBuffer;
 	}
-
-	src = pbf->data;
 	w   = pbf->width;
 	h   = pbf->height;
 
 	if(w != 0 && h != 0 && box.intersects(x, y, w, h)) {
 
+		uint8 *src = pbf->data;
 		uint16 x_skip = 0;
 		uint16 y_skip = 0;
 		uint16 w_new = w;
@@ -316,17 +324,17 @@ void Graphics::bobDraw(uint32 bobnum, uint16 x, uint16 y, uint16 scale, bool xfl
 			h_new = box.y2 - y + 1;
 		}
 
-//		_display->ulines(i, j, w_new / 16, h_new);
+//		_display->ulines(w_new / 16, h_new, 2);
 
 		src += w * y_skip;
 		if (!xflip) {
 			src += x_skip;
-//			_display->blit(hidden, x, y, 320, src, w_new, h_new, w, xflip, true);
+//			Display::blit(_backdrop, x, y, BACKDROP_W, src, w_new, h_new, w, xflip, true);
 		}
 		else {
 			src += w - w_new - x_skip;
 			x += w_new - 1;
-//			_display->blit(hidden, x, y, 320, src, x_new, h_new, w, xflip, true);
+//			Display::blit(_display->_screen, x, y, 320, src, w_new, h_new, w, xflip, true);
 		}
     }
 
@@ -336,11 +344,11 @@ void Graphics::bobDraw(uint32 bobnum, uint16 x, uint16 y, uint16 scale, bool xfl
 void Graphics::bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y) {
 	if (bobnum == 0) {
 		// clear panel area
-//		_display->clear(panel, x, y, 32, 32, INK_BG_PANEL);
+		memset(_panel + y * 32 + x, INK_BG_PANEL, 32 * 32);
 	}
 	else {
 //		BobFrame *pbf = &_frames[bobnum];
-//		_display->blit(panel, x, y, 320, pbf->data, pbf->width, pbf->height, false, false);
+//		Display::blit(_panel, x, y, 320, pbf->data, pbf->width, pbf->height, false, false);
 	}
 }
 
@@ -348,7 +356,7 @@ void Graphics::bobDrawInventoryItem(uint32 bobnum, uint16 x, uint16 y) {
 void Graphics::bobPaste(uint32 bobnum, uint16 x, uint16 y) {
 
 //	BobFrame *pbf = &_frames[bobnum];
-//	_display->blit(backdrop, x, y, 640, pbf->data, pbf->width, pbf->height, pbf->width, false, true);
+//	Display::blit(_backdrop, x, y, 640, pbf->data, pbf->width, pbf->height, pbf->width, false, true);
 	frameErase(bobnum);
 }
 
@@ -358,6 +366,8 @@ void Graphics::bobShrink(const BobFrame* pbf, uint16 percentage) {
 	// computing new size, rounding to upper value
 	uint16 new_w = (pbf->width  * percentage + 50) / 100;
 	uint16 new_h = (pbf->height * percentage + 50) / 100;
+
+	debug(5, "Shrinking bob, buffer size = %d", new_w * new_h);
 
 	if (new_w != 0 && new_h != 0) {
 
@@ -372,10 +382,12 @@ void Graphics::bobShrink(const BobFrame* pbf, uint16 percentage) {
 		uint8* src = pbf->data;
 		uint8* dst = _shrinkBuffer.data;
 
-		for (uint32 y_count = 0; new_h != 0; --new_h) {
-
+		uint32 y_count = 0;
+		while (new_h--) {
+			uint16 i;
+			uint32 x_count = 0;
 			uint8 *p = src;
-			for (uint32 x_count = 0; new_w != 0; --new_w) {
+			for(i = 0; i < new_w; ++i) {
 				*dst++ = *p;
 				p += x_scale;
 				x_count += shrinker;
@@ -384,7 +396,6 @@ void Graphics::bobShrink(const BobFrame* pbf, uint16 percentage) {
 					x_count &= 0xFFFF;
 				}
 			}
-   	  
 			src += y_scale;
 			y_count += shrinker;
 			if (y_count > 0xFFFF) {
@@ -392,8 +403,6 @@ void Graphics::bobShrink(const BobFrame* pbf, uint16 percentage) {
 				y_count &= 0xFFFF;
 			}
 		}
-
-		debug(5, "Shrunk bob, buffer size = %d", new_w * new_h);
 	}
 }
 
@@ -409,22 +418,22 @@ void Graphics::bobClear(uint32 bobnum) {
 	pbs->scale  = 100;
 	pbs->box.x1 = 0;
 	pbs->box.y1 = 0;
-	pbs->box.y1 = 319;
-	pbs->box.y2 = (bobnum == 16) ? 199 : 149; // FIXME: does bob number 16 really used ?
+	pbs->box.x2 = GAME_SCREEN_WIDTH - 1;
+	pbs->box.y2 = (bobnum == 16) ? GAME_SCREEN_HEIGHT - 1 : ROOM_ZONE_HEIGHT - 1; // FIXME: does bob number 16 really used ?
 }
 
 
 void Graphics::bobSortAll() {
 
-	int32 _sorted = 0;
+	_sortedBobsCount = 0;
 
 	// animate/move the bobs
 	for (int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
 
 		BobSlot *pbs = &_bobs[i];
 		if (pbs->active) {
-			_sortedBobs[_sorted] = pbs;
-			++_sorted;
+			_sortedBobs[_sortedBobsCount] = pbs;
+			++_sortedBobsCount;
 
 			if (pbs->animating) {
 				pbs->animOneStep();
@@ -437,12 +446,10 @@ void Graphics::bobSortAll() {
 		}
 	}
 
-	_sortedBobs[_sorted] = 0;
-
 	// bubble sort the bobs
-	for (int32 index = 0; index < _sorted - 1; ++index) {
+	for (int32 index = 0; index < _sortedBobsCount - 1; ++index) {
 		int32 smallest = index;
-		for (int32 compare = index + 1; compare <= _sorted - 1; ++compare) {
+		for (int32 compare = index + 1; compare <= _sortedBobsCount - 1; ++compare) {
 			if (_sortedBobs[compare]->y < _sortedBobs[compare]->y) {
 				smallest = compare;
 			}
@@ -456,10 +463,11 @@ void Graphics::bobSortAll() {
 
 
 void Graphics::bobDrawAll() {
-	
-	for (BobSlot *pbs = _sortedBobs[0]; pbs; ++pbs) {
-		if (pbs->active) {
 
+	int i;
+	for (i = 0; i < _sortedBobsCount; ++i) {
+		BobSlot *pbs = _sortedBobs[i];
+		if (pbs->active) {
 			BobFrame *pbf = &_frames[ pbs->frameNum ];
 			uint16 xh, yh, x, y;
 
@@ -493,7 +501,9 @@ void Graphics::bobClearAll() {
 	}
 }
 
+
 BobSlot *Graphics::bob(int index) {
+
 	if (index < MAX_BOBS_NUMBER)
 		return _bobs + index;
 	else {
@@ -502,14 +512,154 @@ BobSlot *Graphics::bob(int index) {
 	}
 }
 
+
 void Graphics::frameErase(uint32 fslot) {
 
 	BobFrame *pbf = &_frames[fslot];
 	pbf->width  = 0;
 	pbf->height = 0;
 	delete[] pbf->data;
-
+	pbf->data = 0;
 }
+
+
+void Graphics::frameEraseAll(bool joe) {
+
+    int i = 0;
+	if (!joe) {
+		i = FRAMES_JOE + FRAMES_JOE_XTRA;
+	}
+	while (i < 256) {
+		frameErase(i);
+		++i;
+	}
+}
+
+
+void Graphics::loadBackdrop(const char* name, uint16 room) {
+
+//	_display->ulines(2);
+
+	// init Dynalum
+	char roomPrefix[20];
+	strcpy(roomPrefix, name);
+	roomPrefix[ strlen(roomPrefix) - 4 ] = '\0';
+//	_display->dynalumInit(_resource, roomPrefix, room);
+
+	uint8 *pcxbuf = _resource->loadFile(name);
+	if (pcxbuf == NULL) {
+		error("Unable to load backdrop : '%s'", name);
+	}
+
+//	uint32 size = _resource->fileSize(name);
+//	_display->setPal(pcxbuf + size - 768, 0, (room <= 144) ? 144 : 256);
+	_backdropWidth  = READ_LE_UINT16(pcxbuf +  12);
+	_backdropHeight = READ_LE_UINT16(pcxbuf +  14);
+
+	if (_backdropHeight == 150) {
+//		_display->_fullscreen = 0;
+	}
+
+	if (room >= 90) {
+		_cameraBob = 0;
+	}
+
+	readPCX(pcxbuf + 128, _backdrop, BACKDROP_W, _backdropWidth, _backdropHeight);
+	delete[] pcxbuf;
+}
+
+
+void Graphics::loadPanel() {
+
+	uint8 *pcxbuf = _resource->loadFile("panel.pcx");
+	if (pcxbuf == NULL) {
+		error("Unable to open panel file");
+	}
+//	uint32 size = _resource->fileSize("panel.pcx");
+//	_display->setPal(pcxbuf + size - 768, 144, 256);
+	readPCX(pcxbuf + 128, _panel + PANEL_W * 10, PANEL_W, PANEL_W, PANEL_H - 10);
+	delete[] pcxbuf;
+}
+
+
+void Graphics::readPCX(const uint8 *src, uint8 *dst, uint16 dstPitch, uint16 w, uint16 h) {
+
+	while (h--) {
+		uint8 *p = dst;
+		while (p < dst + w ) {
+			uint8 col = *src++;
+			if ((col & 0xC0) == 0xC0) {
+				uint8 len = col & 0x3F;
+				memset(p, *src++, len);
+				p += len;
+			}
+			else {
+				*p++ = col;
+			}
+		}
+		dst += dstPitch;
+	}
+}
+
+
+void Graphics::useJournal() { // GameSettings* pgs
+
+	int i;
+
+	bobClearAll();
+	loadBackdrop("journal.pcx", 160);
+//	_display->fadeout(0,255);
+
+	// load and unpack journal frames
+	frameEraseAll(false);
+    bankLoad("journal.BBK", 8);
+	for(i = 1; i <= 20; ++i) {
+		bankUnpack(i, FRAMES_JOURNAL + i, 8);
+		// set hot spots to zero
+		_frames[FRAMES_JOURNAL + i].xhotspot = 0;
+		_frames[FRAMES_JOURNAL + i].yhotspot = 0;
+	}
+	// adjust info box hot spot to put it on top always
+	_frames[FRAMES_JOURNAL + 20].yhotspot = 200;
+    bankErase(8);
+
+	// TODO: setup zones
+
+	journalBobPreDraw();
+//	_display->fadein(0, 255);
+}
+
+
+void Graphics::journalBobSetup(uint32 bobnum, uint16 x, uint16 y, uint16 frame) {
+
+	BobSlot *pbs = &_bobs[bobnum];
+	pbs->active = true;
+	pbs->x = x;
+	pbs->y = y;
+	pbs->frameNum = FRAMES_JOURNAL + frame;
+	pbs->box.y2 = GAME_SCREEN_HEIGHT - 1;
+}
+
+
+void Graphics::journalBobPreDraw() { // GameSettings* pgs
+
+	journalBobSetup(1, 32, 8, 1); // Review entry
+	journalBobSetup(2, 32, 56, 2); // Make entry
+	journalBobSetup(3, 32, 104, 1); // Close book
+	journalBobSetup(4, 32, 152, 3); // Give up
+//	journalBobSetup(5, 136 + pgs->talkSpeed * 4 - 4, 164, 18); // Text speed
+	journalBobSetup(6, 221, 155, 16); // SFX on/off
+//	_bobs[6].active = pgs->sfxToggle;
+//	journalBobSetup(7, 136 + (pgs->volume * 130) / 100 - 4, 177, 19); // Music volume
+	journalBobSetup(10, 158, 155, 16); // Voice on/off
+//	_bobs[10].active = pgs->voiceToggle;
+	journalBobSetup(11, 125, 167, 16); // Text on/off
+//	_bobs[11].active = pgs->textToggle;
+	journalBobSetup(12, 125, 181, 16); // Music on/off
+//	_bobs[12].active = pgs->musicToggle;
+}
+
+
 
 } // End of namespace Queen
 
