@@ -1,5 +1,5 @@
 CXX     = g++
-CXXFLAGS  = -Wno-multichar -fstrength-reduce -fsigned-char -fno-rtti -O2
+CXXFLAGS  = -Wno-multichar -fstrength-reduce -fsigned-char -O2
 DEFINES = -DNDEBUG
 LDFLAGS = -noixemul -s
 LIBS	= -lamiga -lamigastubs -lcybergraphics
