@@ -77,7 +77,80 @@ void IMuseDigital::resetState() {
 }
 
 void IMuseDigital::saveOrLoad(Serializer *ser) {
-	// save-load code not backported
+	Common::StackLock lock(_mutex);
+
+	const SaveLoadEntry mainEntries[] = {
+		MKLINE(IMuseDigital, _volVoice, sleInt32, VER(31)),
+		MKLINE(IMuseDigital, _volSfx, sleInt32, VER(31)),
+		MKLINE(IMuseDigital, _volMusic, sleInt32, VER(31)),
+		MKLINE(IMuseDigital, _curMusicState, sleInt32, VER(31)),
+		MKLINE(IMuseDigital, _curMusicSeq, sleInt32, VER(31)),
+		MKLINE(IMuseDigital, _curMusicCue, sleInt32, VER(31)),
+		MKLINE(IMuseDigital, _nextSeqToPlay, sleInt32, VER(31)),
+		MKARRAY(IMuseDigital, _attributes[0], sleInt32, 188, VER(31)),
+		MKEND()
+	};
+
+	const SaveLoadEntry trackEntries[] = {
+		MKLINE(Track, pan, sleInt8, VER(31)),
+		MKLINE(Track, vol, sleInt32, VER(31)),
+		MKLINE(Track, volFadeDest, sleInt32, VER(31)),
+		MKLINE(Track, volFadeStep, sleInt32, VER(31)),
+		MKLINE(Track, volFadeDelay, sleInt32, VER(31)),
+		MKLINE(Track, volFadeUsed, sleByte, VER(31)),
+		MKLINE(Track, soundId, sleInt32, VER(31)),
+		MKARRAY(Track, soundName[0], sleByte, 15, VER(31)),
+		MKLINE(Track, used, sleByte, VER(31)),
+		MKLINE(Track, toBeRemoved, sleByte, VER(31)),
+		MKLINE(Track, souStream, sleByte, VER(31)),
+		MKLINE(Track, started, sleByte, VER(31)),
+		MKLINE(Track, priority, sleInt32, VER(31)),
+		MKLINE(Track, regionOffset, sleInt32, VER(31)),
+		MK_OBSOLETE(Track, trackOffset, sleInt32, VER(31), VER(31)),
+		MKLINE(Track, dataOffset, sleInt32, VER(31)),
+		MKLINE(Track, curRegion, sleInt32, VER(31)),
+		MKLINE(Track, curHookId, sleInt32, VER(31)),
+		MKLINE(Track, volGroupId, sleInt32, VER(31)),
+		MKLINE(Track, soundType, sleInt32, VER(31)),
+		MKLINE(Track, iteration, sleInt32, VER(31)),
+		MKLINE(Track, mod, sleInt32, VER(31)),
+		MKLINE(Track, mixerFlags, sleInt32, VER(31)),
+		MKLINE(Track, mixerVol, sleInt32, VER(31)),
+		MKLINE(Track, mixerPan, sleInt32, VER(31)),
+		MKEND()
+	};
+
+	ser->_ref_me = this;
+	ser->_save_ref = NULL;
+	ser->_load_ref = NULL;
+
+	ser->saveLoadEntries(this, mainEntries);
+
+	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
+		Track *track = _track[l];
+		ser->saveLoadEntries(track, trackEntries);
+		if (!ser->isSaving()) {
+			if (!track->used)
+				continue;
+			track->readyToRemove = false;
+			if ((track->toBeRemoved) || (track->souStream)) {
+				track->stream2 = NULL;
+				track->stream = NULL;
+				track->used = false;
+				continue;
+			}
+
+			track->soundHandle = _sound->openSound(track->soundId,
+									track->soundName, track->soundType,
+									track->volGroupId, -1);
+			assert(track->soundHandle);
+			int32 streamBufferSize = track->iteration;
+			int freq = _sound->getFreq(track->soundHandle);
+			track->stream2 = NULL;
+			track->stream = makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
+			_vm->_mixer->playInputStream(&track->handle, track->stream, false, track->mixerVol, track->mixerPan, -1, false);
+		}
+	}
 }
 
 void IMuseDigital::callback() {
