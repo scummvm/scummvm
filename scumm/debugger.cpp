@@ -313,7 +313,7 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 			size = file.readUint16LE();
 			file.seek(-2, SEEK_CUR);
 		} else if (_vm->_features & GF_SMALL_HEADER) {
-			if (!(_vm->_features & GF_SMALL_NAMES))
+			if (_vm->_version == 4)
 				file.seek(8, SEEK_CUR);
 			size = file.readUint32LE();
 			file.readUint16LE();

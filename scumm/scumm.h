@@ -96,9 +96,6 @@ enum GameFeatures {
 	/** Small header games (ScummEngine_v4 and subclasses). */
 	GF_SMALL_HEADER        = 1 << 6,
 
-	/** Small name games (ScummEngine_v3 and subclasses). */
-	GF_SMALL_NAMES         = 1 << 7,
-
 	/** Old bundle games (ScummEngine_v3old and subclasses). */
 	GF_OLD_BUNDLE          = 1 << 8,
 
@@ -131,7 +128,8 @@ enum GameFeatures {
 	GF_MACINTOSH           = 1 << 21,
 	GF_PC                  = 1 << 22,
 	GF_WINDOWS             = 1 << 23,
-	GF_DEMO                = 1 << 24,
+	
+	GF_DEMO                = 1 << 24
 };
 
 /* SCUMM Debug Channels */
