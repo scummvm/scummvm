@@ -25,10 +25,9 @@
 #include "SDL_timer.h"
 #include "SDL_thread.h"
 
-
 #define MAX(a,b) (((a)<(b)) ? (b) : (a))
 #define MIN(a,b) (((a)>(b)) ? (b) : (a))
-#define POCKETSCUMM_BUILD "051902"
+#define POCKETSCUMM_BUILD "070202"
 
 #define VERSION "Build " POCKETSCUMM_BUILD " (VM " SCUMMVM_CVS ")"
 
@@ -139,6 +138,13 @@ public:
 
 	void addEventRightButtonClicked();
 
+	// Mutex functions
+
+	void* create_mutex();
+	void lock_mutex(void*);
+	void unlock_mutex(void*);
+	void delete_mutex(void*);
+
 private:
 	// Windows callbacks & stuff
 	//bool handleMessage();
@@ -246,7 +252,11 @@ extern void setFindGameDlgHandle(HWND);
 extern void getSelectedGame(int, char*, TCHAR*);
 
 extern void palette_update();
-#define SHMenuBar_GetMenu(hWndMB,ID_MENU) (HMENU)SendMessage((hWndMB), SHCMBM_GETSUBMENU, (WPARAM)0, (LPARAM)ID_MENU)
+//#define SHMenuBar_GetMenu(hWndMB,ID_MENU) (HMENU)SendMessage((hWndMB), SHCMBM_GETSUBMENU, (WPARAM)0, (LPARAM)ID_MENU)
+
+/* Monkey2 keyboard stuff */
+bool monkey2_keyboard;
+int monkey2_keyboard_count;
 
 void do_quit() {
 	GXCloseInput();
@@ -384,6 +394,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	if (strcmp(game_name, "zak256") == 0)
 		hide_toolbar = true;
 
+	// Keyboard activated for Monkey Island 2
+	if (strcmp(game_name, "monkey2") == 0) {
+		draw_keyboard = true;
+		monkey2_keyboard = true;
+		monkey2_keyboard_count = 0;
+	}
+
 	if (detector.detectMain(argc, argv))
 		return (-1);
 
@@ -501,6 +518,12 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			toolbar_drawn = false;
 //		SHHandleWMActivate(hWnd, wParam, lParam, &sai, SHA_INPUTDIALOG);
 
+		SHSipPreference(hWnd, SIP_FORCEDOWN);
+		SHFullScreen(hWnd, SHFS_HIDETASKBAR);
+		MoveWindow(hWnd, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), TRUE);
+		SetCapture(hWnd);
+		
+		/*
 		if (LOWORD(wParam) == WA_ACTIVE) {
 			if (GetScreenMode()) {		
 				SHSipPreference(hWnd, SIP_FORCEDOWN);
@@ -513,6 +536,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				MoveWindow(hWnd, 0, 0, GetSystemMetrics(SM_CYSCREEN), GetSystemMetrics(SM_CXSCREEN), TRUE);
 			}
 		}
+		*/
 
 		return 0;
 
@@ -529,7 +553,9 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			toolbar_drawn = false;
 		return 0;
 
+	
 	case WM_COMMAND:
+		/*
 		switch(wParam)
 		{
 		case IDC_OPTIONS:			
@@ -595,6 +621,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				ShowWindow(taskbar, SW_HIDE);*/
 			/*SHSipPreference(hWnd, SIP_FORCEDOWN);
 			SHFullScreen(hWnd, SHFS_HIDETASKBAR);*/
+		/*
 			SetForegroundWindow(hWnd);
 			MoveWindow(hWnd, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), TRUE);
 			SetCapture(hWnd);
@@ -604,6 +631,8 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			break;
 
 		}
+		*/
+		
 		return 0;
 	
 	case WM_KEYDOWN:
@@ -647,42 +676,75 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			ToolbarSelected toolbar_selection;
 			int x = ((int16*)&lParam)[0];
 			int y = ((int16*)&lParam)[1];
+			
+			//FILE *toto;
+			
 			Translate(&x, &y);
+
+			/*
+ 			fprintf(toto, "Non translated %d %d Translated %d %d\n",
+					((int16*)&lParam)[0], ((int16*)&lParam)[1],
+					x, y);
+			fclose(toto);
+			*/
+
 
 			if (draw_keyboard) {
 				// Handle keyboard selection
+				int offset_y;
+				int saved_x = x;
+				int saved_y = y;
 
-				if (x<185 && y>=200) {
+				/*
+				if (!GetScreenMode()) {
+					x = ((int16*)&lParam)[0];
+					y = ((int16*)&lParam)[1];
+				}
+				*/
+
+				offset_y = (GetScreenMode() ? 0 : 40 + 22);
+
+				if (x<185 && y>=(200 + offset_y)) {
 					//Alpha selection
 					wm->_event.event_code = EVENT_KEYDOWN;
 					wm->_event.kbd.ascii = 
-						(y <= 220 ? KEYBOARD_MAPPING_ALPHA_HIGH[((x + 10) / 14) - 1] :
-									KEYBOARD_MAPPING_ALPHA_LOW[((x + 10) / 14) - 1]);
+						(y <= (220 + offset_y)? KEYBOARD_MAPPING_ALPHA_HIGH[((x + 10) / 14) - 1] :
+												KEYBOARD_MAPPING_ALPHA_LOW[((x + 10) / 14) - 1]);
 					break;
 				} 
 				else
-				if (x>=186 && y>=200 && x<=255) {
+				if (x>=186 && y>=(200 + offset_y) && x<=255) {
 				   // Numeric selection
+				   if (monkey2_keyboard)
+					   monkey2_keyboard_count++;
+				   if (monkey2_keyboard_count == 4) {
+					   monkey2_keyboard = false;
+					   draw_keyboard = false;
+					   toolbar_drawn = false;
+				   }
 				   wm->_event.event_code = EVENT_KEYDOWN;
 				   wm->_event.kbd.ascii =
-					   (y <= 220 ? KEYBOARD_MAPPING_NUMERIC_HIGH[((x - 187 + 10) / 14) - 1] :
-								   KEYBOARD_MAPPING_NUMERIC_LOW[((x - 187 + 10) / 14) - 1]);
+					   (y <= (220 + offset_y) ? KEYBOARD_MAPPING_NUMERIC_HIGH[((x - 187 + 10) / 14) - 1] :
+												KEYBOARD_MAPPING_NUMERIC_LOW[((x - 187 + 10) / 14) - 1]);
 				   break;
 				}
 				else
-				if (x>=302 && x <= 316 && y >= 200 && y <= 220) {
+				if (x>=302 && x <= 316 && y >= (200 + offset_y) && y <= (220 + offset_y)) {
 				  // Backspace
 				  wm->_event.event_code = EVENT_KEYDOWN;
 				  wm->_event.kbd.ascii = mapKey(VK_BACK);
 				  break;
 				}
 				else
-				if (x>=302 && x<= 316 && y >= 220) { 
+				if (x>=302 && x<= 316 && y >= (220 + offset_y)) { 
 				  // Enter
 				  wm->_event.event_code = EVENT_KEYDOWN;
 				  wm->_event.kbd.ascii = mapKey(VK_RETURN);
 				  break;
 				}
+
+				x = saved_x;
+				y = saved_y;
 
 				wm->_event.event_code = EVENT_LBUTTONDOWN;
 				wm->_event.mouse.x = x;
@@ -694,13 +756,16 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 					
 
 			toolbar_selection = (hide_toolbar || get_key_mapping ? ToolbarNone : 
-									getToolbarSelection(x, y));
+									 getToolbarSelection(
+										 (GetScreenMode() ? x : ((int16*)&lParam)[0]), 
+										 (GetScreenMode() ? y : ((int16*)&lParam)[1])));
 			if (toolbar_selection == ToolbarNone) {				
 				wm->_event.event_code = EVENT_LBUTTONDOWN;
 				wm->_event.mouse.x = x;
 				wm->_event.mouse.y = y;
 				wm->_last_mouse_event = wm->_event;
 			
+				/*
 				if(y > 200 && !hide_toolbar)
 				{
 					if(x<160) {
@@ -723,7 +788,8 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 						hDC = BeginPaint (hWnd, &ps);
 						EndPaint (hWnd, &ps);
 					}				
-				}			
+				}
+				*/
 			}
 			else {
 				switch(toolbar_selection) {
@@ -732,17 +798,18 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 							detector._gameId <= GID_SIMON_LAST) {							
 							break;
 						}
-						if (GetScreenMode()) {
+						/*if (GetScreenMode()) {*/
 							draw_keyboard = true;
 							if (!hide_toolbar)
 								toolbar_drawn = false;
-						}
+						/*}*/
 						wm->_event.event_code = EVENT_KEYDOWN;
 						wm->_event.kbd.ascii = mapKey(VK_F5);
 						break;
-					case ToolbarExit:
-						wm->_event.event_code = EVENT_KEYDOWN;
-						wm->_event.kbd.ascii = KEY_SET_OPTIONS;
+					case ToolbarMode:
+						SetScreenMode(!GetScreenMode());
+						if (!hide_toolbar)
+							toolbar_drawn = false;
 						break;
 					case ToolbarSkip:
 						if (detector._gameId >= GID_SIMON_FIRST) {
@@ -898,11 +965,11 @@ void action_save() {
 	OSystem_WINCE3* system;
 	system = (OSystem_WINCE3*)g_scumm->_system;
 
-	if (GetScreenMode()) {
+	/*if (GetScreenMode()) {*/
 		draw_keyboard = true;
 		if (!hide_toolbar)
 			toolbar_drawn = false;
-	}
+	/*}*/
 
 	system->addEventKeyPressed(mapKey(VK_F5));
 }
@@ -933,11 +1000,11 @@ void action_hide() {
 }
 
 void action_keyboard() {
-	if (GetScreenMode()) {
+	/*if (GetScreenMode()) {*/
 		draw_keyboard = !draw_keyboard;
 		if (!hide_toolbar)
 			toolbar_drawn = false;
-	}
+	/*}*/
 }
 
 void action_sound() {
@@ -1003,6 +1070,7 @@ OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
 	ShowWindow(syst->hWnd, SW_SHOW);
 	UpdateWindow(syst->hWnd);
 
+	/*
 	SHMENUBARINFO smbi;
 	smbi.cbSize = sizeof(smbi); 
 	smbi.hwndParent = syst->hWnd; 
@@ -1014,10 +1082,13 @@ OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
 	smbi.hwndMB = NULL;
 	BOOL res = SHCreateMenuBar(&smbi);
 	hWnd_MainMenu = smbi.hwndMB;
+	*/
 
 	/* Sound is activated on default - initialize it in the menu */
+	/*
 	CheckMenuItem((HMENU)SHMenuBar_GetMenu (hWnd_MainMenu, IDM_POCKETSCUMM),
 		IDC_SOUND, MF_BYCOMMAND | MF_CHECKED);
+	*/
 
 	GraphicsOn(syst->hWnd);
 
@@ -1031,6 +1102,9 @@ OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
 	if (SDL_Init(SDL_INIT_AUDIO)==-1) {		
 	    exit(1);
 	}
+
+	Cls();
+	drawWait();
 
 	return syst;
 }
@@ -1334,3 +1408,19 @@ bool OSystem_WINCE3::poll_cdrom() {return 0;}
 void OSystem_WINCE3::update_cdrom() {;}
 
 void ScummDebugger::attach(Scumm *s) {;}
+
+/* Mutex stuff */
+void* OSystem_WINCE3::create_mutex() {
+	return (void*)CreateMutex(NULL, FALSE, NULL);
+}
+void OSystem_WINCE3::lock_mutex(void *handle) {
+	WaitForSingleObject((HANDLE)handle, INFINITE);
+}
+
+void OSystem_WINCE3::unlock_mutex(void *handle) {
+	ReleaseMutex((HANDLE)handle);
+}
+
+void OSystem_WINCE3::delete_mutex(void *handle) {
+	CloseHandle((HANDLE)handle);
+}
