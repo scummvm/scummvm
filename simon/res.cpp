@@ -258,7 +258,6 @@ byte *SimonState::readSingleOpcode(File *in, byte *ptr)
 		break;
 	case GAME_SIMON2DOS:
 		table = opcode_arg_table_simon2dos;
-		printf("right opcode table\n");
 		break;
 	case GAME_SIMON2WIN:
 		table = opcode_arg_table_simon2win;
