@@ -35,7 +35,7 @@ class OSystem;
  * Custom object factory for OSystem.
  */
 template <>
-extern OSystem *Common::Singleton<OSystem>::makeInstance();
+OSystem *Common::Singleton<OSystem>::makeInstance();
 
 
 /**
