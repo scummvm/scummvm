@@ -21,11 +21,9 @@
 #include "driver96.h"
 #include "../sword2.h"
 
-#ifndef WIN32
 uint32 timeGetTime(void) {
 	return g_bs2->_syst->get_msecs();
 }
-#endif
 
 void VirtualUnlock(uint8 *free_memman, uint32 total_free_memory) {
 	warning("stub VirtualUnlock");
@@ -54,12 +52,10 @@ int32 GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint8 *,
 	return 1;
 }
 
-#ifndef WIN32
 // FIXME wrap different platform specific mkdir calls and actually do something
 void _mkdir(const char *pathname) {
 	warning("stub _mkdir %s", pathname);
 }
-#endif
 
 void GetModuleFileName(void *module, char *destStr, uint32 maxLen) {
 	warning("stub GetModuleFileName");

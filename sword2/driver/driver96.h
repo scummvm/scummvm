@@ -1612,8 +1612,19 @@ extern int32 IsFxOpen(int32 id);
 extern int32 SetFxVolumePan(int32 id, uint8 vol, int8 pan);
 extern int32 SetFxIdVolume(int32 id, uint8 vol);
 
+#ifdef WIN32
 
-#ifndef WIN32
+#undef timeGetTime
+#undef VirtualUnlock
+#undef GlobalMemoryStatus
+#undef SetFileAttributes
+#undef GetCurrentDirectory
+#undef GetVolumeInformation
+#undef _mkdir
+#undef GetModuleFileName
+
+#endif
+
 //-----------------------------------------------------------------------------
 //	Misc functions - from misc.cpp
 //-----------------------------------------------------------------------------
@@ -1626,7 +1637,6 @@ extern void GetCurrentDirectory(uint32 max, char* path);
 extern int32 GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint8 *, DWORD *dwMaxCompLength, DWORD *dwFSFlags, uint8 *, uint32 a);
 extern void _mkdir(const char *pathname);
 extern void GetModuleFileName(void *module, char *destStr, uint32 maxLen);
-#endif
 
 //-----------------------------------------------------------------------------
 //Macro for calling error handler with source filename and line.
