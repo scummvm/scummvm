@@ -145,24 +145,18 @@ void screenBlocksDrawDebug()
 	int i;
 	int j;
 
-	GLdouble modelView[500];
-	GLdouble projection[500];
-	GLint viewPort[500];
-
-	glGetDoublev( GL_MODELVIEW_MATRIX, modelView );
-	glGetDoublev( GL_PROJECTION_MATRIX, projection );
-	glGetIntegerv( GL_VIEWPORT, viewPort);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, 640, 480, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
 	glDisable(GL_DEPTH_TEST);
-	glPointSize( 3.f );
-	glColor4f( 1.f, 0.f, 1.f, 1.f );
+	glColor4f( 1.f, 0.3f, 1.f, 0.4f );
 	glDisable(GL_TEXTURE_2D );
-
-	glBegin(GL_LINES);
-
-	GLdouble objx;
-	GLdouble objy;
-	GLdouble objz;
+	glDisable(GL_LIGHTING);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	for(i=0;i<40;i++)
 	{
@@ -170,57 +164,18 @@ void screenBlocksDrawDebug()
 		{
 			if(screenBlockData[i][j].isDirty)
 			{
-				int left;
-				int top;
-				int right;
-				int bottom;
-				
-
-				/*glColor3ub( 255, 255, 0 );
+				glBegin(GL_QUADS);
 				glVertex2i(i*16,j*16);
 				glVertex2i((i+1)*16,j*16);
 				glVertex2i((i+1)*16,(j+1)*16);
 				glVertex2i(i*16,(j+1)*16);
-				*/
-
-				left = i*16;
-				right = (i+1)*16;
-				top = j*16;
-				bottom = (j+1)*16;
-				
-
-				// top
-				gluUnProject( left, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-				glVertex3f( objx, objy, objz );
-				gluUnProject( right, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-				glVertex3f( objx, objy, objz );
-
-				// bottom
-				gluUnProject( left, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-				glVertex3f( objx, objy, objz );
-				gluUnProject( right, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-				glVertex3f( objx, objy, objz );
-
-				// left
-				gluUnProject( left, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-				glVertex3f( objx, objy, objz );
-				gluUnProject( left, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-				glVertex3f( objx, objy, objz );
-
-				// right
-				gluUnProject( right, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-				glVertex3f( objx, objy, objz );
-				gluUnProject( right, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
-				glVertex3f( objx, objy, objz );
-
+				glEnd();
 			}
 		}
 	}
-
-	glEnd();
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D );
-
+	glDisable(GL_BLEND);
 }
 
 void screenBlocksBlitDirtyBlocks()
@@ -233,8 +188,6 @@ void screenBlocksBlitDirtyBlocks()
 	glOrtho(0, 640, 480, 0, 0, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glMatrixMode(GL_TEXTURE);
-	glLoadIdentity();
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_ALWAYS);
@@ -242,27 +195,23 @@ void screenBlocksBlitDirtyBlocks()
 	glDepthMask(GL_TRUE);
 
 
-	for(i=0;i<40;i++)
+	for(j=0;j<30;j++)
 	{
-		for(j=0;j<30;j++)
+		for(i=0;i<40;i++)
 		{
-			if(screenBlockData[i][j].isDirty)
-			{
-				// find the largest possible line
+			if (screenBlockData[i][j].isDirty) {
 				int width = 1;
-				int temp = i+1;
-				screenBlockData[i][j].isDirty = false;
-				while((temp <40) && screenBlockData[temp][j].isDirty)
+				int start = i++;
+				// find the largest possible line
+				while ((screenBlockData[i][j].isDirty) && (i < 40))
 				{
-					screenBlockData[temp][j].isDirty = false;
+					i++;
 					width++;
-					temp++;
 				}
-
 				for (int y = 0; y < 16; y++)
 				{
-					glRasterPos2i(j*16, i*16 + y);
-					glDrawPixels(16*width, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, dataTemp+((j*16 +y) * 640)+(i*16));
+					glRasterPos2i(start*16, j*16 + y + 1);
+					glDrawPixels(16*width, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, dataTemp+((j*16 +y) * 640)+(start*16));
 				}
 			}
 		}
