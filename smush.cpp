@@ -149,8 +149,10 @@ void Smush::handleFramesHeader() {
 	free(f_header);
 }
 
-void Smush::setupAnim(const char *file, const char *directory) {
-	_file.open(file, directory);
+bool Smush::setupAnim(const char *file, const char *directory) {
+	if (!_file.open(file))
+		return false;
+
 	uint32 tag;
 	int32 size;
 	
@@ -165,10 +167,16 @@ void Smush::setupAnim(const char *file, const char *directory) {
 	_nbframes = READ_LE_UINT32(s_header + 2);
 	_width = READ_LE_UINT16(s_header + 8);
 	_height = READ_LE_UINT16(s_header + 10);
-	if ((_width != 640) || (_height != 480))
-		error("resolution of smush frame other than 640x480 not supported");
+
+	if ((_width != 640) || (_height != 480)) {
+		warning("resolution of smush frame other than 640x480 not supported");
+		return false;
+	}
+
 	_speed = READ_LE_UINT32(s_header + 14);
 	free(s_header);
+
+	return true;
 }
 
 void Smush::play(const char *filename, const char *directory) {
@@ -249,17 +257,9 @@ void Smush::play(const char *filename, const char *directory) {
 		warning("Smush::play() Open okay for %s!\n", filename);
 	}
 
-	// Verify the specified file exists
-	File f;
-	f.open(tmpOut, NULL);
-	if (!f.isOpen()) {
-		warning("Smush::play() File not found %s", filename);
-		return;
-	}
-	f.close();
-
 	// Load the video
-	setupAnim(tmpOut, directory);
+	if (!setupAnim(tmpOut, directory))
+		return;
 	handleFramesHeader();
 
 	SDL_Surface* image;
@@ -524,3 +524,203 @@ uint32 File::readUint32BE() {
 	uint32 a = readUint16BE();
 	return (b << 16) | a;
 }
+///////////////////////////////////
+
+zlibFile::zlibFile() {
+	_handle = NULL;
+	usedBuffer = 0;
+}
+
+zlibFile::~zlibFile() {
+	close();
+}
+
+bool zlibFile::open(const char *filename) {
+	char flags = 0;
+
+	if (_handle) {
+		warning("File %s already opened", filename);
+		return false;
+	}
+
+	if (filename == NULL || *filename == 0)
+		return false;
+	
+	_handle = ResourceLoader::instance()->openNewStream(filename);
+	if (!_handle) {
+		warning("zlibFile %s not found", filename);
+        	return false;
+	}
+
+	warning("zlibFile %s opening...", filename);
+
+	// Read in the GZ header
+	fread(inBuf, 4, sizeof(char), _handle);				// Header, Method, Flags
+	flags = inBuf[4];
+	fread(inBuf, 6, sizeof(char), _handle);				// XFlags
+
+	if (((flags & 0x04) != 0) || ((flags & 0x10) != 0))		// Misc
+		error("Unsupported header flag");
+
+	if ((flags & 0x08) != 0) {                                              // Name
+		do {
+			fread(inBuf, 1, sizeof(char), _handle);
+		} while(inBuf[0] != 0);
+        }
+
+	if ((flags & 0x02 != 0))                                // CRC
+		fread(inBuf, 2, sizeof(char), _handle);
+
+	stream.zalloc = NULL;
+	stream.zfree = NULL;
+	stream.opaque = Z_NULL;
+
+	if (inflateInit2(&stream, -15) != Z_OK)
+		error("zlibFile::(constructor) - inflateInit2 failed");
+
+	// Initial buffer pump
+	stream.next_in = (Bytef*)inBuf;
+	stream.avail_in = fread(inBuf, 1, sizeof(inBuf), _handle);
+	stream.next_out = (Bytef *)outBuf;
+	stream.avail_out = sizeof(outBuf);
+	fillZlibBuffer();
+
+	warning("zlibFile %s opened!", filename);
+
+	return true;
+}
+
+void zlibFile::close() {
+	if (_handle)
+		fclose(_handle);
+	_handle = NULL;
+}
+
+bool zlibFile::isOpen() {
+	return _handle != NULL;
+}
+
+bool zlibFile::eof() {
+	error("zlibFile::eof() - Not implemented");
+}
+
+uint32 zlibFile::pos() {
+	error("zlibFile::pos() - Not implemented");
+}
+
+uint32 zlibFile::size() {
+	error("zlibFile::size() - Not implemented");
+}
+
+void zlibFile::seek(int32 offs, int whence) {
+	error("zlibFile::seek() - Not implemented");
+}
+
+uint32 zlibFile::read(void *ptr, uint32 len) {
+	byte *ptr2 = (byte *)ptr;
+
+ 	if (_handle == NULL) {
+ 		error("File is not open!");
+ 		return 0;
+ 	}
+ 
+	if (len == 0)
+ 		return 0;
+	int bufferLeft = sizeof(outBuf) - usedBuffer;
+ 
+	printf("zlibFile::read(%d). usedBuffer: %d. bufferLeft: %d\n", len, usedBuffer, bufferLeft);
+ 
+	// Do we need to get more than one buffer-read to complete this request?
+	if (len > bufferLeft) {
+		int maxBuffer = sizeof(outBuf);
+		int ptr2Pos = bufferLeft;
+		int neededAmount = len - bufferLeft;
+		
+		memcpy(ptr2, outBuf+usedBuffer, bufferLeft);	// Copy what we've got
+
+		while (neededAmount > 0) {
+			fillZlibBuffer();
+
+			if (neededAmount > maxBuffer) {
+				memcpy(ptr2+ptr2Pos, outBuf, maxBuffer);
+ 
+				neededAmount-=maxBuffer;
+				ptr2Pos+=maxBuffer;
+				usedBuffer+=maxBuffer;
+			} else {
+				memcpy(ptr2+ptr2Pos, outBuf, neededAmount);
+				usedBuffer+=neededAmount;
+				neededAmount = 0;
+			}
+		}
+	} else {
+		memcpy(ptr2, outBuf + usedBuffer, len);
+		usedBuffer+=len;
+ 	}
+	return len;
+}
+ 
+void zlibFile::fillZlibBuffer() {
+	int status = 0;
+ 
+	if (stream.avail_in == 0) {
+		stream.next_in = (Bytef*)inBuf;
+		stream.avail_in = fread(inBuf, 1, sizeof(inBuf), _handle);
+ 	}
+ 
+        status = inflate(&stream, Z_NO_FLUSH);
+	if (status == Z_STREAM_END) {
+		if (sizeof(outBuf) - stream.avail_out)
+			warning("fillZlibBuffer: End of buffer");
+		return;
+ 	}
+ 
+	if (status != Z_OK) {
+		warning("Smush::play() - Error inflating stream (%d) [-3 means bad data]", status);
+		return;
+	}
+
+
+	if (stream.avail_out == 0) {
+		stream.next_out = (Bytef*)outBuf;
+		stream.avail_out = sizeof(outBuf);
+	}
+	usedBuffer = 0;
+}
+
+byte zlibFile::readByte() {
+	if (_handle == NULL) {
+		error("File is not open!");
+		return 0;
+	}
+
+	if (usedBuffer >= sizeof(outBuf))
+		fillZlibBuffer();
+
+	return outBuf[usedBuffer++];
+}
+
+uint16 zlibFile::readUint16LE() {
+	uint16 a = readByte();
+	uint16 b = readByte();
+	return a | (b << 8);
+}
+
+uint32 zlibFile::readUint32LE() {
+	uint32 a = readUint16LE();
+	uint32 b = readUint16LE();
+	return (b << 16) | a;
+}
+
+uint16 zlibFile::readUint16BE() {
+	uint16 b = readByte();
+	uint16 a = readByte();
+	return a | (b << 8);
+}
+
+uint32 zlibFile::readUint32BE() {
+	uint32 b = readUint16BE();
+	uint32 a = readUint16BE();
+	return (b << 16) | a;
+}
+

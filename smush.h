@@ -21,6 +21,8 @@
 #include "bits.h"
 #include "debug.h"
 #include <cstring>
+#include <zlib.h>
+
 #include "blocky16.h"
 #include "mixer/mixer.h"
 
@@ -60,11 +62,39 @@ public:
 	void setEnc(byte value) { _encbyte = value; }
 };
 
+class zlibFile {
+private:
+	FILE *_handle;
+	z_stream stream;	// zlib stream
+	uint32 usedBuffer;	// how much of outBuf has been processed by ::read*()
+	char inBuf[1024], outBuf[1024]; // Buffers for decompression
+	void fillZlibBuffer();
+
+public:
+	zlibFile();
+	virtual ~zlibFile();
+	bool open(const char *filename);
+	void close();
+	bool isOpen();
+	bool eof();
+	uint32 pos();
+	uint32 size();
+	void seek(int32 offs, int whence = SEEK_SET);
+
+	uint32 read(void *ptr, uint32 size);
+	uint8 readByte();
+	uint16 readUint16LE();
+	uint32 readUint32LE();
+	uint16 readUint16BE();
+	uint32 readUint32BE();
+};
+
 class Smush {
 private:
 	int32 _nbframes;
 	Blocky16 _blocky16;
 	File _file;
+	// zlibFile _file;
 	PlayingSoundHandle _soundHandle;
 
 	int32 _frame;
@@ -91,7 +121,7 @@ private:
 	void handleWave(const byte *src, uint32 size);
 	void init();
 	void deinit();
-	void setupAnim(const char *file, const char *directory);
+	bool setupAnim(const char *file, const char *directory);
 	void updateGLScreen();
 };
 
