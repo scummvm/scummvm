@@ -339,7 +339,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_bompScallingXPtr = NULL;
 	_bompScallingYPtr = NULL;
 	_bompMaskPtr = NULL;
-	_bompActorPalletePtr = NULL;
+	_bompActorPalettePtr = NULL;
 	_shakeEnabled= false;
 	_shakeFrame = 0;
 	_screenStartStrip = 0;

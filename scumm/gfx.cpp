@@ -3738,12 +3738,12 @@ void Scumm::bompApplyShadow3(byte *line_buffer, byte *dst, int32 size) {
 }
 
 void Scumm::bompApplyActorPalette(byte *line_buffer, int32 size) {
-	if (_bompActorPalletePtr != 0) {
-		*(_bompActorPalletePtr + 255) = 255;
+	if (_bompActorPalettePtr != 0) {
+		*(_bompActorPalettePtr + 255) = 255;
 		while(1) {
 			if (size-- == 0)
 				break;
-			*line_buffer = *(_bompActorPalletePtr + *line_buffer);
+			*line_buffer = *(_bompActorPalettePtr + *line_buffer);
 			line_buffer++;
 		}
 	}

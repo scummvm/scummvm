@@ -895,7 +895,7 @@ protected:
 public:
 	byte *_bompScallingXPtr, *_bompScallingYPtr;
 	byte *_bompMaskPtr;
-	byte *_bompActorPalletePtr;
+	byte *_bompActorPalettePtr;
 
 	void drawBomp(BompDrawData *bd, int decode_mode, int mask);
 protected:

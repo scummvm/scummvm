@@ -206,7 +206,7 @@ void AkosRenderer::setPalette(byte *new_palette) {
 		if (color == 255) {
 			palette[0] = color;
 		} else {
-			_vm->_bompActorPalletePtr = palette;
+			_vm->_bompActorPalettePtr = palette;
 		}
 	}
 }
@@ -985,7 +985,7 @@ byte AkosRenderer::codec5() {
 		_vm->drawBomp(&bdd, decode_mode, 0);
 	}
 
-	_vm->_bompActorPalletePtr = NULL;
+	_vm->_bompActorPalettePtr = NULL;
 	
 	return 0;
 }
