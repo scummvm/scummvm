@@ -231,7 +231,7 @@ void Command::executeCurrentAction(bool walk) {
     // process each associated command for the Object, until all done
     // or one of the Gamestate tests fails...
 	int16 cond = 0;
-	CmdListData *com = &_cmdList[1];
+	CmdListData *com = &_cmdList[0];
 	uint16 comId = 0;
 	uint16 curCommand;
 	for (curCommand = 1; curCommand <= comMax; ++curCommand) {
@@ -272,7 +272,7 @@ void Command::executeCurrentAction(bool walk) {
 		}
 	}
 
-	debug(0, "Command::executeCurrentAction() - cond = %X", cond);
+	debug(0, "Command::executeCurrentAction() - cond = %X, com = %X", cond, curCommand);
 
 	if (com->setAreas) {
 		setAreas(comId);
