@@ -991,8 +991,8 @@ void Actor::drawActorCostume() {
 			bcr->_zbuf = 0;
 		else {
 			bcr->_zbuf = _vm->getMaskFromBox(walkbox);
-			if (bcr->_zbuf > _vm->gdi._numZBuffer)
-				bcr->_zbuf = _vm->gdi._numZBuffer;
+			if (bcr->_zbuf > _vm->gdi._numZBuffer-1)
+				bcr->_zbuf = _vm->gdi._numZBuffer-1;
 		}
 
 		bcr->_draw_top = top = 0xFF;
@@ -1001,8 +1001,8 @@ void Actor::drawActorCostume() {
 		bcr->_zbuf = forceClip;
 		if (bcr->_zbuf == 100) {
 			bcr->_zbuf = _vm->getMaskFromBox(walkbox);
-			if (bcr->_zbuf > _vm->gdi._numZBuffer)
-				bcr->_zbuf = _vm->gdi._numZBuffer;
+			if (bcr->_zbuf > _vm->gdi._numZBuffer-1)
+				bcr->_zbuf = _vm->gdi._numZBuffer-1;
 		}
 
 		bcr->_draw_top = top = 0x7fffffff;
