@@ -23,13 +23,6 @@
 #ifndef GFX_H
 #define GFX_H
 
-enum VideoMode {		/* Video scalers */
-	VIDEO_SCALE = 0,
-	VIDEO_2XSAI = 1,
-	VIDEO_SUPERSAI = 2,
-	VIDEO_SUPEREAGLE = 3
-};
-
 enum {					/* Camera modes */
 	CM_NORMAL = 1,
 	CM_FOLLOW_ACTOR = 2,
