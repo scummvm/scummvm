@@ -87,6 +87,9 @@ Engine *Engine::createFromDetector(GameDetector *detector, OSystem *syst)
 	} else if (detector->_gameId >= GID_SCUMM_FIRST && detector->_gameId <= GID_SCUMM_LAST) {
 		// Some kind of Scumm game
 		engine = Engine_SCUMM_create(detector, syst);
+	} else if (detector->_gameId >= GID_SKY_FIRST && detector->_gameId <= GID_SKY_LAST) {
+		// Beneath a Steel Sky
+		engine = Engine_SKY_create(detector, syst);
 	} else {
 		// Unknown game
 	}

@@ -40,7 +40,11 @@ enum GameId {
 
 	// Simon the Sorcerer
 	GID_SIMON_FIRST,
-	GID_SIMON_LAST = GID_SIMON_FIRST + 99
+	GID_SIMON_LAST = GID_SIMON_FIRST + 99,
+
+	// Beneath a Steel Sky
+	GID_SKY_FIRST,
+	GID_SKY_LAST = GID_SKY_FIRST + 99
 };
 
 // TODO: the GameFeatures really should be moved to scumm/scumm.h, too

@@ -191,12 +191,16 @@ GameDetector::GameDetector()
 		// Gather & combine the target lists from the modules
 		const VersionSettings *scummVersions = Engine_SCUMM_targetList();
 		const VersionSettings *simonVersions = Engine_SIMON_targetList();
+		const VersionSettings *skyVersions = Engine_SKY_targetList();
+		
 		int scummCount = countVersions(scummVersions);
 		int simonCount = countVersions(simonVersions);
+		int skyCount = countVersions(skyVersions);
 		
-		VersionSettings *v = (VersionSettings *)calloc(scummCount + simonCount + 1, sizeof(VersionSettings));
+		VersionSettings *v = (VersionSettings *)calloc(scummCount + simonCount + skyCount + 1, sizeof(VersionSettings));
 		memcpy(v, scummVersions, scummCount * sizeof(VersionSettings));
 		memcpy(v+scummCount, simonVersions, simonCount * sizeof(VersionSettings));
+		memcpy(v+skyCount, skyVersions, skyCount * sizeof(VersionSettings));
 		version_settings = v;
 	}
 }

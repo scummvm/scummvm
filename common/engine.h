@@ -78,9 +78,11 @@ void checkHeap();
 // 2) Faster (compiler doesn't have to parse lengthy header files)
 extern Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst);
 extern Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst);
+extern Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst);
 
 extern const VersionSettings *Engine_SIMON_targetList();
 extern const VersionSettings *Engine_SCUMM_targetList();
+extern const VersionSettings *Engine_SKY_targetList();
 
 #endif
 
