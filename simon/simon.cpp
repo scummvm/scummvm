@@ -556,6 +556,9 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_debugLevel = ConfMan.getInt("debuglevel");
 	_language = Common::parseLanguage(ConfMan.get("language"));
 
+	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1)
+		midi.pause(_music_paused ^= 1);
+
 	if ((_game & GF_SIMON2) && ConfMan.hasKey("speech_mute") && ConfMan.getBool("speech_mute") == 1)
 		_speech = 0;
 
