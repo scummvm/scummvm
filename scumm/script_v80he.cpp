@@ -592,10 +592,12 @@ void ScummEngine_v80he::loadWizCursor(int resId, int resType, bool state) {
 	rc.top = MIN((int)rc.top, 32);
 	rc.right = MIN((int)rc.right, 32);
 
-	// FIXME: dirty hack. Cursor is set in drawWizImage, though should be set from here
-	// it is unclear how height and width are passed from drawWizImage
-	drawWizImage(rtImage, resId, 0, 0, 0, 0x20);
+	uint8 *cursor = drawWizImage(rtImage, resId, 0, 0, 0, 0x20);
+	uint32 cw, ch;
+	getWizImageDim(resId, 0, cw, ch);
+	setCursorFromBuffer(cursor, cw, ch, cw);
 	setCursorHotspot(rc.top, rc.right);
+	free(cursor);
 }
 
 void ScummEngine_v80he::o80_setState() {

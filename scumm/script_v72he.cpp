@@ -1450,12 +1450,6 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, int resnum, int state, int x
 			if (flags & 0x20) {
 				int color = 255; // FIXME: should be (VAR_WIZ_TCOLOR != 0xFF) ? VAR(VAR_WIZ_TCOLOR) : 5;
 				memset(dst, color, width * height);
-
-				// FIXME: dirty hack until missing bits are implemented
-				Common::Rect rScreen(0, 0, width-1, height-1);
-				gdi.copyWizImage(dst, wizd, width, height, 0, 0, width, height, &rScreen);
-				setCursorFromBuffer(dst, width, height, width);
-				// FIXME: ensure that caller frees the returned pointer
 			}
 			cw = width;
 			ch = height;
