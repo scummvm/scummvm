@@ -197,10 +197,10 @@ void SkyEngine::handleKey(void) {
 
 void SkyEngine::go() {
 
-	if (!_dump_file)
-		_dump_file = stdout;
-
 	initialise();
+
+	_sdl_mouse_x = GAME_SCREEN_WIDTH / 2;
+	_sdl_mouse_y = GAME_SCREEN_HEIGHT / 2;
 
 	bool introSkipped = false;
 	if (!_quickLaunch) {

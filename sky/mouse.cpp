@@ -91,7 +91,9 @@ Mouse::Mouse(OSystem *system, Disk *skyDisk) {
 	_system = system;
 	_mouseB = 0;
 	_currentCursor = 6;
-	
+	_mouseX = GAME_SCREEN_WIDTH / 2;
+	_mouseY = GAME_SCREEN_HEIGHT / 2;	
+
 	_miceData = _skyDisk->loadFile(MICE_FILE, NULL);
 	fixMouseTransparency(_miceData, _skyDisk->_lastLoadedFileSize);
 
