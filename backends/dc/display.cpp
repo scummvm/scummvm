@@ -575,6 +575,11 @@ const OSystem::GraphicsMode *OSystem_Dreamcast::getSupportedGraphicsModes() cons
   return gfxmodes;
 }
 
+int GraphicsMode *OSystem_Dreamcast::getDefaultGraphicsMode() const
+{
+  return 0;
+}
+
 bool OSystem_Dreamcast::setGraphicsMode(int mode)
 {
   return mode == 0;
