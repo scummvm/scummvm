@@ -9,8 +9,8 @@ MODULE_OBJS = \
 	sound/mixer.o \
 	sound/mpu401.o \
 	sound/rate.o \
-#	sound/resample.o \
 	sound/voc.o
+#	sound/resample.o \
 
 # Include common rules 
 include common.rules
