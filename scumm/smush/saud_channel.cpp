@@ -248,8 +248,8 @@ int32 SaudChannel::availableSoundData(void) const {
 
 void SaudChannel::getSoundData(int16 *snd, int32 size) {
 	for (int32 i = 0; i < size; i++) {
-		snd[2 * i] = _sbuffer[i] ^ 0x80;
-		snd[2 * i + 1] = _sbuffer[i] ^ 0x80;
+		snd[2 * i] = TO_LE_16(_sbuffer[i] ^ 0x80);
+		snd[2 * i + 1] = TO_LE_16(_sbuffer[i] ^ 0x80);
 	}
 	if (!_keepSize)
 		_dataSize -= size;
