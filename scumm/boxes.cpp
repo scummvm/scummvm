@@ -1028,9 +1028,7 @@ void ScummEngine::createBoxMatrix() {
 
 /** Check if two boxes are neighbours. */
 bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
-	int j, k, m, n;
 	int tmp_x, tmp_y;
-	bool result;
 	BoxCoords box;
 	BoxCoords box2;
 
@@ -1040,51 +1038,52 @@ bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 	getBoxCoordinates(box1nr, &box2);
 	getBoxCoordinates(box2nr, &box);
 
-	result = false;
-	j = 4;
-
-	do {
-		k = 4;
-		do {
-			if (box2.ur.x == box2.ul.x && box.ul.x == box2.ul.x && box.ur.x == box2.ur.x) {
-				n = m = 0;
+	// Roughly, the idea of this algorithm is to check if we can find
+	// two sides of the two given boxes which touch.
+	// In order to keep te code simple, we only match the upper sides;
+	// then, we "rotate" the box coordinates four times each, for a total
+	// of 16 comparisions (four sides compared with four sides each).
+	for (int j = 0; j < 4; j++) {
+		for (int k = 0; k < 4; k++) {
+			// Are the "upper" sides of the boxes on a single vertical line
+			// (i.e. all share one x value) ?
+			if (box2.ur.x == box2.ul.x && box.ul.x == box2.ul.x && box.ur.x == box2.ul.x) {
+				bool swappedBox2 = false, swappedBox1 = false;
 				if (box2.ur.y < box2.ul.y) {
-					n = 1;
+					swappedBox2 = 1;
 					SWAP(box2.ur.y, box2.ul.y);
 				}
 				if (box.ur.y < box.ul.y) {
-					m = 1;
+					swappedBox1 = 1;
 					SWAP(box.ur.y, box.ul.y);
 				}
 				if (box.ur.y < box2.ul.y ||
 						box.ul.y > box2.ur.y ||
 						(box.ul.y == box2.ur.y ||
 						 box.ur.y == box2.ul.y) && box2.ur.y != box2.ul.y && box.ul.y != box.ur.y) {
-					if (n) {
-						SWAP(box2.ur.y, box2.ul.y);
-					}
-					if (m) {
-						SWAP(box.ur.y, box.ul.y);
-					}
 				} else {
-					if (n) {
-						SWAP(box2.ur.y, box2.ul.y);
-					}
-					if (m) {
-						SWAP(box.ur.y, box.ul.y);
-					}
-					result = true;
+					return true;
+				}
+
+				// Swap back if necessary
+				if (swappedBox2) {
+					SWAP(box2.ur.y, box2.ul.y);
+				}
+				if (swappedBox1) {
+					SWAP(box.ur.y, box.ul.y);
 				}
 			}
 
-			if (box2.ur.y == box2.ul.y && box.ul.y == box2.ul.y && box.ur.y == box2.ur.y) {
-				n = m = 0;
+			// Are the "upper" sides of the boxes on a single horizontal line
+			// (i.e. all share one y value) ?
+			if (box2.ur.y == box2.ul.y && box.ul.y == box2.ul.y && box.ur.y == box2.ul.y) {
+				bool swappedBox2 = false, swappedBox1 = false;
 				if (box2.ur.x < box2.ul.x) {
-					n = 1;
+					swappedBox2 = 1;
 					SWAP(box2.ur.x, box2.ul.x);
 				}
 				if (box.ur.x < box.ul.x) {
-					m = 1;
+					swappedBox1 = 1;
 					SWAP(box.ur.x, box.ul.x);
 				}
 				if (box.ur.x < box2.ul.x ||
@@ -1092,23 +1091,20 @@ bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 						(box.ul.x == box2.ur.x ||
 						 box.ur.x == box2.ul.x) && box2.ur.x != box2.ul.x && box.ul.x != box.ur.x) {
 
-					if (n) {
-						SWAP(box2.ur.x, box2.ul.x);
-					}
-					if (m) {
-						SWAP(box.ur.x, box.ul.x);
-					}
 				} else {
-					if (n) {
-						SWAP(box2.ur.x, box2.ul.x);
-					}
-					if (m) {
-						SWAP(box.ur.x, box.ul.x);
-					}
-					result = true;
+					return true;
+				}
+
+				// Swap back if necessary
+				if (swappedBox2) {
+					SWAP(box2.ur.x, box2.ul.x);
+				}
+				if (swappedBox1) {
+					SWAP(box.ur.x, box.ul.x);
 				}
 			}
 
+			// "Rotate" the box coordinates
 			tmp_x = box2.ul.x;
 			tmp_y = box2.ul.y;
 			box2.ul.x = box2.ur.x;
@@ -1119,8 +1115,9 @@ bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 			box2.lr.y = box2.ll.y;
 			box2.ll.x = tmp_x;
 			box2.ll.y = tmp_y;
-		} while (--k);
+		}
 
+		// "Rotate" the box coordinates
 		tmp_x = box.ul.x;
 		tmp_y = box.ul.y;
 		box.ul.x = box.ur.x;
@@ -1131,9 +1128,9 @@ bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 		box.lr.y = box.ll.y;
 		box.ll.x = tmp_x;
 		box.ll.y = tmp_y;
-	} while (--j);
+	}
 
-	return result;
+	return false;
 }
 
 void Actor::findPathTowardsOld(byte box1, byte box2, byte finalBox, Common::Point &p2, Common::Point &p3) {
