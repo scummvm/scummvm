@@ -137,7 +137,28 @@ void SwordEngine::initialize(void) {
 		_systemVars.deathScreenFlag = _systemVars.currentMusic = 0;
 	_systemVars.snrStatus = 0;
 	_systemVars.rate = 8;
-	_systemVars.language = 2;
+
+	switch (Common::parseLanguage(ConfMan.get("language"))) {
+	case Common::DE_DEU:
+		_systemVars.language = BS1_GERMAN;
+		break;
+	case Common::FR_FRA:
+		_systemVars.language = BS1_FRENCH;
+		break;
+	case Common::IT_ITA:
+		_systemVars.language = BS1_ITALIAN;
+		break;
+	case Common::ES_ESP:
+		_systemVars.language = BS1_SPANISH;
+		break;
+	case Common::PT_BRA:
+		_systemVars.language = BS1_PORT;
+		break;
+	// TODO add czech option
+	default:
+		_systemVars.language = BS1_ENGLISH;
+	}
+	
 	_systemVars.playSpeech = 1;
 	//- start.c:
 	// todo: move these to somewhere else
