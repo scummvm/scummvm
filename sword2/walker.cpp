@@ -51,7 +51,7 @@ int32 Logic::fnWalk(int32 *params) {
 	uint8 target_dir;
 	int8 route;
 	int32 walk_pc;
-	_walkData *walkAnim;
+	WalkData *walkAnim;
 
 	// get the parameters
 

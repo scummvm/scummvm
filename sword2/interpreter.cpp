@@ -189,7 +189,7 @@ static const OpcodeEntry opcodes[] = {
 do { \
 	assert(stackPtr < ARRAYSIZE(stack)); \
 	stack[stackPtr++] = (value); \
-} while (false);
+} while (false)
 
 #define pop() (assert(stackPtr < ARRAYSIZE(stack)), stack[--stackPtr])
 

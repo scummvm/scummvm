@@ -36,7 +36,7 @@ namespace Sword2 {
 	#pragma START_PACK_STRUCTS
 #endif
 
-struct _walkData {
+struct WalkData {
 	uint16 frame;
 	int16 x;
 	int16 y;
@@ -44,7 +44,7 @@ struct _walkData {
 	uint8 dir;
 } GCC_PACK;
 
-struct _barData {
+struct BarData {
 	int16 x1;
   	int16 y1;
   	int16 x2;
@@ -59,7 +59,7 @@ struct _barData {
 			// line y * dx = x * dy + co
 } GCC_PACK;
 
-struct _nodeData {
+struct NodeData {
 	int16 x;
 	int16 y;
 	int16 level;
@@ -85,19 +85,19 @@ struct _nodeData {
 #define	O_GRID_SIZE		200	// max 200 lines & 200 points
 #define	O_ROUTE_SIZE		50	// max number of modules in a route
 
-typedef	struct {
+struct RouteData {
 	int32 x;
 	int32 y;
 	int32 dirS;
 	int32 dirD;
-} _routeData;
+};
 
-typedef	struct {
+struct PathData {
 	int32 x;
 	int32 y;
 	int32 dir;
 	int32 num;
-} _pathData;
+};
 
 class Router {
 private:
@@ -107,13 +107,13 @@ private:
 	// megas (NULL if slot not in use)
 	mem *_routeSlots[TOTAL_ROUTE_SLOTS];
 
-	_barData _bars[O_GRID_SIZE];
-	_nodeData _node[O_GRID_SIZE];
+	BarData _bars[O_GRID_SIZE];
+	NodeData _node[O_GRID_SIZE];
 
 	int32 _walkGridList[MAX_WALKGRIDS];
 
-	int32 _nbars;
-	int32 _nnodes;
+	int32 _nBars;
+	int32 _nNodes;
 
 	int32 _startX;
 	int32 _startY;
@@ -123,9 +123,10 @@ private:
 	int32 _targetDir;
 	int32 _scaleA;
 	int32 _scaleB;
-	_routeData _route[O_ROUTE_SIZE];
-	_pathData _smoothPath[O_ROUTE_SIZE];
-	_pathData _modularPath[O_ROUTE_SIZE];
+
+	RouteData _route[O_ROUTE_SIZE];
+	PathData _smoothPath[O_ROUTE_SIZE];
+	PathData _modularPath[O_ROUTE_SIZE];
 	int32 _routeLength;
 
 	int32 _framesPerStep;
@@ -179,27 +180,27 @@ private:
 	void loadWalkGrid(void);
 	void setUpWalkGrid(Object_mega *ob_mega, int32 x, int32 y, int32 dir);
 	void loadWalkData(Object_walkdata *ob_walkdata);
-	int32 scan(int32 level);
+	bool scan(int32 level);
 
 	int32 newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2);
-	int32 lineCheck(int32 x1, int32 x2, int32 y1, int32 y2);
-	int32 vertCheck(int32 x, int32 y1, int32 y2);
-	int32 horizCheck(int32 x1, int32 y, int32 x2);
-	int32 check(int32 x1, int32 y1, int32 x2, int32 y2);
+	bool lineCheck(int32 x1, int32 x2, int32 y1, int32 y2);
+	bool vertCheck(int32 x, int32 y1, int32 y2);
+	bool horizCheck(int32 x1, int32 y, int32 x2);
+	bool check(int32 x1, int32 y1, int32 x2, int32 y2);
 	int32 checkTarget(int32 x, int32 y);
 
 	int32 smoothestPath(void);
-	int32 slidyPath(void);
+	void slidyPath(void);
 
 	int32 smoothCheck(int32 best, int32 p, int32 dirS, int32 dirD);
 
-	int32 addSlowInFrames(_walkData *walkAnim);
-	void addSlowOutFrames(_walkData *walkAnim);
-	void slidyWalkAnimator(_walkData *walkAnim);
+	bool addSlowInFrames(WalkData *walkAnim);
+	void addSlowOutFrames(WalkData *walkAnim);
+	void slidyWalkAnimator(WalkData *walkAnim);
 
 #ifndef FORCE_SLIDY
 	int32 solidPath(void);
-	int32 solidWalkAnimator(_walkData *walkAnim);
+	int32 solidWalkAnimator(WalkData *walkAnim);
 #endif
 
 	void plotCross(int16 x, int16 y, uint8 colour);
@@ -227,7 +228,7 @@ public:
 	void earlySlowOut(Object_mega *ob_mega, Object_walkdata *ob_walkdata);
 
 	void allocateRouteMem(void);
-	_walkData* lockRouteMem(void);
+	WalkData *lockRouteMem(void);
 	void floatRouteMem(void);
 	void freeRouteMem(void);
 	void freeAllRouteMem(void);
