@@ -906,6 +906,10 @@ void Actor::drawActorCostume() {
 
 	bcr->_actorX = x - _vm->virtscr[0].xstart;
 	bcr->_actorY = y - elevation;
+	if (_vm->_version <= 2) {
+		// We have to adjust the x position by one strip (8 pixels) in V2 games
+		bcr->_actorX += 8;
+	}
 	bcr->_scaleX = scalex;
 	bcr->_scaleY = scaley;
 
