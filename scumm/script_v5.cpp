@@ -1770,27 +1770,29 @@ void Scumm_v5::o5_resourceRoutines() {
 		loadFlObject(getVarOrDirectWord(0x40), resid);
 		break;
 
+	// TODO: For the following see also Hibarnatus' information on bug #805691.
 	case 32:
-		// TODO
+		// TODO (apparently never used in FM Towns)
 		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
 	case 33:
-		// TODO
+		// TODO (apparently never used in FM Towns)
 		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
 	case 35:
-		// TODO: Might be used to set CD volume in LoomCD
+		// TODO: Might be used to set CD volume in FM Towns Loom
 		foo = getVarOrDirectByte(0x40);
 		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
 	case 36:
-		// TODO
+		// TODO: Sets the loudness of a sound resource. Used in Indy3 and Zak. 
 		foo = getVarOrDirectByte(0x40);
 		bar = fetchScriptByte();
 		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
 	case 37:
-		// TODO
+		// TODO: Sets the pitch of a sound resource (pitch = foo - center semitones.
+		// "center" is at 0x32 in the sfx resource (always 0x3C in zak256, but sometimes different in Indy3). 
 		foo = getVarOrDirectByte(0x40);
 		warning("o5_resourceRoutines %d not yet handled (script %d)", _opcode & 0x3F,  vm.slot[_currentScript].number);
 		break;
@@ -2221,7 +2223,7 @@ void Scumm_v5::o5_startMusic() {
 			result = _sound->getCurrentCDSound();
 			break;
 		case 0xFF:
-			// TODO: Might return current CD volume in LoomCD.
+			// TODO: Might return current CD volume in FM Towns Loom. See also bug #805691.
 			break;
 		default:
 			// TODO: return track length in seconds. We'll have to extend Sound and OSystem for this.
