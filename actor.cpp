@@ -199,12 +199,12 @@ int Actor::remapDirection(int dir)
 		flipY = (walkdata.YXFactor > 0);
 
 		// Check for X-Flip
-		if ((flags & 0x08) || isInClass(0x1E)) {	// 0x1E = 30
+		if ((flags & 0x08) || isInClass(30)) {
 			dir = 360 - dir;
 			flipX = !flipX;
 		}
 		// Check for Y-Flip
-		if ((flags & 0x10) || isInClass(0x1D)) {	// 0x1E = 29
+		if ((flags & 0x10) || isInClass(29)) {
 			dir = 180 - dir;
 			flipY = !flipY;
 		}
@@ -598,7 +598,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 					|| !(_vm->_features & GF_SMALL_HEADER))
 				for (j = box; j >= firstValidBox; j--) {
 					flags = _vm->getBoxFlags(j);
-					if (flags & 0x80 && (!(flags & 0x20) || isInClass(0x1F)))
+					if (flags & 0x80 && (!(flags & 0x20) || isInClass(31)))
 						continue;
 
 					if (pathfrom >= firstValidBox) {
@@ -612,7 +612,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 							// closed doors in some cases in Zak256. However a better fix
 							// would be to recompute the box matrix whenever flags change.
 							flags = _vm->getBoxFlags(i);
-							if (flags & 0x80 && (!(flags & 0x20) || isInClass(0x1F)))
+							if (flags & 0x80 && (!(flags & 0x20) || isInClass(31)))
 								continue;
 						}
 					}
@@ -862,17 +862,16 @@ void Actor::drawActorCostume()
 	if (!(_vm->_features & GF_AFTER_V7)) {
 		CostumeRenderer cr(_vm);
 
-		if (isInClass(20))
-			mask = 0;
-		else if (isInClass(21))
-			forceClip = 1;
-
 		cr._actorX = x - _vm->virtscr->xstart;
 		cr._actorY = y - elevation;
 		cr._scaleX = scalex;
 		cr._scaleY = scaley;
 
 		cr._outheight = _vm->virtscr->height;
+
+		if (isInClass(20))
+			mask = 0;
+		forceClip = isInClass(21) ? 1 : 0;
 
 		cr._zbuf = mask;
 		if (cr._zbuf > _vm->gdi._numZBuffer)
