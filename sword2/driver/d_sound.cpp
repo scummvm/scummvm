@@ -717,7 +717,7 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 
 		// Until the mixer supports LE samples natively, we need to convert our LE ones to BE
 		for (int32 j = 0; j < (bufferSizeFx[fxi] / 2); j++)
-			bufferFx[fxi][j] = TO_BE_16(bufferFx[fxi][j]);
+			bufferFx[fxi][j] = SWAP_BYTES_16(bufferFx[fxi][j]);
 
 		fxId[fxi] = id;
 	}
