@@ -411,14 +411,14 @@ simon games.
         Keyboard Arrow Keys    - simulate mouse movement
         Ctrl-f                 - runs in fast mode.
         Ctrl-Alt 0-9           - Switch between graphics filters
-        Ctrl-Alt b             - Switch beetwen bilinear and non-linear
-                                 filtering [OpenGL backend]
-        Ctrl-Alt a             - Toggle aspect-ratio correction on/off.
+        Ctrl-Alt-a             - Toggle aspect-ratio correction on/off.
                                  Most of the games use a 320x200 pixel
                                  resolution, which may look squashed on
                                  modern monitors. Aspect-ratio correction
                                  stretches the image to use 320x240 pixels
                                  instead, or a multiple thereof.
+        Ctrl-Alt-b             - Switch beetwen bilinear and non-linear
+                                 filtering [OpenGL backend]
 
     Scumm:
         Ctrl 0-9 and Alt 0-9   - load and save game state
@@ -451,22 +451,19 @@ Language options:
 ScummVM includes a language option for Maniac Mansion, Zak KcKracken, The Dig,
 Curse of Monkey Island, Beneath a Steel Sky.and Simon the Sorcerer 1 & 2.
 
-Maniac Mansion and Zak McKracken
-
+    Maniac Mansion and Zak McKracken:
         en  - English (default)
         de  - German
         fr  - French
         it  - Italian
         es  - Spanish
 
-The Dig
-
+    The Dig:
         jp  - Japanese
         zh  - Chinese
         kr  - Korean
 
-Curse of Monkey Island
-
+    Curse of Monkey Island:
         en  - English (default)
         de  - German
         fr  - French
@@ -477,7 +474,7 @@ Curse of Monkey Island
         zh  - Chinese
         kr  - Korean
 
-Beneath a Steel Sky:
+    Beneath a Steel Sky:
         gb  - English (Great Britain) (default)
         en  - English USA
         de  - German
@@ -487,8 +484,7 @@ Beneath a Steel Sky:
         es  - Spanish
         se  - Swedish
 
-Simon the Sorcerer: 1 & 2
-
+    Simon the Sorcerer 1 & 2:
         en  - English (default)
         de  - German
         fr  - French
