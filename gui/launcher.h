@@ -41,6 +41,7 @@ public:
 protected:
 	ListWidget		*_list;
 	Widget			*_startButton;
+	Widget			*_configureButton;
 	StringList		_filenames;
 	GameDetector 	&_detector;
 	BrowserDialog	*_browser;

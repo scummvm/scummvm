@@ -142,8 +142,8 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	// Two more buttons directly below the list box
 	bw = new ButtonWidget(this, 10, 144, 80, 16, "Add Game...", kAddGameCmd, 'A');
 //	bw->setEnabled(false);
-	bw = new ButtonWidget(this, 320-90, 144, 80, 16, "Configure...", kConfigureGameCmd, 'C');
-	bw->setEnabled(false);
+	_configureButton = new ButtonWidget(this, 320-90, 144, 80, 16, "Configure...", kConfigureGameCmd, 'C');
+	_configureButton->setEnabled(false);
 	
 	// Create file browser dialog
 	_browser = new BrowserDialog(_gui);
@@ -330,6 +330,8 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kListSelectionChangedCmd:
 		_startButton->setEnabled(data >= 0);
 		_startButton->draw();
+		//_configureButton->setEnabled(data >= 0);
+		//_configureButton->draw();
 		break;
 	case kQuitCmd:
 		g_system->quit();
