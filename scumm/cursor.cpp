@@ -42,7 +42,7 @@ static const byte default_cursor_colors[4] = {
 };
 
 
-static const uint16 default_cursor_images[5][16] = {
+static const uint16 default_cursor_images[4][16] = {
 	/* cross-hair */
 	{ 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0000, 0x7e3f,
 	  0x0000, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0000 },
@@ -55,13 +55,6 @@ static const uint16 default_cursor_images[5][16] = {
 	/* hand */
 	{ 0x1e00, 0x1200, 0x1200, 0x1200, 0x1200, 0x13ff, 0x1249, 0x1249,
 	  0xf249, 0x9001, 0x9001, 0x9001, 0x8001, 0x8001, 0x8001, 0xffff },
-	/* cross-hair zak256 - chrilith palmos */
-/*
-	{ 0x0080, 0x0080, 0x02a0, 0x01c0, 0x0080, 0x1004, 0x0808, 0x7c1f,
-	  0x0808, 0x1004, 0x0080, 0x01c0, 0x02a0, 0x0080, 0x0080, 0x0000 },
-*/
-	{ 0x0080, 0x02a0, 0x01c0, 0x0080, 0x0000, 0x2002, 0x1004, 0x780f,
-	  0x1004, 0x2002, 0x0000, 0x0080, 0x01c0, 0x02a0, 0x0080, 0x0000 },
 };
 
 static const byte default_cursor_hotspots[10] = {
@@ -386,14 +379,6 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 		_cursor.hotspotX = _cursorHotspots[2 * _currentCursor];
 		_cursor.hotspotY = _cursorHotspots[2 * _currentCursor + 1];
 		src = _cursorImages[_currentCursor];
-
-#ifdef __PALM_OS__
-		if (_gameId == GID_ZAK256 && _currentCursor == 0) {
-			_cursor.hotspotX = default_cursor_hotspots[2 * 4];
-			_cursor.hotspotY = default_cursor_hotspots[2 * 4 + 1];
-			src = default_cursor_images[4];
-		}
-#endif
 
 		_cursor.width = 16;
 		_cursor.height = 16;
