@@ -87,7 +87,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_features = detector->_features;
 	_soundCardType = detector->_soundCardType;
 	_noSubtitles = detector->_noSubtitles;
-	_cdrom = detector->_cdrom;
 	_defaultTalkDelay = detector->_talkSpeed;
 	_use_adlib = detector->_use_adlib;
 	
@@ -117,7 +116,8 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	/* Initialize backend */
 	syst->init_size(_realWidth, _realHeight);
 	prop.cd_num = detector->_cdrom;
-	syst->property(OSystem::PROP_OPEN_CD, &prop);
+	if (prop.cd_num >= 0)
+		syst->property(OSystem::PROP_OPEN_CD, &prop);
 
 	/* Bind the mixer to the system => mixer will be invoked
 	 * automatically when samples need to be generated */	

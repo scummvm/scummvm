@@ -957,7 +957,6 @@ public:
 	char transText[200];
 
 	bool checkFixedDisk();
-	int _cdrom;
 
 #if defined(SCUMM_LITTLE_ENDIAN)
 	uint32 fileReadDword() { return _fileHandle.readDwordLE(); }
