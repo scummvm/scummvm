@@ -19,9 +19,11 @@
  *
  */
 
-/* GFX Settings. Sound & Music only works properly with SIMON1WIN */
-#define USE_SOUND
-#define USE_MUSIC
+#include <time.h>
+#include <sys/stat.h>
+#include "scummsys.h"
+#include "system.h"
+#include "../sound/mixer.h"
 
 /* Various other settings */
 //#define DUMP_CONTINOUS_MAINSCRIPT
@@ -42,10 +44,11 @@ uint32 fileReadBE32(FILE *in);
 uint32 fileReadLE32(FILE *in);
 void fileWriteBE32(FILE *in, uint32 value);
 void fileWriteBE16(FILE *in, uint16 value);
-
+uint fileReadItemID(FILE *in);
 
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
 #define CHECK_BOUNDS(x,y) assert((uint)(x)<ARRAYSIZE(y))
+#define NUM_PALETTE_FADEOUT 32
 
 struct Child {
 	Child *next;
@@ -236,7 +239,6 @@ enum {
 };
 
 int GetAsyncKeyState(int key);
-
 #endif
 
 class MidiDriver;
@@ -415,9 +417,7 @@ public:
 
 	uint32 _last_vga_tick;
 
-//#ifdef SIMON2
 	uint16 _op_189_flags;
-//#endif
 
 	bool _scriptvar_2;
 	bool _run_script_return_1;
@@ -438,14 +438,9 @@ public:
 	bool _dx_use_3_or_4_for_lock;
 
 	bool _mouse_pos_changed;
-
-//#ifdef SIMON2
 	bool _vk_t_toggle;
 	byte _mouse_cursor;
 	bool _vga_var9;
-//#endif
-
-//#ifdef SIMON2
 	int16 _script_unk_1;
 	bool _vga_var6;
 	int _x_scroll,_vga_var1,_vga_var2,_vga_var3,_vga_var5;
@@ -454,9 +449,6 @@ public:
 	uint16 _vc72_var1, _vc72_var2, _vc72_var3;
 	uint16 _vc70_var1, _vc70_var2;
 	byte *_vga_var7;
-//#else
-//	int _script_unk_1;
-//#endif
 
 	int16 _script_cond_a, _script_cond_b, _script_cond_c;
 
@@ -522,10 +514,6 @@ public:
 
 	uint _invoke_timer_callback;
 
-//	uint32 _voice_size;
-	
-//	uint32 _sound_size;
-//	byte *_sound_ptr;
 
 	uint _vga_sprite_changed;
 	
@@ -573,8 +561,6 @@ public:
 	VgaPointersEntry _vga_buffer_pointers[180];
 	VgaSprite _vga_sprites[180]; 
 	VgaSleepStruct _vga_sleep_structs[30];
-
-//	uint16 _unk21_word_array[32]; /* should be initialized to ones */
 
 	uint16 *_pathfind_array[20];
 
@@ -852,6 +838,7 @@ public:
 
 	void run_vga_script();
 
+	// Simon1/Simon2 video script opcodes
 	void vc_1();
 	void vc_2();
 	void vc_3();
@@ -917,7 +904,7 @@ public:
 	void vc_62();
 	void vc_63();
 
-//#ifdef SIMON2
+	// Simon2 specific Video Script Opcodes
 	void vc_64();
 	void vc_65();
 	void vc_66();
@@ -929,7 +916,6 @@ public:
 	void vc_72();
 	void vc_73();
 	void vc_74();
-//#endif
 
 	void delete_vga_timer(VgaTimerEntry *vte);
 	void vc_resume_thread(byte *code_ptr, uint16 cur_file, uint16 cur_sprite);
@@ -992,11 +978,15 @@ public:
 	void dx_clear_surfaces(uint num_lines);
 	void dx_update_screen_and_palette();
 
+#ifdef SIMONDEBUG
 	void dump_video_script(byte *src, bool one_opcode_only);
 	void dump_vga_file(byte *vga);
+	void dump_vga_script(byte *ptr, uint res, uint sprite_id);
+	void dump_vga_script_always(byte *ptr, uint res, uint sprite_id);
 	void dump_vga_bitmaps(byte *vga, byte *vga1, int res);
 	void dump_single_bitmap(int file, int image, byte *offs, int w, int h, byte base);
-	
+#endif
+
 	void dx_clear_attached_from_top(uint lines);
 	void dx_copy_from_attached_to_2(uint x, uint y, uint w, uint h);
 	void dx_copy_from_attached_to_3(uint lines);
@@ -1009,9 +999,7 @@ public:
 
 	byte *vc_10_depack_swap(byte *src, uint w, uint h);
 
-	void dump_vga_script(byte *ptr, uint res, uint sprite_id);
-	void dump_vga_script_always(byte *ptr, uint res, uint sprite_id);
-
+	
 	Item *getNextItemPtrStrange();
 
 	bool save_game(uint slot, const char *caption);
@@ -1027,16 +1015,10 @@ public:
 	void playVoice(uint voice);
 	void playSound(uint sound);
 
-
-//	void generateSound(byte *ptr, int len);
-
 	void playMusic(uint music);
-
 	void checkTimerCallback();
-
 	void delay(uint delay);
 
-//#ifdef SIMON2
 	void o_190_helper(uint i);
 	void vc_58();
 	void timer_vga_sprites_helper();
@@ -1044,7 +1026,6 @@ public:
 	void vc_10_helper_8(byte *dst, byte *src);
 	void scroll_timeout();
 	void hitarea_stuff_helper_2();
-//#endif
 	void realizePalette();
 
 	void vc_kill_thread(uint file, uint sprite);
@@ -1074,10 +1055,6 @@ public:
 void NORETURN CDECL error(const char *errmsg, ...);
 void CDECL warning(const char *errmsg, ...);
 
-//uint16 swap16(uint16 a);
-//uint32 swap32(uint32 a);
-
-
 void _2xSaI (uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr, uint32 dstPitch, int width, int height);
 int Init_2xSaI (uint32 BitFormat);
 void Super2xSaI (uint8 *srcPtr, uint32 srcPitch,
@@ -1085,6 +1062,82 @@ void Super2xSaI (uint8 *srcPtr, uint32 srcPitch,
 		 int width, int height);
 void initializeHardware();
 void dx_set_palette(uint32 *colors, uint num);
+void palette_fadeout(uint32 *pal_values,uint num);
 
-//extern byte *sdl_buf;
-//extern byte *sdl_buf_attached;
+static const GameSpecificSettings simon1_settings = {
+	1, /* VGA_DELAY_BASE */
+	1576/4, /* TABLE_INDEX_BASE */
+	1460/4, /* TEXT_INDEX_BASE */
+	1700/4, /* NUM_GAME_OFFSETS */
+	64, /* NUM_VIDEO_OP_CODES */
+	1000000, /* VGA_MEM_SIZE */
+	50000, /* TABLES_MEM_SIZE */
+	3624, /* NUM_VOICE_RESOURCES */
+	141,  /* NUM_EFFECT_RESOURCES */
+	1316/4, /* MUSIC_INDEX_BASE */
+	0,		/* SOUND_INDEX_BASE */
+	"SIMON.GME",	/* gme_filename */
+	"SIMON.WAV",	/* wav_filename */
+	"SIMON.VOC",	/* wav_filename2 */
+	"EFFECTS.VOC",	/* effects_filename */
+	"GAMEPC",			/* gamepc_filename */
+};
+
+static const GameSpecificSettings simon2_settings = {
+	5, /* VGA_DELAY_BASE */
+	1580/4, /* TABLE_INDEX_BASE */
+	1500/4, /* TEXT_INDEX_BASE */
+	2116/4, /* NUM_GAME_OFFSETS */
+	75, /* NUM_VIDEO_OP_CODES */
+	2000000, /* VGA_MEM_SIZE */
+	100000, /* TABLES_MEM_SIZE */
+	12256, /* NUM_VOICE_RESOURCES */
+	0,
+	1128/4, /* MUSIC_INDEX_BASE */
+	1660/4,			/* SOUND_INDEX_BASE */
+	"SIMON2.GME", /* gme_filename */
+	"SIMON2.WAV",	/* wav_filename */
+	NULL,
+	"",
+	"GSPTR30",		/* gamepc_filename */
+};
+
+static const GameSpecificSettings simon2win_settings = {
+	5, /* VGA_DELAY_BASE */
+	1580/4, /* TABLE_INDEX_BASE */
+	1500/4, /* TEXT_INDEX_BASE */
+	2116/4, /* NUM_GAME_OFFSETS */
+	75, /* NUM_VIDEO_OP_CODES */
+	2000000, /* VGA_MEM_SIZE */
+	100000, /* TABLES_MEM_SIZE */
+	12256, /* NUM_VOICE_RESOURCES */
+	0,
+	1128/4, /* MUSIC_INDEX_BASE */
+	1660/4,			/* SOUND_INDEX_BASE */
+	"SIMON2.GME", /* gme_filename */
+	"SIMON2.WAV",	/* wav_filename */
+	NULL,
+	"",
+	"GSPTR30",		/* gamepc_filename */
+};
+
+static const GameSpecificSettings simon2dos_settings = {
+	5, /* VGA_DELAY_BASE */
+	1580/4, /* TABLE_INDEX_BASE */
+	1500/4, /* TEXT_INDEX_BASE */
+	2116/4, /* NUM_GAME_OFFSETS */
+	75, /* NUM_VIDEO_OP_CODES */
+	2000000, /* VGA_MEM_SIZE */
+	100000, /* TABLES_MEM_SIZE */
+	12256, /* NUM_VOICE_RESOURCES */
+	0,
+	1128/4, /* MUSIC_INDEX_BASE */
+	1660/4,			/* SOUND_INDEX_BASE */
+	"SIMON2.GME", /* gme_filename */
+	"SIMON2.WAV",	/* wav_filename */
+	NULL,
+	"",
+	"GAME32",		/* gamepc_filename */
+};
+
+

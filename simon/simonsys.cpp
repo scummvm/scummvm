@@ -19,27 +19,8 @@
  *
  */
 
-
 #include "stdafx.h"
-#include "scummsys.h"
-#include "system.h"
-#include "../sound/mixer.h"
 #include "simon.h"
-
-#include <stdarg.h>
-
-#ifdef WIN32
-#include <conio.h>
-#endif
-
-//uint16 swap16(uint16 a) {
-//	return (a>>8)|(a<<8);
-//}
-
-//uint32 swap32(uint32 a) {
-//	return (a>>24)|(a>>8)&0xFF00|(a<<8)&0xFF0000|(a<<24);
-//}
-
 
 uint fileReadByte(FILE *in) {
 	byte b;
@@ -84,41 +65,10 @@ void fileWriteBE16(FILE *in, uint16 value) {
 
 
 
-#if 0
-void NORETURN CDECL error(const char *s, ...) {
-	char buf[1024];
-	va_list va;
-
-	va_start(va, s);
-	vsprintf(buf, s, va);
-	va_end(va);
-#ifdef WIN32
-	fprintf(stderr, "Error: %s!\nPress a key to quit.\n", buf);
-	_getch();
-#else
-	fprintf(stderr, "Error: %s!\n", buf);
-#endif
-	exit(1);
-
-}
-
-void CDECL warning(const char *s, ...) {
-	char buf[1024];
-	va_list va;
-
-	va_start(va, s);
-	vsprintf(buf, s, va);
-	va_end(va);
-	fprintf(stdout, "Warning: %s!\n", buf);
-}
-#endif
-
 
 #ifndef WIN32
 /* GetAsyncKeyState for unix */
 int GetAsyncKeyState(int key) {
 	return 0;
 }
-
-
 #endif
