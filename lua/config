@@ -21,7 +21,7 @@ POSIX= -D_POSIX_SOURCE
 
 VERSION= 3.1
 
-INC= $(LUA)/include
+INC= $(LUA)/include `sdl-config --cflags`
 LIB= $(LUA)/lib
 BIN= $(LUA)/bin
 

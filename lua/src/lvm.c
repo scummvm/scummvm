@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <SDL_byteorder.h>
+
 #include "lauxlib.h"
 #include "ldo.h"
 #include "lfunc.h"
@@ -21,7 +23,6 @@
 #include "luadebug.h"
 #include "lvm.h"
 
-
 #ifdef OLD_ANSI
 #define strcoll(a,b)	strcmp(a,b)
 #endif
@@ -29,11 +30,11 @@
 
 #define skip_word(pc)	(pc+=2)
 
-/* Little Endian */
+#if (SDL_BYTEORDER == SDL_LIL_ENDIAN)
 #define get_word(pc)	(*((unsigned short*)(pc)))
-
-/* Big Endian */
-/*#define get_word(pc)    ((*((pc)+1)<<8)|(*(pc))) */
+#else
+#define get_word(pc)    ((*((pc)+1)<<8)|(*(pc)))
+#endif
 
 #define next_word(pc)   (pc+=2, get_word(pc-2))
 
