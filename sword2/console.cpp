@@ -59,6 +59,7 @@ Debugger::Debugger(Sword2Engine *s) {
 	_detach_now = false;
 	_isAttached = false;
 	_errStr = NULL;
+	_debuggerDialog = NULL;
 
 	// Register commands
 
@@ -129,9 +130,9 @@ void Debugger::attach(const char *entry) {
 
 void Debugger::detach() {
 #if USE_CONSOLE
-	if (_vm->_debuggerDialog) {
-		_vm->_debuggerDialog->setInputeCallback(0, 0);
-		_vm->_debuggerDialog->setCompletionCallback(0, 0);
+	if (_debuggerDialog) {
+		_debuggerDialog->setInputCallback(0, 0);
+		_debuggerDialog->setCompletionCallback(0, 0);
 	}
 #endif
 
@@ -203,8 +204,8 @@ void Debugger::DCmd_Register(const char *cmdname, DebugProc pointer) {
 // Main Debugger Loop
 void Debugger::enter() {
 #if USE_CONSOLE
-	if (!_vm->_debuggerDialog) {
-		_vm->_debuggerDialog = new ConsoleDialog(_vm->_newgui, 1.0, 0.67F);
+	if (!_debuggerDialog) {
+		_debuggerDialog = new ConsoleDialog(_vm->_newgui, 1.0, 0.67F);
 
 		Debug_Printf("Debugger started, type 'exit' to return to the game.\n");
 		Debug_Printf("Type 'help' to see a little list of commands and variables.\n");
@@ -216,9 +217,9 @@ void Debugger::enter() {
 		_errStr = NULL;
 	}
 
-	_vm->_debuggerDialog->setInputeCallback(debuggerInputCallback, this);
-	_vm->_debuggerDialog->setCompletionCallback(debuggerCompletionCallback, this);
-	_vm->_debuggerDialog->runModal();
+	_debuggerDialog->setInputCallback(debuggerInputCallback, this);
+	_debuggerDialog->setCompletionCallback(debuggerCompletionCallback, this);
+	_debuggerDialog->runModal();
 #else
 	// TODO: compared to the console input, this here is very bare bone.
 	// For example, no support for tab completion and no history. At least

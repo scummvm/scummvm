@@ -21,6 +21,8 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+class ConsoleDialog;
+
 namespace Scumm {
 
 // Choose between text console or ScummConsole
@@ -66,6 +68,7 @@ protected:
 	bool _detach_now;
 	bool _isAttached;
 	char *_errStr;
+	ConsoleDialog *_debuggerDialog;
 
 	void enter();
 	void detach();

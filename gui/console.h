@@ -94,7 +94,7 @@ public:
 #undef putchar
 	void putchar(int c);
 	
-	void setInputeCallback(InputCallbackProc proc, void *refCon) {
+	void setInputCallback(InputCallbackProc proc, void *refCon) {
 		_callbackProc = proc;
 		_callbackRefCon = refCon;
 	}

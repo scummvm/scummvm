@@ -121,7 +121,6 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	_detector = detector;
 	g_sword2 = this;
 	_newgui = NULL;
-	_debuggerDialog = NULL;
 	_debugger = NULL;
 	_features = detector->_game.features;
 	_gameId = detector->_game.id;

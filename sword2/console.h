@@ -27,10 +27,12 @@
 
 #if USE_CONSOLE
 	#include "gui/console.h"
-	#define Debug_Printf g_sword2->_debuggerDialog->printf
+	#define Debug_Printf g_sword2->_debugger->_debuggerDialog->printf
 #else
 	#define Debug_Printf printf
 #endif
+
+class ConsoleDialog;
 
 namespace Sword2 {
 
@@ -76,7 +78,10 @@ protected:
 	bool _detach_now;
 	bool _isAttached;
 	char *_errStr;
+public:
+	ConsoleDialog *_debuggerDialog;	// Should be protected, but is public now for Debug_Printf
 
+protected:
 	void enter();
 	void detach();
 

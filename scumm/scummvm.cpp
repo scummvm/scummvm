@@ -29,7 +29,6 @@
 
 #include "common/config-manager.h"
 
-#include "gui/console.h"
 #include "gui/message.h"
 #include "gui/newgui.h"
 
@@ -299,7 +298,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	_optionsDialog = NULL;
 	_saveLoadDialog = NULL;
 	_confirmExitDialog = NULL;
-	_debuggerDialog = NULL;
 	_fastMode = 0;
 	_actors = NULL;
 	_inventory = NULL;

@@ -35,7 +35,7 @@
 
 #if USE_CONSOLE
 	#include "gui/console.h"
-	#define Debug_Printf  _vm->_debuggerDialog->printf
+	#define Debug_Printf  _debuggerDialog->printf
 #else
 	#define Debug_Printf printf
 #endif
@@ -56,6 +56,7 @@ ScummDebugger::ScummDebugger(ScummEngine *s) {
 	_detach_now = false;
 	_isAttached = false;
 	_errStr = NULL;
+	_debuggerDialog = NULL;
 
 	// Register variables
 	DVar_Register("debug_countdown", &_frame_countdown, DVAR_INT, 0);
@@ -120,9 +121,9 @@ void ScummDebugger::attach(const char *entry) {
 
 void ScummDebugger::detach() {
 #if USE_CONSOLE
-	if (_vm->_debuggerDialog) {
-		_vm->_debuggerDialog->setInputeCallback(0, 0);
-		_vm->_debuggerDialog->setCompletionCallback(0, 0);
+	if (_debuggerDialog) {
+		_debuggerDialog->setInputCallback(0, 0);
+		_debuggerDialog->setCompletionCallback(0, 0);
 	}
 #endif
 
@@ -197,8 +198,8 @@ void ScummDebugger::DCmd_Register(const char *cmdname, DebugProc pointer) {
 // Main Debugger Loop
 void ScummDebugger::enter() {
 #if USE_CONSOLE
-	if (!_vm->_debuggerDialog) {
-		_vm->_debuggerDialog = new ConsoleDialog(_vm->_newgui, 1.0, 0.67F);
+	if (!_debuggerDialog) {
+		_debuggerDialog = new ConsoleDialog(_vm->_newgui, 1.0, 0.67F);
 
 		Debug_Printf("Debugger started, type 'exit' to return to the game.\n");
 		Debug_Printf("Type 'help' to see a little list of commands and variables.\n");
@@ -210,9 +211,9 @@ void ScummDebugger::enter() {
 		_errStr = NULL;
 	}
 
-	_vm->_debuggerDialog->setInputeCallback(debuggerInputCallback, this);
-	_vm->_debuggerDialog->setCompletionCallback(debuggerCompletionCallback, this);
-	_vm->_debuggerDialog->runModal();
+	_debuggerDialog->setInputCallback(debuggerInputCallback, this);
+	_debuggerDialog->setCompletionCallback(debuggerCompletionCallback, this);
+	_debuggerDialog->runModal();
 #else
 	// TODO: compared to the console input, this here is very bare bone.
 	// For example, no support for tab completion and no history. At least

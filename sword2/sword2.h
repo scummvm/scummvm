@@ -25,7 +25,6 @@
 #include "common/map.h"
 #include "common/rect.h"
 #include "common/str.h"
-#include "gui/console.h"
 #include "bs2/console.h"
 #include "bs2/driver/d_sound.h"
 #include "bs2/driver/d_draw.h"
@@ -80,7 +79,6 @@ public:
 
 	NewGui *_newgui;
 	Debugger *_debugger;
-	ConsoleDialog *_debuggerDialog;
 
 	Common::RandomSource _rnd;
 

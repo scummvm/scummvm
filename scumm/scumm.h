@@ -32,7 +32,6 @@
 #include "scumm/gfx.h"
 #include "scumm/script.h"
 
-class ConsoleDialog;
 class Dialog;
 class GameDetector;
 class NewGui;
@@ -349,9 +348,6 @@ protected:
 	Dialog *_optionsDialog;
 	Dialog *_saveLoadDialog;
 	Dialog *_confirmExitDialog;
-public:
-	// Debugger access this one, too...
-	ConsoleDialog *_debuggerDialog;
 
 protected:
 	int runDialog(Dialog &dialog);
