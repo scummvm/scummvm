@@ -58,7 +58,6 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm)
 }
 
 IMuseDigital::~IMuseDigital() {
-	Common::StackLock lock(_mutex, "IMuseDigital::~IMuseDigital()");
 	stopAllSounds();
 	_vm->_timer->removeTimerProc(timer_handler);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
@@ -125,26 +124,28 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 	ser->_load_ref = NULL;
 
 	ser->saveLoadEntries(this, mainEntries);
-	for (int i = 0; i < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; i++) {
-		Track *track = _track[i];
+	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
+		Track *track = _track[l];
 		ser->saveLoadEntries(track, trackEntries);
 		if (!ser->isSaving()) {
 			if (!track->used)
 				continue;
-			if (track->souStream) {
+			track->readyToRemove = false;
+			if ((track->toBeRemoved) || (track->souStream)) {
 				track->stream2 = NULL;
 				track->stream = NULL;
 				track->used = false;
-			} else {
-				track->soundHandle = _sound->openSound(track->soundId,
-										track->soundName, track->soundType,
-										track->volGroupId);
-				int32 streamBufferSize = track->iteration;
-				int	freq = _sound->getFreq(track->soundHandle);
-				track->stream2 = NULL;
-				track->stream = makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
-				_vm->_mixer->playInputStream(&track->handle, track->stream, false, track->vol / 1000, track->pan, -1);
+				continue;
 			}
+
+			track->soundHandle = _sound->openSound(track->soundId,
+									track->soundName, track->soundType,
+									track->volGroupId);
+			int32 streamBufferSize = track->iteration;
+			int	freq = _sound->getFreq(track->soundHandle);
+			track->stream2 = NULL;
+			track->stream = makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
+			_vm->_mixer->playInputStream(&track->handle, track->stream, false, track->vol / 1000, track->pan, -1);
 		}
 	}
 }
@@ -157,25 +158,10 @@ void IMuseDigital::callback() {
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used) {
-			if (track->stream2) {
-				if (!track->handle.isActive() && track->started) {
-					debug(5, "IMuseDigital::callback() A: stopped sound: %d", track->soundId);
-					delete _track[l]->stream2;
-					track->stream2 = NULL;
-					track->used = false;
-					continue;
-				}
-			} else if (track->stream) {
-				if (track->toBeRemoved) {
-					debug(5, "IMuseDigital::callback() B: stopped sound: %d", track->soundId);
-					track->stream->finish();
-					track->stream = NULL;
-					_sound->closeSound(track->soundHandle);
-					track->soundHandle = NULL;
-					track->used = false;
-					continue;
-				}
+		if (track->used && !track->readyToRemove) {
+			if (track->toBeRemoved) {
+				track->readyToRemove = true;
+				continue;
 			}
 
 			if (track->volFadeUsed) {
@@ -238,12 +224,11 @@ void IMuseDigital::callback() {
 				int bits = _sound->getBits(track->soundHandle);
 				int channels = _sound->getChannels(track->soundHandle);
 
-//				int32 bufferUsage = track->iteration - track->stream->getFreeSpace();
-				int32 bufferMin = track->iteration / 25;
-//				if (bufferMin < bufferUsage)
-//					continue;
+				int32 mixer_size = track->iteration / 25;
 
-				int32 mixer_size = bufferMin;
+				if (track->stream->endOfData()) {
+					mixer_size *= 2;
+				}
 
 				if ((bits == 12) || (bits == 16)) {
 					if (channels == 1)
@@ -315,7 +300,6 @@ void IMuseDigital::switchToNextRegion(int trackId) {
 	debug(5, "switchToNextRegion(track:%d)", trackId);
 
 	Track *track = _track[trackId];
-
 	if (trackId >= MAX_DIGITAL_TRACKS) {
 		track->toBeRemoved = true;
 		debug(5, "exit (fadetrack can't go next region) switchToNextRegion(trackId:%d)", trackId);
@@ -343,7 +327,7 @@ void IMuseDigital::switchToNextRegion(int trackId) {
 		if (sampleHookId != 0) {
 			if (track->curHookId == sampleHookId) {
 				if (fadeDelay != 0) {
-					int fadeTrackId = cloneToFadeOutTrack(trackId, fadeDelay, false);
+					int fadeTrackId = cloneToFadeOutTrack(trackId, fadeDelay);
 					Track *fadeTrack = _track[fadeTrackId];
 					fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundHandle, fadeTrack->curRegion);
 					fadeTrack->regionOffset = 0;
@@ -356,7 +340,7 @@ void IMuseDigital::switchToNextRegion(int trackId) {
 			}
 		} else {
 			if (fadeDelay != 0) {
-				int fadeTrackId = cloneToFadeOutTrack(trackId, fadeDelay, false);
+				int fadeTrackId = cloneToFadeOutTrack(trackId, fadeDelay);
 				Track *fadeTrack = _track[fadeTrackId];
 				fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundHandle, fadeTrack->curRegion);
 				fadeTrack->regionOffset = 0;
