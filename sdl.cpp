@@ -324,9 +324,9 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool vis
 		dst = (byte*)screen->pixels + old_mouse_y*320 + old_mouse_x;
 		bak = old_backup;
 
-		for (y=0; y<h; y++,bak+=BAK_WIDTH,dst+=320) {
+		for (y=0; y<old_mouse_h; y++,bak+=BAK_WIDTH,dst+=320) {
 			if ( (uint)(old_mouse_y + y) < 200) {
-				for (x=0; x<w; x++) {
+				for (x=0; x<old_mouse_w; x++) {
 					if ((uint)(old_mouse_x + x) < 320) {
 						dst[x] = bak[x];
 					}
@@ -369,111 +369,6 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool vis
 		old_mouse_y = ydraw;
 		old_mouse_w = w;
 		old_mouse_h = h;
-	}
-}
-
-void drawMouse(Scumm *s, int xdraw, int ydraw, int color, byte *mask, bool visible) {
-	int x,y;
-	uint32 bits;
-	byte *dst,*bak;
-
-	if (hide_mouse)
-		visible = false;
-
-	if (SDL_LockSurface(screen)==-1)
-		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
-
-#if defined(SCALEUP_2x2)
-
-	if (has_mouse) {
-		dst = (byte*)screen->pixels + old_mouse_y*640*2 + old_mouse_x*2;
-		bak = old_backup;
-
-		for (y=0; y<16; y++,bak+=48,dst+=640*2) {
-			if ( (uint)(old_mouse_y + y) < 200) {
-				for (x=0; x<24; x++) {
-					if ((uint)(old_mouse_x + x) < 320) {
-						dst[x*2+640] = dst[x*2] = bak[x*2];
-						dst[x*2+640+1] = dst[x*2+1] = bak[x*2+1];
-					}
-				}
-			}
-		}
-	}
-
-	if (visible) {
-		dst = (byte*)screen->pixels + ydraw*640*2 + xdraw*2;
-		bak = old_backup;
-
-		for (y=0; y<16; y++,dst+=640*2,bak+=48) {
-			bits = mask[3] | (mask[2]<<8) | (mask[1]<<16);
-			mask += 4;
-			if ((uint)(ydraw+y)<200) {
-				for (x=0; x<24; x++,bits<<=1) {
-					if ((uint)(xdraw+x)<320) {
-						bak[x*2] = dst[x*2];
-						bak[x*2+1] = dst[x*2+1];
-						if (bits&(1<<23)) {
-							dst[x*2] = color;
-							dst[x*2+1] = color;
-							dst[x*2+640] = color;
-							dst[x*2+1+640] = color;
-						}
-					}
-				}
-			}
-		}
-	}
-#else
-	if (has_mouse) {
-		dst = (byte*)screen->pixels + old_mouse_y*320 + old_mouse_x;
-		bak = old_backup;
-
-		for (y=0; y<16; y++,bak+=24,dst+=320) {
-			if ( (uint)(old_mouse_y + y) < 200) {
-				for (x=0; x<24; x++) {
-					if ((uint)(old_mouse_x + x) < 320) {
-						dst[x] = bak[x];
-					}
-				}
-			}
-		}
-	}
-	if (visible) {
-		dst = (byte*)screen->pixels + ydraw*320 + xdraw;
-		bak = old_backup;
-
-		for (y=0; y<16; y++,dst+=320,bak+=24) {
-			bits = mask[3] | (mask[2]<<8) | (mask[1]<<16);
-			mask += 4;
-			if ((uint)(ydraw+y)<200) {
-				for (x=0; x<24; x++,bits<<=1) {
-					if ((uint)(xdraw+x)<320) {
-						bak[x] = dst[x];
-						if (bits&(1<<23)) {
-							dst[x] = color;
-						}
-					}
-				}
-			}
-		}
-	}
-
-
-#endif	
-
-	SDL_UnlockSurface(screen);
-
-	if (has_mouse) {
-		has_mouse = false;
-		addDirtyRectClipped(old_mouse_x, old_mouse_y, 24, 16);
-	}
-
-	if (visible) {
-		has_mouse = true;
-		addDirtyRectClipped(xdraw, ydraw, 24, 16);
-		old_mouse_x = xdraw;
-		old_mouse_y = ydraw;
 	}
 }
 
