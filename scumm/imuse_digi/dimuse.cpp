@@ -147,6 +147,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 									track->soundName, track->soundType,
 									track->volGroupId, -1);
 			assert(track->soundHandle);
+			track->compressed = _sound->isCompressed(track->soundHandle);
 			if (track->compressed) {
 				track->regionOffset = 0;
 				track->dataOffset = _sound->getRegionOffset(track->soundHandle, track->curRegion);
