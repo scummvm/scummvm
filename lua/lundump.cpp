@@ -4,6 +4,7 @@
 ** See Copyright Notice in lua.h
 */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "lauxlib.h"

@@ -24,13 +24,13 @@ void *luaM_realloc (void *oldblock, unsigned long size);
 int luaM_growaux (void **block, unsigned long nelems, int size,
                        char *errormsg, unsigned long limit);
 
-#define luaM_free(b)	luaM_realloc((b), 0)
-#define luaM_malloc(t)	luaM_realloc(NULL, (t))
-#define luaM_new(t)          ((t *)luaM_malloc(sizeof(t)))
-#define luaM_newvector(n,t)  ((t *)luaM_malloc((n)*sizeof(t)))
+#define luaM_free(b)	free((b))
+#define luaM_malloc(t)	malloc((t))
+#define luaM_new(t)          ((t *)malloc(sizeof(t)))
+#define luaM_newvector(n,t)  ((t *)malloc((n)*sizeof(t)))
 #define luaM_growvector(old,n,t,e,l) \
           (luaM_growaux((void**)old,n,sizeof(t),e,l))
-#define luaM_reallocvector(v,n,t) ((t *)luaM_realloc(v,(n)*sizeof(t)))
+#define luaM_reallocvector(v,n,t) ((t *)realloc(v,(n)*sizeof(t)))
 
 
 #ifdef DEBUG

@@ -5,6 +5,7 @@
 */
 
 
+#include <stdlib.h>
 #include <stdio.h>
 
 #include "lauxlib.h"
@@ -476,7 +477,7 @@ static void storevar (LexState *ls, vardesc *var) {
 }
 
 
-static int fix_jump (LexState *ls, int pc, OpCode op, int n) {
+static int fixJump (LexState *ls, int pc, OpCode op, int n) {
   /* jump is relative to position following jump instruction */
   return fix_opcode(ls, pc, op, 0, n-(pc+JMPSIZE));
 }
@@ -497,8 +498,8 @@ static void codeIf (LexState *ls, int thenAdd, int elseAdd) {
     elseinit = fs->pc;
   }
   else
-    elseinit += fix_jump(ls, elseAdd, JMP, fs->pc);
-  fix_jump(ls, thenAdd, IFFJMP, elseinit);
+    elseinit += fixJump(ls, elseAdd, JMP, fs->pc);
+  fixJump(ls, thenAdd, IFFJMP, elseinit);
 }
 
 
@@ -689,7 +690,7 @@ static int stat (LexState *ls) {
       check_pc(fs, cond_size);
       memcpy(f->code+fs->pc, f->code+while_init, cond_size);
       luaO_memdown(f->code+while_init, f->code+cond_end, fs->pc-while_init);
-      while_init += JMPSIZE + fix_jump(ls, while_init, JMP, fs->pc-cond_size);
+      while_init += JMPSIZE + fixJump(ls, while_init, JMP, fs->pc-cond_size);
       fix_upjmp(ls, IFTUPJMP, while_init);
       return 1;
     }
@@ -906,7 +907,7 @@ static void exp0 (LexState *ls, vardesc *v) {
     pc = SaveWordPop(ls);
     exp2(ls, v);
     lua_pushvar(ls, v);
-    fix_jump(ls, pc, (is_and?ONFJMP:ONTJMP), ls->fs->pc);
+    fixJump(ls, pc, (is_and?ONFJMP:ONTJMP), ls->fs->pc);
   }
 }
 

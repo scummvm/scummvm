@@ -5,6 +5,7 @@
 */
 
 
+#include <stdlib.h>
 #include "lbuiltin.h"
 #include "ldo.h"
 #include "lauxlib.h"
