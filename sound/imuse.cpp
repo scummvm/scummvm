@@ -37,8 +37,11 @@ int num_mix;
 #define MDPG_TAG "MDpg"
 #define MDHD_TAG "MDhd"
 
+
+
 /* Roland to General Midi patch table. Still needs much work. */
 static const byte mt32_to_gmidi[128] = {
+	/*
   0,   1,   2,   4,   4,   5,   5,   3,  16,  17,  18,  18,  19,
   19,  20,  21,   6,   6,   6,   7,   7,   7,   8,   8,  62,  63,
   62,  63,  38,  39,  38,  39,  88,  89,  52, 113,  97,  96,  91,
@@ -49,6 +52,16 @@ static const byte mt32_to_gmidi[128] = {
   63,  60,  60,  58,  61,  61,  11,  11,  12,  88,   9,  14,  13,
   12, 107, 111,  77,  78,  78,  76, 121,  47, 117, 127, 115, 118,
  116, 118,  94, 115,   9,  55, 124, 123, 125, 126, 127
+ */
+ 0, 1, 0, 2, 4, 4, 5, 3, 16, 17, 18, 16, 16, 19, 20, 21, 6, 6, 6,
+ 7, 7, 7, 8, 112, 62, 62, 63, 63, 38, 38, 39, 39, 88, 54, 52, 98,
+ 97,99,14,54, 102, 96, 53, 102, 81, 100, 14, 80, 48, 48, 49, 45,
+ 41, 40, 42, 42, 43, 46, 45, 24, 25, 28, 27, 104, 32, 32, 34, 33,
+ 36, 37, 35, 35, 79, 73, 72, 72, 74, 75, 64, 65, 66, 67, 71, 71,
+ 68, 69, 70, 22, 56, 59, 57, 57, 60, 60, 58, 61, 61, 11, 11, 98,
+ 14, 9, 14, 13, 12, 107, 107, 77, 78, 78, 76, 76, 47, 117, 127,
+ 118, 118, 116, 119, 115, 112, 55, 124, 123, 0, 14, 117
+
 };
 
 
@@ -4147,12 +4160,12 @@ void IMuseGM::midiControl0(byte chan, byte value)
 
 void IMuseGM::midiProgram(byte chan, byte program)
 {
-	if ((chan + 1) != 10) {				/* Ignore percussion prededed by patch change */
+//	if ((chan + 1) != 10) {				/* Ignore percussion prededed by patch change */
 		if (_se->_mt32emulate)
 			program = mt32_to_gmidi[program];
 
 		_md->send(program << 8 | 0xC0 | chan);
-	}
+//	}
 }
 
 void IMuseGM::midiPan(byte chan, int8 pan)
