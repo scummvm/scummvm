@@ -354,17 +354,17 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 	ObjectData *obj;
 	const HitZone *hitZone;
 	switch (objectTypeId(objectId)) {
-		case kGameObjectObject:
-							obj = _actor->getObj(objectId);
-							_script->_mainStrings.getString(obj->nameIndex);
-							break;
-		case kGameObjectActor: 
-							actor = _actor->getActor(objectId);			
-							return _actor->_actorsStrings.getString(actor->nameIndex);
-							break;
-		case kGameObjectHitZone:
-							hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(objectId));
-							return _vm->_scene->_sceneStrings.getString(hitZone->getNameIndex());
+	case kGameObjectObject:
+		obj = _actor->getObj(objectId);
+		_script->_mainStrings.getString(obj->nameIndex);
+		break;
+	case kGameObjectActor: 
+		actor = _actor->getActor(objectId);			
+		return _actor->_actorsStrings.getString(actor->nameIndex);
+		break;
+	case kGameObjectHitZone:
+		hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(objectId));
+		return _vm->_scene->_sceneStrings.getString(hitZone->getNameIndex());
 	}
 	warning("SagaEngine::getObjectName name not found for 0x%X", objectId);
 	return NULL;
@@ -384,26 +384,26 @@ const char *SagaEngine::getTextString(int textStringId) {
 void SagaEngine::getExcuseInfo(int verb, const char *&textString, int &soundResourceId) {
 	textString = NULL; // TODO: i18n it !
 	switch (verb) {
-		case kVerbPickUp:
-			textString = "I can't pick that up.";
-			soundResourceId = RID_BOAR_VOICE_007;
-			break;
-		case kVerbLookAt:	
-			textString = "I see nothing special about it."; 
-			soundResourceId = RID_BOAR_VOICE_006;
-			break;
-		case kVerbOpen:		
-			textString = "There's no place to open it.";
-			soundResourceId = RID_BOAR_VOICE_000;
-			break;
-		case kVerbClose:	
-			textString = "There's no opening to close."; 
-			soundResourceId = RID_BOAR_VOICE_002;
-			break;
-		case kVerbUse:		
-			textString = "I don't know how to do that."; 
-			soundResourceId = RID_BOAR_VOICE_005;
-			break;
+	case kVerbPickUp:
+		textString = "I can't pick that up.";
+		soundResourceId = RID_BOAR_VOICE_007;
+		break;
+	case kVerbLookAt:	
+		textString = "I see nothing special about it."; 
+		soundResourceId = RID_BOAR_VOICE_006;
+		break;
+	case kVerbOpen:		
+		textString = "There's no place to open it.";
+		soundResourceId = RID_BOAR_VOICE_000;
+		break;
+	case kVerbClose:	
+		textString = "There's no opening to close."; 
+		soundResourceId = RID_BOAR_VOICE_002;
+		break;
+	case kVerbUse:		
+		textString = "I don't know how to do that."; 
+		soundResourceId = RID_BOAR_VOICE_005;
+		break;
 	}
 }
 
