@@ -681,7 +681,10 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 	va_list va;
 
 	va_start(va, message);
+	// PLEASE FIX IT, vsnprintf is not portable
+#ifndef _MSC_VER
 	vsnprintf(buf, sizeof(buf), message, va);
+#endif
 	va_end(va);
 
 	GUI::MessageDialog dialog(buf, "OK", altButton);
