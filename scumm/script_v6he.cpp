@@ -1248,7 +1248,7 @@ void ScummEngine_v6he::redimArray(int arrayId, int newX, int newY, int type) {
 void ScummEngine_v6he::o6_stringLen() {
 	int a, len;
 
-	if (_gameId == GID_PUTTPUTT) {
+	if (_features & GF_PC) {
 		o6_invalid();
 	}
 
