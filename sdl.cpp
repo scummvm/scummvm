@@ -311,7 +311,6 @@ normal_mode:;
 		uint16 *tmp_screen = (uint16*)calloc(320*204 + 16,sizeof(uint16));
 		_mode_flags = DF_FORCE_FULL_ON_PALETTE | DF_WANT_RECT_OPTIM | DF_2xSAI | DF_SEPARATE_HWSCREEN | DF_UPDATE_EXPAND_1_PIXEL;
 
-		Init_2xSaI(555);
 		sdl_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
 		if (sdl_screen == NULL)
 			error("SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0) failed");
@@ -321,10 +320,16 @@ normal_mode:;
 		);
 		if (sdl_hwscreen == NULL)
 			error("sdl_hwscreen failed");
-
+		
 		/* Need some extra bytes around when using 2XSAI */
-		sdl_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen + TMP_SCREEN_OFFS, 320, 200, 16,
-			320*2, 0x7C00,0x3E0,0x001F,0);
+		Init_2xSaI(555);
+		sdl_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen + TMP_SCREEN_OFFS,
+							320, 200, 16, 320*2,
+							sdl_hwscreen->format->Rmask,
+							sdl_hwscreen->format->Gmask,
+							sdl_hwscreen->format->Bmask,
+							sdl_hwscreen->format->Amask);
+
 		if (sdl_tmpscreen == NULL)
 			error("sdl_tmpscreen failed");
 
