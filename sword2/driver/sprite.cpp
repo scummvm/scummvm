@@ -1439,24 +1439,32 @@ int32 DrawSprite(_spriteInfo *s) {
 	rd.right = rd.left + rs.right;
 	rd.bottom = rd.top + rs.bottom;
 
+	// Check if the sprite would end up completely outside the screen.
+
+	if (rd.left > 640 || rd.top > 440 || rd.right < 0 || rd.bottom < 40) {
+		if (freeSprite)
+			free(sprite);
+		return RD_OK;
+	}
+
 	if (rd.top < 40) {
-		rs.top = (40 - rd.top) * 256 / scale;
+		rs.top = 40 - rd.top;
 		rd.top = 40;
 		clipped = true;
 	}
 	if (rd.bottom > 440) {
-		rs.bottom -= ((rd.bottom - 440) * 256 / scale);
 		rd.bottom = 440;
+		rs.bottom = rs.top + (rd.bottom - rd.top);
 		clipped = true;
 	}
 	if (rd.left < 0) {
-		rs.left = (0 - rd.left) * 256 / scale;
+		rs.left = -rd.left;
 		rd.left = 0;
 		clipped = true;
 	}
 	if (rd.right > 640) {
-		rs.right -= ((rd.right - 640) * 256 / scale);
 		rd.right = 640;
+		rs.right = rs.left + (rd.right - rd.left);
 		clipped = true;
 	}
 
@@ -1504,7 +1512,8 @@ int32 DrawSprite(_spriteInfo *s) {
 	// -----------------------------------------------------------------
 
 	// The light mask is an optional layer that covers the entire room
-	// and which is used to simulate light and shadows.
+	// and which is used to simulate light and shadows. Scaled sprites
+	// (actors, presumably) are always affected.
 
 	if ((renderCaps & RDBLTFX_SHADOWBLEND) && lightMask && (scale != 256 || (s->type & RDSPR_SHADOW))) {
 		uint8 *lightMap;
