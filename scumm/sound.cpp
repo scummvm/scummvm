@@ -977,7 +977,13 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 
 	byte * buffer = NULL;
 	uint32 final_size = decode12BitsSample(ptr, &buffer, size);
-	_scumm->_mixer->playRaw(NULL, buffer, final_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
+	if (_scumm->_mixer->_channels[SoundMixer::NUM_CHANNELS - 1] == NULL) {
+		_scumm->_mixer->playStream(NULL, SoundMixer::NUM_CHANNELS - 1, buffer, final_size, rate,
+															SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
+	} else {
+		_scumm->_mixer->append(SoundMixer::NUM_CHANNELS - 1, buffer, final_size, rate,
+														SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
+	}
 }
 
 void Sound::playBundleSound(char *sound) {
