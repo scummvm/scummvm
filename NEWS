@@ -1,14 +1,17 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.6.1b (2004-07-31)
+0.6.1b (2004-08-03)
  General:
    - Fixed copy/paste bug in launcher that may corrupt the Savegame Path 
-   - ScummVM should no longer crash on 64-bit architectures
+   - Fixed crashes on 64-bit architectures
 
  SCUMM:
    - Fixed VOC crash when playing DOTT Floppy
    - Fixed palette issues in Amiga version of MI2
+
+ Simon:
+   - Fixed VOC crash
 
 0.6.1 (2004-07-25)
  General:
