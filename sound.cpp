@@ -226,7 +226,7 @@ void Scumm::playSound(int sound)
 		char *sound;
 		int size = READ_LE_UINT32(ptr);
 		
-#if 1
+#if 0
 		// FIXME - this is just some debug output for Zak256
 		if (size != 30) {
 			char name[9];
