@@ -419,7 +419,6 @@ void CostumeRenderer::proc3() {
 		ARM_ADDM(_outheight)
 		ARM_ADDM(_shadow_mode)
 		ARM_ADDM(_shadow_table)
-		ARM_ADDV(_vm_proc_special_palette, _vm->_proc_special_palette)
 		ARM_ADDM(_palette)
 		PCE_CALL_RETURN(PNO_COSTUMEPROC3, ARM_DATA(), _scaleIndexX)
 	ARM_END()
