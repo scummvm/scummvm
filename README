@@ -106,7 +106,7 @@ the section on Reporting Bugs.
                   when talking to demons in Sordid's Tower
                 - Some minor graphical glitches
 
-       Simon The Sorcerer:II
+       Simon The Sorcerer II:
                 - No music in simon2dos and simon2talkie
                 - Some music is missing or wrong in simon2win
                 - simon2dos freezes briefly during the sequence where Simon
@@ -612,22 +612,31 @@ An example config file looks as follows:
 Credits:
 --------
  The core ScummVM team:
-        James Brown        - Current lead developer, ScummVM
-        Vincent Hamm       - Developer, ScummVM (inactive)
-        Max Horn           - Developer, ScummVM, MacOS X port, new GUI
+        James Brown        - Lead developer
+        Vincent Hamm       - Developer (retired)
+        Max Horn           - Developer, MacOS X port, new GUI
         Jeremy Newman      - Webmaster
-        Ludvig Strigeus    - Original developer, Scumm and SimonVM. (Retired)
+        Ludvig Strigeus    - Original ScummVM author, initial Simon support (retired)
 
- Porters:
-        Lionel Ulmer       - X11/Linux port
+ Developers:
+        Torbjorn Andersson - Many different contributions
         Nicolas Bacca      - PocketPC/WinCE port
-        Mutwin Kraus       - MacOS Carbon port (Retired)
+        Ralph Brorsen      - Helped write the new GUI
+        Jamieson Christian - Lots of work on iMuse/MIDI
         Marcus Comstedt    - Dreamcast port
+        Jonathan Gray      - Expert weaver in the Loom
         Ruediger Hanke     - MorphOS port
+        Travis Howell      - Daily Win32 builds, Simon The Sorcerer work
+        Felix Jakschitsc   - His hard work on Zak256
+        Oliver Kiehl       - Simon The Sorcerer work
+        Pawel Kolodziejski - Added missing Dig SMUSH codecs, iMuse work
+        Mutwin Kraus       - MacOS Carbon port (retired)
+        Peter Moraliyski   - GP32 port
+        Nicolas Noble      - Config file and ALSA support
+        Lionel Ulmer       - X11/Linux port
 
  Contributors:
         Claudio Matsuoka   - Daily Linux/BeOS builds (http://scummvm.sf.net/daily/)
-        Travis Howell      - Daily Win32 builds
         Janne Huttunen     - V3 actor mask support, Dig/FT SMUSH audio
         Jeroen Janssen     - Numerous readability and bugfix patches
         Gregory Montoir    - AdvanceMAME Scale-2X implementation
@@ -635,16 +644,8 @@ Credits:
         Edward Rudd        - Fixes for playing MP3 versions of MI1/Loom Audio
         Daniel Schepler    - Final MI1 CD music support
         Tim 'realmz'       - Initial MI1 CD music support
-        Jonathan 'khalek'  - Expert weaver in the Loom
-        Nicolas Noble      - Config file and ALSA support
-        Pawel Kolodziejski - Added missing Dig SMUSH codecs, iMuse work
-        Felix Jakschitsc   - His hard work on Zak256
         Andre Souza        - SDL-based OpenGL renderer
         Kovacs Endre Janos - Several fixes for Simon1
-        Ralph Brorsen      - Helped write the new GUI
-        Torbjorn Andersson - Many different contributions
-        Jamieson Christian - Lots of work on iMuse/MIDI
-        Oliver Kiehl       - Simon The Sorcerer debugging
 
         And to all the contributors, users, and beta testers we've missed.
         Thanks!
