@@ -323,7 +323,7 @@ void Sound::playSound(int soundID) {
 			memcpy(sound, ptr + 33, size);
 			_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 			return;
-		} else if (_scumm->_features & GF_OLD256) {
+		} else if (_scumm->_features & GF_FMTOWNS) {
 			size = READ_LE_UINT32(ptr);
 #if 0
 			// FIXME - this is just some debug output for Zak256

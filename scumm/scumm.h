@@ -642,6 +642,8 @@ public:
 
 protected:
 	int readSoundResource(int type, int index);
+	int convert_extraflags(byte *ptr, byte * src_ptr);
+	int convertADResource(int type, int index, byte *ptr, int size);
 	int readSoundResourceSmallHeader(int type, int index);
 	void setResourceCounter(int type, int index, byte flag);
 	bool validateResource(const char *str, int type, int index) const;

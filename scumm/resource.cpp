@@ -649,7 +649,6 @@ int Scumm::loadResource(int type, int idx) {
 		size = _fileHandle.readUint32LE();
 		tag = _fileHandle.readUint16LE();
 		_fileHandle.seek(-6, SEEK_CUR);
-		/* FIXME */
 		if ((type == rtSound) && !(_features & GF_AMIGA) && !(_features & GF_FMTOWNS)) {
 			return readSoundResourceSmallHeader(type, idx);
 		}
@@ -889,166 +888,269 @@ int Scumm::readSoundResource(int type, int idx) {
 	return 0;
 }
 
-// FIXME: some default MIDI instruments for INDY3/MI1
-static char OLD256_MIDI_HACK[] =
-	// 0
-	"\x00\xf0\x14\x7d\x00"  // sysex 00: part on/off
-	"\x00\x00\x03"          // part/channel
-	"\x00\x00\x07\x0f\x00\x00\x08\x00\x00\x00\x00\x02\x00\x00\xf7"
-	"\x04\xf0\x41\x7d\x10"  // sysex 16: set instrument
-	"\x00"                  // part/channel
-	"\x01\x06\x02\x0a\x08\x09\x0d\x08\x04\x04"
-	"\x04\x06\x02\x02\x03\x07\x0f\x0d"
-	"\x05\x04\x0c\x00\x03\x01\x01\x00"
-	"\x00\x00\x01\x01\x0e\x00\x02\x02"
-	"\x01\x00\x01\x00\x01\x02\x00\x01"
-	"\x08\x00\x00\x00\x01\x02\x04\x00"
-	"\x06\x02\x00\x00\x04\x00\x03\x02"
-	"\x04\x00\x00\xf7"
-	"\x00\xb0\x07\x64"      // Controller 7 = 100
-	// 1
-	"\x00\xf0\x14\x7d\x00"  // sysex 00: part on/off
-	"\x01\x00\x03"          // part/channel
-	"\x00\x00\x07\x0f\x00\x00\x08\x00\x00\x00\x00\x02\x00\x00\xf7"
-	"\x04\xf0\x41\x7d\x10"  // sysex 16: set instrument
-	"\x01"                  // part/channel
-	"\x01\x06\x02\x0a\x08\x09\x0d\x08\x04\x04"
-	"\x04\x06\x02\x02\x03\x07\x0f\x0d"
-	"\x05\x04\x0c\x00\x03\x01\x01\x00"
-	"\x00\x00\x01\x01\x0e\x00\x02\x02"
-	"\x01\x00\x01\x00\x01\x02\x00\x01"
-	"\x08\x00\x00\x00\x01\x02\x04\x00"
-	"\x06\x02\x00\x00\x04\x00\x03\x02"
-	"\x04\x00\x00\xf7"
-	"\x00\xb1\x07\x64"      // Controller 7 = 100
-	// 2
-	"\x00\xf0\x14\x7d\x00"  // sysex 00: part on/off
-	"\x02\x00\x03"          // part/channel
-	"\x00\x00\x07\x0f\x00\x00\x08\x00\x00\x00\x00\x02\x00\x00\xf7"
-	"\x04\xf0\x41\x7d\x10"  // sysex 16: set instrument
-	"\x02"                  // part/channel
-	"\x01\x06\x02\x0a\x08\x09\x0d\x08\x04\x04"
-	"\x04\x06\x02\x02\x03\x07\x0f\x0d"
-	"\x05\x04\x0c\x00\x03\x01\x01\x00"
-	"\x00\x00\x01\x01\x0e\x00\x02\x02"
-	"\x01\x00\x01\x00\x01\x02\x00\x01"
-	"\x08\x00\x00\x00\x01\x02\x04\x00"
-	"\x06\x02\x00\x00\x04\x00\x03\x02"
-	"\x04\x00\x00\xf7"
-	"\x00\xb2\x07\x64"      // Controller 7 = 100
-	// 3
-	"\x00\xf0\x14\x7d\x00"  // sysex 00: part on/off
-	"\x03\x00\x03"          // part/channel
-	"\x00\x00\x07\x0f\x00\x00\x08\x00\x00\x00\x00\x02\x00\x00\xf7"
-	"\x04\xf0\x41\x7d\x10"  // sysex 16: set instrument
-	"\x03"                  // part/channel
-	"\x01\x06\x02\x0a\x08\x09\x0d\x08\x04\x04"
-	"\x04\x06\x02\x02\x03\x07\x0f\x0d"
-	"\x05\x04\x0c\x00\x03\x01\x01\x00"
-	"\x00\x00\x01\x01\x0e\x00\x02\x02"
-	"\x01\x00\x01\x00\x01\x02\x00\x01"
-	"\x08\x00\x00\x00\x01\x02\x04\x00"
-	"\x06\x02\x00\x00\x04\x00\x03\x02"
-	"\x04\x00\x00\xf7"
-	"\x00\xb3\x07\x64"      // Controller 7 = 100
-	// 4
-	"\x00\xf0\x14\x7d\x00"  // sysex 00: part on/off
-	"\x04\x00\x03"          // part/channel
-	"\x00\x00\x07\x0f\x00\x00\x08\x00\x00\x00\x00\x02\x00\x00\xf7"
-	"\x04\xf0\x41\x7d\x10"  // sysex 16: set instrument
-	"\x04"                  // part/channel
-	"\x01\x06\x02\x0a\x08\x09\x0d\x08\x04\x04"
-	"\x04\x06\x02\x02\x03\x07\x0f\x0d"
-	"\x05\x04\x0c\x00\x03\x01\x01\x00"
-	"\x00\x00\x01\x01\x0e\x00\x02\x02"
-	"\x01\x00\x01\x00\x01\x02\x00\x01"
-	"\x08\x00\x00\x00\x01\x02\x04\x00"
-	"\x06\x02\x00\x00\x04\x00\x03\x02"
-	"\x04\x00\x00\xf7"
-	"\x00\xb4\x07\x64"      // Controller 7 = 100
-	// 5
-	"\x00\xf0\x14\x7d\x00"  // sysex 00: part on/off
-	"\x05\x00\x03"          // part/channel
-	"\x00\x00\x07\x0f\x00\x00\x08\x00\x00\x00\x00\x02\x00\x00\xf7"
-	"\x04\xf0\x41\x7d\x10"  // sysex 16: set instrument
-	"\x05"                  // part/channel
-	"\x01\x06\x02\x0a\x08\x09\x0d\x08\x04\x04"
-	"\x04\x06\x02\x02\x03\x07\x0f\x0d"
-	"\x05\x04\x0c\x00\x03\x01\x01\x00"
-	"\x00\x00\x01\x01\x0e\x00\x02\x02"
-	"\x01\x00\x01\x00\x01\x02\x00\x01"
-	"\x08\x00\x00\x00\x01\x02\x04\x00"
-	"\x06\x02\x00\x00\x04\x00\x03\x02"
-	"\x04\x00\x00\xf7"
-	"\x00\xb5\x07\x64"      // Controller 7 = 100
-	// 6
-	"\x00\xf0\x14\x7d\x00"  // sysex 00: part on/off
-	"\x06\x00\x03"          // part/channel
-	"\x00\x00\x07\x0f\x00\x00\x08\x00\x00\x00\x00\x02\x00\x00\xf7"
-	"\x04\xf0\x41\x7d\x10"  // sysex 16: set instrument
-	"\x06"                  // part/channel
-	"\x01\x06\x02\x0a\x08\x09\x0d\x08\x04\x04"
-	"\x04\x06\x02\x02\x03\x07\x0f\x0d"
-	"\x05\x04\x0c\x00\x03\x01\x01\x00"
-	"\x00\x00\x01\x01\x0e\x00\x02\x02"
-	"\x01\x00\x01\x00\x01\x02\x00\x01"
-	"\x08\x00\x00\x00\x01\x02\x04\x00"
-	"\x06\x02\x00\x00\x04\x00\x03\x02"
-	"\x04\x00\x00\xf7"
-	"\x00\xb6\x07\x64"      // Controller 7 = 100
-	// 7
-	"\x00\xf0\x14\x7d\x00"  // sysex 00: part on/off
-	"\x07\x00\x03"          // part/channel
-	"\x00\x00\x07\x0f\x00\x00\x08\x00\x00\x00\x00\x02\x00\x00\xf7"
-	"\x04\xf0\x41\x7d\x10"  // sysex 16: set instrument
-	"\x07"                  // part/channel
-	"\x01\x06\x02\x0a\x08\x09\x0d\x08\x04\x04"
-	"\x04\x06\x02\x02\x03\x07\x0f\x0d"
-	"\x05\x04\x0c\x00\x03\x01\x01\x00"
-	"\x00\x00\x01\x01\x0e\x00\x02\x02"
-	"\x01\x00\x01\x00\x01\x02\x00\x01"
-	"\x08\x00\x00\x00\x01\x02\x04\x00"
-	"\x06\x02\x00\x00\x04\x00\x03\x02"
-	"\x04\x00\x00\xf7"
-	"\x00\xb7\x07\x64";     // Controller 7 = 100
+// Adlib MIDI-SYSEX to set MIDI instruments for small header games.
+static byte ADLIB_INSTR_MIDI_HACK[95] = {
+	0x00, 0xf0, 0x14, 0x7d, 0x00,  // sysex 00: part on/off
+	0x00, 0x00, 0x03,              // part/channel  (offset  5)
+	0x00, 0x00, 0x07, 0x0f, 0x00, 0x00, 0x08, 0x00, 
+	0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0xf7,
+	0x04, 0xf0, 0x41, 0x7d, 0x10,  // sysex 16: set instrument
+	0x00,                          // part/channel  (offset 28)
+	0x01, 0x06, 0x02, 0x0a, 0x08, 0x09, 0x0d, 0x08, 0x04, 0x04,
+	0x04, 0x06, 0x02, 0x02, 0x03, 0x07, 0x0f, 0x0d,
+	0x05, 0x04, 0x0c, 0x00, 0x03, 0x01, 0x01, 0x00,
+	0x00, 0x00, 0x01, 0x01, 0x0e, 0x00, 0x02, 0x02,
+	0x01, 0x00, 0x01, 0x00, 0x01, 0x02, 0x00, 0x01,
+	0x08, 0x00, 0x00, 0x00, 0x01, 0x02, 0x04, 0x00,
+	0x06, 0x02, 0x00, 0x00, 0x04, 0x00, 0x03, 0x02,
+	0x04, 0x00, 0x00, 0xf7,
+	0x00, 0xb0, 0x07, 0x64        // Controller 7 = 100 (offset 92)
+};
+			
+int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
+
+	byte * ptr;
+	byte ticks, play_once;
+	byte music_type, num_instr;
+	byte *channel, *instr, *track;
+	int i, ch;
+	
+	src_ptr += 2;
+	size -= 2;
+	music_type = *(src_ptr);	// 0x80: is music; otherwise not.
+	if (music_type != 0x80) {
+		// It's an SFX; we don't know how to handle those yet
+		debug(4, "Sound %d not played, format not yet supported", idx);
+		nukeResource(type, idx);
+		res.roomoffs[type][idx] = 0xFFFFFFFF;
+		return 0;
+	}
+
+	// The "speed" of the song
+	ticks = *(src_ptr + 1);
+	
+	// Flag that tells us whether we should loop the song (0) or play it only once (1)
+	play_once = *(src_ptr + 2);
+	
+	// Number of instruments used
+	num_instr = *(src_ptr + 8);	// Normally 8
+	
+	// copy the pointer to instrument data
+	channel = src_ptr + 9;
+	instr   = src_ptr + 0x11;
+
+	// skip over the rest of the header and copy the MIDI data into a buffer
+	src_ptr  += 0x11 + 8 * 16;
+	size -= 0x11 + 8 * 16;
+
+	CHECK_HEAP 
+			
+	track = src_ptr;
+			
+	int total_size = 8 + 16 + 14 + 8 + 7 + 8*sizeof(ADLIB_INSTR_MIDI_HACK) + size;
+	total_size += 24;	// Up to 24 additional bytes are needed for the jump sysex
+
+	ptr = createResource(type, idx, total_size);
+	memcpy(ptr, "ADL ", 4); ptr += 4;
+	uint32 dw = READ_BE_UINT32(&total_size);
+	memcpy(ptr, &dw, 4); ptr += 4;
+	memcpy(ptr, "MDhd", 4); ptr += 4;
+	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 8;
+	ptr += 4;
+	memset(ptr, 0, 8), ptr += 8;
+	memcpy(ptr, "MThd", 4); ptr += 4;
+	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 6;
+	ptr += 4;
+	ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 1; // MIDI format 0 with 1 track
+	ptr += 4;
+	
+	// We will ignore the PPQN in the original resource, because
+	// it's invalid anyway. We use a constant PPQN of 480.
+	// memcpy(ptr, &ticks, 2); ptr += 2;
+	*ptr++ = 480 >> 8;
+	*ptr++ = 480 & 0xFF;
+	
+	memcpy(ptr, "MTrk", 4); ptr += 4;
+	dw = READ_BE_UINT32(&total_size);
+	memcpy(ptr, &dw, 4); ptr += 4;
+
+	// Conver the ticks into a MIDI tempo. 
+	dw = (500000 * 256) / ticks;
+	debug(4, "  ticks = %d, speed = %ld", ticks, dw);
+	
+	// Write a tempo change SysEx
+	memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
+	*ptr++ = (byte)((dw >> 16) & 0xFF);
+	*ptr++ = (byte)((dw >> 8) & 0xFF);
+	*ptr++ = (byte)(dw & 0xFF);
+		
+	// Copy our hardcoded instrument table into it
+	// Then, convert the instrument table as given in this song resource
+	// And write it *over* the hardcoded table.
+	// Note: we deliberately.
+
+	/* now fill in the instruments */
+	for (i = 0; i < num_instr; i++) {
+		ch = channel[i] - 1;
+
+		debug(4, "Sound %d: instrument %d on channel %d.", 
+			  idx, i, ch);
+
+	    memcpy(ptr, ADLIB_INSTR_MIDI_HACK, 
+			   sizeof(ADLIB_INSTR_MIDI_HACK));
+
+		ptr[5]  += ch;
+		ptr[28] += ch;
+		ptr[92] += ch;
+	
+		/* flags_1 */
+		ptr[30 + 0] = (instr[i * 16 + 3] >> 4) & 0xf;
+		ptr[30 + 1] = instr[i * 16 + 3] & 0xf;
+		
+		/* oplvl_1 */
+		ptr[30 + 2] = (instr[i * 16 + 4] >> 4) & 0xf;
+		ptr[30 + 3] = instr[i * 16 + 4] & 0xf;
+		
+		/* atdec_1 */
+		ptr[30 + 4] = ((~instr[i * 16 + 5]) >> 4) & 0xf;
+		ptr[30 + 5] = (~instr[i * 16 + 5]) & 0xf;
+		
+		/* sustrel_1 */
+		ptr[30 + 6] = ((~instr[i * 16 + 6]) >> 4) & 0xf;
+		ptr[30 + 7] = (~instr[i * 16 + 6]) & 0xf;
+		
+		/* waveform_1 */
+		ptr[30 + 8] = (instr[i * 16 + 7] >> 4) & 0xf;
+		ptr[30 + 9] = instr[i * 16 + 7] & 0xf;
+		
+		/* flags_2 */
+		ptr[30 + 10] = (instr[i * 16 + 8] >> 4) & 0xf;
+		ptr[30 + 11] = instr[i * 16 + 8] & 0xf;
+		
+		/* oplvl_2 */
+		ptr[30 + 12] = (instr[i * 16 + 9] >> 4) & 0xf;
+		ptr[30 + 13] = instr[i * 16 + 9] & 0xf;
+		
+		/* atdec_2 */
+		ptr[30 + 14] = ((~instr[i * 16 + 10]) >> 4) & 0xf;
+		ptr[30 + 15] = (~instr[i * 16 + 10]) & 0xf;
+		
+		/* sustrel_2 */
+		ptr[30 + 16] = ((~instr[i * 16 + 11]) >> 4) & 0xf;
+		ptr[30 + 17] = (~instr[i * 16 + 11]) & 0xf;
+		
+		/* waveform_2 */
+		ptr[30 + 18] = (instr[i * 16 + 12] >> 4) & 0xf;
+		ptr[30 + 19] = instr[i * 16 + 12] & 0xf;
+		
+		/* feedback */
+		ptr[30 + 20] = (instr[i * 16 + 2] >> 4) & 0xf;
+		ptr[30 + 21] = instr[i * 16 + 2] & 0xf;
+		ptr += sizeof(ADLIB_INSTR_MIDI_HACK);
+	}
+	
+	*ptr++ = 0;  // delay 0;
+	
+	// Now copy the actual music data 
+	memcpy(ptr, track, size);
+	ptr += size;
+	
+	if (!play_once) {
+		// The song is meant to be looped. We achieve this by inserting just
+		// before the song end a jump to the song start. More precisely we abuse
+		// a S&M sysex, "maybe_jump" to achieve this effect. We could also
+		// use a set_loop sysex, but it's a bit longer, a little more complicated,
+		// and has no advantage either.
+		
+		// First, find the track end
+		byte *end = ptr;
+		ptr -= size;
+		for (; ptr < end; ptr++) {
+			if (*ptr == 0xff && *(ptr + 1) == 0x2f)
+				break;
+		}
+		assert(ptr < end);
+		
+		// Now insert the jump. The jump offset is measured in ticks, and 
+		// each instrument definition spans 4 ticks... so we jump to tick
+		// 8*4, although jumping to tick 0 would probably work fine, too.
+		// Note: it's possible that some musics don't loop from the start...
+		// in that case we'll have to figure out how the loop range is specified
+		// and then how to handle it appropriately (if it's specified in
+		// ticks, we are fine; but if it's a byte offset, it'll be nasty).
+		const int jump_offset = 8 * 4;
+		memcpy(ptr, "\xf0\x13\x7d\x30\00", 5); ptr += 5;	// maybe_jump
+		memcpy(ptr, "\x00\x00", 2); ptr += 2;			// cmd -> 0 means always jump
+		memcpy(ptr, "\x00\x00\x00\x00", 4); ptr += 4;	// track -> there is only one track, 0
+		memcpy(ptr, "\x00\x00\x00\x01", 4); ptr += 4;	// beat -> for now, 1 (first beat)
+		// Ticks
+		*ptr++ = (byte)((jump_offset >> 12) & 0x0F);
+		*ptr++ = (byte)((jump_offset >> 8) & 0x0F);
+		*ptr++ = (byte)((jump_offset >> 4) & 0x0F);
+		*ptr++ = (byte)(jump_offset & 0x0F);
+		memcpy(ptr, "\x00\xf7", 2); ptr += 2;	// sysex end marker
+	}
+	// Finally we reinsert the end of song sysex, just in case
+	memcpy(ptr, "\x00\xff\x2f\x00\x00", 5); ptr += 5;
+	
+	src_ptr+=size;
+	size  = 0;
+		
+	return 1;
+}
+
 
 int Scumm::readSoundResourceSmallHeader(int type, int idx) {
-	uint32 pos, total_size, size, dw, tag;
-	uint32 best_size = 0, best_offs = 0;
+	uint32 pos, total_size, size, tag;
+	uint32 ad_size = 0, ad_offs = 0;
+	uint32 wa_size = 0, wa_offs = 0;
 
 	debug(4, "readSoundResourceSmallHeader(%s,%d)", resTypeFromId(type), idx);
 
 	//if (_rescache->readResource(roomNr, type, idx))
 	//		return 1;
 
-	total_size = size = _fileHandle.readUint32LE();
-	tag = _fileHandle.readUint16LE();
-	debug(4, "  tag='%c%c', size=%d",
-					(char) (tag & 0xff),
-					(char) ((tag >> 8) & 0xff), size);
-
-	pos = 6;
-	while (pos < total_size) {
-		size = _fileHandle.readUint32LE();
+	if ((_features & GF_OLD_BUNDLE)) {
+		wa_offs = _fileHandle.pos();
+		wa_size = _fileHandle.readUint16LE();
+		_fileHandle.seek(wa_size - 2, SEEK_CUR);
+		ad_offs = _fileHandle.pos();
+		ad_size = _fileHandle.readUint16LE();
+		_fileHandle.seek(4, SEEK_CUR);
+		total_size = wa_size + ad_size;
+	} else {
+		total_size = size = _fileHandle.readUint32LE();
 		tag = _fileHandle.readUint16LE();
 		debug(4, "  tag='%c%c', size=%d",
-					(char) (tag & 0xff),
-					(char) ((tag >> 8) & 0xff), size);
-		pos += size;
-
-		// MI1 and Indy3 uses one or more nested SO resources, which contains AD and WA
-		// resources.
-		if ((tag == 0x4441) && !(best_offs)) { // AD
-				best_size = size;
-				best_offs = _fileHandle.pos();
-		} else { // other AD, WA and nested SO resources
-			if (tag == 0x4F53) {
-				pos -= size;
-				size = 6;
-				pos += 6;
+		      (char) (tag & 0xff),
+		      (char) ((tag >> 8) & 0xff), size);
+		
+		pos = 6;
+		while (pos < total_size) {
+			size = _fileHandle.readUint32LE();
+			tag = _fileHandle.readUint16LE();
+			debug(4, "  tag='%c%c', size=%d",
+			      (char) (tag & 0xff),
+			      (char) ((tag >> 8) & 0xff), size);
+			pos += size;
+			
+			// MI1 and Indy3 uses one or more nested SO resources, which contains AD and WA
+			// resources.
+			if ((tag == 0x4441) && !(ad_offs)) { // AD
+				ad_size = size;
+				ad_offs = _fileHandle.pos();
+			} else if ((tag == 0x4157) && !(wa_offs)) { // WA
+				wa_size = size;
+				wa_offs = _fileHandle.pos();
+			} else { // other AD, WA and nested SO resources
+				if (tag == 0x4F53) { // SO
+					pos -= size;
+					size = 6;
+					pos += 6;
+				}
 			}
+			_fileHandle.seek(size - 6, SEEK_CUR);
 		}
-		_fileHandle.seek(size - 6, SEEK_CUR);
 	}
 
 	// AD resources have a header, instrument definitions and one MIDI track.
@@ -1063,197 +1165,19 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 	//        - proper handling of the short (non-music, SFX) AD resources format
 	//        - check the LE/BE handling for platforms other than PC
 
-	if (best_offs != 0) {
-		byte *ptr, *track, *instr;
-		byte ticks, play_once;
-		byte music_type, num_instr;
-
-		_fileHandle.seek(best_offs - 6, SEEK_SET);
-
-		ptr = createResource(type, idx, best_size);
-		_fileHandle.read(ptr, best_size);
-
-		music_type = *(ptr + 8);	// 0x80: is music; otherwise not.
-		
-		if (music_type != 0x80) {
-			// It's an SFX; we don't know how to handle those yet
-			debug(4, "Sound %d not played, format not yet supported", idx);
-			nukeResource(type, idx);
-			res.roomoffs[type][idx] = 0xFFFFFFFF;
-			return 0;
-		}
-		
-		// The "speed" of the song
-		ticks = *(ptr + 9);
-		
-		// Flag that tells us whether we should loop the song (0) or play it only once (1)
-		play_once = *(ptr + 10);
-		
-		// Number of instruments used
-		num_instr = *(ptr + 16);	// Normally 8
-		if (num_instr != 8)
-			warning("Sound %d has %d instruments, expected 8", idx, num_instr);
-
-		// copy the instrument data in another memory area
-		instr = (byte *)calloc(8 * 16, 1);
-		assert(instr);
-		memcpy(instr, ptr + 0x19, 8*16);
-
-		// skip over the rest of the header and copy the MIDI data into a buffer
-		size = best_size;
-		ptr  += 0x19 + 8 * 16;
-		size -= 0x19 + 8 * 16;
-		CHECK_HEAP 
-		track = (byte *)calloc(size, 1);
-		if (track == NULL) {
-			error("Out of memory while allocating %d", size);
-		}
-		memcpy(track, ptr, size);         // saving MIDI track data
-
-		// Now nuke the old resource, and replace it with a new one
-		nukeResource(type, idx);
-		total_size = 8 + 16 + 14 + 8 + 7 + sizeof(OLD256_MIDI_HACK) + size;
-		if (!play_once)
-			total_size += 24;	// Up to 24 additional bytes are needed for the jump sysex
-
-		// Write the ADL header (see also above for more information)
-		ptr = createResource(type, idx, total_size);
-		memcpy(ptr, "ADL ", 4); ptr += 4;
-		dw = READ_BE_UINT32(&total_size);
-		memcpy(ptr, &dw, 4); ptr += 4;
-		memcpy(ptr, "MDhd", 4); ptr += 4;
-		ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 8;
-		ptr += 4;
-		memset(ptr, 0, 8); ptr += 8;
-		memcpy(ptr, "MThd", 4); ptr += 4;
-		ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 6;
-		ptr += 4;
-		ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 1; // MIDI format 0 with 1 track
-		ptr += 4;
-
-		// We will ignore the PPQN in the original resource, because
-		// it's invalid anyway. We use a constant PPQN of 480.
-		// memcpy(ptr, &ticks, 2); ptr += 2;
-		*ptr++ = 480 >> 8;
-		*ptr++ = 480 & 0xFF;
-
-		memcpy(ptr, "MTrk", 4); ptr += 4;
-		*ptr++ = (byte)(((sizeof(OLD256_MIDI_HACK) + size + 7) >> 24) & 0xFF);
-		*ptr++ = (byte)(((sizeof(OLD256_MIDI_HACK) + size + 7) >> 16) & 0xFF);
-		*ptr++ = (byte)(((sizeof(OLD256_MIDI_HACK) + size + 7) >>  8) & 0xFF);
-		*ptr++ = (byte)(((sizeof(OLD256_MIDI_HACK) + size + 7)      ) & 0xFF);
-
-		// Conver the ticks into a MIDI tempo. 
-		dw = (500000 * 256) / ticks;
-		debug(4, "  ticks = %d, speed = %u", ticks, dw);
-		
-		// Write a tempo change SysEx
-		memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
-		*ptr++ = (byte)((dw >> 16) & 0xFF);
-		*ptr++ = (byte)((dw >> 8) & 0xFF);
-		*ptr++ = (byte)(dw & 0xFF);
-
-		// Copy our hardcoded instrument table into it
-		// Then, convert the instrument table as given in this song resource
-		// And write it *over* the hardcoded table.
-		// Note: we deliberately.
-		memcpy(ptr, OLD256_MIDI_HACK, sizeof(OLD256_MIDI_HACK));
-
-		
-		/* now fill in the instruments */
-		for (int i = 0; i < 8; i++) {
-
-			/* flags_1 */
-			ptr[95 * i + 30 + 0] = (instr[i * 16 + 3] >> 4) & 0xf;
-			ptr[95 * i + 30 + 1] = instr[i * 16 + 3] & 0xf;
-
-			/* oplvl_1 */
-			ptr[95 * i + 30 + 2] = (instr[i * 16 + 4] >> 4) & 0xf;
-			ptr[95 * i + 30 + 3] = instr[i * 16 + 4] & 0xf;
-
-			/* atdec_1 */
-			ptr[95 * i + 30 + 4] = ((~instr[i * 16 + 5]) >> 4) & 0xf;
-			ptr[95 * i + 30 + 5] = (~instr[i * 16 + 5]) & 0xf;
-
-			/* sustrel_1 */
-			ptr[95 * i + 30 + 6] = ((~instr[i * 16 + 6]) >> 4) & 0xf;
-			ptr[95 * i + 30 + 7] = (~instr[i * 16 + 6]) & 0xf;
-
-			/* waveform_1 */
-			ptr[95 * i + 30 + 8] = (instr[i * 16 + 7] >> 4) & 0xf;
-			ptr[95 * i + 30 + 9] = instr[i * 16 + 7] & 0xf;
-
-			/* flags_2 */
-			ptr[95 * i + 30 + 10] = (instr[i * 16 + 8] >> 4) & 0xf;
-			ptr[95 * i + 30 + 11] = instr[i * 16 + 8] & 0xf;
-
-			/* oplvl_2 */
-			ptr[95 * i + 30 + 12] = 3;
-			ptr[95 * i + 30 + 13] = 0xF;
-
-			/* atdec_2 */
-			ptr[95 * i + 30 + 14] = ((~instr[i * 16 + 10]) >> 4) & 0xf;
-			ptr[95 * i + 30 + 15] = (~instr[i * 16 + 10]) & 0xf;
-
-			/* sustrel_2 */
-			ptr[95 * i + 30 + 16] = ((~instr[i * 16 + 11]) >> 4) & 0xf;
-			ptr[95 * i + 30 + 17] = (~instr[i * 16 + 11]) & 0xf;
-
-			/* waveform_2 */
-			ptr[95 * i + 30 + 18] = (instr[i * 16 + 12] >> 4) & 0xf;
-			ptr[95 * i + 30 + 19] = instr[i * 16 + 12] & 0xf;
-
-			/* feedback */
-			ptr[95 * i + 30 + 20] = (instr[i * 16 + 2] >> 4) & 0xf;
-			ptr[95 * i + 30 + 21] = instr[i * 16 + 2] & 0xf;
-		}
-
-		free(instr);
-		ptr += sizeof(OLD256_MIDI_HACK);
-
-		// Now copy the actual music data 
-		memcpy(ptr, track, size);
-		free(track);
-		
-		if (!play_once) {
-			// The song is meant to be looped. We achieve this by inserting just
-			// before the song end a jump to the song start. More precisely we abuse
-			// a S&M sysex, "maybe_jump" to achieve this effect. We could also
-			// use a set_loop sysex, but it's a bit longer, a little more complicated,
-			// and has no advantage either.
-
-			// First, find the track end
-			byte *end = ptr + size;
-			for (; ptr < end; ptr++) {
-				if (*ptr == 0xff && *(ptr + 1) == 0x2f)
-					break;
-			}
-			assert(ptr < end);
-
-			// Now insert the jump. The jump offset is measured in ticks, and 
-			// each instrument definition spans 4 ticks... so we jump to tick
-			// 8*4, although jumping to tick 0 would probably work fine, too.
-			// Note: it's possible that some musics don't loop from the start...
-			// in that case we'll have to figure out how the loop range is specified
-			// and then how to handle it appropriately (if it's specified in
-			// ticks, we are fine; but if it's a byte offset, it'll be nasty).
-			const int jump_offset = 8 * 4;
-			memcpy(ptr, "\xf0\x13\x7d\x30\00", 5); ptr += 5;	// maybe_jump
-			memcpy(ptr, "\x00\x00", 2); ptr += 2;			// cmd -> 0 means always jump
-			memcpy(ptr, "\x00\x00\x00\x00", 4); ptr += 4;	// track -> there is only one track, 0
-			memcpy(ptr, "\x00\x00\x00\x01", 4); ptr += 4;	// beat -> for now, 1 (first beat)
-			// Ticks
-			*ptr++ = (byte)((jump_offset >> 12) & 0x0F);
-			*ptr++ = (byte)((jump_offset >> 8) & 0x0F);
-			*ptr++ = (byte)((jump_offset >> 4) & 0x0F);
-			*ptr++ = (byte)(jump_offset & 0x0F);
-			memcpy(ptr, "\x00\xf7", 2); ptr += 2;	// sysex end marker
-
-			// Finally we reinsert the end of song sysex, just in case
-			memcpy(ptr, "\x00\xff\x2f\x00\x00", 5); ptr += 5;
-		}
-		
-		return 1;
+	if (ad_offs != 0) {
+		byte *ptr;
+		if (_features & GF_OLD_BUNDLE) {
+			ptr = (byte *) calloc(ad_size - 4, 1);
+			_fileHandle.seek(ad_offs + 4, SEEK_SET);
+			_fileHandle.read(ptr, ad_size - 4);
+			return convertADResource(type, idx, ptr, ad_size - 4);
+		} else {
+			ptr = (byte *) calloc(ad_size - 6, 1);
+			_fileHandle.seek(ad_offs, SEEK_SET);
+			_fileHandle.read(ptr, ad_size - 6);
+			return convertADResource(type, idx, ptr, ad_size - 6);
+		} 
 	}
 	res.roomoffs[type][idx] = 0xFFFFFFFF;
 	return 0;

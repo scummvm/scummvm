@@ -25,6 +25,8 @@
 #include "common/engine.h"	// for warning/error/debug
 #include "common/util.h"
 
+static int tick;
+
 class MidiDriver_ADLIB;
 struct AdlibVoice;
 
@@ -156,7 +158,7 @@ struct Struct10 {
 	byte active;
 	int16 cur_val;
 	int16 count;
-	uint16 param;
+	uint16 max_value;
 	int16 start_value;
 	byte loop;
 	byte table_a[4];
@@ -237,7 +239,7 @@ const byte param_table_1[16] = {
 	21, 30, 31, 0
 };
 
-const uint16 param_table_2[16] = {
+const uint16 maxval_table[16] = {
 	0x2FF, 0x1F, 0x7, 0x3F,
 	0x0F, 0x0F, 0x0F, 0x3,
 	0x3F, 0x0F, 0x0F, 0x0F,
@@ -1004,6 +1006,7 @@ void MidiDriver_ADLIB::generate_samples(int16 *data, int len) {
 
 		_next_tick -= step;
 		if (!_next_tick) {
+			tick++;
 			if (_timer_proc)
 				(*_timer_proc)(_timer_param);
 			on_timer();
@@ -1210,7 +1213,7 @@ void MidiDriver_ADLIB::struct10_setup(Struct10 *s10) {
 	s10->num_steps = s10->speed_lo_max = e;
 
 	if (f != 2) {
-		c = s10->param;
+		c = s10->max_value;
 		g = s10->start_value;
 		t = s10->table_b[f];
 		d = lookup_volume(c, (t & 0x7F) - 31);
@@ -1397,7 +1400,7 @@ void MidiDriver_ADLIB::adlib_setup_channel(int chan, AdlibInstrument *instr, byt
 	port = channel_mappings[chan];
 	adlib_write(port + 0x20, instr->flags_1);
 
-	if (!_game_SmallHeader ||(instr->feedback & 1))
+	if (!_game_SmallHeader)
 		adlib_write(port + 0x40, (instr->oplvl_1 | 0x3F) - vol_1 );
 	else
 		adlib_write(port + 0x40, instr->oplvl_1);
@@ -1408,7 +1411,10 @@ void MidiDriver_ADLIB::adlib_setup_channel(int chan, AdlibInstrument *instr, byt
 
 	port = channel_mappings_2[chan];
 	adlib_write(port + 0x20, instr->flags_2);
-	adlib_write(port + 0x40, (instr->oplvl_2 | 0x3F) - vol_2 );
+	if (!_game_SmallHeader)
+		adlib_write(port + 0x40, (instr->oplvl_1 | 0x3F) - vol_1 );
+	else
+		adlib_write(port + 0x40, instr->oplvl_2 );
 	adlib_write(port + 0x60, 0xff & (~instr->atdec_2));
 	adlib_write(port + 0x80, 0xff & (~instr->sustrel_2));
 	adlib_write(port + 0xE0, instr->waveform_2);
@@ -1434,7 +1440,7 @@ void MidiDriver_ADLIB::mc_init_stuff (AdlibVoice *voice, Struct10 * s10,
 	s10->loop = flags & 0x20;
 	s11->flag0x10 = flags & 0x10;
 	s11->param = param_table_1[flags & 0xF];
-	s10->param = param_table_2[flags & 0xF];
+	s10->max_value = maxval_table[flags & 0xF];
 	s10->unk3 = 31;
 	if (s11->flag0x40) {
 		s10->modwheel = part->_modwheel >> 2;
