@@ -507,6 +507,18 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 	if (ah == NULL || ah->data == NULL) {
 		error("readArray: invalid array %d (%d)", array, readVar(array));
 	}
+	
+	// WORKAROUND bug #645711. This is clearly a script bug, as this script
+	// excerpt shows nicely:
+	// ...
+	// [03A7] (5D)         if (isAnyOf(array-447[localvar13][localvar14],[0,4])) {
+	// [03BD] (5D)           if ((localvar13 != -1) && (localvar14 != -1)) {
+	// [03CF] (B6)             printDebug.begin()
+	// ...
+	if (_gameId == GID_FT && array == 447 && _currentRoom == 95 && vm.slot[_currentScript].number == 2010 && idx == -1 && base == -1) {
+		return 0;
+	}
+
 
 	const int offset = base + idx * FROM_LE_16(ah->dim1);
 
@@ -2926,7 +2938,7 @@ void ScummEngine_v6::o6_stampObject() {
 		if (state == 0)
 			state = 255;
 
-		debug(6, "o6_stampObject: (%d at (%d,%d) scale %d)", object, x, y, state);
+		//debug(6, "o6_stampObject: (%d at (%d,%d) scale %d)", object, x, y, state);
 		Actor *a = derefActor(object, "o6_stampObject");
 		a->scalex = state;
 		a->scaley = state;
@@ -2952,7 +2964,7 @@ void ScummEngine_v6::o6_stampObject() {
 
 	putState(object, state);
 	drawObject(objnum, 0);
-	debug(6, "o6_stampObject: (%d at (%d,%d) state %d)", object, x, y, state);
+	//debug(6, "o6_stampObject: (%d at (%d,%d) state %d)", object, x, y, state);
 }
 
 void ScummEngine_v6::o6_stopTalking() {
