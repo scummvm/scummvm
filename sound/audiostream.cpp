@@ -26,6 +26,11 @@
 #include "common/file.h"
 #include "common/util.h"
 
+// This used to be an inline template function, but
+// buggy template function handling in MSVC6 forced
+// us to go with the macro approach. So far this is
+// the only template function that MSVC6 seemed to
+// compile incorrectly. Knock on wood.
 #define READSAMPLE(is16Bit, isUnsigned, ptr) \
 	((is16Bit ? READ_BE_UINT16(ptr) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
 
