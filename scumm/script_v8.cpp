@@ -1313,8 +1313,8 @@ void Scumm_v8::o8_kernelSetFunctions() {
 		
 		break;
 	case 24:	// clearTextQueue
-		// TODO - clearTextQueue
-//		warning("o8_kernelSetFunctions: clearTextQueue()");
+		// TODO - clearTextQueue. Maybe this should just call removeBlastTexts() ?
+		warning("o8_kernelSetFunctions: clearTextQueue()");
 		break;
 	case 25: {	// saveGameReadName
 		SaveFileManager *mgr = _system->get_savefile_manager();
