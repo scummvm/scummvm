@@ -85,7 +85,7 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, int slot) {
 		int len;
 
 		int32 offset = READ_LE_UINT16(ptr + 20);
-		int16 version = READ_LE_UINT16(ptr + 22);
+		/* int16 version = */ READ_LE_UINT16(ptr + 22);
 		int16 code = READ_LE_UINT16(ptr + 24);
 
 		_sounds[slot].region = (_region *)malloc(sizeof(_region) * 70);
