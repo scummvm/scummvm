@@ -512,10 +512,24 @@ inline bool VorbisInputStream::eosIntern() const {
 }
 
 int VorbisInputStream::readBuffer(int16 *buffer, int numSamples) {
-	int samples;
-	for (samples = 0; samples < numSamples && !eosIntern(); samples++) {
+	int samples = 0;
+#if 1
+	const int16 * const bufferEnd = _buffer + ARRAYSIZE(_buffer);
+	while (samples < numSamples && !eosIntern()) {
+		if (_pos >= bufferEnd) {
+			refill();
+		}
+		const int len = MIN(numSamples, bufferEnd - _pos);
+		memcpy(buffer, _pos, len * 2);
+		buffer += len;
+		_pos += len;
+		samples += len;
+	}
+#else
+	for (; samples < numSamples && !eosIntern(); samples++) {
 		*buffer++ = readIntern();
 	}
+#endif
 	return samples;
 }
 
