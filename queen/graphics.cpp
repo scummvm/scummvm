@@ -200,22 +200,21 @@ void Graphics::setupMouseCursor() {
 	_vm->display()->setMouseCursor(bf->data, bf->width, bf->height);
 }
 
-void Graphics::drawBob(const BobSlot *bs, int16 x, int16 y) {
+void Graphics::drawBob(const BobSlot *bs, BobFrame *bf, int16 x, int16 y) {
 	debug(9, "Graphics::drawBob(%d, %d, %d)", bs->frameNum, x, y);
 
 	uint16 w, h;
-	BobFrame *pbf = _vm->bankMan()->fetchFrame(bs->frameNum);
 	if (bs->scale < 100) {
-		shrinkFrame(pbf, bs->scale);
-		pbf = &_shrinkBuffer;
+		shrinkFrame(bf, bs->scale);
+		bf = &_shrinkBuffer;
 	}
-	w = pbf->width;
-	h = pbf->height;
+	w = bf->width;
+	h = bf->height;
 
 	const Box *box = &bs->box;
 
 	if(w != 0 && h != 0 && box->intersects(x, y, w, h)) {
-		uint8 *src = pbf->data;
+		uint8 *src = bf->data;
 		uint16 x_skip = 0;
 		uint16 y_skip = 0;
 		uint16 w_new = w;
@@ -274,8 +273,7 @@ void Graphics::shrinkFrame(const BobFrame *bf, uint16 percentage) {
 	// computing new size, rounding to upper value
 	uint16 new_w = (bf->width  * percentage + 50) / 100;
 	uint16 new_h = (bf->height * percentage + 50) / 100;
-
-	debug(9, "Graphics::shrinkFrame() - scale = %d, bufsize = %d", percentage, new_w * new_h);
+	assert(new_w * new_h < BOB_SHRINK_BUF_SIZE);
 
 	if (new_w != 0 && new_h != 0) {
 
@@ -389,7 +387,7 @@ void Graphics::drawBobs() {
 			x = pbs->x - xh - _vm->display()->horizontalScroll();
 			y = pbs->y - yh;
 
-			drawBob(pbs, x, y);
+			drawBob(pbs, pbf, x, y);
 		}
 	}
 }
