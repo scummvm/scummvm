@@ -102,13 +102,18 @@ void QueenLogic::initialise() {
 	_roomData[_numRooms + 1] = _numObjects;
 
 	//SFX Name
-	// FIXME: the following table isn't available in demo version
-	_sfxName = new uint16[_numRooms + 1];
+	// the following table isn't available in demo version
+	if (_resource->isDemo()) {
+		_sfxName = NULL;
+	}
+	else {
+		_sfxName = new uint16[_numRooms + 1];
 
-	for (i = 0; i < (_numRooms + 1); i++) {
-		_sfxName[i] = READ_BE_UINT16(ptr);
-		ptr += 2;
-	}	
+		for (i = 0; i < (_numRooms + 1); i++) {
+			_sfxName[i] = READ_BE_UINT16(ptr);
+			ptr += 2;
+		}	
+	}
 
 	//Item information
 	_numItems = READ_BE_UINT16(ptr);

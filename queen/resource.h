@@ -47,6 +47,7 @@ public:
 	~QueenResource(void);
 	uint8 *loadFile(const char *filename, uint32 skipBytes = 0);
 	bool exists(const char *filename);
+	bool isDemo();
 
 protected:
 	File *_resourceFile;

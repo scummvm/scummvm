@@ -138,3 +138,7 @@ const char *QueenResource::JASVersion() {
 	return versionStr;
 }
 
+bool QueenResource::isDemo() {
+	return _gameVersion->isDemo;
+}
+
