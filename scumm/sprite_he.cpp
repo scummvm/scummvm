@@ -104,6 +104,12 @@ int ScummEngine_v90he::spriteInfoGet_groupNum(int spriteId) {
 	return _spriteTable[spriteId].group_num;
 }
 
+int ScummEngine_v90he::spriteInfoGet_field_14(int spriteId) {
+	checkRange(_varNumSprites, 1, spriteId, "spriteInfoGet_field_14: Invalid sprite %d");
+
+	return _spriteTable[spriteId].field_14;
+}
+
 int ScummEngine_v90he::spriteInfoGet_field_18(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "spriteInfoGet_field_18: Invalid sprite %d");
 
@@ -156,6 +162,12 @@ int ScummEngine_v90he::spriteInfoGet_field_78(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "spriteInfoGet_field_78: Invalid sprite %d");
 
 	return _spriteTable[spriteId].field_78;
+}
+
+int ScummEngine_v90he::spriteInfoGet_field_7C(int spriteId) {
+	checkRange(_varNumSprites, 1, spriteId, "spriteInfoGet_field_7C: Invalid sprite %d");
+
+	return _spriteTable[spriteId].field_7C;
 }
 
 int ScummEngine_v90he::spriteInfoGet_field_80(int spriteId) {

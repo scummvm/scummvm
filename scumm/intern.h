@@ -885,6 +885,7 @@ protected:
 	int spriteInfoGet_resId(int spriteId);
 	int spriteInfoGet_resState(int spriteId);
 	int spriteInfoGet_groupNum(int spriteId);
+	int spriteInfoGet_field_14(int spriteId);
 	int spriteInfoGet_field_18(int spriteId);
 	int spriteInfoGet_grp_tx(int spriteId);
 	int spriteInfoGet_grp_ty(int spriteId);
@@ -893,6 +894,7 @@ protected:
 	int spriteInfoGet_wizSize(int spriteId);
 	int spriteInfoGet_zoom(int spriteId);
 	int spriteInfoGet_field_78(int spriteId);
+	int spriteInfoGet_field_7C(int spriteId);
 	int spriteInfoGet_field_80(int spriteId);
 	void getSpriteImageDim(int spriteId, int32 &w, int32 &h);
 	void spriteInfoGet_tx_ty(int spriteId, int32 &tx, int32 &ty);

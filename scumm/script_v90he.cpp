@@ -847,6 +847,13 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		else
 			push(0);
 		break;
+	case 32:
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_field_7C(spriteId));
+		else
+			push(0);
+		break;
 	case 33:
 		spriteId = pop();
 		if (spriteId)
@@ -868,6 +875,13 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		else
 			push(0);
 		break;
+	case 56:
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_field_14(spriteId));
+		else
+			push(0);
+		break;
 	case 62:
 		spriteId = pop();
 		if (spriteId)
@@ -880,7 +894,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 		if (spriteId)
 			push(spriteInfoGet_field_78(spriteId));
 		else
-			push(0);
+			push(1);
 		break;
 	case 68:
 		spriteId = pop();
@@ -1289,19 +1303,17 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 		break;
 	case 43:
 		spriteGroupId = pop();
-		if (spriteGroupId) {
+		if (spriteGroupId)
 			push(spriteGroupGet_field_10(spriteGroupId));
-		} else {
+		else
 			push(0);
-		}
 		break;
 	case 63: // HE 99+
 		spriteGroupId = pop();
-		if (spriteGroupId) {
+		if (spriteGroupId)
 			push(spriteGroupGet_field_20(spriteGroupId));
-		} else {
+		else
 			push(0);
-		}
 		break;
 	case 139: // HE 99+
 		// dummy case

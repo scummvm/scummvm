@@ -1789,35 +1789,83 @@ void ScummEngine_v100he::o100_getResourceSize() {
 }
 
 void ScummEngine_v100he::o100_getSpriteGroupInfo() {
+	int32 tx, ty;
+	int spriteGroupId, type;
+
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
 	case 5:
-		pop();
+		spriteGroupId = pop();
+		if (spriteGroupId)
+			push(spriteGroupGet_allocateGroupSpritesList(spriteGroupId));
+		else
+			push(0);
 		break;
-	case 48:
-		pop();
+	case 40:
+		spriteGroupId = pop();
+		if (spriteGroupId)
+			push(spriteGroupGet_field_20(spriteGroupId));
+		else
+			push(0);
 		break;
 	case 54:
+		// TODO
 		pop();
 		pop();
+		push(0);
 		break;
 	case 59:
-		pop();
+		spriteGroupId = pop();
+		if (spriteGroupId)
+			push(spriteGroupGet_field_10(spriteGroupId));
+		else
+			push(0);
 		break;
 	case 60:
-		pop();
-		pop();
+		type = pop();
+		spriteGroupId = pop();
+		if (spriteGroupId) {
+			switch(type) {
+			case 0:
+				push(spriteGroupGet_field_30(spriteGroupId));
+				break;
+			case 1:
+				push(spriteGroupGet_field_34(spriteGroupId));
+				break;
+			case 2:
+				push(spriteGroupGet_field_38(spriteGroupId));
+				break;
+			case 3:
+				push(spriteGroupGet_field_3C(spriteGroupId));
+				break;
+			default:
+				push(0);
+			}
+		} else {
+			push(0);
+		}
 		break;
 	case 85:
-		pop();
+		spriteGroupId = pop();
+		if (spriteGroupId) {
+			spriteGroupGet_tx_ty(spriteGroupId, tx, ty);
+			push(tx);
+		} else {
+			push(0);
+		}
 		break;
 	case 86:
-		pop();
+		spriteGroupId = pop();
+		if (spriteGroupId) {
+			spriteGroupGet_tx_ty(spriteGroupId, tx, ty);
+			push(ty);
+		} else {
+			push(0);
+		}
 		break;
 	default:
 		error("o100_getSpriteGroupInfo: Unknown case %d", subOp);
 	}
-	push(0);
 
 	debug(1,"o100_getSpriteGroupInfo stub (%d)", subOp);
 }
@@ -1978,34 +2026,65 @@ void ScummEngine_v100he::o100_readFile() {
 
 void ScummEngine_v100he::o100_getSpriteInfo() {
 	int args[16];
+	int spriteId, flags;
+	int32 a, b;
 
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 3:
-		pop();
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_flags_6(spriteId));
+		else
+			push(0);
 		break;
 	case 4:
-		pop();
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_field_78(spriteId));
+		else
+			push(1);
 		break;
 	case 7:
-		pop();
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_field_7C(spriteId));
+		else
+			push(0);
 		break;
 	case 16:
 		getStackList(args, ARRAYSIZE(args));
 		pop();
+		push(0);
 		break;
 	case 26:
-		pop();
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_wizSize(spriteId));
+		else
+			push(0);
 		break;
 	case 30:
-		pop();
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_grp_tx(spriteId));
+		else
+			push(0);
 		break;
 	case 31:
-		pop();
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_grp_ty(spriteId));
+		else
+			push(0);
 		break;
 	case 32:
-		pop();
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_flags_8(spriteId));
+		else
+			push(1);
 		break;
 	case 33:
 		getStackList(args, ARRAYSIZE(args));
@@ -2013,68 +2092,165 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 		pop();
 		pop();
 		pop();
+		push(0);
 		break;
 	case 38:
-		pop();
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_groupNum(spriteId));
+		else
+			push(0);
 		break;
 	case 39:
-		pop();
+		spriteId = pop();
+		if (spriteId) {
+			getSpriteImageDim(spriteId, a, b);
+			push(b);
+		} else {
+			push(0);
+		}
 		break;
 	case 40:
-		pop();
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_resId(spriteId));
+		else
+			push(0);
 		break;
 	case 48:
-		pop();
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_field_80(spriteId));
+		else
+			push(0);
 		break;
 	case 54:
 		pop();
 		pop();
+		push(0);
 		break;
 	case 57:
-		pop();
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_field_14(spriteId));
+		else
+			push(0);
 		break;
 	case 59:
-		pop();
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_field_18(spriteId));
+		else
+			push(0);
 		break;
 	case 60:
-		pop();
-		pop();
+		flags = pop();
+		spriteId = pop();
+		if (spriteId) {
+			switch(flags) {
+			case 0:
+				push(spriteInfoGet_flags_1(spriteId));
+				break;
+			case 1:
+				push(spriteInfoGet_flags_2(spriteId));
+				break;
+			case 2:
+				push(spriteInfoGet_flags_3(spriteId));
+				break;
+			case 3:
+				push(spriteInfoGet_flags_4(spriteId));
+				break;
+			case 4:
+				push(spriteInfoGet_flags_5(spriteId));
+				break;
+			default:
+				push(0);
+			}
+		} else {
+			push(0);
+		}
 		break;
 	case 65:
-		pop();
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_zoom(spriteId));
+		else
+			push(0);
 		break;
 	case 70:
-		pop();
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_field_54(spriteId));
+		else
+			push(0);
 		break;
 	case 73:
-		pop();
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_resState(spriteId));
+		else
+			push(0);
 		break;
 	case 75:
-		pop();
+		spriteId = pop();
+		if (spriteId) {
+			spriteInfoGet_field_2C_30(spriteId, a, b);
+			push(a);
+		} else {
+			push(0);
+		}
 		break;
 	case 76:
-		pop();
+		spriteId = pop();
+		if (spriteId) {
+			spriteInfoGet_field_2C_30(spriteId, a, b);
+			push(b);
+		} else {
+			push(0);
+		}
 		break;
 	case 82:
 		pop();
+		push(0);
 		break;
 	case 83:
 		pop();
-		pop();
+		spriteId = pop();
+		if (spriteId)
+			push(spriteInfoGet_field_44(spriteId));
+		else
+			push(0);
 		break;
 	case 84:
-		pop();
+		spriteId = pop();
+		if (spriteId) {
+			getSpriteImageDim(spriteId, a, b);
+			push(a);
+		} else {
+			push(0);
+		}
 		break;
 	case 85:
-		pop();
+		spriteId = pop();
+		if (spriteId) {
+			spriteInfoGet_tx_ty(spriteId, a, b);
+			push(a);
+		} else {
+			push(0);
+		}
 		break;
 	case 86:
-		pop();
+		spriteId = pop();
+		if (spriteId) {
+			spriteInfoGet_tx_ty(spriteId, a, b);
+			push(b);
+		} else {
+			push(0);
+		}
 		break;
 	default:
 		error("o100_getSpriteInfo: Unknown case %d", subOp);
 	}
-	push(0);
 	debug(1,"o100_getSpriteInfo stub (%d)", subOp);
 }
 
