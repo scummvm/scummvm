@@ -847,13 +847,14 @@ const char SwordControl::_languageStrings[8 * 20][43] = {
 	"DRIVE FULL!",
 // BS1_FRENCH:
 	"PAUSE",
-	"INS\xC9REZ LE CD-"
+	"INS\xC9REZ LE CD-",
 	"ET APPUYES SUR UNE TOUCHE",
 	"CD INCORRECT",
 	"Sauvegarder",
 	"Recharger",
 	"Recommencer",
 	"Commencer",
+	"Quitter",
 	"Vitesse",
 	"Volume",
 	"Texte",
@@ -895,6 +896,7 @@ const char SwordControl::_languageStrings[8 * 20][43] = {
 	"Ripristina",
 	"Ricomincia",
 	"Inizio",
+	"Esci",
 	"Velocit\xE0",
 	"Volume",
 	"Testo",
