@@ -450,7 +450,8 @@ public:
 
 	void on_timer(MidiDriver *midi);
 	void pause(bool paused);
-	int terminate();
+	int terminate1();
+	int terminate2();
 	int save_or_load(Serializer *ser, Scumm *scumm);
 	int set_music_volume(uint vol);
 	int get_music_volume();

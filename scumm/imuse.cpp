@@ -316,7 +316,7 @@ int IMuseInternal::stopAllSounds() {
 }
 
 void IMuseInternal::on_timer(MidiDriver *midi) {
-	if (_paused)
+	if (_paused || !_initialized)
 		return;
 
 	if (midi == _midi_native || !_midi_native)
@@ -612,9 +612,16 @@ int IMuseInternal::get_master_volume() {
 	return _master_volume;
 }
 
-int IMuseInternal::terminate() {
+int IMuseInternal::terminate1() {
+	_initialized = false;
 	stopAllSounds();
+	return 0;
+}
 
+// This is the stuff that has to be done
+// outside the monitor's mutex, otherwise
+// a deadlock occurs.
+int IMuseInternal::terminate2() {
 	if (_midi_adlib) {
 		_midi_adlib->close();
 		delete _midi_adlib;
@@ -1779,7 +1786,7 @@ int32 IMuse::doCommand (int numargs, int args[]) { in(); int32 ret = _target->do
 int IMuse::clear_queue() { in(); int ret = _target->clear_queue(); out(); return ret; }
 void IMuse::setBase(byte **base) { in(); _target->setBase(base); out(); }
 uint32 IMuse::property(int prop, uint32 value) { in(); uint32 ret = _target->property(prop, value); out(); return ret; }
-void IMuse::terminate() { in(); _target->terminate(); out(); }
+void IMuse::terminate() { in(); _target->terminate1(); out(); _target->terminate2(); }
 
 // The IMuse::create method provides a front-end factory
 // for creating IMuseInternal without exposing that class
