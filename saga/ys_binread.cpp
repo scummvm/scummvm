@@ -21,7 +21,7 @@
  *
  */
 
-#include <stdio.h>
+#include "saga.h"
 #include "yslib.h"
 
 namespace Saga {

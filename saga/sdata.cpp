@@ -21,12 +21,10 @@
  *
  */
 // Type SDataWord_T must be unpadded
-
+#include "saga.h"
 #include "reinherit.h"
 
 #include "yslib.h"
-
-#include <limits.h>
 
 #include "text_mod.h"
 

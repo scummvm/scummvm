@@ -47,7 +47,7 @@ struct R_BUFFER_INFO {
 };
 
 int RENDER_Register();
-int RENDER_Init();
+int RENDER_Init(OSystem *system);
 int RENDER_DrawScene();
 unsigned int RENDER_GetFlags();
 void RENDER_SetFlag(unsigned int);

@@ -27,11 +27,7 @@
 // described in "Michael Abrash's Graphics Programming Black Book", 
 // Coriolis Group Books, 1997
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-
+#include "saga.h"
 #include "yslib.h"
 
 #include "reinherit.h"

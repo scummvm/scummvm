@@ -23,10 +23,7 @@
 
 // "I Have No Mouth" Intro sequence scene procedures
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
+#include "saga.h"
 #include "yslib.h"
 
 #include "reinherit.h"

@@ -28,8 +28,6 @@
 
 #include "yslib.h"
 
-#include <limits.h>
-
 #include "game_mod.h"
 #include "rscfile_mod.h"
 

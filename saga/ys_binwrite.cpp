@@ -20,8 +20,7 @@
  * $Header$
  *
  */
-
-#include <stddef.h>
+#include "saga.h"
 
 namespace Saga {
 

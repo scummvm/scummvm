@@ -22,12 +22,8 @@
  */
 
 // Configuration Variable Module
-
-
+#include "saga.h"
 #include "reinherit.h"
-
-#include <limits.h>
-#include <stddef.h>
 
 #include "console_mod.h"
 

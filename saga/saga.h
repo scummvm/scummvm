@@ -30,6 +30,9 @@
 #include "base/gameDetector.h"
 #include "common/util.h"
 
+#include <limits.h>
+#include <stddef.h>
+
 //#include "gamedesc.h"
 
 namespace Saga {

@@ -44,8 +44,6 @@ struct R_RENDER_MODULE {
 	int r_softcursor;
 
 	// Module data
-	R_SURFACE *r_screen_surface;
-	R_SURFACE *r_display_surface;
 	R_SURFACE *r_backbuf_surface;
 
 	byte *r_bg_buf;

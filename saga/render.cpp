@@ -22,13 +22,11 @@
  */
 
 // Main rendering loop
-
+#include "saga.h"
 #include "reinherit.h"
 
 #include "systimer.h"
 #include "yslib.h"
-
-#include <SDL.h>
 
 #include "actor_mod.h"
 #include "console_mod.h"
@@ -50,6 +48,7 @@
 namespace Saga {
 
 static R_RENDER_MODULE RenderModule;
+static OSystem *_system;
 
 const char *test_txt = "The quick brown fox jumped over the lazy dog. She sells sea shells down by the sea shore.";
 
@@ -65,25 +64,15 @@ int RENDER_Register() {
 	return R_SUCCESS;
 }
 
-int RENDER_Init() {
+int RENDER_Init(OSystem *system) {
 	R_GAME_DISPLAYINFO disp_info;
-	R_SYSGFX_INIT gfx_init;
 	int result;
 	int tmp_w, tmp_h, tmp_bytepp;
 
 	// Initialize system graphics
 	GAME_GetDisplayInfo(&disp_info);
 
-	gfx_init.backbuf_bpp = 8;	// all games are 8 bpp so far
-	gfx_init.backbuf_w = disp_info.logical_w;
-	gfx_init.backbuf_h = disp_info.logical_h;
-
-	gfx_init.screen_bpp = 8;
-
-	gfx_init.screen_w = disp_info.logical_w;
-	gfx_init.screen_h = disp_info.logical_h;
-
-	if (SYSGFX_Init(&gfx_init) != R_SUCCESS) {
+	if (SYSGFX_Init(system, disp_info.logical_w, disp_info.logical_h) != R_SUCCESS) {
 		return R_FAILURE;
 	}
 
@@ -118,7 +107,6 @@ int RENDER_Init() {
 	RenderModule.r_tmp_buf_w = tmp_w;
 	RenderModule.r_tmp_buf_h = tmp_h;
 
-	RenderModule.r_screen_surface = SYSGFX_GetScreenSurface();
 	RenderModule.r_backbuf_surface = SYSGFX_GetBackBuffer();
 
 	// Initialize cursor state
@@ -126,15 +114,14 @@ int RENDER_Init() {
 		SYSINPUT_HideMouse();
 	}
 
+	_system = system;
 	RenderModule.initialized = 1;
 
 	return R_SUCCESS;
 }
 
 int RENDER_DrawScene() {
-	R_SURFACE *screen_surface;
 	R_SURFACE *backbuf_surface;
-	R_SURFACE *display_surface;
 	R_GAME_DISPLAYINFO disp_info;
 	R_SCENE_INFO scene_info;
 	SCENE_BGINFO bg_info;
@@ -150,7 +137,6 @@ int RENDER_DrawScene() {
 
 	RenderModule.r_framecount++;
 
-	screen_surface = RenderModule.r_screen_surface;
 	backbuf_surface = RenderModule.r_backbuf_surface;
 
 	// Get mouse coordinates
@@ -222,20 +208,10 @@ int RENDER_DrawScene() {
 	// Draw console
 	CON_Draw(backbuf_surface);
 
-	// Display the current frame
-	display_surface = backbuf_surface;
+	_system->copyRectToScreen(backbuf_surface->buf, backbuf_surface->buf_w, 0, 0, 
+							  backbuf_surface->buf_w, backbuf_surface->buf_h);
 
-	SYSGFX_LockSurface(screen_surface);
-	SYSGFX_LockSurface(display_surface);
-
-	GFX_SimpleBlit(screen_surface, display_surface);
-
-	SYSGFX_UnlockSurface(display_surface);
-	SYSGFX_UnlockSurface(screen_surface);
-
-	// FIXME
-	SDL_UpdateRect((SDL_Surface *)screen_surface->impl_src, 0, 0, 0, 0);
-
+	_system->updateScreen();
 	return R_SUCCESS;
 }
 

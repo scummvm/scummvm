@@ -20,10 +20,9 @@
  * $Header$
  *
  */
-
+#include "saga.h"
 #include "reinherit.h"
 
-#include <SDL.h>
 #include "actor_mod.h"
 #include "console_mod.h"
 #include "interface_mod.h"
@@ -33,99 +32,83 @@
 
 namespace Saga {
 
-int SYSINPUT_Init() {
-	SDL_EnableUNICODE(1);
-	SDL_EnableKeyRepeat(200, 30);
+static int _mouse_x, _mouse_y;
 
+int SYSINPUT_Init() {
 	return R_SUCCESS;
 }
 
 int SYSINPUT_ProcessInput() {
-	SDL_Event sdl_event;
+	OSystem::Event event;
 
-	int mouse_x, mouse_y;
 	R_POINT imouse_pt;
 
-	SYSINPUT_GetMousePos(&mouse_x, &mouse_y);
-
-	imouse_pt.x = mouse_x;
-	imouse_pt.y = mouse_y;
-
-	while (SDL_PollEvent(&sdl_event)) {
+	while (g_system->poll_event(&event)) {
 		int in_char;
 
-		switch (sdl_event.type) {
-		case SDL_KEYDOWN:
+		switch (event.event_code) {
+		case OSystem::EVENT_KEYDOWN:
 			if (CON_IsActive()) {
-				in_char = sdl_event.key.keysym.sym;
-				switch (sdl_event.key.keysym.sym) {
-				case SDLK_BACKQUOTE:
+				in_char = event.kbd.ascii;
+				switch (event.kbd.keycode) {
+				case 96: // backquote
 					CON_Deactivate();
 					break;
-				case SDLK_PAGEUP:
+				case 280: // page up
 					CON_PageUp();
 					break;
-				case SDLK_PAGEDOWN:
+				case 281: // page down
 					CON_PageDown();
 					break;
-				case SDLK_UP:
-				case SDLK_KP8:
+				case 273: // up
+				case 264: // keypad up
 					CON_CmdUp();
 					break;
-				case SDLK_DOWN:
-				case SDLK_KP2:
+				case 274: // down
+				case 258: // keypad down
 					CON_CmdDown();
 					break;
 				default:
-					if ((sdl_event.key.keysym.
-						unicode & 0xFF80) == 0) {
-						in_char = sdl_event.key.keysym. unicode & 0x7F;
-						if (in_char) {
-							CON_Type(in_char);
-						}
-					} else {
-						R_printf(R_STDOUT, "Ignored UNICODE character.\n");
+					if (in_char) {
+						CON_Type(in_char);
 					}
 					break;
 				}
 				break;
 			}
 
-			switch (sdl_event.key.keysym.sym) {
-			case SDLK_BACKQUOTE:
+			switch (event.kbd.keycode) {
+			case 96: // back quote
 				CON_Activate();
 				break;
-			case SDLK_q:
-				R_printf(R_STDOUT, "Quit key pressed.\n");
-				//goto done;
-				break;
-			case SDLK_r:
+			case 114: // r
 				INTERFACE_Draw();
 				break;
-			case SDLK_F1:
+			case 282: // F1
 				RENDER_ToggleFlag(RF_SHOW_FPS);
 				break;
-			case SDLK_F2:
+			case 283: // F2
 				RENDER_ToggleFlag(RF_PALETTE_TEST);
 				break;
-			case SDLK_F3:
+			case 284: // F3
 				RENDER_ToggleFlag(RF_TEXT_TEST);
 				break;
-			case SDLK_F4:
+			case 285: // F4
 				RENDER_ToggleFlag(RF_OBJECTMAP_TEST);
 				break;
-			case SDLK_TAB:
+			case 9: // Tab
 				STHREAD_DebugStep();
 				break;
-				// Actual game keys
-			case SDLK_SPACE:
+
+			// Actual game keys
+			case 32: // space
 				ACTOR_SkipDialogue();
 				break;
-			case SDLK_PAUSE:
-			case SDLK_p:
+			case 19:  // pause
+			case 112: // p
 				RENDER_ToggleFlag(RF_RENDERPAUSE);
 				break;
-			case SDLK_ESCAPE:
+			case 27: // Esc
 				// Skip to next scene skip target
 				SCENE_Skip();
 				break;
@@ -133,10 +116,17 @@ int SYSINPUT_ProcessInput() {
 				break;
 			}
 			break;
-		case SDL_KEYUP:
-			break;
-		case SDL_MOUSEBUTTONDOWN:
+		case OSystem::EVENT_LBUTTONDOWN:
 			INTERFACE_Update(&imouse_pt, UPDATE_MOUSECLICK);
+			break;
+		case OSystem::EVENT_MOUSEMOVE:
+			_mouse_x = event.mouse.x;
+			_mouse_y = event.mouse.y;
+			imouse_pt.x = _mouse_x;
+			imouse_pt.y = _mouse_y;
+			break;
+		case OSystem::EVENT_QUIT:
+			g_system->quit();
 			break;
 		default:
 			break;
@@ -147,19 +137,20 @@ int SYSINPUT_ProcessInput() {
 }
 
 int SYSINPUT_GetMousePos(int *mouse_x, int *mouse_y) {
-	SDL_GetMouseState(mouse_x, mouse_y);
+	*mouse_x = _mouse_x;
+	*mouse_y = _mouse_y;
 
 	return R_SUCCESS;
 }
 
 int SYSINPUT_HideMouse() {
-	SDL_ShowCursor(SDL_DISABLE);
+	g_system->showMouse(false);
 
 	return R_SUCCESS;
 }
 
 int SYSINPUT_ShowMouse() {
-	SDL_ShowCursor(SDL_ENABLE);
+	g_system->showMouse(true);
 
 	return R_SUCCESS;
 }

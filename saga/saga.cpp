@@ -241,7 +241,7 @@ void SagaEngine::go() {
 	}
 
 	// Initialize graphics
-	if (RENDER_Init() != R_SUCCESS) {
+	if (RENDER_Init(_system) != R_SUCCESS) {
 		return;
 	}
 

@@ -32,7 +32,6 @@
 
 #include "base/engine.h"
 
-#define R_ENV_LINUX
 #include "sys_interface.h"
 
 namespace Saga {
@@ -111,16 +110,7 @@ int TRANSITION_Dissolve(byte *dst_img, int dst_w, int dst_h,
 // System : Graphics
 #define R_PAL_ENTRIES 256
 
-struct R_SYSGFX_INIT {
-	int backbuf_w;
-	int backbuf_h;
-	int backbuf_bpp;
-	int screen_w;
-	int screen_h;
-	int screen_bpp;
-};
-
-int SYSGFX_Init(R_SYSGFX_INIT *);
+int SYSGFX_Init(OSystem *system, int width, int height);
 R_SURFACE *SYSGFX_GetScreenSurface();
 R_SURFACE *SYSGFX_GetBackBuffer();
 int SYSGFX_LockSurface(R_SURFACE *surface);
@@ -134,7 +124,7 @@ int SYSGFX_PalToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent);
 int SYSGFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent);
 
 // System : Input 
-int SYSINPUT_Init(void);
+int SYSINPUT_Init();
 int SYSINPUT_ProcessInput(void);
 int SYSINPUT_GetMousePos(int *mouse_x, int *mouse_y);
 int SYSINPUT_HideMouse(void);
