@@ -15,13 +15,13 @@ CP      := cp
 # Default compilation parameters. Normally don't edit these           #
 #######################################################################
 
-DEFINES := -DHAVE_CONFIG_H
-LDFLAGS :=
-INCLUDES:= -I. -Icommon
-LIBS	:=
-OBJS	:=
+DEFINES     := -DHAVE_CONFIG_H
+LDFLAGS     :=
+INCLUDES    := -I. -Icommon
+LIBS	    :=
+OBJS	    :=
 
-MODULES :=
+MODULES     :=
 MODULE_DIRS :=
 
 EXECUTABLE := scummvm$(EXEEXT)
