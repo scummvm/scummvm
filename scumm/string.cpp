@@ -820,7 +820,7 @@ void Scumm::translateText(byte *text, byte *trans_buff) {
 			pos += 3;
 			byte *pointer = (byte *)strchr((char*)text + 1, '/');
 			if (pointer != NULL)
-				memcpy(trans_buff, pointer + 1, resStrLen((char*)pointer + 1) + 1);
+				memcpy(trans_buff, pointer + 1, resStrLen(pointer + 1) + 1);
 			else
 				trans_buff[0] = '\0';
 			return;
@@ -880,12 +880,12 @@ void Scumm::translateText(byte *text, byte *trans_buff) {
 	if (text[0] == '/') {
 		byte *pointer = (byte *)strchr((char*)text + 1, '/');
 		if (pointer != NULL)
-			memcpy(trans_buff, pointer + 1, resStrLen((char*)pointer + 1) + 1);
+			memcpy(trans_buff, pointer + 1, resStrLen(pointer + 1) + 1);
 		else
 			trans_buff[0] = '\0';
 		return;
 	}
 
-	memcpy(trans_buff, text, resStrLen((char*)text) + 1);
+	memcpy(trans_buff, text, resStrLen(text) + 1);
 }
 
