@@ -52,11 +52,23 @@ bool ImuseChannel::isTerminated() const {
 	return (_dataSize <= 0 && _sbuffer == 0);
 }
 
-bool ImuseChannel::setParameters(int32 nbframes, int32 size, int32 unk1, int32 unk2) {
+bool ImuseChannel::setParameters(int32 nb, int32 size, int32 flags, int32 unk1) {
+	// flags: 0 - 8 bits
+	// values:
+	// 1 - Voice
+	// 2 - Background music
+	// 0, 3-511 - SFX and volume
+	// FIXME: this should be better
+	if ((flags != 1) && (flags != 2) && ((flags >> 2) != 0)) {
+		_volume = 300 - ((flags >> 3) << 2);
+	}
+	else {
+		_volume = 127;
+	}
 	return true;
 }
 
-bool ImuseChannel::checkParameters(int32 index, int32 nbframes, int32 size, int32 unk1, int32 unk2) {
+bool ImuseChannel::checkParameters(int32 index, int32 nbframes, int32 size, int32 track_flags, int32 unk1) {
 	return true;
 }
 
@@ -171,18 +183,21 @@ void ImuseChannel::decode() {
 	}
 	int loop_size = _sbufferSize / 3;
 	int new_size = loop_size * 2;
-	short * keep, * decoded;
-	keep = decoded = new int16[new_size];
+	byte * keep, * decoded;
+	uint32 value;
+	keep = decoded = new byte[new_size * 2];
 	assert(keep);
 	unsigned char * source = _sbuffer;
-	while(loop_size--) {
-		int v1 =  *source++;
-		int v2 =  *source++;
-		int v3 =  *source++;
-		int value = (((v2 & 0x0f) << 12) | (v1 << 4)) - 0x8000;
-		*decoded++ = (int16)value;
-		value = (((v2 & 0xf0) << 8) | (v3 << 4)) - 0x8000;		
-		*decoded++ = (int16)value;
+		while(loop_size--) {
+		byte v1 =  *source++;
+		byte v2 =  *source++;
+		byte v3 =  *source++;
+		value = ((((v2 & 0x0f) << 8) | v1) << 4) - 0x8000;
+		*decoded++ = (byte)((value >> 8) & 0xff);
+		*decoded++ = (byte)(value & 0xff);
+		value = ((((v2 & 0xf0) << 4) | v3) << 4) - 0x8000;
+		*decoded++ = (byte)((value >> 8) & 0xff);
+		*decoded++ = (byte)(value & 0xff);
 	}
 	delete []_sbuffer;
 	_sbuffer = (byte *)keep;
@@ -306,14 +321,25 @@ int32 ImuseChannel::availableSoundData(void) const {
 void ImuseChannel::getSoundData(int16 * snd, int32 size) {
 	if(_dataSize <= 0 || _bitsize <= 8) error("invalid call to imuse_channel::read_sound_data()");
 	if(_channels == 2) size *= 2;
+	byte * buf = (byte*)snd;
 	if(_rate == 11025) {
 		for(int32 i = 0; i < size; i++) {
-			snd[i * 2] = READ_BE_UINT16(_sbuffer + 2 * i);
-			snd[i * 2 + 1] = snd[i * 2];
+			byte sample1 = *(_sbuffer + i * 2);
+			byte sample2 = *(_sbuffer + i * 2 + 1);
+			uint16 sample = (uint16)(((int16)((sample1 << 8) | sample2) * _volume) >> 8);
+			buf[i * 4 + 0] = (byte)(sample >> 8);
+			buf[i * 4 + 1] = (byte)(sample & 0xff);
+			buf[i * 4 + 2] = buf[i * 4 + 0];
+			buf[i * 4 + 3] = buf[i * 4 + 1];
 		}
 	} else {
-		for(int32 i = 0; i < size; i++)
-			snd[i] = READ_BE_UINT16(_sbuffer + 2 * i);
+		for(int32 i = 0; i < size; i++){
+			byte sample1 = *(_sbuffer + i * 2);
+			byte sample2 = *(_sbuffer + i * 2 + 1);
+			uint16 sample = (uint16)(((int16)((sample1 << 8) | sample2) * _volume) >> 8);
+			buf[i * 2 + 0] = (byte)(sample >> 8);
+			buf[i * 2 + 1] = (byte)(sample & 0xff);
+		}
 	}
 	delete []_sbuffer;
 	assert(_sbufferSize == 2 * size);
@@ -327,12 +353,13 @@ void ImuseChannel::getSoundData(int8 * snd, int32 size) {
 	if(_channels == 2) size *= 2;
 	if(_rate == 11025) {
 		for(int32 i = 0; i < size; i++) {
-			snd[i * 2] = _sbuffer[i];
-			snd[i * 2 + 1] = _sbuffer[i];
+			snd[i * 2] = (int8)(((int8)(_sbuffer[i] ^ 0x80) * _volume) >> 8) ^ 0x80;
+			snd[i * 2 + 1] = snd[i * 2];
 		}
 	} else {
-		for(int32 i = 0; i < size; i++)
-			snd[i] = _sbuffer[i];
+		for(int32 i = 0; i < size; i++){
+			snd[i] = (int8)(((int8)(_sbuffer[i] ^ 0x80) * _volume) >> 8) ^ 0x80;
+		}
 	}
 	delete []_sbuffer;
 	_sbuffer = 0;

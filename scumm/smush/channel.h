@@ -122,6 +122,7 @@ private:
 	int32 _frequency;			//!< the target frequency of the ::mixer
 	int32 _dataSize;			//!< remaining size of sound data in the iMUS buffer
 	bool _inData;
+	int32 _volume;
 
 	int32 _bitsize;			//!< the bitsize of the original data
 	int32 _rate;				//!< the sampling rate of the original data
@@ -142,8 +143,8 @@ public:
 	ImuseChannel(int32 track, int32 freq);
 	virtual ~ImuseChannel();
 	bool isTerminated() const;
-	bool setParameters(int32 nbframes, int32 size, int32 unk1, int32 unk2);
-	bool checkParameters(int32 index, int32 nbframes, int32 size, int32 unk1, int32 unk2);
+	bool setParameters(int32 nbframes, int32 size, int32 track_flags, int32 unk1);
+	bool checkParameters(int32 index, int32 nbframes, int32 size, int32 track_flags, int32 unk1);
 	bool appendData(Chunk & b, int32 size);
 	int32 availableSoundData() const;
 	void getSoundData(int16 * sound_buffer, int32 size);

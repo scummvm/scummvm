@@ -291,28 +291,28 @@ void SmushPlayer::handleFetch(Chunk & b) {
 	debug(6, "SmushPlayer::handleFetch()");
 }
 
-void SmushPlayer::handleImuseBuffer(int32 track_id, int32 index, int32 nbframes, int32 size, int32 unk1, int32 unk2, Chunk & b, int32 bsize) {
-	_Channel * c = _mixer->findChannel(track_id);
+void SmushPlayer::handleImuseBuffer(int32 track_id, int32 index, int32 nbframes, int32 size, int32 unk1, int32 track_flags, Chunk & b, int32 bsize) {
+	int32 track = (track_flags << 16) | track_id;
+	_Channel * c = _mixer->findChannel(track);
 	if(c == 0) {
-		c = new ImuseChannel(track_id, _soundFrequency);
+		c = new ImuseChannel(track, _soundFrequency);
 		_mixer->addChannel(c);
 	}
 	if(index == 0)
-		c->setParameters(nbframes, size, unk1, unk2);
+		c->setParameters(nbframes, size, track_flags, unk1);
 	else
-		c->checkParameters(index, nbframes, size, unk1, unk2);
+		c->checkParameters(index, nbframes, size, track_flags, unk1);
 	c->appendData(b, bsize);
 }
 
-void SmushPlayer::handleImuseAction8(Chunk & b, int32 flags, int32 unknown, int32 track_id) {
+void SmushPlayer::handleImuseAction8(Chunk & b, int32 flags, int32 unknown, int32 track_flags) {
 	assert(flags == 46 && unknown == 0);
-	int32 unknown2 = b.getWord();
-	track_id |= unknown2 << 16;
+	int32 track_id = b.getWord();
 	int32 index = b.getWord();
 	int32 nbframes = b.getWord();
 	int32 size = b.getDword();
 	int32 bsize = b.getSize() - 18;
-	handleImuseBuffer(track_id, index, nbframes, size, unknown, unknown2, b, bsize);
+	handleImuseBuffer(track_id, index, nbframes, size, unknown, track_flags, b, bsize);
 }
 
 void SmushPlayer::handleImuseAction(Chunk & b) {
@@ -322,17 +322,17 @@ void SmushPlayer::handleImuseAction(Chunk & b) {
 	int32 code = b.getWord();
 	int32 flags = b.getWord();
 	int32 unknown = b.getShort();
-	int32 track_id = b.getWord();
+	int32 track_flags = b.getWord();
 #ifdef DEBUG
-	debug(5, "handleImuseAction(%d, %d, %d, %d)", code, flags, unknown, track_id);
+	debug(5, "handleImuseAction(%d, %d, %d, %d)", code, flags, unknown, track_flags);
 #endif
 	switch(code) {
 		case 8:
-			handleImuseAction8(b, flags, unknown, track_id);
+			handleImuseAction8(b, flags, unknown, track_flags);
 			break;
 #ifdef DEBUG
 		default: {
-				debug(9, "%5.5d %d %8.8d %4.4d", track_id, flags, unknown);
+				debug(9, "%5.5d %d %8.8d %4.4d", track_flags, flags, unknown);
 			}
 #endif
 	}
