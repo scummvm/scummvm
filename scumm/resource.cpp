@@ -34,7 +34,7 @@
 
 namespace Scumm {
 
-static uint16 newTag2Old(uint32 oldTag);
+static uint16 newTag2Old(uint32 newTag);
 static const char *resTypeFromId(int id);
 
 
@@ -1434,8 +1434,8 @@ const byte *findResourceSmall(uint32 tag, const byte *searchin) {
 	return NULL;
 }
 
-uint16 newTag2Old(uint32 oldTag) {
-	switch (oldTag) {
+uint16 newTag2Old(uint32 newTag) {
+	switch (newTag) {
 	case (MKID('RMHD')):
 		return (0x4448);	// HD
 	case (MKID('IM00')):
