@@ -1734,7 +1734,7 @@ void Scumm_v8::o8_getStringWidth()
 
 void Scumm_v8::o8_drawObject()
 {
-	int state = pop(), y = pop(), x = pop(), objnum = getObjectIndex(pop());
+	int state = pop(), y = pop(), x = pop(), obj = pop(), objnum = getObjectIndex(obj);
 	ObjectData *od;
 
 	if (!objnum)
@@ -1754,5 +1754,5 @@ void Scumm_v8::o8_drawObject()
 	else
 		warning("o8_drawObject(%d, %d, %d, %d)", x, y, objnum, state);
 
-	putState(objnum, state);
+	putState(obj, state);
 }
