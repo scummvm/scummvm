@@ -47,14 +47,13 @@ void decompressBomp(byte *dst, const byte *src, int w, int h) {
 	} while (--h);
 }
 
-void bompDecodeLine(byte *dst, const byte *src, int size) {
-	assert(size > 0);
+void bompDecodeLine(byte *dst, const byte *src, int len) {
+	assert(len > 0);
 
-	int len, num;
+	int num;
 	byte code, color;
 
-	len = size;
-	while (len) {
+	while (len > 0) {
 		code = *src++;
 		num = (code >> 1) + 1;
 		if (num > len)
@@ -71,16 +70,15 @@ void bompDecodeLine(byte *dst, const byte *src, int size) {
 	}
 }
 
-void bompDecodeLineReverse(byte *dst, const byte *src, int size) {
-	assert(size > 0);
+void bompDecodeLineReverse(byte *dst, const byte *src, int len) {
+	assert(len > 0);
 
-	dst += size;
+	dst += len;
 	
-	int len, num;
+	int num;
 	byte code, color;
 
-	len = size;
-	while (len) {
+	while (len > 0) {
 		code = *src++;
 		num = (code >> 1) + 1;
 		if (num > len)
