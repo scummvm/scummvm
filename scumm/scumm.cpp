@@ -103,12 +103,12 @@ static const ScummGameSettings scumm_settings[] = {
 	/* Scumm Version 3 */
 	{"indy3EGA", "Indiana Jones and the Last Crusade", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, 0, 0},
-	{"indy3Towns", "Indiana Jones and the Last Crusade (FM Towns)", GID_INDY3, 3, 0, MDT_TOWNS,
+	{"indy3Towns", "Indiana Jones and the Last Crusade (FM-TOWNS)", GID_INDY3, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_FMTOWNS | GF_AUDIOTRACKS, 0, 0},
 	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, 0, 0},
 
-	{"zakTowns", "Zak McKracken and the Alien Mindbenders (FM Towns)", GID_ZAK256, 3, 0, MDT_TOWNS,
+	{"zakTowns", "Zak McKracken and the Alien Mindbenders (FM-TOWNS)", GID_ZAK256, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, 0, 0},
 	{"loom", "Loom", GID_LOOM, 3, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, 0, 0},
@@ -143,9 +143,9 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY, 0, 0},
 	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0, 0},
-	{"indy4", "Indiana Jones and the Fate of Atlantis (FM Towns)", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
+	{"indy4", "Indiana Jones and the Fate of Atlantis (FM-TOWNS)", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0, 0},
-	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM Towns Demo)", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
+	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM-TOWNS Demo)", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0, 0},
 
 	/* Scumm Version 6 */
@@ -870,7 +870,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_hexdumpScripts = false;
 	_showStack = false;
 
-	if (_features & GF_FMTOWNS && _version == 3) {	// FMTowns V3 games use 320x240
+	if (_features & GF_FMTOWNS && _version == 3) {	// FM-TOWNS V3 games use 320x240
 		_screenWidth = 320;
 		_screenHeight = 240;
 	} else if (_features & GF_DEFAULT_TO_1X_SCALER) {
@@ -1437,7 +1437,7 @@ int ScummEngine::scummLoop(int delta) {
 		VAR(VAR_TMR_3) += delta;
 		if (_gameId == GID_ZAK256 || _gameId == GID_INDY3) {
 			// All versions of Indy3 set three extra timers
-			// FM Towns version of Zak sets three extra timers
+			// FM-TOWNS version of Zak sets three extra timers
 			VAR(39) += delta;
 			VAR(40) += delta;
 			VAR(41) += delta;
