@@ -2042,6 +2042,8 @@ void Player::parse_sysex(byte *p, uint len) {
 			//   BYTE 05: Volume (upper 4 bits) [guessing]
 			//   BYTE 06: Volume (lower 4 bits) [guessing]
 			//   BYTE 09: BIT 04 (0x08): Percussion? (1 = yes)
+			//   BYTE 15: Program (upper 4 bits)
+			//   BYTE 16: Program (lower 4 bits)
 			part = get_part (p[0] & 0x0F);
 			if (part) {
 				part->set_onoff (p[2] & 0x01);
@@ -2053,6 +2055,12 @@ void Player::parse_sysex(byte *p, uint len) {
 						_se->reallocateMidiChannels (_midi);
 					}
 				} else {
+					// Even in cases where a program does not seem to be specified,
+					// i.e. bytes 15 and 16 are 0, we send a program change because
+					// 0 is a valid program number. MI2 tests show that in such
+					// cases, a regular program change message always seems to follow
+					// anyway.
+					part->_instrument.program ((p[15] & 0x0F) << 4 | (p[16] & 0x0F), _mt32emulate);
 					part->sendAll();
 				}
 			}
