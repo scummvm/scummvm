@@ -280,8 +280,6 @@ void Scumm::CHARSET_1() {
 
 	if (!_keepText) {
 		if(_features & GF_OLD256) {
-			int lenght;
-			
 			gdi._mask_left = string[0].xpos;
 			gdi._mask_top = string[0].ypos;
 			gdi._mask_bottom = string[0].ypos+8;

@@ -67,7 +67,6 @@ bool Scumm::loadState(int slot, bool compat) {
 	SaveGameHeader hdr;
 	Serializer ser;
 	int sb,sh;
-	SoundEngine *se;
 
 	makeSavegameName(filename, slot, compat);
 	if (!out.fopen(filename,"rb"))
@@ -156,7 +155,6 @@ bool Scumm::getSavegameName(int slot, char *desc) {
 	char filename[256];
 	SerializerStream out;
 	SaveGameHeader hdr;
-	bool result;
 	int len;
 
 	makeSavegameName(filename, slot, false);
@@ -524,11 +522,10 @@ void Scumm::saveOrLoad(Serializer *s) {
 
 void Scumm::saveLoadResource(Serializer *ser, int type, int index) {
 	byte *ptr;
-	uint32 size,sizele;
-	byte flag;
+	uint32 size;
 
 	/* don't save/load these resource types */
-	if (/*type==rtFlObject ||*/ type==rtTemp || type==rtBuffer || res.mode[type])
+	if (type==rtTemp || type==rtBuffer || res.mode[type])
 		return;
 
 	if (ser->isSaving()) {
@@ -623,9 +620,9 @@ void Serializer::saveLoadArrayOf(void *b, int len, int datasize, byte filetype) 
 				error("saveLoadArrayOf: invalid size %d", datasize);
 			}
 			switch(filetype) {
-			case sleByte: saveByte(data); break;
+			case sleByte: saveByte((byte)data); break;
 			case sleUint16:
-			case sleInt16:saveWord(data); break;
+			case sleInt16:saveWord((int16)data); break;
 			case sleInt32:
 			case sleUint32:saveUint32(data); break;
 			default:
@@ -643,10 +640,10 @@ void Serializer::saveLoadArrayOf(void *b, int len, int datasize, byte filetype) 
 				error("saveLoadArrayOf: invalid filetype %d", filetype);
 			}
 			if (datasize==1) {
-				*(byte*)at = data;
+				*(byte*)at = (byte)data;
 				at += 1;
 			} else if (datasize==2) {
-				*(uint16*)at = data;
+				*(uint16*)at = (uint16)data;
 				at += 2;
 			} else if (datasize==4) {
 				*(uint32*)at = data;
@@ -673,7 +670,6 @@ void Serializer::saveLoadEntries(void *d, const SaveLoadEntry *sle) {
 	byte type;
 	byte *at;
 	int size;
-	int value;
 	int num;
 	void *ptr;
 	
@@ -704,4 +700,3 @@ void Serializer::saveLoadEntries(void *d, const SaveLoadEntry *sle) {
 		sle++;
 	}
 }
-

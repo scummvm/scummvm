@@ -465,7 +465,7 @@ void fill_sound(void *userdata, Uint8 *stream, int len) {
 
 void cd_playtrack(int track, int offset, int delay) {
         SDL_CDStatus(cdrom);
-        SDL_CDPlayTracks(cdrom, track, (offset * 7.5) - 22650, 0, delay * 7.5);
+        SDL_CDPlayTracks(cdrom, track, (int)((offset * 7.5) - 22650), 0, (int)(delay * 7.5));
 }
 
 int music_thread(Scumm *s) {
@@ -548,7 +548,7 @@ void initGraphics(Scumm *s, bool fullScreen) {
 #endif
 
 int main(int argc, char* argv[]) {
-	int delta,tmp;
+	int delta;
 	int last_time, new_time;
 
 	sound.initialize(&scumm, &snd_driv);

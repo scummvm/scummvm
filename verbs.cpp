@@ -160,7 +160,6 @@ void Scumm::restoreVerbBG(int verb) {
 }
 
 void Scumm::drawVerbBitmap(int vrb, int x, int y) {
-	int nozbufs;
 	VirtScreen *vs;
 	VerbSlot *vst;
 	byte twobufs, *imptr;
@@ -186,15 +185,13 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 
 	obim = getResourceAddress(rtVerb, vrb);
         if (_features & GF_SMALL_HEADER) {
-                ObjectData *od;
-                int index, obj;
+                int obj;
                 obj = READ_LE_UINT16(obim+6);
-		size = READ_LE_UINT32(obim);
+				size = READ_LE_UINT32(obim);
 
-		imgw = (*(obim+size+11)) ;
-		imgh = (*(obim+size+17))>>3 ;
-		imptr = (obim+8);
-
+				imgw = (*(obim+size+11)) ;
+				imgh = (*(obim+size+17))>>3 ;
+				imptr = (obim+8);
         } else {
                 imhd = (ImageHeader*)findResourceData(MKID('IMHD'), obim);
                 imgw = READ_LE_UINT16(&imhd->width) >> 3;

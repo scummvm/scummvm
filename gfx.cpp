@@ -358,7 +358,7 @@ void Scumm::initBGBuffers() {
 
 void Scumm::setPaletteFromPtr(byte *ptr) {
 	int i, r, g, b;
-	byte *dest, *epal;
+	byte *dest;
 	int numcolor;
 
         if( _features & GF_SMALL_HEADER ) {
@@ -406,7 +406,7 @@ void Scumm::setDirtyColors(int min, int max) {
 }
 
 void Scumm::initCycl(byte *ptr) {
-	int i, j;
+	int j;
 	ColorCycle *cycl;
 
 	memset(_colorCycle, 0, sizeof(_colorCycle));
@@ -560,7 +560,7 @@ void Scumm::redrawBGAreas() {
 	int i;
 	int val;
 	CameraData *cd = &camera;
-	int diff;
+	int diff;	// Full throttle hack
 
 #if !defined(FULL_THROTTLE)
 	if (cd->_cur.x!=cd->_last.x && charset._hasMask)
@@ -1260,7 +1260,6 @@ void Gdi::unkDecode7() {
 void Gdi::unkDecode8() {
        byte *src = _smap_ptr;
        byte *dst = _bgbak_ptr; 
-       int i;
        uint h = _numLinesToProcess;
 
        _currentX = 8;
@@ -1583,7 +1582,6 @@ void Scumm::unkScreenEffect7(int a) {
 	int tab_2[16];
 	int i,j;
 	int bottom;
-	int *tab2_ptr;
 	int l,t,r,b;
 
 	for (i=0; i<16; i++) {
@@ -1988,7 +1986,6 @@ void Scumm::resetActorBgs() {
 	Actor *a;
 	int i;
 	uint32 onlyActorFlags,bitpos;
-	int offs;
 	
 	for(i=0; i<40; i++) {
 		onlyActorFlags = (gfxUsageBits[_screenStartStrip + i]&=0x3FFFFFFF);
@@ -2391,7 +2388,7 @@ void Scumm::drawBomp(BompDrawData *bd) {
 			src = bd->dataptr;
 
 			do {
-				byte color,code;
+				byte color;
 				uint len, num;
 				uint x;
 				if ((uint)y >= (uint)bd->outheight) {

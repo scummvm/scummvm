@@ -931,7 +931,7 @@ void Scumm::o5_cursorCommand() {
 	case 14: /* unk */
 		getWordVararg(table);
 		for (i=0; i<16; i++)
-			charset._colorMap[i] = _charsetData[string[1].t_charset][i] = table[i];
+			charset._colorMap[i] = _charsetData[string[1].t_charset][i] = (unsigned char)table[i];
 		break;
 	}
 
@@ -1565,7 +1565,7 @@ void Scumm::o5_print() {
 }
 
 void Scumm::o5_printEgo() {
-	_actorToPrintStrFor = _vars[VAR_EGO];
+	_actorToPrintStrFor = (unsigned char)_vars[VAR_EGO];
 	decodeParseString();
 }
 
@@ -2142,7 +2142,6 @@ void Scumm::o5_verbOps() {
 	VerbSlot *vs;
 	int a,b;
 	byte *ptr;
-	int tempRoom;
 
 	verb = getVarOrDirectByte(0x80);
 

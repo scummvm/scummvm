@@ -347,8 +347,7 @@ void Player::sequencer_timer() {
 
 void SoundEngine::handle_marker(uint id, byte data) {
 	uint16 *p;
-	uint pos;
-	int a;
+	uint pos;	
 	
 	pos = _queue_end;
 	if (pos == _queue_pos)
@@ -420,7 +419,7 @@ void SoundEngine::expire_sustain_notes() {
 
 		counter = sn->counter + player->_timer_speed;
 		sn->pos += counter>>16;
-		sn->counter = counter & 0xFFFF;
+		sn->counter = (unsigned short)counter & 0xFFFF;
 
 		if (sn->pos >= sn->off_pos) {
 			player->key_off(sn->chan, sn->note);
@@ -568,7 +567,6 @@ int SoundEngine::clear_queue() {
 
 int SoundEngine::enqueue_command(int a, int b, int c, int d, int e, int f, int g) {
 	uint16 *p;
-	uint32 r;
 	uint i;
 
 	i = _queue_pos;
@@ -929,13 +927,12 @@ void SoundEngine::init_queue() {
 }
 
 void SoundEngine::pause(bool paused) {
-	Part *part;
-	int i;
-	MidiChannel *mc;
-
 	lock();
 
 #if 0
+	int i;
+	Part *part;
+	MidiChannel *mc;
 
 	for (i=ARRAYSIZE(_parts),part=_parts; i!=0; i--, part++) {
 		if (part->_player) {
@@ -1236,7 +1233,6 @@ void Player::parse_sysex(byte *p, uint len) {
 	uint b;
 	byte buf[128];
 	Part *part;
-	byte hw;
 
 	/* too big? */
 	if (len>=sizeof(buf)*2)
@@ -1764,7 +1760,6 @@ Part *Player::get_part(uint8 chan) {
 
 uint Player::update_actives() {
 	Part *part;
-	MidiChannel *mc;
 	uint16 *active;
 	int count = 0;
 	
@@ -2094,7 +2089,6 @@ int SoundEngine::save_or_load(Serializer *ser) {
 
 	if (!ser->isSaving()) {
 		/* Load all sounds that we need */
-		int i;
 		fix_players_after_load();
 		init_sustaining_notes();
 		_active_volume_faders = true;

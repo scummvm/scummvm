@@ -330,8 +330,6 @@ int Scumm::readVar(uint var) {
 }
 
 void Scumm::writeVar(uint var, int value) {
-	int a;
-
 	if (!(var&0xF000)) {
 		checkRange(_numVariables-1, 0, var, "Variable %d out of range(w)");
 		_vars[var] = value;
@@ -510,7 +508,7 @@ void Scumm::runAllScripts() {
 	for(_curExecScript = 0; _curExecScript<NUM_SCRIPT_SLOT; _curExecScript++) {
 		if (vm.slot[_curExecScript].status == 2 &&
 			vm.slot[_curExecScript].didexec == 0) {
-			_currentScript = _curExecScript;
+			_currentScript = (char)_curExecScript;
 			getScriptBaseAddress();
 			getScriptEntryPoint();
 			executeScript();
@@ -832,8 +830,7 @@ void Scumm::animateActor(int act, int anim) {
 
 
 #else
-	int shr,dir;
-	bool inRoom;
+	int dir;
 	Actor *a;
 
 	a = derefActorSafe(act, "animateActor");
@@ -926,7 +923,7 @@ int Scumm::defineArray(int array, int type, int dim2, int dim1) {
 	id = getArrayId();
 
 	if (array&0x4000) {
-		_arrays[id] = vm.slot[_currentScript].number;
+		_arrays[id] = (char)vm.slot[_currentScript].number;
 	}
 
 	if (array&0x8000) {

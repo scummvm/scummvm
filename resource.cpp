@@ -24,7 +24,7 @@
 
 /* Open a room */
 void Scumm::openRoom(int room) {
-	uint room_offs, roomlimit;
+	int room_offs, roomlimit;
 	char buf[256];
 
 	debug(9, "openRoom(%d)",room);
@@ -647,7 +647,6 @@ int Scumm::loadResource(int type, int index) {
 
 int Scumm::readSoundResource(int type, int index) {
 	uint32 pos, total_size, size, tag,basetag;
-	int i;
 	int pri, best_pri;
 	uint32 best_size, best_offs;
 
@@ -890,7 +889,7 @@ StartScan:
 }
 
 byte *findResource(uint32 tag, byte *searchin, int index) {
-	uint32 maxsize,curpos,totalsize,size;
+	uint32 curpos,totalsize,size;
 
 	assert(searchin);
 
@@ -920,7 +919,7 @@ byte *findResource(uint32 tag, byte *searchin, int index) {
 }
 
 byte *findResourceSmall(uint32 tag, byte *searchin, int index) {
-        uint32 maxsize,curpos,totalsize,size;
+        uint32 curpos,totalsize,size;
         uint16 smallTag;
 
         smallTag=newTag2Old(tag);
@@ -1056,7 +1055,7 @@ void Scumm::freeResources() {
 }
 
 void Scumm::loadPtrToResource(int type, int resindex, byte *source) {
-	byte *ptr, *alloced;
+	byte *alloced;
 	int i,len;
 
 	nukeResource(type, resindex);

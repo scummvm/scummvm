@@ -51,7 +51,7 @@ void Scumm::akos_decodeData(Actor *a, int frame, uint usemask) {
 	uint offs;
 	int i;
 	byte code;
-	uint32 start,len;
+	uint16 start,len;
 	uint16 mask;
 		
 	if (a->costume==0)
@@ -120,7 +120,7 @@ void Scumm::akos_decodeData(Actor *a, int frame, uint usemask) {
 }
 
 void Scumm::akos_setPalette(AkosRenderer *ar, byte *palette) {
-	byte *akos, *akpl;
+	byte *akpl;
 	uint size, i;
 
 	akpl = findResourceData(MKID('AKPL'), ar->akos);
@@ -294,10 +294,8 @@ StartPos:;
 
 void akos_generic_decode(AkosRenderer *ar) {
 	byte *src,*dst;
-	byte len,height,pcolor, maskbit;
-	uint y,scrheight;
-	uint color;
-	int t;
+	byte len,height, maskbit;
+	uint y, color;	
 	const byte *scaleytab, *mask;
 
 
@@ -358,9 +356,7 @@ StartPos:;
 void akos_c1_spec1(AkosRenderer *ar) {
 	byte *src,*dst;
 	byte len,height,pcolor, maskbit;
-	uint y,scrheight;
-	uint color;
-	int t;
+	uint y, color;	
 	const byte *scaleytab, *mask;
 
 
@@ -528,7 +524,6 @@ void Scumm::akos_codec1(AkosRenderer *ar) {
 	int i,j;
 	int x,x_right,x_left,skip,tmp_x,tmp_y;
 	int y,y_top,y_bottom;
-	byte *stab;
 	bool y_clipping;
 	bool charsetmask;
 	bool masking;

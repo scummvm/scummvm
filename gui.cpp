@@ -115,8 +115,7 @@ void Gui::drawWidget(const GuiWidget *w) {
 }
 
 void Gui::widgetClear(const GuiWidget *wid) {
-	int x,y,w,h;
-	int i,j;
+	int x,y,w,h,i;
 
 	x = wid->_x;
 	y = wid->_y;
@@ -145,7 +144,6 @@ void Gui::widgetClear(const GuiWidget *wid) {
 void Gui::widgetBorder(const GuiWidget *w) {
 	int x = w->_x, y = w->_y;
 	int x2 = x + w->_w-1, y2 = y + w->_h-1;
-	int i;
 	byte tmp;
 	
 	hline(x+1,y,x2-1);
@@ -494,7 +492,7 @@ void Gui::loop() {
 	if (_s->_mouseButStat&MBS_LEFT_CLICK) {
 		leftMouseClick(_s->mouse.x, _s->mouse.y);
 	} else if (_s->_lastKeyHit) {
-		addLetter(_s->_lastKeyHit);
+		addLetter((unsigned char)_s->_lastKeyHit);
 	}
 	
 	if (_clickTimer && !--_clickTimer) {

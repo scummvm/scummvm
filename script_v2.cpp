@@ -708,7 +708,7 @@ void Scumm::o6_freezeUnfreeze() {
 }
 
 void Scumm::o6_cursorCommand() {
-	int a,num,i;
+	int a,i;
 	int16 args[16];
 
 	switch(fetchScriptByte()) {
@@ -757,7 +757,7 @@ void Scumm::o6_cursorCommand() {
 	case 0x9D: /* set charset colors */
 		getStackList(args,sizeof(args)/sizeof(args[0]));
 		for (i=0; i<16; i++)
-			charset._colorMap[i] = _charsetData[string[1].t_charset][i] = args[i];
+			charset._colorMap[i] = _charsetData[string[1].t_charset][i] = (unsigned char)args[i];
 		break;
 	case 0xD6:
 		makeCursorColorTransparent(pop());
@@ -1204,7 +1204,6 @@ void Scumm::o6_createBoxMatrix() {
 
 void Scumm::o6_resourceRoutines() {
 	int res;
-	int obj,room;
 
 	switch(fetchScriptByte()) {
 	case 100: /* load script */
@@ -1830,8 +1829,6 @@ void Scumm::o6_getActorWidth() {
 }
 
 void Scumm::o6_wait() {
-	byte oldaddr;
-	
 	switch(fetchScriptByte()) {
 	case 168: {
 		int offs = (int16)fetchScriptWord();
@@ -2009,7 +2006,7 @@ void Scumm::o6_talkActor() {
 }
 
 void Scumm::o6_talkEgo() {
-	_actorToPrintStrFor = _vars[VAR_EGO];
+	_actorToPrintStrFor = (unsigned char)_vars[VAR_EGO];
 	_messagePtr = _scriptPointer;
 	setStringVars(0);
 	actorTalk();
@@ -2017,7 +2014,6 @@ void Scumm::o6_talkEgo() {
 }
 
 void Scumm::o6_dim() {
-	byte b;
 	int data;
 
 	switch(fetchScriptByte()) {
@@ -2187,7 +2183,7 @@ void Scumm::o6_miscOps() {
 			break;
 		case 107:
 			a = derefActorSafe(args[1], "o6_miscops: 107");
-			a->scalex = args[2];
+			a->scalex = (unsigned char)args[2];
 			a->needBgReset = true;
 			a->needRedraw = true;
 			break;
@@ -2256,7 +2252,7 @@ void Scumm::o6_miscOps() {
 	
 		case 107: /* set actor scale */
 			a = derefActorSafe(args[1], "o6_miscops: 107");
-			a->scalex = args[2];
+			a->scalex = (unsigned char)args[2];
 			a->needBgReset = true;
 			a->needRedraw = true;
 			break;

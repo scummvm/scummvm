@@ -642,10 +642,10 @@ void AdlibSoundDriver::mc_inc_stuff(MidiChannelAdl *mc, Struct10 *s10, Struct11 
 			}
 			break;
 		case 30:
-			s11->s10->modwheel = s11->modify_val;
+			s11->s10->modwheel = (char)s11->modify_val;
 			break;
 		case 31:
-			s11->s10->unk3 = s11->modify_val;
+			s11->s10->unk3 = (char)s11->modify_val;
 			break;
 		default:
 			part->_drv->adlib_set_param(mc->_channel, s11->param, s10->start_value + s11->modify_val);
@@ -916,7 +916,6 @@ void AdlibSoundDriver::part_set_instrument(Part *part, Instrument *instr) {
 }
 
 int AdlibSoundDriver::part_update_active(Part *part,uint16 *active) {
-	int i;
 	uint16 bits;
 	int count = 0;
 	MidiChannelAdl *mc;

@@ -182,10 +182,7 @@ void Scumm::checkRange(int max, int min, int no, const char *str) {
 	}
 }
 
-void Scumm::scummMain(int argc, char **argv) {
-	int tmr, i;
-	Actor *a;
-
+void Scumm::scummMain(int argc, char **argv) {	
 	charset._vm = this;
 	gdi._vm = this;
 

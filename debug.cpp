@@ -60,8 +60,6 @@ void ScummDebugger::attach(Scumm *s) {
 
 void BoxTest(int num);
 bool ScummDebugger::do_command() {
-	int cmd;
-
 	switch(get_command()) {
 	case CMD_HELP:
 		printf(
@@ -121,8 +119,10 @@ bool ScummDebugger::do_command() {
 		return true;
 	case CMD_EXIT:
 		exit(1);
+
+	default: /* this line is never reached */
+		error("Unknown debug command");	
 	}
-	/* this line is never reached */
 }
 
 void ScummDebugger::enter() {

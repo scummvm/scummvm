@@ -133,7 +133,6 @@ void Scumm::getObjectXYPos(int object) {
 	byte *ptr;
 	ImageHeader *imhd;
 	int x,y;
-	AdjustBoxResult abr;
 	
         if(!(_features & GF_SMALL_HEADER)) {
                 if (_features&GF_AFTER_V6) {
@@ -167,13 +166,6 @@ void Scumm::getObjectXYPos(int object) {
 		_dir= oldDirToNewDir(od->actordir&3);
 	
         }
-
-//	abr = adjustXYToBeInBox(0, x, y);
-//	_xPos = abr.x;
-//	_yPos = abr.y;
-//	_xPos = x;
-//	_yPos = y;
-//	_dir = oldDirToNewDir(od->actordir&3);
 }
 
 int Scumm::getObjActToObjActDist(int a, int b) {
@@ -355,8 +347,7 @@ void Scumm::loadRoomObjects() {
 	byte *room,*searchptr;
 	ImageHeader *imhd;
 	RoomHeader *roomhdr;
-
-	CodeHeader *cdhd;
+    CodeHeader *cdhd;
 
 	CHECK_HEAP
 	
@@ -421,11 +412,8 @@ void Scumm::loadRoomObjectsSmall() {
        ObjectData *od;
        byte *ptr;
        uint16 obim_id;
-       byte *room,*searchptr;
-       ImageHeader *imhd;
-       RoomHeader *roomhdr;
-
-       CodeHeader *cdhd;
+       byte *room,*searchptr;       
+       RoomHeader *roomhdr;       
 
        CHECK_HEAP
  
@@ -483,10 +471,9 @@ void Scumm::loadRoomObjectsSmall() {
        CHECK_HEAP
 }
 
-void Scumm::setupRoomObject(ObjectData *od, byte *room) {
-      byte *obcd;
-	CodeHeader *cdhd;
-	ImageHeader *imhd;
+void Scumm::setupRoomObject(ObjectData *od, byte *room) {      
+	  CodeHeader *cdhd;
+	  ImageHeader *imhd;	// Full throttle hack
 
         if(_features & GF_SMALL_HEADER) {
                
@@ -584,8 +571,7 @@ void Scumm::processDrawQue() {
 
 void Scumm::clearOwnerOf(int obj) {
 	int i,j;
-	uint16 *a;
-	byte *ptr;
+	uint16 *a;	
 
 	stopObjectScript(obj);
 	
@@ -976,13 +962,9 @@ int Scumm::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e,
 	return getDist(x,y,x2,y2) * 0xFF / ((i + j)>>1);
 }
 
-void Scumm::setCursorImg(uint img, uint room, uint imgindex) {
-	byte *ptr;
-	int index;
+void Scumm::setCursorImg(uint img, uint room, uint imgindex) {	
 	int w,h;
-	byte *roomptr,*obim,*dataptr,*bomp;
-	RoomHeader *rmhd;
-	int i,numobj;
+	byte *dataptr,*bomp;
 	uint32 size;
 	FindObjectInRoom foir;
 	
@@ -1082,10 +1064,6 @@ void Scumm::drawEnqueuedObject(EnqueuedObject *eo) {
 	byte *ptr;
 	int index;
 	ObjectData *od;
-	int width,height;
-	byte *outptr;
-	int x,y;
-	byte *dataptr;
 
 	BompDrawData bdd;
 
@@ -1122,8 +1100,8 @@ void Scumm::drawEnqueuedObject(EnqueuedObject *eo) {
 	bdd.dataptr = bomp + 18;
 	bdd.x = eo->x;
 	bdd.y = eo->y;
-	bdd.scale_x = eo->j;
-	bdd.scale_y = eo->k;
+	bdd.scale_x = (unsigned char)eo->j;
+	bdd.scale_y = (unsigned char)eo->k;
 
 	updateDirtyRect(vs->number, bdd.x, bdd.x+bdd.srcwidth, bdd.y, bdd.y+bdd.srcheight, 0);
 

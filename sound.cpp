@@ -84,7 +84,7 @@ void Scumm::processSoundQues() {
 #endif
 #if !defined(FULL_THROTTLE)
 			if (se) 
-				_vars[VAR_SOUNDRESULT] = se->do_command(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
+				_vars[VAR_SOUNDRESULT] = (short)se->do_command(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
 #endif
 		}
 	}
@@ -140,8 +140,7 @@ void Scumm::processSfxQueues() {
 
 void Scumm::startTalkSound(uint32 offset, uint32 b, int mode) {
 	int num, i;
-	byte file_byte,file_byte_2;
-	uint16 elem;
+	byte file_byte,file_byte_2;	
 
 	if (!_sfxFile) {
 		warning("startTalkSound: SFX file is not open");
@@ -432,8 +431,7 @@ void Scumm::playSfxSound(void *sound, uint32 size, uint rate) {
 }
 
 void MixerChannel::mix(int16 *data, uint32 len) {
-	int8 *s;
-	int i;
+	int8 *s;	
 	uint32 fp_pos, fp_speed;
 
 	if (!_sfx_sound)
