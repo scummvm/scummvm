@@ -196,6 +196,17 @@ class Talk {
 			const char *voiceFilePrefix,
 			int index);
 
+	void headStringAnimation(const SpeechParameters *parameters, int bobNum, int bankNum);
+
+	void stringAnimation(const SpeechParameters *parameters, int startFrame, int bankNum);
+
+	void defaultAnimation(
+		const char *segment, 
+		bool isJoe,
+		const SpeechParameters *parameters, 
+		int startFrame, 
+		int bankNum);
+
 	int countSpaces(const char *segment);
 
 	//! Get special parameters for speech

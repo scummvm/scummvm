@@ -82,8 +82,6 @@ Talk::~Talk() {
 	delete[] _fileData;
 }
 
-
-
 void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	int i;
 	_oldSelectedSentenceIndex = 0;
@@ -567,7 +565,7 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 	if (0 == strcmp(person->name, "FAYE-H") ||
 			0 == strcmp(person->name, "FRANK-H") ||
 			0 == strcmp(person->name, "AZURA-H") ||
-			0 == strcmp(person->name, "X3_RITA-H")) 
+			0 == strcmp(person->name, "X3_RITA")) 
 		_talkHead = true;
 	else
 		_talkHead = false;
@@ -628,6 +626,203 @@ int Talk::countSpaces(const char *segment) {
 	return (tmp * 2) / _logic->talkSpeed();
 }
 
+void Talk::headStringAnimation(const SpeechParameters *parameters, int bobNum, int bankNum) {
+	// talk.c lines 1612-1635
+	BobSlot *bob2 = _graphics->bob(2);
+	
+	if (parameters->animation[0] == 'E') {
+		int offset = 1;
+	
+		BobSlot *bob  = _graphics->bob(bobNum);
+
+		int16 x = bob->x;
+		int16 y = bob->y;
+
+		for (;;) {
+			uint16 frame;
+
+			sscanf(parameters->animation + offset, "%3hu", &frame);
+			if (!frame)
+				break;
+
+			offset += 4;
+
+			_graphics->bankUnpack(frame, _logic->numFrames(), bankNum);
+
+			bob2->frameNum = _logic->numFrames();
+			bob2->scale = 100;
+			bob2->active = true;
+			bob2->x = x;
+			bob2->y = y;
+
+			_logic->update();
+		}
+	}
+	else
+		bob2->active = false;
+}
+
+void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, int bankNum) {
+	// lines 1639-1690 in talk.c
+
+	int offset = 0;
+	bool torso;
+
+	if (parameters->animation[0] == 'T') {
+		// Torso animation
+		torso = true;
+		_graphics->bankOverpack(parameters->body, startFrame, bankNum);
+		offset++;
+	}
+	else if (parameters->animation[0] == 'E') {
+		// Talking head animation
+		return;
+	}
+	else if (!isdigit(parameters->animation[0])) {
+		debug(0, "Error in speak string animation: '%s'", parameters->animation);
+		return;
+	}
+	else
+		torso = false;
+
+	for (;;) {
+		uint16 frame;
+
+		sscanf(parameters->animation + offset, "%3hu", &frame);
+		if (!frame)
+			break;
+
+		offset += 4;
+
+		if (frame > 500) {
+			frame -= 500;
+			// XXX #ifdef __DOS__
+			// XXX 					if(SFXTOGGLE)
+			// XXX 						sfxplay(NULLstr);
+			// XXX #endif
+		}
+
+		if (torso) {
+			_graphics->bankOverpack(frame, startFrame, bankNum);
+		}
+		else {
+			_graphics->bankUnpack(frame, startFrame, bankNum);
+			// XXX bobs[BNUM].scale=SF;
+		}
+
+		_logic->update();
+	}
+
+	// XXX #ifdef __DOS__
+	// XXX 			if (VOICETOGGLE && (sfxflag==0))
+	// XXX 				while (sfxbusy() && KEYVERB!=101)
+	// XXX 					update();
+	// XXX #endif
+}
+
+void Talk::defaultAnimation(
+		const char *segment,
+		bool isJoe,
+		const SpeechParameters *parameters,
+		int startFrame, 
+		int bankNum) {
+	// lines 1730-1823 in talk.c
+
+	if (segment[0] != 0)  {
+
+		int bf;
+
+		if (segment[0] == ' ')
+			bf = 0;
+		else
+			bf = parameters->bf;
+
+		// XXX #ifdef __DOS__
+		// XXX     // 02-21-95 03:44pm DOn't talk until sfx finished
+		// XXX     if(SFXTOGGLE && VOICETOGGLE) {
+		// XXX        if(TEXTTOGGLE==0)
+		// XXX            blanktexts(0,150);
+		// XXX        while(sfxbusy() && KEYVERB!=101)
+		// XXX            update();
+		// XXX    }
+
+		// XXX    sfxflag=VOICETOGGLE ? sfxplay(SPKstr) : 1;
+		// XXX    if((sfxflag==0) && (TEXTTOGGLE==0)) 
+		// XXX		blanktexts(0,150);
+		// XXX  #endif
+
+		// Why on earth would someone name a variable qzx?
+		short qzx = 0;
+
+		int spaces = countSpaces(segment);
+
+		int i;
+		for (i = 0; i < (spaces + 1) /* || sfxflag == 0*/; i++) {
+			// XXX #ifdef __DOS__
+			// XXX         if(sfxflag==0 && sfxbusy())
+			// XXX 			break;
+			// XXX #endif
+
+			int head;
+
+			if (parameters->rf > 0)
+				head = bf + Logic::randomizer.getRandomNumber(parameters->rf);
+			else
+				head = bf;
+
+			if (!(_talkHead && isJoe)) {
+				if (bf > 0) {
+					// Make the head move
+					qzx ^= 1;
+					if (parameters->af && qzx)
+						_graphics->bankOverpack(parameters->af + head, startFrame, bankNum);
+					else {
+						_graphics->bankOverpack(head, startFrame, bankNum);
+					}
+				}
+				else {
+					// Just do a body action
+					_graphics->bankOverpack(parameters->body, startFrame, bankNum);
+				}
+
+				if (!_talkHead)
+					_logic->update();
+			}
+			else
+				_logic->update();
+
+			if (_logic->joeWalk() == 3) {
+				if (_input->talkQuit())
+					break;
+
+				_logic->update();
+			}
+			else {
+				if (_input->talkQuit())
+					break;
+
+				// XXX CHECK_PLAYER();
+				_logic->update(); // XXX call it ourselves as CHECK_PLAYER is not called
+
+				if (_logic->joeWalk() == 2)
+					// Selected a command, so exit
+					break;
+			}
+
+			// Skip through text more quickly
+			if (_input->verbSkipText()) {
+				_input->clearKeyVerb();
+				break;
+			}
+		}
+	}
+
+	// Make sure that Person closes their mouths
+	if (!isJoe && parameters->ff > 0)
+		_graphics->bankOverpack(parameters->ff, startFrame, bankNum);
+}
+
+
 void Talk::speakSegment(
 		const char *segmentStart, 
 		int length, 
@@ -646,8 +841,8 @@ void Talk::speakSegment(
 	char voiceFileName[MAX_STRING_SIZE];
 	snprintf(voiceFileName, sizeof(voiceFileName), "%s%1x", voiceFilePrefix, index + 1);
 
-	//debug(0, "Sentence segment '%*s' is said by person '%s' and voice file '%s' is played",
-	//		length, segment, person, voiceFileName);
+	// debug(0, "Sentence segment '%*s' is said by person '%s' and voice file '%s' is played",
+	//		length, segment, person->name, voiceFileName);
 
 	_sound->sfxPlay(voiceFileName);
 	//debug(0, "Playing voice file '%s'", voiceFileName);
@@ -706,7 +901,7 @@ void Talk::speakSegment(
 
 	if (_talkHead) {
 		// talk.c lines 1491-1533
-		warning("Talking heads not yet handled");
+		warning("Text position for talking heads not yet handled");
 	}
 	else {
 		textX = bob->x;
@@ -719,7 +914,8 @@ void Talk::speakSegment(
 	int startFrame = 0;
 
 	if (_talkHead && isJoe) {
-		_graphics->bobSetText(bob, segment, textX, textY, color, (_talkHead == 1));
+		_graphics->bobSetText(bob, segment, textX, textY, color, (_talkHead == true));
+		defaultAnimation(segment, isJoe, parameters, startFrame, bankNum);
 	}
 	else {
 		if (SPEAK_UNKNOWN_6 == command)
@@ -770,146 +966,49 @@ void Talk::speakSegment(
 
 		if (_talkHead) {
 			// talk.c lines 1612-1635
-			warning("Talking heads not yet handled");
+			headStringAnimation(parameters, bobNum, bankNum);
 		}
 
-		_graphics->bobSetText(bob, segment, textX, textY, color, (_talkHead == 1));
+		_graphics->bobSetText(bob, segment, textX, textY, color, (_talkHead == true));
 
-		if (parameters->animation[0] != '\0') {
-			// talk.c lines 1639-1690
-			//warning("Speech animation not yet implemented");
+		if (parameters->animation[0] != '\0' && parameters->animation[0] != 'E') {
+			stringAnimation(parameters, startFrame, bankNum);
 		}
 		else {
 			_graphics->bankUnpack(parameters->body, startFrame, bankNum);
-		}
 
-		if (length == 0 && !isJoe && parameters->bf > 0) {
-			_graphics->bankOverpack(parameters->bf, startFrame, bankNum);
-			_logic->update();
-		}
-
-		/* A12 = the frame pointer for the full body frame, well use this  */
-		/* for Hot Spot reference, before we have to set up a Torso frame. */
-		/* This way the hot spot is at bottom of body */
-
-		// XXX A12=A1;
-
-		if (-1 == parameters->rf) {
-			// Setup the Torso frames
-			_graphics->bankOverpack(parameters->bf, startFrame, bankNum);
-			if (isJoe)
-				parameters = findSpeechParameters(person->name, 0, _logic->joeFacing());
-			else
-				parameters = findSpeechParameters(person->name, 0, 0);
-		}
-
-		if (-2 == parameters->rf) {
-			// Setup the Torso frames
-			_graphics->bankOverpack(parameters->bf, startFrame, bankNum);
-			if (isJoe)
-				parameters = findSpeechParameters(person->name, 14, _logic->joeFacing());
-			else
-				parameters = findSpeechParameters(person->name, 14, 0);
-		}
-
-	}
-
-	int bf = parameters->bf;
-
-	if (length > 0) {
-	
-		if (segment[0] == '0')
-			bf = 0;
-
-// talkloop:
-
-// XXX #ifdef __DOS__
-// XXX     // 02-21-95 03:44pm DOn't talk until sfx finished
-// XXX     if(SFXTOGGLE && VOICETOGGLE) {
-// XXX        if(TEXTTOGGLE==0)
-// XXX            blanktexts(0,150);
-// XXX        while(sfxbusy() && KEYVERB!=101)
-// XXX            update();
-// XXX    }
-
-// XXX    sfxflag=VOICETOGGLE ? sfxplay(SPKstr) : 1;
-// XXX    if((sfxflag==0) && (TEXTTOGGLE==0)) 
-// XXX		blanktexts(0,150);
-// XXX  #endif
-
-		// Why on earth would someone name a variable qzx?
-		short qzx = 0;
-
-		int spaces = countSpaces(segment);
-
-		for (i = 0; i < (spaces + 1) /* || sfxflag == 0*/; i++) {
-// XXX #ifdef __DOS__
-// XXX         if(sfxflag==0 && sfxbusy())
-// XXX 			break;
-// XXX #endif
-
-			int head;
-
-			if (parameters->rf > 0)
-				head = bf + Logic::randomizer.getRandomNumber(parameters->rf);
-			else
-				head = bf;
-
-			if (!(_talkHead && isJoe)) {
-				if (bf > 0) {
-					// Make the head move
-					qzx ^= 1;
-					if (parameters->af && qzx)
-						_graphics->bankOverpack(parameters->af + head, startFrame, bankNum);
-					else
-						_graphics->bankOverpack(head, startFrame, bankNum);
-				}
-				else {
-					// Just do a body action
-					_graphics->bankOverpack(parameters->body, startFrame, bankNum);
-				}
-
-				if (!_talkHead)
-					_logic->update();
-			}
-			else
-				_logic->update();
-
-			if (_logic->joeWalk() == 3) {
-				if (_input->talkQuit())
-					break;
-
+			if (length == 0 && !isJoe && parameters->bf > 0) {
+				_graphics->bankOverpack(parameters->bf, startFrame, bankNum);
 				_logic->update();
 			}
-			else {
-				if (_input->talkQuit())
-					break;
-				
-				// XXX CHECK_PLAYER();
-				_logic->update(); // XXX call it ourselves as CHECK_PLAYER is not called
 
-				if (_logic->joeWalk() == 2)
-					// Selected a command, so exit
-					break;
+			/* A12 = the frame pointer for the full body frame, well use this  */
+			/* for Hot Spot reference, before we have to set up a Torso frame. */
+			/* This way the hot spot is at bottom of body */
+
+			// XXX A12=A1;
+
+			if (-1 == parameters->rf) {
+				// Setup the Torso frames
+				_graphics->bankOverpack(parameters->bf, startFrame, bankNum);
+				if (isJoe)
+					parameters = findSpeechParameters(person->name, 0, _logic->joeFacing());
+				else
+					parameters = findSpeechParameters(person->name, 0, 0);
 			}
 
-			// Skip through text more quickly
-			// XXX if (KEYVERB == 101) {
-			// XXX 	KEYVERB=0;
-			// XXX 	break;
-			// XXX }
+			if (-2 == parameters->rf) {
+				// Setup the Torso frames
+				_graphics->bankOverpack(parameters->bf, startFrame, bankNum);
+				if (isJoe)
+					parameters = findSpeechParameters(person->name, 14, _logic->joeFacing());
+				else
+					parameters = findSpeechParameters(person->name, 14, 0);
+			}
 
+			defaultAnimation(segment, isJoe, parameters, startFrame, bankNum);
 		}
-		
 	}
-
-// SPEAK_SUB_EXIT:
-
-    // Make sure that Person closes their mouths
-	if (!isJoe && parameters->ff > 0)
-		_graphics->bankOverpack(parameters->ff, startFrame, bankNum);
-
-// SPEAK_SUB_EXIT2:
 
     // Moved here so that Text is cleared when a Torso command done!
     _graphics->textClear(0,198);
@@ -938,8 +1037,9 @@ void Talk::speakSegment(
 			}
 			else if (command != 5) {
 				// 7/11/94, Ensure that correct mouth closed frame is used!
-				if (parameters->rf != -1) 
-					_graphics->bankOverpack(bf, startFrame, bankNum);
+				if (parameters->rf != -1)
+					// XXX should really be just "bf", but it is not always calculated... :-(
+					_graphics->bankOverpack(parameters->bf, startFrame, bankNum);
 				
 				if (parameters->ff == 0)
 					_graphics->bankOverpack(10, startFrame, bankNum);
