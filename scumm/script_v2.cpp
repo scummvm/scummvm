@@ -866,27 +866,28 @@ void Scumm_v2::o2_doSentence() {
 		_sentenceNum--;
 		warning("TODO o2_doSentence(%d, %d, %d): print", st->verb, st->objectA, st->objectB);
 		
-		_scummVars[26] = st->verb;
-		_scummVars[27] = st->objectA;
-		_scummVars[28] = st->objectB;
+		_scummVars[VAR_SENTENCE_VERB] = st->verb;
+		_scummVars[VAR_SENTENCE_OBJECT1] = st->objectA;
+		_scummVars[VAR_SENTENCE_OBJECT2] = st->objectB;
 		o2_drawSentence();
 		break;
 	}
 }
 
 void Scumm_v2::o2_drawSentence() {
-	byte *verb_bit = getResourceAddress(rtVerb, getVerbSlot(_scummVars[26],0));
+	int slot = getVerbSlot(_scummVars[VAR_SENTENCE_VERB],0);
+	byte *verb_bit = getResourceAddress(rtVerb, slot);
 	byte *name_bit, *name2_bit;
 
 	if (_scummVars[27] > 0) {
-		name_bit = getObjOrActorName(_scummVars[27]);
+		name_bit = getObjOrActorName(_scummVars[VAR_SENTENCE_OBJECT1]);
 	} else {
 		name_bit = NULL;
 //(byte*)strdup("");
 	}
 
 	if (_scummVars[28] > 0) {
-		name2_bit = getObjOrActorName(_scummVars[28]);
+		name2_bit = getObjOrActorName(_scummVars[VAR_SENTENCE_OBJECT2]);
 	} else {
 		name2_bit = NULL;
 //(byte*)strdup("");
