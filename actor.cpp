@@ -229,7 +229,7 @@ int Actor::remapDirection(int dir)
 		}
 	}
 	/* Or 1024 in to signal direction interpolation should be done */
-	return Scumm::normalizeAngle(dir)/* | 1024*/;
+	return Scumm::normalizeAngle(dir) | 1024;
 }
 
 int Actor::updateActorDirection()
