@@ -32,13 +32,30 @@
 #endif
 
 struct Box {				/* Internal walkbox file format */
-	int16 ulx, uly;
-	int16 urx, ury;
-	int16 lrx, lry;
-	int16 llx, lly;
-	byte mask;
-	byte flags;
-	uint16 scale;
+	union {
+		struct {
+			int16 ulx, uly;
+			int16 urx, ury;
+			int16 lrx, lry;
+			int16 llx, lly;
+			byte mask;
+			byte flags;
+			uint16 scale;
+		} GCC_PACK old;
+
+		struct {
+			int32 ulx, uly;
+			int32 urx, ury;
+			int32 lrx, lry;
+			int32 llx, lly;
+			uint32 mask;	// FIXME - is 'mask' really here?
+			uint32 flags;	// FIXME - is 'flags' really here?
+			uint32 unk1;
+			uint32 scale;
+			uint32 unk2;
+			uint32 unk3;
+		} GCC_PACK v8;
+	} GCC_PACK;
 } GCC_PACK;
 
 #if !defined(__GNUC__)
@@ -67,7 +84,10 @@ byte Scumm::getMaskFromBox(int box)
 	if (!ptr)
 		return 0;
 
-	return ptr->mask;
+	if (_features & GF_AFTER_V8)
+		return FROM_LE_32(ptr->v8.mask);
+	else
+		return ptr->old.mask;
 }
 
 void Scumm::setBoxFlags(int box, int val)
@@ -80,7 +100,11 @@ void Scumm::setBoxFlags(int box, int val)
 		_extraBoxFlags[box] = val;
 	} else {
 		Box *b = getBoxBaseAddr(box);
-		b->flags = val;
+		assert(b);
+		if (_features & GF_AFTER_V8)
+			b->v8.flags = TO_LE_32(val);
+		else
+			b->old.flags = val;
 	}
 }
 
@@ -89,23 +113,32 @@ byte Scumm::getBoxFlags(int box)
 	Box *ptr = getBoxBaseAddr(box);
 	if (!ptr)
 		return 0;
-	return ptr->flags;
+	if (_features & GF_AFTER_V8)
+		return FROM_LE_32(ptr->v8.flags);
+	else
+		return ptr->old.flags;
 }
 
 void Scumm::setBoxScale(int box, int scale)
 {
 	Box *b = getBoxBaseAddr(box);
-	b->scale = scale;
+	if (_features & GF_AFTER_V8)
+		b->v8.scale = TO_LE_32(scale);
+	else
+		b->old.scale = TO_LE_16(scale);
 }
 
 int Scumm::getBoxScale(int box)
 {
 	if (_features & GF_NO_SCALLING)
-		return (255);
+		return 255;
 	Box *ptr = getBoxBaseAddr(box);
 	if (!ptr)
 		return 255;
-	return FROM_LE_16(ptr->scale);
+	if (_features & GF_AFTER_V8)
+		return FROM_LE_32(ptr->v8.scale);
+	else
+		return FROM_LE_16(ptr->old.scale);
 }
 
 byte Scumm::getNumBoxes()
@@ -113,7 +146,10 @@ byte Scumm::getNumBoxes()
 	byte *ptr = getResourceAddress(rtMatrix, 2);
 	if (!ptr)
 		return 0;
-	return ptr[0];
+	if (_features & GF_AFTER_V8)
+		return READ_LE_UINT32(ptr);
+	else
+		return ptr[0];
 }
 
 Box *Scumm::getBoxBaseAddr(int box)
@@ -127,6 +163,8 @@ Box *Scumm::getBoxBaseAddr(int box)
 			return (Box *)(ptr + box * (SIZEOF_BOX - 2) + 1);
 		else
 			return (Box *)(ptr + box * SIZEOF_BOX + 1);
+	} else if (_features & GF_AFTER_V8) {
+		return (Box *)(ptr + box * 52 + 4);
 	} else
 		return (Box *)(ptr + box * SIZEOF_BOX + 2);
 }
@@ -201,15 +239,27 @@ void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box)
 {
 	Box *bp = getBoxBaseAddr(boxnum);
 
-	box->ul.x = (int16)FROM_LE_16(bp->ulx);
-	box->ul.y = (int16)FROM_LE_16(bp->uly);
-	box->ur.x = (int16)FROM_LE_16(bp->urx);
-	box->ur.y = (int16)FROM_LE_16(bp->ury);
-
-	box->ll.x = (int16)FROM_LE_16(bp->llx);
-	box->ll.y = (int16)FROM_LE_16(bp->lly);
-	box->lr.x = (int16)FROM_LE_16(bp->lrx);
-	box->lr.y = (int16)FROM_LE_16(bp->lry);
+	if (_features & GF_AFTER_V8) {
+		box->ul.x = (int32)FROM_LE_32(bp->v8.ulx);
+		box->ul.y = (int32)FROM_LE_32(bp->v8.uly);
+		box->ur.x = (int32)FROM_LE_32(bp->v8.urx);
+		box->ur.y = (int32)FROM_LE_32(bp->v8.ury);
+	
+		box->ll.x = (int32)FROM_LE_32(bp->v8.llx);
+		box->ll.y = (int32)FROM_LE_32(bp->v8.lly);
+		box->lr.x = (int32)FROM_LE_32(bp->v8.lrx);
+		box->lr.y = (int32)FROM_LE_32(bp->v8.lry);
+	} else {
+		box->ul.x = (int16)FROM_LE_16(bp->old.ulx);
+		box->ul.y = (int16)FROM_LE_16(bp->old.uly);
+		box->ur.x = (int16)FROM_LE_16(bp->old.urx);
+		box->ur.y = (int16)FROM_LE_16(bp->old.ury);
+	
+		box->ll.x = (int16)FROM_LE_16(bp->old.llx);
+		box->ll.y = (int16)FROM_LE_16(bp->old.lly);
+		box->lr.x = (int16)FROM_LE_16(bp->old.lrx);
+		box->lr.y = (int16)FROM_LE_16(bp->old.lry);
+	}
 }
 
 uint Scumm::distanceFromPt(int x, int y, int ptx, int pty)
