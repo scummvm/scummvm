@@ -157,6 +157,6 @@ void ObjectMan::saveLiveList(uint16 *dest) {
 	memcpy(dest, _liveList, TOTAL_SECTIONS * sizeof(uint16));
 }
 
-char *ObjectMan::_errorStr = "Error: Text not found.";
+char ObjectMan::_errorStr[] = "Error: Text not found.";
 
 } // End of namespace Sword1

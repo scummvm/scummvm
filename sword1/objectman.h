@@ -57,7 +57,7 @@ private:
 	static const uint32 _textList[TOTAL_SECTIONS][7];	//a table of pointers to text files
 	uint16	_liveList[TOTAL_SECTIONS]; 					//which sections are active
 	uint8 *_cptData[TOTAL_SECTIONS];
-	static char *_errorStr;
+	static char _errorStr[];
 };
 
 } // End of namespace Sword1 
