@@ -2089,7 +2089,6 @@ void Scumm::o6_wait()
 	case 232:{										/* wait until actor stops turning */
 			int actnum = pop();
 			Actor *a = derefActorSafe(actnum, "o6_wait:232");
-			printf("
 			int offs = (int16)fetchScriptWord();
 			if (a && a->isInCurrentRoom() && a->moving & MF_TURN) {
 				_scriptPointer += offs;
