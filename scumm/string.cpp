@@ -103,6 +103,8 @@ void ScummEngine::CHARSET_1() {
 	int code = (_heversion >= 80) ? 127 : 64;
 	char value[32];
 
+	bool cmi_pos_hack = false;
+
 	if (!_haveMsg)
 		return;
 
@@ -283,6 +285,11 @@ void ScummEngine::CHARSET_1() {
 				warning("CHARSET_1: invalid code %d", c);
 			}
 		} else if (c == 0xFE || c == 0xFF) {
+			//WORKAROUND
+			//to avoid korean code 0xfe treated as charset message code.
+			if(c == 0xFE && checkKSCode(*(buffer + 1), c) && _useCJKMode) {
+				goto loc_avoid_ks_fe;
+			}
 			c = *buffer++;
 			switch (c) {
 			case 1:
@@ -343,13 +350,19 @@ void ScummEngine::CHARSET_1() {
 				warning("CHARSET_1: invalid code %d", c);
 			}
 		} else {
+loc_avoid_ks_fe:
 			_charset->_left = _charset->_nextLeft;
 			_charset->_top = _charset->_nextTop;
 			if (c & 0x80 && _useCJKMode)
-				if (_language == 6 && ((c > 0x84 && c < 0x88) || (c > 0x9f && c < 0xe0) || (c > 0xea && c <= 0xff)))
+				if (_language == Common::JA_JPN && !checkSJISCode(c)) {
 					c = 0x20; //not in S-JIS
-				else
-					c += *buffer++ * 256;
+				} else {
+					c += *buffer++ * 256; //LE
+					if(_gameId == GID_CMI) { //HACK: This fixes korean text position in COMI (off by 6 pixel)
+						cmi_pos_hack = true;
+						_charset->_top += 6;
+					}
+				}
 			if (_version <= 3) {
 				_charset->printChar(c);
 			} else {
@@ -362,6 +375,10 @@ void ScummEngine::CHARSET_1() {
 					// of this message -> don't print it. 
 				} else
 					_charset->printChar(c);
+			}
+			if(cmi_pos_hack) {
+				cmi_pos_hack = false;
+				_charset->_top -= 6;
 			}
 
 			_charset->_nextLeft = _charset->_left;
@@ -388,6 +405,8 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	byte fontHeight = 0;
 	uint color;
 	int code = (_heversion >= 80) ? 127 : 64;
+
+	bool cmi_pos_hack = false;
 
 	addMessageToStack(msg, buf, sizeof(buf));
 
@@ -491,10 +510,24 @@ void ScummEngine::drawString(int a, const byte *msg) {
 					_charset->_blitAlso = true;
 				}
 			}
-			if (c >= 0x80 && _useCJKMode)
-				c += buf[i++] * 256;
+			if (c & 0x80 && _useCJKMode) {
+				if (_language == Common::JA_JPN && !checkSJISCode(c)) {
+					c = 0x20; //not in S-JIS
+				} else {
+					c += buf[i++] * 256;
+					if(_gameId == GID_CMI) {
+						cmi_pos_hack = true;
+						_charset->_top += 6;
+					}
+				}
+			}
 			_charset->printChar(c);
 			_charset->_blitAlso = false;
+
+			if(cmi_pos_hack) {
+				cmi_pos_hack = false;
+				_charset->_top -= 6;
+			}
 		}
 	}
 
@@ -729,8 +762,13 @@ void ScummEngine::drawBlastTexts() {
 		do {
 			c = *buf++;
 			if (c != 0 && c != 0xFF) {
-				if (c >= 0x80 && _useCJKMode)
-					c += *buf++ * 256;
+				if (c & 0x80 && _useCJKMode) {
+					if (_language == Common::JA_JPN && !checkSJISCode(c)) {
+						c = 0x20; //not in S-JIS
+					} else {
+						c += *buf++ * 256;
+					}
+				}
 				_charset->printChar(c);
 			}
 		} while (c);

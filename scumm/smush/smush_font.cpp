@@ -43,7 +43,11 @@ int SmushFont::getStringWidth(const char *str) {
 
 	int width = 0;
 	while (*str) {
-		width += getCharWidth(*str++);
+		if(*str & 0x80 && g_scumm->_useCJKMode) {
+			width += g_scumm->_2byteWidth + 1;
+			str += 2;
+		} else
+			width += getCharWidth(*str++);
 	}
 	return width;
 }
@@ -118,18 +122,25 @@ int SmushFont::draw2byte(byte *buffer, int dst_width, int x, int y, int idx) {
 	int h = _vm->_2byteHeight;
 
 	byte *src = _vm->get2byteCharPtr(idx);
-	byte *dst = buffer + dst_width * (y + (_vm->_gameId == GID_CMI ? 7 : 2)) + x;
+	byte *dst = buffer + dst_width * (y + (_vm->_gameId == GID_CMI ? 7 : (_vm->_gameId == GID_DIG ? 2 : 0))) + x;
 	byte bits = 0;
 
 	char color = (_color != -1) ? _color : 1;
+
 	if (_new_colors)
-		color = (char)0xff; //FIXME;
+		color = (char)0xff;
+
+	if (g_scumm->_gameId == GID_FT)
+		color = 1;
+
 	for (int j = 0; j < h; j++) {
 		for (int i = 0; i < w; i++) {
 			if ((i % 8) == 0)
 				bits = *src++;
 			if (bits & revBitMask[i % 8]) {
 				dst[i + 1] = 0;
+				dst[dst_width + i] = 0;
+				dst[dst_width + i + 1] = 0;
 				dst[i] = color;
 			}
 		}

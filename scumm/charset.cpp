@@ -26,20 +26,37 @@
 namespace Scumm {
 
 void ScummEngine::loadCJKFont() {
+	File fp;
 	_useCJKMode = false;
-	if ((_gameId == GID_DIG || _gameId == GID_CMI) && (_language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN)) {
-		File fp;
+	if (_language == Common::JA_JPN && _version <= 5) { // FM-TOWNS v3 / v5 Kanji
+		int numChar = 256 * 32;
+		_2byteWidth = 16;
+		_2byteHeight = 16;
+		// use FM-TOWNS font rom, since game files don't have kanji font resources
+		if (fp.open("fmt_fnt.rom", File::kFileReadMode)) {
+			_useCJKMode = true;
+			debug(2, "Loading FM-TOWNS Kanji rom");
+			_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
+			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
+			fp.close();
+		}
+	} else if (_language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN) {
+		int numChar = 0;
 		const char *fontFile = NULL;
+
 		switch (_language) {
 		case Common::KO_KOR:
 			fontFile = "korean.fnt";
+			numChar = 2350;
 			break;
 		case Common::JA_JPN:
 			fontFile = (_gameId == GID_DIG) ? "kanji16.fnt" : "japanese.fnt";
+			numChar = 1024; //FIXME
 			break;
 		case Common::ZH_TWN:
 			if (_gameId == GID_CMI) {
 				fontFile = "chinese.fnt";
+				numChar = 1; //FIXME
 			}
 			break;
 		default:
@@ -52,49 +69,23 @@ void ScummEngine::loadCJKFont() {
 			_2byteWidth = fp.readByte();
 			_2byteHeight = fp.readByte();
 
-			int numChar = 0;
-			switch (_language) {
-			case Common::KO_KOR:
-				numChar = 2350;
-				break;
-			case Common::JA_JPN:
-				numChar = (_gameId == GID_DIG) ? 1024 : 2048; //FIXME
-				break;
-			case Common::ZH_TWN:
-				numChar = 1; //FIXME
-				break;
-			default:
-				break;
-			}
 			_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
 			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
 			fp.close();
-		}
-	} else if (_language == Common::JA_JPN && _version == 5) { // FM-TOWNS Kanji
-		File fp;
-		int numChar = 256 * 32;
-		_2byteWidth = 16;
-		_2byteHeight = 16;
-		// use FM-TOWNS font rom, since game files don't have kanji font resources
-		if (fp.open("fmt_fnt.rom")) { 
-			_useCJKMode = true;
-			debug(2, "Loading FM-TOWNS Kanji rom");
-			_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
-			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
-			fp.close();
+		} else {
+			warning("Couldn't load any font");
 		}
 	}
 }
 
-static int SJIStoFMTChunk(int f, int s) //convert sjis code to fmt font offset
-{
+static int SJIStoFMTChunk(int f, int s) { //converts sjis code to fmt font offset
 	enum {
 		KANA = 0,
 		KANJI = 1,
 		EKANJI = 2
 	};
-	int base = s - (s % 32) - 1;
-	int c = 0, p = 0, chunk_f = 0, chunk = 0, cr, kanjiType = KANA;
+	int base = s - ((s + 1) % 32);
+	int c = 0, p = 0, chunk_f = 0, chunk = 0, cr = 0, kanjiType = KANA;
 
 	if (f >= 0x81 && f <= 0x84) kanjiType = KANA;
 	if (f >= 0x88 && f <= 0x9f) kanjiType = KANJI;
@@ -115,10 +106,15 @@ static int SJIStoFMTChunk(int f, int s) //convert sjis code to fmt font offset
 		chunk_f = c + 2 * p;
 	}
 
+	// Base corrections
 	if (base == 0x7f && s == 0x7f)
-		base -= 0x20; //correction
-	if ((base == 0x7f && s == 0x9e) || (base == 0x9f && s == 0xbe) || (base == 0xbf && s == 0xde))
-		base += 0x20; //correction
+		base -= 0x20;
+	if (base == 0x9f && s == 0xbe)
+		base += 0x20;
+	if (base == 0xbf && s == 0xde)
+		base += 0x20;
+	//if (base == 0x7f && s == 0x9e)
+	//	base += 0x20;
 
 	switch (base) {
 	case 0x3f:
@@ -158,9 +154,11 @@ static int SJIStoFMTChunk(int f, int s) //convert sjis code to fmt font offset
 		else if (kanjiType == EKANJI) chunk = 144;
 		break;
 	default:
+		warning("Invaild Char! f %x s %x base %x c %d p %d", f, s, base, c, p);
 		return 0;
 	}
 	
+	debug(6, "Kanji: %c%c f 0x%x s 0x%x base 0x%x c %d p %d chunk %d cr %d index %d", f, s, f, s, base, c, p, chunk, cr, ((chunk_f + chunk) * 32 + (s - base)) + cr);
 	return ((chunk_f + chunk) * 32 + (s - base)) + cr;
 }
 
@@ -238,10 +236,24 @@ void CharsetRendererV3::setCurID(byte id) {
 	_fontPtr += _numChars;
 }
 
+int CharsetRendererCommon::getFontHeight() {
+	if(_vm->_useCJKMode)
+		return MAX(_vm->_2byteHeight + 1, (int)_fontPtr[1]);
+	else
+		return _fontPtr[1];
+}
+
+int CharsetRendererV3::getFontHeight() {
+	if(_vm->_useCJKMode)
+		return MAX(_vm->_2byteHeight + 1, 8);
+	else
+		return 8;
+}
+
 // do spacing for variable width old-style font
 int CharsetRendererClassic::getCharWidth(byte chr) {
 	if (chr >= 0x80 && _vm->_useCJKMode)
-		return 6;
+		return _vm->_2byteWidth / 2;
 	int spacing = 0;
 
 	int offs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
@@ -276,6 +288,10 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 		if (chr == 0xD)
 			break;
 		if (chr == 254 || chr == 255) {
+			//process in LE
+			if(chr == 254 && checkKSCode(text[pos], chr) && _vm->_useCJKMode) {
+				goto loc_avoid_ks_fe;
+			}
 			chr = text[pos++];
 			if (chr == 3)	// 'WAIT'
 				break;
@@ -299,7 +315,13 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 				continue;
 			}
 		}
-		width += getCharWidth(chr);
+loc_avoid_ks_fe:
+		if ((chr & 0x80) && _vm->_useCJKMode) {
+			pos++;
+			width += _vm->_2byteWidth;
+		} else {
+			width += getCharWidth(chr);
+		}
 	}
 
 	setCurID(oldID);
@@ -333,6 +355,10 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 		} else if (chr == '@')
 			continue;
 		if (chr == 254 || chr == 255) {
+			//process in LE
+			if(chr == 254 && checkKSCode(str[pos], chr) && _vm->_useCJKMode) {
+				goto loc_avoid_ks_fe;
+			}
 			chr = str[pos++];
 			if (chr == 3) // 'Wait'
 				break;
@@ -366,7 +392,13 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 		if (chr == ' ')
 			lastspace = pos - 1;
 
-		curw += getCharWidth(chr);
+loc_avoid_ks_fe:
+		if ((chr & 0x80) && _vm->_useCJKMode) {
+			pos++;
+			curw += _vm->_2byteWidth;
+		} else {
+			curw += getCharWidth(chr);
+		}
 		if (lastspace == -1)
 			continue;
 		if (curw > maxwidth) {
@@ -1105,6 +1137,8 @@ CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 }
 
 int CharsetRendererV3::getCharWidth(byte chr) {
+	if (chr & 0x80 && _vm->_useCJKMode)
+		return _vm->_2byteWidth / 2;
 	int spacing = 0;
 
 	spacing = *(_widthTable + chr);
@@ -1129,10 +1163,10 @@ void CharsetRendererV3::setColor(byte color)
 
 void CharsetRendererV3::printChar(int chr) {
 	// Indy3 / Zak256 / Loom
+	int width, height, origWidth, origHeight;
 	VirtScreen *vs;
-	byte *char_ptr, *dest_ptr;
-	int width, height;
-	int drawTop;
+	byte *charPtr, *dst;
+	int is2byte = (chr >= 0x80 && _vm->_useCJKMode) ? 1 : 0;
 
 	checkRange(_vm->_numCharsets - 1, 0, _curId, "Printing with bad charset %d");
 
@@ -1142,6 +1176,25 @@ void CharsetRendererV3::printChar(int chr) {
 	if (chr == '@')
 		return;
 
+	if (is2byte) {
+		charPtr = _vm->get2byteCharPtr(chr);
+		width = _vm->_2byteWidth;
+		height = _vm->_2byteHeight;
+	} else {
+		charPtr = _fontPtr + chr * 8;
+//		width = height = 8;
+		width = getCharWidth(chr);
+		height = 8;
+	}
+
+	origWidth = width;
+	origHeight = height;
+
+	if (_dropShadow) {
+		width++;
+		height++;
+	}
+
 	if (_firstChar) {
 		_str.left = _left;
 		_str.top = _top;
@@ -1150,14 +1203,7 @@ void CharsetRendererV3::printChar(int chr) {
 		_firstChar = false;
 	}
 
-	width = height = 8;
-	if (_dropShadow) {
-		width++;
-		height++;
-	}
-
-	drawTop = _top - vs->topline;
-	char_ptr = _fontPtr + chr * 8;
+	int drawTop = _top - vs->topline;
 
 	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height);
 	
@@ -1166,17 +1212,17 @@ void CharsetRendererV3::printChar(int chr) {
 		_textScreenID = vs->number;
 	}
 	if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
-		dest_ptr = vs->getPixels(_left, drawTop);
-		drawBits1(*vs, dest_ptr, char_ptr, drawTop, 8, 8);
+		dst = vs->getPixels(_left, drawTop);
+		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight);
 	} else {
-		dest_ptr = (byte *)_vm->gdi._textSurface.pixels + _top * _vm->gdi._textSurface.pitch + _left;
-		drawBits1(_vm->gdi._textSurface, dest_ptr, char_ptr, drawTop, 8, 8);
+		dst = (byte *)_vm->gdi._textSurface.pixels + _top * _vm->gdi._textSurface.pitch + _left;
+		drawBits1(_vm->gdi._textSurface, dst, charPtr, drawTop, origWidth, origHeight);
 	}
 
 	if (_str.left > _left)
 		_str.left = _left;
 
-	_left += getCharWidth(chr);
+	_left += origWidth;
 
 	if (_str.right < _left) {
 		_str.right = _left;
@@ -1189,10 +1235,21 @@ void CharsetRendererV3::printChar(int chr) {
 }
 
 void CharsetRendererV3::drawChar(int chr, const Graphics::Surface &s, int x, int y) {
-	byte *char_ptr, *dest_ptr;
-	char_ptr = _fontPtr + chr * 8;
-	dest_ptr = (byte *)s.pixels + y * s.pitch + x;
-	drawBits1(s, dest_ptr, char_ptr, y, 8, 8);
+	byte *charPtr, *dst;
+	int width, height;
+	int is2byte = (chr >= 0x80 && _vm->_useCJKMode) ? 1 : 0;
+	if (is2byte) {
+		charPtr = _vm->get2byteCharPtr(chr);
+		width = _vm->_2byteWidth;
+		height = _vm->_2byteHeight;
+	} else {
+		charPtr = _fontPtr + chr * 8;
+//		width = height = 8;
+		width = getCharWidth(chr);
+		height = 8;
+	}
+	dst = (byte *)s.pixels + y * s.pitch + x;
+	drawBits1(s, dst, charPtr, y, width, height);
 }
 
 
@@ -1216,6 +1273,7 @@ void CharsetRendererClassic::printChar(int chr) {
 	int type = *_fontPtr;
 	if (is2byte) {
 		_dropShadow = true;
+		_shadowColor = (_vm->_features & GF_FMTOWNS) ? 8 : 0;
 		charPtr = _vm->get2byteCharPtr(chr);
 		width = _vm->_2byteWidth;
 		height = _vm->_2byteHeight;
@@ -1404,20 +1462,35 @@ void CharsetRendererClassic::printChar(int chr) {
 void CharsetRendererClassic::drawChar(int chr, const Graphics::Surface &s, int x, int y) {
 	const byte *charPtr;
 	byte *dst;
+	int width, height;
+	int is2byte = (chr >= 0x80 && _vm->_useCJKMode) ? 1 : 0;
 
-	uint32 charOffs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
-	assert(charOffs < 0x10000);
-	if (!charOffs)
-		return;
-	charPtr = _fontPtr + charOffs;
-	
-	int width = charPtr[0];
-	int height = charPtr[1];
+	if (is2byte) {
+		_dropShadow = true;
+		_shadowColor = (_vm->_features & GF_FMTOWNS) ? 8 : 0;
+		charPtr = _vm->get2byteCharPtr(chr);
+		width = _vm->_2byteWidth;
+		height = _vm->_2byteHeight;
+	} else {
+		uint32 charOffs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
+		assert(charOffs < 0x10000);
+		if (!charOffs)
+			return;
+		charPtr = _fontPtr + charOffs;
+		
+		width = charPtr[0];
+		height = charPtr[1];
 
-	charPtr += 4;	// Skip over char header
+		charPtr += 4;	// Skip over char header
+	}
 
 	dst = (byte *)s.pixels + y * s.pitch + x;
-	drawBitsN(s, dst, charPtr, *_fontPtr, y, width, height);
+
+	if (is2byte) {
+		drawBits1(s, dst, charPtr, y, width, height);
+	} else {
+		drawBitsN(s, dst, charPtr, *_fontPtr, y, width, height);
+	}
 }
 
 void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height) {
@@ -1540,7 +1613,7 @@ void CharsetRendererNut::printChar(int chr) {
 	int height = _current->getCharHeight(chr);
 
 	if (chr >= 256 && _vm->_useCJKMode)
-		width = 16;
+		width = _vm->_2byteWidth;
 
 	shadow.right = _left + width + 2;
 	shadow.bottom = _top + height + 2;

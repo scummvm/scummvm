@@ -204,13 +204,8 @@ int NutRenderer::getCharWidth(byte c) const {
 		return 0;
 	}
 
-	if (c >= 0x80 && _vm->_useCJKMode) {
-		if (_vm->_gameId == GID_CMI)
-			return 8;
-		if (_vm->_gameId == GID_DIG)
-			return 6;
-		return 0;
-	}
+	if (c >= 0x80 && _vm->_useCJKMode)
+		return _vm->_2byteWidth / 2;
 
 	if (c >= _numChars)
 		error("invalid character in NutRenderer::getCharWidth : %d (%d)", c, _numChars);
@@ -225,13 +220,8 @@ int NutRenderer::getCharHeight(byte c) const {
 		return 0;
 	}
 
-	if (c >= 0x80 && _vm->_useCJKMode) {
-		if (_vm->_gameId == GID_CMI)
-			return 16;
-		if (_vm->_gameId == GID_DIG)
-			return 10;
-		return 0;
-	}
+	if (c >= 0x80 && _vm->_useCJKMode)
+		return _vm->_2byteHeight;
 
 	if (c >= _numChars)
 		error("invalid character in NutRenderer::getCharHeight : %d (%d)", c, _numChars);
