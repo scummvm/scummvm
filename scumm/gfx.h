@@ -229,11 +229,12 @@ protected:
 	byte _C64MaskMap[4096], _C64MaskChar[4096];
 	bool _C64ObjectMode;
 
-	byte _NESNametable[16][64], _NESAttributes[64];
 	byte _NESBaseTiles;
-	byte _NESNametableObj[16][64];
-	byte _NESMasktable[16][8];
+	byte _NESNametable[16][64], _NESNametableObj[16][64];
+	byte _NESAttributes[64], _NESAttributesObj[64];
+	byte _NESMasktable[16][8], _NESMasktableObj[16][8];
 	int _NESObj_x;
+	bool _NEShasmask;
 
 	/* Bitmap decompressors */
 	bool decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLinesToProcess);
@@ -258,7 +259,7 @@ protected:
 
 	/* Mask decompressors */
 	void drawStripC64Mask(byte *dst, int stripnr, int width, int height) const;
-	void drawStripNESMask(byte *dst, int stripnr, int height) const;
+	void drawStripNESMask(byte *dst, int stripnr, int height, bool isObject) const;
 	void decompressMaskImgOr(byte *dst, const byte *src, int height) const;
 	void decompressMaskImg(byte *dst, const byte *src, int height) const;
 

@@ -40,7 +40,11 @@ void ScummEngine_v2::initV2MouseOver() {
 	int i;
 	int arrow_color, color, hi_color;
 
-	if (_version == 1) {
+	if (_features & GF_NES) {
+		color = 0;
+		hi_color = 0;
+		arrow_color = 0;
+	} else if (_version == 1) {
 		color = 16;
 		hi_color = 7;
 		arrow_color = 6;
