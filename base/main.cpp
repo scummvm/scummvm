@@ -257,11 +257,11 @@ static void runGame(GameDetector &detector, OSystem *system) {
 	// Run the game engine
 	engine->go();
 
-	// Stop all sound processing now (this prevents some race conditions later on)
-	system->clear_sound_proc();
-
 	// Free up memory
 	delete engine;
+
+	// Stop all sound processing now (this prevents some race conditions later on)
+	system->clear_sound_proc();
 }
 
 #ifndef _WIN32_WCE
