@@ -1274,7 +1274,7 @@ void ScummEngine::setObjectState(int obj, int state, int x, int y) {
 
 	i = getObjectIndex(obj);
 	if (i == -1) {
-		debug(1, "setObjectState: no such object %d", obj);
+		warning("setObjectState: no such object %d", obj);
 		return;
 	}
 
