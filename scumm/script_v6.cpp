@@ -2475,13 +2475,13 @@ void Scumm_v6::o6_kernelSetFunctions() {
 		case 16:
 		case 17:{
 			const byte *message;
-			byte buf_input[300];
+			byte buf_input[300], buf_output[300];
 			_messagePtr = getStringAddressVar(VAR_STRING2DRAW);
 			message = _msgPtrToAdd = buf_input;
 			addMessageToStack(_messagePtr);
 			if (_gameId == GID_DIG) {
-				byte buf_output[300], buf_trans[300], *ptr = buf_input;
-				char *t_ptr = (char *)ptr;
+				byte buf_trans[300];
+				char *t_ptr = (char *)buf_input;
 				buf_output[0] = 0;
 				while (t_ptr != NULL) {
 					if (*t_ptr == '/') {
