@@ -263,7 +263,7 @@ static int simon1_gmf_size[] = {
 	17256, 5103, 8794, 4884, 16
 };
 
-void MidiPlayer::playSMF (File *in, int song) {
+void MidiPlayer::loadSMF (File *in, int song) {
 	_system->lock_mutex (_mutex);
 	clearConstructs();
 
@@ -298,7 +298,7 @@ void MidiPlayer::playSMF (File *in, int song) {
 	_system->unlock_mutex (_mutex);
 }
 
-void MidiPlayer::playMultipleSMF (File *in) {
+void MidiPlayer::loadMultipleSMF (File *in) {
 	// This is a special case for Simon 2 Windows.
 	// Instead of having multiple sequences as
 	// separate tracks in a Type 2 file, simon2win
@@ -353,7 +353,7 @@ void MidiPlayer::playMultipleSMF (File *in) {
 //	jump (0, 1);
 }
 
-void MidiPlayer::playXMIDI (File *in) {
+void MidiPlayer::loadXMIDI (File *in) {
 	_system->lock_mutex (_mutex);
 	clearConstructs();
 

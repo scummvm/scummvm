@@ -1069,7 +1069,8 @@ void SimonState::playSting(uint a) {
 
 	// midi.shutdown();
 	_mus_file->seek(_mus_offsets[a], SEEK_SET);
-	midi.playSMF (_mus_file, a);
+	midi.loadSMF (_mus_file, a);
+	midi.jump (0, 0);
 }
 
 Subroutine *SimonState::getSubroutineByID(uint subroutine_id) {
@@ -5280,9 +5281,9 @@ void SimonState::loadMusic (uint music) {
 		midi.stop();
 		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
 		if (_game & GF_WIN) {	
-			midi.playMultipleSMF (_game_file);
+			midi.loadMultipleSMF (_game_file);
 		} else {
-			midi.playXMIDI (_game_file);
+			midi.loadXMIDI (_game_file);
 		}
 
 		_last_music_played = music;
@@ -5299,10 +5300,10 @@ void SimonState::loadMusic (uint music) {
 			midi.stop();
 			if (_game & GF_WIN) {	
 				_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
-				midi.playMultipleSMF (_game_file);
+				midi.loadMultipleSMF (_game_file);
 			} else if (_game & GF_TALKIE) {	
 				_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
-				midi.playSMF (_game_file, music);
+				midi.loadSMF (_game_file, music);
 			} else {
 				char buf[50];
 				File *f = new File();
@@ -5312,7 +5313,7 @@ void SimonState::loadMusic (uint music) {
 					warning("Can't load music from '%s'", buf);
 					return;
 				}
-				midi.playSMF (f, music);
+				midi.loadSMF (f, music);
 				delete f;
 			}
 			midi.jump (0, 0);

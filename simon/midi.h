@@ -57,9 +57,9 @@ public:
 	MidiPlayer (OSystem *system);
 	virtual ~MidiPlayer();
 
-	void playSMF (File *in, int song);
-	void playMultipleSMF (File *in);
-	void playXMIDI (File *in);
+	void loadSMF (File *in, int song);
+	void loadMultipleSMF (File *in);
+	void loadXMIDI (File *in);
 
 	void setLoop (bool loop);
 	void queueTrack (byte track, bool loop);
