@@ -165,7 +165,9 @@ typedef signed long int32;
 #define END_PACK_STRUCTS   pack ()
 #define GCC_PACK
 #define NORETURN
+#define USE_QTMUSIC
 #define NEED_STRDUP
+
 #elif defined(__MORPHOS__)
 #define scumm_stricmp stricmp
 #define CHECK_HEAP
