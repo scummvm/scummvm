@@ -2019,8 +2019,7 @@ void SimonState::set_video_mode_internal(uint mode, uint vga_res_id)
 	vc_ptr_org = _vc_ptr;
 
 	_vc_ptr = _cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x8 *) b)->script_offs);
-	if (_vgascript_toggle)	
-		dump_vga_script(_vc_ptr, num, vga_res_id);
+	//dump_vga_script(_vc_ptr, num, vga_res_id);
 	run_vga_script();
 	_vc_ptr = vc_ptr_org;
 
@@ -3687,8 +3686,7 @@ void SimonState::start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint c
 	for (;;) {
 		if (READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6 *) p)->id) == vga_struct_id) {
 
-			if (_vgascript_toggle)
-				dump_vga_script(pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6*)p)->script_offs), vga_res, vga_struct_id);
+			//dump_vga_script(pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6*)p)->script_offs), vga_res, vga_struct_id);
 
 			add_vga_timer(gss->VGA_DELAY_BASE, pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6 *) p)->script_offs), vga_struct_id, vga_res);
 			break;

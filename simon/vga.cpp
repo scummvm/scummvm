@@ -268,9 +268,7 @@ void SimonState::vc_2()
 
 	_vc_ptr = _cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x8 *) b)->script_offs);
 
-
-	if (_vgascript_toggle) 
-		dump_vga_script(_vc_ptr, res, num);
+	//dump_vga_script(_vc_ptr, res, num);
 	run_vga_script();
 
 	_cur_vga_file_1 = old_file_1;
@@ -359,12 +357,9 @@ void SimonState::vc_3()
 	}
 #endif
 
-	if (_vgascript_toggle) 
-		dump_vga_script(_cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6*)p)->script_offs), res, b);
+	//dump_vga_script(_cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6*)p)->script_offs), res, b);
 
-	add_vga_timer(gss->VGA_DELAY_BASE,
-								_cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6 *) p)->script_offs),
-								b, res);
+	add_vga_timer(gss->VGA_DELAY_BASE, _cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6 *) p)->script_offs), b, res);
 }
 
 void SimonState::vc_4()
