@@ -963,8 +963,18 @@ void Actor::drawActorCostume() {
 	bcr->setPalette(palette);
 	bcr->setFacing(this);
 
-	if (!(_vm->_features & GF_NEW_COSTUMES)) {
+	if (_vm->_features & GF_NEW_COSTUMES) {
 
+		bcr->_zbuf = forceClip;
+		if ((bcr->_zbuf == 100) || ((_vm->_features & GF_HUMONGOUS) && (bcr->_zbuf == 0))) {
+			bcr->_zbuf = _vm->getMaskFromBox(walkbox);
+			if (bcr->_zbuf > _vm->gdi._numZBuffer-1)
+				bcr->_zbuf = _vm->gdi._numZBuffer-1;
+		}
+
+		bcr->_draw_top = top = 0x7fffffff;
+
+	} else {
 		if (forceClip)
 			bcr->_zbuf = forceClip;
 		else if (isInClass(kObjectClassNeverClip))
@@ -976,16 +986,6 @@ void Actor::drawActorCostume() {
 		}
 
 		bcr->_draw_top = top = 0xFF;
-	} else {
-
-		bcr->_zbuf = forceClip;
-		if ((bcr->_zbuf == 100) || ((_vm->_features & GF_HUMONGOUS) && (bcr->_zbuf == 0))) {
-			bcr->_zbuf = _vm->getMaskFromBox(walkbox);
-			if (bcr->_zbuf > _vm->gdi._numZBuffer-1)
-				bcr->_zbuf = _vm->gdi._numZBuffer-1;
-		}
-
-		bcr->_draw_top = top = 0x7fffffff;
 	}
 
 	bcr->_draw_bottom = bottom = 0;
@@ -993,7 +993,7 @@ void Actor::drawActorCostume() {
 	// If the actor is partially hidden, redraw it next frame.
 	// Only done for pre-AKOS, though.
 	if (bcr->drawCostume(_vm->virtscr[0], cost) & 1) {
-		needRedraw = !(_vm->_features & GF_NEW_COSTUMES);
+		needRedraw = !(_vm->_version >= 7);
 	}
 
 	// Record the vertical extent of the drawn actor
@@ -1217,6 +1217,9 @@ void Actor::setActorCostume(int c) {
 				_vm->ensureResourceLoaded(rtCostume, costume);
 			}
 			startAnimActor(initFrame);
+		} else {
+			costume = c;
+			cost.reset();
 		}
 	} else {
 		if (visible) {
