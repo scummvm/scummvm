@@ -678,6 +678,7 @@ protected:
 		int y1;
 		int flags;
 		int state;
+		int unk;
 	};
 
 #if !defined(__GNUC__)
@@ -732,7 +733,7 @@ protected:
 	void o72_wordArrayInc();
 	void o72_getObjectImageX();
 	void o72_getObjectImageY();
-	void o72_unknown56();
+	void o72_captureWizImage();
 	void o72_getTimer();
 	void o72_setTimer();
 	void o72_unknown5A();
@@ -829,8 +830,8 @@ protected:
 	struct WizParameters {
 		byte filename[260];
 		Common::Rect box;
-		int drawFlags;
-		int drawMode;
+		int processFlags;
+		int processMode;
 		int unk_11C;
 		int unk_120;
 		int unk_124;
@@ -841,8 +842,8 @@ protected:
 		int unk_138;
 		int unk_148;
 		int unk_14C;
-		int unk_150;
-		int unk_158;
+		int angle;
+		int zoom;
 		int unk_15C;
 		int unk_160;
 		uint8 remapBuf1[256];
@@ -864,7 +865,9 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 	
-	void wizDraw(const WizParameters *params);
+	void drawWizComplexPolygon(int resnum, int state, int po_x, int po_y, int arg14, int angle, int zoom, const Common::Rect *r);
+	void displayWizComplexImage(const WizParameters *params);
+	void processWizImage(const WizParameters *params);
 	
 	/* HE version 90 script opcodes */
 	void o90_dup();

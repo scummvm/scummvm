@@ -152,7 +152,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 54 */
 		OPCODE(o72_getObjectImageX),
 		OPCODE(o72_getObjectImageY),
-		OPCODE(o72_unknown56),
+		OPCODE(o72_captureWizImage),
 		OPCODE(o6_wordVarDec),
 		/* 58 */
 		OPCODE(o72_getTimer),
@@ -778,7 +778,7 @@ void ScummEngine_v72he::o72_getObjectImageY() {
 	push(_objs[objnum].y_pos);
 }
 
-void ScummEngine_v72he::o72_unknown56() {
+void ScummEngine_v72he::o72_captureWizImage() {
 	// Drawing related
 	int a = pop();
 	int b = pop();
@@ -786,7 +786,7 @@ void ScummEngine_v72he::o72_unknown56() {
 	int d = pop();
 	int e = pop();
 
-	debug(1, "stub o72_unknown56(%d, %d, %d, %d, %d)", a, b, c, d, e);
+	debug(1, "stub o72_captureWizImage(%d, %d, %d, %d, %d)", a, b, c, d, e);
 }
 
 void ScummEngine_v72he::o72_getTimer() {

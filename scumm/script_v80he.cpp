@@ -151,7 +151,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		/* 54 */
 		OPCODE(o72_getObjectImageX),
 		OPCODE(o72_getObjectImageY),
-		OPCODE(o72_unknown56),
+		OPCODE(o72_captureWizImage),
 		OPCODE(o6_wordVarDec),
 		/* 58 */
 		OPCODE(o72_getTimer),
