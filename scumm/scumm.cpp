@@ -279,11 +279,11 @@ static const ScummGameSettings scumm_settings[] = {
 
 #ifdef HEGAMES
 	// Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90
-	{"kinddemo", "Big Thinkers Kindergarten (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"kinddemo", "Big Thinkers Kindergarten (Demo)", GID_PAJAMA, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"1grademo", "Big Thinkers First Grade (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"1grademo", "Big Thinkers First Grade (Demo)", GID_PAJAMA, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"f3-mdemo", "Freddi Fish 3: The Case of the Stolen Conch Shell (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"f3-mdemo", "Freddi Fish 3: The Case of the Stolen Conch Shell (Demo)", GID_PAJAMA, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	// there is also a C++ engine based version of timedemo
 	{"timedemo", "Putt-Putt Travels Through Time (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
@@ -306,27 +306,28 @@ static const ScummGameSettings scumm_settings[] = {
 
 	// Humongous Entertainment Scumm Version 9.8 ?  Scummsys.98
 	// these and later games can easily be identified by the .(a) file instead of a .he1
-	{"freddi4", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch", GID_HEGAME, 6, 90, MDT_NONE,
+	// and INIB chunk in the .he0
+	{"freddi4", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"f4-demo", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"f4-demo", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"lost", "Pajama Sam's Lost & Found", GID_HEGAME, 6, 72, MDT_NONE,
+	{"lost", "Pajama Sam's Lost & Found", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"smaller", "Pajama Sam's Lost & Found (Test)", GID_HEGAME, 6, 72, MDT_NONE,
+	{"smaller", "Pajama Sam's Lost & Found (Test)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"racedemo", "Putt-Putt Enters the Race (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"racedemo", "Putt-Putt Enters the Race (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"puttrace", "Putt-Putt Enters the Race", GID_HEGAME, 6, 90, MDT_NONE,
+	{"puttrace", "Putt-Putt Enters the Race", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"bluesabctimedemo", "Blue's ABC Time (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"BluesABCTimeDemo", "Blue's ABC Time (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Humongous Entertainment Scumm Version 9.9 ?  Scummsys.99
-	{"sf2-demo", "Spyfox 2: Some Assembly Required (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"sf2-demo", "Spyfox 2: Some Assembly Required (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"spyfox2", "Spyfox 2: Some Assembly Required", GID_HEGAME, 6, 90, MDT_NONE,
+	{"spyfox2", "Spyfox 2: Some Assembly Required", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"mustard", "Spy Fox in Hold the Mustard", GID_HEGAME, 6, 90, MDT_NONE,
+	{"mustard", "Spy Fox in Hold the Mustard", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Humongous Entertainment Scumm Version ?  engine moved to c++ 
@@ -3275,6 +3276,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 #ifndef __PALM_OS__
 		case 72:
 		case 90:
+		case 98:
 			engine = new ScummEngine_v72he(detector, syst, game);
 			break;
 		case 71:

@@ -241,7 +241,10 @@ void ScummEngine::openRoom(int room) {
 		if (!(_features & GF_SMALL_HEADER)) {
 
 			if (_heversion >= 70) { // Windows titles
-				sprintf(buf, "%s.he%.1d", _gameName.c_str(), room == 0 ? 0 : 1);
+				if (_heversion >= 98)
+					sprintf(buf, "%s.%s", _gameName.c_str(), room == 0 ? "he0" : "(a)");
+				else
+					sprintf(buf, "%s.he%.1d", _gameName.c_str(), room == 0 ? 0 : 1);
 			} else if (_version >= 7) {
 				if (room > 0 && (_version == 8))
 					VAR(VAR_CURRENTDISK) = res.roomno[rtRoom][room];
@@ -571,6 +574,11 @@ void ScummEngine::readIndexFile() {
 		case MKID('DISK'):
 			_fileHandle.seek(itemsize - 8, SEEK_CUR);
 			warning("DISK index block not yet handled, skipping");
+			break;
+
+		case MKID('INIB'):
+			_fileHandle.seek(itemsize - 8, SEEK_CUR);
+			warning("INIB index block not yet handled, skipping");
 			break;
 
 		case MKID('DIRI'):
