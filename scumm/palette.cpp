@@ -452,7 +452,7 @@ static inline uint colorWeight(int red, int green, int blue) {
 }
 
 
-void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
+void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor, int start, int end) {
 	const byte *basepal = getPalettePtr(_curPalIndex);
 	const byte *pal = basepal;
 	const byte *compareptr;
@@ -477,7 +477,12 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 	// from within Room 23 (the big machine), as it has no shadow effects
 	// and thus doesn't result in any visual differences.
 
-	for (i = 0; i <= 255; i++) {
+	if (_gameId == GID_SAMNMAX) {
+		for (i = 0; i < 256; i++)
+			_shadowPalette[i] = i;
+	}
+
+	for (i = start; i < end; i++) {
 		int r = (int) (*pal++ * redScale) >> 8;
 		int g = (int) (*pal++ * greenScale) >> 8;
 		int b = (int) (*pal++ * blueScale) >> 8;
@@ -522,58 +527,6 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 			}
 		}
 		*table++ = bestitem;
-	}
-}
-
-/** This function create the specialPalette used for semi-transparency in SamnMax */
-void ScummEngine::setupShadowPalette(int16 from, int16 to, int16 redScale, int16 greenScale, int16 blueScale,
-			int16 startColor, int16 endColor) {
-	const byte *palPtr, *curPtr;
-	const byte *searchPtr;
-
-	uint bestResult;
-	uint currentResult;
-
-	byte currentIndex;
-
-	int i, j;
-
-	palPtr = getPalettePtr(_curPalIndex);
-
-	for (i = 0; i < 256; i++)
-		_shadowPalette[i] = i;
-
-	curPtr = palPtr + startColor * 3;
-
-	for (i = startColor; i < endColor; i++) {
-		int r = (int) (*curPtr++ * redScale) >> 8;
-		int g = (int) (*curPtr++ * greenScale) >> 8;
-		int b = (int) (*curPtr++ * blueScale) >> 8;
-
-		if (r > 255)
-			r = 255;
-		if (g > 255)
-			g = 255;
-		if (b > 255)
-			b = 255;
-
-		searchPtr = palPtr + from * 3;
-		bestResult = (uint)-1;
-		currentIndex = (byte) from;
-
-		for (j = from; j <= to; j++) {
-			int ar = (*searchPtr++);
-			int ag = (*searchPtr++);
-			int ab = (*searchPtr++);
-
-			currentResult = colorWeight(ar - r, ag - g, ab - b);
-
-			if (currentResult < bestResult) {
-				_shadowPalette[i] = currentIndex;
-				bestResult = currentResult;
-			}
-			currentIndex++;
-		}
 	}
 }
 

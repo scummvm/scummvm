@@ -486,7 +486,7 @@ void ScummEngine_v6he::o6_roomOps() {
 		b = pop();
 		a = pop();
 		if (_heversion == 60)
-			setupShadowPalette(a, b, c, d, e);
+			setupShadowPalette(a, b, c, d, e, 0, 256);
 		break;
 
 	case 184:		// SO_SAVE_STRING

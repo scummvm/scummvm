@@ -1926,7 +1926,7 @@ void ScummEngine_v5::o5_roomOps() {
 		_opcode = fetchScriptByte();
 		d = getVarOrDirectByte(PARAM_1);
 		e = getVarOrDirectByte(PARAM_2);
-		setupShadowPalette(a, b, c, d, e);
+		setupShadowPalette(a, b, c, d, e, 0, 256);
 		break;
 
 	case 13:	// SO_SAVE_STRING
