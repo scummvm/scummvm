@@ -672,8 +672,11 @@ int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SceneD
 	getInfo(&scene_info);
 
 	_sceneProc(SCENE_BEGIN, &scene_info, this);
-	
-	_vm->_actor->updateActorsScene(actorsEntrance);
+
+	// We probably don't want "followers" to go into scene -1. At the very
+	// least we don't want garbage to be drawn that early in the ITE intro.
+	if (_sceneNumber != -1)
+		_vm->_actor->updateActorsScene(actorsEntrance);
 
 	if (_desc.flags & kSceneFlagShowCursor)
 		_vm->_interface->activate();
