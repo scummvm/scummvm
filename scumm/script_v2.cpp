@@ -658,7 +658,7 @@ void Scumm_v2::o2_waitForMessage() {
 }
 
 void Scumm_v2::o2_waitForSentence() {
-	if (_sentenceNum && !isScriptInUse(SENTENCE_SCRIPT))
+	if (!_sentenceNum && !isScriptInUse(SENTENCE_SCRIPT))
 		return;
 
 	_scriptPointer--;
