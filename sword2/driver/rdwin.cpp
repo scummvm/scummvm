@@ -160,8 +160,7 @@ void Sword2State::parseEvents() {
 				if (event.kbd.keycode == 'w')
 					GrabScreenShot();
 			}
-			WriteKey(event.kbd.keycode);
-
+			WriteKey(event.kbd.ascii);
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
 			mousex = event.mouse.x;
