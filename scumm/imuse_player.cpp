@@ -81,6 +81,7 @@ Player::Player() :
 	_isGM(false),
 	_se(0),
 	_vol_chan(0){
+	_passThrough = 0;
 }
 
 Player::~Player() {
