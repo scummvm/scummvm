@@ -226,7 +226,10 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c) {
 			fcs->textRow--;
 		}
 
-		video_putchar_drawchar(fcs, fcs->textColumn + fcs->x, fcs->textRow * 8 + fcs->y, c);
+		if (_language == 20)
+			video_putchar_drawchar(fcs, fcs->width + fcs->x - fcs->textColumn, fcs->textRow * 8 + fcs->y, c);
+		else
+			video_putchar_drawchar(fcs, fcs->textColumn + fcs->x, fcs->textRow * 8 + fcs->y, c);
 
 		fcs->textLength++;
 		fcs->textColumnOffset += 6;
