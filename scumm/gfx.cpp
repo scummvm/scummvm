@@ -3374,6 +3374,14 @@ void Scumm::updatePalette() {
 #pragma mark --- Cursor ---
 #pragma mark -
 
+void Scumm::setupCursor() {
+	_cursor.animate = 1;
+	if (_gameId == GID_TENTACLE) {
+		setCursorImg(697, 60, 1);
+		makeCursorColorTransparent(1);
+	}
+}
+
 void Scumm::grabCursor(int x, int y, int w, int h) {
 	VirtScreen *vs = findVirtScreen(y);
 
