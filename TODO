@@ -1,6 +1,6 @@
 Residual TODO list (in rough order of priority):
-------------------------------------------------
- * Work out why Residual uses 80+% CPU!
+------------------------------------------------ 
+ * Rewrite Bitmap::draw to use textures (glDrawPixels is SLOW and buggy!) - may fix next issue
  * Check OpenGL usage on Windows (Room bgs look like shit: http://www.enderboi.com/misc/Grim1.jpg)
  * Remove hash_map usage (not implemented on Visual Studio & other compilers)
  * Remove as much other STL stuff as possible (see above)
