@@ -911,7 +911,7 @@ void ScummEngine_v6he::o6_kernelGetFunctions() {
 		debug(0, "stub ScummEngine_v6he::o6_kernelGetFunctions(%d, %d, %d, %d, %d)",
 			  args[0], args[1], args[2], args[3], args[4]);
 		writeVar(0, 0);
-		defineArray(0, 3, 0, kernelGetFunctions1(0, args[1], args[2], args[3], args[4]));
+		defineArray(0, rtCostume, 0, kernelGetFunctions1(0, args[1], args[2], args[3], args[4]));
 		retval = readVar(0);
 		addr = getResourceAddress(rtString, retval);
 		kernelGetFunctions1(addr + 6, args[1], args[2], args[3], args[4]);
@@ -1048,9 +1048,9 @@ int ScummEngine_v6he::readFileToArray(int slot, int32 size) {
 	if (size == 0)
 		size = _hFileTable[slot].size() - _hFileTable[slot].pos();
 	writeVar(0, 0);
-	defineArray(0, 3, 0, size);
-	byte *ptr = getResourceAddress(rtString, readVar(0));
-	_hFileTable[slot].read(ptr + 6, size);
+
+	ArrayHeader *ah = defineArray(0, rtCostume, 0, size);
+	_hFileTable[slot].read(ah->data, size);
 
 	return readVar(0);
 }
@@ -1079,11 +1079,11 @@ void ScummEngine_v6he::o6_readFile() {
 }
 
 void ScummEngine_v6he::writeFileFromArray(int slot, int resID) {
-	byte *ptr = getResourceAddress(rtString, resID);
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, resID);
 	// FIXME: hack for proper size: / 2 - 5
 	// does it really needed? Needs checking
 	int32 size = getResourceSize(rtString, resID) / 2 - 5;
-	_hFileTable[slot].write(ptr, size);
+	_hFileTable[slot].write(ah->data, size);
 }
 
 void ScummEngine_v6he::o6_writeFile() {
@@ -1196,47 +1196,47 @@ void ScummEngine_v6he::o6_redimArray() {
 	subcode = fetchScriptByte();
 	switch (subcode) {
 	case 199:
-		redimArray(fetchScriptWord(), newX, newY, 5);
+		redimArray(fetchScriptWord(), newX, newY, rtInventory);
 		break;
 	case 202:
-		redimArray(fetchScriptWord(), newX, newY, 3);
+		redimArray(fetchScriptWord(), newX, newY, rtCostume);
 		break;
 	default:
 		break;
 	}
 }
 
-void ScummEngine_v6he::redimArray(int arrayId, int newX, int newY, int d) {
+void ScummEngine_v6he::redimArray(int arrayId, int newX, int newY, int type) {
 	// Used in mini game at Cosmic Dust Diner in puttmoon
 	int var_2, var_4, ax, cx;
 
 	if (readVar(arrayId) == 0)
 		error("redimArray: Reference to zeroed array pointer");
 
-	byte *ptr = getResourceAddress(rtString, readVar(arrayId));
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(arrayId));
 
-	if (!ptr)
+	if (!ah)
 		error("redimArray: Invalid array (%d) reference", readVar(arrayId));
 
-	if (d == 5)
+	if (type == rtInventory)
 		var_2 = 2;
-	else
+	else // rtCostume
 		var_2 = 1;
 
-	if (READ_LE_UINT16(ptr) == 5)
+	if (FROM_LE_16(ah->type) == rtInventory)
 		var_4 = 2;
 	else
 		var_4 = 1;
 
 	cx = var_2 * (newX + 1) * (newY + 1);
-	ax = var_4 * READ_LE_UINT16(ptr + 2) * READ_LE_UINT16(ptr + 4);
+	ax = var_4 * FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2);
 
 	if (ax != cx)
 		error("redimArray: array %d redim mismatch", readVar(arrayId));
 
-	WRITE_LE_UINT16(ptr, d);
-	WRITE_LE_UINT16(ptr + 2, newY + 1);
-	WRITE_LE_UINT16(ptr + 4, newX + 1);
+	ah->type = TO_LE_16(type);
+	ah->dim1 = TO_LE_16(newY + 1);
+	ah->dim2 = TO_LE_16(newX + 1);
 }
 
 void ScummEngine_v6he::o6_unknownEE() {

@@ -402,8 +402,13 @@ ArrayHeader *ScummEngine_v6::defineArray(int array, int type, int dim2, int dim1
 	int size;
 	ArrayHeader *ah;
 
-	if (type != 4)
-		type = 5;
+	if (!(_features & GF_HUMONGOUS)) {
+		if (type != rtSound)
+			type = rtInventory;
+	} else {
+		if (type == rtScript || type == rtRoom)
+			type = rtCostume;
+	}
 
 	nukeArray(array);
 
