@@ -105,13 +105,13 @@ void screenBlocksAddRectangle( int top, int right, int left, int bottom, float d
 
 	if(left < 0)
 		left = 0;
-	if(left>=SCREEN_WIDTH)
+	if(left >= SCREEN_WIDTH)
 		left = SCREEN_WIDTH - 1;
 
-	if(right<0)
+	if(right < 0)
 		right = 0;
-	if(right>=SCREEN_WIDTH)
-		right = SCREEN_WIDTH-1;
+	if(right >= SCREEN_WIDTH)
+		right = SCREEN_WIDTH - 1;
 
 	// exit in case of bad rectangle
 	if((left > right) || (top > bottom))
