@@ -980,8 +980,6 @@ next_iter:
 
 void Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProcess)
 {
-	_useOrDecompress = false;
-
 	byte code = *smap_ptr++;
 	assert(numLinesToProcess);
 
@@ -990,10 +988,16 @@ void Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	else
 		_palette_mod = 0;
 
+	_useOrDecompress = false;
 	_decomp_shr = code % 10;
 	_decomp_mask = 0xFF >> (8 - _decomp_shr);
+	
+	// Note that some of the decoders exist in pairs: one honors _transparency, the other not.
+	// The pairs are:
+	// unkDecode1 <-> unkDecode3
+	// unkDecode2 <-> unkDecode5
+	// unkDecode4 <-> unkDecode6
 
-//printf("decompressBitmap codec %d\n", code);
 	switch (code) {
 	case 1:
 		unkDecode7(bgbak_ptr, smap_ptr, numLinesToProcess);
@@ -1054,19 +1058,6 @@ void Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	case 66:
 	case 67:
 	case 68:
-		unkDecode1(bgbak_ptr, smap_ptr, numLinesToProcess);
-		break;
-
-	case 84:
-	case 85:
-	case 86:
-	case 87:
-	case 88:
-		_useOrDecompress = true;
-		unkDecode3(bgbak_ptr, smap_ptr, numLinesToProcess);
-		break;
-
-		/* New since version 6 */
 	case 104:
 	case 105:
 	case 106:
@@ -1075,7 +1066,11 @@ void Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 		unkDecode1(bgbak_ptr, smap_ptr, numLinesToProcess);
 		break;
 
-		/* New since version 6 */
+	case 84:
+	case 85:
+	case 86:
+	case 87:
+	case 88:
 	case 124:
 	case 125:
 	case 126:
@@ -1263,14 +1258,15 @@ void Gdi::unkDecode1(byte *dst, byte *src, int height)
 			FILL_BITS;
 			*dst++ = color + _palette_mod;
 
-		againPos:;
-
+		againPos:
 			if (!READ_BIT) {
 			} else if (READ_BIT) {
 				incm = (bits & 7) - 4;
 				cl -= 3;
 				bits >>= 3;
-				if (!incm) {
+				if (incm) {
+					color += incm;
+				} else {
 					FILL_BITS;
 					reps = bits & 0xFF;
 					do {
@@ -1285,8 +1281,6 @@ void Gdi::unkDecode1(byte *dst, byte *src, int height)
 					bits >>= 8;
 					bits |= (*src++) << (cl - 8);
 					goto againPos;
-				} else {
-					color += incm;
 				}
 			} else {
 				FILL_BITS;
@@ -1348,11 +1342,10 @@ void Gdi::unkDecode3(byte *dst, byte *src, int height)
 				*dst = color + _palette_mod;
 			dst++;
 
-		againPos:;
+		againPos:
 			if (!READ_BIT) {
 			} else if (READ_BIT) {
 				incm = (bits & 7) - 4;
-
 				cl -= 3;
 				bits >>= 3;
 				if (incm) {
@@ -1491,22 +1484,22 @@ void Gdi::unkDecode6(byte *dst, byte *src, int height)
 
 #define NEXT_ROW                                            \
 				dst += _vm->_realWidth;                     \
-					if (--h == 0) {                         \
+				if (--h == 0) {                             \
 					if (!--_currentX)                       \
 						  return;                           \
 					dst -= _vertStripNextInc;               \
-					h = height;                 \
+					h = height;                             \
 				}
 
 void Gdi::unkDecode7(byte *dst, byte *src, int height)
 {
+printf("unkDecode7(%d)\n", height);
 	uint h = height;
 
 	if (_vm->_features & GF_OLD256) {
 		_currentX = 8;
 		for (;;) {
-			byte color = *src++;
-			*dst = color;
+			*dst = *src++;
 			NEXT_ROW
 		}
 		return;
