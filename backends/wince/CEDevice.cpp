@@ -39,7 +39,7 @@ bool CEDevice::hasDesktopResolution() {
 }
 
 bool CEDevice::hasWideResolution() {
-	return (GetSystemMetrics(SM_CXSCREEN) >= 640 && GetSystemMetrics(SM_CYSCREEN) >= 480);
+	return (GetSystemMetrics(SM_CXSCREEN) >= 640 || GetSystemMetrics(SM_CYSCREEN) >= 640);
 }
 
 bool CEDevice::hasSmartphoneResolution() {
