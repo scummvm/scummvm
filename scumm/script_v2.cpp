@@ -412,7 +412,7 @@ void Scumm_v2::decodeParseString() {
 	_string[textSlot].right = 320;
 	_string[textSlot].center = false;
 	_string[textSlot].overhead = false;
-	_string[textSlot].color = 9;	// light blue
+//	_string[textSlot].color = 9;	// light blue
 
 	_messagePtr = buffer;
 	switch (textSlot) {
@@ -669,15 +669,18 @@ void Scumm_v2::o2_waitForSentence() {
 void Scumm_v2::o2_actorSet() {
 	int act = getVarOrDirectByte(0x80);
 	int arg = getVarOrDirectByte(0x40);
-	Actor *a = derefActorSafe(act, "actorSet");
+	Actor *a;
 	int i;
 
 	_opcode = fetchScriptByte();
-	if (!a) {
-		// This case happens in the Zak/MM bootscript exactly once each, to
-		// set the default talk color (9).
+	if (act == 0 && _opcode == 5) {
+		// This case happens in the Zak/MM bootscripts, to set the default talk color (9).
+		_string[0].color = arg;
 		return;
 	}
+	
+	a = derefActorSafe(act, "actorSet");
+	assert(a);
 
 	switch (_opcode) {
 		case 1: 	// Actor Sound
