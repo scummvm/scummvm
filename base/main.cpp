@@ -184,7 +184,7 @@ static void do_memory_test(void) {
 
 #endif
 
-static int launcherDialog(GameDetector &detector, OSystem *system) {
+static bool launcherDialog(GameDetector &detector, OSystem *system) {
 
 	system->beginGFXTransaction();
 		// Set the user specified graphics mode (if any).
@@ -232,7 +232,7 @@ static int launcherDialog(GameDetector &detector, OSystem *system) {
 #else
 	GUI::LauncherDialog dlg(detector);
 #endif
-	return dlg.runModal();
+	return (dlg.runModal() != -1);
 }
 
 static int runGame(GameDetector &detector, OSystem *system) {
@@ -377,7 +377,7 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 
 	// Unless a game was specified, show the launcher dialog
 	if (detector._targetName.isEmpty())
-		launcherDialog(detector, system);
+		running = launcherDialog(detector, system);
 
 	// FIXME: We're now looping the launcher. This, of course, doesn't
 	// work as well as it should. In theory everything should be destroyed
@@ -403,7 +403,7 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 			PluginManager::instance().loadPlugins();
 		}
 
-		launcherDialog(detector, system);
+		running = launcherDialog(detector, system);
 	}
 
 	// ...and quit (the return 0 should never be reached)

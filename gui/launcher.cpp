@@ -673,8 +673,8 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		updateButtons();
 		break;
 	case kQuitCmd:
+		setResult(-1);
 		close();
-		g_system->quit();
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
