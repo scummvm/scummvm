@@ -94,7 +94,7 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_61_sprite_change,
 	&SimonState::vc_62_palette_thing,
 	&SimonState::vc_63_palette_thing_2,
-	&SimonState::vc_64_skip_if_text,
+	&SimonState::vc_64_skip_if_voice,
 	&SimonState::vc_65_palette_thing_3,
 	&SimonState::vc_66_skip_if_nz,
 	&SimonState::vc_67_skip_if_ge,

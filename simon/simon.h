@@ -666,7 +666,7 @@ public:
 	void vc_63_palette_thing_2();
 
 	// Simon2 specific Video Script Opcodes
-	void vc_64_skip_if_text();
+	void vc_64_skip_if_voice();
 	void vc_65_palette_thing_3();
 	void vc_66_skip_if_nz();
 	void vc_67_skip_if_ge();
