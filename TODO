@@ -266,10 +266,11 @@ SCUMM
   - Add support for processWizImage mode 9 (For freddicove/bb2demo/footdemo)
   - Add support for additional drawWizImage flags (cyx)
   - Add shadows support for akos codecs in HE90+ games, uses XMAP resources.
-  - Add arrayOps case 127 (For smaller/lost/bb2demo/footdemo).
+  - Add arrayOps case 127 (For chase/lost/smaller/bb2demo/footdemo).
   - Add support for array sorting (Used in lost/smaller).
   - Fix actor glitches in pajama2
   - Fix array issues in Buzzy games (Kirben)
+  - Fix name check failing in mustard, when comparing strings via o70_compareString()
   - Fix loadImgSpot asserts, due to spritesProcessWiz loading WizImages with sprite res_id of 0
   - Fix cursor transparency in puzzle of pajama2
   - Fix sprites graphical glitches
