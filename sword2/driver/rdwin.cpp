@@ -73,6 +73,10 @@ void Sword2State::parseEvents() {
 	}
 }
 
+/**
+ * Quit the game.
+ */
+
 int32 CloseAppWindow(void) {
 	warning("stub CloseAppWindow");
 /*
@@ -88,6 +92,11 @@ static bool _needRedraw = false;
 void SetNeedRedraw() {
 	_needRedraw = true;
 }
+
+/**
+ * This function should be called at a high rate (> 20 per second) to service
+ * windows and the interface it provides.
+ */
 
 int32 ServiceWindows(void) {
 	g_sword2->parseEvents();
@@ -106,6 +115,11 @@ int32 ServiceWindows(void) {
 
 	return RD_OK;
 }
+
+/**
+ * Set the window name to windowName and stores this name in gameName for
+ * future use.
+ */
 
 void SetWindowName(const char *windowName) {
 	warning("stub SetWindowName( %s )", windowName);

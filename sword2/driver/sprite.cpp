@@ -17,46 +17,6 @@
  * $Header$
  */
 
-//=============================================================================
-//
-//	Filename	:	sprite.c
-//	Created		:	23rd September 1996
-//	By			:	P.R.Porter
-//
-//	Summary		:	This module holds the sprite drawing functions.
-//
-//	Functions
-//	---------
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 CreateSurface(_spriteInfo *s, uint32 *surface)
-//
-//	Creates a sprite surface in video memory (if possible) and returns it's
-//	handle in surface.
-//
-//	---------------------------------------------------------------------------
-//
-//	int32 DrawSurface(_spriteInfo *s, uint32 surface, ScummVM::Rect *clipRect)
-//
-//	Draws the sprite surface created earlier.  If the surface has been lost,
-//	it is recreated.
-//
-//	---------------------------------------------------------------------------
-//
-//	int32 DeleteSurface(uint32 surface)
-//
-//	Deletes a surface from video memory.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 DrawSprite(_spriteInfo *s)
-//
-//	Draws a sprite onto the screen.  The _spriteInfo structure holds all of
-//	the information needed to draw the sprite - see driver96.h for details
-//
-//=============================================================================
-
 #include "stdafx.h"
 #include "driver96.h"
 #include "d_draw.h"
@@ -68,14 +28,13 @@
 char shitColourTable[1024];
 static uint8 *lightMask = 0;
 
-// --------------------------------------------------------------------------
-//
-// int32 MirrorSprite(uint8 *dst, uint8 *src, int16 w, int16 h)
-//
-// This function takes the sprite pointed to by src and creates a mirror
-// image of it in dst.
-//
-// --------------------------------------------------------------------------
+/**
+ * This function takes a sprite and creates a mirror image of it.
+ * @param dst destination buffer
+ * @param src source buffer
+ * @param w width of the sprite
+ * @param h height of the sprite
+ */
 
 int32 MirrorSprite(uint8 *dst, uint8 *src, int16 w, int16 h) {
 	int16 x, y;
@@ -90,16 +49,13 @@ int32 MirrorSprite(uint8 *dst, uint8 *src, int16 w, int16 h) {
 	return RD_OK;
 }
 
-// --------------------------------------------------------------------------
-//
-// int32 DecompressRLE256(uint8 *dest, uint8 *source, int32 decompSize)
-//
-// This function takes a compressed frame of a sprite (with up to 256 colours)
-// and decompresses it into the area of memory marked by the destination
-// pointer.  The decompSize is used to measure when the decompression process
-// has completed.
-//
-// --------------------------------------------------------------------------
+/**
+ * This function takes a compressed frame of a sprite with up to 256 colours
+ * and decompresses it.
+ * @param dest destination buffer
+ * @param source source buffer
+ * @param decompSize the expected size of the decompressed sprite
+ */
 
 int32 DecompressRLE256(uint8 *dest, uint8 *source, int32 decompSize) {
 	// PARAMETERS:
@@ -177,12 +133,9 @@ int32 DecompressRLE256(uint8 *dest, uint8 *source, int32 decompSize) {
 	return rv;
 }
 
-// --------------------------------------------------------------------------
-//
-// void UnwindRaw16(uint8 *dest, uint8 *source, uint8 blockSize, uint8 *colTable)
-//
-// This function unwinds a run of colour 16 data into 256 colour palette data.
-// --------------------------------------------------------------------------
+/**
+ * Unwinds a run of 16-colour data into 256-colour palette data.
+ */
 
 void UnwindRaw16(uint8 *dest, uint8 *source, uint8 blockSize, uint8 *colTable) {
 	// for each pair of pixels
@@ -210,27 +163,16 @@ void UnwindRaw16(uint8 *dest, uint8 *source, uint8 blockSize, uint8 *colTable) {
 	}
 }
 
-// --------------------------------------------------------------------------
-//
-// int32 DecompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, uint8 *colTable)
-//
-// This function takes a compressed frame of a sprite (with up to 16 colours)
-// and decompresses it into the area of memory marked by the destination
-// pointer.  The decompSize is used to measure when the decompression process
-// has completed.  The colour table which maps the 16 encoded colours to the 
-// current palette is passed in to colTable.
-//
-// --------------------------------------------------------------------------
+/**
+ * This function takes a compressed frame of a sprite (with up to 16 colours)
+ * and decompresses it.
+ * @param dest destination buffer
+ * @param source source buffer
+ * @param decompSize the expected size of the uncompressed sprite
+ * @param colTable mapping from the 16 encoded colours to the current palette
+ */
 
 int32 DecompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, uint8 *colTable) {
-	// PARAMETERS:
-	// source	points to the start of the sprite data for input
-	// decompSize	gives size of decompressed data in bytes
-	// dest		points to start of destination buffer for decompressed
-	//		data
-	// colTable	points to a 16-byte table of colours used to encode
-	//		the RAW pixels into 4-bits each
-
 	uint8 headerByte;			// block header byte
 	uint8 *endDest = dest + decompSize;	// pointer to byte after end of decomp buffer
 	int32 rv;
@@ -301,9 +243,14 @@ int32 DecompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, uint8 *colTa
 	return rv;
 }
 
-// The surface functions are used by the in-game dialogs and for displaying
-// cutscene subtitles. Everything that isn't needed for those cases (blending,
-// scaling, etc.) has been removed.
+/**
+ * Creates a sprite surface. Sprite surfaces are used by the in-game dialogs
+ * and for displaying cutscene subtitles, which makes them much easier to draw
+ * than standard sprites.
+ * @param s information about how to decode the sprite
+ * @param sprite the buffer that will be created to store the surface
+ * @return RD_OK, or an error code
+ */
 
 int32 CreateSurface(_spriteInfo *s, uint8 **sprite) {
 	uint8 *newSprite;
@@ -341,6 +288,13 @@ int32 CreateSurface(_spriteInfo *s, uint8 **sprite) {
 
 	return RD_OK;
 }
+
+/**
+ * Draws the sprite surface created earlier.
+ * @param s information about how to place the sprite
+ * @param surface pointer to the surface created earlier
+ * @param clipRect the clipping rectangle
+ */
 
 void DrawSurface(_spriteInfo *s, uint8 *surface, ScummVM::Rect *clipRect) {
 	ScummVM::Rect rd, rs;
@@ -406,6 +360,10 @@ void DrawSurface(_spriteInfo *s, uint8 *surface, ScummVM::Rect *clipRect) {
 	SetNeedRedraw();
 }
 
+/**
+ * Destroys a surface.
+ */
+
 void DeleteSurface(uint8 *surface) {
 	free(surface);
 }
@@ -415,6 +373,24 @@ void DeleteSurface(uint8 *surface) {
 
 uint16 xScale[SCALE_MAXWIDTH];
 uint16 yScale[SCALE_MAXHEIGHT];
+
+/**
+ * Draws a sprite onto the screen. The type of the sprite can be a combination
+ * of the following flags, some of which are mutually exclusive:
+ * RDSPR_DISPLAYALIGN	The sprite is drawn relative to the top left corner
+ *			of the screen
+ * RDSPR_FLIP		The sprite is mirrored
+ * RDSPR_TRANS		The sprite has a transparent colour zero
+ * RDSPR_BLEND		The sprite is translucent
+ * RDSPR_SHADOW		The sprite is affected by the light mask. (Scaled
+ *			sprites always are.)
+ * RDSPR_NOCOMPRESSION	The sprite data is not compressed
+ * RDSPR_RLE16		The sprite data is a 16-colour compressed sprite
+ * RDSPR_RLE256		The sprite data is a 256-colour compressed sprite
+ * @param s all the information needed to draw the sprite
+ * @warning Sprites will only be drawn onto the background, not over menubar
+ * areas.
+ */
 
 // FIXME: I'm sure this could be optimized. There's plenty of data copying and
 // mallocing here.
@@ -709,6 +685,10 @@ int32 DrawSprite(_spriteInfo *s) {
 	return RD_OK;
 }
 
+/**
+ * Opens the light masking sprite for a room.
+ */
+
 int32 OpenLightMask(_spriteInfo *s) {
 	// FIXME: The light mask is only needed on higher graphics detail
 	// settings, so to save memory we could simply ignore it on lower
@@ -727,6 +707,10 @@ int32 OpenLightMask(_spriteInfo *s) {
 
 	return RD_OK;
 }
+
+/**
+ * Closes the light masking sprite for a room.
+ */
 
 int32 CloseLightMask(void) {
 	if (!lightMask)

@@ -102,6 +102,7 @@ class Sword2Sound {
 		int32 StreamCompMusic(const char *filename, uint32 musicId, bool looping);
 		void saveMusicState();
 		void restoreMusicState();
+		void playLeadOut(uint8 *leadOut);
 		int32 MusicTimeRemaining();
 		int32 ReverseStereo(void);
 		uint8 GetFxVolume(void);

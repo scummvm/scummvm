@@ -17,61 +17,6 @@
  * $Header$
  */
 
-//=============================================================================
-//
-//	Filename	:	palette.c
-//	Created		:	22nd August 1996
-//	By			:	P.R.Porter
-//
-//	Summary		:	This module holds the palette functions and the interface
-//					to the directDraw palette.
-//
-//	Functions
-//	---------
-//
-//	--------------------------------------------------------------------------
-//
-//	void BS2_SetPalette(int32 startEntry, int32 noEntries, uint8 *colourTable)
-//
-//	Sets the palette from position startEntry for noEntries, to the data 
-//	pointed to by colourTable.
-//
-//	--------------------------------------------------------------------------
-//
-//	void UpdatePaletteMatchTable(uint8 *data)
-//
-//	Uses the current palCopy to create a table of palette indeces which will
-//	be searched later for a quick palette match, if data is NULL.  Otherwise
-//	it uses the table passed in.
-//
-//	--------------------------------------------------------------------------
-//
-//	uint8 QuickMatch(uint8 r, uint8 g, uint8 b)
-//
-//	Returns the palette index of the closest matching colour in the palette
-//	to these RGB values.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 FadeUp(float time)
-//
-//	Fades the palette up from black to the current palette in time.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 FadeDown(float time)
-//
-//	Fades the palette down to black from the current palette in time.
-//
-//	--------------------------------------------------------------------------
-//
-//	uint8 GetFadeStatus(void)
-//
-//	Returns the fade status which can be one of RDFADE_UP, RDFADE_DOWN or
-//	RDFADE_NONE.
-//
-//=============================================================================
-
 #include "stdafx.h"
 #include <stdio.h>
 
@@ -141,6 +86,13 @@ uint8 GetMatch(uint8 r, uint8 g, uint8 b) {
 	return minIndex;
 }
 
+/**
+ * Sets or creates a table of palette indices which will be searched later for
+ * a quick palette match.
+ * @param data either the palette match table, or NULL to create a new table
+ * from the current palCopy
+ */
+
 int32 UpdatePaletteMatchTable(uint8 *data) {
 	if (!data) {
 		int16 red, green, blue;
@@ -166,12 +118,27 @@ int32 UpdatePaletteMatchTable(uint8 *data) {
 	return RD_OK;
 }
 
+/**
+ * Matches a colour triplet to a palette index.
+ * @param r red colour component
+ * @param g green colour component
+ * @param b blue colour component
+ * @return the palette index of the closest matching colour in the palette
+ */
+
 // FIXME: This used to be inlined - probably a good idea - but the
 // linker complained when I tried to use it in sprite.cpp.
 
 uint8 QuickMatch(uint8 r, uint8 g, uint8 b) {
 	return paletteMatch[((int32) (r >> 2) << 12) + ((int32) (g >> 2) << 6) + (b >> 2)];
 }
+
+/**
+ * Sets the palette.
+ * @param startEntry the first colour entry to set
+ * @param noEntries the number of colour entries to set
+ * @param colourTable the new colour entries
+ */
 
 int32 BS2_SetPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, uint8 fadeNow) {
 	if (noEntries == 0) {
@@ -196,6 +163,11 @@ int32 DimPalette(void) {
 	return RD_OK;
 }
 
+/**
+ * Fades the palette up from black to the current palette.
+ * @param time the time it will take the palette to fade up
+ */
+
 int32 FadeUp(float time) {
 	if (fadeStatus != RDFADE_BLACK && fadeStatus != RDFADE_NONE)
 		return RDERR_FADEINCOMPLETE;
@@ -207,6 +179,11 @@ int32 FadeUp(float time) {
 	return RD_OK;
 }
 
+/**
+ * Fades the palette down to black from the current palette.
+ * @param time the time it will take the palette to fade down
+ */
+
 int32 FadeDown(float time) {
 	if (fadeStatus != RDFADE_BLACK && fadeStatus != RDFADE_NONE)
 		return RDERR_FADEINCOMPLETE;
@@ -217,6 +194,12 @@ int32 FadeDown(float time) {
 
 	return RD_OK;
 }
+
+/**
+ * Get the current fade status
+ * @return RDFADE_UP (fading up), RDFADE_DOWN (fading down), RDFADE_NONE
+ * (not faded), or RDFADE_BLACK (completely faded down)
+ */
 
 uint8 GetFadeStatus(void) {
 	return fadeStatus;

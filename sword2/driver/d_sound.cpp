@@ -234,6 +234,29 @@ void Sword2Sound::restoreMusicState() {
 	music[restoreStream]._lastSample = music[2]._lastSample;
 }
 
+void Sword2Sound::playLeadOut(uint8 *leadOut) {
+	int i;
+
+	if (!leadOut)
+		return;
+
+	PlayFx(0, leadOut, 0, 0, RDSE_FXLEADOUT);
+
+	i = GetFxIndex(-1);
+
+	if (i == MAXFX) {
+		warning("playLeadOut: Can't find lead-out sound handle");
+		return;
+	}
+
+	while (fx[i]._handle) {
+		ServiceWindows();
+		g_system->delay_msecs(30);
+	}
+
+	CloseFx(-2);
+}
+
 // --------------------------------------------------------------------------
 // This function returns the index of the sound effect with the ID passed in.
 // --------------------------------------------------------------------------
@@ -281,7 +304,7 @@ void Sword2Sound::FxServer(int16 *data, uint len) {
 
 	if (fxPaused) {
 		for (i = 0; i < MAXFX; i++) {
-			if ((fx[i]._id == (int32) 0xfffffffe) || (fx[i]._id == (int32) 0xffffffff)) {
+			if ((fx[i]._id == -1) || (fx[i]._id == -2)) {
 				if (!fx[i]._handle) {
 					fx[i]._id = 0;
 					if (fx[i]._buf != NULL) {
@@ -681,47 +704,35 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 
 	if (soundOn) {
 		if (data == NULL) {
-			if (type == RDSE_FXLEADOUT) {
-				id = (int32) 0xffffffff;
-				i = GetFxIndex(id);
-				if (i == MAXFX) {
-					warning("PlayFx(%d, %d, %d, %d) - Not open", id, vol, pan, type);
-					return RDERR_FXNOTOPEN;
-				}
-				fx[i]._flags &= ~SoundMixer::FLAG_LOOP;
-
-				// Start the sound effect playing
-
-				byte volume = musicMuted ? 0 : musicVolTable[musicVol];
-
-				g_engine->_mixer->playRaw(&fx[i]._handle, fx[i]._buf, fx[i]._bufSize, fx[i]._rate, fx[i]._flags, -1, volume, 0);
-			} else {
-				i = GetFxIndex(id);
-				if (i == MAXFX) {
-					warning("PlayFx(%d, %d, %d, %d) - Not open", id, vol, pan, type);
-					return RDERR_FXNOTOPEN;
-				}
-				if (loop == 1)
-					fx[i]._flags |= SoundMixer::FLAG_LOOP;
-				else 
-					fx[i]._flags &= ~SoundMixer::FLAG_LOOP;
-				 
-				fx[i]._volume = vol;
-
-				// Start the sound effect playing
-
-				byte volume = fxMuted ? 0 : vol * fxVol;
-				int8 p = panTable[pan + 16];
-
-				g_engine->_mixer->playRaw(&fx[i]._handle, fx[i]._buf, fx[i]._bufSize, fx[i]._rate, fx[i]._flags, -1, volume, p);
+			i = GetFxIndex(id);
+			if (i == MAXFX) {
+				warning("PlayFx(%d, %d, %d, %d) - Not open", id, vol, pan, type);
+				return RDERR_FXNOTOPEN;
 			}
+			if (loop == 1)
+				fx[i]._flags |= SoundMixer::FLAG_LOOP;
+			else 
+				fx[i]._flags &= ~SoundMixer::FLAG_LOOP;
+				 
+			fx[i]._volume = vol;
+
+			// Start the sound effect playing
+
+			byte volume = fxMuted ? 0 : vol * fxVol;
+			int8 p = panTable[pan + 16];
+
+			g_engine->_mixer->playRaw(&fx[i]._handle, fx[i]._buf, fx[i]._bufSize, fx[i]._rate, fx[i]._flags, -1, volume, p);
 		} else {
-			if (type == RDSE_FXLEADIN) {
-				id = (int32) 0xfffffffe;
+			if (type == RDSE_FXLEADIN || type == RDSE_FXLEADOUT) {
+				if (type == RDSE_FXLEADIN)
+					id = -2;
+				else
+					id = -1;
+
 				hr = OpenFx(id, data);
-				if (hr != RD_OK) {
+				if (hr != RD_OK)
 					return hr;
-				}
+
 				i = GetFxIndex(id);
 				if (i == MAXFX) {
 					warning("PlayFx(%d, %d, %d, %d) - Not found", id, vol, pan, type);
@@ -804,7 +815,7 @@ int32 Sword2Sound::ClearAllFx(void) {
 		return(RD_OK);
 
 	for (int i = 0; i < MAXFX; i++) {
-		if (fx[i]._id && fx[i]._id != (int32) 0xfffffffe && fx[i]._id != (int32) 0xffffffff) {
+		if (fx[i]._id && fx[i]._id != -1 && fx[i]._id != -2) {
 			g_engine->_mixer->stopHandle(fx[i]._handle);
 			fx[i]._id = 0;
 			fx[i]._paused = false;
@@ -867,7 +878,7 @@ int32 Sword2Sound::PauseFx(void) {
 int32 Sword2Sound::PauseFxForSequence(void) {
 	if (!fxPaused) {
 		for (int i = 0; i < MAXFX; i++) {
-			if (fx[i]._id && fx[i]._id != (int32) 0xfffffffe) {
+			if (fx[i]._id && fx[i]._id != -2) {
 				g_engine->_mixer->pauseHandle(fx[i]._handle, true);
 				fx[i]._paused = true;
 			} else {

@@ -17,49 +17,21 @@
  * $Header$
  */
 
-//=============================================================================
-//
-//	Filename	:	language.c
-//	Created		:	20th August 1996
-//	By			:	P.R.Porter
-//
-//	Summary		:	This module holds the functions which govern which language
-//					version is current.
-//
-//	Functions
-//	---------
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 GetLanguageVersion(uint8 *version)
-//
-//	This function modifies the 'version' passed in to be the current language.
-//	The first time this function is called, it gets the language from the 
-//	version.inf file distributed on the game CD.  It returns an RD error code
-//	if this file cannot be opened, or the version cannot be obtained from it.
-//
-//	---------------------------------------------------------------------------
-//	
-//	int32 SetLanguageVersion(uint8 version)
-//
-//	This function is useful for debugging.  It sets the version to the one
-//	passed in.
-//
-//	---------------------------------------------------------------------------
-//	
-//	int32 GetGameName(uint8 *name);
-//
-//	Fills the string pointed to by name with the title of the game, depending
-//	upon what the current language version is.
-//
-//=============================================================================
-
 #include "stdafx.h"
 #include "driver96.h"
 
 uint8 languageVersion = ENGLISH;
 
 static uint8 versionFromFile = 0;
+
+/**
+ * This function modifies the 'version' passed in to be the current language.
+ * The first time this function is called, it gets the language from the
+ * version.inf file distributed on the game CD.
+ * @param version a pointer to the variable to store language information in
+ * @return an RD error code if version.inf cannot be opened, or the version
+ * cannot be obtained from it
+ */
 
 int32 GetLanguageVersion(uint8 *version) {
 	if (versionFromFile) {
@@ -72,10 +44,21 @@ int32 GetLanguageVersion(uint8 *version) {
 	return RD_OK;
 }
 
+/**
+ * This function is useful for debugging. It sets the version to the one passed
+ * in.
+ */
+
 int32 SetLanguageVersion(uint8 version) {
 	languageVersion = version;
 	return RD_OK;
 }
+
+/**
+ * Fills the string pointed to by 'name' with the title of the game, depending
+ * upon what the current language version is.
+ * @param name buffer to store the title of the game in
+ */
 
 int32 GetGameName(uint8 *name) {
 	uint8 version;
@@ -94,7 +77,7 @@ int32 GetGameName(uint8 *name) {
 		strcpy((char *) name, "Baphomet's Fluch II");
 		break;
 	default:
-		strcpy((char *)name, "Some game or other, part 86");
+		strcpy((char *) name, "Some game or other, part 86");
 		return RDERR_INVALIDVERSION;
 	}
 

@@ -17,53 +17,6 @@
  * $Header$
  */
 
-//=============================================================================
-//
-//	Filename	:	mouse.c
-//	Created		:	17th September 1996
-//	By			:	P.R.Porter
-//
-//	Summary		:	This module holds the interface to the mouse..
-//
-//	Functions
-//	---------
-//
-//	--------------------------------------------------------------------------
-//
-//  _mouseEvent *MouseEvent(void)
-//
-//	The address of a _mouseEvent pointer is passed in.  If there is a mouse 
-//	event in the queue, a the value of the mouse event pointer is set to the
-//	address of the event, otherwise, the mouse event pointer is set to NULL.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 SetMouseAnim(uint8 *ma, int32 size)
-//
-//	A pointer to a valid mouse animation is passed in, along with the size of
-//	the header plus sprite data.  Remember to check that the function has 
-//	successfully completed, as memory allocation is required.
-//	Pass NULL in to clear the mouse sprite.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 SetLuggageAnim(uint8 *ma, int32 size)
-//
-//	A pointer to a valid luggage animation is passed in, along with the size of
-//	the header plus sprite data.  Remember to check that the function has 
-//	successfully completed, as memory allocation is required.
-//	Pass NULL in to clear the luggage sprite.  Luggage sprites are of the same
-//	format as mouse sprites.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 AnimateMouse(void)
-//
-//	This function animates the current mouse pointer.  If no pointer is 
-//	currently defined, an error code is returned.
-//
-//=============================================================================
-
 #include "stdafx.h"
 #include "driver96.h"
 #include "d_draw.h"
@@ -239,6 +192,11 @@ void DrawMouse(void) {
 	g_system->set_mouse_cursor(_mouseData, mouse_width, mouse_height, hotspot_x, hotspot_y);
 }
 
+/**
+ * Get the next pending mouse event.
+ * @return a pointer to the mouse event, or NULL of there is none
+ */
+
 _mouseEvent *MouseEvent(void) {
 	_mouseEvent *me;
 
@@ -258,6 +216,10 @@ uint8 CheckForMouseEvents(void) {
 	return mouseBacklog;	// return the number of mouse events waiting
 }
 
+/**
+ * Animates the current mouse pointer
+ */
+
 int32 AnimateMouse(void) {
 	uint8 prevMouseFrame = mouseFrame;
 
@@ -274,6 +236,14 @@ int32 AnimateMouse(void) {
 
 	return RD_OK;
 }
+
+/**
+ * Sets the mouse cursor animation.
+ * @param ma a pointer to the animation data, or NULL to clear the current one
+ * @param size the size of the mouse animation data
+ * @param mouseFlash RDMOUSE_FLASH or RDMOUSE_NOFLASH, depending on whether
+ * or not there is a lead-in animation
+ */
 
 int32 SetMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
 	if (mouseAnim) {
@@ -307,6 +277,13 @@ int32 SetMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
 
 	return RD_OK;
 }
+
+/**
+ * Sets the "luggage" animation to accompany the mouse animation. Luggage
+ * sprites are of the same format as mouse sprites.
+ * @param ma a pointer to the animation data, or NULL to clear the current one
+ * @param size the size of the animation data
+ */
 
 int32 SetLuggageAnim(uint8 *ma, int32 size) {
 	if (luggageAnim) {

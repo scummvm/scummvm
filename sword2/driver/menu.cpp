@@ -17,61 +17,6 @@
  * $Header$
  */
 
-//=============================================================================
-//
-//	Filename	:	menu.c
-//	Created		:	14th November 1996
-//	By			:	P.R.Porter
-//
-//	Summary		:	This module holds the code for the driver96 menu system.
-//
-//	Functions
-//	---------
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 ProcessMenu(void)
-//
-//	This function should be called regularly to process the menuber system.
-//	The rate at which this function is called will dictate how smooth the menu
-//	system is.  The menu cannot be drawn at a higher rate than the system
-//	vbl rate.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 ShowMenu(uint8 menu)
-//
-//	This function brings the menu in to view.  The choice of top or bottom menu
-//	is defined by the parameter menu being either RDMENU_TOP or RDMENU_BOTTOM.
-//	An error code is returned if the menu is already shown.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 HideMenu(uint8 menu)
-//
-//	This function hides the menu defined by the parameter menu.  If the menu is
-//	already hidden, an error code is returned.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 SetMenuIcon(uint8 menu, uint8 pocket, uint8 *icon)
-//
-//	This function sets a menubar icon to that passed in.  If icon is NULL, the
-//	pocket is cleared, otherwise, that icon is placed into pocket.  The menu is
-//	either RDMENU_TOP or RDMENU_BOTTOM.  Valid error codes include
-//	RDERR_INVALIDPOCKET if the pocket number does not exist.  Initially, there
-//	are 15 pockets.
-//
-//	--------------------------------------------------------------------------
-//
-//	uint8 GetMenuStatus(uint8 menu)
-//
-//	This function returns the status of the menu passed in menu.  Return values
-//	are RDMENU_OPENING, RDMENU_CLOSING, RDMENU_HIDDEN and RDMENU_SHOWN.
-//
-//=============================================================================
-
-
 #include "stdafx.h"
 #include "driver96.h"
 #include "menu.h"
@@ -114,6 +59,12 @@ void ClearIconArea(int menu, int pocket, ScummVM::Rect *r) {
 		dst += screenWide;
 	}
 }
+
+/**
+ * This function should be called regularly to process the menubar system. The
+ * rate at which this function is called will dictate how smooth the menu
+ * system is.
+ */
 
 int32 ProcessMenu(void) {
 	byte *src, *dst;
@@ -258,6 +209,12 @@ int32 ProcessMenu(void) {
 	return RD_OK;
 }
 
+/**
+ * This function brings a specified menu into view. 
+ * @param menu RDMENU_TOP or RDMENU_BOTTOM, depending on which menu to show
+ * @return RD_OK, or an error code
+ */
+
 int32 ShowMenu(uint8 menu) {
 	// Check for invalid menu parameter
 	if (menu > RDMENU_BOTTOM)
@@ -272,6 +229,12 @@ int32 ShowMenu(uint8 menu) {
 	return RD_OK;
 }
 
+/**
+ * This function hides a specified menu.
+ * @param menu RDMENU_TOP or RDMENU_BOTTOM depending on which menu to hide
+ * @return RD_OK, or an error code
+ */
+
 int32 HideMenu(uint8 menu) {
 	// Check for invalid menu parameter
 	if (menu > RDMENU_BOTTOM)
@@ -285,6 +248,10 @@ int32 HideMenu(uint8 menu) {
 	menuStatus[menu] = RDMENU_CLOSING;
 	return RD_OK;
 }
+
+/**
+ * This function hides both menus immediately.
+ */
 
 int32 CloseMenuImmediately(void) {
 	ScummVM::Rect r;
@@ -307,6 +274,14 @@ int32 CloseMenuImmediately(void) {
 	memset(pocketStatus, 0, sizeof(uint8) * 2 * RDMENU_MAXPOCKETS);
 	return RD_OK;
 }
+
+/**
+ * This function sets a menubar icon.
+ * @param menu RDMENU_TOP or RDMENU_BOTTOM, depending on which menu to change
+ * @param pocket the menu pocket to change
+ * @param icon icon data, or NULL to clear the icon
+ * @return RD_OK, or an error code
+ */
 
 int32 SetMenuIcon(uint8 menu, uint8 pocket, uint8 *icon) {
 	ScummVM::Rect r;
@@ -340,6 +315,10 @@ int32 SetMenuIcon(uint8 menu, uint8 pocket, uint8 *icon) {
 	}
 	return RD_OK;
 }
+
+/**
+ * @return The status of the menu
+ */
 
 uint8 GetMenuStatus(uint8 menu) {
 	if (menu > RDMENU_BOTTOM)

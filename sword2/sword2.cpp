@@ -270,8 +270,7 @@ void Sword2State::go() {
 	}
 
 	debug(5, "CALLING: InitialiseDisplay");
-	_system->init_size(640, 480);
-	rv = InitialiseDisplay(640, 480, 8, RD_FULLSCREEN);
+	rv = InitialiseDisplay(640, 480);
 
 	// Override global fullscreen setting with any game-specific define
 	if (g_config->getBool("fullscreen", false)) {

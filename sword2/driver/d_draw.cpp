@@ -92,12 +92,22 @@ int32 PlotDots(int16 x, int16 y, int16 count) {
 
 }
 
-int32 InitialiseDisplay(int16 width, int16 height, int16 colourDepth, int32 windowType) {
+/**
+ * Initialise the display with the sizes passed in.
+ * @return RD_OK, or an error code if the display cannot be set up.
+ */
+
+int32 InitialiseDisplay(int16 width, int16 height) {
+	g_system->init_size(width, height);
+
 	screenWide = width;
 	screenDeep = height;
 
 	lpBackBuffer = (byte *) malloc(screenWide * screenDeep);
-	return(RD_OK);
+	if (!lpBackBuffer)
+		return RDERR_OUTOFMEMORY;
+
+	return RD_OK;
 }
 
 // FIXME: Clean up this mess. I don't want to add any new flags, but some of
@@ -115,9 +125,17 @@ void ClearTransFx(void) {
 	renderCaps |= RDBLTFX_ALLHARDWARE;
 }
 
+/**
+ * Sets the edge blend and arithmetic stretching effects.
+ */
+
 void SetBltFx(void) {
 	renderCaps |= (RDBLTFX_EDGEBLEND | RDBLTFX_ARITHMETICSTRETCH);
 }
+
+/**
+ * Clears the edge blend and arithmetic stretching effects.
+ */
 
 void ClearBltFx(void) { 
 	renderCaps &= ~(RDBLTFX_EDGEBLEND | RDBLTFX_ARITHMETICSTRETCH);
@@ -131,26 +149,26 @@ void ClearShadowFx(void) {
 	renderCaps &= ~RDBLTFX_SHADOWBLEND;
 }
 
-int32 GetRenderType(void)
-{
+/**
+ * @return the graphics detail setting
+ */
+
+int32 GetRenderType(void) {
 	if (renderCaps & RDBLTFX_ALLHARDWARE)
-	{
-		return (0);
-	}
-	else
-	{
-		if (renderCaps & (RDBLTFX_EDGEBLEND + RDBLTFX_ARITHMETICSTRETCH))
-			return (3);
-		else
-		{
-			if (renderCaps & RDBLTFX_SHADOWBLEND)
-				return(2);
-			else
-				return (1);
-		}
-	}
+		return 0;
+
+	if (renderCaps & (RDBLTFX_EDGEBLEND | RDBLTFX_ARITHMETICSTRETCH))
+		return 3;
+
+	if (renderCaps & RDBLTFX_SHADOWBLEND)
+		return 2;
+
+	return 1;
 }
 
+/**
+ * Fill the screen buffer with palette colour zero.
+ */
 
 int32 EraseBackBuffer( void ) {
 	memset(lpBackBuffer + MENUDEEP * screenWide, 0, screenWide * RENDERDEEP);
@@ -160,7 +178,7 @@ int32 EraseBackBuffer( void ) {
 
 int32 NextSmackerFrame(void) {
 	warning("stub NextSmackerFrame");
-	return(RD_OK);
+	return RD_OK;
 }
 
 
@@ -183,15 +201,18 @@ void DrawTextObject(_movieTextObject *obj) {
 		DrawSurface(obj->textSprite, textSurface);
 }
 
+/**
+ * Plays an animated cutscene.
+ * @param filename the file name of the cutscene file
+ * @param text the subtitles and voiceovers for the cutscene
+ * @param musicOut lead-out music
+ */
+
 int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 	warning("semi-stub PlaySmacker %s", filename);
 
 	// WORKAROUND: For now, we just do the voice-over parts of the
 	// movies, since they're separate from the actual smacker files.
-
-	// Do we really need to pre-cache the text sprites and speech data
-	// like this? It'd be simpler to just store the text id and construct
-	// the data as we go along.
 
 	if (text) {
 		uint8 oldPal[1024];
@@ -246,6 +267,8 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 
 		PlayingSoundHandle handle = 0;
 
+		bool skipCutscene = false;
+
 		while (1) {
 			if (!text[textCounter])
 				break;
@@ -273,12 +296,14 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 
 			if (ReadKey(&ke) == RD_OK && ke.keycode == 27) {
 				g_sword2->_mixer->stopHandle(handle);
+				skipCutscene = true;
 				break;
 			}
 
 			// Simulate ~12 frames per second. I don't know what
 			// frame rate the original movies had, or even if it
 			// was constant, but this seems to work reasonably.
+
 			g_system->delay_msecs(80);
 		}
 
@@ -294,6 +319,12 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 		r.right = screenWide;
 		r.bottom = MENUDEEP;
 		UploadRect(&r);
+
+		// FIXME: For now, only play the lead-out music for cutscenes
+		// that have subtitles.
+
+		if (!skipCutscene)
+			g_sound->playLeadOut(musicOut);
 	}
 
 	return RD_OK;

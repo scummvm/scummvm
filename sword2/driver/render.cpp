@@ -17,89 +17,6 @@
  * $Header$
  */
 
-//=============================================================================
-//
-//	Filename	:	render.c
-//	Created		:	26th September 1996
-//	By			:	P.R.Porter
-//
-//	Summary		:	This module holds the functions which deal with rendering
-//					the background and parallax layers, and controlling the
-//					speed of the scroll (number of frames)
-//
-//	Functions
-//	---------
-//
-//	---------------------------------------------------------------------------
-//	
-//	int32 RenderParallax(_parallax *p, int16 layer)
-//
-//	Draws a parallax layer at the current position determined by the scroll.
-//	A parallax can be either foreground, background or the main screen.
-//
-//	---------------------------------------------------------------------------
-//
-//	int32 SetScrollTarget(int16 sx, int16 sy)
-//
-//	Sets the scroll target position for the end of the game cycle.  The drivers
-//	will then automatically scroll as many times as it can to reach this 
-//	position in the allotted time.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 StartRenderCycle(void)
-//
-//	This function should be called when the game engine is ready to start
-//	the render cycle.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 EndRenderCycle(BOOL *end)
-//
-//	This function should be called at the end of the render cycle.  If the
-//	render cycle is to be terminated, the function sets *end to 1.  Otherwise,
-//	the render cycle should continue.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 SetLocationMetrics(uint16 w, uint16 h)
-//
-//	This function tells the drivers the size of the background screen for the
-//	current location.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 PlotPoint(uint16 x, uint16 y, uint8 colour)
-//
-//	Plots the point x,y in relation to the top left corner of the background.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 DrawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 colour)
-//
-//	Draws a line from the point x1,y1 to x2,y2 of the specified colour.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 InitialiseBackgroundLayer(_parallax *p)
-//
-//	This function should be called five times with either the parallax layer
-//	or a NULL pointer in order of background parallax to foreground parallax.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 CloseBackgroundLayer(void)
-//
-//	Should be called once after leaving a room to free up video memory.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 PlotDots(int16 x, int16 y, int16 count)
-//
-//	Plots 'count' dots at the position x,y.
-//
-//=============================================================================
-
 #include "stdafx.h"
 #include "driver96.h"
 #include "d_draw.h"
@@ -479,6 +396,14 @@ int32 RestoreBackgroundLayer(_parallax *p, int16 l)
 	return RD_OK;
 }
 
+/**
+ * Plots a point relative to the top left corner of the screen. This is only
+ * used for debugging.
+ * @param x x-coordinate of the point
+ * @param y y-coordinate of the point
+ * @param colour colour of the point
+ */
+
 int32 PlotPoint(uint16 x, uint16 y, uint8 colour) {
 	warning("stub PlotPoint( %d, %d, %d )", x, y, colour);
 /*
@@ -516,6 +441,15 @@ int32 PlotPoint(uint16 x, uint16 y, uint8 colour) {
 	return(RD_OK);
 
 }
+
+/**
+ * Draws a line from one point to another. This is only used for debugging.
+ * @param x0 x-coordinate of the start point
+ * @param y0 y-coordinate of the start point
+ * @param x1 x-coordinate of the end point
+ * @param y1 y-coordinate of the end point
+ * @param colour colour of the line
+ */
 
 // Uses Bressnham's incremental algorithm!
 int32 DrawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
@@ -752,12 +686,24 @@ int32 DrawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 	return RD_OK;
 }
 
+/**
+ * This function tells the driver the size of the background screen for the
+ * current location.
+ * @param w width of the current location
+ * @param h height of the current location
+ */
+
 int32 SetLocationMetrics(uint16 w, uint16 h) {
 	locationWide = w;
 	locationDeep = h;
 
 	return RD_OK;
 }
+
+/**
+ * Draws a parallax layer at the current position determined by the scroll. A
+ * parallax can be either foreground, background or the main screen.
+ */
 
 int32 RenderParallax(_parallax *p, int16 l) {
 	int16 x, y;
@@ -804,11 +750,20 @@ int32 RenderParallax(_parallax *p, int16 l) {
 // Uncomment this when benchmarking the drawing routines.
 #define LIMIT_FRAME_RATE
 
+/**
+ * Initialises the timers before the render loop is entered.
+ */
+
 int32 InitialiseRenderCycle(void) {
 	initialTime = SVM_timeGetTime();
 	totalTime = initialTime + MILLISECSPERCYCLE;
 	return RD_OK;
 }
+
+/**
+ * This function should be called when the game engine is ready to start the
+ * render cycle.
+ */
 
 int32 StartRenderCycle(void) {
 	scrollxOld = scrollx;
@@ -843,6 +798,12 @@ void sleepUntil(int32 time) {
 		g_system->delay_msecs(10);
 	}
 }
+
+/**
+ * This function should be called at the end of the render cycle.
+ * @param end the function sets this to true if the render cycle is to be
+ * terminated, or false if it should continue
+ */
 
 int32 EndRenderCycle(bool *end) {
 	int32 time;
@@ -892,12 +853,23 @@ int32 EndRenderCycle(bool *end) {
 	return RD_OK;
 }
 
+/**
+ * Sets the scroll target position for the end of the game cycle. The driver
+ * will then automatically scroll as many times as it can to reach this
+ * position in the allotted time.
+ */
+
 int32 SetScrollTarget(int16 sx, int16 sy) {
 	scrollxTarget = sx;
 	scrollyTarget = sy;
 
 	return RD_OK;
 }
+
+/**
+ * This function should be called five times with either the parallax layer
+ * or a NULL pointer in order of background parallax to foreground parallax.
+ */
 
 int32 InitialiseBackgroundLayer(_parallax *p) {
 	uint8 *memchunk;
@@ -1021,6 +993,10 @@ int32 InitialiseBackgroundLayer(_parallax *p) {
 	return RD_OK;
 
 }
+
+/**
+ * Should be called once after leaving the room to free up memory.
+ */
 
 int32 CloseBackgroundLayer(void) {
 	debug(2, "CloseBackgroundLayer");

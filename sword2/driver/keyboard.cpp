@@ -17,40 +17,6 @@
  * $Header$
  */
 
-//=============================================================================
-//
-//	Filename	:	keyboard.c
-//	Created		:	19th September 1996
-//	By			:	P.R.Porter
-//
-//	Summary		:	This module holds the interface to the keyboard
-//
-//	Functions
-//	---------
-//
-//	--------------------------------------------------------------------------
-//
-//  BOOL KeyWaiting(void)
-//
-//	This function returns TRUE if there is an unprocessed key waiting in the
-//	queue, FALSE otherwise.
-//
-//	--------------------------------------------------------------------------
-//
-//	int32 ReadKey(char *key)
-//
-//	Sets the value of key passed in to the current waiting key.  If there is
-//	no key waiting, an error code is returned.
-//	
-//	--------------------------------------------------------------------------
-//
-//	void GetKeyStatus(_drvKeyStatus *s)
-//
-//	Retrieves the status of the keyboard handler.
-//	
-//=============================================================================
-
-
 #include "stdafx.h"
 #include "driver96.h"
 
@@ -70,9 +36,18 @@ void WriteKey(uint16 ascii, int keycode, int modifiers) {
 	}
 }
 
+/**
+ * @return true if there is an unprocessed key waiting in the queue
+ */
+
 bool KeyWaiting(void) {
 	return keyBacklog != 0;
 }
+
+/**
+ * Sets the value of the keyboard event passed in to the current waiting key.
+ * @return RD_OK, or an error code to indicate there is no key waiting.
+ */
 
 int32 ReadKey(_keyboardEvent *ev) {
 	if (!keyBacklog)
