@@ -872,8 +872,8 @@ void WndMan::sound_init() {
 	wfx.wBitsPerSample = BITS_PER_SAMPLE;
 	wfx.nBlockAlign = BITS_PER_SAMPLE * 1 / 8;
 
-//	CreateThread(NULL, 0, (unsigned long (__stdcall *)(void *))&sound_thread, this, 0, &_threadId);
-//	SetThreadPriority((void*)_threadId, THREAD_PRIORITY_HIGHEST);
+	CreateThread(NULL, 0, (unsigned long (__stdcall *)(void *))&sound_thread, this, 0, &_threadId);
+	SetThreadPriority((void*)_threadId, THREAD_PRIORITY_HIGHEST);
 
 	_event = CreateEvent(NULL, false, false, NULL);
 
@@ -889,8 +889,6 @@ DWORD _stdcall WndMan::sound_thread(WndMan *wm) {
 	int i;
 	bool signaled;
 	int time = GetTickCount(), cur;
-
-	return 0;
 
 	while (1) {
 		cur = GetTickCount();
