@@ -856,7 +856,7 @@ int SwordLogic::fnFadeDown(BsObject *cpt, int32 id, int32 speed, int32 d, int32 
 }
 
 int SwordLogic::fnFadeUp(BsObject *cpt, int32 id, int32 speed, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	//warning("fnFadeUp speed = %d", speed);
+	warning("fnFadeUp speed = %d", speed);
 	//_screen->fadeUpPalette();
 	return SCRIPT_CONT;
 }
@@ -894,6 +894,9 @@ int SwordLogic::fnSetPaletteToCut(BsObject *cpt, int32 id, int32 c, int32 d, int
 
 int SwordLogic::fnPlaySequence(BsObject *cpt, int32 id, int32 sequenceId, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	warning("fnPlaySequence(%d) called", sequenceId);
+	_scriptVars[NEW_PALETTE] = 1;
+	/* the logic usually calls fnFadeDown before playing the sequence, so we have to
+	   set NEW_PALETTE now to force a palette refresh */
 	return SCRIPT_CONT;
 }
 
@@ -1539,9 +1542,8 @@ int SwordLogic::fnPreload(BsObject *cpt, int32 id, int32 resId, int32 b, int32 c
 }
 
 int SwordLogic::fnCheckCD(BsObject *cpt, int32 id, int32 screen, int32 b, int32 c, int32 d, int32 z, int32 x) {
-	warning("fnCheckCd called");
-	// Not sure if we really have to check that here. I think we can do it in the main loop
-	// and leave a dummy here.
+	// only a dummy, here.
+	// the check is done in the mainloop
 	return SCRIPT_CONT;
 }
 

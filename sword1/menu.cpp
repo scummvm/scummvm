@@ -93,7 +93,15 @@ uint8 SwordMenu::checkMenuClick(uint8 menuType) {
 		for (uint8 cnt = 0; cnt < _inMenu; cnt++) {
 			if (_objects[cnt]->wasClicked(x, y))
 				if (mouseEvent & BS1L_BUTTON_DOWN) {
-					SwordLogic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
+					if (SwordLogic::_scriptVars[OBJECT_HELD]) {
+						if (SwordLogic::_scriptVars[OBJECT_HELD] == _menuList[cnt])
+							SwordLogic::_scriptVars[OBJECT_HELD] = 0; // reselected => deselect it
+						else { // the player is clicking another item on this one.
+							   // run its use-script, if there is one
+							SwordLogic::_scriptVars[SECOND_ITEM] = _menuList[cnt];
+						}
+					} else
+						SwordLogic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
 					buildMenu();
 				} else if (mouseEvent & BS1L_BUTTON_UP) {
 					if (SwordLogic::_scriptVars[OBJECT_HELD] == _menuList[cnt]) {
@@ -144,8 +152,8 @@ void SwordMenu::buildMenu(void) {
 		if (SwordLogic::_scriptVars[MENU_LOOKING] || _subjectBarShown) { // either we're in the chooser or we're doing a 'LOOK AT'
 			if ((!objHeld) || (objHeld == _menuList[menuSlot]))
 				_objects[menuSlot]->setSelect(true);
-		} else if (_secondItem) { // clicked luggage onto 2nd icon - we need to colour-highlight the 2 relevant icons & grey out the rest
-			if ((_menuList[menuSlot] == objHeld) || (_menuList[menuSlot] == _secondItem))
+		} else if (SwordLogic::_scriptVars[SECOND_ITEM]) { // clicked luggage onto 2nd icon - we need to colour-highlight the 2 relevant icons & grey out the rest
+			if ((_menuList[menuSlot] == objHeld) || (_menuList[menuSlot] == SwordLogic::_scriptVars[SECOND_ITEM]))
 				_objects[menuSlot]->setSelect(true);
 		} else { // this object is selected - ie. GREYED OUT
 			if (objHeld != _menuList[menuSlot])
@@ -162,9 +170,9 @@ void SwordMenu::showMenu(uint8 menuType) {
 }
 
 void SwordMenu::fnStartMenu(void) {
-	SwordLogic::_scriptVars[OBJECT_HELD] = 0;  // icon no longer selected
-	SwordLogic::_scriptVars[MENU_LOOKING] = 0; // second icon no longer selected (after using one on another)
-	_secondItem = 0;                           // no longer 'looking at' an icon
+	SwordLogic::_scriptVars[OBJECT_HELD]  = 0; // icon no longer selected
+	SwordLogic::_scriptVars[SECOND_ITEM]  = 0; // second icon no longer selected (after using one on another)
+	SwordLogic::_scriptVars[MENU_LOOKING] = 0; // no longer 'looking at' an icon
 	buildMenu();
 	if (_inMenu > 0) {	// if there's something in the object menu
 		_objectBarShown = true;

@@ -1058,8 +1058,6 @@ void SwordEngine::go(void) {
 		} else if (controlRes == CONTROL_GAME_RESTORED) {
 			reinitialize();  // first clear anything which was loaded
 			control->doRestore(); // then actually load the savegame data.
-			_mouse->fnUnlockMouse(); // and allow mouse movements.
-			_mouse->fnAddHuman();
 		}
 		_systemVars.deathScreenFlag = 0;
 	} while (true);

@@ -72,6 +72,7 @@ public:
 	void fnStartMenu(void);
 	void fnEndMenu(void);
 	void checkTopMenu(void);
+	static const MenuObject _objectDefs[TOTAL_pockets + 1];
 
 private:
 	void buildSubjects(void);
@@ -87,12 +88,10 @@ private:
 	SwordMenuIcon *_objects[TOTAL_pockets];
 	uint32 _menuList[TOTAL_pockets];
 	uint32 _inMenu;
-	uint32 _secondItem;
 
 	SwordScreen *_screen;
 	SwordMouse *_mouse;
 	static const Subject _subjectList[TOTAL_subjects];
-	static const MenuObject _objectDefs[TOTAL_pockets + 1];
 };
 
 #endif //BSMENU_H

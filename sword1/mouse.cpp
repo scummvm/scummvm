@@ -35,24 +35,6 @@ SwordMouse::SwordMouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_resMan = pResMan;
 	_objMan = pObjMan;
 	_system = system;
-	/*_resMan->resOpen(MSE_POINTER);		// normal mouse (1 frame anim)
-	_resMan->resOpen(MSE_OPERATE);
-	_resMan->resOpen(MSE_PICKUP);
-	_resMan->resOpen(MSE_EXAMINE);
-	_resMan->resOpen(MSE_MOUTH);
-	_resMan->resOpen(MSE_BECKON_L);
-	_resMan->resOpen(MSE_BECKON_R);
-	_resMan->resOpen(MSE_ARROW0);
-	_resMan->resOpen(MSE_ARROW1);
-	_resMan->resOpen(MSE_ARROW2);
-	_resMan->resOpen(MSE_ARROW3);
-	_resMan->resOpen(MSE_ARROW4);
-	_resMan->resOpen(MSE_ARROW5);
-	_resMan->resOpen(MSE_ARROW6);
-	_resMan->resOpen(MSE_ARROW7);
-	_resMan->resOpen(MSE_ARROW8);		// UPWARDS
-	_resMan->resOpen(MSE_ARROW9);*/		// DOWNWARDS
-	// luggage & chess stuff is opened dynamically
 }
 
 void SwordMouse::initialize(void) {
@@ -179,7 +161,9 @@ void SwordMouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 	} else
 		SwordLogic::_scriptVars[SPECIAL_ITEM] = 0;
 	if (_state & MOUSE_DOWN_MASK) {
-		// todo: handle top menu?
+		if (_inTopMenu && SwordLogic::_scriptVars[SECOND_ITEM])
+			_logic->runMouseScript(NULL, _menu->_objectDefs[SwordLogic::_scriptVars[SECOND_ITEM]].useScript);
+		
 		SwordLogic::_scriptVars[MOUSE_BUTTON] = _state & MOUSE_DOWN_MASK;
 		if (SwordLogic::_scriptVars[SPECIAL_ITEM]) {
 			BsObject *compact = _objMan->fetchObject(SwordLogic::_scriptVars[SPECIAL_ITEM]);
