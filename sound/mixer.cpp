@@ -464,8 +464,8 @@ void Channel::mix(int16 *data, uint len) {
 	} else {
 		assert(_converter);
 		_converter->flow(*_input, data, len, getVolume());
+		changeVolumeAndPan(data, len, _volume, _pan);
 	}
-	changeVolumeAndPan(data, len, _volume, _pan);
 }
 
 /* RAW mixer */
