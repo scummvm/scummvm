@@ -1,0 +1,13 @@
+--- scummvm-0.5.0/Makefile	2003-08-01 21:14:54.000000000 +0200
++++ scummvm-0.5.0/Makefile.mad	2003-08-01 21:17:59.000000000 +0200
+@@ -49,8 +49,8 @@
+ #######################################################################
+ 
+ # Uncomment this to activate the MAD lib for compressed sound files
+-DEFINES += -DUSE_MAD
+-LIBS    += -lmad
++# DEFINES += -DUSE_MAD
++# LIBS    += -lmad
+ 
+ # Uncomment this to activate the Ogg Vorbis lib for compressed sound files
+ # DEFINES += -DUSE_VORBIS

@@ -1,0 +1,13 @@
+--- scummvm-0.5.0/Makefile	2003-08-01 21:18:49.000000000 +0200
++++ scummvm-0.5.0/Makefile.vorbis	2003-08-01 21:19:06.000000000 +0200
+@@ -53,8 +53,8 @@
+ # LIBS    += -lmad
+ 
+ # Uncomment this to activate the Ogg Vorbis lib for compressed sound files
+-# DEFINES += -DUSE_VORBIS
+-# LIBS    += -lvorbisfile -lvorbis
++DEFINES += -DUSE_VORBIS
++LIBS    += -lvorbisfile -lvorbis
+ 
+ # Uncomment this to activate the ALSA lib for midi
+ # DEFINES += -DUSE_ALSA
