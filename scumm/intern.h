@@ -878,8 +878,10 @@ protected:
 	void o90_dup();
 	void o90_getLT();
 	void o90_getGT();
+	void o90_unknown1F();
+	void o90_unknown20();
 	void o90_startLocalScript();
-	void o90_unknown1C();
+	void o90_wizImageOps();
 	void o90_unknown25();
 	void o90_unknown26();
 	void o90_unknown27();
