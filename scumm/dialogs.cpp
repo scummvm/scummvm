@@ -458,7 +458,7 @@ void OptionsDialog::open()
 
 	// update checkboxes, too
 	subtitlesCheckbox->setState(_scumm->_noSubtitles == false);
-	amigaPalCheckbox->setState(_scumm->_features & GF_AMIGA != 0);
+	amigaPalCheckbox->setState((_scumm->_features & GF_AMIGA) != 0);
 }
 
 void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
