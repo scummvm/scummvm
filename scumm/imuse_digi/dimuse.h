@@ -132,6 +132,7 @@ public:
 	void startSound(int soundId)
 		{ error("MusicEngine::startSound() Should be never called"); }
 
+	void saveOrLoad(Serializer *ser);
 	void resetState();
 
 	void setGroupVoiceVolume(int volume) { _volVoice = volume; }

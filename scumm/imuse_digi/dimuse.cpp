@@ -76,6 +76,9 @@ void IMuseDigital::resetState() {
 	_nextSeqToPlay = 0;
 }
 
+void IMuseDigital::saveOrLoad(Serializer *ser) {
+}
+
 void IMuseDigital::callback() {
 	Common::StackLock lock(_mutex, "IMuseDigital::callback()");
 	int l = 0;

@@ -141,7 +141,6 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 
 	if (_imuseDigital) {
 		_imuseDigital->stopAllSounds();
-		// temporary hack for initial state for imuse music
 		_imuseDigital->resetState();
 	}
 
@@ -788,6 +787,10 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		_imuse->save_or_load(s, this);
 		_imuse->setMasterVolume(ConfMan.getInt("master_volume"));
 		_imuse->set_music_volume(ConfMan.getInt("music_volume"));
+	}
+
+	if (_imuseDigital) {
+		_imuseDigital->saveOrLoad(s);
 	}
 }
 
