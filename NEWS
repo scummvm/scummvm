@@ -18,7 +18,10 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 	 and plugin capabilities
 
  Simon:
-   ** I know there was some Simon stuff done since 0.5.1 - Kirben?
+  - Added data files decoder for Amiga disk versions.
+  - Added support for inventory graphics in Amiga versions.
+  - Fixed brief freezes in simon1dos
+  - Fixed minor glitches in load/save dialog in non-English versions
 
  SCUMM:
    - Many, Many, Many SCUMM game engine fixes. Many of them. And that's a lot.
