@@ -26,6 +26,12 @@
 #include "common/file.h"
 #include "common/util.h"
 
+//#define SOX_HACK
+
+#ifdef SOX_HACK
+#include "rate.h"
+#endif
+
 class Channel {
 protected:
 	SoundMixer *_mixer;
@@ -59,6 +65,10 @@ public:
 class ChannelRaw : public Channel {
 	byte *_ptr;
 	byte _flags;
+#ifdef SOX_HACK
+	RateConverter *_converter;
+	AudioInputStream *_input;
+#else
 	uint32 _pos;
 	uint32 _size;
 	uint32 _fpSpeed;
@@ -66,6 +76,7 @@ class ChannelRaw : public Channel {
 	uint32 _realSize, _rate;
 	byte *_loop_ptr;
 	uint32 _loop_size;
+#endif
 
 public:
 	ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id);
@@ -78,6 +89,10 @@ public:
 };
 
 class ChannelStream : public Channel {
+#ifdef SOX_HACK
+	RateConverter *_converter;
+	WrappedAudioInputStream *_input;
+#else
 	byte *_ptr;
 	byte *_endOfData;
 	byte *_endOfBuffer;
@@ -87,6 +102,7 @@ class ChannelStream : public Channel {
 	uint32 _bufferSize;
 	uint32 _rate;
 	byte _flags;
+#endif
 	bool _finished;
 
 public:
@@ -421,6 +437,9 @@ void SoundMixer::setMusicVolume(int volume) {
 	_musicVolume = volume;
 }
 
+#ifdef SOX_HACK
+#define clamped_add_16(a, b)	clampedAdd(a, b)
+#else
 /*
  * Class that performs cubic interpolation on integer data.
  * It is expected that the data is equidistant, i.e. all have the same
@@ -633,6 +652,7 @@ static int16 mixer_element_size[] = {
 	2, 2,
 	4, 4
 };
+#endif
 
 bool Channel::isActive() {
 	error("isActive should never be called on a non-MP3 mixer ");
@@ -646,6 +666,28 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 	_ptr = (byte *)sound;
 	_flags = flags;
 
+printf("ChannelRaw: flags 0x%x, input rate %d, output rate %d, size %d\n", flags, rate, mixer->getOutputRate(), size);
+//hexdump(_ptr, size);
+//puts("\n");
+
+#ifdef SOX_HACK
+	
+	// Create the input stream
+	_input = makeLinearInputStream(flags, _ptr, size);
+	// TODO: add support for SoundMixer::FLAG_REVERSE_STEREO
+
+	// If rate conversion is necessary, create a converter
+//	printf("inrate %d, outrate %d\n", rate, mixer->getOutputRate());
+	if (rate != mixer->getOutputRate()) {
+		_converter = new LinearRateConverter(rate, mixer->getOutputRate());
+		//_converter = new ResampleRateConverter(rate, mixer->getOutputRate(), 1);
+	} else {
+		if (flags & SoundMixer::FLAG_STEREO)
+			_converter = new CopyRateConverter<true>();
+		else
+			_converter = new CopyRateConverter<false>();
+	}
+#else
 	_pos = 0;
 	_fpPos = 0;
 	_fpSpeed = (1 << 16) * rate / mixer->getOutputRate();
@@ -666,14 +708,32 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 		_loop_ptr = _ptr;
 		_loop_size = _size;
 	}
+#endif
 }
 
 ChannelRaw::~ChannelRaw() {
+#ifdef SOX_HACK
+	delete _converter;
+	delete _input;
+#endif
 	if (_flags & SoundMixer::FLAG_AUTOFREE)
 		free(_ptr);
 }
 
 void ChannelRaw::mix(int16 *data, uint len) {
+#ifdef SOX_HACK
+	const int volume = _mixer->getVolume();
+	uint tmpLen = len;
+	if (_input->eof()) {
+		// TODO: call drain method
+		// TODO: Looping
+		destroy();
+	}
+
+	assert(_converter);
+	_converter->flow(*_input, data, &tmpLen, volume);
+
+#else
 	byte *s, *end;
 
 	if (len > _size)
@@ -697,6 +757,7 @@ void ChannelRaw::mix(int16 *data, uint len) {
 			destroy();
 		}
 	}
+#endif
 }
 
 #define WARP_WORKAROUND 50000
@@ -705,6 +766,30 @@ ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void
 										 byte flags, uint32 buffer_size)
 	: Channel(mixer, handle) {
 	assert(size <= buffer_size);
+
+printf("ChannelStream: flags 0x%x, input rate %d, output rate %d, size %d\n", flags, rate, mixer->getOutputRate(), size);
+//hexdump(_ptr, size);
+//puts("\n");
+
+#ifdef SOX_HACK
+	
+	// Create the input stream
+	_input = makeWrappedInputStream(flags, buffer_size);
+	_input->append((const byte *)sound, size);
+	// TODO: add support for SoundMixer::FLAG_REVERSE_STEREO
+
+	// If rate conversion is necessary, create a converter
+//	printf("inrate %d, outrate %d\n", rate, mixer->getOutputRate());
+	if (rate != mixer->getOutputRate()) {
+		_converter = new LinearRateConverter(rate, mixer->getOutputRate());
+		//_converter = new ResampleRateConverter(rate, mixer->getOutputRate(), 1);
+	} else {
+		if (flags & SoundMixer::FLAG_STEREO)
+			_converter = new CopyRateConverter<true>();
+		else
+			_converter = new CopyRateConverter<false>();
+	}
+#else
 	_flags = flags;
 	_bufferSize = buffer_size;
 	_ptr = (byte *)malloc(_bufferSize + WARP_WORKAROUND);
@@ -714,21 +799,29 @@ ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void
 	_pos = _ptr;
 	_fpPos = 0;
 	_fpSpeed = (1 << 16) * rate / mixer->getOutputRate();
-	_finished = false;
 
 	// adjust the magnitude to prevent division error
 	while (size & 0xFFFF0000)
 		size >>= 1, rate = (rate >> 1) + 1;
 
 	_rate = rate;
+#endif
+	_finished = false;
 }
 
 ChannelStream::~ChannelStream() {
+#ifdef SOX_HACK
+	delete _converter;
+	delete _input;
+#else
 	free(_ptr);
+#endif
 }
 
 void ChannelStream::append(void *data, uint32 len) {
-
+#ifdef SOX_HACK
+	_input->append((const byte *)data, len);
+#else
 	if (_endOfData + len > _endOfBuffer) {
 		/* Wrap-around case */
 		uint32 size_to_end_of_buffer = _endOfBuffer - _endOfData;
@@ -748,10 +841,32 @@ void ChannelStream::append(void *data, uint32 len) {
 		memcpy(_endOfData, data, len);
 		_endOfData += len;
 	}
+#endif
 }
 
 void ChannelStream::mix(int16 *data, uint len) {
+#ifdef SOX_HACK
+	const int volume = _mixer->getVolume();
+	uint tmpLen = len;
 
+	if (_input->eof()) {
+		// TODO: call drain method
+
+		// Normally, the stream stays around even if all its data is used up.
+		// This is in case more data is streamed into it. To make the stream
+		// go away, one can either stop() it (which takes effect immediately,
+		// ignoring any remaining sound data), or finish() it, which means
+		// it will finish playing before it terminates itself.
+		if (_finished) {
+			destroy();
+		}
+
+		return;
+	}
+
+	assert(_converter);
+	_converter->flow(*_input, data, &tmpLen, volume);
+#else
 	if (_pos == _endOfData) {
 		// Normally, the stream stays around even if all its data is used up.
 		// This is in case more data is streamed into it. To make the stream
@@ -799,6 +914,7 @@ void ChannelStream::mix(int16 *data, uint len) {
 			mixProc(data, len, _pos, _fpPos, _fpSpeed, _mixer->getVolume(), _endOfData, (_flags & SoundMixer::FLAG_REVERSE_STEREO) ? true : false);
 		}
 	}
+#endif
 }
 
 #ifdef USE_MAD
@@ -1014,7 +1130,7 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 				// Restream
 				mad_stream_buffer(&_stream, _ptr, _size + not_decoded);
 				if (mad_frame_decode(&_frame, &_stream) == -1) {
-					debug(1, "Error decoding after restream %d !", _stream.error);
+					debug(1, "Error %d decoding after restream !", _stream.error);
 				}
 			} else if (!MAD_RECOVERABLE(_stream.error)) {
 				error("MAD frame decode error in MP3 CDMUSIC !");
