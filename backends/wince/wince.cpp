@@ -20,6 +20,9 @@
  */
 
 #include "wince.h"
+#include "sound/fmopl.h"
+#include "base/plugins.h"
+
 
 #ifdef USE_VORBIS
 #include <vorbis/vorbisfile.h>
@@ -362,11 +365,12 @@ GameDetector detector;
 Engine *engine;
 bool is_simon;
 bool is_bass;
-extern Scumm *g_scumm;
+bool is_sword2;
+//extern Scumm *g_scumm;
 //extern SimonEngine *g_simon;
 //OSystem *g_system;
 //SoundMixer *g_mixer;
-Config *g_config;
+//Config *g_config;
 OSystem::TimerProc timer_callback;
 int timer_interval;
 
@@ -429,6 +433,7 @@ bool save_hide_toolbar;
 bool keyboard_override;
 
 bool _get_key_mapping;
+bool _force_get_key_mapping;
 static char _directory[MAX_PATH];
 bool select_game;
 bool need_GAPI;
@@ -474,9 +479,9 @@ bool isSmartphone() {
 }
 
 void close_GAPI() {
-	g_config->setBool("Sound", sound_activated, "wince");
-	g_config->setInt("DisplayMode", GetScreenMode(), "wince");
-	g_config->flush();
+	ConfMan.set("Sound", sound_activated, "wince");
+	ConfMan.set("DisplayMode", GetScreenMode(), "wince");
+	ConfMan.flushToDisk();
 	dynamicSHFullScreen(hWnd_Window, SHFS_SHOWTASKBAR | SHFS_SHOWSIPBUTTON | SHFS_SHOWSTARTICON);
 	dynamicGXCloseInput();
 	dynamicGXCloseDisplay();
@@ -571,9 +576,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	freelook = false;
 	noGAPI = 0;
 
-	g_config = new Config("scummvm.ini", "scummvm");
-	g_config->set_writing(true);
-
 	// See if we're running on a Windows CE version supporting aygshell
 	aygshell_handle = LoadLibrary(TEXT("aygshell.dll"));
 	if (aygshell_handle) {
@@ -638,7 +640,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 				fclose(test);
 			}
 			else
-			if (g_config->getBool("NoDirectVideo", false, "wince")) 
+			if (ConfMan.getBool("NoDirectVideo", "wince")) 
 				noGAPI = 1;
 		}
 
@@ -678,24 +680,30 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 		gfx_mode_switch = false;
 	}
 
-	sound = g_config->getBool("Sound", true, "wince");
+	if (ConfMan.get("Sound", "wince").isEmpty())
+		sound = true;
+	else
+		sound = ConfMan.getBool("Sound", "wince");
 	if (sound) 
 		sound_activated = sound;
 	else
 		sound_activated = true;
 
-	FM_high_quality = g_config->getBool("FMHighQuality", false, "wince");
-	g_config->setBool("FMHighQuality", FM_high_quality, "wince");
+	FM_high_quality = ConfMan.getBool("FMHighQuality",  "wince");
+	ConfMan.set("FMHighQuality", FM_high_quality, "wince");
 
-	_thread_priority = g_config->getInt("SoundThreadPriority", -1, "wince");
+	if (ConfMan.get("SoundThreadPriority", "wince").isEmpty())
+		_thread_priority = -1;
+	else
+		_thread_priority = ConfMan.getInt("SoundThreadPriority", "wince");
 	if (_thread_priority < 0) {
 #ifdef SH3
 		_thread_priority = THREAD_PRIORITY_NORMAL;
 #else
 		_thread_priority = THREAD_PRIORITY_ABOVE_NORMAL;
 #endif
-		g_config->setInt("SoundThreadPriority", _thread_priority, "wince");
-		g_config->flush();
+		ConfMan.set("SoundThreadPriority", _thread_priority, "wince");
+		ConfMan.flushToDisk();
 	}
 
 	select_game = true;
@@ -785,6 +793,36 @@ bool checkOggSampleRate(char *directory) {
 }
 #endif
 
+void save_key_mapping() {
+	 char tempo[1024];
+	 const unsigned int *work_keys;
+//	 const unsigned char *work;
+	 int i;
+
+	 tempo[0] = '\0';
+	 work_keys = getActionKeys();
+	 for (i=0; i<TOTAL_ACTIONS; i++) {
+		 char x[4];
+		 sprintf(x, "%.4x ", work_keys[i]);
+		 strcat(tempo, x);
+	 }
+	 ConfMan.set("ActionKeys", tempo, "wince");
+
+/*
+	 tempo[0] = '\0';
+
+	 work = getActionTypes();
+	 for (i=0; i<TOTAL_ACTIONS; i++) {
+		 char x[3];
+		 sprintf(x, "%.2x ", work[i]);
+		 strcat(tempo, x);
+	 }
+	 ConfMan.set("ActionTypes", tempo, "wince");
+*/
+
+	 ConfMan.flushToDisk();
+}
+
 
 void runGame(char *game_name) {
 	int argc = 4;
@@ -803,7 +841,7 @@ void runGame(char *game_name) {
 	argv[1] = argdir;
 
 	
-	no_music = g_config->getBool("NoMusic", false, "wince");
+	no_music = ConfMan.getBool("NoMusic", "wince");
 	//sprintf(music, "-e%s", (no_music ? "null" : "wince"));
 	sprintf(music, "-e%s", (no_music ? "null" : "adlib"));
 
@@ -826,12 +864,12 @@ void runGame(char *game_name) {
 		monkey_keyboard = true;
 	}
 
-	if (strcmp(game_name, "comi") == 0) {
+	if (strcmp(game_name, "comi") == 0 || is_sword2) {
 		high_res = true;
 	}
 
 	//new_audio_rate = (strcmp(game_name, "dig") == 0 || strcmp(game_name, "monkey") == 0);
-	new_audio_rate = (strcmp(game_name, "dig") == 0 || strcmp(game_name, "ft") == 0 || strcmp(game_name, "comi") == 0);
+	new_audio_rate = (strcmp(game_name, "dig") == 0 || strcmp(game_name, "ft") == 0 || strcmp(game_name, "comi") == 0 || is_sword2);
 
 #ifdef USE_VORBIS
 	// Modify the sample rate on the fly if OGG is involved 
@@ -840,30 +878,63 @@ void runGame(char *game_name) {
 		new_audio_rate = checkOggSampleRate(_directory);
 #endif
 
+	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
+
+	// Load the plugins
+	PluginManager::instance().loadPlugins();
+
+	// Parse the command line infomation
 	detector.parseCommandLine(argc, argv);
 
-	if (detector.detectMain())
+	// Create the system object
+	OSystem *system = OSystem::instance();
+
+	// Create the timer services
+	g_timer = new Timer(system);
+
+	if (!detector.detectMain())
 		//return (-1);
 		return;
-
-	OSystem *system = detector.createSystem();
 
 	mainClass = (OSystem_WINCE3*)system;
 
 	/* Start the engine */
 
-	is_simon = (strcmp(detector._plugin.getName(), "simon") == 0);
-	is_bass = (strcmp(detector._plugin.getName(), "sky") == 0);
+	is_simon = (strcmp(detector._plugin->getName(), "simon") == 0);
+	is_bass = (strcmp(detector._plugin->getName(), "sky") == 0);
+	is_sword2 = (strcmp(detector._plugin->getName(), "sword2") == 0);
 
-	if (smartphone || strcmp(game_name, "samnmax") == 0 || strcmp(game_name, "dig") == 0 || strcmp(game_name, "ft") == 0 || strcmp(game_name, "comi") == 0)
+	if (smartphone || strcmp(game_name, "samnmax") == 0 || strcmp(game_name, "dig") == 0 || strcmp(game_name, "ft") == 0 || strcmp(game_name, "comi") == 0 || is_sword2)
 		hide_cursor = FALSE;
 	else
 		hide_cursor = TRUE;	
 
-	engine = Engine::createFromDetector(&detector, system);
+	engine = detector.createEngine(system);
 
 	keypad_init();
 	load_key_mapping();
+
+    /* See if we need to force a mapping */
+
+    if (!smartphone && (is_bass || strcmp(game_name, "samnmax") || strcmp(game_name, "comi") || is_sword2) && !isRightClickSet()) {
+       Cls();
+       drawWaitSelectKey();
+       _force_get_key_mapping = true;
+       while (_force_get_key_mapping) {
+          MSG msg;
+
+          if (!PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+               Sleep(100);
+          else {
+                  TranslateMessage(&msg);
+                  DispatchMessage(&msg);
+          }
+       }
+
+       save_key_mapping();
+       Cls();
+       drawWait();
+    }
 
 	engine->go();
 
@@ -1022,11 +1093,11 @@ void load_key_mapping() {
 	 
 	 memset(actions_keys, 0, sizeof(actions_keys));
 	 
-	 version = g_config->getInt("KeysVersion", 0, "wince");
+	 version = ConfMan.getInt("KeysVersion", "wince");
 
 	 memset(actions_keys, 0, TOTAL_ACTIONS);
 
-	 current = g_config->get("ActionKeys", "wince");
+	 current = ConfMan.get("ActionKeys", "wince").c_str();
 	 if (current && version == CURRENT_KEYS_VERSION) {
 		for (i=0; i<TOTAL_ACTIONS; i++) {
 			char x[6];
@@ -1049,7 +1120,7 @@ void load_key_mapping() {
 	 actions[3] = ACTION_SKIP;
 	 actions[4] = ACTION_HIDE;
 
-	 current = g_config->get("ActionTypes", "wince");
+	 current = ConfMan.get("ActionTypes", "wince");
 	 if (current && version) {
 		for (i=0; i<TOTAL_ACTIONS; i++) {
 			char x[6];
@@ -1065,41 +1136,11 @@ void load_key_mapping() {
 	 */
 
 	 if (!version || version != CURRENT_KEYS_VERSION) {
-		 g_config->setInt("KeysVersion", CURRENT_KEYS_VERSION, "wince");
-		 g_config->flush();
+		 ConfMan.set("KeysVersion", CURRENT_KEYS_VERSION, "wince");
+		 ConfMan.flushToDisk();
 	 }
 }
 					
-void save_key_mapping() {
-	 char tempo[1024];
-	 const unsigned int *work_keys;
-//	 const unsigned char *work;
-	 int i;
-
-	 tempo[0] = '\0';
-	 work_keys = getActionKeys();
-	 for (i=0; i<TOTAL_ACTIONS; i++) {
-		 char x[4];
-		 sprintf(x, "%.4x ", work_keys[i]);
-		 strcat(tempo, x);
-	 }
-	 g_config->set("ActionKeys", tempo, "wince");
-
-/*
-	 tempo[0] = '\0';
-
-	 work = getActionTypes();
-	 for (i=0; i<TOTAL_ACTIONS; i++) {
-		 char x[3];
-		 sprintf(x, "%.2x ", work[i]);
-		 strcat(tempo, x);
-	 }
-	 g_config->set("ActionTypes", tempo, "wince");
-*/
-
-	 g_config->flush();
-}
-
 /*************** Hardware keys support ***********/
 
 void OSystem_WINCE3::addEventKeyPressed(int ascii_code) {
@@ -1174,15 +1215,15 @@ void action_freelook() {
 void action_boss() {
 	SHELLEXECUTEINFO se;    
 
-	g_config->setBool("Sound", sound_activated, "wince");
-	g_config->setInt("DisplayMode", GetScreenMode(), "wince");
-	g_config->flush();
+	ConfMan.set("Sound", sound_activated, "wince");
+	ConfMan.set("DisplayMode", GetScreenMode(), "wince");
+	ConfMan.flushToDisk();
 	sound_activated = false;
 	toolbar_drawn = false;
 	hide_toolbar = true;
 	Cls();
-	g_scumm->requestSave(0, "BOSS");
-	g_scumm->scummLoop(0);
+	Scumm::g_scumm->requestSave(0, "BOSS");
+	Scumm::g_scumm->scummLoop(0);
 	dynamicGXCloseInput();
 	dynamicGXCloseDisplay();
 	SDL_AudioQuit();
@@ -1200,14 +1241,14 @@ void action_skip() {
 	//OSystem_WINCE3* system;
 	//system = (OSystem_WINCE3*)g_scumm->_system;
 
-	if (is_simon || is_bass) {
+	if (is_simon || is_bass || is_sword2) {
 		//system->addEventKeyPressed(mapKey(VK_ESCAPE));
 		mainClass->addEventKeyPressed(mapKey(VK_ESCAPE));
 		return;
 	}
 
 	//system->addEventKeyPressed(KEY_MAGIC_SKIP);
-	mainClass->addEventKeyPressed(KEY_ALL_SKIP);
+	mainClass->addEventKeyPressed(Scumm::KEY_ALL_SKIP);
 /*
 	if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer] || g_scumm->_insaneState)
 		system->addEventKeyPressed(g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY]);
@@ -1253,7 +1294,7 @@ void action_cursoronoff() {
 }
 
 void action_subtitleonoff() {
-	g_scumm->_noSubtitles = !g_scumm->_noSubtitles;
+	Scumm::g_scumm->_noSubtitles = !Scumm::g_scumm->_noSubtitles;
 }
 
 void keypad_init() {
@@ -1328,7 +1369,7 @@ OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
 	drawWait();
 
 	// Set mode, portrait or landscape
-	display_mode = g_config->get("DisplayMode", "wince");
+	display_mode = ConfMan.get("DisplayMode", "wince").c_str();
 
 	if (display_mode && !(high_res || noGAPI || !gfx_mode_switch))
 		SetScreenMode(atoi(display_mode));
@@ -1427,8 +1468,8 @@ void OSystem_WINCE3::copy_rect(const byte *buf, int pitch, int x, int y, int w, 
 		undraw_mouse();
 
 	if (!select_game && monkey_keyboard && (
-			g_scumm->VAR(g_scumm->VAR_ROOM) != 108 &&		// monkey 2
-			g_scumm->VAR(g_scumm->VAR_ROOM) != 90)) {		// monkey 1 floppy
+			Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 108 &&		// monkey 2
+			Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 90)) {		// monkey 1 floppy
 		monkey_keyboard = false;
 		draw_keyboard = false;
 		toolbar_drawn = false;
@@ -1486,6 +1527,7 @@ void OSystem_WINCE3::update_screen() {
 		}
 		else {
 			int i;
+			beginBltPart();
 			
 			for (i=0; i<num_of_dirty_square; i++) {
 				if (wide_screen && extra_wide_screen) 
@@ -1502,6 +1544,7 @@ void OSystem_WINCE3::update_screen() {
 				else
 					Blt_part(_gfx_buf + (320 * ds[i].y) + ds[i].x, (GetScreenMode() ? ds[i].x : ds[i].x * 3/4), ds[i].y, ds[i].w, ds[i].h, 320, false);
 			}
+			endBltPart();
 			num_of_dirty_square = 0;
 		}
 	}
