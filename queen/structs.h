@@ -184,6 +184,17 @@ struct GraphicAnim {
 };
 
 
+struct Person {
+	const ActorData *actor; // P_ROOM, P_BNUM, P_GAMES, P_VALUE, P_COLOR, P_STAND, P_X, P_Y
+	const char *name; // P_NAMEstr
+	const char *anim; // P_ANIMstr
+	uint16 bobFrame; // SFRAME
+	//! As the bank number may change, we can't re-use actor->bankNum
+	uint16 bankNum; // P_BANK
+};
+
+
+
 } // End of namespace Queen
 
 #endif

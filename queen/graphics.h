@@ -64,8 +64,8 @@ struct BobSlot {
 
 		//! string based animation
 		struct {
-			uint8* buffer;
-			uint8* curPos;
+			uint16* buffer;
+			uint16* curPos;
 		} string;
 
 		//! normal moving animation
@@ -115,7 +115,7 @@ public:
 	void bankErase(uint32 bankslot); // erase()
 
 	void bobSetupControl();
-	void bobAnimString(uint32 bobnum, uint8* animBuf); // stringanim()
+	void bobAnimString(uint32 bobnum, uint16* animBuf); // stringanim()
 	void bobAnimNormal(uint32 bobnum, uint16 firstFrame, uint16 lastFrame, uint16 speed, bool rebound, bool xflip); // makeanim()
 	void bobMove(uint32 bobnum, uint16 endx, uint16 endy, int16 speed); // movebob()
 	void bobDraw(uint32 bobnum, uint16 x, uint16 y, uint16 scale, bool xflip, const Box& box); // bob()

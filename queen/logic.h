@@ -63,7 +63,7 @@ public:
 
 	uint16 findBob(uint16 obj);
 	uint16 findFrame(uint16 obj);
-	uint16 objectForPerson(uint16 bobnum);
+	uint16 objectForPerson(uint16 bobnum); // OBJ_PERSON
 	WalkOffData *walkOffPointForObject(uint16 obj);
 
 	Area *area(int room, int num);
@@ -111,6 +111,13 @@ public:
 
 	int16 entryObj() const { return _entryObj; }
 	void entryObj(int16 obj) { _entryObj = obj; }
+
+	void personSetData(int16 noun, const char *actorName, bool loadBank, Person *pp); // SET_PERSON_DATA
+	uint16 personSetup(uint16 noun, uint16 curImage); // SETUP_PERSON
+	uint16 personAllocate(uint16 noun, uint16 curImage); // ALLOCATE_PERSON
+
+	uint16 animCreate(uint16 curImage, const Person *person); // CREATE_ANIM
+	void animErase(uint16 bobNum);
 
 
 protected:
@@ -191,6 +198,10 @@ protected:
 	uint16 _numFurnitureStatic; // FMAX
 	uint16 _numFurnitureAnimatedLen; // FMAXLEN
 	uint16 _numFrames; // FRAMES
+	uint16 _personFrames[4];
+
+	//! contains the animation frames (max 60) to use for a bob (whose number must be < 17)
+	uint16 _newAnim[17][60];
 
 	Resource *_resource;
 	Graphics *_graphics;

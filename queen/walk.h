@@ -64,7 +64,7 @@ struct MovePersonData {
 	uint16 moveSpeed;
 };
 
-
+/*
 struct Person {
 	const char* name;
 	uint16 bobNum; // P_BOB
@@ -72,7 +72,7 @@ struct Person {
 	uint16 image; // MOVE_OTHER, CI arg
 	int direction; // MOVE_OTHER, dir arg
 };
-
+*/
 
 class Logic;
 class Graphics;
@@ -95,7 +95,7 @@ public:
 	uint16 joeFace();
 
 	//! MOVE_OTHER
-	void personMove(Person* name, uint16 endx, uint16 endy);
+	void personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curImage, int direction);
 
 
 private:
@@ -105,8 +105,8 @@ private:
 	void animateJoePrepare();
 	void animateJoe();
 
-	void animatePersonPrepare(const MovePersonData *mpd, const Person* pp);
-	void animatePerson(const MovePersonData *mpd, const Person* pp);
+	void animatePersonPrepare(const MovePersonData *mpd, int direction);
+	void animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum, uint16 bankNum, int direction);
 
 	//! CALC_X, CALC_Y
 	static uint16 calcC(uint16 c1, uint16 c2, uint16 c3, uint16 c4, uint16 lastc);

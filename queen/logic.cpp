@@ -32,6 +32,7 @@ Logic::Logic(Resource *resource, Graphics *graphics)
 	_jas = _resource->loadFile("QUEEN.JAS", 20);
 	_joe.x = _joe.y = 0;
 	_walk = new Walk(this, _graphics);
+	memset(_gameState, 0, sizeof(_gameState));
 	initialise();
 }
 
@@ -360,7 +361,7 @@ void Logic::initialise() {
 		_graphicAnim[i].frame3 = (int16)READ_BE_UINT16(ptr);
 		ptr += 2;
 	}
-	
+
 	_currentRoom = _objectData[_entryObj].room;
 	_entryObj = 0;
 	
@@ -438,6 +439,7 @@ void Logic::initialise() {
 	_graphics->panelLoad();
 	_graphics->bobSetupControl();
 	_walk->joeSetup();
+	zoneSetupPanel();
 
 	memset(_zones, 0, sizeof(_zones));
 	_oldRoom = 0;
@@ -855,7 +857,15 @@ void Logic::roomErase() {
 	// TODO: TALKHEAD=0;
 	// TODO: _display->fadeOut();
 	// TODO: credits system
-	// TODO: person animations
+
+	// invalidates all persons animations
+	uint16 i;
+	for (i = 0; i <= 3; ++i) {
+		_personFrames[i] = 0;
+	}
+	for (i = 1; i <= 16; ++i) {
+		_newAnim[i][0] = 0;
+	}
 
 	uint16 cur = _roomData[_oldRoom] + 1;
 	uint16 last = _roomData[_oldRoom + 1];
@@ -889,13 +899,12 @@ void Logic::roomSetupFurniture() {
 	// count the furniture and update gameState
 	uint16 furnitureTotal = 0;
 	uint16 i;
-	// FIXME: uncomment when Array< FurnitureData > available in Logic
-//	for (i = 1; i <= _numFurnitureData; ++i) {
-//		if (_furnitureData[i].room == _currentRoom) {
-//			++furnitureTotal;
-//			_gameState[furnitureTotal] = _furnitureData[i].gameStateValue;
-//		}
-//	}
+	for (i = 1; i <= _numFurniture; ++i) {
+		if (_furnitureData[i].room == _currentRoom) {
+			++furnitureTotal;
+			_gameState[furnitureTotal] = _furnitureData[i].gameStateValue;
+		}
+	}
 	if (furnitureTotal == 0) {
 		return;
 	}
@@ -1018,20 +1027,17 @@ void Logic::roomSetupObjects() {
 	}
 
 	// persons Bobs
-	uint16 bobNum = 0;
 	for (i = firstRoomObj; i <= lastRoomObj; ++i) {
 		ObjectData *pod = &_objectData[i];
 		if (pod->image == -3 || pod->image == -4) {
-			++bobNum;
-			uint16 noun = i - firstRoomObj;
-			// FIXME: need Person stuff
-//			if (pod->name > 0) {
-//				curImage = personSetup(noun, curImage);
-//			}
-//			else {
-//				curImage = personAllocate(noun, curImage);
-//			}
-			warning("Logic::roomSetupObjects() - Person object number %d not handled", noun);
+			debug(9, "Logic::roomSetupObjects() - Setting up person %d", i);
+			uint16 noun = i - _roomData[_currentRoom];
+			if (pod->name > 0) {
+				curImage = personSetup(noun, curImage);
+			}
+			else {
+				curImage = personAllocate(noun, curImage);
+			}
 		}
 	}
 
@@ -1106,6 +1112,229 @@ uint16 Logic::findScale(uint16 x, uint16 y) {
 	}
 	return scale;
 }
+
+
+void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Person *pp) {
+	
+	if (noun <= 0) {
+		warning("Logic::personSetData() - Negative object number");
+	}
+
+	uint16 i;
+	uint16 obj = _roomData[_currentRoom] + noun;
+	int16 img = _objectData[obj].image;
+	if (img != -3 && img != -4) {
+		warning("Logic::personSetData() - Object %d is not a person", obj);
+		return;
+	}
+
+	// search Bob number for the person
+	uint16 bobNum = 0;
+	for (i = _roomData[_currentRoom] + 1; i <= obj; ++i) {
+		img = _objectData[i].image;
+		if (img == -3 || img == -4) {
+			++bobNum;
+		}
+	}
+
+	// search for a matching actor
+	uint16 actor = 1;
+	for (i = 1; i <= _numActors; ++i) {
+		ActorData *pad = &_actorData[i];
+		if (pad->room == _currentRoom) {
+			if (_gameState[pad->gameStateSlot] == pad->gameStateValue) {
+				if ((bobNum > 0 && bobNum == pad->bobNum) || strcmp(pp->name, actorName) == 0) {
+					actor = i;
+					break;
+				}
+			}
+		}
+	}
+
+	pp->actor = &_actorData[actor];
+	pp->name = _aName[pp->actor->name];
+	if (pp->actor->anim != 0) {
+		pp->anim = _aAnim[pp->actor->anim];
+	}
+	else {
+		pp->anim = NULL;
+	}
+	
+	if (loadBank) {
+		const char *actorFile = _aFile[pp->actor->actorFile];
+		if (actorFile) {
+			_graphics->bankLoad(actorFile, pp->bankNum);
+		}
+		else {
+			pp->bankNum = 15;
+		}		
+	}
+	
+	if (pp->actor->bobNum >= 1 && pp->actor->bobNum <= 3) {
+		pp->bobFrame = 29 + FRAMES_JOE_XTRA + pp->actor->bobNum;
+	}
+	else {
+		warning("Logic::personSetData() - The bob number for actor is not in the [1:3] range");
+	}
+}
+
+
+uint16 Logic::personSetup(uint16 noun, uint16 curImage) {
+
+	Person p;
+	personSetData(noun, "", true, &p);
+
+	const ActorData *pad = p.actor;
+	uint16 scale = 100;
+	uint16 a = zoneInArea(ZONE_ROOM, pad->x, pad->y);
+	if (a > 0) {
+		// person is not standing in the area box, scale it accordingly
+		scale = currentRoomArea(a)->calcScale(pad->y);
+	}
+	_graphics->bankUnpack(pad->bobFrameStanding, p.bobFrame, p.bankNum);
+	bool xflip = false;
+	uint16 person = _roomData[_currentRoom] + noun;
+	if (_objectData[person].image == -3) {
+		// person is facing left
+		xflip = true;
+	}
+	BobSlot *pbs = _graphics->bob(pad->bobNum);
+	pbs->active = true;
+	pbs->scale = scale;
+	pbs->x = pad->x;
+	pbs->y = pad->y;
+	pbs->frameNum = p.bobFrame;
+	pbs->xflip = xflip;
+	
+	if (p.anim != NULL) {
+		_personFrames[pad->bobNum] = curImage + 1;
+		curImage = animCreate(curImage, &p);
+	}
+	else {
+		animErase(pad->bobNum);
+	}
+	return curImage;
+}
+
+
+uint16 Logic::personAllocate(uint16 noun, uint16 curImage) {
+	
+	uint16 i;
+	uint16 person = _roomData[_currentRoom] + noun;
+
+	// search Bob number for the person
+	uint16 bobNum = 0;
+	for (i = _roomData[_currentRoom] + 1; i <= person; ++i) {
+		int16 img = _objectData[i].image;
+		if (img == -3 || img == -4) {
+			++bobNum;
+		}
+	}
+		
+	// search for a matching actor
+	uint16 actor = 0;
+	for (i = 1; i <= _numActors; ++i) {
+		ActorData *pad = &_actorData[i];
+		if (pad->room == _currentRoom) {
+			if (_gameState[pad->gameStateSlot] == pad->gameStateValue) {
+				if (bobNum > 0 && bobNum == pad->bobNum) {
+					actor = i;
+					break;
+				}
+			}
+		}
+	}
+	
+	if (actor > 0) {
+		const char *animStr = _aAnim[_actorData[actor].actorFile];
+		if (animStr[0] != '\0') {
+			bool allocatedFrames[256];
+			memset(allocatedFrames, 0, sizeof(allocatedFrames));
+			uint16 f1, f2;
+			do {
+				sscanf(animStr, "%3hu,%3hu", &f1, &f2);
+				animStr += 8;
+				allocatedFrames[f1] = true;
+			} while(f1 != 0);
+			for (i = 1; i <= 255; ++i) {
+				if (allocatedFrames[i]) {
+					++curImage;
+				}
+			}
+			_personFrames[bobNum] = curImage + 1;
+		}
+	}
+	return curImage;
+}
+
+
+uint16 Logic::animCreate(uint16 curImage, const Person *person) {
+
+	uint16 *animFrames = _newAnim[person->actor->bobNum];
+
+	uint16 allocatedFrames[256];
+	memset(allocatedFrames, 0, sizeof(allocatedFrames));
+	const char *p = person->anim;
+	int frame = 0;
+	uint16 f1, f2;
+	do {
+		sscanf(p, "%3hu,%3hu", &f1, &f2);
+		animFrames[frame + 0] = f1;
+		animFrames[frame + 1] = f2;
+		
+		if (f1 > 500) {
+			// SFX
+			allocatedFrames[f1 - 500] = 1;
+		}
+		else {
+			allocatedFrames[f1] = 1;
+		}
+		
+		p += 8;
+		frame += 2;
+	} while(f1 != 0);
+	
+	// ajust frame numbers
+	uint16 n = 1;
+	uint16 i;
+	for (i = 1; i <= 255; ++i) {
+		if (allocatedFrames[i] != 0) {
+			allocatedFrames[i] = n;
+			++n;
+		}
+	}
+	for (i = 0; animFrames[i] != 0; i += 2) {
+		uint16 frameNum = animFrames[i];
+		if (frameNum > 500) {
+			animFrames[i] = curImage + allocatedFrames[frameNum - 500] + 500;
+		}
+		else {
+			animFrames[i] = curImage + allocatedFrames[frameNum];
+		}
+	}
+	
+	// unpack necessary frames
+	for (i = 1; i <= 255; ++i) {
+		if (allocatedFrames[i] != 0) {
+			++curImage;
+			_graphics->bankUnpack(i, curImage, person->bankNum);
+		}
+	}
+	
+	// start animation
+	_graphics->bobAnimString(person->actor->bobNum, animFrames);
+	
+	return curImage;
+}
+
+
+void Logic::animErase(uint16 bobNum) {
+	_newAnim[bobNum][0] = 0;
+	BobSlot *pbs = _graphics->bob(bobNum);
+	pbs->animating = false;
+	pbs->anim.string.buffer = NULL;
+}
+
 
 
 } // End of namespace Queen

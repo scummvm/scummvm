@@ -210,7 +210,7 @@ void Walk::animateJoe() {
 }
 
 
-void Walk::animatePersonPrepare(const MovePersonData *mpd, const Person *pp) {
+void Walk::animatePersonPrepare(const MovePersonData *mpd, int direction) {
 	// queen.c l.2469-2572
 	int i;
 	for (i = 1; i <= _walkDataCount; ++i) {
@@ -229,7 +229,7 @@ void Walk::animatePersonPrepare(const MovePersonData *mpd, const Person *pp) {
 			}
 			else {
 				// we have specific moves for this actor, see what direction they were last facing
-				if (pp->direction == -3) {
+				if (direction == -3) {
 					// previously facing right
 					pwd->anim.set(mpd->walkLeft1, mpd->walkLeft2, DIR_LEFT);
 				}
@@ -272,7 +272,7 @@ void Walk::animatePersonPrepare(const MovePersonData *mpd, const Person *pp) {
 				}
 				else {
 					// we have a special move for left/right, so select that instead!
-					if (pp->direction == -3) {
+					if (direction == -3) {
 						// previously facing right
 						pwd->anim.set(mpd->walkLeft1, mpd->walkLeft2, DIR_FRONT);
 					}
@@ -287,14 +287,14 @@ void Walk::animatePersonPrepare(const MovePersonData *mpd, const Person *pp) {
 }
 
 
-void Walk::animatePerson(const MovePersonData *mpd, const Person *pp) {
+void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum, uint16 bankNum, int direction) {
 	// queen.c l.2572-2651
 
-	BobSlot *pbs = _graphics->bob(pp->bobNum);
+	BobSlot *pbs = _graphics->bob(bobNum);
 
 	// check to see which way person should be facing
 	if (mpd->walkLeft1 == mpd->walkRight1) {
-		pbs->xflip = (pp->direction == -3);
+		pbs->xflip = (direction == -3);
 	}
 	else {
 		// they have special walk for left and right, so don't flip
@@ -305,24 +305,24 @@ void Walk::animatePerson(const MovePersonData *mpd, const Person *pp) {
 	for (i = 1; i <= _walkDataCount; ++i) {
 		WalkData *pwd = &_walkData[i];
 		// unpack necessary frames for bob animation
-		uint16 dstFrame = pp->image;
+		uint16 dstFrame = image;
 		uint16 srcFrame = ABS(pwd->anim.firstFrame);
 		while (srcFrame <= ABS(pwd->anim.lastFrame)) {
-			_graphics->bankUnpack(srcFrame, dstFrame, pp->bankNum);
+			_graphics->bankUnpack(srcFrame, dstFrame, bankNum);
 			++dstFrame;
 			++srcFrame;
 		}
 		// pass across bobs direction ONLY if walk is a mirror flip!
 		if (ABS(mpd->walkLeft1) == ABS(mpd->walkRight1)) {
-			_graphics->bobAnimNormal(pp->bobNum, pp->image, dstFrame - 1, mpd->animSpeed, false, pbs->xflip);
+			_graphics->bobAnimNormal(bobNum, image, dstFrame - 1, mpd->animSpeed, false, pbs->xflip);
 		}
 		else {
-			_graphics->bobAnimNormal(pp->bobNum, pp->image, dstFrame - 1, mpd->animSpeed, false, false);
+			_graphics->bobAnimNormal(bobNum, image, dstFrame - 1, mpd->animSpeed, false, false);
 		}
 
 		// move other actors at correct speed relative to scale
 		uint16 moveSpeed = _logic->findScale(pbs->x, pbs->y) * mpd->moveSpeed / 100;
-		_graphics->bobMove(pp->bobNum, pbs->x + pwd->dx, pbs->y + pwd->dy, moveSpeed);
+		_graphics->bobMove(bobNum, pbs->x + pwd->dx, pbs->y + pwd->dy, moveSpeed);
 
 		// flip if one set of frames for actor
 		if (mpd->walkLeft1 < 0 || ABS(mpd->walkLeft1) == ABS(mpd->walkRight1)) {
@@ -477,18 +477,21 @@ void Walk::joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway) {
 
 
 
-void Walk::personMove(Person* pp, uint16 endx, uint16 endy) {
+void Walk::personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curImage, int direction) {
 
 	// CAN = 0;
 	initWalkData();
 
-	uint16 oldx = _graphics->bob(pp->bobNum)->x;
-	uint16 oldy = _graphics->bob(pp->bobNum)->y;
+	uint16 bobNum = pp->actor->bobNum;
+	uint16 bankNum = pp->bankNum;
+
+	uint16 oldx = _graphics->bob(bobNum)->x;
+	uint16 oldy = _graphics->bob(bobNum)->y;
 
 	uint16 oldPos = _logic->zoneInArea(ZONE_ROOM, oldx, oldy);
 	uint16 newPos = _logic->zoneInArea(ZONE_ROOM, endx, endy);
 
-	debug(9, "Walk::personMove(%d, %d, %d, %d, %d), old = %d, new = %d", pp->direction, oldx, oldy, endx, endy, oldPos, newPos);
+	debug(9, "Walk::personMove(%d, %d, %d, %d, %d), old = %d, new = %d", direction, oldx, oldy, endx, endy, oldPos, newPos);
 
 	calc(oldPos, newPos, oldx, oldy, endx, endy);
 
@@ -505,30 +508,30 @@ void Walk::personMove(Person* pp, uint16 endx, uint16 endy) {
 	}
 
 	if (_walkDataCount > 0) {
-		animatePersonPrepare(mpd, pp);
-		animatePerson(mpd, pp);
+		animatePersonPrepare(mpd, direction);
+		animatePerson(mpd, curImage, bobNum, bankNum, direction);
 	}
 
 	uint16 standingFrame = 0;
-	if (pp->bobNum <= 3) {
-		standingFrame = 29 + FRAMES_JOE_XTRA + pp->bobNum;
+	if (bobNum <= 3) {
+		standingFrame = 29 + FRAMES_JOE_XTRA + bobNum;
 	}
 	else {
-		warning("Walk::personMove() - Wrong bob number : %d", pp->bobNum);
+		warning("Walk::personMove() - Wrong bob number : %d", bobNum);
 	}
 	// make other person face the right direction
-	BobSlot *pbs = _graphics->bob(pp->bobNum);
+	BobSlot *pbs = _graphics->bob(bobNum);
 	pbs->endx = endx;
 	pbs->endy = endy;
 	pbs->animating = false;
 	pbs->scale = _walkData[_walkDataCount].area->calcScale(endy);
 	if (_walkData[_walkDataCount].anim.facing == DIR_BACK) {
-		_graphics->bankUnpack(mpd->backStandingFrame, standingFrame, pp->bankNum);
+		_graphics->bankUnpack(mpd->backStandingFrame, standingFrame, bankNum);
 	}
 	else {
-		_graphics->bankUnpack(mpd->frontStandingFrame, standingFrame, pp->bankNum);
+		_graphics->bankUnpack(mpd->frontStandingFrame, standingFrame, bankNum);
 	}
-	uint16 obj = _logic->objectForPerson(pp->bobNum);
+	uint16 obj = _logic->objectForPerson(bobNum);
 	if (_walkData[_walkDataCount].dx < 0) {
 		_logic->objectData(obj)->image = -3;
 		pbs->xflip = true;
