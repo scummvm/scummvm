@@ -90,9 +90,9 @@ typedef	struct {
 
 	Boolean debug;
 	UInt16 debugLevel;
-
+	Boolean saveConfig;
 	Boolean stdPalette;
-	
+
 	struct {
 		UInt16 speaker;
 		UInt16 headphone;
@@ -105,10 +105,9 @@ typedef	struct {
 	struct {
 		Boolean music;
 		UInt8 driver;
-		UInt32 tempo;
+		UInt8 tempo;
 		Boolean sfx;
 	} sound;
-		
 
 } GlobalsPreferenceType;
 
@@ -1407,38 +1406,35 @@ static Boolean VolumeFormHandleEvent(EventPtr eventP) {
 }
 
 static void SoundFormSave() {
-	ControlType *cck1P, *cck2P;
-	ListType *listP;
-	FieldType *fld1P;
+	ControlType *cck1P;
+	ListType *list1P, *list2P;
 
-	fld1P = (FieldType *)GetObjectPtr(SoundTempoField);
 	cck1P = (ControlType *)GetObjectPtr(SoundMusicCheckbox);
-	cck2P = (ControlType *)GetObjectPtr(SoundSfxCheckbox);
-	listP = (ListType *)GetObjectPtr(SoundDriverList);
+	list1P = (ListType *)GetObjectPtr(SoundDriverList);
+	list2P = (ListType *)GetObjectPtr(SoundTempoList);
 
 	gPrefs->sound.music = CtlGetValue(cck1P);
-	gPrefs->sound.sfx = CtlGetValue(cck2P);
-	gPrefs->sound.driver = LstGetSelection(listP);
+	gPrefs->sound.driver = LstGetSelection(list1P);
+	gPrefs->sound.tempo = LstGetSelection(list2P);
 
 	FrmReturnToForm (MainForm);
 }
 
 static void SoundFormInit() {
-	ControlType *cck1P, *cck2P;
-	ListType *listP;
-	FieldType *fld1P;
+	ControlType *cck1P;
+	ListType *list1P, *list2P;
 	FormPtr frmP;
 
-	fld1P = (FieldType *)GetObjectPtr(SoundTempoField);
 	cck1P = (ControlType *)GetObjectPtr(SoundMusicCheckbox);
-	cck2P = (ControlType *)GetObjectPtr(SoundSfxCheckbox);
-	listP = (ListType *)GetObjectPtr(SoundDriverList);
+	list1P = (ListType *)GetObjectPtr(SoundDriverList);
+	list2P = (ListType *)GetObjectPtr(SoundTempoList);
 
 	CtlSetValue(cck1P, gPrefs->sound.music);
-	CtlSetValue(cck2P, gPrefs->sound.sfx);
 
-	LstSetSelection(listP, gPrefs->sound.driver);
-	CtlSetLabel((ControlType *)GetObjectPtr(SoundDriverPopTrigger), LstGetSelectionText(listP, LstGetSelection(listP)));
+	LstSetSelection(list1P, gPrefs->sound.driver);
+	LstSetSelection(list2P, gPrefs->sound.tempo);
+	CtlSetLabel((ControlType *)GetObjectPtr(SoundDriverPopTrigger), LstGetSelectionText(list1P, LstGetSelection(list1P)));
+	CtlSetLabel((ControlType *)GetObjectPtr(SoundTempoPopTrigger), LstGetSelectionText(list2P, LstGetSelection(list2P)));
 
 	frmP = FrmGetActiveForm();
 	FrmDrawForm(frmP);
@@ -1468,6 +1464,10 @@ static Boolean SoundFormHandleEvent(EventPtr eventP) {
 					FrmList(eventP, SoundDriverList);
 					break;
 
+				case SoundTempoPopTrigger:
+					FrmList(eventP, SoundTempoList);
+					break;
+
 			}
 			handled = true;
 			break;
@@ -1494,7 +1494,7 @@ static Boolean SoundFormHandleEvent(EventPtr eventP) {
 static void MiscOptionsFormSave() {
 
 	FieldType *fld1P;
-	ControlType *cck1P, *cck2P, *cck3P, *cck4P;	
+	ControlType *cck1P, *cck2P, *cck3P, *cck4P, *cck5P;	
 	FormPtr frmP;
 
 	fld1P = (FieldType *)GetObjectPtr(MiscOptionsDebugLevelField);
@@ -1503,6 +1503,7 @@ static void MiscOptionsFormSave() {
 	cck2P = (ControlType *)GetObjectPtr(MiscOptionsNoAutoOffCheckbox);
 	cck3P = (ControlType *)GetObjectPtr(MiscOptionsStdPaletteCheckbox);
 	cck4P = (ControlType *)GetObjectPtr(MiscOptionsDebugCheckbox);
+	cck5P = (ControlType *)GetObjectPtr(MiscOptionsWriteIniCheckbox);
 
 	frmP = FrmGetActiveForm();
 
@@ -1516,6 +1517,8 @@ static void MiscOptionsFormSave() {
 	gPrefs->autoOff = !CtlGetValue(cck2P);
 	gPrefs->stdPalette = CtlGetValue(cck3P);
 	gPrefs->debug = CtlGetValue(cck4P);
+	gPrefs->saveConfig = CtlGetValue(cck5P);
+
 	gPrefs->debugLevel = StrAToI(FldGetTextPtr(fld1P));
 	
 	FrmReturnToForm (MainForm);
@@ -1533,6 +1536,7 @@ static void MiscOptionsFormInit() {
 	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsNoAutoOffCheckbox), !gPrefs->autoOff);
 	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsStdPaletteCheckbox), gPrefs->stdPalette);
 	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsDebugCheckbox), gPrefs->debug);
+	CtlSetValue((ControlType *)GetObjectPtr(MiscOptionsWriteIniCheckbox), gPrefs->saveConfig);
 
 	fld1P = (FieldType *)GetObjectPtr(MiscOptionsDebugLevelField);
 
@@ -2284,7 +2288,10 @@ static void StartScummVM()
 		}
 	*/
 		AddArg(&argvP[argc], "ScummVM", NULL, &argc);
-	//	AddArg(&argvP[argc], "-w", NULL, &argc);
+		
+		// save scummvm.ini ?
+		if (gPrefs->saveConfig)
+			AddArg(&argvP[argc], "-w", NULL, &argc);
 
 		// path
 		AddArg(&argvP[argc], "-p", pathP, &argc);
@@ -2343,13 +2350,23 @@ static void StartScummVM()
 				case 0:	// NULL
 					AddArg(&argvP[argc], "-e", "null", &argc);
 					break;
-				case 1:	// yam	ha Pa1
+				case 1:	// yamaha Pa1
 					AddArg(&argvP[argc], "-e", "ypa1", &argc);
 					break;
 			}		
 		}
 		else	// NULL as default
 			AddArg(&argvP[argc], "-e", "null", &argc);
+
+		// music tempo
+		switch (gPrefs->sound.tempo) {
+			case 1:	// Adlib : 0x1D9000 -> no fcuntion to convert hex->dec on palmos
+				AddArg(&argvP[argc], "-t", "1937408", &argc);
+				break;
+			case 2:	// Midi : 0x4A0000 -> no fcuntion to convert hex->dec on palmos
+				AddArg(&argvP[argc], "-t", "4849664", &argc);
+				break;
+		}		
 
 		// volume control
 		StrIToA(num, gPrefs->volume.master);
