@@ -38,14 +38,14 @@ typedef struct {
 
 class SkyGmChannel : public SkyChannelBase {
 public:
-	SkyGmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, byte *pInstMap);
+	SkyGmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, byte *pInstMap, uint8 *veloTab);
 	virtual void stopNote(void);
 	virtual uint8 process(uint16 aktTime);
 	virtual void updateVolume(uint16 pVolume);
 	virtual bool isActive(void);
 private:
 	byte *_mt32_to_gm;
-	static uint8 _veloTab[128];
+	uint8 *_veloTab;
 	MidiDriver *_midiDrv;
 	uint8 *_musicData;
 	uint16 _musicVolume;

@@ -79,7 +79,7 @@ void SkyMT32Music::setupChannels(uint8 *channelData) {
 	channelData++;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
 		uint16 chDataStart = ((channelData[(cnt << 1) | 1] << 8) | channelData[cnt << 1]) + _musicDataLoc;
-		_channels[cnt] = new SkyGmChannel(_musicData, chDataStart, _midiDrv, _dummyMap);
+		_channels[cnt] = new SkyGmChannel(_musicData, chDataStart, _midiDrv, _dummyMap, _dummyMap);
 	}
 }
 

@@ -41,6 +41,7 @@ private:
 	uint8 *_sysExSequence;
 	MidiDriver *_midiDrv;
 	static byte _mt32_to_gm[128];
+	static uint8 _veloTab[128];
 
 	virtual void setupPointers(void);
 	virtual void setupChannels(uint8 *channelData);
