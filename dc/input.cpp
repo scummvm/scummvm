@@ -88,6 +88,10 @@ void handleInput(struct mapledev *pad, int16 &mouse_x, int16 &mouse_y,
 	  newkey = 9; break;
 	case 0x2c:
 	  newkey = ' '; break;
+	case 0x4c:
+	  if((shift & 0x11) && (shift & 0x44))
+	    exit(0);
+	  break;
 	case 0x4f:
 	  mouse_x++; break;
 	case 0x50:
