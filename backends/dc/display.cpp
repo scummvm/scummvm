@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Dreamcast port
- * Copyright (C) 2002-2004  Marcus Comstedt
+ * Copyright (C) 2002-2005  Marcus Comstedt
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,9 +20,10 @@
  *
  */
 
+#define RONIN_TIMER_ACCESS
+
 #include <common/stdafx.h>
 #include <common/scummsys.h>
-#include "base/engine.h"
 #include "dc.h"
 
 #define SCREEN_W 640
@@ -192,6 +193,8 @@ void OSystem_Dreamcast::initSize(uint w, uint h)
   //  dc_reset_screen(0, 0);
   memset(screen, 0, SCREEN_W*SCREEN_H);
   memset(overlay, 0, OVL_W*OVL_H*sizeof(unsigned short));
+
+  _devpoll = Timer();
 }
 
 void OSystem_Dreamcast::copyRectToScreen(const byte *buf, int pitch, int x, int y,
