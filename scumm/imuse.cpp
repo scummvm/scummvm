@@ -4866,14 +4866,16 @@ void IMuseDigital::handler() {
 			}
 
 			uint32 new_size = _channel[l]._mixerSize;
+			uint32 mixer_size = new_size;
 			if (_channel[l]._offset + _channel[l]._mixerSize > _channel[l]._size) {
 				new_size = _channel[l]._size - _channel[l]._offset;
 				if(_channel[l]._isLoop == false) {
 					_channel[l]._toBeRemoved = true;
+					mixer_size = new_size;
 				}
 			}
 
-			byte *buf = (byte*)malloc(_channel[l]._mixerSize);
+			byte *buf = (byte*)malloc(mixer_size);
 			memcpy(buf, _channel[l]._data + _channel[l]._offset, new_size);
 			if ((new_size != _channel[l]._mixerSize) && (_channel[l]._isLoop == true)) {
 				memcpy(buf + new_size, _channel[l]._data, _channel[l]._mixerSize - new_size);
@@ -4896,10 +4898,10 @@ void IMuseDigital::handler() {
 			}
 
 			if (new_mixer) {
-				_scumm->_mixer->playStream(NULL, _channel[l]._mixerTrack, buf, _channel[l]._mixerSize,
+				_scumm->_mixer->playStream(NULL, _channel[l]._mixerTrack, buf, mixer_size,
 																				 _channel[l]._freq, _channel[l]._mixerFlags);
 			} else {
-				_scumm->_mixer->append(_channel[l]._mixerTrack, buf, _channel[l]._mixerSize,
+				_scumm->_mixer->append(_channel[l]._mixerTrack, buf, mixer_size,
 															 _channel[l]._freq, _channel[l]._mixerFlags);
 			}
 			_scumm->_system->unlock_mutex(_scumm->_mixer->_mutex);
