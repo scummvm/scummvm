@@ -2143,189 +2143,186 @@ void Scumm::o6_miscOps() {
 
 	getStackList(args,sizeof(args)/sizeof(args[0]));
 
-#if defined(FULL_THROTTLE)
-	switch(args[0]) {
-	case 4:
-		grabCursor(args[1], args[2], args[3], args[4]);
-		break;
-	case 6:
-		warning("o6_miscOps: startVideo(%d,%s)", args[1], getStringAddress(_vars[0xf6/2]));
-		break;
-	case 7:
-		warning("o6_miscOps: stub7()");
-		break;
-	case 10:
-		warning("o6_miscOps: stub10(%d,%d,%d,%d)",args[1],args[2],args[3],args[4]);
-		break;
-	case 11:
-		warning("o6_miscOps: stub11(%d)", args[1]);
-		break;
-	case 12:
-		setCursorImg(args[1], -1, args[2]);
-		break;
-	case 13:
-		warning("o6_miscOps: stub13(%d,%d,%d,%d)",args[1],args[2],args[3],args[4]);
-		break;
-	case 14:
-		remapActor(derefActorSafe(args[1], "o6_miscOps:14"), args[2],args[3],args[4],args[5]);
-		break;
-	case 15:
-		warning("o6_miscOps: stub15(%d)", args[1]);
-		break;
-	case 16: {
-		byte buf[200];
-		_msgPtrToAdd = buf;
-		addMessageToStack(getStringAddress(_vars[VAR_STRING2DRAW]));
-		warning("o6_miscOps: drawString(%s,charset=%d,color=%d,x=%d,y=%d)",buf, args[1],args[2],args[3],args[4]);
-		break;
-	}
-	case 17:
-		warning("o6_miscOps: stub17(%d,%d,%d,%d)",args[1],args[2],args[3],args[4]);
-		break;
-	case 18:
-		warning("o6_miscOps: stub18(%d,%d)", args[1], args[2]);
-		break;
-	case 107:
-		a = derefActorSafe(args[1], "o6_miscops: 107");
-		a->scalex = args[2];
-		a->needBgReset = true;
-		a->needRedraw = true;
-		break;
-	case 108:
-		setupShadowPalette(args[1],args[2],args[3],args[4],args[5],args[6]);
-		break;
-	case 109:
-		setupShadowPalette(0, args[1],args[2],args[3],args[4],args[5]);
-		break;
-	case 114:
-		warning("o6_miscOps: stub114()");
-		break;
-	case 117:
-		freezeScripts(2);
-		break;
-	case 118:
-		enqueueObject(args[1],args[2],args[3],args[4],args[5],args[6],args[7],args[8], 3);
-		break;
-	case 119:
-		enqueueObject(args[1],args[2],args[3],args[4],args[5],args[6],args[7],args[8], 0);
-		break;
-	case 120:
-		warning("o6_miscOps: stub120(%d,%d)", args[1], args[2]);
-		break;
-	case 124:
-		warning("o6_miscOps: stub124(%d)", args[1]);
-		break;
-	}
+	if(_features & GF_AFTER_V7) {
+		switch(args[0]) {
+		case 4:
+			grabCursor(args[1], args[2], args[3], args[4]);
+			break;
+		case 6:
+			warning("o6_miscOps: startVideo(%d,%s)", args[1], getStringAddress(_vars[0xf6/2]));
+			break;
+		case 7:
+			warning("o6_miscOps: stub7()");
+			break;
+		case 10:
+			warning("o6_miscOps: stub10(%d,%d,%d,%d)",args[1],args[2],args[3],args[4]);
+			break;
+		case 11:
+			warning("o6_miscOps: stub11(%d)", args[1]);
+			break;
+		case 12:
+			setCursorImg(args[1], -1, args[2]);
+			break;
+		case 13:
+			warning("o6_miscOps: stub13(%d,%d,%d,%d)",args[1],args[2],args[3],args[4]);
+			break;
+		case 14:
+			remapActor(derefActorSafe(args[1], "o6_miscOps:14"), args[2],args[3],args[4],args[5]);
+			break;
+		case 15:
+			warning("o6_miscOps: stub15(%d)", args[1]);
+			break;
+		case 16: {
+			byte buf[200];
+			_msgPtrToAdd = buf;
+			addMessageToStack(getStringAddress(_vars[VAR_STRING2DRAW]));
+			warning("o6_miscOps: drawString(%s,charset=%d,color=%d,x=%d,y=%d)",buf, args[1],args[2],args[3],args[4]);
+			break;
+		}
+		case 17:
+			warning("o6_miscOps: stub17(%d,%d,%d,%d)",args[1],args[2],args[3],args[4]);
+			break;
+		case 18:
+			warning("o6_miscOps: stub18(%d,%d)", args[1], args[2]);
+			break;
+		case 107:
+			a = derefActorSafe(args[1], "o6_miscops: 107");
+			a->scalex = args[2];
+			a->needBgReset = true;
+			a->needRedraw = true;
+			break;
+		case 108:
+			setupShadowPalette(args[1],args[2],args[3],args[4],args[5],args[6]);
+			break;
+		case 109:
+			setupShadowPalette(0, args[1],args[2],args[3],args[4],args[5]);
+			break;
+		case 114:
+			warning("o6_miscOps: stub114()");
+			break;
+		case 117:
+			freezeScripts(2);
+			break;
+		case 118:
+			enqueueObject(args[1],args[2],args[3],args[4],args[5],args[6],args[7],args[8], 3);
+			break;
+		case 119:
+			enqueueObject(args[1],args[2],args[3],args[4],args[5],args[6],args[7],args[8], 0);
+			break;
+		case 120:
+			warning("o6_miscOps: stub120(%d,%d)", args[1], args[2]);
+			break;
+		case 124:
+			warning("o6_miscOps: stub124(%d)", args[1]);
+			break;
+		}
+	} else {
+		switch(args[0]) {
+		case 3:
+			warning("o6_miscOps: nothing in 3");
+			break;
+		case 4:
+			grabCursor(args[1], args[2], args[3], args[4]);
+			break;
+		case 5:
+			unkVirtScreen4(args[1]);
+			break;
+		case 6:
+			_fullRedraw = 1;
+			redrawBGAreas();
+			for (i=0; i<NUM_ACTORS; i++)
+				derefActor(i)->needRedraw = true;
+			processActors();
+			screenEffect(args[1]);
+			break;
+		case 8:
+			startManiac();
+			break;
+		case 9:
+			unkMiscOp9();
+			break;
 
-#else
-	switch(args[0]) {
-	case 3:
-		warning("o6_miscOps: nothing in 3");
-		break;
-	case 4:
-		grabCursor(args[1], args[2], args[3], args[4]);
-		break;
-	case 5:
-		unkVirtScreen4(args[1]);
-		break;
-	case 6:
-		_fullRedraw = 1;
-		redrawBGAreas();
-		for (i=0; i<NUM_ACTORS; i++)
-			derefActor(i)->needRedraw = true;
-		processActors();
-		screenEffect(args[1]);
-		break;
-	case 8:
-		startManiac();
-		break;
-	case 9:
-		unkMiscOp9();
-		break;
+		case 124: /* samnmax */
+			warning("o6_miscOps: _saveSound=%d", args[1]);
+			break;
 
-	case 124: /* samnmax */
-		warning("o6_miscOps: _saveSound=%d", args[1]);
-		break;
-
-	case 104: /* samnmax */
-		nukeFlObjects(args[2], args[3]);
-		break;
+		case 104: /* samnmax */
+			nukeFlObjects(args[2], args[3]);
+			break;
 	
-	case 106:
-		error("stub o6_miscOps_106()");
-		break;
+		case 106:
+			error("stub o6_miscOps_106()");
+			break;
 	
-	case 107: /* set actor scale */
-		a = derefActorSafe(args[1], "o6_miscops: 107");
-		a->scalex = args[2];
-		a->needBgReset = true;
-		a->needRedraw = true;
-		break;
+		case 107: /* set actor scale */
+			a = derefActorSafe(args[1], "o6_miscops: 107");
+			a->scalex = args[2];
+			a->needBgReset = true;
+			a->needRedraw = true;
+			break;
 
-	case 108:
-	case 109:
-		warning("stub o6_miscOps_108(%d,%d,%d,%d,%d,%d,%d)",
-			args[1], args[2], args[3], args[4], args[5],
-			0,256);
-		break;
+		case 108:
+		case 109:
+			warning("stub o6_miscOps_108(%d,%d,%d,%d,%d,%d,%d)",args[1], args[2], args[3], args[4], args[5],0,256);
+			break;
 
-	case 110:
-		gdi.clearUpperMask();
-		break;
+		case 110:
+			gdi.clearUpperMask();
+			break;
 
-	case 111:
-		a = derefActorSafe(args[1], "o6_miscops: 111");
-		a->shadow_mode = args[2] + args[3];
-		break;
+		case 111:
+			a = derefActorSafe(args[1], "o6_miscops: 111");
+			a->shadow_mode = args[2] + args[3];
+			break;
 
-	case 112:
-		error("stub o6_miscOps_112(%d,%d,%d,%d,%d,%d,%d)",
-			args[1], args[2], args[3], args[4], args[5],
-			args[6], args[7]);
-		break;
-
-	case 114: /* palette? */
-		error("stub o6_miscOps_114()");
-		break;
+		case 112:
+			error("stub o6_miscOps_112(%d,%d,%d,%d,%d,%d,%d)",
+				args[1], args[2], args[3], args[4], args[5],
+				args[6], args[7]);
+			break;
+	
+		case 114: /* palette? */
+			error("stub o6_miscOps_114()");
+			break;
 			
-	case 117:
-		error("stub o6_miscOps_117()");
-		break;
+		case 117:
+			error("stub o6_miscOps_117()");
+			break;
 
-	case 118:
-		error("stub o6_miscOps_118(%d,%d,%d,%d,%d,%d,%d)",
-			args[1], args[2], args[3], args[4], args[5],
-			args[6], args[7]);
-		break;
+		case 118:
+			error("stub o6_miscOps_118(%d,%d,%d,%d,%d,%d,%d)",
+				args[1], args[2], args[3], args[4], args[5],
+				args[6], args[7]);
+			break;
+	
+		case 119:
+			enqueueObject(args[1], args[2], args[3], args[4], args[5],
+				args[6], args[7], args[8], 0);
+			break;
 
-	case 119:
-		enqueueObject(args[1], args[2], args[3], args[4], args[5],
-			args[6], args[7], args[8], 0);
-		break;
+		case 120:
+			swapPalColors(args[1],args[2]);
+			break;
 
-	case 120:
-		swapPalColors(args[1],args[2]);
-		break;
+		case 121:
+			error("stub o6_miscOps_121(%d)", args[1]);
+			break;	
 
-	case 121:
-		error("stub o6_miscOps_121(%d)", args[1]);
-		break;
+		case 122:
+			error("stub o6_miscOps_122(%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d)", 
+				args[1],args[2],args[3],args[4],
+				args[5],args[6],args[7],args[8],
+				args[9],args[10],args[11],args[12]);
+			break;
 
-	case 122:
-		error("stub o6_miscOps_122(%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d)", 
-			args[1],args[2],args[3],args[4],
-			args[5],args[6],args[7],args[8],
-			args[9],args[10],args[11],args[12]);
-		break;
+		case 123:
+			error("stub o6_miscOps_123(%d,%d)", args[1], args[2]);
+			break;
 
-	case 123:
-		error("stub o6_miscOps_123(%d,%d)", args[1], args[2]);
-		break;
-
-	default:
-		error("o6_miscOps: default case %d", args[0]);
+		default:
+			error("o6_miscOps: default case %d", args[0]);
+		}
 	}
-#endif
 }
 
 void Scumm::o6_kernelFunction() {

@@ -62,14 +62,11 @@ void Scumm::openRoom(int room) {
 			_fileOffset = _roomFileOffsets[room];
 			return;
 		}
-#if defined(FULL_THROTTLE)
-		sprintf(buf, "%s.la%d", _exe_name, 
-			room==0 ? 0 : res.roomno[rtRoom][room]);
-                _encbyte = (_features & GF_USE_KEY) ? 0x69 : 0;
-#else
                 if (!(_features & GF_SMALL_HEADER)) {
-                        sprintf(buf, "%s.%.3d",  _exe_name,  room==0 ? 0 : res.roomno[rtRoom][room]);
-			
+			if(_features & GF_AFTER_V7)
+				sprintf(buf, "%s.la%d", _exe_name, room==0 ? 0 : res.roomno[rtRoom][room]);
+			else
+                        	sprintf(buf, "%s.%.3d",  _exe_name,  room==0 ? 0 : res.roomno[rtRoom][room]);
                         _encbyte = (_features & GF_USE_KEY) ? 0x69 : 0;
                 } else if(!(_features & GF_SMALL_NAMES)) {
 			if(room==0 || room>=900) {
@@ -91,7 +88,6 @@ void Scumm::openRoom(int room) {
 				else
 					_encbyte = 0;
 		}
-#endif
 
 		if (openResourceFile(buf)) {
 			if (room==0)

@@ -206,6 +206,11 @@ void Scumm::scummMain(int argc, char **argv) {
 		_features = GF_DEFAULT;
 	}
 
+	if(_features & GF_AFTER_V7)
+		setupScummVarsNew();
+	else
+		setupScummVarsOld();
+
 	if (_gameId==GID_INDY4 && _bootParam==0) {
 		_bootParam = -7873;
 	}
@@ -465,8 +470,9 @@ static const VersionSettings version_settings[] = {
         {"snmdemo",     "Sam & Max (Demo)",                             GID_SAMNMAX,  6, 3, 0, GF_NEW_OPCODES|GF_AFTER_V6|GF_USE_KEY},
 
         /* Scumm Version 7 */
-        {"ft",          "Full Throttle",                                GID_SAMNMAX,  7, 3, 0, GF_NEW_OPCODES|GF_AFTER_V6|GF_AFTER_V7},
-
+        {"ft",          "Full Throttle",                                GID_FT,       7, 3, 0, GF_NEW_OPCODES|GF_AFTER_V6|GF_AFTER_V7},
+	{"dig",		"The Dig",					GID_DIG,      7, 5, 0, GF_NEW_OPCODES|GF_AFTER_V6|GF_AFTER_V7},	
+	
         /* Scumm Version 8 */
 //      {"curse",       "The Curse of Monkey Island",                   GID_CMI,      8, 1, 0,},
 	{NULL,NULL}

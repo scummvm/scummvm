@@ -101,7 +101,7 @@ bool ScummDebugger::do_command() {
 			printf("Enter a room number...\n");
 		} else {	
 			int room=atoi(_parameters);
-			_s->actor[_s->_vars[VAR_EGO]].room=room;
+			_s->actor[_s->_vars[_s->VAR_EGO]].room=room;
 			_s->startScene(room, 0, 0);
 			_s->_fullRedraw = 1;
 		}
