@@ -101,6 +101,7 @@ long	       lua_collectgarbage	(long limit);
 
 void	       lua_runtasks		(void);
 
+void current_script (void);
 
 /* =============================================================== */
 /* some useful macros/derived functions */

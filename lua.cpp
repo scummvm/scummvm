@@ -1188,6 +1188,10 @@ static void FreeObjectState() {
 	//scene.deleteObjectState(object);
 }
 
+static void GetCurrentScript() {
+	current_script();
+}
+
 // Stub function for builtin functions not yet implemented
 
 static void stubWarning() {
@@ -1410,7 +1414,6 @@ static char *stubFuncs[] = {
 	"DrawLine",
 	"pause_scripts",
 	"unpause_scripts",
-	"print_stack"
 };
 
 // Entries in the system table
@@ -1676,7 +1679,8 @@ struct luaL_reg builtins[] = {
 	{ "SetSpeechMode", SetSpeechMode },
 	{ "GetTextCharPosition", GetTextCharPosition },
 	{ "GetDiskFreeSpace", GetDiskFreeSpace },
-	{ "Is3DHardwareEnabled", Is3DHardwareEnabled }
+	{ "Is3DHardwareEnabled", Is3DHardwareEnabled },
+	{ "GetCurrentScript", GetCurrentScript }
 };
 
 void register_lua() {
@@ -1755,10 +1759,10 @@ int bundle_dofile(const char *filename) {
 		// d:\grimFandango\Scripts\foo.lua
 		if (std::strstr(filename, "Scripts\\") == NULL)
 			warning("Cannot find script %s\n", filename);
-	return 2;
-}
+		return 2;
+	}
 
-int result = lua_dobuffer(const_cast<char *>(b->data()), b->len(),
+	int result = lua_dobuffer(const_cast<char *>(b->data()), b->len(),
 							const_cast<char *>(filename));
 	delete b;
 	return result;

@@ -172,7 +172,7 @@ void break_here (void) {
   L->Tstate = YIELD;
 }
 
-void GetCurrentScript (void) {
+void current_script (void) {
   if (L->curr_task == L->root_task)
     lua_pushnil();
   else {

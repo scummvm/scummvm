@@ -83,7 +83,7 @@ Block *Lab::getFileBlock(const char *filename) const {
 	data[i->second.len] = '\0';	// For valgrind cleanness
 	data[i->second.len + 1] = '\0';
 	return new Block(data, i->second.len);
-	}
+}
 
 std::FILE *Lab::openNewStream(const char *filename) const {
 	file_map_type::const_iterator i = find_filename(filename);
