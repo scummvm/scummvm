@@ -1229,23 +1229,20 @@ void Cutaway::talk(char *nextFilename) {
 int Cutaway::makeComplexAnimation(int16 currentImage, Cutaway::CutawayAnim *objAnim, int frameCount) {
 	int frameIndex[256];
 	int i;
-	int bobNum = objAnim[0].object;
-	assert(bobNum < 21);
+	assert(frameCount < 30);
+	AnimFrame cutAnim[30];
 	
 	memset(frameIndex, 0, sizeof(frameIndex));
 	debug(6, "[Cutaway::makeComplexAnimation] currentImage = %i", currentImage);
 
-	BobSlot *bob = _vm->graphics()->bob(bobNum);
-	bob->xflip = objAnim[0].flip;
-
 	for (i = 0; i < frameCount; i++) {
-		_cutAnim[bobNum][i].frame = objAnim[i].unpackFrame;
-		_cutAnim[bobNum][i].speed = objAnim[i].speed;
+		cutAnim[i].frame = objAnim[i].unpackFrame;
+		cutAnim[i].speed = objAnim[i].speed;
 		frameIndex[objAnim[i].unpackFrame] = 1;
 	}
 
-	_cutAnim[bobNum][frameCount].frame = 0;	
-	_cutAnim[bobNum][frameCount].speed = 0;
+	cutAnim[frameCount].frame = 0;	
+	cutAnim[frameCount].speed = 0;
 
 	int nextFrameIndex = 1;
 
@@ -1254,20 +1251,17 @@ int Cutaway::makeComplexAnimation(int16 currentImage, Cutaway::CutawayAnim *objA
 			frameIndex[i] = nextFrameIndex++;
 
 	for (i = 0; i < frameCount; i++) {
-		_cutAnim[bobNum][i].frame = currentImage + frameIndex[objAnim[i].unpackFrame];
-		//debug(6, "_cutAnim[%i][%i].frame = %i", bobNum, i, _cutAnim[bobNum][i].frame);
+		cutAnim[i].frame = currentImage + frameIndex[objAnim[i].unpackFrame];
 	}
 
 	for (i = 1; i < 256; i++) {
 		if (frameIndex[i]) {
 			currentImage++;
-			//debug(6, "bankUnpack(%i, %i, %i)", i, currentImage, objAnim[0].bank);
 			_vm->bankMan()->unpack(i, currentImage, objAnim[0].bank);
 		}
 	}
 
-	bob->animString(_cutAnim[bobNum]);
-
+	_vm->graphics()->setBobCutawayAnim(objAnim[0].object, objAnim[0].flip, cutAnim, frameCount + 1);
 	return currentImage;
 }
 
