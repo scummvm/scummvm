@@ -31,7 +31,6 @@ namespace Scumm {
 ImuseDigiSndMgr::ImuseDigiSndMgr(ScummEngine *scumm) {
 	memset(&_sounds, 0, sizeof(_sounds));
 	_vm = scumm;
-	_mutex = g_system->create_mutex();
 	_disk = 0;
 	_cacheBundleDir = new BundleDirCache();
 	BundleCodecs::initializeImcTables();
@@ -42,8 +41,6 @@ ImuseDigiSndMgr::~ImuseDigiSndMgr() {
 		if (&_sounds[l])
 			closeSound(&_sounds[l]);
 	}
-	delete _cacheBundleDir;
-	g_system->delete_mutex(_mutex);
 #ifdef __PALM_OS__
 	BundleCodecs::releaseImcTables();
 #endif
@@ -209,7 +206,6 @@ bool ImuseDigiSndMgr::openVoiceBundle(int slot) {
 ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const char *soundName, int soundType, int soundGroup) {
 	assert(soundId >= 0);
 	assert(soundType);
-	Common::StackLock tmpLock(_mutex);
 
 	int slot = allocSlot();
 	if (slot == -1) {
@@ -273,7 +269,6 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 
 void ImuseDigiSndMgr::closeSound(soundStruct *soundHandle) {
 	assert(soundHandle && checkForProperHandle(soundHandle));
-	Common::StackLock tmpLock(_mutex);
 
 	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
 		if (&_sounds[l] == soundHandle) {
@@ -297,50 +292,42 @@ bool ImuseDigiSndMgr::checkForProperHandle(soundStruct *soundHandle) {
 }
 
 int ImuseDigiSndMgr::getFreq(soundStruct *soundHandle) {
-	Common::StackLock tmpLock(_mutex);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	return soundHandle->freq;
 }
 
 int ImuseDigiSndMgr::getBits(soundStruct *soundHandle) {
-	Common::StackLock tmpLock(_mutex);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	return soundHandle->bits;
 }
 
 int ImuseDigiSndMgr::getChannels(soundStruct *soundHandle) {
-	Common::StackLock tmpLock(_mutex);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	return soundHandle->channels;
 }
 
 bool ImuseDigiSndMgr::isEndOfRegion(soundStruct *soundHandle, int region) {
-	Common::StackLock tmpLock(_mutex);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(region >= 0 && region < soundHandle->numRegions);
 	return soundHandle->endFlag;
 }
 
 int ImuseDigiSndMgr::getNumRegions(soundStruct *soundHandle) {
-	Common::StackLock tmpLock(_mutex);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	return soundHandle->numRegions;
 }
 
 int ImuseDigiSndMgr::getNumJumps(soundStruct *soundHandle) {
-	Common::StackLock tmpLock(_mutex);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	return soundHandle->numJumps;
 }
 
 int ImuseDigiSndMgr::getNumMarkers(soundStruct *soundHandle) {
-	Common::StackLock tmpLock(_mutex);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	return soundHandle->numMarkers;
 }
 
 int ImuseDigiSndMgr::getJumpIdByRegionId(soundStruct *soundHandle, int number) {
-	Common::StackLock tmpLock(_mutex);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(number >= 0 && number < soundHandle->numRegions);
 	for (int l = 0; l < soundHandle->numJumps; l++) {
@@ -353,7 +340,6 @@ int ImuseDigiSndMgr::getJumpIdByRegionId(soundStruct *soundHandle, int number) {
 }
 
 void ImuseDigiSndMgr::getSyncSizeAndPtrById(soundStruct *soundHandle, int number, int32 &sync_size, byte **sync_ptr) {
-	Common::StackLock tmpLock(_mutex);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(number >= 0);
 	if (number < soundHandle->numSyncs) {
@@ -366,7 +352,6 @@ void ImuseDigiSndMgr::getSyncSizeAndPtrById(soundStruct *soundHandle, int number
 }
 
 int ImuseDigiSndMgr::getRegionIdByHookId(soundStruct *soundHandle, int number) {
-	Common::StackLock tmpLock(_mutex);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	for (int l = 0; l < soundHandle->numJumps; l++) {
 		if (soundHandle->jump[l].hookId == number) {
@@ -382,28 +367,24 @@ int ImuseDigiSndMgr::getRegionIdByHookId(soundStruct *soundHandle, int number) {
 }
 
 int ImuseDigiSndMgr::getJumpHookId(soundStruct *soundHandle, int number) {
-	Common::StackLock tmpLock(_mutex);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(number >= 0 && number < soundHandle->numJumps);
 	return soundHandle->jump[number].hookId;
 }
 
 int ImuseDigiSndMgr::getJumpFade(soundStruct *soundHandle, int number) {
-	Common::StackLock tmpLock(_mutex);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(number >= 0 && number < soundHandle->numJumps);
 	return soundHandle->jump[number].fadeDelay;
 }
 
 char *ImuseDigiSndMgr::getMarker(soundStruct *soundHandle, int number) {
-	Common::StackLock tmpLock(_mutex);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(number >= 0 && number < soundHandle->numMarkers);
 	return (char *)(soundHandle->marker[number].name);
 }
 
 int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, byte **buf, int32 offset, int32 size) {
-	Common::StackLock tmpLock(_mutex);
 	assert(soundHandle && checkForProperHandle(soundHandle));
 	assert(buf && offset >= 0 && size >= 0);
 	assert(region >= 0 && region < soundHandle->numRegions);

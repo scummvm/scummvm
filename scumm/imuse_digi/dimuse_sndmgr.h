@@ -103,7 +103,6 @@ private:
 	void prepareSound(byte *ptr, int slot);
 
 	ScummEngine *_vm;
-	OSystem::MutexRef _mutex;
 	byte _disk;
 	BundleDirCache *_cacheBundleDir;
 

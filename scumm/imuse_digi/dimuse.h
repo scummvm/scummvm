@@ -57,6 +57,7 @@ private:
 		int soundGroup;
 		int iteration;
 		int mod;
+		bool locked;
 		int32 pullSize;
 		ImuseDigiSndMgr::soundStruct *soundHandle;
 		PlayingSoundHandle handle;

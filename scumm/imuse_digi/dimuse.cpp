@@ -72,7 +72,7 @@ void IMuseDigital::callback() {
 					continue;
 				}
 			} else if (_track[l].stream) {
-				if (_track[l].toBeRemoved) {
+				if ((!_track[l].locked) && (_track[l].toBeRemoved)) {
 					debug(5, "IMuseDigital::callback(): stoped sound: %d", _track[l].idSound);
 					if (_track[l].stream)
 						_track[l].stream->finish();
@@ -289,6 +289,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				_curMusicId = soundId;
 			}
 
+			_track[l].locked = false;
 			_track[l].used = true;
 			return;
 		}
@@ -299,11 +300,13 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 void IMuseDigital::stopMusic() {
 	debug(5, "IMuseDigital::stopMusic()");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		_track[l].locked = true;
 		if ((_track[l].idSound == _curMusicId) && _track[l].used) {
 			if (_track[l].stream) {
 				_track[l].toBeRemoved = true;
 			}
 		}
+		_track[l].locked = false;
 	}
 	_curMusicId = -1;
 }
@@ -311,6 +314,7 @@ void IMuseDigital::stopMusic() {
 void IMuseDigital::stopSound(int soundId) {
 	debug(5, "IMuseDigital::stopSound(%d)", soundId);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		_track[l].locked = true;
 		if ((_track[l].idSound == soundId) && _track[l].used) {
 			if (_track[l].stream) {
 				_track[l].toBeRemoved = true;
@@ -318,18 +322,21 @@ void IMuseDigital::stopSound(int soundId) {
 			else if (_track[l].stream2)
 				_vm->_mixer->stopHandle(_track[l].handle);
 		}
+		_track[l].locked = false;
 	}
 }
 
 void IMuseDigital::stopAllSounds(bool waitForStop) {
 	debug(5, "IMuseDigital::stopAllSounds");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		_track[l].locked = true;
 		if (_track[l].used) {
 			if (_track[l].stream) {
 				_track[l].toBeRemoved = true;
 			} else if (_track[l].stream2)
 				_vm->_mixer->stopHandle(_track[l].handle);
 		}
+		_track[l].locked = false;
 	}
 	_curMusicId = -1;
 
@@ -347,9 +354,11 @@ void IMuseDigital::stopAllSounds(bool waitForStop) {
 
 void IMuseDigital::pause(bool p) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		_track[l].locked = true;
 		if (_track[l].used) {
 			_vm->_mixer->pauseHandle(_track[l].handle, p);
 		}
+		_track[l].locked = false;
 	}
 	_pause = p;
 }
@@ -376,11 +385,13 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 		case 0x600: // set volume
 			debug(5, "ImuseSetParam (0x600), sample(%d), volume(%d)", sample, d);
 			for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+				_track[l].locked = true;
 				if ((_track[l].idSound == sample) && _track[l].used) {
 					_track[l].vol = d * 1000;
 //					if (_track[l].volFadeUsed)
 //						_track[l].volFadeStep = (_track[l].volFadeDest - _track[l].vol) * 60 * 40 / (1000 * _track[chan].volFadeDelay);
 				}
+				_track[l].locked = false;
 			}
 			if (l == -1) {
 				debug(5, "ImuseSetParam (0x600), sample(%d) not exist in channels", sample);
@@ -390,9 +401,11 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 		case 0x700: // set pan
 			debug(5, "ImuseSetParam (0x700), sample(%d), pan(%d)", sample, d);
 			for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+				_track[l].locked = true;
 				if ((_track[l].idSound == sample) && _track[l].used) {
 					_track[l].pan = d;
 				}
+				_track[l].locked = false;
 			}
 			if (l == -1) {
 				debug(5, "ImuseSetParam (0x700), sample(%d) not exist in channels", sample);
@@ -413,6 +426,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 				return;
 			}
 			for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+				_track[l].locked = true;
 				if ((_track[l].idSound == sample) && _track[l].used) {
 					_track[l].volFadeDelay = e;
 					_track[l].volFadeDest = d * 1000;
@@ -420,6 +434,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 					_track[l].volFadeUsed = true;
 					debug(5, "ImuseFadeParam: vol %d, volDest %d, step %d", _track[l].vol, d * 1000, _track[l].volFadeStep);
 				}
+				_track[l].locked = false;
 			}
 			if (chan == -1) {
 				debug(5, "ImuseFadeParam (0x600), sample %d not exist in channels", sample);
@@ -583,6 +598,7 @@ void IMuseDigital::getLipSync(int soundId, int syncId, int32 msPos, int32 &width
 	msPos /= 16;
 	if (msPos < 65536) {
 		for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+			_track[l].locked = true;
 			if ((_track[l].idSound == soundId) && _track[l].used) {
 				_sound->getSyncSizeAndPtrById(_track[l].soundHandle, syncId, sync_size, &sync_ptr);
 				if ((sync_size != 0) && (sync_ptr != NULL)) {
@@ -600,19 +616,24 @@ void IMuseDigital::getLipSync(int soundId, int syncId, int32 msPos, int32 &width
 
 					width = sync_ptr[2];
 					height = sync_ptr[3];
+					_track[l].locked = false;
 					return;
 				}
 			}
+			_track[l].locked = false;
 		}
 	}
 }
 
 int32 IMuseDigital::getPosInMs(int soundId) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		_track[l].locked = true;
 		if ((_track[l].idSound == soundId) && _track[l].used) {
 			int32 pos = 1000 * _track[l].trackOffset / _track[l].iteration;
+			_track[l].locked = false;
 			return pos;
 		}
+		_track[l].locked = false;
 	}
 
 	return 0;
