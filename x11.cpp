@@ -226,6 +226,7 @@ static void *sound_and_music_thread(void *params)
 		exit(-1);
 	}
 
+	sched_yield();
 	while (1) {
 		unsigned short *buf = (unsigned short *)sound_buffer;
 		int size, written;
@@ -374,7 +375,7 @@ void OSystem_X11::init_size(uint w, uint h) {
 }
 
 bool OSystem_X11::set_sound_proc(void *param, SoundProc *proc, byte format) {
-	THREAD_PARAM thread_param;
+	static THREAD_PARAM thread_param;
 
 	/* And finally start the music thread */
 	thread_param.param = param;
