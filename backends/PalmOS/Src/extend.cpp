@@ -27,6 +27,8 @@
 #include "globals.h"
 #include "starterrsc.h"
 
+#include "armnative.h"
+
 const Char *SCUMMVM_SAVEPATH = "/PALM/Programs/ScummVM/Saved/";
 
 void PalmFatalError(const Char *err) {
@@ -41,6 +43,27 @@ void PalmFatalError(const Char *err) {
 	WinEraseWindow();
 	FrmCustomAlert(FrmFatalErrorAlert, err, 0,0);
 	SysReset();
+}
+
+
+void DrawStatus(Boolean show) {
+	if (OPTIONS_TST(kOptDisableOnScrDisp))
+		return;
+
+	UInt8 x,y;
+	UInt8 *screen = (UInt8 *)(BmpGetBits(WinGetBitmap(WinGetDisplayWindow())));
+	UInt8 color = (show? gVars->indicator.on : gVars->indicator.off);
+
+	if (gVars->screenLocked)
+		screen = (screen == gVars->flipping.pageAddr1) ? gVars->flipping.pageAddr2 : gVars->flipping.pageAddr1;
+
+	screen += gVars->screenPitch + 1;
+	for(y=0; y < 4; y++) {
+		for(x=0; x < 4; x++)
+			screen[x] = color;
+
+		screen += gVars->screenPitch;
+	}
 }
 
 UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Char *fndParamStr) {
@@ -78,39 +101,42 @@ UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Ch
 
 	return occurences;
 }
-/*
-UInt32 PceNativeRsrcCall(DmResID resID, void *userDataP) {
-	PnoDescriptor pno;
-	
+
+MemPtr _PceInit(DmResID resID) {
 	MemHandle armH = DmGetResource('ARMC', resID);
-	MemPtr pnoPtr = MemHandleLock(armH);
+	NativeFuncType *armP = (NativeFuncType *)MemHandleLock(armH);
 
-//	UInt32 result = PceNativeCall((NativeFuncType*)armP, userDataP);
-	PnoLoad(&pno, pnoPtr);
-	UInt32 result = PnoCall(&pno, userDataP);
-	PnoUnload(&pno);
+	return armP;
+}
 
-	MemHandleUnlock(armH);
+UInt32 _PceCall(void *armP, void *userDataP) {
+	return PceNativeCall((NativeFuncType *)armP, userDataP);
+}
+
+void _PceFree(void *armP) {
+	MemHandle armH = MemPtrRecoverHandle(armP);
+
+	MemPtrUnlock(armP);
 	DmReleaseResource(armH);
-
-	return result;
-}*/
-UInt32 PceNativeRsrcCall(PnoDescriptor *pno, void *userDataP) {
-	return PnoCall(pno, userDataP);;
 }
 
-MemPtr PceNativeCallInit(DmResID resID, PnoDescriptor *pno) {
+MemPtr _PnoInit(DmResID resID, PnoDescriptor *pnoP) {
 	MemHandle armH = DmGetResource('ARMC', resID);
-	MemPtr pnoPtr = MemHandleLock(armH);
-	PnoLoad(pno, pnoPtr);
+	MemPtr armP = MemHandleLock(armH);
+	PnoLoad(pnoP, armP);
 
-	return pnoPtr;
+	return armP;
 }
 
-void PceNativeCallRelease(PnoDescriptor *pno, MemPtr ptr) {
-	MemHandle h = MemPtrRecoverHandle(ptr);
-
-	PnoUnload(pno);
-	MemPtrUnlock(ptr);
-	DmReleaseResource(h);
+UInt32 _PnoCall(PnoDescriptor *pnoP, void *userDataP) {
+	return PnoCall(pnoP, userDataP);;
 }
+
+void _PnoFree(PnoDescriptor *pnoP, MemPtr armP) {
+	MemHandle armH = MemPtrRecoverHandle(armP);
+
+	PnoUnload(pnoP);
+	MemPtrUnlock(armP);
+	DmReleaseResource(armH);
+}
+
