@@ -11,10 +11,10 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
  General:
    - Subtitles now default to disabled. '-n' option now enabled subtitles.
    - Added HQ2x and HQ3x scalers
-   - New 'from scratch' sound mixer
+   - Rewrote sound code for more flexibility and performance
    - Improved native MT32 support
    - Adlib GM emulation table revamped, providing more accurate software MIDI
-   - Default Makefile now uses configure script, old one is Makefile.noconf
+   - Default Makefile now uses configure script
    - Greatly improved the launcher and options dialogs (work-in-progress)
    - Many other "under the hood" improvements, like a new config managment
 	 and plugin capabilities
