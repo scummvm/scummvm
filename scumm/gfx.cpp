@@ -1210,7 +1210,7 @@ void Gdi::decodeStripOldEGA(byte *dst, byte *src, int height, int stripnr) {
 	memset(dither_table, 0, sizeof(dither_table));	// FIXME - is that correct?
 	do {
 		ptr_dither_table = dither_table;
-		y = 128;
+		y = height;
 		do {
 			if (--run == 0) {
 				data = *src++;
