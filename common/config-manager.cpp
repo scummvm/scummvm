@@ -334,6 +334,13 @@ const String & ConfigManager::get(const String &key, const String &domain) const
 int ConfigManager::getInt(const String &key, const String &dom) const {
 	String value(get(key, dom));
 	char *errpos;
+	
+	// For now, be tolerant against missing config keys. Strictly spoken, it is
+	// a bug in the calling code to retrieve an int for a key which isn't even
+	// present... and a default value of 0 seems rather arbitrary.
+	if (value.isEmpty())
+		return 0;
+
 	int ivalue = (int)strtol(value.c_str(), &errpos, 10);
 	if (value.c_str() == errpos)
 		error("Config file buggy: '%s' is not a valid integer", errpos);

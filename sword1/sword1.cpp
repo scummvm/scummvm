@@ -113,18 +113,19 @@ void SwordEngine::initialize(void) {
 	_logic = new Logic(_objectMan, _resMan, _screen, _mouse, _sound, _music, _menu, _system, _mixer);
 	_mouse->useLogicAndMenu(_logic, _menu);
 
+	ConfMan.registerDefault("speech_volume", 192);
+
 	uint8 musicVol = (uint8)ConfMan.getInt("music_volume");
 	uint8 speechVol = (uint8)ConfMan.getInt("speech_volume");
 	uint8 sfxVol = (uint8)ConfMan.getInt("sfx_volume");
-	if (!speechVol)
-		speechVol = 192;
 
 	_music->setVolume(musicVol, musicVol);      // these routines expect left and right volume,
 	_sound->setSpeechVol(speechVol, speechVol); // but our config manager doesn't support it.
 	_sound->setSfxVol(sfxVol, sfxVol);
 
-	_systemVars.justRestoredGame = _systemVars.currentCD = 
-		_systemVars.gamePaused = 0;
+	_systemVars.justRestoredGame = 0;
+	_systemVars.currentCD = 0;
+	_systemVars.gamePaused = 0;
 	_systemVars.deathScreenFlag = 3;
 	_systemVars.forceRestart = false;
 	_systemVars.wantFade = true;
