@@ -666,8 +666,10 @@ void Scumm_v5::o5_cursorCommand() {
 		break;
 	}
 
-	_vars[VAR_CURSORSTATE] = _cursor.state;
-	_vars[VAR_USERPUT] = _userPut;
+	if (!(_features & GF_OLD_BUNDLE) && _gameId != GID_INDY3_256) {
+		_vars[VAR_CURSORSTATE] = _cursor.state;
+		_vars[VAR_USERPUT] = _userPut;
+	}
 }
 
 void Scumm_v5::o5_cutscene() {
