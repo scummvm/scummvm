@@ -345,6 +345,9 @@ namespace Kyra {
 			{ 0, 0 }
 		};
 
+		_commands = commandProcs;
+//		_opcodes = opcodeProcs;
+
 		_scriptFile = NULL;
 		_scriptFileSize = 0;
 	}

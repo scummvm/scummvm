@@ -29,6 +29,7 @@
 namespace Kyra {
 	Resourcemanager::Resourcemanager(KyraEngine* engine, const char* gamedir) {
 		_gameDir = gamedir;
+		_engine = engine;
 		
 		// prefetches all PAK Files
 		
@@ -41,12 +42,11 @@ namespace Kyra {
 		};
 		
 		for (uint32 tmp = 0; kyraFilelist[tmp]; ++tmp)	{
-				
 			// prefetch file
 			PAKFile* file = new PAKFile(getPath() + kyraFilelist[tmp]);
 			assert(file);			
      
-			if (file->isValid())		
+			if (file->isOpen() && file->isValid())		
 				_pakfiles.push_back(file);
 			else
 				warning("couldn't load file '%s' correctly", kyraFilelist[tmp]);
@@ -179,9 +179,10 @@ namespace Kyra {
 ///////////////////////////////////////////
 // Pak file manager
 	#define PAKFile_Iterate Common::List<PakChunk*>::iterator start=_files.begin();start != _files.end(); ++start
-
 	PAKFile::PAKFile(const Common::String& file) {
 		File pakfile;
+		_buffer = 0;
+		_open = false;
 
 		if (!pakfile.open(file.c_str())) {
 			warning("PAKFile couldn't open: '%s'", file.c_str());
@@ -221,11 +222,13 @@ namespace Kyra {
 
 			_files.push_back(chunk);
 		}
+		_open = true;
  	}
 
 	PAKFile::~PAKFile() {
 		delete [] _buffer;
 		_buffer = 0;
+		_open = false;
 
 		for (PAKFile_Iterate) {
  			delete *start;
