@@ -560,19 +560,10 @@ void Sound::processSfxQueues() {
 		_talk_sound_mode = 0;
 	}
 
-	if (_scumm->VAR(_scumm->VAR_TALK_ACTOR)) { //_sfxMode & 2) {
+	if ((_sfxMode & 2) && _scumm->VAR(_scumm->VAR_TALK_ACTOR)) {
 		act = _scumm->VAR(_scumm->VAR_TALK_ACTOR);
 
-		// FIXME: This was changed in the process of my COMI fixes.
-		// Problem is, 'finished' used to indicate if speech had
-		// been running but now is finished. But now, it'll be set
-		// even if there never has been any speech running (i.e. in
-		// all games which don't even use speech). This will have
-		// to be fixed properly! For now I am just disabling
-		// this for V2 games. A better fix would be to introduce a second
-		// variable which is set whenever speech is initiated, and reset
-		// when it stops (i.e. when _talkChannelHandle is 0).
-		finished = !_talkChannelHandle && (_scumm->_version > 2);
+		finished = !_talkChannelHandle;
 
 		if (act != 0 && (uint) act < 0x80 && !_scumm->_string[0].no_talk_anim) {
 			a = _scumm->derefActor(act, "processSfxQueues");
@@ -593,7 +584,6 @@ void Sound::processSfxQueues() {
 		
 		if (finished && _scumm->_talkDelay == 0) {
 			_scumm->stopTalk();
-			_sfxMode &= ~2;
 		}
 	}
 		
