@@ -1144,7 +1144,7 @@ void ScummEngine_v90he::spritesSortActiveSprites() {
 }
 
 void ScummEngine_v90he::spritesProcessWiz(bool arg) {
-	int spr_flags, spr_flags_;
+	int spr_flags;
 	int16 spr_wiz_x, spr_wiz_y;
 	int res_id, res_state;
 	Common::Rect *bboxPtr;
@@ -1202,9 +1202,8 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		if (res_id) {
 			rot_angle = spi->rot_angle;
 			zoom = spi->zoom;
-			spr_flags_ = spi->flags & kSFRotated;
 			getWizImageDim(res_id, res_state, w, h);
-			if (!(spi->flags & (kSFZoomed | kSFRotated)) || 1) { // FIXME. remove '|| 1'
+			if (!(spi->flags & kSFZoomed) && !(spi->flags & kSFRotated)) {
 				bboxPtr->left = wiz.img.x1;
 				bboxPtr->top = wiz.img.y1;
 				bboxPtr->right = wiz.img.x1 + w;
@@ -1223,7 +1222,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 						pts[j].y = pts[i].y * zoom / 256;
 					}
 				}
-				if (rot_angle) {
+				if (spi->flags & kSFRotated) {
 					double alpha = rot_angle * PI / 180.;
 					double cos_alpha = cos(alpha);
 					double sin_alpha = sin(alpha);
