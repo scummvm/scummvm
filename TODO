@@ -6,16 +6,16 @@ General
 * Revise the way "quit" is handled. Maybe add a global variable "g_quit" which
   we set when the application should be quit (e.g. when an EVENT_QUIT is
   received). This is useful if multiple levels of event loops have to be ended
-* fix the Map<> template, make it more robust; maybe use a red-black tree?
-* add iterators to List<> template and make use of them
-* allow for return-to-launcher instead of a normal "quit" ?
-* improve the argv (command line args) parser
-* extend the Plugin API to provide for "game detection": instead of the
+* Fix the Map<> template, make it more robust; maybe use a red-black tree?
+* Add iterators to List<> template and make use of them
+* Allow for return-to-launcher instead of a normal "quit" ?
+* Improve the argv (command line args) parser
+* Extend the Plugin API to provide for "game detection": instead of the
   GameSettings::detectname "hack" to detect files, provide a callback
   in each Plugin which given a FSList returns a list of candidate targets.
   This way, a plugin can implement tests more elaborate than filename
   checking, e.g. it could actually peek into the files.
-* make some generic "EventLoop" API/class which all backends and the GUI
+* Make some generic "EventLoop" API/class which all backends and the GUI
   use. Initially this would just call the backend poll_event() etc. methods.
   But eventually the EventLoop object(s) could be made by the backend.
   This may allow for more efficient CPU usage etc.
@@ -26,12 +26,12 @@ General
 
 GUI
 ===
-* implement "tabs" for multi-pane prefs dialog
+* Implement "tabs" for multi-pane prefs dialog
   -> could also be used by the Scumm help dialog in scumm/help.cpp
 * LAUNCHER: fix global options dialog to be properly persistent
 * LAUNCHER: add more options to global options dialog
 * LAUNCHER: add more options to game target options dialog 
-* global & game target options dialogs probably could share some "panes"
+* Global & game target options dialogs probably could share some "panes"
   -> write code allowing this
   -> also, 'in game' option dialogs (for volume/scaler/etc. settings)
      could potentially reuse these, too
@@ -91,6 +91,10 @@ SCUMM
   3) Adjust Makefile and project files to use the new name
 * Possible implement a new resource manager, which then also could be shared
   by ScummEX. [Jamieson has some ideas about this and might work on it|
+* Make opening of resource files not depend on target names for the games with
+  resource files like targetname.xxx.  This is needed for bundled mac games.
+* Support all Mac games without needing rescumm. These games being: dott,
+  samnmax, dig & ft. See above point.
 
 Broken Sword 2
 ==============
