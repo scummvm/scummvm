@@ -43,9 +43,9 @@ int Blend(int src, int dst, byte *palette);
 void ClearBlendCache(byte *palette, int weight);
 
 /*
- * Print hexdump of the data passed in, 8 bytes a row
+ * Print hexdump of the data passed in
  */
-void hexdump(const byte * data, int len);
+void hexdump(const byte * data, int len, int bytes_per_line = 8);
 
 class RandomSource {
 private:

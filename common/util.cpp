@@ -96,24 +96,25 @@ void ClearBlendCache(byte *palette, int weight) {
 }
 
 //
-// Print hexdump of the data passed in, 8 bytes a row
+// Print hexdump of the data passed in
 //
-void hexdump(const byte * data, int len) {
+void hexdump(const byte * data, int len, int bytes_per_line) {
+	assert(1 <= bytes_per_line && bytes_per_line <= 32);
 	int i;
 	byte c;
-	while (len >= 8) {
-		for (i = 0; i < 8; i++)
+	while (len >= bytes_per_line) {
+		for (i = 0; i < bytes_per_line; i++)
 			printf("%02x ", data[i]);
 		printf(" |");
-		for (i = 0; i < 8; i++) {
+		for (i = 0; i < bytes_per_line; i++) {
 			c = data[i];
 			if (c < 32 || c >= 127)
 				c = '.';
 			printf("%c", c);
 		}
 		printf("|\n");
-		data += 8;
-		len -= 8;
+		data += bytes_per_line;
+		len -= bytes_per_line;
 	}
 
 	if (len <= 0) 
@@ -121,7 +122,7 @@ void hexdump(const byte * data, int len) {
 
 	for (i = 0; i < len; i++)
 		printf("%02x ", data[i]);
-	for (; i < 8; i++)
+	for (; i < bytes_per_line; i++)
 		printf("   ");
 	printf(" |");
 	for (i = 0; i < len; i++) {
@@ -130,7 +131,7 @@ void hexdump(const byte * data, int len) {
 			c = '.';
 		printf("%c", c);
 	}
-	for (; i < 8; i++)
+	for (; i < bytes_per_line; i++)
 		printf(" ");
 	printf("|\n");
 }
