@@ -49,6 +49,8 @@ Scene::Scene(const char *name, const char *buf, int len) :
 
   numSectors_ = -1;
   numLights_ = -1;
+  lights_ = NULL;
+  sectors_ = NULL;
   // Lights are optional
   if (ts.eof())
    return;
@@ -76,7 +78,8 @@ Scene::Scene(const char *name, const char *buf, int len) :
 Scene::~Scene() {
   delete [] cmaps_;
   delete [] setups_;
-  delete [] lights_;
+  if (lights_)
+   delete [] lights_;
   if (sectors_)
    delete [] sectors_; 
 }
