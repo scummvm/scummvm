@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	scumm/gfx.o \
 	scumm/imuse.o \
 	scumm/imuse_player.o \
+	scumm/input.o \
 	scumm/instrument.o \
 	scumm/help.o \
 	scumm/midiparser_ro.o \

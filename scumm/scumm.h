@@ -384,14 +384,19 @@ public:
 	ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]);
 	virtual ~ScummEngine();
 
-	// Init functions
-	virtual void scummInit();
-	void initScummVars();
-	virtual void setupScummVars();
-
-	// Startup functions
-	void launch();
+	/** Startup function: Calls mainInit and then mainRun. */
 	void go();
+
+	// Init functions
+	void mainInit();
+
+	virtual void setupScummVars();
+	void initScummVars();
+
+	virtual void scummInit();
+
+	void loadCJKFont();
+	void setupMusic(int midi);
 
 	// Scumm main loop
 	void mainRun();
@@ -1091,7 +1096,7 @@ protected:
 	byte _haveMsg;
 	bool _useTalkAnims;
 	uint16 _defaultTalkDelay;
-	int tempMusic;
+	int _tempMusic;
 	int _saveSound;
 	bool _native_mt32;
 	int _midiDriver; // Use the MD_ values from mididrv.h

@@ -22,8 +22,10 @@
 
 
 #include "stdafx.h"
+#include "common/config-manager.h"
 #include "scumm/scumm.h"
 #include "scumm/intern.h"
+#include "sound/mididrv.h"
 
 namespace Scumm {
 
@@ -462,6 +464,132 @@ void ScummEngine_v8::setupScummVars() {
 
 	VAR_DEFAULT_TALK_DELAY = 128;
 	VAR_CHARINC = 129;
+}
+
+void ScummEngine::initScummVars() {
+
+	// This needs to be at least greater than 40 to get the more
+	// elaborate version of the EGA Zak into. I don't know where
+	// else it makes any difference.
+	if (_gameId == GID_ZAK)
+		VAR(VAR_MACHINE_SPEED) = 0x7FFF;
+
+	if (_version <= 2)
+		return;
+
+	if (_version >= 4 && _version <= 5)
+		VAR(VAR_V5_TALK_STRING_Y) = -0x50;
+
+	if (_version == 8) {	// Fixme: How do we deal with non-cd installs?
+		VAR(VAR_CURRENTDISK) = 1;
+		VAR(VAR_LANGUAGE) = _language;
+	} else if (_version >= 7) {
+		VAR(VAR_V6_EMSSPACE) = 10000;
+		VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
+	} else if (_heversion >= 70) {
+		VAR(VAR_NUM_SOUND_CHANNELS) = 3;
+		VAR(VAR_MUSIC_CHANNEL) = 1;
+		VAR(VAR_SOUND_CHANNEL) = 2;
+
+		if (_heversion >= 72) {
+			VAR(VAR_NUM_ROOMS) = _numRooms - 1;
+			VAR(VAR_NUM_SCRIPTS) = _numScripts - 1;
+			VAR(VAR_NUM_SOUNDS) = _numSounds - 1;
+			VAR(VAR_NUM_COSTUMES) = _numCostumes - 1;
+			VAR(VAR_NUM_IMAGES) = _numImages - 1;
+			VAR(VAR_NUM_CHARSETS) = _numCharsets - 1;
+			VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
+		}
+		if (_heversion >= 80)
+			VAR(VAR_WINDOWS_VERSION) = 40;
+		if (_heversion >= 90)
+			VAR(VAR_NUM_SPRITES) = _numSprites - 1;
+	} else {
+		VAR(VAR_CURRENTDRIVE) = 0;
+		switch (_midiDriver) {
+		case MD_NULL:  VAR(VAR_SOUNDCARD) = 0; break;
+		case MD_ADLIB: VAR(VAR_SOUNDCARD) = 3; break;
+		case MD_PCSPK:
+		case MD_PCJR:  VAR(VAR_SOUNDCARD) = 1; break;
+		default:       
+			if ((_gameId == GID_MONKEY_EGA || _gameId == GID_MONKEY_VGA || _gameId == GID_LOOM)
+			   &&  (_features & GF_PC)) {
+				if (_gameId == GID_LOOM) {
+					char buf[50];
+					uint i = 82;
+					File f;
+					while (i < 85) {
+						sprintf(buf, "%d.LFL", i);
+						f.open(buf);
+						if (f.isOpen() == false)
+							error("Native MIDI support requires Roland patch from LucasArts");
+						f.close();
+						i++;
+					}
+				} else if (_gameId == GID_MONKEY_EGA) {
+						File f;
+						f.open("DISK09.LEC");
+						if (f.isOpen() == false)
+							error("Native MIDI support requires Roland patch from LucasArts");
+				}
+				VAR(VAR_SOUNDCARD) = 4;
+			} else
+				VAR(VAR_SOUNDCARD) = 3;
+		}
+		if (_features & GF_FMTOWNS)
+			VAR(VAR_VIDEOMODE) = 42;
+		else if (_gameId == GID_INDY3 && (_features & GF_MACINTOSH))
+			VAR(VAR_VIDEOMODE) = 50;
+		else if (_gameId == GID_MONKEY2 && (_features & GF_AMIGA))
+			VAR(VAR_VIDEOMODE) = 82;
+		else
+			VAR(VAR_VIDEOMODE) = 19;
+		if (_gameId == GID_LOOM && _features & GF_OLD_BUNDLE) {
+			// Set number of sound resources
+			if (!(_features & GF_MACINTOSH))
+				VAR(39) = 80;
+			VAR(VAR_HEAPSPACE) = 1400;
+		} else if (_version >= 4) {
+			VAR(VAR_HEAPSPACE) = 1400;
+			VAR(VAR_FIXEDDISK) = true;
+			if (_features & GF_HUMONGOUS) {
+				VAR(VAR_SOUNDPARAM) = 1; // soundblaster for music
+				VAR(VAR_SOUNDPARAM2) = 1; // soundblaster for sfx
+			} else {
+				VAR(VAR_SOUNDPARAM) = 0;
+				VAR(VAR_SOUNDPARAM2) = 0;
+			}
+			VAR(VAR_SOUNDPARAM3) = 0;
+		}
+		if (_version >= 5)
+			VAR(VAR_MOUSEPRESENT) = true;
+		if (_version == 6)
+			VAR(VAR_V6_EMSSPACE) = 10000;
+	}
+	
+	if ((_features & GF_MACINTOSH) && (_version == 3)) {
+		// This is the for the Mac version of Indy3/Loom
+		VAR(39) = 320;
+	}
+
+	if (VAR_CURRENT_LIGHTS != 0xFF) {
+		// Setup light
+		VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
+	}
+	
+	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
+		_scummVars[74] = 1225;
+
+	if (_version >= 7) {
+		VAR(VAR_DEFAULT_TALK_DELAY) = 60;
+		VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
+	}
+
+	if (VAR_FADE_DELAY != 0xFF)
+		VAR(VAR_FADE_DELAY) = 3;
+		
+	VAR(VAR_CHARINC) = 4;
+	setTalkingActor(0);
 }
 
 } // End of namespace Scumm

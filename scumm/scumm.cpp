@@ -42,6 +42,7 @@
 #include "scumm/dialogs.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse.h"
+#include "scumm/insane/insane.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/player_v1.h"
@@ -54,8 +55,6 @@
 #include "scumm/scumm-md5.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
-
-#include "scumm/insane/insane.h"
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
@@ -70,11 +69,6 @@ extern bool isSmartphone(void);
 #endif
 
 namespace Scumm {
-
-enum MouseButtonStatus {
-	msDown = 1,
-	msClicked = 2
-};
 
 // Use g_scumm from error() ONLY
 ScummEngine *g_scumm = 0;
@@ -495,7 +489,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		}
 	}
 
-	// Init all vars - maybe now we can get rid of our custom new/delete operators?
+	// Init all vars
 	_imuse = NULL;
 	_imuseDigital = NULL;
 	_musicEngine = NULL;
@@ -660,7 +654,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_useTalkAnims = false;
 	_defaultTalkDelay = 0;
 	_midiDriver = MD_NULL;
-	tempMusic = 0;
+	_tempMusic = 0;
 	_saveSound = 0;
 	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
 	memset(_scaleSlots, 0, sizeof(_scaleSlots));
@@ -875,8 +869,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// differing from the regular version(s) of that game.
 	_gameName = ConfMan.hasKey("basename") ? ConfMan.get("basename") : gs.baseFilename ? gs.baseFilename : gs.name;
 
-	_midiDriver = GameDetector::detectMusicDriver(gs.midi);
-
 	_copyProtection = ConfMan.getBool("copy_protection");
 	_demoMode = ConfMan.getBool("demo_mode");
 	if (ConfMan.hasKey("nosubtitles")) {
@@ -885,11 +877,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 			ConfMan.set("subtitles", !ConfMan.getBool("nosubtitles"));
 	}
 	_confirmExit = ConfMan.getBool("confirm_exit");
-	_native_mt32 = ConfMan.getBool("native_mt32");
-	// TODO: We shouldn't rely on the global Language values matching those COMI etc. expect.
-	// Rather we should explicitly translate them.
-	_language = Common::parseLanguage(ConfMan.get("language"));
-	memset(&res, 0, sizeof(res));
+
 	_hexdumpScripts = false;
 	_showStack = false;
 
@@ -911,134 +899,26 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	}
 
 	// Initialize backend
-	syst->initSize(_screenWidth, _screenHeight);
+	_system->initSize(_screenWidth, _screenHeight);
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0 && (_features & GF_AUDIOTRACKS))
-		syst->openCD(cd_num);
+		_system->openCD(cd_num);
 
-	// Setup GDI object
-	gdi._numStrips = _screenWidth / 8;
-
+	// Create the sound manager
 	_sound = new Sound(this);
+	
+	// Setup the music engine
+	setupMusic(gs.midi);
 
-#ifndef __GP32__ //ph0x FIXME, "quick dirty hack"
-	/* Bind the mixer to the system => mixer will be invoked
-	 * automatically when samples need to be generated */
-	if (!_mixer->isReady()) {
-		warning("Sound mixer initialization failed");
-		if (_midiDriver == MD_ADLIB ||
-				_midiDriver == MD_PCSPK ||
-				_midiDriver == MD_PCJR)	{
-			_midiDriver = MD_NULL;
-			warning("MIDI driver depends on sound mixer, switching to null MIDI driver");
-		}
-	}
-	_mixer->setVolume(ConfMan.getInt("sfx_volume") * ConfMan.getInt("master_volume") / 255);
-	_mixer->setMusicVolume(ConfMan.getInt("music_volume"));
+	// TODO: We shouldn't rely on the global Language values matching those COMI etc. expect.
+	// Rather we should explicitly translate them.
+	_language = Common::parseLanguage(ConfMan.get("language"));
 
-	// Init iMuse
-	if (_features & GF_DIGI_IMUSE) {
-		_musicEngine = _imuseDigital = new IMuseDigital(this, 10);
-		_mixer->setVolume(ConfMan.getInt("master_volume"));
-		_imuseDigital->setGroupMusicVolume(ConfMan.getInt("music_volume") / 2);
-		_imuseDigital->setGroupSfxVolume(ConfMan.getInt("sfx_volume") / 2);
-		_imuseDigital->setGroupVoiceVolume(ConfMan.getInt("speech_volume") / 2);
-	} else if ((_features & GF_AMIGA) && (_version == 2)) {
-		_musicEngine = new Player_V2A(this);
-	} else if ((_features & GF_AMIGA) && (_version == 3)) {
-		_musicEngine = new Player_V3A(this);
-	} else if ((_features & GF_AMIGA) && (_version < 5)) {
-		_musicEngine = NULL;
-	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
-		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);
-	} else if (_version > 2 && _heversion <= 60) {
-		MidiDriver *driver = GameDetector::createMidi(_midiDriver);
-		if (driver && _native_mt32)
-			driver->property (MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-		_musicEngine = _imuse = IMuse::create(syst, _mixer, driver);
-		if (_imuse) {
-			if (ConfMan.hasKey("tempo"))
-				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
-			_imuse->property(IMuse::PROP_OLD_ADLIB_INSTRUMENTS, (_features & GF_SMALL_HEADER) ? 1 : 0);
-			_imuse->property(IMuse::PROP_MULTI_MIDI, ConfMan.getBool("multi_midi") &&
-			                 _midiDriver != MD_NULL && (gs.midi & MDT_ADLIB));
-			_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
-			if (_features & GF_HUMONGOUS || gs.midi == MDT_TOWNS) {
-				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
-				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
-			}
-			if (gs.midi == MDT_TOWNS)
-				_imuse->property(IMuse::PROP_DIRECT_PASSTHROUGH, 1);
-			_imuse->set_music_volume(ConfMan.getInt("music_volume"));
-		}
-	}
-#endif // ph0x-hack
-
-	// Load game from specified slot, if any
-	if (ConfMan.hasKey("save_slot")) {
-		requestLoad(ConfMan.getInt("save_slot"));
-	}
+	// Load localization data, if present
 	loadLanguageBundle();
 
-	// Load CJK font
-	_useCJKMode = false;
-	if ((_gameId == GID_DIG || _gameId == GID_CMI) && (_language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN)) {
-		File fp;
-		const char *fontFile = NULL;
-		switch(_language) {
-		case Common::KO_KOR:
-			fontFile = "korean.fnt";
-			break;
-		case Common::JA_JPN:
-			fontFile = (_gameId == GID_DIG) ? "kanji16.fnt" : "japanese.fnt";
-			break;
-		case Common::ZH_TWN:
-			if (_gameId == GID_CMI) {
-				fontFile = "chinese.fnt";
-			}
-			break;
-		default:
-			break;
-		}
-		if (fontFile && fp.open(fontFile)) {
-			debug(2, "Loading CJK Font");
-			_useCJKMode = true;
-			fp.seek(2, SEEK_CUR);
-			_2byteWidth = fp.readByte();
-			_2byteHeight = fp.readByte();
-
-			int numChar = 0;
-			switch(_language) {
-			case Common::KO_KOR:
-				numChar = 2350;
-				break;
-			case Common::JA_JPN:
-				numChar = (_gameId == GID_DIG) ? 1024 : 2048; //FIXME
-				break;
-			case Common::ZH_TWN:
-				numChar = 1; //FIXME
-				break;
-			default:
-				break;
-			}
-			_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
-			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
-			fp.close();
-		}
-	} else if (_language == Common::JA_JPN && _version == 5) { //FM Towns Kanji
-		File fp;
-		int numChar = 256 * 32;
-		_2byteWidth = 16;
-		_2byteHeight = 16;
-		//use FM Towns font rom, since game files don't have kanji font resources
-		if (fp.open("fmt_fnt.rom")) { 
-			_useCJKMode = true;
-			debug(2, "Loading FM Towns Kanji rom");
-			_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
-			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
-			fp.close();
-		}
-	}
+	// Load CJK font, if present
+	loadCJKFont();
 
 	// Create the charset renderer
 	if (_version <= 2)
@@ -1061,6 +941,11 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_insane = new Insane((ScummEngine_v6 *)this);
 	else
 		_insane = 0;
+
+	// Load game from specified slot, if any
+	if (ConfMan.hasKey("save_slot")) {
+		requestLoad(ConfMan.getInt("save_slot"));
+	}
 }
 
 ScummEngine::~ScummEngine() {
@@ -1129,7 +1014,7 @@ ScummEngine_v7he::ScummEngine_v7he(GameDetector *detector, OSystem *syst, const 
 }
 
 void ScummEngine::go() {
-	launch();
+	mainInit();
 	mainRun();
 }
 
@@ -1137,7 +1022,7 @@ void ScummEngine::go() {
 #pragma mark --- Initialization ---
 #pragma mark -
 
-void ScummEngine::launch() {
+void ScummEngine::mainInit() {
 
 #ifdef __PALM_OS__
 	if (_features & GF_NEW_COSTUMES)
@@ -1197,6 +1082,7 @@ void ScummEngine::launch() {
 	readIndexFile();
 
 	scummInit();
+	initScummVars();
 
 	if (VAR_DEBUGMODE != 0xFF) {
 		// This is NOT for the Mac version of Indy3/Loom
@@ -1240,7 +1126,7 @@ void ScummEngine::launch() {
 void ScummEngine::scummInit() {
 	int i;
 
-	tempMusic = 0;
+	_tempMusic = 0;
 	debug(9, "scummInit");
 
 	if ((_gameId == GID_MANIAC) && (_version == 1)) {
@@ -1413,8 +1299,6 @@ void ScummEngine::scummInit() {
 		_wizPolygons = (WizPolygon *)calloc(_wizNumPolygons, sizeof(WizPolygon));
 	}
 
-	initScummVars();
-
 	_lastSaveTime = _system->get_msecs();
 }
 
@@ -1434,131 +1318,64 @@ void ScummEngine_v6::scummInit() {
 		setCursorHotspot(16, 16);
 }
 
-void ScummEngine::initScummVars() {
+void ScummEngine::setupMusic(int midi) {
+	_midiDriver = GameDetector::detectMusicDriver(midi);
+	_native_mt32 = ConfMan.getBool("native_mt32");
 
-	// This needs to be at least greater than 40 to get the more
-	// elaborate version of the EGA Zak into. I don't know where
-	// else it makes any difference.
-	if (_gameId == GID_ZAK)
-		VAR(VAR_MACHINE_SPEED) = 0x7FFF;
-
-	if (_version <= 2)
-		return;
-
-	if (_version >= 4 && _version <= 5)
-		VAR(VAR_V5_TALK_STRING_Y) = -0x50;
-
-	if (_version == 8) {	// Fixme: How do we deal with non-cd installs?
-		VAR(VAR_CURRENTDISK) = 1;
-		VAR(VAR_LANGUAGE) = _language;
-	} else if (_version >= 7) {
-		VAR(VAR_V6_EMSSPACE) = 10000;
-		VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
-	} else if (_heversion >= 70) {
-		VAR(VAR_NUM_SOUND_CHANNELS) = 3;
-		VAR(VAR_MUSIC_CHANNEL) = 1;
-		VAR(VAR_SOUND_CHANNEL) = 2;
-
-		if (_heversion >= 72) {
-			VAR(VAR_NUM_ROOMS) = _numRooms - 1;
-			VAR(VAR_NUM_SCRIPTS) = _numScripts - 1;
-			VAR(VAR_NUM_SOUNDS) = _numSounds - 1;
-			VAR(VAR_NUM_COSTUMES) = _numCostumes - 1;
-			VAR(VAR_NUM_IMAGES) = _numImages - 1;
-			VAR(VAR_NUM_CHARSETS) = _numCharsets - 1;
-			VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
+#ifndef __GP32__ //ph0x FIXME, "quick dirty hack"
+	/* Bind the mixer to the system => mixer will be invoked
+	 * automatically when samples need to be generated */
+	if (!_mixer->isReady()) {
+		warning("Sound mixer initialization failed");
+		if (_midiDriver == MD_ADLIB ||
+				_midiDriver == MD_PCSPK ||
+				_midiDriver == MD_PCJR)	{
+			_midiDriver = MD_NULL;
+			warning("MIDI driver depends on sound mixer, switching to null MIDI driver");
 		}
-		if (_heversion >= 80)
-			VAR(VAR_WINDOWS_VERSION) = 40;
-		if (_heversion >= 90)
-			VAR(VAR_NUM_SPRITES) = _numSprites - 1;
-	} else {
-		VAR(VAR_CURRENTDRIVE) = 0;
-		switch (_midiDriver) {
-		case MD_NULL:  VAR(VAR_SOUNDCARD) = 0; break;
-		case MD_ADLIB: VAR(VAR_SOUNDCARD) = 3; break;
-		case MD_PCSPK:
-		case MD_PCJR:  VAR(VAR_SOUNDCARD) = 1; break;
-		default:       
-			if ((_gameId == GID_MONKEY_EGA || _gameId == GID_MONKEY_VGA || _gameId == GID_LOOM)
-			   &&  (_features & GF_PC)) {
-				if (_gameId == GID_LOOM) {
-					char buf[50];
-					uint i = 82;
-					File f;
-					while (i < 85) {
-						sprintf(buf, "%d.LFL", i);
-						f.open(buf);
-						if (f.isOpen() == false)
-							error("Native MIDI support requires Roland patch from LucasArts");
-						f.close();
-						i++;
-					}
-				} else if (_gameId == GID_MONKEY_EGA) {
-						File f;
-						f.open("DISK09.LEC");
-						if (f.isOpen() == false)
-							error("Native MIDI support requires Roland patch from LucasArts");
-				}
-				VAR(VAR_SOUNDCARD) = 4;
-			} else
-				VAR(VAR_SOUNDCARD) = 3;
-		}
-		if (_features & GF_FMTOWNS)
-			VAR(VAR_VIDEOMODE) = 42;
-		else if (_gameId == GID_INDY3 && (_features & GF_MACINTOSH))
-			VAR(VAR_VIDEOMODE) = 50;
-		else if (_gameId == GID_MONKEY2 && (_features & GF_AMIGA))
-			VAR(VAR_VIDEOMODE) = 82;
-		else
-			VAR(VAR_VIDEOMODE) = 19;
-		if (_gameId == GID_LOOM && _features & GF_OLD_BUNDLE) {
-			// Set number of sound resources
-			if (!(_features & GF_MACINTOSH))
-				VAR(39) = 80;
-			VAR(VAR_HEAPSPACE) = 1400;
-		} else if (_version >= 4) {
-			VAR(VAR_HEAPSPACE) = 1400;
-			VAR(VAR_FIXEDDISK) = true;
-			if (_features & GF_HUMONGOUS) {
-				VAR(VAR_SOUNDPARAM) = 1; // soundblaster for music
-				VAR(VAR_SOUNDPARAM2) = 1; // soundblaster for sfx
-			} else {
-				VAR(VAR_SOUNDPARAM) = 0;
-				VAR(VAR_SOUNDPARAM2) = 0;
+	}
+	_mixer->setVolume(ConfMan.getInt("sfx_volume") * ConfMan.getInt("master_volume") / 255);
+	_mixer->setMusicVolume(ConfMan.getInt("music_volume"));
+
+	// Init iMuse
+	if (_features & GF_DIGI_IMUSE) {
+		_musicEngine = _imuseDigital = new IMuseDigital(this, 10);
+		_mixer->setVolume(ConfMan.getInt("master_volume"));
+		_imuseDigital->setGroupMusicVolume(ConfMan.getInt("music_volume") / 2);
+		_imuseDigital->setGroupSfxVolume(ConfMan.getInt("sfx_volume") / 2);
+		_imuseDigital->setGroupVoiceVolume(ConfMan.getInt("speech_volume") / 2);
+	} else if ((_features & GF_AMIGA) && (_version == 2)) {
+		_musicEngine = new Player_V2A(this);
+	} else if ((_features & GF_AMIGA) && (_version == 3)) {
+		_musicEngine = new Player_V3A(this);
+	} else if ((_features & GF_AMIGA) && (_version < 5)) {
+		_musicEngine = NULL;
+	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
+		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);
+	} else if (_version > 2 && _heversion <= 60) {
+		MidiDriver *driver = GameDetector::createMidi(_midiDriver);
+		if (driver && _native_mt32)
+			driver->property (MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+		_musicEngine = _imuse = IMuse::create(_system, _mixer, driver);
+		if (_imuse) {
+			if (ConfMan.hasKey("tempo"))
+				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
+			_imuse->property(IMuse::PROP_OLD_ADLIB_INSTRUMENTS, (_features & GF_SMALL_HEADER) ? 1 : 0);
+			_imuse->property(IMuse::PROP_MULTI_MIDI, ConfMan.getBool("multi_midi") &&
+			                 _midiDriver != MD_NULL && (midi & MDT_ADLIB));
+			_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
+			if (_features & GF_HUMONGOUS || midi == MDT_TOWNS) {
+				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
+				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
 			}
-			VAR(VAR_SOUNDPARAM3) = 0;
+			if (midi == MDT_TOWNS)
+				_imuse->property(IMuse::PROP_DIRECT_PASSTHROUGH, 1);
+			_imuse->set_music_volume(ConfMan.getInt("music_volume"));
 		}
-		if (_version >= 5)
-			VAR(VAR_MOUSEPRESENT) = true;
-		if (_version == 6)
-			VAR(VAR_V6_EMSSPACE) = 10000;
 	}
-	
-	if ((_features & GF_MACINTOSH) && (_version == 3)) {
-		// This is the for the Mac version of Indy3/Loom
-		VAR(39) = 320;
-	}
-
-	if (VAR_CURRENT_LIGHTS != 0xFF) {
-		// Setup light
-		VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
-	}
-	
-	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
-		_scummVars[74] = 1225;
-
-	if (_version >= 7) {
-		VAR(VAR_DEFAULT_TALK_DELAY) = 60;
-		VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
-	}
-
-	if (VAR_FADE_DELAY != 0xFF)
-		VAR(VAR_FADE_DELAY) = 3;
-		
-	VAR(VAR_CHARINC) = 4;
-	setTalkingActor(0);
+#endif // ph0x-hack
 }
+
 
 #pragma mark -
 #pragma mark --- Main loop ---
@@ -1647,8 +1464,6 @@ int ScummEngine::scummLoop(int delta) {
 
 	// In V1-V3 games, CHARSET_1 is called much earlier than in newer games.
 	// See also bug #770042 for a case were this makes a difference.
-	// FIXME: Actually I am only sure that this is correct for V1-V2 and Loom.
-	// We should also check Indy3 & Zak256.
 	if (_version <= 3)
 		CHARSET_1();
 
@@ -1689,9 +1504,9 @@ int ScummEngine::scummLoop(int delta) {
 		// to get it correct for all games. Without the ability to watch/listen to the
 		// original games, I can't do that myself.
 		const int MUSIC_DELAY = 350;
-		tempMusic += delta * 15;	// Convert delta to milliseconds
-		if (tempMusic >= MUSIC_DELAY) {
-			tempMusic -= MUSIC_DELAY;
+		_tempMusic += delta * 15;	// Convert delta to milliseconds
+		if (_tempMusic >= MUSIC_DELAY) {
+			_tempMusic -= MUSIC_DELAY;
 			VAR(VAR_MUSIC_TIMER) += 1;
 		}
 	}
@@ -1738,12 +1553,8 @@ load_game:
 			displayMessage(0, errMsg, filename);
 		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {
 			// Display "Save successful" message, except for auto saves
-#ifdef __PALM_OS__
-			char buf[256]; // 1024 is too big overflow the stack
-#else
-			char buf[1024];
-#endif
-			sprintf(buf, "Successfully saved game state in file:\n\n%s", filename);
+			char buf[256];
+			snprintf(buf, sizeof(buf), "Successfully saved game state in file:\n\n%s", filename);
 	
 			GUI::TimedMessageDialog dialog(buf, 1500);
 			runDialog(dialog);
@@ -1914,376 +1725,6 @@ load_game:
 		VAR(VAR_TIMER) = 0;
 	return VAR(VAR_TIMER_NEXT);
 
-}
-
-#pragma mark -
-#pragma mark --- Events / Input ---
-#pragma mark -
-
-void ScummEngine::parseEvents() {
-	OSystem::Event event;
-
-	while (_system->poll_event(&event)) {
-
-		switch(event.event_code) {
-		case OSystem::EVENT_KEYDOWN:
-			if (event.kbd.keycode >= '0' && event.kbd.keycode <= '9'
-				&& (event.kbd.flags == OSystem::KBD_ALT ||
-					event.kbd.flags == OSystem::KBD_CTRL)) {
-				_saveLoadSlot = event.kbd.keycode - '0';
-
-				//  don't overwrite autosave (slot 0)
-				if (_saveLoadSlot == 0)
-					_saveLoadSlot = 10;
-
-				sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
-				_saveLoadFlag = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
-				_saveTemporaryState = false;
-			} else if (event.kbd.flags == OSystem::KBD_CTRL) {
-				if (event.kbd.keycode == 'f')
-					_fastMode ^= 1;
-				else if (event.kbd.keycode == 'g')
-					_fastMode ^= 2;
-				else if (event.kbd.keycode == 'd')
-					_debugger->attach();
-				else if (event.kbd.keycode == 's')
-					resourceStats();
-				else
-					_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
-			} else if (event.kbd.flags & OSystem::KBD_ALT) {
-				// The result must be 273 for Alt-W
-				// because that's what MI2 looks for in
-				// its "instant win" cheat.
-				_keyPressed = event.kbd.keycode + 154;
-			} else if (event.kbd.ascii == 315 && (_gameId == GID_CMI && !(_features & GF_DEMO))) {
-				// FIXME: support in-game menu screen. For now, this remaps F1 to F5 in COMI
-				_keyPressed = 319;
-			} else if (_gameId == GID_INDY4 && event.kbd.ascii >= '0' && event.kbd.ascii <= '9') {
-				// To support keyboard fighting in FOA, we need to remap the number keys.
-				// FOA apparently expects PC scancode values (see script 46 if you want
-				// to know where I got these numbers from).
-				static const int numpad[10] = {
-						'0',
-						335, 336, 337,
-						331, 332, 333,
-						327, 328, 329
-					};
-				_keyPressed = numpad[event.kbd.ascii - '0'];
-			} else if (event.kbd.ascii < 273 || event.kbd.ascii > 276 || _version >= 7) {
-				// don't let game have arrow keys as we currently steal them
-				// for keyboard cursor control
-				// this fixes bug with up arrow (273) corresponding to
-				// "instant win" cheat in MI2 mentioned above
-				//
-				// This is not applicable to Full Throttle as it processes keyboard
-				// cursor control by itself. Also it fixes derby scene
-				_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
-			}
-
-			if (_keyPressed >= 512)
-				debugC(DEBUG_GENERAL, "_keyPressed > 512 (%d)", _keyPressed);
-			else
-				_keyDownMap[_keyPressed] = true;
-			break;
-
-		case OSystem::EVENT_KEYUP:
-			// FIXME: for some reason OSystem::KBD_ALT is set sometimes
-			// possible to a bug in sdl-common.cpp
-			if (event.kbd.ascii >= 512)
-				debugC(DEBUG_GENERAL, "keyPressed > 512 (%d)", event.kbd.ascii);
-			else
-				_keyDownMap[event.kbd.ascii] = false;
-			break;
-
-		case OSystem::EVENT_MOUSEMOVE:
-			_mouse.x = event.mouse.x;
-			_mouse.y = event.mouse.y;
-			break;
-
-		case OSystem::EVENT_LBUTTONDOWN:
-			_leftBtnPressed |= msClicked|msDown;
-#if defined(_WIN32_WCE) || defined(__PALM_OS__)
-			_mouse.x = event.mouse.x;
-			_mouse.y = event.mouse.y;
-#endif
-			break;
-
-		case OSystem::EVENT_RBUTTONDOWN:
-			_rightBtnPressed |= msClicked|msDown;
-#if defined(_WIN32_WCE) || defined(__PALM_OS__)
-			_mouse.x = event.mouse.x;
-			_mouse.y = event.mouse.y;
-#endif
-			break;
-
-		case OSystem::EVENT_LBUTTONUP:
-			_leftBtnPressed &= ~msDown;
-			break;
-
-		case OSystem::EVENT_RBUTTONUP:
-			_rightBtnPressed &= ~msDown;
-			break;
-		
-		// The following two cases enable dialog choices to be
-		// scrolled through in the SegaCD version of MI
-		// as nothing else uses the wheel don't bother
-		// checking the gameid
-			
-		case OSystem::EVENT_WHEELDOWN:
-			_keyPressed = 55;
-			break;
-
-		case OSystem::EVENT_WHEELUP:
-			_keyPressed = 54;
-			break;
-	
-		case OSystem::EVENT_QUIT:
-			if (_confirmExit)
-				confirmexitDialog();
-			else
-				_quit = true;
-			break;
-	
-		default:
-			break;
-		}
-	}
-}
-
-void ScummEngine::clearClickedStatus() {
-	_keyPressed = 0;
-	_mouseButStat = 0;
-	_leftBtnPressed &= ~msClicked;
-	_rightBtnPressed &= ~msClicked;
-}
-
-void ScummEngine::processKbd(bool smushMode) {
-	int saveloadkey;
-
-	_lastKeyHit = _keyPressed;
-	_keyPressed = 0;
-	if (((_version <= 2) || (_features & GF_FMTOWNS && _version == 3)) && 315 <= _lastKeyHit && _lastKeyHit < 315+12) {
-		// Convert F-Keys for V1/V2 games (they start at 1 instead of at 315)
-		_lastKeyHit -= 314;
-	}
-	
-	
-	//
-	// Clip the mouse coordinates, and compute _virtualMouse.x (and clip it, too)
-	//
-	if (_mouse.x < 0)
-		_mouse.x = 0;
-	if (_mouse.x > _screenWidth-1)
-		_mouse.x = _screenWidth-1;
-	if (_mouse.y < 0)
-		_mouse.y = 0;
-	if (_mouse.y > _screenHeight-1)
-		_mouse.y = _screenHeight-1;
-
-	_virtualMouse.x = _mouse.x + virtscr[0].xstart;
-	_virtualMouse.y = _mouse.y - virtscr[0].topline;
-	if (_features & GF_NEW_CAMERA)
-		_virtualMouse.y += _screenTop;
-
-	if (_virtualMouse.y < 0)
-		_virtualMouse.y = -1;
-	if (_virtualMouse.y >= virtscr[0].h)
-		_virtualMouse.y = -1;
-
-	//
-	// Determine the mouse button state.
-	//
-	_mouseButStat = 0;
-
-	// Interpret 'return' as left click and 'tab' as right click
-	if (_lastKeyHit && _cursor.state > 0) {
-		if (_lastKeyHit == 9) {
-			_mouseButStat = MBS_RIGHT_CLICK;
-			_lastKeyHit = 0;
-		} else if (_lastKeyHit == 13) {
-			_mouseButStat = MBS_LEFT_CLICK;
-			_lastKeyHit = 0;
-		}
-	}
-
-	if (_leftBtnPressed & msClicked && _rightBtnPressed & msClicked && _version > 3) {
-		// Pressing both mouse buttons is treated as if you pressed
-		// the cutscene exit key (i.e. ESC in most games). That mimicks
-		// the behaviour of the original engine where pressing both
-		// mouse buttons also skips the current cutscene.
-		_mouseButStat = 0;
-		_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
-	} else if (_rightBtnPressed & msClicked && (_version < 4 && _gameId != GID_LOOM)) {
-		// Pressing right mouse button is treated as if you pressed
-		// the cutscene exit key (i.e. ESC in most games). That mimicks
-		// the behaviour of the original engine where pressing right
-		// mouse button also skips the current cutscene.
-		_mouseButStat = 0;
-		_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
-	} else if (_leftBtnPressed & msClicked) {
-		_mouseButStat = MBS_LEFT_CLICK;
-	} else if (_rightBtnPressed & msClicked) {
-		_mouseButStat = MBS_RIGHT_CLICK;
-	}
-
-	if (_version == 8) {
-		VAR(VAR_MOUSE_BUTTONS) = 0;
-		VAR(VAR_MOUSE_HOLD) = 0;
-		VAR(VAR_RIGHTBTN_HOLD) = 0;
-
-		if (_leftBtnPressed & msClicked)
-			VAR(VAR_MOUSE_BUTTONS) += 1;
-
-		if (_rightBtnPressed & msClicked)
-			VAR(VAR_MOUSE_BUTTONS) += 2;
-
-		if (_leftBtnPressed & msDown)
-			VAR(VAR_MOUSE_HOLD) += 1;
-
-		if (_rightBtnPressed & msDown) {
-			VAR(VAR_RIGHTBTN_HOLD) = 1;
-			VAR(VAR_MOUSE_HOLD) += 2;
-		}
-	} else if (_version >= 6) {
-		VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
-		VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
-
-		if (_version == 7) {
-			VAR(VAR_LEFTBTN_DOWN) = (_leftBtnPressed & msClicked) != 0;
-			VAR(VAR_RIGHTBTN_DOWN) = (_rightBtnPressed & msClicked) != 0;
-		}
-	}
-
-	_leftBtnPressed &= ~msClicked;
-	_rightBtnPressed &= ~msClicked;
-
-	if (!_lastKeyHit)
-		return;
-
-	// If a key script was specified (a V8 feature), and it's trigger
-	// key was pressed, run it.
-	if (_keyScriptNo && (_keyScriptKey == _lastKeyHit)) {
-		runScript(_keyScriptNo, 0, 0, 0);
-		return;
-	}
-
-#ifdef _WIN32_WCE
-	if (_lastKeyHit == KEY_ALL_SKIP) {
-		// Skip cutscene
-		if (smushMode) {
-			_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
-		}
-		else
-		if (vm.cutScenePtr[vm.cutSceneStackPointer])
-			_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
-		else 
-		// Skip talk 
-		if (_talkDelay > 0) 
-			_lastKeyHit = (uint)VAR(VAR_TALKSTOP_KEY);
-		else
-		// Escape
-			_lastKeyHit = 27;
-	}
-#endif
-
-	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY) ||
-	   (((_version <= 2) || (_features & GF_FMTOWNS && _version == 3)) && _lastKeyHit == 8)) {
-		confirmrestartDialog();
-		return;
-	}
-
-	if ((VAR_PAUSE_KEY != 0xFF && _lastKeyHit == VAR(VAR_PAUSE_KEY)) ||
-		(VAR_PAUSE_KEY == 0xFF && _lastKeyHit == ' ')) {
-		pauseGame();
-		return;
-	}
-
-	// COMI version string is hard coded
-	// Dig/FT version strings are partly hard coded too
-	if (_version == 7 && _lastKeyHit == VAR(VAR_VERSION_KEY)) {
-		versionDialog();
-		return;
-	}
-
-	if ((_version <= 2) || (_features & GF_FMTOWNS && _version == 3))
-		saveloadkey = 5;	// F5
-	else if ((_version <= 3) || (_gameId == GID_SAMNMAX) || (_gameId == GID_CMI) || (_heversion >= 72))
-		saveloadkey = 319;	// F5
-	else
-		saveloadkey = VAR(VAR_MAINMENU_KEY);
-
-	if (_lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY) ||
-		(VAR(VAR_CUTSCENEEXIT_KEY) == 4 && _lastKeyHit == 27)) {
-		// Skip cutscene (or active SMUSH video). For the V2 games, which
-		// normally use F4 for this, we add in a hack that makes escape work,
-		// too (just for convenience).
-		if (smushMode) {
-			if (_gameId == GID_FT)
-				_insane->escapeKeyHandler();
-			else
-				_smushVideoShouldFinish = true;
-		}
-		if (!smushMode || _smushVideoShouldFinish)
-			abortCutscene();
-		if (_version <= 2) {
-			// Ensure that the input script also sees the key press.
-			// This is necessary so you can abort the airplane travel
-			// in Zak.
-			VAR(VAR_KEYPRESS) = VAR(VAR_CUTSCENEEXIT_KEY);
-		}
-	} else if (_lastKeyHit == saveloadkey) {
-		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
-			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
-
-		mainMenuDialog();		// Display NewGui
-
-		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
-			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
-		return;
-	} else if (VAR_TALKSTOP_KEY != 0xFF && _lastKeyHit == VAR(VAR_TALKSTOP_KEY)) {
-		_talkDelay = 0;
-		if (_sound->_sfxMode & 2)
-			stopTalk();
-		return;
-	} else if (_lastKeyHit == '[') { // [ Music volume down
-		int vol = ConfMan.getInt("music_volume");
-		if (!(vol & 0xF) && vol)
-			vol -= 16;
-		vol = vol & 0xF0;
-		ConfMan.set("music_volume", vol);
-		if (_imuse)
-			_imuse->set_music_volume (vol);
-	} else if (_lastKeyHit == ']') { // ] Music volume up
-		int vol = ConfMan.getInt("music_volume");
-		vol = (vol + 16) & 0xFF0;
-		if (vol > 255) vol = 255;
-		ConfMan.set("music_volume", vol);
-		if (_imuse)
-			_imuse->set_music_volume (vol);
-	} else if (_lastKeyHit == '-') { // - text speed down
-		if (_defaultTalkDelay < 9)
-			_defaultTalkDelay++;
-		if (VAR_CHARINC != 0xFF)
-			VAR(VAR_CHARINC) = _defaultTalkDelay;
-	} else if (_lastKeyHit == '+') { // + text speed up
-		if (_defaultTalkDelay > 0)
-			_defaultTalkDelay--;
-		if (VAR_CHARINC != 0xFF)
-			VAR(VAR_CHARINC) = _defaultTalkDelay;
-	} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console
-		_debugger->attach();
-	} else if (_version <= 2) {
-		// Store the input type. So far we can't distinguish
-		// between 1, 3 and 5.
-		// 1) Verb	2) Scene	3) Inv.		4) Key
-		// 5) Sentence Bar
-
-		if (_lastKeyHit) {		// Key Input
-			VAR(VAR_KEYPRESS) = _lastKeyHit;
-		}
-	}
-
-	_mouseButStat = _lastKeyHit;
 }
 
 #pragma mark -
@@ -2831,7 +2272,7 @@ void ScummEngine::initRoomSubBlocks() {
 	// HE 7.0 games load resources but don't use them.
 	if (_version >= 4 && _heversion <= 60) {
 		if (_features & GF_SMALL_HEADER)
-			ptr = findResourceSmall (MKID('CYCL'), roomptr);
+			ptr = findResourceSmall(MKID('CYCL'), roomptr);
 		else 
 			ptr = findResourceData(MKID('CYCL'), roomptr);
 		if (ptr) {
@@ -2910,6 +2351,12 @@ void ScummEngine::restart() {
 // TODO: Check this function - we should probably be reinitting a lot more stuff, and I suspect
 //	 this leaks memory like a sieve
 
+// Fingolfing seez: An alternate way to implement restarting would be to create
+// a save state right after startup ... to this end we could introduce a SaveFile
+// subclass which is implemented using a memory buffer (i.e. no actual file is
+// created). Then to restart we just have to load that pseudo save state.
+
+
 	int i;
 
 	// Reset some stuff
@@ -2931,6 +2378,7 @@ void ScummEngine::restart() {
 	allocateArrays();                   // Reallocate arrays
 	readIndexFile();                    // Reread index (reset objectstate etc)
 	scummInit();                       // Reinit scumm variables
+	initScummVars();
 	if (_imuse) {
 		_imuse->setBase(res.address[rtSound]);
 	}
@@ -3036,99 +2484,6 @@ char ScummEngine::displayMessage(const char *altButton, const char *message, ...
 #pragma mark --- Miscellaneous ---
 #pragma mark -
 
-int SJIStoFMTChunk(int f, int s) //convert sjis code to fmt font offset
-{
-	enum {
-		KANA = 0,
-		KANJI = 1,
-		EKANJI = 2
-	};
-	int base = s - (s % 32) - 1;
-	int c = 0, p = 0, chunk_f = 0, chunk = 0, cr, kanjiType = KANA;
-
-	if (f >= 0x81 && f <= 0x84) kanjiType = KANA;
-	if (f >= 0x88 && f <= 0x9f) kanjiType = KANJI;
-	if (f >= 0xe0 && f <= 0xea) kanjiType = EKANJI;
-
-	if ((f > 0xe8 || (f == 0xe8 && base >= 0x9f)) || (f > 0x90 || (f == 0x90 && base >= 0x9f))) {
-		c = 48; //correction
-		p = -8; //correction
-	}
-
-	if (kanjiType == KANA) {//Kana
-		chunk_f = (f - 0x81) * 2;
-	} else if (kanjiType == KANJI) {//Standard Kanji
-		p += f - 0x88;
-		chunk_f = c + 2 * p;
-	} else if (kanjiType == EKANJI) {//Enhanced Kanji
-		p += f - 0xe0;
-		chunk_f = c + 2 * p;
-	}
-
-	if (base == 0x7f && s == 0x7f)
-		base -= 0x20; //correction
-	if ((base == 0x7f && s == 0x9e) || (base == 0x9f && s == 0xbe) || (base == 0xbf && s == 0xde))
-		base += 0x20; //correction
-
-	switch(base) {
-	case 0x3f:
-		cr = 0; //3f
-		if (kanjiType == KANA) chunk = 1;
-		else if (kanjiType == KANJI) chunk = 31;
-		else if (kanjiType == EKANJI) chunk = 111;
-		break;
-	case 0x5f:
-		cr = 0; //5f
-		if (kanjiType == KANA) chunk = 17;
-		else if (kanjiType == KANJI) chunk = 47;
-		else if (kanjiType == EKANJI) chunk = 127;
-		break;
-	case 0x7f:
-		cr = -1; //80
-		if (kanjiType == KANA) chunk = 9;
-		else if (kanjiType == KANJI) chunk = 63;
-		else if (kanjiType == EKANJI) chunk = 143;
-		break;
-	case 0x9f:
-		cr = 1; //9e
-		if (kanjiType == KANA) chunk = 2;
-		else if (kanjiType == KANJI) chunk = 32;
-		else if (kanjiType == EKANJI) chunk = 112;
-		break;
-	case 0xbf:
-		cr = 1; //be
-		if (kanjiType == KANA) chunk = 18;
-		else if (kanjiType == KANJI) chunk = 48;
-		else if (kanjiType == EKANJI) chunk = 128;
-		break;
-	case 0xdf:
-		cr = 1; //de
-		if (kanjiType == KANA) chunk = 10;
-		else if (kanjiType == KANJI) chunk = 64;
-		else if (kanjiType == EKANJI) chunk = 144;
-		break;
-	default:
-		return 0;
-	}
-	
-	return ((chunk_f + chunk) * 32 + (s - base)) + cr;
-}
-
-byte *ScummEngine::get2byteCharPtr(int idx) {
-	switch(_language) {
-	case Common::KO_KOR:
-		idx = ((idx % 256) - 0xb0) * 94 + (idx / 256) - 0xa1;
-		break;
-	case Common::JA_JPN:
-		idx = SJIStoFMTChunk((idx % 256), (idx / 256));
-		break;
-	case Common::ZH_TWN:
-	default:
-		idx = 0;
-	}
-	return 	_2byteFontPtr + ((_2byteWidth + 7) / 8) * _2byteHeight * idx;
-}
-
 void ScummEngine::errorString(const char *buf1, char *buf2) {
 	if (_currentScript != 0xFF) {
 		ScriptSlot *ss = &vm.slot[_currentScript];
@@ -3158,12 +2513,8 @@ void ScummEngine::errorString(const char *buf1, char *buf2) {
 
 void checkRange(int max, int min, int no, const char *str) {
 	if (no < min || no > max) {
-#ifdef __PALM_OS__
-		char buf[256]; // 1024 is too big overflow the stack
-#else
-		char buf[1024];
-#endif
-		sprintf(buf, str, no);
+		char buf[256];
+		snprintf(buf, sizeof(buf), str, no);
 		error("Value %d is out of bounds (%d,%d) (%s)", no, min, max, buf);
 	}
 }

@@ -226,6 +226,8 @@ void Gdi::init() {
 	_textSurface.h = _vm->_screenHeight;
 	_textSurface.pitch = _vm->_screenWidth;
 	_textSurface.bytesPerPixel = 1;
+
+	_numStrips = _vm->_screenWidth / 8;
 }
 
 
