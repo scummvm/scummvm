@@ -2,6 +2,9 @@ MODULE := sky
 
 MODULE_OBJS = \
 	sky/sky.o \
+	sky/compact.o \
+	sky/logic.o \
+	sky/debug.o \
 	sky/disk.o \
 	sky/screen.o \
 	sky/timer.o \

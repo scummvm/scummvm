@@ -22,6 +22,9 @@
 #include "stdafx.h"
 #include "sky/sky.h"
 #include "sky/skydefs.h" //game specific defines
+#include "sky/compact.h"
+#include "sky/logic.h"
+#include "sky/debug.h"
 #include "common/file.h"
 #include "common/gameDetector.h"
 #include <errno.h>
@@ -47,6 +50,8 @@ const VersionSettings *Engine_SKY_targetList() {
 Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst) {
 	return new SkyState(detector, syst);
 }
+
+void **SkyState::_itemList[300];
 
 SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
@@ -83,12 +88,13 @@ void SkyState::go() {
 		_dump_file = stdout;
 
 	initialise();
-	
-	if (!isDemo(_gameVersion) || isCDVersion(_gameVersion))
-		intro();
-	
+
+	//if (!isDemo(_gameVersion) || isCDVersion(_gameVersion))
+	//	intro();
+
 	while (1) {
 		delay(100);
+		_skyLogic->engine();
 	}
 }
 
@@ -110,6 +116,8 @@ void SkyState::initialise(void) {
 	//initScript();
 	initialiseGrids();
 	//initialiseRouter();
+	_skyText = getSkyText();
+	_skyLogic = new SkyLogic(_skyDisk);
 }
 
 void SkyState::initItemList() {
@@ -117,23 +125,29 @@ void SkyState::initItemList() {
 	//See List.asm for (cryptic) item # descriptions
 
 	for (int i = 0; i < 300; i++)
-		_itemList[i] = (void*)NULL;
+		_itemList[i] = (void **)NULL;
 
 	//init the non-null items
-	/*
-	_itemList[119] = (void*)data_0; // Compacts - Section 0
-	_itemList[120] = (void*)data_1; // Compacts - Section 1
+	_itemList[119] = (void **)SkyCompact::data_0; // Compacts - Section 0
+	_itemList[120] = (void **)SkyCompact::data_1; // Compacts - Section 1
 	
 	if (isDemo(_gameVersion)) {
-		_itemList[121] = _itemList[122] = _itemList[123] = _itemList[124] = _itemList[125] = (void*)data_0;
+		_itemList[121] = _itemList[122] = _itemList[123] = _itemList[124] = _itemList[125] = (void **)SkyCompact::data_0;
 	} else {
-		_itemList[121] = (void*)data_2; // Compacts - Section 2
-		_itemList[122] = (void*)data_3; // Compacts - Section 3
-		_itemList[123] = (void*)data_4; // Compacts - Section 4
-		_itemList[124] = (void*)data_5; // Compacts - Section 5
-		_itemList[125] = (void*)data_6; // Compacts - Section 6
+		_itemList[121] = (void **)SkyCompact::data_2; // Compacts - Section 2
+		_itemList[122] = (void **)SkyCompact::data_3; // Compacts - Section 3
+		_itemList[123] = (void **)SkyCompact::data_4; // Compacts - Section 4
+		_itemList[124] = (void **)SkyCompact::data_5; // Compacts - Section 5
+		_itemList[125] = (void **)SkyCompact::data_6; // Compacts - Section 6
 	}
-	*/
+}
+
+Compact *SkyState::fetchCompact(uint32 a) {
+	SkyDebug::fetchCompact(a);
+	uint32 sectionNum = (a & 0xf000) >> 12;
+	uint32 compactNum = (a & 0x0fff);
+
+	return (Compact *)(_itemList[119 + sectionNum][compactNum]);
 }
 
 void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp

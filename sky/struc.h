@@ -19,8 +19,10 @@
  *
  */
 
-struct dataFileHeader
-{
+#ifndef SKYSTRUC_H
+#define SKYSTRUC_H
+
+struct dataFileHeader {
 	uint16 flag; // bit 0: set for colour data, clear for not
 	// bit 1: set for compressed, clear for uncompressed
 	// bit 2: set for 32 colours, clear for 16 colours
@@ -36,3 +38,118 @@ struct dataFileHeader
 	uint16 s_compressed_size;
 };
 
+#if !defined(__GNUC__)
+#pragma START_PACK_STRUCTS
+#endif
+
+struct ExtCompact {
+	uint16 actionSub;
+	uint16 actionSub_off;
+	uint16 getToSub;
+	uint16 getToSub_off;
+	uint16 extraSub;
+	uint16 extraSub_off;
+
+	uint16 dir;
+
+	uint16 stopScript;
+	uint16 miniBump;
+	uint16 leaving;
+	uint16 atWatch; // pointer to script variable
+	uint16 atWas; // pointer to script variable
+	uint16 alt; // alternate script
+	uint16 request;
+
+	uint16 spWidth_xx;
+	uint16 spColour;
+	uint16 spTextId;
+	uint16 spTime;
+
+	uint16 arAnimIndex;
+	void *turnProg;
+
+	uint16 waitingFor;
+
+	uint16 arTargetX;
+	uint16 arTargetY;
+
+	void *animScratch; // data area for AR
+
+	uint16 megaSet;
+
+	uint16 gridWidth;
+	uint16 colOffset;
+	uint16 colWidth;
+	uint16 lastChr;
+
+	uint16 *animUp;
+	uint16 *animDown;
+	uint16 *animLeft;
+	uint16 *animRight;
+
+	uint16 *standUp;
+	uint16 *standDown;
+	uint16 *standLeft;
+	uint16 *standRight;
+	uint16 *standTalk;
+} GCC_PACK;
+
+struct UnknownStuff {
+	uint16 unknownStuff_1_1[4];
+	uint16 *unknownStuff_1_2[34];
+	uint16 unknownStuff_2_1[4];
+	uint16 *unknownStuff_2_2[34];
+	uint16 unknownStuff_3_1[4];
+	uint16 *unknownStuff_3_2[34];
+} GCC_PACK;
+
+struct Compact {
+	uint16 logic; // Entry in logic table to run (byte as <256entries in logic table
+	uint16 status;
+	uint16 sync; // flag sent to compacts by other things
+
+	uint16 screen; // current screen
+	uint16 place; // so's this one
+	uint16 *getToTable; // Address of how to get to things table
+
+	uint16 xcood;
+	uint16 ycood;
+
+	uint16 frame;
+
+	uint16 cursorText;
+	uint16 mouseOn;
+	uint16 mouseOff;
+	uint16 mouseClick; // dword script
+
+	uint16 mouseRelX;
+	uint16 mouseRelY;
+	uint16 mouseSizeX;
+	uint16 mouseSizeY;
+
+	uint16 actionScript;
+
+	uint16 upFlag; // usually holds the Action Mode
+	uint16 downFlag; // used for passing back
+	uint16 getToFlag; // used by action script for get to attempts, also frame store (hence word)
+	uint16 flag; // a use any time flag
+
+	uint16 mood; // high level - stood or not
+	uint16 *grafixProg;
+	uint16 offset;
+
+	uint16 mode; // which mcode block
+
+	uint16 baseSub; // 1st mcode block relative to start of compact
+	uint16 baseSub_off;
+
+	ExtCompact *extCompact;
+	void *turnTable;
+	UnknownStuff *unknownStuff;
+} GCC_PACK;
+
+#if !defined(__GNUC__)
+#pragma END_PACK_STRUCTS
+#endif
+
+#endif

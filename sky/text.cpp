@@ -81,17 +81,17 @@ void SkyText::fnSetFont(uint32 fontNr) {
 	_dtCharSpacing = newCharSet->charSpacing;
 }
 
-void SkyText::getText(uint32 textNr, void **itemList, uint16 language) { //load text #"textNr" into textBuffer
+void SkyText::getText(uint32 textNr, uint16 language) { //load text #"textNr" into textBuffer
 	uint32 sectionNo = (textNr & 0x0F000) >> 10;
 	
-	if (itemList[FIRST_TEXT_SEC + sectionNo] == (void*)NULL) { //check if already loaded
+	if (SkyState::_itemList[FIRST_TEXT_SEC + sectionNo] == (void **)NULL) { //check if already loaded
 		debug(5, "Loading Text item(s) for Section %d", (sectionNo>>2));
 		
 		uint32 fileNo = (sectionNo >> 2); 
 		fileNo += ((language * NO_OF_TEXT_SECTIONS) + 60600);
-		itemList[FIRST_TEXT_SEC + sectionNo] = (void *)_skyDisk->loadFile((uint16)fileNo, NULL);
+		SkyState::_itemList[FIRST_TEXT_SEC + sectionNo] = (void **)_skyDisk->loadFile((uint16)fileNo, NULL);
 	}
-	_textItemPtr = (uint8 *)itemList[FIRST_TEXT_SEC + sectionNo];
+	_textItemPtr = (uint8 *)SkyState::_itemList[FIRST_TEXT_SEC + sectionNo];
 	
 	uint32 offset = 0; 
 	uint32 nr32MsgBlocks = (textNr & 0x0fe0);

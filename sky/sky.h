@@ -30,7 +30,10 @@
 #include "sky/sound.h"
 #include "sky/text.h"
 #include "sky/disk.h"
+#include "sky/struc.h"
 #include "sky/skymusic.h"
+
+class SkyLogic;
 
 class SkyState : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
@@ -42,8 +45,6 @@ protected:
 	uint32 _tseqFrames;
 	byte *_tseqData;
 	uint32 _tseqCounter;
-
-	void *_itemList[300];
 
 	uint16 _debugMode;
 	uint16 _debugLevel;
@@ -68,6 +69,8 @@ protected:
 
 	SkySound *_sound;
 	SkyDisk *_skyDisk;
+	SkyText *_skyText;
+	SkyLogic *_skyLogic;
 	SkyMusic *_music;
 	
 	byte *_workScreen;
@@ -86,8 +89,13 @@ public:
 
 	static bool isDemo(uint32 version);
 	static bool isCDVersion(uint32 version);
+
+	static Compact *fetchCompact(uint32 a);
 	
+	static void **_itemList[300];
+
 protected:
+	void logic_engine();
 	void delay(uint amount);
 	void pollMouseXY();
 	void go();
@@ -117,7 +125,6 @@ protected:
 	void shutdown();
 
 	RandomSource _rnd;
-	SkyText *_skyText;
 };
 
 #endif
