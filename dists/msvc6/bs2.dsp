@@ -142,332 +142,308 @@ LIB32=link.exe -lib
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\_console.cpp
+SOURCE=..\..\sword2\driver\_mouse.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\_console.h
+SOURCE=..\..\sword2\driver\_mouse.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\_mouse.cpp
+SOURCE=..\..\sword2\driver\d_draw.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\_mouse.h
+SOURCE=..\..\sword2\driver\d_draw.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\d_draw.cpp
+SOURCE=..\..\sword2\driver\d_sound.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\d_draw.h
+SOURCE=..\..\sword2\driver\d_sound.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\d_sound.cpp
+SOURCE=..\..\sword2\driver\ddutil.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\d_sound.h
+SOURCE=..\..\sword2\driver\driver96.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\ddutil.h
+SOURCE=..\..\sword2\driver\keyboard.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\driver96.h
+SOURCE=..\..\sword2\driver\keyboard.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\keyboard.cpp
+SOURCE=..\..\sword2\driver\menu.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\keyboard.h
+SOURCE=..\..\sword2\driver\menu.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\language.cpp
+SOURCE=..\..\sword2\driver\mouse.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\menu.cpp
+SOURCE=..\..\sword2\driver\palette.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\menu.h
+SOURCE=..\..\sword2\driver\palette.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\misc.cpp
+SOURCE=..\..\sword2\driver\rdwin.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\mouse.h
+SOURCE=..\..\sword2\driver\rdwin.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\palette.cpp
+SOURCE=..\..\sword2\driver\render.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\palette.h
+SOURCE=..\..\sword2\driver\render.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\driver\rdwin.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\bs2\driver\rdwin.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\bs2\driver\render.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\bs2\driver\render.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\bs2\driver\sprite.cpp
+SOURCE=..\..\sword2\driver\sprite.cpp
 # End Source File
 # End Group
 # Begin Source File
 
-SOURCE=..\..\bs2\anims.cpp
+SOURCE=..\..\sword2\anims.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\anims.h
+SOURCE=..\..\sword2\anims.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\build_display.cpp
+SOURCE=..\..\sword2\build_display.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\build_display.h
+SOURCE=..\..\sword2\build_display.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\console.cpp
+SOURCE=..\..\sword2\console.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\console.h
+SOURCE=..\..\sword2\console.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\controls.cpp
+SOURCE=..\..\sword2\controls.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\controls.h
+SOURCE=..\..\sword2\controls.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\credits.h
+SOURCE=..\..\sword2\credits.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\debug.cpp
+SOURCE=..\..\sword2\debug.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\debug.h
+SOURCE=..\..\sword2\debug.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\defs.h
+SOURCE=..\..\sword2\defs.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\events.cpp
+SOURCE=..\..\sword2\events.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\events.h
+SOURCE=..\..\sword2\events.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\function.cpp
+SOURCE=..\..\sword2\function.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\function.h
+SOURCE=..\..\sword2\function.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\header.h
+SOURCE=..\..\sword2\header.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\icons.cpp
+SOURCE=..\..\sword2\icons.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\icons.h
+SOURCE=..\..\sword2\icons.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\interpreter.cpp
+SOURCE=..\..\sword2\interpreter.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\interpreter.h
+SOURCE=..\..\sword2\interpreter.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\layers.cpp
+SOURCE=..\..\sword2\layers.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\layers.h
+SOURCE=..\..\sword2\layers.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\logic.cpp
+SOURCE=..\..\sword2\logic.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\logic.h
+SOURCE=..\..\sword2\logic.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\maketext.cpp
+SOURCE=..\..\sword2\maketext.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\maketext.h
+SOURCE=..\..\sword2\maketext.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\mem_view.cpp
+SOURCE=..\..\sword2\mem_view.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\mem_view.h
+SOURCE=..\..\sword2\mem_view.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\memory.cpp
+SOURCE=..\..\sword2\memory.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\memory.h
+SOURCE=..\..\sword2\memory.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\mouse.cpp
+SOURCE=..\..\sword2\mouse.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\mouse.h
+SOURCE=..\..\sword2\mouse.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\object.h
+SOURCE=..\..\sword2\object.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\protocol.cpp
+SOURCE=..\..\sword2\protocol.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\protocol.h
+SOURCE=..\..\sword2\protocol.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\resman.cpp
+SOURCE=..\..\sword2\resman.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\resman.h
+SOURCE=..\..\sword2\resman.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\router.cpp
+SOURCE=..\..\sword2\router.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\router.h
+SOURCE=..\..\sword2\router.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\save_rest.cpp
+SOURCE=..\..\sword2\save_rest.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\save_rest.h
+SOURCE=..\..\sword2\save_rest.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\scroll.cpp
+SOURCE=..\..\sword2\scroll.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\scroll.h
+SOURCE=..\..\sword2\scroll.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\sound.cpp
+SOURCE=..\..\sword2\sound.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\sound.h
+SOURCE=..\..\sword2\sound.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\speech.cpp
+SOURCE=..\..\sword2\speech.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\speech.h
+SOURCE=..\..\sword2\speech.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\startup.cpp
+SOURCE=..\..\sword2\startup.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\startup.h
+SOURCE=..\..\sword2\startup.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\sword2.cpp
+SOURCE=..\..\sword2\sword2.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\sword2.h
+SOURCE=..\..\sword2\sword2.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\sync.cpp
+SOURCE=..\..\sword2\sync.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\sync.h
+SOURCE=..\..\sword2\sync.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\tony_gsdk.cpp
+SOURCE=..\..\sword2\walker.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\bs2\tony_gsdk.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\bs2\walker.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\bs2\walker.h
+SOURCE=..\..\sword2\walker.h
 # End Source File
 # End Group
 # End Target
