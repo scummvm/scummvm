@@ -257,8 +257,8 @@ public:
 	byte _video_var_9;
 
 	uint _midi_sfx;
-	uint _last_music_played;
-	uint _next_music_to_play;
+	uint16 _last_music_played;
+	uint16 _next_music_to_play;
 
 	bool _show_preposition;
 	bool _showmessage_flag;

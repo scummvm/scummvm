@@ -5303,9 +5303,9 @@ void SimonState::playMusic(uint music) {
 
 		_last_music_played = music;
 		_vc72_var1 = 999;
-		_vc70_var1 = 0xFFFF;
-		_vc72_var3 = 0xFFFF;
-		_next_music_to_play = 0xFFFF;
+		_vc70_var1 = -1;
+		_vc72_var3 = -1;
+		_next_music_to_play = -1;
 	} else { // Simon 1 music
 		if (_game & GF_AMIGAS) {
 			if (_game != GAME_SIMON1CD32) {

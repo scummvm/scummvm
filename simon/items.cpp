@@ -750,10 +750,10 @@ int SimonState::runScript() {
 			break;
 
 		case 134:{
-				_vc70_var2 = 0xFFFF;
+				_vc70_var2 = -1;
 				midi.stop();
-				_last_music_played = 0xFFFF;
-				_vc72_var1 = 0xFFFF;
+				_last_music_played = -1;
+				_vc72_var1 = -1;
 			}
 			break;
 
@@ -1447,9 +1447,9 @@ void SimonState::o_unk_127() {
 			//FIXME Changed if to allow midi jumping to work for now.
 			if (b != 1)  {
 				_vc70_var2 = c;
-				_vc70_var1 = 0xFFFF;
-				_vc72_var3 = 0xFFFF;
-				_next_music_to_play = 0xFFFF;
+				_vc70_var1 = -1;
+				_vc72_var3 = -1;
+				_next_music_to_play = -1;
 				midi_play(b);
 				_vc72_var1 = b;
 			} else {
