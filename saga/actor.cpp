@@ -56,7 +56,7 @@ static int actorCompare(const ActorDataPointer& actor1, const ActorDataPointer& 
 // Lookup table to convert 8 cardinal directions to 4
 int actorDirectectionsLUT[8] = {
 	ACTOR_DIRECTION_BACK,	// kDirUp
-	ACTOR_DIRECTION_RIGHT,	// kkDirUpRight
+	ACTOR_DIRECTION_RIGHT,	// kDirUpRight
 	ACTOR_DIRECTION_RIGHT,	// kDirRight
 	ACTOR_DIRECTION_RIGHT,	// kDirDownRight
 	ACTOR_DIRECTION_FORWARD,// kDirDown
@@ -74,6 +74,36 @@ PathDirectionData pathDirectionLUT[8][4] = {
 	{{1,  1,  0}, {2,  0,  1}, {5,  1,  1}},
 	{{2,  0,  1}, {3, -1,  0}, {6, -1,  1}},
 	{{3, -1,  0}, {0,  0, -1}, {7, -1, -1}}
+};
+
+int pathDirectionLUT2[8][2] =  {
+	0,	-1,
+	1,	0,
+	0,	1,
+	-1,	0,
+	1,	-1,
+	1,	1,
+	-1,	1,
+	-1,	-1
+};
+
+int angleLUT[16][2] = {
+	0,		-256,
+	98,		-237,
+	181,	-181,
+	237,	-98,
+	256,	0,
+	237,	98,
+	181,	181,
+	98,		237,
+	0,		256,
+	-98,	237,
+	-181,	181,
+	-237,	98,
+	-256,	0,
+	-237,	-98,
+	-181,	-181,
+	-98,	-237
 };
 
 
@@ -96,6 +126,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_pathCellCount = _yCellCount * _xCellCount;
 	_pathCell = (int*)malloc(_pathCellCount * sizeof *_pathCell);
 	
+
 	_pathRect.left = 0;
 	_pathRect.right = _vm->getDisplayWidth();
 	_pathRect.top = _vm->getPathYOffset();
@@ -213,6 +244,34 @@ bool Actor::loadActorResources(ActorData * actor) {
 	}
 
 	return true;
+}
+
+void Actor::realLocation(ActorLocation &location, uint16 objectId, uint16 walkFlags) {
+	int angle;
+	int distance;
+	ActorData *actor;
+	if (walkFlags & kWalkUseAngle) {
+		// tiled stuff
+		if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+			//todo: it
+		} else {
+			angle = location.x & 15;  
+			distance = location.y;
+
+			location.x = (angleLUT[angle][0] * distance) >> 6; //fixme - call real angle calc
+			location.y = (angleLUT[angle][1] * distance) >> 6;
+		}
+	}
+
+	if (objectId != ID_NOTHING) {
+		if (IS_VALID_ACTOR_ID(objectId)) {
+			actor = getActor(objectId);
+			location = actor->location;
+		} else {
+			warning("ObjectId unsupported"); //TODO: do it
+		}
+		
+	}
 }
 
 ActorData *Actor::getActor(uint16 actorId) {
@@ -1114,7 +1173,7 @@ void Actor::abortSpeech() {
 	_activeSpeech.playingTime = 0;
 }
 
-void Actor::findActorPath(ActorData * actor, const Point &pointFrom, const Point &pointTo) {
+void Actor::findActorPath(ActorData * actor, const Point &fromPoint, const Point &toPoint) {
 	Point tempPoint;
 	Point iteratorPoint;
 	Point bestPoint;
@@ -1124,11 +1183,11 @@ void Actor::findActorPath(ActorData * actor, const Point &pointFrom, const Point
 	int i;
 	Rect intersect;
 	
-	tempPoint.y = pointTo.y;
-	tempPoint.x = pointTo.x >> 1;
+	tempPoint.y = toPoint.y;
+	tempPoint.x = toPoint.x >> 1;
 
 	actor->walkStepsCount = 0;
-	if (pointFrom == pointTo) {
+	if (fromPoint == toPoint) {
 		actor->addWalkPath(tempPoint.x, tempPoint.y);
 		return;
 	}
@@ -1165,27 +1224,26 @@ void Actor::findActorPath(ActorData * actor, const Point &pointFrom, const Point
 	
 
 
-	if (scanPathLine(pointFrom, pointTo)) {
-		iteratorPoint.y = pointFrom.y;
-		iteratorPoint.x = pointFrom.x >> 1;
+	if (scanPathLine(fromPoint, toPoint)) {
+		iteratorPoint.y = fromPoint.y;
+		iteratorPoint.x = fromPoint.x >> 1;
 		actor->addWalkPath(iteratorPoint.x, iteratorPoint.y);
 		actor->addWalkPath(tempPoint.x, tempPoint.y);
 		return;
 	}
 	
 
-	i = fillPathArray(pointFrom, pointTo, bestPoint);
+	i = fillPathArray(fromPoint, toPoint, bestPoint);
 
-	if (pointFrom == bestPoint) {
+	if (fromPoint == bestPoint) {
 		iteratorPoint.y = bestPoint.y;
 		iteratorPoint.x = bestPoint.x >> 1;
 		actor->addWalkPath(iteratorPoint.x, iteratorPoint.y);
 		return;
 	}
-/*
+
 	if (i != 0)
-		result = SetPath(pcell, from, &bestpoint, nodelist);
-*/
+		setActorPath(actor, fromPoint, bestPoint);
 }
 
 bool Actor::scanPathLine(const Point &point1, const Point &point2) {
@@ -1240,9 +1298,9 @@ bool Actor::scanPathLine(const Point &point1, const Point &point2) {
 	return true;
 }
 
-int Actor::fillPathArray(const Point &pointFrom, const Point &pointTo, Point &bestPoint) {
-	Point  pathFrom;
-	Point  pathTo;
+int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &bestPoint) {
+	Point  pathFromPoint;
+	Point  pathToPoint;
 	int bestRating;
 	int currentRating;
 	Point bestPath;
@@ -1256,24 +1314,24 @@ int Actor::fillPathArray(const Point &pointFrom, const Point &pointTo, Point &be
 	int directionCount;
 
 
-	pathFrom.x = pointFrom.x >> 1;
-	pathFrom.y = pointFrom.y - _vm->getPathYOffset();
+	pathFromPoint.x = fromPoint.x >> 1;
+	pathFromPoint.y = fromPoint.y - _vm->getPathYOffset();
 
-	pathTo.x = pointTo.x >> 1;
-	pathTo.y = pointTo.y - _vm->getPathYOffset();
+	pathToPoint.x = toPoint.x >> 1;
+	pathToPoint.y = toPoint.y - _vm->getPathYOffset();
 
 	pointCounter = 0;
-	bestRating = quickDistance(pathFrom, pathTo);
-	bestPath = pathFrom;
+	bestRating = quickDistance(pathFromPoint, pathToPoint);
+	bestPath = pathFromPoint;
 	
 	for (startDirection = 0; startDirection < 4; startDirection++) {
 		newPathDirectionIterator = pathDirectionList.pushBack();
 		pathDirection = newPathDirectionIterator.operator->();
-		pathDirection->x = pathFrom.x;
-		pathDirection->y = pathFrom.y;
+		pathDirection->x = pathFromPoint.x;
+		pathDirection->y = pathFromPoint.y;
 		pathDirection->direction = startDirection;
 	}
-	setPathCell(pathFrom, 0);
+	setPathCell(pathFromPoint, 0);
 	
 	pathDirectionIterator = pathDirectionList.begin();
 
@@ -1293,12 +1351,12 @@ int Actor::fillPathArray(const Point &pointFrom, const Point &pointTo, Point &be
 				pathDirection->y = nextPoint.y;
 				pathDirection->direction = samplePathDirection->direction;
 				++pointCounter;
-				if (nextPoint == pathTo) {
-					bestPoint.x = pointTo.x & ~1;
-					bestPoint.y = pointTo.y;
+				if (nextPoint == pathToPoint) {
+					bestPoint.x = toPoint.x & ~1;
+					bestPoint.y = toPoint.y;
 					return pointCounter;
 				}
-				currentRating = quickDistance(nextPoint, pathTo);
+				currentRating = quickDistance(nextPoint, pathToPoint);
 				if (currentRating  < bestRating) {
 					bestRating = currentRating;
 					bestPath = nextPoint;
@@ -1312,6 +1370,356 @@ int Actor::fillPathArray(const Point &pointFrom, const Point &pointTo, Point &be
 	bestPoint.y = bestPath.y + _vm->getPathYOffset();
 
 	return pointCounter;
+}
+
+void Actor::setActorPath(ActorData * actor, const Point &fromPoint, const Point &toPoint) {
+	Point  pathFromPoint;
+	Point  pathToPoint;
+	Point *point;
+	Point nextPoint;
+	int direction;
+	PathNode *node;
+	int i, last;
+
+	pathFromPoint.x = fromPoint.x >> 1;
+	pathFromPoint.y = fromPoint.y - _vm->getPathYOffset();
+
+	pathToPoint.x = toPoint.x >> 1;
+	pathToPoint.y = toPoint.y - _vm->getPathYOffset();
+
+
+
+	_pathList[0].x = pathToPoint.x;
+	_pathList[0].y = toPoint.y;
+	nextPoint = pathToPoint;
+	_pathListIndex = 0;
+
+	point = _pathList;
+	while ( !(nextPoint == pathFromPoint)) {
+		_pathListIndex++;
+		if (_pathListIndex >= PATH_LIST_MAX) {
+			error("Actor::setActorPath PATH_LIST_MAX");
+		}
+		point++;
+		direction = getPathCell(nextPoint);
+		nextPoint.x -= pathDirectionLUT2[direction][0];
+		nextPoint.y -= pathDirectionLUT2[direction][1];
+		point->x = nextPoint.x;
+		point->y = nextPoint.y + _vm->getPathYOffset();
+	}
+
+	pathToNode();
+
+	removeNodes();
+
+    nodeToPath();
+
+	removePathPoints();
+
+	_pathNodeIndex++;
+	last = min(_pathNodeIndex, PATH_NODE_MAX);
+	for (i = 0, node = _pathNodeList; i < last; i++, node++) {
+		actor->addWalkPath(node->x, node->y);
+	}
+
+}
+
+void Actor::pathToNode() {
+	Point point1, point2, delta;
+	int direction;
+	int i;
+	WORD 	nodeindex = 0;
+	Point *point;
+	PathNode *nodeList;
+
+	_pathNodeIndex = 0;
+	point= &_pathList[_pathListIndex];	
+	direction = 0,
+
+	_pathNodeList->x = point->x;
+	_pathNodeList->y = point->y;
+	nodeList = _pathNodeList;
+
+	for (i = _pathListIndex; i > 0; i--) {
+		point1 = *point;
+		--point;
+		point2 = *point;
+		if (direction == 0) {
+			delta.x = integerCompare(point2.x, point1.x);
+			delta.y = integerCompare(point2.y, point1.y);
+			direction++;
+		}
+		if ((point1.x + delta.x != point2.x) || (point1.y + delta.y != point2.y)) {
+			++nodeList;
+			++_pathNodeIndex;
+			nodeList->x = point1.x;
+			nodeList->y = point2.x;
+			direction--;
+			i++;
+			point++;
+		}
+	}
+	++nodeList;
+	++_pathNodeIndex;
+	nodeList->x = _pathList->x;
+	nodeList->y = _pathList->y;
+}
+
+int pathLine(Point *pointList, const Point &point1, const Point &point2) {
+	Point point;
+	Point delta;
+	Point tempPoint;
+	int s1;
+	int s2;
+	bool interchange = false;
+	int errterm;
+	int i;
+
+	delta.x = abs(point2.x - point1.x);
+	delta.y = abs(point2.y - point1.y);
+	point = point1;
+	s1 = integerCompare(point2.x, point1.x);
+	s2 = integerCompare(point2.y, point1.y);
+
+	if (delta.y > delta.x) {
+		SWAP(delta.y, delta.x);
+		interchange = true;
+	}
+
+	tempPoint.x = delta.x * 2;
+	tempPoint.y = delta.y * 2;
+
+	errterm = tempPoint.y - delta.x;
+
+	for (i = 0; i < delta.x; i++) {
+		while (errterm >= 0) {
+			if (interchange) {
+				point.x += s1;
+			} else {
+				point.y += s2;
+			}
+			errterm -= tempPoint.x;
+		}
+		if (interchange) {
+			point.y += s2;
+		} else {
+			point.x += s1;
+		}
+		errterm += tempPoint.y;
+
+		pointList[i] = point;
+	}
+	return delta.x;
+}
+
+void Actor::nodeToPath() {
+	int i;
+	Point point1, point2;
+	PathNode *node;
+	Point *point;
+
+	for (i = 0, point = _pathList; i < PATH_LIST_MAX; i++, point++) {
+		point->x = point->y = PATH_NODE_EMPTY;
+	}
+
+	_pathListIndex = 1;
+	_pathList[0].x = _pathNodeList[0].x;
+	_pathList[0].y = _pathNodeList[0].y;
+	_pathNodeList[0].link = 0;
+	for (i = 0, node = _pathNodeList; i < _pathNodeIndex; i++) {
+		point1.x = node->x;
+		point1.y = node->y;
+		node++;
+		point2.x = node->x;
+		point2.y = node->y;
+		_pathListIndex += pathLine(&_pathList[_pathListIndex], point1, point2);
+		node->link = _pathListIndex - 1;
+	}
+	_pathListIndex--;
+	_pathNodeList[_pathNodeIndex].link = _pathListIndex;
+
+}
+
+void Actor::removeNodes() {
+	int i, j, k;
+	PathNode *iNode, *jNode, *kNode, *fNode;
+	Point point1, point2;
+	fNode = &_pathNodeList[_pathNodeIndex];
+	
+	point1.x = _pathNodeList[0].x * 2;
+	point1.y = _pathNodeList[0].y;
+	point2.x = fNode->x * 2;
+	point2.y = fNode->y;
+
+	if (scanPathLine(point1, point2)) {
+		_pathNodeList[1] = *fNode;
+		_pathNodeIndex = 1;
+	}
+
+	if (_pathNodeIndex < 4) {
+		return;
+	}
+
+	for (i = _pathNodeIndex - 1, iNode = fNode-1; i > 1 ; i--, iNode--) {
+		if (iNode->x == PATH_NODE_EMPTY) {
+			continue;
+		}
+
+		point1.x = _pathNodeList[0].x * 2;
+		point1.y = _pathNodeList[0].y;
+		point2.x = iNode->x * 2;
+		point2.y = iNode->y;
+
+		if (scanPathLine(point1, point2)) {
+			for (j = 1, jNode = _pathNodeList + 1; j < i; j++, jNode++) {
+				jNode->x = PATH_NODE_EMPTY;
+			}
+		}
+	}
+
+	for (i = 1, iNode = _pathNodeList + 1; i < _pathNodeIndex - 1; i++, iNode++) {
+		if (iNode->x == PATH_NODE_EMPTY) {
+			continue;
+		}
+		point1.x = fNode->x * 2;
+		point1.y = fNode->y;
+		point2.x = iNode->x * 2;
+		point2.y = iNode->y;
+
+		if (scanPathLine(point1, point2)) {
+			for (j = i + 1, jNode = iNode + 1; j < _pathNodeIndex; j++, jNode++) {
+				jNode->x = PATH_NODE_EMPTY;
+			}
+		}
+	}
+	condenseNodeList();
+
+	for (i = 1, iNode = _pathNodeList + 1; i < _pathNodeIndex - 1; i++, iNode++) {
+		if (iNode->x == PATH_NODE_EMPTY) {
+			continue;
+		}
+		for (j = i + 2,jNode = iNode + 2; j < _pathNodeIndex; j++, jNode++)
+		{
+			if (jNode->x == PATH_NODE_EMPTY) {
+				continue;
+			}
+
+			point1.x = iNode->x * 2;
+			point1.y = iNode->y;
+			point2.x = jNode->x * 2;
+			point2.y = jNode->y;
+
+			if (scanPathLine(point1, point2)) {
+				for (k = i + 1,kNode = iNode + 1; k < j; k++, kNode++) {
+					kNode->x = PATH_NODE_EMPTY;
+				}
+			}
+		}
+	}
+	condenseNodeList();
+}
+
+void Actor::condenseNodeList() {
+	int i, j, count;
+	PathNode *iNode, *jNode;
+	
+	count = _pathNodeIndex;
+
+	for (i = 1, iNode = _pathNodeList+1; i < _pathNodeIndex; i++, iNode++) {
+		if (iNode->x == PATH_NODE_EMPTY) {
+			j = i + 1;
+			jNode = iNode + 1;
+			while ( jNode->x == PATH_NODE_EMPTY ) {
+				j++;
+				jNode++;
+			}
+			*iNode = *jNode;
+			count = i;
+			jNode->x = PATH_NODE_EMPTY;
+			if (j == _pathNodeIndex) {
+				break;
+			}
+		}
+	}
+	_pathNodeIndex = count;
+}
+
+void Actor::removePathPoints() {
+	int i, j, k, l;
+	PathNode *node;
+	int newPathNodeIndex;
+	int start;
+	int end;
+	Point point1, point2, point3, point4;
+
+
+	if (_pathNodeIndex < 2)
+		return;
+
+
+	_newPathNodeList[0] = _pathNodeList[0];
+	newPathNodeIndex = 0;
+
+	for (i = 1, node = _pathNodeList + 1; i < _pathNodeIndex; i++, node++) {
+		newPathNodeIndex++;
+		_newPathNodeList[newPathNodeIndex] = *node;
+
+		for (j = 5; j > 0; j--) {
+			start = node->link - j;
+			end = node->link + j;
+		
+			if (start < 0 || end > _pathListIndex) {
+				continue;
+			}
+
+			point1.x = _pathList[start].x;
+			if (point1.x == PATH_NODE_EMPTY) {
+				continue;
+			}
+			point2.x = _pathList[end].x;
+			if (point2.x == PATH_NODE_EMPTY) {
+				continue;
+			}
+
+			point1.y = _pathList[start].y;
+			point2.y = _pathList[end].y;
+			
+			point3.x = point1.x * 2;
+			point3.y = point1.y;
+			point4.x = point2.x * 2;
+			point4.y = point2.y;
+			if (scanPathLine( point3, point4)) {
+				for (l = 1; l <= newPathNodeIndex; l++) {
+					if (start <= _newPathNodeList[l].link) {
+						newPathNodeIndex = l;
+						_newPathNodeList[newPathNodeIndex].x = point1.x;
+						_newPathNodeList[newPathNodeIndex].y = point1.y;
+						_newPathNodeList[newPathNodeIndex].link = start;
+						newPathNodeIndex++;
+						break;
+					}
+				}
+				_newPathNodeList[newPathNodeIndex].x = point2.x;
+				_newPathNodeList[newPathNodeIndex].y = point2.y;
+				_newPathNodeList[newPathNodeIndex].link = end;
+
+				for (k = start + 1; k < end; k++) {
+					_pathList[k].x = PATH_NODE_EMPTY;
+				}
+				break;
+			}
+		}
+	}
+
+	newPathNodeIndex++;
+	_newPathNodeList[newPathNodeIndex] = _pathNodeList[_pathNodeIndex];
+
+	for (i = 0, j = 0; i <= newPathNodeIndex; i++) {
+		if (newPathNodeIndex == i || (_newPathNodeList[i].y != _newPathNodeList[i+1].y
+			|| _newPathNodeList[i].x != _newPathNodeList[i+1].x) )
+			_pathNodeList[j++] = _newPathNodeList[i];
+	}
+	_pathNodeIndex = j - 1;
 }
 
 /*

@@ -114,6 +114,13 @@ enum CycleFlags {
 	kCycleReverse = (1 << 3)
 };
 
+enum WalkFlags {
+	kWalkBackPedal = (1<<0),
+	kWalkAsync = (1<<1),
+	kWalkUseAngle = (1<<2),
+	kWalkFace = (1<<5)
+};
+
 struct SCRIPT_THREAD {
 	int flags;				// ThreadFlags
 	int waitType;			// ThreadWaitTypes
@@ -325,7 +332,7 @@ private:
 	int SF_cycleColors(SCRIPTFUNC_PARAMS);
 	int sfDoCenterActor(SCRIPTFUNC_PARAMS);
 	int sfStartBgdAnimSpeed(SCRIPTFUNC_PARAMS);
-	int SF_actorWalkToAsync(SCRIPTFUNC_PARAMS);
+	int sfScriptWalkToAsync(SCRIPTFUNC_PARAMS);
 	int SF_enableZone(SCRIPTFUNC_PARAMS);
 	int sfSetActorState(SCRIPTFUNC_PARAMS);
 	int scriptMoveTo(SCRIPTFUNC_PARAMS);
@@ -334,7 +341,7 @@ private:
 	int sfFinishBgdAnim(SCRIPTFUNC_PARAMS);
 	int sfSwapActors(SCRIPTFUNC_PARAMS);
 	int sfSimulSpeech(SCRIPTFUNC_PARAMS);
-	int SF_actorWalk(SCRIPTFUNC_PARAMS);
+	int sfScriptWalk(SCRIPTFUNC_PARAMS);
 	int sfCycleFrames(SCRIPTFUNC_PARAMS);
 	int sfSetFrame(SCRIPTFUNC_PARAMS);
 	int SF_setRightPortrait(SCRIPTFUNC_PARAMS);

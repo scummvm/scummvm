@@ -74,7 +74,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_cycleColors),
 		OPCODE(sfDoCenterActor),
 		OPCODE(sfStartBgdAnimSpeed),
-		OPCODE(SF_actorWalkToAsync),
+		OPCODE(sfScriptWalkToAsync),
 		OPCODE(SF_enableZone),
 		OPCODE(sfSetActorState),
 		OPCODE(scriptMoveTo),
@@ -83,7 +83,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfFinishBgdAnim),
 		OPCODE(sfSwapActors),
 		OPCODE(sfSimulSpeech),
-		OPCODE(SF_actorWalk),
+		OPCODE(sfScriptWalk),
 		OPCODE(sfCycleFrames),
 		OPCODE(sfSetFrame),
 		OPCODE(SF_setRightPortrait),
@@ -197,7 +197,6 @@ int Script::SF_commandMode(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #6 (0x06) blocking
-// Commands the specified actor to walk to the given position
 // Param1: actor id
 // Param2: actor x
 // Param3: actor y
@@ -478,28 +477,24 @@ int Script::sfStartBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #27 (0x1B) nonblocking
-// Commands the specified actor to walk to the given position
 // Param1: actor id
-// Param2: actor destination x
-// Param3: actor destination y
-int Script::SF_actorWalkToAsync(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord actor_parm;
-	ScriptDataWord x_parm;
-	ScriptDataWord y_parm;
+// Param2: actor x
+// Param3: actor y
+int Script::sfScriptWalkToAsync(SCRIPTFUNC_PARAMS) {
 	uint16 actorId;
-	Point pt;
+	ActorLocation actorLocation;
+	ActorData *actor;
 
-	actor_parm = thread->pop();
+	actorId = getSWord(thread->pop());
+	actorLocation.x = getSWord(thread->pop());
+	actorLocation.y = getSWord(thread->pop());
 
-	x_parm = thread->pop();
-	y_parm = thread->pop();
+	actor = _vm->_actor->getActor(actorId);
+	actorLocation.z = actor->location.z;
 
-	actorId = getSWord(actor_parm);
+	actor->flags &= ~kFollower;
 
-	pt.x = getSWord(x_parm);
-	pt.y = getSWord(y_parm);
-//	error("!");
-
+	_vm->_actor->actorWalkTo(actorId, actorLocation);
 	return SUCCESS;
 }
 
@@ -666,32 +661,37 @@ int Script::sfSimulSpeech(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #36 (0x24) ?
-// Commands the specified actor to walk to the given position
 // Param1: actor id
-// Param2: actor destination x
-// Param3: actor destination y
-// Param4: flags telling how to walk
-int Script::SF_actorWalk(SCRIPTFUNC_PARAMS) {
-	// INCOMPLETE
-	ScriptDataWord actor_parm;
-	ScriptDataWord x_parm;
-	ScriptDataWord y_parm;
-	ScriptDataWord flags_parm;
+// Param2: actor x
+// Param3: actor y
+// Param4: actor walk flag
+int Script::sfScriptWalk(SCRIPTFUNC_PARAMS) {
 	uint16 actorId;
-	Point pt;
+	ActorLocation actorLocation;
+	ActorData *actor;
+	uint16 walkFlags;
 
-	actor_parm = thread->pop();
-	x_parm = thread->pop();
-	y_parm = thread->pop();
-	flags_parm = thread->pop();
+	actorId = getSWord(thread->pop());
+	actorLocation.x = getSWord(thread->pop());
+	actorLocation.y = getSWord(thread->pop());
+	walkFlags = getUWord(thread->pop());
 
-	actorId = getSWord(actor_parm);
+	actor = _vm->_actor->getActor(actorId);
+	actorLocation.z = actor->location.z;
 
-	pt.x = getSWord(x_parm);
-	pt.y = getSWord(y_parm);
+	_vm->_actor->realLocation(actorLocation, ID_NOTHING, walkFlags);
 
-//	error("!");
+	actor->flags &= ~kFollower;
 
+	if (_vm->_actor->actorWalkTo(actorId, actorLocation) && !(walkFlags & kWalkAsync)) {
+		thread->waitWalk(actor);
+	}
+
+	if (walkFlags & kWalkBackPedal) {
+		actor->actorFlags |= kActorBackwards;
+	}
+
+	actor->actorFlags = (actor->actorFlags & ~kActorFacingMask) | (walkFlags & kActorFacingMask);
 	return SUCCESS;
 }
 

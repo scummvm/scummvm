@@ -53,6 +53,12 @@ namespace Saga {
 #define ACTOR_SPEECH_STRING_MAX 16	// speech const
 #define ACTOR_SPEECH_ACTORS_MAX 8
 
+#define PATH_NODE_MAX 100
+#define PATH_LIST_MAX 500
+
+#define PATH_NODE_EMPTY -1
+
+
 #define ID_NOTHING 0
 #define ID_PROTAG 1
 
@@ -123,6 +129,12 @@ struct PathDirectionData {
 };
 
 typedef SortedList<PathDirectionData> PathDirectionList;
+
+struct PathNode {
+	int x;
+	int y;
+	int link;
+};
 
 struct ActorFrameRange {
 	int frameIndex;
@@ -259,6 +271,7 @@ public:
 	bool actorWalkTo(uint16 actorId, const ActorLocation &toLocation);
 	ActorData *getActor(uint16 actorId);
 	ActorFrameRange *getActorFrameRange(uint16 actorId, int frameType);
+	void realLocation(ActorLocation &location, uint16 objectId, uint16 walkFlags);
 
 //	speech 
 	void actorSpeech(uint16 actorId, const char **strings, int stringsCount, uint16 sampleResourceId, int speechFlags);
@@ -280,7 +293,7 @@ private:
 	void createDrawOrderList();
 	void calcActorScreenPosition(ActorData * actor);
 	bool followProtagonist(ActorData * actor);
-	void findActorPath(ActorData * actor, const Point &pointFrom, const Point &pointTo);
+	void findActorPath(ActorData * actor, const Point &fromPoint, const Point &toPoint);
 	void handleSpeech(int msec);
 	void handleActions(int msec, bool setup);
 	void setPathCell(const Point &testPoint, int value) {
@@ -290,7 +303,13 @@ private:
 		return _pathCell[testPoint.x + testPoint.y * _xCellCount];
 	}
 	bool scanPathLine(const Point &point1, const Point &point2);
-	int fillPathArray(const Point &pointFrom, const Point &pointTo, Point &bestPoint);
+	int fillPathArray(const Point &fromPoint, const Point &toPoint, Point &bestPoint);
+	void setActorPath(ActorData * actor, const Point &fromPoint, const Point &toPoint);
+	void pathToNode();
+	void condenseNodeList();
+	void removeNodes();
+	void nodeToPath();
+	void removePathPoints();
 
 	int _lastTickMsec;
 	SagaEngine *_vm;
@@ -298,6 +317,8 @@ private:
 	ActorOrderList _drawOrderList;
 	ActorData _actors[ACTORCOUNT];
 	SpeechData _activeSpeech;
+
+//path stuff
 	Rect _barrierList[ACTOR_BARRIERS_MAX];
 	int _barrierCount;
 	int *_pathCell;
@@ -305,6 +326,11 @@ private:
 	int _xCellCount;
 	int _yCellCount;
 	Rect _pathRect;
+	Point _pathList[PATH_LIST_MAX];
+	int _pathListIndex;
+	PathNode _pathNodeList[PATH_NODE_MAX];
+	PathNode _newPathNodeList[PATH_NODE_MAX];
+	int _pathNodeIndex;
 
 };
 
