@@ -2712,10 +2712,17 @@ void Scumm::decodeParseString()
 				delay = (int)((getVarOrDirectWord(0x40) & 0xffff) * 7.5);
 				if (_gameId == GID_LOOM256) {
 					_vars[VAR_MI1_TIMER] = 0;
+					if (offset == 0 && delay == 0) {
 #ifdef COMPRESSED_SOUND_FILE
-					if (playMP3CDTrack(1, 0, offset, delay) == -1)
+						if (stopMP3CD() == -1)
 #endif
-						_system->play_cdrom(1, 0, offset, delay);
+							_system->stop_cdrom();
+					} else {
+#ifdef COMPRESSED_SOUND_FILE
+						if (playMP3CDTrack(1, 0, offset, delay) == -1)
+#endif
+							_system->play_cdrom(1, 0, offset, delay);
+					}
 				} else {
 					warning("parseString: 8");
 				}

@@ -291,7 +291,7 @@ byte CostumeRenderer::mainRoutine(Actor *a, int slot, int frame)
 	masking = 0;
 
 	if (_vm->_features & GF_SMALL_HEADER)
-		masking = _zbuf;
+		masking = (_zbuf != 0);
 	else
 		masking =
 			_vm->isMaskActiveAt(_left, _top, _right, _bottom,

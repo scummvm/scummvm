@@ -510,7 +510,7 @@ void Scumm::stopSound(int a)
 	IMuse *se;
 	int i;
 
-	if (a == current_cd_sound) {
+	if (a != 0 && a == current_cd_sound) {
 		current_cd_sound = 0;
 #ifdef COMPRESSED_SOUND_FILE
 		if (stopMP3CD() == -1)
