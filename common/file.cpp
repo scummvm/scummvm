@@ -27,6 +27,12 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 	char buf[256];
 	char *ptr;
 
+	// Fix for Win98 issue related with game directory pointing to root drive ex. "c:\"
+	ptr = (char*)directory;
+	if ((ptr[1] == ':') && (ptr[2] == '\\') && (ptr[3] == 0)) {
+		ptr[2] = 0;
+	}
+
 	strcpy(buf, directory);
 	if (directory[0] != 0) {
 #ifdef __MORPHOS__
