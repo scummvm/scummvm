@@ -234,6 +234,8 @@ void Scumm_v8::setupScummVars()
 	VAR_CUTSCENE_START_SCRIPT = 58;
 	VAR_CUTSCENE_END_SCRIPT = 59;
 
+	VAR_CUTSCENEEXIT_KEY = 62;	// FIXME - guess based on script-1 (could also be 68)
+
 	VAR_PAUSE_KEY = 64;				// ???
 	VAR_SAVELOADDIALOG_KEY = 65;	// ???
 
@@ -251,6 +253,8 @@ void Scumm_v8::setupScummVars()
 	VAR_CAMERA_SPEED_Y = 108;
 	VAR_CAMERA_ACCEL_X = 109;
 	VAR_CAMERA_ACCEL_Y = 110;
+
+	VAR_TIMER_NEXT = 112;	// FIXME - guess based on script-1
 
 	VAR_EGO = 126;
 
