@@ -43,5 +43,9 @@ unsigned long PNO_Main(const void *emulStateP, void *userData68KP, Call68KFuncTy
 	Gdi_drawStripToScreen(userData68KP);
 #endif
 
+#ifdef COMPILE_BLIT
+	Display_blit(userData68KP);
+#endif
+
 	return ByteSwap32(retVal);
 }

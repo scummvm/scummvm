@@ -9,6 +9,7 @@
 #ifndef __PALM_OS__
 
 typedef UInt8 byte;
+typedef UInt8 uint8;
 typedef Int32 int32;
 typedef UInt16 uint16;
 typedef unsigned int uint;
@@ -21,7 +22,8 @@ enum {
 	RSC_WIDEPORTRAIT,
 	RSC_COPYRECT,
 	RSC_COSTUMEPROC3,
-	RSC_DRAWSTRIP
+	RSC_DRAWSTRIP,
+	RSC_BLIT
 };
 
 enum {
@@ -29,6 +31,7 @@ enum {
 	PNO_WIDE,
 	PNO_COSTUMEPROC3,
 	PNO_DRAWSTRIP,
+	PNO_BLIT,
 	PNO_COUNT
 };
 
@@ -109,9 +112,7 @@ typedef struct {
 	int _outheight;
 
 	byte *_shadow_table;
-
-	 byte *_vm_proc_special_palette;
-	 byte *_palette;
+	byte *_palette;
 	byte _shadow_mode;
 } CostumeProc3Type;
 
@@ -127,6 +128,18 @@ typedef struct {
 	uint16 vs_pitch;
 	uint16 _textSurface_pitch;
 } DrawStripType;
+
+// Queen
+typedef struct {
+	uint8 *dstBuf;
+	const uint8 *srcBuf;
+	uint16 dstPitch;
+	uint16 srcPitch;
+	uint16 w;
+	uint16 h;
+	byte xflip;
+	byte masked;
+} BlitType;
 
 // calls
 MemPtr	_PceInit(DmResID resID);
