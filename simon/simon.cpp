@@ -4612,10 +4612,10 @@ void SimonState::delay(uint amount)
 				case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.keycode == 't') {
 					_vk_t_toggle ^= 1;
-				} else if (event.kbd.keycode == '+') {
-					midi.set_volume(midi.get_volume() + 10);
-				} else if (event.kbd.keycode == '-') {
-					midi.set_volume(midi.get_volume() - 10);
+				} else if (event.kbd.keycode == ']' || event.kbd.keycode == '+') {
+					midi.set_volume(midi.get_volume() + 16);
+				} else if (event.kbd.keycode == '[' || event.kbd.keycode == '-') {
+					midi.set_volume(midi.get_volume() - 16);
 				} else if (event.kbd.keycode == 'm') {
 					midi.pause(_music_paused ^= 1);
 				} else if (event.kbd.keycode == 's') {
