@@ -1,4 +1,5 @@
 #include "screen.h"
+#include <string.h>
 
 unsigned short int dataTemp[640*480];
 
@@ -252,3 +253,4 @@ void screenBlocksBlitDirtyBlocks()
 		}
 	}
 }
+
