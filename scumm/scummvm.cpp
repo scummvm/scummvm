@@ -822,6 +822,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 }
 
 ScummEngine::~ScummEngine() {
+	_mixer->stopAll();
+	
 	delete [] _actors;
 	
 	delete _2byteFontPtr;
