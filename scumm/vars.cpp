@@ -232,4 +232,19 @@ void Scumm_v8::setupScummVars()
 
 	VAR_PAUSE_KEY = 64;				// ???
 	VAR_SAVELOADDIALOG_KEY = 65;	// ???
+
+
+	// FIXME - HACK: no clue where these really are located, but we need to put them
+	// somewhere so that camera clamping works. So for now just assume they are on their
+	// V6 positions (which is somewhat unlikely, considering most stuff moved...)
+	VAR_CAMERA_MIN_X = 101;
+	VAR_CAMERA_MAX_X = 102;
+	VAR_CAMERA_MIN_Y = 103;
+	VAR_CAMERA_MAX_Y = 104;
+	VAR_CAMERA_THRESHOLD_X = 105;
+	VAR_CAMERA_THRESHOLD_Y = 106;
+	VAR_CAMERA_SPEED_X = 107;
+	VAR_CAMERA_SPEED_Y = 108;
+	VAR_CAMERA_ACCEL_X = 109;
+	VAR_CAMERA_ACCEL_Y = 110;
 }

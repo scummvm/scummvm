@@ -668,7 +668,7 @@ void Scumm::redrawBGStrip(int start, int num)
 		gfxUsageBits[s + i] |= 0x80000000;
 
 	gdi.drawBitmap(getResourceAddress(rtRoom, _roomResource) + _IM00_offs,
-								 &virtscr[0], s, 0, virtscr[0].height, s, num, 0);
+	               &virtscr[0], s, 0, virtscr[0].height, s, num, 0);
 }
 
 void Scumm::restoreCharsetBg()
@@ -1708,7 +1708,10 @@ void Scumm::setCameraAt(int pos_x, int pos_y)
 				&& _vars[VAR_SCROLL_SCRIPT]) {
 			_vars[VAR_CAMERA_POS_X] = camera._cur.x;
 			_vars[VAR_CAMERA_POS_Y] = camera._cur.y;
-			runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
+			// FIXME - HACK - for now disable scroll script in V8, until we figure out
+			// what value VAR_SCROLL_SCRIPT has.
+			if (!(_features & GF_AFTER_V8))
+				runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
 		}
 	} else {
 		int t;

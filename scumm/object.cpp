@@ -402,7 +402,8 @@ void Scumm::loadRoomObjects()
 	RoomHeader *roomhdr;
 	CodeHeader *cdhd;
 
-	CHECK_HEAP room = getResourceAddress(rtRoom, _roomResource);
+	CHECK_HEAP
+	room = getResourceAddress(rtRoom, _roomResource);
 	roomhdr = (RoomHeader *)findResourceData(MKID('RMHD'), room);
 
 	if (_features & GF_AFTER_V8)
@@ -459,8 +460,8 @@ void Scumm::loadRoomObjects()
 		imhd = (ImageHeader *)findResourceData(MKID('IMHD'), ptr);
 		if (_features & GF_AFTER_V8)
 			// FIXME - in v8, IMHD seems to contain no obj_id, but rather a name string
-			obim_id = 0;
-//			obim_id = READ_LE_UINT32(&imhd->v8.obj_id);
+			// EVIL HACK to allow loading of the first COMI room
+			obim_id = 1373 + i;
 		else if (_features & GF_AFTER_V7)
 			obim_id = READ_LE_UINT16(&imhd->v7.obj_id);
 		else
@@ -473,13 +474,12 @@ void Scumm::loadRoomObjects()
 		searchptr = NULL;
 	}
 
-	od = &_objs[1];
-
-	for (i = 1; i <= _numObjectsInRoom; i++, od++) {
-		setupRoomObject(od, room);
+	for (i = 1; i <= _numObjectsInRoom; i++) {
+		setupRoomObject(&_objs[i], room);
 	}
 
-CHECK_HEAP}
+	CHECK_HEAP
+}
 
 void Scumm::loadRoomObjectsSmall()
 {
@@ -541,7 +541,8 @@ void Scumm::loadRoomObjectsSmall()
 		setupRoomObject(od, room);
 	}
 
-CHECK_HEAP}
+	CHECK_HEAP
+}
 
 void Scumm::setupRoomObject(ObjectData *od, byte *room)
 {
@@ -574,15 +575,13 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room)
 		od->actordir = (*(ptr + 17)) & 7;
 		od->height = *(ptr + 17);		// ok
 
-
-
 		return;
 	}
 
-        if (_features & GF_AFTER_V8)
-                searchptr = getResourceAddress(rtRoomScripts, _roomResource);
-        else
-                searchptr = room;
+	if (_features & GF_AFTER_V8)
+		searchptr = getResourceAddress(rtRoomScripts, _roomResource);
+	else
+		searchptr = room;
 
 	cdhd = (CodeHeader *)findResourceData(MKID('CDHD'), searchptr + od->offs_obcd_to_room);
 	if (cdhd == NULL)
