@@ -417,6 +417,7 @@ bool _get_key_mapping;
 static char _directory[MAX_PATH];
 bool select_game;
 bool need_GAPI;
+char is_demo;
 
 bool gfx_mode_switch;
 
@@ -430,7 +431,7 @@ extern void startFindGame();
 extern void displayGameInfo();
 extern bool loadGameSettings(void);
 extern void setFindGameDlgHandle(HWND);
-extern void getSelectedGame(int, char*, TCHAR*);
+extern void getSelectedGame(int, char*, TCHAR*, char*);
 extern void runGame(char*);
 
 extern void palette_update();
@@ -451,6 +452,7 @@ bool closing = false;
 
 /* Check platform */
 bool smartphone = false;
+bool high_res = false;
 
 void close_GAPI() {
 	g_config->setBool("Sound", sound_activated, "wince");
@@ -730,7 +732,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 		if (result < 0)
 			return 0;
 
-		getSelectedGame(result, game_name, directory);
+		getSelectedGame(result, game_name, directory, &is_demo);
 	}
 
 	WideCharToMultiByte(CP_ACP, 0, directory, wcslen(directory) + 1, _directory, sizeof(_directory), NULL, NULL);
@@ -741,7 +743,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	return 0;
 }
 
-/*
+
 bool checkOggSampleRate(char *directory) {
 	char trackFile[255];
 	FILE *testFile;
@@ -750,18 +752,19 @@ bool checkOggSampleRate(char *directory) {
 	sprintf(trackFile,"%s/Track1.ogg", directory);
 	// Check if we have an OGG audio track
 	testFile = fopen(trackFile, "rb");
-	if (file->isOpen()) {
+	if (testFile) {
 		if (!ov_open(testFile, test_ov_file, NULL, 0)) {
-			bool highSampleRate = (ov_info(&test_ov_file, -1)->rate == 22050);
+			bool highSampleRate = (ov_info(test_ov_file, -1)->rate == 22050);
 			ov_clear(test_ov_file);
 			return highSampleRate;
 		}
 	}
-	// Or if we have an OGG compressed speech file
+	
+	// Do not test for OGG samples - too big and too slow anyway :)
 
 	return false;
 }
-*/
+
 
 void runGame(char *game_name) {
 	int argc = 4;
@@ -797,18 +800,23 @@ void runGame(char *game_name) {
 
 	// Keyboard activated for Monkey Island 2 and Monkey 1 floppy
 	if (strcmp(game_name, "monkey2") == 0 ||
-		strcmp(game_name, "monkeyvga") == 0) {
+		strcmp(game_name, "monkeyvga") == 0 ||
+		strcmp(game_name, "monkeyega") == 0) {
 		draw_keyboard = true;
 		monkey_keyboard = true;
 	}
 
+	if (strcmp(game_name, "comi") == 0) {
+		high_res = true;
+	}
+
 	//new_audio_rate = (strcmp(game_name, "dig") == 0 || strcmp(game_name, "monkey") == 0);
-	new_audio_rate = (strcmp(game_name, "dig") == 0 || strcmp(game_name, "ft") == 0);
+	new_audio_rate = (strcmp(game_name, "dig") == 0 || strcmp(game_name, "ft") == 0 || strcmp(game_name, "comi") == 0);
 
 	// Modify the sample rate on the fly if OGG is involved 
 
-	//if (!new_audio_rate)
-	//	new_audio_rate = checkOggSampleRate(_directory);
+	if (!new_audio_rate)
+		new_audio_rate = checkOggSampleRate(_directory);
 
 	detector.parseCommandLine(argc, argv);
 
@@ -825,7 +833,7 @@ void runGame(char *game_name) {
 
 	is_simon = (detector._gameId >= GID_SIMON_FIRST);
 
-	if (smartphone || detector._gameId == GID_SAMNMAX || detector._gameId == GID_FT || detector._gameId == GID_DIG)
+	if (smartphone || detector._gameId == GID_SAMNMAX || detector._gameId == GID_FT || detector._gameId == GID_DIG || detector._gameId == GID_CMI)
 		hide_cursor = FALSE;
 	else
 		hide_cursor = TRUE;	
@@ -1117,7 +1125,7 @@ void action_save() {
 			toolbar_drawn = false;
 	*/
 	/*}*/
-	if (g_scumm->_features & GF_OLD256)
+	if (g_scumm->_features & GF_OLD256 || g_scumm->_gameId == GID_CMI)
 		system->addEventKeyPressed(319);
 	else
 		system->addEventKeyPressed(g_scumm->_vars[g_scumm->VAR_SAVELOADDIALOG_KEY]);						
@@ -1271,7 +1279,7 @@ OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
 
 	reducePortraitGeometry();
 
-	if (smartphone || ((noGAPI || !gfx_mode_switch) && GetSystemMetrics(SM_CXSCREEN) < 320)) 
+	if (smartphone || high_res || ((noGAPI || !gfx_mode_switch) && GetSystemMetrics(SM_CXSCREEN) < 320)) 
 		SetScreenMode(1);
 
 	Cls();
@@ -1280,7 +1288,7 @@ OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
 	// Set mode, portrait or landscape
 	display_mode = g_config->get("DisplayMode", "wince");
 
-	if (display_mode && !(noGAPI || !gfx_mode_switch))
+	if (display_mode && !(high_res || noGAPI || !gfx_mode_switch))
 		SetScreenMode(atoi(display_mode));
 
 	return syst;
@@ -1312,10 +1320,16 @@ void OSystem_WINCE3::set_palette(const byte *colors, uint start, uint num) {
 void OSystem_WINCE3::load_gfx_mode() {
 	force_full = true;
 
-	_gfx_buf = (byte*)malloc((320 * 240) * sizeof(byte));	
-	_overlay_buf = (byte*)malloc((320 * 240) * sizeof(uint16));
+	if (!high_res) {
+		_gfx_buf = (byte*)malloc((320 * 240) * sizeof(byte));	
+		_overlay_buf = (byte*)malloc((320 * 240) * sizeof(uint16));
+	}
+	else {
+		_gfx_buf = (byte*)malloc((640 * 480) * sizeof(byte));	
+		_overlay_buf = (byte*)malloc((320 * 240) * sizeof(uint16));
+	}
 	//_ms_backup = (byte*)malloc((40 * 40 * 3) * sizeof(byte));
-	_ms_backup = (byte*)malloc((40 * 40 * 3) * sizeof(uint16));
+	_ms_backup = (byte*)malloc((MAX_MOUSE_W * MAX_MOUSE_H) * sizeof(uint16));
 }
 
 void OSystem_WINCE3::unload_gfx_mode() {
@@ -1339,10 +1353,15 @@ void OSystem_WINCE3::copy_rect(const byte *buf, int pitch, int x, int y, int w, 
 
 	AddDirtyRect(x, y, w, h);
 
-	dst = _gfx_buf + y * 320 + x;
+	if (x == 0 && y == 0 && w == _screenWidth && h == _screenHeight) {
+		memcpy(_gfx_buf, buf, _screenWidth * _screenHeight);
+		return;
+	}
+
+	dst = _gfx_buf + y * (high_res ? 640 : 320) + x;
 	do {
 		memcpy(dst, buf, w);
-		dst += 320;
+		dst += (high_res ? 640 : 320);
 		buf += pitch;
 	} while (--h);
 
@@ -1354,7 +1373,7 @@ void OSystem_WINCE3::update_screen() {
 		draw_mouse();
 
 	if (_overlay_visible) {
-		Set_565((int16*)_overlay_buf, 320, 0, 0, 320, 200);
+			Set_565((int16*)_overlay_buf, 320, 0, 0, 320, 200);
 		checkToolbar();
 	}
 	else {
@@ -1366,9 +1385,12 @@ void OSystem_WINCE3::update_screen() {
 			int i;
 			for (i=0; i<num_of_dirty_square; i++) {
 				if (smartphone)
-					Blt_part(_gfx_buf + (320 * ds[i].y) + ds[i].x, ds[i].x * 2 / 3, ds[i].y * 7 / 8, ds[i].w, ds[i].h, 320, true);
+					Blt_part(_gfx_buf + (320 * ds[i].y) + ds[i].x, ds[i].x * 2 / 3, ds[i].y * 7 / 8, ds[i].w, ds[i].h, 320, false);
 				else
-					Blt_part(_gfx_buf + (320 * ds[i].y) + ds[i].x, ((GetScreenMode() || GetSystemMetrics(SM_CXSCREEN) >= 320) ? ds[i].x : ds[i].x * 3/4), ds[i].y, ds[i].w, ds[i].h, 320, true);
+				if (high_res)
+					Blt_part(_gfx_buf + (640 * ds[i].y) + ds[i].x, ds[i].x/2, ds[i].y/2, ds[i].w, ds[i].h, 640, false);
+				else
+					Blt_part(_gfx_buf + (320 * ds[i].y) + ds[i].x, ((GetScreenMode() || GetSystemMetrics(SM_CXSCREEN) >= 320) ? ds[i].x : ds[i].x * 3/4), ds[i].y, ds[i].w, ds[i].h, 320, false);
 			}
 			num_of_dirty_square = 0;
 		}
@@ -1385,148 +1407,139 @@ bool OSystem_WINCE3::show_mouse(bool visible) {
 	return last;
 }
 
-// From X11 port
+// From SDL backend 
 
 void OSystem_WINCE3::draw_mouse() {
 	if (_mouse_drawn || !_mouse_visible)
 		return;
-	_mouse_drawn = true;
 
-	int xdraw = _ms_cur.x - _ms_hotspot_x;
-	int ydraw = _ms_cur.y - _ms_hotspot_y;
+	int x = _ms_cur.x - _ms_hotspot_x;
+	int y = _ms_cur.y - _ms_hotspot_x;
 	int w = _ms_cur.w;
 	int h = _ms_cur.h;
-	int real_w;
-	int real_h;
-	int real_h_2;
+	byte color;
+	byte *src = _ms_buf;		// Image representing the mouse
 
-	byte *dst;
-	byte *dst2;
-	const byte *buf = _ms_buf;
-	byte *bak = _ms_backup;
-
-	assert(w <= 40 && h <= 40);
-
-	if (ydraw < 0) {
-		real_h = h + ydraw;
-		buf += (-ydraw) * w;
-		ydraw = 0;
-	} else {
-		real_h = (ydraw + h) > 200 ? (200 - ydraw) : h;
-	}
-	if (xdraw < 0) {
-		real_w = w + xdraw;
-		buf += (-xdraw);
-		xdraw = 0;
-	} else {
-		real_w = (xdraw + w) > 320 ? (320 - xdraw) : w;
-	}
-
-	if (_overlay_visible)
-		dst = (byte*)_overlay_buf + (ydraw * 320 * sizeof(uint16)) + (xdraw * sizeof(uint16));
-	else
-		dst = _gfx_buf + (ydraw * 320) + xdraw;
-	dst2 = dst;
-
-	if ((real_h == 0) || (real_w == 0)) {
-		_mouse_drawn = false;
+	if (_overlay_visible && (x >= 320 || y>=240))
 		return;
+
+	// clip the mouse rect, and addjust the src pointer accordingly
+	if (x < 0) {
+		w += x;
+		src -= x;
+		x = 0;
+	}
+	if (y < 0) {
+		h += y;
+		src -= y * _ms_cur.w;
+		y = 0;
 	}
 
-	AddDirtyRect(xdraw, ydraw, real_w, real_h);
-	_ms_old.x = xdraw;
-	_ms_old.y = ydraw;
-	_ms_old.w = real_w;
-	_ms_old.h = real_h;
+	if (w > _screenWidth - x)
+		w = _screenWidth - x;
+	if (h > _screenHeight - y)
+		h = _screenHeight - y;
+
+	// Quick check to see if anything has to be drawn at all
+	if (w <= 0 || h <= 0)
+		return;
+
+	// Store the bounding box so that undraw mouse can restore the area the
+	// mouse currently covers to its original content.
+	_ms_old.x = x;
+	_ms_old.y = y;
+	_ms_old.w = w;
+	_ms_old.h = h;
+
+	// Mark as dirty
+	AddDirtyRect(x, y, w, h);
 
 	if (!_overlay_visible) {
-
-		real_h_2 = real_h;
-		while (real_h_2 > 0) {
-			memcpy(bak, dst, real_w);
-			bak += 40;
-			dst += 320;
-			real_h_2--;
-		}
-		while (real_h > 0) {
-			int width = real_w;
+		byte *bak = _ms_backup;		// Surface used to backup the area obscured by the mouse
+		byte *dst;					// Surface we are drawing into
+	
+		dst = (byte *)_gfx_buf + y * _screenWidth + x;
+		while (h > 0) {
+			int width = w;
 			while (width > 0) {
-				byte color = *buf;
-				if (color != 0xFF) {
-					*dst2 = color;
-				}
-				buf++;
-				dst2++;
+				*bak++ = *dst;
+				color = *src++;
+				if (color != 0xFF)	// 0xFF = transparent, don't draw
+					*dst = color;
+				dst++;
 				width--;
 			}
-			buf += w - real_w;
-			dst2 += 320 - real_w;
-			real_h--;
+			src += _ms_cur.w - w;
+			bak += MAX_MOUSE_W - w;
+			dst += _screenWidth - w;
+			h--;
 		}
-	}
-	else {	
-		real_h_2 = real_h;
-		while (real_h_2 > 0) {
-			memcpy(bak, dst, real_w * sizeof(uint16));
-			bak += 40 * sizeof(uint16);
-			dst += 320 * sizeof(uint16);
-			real_h_2--;
-		}
-		while (real_h > 0) {
-			int width = real_w;
+	} 
+	else {
+		uint16 *bak = (uint16 *)_ms_backup;	// Surface used to backup the area obscured by the mouse
+		uint16 *dst;					// Surface we are drawing into
+	
+		dst = (uint16*)_overlay_buf + y * 320 + x;
+		while (h > 0) {
+			int width = w;
 			while (width > 0) {
-				byte color = *buf;
-				if (color != 0xFF) {
+				*bak++ = *dst;
+				color = *src++;
+				if (color != 0xFF)	{ // 0xFF = transparent, don't draw 
 					uint16 x = getColor565(color);
-					memcpy(dst2, &x, sizeof(uint16));
+					memcpy(dst, &x, sizeof(uint16));
 				}
-				buf++;
-				dst2 += sizeof(uint16);
+				dst++;
 				width--;
 			}
-			buf += w - real_w;
-			dst2 += (320 - real_w) * sizeof(uint16);
-			real_h--;
-		}	
+			src += _ms_cur.w - w;
+			bak += MAX_MOUSE_W - w;
+			dst += 320 - w;
+			h--;
+		}
 	}
+
+	// Finally, set the flag to indicate the mouse has been drawn
+	_mouse_drawn = true;
 }
 
-void OSystem_WINCE3::undraw_mouse() {
-	byte *dst;
 
+void OSystem_WINCE3::undraw_mouse() {
 	if (!_mouse_drawn)
 		return;
 	_mouse_drawn = false;
 
-	int old_h = _ms_old.h;
-
-	AddDirtyRect(_ms_old.x, _ms_old.y, _ms_old.w, _ms_old.h);
-
-	if (_overlay_visible)
-	   dst = (byte*)_overlay_buf + (_ms_old.y * 320 * sizeof(uint16)) + (_ms_old.x * sizeof(uint16));
-	else
-	   dst = _gfx_buf + (_ms_old.y * 320) + _ms_old.x;
-	byte *bak = _ms_backup;
+	const int old_mouse_x = _ms_old.x;
+	const int old_mouse_y = _ms_old.y;
+	const int old_mouse_w = _ms_old.w;
+	const int old_mouse_h = _ms_old.h;
+	int x, y;
 
 	if (!_overlay_visible) {
+		byte *dst, *bak = _ms_backup;
 
-		while (old_h > 0) {
-			memcpy(dst, bak, _ms_old.w);
-			bak += 40;
-			dst += 320;
-			old_h--;
-		}
+		// No need to do clipping here, since draw_mouse() did that already
+		dst = (byte *)_gfx_buf + old_mouse_y * _screenWidth + old_mouse_x;
+		for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _screenWidth) {
+			for (x = 0; x < old_mouse_w; ++x) {
+				dst[x] = bak[x];
+			}
+		}	
 	}
 	else {
-		while (old_h > 0) {
-			memcpy(dst, bak, _ms_old.w * sizeof(uint16));
-			bak += 40 * sizeof(uint16);
-			dst += 320 * sizeof(uint16);
-			old_h--;
+		uint16 *dst, *bak = (uint16 *)_ms_backup;
+	
+		// No need to do clipping here, since draw_mouse() did that already
+		dst = (uint16 *)_overlay_buf + old_mouse_y * 320 + old_mouse_x;
+		for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += 320) {
+			for (x = 0; x < old_mouse_w; ++x) {
+				dst[x] = bak[x];
+			}
 		}
 	}
-}
 
+	AddDirtyRect(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
+}
 
 void OSystem_WINCE3::warp_mouse(int x, int y) {
 }
@@ -1680,10 +1693,7 @@ void OSystem_WINCE3::quit() {
 
 /* CDRom Audio */
 void OSystem_WINCE3::stop_cdrom() {;}
-void OSystem_WINCE3::play_cdrom(int track, int num_loops, int start_frame, int end_frame) {
-	/* Reset sync count */
-	g_scumm->_vars[g_scumm->VAR_MI1_TIMER] = 0;
-}
+void OSystem_WINCE3::play_cdrom(int track, int num_loops, int start_frame, int end_frame) {;}
 
 bool OSystem_WINCE3::poll_cdrom() {return 0;}
 void OSystem_WINCE3::update_cdrom() {;}
