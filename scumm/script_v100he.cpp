@@ -2425,7 +2425,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 		d = pop();
 		e = pop();
 		f = pop();
-		push(spriteInfoGet_case15(f, e, d, c, flags, args));
+		push(findSpriteWithClassOf(f, e, d, c, flags, args));
 		break;
 	case 38:
 		spriteId = pop();

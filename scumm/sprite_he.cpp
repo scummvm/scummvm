@@ -39,8 +39,86 @@ void ScummEngine_v90he::allocateArrays() {
 //
 // spriteInfoGet functions
 //
-int ScummEngine_v90he::spriteInfoGet_case15(int a, int b, int c, int d, int num, int *args) {
-	// TODO
+int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroup, int d, int num, int *args) {
+	int classId;
+	debug(1, "findSprite: x %d, y %d, spriteGroup %d, d %d, num %d\n", x, y, spriteGroup, d, num);
+
+	for (int i = 0; i < _numSpritesToProcess; ++i) {
+		SpriteInfo *spi = _activeSpritesTable[i];
+		if (!spi->field_4C)
+			continue;
+
+		if (spriteGroup && spi->group_num != spi->field_4C)
+			continue;
+
+		for (int j = 0; j < num; j++) {
+			classId = args[j] & 0x7F;
+			checkRange(32, 1, classId, "class %d out of range in statement");
+			if (!(spi->class_flags & (1 << classId)))
+				continue;
+		}
+
+		if (d != 0) {
+			if (spi->bbox.left > spi->bbox.right)
+				continue;
+			if (spi->bbox.top > spi->bbox.bottom)
+				continue;
+			if (spi->bbox.left > x)
+				continue;
+			if (spi->bbox.top > y)
+				continue;
+			if (spi->bbox.right < x)
+				continue;
+			if (spi->bbox.bottom < y)
+				continue;
+			return i;
+		} else {
+			int state;
+			int resId = spi->field_4C;
+
+			if (spi->field_80) {
+				int16 x1, x2, y1, y2;
+
+				state = getWizImageStates(spi->field_80);
+				state /= spi->field_48;
+
+				x -= spi->field_34;
+				y -= spi->field_38;
+
+				loadImgSpot(spi->field_4C, state, x1, y1);
+				loadImgSpot(spi->field_80, state, x2, y2);
+
+				x += (x2 - x1);
+				y += (y2 - y1);
+			} else {
+				if (spi->bbox.left > spi->bbox.right)
+					continue;
+				if (spi->bbox.top > spi->bbox.bottom)
+					continue;
+				if (spi->bbox.left > x)
+					continue;
+				if (spi->bbox.top > y)
+					continue;
+				if (spi->bbox.right < x)
+					continue;
+				if (spi->bbox.bottom < y)
+					continue;
+
+				x -= spi->field_34;
+				y -= spi->field_38;
+				state = spi->field_48;
+			}
+
+			if ((spi->flags & kSFZoomed) || (spi->flags & kSFRotated)) {
+				// TODO
+
+			}
+
+			if(isWizPixelNonTransparent(rtImage, resId, state, x, y, spi->imgFlags));
+				return i;
+		}
+	}
+
 	return 0;
 }
 

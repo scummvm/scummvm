@@ -829,18 +829,18 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 			d = pop();
 			e = pop();
 			f = pop();
-			push(spriteInfoGet_case15(f, e, d, c, flags, args));
+			push(findSpriteWithClassOf(f, e, d, c, flags, args));
 		} else if (_heversion == 98) {
-			pop();
-			pop();
-			pop();
-			pop();
-			push(0);
+			c = pop();
+			d = pop();
+			e = pop();
+			f = pop();
+			push(findSpriteWithClassOf(f, e, d, c, 0, 0));
 		} else {
-			pop();
-			pop();
-			pop();
-			push(0);
+			d = pop();
+			e = pop();
+			f = pop();
+			push(findSpriteWithClassOf(f, e, d, 0, 0, 0));
 		}
 		break;
 	case 22:
