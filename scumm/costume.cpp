@@ -579,7 +579,6 @@ void LoadedCostume::loadNEScostume(void) {
 	const byte *src;
 	int frameset, framenum;
 	int offset;
-	byte *table;
 
 	_format = 0x01;
 	_mirror = 0;
@@ -593,13 +592,11 @@ void LoadedCostume::loadNEScostume(void) {
 	offset = src[(frameset * 4 + framenum) * 2];
 
 	// Lookup & desc
-	table = _vm->_NEScostdesc;
-	offset = READ_LE_UINT16(table + v1MMNESLookup[_id] * 2);
-
-	if (v1MMNESLookup[_id] * 2 + 2 >= READ_LE_UINT16(table - 2)) {
-		_numAnim = (READ_LE_UINT16(table) - v1MMNESLookup[_id] * 2) / 2;
+	offset = READ_LE_UINT16(_vm->_NEScostdesc + v1MMNESLookup[_id] * 2);
+	if (v1MMNESLookup[_id] * 2 + 2 < READ_LE_UINT16(_vm->_NEScostdesc - 2)) {
+		_numAnim = (READ_LE_UINT16(_vm->_NEScostdesc + v1MMNESLookup[_id] * 2 + 2) - offset);
 	} else {
-		_numAnim = (READ_LE_UINT16(table + v1MMNESLookup[_id] * 2 + 2) - offset) / 2;
+		_numAnim = ((READ_LE_UINT16(_vm->_NEScostlens - 2) - 2) - offset);
 	}
 }
 
