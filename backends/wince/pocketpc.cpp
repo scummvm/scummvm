@@ -132,6 +132,8 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 
 			Translate(&x, &y);
 
+			wm->_event.kbd.flags = 0;
+
 			if (draw_keyboard) {
 				// Handle keyboard selection
 				int offset_y;
