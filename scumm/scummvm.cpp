@@ -2687,9 +2687,11 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	case 7:
 		engine = new ScummEngine_v7(detector, syst);
 		break;
+#ifndef __PALM_OS__
 	case 8:
 		engine = new ScummEngine_v8(detector, syst);
 		break;
+#endif
 	default:
 		error("Engine_SCUMM_create(): Unknown version of game engine");
 	}
