@@ -1,5 +1,5 @@
 ScummVM README
-Last updated:    2003-08-02
+Last updated:    2003-09-10
 Release version: 0.5.3-cvs
 ------------------------------------------------------------------------
 
@@ -7,15 +7,42 @@ For more information, compatibility lists, details on donating, the latest
 release, progress reports and more, please visit the ScummVM home page
 at: http://www.scummvm.org/
 
+Table of Contents:
+------------------
+1.0) About
+2.0) Contacting
+ * 2.1 Reporting Bugs
+3.0) Supported Games
+ * 3.1 Copy Protection
+ * 3.2 Simon the Sorcerer notes
+ * 3.3 Known Bugs
+4.0) Supported Platforms
+5.0) Running ScummVM
+ * 5.1 Command Line Options
+ * 5.2 Language Options
+ * 5.3 Graphics Filters
+ * 5.4 Hotkeys
+ * 5.5 Using Macintosh games
+6.0) Savegames
+ * 6.1 Autosaves
+7.0) Music and Sound
+ * 7.1 Adlib emulation
+ * 7.2 MIDI emulation
+ * 7.3 Native MIDI support
+ * 7.4 UNIX native & ALSA sequencer support
+ * 7.5 Using MP3 or OGG to store/compress audio
+8.0) Configuration Files
+9.0) Compiling
+X.X) Credits
 
-About:
------- 
+1.0) About:
+---- ------ 
 ScummVM is a collection of interpreters, capable of emulating several
 adventure game engines. ScummVM mainly supports engines created using 
 SCUMM (Script Creation Utility for Maniac Mansion), used in various
 LucasArts games such as Monkey Island, Day of the Tentacle, and others.
 ScummVM also contains interpreters for several non-SCUMM games, currently
-these are Simon the Sorcerer (1 & 2), and Beneath a Steel Sky.
+these are Beneath a Steel Sky, Broken Sword II and Simon the Sorcerer 1 & 2
 
 At this time ScummVM should be considered beta software, and is still
 under heavy development. Be aware that whilst we attempt to make sure
@@ -25,16 +52,40 @@ If you enjoy ScummVM feel free to donate using the PayPal button on the
 ScummVM homepage. This will help us buy utilities needed to develop ScummVM
 easier and quicker. If you cannot donate, help and contribute a patch!
 
-
-Contacting:
------------
+2.0) Contacting:
+---- ----------
 The easiest way to contact the ScummVM team is by submitting bug reports or
 commenting in our forums. You can also join and e-mail the scummvm-devel
-mailing list, or chat with us on irc (#scummvm, irc.freenode.net)
+mailing list, or chat with us on irc (#scummvm on irc.freenode.net)
+Please do not ask us to support an unsupported game - read our homepages
+FAQ first.
 
+2.1) Reporting Bugs:
+---- ---------------
+To report a bug, please create a SourceForge account and follow the bugs
+link from our homepage. Please make sure the bug is reproducible, and
+still occurs in the latest daily build/current CVS version. Also check
+the known bugs list (below) and compatibility listing for that game, to
+ensure the issue is not already known.
 
-Supported Games:
-----------------
+Also do not report bugs on games that are not listed as being completable
+in the 'Supported Games' section, or compatibility list. We -know- those
+games have bugs.
+
+Please include the following information:
+        - ScummVM version (PLEASE test the latest CVS/Daily build)
+        - Bug details, including instructions on reproducing
+        - Language of game (English, German, ...)
+        - Version of game (talkie, floppy, ...)
+        - Platform and Compiler (Win32, Linux, FreeBSD, ...)
+        - Attach a save game if possible
+        - If this bug only occurred recently, please note the last
+          version without the bug, and the first version including
+          the bug. That way we can fix it quicker by looking at the
+          changes made.
+
+3.0) Supported Games:
+---- ----------------
 At the moment the following games have been reported to work, and should
 be playable to the end. However, this list generally applies to PC versions.
 Mac versions should work after being "ReSCUMM'ed" (see later in this document),
@@ -55,7 +106,7 @@ SCUMM Games:
      Zak McKracken (256 FM Towns)                    [Game: zak256]
      Monkey Island 1 (EGA)                           [Game: monkeyega]
      Monkey Island 1 (VGA)                           [Game: monkeyvga]
-     Monkey Island 1 (CD)                            [Game:  monkey/monkey1]
+     Monkey Island 1 (CD)                            [Game: monkey/monkey1]
      Monkey Island 2                                 [Game: monkey2]
      Indiana Jones and the Fate of Atlantis          [Game: atlantis]
      Day of the Tentacle                             [Game: tentacle]
@@ -66,12 +117,14 @@ SCUMM Games:
 Other Games:
      Beneath a Steel Sky                             [Game: sky]
      Simon the Sorcerer 1                            [Game: simon1dos/
-                                                       simon1talkie/simon1win]
+                                                            simon1talkie/
+                                                            simon1win]
      Simon the Sorcerer 2                            [Game: simon2dos/
                                                             simon2talkie/
-                                                            simon2win/simon2mac]
+                                                            simon2win
+                                                            simon2mac]
 
-The following games should be finishable, but have some criticial problems that
+The following games should be completable, but have some critical problems that
 prevent them from being fully supported at this time. Please do not file bug
 reports about them.
         
@@ -98,35 +151,8 @@ that sometimes make it impossible to finish the game. Save often, and please
 file a bug report (instructions on submitting bug reports are below) if you
 encounter such a bug in a 'supported' game.
 
-
-Supported Platforms:
--------------------
-ScummVM has been ported to run on many platforms and operating systems.
-Links to these ports can be found either on the ScummVM web page or by a
-Google search. Many thanks to the effort of porters. If you have a port of
-ScummVM and wish to commit it into the main CVS, feel free to contact us!
-
-        Windows         - SDL
-        Windows CE      - SDL           (iPaq and other handheld devices)
-        Linux           - X11 & OSS audio (includes iPaqs running Linux)
-        Mac OS X        - SDL
-        AmigaOS         - SDL/AGA
-        MorphOS         - custom backend
-        BeOS            - SDL
-        Acorn (RiscOS)  - ???
-        Dreamcast       - custom backend 
-        GP32            - custom backend
-        PalmOS          - custom backend
-        UNIX            - SDL           (Linux, Solaris, IRIX, *BSD)
-
-Neither the Dreamcast nor Palm ports support Curse of Monkey Island or
-either Simon the Sorcerer game. The Dig is also currently unsupported
-on the Dreamcast port, and will only work on some Palm devices (those
-with a large dynamic heap). The PalmOS port also lacks support for
-Beneath a Steel Sky.
-
-Copy Protection:
-----------------
+3.1) Copy Protection:
+---- ----------------
 The ScummVM team does not condone piracy. However, there are cases when
 LucasArts themselves bundled cracked interpreters with their own games --
 the data files still contain the copy protection scripts, but the interpreter
@@ -150,9 +176,24 @@ Beneath a Steel Sky (bypassed with permission from Revolution)
 In most cases ScummVM will still show the copy protection screen. Try entering
 any answer. Chances are that it will work.
 
+3.2) Simon the Sorcerer 1 and 2 notes:
+---- ---------------------------------
+The Simon the Sorcerer 1 & 2 games were split into several targets to make
+coding easier and to make it more clear which target should be used:
+       simon1dos    - Use for Simon the Sorcerer 1 for DOS (Disk)
+       simon2dos    - Use for Simon the Sorcerer 2 for DOS (Disk)
+       simon1talkie - Use for Simon the Sorcerer 1 Talkie for DOS (CD)
+       simon2talkie - Use for Simon the Sorcerer 2 Talkie for DOS (CD)
+       simon1win    - Use for Simon the Sorcerer 1 Talkie for Windows (CD)
+       simon2win    - Use for Simon the Sorcerer 2 Talkie for Windows (CD)
+       simon2mac    - Use for Simon the Sorcerer 2 Talkie for Amiga or Mac (CD)
 
-Known Problems in ScummVM 0.5.3(CVS):
---------------------------------
+If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
+then you will find the Windows version in the main directory of CD
+and the DOS Talkie version in the DOS directory of the CD.
+
+3.3) Known Problems in ScummVM 0.5.3-cvs
+---- -----------------------------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
 listed here, nor in the compatibility table on the web site, please see
@@ -187,11 +228,16 @@ the section on Reporting Bugs.
 
        Sam and Max:
                 - Highway subgame does not behave correctly.
+                - Music is broken under Dreamcast, causing game freezes
 
        Beneath a Steel Sky:
                 - Floppy demo does not work at all
                 - Amiga versions aren't supported and probably never will be
                 - Not a bug: CD version is missing speech for some dialog
+                - ScummVM 0.5.0 contained a bug in the savegame system.
+                  If you experience problems using an old savegame, it may be
+                  corrupt, and you will need to start a new game using this
+                  version.
 
        Simon the Sorcerer 1:
                 - No inventory scrolling arrows shown in simon1dos and
@@ -211,6 +257,7 @@ the section on Reporting Bugs.
 
        Curse of Monkey Island
                 - The "Pirate Song" scene does not play correctly
+                - Some minor graphical glitches remain
 
        All CD games:
                - If you are experiencing random crashes, and your game
@@ -219,49 +266,543 @@ the section on Reporting Bugs.
                  running them from there.
 
 
-Simon the Sorcerer 1 and 2 games note
---------------------------------------
-The Simon the Sorcerer 1 & 2 games were split into several targets to make 
-coding easier and to make it more clear which target should be used:
-       simon1dos    - Use for Simon the Sorcerer 1 for DOS (Disk)
-       simon2dos    - Use for Simon the Sorcerer 2 for DOS (Disk)
-       simon1talkie - Use for Simon the Sorcerer 1 Talkie for DOS (CD)
-       simon2talkie - Use for Simon the Sorcerer 2 Talkie for DOS (CD)
-       simon1win    - Use for Simon the Sorcerer 1 Talkie for Windows (CD)
-       simon2win    - Use for Simon the Sorcerer 2 Talkie for Windows (CD)
-       simon2mac    - Use for Simon the Sorcerer 2 Talkie for Amiga or Mac (CD)
+4.0) Supported Platforms:
+---- --------------------
+ScummVM has been ported to run on many platforms and operating systems.
+Links to these ports can be found either on the ScummVM web page or by a
+Google search. Many thanks to the effort of porters. If you have a port of
+ScummVM and wish to commit it into the main CVS, feel free to contact us!
 
-If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
-then you will find the Windows version in the main directory of CD
-and the DOS Talkie version in the DOS directory of the CD.
+        Windows         - SDL
+        Windows CE      - SDL           (iPaq and other handheld devices)
+        Linux           - X11 & OSS audio (includes iPaqs running Linux)
+        Mac OS X        - SDL
+        AmigaOS         - SDL/AGA
+        MorphOS         - Custom backend
+        BeOS            - SDL
+        Acorn (RiscOS)  - ???
+        Dreamcast       - Custom backend 
+        GP32            - Custom backend
+        PalmOS          - Custom backend
+        UNIX            - SDL           (Linux, Solaris, IRIX, *BSD)
+
+The Dreamcast port does not support Curse of Monkey Island, nor The Dig.
+The PalmOS port does not support Curse of Monkey Island, Beneath a Steel
+Sky, nor either Simon the Sorcerer 1 or 2. The Dig will only work on some
+Palm devices (those with a large dynamic heap).
+
+5.0) Running ScummVM:
+---- ----------------
+Before you run the engine, you need to put the game's datafiles in a
+directory. The filenames must not be in mixed case on *nix systems
+(for example, these are valid names: "monkey2.000", "MONKEY2.000", while
+this is a bad one: "Monkey2.000"). If you use a game with speech, the file
+monster.sou must reside in the same directory as the datafiles.
+
+ScummVM can be launched directly by running the executable. In this case,
+the in-built launcher will activate. From this, you can add games (click
+'Add Game'), or launch games which have already been configured.
+
+ScummVM can also be launched into a game directly using Command Line
+arguments - see the next section.
+
+5,1) Command Line Options:
+---- ---------------------
+        scummvm [OPTIONS] [GAME]
+
+        [GAME]         - Short name of game to load. For example, 'monkey' for
+                         Monkey Island. This can be either a known gameid, or
+                         a pre-configured target.
+
+        -p<path>       - Path to where the game is installed. Default is CWD.
+        -x[<num>]      - Save game slot to load (default: autosave)
+        -f             - Full-screen mode. (-F forces window mode.)
+        -g<mode>       - Select graphics scaler. See below.
+        -e<mode>       - Select sound engine. See below.
+        -q<lang>       - Select language. See below.
+        -c<num>        - Drive to play CD audio from.  E.g., 0 is first drive.
+        -m<num>        - Set the music volume, 0-255.  Default is '192'
+        -o<num>        - Set the master volume, 0-255. Default is '192'
+        -s<num>        - Set the sfx volume, 0-255.    Default is '192'
+        -t<num>        - Set music tempo. 50-200. Default is '100' (percent)
+        -n             - Disable subtitles. Use with games that have voice.
+        -y             - Set talk speed ('yak option'). Default is '60'
+        -l<file>       - Load alternate configuration file
+        -w[<file>]     - Write configuration file
+        -v             - Show version information and exit
+        -z             - Display list of games
+        -b<num>        - Pass number to the boot script (boot param)
+        -d[<num>]      - Set debug verbosity to <num>
+        -u             - Dump scripts if a directory called 'dumps' exists in
+                         current directory
+        --platform=    - Specify version of game (amiga,atari-st,macintosh)
+        --multi-midi   - Enable combination Adlib and native MIDI
+        --native-mt32  - True Roland MT-32 (disable GM emulation)
+        --fullscreen   - Full-screen mode (same as -f)
+        --aspect-ratio - Enable aspect ratio correction
+        --demo-mode    - Start demo mode of Maniac Mansion (Classic version)
+        --floppy-intro - Use floppy version intro for Beneath a Steel Sky CD
+
+The meaning of long options can be inverted by prefixing them with "no-", e.g.
+--no-aspect-ratio. This is useful if you want to override a setting in the
+configuration file.
+
+The short game name ('game target') you see at the end of the command
+line is very important. A short list is contained at the top of this
+file. You can also get the current list of games and game names at:
+        http://www.scummvm.org/compatibility.php
+
+Examples:
+ * Win32:
+  Running Monkey Island, fullscreen, from a hard disk:
+   C:\Games\LucasArts\scummvm.exe -f -pC:\Games\LucasArts\monkey\ monkey
+  Running Full Throttle from CD, fullscreen and with subtitles disabled:
+   C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ ft
+
+ * Unix:
+  Running Monkey Island, fullscreen, from a hard disk:
+   /path/to/scummvm -f -p/games/LucasArts/monkey/ monkey
+  Running Full Throttle from CD, fullscreen and with subtitles disabled:
+   /path/to/scummvm -f -n -p/cdrom/resource/ ft
+
+5.1) Language options:
+---- -----------------
+ScummVM includes a language option for Maniac Mansion, Zak McKracken, The Dig,
+Curse of Monkey Island, Beneath a Steel Sky. and Simon the Sorcerer 1 & 2.
+
+Maniac Mansion and Zak McKracken
+        en  - English (default)
+        de  - German
+        fr  - French
+        it  - Italian
+        es  - Spanish
+
+The Dig
+        jp  - Japanese
+        zh  - Chinese
+        kr  - Korean
+
+Curse of Monkey Island
+        en  - English (default)
+        de  - German
+        fr  - French
+        it  - Italian
+        pt  - Portuguese
+        es  - Spanish
+        jp  - Japanese
+        zh  - Chinese
+        kr  - Korean
+
+Beneath a Steel Sky:
+        gb  - English (Great Britain) (default)
+	en  - English USA
+        de  - German
+        fr  - French
+        it  - Italian
+        pt  - Portuguese
+        es  - Spanish
+        se  - Swedish
+
+Simon the Sorcerer: 1 & 2
+        en  - English (default)
+        de  - German
+        fr  - French
+        it  - Italian
+        es  - Spanish
+        hb  - Hebrew
+
+5.3) Graphics filters:
+---- -----------------
+ScummVM offers several anti-aliasing filters to attempt to improve visual
+quality. These are the same filters used in many other emulators, such as
+MAME. 
+Note: the resolutions listed assume the game was originally 320x200
+
+They are:
+        normal     - No filtering, original 320x200 resolution. Fastest.
+        2x         - No filtering, double screen/window size to 640x400 
+                     (default)
+        3x         - No filtering, triple screen/window size to 960x600
+        2xsai      - 2xsai filtering, double screen/window size to 640x400
+        super2xsai - Enhanced 2xsai filtering. 640x400 screen/window size
+        supereagle - Less blurry than 2xsai, but slower. Also 640x400
+        advmame2x  - 640x400 scaling. Doesn't rely on blurring like 2xSAI.
+        advmame3x  - 960x600 scaling. Doesn't rely on blurring like 2xSAI.
+        tv2x       - 640x400 scaling. Horizontal scanlines.
+        dotmatrix  - 640x400 scaling. Dot matrix effect.
+        opengl     - OpenGL with bilinear filtering [Unsupported]
+
+To select a graphics filter, pass its name via the '-g' option to scummvm,
+for example:
+
+    scummvm -g advmame2x monkey2
+
+Note #1: Not all backends support all or any filters. The ones listed above
+are for the default SDL backend.
+
+Note #2: Filters can be very slow when ScummVM is compiled in a debug
+configuration without optimizations. And there is always a speed impact when
+using any form of anti-aliasing/linear filtering.
+
+Note #3: The Fm Towns version of Zak (zak256 target) uses an original resolution
+of 320x240 - hence for this game scalers will scale to 640x480 or 960x720.
+
+Note #4: The OpenGL filter is included as a curiosity only. It's use is
+unsupported, and unrecommended. The only benefit is hardware accelerated
+scaling, but any machine with an OpenGL card should be fast enough to use
+the software scalers (see above).
+
+5.4 Hot Keys:
+--- ---------
+ScummVM supports various in game hotkeys. They differ between the SCUMM and
+simon games.
+
+    Common:
+        Ctrl-z OR Alt-x        - Quit
+        Keyboard Arrow Keys    - Simulate mouse movement
+        Ctrl-f                 - Runs in fast mode.
+        Ctrl-Alt 0-9           - Switch between graphics filters
+        Ctrl-Alt b             - Switch between bilinear and non-linear
+                                 filtering [OpenGL backend]
+        Ctrl-Alt a             - Toggle aspect-ratio correction on/off.
+                                 Most of the games use a 320x200 pixel
+                                 resolution, which may look squashed on
+                                 modern monitors. Aspect-ratio correction
+                                 stretches the image to use 320x240 pixels
+                                 instead, or a multiple thereof.
+
+    SCUMM:
+        Ctrl 0-9 and Alt 0-9   - Load and save game state
+        Ctrl-g                 - Runs in really REALLY fast mode.
+        Ctrl-d                 - Starts the debugger.
+        Tilde (~)              - Show/hide the debugging console
+        Ctrl-s                 - Shows memory consumption.
+        [ and ]                - Music volume, down/up
+        - and +                - Text speed, slower/faster
+        F5                     - Displays a save/load box.
+        Space                  - Pauses
+        Period (.)             - Skips current line of text in some games
+        Alt-Enter              - Toggles full screen/windowed
+        Enter                  - Simulate left mouse button press
+        Tab                    - Simulate right mouse button press
+
+    Simon:
+        F1 - F3                - Text speed, faster - slower
+        F10                    - Shows all characters and objects you can 
+                                 interact with
+        - and +                - Music volume, down/up
+        m                      - Music on/off
+        s                      - Sound effects on/off
+        b                      - Background sounds on/off
+
+Note that using ctrl-f and ctrl-g are not recommended: games can crash when
+being ran faster than their normal speed, as scripts will lose synchronisation
+
+5.5 Using data files from Macintosh game versions:
+--- ----------------------------------------------
+All LucasArts SCUMM based adventures except CMI also exist in versions for the
+Macintosh. ScummVM can use most (all?) of them, however, in some case some
+additional work is required. First off, if you are not using a Macintosh for
+this, accessing the CD/floppy data might be tricky. There are various tools on
+the net for this, though.
+
+Secondly, most of the newer games shipped only with a  single data file on the
+Macintosh. You first have to run the 'rescumm' tool from the scummvm-tools
+package to extract the data files ScummVM expects. You invoke rescumm like
+this (where DATAFILE is the path to the single big data file):
+
+   rescumm DATAFILE
+
+It will extract the data into the current directory, so make sure to run it from
+a writable directory.
+
+6.0) Savegames:
+---- ----------
+Savegames are by default put in the current directory. You can specify the save
+in the config file by setting the savepath parameter. See the example config
+file later in this readme.
+
+You can also use the environment variable SCUMMVM_SAVEPATH to specify where to
+put save games. Don't forget the trailing directory separator. Also be aware
+that saved games may break between ScummVM releases.
+
+Bash (Unix) example:
+        export SCUMMVM_SAVEPATH=/tmp/scummvm_savegames/
+
+Windows example:
+        set SCUMMVM_SAVEPATH=C:\saved_games\
+
+6.1) Autosaves:
+---- ----------
+Because ScummVM is still a beta product, it -can- crash and/or hang
+occasionally. As such, every five minutes it will save a game in Slot 0. This
+game can be loaded via Ctrl-0, or the F5 menu. This autosaving does not, 
+however, occur with Simon the Sorcerer 1 and 2.
 
 
-Reporting Bugs:
----------------
-To report a bug, please create a SourceForge account and follow the bugs
-link from our homepage. Please make sure the bug is reproducible, and
-still occurs in the latest daily build/current CVS version. Also check
-the existing bug list, and compatibility listing for that game, to
-ensure the issue is not already known.
+7.0) Music and Sound: 
+---- ----------------
+By default, on most operating systems, ScummVM will automatically use Adlib
+emulation. MIDI may not be available on all operating systems or may need
+manual configuration. If you ARE using MIDI, you have several different
+choices of output, depending on your operating system and configuration.
+        
+        adlib     - Uses internal Adlib Emulation (default) 
+        pcjr      - Uses internal PCjr Emulation 
+        pcspk     - Uses internal PC Speaker Emulation
+        windows   - Windows MIDI. Uses built-in sequencer, for Windows users
+        seq       - Uses /dev/sequencer for MIDI, *nix users. See below.
+        qt        - Quicktime sound, for Macintosh users.
+        core      - CoreAudio sound, for MacOS X users.
+        amidi     - Uses the MorphOS MIDI system, for MorphOS users
+        alsa      - Output using ALSA sequencer device. See below.
+        null      - Null output. Don't play any music.
 
-Do NOT report bugs on games that are not listed as being completable
-above. We -know- those games have bugs.
+To select a sound driver, pass its name via the '-e' option to scummvm,
+for example:
 
-Please include the following information:
-        - ScummVM version (PLEASE test the latest CVS/Daily build)
-        - Bug details, including instructions on reproducing
-        - Language of game (English, German, ...)
-        - Version of game (Talkie, Floppy, ...)
-        - Platform and Compiler (Win32, Linux, FreeBSD, ...)
-        - Attach a save game if possible
-        - If this bug only occurred recently, please note the last
-          version without the bug, and the first version including
-          the bug. That way we can fix it quicker by looking at the
-          changes made.
+    scummvm -e adlib monkey2
 
 
-Compiling:
-----------
+7.1) Playing sound with Adlib emulation:
+---- -----------------------------------
+By default an Adlib card will be emulated and ScummVM will output the music
+as sampled waves. This is the default mode for most games, and offers the
+best compatibility between machines and games.
+
+
+7.2) Playing sound with MIDI emulation:
+---- ----------------------------------
+Some games (such as Sam and Max) only contain MIDI music data.  This once
+prevented music for these games from working on platforms that do not support
+MIDI, or soundcards that do not provide MIDI drivers (e.g, many soundcards will
+not play MIDI under Linux). ScummVM can now emulate MIDI mode using sampled
+waves and Adlib emulation using the -eadlib option.  However, if you are capable
+of using native MIDI, we recommend using one of the MIDI modes below for best
+sound.
+
+7.3) Playing sound with Native MIDI:
+---- -------------------------------
+Use the appropriate -e<mode> command line option from the list above to
+select your preferred MIDI device. For example, if you wish to use the
+Windows MIDI driver, use the -ewindows option.
+
+
+7.4.0 Playing sound with Sequencer MIDI:                        [UNIX ONLY]
+----- ----------------------------------
+If your soundcard driver supports a sequencer, you may set the environment
+variable "SCUMMVM_MIDI" to your sequencer device - e.g., /dev/sequencer
+
+If you have problems with not hearing audio in this configuration, it is
+possible you will need to set the "SCUMMVM_MIDIPORT" variable to 1 or 2. This
+selects the port on the selected sequencer to use. Then start scummvm with the
+-eseq parameter. This should work on several cards, and may offer better
+performance and quality than Adlib emulation. However, for those systems where
+sequencer support does not work, you can always fall back on Adlib emulation.
+
+
+7.4.1 Playing sound with ALSA sequencer:                        [UNIX ONLY]
+----- ----------------------------------
+If you have installed the ALSA driver with the sequencer support, then
+set the environment variable "SCUMMVM_PORT" to your sequencer port - e.g. 65:0
+
+Here is a little howto on how to use the ALSA sequencer with your soundcard.
+In all cases, to have a list of all the sequencer ports you have, try the
+command "aconnect -o -l". This should give output similar to:
+client 64: 'External MIDI 0' [type=kernel]
+    0 'MIDI 0-0        '
+client 65: 'Emu10k1 WaveTable' [type=kernel]
+    0 'Emu10k1 Port 0  '
+    1 'Emu10k1 Port 1  '
+    2 'Emu10k1 Port 2  '
+    3 'Emu10k1 Port 3  '
+client 128: 'Client-128' [type=user]
+    0 'TiMidity port 0 '
+    1 'TiMidity port 1 '
+
+This means the external MIDI output of the sound card is located on the
+port 64:0, four WaveTable MIDI outputs in 65:0, 65:1, 65:2
+and 65:3, and two TiMidity ports, located at 128:0 and 128:1.
+
+If you have a FM-chip on your card, like the SB16, then you have to load
+the soundfonts using the sbiload software. Example:
+  sbiload -p 65:0 /etc/std.o3 /etc/drums.o3
+
+If you have a WaveTable capable sound card, you have to load a sbk or sf2
+soundfont using the sfxload software. Example:
+  sfxload /path/to/8mbgmsfx.sf2
+
+If you don't have a MIDI capable soundcard, or if you want to take advantage of
+your TiMidity samples, then you can ask TiMidity to become an ALSA sequencer
+output. Here is a quick way to do so:
+  timidity -iAqqq -B2,8 -Os1S -s 44100 &
+If you get distorted output with this setting try dropping the -B2,8 or
+changing the value.
+
+Then the TiMidity port will be visible from the 'aconnect -o -l' list. You
+should launch it as root, since it will try to set up some real time
+priority.
+
+You can also use FluidSynth for a software synth that supports sound fonts,
+if you don't have any MIDI hardware.
+
+An example usage of FluidSynth might look like this:
+  fluidsynth -m alsa_seq /path/to/8mbgmsfx.sf2
+Then use 'aconnect -o -l' as above to find what port its on.
+
+7.5.0) Using MP3 files for CD audio:
+------ -----------------------------
+Use LAME or some other mp3 encoder to rip the cd audio tracks to files. Name
+the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with MAD support
+to use this option. You'll need to rip the file from the CD as a WAV file,
+then encode the MP3 files in constant bit rate. This can be done with the 
+following LAME command line:
+
+  lame -t -q 0 -b 96 track1.wav track1.mp3
+
+
+7.5.1) Using Ogg Vorbis files for CD audio:
+------ ------------------------------------
+Use oggenc or some other vorbis encoder to encode the audio tracks to files.
+Name the files track1.ogg track2.ogg etc. ScummVM must be compiled with vorbis
+support to use this option. You'll need to rip the files from the CD as a WAV
+file, then encode the vorbis files. This can be done with the following oggenc
+command line with the value after q specifying the desired quality from 0 to 10:
+
+  oggenc -q 5 track1.wav
+
+
+7.5.2) Compressing MONSTER.SOU with MP3:
+------ ---------------------------------
+You need LAME, and our extract util from the scummvm-tools package to perform
+this task, and ScummVM must be compiled with MAD support.
+
+Make a backup file of your MONSTER.SOU before attempting this. Copy your
+MONSTER.SOU file to a temporary folder. Then run:
+
+  extract monster.sou
+
+In about 30 minutes or so, you will have a much smaller monster.so3 file,
+copy this file to your game directory. You can safely remove the monster.sou
+file.
+
+
+7.5.3) Compressing MONSTER.SOU with Ogg Vorbis:
+------ ----------------------------------------
+As above but run:
+
+  extract --vorbis monster.sou
+
+This should produce a smaller monster.sog file, which you should copy to your
+game directory.
+
+
+7.5.4) Compressing sfx/speech in Simon the Sorcerer 1 and 2
+------ ----------------------------------------------------
+You need LAME, and our simon2mp3 util from the scummvm-tools package to perform
+this task, and ScummVM must be compiled with MAD support.
+
+Make a backup of the file before attempting this. Copy the file to a
+temporary folder. Then run:
+
+  simon2mp3 effects.voc (For simon1talkie)
+  simon2mp3 simon.voc   (For simon1talkie)
+  simon2mp3 simon.wav   (For simon1win)
+  simon2mp3 simon2.voc  (For simon2talkie)
+  simon2mp3 simon2.wav  (For simon2win) 
+
+
+In about 30 minutes or so, you will have a much smaller *.mp3 file, copy this
+file to your game dir. You can safely remove the old file.
+
+
+8.0) Configuration file:
+---- -------------------
+By default, the configuration file is saved in, and loaded from:
+
+        Windows:  <windir>\scummvm.ini,
+        Unix:     ~/.scummvmrc
+        Mac OS X: ~/Library/Preferences/ScummVM Preferences
+        Others:   scummvm.ini in the current directory
+
+An example config file looks as follows:
+
+        [scummvm]
+        gfx_mode=supereagle
+        fullscreen=true
+        savepath=C:\saves\
+
+        [germandott]
+        gameid=tentacle
+        path=C:\german\tentacle\
+        description=German version of DOTT
+
+        [tentacle]
+        path=C:\tentacle\
+        nosubtitles=true
+        master_volume=98
+        music_volume=40
+        sfx_volume=255
+
+        [loomcd]
+        cdrom=1
+        path=C:\loom\
+        talkspeed=55
+        
+        [monkey2]
+        path=C:\amiga_mi2\
+        music_driver=windows
+        amiga=true
+
+The following keywords are recognized:
+
+        basename        string
+        path            string   The path to where a game's data files are
+        read_only       bool     If true, ScummVM will never try to overwrite
+                                 the configuration file.
+        save_slot
+        savepath                 The path to where a game will store its
+                                 savegames.
+        versioninfo     string   The version of the ScummVM that created the
+                                 configuration file.
+
+        gameid          string   The real id of a game. Useful if you have
+                                 several versions of the same game, and want
+                                 different aliases for them. See the example.
+        description     string   The description of the game as it will appear
+                                 in the launcher.
+
+        language        string   Specify language (en, de, fr, it, pt, es, jp,
+                                 zh, kr,se, gb, hb)
+        nosubtitles     bool     Set to true to suppress subtitles.
+        talkspeed       number   Text speed (default: 60)
+
+        fullscreen      bool     Fullscreen mode
+        aspect_ratio    bool     Enable aspect ratio correction
+        gfx_mode        string   Graphics mode (normal, 2x, 3x, 2xsai,
+                                 super2xsai, supereagle, advmame2x, advmame3x,
+                                 tv2x, dotmatrix)
+
+        cdrom           int      Number of CD-ROM unit to use for audio. If
+                                 negative, don't even try to access the CD-ROM.
+        master_volume   int      The master volume setting (0-255)
+        music_driver    string   The music engine to use.
+        music_volume    int      The music volume setting (0-255)
+        multi_midi      bool     If true, enable combination Adlib and native
+                                 MIDI.
+        native_mt32     bool     If true, disable GM emulation and assume that
+                                 there is a true Roland MT-32 available.
+        sfx_volume      int      The sfx volume setting (0-255)
+        tempo           int      The music tempo (50-200) (default: 100)
+
+        floppy_intro    bool     Use floppy version of introduction in Beneath
+                                 a Steel Sky (CD version)
+
+        debuglevel      int      Enable debug output. The higher number, the
+                                 more verbose output.
+
+9.0 Compiling:
+--- ----------
 You need SDL-1.2.2 or newer (older versions may work, but are unsupported), and
 a supported compiler. Several compilers, including GCC, mingw and Microsoft
 Visual C++ are supported. If you wish to use MP3-compressed CD tracks or
@@ -320,573 +861,46 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * To get a version you can run from Finder, type 'make bundle' which
           will create ScummVM.app.
 
-
-Running:
---------
-Before you run the engine, you need to put the game's datafiles in a
-directory. The filenames must not be in mixed case on *nix systems
-(for example, these are valid names: "monkey2.000", "MONKEY2.000", while
-this is a bad one: "Monkey2.000"). If you use a game with speech, the file
-monster.sou must reside in the same directory as the datafiles.
-
-For example, to run a copy of Monkey Island installed in C:\Games\LucasArts
-under Windows, you would make a shortcut calling this command:
-
-  C:\Games\LucasArts\scummvm.exe -f -pC:\Games\LucasArts\monkey\ monkey
-
-Under Unix, the commandline would be:
-
-  /path/to/scummvm -f -p/games/LucasArts/monkey/ monkey
-
-Or, if you have, for example, Full Throttle on CD, and your CD drive is D:,
-and you wish to disable subtitles and run in fullscreen:
-
-  C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ ft
-  /path/to/scummvm -f -n -p/mnt/cdrom/resource/ ft
-
-Note that if you run the game once this way, and specify the -w commandline
-parameter (or edit the config file manually), ScummVM will remember the
-path, and other settings for this game. Documentation on the configuration
-file can be found near the end of this readme.
-
-The short game name ('game target') you see at the end of the command
-line is very important. A short list is contained at the top of this
-file. You can also get the current list of games and game names at:
-
-        http://www.scummvm.org/compatibility.php
-
-For the adventurous, who like to live on the edge... you can download
-daily builds of Win32 from the Download page of the main ScummVM homepage.
-
-
-Command Line Options:
----------------------
-
-        scummvm [OPTIONS] [GAME]
-
-        [GAME]         - Short name of game to load. For example, 'monkey' for
-                         Monkey Island.
-
-        -p<path>       - Path to where the game is installed. Default is CWD.
-        -x[<num>]      - Save game slot to load (default: autosave)
-        -f             - Full-screen mode. (-F forces window mode.)
-        -g<mode>       - Select graphics scaler. See below.
-        -e<mode>       - Select sound engine. See below.
-        -q<lang>       - Select language. See below.
-        -c<num>        - Drive to play cd audio from.  E.g., 0 is first drive.
-        -m<num>        - Set the music volume, 0-255.  Default is '192'
-        -o<num>        - Set the master volume, 0-255. Default is '192'
-        -s<num>        - Set the sfx volume, 0-255.    Default is '192'
-        -t<num>        - Set music tempo. 50-200. Default is '100' (percent)
-        -n             - Disable subtitles. Use with games that have voice.
-        -y             - Set talk speed ('yak option'). Default is '60'
-        -l<file>       - Load alternate configuration file
-        -w[<file>]     - Write configuration file
-        -v             - Show version information and exit
-        -z             - Display list of games
-        -b<num>        - Pass number to the boot script (boot param)
-        -d[<num>]      - Set debug verbosity to <num>
-        -u             - Dump scripts if a directory called 'dumps' exists in
-                         current directory
-        --platform=    - Specify version of game (amiga,atari-st,macintosh)
-        --multi-midi   - Enable combination Adlib and native MIDI
-        --native-mt32  - True Roland MT-32 (disable GM emulation)
-        --fullscreen   - Full-screen mode (same as -f)
-        --aspect-ratio - Enable aspect ratio correction
-        --demo-mode    - Start demo mode of Maniac Mansion (Classic version)
-        --floppy-intro - Use floppy version intro for Beneath a Steel Sky CD
-
-The meaning of long options can be inversed by prefixing them with "no-", e.g.
---no-aspect-ratio. This is useful if you want to override a setting in the
-configuration file.
-
-
-
-Hot Keys:
----------
-ScummVM supports various in game hotkeys. They differ between the scumm and
-simon games.
-
-    Common:
-        Ctrl-z OR Alt-x        - quit
-        Keyboard Arrow Keys    - simulate mouse movement
-        Ctrl-f                 - runs in fast mode.
-        Ctrl-Alt 0-9           - Switch between graphics filters
-        Ctrl-Alt-a             - Toggle aspect-ratio correction on/off.
-                                 Most of the games use a 320x200 pixel
-                                 resolution, which may look squashed on
-                                 modern monitors. Aspect-ratio correction
-                                 stretches the image to use 320x240 pixels
-                                 instead, or a multiple thereof.
-        Ctrl-Alt-b             - Switch beetwen bilinear and non-linear
-                                 filtering [OpenGL backend]
-        Alt-Enter              - toggles full screen/windowed
-
-    Scumm:
-        Ctrl 0-9 and Alt 0-9   - load and save game state
-        Ctrl-g                 - runs in really REALLY fast mode.
-        Ctrl-d                 - starts the debugger.
-        Tilde (~)              - Show/hide the debugging console
-        Ctrl-s                 - shows memory consumption.
-        [ and ]                - music volume, down/up
-        - and +                - text speed, slower/faster
-        F5                     - displays a save/load box.
-        Space                  - pauses
-        Period (.)             - skips current line of text in some games
-        Enter                  - simulate left mouse button press
-        Tab                    - simulate right mouse button press
-
-    Simon:
-        F1 - F3                - text speed, faster - slower
-        F10                    - shows all characters and objects you can interact with
-        - and +                - music volume, down/up
-        m                      - music on/off
-        s                      - sound effects on/off
-        b                      - background sounds on/off
-
-    Beneath a Steel Sky:
-        Escape                 - skip the intro
-        F5                     - display the save/load/options box
-        Period (.)             - skip the current line of text
-
-Note that using ctrl-f and ctrl-g are not recommended: Games can crash when
-being ran faster than their normal speed, as scripts will lose synchronisation
-
-
-Language options:
------------------
-ScummVM includes a language option for Maniac Mansion, Zak McKracken, The Dig,
-Curse of Monkey Island, Beneath a Steel Sky, and Simon the Sorcerer 1 & 2.
-
-    Maniac Mansion and Zak McKracken:
-        en  - English (default)
-        de  - German
-        fr  - French
-        it  - Italian
-        es  - Spanish
-
-    The Dig:
-        jp  - Japanese
-        zh  - Chinese
-        kr  - Korean
-
-    Curse of Monkey Island:
-        en  - English (default)
-        de  - German
-        fr  - French
-        it  - Italian
-        pt  - Portuguese
-        es  - Spanish
-        jp  - Japanese
-        zh  - Chinese
-        kr  - Korean
-
-    Beneath a Steel Sky:
-        gb  - English (Great Britain) (default)
-        en  - English USA
-        de  - German
-        fr  - French
-        it  - Italian
-        pt  - Portuguese
-        es  - Spanish
-        se  - Swedish
-
-    Simon the Sorcerer 1 & 2:
-        en  - English (default)
-        de  - German
-        fr  - French
-        it  - Italian
-        es  - Spanish
-        hb  - Hebrew
-
-
-Graphics filters:
------------------
-ScummVM offers several anti-aliasing filters to attempt to improve visual
-quality. These are the same filters used in many other emulators, such as
-MAME. 
-Note: the resolutions listed assume the game was originally 320x200
-
-They are:
-        normal     - No filtering, original 320x200 resolution. Fastest.
-        2x         - No filtering, double screen/window size to 640x400 
-                     (default)
-        3x         - No filtering, triple screen/window size to 960x600
-        2xsai      - 2xsai filtering, double screen/window size to 640x400
-        super2xsai - Enhanced 2xsai filtering. 640x400 screen/window size
-        supereagle - Less blurry than 2xsai, but slower. Also 640x400
-        advmame2x  - 640x400 scaling. Doesn't rely on blurring like 2xSAI.
-        advmame3x  - 960x600 scaling. Doesn't rely on blurring like 2xSAI.
-        tv2x       - 640x400 scaling. Horizontal scanlines.
-        dotmatrix  - 640x400 scaling. Dot matrix effect.
-        opengl     - OpenGL with bilinear filtering [Unsupported]
-
-To select a graphics filter, pass its name via the '-g' option to scummvm,
-for example:
-
-    scummvm -g advmame2x monkey2
-
-Note #1: Not all backends support all or any filters. The ones listed above
-are for the default SDL backend.
-
-Note #2: Filters can be very slow when ScummVM is compiled in a debug
-configuration without optimizations. And there is always a speed impact when
-using any form of anti-aliasing/linear filtering.
-
-Note #3: The FmTowns version of Zak (zak256 target) uses an original resolution
-of 320x240 - hence for this game scalers will scale to 640x480 or 960x720.
-
-Note #4: The OpenGL filter is included as a curiosity only. It's use is
-unsupported, and unrecommended. The only benefit is hardware accelerated
-scaling, but any machine with an OpenGL card should be fast enough to use
-the software scalers (see above).
-
-Autosaves:
-----------
-Because ScummVM is still a beta product, it -can- crash and/or hang
-occasionally. As such, every five minutes it will save a game in Slot 0. This
-game can be loaded via Ctrl-0, or the F5 menu. This autosaving does not, however,
-occur with Simon the Sorcerer.
-
-
-Savegames:
-----------
-Savegames are by default put in the current directory. You can specify the save
-in the config file by setting the savepath parameter. See the example config
-file later in this readme.
-
-You can also use the environment variable SCUMMVM_SAVEPATH to specify where to
-put save games. Don't forget the trailing directory separator. Also be aware
-that saved games may break between ScummVM releases.
-
-Bash (Unix) Example:
-        export SCUMMVM_SAVEPATH=/tmp/scummvm_savegames/
-
-Windows example:
-        set SCUMMVM_SAVEPATH=C:\saved_games\
-
-
-Music and Sound: 
-----------------
-By default, on most operating systems, ScummVM will automatically use Adlib
-emulation. MIDI may not be available on all operating systems or may need
-manual configuration. If you ARE using MIDI, you have several different
-choices of output, depending on your operating system and configuration.
-        
-        adlib     - Uses internal Adlib Emulation (default) 
-        pcjr      - Uses internal PCjr Emulation 
-        pcspk     - Uses internal PC Speaker Emulation
-        windows   - Windows MIDI. Uses built-in sequencer, for Windows users
-        seq       - Uses /dev/sequencer for MIDI, *nix users. See below.
-        qt        - Quicktime sound, for Macintosh users.
-        core      - CoreAudio sound, for MacOS X users.
-        amidi     - Uses the MorphOS MIDI system, for MorphOS users
-        alsa      - Output using ALSA sequencer device. See below.
-        null      - Null output. Don't play any music.
-
-To select a sound driver, pass its name via the '-e' option to scummvm,
-for example:
-
-    scummvm -e adlib monkey2
-
-
-Playing sound with Adlib emulation:
------------------------------------
-By default an Adlib card will be emulated and ScummVM will output the music
-as sampled waves. This is the default mode for most games, and offers the
-best compatibility between machines and games.
-
-
-Playing sound with MIDI emulation:
-----------------------------------
-Until recently, some games (particularly Sam and Max) were only able to run
-in MIDI mode. This prevented music for these games from working on platforms
-that do not support MIDI, or soundcards that do not provide MIDI drivers (e.g.,
-many soundcards will not play MIDI under Linux). ScummVM can now emulate MIDI
-mode using sampled waves and Adlib emulation using the -eadlib option.
-However, if you are capable of using native MIDI, we recommend using one of
-the MIDI modes below for best sound.
-
-
-Playing sound with Native MIDI:
--------------------------------
-Use the appropriate -e<mode> command line option from the list above to
-select your preferred MIDI device. For example, if you wish to use the
-Windows MIDI driver, use the -ewindows option.
-
-
-Playing sound with Sequencer MIDI:              [UNIX ONLY]
-----------------------------------
-If your soundcard driver supports a sequencer, you may set the environment
-variable "SCUMMVM_MIDI" to your sequencer device - e.g., /dev/sequencer
-
-If you have problems with not hearing audio in this configuration, it is
-possible you will need to set the "SCUMMVM_MIDIPORT" variable to 1 or 2. This
-selects the port on the selected sequencer to use. Then start scummvm with the
--eseq parameter. This should work on several cards, and may offer better
-performance and quality than Adlib emulation. However, for those systems where
-sequencer support does not work, you can always fall back on Adlib emulation.
-
-
-Playing sound with ALSA sequencer:              [UNIX ONLY]
-----------------------------------
-If you have installed the ALSA driver with the sequencer support, then
-set the environment variable "SCUMMVM_PORT" to your sequencer port - e.g. 65:0
-
-Here is a little howto on how to use the ALSA sequencer with your soundcard.
-In all cases, to have a list of all the sequencer ports you have, try the
-command "aconnect -o -l". This should give output similar to:
-client 64: 'External MIDI 0' [type=kernel]
-    0 'MIDI 0-0        '
-client 65: 'Emu10k1 WaveTable' [type=kernel]
-    0 'Emu10k1 Port 0  '
-    1 'Emu10k1 Port 1  '
-    2 'Emu10k1 Port 2  '
-    3 'Emu10k1 Port 3  '
-client 128: 'Client-128' [type=user]
-    0 'TiMidity port 0 '
-    1 'TiMidity port 1 '
-
-This means the external MIDI output of the sound card is located on the
-port 64:0, four WaveTable MIDI outputs in 65:0, 65:1, 65:2
-and 65:3, and two TiMidity ports, located at 128:0 and 128:1.
-
-If you have a FM-chip on your card, like the SB16, then you have to load
-the soundfonts using the sbiload software. Example:
-  sbiload -p 65:0 /etc/std.o3 /etc/drums.o3
-
-If you have a WaveTable capable sound card, you have to load a sbk or sf2
-soundfont using the sfxload software. Example:
-  sfxload /path/to/8mbgmsfx.sf2
-
-If you don't have a MIDI capable soundcard, or if you want to take advantage of
-your TiMidity samples, then you can ask TiMidity to become an ALSA sequencer
-output. Here is a quick way to do so:
-  timidity -iAqqq -B2,8 -Os1S -s 44100 &
-If you get distorted output with this setting try dropping the -B2,8 or
-changing the value.
-
-Then the TiMidity port will be visible from the 'aconnect -o -l' list. You
-should launch it as root, since it will try to set up some real time
-priority.
-
-You can also use FluidSynth for a software synth that supports sound fonts,
-if you don't have any MIDI hardware.
-
-An example usage of FluidSynth might look like this:
-  fluidsynth -m alsa_seq /path/to/8mbgmsfx.sf2
-Then use 'aconnect -o -l' as above to find what port its on.
-
-Using MP3 files for CD audio:
------------------------------
-Use LAME or some other mp3 encoder to rip the cd audio tracks to files. Name
-the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with MAD support
-to use this option. You'll need to rip the file from the CD as a WAV file,
-then encode the MP3 files in Constant Bit Rate. This can be done with the following 
-LAME command line:
-
-  lame -t -q 0 -b 96 track1.wav track1.mp3
-
-
-Using Ogg Vorbis files for CD audio:
-------------------------------------
-Use oggenc or some other vorbis encoder to encode the audio tracks to files.
-Name the files track1.ogg track2.ogg etc. ScummVM must be compiled with vorbis
-support to use this option. You'll need to rip the files from the CD as a WAV
-file, then encode the vorbis files. This can be done with the following oggenc
-command line with the value after q specifying the desired quality from 0 to 10:
-
-  oggenc -q 5 track1.wav
-
-
-Compressing MONSTER.SOU with MP3:
----------------------------------
-You need LAME, and our extract util from the scummvm-tools package to perform
-this task, and ScummVM must be compiled with MAD support.
-
-Make a backup file of your MONSTER.SOU before attempting this. Copy your
-MONSTER.SOU file to a temporary folder. Then run:
-
-  extract monster.sou
-
-In about 30 minutes or so, you will have a much smaller monster.so3 file,
-copy this file to your game dir. You can safely remove the monster.sou file.
-
-
-Compressing MONSTER.SOU with Ogg Vorbis:
-----------------------------------------
-As above but run:
-
-  extract --vorbis monster.sou
-
-This should produce a smaller monster.sog file, which you should copy to your
-game dir.
-
-
-Compressing sound effects and speech files in Simon the Sorcerer 1 and 2
------------------------------------------------------------------------
-You need LAME, and our simon2mp3 util from the scummvm-tools package to perform
-this task, and ScummVM must be compiled with MAD support.
-
-Make a backup of the file before attempting this. Copy the file to a
-temporary folder. Then run:
-
-  simon2mp3 effects.voc (For simon1talkie)
-  simon2mp3 simon.voc   (For simon1talkie)
-  simon2mp3 simon.wav   (For simon1win)
-  simon2mp3 simon2.voc  (For simon2talkie)
-  simon2mp3 simon2.wav  (For simon2win) 
-
-
-In about 30 minutes or so, you will have a much smaller *.mp3 file, copy this
-file to your game dir. You can safely remove the old file.
-
-Using data files from Macintosh game versions:
-----------------------------------------------
-All LucasArts Scumm based adventures except CMI also exist in versions for the
-Macintosh. ScummVM can use most (all?) of them, however, in some case some
-additional work is required. First off, if you are not using a Macintoh for
-this, accessing the CD/floppy data might be tricky. There are various tools on
-the net for this, though.
-
-Secondly, most of the newer games shipped only with a  single data file on the
-Macintosh. You first have to run the 'rescumm' tool from the scummvm-tools
-package to extract the data files ScummVM excpects. You invoke rescumm like
-this (where DATAFILE is the path to the single big data file):
-
-   rescumm DATAFILE
-
-It will extract the data into the current directory, so make sure to run it from
-a writable directory.
-
-
-Configuration file:
--------------------
-By default, the configuration file is saved in, and loaded from:
-
-        Windows:  <windir>\scummvm.ini,
-        Unix:     ~/.scummvmrc
-        Mac OS X: ~/Library/Preferences/ScummVM Preferences
-        Others:   scummvm.ini in the current directory
-
-An example config file looks as follows:
-
-        [scummvm]
-        gfx_mode=supereagle
-        fullscreen=true
-        savepath=C:\saves\
-
-        [germandott]
-        gameid=tentacle
-        path=C:\german\tentacle\
-        description=German version of DOTT
-
-        [tentacle]
-        path=C:\tentacle\
-        nosubtitles=true
-        master_volume=98
-        music_volume=40
-        sfx_volume=255
-
-        [loomcd]
-        cdrom=1
-        path=C:\loom\
-        talkspeed=55
-        
-        [monkey2]
-        path=C:\amiga_mi2\
-        music_driver=windows
-        amiga=true
-
-The following keywords are recognized:
-
-        basename        string
-        path            string   The path to where a game's data files are
-        read_only       bool     If true, ScummVM will never try to overwrite
-                                 the configuration file.
-        save_slot
-        savepath                 The path to where a game will store its
-                                 savegames.
-        versioninfo     string   The version of the ScummVM that created the
-                                 configuration file.
-
-        gameid          string   The real id of a game. Useful if you have
-                                 several versions of the same game, and want
-                                 different aliases for them. See the example.
-        description     string   The description of the game as it will appear
-                                 in the launcher.
-
-        language        string   Specify language (en, de, fr, it, pt, es, jp,
-                                 zh, kr, hb)
-        nosubtitles     bool     Set to true to suppress subtitles.
-        talkspeed       number   Text speed (default: 60)
-
-        fullscreen      bool     Fullscreen mode
-        aspect_ratio    bool     Enable aspect ratio correction
-        gfx_mode        string   Graphics mode (normal, 2x, 3x, 2xsai,
-                                 super2xsai, supereagle, advmame2x, advmame3x,
-                                 tv2x, dotmatrix)
-
-        cdrom           int      Number of CD-ROM unit to use for audio. If
-                                 negative, don't even try to access the CD-ROM.
-        master_volume   int      The master volume setting (0-255)
-        music_driver    string   The music engine to use.
-        music_volume    int      The music volume setting (0-255)
-        multi_midi      bool     If true, enable combination Adlib and native
-                                 MIDI.
-        native_mt32     bool     If true, disable GM emulation and assume that
-                                 there is a true Roland MT-32 available.
-        sfx_volume      int      The sfx volume setting (0-255)
-        tempo           int      The music tempo (50-200) (default: 100)
-
-        demo_mode       bool     Start demo in Maniac Mansion (Classic version)
-        floppy_intro    bool     Use floppy version of introduction in Beneath a 
-                                 Steel Sky (CD version)
-
-        debuglevel      int      Enable debug output. The higher number, the
-                                 more verbose output.
-
-
-Credits:
---------
+X.X Credits:
+--- --------
  The ScummVM team:
-        James Brown          - Lead Developer
-        Max Horn             - Lead Developer
-        Robert Goeffringmann - Engine: Beneath a Steel Sky
+        James Brown          - Lead developer
+        Max Horn             - Lead developer
+        Robert Goeffringmann - Engine: Beneath a Steel Sky (maintainer)
         Jonathan Gray        - Engine: SCUMM
         Oliver Kiehl         - Engine: Beneath a Steel Sky, Simon
         Pawel Kolodziejski   - Engine: SCUMM (Codecs, iMUSE, Smush, etc.)
         Joost Peters         - Engine: Beneath a Steel Sky
         Chris Apers          - Port: PalmOS
         Nicolas Bacca        - Port: PocketPC/WinCE port
-        Marcus Comstedt      - Port: DreamCast
+        Marcus Comstedt      - Port: Dreamcast
         Ruediger Hanke       - Port: MorphOS
-        Travis Howell        - Port: Win32, Engine: Simon
+        Travis Howell        - Port: Win32, Engine: Simon (maintainer)
         Peter Moraliyski     - Port: GP32
         Lionel Ulmer         - Port: X11
-        Torbjorn Andersson   - Generic Bugfixer and Patch Submitter
+        Torbjorn Andersson   - Generic bugfixer and patch submitter
         Jamieson Christian   - iMUSE, MIDI, all things musical.
         Jochen Hoenicke      - Speaker & PCjr sound support, Adlib work
         Jeremy Newman        - Webmaster
 
  Retired Team Members:
-        Ralph Brorsen        - Help with GUI Implementation
+        Ralph Brorsen        - Help with GUI implementation
         Vincent Hamm         - Co-Founder
         Felix Jakschitsch    - Zak256 reverse engineering
-        Mutwin Kraus         - Original MacOS Porter
-        Ludvig Strigeus      - Original ScummVM and SimonVM Author
+        Mutwin Kraus         - Original MacOS porter
+        Ludvig Strigeus      - Original ScummVM and SimonVM author
 
  Contributors:
         Stuart Caie          - Decoders for Simon 1 Amiga data files
-        Janne Huttunen       - V3 actor mask support, Dig/FT SMUSH audio
+        Janne Huttunen       - V3 actor mask support, Dig/FT Smush audio
         Kovacs Endre Janos   - Several fixes for Simon1
         Jeroen Janssen       - Numerous readability and bugfix patches
         Claudio Matsuoka     - Daily Linux/BeOS builds 
-        Gregory Montoir      - AdvanceMAME Scale-2X, TV 2x and Dot Matrix
+        Gregory Montoir      - AdvanceMAME Scale-2X, TV 2x and dot matrix
                                implementation
-        Mikesch Nepomuk      - MI1 VGA Floppy patches.
+        Mikesch Nepomuk      - MI1 VGA floppy patches.
         Nicolas Noble        - Config file and ALSA support
-        Edward Rudd          - Fixes for playing MP3 versions of MI1/Loom Audio
+        Edward Rudd          - Fixes for playing MP3 versions of MI1/Loom audio
         Daniel Schepler      - Final MI1 CD music support/ 
                                Initial Ogg Vorbis support
         Andre Souza          - SDL-based OpenGL renderer
@@ -898,11 +912,12 @@ Credits:
  Special thanks to:
         Sander Buskens  - For his work on the initial reversing of Monkey2
         Kevin Carnes    - For Scumm16, the basis of ScummVM older gfx codec
-        Jim Leiterman   - Various info on his FmTowns/Marty SCUMM ports
+        Jim Leiterman   - Various info on his Fm Towns/Marty SCUMM ports
         Jimmi Thogersen - For ScummRev, and much obscure code/documentation
 
-        Tony Warriner and everyone at Revolution Sofware Ltd. for sharing
-        with us the source of some of their brilliant games, and being
+        Tony Warriner and everyone at Revolution Software Ltd. for sharing
+        with us the source of some of their brilliant games, allowing us to
+        release Beneath a Steel Sky as freeware... and generally being
         supportive above and beyond the call of duty.
 
         Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at
