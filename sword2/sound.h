@@ -93,10 +93,20 @@ public:
 	int getRate() const	{ return 22050; }
 };
 
+struct SoundFileHandle {
+	File *file;
+	uint32 *idxTab;
+	uint32 idxLen;
+	uint32 fileSize;
+	uint32 fileType;
+	volatile bool inUse;
+};
+
 class MusicInputStream : public AudioStream {
 private:
 	int _cd;
-	File *_file;
+	//File *_file;
+	SoundFileHandle *_fh;
 	uint32 _musicId;
 	AudioStream *_decoder;
 	int16 _buffer[BUFFER_SIZE];
@@ -119,7 +129,7 @@ private:
 	}
 
 public:
-	MusicInputStream(int cd, File *fp, uint32 musicId, bool looping);
+	MusicInputStream(int cd, SoundFileHandle *fh, uint32 musicId, bool looping);
 	~MusicInputStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -176,7 +186,9 @@ private:
 	PlayingSoundHandle _soundHandleSpeech;
 
 	MusicInputStream *_music[MAXMUS];
-	File _musicFile[MAXMUS];
+	//File _musicFile[MAXMUS];
+	SoundFileHandle _musicFile[MAXMUS];
+	SoundFileHandle _speechFile[MAXMUS];
 
 	int16 *_mixBuffer;
 	int _mixBufferLen;

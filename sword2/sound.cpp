@@ -50,8 +50,23 @@ Sound::Sound(Sword2Engine *vm) {
 	for (i = 0; i < FXQ_LENGTH; i++)
 		_fxQueue[i].resource = 0;
 
-	for (i = 0; i < MAXMUS; i++)
+	for (i = 0; i < MAXMUS; i++) {
 		_music[i] = NULL;
+
+		_musicFile[i].file = new File;
+		_musicFile[i].idxTab = NULL;
+		_musicFile[i].idxLen = 0;
+		_musicFile[i].fileSize = 0;
+		_musicFile[i].fileType = 0;
+		_musicFile[i].inUse = false;
+
+		_speechFile[i].file = new File;
+		_speechFile[i].idxTab = NULL;
+		_speechFile[i].idxLen = 0;
+		_speechFile[i].fileSize = 0;
+		_speechFile[i].fileType = 0;
+		_speechFile[i].inUse = false;
+	}
 
 	_speechPaused = false;
 	_musicPaused = false;
@@ -77,8 +92,10 @@ Sound::~Sound() {
 	free(_mixBuffer);
 
 	for (int i = 0; i < MAXMUS; i++) {
-		if (_musicFile[i].isOpen())
-			_musicFile[i].close();
+		if (_musicFile[i].file->isOpen())
+			_musicFile[i].file->close();
+		if (_speechFile[i].file->isOpen())
+			_speechFile[i].file->close();
 	}
 }
 

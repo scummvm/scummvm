@@ -40,95 +40,106 @@ namespace Sword2 {
 
 static AudioStream *makeCLUStream(File *fp, int size);
 
-static AudioStream *getAudioStream(File *fp, const char *base, int cd, uint32 id, uint32 *numSamples) {
-	struct {
-		const char *ext;
-		int mode;
-	} file_types[] = {
-#ifdef USE_MAD
-		{ "cl3", kMP3Mode },
-#endif
-#ifdef USE_VORBIS
-		{ "clg", kVorbisMode },
-#endif
-#ifdef USE_FLAC
-		{ "clf", kFlacMode },
-#endif
-		{ "clu", kCLUMode }
-	};
+static AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd, uint32 id, uint32 *numSamples) {
+	if (!fh->file->isOpen()) {
+		struct {
+			const char *ext;
+			int mode;
+		} file_types[] = {
+	#ifdef USE_MAD
+			{ "cl3", kMP3Mode },
+	#endif
+	#ifdef USE_VORBIS
+			{ "clg", kVorbisMode },
+	#endif
+	#ifdef USE_FLAC
+			{ "clf", kFlacMode },
+	#endif
+			{ "clu", kCLUMode }
+		};
 
-	int soundMode = -1;
-	char filename[20];
+		int soundMode = -1;
+		char filename[20];
 
-	for (int i = 0; i < ARRAYSIZE(file_types); i++) {
-		File f;
+		for (int i = 0; i < ARRAYSIZE(file_types); i++) {
+			File f;
 
-		sprintf(filename, "%s%d.%s", base, cd, file_types[i].ext);
-		if (f.open(filename)) {
-			soundMode = file_types[i].mode;
-			break;
+			sprintf(filename, "%s%d.%s", base, cd, file_types[i].ext);
+			if (f.open(filename)) {
+				soundMode = file_types[i].mode;
+				break;
+			}
+
+			sprintf(filename, "%s.%s", base, file_types[i].ext);
+			if (f.open(filename)) {
+				soundMode = file_types[i].mode;
+				break;
+			}
 		}
 
-		sprintf(filename, "%s.%s", base, file_types[i].ext);
-		if (f.open(filename)) {
-			soundMode = file_types[i].mode;
-			break;
+		if (soundMode == 0)
+			return NULL;
+
+		fh->file->open(filename);
+		fh->fileType = soundMode;
+		if (!fh->file->isOpen()) {
+			warning("Very strange fopen error");
+			return NULL;
+		}
+		if (fh->fileSize != fh->file->size()) {
+			if (fh->idxTab) {
+				free(fh->idxTab);
+				fh->idxTab = NULL;
+			}
 		}
 	}
 
-	if (soundMode == 0)
-		return NULL;
+	uint32 entrySize = (fh->fileType == kCLUMode) ? 2 : 3;
 
-	// The assumption here is that a sound file is closed when the sound
-	// finishes, and we never play sounds from two different files at the
-	// same time. Thus, if the file is already open it's the correct file,
-	// and the loop above was just needed to figure out the compression.
-	//
-	// This is to avoid having two file handles open to the same file at
-	// the same time. There was some speculation that some of our target
-	// systems may have trouble with that.
+	if (!fh->idxTab) {
+		fh->file->seek(0);
+		fh->idxLen = fh->file->readUint32LE();
+		fh->file->seek(entrySize * 4);
 
-	if (!fp->isOpen())
-		fp->open(filename);
+		fh->idxTab = (uint32*)malloc(fh->idxLen * 3 * sizeof(uint32));
+		for (uint32 cnt = 0; cnt < fh->idxLen; cnt++) {
+			fh->idxTab[cnt * 3 + 0] = fh->file->readUint32LE();
+			fh->idxTab[cnt * 3 + 1] = fh->file->readUint32LE();
+			if (fh->fileType == kCLUMode)
+				fh->idxTab[cnt * 3 + 2] = fh->idxTab[cnt * 3 + 1] + 1;
+			else
+				fh->idxTab[cnt * 3 + 2] = fh->file->readUint32LE();
+		}
+	}
 
-	if (!fp->isOpen())
-		return NULL;
-
-	fp->seek((id + 1) * ((soundMode == kCLUMode) ? 8 : 12), SEEK_SET);
-
-	uint32 pos = fp->readUint32LE();
-	uint32 len = fp->readUint32LE();
-	uint32 enc_len;
+	uint32 pos = fh->idxTab[id * 3 + 0];
+	uint32 len = fh->idxTab[id * 3 + 1];
+	uint32 enc_len = fh->idxTab[id * 3 + 2];
 
 	if (numSamples)
 		*numSamples = len;
 
-	if (soundMode != kCLUMode)
-		enc_len = fp->readUint32LE();
-	else
-		enc_len = len + 1;
-
 	if (!pos || !len) {
-		fp->close();
+		fh->file->close();
 		return NULL;
 	}
 
-	fp->seek(pos, SEEK_SET);
+	fh->file->seek(pos, SEEK_SET);
 
-	switch (soundMode) {
+	switch (fh->fileType) {
 	case kCLUMode:
-		return makeCLUStream(fp, enc_len);
+		return makeCLUStream(fh->file, enc_len);
 #ifdef USE_MAD
 	case kMP3Mode:
-		return makeMP3Stream(fp, enc_len);
+		return makeMP3Stream(fh->file, enc_len);
 #endif
 #ifdef USE_VORBIS
 	case kVorbisMode:
-		return makeVorbisStream(fp, enc_len);
+		return makeVorbisStream(fh->file, enc_len);
 #endif
 #ifdef USE_FLAC
 	case kFlacMode:
-		return makeFlacStream(fp, enc_len);
+		return makeFlacStream(fh->file, enc_len);
 #endif
 	default:
 		return NULL;
@@ -225,9 +236,9 @@ AudioStream *makeCLUStream(File *file, int size) {
 // The length of a fade-in/out, in milliseconds.
 #define FADE_LENGTH 3000
 
-MusicInputStream::MusicInputStream(int cd, File *fp, uint32 musicId, bool looping) {
+MusicInputStream::MusicInputStream(int cd, SoundFileHandle *fh, uint32 musicId, bool looping) {
 	_cd = cd;
-	_file = fp;
+	_fh = fh;
 	_musicId = musicId;
 	_looping = looping;
 
@@ -235,7 +246,7 @@ MusicInputStream::MusicInputStream(int cd, File *fp, uint32 musicId, bool loopin
 	_remove = false;
 	_fading = 0;
 	
-	_decoder = getAudioStream(fp, "music", _cd, _musicId, &_numSamples);
+	_decoder = getAudioStream(_fh, "music", _cd, _musicId, &_numSamples);
 	if (_decoder) {
 		_samplesLeft = _numSamples;
 		_fadeSamples = (getRate() * FADE_LENGTH) / 1000;
@@ -353,7 +364,7 @@ void MusicInputStream::refill() {
 	if (!_samplesLeft) {
 		if (_looping) {
 			delete _decoder;
-			_decoder = getAudioStream(_file, "music", _cd, _musicId, &_numSamples);
+			_decoder = getAudioStream(_fh, "music", _cd, _musicId, &_numSamples);
 			_samplesLeft = _numSamples;
 		} else
 			_remove = true;
@@ -448,8 +459,8 @@ int Sound::readBuffer(int16 *buffer, const int numSamples) {
 	}
 
 	for (i = 0; i < MAXMUS; i++) {
-		if (!inUse[i] && _musicFile[i].isOpen())
-			_musicFile[i].close();
+		if (!inUse[i] && !_musicFile[i].inUse && _musicFile[i].file->isOpen())
+			_musicFile[i].file->close();
 	}
 
 	return numSamples;
@@ -457,7 +468,7 @@ int Sound::readBuffer(int16 *buffer, const int numSamples) {
 
 bool Sound::endOfData() const {
 	for (int i = 0; i < MAXMUS; i++) {
-		if (_musicFile[i].isOpen())
+		if (_musicFile[i].file->isOpen())
 			return false;
 	}
 
@@ -516,8 +527,9 @@ void Sound::stopMusic(bool immediately) {
  * @return RD_OK or an error code
  */
 int32 Sound::streamCompMusic(uint32 musicId, bool loop) {
-	Common::StackLock lock(_mutex);
+	//Common::StackLock lock(_mutex);
 
+	_mutex.lock();
 	int cd = _vm->_resman->whichCd();
 
 	if (loop)
@@ -572,23 +584,32 @@ int32 Sound::streamCompMusic(uint32 musicId, bool loop) {
 		primary = 0;
 
 	// Don't start streaming if the volume is off.
-	if (isMusicMute())
+	if (isMusicMute()) {
+		_mutex.unlock();
 		return RD_OK;
+	}
 
 	if (secondary != -1)
 		_music[secondary]->fadeDown();
+	SoundFileHandle *fh = (cd == 1) ? &_musicFile[0] : &_musicFile[1];
+	fh->inUse = true;
+	_mutex.unlock();
 
-	File *fp = (cd == 1) ? &_musicFile[0] : &_musicFile[1];
+	MusicInputStream *tmp = new MusicInputStream(cd, fh, musicId, loop);
 
-	_music[primary] = new MusicInputStream(cd, fp, musicId, loop);
-
-	if (!_music[primary]->isReady()) {
-		delete _music[primary];
-		_music[primary] = NULL;
+	if (tmp->isReady()) {
+		_mutex.lock();
+		_music[primary] = tmp;
+		fh->inUse = false;
+		_mutex.unlock();
+		return RD_OK;
+	} else {
+		_mutex.lock();
+		fh->inUse = false;
+		_mutex.unlock();
+		delete tmp;
 		return RDERR_INVALIDFILENAME;
 	}
-
-	return RD_OK;
 }
 
 /**
@@ -685,10 +706,12 @@ int32 Sound::amISpeaking() {
  */
 
 uint32 Sound::preFetchCompSpeech(uint32 speechId, uint16 **buf) {
-	File fp;
+	int cd = _vm->_resman->whichCd();
 	uint32 numSamples;
 
-	AudioStream *input = getAudioStream(&fp, "speech", _vm->_resman->whichCd(), speechId, &numSamples);
+	SoundFileHandle *fh = (cd == 1) ? &_speechFile[0] : &_speechFile[1];
+
+	AudioStream *input = getAudioStream(fh, "speech", cd, speechId, &numSamples);
 
 	if (!input)
 		return 0;
@@ -702,13 +725,13 @@ uint32 Sound::preFetchCompSpeech(uint32 speechId, uint16 **buf) {
 	*buf = (uint16 *) malloc(bufferSize);
 	if (!*buf) {
 		delete input;
-		fp.close();
+		fh->file->close();
 		return 0;
 	}
 
 	uint32 readSamples = input->readBuffer((int16 *) *buf, numSamples);
 
-	fp.close();
+	fh->file->close();
 	delete input;
 
 	return 2 * readSamples;
@@ -729,12 +752,10 @@ int32 Sound::playCompSpeech(uint32 speechId, uint8 vol, int8 pan) {
 	if (getSpeechStatus() == RDERR_SPEECHPLAYING)
 		return RDERR_SPEECHPLAYING;
 
-	File *fp = new File;
-	AudioStream *input = getAudioStream(fp, "speech", _vm->_resman->whichCd(), speechId, NULL);
+	int cd = _vm->_resman->whichCd();
+	SoundFileHandle *fh = (cd == 1) ? &_speechFile[0] : &_speechFile[1];
 
-	// Make the AudioStream object the sole owner of the file so that it
-	// will die along with the AudioStream when the speech has finished.
-	fp->decRef();
+	AudioStream *input = getAudioStream(fh, "speech", cd, speechId, NULL);
 
 	if (!input)
 		return RDERR_INVALIDID;
