@@ -1162,13 +1162,24 @@ void Scumm::translateText(char * text, char * trans_buff) {
 		sprintf(num_s, "%ld", num);
 
 		char * buf = _languageBuffer;
+		pos = 0;
 		// determine is file encoded
 		if (*buf == 'e') {
 			enc = 0x13;
-			pos = 1;
+			pos += 3;
 		} else {
 			enc = 0;
-			pos = 0;
+		}
+
+		// skip translation if flag 'h' exist
+		if (*(buf + pos) == 'h') {
+			pos += 3;
+			char *pointer = strchr((char*)text + 1, '/');
+			if (pointer != NULL)
+				strcpy(trans_buff, pointer + 1);
+			else
+				strcpy(trans_buff, "");
+			return;
 		}
 
 		for(;;) {
