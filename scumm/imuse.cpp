@@ -301,6 +301,8 @@ private:
 	bool _initialized;
 	byte _volume_fader_counter;
 
+	int _tempoFactor;
+
 	uint _queue_end, _queue_pos, _queue_sound;
 	byte _queue_adding;
 
@@ -1643,11 +1645,11 @@ int IMuseInternal::get_volchan_entry(uint a) {
 uint32 IMuseInternal::property(int prop, uint32 value) {
 	switch (prop) {
 	case IMuse::PROP_TEMPO_BASE:
-		// Jamieson630: This used to specify a low-level microsecond
-		// timing override for the MIDI drivers, based on the -t
-		// option. It hasn't worked for a while, but may come back
-		// later as a more user-friendly adjustment option.
-//		_game_tempo = value;
+		// This is a specified as a percentage of normal
+		// music speed. The number must be an integer
+		// ranging from 50 to 200 (for 50% to 200% normal speed).
+		if (value >= 50 && value <= 200)
+			_tempoFactor = value;
 		break;
 	}
 	return 0;
@@ -1671,6 +1673,7 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi) {
 	if (native_midi)
 		initMidiDriver (_midi_native);
 
+	if (!_tempoFactor) _tempoFactor = 100;
 	_master_volume = 255;
 	if (_music_volume < 1)
 		_music_volume = kDefaultMusicVolume;
@@ -1854,6 +1857,7 @@ void Player::set_tempo(uint32 b) {
 	i = _midi->getBaseTempo();
 
 	j = _tempo = b;
+	j = j * 100 / _se->_tempoFactor;
 
 	while (i & 0xFFFF0000 || j & 0xFFFF0000) {
 		i >>= 1;
