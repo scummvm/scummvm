@@ -63,11 +63,15 @@ Driver::Driver(int screenW, int screenH, int screenBPP) {
 	}
 #else
 	{
-		//Display *dpy = XOpenDisplay(NULL);
-		//XFontStruct *XFont = XLoadQueryFont(dpy, "-misc-fixed-medium-r-*-*-20-*-*-*-*-*-*-*" );
-		//glXUseXFont(XFont->fid, 0, 256, hackFont);
-		//XFreeFont(dpy, XFont);
-		//XCloseDisplay(dpy);
+		Display *dpy = XOpenDisplay(NULL);
+		XFontStruct *XFont = XLoadQueryFont(dpy, "-misc-fixed-medium-r-*-*-20-*-*-*-*-*-*-*" );
+		if (XFont) {
+			glXUseXFont(XFont->fid, 0, 256, hackFont);
+			XFreeFont(dpy, XFont);
+			XCloseDisplay(dpy);
+		} else {
+			warning("Couldn't load default font -misc-fixed-medium");
+		}
 	}
 #endif
 
