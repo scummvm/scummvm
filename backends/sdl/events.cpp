@@ -387,7 +387,10 @@ bool OSystem_SDL::pollEvent(Event &event) {
 			event.kbd.keycode = ev.key.keysym.sym;
 			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 #endif
-			
+
+/* Disabled mouse emulation code (fingolfin, 2004-12-18).
+   I am keeping the rest of the code in for now, since the joystick
+   code (or rather, "hack") uses it, too.
 			switch(ev.key.keysym.sym) {
 			case SDLK_LEFT:
 				_km.x_vel = -1;
@@ -408,7 +411,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 			default:
 				break;
 			}
-
+*/
 			return true;
 	
 		case SDL_KEYUP:
@@ -416,6 +419,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 			event.kbd.keycode = ev.key.keysym.sym;
 			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 
+/*
 			switch(ev.key.keysym.sym) {
 			case SDLK_LEFT:
 				if (_km.x_vel < 0) {
@@ -444,6 +448,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 			default:
 				break;
 			}
+*/
 			return true;
 
 		case SDL_MOUSEMOTION:
