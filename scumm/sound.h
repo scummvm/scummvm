@@ -56,7 +56,6 @@ enum {
 	bool _musicBundleToBeChanged;
 	bool _musicBundleToBeRemoved;
 
-	int _talkChannel;	/* Mixer channel actor is talking on */
 	File *_sfxFile;
 	uint32 _talk_sound_a1, _talk_sound_a2, _talk_sound_b1, _talk_sound_b2;
 	byte _talk_sound_mode;
@@ -92,6 +91,7 @@ public:
 
 #endif
 
+	int _talkChannel;	/* Mixer channel actor is talking on */
 	int _cd_timer_value;
 	bool _soundsPaused;
 	int16 _sound_volume_master, _sound_volume_music, _sound_volume_sfx;
@@ -125,7 +125,7 @@ public:
 	void pauseBundleMusic(bool state);
 	void bundleMusicHandler(Scumm * scumm);
 	void stopBundleMusic();
-	void playBundleSound(char *sound);
+	int playBundleSound(char *sound);
 	byte * readCreativeVocFile(byte * ptr, uint32 & size, uint32 & rate, uint32 & loops);
 	int playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned);
 	int playSfxSound_MP3(void *sound, uint32 size);

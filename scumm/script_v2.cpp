@@ -2382,16 +2382,6 @@ void Scumm::o6_wait()
 			Actor *a = derefActorSafe(actnum, "o6_wait:226");
 			int offs = (int16)fetchScriptWord();
 			
-			// FIXME: This wait command doesn't return at the 
-			// correct times, which causes several script freezes
-			// in The Dig. Eg, planetarium lightbridge,
-			// and taking the rod in the museum AFTER looking at
-			// all the displays. This is testing actor 3 (Ego),
-			// so I'm guessing it's something to do with the way
-			// ego doesn't always stop his mouth moving.
-			if (actnum == 3)
-				return;
-
 			if (a && a->isInCurrentRoom() && a->needRedraw) {
 				_scriptPointer += offs;
 				o6_breakHere();
@@ -2558,8 +2548,9 @@ void Scumm::o6_talkActor()
 				pointer[j++] = _messagePtr[i];
 		}
 		pointer[j] = 0;
-		_sound->playBundleSound(pointer);
+		_sound->_talkChannel = _sound->playBundleSound(pointer);
 		_messagePtr = (byte*)&transText;
+		printf("Said %s, talkchannel is %d\n", transText, _sound->_talkChannel);
 		setStringVars(0);
 		actorTalk();
 	} else {
@@ -2585,7 +2576,8 @@ void Scumm::o6_talkEgo()
 				pointer[j++] = _messagePtr[i];
 		}
 		pointer[j] = 0;
-		_sound->playBundleSound(pointer);
+		_sound->_talkChannel = _sound->playBundleSound(pointer);
+		printf("Said %s, talkchannel is %d\n", transText, _sound->_talkChannel);
 		_messagePtr = (byte*)&transText;
 		setStringVars(0);
 		actorTalk();

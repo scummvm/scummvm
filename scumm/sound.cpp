@@ -416,9 +416,9 @@ void Sound::processSfxQueues() {
 		act = _scumm->_vars[_scumm->VAR_TALK_ACTOR];
 		if (_talkChannel < 0)
 			finished = false;
-		else if (_scumm->_mixer->_channels[_talkChannel] == NULL)
+		else if (_scumm->_mixer->_channels[_talkChannel] == NULL) {
 			finished = true;
-		else
+		} else
 			finished = false;
 		
 
@@ -1044,17 +1044,17 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 	}
 }
 
-void Sound::playBundleSound(char *sound) {
+int Sound::playBundleSound(char *sound) {
 	byte * ptr;
 
 	if (_scumm->_bundle->openVoiceFile("digvoice.bun", _scumm->getGameDataPath()) == false) {
-		return;
+		return -1;
 	}
 
 	ptr = (byte *)malloc(1000000);
 	if (_scumm->_bundle->decompressVoiceSampleByName(sound, ptr) == 0) {
 		delete ptr;
-		return;
+		return -1;
 	}
 
 	int rate = 22050;
@@ -1064,7 +1064,7 @@ void Sound::playBundleSound(char *sound) {
 	if (tag != MKID_BE('iMUS')) {
 		warning("Decompression of bundle sound failed");
 		free(ptr);
-		return;
+		return -1;
 	}
 
 	ptr += 12;
@@ -1094,12 +1094,12 @@ void Sound::playBundleSound(char *sound) {
 	if (size < 0) {
 		warning("Decompression sound failed (no size field)");
 		free(ptr);
-		return;
+		return -1;
 	}
 	
 	byte * final = (byte *)malloc(size);
 	memcpy(final, ptr, size);
-	_scumm->_mixer->playRaw(NULL, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+	return _scumm->_mixer->playRaw(NULL, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 }
 
 int Sound::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned) {
