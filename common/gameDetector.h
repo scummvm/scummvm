@@ -90,6 +90,7 @@ enum GameFeatures {
 	GF_AFTER_V3            = 1 << 19,
 	GF_AFTER_V4            = 1 << 20,
 	GF_AFTER_V5            = 1 << 21,
+	GF_AFTER_HEV7          = 1 << 22,
 
 	GF_HAS_ROOMTABLE       = GF_AFTER_V7,
 	GF_USE_ANGLES          = GF_AFTER_V7,
