@@ -78,7 +78,6 @@ OBJS =\
 	registry.o \
 	resource.o \
 	scene.o \
-	screen.o \
 	smush.o \
 	textobject.o \
 	textsplit.o \
