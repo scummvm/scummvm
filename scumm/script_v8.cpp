@@ -1229,9 +1229,9 @@ void Scumm_v8::o8_system() {
 
 void Scumm_v8::o8_startVideo() {
 	int len = resStrLen(_scriptPointer);
-	
-	warning("o8_startVideo(%s/%s)", getGameDataPath(), (const char*)_scriptPointer);
-	
+
+	debug(4, "o8_startVideo(%s/%s)", getGameDataPath(), (const char*)_scriptPointer);
+
 	SmushPlayer *sp = new SmushPlayer(this, 83333, !_noSubtitles);
 	sp->play((const char*)_scriptPointer, getGameDataPath());
 	delete sp;
