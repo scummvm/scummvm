@@ -1069,7 +1069,7 @@ void ScummEngine::launch() {
 		else if (_heversion >= 70)
 			VAR(VAR_VERSION) = 22;
 	
-		if (!((_features & GF_MACINTOSH) && (_version == 3)) && !(_features & GF_FMTOWNS)) {
+		if (_version > 3) {
 			// This is NOT for the Mac version of Indy3/Loom
 			VAR(VAR_DEBUGMODE) = _debugMode;
 		}
@@ -1436,9 +1436,9 @@ int ScummEngine::scummLoop(int delta) {
 		VAR(VAR_TMR_1) += delta;
 		VAR(VAR_TMR_2) += delta;
 		VAR(VAR_TMR_3) += delta;
-		if ((_gameId == GID_ZAK256) || (_gameId == GID_INDY3 && (_features & GF_FMTOWNS || _features & GF_AMIGA))) {
-			// Amiga and FM Towns version of Indy3 set three extra timers
-			// FM Towns version of Zak set three extra timers
+		if (_gameId == GID_ZAK256 || _gameId == GID_INDY3) {
+			// All versions of Indy3 set three extra timers
+			// FM Towns version of Zak sets three extra timers
 			VAR(39) += delta;
 			VAR(40) += delta;
 			VAR(41) += delta;
@@ -1489,7 +1489,7 @@ int ScummEngine::scummLoop(int delta) {
 		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y;
 		VAR(VAR_MOUSE_X) = _mouse.x;
 		VAR(VAR_MOUSE_Y) = _mouse.y;
-		if (!((_features & GF_MACINTOSH) && (_version == 3)) && !(_features & GF_FMTOWNS)) {
+		if (_version > 3) {
 			// This is NOT for the Mac version of Indy3/Loom
 			VAR(VAR_DEBUGMODE) = _debugMode;
 		}
