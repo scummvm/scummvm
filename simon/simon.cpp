@@ -544,7 +544,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_language = Common::parseLanguage(ConfMan.get("language"));
 
 	if (!(_game & GF_SIMON2) && _language > 1) {
-		if (ConfMan.hasKey("_subtitles") && ConfMan.getBool("_subtitles") == 0)
+		if (ConfMan.hasKey("subtitles") && ConfMan.getBool("subtitles") == 0)
 			_subtitles = 0;
 	} else
 		_subtitles = ConfMan.getBool("subtitles");
