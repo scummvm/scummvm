@@ -766,8 +766,7 @@ void OSystem_GP32::update_screen() {
 				
 				dst_y *= _scaleFactor;
 
-				_scaler_proc((byte*)sdl_tmpscreen->pixels + (r->x*2+2) + (r->y+1)*srcPitch, srcPitch, NULL, 
-					(byte*)sdl_hwscreen->pixels + r->x*2*_scaleFactor + dst_y*dstPitch, dstPitch, r->w, dst_h);			
+				_scaler_proc((byte*)sdl_tmpscreen->pixels + (r->x*2+2) + (r->y+1)*srcPitch, srcPitch, (byte*)sdl_hwscreen->pixels + r->x*2*_scaleFactor + dst_y*dstPitch, dstPitch, r->w, dst_h);			
 			}			
 			r->x *= _scaleFactor;
 			r->y = dst_y;
@@ -984,6 +983,11 @@ bool OSystem_GP32::set_sound_proc(SoundProc *proc, void *param, SoundFormat form
 	return false; 
 }
 
+void OSystem_GP32::clear_sound_proc() {
+	//_sound_proc = NULL;
+	//_sound_proc_param = NULL;
+}
+
 void OSystem_GP32::get_screen_image(byte *buf) {
 	/* make sure the mouse is gone */
 	undraw_mouse();
@@ -1075,7 +1079,9 @@ void OSystem_GP32::update_cdrom() { }
 void OSystem_GP32::set_timer(int timer, int (*callback)(int)) { }
 
 // Mutex handling
-MutexRef OSystem_GP32::create_mutex() { }
+OSystem::MutexRef OSystem_GP32::create_mutex() {
+	return NULL;
+}
 void OSystem_GP32::lock_mutex(MutexRef mutex) { }
 void OSystem_GP32::unlock_mutex(MutexRef mutex) { }
 void OSystem_GP32::delete_mutex(MutexRef mutex) { }

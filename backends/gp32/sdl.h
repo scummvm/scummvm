@@ -82,3 +82,4 @@ typedef struct SDL_Surface {
 #define SDL_SWSURFACE	0x00000000
 #define SDL_HWSURFACE	0x00000001
 #define SDL_FULLSCREEN	0x80000000
+

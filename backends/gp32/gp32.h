@@ -39,7 +39,9 @@ public:
 	// Set the size of the video bitmap.
 	// Typically, 320x200
 	void init_size(uint w, uint h);
-
+	int16 get_height() { return _screenHeight; }
+	int16 get_width() { return _screenWidth; }
+	
 	// Draw a bitmap to screen.
 	// The screen will not be updated to reflect the new bitmap
 	void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h);
@@ -81,6 +83,7 @@ public:
 	// Format is the sample type format.
 	// Only 16-bit signed mode is needed for simon & scumm
 	bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format);
+	void clear_sound_proc();
 	
 	// Get or set a property
 	uint32 property(int param, Property *value);
@@ -102,7 +105,7 @@ public:
 	void set_timer(int timer, int (*callback)(int));
 
 	// Mutex handling
-	MutexRef create_mutex();
+	OSystem::MutexRef create_mutex();
 	void lock_mutex(MutexRef mutex);
 	void unlock_mutex(MutexRef mutex);
 	void delete_mutex(MutexRef mutex);
