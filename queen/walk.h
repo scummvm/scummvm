@@ -71,9 +71,9 @@ public:
 
 	Walk(Logic *logic, Graphics *graphics);
 
-	int16 joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway);
+	int16 joeMove(int direction, int16 endx, int16 endy, bool inCutaway);
 	
-	int16 personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curImage, int direction);
+	int16 personMove(const Person *pp, int16 endx, int16 endy, uint16 curImage, int direction);
 
 	enum {
 		MAX_WALK_DATA = 16
@@ -88,10 +88,10 @@ private:
 	void animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum, uint16 bankNum, int direction);
 
 	//! compute transition coordinate
-	static uint16 calcC(uint16 c1, uint16 c2, uint16 c3, uint16 c4, uint16 lastc);
+	static int16 calcC(int16 c1, int16 c2, int16 c3, int16 c4, int16 lastc);
 	
 	//! find area for position
-	int16 findAreaPosition(uint16 *x, uint16 *y, bool recalibrate);
+	int16 findAreaPosition(int16 *x, int16 *y, bool recalibrate);
 
 	//! find an area not already struck
 	uint16 findFreeArea(uint16 area) const;
@@ -106,10 +106,10 @@ private:
 	void initWalkData();
 	
 	//! add an area to the path
-	void incWalkData(uint16 px, uint16 py, uint16 x, uint16 y, uint16 area);
+	void incWalkData(int16 px, int16 py, int16 x, int16 y, uint16 area);
 	
 	//! compute path (and populates _walkData) from current position to the new one
-    void calc(uint16 oldPos, uint16 newPos, uint16 oldx, uint16 oldy, uint16 x, uint16 y);
+    void calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, int16 y);
 
 
 	WalkData _walkData[MAX_WALK_DATA];	

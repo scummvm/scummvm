@@ -290,7 +290,7 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 }
 
 
-int16 Walk::joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway) {
+int16 Walk::joeMove(int direction, int16 endx, int16 endy, bool inCutaway) {
 
 	_joeMoveBlock = false;
 	int16 can = 0;
@@ -342,7 +342,7 @@ int16 Walk::joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway) {
 }
 
 
-int16 Walk::personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curImage, int direction) {
+int16 Walk::personMove(const Person *pp, int16 endx, int16 endy, uint16 curImage, int direction) {
 
 	if (endx == 0 && endy == 0) {
 		warning("Walk::personMove() - endx == 0 && endy == 0");
@@ -422,7 +422,7 @@ int16 Walk::personMove(const Person *pp, uint16 endx, uint16 endy, uint16 curIma
 }
 
 
-void Walk::calc(uint16 oldPos, uint16 newPos, uint16 oldx, uint16 oldy, uint16 x, uint16 y) {
+void Walk::calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, int16 y) {
 	
 	// if newPos is outside of an AREA then traverse Y axis until an AREA is found
 	if (newPos == 0) { 
@@ -440,8 +440,8 @@ void Walk::calc(uint16 oldPos, uint16 newPos, uint16 oldx, uint16 oldy, uint16 x
 	}
 	else if (calcPath(oldPos, newPos)) {
 		uint16 i;
-		uint16 px = oldx;
-		uint16 py = oldy;
+		int16 px = oldx;
+		int16 py = oldy;
 		for (i = 2; i <= _areaListCount; ++i) {
 			uint16 a1 = _areaList[i - 1];
 			uint16 a2 = _areaList[i];
@@ -458,11 +458,11 @@ void Walk::calc(uint16 oldPos, uint16 newPos, uint16 oldx, uint16 oldy, uint16 x
 }
 
 
-uint16 Walk::calcC(uint16 c1, uint16 c2, uint16 c3, uint16 c4, uint16 lastc) {
+int16 Walk::calcC(int16 c1, int16 c2, int16 c3, int16 c4, int16 lastc) {
 
-	uint16 s1 = MAX(c1, c3);
-	uint16 s2 = MIN(c2, c4);
-	uint16 c;
+	int16 s1 = MAX(c1, c3);
+	int16 s2 = MIN(c2, c4);
+	int16 c;
 	if ((lastc >= s1 && lastc <= s2) || (lastc >= s2 && lastc <= s1)) {
 		c = lastc;
 	}
@@ -473,7 +473,7 @@ uint16 Walk::calcC(uint16 c1, uint16 c2, uint16 c3, uint16 c4, uint16 lastc) {
 }
 
 
-int16 Walk::findAreaPosition(uint16 *x, uint16 *y, bool recalibrate) {
+int16 Walk::findAreaPosition(int16 *x, int16 *y, bool recalibrate) {
 	// In order to locate the nearest available area, the original  algorithm
 	// computes the X (or Y) closest face distance for each available area. We
 	// simply added the case where the pointer is neither lying in the X range
@@ -600,9 +600,9 @@ void Walk::initWalkData() {
 }
 
 
-void Walk::incWalkData(uint16 px, uint16 py, uint16 x, uint16 y, uint16 areaNum) {
+void Walk::incWalkData(int16 px, int16 py, int16 x, int16 y, uint16 areaNum) {
 
-	debug(9, "Walk::incWalkData(%d, %d, %d)", (int16)(x - px), (int16)(y - py), areaNum);
+	debug(9, "Walk::incWalkData(%d, %d, %d)", (x - px), (y - py), areaNum);
 
 	if (px != x || py != y) {
 		++_walkDataCount;
