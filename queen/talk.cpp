@@ -473,10 +473,10 @@ void Talk::initialTalk() {
 
 	byte *ptr = _joePtr + 2;
 	
-	uint16 hasString = READ_BE_UINT16(ptr); ptr += 2;
+	uint16 hasNotString = READ_BE_UINT16(ptr); ptr += 2;
 
 	char joeString[MAX_STRING_SIZE];
-	if (hasString) {
+	if (!hasNotString) {
 		ptr = getString(ptr, joeString, MAX_STRING_LENGTH);
 		//debug(0, "joeString = '%s'", joeString);
 	}
