@@ -79,9 +79,9 @@ const char *MidiDriver::getErrorName(int error_code) {
 MidiDriver_MPU401::MidiDriver_MPU401() :
 	MidiDriver(),
 	_started_thread (false),
+	_mutex (0),
 	_timer_proc (0),
-	_timer_param (0),
-	_mutex (0)
+	_timer_param (0)
 {
 	
 	uint i;
