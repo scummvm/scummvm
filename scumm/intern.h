@@ -305,7 +305,7 @@ protected:
 	void o2_stopSound();
 	void o2_endCutscene();
 	void o2_decrement();
-	void o2_divide();
+	void o2_drawSentence();
 };
 
 class Scumm_v4 : public Scumm_v3 {

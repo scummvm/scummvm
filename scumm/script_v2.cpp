@@ -248,7 +248,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_addDirect),
 		OPCODE(o5_dummy),
 		/* AC */
-		OPCODE(o2_delay),
+		OPCODE(o2_drawSentence),
 		OPCODE(o2_putActorInRoom),
 		OPCODE(o2_waitForSentence),
 		OPCODE(o2_ifNotState04),
@@ -306,7 +306,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_printEgo),
 		OPCODE(o2_doSentence),
 		OPCODE(o2_add),
-		OPCODE(o2_divide),
+		OPCODE(o2_setBitVar),
 		/* DC */
 		OPCODE(o5_dummy),
 		OPCODE(o2_ifClassOfIs),
@@ -1480,13 +1480,6 @@ void Scumm_v2::o2_stopSound() {
 	_sound->stopSound(getVarOrDirectByte(0x80));
 }
 
-void Scumm_v2::o2_divide() {
-	int a;
-	getResultPos();
-	a = getVarOrDirectWord(0x80);
-	if (a == 0) {
-		error("Divide by zero");
-		_vars[_resultVarNumber] = 0;
-	} else
-		_vars[_resultVarNumber] /= a;
+void Scumm_v2::o2_drawSentence() {
+	error("TODO o2_drawSentence()");
 }
