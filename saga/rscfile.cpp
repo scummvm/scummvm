@@ -211,6 +211,10 @@ int RSC_GetResourceOffset(RSCFILE_CONTEXT *rsc, uint32 res_num, uint32 *res_offs
 	return SUCCESS;
 }
 
+const char *RSC_FileName(RSCFILE_CONTEXT *rsc) {
+	return rsc->rc_file_fspec;
+}
+
 int RSC_LoadResource(RSCFILE_CONTEXT *rsc, uint32 res_num, byte **res_p, size_t *res_size_p) {
 	uint32 res_offset;
 	size_t res_size;

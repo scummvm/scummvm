@@ -70,8 +70,6 @@ public:
 	int playSound(uint32 sound_rn, int volume);
 	int playVoice(uint32 voice_rn);
 	int getVoiceLength(uint32 voice_rn);
-	int ITEVOC_Resample(long src_freq, long dst_freq, byte *src_buf,
-						size_t src_buf_len, byte **dst_buf, size_t *dst_buf_len);
 
  private:
 	int load(RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, SOUNDBUFFER *snd_buf_i);
@@ -79,7 +77,7 @@ public:
 
 	int _init;
 
- RSCFILE_CONTEXT *_sfx_ctxt;
+	RSCFILE_CONTEXT *_sfx_ctxt;
 	RSCFILE_CONTEXT *_voice_ctxt;
 
 	GAME_SOUNDINFO _snd_info;

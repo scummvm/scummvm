@@ -75,8 +75,8 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	GAME_GetSceneInfo(&gs_desc);
 
 	// Load scene module resource context
-	result = GAME_GetFileContext(&_sceneContext, GAME_RESOURCEFILE, 0);
-	if (result != SUCCESS) {
+	_sceneContext = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
+	if (_sceneContext == NULL) {
 		warning("Scene::Scene(): Couldn't load scene resource context");
 		return;
 	}

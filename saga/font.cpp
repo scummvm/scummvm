@@ -37,8 +37,8 @@ Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	int i;
 
 	// Load font module resource context 
-	if (GAME_GetFileContext(&_fontContext,
-	 GAME_RESOURCEFILE, 0) != SUCCESS) {
+	_fontContext = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
+	if (_fontContext == NULL) {
 		error("Font::Font(): Couldn't get resource context.");
 	}
 
@@ -102,7 +102,8 @@ int Font::loadFont(uint32 font_rn, int font_id) {
 	}
 
 	if (fontres_len < FONT_DESCSIZE) {
-		error("Font::loadFont(): Invalid font length.");
+		warning("Font::loadFont(): Invalid font length (%d < %d)", fontres_len, FONT_DESCSIZE);
+		return FAILURE;
 	}
 
 	MemoryReadStream readS(fontres_p, fontres_len);
@@ -119,7 +120,7 @@ int Font::loadFont(uint32 font_rn, int font_id) {
 	fh.c_width = readS.readUint16LE();
 	fh.row_length = readS.readUint16LE();
 
-	debug(1, "Font::loadFont(): Reading font resource...");
+	debug(1, "Font::loadFont(): Reading font resource #%d...", font_rn);
 
 	debug(2, "Character width: %d", fh.c_width);
 	debug(2, "Character height: %d", fh.c_height);

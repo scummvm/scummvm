@@ -69,12 +69,11 @@ int Actor::reg() {
 }
 
 Actor::Actor(SagaEngine *vm) : _vm(vm), _initialized(false) {
-	int result;
 	int i;
 
 	// Get actor resource file context
-	result = GAME_GetFileContext(&_actorContext, GAME_RESOURCEFILE, 0);
-	if (result != SUCCESS) {
+	_actorContext = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
+	if (_actorContext == NULL) {
 		error("Actor::Actor(): Couldn't load actor module resource context.");
 	}
 

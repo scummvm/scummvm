@@ -308,10 +308,22 @@ Music::Music(SoundMixer *mixer, MidiDriver *driver, int enabled) : _mixer(mixer)
 		// know why it has 27 elements, but the last one represents a
 		// very short tune. Perhaps it's a dummy?
 		//
-		// TODO: The demo uses compressed music?
+		// FIXME: Well, it's a hack which I don't like. Logically it should
+		// call LoadResource() et al, but I don't want to load those
+		// huge files into memory. So I use FileContext just for getting file
+		// name and reuse its opened file a bit.
+		//
+		// Proper approach would be to extend resource manager so it could
+		// return File object.
 
-		if (file.open("music.rsc")) {
+		_musicContext = GAME_GetFileContext(GAME_MUSICFILE, 0);
+		if (_musicContext != NULL) {
 			_hasDigiMusic = true;
+
+			debug(0, "DHFJKHDFKJLHDFKLJHDFKJHDASF");
+			_musicFname = RSC_FileName(_musicContext);
+
+			file.open(_musicFname);
 			file.seek(-ARRAYSIZE(_digiTableITECD) * 8, SEEK_END);
 
 			for (int i = 0; i < ARRAYSIZE(_digiTableITECD); i++) {
@@ -403,13 +415,18 @@ int Music::play(uint32 music_rn, uint16 flags) {
 				uint32 length = _digiTableITECD[music_rn - 9].length;
 
 				if (length > 0) {
-					audioStream = makeRAWStream("music.rsc", start, length, flags == MUSIC_LOOP);
+					audioStream = makeRAWStream(_musicFname, start, length, flags == MUSIC_LOOP);
 				}
 			}
 
 			// No digitized music - try standalone MIDI.
-			if (!audioStream)
+			if (!audioStream) {
 				midiFile.open(_midiTableITECD[music_rn - 9].filename);
+
+				if (!midiFile.isOpen()) {
+					warning("Cannot open music file %s", _midiTableITECD[music_rn - 9].filename);
+				}
+			}
 		}
 	}
 
@@ -437,7 +454,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 	} else {
 		// Load XMI resource data
 
-		GAME_GetFileContext(&rsc_ctxt, GAME_RESOURCEFILE, 0);
+		rsc_ctxt = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
 
 		if (RSC_LoadResource(rsc_ctxt, music_rn, &resource_data, 
 				&resource_size) != SUCCESS ) {
@@ -447,6 +464,11 @@ int Music::play(uint32 music_rn, uint16 flags) {
 
 		_player->setGM(false);
 		parser = MidiParser::createParser_XMIDI();
+	}
+
+	if (resource_size <= 0) {
+		warning("Music::play(): Resource load failed: %u", music_rn);
+		return FAILURE;
 	}
 
 	if (!parser->loadMusic(resource_data, resource_size)) {

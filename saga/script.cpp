@@ -70,14 +70,14 @@ Script::Script() {
 	
 	debug(0, "Initializing scripting subsystem");
 	// Load script resource file context
-	result = GAME_GetFileContext(&_scriptContext, GAME_SCRIPTFILE, 0);
-	if (result != SUCCESS) {
+	_scriptContext = GAME_GetFileContext(GAME_SCRIPTFILE, 0);
+	if (_scriptContext == NULL) {
 		error("Couldn't get script file context");
 	}
 
 	// Load script LUT resource
-	result = GAME_GetFileContext(&s_lut_ctxt, GAME_RESOURCEFILE, 0);
-	if (result != SUCCESS) {
+	s_lut_ctxt = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
+	if (s_lut_ctxt == NULL) {
 		error("Couldn't get resource file context");
 	}
 

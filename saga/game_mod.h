@@ -51,7 +51,8 @@ enum GAME_FILETYPES {
 enum GAME_SOUNDINFO_TYPES {
 	GAME_SOUND_PCM = 0,
 	GAME_SOUND_VOC,
-	GAME_SOUND_WAV
+	GAME_SOUND_WAV,
+	GAME_SOUND_VOX
 };
 
 enum GAME_FONT_IDS {
@@ -62,6 +63,10 @@ enum GAME_FONT_IDS {
 	GAME_FONT_MEDIUM2,
 	GAME_FONT_LARGE2,
 	GAME_FONT_LARGE3
+};
+
+enum GAME_FEATURES {
+	GF_VOX_VOICES = 1
 };
 
 struct GAME_DISPLAYINFO {
@@ -96,7 +101,7 @@ struct GAME_RESOURCEDESC {
 
 int GAME_Register();
 int GAME_Init();
-int GAME_GetFileContext(RSCFILE_CONTEXT **ctxt_p, uint16 type, int param);
+RSCFILE_CONTEXT *GAME_GetFileContext(uint16 type, int param);
 int GAME_GetFontInfo(GAME_FONTDESC **, int *);
 int GAME_GetResourceInfo(GAME_RESOURCEDESC *);
 int GAME_GetSoundInfo(GAME_SOUNDINFO *);
@@ -104,8 +109,8 @@ int GAME_GetDisplayInfo(GAME_DISPLAYINFO *);
 int GAME_GetSceneInfo(GAME_SCENEDESC *);
 int GAME_GetGame();
 int GAME_GetGameType();
-GameList GAME_GameList();
 DetectedGameList GAME_ProbeGame(const FSList &fslist);
+uint32 GAME_GetFeatures();
 
 } // End of namespace Saga
 

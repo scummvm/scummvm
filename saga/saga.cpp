@@ -55,8 +55,24 @@
 #include "saga/game_mod.h"
 #include "saga/palanim.h"
 
+static const GameSettings saga_games[] = {
+	{"ite", "Inherit the Earth", 0},
+	{"ite-demo", "Inherit the Earth (Demo)",  0},
+	{"ihnm", "I Have No Mouth and I Must Scream", 0 },
+	{"ihnm-demo", "I Have No Mouth and I Must Scream (Demo)", 0 },
+	{0, 0, 0}
+};
+
 GameList Engine_SAGA_gameList() {
-	return Saga::GAME_GameList();
+	GameList games;
+	const GameSettings *g = saga_games;
+
+	while (g->name) {
+		games.push_back(*g);
+		g++;
+	}
+
+	return games;
 }
 
 DetectedGameList Engine_SAGA_detectGames(const FSList &fslist) {
@@ -124,13 +140,17 @@ void SagaEngine::go() {
 
 	CVAR_RegisterFunc(CF_quitfunc, "quit", NULL, CVAR_NONE, 0, 0, this);
 
-	// Process config file
-	// FIXME
-	/*
-	if (CFG_Read(NULL) != SUCCESS) {
-		warning("Couldn't read configuration file");
-	}
-	*/
+	// Add some default directories
+	// Win32 demo & full game
+	File::addDefaultDirectory("graphics");
+	File::addDefaultDirectory("music");
+	File::addDefaultDirectory("sound");
+
+	// Linux demo
+	File::addDefaultDirectory("itedata");
+
+	// Mac demos & full game
+	File::addDefaultDirectory("patch");
 
 	// Process command line
 

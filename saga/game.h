@@ -47,8 +47,8 @@ struct GAME_FILEDESC {
 
 struct GAMEDESC {
 	const char *name;
-	int gd_game_type;
-	uint32 gd_game_id;
+	const int gd_game_type;
+	const uint32 gd_game_id;
 	const char *gd_title;
 	int gd_logical_w;
 	int gd_logical_h;

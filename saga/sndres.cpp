@@ -36,16 +36,14 @@
 namespace Saga {
 
 SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
-	int result;
-
 	/* Load sound module resource file contexts */
-	result = GAME_GetFileContext(&_sfx_ctxt, GAME_SOUNDFILE, 0);
-	if (result != SUCCESS) {
+	_sfx_ctxt = GAME_GetFileContext(GAME_SOUNDFILE, 0);
+	if (_sfx_ctxt == NULL) {
 		return;
 	}
 
-	result = GAME_GetFileContext(&_voice_ctxt, GAME_VOICEFILE, 0);
-	if (result != SUCCESS) {
+	_voice_ctxt = GAME_GetFileContext(GAME_VOICEFILE, 0);
+	if (_voice_ctxt == NULL) {
 		return;
 	}
 
@@ -72,7 +70,8 @@ int SndRes::playSound(uint32 sound_rn, int volume) {
 
 int SndRes::playVoice(uint32 voice_rn) {
 	SOUNDBUFFER snd_buffer;
-	int result;
+	int result = FAILURE;
+	bool voiceFile = false;
 
 	debug(0, "SndRes::playVoice(%ld)", voice_rn);
 
@@ -90,34 +89,40 @@ int SndRes::playVoice(uint32 voice_rn) {
 		else
 			f.open("P2_A.iaf");
 
-		if (!f.isOpen())
-			return FAILURE;
+		if (f.isOpen()) {
+			size = f.size();
+			byte *snd_res = (byte *)malloc(size);
+			f.read(snd_res, size);
+			f.close();
 
-		size = f.size();
-		byte *snd_res = (byte *)malloc(size);
-		f.read(snd_res, size);
-		f.close();
-
-		if (!voc) {
-			snd_buffer.s_stereo = 0;
-			snd_buffer.s_samplebits = 16;
-			snd_buffer.s_freq = 22050;
-			snd_buffer.s_buf = snd_res;
-			snd_buffer.s_buf_len = size;
-			snd_buffer.s_signed = 1;
-			result = SUCCESS;
-		} else {
-			result = loadVocSound(snd_res, size, &snd_buffer);
-			RSC_FreeResource(snd_res);
+			if (!voc) {
+				snd_buffer.s_stereo = 0;
+				snd_buffer.s_samplebits = 16;
+				snd_buffer.s_freq = 22050;
+				snd_buffer.s_buf = snd_res;
+				snd_buffer.s_buf_len = size;
+				snd_buffer.s_signed = 1;
+				result = SUCCESS;
+			} else {
+				result = loadVocSound(snd_res, size, &snd_buffer);
+				RSC_FreeResource(snd_res);
+			}
+			voiceFile = true;
 		}
-	} else
+	}
+
+	// File is not present. It is DOS CD or Floppy
+	if (result != SUCCESS)
 		result = load(_voice_ctxt, voice_rn, &snd_buffer);
 
 	if (result != SUCCESS) {
 		return FAILURE;
 	}
 
-	_vm->_sound->playVoice(&snd_buffer);
+	if (GAME_GetFeatures() & GF_VOX_VOICES && !voiceFile)
+		_vm->_sound->playVoxVoice(&snd_buffer);
+	else
+		_vm->_sound->playVoice(&snd_buffer);
 
 	return SUCCESS;
 }
@@ -248,6 +253,7 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf
 int SndRes::getVoiceLength(uint32 voice_rn) {
 	int res_type = _snd_info.res_type;
 	uint32 length = 0;
+	bool voiceFile = false;
 
 	double ms_f;
 	int ms_i = -1;
@@ -268,11 +274,13 @@ int SndRes::getVoiceLength(uint32 voice_rn) {
 			length = f.size();
 			res_type = GAME_SOUND_VOC;
 			f.close();
+			voiceFile = true;
 		} else if (f.open("P2_A.iaf")) {
 			result = SUCCESS;
 			length = f.size();
 			res_type = GAME_SOUND_PCM;
 			f.close();
+			voiceFile = true;
 		}
 	}
 
@@ -284,7 +292,11 @@ int SndRes::getVoiceLength(uint32 voice_rn) {
 		}
 	}
 
-	if (res_type == GAME_SOUND_PCM) {
+	if (GAME_GetFeatures() & GF_VOX_VOICES && !voiceFile) {
+		// Rough hack, fix this to be accurate
+		ms_f = (double)length / 22050 * 2000.0;
+		ms_i = (int)ms_f;
+	} else if (res_type == GAME_SOUND_PCM) {
 		ms_f = (double)length / (_snd_info.sample_size / CHAR_BIT) / (_snd_info.freq) * 1000.0;
 		ms_i = (int)ms_f;
 	} else if (res_type == GAME_SOUND_VOC) {
@@ -296,61 +308,6 @@ int SndRes::getVoiceLength(uint32 voice_rn) {
 	}
 
 	return ms_i;
-}
-
-int SndRes::ITEVOC_Resample(long src_freq, long dst_freq, byte *src_buf, 
-						size_t src_buf_len, byte **dst_buf, size_t *dst_buf_len) {
-	byte *resamp_buf;
-	size_t resamp_len;
-
-	byte src_samp_a;
-	byte src_samp_b;
-
-	const byte *read_pa;
-	const byte *read_pb;
-
-	byte *write_pa;
-	byte *write_pb;
-	byte *write_pc;
-
-	size_t src_i;
-
-	assert(src_freq == 14705);
-	assert(dst_freq == 22050);
-
-	resamp_len = (size_t) (src_buf_len * 1.5);
-	resamp_buf = (byte *)malloc(resamp_len);
-	if (resamp_buf == NULL) {
-		return FAILURE;
-	}
-
-	read_pa = src_buf;
-	read_pb = src_buf + 1;
-
-	write_pa = resamp_buf;
-	write_pb = resamp_buf + 1;
-	write_pc = resamp_buf + 2;
-
-	for (src_i = 0; src_i < src_buf_len / 2; src_i++) {
-		src_samp_a = *read_pa;
-		src_samp_b = *read_pb;
-
-		read_pa += 2;
-		read_pb += 2;
-
-		*write_pa = src_samp_a;
-		*write_pb = (byte) ((src_samp_a / 2) + (src_samp_b / 2));
-		*write_pc = src_samp_b;
-
-		write_pa += 3;
-		write_pb += 3;
-		write_pc += 3;
-	}
-
-	*dst_buf = resamp_buf;
-	*dst_buf_len = resamp_len;
-
-	return SUCCESS;
 }
 
 } // End of namespace Saga

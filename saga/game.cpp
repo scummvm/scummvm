@@ -57,8 +57,17 @@ GAME_SOUNDINFO ITEDEMO_GameSound = {
 	GAME_SOUND_VOC, 0, 0, 0
 };
 
-// Inherit the Earth - win32 Wyrmkeep Demo version
+// Inherit the Earth - win32 Wyrmkeep Linux Demo version
 GAME_FILEDESC ITEWINDEMO_GameFiles[] = {
+	{"ITED.RSC", GAME_RESOURCEFILE},
+	{"SCRIPTSD.RSC", GAME_SCRIPTFILE},
+	{"SOUNDSD.RSC", GAME_SOUNDFILE},
+	{"VOICESD.RSC", GAME_VOICEFILE},
+	{"MUSICD.RSC", GAME_MUSICFILE}
+};
+
+// Inherit the Earth - win32 Wyrmkeep Demo version older release
+GAME_FILEDESC ITEWINDEMOOld_GameFiles[] = {
 	{"ITED.RSC", GAME_RESOURCEFILE},
 	{"SCRIPTSD.RSC", GAME_SCRIPTFILE},
 	{"SOUNDSD.RSC", GAME_SOUNDFILE},
@@ -67,14 +76,14 @@ GAME_FILEDESC ITEWINDEMO_GameFiles[] = {
 
 // Inherit the Earth - Diskette version
 GAME_FILEDESC ITEDISK_GameFiles[] = {
-	{"ITE.RSC", GAME_RESOURCEFILE} ,
-	{"SCRIPTS.RSC", GAME_SCRIPTFILE} ,
+	{"ITE.RSC", GAME_RESOURCEFILE},
+	{"SCRIPTS.RSC", GAME_SCRIPTFILE},
 	{"VOICES.RSC", GAME_SOUNDFILE | GAME_VOICEFILE}
 };
 
 GAME_FONTDESC ITEDISK_GameFonts[] = {
-	{GAME_FONT_MEDIUM, 0} ,
-	{GAME_FONT_LARGE, 1} ,
+	{GAME_FONT_MEDIUM, 0},
+	{GAME_FONT_LARGE, 1},
 	{GAME_FONT_SMALL, 2}
 };
 
@@ -174,12 +183,13 @@ GAMEDESC GameDescs[] = {
 		0 // features
 	},
 
-	// Inherit the earth - win32 Wyrmkeep Demo version
+	// Inherit the earth - Linux Demo version
+	// Note: it should be before win32 version
 	{
-		"ite-demo-win",
+		"ite-demo",
 		GID_ITE,
 		GAME_ITE_WINDEMO,
-		"Inherit the Earth (Win32 Demo)",
+		"Inherit the Earth (Linux Demo)",
 		320, 200,
 		137,
 		ITE_DEFAULT_SCENE,
@@ -189,13 +199,31 @@ GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
-		0
+		GF_VOX_VOICES
+	},
+	
+	// Inherit the earth - Win32 Demo version
+	{
+		"ite-demo",
+		GID_ITE,
+		GAME_ITE_WINDEMO,
+		"Inherit the Earth (Win32 Demo)",
+		320, 200,
+		137,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEWINDEMOOld_GameFiles),
+		ITEWINDEMO_GameFiles,
+		ARRAYSIZE(ITECD_GameFonts),
+		ITECD_GameFonts,
+		&ITECD_GameSound,
+		GF_VOX_VOICES
 	},
 	
 	// Inherit the earth - CD version
 	// NOTE: it should be before floppy version
 	{
-		"itecd",
+		"ite",
 		GID_ITE,
 		GAME_ITE_CD,
 		"Inherit the Earth (DOS CD Version)",
@@ -343,13 +371,9 @@ int LoadLanguage() {
 	return SUCCESS;
 }
 
-int GAME_GetFileContext(RSCFILE_CONTEXT ** ctxt_p, uint16 type, int param) {
+RSCFILE_CONTEXT *GAME_GetFileContext(uint16 type, int param) {
 	RSCFILE_CONTEXT *found_ctxt = NULL;
 	uint16 i;
-
-	if (ctxt_p == NULL) {
-		return FAILURE;
-	}
 
 	for (i = 0; i < GameModule.gfile_n; i++) {
 		if (GameModule.gfile_data[i].file_types & type) {
@@ -357,13 +381,7 @@ int GAME_GetFileContext(RSCFILE_CONTEXT ** ctxt_p, uint16 type, int param) {
 		}
 	}
 
-	if (found_ctxt != NULL) {
-		*ctxt_p = found_ctxt;
-	} else {
-		*ctxt_p = NULL;
-	}
-
-	return SUCCESS;
+	return found_ctxt;
 }
 
 DetectedGameList GAME_ProbeGame(const FSList &fslist) {
@@ -560,15 +578,8 @@ int GAME_GetGameType() {
 	return GameModule.gamedesc->gd_game_type;
 }
 
-GameList GAME_GameList() {
-	int gNum = ARRAYSIZE(GameDescs);
-	int i;
-	GameList games;
-
-	for (i = 0; i < gNum; i++)
-		games.push_back(GameDescs[i].toGameSettings());
-
-	return games;
+uint32 GAME_GetFeatures() {
+	return GameModule.gamedesc->features;
 }
 
 } // End of namespace Saga

@@ -177,8 +177,8 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	}
 
 	// Load interface module resource file context
-	result = GAME_GetFileContext(&_interfaceContext, GAME_RESOURCEFILE, 0);
-	if (result != SUCCESS) {
+	_interfaceContext = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
+	if (_interfaceContext == NULL) {
 		return;
 	}
 

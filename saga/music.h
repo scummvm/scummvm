@@ -126,6 +126,9 @@ private:
 	int _musicInitialized;
 	int _enabled;
 	bool _hasDigiMusic;
+
+	RSCFILE_CONTEXT *_musicContext;
+	const char *_musicFname;
 };
 
 } // End of namespace Saga

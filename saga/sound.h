@@ -54,6 +54,7 @@ public:
 	int stopSound();
 
 	int playVoice(SOUNDBUFFER *buf);
+	int playVoxVoice(SOUNDBUFFER *buf);
 	int pauseVoice();
 	int resumeVoice();
 	int stopVoice();

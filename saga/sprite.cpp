@@ -37,13 +37,11 @@
 namespace Saga {
 
 Sprite::Sprite(SagaEngine *vm) : _vm(vm), _initialized(false) {
-	int result;
-
 	debug(0, "Initializing sprite subsystem...");
 
 	// Load sprite module resource context
-	result = GAME_GetFileContext(&_spriteContext, GAME_RESOURCEFILE, 0);
-	if (result != SUCCESS) {
+	_spriteContext = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
+	if (_spriteContext == NULL) {
 		return;
 	}
 
