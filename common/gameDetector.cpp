@@ -497,6 +497,7 @@ void GameDetector::setGame(const String &name) {
 	updateconfig();
 	g_config->delete_domain ("_COMMAND_LINE");
 	g_config->delete_domain ("_USER_OVERRIDES");
+	g_config->set_domain(name);
 }
 
 int GameDetector::parseGraphicsMode(const char *s) {
