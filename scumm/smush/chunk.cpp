@@ -23,6 +23,7 @@
 #include "chunk.h"
 
 #include "common/engine.h" // for debug, warning, error
+#include "common/file.h"
 
 #include <stdio.h> // for FILE, fopen, fclose, fseek and ftell
 #include <string.h> // for memcpy
@@ -40,7 +41,7 @@ public:
 	FilePtr(const char * fname) : _refcount(1), _curPos(0) {
 		debug(9, "FilePtr created for %s", fname);
 		_filename = strdup(fname);
-		_ifs  = fopen(fname, "rb");
+		_ifs  = fopen_nocase(fname, "rb");
 		if(_ifs == NULL) error("FilePtr unable to read file \"%s\"", fname);
 	}
 	~FilePtr() {

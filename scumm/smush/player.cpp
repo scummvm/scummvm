@@ -20,6 +20,7 @@
  */
 
 #include <stdafx.h>
+#include "common/file.h"
 #include "common/util.h"
 #include "common/engine.h" // for debug, warning, error
 
@@ -614,19 +615,18 @@ void SmushPlayer::handleAnimHeader(Chunk & b) {
 	}
 }
 
+#define NEW_FILE	1
 static StringResource * getStrings(const char * file, bool is_encoded) {
 	debug(7, "trying to read text ressources from %s", file);
-	FILE * is;
-	is = fopen(file, "rb");
-	if(is == NULL) return 0;
-	fseek(is, 0, SEEK_END);
-	int32 length = ftell(is);
-	fseek(is, 0, SEEK_SET);
+	File theFile;
+	theFile.open(file);
+	if (!theFile.isOpen())
+		return 0;
+	int32 length = theFile.size();
 	char * filebuffer = new char [length + 1];
 	assert(filebuffer);
-	fread (filebuffer, length, 1, is);
+	theFile.read(filebuffer, length);
 	filebuffer[length] = 0;
-	fclose(is);
 	if(is_encoded) {
 		static const int32 ETRS_HEADER_LENGTH = 16;
 		assert(length > ETRS_HEADER_LENGTH);
