@@ -780,7 +780,13 @@ void Scumm::initRoomSubBlocks() {
 		ptr = findResourceData(MKID('BOXD'), roomptr);
 		if (ptr) {
 			byte numOfBoxes=*(ptr);
-			int size = numOfBoxes * SIZEOF_BOX+1;
+                        int size;
+			if (_features & GF_OLD256)
+				size = numOfBoxes * (SIZEOF_BOX-2) + 1;
+			else
+				size = numOfBoxes * SIZEOF_BOX + 1;
+
+
 			createResource(rtMatrix, 2, size);
 			memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
 			ptr += size;

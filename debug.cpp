@@ -108,15 +108,28 @@ bool ScummDebugger::do_command() {
 		return true;
 	case CMD_DUMPBOX:
 		{
-			int num, i; BoxCoords box;		
-			num = _s->getNumBoxes();
-			for (i=0; i<num; i++) {
-				printf("bt %d\n", i);
+			int num, i = 0, rows = 0; 
+			BoxCoords box;		
+			byte *boxm = _s->getBoxMatrixBaseAddr();
+			num = _s->getNumBoxes();			
+
+			printf("Walk matrix:\n");
+			while (*boxm != 0xFF) {
+				printf("%d ", *boxm);
+				i++; *boxm++;
+				if (i >= num) {i = 0; rows++; printf("\n");}				
+			}
+
+			if (rows < num)
+				printf("\nERROR: Box Matrix invalid, missing or incomplete: %d row(s)", num - rows);
+
+			printf("\nWalk boxes:\n");			
+			for (i=0; i<num; i++) {				
 				BoxTest(i);
 				_s->getBoxCoordinates(i, &box);
 				printf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d]\n", i, 
-				box.ul.x, box.ul.y, 	box.ll.x, box.ll.y, 
-				box.ur.x, box.ur.y, 	box.lr.x, box.lr.y);
+						box.ul.x, box.ul.y, box.ll.x, box.ll.y, 
+						box.ur.x, box.ur.y, box.lr.x, box.lr.y);
 			}
 		}
 		return true;
