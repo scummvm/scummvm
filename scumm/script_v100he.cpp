@@ -634,13 +634,13 @@ void ScummEngine_v100he::o100_arrayOps() {
 		if (id == 0) {
 			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
 		}
-		tmp2 = len;
+		tmp2 = 0;
 		while (dim2start <= dim2end) {
 			tmp = dim1start;
 			while (tmp <= dim1end) {
-				writeArray(array, dim2start, tmp, list[--tmp2]);
-				if (tmp2 == 0)
-					tmp2 = len;
+				writeArray(array, dim2start, tmp, list[tmp2++]);
+				if (tmp2 == len)
+					tmp2 = 0;
 				tmp++;
 			}
 			dim2start++;
@@ -649,7 +649,6 @@ void ScummEngine_v100he::o100_arrayOps() {
 	case 131:
 		{
 		// TODO
-		// Array copy and cat?
 		//Array1
 		dim1end = pop();
 		dim1start = pop();
@@ -1821,12 +1820,11 @@ void ScummEngine_v100he::o100_unknown25() {
 }
 
 void ScummEngine_v100he::decodeParseString(int m, int n) {
-	byte b, *ptr;
-	int i, color, size;
+	int i, colors, size;
 	int args[31];
 	byte name[1024];
 
-	b = fetchScriptByte();
+	byte b = fetchScriptByte();
 
 	switch (b) {
 	case 6:		// SO_AT
@@ -1845,15 +1843,15 @@ void ScummEngine_v100he::decodeParseString(int m, int n) {
 		_string[m].color = pop();
 		break;
 	case 21:
-		color = pop();
-		if (color == 1) {
+		colors = pop();
+		if (colors == 1) {
 			_string[m].color = pop();
 		} else {	
-			push(color);
+			push(colors);
 			getStackList(args, ARRAYSIZE(args));
 			for (i = 0; i < 16; i++)
 				_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
-			_string[m].color = color;
+			_string[m].color = _charsetColorMap[0];
 		}
 		break;
 	case 35:
@@ -1872,10 +1870,13 @@ void ScummEngine_v100he::decodeParseString(int m, int n) {
 		_string[m].no_talk_anim = false;
 		break;
 	case 78:
-		ptr = getResourceAddress(rtTalkie, pop());
-		size = READ_BE_UINT32(ptr + 12);
-		memcpy(name, ptr + 16, size);
+		{
+		const byte *dataPtr = getResourceAddress(rtTalkie, pop());
+		const byte *text = findWrappedBlock(MKID('TEXT'), dataPtr, 0, 0);
+		size = getResourceDataSize(text);
+		memcpy(name, text, size);
 		printString(m, name);
+		}
 		break;
 	case 79:		// SO_TEXTSTRING
 		printString(m, _scriptPointer);

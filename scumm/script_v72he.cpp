@@ -1316,7 +1316,6 @@ void ScummEngine_v72he::o72_arrayOps() {
 	case 127:
 		{
 		// TODO
-		// Array copy and cat?
 		//Array1
 		dim1end = pop();
 		dim1start = pop();
