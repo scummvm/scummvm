@@ -83,7 +83,7 @@
 #include <assert.h>
 #include <mmsystem.h>
 #include <ctype.h>
-#include <Winuser.h>
+#include <winuser.h>
 #include <direct.h>
 
 #else

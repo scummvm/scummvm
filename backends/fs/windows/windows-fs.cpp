@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
-#include <TCHAR.h>
+#include <tchar.h>
 
 /*
  * Implementation of the ScummVM file system API based on Windows API.
