@@ -22,6 +22,7 @@
 #include "common/file.h"
 #include "common/util.h"
 #include "common/system.h"
+#include "gui/message.h"
 #include "sky/compact.h"
 #include "sky/control.h"
 #include "sky/disk.h"
@@ -883,13 +884,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 						refreshNames = true;
 					}
 					if (clickRes == NO_DISK_SPACE) {
-						// HACK: The error dialog will have two buttons, one
-						// for yes and one for no. And we just won't care
-						// which one the user presses. As far as I can tell,
-						// making a proper dialog is tricky, since the yes/no
-						// buttons are actually one single sprite.
-						char saveFailed[] = "Could not save!";
-						getYesNo(saveFailed);
+						displayMessage(0, "Could not save game in directory '%s'", _savePath);
 						quitPanel = true;
 					}
 					if ((clickRes == CANCEL_PRESSED) || (clickRes == GAME_RESTORED))
@@ -1051,6 +1046,24 @@ bool Control::loadSaveAllowed(void) {
 	return true;
 }
 
+int Control::displayMessage(const char *altButton, const char *message, ...) {
+#ifdef __PALM_OS__
+	char buf[256]; // 1024 is too big overflow the stack
+#else
+	char buf[1024];
+#endif
+	va_list va;
+
+	va_start(va, message);
+	vsprintf(buf, message, va);
+	va_end(va);
+
+	GUI::MessageDialog dialog(buf, "OK", altButton);
+	int result = dialog.runModal();
+	_skyMouse->spriteMouse(MOUSE_NORMAL, 0, 0);
+	return result;
+}
+
 void Control::saveDescriptions(uint8 *srcBuf) {
 
 	uint8 *tmpBuf = (uint8 *)malloc(MAX_SAVE_GAMES * MAX_TEXT_LEN);
@@ -1089,14 +1102,15 @@ void Control::doAutoSave(void) {
 
 	outf = _saveFileMan->open_savefile(fName, _savePath, true);
 	if (outf == NULL) {
-		warning("Can't create file %s for autosaving", fName);
+		displayMessage(0, "Untable to create autosave file '%s' in directory '%s'", fName, _savePath);
 		return;
 	}
 	uint8 *saveData = (uint8 *)malloc(0x20000);
 	uint32 fSize = prepareSaveData(saveData);
 
 	if (outf->write(saveData, fSize) != fSize)
-		warning("Can't write file %s for autosaving. Disk full?", fName);
+		displayMessage(0, "Unable to write autosave file '%s' in directory '%s'. Disk full?", fName, _savePath);
+
 	delete outf;
 	free(saveData);
 }
@@ -1429,12 +1443,12 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 	LODSD(srcPos, size);
 	LODSD(srcPos, saveRev);
 	if (saveRev > SAVE_FILE_REVISION) {
-		warning("Unknown save file revision (%d)",saveRev);
+		displayMessage(0, "Unknown save file revision (%d)", saveRev);
 		return RESTORE_FAILED;
 	}
 
 	if (saveRev <= OLD_SAVEGAME_TYPE) {
-		warning("This savegame version is unsupported.");
+		displayMessage(0, "This savegame version is unsupported.");
 		return RESTORE_FAILED;
 	}
 	uint32 music, mouseType, palette, gameVersion;
@@ -1521,7 +1535,7 @@ uint16 Control::restoreGameFromFile(bool autoSave) {
 	*(uint32 *)saveData = TO_LE_32(infSize);
 
 	if (inf->read(saveData+4, infSize-4) != infSize-4) {
-		warning("Can't read from file!");
+		displayMessage("Can't read from file '%s'", fName);
 		free(saveData);
 		delete inf;
 		return RESTORE_FAILED;
@@ -1551,7 +1565,7 @@ uint16 Control::quickXRestore(uint16 slot) {
 		_skyScreen->setPalette(60510);
 
 	_savedMouse = _skyMouse->giveCurrentMouseType();
-	_skyMouse->spriteMouse(MOUSE_NORMAL,0,0);
+	_skyMouse->spriteMouse(MOUSE_NORMAL, 0, 0);
 
 	if (slot == 0)
 		result = restoreGameFromFile(true);

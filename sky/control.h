@@ -185,6 +185,8 @@ public:
 	bool loadSaveAllowed(void);
 
 private:
+	int displayMessage(const char *altButton, const char *message, ...);
+
 	void initPanel(void);
 	void removePanel(void);
 
