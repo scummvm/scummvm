@@ -46,7 +46,7 @@ public:
 	void drawNewMouse(void);
 	void spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY);
 	void useLogicInstance(SkyLogic *skyLogic) { _skyLogic = skyLogic; };
-	void buttonPressed(uint8 button) { _bMouseB = button; };
+	void buttonPressed(uint8 button);
 	void waitMouseNotPressed(void);
 	uint16 giveMouseX(void) { return _aMouseX; };
 	uint16 giveMouseY(void) { return _aMouseY; };

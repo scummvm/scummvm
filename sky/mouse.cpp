@@ -172,7 +172,7 @@ void SkyMouse::drawNewMouse() {
 }
 
 void SkyMouse::waitMouseNotPressed(void) {
-	while (_mouseB != 0) ;
+	while (_mouseB) ;
 	_bMouseB = 0;
 }
 
@@ -271,6 +271,16 @@ void SkyMouse::pointerEngine(void) {
 			_skyLogic->script((uint16)SkyLogic::_scriptVariables[GET_OFF],(uint16)(SkyLogic::_scriptVariables[GET_OFF] >> 16));
 		SkyLogic::_scriptVariables[GET_OFF] = 0;
 	}
+}
+
+void SkyMouse::buttonPressed(uint8 button) {
+	if (_bMouseB == button)
+		_mouseB = 1;
+	else
+		_mouseB = 0;
+	
+	_bMouseB = button;
+	
 }
 
 void SkyMouse::buttonEngine1(void) {
