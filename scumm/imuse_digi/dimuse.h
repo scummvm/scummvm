@@ -180,14 +180,14 @@ struct imuseFtNames {
 struct imuseFtStateTable {
 	char audioName[9];
 	byte opcode;
-	int8 volume;
+	byte volume;
 	char name[21];
 };
 
 struct imuseFtSeqTable {
 	char audioName[9];
 	byte opcode;
-	int8 volume;
+	byte volume;
 };
 
 #ifdef __PALM_OS__
