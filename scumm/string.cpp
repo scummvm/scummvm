@@ -543,6 +543,10 @@ void Scumm::drawString(int a)
 
 	if (_features & GF_AFTER_V7) {
 		_charset->_hasMask = true;
+		// FIXME - hos is supposed to ever work, since gdi._mask_left is by default set
+		// to -1 to mark it as invalid. Hence this comparision will always leave it at -1,
+		// which implies that if the mask was marked invalid, it will always stay so. 
+		// That seems odd and not at all to be the intended thing... or is it?
 		if (_charset->_strLeft < gdi._mask_left)
 			gdi._mask_left = _charset->_strLeft;
 		if (_charset->_strRight > gdi._mask_right)
