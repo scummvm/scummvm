@@ -4595,21 +4595,21 @@ void SimonState::delay(uint amount)
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
 				case OSystem::EVENT_KEYDOWN:
-				if (event.kbd.keycode == 'o') {
+				if (event.kbd.ascii == 'o') {
 					_mainscript_toggle ^= 1;
-				} else if (event.kbd.keycode == 'v') {
+				} else if (event.kbd.ascii == 'v') {
 					_vgascript_toggle ^= 1;
-				} else if (event.kbd.keycode == 't') {
+				} else if (event.kbd.ascii == 't') {
 					_vk_t_toggle ^= 1;
-				} else if (event.kbd.keycode == ']' || event.kbd.keycode == '+') {
+				} else if (event.kbd.ascii == '+') {
 					midi.set_volume(midi.get_volume() + 16);
-				} else if (event.kbd.keycode == '[' || event.kbd.keycode == '-') {
+				} else if (event.kbd.ascii == '-') {
 					midi.set_volume(midi.get_volume() - 16);
-				} else if (event.kbd.keycode == 'm') {
+				} else if (event.kbd.ascii == 'm') {
 					midi.pause(_music_paused ^= 1);
-				} else if (event.kbd.keycode == 's') {
+				} else if (event.kbd.ascii == 's') {
 					_effects_paused ^= 1;
-				} else if (event.kbd.keycode == 'b') {
+				} else if (event.kbd.ascii == 'b') {
 					_ambient_paused ^= 1;
 					if (_ambient_paused && _ambient_playing) {
 						_mixer->stop(_ambient_index);
@@ -4619,7 +4619,7 @@ void SimonState::delay(uint amount)
 						playAmbient(tmp);
 					}
 				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
-					if (event.kbd.keycode == 'f') {
+					if (event.kbd.ascii == 'f') {
 						_fast_mode ^= 1;
 					}
 				}
