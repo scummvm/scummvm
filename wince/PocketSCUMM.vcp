@@ -255,7 +255,7 @@ RSC=rc.exe
 # ADD RSC /l 0x409 /d UNDER_CE=$(CEVersion) /d _WIN32_WCE=$(CEVersion) /d "UNICODE" /d "_UNICODE" /d "NDEBUG" /d "$(CePlatform)" /d "ARM" /d "_ARM_" /r
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "." /I "missing" /I ".." /I "gapi/inc" /I "SDLAudio/include" /D "ARM" /D "_ARM_" /D "NDEBUG" /D "WIN32" /D UNDER_CE=$(CEVersion) /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "USE_ADLIB" /FR /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "." /I "missing" /I ".." /I "../sound" /I "gapi/inc" /I "SDLAudio/include" /I "mad/include" /D "ARM" /D "_ARM_" /D "NDEBUG" /D "WIN32" /D UNDER_CE=$(CEVersion) /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /FR /YX /Oxs /M$(CECrtMT) /c
 MTL=midl.exe
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
@@ -264,7 +264,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 commctrl.lib coredll.lib aygshell.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /nodefaultlib:"$(CENoDefaultLib)" /subsystem:$(CESubsystem) /align:"4096" /MACHINE:ARM
-# ADD LINK32 commctrl.lib coredll.lib aygshell.lib SDLAudio.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /nodefaultlib:"$(CENoDefaultLib)" /libpath:"SDLAudio/lib/ARM" /subsystem:$(CESubsystem) /align:"4096" /MACHINE:ARM
+# ADD LINK32 commctrl.lib coredll.lib aygshell.lib SDLAudio.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /nodefaultlib:"$(CENoDefaultLib)" /libpath:"SDLAudio/lib/ARM" /libpath:"mad/lib/ARM" /subsystem:$(CESubsystem) /align:"4096" /MACHINE:ARM
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
@@ -281,6 +281,7 @@ LINK32=link.exe
 # PROP Intermediate_Dir "ARMDbg"
 # PROP CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 RSC=rc.exe
 # ADD BASE RSC /l 0x409 /d UNDER_CE=$(CEVersion) /d _WIN32_WCE=$(CEVersion) /d "UNICODE" /d "_UNICODE" /d "DEBUG" /d "$(CePlatform)" /d "ARM" /d "_ARM_" /r
@@ -345,6 +346,7 @@ LINK32=link.exe
 # PROP Intermediate_Dir "X86EMDbg"
 # PROP CPU_ID "{D6518FF4-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
+# PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 RSC=rc.exe
 # ADD BASE RSC /l 0x409 /d UNDER_CE=$(CEVersion) /d _WIN32_WCE=$(CEVersion) /d "UNICODE" /d "_UNICODE" /d "DEBUG" /d "$(CePlatform)" /d "_X86_" /d "x86" /d "i486" /r
@@ -379,6 +381,1507 @@ LINK32=link.exe
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# Begin Group "sound"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\sound\fmopl.cpp
+
+!IF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Release"
+
+DEP_CPP_FMOPL=\
+	"..\sound\fmopl.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_FMOPL=\
+	".\SDL.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Debug"
+
+DEP_CPP_FMOPL=\
+	"..\sound\fmopl.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_FMOPL=\
+	".\SDL.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Release"
+
+DEP_CPP_FMOPL=\
+	"..\sound\fmopl.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_FMOPL=\
+	".\SDL.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Debug"
+
+DEP_CPP_FMOPL=\
+	"..\sound\fmopl.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_FMOPL=\
+	".\SDL.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Release"
+
+DEP_CPP_FMOPL=\
+	"..\sound\fmopl.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_FMOPL=\
+	".\SDL.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Debug"
+
+DEP_CPP_FMOPL=\
+	"..\sound\fmopl.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_FMOPL=\
+	".\SDL.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
+
+DEP_CPP_FMOPL=\
+	"..\sound\fmopl.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
+
+DEP_CPP_FMOPL=\
+	"..\sound\fmopl.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
+
+DEP_CPP_FMOPL=\
+	"..\sound\fmopl.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_FMOPL=\
+	".\SDL.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
+
+DEP_CPP_FMOPL=\
+	"..\sound\fmopl.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\imuse.cpp
+
+!IF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Release"
+
+DEP_CPP_IMUSE=\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_IMUSE=\
+	"..\sound.h"\
+	".\SDL.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Debug"
+
+DEP_CPP_IMUSE=\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_IMUSE=\
+	"..\sound.h"\
+	".\SDL.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Release"
+
+DEP_CPP_IMUSE=\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_IMUSE=\
+	"..\sound.h"\
+	".\SDL.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Debug"
+
+DEP_CPP_IMUSE=\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_IMUSE=\
+	"..\sound.h"\
+	".\SDL.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Release"
+
+DEP_CPP_IMUSE=\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_IMUSE=\
+	"..\sound.h"\
+	".\SDL.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Debug"
+
+DEP_CPP_IMUSE=\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_IMUSE=\
+	"..\sound.h"\
+	".\SDL.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
+
+DEP_CPP_IMUSE=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\sound\fmopl.h"\
+	"..\sound\mididrv.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
+
+DEP_CPP_IMUSE=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\sound\fmopl.h"\
+	"..\sound\mididrv.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
+
+DEP_CPP_IMUSE=\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_IMUSE=\
+	"..\sound.h"\
+	".\SDL.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
+
+DEP_CPP_IMUSE=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\sys\time.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_IMUSE=\
+	"..\sound.h"\
+	"..\sound\gmidi.h"\
+	"..\sound\QuickTimeMusic.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\mididrv.cpp
+
+!IF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Release"
+
+DEP_CPP_MIDID=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\sys\time.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+NODEP_CPP_MIDID=\
+	"..\sound.h"\
+	"..\sound\gmidi.h"\
+	"..\sound\QuickTimeMusic.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Debug"
+
+DEP_CPP_MIDID=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\sys\time.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_MIDID=\
+	"..\sound.h"\
+	"..\sound\gmidi.h"\
+	"..\sound\QuickTimeMusic.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Release"
+
+DEP_CPP_MIDID=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\sys\time.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_MIDID=\
+	"..\sound.h"\
+	"..\sound\gmidi.h"\
+	"..\sound\QuickTimeMusic.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Debug"
+
+DEP_CPP_MIDID=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\sys\time.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_MIDID=\
+	"..\sound.h"\
+	"..\sound\gmidi.h"\
+	"..\sound\QuickTimeMusic.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Release"
+
+DEP_CPP_MIDID=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\sys\time.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+NODEP_CPP_MIDID=\
+	"..\sound.h"\
+	"..\sound\gmidi.h"\
+	"..\sound\QuickTimeMusic.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Debug"
+
+DEP_CPP_MIDID=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\sys\time.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_MIDID=\
+	"..\sound.h"\
+	"..\sound\gmidi.h"\
+	"..\sound\QuickTimeMusic.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
+
+DEP_CPP_MIDID=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\sound\mididrv.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
+	".\missing\sys\time.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+NODEP_CPP_MIDID=\
+	"..\sound\QuickTimeMusic.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
+
+DEP_CPP_MIDID=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\sound\mididrv.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\sys\time.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_MIDID=\
+	"..\sound\QuickTimeMusic.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
+
+DEP_CPP_MIDID=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\sys\time.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_MIDID=\
+	"..\sound.h"\
+	"..\sound\gmidi.h"\
+	"..\sound\QuickTimeMusic.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
+
+DEP_CPP_MIDID=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\sys\time.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_MIDID=\
+	"..\sound.h"\
+	"..\sound\gmidi.h"\
+	"..\sound\QuickTimeMusic.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\mididrv.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\mixer.cpp
+
+!IF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Release"
+
+DEP_CPP_MIXER=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Debug"
+
+DEP_CPP_MIXER=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Release"
+
+DEP_CPP_MIXER=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Debug"
+
+DEP_CPP_MIXER=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Release"
+
+DEP_CPP_MIXER=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Debug"
+
+DEP_CPP_MIXER=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
+
+DEP_CPP_MIXER=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
+
+DEP_CPP_MIXER=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
+
+DEP_CPP_MIXER=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
+
+DEP_CPP_MIXER=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\mixer.h
+# End Source File
+# End Group
+# Begin Group "v3"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\v3\resource_v3.cpp
+
+!IF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Release"
+
+DEP_CPP_RESOU=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+NODEP_CPP_RESOU=\
+	"..\gmidi.h"\
+	"..\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Debug"
+
+DEP_CPP_RESOU=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_RESOU=\
+	"..\gmidi.h"\
+	"..\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Release"
+
+DEP_CPP_RESOU=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_RESOU=\
+	"..\gmidi.h"\
+	"..\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Debug"
+
+DEP_CPP_RESOU=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_RESOU=\
+	"..\gmidi.h"\
+	"..\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Release"
+
+DEP_CPP_RESOU=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+NODEP_CPP_RESOU=\
+	"..\gmidi.h"\
+	"..\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Debug"
+
+DEP_CPP_RESOU=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_RESOU=\
+	"..\gmidi.h"\
+	"..\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
+
+DEP_CPP_RESOU=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
+
+DEP_CPP_RESOU=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_RESOU=\
+	"..\mixer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
+
+DEP_CPP_RESOU=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_RESOU=\
+	"..\gmidi.h"\
+	"..\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
+
+DEP_CPP_RESOU=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_RESOU=\
+	"..\gmidi.h"\
+	"..\sound.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# End Group
+# Begin Group "v4"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\v4\resource_v4.cpp
+
+!IF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Release"
+
+DEP_CPP_RESOUR=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+NODEP_CPP_RESOUR=\
+	"..\gmidi.h"\
+	"..\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Debug"
+
+DEP_CPP_RESOUR=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_RESOUR=\
+	"..\gmidi.h"\
+	"..\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Release"
+
+DEP_CPP_RESOUR=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_RESOUR=\
+	"..\gmidi.h"\
+	"..\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Debug"
+
+DEP_CPP_RESOUR=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_RESOUR=\
+	"..\gmidi.h"\
+	"..\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Release"
+
+DEP_CPP_RESOUR=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+NODEP_CPP_RESOUR=\
+	"..\gmidi.h"\
+	"..\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Debug"
+
+DEP_CPP_RESOUR=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_RESOUR=\
+	"..\gmidi.h"\
+	"..\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
+
+DEP_CPP_RESOUR=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
+
+DEP_CPP_RESOUR=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_RESOUR=\
+	"..\mixer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
+
+DEP_CPP_RESOUR=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_RESOUR=\
+	"..\gmidi.h"\
+	"..\sound.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
+
+DEP_CPP_RESOUR=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_RESOUR=\
+	"..\gmidi.h"\
+	"..\sound.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# End Group
+# Begin Group "simon"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\simon\midi.cpp
+
+!IF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Release"
+
+DEP_CPP_MIDI_=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+NODEP_CPP_MIDI_=\
+	"..\simon\gmidi.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Debug"
+
+DEP_CPP_MIDI_=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_MIDI_=\
+	"..\simon\gmidi.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Release"
+
+DEP_CPP_MIDI_=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_MIDI_=\
+	"..\simon\gmidi.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Debug"
+
+DEP_CPP_MIDI_=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_MIDI_=\
+	"..\simon\gmidi.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Release"
+
+DEP_CPP_MIDI_=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+NODEP_CPP_MIDI_=\
+	"..\simon\gmidi.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Debug"
+
+DEP_CPP_MIDI_=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_MIDI_=\
+	"..\simon\gmidi.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
+
+DEP_CPP_MIDI_=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\sound\mididrv.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
+
+DEP_CPP_MIDI_=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_MIDI_=\
+	"..\simon\mididrv.h"\
+	"..\simon\mixer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
+
+DEP_CPP_MIDI_=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_MIDI_=\
+	"..\simon\gmidi.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
+
+DEP_CPP_MIDI_=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_MIDI_=\
+	"..\simon\gmidi.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\simon\simon.cpp
+
+!IF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Release"
+
+DEP_CPP_SIMON=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Debug"
+
+DEP_CPP_SIMON=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Release"
+
+DEP_CPP_SIMON=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Debug"
+
+DEP_CPP_SIMON=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Release"
+
+DEP_CPP_SIMON=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Debug"
+
+DEP_CPP_SIMON=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
+
+DEP_CPP_SIMON=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
+
+DEP_CPP_SIMON=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_SIMON=\
+	"..\simon\mixer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
+
+DEP_CPP_SIMON=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
+
+DEP_CPP_SIMON=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\simon\simon.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\simon\simonsys.cpp
+
+!IF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Release"
+
+DEP_CPP_SIMONS=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Debug"
+
+DEP_CPP_SIMONS=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Release"
+
+DEP_CPP_SIMONS=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Debug"
+
+DEP_CPP_SIMONS=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Release"
+
+DEP_CPP_SIMONS=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Debug"
+
+DEP_CPP_SIMONS=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
+
+DEP_CPP_SIMONS=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\sound\mixer.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
+
+DEP_CPP_SIMONS=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+NODEP_CPP_SIMONS=\
+	"..\simon\mixer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
+
+DEP_CPP_SIMONS=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
+
+DEP_CPP_SIMONS=\
+	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\stdafx.h"\
+	"..\system.h"\
+	".\missing\unistd.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=..\2xsai.cpp
+
+!IF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Release"
+
+DEP_CPP_2XSAI=\
+	"..\scummsys.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Debug"
+
+DEP_CPP_2XSAI=\
+	"..\scummsys.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Release"
+
+DEP_CPP_2XSAI=\
+	"..\scummsys.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Debug"
+
+DEP_CPP_2XSAI=\
+	"..\scummsys.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Release"
+
+DEP_CPP_2XSAI=\
+	"..\scummsys.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Debug"
+
+DEP_CPP_2XSAI=\
+	"..\scummsys.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
+
+DEP_CPP_2XSAI=\
+	"..\scummsys.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
+
+DEP_CPP_2XSAI=\
+	"..\scummsys.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
+
+DEP_CPP_2XSAI=\
+	"..\scummsys.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+
+!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
+
+DEP_CPP_2XSAI=\
+	"..\scummsys.h"\
+	"..\stdafx.h"\
+	".\missing\unistd.h"\
+	
+
+!ENDIF 
+
+# End Source File
 # Begin Source File
 
 SOURCE=..\actor.cpp
@@ -462,45 +1965,35 @@ NODEP_CPP_ACTOR=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_ACTOR=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_ACTOR=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_ACTOR=\
-	".\SDL.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -518,184 +2011,19 @@ NODEP_CPP_ACTOR=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_ACTOR=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_ACTOR=\
-	".\SDL.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\sound\adlib.cpp
-
-!IF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Release"
-
-DEP_CPP_ADLIB=\
-	"..\scumm.h"\
-	"..\scummsys.h"\
-	"..\smush.h"\
+	"..\gmidi.h"\
 	"..\sound.h"\
-	"..\sound\fmopl.h"\
-	"..\stdafx.h"\
-	".\missing\unistd.h"\
-	
-NODEP_CPP_ADLIB=\
-	".\SDL.h"\
-	".\SDLAudio\include\SDL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_ADLIB=\
-	"..\scumm.h"\
-	"..\scummsys.h"\
-	"..\sound.h"\
-	"..\sound\fmopl.h"\
-	"..\stdafx.h"\
-	".\missing\unistd.h"\
-	
-NODEP_CPP_ADLIB=\
-	".\SDL.h"\
-	
-
-!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Release"
-
-DEP_CPP_ADLIB=\
-	"..\scumm.h"\
-	"..\scummsys.h"\
-	"..\sound.h"\
-	"..\sound\fmopl.h"\
-	"..\stdafx.h"\
-	".\missing\unistd.h"\
-	
-NODEP_CPP_ADLIB=\
-	".\SDL.h"\
-	
-
-!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Debug"
-
-DEP_CPP_ADLIB=\
-	"..\scumm.h"\
-	"..\scummsys.h"\
-	"..\sound.h"\
-	"..\sound\fmopl.h"\
-	"..\stdafx.h"\
-	".\missing\unistd.h"\
-	
-NODEP_CPP_ADLIB=\
-	".\SDL.h"\
-	
-
-!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Release"
-
-DEP_CPP_ADLIB=\
-	"..\scumm.h"\
-	"..\scummsys.h"\
-	"..\smush.h"\
-	"..\sound.h"\
-	"..\sound\fmopl.h"\
-	"..\stdafx.h"\
-	".\missing\unistd.h"\
-	
-NODEP_CPP_ADLIB=\
-	".\SDL.h"\
-	".\SDLAudio\include\SDL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Debug"
-
-DEP_CPP_ADLIB=\
-	"..\scumm.h"\
-	"..\scummsys.h"\
-	"..\sound.h"\
-	"..\sound\fmopl.h"\
-	"..\stdafx.h"\
-	".\missing\unistd.h"\
-	
-NODEP_CPP_ADLIB=\
-	".\SDL.h"\
-	
-
-!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
-
-DEP_CPP_ADLIB=\
-	"..\scumm.h"\
-	"..\scummsys.h"\
-	"..\smush.h"\
-	"..\sound.h"\
-	"..\sound\fmopl.h"\
-	"..\stdafx.h"\
-	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
-	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
-	
-
-!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
-
-DEP_CPP_ADLIB=\
-	"..\scumm.h"\
-	"..\scummsys.h"\
-	"..\sound.h"\
-	"..\sound\fmopl.h"\
-	"..\stdafx.h"\
-	".\missing\unistd.h"\
-	
-NODEP_CPP_ADLIB=\
-	".\SDL.h"\
-	
-
-!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
-
-DEP_CPP_ADLIB=\
-	"..\scumm.h"\
-	"..\scummsys.h"\
-	"..\sound.h"\
-	"..\sound\fmopl.h"\
-	"..\stdafx.h"\
-	".\missing\unistd.h"\
-	
-NODEP_CPP_ADLIB=\
-	".\SDL.h"\
-	
-
-!ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
-
-DEP_CPP_ADLIB=\
-	"..\scumm.h"\
-	"..\scummsys.h"\
-	"..\sound.h"\
-	"..\sound\fmopl.h"\
-	"..\stdafx.h"\
-	".\missing\unistd.h"\
-	
-NODEP_CPP_ADLIB=\
-	".\SDL.h"\
 	
 
 !ENDIF 
@@ -784,45 +2112,35 @@ NODEP_CPP_AKOS_=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_AKOS_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_AKOS_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_AKOS_=\
-	".\SDL.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -840,13 +2158,19 @@ NODEP_CPP_AKOS_=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_AKOS_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_AKOS_=\
-	".\SDL.h"\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -935,45 +2259,35 @@ NODEP_CPP_BOXES=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_BOXES=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_BOXES=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_BOXES=\
-	".\SDL.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -991,13 +2305,19 @@ NODEP_CPP_BOXES=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_BOXES=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_BOXES=\
-	".\SDL.h"\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -1086,45 +2406,35 @@ NODEP_CPP_COSTU=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_COSTU=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_COSTU=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_COSTU=\
-	".\SDL.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -1142,13 +2452,19 @@ NODEP_CPP_COSTU=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_COSTU=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_COSTU=\
-	".\SDL.h"\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -1156,135 +2472,200 @@ NODEP_CPP_COSTU=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\sound\fmopl.cpp
+SOURCE=..\gameDetector.cpp
 
 !IF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Release"
 
-DEP_CPP_FMOPL=\
-	"..\sound\fmopl.h"\
+DEP_CPP_GAMED=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gameDetector.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
 	
-NODEP_CPP_FMOPL=\
-	".\SDL.h"\
+NODEP_CPP_GAMED=\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Debug"
 
-DEP_CPP_FMOPL=\
-	"..\sound\fmopl.h"\
+DEP_CPP_GAMED=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gameDetector.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_FMOPL=\
-	".\SDL.h"\
+NODEP_CPP_GAMED=\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Release"
 
-DEP_CPP_FMOPL=\
-	"..\sound\fmopl.h"\
+DEP_CPP_GAMED=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gameDetector.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_FMOPL=\
-	".\SDL.h"\
+NODEP_CPP_GAMED=\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Debug"
 
-DEP_CPP_FMOPL=\
-	"..\sound\fmopl.h"\
+DEP_CPP_GAMED=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gameDetector.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_FMOPL=\
-	".\SDL.h"\
+NODEP_CPP_GAMED=\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Release"
 
-DEP_CPP_FMOPL=\
-	"..\sound\fmopl.h"\
+DEP_CPP_GAMED=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gameDetector.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
+	".\SDLAudio\include\SDL_byteorder.h"\
 	
-NODEP_CPP_FMOPL=\
-	".\SDL.h"\
+NODEP_CPP_GAMED=\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Debug"
 
-DEP_CPP_FMOPL=\
-	"..\sound\fmopl.h"\
+DEP_CPP_GAMED=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gameDetector.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_FMOPL=\
-	".\SDL.h"\
+NODEP_CPP_GAMED=\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
-DEP_CPP_FMOPL=\
-	"..\sound\fmopl.h"\
+DEP_CPP_GAMED=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gameDetector.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
+	"..\sound\imuse.h"\
+	"..\sound\mididrv.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
-DEP_CPP_FMOPL=\
-	"..\sound\fmopl.h"\
+DEP_CPP_GAMED=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gameDetector.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_FMOPL=\
-	".\SDL.h"\
+NODEP_CPP_GAMED=\
+	"..\imuse.h"\
+	"..\mididrv.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
 
-DEP_CPP_FMOPL=\
-	"..\sound\fmopl.h"\
+DEP_CPP_GAMED=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gameDetector.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_FMOPL=\
-	".\SDL.h"\
+NODEP_CPP_GAMED=\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
-DEP_CPP_FMOPL=\
-	"..\sound\fmopl.h"\
+DEP_CPP_GAMED=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gameDetector.h"\
+	"..\gfx.h"\
+	"..\scumm.h"\
+	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_FMOPL=\
-	".\SDL.h"\
+NODEP_CPP_GAMED=\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -1373,45 +2754,37 @@ NODEP_CPP_GFX_C=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_GFX_C=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\gui.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_GFX_C=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
+	"..\gui.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_GFX_C=\
-	".\SDL.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -1429,13 +2802,19 @@ NODEP_CPP_GFX_C=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_GFX_C=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_GFX_C=\
-	".\SDL.h"\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -1452,11 +2831,11 @@ DEP_CPP_GUI_C=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
-	"..\sound.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_GUI_C=\
+	"..\sound.h"\
 	".\gapi_keys.h"\
 	".\SDL.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
@@ -1508,11 +2887,11 @@ DEP_CPP_GUI_C=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
-	"..\sound.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_GUI_C=\
+	"..\sound.h"\
 	".\gapi_keys.h"\
 	".\SDL.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
@@ -1534,49 +2913,45 @@ NODEP_CPP_GUI_C=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_GUI_C=\
+	"..\akos.h"\
+	"..\boxes.h"\
 	"..\gapi_keys.h"\
+	"..\gfx.h"\
 	"..\gui.h"\
+	"..\guimaps.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
-	"..\sound.h"\
+	"..\sound\imuse.h"\
+	"..\sound\mididrv.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_GUI_C=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gapi_keys.h"\
+	"..\gfx.h"\
 	"..\gui.h"\
+	"..\guimaps.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_GUI_C=\
-	".\SDL.h"\
+	"..\imuse.h"\
+	"..\mididrv.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -1595,14 +2970,22 @@ NODEP_CPP_GUI_C=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_GUI_C=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gapi_keys.h"\
+	"..\gfx.h"\
 	"..\gui.h"\
+	"..\guimaps.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_GUI_C=\
-	".\SDL.h"\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -1610,160 +2993,178 @@ NODEP_CPP_GUI_C=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\sound\imuse.cpp
+SOURCE=..\init.cpp
 
 !IF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Release"
 
-DEP_CPP_IMUSE=\
+DEP_CPP_INIT_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
-	"..\sound.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
-	
-NODEP_CPP_IMUSE=\
-	".\SDL.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
+	
+NODEP_CPP_INIT_=\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Debug"
 
-DEP_CPP_IMUSE=\
+DEP_CPP_INIT_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
-	"..\sound.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_IMUSE=\
-	".\SDL.h"\
+NODEP_CPP_INIT_=\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Release"
 
-DEP_CPP_IMUSE=\
+DEP_CPP_INIT_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
-	"..\sound.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_IMUSE=\
-	".\SDL.h"\
+NODEP_CPP_INIT_=\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Debug"
 
-DEP_CPP_IMUSE=\
+DEP_CPP_INIT_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
-	"..\sound.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_IMUSE=\
-	".\SDL.h"\
+NODEP_CPP_INIT_=\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Release"
 
-DEP_CPP_IMUSE=\
+DEP_CPP_INIT_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
-	"..\sound.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
-	
-NODEP_CPP_IMUSE=\
-	".\SDL.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
+	
+NODEP_CPP_INIT_=\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Debug"
 
-DEP_CPP_IMUSE=\
+DEP_CPP_INIT_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
-	"..\sound.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_IMUSE=\
-	".\SDL.h"\
+NODEP_CPP_INIT_=\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
-DEP_CPP_IMUSE=\
+DEP_CPP_INIT_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
-	"..\sound.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
-DEP_CPP_IMUSE=\
+DEP_CPP_INIT_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
-	"..\sound.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_IMUSE=\
-	".\SDL.h"\
+NODEP_CPP_INIT_=\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
 
-DEP_CPP_IMUSE=\
+DEP_CPP_INIT_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
-	"..\sound.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_IMUSE=\
-	".\SDL.h"\
+NODEP_CPP_INIT_=\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
-DEP_CPP_IMUSE=\
+DEP_CPP_INIT_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
-	"..\sound.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_IMUSE=\
-	".\SDL.h"\
+NODEP_CPP_INIT_=\
+	"..\mixer.h"\
 	
 
 !ENDIF 
@@ -1856,46 +3257,35 @@ NODEP_CPP_INSAN=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_INSAN=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_INSAN=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_INSAN=\
-	".\SDL.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -1914,14 +3304,19 @@ NODEP_CPP_INSAN=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_INSAN=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_INSAN=\
-	".\SDL.h"\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -2010,45 +3405,35 @@ NODEP_CPP_OBJEC=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_OBJEC=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_OBJEC=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_OBJEC=\
-	".\SDL.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -2066,13 +3451,19 @@ NODEP_CPP_OBJEC=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_OBJEC=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_OBJEC=\
-	".\SDL.h"\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -2084,146 +3475,142 @@ SOURCE=..\resource.cpp
 
 !IF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Release"
 
-DEP_CPP_RESOU=\
+DEP_CPP_RESOURC=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_RESOU=\
+NODEP_CPP_RESOURC=\
 	".\SDL.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Debug"
 
-DEP_CPP_RESOU=\
+DEP_CPP_RESOURC=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_RESOU=\
+NODEP_CPP_RESOURC=\
 	".\SDL.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Release"
 
-DEP_CPP_RESOU=\
+DEP_CPP_RESOURC=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_RESOU=\
+NODEP_CPP_RESOURC=\
 	".\SDL.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Debug"
 
-DEP_CPP_RESOU=\
+DEP_CPP_RESOURC=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_RESOU=\
+NODEP_CPP_RESOURC=\
 	".\SDL.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Release"
 
-DEP_CPP_RESOU=\
+DEP_CPP_RESOURC=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_RESOU=\
+NODEP_CPP_RESOURC=\
 	".\SDL.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Debug"
 
-DEP_CPP_RESOU=\
+DEP_CPP_RESOURC=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_RESOU=\
+NODEP_CPP_RESOURC=\
 	".\SDL.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
-DEP_CPP_RESOU=\
+DEP_CPP_RESOURC=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
-DEP_CPP_RESOU=\
+DEP_CPP_RESOURC=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_RESOU=\
-	".\SDL.h"\
+NODEP_CPP_RESOURC=\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
 
-DEP_CPP_RESOU=\
+DEP_CPP_RESOURC=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_RESOU=\
+NODEP_CPP_RESOURC=\
 	".\SDL.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
-DEP_CPP_RESOU=\
+DEP_CPP_RESOURC=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
-NODEP_CPP_RESOU=\
-	".\SDL.h"\
+NODEP_CPP_RESOURC=\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -2239,11 +3626,11 @@ DEP_CPP_SAVEL=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
-	"..\sound.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SAVEL=\
+	"..\sound.h"\
 	".\SDL.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
 	
@@ -2253,11 +3640,11 @@ NODEP_CPP_SAVEL=\
 DEP_CPP_SAVEL=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
-	"..\sound.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SAVEL=\
+	"..\sound.h"\
 	".\SDL.h"\
 	
 
@@ -2291,11 +3678,11 @@ DEP_CPP_SAVEL=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
-	"..\sound.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SAVEL=\
+	"..\sound.h"\
 	".\SDL.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
 	
@@ -2315,46 +3702,39 @@ NODEP_CPP_SAVEL=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_SAVEL=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
-	"..\sound.h"\
+	"..\sound\imuse.h"\
+	"..\sound\mididrv.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_SAVEL=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SAVEL=\
-	".\SDL.h"\
+	"..\imuse.h"\
+	"..\mididrv.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -2372,14 +3752,19 @@ NODEP_CPP_SAVEL=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_SAVEL=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
-	"..\sound.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SAVEL=\
-	".\SDL.h"\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -2468,45 +3853,35 @@ NODEP_CPP_SCRIP=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_SCRIP=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_SCRIP=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SCRIP=\
-	".\SDL.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -2524,13 +3899,19 @@ NODEP_CPP_SCRIP=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_SCRIP=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SCRIP=\
-	".\SDL.h"\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -2619,45 +4000,35 @@ NODEP_CPP_SCRIPT=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_SCRIPT=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_SCRIPT=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SCRIPT=\
-	".\SDL.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -2675,13 +4046,20 @@ NODEP_CPP_SCRIPT=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_SCRIPT=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SCRIPT=\
-	".\SDL.h"\
+	"..\cdmusic.h"\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -2770,45 +4148,35 @@ NODEP_CPP_SCRIPT_=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_SCRIPT_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_SCRIPT_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SCRIPT_=\
-	".\SDL.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -2826,13 +4194,19 @@ NODEP_CPP_SCRIPT_=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_SCRIPT_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SCRIPT_=\
-	".\SDL.h"\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -2849,11 +4223,11 @@ DEP_CPP_SCUMM=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
-	"..\sound.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SCUMM=\
+	"..\sound.h"\
 	".\SDL.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
 	
@@ -2904,11 +4278,11 @@ DEP_CPP_SCUMM=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
-	"..\sound.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SCUMM=\
+	"..\sound.h"\
 	".\SDL.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
 	
@@ -2929,48 +4303,43 @@ NODEP_CPP_SCUMM=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_SCUMM=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gameDetector.h"\
+	"..\gfx.h"\
 	"..\gui.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
-	"..\sound.h"\
+	"..\sound\imuse.h"\
+	"..\sound\mididrv.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_SCUMM=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gameDetector.h"\
+	"..\gfx.h"\
 	"..\gui.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SCUMM=\
-	".\SDL.h"\
+	"..\imuse.h"\
+	"..\mididrv.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -2989,14 +4358,21 @@ NODEP_CPP_SCUMM=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_SCUMM=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gameDetector.h"\
+	"..\gfx.h"\
 	"..\gui.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SCUMM=\
-	".\SDL.h"\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -3012,11 +4388,11 @@ DEP_CPP_SOUND=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
-	"..\sound.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SOUND=\
+	"..\sound.h"\
 	".\SDL.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
 	
@@ -3026,11 +4402,11 @@ NODEP_CPP_SOUND=\
 DEP_CPP_SOUND=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
-	"..\sound.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SOUND=\
+	"..\sound.h"\
 	".\SDL.h"\
 	
 
@@ -3066,11 +4442,11 @@ DEP_CPP_SOUND=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
-	"..\sound.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SOUND=\
+	"..\sound.h"\
 	".\SDL.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
 	
@@ -3091,47 +4467,39 @@ NODEP_CPP_SOUND=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_SOUND=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
-	"..\sound.h"\
+	"..\sound\imuse.h"\
+	"..\sound\mididrv.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_SOUND=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SOUND=\
-	"..\sound.h"\
-	".\SDL.h"\
+	"..\imuse.h"\
+	"..\mididrv.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -3150,14 +4518,20 @@ NODEP_CPP_SOUND=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_SOUND=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
-	"..\sound.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SOUND=\
-	".\SDL.h"\
+	"..\cdmusic.h"\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -3232,28 +4606,6 @@ NODEP_CPP_STDAF=\
 DEP_CPP_STDAF=\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
-	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
@@ -3261,9 +4613,6 @@ DEP_CPP_STDAF=\
 DEP_CPP_STDAF=\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
-	
-NODEP_CPP_STDAF=\
-	".\SDL.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -3281,9 +4630,6 @@ NODEP_CPP_STDAF=\
 DEP_CPP_STDAF=\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
-	
-NODEP_CPP_STDAF=\
-	".\SDL.h"\
 	
 
 !ENDIF 
@@ -3372,45 +4718,35 @@ NODEP_CPP_STRIN=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_STRIN=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_STRIN=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_STRIN=\
-	".\SDL.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -3428,13 +4764,19 @@ NODEP_CPP_STRIN=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_STRIN=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_STRIN=\
-	".\SDL.h"\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -3523,45 +4865,35 @@ NODEP_CPP_SYS_C=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_SYS_C=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_SYS_C=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SYS_C=\
-	".\SDL.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -3579,13 +4911,19 @@ NODEP_CPP_SYS_C=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_SYS_C=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_SYS_C=\
-	".\SDL.h"\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -3678,46 +5016,35 @@ NODEP_CPP_VARS_=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_VARS_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_VARS_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_VARS_=\
-	".\SDL.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -3736,14 +5063,19 @@ NODEP_CPP_VARS_=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_VARS_=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_VARS_=\
-	".\SDL.h"\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -3832,45 +5164,35 @@ NODEP_CPP_VERBS=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_VERBS=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
 	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_VERBS=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_VERBS=\
-	".\SDL.h"\
+	"..\mixer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -3888,13 +5210,19 @@ NODEP_CPP_VERBS=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_VERBS=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_VERBS=\
-	".\SDL.h"\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	
 
 !ENDIF 
@@ -3907,6 +5235,10 @@ NODEP_CPP_VERBS=\
 # Begin Source File
 
 SOURCE=..\sound\fmopl.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\gapi_keys.h
 # End Source File
 # Begin Source File
 
@@ -4128,28 +5460,6 @@ NODEP_CPP_FINDG=\
 DEP_CPP_FINDG=\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
-	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
@@ -4157,9 +5467,6 @@ DEP_CPP_FINDG=\
 DEP_CPP_FINDG=\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
-	
-NODEP_CPP_FINDG=\
-	".\SDL.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -4177,9 +5484,6 @@ NODEP_CPP_FINDG=\
 DEP_CPP_FINDG=\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
-	
-NODEP_CPP_FINDG=\
-	".\SDL.h"\
 	
 
 !ENDIF 
@@ -4208,29 +5512,35 @@ NODEP_CPP_GAPI_=\
 
 DEP_CPP_GAPI_=\
 	"..\stdafx.h"\
-	".\gapi\inc\gx.h"\
 	".\missing\unistd.h"\
 	".\screen.h"\
-	{$(INCLUDE)}"aygshell.h"\
-	{$(INCLUDE)}"sipapi.h"\
+	
+NODEP_CPP_GAPI_=\
+	".\gapi\inc\gx.h"\
+	".\ipapi.h"\
+	".\ygshell.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Release"
 
 DEP_CPP_GAPI_=\
 	"..\stdafx.h"\
-	".\gapi\inc\gx.h"\
 	".\missing\unistd.h"\
 	".\screen.h"\
+	
+NODEP_CPP_GAPI_=\
+	".\gapi\inc\gx.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Debug"
 
 DEP_CPP_GAPI_=\
 	"..\stdafx.h"\
-	".\gapi\inc\gx.h"\
 	".\missing\unistd.h"\
 	".\screen.h"\
+	
+NODEP_CPP_GAPI_=\
+	".\gapi\inc\gx.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Release"
@@ -4252,54 +5562,36 @@ NODEP_CPP_GAPI_=\
 
 DEP_CPP_GAPI_=\
 	"..\stdafx.h"\
-	".\gapi\inc\gx.h"\
 	".\missing\unistd.h"\
 	".\screen.h"\
-	{$(INCLUDE)}"aygshell.h"\
-	{$(INCLUDE)}"sipapi.h"\
+	
+NODEP_CPP_GAPI_=\
+	".\gapi\inc\gx.h"\
+	".\ipapi.h"\
+	".\ygshell.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_GAPI_=\
+	"..\gapi_keys.h"\
 	"..\stdafx.h"\
 	".\gapi\inc\gx.h"\
 	".\missing\unistd.h"\
 	".\screen.h"\
-	".\SDLAudio\include\begin_code.h"\
-	".\SDLAudio\include\close_code.h"\
-	".\SDLAudio\include\SDL.h"\
-	".\SDLAudio\include\SDL_active.h"\
-	".\SDLAudio\include\SDL_audio.h"\
-	".\SDLAudio\include\SDL_byteorder.h"\
-	".\SDLAudio\include\SDL_cdrom.h"\
-	".\SDLAudio\include\SDL_error.h"\
-	".\SDLAudio\include\SDL_events.h"\
-	".\SDLAudio\include\SDL_getenv.h"\
-	".\SDLAudio\include\SDL_joystick.h"\
-	".\SDLAudio\include\SDL_keyboard.h"\
-	".\SDLAudio\include\SDL_keysym.h"\
-	".\SDLAudio\include\SDL_main.h"\
-	".\SDLAudio\include\SDL_mouse.h"\
-	".\SDLAudio\include\SDL_mutex.h"\
-	".\SDLAudio\include\SDL_quit.h"\
-	".\SDLAudio\include\SDL_rwops.h"\
-	".\SDLAudio\include\SDL_timer.h"\
-	".\SDLAudio\include\SDL_types.h"\
-	".\SDLAudio\include\SDL_version.h"\
-	".\SDLAudio\include\SDL_video.h"\
-	{$(INCLUDE)}"aygshell.h"\
+	{$(INCLUDE)}"Aygshell.h"\
 	{$(INCLUDE)}"sipapi.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_GAPI_=\
+	"..\gapi_keys.h"\
 	"..\stdafx.h"\
 	".\gapi\inc\gx.h"\
 	".\missing\unistd.h"\
 	".\screen.h"\
-	{$(INCLUDE)}"aygshell.h"\
+	{$(INCLUDE)}"Aygshell.h"\
 	{$(INCLUDE)}"sipapi.h"\
 	
 
@@ -4307,11 +5599,13 @@ DEP_CPP_GAPI_=\
 
 DEP_CPP_GAPI_=\
 	"..\stdafx.h"\
-	".\gapi\inc\gx.h"\
 	".\missing\unistd.h"\
 	".\screen.h"\
-	{$(INCLUDE)}"aygshell.h"\
-	{$(INCLUDE)}"sipapi.h"\
+	
+NODEP_CPP_GAPI_=\
+	".\gapi\inc\gx.h"\
+	".\ipapi.h"\
+	".\ygshell.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
@@ -4321,8 +5615,10 @@ DEP_CPP_GAPI_=\
 	".\gapi\inc\gx.h"\
 	".\missing\unistd.h"\
 	".\screen.h"\
-	{$(INCLUDE)}"aygshell.h"\
-	{$(INCLUDE)}"sipapi.h"\
+	
+NODEP_CPP_GAPI_=\
+	".\ipapi.h"\
+	".\ygshell.h"\
 	
 
 !ENDIF 
@@ -4416,11 +5712,11 @@ DEP_CPP_POCKE=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
-	"..\sound.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_POCKE=\
+	"..\sound.h"\
 	".\gapi_keys.h"\
 	".\gx.h"\
 	".\ipapi.h"\
@@ -4446,11 +5742,11 @@ DEP_CPP_POCKE=\
 	"..\gui.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
-	"..\sound.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_POCKE=\
+	"..\sound.h"\
 	".\ipapi.h"\
 	".\screen.h"\
 	".\SDL.h"\
@@ -4494,11 +5790,11 @@ DEP_CPP_POCKE=\
 	"..\scumm.h"\
 	"..\scummsys.h"\
 	"..\smush.h"\
-	"..\sound.h"\
 	"..\stdafx.h"\
 	".\missing\unistd.h"\
 	
 NODEP_CPP_POCKE=\
+	"..\sound.h"\
 	".\gapi_keys.h"\
 	".\gx.h"\
 	".\ipapi.h"\
@@ -4536,13 +5832,22 @@ NODEP_CPP_POCKE=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_POCKE=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gameDetector.h"\
+	"..\gapi_keys.h"\
+	"..\gfx.h"\
 	"..\gui.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\simon\simon.h"\
 	"..\smush.h"\
-	"..\sound.h"\
+	"..\sound\mididrv.h"\
+	"..\sound\mixer.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
 	".\gapi\inc\gx.h"\
+	".\mad\include\mad.h"\
 	".\missing\unistd.h"\
 	".\screen.h"\
 	".\SDLAudio\include\begin_code.h"\
@@ -4568,23 +5873,38 @@ DEP_CPP_POCKE=\
 	".\SDLAudio\include\SDL_types.h"\
 	".\SDLAudio\include\SDL_version.h"\
 	".\SDLAudio\include\SDL_video.h"\
-	{$(INCLUDE)}"aygshell.h"\
+	{$(INCLUDE)}"Aygshell.h"\
 	{$(INCLUDE)}"sipapi.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Debug"
 
 DEP_CPP_POCKE=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gameDetector.h"\
+	"..\gapi_keys.h"\
+	"..\gfx.h"\
 	"..\gui.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
+	"..\simon\simon.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\gapi\inc\gx.h"\
 	".\missing\unistd.h"\
+	".\screen.h"\
+	{$(INCLUDE)}"Aygshell.h"\
+	{$(INCLUDE)}"sipapi.h"\
 	
 NODEP_CPP_POCKE=\
-	".\screen.h"\
+	"..\mixer.h"\
+	".\mididrv.h"\
 	".\SDL.h"\
-	".\sound.h"\
+	".\SDL_audio.h"\
+	".\SDL_thread.h"\
+	".\SDL_timer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
@@ -4605,17 +5925,27 @@ NODEP_CPP_POCKE=\
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
 
 DEP_CPP_POCKE=\
+	"..\akos.h"\
+	"..\boxes.h"\
+	"..\gfx.h"\
 	"..\gui.h"\
 	"..\scumm.h"\
 	"..\scummsys.h"\
-	"..\sound.h"\
+	"..\smush.h"\
 	"..\stdafx.h"\
+	"..\system.h"\
+	".\gapi\inc\gx.h"\
 	".\missing\unistd.h"\
+	".\screen.h"\
 	
 NODEP_CPP_POCKE=\
+	"..\gmidi.h"\
+	"..\sound.h"\
 	".\ipapi.h"\
-	".\screen.h"\
 	".\SDL.h"\
+	".\SDL_audio.h"\
+	".\SDL_thread.h"\
+	".\SDL_timer.h"\
 	".\ygshell.h"\
 	
 
@@ -4656,58 +5986,71 @@ SOURCE=.\screen.cpp
 !IF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Release"
 
 DEP_CPP_SCREE=\
-	".\gapi\inc\gx.h"\
 	".\screen.h"\
-	{$(INCLUDE)}"aygshell.h"\
-	{$(INCLUDE)}"sipapi.h"\
+	
+NODEP_CPP_SCREE=\
+	".\gapi\inc\gx.h"\
+	".\ipapi.h"\
+	".\ygshell.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE MIPS) Debug"
 
 DEP_CPP_SCREE=\
-	".\gapi\inc\gx.h"\
 	".\screen.h"\
-	{$(INCLUDE)}"aygshell.h"\
-	{$(INCLUDE)}"sipapi.h"\
+	
+NODEP_CPP_SCREE=\
+	".\gapi\inc\gx.h"\
+	".\ipapi.h"\
+	".\ygshell.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Release"
 
 DEP_CPP_SCREE=\
-	".\gapi\inc\gx.h"\
 	".\screen.h"\
+	
+NODEP_CPP_SCREE=\
+	".\gapi\inc\gx.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH4) Debug"
 
 DEP_CPP_SCREE=\
-	".\gapi\inc\gx.h"\
 	".\screen.h"\
+	
+NODEP_CPP_SCREE=\
+	".\gapi\inc\gx.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Release"
 
 DEP_CPP_SCREE=\
-	".\gapi\inc\gx.h"\
 	".\screen.h"\
-	{$(INCLUDE)}"aygshell.h"\
-	{$(INCLUDE)}"sipapi.h"\
+	
+NODEP_CPP_SCREE=\
+	".\gapi\inc\gx.h"\
+	".\ipapi.h"\
+	".\ygshell.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE SH3) Debug"
 
 DEP_CPP_SCREE=\
-	".\gapi\inc\gx.h"\
 	".\screen.h"\
-	{$(INCLUDE)}"aygshell.h"\
-	{$(INCLUDE)}"sipapi.h"\
+	
+NODEP_CPP_SCREE=\
+	".\gapi\inc\gx.h"\
+	".\ipapi.h"\
+	".\ygshell.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE ARM) Release"
 
 DEP_CPP_SCREE=\
 	".\gapi\inc\gx.h"\
-	{$(INCLUDE)}"aygshell.h"\
+	".\screen.h"\
+	{$(INCLUDE)}"Aygshell.h"\
 	{$(INCLUDE)}"sipapi.h"\
 	
 
@@ -4716,17 +6059,19 @@ DEP_CPP_SCREE=\
 DEP_CPP_SCREE=\
 	".\gapi\inc\gx.h"\
 	".\screen.h"\
-	{$(INCLUDE)}"aygshell.h"\
+	{$(INCLUDE)}"Aygshell.h"\
 	{$(INCLUDE)}"sipapi.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Release"
 
 DEP_CPP_SCREE=\
-	".\gapi\inc\gx.h"\
 	".\screen.h"\
-	{$(INCLUDE)}"aygshell.h"\
-	{$(INCLUDE)}"sipapi.h"\
+	
+NODEP_CPP_SCREE=\
+	".\gapi\inc\gx.h"\
+	".\ipapi.h"\
+	".\ygshell.h"\
 	
 
 !ELSEIF  "$(CFG)" == "PocketSCUMM - Win32 (WCE x86em) Debug"
@@ -4734,8 +6079,10 @@ DEP_CPP_SCREE=\
 DEP_CPP_SCREE=\
 	".\gapi\inc\gx.h"\
 	".\screen.h"\
-	{$(INCLUDE)}"aygshell.h"\
-	{$(INCLUDE)}"sipapi.h"\
+	
+NODEP_CPP_SCREE=\
+	".\ipapi.h"\
+	".\ygshell.h"\
 	
 
 !ENDIF 
@@ -4940,10 +6287,6 @@ SOURCE=.\missing\errno.h
 # Begin Source File
 
 SOURCE=.\missing\fcntl.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\gapi_keys.h
 # End Source File
 # Begin Source File
 
