@@ -260,16 +260,17 @@ void ScummDebugger::printActors(int act)
 	int i;
 	Actor *a;
 
-	printf("+--------------------------------------------------------------+\n");
-	printf("|# |room|  x y   |elev|cos|width|box|mov|zp|frame|scale|spd|dir|\n");
-	printf("+--+----+--------+----+---+-----+---+---+--+-----+-----+---+---+\n");
+	printf("+------------------------------------------------------------------+\n");
+	printf("|# |room|  x y   |elev|cos|width|box|mov|zp|frame|scale|spd|dir|cls|\n");
+	printf("+--+----+--------+----+---+-----+---+---+--+-----+-----+---+---+---+\n");
 	for (i = 1; i < _s->NUM_ACTORS; i++) {
 		if (act == -1 || act == i) {
 			a = &_s->_actors[i];
 			if (a->visible)
-				printf("|%2d|%4d|%3d  %3d|%4d|%3d|%5d|%3d|%3d|%2d|%5d|%5d|%3d|%3d|\n",
-							 i, a->room, a->x, a->y, a->elevation, a->costume, a->width,
-							 a->walkbox, a->moving, a->forceClip, a->frame, a->scalex, a->speedx, a->facing);
+				printf("|%2d|%4d|%3d  %3d|%4d|%3d|%5d|%3d|%3d|%2d|%5d|%5d|%3d|%3d|$%02x|\n",
+							 a->number, a->room, a->x, a->y, a->elevation, a->costume,
+							 a->width, a->walkbox, a->moving, a->forceClip, a->frame,
+							 a->scalex, a->speedx, a->facing, _s->_classData[a->number]);
 		}
 	}
 	printf("+--------------------------------------------------------------+\n");
@@ -291,7 +292,7 @@ void ScummDebugger::printScripts()
 						 ss->freezeCount, ss->cutsceneOverride, ss->unk5);
 		}
 	}
-	printf("+---------------------------------+\n");
+	printf("+-------------------------------------+\n");
 }
 
 
