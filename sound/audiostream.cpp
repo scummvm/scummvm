@@ -26,8 +26,6 @@
 #include "common/file.h"
 #include "common/util.h"
 
-//#define WHY_DOES_THIS_NOT_WORK 1
-
 
 // This used to be an inline template function, but
 // buggy template function handling in MSVC6 forced
@@ -64,6 +62,13 @@ protected:
 public:
 	LinearMemoryStream(const byte *ptr, uint len, uint loopOffset, uint loopLen)
 		: _ptr(ptr), _end(ptr+len), _loopPtr(0), _loopEnd(0) {
+
+		// Verify the buffer sizes are sane
+		if (is16Bit && stereo)
+			assert((len & 3) == 0 && (loopLen & 3) == 0);
+		else if (is16Bit || stereo)
+			assert((len & 1) == 0 && (loopLen & 1) == 0);
+
 		if (loopLen) {
 			_loopPtr = _ptr + loopOffset;
 			_loopEnd = _loopPtr + loopLen;
@@ -82,12 +87,8 @@ template<bool stereo, bool is16Bit, bool isUnsigned>
 int LinearMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
-#ifdef WHY_DOES_THIS_NOT_WORK
 		const int len = MIN(numSamples, samples + (int)(_end - _ptr) / (is16Bit ? 2 : 1));
 		while (samples < len) {
-#else
-		while (samples < numSamples && !eosIntern()) {
-#endif
 			*buffer++ = READSAMPLE(is16Bit, isUnsigned, _ptr);
 			_ptr += (is16Bit ? 2 : 1);
 			samples++;
@@ -133,8 +134,13 @@ public:
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
 WrappedMemoryStream<stereo, is16Bit, isUnsigned>::WrappedMemoryStream(uint bufferSize) {
-	if (stereo)	// Stereo requires an even sized buffer
-		assert(bufferSize % 2 == 0);
+
+	// Verify the buffer size is sane
+	if (is16Bit && stereo)
+		assert((bufferSize & 3) == 0);
+	else if (is16Bit || stereo)
+		assert((bufferSize & 1) == 0);
+
 	_bufferStart = (byte *)malloc(bufferSize);
 	_pos = _end = _bufferStart;
 	_bufferEnd = _bufferStart + bufferSize;
@@ -157,13 +163,9 @@ template<bool stereo, bool is16Bit, bool isUnsigned>
 int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
-#ifdef WHY_DOES_THIS_NOT_WORK
 		const byte *endMarker = (_pos > _end) ? _bufferEnd : _end;
 		const int len = MIN(numSamples, samples + (int)(endMarker - _pos) / (is16Bit ? 2 : 1));
 		while (samples < len) {
-#else
-		while (samples < numSamples && !eosIntern()) {
-#endif
 			*buffer++ = READSAMPLE(is16Bit, isUnsigned, _pos);
 			_pos += (is16Bit ? 2 : 1);
 			samples++;
@@ -177,6 +179,13 @@ int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, 
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
 void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, uint32 len) {
+
+	// Verify the buffer size is sane
+	if (is16Bit && stereo)
+		assert((len & 3) == 0);
+	else if (is16Bit || stereo)
+		assert((len & 1) == 0);
+
 	if (_end + len > _bufferEnd) {
 		// Wrap-around case
 		uint32 size_to_end_of_buffer = _bufferEnd - _end;
@@ -415,12 +424,8 @@ int MP3InputStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	assert(_curChannel == 0);	// Paranoia check
 	while (samples < numSamples && !eosIntern()) {
-#ifdef WHY_DOES_THIS_NOT_WORK
 		const int len = MIN(numSamples, samples + (int)(_synth.pcm.length - _posInFrame) * (_isStereo ? 2 : 1));
 		while (samples < len) {
-#else
-		while (samples < numSamples && !eosIntern()) {
-#endif
 			*buffer++ = (int16)scale_sample(_synth.pcm.samples[0][_posInFrame]);
 			samples++;
 			if (_isStereo) {
