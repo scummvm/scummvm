@@ -46,7 +46,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_isNotEqual),
 		OPCODE(o5_faceActor),
 		OPCODE(o2_assignVarWordIndirect),
-		OPCODE(o2_setObjUnknown),
+		OPCODE(o2_setObjPreposition),
 		/* 0C */
 		OPCODE(o2_resourceRoutines),
 		OPCODE(o5_walkActorToActor),
@@ -126,7 +126,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_isEqual),
 		OPCODE(o5_faceActor),
 		OPCODE(o2_chainScript),
-		OPCODE(o2_setObjUnknown),
+		OPCODE(o2_setObjPreposition),
 		/* 4C */
 		OPCODE(o2_waitForSentence),
 		OPCODE(o5_walkActorToActor),
@@ -168,7 +168,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_subIndirect),
 		OPCODE(o2_dummy),
 		/* 6C */
-		OPCODE(o2_getObjUnknown),
+		OPCODE(o2_getObjPreposition),
 		OPCODE(o5_putActorInRoom),
 		OPCODE(o2_dummy),
 		OPCODE(o2_ifState04),
@@ -206,7 +206,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_isNotEqual),
 		OPCODE(o5_faceActor),
 		OPCODE(o2_assignVarWordIndirect),
-		OPCODE(o2_setObjUnknown),
+		OPCODE(o2_setObjPreposition),
 		/* 8C */
 		OPCODE(o2_resourceRoutines),
 		OPCODE(o5_walkActorToActor),
@@ -286,7 +286,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_isEqual),
 		OPCODE(o5_faceActor),
 		OPCODE(o2_chainScript),
-		OPCODE(o2_setObjUnknown),
+		OPCODE(o2_setObjPreposition),
 		/* CC */
 		OPCODE(o5_pseudoRoom),
 		OPCODE(o5_walkActorToActor),
@@ -328,7 +328,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_subIndirect),
 		OPCODE(o2_dummy),
 		/* EC */
-		OPCODE(o2_getObjUnknown),
+		OPCODE(o2_getObjPreposition),
 		OPCODE(o5_putActorInRoom),
 		OPCODE(o2_dummy),
 		OPCODE(o2_ifState04),
@@ -512,7 +512,7 @@ void Scumm_v2::o2_assignVarByte() {
 	setResult(fetchScriptByte());
 }
 
-void Scumm_v2::o2_setObjUnknown() {
+void Scumm_v2::o2_setObjPreposition() {
 	int obj = getVarOrDirectWord(0x80);
 	int unk = fetchScriptByte();
 
@@ -522,7 +522,7 @@ void Scumm_v2::o2_setObjUnknown() {
 	}
 }
 
-void Scumm_v2::o2_getObjUnknown() {
+void Scumm_v2::o2_getObjPreposition() {
 	getResultPos();
 	int obj = getVarOrDirectWord(0x80);
 
@@ -859,7 +859,7 @@ void Scumm_v2::o2_doSentence() {
 	st->verb = a;
 	st->objectA = getVarOrDirectWord(0x40);
 	st->objectB = getVarOrDirectWord(0x20);
-	st->unk2 = (st->objectB != 0);
+	st->preposition = (st->objectB != 0);
 	st->freezeCount = 0;
 	
 	// TODO
@@ -1363,5 +1363,5 @@ void Scumm_v2::resetSentence() {
 	VAR(VAR_SENTENCE_VERB) = VAR(VAR_BACKUP_VERB);
 	VAR(VAR_SENTENCE_OBJECT1) = 0;
 	VAR(VAR_SENTENCE_OBJECT2) = 0;
-	_scummVars[29] = 0;
+	VAR(VAR_SENTENCE_PREPOSITION) = 0;
 }

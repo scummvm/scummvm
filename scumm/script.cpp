@@ -818,7 +818,7 @@ void Scumm::doSentence(int verb, int objectA, int objectB) {
 	st->verb = verb;
 	st->objectA = objectA;
 	st->objectB = objectB;
-	st->unk2 = (objectB & 0xFF00) != 0;
+	st->preposition = (objectB & 0xFF00) != 0;
 	st->freezeCount = 0;
 }
 
@@ -845,7 +845,7 @@ void Scumm::checkAndRunSentenceScript() {
 	_sentenceNum--;
 
 	if (!(_features & GF_AFTER_V7))
-		if (_sentence[_sentenceNum].unk2 && _sentence[_sentenceNum].objectB == _sentence[_sentenceNum].objectA)
+		if (_sentence[_sentenceNum].preposition && _sentence[_sentenceNum].objectB == _sentence[_sentenceNum].objectA)
 			return;
 
 	if (_features & GF_AFTER_V2) {

@@ -240,7 +240,7 @@ protected:
 	void o2_getActorX();
 	void o2_getActorY();
 	void o2_getBitVar();
-	void o2_getObjUnknown();
+	void o2_getObjPreposition();
 	void o2_ifClassOfIs();
 	void o2_ifNotState01();
 	void o2_ifNotState02();
@@ -264,7 +264,7 @@ protected:
 	void o2_setBitVar();
 	void o2_setCameraAt();
 	void o2_setObjectName();
-	void o2_setObjUnknown();
+	void o2_setObjPreposition();
 	void o2_setOwnerOf();
 	void o2_setState01();
 	void o2_setState02();
@@ -282,6 +282,7 @@ protected:
 	byte VAR_SENTENCE_VERB;
 	byte VAR_SENTENCE_OBJECT1;
 	byte VAR_SENTENCE_OBJECT2;
+	byte VAR_SENTENCE_PREPOSITION;
 	byte VAR_BACKUP_VERB;
 };
 

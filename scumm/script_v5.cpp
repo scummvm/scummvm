@@ -749,7 +749,7 @@ void Scumm_v5::o5_doSentence() {
 	st->verb = a;
 	st->objectA = getVarOrDirectWord(0x40);
 	st->objectB = getVarOrDirectWord(0x20);
-	st->unk2 = (st->objectB != 0);
+	st->preposition = (st->objectB != 0);
 	st->freezeCount = 0;
 }
 

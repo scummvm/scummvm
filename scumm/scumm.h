@@ -218,7 +218,7 @@ struct ArrayHeader {
 
 struct SentenceTab {
 	byte verb;
-	byte unk2;
+	byte preposition;
 	uint16 objectA;
 	uint16 objectB;
 	uint8 freezeCount;
