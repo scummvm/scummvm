@@ -739,7 +739,10 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 	byte twobufs;
 	int numzbuf;
 	int sx;
+	bool lightsOn;
 
+	// Check whether lights are turned on or not
+	lightsOn = (_vm->_features & GF_AFTER_V6) || (_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_screen);
 
 	CHECK_HEAP;
 	if (_vm->_features & GF_SMALL_HEADER)
@@ -824,12 +827,12 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h,
 			_bgbak_ptr = where_draw_ptr;
 
 			if (_vm->hasCharsetMask(sx << 3, y, (sx + 1) << 3, bottom)) {
-				if (flag & dbClear)
+				if (flag & dbClear || (!lightsOn && vs->number == 0))
 					clear8ColWithMasking();
 				else
 					draw8ColWithMasking();
 			} else {
-				if (flag & dbClear)
+				if (flag & dbClear || (!lightsOn && vs->number == 0))
 					clear8Col();
 				else
 					blit(_backbuff_ptr, _bgbak_ptr, 8, h);
@@ -2256,7 +2259,6 @@ void Gdi::resetBackground(int top, int bottom, int strip)
 	_numLinesToProcess = bottom - top;
 	if (_numLinesToProcess) {
 		if ((_vm->_features & GF_AFTER_V6) || (_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_screen)) {
-//		if (1 /*_vm->_vars[VAR_V5_DRAWFLAGS]&2*/ ) {
 			if (_vm->hasCharsetMask(strip << 3, top, (strip + 1) << 3, bottom))
 				draw8ColWithMasking();
 			else
