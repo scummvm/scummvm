@@ -196,8 +196,7 @@ bool SimonState::is_hitarea_0x40_clear(uint hitarea)
 	return (ha->flags & 0x40) == 0;
 }
 
-void SimonState::addNewHitArea(int id, int x, int y, int width, int height,
-															 int flags, int unk3, Item *item_ptr)
+void SimonState::addNewHitArea(int id, int x, int y, int width, int height, int flags, int unk3, Item *item_ptr)
 {
 
 	HitArea *ha;

@@ -36,87 +36,87 @@ extern bool draw_keyboard;
 #endif
 
 static const GameSpecificSettings simon1_settings = {
-	1,														/* VGA_DELAY_BASE */
-	1576 / 4,											/* TABLE_INDEX_BASE */
-	1460 / 4,											/* TEXT_INDEX_BASE */
-	1700 / 4,											/* NUM_GAME_OFFSETS */
-	64,														/* NUM_VIDEO_OP_CODES */
-	1000000,											/* VGA_MEM_SIZE */
-	50000,												/* TABLES_MEM_SIZE */
-	3624,													/* NUM_VOICE_RESOURCES */
-	141,													/* NUM_EFFECT_RESOURCES */
-	1316 / 4,											/* MUSIC_INDEX_BASE */
-	0,														/* SOUND_INDEX_BASE */
+	1,										/* VGA_DELAY_BASE */
+	1576 / 4,									/* TABLE_INDEX_BASE */
+	1460 / 4,									/* TEXT_INDEX_BASE */
+	1700 / 4,									/* NUM_GAME_OFFSETS */
+	64,										/* NUM_VIDEO_OP_CODES */
+	1000000,									/* VGA_MEM_SIZE */
+	50000,										/* TABLES_MEM_SIZE */
+	3624,										/* NUM_VOICE_RESOURCES */
+	141,										/* NUM_EFFECT_RESOURCES */
+	1316 / 4,									/* MUSIC_INDEX_BASE */
+	0,										/* SOUND_INDEX_BASE */
 	"SIMON.GME",									/* gme_filename */
 	"SIMON.WAV",									/* wav_filename */
 	"SIMON.VOC",									/* voc_filename */
 	"SIMON.MP3",									/* mp3_filename */
 	"EFFECTS.VOC",									/* voc_effects_filename */
 	"EFFECTS.MP3",									/* mp3_effects_filename */
-	"GAMEPC",											/* gamepc_filename */
+	"GAMEPC",									/* gamepc_filename */
 };
 
 static const GameSpecificSettings simon1demo_settings = {
-	1,														/* VGA_DELAY_BASE */
-	1576 / 4,											/* TABLE_INDEX_BASE */
-	1460 / 4,											/* TEXT_INDEX_BASE */
-	1700 / 4,											/* NUM_GAME_OFFSETS */
-	64,														/* NUM_VIDEO_OP_CODES */
-	1000000,											/* VGA_MEM_SIZE */
-	50000,												/* TABLES_MEM_SIZE */
-	3624,													/* NUM_VOICE_RESOURCES */
-	141,													/* NUM_EFFECT_RESOURCES */
-	1316 / 4,											/* MUSIC_INDEX_BASE */
-	0,														/* SOUND_INDEX_BASE */
-	"",									/* gme_filename */
-	"",									/* wav_filename */
-	"",									/* voc_filename */
-	"",									/* mp3_filename */
-	"",									/* voc_effects_filename */
-	"",									/* mp3_effects_filename */
-	"GDEMO",											/* gamepc_filename */
+	1,										/* VGA_DELAY_BASE */
+	1576 / 4,									/* TABLE_INDEX_BASE */
+	1460 / 4,									/* TEXT_INDEX_BASE */
+	1700 / 4,									/* NUM_GAME_OFFSETS */
+	64,										/* NUM_VIDEO_OP_CODES */
+	1000000,									/* VGA_MEM_SIZE */
+	50000,										/* TABLES_MEM_SIZE */
+	3624,										/* NUM_VOICE_RESOURCES */
+	141,										/* NUM_EFFECT_RESOURCES */
+	1316 / 4,									/* MUSIC_INDEX_BASE */
+	0,										/* SOUND_INDEX_BASE */
+	"",										/* gme_filename */
+	"",										/* wav_filename */
+	"",										/* voc_filename */
+	"",										/* mp3_filename */
+	"",										/* voc_effects_filename */
+	"",										/* mp3_effects_filename */
+	"GDEMO",									/* gamepc_filename */
 };
 
 static const GameSpecificSettings simon2win_settings = {
-	5,														/* VGA_DELAY_BASE */
-	1580 / 4,											/* TABLE_INDEX_BASE */
-	1500 / 4,											/* TEXT_INDEX_BASE */
-	2116 / 4,											/* NUM_GAME_OFFSETS */
-	75,														/* NUM_VIDEO_OP_CODES */
-	2000000,											/* VGA_MEM_SIZE */
-	100000,												/* TABLES_MEM_SIZE */
-	12256,												/* NUM_VOICE_RESOURCES */
-	0,
-	1128 / 4,											/* MUSIC_INDEX_BASE */
-	1660 / 4,											/* SOUND_INDEX_BASE */
+	5,										/* VGA_DELAY_BASE */
+	1580 / 4,									/* TABLE_INDEX_BASE */
+	1500 / 4,									/* TEXT_INDEX_BASE */
+	2116 / 4,									/* NUM_GAME_OFFSETS */
+	75,										/* NUM_VIDEO_OP_CODES */
+	2000000,									/* VGA_MEM_SIZE */
+	100000,										/* TABLES_MEM_SIZE */
+	12256,										/* NUM_VOICE_RESOURCES */
+	0,										/* NUM_EFFECT_RESOURCES */
+	1128 / 4,									/* MUSIC_INDEX_BASE */
+	1660 / 4,									/* SOUND_INDEX_BASE */
 	"SIMON2.GME",									/* gme_filename */
 	"SIMON2.WAV",									/* wav_filename */
 	"SIMON2.VOC",									/* voc_filename */
 	"SIMON2.MP3",									/* mp3_filename */
 	"",										/* voc_effects_filename */
 	"",										/* mp3_effects_filename */
-	"GSPTR30",										/* gamepc_filename */
+	"GSPTR30",									/* gamepc_filename */
 };
 
 static const GameSpecificSettings simon2dos_settings = {
-	5,														/* VGA_DELAY_BASE */
-	1580 / 4,											/* TABLE_INDEX_BASE */
-	1500 / 4,											/* TEXT_INDEX_BASE */
-	2116 / 4,											/* NUM_GAME_OFFSETS */
-	75,														/* NUM_VIDEO_OP_CODES */
-	2000000,											/* VGA_MEM_SIZE */
-	100000,												/* TABLES_MEM_SIZE */
-	12256,												/* NUM_VOICE_RESOURCES */
-	0,
-	1128 / 4,											/* MUSIC_INDEX_BASE */
-	1660 / 4,											/* SOUND_INDEX_BASE */
+	5,										/* VGA_DELAY_BASE */
+	1580 / 4,									/* TABLE_INDEX_BASE */
+	1500 / 4,									/* TEXT_INDEX_BASE */
+	2116 / 4,									/* NUM_GAME_OFFSETS */
+	75,										/* NUM_VIDEO_OP_CODES */
+	2000000,									/* VGA_MEM_SIZE */
+	100000,										/* TABLES_MEM_SIZE */
+	12256,										/* NUM_VOICE_RESOURCES */
+	0,										/* NUM_EFFECT_RESOURCES */
+	1128 / 4,									/* MUSIC_INDEX_BASE */
+	1660 / 4,									/* SOUND_INDEX_BASE */
 	"SIMON2.GME",									/* gme_filename */
 	"",										/* wav_filename */
 	"",										/* voc_filename */
 	"",										/* mp3_filename */
 	"",										/* voc_effects_filename */
 	"",										/* mp3_effects_filename */
-	"GAME32",											/* gamepc_filename */
+	"GAME32",									/* gamepc_filename */
 };
 
 
@@ -3585,9 +3585,7 @@ void SimonState::start_vga_code(uint b, uint vga_res, uint vga_struct_id, uint c
 
 			//dump_vga_script(pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6*)p)->script_offs), vga_res, vga_struct_id);
 
-			add_vga_timer(gss->VGA_DELAY_BASE,
-										pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6 *) p)->script_offs),
-										vga_struct_id, vga_res);
+			add_vga_timer(gss->VGA_DELAY_BASE, pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6 *) p)->script_offs), vga_struct_id, vga_res);
 			break;
 		}
 		p += sizeof(VgaFile1Struct0x6);
@@ -3648,8 +3646,7 @@ void SimonState::talk_with_speech(uint speech_id, uint num_1)
 	}
 }
 
-void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, uint threeval_a,
-																int threeval_b, uint width)
+void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, uint threeval_a, int threeval_b, uint width)
 {
 	char print_str_buf[0x140];
 	char *char_buf;
@@ -3659,7 +3656,8 @@ void SimonState::talk_with_text(uint num_1, uint num_2, const char *string_ptr, 
 	uint m, n;
 	uint height;
 
-	if (num_1 >= 100)							// FIXME: Simon1 Mine - Fix text for dwarf song
+	// FIXME: Simon1 Mine - Fix text for dwarf song
+	if (num_1 >= 100)
 		num_1 -= 100;
 
 	char_buf = print_str_buf;

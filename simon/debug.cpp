@@ -414,9 +414,7 @@ void SimonState::dumpSubroutine(Subroutine *sub)
 {
 	SubroutineLine *sl;
 
-	fprintf(_dump_file,
-					"\n******************************************\n;Subroutine, ID=%d:\nSUB_%d:\n", sub->id,
-					sub->id);
+	fprintf(_dump_file, "\n******************************************\n;Subroutine, ID=%d:\nSUB_%d:\n", sub->id, sub->id);
 	sl = (SubroutineLine *)((byte *)sub + sub->first);
 	for (; (byte *)sl != (byte *)sub; sl = (SubroutineLine *)((byte *)sub + sl->next)) {
 		dumpSubroutineLine(sl, sub);
@@ -626,9 +624,7 @@ void SimonState::dump_vga_file(byte *vga)
 		while (--count >= 0) {
 			int id = READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6 *) p)->id);
 
-			dump_vga_script_always(vga +
-														 READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6 *) p)->script_offs),
-														 id / 100, id);
+			dump_vga_script_always(vga + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6 *) p)->script_offs), id / 100, id);
 			p += sizeof(VgaFile1Struct0x6);
 		}
 	}
@@ -645,9 +641,7 @@ void SimonState::dump_vga_file(byte *vga)
 		while (--c >= 0) {
 			int id = READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x8 *) b)->id);
 
-			dump_vga_script_always(vga +
-														 READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x8 *) b)->script_offs),
-														 id / 100, id);
+			dump_vga_script_always(vga + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x8 *) b)->script_offs), id / 100, id);
 			b += sizeof(VgaFile1Struct0x8);
 		}
 	}
