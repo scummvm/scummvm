@@ -77,6 +77,7 @@ void ScummEngine::openRoom(int room) {
 
 		if (room_offs != 0 && room != 0 && _heversion < 98) {
 			_fileOffset = res.roomoffs[rtRoom][room];
+			return;
 		}
 		if (!(_features & GF_SMALL_HEADER)) {
 
