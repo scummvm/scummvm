@@ -29,7 +29,11 @@ namespace Sword2 {
 
 // The machine code table
 
-#define OPCODE(x)	{ &Logic::x, #x }
+#ifndef REDUCE_MEMORY_USAGE
+#	define OPCODE(x)	{ &Logic::x, #x }
+#else
+#	define OPCODE(x)	{ &Logic::x, "" }
+#endif
 
 typedef int32 (Logic::*OpcodeProc)(int32 *);
 struct OpcodeEntry {
