@@ -53,7 +53,7 @@ protected:
 	void updateListing();
 	void updateButtons();
 	
-	void addGame();
+	virtual void addGame();
 	void removeGame(int item);
 	void editGame(int item);
 };
