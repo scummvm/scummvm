@@ -50,14 +50,23 @@ be playable to the end:
         Simon The Sorcerer                         [Game: simon1dos/simon1talkie/simon1win]
         Simon the Sorcerer II                      [Game: simon2dos/simon2talkie/simon2win]
 
+The following games should be finishable, but have some criticial problems that
+prevent them from being fully supported at this time. Please do not file bug reports
+about them.
+        
+	Full Throttle                              [Game: ft]
+        Curse of Monkey Island                     [Game: comi]
 
 The following games should load, but are not yet fully playable. Play these at
 your own risk, and please do not file bug reports about them. If you want
 the latest updates on game compatibility, visit our web site and view the
 compatibility chart.
 
-        Full Throttle                              [Game: ft]
-        Curse of Monkey Island                     [Game: comi]
+	Putt-Putt Goes To The Moon                 [Game: puttmoon]
+	Putt-Putt's Fun Pack                       [Game: funpack]
+	Fatty Bear's Birthday Surprise             [Game: fbear]
+	Fatty Bear's Fun Pack                      [Game: fbpack]
+	Beneath A Steel Sky                        [Game: sky]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
@@ -65,6 +74,8 @@ The following games are SCUMM engine, but NOT supported by ScummVM (yet).
         Zak McKracken (16 color floppy version)
         Monkey Island 1 (EGA, 16 color floppy version)
         Loom (16 color floppy version)
+	Putt-Putt Joins the Parade
+	Most other Humongous Entertainment titles
 
 Please be aware that the engine may contain bugs and unimplemented features
 that sometimes make it impossible to finish the game. Save often, and please
