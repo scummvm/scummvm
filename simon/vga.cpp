@@ -1781,16 +1781,13 @@ void SimonState::vc_62_palette_thing()
 
 	if (!_video_var_3) {
 		if (_game & GAME_SIMON2) {
-		//FIXME The screen should be cleared elsewhere.
-		dx_clear_surfaces(_video_palette_mode == 4 ? 134 : 200);
 			if (_midi_unk2 != 0xffff) {
 				playMusic(999, _midi_unk2);
 			}
 		}
-	return;
-	}
+	} else
+		_video_var_3 = true;
 
-	_video_var_3 = true;
 	_video_num_pal_colors = 256;
 	if (_video_palette_mode == 4)
 		_video_num_pal_colors = 208;
