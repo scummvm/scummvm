@@ -67,7 +67,7 @@ String::String(const String &str)
 
 	_refCount = str._refCount;
 	_capacity = str._capacity;
-	_len = str._capacity;
+	_len = str._len;
 	_str = str._str;
 }
 
