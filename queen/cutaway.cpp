@@ -745,6 +745,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 				// XXX loadnoplay=1;
 				// XXX playsong(abs(OBJ_ANIM[J][11]));
 				// XXX loadnoplay=0;
+				warning("Cutaway::handleAnimation() song %d not handled", ABS(objAnim[i].song));
 			}
 
 		} // for()

@@ -102,8 +102,6 @@ protected:
 
 	void initialise();
 
-	static void timerHandler(void *ptr);
-
 
 	int _talkSpeed;
 	bool _subtitles;

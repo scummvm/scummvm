@@ -154,7 +154,7 @@ void Display::palSet(const uint8 *pal, int start, int end, bool updateScreen) {
 	_system->set_palette(tempPal + start * 4, start, end - start + 1);
 	if (updateScreen) {
 		_system->update_screen();
-		waitForTimer();
+		_vm->input()->delay(20);
 	}
 }
 
@@ -613,7 +613,6 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 		debug(7, "Display::update() - Dirtyblocks blit (%d)", count);
 	}
 	_system->update_screen();
-	waitForTimer();
 }
 
 void Display::setupPanel() {
@@ -765,17 +764,6 @@ void Display::setDirtyBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
 			}
 			p += _dirtyBlocksWidth;
 		}
-	}
-}
-
-void Display::handleTimer() {
-	_gotTick = true;
-}
-
-void Display::waitForTimer() {
-	_gotTick = false;
-	while (!_gotTick) {
-		_vm->input()->delay(10);
 	}
 }
 
@@ -966,7 +954,7 @@ void Display::blankScreenEffect1() {
 			}
 			_system->copy_rect(buf, 32, x, y, 32, 32);
 			_system->update_screen();
-			waitForTimer();
+			_vm->input()->delay(10);
 		}
 	}
 }
@@ -999,7 +987,7 @@ void Display::blankScreenEffect2() {
 		}
 		_system->copy_rect(buf, SCREEN_W, x, y, 2, 2);
 		_system->update_screen();
-		waitForTimer();		
+		_vm->input()->delay(10);
 	}
 }
 
@@ -1028,7 +1016,7 @@ void Display::blankScreenEffect3() {
 			_system->copy_rect(buf, SCREEN_W, x, y, 2, 2);
 		}
 		_system->update_screen();
-		waitForTimer();
+		_vm->input()->delay(10);
 	}
 }
 

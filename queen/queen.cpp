@@ -101,7 +101,6 @@ QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 }
 
 QueenEngine::~QueenEngine() {
-	_timer->removeTimerProc(&timerHandler);
 	delete _bam;
 	delete _resource;
 	delete _bankMan;
@@ -362,13 +361,7 @@ void QueenEngine::initialise(void) {
 	_music = new Music(driver, this);
 	_sound = Sound::giveSound(_mixer, this, _resource->compression());
 	_walk = new Walk(this);
-	_timer->installTimerProc(&timerHandler, 1000000 / 50, this); //call 50 times per second
 	_saveFileMan = _system->get_savefile_manager();
-}
-
-void QueenEngine::timerHandler(void *ptr) {
-	QueenEngine *vm = (QueenEngine *)ptr;
-	vm->_display->handleTimer();
 }
 
 } // End of namespace Queen

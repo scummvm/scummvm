@@ -82,9 +82,6 @@ public:
 	void setDirtyBlock(uint16 x, uint16 y, uint16 w, uint16 h);
 	void forceFullRefresh() { _fullRefresh = 2; }
 
-	void handleTimer();
-	void waitForTimer();
-
 	void setMouseCursor(uint8 *buf, uint16 w, uint16 h);
 	void showMouseCursor(bool show);
 
