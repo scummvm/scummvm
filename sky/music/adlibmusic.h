@@ -28,6 +28,7 @@
 #include "common/engine.h"
 #include "adlibchannel.h"
 #include "musicbase.h"
+#include "sound/fmopl.h"
 
 class SkyAdlibMusic : public SkyMusicBase {
 public:
@@ -35,6 +36,7 @@ public:
 	~SkyAdlibMusic(void);
 	virtual void setVolume(uint8 volume);
 private:
+	FM_OPL *_opl;
 	SoundMixer *_mixer;
 	uint8 *_initSequence;
 	uint32 _sampleRate, _nextMusicPoll;

@@ -577,6 +577,7 @@ private:
 	bool _isOpen;
 	bool _game_SmallHeader;
 
+	FM_OPL *_opl;
 	byte *_adlib_reg_cache;
 	SoundMixer *_mixer;
 
@@ -848,8 +849,12 @@ int MidiDriver_ADLIB::open() {
 	_adlib_reg_cache = (byte *)calloc(256, 1);
 
 	// We need to emulate one YM3812 chip
-	if (0 != YM3812Init(1, 3579545, g_system->property(OSystem::PROP_GET_SAMPLE_RATE, 0)))
-		error("Error initialising YM3812 sound chip emulation");
+//	if (0 != YM3812Init(1, 3579545, g_system->property(OSystem::PROP_GET_SAMPLE_RATE, 0)))
+//		error("Error initialising YM3812 sound chip emulation");
+	int env_bits = g_system->property(OSystem::PROP_GET_FMOPL_ENV_BITS, NULL);   
+	int eg_ent = g_system->property(OSystem::PROP_GET_FMOPL_EG_ENT, NULL);   
+	OPLBuildTables((env_bits ? env_bits : FMOPL_ENV_BITS_HQ), (eg_ent ? eg_ent : FMOPL_EG_ENT_HQ));
+	_opl = OPLCreate(OPL_TYPE_YM3812, 3579545, g_system->property(OSystem::PROP_GET_SAMPLE_RATE, 0));
 
 	adlib_write(1, 0x20);
 	adlib_write(8, 0x40);
@@ -876,7 +881,7 @@ void MidiDriver_ADLIB::close() {
 	_mixer->setupPremix (0, 0);
 	
 	// Turn off the OPL emulation
-	YM3812Shutdown();
+//	YM3812Shutdown();
 	
 	free(_adlib_reg_cache);
 
@@ -986,8 +991,9 @@ void MidiDriver_ADLIB::adlib_write(byte port, byte value) {
 		return;
 	_adlib_reg_cache[port] = value;
 
-	YM3812Write(0, 0, port);
-	YM3812Write(0, 1, value);
+//	YM3812Write(0, 0, port);
+//	YM3812Write(0, 1, value);
+	OPLWriteReg (_opl, port, value);
 }
 
 void MidiDriver_ADLIB::generate_samples(int16 *data, int len) {
@@ -997,7 +1003,8 @@ void MidiDriver_ADLIB::generate_samples(int16 *data, int len) {
 		step = len;
 		if (step > _next_tick)
 			step = _next_tick;
-		YM3812UpdateOne(0, data, step);
+//		YM3812UpdateOne(0, data, step);
+		YM3812UpdateOne (_opl, data, step);
 
 		_next_tick -= step;
 		if (!_next_tick) {

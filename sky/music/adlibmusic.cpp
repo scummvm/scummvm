@@ -33,15 +33,20 @@ SkyAdlibMusic::SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk, OSystem *sys
 	_driverFileBase = 60202;
     _mixer = pMixer;
 	_sampleRate = g_system->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
-	if (0 != YM3812Init(1, 3579545, _sampleRate))
-		error("Error initialising YM3812 sound chip emulation");
+//	if (0 != YM3812Init(1, 3579545, _sampleRate))
+//		error("Error initialising YM3812 sound chip emulation");
+	int env_bits = g_system->property(OSystem::PROP_GET_FMOPL_ENV_BITS, NULL);   
+	int eg_ent = g_system->property(OSystem::PROP_GET_FMOPL_EG_ENT, NULL);   
+	OPLBuildTables((env_bits ? env_bits : FMOPL_ENV_BITS_HQ), (eg_ent ? eg_ent : FMOPL_EG_ENT_HQ));
+	_opl = OPLCreate(OPL_TYPE_YM3812, 3579545, g_system->property(OSystem::PROP_GET_SAMPLE_RATE, 0));
+  
 	_mixer->setupPremix(this, passMixerFunc);
 }
 
 SkyAdlibMusic::~SkyAdlibMusic(void) {
 
 	_mixer->setupPremix(NULL, NULL);
-	YM3812Shutdown();
+//	YM3812Shutdown();
 }
 
 void SkyAdlibMusic::setVolume(uint8 volume) {
@@ -70,7 +75,7 @@ void SkyAdlibMusic::premixerCall(int16 *buf, uint len) {
 		render = (len > _nextMusicPoll) ? (_nextMusicPoll) : (len);
 		len -= render;
 		_nextMusicPoll -= render;
-		YM3812UpdateOne(0, buf, render);
+		YM3812UpdateOne (_opl, buf, render);
 		buf += render;
 		if (_nextMusicPoll == 0) {
 			pollMusic();
@@ -98,7 +103,7 @@ void SkyAdlibMusic::setupChannels(uint8 *channelData) {
 	channelData++;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
 		uint16 chDataStart = ((channelData[(cnt << 1) | 1] << 8) | channelData[cnt << 1]) + _musicDataLoc;
-		_channels[cnt] = new SkyAdlibChannel(_musicData, chDataStart);
+		_channels[cnt] = new SkyAdlibChannel(_opl, _musicData, chDataStart);
 		_channels[cnt]->updateVolume(_musicVolume | 128);
 	}
 }
@@ -107,8 +112,9 @@ void SkyAdlibMusic::startDriver(void) {
 
 	uint16 cnt = 0;
 	while (_initSequence[cnt] || _initSequence[cnt+1]) {
-		YM3812Write(0, 0, _initSequence[cnt]);
-		YM3812Write(0, 1, _initSequence[cnt+1]);
+//		YM3812Write(0, 0, _initSequence[cnt]);
+//		YM3812Write(0, 1, _initSequence[cnt+1]);
+		OPLWriteReg (_opl, _initSequence[cnt], _initSequence[cnt+1]);
 		cnt += 2;
 	}
 	_allowedCommands = 0xD;
