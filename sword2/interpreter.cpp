@@ -230,7 +230,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 	const uint32 *offsetTable = (const uint32 *) code;
 
 	if (*offset < noScripts) {
-		ip = READ_LE_UINT32(&offsetTable[*offset]);
+		ip = FROM_LE_32(offsetTable[*offset]);
 		scriptNumber = *offset;
 		debug(4, "Start script %d with offset %d", *offset, ip);
 	} else {
@@ -239,7 +239,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		ip = *offset;
 
 		for (i = 1; i < noScripts; i++) {
-			if (ip < READ_LE_UINT32(code + 4 * i))
+			if (FROM_LE_32(offsetTable[i]) >= ip)
 				break;
 		}
 
