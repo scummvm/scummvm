@@ -1198,7 +1198,6 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 		return 1;
 	}
 
-
 	/* This is a sfx resource.  First parse it quickly to find the parallel
 	 * tracks.
 	 */
@@ -1369,7 +1368,7 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 
 
 			/* FIXME:  delay factor found by try and error */
-			delay = (delay + 1) * 240 / 13;
+			delay = delay * 8;
 			
 			{
 				int freq = ((current_instr[ch][1] & 3) << 8)
@@ -1387,8 +1386,8 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 					note += freq2note[freq - 0x80];
 
 				debug(4, "Note: %d", note);
-				if (note < 0)
-				    note = 0;
+				if (note <= 0)
+				    note = 1;
 				else if (note > 127)
 				    note = 127;
 				

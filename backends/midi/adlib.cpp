@@ -25,7 +25,12 @@
 #include "common/engine.h"	// for warning/error/debug
 #include "common/util.h"
 
+#define BASE_FREQ 250
+#define FIXP_SHIFT  16
+
+#ifdef DEBUG_ADLIB
 static int tick;
+#endif
 
 class MidiDriver_ADLIB;
 struct AdlibVoice;
@@ -559,11 +564,7 @@ public:
 
 	void setTimerCallback(void *timer_param, void (*timer_proc) (void *));
 	uint32 getBaseTempo() {
-#ifdef _WIN32_WCE
-		return 3991 * 2; // Sampled down to 11 kHz
-#else	//_WIN32_WCE
-		return 3991; // 88 samples per call (at 22 kHz mono)
-#endif //_WIN32_WCE
+		return 1000000 / BASE_FREQ;
 	}
 
 	MidiChannel *allocateChannel();
@@ -585,6 +586,9 @@ private:
 	uint16 channel_table_2[9];
 	int _voice_index;
 	int _next_tick;
+	int _samples_per_tick;
+	int _timer_p;
+	int _timer_q;
 	uint16 curnote_table[9];
 	AdlibVoice _voices[9];
 	AdlibPart _parts[32];
@@ -644,10 +648,16 @@ void AdlibPart::send (uint32 b) {
 }
 
 void AdlibPart::noteOff(byte note) {
+#ifdef DEBUG_ADLIB
+	debug (6, "%10d: noteOff(%d)", tick, note);
+#endif
 	_owner->part_key_off(this, note);
 }
 
 void AdlibPart::noteOn(byte note, byte velocity) {
+#ifdef DEBUG_ADLIB
+	debug (6, "%10d: noteOn(%d,%d)", tick, note, velocity);
+#endif
 	_owner->part_key_on(this, &_part_instr, note, velocity);
 }
 
@@ -823,6 +833,8 @@ MidiDriver_ADLIB::MidiDriver_ADLIB(SoundMixer *mixer)
 		_parts[i].init(this, i + ((i >= 9) ? 1 : 0));
 	}
 	_percussion.init(this, 9);
+	_timer_p = 0xD69;
+	_timer_q = 0x411B;
 }
 
 int MidiDriver_ADLIB::open() {
@@ -851,6 +863,8 @@ int MidiDriver_ADLIB::open() {
 	adlib_write(8, 0x40);
 	adlib_write(0xBD, 0x00);
 	create_lookup_table();
+
+	_samples_per_tick = (_mixer->getOutputRate() << FIXP_SHIFT) / BASE_FREQ;
 
 	_mixer->setupPremix(this, premix_proc);
 	
@@ -929,6 +943,13 @@ uint32 MidiDriver_ADLIB::property(int prop, uint32 param) {
 	switch (prop) {
 		case PROP_OLD_ADLIB: // Older games used a different operator volume algorithm
 			_game_SmallHeader = (param > 0);
+			if (_game_SmallHeader) {
+				_timer_p = 473;
+				_timer_q = 1000;
+			} else {
+				_timer_p = 0xD69;
+				_timer_q = 0x411B;
+			}
 			return 1;
 	}
 
@@ -982,6 +1003,9 @@ void MidiDriver_ADLIB::premix_proc(void *param, int16 *buf, uint len) {
 void MidiDriver_ADLIB::adlib_write(byte port, byte value) {
 	if (_adlib_reg_cache[port] == value)
 		return;
+#ifdef DEBUG_ADLIB
+	debug (6, "%10d: adlib_write[%x] = %x", tick, port, value);
+#endif
 	_adlib_reg_cache[port] = value;
 
 	OPLWriteReg(_opl, port, value);
@@ -992,12 +1016,12 @@ void MidiDriver_ADLIB::generate_samples(int16 *data, int len) {
 
 	do {
 		step = len;
-		if (step > _next_tick)
-			step = _next_tick;
+		if (step > (_next_tick >> FIXP_SHIFT))
+			step = (_next_tick >> FIXP_SHIFT);
 		YM3812UpdateOne(_opl, data, step);
 
-		_next_tick -= step;
-		if (!_next_tick) {
+		_next_tick -= step << FIXP_SHIFT;
+		if (!(_next_tick >> FIXP_SHIFT)) {
 			if (_timer_proc)
 				(*_timer_proc)(_timer_param);
 			on_timer();
@@ -1009,18 +1033,20 @@ void MidiDriver_ADLIB::generate_samples(int16 *data, int len) {
 }
 
 void MidiDriver_ADLIB::reset_tick() {
-	_next_tick = 88;
+	_next_tick += _samples_per_tick;
 }
 
 void MidiDriver_ADLIB::on_timer() {
 	AdlibVoice *voice;
 	int i;
 
-	_adlib_timer_counter += 0xD69;
-	while (_adlib_timer_counter >= 0x411B) {
-		_adlib_timer_counter -= 0x411B;
-		voice = _voices;
+	_adlib_timer_counter += _timer_p;
+	while (_adlib_timer_counter >= _timer_q) {
+		_adlib_timer_counter -= _timer_q;
+#ifdef DEBUG_ADLIB
 		tick++;
+#endif
+		voice = _voices;
 		for (i = 0; i != ARRAYSIZE(_voices); i++, voice++) {
 			if (!voice->_part)
 				continue;
