@@ -1534,10 +1534,14 @@ void ScummEngine_v2::scummInit() {
 
 	initV2MouseOver();
 
-	// Seems in V2 there was only a single room effect (iris),
-	// so we set that here.
-	_switchRoomEffect2 = 1;
-	_switchRoomEffect = 5;
+	if (_features & GF_NES) {
+		_switchRoomEffect2 = _switchRoomEffect = 6;
+	} else {
+		// Seems in V2 there was only a single room effect (iris),
+		// so we set that here.
+		_switchRoomEffect2 = 1;
+		_switchRoomEffect = 5;
+	}
 }
 
 void ScummEngine_v6::scummInit() {

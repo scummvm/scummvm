@@ -83,7 +83,7 @@ struct TransitionEffect {
 #ifdef __PALM_OS__
 static const TransitionEffect *transitionEffects;
 #else
-static const TransitionEffect transitionEffects[5] = {
+static const TransitionEffect transitionEffects[6] = {
 	// Iris effect (looks like an opening/closing camera iris)
 	{
 		13,		// Number of iterations
@@ -167,7 +167,25 @@ static const TransitionEffect transitionEffects[5] = {
 			 7, 8,  7, 8,
 			32, 7, 32, 8
 		}
+	},
+
+	// Horizontal wipe (a box expands from left to right side). For MM NES
+	{
+		14,		// Number of iterations
+		{
+			  2,  0,  2,  0,
+			  2,  0,  2,  0,
+			  0,  0,  0,  0,
+			  0,  0,  0,  0
+		},
+		{
+			  0, 0,  0,  15,
+			  1, 0,  1,  15,
+			255, 0,  0,  0,
+			255, 0,  0,  0
+		}
 	}
+	
 };
 #endif
 
@@ -600,8 +618,7 @@ void Gdi::ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int
 		srcptr = src + y1 * srcPitch;
 		dstptr = hercbuf + dsty * Common::kHercW + xo * 2;
 
-		if (dstptr >= hercbuf + Common::kHercW * Common::kHercH + widtho * 2)
-			debug("Gnaa");
+		assert(dstptr < hercbuf + Common::kHercW * Common::kHercH + widtho * 2);
 
 		idx1 = (dsty % 7) % 2;
 		for (int x1 = 0; x1 < widtho; x1++) {
@@ -2552,6 +2569,7 @@ void ScummEngine::fadeIn(int effect) {
 	case 3:
 	case 4:
 	case 5:
+	case 6:
 		// Some of the transition effects won't work properly unless
 		// the screen is marked as clean first. At first I thought I
 		// could safely do this every time fadeIn() was called, but
@@ -2613,6 +2631,7 @@ void ScummEngine::fadeOut(int effect) {
 		case 3:
 		case 4:
 		case 5:
+		case 6:
 			transitionEffect(effect - 1);
 			break;
 		case 128:
