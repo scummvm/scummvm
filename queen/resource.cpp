@@ -216,8 +216,6 @@ Language Resource::getLanguage() const {
 bool Resource::readTableFile(const GameVersion *gameVersion) {
 	File tableFile;
 	tableFile.open(_tableFilename);
-	if (!tableFile.isOpen())	
-		tableFile.open(_tableFilename, File::kFileReadMode, ""); // try current directory
 	if (tableFile.isOpen() && tableFile.readUint32BE() == 'QTBL') {
 		if (tableFile.readUint32BE() != CURRENT_TBL_VERSION)
 			warning("Incorrect version of queen.tbl, please update it");
