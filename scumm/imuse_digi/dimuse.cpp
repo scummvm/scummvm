@@ -412,7 +412,6 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 	int cmd = a;
 	int soundId = b;
 	int sub_cmd = c;
-	int chan = -1;
 
 	if (!cmd)
 		return;
