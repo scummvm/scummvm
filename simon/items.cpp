@@ -1445,12 +1445,10 @@ void SimonState::o_play_music_resource() {
 		int loop = getVarOrByte();
 
 		midi.setLoop (loop != 0);
-		if (_last_music_played != music) {
-			loadMusic (music);
-			_last_music_played = music;
-			_next_music_to_play = -1;
-		}
-		midi.startTrack (track);
+		if (_last_music_played != music)
+			_next_music_to_play = music;
+		else 
+			midi.startTrack (track);
 	} else {
 		if (music != _last_music_played) {
 			_last_music_played = music;
