@@ -101,6 +101,10 @@ void Sound::playSong(int16 songNum) {
 	
 	int16 newTune;
 	if (_vm->resource()->isDemo()) {
+		if (songNum == 17) {
+			_vm->music()->stopSong();
+			return;
+		}
 		newTune = _songDemo[songNum - 1].tuneList[0] - 1;
 	} else {
 		newTune = _song[songNum - 1].tuneList[0] - 1;
