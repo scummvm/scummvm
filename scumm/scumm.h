@@ -205,7 +205,6 @@ struct CharsetRenderer {
 	byte *_charPtr;
 	int _width, _height;
 	int _offsX, _offsY;
-	byte _bitMask;
 	int _bottom;
 	int _virtScreenHeight;
 

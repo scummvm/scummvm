@@ -954,7 +954,6 @@ void CharsetRenderer::printChar(int chr)
 
 	_bpp = _unk2 = *ptr;
 	_invNumBits = 8 - _bpp;
-	_bitMask = 0xFF << _invNumBits;
 	_colorMap[1] = _color;
 
 	_charOffs = READ_LE_UINT32(ptr + chr * 4 + 4);
@@ -1080,7 +1079,7 @@ void CharsetRenderer::drawBits()
 		maskpos = 0;
 
 		for (x = 0; x < _width; x++) {
-			color = (bits & _bitMask) >> _invNumBits;
+			color = (bits >> _invNumBits) & 0xFF;
 			if (color) {
 				if (usemask) {
 					mask[maskpos] |= maskmask;
