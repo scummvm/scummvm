@@ -145,7 +145,7 @@ static void drawProgress(float progress) {
 }
 
 static void drawMessage(int offset, const Common::String &text) {
-	const Graphics::Font &font(Graphics::g_sysfont);
+	const Graphics::Font &font(Graphics::g_scummfont);
 	Graphics::Surface surf;
 	uint32 color = 0x2;
 	surf.w = g_system->getWidth();
