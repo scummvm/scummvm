@@ -433,7 +433,7 @@ void ScummEngine_v7he::o7_unknownFA() {
 	int len, a = fetchScriptByte();
 	
 	if (_heversion <= 71) {
-		int len = resStrLen(_scriptPointer);
+		len = resStrLen(_scriptPointer);
 		warning("stub o7_unknownFA(%d, \"%s\")", a, _scriptPointer);
 		_scriptPointer += len + 1;
 	} else {
