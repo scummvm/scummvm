@@ -4743,9 +4743,6 @@ void SimonEngine::go() {
 		_subtitles = true;
 	}
 
-	if (_language == 4 || (_language > 5 && _language < 20))
-		error("The only known versions are English, French, German, Hebrew, Italian and Spanish");
-
 	while (1) {
 		hitarea_stuff();
 		handle_verb_clicked(_verb_hitarea);

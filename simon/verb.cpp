@@ -26,6 +26,23 @@
 
 namespace Simon {
 
+static const char *const russian_verb_names[] = {
+	"Ietj _",
+	"Qnotrft< pa",
+	"Nt_r[t<",
+	"Ecjdat<",
+
+	"Q=fst<",
+	"C^]t<",
+	"Ha_r[t<",
+	"Isqom<^ocat<",
+
+	"Docorjt<",
+	"Qp]t<",
+	"Neft<",
+	"Eat<"
+};
+
 static const char *const hebrew_verb_names[] = {
 	"LJ @L",
 	"DQZKL RL",
@@ -128,6 +145,12 @@ static const char *const english_verb_names[] = {
 	"Give"
 };
 
+static const char *const russian_verb_prep_names[] = {
+	"", "", "", "",
+	"", "", "", "s yfn?",
+	"", "", "", "_onu ?"
+};
+
 static const char *const hebrew_verb_prep_names[] = {
 	"", "", "", "",
 	"", "", "", "RM ND ?",
@@ -198,6 +221,7 @@ void SimonEngine::focusVerb(uint hitarea_id) {
 
 	if (_show_preposition) {
 		switch (_language) {
+		case 21: verb_prep_names = russian_verb_prep_names; break;
 		case 20: verb_prep_names = hebrew_verb_prep_names; break;
 		case  5: verb_prep_names = spanish_verb_prep_names; break;
 		case  3: verb_prep_names = italian_verb_prep_names; break;
@@ -209,6 +233,7 @@ void SimonEngine::focusVerb(uint hitarea_id) {
 		txt = verb_prep_names[hitarea_id];
 	} else {
 		switch (_language) {
+		case 21: verb_names = russian_verb_names; break;
 		case 20: verb_names = hebrew_verb_names; break;
 		case  5: verb_names = spanish_verb_names; break;
 		case  3: verb_names = italian_verb_names; break;
