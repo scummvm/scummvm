@@ -169,7 +169,13 @@ public:
 	int16 gameState(int index);
 	void gameState(int index, int16 newValue);
 
-	const char *roomName(uint16 roomNum) const { return _roomName[roomNum] ; }
+	const char *roomName(uint16 roomNum) const { 
+		if (roomNum >= 1 && roomNum <= _numRooms)
+			return _roomName[roomNum];
+		else
+			error("Invalid room number: %i", roomNum);
+	}
+	
 	const char *objectName(uint16 objNum) const { return _objName[objNum]; }
 	const char *objectTextualDescription(uint16 objNum) const { return _objDescription[objNum]; }
 
