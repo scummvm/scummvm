@@ -2252,7 +2252,7 @@ void Scumm_v5::o5_wait() {
 
 	oldaddr = _scriptPointer - 1;
 
-	if ((_gameId == GID_INDY3_256) || (_features & GF_OLD_BUNDLE)) {
+	if ((_gameId == GID_INDY3_256) || (_gameId == GID_INDY3)) {
 		_opcode = 2;
 	} else
 		_opcode = fetchScriptByte();

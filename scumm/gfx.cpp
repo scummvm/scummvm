@@ -3275,7 +3275,7 @@ void Scumm::decompressDefaultCursor(int idx) {
 
 	// FIXME: None of the stock cursors are right for Loom. Why is that?
 
-	if (_gameId == GID_LOOM256) {
+	if ((_gameId == GID_LOOM256) || (_gameId == GID_LOOM)) {
 		int w;
 
 		_cursor.width = 8;
