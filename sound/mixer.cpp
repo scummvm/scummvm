@@ -264,12 +264,13 @@ static void mix_unsigned_stereo_8(int16 *data, uint len, byte **s_ptr, uint32 *f
 }
 static void mix_signed_mono_16(int16 *data, uint len, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab) {
 	uint32 fp_pos = *fp_pos_ptr;
+	unsigned char volume = ((int) vol_tab[1]) * 32 / 255;
 	byte *s = *s_ptr;
 	do {
+		int16 sample = (int16) (((int32) ((*s << 8) | *(s + 1))) * volume / 32);
 		fp_pos += fp_speed;
-		// FIXME: missing volume table
-		*data++ += ((*s << 8) | *(s + 1));
-		*data++ += ((*s << 8) | *(s + 1));
+		*data++ += sample;
+		*data++ += sample;
 		s += (fp_pos >> 16) << 1;
 		fp_pos &= 0x0000FFFF;
 	} while (--len);
@@ -282,12 +283,12 @@ static void mix_unsigned_mono_16(int16 *data, uint len, byte **s_ptr, uint32 *fp
 }
 static void mix_signed_stereo_16(int16 *data, uint len, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab) {
 	uint32 fp_pos = *fp_pos_ptr;
+	unsigned char volume = ((int) vol_tab[1]) * 32 / 255;
 	byte *s = *s_ptr;
 	do {
 		fp_pos += fp_speed;
-		// FIXME: missing volume table
-		*data++ += ((*s << 8) | *(s + 1));
-		*data++ += ((*(s + 2) << 8) | *(s + 3));
+		*data++ += (int16) ((((int32) ((*(s    ) << 8) | *(s + 1))) * volume) / 32);
+		*data++ += (int16) ((((int32) ((*(s + 2) << 8) | *(s + 3))) * volume) / 32);
 		s += (fp_pos >> 16) << 2;
 		fp_pos &= 0x0000FFFF;
 	} while (--len);
