@@ -31,6 +31,13 @@
 // FIXME: This is a horrible place to put this, but for now....
 #include "sound/midistreamer.cpp"
 
+MidiPlayer::MidiPlayer() {
+	// Since initialize() is called every time the music changes,
+	// this is where we'll initialize stuff that must persist
+	// between songs.
+	_masterVolume = 255;
+}
+
 void MidiPlayer::read_all_songs(File *in, uint music)
 {
 	uint i, num;
@@ -178,21 +185,16 @@ void MidiPlayer::initialize()
 	int i;
 
 	for (i = 0; i != 16; i++)
-		_volumeTable[i] = 100;
+		_volumeTable[i] = 127;
 
 	_midiDriver->property(MidiDriver::PROP_TIMEDIV, _songs[0].ppqn);
 
 	res = _midiDriver->open(MidiDriver::MO_STREAMING);
-	if (res == MidiDriver::MERR_STREAMING_NOT_AVAILABLE) {
-		// No direct streaming, slap a front-end on.
-		_midiDriver = new MidiStreamer (_midiDriver);
-		_midiDriver->property (MidiDriver::PROP_TIMEDIV, _songs[0].ppqn);
-		_midiDriver->set_stream_callback (this, on_fill);
-		res = _midiDriver->open (MidiDriver::MO_STREAMING);
-	}
-
 	if (res != 0)
 		error("MidiPlayer::initializer, got %s", MidiDriver::get_error_name(res));
+
+	if (_paused)
+		_midiDriver->pause (true);
 }
 
 int MidiPlayer::fill(MidiEvent *me, int num_event)
@@ -261,8 +263,8 @@ bool MidiPlayer::fill_helper(NoteRec *nr, MidiEvent *me)
 
 		if ((nr->cmd & 0xF0) == 0xB0 && nr->param_1 == 7) {
 			_volumeTable[nr->cmd & 0xF] = nr->param_2;
-			nr->param_1 = 0x76;
-			me->event = nr->cmd | (nr->param_1 << 8) | (nr->param_2 << 16) /* | MEVT_F_CALLBACK */ ;
+//			nr->param_1 = 0x76;
+			me->event = nr->cmd | (nr->param_1 << 8) | ((nr->param_2 * _masterVolume / 255) << 16) /* | MEVT_F_CALLBACK */ ;
 		}
 		return true;
 
@@ -414,27 +416,52 @@ void MidiPlayer::unload()
 
 void MidiPlayer::play()
 {
-	_midiDriver->pause(false);
+	if (!_paused)
+		_midiDriver->pause(false);
 }
 
-void MidiPlayer::pause(bool b)
+void MidiPlayer::pause (bool b)
 {
+	if (_paused == b)
+		return;
+	_paused = b;
 	_midiDriver->pause(b);
+
+	for (int i = ARRAYSIZE (_volumeTable); i; --i) {
+		_midiDriver->send (((_paused ? 0 : (_volumeTable[i-1] * _masterVolume / 255)) << 16) | (7 << 8) | 0xB0 | i);
+	}
+	
 }
 
-uint MidiPlayer::get_volume()
+int MidiPlayer::get_volume()
 {
-	// TODO: implement me 
-	return 0;
+	return _masterVolume;
 }
 
-void MidiPlayer::set_volume(uint volume)
+void MidiPlayer::set_volume (int volume)
 {
-	// TODO: implement me 
+	if (volume < 0)
+		volume = 0;
+	else if (volume > 255)
+		volume = 255;
+
+	if (_masterVolume == volume)
+		return;
+
+	_masterVolume = volume;
+
+	// Now tell all the channels this.
+	if (_midiDriver && !_paused) {
+		for (int i = ARRAYSIZE (_volumeTable); i; --i) {
+			_midiDriver->send (((_volumeTable[i-1] * _masterVolume / 255) << 16) | (7 << 8) | 0xB0 | i);
+		}
+	}
 }
 
 void MidiPlayer::set_driver(MidiDriver *md)
 {
-	_midiDriver = md;
+	// We must always use the MidiStreamer front-end
+	// so we can support user-initiated MIDI events (like volume).
+	_midiDriver = new MidiStreamer (md);
 	_midiDriver->set_stream_callback(this, on_fill);
 }

@@ -28,15 +28,17 @@ struct MidiEvent;
 
 class MidiPlayer {
 public:
-	void read_all_songs(File *in, uint music);
-	void read_all_songs_old(File *in, uint music);
+	MidiPlayer();
+
+	void read_all_songs (File *in, uint music);
+	void read_all_songs_old (File *in, uint music);
 	void initialize();
 	void shutdown();
 	void play();
-	void pause(bool b);
-	uint get_volume();
-	void set_volume(uint volume);
-	void set_driver(MidiDriver *md);
+	void pause (bool b);
+	int  get_volume();
+	void set_volume (int volume);
+	void set_driver (MidiDriver *md);
 
 private:
 	struct Track {
@@ -69,8 +71,9 @@ private:
 	uint _lastDelay;
 	Song *_currentSong;
 	Song _songs[8];
-	uint32 _volumeTable[16];
-
+	byte _volumeTable[16]; // 0-127
+	byte _masterVolume;    // 0-255
+	bool _paused;
 
 	void read_mthd(File *in, Song *s, bool old, uint music);
 
@@ -79,8 +82,8 @@ private:
 	static uint32 track_read_gamma(Track *t);
 	static byte track_read_byte(Track *t);
 
-	int fill(MidiEvent *me, int num_event);
-	bool fill_helper(NoteRec *nr, MidiEvent *me);
+	int fill (MidiEvent *me, int num_event);
+	bool fill_helper (NoteRec *nr, MidiEvent *me);
 
 	void reset_tracks();
 	void read_next_note(Track *t, NoteRec *nr);

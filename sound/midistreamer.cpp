@@ -30,8 +30,8 @@ private:
 	MidiDriver *_target;
 	StreamCallback *_stream_proc;
 	void *_stream_param;
-	int _mode;
-	bool _paused;
+	volatile int _mode;
+	volatile bool _paused;
 
 	MidiEvent _events [64];
 	int _event_count;
@@ -52,7 +52,7 @@ public:
 
 	int open(int mode);
 	void close();
-	void send(uint32 b) { _target->send (b); }
+	void send(uint32 b) { if (_mode) _target->send (b); }
 	void pause(bool p) { _paused = p; }
 	void set_stream_callback(void *param, StreamCallback *sc);
 	void setPitchBendRange (byte channel, uint range) { _target->setPitchBendRange (channel, range); }
@@ -87,6 +87,7 @@ int MidiStreamer::timer_thread (void *param) {
 	MidiStreamer *mid = (MidiStreamer *) param;
 	int old_time, cur_time;
 	while (mid->_mode) {
+		g_system->delay_msecs (100);
 		while (!mid->_stream_proc);
 		old_time = g_system->get_msecs();
 		while (!mid->_paused) {
@@ -104,7 +105,7 @@ int MidiStreamer::timer_thread (void *param) {
 	// just to catch anything still playing.
 	int i;
 	for (i = 0; i < 16; ++i)
-		mid->send ((0x7B << 8) | 0xB0 | i);
+		mid->_target->send ((0x7B << 8) | 0xB0 | i);
 	mid->_active = false;
 	return 0;
 }
