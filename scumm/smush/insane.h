@@ -328,7 +328,7 @@ class Insane {
 	void smush_proc40(void);
 	void smush_proc41(void);
 	void imuseCode04(void);
-	void smush_setupSomething(int x, int y, int flag);
+	void smush_warpMouse(int x, int y, int buttons);
 	void putActors(void);
 	void readState(void);
 	void setTrsFile(int file);	// FIXME: we don't need it

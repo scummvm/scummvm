@@ -1121,7 +1121,7 @@ int32 Insane::enemyBenHandler(int32 actor1, int32 actor2, int32 probability) {
 
 	_actor[actor1].field_14 = tmp;
 
-	smush_setupSomething(_enemyState[EN_BEN][0], _enemyState[EN_BEN][1], -1);
+	smush_warpMouse(_enemyState[EN_BEN][0], _enemyState[EN_BEN][1], -1);
 	
 	return retval & 3;
 }
@@ -1132,8 +1132,8 @@ int32 Insane::processMouse(void) {
 	_enemyState[EN_BEN][0] = _scumm->_mouse.x;
 	_enemyState[EN_BEN][1] = _scumm->_mouse.y;
 
-	buttons = _scumm->_mouseButStat & MBS_LEFT_CLICK ? 1 : 0;
-	buttons |= _scumm->_mouseButStat & MBS_RIGHT_CLICK ? 2 : 0;
+	buttons = _scumm->VAR(_scumm->VAR_LEFTBTN_HOLD) ? 1 : 0;
+	buttons |= _scumm->VAR(_scumm->VAR_RIGHTBTN_HOLD) ? 2 : 0;
 
 	return buttons;
 }
@@ -1240,7 +1240,7 @@ void Insane::runScene(int arraynum) {
 	_currTrsMsg = 0;
 
 	smush_proc41();
-	smush_setupSomething(160, 100, -1);
+	smush_warpMouse(160, 100, -1);
 	putActors();
 	readState();
 	_val10b = _val50d; // FIXME: seems to be unused
@@ -1417,48 +1417,9 @@ void Insane::startVideo1(const char *filename, int num, int argC, int frameRate,
 		smush_setupSanFromStart(filename, 0, -1, -1, 0);
 	}
 
-	// Everything below is a temporary and wrong implementation
-	// FIXME: implement
-
 	// blah();
 	
 	_player->play(filename, _scumm->getGameDataPath());
-
-	return;
-
-	_scumm->_videoFinished = false;
-
-	while (true) {
-		procPreRendering();
-
-		smlayer_mainLoop(); // we avoid calling ptrs here
-
-		_scumm->parseEvents();
-		_scumm->processKbd();
-		_scumm->processActors();
-		_scumm->_sound->processSoundQues();
-	
-		if (1) {
-			uint32 end_time, start_time;
-		
-			start_time = _scumm->_system->get_msecs();
-
-		   _scumm->drawDirtyScreenParts(); // FIXME: remove
-
-			_scumm->_system->update_screen();
-			end_time = _scumm->_system->get_msecs();
-		}
-
-		procPostRendering(_player->_dst, 0, 0, 0, _smush_curFrame, _smush_numFrames);
-
-		_smush_curFrame++;
-
-		debug(0, "Frame: %d %d", _smush_curFrame, _smush_numFrames);
-
-		if (_scumm->_quit || _scumm->_videoFinished)
-			break;
-		_scumm->_system->delay_msecs(100);
-	}
 }
 
 int Insane::smlayer_mainLoop(void) {
@@ -1483,7 +1444,7 @@ void Insane::smush_proc41(void) {
 	warning("stub Insane::smush_proc41");
 }
 
-void Insane::smush_setupSomething(int x, int y, int buttons) {
+void Insane::smush_warpMouse(int x, int y, int buttons) {
 	_scumm->_system->warp_mouse(x, y);
 }
 
@@ -2039,7 +2000,7 @@ void Insane::setupValues(void) {
 	_actor[0].lost = 0;
 	_currEnemy = -1;
 	_val32d = -1;
-	smush_setupSomething(160, 100, -1);
+	smush_warpMouse(160, 100, -1);
 }
 
 void Insane::setEnemyCostumes (void) {
@@ -2171,7 +2132,7 @@ void Insane::setEnemyCostumes (void) {
 		enemyInitializer(_enemy[_currEnemy].initializer, _actor[1].damage, 
 							 _actor[0].damage, _actor[1].probability);
 
-	smush_setupSomething(160, 100, -1);
+	smush_warpMouse(160, 100, -1);
 }
 
 void Insane::mainLoop(void) {
