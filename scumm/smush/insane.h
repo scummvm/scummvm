@@ -115,9 +115,11 @@ class Insane {
 	int _keybX;
 	int _keybY;
 	int32 _firstBattle;
-	bool _weaponJustSwitched;
-	bool _kickingInProgress;
+	bool _weaponBenJustSwitched;
+	bool _kickBenProgress;
 	int32 _battleScene;
+	bool _kickEnemyProgress;
+	bool _weaponEnemyJustSwitched;
 	int32 _val8d;
 	byte _val10b;
 	int32 _val11d;
@@ -448,14 +450,14 @@ class Insane {
 	void actor03Reaction(int32 buttons);
 	void turnEnemy(bool battle);
 	int32 actionBen(void);
-	void chooseWeaponAnim(int arg_0);
-	void setEnemyAnimation(int32 actornum, int arg_4);
+	void chooseBenWeaponAnim(int buttons);
+	void setBenAnimation(int32 actornum, int anim);
 	int calcTilt(int speed);
 	bool smush_eitherNotStartNewFrame(void);
 	void smlayer_setActorFacing(int actornum, int actnum, int frame, int direction);
 	int32 weaponMaxRange(int32 actornum);
 	int32 weaponMinRange(int32 actornum);
-	void switchWeapon(void);
+	void switchBenWeapon(void);
 	void prepareScenePropScene(int32 scenePropNum, bool arg_4, bool arg_8);
 	int32 calcDamage(bool arg_0, bool arg_4);
 	int32 weaponDamage(int32 actornum);
@@ -483,13 +485,16 @@ class Insane {
 	int32 getLastKey(bool arg_0);
 	void drawSpeedyActor(int32 arg_0);
 	void actor11Reaction(int32 buttons);
-	void proc51(int32 buttons);
-	void proc54(int32 buttons);
+	void actor12Reaction(int32 buttons);
+	void actor13Reaction(int32 buttons);
 	void actor10Reaction(int32 buttons);
 	int32 actionEnemy(void);
 	int32 processKeyboard(void);
 	int32 func75(void);
-	void proc56(int32 buttons);
+	void setEnemyAnimation(int32 actornum, int anim);
+	void chooseEnemyWeaponAnim(int buttons);
+	void switchEnemyWeapon(void);
+	void enemyDustAction(void);
 
 	void blah(void);
 

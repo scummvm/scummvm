@@ -150,6 +150,10 @@ void Insane::initvars(void) {
 	_keybY = 0;
 	_firstBattle = false;
 	_battleScene = true;
+	_kickBenProgress = false;
+	_weaponBenJustSwitched = false;
+	_kickEnemyProgress = false;
+	_weaponEnemyJustSwitched = false;
 	_val11d = 0;
 	_val32d = -1;
 	_val51d = 0;
@@ -173,8 +177,6 @@ void Insane::initvars(void) {
 	_val122_ = false;
 	_val123_ = false;
 	_val124_ = false;
-	_kickingInProgress = false;
-	_weaponJustSwitched = false;
 	_val130b = 0;
 	_val131w = 0;
 	_val132w = 0;
@@ -2829,7 +2831,7 @@ void Insane::postCaseAll(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				tsceneProp = &_sceneProp[_currScenePropIdx + _currScenePropSubIdx];
 				tsceneProp->counter = 0;
 				if (tsceneProp->trsId)
-					_currTrsMsg = handleTrsTag(_trsFilePtr, tsceneProp->trsId);
+					_currTrsMsg = tsceneProp->trsId;
 				else
 					_currTrsMsg = 0;
 
@@ -3296,7 +3298,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			_actor[0].act[2].state = 1;
 			_actor[0].inventory[INV_MACE] = 0;
 			smlayer_startSound2(318);
-			switchWeapon();
+			switchBenWeapon();
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
@@ -3316,7 +3318,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			_actor[0].act[2].state = 1;
 			_actor[0].inventory[INV_MACE] = 0;
 			smlayer_startSound2(318);
-			switchWeapon();
+			switchBenWeapon();
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
@@ -3336,7 +3338,7 @@ void Insane::actor02Reaction(int32 buttons) {
 			_actor[0].act[2].state = 1;
 			_actor[0].inventory[INV_CHAIN] = 0; // Chain
 			smlayer_startSound2(318);
-			switchWeapon();
+			switchBenWeapon();
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
 		break;
@@ -3345,7 +3347,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].field_2C = 1;
 		_actor[0].kicking = 0;
 		_actor[0].field_44 = 1;
-		if (_actor[0].act[2].frame >= 2 && !_kickingInProgress) {
+		if (_actor[0].act[2].frame >= 2 && !_kickBenProgress) {
 			smlayer_setActorFacing(0, 2, 19, 180);
 			_actor[0].act[2].state = 74;
 		}
@@ -3390,7 +3392,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].field_2C = 1;
 		_actor[0].kicking = 0;
 		_actor[0].field_44 = 1;
-		if (_actor[0].act[2].frame >= 2 && !_kickingInProgress) {
+		if (_actor[0].act[2].frame >= 2 && !_kickBenProgress) {
 			smlayer_setActorFacing(0, 2, 23, 180);
 			_actor[0].act[2].state = 82;
 		}
@@ -3434,7 +3436,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].field_2C = 0;
 		_actor[0].kicking = 0;
 		_actor[0].field_44 = 1;
-		if (_actor[0].act[2].frame >= 2 && !_kickingInProgress) {
+		if (_actor[0].act[2].frame >= 2 && !_kickBenProgress) {
 			smlayer_setActorFacing(0, 2, 23, 180);
 			_actor[0].act[2].state = 84;
 		}
@@ -3456,7 +3458,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].field_2C = 1;
 		_actor[0].kicking = 0;
 		_actor[0].field_44 = 1;
-		if (_actor[0].act[2].frame >= 4 && !_kickingInProgress) {
+		if (_actor[0].act[2].frame >= 4 && !_kickBenProgress) {
 			smlayer_setActorFacing(0, 2, 23, 180);
 			_actor[0].act[2].state = 76;
 		}
@@ -4196,7 +4198,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = 0;
 		
 		if (!smlayer_actorNeedRedraw(0, 2)) {
-			switchWeapon();
+			switchBenWeapon();
 			_actor[0].act[2].tilt = 0;
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].speed);
@@ -4375,17 +4377,17 @@ void Insane::actor00Reaction(int32 buttons) {
 void Insane::actor01Reaction(int32 buttons) {
 	int32 tmpx, tmpy;
 
-	chooseWeaponAnim(buttons);
+	chooseBenWeaponAnim(buttons);
 
 	switch (_actor[0].speed) {
 	case -3:
 		if (_actor[0].act[1].state != 41 || _actor[0].field_2C != _actor[0].field_30) {
-			setEnemyAnimation(0, 6);
+			setBenAnimation(0, 6);
 			_actor[0].act[1].state = 41;
 		}
 	
 		if (_actor[0].field_14 >= -100) {
-			setEnemyAnimation(0, 7);
+			setBenAnimation(0, 7);
 			_actor[0].act[1].state = 40;
 			_actor[0].field_8 = 48;
 			_actor[0].speed = -2;
@@ -4393,7 +4395,7 @@ void Insane::actor01Reaction(int32 buttons) {
 		break;
 	case -2:
 		if (_actor[0].act[1].state != 40 || _actor[0].field_2C != _actor[0].field_30) {
-			setEnemyAnimation(0, 7);
+			setBenAnimation(0, 7);
 			_actor[0].act[1].state = 40;
 		}
 		if (_actor[0].field_8 == 48)
@@ -4403,7 +4405,7 @@ void Insane::actor01Reaction(int32 buttons) {
 		break;
 	case -1:
 		if (_actor[0].act[1].state != 39 || _actor[0].field_2C != _actor[0].field_30) {
-			setEnemyAnimation(0, 8);
+			setBenAnimation(0, 8);
 			_actor[0].act[1].state = 39;
 		}
 	
@@ -4414,18 +4416,18 @@ void Insane::actor01Reaction(int32 buttons) {
 		break;
 	case 0:
 		if (_actor[0].act[1].state != 1 || _actor[0].field_2C != _actor[0].field_30) {
-			setEnemyAnimation(0, 9);
+			setBenAnimation(0, 9);
 			_actor[0].act[1].state = 1;
 		}
 		_actor[0].field_8 = 1;
 		if (_actor[0].field_14 < -100) {
-			setEnemyAnimation(0, 8);
+			setBenAnimation(0, 8);
 			_actor[0].act[1].state = 39;
 			_actor[0].field_8 = 46;
 			_actor[0].speed = -1;
 		} else {
 			if (_actor[0].field_14 > 100) {
-				setEnemyAnimation(0, 10);
+				setBenAnimation(0, 10);
 				_actor[0].act[1].state = 55;
 				_actor[0].field_8 = 49;
 				_actor[0].speed = 1;
@@ -4434,7 +4436,7 @@ void Insane::actor01Reaction(int32 buttons) {
 		break;
 	case 1:
 		if (_actor[0].act[1].state != 55 || _actor[0].field_2C != _actor[0].field_30) {
-			setEnemyAnimation(0, 10);
+			setBenAnimation(0, 10);
 			_actor[0].act[1].state = 55;
 		}
 		if (_actor[0].field_8 == 51)
@@ -4444,7 +4446,7 @@ void Insane::actor01Reaction(int32 buttons) {
 		break;
 	case 2:
 		if (_actor[0].act[1].state != 56 || _actor[0].field_2C != _actor[0].field_30) {
-			setEnemyAnimation(0, 11);
+			setBenAnimation(0, 11);
 			_actor[0].act[1].state = 56;
 		}
 		if (_actor[0].field_8 == 51)
@@ -4454,12 +4456,12 @@ void Insane::actor01Reaction(int32 buttons) {
 		break;
 	case 3:
 		if (_actor[0].act[1].state != 57 || _actor[0].field_2C != _actor[0].field_30) {
-			setEnemyAnimation(0, 12);
+			setBenAnimation(0, 12);
 			_actor[0].act[1].state = 57;
 		}
 	
 		if (_actor[0].field_14 <= 100) {
-			setEnemyAnimation(0, 11);
+			setBenAnimation(0, 11);
 			_actor[0].act[1].state = 56;
 			_actor[0].field_8 = 51;
 			_actor[0].speed = 2;
@@ -4567,10 +4569,10 @@ void Insane::actor03Reaction(int32 buttons) {
 	}
 }
 
-void Insane::chooseWeaponAnim(int buttons) {
+void Insane::chooseBenWeaponAnim(int buttons) {
 	// kick
 	if ((buttons & 1) && (_currEnemy != EN_TORQUE)) {
-		if (!_kickingInProgress && actor0StateFlags2(_actor[0].act[2].state + _actor[0].weapon * 238)) {
+		if (!_kickBenProgress && actor0StateFlags2(_actor[0].act[2].state + _actor[0].weapon * 238)) {
 			switch (_actor[0].weapon) {
 			case INV_CHAIN:
 				_actor[0].act[2].state = 10;
@@ -4600,15 +4602,15 @@ void Insane::chooseWeaponAnim(int buttons) {
 				break;
 			}
 			_actor[0].kicking = 1;
-			_kickingInProgress = true;
+			_kickBenProgress = true;
 		}
 	} else {
-		_kickingInProgress = false;
+		_kickBenProgress = false;
 	}
 
 	// switch weapon
 	if ((buttons & 2) && (_currEnemy != EN_TORQUE)) {
-		if (_weaponJustSwitched)
+		if (_weaponBenJustSwitched)
 			return;
 
 		if (!actor0StateFlags1(_actor[0].act[2].state))
@@ -4627,26 +4629,26 @@ void Insane::chooseWeaponAnim(int buttons) {
 		case INV_HAND:
 		case INV_DUST:
 			_actor[0].act[2].state = 0;
-			switchWeapon();
+			switchBenWeapon();
 		}
 		
-		_weaponJustSwitched = true;
+		_weaponBenJustSwitched = true;
 	} else {
-		_weaponJustSwitched = false;
+		_weaponBenJustSwitched = false;
 	}
 }
 
-void Insane::setEnemyAnimation(int32 actornum, int32 arg_4) {
-	if (arg_4 <= 12)
+void Insane::setBenAnimation(int32 actornum, int anim) {
+	if (anim <= 12)
 		smlayer_setActorFacing(actornum, 1, 
-			  actorAnimationData[_actor[actornum].field_2C * 7 + arg_4 - 6], 180);
+			  actorAnimationData[_actor[actornum].field_2C * 7 + anim - 6], 180);
 }
 
-void Insane::switchWeapon(void) {
+void Insane::switchBenWeapon(void) {
 	do {
 		_actor[0].weapon++;
 		if (_actor[0].weapon > 7)
-			_actor[0].weapon = 0;
+			_actor[0].weapon = INV_CHAIN;
 
 	} while (!_actor[0].inventory[_actor[0].weapon]);
 
@@ -4745,7 +4747,7 @@ void Insane::prepareScenePropScene(int32 scenePropNum, bool arg_4, bool arg_8) {
 	_sceneProp[scenePropNum + 1].counter = 0;
 	_currScenePropSubIdx = 1;
 	if (_sceneProp[scenePropNum + 1].trsId)
-		_currTrsMsg = handleTrsTag(_trsFilePtr, _sceneProp[scenePropNum + 1].trsId);
+		_currTrsMsg = _sceneProp[scenePropNum + 1].trsId;
 	else
 		_currTrsMsg = 0;
 
@@ -5267,17 +5269,19 @@ void Insane::turnEnemy(bool battle) {
 	debug(1, "11:%d 12:%d 13:%d 10:%d", _actor[1].act[1].state, 
 				_actor[1].act[2].state, _actor[1].act[3].state, _actor[1].act[0].state);
 	actor11Reaction(buttons);
-	proc51(buttons);
-	proc54(buttons);
+	actor12Reaction(buttons);
+	actor13Reaction(buttons);
 	actor10Reaction(buttons);
 }
 
 void Insane::actor11Reaction(int32 buttons) {
-	proc56(buttons);
+	int32 tmpx, tmpy;
+
+	chooseEnemyWeaponAnim(buttons);
 
 	switch(_actor[1].speed) {
 	case -3:
-		if (_actor[1].act[1].state != 41 || _actor[1].field_2C != _actor[0].field_30) {
+		if (_actor[1].act[1].state != 41 || _actor[1].field_2C != _actor[1].field_30) {
 			setEnemyAnimation(1, 6);
 			_actor[1].act[1].state = 41;
 		}
@@ -5289,25 +5293,351 @@ void Insane::actor11Reaction(int32 buttons) {
 			_actor[1].speed = -2;
 		}
 
-		//insane_actor1.x += (a - a * 32) / 32;
+		_actor[1].x += _actor[1].field_14 / 32;
+		break;
+	case -2:
+		if (_actor[1].act[1].state != 40 || _actor[1].field_2C != _actor[1].field_30) {
+			setEnemyAnimation(1, 7);
+			_actor[1].act[1].state = 40;
+		}
+		if (_actor[1].field_8 == 48)
+			_actor[1].speed = -1;
+		else
+			_actor[1].speed = -3;
 
-		//_actor[1].x = _actor[1].field_14; // XXX
+		_actor[1].x += _actor[1].field_14 / 32;
+		break;
+	case -1:
+		if (_actor[1].act[1].state != 39 || _actor[1].field_2C != _actor[1].field_30) {
+		    setEnemyAnimation(1, 8);
+			_actor[1].act[1].state = 39;
+		}
+	
+		if (_actor[1].field_8 == 48)
+			_actor[1].speed = 0;
+		else
+			_actor[1].speed = -2;
+
+		_actor[1].x += _actor[1].field_14 / 32;
+		break;
+	case 0:
+		if (_actor[1].act[1].state != 1 || _actor[1].field_2C != _actor[1].field_30) {
+			setEnemyAnimation(1, 9);
+			_actor[1].act[1].state = 1;
+		}
+		_actor[1].field_8 = 1;
+		if (_actor[1].field_14 < -100) {
+			setEnemyAnimation(1, 8);
+			_actor[1].act[1].state = 39;
+			_actor[1].field_8 = 46;
+			_actor[1].speed = -1;
+		} else {
+			if (_actor[1].field_14 > 100) {
+				setEnemyAnimation(1, 10);
+				_actor[1].act[1].state = 55;
+				_actor[1].field_8 = 49;
+				_actor[1].speed = 1;
+			}
+		}
+		break;
+	case 1:
+		if (_actor[1].act[1].state != 55 || _actor[1].field_2C != _actor[1].field_30) {
+			setEnemyAnimation(1, 10);
+			_actor[1].act[1].state = 55;
+		}
+		if (_actor[1].field_8 == 51)
+			_actor[1].speed = 0;
+		else
+			_actor[1].speed = 2;
+
+		_actor[1].x += _actor[1].field_14 / 32;
+		break;
+	case 2:
+		if (_actor[1].act[1].state != 56 || _actor[1].field_2C != _actor[1].field_30) {
+			setEnemyAnimation(1, 11);
+			_actor[1].act[1].state = 56;
+		}
+		if (_actor[1].field_8 == 51)
+			_actor[1].speed = 1;
+		else
+			_actor[1].speed = 3;
+
+		_actor[1].x += _actor[1].field_14 / 32;
+		break;
+	case 3:
+		if (_actor[1].act[1].state != 57 || _actor[1].field_2C != _actor[1].field_30) {
+			setEnemyAnimation(1, 12);
+			_actor[1].act[1].state = 57;
+		}
+	
+		if (_actor[1].field_14 <= 100) {
+			setEnemyAnimation(1, 11);
+			_actor[1].act[1].state = 56;
+			_actor[1].field_8 = 51;
+			_actor[1].speed = 2;
+		}
+
+		_actor[1].x += _actor[1].field_14 / 32;
+		break;
+	}
+	
+	tmpx = _actor[1].x;
+	tmpy = _actor[1].y + _actor[1].y1;
+
+	if (_actor[1].act[1].room)
+		smlayer_putActor(1, 1, tmpx, tmpy, _smlayer_room2);
+	else 
+		smlayer_putActor(1, 1, tmpx, tmpy, _smlayer_room);
+
+	_actor[1].field_30 = _actor[1].field_2C;
+}
+
+void Insane::setEnemyAnimation(int32 actornum, int anim) {
+	int d = 0;
+
+	if (_currEnemy == EN_VULTM1)
+		d = 14;
+
+	if (anim <= 12)
+		smlayer_setActorFacing(actornum, 1, 
+			  actorAnimationData[_actor[actornum].field_2C * 7 + anim - 6 + d], 180);
+}
+
+void Insane::chooseEnemyWeaponAnim(int32 buttons) {
+	// kick
+	if ((buttons & 1) && (!_actor[0].lost)) {
+		if (!_kickEnemyProgress && actor0StateFlags2(_actor[1].act[2].state + _actor[1].weapon * 238)) {
+			switch (_actor[1].weapon) {
+			case INV_CHAIN:
+				_actor[1].act[2].state = 10;
+				break;
+			case INV_CHAINSAW:
+				_actor[1].act[2].state = 14;
+				break;
+			case INV_MACE:
+				_actor[1].act[2].state = 18;
+				break;
+			case INV_2X4:
+				_actor[1].act[2].state = 22;
+				break;
+			case INV_WRENCH:
+				_actor[1].act[2].state = 26;
+				break;
+			case INV_BOOT:
+				_actor[1].act[2].state = 93;
+				break;
+			case INV_HAND:
+				_actor[1].act[2].state = 2;
+				break;
+			case INV_DUST:
+				_actor[1].act[2].state = 89;
+				break;
+			default:
+				break;
+			}
+			_kickEnemyProgress = true;
+		}
+	} else {
+		_kickEnemyProgress = false;
+	}
+
+	// switch weapon
+	if ((buttons & 2) && (_currEnemy != EN_TORQUE)) {
+		if (_weaponBenJustSwitched || _actor[1].act[2].state == 35 ||
+			_actor[1].act[2].state == 34)
+			return;
+
+		if (!actor0StateFlags1(_actor[1].act[2].state))
+			return;
+
+		switch (_actor[1].weapon) {
+		case INV_CHAIN:
+		case INV_CHAINSAW:
+		case INV_MACE:
+		case INV_2X4:
+		case INV_WRENCH:
+			_actor[1].act[2].state = 35;
+			smlayer_setActorFacing(1, 2, 24, 180);
+			break;
+		case INV_BOOT:
+		case INV_HAND:
+		case INV_DUST:
+			_actor[1].act[2].state = 0;
+			switchEnemyWeapon();
+		}
+		
+		_weaponEnemyJustSwitched = true;
+	} else {
+		_weaponEnemyJustSwitched = false;
+	}
+}
+
+void Insane::switchEnemyWeapon(void) {
+	do {
+		_actor[1].weapon++;
+		if (_actor[1].weapon > 7)
+			_actor[1].weapon = INV_CHAIN;
+
+	} while (!_actor[1].inventory[_actor[1].weapon]);
+
+	switch (_actor[1].weapon) {
+	case INV_CHAIN:
+	case INV_CHAINSAW:
+	case INV_MACE:
+	case INV_2X4:
+	case INV_WRENCH:
+		smlayer_setActorCostume(1, 2, readArray(_numberArray, _enemy[_currEnemy].costume4));
+		smlayer_setActorFacing(1, 2, 18, 180);
+		_actor[1].field_2C = 1;
+		_actor[1].act[2].state = 34;
+		break;
+	case INV_BOOT:
+		_actor[1].field_2C = 2;
+		_actor[1].act[2].state = 1;
+		break;
+	case INV_HAND:
+		smlayer_setActorCostume(1, 2, readArray(_numberArray, _enemy[_currEnemy].costume4));
+		_actor[1].field_2C = 1;
+		_actor[1].act[2].state = 34;
+		break;
+	case INV_DUST:
+		enemyDustAction();
+		break;
+	default:
 		break;
 	}
 }
 
-void Insane::proc56(int32 buttons) {
+void Insane::enemyDustAction(void) {
+	if (_actor[1].lost)
+		return;
+
+	_actor[1].act[2].facing = -1000;
+
+	if (_currEnemy == EN_CAVEFISH) {
+		_actor[1].field_2C = 2;
+		if (!_val121_)
+			_actor[1].act[2].state = 98;
+		else
+			_actor[1].act[2].state = 99;
+		
+		return;
+	}
+
+	switch (_actor[1].weapon) {
+	case INV_CHAIN:
+		_actor[1].field_2C = 1;
+		_actor[1].act[2].state = 63;
+		break;
+	case INV_CHAINSAW:
+		_actor[1].field_2C = 1;
+		_actor[1].act[2].state = 64;
+		break;
+	case INV_MACE:
+		_actor[1].field_2C = 1;
+		_actor[1].act[2].state = 65;
+		break;
+	case INV_2X4:
+		_actor[1].field_2C = 1;
+		_actor[1].act[2].state = 66;
+		break;
+	case INV_WRENCH:
+		_actor[1].field_2C = 1;
+		_actor[1].act[2].state = 62;
+		break;
+	case INV_BOOT:
+	case INV_HAND:
+	case INV_DUST:
+		_actor[1].field_2C = 2;
+		_actor[1].act[2].state = 1;
+	}
+}
+
+void Insane::actor12Reaction(int32 buttons) {
 	// FIXME: implement
 }
 
-// 12
-void Insane::proc51(int32 buttons) {
-	// FIXME: implement
-}
+void Insane::actor13Reaction(int32 buttons) {
+	int32 tmp;
 
-// 13
-void Insane::proc54(int32 buttons) {
-	// FIXME: implement
+	switch (_actor[1].act[3].state) {
+	case 117:
+		smlayer_setActorFacing(1, 3, 13, 180);
+		_actor[1].field_54 = 1;
+		_actor[1].act[3].state = 69;
+		break;
+	case 69:
+		if (_actor[1].act[3].frame >= 2)
+			_actor[1].act[3].state = 70;
+		break;
+	case 70:
+		if (_actor[1].scenePropSubIdx) {
+			smlayer_setActorFacing(1, 3, 4, 180);
+			tmp = _currScenePropIdx + _actor[1].scenePropSubIdx;
+			if (!smlayer_startSound2(_sceneProp[tmp].sound))
+				_actor[1].runningSound = 0;
+			else
+				_actor[1].runningSound = _sceneProp[tmp].sound;
+			_actor[1].act[3].state = 72;
+		} else {
+			_actor[1].act[3].state = 118;
+		}
+		break;
+	case 72:
+		if (_actor[1].runningSound) {
+			if (!smlayer_isSoundRunning(_actor[1].runningSound)) {
+				smlayer_setActorFacing(1, 3, 5, 180);
+				_actor[1].act[3].state = 70;
+				_actor[1].scenePropSubIdx = 0;
+			}
+		} else {
+			tmp = _currScenePropIdx + _actor[1].scenePropSubIdx;
+			if (_sceneProp[tmp].counter >= _sceneProp[tmp].maxCounter) {
+				smlayer_setActorFacing(1, 3, 5, 180);
+				_actor[1].act[3].state = 70;
+				_actor[1].scenePropSubIdx = 0;
+				_actor[1].runningSound = 0;
+			}
+		}
+		break;
+	case 118:
+		smlayer_setActorFacing(1, 3, 14, 180);
+		_actor[1].act[3].state = 71;
+		break;
+	case 71:
+		_actor[1].field_54 = 0;
+		if (_actor[1].act[3].frame >= 2)
+			_actor[1].act[3].state = 1;
+		break;
+	case 52:
+		if (_actor[1].runningSound)
+			smlayer_stopSound(_actor[1].runningSound);
+		
+		if (_currScenePropIdx)
+			shutCurrentScene();
+
+		_actor[1].runningSound = 0;
+		_actor[1].field_4C = 0;
+		_actor[1].field_54 = 0;
+		smlayer_setActorFacing(1, 3, 15, 180);
+		_actor[1].act[3].state = 53;
+		break;
+	case 53:
+		_actor[1].field_54 = 0;
+		if (_actor[1].act[3].frame >= 2) {
+			smlayer_setActorFacing(1, 3, 16, 180);
+			_actor[1].act[3].state = 54;
+		}
+		break;
+	case 54:
+		_actor[1].field_54 = 0;
+		break;
+	case 1:
+		_actor[1].field_54 = 0;
+		break;
+	default:
+		break;
+	}
 }
 
 

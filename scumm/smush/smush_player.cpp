@@ -993,6 +993,9 @@ void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos) {
 
 	if (pos != 8)
 		_base->seek(pos, FileChunk::seek_start);
+
+	// FIXME: is this really applicable? HACK
+	_frame = 0;
 }
 
 void SmushPlayer::play(const char *filename, const char *directory) {
