@@ -89,11 +89,11 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	switch (_loaded._format) {
 	case 0x60:
 	case 0x61:
+		// This format is used e.g. in the Sam&Max intro
 		ex1 = _srcptr[0];
 		ex2 = _srcptr[1];
 		_srcptr += 2;
 		if (ex1 != 0xFF || ex2 != 0xFF) {
-printf("Funky! Tell Fingolfin where you saw this\n");
 			ex1 = READ_LE_UINT16(_loaded._frameOffsets + ex1 * 2);
 			_srcptr = _loaded._baseptr + READ_LE_UINT16(_loaded._baseptr + ex1 + ex2 * 2) + 14;
 		}
