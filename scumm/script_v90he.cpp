@@ -1994,18 +1994,18 @@ void ScummEngine_v90he::setHEPaletteFromCostume(int palSlot, int resId) {
 
 void ScummEngine_v90he::setHEPaletteFromImage(int palSlot, int resId, int state) {
 	assert(palSlot >= 1 && palSlot <= _numPalettes);
-	const uint8 *data = getResourceAddress(rtImage, resId);
+	uint8 *data = getResourceAddress(rtImage, resId);
 	assert(data);
-	const uint8 *rgbs = findWrappedBlock(MKID('RGBS'), data, state, 0);
+	uint8 *rgbs = findWrappedBlock(MKID('RGBS'), data, state, 0);
 	assert(rgbs);
 	setHEPaletteFromPtr(palSlot, rgbs);
 }
 
 void ScummEngine_v90he::setHEPaletteFromRoom(int palSlot, int resId, int state) {
 	assert(palSlot >= 1 && palSlot <= _numPalettes);
-	const uint8 *data = getResourceAddress(rtRoom, resId);
+	uint8 *data = getResourceAddress(rtRoom, resId);
 	assert(data);
-	const uint8 *rgbs = findWrappedBlock(MKID('PALS'), data, state, 0);
+	uint8 *rgbs = findWrappedBlock(MKID('PALS'), data, state, 0);
 	assert(rgbs);
 	setHEPaletteFromPtr(palSlot, rgbs);
 }

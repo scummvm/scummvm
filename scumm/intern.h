@@ -753,7 +753,9 @@ protected:
 	void decodeScriptString(byte *dst, bool scriptString = false);
 	void copyScriptString(byte *dst);
 
-	const byte *findWrappedBlock(uint32 tag, const byte *ptr, int state, bool flagError);
+	byte *heFindResourceData(uint32 tag, byte *ptr);
+	byte *heFindResource(uint32 tag, byte *ptr);
+	byte *findWrappedBlock(uint32 tag, byte *ptr, int state, bool flagError);
 
 	/* HE version 72 script opcodes */
 	void o72_pushDWord();

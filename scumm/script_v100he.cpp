@@ -2767,8 +2767,8 @@ void ScummEngine_v100he::decodeParseString(int m, int n) {
 		break;
 	case 78:
 		{
-		const byte *dataPtr = getResourceAddress(rtTalkie, pop());
-		const byte *text = findWrappedBlock(MKID('TEXT'), dataPtr, 0, 0);
+		byte *dataPtr = getResourceAddress(rtTalkie, pop());
+		byte *text = findWrappedBlock(MKID('TEXT'), dataPtr, 0, 0);
 		size = getResourceDataSize(text);
 		memcpy(name, text, size);
 		printString(m, name);

@@ -585,16 +585,53 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 	*dst = 0;
 }
 
-const byte *ScummEngine_v72he::findWrappedBlock(uint32 tag, const byte *ptr, int state, bool errorFlag) {
+byte *ScummEngine_v72he::heFindResourceData(uint32 tag, byte *ptr) {
+	ptr = heFindResource(tag, ptr);
+
+	if (ptr == NULL)
+		return NULL;
+	return ptr + _resourceHeaderSize;
+}
+
+byte *ScummEngine_v72he::heFindResource(uint32 tag, byte *searchin) {
+	uint32 curpos, totalsize, size;
+
+	debugC(DEBUG_RESOURCE, "heFindResource(%s, %lx)", tag2str(tag), searchin);
+
+	assert(searchin);
+	searchin += 4;
+	_resourceLastSearchSize = totalsize = READ_BE_UINT32(searchin);
+	curpos = 8;
+	searchin += 4;
+
+	while (curpos < totalsize) {
+		if (READ_UINT32(searchin) == tag) {
+			return searchin;
+		}
+
+		size = READ_BE_UINT32(searchin + 4);
+		if ((int32)size <= 0) {
+			error("(%s) Not found in %d... illegal block len %d", tag2str(tag), 0, size);
+			return NULL;
+		}
+
+		curpos += size;
+		searchin += size;
+	}
+
+	return NULL;
+}
+
+byte *ScummEngine_v72he::findWrappedBlock(uint32 tag, byte *ptr, int state, bool errorFlag) {
 	if (READ_UINT32(ptr) == MKID('MULT')) {
-		const byte *offs, *wrap;
+		byte *offs, *wrap;
 		uint32 size;
 
-		wrap = findResource(MKID('WRAP'), ptr);
+		wrap = heFindResource(MKID('WRAP'), ptr);
 		if (wrap == NULL)
 			return NULL;
 
-		offs = findResourceData(MKID('OFFS'), wrap);
+		offs = heFindResourceData(MKID('OFFS'), wrap);
 		if (offs == NULL)
 			return NULL;
 
@@ -603,17 +640,17 @@ const byte *ScummEngine_v72he::findWrappedBlock(uint32 tag, const byte *ptr, int
 			
 
 		offs += READ_LE_UINT32(offs + state * sizeof(uint32));
-		offs = findResourceData(tag, offs - 8);
+		offs = heFindResourceData(tag, offs - 8);
 		if (offs)
 			return offs;
 
-		offs = findResourceData(MKID('DEFA'), ptr);
+		offs = heFindResourceData(MKID('DEFA'), ptr);
 		if (offs == NULL)
 			return NULL;
 
-		return findResourceData(tag, offs - 8);
+		return heFindResourceData(tag, offs - 8);
 	} else {
-		return findResourceData(tag, ptr);
+		return heFindResourceData(tag, ptr);
 	}
 }
 
@@ -2048,8 +2085,8 @@ void ScummEngine_v72he::decodeParseString(int m, int n) {
 		break;
 	case 0xE1:
 		{
-		const byte *dataPtr = getResourceAddress(rtTalkie, pop());
-		const byte *text = findWrappedBlock(MKID('TEXT'), dataPtr, 0, 0);
+		byte *dataPtr = getResourceAddress(rtTalkie, pop());
+		byte *text = findWrappedBlock(MKID('TEXT'), dataPtr, 0, 0);
 		size = getResourceDataSize(text);
 		memcpy(name, text, size);
 		printString(m, name);
