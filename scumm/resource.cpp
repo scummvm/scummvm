@@ -1354,7 +1354,7 @@ byte *Scumm::findResourceData(uint32 tag, byte *ptr) {
 	return ptr + _resourceHeaderSize;
 }
 
-int Scumm::getResourceDataSize(byte *ptr) {
+int Scumm::getResourceDataSize(const byte *ptr) const {
 	if (ptr == NULL)
 		return 0;
 

@@ -1600,7 +1600,7 @@ void Scumm::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, i
 	_scaleSlots[slot-1].scale1 = scale1;
 }
 
-void Scumm::dumpResource(char *tag, int idx, byte *ptr, int length) {
+void Scumm::dumpResource(const char *tag, int idx, byte *ptr, int length) {
 	char buf[256];
 	File out;
 

@@ -621,8 +621,8 @@ protected:
 	int _lastLoadedRoom;
 public:
 	byte *findResourceData(uint32 tag, byte *ptr);
-	int getResourceDataSize(byte *ptr);
-	void dumpResource(char *tag, int index, byte *ptr, int length = -1);
+	int getResourceDataSize(const byte *ptr) const;
+	void dumpResource(const char *tag, int index, byte *ptr, int length = -1);
 
 protected:
 	int getArrayId();
@@ -826,7 +826,7 @@ protected:
 	byte *getPalettePtr();
 	void setupEGAPalette();
 	void setPalette(int pal);
-	void setPaletteFromPtr(byte *ptr);
+	void setPaletteFromPtr(const byte *ptr);
 	void setPaletteFromRes();
 	void setPalColor(int index, int r, int g, int b);
 	void setDirtyColors(int min, int max);
@@ -885,7 +885,7 @@ protected:
 	void dissolveEffect(int width, int height);
 	void scrollEffect(int dir);
 
-	void blit(byte *dst, byte *src, int w, int h);
+	void blit(byte *dst, const byte *src, int w, int h);
 
 	// bomp
 protected:
@@ -897,12 +897,12 @@ public:
 
 	void drawBomp(BompDrawData *bd, int decode_mode, int mask);
 protected:
-	void decompressBomp(byte *dst, byte *src, int w, int h);
+	void decompressBomp(byte *dst, const byte *src, int w, int h);
 	int32 setupBompScale(byte *scalling, int32 size, byte scale);
 	void bompScaleFuncX(byte *line_buffer, byte *scalling_x_ptr, byte skip, int32 size);
-	int32 bompDecodeLineMode0(byte *src, byte *line_buffer, int32 size);
-	int32 bompDecodeLineMode1(byte *src, byte *line_buffer, int32 size);
-	int32 bompDecodeLineMode3(byte *src, byte *line_buffer, int32 size);
+	int32 bompDecodeLineMode0(const byte *src, byte *line_buffer, int32 size);
+	int32 bompDecodeLineMode1(const byte *src, byte *line_buffer, int32 size);
+	int32 bompDecodeLineMode3(const byte *src, byte *line_buffer, int32 size);
 	void bompApplyMask(byte *line_buffer, byte *mask_out, byte bits, int32 size);
 	void bompApplyShadow0(byte *line_buffer, byte *dst, int32 size);
 	void bompApplyShadow1(byte *line_buffer, byte *dst, int32 size);
@@ -1051,7 +1051,7 @@ public:
 protected:
 	void CHARSET_1();
 	void drawString(int a);
-	void drawDescString(byte *msg);
+	void drawDescString(const byte *msg);
 	const byte *addMessageToStack(const byte *msg);
 	void addIntToStack(int var);
 	void addVerbToStack(int var);

@@ -334,7 +334,7 @@ void Scumm::CHARSET_1() {
 	gdi._mask = _charset->_str;
 }
 
-void Scumm::drawDescString(byte *msg) {
+void Scumm::drawDescString(const byte *msg) {
 	byte c, *buf, buffer[256];
 
 	buf = _msgPtrToAdd = buffer;

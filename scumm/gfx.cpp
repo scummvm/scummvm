@@ -510,7 +510,7 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	}
 }
 
-void Scumm::blit(byte *dst, byte *src, int w, int h) {
+void Scumm::blit(byte *dst, const byte *src, int w, int h) {
 	assert(h > 0);
 	assert(src != NULL);
 	assert(dst != NULL);
@@ -1276,7 +1276,7 @@ next_iter:
 	}
 }
 
-void Gdi::decodeStripEGA(byte *dst, byte *src, int height) {
+void Gdi::decodeStripEGA(byte *dst, const byte *src, int height) {
 	byte color = 0;
 	int run = 0, x = 0, y = 0, z;
 
@@ -1438,7 +1438,7 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProces
 	return useOrDecompress;
 }
 
-void Gdi::draw8ColWithMasking(byte *dst, byte *src, int height, byte *mask) {
+void Gdi::draw8ColWithMasking(byte *dst, const byte *src, int height, byte *mask) {
 	byte maskbits;
 
 	do {
@@ -1464,8 +1464,8 @@ void Gdi::draw8ColWithMasking(byte *dst, byte *src, int height, byte *mask) {
 #if defined(SCUMM_NEED_ALIGNMENT)
 			memcpy(dst, src, 8);
 #else
-			((uint32 *)dst)[0] = ((uint32 *)src)[0];
-			((uint32 *)dst)[1] = ((uint32 *)src)[1];
+			((uint32 *)dst)[0] = ((const uint32 *)src)[0];
+			((uint32 *)dst)[1] = ((const uint32 *)src)[1];
 #endif
 		}
 		src += _vm->_screenWidth;
@@ -1509,13 +1509,13 @@ void Gdi::clear8ColWithMasking(byte *dst, int height, byte *mask) {
 	} while (--height);
 }
 
-void Gdi::draw8Col(byte *dst, byte *src, int height) {
+void Gdi::draw8Col(byte *dst, const byte *src, int height) {
 	do {
 #if defined(SCUMM_NEED_ALIGNMENT)
 		memcpy(dst, src, 8);
 #else
-		((uint32 *)dst)[0] = ((uint32 *)src)[0];
-		((uint32 *)dst)[1] = ((uint32 *)src)[1];
+		((uint32 *)dst)[0] = ((const uint32 *)src)[0];
+		((uint32 *)dst)[1] = ((const uint32 *)src)[1];
 #endif
 		dst += _vm->_screenWidth;
 		src += _vm->_screenWidth;
@@ -1534,7 +1534,7 @@ void Gdi::clear8Col(byte *dst, int height)
 	} while (--height);
 }
 
-void Gdi::decompressMaskImg(byte *dst, byte *src, int height) {
+void Gdi::decompressMaskImg(byte *dst, const byte *src, int height) {
 	byte b, c;
 
 	while (height) {
@@ -1559,7 +1559,7 @@ void Gdi::decompressMaskImg(byte *dst, byte *src, int height) {
 	}
 }
 
-void Gdi::decompressMaskImgOr(byte *dst, byte *src, int height) {
+void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) {
 	byte b, c;
 
 	while (height) {
@@ -1592,7 +1592,7 @@ void Gdi::decompressMaskImgOr(byte *dst, byte *src, int height) {
 										}													\
 									} while (0)
 
-void Gdi::unkDecodeA(byte *dst, byte *src, int height) {
+void Gdi::unkDecodeA(byte *dst, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -1640,7 +1640,7 @@ void Gdi::unkDecodeA(byte *dst, byte *src, int height) {
 	} while (--height);
 }
 
-void Gdi::unkDecodeA_trans(byte *dst, byte *src, int height) {
+void Gdi::unkDecodeA_trans(byte *dst, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -1692,7 +1692,7 @@ void Gdi::unkDecodeA_trans(byte *dst, byte *src, int height) {
 	} while (--height);
 }
 
-void Gdi::unkDecodeB(byte *dst, byte *src, int height) {
+void Gdi::unkDecodeB(byte *dst, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -1722,7 +1722,7 @@ void Gdi::unkDecodeB(byte *dst, byte *src, int height) {
 	} while (--height);
 }
 
-void Gdi::unkDecodeB_trans(byte *dst, byte *src, int height) {
+void Gdi::unkDecodeB_trans(byte *dst, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -1754,7 +1754,7 @@ void Gdi::unkDecodeB_trans(byte *dst, byte *src, int height) {
 	} while (--height);
 }
 
-void Gdi::unkDecodeC(byte *dst, byte *src, int height) {
+void Gdi::unkDecodeC(byte *dst, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -1786,7 +1786,7 @@ void Gdi::unkDecodeC(byte *dst, byte *src, int height) {
 	} while (--x);
 }
 
-void Gdi::unkDecodeC_trans(byte *dst, byte *src, int height) {
+void Gdi::unkDecodeC_trans(byte *dst, const byte *src, int height) {
 	byte color = *src++;
 	uint bits = *src++;
 	byte cl = 8;
@@ -1839,7 +1839,7 @@ void Gdi::unkDecodeC_trans(byte *dst, byte *src, int height) {
 					h = height;								\
 				}
 
-void Gdi::unkDecode7(byte *dst, byte *src, int height) {
+void Gdi::unkDecode7(byte *dst, const byte *src, int height) {
 	uint h = height;
 
 	if (_vm->_features & GF_OLD256) {
@@ -1855,15 +1855,15 @@ void Gdi::unkDecode7(byte *dst, byte *src, int height) {
 #if defined(SCUMM_NEED_ALIGNMENT)
 		memcpy(dst, src, 8);
 #else
-		((uint32 *)dst)[0] = ((uint32 *)src)[0];
-		((uint32 *)dst)[1] = ((uint32 *)src)[1];
+		((uint32 *)dst)[0] = ((const uint32 *)src)[0];
+		((uint32 *)dst)[1] = ((const uint32 *)src)[1];
 #endif
 		dst += _vm->_screenWidth;
 		src += 8;
 	} while (--height);
 }
 
-void Gdi::unkDecode8(byte *dst, byte *src, int height) {
+void Gdi::unkDecode8(byte *dst, const byte *src, int height) {
 	uint h = height;
 
 	int x = 8;
@@ -1878,7 +1878,7 @@ void Gdi::unkDecode8(byte *dst, byte *src, int height) {
 	}
 }
 
-void Gdi::unkDecode9(byte *dst, byte *src, int height) {
+void Gdi::unkDecode9(byte *dst, const byte *src, int height) {
 	unsigned char c, bits, color, run;
 	int i, j;
 	uint buffer = 0, mask = 128;
@@ -1929,7 +1929,7 @@ void Gdi::unkDecode9(byte *dst, byte *src, int height) {
 	}
 }
 
-void Gdi::unkDecode10(byte *dst, byte *src, int height) {
+void Gdi::unkDecode10(byte *dst, const byte *src, int height) {
 	int i;
 	unsigned char local_palette[256], numcolors = *src++;
 	uint h = height;
@@ -1956,7 +1956,7 @@ void Gdi::unkDecode10(byte *dst, byte *src, int height) {
 }
 
 
-void Gdi::unkDecode11(byte *dst, byte *src, int height) {
+void Gdi::unkDecode11(byte *dst, const byte *src, int height) {
 	int bits, i;
 	uint buffer = 0, mask = 128;
 	unsigned char inc = 1, color = *src++;
@@ -2733,7 +2733,7 @@ void Scumm::setupEGAPalette() {
 	setPalColor(15, 252, 252, 252);
 }
 
-void Scumm::setPaletteFromPtr(byte *ptr) {
+void Scumm::setPaletteFromPtr(const byte *ptr) {
 	int i;
 	byte *dest, r, g, b;
 	int numcolor;
@@ -3607,7 +3607,7 @@ void Scumm::makeCursorColorTransparent(int a) {
 #pragma mark --- Bomp ---
 #pragma mark -
 
-int32 Scumm::bompDecodeLineMode0(byte *src, byte *line_buffer, int32 size) {
+int32 Scumm::bompDecodeLineMode0(const byte *src, byte *line_buffer, int32 size) {
 	if (size <= 0)
 		return size;
 
@@ -3617,7 +3617,7 @@ int32 Scumm::bompDecodeLineMode0(byte *src, byte *line_buffer, int32 size) {
 	return size;
 }
 
-int32 Scumm::bompDecodeLineMode1(byte *src, byte *line_buffer, int32 size) {
+int32 Scumm::bompDecodeLineMode1(const byte *src, byte *line_buffer, int32 size) {
 	int32 t_size = READ_LE_UINT16(src) + 2;
 	if (size <= 0)
 		return t_size;
@@ -3644,7 +3644,7 @@ int32 Scumm::bompDecodeLineMode1(byte *src, byte *line_buffer, int32 size) {
 	return t_size;
 }
 
-int32 Scumm::bompDecodeLineMode3(byte *src, byte *line_buffer, int32 size) {
+int32 Scumm::bompDecodeLineMode3(const byte *src, byte *line_buffer, int32 size) {
 	int32 t_size = READ_LE_UINT16(src) + 2;
 	line_buffer += size;
 	if (size <= 0)
@@ -3761,7 +3761,7 @@ void Scumm::bompScaleFuncX(byte *line_buffer, byte *scalling_x_ptr, byte skip, i
 	}
 }
 
-void Scumm::decompressBomp(byte *dst, byte *src, int w, int h) {
+void Scumm::decompressBomp(byte *dst, const byte *src, int w, int h) {
 	int len, num;
 	byte code, color;
 
