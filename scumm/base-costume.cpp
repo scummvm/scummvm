@@ -60,24 +60,3 @@ void BaseCostumeRenderer::codec1_ignorePakCols(int num) {
 		} while (--v1.replen);
 	} while (1);
 }
-
-// FIXME: Call this something sensible, make sure it works
-void BaseCostumeRenderer::V1_ignorePakCols(int num) {
-	int n = _height;
-	warning("Attempting V1 column skip. We don't even make it here, yet.");
-	if (num > 1)
-		n *= num;
-
-	do {
-		v1.repcolor = *_srcptr >> 4;
-		v1.replen = *_srcptr++ & 0x0F;
-
-		if (v1.replen == 0)
-			v1.replen = *_srcptr++;
-
-		do {
-			if (!--n) return;
-		} while (--v1.replen);
-	} while (1);
-}
-

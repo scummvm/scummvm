@@ -207,7 +207,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			v1.skip_width -= skip;
 
 			if (_vm->_version == 1)
-				V1_ignorePakCols(skip);
+				c64_ignorePakCols(skip);
 			else
 				codec1_ignorePakCols(skip);
 			v1.x = 0;
@@ -226,7 +226,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 			v1.skip_width -= skip;
 
 			if (_vm->_version == 1)
-				V1_ignorePakCols(skip);
+				c64_ignorePakCols(skip);
 			else
 				codec1_ignorePakCols(skip);
 			v1.x = _vm->_screenWidth - 1;
@@ -277,6 +277,26 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	CHECK_HEAP
 	return drawFlag;
+}
+
+// FIXME: Call this something sensible, make sure it works
+void CostumeRenderer::c64_ignorePakCols(int num) {
+	int n = _height;
+	warning("Attempting C64 column skip. We don't even make it here, yet.");
+	if (num > 1)
+		n *= num;
+
+	do {
+		v1.repcolor = *_srcptr >> 4;
+		v1.replen = *_srcptr++ & 0x0F;
+
+		if (v1.replen == 0)
+			v1.replen = *_srcptr++;
+
+		do {
+			if (!--n) return;
+		} while (--v1.replen);
+	} while (1);
 }
 
 void CostumeRenderer::procC64() {
@@ -585,10 +605,17 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 		return;
 	}
 
-	if (_version == 1)
+	if (_version == 1) {
+		// FIXME: lc._numColors is 0 for C64 codec...
+		// Is this code here really correct? If I compare V1 and V2 maniac,
+		// I noticed that for V1, there are 3 bytes / entry (i.e. the offsets
+		// increase in steps of 3), while for V2 there are 10 bytes / entry.
+		// That makes me wonder if the following decoder is correct *at all*
+		// for the C64 data
 		r = lc._baseptr + READ_LE_UINT16(lc._ptr + anim * 2 + lc._numColors + 30);
-	else
+	} else {
 		r = lc._baseptr + READ_LE_UINT16(lc._ptr + anim * 2 + lc._numColors + 42);
+	}
 
 	if (r == lc._baseptr) {
 		return;
