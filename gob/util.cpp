@@ -32,25 +32,25 @@ int16 util_translateKey(int16 key) {
 	struct keyS {
 		int16 from;
 		int16 to;
-	} static keys[] = {
-		8, 0xe08,	// Backspace
-		13, 0x1C0D,	// Enter
-		27, 0x11b,	// ESC 
-		127, 0x5300,	// Del
-		273, 0x4800,	// Up arrow
-		274, 0x5000,	// Down arrow
-		275, 0x4D00,	// Right arrow
-		276, 0x4B00,	// Left arrow
-		282, 0x3b00,	// F1
-		283, 0x3c00,	// F2
-		284, 0x3d00,	// F3
-		285, 0x3E00,	// F4
-		286, 0x3F00,	// F5
-		287, 0x4000,	// F6
-		288, 0x4100,	// F7
-		289, 0x4200,	// F8
-		290, 0x4300,	// F9
-		291, 0x4400	// F10
+	} keys[] = {
+		{8, 0xe08   },	// Backspace
+		{13, 0x1C0D },	// Enter
+		{27, 0x11b  },	// ESC 
+		{127, 0x5300},	// Del
+		{273, 0x4800},	// Up arrow
+		{274, 0x5000},	// Down arrow
+		{275, 0x4D00},	// Right arrow
+		{276, 0x4B00},	// Left arrow
+		{282, 0x3b00},	// F1
+		{283, 0x3c00},	// F2
+		{284, 0x3d00},	// F3
+		{285, 0x3E00},	// F4
+		{286, 0x3F00},	// F5
+		{287, 0x4000},	// F6
+		{288, 0x4100},	// F7
+		{289, 0x4200},	// F8
+		{290, 0x4300},	// F9
+		{291, 0x4400}	// F10
 	};
 	int i;
 
@@ -122,9 +122,9 @@ void util_processInput() {
 }
 
 void util_getMouseState(int16 *pX, int16 *pY, int16 *pButtons) {
-	int16 x = 0;
-	int16 y = 0;
-	int16 buttons = 0;
+//	int16 x = 0;
+//	int16 y = 0;
+//	int16 buttons = 0;
 
 	*pX = _mouseX;
 	*pY = _mouseY;
