@@ -83,3 +83,37 @@ bool OSystem::setGraphicsMode(const char *name) {
 
 	return false;
 }
+
+#pragma mark -
+
+
+namespace Common {
+
+StackLock::StackLock(OSystem::MutexRef mutex, OSystem *syst, const char *mutexName)
+	: _mutex(mutex), _syst(syst), _mutexName(mutexName) {
+	if (syst == 0)
+		_syst = g_system;
+	lock();
+}
+
+StackLock::~StackLock() {
+	unlock();
+}
+
+void StackLock::lock() {
+	assert(_syst);
+	if (_mutexName != NULL)
+		debug(6, "Locking mutex %s", _mutexName);
+	
+	_syst->lockMutex(_mutex);
+}
+
+void StackLock::unlock() {
+	assert(_syst);
+	if (_mutexName != NULL)
+		debug(6, "Unlocking mutex %s", _mutexName);
+
+	_syst->unlockMutex(_mutex);
+}
+
+}	// End of namespace Common

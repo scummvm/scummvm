@@ -25,6 +25,8 @@
 
 #include "common/scummsys.h"
 #include "common/savefile.h"
+#include "common/util.h"
+#include "common/rect.h"
 
 
 /**
@@ -479,7 +481,19 @@ public:
 
 
 
-	/** @name Mutex handling */
+	/**
+	 * @name Mutex handling
+	 * Historically, the OSystem API used to have a method which allowed
+	 * creating threads. Hence mutex support was needed for thread syncing.
+	 * To ease portability, though, we decided to remove the threading API.
+	 * Instead, we now use timers (see setTimerCallback() and Common::Timer).
+	 * But since those may be implemented using threads (and in fact, that's
+	 * how our primary backend, the SDL one, does it on many systems), we
+	 * still have to do mutex syncing in our timer callbacks.
+	 *
+	 * Hence backends which do not use threads to implement the timers simply
+	 * can use dummy implementations for these methods.
+	 */
 	//@{
 
 	typedef struct Mutex *MutexRef;
@@ -569,6 +583,25 @@ public:
 
 /** The global OSystem instance. Inited in main(). */
 #define g_system	(OSystem::instance())
+
+namespace Common {
+
+/**
+ * Auxillary class to (un)lock a mutex on the stack.
+ */
+class StackLock {
+	OSystem::MutexRef _mutex;
+	OSystem *_syst;
+	const char *_mutexName;
+
+	void lock();
+	void unlock();
+public:
+	StackLock(OSystem::MutexRef mutex, OSystem *syst = 0, const char *mutexName = NULL);
+	~StackLock();
+};
+
+}	// End of namespace Common
 
 
 #endif 
