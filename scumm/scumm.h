@@ -854,7 +854,7 @@ protected:
 	ColorCycle _colorCycle[16];	// Palette cycles
 
 	uint32 _ENCD_offs, _EXCD_offs;
-	uint32 _CLUT_offs;
+	uint32 _CLUT_offs, _EPAL_offs;
 	uint32 _IM00_offs, _PALS_offs;
 
 	StripTable *_roomStrips;

@@ -2601,6 +2601,8 @@ uint16 newTag2Old(uint32 oldTag) {
 		return (0x5842);	// BX
 	case (MKID('CYCL')):
 		return (0x4343);	// CC
+	case (MKID('EPAL')):
+		return (0x5053);	// SP
 	default:
 		return (0);
 	}

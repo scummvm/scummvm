@@ -559,6 +559,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_ENCD_offs = 0;
 	_EXCD_offs = 0;
 	_CLUT_offs = 0;
+	_EPAL_offs = 0;
 	_IM00_offs = 0;
 	_PALS_offs = 0;
 	_fullRedraw = false;
@@ -1360,13 +1361,14 @@ void ScummEngine::initScummVars() {
 			} else
 				VAR(VAR_SOUNDCARD) = 3;
 		}
-		// Amiga version of MI2 and FM Towns versions use unique values
 		if (_features & GF_FMTOWNS)
 			VAR(VAR_VIDEOMODE) = 42;
+		else if (_gameId == GID_INDY3 && (_features & GF_MACINTOSH))
+			VAR(VAR_VIDEOMODE) = 50;
 		else if (_gameId == GID_MONKEY2 && (_features & GF_AMIGA))
 			VAR(VAR_VIDEOMODE) = 82;
 		else
-			VAR(VAR_VIDEOMODE) = 19;
+			VAR(VAR_VIDEOMODE) = 14;
 		if (_gameId == GID_LOOM && _features & GF_OLD_BUNDLE) {
 			// Set number of sound resources
 			if (!(_features & GF_MACINTOSH))
@@ -2306,6 +2308,7 @@ void ScummEngine::initRoomSubBlocks() {
 
 	_ENCD_offs = 0;
 	_EXCD_offs = 0;
+	_EPAL_offs = 0;
 	_CLUT_offs = 0;
 	_PALS_offs = 0;
 
@@ -2605,6 +2608,17 @@ void ScummEngine::initRoomSubBlocks() {
 
 	if (_features & GF_OLD_BUNDLE)
 		ptr = 0;
+	else if (_features & GF_SMALL_HEADER)
+		ptr = findResourceSmall(MKID('EPAL'), roomptr);
+	else
+		ptr = findResourceData(MKID('EPAL'), roomptr);
+
+	if (ptr) {
+		_EPAL_offs = ptr - roomptr;
+	}
+
+	if (_features & GF_OLD_BUNDLE)
+		ptr = 0; // TODO ? do 16 bit games use a palette?!?
 	else if (_features & GF_SMALL_HEADER)
 		ptr = findResourceSmall(MKID('CLUT'), roomptr);
 	else
