@@ -205,7 +205,13 @@ void Scumm::getObjectXYPos(int object, int &x, int &y, int &dir) {
 			ptr = getResourceAddress(rtRoom, _roomResource);
 			ptr += od->OBIMoffset;
 		}
-		assert(ptr);
+		if (!ptr) {
+			// FIXME: We used to assert here, but it seems that in the nexus
+			// in The Dig, this can happen, at least with old savegames, and
+			// it's safe to continue...
+			warning("getObjectXYPos: Can't find object %d", object);
+			return;
+		}
 		imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), ptr);
 		if (_features & GF_AFTER_V8) {
 			x = od->x_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].x);
