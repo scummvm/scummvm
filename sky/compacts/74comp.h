@@ -122,7 +122,7 @@ uint16 sc74_int_table[] = {
 	ID_SC74_RIGHT_TV,
 	GT_SC74_FLOOR,
 	ID_SC74_INTERFACE,
-	RETURN_OK,
+	RET_OK,
 	ID_SC74_INT_SLOT,
 	GT_SC74_FLOOR,
 	ID_SC74_TERMINAL,
@@ -1926,7 +1926,7 @@ Compact sc74_monitor2 = {
 
 uint16 sc74_floor_table[] = {
 	ID_SC74_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC74_DOOR,
 	GT_SC74_DOOR,
 	0,

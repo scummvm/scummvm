@@ -257,7 +257,7 @@ Compact sc41_exit_39 = {
 
 uint16 sc41_floor_table[] = {
 	ID_SC41_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC41_EXIT_39,
 	GT_SC41_EXIT_39,
 	0,

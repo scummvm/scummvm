@@ -474,7 +474,7 @@ uint16 chip_list_sc91[] = {
 
 uint16 sc91_floor_table[] = {
 	ID_SC91_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_DOOR_L91,
 	GET_TO_DOOR_L91,
 	ID_DOOR_R91,

@@ -69,7 +69,7 @@ uint16 rs_joey_7_29[] = {
 
 uint16 s29_floor_table[] = {
 	ID_S29_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	ID_LIFT_29,
@@ -996,7 +996,7 @@ Compact small_r_29 = {
 
 uint16 s29_sml_table[] = {
 	ID_S29_SML_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	ID_SMALL_R_29,

@@ -121,7 +121,7 @@ Compact adjust_book = {
 
 uint16 sc93_floor_table[] = {
 	ID_SC93_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_DOOR_L93,
 	GET_TO_DOOR_L93,
 	ID_PERSONA,

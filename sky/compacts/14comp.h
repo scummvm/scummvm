@@ -620,7 +620,7 @@ uint16 locker_close_seq[] = {
 
 uint16 s14_floor_table[] = {
 	ID_S14_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	0,

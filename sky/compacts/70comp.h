@@ -589,7 +589,7 @@ uint16 sc70_palette[] = {
 
 uint16 sc70_floor_table[] = {
 	ID_SC70_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC70_DOOR,
 	GT_SC70_DOOR,
 	ID_SC70_CONTROL,

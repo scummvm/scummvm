@@ -217,7 +217,7 @@ uint16 sc37_grillopen[] = {
 
 uint16 sc37_floor_table[] = {
 	ID_SC37_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC37_DOOR,
 	GT_SC37_DOOR,
 	0,
@@ -491,7 +491,7 @@ uint16 sc37_flimsy_box_table[] = {
 	ID_SC37_GRILL,
 	GT_SC37_GRILL,
 	ID_SC37_FLIMSY_BOX,
-	RETURN_OK,
+	RET_OK,
 	ID_SC37_BIG_BOX,
 	STEP_OFF_BOX,
 	ID_SC37_WINE_RACK,

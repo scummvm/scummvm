@@ -112,7 +112,7 @@ uint16 door_l96f_anim[] = {
 
 uint16 sc96_floor_table[] = {
 	ID_SC96_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_DOOR_L96,
 	GET_TO_DOOR_L96,
 	ID_CRYSTAL,

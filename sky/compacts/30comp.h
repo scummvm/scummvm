@@ -984,7 +984,7 @@ uint16 sc42_judge_point[] = {
 
 uint16 sc30_floor_table[] = {
 	ID_SC30_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC30_EXIT_31,
 	GT_SC30_EXIT_31,
 	0,

@@ -565,7 +565,7 @@ Compact sc69_pulse2 = {
 
 uint16 sc69_floor_table[] = {
 	ID_SC69_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	0,
 	SC69_EXIT_WALK_ON,
 	1,

@@ -250,7 +250,7 @@ uint16 console_16_seq[] = {
 
 uint16 s16_floor_table[] = {
 	ID_S16_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	0,

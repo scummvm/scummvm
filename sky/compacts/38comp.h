@@ -1182,7 +1182,7 @@ uint32 *spu = 0;
 
 uint16 sc38_floor_table[] = {
 	ID_SC38_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC38_LIFT,
 	GT_SC38_LIFT,
 	ID_SC38_SOFA,

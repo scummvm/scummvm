@@ -46,7 +46,7 @@ uint16 s28_chip_list[] = {
 
 uint16 s28_floor_table[] = {
 	ID_S28_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	0,
@@ -76,7 +76,7 @@ uint16 s28_floor_table[] = {
 
 uint16 s28_sml_table[] = {
 	ID_S28_SML_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	ID_SMALL_R_28,

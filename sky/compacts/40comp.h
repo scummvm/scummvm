@@ -619,7 +619,7 @@ Compact sc40_locker_1 = {
 
 uint16 sc40_floor_table[] = {
 	ID_SC40_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC40_EXIT_39,
 	GT_SC40_EXIT_39,
 	ID_SC40_CABINET,

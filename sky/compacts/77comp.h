@@ -818,7 +818,7 @@ uint16 sc77_fpushr_2[] = {
 
 uint16 sc77_floor_table[] = {
 	ID_SC77_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC77_DOOR76,
 	GT_SC77_DOOR76,
 	0,

@@ -512,7 +512,7 @@ uint16 sc47_chip_list[] = {
 
 uint16 sc47_floor_table[] = {
 	ID_SC47_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC47_EXIT_45,
 	GT_SC47_EXIT_45,
 	0,

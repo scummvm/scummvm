@@ -388,7 +388,7 @@ uint32 *grid18 = 0;
 
 uint16 s7_floor_table[] = {
 	ID_S7_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	0,
@@ -2609,7 +2609,7 @@ uint16 jostair2_seq[] = {
 
 uint16 s6_floor_table[] = {
 	ID_S6_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_S6_STAIRS,
 	GET_TO_STAIRS6,
 	ID_JOEY_PARK,
@@ -2782,7 +2782,7 @@ Compact right_exit_s7 = {
 
 uint16 s5_floor_table[] = {
 	ID_S5_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	0,
@@ -2823,7 +2823,7 @@ Compact s5_floor = {
 
 uint16 s8_floor_table[] = {
 	ID_S8_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	0,
 	S8_WALK_ON,
 	ID_WRECK_GUARD,

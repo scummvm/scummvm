@@ -572,7 +572,7 @@ uint16 sc33_logic_list[] = {
 
 uint16 sc33_floor_table[] = {
 	ID_SC33_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC33_EXIT_30,
 	GT_SC33_EXIT_30,
 	0,

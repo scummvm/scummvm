@@ -762,7 +762,7 @@ Compact lite1 = {
 
 uint16 s13_floor_table[] = {
 	ID_S13_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	0,

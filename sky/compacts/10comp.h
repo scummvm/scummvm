@@ -541,7 +541,7 @@ uint16 lift_10_close[] = {
 
 uint16 s10_floor_table[] = {
 	ID_S10_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_LEFT_EXIT_10,
 	GT_LEFT_EXIT_10,
 	0,
@@ -1290,7 +1290,7 @@ uint16 linc_10_table[] = {
 	ID_LIFT_10,
 	GT_FLOOR_FROM_CHAIR10,
 	ID_LINC_10,
-	RETURN_OK,
+	RET_OK,
 	65535,
 };
 

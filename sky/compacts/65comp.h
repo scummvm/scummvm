@@ -52,7 +52,7 @@ Compact sc65_exit_48 = {
 
 uint16 sc65_floor_table[] = {
 	ID_SC65_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC65_POSTER1,
 	GT_SC65_POSTER1,
 	ID_SC65_POSTER2,

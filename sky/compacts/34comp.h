@@ -256,7 +256,7 @@ uint16 sc34_stairs2[] = {
 
 uint16 sc34_floor_table[] = {
 	ID_SC34_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC34_DOOR,
 	GT_SC34_DOOR,
 	0,

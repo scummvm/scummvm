@@ -1743,7 +1743,7 @@ uint16 sc36_low_floor_table[] = {
 	ID_SC36_FLOOR,
 	GT_SC36_FLOOR,
 	ID_SC36_LOW_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC36_EXIT_30,
 	GT_SC36_FLOOR,
 	ID_SC36_DOOR,
@@ -1796,7 +1796,7 @@ Compact sc36_low_floor = {
 
 uint16 sc36_floor_table[] = {
 	ID_SC36_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC36_LOW_FLOOR,
 	GT_SC36_LOW_FLOOR,
 	ID_SC36_EXIT_30,

@@ -81,7 +81,7 @@ Compact plant_26 = {
 
 uint16 s26_floor_table[] = {
 	ID_S26_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	0,

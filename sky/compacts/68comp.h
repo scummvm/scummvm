@@ -1183,7 +1183,7 @@ uint16 sc68_door_close[] = {
 
 uint16 sc68_floor_table[] = {
 	ID_SC68_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	0,
 	SC68_DOOR_WALK_ON,
 	1,

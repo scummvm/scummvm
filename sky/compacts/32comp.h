@@ -762,7 +762,7 @@ Compact sc32_buzzer = {
 
 uint16 sc32_floor_table[] = {
 	ID_SC32_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC32_EXIT_31,
 	GT_SC32_EXIT_31,
 	0,

@@ -29,7 +29,7 @@ namespace SkyCompact {
 
 uint16 sc46_floor_table[] = {
 	ID_SC46_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC46_RUBBLE,
 	GT_SC46_RUBBLE,
 	ID_SC46_EXIT_45,

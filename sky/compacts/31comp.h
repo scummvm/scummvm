@@ -1878,7 +1878,7 @@ uint16 sc31_get_plank[] = {
 
 uint16 sc31_floor_table[] = {
 	ID_SC31_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC31_EXIT_30,
 	GT_SC31_EXIT_30,
 	0,

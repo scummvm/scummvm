@@ -220,7 +220,7 @@ uint16 botbelt_seq[] = {
 
 uint16 s12_floor_table[] = {
 	ID_S12_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	0,

@@ -875,7 +875,7 @@ uint16 sc73_joey_fight2[] = {
 
 uint16 sc73_floor_table[] = {
 	ID_SC73_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC73_EXIT,
 	GT_SC73_EXIT,
 	0,

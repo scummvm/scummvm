@@ -1322,7 +1322,7 @@ uint16 sc71_mon_anim[] = {
 
 uint16 sc71_floor_table[] = {
 	ID_SC71_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	0,
 	SC71_DOOR69_WALK_ON,
 	3,

@@ -79,7 +79,7 @@ uint16 sc48_chip_list[] = {
 
 uint16 sc48_floor_table[] = {
 	ID_SC48_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC48_EXIT_47,
 	GT_SC48_EXIT_47,
 	0,

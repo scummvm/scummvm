@@ -346,7 +346,7 @@ uint16 push_dispensor[] = {
 
 uint16 s21_floor_table[] = {
 	ID_S21_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	0,

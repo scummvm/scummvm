@@ -29,7 +29,7 @@ namespace SkyCompact {
 
 uint16 s9_floor_table[] = {
 	ID_S9_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	42,

@@ -47,7 +47,7 @@ uint16 sc45_logic_list[] = {
 
 uint16 sc45_floor_table[] = {
 	ID_SC45_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC45_EXIT_44,
 	GT_SC45_EXIT_44,
 	0,

@@ -91,7 +91,7 @@ Compact sc44_grill = {
 
 uint16 sc44_floor_table[] = {
 	ID_SC44_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC44_RUBBLE,
 	GT_SC44_RUBBLE,
 	ID_SC44_GRILL,

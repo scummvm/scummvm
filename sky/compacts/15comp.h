@@ -189,9 +189,9 @@ uint16 flap_seq[] = {
 
 uint16 s15_floor_table[] = {
 	ID_S15_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_NU_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	0,

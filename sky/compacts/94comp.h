@@ -135,7 +135,7 @@ uint16 holo1_a_anim[] = {
 
 uint16 sc94_floor_table[] = {
 	ID_SC94_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_DOOR_L94,
 	GET_TO_DOOR_L94,
 	ID_DOOR_R94,

@@ -635,7 +635,7 @@ Compact left_exit_23 = {
 
 uint16 s23_floor_table[] = {
 	ID_S23_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	0,

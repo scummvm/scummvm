@@ -93,7 +93,7 @@ uint16 trev_read_mag[] = {
 
 uint16 s24_floor_table[] = {
 	ID_S24_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	0,

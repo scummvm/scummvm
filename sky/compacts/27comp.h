@@ -752,7 +752,7 @@ uint16 burke_st_left[] = {
 
 uint16 chair_table[] = {
 	ID_CHAIR_27,
-	RETURN_OK,
+	RET_OK,
 	ID_S27_FLOOR,
 	GT_FLOOR_FROM_CHAIR,
 	ID_RIGHT_EXIT_27,
@@ -1219,7 +1219,7 @@ uint16 operate_seq[] = {
 
 uint16 s27_floor_table[] = {
 	ID_S27_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_RIGHT_EXIT_27,
 	GT_RIGHT_EXIT_27,
 	ID_JOEY_PARK,

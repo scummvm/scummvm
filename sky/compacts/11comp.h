@@ -707,7 +707,7 @@ Compact soccer_4 = {
 
 uint16 s11_floor_table[] = {
 	ID_S11_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_CABLE_FALL,
 	GT_CABLE_11,
 	ID_LOCKER_11,

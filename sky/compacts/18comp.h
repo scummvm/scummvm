@@ -404,7 +404,7 @@ uint16 power_stop_seq[] = {
 
 uint16 s18_floor_table[] = {
 	ID_S18_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	0,

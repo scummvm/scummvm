@@ -1086,7 +1086,7 @@ uint16 sc79_crouch_down[] = {
 
 uint16 sc79_pipe_table[] = {
 	ID_SC79_PIPE,
-	RETURN_OK,
+	RET_OK,
 	ID_SC79_EXIT,
 	GT_SC79_EXIT,
 	0,

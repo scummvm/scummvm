@@ -993,7 +993,7 @@ Compact lazer_25 = {
 
 uint16 s25_floor_table[] = {
 	ID_S25_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	0,

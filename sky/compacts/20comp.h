@@ -597,7 +597,7 @@ uint16 rs_all_28_20[] = {
 
 uint16 s20_floor_table[] = {
 	ID_S20_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	0,

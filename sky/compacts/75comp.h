@@ -29,7 +29,7 @@ namespace SkyCompact {
 
 uint16 sc75_floor_table[] = {
 	ID_SC75_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC75_BIG_DOOR,
 	GT_SC75_BIG_DOOR,
 	0,

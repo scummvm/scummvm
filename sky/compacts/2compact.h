@@ -636,7 +636,7 @@ uint16 loaderb_r_to_l[] = {
 
 uint16 top_lift_table[] = {
 	ID_TOP_LIFT,
-	RETURN_OK,
+	RET_OK,
 	115,
 	LIFT_TO_FLOOR,
 	ID_L_EXIT_S2,

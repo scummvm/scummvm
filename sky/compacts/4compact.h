@@ -112,9 +112,9 @@ uint16 m_jobs_l_to_d[] = {
 
 uint16 s4_talk_table[] = {
 	4106,
-	RETURN_OK,
+	RET_OK,
 	4107,
-	RETURN_OK,
+	RET_OK,
 	ID_S4_FLOOR,
 	STD_ADJOIN_FLOOR,
 	ID_S4_L_EXIT,
@@ -997,7 +997,7 @@ Compact chuck_s4 = {
 
 uint16 r4_floor_table[] = {
 	ID_S4_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_S4_L_EXIT,
 	GET_TO_EL4,
 	ID_CUPBOARD,

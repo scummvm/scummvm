@@ -29,7 +29,7 @@ namespace SkyCompact {
 
 uint16 sc78_ledge_table[] = {
 	ID_SC78_LEDGE,
-	RETURN_OK,
+	RET_OK,
 	ID_SC78_PIPE,
 	GT_SC78_PIPE,
 	ID_SC78_BIG_DOOR,
@@ -626,7 +626,7 @@ uint16 reset_77_78[] = {
 
 uint16 sc78_pipe_table[] = {
 	ID_SC78_PIPE,
-	RETURN_OK,
+	RET_OK,
 	ID_SC78_LEDGE,
 	GT_SC78_LEDGE,
 	ID_SC78_BIG_DOOR,

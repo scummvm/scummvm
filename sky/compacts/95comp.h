@@ -115,7 +115,7 @@ uint16 weight_anim[] = {
 
 uint16 sc95_floor_table[] = {
 	ID_SC95_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_DOOR_L95,
 	GET_TO_DOOR_L95,
 	ID_DOOR_R95,

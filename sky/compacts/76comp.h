@@ -589,7 +589,7 @@ Compact ken = {
 
 uint16 sc76_floor_table[] = {
 	ID_SC76_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC76_DOOR75,
 	GT_SC76_DOOR75,
 	0,

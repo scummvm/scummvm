@@ -1683,7 +1683,7 @@ uint16 rs_low_lift[] = {
 
 uint16 r3_floor_table[] = {
 	ID_S3_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_FURNACE_DOOR,
 	GET_TO_FURNACE_DOOR,
 	ID_SLOT,

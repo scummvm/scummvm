@@ -327,7 +327,7 @@ uint16 wit_r_to_d[] = {
 
 uint16 sc72_floor_table[] = {
 	ID_SC72_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	0,
 	SC72_DOOR_WALK_ON,
 	1,

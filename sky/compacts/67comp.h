@@ -1796,7 +1796,7 @@ Compact sc67_brick = {
 
 uint16 sc67_floor_table[] = {
 	ID_SC67_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_SC67_BRICKWORK,
 	GT_SC67_BRICKWORK,
 	ID_SC67_DOOR,

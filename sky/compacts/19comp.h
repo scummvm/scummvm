@@ -52,7 +52,7 @@ uint16 s19_mouse[] = {
 
 uint16 s19_floor_table[] = {
 	ID_S19_FLOOR,
-	RETURN_OK,
+	RET_OK,
 	ID_JOEY_PARK,
 	GET_TO_JP2,
 	0,
