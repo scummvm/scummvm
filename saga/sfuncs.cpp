@@ -51,7 +51,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfWait),
 		OPCODE(SF_takeObject),
 		OPCODE(SF_objectIsCarried),
-		OPCODE(SF_setStatusText),
+		OPCODE(sfStatusBar),
 		OPCODE(SF_commandMode),
 		OPCODE(sfScriptWalkTo),
 		OPCODE(SF_doAction),
@@ -185,7 +185,7 @@ int Script::SF_objectIsCarried(SCRIPTFUNC_PARAMS) {
 // Script function #4 (0x04) nonblocking
 // Set the command display to the specified text string
 // Param1: dialogue index of string
-int Script::SF_setStatusText(SCRIPTFUNC_PARAMS) {
+int Script::sfStatusBar(SCRIPTFUNC_PARAMS) {
 	ScriptDataWord param = thread->pop();
 
 	return _vm->_interface->setStatusText(getString(param));
@@ -193,7 +193,7 @@ int Script::SF_setStatusText(SCRIPTFUNC_PARAMS) {
 
 // Script function #5 (0x05)
 int Script::SF_commandMode(SCRIPTFUNC_PARAMS) {
-	return _vm->_interface->setMode(kPanelCommand);
+	return _vm->_interface->setMode(kPanelMain);
 }
 
 // Script function #6 (0x06) blocking
@@ -295,7 +295,7 @@ int Script::SF_freezeInterface(SCRIPTFUNC_PARAMS) {
 // Script function #12 (0x0C)
 // Disables mouse input, etc.
 int Script::SF_dialogMode(SCRIPTFUNC_PARAMS) {
-	return _vm->_interface->setMode(kPanelDialogue);
+	return _vm->_interface->setMode(kPanelConverse);
 }
 
 // Script function #13 (0x0D)
@@ -848,7 +848,10 @@ int Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	actorDirection =  getSWord(thread->pop());
 	frameType =  getSWord(thread->pop());
 	frameOffset =  getSWord(thread->pop());
-	
+
+	debug(1, "sfPlaceActor(%d, %d, %d, %d, %d, %d)", actorId, actorLocation.x, 
+		  actorLocation.y, actorDirection, frameType, frameOffset);
+
 	actor = _vm->_actor->getActor(actorId);
 	actor->location.x = actorLocation.x;
 	actor->location.y = actorLocation.y;
@@ -950,6 +953,9 @@ int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	_vm->_scene->getBGPal(&pal);
 	_vm->_gfx->blackToPalWait(back_buf, pal, kNormalFadeDuration);
 
+	_vm->_interface->rememberMode();
+	_vm->_interface->setMode(kPanelPlacard);
+
 	return SUCCESS;
 }
 
@@ -972,6 +978,8 @@ int Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 
 	_vm->_gfx->showCursor(true);
 	_vm->_gfx->blackToPalWait(back_buf, pal, kNormalFadeDuration);
+
+	_vm->_interface->restoreMode();
 
 	return SUCCESS;
 }

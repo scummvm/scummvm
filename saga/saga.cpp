@@ -102,6 +102,9 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	File::addDefaultDirectory(_gameDataPath + "music/");
 	File::addDefaultDirectory(_gameDataPath + "sound/");
 
+	// Mac CD Wyrmkeep
+	File::addDefaultDirectory(_gameDataPath + "patch/");
+
 	// Setup mixer
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");

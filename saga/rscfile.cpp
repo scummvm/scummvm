@@ -30,6 +30,20 @@
 
 namespace Saga {
 
+static struct Substitutes {
+	uint32 id;
+	const char *fname;
+} substitutes[] = {
+	{ 1529, "wyrm.pak" },
+	{ 1530, "wyrm1.dlt" },
+	{ 1531, "wyrm2.dlt" },
+	{ 1532, "wyrm3.dlt" },
+	{ 1533, "wyrm4.dlt" },
+	{ 1796, "credit3n.dlt" },
+	{ 1797, "credit4n.dlt" }
+};
+	
+
 RSCFILE_CONTEXT *RSC_CreateContext() {
 	RSCFILE_CONTEXT empty_context;
 	empty_context.rc_file_fspec = NULL;
@@ -220,8 +234,9 @@ const char *RSC_FileName(RSCFILE_CONTEXT *rsc) {
 
 int RSC_LoadResource(RSCFILE_CONTEXT *rsc, uint32 res_num, byte **res_p, size_t *res_size_p) {
 	uint32 res_offset;
-	size_t res_size;
-	byte *res_buf;
+	size_t res_size = 0;
+	byte *res_buf = NULL;
+	int substnum = -1;
 
 	if ((rsc == NULL) || (res_p == NULL)) {
 		return FAILURE;
@@ -231,19 +246,42 @@ int RSC_LoadResource(RSCFILE_CONTEXT *rsc, uint32 res_num, byte **res_p, size_t 
 		return FAILURE;
 	}
 
-	res_offset = rsc->rc_res_table[res_num].res_offset;
-	res_size = rsc->rc_res_table[res_num].res_size;
+	debug(8, "LoadResource %d", res_num);
+	for (int i = 0; i < ARRAYSIZE(substitutes); i++)
+		if (substitutes[i].id == res_num) {
+			substnum = i;
+			break;
+		}
 
-	rsc->rc_file->seek((long)res_offset, SEEK_SET);
+	if (substnum != -1) {
+		File in;
 
-	res_buf = (byte *)malloc(res_size);
-	if (res_buf == NULL) {
-		return MEM;
+		if (in.open(substitutes[substnum].fname)) {
+			res_size = in.size();
+			if ((res_buf = (byte *)malloc(res_size)) == NULL)
+				return MEM;
+
+			in.read(res_buf, res_size);
+			in.close();
+			debug(8, "LoadResource: substituted resource by %s", substitutes[substnum].fname);
+		} else {
+			substnum = -1;
+		}
 	}
 
-	if (rsc->rc_file->read(res_buf, res_size) != res_size) {
-		free(res_buf);
-		return FAILURE;
+	if (substnum == -1) {
+		res_offset = rsc->rc_res_table[res_num].res_offset;
+		res_size = rsc->rc_res_table[res_num].res_size;
+
+		if ((res_buf = (byte *)malloc(res_size)) == NULL)
+			return MEM;
+
+		rsc->rc_file->seek((long)res_offset, SEEK_SET);
+
+		if (rsc->rc_file->read(res_buf, res_size) != res_size) {
+			free(res_buf);
+			return FAILURE;
+		}
 	}
 
 	*res_p = res_buf;

@@ -446,8 +446,11 @@ void Actor::handleActions(int msec, bool setup) {
 		
 		//todo: dragon stuff
 
+		if (actor->index == 2)
+			debug(9, "Action: %d Flags: %x", actor->currentAction, actor->flags);
+
 		switch(actor->currentAction) {
-			case kActionWait: {
+			case kActionWait:
 				if (!setup && (actor->flags & kFollower)) {
 					followProtagonist(actor);
 					if (actor->currentAction != kActionWait)
@@ -484,9 +487,10 @@ void Actor::handleActions(int msec, bool setup) {
 					}
 				}
 				actor->actionCycle++;
-			} break;
+				break;
+
 			case kActionWalkToPoint:
-			case kActionWalkToLink: {
+			case kActionWalkToLink:
 				// tiled stuff
 				if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
 					//todo: it
@@ -568,12 +572,14 @@ void Actor::handleActions(int msec, bool setup) {
 				}
 
 				actor->frameNumber = frameRange->frameIndex + actor->actionCycle;
-			} break;
-			case kActionWalkDir: {
+				break;
+
+			case kActionWalkDir:
 				debug(9,"kActionWalkDir not implemented");
 				//todo: do it
-			} break;
-			case kActionSpeak: {
+				break;
+
+			case kActionSpeak:
 				actor->actionCycle++;
 				actor->cycleWrap(64);
 
@@ -594,14 +600,14 @@ void Actor::handleActions(int msec, bool setup) {
 				}
 
 				actor->frameNumber = frameRange->frameIndex + state;
-			} break;
+				break;
 
 			case kActionAccept:
 			case kActionStoop:
 				break;
 
 			case kActionCycleFrames:
-			case kActionPongFrames: {
+			case kActionPongFrames:
 				if (actor->cycleTimeCount > 0) {
 					actor->cycleTimeCount--;
 					break;
@@ -647,17 +653,19 @@ void Actor::handleActions(int msec, bool setup) {
 				} else {
 					actor->frameNumber = frameRange->frameIndex + state;
 				}
-			} break;
-			case kActionFall: {
+				break;
+
+			case kActionFall:
 				debug(9,"kActionFall not implemented");
 
 				//todo: do it
-			} break;
-			case kActionClimb: {
+				break;
+
+			case kActionClimb:
 				debug(9,"kActionClimb not implemented");
 
 				//todo: do it
-			} break;
+				break;
 		}
 	}
 
@@ -705,6 +713,9 @@ void Actor::calcActorScreenPosition(ActorData *actor) {
 		actor->screenPosition.x = (actor->location.x / ACTOR_LMULT);
 		actor->screenPosition.y = (actor->location.y / ACTOR_LMULT) - actor->location.z;
 	}
+
+	if (actor->index == 2)
+		debug(9, "act: %d. x: %d y: %d", actor->index, actor->screenPosition.x, actor->screenPosition.y);
 }
 
 void Actor::createDrawOrderList() {
@@ -946,7 +957,7 @@ bool Actor::actorWalkTo(uint16 actorId, const ActorLocation &toLocation) {
 	bool extraEndNode;
 
 	actor = getActor(actorId);
-	
+
 	if (actor == _protagonist) {
 		_vm->_scene->setDoorState(2, 0xff);
 		_vm->_scene->setDoorState(3, 0);

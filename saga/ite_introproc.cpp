@@ -195,20 +195,28 @@ int Scene::ITEIntroAnimProc(int param, SCENE_INFO *scene_info) {
 
 		// Link this scene's animation resources for continuous
 		// playback
-		_vm->_anim->link(0, 1);
-		_vm->_anim->link(1, 2);
-		_vm->_anim->link(2, 3);
-		_vm->_anim->link(3, 4);
+		int lastAnim;
 
-		if (_vm->_features & GF_MAC_RESOURCES)
-			_vm->_anim->setFlag(4, ANIM_ENDSCENE);
-		else {
-			_vm->_anim->link(4, 5);
-			_vm->_anim->link(5, 6);
-
-			// Scene should end on display of last animation frame
-			_vm->_anim->setFlag(6, ANIM_ENDSCENE);
+		if (_vm->_features & GF_WYRMKEEP) {
+			if (_vm->_features & GF_MAC_RESOURCES) {
+				lastAnim = 3;
+			} else {
+				lastAnim = 2;
+			}
+		} else {
+			if (_vm->_features & GF_MAC_RESOURCES) {
+				lastAnim = 4;
+			} else {
+				lastAnim = 5;
+			}
 		}
+
+		for (int i = 0; i < lastAnim; i++)
+			_vm->_anim->link(i, i+1);
+
+		_vm->_anim->setFlag(lastAnim, ANIM_ENDSCENE);
+
+		debug(0, "Beginning animation playback.");
 
 		// Begin the animation
 		event.type = ONESHOT_EVENT;

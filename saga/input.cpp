@@ -81,7 +81,7 @@ int SagaEngine::processInput() {
 				break;
 			case 27: // Esc
 				// Skip to next scene skip target
-				if (!_interface->getMode() == kPanelNone) // FIXME: hack
+				if (!_interface->getMode() == kPanelNull) // FIXME: hack
 					_actor->abortAllSpeeches();
 				else
 					_scene->skipScene();

@@ -102,9 +102,17 @@ enum INTERFACE_UPDATE_FLAGS {
 #define IHNM_INVENTORY_YSPACING 0
 
 enum PANEL_MODES {
-	kPanelNone,
-	kPanelCommand,
-	kPanelDialogue
+	kPanelNull,
+	kPanelMain,
+	kPanelOption,
+	kPanelTextBox,
+	kPanelQuit,
+	kPanelError,
+	kPanelLoad,
+	kPanelConverse,
+	kPanelProtect,
+	kPanelPlacard,
+	kPanelMap
 };
 
 enum BUTTON_FLAGS {
@@ -201,6 +209,8 @@ public:
 	int deactivate();
 	int setMode(int mode);
 	int getMode(void) { return _panelMode; }
+	void rememberMode() { _savedMode = _panelMode; }
+	void restoreMode() { _panelMode = _savedMode; }
 	int setStatusText(const char *new_txt);
 	int loadScenePortraits(int res);
 	int setLeftPortrait(int portrait);
@@ -212,6 +222,7 @@ public:
 	void removeFromInventory(int sprite);
 	void drawInventory();
 	int inventoryTest(const Point& imousePt, int *ibutton);
+
 private:
 	int hitTest(const Point& imousePt, int *ibutton);
 	int drawStatusBar(SURFACE *ds);
@@ -228,6 +239,7 @@ private:
 	RSCFILE_CONTEXT *_interfaceContext;
 	INTERFACE_DESC _iDesc;
 	int _panelMode;
+	int _savedMode;
 	INTERFACE_PANEL _cPanel;
 	INTERFACE_PANEL _dPanel;
 	char _statusText[STATUS_TEXT_LEN];

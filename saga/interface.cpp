@@ -238,7 +238,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_activeVerb = I_VERB_WALKTO;
 
 	_active = 0;
-	_panelMode = kPanelNone;
+	_panelMode = _savedMode = kPanelNull;
 	*_statusText = 0;
 
 	_inventoryCount = 0;
@@ -331,7 +331,7 @@ int Interface::draw() {
 	drawStatusBar(back_buf);
 
 	// Draw command panel background
-	if (_panelMode == kPanelCommand) {
+	if (_panelMode == kPanelMain) {
 		xbase = _cPanel.x;
 		ybase = _cPanel.y;
 
@@ -357,7 +357,7 @@ int Interface::draw() {
 
 	_vm->_sprite->draw(back_buf, _defPortraits, _leftPortrait, lportrait, 256);
 
-	if (_panelMode == kPanelDialogue && _iDesc.rportrait_x >= 0) {
+	if (_panelMode == kPanelConverse && _iDesc.rportrait_x >= 0) {
 		rportrait.x = xbase + _iDesc.rportrait_x;
 		rportrait.y = ybase + _iDesc.rportrait_y;
 
@@ -388,7 +388,7 @@ int Interface::update(const Point& imousePt, int update_flag) {
 	// Get game display info
 	_vm->getDisplayInfo(&g_di);
 
-	if (_panelMode == kPanelCommand) {
+	if (_panelMode == kPanelMain) {
 		// Update playfield space ( only if cursor is inside )
 		if (imouse_y < g_di.scene_h) {
 			// Mouse is in playfield space
@@ -691,7 +691,7 @@ void Interface::removeFromInventory(int sprite) {
 }
 
 void Interface::drawInventory() {
-	if (_panelMode != kPanelCommand)
+	if (_panelMode != kPanelMain)
 		return;
 
 	SURFACE *back_buf = _vm->_gfx->getBackBuffer();

@@ -199,93 +199,94 @@ struct GAME_MD5 {
 	GAME_IDS id;
 	const char *md5;
 	const char *filename;
+	bool caseSensitive;
 };
 
 #define FILE_MD5_BYTES 5000
 
 static GAME_MD5 game_md5[] = {
-	{ GID_ITE_DISK_G,   "8f4315a9bb10ec839253108a032c8b54", "ite.rsc" },
-	{ GID_ITE_DISK_G,   "516f7330f8410057b834424ea719d1ef", "scripts.rsc" },
-	{ GID_ITE_DISK_G,   "c46e4392fcd2e89bc91e5567db33b62d", "voices.rsc" },
+	{ GID_ITE_DISK_G,   "8f4315a9bb10ec839253108a032c8b54", "ite.rsc", false },
+	{ GID_ITE_DISK_G,   "516f7330f8410057b834424ea719d1ef", "scripts.rsc", false },
+	{ GID_ITE_DISK_G,   "c46e4392fcd2e89bc91e5567db33b62d", "voices.rsc", false },
 
-	{ GID_ITE_CD_G,     "8f4315a9bb10ec839253108a032c8b54", "ite.rsc" },
-	{ GID_ITE_CD_G,     "50a0d2d7003c926a3832d503c8534e90", "scripts.rsc" },
-	{ GID_ITE_CD_G,     "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc" },
-	{ GID_ITE_CD_G,     "41bb6b95d792dde5196bdb78740895a6", "voices.rsc" },
+	{ GID_ITE_CD_G,     "8f4315a9bb10ec839253108a032c8b54", "ite.rsc", false },
+	{ GID_ITE_CD_G,     "50a0d2d7003c926a3832d503c8534e90", "scripts.rsc", false },
+	{ GID_ITE_CD_G,     "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc", false },
+	{ GID_ITE_CD_G,     "41bb6b95d792dde5196bdb78740895a6", "voices.rsc", false },
 
-	{ GID_ITE_CD,       "8f4315a9bb10ec839253108a032c8b54", "ite.rsc" },
-	{ GID_ITE_CD,       "a891405405edefc69c9d6c420c868b84", "scripts.rsc" },
-	{ GID_ITE_CD,       "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc" },
-	{ GID_ITE_CD,       "41bb6b95d792dde5196bdb78740895a6", "voices.rsc" },
+	{ GID_ITE_CD,       "8f4315a9bb10ec839253108a032c8b54", "ite.rsc", false },
+	{ GID_ITE_CD,       "a891405405edefc69c9d6c420c868b84", "scripts.rsc", false },
+	{ GID_ITE_CD,       "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc", false },
+	{ GID_ITE_CD,       "41bb6b95d792dde5196bdb78740895a6", "voices.rsc", false },
 
-	{ GID_ITE_DEMO_G,   "986c79c4d2939dbe555576529fd37932", "ite.rsc" },
-	{ GID_ITE_DEMO_G,   "d5697dd3240a3ceaddaa986c47e1a2d7", "scripts.rsc" },
-	{ GID_ITE_DEMO_G,   "c58e67c506af4ffa03fd0aac2079deb0", "voices.rsc" },
-	{ GID_ITE_DEMO_G,   "0b9a70eb4e120b6f00579b46c8cae29e", "ite.dmo" },
+	{ GID_ITE_DEMO_G,   "986c79c4d2939dbe555576529fd37932", "ite.rsc", false },
+	{ GID_ITE_DEMO_G,   "d5697dd3240a3ceaddaa986c47e1a2d7", "scripts.rsc", false },
+	{ GID_ITE_DEMO_G,   "c58e67c506af4ffa03fd0aac2079deb0", "voices.rsc", false },
+	{ GID_ITE_DEMO_G,   "0b9a70eb4e120b6f00579b46c8cae29e", "ite.dmo", false },
 
-	{ GID_ITE_MACCD,    "4f7fa11c5175980ed593392838523060", "ite.rsc" },
-	{ GID_ITE_MACCD,    "adf1f46c1d0589083996a7060c798ad0", "scripts.rsc" },
-	{ GID_ITE_MACCD,    "1a91cd60169f367ecb6c6e058d899b2f", "music.rsc" },
-	{ GID_ITE_MACCD,    "95863b89a0916941f6c5e1789843ba14", "sounds.rsc" },
-	{ GID_ITE_MACCD,    "c14c4c995e7a0d3828e3812a494301b7", "Inherit the Earth Voices" },
+	{ GID_ITE_MACCD,    "4f7fa11c5175980ed593392838523060", "ite.rsc", false },
+	{ GID_ITE_MACCD,    "adf1f46c1d0589083996a7060c798ad0", "scripts.rsc", false },
+	{ GID_ITE_MACCD,    "1a91cd60169f367ecb6c6e058d899b2f", "music.rsc", false },
+	{ GID_ITE_MACCD,    "95863b89a0916941f6c5e1789843ba14", "sounds.rsc", false },
+	{ GID_ITE_MACCD,    "c14c4c995e7a0d3828e3812a494301b7", "Inherit the Earth Voices", true },
 
-	{ GID_ITE_LINCD,    "8f4315a9bb10ec839253108a032c8b54", "ite.rsc" },
-	{ GID_ITE_LINCD,    "a891405405edefc69c9d6c420c868b84", "scripts.rsc" },
-	{ GID_ITE_LINCD,    "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc" },
-	{ GID_ITE_LINCD,    "41bb6b95d792dde5196bdb78740895a6", "voices.rsc" },
-	{ GID_ITE_LINCD,    "d6454756517f042f01210458abe8edd4", "music.rsc" },
+	{ GID_ITE_LINCD,    "8f4315a9bb10ec839253108a032c8b54", "ite.rsc", false },
+	{ GID_ITE_LINCD,    "a891405405edefc69c9d6c420c868b84", "scripts.rsc", false },
+	{ GID_ITE_LINCD,    "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc", false },
+	{ GID_ITE_LINCD,    "41bb6b95d792dde5196bdb78740895a6", "voices.rsc", false },
+	{ GID_ITE_LINCD,    "d6454756517f042f01210458abe8edd4", "music.rsc", false },
 
-	{ GID_ITE_DISK_DE,  "869fc23c8f38f575979ec67152914fee", "ite.rsc" },
-	{ GID_ITE_DISK_DE,  "516f7330f8410057b834424ea719d1ef", "scripts.rsc" },
-	{ GID_ITE_DISK_DE,  "0c9113e630f97ef0996b8c3114badb08", "voices.rsc" },
+	{ GID_ITE_DISK_DE,  "869fc23c8f38f575979ec67152914fee", "ite.rsc", false },
+	{ GID_ITE_DISK_DE,  "516f7330f8410057b834424ea719d1ef", "scripts.rsc", false },
+	{ GID_ITE_DISK_DE,  "0c9113e630f97ef0996b8c3114badb08", "voices.rsc", false },
 
-	{ GID_ITE_WINDEMO2, "3a450852cbf3c80773984d565647e6ac", "ited.rsc" },
-	{ GID_ITE_WINDEMO2, "3f12b67fa93e56e1a6be39d2921d80bb", "scriptsd.rsc" },
-	{ GID_ITE_WINDEMO2, "95a6c148e22e99a8c243f2978223583c", "soundsd.rsc" },
-	{ GID_ITE_WINDEMO2, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc" },
+	{ GID_ITE_WINDEMO2, "3a450852cbf3c80773984d565647e6ac", "ited.rsc", false },
+	{ GID_ITE_WINDEMO2, "3f12b67fa93e56e1a6be39d2921d80bb", "scriptsd.rsc", false },
+	{ GID_ITE_WINDEMO2, "95a6c148e22e99a8c243f2978223583c", "soundsd.rsc", false },
+	{ GID_ITE_WINDEMO2, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc", false },
 
-	{ GID_ITE_LINDEMO,  "3a450852cbf3c80773984d565647e6ac", "ited.rsc" },
-	{ GID_ITE_LINDEMO,  "3f12b67fa93e56e1a6be39d2921d80bb", "scriptsd.rsc" },
-	{ GID_ITE_LINDEMO,  "d6454756517f042f01210458abe8edd4", "musicd.rsc" },
-	{ GID_ITE_LINDEMO,  "95a6c148e22e99a8c243f2978223583c", "soundsd.rsc" },
-	{ GID_ITE_LINDEMO,  "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc" },
+	{ GID_ITE_LINDEMO,  "3a450852cbf3c80773984d565647e6ac", "ited.rsc", false },
+	{ GID_ITE_LINDEMO,  "3f12b67fa93e56e1a6be39d2921d80bb", "scriptsd.rsc", false },
+	{ GID_ITE_LINDEMO,  "d6454756517f042f01210458abe8edd4", "musicd.rsc", false },
+	{ GID_ITE_LINDEMO,  "95a6c148e22e99a8c243f2978223583c", "soundsd.rsc", false },
+	{ GID_ITE_LINDEMO,  "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc", false },
 
-	{ GID_ITE_MACDEMO2, "addfc9d82bc2fa1f4cab23743c652c08", "ited.rsc" },
-	{ GID_ITE_MACDEMO2, "fded5c59b8b7c5976229f960d21e6b0b", "scriptsd.rsc" },
-	{ GID_ITE_MACDEMO2, "495bdde51fd9f4bea2b9c911091b1ab2", "musicd.rsc" },
-	{ GID_ITE_MACDEMO2, "b3a831fbed337d1f1300fee1dd474f6c", "soundsd.rsc" },
-	{ GID_ITE_MACDEMO2, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc" },
+	{ GID_ITE_MACDEMO2, "addfc9d82bc2fa1f4cab23743c652c08", "ited.rsc", false },
+	{ GID_ITE_MACDEMO2, "fded5c59b8b7c5976229f960d21e6b0b", "scriptsd.rsc", false },
+	{ GID_ITE_MACDEMO2, "495bdde51fd9f4bea2b9c911091b1ab2", "musicd.rsc", false },
+	{ GID_ITE_MACDEMO2, "b3a831fbed337d1f1300fee1dd474f6c", "soundsd.rsc", false },
+	{ GID_ITE_MACDEMO2, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc", false },
 
-	{ GID_ITE_WINDEMO1, "3a450852cbf3c80773984d565647e6ac", "ited.rsc" },
-	{ GID_ITE_WINDEMO1, "3f12b67fa93e56e1a6be39d2921d80bb", "scriptsd.rsc" },
-	{ GID_ITE_WINDEMO1, "a741139dd7365a13f463cd896ff9969a", "soundsd.rsc" },
-	{ GID_ITE_WINDEMO1, "0759eaf5b64ae19fd429920a70151ad3", "voicesd.rsc" },
+	{ GID_ITE_WINDEMO1, "3a450852cbf3c80773984d565647e6ac", "ited.rsc", false },
+	{ GID_ITE_WINDEMO1, "3f12b67fa93e56e1a6be39d2921d80bb", "scriptsd.rsc", false },
+	{ GID_ITE_WINDEMO1, "a741139dd7365a13f463cd896ff9969a", "soundsd.rsc", false },
+	{ GID_ITE_WINDEMO1, "0759eaf5b64ae19fd429920a70151ad3", "voicesd.rsc", false },
 
-	{ GID_ITE_MACDEMO1, "addfc9d82bc2fa1f4cab23743c652c08", "ited.rsc" },
-	{ GID_ITE_MACDEMO1, "fded5c59b8b7c5976229f960d21e6b0b", "scriptsd.rsc" },
-	{ GID_ITE_MACDEMO1, "1a91cd60169f367ecb6c6e058d899b2f", "musicd.rsc" },
-	{ GID_ITE_MACDEMO1, "b3a831fbed337d1f1300fee1dd474f6c", "soundsd.rsc" },
-	{ GID_ITE_MACDEMO1, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc" },
+	{ GID_ITE_MACDEMO1, "addfc9d82bc2fa1f4cab23743c652c08", "ited.rsc", false },
+	{ GID_ITE_MACDEMO1, "fded5c59b8b7c5976229f960d21e6b0b", "scriptsd.rsc", false },
+	{ GID_ITE_MACDEMO1, "1a91cd60169f367ecb6c6e058d899b2f", "musicd.rsc", false },
+	{ GID_ITE_MACDEMO1, "b3a831fbed337d1f1300fee1dd474f6c", "soundsd.rsc", false },
+	{ GID_ITE_MACDEMO1, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc", false },
 
 	// My CD also has a file called 'patch.re_'. I assume it contains
 	// bugfixes, but let's ignore it for now.
-	{ GID_IHNM_CD, "0439083e3dfdc51b486071d45872ae52", "musicfm.res" },
-	{ GID_IHNM_CD, "80f875a1fb384160d1f4b27166eef583", "musicgm.res" },
-	{ GID_IHNM_CD, "46bbdc65d164ba7e89836a0935eec8e6", "scream.res" },
-	{ GID_IHNM_CD, "be38bbc5a26be809dbf39f13befebd01", "scripts.res" },
-	{ GID_IHNM_CD, "1c610d543f32ec8b525e3f652536f269", "sfx.res" },
-	{ GID_IHNM_CD, "fc6440b38025f4b2cc3ff55c3da5c3eb", "voices1.res" },
-	{ GID_IHNM_CD, "b37f10fd1696ade7d58704ccaaebceeb", "voices2.res" },
-	{ GID_IHNM_CD, "3bbc16a8f741dbb511da506c660a0b54", "voices3.res" },
-	{ GID_IHNM_CD, "ebfa160122d2247a676ca39920e5d481", "voices4.res" },
-	{ GID_IHNM_CD, "1f501ce4b72392bdd1d9ec38f6eec6da", "voices5.res" },
-	{ GID_IHNM_CD, "f580ed7568c7d6ef34e934ba20adf834", "voices6.res" },
-	{ GID_IHNM_CD, "54b1f2013a075338ceb0e258d97808bd", "voicess.res" },
+	{ GID_IHNM_CD, "0439083e3dfdc51b486071d45872ae52", "musicfm.res", false },
+	{ GID_IHNM_CD, "80f875a1fb384160d1f4b27166eef583", "musicgm.res", false },
+	{ GID_IHNM_CD, "46bbdc65d164ba7e89836a0935eec8e6", "scream.res", false },
+	{ GID_IHNM_CD, "be38bbc5a26be809dbf39f13befebd01", "scripts.res", false },
+	{ GID_IHNM_CD, "1c610d543f32ec8b525e3f652536f269", "sfx.res", false },
+	{ GID_IHNM_CD, "fc6440b38025f4b2cc3ff55c3da5c3eb", "voices1.res", false },
+	{ GID_IHNM_CD, "b37f10fd1696ade7d58704ccaaebceeb", "voices2.res", false },
+	{ GID_IHNM_CD, "3bbc16a8f741dbb511da506c660a0b54", "voices3.res", false },
+	{ GID_IHNM_CD, "ebfa160122d2247a676ca39920e5d481", "voices4.res", false },
+	{ GID_IHNM_CD, "1f501ce4b72392bdd1d9ec38f6eec6da", "voices5.res", false },
+	{ GID_IHNM_CD, "f580ed7568c7d6ef34e934ba20adf834", "voices6.res", false },
+	{ GID_IHNM_CD, "54b1f2013a075338ceb0e258d97808bd", "voicess.res", false },
 
-	{ GID_IHNM_DEMO, "46bbdc65d164ba7e89836a0935eec8e6", "scream.res" },
-	{ GID_IHNM_DEMO, "9626bda8978094ff9b29198bc1ed5f9a", "scripts.res" },
-	{ GID_IHNM_DEMO, "1c610d543f32ec8b525e3f652536f269", "sfx.res" },
-	{ GID_IHNM_DEMO, "3bbc16a8f741dbb511da506c660a0b54", "voicesd.res" },
+	{ GID_IHNM_DEMO, "46bbdc65d164ba7e89836a0935eec8e6", "scream.res", false },
+	{ GID_IHNM_DEMO, "9626bda8978094ff9b29198bc1ed5f9a", "scripts.res", false },
+	{ GID_IHNM_DEMO, "1c610d543f32ec8b525e3f652536f269", "sfx.res", false },
+	{ GID_IHNM_DEMO, "3bbc16a8f741dbb511da506c660a0b54", "voicesd.res", false },
 };
 
 static GAMEDESC GameDescs[] = {
@@ -358,7 +359,7 @@ static GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITEMACDEMO_GameFonts),
 		ITEMACDEMO_GameFonts,
 		&ITECD_GameSound,
-		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES
+		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP
 	},
 
 	// Inherit the earth - Linux Demo version
@@ -377,7 +378,7 @@ static GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
-		GF_VOX_VOICES
+		GF_VOX_VOICES | GF_WYRMKEEP
 	},
 	
 	// Inherit the earth - Linux Demo version
@@ -395,7 +396,7 @@ static GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
-		GF_VOX_VOICES
+		GF_VOX_VOICES | GF_WYRMKEEP
 	},
 	
 	// Inherit the earth - Win32 Demo version
@@ -413,7 +414,7 @@ static GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		&ITECD_GameSound,
-		GF_VOX_VOICES
+		GF_VOX_VOICES | GF_WYRMKEEP
 	},
 	
 	// Inherit the earth - Wyrmkeep Linux CD version
@@ -432,7 +433,7 @@ static GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
-		0
+		GF_WYRMKEEP
 	},
 
 	// Inherit the earth - DOS CD version
@@ -639,7 +640,7 @@ int detectGame(const FSList &fslist, bool mode) {
 	File test_file;
 	bool file_missing;
 
-	Common::String tstr;
+	Common::String tstr, tstr1;
 	char md5str[32+1];
 	uint8 md5sum[16];
 
@@ -647,7 +648,11 @@ int detectGame(const FSList &fslist, bool mode) {
 	for (int i = 0; i < ARRAYSIZE(game_md5); i++) {
 		tstr = Common::String(game_md5[i].filename);
 		tstr.toLowercase();
-		filesList[tstr] = true;
+
+		if (game_md5[i].caseSensitive && !mode)
+			filesList[Common::String(game_md5[i].filename)] = true;
+		else
+			filesList[tstr] = true;
 	}
 
 	if (mode) {
@@ -655,14 +660,18 @@ int detectGame(const FSList &fslist, bool mode) {
 		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 			if (!file->isDirectory()) {
 				tstr = file->displayName();
+				// FIXME: there is a bug in String class. tstr1 = tstr; tstr.toLowercase()
+				// makes tstr1 lowercase as well
+				tstr1 = Common::String(file->displayName().c_str());
 				tstr.toLowercase();
 				
-				if (filesList.contains(tstr)) {
+				if (filesList.contains(tstr) || filesList.contains(tstr1)) {
 					if (md5_file(file->path().c_str(), md5sum, NULL, FILE_MD5_BYTES)) {
 						for (int j = 0; j < 16; j++) {
 							sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 						}
 						filesMD5[tstr] = Common::String(md5str);
+						filesMD5[tstr1] = Common::String(md5str);
 					}
 				}
 			}
@@ -690,7 +699,6 @@ int detectGame(const FSList &fslist, bool mode) {
 		// Try to open all files for this game
 		for (file_n = 0; file_n < file_count; file_n++) {
 			tstr = GameDescs[game_n].gd_filedescs[file_n].gf_fname;
-			tstr.toLowercase();
 
 			if (!filesMD5.contains(tstr)) {
 				file_missing = true;
@@ -710,7 +718,6 @@ int detectGame(const FSList &fslist, bool mode) {
 			for (int i = 0; i < ARRAYSIZE(game_md5); i++) {
 				if (game_md5[i].id == GameDescs[game_n].gd_game_id) {
 					tstr = game_md5[i].filename;
-					tstr.toLowercase();
 
 					if (strcmp(game_md5[i].md5, filesMD5[tstr].c_str())) {
 						match = false;

@@ -309,7 +309,7 @@ private:
 	int sfWait(SCRIPTFUNC_PARAMS);
 	int SF_takeObject(SCRIPTFUNC_PARAMS);
 	int SF_objectIsCarried(SCRIPTFUNC_PARAMS);
-	int SF_setStatusText(SCRIPTFUNC_PARAMS);
+	int sfStatusBar(SCRIPTFUNC_PARAMS);
 	int SF_commandMode(SCRIPTFUNC_PARAMS);
 	int sfScriptWalkTo(SCRIPTFUNC_PARAMS);
 	int SF_doAction(SCRIPTFUNC_PARAMS);
