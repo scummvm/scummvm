@@ -2734,8 +2734,8 @@ void Scumm::setPalColor(int idx, int r, int g, int b)
 
 void Scumm::setCursorHotspot2(int x, int y)
 {
-	_cursorHotspotX = x;
-	_cursorHotspotY = y;
+	_cursor.hotspotX = x;
+	_cursor.hotspotY = y;
 }
 
 byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem)
@@ -2902,9 +2902,9 @@ void Scumm::grabCursor(byte *ptr, int width, int height)
 	if (size > sizeof(_grabbedCursor))
 		error("grabCursor: grabbed cursor too big");
 
-	_cursorWidth = width;
-	_cursorHeight = height;
-	_cursorAnimate = 0;
+	_cursor.width = width;
+	_cursor.height = height;
+	_cursor.animate = 0;
 
 	dst = _grabbedCursor;
 	for (; height; height--) {
@@ -2938,17 +2938,17 @@ void Scumm::useIm01Cursor(byte *im, int w, int h)
 
 void Scumm::updateCursor()
 {
-	_system->set_mouse_cursor(_grabbedCursor, _cursorWidth, _cursorHeight,
-														_cursorHotspotX, _cursorHotspotY);
+	_system->set_mouse_cursor(_grabbedCursor, _cursor.width, _cursor.height,
+														_cursor.hotspotX, _cursor.hotspotY);
 }
 
 void Scumm::animateCursor()
 {
-	if (_cursorAnimate) {
-		if (!(_cursorAnimateIndex & 0x3)) {
-			decompressDefaultCursor((_cursorAnimateIndex >> 2) & 3);
+	if (_cursor.animate) {
+		if (!(_cursor.animateIndex & 0x3)) {
+			decompressDefaultCursor((_cursor.animateIndex >> 2) & 3);
 		}
-		_cursorAnimateIndex++;
+		_cursor.animateIndex++;
 	}
 
 }
@@ -2964,9 +2964,9 @@ void Scumm::useBompCursor(byte *im, int width, int height)
 	if (size > sizeof(_grabbedCursor))
 		error("useBompCursor: cursor too big");
 
-	_cursorWidth = width;
-	_cursorHeight = height;
-	_cursorAnimate = 0;
+	_cursor.width = width;
+	_cursor.height = height;
+	_cursor.animate = 0;
 
 	decompressBomp(_grabbedCursor, im + 10, width, height);
 
@@ -3010,10 +3010,10 @@ void Scumm::decompressDefaultCursor(int idx)
 	if (_gameId == GID_LOOM256) {
 		int w;
 
-		_cursorWidth = 8;
-		_cursorHeight = 8;
-		_cursorHotspotX = 0;
-		_cursorHotspotY = 0;
+		_cursor.width = 8;
+		_cursor.height = 8;
+		_cursor.hotspotX = 0;
+		_cursor.hotspotY = 0;
 
 		for (i = 0, w = 0; i < 8; i++) {
 			w += (i >= 6) ? -2 : 1;
@@ -3021,10 +3021,10 @@ void Scumm::decompressDefaultCursor(int idx)
 				_grabbedCursor[i * 8 + j] = color;
 		}
 	} else {
-		_cursorWidth = 16;
-		_cursorHeight = 16;
-		_cursorHotspotX = default_cursor_hotspots[2 * _currentCursor];
-		_cursorHotspotY = default_cursor_hotspots[2 * _currentCursor + 1];
+		_cursor.width = 16;
+		_cursor.height = 16;
+		_cursor.hotspotX = default_cursor_hotspots[2 * _currentCursor];
+		_cursor.hotspotY = default_cursor_hotspots[2 * _currentCursor + 1];
 
 		for (i = 0; i < 16; i++) {
 			for (j = 0; j < 16; j++) {
@@ -3041,7 +3041,7 @@ void Scumm::makeCursorColorTransparent(int a)
 {
 	int i, size;
 
-	size = _cursorWidth * _cursorHeight;
+	size = _cursor.width * _cursor.height;
 
 	for (i = 0; i < size; i++)
 		if (_grabbedCursor[i] == (byte)a)

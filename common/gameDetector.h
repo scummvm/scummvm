@@ -121,7 +121,6 @@ public:
 	uint16 _debugMode;
 	bool _noSubtitles;
 	uint16 _bootParam;
-	uint16 _soundCardType;
 
 	char *_gameDataPath;
 	int _gameTempo;

@@ -396,7 +396,7 @@ void Scumm::saveOrLoad(Serializer *s)
 		/* nest */
 		MKLINE(Scumm, _numNestedScripts, sleByte),
 		MKLINE(Scumm, _userPut, sleByte),
-		MKLINE(Scumm, _cursorState, sleByte),
+		MKLINE(Scumm, _cursor.state, sleByte),
 		MKLINE(Scumm, gdi._cursorActive, sleByte),
 		MKLINE(Scumm, _currentCursor, sleByte),
 
@@ -444,10 +444,10 @@ void Scumm::saveOrLoad(Serializer *s)
 		MKLINE(Scumm, _screenB, sleUint16),
 		MKLINE(Scumm, _screenH, sleUint16),
 
-		MKLINE(Scumm, _cd_track, sleInt16),
-		MKLINE(Scumm, _cd_loops, sleInt16),
-		MKLINE(Scumm, _cd_frame, sleInt16),
-		MKLINE(Scumm, _cd_end, sleInt16),
+		MKLINE(Scumm, _cd_track, sleInt16),	// FIXME - remove next time save format changes
+		MKLINE(Scumm, _cd_loops, sleInt16),	// FIXME - remove next time save format changes
+		MKLINE(Scumm, _cd_frame, sleInt16),	// FIXME - remove next time save format changes
+		MKLINE(Scumm, _cd_end, sleInt16),	// FIXME - remove next time save format changes
 
 		MKEND()
 	};
@@ -511,7 +511,7 @@ void Scumm::saveOrLoad(Serializer *s)
 		/* nest */
 		MKLINE(Scumm, _numNestedScripts, sleByte),
 		MKLINE(Scumm, _userPut, sleByte),
-		MKLINE(Scumm, _cursorState, sleByte),
+		MKLINE(Scumm, _cursor.state, sleByte),
 		MKLINE(Scumm, gdi._cursorActive, sleByte),
 		MKLINE(Scumm, _currentCursor, sleByte),
 

@@ -22,7 +22,6 @@
 
 
 #include "stdafx.h"
-//#include "scumm/scumm.h"
 #include "sound/mididrv.h"
 #include "scumm/imuse.h"
 #include "common/engine.h"
@@ -90,7 +89,6 @@ GameDetector::GameDetector()
 	_debugMode = 0;
 	_noSubtitles = false;
 	_bootParam = 0;
-	_soundCardType = 3;
 
 	_gameDataPath = 0;
 	_gameTempo = 0;

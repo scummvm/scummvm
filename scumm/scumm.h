@@ -314,8 +314,6 @@ public:
 	/* Init functions, etc */
 	byte _fastMode;
 
-	/* system call object */
-
 	/* Scumm main loop */
 
 	void mainRun();
@@ -404,8 +402,7 @@ public:
 	byte _leftBtnPressed, _rightBtnPressed;
 
 	int16 _virtual_mouse_x, _virtual_mouse_y, _bootParam;
-	uint16 _debugMode, _currentDrive, _soundCardType;
-	byte _mousePresent;
+	uint16 _debugMode, _soundCardType;
 
 	/* Not sure where this stuff goes */
 	byte isMaskActiveAt(int l, int t, int r, int b, byte *mem);
@@ -702,9 +699,12 @@ public:
 	bool _fullRedraw, _BgNeedsRedraw, _shakeEnabled, _verbRedraw;
 	bool _screenEffectFlag, _completeScreenRedraw;
 
-	int _cursorHotspotX, _cursorHotspotY, _cursorWidth, _cursorHeight;
-	byte _cursorAnimate, _cursorAnimateIndex, _grabbedCursor[2048];
-	int8 _cursorState;
+	struct {
+		int hotspotX, hotspotY, width, height;
+		byte animate, animateIndex;
+		int8 state;
+	} _cursor;
+	byte _grabbedCursor[2048];
 	byte _currentCursor;
 
 	byte _newEffect, _switchRoomEffect2, _switchRoomEffect;
@@ -769,7 +769,7 @@ public:
 	void grabCursor(int x, int y, int w, int h);
 	void grabCursor(byte *ptr, int width, int height);
 	void makeCursorColorTransparent(int a);
-	void setupCursor() { _cursorAnimate = 1; }
+	void setupCursor() { _cursor.animate = 1; }
 	void decompressDefaultCursor(int index);
 	void useIm01Cursor(byte *im, int w, int h);
 	void useBompCursor(byte *im, int w, int h);
@@ -855,8 +855,8 @@ public:
 	int tempMusic;
 	bool _silentDigitalImuse;
 	int _saveSound;
-	uint16 _soundParam, _soundParam2, _soundParam3;
-	int current_cd_sound, _cd_loops, _cd_frame, _cd_track, _cd_end;
+	int current_cd_sound;
+	int _cd_loops, _cd_frame, _cd_track, _cd_end;	// FIXME - these are not used anymore
 
 	/* Walkbox / Navigation class */
 	int _maxBoxVertexHeap, _boxPathVertexHeapIndex, _boxMatrixItem;
@@ -922,8 +922,6 @@ public:
 	void loadLanguageBundle();
 	void translateText(byte *text, byte *trans_buff);
 	byte _transText[256];
-
-	bool checkFixedDisk();
 
 #if defined(SCUMM_LITTLE_ENDIAN)
 	uint32 fileReadDword() { return _fileHandle.readUint32LE(); }

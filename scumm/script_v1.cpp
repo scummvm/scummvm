@@ -594,11 +594,11 @@ void Scumm::o5_cursorCommand()
 	int16 table[16];
 	switch ((_opcode = fetchScriptByte()) & 0x1F) {
 	case 1:											/* cursor show */
-		_cursorState = 1;
+		_cursor.state = 1;
 		verbMouseOver(0);
 		break;
 	case 2:											/* cursor hide */
-		_cursorState = 0;
+		_cursor.state = 0;
 		verbMouseOver(0);
 		break;
 	case 3:											/* userput on */
@@ -608,11 +608,11 @@ void Scumm::o5_cursorCommand()
 		_userPut = 0;
 		break;
 	case 5:											/* cursor soft on */
-		_cursorState++;
+		_cursor.state++;
 		verbMouseOver(0);
 		break;
 	case 6:											/* cursor soft off */
-		_cursorState--;
+		_cursor.state--;
 		verbMouseOver(0);
 		break;
 	case 7:											/* userput soft on */
@@ -647,7 +647,7 @@ void Scumm::o5_cursorCommand()
 		break;
 	}
 
-	_vars[VAR_CURSORSTATE] = _cursorState;
+	_vars[VAR_CURSORSTATE] = _cursor.state;
 	_vars[VAR_USERPUT] = _userPut;
 }
 

@@ -87,7 +87,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_game_name = (char*)detector->_gameFileName.c_str();
 	_gameId = detector->_gameId;
 	_features = detector->_features;
-	_soundCardType = detector->_soundCardType;
 	_noSubtitles = detector->_noSubtitles;
 	_defaultTalkDelay = detector->_talkSpeed;
 	_use_adlib = detector->_use_adlib;
@@ -312,7 +311,7 @@ void Scumm::scummInit()
 	_keepText = false;
 
 	_currentCursor = 0;
-	_cursorState = 0;
+	_cursor.state = 0;
 	_userPut = 0;
 
 	_newEffect = 129;
@@ -354,15 +353,15 @@ void Scumm::scummInit()
 void Scumm::initScummVars()
 {
 	if (!(_features & GF_AFTER_V7)) {
-		_vars[VAR_CURRENTDRIVE] = _currentDrive;
-		_vars[VAR_FIXEDDISK] = checkFixedDisk();
-		_vars[VAR_SOUNDCARD] = _soundCardType;
+		_vars[VAR_CURRENTDRIVE] = 0;
+		_vars[VAR_FIXEDDISK] = true;
+		_vars[VAR_SOUNDCARD] = 3;
 		_vars[VAR_VIDEOMODE] = 0x13;
 		_vars[VAR_HEAPSPACE] = 1400;
-		_vars[VAR_MOUSEPRESENT] = _mousePresent;
-		_vars[VAR_SOUNDPARAM] = _soundParam;
-		_vars[VAR_SOUNDPARAM2] = _soundParam2;
-		_vars[VAR_SOUNDPARAM3] = _soundParam3;
+		_vars[VAR_MOUSEPRESENT] = true; // FIXME - used to be 0, but that seems odd?!?
+		_vars[VAR_SOUNDPARAM] = 0;
+		_vars[VAR_SOUNDPARAM2] = 0;
+		_vars[VAR_SOUNDPARAM3] = 0;
 		if (_features & GF_AFTER_V6)
 			_vars[VAR_V6_EMSSPACE] = 10000;
 	} else {
@@ -548,7 +547,7 @@ int Scumm::scummLoop(int delta)
 			clearClickedStatus();
 		}
 
-		if (_cursorState > 0) {
+		if (_cursor.state > 0) {
 			verbMouseOver(checkMouseOver(mouse.x, mouse.y));
 		}
 
@@ -570,7 +569,7 @@ int Scumm::scummLoop(int delta)
 	animateCursor();
 	
 	/* show or hide mouse */
-	_system->show_mouse(_cursorState > 0);
+	_system->show_mouse(_cursor.state > 0);
 
 	_vars[VAR_TIMER] = 0;
 	return _vars[VAR_TIMER_NEXT];
@@ -1199,7 +1198,7 @@ int Scumm::getKeyInput(int a)
 
 void Scumm::convertKeysToClicks()
 {
-	if (_lastKeyHit && _cursorState > 0) {
+	if (_lastKeyHit && _cursor.state > 0) {
 		if (_lastKeyHit == 9) {
 			_mouseButStat = MBS_RIGHT_CLICK;
 		} else if (_lastKeyHit == 13) {
@@ -1612,8 +1611,4 @@ byte Scumm::getDefaultGUIColor(int color)
 	} else {
 		return getStringAddress(21)[color];
 	}
-}
-
-bool Scumm::checkFixedDisk() {
-	return true;
 }

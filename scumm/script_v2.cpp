@@ -814,11 +814,11 @@ void Scumm::o6_cursorCommand()
 
 	switch (fetchScriptByte()) {
 	case 0x90:
-		_cursorState = 1;
+		_cursor.state = 1;
 		verbMouseOver(0);
 		break;
 	case 0x91:
-		_cursorState = 0;
+		_cursor.state = 0;
 		verbMouseOver(0);
 		break;
 	case 0x92:
@@ -828,13 +828,13 @@ void Scumm::o6_cursorCommand()
 		_userPut = 0;
 		break;
 	case 0x94:
-		_cursorState++;
-		if (_cursorState > 1)
+		_cursor.state++;
+		if (_cursor.state > 1)
 			error("Cursor state greater than 1 in script");
 		verbMouseOver(0);
 		break;
 	case 0x95:
-		_cursorState--;
+		_cursor.state--;
 		verbMouseOver(0);
 		break;
 	case 0x96:
@@ -867,7 +867,7 @@ void Scumm::o6_cursorCommand()
 		error("o6_cursorCommand: default case");
 	}
 
-	_vars[VAR_CURSORSTATE] = _cursorState;
+	_vars[VAR_CURSORSTATE] = _cursor.state;
 	_vars[VAR_USERPUT] = _userPut;
 }
 
