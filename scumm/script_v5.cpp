@@ -1387,7 +1387,7 @@ void Scumm_v5::o5_panCameraTo() {
 
 void Scumm_v5::o5_pickupObject() {
 	int obj, room;
-	if (_features & GF_OLD256) {
+	if (_features & GF_AFTER_V3) {
 		o5_drawObject();
 		return;
 	}
