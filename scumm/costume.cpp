@@ -82,7 +82,7 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 	uint scal;
 	byte scaling;
 	byte charsetmask, masking;
-	byte unk19;
+	byte startScaleIndexX;
 	byte newAmiCost;
 	int ex1, ex2;
 	
@@ -132,43 +132,43 @@ byte CostumeRenderer::mainRoutine(int slot, int frame) {
 		}
 
 		if (_mirror) {
-			unk19 = _scaleIndexX = 128 - xmove;
+			startScaleIndexX = _scaleIndexX = 128 - xmove;
 			for (i = 0; i < xmove; i++) {
 				scal = cost_scaleTable[_scaleIndexX++];
 				if (scal < _scaleX)
 					_xpos -= _scaleIndexXStep;
 			}
 			_right = _left = _xpos;
-			_scaleIndexX = unk19;
+			_scaleIndexX = startScaleIndexX;
 			for (i = 0; i < _width; i++) {
 				if (_right < 0) {
 					s++;
-					unk19 = _scaleIndexX;
+					startScaleIndexX = _scaleIndexX;
 				}
 				scal = cost_scaleTable[_scaleIndexX++];
 				if (scal < _scaleX)
 					_right++;
 			}
 		} else {
-			unk19 = _scaleIndexX = xmove + 128;
+			startScaleIndexX = _scaleIndexX = xmove + 128;
 			for (i = 0; i < xmove; i++) {
 				scal = cost_scaleTable[_scaleIndexX--];
 				if (scal < _scaleX)
 					_xpos += _scaleIndexXStep;
 			}
 			_right = _left = _xpos;
-			_scaleIndexX = unk19;
+			_scaleIndexX = startScaleIndexX;
 			for (i = 0; i < _width; i++) {
 				if (_left > (_vm->_realWidth - 1)) {
 					s++;
-					unk19 = _scaleIndexX;
+					startScaleIndexX = _scaleIndexX;
 				}
 				scal = cost_scaleTable[_scaleIndexX--];
 				if (scal < _scaleX)
 					_left--;
 			}
 		}
-		_scaleIndexX = unk19;
+		_scaleIndexX = startScaleIndexX;
 		if (s)
 			s--;
 		_scaleIndexYStep = -1;
