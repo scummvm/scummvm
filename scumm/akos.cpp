@@ -293,6 +293,10 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 	if (code == AKC_Return || code == AKC_EndSeq)
 		return 0;
 
+	//HACK Until support is added.
+	if (code == AKC_C021)
+		return 0;
+
 	// Code 0xC025 reads 4 bytes of extra information
 
 	if (code != AKC_ComplexChan && code != AKC_ComplexChan2) {
@@ -1421,7 +1425,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 	int code2 = aksq[curpos];
 	if (code2 & 0x80)
 		code2 = (code2 << 8) | aksq[curpos + 1];
-	assert((code2 & 0xC000) != 0xC000 || code2 == AKC_ComplexChan || code2 == AKC_Return || code2 == AKC_EndSeq || code2 == AKC_C08E || code2 == AKC_ComplexChan2);
+	assert((code2 & 0xC000) != 0xC000 || code2 == AKC_ComplexChan || code2 == AKC_Return || code2 == AKC_EndSeq || code2 == AKC_C08E || code2 == AKC_ComplexChan2 || code2 == AKC_C021);
 
 	a->cost.curpos[chan] = curpos;
 
