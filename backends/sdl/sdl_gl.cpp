@@ -31,6 +31,7 @@ int glGetColorTable(int, int, int, void *) { return 0; }
 #endif
 
 #include "fb2opengl.h"
+int _screenStart = 30;
 
 class OSystem_SDL_Normal : public OSystem_SDL_Common {
 public:
@@ -211,6 +212,7 @@ void OSystem_SDL_Normal::load_gfx_mode() {
 
 	sdl_tmpscreen = NULL;
 	TMP_SCREEN_WIDTH = (_screenWidth + 3);
+//	TMP_SCREEN_WIDTH = (_screenWidth);
 	
 	//
 	// Create the surface that contains the 8 bit game data
@@ -224,9 +226,18 @@ void OSystem_SDL_Normal::load_gfx_mode() {
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	//
 
-	int gl_flags =  FB2GL_320 | FB2GL_PITCH | FB2GL_RGBA | FB2GL_EXPAND;
+//	SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 5 );
+//	if (fb2gl.screen->format->Rmask == 0x7C00)
+//	  SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 5 );
+//	else
+//	  SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 6 );
+//	SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 5 );
+//        SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16 );
+	
+	int gl_flags =  FB2GL_320 | FB2GL_RGBA | FB2GL_EXPAND;
         if (_full_screen) gl_flags |= (FB2GL_FS);
-	fb2gl.init(640,480,0,70,gl_flags); // 640x480 screen resolution
+	// 640x480 screen resolution
+	fb2gl.init(640,480,0,_screenStart? 0: 70,gl_flags);
 
 	SDL_SetGamma(1.25,1.25,1.25);
 
@@ -278,8 +289,10 @@ void OSystem_SDL_Normal::update_screen() {
 	
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
-//		SDL_Rect blackrect = {0, 0, _screenWidth*_scaleFactor, _newShakePos*_scaleFactor};
-//		SDL_FillRect(sdl_hwscreen, &blackrect, 0);
+		SDL_Rect blackrect = {0, _screenStart, _screenWidth, _newShakePos+_screenStart};
+		SDL_FillRect(sdl_tmpscreen, &blackrect, 0);
+
+		fb2gl.blit16(sdl_tmpscreen,1,&blackrect,0,0);
 
 		_currentShakePos = _newShakePos;
 
@@ -328,9 +341,11 @@ void OSystem_SDL_Normal::update_screen() {
 					error("SDL_BlitSurface failed: %s", SDL_GetError());
 			}
 		}
-	
-		fb2gl.update_scummvm_screen((void *)sdl_tmpscreen,TMP_SCREEN_WIDTH,_screenHeight,TMP_SCREEN_WIDTH,0,_currentShakePos);
-		       
+
+		// Almost the same thing as SDL_UpdateRects
+		fb2gl.blit16(sdl_tmpscreen,_num_dirty_rects,_dirty_rect_list,0,
+		    _currentShakePos+_screenStart);
+		fb2gl.display();
 	}
 
 	_num_dirty_rects = 0;

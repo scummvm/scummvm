@@ -22,7 +22,8 @@
 // Andre Souza <asouza@olinux.com.br>
 
 #include <SDL.h>
-#include <SDL_opengl.h>
+//#include <SDL_opengl.h>
+#include <GL/gl.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -47,6 +48,9 @@ class FB2GL {
     // Framebuffer for RGBA */ 
     unsigned char ogl_fb1[256][256][4];
     unsigned char ogl_fb2[256][64][4];
+    // Framebuffer for the blit function (SDL Blitting)
+    unsigned char fb1[256*256*4]; // Enough room for RGBA
+    unsigned char fb2[64*256*4]; // Enough room for RGBA
     // Texture(s)
     GLuint texture;
     GLuint textureb;
@@ -69,7 +73,7 @@ class FB2GL {
     void update(void *fb, int width, int height, int pitch, int xskip, int yskip);
     void palette(int index, int r, int g, int b);
     void setPalette(int first, int ncolors);
-    void update_scummvm_screen(void *fb, int width, int height, int pitch, int x, int y);
+    void blit16(SDL_Surface *fb, int num_rect, SDL_Rect *rectlist, int xskip, int yskip);
     void display();
 };
 
@@ -317,45 +321,72 @@ void FB2GL::update(void *fb, int w, int h, int pitch, int xskip, int yskip) {
 
 }
 
-void FB2GL::update_scummvm_screen(void *fb, int w, int h, int pitch, int xpos, int ypos) {
-  uint16 *fb1 = (uint16 *)(((SDL_Surface *)fb)->pixels);
-  int x, y;
-  unsigned char r, g, b, a;
+void FB2GL::blit16(SDL_Surface *fb, int num_rect, SDL_Rect *rect, int xskip, int yskip) {
+  int x, y, i;
+  int rx, ry, rw, rh;
+  int xend=0, yend=0;
+  int pitch = fb->pitch/2; // 16 bit pointer access (not char *)
+  int tex1_w = 0, tex2_w = 0, tex2_x = 0;
 
-  for (y=0; y<h; y++) {
-    for (x=0; x<w; x++) {
-      
-      SDL_GetRGBA(fb1[x],((SDL_Surface *)fb)->format,&r,&g,&b,&a);
-      
-      if (x<256) { 
-	ogl_fb1[y][x][0] = r;
-	ogl_fb1[y][x][1] = g;
-	ogl_fb1[y][x][2] = b;
-	ogl_fb1[y][x][3] = a; // Alpha
+  for (i=0; i<num_rect; i++) {
+    tex1_w = tex2_w = tex2_x = 0;
+    rx = rect[i].x;
+    ry = rect[i].y;
+    rw = rect[i].w;
+    rh = rect[i].h;
+    xend = rx + rw;
+    yend = ry + rh;
+    if (xend > fb->w) continue;
+    if (yend > fb->h) continue;
+
+    if (rx < 256) { // Begins before the end of the 1st texture
+      if (xend >= 256) { // Ends after the first texture
+	tex2_w = xend-256; // For the 2nd texture
+	tex1_w = rw - tex2_w; // For the 1st texture
       }
-      else {
-	ogl_fb2[y][x-256][0] = r;
-	ogl_fb2[y][x-256][1] = g;
-	ogl_fb2[y][x-256][2] = b;
-	ogl_fb2[y][x-256][3] = a; // Alpha
+      else tex1_w = rw; 
+    }
+    else {
+      tex2_w = rw;
+      tex2_x = rx - 256;
+    }
+
+    for (y = ry; y < yend; y++) {
+      for (x = rx; x < xend; x++) {
+      
+        if (x < 256 && tex1_w) { 
+	  int pos = (x-rx+(y-ry)*tex1_w)*4; // RGBA
+	  SDL_GetRGB(((Uint16 *)fb->pixels)[x+y*(pitch)],fb->format,
+	    &fb1[pos],
+	    &fb1[pos+1],
+	    &fb1[pos+2]);
+	}
+	else if (x >= 256 && tex2_w) {
+	  int rx2 = rx < 256? 256: rx;
+	  int pos = (x-rx2+(y-ry)*tex2_w)*4; // RGBA
+	  SDL_GetRGB(((Uint16 *)fb->pixels)[x+y*(pitch)],fb->format,
+	    &fb2[pos],
+	    &fb2[pos+1],
+	    &fb2[pos+2]);
+	}
       }
     }
-    fb1 += pitch;
+
+    if (tex1_w > 0) {
+      // Update 256x256 texture
+      glBindTexture(GL_TEXTURE_2D,texture);
+      glFlush();
+      glTexSubImage2D(GL_TEXTURE_2D,0,rx+xskip,ry+yskip,tex1_w,rh,GL_RGBA,
+        GL_UNSIGNED_BYTE,fb1);
+    }
+    if (tex2_w > 0) { // What was left for this texture
+      // Update 64x256 texture
+      glBindTexture(GL_TEXTURE_2D,textureb);
+      glFlush();
+      glTexSubImage2D(GL_TEXTURE_2D,0,tex2_x+xskip,ry+yskip,tex2_w,rh,GL_RGBA,
+        GL_UNSIGNED_BYTE,fb2);
+    }
   }
-
-  // Update 256x256 texture
-  glBindTexture(GL_TEXTURE_2D,texture);
-  glFlush();
-  glTexSubImage2D(GL_TEXTURE_2D,0,xpos,ypos,256-xpos,256-ypos,GL_RGBA,
-    GL_UNSIGNED_BYTE,ogl_fb1);
-
-  // Update 64x256 texture
-  glBindTexture(GL_TEXTURE_2D,textureb);
-  glFlush();
-  glTexSubImage2D(GL_TEXTURE_2D,0,xpos,ypos,64-xpos,256-ypos,GL_RGBA,
-    GL_UNSIGNED_BYTE,ogl_fb2);
- 
-  display();
 }
 
 void FB2GL::palette(int i, int r, int g, int b) {
