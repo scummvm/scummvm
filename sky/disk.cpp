@@ -344,6 +344,18 @@ void SkyDisk::fnCacheFiles(void) {
 	_buildList[0] = 0;
 }
 
+void SkyDisk::fnMiniLoad(uint16 fileNum) {
+
+	uint16 cnt = 0;
+	while (_loadedFilesList[cnt]) {
+		if (_loadedFilesList[cnt] == fileNum) return ;
+		cnt++;
+	}
+	_loadedFilesList[cnt] = fileNum;
+	_loadedFilesList[cnt + 1] = 0;
+	SkyState::_itemList[fileNum & 2047] = (void**)loadFile(fileNum, NULL);
+}
+
 void SkyDisk::fnFlushBuffers(void) {
 
 	// dump all loaded sprites

@@ -31,7 +31,6 @@
 #include "sky/text.h"
 #include "sky/disk.h"
 #include "sky/struc.h"
-#include "sky/grid.h"
 #include "sky/screen.h"
 #include "sky/music/musicbase.h"
 #include "sky/music/adlibmusic.h"
@@ -44,14 +43,13 @@ struct SystemVars {
 	uint32 gameVersion;
 	uint32 mouseFlag;
 	uint16 language;
+	uint32 currentPalette; // I guess that's for saving.
 	/* uint16 sfxVolume;
 	uint16 musicVolume;
 	uint16 gameSpeed; */
 };
 
 class SkyLogic;
-class SkyGrid;
-class SkyAutoRoute;
 class SkyScreen;
 
 class SkyState : public Engine {
@@ -86,7 +84,6 @@ protected:
 	SkySound *_skySound;
 	SkyDisk *_skyDisk;
 	SkyText *_skyText;
-	SkyGrid *_skyGrid;
 	SkyLogic *_skyLogic;
 	SkyMouse *_skyMouse;
 	SkyScreen *_skyScreen;

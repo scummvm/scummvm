@@ -49,14 +49,14 @@ static const LogicTable logicTable[] = {
 	&SkyLogic::simpleAnim,	 // 16 Module anim without x,y's
 };
 
-SkyLogic::SkyLogic(SkyScreen *skyScreen, SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound) {
+SkyLogic::SkyLogic(SkyScreen *skyScreen, SkyDisk *skyDisk, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound) {
 	_skyScreen = skyScreen;
 	_skyDisk = skyDisk;
-	_skyGrid = skyGrid;
 	_skyText = skyText;
 	_skyMusic = skyMusic;
 	_skySound = skySound;
 	_skyMouse = skyMouse;
+	_skyGrid = new SkyGrid(_skyDisk);
 	_skyAutoRoute = new SkyAutoRoute(_skyGrid);
 
 	for (int i = 0; i < ARRAYSIZE(_moduleList); i++)
@@ -498,6 +498,7 @@ void SkyLogic::talk() {
 
 	if ((_compact->extCompact->spTextId == 0xFFFF) && // is this a voc file?
 		(_skySound->speechFinished())) { // finished?
+			printf("weird thing\n");
 
 		_compact->logic = L_SCRIPT; // restart character control
 
@@ -522,6 +523,7 @@ void SkyLogic::talk() {
 				_compact->grafixProg = graphixProg;
 			}
 		} else {
+			printf("EOA reached. getTo = %d (%X) frame %X\n",_compact->getToFlag,_compact->getToFlag,_compact->getToFlag>>6);
 			// we ran out of frames, let actor stand still.
 			// TODO: we should improve this and simply restart animation.
 			_compact->frame = _compact->getToFlag;
@@ -1510,13 +1512,32 @@ bool SkyLogic::fnSpeakMeDir(uint32 targetId, uint32 mesgNum, uint32 animNum) {
 }
 
 bool SkyLogic::fnSpeakWait(uint32 id, uint32 message, uint32 animation) {
+	// non player mega char speaks
+	// player will wait for it to finish before continuing script processing
 	_compact->flag = (uint16)(id & 0xffff);
 	_compact->logic = L_LISTEN;
 	return fnSpeakMe(id, message, animation);
 }
 
 bool SkyLogic::fnSpeakWaitDir(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnSpeakWaitDir");
+	/* non player mega chr$ speaks	S2(20Jan93tw)
+	the player will wait for it to finish
+	before continuing script processing
+	this function sets the directional option whereby
+	the anim chosen is linked to c_dir -
+
+	_compact is player
+	a is ID to speak (not us)
+	b is text message number
+	c is base of mini table within anim_talk_table */
+
+	_compact->flag = (uint16)a;
+	_compact->logic = L_LISTEN;
+
+	Compact *speaker = SkyState::fetchCompact(a);
+	if (c) c += speaker->extCompact->dir << 1;
+	stdSpeak(speaker, b, c, speaker->extCompact->dir << 1);
+	return false;
 }
 
 bool SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
@@ -1524,7 +1545,7 @@ bool SkyLogic::fnChooser(uint32 a, uint32 b, uint32 c) {
 	// setup the text questions to be clicked on
 	// read from TEXT1 until 0
 
-//	systemFlags |= 1 << SF_CHOOSING; // can't save/restore while choosing
+	SkyState::_systemVars.systemFlags |= SF_CHOOSING; // can't save/restore while choosing
 
 	_scriptVariables[THE_CHOSEN_ONE] = 0; // clear result
 
@@ -1988,11 +2009,14 @@ bool SkyLogic::fnCustomJoey(uint32 id, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnSetPalette(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnSetPalette");
+	_skyScreen->setPalette((uint8*)SkyState::fetchCompact(a));
+	SkyState::_systemVars.currentPalette = a;
+	return true;
 }
 
 bool SkyLogic::fnTextModule(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnTextModule");
+	_skyText->fnTextModule(a, b);
+	return true;
 }
 
 bool SkyLogic::fnChangeName(uint32 id, uint32 textNo, uint32 c) {
@@ -2002,7 +2026,8 @@ bool SkyLogic::fnChangeName(uint32 id, uint32 textNo, uint32 c) {
 }
 
 bool SkyLogic::fnMiniLoad(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnMiniLoad");
+	_skyDisk->fnMiniLoad((uint16)a);
+	return true;
 }
 
 bool SkyLogic::fnFlushBuffers(uint32 a, uint32 b, uint32 c) {
@@ -2011,7 +2036,8 @@ bool SkyLogic::fnFlushBuffers(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnFlushChip(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnFlushChip");
+	// this should be done automatically
+	return true;
 }
 
 bool SkyLogic::fnSaveCoods(uint32 a, uint32 b, uint32 c) {
@@ -2072,18 +2098,16 @@ bool SkyLogic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
 	if (sectionNo == 5) //linc section - has different mouse icons
 		_skyMouse->replaceMouseCursors(60302);
 
-	else
-		if (sectionNo != _currentSection) {
+	if (sectionNo != _currentSection) {
+		_currentSection = sectionNo;
+		_saveCurrentSection = sectionNo;
 
-			_currentSection = sectionNo;
-			_saveCurrentSection = sectionNo;
+		sectionNo++;
+		_skyMusic->loadSection((byte)sectionNo);
+		_skySound->loadSection((byte)sectionNo);
+		_skyGrid->loadGrids();
 
-			sectionNo++;
-			_skyMusic->loadSection((byte)sectionNo);
-			_skySound->loadSection((byte)sectionNo);
-			_skyGrid->loadGrids();
-
-		}
+	}
 			
 	return true;
 }
@@ -2097,11 +2121,18 @@ bool SkyLogic::fnRestartGame(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnNewSwingSeq(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnNewSwingSeq");
+	// only certain files work on pc. (huh?! something we should take care of?)
+	if ((a == 85) || (a == 106) || (a == 75) || (a == 15)) {
+		_skyScreen->startSequenceItem((uint16)a);
+	} else {
+		debug(1,"SkyLogic::fnNewSwingSeq: ignored seq %d\n",a);
+	}
+	return true;
 }
 
 bool SkyLogic::fnWaitSwingEnd(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnWaitSwingEnd");
+	_skyScreen->waitForSequence();
+	return true;
 }
 
 bool SkyLogic::fnSkipIntroCode(uint32 a, uint32 b, uint32 c) {
@@ -2110,11 +2141,18 @@ bool SkyLogic::fnSkipIntroCode(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnBlankScreen(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnBlankScreen");
+	_skyScreen->clearScreen();
+	return true;
 }
 
 bool SkyLogic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnPrintCredit");
+
+	lowTextManager_t creditText = _skyText->lowTextManager(a , 240, 0, 248, true);
+	Compact *credCompact = SkyState::fetchCompact(creditText.compactNum);
+	credCompact->xcood = 168;
+	credCompact->ycood = (uint16)c;
+	_scriptVariables[RESULT] = creditText.compactNum;
+	return true;
 }
 
 bool SkyLogic::fnLookAt(uint32 a, uint32 b, uint32 c) {
@@ -2194,7 +2232,7 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 
 	animNum += target->extCompact->megaSet / NEXT_MEGA_SET;
 	animNum &= 0xFF;
-
+	printf("Doing anim %X (%d). %s\n",animNum,animNum,SkyTalkAnims::animTalkTableIsPointer[animNum]?("PTR"):("VAL"));
 	if (SkyTalkAnims::animTalkTableIsPointer[animNum]) //is it a pointer? 
 		animPtr = (uint16 *)SkyTalkAnims::animTalkTablePtr[animNum];
 	else 	//then it must be a value

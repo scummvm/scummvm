@@ -65,7 +65,7 @@ class SkyScreen;
 
 class SkyLogic {
 public:
-	SkyLogic(SkyScreen *skyScreen, SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound);
+	SkyLogic(SkyScreen *skyScreen, SkyDisk *skyDisk, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound);
 	void engine();
 
 	void nop();

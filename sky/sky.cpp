@@ -54,7 +54,7 @@ Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst) {
 
 void **SkyState::_itemList[300];
 
-SystemVars SkyState::_systemVars = {0, 0, 0, 0};
+SystemVars SkyState::_systemVars = {0, 0, 0, 0, 4316};
 
 SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
@@ -112,7 +112,6 @@ void SkyState::showQuitMsg(void) {
 SkyState::~SkyState() {
 
 	delete _skyLogic;
-	delete _skyGrid;
 	delete _skySound;
 	delete _skyMusic;
 	showQuitMsg();	
@@ -153,7 +152,6 @@ void SkyState::go() {
 		_skyScreen->spriteEngine();
 		_skyScreen->flip();
 		_system->update_screen();
-		//if (_skySound->speechFinished()) printf("finsihed\n"); else printf("running\n");
 	}
 }
 
@@ -185,8 +183,7 @@ void SkyState::initialise(void) {
 	//initScript();
 	//initialiseRouter();
 	loadFixedItems();
-	_skyGrid = new SkyGrid(_skyDisk);
-	_skyLogic = new SkyLogic(_skyScreen, _skyDisk, _skyGrid, _skyText, _skyMusic, _skyMouse, _skySound);
+	_skyLogic = new SkyLogic(_skyScreen, _skyDisk, _skyText, _skyMusic, _skyMouse, _skySound);
 	
 	_timer = Engine::_timer; // initialize timer *after* _skyScreen has been initialized.
 	_timer->installProcedure(&timerHandler, 1000000 / 50); //call 50 times per second
@@ -218,7 +215,6 @@ void SkyState::loadBase0(void) {
 
 	_skyLogic->fnEnterSection(0, 0, 0);
 	_skyMusic->startMusic(2);
-	_skyGrid->loadGrids();
 }
 
 void SkyState::loadFixedItems(void) {

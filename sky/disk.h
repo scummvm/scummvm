@@ -46,6 +46,7 @@ public:
 
 	uint32 _lastLoadedFileSize;
 
+	void fnMiniLoad(uint16 fileNum);
 	void fnCacheFast(uint32 list);
 	void fnCacheChip(uint32 list);
 	void fnCacheFiles(void);

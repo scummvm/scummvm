@@ -40,6 +40,7 @@ public:
 	void makeGameCharacter(char textChar, uint8 *charSetPtr, uint8 *&data, uint8 color);
 	struct lowTextManager_t lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool centre);
 	void fnSetFont(uint32 fontNr);
+	void fnTextModule(uint32 textInfoId, uint32 textNo);
 
 protected:
 	bool getTBit();

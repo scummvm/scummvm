@@ -94,6 +94,18 @@ void SkyText::fnSetFont(uint32 fontNr) {
 	_dtCharSpacing = newCharSet->charSpacing;
 }
 
+void SkyText::fnTextModule(uint32 textInfoId, uint32 textNo) {
+
+	fnSetFont(1);
+	uint16* msgData = (uint16*)SkyState::fetchCompact(textInfoId);
+	lowTextManager_t textId = lowTextManager(textNo, msgData[1], msgData[2], 209, false);
+	SkyLogic::_scriptVariables[RESULT] = textId.compactNum;
+	Compact *textCompact = SkyState::fetchCompact(textId.compactNum);
+	textCompact->xcood = msgData[3];
+	textCompact->ycood = msgData[4];
+	fnSetFont(0);
+}
+
 void SkyText::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 	uint32 sectionNo = (textNr & 0x0F000) >> 10;
 	

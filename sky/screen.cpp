@@ -84,6 +84,13 @@ SkyScreen::~SkyScreen(void) {
 	if (_backScreen) free(_backScreen);
 }
 
+void SkyScreen::clearScreen(void) {
+	 
+	memset(_currentScreen, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
+	_system->copy_rect(_currentScreen, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+	_system->update_screen();
+}
+
 //set a new palette, pal is a pointer to dos vga rgb components 0..63
 void SkyScreen::setPalette(uint8 *pal) {
 	
@@ -366,6 +373,17 @@ void SkyScreen::startSequence(uint16 fileNum) {
 	_seqInfo.seqDataPos = _seqInfo.seqData + 1;
 	_seqInfo.delay = SEQ_DELAY;
 	_seqInfo.running = true;
+	_seqInfo.runningItem = false;
+}
+
+void SkyScreen::startSequenceItem(uint16 itemNum) {
+
+	_seqInfo.seqData = (uint8*)SkyState::fetchItem(itemNum);
+	_seqInfo.framesLeft = _seqInfo.seqData[0];
+	_seqInfo.seqDataPos = _seqInfo.seqData + 1;
+	_seqInfo.delay = SEQ_DELAY;
+	_seqInfo.running = true;
+	_seqInfo.runningItem = true;
 }
 
 void SkyScreen::stopSequence() {
@@ -423,14 +441,9 @@ void SkyScreen::processSequence(void) {
 	}
 	if (_seqInfo.framesLeft == 0) {
 		_seqInfo.running = false;
-		free(_seqInfo.seqData);
+		if (!_seqInfo.runningItem) free(_seqInfo.seqData);
 		_seqInfo.seqData = _seqInfo.seqDataPos = NULL;
 	}
-}
-
-bool SkyScreen::sequenceRunning(void) {
-
-	return _seqInfo.running;
 }
 
 //- sprites.asm routines

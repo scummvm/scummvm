@@ -61,8 +61,10 @@ public:
 	
 	void handleTimer(void);
 	void startSequence(uint16 fileNum);
+	void startSequenceItem(uint16 itemNum);
 	void stopSequence(void);
-	bool sequenceRunning(void);
+	bool sequenceRunning(void) { return _seqInfo.running; };
+	void waitForSequence(void) { while (_seqInfo.running) _system->delay_msecs(20); };
 	uint32 seqFramesLeft(void) { return _seqInfo.framesLeft; };
 	uint8 *giveCurrent(void) { return _currentScreen; };
 	void halvePalette(void);
@@ -72,7 +74,7 @@ public:
 	void fnFadeUp(uint32 palNum, uint32 scroll);
 	void fnFadeDown(uint32 scroll);
 	void fnDrawScreen(uint32 palette, uint32 scroll);
-	void clearScreen(void) { memset(_currentScreen, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT); };
+	void clearScreen(void);
 
 	void recreate(void);
 	void flip(void);
@@ -101,13 +103,8 @@ private:
 		uint8 *seqData;
 		uint8 *seqDataPos;
 		bool running;
+		bool runningItem; // when playing an item, don't free it afterwards.
 	} _seqInfo;
-	//byte *_workScreen;
-	//byte *_tempPal;
-	//byte *_workPalette;
-	//byte *_halfPalette;
-	//byte *_scrollAddr;
-	//byte *_lScreenBuf, *_lPaletteBuf;
 
     //- more regular screen.asm + layer.asm routines
 	void convertPalette(uint8 *inPal, uint8* outPal);
