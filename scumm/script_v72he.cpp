@@ -558,13 +558,26 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 		chr = string[num++];
 		if (chr == '%') {
 			chr = string[num++];
-			if (chr == 'd') {
+			switch(chr) {
+			case 'b':
+				// byte
+				break;
+			case 'c':
+				*dst++ = args[val--];
+				break;
+			case 'd':
 				dst += snprintf((char *)dst, 10, "%d", args[val--]);
-				continue;
-			} else if (chr == 's') {
+				break;
+			case 's':
 				dst += addStringToStack(dst, 512, args[val--]);
-				continue;
+				break;
+			case 'x':
+				// hexadecimal
+				break;
+			default:
+				error("decodeScriptString: Unknown type %d", chr);
 			}
+			continue;	
 		}
 		*dst++ = chr;
 	}
