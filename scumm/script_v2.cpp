@@ -2467,7 +2467,8 @@ void Scumm::o6_miscOps()
 						break;
 					 case 3: {
 						if (readArray(233,0,50) == 0) {
-						        InfoDialog* dialog = new InfoDialog(_newgui, this, "Set MineRoad - You can now jump the gorge.");
+							InfoDialog* dialog = new InfoDialog(_newgui, this,
+													"Set MineRoad - You can now jump the gorge.");
 							runDialog (dialog);
  							delete dialog;
 
