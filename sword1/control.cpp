@@ -165,7 +165,10 @@ SwordControl::SwordControl(ResMan *pResMan, ObjectMan *pObjMan, OSystem *system,
 
 void SwordControl::askForCd(void) {
 	_screenBuf = (uint8*)malloc(640 * 480);
-	_font = (uint8*)_resMan->openFetchRes(SR_FONT);
+	uint32 fontId = SR_FONT;
+	if (SwordEngine::_systemVars.language == BS1_CZECH)
+		fontId = CZECH_SR_FONT;
+	_font = (uint8*)_resMan->openFetchRes(fontId);
 	uint8 *pal = (uint8*)_resMan->openFetchRes(SR_PALETTE);
 	uint8 *palOut = (uint8*)malloc(256 * 4);
 	for (uint16 cnt = 1; cnt < 256; cnt++) {
@@ -210,7 +213,7 @@ void SwordControl::askForCd(void) {
 		}
 	} while (notAccepted);
 
-	_resMan->resClose(SR_FONT);
+	_resMan->resClose(fontId);
 	free(_screenBuf);
 }
 
@@ -219,8 +222,14 @@ uint8 SwordControl::runPanel(void) {
 	_restoreBuf = NULL;
 	_keyPressed = _numButtons = 0;
 	_screenBuf = (uint8*)malloc(640 * 480);
-	_font = (uint8*)_resMan->openFetchRes(SR_FONT); // todo: czech support
-	_redFont = (uint8*)_resMan->openFetchRes(SR_REDFONT);
+	uint32 fontId = SR_FONT, redFontId = SR_REDFONT;
+	if (SwordEngine::_systemVars.language == BS1_CZECH) {
+		fontId = CZECH_SR_FONT;
+		redFontId = CZECH_SR_REDFONT;
+	}
+	_font = (uint8*)_resMan->openFetchRes(fontId);
+	_redFont = (uint8*)_resMan->openFetchRes(redFontId);
+
 	uint8 *pal = (uint8*)_resMan->openFetchRes(SR_PALETTE);
 	uint8 *palOut = (uint8*)malloc(256 * 4);
 	for (uint16 cnt = 1; cnt < 256; cnt++) {
@@ -276,8 +285,8 @@ uint8 SwordControl::runPanel(void) {
 		newMode = getClicks(mode, &retVal);
 	} while ((newMode != 1) && (retVal == 0));
 	destroyButtons();
-	_resMan->resClose(SR_FONT);
-	_resMan->resClose(SR_REDFONT);
+	_resMan->resClose(fontId);
+	_resMan->resClose(redFontId);
 	memset(_screenBuf, 0, 640 * 480);
 	_system->copy_rect(_screenBuf, 640, 0, 0, 640, 480);
 	free(_screenBuf);
