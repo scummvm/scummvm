@@ -2833,41 +2833,6 @@ void Scumm::darkenPalette(int startColor, int endColor, int redScale, int greenS
 	}
 }
 
-void Scumm::desaturatePalette()
-{
-	// FIXME: Should this be made to take a range of colors instead?
-
-	byte *cur;
-	int i;
-
-	cur = _currentPalette;
-
-	for (i = 0; i <= 255; i++)
-	{
-		int max, min;
-		int brightness;
-
-		// An algorithm that is good enough for The GIMP should be
-		// good enough for us...
-
-		max = (cur[0] > cur[1]) ? cur[0] : cur[1];
-		if (cur[2] > max)
-			max = cur[2];
-
-		min = (cur[0] < cur[1]) ? cur[0] : cur[1];
-		if (cur[2] < min)
-			min = cur[2];
-
-		brightness = (min + max) / 2;
-
-		*cur++ = brightness;
-		*cur++ = brightness;
-		*cur++ = brightness;
-	}
-
-	setDirtyColors(0, 255);
-}
-
 void Scumm::grabCursor(int x, int y, int w, int h)
 {
 	VirtScreen *vs = findVirtScreen(y);

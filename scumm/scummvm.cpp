@@ -1426,16 +1426,13 @@ void Scumm::waitForTimer(int msec_delay) {
 void Scumm::updatePalette() {
 	if (_palDirtyMax == -1)
 		return;
-	
+
+	bool noir_mode = (_gameId == GID_SAMNMAX && readVar(0x8000));
 	int first = _palDirtyMin;
 	int num = _palDirtyMax - first + 1;
 	int i;
 
 	byte palette_colors[1024],*p = palette_colors;
-
-	// Sam & Max film noir mode
-	if (_gameId == GID_SAMNMAX && readVar(0x8000))
-		desaturatePalette();
 
 	for (i = _palDirtyMin; i <= _palDirtyMax; i++) {
 		byte *data;
@@ -1445,11 +1442,29 @@ void Scumm::updatePalette() {
 		else
 			data = _currentPalette + i * 3;
 
-		*p++ = data[0];
-		*p++ = data[1];
-		*p++ = data[2];
-		*p++ = 0;
+		// Sam & Max film noir mode. Convert the colours to grayscale
+		// before uploading them to the backend.
 
+		if (noir_mode) {
+			double r, g, b;
+			double brightness;
+
+			r = (double) data[0];
+			g = (double) data[1];
+			b = (double) data[2];
+
+			brightness = (0.299 * r + 0.587 * g + 0.114 * b) + 0.5;
+
+			*p++ = (byte) brightness;
+			*p++ = (byte) brightness;
+			*p++ = (byte) brightness;
+			*p++ = 0;
+		} else {
+			*p++ = data[0];
+			*p++ = data[1];
+			*p++ = data[2];
+			*p++ = 0;
+		}
 	}
 	
 	_system->set_palette(palette_colors, first, num);

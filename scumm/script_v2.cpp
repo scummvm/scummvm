@@ -2936,17 +2936,13 @@ void Scumm::o6_miscOps()
 				// At this point ScummVM will already have set
 				// variable 0x8000 to indicate that the game is
 				// in film noir mode. All we have to do here is
-				// to mark the palette as "dirty", and the next
-				// call to updatePalette() will take care of
-				// the rest.
+				// to mark the palette as "dirty", because
+				// updatePalette() will desaturate the colors
+				// as they are uploaded to the backend.
 				//
-				// Actually, for extra bug-compatibility we
-				// should call desaturatePalette() here only,
-				// instead of in updatePalette(). To see the
-				// difference in behaviour, try turning on film
-				// noir mode in Sam & Max's office. The
-				// background will be grayscale, but Sam and
-				// Max themselves will be in color.
+				// This actually works better than the original
+				// interpreter, where actors would sometimes
+				// still be drawn in color.
 				setDirtyColors(0, 255);
 			} else
 				warning("stub o6_miscOps_114()");

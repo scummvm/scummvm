@@ -816,7 +816,6 @@ public:
 	void moveMemInPalRes(int start, int end, byte direction);
 	void setupShadowPalette(int slot, int rfact, int gfact, int bfact, int from, int to);
 	void darkenPalette(int a, int b, int c, int d, int e);
-	void desaturatePalette();
 
 	void setShake(int mode);
 
