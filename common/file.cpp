@@ -273,6 +273,9 @@ uint32 File::write(void *ptr, uint32 len) {
 		return 0;
 
 	if (_encbyte != 0) {
+		// Maybe FIXME: while it's efficient to do the encoding here,
+		// it not really nice for a write function to modify its input.
+		// Maybe we should work on a copy here...
 		uint32 t_size = len;
 		do {
 			*ptr2++ ^= _encbyte;
