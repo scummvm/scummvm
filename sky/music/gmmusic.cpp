@@ -58,12 +58,7 @@ GmMusic::~GmMusic(void) {
 
 void GmMusic::setVolume(uint8 volume) {
 
-	uint8 sysEx[6];
-	_musicVolume = volume;
-	if (volume > 0) volume = (volume * 2) / 3 + 43; // GM synths behave kinda logarithmic
-	sysEx[0] = 0x7F; sysEx[1] = 0x7F; sysEx[2] = 0x04; sysEx[3] = 0x01;
-	sysEx[4] = 0; sysEx[5] = volume & 0x7F;
-	_midiDrv->sysEx(sysEx, 6);
+	setFMVolume(volume);
 }
 
 void GmMusic::timerCall(void) {
