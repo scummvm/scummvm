@@ -24,7 +24,9 @@
 #define __START_H__
 
 #define appFileCreator 'ScVM'
-#define curItemVersion sysMakeROMVersion(2,0,0,0,0)
+#define curItemVersion sysMakeROMVersion(2,5,0,0,0)
+
+#define itemVersion_2 sysMakeROMVersion(2,0,0,0,0)
 
 typedef struct {
 	Char nameP[32];
@@ -52,7 +54,6 @@ typedef	struct {
 
 	Boolean debug;
 	UInt16 debugLevel;
-	Boolean saveConfig;
 	Boolean stdPalette;
 	Boolean autoReset;
 	Boolean demoMode;
@@ -90,11 +91,16 @@ extern GlobalsPreferencePtr gPrefs;
 #define appVersionNum			0x01
 #define appPrefVersionNum		0x01
 
+#define STACK_DEFAULT			8192
+#define STACK_LARGER			16384
+#define STACK_GET				0
 
 Err AppStart(void);
 void AppStop(void);
 Boolean CheckVibratorExists();
 Boolean StartScummVM();
+void PINGetScreenDimensions();
+void WinScreenGetPitch();
 void SavePrefs();
 Err SendDatabase (UInt16 cardNo, LocalID dbID, Char *nameP, Char *descriptionP);
 #endif
