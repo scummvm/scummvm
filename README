@@ -131,12 +131,9 @@ Other Games:
      Flight of the Amazon Queen                      [Game: queen]
      Simon the Sorcerer 1                            [Game: simon1acorn/
                                                             simon1dos/
-                                                            simon1talkie/
-                                                            simon1win]
+                                                            simon1talkie]
      Simon the Sorcerer 2                            [Game: simon2dos/
-                                                            simon2talkie/
-                                                            simon2win
-                                                            simon2mac]
+                                                            simon2talkie]
 
 The following games should load, but are not yet fully playable. Play these at
 your own risk, and please do not file bug reports about them. If you want
@@ -183,16 +180,15 @@ any answer. Chances are that it will work.
 
 3.2) Simon the Sorcerer 1 and 2 notes:
 ---- ---------------------------------
-The Simon the Sorcerer 1 & 2 games were split into several targets to make
-coding easier and to make it more clear which target should be used:
-       simon1acorn  - Use for Simon the Sorcerer 1 for Acorn (CD)
-       simon1dos    - Use for Simon the Sorcerer 1 for DOS (Disk)
-       simon2dos    - Use for Simon the Sorcerer 2 for DOS (Disk)
-       simon1talkie - Use for Simon the Sorcerer 1 Talkie for DOS (CD)
-       simon2talkie - Use for Simon the Sorcerer 2 Talkie for DOS (CD)
-       simon1win    - Use for Simon the Sorcerer 1 Talkie for Windows (CD)
-       simon2win    - Use for Simon the Sorcerer 2 Talkie for Windows (CD)
-       simon2mac    - Use for Simon the Sorcerer 2 Talkie for Amiga or Mac (CD)
+The current game targets are:
+ simon1acorn  - Use for Simon the Sorcerer 1 for Acorn (CD)
+ simon1dos    - Use for Simon the Sorcerer 1 for DOS (Disk)
+ simon2dos    - Use for Simon the Sorcerer 2 for DOS (Disk)
+ simon1talkie - Use for Simon the Sorcerer 1 Talkie (DOS/Windows)
+ simon2talkie - Use for Simon the Sorcerer 2 Talkie (Amiga/DOS/Mac/Windows)
+
+Also make sure that the platform setting is correct, since it is used
+to tell the difference between the various ports of the games.
 
 If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
 then you will find the Windows version in the main directory of CD
@@ -361,7 +357,7 @@ manual.
   --joystick[=NUM]         Enable input with joystick (default: 0 = first
                            joystick)
   --platform=WORD          Specify version of game (allowed values: amiga,
-                           atari, mac, pc)
+                           atari, mac, pc, windows)
   --multi-midi             Enable combination of Adlib and native MIDI
   --native-mt32            True Roland MT-32 (disable GM emulation)
   --aspect-ratio           Enable aspect ratio correction
