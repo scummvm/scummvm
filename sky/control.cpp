@@ -882,8 +882,17 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 						_selectedGame = _firstText;
 						refreshNames = true;
 					}
-					if ((clickRes == CANCEL_PRESSED) || (clickRes == NO_DISK_SPACE) || 
-						(clickRes == GAME_RESTORED))
+					if (clickRes == NO_DISK_SPACE) {
+						// HACK: The error dialog will have two buttons, one
+						// for yes and one for no. And we just won't care
+						// which one the user presses. As far as I can tell,
+						// making a proper dialog is tricky, since the yes/no
+						// buttons are actually one single sprite.
+						char saveFailed[] = "Could not save!";
+						getYesNo(saveFailed);
+						quitPanel = true;
+					}
+					if ((clickRes == CANCEL_PRESSED) || (clickRes == GAME_RESTORED))
 						quitPanel = true;
 
 					if (clickRes == GAME_SAVED) {
