@@ -134,6 +134,8 @@ SCUMM
 * COMI: Implement voice & music lip sync (see patch #671104 & bug #755826)
 * COMI: Fix setActorChoreLimbFrame opcode (see bug #754419, "Wally's Fake
   piratehook still on ground after pick up")
+* V7-8 games: Implement smooth horizontal scrolling (instead of scrolling in
+  increments of 8 pixels). See bug #629417.
 
 Broken Sword 2
 ==============
