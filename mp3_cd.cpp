@@ -20,9 +20,9 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "mp3_cd.h"
 
 #ifdef COMPRESSED_SOUND_FILE
+#include "mp3_cd.h"
 
 int _current_mp3_cd_track;
 struct xing _vbr_header;
