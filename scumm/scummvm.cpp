@@ -82,6 +82,7 @@ struct ScummGameSettings {
 	byte id, version;
 	int midi; // MidiDriverType values
 	uint32 features;
+	const char *baseFilename;
 
 	GameSettings toGameSettings() const {
 		GameSettings dummy = { gameName, description, midi, features, 0 };
@@ -95,200 +96,200 @@ static const ScummGameSettings scumm_settings[] = {
 	/* Scumm Version 2 */
 
 	{"maniac", "Maniac Mansion", GID_MANIAC, 2, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, 0},
 	//{"maniacnes", "Maniac Mansion (NES)", GID_MANIAC, 2, MDT_NONE,
 	// GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING | GF_NES},
 	{"zak",         "Zak McKracken and the Alien Mindbenders", GID_ZAK, 2, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, 0},
 
 	/* Scumm Version 3 */
 	{"indy3EGA", "Indiana Jones and the Last Crusade", GID_INDY3, 3, MDT_PCSPK | MDT_ADLIB,
-	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE},
+	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, 0},
 	{"indy3Towns", "Indiana Jones and the Last Crusade (FM Towns)", GID_INDY3, 3, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_FMTOWNS | GF_AUDIOTRACKS},
+	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_FMTOWNS | GF_AUDIOTRACKS, 0},
 	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3, 3, MDT_PCSPK | MDT_ADLIB,
-	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS},
+	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, 0},
 	{"zak256", "Zak McKracken 256 (deprecated)", GID_ZAK256, 3, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS},
+	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, 0},
 	{"zakTowns", "Zak McKracken and the Alien Mindbenders (FM Towns)", GID_ZAK256, 3, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS},
+	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, 0},
 	{"loom", "Loom", GID_LOOM, 3, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
-	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE},
+	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, 0},
 	{"loomTowns", "Loom (FM Towns)", GID_LOOM, 3, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS},
+	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FMTOWNS | GF_AUDIOTRACKS, 0},
 
 	/* Scumm Version 4 */
 	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, 0},
 	{"pass", "Passport to Adventure", GID_PASS, 4, MDT_PCSPK | MDT_ADLIB,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, 0},
 
 	/* Scumm version 5 */
 	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA,  4, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
-	 GF_SMALL_HEADER | GF_USE_KEY},
+	 GF_SMALL_HEADER | GF_USE_KEY, 0},
 	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 4, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, 0},
 	{"monkey", "Monkey Island 1", GID_MONKEY, 5, /*MDT_PCSPK |*/ MDT_ADLIB,
-	 GF_USE_KEY | GF_AUDIOTRACKS},
+	 GF_USE_KEY | GF_AUDIOTRACKS, 0},
 	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY | GF_AUDIOTRACKS},
+	 GF_USE_KEY | GF_AUDIOTRACKS, 0},
 	{"game", "Monkey Island 1 (SegaCD version)", GID_MONKEY_SEGA, 5, MDT_NONE,
-	 GF_USE_KEY | GF_AUDIOTRACKS},
+	 GF_USE_KEY | GF_AUDIOTRACKS, 0},
 	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY},
+	 GF_USE_KEY, 0},
 	{"mi2demo", "Monkey Island 2: LeChuck's revenge (Demo)", GID_MONKEY2, 5, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY},
+	 GF_USE_KEY, 0},
 	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM Towns Demo)", GID_INDY4, 5, MDT_ADLIB,
-	 GF_USE_KEY},
+	 GF_USE_KEY, 0},
 	{"indy4", "Indiana Jones and the Fate of Atlantis (FM Towns)", GID_INDY4, 5, MDT_ADLIB,
-	 GF_USE_KEY},
+	 GF_USE_KEY, 0},
 	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY},
+	 GF_USE_KEY, 0},
 	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY},
+	 GF_USE_KEY, 0},
 	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY},
+	 GF_USE_KEY, 0},
 
 	/* Scumm Version 6 */
 	{"puttputt", "Putt-Putt Joins The Parade (DOS)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"puttdemo", "Putt-Putt Joins The Parade (DOS Demo)", GID_PUTTDEMO, 6, MDT_ADLIB | MDT_NATIVE,
-	  GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS},
+	  GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS, 0},
 	{"moondemo", "Putt-Putt Goes To The Moon (DOS Demo)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"puttmoon", "Putt-Putt Goes To The Moon (DOS)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"funpack", "Putt-Putt's Fun Pack", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"fbpack", "Fatty Bear's Fun Pack", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"fbear", "Fatty Bear's Birthday Surprise (DOS)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"fbdemo", "Fatty Bear's Birthday Surprise (DOS Demo)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY},
+	 GF_NEW_OPCODES | GF_USE_KEY, 0},
 	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY},
+	 GF_NEW_OPCODES | GF_USE_KEY, 0},
 
 	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER},
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, 0},
 
 	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER},
+	 GF_NEW_OPCODES | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER, 0},
 	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER},
+	 GF_NEW_OPCODES | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER, 0},
 	{"snmidemo", "Sam & Max (Interactive WIP Demo)", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER},
+	 GF_NEW_OPCODES | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER, 0},
 
-//	{"test", "Test demo game", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE, GF_NEW_OPCODES},
+//	{"test", "Test demo game", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE, GF_NEW_OPCODES, 0},
 
 	/* Scumm Version 7 */
 	{"ft", "Full Throttle", GID_FT, 7, MDT_NONE,
-	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
+	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
 	{"ftdemo", "Full Throttle (Mac. Demo)", GID_FT, 7, MDT_NONE,
-	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
+	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
 	{"ftpcdemo", "Full Throttle (PC Demo)", GID_FT, 7, MDT_NONE,
-	 GF_DEMO | GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
+	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, "ft"},
 
 
 	{"dig", "The Dig", GID_DIG, 7, MDT_NONE,
-	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
+	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
 	{"digdemo", "The Dig (Demo)", GID_DIG, 7, MDT_NONE,
-	 GF_DEMO | GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
+	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, "dig"},
 
 #ifndef __PALM_OS__ // these are SVGA games not supported under PalmOS
 	/* Scumm Version 8 */
 	{"comi", "The Curse of Monkey Island", GID_CMI, 8, MDT_NONE,
-	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER},
+	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER, 0},
 	{"comidemo", "The Curse of Monkey Island (Demo)", GID_CMI, 8, MDT_NONE,
-	 GF_DEMO | GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER},
+	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER | GF_DEMO, "comi"},
 
 	 /* Note that both full versions of Humongous games and demos were often released for
 	  * several interpreter versions... */
 /*	 
 	// Humongous Entertainment Scumm Version 7 
 	{"catalog", "Humongous Interactive Catalog", GID_PUTTPUTT, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"farm", "Let's Explore the Farm with Buzzy", GID_PUTTPUTT, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"airport", "Let's Explore the Airport with Buzzy", GID_PUTTPUTT, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"airdemo", "Let's Explore the Airport with Buzzy (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"jungle", "Let's Explore the Jungle with Buzzy", GID_PUTTPUTT, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"puttzoo", "Putt-Putt Saves the Zoo", GID_PUTTPUTT, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"zoodemo", "Putt-Putt Saves the Zoo (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"freddi", "Freddi Fish 1: Missing Kelp Seeds", GID_PUTTPUTT, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"freddemo", "Freddi Fish 1: Missing Kelp Seeds (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80 
 	{"pajama", "Pajama Sam 1: No Need to Hide", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"pjs-demo", "Pajama Sam 1: No Need to Hide (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"ffhsdemo", "Freddi Fish 2: Haunted Schoolbus (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"ff2-demo", "Freddi Fish 2: Haunted Schoolbus (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"freddi2", "Freddi Fish 2: Haunted Schoolbus", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
 	// Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90
 	{"timedemo", "Putt-Putt Travels Through Time (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"f3-mdemo", "Freddi Fish 3: Stolen Conch Shell (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"spyfox", "Spyfox 1: Dry Cereal", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"foxdemo", "Spyfox 1: Dry Cereal (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"spydemo", "Spyfox 1: Dry Cereal (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"kinddemo", "Big Thinkers Kindergarten (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"1grademo", "Big Thinkers First Grade (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
 	// Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95
 	{"pj2demo", "Pajama Sam 2: Thunder and Lightning (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
 	// Humongous Entertainment Scumm Version 9.8 ?  Scummsys.98
 	// these and later games can easily be identified by the .(a) file instead of a .he1
 	{"racedemo", "Putt-Putt Enters the Race (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"puttrace", "Putt-Putt Enters the Race", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"freddi4", "Freddi Fish 4: Hogfish Rustlers of Briny Gulch", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"f4-demo", "Freddi Fish 4: Hogfish Rustlers of Briny Gulch (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"bluesabctimedemo", "Blue's ABC Time Activities (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"bluesabctime", "Blue's ABC Time Activities", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"blue'sbirthday-yellow", "Blue's Birthday Yellow", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
 	// Humongous Entertainment Scumm Version ?  engine moved to c++ 
 	{"pj3-demo", "Pajama Sam 3: You Are What You Eat (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"putttime", "Putt-Putt Travels Through Time", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	// bunch of backyard sports games...
 */
 #endif
-	{NULL, NULL, 0, 0, MDT_NONE, 0}
+	{NULL, NULL, 0, 0, MDT_NONE, 0, 0}
 };
 
 ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs)
@@ -618,7 +619,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// Allow the user to override the game name with a custom string.
 	// This allows some game versions to work which use filenames
 	// differing from the regular version(s) of that game.
-	_gameName = ConfMan.hasKey("basename") ? ConfMan.get("basename") : gs.gameName;
+	_gameName = ConfMan.hasKey("basename") ? ConfMan.get("basename") : gs.baseFilename ? gs.baseFilename : gs.gameName;
 
 	_midiDriver = GameDetector::detectMusicDriver(gs.midi);
 
@@ -987,7 +988,7 @@ void ScummEngine::scummInit() {
 		_switchRoomEffect = 5;
 	}
 	
-	if (!(_features & GF_SMALL_NAMES) && _version != 8)
+	if (_version > 3 && _version < 8)
 		loadCharset(1);
 	
 	if (_features & GF_OLD_BUNDLE)
@@ -2771,19 +2772,12 @@ GameList Engine_SCUMM_detectGames(const FSList &fslist) {
 			strcpy(detectName, "000.LFL");
 			detectName2[0] = '\0';
 		} else {
-			strcpy(detectName, g->gameName);
+			const char *base = g->baseFilename ? g->baseFilename : g->gameName;
+			strcpy(detectName, base);
 			strcat(detectName, ".000");
-			strcpy(detectName2, g->gameName);
+			strcpy(detectName2, base);
 			if (g->features & GF_HUMONGOUS) {
 				strcat(detectName2, ".he0");
-			} else if ((g->id == GID_FT) && (g->features & GF_DEMO)) {
-				// FIXME: Now it is not possible to have target file and
-				// main resource file named differently
-				strcpy(detectName, "ft.000");
-			} else if ((g->id == GID_DIG) && (g->features & GF_DEMO)) {
-				strcpy(detectName, "dig.la0");
-			} else if ((g->id == GID_CMI) && (g->features & GF_DEMO)) {
-				strcpy(detectName, "comi.la0");
 			} else if (g->version >= 7) {
 				strcat(detectName2, ".la0");
 			} else

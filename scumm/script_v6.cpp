@@ -2412,15 +2412,8 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 				if (args[1] == 0) {
 					sp->play((char *)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
 				} else if (_gameId == GID_FT) {
-					int insaneVarNum;
-					int insaneMode;
-
-					if ((_gameId == GID_FT) && (_features & GF_DEMO))
-						insaneVarNum = 232;
-					else
-						insaneVarNum = 233;
-
-					insaneMode = readArray(insaneVarNum,0,0);
+					const int insaneVarNum = (_features & GF_DEMO) ? 232 : 233;
+					const int insaneMode = readArray(insaneVarNum,0,0);
 
 					// FIXME: FT Demo has different Insane
 					debug(1, "FT_INSANE Mode: %d", insaneMode);

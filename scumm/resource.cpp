@@ -88,16 +88,7 @@ void ScummEngine::openRoom(int room) {
 					VAR(VAR_CURRENTDISK) = res.roomno[rtRoom][room];
 				sprintf(buf, "%s.la%d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
 
-				// FIXME: Now it is not possible to have target file and
-				// main resource file named differently
-				if ((_gameId == GID_FT) && (_features & GF_DEMO))
-					sprintf(buf2, "ft.%.3d", room == 0 ? 0 : res.roomno[rtRoom][room]);
-				else if ((_gameId == GID_DIG) && (_features & GF_DEMO))
-					sprintf(buf2, "dig.la%d", room == 0 ? 0 : res.roomno[rtRoom][room]);
-				else if ((_gameId == GID_CMI) && (_features & GF_DEMO))
-					sprintf(buf2, "comi.la%d", room == 0 ? 0 : res.roomno[rtRoom][room]);
-				else
-					sprintf(buf2, "%s.%.3d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
+				sprintf(buf2, "%s.%.3d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
 			} else if (_features & GF_HUMONGOUS)
 				sprintf(buf, "%s.he%.1d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
 			else {
