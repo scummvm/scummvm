@@ -11,6 +11,7 @@ INCS	= scumm/scumm.h common/scummsys.h common/stdafx.h
 
 BACKEND_OBJS = \
 	backends/fs/posix/posix-fs.o \
+	backends/fs/morphos/abox-fs.o \
 	backends/fs/windows/windows-fs.o
 
 COMMON_OBJS = \
