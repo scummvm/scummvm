@@ -160,9 +160,14 @@ bool OSystem_Dreamcast::poll_event(Event *event)
   if (_ms_cur_x<0) _ms_cur_x=0;
   if (_ms_cur_x>319) _ms_cur_x=319;
   if (_ms_cur_y<0) _ms_cur_y=0;
-  if (_ms_cur_y>=_screen_h) _ms_cur_y=_screen_h-1;
-  event->mouse.x = _ms_cur_x;
-  event->mouse.y = _ms_cur_y;
+  if (_ms_cur_y>=(_hires? (_screen_h>>1):_screen_h))
+    _ms_cur_y=(_hires? (_screen_h>>1):_screen_h)-1;
+  event->mouse.x = (_hires? (_ms_cur_x<<1):_ms_cur_x);
+  event->mouse.y = (_hires? (_ms_cur_y<<1):_ms_cur_y);
+  if (_overlay_visible) {
+    event->mouse.x -= _overlay_x;
+    event->mouse.y -= _overlay_y;
+  }
   event->kbd.ascii = event->kbd.keycode = 0;
   if(e<0) {
     event->event_code = -e;

@@ -25,15 +25,16 @@
 #include <common/engine.h>
 #include "dc.h"
 
-#define SCREEN_W 320
-#define SCREEN_H 240
+#define SCREEN_W 640
+#define SCREEN_H 480
 #define MOUSE_W 64
 #define MOUSE_H 64
 
 #define OVL_W 320
-#define OVL_H 240
+#define OVL_H 200
+#define OVL_TXSTRIDE 512
 
-#define TOP_OFFSET (240.0-_screen_h)
+#define TOP_OFFSET (240.0+(_hires? _current_shake_pos-(_screen_h>>1):2*_current_shake_pos-_screen_h))
 
 #define QACR0 (*(volatile unsigned int *)(void *)0xff000038)
 #define QACR1 (*(volatile unsigned int *)(void *)0xff00003c)
@@ -142,12 +143,17 @@ void OSystem_Dreamcast::set_palette(const byte *colors, uint start, uint num)
 
 void OSystem_Dreamcast::init_size(uint w, uint h)
 {
-  assert(w == SCREEN_W && h <= SCREEN_H);
+  assert(w <= SCREEN_W && h <= SCREEN_H);
 
   _overlay_visible = false;
   _overlay_fade = 0.0;
   _screen_w = w;
   _screen_h = h;
+  _hires = w > 400;
+  _overlay_x = (w-OVL_W)/2;
+  _overlay_y = (h-OVL_H)/2;
+  if(_overlay_x<0) _overlay_x = 0;
+  if(_overlay_y<0) _overlay_y = 0;
   ta_sync();
   if(!screen)
     screen = new unsigned char[SCREEN_W*SCREEN_H];
@@ -161,7 +167,7 @@ void OSystem_Dreamcast::init_size(uint w, uint h)
       mouse_tx[i] = ta_txalloc(MOUSE_W*MOUSE_H*2);
   for(int i=0; i<NUM_BUFFERS; i++)
     if(!ovl_tx[i])
-      ovl_tx[i] = ta_txalloc(OVL_W*OVL_H*2);
+      ovl_tx[i] = ta_txalloc(OVL_TXSTRIDE*OVL_H*2);
   _screen_buffer = 0;
   _mouse_buffer = 0;
   _overlay_buffer = 0;
@@ -194,24 +200,24 @@ void OSystem_Dreamcast::move_screen(int dx, int dy, int height) {
 			// move down
 			// copy from bottom to top
 			for (int y = height - 1; y >= dy; y--)
-				copy_rect(screen + SCREEN_W * (y - dy), SCREEN_W, 0, y, SCREEN_W, 1);
+				copy_rect(screen + SCREEN_W * (y - dy), SCREEN_W, 0, y, _screen_w, 1);
 		} else {
 			// move up
 			// copy from top to bottom
 			for (int y = 0; y < height + dx; y++)
-				copy_rect(screen + SCREEN_W * (y - dy), SCREEN_W, 0, y, SCREEN_W, 1);
+				copy_rect(screen + SCREEN_W * (y - dy), SCREEN_W, 0, y, _screen_w, 1);
 		}
 	} else if (dy == 0) {
 		// horizontal movement
 		if (dx > 0) {
 			// move right
 			// copy from right to left
-			for (int x = SCREEN_W - 1; x >= dx; x--)
+			for (int x = _screen_w - 1; x >= dx; x--)
 				copy_rect(screen + x - dx, SCREEN_W, x, 0, 1, height);
 		} else {
 			// move left
 			// copy from left to right
-			for (int x = 0; x < SCREEN_W; x++)
+			for (int x = 0; x < _screen_w; x++)
 				copy_rect(screen + x - dx, SCREEN_W, x, 0, 1, height);
 		}
 	} else {
@@ -233,14 +239,17 @@ bool OSystem_Dreamcast::show_mouse(bool visible)
 
 void OSystem_Dreamcast::set_mouse_pos(int x, int y)
 {
-  _ms_cur_x = x;
-  _ms_cur_y = y;
+  if (_overlay_visible) {
+    x += _overlay_x;
+    y += _overlay_y;
+  }
+  _ms_cur_x = (_hires? (x>>1):x);
+  _ms_cur_y = (_hires? (y>>1):y);
 }
 
 void OSystem_Dreamcast::warp_mouse(int x, int y)
 {
-  _ms_cur_x = x;
-  _ms_cur_y = y;
+  set_mouse_pos(x, y);
 }
 
 void OSystem_Dreamcast::set_mouse_cursor(const byte *buf, uint w, uint h,
@@ -278,7 +287,7 @@ void OSystem_Dreamcast::update_screen(void)
   
     for( int y = 0; y<_screen_h; y++ )
     {
-      texture_memcpy64_pal( dst, src, SCREEN_W>>5, palette );
+      texture_memcpy64_pal( dst, src, _screen_w>>5, palette );
       src += SCREEN_W;
       dst += SCREEN_W;
     }
@@ -294,11 +303,11 @@ void OSystem_Dreamcast::update_screen(void)
     unsigned short *dst = (unsigned short *)ovl_tx[_overlay_buffer];
     unsigned short *src = overlay;
 
-    for( int y = 0; y<_screen_h; y++ )
+    for( int y = 0; y<OVL_H; y++ )
     {
       texture_memcpy64( dst, src, OVL_W>>5 );
       src += OVL_W;
-      dst += OVL_W;
+      dst += OVL_TXSTRIDE;
     }
 
     _overlay_dirty = false;
@@ -312,7 +321,7 @@ void OSystem_Dreamcast::update_screen(void)
   mypoly.mode1 = TA_POLYMODE1_Z_ALWAYS|TA_POLYMODE1_NO_Z_UPDATE;
   mypoly.mode2 =
     TA_POLYMODE2_BLEND_SRC|TA_POLYMODE2_FOG_DISABLED|TA_POLYMODE2_TEXTURE_REPLACE|
-    TA_POLYMODE2_U_SIZE_512|TA_POLYMODE2_V_SIZE_512;
+    TA_POLYMODE2_U_SIZE_1024|TA_POLYMODE2_V_SIZE_1024;
   mypoly.texture = TA_TEXTUREMODE_ARGB1555|TA_TEXTUREMODE_NON_TWIDDLED|
     TA_TEXTUREMODE_STRIDE|TA_TEXTUREMODE_ADDRESS(screen_tx[_screen_buffer]);
 
@@ -330,21 +339,21 @@ void OSystem_Dreamcast::update_screen(void)
   myvertex.v = 0.0;
 
   myvertex.x = 0.0;
-  myvertex.y = _current_shake_pos*2.0+TOP_OFFSET;
+  myvertex.y = TOP_OFFSET;
   ta_commit_list(&myvertex);
 
-  myvertex.x = _screen_w*2.0;
-  myvertex.u = _screen_w*(1/512.0);
+  myvertex.x = (_hires? _screen_w:_screen_w*2.0);
+  myvertex.u = _screen_w*(1/1024.0);
   ta_commit_list(&myvertex);
 
   myvertex.x = 0.0;
-  myvertex.y += _screen_h*2.0;
+  myvertex.y += (_hires? _screen_h:_screen_h*2.0);
   myvertex.u = 0.0;
-  myvertex.v = _screen_h*(1/512.0);
+  myvertex.v = _screen_h*(1/1024.0);
   ta_commit_list(&myvertex);
 
-  myvertex.x = _screen_w*2.0;
-  myvertex.u = _screen_w*(1/512.0);
+  myvertex.x = (_hires? _screen_w:_screen_w*2.0);
+  myvertex.u = _screen_w*(1/1024.0);
   myvertex.cmd |= TA_CMD_VERTEX_EOS;
   ta_commit_list(&myvertex);
 
@@ -370,7 +379,7 @@ void OSystem_Dreamcast::update_screen(void)
       TA_POLYMODE2_FOG_DISABLED|TA_POLYMODE2_TEXTURE_MODULATE_ALPHA|
       TA_POLYMODE2_U_SIZE_512|TA_POLYMODE2_V_SIZE_512;
     mypoly.texture = TA_TEXTUREMODE_RGB565|TA_TEXTUREMODE_NON_TWIDDLED|
-      TA_TEXTUREMODE_STRIDE|TA_TEXTUREMODE_ADDRESS(ovl_tx[_overlay_buffer]);
+      TA_TEXTUREMODE_ADDRESS(ovl_tx[_overlay_buffer]);
     
     mypoly.red = mypoly.green = mypoly.blue = mypoly.alpha = 0.0;
 
@@ -384,22 +393,22 @@ void OSystem_Dreamcast::update_screen(void)
     myvertex.u = 0.0;
     myvertex.v = 0.0;
 
-    myvertex.x = 0.0;
-    myvertex.y = _current_shake_pos*2.0+TOP_OFFSET;
+    myvertex.x = (_hires? _overlay_x:_overlay_x*2.0);
+    myvertex.y = (_hires? _overlay_y:_overlay_y*2.0)+TOP_OFFSET;
     ta_commit_list(&myvertex);
 
-    myvertex.x = _screen_w*2.0;
-    myvertex.u = _screen_w*(1.0/512.0);
+    myvertex.x += (_hires? OVL_W:OVL_W*2.0);
+    myvertex.u = OVL_W*(1.0/512.0);
     ta_commit_list(&myvertex);
 
-    myvertex.x = 0.0;
-    myvertex.y += _screen_h*2.0;
+    myvertex.x -= (_hires? OVL_W:OVL_W*2.0);
+    myvertex.y += (_hires? OVL_H:OVL_H*2.0);
     myvertex.u = 0.0;
-    myvertex.v = _screen_h*(1.0/512.0);
+    myvertex.v = OVL_H*(1.0/512.0);
     ta_commit_list(&myvertex);
     
-    myvertex.x = _screen_w*2.0;
-    myvertex.u = _screen_w*(1.0/512.0);
+    myvertex.x += (_hires? OVL_W:OVL_W*2.0);
+    myvertex.u = OVL_W*(1.0/512.0);
     myvertex.cmd |= TA_CMD_VERTEX_EOS;
     ta_commit_list(&myvertex);
   }
@@ -461,7 +470,7 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
   myvertex.v = 0.0;
 
   myvertex.x = (xdraw-_ms_hotspot_y)*2.0;
-  myvertex.y = (ydraw+_current_shake_pos-_ms_hotspot_x)*2.0 + TOP_OFFSET;
+  myvertex.y = (ydraw-_ms_hotspot_x)*2.0 + TOP_OFFSET;
   ta_commit_list(&myvertex);
 
   myvertex.x += w*2.0;
@@ -497,11 +506,11 @@ void OSystem_Dreamcast::clear_overlay()
   if(!_overlay_visible)
     return;
 
-  unsigned char *src = screen;
+  unsigned char *src = screen+_overlay_x+_overlay_y*SCREEN_W;
   unsigned short *dst = overlay;
 
-  for(int y=0; y<_screen_h; y++) {
-    for(int x=0; x<_screen_w; x++) {
+  for(int y=0; y<OVL_H; y++) {
+    for(int x=0; x<OVL_W; x++) {
       short pix = palette[src[x]];
       dst[x] = ((pix&0x7fe0)<<1)|((pix&0x0200)>>4)|(pix&0x1f);
     }
@@ -513,10 +522,10 @@ void OSystem_Dreamcast::clear_overlay()
 
 void OSystem_Dreamcast::grab_overlay(int16 *buf, int pitch)
 {
-  int h = _screen_h;
+  int h = OVL_H;
   unsigned short *src = overlay;
   do {
-    memcpy(buf, src, _screen_w*sizeof(int16));
+    memcpy(buf, src, OVL_W*sizeof(int16));
     src += OVL_W;
     buf += pitch;
   } while (--h);

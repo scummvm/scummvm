@@ -97,11 +97,13 @@ class OSystem_Dreamcast : public OSystem {
   int _ms_cur_x, _ms_cur_y, _ms_cur_w, _ms_cur_h, _ms_old_x, _ms_old_y;
   int _ms_hotspot_x, _ms_hotspot_y, _ms_visible, _devpoll;
   int _current_shake_pos, _screen_w, _screen_h;
+  int _overlay_x, _overlay_y;
   unsigned char *_ms_buf;
   SoundProc *_sound_proc;
   void *_sound_proc_param;
   bool _overlay_visible, _overlay_dirty, _screen_dirty;
   int _screen_buffer, _overlay_buffer, _mouse_buffer;
+  bool _hires;
   float _overlay_fade;
 
   uint32 _timer_duration, _timer_next_expiry;
