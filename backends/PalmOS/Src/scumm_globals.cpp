@@ -99,7 +99,6 @@ static DmOpenRef GlbOpenInternal(const Char *nameP) {
 void GlbOpen() {
 	gVars->globals[GBVARS_SCUMM] = GlbOpenInternal("Scumm-Globals");
 	gVars->globals[GBVARS_SIMON] = GlbOpenInternal("Simon-Globals");
-	gVars->globals[GBVARS_SKY  ] = GlbOpenInternal("Sky-Globals");
 	gVars->globals[GBVARS_QUEEN] = GlbOpenInternal("Queen-Globals");
 
 	GlbInitAll();
@@ -112,8 +111,6 @@ void GlbClose() {
 		DmCloseDatabase(gVars->globals[GBVARS_SCUMM]);
 	if (gVars->globals[GBVARS_SIMON])
 		DmCloseDatabase(gVars->globals[GBVARS_SIMON]);
-	if (gVars->globals[GBVARS_SKY])
-		DmCloseDatabase(gVars->globals[GBVARS_SKY]);
 	if (gVars->globals[GBVARS_QUEEN])
 		DmCloseDatabase(gVars->globals[GBVARS_QUEEN]);
 }
