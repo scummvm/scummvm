@@ -426,39 +426,14 @@ _hq3x_16:
     mov     ecx,[ebp+Xres]
     shl     ecx,1
     mov     ebx,[ebp+srcPitch]
-    mov     dword[prevline],0
     mov     dword[nextline],ebx
     mov     dword[moduloSrc],ebx
     sub     dword[moduloSrc],ecx
+    neg     ebx
+    mov     dword[prevline],ebx
 .loopy
     mov     ecx,[ebp+Xres]
-    sub     ecx,2                 ; x={Xres-2, Xres-1} are special cases.
     mov     dword[xcounter],ecx
-    ; x=0 - special case
-    mov     ebx,[prevline]
-    movq    mm5,[esi+ebx]
-    movq    mm6,[esi]
-    mov     ebx,[nextline]
-    movq    mm7,[esi+ebx]
-    movd    eax,mm5
-    movzx   edx,ax  
-    mov     [w1],edx
-    mov     [w2],edx
-    shr     eax,16
-    mov     [w3],eax
-    movd    eax,mm6
-    movzx   edx,ax  
-    mov     [w4],edx
-    mov     [w5],edx
-    shr     eax,16
-    mov     [w6],eax
-    movd    eax,mm7
-    movzx   edx,ax  
-    mov     [w7],edx
-    mov     [w8],edx
-    shr     eax,16
-    mov     [w9],eax
-    jmp     .flags
 .loopx
     mov     ebx,[prevline]
     movq    mm5,[esi+ebx-2]
@@ -2397,89 +2372,15 @@ _hq3x_16:
     add     esi,2
     add     edi,6
     dec     dword[xcounter]
-    jle     .xres_2
+    jz      .nexty
     jmp     .loopx
-.xres_2
-    ; x=Xres-2 - special case
-    jl      .xres_1
-    mov     ebx,[prevline]
-    movq    mm5,[esi+ebx-4]
-    movq    mm6,[esi-4]
-    mov     ebx,[nextline]
-    movq    mm7,[esi+ebx-4]
-    psrlq   mm5,16
-    psrlq   mm6,16
-    psrlq   mm7,16
-    movd    eax,mm5
-    movzx   edx,ax
-    mov     [w1],edx
-    shr     eax,16
-    mov     [w2],eax
-    psrlq   mm5,32
-    movd    eax,mm5
-    mov     [w3],eax
-    movd    eax,mm6
-    movzx   edx,ax
-    mov     [w4],edx
-    shr     eax,16
-    mov     [w5],eax
-    psrlq   mm6,32
-    movd    eax,mm6
-    mov     [w6],eax
-    movd    eax,mm7
-    movzx   edx,ax
-    mov     [w7],edx
-    shr     eax,16
-    mov     [w8],eax
-    psrlq   mm7,32
-    movd    eax,mm7
-    mov     [w9],eax
-    jmp     .flags
-.xres_1
-    cmp     dword[xcounter],-1
-    jl      .nexty
-    ; x=Xres-1 - special case
-    mov     ebx,[prevline]
-    movq    mm5,[esi+ebx-6]
-    movq    mm6,[esi-6]
-    mov     ebx,[nextline]
-    movq    mm7,[esi+ebx-6]
-    psrlq   mm5,32
-    psrlq   mm6,32
-    psrlq   mm7,32
-    movd    eax,mm5
-    movzx   edx,ax  
-    mov     [w1],edx
-    shr     eax,16
-    mov     [w2],eax
-    mov     [w3],eax
-    movd    eax,mm6
-    movzx   edx,ax  
-    mov     [w4],edx
-    shr     eax,16
-    mov     [w5],eax
-    mov     [w6],eax
-    movd    eax,mm7
-    movzx   edx,ax  
-    mov     [w7],edx
-    shr     eax,16
-    mov     [w8],eax
-    mov     [w9],eax
-    jmp     .flags
 .nexty
     add     esi,dword[moduloSrc]
     add     edi,dword[moduloDst]
     dec     dword[linesleft]
     jz      .fin
     mov     ebx,[ebp+srcPitch]
-    cmp     dword[linesleft],1
-    je      .lastline
     mov     dword[nextline],ebx
-    neg     ebx
-    mov     dword[prevline],ebx
-    jmp     .loopy
-.lastline
-    mov     dword[nextline],0
     neg     ebx
     mov     dword[prevline],ebx
     jmp     .loopy
