@@ -2537,18 +2537,18 @@ void Scumm::setShake(int mode) {
 
 void Scumm::setupAmigaPalette() {
 	setPalColor( 0,   0,   0,   0);
-	setPalColor( 1,   0,   0, 204);
-	setPalColor( 2,   0, 204,   0);
-	setPalColor( 3,   0, 204, 204);
-	setPalColor( 4, 204,   0,   0);
-	setPalColor( 5, 204,   0, 204);
-	setPalColor( 6, 204, 102,   0);
-	setPalColor( 7, 204, 204, 204);
-	setPalColor( 8, 102, 102, 102);
-	setPalColor( 9, 102, 102, 255);
+	setPalColor( 1,   0,   0, 187);
+	setPalColor( 2,   0, 187,   0);
+	setPalColor( 3,   0, 187, 187);
+	setPalColor( 4, 187,   0,   0);
+	setPalColor( 5, 187,   0, 187);
+	setPalColor( 6, 187, 119,   0);
+	setPalColor( 7, 187, 187, 187);
+	setPalColor( 8, 119, 119, 119);
+	setPalColor( 9, 119, 119, 255);
 	setPalColor(10,  0,  255,   0);
 	setPalColor(11,   0, 255, 255);
-	setPalColor(12, 255, 153, 153);
+	setPalColor(12, 255, 136, 136);
 	setPalColor(13, 255,   0, 255);
 	setPalColor(14, 255, 255,   0);
 	setPalColor(15, 255, 255, 255);
