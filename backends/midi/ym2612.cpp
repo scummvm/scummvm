@@ -280,25 +280,25 @@ void Operator2612::frequency(int freq) {
 	}
 	_attackTime = (int32) value; // 1 秒 == (1 << 12)
 
-	r = _specifiedDecayRate / _owner->_rate;
+	r = _specifiedDecayRate;
 	if (r != 0) {
 		r = r * 2 + (keyscaleTable[freq/262205] >> (3-_keyScale));
 		if (r >= 64)
 			r = 63;
 	}
 	value = (double) powtbl[(r&3) << 7] * (0x10 << (r>>2)) / 31;
-	_decayRate = (int32) value;
+	_decayRate = (int32) value / _owner->_rate;
 
-	r = _specifiedSustainRate / _owner->_rate;
+	r = _specifiedSustainRate;
 	if (r != 0) {
 		r = r * 2 + (keyscaleTable[freq/262205] >> (3-_keyScale));
 		if (r >= 64)
 			r = 63;
 	}
 	value = (double) powtbl[(r&3) << 7] * (0x10 << (r>>2)) / 31;
-	_sustainRate = (int32) value;
+	_sustainRate = (int32) value / _owner->_rate;
 
-	r = _specifiedReleaseRate / _owner->_rate;
+	r = _specifiedReleaseRate;
 	if (r != 0) {
 		r = r * 2 + 1;		// このタイミングで良いのかわからん
 		r = r * 2 + (keyscaleTable[freq/262205] >> (3-_keyScale));
@@ -307,7 +307,7 @@ void Operator2612::frequency(int freq) {
 			r = 63;
 	}
 	value = (double) powtbl[(r&3) << 7] * (0x10 << (r>>2)) / 31;
-	_releaseRate = (int32) value;
+	_releaseRate = (int32) value / _owner->_rate;
 }
 
 int Operator2612::nextTick(uint16 rate, int phaseShift) {
