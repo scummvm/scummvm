@@ -381,8 +381,7 @@ void Blocky16::level2(byte *d_dst) {
 		}
 		tmp2 += _offset1;
 		for (i = 0; i < 4; i++) {
-			if ((tmp2 + (d_dst - _deltaBuf) > _deltaSize))
-				error("Reading %d bytes out-of-bounds in Blocky16::level2()", (tmp2 + (d_dst - _deltaBuf)) - _deltaSize);
+			assert(d_dst + tmp2 < _deltaBufs[1] + _frameSize && d_dst + tmp2 >= _deltaBufs[1]);
 			*(uint32 *)(d_dst +  0) = *(uint32 *)(d_dst + tmp2 +  0);
 			*(uint32 *)(d_dst +  4) = *(uint32 *)(d_dst + tmp2 +  4);
 			d_dst += _d_pitch;
