@@ -32,6 +32,8 @@
 #include "common/util.h"
 
 Sound::Sound(Scumm *parent) {
+	memset(this,0,sizeof(Sound));	// palmos
+	
 	_scumm = parent;
 	_nameBundleMusic = NULL;
 	_musicBundleBufFinal = NULL;
@@ -41,6 +43,10 @@ Sound::Sound(Scumm *parent) {
 }
 
 Sound::~Sound() {
+	if (_sfxFile) {
+		_sfxFile->close();
+		delete _sfxFile;
+	}
 }
 
 void Sound::addSoundToQueue(int sound) {

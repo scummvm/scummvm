@@ -377,6 +377,9 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		_scumm->optionsDialog();
 		break;
 	case kQuitCmd:
+#ifdef __PALM_OS__
+		close();
+#endif
 		_scumm->_system->quit();
 		break;
 	default:
@@ -398,6 +401,7 @@ void SaveLoadDialog::fillList() {
 	char name[32];
 	uint i = _saveMode ? 1 : 0;
 	bool avail_saves[81];
+
 	SaveFileManager *mgr = _scumm->_system->get_savefile_manager();
 
 	_scumm->listSavegames(avail_saves, ARRAYSIZE(avail_saves), mgr);

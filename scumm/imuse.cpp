@@ -154,6 +154,11 @@ struct Player {
 	int fade_vol(byte vol, int time);
 	bool is_fading_out();
 	void sequencer_timer();
+
+	Player() {
+		memset(this,0,sizeof(Player));	// palmos
+	}
+
 };
 
 struct VolumeFader {
@@ -171,6 +176,10 @@ struct VolumeFader {
 	}
 	void on_timer(bool probe);
 	byte fading_to();
+	
+	VolumeFader() {
+		memset(this,0,sizeof(VolumeFader));	//palmos
+	}
 };
 
 struct SustainingNotes {
@@ -255,6 +264,10 @@ struct Part {
 
 	void update_pris();
 	void changed(uint16 what);
+	
+	Part() {
+		memset(this,0,sizeof(Part));
+	}
 };
 
 struct ImTrigger {
@@ -433,6 +446,9 @@ private:
 	void unlock();
 
 public:
+	IMuseInternal() {
+		memset(this,0,sizeof(IMuseInternal));	// palmos
+	}
 	~IMuseInternal();
 
 	Part *parts_ptr() {
@@ -2967,6 +2983,10 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 #ifdef _WIN32_WCE // Don't break savegames made with andys' build
 	if (!ser->isSaving() && ser->checkEOFLoadStream())
 		return 0;
+#elif defined(__PALM_OS__) //	previous PalmOS ver. without imuse implementation or not saved(Oopps...forgot it !), is this really working ? will we have sound with old saved game ?
+	if (!ser->isSaving() && ser->checkEOFLoadStream())
+		return 0;	//palmfixme
+
 #endif
 
 	ser->_ref_me = this;
@@ -3240,6 +3260,8 @@ void Part::set_instrument(uint b) {
 
 IMuseDriver::IMuseDriver (MidiDriver *midi) {
 	int i;
+
+	memset(this,0,sizeof(IMuseDriver));	//palmos
 
 	// Initialize our "last" trackers with impossible
 	// values, so that they don't accidentally match

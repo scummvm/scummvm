@@ -82,7 +82,9 @@ struct TransitionEffect {
 	int8 deltaTable[16];	// four times l / t / r / b
 	byte stripTable[16];	// ditto
 };
-
+#ifdef __PALM_OS__
+static const TransitionEffect *transitionEffects;
+#else
 static const TransitionEffect transitionEffects[4] = {
 	// Iris effect (looks like an opening/closing camera iris)
 	{
@@ -153,7 +155,7 @@ static const TransitionEffect transitionEffects[4] = {
 		}
 	}
 };
-
+#endif
 
 /*
  * Mouse cursor cycle colors (for the default crosshair).
@@ -162,7 +164,7 @@ static const byte default_cursor_colors[4] = {
 	15, 15, 7, 8
 };
 
-static const uint16 default_cursor_images[4][16] = {
+static const uint16 default_cursor_images[5][16] = {
 	/* cross-hair */
 	{ 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0000, 0x7e3f,
 	  0x0000, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0000 },
@@ -175,10 +177,18 @@ static const uint16 default_cursor_images[4][16] = {
 	/* hand */
 	{ 0x1e00, 0x1200, 0x1200, 0x1200, 0x1200, 0x13ff, 0x1249, 0x1249,
 	  0xf249, 0x9001, 0x9001, 0x9001, 0x8001, 0x8001, 0x8001, 0xffff },
+	/* cross-hair zak256 - chrilith palmos */
+/*
+	{ 0x0080, 0x0080, 0x02a0, 0x01c0, 0x0080, 0x1004, 0x0808, 0x7c1f,
+	  0x0808, 0x1004, 0x0080, 0x01c0, 0x02a0, 0x0080, 0x0080, 0x0000 },
+*/
+	{ 0x0080, 0x02a0, 0x01c0, 0x0080, 0x0000, 0x2002, 0x1004, 0x780f,
+	  0x1004, 0x2002, 0x0000, 0x0080, 0x01c0, 0x02a0, 0x0080, 0x0000 },
 };
 
-static const byte default_cursor_hotspots[8] = {
-	8, 7,   8, 7,   1, 1,   5, 0
+static const byte default_cursor_hotspots[10] = {
+	8, 7,   8, 7,   1, 1,   5, 0,
+	8, 7, //zak256
 };
 
 
@@ -859,7 +869,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 	else {
 		numzbuf = _numZBuffer;
 		assert(numzbuf <= (int)ARRAYSIZE(zplane_list));
-	
+		
 		if (_vm->_features & GF_OLD256) {
 			zplane_list[1] = smap_ptr + READ_LE_UINT32(smap_ptr);
 			if (0 == READ_LE_UINT32(zplane_list[1]))
@@ -3450,14 +3460,21 @@ void Scumm::decompressDefaultCursor(int idx) {
 				_grabbedCursor[i * 8 + j] = color;
 		}
 	} else {
+		byte currentCursor = _currentCursor;
+
+#ifdef __PALM_OS__
+		if (_gameId == GID_ZAK256 && currentCursor == 0)
+			currentCursor = 4;
+#endif
+
 		_cursor.width = 16;
 		_cursor.height = 16;
-		_cursor.hotspotX = default_cursor_hotspots[2 * _currentCursor];
-		_cursor.hotspotY = default_cursor_hotspots[2 * _currentCursor + 1];
+		_cursor.hotspotX = default_cursor_hotspots[2 * currentCursor];
+		_cursor.hotspotY = default_cursor_hotspots[2 * currentCursor + 1];
 
 		for (i = 0; i < 16; i++) {
 			for (j = 0; j < 16; j++) {
-				if (default_cursor_images[_currentCursor][i] & (1 << j))
+				if (default_cursor_images[currentCursor][i] & (1 << j))	
 					_grabbedCursor[16 * i + 15 - j] = color;
 			}
 		}
@@ -3804,3 +3821,12 @@ void Scumm::drawBomp(BompDrawData *bd, int decode_mode, int mask) {
 			break;
 	}
 }
+
+
+#ifdef __PALM_OS__
+#include "scumm_globals.h" // init globals
+void Gfx_initGlobals()		{	
+	GSETPTR(transitionEffects, GBVARS_TRANSITIONEFFECTS_INDEX, TransitionEffect, GBVARS_SCUMM)
+}
+void Gfx_releaseGlobals()	{	GRELEASEPTR(GBVARS_TRANSITIONEFFECTS_INDEX, GBVARS_SCUMM)}
+#endif

@@ -73,6 +73,13 @@ bool Scumm::saveState(int slot, bool compat, SaveFileManager *mgr) {
 
 	Serializer ser(out, true, CURRENT_VER);
 	saveOrLoad(&ser, CURRENT_VER);
+#ifdef __PALM_OS__
+	if (_imuse) {	// moved here to prevent stack overflow on palmos
+		_imuse->save_or_load(&ser, this);
+		_imuse->set_master_volume (_sound->_sound_volume_master);
+		_imuse->set_music_volume (_sound->_sound_volume_music);
+	}
+#endif
 
 	delete out;
 	debug(1, "State saved as '%s'", filename);
@@ -142,6 +149,13 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	
 	Serializer ser(out, false, hdr.ver);
 	saveOrLoad(&ser, hdr.ver);
+#ifdef __PALM_OS__
+	if (_imuse) {	// moved here to prevent stack overflow on palmos
+		_imuse->save_or_load(&ser, this);
+		_imuse->set_master_volume (_sound->_sound_volume_master);
+		_imuse->set_music_volume (_sound->_sound_volume_music);
+	}
+#endif
 	delete out;
 
 	sb = _screenB;
@@ -179,7 +193,6 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 
 	CHECK_HEAP debug(1, "State loaded from '%s'", filename);
 
-
 	_sound->pauseSounds(false);
 
 	return true;
@@ -188,7 +201,11 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 void Scumm::makeSavegameName(char *out, int slot, bool compatible) {
 	const char *dir = getSavePath();
 
+#ifndef __PALM_OS__
 	sprintf(out, "%s%s.%c%.2d", dir, _game_name, compatible ? 'c' : 's', slot);
+#else
+	sprintf(out, "%s%s.%s%.2d", dir, _game_name, compatible ? "c" : "s", slot);
+#endif
 }
 
 void Scumm::listSavegames(bool *marks, int num, SaveFileManager *mgr) {
@@ -667,12 +684,14 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 			res.flags[r][s->loadWord()] |= RF_LOCK;
 		}
 	}
-
+	
+#ifndef __PALM_OS__// moved to ::loadState/saveState to prevent stack overflow on palmos
 	if (_imuse) {
 		_imuse->save_or_load(s, this);
 		_imuse->set_master_volume (_sound->_sound_volume_master);
 		_imuse->set_music_volume (_sound->_sound_volume_music);
 	}
+#endif
 }
 
 void Scumm::saveLoadResource(Serializer *ser, int type, int idx) {
@@ -730,7 +749,14 @@ bool Serializer::checkEOFLoadStream() {
 	_saveLoadStream->fseek(-1, SEEK_CUR);
 	return false;
 }
+#elif defined(__PALM_OS__)
+bool Serializer::checkEOFLoadStream() {
 
+	if (_saveLoadStream->feof())
+		return true;
+
+	return false;
+}
 #endif
 
 

@@ -550,7 +550,7 @@ void Scumm::nukeCharset(int i) {
 }
 
 void Scumm::ensureResourceLoaded(int type, int i) {
-	void *addr;
+	void *addr = NULL;
 
 	debug(9, "ensureResourceLoaded(%s,%d)", resTypeFromId(type), i);
 
@@ -561,7 +561,9 @@ void Scumm::ensureResourceLoaded(int type, int i) {
 	if (i == 0)
 		return;
 
-	addr = res.address[type][i];
+	if (i <= res.num[type])
+		addr = res.address[type][i];
+
 	if (addr)
 		return;
 
@@ -1001,7 +1003,7 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		ptr = createResource(type, idx, best_size);
 		_fileHandle.read(ptr, best_size);
 
-		ticks = READ_BE_UINT16(ptr + 9);
+		ticks = READ_BE_UINT16_UNALIGNED(ptr + 9);
 		size = best_size;
 		if (size < 0x98) {
 				// FIXME: OLD256 music file w/o instruments

@@ -289,7 +289,7 @@ void Scumm::executeScript() {
 		}
 		_opcode = fetchScriptByte();
 		vm.slot[_currentScript].didexec = 1;
-		debug(7, " Script %d, offset 0x%x: [%X] %s()",
+		debug(7, "Script %d, offset 0x%x: [%X] %s()",
 				vm.slot[_currentScript].number,
 				_scriptPointer - _scriptOrgPointer,
 				_opcode,

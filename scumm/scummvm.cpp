@@ -49,7 +49,7 @@ extern void drawError(char*);
 
 // Use g_scumm from error() ONLY
 Scumm *g_scumm = 0;
-ScummDebugger g_debugger;
+ScummDebugger *g_debugger;
 
 extern NewGui *g_gui;
 extern uint16 _debugLevel;
@@ -182,8 +182,224 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst), _pauseDialog(0), _optionsDialog(0), _saveLoadDialog(0) {
 	OSystem::Property prop;
 
+	// Init all vars - maybe now we can get rid of our custom new/delete operators?
+	_imuse = NULL;
+	_imuseDigital = NULL;
+	_features = 0;
+	_verbs = NULL;
+	_objs = NULL;
+	_debugger = NULL;
+	_bundle = NULL;
+	_timer =NULL;
+	_sound= NULL;
+	memset(&res, 0, sizeof(res));
+	memset(&vm, 0, sizeof(vm));
+	memset(&mouse, 0, sizeof(mouse));
+	_smushFrameRate = 0;
+	_insaneState = 0;
+	_videoFinished = 0;
+	_smushPlay = 0;
+#ifdef __PALM_OS__
+	_quit = false;
+#endif
+	_newgui = NULL;
+	_pauseDialog = NULL;
+	_optionsDialog = NULL;
+	_saveLoadDialog = NULL;
+	_debuggerDialog = NULL;
+	_fastMode = 0;
+	memset(&_rnd, 0, sizeof(RandomSource));
+	_gameId = 0;
+	memset(&gdi,0,sizeof(Gdi));
+	_actors = NULL;
+	_inventory = NULL;
+	_arrays = NULL;
+	_newNames = NULL;
+	_vars = NULL;
+	_varwatch = 0;
+	_bitVars = NULL;
+	_numVariables = 0;
+	_numBitVariables = 0;
+	_numLocalObjects = 0;
+	_numGlobalObjects = 0;
+	_numArray = 0;
+	_numVerbs = 0;
+	_numFlObject = 0;
+	_numInventory = 0;
+	_numRooms = 0;
+	_numScripts = 0;
+	_numSounds = 0;
+	_numCharsets = 0;
+	_numNewNames = 0;
+	_numGlobalScripts = 0;
+	NUM_ACTORS = 0;
+	_numCostumes = 0;
+	_audioNames = NULL;
+	_numAudioNames = 0;
+	_curActor = 0;
+	_curVerb = 0;
+	_curVerbSlot = 0;
+	_curPalIndex = 0;
+	_currentRoom = 0;
+	_egoPositioned = false;
+	_keyPressed = 0;
+	_lastKeyHit = 0;
+	_mouseButStat = 0;
+	_leftBtnPressed = 0;
+	_rightBtnPressed = 0;
+	_virtual_mouse_x = 0;
+	_virtual_mouse_y = 0;
+	_bootParam = 0;
+	_dumpScripts = false;
+	_debugMode = 0;
+	_soundCardType = 0;
+	_language = 0;
+	_objectOwnerTable = NULL;
+	_objectRoomTable = NULL;
+	_objectStateTable = NULL;
+	memset(&_objectIDMap,0,sizeof(ObjectIDMap));
+	_numObjectsInRoom = 0;
+	_userPut = 0;
+	_resourceHeaderSize = 0;
+	_saveLoadFlag = 0;
+	_saveLoadSlot = 0;
+	_lastSaveTime = 0;
+	_saveLoadCompatible = false;
+	memset(_saveLoadName,0,sizeof(_saveLoadName));
+	_maxHeapThreshold = 0;
+	_minHeapThreshold = 0;
+	memset(_localScriptList,0,sizeof(_localScriptList));
+	_scriptPointer = NULL;
+	_scriptOrgPointer = NULL;
+	_opcode = 0;
+	_numNestedScripts = 0;
+	_currentScript = 0;
+	_curExecScript = 0;
+	_lastCodePtr = NULL;
+	_resultVarNumber = 0;
+	_scummStackPos = 0;
+	memset(_localParamList,0,sizeof(_localParamList));
+	memset(_scummStack,0,sizeof(_scummStack));
+	_keyScriptKey = 0;
+	_keyScriptNo = 0;
+	_encbyte = 0;
+	memset(&_fileHandle,0,sizeof(File));
+	_fileOffset = 0;
+	_exe_name = NULL;
+	_game_name = NULL;
+	_dynamicRoomOffsets = false;
+	memset(_resourceMapper,0,sizeof(_resourceMapper));
+	_allocatedSize = 0;
+	_expire_counter = 0;
+	_lastLoadedRoom = 0;
+	_roomResource = 0;
+	OF_OWNER_ROOM = 0;
+	_verbMouseOver = 0;
+	_inventoryOffset = 0;
+	_classData = NULL;
+	_actorToPrintStrFor = 0;
+	_sentenceNum = 0;
+	memset(_sentence,0,sizeof(_sentence));
+	memset(_string,0,sizeof(_string));
+	_screenB = 0;
+	_screenH = 0;
+	_scrHeight = 0;
+	_scrWidth = 0;
+	_realHeight = 0;
+	_realWidth = 0;
+	memset(virtscr,0,sizeof(virtscr));
+	memset(&camera,0,sizeof(CameraData));
+	memset(_colorCycle,0,sizeof(_colorCycle));
+	_ENCD_offs = 0;
+	_EXCD_offs = 0;
+	_CLUT_offs = 0;
+	_IM00_offs = 0;
+	_PALS_offs = 0;
+	_fullRedraw = false;
+	_BgNeedsRedraw = false;
+	_verbRedraw = false;
+	_screenEffectFlag = false;
+	_completeScreenRedraw = false;
+	memset(&_cursor,0,sizeof(_cursor));
+	memset(_grabbedCursor,0,sizeof(_grabbedCursor));
+	_currentCursor = 0;
+	_newEffect = 0;
+	_switchRoomEffect2 = 0;
+	_switchRoomEffect = 0;
+	_doEffect = false;
+	memset(&_flashlight,0,sizeof(_flashlight));
+	_flashlightXStrips = 0;
+	_flashlightYStrips = 0;
+	_flashlightIsDrawn = false;
+	_bompScaleRight = 0;
+	_bompScaleBottom = 0;
+	_bompScallingXPtr = NULL;
+	_bompScallingYPtr = NULL;
+	_bompMaskPtr = NULL;
+	_bompActorPalletePtr = NULL;
+	_shakeEnabled= false;
+	_shakeFrame = 0;
+	_screenStartStrip = 0;
+	_screenEndStrip = 0;
+	_screenLeft = 0;
+	_screenTop = 0;
+	_blastObjectQueuePos = 0; 
+	memset(_blastObjectQueue,0,sizeof(_blastObjectQueue));
+	_blastTextQueuePos = 0;
+	memset(_blastTextQueue,0,sizeof(_blastTextQueue));
+	_drawObjectQueNr = 0;
+	memset(_drawObjectQue,0,sizeof(_drawObjectQue));
+	_palManipStart = 0;
+	_palManipEnd = 0;
+	_palManipCounter = 0;
+	_palManipPalette = NULL;
+	_palManipIntermediatePal = NULL;
+	memset(gfxUsageBits,0,sizeof(gfxUsageBits));
+	_shadowPalette = NULL;
+	_shadowPaletteSize = 0;
+	memset(_currentPalette,0,sizeof(_currentPalette));
+	memset(_proc_special_palette,0,sizeof(_proc_special_palette));
+	_palDirtyMin = 0;
+	_palDirtyMax = 0;
+	_haveMsg = 0;
+	_useTalkAnims = false;
+	_defaultTalkDelay = 0;
+	_use_adlib = false;
+	tempMusic = 0;
+	_silentDigitalImuse = 0;
+	_noDigitalSamples = 0;
+	_saveSound = 0;
+	current_cd_sound = 0;
+	_maxBoxVertexHeap = 0;
+	_boxPathVertexHeapIndex = 0;
+	_boxMatrixItem = 0;
+	_boxPathVertexHeap = NULL;
+	_boxMatrixPtr1 = NULL;
+	_boxMatrixPtr3 = NULL;
+	memset(_extraBoxFlags,0,sizeof(_extraBoxFlags));
+	memset(_scaleSlots,0,sizeof(_scaleSlots));
+	_charset = NULL;
+	_charsetColor = 0;
+	memset(_charsetColorMap,0,sizeof(_charsetColorMap));
+	memset(_charsetData,0,sizeof(_charsetData));
+	_charsetBufPos = 0;
+	memset(_charsetBuffer,0,sizeof(_charsetBuffer));
+	_noSubtitles = false;
+	_numInMsgStack = 0;
+	_msgPtrToAdd = NULL;
+	_messagePtr = NULL;
+	_talkDelay = 0;
+	_keepText = false;
+	_existLanguageFile = false;
+	_languageBuffer = NULL;
+	_languageIndex = NULL;
+	_languageStrCount = 0;
+	memset(_transText,0,sizeof(_transText));
+
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
+
+	g_debugger = new ScummDebugger;
 
 	_debugMode = detector->_debugMode;
 	_debugLevel = detector->_debugLevel;
@@ -305,6 +521,13 @@ Scumm::~Scumm ()
 	delete _imuseDigital;
 	delete _languageBuffer;
 	delete _audioNames;
+
+	if (_shadowPalette)
+		free(_shadowPalette);
+	
+	destroy();
+
+	delete g_debugger;
 }
 
 void Scumm::scummInit() {
@@ -468,7 +691,6 @@ void Scumm::initScummVars() {
 			_vars[VAR_SOUNDPARAM] = 0;
 		_vars[VAR_SOUNDPARAM2] = 0;
 		_vars[VAR_SOUNDPARAM3] = 0;
-
 		if (_features & GF_AFTER_V6)
 			_vars[VAR_V6_EMSSPACE] = 10000;
 
@@ -478,7 +700,7 @@ void Scumm::initScummVars() {
 		// Setup light
 		_vars[VAR_CURRENT_LIGHTS] = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
 	} else {
-		_vars[VAR_V6_EMSSPACE] = 10000;
+			_vars[VAR_V6_EMSSPACE] = 10000;
 	}
 
 	if (_features & GF_AFTER_V8) {	// Fixme: How do we deal with non-cd installs?
@@ -492,7 +714,11 @@ void Scumm::initScummVars() {
 
 void Scumm::checkRange(int max, int min, int no, const char *str) {
 	if (no < min || no > max) {
+#ifdef __PALM_OS__
+		char buf[256]; // 1024 is too big overflow the stack
+#else
 		char buf[1024];
+#endif
 		sprintf(buf, str, no);
 		error("Value %d is out of bounds (%d,%d) in script %d (%s)", no, min,
 					max, vm.slot[_curExecScript].number, buf);
@@ -610,7 +836,11 @@ load_game:
 			displayError(false, errMsg, filename);
 		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveLoadCompatible) {
 			// Display "Save succesful" message, except for auto saves
+#ifdef __PALM_OS__
+			char buf[256]; // 1024 is too big overflow the stack
+#else
 			char buf[1024];
+#endif
 			sprintf(buf, errMsg, filename);
 			
 			Dialog *dialog = new MessageDialog(_newgui, buf, 1500, false);
@@ -1331,7 +1561,11 @@ void Scumm::optionsDialog() {
 }
 
 char Scumm::displayError(bool showCancel, const char *message, ...) {
+#ifdef __PALM_OS__
+	char buf[256], result; // 1024 is too big overflow the stack
+#else
 	char buf[1024], result;
+#endif
 	va_list va;
 
 	va_start(va, message);
@@ -1446,7 +1680,7 @@ void Scumm::processKbd() {
 
 		_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
 	} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console
-		g_debugger.attach(this, NULL);
+		g_debugger->attach(this, NULL);
 	}
 
 	_mouseButStat = _lastKeyHit;
@@ -1638,14 +1872,13 @@ void Scumm::errorString(const char *buf1, char *buf2) {
 		strcpy(buf2, buf1);
 	}
 
-        // Unless an error -originated- within the debugger, spawn the debugger. Otherwise
-        // exit out normally.
-        if (!_debugger) {
-                printf("%s", buf2);	// (Print it again in-case debugger segfaults)
-                g_debugger.attach(this, buf2);
-                g_debugger.on_frame();
-        }
-
+	// Unless an error -originated- within the debugger, spawn the debugger. Otherwise
+	// exit out normally.
+	if (!_debugger) {
+		printf("%s", buf2);	// (Print it again in-case debugger segfaults)
+		g_debugger->attach(this, buf2);
+		g_debugger->on_frame();
+	}
 }
 
 void Scumm::waitForTimer(int msec_delay) {
@@ -1693,7 +1926,7 @@ void Scumm::parseEvents() {
 				else if (event.kbd.keycode == 'g')
 					_fastMode ^= 2;
 				else if ((event.kbd.keycode == 'd') && (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0)))
-					g_debugger.attach(this, NULL);
+					g_debugger->attach(this, NULL);
 				else if (event.kbd.keycode == 's')
 					resourceStats();
 				else
@@ -1716,7 +1949,7 @@ void Scumm::parseEvents() {
 
 		case OSystem::EVENT_LBUTTONDOWN:
 			_leftBtnPressed |= msClicked|msDown;
-#ifdef _WIN32_WCE
+#if defined(_WIN32_WCE) || defined(__PALM_OS__)
 			mouse.x = event.mouse.x;
 			mouse.y = event.mouse.y;
 #endif
@@ -1724,7 +1957,7 @@ void Scumm::parseEvents() {
 
 		case OSystem::EVENT_RBUTTONDOWN:
 			_rightBtnPressed |= msClicked|msDown;
-#ifdef _WIN32_WCE
+#if defined(_WIN32_WCE) || defined(__PALM_OS__)
 			mouse.x = event.mouse.x;
 			mouse.y = event.mouse.y;
 #endif
@@ -1798,6 +2031,10 @@ void Scumm::mainRun() {
 	int new_time;
 
 	for(;;) {
+#ifdef __PALM_OS__
+	if (_quit)	// palmfixme : need to check for autosave on exit
+		return;
+#endif
 		updatePalette();
 		
 		_system->update_screen();		
@@ -1813,12 +2050,20 @@ void Scumm::mainRun() {
 void Scumm::launch() {
 	gdi._vm = this;
 
+#ifdef __PALM_OS__
+	// PALMOS : check if this value is correct with palm,
+	// old value 450000 doesn't work anymore (return _fntPtr = NULL in zak256, not tested with others)
+	// 1500000 is too big and make ScummVM crashes : MemMove to NULL or immediate exit if try to allocate
+	// memory with new operator
+	_maxHeapThreshold = 550000;
+#else
 	// Since the new costumes are very big, we increase the heap limit, to avoid having
 	// to constantly reload stuff from the data files.
 	if (_features & GF_NEW_COSTUMES)
 		_maxHeapThreshold = 1500000;
 	else
 		_maxHeapThreshold = 450000;
+#endif
 	_minHeapThreshold = 400000;
 
 	_verbRedraw = false;

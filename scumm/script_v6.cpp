@@ -425,15 +425,14 @@ void Scumm::writeArray(int array, int idx, int base, int value) {
 	} else if (_features & GF_AFTER_V8) {
 #if defined(SCUMM_NEED_ALIGNMENT)
 		uint32 tmp = TO_LE_32(value);
-		memcpy(&((uint32*)ah->data)[base], &tmp, 4);
+		memcpy(&((uint32 *)ah->data)[base], &tmp, 4);
 #else
 		((uint32 *)ah->data)[base] = TO_LE_32(value);
 #endif
-		
 	} else {
 #if defined(SCUMM_NEED_ALIGNMENT)
 		uint16 tmp = TO_LE_16(value);
-		memcpy(&((uint16*)ah->data)[base], &tmp, 2);
+		memcpy(&((uint16 *)ah->data)[base], &tmp, 2);
 #else
 		((uint16 *)ah->data)[base] = TO_LE_16(value);
 #endif
@@ -2281,7 +2280,8 @@ void Scumm_v6::o6_dim2() {
 }
 
 void Scumm_v6::o6_abs() {
-	push(abs(pop()));
+	int a = pop();	// palmos: prevent multi pop if we use an abs function defined as : #define abs(a) ((a) < 0 ? -(a) : (a))
+	push(abs(a));
 }
 
 void Scumm_v6::o6_distObjectObject() {

@@ -72,6 +72,15 @@ struct imuse_music_map {
 	int16 unk4;
 };
 
+#ifdef __PALM_OS__
+// these games are currently not supported under PalmOS so we can save this space
+// to prevent full data segement
+static const imuse_music_map *_digStateMusicMap;
+static const imuse_music_table *_digStateMusicTable;
+static const imuse_music_table *_comiStateMusicTable;
+static const imuse_music_table *_comiSeqMusicTable;
+static const imuse_music_table *_digSeqMusicTable;
+#else
 static const imuse_music_map _digStateMusicMap[] = {
 	{0,		0,	0,	0,	0,	0	},
 	{1,		0,	0,	0,	0,	0	},
@@ -516,6 +525,7 @@ static const imuse_music_table _digSeqMusicTable[] = {
 	{2450,	"seqFinale9a",					"Seq (finale 9a)",				"SE313B~5.IMU",	4},
 	{-1,		"",											"",												"",							0},
 };
+#endif
 
 struct imuse_ft_music_table {
 	int16 index;
@@ -525,6 +535,12 @@ struct imuse_ft_music_table {
 	char name[30];
 };
 
+#ifdef __PALM_OS__
+// these games are currently not supported under PalmOS so we can save this space
+// to prevent full data segement
+static const imuse_ft_music_table *_ftStateMusicTable;
+static const imuse_ft_music_table *_ftSeqMusicTable;
+#else
 static const imuse_ft_music_table _ftStateMusicTable[] = {
 	{0,		"",					0,	0,		"STATE_NULL"					},
 	{1,		"",					4,	127,	"stateKstandOutside"	},
@@ -634,6 +650,7 @@ static const imuse_ft_music_table _ftSeqMusicTable[] = {
 	{52,	"",					0,	0,		"seqCredits"					},
 	{-1,	"",					0,	0,		""										},
 };
+#endif
 
 void IMuseDigital::handler() {
 	uint32 l = 0, i = 0;
@@ -813,16 +830,16 @@ void IMuseDigital::startSound(int sound) {
 			} else if (READ_UINT32_UNALIGNED(ptr) == MKID('iMUS')) {
 				ptr += 16;
 				for (;;) {
-					tag = READ_BE_UINT32(ptr); ptr += 4;
+					tag = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
 					switch(tag) {
 						case MKID_BE('FRMT'):
 							ptr += 12;
-							_channel[l]._bits = READ_BE_UINT32(ptr); ptr += 4;
-							_channel[l]._freq = READ_BE_UINT32(ptr); ptr += 4;
-							_channel[l]._channels = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._bits = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
+							_channel[l]._freq = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
+							_channel[l]._channels = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
 						break;
 						case MKID_BE('TEXT'):
-							size = READ_BE_UINT32(ptr); ptr += size + 4;
+							size = READ_BE_UINT32_UNALIGNED(ptr); ptr += size + 4;
 						break;
 						case MKID_BE('REGN'):
 							ptr += 4;
@@ -831,13 +848,13 @@ void IMuseDigital::startSound(int sound) {
 								ptr += 8;
 								break;
 							}
-							_channel[l]._region[_channel[l]._numRegions]._offset = READ_BE_UINT32(ptr); ptr += 4;
-							_channel[l]._region[_channel[l]._numRegions]._length = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._region[_channel[l]._numRegions]._offset = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
+							_channel[l]._region[_channel[l]._numRegions]._length = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
 							_channel[l]._numRegions++;
 						break;
 						case MKID_BE('STOP'):
 							ptr += 4;
-							_channel[l]._offsetStop = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._offsetStop = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
 						break;
 						case MKID_BE('JUMP'):
 							ptr += 4;
@@ -846,15 +863,15 @@ void IMuseDigital::startSound(int sound) {
 								ptr += 16;
 								break;
 							}
-							_channel[l]._jump[_channel[l]._numJumps]._offset = READ_BE_UINT32(ptr); ptr += 4;
-							_channel[l]._jump[_channel[l]._numJumps]._dest = READ_BE_UINT32(ptr); ptr += 4;
-							_channel[l]._jump[_channel[l]._numJumps]._id = READ_BE_UINT32(ptr); ptr += 4;
-							_channel[l]._jump[_channel[l]._numJumps]._numLoops = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._jump[_channel[l]._numJumps]._offset = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
+							_channel[l]._jump[_channel[l]._numJumps]._dest = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
+							_channel[l]._jump[_channel[l]._numJumps]._id = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
+							_channel[l]._jump[_channel[l]._numJumps]._numLoops = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
 							_channel[l]._isJump = true;
 							_channel[l]._numJumps++;
 						break;
 						case MKID_BE('DATA'):
-							size = READ_BE_UINT32(ptr); ptr += 4;
+							size = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
 						break;
 						default:
 							error("IMuseDigital::startSound(%d) Unknown sfx header %c%c%c%c", tag>>24, tag>>16, tag>>8, tag);
@@ -1170,3 +1187,27 @@ int IMuseDigital::getSoundStatus(int sound) {
 
 	return 0;
 }
+
+
+
+#ifdef __PALM_OS__
+#include "scumm_globals.h" // init globals
+void IMuseDigital_initGlobals() {
+	GSETPTR(_digStateMusicMap,		GBVARS_DIGSTATEMUSICMAP_INDEX,		imuse_music_map		, GBVARS_SCUMM)
+	GSETPTR(_digStateMusicTable,	GBVARS_DIGSTATEMUSICTABLE_INDEX,	imuse_music_table	, GBVARS_SCUMM)
+	GSETPTR(_comiStateMusicTable,	GBVARS_COMISTATEMUSICTABLE_INDEX,	imuse_music_table	, GBVARS_SCUMM)
+	GSETPTR(_comiSeqMusicTable,		GBVARS_COMISEQMUSICTABLE_INDEX,		imuse_music_table	, GBVARS_SCUMM)
+	GSETPTR(_digSeqMusicTable,		GBVARS_DIGSEQMUSICTABLE_INDEX,		imuse_music_table	, GBVARS_SCUMM)
+	GSETPTR(_ftStateMusicTable,		GBVARS_FTSTATEMUSICTABLE_INDEX,		imuse_ft_music_table, GBVARS_SCUMM)
+	GSETPTR(_ftSeqMusicTable,		GBVARS_FTSEQMUSICTABLE_INDEX,		imuse_ft_music_table, GBVARS_SCUMM)
+}
+void IMuseDigital_releaseGlobals() {
+	GRELEASEPTR(GBVARS_DIGSTATEMUSICMAP_INDEX		, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_DIGSTATEMUSICTABLE_INDEX		, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_COMISTATEMUSICTABLE_INDEX	, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_COMISEQMUSICTABLE_INDEX		, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_DIGSEQMUSICTABLE_INDEX		, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_FTSTATEMUSICTABLE_INDEX		, GBVARS_SCUMM)
+	GRELEASEPTR(GBVARS_FTSEQMUSICTABLE_INDEX		, GBVARS_SCUMM)
+}
+#endif

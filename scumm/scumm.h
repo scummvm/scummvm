@@ -350,6 +350,9 @@ public:
 	void shutDown(int i);
 	void setOptions(void);
 
+#ifdef __PALM_OS__
+	bool _quit;		// try to exit properly
+#endif
 	// GUI
 	NewGui *_newgui;
 
@@ -599,7 +602,6 @@ protected:
 	bool isResourceInUse(int type, int i);
 	void initRoomSubBlocks();
 	void clearRoomObjects();
-
 	void loadRoomObjects();
 	void loadRoomObjectsSmall();
 	void loadRoomObjectsOldBundle();
