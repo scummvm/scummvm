@@ -82,17 +82,17 @@ public:
 	~IMuseDigital();
 
 	void startVoice(int soundId, AudioStream *input)
-		{ debug(0, "startVoiceStream(%d)", soundId); startSound(soundId, NULL, 0, IMUSE_VOICE, input); }
+		{ debug(5, "startVoiceStream(%d)", soundId); startSound(soundId, NULL, 0, IMUSE_VOICE, input); }
 	void startVoice(int soundId)
-		{ debug(0, "startVoiceBundle(%d)", soundId); startSound(soundId, NULL, IMUSE_BUNDLE, IMUSE_VOICE, NULL); }
+		{ debug(5, "startVoiceBundle(%d)", soundId); startSound(soundId, NULL, IMUSE_BUNDLE, IMUSE_VOICE, NULL); }
 	void startVoice(int soundId, char *soundName)
-		{ debug(0, "startVoiceBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOICE, NULL); }
+		{ debug(5, "startVoiceBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOICE, NULL); }
 	void startMusic(int soundId)
-		{ debug(0, "startMusicResource(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_MUSIC, NULL); }
+		{ debug(5, "startMusicResource(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_MUSIC, NULL); }
 	void startMusic(char *soundName, int soundId)
-		{ debug(0, "startMusicBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_MUSIC, NULL); }
+		{ debug(5, "startMusicBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_MUSIC, NULL); }
 	void startSfx(int soundId)
-		{ debug(0, "startSfx(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_SFX, NULL); }
+		{ debug(5, "startSfx(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_SFX, NULL); }
 	void startSound(int soundId)
 		{ error("MusicEngine::startSound() Should be never called"); }
 
