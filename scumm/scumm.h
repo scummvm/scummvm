@@ -1210,6 +1210,8 @@ int toSimpleDir(int dirtype, int dir);
 
 void checkRange(int max, int min, int no, const char *str);
 
+const char *tag2str(uint32 tag);
+
 } // End of namespace Scumm
 
 #endif

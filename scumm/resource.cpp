@@ -426,11 +426,7 @@ void ScummEngine::readIndexFile() {
 			break;
 
 		default:
-			error("Bad ID %c%c%c%c found in directory!",
-						(byte)blocktype,
-						(byte)(blocktype >> 8),
-						(byte)(blocktype >> 16),
-						(byte)(blocktype >> 24));
+			error("Bad ID '%s' found in directory!", tag2str(blocktype));
 			return;
 		}
 	}
@@ -712,10 +708,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 	basetag = fileReadDword();
 	total_size = _fileHandle.readUint32BE();
 
-	debug(8, "  basetag: %c%c%c%c, total_size=%d",
-				(char)((basetag >> 24) & 0xff),
-				(char)((basetag >> 16) & 0xff),
-				(char)((basetag >> 8) & 0xff), (char)(basetag & 0xff), total_size);
+	debug(8, "  basetag: %s, total_size=%d", tag2str(TO_BE_32(basetag)), total_size);
 
 	if (basetag == MKID('MIDI') || basetag == MKID('iMUS')) {
 		if (_midiDriver != MD_PCSPK && _midiDriver != MD_PCJR) {
@@ -768,9 +761,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 			if ((_midiDriver == MD_PCSPK || _midiDriver == MD_PCJR) && pri != 11)
 				pri = -1;
 
-			debug(8, "    tag: %c%c%c%c, total_size=%d, pri=%d",
-						(char)((tag >> 24) & 0xff),
-						(char)((tag >> 16) & 0xff), (char)((tag >> 8) & 0xff), (char)(tag & 0xff), size, pri);
+			debug(8, "    tag: %s, total_size=%d, pri=%d", tag2str(TO_BE_32(tag)), size, pri);
 
 
 			if (pri > best_pri) {
@@ -1034,11 +1025,7 @@ static inline byte Mac0ToGMInstrument(uint32 type, int &transpose) {
 	case MKID('BONG'): return 115;
 	case MKID('BASS'): transpose = -24; return 35;
 	default:
-		error("Unknown Mac0 instrument %c%c%c%c found",
-					(byte)type,
-					(byte)(type >> 8),
-					(byte)(type >> 16),
-					(byte)(type >> 24));
+		error("Unknown Mac0 instrument %s found", tag2str(type));
 	}
 }
 
@@ -2311,8 +2298,7 @@ const byte *findResource(uint32 tag, const byte *searchin) {
 
 		size = READ_BE_UINT32(searchin + 4);
 		if ((int32)size <= 0) {
-			error("(%c%c%c%c) Not found in %d... illegal block len %d",
-						tag & 0xFF, (tag >> 8) & 0xFF, (tag >> 16) & 0xFF, (tag >> 24) & 0xFF, 0, size);
+			error("(%s) Not found in %d... illegal block len %d", tag2str(tag), 0, size);
 			return NULL;
 		}
 
@@ -2344,8 +2330,7 @@ const byte *findResourceSmall(uint32 tag, const byte *searchin) {
 			return searchin;
 
 		if ((int32)size <= 0) {
-			error("(%c%c%c%c) Not found in %d... illegal block len %d",
-						tag & 0xFF, (tag >> 8) & 0xFF, (tag >> 16) & 0xFF, (tag >> 24) & 0xFF, 0, size);
+			error("(%s) Not found in %d... illegal block len %d", tag2str(tag), 0, size);
 			return NULL;
 		}
 
