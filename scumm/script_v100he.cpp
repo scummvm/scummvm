@@ -2384,7 +2384,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 		spriteId = pop();
 		if (spriteId) {
 			if (flags)
-				push(spriteInfoGet_classFlags2(spriteId, flags, args));
+				push(spriteInfoGet_classFlagsAnd(spriteId, flags, args));
 			else
 				push(spriteInfoGet_classFlags(spriteId, -1));
 		} else {

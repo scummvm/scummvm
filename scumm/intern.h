@@ -877,7 +877,7 @@ protected:
 	
 	int spriteInfoGet_case15(int a, int b, int c, int d, int num, int *args);
 	int spriteInfoGet_classFlags(int spriteId, int num);
-	int spriteInfoGet_classFlags2(int spriteId, int num, int *args);
+	int spriteInfoGet_classFlagsAnd(int spriteId, int num, int *args);
 	int spriteInfoGet_flags_1(int spriteId);
 	int spriteInfoGet_flags_2(int spriteId);
 	int spriteInfoGet_flags_3(int spriteId);
