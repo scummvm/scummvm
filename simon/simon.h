@@ -436,8 +436,8 @@ public:
 
 	bool o_unk_23(uint a);
 
-	void o_unk_99_simon1(uint a);
-	void o_unk_99_simon2(uint a, uint b);
+	void o_kill_thread_simon1(uint a);
+	void o_kill_thread_simon2(uint a, uint b);
 
 	void o_vga_reset();
 	void o_unk_101();
