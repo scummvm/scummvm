@@ -300,8 +300,6 @@ int Scumm::scummLoop(int delta)
 		charset._hasMask = false;
 		redrawVerbs();
 		_fullRedraw = true;
-		for (i = 0, a = getFirstActor(); i < NUM_ACTORS; i++, a++)
-			a->needRedraw = 1;
 	}
 
 	runAllScripts();
@@ -422,7 +420,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 	clearDrawObjectQueue();
 
 	_vars[VAR_ROOM] = room;
-	_fullRedraw = 1;
+	_fullRedraw = true;
 
 	increaseResourceCounter();
 
