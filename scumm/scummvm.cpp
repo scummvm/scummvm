@@ -85,12 +85,8 @@ extern uint16 _debugLevel;
 
 static const VersionSettings scumm_settings[] = {
 	/* Scumm Version 1 */
-	{"maniac64",      "Maniac Mansion (C64)", GID_MANIAC64, 1, 0, 0,
-	 GF_AFTER_V1 | GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
-	{"zak64",         "Zak McKracken and the Alien Mindbenders (C64)", GID_ZAK64, 1, 0, 0,
-	 GF_AFTER_V1 | GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
-
 	/* Scumm Version 2 */
+
 	{"maniac", "Maniac Mansion", GID_MANIAC, 2, 0, 0,
 	 GF_AFTER_V2 | GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "00.LFL"},
 	{"zak",         "Zak McKracken and the Alien Mindbenders",      GID_ZAK,     2, 0, 0,
@@ -2440,7 +2436,7 @@ void Scumm::launch() {
 		_numActors = 80;
 	else if ((_features & GF_AFTER_V7) || (_gameId == GID_SAMNMAX))
 		_numActors = 30;
-	else if (_gameId == GID_MANIAC || _gameId == GID_MANIAC64)
+	else if (_gameId == GID_MANIAC)
 		_numActors = 25;
 	else
 		_numActors = 13;

@@ -182,8 +182,6 @@ enum ScummGameId {
 	GID_CMI,
 	GID_MANIAC,
 	GID_ZAK,
-	GID_MANIAC64,
-	GID_ZAK64,
 	GID_PUTTDEMO
 };
 

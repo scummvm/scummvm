@@ -27,20 +27,18 @@
 void Scumm_v2::readClassicIndexFile() {
 	int i;
 
-	if (_gameId == GID_MANIAC64) {
+	if (_gameId == GID_MANIAC) {
 		_numGlobalObjects = 800;
 		_numRooms = 55;
 		_numCostumes = 35;
 		_numScripts = 200;
 		_numSounds = 100;
-	} else if (_gameId == GID_ZAK64) {
+	} else if (_gameId == GID_ZAK) {
 		_numGlobalObjects = 775;
 		_numRooms = 61;
 		_numCostumes = 37;
 		_numScripts = 155;
 		_numSounds = 120;
-	} else {
-		error("Scumm_v1::readEchancedIndexFile(). Unknown game variant.");
 	}
 
 	_fileHandle.seek(0, SEEK_SET);
@@ -148,6 +146,7 @@ void Scumm_v2::readIndexFile() {
 			break;
 		case 0x0A31:
 			warning("Classic V1 game detected");
+			setFeatures(_features | GF_AFTER_V1);
 			readClassicIndexFile();
 			break;
 		default:
