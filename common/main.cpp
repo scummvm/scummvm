@@ -151,13 +151,44 @@ int main(int argc, char *argv[])
 	// TODO - move this up for the launcher dialog?
 	g_gui = new NewGui(system);
 
-#if 0
-	// FIXME - we need to be able to do an init_size() call on the system object here
-	// so that we can display stuff. But right now, init_size() can't safely be called
-	// multiple times (at least not for the SDL backend). So either we have to modify
-	// all the backends to allow for this, or come up with some other solution.
-	const char *message = "This dialog is shown before the Engine is even created!\n"
-						  "Wow! Ain't e cool?\n";
+#if 1
+	// FIXME - we need to call init_size() here so that we can display for example
+	// the launcher dialog. But the Engine object will also call it again (possibly
+	// with a different widht/height!9 However, this method is not for all OSystem 
+	// implementations reentrant (it is so now for the SDL backend). Thus we need
+	// to fix all backends to support it, if they don't already.
+	system->init_size(320, 200);
+	
+	// FIXME - mouse cursors are currently always set via 8 bit data.
+	// Thus for now we need to setup a dummy palette. On the long run, we might
+	// want to add a set_mouse_cursor_overlay() method to OSystem, which would serve
+	// two purposes:
+	// 1) allow for 16 bit mouse cursors in overlay mode
+	// 2) no need to backup & restore the mouse cursor before/after the overlay is shown
+	const byte dummy_palette[] = {
+		0, 0, 0, 0, 
+		0, 0, 171, 0, 
+		0, 171, 0, 0, 
+		0, 171, 171, 0, 
+		171, 0, 0, 0, 
+		171, 0, 171, 0, 
+		171, 87, 0, 0, 
+		171, 171, 171, 0, 
+		87, 87, 87, 0, 
+		87, 87, 255, 0, 
+		87, 255, 87, 0, 
+		87, 255, 255, 0, 
+		255, 87, 87, 0, 
+		255, 87, 255, 0, 
+		255, 255, 87, 0, 
+		255, 255, 255, 0, 
+	};
+
+	system->set_palette(dummy_palette, 0, 16);
+
+	const char *message = "This dialog is shown before the\n"
+						  "Engine obejct is even created.\n"
+						  "Wow! Ain't we cool?\n";
 	Dialog *dlg = new MessageDialog(g_gui, message);
 	dlg->open();
 	g_gui->runLoop();

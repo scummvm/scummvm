@@ -191,6 +191,8 @@ void NewGui::runLoop()
 		// Delay for a moment
 		_system->delay_msecs(10);
 	}
+	
+	restoreState();
 }
 
 #pragma mark -
@@ -202,14 +204,10 @@ void NewGui::saveState()
 	
 	_system->show_overlay();
 	// TODO - add getHeight & getWidth methods to OSystem.
-	// Note that this alone is not a sufficient solution, as in the future the screen size
-	// might change. E.g. we start up in 320x200 mode but then go on playing Zak256
-	// which makes us switch to 320x240, or even CMI which uses 640x480...
-	// FIXME - for now just use a dirty HACK
 	_screen = new int16[320 * 240];
 	_screen_pitch = 320;
-//	_screen = new int16[_s->_realWidth * _s->_realHeight];
-//	_screen_pitch = _s->_realWidth;
+//	_screen = new int16[_system->get_width() * _system->get_height()];
+//	_screen_pitch = _system->get_width();
 	_system->grab_overlay(_screen, _screen_pitch);
 }
 
@@ -222,6 +220,8 @@ void NewGui::restoreState()
 		delete _screen;
 		_screen = 0;
 	}
+	
+	_system->update_screen();		
 }
 
 void NewGui::openDialog(Dialog *dialog)
@@ -238,10 +238,7 @@ void NewGui::closeTopDialog()
 	
 	// Remove the dialog from the stack
 	_dialogStack.pop();
-	if (_dialogStack.empty())
-		restoreState();
-	else
-		_need_redraw = true;
+	_need_redraw = true;
 }
 
 
