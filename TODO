@@ -335,8 +335,9 @@ SAGA
  * Optimize screen output. Now we blit whole screen for each frame.
  * When using the original XMIDI music resources, some songs play at the wrong
    speed. The worst example I've heard of this is the "Elk Fanfare" during the
-   intro. My guess is that it's one of those meta events we're not handling
-   that's supposed to set the tempo.
+   intro. It could be the meta events we don't handle, but at least the tempo
+   event doesn't seem to make any difference. Maybe something in the data
+   header instead...?
 
 - plans -
  * Implement unimplemented/proofread unchecked opcodes
