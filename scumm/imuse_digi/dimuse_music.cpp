@@ -30,6 +30,22 @@ namespace Scumm {
 #define COMI_STATE_OFFSET 3
 #define COMI_SEQ_OFFSET (COMI_STATE_OFFSET + 94)
 
+void IMuseDigital::refreshScripts() {
+	bool found = false;
+	{
+		Common::StackLock lock(_mutex, "IMuseDigital::refreshScripts()");
+		for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+			if ((_track[l].used) && (_track[l].volGroupId == IMUSE_VOLGRP_MUSIC) && (!_track[l].volFadeUsed)) {
+				found = true;
+			}
+		}
+	}
+
+	if ((!found) && (_curMusicSeq != 0)) {
+		parseScriptCmds(0x1001, 0, 0, 0, 0, 0, 0, 0);
+	}
+}
+
 void IMuseDigital::setDigMusicState(int stateId) {
 	int l, num = -1;
 

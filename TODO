@@ -255,9 +255,6 @@ SCUMM
   on small devices 
 * Fix codec44 for nut fonts
 * iMUSE Digital:
-  - Cleanup startSound code
-  - Make struct sync, jump, regions use dynamic memory usage
-  - Add pool method for FT voc samples from resource
   - Fix music code
   - Recheck 'next region' code
   - Implement pool method data transfer between imuse and sound mixer

@@ -59,7 +59,7 @@ private:
 		int32 dataOffset;
 		int curRegion;
 		int curHookId;
-		int soundGroup;
+		int volGroupId;
 		int iteration;
 		int mod;
 		int32 pullSize;
@@ -93,7 +93,8 @@ private:
 	static void timer_handler(void *refConf);
 	void callback();
 	void switchToNextRegion(int track);
-	void startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input, int hookId, int volume, int priority);
+	void allocSlot(int priority);
+	void startSound(int soundId, const char *soundName, int soundType, int volGroupId, AudioStream *input, int hookId, int volume, int priority);
 
 	int32 getPosInMs(int soundId);
 	void getLipSync(int soundId, int syncId, int32 msPos, int32 &width, int32 &height);
@@ -118,24 +119,19 @@ public:
 	IMuseDigital(ScummEngine *scumm);
 	virtual ~IMuseDigital();
 
-	void startVoice(int soundId, AudioStream *input)
-		{ debug(5, "startVoiceStream(%d)", soundId); startSound(soundId, NULL, 0, IMUSE_VOICE, input, 0, 127, 127); }
-	void startVoice(int soundId, const char *soundName)
-		{ debug(5, "startVoiceBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOICE, NULL, 0, 127, 127); }
-	void startMusic(int soundId, int volume)
-		{ debug(5, "startMusicResource(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_MUSIC, NULL, 0, volume, 126); }
-	void startMusic(const char *soundName, int soundId, int hookId, int volume)
-		{ debug(5, "startMusicBundle(%s)", soundName); startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_MUSIC, NULL, hookId, volume, 126); }
-	void startSfx(int soundId, int priority)
-		{ debug(5, "startSfx(%d)", soundId); startSound(soundId, NULL, IMUSE_RESOURCE, IMUSE_SFX, NULL, 0, 127, priority); }
+	void startVoice(int soundId, AudioStream *input);
+	void startVoice(int soundId, const char *soundName);
+	void startMusic(int soundId, int volume);
+	void startMusic(const char *soundName, int soundId, int hookId, int volume);
+	void startSfx(int soundId, int priority);
 	void startSound(int soundId)
 		{ error("MusicEngine::startSound() Should be never called"); }
 
 	void resetState();
 
-	void setGroupVoiceVolume(int volume);
-	void setGroupSfxVolume(int volume);
-	void setGroupMusicVolume(int volume);
+	void setGroupVoiceVolume(int volume) { _volVoice = volume; }
+	void setGroupSfxVolume(int volume) { _volSfx = volume; }
+	void setGroupMusicVolume(int volume) { _volMusic = volume; }
 	int getGroupVoiceVolume() { return _volVoice; }
 	int getGroupSfxVolume() { return _volSfx; }
 	int getGroupMusicVolume() { return _volMusic; }
@@ -144,7 +140,7 @@ public:
 	void setVolume(int soundId, int volume);
 	void setPan(int soundId, int pan);
 	void setFade(int soundId, int destVolume, int delay60HzTicks);
-	void selectGroupVolume(int soundId, int groupId);
+	void selectVolumeGroup(int soundId, int volGroupId);
 	void setMasterVolume(int vol) {}
 	void stopSound(int soundId);
 	void stopAllSounds() { stopAllSounds(false); }

@@ -176,6 +176,9 @@
 				RelativePath="..\..\scumm\imuse_digi\dimuse_music.cpp">
 			</File>
 			<File
+				RelativePath="..\..\scumm\imuse_digi\dimuse_script.cpp">
+			</File>
+			<File
 				RelativePath="..\..\scumm\imuse_digi\dimuse_sndmgr.cpp">
 			</File>
 			<File
@@ -183,6 +186,9 @@
 			</File>
 			<File
 				RelativePath="..\..\scumm\imuse_digi\dimuse_tables.cpp">
+			</File>
+			<File
+				RelativePath="..\..\scumm\imuse_digi\dimuse_track.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -403,10 +409,10 @@
 			RelativePath="..\..\scumm\scumm-md5.h">
 		</File>
 		<File
-			RelativePath="..\..\scumm\scumm.h">
+			RelativePath="..\..\scumm\scumm.cpp">
 		</File>
 		<File
-			RelativePath="..\..\scumm\scumm.cpp">
+			RelativePath="..\..\scumm\scumm.h">
 		</File>
 		<File
 			RelativePath="..\..\scumm\sound.cpp">

@@ -50,6 +50,8 @@ MODULE_OBJS := \
 	scumm/imuse_digi/dimuse_codecs.o \
 	scumm/imuse_digi/dimuse_music.o \
 	scumm/imuse_digi/dimuse_sndmgr.o \
+	scumm/imuse_digi/dimuse_script.o \
+	scumm/imuse_digi/dimuse_track.o \
 	scumm/imuse_digi/dimuse_tables.o \
 	scumm/insane/insane.o \
 	scumm/insane/insane_ben.o \
