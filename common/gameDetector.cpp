@@ -349,9 +349,9 @@ const VersionSettings version_settings[] = {
 //      {"maniac",      "Maniac Mansion", GID_MANIAC, 2, 0, 0,
 //      GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE |
 //      GF_NO_SCALLING},
-//	{"zak",         "Zak McKracken and the Alien Mindbenders",      GID_ZAK,     2, 0, 0,
-//	 GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE |
-//	 GF_NO_SCALLING},
+//      {"zak",         "Zak McKracken and the Alien Mindbenders",      GID_ZAK,     2, 0, 0,
+//      GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE |
+//      GF_NO_SCALLING},
 //      {"indy3",       "Indiana Jones and the Last Crusade",           GID_INDY3,   2, 0, 0,},
 
 	/* Scumm Version 3 */
@@ -431,7 +431,6 @@ bool GameDetector::detectGame()
 	do {
 		if (!scumm_stricmp(_exe_name, gnl->filename)) {
 			_gameId = gnl->id;
-			_scummVersion = gnl->major;
 
 			_features = gnl->features;
 			_gameText = gnl->gamename;
@@ -443,7 +442,7 @@ bool GameDetector::detectGame()
 
 	debug(1, "Failed game detection");
 
-	return true;
+	return false;
 }
 
 const char *GameDetector::getGameName()

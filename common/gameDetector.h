@@ -69,7 +69,6 @@ public:
 	int _gfx_driver;
 	int _gfx_mode;
 	
-	int _scummVersion;
 	int _cdrom;
 	int _save_slot;
 	
