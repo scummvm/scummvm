@@ -155,7 +155,7 @@ bool Debugger::Cmd_SetBit(int argc, const char **argv) {
 		bit = atoi(argv[1]);
 		value = atoi(argv[2]);
 		if (value <= 1) {
-			_vm->vc_set_bit_to(bit, value);
+			_vm->vc_set_bit_to(bit, value != 0);
 			DebugPrintf("Set bit %d to %d\n", bit, value);
 		} else
 			DebugPrintf("Bit value out of range (0 - 1)\n");
