@@ -2266,62 +2266,39 @@ void Gdi::drawStripHE(byte *dst, int dstPitch, const byte *src, int width, int h
 
 
 void Gdi::drawStrip3DO(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const {
-	int destbytes, olddestbytes2, olddestbytes1;
-	byte color;
-
-	uint32 dataBit, data;
-
-	olddestbytes1 = 0;
-
-	destbytes = height << 3;
-
-	if (!height)
+	if (height == 0)
 		return;
 
-	// FIXME/TODO: This is a simple RLE encoding; the code could be made
-	// clearer by renaming some vars and/or rearranginge the code.
+	int decSize = height * 8;
+	int curSize = 0;
 
 	do {
-		data = *src++;
+		uint8 data = *src++;
+		uint8 rle = data & 1;
+		int len = (data >> 1) + 1;
 
-		dataBit = data & 1;
-		data >>= 1;
-		data++;
+		len = MIN(decSize, len);
+		decSize -= len;
 
-		destbytes -= data;
-		
-		// Clip!
-		if (destbytes < 0)
-			data += destbytes;
-
-		olddestbytes2 = destbytes;
-		destbytes = olddestbytes1;
-
-		if (!dataBit) {
-			for (; data > 0; data--, src++, dst++) {
+		if (!rle) {
+			for (; len > 0; len--, src++, dst++) {
 				if (!transpCheck || *src != _transparentColor)
 					*dst = _roomPalette[*src];
-			
-				destbytes++;
-				if (!(destbytes & 7))
-					dst += dstPitch - 8;	// Next row
+				curSize++;
+				if (!(curSize & 7))
+					dst += dstPitch - 8; // Next row
 			}
 		} else {
-			color = *src;
-			src++;
-
-			for (; data > 0; data--, dst++) {
+			byte color = *src++;
+			for (; len > 0; len--, dst++) {
 				if (!transpCheck || color != _transparentColor)
 					*dst = _roomPalette[color];
-				destbytes++;
-				if (!(destbytes & 7))
-					dst += dstPitch - 8;	// Next row
+				curSize++;
+				if (!(curSize & 7))
+					dst += dstPitch - 8; // Next row
 			}
 		}
-
-		olddestbytes1 = destbytes;
-		destbytes = olddestbytes2;
-	} while (olddestbytes2 > 0);
+	} while (decSize > 0);
 }
 
 
