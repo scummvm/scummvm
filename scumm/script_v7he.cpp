@@ -675,7 +675,7 @@ void ScummEngine_v7he::o7_startSound() {
 
 	case 232:
 		_heSndSoundId = pop();
-		_heSndTimer = 0;
+		_heSndOffset = 0;
 		_heSndSoundFreq = 11025;
 		_heSndTimer = VAR(VAR_MUSIC_TIMER);
 		break;
