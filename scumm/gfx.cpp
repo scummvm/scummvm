@@ -1165,11 +1165,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 		if (_vm->_version == 1) {
 			mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[1];
-			if (_C64ObjectMode) {
-				// FIXME/TODO: V1 object masks are stored separately
-			} else {
-				drawStripC64Mask(mask_ptr, stripnr, height);
-			}
+			drawStripC64Mask(mask_ptr, stripnr, width, height);
 		} else if (_vm->_version == 2) {
 			// Do nothing here for V2 games - zplane was handled already.
 		} else if (flag & dbDrawMaskOnAll) {
@@ -1344,11 +1340,13 @@ StripTable *Gdi::generateStripTable(const byte *src, int width, int height, Stri
 }
 
 void Gdi::drawStripC64Background(byte *dst, int stripnr, int height) {
+	int charIdx;
 	height >>= 3;
 	for (int y = 0; y < height; y++) {
 		_C64Colors[3] = (_C64ColorMap[y + stripnr * height] & 7);
+		charIdx = _C64PicMap[y + stripnr * height] * 8;
 		for (int i = 0; i < 8; i++) {
-			byte c = _C64CharMap[_C64PicMap[y + stripnr * height] * 8 + i];
+			byte c = _C64CharMap[charIdx + i];
 			dst[0] = dst[1] = _C64Colors[(c >> 6) & 3];
 			dst[2] = dst[3] = _C64Colors[(c >> 4) & 3];
 			dst[4] = dst[5] = _C64Colors[(c >> 2) & 3];
@@ -1359,12 +1357,14 @@ void Gdi::drawStripC64Background(byte *dst, int stripnr, int height) {
 }
 
 void Gdi::drawStripC64Object(byte *dst, int stripnr, int width, int height) {
+	int charIdx;
 	height >>= 3;
 	width >>= 3;
 	for (int y = 0; y < height; y++) {
-		_C64Colors[3] = (_C64ObjectMap[y * width + stripnr + (width * height)] & 7);
+		_C64Colors[3] = (_C64ObjectMap[(y + height) * width + stripnr] & 7);
+		charIdx = _C64ObjectMap[y * width + stripnr] * 8;
 		for (int i = 0; i < 8; i++) {
-			byte c = _C64CharMap[_C64ObjectMap[y * width + stripnr] * 8 + i];
+			byte c = _C64CharMap[charIdx + i];
 			dst[0] = dst[1] = _C64Colors[(c >> 6) & 3];
 			dst[2] = dst[3] = _C64Colors[(c >> 4) & 3];
 			dst[4] = dst[5] = _C64Colors[(c >> 2) & 3];
@@ -1374,17 +1374,21 @@ void Gdi::drawStripC64Object(byte *dst, int stripnr, int width, int height) {
 	}
 }
 
-void Gdi::drawStripC64Mask(byte *dst, int stripnr, int height) {
+void Gdi::drawStripC64Mask(byte *dst, int stripnr, int width, int height) {
+	int maskIdx;
 	height >>= 3;
 	for (int y = 0; y < height; y++) {
+		if (_C64ObjectMode)
+			maskIdx = _C64ObjectMap[(y + 2 * height) * width + stripnr] * 8;
+		else
+			maskIdx = _C64MaskMap[y + stripnr * height] * 8;
 		for (int i = 0; i < 8; i++) {
-			byte c = _C64MaskChar[_C64MaskMap[y + stripnr * height] * 8 + i];
-			byte tmp1 = ((c >> 6) & 3) == 0;
-			byte tmp2 = ((c >> 4) & 3) == 0;
-			byte tmp3 = ((c >> 2) & 3) == 0;
-			byte tmp4 = ((c >> 0) & 3) == 0;
-			*dst = (tmp1 << 7) | (tmp1 << 6) | (tmp2 << 5) | (tmp2 << 4) |
-						 (tmp3 << 3) | (tmp3 << 2) | (tmp4 << 1) | (tmp4 << 0);
+			byte c = _C64MaskChar[maskIdx + i];
+
+			// Room masks are inverted compared to the object masks
+			if (!_C64ObjectMode)
+				c ^= 0xFF;
+			*dst = c;
 			dst += _numStrips;
 		}
 	}

@@ -133,7 +133,7 @@ protected:
 	void decodeC64Gfx(const byte *src, byte *dst, int size);
 	void drawStripC64Object(byte *dst, int stripnr, int width, int height);
 	void drawStripC64Background(byte *dst, int stripnr, int height);
-	void drawStripC64Mask(byte *dst, int stripnr, int height);
+	void drawStripC64Mask(byte *dst, int stripnr, int width, int height);
 	void unkDecodeA(byte *dst, const byte *src, int height);
 	void unkDecodeA_trans(byte *dst, const byte *src, int height);
 	void unkDecodeB(byte *dst, const byte *src, int height);
