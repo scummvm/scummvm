@@ -33,7 +33,7 @@
 namespace Queen {
 
 Sound::Sound(SoundMixer *mixer, QueenEngine *vm) : 
-	_mixer(mixer), _vm(vm), _sfxToggle(true), _speechToggle(true), _musicToggle(true), _lastOverride(0), _currentSong(0) {
+	_mixer(mixer), _vm(vm), _sfxToggle(true), _speechToggle(true), _musicToggle(true), _lastOverride(0) {
 }
 
 Sound::~Sound() {

@@ -1363,7 +1363,7 @@ void Logic::setupRestoredGame() {
 	uint16 flag = _vm->bam()->_flag;
 	_vm->bam()->_flag = BamScene::F_STOP;
 
-	_vm->sound()->playSong(_vm->sound()->lastOverride());
+	_vm->sound()->playLastSong();
 
 	switch (gameState(VAR_DRESSING_MODE)) {
 	case 0: 

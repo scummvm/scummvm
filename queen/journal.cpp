@@ -255,9 +255,9 @@ void Journal::handleNormalMode(int16 zoneNum, int x) {
 	} else if (zoneNum == ZN_MUSIC_TOGGLE) {
 		_vm->sound()->toggleMusic();
 		if (_vm->sound()->musicOn()) {
-			// XXX playsong(lastoverride);
+			_vm->sound()->playLastSong();
 		} else {
-			// XXX playsong(-1);
+			_vm->music()->stopSong();
 		}
 		drawConfigPanel();
 	} else if (zoneNum == ZN_VOICE_TOGGLE) {
