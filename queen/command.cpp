@@ -145,16 +145,9 @@ void Command::executeCurrentAction() {
 		}
 
 		_state.verb = State::findDefaultVerb(od->state);
-		if (_state.verb == VERB_NONE) {
-			// no match made, so command not yet completed, redefine as WALK_TO
-			_cmdText.setVerb(VERB_WALK_TO);
-			_state.selAction = VERB_WALK_TO;
-		}
-		else {
-			_cmdText.setVerb(_state.verb);
-			_state.selAction = _state.verb;
-		}
-		_cmdText.addObject(_vm->logic()->objectName(od->name)); //_vm->logic()->objectData(obj)->name));
+		_state.selAction = (_state.verb == VERB_NONE) ? VERB_WALK_TO : _state.verb;
+		_cmdText.setVerb(_state.selAction);
+		_cmdText.addObject(_vm->logic()->objectName(od->name));
 	}
 
 	// make sure that command is always highlighted when actioned!
@@ -599,15 +592,12 @@ void Command::grabSelectedItem() {
 
 //	_parse = true;
 
-	int16 item = _vm->logic()->findInventoryItem(_state.verb - VERB_INV_FIRST);
-	//if (item == 0 || _vm->logic()->itemData(item)->name <= 0) {
-	//	return;
-	//}
-
 	ItemData *id = findItemData(_state.verb);
 	if (id == NULL || id->name <= 0) {
 		return;
 	}
+
+	int16 item = _vm->logic()->findInventoryItem(_state.verb - VERB_INV_FIRST);
 
 	// If we've selected via keyboard, and there is no VERB then do
 	// the ITEMs default, otherwise keep constructing!
@@ -722,15 +712,9 @@ void Command::grabSelectedNoun() {
 			if (_cmdText.isEmpty()) {
 				// Ensures that Right Mkey will select correct default
 				_state.verb = State::findDefaultVerb(od->state);
-				if (_state.verb != VERB_NONE) {
-					// no match made, redefine as Walk To
-					_state.selAction = VERB_WALK_TO;
-				}
-				else {
-					_state.selAction = _state.verb;
-				}
+				_state.selAction = (_state.verb == VERB_NONE) ? VERB_WALK_TO : _state.verb;
 				_cmdText.setVerb(_state.selAction);
-				_cmdText.addObject(_vm->logic()->objectName(od->name)); //_vm->logic()->objectData(objNum)->name));
+				_cmdText.addObject(_vm->logic()->objectName(od->name));
 			}
 			else {
 				_state.verb = VERB_NONE;
@@ -740,13 +724,7 @@ void Command::grabSelectedNoun() {
 				else {
 					_state.verb = State::findDefaultVerb(od->state);
 				}
-				if (_state.verb == VERB_NONE) {
-					_state.action = VERB_WALK_TO;
-					_cmdText.setVerb(VERB_WALK_TO);
-				}
-				else {
-					_state.action = _state.verb;
-				}
+				_state.action = (_state.verb == VERB_NONE) ? VERB_WALK_TO : _state.verb;
 				_state.verb = VERB_NONE;
 			}
 		}
@@ -818,7 +796,6 @@ bool Command::executeIfDialog(const char *description) {
 			strcpy(currentCutaway, cutaway);
 			_vm->logic()->playCutaway(currentCutaway, cutaway);
 		}
-
 		return true;
 	}
 	return false;
@@ -993,7 +970,6 @@ void Command::changeObjectState(Verb action, int16 obj, int16 song, bool cutDone
 		}
 	}
 	else if (action == VERB_CLOSE && !cutDone) {
-
 		if (State::findOn(objData->state) == STATE_ON_OFF) {
 			State::alterOn(&objData->state, STATE_ON_ON);
 			State::alterDefaultVerb(&objData->state, VERB_OPEN);
@@ -1064,7 +1040,6 @@ void Command::openOrCloseAssociatedObject(Verb action, int16 otherObj) {
 		ObjectData *objData = _vm->logic()->objectData(otherObj);
 
 		if (cmdList->imageOrder != 0) {
-			// update the graphic image of object
 			objData->image = cmdList->imageOrder;
 		}
 
@@ -1331,15 +1306,15 @@ uint16 Command::nextObjectDescription(ObjectDescription* objDesc, uint16 firstDe
 
 void Command::lookAtSelectedObject() {
 
-	if (_state.selNoun > 0 && _state.selNoun <= _vm->logic()->currentRoomObjMax()) {
-		uint16 objNum = _vm->logic()->currentRoomData() + _state.selNoun;
-		if (_vm->logic()->objectData(objNum)->entryObj == 0) {
-			if (makeJoeWalkTo(_selPosX, _selPosY, objNum, _state.selAction, false) == -2) {
-				// 'I can't get close enough to have a look.'
-				_vm->logic()->joeSpeak(13);
-			}
-		}
-	}
+//	if (_state.selNoun > 0 && _state.selNoun <= _vm->logic()->currentRoomObjMax()) {
+//		uint16 objNum = _vm->logic()->currentRoomData() + _state.selNoun;
+//		if (_vm->logic()->objectData(objNum)->entryObj == 0) {
+//			if (makeJoeWalkTo(_selPosX, _selPosY, objNum, _state.selAction, false) == -2) {
+//				// 'I can't get close enough to have a look.'
+//				_vm->logic()->joeSpeak(13);
+//			}
+//		}
+//	}
 
 	uint16 desc;
 	if (_state.subject[0] < 0) {
