@@ -452,6 +452,7 @@ public:
 
 	void o_unk_114();
 	void o_wait_for_vga(uint a);
+	void skip_speech();
 	void o_unk_120(uint a);
 	void o_unk_126();
 	void o_unk_127();

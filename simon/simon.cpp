@@ -1133,8 +1133,8 @@ void SimonState::startSubroutine170()
 {
 	Subroutine *sub;
 
-	/* XXX: stop speech */
-
+	_sound->stopVoice();
+	
 	sub = getSubroutineByID(170);
 	if (sub != NULL)
 		startSubroutineEx(sub);
@@ -2475,7 +2475,6 @@ get_out:;
 #endif
 }
 
-
 void SimonState::o_wait_for_vga(uint a)
 {
 	_vga_wait_for = a;
@@ -2488,6 +2487,12 @@ void SimonState::o_wait_for_vga(uint a)
 				_system->show_mouse(true);
 				startSubroutine170();
 				break;
+			}
+			if (_game & GAME_SIMON2) {
+				if (_vga_wait_for == 200 && !vc_get_bit(14)) {
+					skip_speech();
+					break;
+				}
 			}
 		} else {
 			processSpecialKeys();
@@ -2507,6 +2512,18 @@ void SimonState::o_wait_for_vga(uint a)
 
 	}
 	_system->show_mouse(true);
+}
+
+void SimonState::skip_speech()
+{
+	_sound->stopVoice();
+	if (!(_bit_array[1] & 0x1000)) {
+		_bit_array[0] |= 0x4000;
+		_variableArray[200] = 5;
+		start_vga_code(4, 1, 0x1e, 0, 0, 0);
+		o_wait_for_vga(0x82);
+		o_unk_99_simon2(2, 1);
+	}       
 }
 
 void SimonState::timer_vga_sprites()
@@ -3761,7 +3778,7 @@ void SimonState::talk_with_speech(uint speech_id, uint num_1)
 				return;
 			if (!(_bit_array[0] & 0x4000 || _bit_array[1] & 0x1000)) {
 				_bit_array[0] |= 0x4000;
-
+				_variableArray[200] = 5;
 				start_vga_code(4, 1, 0x1e, 0, 0, 0);
 				o_wait_for_vga(0x82);
 			}
