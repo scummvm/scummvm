@@ -108,44 +108,40 @@ bool SmushMixer::handleFrame() {
 			} else {
 				int32 rate;
 				bool stereo, is_short;
+				void *data;
 
 				_channels[i].chan->getParameters(rate, stereo, is_short);
 				int32 size = _channels[i].chan->availableSoundData();
 				int32 flags = stereo ? SoundMixer::FLAG_STEREO : 0;
 
 				if (is_short) {
-					short *data = new int16[size * (stereo ? 2 : 1) * 2];
-					_channels[i].chan->getSoundData(data, size);
-					if (_channels[i].chan->getRate() == 11025) size *= 2;
+					data = malloc(size * (stereo ? 2 : 1) * 4);
+					_channels[i].chan->getSoundData((int16 *)data, size);
+					if (_channels[i].chan->getRate() == 11025)
+						size *= 2;
 					size *= stereo ? 4 : 2;
 
-					if (_silentMixer == false) {
-						if (_channels[i].first) {
-							_channels[i].mixer_index = _mixer->playStream(NULL, -1, data, size, rate, flags | SoundMixer::FLAG_16BITS);
-							_channels[i].first = false;
-						} else {
-							_mixer->append(_channels[i].mixer_index, data, size, rate, flags | SoundMixer::FLAG_16BITS);
-						}
-					}
+					flags |= SoundMixer::FLAG_16BITS;
 
-					delete []data;
 				} else {
-					int8 *data = new int8[size * (stereo ? 2 : 1) * 2];
-					_channels[i].chan->getSoundData(data, size);
-					if (_channels[i].chan->getRate() == 11025) size *= 2;
+					data = malloc(size * (stereo ? 2 : 1) * 2);
+					_channels[i].chan->getSoundData((int8 *)data, size);
+					if (_channels[i].chan->getRate() == 11025)
+						size *= 2;
 					size *= stereo ? 2 : 1;
 
-					if (_silentMixer == false) {
-						if (_channels[i].first) {
-							_channels[i].mixer_index = _mixer->playStream(NULL, -1, data, size, rate, flags | SoundMixer::FLAG_UNSIGNED);
-							_channels[i].first = false;
-						} else {
-							_mixer->append(_channels[i].mixer_index, data, size, rate, flags | SoundMixer::FLAG_UNSIGNED);
-						}
-					}
-
-					delete []data;
+					flags |= SoundMixer::FLAG_UNSIGNED;
 				}
+
+				if (_silentMixer == false) {
+					if (_channels[i].first) {
+						_channels[i].mixer_index = _mixer->playStream(NULL, -1, data, size, rate, flags);
+						_channels[i].first = false;
+					} else {
+						_mixer->append(_channels[i].mixer_index, data, size, rate, flags);
+					}
+				}
+				free(data);
 			}
 		}
 	}

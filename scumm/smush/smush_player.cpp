@@ -436,7 +436,7 @@ void SmushPlayer::handleImuseAction(Chunk &b) {
 							*dst++ = *d_src2++;
 						} else {
 							int16 val = (int8)value << variable2;
-							*dst++ = val>> 8;
+							*dst++ = val >> 8;
 							*dst++ = (byte)(val);
 						}
 						value = *(d_src2++);
