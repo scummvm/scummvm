@@ -297,8 +297,6 @@ private:
 	bool _initialized;
 	byte _volume_fader_counter;
 
-	int _game_tempo;
-
 	uint _queue_end, _queue_pos, _queue_sound;
 	byte _queue_adding;
 
@@ -1603,7 +1601,11 @@ int IMuseInternal::get_volchan_entry(uint a) {
 uint32 IMuseInternal::property(int prop, uint32 value) {
 	switch (prop) {
 	case IMuse::PROP_TEMPO_BASE:
-		_game_tempo = value;
+		// Jamieson630: This used to specify a low-level microsecond
+		// timing override for the MIDI drivers, based on the -t
+		// option. It hasn't worked for a while, but may come back
+		// later as a more user-friendly adjustment option.
+//		_game_tempo = value;
 		break;
 	}
 	return 0;
@@ -1626,7 +1628,6 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *midi) {
 		error ("IMuse was initialized without a MIDI driver (even the NULL driver)");
 
 	_midi_native = midi;
-	_game_tempo = _midi_native->getBaseTempo();
 	initMidiDriver (_midi_native);
 
 	_master_volume = 255;
@@ -1748,6 +1749,7 @@ bool Player::startSound (int sound, MidiDriver *midi) {
 
 	_parts = NULL;
 	_active = true;
+	_midi = midi;
 	_id = sound;
 	_priority = 0x80;
 	_volume = 0x7F;
@@ -1762,9 +1764,9 @@ bool Player::startSound (int sound, MidiDriver *midi) {
 	hook_clear();
 	if (start_seq_sound(sound) != 0) {
 		_active = false;
+		_midi = NULL;
 		return false;
 	}
-	_midi = midi;
 	return true;
 }
 
@@ -1808,7 +1810,7 @@ int Player::start_seq_sound(int sound) {
 void Player::set_tempo(uint32 b) {
 	uint32 i, j;
 
-	i = _se->_game_tempo;
+	i = _midi->getBaseTempo();
 
 	j = _tempo = b;
 
