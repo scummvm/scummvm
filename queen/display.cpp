@@ -37,19 +37,19 @@ void TextRenderer::init() {
 	uint16 i, y, x;
 
 	for (i = 0; i < 256; ++i) {
-		charWidth[i] = 0;
+		_charWidth[i] = 0;
 		for (y = 0; y < 8; ++y) {
-			uint8 c = FONT[i * 8 + y];
+			uint8 c = _font[i * 8 + y];
 			for (x = 0; x < 8; ++x) {
-				if ((c & (0x80 >> x)) && (x > charWidth[i])) {
-					charWidth[i] = x;
+				if ((c & (0x80 >> x)) && (x > _charWidth[i])) {
+					_charWidth[i] = x;
 				}
 			}
 		}
-		charWidth[i] += 2;
+		_charWidth[i] += 2;
 	}
-	charWidth[(uint8)' '] = 4;
-	--charWidth[(uint8)'^'];
+	_charWidth[(uint8)' '] = 4;
+	--_charWidth[(uint8)'^'];
 }
 
 
@@ -58,8 +58,8 @@ void TextRenderer::drawString(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y
 	const uint8 *str = (const uint8*)text;
 	while (*str && x < dstPitch) {
 
-		uint8 c = (lang == FRENCH && *str == 0x96) ? 0xFB : *str;
-		const uint8 *pchr = FONT + c * 8;
+		uint8 c = (_lang == FRENCH && *str == 0x96) ? 0xFB : *str;
+		const uint8 *pchr = _font + c * 8;
 
 		if (outlined) {
 			drawChar(dstBuf, dstPitch, x - 1, y - 1, INK_OUTLINED_TEXT, pchr);
@@ -73,7 +73,7 @@ void TextRenderer::drawString(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y
 		}
 		drawChar(dstBuf, dstPitch, x, y, color, pchr);
 
-		x += charWidth[ c ];
+		x += _charWidth[ c ];
 		++str;
 	}
 }
@@ -105,26 +105,26 @@ Display::Display(Language language, OSystem *system, Input *input)
 	: _system(system), _input(input) {
 
 	_dynalum.prevColMask = 0xFF;
-	_textRenderer.lang = language;
+	_textRenderer._lang = language;
 	_textRenderer.init();
 
-	_buffers[RB_BACKDROP] = new uint8[BACKDROP_W * BACKDROP_H];
-	_buffers[RB_PANEL]    = new uint8[PANEL_W * PANEL_H];
-	_buffers[RB_SCREEN]   = new uint8[SCREEN_W * SCREEN_H];
-	memset(_buffers[RB_BACKDROP], 0, BACKDROP_W * BACKDROP_H);
-	memset(_buffers[RB_PANEL],    0, PANEL_W * PANEL_H);
-	memset(_buffers[RB_SCREEN],   0, SCREEN_W * SCREEN_H);
+	_buffer[RB_BACKDROP] = new uint8[BACKDROP_W * BACKDROP_H];
+	_buffer[RB_PANEL]    = new uint8[PANEL_W * PANEL_H];
+	_buffer[RB_SCREEN]   = new uint8[SCREEN_W * SCREEN_H];
+	memset(_buffer[RB_BACKDROP], 0, BACKDROP_W * BACKDROP_H);
+	memset(_buffer[RB_PANEL],    0, PANEL_W * PANEL_H);
+	memset(_buffer[RB_SCREEN],   0, SCREEN_W * SCREEN_H);
 	_bufPitch[RB_BACKDROP] = BACKDROP_W;
 	_bufPitch[RB_PANEL]    = PANEL_W;
 	_bufPitch[RB_SCREEN]   = SCREEN_W;
 
-	_pals.room   = new uint8[ 256 * 3 ];
-	_pals.screen = new uint8[ 256 * 3 ];
-	memset(_pals.room,   0, 256 * 3);
-	memset(_pals.screen, 0, 256 * 3);
-	_pals.dirtyMin = 0;
-	_pals.dirtyMax = 255;
-	_pals.scrollable = true;
+	_pal.room   = new uint8[ 256 * 3 ];
+	_pal.screen = new uint8[ 256 * 3 ];
+	memset(_pal.room,   0, 256 * 3);
+	memset(_pal.screen, 0, 256 * 3);
+	_pal.dirtyMin = 0;
+	_pal.dirtyMax = 255;
+	_pal.scrollable = true;
 	
 	_horizontalScroll = 0;
 }
@@ -132,12 +132,12 @@ Display::Display(Language language, OSystem *system, Input *input)
 
 Display::~Display() {
 
-	delete[] _buffers[RB_BACKDROP];
-	delete[] _buffers[RB_PANEL];
-	delete[] _buffers[RB_SCREEN];
+	delete[] _buffer[RB_BACKDROP];
+	delete[] _buffer[RB_PANEL];
+	delete[] _buffer[RB_SCREEN];
 
-	delete[] _pals.room;
-	delete[] _pals.screen;
+	delete[] _pal.room;
+	delete[] _pal.screen;
 }
 
 
@@ -196,18 +196,18 @@ void Display::dynalumUpdate(int16 x, int16 y) {
 		for (i = 144; i < 160; ++i) {
 			uint8 j;
 			for (j = 0; j < 3; ++j) {
-				int16 c = (int16)(_pals.room[i * 3 + j] + _dynalum.lum[colMask * 3 + j] * 4);
+				int16 c = (int16)(_pal.room[i * 3 + j] + _dynalum.lum[colMask * 3 + j] * 4);
 				if (c < 0) {
 					c = 0;
 				}
 				else if (c > 255) {
 					c = 255;
 				}
-				_pals.screen[i * 3 + j] = (uint8)c;
+				_pal.screen[i * 3 + j] = (uint8)c;
 			}
 		}
-		_pals.dirtyMin = MIN(_pals.dirtyMin, 144);
-		_pals.dirtyMax = MAX(_pals.dirtyMax, 159);
+		_pal.dirtyMin = MIN(_pal.dirtyMin, 144);
+		_pal.dirtyMax = MAX(_pal.dirtyMax, 159);
 		_dynalum.prevColMask = colMask;
 	}
 }
@@ -244,22 +244,22 @@ void Display::palSetJoe(JoePalette pal) {
 	const uint8 *palJoe = NULL;
 	switch (pal) {
 	case JP_CLOTHES:
-		palJoe = PAL_JOE_CLOTHES;
+		palJoe = _palJoeClothes;
 		break;
 	case JP_DRESS:
-		palJoe = PAL_JOE_DRESS;
+		palJoe = _palJoeDress;
 		break;
 	}
-	memcpy(_pals.room + 144 * 3, palJoe, 16 * 3);
-	memcpy(_pals.screen + 144 * 3, palJoe, 16 * 3); 
-	palSet(_pals.screen, 144, 159, true);
+	memcpy(_pal.room + 144 * 3, palJoe, 16 * 3);
+	memcpy(_pal.screen + 144 * 3, palJoe, 16 * 3); 
+	palSet(_pal.screen, 144, 159, true);
 }
 
 
 void Display::palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 dynaX, int16 dynaY) {
 
 	debug(9, "Display::palFadeIn(%d, %d)", start, end);
-	memcpy(_pals.screen, _pals.room, 256 * 3);
+	memcpy(_pal.screen, _pal.room, 256 * 3);
 	if (roomNum < 90 || (roomNum > 94 && roomNum < 114)) {
 		if (dynalum) {
 			dynalumUpdate(dynaX, dynaY);
@@ -270,7 +270,7 @@ void Display::palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 
 		for (i = 0; i <= FADE_SPEED; ++i) {
 			int j = n * 3;
 			uint8 *outPal = tempPal + start * 3;
-			const uint8 *inPal = _pals.screen + start * 3;
+			const uint8 *inPal = _pal.screen + start * 3;
 			while (j--) {
 				*outPal = *inPal * i / FADE_SPEED;
 				++outPal;
@@ -279,35 +279,35 @@ void Display::palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 
 			palSet(tempPal, start, end, true);
 		}
 	}
-	_pals.dirtyMin = 0;
-	_pals.dirtyMax = 255; // (roomNum >= 114) ? 255 : 223; // FIXME: only for tests
-	_pals.scrollable = true;
+	_pal.dirtyMin = 0;
+	_pal.dirtyMax = 255; // (roomNum >= 114) ? 255 : 223; // FIXME: only for tests
+	_pal.scrollable = true;
 }
 
 
 void Display::palFadeOut(int start, int end, uint16 roomNum) {
 
 	debug(9, "Display::palFadeOut(%d, %d)", start, end);
-	_pals.scrollable = false;
+	_pal.scrollable = false;
 	int n = end - start + 1;
 	if (!(roomNum < 90 || (roomNum > 94 && roomNum < 114))) {
-		memset(_pals.screen + start * 3, 0, n * 3);
-		palSet(_pals.screen, start, end);
+		memset(_pal.screen + start * 3, 0, n * 3);
+		palSet(_pal.screen, start, end);
 	}
 	else {
 		uint8 tempPal[256 * 3];
-		memcpy(tempPal + start * 3, _pals.screen + start * 3, n * 3);
+		memcpy(tempPal + start * 3, _pal.screen + start * 3, n * 3);
 		int i;
 		for (i = FADE_SPEED; i >= 0; --i) {
 			int j = n * 3;
-			uint8 *outPal = _pals.screen + start * 3;
+			uint8 *outPal = _pal.screen + start * 3;
 			const uint8 *inPal = tempPal + start * 3;
 			while (j--) {
 				*outPal = *inPal * i / FADE_SPEED;
 				++outPal;
 				++inPal;
 			}
-			palSet(_pals.screen, start, end, true);
+			palSet(_pal.screen, start, end, true);
 		}
 
 	}
@@ -316,11 +316,12 @@ void Display::palFadeOut(int start, int end, uint16 roomNum) {
 
 void Display::palFadePanel() {
 
-	int i, j;
+	int i;
 	uint8 tempPal[256 * 3];
-	for (i = 224; i < 256; ++i)
-		for (j = 0; j < 3; j++)
-			tempPal[i * 3 + j] = _pals.screen[i * 3 + 1] * 2 / 3;
+	for (i = 224 * 3; i < 256 * 3; i += 3) {
+		uint8 *p = tempPal + i;
+		*(p) = *(p + 1) = *(p + 2) = _pal.screen[i + 1] * 2 / 3;
+	}
 
 	palSet(tempPal, 224, 255, true);
 }
@@ -330,8 +331,8 @@ void Display::palScroll(int start, int end) {
 
 	debug(9, "Display::palScroll(%d, %d)", start, end);
 
-	uint8 *palEnd = _pals.screen + end * 3;
-	uint8 *palStart = _pals.screen + start * 3;
+	uint8 *palEnd = _pal.screen + end * 3;
+	uint8 *palStart = _pal.screen + start * 3;
 
 	uint8 r = *palEnd++;
 	uint8 g = *palEnd++;
@@ -357,26 +358,26 @@ void Display::palCustomColors(uint16 roomNum) {
 	switch (roomNum) {
 	case 31:
 		for(i = 72; i < 84; i++) {
-			_pals.room[i * 3 + 1] = _pals.room[i * 3 + 1] * 90 / 100;
-			_pals.room[i * 3 + 2] = _pals.room[i * 3 + 2] * 70 / 100;
+			_pal.room[i * 3 + 1] = _pal.room[i * 3 + 1] * 90 / 100;
+			_pal.room[i * 3 + 2] = _pal.room[i * 3 + 2] * 70 / 100;
 		}
 		break;
 	case 29:
 		for(i = 72; i < 84; i++) {
-			_pals.room[i * 3 + 1] = _pals.room[i * 3 + 1] * 60 / 100;
-			_pals.room[i * 3 + 2] = _pals.room[i * 3 + 2] * 60 / 100;
+			_pal.room[i * 3 + 1] = _pal.room[i * 3 + 1] * 60 / 100;
+			_pal.room[i * 3 + 2] = _pal.room[i * 3 + 2] * 60 / 100;
 		}
 		break;
 	case 30:
 		for(i = 72; i < 84; i++) {
-			_pals.room[i * 3 + 0] = _pals.room[i * 3 + 0] * 60 / 100;
-			_pals.room[i * 3 + 1] = _pals.room[i * 3 + 1] * 80 / 100;
+			_pal.room[i * 3 + 0] = _pal.room[i * 3 + 0] * 60 / 100;
+			_pal.room[i * 3 + 1] = _pal.room[i * 3 + 1] * 80 / 100;
 		}
 		break;
 	case 28:
 		for(i = 72; i < 84; i++) {
-			_pals.room[i * 3 + 0] = _pals.room[i * 3 + 0] * 80 / 100;
-			_pals.room[i * 3 + 2] = _pals.room[i * 3 + 1] * 60 / 100;
+			_pal.room[i * 3 + 0] = _pal.room[i * 3 + 0] * 80 / 100;
+			_pal.room[i * 3 + 2] = _pal.room[i * 3 + 1] * 60 / 100;
 		}
 		break;
 	}
@@ -388,7 +389,7 @@ void Display::palCustomScroll(uint16 roomNum) {
 	debug(9, "Display::palCustomScroll(%d)", roomNum);
 	static int16 scrollx = 0;
 
-	if (!_pals.scrollable) {
+	if (!_pal.scrollable) {
 		return;
 	}
 
@@ -399,10 +400,10 @@ void Display::palCustomScroll(uint16 roomNum) {
 	++scrollx;
 	switch (roomNum) {
 	case 123: {
-			static int16 j = 0,jdir = 2;
+			static int16 j = 0, jdir = 2;
 			for(i = 96; i < 111; ++i) {
-				_pals.screen[i * 3 + 0] = MIN(255, _pals.room[i * 3 + 0] + j * 8);
-				_pals.screen[i * 3 + 1] = MIN(255, _pals.room[i * 3 + 1] + j * 4);
+				_pal.screen[i * 3 + 0] = MIN(255, _pal.room[i * 3 + 0] + j * 8);
+				_pal.screen[i * 3 + 1] = MIN(255, _pal.room[i * 3 + 1] + j * 4);
 			}
 			j += jdir;
 			if(j <= 0 || j >= 18) {
@@ -415,8 +416,8 @@ void Display::palCustomScroll(uint16 roomNum) {
 	case 124: {
 			static int16 j = 0,jdir = 2;
 			for(i = 80; i < 144; ++i) {
-				_pals.screen[i * 3 + 0] = MIN(255, _pals.room[i * 3 + 0] + j * 8);
-				_pals.screen[i * 3 + 1] = MIN(255, _pals.room[i * 3 + 1] + j * 4);
+				_pal.screen[i * 3 + 0] = MIN(255, _pal.room[i * 3 + 0] + j * 8);
+				_pal.screen[i * 3 + 1] = MIN(255, _pal.room[i * 3 + 1] + j * 4);
 			}
 			j += jdir;
 			if(j <= 0 || j >= 14) {
@@ -458,9 +459,9 @@ void Display::palCustomScroll(uint16 roomNum) {
 		break;
 	case 62:
 		if(scrollx & 1) {
-			palScroll(0x6c, 0x77);
-			loPal = 0x6c;
-			hiPal = 0x77;
+			palScroll(108, 119);
+			loPal = 108;
+			hiPal = 119;
 		}
 		break;
 	case 25:
@@ -504,12 +505,10 @@ void Display::palCustomScroll(uint16 roomNum) {
 	case 97:
 		if(scrollx & 1) {
 			palScroll(96, 107);
-		}
-		if(scrollx & 3) {
 			palScroll(108, 122);
+			loPal = 96;
+			hiPal = 122;
 		}
-		loPal = 96;
-		hiPal = 122;
 		break;
 	case 55:
 		palScroll(128, 143);
@@ -532,9 +531,9 @@ void Display::palCustomScroll(uint16 roomNum) {
 	case 2:
 		if(scrollx & 1) {
 			palScroll(120, 127);
+			loPal = 120;
+			hiPal = 127;
 		}
-		loPal = 120;
-		hiPal = 127;
 		break;
 	case 3:
 	case 5:
@@ -580,12 +579,10 @@ void Display::palCustomScroll(uint16 roomNum) {
 	case 64:
 		if(scrollx & 1) {
 			palScroll(112, 119);
-		}
-		if(scrollx & 3) {
 			palScroll(120, 127);
+			loPal = 112;
+			hiPal = 127;
 		}
-		loPal = 112;
-		hiPal = 127;
 		break;
 	case 49:
 		palScroll(101, 127);
@@ -593,8 +590,8 @@ void Display::palCustomScroll(uint16 roomNum) {
 		hiPal = 127;
 		break;
 	}
-	_pals.dirtyMin = MIN(_pals.dirtyMin, loPal);
-	_pals.dirtyMax = MAX(_pals.dirtyMax, hiPal);
+	_pal.dirtyMin = MIN(_pal.dirtyMin, loPal);
+	_pal.dirtyMax = MAX(_pal.dirtyMax, hiPal);
 }
 
 
@@ -617,7 +614,7 @@ void Display::palCustomFlash() {
 	// set flash palette
 	palSet(tempPal, 0, 255, true);
 	// restore original palette
-	palSet(_pals.screen, 0, 255, true);
+	palSet(_pal.screen, 0, 255, true);
 }
 
 
@@ -643,15 +640,15 @@ void Display::prepareUpdate() {
 
 	if (!_fullscreen) {
 		// draw the panel
-		memcpy(_buffers[RB_SCREEN] + _bufPitch[RB_SCREEN] * ROOM_ZONE_HEIGHT, 
-			_buffers[RB_PANEL], PANEL_W * PANEL_H);
+		memcpy(_buffer[RB_SCREEN] + _bufPitch[RB_SCREEN] * ROOM_ZONE_HEIGHT, 
+			_buffer[RB_PANEL], PANEL_W * PANEL_H);
 	}
 
 	// draw the backdrop bitmap
 	int i;
 	int n = _fullscreen ? 200 : 150;
-	uint8 *dst = _buffers[RB_SCREEN];
-	uint8 *src = _buffers[RB_BACKDROP] + _horizontalScroll;
+	uint8 *dst = _buffer[RB_SCREEN];
+	uint8 *src = _buffer[RB_BACKDROP] + _horizontalScroll;
 	for (i = 0; i < n; ++i) {
 		memcpy(dst, src, _bufPitch[RB_SCREEN]);
 		dst += _bufPitch[RB_SCREEN];
@@ -662,15 +659,15 @@ void Display::prepareUpdate() {
 
 void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 
-	if (_pals.scrollable && dynalum) {
+	if (_pal.scrollable && dynalum) {
 		dynalumUpdate(dynaX, dynaY);
 	}
-	if (_pals.dirtyMin != 144 || _pals.dirtyMax != 144) {
-		palSet(_pals.screen, _pals.dirtyMin, _pals.dirtyMax);
-		_pals.dirtyMin = 144;
-		_pals.dirtyMax = 144;
+	if (_pal.dirtyMin != 144 || _pal.dirtyMax != 144) {
+		palSet(_pal.screen, _pal.dirtyMin, _pal.dirtyMax);
+		_pal.dirtyMin = 144;
+		_pal.dirtyMax = 144;
 	}
-	_system->copy_rect(_buffers[RB_SCREEN], _bufPitch[RB_SCREEN], 0, 0, SCREEN_W, SCREEN_H);
+	_system->copy_rect(_buffer[RB_SCREEN], _bufPitch[RB_SCREEN], 0, 0, SCREEN_W, SCREEN_H);
 	_system->update_screen();
 	waitForTimer();
 }
@@ -679,7 +676,7 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 void Display::blit(RenderingBuffer dst, uint16 dstX, uint16 dstY, const uint8 *srcBuf, uint16 srcW, uint16 srcH, uint16 srcPitch, bool xflip, bool masked) {
 
 	uint16 dstPitch = _bufPitch[dst];
-	uint8 *dstBuf = _buffers[dst] + dstPitch * dstY + dstX;
+	uint8 *dstBuf = _buffer[dst] + dstPitch * dstY + dstX;
 
 	if (!masked) { // Unmasked always unflipped
 		while (srcH--) {
@@ -721,7 +718,7 @@ void Display::fill(RenderingBuffer dst, uint16 x, uint16 y, uint16 w, uint16 h, 
 
 	assert(w <= _bufPitch[dst]);
 	uint16 dstPitch = _bufPitch[dst];
-	uint8 *dstBuf = _buffers[dst] + dstPitch * y + x;
+	uint8 *dstBuf = _buffer[dst] + dstPitch * y + x;
 	while (h--) {
 		memset(dstBuf, color, w);
 		dstBuf += dstPitch;
@@ -753,23 +750,23 @@ void Display::pcxReadBackdrop(const uint8 *pcxBuf, uint32 size, bool useFullPal)
 
 	_bdWidth  = READ_LE_UINT16(pcxBuf + 12);
 	_bdHeight = READ_LE_UINT16(pcxBuf + 14);
-	pcxRead(_buffers[RB_BACKDROP], _bufPitch[RB_BACKDROP], pcxBuf + 128, _bdWidth, _bdHeight);
-	memcpy(_pals.room, pcxBuf + size - 768, useFullPal ? 256 * 3 : 144 * 3);
+	pcxRead(_buffer[RB_BACKDROP], _bufPitch[RB_BACKDROP], pcxBuf + 128, _bdWidth, _bdHeight);
+	memcpy(_pal.room, pcxBuf + size - 768, useFullPal ? 256 * 3 : 144 * 3);
 }
 
 
 void Display::pcxReadPanel(const uint8 *pcxBuf, uint32 size) {
 
-	uint8 *dst = _buffers[RB_PANEL] + PANEL_W * 10;
+	uint8 *dst = _buffer[RB_PANEL] + PANEL_W * 10;
 	pcxRead(dst, PANEL_W, pcxBuf + 128, PANEL_W, PANEL_H - 10);
-	memcpy(_pals.room + 144 * 3, pcxBuf + size - 768 + 144 * 3, (256 - 144) * 3);
+	memcpy(_pal.room + 144 * 3, pcxBuf + size - 768 + 144 * 3, (256 - 144) * 3);
 }
 
 
 void Display::textDraw(uint16 x, uint16 y, uint8 color, const char *text, bool outlined) {
 
 	debug(9, "Display::textDraw(%s)", text);
-	_textRenderer.drawString(_buffers[RB_SCREEN], _bufPitch[RB_SCREEN], x, y, color, text, outlined);
+	_textRenderer.drawString(_buffer[RB_SCREEN], _bufPitch[RB_SCREEN], x, y, color, text, outlined);
 }
 
 
@@ -777,7 +774,7 @@ uint16 Display::textWidth(const char *text) const {
 
 	uint16 len = 0;
 	while (*text) {
-		len += _textRenderer.charWidth[ (uint8)*text ];
+		len += _textRenderer._charWidth[ (uint8)*text ];
 		++text;
 	}
 	return len;
@@ -844,8 +841,23 @@ void Display::mouseCursorShow(bool show) {
 }
 
 
+void Display::drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col) {
 
-const uint8 TextRenderer::FONT[] = {
+	uint8 *p = _buffer[RB_SCREEN];
+	uint16 pitch = _bufPitch[RB_SCREEN];
+
+	int i;
+	for (i = y1; i <= y2; ++i) {
+		*(p + i * pitch + x1) = *(p + i * pitch + x2) = col;
+	}
+	for (i = x1; i <= x2; ++i) {
+		*(p + y1 * pitch + i) = *(p + y2 * pitch + i) = col;
+	}
+}
+
+
+
+const uint8 TextRenderer::_font[] = {
 	0xF8, 0xB0, 0xB0, 0x80, 0xB0, 0xB0, 0xC0, 0x00, 0xF8, 0xB0, 
 	0xB0, 0x80, 0xB0, 0xB0, 0xC0, 0x00, 0xF8, 0xB0, 0xB0, 0x80, 
 	0xB0, 0xB0, 0xC0, 0x00, 0xF8, 0xB0, 0xB0, 0x80, 0xB0, 0xB0, 
@@ -1054,7 +1066,7 @@ const uint8 TextRenderer::FONT[] = {
 };
 
 
-const uint8 Display::PAL_JOE_CLOTHES[] = {
+const uint8 Display::_palJoeClothes[] = {
 	0x00, 0x00, 0x00, 0x60, 0x60, 0x60, 0x87, 0x87, 0x87, 
 	0xB0, 0xB0, 0xB0, 0xDA, 0xDA, 0xDA, 0x43, 0x34, 0x20,
 	0x77, 0x33, 0x1F, 0xA3, 0x43, 0x27, 0x80, 0x45, 0x45, 
@@ -1064,7 +1076,7 @@ const uint8 Display::PAL_JOE_CLOTHES[] = {
 };
 
 
-const uint8 Display::PAL_JOE_DRESS[] = {
+const uint8 Display::_palJoeDress[] = {
 	0x00, 0x00, 0x00, 0x50, 0x50, 0x50, 0x70, 0x70, 0x70,
 	0x90, 0x90, 0x90, 0xC6, 0xC6, 0xC6, 0xFF, 0xFF, 0xFF, 
 	0x30, 0x30, 0x90, 0x47, 0x49, 0xD0, 0x40, 0x24, 0x00, 

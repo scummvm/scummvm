@@ -55,9 +55,9 @@ struct TextRenderer {
 	void drawString(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint8 color, const char *text, bool outlined = true);
 	void drawChar(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint8 color, const uint8 *chr);
 
-	Language lang;
-	uint8 charWidth[256];
-	static const uint8 FONT[];
+	Language _lang;
+	uint8 _charWidth[256];
+	static const uint8 _font[];
 };
 
 
@@ -72,15 +72,15 @@ public:
 
 	void palConvert(uint8 *outPal, const uint8 *inPal, int start, int end);
 	void palSet(const uint8 *pal, int start, int end, bool updateScreen = false);
-	void palSetJoe(JoePalette pal); // changejoepal
+	void palSetJoe(JoePalette pal);
 	void palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 dynaX, int16 dynaY);
 	void palFadeOut(int start, int end, uint16 roomNum);
 	void palFadePanel();
 	void palScroll(int start, int end);
-	void palCustomColors(uint16 roomNum); // check_colors
-	void palCustomScroll(uint16 roomNum); // check_pal_scroll
-	void palCustomFlash(); // flashspecial()
-	void palSetAllDirty() { _pals.dirtyMin = 0; _pals.dirtyMax = 255; }
+	void palCustomColors(uint16 roomNum);
+	void palCustomScroll(uint16 roomNum);
+	void palCustomFlash();
+	void palSetAllDirty() { _pal.dirtyMin = 0; _pal.dirtyMax = 255; }
 
 	void screenMode(int comPanel, bool inCutaway);
 
@@ -97,7 +97,7 @@ public:
 	void textDraw(uint16 x, uint16 y, uint8 color, const char *text, bool outlined = true);
 	uint16 textWidth(const char *text) const;
 
-	void horizontalScrollUpdate(int16 xCamera); // calc_screen_scroll
+	void horizontalScrollUpdate(int16 xCamera);
 	void horizontalScroll(int16 scroll);
 	int16 horizontalScroll() const { return _horizontalScroll; }
 
@@ -109,6 +109,8 @@ public:
 
 	void mouseCursorInit(uint8 *buf, uint16 w, uint16 h, uint16 xhs, uint16 yhs);
 	void mouseCursorShow(bool show);
+
+	void drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col);
 
 private:
 
@@ -132,9 +134,9 @@ private:
 		uint8 *screen;
 		int dirtyMin, dirtyMax;
 		bool scrollable;
-	} _pals;
+	} _pal;
 
-	uint8 *_buffers[3];
+	uint8 *_buffer[3];
 	uint16 _bufPitch[3];
 
 	bool _fullscreen;
@@ -148,8 +150,8 @@ private:
 	OSystem *_system;
 	Input *_input;
 
-	static const uint8 PAL_JOE_CLOTHES[];
-	static const uint8 PAL_JOE_DRESS[];
+	static const uint8 _palJoeClothes[];
+	static const uint8 _palJoeDress[];
 };
 
 

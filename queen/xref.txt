@@ -108,19 +108,19 @@ game_load()					Logic::gameLoad()
 game_save()					Logic::gameSave()
 -
 config_request
-MUSICTOGGLE					GameConfig::musicToggle
-SFXTOGGLE					GameConfig::sfxToggle
+MUSICTOGGLE					Sound::musicToggle
+SFXTOGGLE					Sound::sfxToggle
 TALKSPD						GameConfig::talkSpeed
 TEXTTOGGLE					GameConfig::textToggle
 VersionStr					Logic::language (add more functions if needed)
-VOICETOGGLE					GameConfig::speechToggle
-walkgameload
+VOICETOGGLE					Sound::speechToggle
+VOLUME						GameConfig::musicVolume
 
 
 GRAPHICS
 ========
 bob()						Graphics::bobDraw
-Box()
+Box()						Display::drawBox
 CHECK_PARALLAX()			Graphics::bobCustomParallax
 clearallbobs()				Graphics::bobClearAll
 clearbob()					Graphics::bobClear
@@ -154,7 +154,7 @@ key_commands				Input::_currentCommandKeys
 key_language				Input::_commandKeys
 KEYVERB						Input::_keyVerb
 MouseButton					Input::_mouseButton
-mouseflag
+mouseflag					*not needed*
 no_check_keys				Input::_noCheckKeys
 
 
@@ -188,18 +188,20 @@ JOEWALK						Logic::_joe.walk (legal values = 0,1,2,3)
 
 JOURNAL
 =======
-clearlefttext()
-drawnames()
-findsaves()
-menutext()
-predrawbobs()
-prompt_do()
-USE_JOURNAL()				Graphics::useJournal
-waitmousezone()
+clearlefttext()				Journal::clearPanelTexts
+drawnames()					Journal::drawSaveDescriptions
+findsaves()					Journal::findSaveDescriptions
+menutext()					Journal::drawPanelText
+predrawbobs()				Journal::drawConfigPanel / Journal::drawNormalPanel
+prompt_do()					*not needed*
+USE_JOURNAL()				Logic::useJournal
+waitmousezone()				*not needed*
 -
-choice
-decbase
-in_journal
+choice						Journal::_currentSaveSlot
+decbase						Journal::_currentSavePage
+in_journal					*not needed ?*
+save_descriptions			Journal::_saveDescriptions
+walkgameload
 
 
 LOGIC
@@ -297,6 +299,7 @@ SCREEN
 calc_screen_scroll()		Display::horizontalScrollUpdate
 changejoepal()				Display::palSetJoe
 check_colors()				Display::palCustomColors
+check_pal_scroll			Display::palCustomScroll
 clearpanel()				Display::prepareUpdate
 drawbackdrop()				Display::prepareUpdate
 drawpanel()					Display::prepareUpdate
@@ -313,17 +316,17 @@ setpal()					Display::palSet
 -
 BDxres						Display::_bdWidth
 BDyres						Display::_bdHeight
-clothespal					Display::PAL_JOE_CLOTHES
-COMPANEL					*not needed ?*
-dresspal					Display::PAL_JOE_DRESS
-font						TextRenderer::FONT
+clothespal					Display::_palJoeClothes
+COMPANEL					*not needed* (argument)
+dresspal					Display::_palJoeDress
+font						TextRenderer::_font
 font_sizes					TextRenderer::charWidth
 FULLSCREEN					Display::_fullscreen
-nopalscroll					Display::_pals.scrollable
-palette						Display::_pals.room
-panelflag					Display::_panel
+nopalscroll					Display::_pal.scrollable
+palette						Display::_pal.room
+panelflag					*not needed* (redundant with fullscreen)
 scrollx						Display::_horizontalScroll
-tpal						Display::_pals.screen
+tpal						Display::_pal.screen
 
 
 SOUND
@@ -384,7 +387,6 @@ TEXTS
 blanktexts()				Graphics::textClear
 drawtext()					Graphics::textDrawAll
 Ink() 						Graphics::textCurrentColor
-menutext()
 MIDDLE() 					Graphics::textCenterX / Graphics::textSetCentered
 text()						Graphics::textSet
 textlen() 					Graphics::textWidth
@@ -408,7 +410,7 @@ MOVE_OTHER()				Walk::personMove
 -
 AREALIST					Walk::_areaList
 AREASTRIKE					Walk::_areaStrike
-movdata						Walk::MOVE_DATA
+movdata						Walk::_moveData
 WALK_DATA					Walk::_walkData
 WALKI						Walk::_walkDataCount
 
