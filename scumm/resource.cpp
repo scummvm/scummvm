@@ -80,7 +80,7 @@ void ScummEngine::openRoom(int room) {
 		}
 		if (!(_features & GF_SMALL_HEADER)) {
 
-			if (_features & GF_AFTER_HEV7) {
+			if ((_features & GF_HUMONGOUS) && (_features & GF_WINDOWS)) {
 				sprintf(buf, "%s.he%.1d", _gameName.c_str(), room == 0 ? 0 : 1);
 			} else if (_version >= 7) {
 				if (room > 0 && (_version == 8))
@@ -185,7 +185,7 @@ void ScummEngine::readRoomsOffsets() {
 	if (_features & GF_SMALL_NAMES)
 		return;
 
-	if (_features & GF_AFTER_HEV7) {
+	if ((_features & GF_HUMONGOUS) && (_features & GF_WINDOWS)) {
 		num = READ_LE_UINT16(_HEV7RoomOffsets);
 		ptr = _HEV7RoomOffsets + 2;
 		for (i = 0; i < num; i++) {
@@ -346,7 +346,7 @@ void ScummEngine::readIndexFile() {
 					_objectStateTable[i] = _objectOwnerTable[i] >> OF_STATE_SHL;
 					_objectOwnerTable[i] &= OF_OWNER_MASK;
 				}
-				if (_features & GF_AFTER_HEV7) {
+				if ((_features & GF_HUMONGOUS) && (_features & GF_WINDOWS)) {
 					// _objectRoomTable
 					_fileHandle.seek(num * 4, SEEK_CUR);
 					//_fileHandle.read(_objectRoomTable, num * 4);
@@ -496,7 +496,7 @@ void ScummEngine::readResTypeList(int id, uint32 tag, const char *name) {
 		for (i = 0; i < num; i++) {
 			res.roomoffs[id][i] = _fileHandle.readUint32LE();
 		}
-		if (_features & GF_AFTER_HEV7) {
+		if ((_features & GF_HUMONGOUS) && (_features & GF_WINDOWS)) {
 			_fileHandle.seek(4 * num, SEEK_CUR); // FIXME what are these additional offsets
 		}
 	}

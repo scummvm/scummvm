@@ -212,12 +212,6 @@ static const ScummGameSettings scumm_settings[] = {
 	// Humongous Entertainment Scumm Version 7 
 	//{"catalog", "Humongous Interactive Catalog", GID_PUTTPUTT, 6, MDT_NONE,
 	// GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"puttwin", "Putt-Putt Joins The Parade (Windows)", GID_PUTTPUTT, 6, MDT_NONE,
-	GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, "puttputt"},
-	{"moonwin", "Putt-Putt Goes To The Moon (Windows)", GID_PUTTPUTT, 6, MDT_NONE,
-	GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, "puttmoon"},
-	{"fbearwin", "Fatty Bear's Birthday Surprise (Windows)", GID_PUTTPUTT, 6, MDT_NONE,
-	GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, "fbear"},
 	//{"farm", "Let's Explore the Farm with Buzzy", GID_PUTTPUTT, 6, MDT_NONE,
 	// GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	//{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
