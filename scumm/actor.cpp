@@ -781,17 +781,17 @@ void Actor::showActor() {
 	needRedraw = true;
 }
 
-// Maniac doesn't have a ScummVar for VAR_TALK_ACTOR, and just uses
+// V1 Maniac doesn't have a ScummVar for VAR_TALK_ACTOR, and just uses
 // an internal variable. Emulate this to prevent overwriting script vars...
 int ScummEngine::talkingActor() {
-	if (_gameId == GID_MANIAC)
+	if (_gameId == GID_MANIAC && _version == 1)
 		return _V1_talkingActor;
 	else
 		return VAR(VAR_TALK_ACTOR);
 };
 
 void ScummEngine::talkingActor(int value) {
-	if (_gameId == GID_MANIAC)
+	if (_gameId == GID_MANIAC && _version == 1)
 		_V1_talkingActor = value;
 	else
 		VAR(VAR_TALK_ACTOR) = value;

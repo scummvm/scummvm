@@ -778,7 +778,7 @@ public:
 	int16 _talkDelay;
 	void actorTalk();
 	void stopTalk();
-	int talkingActor();		// Wrapper around VAR_TALK_ACTOR for V1/V2 purposes
+	int talkingActor();		// Wrapper around VAR_TALK_ACTOR for V1 Maniac
 	void talkingActor(int variable);
 
 	// Costume class
