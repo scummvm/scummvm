@@ -1162,10 +1162,18 @@ void Scumm::waitForTimer(int msec_delay) {
 
 			case OSystem::EVENT_LBUTTONDOWN:
 				_leftBtnPressed |= msClicked|msDown;
+#ifdef _WIN32_WCE
+				mouse.x = event.mouse.x;
+				mouse.y = event.mouse.y;
+#endif
 				break;
 
 			case OSystem::EVENT_RBUTTONDOWN:
 				_rightBtnPressed |= msClicked|msDown;
+#ifdef _WIN32_WCE
+				mouse.x = event.mouse.x;
+				mouse.y = event.mouse.y;
+#endif
 				break;
 
 			case OSystem::EVENT_LBUTTONUP:
