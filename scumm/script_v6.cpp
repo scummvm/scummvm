@@ -2508,8 +2508,8 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			const byte *message;
 			byte buf_input[300], buf_output[300];
 			_messagePtr = getStringAddressVar(VAR_STRING2DRAW);
-			message = _msgPtrToAdd = buf_input;
-			addMessageToStack(_messagePtr);
+			message = buf_input;
+			addMessageToStack(_messagePtr, buf_input, sizeof(buf_input));
 			if ((_gameId == GID_DIG) && !(_features & GF_DEMO)) {
 				byte buf_trans[300];
 				char *t_ptr = (char *)buf_input;

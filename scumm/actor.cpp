@@ -1147,9 +1147,7 @@ int ScummEngine::getActorFromPos(int x, int y) {
 void ScummEngine::actorTalk() {
 	Actor *a;
 
-	_msgPtrToAdd = _charsetBuffer;
-	_messagePtr = addMessageToStack(_messagePtr);
-	assert((int)(_msgPtrToAdd - _charsetBuffer) < (int)(sizeof(_charsetBuffer)));
+	_messagePtr = addMessageToStack(_messagePtr, _charsetBuffer, sizeof(_charsetBuffer));
 
 	// FIXME: Workaround for bugs #770039 and #770049 
 	if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {

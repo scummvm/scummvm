@@ -48,8 +48,7 @@ void ScummEngine::setStringVars(int slot) {
 
 void ScummEngine::unkMessage1() {
 	byte buffer[100];
-	_msgPtrToAdd = buffer;
-	_messagePtr = addMessageToStack(_messagePtr);
+	_messagePtr = addMessageToStack(_messagePtr, buffer, sizeof(buffer));
 
 //	if ((_gameId == GID_CMI) && _debugMode) {	// In CMI, unkMessage1 is used for printDebug output
 	if ((buffer[0] != 0xFF) && _debugMode) {
@@ -78,8 +77,7 @@ void ScummEngine::unkMessage2() {
 	byte buf[100];
 	const byte *tmp;
 
-	_msgPtrToAdd = buf;
-	tmp = _messagePtr = addMessageToStack(_messagePtr);
+	tmp = _messagePtr = addMessageToStack(_messagePtr, buf, sizeof(buf));
 
 	if (_string[3].color == 0)
 		_string[3].color = 4;
@@ -348,8 +346,7 @@ void ScummEngine::drawString(int a) {
 	byte fontHeight = 0;
 	uint color;
 
-	_msgPtrToAdd = buf;
-	_messagePtr = addMessageToStack(_messagePtr);
+	_messagePtr = addMessageToStack(_messagePtr, buf, sizeof(buf));
 
 	_charset->_top = _string[a].ypos + _screenTop;
 	_charset->_startLeft = _charset->_left = _string[a].xpos;
@@ -366,18 +363,18 @@ void ScummEngine::drawString(int a) {
 
 	fontHeight = _charset->getFontHeight();
 
-	_msgPtrToAdd = buf;
 
 	// trim from the right
+	byte *tmp = buf;
 	space = NULL;
-	while (*_msgPtrToAdd) {
-		if (*_msgPtrToAdd == ' ') {
+	while (*tmp) {
+		if (*tmp == ' ') {
 			if (!space)
-				space = _msgPtrToAdd;
+				space = tmp;
 		} else {
 			space = NULL;
 		}
-		_msgPtrToAdd++;
+		tmp++;
 	}
 	if (space)
 		*space = '\0';
@@ -472,11 +469,15 @@ void ScummEngine::drawString(int a) {
 	}
 }
 
-const byte *ScummEngine::addMessageToStack(const byte *msg) {
+const byte *ScummEngine::addMessageToStack(const byte *msg, byte *dstBuffer, int dstBufferSize) {
 	uint num = 0;
 	uint32 val;
 	byte chr;
 	byte buf[512];
+
+	if (dstBuffer) {
+		_msgPtrToAdd = dstBuffer;
+	}
 
 	if (msg == NULL) {
 		warning("Bad message in addMessageToStack, ignoring");
@@ -563,6 +564,12 @@ const byte *ScummEngine::addMessageToStack(const byte *msg) {
 	}
 	*_msgPtrToAdd = 0;
 
+	if (dstBuffer) {
+		// Check for a buffer overflow
+		if (_msgPtrToAdd >= dstBuffer + dstBufferSize)
+			error("addMessageToStack: buffer overflow!");
+	}
+
 	return msg;
 }
 
@@ -582,7 +589,7 @@ void ScummEngine::addVerbToStack(int var) {
 			if (num == _verbs[k].verbid && !_verbs[k].type && !_verbs[k].saveid) {
 				const byte *ptr = getResourceAddress(rtVerb, k);
 				ptr = translateTextAndPlaySpeech(ptr);
-				addMessageToStack(ptr);
+				addMessageToStack(ptr, 0, 0);
 				break;
 			}
 		}
@@ -599,9 +606,9 @@ void ScummEngine::addNameToStack(int var) {
 	if (ptr) {
 		if ((_version == 8) && (ptr[0] == '/')) {
 			translateText(ptr, _transText);
-			addMessageToStack(_transText);
+			addMessageToStack(_transText, 0, 0);
 		} else {
-			addMessageToStack(ptr);
+			addMessageToStack(ptr, 0, 0);
 		}
 	}
 }
@@ -617,9 +624,9 @@ void ScummEngine::addStringToStack(int var) {
 		if (ptr) {
 			if ((_version == 8) && (ptr[0] == '/')) {
 				translateText(ptr, _transText);
-				addMessageToStack(_transText);
+				addMessageToStack(_transText, 0, 0);
 			} else {
-				addMessageToStack(ptr);
+				addMessageToStack(ptr, 0, 0);
 			}
 		}
 	}
@@ -728,6 +735,7 @@ int indexCompare(const void *p1, const void *p2) {
 	return strcmp(i1->tag, i2->tag);
 }
 
+// Create an index of the language file.
 void ScummEngine::loadLanguageBundle() {
 	File file;
 	int32 size;
@@ -751,23 +759,16 @@ void ScummEngine::loadLanguageBundle() {
 	file.read(_languageBuffer, size);
 	file.close();
 
-	// Create an index of the language file.
-	// FIXME: Extend this mechanism to also cover The Dig?
-
 	int32 i;
 	char *ptr = _languageBuffer;
 
 	// Count the number of lines in the language file.
-
-	_languageIndexSize = 0;
-
-	for (;;) {
+	for (_languageIndexSize = 0; ; _languageIndexSize++) {
 		ptr = strpbrk(ptr, "\n\r");
 		if (ptr == NULL)
 			break;
 		while (*ptr == '\n' || *ptr == '\r')
 			ptr++;
-		_languageIndexSize++;
 	}
 
 	// Fill the language file index. This is just an array of

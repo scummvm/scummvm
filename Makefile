@@ -30,7 +30,7 @@ MODULE_DIRS :=
 include config.mak
 
 # Uncomment this for stricter compile time code verification
-# CXXFLAGS+= -Werror
+CXXFLAGS+= -Werror
 
 CXXFLAGS:= -Wall $(CXXFLAGS)
 CXXFLAGS+= -O -Wuninitialized

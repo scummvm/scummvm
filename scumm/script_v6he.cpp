@@ -955,9 +955,8 @@ void ScummEngine_v6he::o6_openFile() {
 	int mode, len, slot, l, r;
 	byte filename[100];
 
-	_msgPtrToAdd = filename;
 	_messagePtr = _scriptPointer;
-	addMessageToStack(_messagePtr);
+	addMessageToStack(_messagePtr, filename, sizeof(filename));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
@@ -1003,9 +1002,8 @@ void ScummEngine_v6he::o6_deleteFile() {
 	int len, r;
 	byte filename[100];
 
-	_msgPtrToAdd = filename;
 	_messagePtr = _scriptPointer;
-	addMessageToStack(_messagePtr);
+	addMessageToStack(_messagePtr, filename, sizeof(filename));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
@@ -1022,9 +1020,8 @@ void ScummEngine_v6he::o6_rename() {
 	int len, r1, r2;
 	byte filename[100],filename2[100];
 
-	_msgPtrToAdd = filename;
 	_messagePtr = _scriptPointer;
-	addMessageToStack(_messagePtr);
+	addMessageToStack(_messagePtr, filename, sizeof(filename));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
@@ -1034,9 +1031,8 @@ void ScummEngine_v6he::o6_rename() {
 			break;
 	}
 
-	_msgPtrToAdd = filename2;
 	_messagePtr = _scriptPointer;
-	addMessageToStack(_messagePtr);
+	addMessageToStack(_messagePtr, filename2, sizeof(filename2));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
@@ -1344,25 +1340,22 @@ void ScummEngine_v6he::o6_unknownF4() {
 
 		switch (b) {
 		case 1:
-			_msgPtrToAdd = filename1;
 			_messagePtr = _scriptPointer;
-			addMessageToStack(_messagePtr);
+			addMessageToStack(_messagePtr, filename1, sizeof(filename1));
 
 			len = resStrLen(_scriptPointer);
 			_scriptPointer += len + 1;
 			debug(1, "o6_unknownF4(%d, %d, \"%s\")", a, b, _messagePtr);
 			break;
 		case 2:
-			_msgPtrToAdd = filename1;
 			_messagePtr = _scriptPointer;
-			addMessageToStack(_messagePtr);
+			addMessageToStack(_messagePtr, filename1, sizeof(filename1));
 
 			len = resStrLen(_scriptPointer);
 			_scriptPointer += len + 1;
 
-			_msgPtrToAdd = filename2;
 			_messagePtr = _scriptPointer;
-			addMessageToStack(_messagePtr);
+			addMessageToStack(_messagePtr, filename2, sizeof(filename2));
 
 			len = resStrLen(_scriptPointer);
 			_scriptPointer += len + 1;
@@ -1378,9 +1371,8 @@ void ScummEngine_v6he::o6_unknownF9() {
 	int len, r;
 	byte filename[100];
 
-	_msgPtrToAdd = filename;
 	_messagePtr = _scriptPointer;
-	addMessageToStack(_messagePtr);
+	addMessageToStack(_messagePtr, filename, sizeof(filename));
 
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;

@@ -368,9 +368,12 @@ public:
 			/**
 			 * Abstract key code (will be the same for any given key regardless
 			 * of modifiers being held at the same time.
-			 * @todo Document which values are to be used for non-ASCII keys
-			 * like F1-F10.
 			 * For example, this is the same for both 'A' and Shift-'A'.
+			 * @todo Document which values are to be used for non-ASCII keys
+			 * like F1-F10. For now, let's just say that our primary backend
+			 * is the SDL one, and it uses the values SDL uses... so until
+			 * we fix this, your best bet is to get a copy of SDL_keysym.h
+			 * and look at that, if you want to find out a key code.
 			 */
 			int keycode;
 			/**
@@ -378,6 +381,7 @@ public:
 			 * This depends on modifiers, i.e. pressing the 'A' key results in
 			 * different values here depending on the status of shift, alt and
 			 * caps lock.
+			 * For the function keys F1-F9, values of 315-323 are used.
 			 */
 			uint16 ascii;
 			/**
