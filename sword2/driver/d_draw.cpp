@@ -20,6 +20,9 @@
 #include <stdio.h>
 #include "stdafx.h"
 #include "driver96.h"
+#include "bs2/header.h"		// HACK: For cutscenes instruction message
+#include "bs2/memory.h"		// HACK: For cutscenes instruction message
+#include "bs2/maketext.h"	// HACK: For cutscenes instruction message
 #include "rdwin.h"
 #include "_mouse.h"
 #include "d_draw.h"
@@ -551,6 +554,31 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 
 		EraseBackBuffer();
 
+		// HACK: Draw instructions
+		//
+		// I'm using the the menu area, because that's unlikely to be
+		// touched by anything else during the cutscene.
+
+		memset(lpBackBuffer, 0, screenWide * MENUDEEP);
+
+		uint8 msg[] = "Cutscene - Press ESC to exit";
+		mem *data = MakeTextSprite(msg, 640, 255, speech_font_id);
+		_frameHeader *frame = (_frameHeader *) data->ad;
+		_spriteInfo msgSprite;
+		uint8 *msgSurface;
+
+		msgSprite.x = screenWide / 2 - frame->width / 2;
+		msgSprite.y = RDMENU_MENUDEEP / 2 - frame->height / 2;
+		msgSprite.w = frame->width;
+		msgSprite.h = frame->height;
+		msgSprite.h = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
+		msgSprite.data = data->ad + sizeof(_frameHeader);
+
+		CreateSurface(&msgSprite, &msgSurface);
+		DrawSurface(&msgSprite, msgSurface);
+		DeleteSurface(msgSurface);
+		Free_mem(data);
+
 		// In case the cutscene has a long lead-in, start just before
 		// the first line of text.
 
@@ -609,6 +637,15 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 		BS2_SetPalette(0, 256, oldPal, RDPAL_INSTANT);
 
 		CloseTextObject(text[textCounter]);
+
+		// HACK: Remove the instructions created above
+		ScummVM::Rect r;
+
+		memset(lpBackBuffer, 0, screenWide * MENUDEEP);
+		r.left = r.top = 0;
+		r.right = screenWide;
+		r.bottom = MENUDEEP;
+		UploadRect(&r);
 	}
 
 	return(RD_OK);
