@@ -158,8 +158,7 @@ void Scumm::drawDirtyScreenParts()
 	if (_features & GF_OLD256)
 		updateDirtyScreen(1);
 
-	if ((camera._last.x == camera._cur.x && camera._last.y == camera._cur.y && (_features & GF_AFTER_V7))
-			|| (camera._last.x == camera._cur.x)) {
+	if (camera._last.x == camera._cur.x && (camera._last.y == camera._cur.y || !(_features & GF_AFTER_V7))) {
 		updateDirtyScreen(0);
 	} else {
 		vs = &virtscr[0];
@@ -247,11 +246,8 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b)
 	if (height > _vm->_realHeight)
 		height = _vm->_realHeight;
 
-	// FIXME - is this check really necessary?
-	if (_vm->camera._cur.y == 0)
-		scrollY = 0;
-	else
-		scrollY = _vm->_screenTop;
+	assert(_vm->_screenTop >= 0);
+	scrollY = _vm->_screenTop;
 
 	ptr = vs->screenPtr + (t * _numStrips + x) * 8 + _readOffs + scrollY * _vm->_realWidth;
 	_vm->_system->copy_rect(ptr, _vm->_realWidth, x * 8, vs->topline + t, w, height);
@@ -2447,13 +2443,11 @@ void Scumm::cameraMoved()
 
 		assert(camera._cur.x >= (_realWidth / 2) && camera._cur.y >= (_realHeight / 2));
 
-		_screenLeft = camera._cur.x - (_realWidth / 2);
-		_screenTop = camera._cur.y - (_realHeight / 2);
 	} else {
 
 		if (camera._cur.x < (_realWidth / 2)) {
 			camera._cur.x = (_realWidth / 2);
-		} else if (camera._cur.x + (_realWidth / 2) >= _scrWidth) {
+		} else if (camera._cur.x > _scrWidth - (_realWidth / 2)) {
 			camera._cur.x = _scrWidth - (_realWidth / 2);
 		}
 	}
@@ -2461,6 +2455,17 @@ void Scumm::cameraMoved()
 	_screenStartStrip = (camera._cur.x - (_realWidth / 2)) >> 3;
 	_screenEndStrip = _screenStartStrip + gdi._numStrips - 1;
 	virtscr[0].xstart = _screenStartStrip << 3;
+
+
+	_screenTop = camera._cur.y - (_realHeight / 2);
+	if (_features & GF_AFTER_V7) {
+
+		_screenLeft = camera._cur.x - (_realWidth / 2);
+	} else {
+
+		_screenLeft = _screenStartStrip << 3;
+	}
+
 }
 
 void Scumm::panCameraTo(int x, int y)
