@@ -63,8 +63,10 @@ uint16 SkyAutoRoute::autoRoute(Compact *cpt, uint16 **pSaveRoute) {
 	if (!cpt->extCompact)
 		error("SkyAutoRoute::autoRoute: fatal error. cpt->extCompact == NULL!\n");
 	uint16* routeData = (uint16*)cpt->extCompact->animScratch;
-	uint8* screenGrid = _grid->giveGrid(cpt->screen) - 4;
-	// ^^ this is actually a pointer to the last dword of the grid
+	uint8* screenGrid = _grid->giveGrid(cpt->screen);
+	screenGrid += GRID_SIZE-4; // all arrays are processed from behind, so make
+	// screenGrid point to the last element of our grid.
+
 	uint16 *routeCalc = _routeGrid + (ROUTE_GRID_SIZE >> 1) - 1;	
 	
 	uint8 stretch1, stretch2; // bl / bh
