@@ -278,6 +278,9 @@ int main(int argc, char *argv[]) {
 	// Create the system object
 	OSystem *system = detector.createSystem();
 	g_system = system;
+	
+	// Create the timer services
+	g_timer = new Timer(system);
 
 	// Set initial window caption
 	prop.caption = "ScummVM";
@@ -290,8 +293,9 @@ int main(int argc, char *argv[]) {
 	if (detector._gameFileName.isEmpty())
 		launcherDialog(detector, system);
 
-	// Verify the given game name
+	// Verify the given game name is a valid supported game
 	if (detector.detectMain()) {
+
 		// Set the window caption to the game name
 		prop.caption = g_config->get("description", detector._gameFileName);
 		if (prop.caption == NULL)	
@@ -304,9 +308,6 @@ int main(int argc, char *argv[]) {
 			prop.gfx_mode = GFX_NORMAL;
 			system->property(OSystem::PROP_SET_GFX_MODE, &prop);
 		}
-		
-		// Create the timer services
-		g_timer = new Timer(system);
 
 		// Create the game engine
 		Engine *engine = detector.createEngine(system);
