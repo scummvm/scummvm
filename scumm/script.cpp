@@ -477,11 +477,6 @@ int ScummEngine::fetchScriptWordSigned() {
 
 int ScummEngine::readVar(uint var) {
 	int a;
-	static byte copyprotbypassed;
-	if (!_copyProtection)
-		copyprotbypassed = false;
-	else
-		copyprotbypassed = true;
 
 	debugC(DEBUG_VARS, "readvar(%d)", var);
 
@@ -496,8 +491,7 @@ int ScummEngine::readVar(uint var) {
 
 	if (!(var & 0xF000)) {
 		if (!_copyProtection) {
-			if (var == 490 && _gameId == GID_MONKEY2 && !copyprotbypassed) {
-				copyprotbypassed = true;
+			if (var == 490 && _gameId == GID_MONKEY2) {
 				var = 518;
 			}
 		}
