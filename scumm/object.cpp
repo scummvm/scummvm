@@ -129,34 +129,11 @@ int Scumm::getObjectIndex(int object) {
 	if (object < 1)
 		return -1;
 
-#if 1
 	for (i = (_numLocalObjects-1); i > 0; i--) {
 		if (_objs[i].obj_nr == object)
 			return i;
 	}
 	return -1;
-#else
-	// FIXME: this function searches thru the _inventory. Yet almost all
-	// functions calling it assumg the index will always be into _objs.
-	// For script_v2.cpp this already caused some hard to track buglets.
-	// Maybe it also causes problems in other places. The question is,
-	// under which cirumstances would the _inventory result ever be
-	// useful for us?
-
-	// OF_OWNER_ROOM should be 0xFF for full throttle, else 0xF
-	if (_objectOwnerTable[object] != OF_OWNER_ROOM) {
-		for (i = 0; i < _maxInventoryItems; i++)
-			if (_inventory[i] == object)
-				return i;
-		return -1;
-	} else {
-		for (i = (_numLocalObjects-1); i > 0; i--) {
-			if (_objs[i].obj_nr == object)
-				return i;
-		}
-		return -1;
-	}
-#endif
 }
 
 int Scumm::whereIsObject(int object) {
@@ -977,9 +954,7 @@ void Scumm::addObjectToInventory(uint obj, uint room) {
 
 	slot = getInventorySlot();
 	_inventory[slot] = obj;
-	createResource(rtInventory, slot, size);
-
-	dst = getResourceAddress(rtInventory, slot);
+	dst = createResource(rtInventory, slot, size);
 	assert(dst);
 	memcpy(dst, ptr, size);
 
@@ -998,7 +973,7 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 	if (findWhat & foCheckAlreadyLoaded && getObjectIndex(id) != -1) {
 		if (_features & GF_OLD_BUNDLE) {
 			// I am not sure if this is even needed for old games...
-			// but using RES_SIZE defintily won't work with OLD_BUNDLE, since it
+			// but using RES_SIZE definitely won't work with OLD_BUNDLE, since it
 			// assumes the size is 32 bit but in old games it's 16 bit
 			error("findObjectInRoom foCheckAlreadyLoaded NYI for GF_OLD_BUNDLE (id = %d, room = %d)", id, room);
 		}
@@ -1795,8 +1770,7 @@ void Scumm::loadFlObject(uint object, uint room) {
 
 	// Allocate slot & memory for floating object
 	slot = findFlObjectSlot();
-	createResource(rtFlObject, slot, flob_size);
-	flob = getResourceAddress(rtFlObject, slot);
+	flob = createResource(rtFlObject, slot, flob_size);
 	assert(flob);
 
 	// Copy object code + object image to floating object
