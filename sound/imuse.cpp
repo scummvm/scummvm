@@ -41,9 +41,9 @@ int num_mix;
 #define COMMAND_ID 1
 
 #ifdef SAMNMAX
-#define MDHD_TAG "MDpg"
+	#define MDHD_TAG "MDpg"
 #else
-#define MDHD_TAG "MDhd"
+	#define MDHD_TAG "MDhd"
 #endif
 
 int clamp(int val, int min, int max) {
@@ -1059,12 +1059,12 @@ int Player::start_seq_sound(int sound) {
 
 void Player::set_tempo(uint32 b) {
 	uint32 i,j;
-printf("is: %d\n", _se->_s->_gameTempo);
+
         if (_se->_s->_gameTempo < 1000)
                 i = TEMPO_BASE;
         else
                 i = _se->_s->_gameTempo;
-	printf("Tempo set to: %d\n", i);
+
 	j = _tempo = b;
 
 	while (i&0xFFFF0000 || j&0xFFFF0000) { i>>=1; j>>=1; }
