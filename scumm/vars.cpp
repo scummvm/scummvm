@@ -79,6 +79,7 @@ void Scumm::setupScummVars() {
 	VAR_FIXEDDISK = 51;
 	VAR_CURSORSTATE = 52;
 	VAR_USERPUT = 53;
+	VAR_V5_TALK_STRING_Y = 54;
 	VAR_SOUNDRESULT = 56;
 	VAR_TALKSTOP_KEY = 57;
 	VAR_59 = 59;
@@ -88,13 +89,38 @@ void Scumm::setupScummVars() {
 	VAR_SOUNDPARAM3 = 66;
 	VAR_MOUSEPRESENT = 67;
 	VAR_PERFORMANCE_1 = 68;
-	VAR_PERFORMANCE_2 = 69;	// Zak256 Note: Cashcard for Zak
-	VAR_ROOM_FLAG = 70;	// Zak256 Note: Cashcard for Annie
-	VAR_GAME_LOADED = 71;	// Zak256 Note: Cashcard for Melissa
-	VAR_NEW_ROOM = 72;	// Zak256 Note: Cashcard for Leslie
+	if (!(_features & GF_SMALL_HEADER)) {
+		VAR_PERFORMANCE_2 = 69;	// Zak256 Note: Cashcard for Zak
+		VAR_ROOM_FLAG = 70;	// Zak256 Note: Cashcard for Annie
+		VAR_GAME_LOADED = 71;	// Zak256 Note: Cashcard for Melissa
+		VAR_NEW_ROOM = 72;	// Zak256 Note: Cashcard for Leslie
+	}
 	VAR_VERSION = 75;
+}
 
-	VAR_V5_TALK_STRING_Y = 54;
+void Scumm_v2::setupScummVars() {
+	VAR_EGO = 0;
+	VAR_CAMERA_POS_X = 2;
+	VAR_HAVE_MSG = 3;
+	VAR_ROOM = 4;
+	VAR_OVERRIDE = 5;
+	VAR_MACHINE_SPEED = 6;
+	VAR_NUM_ACTOR = 11;
+	VAR_CURRENT_LIGHTS = 12;
+	VAR_CURRENTDRIVE = 13;
+	VAR_MUSIC_TIMER = 17;
+	VAR_ACTOR_RANGE_MIN = 19;
+	VAR_ACTOR_RANGE_MAX = 20;
+	VAR_CAMERA_MIN_X = 23;
+	VAR_CAMERA_MAX_X = 24;
+	VAR_TIMER_NEXT = 25;
+	VAR_VIRT_MOUSE_X = 30;
+	VAR_VIRT_MOUSE_Y = 31;
+	VAR_ROOM_RESOURCE = 36;
+	VAR_LAST_SOUND = 37;
+	VAR_KEYPRESS = 39;
+	VAR_CUTSCENEEXIT_KEY = 40;
+	VAR_TALK_ACTOR = 41;
 }
 
 void Scumm_v6::setupScummVars() {
@@ -284,30 +310,4 @@ void Scumm_v8::setupScummVars() {
 	VAR_KEYPRESS = 132;
 	
 	VAR_CHARINC = 221;
-}
-
-void Scumm_v2::setupScummVars() {
-	VAR_EGO = 0;
-	VAR_CAMERA_POS_X = 2;
-	VAR_HAVE_MSG = 3;
-	VAR_ROOM = 4;
-	VAR_OVERRIDE = 5;
-	VAR_MACHINE_SPEED = 6;
-	VAR_NUM_ACTOR = 11;
-	VAR_CURRENT_LIGHTS = 12;
-	VAR_CURRENTDRIVE = 13;
-	VAR_MUSIC_TIMER = 17;
-	VAR_ACTOR_RANGE_MIN = 19;
-	VAR_ACTOR_RANGE_MAX = 20;
-	VAR_CAMERA_MIN_X = 23;
-	VAR_CAMERA_MAX_X = 24;
-	VAR_TIMER_NEXT = 25;
-	VAR_VIRT_MOUSE_X = 30;
-	VAR_VIRT_MOUSE_Y = 31;
-	VAR_ROOM_RESOURCE = 36;
-	VAR_LAST_SOUND = 37;
-	VAR_KEYPRESS = 39;
-	VAR_CUTSCENEEXIT_KEY = 40;
-	VAR_TALK_ACTOR = 41;
-
 }

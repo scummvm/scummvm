@@ -215,7 +215,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_inventory = NULL;
 	_arrays = NULL;
 	_newNames = NULL;
-	_vars = NULL;
+	_scummVars = NULL;
 	_varwatch = 0;
 	_bitVars = NULL;
 	_numVariables = 0;
@@ -395,6 +395,121 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_languageIndex = NULL;
 	_languageStrCount = 0;
 	memset(_transText,0,sizeof(_transText));
+
+	//
+	// Init all VARS to 0xFF
+	//
+	VAR_LANGUAGE = 0xFF;
+	VAR_KEYPRESS = 0xFF;
+	VAR_EGO = 0xFF;
+	VAR_CAMERA_POS_X = 0xFF;
+	VAR_HAVE_MSG = 0xFF;
+	VAR_ROOM = 0xFF;
+	VAR_OVERRIDE = 0xFF;
+	VAR_MACHINE_SPEED = 0xFF;
+	VAR_ME = 0xFF;
+	VAR_NUM_ACTOR = 0xFF;
+	VAR_CURRENT_LIGHTS = 0xFF;
+	VAR_CURRENTDRIVE = 0xFF;	// How about merging this with VAR_CURRENTDISK?
+	VAR_CURRENTDISK = 0xFF;
+	VAR_TMR_1 = 0xFF;
+	VAR_TMR_2 = 0xFF;
+	VAR_TMR_3 = 0xFF;
+	VAR_MUSIC_TIMER = 0xFF;
+	VAR_ACTOR_RANGE_MIN = 0xFF;
+	VAR_ACTOR_RANGE_MAX = 0xFF;
+	VAR_CAMERA_MIN_X = 0xFF;
+	VAR_CAMERA_MAX_X = 0xFF;
+	VAR_TIMER_NEXT = 0xFF;
+	VAR_VIRT_MOUSE_X = 0xFF;
+	VAR_VIRT_MOUSE_Y = 0xFF;
+	VAR_ROOM_RESOURCE = 0xFF;
+	VAR_LAST_SOUND = 0xFF;
+	VAR_CUTSCENEEXIT_KEY = 0xFF;
+	VAR_OPTIONS_KEY = 0xFF;
+	VAR_TALK_ACTOR = 0xFF;
+	VAR_CAMERA_FAST_X = 0xFF;
+	VAR_SCROLL_SCRIPT = 0xFF;
+	VAR_ENTRY_SCRIPT = 0xFF;
+	VAR_ENTRY_SCRIPT2 = 0xFF;
+	VAR_EXIT_SCRIPT = 0xFF;
+	VAR_EXIT_SCRIPT2 = 0xFF;
+	VAR_VERB_SCRIPT = 0xFF;
+	VAR_SENTENCE_SCRIPT = 0xFF;
+	VAR_HOOK_SCRIPT = 0xFF;
+	VAR_CUTSCENE_START_SCRIPT = 0xFF;
+	VAR_CUTSCENE_END_SCRIPT = 0xFF;
+	VAR_CHARINC = 0xFF;
+	VAR_WALKTO_OBJ = 0xFF;
+	VAR_DEBUGMODE = 0xFF;
+	VAR_HEAPSPACE = 0xFF;
+	VAR_RESTART_KEY = 0xFF;
+	VAR_PAUSE_KEY = 0xFF;
+	VAR_MOUSE_X = 0xFF;
+	VAR_MOUSE_Y = 0xFF;
+	VAR_TIMER = 0xFF;
+	VAR_TMR_4 = 0xFF;
+	VAR_SOUNDCARD = 0xFF;
+	VAR_VIDEOMODE = 0xFF;
+	VAR_SAVELOADDIALOG_KEY = 0xFF;
+	VAR_FIXEDDISK = 0xFF;
+	VAR_CURSORSTATE = 0xFF;
+	VAR_USERPUT = 0xFF;
+	VAR_SOUNDRESULT = 0xFF;
+	VAR_TALKSTOP_KEY = 0xFF;
+	VAR_59 = 0xFF;
+
+	VAR_SOUNDPARAM = 0xFF;
+	VAR_SOUNDPARAM2 = 0xFF;
+	VAR_SOUNDPARAM3 = 0xFF;
+	VAR_MOUSEPRESENT = 0xFF;
+	VAR_PERFORMANCE_1 = 0xFF;
+	VAR_PERFORMANCE_2 = 0xFF;
+	VAR_ROOM_FLAG = 0xFF;
+	VAR_GAME_LOADED = 0xFF;
+	VAR_NEW_ROOM = 0xFF;
+	VAR_VERSION = 0xFF;
+
+	VAR_V5_TALK_STRING_Y = 0xFF;
+
+	VAR_V6_SCREEN_WIDTH = 0xFF;
+	VAR_V6_SCREEN_HEIGHT = 0xFF;
+	VAR_V6_EMSSPACE = 0xFF;
+	VAR_V6_RANDOM_NR = 0xFF;
+
+	VAR_STRING2DRAW = 0xFF;
+	VAR_CAMERA_POS_Y = 0xFF;
+
+	VAR_CAMERA_MIN_Y = 0xFF;
+	VAR_CAMERA_MAX_Y = 0xFF;
+	VAR_CAMERA_THRESHOLD_X = 0xFF;
+	VAR_CAMERA_THRESHOLD_Y = 0xFF;
+	VAR_CAMERA_SPEED_X = 0xFF;
+	VAR_CAMERA_SPEED_Y = 0xFF;
+	VAR_CAMERA_ACCEL_X = 0xFF;
+	VAR_CAMERA_ACCEL_Y = 0xFF;
+
+	VAR_CAMERA_DEST_X = 0xFF;
+
+	VAR_CAMERA_DEST_Y = 0xFF;
+
+	VAR_CAMERA_FOLLOWED_ACTOR = 0xFF;
+
+	VAR_LEFTBTN_DOWN = 0xFF;
+	VAR_RIGHTBTN_DOWN = 0xFF;
+	VAR_LEFTBTN_HOLD = 0xFF;
+	VAR_RIGHTBTN_HOLD = 0xFF;
+	VAR_MOUSE_BUTTONS = 0xFF;
+	VAR_MOUSE_HOLD = 0xFF;
+	VAR_UNK_SCRIPT = 0xFF;
+	VAR_UNK_SCRIPT_2 = 0xFF;
+
+	VAR_DEFAULT_TALK_DELAY = 0xFF;
+	VAR_CHARSET_MASK = 0xFF;
+
+	VAR_CUSTOMSCALETABLE = 0xFF;
+	VAR_V6_SOUNDMODE = 0xFF;
+
 
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
@@ -672,39 +787,39 @@ void Scumm::scummInit() {
 
 void Scumm::initScummVars() {
 	if (!(_features & GF_AFTER_V6))
-		_vars[VAR_V5_TALK_STRING_Y] = -0x50;
+		VAR(VAR_V5_TALK_STRING_Y) = -0x50;
 
 	if (!(_features & GF_AFTER_V7)) {
-		_vars[VAR_CURRENTDRIVE] = 0;
-		_vars[VAR_FIXEDDISK] = true;
-		_vars[VAR_SOUNDCARD] = 3;
-		_vars[VAR_VIDEOMODE] = 0x13;
-		_vars[VAR_HEAPSPACE] = 1400;
-		_vars[VAR_MOUSEPRESENT] = true; // FIXME - used to be 0, but that seems odd?!?
+		VAR(VAR_CURRENTDRIVE) = 0;
+		VAR(VAR_FIXEDDISK) = true;
+		VAR(VAR_SOUNDCARD) = 3;
+		VAR(VAR_VIDEOMODE) = 0x13;
+		VAR(VAR_HEAPSPACE) = 1400;
+		VAR(VAR_MOUSEPRESENT) = true; // FIXME - used to be 0, but that seems odd?!?
 //		if (_features & GF_HUMONGOUS) // FIXME uncomment when XMI support is added
-//			_vars[VAR_SOUNDPARAM] = 1; // soundblaster for music
+//			VAR(VAR_SOUNDPARAM) = 1; // soundblaster for music
 //		else
-			_vars[VAR_SOUNDPARAM] = 0;
-		_vars[VAR_SOUNDPARAM2] = 0;
-		_vars[VAR_SOUNDPARAM3] = 0;
+			VAR(VAR_SOUNDPARAM) = 0;
+		VAR(VAR_SOUNDPARAM2) = 0;
+		VAR(VAR_SOUNDPARAM3) = 0;
 		if (_features & GF_AFTER_V6)
-			_vars[VAR_V6_EMSSPACE] = 10000;
+			VAR(VAR_V6_EMSSPACE) = 10000;
 
-		_vars[VAR_59] = 3;
+		VAR(VAR_59) = 3;
 
 		// Setup light
-		_vars[VAR_CURRENT_LIGHTS] = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
+		VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
 	} else {
-		_vars[VAR_V6_EMSSPACE] = 10000;
+		VAR(VAR_V6_EMSSPACE) = 10000;
 	}
 
 	if (_features & GF_AFTER_V8) {	// Fixme: How do we deal with non-cd installs?
-		_vars[VAR_CURRENTDISK] = 1;
-		_vars[VAR_LANGUAGE] = _language;
+		VAR(VAR_CURRENTDISK) = 1;
+		VAR(VAR_LANGUAGE) = _language;
 	}
 
-	_vars[VAR_CHARINC] = 4;
-	_vars[VAR_TALK_ACTOR] = 0;
+	VAR(VAR_CHARINC) = 4;
+	VAR(VAR_TALK_ACTOR) = 0;
 }
 
 void Scumm::checkRange(int max, int min, int no, const char *str) {
@@ -730,10 +845,10 @@ int Scumm::scummLoop(int delta) {
 	// that it will be in a different state each time you run the program.
 	_rnd.getRandomNumber(2);
 
-	_vars[VAR_TMR_1] += delta;
-	_vars[VAR_TMR_2] += delta;
-	_vars[VAR_TMR_3] += delta;
-	_vars[VAR_TMR_4] += delta;
+	VAR(VAR_TMR_1) += delta;
+	VAR(VAR_TMR_2) += delta;
+	VAR(VAR_TMR_3) += delta;
+	VAR(VAR_TMR_4) += delta;
 
 	if (delta > 15)
 		delta = 15;
@@ -753,17 +868,17 @@ int Scumm::scummLoop(int delta) {
 	processKbd();
 
 	if (_features & GF_AFTER_V7) {
-		_vars[VAR_CAMERA_POS_X] = camera._cur.x;
-		_vars[VAR_CAMERA_POS_Y] = camera._cur.y;
+		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
+		VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
 	} else {
-		_vars[VAR_CAMERA_POS_X] = camera._cur.x;
+		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 	}
-	_vars[VAR_HAVE_MSG] = (_haveMsg == 0xFE) ? 0xFF : _haveMsg;
-	_vars[VAR_VIRT_MOUSE_X] = _virtual_mouse_x;
-	_vars[VAR_VIRT_MOUSE_Y] = _virtual_mouse_y;
-	_vars[VAR_MOUSE_X] = mouse.x;
-	_vars[VAR_MOUSE_Y] = mouse.y;
-	_vars[VAR_DEBUGMODE] = _debugMode;
+	VAR(VAR_HAVE_MSG) = (_haveMsg == 0xFE) ? 0xFF : _haveMsg;
+	VAR(VAR_VIRT_MOUSE_X) = _virtual_mouse_x;
+	VAR(VAR_VIRT_MOUSE_Y) = _virtual_mouse_y;
+	VAR(VAR_MOUSE_X) = mouse.x;
+	VAR(VAR_MOUSE_Y) = mouse.y;
+	VAR(VAR_DEBUGMODE) = _debugMode;
 
 	if (_features & GF_AUDIOTRACKS) {
 		// Covered automatically by the Sound class
@@ -775,7 +890,7 @@ int Scumm::scummLoop(int delta) {
 		tempMusic += delta * 15;	// Convert delta to milliseconds
 		if (tempMusic >= MUSIC_DELAY) {
 			tempMusic %= MUSIC_DELAY;
-			_vars[VAR_MUSIC_TIMER] += 1;
+			VAR(VAR_MUSIC_TIMER) += 1;
 		}
 	}
 
@@ -788,7 +903,7 @@ int Scumm::scummLoop(int delta) {
 	}
 
 	if (!(_features & GF_SMALL_HEADER) && !(_features && GF_AFTER_V8))
-		_vars[VAR_GAME_LOADED] = 0;
+		VAR(VAR_GAME_LOADED) = 0;
 	if (_saveLoadFlag) {
 load_game:
 		bool success;
@@ -804,7 +919,7 @@ load_game:
 			//  variables (eg, Zak256 cashcard values). Temp disabled for V8
 			// because of odd timing issue with scripts and the variable reset
 			if (success && _saveLoadCompatible && !(_features & GF_SMALL_HEADER) && !(_features & GF_AFTER_V8))
-				_vars[VAR_GAME_LOADED] = 201;
+				VAR(VAR_GAME_LOADED) = 201;
 		} else {
 			success = loadState(_saveLoadSlot, _saveLoadCompatible);
 			if (!success)
@@ -813,7 +928,7 @@ load_game:
 			// Ender: Disabled for small_header games, as can overwrite game
 			//  variables (eg, Zak256 cashcard values).
 			if (success && _saveLoadCompatible && !(_features & GF_SMALL_HEADER))
-				_vars[VAR_GAME_LOADED] = 203;
+				VAR(VAR_GAME_LOADED) = 203;
 		}
 
 		makeSavegameName(filename, _saveLoadSlot, _saveLoadCompatible);
@@ -885,8 +1000,9 @@ load_game:
 		setActorRedrawFlags(true, true);
 		resetActorBgs();
 
-		if (!(_vars[VAR_CURRENT_LIGHTS] & LIGHTMODE_screen) &&
-		      _vars[VAR_CURRENT_LIGHTS] & LIGHTMODE_flashlight) {
+		if (!(_features & GF_AFTER_V7) &&
+		    !(VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_screen) &&
+		      VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_flashlight) {
 			drawFlashlight();
 			setActorRedrawFlags(true, false);
 		}
@@ -931,8 +1047,8 @@ load_game:
 	/* show or hide mouse */
 	_system->show_mouse(_cursor.state > 0);
 
-	_vars[VAR_TIMER] = 0;
-	return _vars[VAR_TIMER_NEXT];
+	VAR(VAR_TIMER) = 0;
+	return VAR(VAR_TIMER_NEXT);
 
 }
 
@@ -964,7 +1080,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr) {
 	}
 
 	if (!(_features & GF_SMALL_HEADER))  // Disable for SH games. Overwrites
-		_vars[VAR_NEW_ROOM] = room; // gamevars, eg Zak cashcards
+		VAR(VAR_NEW_ROOM) = room; // gamevars, eg Zak cashcards
 
 	runExitScript();
 	killScriptsAndResources();
@@ -985,20 +1101,20 @@ void Scumm::startScene(int room, Actor * a, int objectNr) {
 
 	clearDrawObjectQueue();
 
-	_vars[VAR_ROOM] = room;
+	VAR(VAR_ROOM) = room;
 	_fullRedraw = true;
 
 	increaseResourceCounter();
 
 	_currentRoom = room;
-	_vars[VAR_ROOM] = room;
+	VAR(VAR_ROOM) = room;
 
 	if (room >= 0x80 &&  !(_features & GF_AFTER_V7))
 		_roomResource = _resourceMapper[room & 0x7F];
 	else
 		_roomResource = room;
 
-	_vars[VAR_ROOM_RESOURCE] = _roomResource;
+	VAR(VAR_ROOM_RESOURCE) = _roomResource;
 
 	if (room != 0)
 		ensureResourceLoaded(rtRoom, room);
@@ -1026,16 +1142,16 @@ void Scumm::startScene(int room, Actor * a, int objectNr) {
 	}
 
 	if (_features & GF_AFTER_V6) {
-		_vars[VAR_V6_SCREEN_WIDTH] = _scrWidth;
-		_vars[VAR_V6_SCREEN_HEIGHT] = _scrHeight;
+		VAR(VAR_V6_SCREEN_WIDTH) = _scrWidth;
+		VAR(VAR_V6_SCREEN_HEIGHT) = _scrHeight;
 	}
 
-	_vars[VAR_CAMERA_MIN_X] = _realWidth / 2;
-	_vars[VAR_CAMERA_MAX_X] = _scrWidth - (_realWidth / 2);
+	VAR(VAR_CAMERA_MIN_X) = _realWidth / 2;
+	VAR(VAR_CAMERA_MAX_X) = _scrWidth - (_realWidth / 2);
 
 	if (_features & GF_AFTER_V7) {
-		_vars[VAR_CAMERA_MIN_Y] = _realHeight / 2;
-		_vars[VAR_CAMERA_MAX_Y] = _scrHeight - (_realHeight / 2);
+		VAR(VAR_CAMERA_MIN_Y) = _realHeight / 2;
+		VAR(VAR_CAMERA_MAX_Y) = _scrHeight - (_realHeight / 2);
 		setCameraAt(_realWidth / 2, _realHeight / 2);
 	}
 
@@ -1578,7 +1694,7 @@ void Scumm::processKbd() {
 	if ((_features & GF_OLD256) || (_gameId == GID_CMI) || (_features & GF_OLD_BUNDLE)) /* FIXME: Support ingame screen */
 		saveloadkey = 319;
 	else
-		saveloadkey = _vars[VAR_SAVELOADDIALOG_KEY];
+		saveloadkey = VAR(VAR_SAVELOADDIALOG_KEY);
 
 	_virtual_mouse_x = mouse.x + virtscr[0].xstart;
 
@@ -1608,33 +1724,33 @@ void Scumm::processKbd() {
 		return;
 	}
 
-	if (_lastKeyHit == _vars[VAR_RESTART_KEY]) {
+	if (_lastKeyHit == VAR(VAR_RESTART_KEY)) {
 		warning("Restart not implemented");
 //		pauseGame(true);
 		return;
 	}
 
-	if (_lastKeyHit == _vars[VAR_PAUSE_KEY]) {
+	if (_lastKeyHit == VAR(VAR_PAUSE_KEY)) {
 		pauseGame(true);
 		/* pause */
 		return;
 	}
 
-	if (_lastKeyHit == _vars[VAR_CUTSCENEEXIT_KEY]) {
+	if (_lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY)) {
 		if (_insaneState) {
 			_videoFinished = true;
 		} else
 			exitCutscene();
 	} else if (_lastKeyHit == saveloadkey && _currentRoom != 0) {
 		if (_features & GF_AFTER_V7)
-			runScript(_vars[VAR_UNK_SCRIPT], 0, 0, 0);
+			runScript(VAR(VAR_UNK_SCRIPT), 0, 0, 0);
 
 		saveloadDialog();		// Display NewGui
 
 		if (_features & GF_AFTER_V7)
-			runScript(_vars[VAR_UNK_SCRIPT_2], 0, 0, 0);
+			runScript(VAR(VAR_UNK_SCRIPT_2), 0, 0, 0);
 		return;
-	} else if (_lastKeyHit == _vars[VAR_TALKSTOP_KEY]) {
+	} else if (_lastKeyHit == VAR(VAR_TALKSTOP_KEY)) {
 		_talkDelay = 0;
 		if (_sound->_sfxMode & 2)
 			stopTalk();
@@ -1659,13 +1775,13 @@ void Scumm::processKbd() {
 		if (_defaultTalkDelay > 90)
 			_defaultTalkDelay = 90;
 
-		_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
+		VAR(VAR_CHARINC) = _defaultTalkDelay / 20;
 	} else if (_lastKeyHit == '+') { // + text speed up
 		_defaultTalkDelay -= 5;
 		if (_defaultTalkDelay < 5)
 			_defaultTalkDelay = 5;
 
-		_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
+		VAR(VAR_CHARINC) = _defaultTalkDelay / 20;
 	} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console
 		g_debugger->attach(this, NULL);
 	}
@@ -1690,7 +1806,7 @@ int Scumm::getKeyInput() {
 
 	if (_leftBtnPressed & msClicked && _rightBtnPressed & msClicked) {
 		_mouseButStat = 0;
-		_lastKeyHit = (uint)_vars[VAR_CUTSCENEEXIT_KEY];
+		_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
 	} else if (_leftBtnPressed & msClicked) {
 		_mouseButStat = MBS_LEFT_CLICK;
 	} else if (_rightBtnPressed & msClicked) {
@@ -1698,28 +1814,28 @@ int Scumm::getKeyInput() {
 	}
 
 	if (_features & GF_AFTER_V8) {
-		_vars[VAR_MOUSE_BUTTONS] = 0;
-		_vars[VAR_MOUSE_HOLD] = 0;
-		_vars[VAR_RIGHTBTN_HOLD] = 0;
+		VAR(VAR_MOUSE_BUTTONS) = 0;
+		VAR(VAR_MOUSE_HOLD) = 0;
+		VAR(VAR_RIGHTBTN_HOLD) = 0;
 
 		if (_leftBtnPressed & msClicked)
-			_vars[VAR_MOUSE_BUTTONS] += 1;
+			VAR(VAR_MOUSE_BUTTONS) += 1;
 
 		if (_rightBtnPressed & msClicked)
-			_vars[VAR_MOUSE_BUTTONS] += 2;
+			VAR(VAR_MOUSE_BUTTONS) += 2;
 
 		if (_leftBtnPressed & msDown)
-			_vars[VAR_MOUSE_HOLD] += 1;
+			VAR(VAR_MOUSE_HOLD) += 1;
 
 		if (_rightBtnPressed & msDown) {
-			_vars[VAR_RIGHTBTN_HOLD] = 1;
-			_vars[VAR_MOUSE_HOLD] += 2;
+			VAR(VAR_RIGHTBTN_HOLD) = 1;
+			VAR(VAR_MOUSE_HOLD) += 2;
 		}
 	} else if (_features & GF_AFTER_V7) {
-//    _vars[VAR_LEFTBTN_DOWN] = (_leftBtnPressed&msClicked) != 0;
-		_vars[VAR_LEFTBTN_HOLD] = (_leftBtnPressed & msDown) != 0;
-//    _vars[VAR_RIGHTBTN_DOWN] = (_rightBtnPressed&msClicked) != 0;
-		_vars[VAR_RIGHTBTN_HOLD] = (_rightBtnPressed & msDown) != 0;
+//    VAR(VAR_LEFTBTN_DOWN) = (_leftBtnPressed&msClicked) != 0;
+		VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
+//    VAR(VAR_RIGHTBTN_DOWN) = (_rightBtnPressed&msClicked) != 0;
+		VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
 	}
 
 	_leftBtnPressed &= ~msClicked;
@@ -1779,7 +1895,7 @@ void Scumm::destroy() {
 	free(_arrays);
 	free(_verbs);
 	free(_objs);
-	free(_vars);
+	free(_scummVars);
 	free(_bitVars);
 	free(_newNames);
 	free(_classData);
@@ -2093,12 +2209,12 @@ void Scumm::launch() {
 	scummInit();
 
 	if (!(_features & GF_AFTER_V7))
-		_vars[VAR_VERSION] = 21;
+		VAR(VAR_VERSION) = 21;
 
-	_vars[VAR_DEBUGMODE] = _debugMode;
+	VAR(VAR_DEBUGMODE) = _debugMode;
 
 	if (_gameId == GID_MONKEY)
-		_vars[74] = 1225;
+		_scummVars[74] = 1225;
 
 	_sound->setupSound();
 

@@ -195,7 +195,7 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 
 	initBGBuffers(_scrHeight);
 
-	if ((_features & GF_AUDIOTRACKS) && _vars[VAR_MUSIC_TIMER] > 0)
+	if ((_features & GF_AUDIOTRACKS) && VAR(VAR_MUSIC_TIMER) > 0)
 		_sound->startCDTimer();
 
 	CHECK_HEAP debug(1, "State loaded from '%s'", filename);
@@ -659,19 +659,19 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 	s->saveLoadArrayOf(_classData, _numGlobalObjects, sizeof(_classData[0]), sleUint32);
 
-	var120Backup = _vars[120];
-	var98Backup = _vars[98];
+	var120Backup = _scummVars[120];
+	var98Backup = _scummVars[98];
 
 	// The variables grew from 16 to 32 bit.
 	if (savegameVersion < VER_V15)
-		s->saveLoadArrayOf(_vars, _numVariables, sizeof(_vars[0]), sleInt16);
+		s->saveLoadArrayOf(_scummVars, _numVariables, sizeof(_scummVars[0]), sleInt16);
 	else
-		s->saveLoadArrayOf(_vars, _numVariables, sizeof(_vars[0]), sleInt32);
+		s->saveLoadArrayOf(_scummVars, _numVariables, sizeof(_scummVars[0]), sleInt32);
 
 	if (_gameId == GID_TENTACLE)	// Maybe misplaced, but that's the main idea
-		_vars[120] = var120Backup;
+		_scummVars[120] = var120Backup;
 	if (_gameId == GID_INDY4)
-		_vars[98] = var98Backup;;
+		_scummVars[98] = var98Backup;;
 
 	s->saveLoadArrayOf(_bitVars, _numBitVariables >> 3, 1, sleByte);
 

@@ -177,9 +177,9 @@ const ScummVM::String ScummDialog::queryResString(int stringno) {
 		return String();
 
 	if (_scumm->_features & GF_AFTER_V7)
-		string = _scumm->_vars[string_map_table_v7[stringno - 1].num];
+		string = _scumm->readVar(string_map_table_v7[stringno - 1].num);
 	else if (_scumm->_features & GF_AFTER_V6)
-		string = _scumm->_vars[string_map_table_v6[stringno - 1].num];
+		string = _scumm->readVar(string_map_table_v6[stringno - 1].num);
 	else
 		string = string_map_table_v5[stringno - 1].num;
 

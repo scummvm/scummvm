@@ -836,8 +836,8 @@ void Scumm_v6::o6_cursorCommand() {
 		error("o6_cursorCommand: default case");
 	}
 
-	_vars[VAR_CURSORSTATE] = _cursor.state;
-	_vars[VAR_USERPUT] = _userPut;
+	VAR(VAR_CURSORSTATE) = _cursor.state;
+	VAR(VAR_USERPUT) = _userPut;
 }
 
 void Scumm_v6::o6_breakHere() {
@@ -953,7 +953,7 @@ void Scumm_v6::o6_setCameraAt() {
 		int x, y;
 
 		camera._follows = 0;
-		_vars[VAR_CAMERA_FOLLOWED_ACTOR] = 0;
+		VAR(VAR_CAMERA_FOLLOWED_ACTOR) = 0;
 
 		y = pop();
 		x = pop();
@@ -1037,7 +1037,7 @@ void Scumm_v6::o6_putActorInRoom() {
 	if (room == 0xFF || room == 0x7FFFFFFF) {
 		room = a->room;
 	} else {
-		if (a->visible && _currentRoom != room && _vars[VAR_TALK_ACTOR] == a->number) {
+		if (a->visible && _currentRoom != room && VAR(VAR_TALK_ACTOR) == a->number) {
 			clearMsgQueue();
 		}
 		if (room != 0)
@@ -1104,14 +1104,14 @@ void Scumm_v6::o6_pickupObject() {
 
 	for (i = 1; i < _maxInventoryItems; i++) {
 		if (_inventory[i] == (uint16)obj) {
-			putOwner(obj, _vars[VAR_EGO]);
+			putOwner(obj, VAR(VAR_EGO));
 			runHook(obj);
 			return;
 		}
 	}
 
 	addObjectToInventory(obj, room);
-	putOwner(obj, _vars[VAR_EGO]);
+	putOwner(obj, VAR(VAR_EGO));
 	putClass(obj, 32, 1);
 	putState(obj, 1);
 	removeObjectFromRoom(obj);
@@ -1128,15 +1128,15 @@ void Scumm_v6::o6_loadRoomWithEgo() {
 
 	obj = popRoomAndObj(&room);
 
-	a = derefActorSafe(_vars[VAR_EGO], "o6_loadRoomWithEgo");
+	a = derefActorSafe(VAR(VAR_EGO), "o6_loadRoomWithEgo");
 	assert(a);
 	
 	a->putActor(0, 0, room);
 	_egoPositioned = false;
 
-	_vars[VAR_WALKTO_OBJ] = obj;
+	VAR(VAR_WALKTO_OBJ) = obj;
 	startScene(a->room, a, obj);
-	_vars[VAR_WALKTO_OBJ] = 0;
+	VAR(VAR_WALKTO_OBJ) = 0;
 
 	/* startScene maybe modifies VAR_EGO, i hope not */
 
@@ -1155,7 +1155,7 @@ void Scumm_v6::o6_loadRoomWithEgo() {
 void Scumm_v6::o6_getRandomNumber() {
 	int rnd;
 	rnd = _rnd.getRandomNumber(pop());
-	_vars[VAR_V6_RANDOM_NR] = rnd;
+	VAR(VAR_V6_RANDOM_NR) = rnd;
 	push(rnd);
 }
 
@@ -1163,7 +1163,7 @@ void Scumm_v6::o6_getRandomNumberRange() {
 	int max = pop();
 	int min = pop();
 	int rnd = _rnd.getRandomNumberRng(min, max);
-	_vars[VAR_V6_RANDOM_NR] = rnd;
+	VAR(VAR_V6_RANDOM_NR) = rnd;
 	push(rnd);
 }
 
@@ -1468,8 +1468,8 @@ void Scumm_v6::o6_roomOps() {
 			a = _scrWidth - (_realWidth / 2);
 		if (b > _scrWidth - (_realWidth / 2))
 			b = _scrWidth - (_realWidth / 2);
-		_vars[VAR_CAMERA_MIN_X] = a;
-		_vars[VAR_CAMERA_MAX_X] = b;
+		VAR(VAR_CAMERA_MIN_X) = a;
+		VAR(VAR_CAMERA_MAX_X) = b;
 		break;
 
 	case 174:										/* set screen */
@@ -2028,7 +2028,7 @@ void Scumm_v6::o6_wait() {
 			return;
 		}
 
-		if (_vars[VAR_HAVE_MSG])
+		if (VAR(VAR_HAVE_MSG))
 			break;
 		return;
 	case 170:
@@ -2043,11 +2043,11 @@ void Scumm_v6::o6_wait() {
 		return;
 	case 171:
 		if (_sentenceNum) {
-			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 				return;
 			break;
 		}
-		if (!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+		if (!isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 			return;
 		break;
 	case 226:{										/* wait until actor drawn */
@@ -2151,7 +2151,7 @@ void Scumm_v6::o6_delayMinutes() {
 
 void Scumm_v6::o6_stopSentence() {
 	_sentenceNum = 0;
-	stopScriptNr(_vars[VAR_SENTENCE_SCRIPT]);
+	stopScriptNr(VAR(VAR_SENTENCE_SCRIPT));
 	clearClickedStatus();
 }
 
@@ -2177,7 +2177,7 @@ void Scumm_v6::o6_printActor() {
 }
 
 void Scumm_v6::o6_printEgo() {
-	push(_vars[VAR_EGO]);
+	push(VAR(VAR_EGO));
 	decodeParseString(0, 1);
 }
 
@@ -2214,7 +2214,7 @@ void Scumm_v6::o6_talkActor() {
 }
 
 void Scumm_v6::o6_talkEgo() {
-	push(_vars[VAR_EGO]);
+	push(VAR(VAR_EGO));
 	o6_talkActor();
 }
 
@@ -2624,7 +2624,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 
 		case 122:
 
-			_vars[VAR_SOUNDRESULT] =
+			VAR(VAR_SOUNDRESULT) =
 				(short)_imuse->doCommand(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]);
 			break;
 
@@ -2707,7 +2707,7 @@ void Scumm_v6::o6_kernelGetFunctions() {
 		}
 
 		if( ((args[1] == 328) || (args[1] == 336) || (args[1] == 13)) &&
-			((_vars[VAR_LEFTBTN_HOLD]) || (_lastKeyHit == 13) || (_lastKeyHit == 274) ||
+			((VAR(VAR_LEFTBTN_HOLD)) || (_lastKeyHit == 13) || (_lastKeyHit == 274) ||
 			(_lastKeyHit == 273)) ) {
 			push(1); // thrust
 			return;
@@ -2937,14 +2937,14 @@ void Scumm_v6::o6_getDateTime() {
 	
 	t = localtime(&now);
 
-	_vars[VAR_TIMEDATE_YEAR] = t->tm_year;
-	_vars[VAR_TIMEDATE_MONTH] = t->tm_mon;
-	_vars[VAR_TIMEDATE_DAY] = t->tm_mday;
-	_vars[VAR_TIMEDATE_HOUR] = t->tm_hour;
-	_vars[VAR_TIMEDATE_MINUTE] = t->tm_min;
+	VAR(VAR_TIMEDATE_YEAR) = t->tm_year;
+	VAR(VAR_TIMEDATE_MONTH) = t->tm_mon;
+	VAR(VAR_TIMEDATE_DAY) = t->tm_mday;
+	VAR(VAR_TIMEDATE_HOUR) = t->tm_hour;
+	VAR(VAR_TIMEDATE_MINUTE) = t->tm_min;
 	
 	if (_features & GF_AFTER_V8)
-		_vars[VAR_TIMEDATE_SECOND] = t->tm_sec;
+		VAR(VAR_TIMEDATE_SECOND) = t->tm_sec;
 }
 
 void Scumm_v6::o6_unknownE1() {

@@ -51,7 +51,7 @@ Sound::~Sound() {
 
 void Sound::addSoundToQueue(int sound) {
 	if (!(_scumm->_features & GF_AFTER_V7)) {
-		_scumm->_vars[_scumm->VAR_LAST_SOUND] = sound;
+		_scumm->VAR(_scumm->VAR_LAST_SOUND) = sound;
 		_scumm->ensureResourceLoaded(rtSound, sound);
 		addSoundToQueue2(sound);
 	} else {
@@ -103,12 +103,12 @@ void Sound::processSoundQues() {
 			
 			if (!(_scumm->_features & GF_AFTER_V7)) {
 				if (_scumm->_imuse)
-					_scumm->_vars[_scumm->VAR_SOUNDRESULT] =
+					_scumm->VAR(_scumm->VAR_SOUNDRESULT) =
 						(short)_scumm->_imuse->doCommand(data[0], data[1], data[2], data[3], data[4],
 																	data[5], data[6], data[7]);
 			} else {
 				if (_scumm->_imuseDigital)
-					_scumm->_vars[_scumm->VAR_SOUNDRESULT] =
+					_scumm->VAR(_scumm->VAR_SOUNDRESULT) =
 						(short)_scumm->_imuseDigital->doCommand(data[0], data[1], data[2], data[3], data[4],
 																	data[5], data[6], data[7]);
 			}
@@ -190,7 +190,7 @@ void Sound::playSound(int soundID) {
 		}
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
 			ptr += 8;
-			_scumm->_vars[_scumm->VAR_MUSIC_TIMER] = 0;
+			_scumm->VAR(_scumm->VAR_MUSIC_TIMER) = 0;
 			playCDTrack(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
 							(ptr[18] * 60 + ptr[19]) * 75 + ptr[20], 0);
 
@@ -456,8 +456,8 @@ void Sound::processSfxQueues() {
 		_talk_sound_mode = 0;
 	}
 
-	if (_scumm->_vars[_scumm->VAR_TALK_ACTOR]) { //_sfxMode & 2) {
-		act = _scumm->_vars[_scumm->VAR_TALK_ACTOR];
+	if (_scumm->VAR(_scumm->VAR_TALK_ACTOR)) { //_sfxMode & 2) {
+		act = _scumm->VAR(_scumm->VAR_TALK_ACTOR);
 		if (_talkChannel < 0)
 			finished = false;
 		else if (_scumm->_mixer->_channels[_talkChannel] == NULL) {
@@ -796,7 +796,7 @@ void Sound::pauseSounds(bool pause) {
 		_scumm->_imuseDigital->pause(pause);
 	}
 
-	if ((_scumm->_features & GF_AUDIOTRACKS) && _scumm->_vars[_scumm->VAR_MUSIC_TIMER] > 0) {
+	if ((_scumm->_features & GF_AUDIOTRACKS) && _scumm->VAR(_scumm->VAR_MUSIC_TIMER) > 0) {
 		if (pause)
 			stopCDTimer();
 		else
@@ -1009,8 +1009,8 @@ void Sound::playBundleMusic(char *song) {
 		_outputMixerSize = 66150; // ((22050 * 2 * 2) / 4) * 3
 		if (_scumm->_gameId == GID_CMI) {
 			char bunfile[20];
-			sprintf(bunfile, "musdisk%d.bun", _scumm->_vars[_scumm->VAR_CURRENTDISK]);
-			if (_musicDisk != _scumm->_vars[_scumm->VAR_CURRENTDISK]) 
+			sprintf(bunfile, "musdisk%d.bun", _scumm->VAR(_scumm->VAR_CURRENTDISK));
+			if (_musicDisk != _scumm->VAR(_scumm->VAR_CURRENTDISK)) 
 				_scumm->_bundle->_musicFile.close();
 
 			if (_scumm->_bundle->openMusicFile(bunfile, _scumm->getGameDataPath()) == false) {
@@ -1020,7 +1020,7 @@ void Sound::playBundleMusic(char *song) {
 				}
 			}
 
-			_musicDisk = (byte)_scumm->_vars[_scumm->VAR_CURRENTDISK];
+			_musicDisk = (byte)_scumm->VAR(_scumm->VAR_CURRENTDISK);
 			_outputMixerSize = 88140; // ((22050 * 2 * 2)
 		} else {
 			if (_scumm->_bundle->openMusicFile("digmusic.bun", _scumm->getGameDataPath()) == false)
@@ -1194,15 +1194,15 @@ int Sound::playBundleSound(char *sound) {
 
 	if (_scumm->_gameId == GID_CMI) {
 		char voxfile[20];
-		sprintf(voxfile, "voxdisk%d.bun", _scumm->_vars[_scumm->VAR_CURRENTDISK]);
-		if (_voiceDisk != _scumm->_vars[_scumm->VAR_CURRENTDISK])
+		sprintf(voxfile, "voxdisk%d.bun", _scumm->VAR(_scumm->VAR_CURRENTDISK));
+		if (_voiceDisk != _scumm->VAR(_scumm->VAR_CURRENTDISK))
 			_scumm->_bundle->_voiceFile.close();
 
 		result = _scumm->_bundle->openVoiceFile(voxfile, _scumm->getGameDataPath());
 
 		if (result == false) 
 			result = _scumm->_bundle->openVoiceFile("voice.bun", _scumm->getGameDataPath());
-		_voiceDisk = (byte)_scumm->_vars[_scumm->VAR_CURRENTDISK];
+		_voiceDisk = (byte)_scumm->VAR(_scumm->VAR_CURRENTDISK);
 	} else if (_scumm->_gameId == GID_DIG)
 		result = _scumm->_bundle->openVoiceFile("digvoice.bun", _scumm->getGameDataPath());
 	else
@@ -1406,7 +1406,7 @@ static void cd_timer_handler(void *ptr) {
 	// should be possible to check with pollCD(), but since CD sound isn't
 	// properly restarted when reloading a saved game, I don't dare to.
 
-	scumm->_vars[scumm->VAR_MUSIC_TIMER] += 6;
+	scumm->VAR(scumm->VAR_MUSIC_TIMER) += 6;
 }
 
 void Sound::startCDTimer() {
@@ -1522,7 +1522,7 @@ int Sound::getCachedTrack(int track) {
 
 int Sound::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 	int index;
-	_scumm->_vars[_scumm->VAR_MUSIC_TIMER] = 0;
+	_scumm->VAR(_scumm->VAR_MUSIC_TIMER) = 0;
 
 	if (_soundsPaused)
 		return 0;

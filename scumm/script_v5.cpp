@@ -679,8 +679,8 @@ void Scumm_v5::o5_cursorCommand() {
 	}
 
 	if (!(_features & GF_OLD_BUNDLE) && _gameId != GID_INDY3_256) {
-		_vars[VAR_CURSORSTATE] = _cursor.state;
-		_vars[VAR_USERPUT] = _userPut;
+		VAR(VAR_CURSORSTATE) = _cursor.state;
+		VAR(VAR_USERPUT) = _userPut;
 	}
 }
 
@@ -737,7 +737,7 @@ void Scumm_v5::o5_doSentence() {
 	a = getVarOrDirectByte(0x80);
 	if (a == 0xFE) {
 		_sentenceNum = 0;
-		stopScriptNr(_vars[VAR_SENTENCE_SCRIPT]);
+		stopScriptNr(VAR(VAR_SENTENCE_SCRIPT));
 		clearClickedStatus();
 		return;
 	}
@@ -876,7 +876,7 @@ void Scumm_v5::o5_expression() {
 		case 6:										/* normal opcode */
 			_opcode = fetchScriptByte();
 			executeOpcode(_opcode);
-			push(_vars[0]);
+			push(_scummVars[0]);
 			break;
 		}
 	}
@@ -1082,7 +1082,7 @@ void Scumm_v5::o5_getClosestObjActor() {
 	getResultPos();
 
 	act = getVarOrDirectWord(0x80);
-	obj = _vars[VAR_ACTOR_RANGE_MAX];
+	obj = VAR(VAR_ACTOR_RANGE_MAX);
 
 	do {
 		dist = getObjActToObjActDist(act, obj);
@@ -1090,7 +1090,7 @@ void Scumm_v5::o5_getClosestObjActor() {
 			closest_dist = dist;
 			closest_obj = obj;
 		}
-	} while (--obj >= _vars[VAR_ACTOR_RANGE_MIN]);
+	} while (--obj >= VAR(VAR_ACTOR_RANGE_MIN));
 
 	setResult(closest_dist);
 }
@@ -1309,7 +1309,7 @@ void Scumm_v5::o5_lights() {
 	c = fetchScriptByte();
 
 	if (c == 0)
-		_vars[VAR_CURRENT_LIGHTS] = a;
+		VAR(VAR_CURRENT_LIGHTS) = a;
 	else if (c == 1) {
 		_flashlightXStrips = a;
 		_flashlightYStrips = b;
@@ -1337,7 +1337,7 @@ void Scumm_v5::o5_loadRoomWithEgo() {
 	obj = getVarOrDirectWord(0x80);
 	room = getVarOrDirectByte(0x40);
 
-	a = derefActorSafe(_vars[VAR_EGO], "o5_loadRoomWithEgo");
+	a = derefActorSafe(VAR(VAR_EGO), "o5_loadRoomWithEgo");
 
 	a->putActor(0, 0, room);
 	_egoPositioned = false;
@@ -1345,9 +1345,9 @@ void Scumm_v5::o5_loadRoomWithEgo() {
 	x = (int16)fetchScriptWord();
 	y = (int16)fetchScriptWord();
 
-	_vars[VAR_WALKTO_OBJ] = obj;
+	VAR(VAR_WALKTO_OBJ) = obj;
 	startScene(a->room, a, obj);
-	_vars[VAR_WALKTO_OBJ] = 0;
+	VAR(VAR_WALKTO_OBJ) = 0;
 
 	// FIXME: Can this be removed?
 	camera._cur.x = a->x;
@@ -1437,7 +1437,7 @@ void Scumm_v5::o5_pickupObject() {
 	if (room == 0)
 		room = _roomResource;
 	addObjectToInventory(obj, room);
-	putOwner(obj, _vars[VAR_EGO]);
+	putOwner(obj, VAR(VAR_EGO));
 	putClass(obj, 32, 1);
 	putState(obj, 1);
 	removeObjectFromRoom(obj);
@@ -1451,7 +1451,7 @@ void Scumm_v5::o5_print() {
 }
 
 void Scumm_v5::o5_printEgo() {
-	_actorToPrintStrFor = (byte)_vars[VAR_EGO];
+	_actorToPrintStrFor = (byte)VAR(VAR_EGO);
 	decodeParseString();
 }
 
@@ -1500,7 +1500,7 @@ void Scumm_v5::o5_putActorInRoom() {
 	room = getVarOrDirectByte(0x40);
 
 	if (a == NULL) return; // FIXME - yet another null dref hack, see bug 639201
-	if (a->visible && _currentRoom != room && _vars[VAR_TALK_ACTOR] == a->number) {
+	if (a->visible && _currentRoom != room && VAR(VAR_TALK_ACTOR) == a->number) {
 		clearMsgQueue();
 	}
 	a->room = room;
@@ -1668,8 +1668,8 @@ void Scumm_v5::o5_roomOps() {
 			a = _scrWidth - (_realWidth / 2);
 		if (b > _scrWidth - (_realWidth / 2))
 			b = _scrWidth - (_realWidth / 2);
-		_vars[VAR_CAMERA_MIN_X] = a;
-		_vars[VAR_CAMERA_MAX_X] = b;
+		VAR(VAR_CAMERA_MIN_X) = a;
+		VAR(VAR_CAMERA_MAX_X) = b;
 		break;
 	case 2:											/* room color */
 		if (_features & GF_SMALL_HEADER) {
@@ -2007,7 +2007,7 @@ void Scumm_v5::o5_startMusic() {
 }
 
 void Scumm_v5::o5_startSound() {
-	_vars[VAR_MUSIC_TIMER] = 0;
+	VAR(VAR_MUSIC_TIMER) = 0;
 	_sound->addSoundToQueue(getVarOrDirectByte(0x80));
 }
 
@@ -2034,9 +2034,9 @@ void Scumm_v5::o5_soundKludge() {
 
 	if (_features & GF_SMALL_HEADER) {	// Is WaitForSentence in SCUMM V3
 		if (_sentenceNum) {
-			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 				return;
-		} else if (!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+		} else if (!isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 			return;
 
 		_scriptPointer--;
@@ -2320,7 +2320,7 @@ void Scumm_v5::o5_wait() {
 			return;
 		}
 	case 2:											/* wait for message */
-		if (_vars[VAR_HAVE_MSG])
+		if (VAR(VAR_HAVE_MSG))
 			break;
 		return;
 	case 3:											/* wait for camera */
@@ -2329,11 +2329,11 @@ void Scumm_v5::o5_wait() {
 		return;
 	case 4:											/* wait for sentence */
 		if (_sentenceNum) {
-			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 				return;
 			break;
 		}
-		if (!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+		if (!isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 			return;
 		break;
 	default:
@@ -2491,7 +2491,7 @@ void Scumm_v5::decodeParseString() {
 				int delay = (uint16)getVarOrDirectWord(0x40);
 
 				if (_gameId == GID_LOOM256) {
-					_vars[VAR_MUSIC_TIMER] = 0;
+					VAR(VAR_MUSIC_TIMER) = 0;
 					if (offset == 0 && delay == 0) {
 						_sound->stopCD();
 					} else {
@@ -2639,7 +2639,7 @@ void Scumm_v5::o5_pickupObjectOld() {
 	// warning("adding %d from %d to inventoryOld", obj, _currentRoom);
 	addObjectToInventory(obj, _roomResource);
 	removeObjectFromRoom(obj);
-	putOwner(obj, _vars[VAR_EGO]);
+	putOwner(obj, VAR(VAR_EGO));
 	putClass(obj, 32, 1);
 	putState(obj, 1);
 	clearDrawObjectQueue();

@@ -399,15 +399,15 @@ void Scumm_v2::decodeParseString() {
 
 int Scumm_v2::readVar(uint var) {
 	if (var >= 14 && var <= 16)
-		var = _vars[var];
+		var = _scummVars[var];
 
 	checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
-	debug(6, "readvar(%d) = %d", var, _vars[var]);
-	return _vars[var];
+	debug(6, "readvar(%d) = %d", var, _scummVars[var]);
+	return _scummVars[var];
 }
 
 void Scumm_v2::getResultPosIndirect() {
-	_resultVarNumber = _vars[fetchScriptByte()];
+	_resultVarNumber = _scummVars[fetchScriptByte()];
 }
 
 void Scumm_v2::getResultPos() {
@@ -504,9 +504,9 @@ void Scumm_v2::o2_setBitVar() {
 	bit_var >>= 4;
 
 	if (getVarOrDirectByte(0x40))
-		_vars[bit_var] |= (1 << bit_offset);
+		_scummVars[bit_var] |= (1 << bit_offset);
 	else
-		_vars[bit_var] &= ~(1 << bit_offset);
+		_scummVars[bit_var] &= ~(1 << bit_offset);
 }
 
 void Scumm_v2::o2_getBitVar() {
@@ -519,7 +519,7 @@ void Scumm_v2::o2_getBitVar() {
 	int bit_offset = bit_var & 0x0f;
 	bit_var >>= 4;
 
-	setResult((_vars[bit_var] & (1 << bit_offset)) ? 1 : 0);
+	setResult((_scummVars[bit_var] & (1 << bit_offset)) ? 1 : 0);
 }
 
 void Scumm_v2::ifStateCommon(byte type) {
@@ -576,14 +576,14 @@ void Scumm_v2::o2_addIndirect() {
 	int a;
 	getResultPosIndirect();
 	a = getVarOrDirectWord(0x80);
-	_vars[_resultVarNumber] += a;
+	_scummVars[_resultVarNumber] += a;
 }
 
 void Scumm_v2::o2_subIndirect() {
 	int a;
 	getResultPosIndirect();
 	a = getVarOrDirectWord(0x80);
-	_vars[_resultVarNumber] -= a;
+	_scummVars[_resultVarNumber] -= a;
 }
 
 void Scumm_v2::o2_waitForActor() {
@@ -595,7 +595,7 @@ void Scumm_v2::o2_waitForActor() {
 
 void Scumm_v2::o2_waitForMessage() {
 	
-	if (_vars[VAR_HAVE_MSG]) {
+	if (VAR(VAR_HAVE_MSG)) {
 		_scriptPointer--;
 		o5_breakHere();
 	}
@@ -927,7 +927,7 @@ void Scumm_v2::o2_loadRoomWithEgo() {
 	obj = getVarOrDirectWord(0x80);
 	room = getVarOrDirectByte(0x40);
 
-	a = derefActorSafe(_vars[VAR_EGO], "o2_loadRoomWithEgo");
+	a = derefActorSafe(VAR(VAR_EGO), "o2_loadRoomWithEgo");
 
 	a->putActor(0, 0, room);
 	_egoPositioned = false;
@@ -997,8 +997,8 @@ void Scumm_v2::o2_roomOps() {
 			a = _scrWidth - (_realWidth / 2);
 		if (b > _scrWidth - (_realWidth / 2))
 			b = _scrWidth - (_realWidth / 2);
-		_vars[VAR_CAMERA_MIN_X] = a;
-		_vars[VAR_CAMERA_MAX_X] = b;
+		VAR(VAR_CAMERA_MIN_X) = a;
+		VAR(VAR_CAMERA_MAX_X) = b;
 		break;
 	case 2:											/* room color */
 		_shadowPalette[b] = a;
@@ -1041,7 +1041,7 @@ void Scumm_v2::o2_pickupObject() {
 
 	addObjectToInventory(obj, _roomResource);
 	removeObjectFromRoom(obj);
-	putOwner(obj, _vars[VAR_EGO]);
+	putOwner(obj, VAR(VAR_EGO));
 	putClass(obj, 32, 1);
 	putState(obj, 1);
 	clearDrawObjectQueue();

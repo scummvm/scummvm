@@ -1319,7 +1319,7 @@ void CostumeRenderer::setPalette(byte *palette) {
 	byte color;
 
 	if (_vm->_features & GF_OLD_BUNDLE) {
-		if ((_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_actor_color)) {
+		if ((_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
 			memcpy(_palette, palette, 16);
 		} else {
 			memset(_palette, 8, 16);
@@ -1332,7 +1332,7 @@ void CostumeRenderer::setPalette(byte *palette) {
 		_palette[_loaded._ptr[8]] = _palette[0];
 	} else {
 		for (i = 0; i < _loaded._numColors; i++) {
-			if ((_vm->_vars[_vm->VAR_CURRENT_LIGHTS] & LIGHTMODE_actor_color) || (_vm->_features & GF_AFTER_V6)) {
+			if ((_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color) || (_vm->_features & GF_AFTER_V6)) {
 				color = palette[i];
 				if (color == 255)
 					color = _loaded._ptr[8 + i];

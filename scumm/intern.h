@@ -294,7 +294,17 @@ protected:
 	const OpcodeEntryV6 *_opcodesV6;
 	
 public:
-	Scumm_v6(GameDetector *detector, OSystem *syst) : Scumm(detector, syst) {}
+	Scumm_v6(GameDetector *detector, OSystem *syst) : Scumm(detector, syst)
+	{
+		VAR_VIDEONAME = 0xFF;
+
+		VAR_TIMEDATE_YEAR = 0xFF;
+		VAR_TIMEDATE_MONTH = 0xFF;
+		VAR_TIMEDATE_DAY = 0xFF;
+		VAR_TIMEDATE_HOUR = 0xFF;
+		VAR_TIMEDATE_MINUTE = 0xFF;
+		VAR_TIMEDATE_SECOND = 0xFF;
+	}
 
 protected:
 	virtual void setupOpcodes();

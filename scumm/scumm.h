@@ -388,9 +388,19 @@ protected:
 	byte *_arrays;
 	uint16 *_newNames;
 public:
-	int32 *_vars;
+	// VAR is a wrapper around scummVar, which attempts to include additional
+	// useful information should an illegal var access be detected.
+	#define VAR(x)	scummVar(x, #x, __FILE__, __LINE__)
+	inline int32& scummVar(byte var, const char *varName, const char *file, int line)
+	{
+		if (var == 0xFF)
+			warning("Illegal access to variable %s in file %s, line %d", varName, file, line);
+		return _scummVars[var];
+	}
+
 protected:
 	int16 _varwatch;
+	int32 *_scummVars;
 	byte *_bitVars;
 
 	/* Global resource tables */

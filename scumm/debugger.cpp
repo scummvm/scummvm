@@ -68,7 +68,7 @@ void ScummDebugger::attach(Scumm *s, char *entry) {
 		DVar_Register("scumm_speed", &_s->_fastMode, DVAR_INT, 0);
 		DVar_Register("scumm_room", &_s->_currentRoom, DVAR_INT, 0);
 		DVar_Register("scumm_roomresource", &_s->_roomResource, DVAR_INT, 0);
-		DVar_Register("scumm_vars", &_s->_vars, DVAR_INTARRAY, _s->_numVariables);
+		DVar_Register("scumm_vars", &_s->_scummVars, DVAR_INTARRAY, _s->_numVariables);
 
 		DVar_Register("scumm_gamename", &_s->_game_name, DVAR_STRING, 0);
 		DVar_Register("scumm_exename", &_s->_exe_name, DVAR_STRING, 0);
@@ -338,7 +338,7 @@ bool ScummDebugger::Cmd_Restart(int argc, const char **argv) {
 bool ScummDebugger::Cmd_Room(int argc, const char **argv) {
 	if (argc > 1) {
 		int room = atoi(argv[1]);
-		_s->_actors[_s->_vars[_s->VAR_EGO]].room = room;
+		_s->_actors[_s->VAR(_s->VAR_EGO)].room = room;
 		_s->startScene(room, 0, 0);
 		_s->_fullRedraw = 1;
 		return false;
@@ -594,7 +594,7 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 	if (!strcmp(argv[2], "pickup")) {
 		for (i = 1; i < _s->_maxInventoryItems; i++) {
 			if (_s->_inventory[i] == (uint16)obj) {
-				_s->putOwner(obj, _s->_vars[_s->VAR_EGO]);
+				_s->putOwner(obj, _s->VAR(_s->VAR_EGO));
 				_s->runHook(obj);
 				return true;
 			}
@@ -605,7 +605,7 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 		else
 			_s->addObjectToInventory(obj, atoi(argv[3]));
 
-		_s->putOwner(obj, _s->_vars[_s->VAR_EGO]);
+		_s->putOwner(obj, _s->VAR(_s->VAR_EGO));
 		_s->putClass(obj, 32, 1);
 		_s->putState(obj, 1);
 		_s->removeObjectFromRoom(obj);
@@ -769,8 +769,8 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 
 		if (strcmp(argv[1], "learn") == 0) {
 			for (i = 0; i < 16; i++)
-				_s->_vars[base + 2 * i] |= 0x2000;
-			_s->_vars[base + 72] = 8;
+				_s->_scummVars[base + 2 * i] |= 0x2000;
+			_s->_scummVars[base + 72] = 8;
 
 			// In theory, we could run script 18 here to redraw
 			// the distaff, but I don't know if that's a safe
@@ -787,7 +787,7 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 
 		if (strcmp(argv[1], "fix") == 0) {
 			for (i = 0; i < 16; i++)
-				_s->_vars[base + 2 * i + 1] = odds[i];
+				_s->_scummVars[base + 2 * i + 1] = odds[i];
 			Debug_Printf(
 				"An attempt has been made to repair\n"
 				"the internal drafts data structure.\n"
@@ -799,7 +799,7 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 	// Probably the most useful command for ordinary use: list the drafts.
 
 	for (i = 0; i < 16; i++) {
-		draft = _s->_vars[base + i * 2];
+		draft = _s->_scummVars[base + i * 2];
 		Debug_Printf("%d %-13s %c%c%c%c %c%c %5d %c\n",
 			base + 2 * i,
 			names[i],
@@ -809,8 +809,8 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 			notes[(draft & 0x0e00) >> 9],
 			(draft & 0x2000) ? 'K' : ' ',
 			(draft & 0x4000) ? 'U' : ' ',
-			_s->_vars[base + 2 * i + 1],
-			(_s->_vars[base + 2 * i + 1] != odds[i]) ? '!' : ' ');
+			_s->_scummVars[base + 2 * i + 1],
+			(_s->_scummVars[base + 2 * i + 1] != odds[i]) ? '!' : ' ');
 	}
 
 	return true;

@@ -49,7 +49,7 @@ void Scumm::unkMessage1() {
 		// and setting VAR_V6_SOUNDMODE beforehand. See patch 609791.
 		// FIXME: There are other VAR_V6_SOUNDMODE states, as
 		// mentioned in the patch. FIXME after iMUSE is done.
-		if (_gameId != GID_SAMNMAX || (_vars[VAR_V6_SOUNDMODE] != 2))
+		if (_gameId != GID_SAMNMAX || (VAR(VAR_V6_SOUNDMODE) != 2))
 			_sound->talkSound(a, b, 1, -1);
 	} 
 }
@@ -66,7 +66,7 @@ void Scumm::unkMessage2() {
 	InfoDialog* dialog = new InfoDialog(_newgui, this, (char*)buf);
 	// FIXME: I know this is the right thing to do for MI1 and MI2. For
 	// all other games it's just a guess.
-	_vars[VAR_KEYPRESS] = runDialog (dialog);
+	VAR(VAR_KEYPRESS) = runDialog (dialog);
 	delete dialog;
 
 	_messagePtr = tmp;
@@ -89,24 +89,24 @@ void Scumm::CHARSET_1() {
 	// 'secret room while walking' hang. It doesn't do the camera check
 	// when the talk target isn't an actor. The question is, can we make
 	// this a more general case? Does it really need to be Zak specific?
-	if (!(_features & GF_AFTER_V7) && !(_gameId==GID_ZAK256 && _vars[VAR_TALK_ACTOR] == 0xFF)) {
+	if (!(_features & GF_AFTER_V7) && !(_gameId==GID_ZAK256 && VAR(VAR_TALK_ACTOR) == 0xFF)) {
 		if ((camera._dest.x >> 3) != (camera._cur.x >> 3) || camera._cur.x != camera._last.x)
 			return;
 	}
 
 	a = NULL;
-	if (_vars[VAR_TALK_ACTOR] != 0xFF)
-		a = derefActorSafe(_vars[VAR_TALK_ACTOR], "CHARSET_1");
+	if (VAR(VAR_TALK_ACTOR) != 0xFF)
+		a = derefActorSafe(VAR(VAR_TALK_ACTOR), "CHARSET_1");
 
 	if (a && _string[0].overhead != 0) {
 		if (!(_features & GF_AFTER_V6)) {
 			_string[0].xpos = a->x - camera._cur.x + (_realWidth / 2);
 
-			if (_vars[VAR_V5_TALK_STRING_Y] < 0) {
-				s = (a->scaley * (int)_vars[VAR_V5_TALK_STRING_Y]) / 0xFF;
-				_string[0].ypos = ((_vars[VAR_V5_TALK_STRING_Y] - s) >> 1) + s - a->elevation + a->y;
+			if (VAR(VAR_V5_TALK_STRING_Y) < 0) {
+				s = (a->scaley * (int)VAR(VAR_V5_TALK_STRING_Y)) / 0xFF;
+				_string[0].ypos = ((VAR(VAR_V5_TALK_STRING_Y) - s) >> 1) + s - a->elevation + a->y;
 			} else {
-				_string[0].ypos = (int)_vars[VAR_V5_TALK_STRING_Y];
+				_string[0].ypos = (int)VAR(VAR_V5_TALK_STRING_Y);
 			}
 			if (_string[0].ypos < 1)
 				_string[0].ypos = 1;
@@ -182,7 +182,7 @@ void Scumm::CHARSET_1() {
 
 	if (_gameId == GID_LOOM256) {
 		_defaultTalkDelay = 100;
-		_vars[VAR_CHARINC] = 5;
+		VAR(VAR_CHARINC) = 5;
 	}
 
 	_talkDelay = _defaultTalkDelay;
@@ -264,7 +264,7 @@ void Scumm::CHARSET_1() {
 
 			_charset->_nextLeft = _charset->_left;
 			_charset->_nextTop = _charset->_top;
-			_talkDelay += (int)_vars[VAR_CHARINC];
+			_talkDelay += (int)VAR(VAR_CHARINC);
 			continue;
 		}
 

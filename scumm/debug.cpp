@@ -113,7 +113,7 @@ bool ScummDebugger::do_command(int cmd)
 			printf("Current room: %d [%d]\n", _s->_currentRoom, _s->_roomResource);
 		} else {
 			int room = atoi(_parameters);
-			_s->_actors[_s->_vars[_s->VAR_EGO]].room = room;
+			_s->_actors[_s->VAR(_s->VAR_EGO)].room = room;
 			_s->startScene(room, 0, 0);
 			_s->_fullRedraw = 1;
 		}

@@ -392,7 +392,7 @@ int Scumm_v8::readVar(uint var) {
 
 	if (!(var & 0xF0000000)) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
-		return _vars[var];
+		return _scummVars[var];
 	}
 
 	if (var & 0x80000000) {
@@ -417,7 +417,7 @@ void Scumm_v8::writeVar(uint var, int value) {
 	if (!(var & 0xF0000000)) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");
 
-		_vars[var] = value;
+		_scummVars[var] = value;
 
 		if ((_varwatch == (int)var) || (_varwatch == 0)) {
 			if (vm.slot[_currentScript].number < 100)
@@ -650,7 +650,7 @@ void Scumm_v8::o8_wait() {
 		}
 		return;
 	case 0x1F:		// SO_WAIT_FOR_MESSAGE Wait for message
-		if (_vars[VAR_HAVE_MSG])
+		if (VAR(VAR_HAVE_MSG))
 			break;
 		return;
 	case 0x20:		// SO_WAIT_FOR_CAMERA Wait for camera (to finish current action?)
@@ -659,11 +659,11 @@ void Scumm_v8::o8_wait() {
 		return;
 	case 0x21:		// SO_WAIT_FOR_SENTENCE
 		if (_sentenceNum) {
-			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 				return;
 			break;
 		}
-		if (!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+		if (!isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 			return;
 		break;
 	case 0x22:		// SO_WAIT_FOR_ANIMATION
@@ -858,8 +858,8 @@ void Scumm_v8::o8_cursorCommand() {
 		error("o8_cursorCommand: default case 0x%x", subOp);
 	}
 
-	_vars[VAR_CURSORSTATE] = _cursor.state;
-	_vars[VAR_USERPUT] = _userPut;
+	VAR(VAR_CURSORSTATE) = _cursor.state;
+	VAR(VAR_USERPUT) = _userPut;
 }
 
 void Scumm_v8::o8_createBoxMatrix() {

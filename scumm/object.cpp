@@ -1099,7 +1099,7 @@ void Scumm::SamInventoryHack(int obj) {
 		if (value == obj)
 			return;
 		if (value == 0) {
-			_vars[179]++;
+			_scummVars[179]++;
 			writeArray(178, 0, base, obj);
 			return;
 		}

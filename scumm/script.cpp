@@ -362,7 +362,7 @@ int Scumm::readVar(uint var) {
 		}
 #endif
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
-		return _vars[var];
+		return _scummVars[var];
 	}
 
 	if (var & 0x8000) {
@@ -380,7 +380,7 @@ int Scumm::readVar(uint var) {
 			}
 #endif
 			checkRange(_numVariables - 1, 0, var, "Variable %d out of range(rzb)");
-			return (_vars[ var ] & ( 1 << bit ) ) ? 1 : 0;
+			return (_scummVars[ var ] & ( 1 << bit ) ) ? 1 : 0;
 		} else {
 			var &= 0x7FFF;
 			checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(r)");
@@ -408,9 +408,9 @@ void Scumm::writeVar(uint var, int value) {
 
 		// FIXME: Find some better place to put this.
 		if (var == VAR_CHARINC)
-			_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
+			VAR(VAR_CHARINC) = _defaultTalkDelay / 20;
 		else
-			_vars[var] = value;
+			_scummVars[var] = value;
 
 		if ((_varwatch == (int)var) || (_varwatch == 0)) {
 			if (vm.slot[_currentScript].number < 100)
@@ -430,9 +430,9 @@ void Scumm::writeVar(uint var, int value) {
 			var = (var >> 4) & 0xFF;
 			checkRange(_numVariables - 1, 0, var, "Variable %d out of range(wzb)");
 			if(value)
-				_vars[var] |= ( 1 << bit );
+				_scummVars[var] |= ( 1 << bit );
 			else
-				_vars[var] &= ~( 1 << bit );
+				_scummVars[var] &= ~( 1 << bit );
 		} else {
 			var &= 0x7FFF;
 			checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(w)");
@@ -591,8 +591,8 @@ bool Scumm::isScriptInUse(int script) {
 void Scumm::runHook(int i) {
 	int tmp[16];
 	tmp[0] = i;
-	if (_vars[VAR_HOOK_SCRIPT]) {
-		runScript(_vars[VAR_HOOK_SCRIPT], 0, 0, tmp);
+	if (VAR(VAR_HOOK_SCRIPT)) {
+		runScript(VAR(VAR_HOOK_SCRIPT), 0, 0, tmp);
 	}
 }
 
@@ -653,8 +653,8 @@ void Scumm::runAllScripts() {
 }
 
 void Scumm::runExitScript() {
-	if (!(_features & GF_AFTER_V2) && _vars[VAR_EXIT_SCRIPT])
-		runScript(_vars[VAR_EXIT_SCRIPT], 0, 0, 0);
+	if (!(_features & GF_AFTER_V2) && VAR(VAR_EXIT_SCRIPT))
+		runScript(VAR(VAR_EXIT_SCRIPT), 0, 0, 0);
 	if (_EXCD_offs) {
 		int slot = getScriptSlot();
 		vm.slot[slot].status = ssRunning;
@@ -684,13 +684,13 @@ void Scumm::runExitScript() {
 
 		runScriptNested(slot);
 	}
-	if (!(_features & GF_AFTER_V2) && _vars[VAR_EXIT_SCRIPT2])
-		runScript(_vars[VAR_EXIT_SCRIPT2], 0, 0, 0);
+	if (!(_features & GF_AFTER_V2) && VAR(VAR_EXIT_SCRIPT2))
+		runScript(VAR(VAR_EXIT_SCRIPT2), 0, 0, 0);
 }
 
 void Scumm::runEntryScript() {
-	if (!(_features & GF_AFTER_V2) && _vars[VAR_ENTRY_SCRIPT])
-		runScript(_vars[VAR_ENTRY_SCRIPT], 0, 0, 0);
+	if (!(_features & GF_AFTER_V2) && VAR(VAR_ENTRY_SCRIPT))
+		runScript(VAR(VAR_ENTRY_SCRIPT), 0, 0, 0);
 	if (_ENCD_offs) {
 		int slot = getScriptSlot();
 		vm.slot[slot].status = ssRunning;
@@ -703,8 +703,8 @@ void Scumm::runEntryScript() {
 		vm.slot[slot].delayFrameCount = 0;
 		runScriptNested(slot);
 	}
-	if (!(_features & GF_AFTER_V2) && _vars[VAR_ENTRY_SCRIPT2])
-		runScript(_vars[VAR_ENTRY_SCRIPT2], 0, 0, 0);
+	if (!(_features & GF_AFTER_V2) && VAR(VAR_ENTRY_SCRIPT2))
+		runScript(VAR(VAR_ENTRY_SCRIPT2), 0, 0, 0);
 }
 
 void Scumm::killScriptsAndResources() {
@@ -786,10 +786,10 @@ void Scumm::checkAndRunSentenceScript() {
 	ScriptSlot *ss;
 
 	memset(_localParamList, 0, sizeof(_localParamList));
-	if (isScriptInUse(_vars[VAR_SENTENCE_SCRIPT])) {
+	if (isScriptInUse(VAR(VAR_SENTENCE_SCRIPT))) {
 		ss = vm.slot;
 		for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++)
-			if (ss->number == _vars[VAR_SENTENCE_SCRIPT] && ss->status != ssDead && ss->freezeCount == 0)
+			if (ss->number == VAR(VAR_SENTENCE_SCRIPT) && ss->status != ssDead && ss->freezeCount == 0)
 				return;
 	}
 
@@ -806,8 +806,8 @@ void Scumm::checkAndRunSentenceScript() {
 	_localParamList[1] = _sentence[_sentenceNum].unk4;
 	_localParamList[2] = _sentence[_sentenceNum].unk3;
 	_currentScript = 0xFF;
-	if (_vars[VAR_SENTENCE_SCRIPT])
-		runScript(_vars[VAR_SENTENCE_SCRIPT], 0, 0, _localParamList);
+	if (VAR(VAR_SENTENCE_SCRIPT))
+		runScript(VAR(VAR_SENTENCE_SCRIPT), 0, 0, _localParamList);
 }
 
 void Scumm::runInputScript(int a, int cmd, int mode) {
@@ -816,8 +816,8 @@ void Scumm::runInputScript(int a, int cmd, int mode) {
 	args[0] = a;
 	args[1] = cmd;
 	args[2] = mode;
-	if (_vars[VAR_VERB_SCRIPT])
-		runScript(_vars[VAR_VERB_SCRIPT], 0, 0, args);
+	if (VAR(VAR_VERB_SCRIPT))
+		runScript(VAR(VAR_VERB_SCRIPT), 0, 0, args);
 }
 
 void Scumm::decreaseScriptDelay(int amount) {
@@ -1074,8 +1074,8 @@ void Scumm::cutscene(int *args) {
 	vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
 
 	vm.cutSceneScriptIndex = scr;
-	if (_vars[VAR_CUTSCENE_START_SCRIPT])
-		runScript(_vars[VAR_CUTSCENE_START_SCRIPT], 0, 0, args);
+	if (VAR(VAR_CUTSCENE_START_SCRIPT))
+		runScript(VAR(VAR_CUTSCENE_START_SCRIPT), 0, 0, args);
 	vm.cutSceneScriptIndex = 0xFF;
 }
 
@@ -1089,7 +1089,7 @@ void Scumm::endCutscene() {
 		ss->cutsceneOverride--;
 
 	args[0] = vm.cutSceneData[vm.cutSceneStackPointer];
-	_vars[VAR_OVERRIDE] = 0;
+	VAR(VAR_OVERRIDE) = 0;
 
 	if (vm.cutScenePtr[vm.cutSceneStackPointer] && (ss->cutsceneOverride > 0))	// Only terminate if active
 		ss->cutsceneOverride--;
@@ -1098,8 +1098,8 @@ void Scumm::endCutscene() {
 	vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
 	vm.cutSceneStackPointer--;
 
-	if (_vars[VAR_CUTSCENE_END_SCRIPT])
-		runScript(_vars[VAR_CUTSCENE_END_SCRIPT], 0, 0, args);
+	if (VAR(VAR_CUTSCENE_END_SCRIPT))
+		runScript(VAR(VAR_CUTSCENE_END_SCRIPT), 0, 0, args);
 }
 
 void Scumm::exitCutscene() {
@@ -1113,7 +1113,7 @@ void Scumm::exitCutscene() {
 		if (ss->cutsceneOverride > 0)
 			ss->cutsceneOverride--;
 
-		_vars[VAR_OVERRIDE] = 1;
+		VAR(VAR_OVERRIDE) = 1;
 		vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
 	}
 }
@@ -1132,7 +1132,7 @@ void Scumm::beginOverride() {
 	// why we record the current script position in vm.cutScenePtr).
 	fetchScriptByte();
 	fetchScriptWord();
-	_vars[VAR_OVERRIDE] = 0;
+	VAR(VAR_OVERRIDE) = 0;
 }
 
 void Scumm::endOverride() {
@@ -1143,5 +1143,5 @@ void Scumm::endOverride() {
 
 	vm.cutScenePtr[idx] = 0;
 	vm.cutSceneScript[idx] = 0;
-	_vars[VAR_OVERRIDE] = 0;
+	VAR(VAR_OVERRIDE) = 0;
 }

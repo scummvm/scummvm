@@ -549,7 +549,7 @@ void Actor::setDirection(int direction) {
 }
 
 void Actor::putActor(int dstX, int dstY, byte newRoom) {
-	if (visible && _vm->_currentRoom != newRoom && _vm->_vars[_vm->VAR_TALK_ACTOR] == number) {
+	if (visible && _vm->_currentRoom != newRoom && _vm->VAR(_vm->VAR_TALK_ACTOR) == number) {
 		_vm->clearMsgQueue();
 	}
 
@@ -559,7 +559,7 @@ void Actor::putActor(int dstX, int dstY, byte newRoom) {
 	needRedraw = true;
 	needBgReset = true;
 
-	if (_vm->_vars[_vm->VAR_EGO] == number) {
+	if (_vm->VAR(_vm->VAR_EGO) == number) {
 		_vm->_egoPositioned = true;
 	}
 
@@ -788,14 +788,14 @@ void Scumm::stopTalk() {
 	_haveMsg = 0;
 	_talkDelay = 0;
 
-	act = _vars[VAR_TALK_ACTOR];
+	act = VAR(VAR_TALK_ACTOR);
 	if (act && act < 0x80) {
 		Actor *a = derefActorSafe(act, "stopTalk");
 		if ((a->isInCurrentRoom() && _useTalkAnims) || (_features & GF_NEW_COSTUMES)) {
 			a->startAnimActor(a->talkFrame2);
 			_useTalkAnims = false;
 		}
-		_vars[VAR_TALK_ACTOR] = 0xFF;
+		VAR(VAR_TALK_ACTOR) = 0xFF;
 	}
 	_keepText = false;
 	restoreCharsetBg();
@@ -1159,7 +1159,7 @@ void Scumm::actorTalk() {
 	if (_actorToPrintStrFor == 0xFF) {
 		if (!_keepText)
 			stopTalk();
-		_vars[VAR_TALK_ACTOR] = 0xFF;
+		VAR(VAR_TALK_ACTOR) = 0xFF;
 		oldact = 0;
 	} else {
 		a = derefActorSafe(_actorToPrintStrFor, "actorTalk");
@@ -1168,27 +1168,27 @@ void Scumm::actorTalk() {
 		} else {
 			if (!_keepText)
 				stopTalk();
-			_vars[VAR_TALK_ACTOR] = a->number;
+			VAR(VAR_TALK_ACTOR) = a->number;
 			if (!_string[0].no_talk_anim) {
 				a->startAnimActor(a->talkFrame1);
 				_useTalkAnims = true;
 			}
-			oldact = _vars[VAR_TALK_ACTOR];
+			oldact = VAR(VAR_TALK_ACTOR);
 		}
 	}
 	if (oldact >= 0x80)
 		return;
 
-	if (_vars[VAR_TALK_ACTOR] > 0x7F) {
+	if (VAR(VAR_TALK_ACTOR) > 0x7F) {
 		_charsetColor = (byte)_string[0].color;
 	} else {
-		a = derefActorSafe(_vars[VAR_TALK_ACTOR], "actorTalk(2)");
+		a = derefActorSafe(VAR(VAR_TALK_ACTOR), "actorTalk(2)");
 		_charsetColor = a->talkColor;
 	}
 	_charsetBufPos = 0;
 	_talkDelay = 0;
 	_haveMsg = 0xFF;
-	_vars[VAR_HAVE_MSG] = 0xFF;
+	VAR(VAR_HAVE_MSG) = 0xFF;
 	CHARSET_1();
 }
 

@@ -77,8 +77,8 @@ void Scumm::openRoom(int room) {
 		if (!(_features & GF_SMALL_HEADER)) {
 
 			if (_features & GF_AFTER_V7) {
-				if (room > 0)
-					_vars[VAR_CURRENTDISK] = res.roomno[rtRoom][room];
+				if (room > 0 && (_features & GF_AFTER_V8))
+					VAR(VAR_CURRENTDISK) = res.roomno[rtRoom][room];
 				sprintf(buf, "%s.la%d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
 				sprintf(buf2, "%s.%.3d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
 			} else if (_features & GF_HUMONGOUS)
@@ -586,7 +586,7 @@ void Scumm::ensureResourceLoaded(int type, int i) {
 
 	if (!(_features & GF_AFTER_V7) && !(_features & GF_SMALL_HEADER))
 		if (type == rtRoom && i == _roomResource)
-			_vars[VAR_ROOM_FLAG] = 1;
+			VAR(VAR_ROOM_FLAG) = 1;
 }
 
 int Scumm::loadResource(int type, int idx) {
@@ -1253,9 +1253,9 @@ byte *Scumm::getStringAddress(int i) {
 byte *Scumm::getStringAddressVar(int i) {
 	byte *addr;
 
-	addr = getResourceAddress(rtString, _vars[i]);
+	addr = getResourceAddress(rtString, _scummVars[i]);
 	if (addr == NULL)
-		error("NULL string var %d slot %d", i, _vars[i]);
+		error("NULL string var %d slot %d", i, _scummVars[i]);
 
 	if (_features & GF_NEW_OPCODES)
 		return ((ArrayHeader *)addr)->data;
@@ -1745,7 +1745,7 @@ void Scumm::allocateArrays() {
 	_verbs = (VerbSlot *)calloc(_numVerbs, sizeof(VerbSlot));
 	_objs = (ObjectData *)calloc(_numLocalObjects, sizeof(ObjectData));
 	debug(2, "Allocated %d space in numObjects\n", _numLocalObjects);
-	_vars = (int32 *)calloc(_numVariables, sizeof(int32));
+	_scummVars = (int32 *)calloc(_numVariables, sizeof(int32));
 	_bitVars = (byte *)calloc(_numBitVariables >> 3, 1);
 
 	allocResTypeData(rtCostume, (_features & GF_NEW_COSTUMES) ? MKID('AKOS') : MKID('COST'),
