@@ -406,7 +406,15 @@ void SkyLogic::talk() {
 }
 
 void SkyLogic::listen() {
-	error("Stub: SkyLogic::listen");
+	// Stay in this mode until id in c_get_to_flag leaves l_talk mode
+
+	Compact *cpt = SkyState::fetchCompact(_compact->flag);
+
+	if (cpt->logic == L_TALK)
+		return;
+
+	_compact->logic = L_SCRIPT;
+	logicScript();
 }
 
 void SkyLogic::stopped() {
@@ -418,7 +426,12 @@ void SkyLogic::choose() {
 }
 
 void SkyLogic::frames() {
-	error("Stub: SkyLogic::frames");
+	if (!_compact->sync)
+		simpleAnim();
+
+	_compact->downFlag = 0; // return 'ok' to script
+	_compact->logic = L_SCRIPT;
+	logicScript();
 }
 
 void SkyLogic::pause() {
@@ -1220,8 +1233,10 @@ uint32 SkyLogic::fnLeaving(uint32 a, uint32 b, uint32 c) {
 	return 1; // keep going
 }
 
-uint32 SkyLogic::fnSetAlternate(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnSetAlternate");
+uint32 SkyLogic::fnSetAlternate(uint32 scr, uint32 b, uint32 c) {
+	_compact->extCompact->alt = scr;
+	_compact->logic = L_ALT;
+	return 0;
 }
 
 uint32 SkyLogic::fnAltSetAlternate(uint32 a, uint32 b, uint32 c) {
@@ -1268,7 +1283,8 @@ uint32 SkyLogic::fnQuit(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnSpeakMe(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnSpeakMe");
+	warning("Stub: fnSpeakMe");
+	return 0;
 }
 
 uint32 SkyLogic::fnSpeakMeDir(uint32 a, uint32 b, uint32 c) {
@@ -1276,8 +1292,10 @@ uint32 SkyLogic::fnSpeakMeDir(uint32 a, uint32 b, uint32 c) {
 	return 0;
 }
 
-uint32 SkyLogic::fnSpeakWait(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnSpeakWait");
+uint32 SkyLogic::fnSpeakWait(uint32 id, uint32 message, uint32 animation) {
+	_compact->flag = id;
+	_compact->logic = L_LISTEN;
+	return fnSpeakMe(id, message, animation);
 }
 
 uint32 SkyLogic::fnSpeakWaitDir(uint32 a, uint32 b, uint32 c) {
@@ -1465,8 +1483,15 @@ uint32 SkyLogic::fnRunAnimMod(uint32 animNo, uint32 b, uint32 c) {
 	return 0; // drop from script
 }
 
-uint32 SkyLogic::fnSimpleMod(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnSimpleMod");
+uint32 SkyLogic::fnSimpleMod(uint32 animSeqNo, uint32 b, uint32 c) {
+	uint16 *animSeq = (uint16 *)SkyState::fetchCompact(animSeqNo);
+
+	_compact->offset = *animSeq++;
+	assert(*animSeq != 0);
+	_compact->grafixProg = animSeq;
+	_compact->logic = L_SIMPLE_MOD;
+	simpleAnim();
+	return 0;
 }
 
 uint32 SkyLogic::fnRunFrames(uint32 sequenceNo, uint32 b, uint32 c) {
