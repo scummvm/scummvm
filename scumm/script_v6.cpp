@@ -74,7 +74,7 @@ void Scumm_v6::setupOpcodes()
 		/* 18 */
 		OPCODE(o6_land),
 		OPCODE(o6_lor),
-		OPCODE(o6_kill),
+		OPCODE(o6_pop),
 		OPCODE(o6_invalid),
 		/* 1C */
 		OPCODE(o6_invalid),
@@ -279,8 +279,8 @@ void Scumm_v6::setupOpcodes()
 		/* BC */
 		OPCODE(o6_dim),
 		OPCODE(o6_dummy),
-		OPCODE(o6_runVerbCodeQuick),
-		OPCODE(o6_runScriptQuick),
+		OPCODE(o6_startObjectQuick),
+		OPCODE(o6_startScriptQuick),
 		/* C0 */
 		OPCODE(o6_dim2),
 		OPCODE(o6_invalid),
@@ -616,7 +616,7 @@ void Scumm_v6::o6_band()	// Bitwise And
 	push(pop() | a);
 }
 
-void Scumm_v6::o6_kill()
+void Scumm_v6::o6_pop()
 {
 	pop();
 }
@@ -2349,7 +2349,7 @@ void Scumm_v6::o6_dummy()
 	/* nothing */
 }
 
-void Scumm_v6::o6_runVerbCodeQuick()
+void Scumm_v6::o6_startObjectQuick()
 {
 	int16 args[16];
 	int script, entryp;
@@ -2359,7 +2359,7 @@ void Scumm_v6::o6_runVerbCodeQuick()
 	runVerbCode(script, entryp, 0, 1, args);
 }
 
-void Scumm_v6::o6_runScriptQuick()
+void Scumm_v6::o6_startScriptQuick()
 {
 	int16 args[16];
 	int script;
