@@ -2221,6 +2221,7 @@ void ScummEngine::resourceStats() {
 }
 
 void ScummEngine::readMAXS(int blockSize) {
+	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
 	// FIXME: trying to detect multiple targets probably a better way to do this
 	if (_heversion >= 70 && blockSize > 38 && _heversion < 72)
 			_heversion = 72;
@@ -2297,7 +2298,7 @@ void ScummEngine::readMAXS(int blockSize) {
 		_fileHandle.readUint16LE(); // _numLocalScripts?
 		_fileHandle.readUint16LE(); // unknown
 	} else if (_heversion >= 70 && (blockSize == 44 + 8)) { // C++ based engine
-				error("MAXS blocks from C++ based games not yet supported");
+		error("MAXS blocks from C++ based games not yet supported");
 	} else if (_heversion >= 70 && blockSize > 38) { // sputm7.2
 		if (blockSize != 32 + 8)
 				error("MAXS block of size %d not supported, please report", blockSize);
