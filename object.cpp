@@ -374,7 +374,14 @@ void Scumm::loadRoomObjects() {
 
 		od->offs_obcd_to_room = ptr - room;
 		cdhd = (CodeHeader*)findResourceData(MKID('CDHD'), ptr);
-		od->obj_nr = READ_LE_UINT16(&cdhd->obj_id);
+
+		if(_features & GF_AFTER_V7)
+			od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
+		else
+			if(_features & GF_AFTER_V6)
+				od->obj_nr = READ_LE_UINT16(&(cdhd->v6.obj_id));
+			else
+				od->obj_nr = READ_LE_UINT16(&(cdhd->v5.obj_id));
 
 #ifdef DUMP_SCRIPTS
 		do {
@@ -509,8 +516,14 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room) {
         }
 
         cdhd = (CodeHeader*)findResourceData(MKID('CDHD'), room + od->offs_obcd_to_room);
-	od->obj_nr = READ_LE_UINT16(&cdhd->obj_id);
-
+	if(_features & GF_AFTER_V7)
+		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
+	else
+		if(_features & GF_AFTER_V6)
+			od->obj_nr = READ_LE_UINT16(&(cdhd->v6.obj_id));
+		else
+		        od->obj_nr = READ_LE_UINT16(&(cdhd->v5.obj_id));
+	
 #if !defined(FULL_THROTTLE)
 	if (_features & GF_AFTER_V6) {
 		od->width = READ_LE_UINT16(&cdhd->v6.w);
@@ -738,6 +751,7 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 	byte *roomptr,*obcdptr,*obimptr,*searchptr;
 	RoomHeader *roomhdr;
 	ImageHeader *imhd;
+	int id2;
 	
 	if (findWhat&foCheckAlreadyLoaded && getObjectIndex(id) != -1) {
 		fo->obcd = obcdptr = getOBCDFromObject(id);
@@ -778,7 +792,15 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
                                 }
                         } else {
                                cdhd = (CodeHeader*)findResourceData(MKID('CDHD'), obcdptr);
-                                if ( READ_LE_UINT16(&cdhd->obj_id) == (uint16)id) {
+				if ( _features & GF_AFTER_V7)
+					id2 = READ_LE_UINT16(&(cdhd->v7.obj_id));
+				else
+					if( _features & GF_AFTER_V6)
+						id2 = READ_LE_UINT16(&(cdhd->v6.obj_id));
+					else
+						id2 = READ_LE_UINT16(&(cdhd->v5.obj_id));
+			       
+                                if ( id2 == (uint16)id) {
                                         fo->cdhd = cdhd;
                                         fo->obcd = obcdptr;
                                         break;

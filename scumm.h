@@ -113,20 +113,10 @@ struct AkosCI {
 	int16 move_x, move_y;
 } GCC_PACK;
 
-#if defined(FULL_THROTTLE)
 struct CodeHeader {
-	uint32 version;
-	uint16 obj_id;
-	byte parent;
-	byte parentstate;
-} GCC_PACK;
-
-#else
-struct CodeHeader {
-	uint16 obj_id;
-
 	union {
 		struct {
+			uint16 obj_id;
 			byte x,y,w,h;
 			byte flags;
 			byte parent;
@@ -136,6 +126,7 @@ struct CodeHeader {
 		} v5;
 
 		struct {
+			uint16 obj_id;
 			int16 x, y;
 			uint16 w,h;
 			byte flags, parent;
@@ -143,9 +134,16 @@ struct CodeHeader {
 			uint16 unk2;
 			byte actordir;
 		} v6;
+
+		struct {
+			uint32 version;
+			uint16 obj_id;
+			byte parent;
+			byte parentstate;
+		} v7;
+							
 	};
 } GCC_PACK;
-#endif
 
 #if defined(FULL_THROTTLE)
 struct ImageHeader { /* file format */
