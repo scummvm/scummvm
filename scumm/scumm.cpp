@@ -3336,10 +3336,14 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	case 6:
 		switch (game.heversion) {
 #ifndef __PALM_OS__
-		case 72:
-		case 80:
 		case 90:
 		case 98:
+			engine = new ScummEngine_v90he(detector, syst, game);
+			break;
+		case 80:
+			engine = new ScummEngine_v80he(detector, syst, game);
+			break;
+		case 72:
 			engine = new ScummEngine_v72he(detector, syst, game);
 			break;
 		case 71:

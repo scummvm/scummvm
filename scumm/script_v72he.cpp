@@ -81,7 +81,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_pop),
 		OPCODE(o72_compareStackList),
 		/* 1C */
-		OPCODE(o72_unknown1C),
+		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -614,27 +614,6 @@ void ScummEngine_v72he::o72_compareStackList() {
 	} else {
 		push(0);
 	}
-}
-
-void ScummEngine_v72he::o72_unknown1C() {
-	// HE 90+ specific
-	if (_heversion < 90)
-		error("Invalid opcode '%x' at %x", _opcode, _scriptPointer - _scriptOrgPointer);
-
-	// For Pajame Sam 2 demo
-	// Incomplete
-	int value = fetchScriptByte();
-	value -= 46;
-
-	if (value == 10) {
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-	}
-
-	warning("o72_unknown1C stub (%d)", value);
 }
 
 void ScummEngine_v72he::o72_wordArrayWrite() {

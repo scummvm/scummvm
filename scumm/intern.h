@@ -575,7 +575,7 @@ protected:
 	virtual void decodeParseString(int a, int b);
 	void swapObjects(int object1, int object2);
 
-	/* Version 6 script opcodes */
+	/* HE version 60 script opcodes */
 	void o6_setState();
 	void o6_roomOps();
 	void o6_actorOps();
@@ -618,7 +618,7 @@ protected:
 	byte stringLen(byte *);
 	int getCharsetOffset(int letter);
 
-	/* Version 7 script opcodes */
+	/* HE version 70 script opcodes */
 	void o7_cursorCommand();
 	void o7_startSound();
 	void o7_pickupObject();
@@ -704,7 +704,7 @@ protected:
 	void decodeScriptString(byte *dst, bool scriptString = false);
 	int copyScriptString(byte *dst);
 
-	/* Version 7 script opcodes */
+	/* HE version 72 script opcodes */
 	void o72_pushDWord();
 	void o72_addMessageToStack();
 	void o72_wordArrayRead();
@@ -712,7 +712,6 @@ protected:
 	void o72_wordArrayWrite();
 	void o72_wordArrayIndexedWrite();
 	void o72_compareStackList();
-	void o72_unknown1C();
 	void o72_unknown50();
 	void o72_findObject();
 	void o72_wordArrayInc();
@@ -758,6 +757,50 @@ protected:
 	void o72_unknownF9();
 	void o72_unknownFA();
 	void o72_unknownFB();
+};
+
+class ScummEngine_v80he : public ScummEngine_v72he {
+protected:
+	typedef void (ScummEngine_v80he::*OpcodeProcV80he)();
+	struct OpcodeEntryV80he {
+		OpcodeProcV80he proc;
+		const char *desc;
+	};
+	
+	const OpcodeEntryV80he *_opcodesV80he;
+
+public:
+	ScummEngine_v80he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine_v72he(detector, syst, gs) {}
+
+protected:
+	virtual void setupOpcodes();
+	virtual void executeOpcode(byte i);
+	virtual const char *getOpcodeDesc(byte i);
+	
+	/* HE version 80 script opcodes */
+};
+
+class ScummEngine_v90he : public ScummEngine_v80he {
+protected:
+	typedef void (ScummEngine_v90he::*OpcodeProcV90he)();
+	struct OpcodeEntryV90he {
+		OpcodeProcV90he proc;
+		const char *desc;
+	};
+	
+	const OpcodeEntryV90he *_opcodesV90he;
+
+public:
+	ScummEngine_v90he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs) : ScummEngine_v80he(detector, syst, gs) {}
+
+protected:
+	virtual void setupOpcodes();
+	virtual void executeOpcode(byte i);
+	virtual const char *getOpcodeDesc(byte i);
+	
+	/* HE version 90 script opcodes */
+	void o90_unknown1C();
+	void o90_unknown26();
 };
 
 class ScummEngine_v7 : public ScummEngine_v6 {
