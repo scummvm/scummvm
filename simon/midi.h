@@ -50,6 +50,7 @@ protected:
 	OSystem *_system;
 	OSystem::MutexRef _mutex;
 	MidiDriver *_driver;
+	bool _map_mt32_to_gm;
 
 	MusicInfo _music;
 	MusicInfo _sfx;
@@ -82,6 +83,7 @@ public:
 	void loadXMIDI (File *in, bool sfx = false);
 	void loadS1D (File *in, bool sfx = false);
 
+	void mapMT32toGM (bool map);
 	void setLoop (bool loop);
 	void startTrack(int track);
 	void queueTrack (int track, bool loop);
