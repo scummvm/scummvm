@@ -40,7 +40,7 @@ namespace Sword2 {
 //
 //	resource.inf which is a list of ascii cluster file names
 //	resource.tab which is a table which tells us which cluster a resource
-//      is located in and the number within the cluster
+//	is located in and the number within the cluster
 
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
@@ -512,7 +512,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 		convertEndian(_resList[res].ptr, len);
 #endif
 	} else if (_resList[res].refCount == 0)
-        removeFromCacheList(_resList + res);
+		removeFromCacheList(_resList + res);
 
 	_resList[res].refCount++;
 
@@ -765,7 +765,7 @@ void ResourceManager::killAllObjects(bool wantInfo) {
 		Debug_Printf("Expelled %d resources\n", nuked);
 }
 
-int ResourceManager::whichCd()  {
+int ResourceManager::whichCd() {
 	return _curCd;
 }
 
