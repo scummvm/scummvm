@@ -636,9 +636,9 @@ void ScummEngine_v90he::spriteInfoSet_setClassFlag(int spriteId, int classId, in
 	checkRange(32, 1, classId, "class %d out of range in statement");
 	
 	if (toggle) {
-		_spriteTable[spriteId].class_flags |= 1 << (classId - 1);
+		_spriteTable[spriteId].class_flags |= (1 << (classId));
 	} else {
-		_spriteTable[spriteId].class_flags &= ~(1 << (classId - 1));
+		_spriteTable[spriteId].class_flags &= ~(1 << (classId));
 	}
 }
 
