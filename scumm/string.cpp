@@ -334,8 +334,8 @@ void Scumm::CHARSET_1() {
 
 	_charsetBufPos = buffer - _charsetBuffer;
 
-	_charset->_hasMask = true;
-	gdi._mask.extend(_charset->_str);
+	_charset->_hasMask = (_charset->_str.left != -1);
+	gdi._mask = _charset->_str;
 }
 
 void Scumm::drawString(int a) {
