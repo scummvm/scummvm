@@ -412,9 +412,9 @@ SoundDialog::SoundDialog(NewGui *gui)
 	musicVolumeSlider = new SliderWidget(this, 110, 33, 80, 16, "Volume2", kMusicVolumeChanged);
 	sfxVolumeSlider = new SliderWidget(this, 110, 53, 80, 16, "Volume3", kSfxVolumeChanged);
 
-	masterVolumeSlider->setMinValue(0);	masterVolumeSlider->setMaxValue(255);
-	musicVolumeSlider->setMinValue(0);	musicVolumeSlider->setMaxValue(255);
-	sfxVolumeSlider->setMinValue(0);	sfxVolumeSlider->setMaxValue(255);
+	masterVolumeSlider->setMinValue(0);	masterVolumeSlider->setMaxValue(256);
+	musicVolumeSlider->setMinValue(0);	musicVolumeSlider->setMaxValue(256);
+	sfxVolumeSlider->setMinValue(0);	sfxVolumeSlider->setMaxValue(256);
 
 	masterVolumeLabel = new StaticTextWidget(this, 195, 17, 60, 16, "Volume1", kTextAlignLeft);
 	musicVolumeLabel = new StaticTextWidget(this, 195, 37, 60, 16, "Volume2", kTextAlignLeft);

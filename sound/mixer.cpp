@@ -195,12 +195,24 @@ void SoundMixer::setup_premix(void *param, PremixProc *proc)
 
 void SoundMixer::set_volume(int volume)
 {
-	for (int i = 0; i != 256; i++)
-		_volume_table[i] = ((int8)i) * volume;
+	// Check range
+	if (volume > 256)
+		volume = 256;
+	else if (volume < 0)
+		volume = 0;
+
+	for (int i = 0; i < 256; i++)
+		_volume_table[i] = (i + 1) * volume - 1;
 }
 
 void SoundMixer::set_music_volume(int volume)
 {
+	// Check range
+	if (volume > 256)
+		volume = 256;
+	else if (volume < 0)
+		volume = 0;
+
 	_music_volume = volume;
 }
 
@@ -818,7 +830,8 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len)
 {
 	mad_fixed_t const *ch;
 	mad_timer_t frame_duration;
-	unsigned char volume = _mixer->_music_volume * 32 / 255;
+//	unsigned char volume = _mixer->_music_volume * 32 / 255;
+	unsigned char volume = _mixer->_music_volume >> 3;
 
 	if (_to_be_destroyed) {
 		real_destroy();

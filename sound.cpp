@@ -588,9 +588,9 @@ void Scumm::setupSound()
 	if (_imuse) {
 		_imuse->setBase(res.address[rtSound]);
 
-		_sound_volume_music = scummcfg->getInt("music_volume", 192);
-		_sound_volume_master = scummcfg->getInt("master_volume", 192);
-		_sound_volume_sfx = scummcfg->getInt("sfx_volume", 192);
+		_sound_volume_music = scummcfg->getInt("music_volume", kDefaultMusicVolume);
+		_sound_volume_master = scummcfg->getInt("master_volume", kDefaultMasterVolume);
+		_sound_volume_sfx = scummcfg->getInt("sfx_volume", kDefaultSFXVolume);
 
 		_imuse->set_master_volume(_sound_volume_master);
 		_imuse->set_music_volume(_sound_volume_music);

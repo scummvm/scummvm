@@ -1529,8 +1529,8 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 			warning("Adlib music was selected, switching to midi null driver");   
 		}   
 	} 
-	scumm->_mixer->set_volume(128);
-	scumm->_mixer->set_music_volume(128);
+	scumm->_mixer->set_volume(kDefaultSFXVolume);
+	scumm->_mixer->set_music_volume(kDefaultMusicVolume);
 
 	/* HACK !!! */
 	g_scumm = scumm;

@@ -342,8 +342,8 @@ private:
 
 	byte _queue_marker;
 	byte _queue_cleared;
-	byte _master_volume;
-	byte _music_volume;						/* Global music volume. Percantage */
+	byte _master_volume;					/* Master volume. 0-127 */
+	byte _music_volume;						/* Global music volume. 0-128 */
 
 	uint16 _trigger_count;
 
@@ -1250,20 +1250,17 @@ int IMuseInternal::query_queue(int param)
 
 int IMuseInternal::get_music_volume()
 {
-	return _music_volume;
+	return _music_volume * 2;
 }
 
 int IMuseInternal::set_music_volume(uint vol)
 {
-	// recalibrate from 0-255 range
-	vol = vol * 100 / 255;
+	if (vol > 256)
+		vol = 256;
+	else if (vol < 0)
+		vol = 0;
 
-	if (vol > 100)
-		vol = 100;
-	else if (vol < 1)
-		vol = 1;
-
-	_music_volume = vol;
+	_music_volume = vol / 2;
 	return 0;
 }
 
@@ -1271,14 +1268,14 @@ int IMuseInternal::set_master_volume(uint vol)
 {
 	int i;
 
-	// recalibrate from 0-255 range
-	vol = vol * 127 / 255;
+	// recalibrate from 0-256 range
+	vol = vol * 127 / 256;
 
 	if (vol > 127)
 		return -1;
 
 	if (_music_volume > 0)
-		vol = vol / (100 / _music_volume);
+		vol = vol * _music_volume / 128;
 
 	_master_volume = vol;
 	for (i = 0; i != 8; i++)
@@ -1289,7 +1286,8 @@ int IMuseInternal::set_master_volume(uint vol)
 
 int IMuseInternal::get_master_volume()
 {
-	return _master_volume;
+	// recalibrate to 0-256 range
+	return _master_volume * 256 / 127;
 }
 
 int IMuseInternal::terminate()
@@ -1637,7 +1635,7 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer
 
 	_master_volume = 127;
 	if (_music_volume < 1)
-		_music_volume = 60;
+		_music_volume = kDefaultMusicVolume;
 
 	for (i = 0; i != 8; i++)
 		_channel_volume[i] = _channel_volume_eff[i] = _volchan_table[i] = 127;

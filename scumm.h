@@ -61,6 +61,12 @@ enum {
     KEY_SET_OPTIONS = 3456 // WinCE
 };
 
+enum {
+	kDefaultMasterVolume = 192,
+	kDefaultSFXVolume = 192,
+	kDefaultMusicVolume = 192
+};
+
 struct ScummPoint {
 	int x, y;
 };
