@@ -216,6 +216,7 @@ void File::seek(int32 offs, int whence) {
 
 uint32 File::read(void *ptr, uint32 len) {
 	byte *ptr2 = (byte *)ptr;
+	uint32 real_len;
 
 	if (_handle == NULL) {
 		error("File is not open!");
@@ -225,19 +226,20 @@ uint32 File::read(void *ptr, uint32 len) {
 	if (len == 0)
 		return 0;
 
-	if ((uint32)fread(ptr2, 1, len, _handle) != len) {
+	real_len = fread(ptr2, 1, len, _handle);
+	if (real_len < len) {
 		clearerr(_handle);
 		_ioFailed = true;
 	}
 
 	if (_encbyte != 0) {
-		uint32 t_size = len;
+		uint32 t_size = real_len;
 		do {
 			*ptr2++ ^= _encbyte;
 		} while (--t_size);
 	}
 
-	return len;
+	return real_len;
 }
 
 byte File::readByte() {
