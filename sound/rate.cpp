@@ -204,9 +204,6 @@ public:
 		int16 tmp[2];
 		st_size_t len = osamp;
 		assert(input.isStereo() == stereo);
-
-// TODO: use readBuffer
-
 		while (!input.eos() && len--) {
 			tmp[0] = tmp[1] = (input.read() * vol) >> 8;
 			if (stereo)
