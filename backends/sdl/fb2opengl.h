@@ -19,7 +19,7 @@
  */
 
 // FrameBuffer renderer in an OpenGL texture
-// Andre Souza <asouza@olinux.com.br>
+// Andre Souza <asouza_luke@yahoo.com.br>
 
 #include <SDL.h>
 #include <SDL_opengl.h>
@@ -43,32 +43,45 @@
 
 class FB2GL {
 	private:
-		// Framebuffer for 8 bpp
-		unsigned char ogl_fb[256][256];
-		unsigned char ogl_fbb[256][64];
-		// Framebuffer for RGBA
-		unsigned char ogl_fb1[256][256][4];
-		unsigned char ogl_fb2[256][64][4];
-		// Framebuffer for the blit function (SDL Blitting)
-		unsigned char fb1[256 * 256 * 4]; // Enough room for RGBA
-		unsigned char fb2[64 * 256 * 4]; // Enough room for RGBA
-		// Texture(s)
-		GLuint texture;
-		GLuint textureb;
-		// Display list
-		GLuint dlist;
-		// Color Table (256 colors, RGB)
-		char ogl_ctable[256][3];
-		char ogl_temp_ctable[256][3]; // Support for OpenGL 1.1
-		char flags;
-		void maketex();
-		void makedlist(int xf, int yf);
-	public:
 		SDL_Surface *screen;
+		// Framebuffer for 8 bpp
+		unsigned char palettedFrameBuffer1[256][256];
+		unsigned char palettedFrameBuffer2[256][64];
+		// Framebuffer for RGBA
+		unsigned char RGBAFrameBuffer1[256][256][4];
+		unsigned char RGBAFrameBuffer2[256][64][4];
+		// Framebuffer for the blit function (SDL Blitting)
+		unsigned char *blitFrameBuffer1;
+		unsigned char *blitFrameBuffer2;
+		// Texture(s)
+		GLuint texture1;
+		GLuint texture2;
+		// Display list
+		GLuint displayList;
+		// Color Table (256 colors, RGB)
+		char colorTable[256][3];
+		char tempColorTable[256][3]; // Support for OpenGL 1.1
+		char flags;
+		void makeTextures();
+		void makeDisplayList(int xf, int yf);
+
+	public:
+		
 		FB2GL() { 
 			flags = 0;
 			screen = NULL;
+			blitFrameBuffer1 = (unsigned char *)RGBAFrameBuffer1;
+			blitFrameBuffer2 = (unsigned char *)RGBAFrameBuffer2;
 		}
+		
+		SDL_Surface *getScreen() {
+		  return screen; 
+		};
+		
+		void setScreen(SDL_Surface *s) {
+		  screen = s;
+		};
+		
 		int init(int width, int height, int xfix, int yfix, char _flags);
 		void update(void *fb, int width, int height, int pitch, int xskip, int yskip);
 		void palette(int index, int r, int g, int b);
@@ -77,9 +90,9 @@ class FB2GL {
 		void display();
 };
 
-void FB2GL::maketex() {
-	glGenTextures(0,&texture);
-	glBindTexture(GL_TEXTURE_2D,texture);
+void FB2GL::makeTextures() {
+	glGenTextures(0,&texture1);
+	glBindTexture(GL_TEXTURE_2D,texture1);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
@@ -93,15 +106,15 @@ void FB2GL::maketex() {
 */
 
 	if (flags & FB2GL_RGBA) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, ogl_fb1);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, RGBAFrameBuffer1);
 	}
 	else {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_COLOR_INDEX, 256, 256, 0, GL_COLOR_INDEX, GL_UNSIGNED_BYTE, ogl_fb);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_COLOR_INDEX, 256, 256, 0, GL_COLOR_INDEX, GL_UNSIGNED_BYTE, palettedFrameBuffer1);
 	}
 
 	if (flags & FB2GL_320) {
-		glGenTextures(1, &textureb);
-		glBindTexture(GL_TEXTURE_2D, textureb);
+		glGenTextures(1, &texture2);
+		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
@@ -116,57 +129,68 @@ void FB2GL::maketex() {
 
 		if (flags & FB2GL_RGBA) {
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 256, 0, GL_RGBA, 
-										GL_UNSIGNED_BYTE, ogl_fb2);
+										GL_UNSIGNED_BYTE, RGBAFrameBuffer2);
 		}
 		else {
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_COLOR_INDEX, 64, 256, 0, GL_COLOR_INDEX,
-										GL_UNSIGNED_BYTE, ogl_fbb);
+										GL_UNSIGNED_BYTE, palettedFrameBuffer2);
 		}
 	}
 }
 
-void FB2GL::makedlist(int xf, int yf) {
+void FB2GL::makeDisplayList(int xf, int yf) {
 	double xfix = (double)xf / 128; // 128 = 256/2 (half texture => 0.0 to 1.0)
 	double yfix = (double)yf / 128;
 	// End of 256x256 (from -1.0 to 1.0)
 	double texend = (double)96 / 160; // 160=320/2 (== 0.0), 256-160=96.
 
-	if (glIsList(dlist)) 
-		glDeleteLists(dlist, 1);
+	if (glIsList(displayList)) 
+		glDeleteLists(displayList, 1);
 
-	dlist=glGenLists(1);
-	glNewList(dlist, GL_COMPILE);
+	displayList = glGenLists(1);
+	glNewList(displayList, GL_COMPILE);
 
 	glEnable(GL_TEXTURE_2D);
 
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindTexture(GL_TEXTURE_2D, texture1);
 
 	if (!(flags & FB2GL_320)) { // Normal 256x256
 		glBegin(GL_QUADS);
-		glTexCoord2f(0.0, 1.0); glVertex2f(-1.0, -1.0 - yfix); // upper left 
-		glTexCoord2f(0.0, 0.0); glVertex2f(-1.0, 1.0); // lower left 
-		glTexCoord2f(1.0, 0.0); glVertex2f(1.0 + xfix, 1.0); // lower right 
-		glTexCoord2f(1.0, 1.0); glVertex2f(1.0 + xfix, -1.0 - yfix); // upper right 
-		glEnd();
+		// upper left
+		glTexCoord2f(0.0, 1.0); glVertex2f(-1.0, -1.0 - yfix);
+		// lower left
+		glTexCoord2f(0.0, 0.0); glVertex2f(-1.0, 1.0);
+		// lower right
+		glTexCoord2f(1.0, 0.0); glVertex2f(1.0 + xfix, 1.0);
+		// upper right 
+		glTexCoord2f(1.0, 1.0); glVertex2f(1.0 + xfix, -1.0 - yfix);		glEnd();
 	}
 	else { // 320x256 
 
 		// First, the 256x256 texture 
 		glBegin(GL_QUADS);
-		glTexCoord2f(0.0, 1.0); glVertex2f( -1.0, -1.0 - yfix); // upper left 
-		glTexCoord2f(0.0, 0.0); glVertex2f(-1.0, 1.0); // lower left 
-		glTexCoord2f(1.0, 0.0); glVertex2f(texend + xfix, 1.0); // lower right 
-		glTexCoord2f(1.0, 1.0); glVertex2f(texend + xfix, -1.0 - yfix); // upper right
+		// upper left
+		glTexCoord2f(0.0, 1.0); glVertex2f( -1.0, -1.0 - yfix);
+		// lower left
+		glTexCoord2f(0.0, 0.0); glVertex2f(-1.0, 1.0);
+		// lower right
+		glTexCoord2f(1.0, 0.0); glVertex2f(texend + xfix, 1.0);
+		// upper right
+		glTexCoord2f(1.0, 1.0); glVertex2f(texend + xfix, -1.0 - yfix);
 		glEnd();
 
 		// 64x256 
-		glBindTexture(GL_TEXTURE_2D, textureb);
+		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		glBegin(GL_QUADS);
-		glTexCoord2f(0.0, 1.0); glVertex2f(texend + xfix, -1.0 - yfix); // upper left 
-		glTexCoord2f(0.0, 0.0); glVertex2f(texend + xfix, 1.0); // lower left 
-		glTexCoord2f(1.0, 0.0); glVertex2f(1.0 + xfix, 1.0); // lower right 
-		glTexCoord2f(1.0, 1.0); glVertex2f(1.0 + xfix, -1.0 - yfix); // upper right 
+		// upper left
+		glTexCoord2f(0.0, 1.0); glVertex2f(texend + xfix, -1.0 - yfix);
+		// lower left	
+		glTexCoord2f(0.0, 0.0); glVertex2f(texend + xfix, 1.0);
+		// lower right
+		glTexCoord2f(1.0, 0.0); glVertex2f(1.0 + xfix, 1.0);
+		// upper right
+		glTexCoord2f(1.0, 1.0); glVertex2f(1.0 + xfix, -1.0 - yfix);
 		glEnd();
 	}
 
@@ -188,14 +212,14 @@ int FB2GL::init(int width, int height, int xfix, int yfix, char _flags) {
 				(flags & FB2GL_FS? SDL_FULLSCREEN: 0));
 	}
 
-	warning("Screen BitsPerPixel: %d\n",screen->format->BitsPerPixel);
+//	warning("Screen BitsPerPixel: %d\n",screen->format->BitsPerPixel);
 
 	if (!screen) {
-		fprintf(stderr, "Couldn't start video res %dx%d\n", width, height);
+		warning("Couldn't start video res %dx%d\n", width, height);
 		return 0;
 	}
 
-
+/*
 	if (!(flags & FB2GL_RGBA)) { // Check for Paletted Texture Extension 
 		
 		strcpy(gl_ext, (char *)glGetString(GL_EXTENSIONS));
@@ -208,32 +232,28 @@ int FB2GL::init(int width, int height, int xfix, int yfix, char _flags) {
 			return 0;
 		}
 	}
-	
-	if (width>0 && height>0) 
-		maketex();
-	makedlist(xfix, yfix);
+*/
 
-/*	glEnable(GL_ALPHA_TEST);
-	glEnable(GL_BLEND);
-	glAlphaFunc(GL_GREATER,0);
-	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);*/
-	
+	if (width>0 && height>0) 
+		makeTextures();
+	makeDisplayList(xfix, yfix);
+
 	return 1;
 }
 
 void FB2GL::display()
 {
-	glCallList(dlist);
+	glCallList(displayList);
 	SDL_GL_SwapBuffers();
 }
 
 void FB2GL::update(void *fb, int w, int h, int pitch, int xskip, int yskip) {
-	unsigned char *fb1=(unsigned char *)fb;
-	int x,y,scr_pitch,byte=0;
+	unsigned char *tempFrameBuffer = (unsigned char *)fb;
+	int x, y, scr_pitch, byte = 0;
 
-	if (flags & FB2GL_PITCH) scr_pitch=pitch;
+	if (flags & FB2GL_PITCH) scr_pitch = pitch;
 	else {
-		scr_pitch=w*pitch;
+		scr_pitch = w * pitch;
 		byte = pitch; // Bytes perl pixel (for RGBA mode)
 	}
 
@@ -241,54 +261,56 @@ void FB2GL::update(void *fb, int w, int h, int pitch, int xskip, int yskip) {
 		
 		if (flags & FB2GL_EXPAND) { // Expand the 8 bit fb into a RGB fb
 	
-			for (y=yskip; y<h; y++) {
-	for (x=xskip; x<w; x++) {
-		if (x<256) { 
-			ogl_fb1[y][x][0] = ogl_ctable[*(fb1+x)][0];
-			ogl_fb1[y][x][1] = ogl_ctable[*(fb1+x)][1]; 
-			ogl_fb1[y][x][2] = ogl_ctable[*(fb1+x)][2]; 
-			ogl_fb1[y][x][3] = 255;
+			for (y = yskip; y < h; y++) {
+	for (x = xskip; x < w; x++) {
+		if (x < 256) { 
+			RGBAFrameBuffer1[y][x][0] = colorTable[*(tempFrameBuffer+x)][0];
+			RGBAFrameBuffer1[y][x][1] = colorTable[*(tempFrameBuffer+x)][1]; 
+			RGBAFrameBuffer1[y][x][2] = colorTable[*(tempFrameBuffer+x)][2]; 
+			RGBAFrameBuffer1[y][x][3] = 255;
 		}
 		else {
-			ogl_fb2[y][x-256][0] = ogl_ctable[*(fb1+x)][0]; 
-			ogl_fb2[y][x-256][1] = ogl_ctable[*(fb1+x)][1]; 
-			ogl_fb2[y][x-256][2] = ogl_ctable[*(fb1+x)][2]; 
-			ogl_fb2[y][x-256][3] = 255;
+			RGBAFrameBuffer2[y][x-256][0] = colorTable[*(tempFrameBuffer+x)][0]; 
+			RGBAFrameBuffer2[y][x-256][1] = colorTable[*(tempFrameBuffer+x)][1]; 
+			RGBAFrameBuffer2[y][x-256][2] = colorTable[*(tempFrameBuffer+x)][2]; 
+			RGBAFrameBuffer2[y][x-256][3] = 255;
 		}
 	}
-	fb1 += scr_pitch;
+	tempFrameBuffer += scr_pitch; // Next row (like y++)
 			}
 		}
 		else { // No expansion
-			for (y=yskip; y<h; y++) {
-	for (x=xskip; x<w; x++) {
-		if (x<256) { 
-			ogl_fb1[y-yskip][x-xskip][0] = *(fb1+(x*byte)); 
-			ogl_fb1[y-yskip][x-xskip][1] = *(fb1+(x*byte)+1); 
-			ogl_fb1[y-yskip][x-xskip][2] = *(fb1+(x*byte)+2); 
+			for (y = yskip; y < h; y++) {
+	for (x = xskip; x < w; x++) {
+		if (x < 256) { 
+			RGBAFrameBuffer1[y-yskip][x-xskip][0] = *(tempFrameBuffer+(x*byte)); 
+			RGBAFrameBuffer1[y-yskip][x-xskip][1] = *(tempFrameBuffer+(x*byte)+1); 
+			RGBAFrameBuffer1[y-yskip][x-xskip][2] = *(tempFrameBuffer+(x*byte)+2); 
 		}
 		else {
-			ogl_fb2[y-yskip][x-256][0] = *(fb1+(x*byte)); 
-			ogl_fb2[y-yskip][x-256][1] = *(fb1+(x*byte)+1); 
-			ogl_fb2[y-yskip][x-256][2] = *(fb1+(x*byte)+2); 
+			RGBAFrameBuffer2[y-yskip][x-256][0] = *(tempFrameBuffer+(x*byte)); 
+			RGBAFrameBuffer2[y-yskip][x-256][1] = *(tempFrameBuffer+(x*byte)+1); 
+			RGBAFrameBuffer2[y-yskip][x-256][2] = *(tempFrameBuffer+(x*byte)+2); 
 		}
 	}
-	fb1 += scr_pitch;
+	tempFrameBuffer += scr_pitch; // Next row (like y++)
 			}
 		}
 
 		// Update 256x256 texture
-		glBindTexture(GL_TEXTURE_2D,texture);
+		glBindTexture(GL_TEXTURE_2D, texture1);
 		glFlush();
-		glTexSubImage2D(GL_TEXTURE_2D,0,xskip,yskip,256-xskip,256-yskip,GL_RGBA,
-	GL_UNSIGNED_BYTE,ogl_fb1);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, xskip, yskip, 
+		    256-xskip, 256-yskip, GL_RGBA,
+		    GL_UNSIGNED_BYTE, RGBAFrameBuffer1);
 
 		if (flags & FB2GL_320) {
 			// Update 64x256 texture
-			glBindTexture(GL_TEXTURE_2D,textureb);
+			glBindTexture(GL_TEXTURE_2D, texture2);
 			glFlush();
-			glTexSubImage2D(GL_TEXTURE_2D,0,xskip,yskip,64-xskip,256-yskip,GL_RGBA,
-	GL_UNSIGNED_BYTE,ogl_fb2);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, xskip, yskip,
+			    64-xskip, 256-yskip, GL_RGBA,
+			    GL_UNSIGNED_BYTE, RGBAFrameBuffer2);
 		}
 
 	}
@@ -297,38 +319,47 @@ void FB2GL::update(void *fb, int w, int h, int pitch, int xskip, int yskip) {
 		for (y=0; y<h; y++)
 			for (x=0; x<w; x++) {
 	if (x<256) { 
-		ogl_fb[ y ][ x ] = *(fb1 + (y)*scr_pitch + x);
+		palettedFrameBuffer1[ y ][ x ] = *(tempFrameBuffer + (y)*scr_pitch + x);
 	}
 	else { 
-		ogl_fbb[ y ][ x - 256 ] = *(fb1 + y*scr_pitch + x);
+		palettedFrameBuffer2[ y ][ x - 256 ] = *(tempFrameBuffer + y*scr_pitch + x);
 	}
 			}
 
 		// Update 256x256 texture
-		glBindTexture(GL_TEXTURE_2D,texture);
-		glTexSubImage2D(GL_TEXTURE_2D,0,xskip,yskip,256-xskip,256-yskip,
-	GL_COLOR_INDEX, GL_UNSIGNED_BYTE,ogl_fb);
+		glBindTexture(GL_TEXTURE_2D, texture1);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, xskip, yskip, 
+		    256-xskip, 256-yskip, GL_COLOR_INDEX, 
+		    GL_UNSIGNED_BYTE, palettedFrameBuffer1);
 		
 		if (flags & FB2GL_320) {
 			// Update 64x256 texture
-			glBindTexture(GL_TEXTURE_2D,textureb);
-			glTexSubImage2D(GL_TEXTURE_2D,0,xskip,yskip,64-xskip,256-yskip,
-		GL_COLOR_INDEX, GL_UNSIGNED_BYTE,ogl_fbb);
+			glBindTexture(GL_TEXTURE_2D, texture2);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, xskip, yskip, 
+			    64-xskip, 256-yskip, GL_COLOR_INDEX, 
+			    GL_UNSIGNED_BYTE, palettedFrameBuffer2);
 		}
 
 	}
 
 	display();
-
 }
 
 void FB2GL::blit16(SDL_Surface *fb, int num_rect, SDL_Rect *rect, int xskip, int yskip) {
 	int x, y, i;
-	int rx, ry, rw, rh;
-	int xend=0, yend=0;
+	int rx, ry, rw, rh; // rect[i].x, .y, .w, .h 
+	// (0 <= rx <= 320) and (0 <= ry <= 240). 
+	// Note: rx may be larger than texture1 width (256).
+	int xend=0, yend=0; // (x + width) and (y + height)
 	int pitch = fb->pitch/2; // 16 bit pointer access (not char *)
-	int tex1_w = 0, tex2_w = 0, tex2_x = 0;
-
+	
+	// Width of the rectangle draw in texture1. (256 - rx) > 0
+	unsigned int tex1_w = 0;
+	// Width of the rectangle draw in texture2. (xend - 256) > 0
+	unsigned int tex2_w = 0;
+	// Rectangle's x coordinate in texture2. (rx - 256) > 0
+	unsigned int tex2_x = 0;
+	
 	for (i=0; i<num_rect; i++) {
 		tex1_w = tex2_w = tex2_x = 0;
 		rx = rect[i].x;
@@ -340,95 +371,112 @@ void FB2GL::blit16(SDL_Surface *fb, int num_rect, SDL_Rect *rect, int xskip, int
 		if (xend > fb->w) continue;
 		if (yend > fb->h) continue;
 
-		if (rx < 256) { // Begins before the end of the 1st texture
-			if (xend >= 256) { // Ends after the first texture
-	tex2_w = xend-256; // For the 2nd texture
-	tex1_w = rw - tex2_w; // For the 1st texture
+		if (rx < 256) { // Begins before the end of texture1
+			if (xend >= 256) { // Ends after texture1
+			      tex2_w = xend - 256; //Rectangle width on texture2
+			      tex1_w = rw - tex2_w; // Width left for texture1
 			}
-			else tex1_w = rw; 
+			else tex1_w = rw;  // This rectangle is inside texture1
 		}
 		else {
-			tex2_w = rw;
-			tex2_x = rx - 256;
+			tex2_w = rw;       // This rectangle is inside texture2
+			tex2_x = rx - 256; // Relative x coordinate on texture2
 		}
+
+		// Note: if (tex1_w == 0) then there is no rectangle to draw 
+		// in texture1. The same is true for tex2_w.
 
 		for (y = ry; y < yend; y++) {
 			for (x = rx; x < xend; x++) {
 			
 				if (x < 256 && tex1_w) { 
-		int pos = (x-rx+(y-ry)*tex1_w)*4; // RGBA
-		SDL_GetRGB(((Uint16 *)fb->pixels)[x+y*(pitch)],fb->format,
-			&fb1[pos],
-			&fb1[pos+1],
-			&fb1[pos+2]);
+		int pos = (x-rx+(y-ry)*tex1_w)*4; // (x + (y*pitch)) * RGBAsize
+		SDL_GetRGB(
+			((Uint16 *)fb->pixels)[x+y*(pitch)], 
+			fb->format,
+			&blitFrameBuffer1[pos],
+			&blitFrameBuffer1[pos+1],
+			&blitFrameBuffer1[pos+2]
+		);
 	}
 	else if (x >= 256 && tex2_w) {
 		int rx2 = rx < 256? 256: rx;
-		int pos = (x-rx2+(y-ry)*tex2_w)*4; // RGBA
-		SDL_GetRGB(((Uint16 *)fb->pixels)[x+y*(pitch)],fb->format,
-			&fb2[pos],
-			&fb2[pos+1],
-			&fb2[pos+2]);
+		int pos = (x-rx2+(y-ry)*tex2_w)*4; // (x + (y*pitch)) * RGBAsize
+		SDL_GetRGB(
+			((Uint16 *)fb->pixels)[x+y*(pitch)], 
+			fb->format,
+			&blitFrameBuffer2[pos],
+			&blitFrameBuffer2[pos+1],
+			&blitFrameBuffer2[pos+2]
+		);
 	}
 			}
 		}
 
 		if (tex1_w > 0) {
 			// Update 256x256 texture
-			glBindTexture(GL_TEXTURE_2D,texture);
+			glBindTexture(GL_TEXTURE_2D, texture1);
 			glFlush();
-			glTexSubImage2D(GL_TEXTURE_2D,0,rx+xskip,ry+yskip,tex1_w,rh,GL_RGBA,
-				GL_UNSIGNED_BYTE,fb1);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 
+			    rx + xskip,
+			    ry + yskip, 
+			    tex1_w, rh, GL_RGBA,
+			    GL_UNSIGNED_BYTE, blitFrameBuffer1);
 		}
 		if (tex2_w > 0) { // What was left for this texture
 			// Update 64x256 texture
-			glBindTexture(GL_TEXTURE_2D,textureb);
+			glBindTexture(GL_TEXTURE_2D, texture2);
 			glFlush();
-			glTexSubImage2D(GL_TEXTURE_2D,0,tex2_x+xskip,ry+yskip,tex2_w,rh,GL_RGBA,
-				GL_UNSIGNED_BYTE,fb2);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 
+			    tex2_x + xskip, 
+			    ry + yskip, 
+			    tex2_w, rh, GL_RGBA,
+			    GL_UNSIGNED_BYTE,blitFrameBuffer2);
 		}
 	}
 }
 
 void FB2GL::palette(int i, int r, int g, int b) {
 	if (flags & FB2GL_EXPAND) {
-		ogl_temp_ctable[i][0]=r;
-		ogl_temp_ctable[i][1]=g;
-		ogl_temp_ctable[i][2]=b;
+		tempColorTable[i][0] = r;
+		tempColorTable[i][1] = g;
+		tempColorTable[i][2] = b;
 	}
 	else { // Paletted texture
-		ogl_ctable[i][0]=r;
-		ogl_ctable[i][1]=g;
-		ogl_ctable[i][2]=b;
+		colorTable[i][0] = r;
+		colorTable[i][1] = g;
+		colorTable[i][2] = b;
 	}
 }
 
-void FB2GL::setPalette(int f, int n) {
+void FB2GL::setPalette(int first, int n) {
 	char temp[256][3];
 	int i;
  
 	if (flags & FB2GL_EXPAND) {
-		for (i=f; i<n; i++) {
-			ogl_ctable[i][0] = ogl_temp_ctable[i][0];
-			ogl_ctable[i][1] = ogl_temp_ctable[i][1];
-			ogl_ctable[i][2] = ogl_temp_ctable[i][2];
+		for (i = first; i < n; i++) {
+			colorTable[i][0] = tempColorTable[i][0];
+			colorTable[i][1] = tempColorTable[i][1];
+			colorTable[i][2] = tempColorTable[i][2];
 		}
 	}
 	else { // Paletted texture
-		glBindTexture(GL_TEXTURE_2D,texture);
-		glGetColorTable(GL_TEXTURE_2D,GL_RGB,GL_UNSIGNED_BYTE,&temp);
+		glBindTexture(GL_TEXTURE_2D, texture1);
+		glGetColorTable(GL_TEXTURE_2D, GL_RGB, GL_UNSIGNED_BYTE, &temp);
 	
-		for (i=f; i<n; i++) {
-			temp[i][0] = ogl_ctable[i][0];
-			temp[i][1] = ogl_ctable[i][1];
-			temp[i][2] = ogl_ctable[i][2];
+		for (i = first; i < n; i++) {
+			temp[i][0] = colorTable[i][0];
+			temp[i][1] = colorTable[i][1];
+			temp[i][2] = colorTable[i][2];
 		}
 	
-		glColorTable(GL_TEXTURE_2D,GL_RGB,256,GL_RGB,GL_UNSIGNED_BYTE,&temp);
+		glColorTable(GL_TEXTURE_2D, GL_RGB, 256, GL_RGB, 
+		    GL_UNSIGNED_BYTE, &temp);
 
 		if (flags & FB2GL_320) {
-			glBindTexture(GL_TEXTURE_2D,textureb);
-			glColorTable(GL_TEXTURE_2D,GL_RGB,256,GL_RGB,GL_UNSIGNED_BYTE,&temp);
+			glBindTexture(GL_TEXTURE_2D, texture2);
+			glColorTable(GL_TEXTURE_2D, GL_RGB, 256, GL_RGB, 
+			    GL_UNSIGNED_BYTE, &temp);
 		}
 
 	}

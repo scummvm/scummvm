@@ -34,7 +34,11 @@ int glGetColorTable(int, int, int, void *) { return 0; }
 
 class OSystem_SDL_OpenGL : public OSystem_SDL_Common {
 public:
-	OSystem_SDL_OpenGL() { _glScreenStart = 0; _glBilinearFilter = true; }
+	OSystem_SDL_OpenGL() { 
+	  _glScreenStart = 0; 
+	  _glBilinearFilter = true;
+	  _glBottomOfTexture = 256; // height is always 256
+	}
 
 	// Set colors of the palette
 	void set_palette(const byte *colors, uint start, uint num);
@@ -47,14 +51,16 @@ public:
 
 protected:
 	FB2GL fb2gl;
-	int gl_flags;
+	int _glFlags;
 	int _glScreenStart;
 	bool _glBilinearFilter;
 	SDL_Surface *tmpSurface; // Used for black rectangles blitting 
 	SDL_Rect tmpBlackRect; // Black rectangle at end of the GL screen
-
+	int _glBottomOfTexture;
+	
 	virtual void load_gfx_mode();
 	virtual void unload_gfx_mode();
+	void hotswap_gfx_mode();
 };
 
 OSystem_SDL_Common *OSystem_SDL_Common::create() {
@@ -107,13 +113,13 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	//
 
-	gl_flags =  FB2GL_320 | FB2GL_RGBA | FB2GL_16BIT;
+	_glFlags =  FB2GL_320 | FB2GL_RGBA | FB2GL_16BIT;
 	if (_full_screen) {
-		gl_flags |= (FB2GL_FS);
+		_glFlags |= (FB2GL_FS);
 		_glScreenStart = 0;
 	}
 	// 640x480 screen resolution
-	fb2gl.init(640, 480, 0,_glScreenStart? 15: 70,gl_flags);
+	fb2gl.init(640, 480, 0,_glScreenStart? 15: 70,_glFlags);
 
 	SDL_SetGamma(1.25, 1.25, 1.25);
 
@@ -156,6 +162,7 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 }
 
 void OSystem_SDL_OpenGL::unload_gfx_mode() {
+	SDL_SetGamma(1.0, 1.0, 1.0);
 	if (_screen) {
 		SDL_FreeSurface(_screen);
 		_screen = NULL; 
@@ -166,6 +173,38 @@ void OSystem_SDL_OpenGL::unload_gfx_mode() {
 		SDL_FreeSurface(_tmpscreen);
 		_tmpscreen = NULL;
 	}
+}
+
+void OSystem_SDL_OpenGL::hotswap_gfx_mode() {
+	if (!_screen)
+		return;
+
+	// Keep around the old _screen & _tmpscreen so we can restore the screen data
+	// after the mode switch.
+	SDL_Surface *old_screen = _screen;
+	SDL_Surface *old_tmpscreen = _tmpscreen;
+
+	// Release the HW screen surface
+	SDL_FreeSurface(fb2gl.getScreen());
+	fb2gl.setScreen(NULL);
+
+	// Setup the new GFX mode
+	load_gfx_mode();
+
+	// reset palette
+	SDL_SetColors(_screen, _currentPalette, 0, 256);
+
+	// Restore old screen content
+	SDL_BlitSurface(old_screen, NULL, _screen, NULL);
+	SDL_BlitSurface(old_tmpscreen, NULL, _tmpscreen, NULL);
+	
+	// Free the old surfaces
+	SDL_FreeSurface(old_screen);
+	free(old_tmpscreen->pixels);
+	SDL_FreeSurface(old_tmpscreen);
+
+	// Finally, blit everything to the screen
+	update_screen();
 }
 
 void OSystem_SDL_OpenGL::update_screen() {
@@ -228,11 +267,15 @@ void OSystem_SDL_OpenGL::update_screen() {
 		fb2gl.blit16(_tmpscreen, _num_dirty_rects, _dirty_rect_list, 0,
 									_currentShakePos+_glScreenStart);
 
-		tmpBlackRect.h = 256 - _screenHeight - _glScreenStart - _currentShakePos;
-
-		SDL_FillRect(tmpSurface, &tmpBlackRect, 0);
-		fb2gl.blit16(tmpSurface, 1, &tmpBlackRect, 0,_screenHeight
-												+ _glScreenStart+_currentShakePos);
+		int _glBottomOfGameScreen = _screenHeight + _glScreenStart + _currentShakePos; 
+		// Bottom black border height
+		tmpBlackRect.h = _glBottomOfTexture - _glBottomOfGameScreen;
+		
+		if (!(_full_screen) && (tmpBlackRect.h > 0)) {
+		  SDL_FillRect(tmpSurface, &tmpBlackRect, 0);
+		  fb2gl.blit16(tmpSurface, 1, &tmpBlackRect, 0,
+		      _glBottomOfGameScreen);
+		}
 
 		fb2gl.display();
 	}
@@ -246,8 +289,18 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 
 	if (param == PROP_TOGGLE_FULLSCREEN) {
 		_full_screen ^= true;
+#ifdef MACOSX
+		// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
+		// it still always returns -1. So we simply don't call it at all and
+		// use hotswap_gfx_mode() directly to switch to fullscreen mode.
+		hotswap_gfx_mode();
+#else
+		if (!SDL_WM_ToggleFullScreen(fb2gl.getScreen())) {
+			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
+			hotswap_gfx_mode();
+		}
+#endif
 
-		SDL_WM_ToggleFullScreen(fb2gl.screen);
 		return 1;
 	}
 	else if (param == PROP_SET_GFX_MODE) {
@@ -268,14 +321,14 @@ uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
 					}
 				}
 				break;
-			case 1: // Don't fit the whole screen
-				fb2gl.init(0, 0, 0, 15, gl_flags);
+			case 1: // Don't use the whole screen
+				fb2gl.init(0, 0, 0, 15, _glFlags);
 				_glScreenStart = 20;
 				SDL_FillRect(tmpSurface, &tmpBlackRect, 0);
 				fb2gl.blit16(tmpSurface, 1, &tmpBlackRect, 0, 0);
 				break;
-			case 2: // Fit the whole screen
-				fb2gl.init(0, 0, 0, 70, gl_flags);
+			case 2: // Use the whole screen
+				fb2gl.init(0, 0, 0, 70, _glFlags);
 				_glScreenStart = 0;
 				break;
 			default: // Zooming
