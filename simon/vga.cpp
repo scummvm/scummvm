@@ -1278,7 +1278,7 @@ void SimonEngine::vc_27_reset() {
 void SimonEngine::vc_28_dummy_op() {
 	/* dummy opcode */
 	_vc_ptr += 8;
-	error("vc_28 - Please report error message and where in game it occured");
+	warning("vc_28 - Please report error message and where in game it occured");
 }
 
 void SimonEngine::vc_29_stop_all_sounds() {
@@ -1326,7 +1326,7 @@ void SimonEngine::vc_35() {
 	/* not used? */
 	_vc_ptr += 4;
 	_vga_sprite_changed++;
-	error("vc_35 - Please report error message and where in game it occured");
+	warning("vc_35 - Please report error message and where in game it occured");
 }
 
 void SimonEngine::vc_36_saveload_thing() {
@@ -1532,13 +1532,13 @@ void SimonEngine::vc_52_play_sound() {
 void SimonEngine::vc_53_no_op() {
 	/* dummy op in simon1dos/talkie */
 	/* no op in simon1win */
-	error("vc_53 - Please report error message and where in game it occured");
+	warning("vc_53 - Please report error message and where in game it occured");
 }
 
 void SimonEngine::vc_54_no_op() {
 	/* dummy op in simon1dos/talkie */
 	/* no op in simon1win */
-	error("vc_54 - Please report error message and where in game it occured");
+	warning("vc_54 - Please report error message and where in game it occured");
 }
 
 void SimonEngine::vc_55_offset_hit_area() {
@@ -1573,7 +1573,7 @@ void SimonEngine::vc_56() {
 		add_vga_timer(num + gss->VGA_DELAY_BASE, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
 		_vc_ptr = (byte *)&vc_get_out_of_code;
 	} else {
-		error("vc_56 - Please report error message and where in game it occured");
+		warning("vc_56 - Please report error message and where in game it occured");
 	}
 }
 
@@ -1596,7 +1596,7 @@ void SimonEngine::vc_58() {
 	/* no op in simon1dos */
 	/* not used in simon1win? */
 	if (!(_game & GF_SIMON2))
-		error("vc_58 - Please report error message and where in game it occured");
+		warning("vc_58 - Please report error message and where in game it occured");
 	uint sprite = _vga_cur_sprite_id;
 	uint file = _vga_cur_file_id;
 	byte *vc_ptr;
@@ -1620,7 +1620,7 @@ void SimonEngine::vc_57_no_op() {
 	/* unknown function in simon1dos/simon2dos */
 	/* no op in simon1win/simon2win */
 	/* not used? */
-		error("vc_57 - Please report error message and where in game it occured");
+		warning("vc_57 - Please report error message and where in game it occured");
 }
 
 void SimonEngine::vc_kill_sprite(uint file, uint sprite) {

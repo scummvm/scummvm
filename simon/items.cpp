@@ -373,10 +373,15 @@ int SimonEngine::runScript() {
 		case 67:{									/* set array 3 and 4 */
 				uint var = getVarOrByte();
 				uint string_id = getNextStringID();
-				if (var < 20) {
-					_stringid_array_3[var] = string_id;
-					if (_game & GF_TALKIE)
-						_array_4[var] = getNextWord();
+				if (_game & GF_TALKIE) {
+					uint value = getNextWord();
+					if (var < 20) {
+						_stringid_array_3[var] = string_id;
+						_array_4[var] = value;
+					}
+				} else {
+					if (var < 20)
+						_stringid_array_3[var] = string_id;
 				}
 			}
 			break;
@@ -436,7 +441,7 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 82:{									/* dummy opcode? */
+		case 82:{									/* dummy opcode */
 				getVarOrByte();
 			}
 			break;
