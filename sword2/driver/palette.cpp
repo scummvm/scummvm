@@ -138,18 +138,18 @@ uint8 GetMatch(uint8 r, uint8 g, uint8 b) {
 	}
 
 	// Here, minIndex is the index of the matchpalette which is closest.
-	return(minIndex);
+	return minIndex;
 }
-
-// FIXME: Does this function really need to write to file?
 
 int32 UpdatePaletteMatchTable(uint8 *data) {
 	if (!data) {
-		FILE *fp;
 		int16 red, green, blue;
 		uint8 *p;
 
 		// Create palette match table
+
+		// FIXME: Does this case ever happen?
+
 		p = &paletteMatch[0];
 		for (red = 0; red < 256; red += 4) {
 			for (green = 0; green < 256; green += 4) {
@@ -158,30 +158,11 @@ int32 UpdatePaletteMatchTable(uint8 *data) {
 				}
 			}
 		}
-
-		// Write out palette match table
-		fp = fopen("r11.rgb", "wb");
-		if (fp == NULL)
-			return(RDERR_INVALIDFILENAME);
-		if (fwrite(paletteMatch, 1, 64*64*64, fp) != 64*64*64)
-			return(RDERR_WRITEERROR);
-		fclose(fp);
 	} else {
-		// Read table from file
+		// The provided data is th new palette match table
 		memcpy(paletteMatch, data, PALTABLESIZE);
-	
-/*
-		FILE *fp;
-
-		fp = fopen(filename, "rb");
-		if (fp == NULL)
-			return(RDERR_INVALIDFILENAME);
-		if (fread(paletteMatch, 1, 64*64*64, fp) != 64*64*64)
-			return(RDERR_READERROR);
-		fclose(fp);
-		return(RD_OK);
-*/		
 	}
+
 	return RD_OK;
 }
 
