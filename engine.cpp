@@ -101,8 +101,6 @@ void Engine::mainLoop() {
 
     glEnable(GL_DEPTH_TEST);
     currScene_->setupCamera();
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
 
     // Draw actors
     glEnable(GL_TEXTURE_2D);

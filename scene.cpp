@@ -148,6 +148,9 @@ void Scene::Setup::setupCamera() const {
   //  gluPerspective(std::atan(std::tan(fov_ / 2 * (M_PI/180)) * 0.75) * 2 * (180/M_PI), 4.0f / 3, nclip_, fclip_);
   float right = nclip_ * std::tan(fov_ / 2 * (M_PI/180));
   glFrustum(-right, right, -right * 0.75, right * 0.75, nclip_, fclip_);
+  
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
 
   // Apply camera roll
   glRotatef(roll_, 0, 0, -1);
@@ -159,7 +162,4 @@ void Scene::Setup::setupCamera() const {
   gluLookAt(pos_.x(), pos_.y(), pos_.z(),
 	    interest_.x(), interest_.y(), interest_.z(),
 	    up_vec.x(), up_vec.y(), up_vec.z());
-
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
 }
