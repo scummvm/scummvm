@@ -515,7 +515,6 @@ void Scumm_v8::decodeParseString(int m, int n)
 	case 0xCD:		// SO_PRINT_CHARSET Set print character set
 		// FIXME - TODO
 		_string[m].charset = pop();
-		printf("so_print_charset(%d)\n", _string[m].charset);
 		break;
 	case 0xCE:
 		_string[m].center = false;
@@ -1166,7 +1165,6 @@ void Scumm_v8::o8_kludge()
 	// TODO
 	int16 args[30];
 	getStackList(args, sizeof(args) / sizeof(args[0]));
-	warning("o8_kludge %d\n", args[0]);
 
 	switch (args[0]) {
 	case 11:
@@ -1219,7 +1217,7 @@ void Scumm_v8::o8_kludge2()
 	// TODO
 	int16 args[30];
 	getStackList(args, sizeof(args) / sizeof(args[0]));
-	warning("o8_kludge2 %d\n", args[0]);
+
 	switch (args[0]) {
 	case 0xCE:		// getRGBSlot
 	case 0xD3:		// getKeyState
