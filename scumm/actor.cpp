@@ -807,16 +807,24 @@ void Scumm::playActorSounds() {
 	}
 }
 
-
-#define DRAW_ORDER(x)	((x)->y - ((x)->layer << 11))
 inline int32 drawOrder (const Actor* x) { return (x)->y - ((x)->layer << 11); }
 
 int sortByDrawOrder (const void* a, const void* b)
 {
 	const Actor* actor1 = *(const Actor *const*)a;
 	const Actor* actor2 = *(const Actor *const*)b;
-	assert (DRAW_ORDER (actor1)==drawOrder (actor1) && DRAW_ORDER (actor1)==drawOrder (actor1));
-	return drawOrder (actor1)-drawOrder (actor2);
+	int32 order1 = drawOrder(actor1);
+	int32 order2 = drawOrder(actor2);
+
+	// The qsort() function is apparently not guaranteed to be stable (i.e.
+	// it may re-order actors with the same draw order value). Use the
+	// actor number as tie-breaker. This is needed for the Sam & Max intro,
+	// and possibly other cases as well. See bug #758167.
+
+	if (order1 == order2)
+		return actor1->number - actor2->number;
+
+	return order1 - order2;
 }
 
 void Scumm::processActors() {
