@@ -1170,8 +1170,6 @@ void SimonEngine::playSting(uint a) {
 		return;
 	}
 
-	//uint16 size = mus_file.readUint16LE();
-
 	mus_file.seek(a * 2, SEEK_SET);
 	mus_offset = mus_file.readUint16LE();
 	if (mus_file.ioFailed())
@@ -4015,7 +4013,7 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 	uint m, n;
 	uint height;
 
-	// FIXME: Shows Dwarf Song subtitles in Dwarf Mine under simon1dos/simon1talkie
+	// FIXME: Shows Dwarf Song subtitles in Dwarf Mine under simon1dos
 	if ((_game == GAME_SIMON1DOS) && (vga_sprite_id >= 100))
 		vga_sprite_id -= 100;
 
