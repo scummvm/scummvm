@@ -946,14 +946,14 @@ void Scumm::redrawBGStrip(int start, int num) {
 	_curVirtScreen = &virtscr[0];
 
 	gfxUsageBits[s]|=0x80000000;
-	if (_curVirtScreen->height > _scrHeight) {
-		error("Screen Y size %d < Room height %d",
+	
+	if (_curVirtScreen->height < _scrHeight) {	
+		warning("Screen Y size %d < Room height %d",
 			_curVirtScreen->height,
 			_scrHeight);
+		_curVirtScreen->height = _scrHeight; // FIXME: Indy3 Hack
 	}
-	if (_currentRoom == 79 && _gameID = GID_INDY3_256)	// FIXME: Indy3 workaround
-			_curVirtScreen->height = 136;
-
+	
 	gdi.drawBitmap(getResourceAddress(rtRoom, _roomResource)+_IM00_offs,
 		_curVirtScreen, s, 0, _curVirtScreen->height, s, num, 0);
 }
