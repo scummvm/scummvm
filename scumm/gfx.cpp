@@ -25,6 +25,7 @@
 #include "gui/gui.h"
 #include "gui/newgui.h"
 #include "resource.h"
+#include "util.h"
 
 enum {
 	kScrolltime = 500,  // ms scrolling is supposed to take
@@ -3054,6 +3055,66 @@ int Scumm::remapPaletteColor(int r, int g, int b, uint threshold)
 	return bestitem;
 }
 
+static int blend_cache[3][256];
+
+static void clear_blend_cache()
+{
+	int i, j;
+
+	for (i = 0; i < 3; i++)
+		for (j = 0; j < 256; j++)
+			blend_cache[i][j] = -1;
+}
+
+static byte blend(byte *pal, byte method, int dest_color)
+{
+	double val = 1.0;
+	int cache = 0;
+
+	switch (method) {
+		case 1:
+			cache = 0;
+			val = 0.5;
+			break;
+
+		case 2:
+			cache = 1;
+			val = 0.4;
+			break;
+
+		case 3:
+			cache = 2;
+			val = 1.1;
+			break;
+
+		case 255:
+			return dest_color;
+
+		default:
+			return method;
+	}
+
+	if (blend_cache[cache][dest_color] == -1) {
+		byte r = *(pal + 3 * dest_color + 0);
+		byte g = *(pal + 3 * dest_color + 1);
+		byte b = *(pal + 3 * dest_color + 2);
+
+		int new_r = (int) (val * r + 0.5);
+		int new_g = (int) (val * g + 0.5);
+		int new_b = (int) (val * b + 0.5);
+
+		if (new_r > 255)
+			new_r = 255;
+		if (new_g > 255)
+			new_g = 255;
+		if (new_b > 255)
+			new_g = 255;
+
+		blend_cache[cache][dest_color] = RGBMatch(pal, new_r, new_g, new_b);
+	}
+
+	return blend_cache[cache][dest_color];
+}
 
 // param3= clipping
 
@@ -3062,95 +3123,118 @@ int Scumm::remapPaletteColor(int r, int g, int b, uint threshold)
 // param1= never used ?
 void Scumm::drawBomp(BompDrawData *bd, int param1, byte *dataPtr, int param2, int param3)
 {
+	byte *scale_rows = NULL;
+	byte *scale_cols = NULL;
 	byte *dest = bd->out + bd->y * bd->outwidth, *src;
+	int src_x, src_y, dst_x, dst_y;
+	uint scaled_width, scaled_height;
 	int h = bd->srcheight;
-	bool inside;
+	uint i;
 
 	if (h == 0 || bd->srcwidth == 0)
 		return;
 
-	inside = (bd->x >= 0) && (bd->y >= 0) &&
-		(bd->x <= bd->outwidth - bd->srcwidth) && (bd->y <= bd->outheight - bd->srcheight);
-
-	if (1 || bd->scale_x == 255 && bd->scale_y == 255) {
-		/* Routine used when no scaling is needed */
-		if (inside) {
-			dest += bd->x;
-			src = bd->dataptr;
-			do {
-				byte code, color;
-				uint len = bd->srcwidth, num, i;
-				byte *d = dest;
-				src += 2;
-				do {
-					code = *src++;
-					num = (code >> 1) + 1;
-					if (num > len)
-						num = len;
-					len -= num;
-					if (code & 1) {
-						color = *src++;
-						if (color != 255) {
-							do
-								*d++ = color;
-							while (--num);
-						} else {
-							d += num;
-						}
-					} else {
-						for (i = 0; i < num; i++)
-							if ((color = src[i]) != 255)
-								d[i] = color;
-						d += num;
-						src += num;
-					}
-				} while (len);
-				dest += bd->outwidth;
-			} while (--h);
-		} else {
-			uint y = bd->y;
-			src = bd->dataptr;
-
-			do {
-				byte color;
-				uint len, num;
-				uint x;
-				if ((uint) y >= (uint) bd->outheight) {
-					src += READ_LE_UINT16(src) + 2;
-					continue;
-				}
-				len = bd->srcwidth;
-				x = bd->x;
-
-				src += 2;
-				do {
-					byte code = *src++;
-					num = (code >> 1) + 1;
-					if (num > len)
-						num = len;
-					len -= num;
-					if (code & 1) {
-						if ((color = *src++) != 255) {
-							do {
-								if ((uint) x < (uint) bd->outwidth)
-									dest[x] = color;
-							} while (++x, --num);
-						} else {
-							x += num;
-						}
-					} else {
-						do {
-							if ((color = *src++) != 255 && (uint) x < (uint) bd->outwidth)
-								dest[x] = color;
-						} while (++x, --num);
-					}
-				} while (len);
-			} while (dest += bd->outwidth, y++, --h);
+	if (bd->scale_x != 255) {
+		scale_rows = (byte *) calloc(bd->srcheight, 1);
+		if (scale_rows == NULL) {
+			warning("drawBomp: out of memory");
+			return;
 		}
-	} else {
-		/* scaling of bomp images not supported yet */
 	}
 
+	if (bd->scale_y != 255) {	
+		scale_cols = (byte *) calloc(bd->srcwidth, 1);
+		if (scale_cols == NULL) {
+			warning("drawBomp: out of memory");
+			return;
+		}
+	}
+
+	// Select which rows and columns from the original to show in the
+	// scaled version of the image. This is a pretty stupid way of scaling
+	// images, but it will have to do for now.
+
+	if (bd->scale_x < 255) {
+		scaled_width = (bd->srcwidth * bd->scale_x) / 255;
+		for (i = 0; i < scaled_width; i++)
+			scale_cols[(i * 255) / bd->scale_x] = 1;
+	}
+
+	if (bd->scale_y < 255) {
+		scaled_height = (bd->srcheight * bd->scale_y) / 255;
+		for (i = 0; i < scaled_height; i++)
+			scale_rows[(i * 255) / bd->scale_y] = 1;
+	}
+
+	clear_blend_cache();
+
+	dest += bd->x;
+	src = bd->dataptr;
+	for (src_y = 0, dst_y = bd->y; src_y < bd->srcheight; src_y++) {
+		byte code, color;
+		uint len, num;
+		byte *d = dest;
+
+		if (dst_y < 0 || dst_y >= bd->outheight) {
+			src += READ_LE_UINT16(src) + 2;
+			continue;
+		}
+
+		len = bd->srcwidth;
+		src_x = 0;
+		dst_x = bd->x;
+		src += 2;
+		
+		while (src_x < bd->srcwidth) {
+			code = *src++;
+			num = (code >> 1) + 1;
+			if (num > len)
+				num = len;
+			len -= num;
+			if (code & 1) {
+				color = *src++;
+				if (bd->scale_y == 255 || scale_rows[src_y]) {
+					do {
+						if (dst_x >= 0 && dst_x < bd->outwidth && (bd->scale_x || scale_cols[src_x]))
+							*d = blend(_currentPalette, color, *d);
+						if (bd->scale_x == 255 || scale_cols[src_x]) {
+							d++;
+							dst_x++;
+						}
+						src_x++;
+					} while (--num);
+				} else {
+					src_x += num;
+					dst_x += num;
+				}
+			} else {
+				if (bd->scale_y == 255 || scale_rows[src_y]) {
+					for (i = 0; i < num; i++) {
+						if (dst_x >= 0 && dst_x < bd->outwidth && (bd->scale_x || scale_cols[src_x]))
+							*d = blend(_currentPalette, src[i], *d);
+						if (bd->scale_x == 255 || scale_cols[src_x]) {
+							d++;
+							dst_x++;
+						}
+						src_x++;
+					}
+				} else {
+					dst_x += num;
+					src_x += num;
+				}
+				src += num;
+			}
+		}
+		if (bd->scale_y == 255 || scale_rows[src_y]) {
+			dest += bd->outwidth;
+			dst_y++;
+		}
+	}
+
+	if (scale_rows)
+		free(scale_rows);
+	if (scale_cols)
+		free(scale_cols);
 	CHECK_HEAP;
 }
 
