@@ -337,6 +337,7 @@ protected:
 	byte _letters_to_print_buf[80];
 
 	MidiPlayer midi;
+	int _midiDriver;
 
 	int _num_screen_updates;
 	int _vga_tick_counter;

@@ -59,6 +59,7 @@ MidiPlayer::MidiPlayer(OSystem *system) {
 	_mutex = system->createMutex();
 	_driver = 0;
 	_map_mt32_to_gm = false;
+	_passThrough = false;
 	
 	_enable_sfx = true;
 	_current = 0;
@@ -105,6 +106,11 @@ void MidiPlayer::close() {
 void MidiPlayer::send(uint32 b) {
 	if (!_current)
 		return;
+
+	if (_passThrough) {
+		_driver->send(b);
+		return;
+	}
 
 	byte channel = (byte) (b & 0x0F);
 	if ((b & 0xFFF0) == 0x07B0) {

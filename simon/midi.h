@@ -55,6 +55,7 @@ protected:
 	OSystem::MutexRef _mutex;
 	MidiDriver *_driver;
 	bool _map_mt32_to_gm;
+	bool _passThrough;
 
 	MusicInfo _music;
 	MusicInfo _sfx;
@@ -108,6 +109,7 @@ public:
 	void send(uint32 b);
 
 	void metaEvent (byte type, byte *data, uint16 length);
+	void setPassThrough(bool b)		{ _passThrough = b; }
 
 	// Timing functions - MidiDriver now operates timers
 	void setTimerCallback (void *timer_param, void (*timer_proc) (void *)) { }

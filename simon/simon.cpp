@@ -675,18 +675,26 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 						"Features of the game that depend on sound synchronization will most likely break");
 	set_volume(ConfMan.getInt("sfx_volume"));
 
+	_system->initSize(320, 200);
+
 	// Setup midi driver
 	MidiDriver *driver = 0;
+	_midiDriver = MD_NULL;
 	if (_game == GAME_SIMON1AMIGA || _game == GAME_SIMON1CD32)
 		driver = GameDetector::createMidi(MD_NULL);	// Create fake MIDI driver for Simon1Amiga and Simon2CD32 for now
-	else
-		driver = GameDetector::createMidi(GameDetector::detectMusicDriver(MDT_ADLIB | MDT_NATIVE));
+	else {
+		_midiDriver = GameDetector::detectMusicDriver(MDT_ADLIB | MDT_NATIVE);
+		driver = GameDetector::createMidi(_midiDriver);
+	}
 	if (!driver)
 		driver = MidiDriver_ADLIB_create(_mixer);
-	else if (ConfMan.getBool("native_mt32"))
+	else if (ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32))
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	midi.mapMT32toGM (!(_game & GF_SIMON2) && !ConfMan.getBool("native_mt32"));
+	midi.mapMT32toGM (!(_game & GF_SIMON2) && !(ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32)));
+	if (_midiDriver == MD_MT32)
+		midi.setPassThrough(true);
+
 	midi.set_driver(driver);
 	int ret = midi.open();
 	if (ret)
@@ -716,8 +724,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	if (ConfMan.hasKey("slow_down") && ConfMan.getInt("slow_down") >= 1)
 		_speed = ConfMan.getInt("slow_down");
-
-	_system->initSize(320, 200);
 
 	// FIXME Use auto dirty rects cleanup code to reduce CPU usage
 	g_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
@@ -5119,7 +5125,7 @@ void SimonEngine::loadMusic (uint music) {
 	if (_game & GF_SIMON2) {        // Simon 2 music
 		midi.stop();
 		_game_file->seek(_game_offsets_ptr[MUSIC_INDEX_BASE + music - 1], SEEK_SET);
-		if (_game & GF_WIN && !ConfMan.getBool("native_mt32")) {	
+		if (_game & GF_WIN && !(ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32))) {
 			midi.loadMultipleSMF (_game_file);
 		} else {
 			midi.loadXMIDI (_game_file);
