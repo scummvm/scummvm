@@ -77,249 +77,113 @@ void Graphics::blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *
 	}
 }
 
-// I've made the scaling two separate functions because there were cases from
-// DrawSprite() where it wasn't obvious if the sprite should grow or shrink,
-// which caused crashes.
+// There are two different separate functions for scaling the image - one fast
+// and one good. Or at least that's the theory. I'm sure there are better ways
+// to scale an image than this. The latter is used at the highest graphics
+// quality setting. Note that the "good" scaler takes an extra parameter, a
+// pointer to the area of the screen where the sprite will be drawn.
 //
-// Keeping them separate might be a good idea anyway, for readability.
-//
-// The code is based on the original DrawSprite() code, so apart from not
-// knowing if I got it right, I don't know how good the original really is.
-//
-// The backbuf parameter points to the buffer where the image will eventually
-// be drawn. This is only used at the highest graphics detail setting (and not
-// always even then) and is used to help anti-alias the image.
+// This code isn't quite like the original DrawSprite(), but should be close
+// enough.
 
-void Graphics::squashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
-	int32 ince, incne, d;
-	int16 x, y;
+void Graphics::scaleImageFast(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight) {
+	int x, y;
 
-	// Work out the x-scale
+	for (x = 0; x < dstWidth; x++)
+		_xScale[x] = (x * srcWidth) / dstWidth;
 
-	ince = 2 * dstWidth;
-	incne = 2 * (dstWidth - srcWidth);
-	d = 2 * dstWidth - srcWidth;
-	x = y = 0;
-	_xScale[y] = x;
+	for (y = 0; y < dstHeight; y++)
+		_yScale[y] = (y * srcHeight) / dstHeight;
 
-	while (x < srcWidth) {
-		if (d <= 0) {
-			d += ince;
-			x++;
-		} else {
-			d += incne;
-			x++;
-			y++;
+	for (y = 0; y < dstHeight; y++) {
+		for (x = 0; x < dstWidth; x++) {
+			dst[x] = src[_yScale[y] * srcPitch + _xScale[x]];
 		}
-		_xScale[y] = x;
-	}
-
-	// Work out the y-scale
-
-	ince = 2 * dstHeight;
-	incne = 2 * (dstHeight - srcHeight);
-	d = 2 * dstHeight - srcHeight;
-	x = y = 0;
-	_yScale[y] = x;
-
-	while (x < srcHeight) {
-		if (d <= 0) {
-			d += ince;
-			x++;
-		} else {
-			d += incne;
-			x++;
-			y++;
-		}
-		_yScale[y] = x;
-	}
-
-	// Copy the image (with or without anti-aliasing)
-
-	if (backbuf) {
-		for (y = 0; y < dstHeight; y++) {
-			for (x = 0; x < dstWidth; x++) {
-				uint8 p;
-				uint8 p1 = 0;
-				int count = 0;
-				int spriteCount = 0;
-				int red = 0;
-				int green = 0;
-				int blue = 0;
-				int i, j;
-
-				for (j = _yScale[y]; j < _yScale[y + 1]; j++) {
-					for (i = _xScale[x]; i < _xScale[x + 1]; i++) {
-						p = src[j * srcPitch + i];
-						if (p) {
-							red += _palCopy[p][0];
-							green += _palCopy[p][1];
-							blue += _palCopy[p][2];
-							p1 = p;
-							spriteCount++;
-						} else {
-							red += _palCopy[backbuf[x]][0];
-							green += _palCopy[backbuf[x]][1];
-							blue += _palCopy[backbuf[x]][2];
-						}
-						count++;
-					}
-				}
-				if (spriteCount == 0)
-					dst[x] = 0;
-				else if (spriteCount == 1)
-					dst[x] = p1;
-				else
-					dst[x] = quickMatch((uint8) (red / count), (uint8) (green / count), (uint8) (blue / count));
-			}
-			dst += dstPitch;
-			backbuf += _screenWide;
-		}
-	} else {
-		for (y = 0; y < dstHeight; y++) {
-			for (x = 0; x < dstWidth; x++) {
-				dst[x] = src[_yScale[y] * srcPitch + _xScale[x]];
-			}
-			dst += dstPitch;
-		}
+		dst += dstPitch;
 	}
 }
 
-void Graphics::stretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
-	byte *origDst = dst;
-	int32 ince, incne, d;
-	int16 x, y, i, j, k;
+void Graphics::scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
+	for (int y = 0; y < dstHeight; y++) {
+		for (int x = 0; x < dstWidth; x++) {
+			uint8 c1, c2, c3, c4;
 
-	// Work out the x-scale
+			uint32 xPos = (x * srcWidth) / dstWidth;
+			uint32 yPos = (y * srcHeight) / dstHeight;
+			uint32 xFrac = dstWidth - (x * srcWidth) % dstWidth;
+			uint32 yFrac = dstHeight - (y * srcHeight) % dstHeight;
 
-	ince = 2 * srcWidth;
-	incne = 2 * (srcWidth - dstWidth);
-	d = 2 * srcWidth - dstWidth;
-	x = y = 0;
-	_xScale[y] = x;
+			byte *srcPtr = src + yPos * srcPitch + xPos;
+			byte *backPtr = backbuf + y * _screenWide + x;
 
-	while (x < dstWidth) {
-		if (d <= 0) {
-			d += ince;
-			x++;
-		} else {
-			d += incne;
-			x++;
-			y++;
-			_xScale[y] = x;
-		}
-	}
+			bool transparent = true;
 
-	// Work out the y-scale
+			if (*srcPtr) {
+				c1 = *srcPtr;
+				transparent = false;
+			} else
+				c1 = *backPtr;
 
-	ince = 2 * srcHeight;
-	incne = 2 * (srcHeight - dstHeight);
-	d = 2 * srcHeight - dstHeight;
-	x = y = 0;
-	_yScale[y] = x;
-	while (x < dstHeight) {
-		if (d <= 0) {
-			d += ince;
-			x++;
-		} else {
-			d += incne;
-			x++;
-			y++;
-			_yScale[y] = x;
-		}
-	}
-
-	// Copy the image
-
-	for (y = 0; y < srcHeight; y++) {
-		for (j = _yScale[y]; j < _yScale[y + 1]; j++) {
-			k = 0;
-			for (x = 0; x < srcWidth; x++) {
-				for (i = _xScale[x]; i < _xScale[x + 1]; i++) {
-					dst[k++] = src[y * srcPitch + x];
-				}
-			}
-			dst += dstPitch;
-		}
-	}
-
-	// Anti-aliasing
-
-	if (backbuf) {
-		byte *newDst = (byte *) malloc(dstWidth * dstHeight);
-		if (!newDst)
-			return;
-
-		memcpy(newDst, origDst, dstWidth);
-
-		for (y = 1; y < dstHeight - 1; y++) {
-			src = origDst + y * dstPitch;
-			dst = newDst + y * dstWidth;
-			*dst++ = *src++;
-			for (x = 1; x < dstWidth - 1; x++) {
-				byte pt[5];
-				byte *p = backbuf + y * 640 + x;
-				int count = 0;
-
-				if (*src) {
-					count++;
-					pt[0] = *src;
+			if (x < dstWidth - 1) {
+				if (*(srcPtr + 1)) {
+					c2 = *(srcPtr + 1);
+					transparent = false;
 				} else
-					pt[0] = *p;
+					c2 = *(backPtr + 1);
+			} else
+				c2 = c1;
 
-				pt[1] = *(src - dstPitch);
-				if (pt[1] == 0)
-					pt[1] = *(p - 640);
-				else
-					count++;
-
-				pt[2] = *(src - 1);
-				if (pt[2] == 0)
-					pt[2] = *(p - 1);
-				else
-					count++;
-
-				pt[3] = *(src + 1);
-				if (pt[3] == 0)
-					pt[3] = *(p + 1);
-				else
-					count++;
-
-				pt[4] = *(src + dstPitch);
-				if (pt[4] == 0)
-					pt[4] = *(p + 640);
-				else
-					count++;
-
-				if (count) {
-					int red = _palCopy[pt[0]][0] << 2;
-					int green = _palCopy[pt[0]][1] << 2;
-					int blue = _palCopy[pt[0]][2] << 2;
-					for (i = 1; i < 5; i++) {
-						red += _palCopy[pt[i]][0];
-						green += _palCopy[pt[i]][1];
-						blue += _palCopy[pt[i]][2];
-					}
-
-					*dst++ = quickMatch((uint8) (red >> 3), (uint8) (green >> 3), (uint8) (blue >> 3));
+			if (y < dstHeight - 1) {
+				if (*(srcPtr + srcPitch)) {
+					c3 = *(srcPtr + srcPitch);
+					transparent = false;
 				} else
-					*dst++ = 0;
-				src++;
-			}
-			*dst++ = *src++;
+					c3 = *(backPtr + _screenWide);
+			} else
+				c3 = c1;
+
+			if (x < dstWidth - 1 && y < dstHeight - 1) {
+				if (*(srcPtr + srcPitch + 1)) {
+					c4 = *(srcPtr + srcPitch + 1);
+					transparent = false;
+				} else
+					c4 = *(backPtr + _screenWide + 1);
+			} else
+				c4 = c3;
+
+			if (!transparent) {
+				uint32 r1 = _palCopy[c1][0];
+				uint32 g1 = _palCopy[c1][1];
+				uint32 b1 = _palCopy[c1][2];
+
+				uint32 r2 = _palCopy[c2][0];
+				uint32 g2 = _palCopy[c2][1];
+				uint32 b2 = _palCopy[c2][2];
+
+				uint32 r3 = _palCopy[c3][0];
+				uint32 g3 = _palCopy[c3][1];
+				uint32 b3 = _palCopy[c3][2];
+
+				uint32 r4 = _palCopy[c4][0];
+				uint32 g4 = _palCopy[c4][1];
+				uint32 b4 = _palCopy[c4][2];
+
+				uint32 r5 = (r1 * xFrac + r2 * (dstWidth - xFrac)) / dstWidth;
+				uint32 g5 = (g1 * xFrac + g2 * (dstWidth - xFrac)) / dstWidth;
+				uint32 b5 = (b1 * xFrac + b2 * (dstWidth - xFrac)) / dstWidth;
+
+				uint32 r6 = (r3 * xFrac + r4 * (dstWidth - xFrac)) / dstWidth;
+				uint32 g6 = (g3 * xFrac + g4 * (dstWidth - xFrac)) / dstWidth;
+				uint32 b6 = (b3 * xFrac + b4 * (dstWidth - xFrac)) / dstWidth;
+
+				uint32 r = (r5 * yFrac + r6 * (dstHeight - yFrac)) / dstHeight;
+				uint32 g = (g5 * yFrac + g6 * (dstHeight - yFrac)) / dstHeight;
+				uint32 b = (b5 * yFrac + b6 * (dstHeight - yFrac)) / dstHeight;
+
+				dst[y * dstWidth + x] = quickMatch(r, g, b);
+			} else
+				dst[y * dstWidth + x] = 0;
 		}
-		memcpy(dst, src, dstWidth);
-
-		src = newDst;
-		dst = origDst;
-
-		for (i = 0; i < dstHeight; i++) {
-			memcpy(dst, src, dstWidth);
-			dst += dstPitch;
-			src += dstWidth;
-		}
-
-		free(newDst);
 	}
 }
 

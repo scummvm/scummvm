@@ -355,12 +355,10 @@ void Graphics::deleteSurface(byte *surface) {
 int32 Graphics::drawSprite(SpriteInfo *s) {
 	byte *src, *dst;
 	byte *sprite, *newSprite;
-	byte *backbuf = NULL;
 	uint16 scale;
 	int16 i, j;
 	uint16 srcPitch;
 	bool freeSprite = false;
-	bool clipped = false;
 	Common::Rect rd, rs;
 
 	// -----------------------------------------------------------------
@@ -453,22 +451,18 @@ int32 Graphics::drawSprite(SpriteInfo *s) {
 	if (rd.top < 40) {
 		rs.top = 40 - rd.top;
 		rd.top = 40;
-		clipped = true;
 	}
 	if (rd.bottom > 440) {
 		rd.bottom = 440;
 		rs.bottom = rs.top + (rd.bottom - rd.top);
-		clipped = true;
 	}
 	if (rd.left < 0) {
 		rs.left = -rd.left;
 		rd.left = 0;
-		clipped = true;
 	}
 	if (rd.right > 640) {
 		rd.right = 640;
 		rs.right = rs.left + (rd.right - rd.left);
-		clipped = true;
 	}
 
 	// -----------------------------------------------------------------
@@ -476,10 +470,6 @@ int32 Graphics::drawSprite(SpriteInfo *s) {
 	// -----------------------------------------------------------------
 
 	if (scale != 256) {
-		if ((_renderCaps & RDBLTFX_EDGEBLEND) && !clipped)
-			backbuf = _buffer + _screenWide * rd.top + rd.left;
-			
-
 		if (s->scaledWidth > SCALE_MAXWIDTH || s->scaledHeight > SCALE_MAXHEIGHT) {
 			if (freeSprite)
 				free(sprite);
@@ -493,16 +483,10 @@ int32 Graphics::drawSprite(SpriteInfo *s) {
 			return RDERR_OUTOFMEMORY;
 		}
 
-		if (scale < 256) {
-			squashImage(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h, backbuf);
-		} else {
-			if (s->scale > 512) {
-				if (freeSprite)
-					free(sprite);
-				return RDERR_INVALIDSCALING;
-			}
-			stretchImage(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h, backbuf);
-		}
+		if (_renderCaps & RDBLTFX_EDGEBLEND)
+			scaleImageGood(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h, _buffer + _screenWide * rd.top + rd.left);
+		else
+			scaleImageFast(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h);
 
 		if (freeSprite)
 			free(sprite);

@@ -156,9 +156,9 @@ void Graphics::processMenu(void) {
 					byte *src = _icons[menu][i];
 
 					if (_pocketStatus[menu][i] != MAXMENUANIMS) {
-						squashImage(
+						scaleImageFast(
 							dst, _screenWide, r2.right - r2.left, r2.bottom - r2.top,
-							src, RDMENU_ICONWIDE, RDMENU_ICONWIDE, RDMENU_ICONDEEP, NULL);
+							src, RDMENU_ICONWIDE, RDMENU_ICONWIDE, RDMENU_ICONDEEP);
 					} else {
 						for (j = 0; j < RDMENU_ICONDEEP; j++) {
 							memcpy(dst, src, RDMENU_ICONWIDE);

@@ -153,10 +153,10 @@ private:
 	uint8 getMatch(uint8 r, uint8 g, uint8 b);
 	void fadeServer(void);
 
-	void squashImage(byte *dst, uint16 dstPitch, uint16 dstWidth,
+	void scaleImageFast(byte *dst, uint16 dstPitch, uint16 dstWidth,
 		uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth,
-		uint16 srcHeight, byte *backbuf);
-	void stretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth,
+		uint16 srcHeight);
+	void scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth,
 		uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth,
 		uint16 srcHeight, byte *backbuf);
 
