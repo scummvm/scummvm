@@ -91,6 +91,13 @@ bool Actor::talking() {
   return true;
 }
 
+void Actor::shutUp() {
+    if (talkSound_) {
+    	Mixer::instance()->stopVoice(talkSound_);
+	talkSound_ = NULL;
+    }
+}
+
 void Actor::pushCostume(const char *name) {
   Costume *newCost = ResourceLoader::instance()->
     loadCostume(name, currentCostume());

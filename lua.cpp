@@ -467,6 +467,12 @@ static void IsMessageGoing() {
   }
 }
 
+static void ShutUpActor() {
+ Actor *act = check_actor(1);
+ if (act)
+  act->shutUp();
+}
+
 // Sector functions
 static void GetActorSector(void) {
   Actor *act = check_actor(1);
@@ -854,7 +860,6 @@ static char *stubFuncs[] = {
   "GetPointSector",
   "IsPointInSector",
   "SetActorFrustrumCull",
-  "ShutUpActor",
   "SetActorFollowBoxes",
   "SetActorHead",
   "GetCameraActor",
@@ -1122,7 +1127,8 @@ struct luaL_reg builtins[] = {
   { "InputDialog", InputDialog },
   { "ChangeTextObject", ChangeTextObject },
   { "GetTextObjectDimensions", GetTextObjectDimensions },
-  { "MakeTextObject", MakeTextObject }
+  { "MakeTextObject", MakeTextObject },
+  { "ShutUpActor", ShutUpActor }
 };
 
 void register_lua() {

@@ -33,6 +33,7 @@ public:
   void playVoice(Sound *s);
   void playSfx(Sound *s);
   void stopSfx(Sound *s);
+  void stopVoice(Sound *s);
   void setImuseState(int state);
   void setImuseSeq(int seq);
 

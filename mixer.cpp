@@ -312,6 +312,18 @@ void Mixer::stopSfx(Sound *s) {
   }
 }
 
+void Mixer::stopVoice(Sound *s) {
+  AudioLock l;
+
+  for (sound_list::iterator i = voiceSounds_.begin();
+       i != voiceSounds_.end(); ) {
+    if (*i == s)
+      i = voiceSounds_.erase(i);
+    else
+      i++;
+  }
+}
+
 static int compareStates(const void *p1, const void *p2) {
   const imuseTableEntry *e1 = static_cast<const imuseTableEntry *>(p1);
   const imuseTableEntry *e2 = static_cast<const imuseTableEntry *>(p2);

@@ -60,6 +60,7 @@ public:
   void turn(int dir);
 
   void sayLine(const char *msg);
+  void shutUp();
   bool talking();
 
   void pushCostume(const char *name);
