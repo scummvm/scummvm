@@ -569,7 +569,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 			}
 		}
 		if (actor->sceneNumber == _vm->_scene->currentSceneNumber()) {
-			actor->actionCycle = (rand() & 7) * 4;
+			actor->actionCycle = (_vm->_rnd.getRandomNumber(7) & 0x7) * 4; // 1/8th chance
 		}
 	}
 	
@@ -725,7 +725,7 @@ void Actor::handleSpeech(int msec) {
 			actor = getActor(_activeSpeech.actorIds[0]);
 			if (!(_activeSpeech.speechFlags & kSpeakNoAnimate)) {
 				actor->currentAction = kActionSpeak;
-				actor->actionCycle = rand() % 64;
+				actor->actionCycle = _vm->_rnd.getRandomNumber(63);
 			}
 		}
 		_activeSpeech.playing = true;			
@@ -831,7 +831,7 @@ void Actor::handleActions(int msec, bool setup) {
 					frameRange = getActorFrameRange(actor->id, kFrameStand);
 
 				if (frameRange->frameCount) {
-					actor->frameNumber = frameRange->frameIndex + (uint16)rand() % frameRange->frameCount;
+					actor->frameNumber = frameRange->frameIndex + (uint16)_vm->_rnd.getRandomNumber(frameRange->frameCount - 1);
 				} else {
 					actor->frameNumber = frameRange->frameIndex;
 				}
@@ -1010,7 +1010,7 @@ void Actor::handleActions(int msec, bool setup) {
 					break;
 				frameRange = getActorFrameRange(actor->id, kFrameSpeak);
 
-				state = (uint16)rand() % (frameRange->frameCount + 1);
+				state = (uint16)_vm->_rnd.getRandomNumber(frameRange->frameCount);
 
 				if (state == 0) {
 					frameRange = getActorFrameRange(actor->id, kFrameStand);
@@ -1067,7 +1067,7 @@ void Actor::handleActions(int msec, bool setup) {
 			}
 
 			if (frameRange->frameCount && (actor->actorFlags & kActorRandom)) {
-				state = rand() % frameRange->frameCount;
+				state = _vm->_rnd.getRandomNumber(frameRange->frameCount - 1);
 			}
 
 			if (actor->actorFlags & kActorBackwards) {
@@ -1347,8 +1347,8 @@ bool Actor::followProtagonist(ActorData *actor) {
 			newU = clamp( -prefU, delta.u(), prefU ) + protagonistLocation.u();
 			newV = clamp( -prefV, delta.v(), prefV ) + protagonistLocation.v();
 
-			newLocation.u() = newU + (rand() % prefU) - prefU / 2;
-			newLocation.v() = newV + (rand() % prefV) - prefV / 2;
+			newLocation.u() = newU + _vm->_rnd.getRandomNumber(prefU - 1) - prefU / 2;
+			newLocation.v() = newV + _vm->_rnd.getRandomNumber(prefV - 1) - prefV / 2;
 			newLocation.z = 0;
 
 			return actorWalkTo(actor->id, newLocation);
@@ -1384,7 +1384,7 @@ bool Actor::followProtagonist(ActorData *actor) {
 			}
 		}
 
-		if ((rand() & 0x7) == 0)
+		if ((_vm->_rnd.getRandomNumber(7) & 0x7) == 0) // 1/8th chance
 			actor->actorFlags &= ~kActorNoFollow;
 
 		if (actor->actorFlags & kActorNoFollow) {
@@ -1412,8 +1412,8 @@ bool Actor::followProtagonist(ActorData *actor) {
 				newLocation.z = 0;
 
 				if (protagonistBGMaskType != 3) {
-					newLocation.x += (rand() % prefer1.x) - prefer1.x / 2;
-					newLocation.y += (rand() % prefer1.y) - prefer1.y / 2;
+					newLocation.x += _vm->_rnd.getRandomNumber(prefer1.x - 1) - prefer1.x / 2;
+					newLocation.y += _vm->_rnd.getRandomNumber(prefer1.y - 1) - prefer1.y / 2;
 				}
 
 				newLocation.x = clamp(-31*4, newLocation.x, (_vm->getDisplayWidth() + 31) * 4); //fixme
