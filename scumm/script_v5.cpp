@@ -1462,8 +1462,8 @@ void Scumm_v5::o5_putActorInRoom() {
 
 	a = derefActor(act, "o5_putActorInRoom");
 	
-	// Fix for Bug #770710
-	// This fix fixes conflicting actor usage by two different scripts
+	// WORKAROUND: Fix for Bug #770710
+	// This fixes conflicting actor usage by two different scripts
 	// in MI1 Demo (PC GID_MONKEY_EGA or Amiga GID_MONKEY_VGA). The
 	// exit script for the LucasArts logo screen attempts to reset an
 	// actor that has already been set up for the next scene by the
