@@ -16,9 +16,10 @@
  *
  *
  ***********************************************************************/
-static Boolean stackChanged = false;
 static TabType *myTabP;
 static UInt16 lastTab = 0;
+
+static Boolean stackChanged = false;
 
 static UInt32 StackSize(UInt32 newSize) {
 	MemHandle pref = DmGetResource('pref',0);
@@ -51,9 +52,8 @@ static Boolean ScummVMTabSave() {
 	
 	cckP[3] = (ControlType *)GetObjectPtr(TabScummVMDebugCheckbox);
 	cckP[6] = (ControlType *)GetObjectPtr(TabScummVMDemoCheckbox);
-	cckP[7] = (ControlType *)GetObjectPtr(TabScummVMFullscreenCheckbox);
-	cckP[8] = (ControlType *)GetObjectPtr(TabScummVMAspectRatioCheckbox);
 	cckP[9] = (ControlType *)GetObjectPtr(TabScummVMCopyProtectionCheckbox);
+	cckP[10]= (ControlType *)GetObjectPtr(TabScummVMAltIntroCheckbox);
 
 	frmP = FrmGetActiveForm();
 	if (FldGetTextLength(fld1P) == 0 && CtlGetValue(cckP[3]) == 1) {
@@ -65,9 +65,8 @@ static Boolean ScummVMTabSave() {
 
 	gPrefs->debug = CtlGetValue(cckP[3]);
 	gPrefs->demoMode = CtlGetValue(cckP[6]);
-	gPrefs->fullscreen = CtlGetValue(cckP[7]);
-	gPrefs->aspectRatio = CtlGetValue(cckP[8]);
 	gPrefs->copyProtection = CtlGetValue(cckP[9]);
+	gPrefs->altIntro = CtlGetValue(cckP[10]);
 
 	gPrefs->debugLevel = StrAToI(FldGetTextPtr(fld1P));
 	
@@ -104,9 +103,8 @@ static void ScummVMTabInit() {
 
 	CtlSetValue((ControlType *)GetObjectPtr(TabScummVMDebugCheckbox), gPrefs->debug);
 	CtlSetValue((ControlType *)GetObjectPtr(TabScummVMDemoCheckbox), gPrefs->demoMode);
-	CtlSetValue((ControlType *)GetObjectPtr(TabScummVMFullscreenCheckbox), gPrefs->fullscreen);
-	CtlSetValue((ControlType *)GetObjectPtr(TabScummVMAspectRatioCheckbox), gPrefs->aspectRatio);
 	CtlSetValue((ControlType *)GetObjectPtr(TabScummVMCopyProtectionCheckbox), gPrefs->copyProtection);
+	CtlSetValue((ControlType *)GetObjectPtr(TabScummVMAltIntroCheckbox), gPrefs->altIntro);
 
 	fld1P = (FieldType *)GetObjectPtr(TabScummVMDebugLevelField);
 
