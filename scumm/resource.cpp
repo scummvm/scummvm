@@ -483,20 +483,24 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name) {
 			for (i = 0; i < num; i++)
 				res.roomno[id][i] = _fileHandle.readByte();
 		}
-		for (i = 0; i < num; i++)
+		for (i = 0; i < num; i++) {
 			res.roomoffs[id][i] = _fileHandle.readUint16LE();
+			if (roomoffs[id][i] == 0xFFFF)
+				roomoffs[id][i] = 0xFFFFFFFF;
+		}
+
 	} else if (_features & GF_SMALL_HEADER) {
 		for (i = 0; i < num; i++) {
 			res.roomno[id][i] = _fileHandle.readByte();
 			res.roomoffs[id][i] = _fileHandle.readUint32LE();
 		}
 	} else {
-		_fileHandle.read(res.roomno[id], num * sizeof(uint8));
-		_fileHandle.read(res.roomoffs[id], num * sizeof(uint32));
-#if defined(SCUMM_BIG_ENDIAN)
-		for (i = 0; i < num; i++)
-			res.roomoffs[id][i] = FROM_LE_32(res.roomoffs[id][i]);
-#endif
+		for (i = 0; i < num; i++) {
+			res.roomno[id][i] = _fileHandle.readByte();
+		}
+		for (i = 0; i < num; i++) {
+			res.roomoffs[id][i] = _fileHandle.readUint32LE();
+		}
 	}
 }
 
