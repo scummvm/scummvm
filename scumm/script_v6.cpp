@@ -315,7 +315,7 @@ void Scumm_v6::setupOpcodes() {
 		OPCODE(o6_isRoomScriptRunning),
 		OPCODE(o6_closeFile),
 		OPCODE(o6_openFile),
-		OPCODE(o6_invalid),
+		OPCODE(o6_readFile),
 		/* DC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_findAllObjects),
@@ -2827,6 +2827,10 @@ void Scumm_v6::o6_deleteFile() {
 	len = resStrLen(_scriptPointer);
 	warning("stub o6_deleteFile(\"%s\")", _scriptPointer);
 	_scriptPointer += len + 1;
+}
+
+void Scumm_v6::o6_readFile() {
+	error("stub o6_readFile(%d, %d)", pop(), pop());
 }
 
 void Scumm_v6::o6_findAllObjects() {

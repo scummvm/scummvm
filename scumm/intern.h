@@ -424,6 +424,7 @@ protected:
 	void o6_openFile();
 	void o6_closeFile();
 	void o6_deleteFile();
+	void o6_readFile();
 	void o6_findAllObjects();
 	void o6_pickVarRandom();
 	void o6_getDateTime();
