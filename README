@@ -987,10 +987,6 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * Type make (or gmake, or gnumake, depending on what GNU make is
           called on your system) and hopefully ScummVM will compile for you.
 
-    Mingw - Windows 95/98/ME/NT/2000/XP/2003:
-        * Open Makefile.mingw, alter SDL paths and choose compiling options.
-        * Type make -f Makefile.mingw,  hopefully ScummVM will compile for you.
-
     Microsoft Visual C++ 6.0:
         * Open the workspace, scummwm.dsw
         * Enter the path to the needed libraries and includes in Tools|Options|Directories
