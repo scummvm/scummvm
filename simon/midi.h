@@ -31,17 +31,17 @@ class OSystem;
 struct MusicInfo {
 	MidiParser *parser;
 	byte * data;
-	byte   num_songs;      // For Type 1 SMF resources
-	byte * songs[16];      // For Type 1 SMF resources
-	uint32 song_sizes[16]; // For Type 1 SMF resources
-	bool   in_use[16];     // Tracks which resource is using which MIDI channels
+	byte   num_songs;         // For Type 1 SMF resources
+	byte * songs[16];         // For Type 1 SMF resources
+	uint32 song_sizes[16];    // For Type 1 SMF resources
+	MidiChannel *channel[16]; // Dynamic remapping of channels to resolve conflicts
 
 	MusicInfo() { clear(); }
 	void clear() {
 		parser = 0; data = 0; num_songs = 0;
 		memset (songs, 0, sizeof (songs));
 		memset (song_sizes, 0, sizeof (song_sizes));
-		memset (in_use, 0, sizeof (in_use));
+		memset (channel, 0, sizeof (channel));
 	}
 };
 

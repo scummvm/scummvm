@@ -88,19 +88,18 @@ void MidiPlayer::send (uint32 b) {
 		volume = (byte) ((b >> 16) & 0xFF) * _masterVolume / 255;
 		_volumeTable [b & 0xF] = volume;
 		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xF0) == 0xC0) {
-		int chan = b & 0x0F;
-		if (!_current->in_use [chan])
-			_driver->send (0x007BB0 | chan); // All Notes Off
-		_current->in_use [chan] = true;
 	} else if ((b & 0xFFF0) == 0x007BB0) {
 		// Only respond to an All Notes Off if this channel
 		// has already been marked "in use" by this parser.
-		if (!_current->in_use [b & 0x0F])
+		if (!_current->channel [b & 0x0F])
 			return;
 	}
 
-	_driver->send (b);
+	byte channel = (byte) (b & 0x0F);
+	if (!_current->channel [channel])
+		_current->channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+	if (_current->channel [channel])
+		_driver->send ((b & ~0x0F) | _current->channel[channel]->getNumber());
 }
 
 void MidiPlayer::metaEvent (byte type, byte *data, uint16 length) {
@@ -269,8 +268,10 @@ void MidiPlayer::clearConstructs (MusicInfo &info) {
 		delete info.parser;
 	if (_driver) {
 		for (i = 0; i < 16; ++i) {
-			if (info.in_use[i])
-				_driver->send (0x007BB0 | i); // All Notes Off
+			if (info.channel[i]) {
+				_driver->send (0x007BB0 | info.channel[i]->getNumber()); // All Notes Off
+				info.channel[i]->release();
+			}
 		}
 	}
 	info.clear();
@@ -299,6 +300,13 @@ void MidiPlayer::loadSMF (File *in, int song, bool sfx) {
 	in->read (p->data, size);
 
 	if (!memcmp (p->data, "GMF\x1", 4)) {
+		// BTW, here's what we know about the GMF header,
+		// the 7 bytes preceding the actual MIDI events.
+		// 3 BYTES: 'GMF'
+		// 1 BYTE : Always seems to be 0x01
+		// 1 BYTE : Always seems to be 0x00
+		// 1 BYTE : Ranges from 0x02 to 0x08 (always 0x02 for SFX, though)
+		// 1 BYTE : Loop control. 0 = no loop, 1 = loop
 		if (!sfx)
 			setLoop (p->data[6] != 0);
 
