@@ -41,6 +41,10 @@ CXXFLAGS+= -Wno-reorder -Wwrite-strings -fcheck-new -Wctor-dtor-privacy
 
 include Makefile.common
 
+config.mak:
+	@echo "you need to run ./configure before you can run make"
+	@exit 1
+
 dist:
 	$(RM) $(ZIPFILE)
 	$(ZIP) $(ZIPFILE) $(DISTFILES)
