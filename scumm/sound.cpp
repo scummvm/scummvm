@@ -1111,6 +1111,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 		memcpy(buffer, ptr, size);
 	} else {
 		warning("Sound::bundleMusicHandler  to do more playStream options...");
+		return;
 	}
 
 	if (_bundleMusicTrack == -1) {
