@@ -1577,9 +1577,8 @@ load_game:
 	}
 
 	_sound->processSoundQues();
-	if (_imuseDigital && 
-			( ((_gameId == GID_DIG) && (!(_features & GF_DEMO))) ||
-			((_gameId == GID_CMI) && (_features & GF_DEMO)) ) )
+	if (_imuseDigital &&
+			( ((_gameId == GID_DIG) && (!(_features & GF_DEMO))) || (_gameId == GID_CMI) ))
 		_imuseDigital->refreshScripts();
 
 	camera._last = camera._cur;
