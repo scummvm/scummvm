@@ -1214,7 +1214,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		sx = 0;
 	}
 
-	while (numstrip && sx < _numStrips && x * 8 < _vm->_roomWidth) {
+	while (numstrip && sx < _numStrips && x * 8 < MAX(_vm->_roomWidth, (int) vs->w)) {
 		CHECK_HEAP;
 
 		if (y < vs->tdirty[sx])
