@@ -629,15 +629,13 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 		return;
 	}
 
-	// FIXME: Maybe V1 only ready one byte here? At least it seems by comparing the
-	// V1 and V2 data that there is a 1-byte len difference.
-/*	if (_version == 1) {
+	if (_version == 1) {
+		r += 4;
 		mask = *r++ << 8;
 	} else {
-*/
 		mask = READ_LE_UINT16(r);
 		r += 2;
-//	}
+	}
 //printf("mask = 0x%x, usemask = 0x%x\n", mask, usemask);
 	i = 0;
 	do {
