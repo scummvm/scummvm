@@ -172,6 +172,7 @@ void SwordLogic::processLogic(BsObject *compact, uint32 id) {
 				break;
 			case LOGIC_start_talk:
 				logicRet = logicStartTalk(compact);
+				break;
 			case LOGIC_script:
 				_scriptVars[CUR_ID] = id;
 				logicRet = scriptManager(compact, id);

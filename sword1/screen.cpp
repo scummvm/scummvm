@@ -115,7 +115,7 @@ void SwordScreen::refreshPalette(void) {
 }
 
 bool SwordScreen::stillFading(void) {
-	return _fadingStep;
+	return (_fadingStep != 0);
 }
 
 void SwordScreen::updateScreen(void) {
