@@ -1284,7 +1284,7 @@ void ScummEngine::initScummVars() {
 		return;
 	}
 
-	if (_version >= 4 && _version <= 6)
+	if (_version >= 4 && _version <= 5)
 		VAR(VAR_V5_TALK_STRING_Y) = -0x50;
 
 	if (_version == 8) {	// Fixme: How do we deal with non-cd installs?
