@@ -57,6 +57,8 @@ public:
 	virtual void loadCostume(int id) = 0;
 	virtual byte increaseAnims(Actor *a) = 0;
 	virtual void costumeDecodeData(Actor *a, int frame, uint usemask) = 0;
+
+	bool hasManyDirections(int id) { return false; }
 };
 
 
