@@ -1007,7 +1007,6 @@ int32 deltaY;
 	modularPath[slidy].dir = 9;
 	modularPath[slidy].num = ROUTE_END_FLAG;
 	return 1;
-
 }
 
 //****************************************************************************
@@ -2646,17 +2645,28 @@ void LoadWalkData(Object_walkdata *ob_walkdata)
 	uint32	frameCounter = 0;	// starts at frame 0 of mega set (16sep96 JEL)
       
 
-	nWalkFrames				= ob_walkdata->nWalkFrames;
-	usingStandingTurnFrames	= ob_walkdata->usingStandingTurnFrames;
-	usingWalkingTurnFrames	= ob_walkdata->usingWalkingTurnFrames;
-	usingSlowInFrames		= ob_walkdata->usingSlowInFrames;
-	usingSlowOutFrames		= ob_walkdata->usingSlowOutFrames;
+	nWalkFrames				= FROM_LE_32(ob_walkdata->nWalkFrames);
+	usingStandingTurnFrames	= FROM_LE_32(ob_walkdata->usingStandingTurnFrames);
+	usingWalkingTurnFrames	= FROM_LE_32(ob_walkdata->usingWalkingTurnFrames);
+	usingSlowInFrames		= FROM_LE_32(ob_walkdata->usingSlowInFrames);
+	usingSlowOutFrames		= FROM_LE_32(ob_walkdata->usingSlowOutFrames);
 	numberOfSlowOutFrames	= usingSlowOutFrames;	// 0 = not using slow out frames; non-zero = using that many frames for each leading leg for each direction
 
  	memcpy(&numberOfSlowInFrames[0],ob_walkdata->nSlowInFrames,NO_DIRECTIONS*sizeof(numberOfSlowInFrames[0]));
  	memcpy(&leadingLeg[0],ob_walkdata->leadingLeg,NO_DIRECTIONS*sizeof(leadingLeg[0]));
  	memcpy(&dx[0],ob_walkdata->dx,NO_DIRECTIONS*(nWalkFrames+1)*sizeof(dx[0]));
  	memcpy(&dy[0],ob_walkdata->dy,NO_DIRECTIONS*(nWalkFrames+1)*sizeof(dy[0]));
+
+#ifdef SCUMM_BIG_ENDIAN
+	for (direction=0; direction<NO_DIRECTIONS; direction++) {
+		numberOfSlowInFrames[direction] = SWAP_BYTES_32(numberOfSlowInFrames[direction]);
+		leadingLeg[direction] = SWAP_BYTES_32(leadingLeg[direction]);
+	}
+	for (walkFrameNo = 0; walkFrameNo < NO_DIRECTIONS*(nWalkFrames+1); walkFrameNo++) {
+		dx[walkFrameNo] = SWAP_BYTES_32(dx[walkFrameNo]);
+		dy[walkFrameNo] = SWAP_BYTES_32(dy[walkFrameNo]);
+	}
+#endif
 
 	//---------------------------------------------------------
 
