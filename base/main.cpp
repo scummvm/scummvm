@@ -32,6 +32,7 @@
 #include "base/engine.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
+#include "base/version.h"
 #include "common/config-manager.h"
 #include "common/scaler.h"	// For GFX_NORMAL
 #include "common/timer.h"
@@ -85,7 +86,31 @@
 const char *gScummVMVersion = "0.5.7cvs";
 const char *gScummVMBuildDate = __DATE__ " " __TIME__;
 const char *gScummVMFullVersion = "ScummVM 0.5.7cvs (" __DATE__ " " __TIME__ ")";
+const char *gScummVMFeatures = 
+#ifdef USE_VORBIS
+	"Vorbis "
+#endif
 
+#ifdef USE_FLAC
+	"FLAC "
+#endif
+
+#ifdef USE_MAD
+	"MP3 "
+#endif
+
+#ifdef USE_ALSA
+	"ALSA "
+#endif
+
+#ifdef USE_ZLIB
+	"zLib "
+#endif
+
+#ifdef USE_MPEG2
+	"MPEG2 "
+#endif
+	;	
 
 #if defined(WIN32) && defined(NO_CONSOLE)
 #include <cstdio>

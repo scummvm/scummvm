@@ -25,6 +25,7 @@
 #include "base/engine.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
+#include "base/version.h"
 
 #include "common/config-manager.h"
 #include "common/scaler.h"	// Only for gfx_modes
@@ -371,6 +372,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 
 			DO_OPTION_CMD('v', "version")
 				printf("%s\n", gScummVMFullVersion);
+				printf("Features compiled in: %s\n", gScummVMFeatures);
 				exit(0);
 			END_OPTION
 

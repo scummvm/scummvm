@@ -25,6 +25,7 @@
 #include "base/engine.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
+#include "base/version.h"
 
 #include "common/config-manager.h"
 #include "common/util.h"

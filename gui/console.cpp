@@ -23,6 +23,7 @@
 #include "gui/ScrollBarWidget.h"
 
 #include "base/engine.h"
+#include "base/version.h"
 
 #ifdef NEW_FONT_CODE
 #include "gui/font.h"

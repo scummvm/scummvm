@@ -18,42 +18,12 @@
  * $Header$
  */
 
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef VERSION_H
+#define VERSION_H
 
-#include "common/scummsys.h"
-#include "common/str.h"
-#include "common/system.h"
-
-class SoundMixer;
-class Timer;
-
-class Engine {
-public:
-	OSystem *_system;
-	SoundMixer *_mixer;
-	Timer * _timer;
-
-protected:
-	const Common::String _gameDataPath;
-
-public:
-	Engine(OSystem *syst);
-	virtual ~Engine();
-
-	/** Start the main engine loop. */ 
-	virtual void go() = 0;
-
-	/** Get the path to the save game directory. */
-	virtual const char *getSavePath() const;
-
-	/** Get the path to the game data directory. */
-	virtual const char *getGameDataPath() const;
-
-	/** Specific for each engine: prepare error string. */
-	virtual void errorString(const char *buf_input, char *buf_output) = 0;
-};
-
-extern Engine *g_engine;
+extern const char *gScummVMVersion;		// e.g. "0.4.1"
+extern const char *gScummVMBuildDate;	// e.g. "2003-06-24"
+extern const char *gScummVMFullVersion;	// e.g. "ScummVM 0.4.1 (2003-06-24)"
+extern const char *gScummVMFeatures; 	// e.g. "ALSA MPEG2 zLib"
 
 #endif

@@ -20,6 +20,7 @@
 
 #include "stdafx.h"
 #include "base/engine.h"
+#include "base/version.h"
 #include "gui/about.h"
 #include "gui/newgui.h"
 #include "gui/widget.h"
@@ -27,27 +28,33 @@
 namespace GUI {
 
 AboutDialog::AboutDialog()
-	: Dialog(10, 20, 300, 144) {
-	addButton((_w - kButtonWidth) / 2, 120, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
+	: Dialog(10, 20, 300, 154) {
+	
+	addButton((_w - kButtonWidth) / 2, 130, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
 
 	Common::String version("ScummVM ");
 	version += gScummVMVersion;
-	new StaticTextWidget(this, 10, 10, _w - 20, kLineHeight, version, kTextAlignCenter);
+	new StaticTextWidget(this, 0, 10, _w, kLineHeight, version, kTextAlignCenter);
 
 	Common::String date("(built on ");
 	date += gScummVMBuildDate;
 	date += ')';
-	new StaticTextWidget(this, 10, 20, _w - 20, kLineHeight, date, kTextAlignCenter);
+	new StaticTextWidget(this, 0, 20, _w, kLineHeight, date, kTextAlignCenter);
 
+	Common::String features("Supports: ");
+	features += gScummVMFeatures;
+	new StaticTextWidget(this, 0, 30, _w, kLineHeight, features, kTextAlignCenter );
+	
+	
 	// TODO: Probably should display something regarding GPL
-	new StaticTextWidget(this, 10, 35, _w - 20, kLineHeight, "Copyright (C) 2002-2004 The ScummVM project", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 45, _w - 20, kLineHeight, "http://www.scummvm.org", kTextAlignCenter);
+	new StaticTextWidget(this, 0, 45, _w, kLineHeight, "Copyright (C) 2002-2004 The ScummVM project", kTextAlignCenter);
+	new StaticTextWidget(this, 0, 55, _w, kLineHeight, "http://www.scummvm.org", kTextAlignCenter);
 
-	new StaticTextWidget(this, 10, 65, _w - 20, kLineHeight, "LucasArts SCUMM Games (C) LucasArts", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 75, _w - 20, kLineHeight, "Humongous SCUMM Games (C) Humongous", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 85, _w - 20, kLineHeight, "Simon the Sorcerer (C) Adventure Soft", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 95, _w - 20, kLineHeight, "Beneath a Steel Sky (C) Revolution", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 105, _w - 20, kLineHeight, "Broken Sword Games (C) Revolution", kTextAlignCenter);
+	new StaticTextWidget(this, 0, 75, _w, kLineHeight, "LucasArts SCUMM Games (C) LucasArts", kTextAlignCenter);
+	new StaticTextWidget(this, 0, 85, _w, kLineHeight, "Humongous SCUMM Games (C) Humongous", kTextAlignCenter);
+	new StaticTextWidget(this, 0, 95, _w, kLineHeight, "Simon the Sorcerer (C) Adventure Soft", kTextAlignCenter);
+	new StaticTextWidget(this, 0, 105, _w, kLineHeight, "Beneath a Steel Sky (C) Revolution", kTextAlignCenter);
+	new StaticTextWidget(this, 0, 115, _w, kLineHeight, "Broken Sword Games (C) Revolution", kTextAlignCenter);
 }
 
 } // End of namespace GUI

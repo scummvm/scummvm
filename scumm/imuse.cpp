@@ -22,6 +22,8 @@
 
 #include "stdafx.h"
 
+#include "base/version.h"
+
 #include "common/util.h"
 
 #include "scumm/imuse.h"
