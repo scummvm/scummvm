@@ -51,9 +51,26 @@ void EditTextWidget::handleTickle() {
 	}
 }
 
-void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
-	// TODO - once we support "real editing" (i.e. caret can be at any spot),
-	// a mouse click should place the caret.
+void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount){
+	// First remove caret
+	if (_caretVisible)
+		drawCaret(true);
+
+	NewGui *gui = _boss->getGui();
+
+	x += _labelOffset;
+
+	int width = 0;
+	int i;
+
+	for (i = 0; i < _label.size(); ++i) {
+		width += gui->getCharWidth(_label[i]);
+		if (width >= x)
+			break;
+	}
+	_pos = i;
+	if (adjustOffset())
+		draw();
 }
 
 bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
