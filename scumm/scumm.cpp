@@ -267,7 +267,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"pjs-demo", "Pajama Sam 1: No Need to Hide When It's Dark Outside (Demo)", GID_PAJAMA, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"socks", "Pajama Sam's Sock Works", GID_HEGAME, 6, 72, MDT_NONE,
+	{"socks", "Pajama Sam's Sock Works", GID_PAJAMA, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	// Resource changed for pajama
 	{"pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside", GID_PAJAMA, 6, 72, MDT_NONE,
