@@ -844,23 +844,20 @@ void ScummEngine_v72he::o72_actorOps() {
 		return;
 
 	switch (b) {
-	case 21:
-		// HE 80+
+	case 21: // HE 80+
 		k = getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < k; ++i) {
 			a->setUserCondition(args[i] & 0x7F, args[i] & 0x80);
 		}
 		debug(1,"o72_actorOps: case 21 (%d)", k);
 		break;
-	case 24:
-		// HE 80+
+	case 24: // HE 80+
 		k = pop();
 		a->talkUnk = 1;
 		a->setTalkCondition(k);
 		debug(1,"o72_actorOps: case 24 (%d)", k);
 		break;
-	case 43:
-		// HE 90+
+	case 43: // HE 90+
 		k = pop();
 		debug(1,"o72_actorOps: case 43 (%d)", k);
 		break;
@@ -870,8 +867,12 @@ void ScummEngine_v72he::o72_actorOps() {
 		_actorClipOverride.top = pop();
 		_actorClipOverride.left = pop();
 		break;
-	case 68:
-		// HE 90+
+	case 65: // HE 90+
+		i = pop();
+		j = pop();
+		debug(1,"o72_actorOps: case 65 (%d, %d)", i, j);
+		break;
+	case 68: // HE 90+
 		k = pop();
 		debug(1,"o72_actorOps: case 65 (%d)", k);
 		break;
