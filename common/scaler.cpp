@@ -247,64 +247,76 @@ void SuperEagle(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstP
 			colorA2 = *(bP + 2 * nextlineSrc + 1);
 
 			// --------------------------------------
-			if (color2 == color6 && color5 != color3) {
-				product1b = product2a = color2;
-				if ((color1 == color2) || (color6 == colorB2)) {
-					product1a = INTERPOLATE(color2, color5);
-					product1a = INTERPOLATE(color2, product1a);
-				} else {
-					product1a = INTERPOLATE(color5, color6);
-				}
-
-				if ((color6 == colorS2) || (color2 == colorA1)) {
-					product2b = INTERPOLATE(color2, color3);
-					product2b = INTERPOLATE(color2, product2b);
-				} else {
-					product2b = INTERPOLATE(color2, color3);
-				}
-			} else if (color5 == color3 && color2 != color6) {
-				product2b = product1a = color5;
-
-				if ((colorB1 == color5) || (color3 == colorS1)) {
-					product1b = INTERPOLATE(color5, color6);
-					product1b = INTERPOLATE(color5, product1b);
-				} else {
-					product1b = INTERPOLATE(color5, color6);
-				}
-
-				if ((color3 == colorA2) || (color4 == color5)) {
-					product2a = INTERPOLATE(color5, color2);
-					product2a = INTERPOLATE(color5, product2a);
-				} else {
-					product2a = INTERPOLATE(color2, color3);
-				}
-
-			} else if (color5 == color3 && color2 == color6) {
-				register int r = 0;
-
-				r += GetResult(color6, color5, color1, colorA1);
-				r += GetResult(color6, color5, color4, colorB1);
-				r += GetResult(color6, color5, colorA2, colorS1);
-				r += GetResult(color6, color5, colorB2, colorS2);
-
-				if (r > 0) {
+			if (color5 != color3)
+			{
+				if (color2 == color6)
+				{
 					product1b = product2a = color2;
-					product1a = product2b = INTERPOLATE(color5, color6);
-				} else if (r < 0) {
-					product2b = product1a = color5;
-					product1b = product2a = INTERPOLATE(color5, color6);
-				} else {
-					product2b = product1a = color5;
-					product1b = product2a = color2;
-				}
-			} else {
-				product2b = product1a = INTERPOLATE(color2, color6);
-				product2b = Q_INTERPOLATE(color3, color3, color3, product2b);
-				product1a = Q_INTERPOLATE(color5, color5, color5, product1a);
+					if ((color1 == color2) || (color6 == colorB2)) {
+						product1a = INTERPOLATE(color2, color5);
+						product1a = INTERPOLATE(color2, product1a);
+					} else {
+						product1a = INTERPOLATE(color5, color6);
+					}
 
-				product2a = product1b = INTERPOLATE(color5, color3);
-				product2a = Q_INTERPOLATE(color2, color2, color2, product2a);
-				product1b = Q_INTERPOLATE(color6, color6, color6, product1b);
+					if ((color6 == colorS2) || (color2 == colorA1)) {
+						product2b = INTERPOLATE(color2, color3);
+						product2b = INTERPOLATE(color2, product2b);
+					} else {
+						product2b = INTERPOLATE(color2, color3);
+					}
+				}
+				else
+				{
+					product2b = product1a = INTERPOLATE(color2, color6);
+					product2b = Q_INTERPOLATE(color3, color3, color3, product2b);
+					product1a = Q_INTERPOLATE(color5, color5, color5, product1a);
+
+					product2a = product1b = INTERPOLATE(color5, color3);
+					product2a = Q_INTERPOLATE(color2, color2, color2, product2a);
+					product1b = Q_INTERPOLATE(color6, color6, color6, product1b);
+				}
+			}
+			else //if (color5 == color3)
+			{
+				if (color2 != color6)
+				{
+					product2b = product1a = color5;
+
+					if ((colorB1 == color5) || (color3 == colorS1)) {
+						product1b = INTERPOLATE(color5, color6);
+						product1b = INTERPOLATE(color5, product1b);
+					} else {
+						product1b = INTERPOLATE(color5, color6);
+					}
+
+					if ((color3 == colorA2) || (color4 == color5)) {
+						product2a = INTERPOLATE(color5, color2);
+						product2a = INTERPOLATE(color5, product2a);
+					} else {
+						product2a = INTERPOLATE(color2, color3);
+					}
+				}
+				else	//if (color2 != color6)
+				{
+					register int r = 0;
+
+					r += GetResult(color6, color5, color1, colorA1);
+					r += GetResult(color6, color5, color4, colorB1);
+					r += GetResult(color6, color5, colorA2, colorS1);
+					r += GetResult(color6, color5, colorB2, colorS2);
+
+					if (r > 0) {
+						product1b = product2a = color2;
+						product1a = product2b = INTERPOLATE(color5, color6);
+					} else if (r < 0) {
+						product2b = product1a = color5;
+						product1b = product2a = INTERPOLATE(color5, color6);
+					} else {
+						product2b = product1a = color5;
+						product1b = product2a = color2;
+					}
+				}
 			}
 
 			*(dP + 0) = (uint16) product1a;
