@@ -57,7 +57,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_pushByteVar),
 		OPCODE(o6_pushWordVar),
 		/* 04 */
-		OPCODE(o6_invalid),
+		OPCODE(o7_getString),
 		OPCODE(o6_invalid),
 		OPCODE(o6_byteArrayRead),
 		OPCODE(o6_wordArrayRead),
@@ -419,12 +419,26 @@ void ScummEngine_v7he::o7_objectY() {
 	push(_objs[objnum].y_pos);
 }
 
+void ScummEngine_v7he::o7_getString() {
+	int len;
+	
+	len = resStrLen(_scriptPointer);
+	warning("stub o7_getString(\"%s\")", _scriptPointer);
+	_scriptPointer += len;
+	fetchScriptWord();
+	fetchScriptWord();
+}
+
 void ScummEngine_v7he::o7_unknownFA() {
 	int len, a = fetchScriptByte();
 	
-	len = resStrLen(_scriptPointer);
-	warning("stub o7_unknownFA(%d, \"%s\")", a, _scriptPointer);
-	_scriptPointer += len + 1;
+	if (_heversion <= 71) {
+		int len = resStrLen(_scriptPointer);
+		warning("stub o7_unknownFA(%d, \"%s\")", a, _scriptPointer);
+		_scriptPointer += len + 1;
+	} else {
+		warning("stub o7_unknownFA(%d)", a);
+	}
 }
 
 void ScummEngine_v7he::o7_stringLen() {

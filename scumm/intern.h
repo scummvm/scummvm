@@ -622,6 +622,7 @@ protected:
 	byte stringLen(byte *);
 
 	/* Version 7 script opcodes */
+	void o7_getString();
 	void o7_objectX();
 	void o7_objectY();
 	void o7_stringLen();
