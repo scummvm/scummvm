@@ -609,7 +609,11 @@ void Scumm::drawFlashlight()
 			do {
 				j = _flashlight.w / 4;
 				do {
+#if defined(SCUMM_NEED_ALIGNMENT)
+					memset(_flashlight.buffer, 0, sizeof(uint32));
+#else		
 					*(uint32 *)_flashlight.buffer = 0;
+#endif
 					_flashlight.buffer += 4;
 				} while (--j);
 				_flashlight.buffer += offset;
@@ -1165,8 +1169,12 @@ void Gdi::draw8ColWithMasking()
 			if (!(maskbits & 0x01))
 				dst[7] = src[7];
 		} else {
+#if defined(SCUMM_NEED_ALIGNMENT)
+			memcpy(dst, src, 2 * sizeof(uint32));
+#else
 			((uint32 *)dst)[0] = ((uint32 *)src)[0];
 			((uint32 *)dst)[1] = ((uint32 *)src)[1];
+#endif
 		}
 		src += _vm->_realWidth;
 		dst += _vm->_realWidth;
@@ -1201,8 +1209,12 @@ void Gdi::clear8ColWithMasking()
 			if (!(maskbits & 0x01))
 				dst[7] = 0;
 		} else {
+#if defined(SCUMM_NEED_ALIGNMENT)
+			memset(dst, 0, 2 * sizeof(uint32));
+#else
 			((uint32 *)dst)[0] = 0;
 			((uint32 *)dst)[1] = 0;
+#endif
 		}
 		dst += _vm->_realWidth;
 		mask += _numStrips;
@@ -1215,8 +1227,12 @@ void Gdi::clear8Col()
 	byte *dst = _backbuff_ptr;
 
 	do {
+#if defined(SCUMM_NEED_ALIGNMENT)
+		memset(dst, 0, 2 * sizeof(uint32));
+#else
 		((uint32 *)dst)[0] = 0;
 		((uint32 *)dst)[1] = 0;
+#endif
 		dst += _vm->_realWidth;
 	} while (--height);
 }
@@ -1590,7 +1606,7 @@ void Gdi::unkDecode7()
 	do {
 		/* Endian safe */
 #if defined(SCUMM_NEED_ALIGNMENT)
-		memcpy(dst, src, 8);
+		memcpy(dst, src, 2 * sizeof(uint32));
 #else
 		((uint32 *)dst)[0] = ((uint32 *)src)[0];
 		((uint32 *)dst)[1] = ((uint32 *)src)[1];
