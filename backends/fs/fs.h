@@ -146,7 +146,7 @@ public:
 /*
  * A sorted list of multiple file system nodes. E.g. the contents of a given directory.
  */
-class FSList : Common::List<FilesystemNode *> {
+class FSList : public Common::List<FilesystemNode *> {
 public:
 	~FSList() {
 		for (int i = 0; i < _size; i++)
