@@ -22,7 +22,7 @@
 #ifndef SMUSH_CHANNEL_H
 #define SMUSH_CHANNEL_H
 
-#include "common/engine.h"
+#include "common/util.h"
 
 class Chunk;
 class ContChunk;

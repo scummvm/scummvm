@@ -20,10 +20,9 @@
  */
 
 #include "stdafx.h"
-#include "codec47.h"
+#include "common/util.h"
 #include "scumm/bomp.h"
-
-#include "common/engine.h"
+#include "scumm/smush/codec47.h"
 
 #if defined(SCUMM_NEED_ALIGNMENT)
 

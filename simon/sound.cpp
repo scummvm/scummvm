@@ -19,7 +19,7 @@
 
 #include "stdafx.h"
 #include "common/file.h"
-#include "common/engine.h"
+#include "common/util.h"
 #include "simon/sound.h"
 #include "sound/voc.h"
 

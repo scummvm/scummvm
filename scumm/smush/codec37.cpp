@@ -20,10 +20,9 @@
  */
 
 #include "stdafx.h"
-#include "codec37.h"
+#include "common/util.h"
 #include "scumm/bomp.h"
-
-#include "common/engine.h"
+#include "scumm/smush/codec37.h"
 
 void Codec37Decoder::init(int width, int height) {
 	deinit();

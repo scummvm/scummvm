@@ -22,9 +22,9 @@
 #include "stdafx.h"
 #include "chunk.h"
 
-#include "common/engine.h"
 #include "common/file.h"
 #include "common/str.h"
+#include "common/util.h"
 
 class FilePtr : public File {
 	ScummVM::String _filename;
