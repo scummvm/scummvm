@@ -60,6 +60,8 @@ LIBS    += -lvorbisfile -lvorbis -logg
 # Misc stuff - you should normally never have to edit this            #
 #######################################################################
 
+EXECUTABLE := scummvm$(EXEEXT)
+
 include Makefile.common
 
 scummvmico.o: scummvm.ico
