@@ -643,8 +643,24 @@ void Scumm::drawFlashlight()
 
 	blit(flashBuffer, bgbak, flashW*8, flashH);
 
-	// TODO - flashlight should have round corners
+	// Round the corners. To do so, we simply hard-code a set of nicely
+	// rounded corners.
+	int corner_data[] = { 8, 6, 4, 3, 2, 2, 1, 1 };
+	int minrow = 0;
+	int maxcol = flashW * 8 - 1;
+	int maxrow = (flashH - 1) * 320;
 
+	for (i = 0; i < 8; i++, minrow += 320, maxrow -= 320) {
+		int d = corner_data[i];
+
+		for (j = 0; j < d; j++) {
+			flashBuffer[minrow + j] = 0;
+			flashBuffer[minrow + maxcol - j] = 0;
+			flashBuffer[maxrow + j] = 0;
+			flashBuffer[maxrow + maxcol - j] = 0;
+		}
+	}
+	
 	_flashlightIsDrawn = true;
 }
 
