@@ -10,7 +10,7 @@ private:
 		SoundMixer *_mixer;
 
 	public:
-		SimonSound::Sound::Sound(SoundMixer *mixer, File *file, uint32 base = 0);
+		Sound(SoundMixer *mixer, File *file, uint32 base = 0);
 		virtual int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0) = 0;
 	};
 
