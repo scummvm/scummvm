@@ -758,7 +758,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
 			fp.close();
 		}
-	} else if (_language == Common::JA_JPN && _version <= 5) { //FM Towns Kanji
+	} else if (_language == Common::JA_JPN && _version == 5) { //FM Towns Kanji
 		File fp;
 		int numChar = 256 * 32;
 		_2byteWidth = 16;
