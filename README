@@ -76,7 +76,7 @@ Please include the following information:
         - ScummVM version (PLEASE test the latest CVS/Daily build)
         - Bug details, including instructions on reproducing
         - Language of game (English, German, ...)
-        - Version of game (Talkie, Floppy, ...)
+        - Version of game (talkie, floppy, ...)
         - Platform and Compiler (Win32, Linux, FreeBSD, ...)
         - Attach a save game if possible
         - If this bug only occurred recently, please note the last
@@ -321,7 +321,7 @@ arguments - see the next section.
         -f             - Full-screen mode.
         -g<mode>       - Select graphics scaler. See below.
         -e<mode>       - Select sound engine. See below.
-        -a             - Enable amiga pal conversion, for playing Amiga
+        -a             - Enable Amiga pal conversion, for playing Amiga
                          versions
         -q<lang>       - Select language. See below.
         -c<num>        - Drive to play CD audio from.  E.g., 0 is first drive.
@@ -886,7 +886,7 @@ X.X Credits:
 
  Contributors:
         Stuart Caie          - Decoders for Simon 1 Amiga data files
-        Janne Huttunen       - V3 actor mask support, Dig/FT SMUSH audio
+        Janne Huttunen       - V3 actor mask support, Dig/FT Smush audio
         Kovacs Endre Janos   - Several fixes for Simon1
         Jeroen Janssen       - Numerous readability and bugfix patches
         Claudio Matsuoka     - Daily Linux/BeOS builds 
