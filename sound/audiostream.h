@@ -40,7 +40,6 @@ protected:
 	virtual void advance() = 0;
 public:
 	int16 read() { assert(size() > 0); int16 val = readIntern(); advance(); return val; }
-//	int16 peek() { assert(size() > 0); return readIntern(); }
 	virtual int size() const = 0;
 	bool eof() const { return size() <= 0; }
 	virtual bool isStereo() const = 0;

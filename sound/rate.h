@@ -81,15 +81,17 @@ public:
 	virtual int drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol);
 };
 
+template<bool stereo>
 class CopyRateConverter : public RateConverter {
 public:
 	virtual int flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
 		int16 tmp;
 		st_size_t len = *osamp;
+		assert(input.isStereo() == stereo);
 		while (!input.eof() && len--) {
 			tmp = input.read() * vol / 256;
 			clampedAdd(*obuf++, tmp);
-			if (input.isStereo())
+			if (stereo)
 				tmp = input.read() * vol / 256;
 			clampedAdd(*obuf++, tmp);
 		}

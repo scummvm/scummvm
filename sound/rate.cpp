@@ -92,29 +92,36 @@ int st_rate_start(eff_t effp, st_rate_t inrate, st_rate_t outrate)
  * Processed signed long samples from ibuf to obuf.
  * Return number of samples processed.
  */
-template<int channels>
+template<bool stereo>
 int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol)
 {
 	rate_t rate = (rate_t) effp->priv;
 	st_sample_t *ostart, *oend;
 	st_sample_t ilast[2], icur[2], out;
 	unsigned long tmp;
-	int i;
 
-	assert(channels == 1 || channels == 2);
-
-	for (i = 0; i < channels; i++)
-		ilast[i] = rate->ilast[i];
+	ilast[0] = rate->ilast[0];
+	if (stereo)
+		ilast[1] = rate->ilast[1];
 
 	ostart = obuf;
 	oend = obuf + *osamp * 2;
+
+	if (stereo)
+		assert(input.size() % 2 == 0);	// Stereo code assumes even number of input samples
+	
+	// If the input position exceeds the output position, then we aborted the
+	// previous conversion run because the output buffer was full. Resume!
+	if (rate->ipos > rate->opos)
+		goto resume;
 
 	while (obuf < oend && !input.eof()) {
 
 		/* read enough input samples so that ipos > opos */
 		while (rate->ipos <= rate->opos) {
-			for (i = 0; i < channels; i++)
-				ilast[i] = input.read();
+			ilast[0] = input.read();
+			if (stereo)
+				ilast[1] = input.read();
 			rate->ipos++;
 			/* See if we finished the input buffer yet */
 
@@ -124,27 +131,31 @@ int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size
 
 		// read the input sample(s)
 		icur[0] = input.read();
-		if (channels == 2) {
-			if (input.eof())
-				goto the_end;	// Shouldn't happen if data comes pair-wise
+		if (stereo)
 			icur[1] = input.read();
-		}
 
-		while (rate->ipos > rate->opos) {
-			for (i = 0; i < channels; i++) {
+resume:
+		// Loop as long as the outpos trails behind, and as long as there is
+		// still space in the output buffer.
+		while (rate->ipos > rate->opos && obuf < oend) {
+
+			// interpolate
+			out = ilast[0] + (((icur[0] - ilast[0]) * rate->opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS);
+			// adjust volume
+			out = out * vol / 256;
+	
+			// output left channel sample
+			clampedAdd(*obuf++, out);
+			
+			if (stereo) {
 				// interpolate
-				out = ilast[i] + (((icur[i] - ilast[i]) * rate->opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS);
-		
+				out = ilast[1] + (((icur[1] - ilast[1]) * rate->opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS);
 				// adjust volume
 				out = out * vol / 256;
-		
-				// output left channel sample
-				clampedAdd(*obuf++, out);
 			}
 	
-			// For mono input, repeat the sample to produce stereo output
-			if (channels == 1)
-				clampedAdd(*obuf++, out);
+			// output right channel sample
+			clampedAdd(*obuf++, out);
 	
 			// Increment output position
 			tmp = rate->opos_frac + rate->opos_inc_frac;
@@ -154,14 +165,16 @@ int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size
 
 		// Increment input position again (for the sample we read now)
 		rate->ipos++;
-		for (i = 0; i < channels; i++)
-			ilast[i] = icur[i];
+		ilast[0] = icur[0];
+		if (stereo)
+			ilast[1] = icur[1];
 	}
 
 the_end:
 	*osamp = (obuf - ostart) / 2;
-	for (i = 0; i < channels; i++)
-		rate->ilast[i] = ilast[i];
+	rate->ilast[0] = ilast[0];
+	if (stereo)
+		rate->ilast[1] = ilast[1];
 	return (ST_SUCCESS);
 }
 
@@ -175,9 +188,9 @@ LinearRateConverter::LinearRateConverter(st_rate_t inrate, st_rate_t outrate) {
 
 int LinearRateConverter::flow(AudioInputStream &input, st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
 	if (input.isStereo())
-		return st_rate_flow<2>(&effp, input, obuf, osamp, vol);
+		return st_rate_flow<true>(&effp, input, obuf, osamp, vol);
 	else
-		return st_rate_flow<1>(&effp, input, obuf, osamp, vol);
+		return st_rate_flow<false>(&effp, input, obuf, osamp, vol);
 }
 
 int LinearRateConverter::drain(st_sample_t *obuf, st_size_t *osamp, st_volume_t vol) {
