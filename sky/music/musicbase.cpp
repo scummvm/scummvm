@@ -29,6 +29,7 @@ SkyMusicBase::SkyMusicBase(SkyDisk *pSkyDisk, OSystem *system) {
 	_currentMusic = 0;
 	_musicVolume = 127;
 	_system = system;
+	_numberOfChannels = _currentMusic = 0;
 	_mutex = _system->create_mutex();
 }
 
