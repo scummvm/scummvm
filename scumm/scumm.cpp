@@ -216,6 +216,8 @@ static const ScummGameSettings scumm_settings[] = {
 	// Humongous Entertainment Scumm Version 6 (Windows versions are version 7 actually)
 	{"catalog", "Humongous Interactive Catalog", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"catalog2", "Humongous Interactive Catalog 2", GID_HEGAME, 6, 70, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"farm", "Let's Explore the Farm with Buzzy", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_HEGAME, 6, 70, MDT_NONE,
