@@ -110,7 +110,7 @@ public:
 	void stopID(int id);
 
 	/** Start a new stream. */
-	int newStream(void *sound, uint32 size, uint rate, byte flags, int32 buffer_size);
+	int newStream(void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size);
 
 	/** Append to an existing stream. */
 	void appendStream(int index, void * sound, uint32 size);

@@ -77,7 +77,7 @@ class ChannelStream : public Channel {
 	bool _finished;
 
 public:
-	ChannelStream(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags, int32 buffer_size);
+	ChannelStream(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size);
 	~ChannelStream();
 
 	void mix(int16 *data, uint len);
@@ -238,7 +238,7 @@ int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, ui
 	return insertChannel(handle, new ChannelRaw(this, sound, size, rate, flags, id));
 }
 
-int SoundMixer::newStream(void *sound, uint32 size, uint rate, byte flags, int32 buffer_size) {
+int SoundMixer::newStream(void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size) {
 	StackLock lock(_mutex);	
 	return insertChannel(NULL, new ChannelStream(this, sound, size, rate, flags, buffer_size));
 }
@@ -451,12 +451,8 @@ static inline int clamped_add_16(int a, int b) {
 		return val;
 }
 
-static int16 *mix_signed_mono_8(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+static void mix_signed_mono_8(int16 *data, uint &len, byte *&s, uint32 &fp_pos,
 								int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
-	uint32 fp_pos = *fp_pos_ptr;
-	byte *s = *s_ptr;
-	uint len = *len_ptr;
-
 	int inc = 1, result;
 	CubicInterpolator interp(vol_tab[*s], vol_tab[*(s + 1)], vol_tab[*(s + 2)]);
 
@@ -482,20 +478,10 @@ static int16 *mix_signed_mono_8(int16 *data, uint *len_ptr, byte **s_ptr, uint32
 			interp.feedData();
 
 	} while (len && (s < s_end));
-
-	*fp_pos_ptr = fp_pos;
-	*s_ptr = s;
-	*len_ptr = len;
-
-	return data;
 }
 
-static int16 *mix_unsigned_mono_8(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+static void mix_unsigned_mono_8(int16 *data, uint &len, byte *&s, uint32 &fp_pos,
 											int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
-	uint32 fp_pos = *fp_pos_ptr;
-	byte *s = *s_ptr;
-	uint len = *len_ptr;
-
 	int inc = 1, result;
 	CubicInterpolator interp(vol_tab[*s ^ 0x80], vol_tab[*(s + 1) ^ 0x80], vol_tab[*(s + 2) ^ 0x80]);
 
@@ -521,26 +507,14 @@ static int16 *mix_unsigned_mono_8(int16 *data, uint *len_ptr, byte **s_ptr, uint
 			interp.feedData();
 
 	} while (len && (s < s_end));
-
-	*fp_pos_ptr = fp_pos;
-	*s_ptr = s;
-	*len_ptr = len;
-
-	return data;
 }
 
-static int16 *mix_signed_stereo_8(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+static void mix_signed_stereo_8(int16 *data, uint &len, byte *&s, uint32 &fp_pos,
 										int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
 	warning("Mixing stereo signed 8 bit is not supported yet ");
-
-	return data;
 }
-static int16 *mix_unsigned_stereo_8(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+static void mix_unsigned_stereo_8(int16 *data, uint &len, byte *&s, uint32 &fp_pos,
 										int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
-	uint32 fp_pos = *fp_pos_ptr;
-	byte *s = *s_ptr;
-	uint len = *len_ptr;
-
 	int inc = 1;
 	CubicInterpolator	left(vol_tab[*s ^ 0x80], vol_tab[*(s + 2) ^ 0x80], vol_tab[*(s + 4) ^ 0x80]);
 	CubicInterpolator	right(vol_tab[*(s + 1) ^ 0x80], vol_tab[*(s + 3) ^ 0x80], vol_tab[*(s + 5) ^ 0x80]);
@@ -575,19 +549,10 @@ static int16 *mix_unsigned_stereo_8(int16 *data, uint *len_ptr, byte **s_ptr, ui
 		}
 
 	} while (len && (s < s_end));
-
-	*fp_pos_ptr = fp_pos;
-	*s_ptr = s;
-	*len_ptr = len;
-
-	return data;
 }
-static int16 *mix_signed_mono_16(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+static void mix_signed_mono_16(int16 *data, uint &len, byte *&s, uint32 &fp_pos,
 										 int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
-	uint32 fp_pos = *fp_pos_ptr;
 	unsigned char volume = ((int)vol_tab[1]);
-	byte *s = *s_ptr;
-	uint len = *len_ptr;
 	do {
 		int16 sample = ((int16)READ_BE_UINT16(s) * volume) / 256;
 		fp_pos += fp_speed;
@@ -600,25 +565,14 @@ static int16 *mix_signed_mono_16(int16 *data, uint *len_ptr, byte **s_ptr, uint3
 		s += (fp_pos >> 16) << 1;
 		fp_pos &= 0x0000FFFF;
 	} while ((--len) && (s < s_end));
-
-	*fp_pos_ptr = fp_pos;
-	*s_ptr = s;
-	*len_ptr = len;
-
-	return data;
 }
-static int16 *mix_unsigned_mono_16(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+static void mix_unsigned_mono_16(int16 *data, uint &len, byte *&s, uint32 &fp_pos,
 										 int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
 	warning("Mixing mono unsigned 16 bit is not supported yet ");
-
-	return data;
 }
-static int16 *mix_signed_stereo_16(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+static void mix_signed_stereo_16(int16 *data, uint &len, byte *&s, uint32 &fp_pos,
 										 int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
-	uint32 fp_pos = *fp_pos_ptr;
 	unsigned char volume = (int)vol_tab[1];
-	byte *s = *s_ptr;
-	uint len = *len_ptr;
 
 	do {
 		int16 leftS = ((int16)READ_BE_UINT16(s) * volume) / 256;
@@ -639,22 +593,14 @@ static int16 *mix_signed_stereo_16(int16 *data, uint *len_ptr, byte **s_ptr, uin
 		s += (fp_pos >> 16) << 2;
 		fp_pos &= 0x0000FFFF;
 	} while ((--len) && (s < s_end));
-
-	*fp_pos_ptr = fp_pos;
-	*s_ptr = s;
-	*len_ptr = len;
-
-	return data;
 }
-static int16 *mix_unsigned_stereo_16(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+static void mix_unsigned_stereo_16(int16 *data, uint &len, byte *&s, uint32 &fp_pos,
 											 int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
 	warning("Mixing stereo unsigned 16 bit is not supported yet ");
-
-	return data;
 }
 
-typedef int16 *MixProc(int16 *data, uint *len_ptr, byte **s_ptr,
-                      uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab,
+typedef void MixProc(int16 *data, uint &len, byte *&s,
+                      uint32 &fp_pos, int fp_speed, const int16 *vol_tab,
                       byte *s_end, bool reverse_stereo);
 
 static MixProc *mixer_helper_table[8] = { 
@@ -721,7 +667,7 @@ void ChannelRaw::mix(int16 *data, uint len) {
 
 	const int16 *vol_tab = _mixer->_volumeTable;
 
-	mixer_helper_table[_flags & 0x07] (data, &len, &s, &_fpPos, _fpSpeed, vol_tab, end, (_flags & SoundMixer::FLAG_REVERSE_STEREO) ? true : false);
+	mixer_helper_table[_flags & 0x07] (data, len, s, _fpPos, _fpSpeed, vol_tab, end, (_flags & SoundMixer::FLAG_REVERSE_STEREO) ? true : false);
 
 	_pos = s - _ptr;
 
@@ -740,8 +686,9 @@ void ChannelRaw::mix(int16 *data, uint len) {
 #define WARP_WORKAROUND 50000
 
 ChannelStream::ChannelStream(SoundMixer *mixer, void *sound, uint32 size, uint rate,
-										 byte flags, int32 buffer_size)
+										 byte flags, uint32 buffer_size)
 	: Channel(mixer) {
+	assert(size <= buffer_size);
 	_flags = flags;
 	_bufferSize = buffer_size;
 	_ptr = (byte *)malloc(_bufferSize + WARP_WORKAROUND);
@@ -765,31 +712,29 @@ ChannelStream::~ChannelStream() {
 }
 
 void ChannelStream::append(void *data, uint32 len) {
-	byte *new_end = _endOfData + len;
-	byte *cur_pos = _pos;					/* This is just to prevent the variable to move during the tests :-) */
-	if (new_end > (_ptr + _bufferSize)) {
+
+	if (_endOfData + len > _endOfBuffer) {
 		/* Wrap-around case */
 		uint32 size_to_end_of_buffer = _endOfBuffer - _endOfData;
 		uint32 new_size = len - size_to_end_of_buffer; 
-		new_end = _ptr + new_size;
-		if ((_endOfData < cur_pos) || (new_end >= cur_pos)) {
-			debug(2, "Mixer full... Trying to not break too much ");
+		if ((_endOfData < _pos) || (_ptr + new_size >= _pos)) {
+			debug(2, "Mixer full... Trying to not break too much (A)");
 			return;
 		}
 		memcpy(_endOfData, (byte*)data, size_to_end_of_buffer);
 		memcpy(_ptr, (byte *)data + size_to_end_of_buffer, new_size);
+		_endOfData = _ptr + new_size;
 	} else {
-		if ((_endOfData < cur_pos) && (new_end >= cur_pos)) {
-			debug(2, "Mixer full... Trying to not break too much ");
+		if ((_endOfData < _pos) && (_endOfData + len >= _pos)) {
+			debug(2, "Mixer full... Trying to not break too much (B)");
 			return;
 		}
 		memcpy(_endOfData, data, len);
+		_endOfData += len;
 	}
-	_endOfData = new_end;
 }
 
 void ChannelStream::mix(int16 *data, uint len) {
-	const int16 *vol_tab = _mixer->_volumeTable;
 
 	if (_pos == _endOfData) {
 		// Normally, the stream stays around even if all its data is used up.
@@ -797,36 +742,46 @@ void ChannelStream::mix(int16 *data, uint len) {
 		// go away, one can either stop() it (which takes effect immediately,
 		// ignoring any remaining sound data), or finish() it, which means
 		// it will finish playing before it terminates itself.
-		if (_finished)
+		if (_finished) {
 			destroy();
+		} else {
+			// Since the buffer is empty now, reset the position to the start
+			_pos = _endOfData = _ptr;
+			_fpPos = 0;
+		}
+
 		return;
 	}
+	
+	const int16 *vol_tab = _mixer->_volumeTable;
+	MixProc *mixProc = mixer_helper_table[_flags & 0x07];
 
 	if (_pos < _endOfData) {
-		mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &_fpPos, _fpSpeed, vol_tab, _endOfData, (_flags & SoundMixer::FLAG_REVERSE_STEREO) ? true : false);
+		mixProc(data, len, _pos, _fpPos, _fpSpeed, vol_tab, _endOfData, (_flags & SoundMixer::FLAG_REVERSE_STEREO) ? true : false);
 	} else {
-		int wrap_offset = 0;
+		int wrapOffset = 0;
+		const uint32 outLen = mixer_element_size[_flags & 0x07] * len;
 
 		// see if we will wrap
-		if (_pos + (mixer_element_size[_flags & 0x07] * len) > _endOfBuffer) {
-			wrap_offset = _pos + (mixer_element_size[_flags & 0x07] * len) - _endOfBuffer;
-			debug(9, "using wrap workaround for %d bytes", wrap_offset);
-			memcpy(_endOfBuffer, _ptr, wrap_offset);
+		if (_pos + outLen > _endOfBuffer) {
+			wrapOffset = _pos + outLen - _endOfBuffer;
+			debug(2, "using wrap workaround for %d bytes", wrapOffset);
+			assert(wrapOffset <= WARP_WORKAROUND);
+			memcpy(_endOfBuffer, _ptr, wrapOffset);
 		}
 			 
-		
-		mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &_fpPos, _fpSpeed, vol_tab, _endOfBuffer + wrap_offset, (_flags & SoundMixer::FLAG_REVERSE_STEREO) ? true : false);
+		mixProc(data, len, _pos, _fpPos, _fpSpeed, vol_tab, _endOfBuffer + wrapOffset, (_flags & SoundMixer::FLAG_REVERSE_STEREO) ? true : false);
 
 		// recover from wrap
-		if (wrap_offset)
-			_pos = _ptr + wrap_offset;
+		if (wrapOffset)
+			_pos = _ptr + wrapOffset;
 
 		// shouldn't happen anymore
 		if (len != 0) {
 			//FIXME: what is wrong ?
-			warning("bad play sound in stream(wrap around)");
+			warning("bad play sound in stream (wrap around)");
 			_pos = _ptr;
-			mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &_fpPos, _fpSpeed, vol_tab, _endOfData, (_flags & SoundMixer::FLAG_REVERSE_STEREO) ? true : false);
+			mixProc(data, len, _pos, _fpPos, _fpSpeed, vol_tab, _endOfData, (_flags & SoundMixer::FLAG_REVERSE_STEREO) ? true : false);
 		}
 	}
 }
