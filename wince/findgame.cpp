@@ -31,7 +31,7 @@ struct InstalledScummGame {
 static const ScummGame GameList[] = {
 	{	 
 		 "Simon The Sorcerer 1 (win)",
-		 "To be tested",
+		 "Completable",
 		 "", "SIMON.GME", "GAMEPC",
 		 "simon1win",
 		 0
@@ -52,7 +52,7 @@ static const ScummGame GameList[] = {
 	},
 	{	 
 		 "Zak Mc Kracken (new)",
-		 "Buggy, playable a bit",
+		 "Completable",
 		 "zak256", "", "",
 		 "zak256",
 		 0
@@ -122,14 +122,14 @@ static const ScummGame GameList[] = {
 	},
 	{	
 		 "Sam & Max",
-		 "Completable,glitches,no music",
+		 "Completable, music glitches",
 		 "", "SAMNMAX.000", "SAMNMAX.001",
 		 "samnmax",
 		 1
 	},
 	{
 		 "Sam & Max demo",
-		 "Completable, minor glitches, no music",
+		 "Completable",
 		 "", "SNMDEMO.000", "SNMDEMO.001",
 		 "snmdemo",
 		 0
