@@ -308,9 +308,9 @@ void ResMan::openScriptResourceBigEndian(uint32 id) {
 	MemHandle *handle = resHandle(id);
 	// uint32 totSize = handle->size;
 	Header *head = (Header*)handle->data;
-	head->comp_length = READ_LE_UINT32(&head->comp_length);
-	head->decomp_length = READ_LE_UINT32(&head->decomp_length);
-	head->version = READ_LE_UINT16(&head->version);
+	head->comp_length = FROM_LE_32(head->comp_length);
+	head->decomp_length = FROM_LE_32(head->decomp_length);
+	head->version = FROM_LE_16(head->version);
 	uint32 *data = (uint32*)((uint8*)handle->data + sizeof(Header));
 	uint32 size = handle->size - sizeof(Header);
 	if (size & 3)
