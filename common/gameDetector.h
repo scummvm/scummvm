@@ -97,7 +97,6 @@ struct MusicDrivers {
 	const char *name;
 	const char *description;
 	const int id;
-	bool available;
 };
 
 struct GraphicsModes {
