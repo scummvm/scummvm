@@ -45,6 +45,7 @@ install:   residual
 	strip residual$(EXEEXT) -o $(RESIDUALPATH)/residual$(EXEEXT)
 
 dist:   install
+	cp COPYING $(RESIDUALPATH)/copying.txt
 	cp README $(RESIDUALPATH)/readme.txt
 	cp SDL/README-SDL.txt $(RESIDUALPATH)
 	cp SDL/lib/SDL.dll $(RESIDUALPATH)
