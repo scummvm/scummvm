@@ -4882,7 +4882,7 @@ void SimonState::playSound(uint sound)
 void SimonState::playMusic(uint music)
 {
 	/* FIXME: not properly implemented */
-	/* Simon 1/2 dos talkie music aren't supported */
+	/* Simon 2 dos talkie music isn't supported */
 	/* Simon 2 dos music isn't supported */
 	const char *s2 = gss->wav_filename2;
 	File music_file;
@@ -4910,6 +4910,18 @@ void SimonState::playMusic(uint music)
 	
 		midi.initialize();
 		midi.play();
+	} else {
+		if (_game == GAME_SIMON1WIN) {
+
+		midi.shutdown();
+
+		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
+		File *f = _game_file;
+		midi.read_all_songs_old(f);
+
+		midi.initialize();
+		midi.play();
+		}
 	}
 }
 
