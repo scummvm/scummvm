@@ -837,8 +837,10 @@ void SoundMixer::ChannelMP3::mix(int16 * data, uint len) {
 
 		while ((_posInFrame < _synth.pcm.length) && (len > 0)) {
 			int16 sample = (int16)((scale_sample(*ch) * volume) / 32);
-			*data++ += sample;
-			*data++ += sample;
+			*data = clamped_add_16(*data, sample);
+			data++;
+			*data = clamped_add_16(*data, sample);
+			data++;
 			len--;
 			ch++;
 			_posInFrame++;
@@ -957,8 +959,10 @@ void SoundMixer::ChannelMP3CDMusic::mix(int16 * data, uint len) {
 		ch = _synth.pcm.samples[0] + _posInFrame;
 		while ((_posInFrame < _synth.pcm.length) && (len > 0)) {
 			int16 sample = (int16)((scale_sample(*ch++) * volume) / 32);
-			*data++ += sample;
-			*data++ += sample;
+			*data = clamped_add_16(*data, sample);
+			data++;
+			*data = clamped_add_16(*data, sample);
+			data++;
 			len--;
 			_posInFrame++;
 		}
@@ -1083,10 +1087,12 @@ void SoundMixer::ChannelVorbis::mix(int16 * data, uint len) {
 	// Mix the samples in
 	for (uint i = 0; i < len; i++) {
 		int16 sample = (int16) ((int32) samples[i * channels] * volume / 256);
-		*data++ += sample;
+		*data = clamped_add_16(*data, sample);
+		data++;
 		if (channels > 1)
 			sample = (int16) ((int32) samples[i * channels + 1] * volume / 256);
-		*data++ += sample;
+		*data = clamped_add_16(*data, sample);
+		data++;
 	}
 
 	delete [] samples;
