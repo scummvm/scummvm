@@ -130,13 +130,6 @@ public:
 
 	File *_game_file;
 	
-	File *_voice_file;
-	uint32 *_voice_offsets;
-	SoundFormat _voice_type;
-	File *_effects_file;
-	uint32 *_effects_offsets;
-	SoundFormat _effects_type;
-
 	byte *_stripped_txt_mem;
 	uint _text_size;
 	uint _stringtab_num, _stringtab_pos, _stringtab_numalloc;
