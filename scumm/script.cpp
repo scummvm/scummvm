@@ -883,18 +883,32 @@ int Scumm::getVerbEntrypoint(int obj, int entry)
 	if (!(_features & GF_SMALL_HEADER))
 		verbptr += _resourceHeaderSize;
 
-	do {
-		if (!*verbptr)
-			return 0;
-		if (*verbptr == entry || *verbptr == 0xFF)
-			break;
-		verbptr += 3;
-	} while (1);
-
-	if (_features & GF_SMALL_HEADER)
-		return READ_LE_UINT16(verbptr + 1);
-	else
-		return verboffs + READ_LE_UINT16(verbptr + 1);
+	if (_features & GF_AFTER_V8) {
+		uint32 *ptr = (uint32 *)verbptr;
+		uint32 verb;
+		do {
+			verb = READ_LE_UINT32(ptr);
+			if (!verb)
+				return 0;
+			if (verb == (uint32)entry || verb == 0xFFFFFFFF)
+				break;
+			ptr += 2;
+		} while (1);
+		return verboffs + 8 + READ_LE_UINT32(ptr + 1);
+	} else {
+		do {
+			if (!*verbptr)
+				return 0;
+			if (*verbptr == entry || *verbptr == 0xFF)
+				break;
+			verbptr += 3;
+		} while (1);
+	
+		if (_features & GF_SMALL_HEADER)
+			return READ_LE_UINT16(verbptr + 1);
+		else
+			return verboffs + READ_LE_UINT16(verbptr + 1);
+	}
 }
 
 void Scumm::endCutscene()
