@@ -1054,6 +1054,8 @@ void ScummEngine_v6he::o6_readFile() {
 	int32 size = pop();
 	int slot = pop();
 
+	debug(1, "o6_readFile(%d, %d)", slot, size);
+
 	// Fatty Bear uses positive values
 	if (_gameId == GID_FBEAR)
 		size = -size;
@@ -1065,7 +1067,6 @@ void ScummEngine_v6he::o6_readFile() {
 	} else {
 		push(readFileToArray(slot, size));
 	}
-	debug(1, "o6_readFile(%d, %d)", slot, size);
 }
 
 void ScummEngine_v6he::writeFileFromArray(int slot, int resID) {
@@ -1080,6 +1081,8 @@ void ScummEngine_v6he::o6_writeFile() {
 	int32 size = pop();
 	int16 resID = pop();
 	int slot = pop();
+
+	debug(1, "o6_writeFile(%d, %d, %d)", slot, resID, size);
 
 	// Fatty Bear uses positive values
 	if (_gameId == GID_FBEAR)
