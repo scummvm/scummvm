@@ -435,8 +435,8 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 	if (ah == NULL || ah->data == NULL)
 		error("readArray: invalid array %d (%d)", array, readVar(array));
 
-	if (idx2 < 0 || idx2 > FROM_LE_32(ah->dim2end) || 
-		idx1 < 0 || idx1 > FROM_LE_32(ah->dim1end)) {
+	if (idx2 < 0 || idx2 > (int)FROM_LE_32(ah->dim2end) || 
+		idx1 < 0 || idx1 > (int)FROM_LE_32(ah->dim1end)) {
 		error("readArray: array %d out of bounds: [%d, %d] exceeds [%d..%d, %d..%d]",
 			  array, idx1, idx2, FROM_LE_32(ah->dim1start), FROM_LE_32(ah->dim1end),
 			  FROM_LE_32(ah->dim2start), FROM_LE_32(ah->dim2end));
@@ -471,8 +471,8 @@ void ScummEngine_v72he::writeArray(int array, int idx2, int idx1, int value) {
 	if (!ah)
 		error("writeArray: Invalid array (%d) reference", readVar(array));
 
-	if (idx2 < 0 || idx2 > FROM_LE_32(ah->dim2end) || 
-		idx1 < 0 || idx1 > FROM_LE_32(ah->dim1end)) {
+	if (idx2 < 0 || idx2 > (int)FROM_LE_32(ah->dim2end) || 
+		idx1 < 0 || idx1 > (int)FROM_LE_32(ah->dim1end)) {
 		error("writeArray: array %d out of bounds: [%d, %d] exceeds [%d..%d, %d..%d]",
 			  array, idx1, idx2, FROM_LE_32(ah->dim1start), FROM_LE_32(ah->dim1end),
 			  FROM_LE_32(ah->dim2start), FROM_LE_32(ah->dim2end));
