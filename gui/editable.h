@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2005 The ScummVM project
+ * Copyright (C) 2005 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +27,10 @@
 
 namespace GUI {
 
-
+/**
+ * Base class for widgets which need to edit text, like ListWidget and
+ * EditTextWidget.
+ */
 class EditableWidget : public Widget {
 public:
 	typedef Common::String String;
@@ -46,7 +49,11 @@ public:
 	EditableWidget(GuiObject *boss, int x, int y, int w, int h);
 	virtual ~EditableWidget();
 
+	virtual void setEditString(const String &str);
+	virtual const String &getEditString() const		{ return _editString; }
+
 	virtual void handleTickle();
+	virtual bool handleKeyDown(uint16 ascii, int keycode, int modifiers);
 
 protected:
 	virtual void startEditMode() = 0;
@@ -54,8 +61,12 @@ protected:
 	virtual void abortEditMode() = 0;
 
 	virtual Common::Rect getEditRect() const = 0;
-	virtual int getCaretOffset() const = 0;
+	virtual int getCaretOffset() const;
 	void drawCaret(bool erase);
+	bool setCaretPos(int newPos);
+	bool adjustOffset();
+	
+	virtual bool tryInsertChar(char c, int pos);
 };
 
 } // End of namespace GUI

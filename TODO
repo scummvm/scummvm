@@ -194,11 +194,12 @@ Files
 GUI
 ===
 * Remove hard coded 320x200 assumptions, use game screen size
-* Add ability to scale GUI (ie. to make the GUI less tiny in COMI)
-* Remove code duplication between EditTextWidget and ListWidget (i.e. text 
-  editing code; maybe we can factor that out into a common base or aggregate
-  class... not yet sure).
-* Fix EditTextWidget::drawCaret and ListWidget::drawCaret support for alternate
+* EditableWidget: Make it possible to specify a min/max length for the text
+* EditableWidget: Let setEditString filter the string it gets
+* EditableWidget: Right now, custom filtering requires the user to subclass;
+  it would be nice if there was simply a "validator hook" or so.
+  Maybe take some inspiration from Java's Swing in this matter.
+* Improve EditTextWidget::drawCaret and ListWidget::drawCaret support for alternate
   fonts (the current code overdraws chars partly, and relies on the fact that
   our default built-in font has a separation pixel column on the *left* side;
   most other bitmap fonts have it on the right, though). To this end, we maybe

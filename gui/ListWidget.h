@@ -96,7 +96,6 @@ protected:
 	void abortEditMode();
 	
 	Common::Rect getEditRect() const;
-	int getCaretOffset() const;
 
 	void lostFocusWidget();
 	void scrollToCurrent();

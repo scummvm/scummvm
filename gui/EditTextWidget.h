@@ -36,11 +36,9 @@ protected:
 public:
 	EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text);
 
-//	void setString(const String &str)	{ _editString = str; }
-	const String &getString() const		{ return _editString; }
+	void setEditString(const String &str);
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
-	virtual bool handleKeyDown(uint16 ascii, int keycode, int modifiers);
 
 	virtual bool wantsFocus() { return true; };
 
@@ -54,11 +52,6 @@ protected:
 	void abortEditMode();
 
 	Common::Rect getEditRect() const;
-	int getCaretOffset() const;
-	bool setCaretPos(int newPos);
-	bool adjustOffset();
-	
-	virtual bool tryInsertChar(char c, int pos);
 };
 
 } // End of namespace GUI

@@ -124,7 +124,7 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	}
 	
 	// TODO: Determine where inside the string the user clicked and place the
-	// caret accordingly.
+	// caret accordingly. See _editScrollOffset and EditTextWidget::handleMouseDown.
 	draw();
 
 }
@@ -193,35 +193,8 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 
 		scrollToCurrent();
 	} else if (_editMode) {
-
-		if (_caretVisible)
-			drawCaret(true);
-
-		switch (keycode) {
-		case '\n':	// enter/return
-		case '\r':
-			// confirm edit and exit editmode
-			endEditMode();
-			dirty = true;
-			break;
-		case 27:	// escape
-			// abort edit and exit editmode
-			abortEditMode();
-			dirty = true;
-			break;
-		case 8:		// backspace
-			_editString.deleteLastChar();
-			dirty = true;
-			break;
-		default:
-			if (isprint((char)ascii)) {
-				_editString += (char)ascii;
-				dirty = true;
-			} else {
-				handled = false;
-			}
-		}
-
+		// Class EditableWidget handles all text editing related key presses for us
+		handled = EditableWidget::handleKeyDown(ascii, keycode, modifiers);
 	} else {
 		// not editmode
 
@@ -313,6 +286,7 @@ void ListWidget::drawWidget(bool hilite) {
 	NewGui *gui = &g_gui;
 	int i, pos, len = _list.size();
 	Common::String buffer;
+	int offset, deltax;
 
 	// Draw a thin frame around the list.
 	gui->hLine(_x, _y, _x + _w - 1, gui->_color);
@@ -321,26 +295,41 @@ void ListWidget::drawWidget(bool hilite) {
 
 	// Draw the list items
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
-		if (_numberingMode != kListNumberingOff) {
-			char temp[10];
-			sprintf(temp, "%2d. ", (pos + _numberingMode));
-			buffer = temp;
-		} else {
-			buffer.clear();
-		}
-		if (_selectedItem == pos && _editMode)
-			buffer += _editString;
-		else
-			buffer += _list[pos];
+		const OverlayColor textColor = (_selectedItem == pos && _hasFocus) ? gui->_bgcolor : gui->_textcolor;
+		const int y = _y + 2 + kLineHeight * i;
 
+		// Draw the selected item inverted, on a highlighted background.
 		if (_selectedItem == pos) {
 			if (_hasFocus)
 				gui->fillRect(_x + 1, _y + 1 + kLineHeight * i, _w - 1, kLineHeight, gui->_textcolorhi);
 			else
 				gui->frameRect(_x + 1, _y + 1 + kLineHeight * i, _w - 1, kLineHeight, gui->_textcolorhi);
 		}
-		gui->drawString(buffer, _x + 2, _y + 2 + kLineHeight * i, _w - 4,
-							(_selectedItem == pos && _hasFocus) ? gui->_bgcolor : gui->_textcolor);
+
+		// If in numbering mode, we first print a number prefix
+		if (_numberingMode != kListNumberingOff) {
+			char temp[10];
+			sprintf(temp, "%2d. ", (pos + _numberingMode));
+			buffer = temp;
+			gui->drawString(buffer, _x + 2, y, _w - 4, textColor);
+			offset = gui->getStringWidth(buffer);
+		} else {
+			offset = 0;
+		}
+
+		Common::Rect r(getEditRect());
+		if (_selectedItem == pos && _editMode) {
+
+			buffer = _editString;
+			adjustOffset();
+			deltax = -_editScrollOffset;
+	
+			gui->drawString(buffer, _x + r.left, y, r.width(), textColor, kTextAlignLeft, deltax, false);
+		} else {
+			buffer = _list[pos];
+			deltax = 0;
+			gui->drawString(buffer, _x + r.left, y, r.width(), textColor);
+		}
 	}
 }
 
@@ -357,14 +346,6 @@ Common::Rect ListWidget::getEditRect() const {
 	}
 	
 	return r;
-}
-
-int ListWidget::getCaretOffset() const {
-	int caretpos = 0;
-
-	caretpos += g_gui.getStringWidth(_editString);
-	
-	return caretpos;
 }
 
 void ListWidget::scrollToCurrent() {
@@ -389,8 +370,7 @@ void ListWidget::scrollToCurrent() {
 void ListWidget::startEditMode() {
 	if (_editable && !_editMode && _selectedItem >= 0) {
 		_editMode = true;
-		_editString = _list[_selectedItem];
-		_caretPos = _editString.size();
+		setEditString(_list[_selectedItem]);
 		draw();
 	}
 }

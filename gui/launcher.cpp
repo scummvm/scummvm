@@ -303,7 +303,7 @@ void EditGameDialog::open() {
 
 void EditGameDialog::close() {
 	if (getResult()) {
-		ConfMan.set("description", _descriptionWidget->getString(), _domain);
+		ConfMan.set("description", _descriptionWidget->getEditString(), _domain);
 
 		Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
 		if (lang < 0)
@@ -389,7 +389,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 	case kOKCmd: {
 		// Write back changes made to config object
-		String newDomain(_domainWidget->getString());
+		String newDomain(_domainWidget->getEditString());
 		if (newDomain != _domain) {
 			if (newDomain.isEmpty() || ConfMan.hasGameDomain(newDomain)) {
 				MessageDialog alert("This game ID is already taken. Please choose another one.");
