@@ -34,7 +34,8 @@
 #include "scumm/smush/smush_player.h"
 #include "scumm/smush/chunk_type.h"
 #include "scumm/smush/chunk.h"
-#include "scumm/smush/insane.h"
+
+#include "scumm/insane/insane.h"
 
 // TODO (in no particular order):
 // o Ben's velocity don't get zeroed after crash

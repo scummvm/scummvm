@@ -39,7 +39,8 @@
 #include "scumm/smush/smush_font.h"
 #include "scumm/smush/smush_mixer.h"
 #include "scumm/smush/smush_player.h"
-#include "scumm/smush/insane.h"
+
+#include "scumm/insane/insane.h"
 
 #include "sound/mixer.h"
 
@@ -948,7 +949,6 @@ void SmushPlayer::insanity(bool flag) {
 	_insanity = flag;
 }
 
-// FIXME: now it will work with offsets = 8. No Flu files are supported
 void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos, int32 contFrame) {
 	Chunk *sub;
 	

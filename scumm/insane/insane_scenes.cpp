@@ -28,7 +28,8 @@
 
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
-#include "scumm/smush/insane.h"
+
+#include "scumm/insane/insane.h"
 
 namespace Scumm {
 

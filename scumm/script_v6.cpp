@@ -40,7 +40,7 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
-#include "scumm/smush/insane.h"
+#include "scumm/insane/insane.h"
 
 namespace Scumm {
 
