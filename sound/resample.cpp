@@ -109,6 +109,15 @@ int makeFilter(Float Imp[],
 static long SrcUD(resample_t r, long Nx);
 static long SrcEX(resample_t r, long Nx);
 
+/* here for linear interp.  might be useful for other things */
+static st_rate_t st_gcd(st_rate_t a, st_rate_t b)
+{
+	if (b == 0)
+		return a;
+	else
+		return st_gcd(b, a % b);
+}
+
 
 /*
  * Process options

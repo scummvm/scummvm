@@ -30,15 +30,6 @@ typedef eff_struct *eff_t;
 #define ST_EOF (-1)
 #define ST_SUCCESS (0)
 
-/* here for linear interp.  might be useful for other things */
-static st_rate_t st_gcd(st_rate_t a, st_rate_t b)
-{
-	if (b == 0)
-		return a;
-	else
-		return st_gcd(b, a % b);
-}
-
 static inline void clampedAdd(int16& a, int b) {
 	int val = a + b;
 
