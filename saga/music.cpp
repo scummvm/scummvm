@@ -463,8 +463,13 @@ int Music::play(uint32 music_rn, uint16 flags) {
 
 			if (hasAdlib()) {
 				rsc_ctxt = GAME_GetFileContext(GAME_MUSICFILE_FM, 0);
+				// FIXME: This is weird, but this way Adlib
+				// sounds closer to original, though instrument
+				// mapping is not correct.
+				_player->setGM(false);
 			} else {
 				rsc_ctxt = GAME_GetFileContext(GAME_MUSICFILE_GM, 0);
+				_player->setGM(true);
 			}
 		}
 
@@ -472,12 +477,6 @@ int Music::play(uint32 music_rn, uint16 flags) {
 				&resource_size) != SUCCESS ) {
 			warning("Music::play(): Resource load failed: %u", music_rn);
 			return FAILURE;
-		}
-
-		// FIXME: This is weird, but this way Adlib sounds closer to original, 
-		// though instrument mapping is not correct
-		if (hasAdlib()) {
-			_player->setGM(false);
 		}
 
 		parser = MidiParser::createParser_XMIDI();
