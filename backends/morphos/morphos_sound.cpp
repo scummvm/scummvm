@@ -55,9 +55,16 @@ static MsgPort 	   *ScummMidiPort = NULL;
 
 		 Device        *EtudeBase = NULL;
 
+bool etude_available()
+{
+	bool avail = init_morphos_music(ScummMidiUnit, ETUDEF_DIRECT);
+	if (avail)
+		exit_morphos_music();
+	return avail;
+}
+
 bool init_morphos_music(ULONG MidiUnit, ULONG DevFlags)
 {
-	MidiUnit = ScummMidiUnit;	// Ugly fix, but ...
 	ScummMidiPort = CreateMsgPort();
 	if (ScummMidiPort)
 	{
@@ -65,7 +72,7 @@ bool init_morphos_music(ULONG MidiUnit, ULONG DevFlags)
 		if (ScummMidiRequest)
 		{
 			ScummMidiRequest->emr_Version = 1;
-			if (OpenDevice(ETUDENAME, MidiUnit, (IORequest *) ScummMidiRequest, DevFlags))
+			if (OpenDevice(ETUDENAME, ScummMidiUnit, (IORequest *) ScummMidiRequest, DevFlags))
 			{
 				DeleteIORequest((IORequest *) ScummMidiRequest);
 				DeleteMsgPort(ScummMidiPort);

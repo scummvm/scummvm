@@ -91,7 +91,7 @@ OSystem *OSystem_MorphOS_create(int game_id, int gfx_mode, bool full_screen)
 			break;
 	}
 
-	TheSystem = OSystem_MorphOS::create(game_id, gfx_scaler, full_screen);
+	TheSystem = OSystem_MorphOS::create(gfx_scaler, full_screen);
 	return TheSystem;
 }
 
@@ -99,9 +99,6 @@ void close_resources()
 {
 	if (TheSystem)
 		delete TheSystem;
-
-	if (g_engine)
-		delete g_engine;
 
 	if (ScummPath)
 		FreeVec(ScummPath);
@@ -389,6 +386,13 @@ int main()
 	if (args[USG_NOSUBTITLES]) argv[argc++] = "-n";
 	if (args[USG_AMIGA]) 		argv[argc++] = "-a";
 	if (args[USG_MUSIC]) 		argv[argc++] = ScummMusicDriver;
+	else
+	{
+		if (etude_available())
+			argv[argc++] = "-eetude";
+		else
+			argv[argc++] = "-eadlib";
+	}
 	if (ScummGfxScaler != ST_INVALID)
 	{
 		sprintf(scaler, "-g%s", MorphOSScaler::GetParamName(ScummGfxScaler));

@@ -75,16 +75,15 @@ static CONST_STRPTR LoomNames[]   = { "LoomCD", NULL };
 #define BLOCKS_Y			(ScummBufferHeight/BLOCKSIZE_Y)
 #define BLOCK_ID(x, y)  ((y/BLOCKSIZE_Y)*BLOCKS_X+(x/BLOCKSIZE_X))
 
-OSystem_MorphOS *OSystem_MorphOS::create(int game_id, SCALERTYPE gfx_scaler, bool full_screen)
+OSystem_MorphOS *OSystem_MorphOS::create(SCALERTYPE gfx_scaler, bool full_screen)
 {
-	OSystem_MorphOS *syst = new OSystem_MorphOS(game_id, gfx_scaler, full_screen);
+	OSystem_MorphOS *syst = new OSystem_MorphOS(gfx_scaler, full_screen);
 
 	return syst;
 }
 
-OSystem_MorphOS::OSystem_MorphOS(int game_id, SCALERTYPE gfx_mode, bool full_screen)
+OSystem_MorphOS::OSystem_MorphOS(SCALERTYPE gfx_mode, bool full_screen)
 {
-	GameID = game_id;
 	ScummScreen = NULL;
 	ScummWindow = NULL;
 	ScummBuffer = NULL;
@@ -364,6 +363,9 @@ uint32 OSystem_MorphOS::property(int param, Property *value)
 		{
 			CONST_STRPTR *ids = NULL, *names = NULL;
 
+			if (g_scumm)
+				GameID = g_scumm->_gameId;
+
 			switch (GameID)
 			{
 				case GID_MONKEY:
@@ -467,7 +469,8 @@ void OSystem_MorphOS::play_cdrom(int track, int num_loops, int start_frame, int 
 
 void OSystem_MorphOS::stop_cdrom()
 {
-	CDDA_Stop(CDrive);
+	if (CDrive)
+		CDDA_Stop(CDrive);
 }
 
 bool OSystem_MorphOS::poll_cdrom()
@@ -825,14 +828,10 @@ bool OSystem_MorphOS::poll_event(Event *event)
 				}
 				else if (MapRawKey(&FakedIEvent, &charbuf, 1, NULL) == 1)
 				{
-					if (qual == KBD_CTRL)
+					if (qual == KBD_CTRL && charbuf == 'z')
 					{
-						switch (charbuf)
-						{
-							case 'z':
-								ReplyMsg((Message *) ScummMsg);
-								quit();
-						}
+						event->event_code = EVENT_QUIT;
+						break;
 					}
 					else if (qual == KBD_ALT)
 					{
@@ -846,8 +845,8 @@ bool OSystem_MorphOS::poll_event(Event *event)
 						}
 						else if (charbuf == 'x')
 						{
-							ReplyMsg((Message *) ScummMsg);
-							quit();
+							event->event_code = EVENT_QUIT;
+							break;
 						}
 						else if (charbuf == 0x0d)
 						{
@@ -932,8 +931,8 @@ bool OSystem_MorphOS::poll_event(Event *event)
 			}
 
 			case IDCMP_CLOSEWINDOW:
-				ReplyMsg((Message *)ScummMsg);
-				exit(0);
+				event->event_code = EVENT_QUIT;
+				break;
 		}
 
 		if (ScummMsg)
