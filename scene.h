@@ -21,6 +21,7 @@
 #include "vector3d.h"
 #include "bitmap.h"
 #include "color.h"
+#include "debug.h"
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <string>
@@ -36,11 +37,13 @@ public:
   ~Scene();
 
   void drawBackground() const {
+    if (currSetup_->bkgnd_zbm_ == NULL) {
+      error("Null background for setup %s in %s", currSetup_->name_.c_str(), name_.c_str());
+      return;
+    }
     glEnable(GL_DEPTH_TEST);
-    //    if (currSetup_->bkgnd_zbm_ != NULL)
-    //      currSetup_->bkgnd_zbm_->draw();
     glDepthMask(GL_FALSE);
-    currSetup_->bkgnd_bm_->draw();
+    currSetup_->bkgnd_zbm_->draw();
     glDepthMask(GL_TRUE);
   }
   void setupCamera() {
