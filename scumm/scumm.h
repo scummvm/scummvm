@@ -360,7 +360,6 @@ public:
 	void pauseDialog();
 	void saveloadDialog();
 	void optionsDialog();
-	void debuggerDialog();
 	void displayError(const char *message, ...);
 
 	// Misc startup/event functions

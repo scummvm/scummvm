@@ -24,7 +24,7 @@
 #include "scumm.h"
 #include "actor.h"
 #include "bundle.h"
-#include "debug.h"
+#include "debugger.h"
 #include "dialogs.h"
 #include "imuse.h"
 #include "object.h"
@@ -1002,11 +1002,6 @@ void Scumm::saveloadDialog()
 	runDialog(_saveLoadDialog);
 }
 
-void Scumm::debuggerDialog()
-{
-	g_debugger.attach(this);
-}
-
 void Scumm::optionsDialog()
 {
 	if (!_optionsDialog)
@@ -1136,7 +1131,7 @@ void Scumm::processKbd()
 
 		_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
 	} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console
-		debuggerDialog();
+		g_debugger.attach(this);
 	}
 
 	_mouseButStat = _lastKeyHit;
