@@ -42,6 +42,9 @@ game is then supplied on the command line.
 .B \-a
 Specify game is amiga version.
 .TP
+.BI \-\-aspect\-ratio
+Enable aspect ratio correction
+.TP
 .BI \-b <param>
 Specify parameter to pass to first game script default is 0.
 .TP
@@ -180,6 +183,12 @@ Access the in-game save/load/options dialog
 .TP
 .B Ctrl+0..9
 Load a previously saved game state.
+.TP
+.B Ctrl+Alt a
+Toggle aspect\-ratio correction on/off. Most of the games use a 320x200 pixel
+resolution, which may look squashed on modern monitors. Aspect\-ratio
+correction stretches the image to use 320x240 pixels instead, or a multiple
+thereof.
 .TP
 .B Alt+0..9
 Save a game state.
