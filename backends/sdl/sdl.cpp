@@ -163,21 +163,6 @@ void OSystem_SDL::setFeatureState(Feature f, bool enable) {
 			_adjustAspectRatio ^= true;
 			hotswap_gfx_mode();
 			
-#ifdef USE_OSD
-			char buffer[128];
-			if (_adjustAspectRatio)
-				sprintf(buffer, "Enabled aspect ratio correction\n%d x %d -> %d x %d",
-					_screenWidth, _screenHeight,
-					_hwscreen->w, _hwscreen->h
-					);
-			else
-				sprintf(buffer, "Disabled aspect ratio correction\n%d x %d -> %d x %d",
-					_screenWidth, _screenHeight,
-					_hwscreen->w, _hwscreen->h
-					);
-			displayMessageOnOSD(buffer);
-#endif
-
 			// Blit everything to the screen
 			internUpdateScreen();
 			

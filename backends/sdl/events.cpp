@@ -193,6 +193,13 @@ bool OSystem_SDL::poll_event(Event *event) {
 			// Alt-Return toggles full screen mode				
 			if (b == KBD_ALT && ev.key.keysym.sym == SDLK_RETURN) {
 				setFullscreenMode(!_full_screen);
+#ifdef USE_OSD
+				if (_full_screen)
+					displayMessageOnOSD("Fullscreen mode");
+				else
+					displayMessageOnOSD("Windowed mode");
+#endif
+
 				break;
 			}
 
@@ -266,18 +273,35 @@ bool OSystem_SDL::poll_event(Event *event) {
 				// Ctrl-Alt-a toggles aspect ratio correction
 				if (ev.key.keysym.sym == 'a') {
 					setFeatureState(kFeatureAspectRatioCorrection, !_adjustAspectRatio);
+#ifdef USE_OSD
+					char buffer[128];
+					if (_adjustAspectRatio)
+						sprintf(buffer, "Enabled aspect ratio correction\n%d x %d -> %d x %d",
+							_screenWidth, _screenHeight,
+							_hwscreen->w, _hwscreen->h
+							);
+					else
+						sprintf(buffer, "Disabled aspect ratio correction\n%d x %d -> %d x %d",
+							_screenWidth, _screenHeight,
+							_hwscreen->w, _hwscreen->h
+							);
+					displayMessageOnOSD(buffer);
+#endif
+
 					break;
 				}
 
+
+				int newMode = -1;
+				
 				// Increase/decrease the scale factor
 				// TODO: Shall we 'wrap around' here?
 				if (ev.key.keysym.sym == SDLK_EQUALS || ev.key.keysym.sym == SDLK_PLUS || ev.key.keysym.sym == SDLK_MINUS ||
 					ev.key.keysym.sym == SDLK_KP_PLUS || ev.key.keysym.sym == SDLK_KP_MINUS) {
 					factor += (ev.key.keysym.sym == SDLK_MINUS || ev.key.keysym.sym == SDLK_KP_MINUS) ? -1 : +1;
 					if (0 <= factor && factor < 4 && s_gfxModeSwitchTable[_scalerType][factor] >= 0) {
-						setGraphicsMode(s_gfxModeSwitchTable[_scalerType][factor]);
+						newMode = s_gfxModeSwitchTable[_scalerType][factor];
 					}
-					break;
 				}
 				
 				const bool isNormalNumber = (SDLK_1 <= ev.key.keysym.sym && ev.key.keysym.sym <= SDLK_9);
@@ -291,9 +315,36 @@ bool OSystem_SDL::poll_event(Event *event) {
 						assert(factor > 0);
 						factor--;
 					}
-					setGraphicsMode(s_gfxModeSwitchTable[_scalerType][factor]);
-					break;
+					newMode = s_gfxModeSwitchTable[_scalerType][factor];
 				}
+				
+				if (newMode >= 0) {
+					setGraphicsMode(newMode);
+#ifdef USE_OSD
+					if (_osdSurface) {
+						const char *newScalerName = 0;
+						const GraphicsMode *g = getSupportedGraphicsModes();
+						while (g->name) {
+							if (g->id == _mode) {
+								newScalerName = g->description;
+								break;
+							}
+							g++;
+						}
+						if (newScalerName) {
+							char buffer[128];
+							sprintf(buffer, "Active graphics filter: %s\n%d x %d -> %d x %d",
+								newScalerName,
+								_screenWidth, _screenHeight,
+								_hwscreen->w, _hwscreen->h
+								);
+							displayMessageOnOSD(buffer);
+						}
+					}
+#endif
+
+				}
+				break;
 			}
 
 #ifdef LINUPY

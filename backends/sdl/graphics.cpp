@@ -121,30 +121,6 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 	if (!_screen)
 		return true;
 
-#ifdef USE_OSD
-	if (_osdSurface) {
-		const char *newScalerName = 0;
-		const GraphicsMode *g = s_supportedGraphicsModes;
-		while (g->name) {
-			if (g->id == mode) {
-				newScalerName = g->description;
-				break;
-			}
-			g++;
-		}
-		if (newScalerName) {
-			char buffer[128];
-			sprintf(buffer, "Active graphics filter: %s\n%d x %d -> %d x %d",
-				newScalerName,
-				_screenWidth, _screenHeight,
-				_hwscreen->w, _hwscreen->h
-				);
-			displayMessageOnOSD(buffer);
-		}
-	}
-#endif
-
-
 	// Blit everything to the screen
 	_forceFull = true;
 	internUpdateScreen();
@@ -519,13 +495,6 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 		}
 #endif
 			
-#ifdef USE_OSD
-		if (_full_screen)
-			displayMessageOnOSD("Fullscreen mode");
-		else
-			displayMessageOnOSD("Windowed mode");
-#endif
-
 		// Blit everything to the screen
 		internUpdateScreen();
 		
