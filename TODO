@@ -37,6 +37,7 @@ General
   of the subdirs). Better would be to introduce a somewhat higher level API,
   a replacement for File::open() which (optionally) takes a list of subdirs.
   E.g. for Scumm, only certain files are to be expected in the VIDEO subdir).
+* Add test(s) for backend usability in the configure script.
 
 Documentation
 =============
@@ -138,6 +139,8 @@ SCUMM
   piratehook still on ground after pick up")
 * V7-8 games: Implement smooth horizontal scrolling (instead of scrolling in
   increments of 8 pixels). See bug #629417.
+* Implement o6_actorOps case 218 as used in Humongous games
+* Implement localizeArray opcode as used in Humongous games
 
 Broken Sword 2
 ==============
