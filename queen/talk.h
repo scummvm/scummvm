@@ -61,7 +61,8 @@ private:
 	  ARROW_BOB_DOWN = 63,
 	  ARROW_ZONE_UP   = 5,
 	  ARROW_ZONE_DOWN = 6,
-	  DOG_HEADER_SIZE = 20
+	  DOG_HEADER_SIZE = 20,
+	  OPTION_TEXT_MARGIN = 24
 	};
 
 	//! Special commands for speech

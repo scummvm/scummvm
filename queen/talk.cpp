@@ -1230,6 +1230,7 @@ TalkSelected *Talk::talkSelected() {
 }
 
 int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
+	debug(6, "Talk::splitOption(%s)", str);
 	// Check to see if option fits on one line, and exit early
 	if (_vm->resource()->getLanguage() == ENGLISH || 
 		_vm->display()->textWidth(str) <= MAX_TEXT_WIDTH) {
@@ -1239,6 +1240,7 @@ int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
 
 	// Split up multiple line option at closest space character
 	memset(optionText, 0, 5 * MAX_STRING_SIZE);
+	uint16 spaceCharWidth = _vm->display()->textWidth(" ");
 	uint16 width = 0;
 	uint16 optionLines = 0;
 	uint16 maxTextLen = MAX_TEXT_WIDTH;
@@ -1246,25 +1248,30 @@ int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
 	while (p) {
 		p = strchr(str, ' ');
 		if (p) {
-			uint16 len = p - str + 1;
-			width += _vm->display()->textWidth(str, len);
-			if (width > maxTextLen) {
-				strncat(optionText[optionLines], str, len - 1);
+			uint16 len = p - str;
+			uint16 wordWidth = _vm->display()->textWidth(str, len);
+			width += wordWidth;
+			if (width> maxTextLen) {
 				++optionLines;
-				width = 0;
-				maxTextLen = MAX_TEXT_WIDTH - 16; // compensate left margin
+				strncpy(optionText[optionLines], str, len + 1);
+				width = wordWidth;
+				maxTextLen = MAX_TEXT_WIDTH - OPTION_TEXT_MARGIN;
 			} else {
-				strncat(optionText[optionLines], str, len);
+				strncat(optionText[optionLines], str, len + 1);
 			}
+			width += spaceCharWidth;
 			str = p + 1;
+		} else {
+			if (str[0]) {
+				if (width + _vm->display()->textWidth(str) > maxTextLen) {
+					++optionLines;
+				}
+				strcat(optionText[optionLines], str);
+			}
+			++optionLines;
 		}
 	}
-	width += _vm->display()->textWidth(str);
-	if (width > maxTextLen) {
-		++optionLines;
-	}
-	strcat(optionText[optionLines], str);
-	return optionLines + 1;
+	return optionLines;
 }
 
 static char *removeStar(char *str) {
@@ -1356,7 +1363,7 @@ int16 Talk::selectSentence() {
 					if (yOffset < 5) {
 						//debug(6, "Draw text '%s'", optionText[j]);
 						_vm->display()->setText(
-								(j == 0) ? 0 : 24, 
+								(j == 0) ? 0 : OPTION_TEXT_MARGIN, 
 								150 - PUSHUP + yOffset * LINE_HEIGHT, 
 								optionText[j]);
 					}
