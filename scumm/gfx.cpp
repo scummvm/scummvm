@@ -1169,7 +1169,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 		if (_vm->_features & GF_AFTER_V1) {
 			mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[1];
-			drawStripC64Mask(mask_ptr, stripnr, height);
+//			drawStripC64Mask(mask_ptr, stripnr, height);
 		} else if (_vm->_features & GF_AFTER_V2) {
 			// Do nothing here for V2 games - zplane was handled already.
 		} else if (flag & dbDrawMaskOnAll) {
