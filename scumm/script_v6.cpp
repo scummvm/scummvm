@@ -2542,6 +2542,12 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 		case 124:
 			_saveSound = args[1];
 			break;
+		case 215:
+			if (args[1])
+				_noSubtitles = false;
+			else
+				_noSubtitles = true;
+			break;
 		default:
 			error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
 			break;
@@ -2661,6 +2667,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 void ScummEngine_v6::o6_kernelGetFunctions() {
 	int args[30];
 	int i;
+	int slot;
 	Actor *a;
 
 	getStackList(args, ARRAYSIZE(args));
@@ -2744,6 +2751,14 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 		a = derefActor(args[1], "o6_kernelGetFunctions:212");
 		// This is used by walk scripts
 		push(a->frame);
+		break;
+	case 213:
+		slot = getVerbSlot(args[1], 0);
+		push(_verbs[slot].x);
+		break;
+	case 214:
+		slot = getVerbSlot(args[1], 0);
+		push(_verbs[slot].y);
 		break;
 	case 215:
 		if ((_extraBoxFlags[args[1]] & 0x00FF) == 0x00C0) {
