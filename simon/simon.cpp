@@ -1241,17 +1241,15 @@ Subroutine *SimonEngine::getSubroutineByID(uint subroutine_id) {
 	_subroutine = subroutine_id;
 
 	for (cur = _subroutine_list; cur; cur = cur->next) {
-		if (cur->id == subroutine_id) {
+		if (cur->id == subroutine_id)
 			return cur;
-		}
 	}
 
 	loadTablesIntoMem(subroutine_id);
 
 	for (cur = _subroutine_list; cur; cur = cur->next) {
-		if (cur->id == subroutine_id) {
+		if (cur->id == subroutine_id)
 			return cur;
-		}
 	}
 
 	debug(1,"getSubroutineByID: subroutine %d not found", subroutine_id);
