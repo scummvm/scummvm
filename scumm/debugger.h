@@ -51,7 +51,7 @@ public:
 	ScummDebugger();
 	
 	void on_frame();
-	void attach(Scumm *s);
+	void attach(Scumm *s, char *entry);
 
 protected:
 	Scumm *_s;
@@ -59,6 +59,7 @@ protected:
 	DVar _dvars[256];
 	DCmd _dcmds[256];
 	bool _detach_now;
+	char *errStr;
 
 	void enter();
 	void detach();

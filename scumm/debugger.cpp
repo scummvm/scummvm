@@ -48,9 +48,12 @@ ScummDebugger::ScummDebugger() {
 }
 
 // Initialisation Functions
-void ScummDebugger::attach(Scumm *s) {
+void ScummDebugger::attach(Scumm *s, char *entry) {
 	if (_s)
 		detach();
+
+	if (entry)
+		errStr = strdup(entry);
 	
 	_s = s;
 	s->_debugger = this;
@@ -161,7 +164,14 @@ void ScummDebugger::enter() {
 #ifdef USE_CONSOLE
 	if (!_s->_debuggerDialog) {
 		_s->_debuggerDialog = new ConsoleDialog(_s->_newgui, _s->_realWidth);
+
 		Debug_Printf("Debugger started, type 'exit' to return to the game\n");
+	}
+
+	if (errStr) {
+		Debug_Printf("ERROR: %s\n\n", errStr);
+		free(errStr);
+		errStr = NULL;
 	}
 	
 	_s->_debuggerDialog->setInputeCallback(debuggerInputCallback, this);

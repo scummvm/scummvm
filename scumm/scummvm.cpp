@@ -1400,7 +1400,7 @@ void Scumm::processKbd() {
 
 		_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
 	} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console
-		g_debugger.attach(this);
+		g_debugger.attach(this, NULL);
 	}
 
 	_mouseButStat = _lastKeyHit;
@@ -1591,6 +1591,15 @@ void Scumm::errorString(const char *buf1, char *buf2) {
 	} else {
 		strcpy(buf2, buf1);
 	}
+
+        // Unless an error -originated- within the debugger, spawn the debugger. Otherwise
+        // exit out normally.
+        if (!_debugger) {
+                printf("%s", buf2);	// (Print it again in-case debugger segfaults)
+                g_debugger.attach(this, buf2);
+                g_debugger.on_frame();
+        }
+
 }
 
 void Scumm::waitForTimer(int msec_delay) {
@@ -1638,7 +1647,7 @@ void Scumm::parseEvents() {
 				else if (event.kbd.keycode == 'g')
 					_fastMode ^= 2;
 				else if ((event.kbd.keycode == 'd') && (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0)))
-					g_debugger.attach(this);
+					g_debugger.attach(this, NULL);
 				else if (event.kbd.keycode == 's')
 					resourceStats();
 				else
