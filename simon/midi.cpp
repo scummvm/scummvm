@@ -228,7 +228,10 @@ static int simon1_gmf_size[] = {
 void MidiPlayer::playSMF (File *in, int song) {
 	_system->lock_mutex (_mutex);
 	clearConstructs();
-	uint32 size = in->size() - in->pos();
+
+	// When computing the resource size, add
+	// 4 for our own End of Track on GMF resources.
+	uint32 size = in->size() - in->pos() + 4;
 	if (size > 64000)
 		size = 64000;
 	_data = (byte *) calloc (size, 1);
@@ -237,7 +240,7 @@ void MidiPlayer::playSMF (File *in, int song) {
 	// For GMF files, we're going to have to use
 	// hardcoded size tables.
 	if (!memcmp (_data, "GMF\x1", 4) && size == 64000)
-		size = simon1_gmf_size [song];
+		size = simon1_gmf_size [song] + 4; // Again, +4 for End of Track
 
 	MidiParser *parser = MidiParser::createParser_SMF();
 	parser->property (MidiParser::mpMalformedPitchBends, 1);
