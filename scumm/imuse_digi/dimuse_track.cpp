@@ -82,7 +82,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 
 	Track *track = _track[l];
 	for (;;) {
-#ifdef _WIN32_WCE
+#if defined(_WIN32_WCE) || defined (__PALM_OS__)
 		_vm->parseEvents(); // timers are events, we need to consume them
 #endif
 		flushTracks();

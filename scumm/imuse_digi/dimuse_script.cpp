@@ -384,7 +384,7 @@ void IMuseDigital::stopAllSounds() {
 			break;
 		flushTracks();
 		_vm->_system->delay_msecs(50);
-#ifdef _WIN32_WCE
+#if defined(_WIN32_WCE) || defined (__PALM_OS__)
 		_vm->parseEvents(); // timers are events, we need to consume them
 #endif
 	}
