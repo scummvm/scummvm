@@ -255,9 +255,9 @@ private:
 class V2A_Sound_SingleLooped : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_SingleLooped(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint16 loopoffset, uint16 loopsize) :
-		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol), _loopoffset(loopoffset), _loopsize(loopsize) { }
+		V2A_Sound_Base<1>(offset, size), _loopoffset(loopoffset), _loopsize(loopsize), _freq(freq), _vol(vol) { }
 	V2A_Sound_SingleLooped(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
-		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol), _loopoffset(0), _loopsize(size) { }
+		V2A_Sound_Base<1>(offset, size), _loopoffset(0), _loopsize(size), _freq(freq), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
 		_id = id;
