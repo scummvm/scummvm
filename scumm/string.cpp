@@ -880,7 +880,7 @@ const byte *ScummEngine::translateTextAndPlaySpeech(const byte *ptr) {
 		// FIXME: This is a hack to distinguish between 'real' actor speech and
 		// some odd (?) other strings... there is probably a better way to do this.
 		// I just don't know which (yet).
-		if (ptr[i+1] != 0 && ptr[i+1] != 255) {
+		if ((_gameId == GID_DIG) || (_gameId == GID_CMI && ptr[i+1] != 0 && ptr[i+1] != 255)) {
 			_sound->stopTalkSound();
 			_imuseDigital->startVoice(kTalkSoundID, pointer);
 			_sound->talkSound(0, 0, 2, -1);
