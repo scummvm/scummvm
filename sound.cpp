@@ -630,7 +630,7 @@ int Scumm::getCachedTrack(int track) {
 
 	while (1) {
 		if (buflen < sizeof(buffer)) {
-			uint16 bytes;
+			int bytes;
 
 			bytes = fread(buffer + buflen, 1, sizeof(buffer) - buflen, file);
 			if (bytes <= 0) {
