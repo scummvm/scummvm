@@ -100,6 +100,13 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 	_tmpScreenWidth = (_screenWidth + 3);
 
 	switch(_mode) {
+	case GFX_BILINEAR:
+		_usingOpenGL = true;
+		_mode = GFX_NORMAL;
+		_scaleFactor = 1;
+		_scaler_proc = Normal1x;
+		break;
+
 	case GFX_NORMAL:
 		_scaleFactor = 1;
 		_scaler_proc = Normal1x;
