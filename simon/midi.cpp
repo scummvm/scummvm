@@ -46,7 +46,7 @@ MidiPlayer::MidiPlayer (OSystem *system) {
 	memset(_songs, 0, sizeof(_songs));
 	memset(_song_sizes, 0, sizeof(_song_sizes));
 	
-	_midi_sfx_toggle = false
+	_midi_sfx_toggle = false;
 }
 
 MidiPlayer::~MidiPlayer() {
