@@ -12,6 +12,7 @@ void next_script (void);
 void identify_script (void);
 void find_script (void);
 void break_here (void);
+void GetCurrentScript (void);
 
 void gc_task (void);
 

@@ -737,7 +737,6 @@ static char *stubFuncs[] = {
   "RotateVector",
   "LoadCostume",
   "PrintActorCostumes",
-  "GetCurrentScript",
   "SpewStartup",
   "PreRender",
   "MakeSectorActive",

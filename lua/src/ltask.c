@@ -160,6 +160,15 @@ void break_here (void) {
   L->Tstate = YIELD;
 }
 
+void GetCurrentScript (void) {
+  if (L->curr_task == L->root_task)
+    lua_pushnil();
+  else {
+    L->curr_task->auto_delete = 0;
+    lua_pushusertag(L->curr_task, task_tag);
+  }
+}
+
 void lua_runtasks (void) {
   struct lua_Task *t, *prev;
   struct lua_Task *old_task = L->curr_task;
