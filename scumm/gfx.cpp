@@ -441,7 +441,7 @@ void Scumm::initBGBuffers(int height)
 void Scumm::setPaletteFromPtr(byte *ptr)
 {
 	int i;
-	byte *dest;
+	byte *dest, r, g, b;
 	int numcolor;
 
 	if (_features & GF_SMALL_HEADER) {
@@ -464,7 +464,7 @@ void Scumm::setPaletteFromPtr(byte *ptr)
 		b = *ptr++;
 
 		// This comparison might look wierd, but it's what the disassembly (DOTT) says!
-		if ((_features & GF_AFTER_V7) || (<= 15 || r < 252 || g < 252 || b < 252)) {
+		if ((_features & GF_AFTER_V7) || (i <= 15 || r < 252 || g < 252 || b < 252)) {
 			*dest++ = r;
 			*dest++ = g;
 			*dest++ = b;
