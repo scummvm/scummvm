@@ -123,9 +123,9 @@ static const TargetSettings scumm_settings[] = {
 	 GF_USE_KEY, 0},
 	{"mi2demo", "Monkey Island 2: LeChuck's revenge (Demo)", GID_MONKEY2, 5, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0},
-	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM Towns Demo)", GID_INDY4, 5, MDT_TOWNS,
+	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM Towns Demo)", GID_INDY4, 5, MDT_ADLIB,
 	 GF_USE_KEY, 0},
-	{"indy4", "Indiana Jones and the Fate of Atlantis (FM Towns)", GID_INDY4, 5, MDT_TOWNS,
+	{"indy4", "Indiana Jones and the Fate of Atlantis (FM Towns)", GID_INDY4, 5, MDT_ADLIB,
 	 GF_USE_KEY, 0},
 	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, 0},
@@ -688,7 +688,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 			if (detector->_gameTempo != 0)
 				_imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);
 			_imuse->property(IMuse::PROP_OLD_ADLIB_INSTRUMENTS, (_features & GF_SMALL_HEADER) ? 1 : 0);
-			_imuse->property(IMuse::PROP_MULTI_MIDI, detector->_multi_midi && _midiDriver != MD_NULL);
+			_imuse->property(IMuse::PROP_MULTI_MIDI, detector->_multi_midi &&
+			                 _midiDriver != MD_NULL && (detector->_game.midi & MDT_ADLIB));
 			_imuse->property(IMuse::PROP_NATIVE_MT32, detector->_native_mt32);
 			if (_features & GF_HUMONGOUS || _features & GF_FMTOWNS) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
