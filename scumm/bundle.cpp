@@ -850,7 +850,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 					var3b = (1 << decompTable) << 1;
 					readPos = src + (tableEntrySum >> 3);
 					readWord = (uint16)(READ_BE_UINT16(readPos) << (tableEntrySum & 7));
-					otherTablePos = (byte)(readWord << (16 - curTableEntry)) & 0xff;
+					otherTablePos = (byte)(readWord >> (16 - curTableEntry));
 					tableEntrySum += curTableEntry;
 					esiReg = imxShortTable[curTableEntry];
 					esiReg = (esiReg & otherTablePos) << (7 - curTableEntry);
