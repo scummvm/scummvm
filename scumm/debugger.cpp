@@ -212,7 +212,7 @@ void ScummDebugger::enter() {
 	do {
 		printf("debug> ");
 		if (!fgets(buf, sizeof(buf), stdin))
-			continue;
+			return;
 
 		i = strlen(buf);
 		while (i > 0 && buf[i - 1] == '\n')
