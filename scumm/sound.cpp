@@ -26,6 +26,7 @@
 #include "sound/mididrv.h"
 #include "imuse.h"
 #include "imuse_digi.h"
+#include "player_v2.h"
 #include "actor.h"
 #include "bundle.h"
 #include "common/config-file.h"
@@ -389,8 +390,11 @@ void Sound::playSound(int soundID) {
 	
 	}
 	
-	if (_scumm->_features & GF_OLD_BUNDLE)
-		return;	// FIXME
+	if (_scumm->_features & GF_OLD_BUNDLE) {
+		if (_scumm->_playerV2)
+			_scumm->_playerV2->startSound (soundID, ptr);
+		return;
+	}
 
 	if (_scumm->_gameId == GID_MONKEY_VGA || _scumm->_gameId == GID_MONKEY_EGA) {
 		// FIXME: This evil hack works around the fact that in some
@@ -611,6 +615,9 @@ int Sound::isSoundRunning(int sound) {
 	if (_scumm->_imuse)
 		return _scumm->_imuse->getSoundStatus(sound);
 
+	if (_scumm->_playerV2)
+		return _scumm->_playerV2->getSoundStatus (sound);
+
 	return 0;
 }
 
@@ -677,6 +684,8 @@ void Sound::stopSound(int a) {
 		_scumm->_imuseDigital->stopSound(a);
 	} else if (_scumm->_imuse) {
 		_scumm->_imuse->stopSound(a);
+	} else if (_scumm->_playerV2) {
+		_scumm->_playerV2->stopSound (a);
 	}
 
 	for (i = 0; i < 10; i++)
@@ -693,7 +702,10 @@ void Sound::stopAllSounds() {
 	if (_scumm->_imuse) {
 		_scumm->_imuse->stop_all_sounds();
 		_scumm->_imuse->clear_queue();
+	} else if (_scumm->_playerV2) {
+		_scumm->_playerV2->stopAllSounds();
 	}
+
 	clearSoundQue();
 	stopSfxSound();
 }

@@ -16,6 +16,7 @@ SCUMM_OBJS = \
 	scumm/instrument.o \
 	scumm/nut_renderer.o \
 	scumm/object.o \
+	scumm/player_v2.o\
 	scumm/resource.o \
 	scumm/resource_v2.o \
 	scumm/resource_v3.o \

@@ -31,6 +31,7 @@
 #include "imuse_digi.h"
 #include "intern.h"
 #include "object.h"
+#include "player_v2.h"
 #include "resource.h"
 #include "sound.h"
 #include "string.h"
@@ -609,7 +610,14 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	if (_features & GF_AFTER_V7) {
 		_imuseDigital = new IMuseDigital(this);
 		_imuse = NULL;
+		_playerV2 = NULL;
+	} else if (_features & GF_OLD_BUNDLE && !(_features & GF_AFTER_V3)) {
+		debug (0, "Creating player");
+		_playerV2 = new Player_V2();
+		_imuse = NULL;
+		_imuseDigital = NULL;
 	} else {
+		_playerV2 = NULL;
 		_imuseDigital = NULL;
 		_imuse = IMuse::create (syst, detector->createMidi());
 		if (_imuse) {
@@ -650,6 +658,7 @@ Scumm::~Scumm ()
 	delete _sound;
 	delete _imuse;
 	delete _imuseDigital;
+	delete _playerV2;
 	delete _languageBuffer;
 	delete _audioNames;
 

@@ -40,6 +40,7 @@ class ConsoleDialog;
 class Scumm;
 class IMuse;
 class IMuseDigital;
+class Player_V2;
 class Actor;
 class Sound;
 class Bundle;
@@ -268,6 +269,7 @@ public:
 	 * on some architectures. */
 	IMuse *_imuse;
 	IMuseDigital *_imuseDigital;
+	Player_V2 *_playerV2;
 	uint32 _features;
 	VerbSlot *_verbs;
 	ObjectData *_objs;
