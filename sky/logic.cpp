@@ -307,21 +307,21 @@ void SkyLogic::mainAnim() {
 		}
 	};
 
-	uint16 **anim = (uint16 **)SkyCompact::getCompactElem(_compact,
+	uint16 **animList = (uint16 **)SkyCompact::getCompactElem(_compact,
 			C_ANIM_UP + _compact->extCompact->megaSet + dir * 4);
 
 	uint16 arAnimIndex = _compact->extCompact->arAnimIndex;
-	if (!(*anim)[arAnimIndex/2]) {
+	if (!(*animList)[arAnimIndex/2]) {
 		 arAnimIndex = 0;
 		_compact->extCompact->arAnimIndex = 0; // reset
 	}
 
 	_compact->extCompact->arAnimIndex += S_LENGTH;
 
-	*sequence       -= (*anim)[(S_COUNT + arAnimIndex)/2]; // reduce the distance to travel
-	_compact->frame  = (*anim)[(S_FRAME + arAnimIndex)/2]; // new graphic frame
-	_compact->xcood += (*anim)[(S_AR_X  + arAnimIndex)/2]; // update x coordinate
-	_compact->ycood += (*anim)[(S_AR_Y  + arAnimIndex)/2]; // update y coordinate
+	*sequence       -= (*animList)[(S_COUNT + arAnimIndex)/2]; // reduce the distance to travel
+	_compact->frame  = (*animList)[(S_FRAME + arAnimIndex)/2]; // new graphic frame
+	_compact->xcood += (*animList)[(S_AR_X  + arAnimIndex)/2]; // update x coordinate
+	_compact->ycood += (*animList)[(S_AR_Y  + arAnimIndex)/2]; // update y coordinate
 }
 
 void SkyLogic::arTurn() {
