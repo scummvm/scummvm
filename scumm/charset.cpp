@@ -378,10 +378,10 @@ void CharsetRendererV3::printChar(int chr) {
 		return;
 
 	if (_firstChar) {
-		_strLeft = _left;
-		_strTop = _top;
-		_strRight = _left;
-		_strBottom = _top;
+		_str.left = _left;
+		_str.top = _top;
+		_str.right = _left;
+		_str.bottom = _top;
 		_firstChar = false;
 	}
 
@@ -435,19 +435,19 @@ void CharsetRendererV3::printChar(int chr) {
 		mask_ptr += _vm->gdi._numStrips;
 	}
 
-	if (_strLeft > _left)
-		_strLeft = _left;
+	if (_str.left > _left)
+		_str.left = _left;
 
 	_left += getCharWidth(chr);
 
-	if (_strRight < _left) {
-		_strRight = _left;
+	if (_str.right < _left) {
+		_str.right = _left;
 		if (_dropShadow)
-			_strRight++;
+			_str.right++;
 	}
 
-	if (_strBottom < _top + h)
-		_strBottom = _top + h;
+	if (_str.bottom < _top + h)
+		_str.bottom = _top + h;
 }
 
 void CharsetRendererClassic::printChar(int chr) {
@@ -479,10 +479,10 @@ void CharsetRendererClassic::printChar(int chr) {
 	width = _charPtr[0];
 	height = _charPtr[1];
 	if (_firstChar) {
-		_strLeft = 0;
-		_strTop = 0;
-		_strRight = 0;
-		_strBottom = 0;
+		_str.left = 0;
+		_str.top = 0;
+		_str.right = 0;
+		_str.bottom = 0;
 	}
 
 	if (_disableOffsX) {
@@ -511,18 +511,18 @@ void CharsetRendererClassic::printChar(int chr) {
 	_disableOffsX = false;
 
 	if (_firstChar) {
-		_strLeft = _left;
-		_strTop = _top;
-		_strRight = _left;
-		_strBottom = _top;
+		_str.left = _left;
+		_str.top = _top;
+		_str.right = _left;
+		_str.bottom = _top;
 		_firstChar = false;
 	}
 
-	if (_left < _strLeft)
-		_strLeft = _left;
+	if (_left < _str.left)
+		_str.left = _left;
 
-	if (_top < _strTop)
-		_strTop = _top;
+	if (_top < _str.top)
+		_str.top = _top;
 
 	int drawTop = _top - vs->topline;
 	if (drawTop < 0)
@@ -556,11 +556,11 @@ void CharsetRendererClassic::printChar(int chr) {
 	}
 	
 	_left += width;
-	if (_left > _strRight)
-		_strRight = _left;
+	if (_left > _str.right)
+		_str.right = _left;
 
-	if (_top + height > _strBottom)
-		_strBottom = _top + height;
+	if (_top + height > _str.bottom)
+		_str.bottom = _top + height;
 
 	_top -= offsY;
 }
@@ -656,10 +656,10 @@ void CharsetRendererNut::printChar(int chr) {
 		return;
 
 	if (_firstChar) {
-		_strLeft = _left;
-		_strTop = _top;
-		_strRight = _left;
-		_strBottom = _top;
+		_str.left = _left;
+		_str.top = _top;
+		_str.right = _left;
+		_str.bottom = _top;
 		_firstChar = false;
 	}
 
@@ -671,10 +671,10 @@ void CharsetRendererNut::printChar(int chr) {
 	_vm->updateDirtyRect(0, _left, _left + width, _top, _top + height, 0);
 
 	_left += width;
-	if (_left > _strRight)
-		_strRight = _left;
+	if (_left > _str.right)
+		_str.right = _left;
 
-	if (_top + height > _strBottom)
-		_strBottom = _top + height;
+	if (_top + height > _str.bottom)
+		_str.bottom = _top + height;
 }
 

@@ -21,6 +21,7 @@
 #ifndef CHARSET_H
 #define CHARSET_H
 
+#include "common/rect.h"
 #include "common/scummsys.h"
 
 class Scumm;
@@ -29,7 +30,7 @@ struct VirtScreen;
 
 class CharsetRenderer {
 public:
-	int _strLeft, _strRight, _strTop, _strBottom;
+	ScummVM::Rect _str;
 	int _nextLeft, _nextTop;
 
 	int _top;

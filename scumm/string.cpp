@@ -146,10 +146,7 @@ void Scumm::CHARSET_1() {
 			_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
 
 	if (_keepText) {
-		_charset->_strLeft = gdi._mask_left;
-		_charset->_strRight = gdi._mask_right;
-		_charset->_strTop = gdi._mask_top;
-		_charset->_strBottom = gdi._mask_bottom;
+		_charset->_str = gdi._mask;
 	}
 
 	if (_talkDelay)
@@ -185,12 +182,12 @@ void Scumm::CHARSET_1() {
 
 	if (!_keepText) {
 		if ((_features & GF_AFTER_V2 || _features & GF_AFTER_V3) && _gameId != GID_LOOM) {
-			gdi._mask_left = _string[0].xpos;
-			gdi._mask_top = _string[0].ypos;
-			gdi._mask_bottom = _string[0].ypos + 8;
-			gdi._mask_right = _screenWidth;
+			gdi._mask.left = _string[0].xpos;
+			gdi._mask.top = _string[0].ypos;
+			gdi._mask.bottom = _string[0].ypos + 8;
+			gdi._mask.right = _screenWidth;
 			if (_string[0].ypos <= 16)	// If we are cleaning the text line, clean 2 lines.
-				gdi._mask_bottom = 16;
+				gdi._mask.bottom = 16;
 		}
 		restoreCharsetBg();
 	}
@@ -333,10 +330,7 @@ void Scumm::CHARSET_1() {
 
 	_charsetBufPos = buffer - _charsetBuffer;
 
-	gdi._mask_left = _charset->_strLeft;
-	gdi._mask_right = _charset->_strRight;
-	gdi._mask_top = _charset->_strTop;
-	gdi._mask_bottom = _charset->_strBottom;
+	gdi._mask = _charset->_str;
 }
 
 void Scumm::drawDescString(byte *msg) {
@@ -366,7 +360,7 @@ void Scumm::drawDescString(byte *msg) {
 	_talkDelay = 1;
 
 	if (_string[0].ypos + _charset->getFontHeight() > 0)
-		restoreBG(0, _string[0].ypos, _screenWidth - 1, _string[0].ypos + _charset->getFontHeight());
+		restoreBG(ScummVM::Rect(0, _string[0].ypos, _screenWidth - 1, _string[0].ypos + _charset->getFontHeight()));
 
 	_charset->_nextLeft = _string[0].xpos;
 	_charset->_nextTop = _string[0].ypos;
@@ -385,10 +379,8 @@ void Scumm::drawDescString(byte *msg) {
 
 	// hack: more 8 pixels at width and height while redraw
 	// for proper description redraw while scrolling room
-	gdi._mask_left = _charset->_strLeft - 8;
-	gdi._mask_right = _charset->_strRight + 8;
-	gdi._mask_top = _charset->_strTop - 8;
-	gdi._mask_bottom = _charset->_strBottom + 8;
+	gdi._mask = _charset->_str;
+	gdi._mask.grow(8);
 }
 
 void Scumm::drawString(int a) {
@@ -497,7 +489,7 @@ void Scumm::drawString(int a) {
 	} 
 
 
-	_string[a].xpos = _charset->_strRight + 8;	// Indy3: Fixes Grail Diary text positioning
+	_string[a].xpos = _charset->_str.right + 8;	// Indy3: Fixes Grail Diary text positioning
 
 	if (_features & GF_AFTER_V7) {
 		_charset->_hasMask = true;
@@ -505,14 +497,14 @@ void Scumm::drawString(int a) {
 		// to -1 to mark it as invalid. Hence this comparision will always leave it at -1,
 		// which implies that if the mask was marked invalid, it will always stay so. 
 		// That seems odd and not at all to be the intended thing... or is it?
-		if (_charset->_strLeft < gdi._mask_left)
-			gdi._mask_left = _charset->_strLeft;
-		if (_charset->_strRight > gdi._mask_right)
-			gdi._mask_right = _charset->_strRight;
-		if (_charset->_strTop < gdi._mask_top)
-			gdi._mask_top = _charset->_strTop;
-		if (_charset->_strBottom > gdi._mask_bottom)
-			gdi._mask_bottom = _charset->_strBottom;
+		if (_charset->_str.left < gdi._mask.left)
+			gdi._mask.left = _charset->_str.left;
+		if (_charset->_str.right > gdi._mask.right)
+			gdi._mask.right = _charset->_str.right;
+		if (_charset->_str.top < gdi._mask.top)
+			gdi._mask.top = _charset->_str.top;
+		if (_charset->_str.bottom > gdi._mask.bottom)
+			gdi._mask.bottom = _charset->_str.bottom;
 	} 
 }
 

@@ -117,7 +117,7 @@ public:
 	int _numZBuffer;
 	int _imgBufOffs[8];
 	int32 _numStrips;
-	int16 _mask_top, _mask_bottom, _mask_right, _mask_left;
+	ScummVM::Rect _mask;
 
 protected:
 	byte *_readPtr;

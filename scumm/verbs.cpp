@@ -184,13 +184,13 @@ void Scumm::drawVerb(int verb, int mode) {
 		drawString(4);
 		_charset->_center = tmp;
 
-		vs->right = _charset->_strRight;
-		vs->bottom = _charset->_strBottom;
-		vs->oldleft = _charset->_strLeft;
-		vs->oldright = _charset->_strRight;
-		vs->oldtop = _charset->_strTop;
-		vs->oldbottom = _charset->_strBottom;
-		_charset->_strLeft = _charset->_strRight;
+		vs->right = _charset->_str.right;
+		vs->bottom = _charset->_str.bottom;
+		vs->oldleft = _charset->_str.left;
+		vs->oldright = _charset->_str.right;
+		vs->oldtop = _charset->_str.top;
+		vs->oldbottom = _charset->_str.bottom;
+		_charset->_str.left = _charset->_str.right;
 	} else {
 		restoreVerbBG(verb);
 	}
@@ -202,7 +202,7 @@ void Scumm::restoreVerbBG(int verb) {
 	vs = &_verbs[verb];
 
 	if (vs->oldleft != -1) {
-		restoreBG(vs->oldleft, vs->oldtop, vs->oldright, vs->oldbottom, vs->bkcolor);
+		restoreBG(ScummVM::Rect(vs->oldleft, vs->oldtop, vs->oldright, vs->oldbottom), vs->bkcolor);
 		vs->oldleft = -1;
 	}
 }

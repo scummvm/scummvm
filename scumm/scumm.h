@@ -105,7 +105,7 @@ struct NestedScript {
 
 struct BlastText {
 	int16 xpos, ypos;
-	int16 left, right, top, bottom;
+	ScummVM::Rect rect;
 	byte color;
 	byte charset;
 	bool center;
@@ -789,7 +789,7 @@ public:
 	void drawRoomObject(int i, int arg);
 	void drawBox(int x, int y, int x2, int y2, int color);
 
-	void restoreBG(int left, int top, int right, int bottom, byte backColor = 0);
+	void restoreBG(ScummVM::Rect rect, byte backColor = 0);
 	void redrawBGStrip(int start, int num);	
 	void redrawBGAreas();	
 	

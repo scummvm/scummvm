@@ -611,10 +611,7 @@ void Scumm::drawBlastTexts() {
 			}
 		} while (c);
 
-		_blastTextQueue[i].left = _charset->_strLeft;
-		_blastTextQueue[i].right = _charset->_strRight;
-		_blastTextQueue[i].top = _charset->_strTop;
-		_blastTextQueue[i].bottom = _charset->_strBottom;
+		_blastTextQueue[i].rect = _charset->_str;
 	}
 	_charset->_ignoreCharsetMask = false;
 }
@@ -623,7 +620,7 @@ void Scumm::removeBlastTexts() {
 	int i;
 
 	for (i = 0; i < _blastTextQueuePos; i++) {
-		restoreBG(_blastTextQueue[i].left, _blastTextQueue[i].top, _blastTextQueue[i].right, _blastTextQueue[i].bottom);
+		restoreBG(_blastTextQueue[i].rect);
 	}
 	_blastTextQueuePos = 0;
 }

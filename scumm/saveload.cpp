@@ -161,7 +161,7 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	sb = _screenB;
 	sh = _screenH;
 
-	gdi._mask_left = -1;
+	gdi._mask.left = -1;
 
 	initScreens(0, 0, _screenWidth, _screenHeight);
 

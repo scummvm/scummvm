@@ -727,11 +727,11 @@ void Scumm::redrawBGStrip(int start, int num) {
 }
 
 void Scumm::restoreCharsetBg() {
-	if (gdi._mask_left != -1) {
-		restoreBG(gdi._mask_left, gdi._mask_top, gdi._mask_right, gdi._mask_bottom);
+	if (gdi._mask.left != -1) {
+		restoreBG(gdi._mask);
 		_charset->_hasMask = false;
-		gdi._mask_left = -1;
-		_charset->_strLeft = -1;
+		gdi._mask.left = -1;
+		_charset->_str.left = -1;
 		_charset->_left = -1;
 	}
 
@@ -739,42 +739,42 @@ void Scumm::restoreCharsetBg() {
 	_charset->_nextTop = _string[0].ypos;
 }
 
-void Scumm::restoreBG(int left, int top, int right, int bottom, byte backColor) {
+void Scumm::restoreBG(ScummVM::Rect rect, byte backColor) {
 	VirtScreen *vs;
 	int topline, height, width;
 	byte *backbuff, *bgbak;
 	bool lightsOn;
 
-	if (left == right || top == bottom)
+	if (rect.left == rect.right || rect.top == rect.bottom)
 		return;
-	if (top < 0)
-		top = 0;
+	if (rect.top < 0)
+		rect.top = 0;
 
-	if ((vs = findVirtScreen(top)) == NULL)
+	if ((vs = findVirtScreen(rect.top)) == NULL)
 		return;
 
 	topline = vs->topline;
 	height = topline + vs->height;
 
-	if (left < 0)
-		left = 0;
-	if (right < 0)
-		right = 0;
-	if (left > _screenWidth)
+	if (rect.left < 0)
+		rect.left = 0;
+	if (rect.right < 0)
+		rect.right = 0;
+	if (rect.left > _screenWidth)
 		return;
-	if (right > _screenWidth)
-		right = _screenWidth;
-	if (bottom >= height)
-		bottom = height;
+	if (rect.right > _screenWidth)
+		rect.right = _screenWidth;
+	if (rect.bottom >= height)
+		rect.bottom = height;
 
-	updateDirtyRect(vs->number, left, right, top - topline, bottom - topline, USAGE_BIT_RESTORED);
+	updateDirtyRect(vs->number, rect.left, rect.right, rect.top - topline, rect.bottom - topline, USAGE_BIT_RESTORED);
 
-	int offset = (top - topline) * _screenWidth + vs->xstart + left;
+	int offset = (rect.top - topline) * _screenWidth + vs->xstart + rect.left;
 	backbuff = vs->screenPtr + offset;
 	bgbak = getResourceAddress(rtBuffer, vs->number + 5) + offset;
 
-	height = bottom - top;
-	width = right - left;
+	height = rect.height();
+	width = rect.width();
 
 	// Check whether lights are turned on or not
 	lightsOn = (_features & GF_AFTER_V6) || (vs->number != 0) || (VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_screen);
@@ -788,7 +788,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom, byte backColor) 
 			if (width & 0x07)
 				mask_width++;
 
-			mask = getResourceAddress(rtBuffer, 9) + top * gdi._numStrips + (left >> 3) + _screenStartStrip;
+			mask = getResourceAddress(rtBuffer, 9) + rect.top * gdi._numStrips + (rect.left >> 3) + _screenStartStrip;
 			if (vs->number == 0)
 				mask += vs->topline * gdi._numStrips;
 
@@ -813,10 +813,10 @@ bool Scumm::hasCharsetMask(int left, int top, int right, int bottom) {
 	// would mean that the rects are touching on their borders, but not
 	// actually overlapping.
 	return _charset->_hasMask
-			&& top <= gdi._mask_bottom
-			&& left <= gdi._mask_right
-			&& bottom >= gdi._mask_top
-			&& right >= gdi._mask_left;
+			&& top <= gdi._mask.bottom
+			&& left <= gdi._mask.right
+			&& bottom >= gdi._mask.top
+			&& right >= gdi._mask.left;
 /*
 	if (!_charset->_hasMask || top > gdi._mask_bottom || left > gdi._mask_right ||
 			bottom < gdi._mask_top || right < gdi._mask_left)
