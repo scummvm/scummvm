@@ -26,6 +26,7 @@
 #include "gameDetector.h"
 #include "dc.h"
 #include "icon.h"
+#include "saveload.h"
 
 #include <ronin/zlib.h>
 

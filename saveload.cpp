@@ -26,12 +26,53 @@
 #include "sound/imuse.h"
 #include "actor.h"
 #include "config-file.h"
+#include "saveload.h"
 
 struct SaveGameHeader {
 	uint32 type;
 	uint32 size;
 	uint32 ver;
 	char name[32];
+};
+
+struct SaveLoadEntry {
+	uint32 offs;
+	uint8 type;
+	uint8 size;
+};
+
+typedef int SerializerSaveReference(void *me, byte type, void *ref);
+typedef void *SerializerLoadReference(void *me, byte type, int ref);
+
+struct Serializer {
+	SerializerStream _saveLoadStream;
+
+	union {
+		SerializerSaveReference *_save_ref;
+		SerializerLoadReference *_load_ref;
+		void *_saveload_ref;
+	};
+	void *_ref_me;
+
+	bool _saveOrLoad;
+
+	void saveLoadBytes(void *b, int len);
+	void saveLoadArrayOf(void *b, int len, int datasize, byte filetype);
+	void saveLoadEntries(void *d, const SaveLoadEntry *sle);
+	void saveLoadArrayOf(void *b, int num, int datasize, const SaveLoadEntry *sle);
+
+	void saveUint32(uint32 d);
+	void saveWord(uint16 d);
+	void saveByte(byte b);
+
+	byte loadByte();
+	uint16 loadWord();
+	uint32 loadUint32();
+
+	bool isSaving() { return _saveOrLoad; }
+
+	bool checkEOFLoadStream();
+
 };
 
 // Support for "old" savegames (made with 2501 CVS build)

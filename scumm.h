@@ -1154,7 +1154,6 @@ public:
 	int _maxBoxVertexHeap, _boxPathVertexHeapIndex, _boxMatrixItem;
 	byte *_boxMatrixPtr4, *_boxMatrixPtr1, *_boxMatrixPtr3;	
 
-//	ScummPoint p[5];	/* Gate locations */
 	ScummPoint gateLoc[5];	/* Gate locations */
 	int gate1ax, gate1ay, gate1bx, gate1by, gate2ax, gate2ay, gate2bx, gate2by;
 	uint16 _extraBoxFlags[65];
@@ -1683,74 +1682,6 @@ struct ScummDebugger {
 	void printScripts();
 };
 
-struct SaveLoadEntry {
-	uint32 offs;
-	uint8 type;
-	uint8 size;
-};
-
-typedef int SerializerSaveReference(void *me, byte type, void *ref);
-typedef void *SerializerLoadReference(void *me, byte type, int ref);
-
-
-struct SerializerStream {
-#ifdef NONSTANDARD_SAVE
-	void *context;
-
-	bool fopen(const char *filename, const char *mode);
-	void fclose();
-	int fread(void *buf, int size, int cnt);
-	int fwrite(void *buf, int size, int cnt);
-#else
-	FILE *out;
-
-	FILE *fopen(const char *filename, const char *mode) {
-		return out = ::fopen(filename, mode);
-	}
-	void fclose() {
-		::fclose(out);
-	}
-	int fread(void *buf, int size, int cnt) {
-		return ::fread(buf, size, cnt, out);
-	}
-	int fwrite(void *buf, int size, int cnt) {
-		return ::fwrite(buf, size, cnt, out);
-	}
-#endif
-};
-
-struct Serializer {
-	SerializerStream _saveLoadStream;
-
-	union {
-		SerializerSaveReference *_save_ref;
-		SerializerLoadReference *_load_ref;
-		void *_saveload_ref;
-	};
-	void *_ref_me;
-
-	bool _saveOrLoad;
-
-	void saveLoadBytes(void *b, int len);
-	void saveLoadArrayOf(void *b, int len, int datasize, byte filetype);
-	void saveLoadEntries(void *d, const SaveLoadEntry *sle);
-	void saveLoadArrayOf(void *b, int num, int datasize, const SaveLoadEntry *sle);
-
-	void saveUint32(uint32 d);
-	void saveWord(uint16 d);
-	void saveByte(byte b);
-
-	byte loadByte();
-	uint16 loadWord();
-	uint32 loadUint32();
-
-	bool isSaving() { return _saveOrLoad; }
-
-	bool checkEOFLoadStream();
-
-};
-
-
 extern const uint32 IMxx_tags[];
 extern const byte default_scale_table[768];
 extern uint16 _debugLevel;
@@ -1768,19 +1699,11 @@ void CDECL NORETURN error(const char *s, ...);
 void CDECL warning(const char *s, ...);
 void CDECL debug(int level, const char *s, ...);
 void checkHeap();
-//void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor = 2);
-//void updateScreen(Scumm *s);
-//void drawMouse(int x, int y, int color, byte *mask, bool visible);
-//void drawMouse(int x, int y, int w, int h, byte *buf, bool visible);
 void blit(byte *dst, byte *src, int w, int h);
 byte *findResource(uint32 tag, byte *searchin, int index);
 byte *findResourceSmall(uint32 tag, byte *searchin, int index);
 byte *findResource(uint32 tag, byte *searchin);
 byte *findResourceSmall(uint32 tag, byte *searchin);
-//void playSfxSound(void *sound, uint32 size, uint rate);
-//bool isSfxFinished();
-//void waitForTimer(Scumm *s, int msec_delay);
-//void setShakePos(Scumm *s, int shake_pos);
 void setWindowName(Scumm *s);
 uint16 newTag2Old(uint32 oldTag);
 
