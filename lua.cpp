@@ -158,8 +158,12 @@ static void FunctionName() {
 	char *filename;
 	int line;
 
-	if (! lua_isfunction(lua_getparam(1)))
-		luaL_argerror(1, "expected function");
+	if (!lua_isfunction(lua_getparam(1))) {
+		sprintf(buf, "function InvalidArgsToFunctionName");
+		lua_pushstring(buf);
+		return;
+	}
+
 	lua_funcinfo(lua_getparam(1), &filename, &line);
 	switch (*lua_getobjname(lua_getparam(1), &name)) {
 	case 'g':
@@ -313,7 +317,8 @@ static void SetActorTurnChores() {
 static void SetActorTalkChore() {
 	Actor *act = check_actor(1);
 	int index = check_int(2);
-	int chore = check_int(3);
+	int chore = lua_isnil(lua_getparam(3)) ? check_int(3) : -1;
+
 	Costume *costume = get_costume(act, 4, "setActorTalkChore");
 
 	act->setTalkChore(index, chore, costume);
