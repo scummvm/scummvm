@@ -1694,7 +1694,7 @@ void Scumm_v6::o6_actorOps() {
 	case 93:
 		a->forceClip = 0;
 		break;
-	case 225:
+	case 225:	// FIXME: Is subop 225 really identical to subop 94
 	case 94:
 		a->forceClip = pop();
 		break;
