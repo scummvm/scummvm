@@ -1046,6 +1046,7 @@ ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const Scum
 ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
  : ScummEngine_v60he(detector, syst, gs, md5sum) {
 	 _win32ResExtractor = new Win32ResExtractor(this);
+	 _macResExtractor = new MacResExtractor(this);
 
 	_heSndSoundId = 0;
 	_heSndOffset = 0;
@@ -2763,10 +2764,15 @@ static int generateMacFileName_(const char *filename, char *buf, int bufsize, in
 
 	for (int i = cont; i < ARRAYSIZE(heMacFileNameTable); i++) {
 		if (!scumm_strnicmp(filename, heMacFileNameTable[i].winName, len)) {
-			if (heMacFileNameTable[i].hasParens)
-				snprintf(buf, bufsize, "%s (%c)", heMacFileNameTable[i].macName, num);
-			else 
-				snprintf(buf, bufsize, "%s %c", heMacFileNameTable[i].macName, num);
+			if (num == '3') { // special case for cursors
+				// For mac they're stored in game binary
+				strncpy(buf, heMacFileNameTable[i].macName, bufsize);
+			} else {
+				if (heMacFileNameTable[i].hasParens)
+					snprintf(buf, bufsize, "%s (%c)", heMacFileNameTable[i].macName, num);
+				else 
+					snprintf(buf, bufsize, "%s %c", heMacFileNameTable[i].macName, num);
+			}
 
 			return i;
 		}

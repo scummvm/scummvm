@@ -144,11 +144,10 @@ void ScummEngine::setCursorFromBuffer(byte *ptr, int width, int height, int pitc
 }
 
 void ScummEngine_v70he::setCursorFromImg(uint img, uint room, uint imgindex) {
-	// HACK Macintosh cursors aren't supported yet.
 	if (_features & GF_MACINTOSH && _heversion == 72) 
-		return;
-
-	_win32ResExtractor->setCursor(img);
+		_macResExtractor->setCursor(img);
+	else
+		_win32ResExtractor->setCursor(img);
 }
 
 void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {

@@ -481,6 +481,57 @@ class Win32ResExtractor {
 	void fix_win32_image_data_directory(Win32ImageDataDirectory *obj);
 };
 
+class MacResExtractor {
+
+public:
+	MacResExtractor(ScummEngine_v70he *scumm);
+	~MacResExtractor() { }
+	void setCursor(int id) ;
+
+private:
+	int extractResource(int id, byte **buf);
+	bool init(File in);
+	void readMap(File in);
+	byte *getResource(File in, const char *typeID, int16 resID, int *size);
+	void convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
+					 int *hotspot_x, int *hotspot_y, int *keycolor);
+
+	struct ResMap {
+		int16 resAttr;
+		int16 typeOffset;
+		int16 nameOffset;
+		int16 numTypes;
+	};
+
+	struct ResType {
+		char  id[5];
+		int16 items;
+		int16 offset;
+	};
+
+	struct Resource {
+		int16 id;
+		int16 nameOffset;
+		byte  attr;
+		int32 dataOffset;
+		byte  *name;
+	};
+
+	typedef Resource *ResPtr;
+
+private:
+	ScummEngine_v70he *_vm;
+	char _fileName[256];
+	int _resOffset;
+	int32 _dataOffset;
+	int32 _dataLength;
+	int32 _mapOffset;
+	int32 _mapLength;
+	ResMap _resMap;
+	ResType *_resTypes;
+	ResPtr  *_resLists;
+}; 
+
 } // End of namespace Scumm
 
 #endif

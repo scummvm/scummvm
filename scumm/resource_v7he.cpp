@@ -51,7 +51,7 @@ const char *res_types[] = {
 Win32ResExtractor::Win32ResExtractor(ScummEngine_v70he *scumm) {
 	_vm = scumm;
 
-	snprintf(_fileName, 256, "%s.he3", _vm->getGameName());
+	_fileName[0] = 0;
 	memset(_cursorCache, 0, sizeof(_cursorCache));
 }
 
@@ -145,6 +145,9 @@ int Win32ResExtractor::extractResource(const char *resType, char *resName, byte 
 	/* initiate stuff */
 	fi.memory = NULL;
 	fi.file = new File;
+
+	if (!_fileName[0]) // We are running for the first time
+		snprintf(_fileName, 256, "%s.he3", _vm->getGameName());
 
 	/* get file size */
 	fi.file->open(_fileName);
@@ -1256,5 +1259,258 @@ void Win32ResExtractor::fix_win32_image_data_directory(Win32ImageDataDirectory *
     LE32(obj->size);
 }
 
+
+MacResExtractor::MacResExtractor(ScummEngine_v70he *scumm) {
+	_vm = scumm;
+
+	_fileName[0] = 0;
+	_resOffset = -1;
+}
+
+void MacResExtractor::setCursor(int id) {
+	byte *cursorRes = 0, *cursor = 0;
+	int cursorsize;
+	int w = 0, h = 0, hotspot_x = 0, hotspot_y = 0;
+	int keycolor;
+
+	if (!_fileName[0]) // We are running for the first time
+		if (_vm->_heMacFileNameIndex > 0) {
+			char buf1[128];
+
+			snprintf(buf1, 128, "%s.he3", _vm->getGameName());
+			_vm->generateMacFileName(buf1, _fileName, 128, 0, _vm->_heMacFileNameIndex);
+		}
+
+	cursorsize = extractResource(id, &cursorRes);
+	convertIcons(cursorRes, cursorsize, &cursor, &w, &h, &hotspot_x, &hotspot_y, &keycolor);
+
+	_vm->setCursorHotspot(hotspot_x, hotspot_y);
+	_vm->setCursorFromBuffer(cursor, w, h, w);
+	free(cursorRes);
+	free(cursor);
+}
+
+int MacResExtractor::extractResource(int id, byte **buf) {
+	File in;
+	int size;
+
+	in.open(_fileName);
+	if (!in.isOpen()) {
+		error("Cannot open file %s", _fileName);
+	}
+
+	// we haven't calculated it
+	if (_resOffset == -1) {
+		if (!init(in))
+			error("Invalid file format (%s)", _fileName);
+		debug(0, "ResOffset: %d", _resOffset);
+	}
+
+	*buf = getResource(in, "crsr", 1000 + id, &size);
+
+	if (*buf == NULL)
+		error("Cannot read cursor ID: %d", id);
+
+	return size;
+}
+
+#define MBI_INFOHDR 128
+#define MBI_ZERO1 0
+#define MBI_NAMELEN 1
+#define MBI_ZERO2 74
+#define MBI_ZERO3 82
+#define MBI_DFLEN 83
+#define MBI_RFLEN 87
+#define MAXNAMELEN 63
+
+bool MacResExtractor::init(File in) {
+	byte infoHeader[MBI_INFOHDR];
+	int32 data_size, rsrc_size;
+	int32 data_size_pad, rsrc_size_pad;
+	int filelen;
+
+	filelen = in.size();
+	in.read(infoHeader, MBI_INFOHDR);
+
+	// Following should be 0 bytes
+	if(infoHeader[MBI_ZERO1] != 0) return false;
+
+	if(infoHeader[MBI_ZERO2] != 0) return false;
+
+	if(infoHeader[MBI_ZERO3] != 0) return false;
+
+	// Filename has a length range
+	if(infoHeader[MBI_NAMELEN] > MAXNAMELEN) return false;
+
+	// Pull out fork lengths
+	data_size = READ_BE_UINT32(infoHeader + MBI_DFLEN);
+	rsrc_size = READ_BE_UINT32(infoHeader + MBI_RFLEN);
+
+	data_size_pad = (((data_size + 127) >> 7) << 7);
+	rsrc_size_pad = (((rsrc_size + 127) >> 7) << 7);
+
+	// Length check
+	int sumlen =  MBI_INFOHDR + data_size_pad + rsrc_size_pad;
+	if(sumlen != filelen) return false;
+
+	_resOffset = MBI_INFOHDR + data_size_pad;
+
+	in.seek(_resOffset);
+
+	_dataOffset = in.readUint32BE() + _resOffset;
+	_mapOffset = in.readUint32BE() + _resOffset;
+	_dataLength = in.readUint32BE();
+	_mapLength = in.readUint32BE();
+
+	debug(0, "got header: data %d [%d] map %d [%d]", 
+		_dataOffset, _dataLength, _mapOffset, _mapLength);
+
+	readMap(in);
+
+	return true;
+}
+
+byte *MacResExtractor::getResource(File in, const char *typeID, int16 resID, int *size) {
+	int	i;
+	int typeNum = -1;
+	int resNum = -1;
+	byte *buf;
+	int len;
+	
+	for (i = 0; i < _resMap.numTypes; i++)
+		if (strcmp(_resTypes[i].id, typeID) == 0) {
+			typeNum = i;
+			break;
+		}
+
+	if (typeNum == -1)
+		return NULL;
+
+	for (i = 0; i < _resTypes[typeNum].items; i++)
+		if (_resLists[typeNum][i].id == resID) {
+			resNum = i;
+			break;
+		}
+
+	if (resNum == -1)
+		return NULL;
+
+	in.seek(_dataOffset + _resLists[typeNum][resNum].dataOffset);
+
+	len = in.readUint32BE();
+	buf = (byte *)malloc(len);
+
+	in.read(buf, len);
+
+	*size = len;
+
+	return buf;
+}
+
+void MacResExtractor::readMap(File in) {
+	int	i, j, len;
+	
+	in.seek(_mapOffset + 22);
+
+	_resMap.resAttr = in.readUint16BE();
+	_resMap.typeOffset = in.readUint16BE();
+	_resMap.nameOffset = in.readUint16BE();
+	_resMap.numTypes = in.readUint16BE();
+	_resMap.numTypes++;
+
+	debug(0, "Read %d types, type offset %d, name offset %d", _resMap.numTypes,
+		_resMap.typeOffset, _resMap.nameOffset);
+
+	in.seek(_mapOffset + _resMap.typeOffset + 2);
+	_resTypes = new ResType[_resMap.numTypes];
+
+	for (i = 0; i < _resMap.numTypes; i++) {
+		in.read(_resTypes[i].id, 4);
+		_resTypes[i].items = in.readUint16BE();
+		_resTypes[i].offset = in.readUint16BE();
+		_resTypes[i].items++;
+	}
+	
+	for (i = 0; i < _resMap.numTypes; i++) {
+		debug(0, "resource '%c%c%c%c': items %d, offset %d", 
+			_resTypes[i].id[0], _resTypes[i].id[1], 
+			_resTypes[i].id[2], _resTypes[i].id[3],
+			_resTypes[i].items, _resTypes[i].offset);
+	}	
+
+	_resLists = new ResPtr[_resMap.numTypes];
+	
+	for (i = 0; i < _resMap.numTypes; i++) {
+		_resLists[i] = new Resource[_resTypes[i].items];
+		in.seek(_resTypes[i].offset + _mapOffset + _resMap.typeOffset);
+
+		for (j = 0; j < _resTypes[i].items; j++) {
+			ResPtr resPtr = _resLists[i] + j;
+			
+			resPtr->id = in.readUint16BE();
+			resPtr->nameOffset = in.readUint16BE();
+			resPtr->dataOffset = in.readUint32BE();
+			in.readUint32BE();
+			resPtr->name = 0;
+			
+			resPtr->attr = resPtr->dataOffset >> 24;
+			resPtr->dataOffset &= 0xFFFFFF;
+
+			debug(0, "resource '%c%c%c%c' %d: name %d, data %d, attr %d", 
+				_resTypes[i].id[0], _resTypes[i].id[1], 
+				_resTypes[i].id[2], _resTypes[i].id[3],
+				resPtr->id, resPtr->nameOffset, resPtr->dataOffset, resPtr->attr);
+		}
+
+		for (j = 0; j < _resTypes[i].items; j++) {
+			if (_resLists[i][j].nameOffset != -1) {
+				in.seek(_resLists[i][j].nameOffset + _mapOffset + _resMap.nameOffset);
+				
+				len = in.readByte();
+				_resLists[i][j].name = new byte[len + 1];
+				_resLists[i][j].name[len] = 0;
+				in.read(_resLists[i][j].name, len);
+				debug(0, "name of %d: %s", _resLists[i][j].id, _resLists[i][j].name);
+			}
+		}
+	}
+}
+
+void MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
+							int *hotspot_x, int *hotspot_y, int *keycolor) {
+	Common::MemoryReadStream dis(data, datasize);
+	int i, b;
+	byte imageByte;
+	int ignored;
+
+	ignored = dis.readUint16BE(); // type
+	ignored = dis.readUint32BE(); // offset to pixle map
+	ignored = dis.readUint32BE(); // offset to pixel data
+	ignored = dis.readUint32BE(); // expanded cursor data
+	ignored = dis.readUint16BE(); // expanded data depth
+	ignored = dis.readUint32BE(); // reserved
+	  
+	// Grab icon data
+	*cursor = (byte *)malloc(256);
+	for (i = 0; i < 32; i++) {
+		imageByte = dis.readByte();
+		for (b = 0; b < 8; b++)
+			cursor[0][i*8+b] = (byte)((imageByte &
+									  (0x80 >> b)) > 0? 0x0F: 0x00);
+	}
+
+	// Grab mask data
+	for (i = 0; i < 32; i++) {
+		imageByte = dis.readByte();
+		for (b = 0; b < 8; b++)
+			if ((imageByte & (0x80 >> b)) == 0)
+				cursor[0][i*8+b] = 0xff;
+	}
+
+	// Could use DataInputStream - but just 2 bytes
+	*hotspot_y = dis.readUint16BE();
+	*hotspot_x = dis.readUint16BE();
+	*w = *h = 16;
+}
 
 } // End of namespace Scumm
