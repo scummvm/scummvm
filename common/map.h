@@ -33,8 +33,8 @@ protected:
 		Node *_left, *_right;
 		Key _key;
 		Value _value;
-		Node() {}
-		Node(const Key &key, Node *parent) : _parent(parent), _key(key) {}
+		Node() : _parent(0), _left(0), _right(0) {}
+		Node(const Key &key, Node *parent) : _parent(parent), _left(0), _right(0), _key(key) {}
 	};
 	
 	Node *_root;
