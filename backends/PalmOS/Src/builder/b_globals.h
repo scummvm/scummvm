@@ -29,4 +29,6 @@ void Queen_addGraphics();
 void Queen_addDisplay();
 void Queen_addMusicdata();
 /////////////////////////////////
+void Sky_addHufftext();
+/////////////////////////////////
 void Sword1_addStaticres();
