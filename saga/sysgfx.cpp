@@ -45,11 +45,7 @@ int SYSGFX_Init(R_SYSGFX_INIT *gfx_init) {
 
 	assert(gfx_init != NULL);
 
-	if (gfx_init->fullscreen) {
-		flags = SDL_FULLSCREEN | SDL_HWPALETTE;
-	} else {
-		flags = SDL_HWPALETTE;
-	}
+	flags = SDL_HWPALETTE;
 
 	// Test video mode availability */
 	result = SDL_VideoModeOK(gfx_init->screen_w, gfx_init->screen_h, gfx_init->screen_bpp, flags);
@@ -141,78 +137,6 @@ int SYSGFX_UnlockSurface(R_SURFACE *surface) {
 	assert(surface != NULL);
 
 	SDL_UnlockSurface((SDL_Surface *) surface->impl_src);
-
-	return R_SUCCESS;
-}
-
-R_SURFACE *SYSGFX_FormatToDisplay(R_SURFACE *surface) {
-	R_SURFACE *new_r_surface;
-	SDL_Surface *new_sdl_surface;
-
-	new_r_surface = (R_SURFACE *)malloc(sizeof *new_r_surface);
-	if (new_r_surface == NULL) {
-		return NULL;
-	}
-
-	new_sdl_surface = SDL_DisplayFormat((SDL_Surface *)surface->impl_src);
-	if (new_sdl_surface == NULL) {
-		free(new_r_surface);
-		return NULL;
-	}
-
-	new_r_surface->buf = (byte *)new_sdl_surface->pixels;
-	new_r_surface->buf_w = new_sdl_surface->w;
-	new_r_surface->buf_h = new_sdl_surface->h;
-	new_r_surface->buf_pitch = new_sdl_surface->pitch;
-	new_r_surface->bpp = new_sdl_surface->format->BitsPerPixel;
-
-	new_r_surface->clip_rect.left = 0;
-	new_r_surface->clip_rect.top = 0;
-	new_r_surface->clip_rect.right = new_sdl_surface->w - 1;
-	new_r_surface->clip_rect.bottom = new_sdl_surface->h - 1;
-
-	new_r_surface->impl_src = new_sdl_surface;
-
-	return new_r_surface;
-}
-
-R_SURFACE *SYSGFX_CreateSurface(int w, int h, int bpp) {
-	R_SURFACE *new_surface;
-	SDL_Surface *new_sdl_surface;
-
-	assert(bpp == 8);	// 16bpp not supported, maybe not necessary?
-	assert((w > 0) && (h > 0));
-
-	new_surface = (R_SURFACE *)malloc(sizeof *new_surface);
-	if (new_surface == NULL) {
-		return NULL;
-	}
-
-	new_sdl_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, bpp, 0, 0, 0, 0);
-	if (new_sdl_surface == NULL) {
-		free(new_surface);
-		return NULL;
-	}
-
-	new_surface->buf_w = new_sdl_surface->w;
-	new_surface->buf_h = new_sdl_surface->h;
-	new_surface->buf_pitch = new_sdl_surface->pitch;
-	new_surface->bpp = new_sdl_surface->format->BitsPerPixel;
-
-	new_surface->clip_rect.left = 0;
-	new_surface->clip_rect.top = 0;
-	new_surface->clip_rect.right = w - 1;
-	new_surface->clip_rect.bottom = h - 1;
-
-	new_surface->impl_src = new_sdl_surface;
-
-	return new_surface;
-}
-
-int SYSGFX_DestroySurface(R_SURFACE *surface) {
-	SDL_FreeSurface((SDL_Surface *) surface->impl_src);
-
-	free(surface);
 
 	return R_SUCCESS;
 }

@@ -37,16 +37,6 @@ enum RENDER_FLAGS {
 	RF_GAMEPAUSE = 0x20
 };
 
-enum RENDER_MODES {
-	RM_NORMAL,
-	RM_SCANLINES,
-	RM_SCANLINES50,
-	RM_2XSAI,
-	RM_SUPER2XSAI,
-	RM_SUPEREAGLE,
-	RM_BILINEAR
-};
-
 struct R_BUFFER_INFO {
 	byte *r_bg_buf;
 	int r_bg_buf_w;
@@ -59,11 +49,9 @@ struct R_BUFFER_INFO {
 int RENDER_Register();
 int RENDER_Init();
 int RENDER_DrawScene();
-void RENDER_ConvertMousePt(R_POINT *);
 unsigned int RENDER_GetFlags();
 void RENDER_SetFlag(unsigned int);
 void RENDER_ToggleFlag(unsigned int);
-int RENDER_SetMode(int);
 unsigned int RENDER_GetFrameCount(void);
 unsigned int RENDER_ResetFrameCount(void);
 int RENDER_GetBufferInfo(R_BUFFER_INFO *);

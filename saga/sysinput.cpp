@@ -61,8 +61,6 @@ int SYSINPUT_ProcessInput(void)
 	imouse_pt.x = mouse_x;
 	imouse_pt.y = mouse_y;
 
-	RENDER_ConvertMousePt(&imouse_pt);
-
 	while (SDL_PollEvent(&sdl_event)) {
 
 		int in_char;
@@ -150,22 +148,6 @@ int SYSINPUT_ProcessInput(void)
 
 			case SDLK_F4:
 				RENDER_ToggleFlag(RF_OBJECTMAP_TEST);
-				break;
-
-			case SDLK_1:
-				RENDER_SetMode(RM_NORMAL);
-				break;
-
-			case SDLK_4:
-				RENDER_SetMode(RM_2XSAI);
-				break;
-
-			case SDLK_5:
-				RENDER_SetMode(RM_SUPER2XSAI);
-				break;
-
-			case SDLK_6:
-				RENDER_SetMode(RM_SUPEREAGLE);
 				break;
 
 			case SDLK_TAB:

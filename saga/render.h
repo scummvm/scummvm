@@ -34,8 +34,6 @@ namespace Saga {
 #define R_HICOLOR_DEFAULT    1
 #define R_SOFTCURSOR_DEFAULT 1
 
-#define R_DOUBLE_RESLIMIT 320
-
 #define R_PAUSEGAME_MSG "PAWS GAME"
 
 struct R_RENDER_MODULE {
@@ -43,8 +41,6 @@ struct R_RENDER_MODULE {
 
 	// Init cvars
 	int r_fullscreen;
-	int r_doubleres;
-	int r_hicolor;
 	int r_softcursor;
 
 	// Module data

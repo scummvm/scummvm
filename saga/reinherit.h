@@ -144,8 +144,6 @@ struct R_SYSGFX_INIT {
 	int screen_w;
 	int screen_h;
 	int screen_bpp;
-
-	int fullscreen;
 };
 
 int SYSGFX_Init(R_SYSGFX_INIT *);
@@ -155,10 +153,6 @@ R_SURFACE *SYSGFX_GetBackBuffer(void);
 
 int SYSGFX_LockSurface(R_SURFACE *surface);
 int SYSGFX_UnlockSurface(R_SURFACE *surface);
-
-R_SURFACE *SYSGFX_CreateSurface(int w, int h, int bpp);
-R_SURFACE *SYSGFX_FormatToDisplay(R_SURFACE *surface);
-int SYSGFX_DestroySurface(R_SURFACE *surface);
 
 int SYSGFX_GetWhite(void);
 int SYSGFX_GetBlack(void);

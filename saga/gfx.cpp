@@ -41,29 +41,6 @@
 
 namespace Saga {
 
-int GFX_ClearSurface(char *buf, int w, int h, int p) {
-	int y;
-
-	for (y = 0; y < h; y++) {
-		memset(buf, 0, w);
-		buf += p;
-	}
-
-	return R_SUCCESS;
-}
-
-int GFX_ClearSurface16(char *buf, int w, int h, int p) {
-	int y;
-	w <<= 1;
-
-	for (y = 0; y < h; y++) {
-		memset(buf, 0, w);
-		buf += p;
-	}
-
-	return R_SUCCESS;
-}
-
 int GFX_DrawPalette(R_SURFACE *dst_s) {
 	int x;
 	int y;
@@ -107,100 +84,6 @@ int GFX_SimpleBlit(R_SURFACE *dst_s, R_SURFACE *src_s) {
 
 		dst_p += p;
 		src_p += p;
-	}
-
-	return R_SUCCESS;
-}
-
-int GFX_Scale2x(R_SURFACE *dst_s, R_SURFACE *src_s) {
-	assert((dst_s != NULL) && (src_s != NULL));
-	assert((dst_s->bpp == src_s->bpp));
-
-	switch (dst_s->bpp) {
-	case 8:
-		return GFX_Scale2x8(dst_s, src_s);
-		break;
-
-	case 16:
-		return GFX_Scale2x16(dst_s, src_s);
-		break;
-
-	default:
-		break;
-
-	}
-
-	return R_FAILURE;
-}
-
-int GFX_Scale2x8(R_SURFACE *dst_s, R_SURFACE *src_s) {
-	int y, x;
-
-	int src_skip = src_s->buf_pitch - src_s->buf_w;
-	int dst_skip = dst_s->buf_pitch - dst_s->buf_w;
-
-	byte *src_ptr = src_s->buf;
-	byte *dst_ptr = dst_s->buf;
-
-	byte *src_row;
-	byte *dst_row;
-
-	assert(dst_s->buf_w == (src_s->buf_w * 2));
-	assert(dst_s->buf_h == (src_s->buf_h * 2));
-
-	for (y = 0; y < src_s->buf_h; y++) {
-		src_row = src_ptr;
-		dst_row = dst_ptr;
-
-		for (x = 0; x < src_s->buf_w; x++) {
-			*dst_ptr++ = *src_ptr;
-			*dst_ptr++ = *src_ptr++;
-		}
-
-		dst_ptr += dst_skip;
-
-		memcpy(dst_ptr, dst_row, dst_s->buf_w);
-
-		dst_ptr += dst_s->buf_pitch;
-		src_ptr += src_skip;
-	}
-
-	return R_SUCCESS;
-}
-
-int GFX_Scale2x16(R_SURFACE *dst_s, R_SURFACE *src_s) {
-	int y, x;
-
-	int src_skip;
-	int dest_skip;
-
-	byte *src_ptr = src_s->buf;
-	byte *dest_ptr = dst_s->buf;
-
-	short *src_row;
-	short *dest_row;
-
-	assert((dst_s != NULL) && (src_s != NULL));
-
-	src_skip = (src_s->buf_pitch - src_s->buf_w) / sizeof(short);
-	dest_skip = (dst_s->buf_pitch - dst_s->buf_w) / sizeof(short);
-
-	for (y = 0; y < src_s->buf_h; y++) {
-		src_row = (short *)src_ptr;
-		dest_row = (short *)dest_ptr;
-
-		for (x = 0; x < src_s->buf_w; x++) {
-			*dest_row++ = *src_row;
-			*dest_row++ = *src_row++;
-		}
-
-		src_ptr += src_s->buf_pitch;
-
-		memcpy(dest_ptr + dst_s->buf_pitch, dest_ptr,
-		    dst_s->buf_w << 1);
-
-		dest_ptr += dst_s->buf_pitch;
-		dest_ptr += dst_s->buf_pitch;
 	}
 
 	return R_SUCCESS;

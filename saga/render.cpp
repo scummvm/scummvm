@@ -54,30 +54,6 @@ static R_RENDER_MODULE RenderModule;
 const char *test_txt = "The quick brown fox jumped over the lazy dog. She sells sea shells down by the sea shore.";
 
 int RENDER_Register() {
-	// Register "r_fullscreen" cfg cvar
-	RenderModule.r_fullscreen = R_FULLSCREEN_DEFAULT;
-
-	if (CVAR_Register_I(&RenderModule.r_fullscreen,
-		"r_fullscreen", NULL, R_CVAR_CFG, 0, 1) != R_SUCCESS) {
-		return R_FAILURE;
-	}
-
-	// Register "r_doubleres" cfg cvar
-	RenderModule.r_doubleres = R_DOUBLERES_DEFAULT;
-
-	if (CVAR_Register_I(&RenderModule.r_doubleres,
-		"r_doubleres", NULL, R_CVAR_CFG, 0, 1) != R_SUCCESS) {
-		return R_FAILURE;
-	}
-
-	// Register "r_hicolor" cfg cvar
-	RenderModule.r_hicolor = R_HICOLOR_DEFAULT;
-
-	if (CVAR_Register_I(&RenderModule.r_hicolor,
-		"r_hicolor", NULL, R_CVAR_CFG, 0, 1) != R_SUCCESS) {
-		return R_FAILURE;
-	}
-
 	// Register "r_softcursor" cfg cvar
 	RenderModule.r_softcursor = R_SOFTCURSOR_DEFAULT;
 
@@ -102,27 +78,10 @@ int RENDER_Init() {
 	gfx_init.backbuf_w = disp_info.logical_w;
 	gfx_init.backbuf_h = disp_info.logical_h;
 
-	if (RenderModule.r_hicolor) {
-		gfx_init.screen_bpp = 16;
-	} else {
-		gfx_init.screen_bpp = 8;
-	}
+	gfx_init.screen_bpp = 8;
 
 	gfx_init.screen_w = disp_info.logical_w;
 	gfx_init.screen_h = disp_info.logical_h;
-
-	// Don't try to double a game exceeding the resolution limit
-	// (640x480 would get doubled to 1280 x 960!) */
-	if (disp_info.logical_w > R_DOUBLE_RESLIMIT) {
-		RenderModule.r_doubleres = 0;
-	}
-
-	if (RenderModule.r_doubleres) {
-		gfx_init.screen_w *= 2;
-		gfx_init.screen_h *= 2;
-	}
-
-	gfx_init.fullscreen = RenderModule.r_fullscreen;
 
 	if (SYSGFX_Init(&gfx_init) != R_SUCCESS) {
 		return R_FAILURE;
@@ -148,15 +107,6 @@ int RENDER_Init() {
 	tmp_w = disp_info.logical_w;
 	tmp_h = disp_info.logical_h + 4; // BG unbanking requres extra rows
 	tmp_bytepp = 1;
-
-	if (RenderModule.r_doubleres) {
-		tmp_w *= 2;
-		tmp_h *= 2;
-	}
-
-	if (RenderModule.r_hicolor) {
-		tmp_bytepp = 2;
-	}
 
 	RenderModule.r_tmp_buf = (byte *)calloc(1, tmp_w * tmp_h * tmp_bytepp);
 	if (RenderModule.r_tmp_buf == NULL) {
@@ -193,7 +143,6 @@ int RENDER_DrawScene() {
 	int fps_width;
 	R_POINT mouse_pt;
 	int mouse_x, mouse_y;
-	int surface_converted = 0;
 
 	if (!RenderModule.initialized) {
 		return R_FAILURE;
@@ -209,11 +158,6 @@ int RENDER_DrawScene() {
 
 	mouse_pt.x = mouse_x;
 	mouse_pt.y = mouse_y;
-
-	if (RenderModule.r_doubleres) {
-		mouse_pt.x /= 2;
-		mouse_pt.y /= 2;
-	}
 
 	SCENE_GetBGInfo(&bg_info);
 	GAME_GetDisplayInfo(&disp_info);
@@ -246,25 +190,6 @@ int RENDER_DrawScene() {
 		fps_width = FONT_GetStringWidth(SMALL_FONT_ID, txt_buf, 0, FONT_NORMAL);
 		FONT_Draw(SMALL_FONT_ID, backbuf_surface, txt_buf, 0, backbuf_surface->buf_w - fps_width, 2,
 					SYSGFX_GetWhite(), SYSGFX_GetBlack(), FONT_OUTLINE);
-		switch (RenderModule.r_mode) {
-		case RM_SCANLINES:
-			FONT_Draw(SMALL_FONT_ID, backbuf_surface, "Scanlines", 0, 2, 2,
-						SYSGFX_GetWhite(), SYSGFX_GetBlack(), FONT_OUTLINE);
-			break;
-		case RM_2XSAI:
-			FONT_Draw(SMALL_FONT_ID, backbuf_surface, "2xSaI", 0, 2, 2,
-						SYSGFX_GetWhite(), SYSGFX_GetBlack(), FONT_OUTLINE);
-			break;
-		case RM_SUPER2XSAI:
-			FONT_Draw(SMALL_FONT_ID, backbuf_surface, "Super2xSaI", 0, 2, 2,
-						SYSGFX_GetWhite(), SYSGFX_GetBlack(), FONT_OUTLINE);
-			break;
-		case RM_SUPEREAGLE:
-			FONT_Draw(SMALL_FONT_ID, backbuf_surface, "SuperEagle", 0, 2, 2,
-						SYSGFX_GetWhite(), SYSGFX_GetBlack(), FONT_OUTLINE);
-			break;
-		}
-
 	}
 
 	// Display "paused game" message, if applicable
@@ -298,38 +223,15 @@ int RENDER_DrawScene() {
 	CON_Draw(backbuf_surface);
 
 	// Display the current frame
-	if (RenderModule.r_hicolor) {
-		display_surface = SYSGFX_FormatToDisplay(backbuf_surface);
-		if (display_surface == NULL) {
-			R_printf(R_STDERR, "Error: Back buffer conversion failed!\n");
-			return R_FAILURE;
-		}
-		surface_converted = 1;
-	} else {
-		display_surface = backbuf_surface;
-	}
+	display_surface = backbuf_surface;
 
 	SYSGFX_LockSurface(screen_surface);
 	SYSGFX_LockSurface(display_surface);
 
-	switch (RenderModule.r_mode) {
-	case RM_SCANLINES:
-		break;
-	default:
-		if (RenderModule.r_doubleres) {
-			GFX_Scale2x(screen_surface, display_surface);
-		} else {
-			GFX_SimpleBlit(screen_surface, display_surface);
-		}
-		break;
-	}
+	GFX_SimpleBlit(screen_surface, display_surface);
 
 	SYSGFX_UnlockSurface(display_surface);
 	SYSGFX_UnlockSurface(screen_surface);
-
-	if (surface_converted) {
-		SYSGFX_DestroySurface(display_surface);
-	}
 
 	// FIXME
 	SDL_UpdateRect((SDL_Surface *)screen_surface->impl_src, 0, 0, 0, 0);
@@ -359,16 +261,6 @@ void RENDER_FpsTimer(unsigned long interval, void *param) {
 	return;
 }
 
-void RENDER_ConvertMousePt(R_POINT *mouse_pt) {
-	assert(mouse_pt != NULL);
-
-	if (RenderModule.r_doubleres) {
-
-		mouse_pt->x /= 2;
-		mouse_pt->y /= 2;
-	}
-}
-
 unsigned int RENDER_GetFlags() {
 	return RenderModule.r_flags;
 }
@@ -379,37 +271,6 @@ void RENDER_SetFlag(unsigned int flag) {
 
 void RENDER_ToggleFlag(unsigned int flag) {
 	RenderModule.r_flags ^= flag;
-}
-
-int RENDER_SetMode(int mode) {
-	switch (mode) {
-	case RM_SCANLINES:
-		if (!RenderModule.r_doubleres) {
-			return R_FAILURE;
-		}
-		break;
-	case RM_2XSAI:
-		if (!RenderModule.r_doubleres || !RenderModule.r_hicolor) {
-			return R_FAILURE;
-		}
-		break;
-	case RM_SUPER2XSAI:
-		if (!RenderModule.r_doubleres || !RenderModule.r_hicolor) {
-			return R_FAILURE;
-		}
-		break;
-	case RM_SUPEREAGLE:
-		if (!RenderModule.r_doubleres || !RenderModule.r_hicolor) {
-			return R_FAILURE;
-		}
-		break;
-	default:
-		break;
-	}
-
-	RenderModule.r_mode = mode;
-
-	return R_SUCCESS;
 }
 
 int RENDER_GetBufferInfo(R_BUFFER_INFO *r_bufinfo) {
