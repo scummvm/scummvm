@@ -1320,11 +1320,15 @@ void CharsetRendererClassic::printChar(int chr) {
 		dst.right = dst.left + width;
 		dst.bottom = dst.top + height;
 
-		if (dst.left < 0)
+		if (dst.left < 0) {
+			dstPtr -= _left;
 			dst.left = 0;
+		}
 
-		if (dst.top < 0)
+		if (dst.top < 0) {
+			dstPtr -= _top * dstSurface.pitch;
 			dst.top = 0;
+		}
 
 		if ((dst.left >= dst.right) || (dst.top >= dst.bottom))
 			return;
