@@ -34,4 +34,4 @@ dist:
 
 # Until we add a nice configure tool, default to the SDL build rules
 build.rules:
-	ln -s backends/sdl/build.rules
+	cp backends/sdl/build.rules build.rules
