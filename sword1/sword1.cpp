@@ -136,7 +136,9 @@ void SwordEngine::initialize(void) {
 	case Common::PT_BRA:
 		_systemVars.language = BS1_PORT;
 		break;
-	// TODO add czech option
+	case Common::CZ_CZE:
+		_systemVars.language = BS1_CZECH;
+		break;
 	default:
 		_systemVars.language = BS1_ENGLISH;
 	}

@@ -64,7 +64,8 @@ void SwordLogic::initialize(void) {
 	_eventMan = new EventManager();
 
 	delete _textMan;
-	_textMan = new SwordText(_objMan, _resMan, false);
+	_textMan = new SwordText(_objMan, _resMan, 
+		(SwordEngine::_systemVars.language == BS1_CZECH) ? true : false);
 	_screen->useTextManager(_textMan);
 	_textRunning = _speechRunning = false;
 	_speechFinished = true;

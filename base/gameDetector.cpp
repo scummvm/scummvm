@@ -57,7 +57,7 @@ static const char USAGE_STRING[] =
 	"                           hq3x,tv2x,dotmatrix)\n"
 	"  -e, --music-driver=MODE  Select music driver (see README for details)\n"
 	"  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,\n"
-	"                           hb,ru)\n"
+	"                           hb,ru,cz)\n"
 	"  -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)\n"
 	"  -o, --master-volume=NUM  Set the master volume, 0-255 (default: 192)\n"
 	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)\n"

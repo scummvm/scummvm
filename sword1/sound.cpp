@@ -257,8 +257,7 @@ void SwordSound::initCowSystem(void) {
 	sprintf(cowName, "SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);
 	_cowFile.open(cowName);
 	if (!_cowFile.isOpen()) {
-		sprintf(cowName, "SPEECH.CLU");
-		_cowFile.open(cowName);
+		_cowFile.open("speech.clu");
 	}
 	if (_cowFile.isOpen()) {
 		_cowHeaderSize = _cowFile.readUint32LE();

@@ -108,7 +108,8 @@ enum Language {
 	SE_SWE = 9,
 	EN_GRB = 10,
 	HB_HEB = 20,
-	RU_RUS = 21
+	RU_RUS = 21,
+	CZ_CZE = 22
 };
 
 struct LanguageDescription {
