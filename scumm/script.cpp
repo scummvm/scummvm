@@ -482,8 +482,12 @@ int ScummEngine::readVar(uint var) {
 			}
 		}
 
-		if ((_gameId == GID_LOOM256 || _features & GF_HUMONGOUS) && var == VAR_NOSUBTITLES) {
-			return !ConfMan.getBool("subtitles");	
+		if (var == VAR_NOSUBTITLES) {
+			if (_gameId == GID_LOOM256 || _features & GF_HUMONGOUS) 
+				return !ConfMan.getBool("subtitles");	
+			else if (_gameId == GID_SAMNMAX)
+				// Used as VAR_SUBTITLES in Sam & Max during Conroy Bumpus song
+				return ConfMan.getBool("subtitles");
 		}
 		
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
