@@ -309,7 +309,7 @@ void ScummEngine::processKbd(bool smushMode) {
 			_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
 		else 
 		// Skip talk 
-		if (_talkDelay > 0) 
+		if (_version >= 4 && _talkDelay > 0) 
 			_lastKeyHit = (uint)VAR(VAR_TALKSTOP_KEY);
 		else
 		// Escape
