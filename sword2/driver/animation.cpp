@@ -118,14 +118,12 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 	}
 
 	_vm->_graphics->clearScene();
-	memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
 
 #ifndef SCUMM_BIG_ENDIAN
 	flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
 #endif
 
-	while (1) {
-		if (!decodeFrame(anim)) break;
+	while (decodeFrame(anim)) {
 		_vm->_graphics->setNeedFullRedraw();
 
 		if (text && text[textCounter]) {                      
@@ -262,9 +260,6 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], uint
 		// Fake a palette that will hopefully make the text visible.
 		// In the opening cutscene it seems to use colours 1 (black?)
 		// and 255 (white?).
-		//
-		// The text should probably be colored the same as the rest of
-		// the in-game text.
 
 		memcpy(oldPal, _vm->_graphics->_palCopy, 1024);
 		memset(tmpPal, 0, 1024);
@@ -370,7 +365,7 @@ void MoviePlayer::checkPaletteSwitch(AnimationState * st) {
 		unsigned char *l = st->lut2;
 		st->palnum++;
 		_vm->_graphics->setPalette(0, 256, st->palettes[st->palnum].pal, RDPAL_INSTANT);
-		st->lutcalcnum =  (BITDEPTH + st->palettes[st->palnum].end - (st->framenum + 1) + 2) / (st->palettes[st->palnum].end - (st->framenum + 1) + 2);
+		st->lutcalcnum = (BITDEPTH + st->palettes[st->palnum].end - (st->framenum + 1) + 2) / (st->palettes[st->palnum].end - (st->framenum + 1) + 2);
 		st->lut2 = st->lut;
 		st->lut = l;
 	}
@@ -480,26 +475,24 @@ AnimationState *MoviePlayer::initAnimation(const char *name) {
 	/* Play audio - TODO: Sync with video?*/
 
 #ifdef USE_VORBIS
-	// Another TODO: There is no reason that this only allows OGG, and not MP3, or any other format
-	// the mixer might support one day... is there?
-	File *sndFile = new File;
+	// Another TODO: There is no reason that this only allows OGG, and not
+	// MP3, or any other format the mixer might support one day... is
+	// there?
+	st->sndfile = new File;
 	sprintf(tempFile, "%s.ogg", basename);
-	if (sndFile->open(tempFile))
-		_vm->_mixer->playVorbis(&st->bgSound, sndFile, 100000000);
+	if (st->sndfile->open(tempFile))
+		_vm->_mixer->playVorbis(&st->bgSound, st->sndfile, 100000000);
 #endif
-
-	// FIXME: This leaks (sndFile will never be deleted)
 
 	return st;
 }
 
 void MoviePlayer::doneAnimation(AnimationState *st) {
-	if (st->bgSound.isActive())
-		_vm->_mixer->stopHandle(st->bgSound);
-
-	mpeg2_close (st->decoder);
+	_vm->_mixer->stopHandle(st->bgSound);
+	mpeg2_close(st->decoder);
 	st->mpgfile->close();
 	delete st->mpgfile;
+	delete st->sndfile;
 	delete st;
 }
 

@@ -58,6 +58,7 @@ public:
 #endif
 
 	File *mpgfile;
+	File *sndfile;
 
 	int curpal;
 	int cr;
@@ -86,11 +87,11 @@ private:
 	void closeTextObject(MovieTextObject *obj);
 	void drawTextObject(MovieTextObject *obj);
 
-	void checkPaletteSwitch(AnimationState * st);
+	void checkPaletteSwitch(AnimationState *st);
 
-	AnimationState * initAnimation(const char *name);
-	void doneAnimation(AnimationState * st);
-	bool decodeFrame(AnimationState * st);
+	AnimationState *initAnimation(const char *name);
+	void doneAnimation(AnimationState *st);
+	bool decodeFrame(AnimationState *st);
 
 public:
 	MoviePlayer(Sword2Engine *vm) : _vm(vm), _textSurface(NULL) {}
