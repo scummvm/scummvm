@@ -22,59 +22,59 @@
 
 #include "common/scaler/intern.h"
 
-#define PIXEL00_0	*(q) = w[5];
-#define PIXEL00_10	*(q) = interpolate16_2<bitFormat,3,1>(w[5], w[1]);
-#define PIXEL00_11	*(q) = interpolate16_2<bitFormat,3,1>(w[5], w[4]);
-#define PIXEL00_12	*(q) = interpolate16_2<bitFormat,3,1>(w[5], w[2]);
-#define PIXEL00_20	*(q) = interpolate16_3<bitFormat,2,1,1>(w[5], w[4], w[2]);
-#define PIXEL00_21	*(q) = interpolate16_3<bitFormat,2,1,1>(w[5], w[1], w[2]);
-#define PIXEL00_22	*(q) = interpolate16_3<bitFormat,2,1,1>(w[5], w[1], w[4]);
-#define PIXEL00_60	*(q) = interpolate16_3<bitFormat,5,2,1>(w[5], w[2], w[4]);
-#define PIXEL00_61	*(q) = interpolate16_3<bitFormat,5,2,1>(w[5], w[4], w[2]);
-#define PIXEL00_70	*(q) = interpolate16_3<bitFormat,6,1,1>(w[5], w[4], w[2]);
-#define PIXEL00_90	*(q) = interpolate16_3<bitFormat,2,3,3>(w[5], w[4], w[2]);
-#define PIXEL00_100	*(q) = interpolate16_3<bitFormat,14,1,1>(w[5], w[4], w[2]);
+#define PIXEL00_0	*(q) = w5;
+#define PIXEL00_10	*(q) = interpolate16_2<bitFormat,3,1>(w5, w1);
+#define PIXEL00_11	*(q) = interpolate16_2<bitFormat,3,1>(w5, w4);
+#define PIXEL00_12	*(q) = interpolate16_2<bitFormat,3,1>(w5, w2);
+#define PIXEL00_20	*(q) = interpolate16_3<bitFormat,2,1,1>(w5, w4, w2);
+#define PIXEL00_21	*(q) = interpolate16_3<bitFormat,2,1,1>(w5, w1, w2);
+#define PIXEL00_22	*(q) = interpolate16_3<bitFormat,2,1,1>(w5, w1, w4);
+#define PIXEL00_60	*(q) = interpolate16_3<bitFormat,5,2,1>(w5, w2, w4);
+#define PIXEL00_61	*(q) = interpolate16_3<bitFormat,5,2,1>(w5, w4, w2);
+#define PIXEL00_70	*(q) = interpolate16_3<bitFormat,6,1,1>(w5, w4, w2);
+#define PIXEL00_90	*(q) = interpolate16_3<bitFormat,2,3,3>(w5, w4, w2);
+#define PIXEL00_100	*(q) = interpolate16_3<bitFormat,14,1,1>(w5, w4, w2);
 
-#define PIXEL01_0	*(q+1) = w[5];
-#define PIXEL01_10	*(q+1) = interpolate16_2<bitFormat,3,1>(w[5], w[3]);
-#define PIXEL01_11	*(q+1) = interpolate16_2<bitFormat,3,1>(w[5], w[2]);
-#define PIXEL01_12	*(q+1) = interpolate16_2<bitFormat,3,1>(w[5], w[6]);
-#define PIXEL01_20	*(q+1) = interpolate16_3<bitFormat,2,1,1>(w[5], w[2], w[6]);
-#define PIXEL01_21	*(q+1) = interpolate16_3<bitFormat,2,1,1>(w[5], w[3], w[6]);
-#define PIXEL01_22	*(q+1) = interpolate16_3<bitFormat,2,1,1>(w[5], w[3], w[2]);
-#define PIXEL01_60	*(q+1) = interpolate16_3<bitFormat,5,2,1>(w[5], w[6], w[2]);
-#define PIXEL01_61	*(q+1) = interpolate16_3<bitFormat,5,2,1>(w[5], w[2], w[6]);
-#define PIXEL01_70	*(q+1) = interpolate16_3<bitFormat,6,1,1>(w[5], w[2], w[6]);
-#define PIXEL01_90	*(q+1) = interpolate16_3<bitFormat,2,3,3>(w[5], w[2], w[6]);
-#define PIXEL01_100	*(q+1) = interpolate16_3<bitFormat,14,1,1>(w[5], w[2], w[6]);
+#define PIXEL01_0	*(q+1) = w5;
+#define PIXEL01_10	*(q+1) = interpolate16_2<bitFormat,3,1>(w5, w3);
+#define PIXEL01_11	*(q+1) = interpolate16_2<bitFormat,3,1>(w5, w2);
+#define PIXEL01_12	*(q+1) = interpolate16_2<bitFormat,3,1>(w5, w6);
+#define PIXEL01_20	*(q+1) = interpolate16_3<bitFormat,2,1,1>(w5, w2, w6);
+#define PIXEL01_21	*(q+1) = interpolate16_3<bitFormat,2,1,1>(w5, w3, w6);
+#define PIXEL01_22	*(q+1) = interpolate16_3<bitFormat,2,1,1>(w5, w3, w2);
+#define PIXEL01_60	*(q+1) = interpolate16_3<bitFormat,5,2,1>(w5, w6, w2);
+#define PIXEL01_61	*(q+1) = interpolate16_3<bitFormat,5,2,1>(w5, w2, w6);
+#define PIXEL01_70	*(q+1) = interpolate16_3<bitFormat,6,1,1>(w5, w2, w6);
+#define PIXEL01_90	*(q+1) = interpolate16_3<bitFormat,2,3,3>(w5, w2, w6);
+#define PIXEL01_100	*(q+1) = interpolate16_3<bitFormat,14,1,1>(w5, w2, w6);
 
-#define PIXEL10_0	*(q+nextlineDst) = w[5];
-#define PIXEL10_10	*(q+nextlineDst) = interpolate16_2<bitFormat,3,1>(w[5], w[7]);
-#define PIXEL10_11	*(q+nextlineDst) = interpolate16_2<bitFormat,3,1>(w[5], w[8]);
-#define PIXEL10_12	*(q+nextlineDst) = interpolate16_2<bitFormat,3,1>(w[5], w[4]);
-#define PIXEL10_20	*(q+nextlineDst) = interpolate16_3<bitFormat,2,1,1>(w[5], w[8], w[4]);
-#define PIXEL10_21	*(q+nextlineDst) = interpolate16_3<bitFormat,2,1,1>(w[5], w[7], w[4]);
-#define PIXEL10_22	*(q+nextlineDst) = interpolate16_3<bitFormat,2,1,1>(w[5], w[7], w[8]);
-#define PIXEL10_60	*(q+nextlineDst) = interpolate16_3<bitFormat,5,2,1>(w[5], w[4], w[8]);
-#define PIXEL10_61	*(q+nextlineDst) = interpolate16_3<bitFormat,5,2,1>(w[5], w[8], w[4]);
-#define PIXEL10_70	*(q+nextlineDst) = interpolate16_3<bitFormat,6,1,1>(w[5], w[8], w[4]);
-#define PIXEL10_90	*(q+nextlineDst) = interpolate16_3<bitFormat,2,3,3>(w[5], w[8], w[4]);
-#define PIXEL10_100	*(q+nextlineDst) = interpolate16_3<bitFormat,14,1,1>(w[5], w[8], w[4]);
+#define PIXEL10_0	*(q+nextlineDst) = w5;
+#define PIXEL10_10	*(q+nextlineDst) = interpolate16_2<bitFormat,3,1>(w5, w7);
+#define PIXEL10_11	*(q+nextlineDst) = interpolate16_2<bitFormat,3,1>(w5, w8);
+#define PIXEL10_12	*(q+nextlineDst) = interpolate16_2<bitFormat,3,1>(w5, w4);
+#define PIXEL10_20	*(q+nextlineDst) = interpolate16_3<bitFormat,2,1,1>(w5, w8, w4);
+#define PIXEL10_21	*(q+nextlineDst) = interpolate16_3<bitFormat,2,1,1>(w5, w7, w4);
+#define PIXEL10_22	*(q+nextlineDst) = interpolate16_3<bitFormat,2,1,1>(w5, w7, w8);
+#define PIXEL10_60	*(q+nextlineDst) = interpolate16_3<bitFormat,5,2,1>(w5, w4, w8);
+#define PIXEL10_61	*(q+nextlineDst) = interpolate16_3<bitFormat,5,2,1>(w5, w8, w4);
+#define PIXEL10_70	*(q+nextlineDst) = interpolate16_3<bitFormat,6,1,1>(w5, w8, w4);
+#define PIXEL10_90	*(q+nextlineDst) = interpolate16_3<bitFormat,2,3,3>(w5, w8, w4);
+#define PIXEL10_100	*(q+nextlineDst) = interpolate16_3<bitFormat,14,1,1>(w5, w8, w4);
 
-#define PIXEL11_0	*(q+1+nextlineDst) = w[5];
-#define PIXEL11_10	*(q+1+nextlineDst) = interpolate16_2<bitFormat,3,1>(w[5], w[9]);
-#define PIXEL11_11	*(q+1+nextlineDst) = interpolate16_2<bitFormat,3,1>(w[5], w[6]);
-#define PIXEL11_12	*(q+1+nextlineDst) = interpolate16_2<bitFormat,3,1>(w[5], w[8]);
-#define PIXEL11_20	*(q+1+nextlineDst) = interpolate16_3<bitFormat,2,1,1>(w[5], w[6], w[8]);
-#define PIXEL11_21	*(q+1+nextlineDst) = interpolate16_3<bitFormat,2,1,1>(w[5], w[9], w[8]);
-#define PIXEL11_22	*(q+1+nextlineDst) = interpolate16_3<bitFormat,2,1,1>(w[5], w[9], w[6]);
-#define PIXEL11_60	*(q+1+nextlineDst) = interpolate16_3<bitFormat,5,2,1>(w[5], w[8], w[6]);
-#define PIXEL11_61	*(q+1+nextlineDst) = interpolate16_3<bitFormat,5,2,1>(w[5], w[6], w[8]);
-#define PIXEL11_70	*(q+1+nextlineDst) = interpolate16_3<bitFormat,6,1,1>(w[5], w[6], w[8]);
-#define PIXEL11_90	*(q+1+nextlineDst) = interpolate16_3<bitFormat,2,3,3>(w[5], w[6], w[8]);
-#define PIXEL11_100	*(q+1+nextlineDst) = interpolate16_3<bitFormat,14,1,1>(w[5], w[6], w[8]);
+#define PIXEL11_0	*(q+1+nextlineDst) = w5;
+#define PIXEL11_10	*(q+1+nextlineDst) = interpolate16_2<bitFormat,3,1>(w5, w9);
+#define PIXEL11_11	*(q+1+nextlineDst) = interpolate16_2<bitFormat,3,1>(w5, w6);
+#define PIXEL11_12	*(q+1+nextlineDst) = interpolate16_2<bitFormat,3,1>(w5, w8);
+#define PIXEL11_20	*(q+1+nextlineDst) = interpolate16_3<bitFormat,2,1,1>(w5, w6, w8);
+#define PIXEL11_21	*(q+1+nextlineDst) = interpolate16_3<bitFormat,2,1,1>(w5, w9, w8);
+#define PIXEL11_22	*(q+1+nextlineDst) = interpolate16_3<bitFormat,2,1,1>(w5, w9, w6);
+#define PIXEL11_60	*(q+1+nextlineDst) = interpolate16_3<bitFormat,5,2,1>(w5, w8, w6);
+#define PIXEL11_61	*(q+1+nextlineDst) = interpolate16_3<bitFormat,5,2,1>(w5, w6, w8);
+#define PIXEL11_70	*(q+1+nextlineDst) = interpolate16_3<bitFormat,6,1,1>(w5, w6, w8);
+#define PIXEL11_90	*(q+1+nextlineDst) = interpolate16_3<bitFormat,2,3,3>(w5, w6, w8);
+#define PIXEL11_100	*(q+1+nextlineDst) = interpolate16_3<bitFormat,14,1,1>(w5, w6, w8);
 
-#define YUV(x)	RGBtoYUV[w[x]]
+#define YUV(x)	RGBtoYUV[w ## x]
 
 /**
  * The HQ2x high quality 2x graphics filter.
@@ -83,7 +83,8 @@
  */
 template<int bitFormat>
 void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	int  w[10];
+//	int  w[10];
+	register int  w1, w2, w3, w4, w5, w6, w7, w8, w9;
   
 	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
 	const uint16 *p = (const uint16 *)srcPtr;
@@ -147,13 +148,13 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 
 
 	while (height--) {
-		w[1] = *(p - 1 - nextlineSrc);
-		w[4] = *(p - 1);
-		w[7] = *(p - 1 + nextlineSrc);
+		w1 = *(p - 1 - nextlineSrc);
+		w4 = *(p - 1);
+		w7 = *(p - 1 + nextlineSrc);
 
-		w[2] = *(p - nextlineSrc);
-		w[5] = *(p);
-		w[8] = *(p + nextlineSrc);
+		w2 = *(p - nextlineSrc);
+		w5 = *(p);
+		w8 = *(p + nextlineSrc);
 
 #if USE_ALTIVEC
 		// Load inital values of vecYUV1234 / vecYUV6789
@@ -168,9 +169,9 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 		while (tmpWidth--) {
 			p++;
 
-			w[3] = *(p - nextlineSrc);
-			w[6] = *(p);
-			w[9] = *(p + nextlineSrc);
+			w3 = *(p - nextlineSrc);
+			w6 = *(p);
+			w9 = *(p + nextlineSrc);
 
 			int pattern = 0;
 
@@ -242,14 +243,14 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 			pattern = ((int *)&vSum)[3];
 #else
 			const int yuv5 = YUV(5);
-			if (w[5] != w[1] && diffYUV(yuv5, YUV(1))) pattern |= 0x0001;
-			if (w[5] != w[2] && diffYUV(yuv5, YUV(2))) pattern |= 0x0002;
-			if (w[5] != w[3] && diffYUV(yuv5, YUV(3))) pattern |= 0x0004;
-			if (w[5] != w[4] && diffYUV(yuv5, YUV(4))) pattern |= 0x0008;
-			if (w[5] != w[6] && diffYUV(yuv5, YUV(6))) pattern |= 0x0010;
-			if (w[5] != w[7] && diffYUV(yuv5, YUV(7))) pattern |= 0x0020;
-			if (w[5] != w[8] && diffYUV(yuv5, YUV(8))) pattern |= 0x0040;
-			if (w[5] != w[9] && diffYUV(yuv5, YUV(9))) pattern |= 0x0080;
+			if (w5 != w1 && diffYUV(yuv5, YUV(1))) pattern |= 0x0001;
+			if (w5 != w2 && diffYUV(yuv5, YUV(2))) pattern |= 0x0002;
+			if (w5 != w3 && diffYUV(yuv5, YUV(3))) pattern |= 0x0004;
+			if (w5 != w4 && diffYUV(yuv5, YUV(4))) pattern |= 0x0008;
+			if (w5 != w6 && diffYUV(yuv5, YUV(6))) pattern |= 0x0010;
+			if (w5 != w7 && diffYUV(yuv5, YUV(7))) pattern |= 0x0020;
+			if (w5 != w8 && diffYUV(yuv5, YUV(8))) pattern |= 0x0040;
+			if (w5 != w9 && diffYUV(yuv5, YUV(9))) pattern |= 0x0080;
 #endif
 
 			switch (pattern) {
@@ -2044,13 +2045,13 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 				break;
 			}
 
-			w[1] = w[2];
-			w[4] = w[5];
-			w[7] = w[8];
+			w1 = w2;
+			w4 = w5;
+			w7 = w8;
 
-			w[2] = w[3];
-			w[5] = w[6];
-			w[8] = w[9];
+			w2 = w3;
+			w5 = w6;
+			w8 = w9;
 
 			q += 2;
 		}
