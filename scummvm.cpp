@@ -902,9 +902,8 @@ void Scumm::convertKeysToClicks()
 Actor *Scumm::derefActorSafe(int id, const char *errmsg)
 {
 	if (id < 1 || id >= NUM_ACTORS) {
-		warning
-			("Invalid actor %d in %s (script %d, opcode 0x%x) - This is potentially a BIG problem.",
-			 id, errmsg, vm.slot[_curExecScript].number, _opcode);
+		if (_debugMode)
+			warning("Invalid actor %d in %s (script %d, opcode 0x%x) - This is potentially a BIG problem.", id, errmsg, vm.slot[_curExecScript].number, _opcode);
 		return NULL;
 	}
 	return derefActor(id);

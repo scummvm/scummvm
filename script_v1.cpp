@@ -1254,10 +1254,15 @@ void Scumm::o5_getActorMoving()
 void Scumm::o5_getActorRoom()
 {
 	int temp;
+	Actor *act;
 	getResultPos();
 	temp = getVarOrDirectByte(0x80);
+	
+	act = derefActorSafe(temp, "o5_getActorRoom");
+	if (!act) 
+		return;
 
-	setResult(derefActorSafe(temp, "o5_getActorRoom")->room);
+	setResult(act->room);
 }
 
 void Scumm::o5_getActorScale()
