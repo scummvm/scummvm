@@ -35,8 +35,20 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
  SCUMM:
    - Fixed wrong actor animation in Full Throttle INSANE
  
- PocketPC:
-   - Fixed several issues introduced in 0.7.0 [Arisme, feel free to fill in details]
+ Windows Mobile port (PocketPC / Smartphone) :
+   - Fixed FOTAQ crash on all platforms when leaving the hotel AGAIN
+   - Better low quality Adlib emulation for FOTAQ
+   - Fix randomly broken Hide Toolbar option (thanks iKi)
+   - Fix first hardware key mapping (was not displayed before) 
+   - Fix BASS & Simon hangs on Smartphone when using the Skip hotkey
+   - Fix Zone key action on Smartphone (now mapped on key 9)
+   - Experimental third party VGA mode (SE-VGA) fix
+   - Add Key Mapping option in the launcher (Options / Misc / Keys)
+   - Remove AYGSHELL.DLL dependency to work on CE .Net platforms
+   - Fix key mapping issues introduced in 0.7.0
+   - Full Throttle interactive action sequences should be more playable.
+   - New key mapping option "FT Cheat" to win a Full Throttle action sequence
+   - Quit Simon game with 'Action key' on Smartphones
 
  Sword2:
    - Fixed crash caused by attempting to play music from CD1 and CD2 at the
