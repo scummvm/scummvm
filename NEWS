@@ -9,7 +9,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 - Curse of Monkey Island (COMI) support for playing from CD improved on Mac OS X
 - Loading COMI savegames for disk 2 doesn't anymore require disk 1 first
 - Music fixes (exp. Monkey Island 2)
-- Rewritten iMuse engine
+- Rewritten iMUSE engine
 - Many other bug fixes and improvements
 
 0.4.1 (2003-05-25)
@@ -17,7 +17,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 - Fixed crash in Curse of Monkey Island (and possibly other games as well)
 - Fixed airport doors in Zak256
 - Fixed crash in SDL backend
-- Fixed various iMuse bugs
+- Fixed various iMUSE bugs
 
 0.4.0 (2003-05-11)
 - Curse of Monkey Island (comi) support (experimental)
