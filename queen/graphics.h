@@ -144,6 +144,7 @@ public:
 
 	void frameErase(uint32 fslot);
 	void frameEraseAll(bool joe); // freeframes, freeallframes
+	BobFrame *frame(int index) { return _frames + index; }
 
 	void loadBackdrop(const char *name, uint16 room);
 	void loadPanel();

@@ -81,6 +81,10 @@ void Graphics::bankLoad(const char *bankname, uint32 bankslot) {
 void Graphics::bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	
 	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
+
+	if (!_banks[bankslot].data)
+		error("Graphics::bankUnpack(%i, %i, %i) called but _banks[bankslot].data is NULL!", 
+				srcframe, dstframe, bankslot);
 		
 	BobFrame *pbf = &_frames[dstframe];
 	delete[] pbf->data;
@@ -656,13 +660,13 @@ void Graphics::useJournal() { // GameSettings* pgs
 }
 
 
-void Graphics::journalBobSetup(uint32 bobnum, uint16 x, uint16 y, uint16 frame) {
-
+void Graphics::journalBobSetup(uint32 bobnum, uint16 x, uint16 y, uint16 frameNum) 
+{
 	BobSlot *pbs = &_bobs[bobnum];
 	pbs->active = true;
 	pbs->x = x;
 	pbs->y = y;
-	pbs->frameNum = FRAMES_JOURNAL + frame;
+	pbs->frameNum = FRAMES_JOURNAL + frameNum;
 	pbs->box.y2 = GAME_SCREEN_HEIGHT - 1;
 }
 
