@@ -327,17 +327,19 @@ SAGA
  * Actor pops up with wrong palette at transition to faery scene. Again :)
  * Make sprite RLE decompressor work on Mac resources
  * Animation end is not detected properly with Mac. That leads to hang in intro
+ * Sound/voice length calculation wrong
+
 
 - plans -
  * Implement unimplemented opcodes
  * Remove use of floating point, especially doubles.
  * Rewrite path finder (h00ligan)
- * Eliminate script semaphores and use flags instead
  * Fix the usage of Rect so that it's more consistent with the rest of ScummVM,
    e.g. a rectangle covering the entire ITE screen should have right=320 and
    bottom=200. (eriktorbjorn, partly - mostly? - done)
- * Change SData so that its buffers point to the appropriate data.
-   (eriktorbjorn - mostly done; the script "static" buffer is still wrong)
+ * Change script buffer so that its point to the appropriate data.
+   (eriktorbjorn - mostly done)
+ * ISO - tile scene implementation
 
 - features -
  * Add sound/voices compression. Should _considerably_ save space.
