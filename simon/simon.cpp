@@ -43,11 +43,9 @@ static const VersionSettings simon_settings[] = {
 	{"simon2dos", "Simon the Sorcerer 2 for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2DOS, "GAME32"},
 	{"simon1talkie", "Simon the Sorcerer 1 Talkie for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1TALKIE, "SIMON.GME"},
 	{"simon2talkie", "Simon the Sorcerer 2 Talkie for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2TALKIE, "GSPTR30"},
-	{"simon2talkie", "Simon the Sorcerer 2 Talkie for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2TALKIE, "GSPTR30."},
 	{"simon1win", "Simon the Sorcerer 1 Talkie for Windows", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1WIN, "SIMON.GME"},
 	{"simon1cd32", "Simon the Sorcerer 1 Talkie for Amiga CD32", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1CD32, "gameamiga"},
 	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2WIN, "GSPTR30"},
-	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2WIN, "GSPTR30."},
 	{"simon2mac", "Simon the Sorcerer 2 Talkie for Amiga or Mac", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2MAC, "GSPTR30"},
 	{"simon1demo", "Simon the Sorcerer 1 for DOS (Demo)", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1DEMO, "GDEMO"}, 
 
