@@ -292,7 +292,7 @@ void SkyDisk::fnCacheFiles(void) {
 		bCnt = 0;
 		found = false;
 		while (_buildList[bCnt] && (!found)) {
-			if ((_buildList[bCnt] & 0x7FFF) == _loadedFilesList[lCnt]) found = true;
+			if ((_buildList[bCnt] & 0x7FFFU) == _loadedFilesList[lCnt]) found = true;
 			else bCnt++;
 		}
 		if (found) {
@@ -315,7 +315,7 @@ void SkyDisk::fnCacheFiles(void) {
 		lCnt = 0;
 		found = false;
 		while (_loadedFilesList[lCnt] && (!found)) {
-			if (_loadedFilesList[lCnt] == (_buildList[bCnt] & 0x7FFF)) found = true;
+			if (_loadedFilesList[lCnt] == (_buildList[bCnt] & 0x7FFFU)) found = true;
             lCnt++;
 		}
 		if (found) {
