@@ -868,14 +868,14 @@ void Scumm_v2::o2_doSentence() {
 		// Execute the sentence
 		_sentenceNum--;
 		
-		if (st->verb != 250) {
+		if (st->verb != 250 && st->verb != 253) {
 			VAR(VAR_ACTIVE_VERB) = st->verb;
 			VAR(VAR_ACTIVE_OBJECT1) = st->objectA;	
 			VAR(VAR_ACTIVE_OBJECT2) = st->objectB;
 
 			runObjectScript(st->objectA, st->verb, false, false, NULL);
 		} else
-			runObjectScript(st->objectA, 253, false, true, NULL);
+			runObjectScript(st->objectA, 253, false, (st->verb == 250), NULL);
 		break;
 	case 2:
 		// Print the sentence
