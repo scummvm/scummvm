@@ -9,7 +9,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 - Added support for Amiga version of Monkey Island 1
 - Enhanced versions of Maniac Mansion and Zak McKracken are now supported and completable
 - Beneath A Steel Sky is now supported and completable
-- Initial, unplayable, support for V1 EGA version of Maniac Mansion
+- Initial unplayable support for V1 version of Maniac Mansion/Zak McKracken
 - Curse of Monkey Island (COMI) support for playing from CD improved on Mac OS X
 - Loading COMI savegames for disk 2 doesn't anymore require disk 1 first
 - Improved music and sound support in Zak256
