@@ -1626,6 +1626,12 @@ void Scumm::processKbd() {
 			_videoFinished = true;
 		} else
 			abortCutscene();
+		if (_version <= 2) {
+			// Ensure that the input script also sees the key press.
+			// This is necessary so you can abort the airplane travel
+			// in Zak.
+			VAR(VAR_KEYPRESS) = VAR(VAR_CUTSCENEEXIT_KEY);
+		}
 	} else if (_lastKeyHit == saveloadkey) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
