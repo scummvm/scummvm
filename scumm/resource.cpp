@@ -36,7 +36,9 @@ uint16 newTag2Old(uint32 oldTag);
 /* Open a room */
 void Scumm::openRoom(int room) {
 	int room_offs, roomlimit;
-	char buf[256];
+	bool result;
+	char buf[128];
+	char buf2[128] = "";
 
 	debug(9, "openRoom(%d)", room);
 	assert(room >= 0);
@@ -78,10 +80,14 @@ void Scumm::openRoom(int room) {
 				if (room > 0)
 					_vars[VAR_CURRENTDISK] = res.roomno[rtRoom][room];
 				sprintf(buf, "%s.la%d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
+				sprintf(buf2, "%s.%.3d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
 			} else if (_features & GF_HUMONGOUS)
 				sprintf(buf, "%s.he%.1d", _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
-			else
+			else {
 				sprintf(buf, "%s.%.3d",  _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
+				if (_gameId == GID_SAMNMAX)
+					sprintf(buf2, "%s.sm%.1d",  _exe_name, room == 0 ? 0 : res.roomno[rtRoom][room]);
+			}
 
 			_encbyte = (_features & GF_USE_KEY) ? 0x69 : 0;
 		} else if (!(_features & GF_SMALL_NAMES)) {
@@ -102,7 +108,11 @@ void Scumm::openRoom(int room) {
 			_encbyte = (_features & GF_USE_KEY) ? 0xFF : 0;
 		}
 
-		if (openResourceFile(buf)) {
+		result = openResourceFile(buf);
+		if ((result == false) && (buf2[0]))
+			result = openResourceFile(buf2);
+			
+		if (result) {
 			if (room == 0)
 				return;
 			if (_features & GF_EXTERNAL_CHARSET && room >= roomlimit)
