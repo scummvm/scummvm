@@ -70,7 +70,34 @@ typedef struct {
 
 } GameInfoTypeV2;
 
+
 // Current config
+typedef struct {
+	struct {
+		UInt16 master;
+		UInt16 music;
+		UInt16 sfx;
+		UInt16 speech;
+		UInt16 audiocd;
+	} volume;
+	
+	struct {
+		// midi
+		Boolean multiMidi;
+		Boolean music;
+		UInt8 drvMusic;
+		UInt8 tempo;
+		// sound FX
+		Boolean sfx;
+		UInt8 rate;
+		// CD audio
+		Boolean CD;
+		UInt8 drvCD, frtCD;
+		UInt16 defaultTrackLength;
+		UInt16 firstTrack;
+	} sound;
+} MusicInfoType;
+
 typedef struct {
 	UInt32	version;
 	UInt16	icnID;			// icon to display on the list
@@ -91,7 +118,13 @@ typedef struct {
 	UInt16 bootValue;
 	UInt16 talkValue;
 	UInt8 platform;
-	UInt8 language;
+	UInt8 language;			// |- 	v2.5
+	
+	Boolean filter;			// 		v2.6
+	Boolean fullscreen;		// |
+	Boolean aspectRatio;	// |-	v2.7
+	
+	MusicInfoType musicInfo;// 		v3.0
 
 } GameInfoType;
 

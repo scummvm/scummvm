@@ -64,8 +64,39 @@ static Err GamUpdateList() {
 				FrmDrawForm(frmP);
 				SysTaskDelay(200);
 
-				if (version == itemVersion_2) {
-					// need conversion from V2 -> V2.5
+				MemSet(&gitCur, sizeof(GameInfoType), 0);
+
+				if (version == itemVersion_27 ||
+					version == itemVersion_26 ||
+					version == itemVersion_25) {
+
+					for (index = 0; index < numRecs; index++) {
+						
+						// get old data
+						tmpH = DmQueryRecord(gameDB, index);
+						tmpP = MemHandleLock(tmpH);
+						MemMove(&gitCur, tmpP, MemHandleSize(tmpH));
+						MemHandleUnlock(tmpH);
+						
+						gitCur.musicInfo.volume.master = 192;
+						gitCur.musicInfo.volume.music = 192;
+						gitCur.musicInfo.volume.sfx = 192;
+						gitCur.musicInfo.volume.speech = 192;
+						gitCur.musicInfo.volume.audiocd = 50;
+						
+						gitCur.musicInfo.sound.tempo = 100;
+						gitCur.musicInfo.sound.defaultTrackLength = 10;
+						gitCur.musicInfo.sound.firstTrack = 1;
+
+						// simply resize the old record
+						tmpH = DmResizeRecord(gameDB, index, sizeof(GameInfoType));	// TODO : check error on resize tmpH==NULL
+						tmpP = MemHandleLock(tmpH);
+						DmWrite(tmpP, 0, &gitCur, sizeof(GameInfoType));
+						MemPtrUnlock(tmpP);
+					}
+					
+				} else if (version == itemVersion_20) {
+					// need conversion from V2 -> V2.7
 					GameInfoTypeV2 git0;
 
 					for (index = 0; index < numRecs; index++) {
@@ -96,14 +127,24 @@ static Err GamUpdateList() {
 						gitCur.talkValue = git0.talkValue;
 						gitCur.platform = git0.platform;
 						gitCur.language = git0.language;
+
+						gitCur.musicInfo.volume.master = 192;
+						gitCur.musicInfo.volume.music = 192;
+						gitCur.musicInfo.volume.sfx = 192;
+						gitCur.musicInfo.volume.speech = 192;
+						gitCur.musicInfo.volume.audiocd = 50;
 						
+						gitCur.musicInfo.sound.tempo = 100;
+						gitCur.musicInfo.sound.defaultTrackLength = 10;
+						gitCur.musicInfo.sound.firstTrack = 1;
+
 						tmpH = DmResizeRecord(gameDB, index, sizeof(GameInfoType));	// TODO : check error on resize tmpH==NULL
 						tmpP = MemHandleLock(tmpH);
 						DmWrite(tmpP, 0, &gitCur, sizeof(GameInfoType));
 						MemPtrUnlock(tmpP);
 					}
 				} else {
-					// need conversion from V0 -> V2.5
+					// need conversion from V0 -> V2.7
 					GameInfoTypeV0 git0;
 
 					for (index = 0; index < numRecs; index++) {
@@ -134,7 +175,17 @@ static Err GamUpdateList() {
 						gitCur.talkValue = git0.talkValue;
 						gitCur.platform = 0;	// default to amiga
 						gitCur.language = git0.language;
+
+						gitCur.musicInfo.volume.master = 192;
+						gitCur.musicInfo.volume.music = 192;
+						gitCur.musicInfo.volume.sfx = 192;
+						gitCur.musicInfo.volume.speech = 192;
+						gitCur.musicInfo.volume.audiocd = 50;
 						
+						gitCur.musicInfo.sound.tempo = 100;
+						gitCur.musicInfo.sound.defaultTrackLength = 10;
+						gitCur.musicInfo.sound.firstTrack = 1;
+
 						tmpH = DmResizeRecord(gameDB, index, sizeof(GameInfoType));	// TODO : check error on resize tmpH==NULL
 						tmpP = MemHandleLock(tmpH);
 						DmWrite(tmpP, 0, &gitCur, sizeof(GameInfoType));
