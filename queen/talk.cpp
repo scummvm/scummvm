@@ -725,7 +725,7 @@ void Talk::headStringAnimation(const SpeechParameters *parameters, int bobNum, i
 		for (;;) {
 			uint16 frame;
 
-			sscanf(parameters->animation + offset, "%3hu", &frame);
+			frame = atoi(parameters->animation + offset);
 			if (!frame)
 				break;
 
@@ -772,7 +772,7 @@ void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, i
 	for (;;) {
 		uint16 frame;
 
-		sscanf(parameters->animation + offset, "%3hu", &frame);
+		frame = atoi(parameters->animation + offset);
 		if (!frame)
 			break;
 

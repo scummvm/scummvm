@@ -80,7 +80,7 @@ int32 Resource::resourceIndex(const char *filename) const {
 	
 
 	//Use simple binary search to locate file
-	for(;;) {
+	for (;;) {
 		uint32 cur = (low + high) / 2;
 		int32 diff = strcmp(entryName, _resourceTable[cur].filename);
 

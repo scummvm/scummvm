@@ -93,7 +93,7 @@ void Credits::update() {
 					break;
 
 				case 'p' :
-					sscanf(&line[3], "%d\n", &_pause);
+					_pause = atoi(&line[3]);
 					_pause *= 10;
 
 					/* wait until next room */
@@ -111,7 +111,7 @@ void Credits::update() {
 					return;
 					
 				case 'i' :
-					sscanf(&line[3], "%d\n", &_color);
+					_color = atoi(&line[3]);
 					break;
 
 				case '1' :
