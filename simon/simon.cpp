@@ -50,7 +50,7 @@ static const GameSpecificSettings simon1_settings = {
 	"SIMON.GME",									/* gme_filename */
 	"SIMON.WAV",									/* wav_filename */
 	"SIMON.VOC",									/* wav_filename2 */
-	"EFFECTS.VOC",								/* effects_filename */
+	"EFFECTS.VOC",									/* effects_filename */
 	"GAMEPC",											/* gamepc_filename */
 };
 
@@ -86,7 +86,7 @@ static const GameSpecificSettings simon2dos_settings = {
 	1128 / 4,											/* MUSIC_INDEX_BASE */
 	1660 / 4,											/* SOUND_INDEX_BASE */
 	"SIMON2.GME",									/* gme_filename */
-	"SIMON2.WAV",									/* wav_filename */
+	NULL,										/* wav_filename */
 	NULL,
 	"",
 	"GAME32",											/* gamepc_filename */
@@ -1713,8 +1713,6 @@ void SimonState::o_print_str()
 	case GAME_SIMON2DOS:
 		if (string_id != 0xFFFF)
 			string_ptr = getStringPtrByID(string_id);
-
-		speech_id = (uint16)getNextWord();
 		break;
 
 	case GAME_SIMON1DOS:
@@ -1767,18 +1765,8 @@ void SimonState::o_print_str()
 		break;
 
 	case GAME_SIMON2DOS:
-		if (speech_id != 0 && num_1 == 1 && !_vk_t_toggle)
-			talk_with_speech(speech_id, num_1);
-
-		if (speech_id != 0 && !_vk_t_toggle)
-			return;
-
-		if (speech_id == 0)
-			o_unk_99_simon2(2, num_1 + 2);
-
 		talk_with_text(num_1, num_2, (char *)string_ptr, tv->a, tv->b, tv->c);
 		break;
-
 
 	case GAME_SIMON2WIN:
 		if (speech_id != 0 && num_1 == 1 && !_vk_t_toggle)
