@@ -51,12 +51,17 @@ void Imuse::setMusicSequence(int seqId) {
 	if (seqId == 0)
 		seqId = 2000;
 
+	if (seqId == 4097)
+		return;
+
 	for (l = 0; _seqMusicTable[l].soundId != -1; l++) {
 		if (_seqMusicTable[l].soundId == seqId) {
 			num = l;
 			break;
 		}
 	}
+
+	if (seqId == 4096)
 	assert(num != -1);
 
 	if (_curMusicSeq == num)
