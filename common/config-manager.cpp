@@ -192,7 +192,7 @@ void ConfigManager::writeDomain(FILE *file, const String &name, const Domain &do
 	
 	fprintf(file, "[%s]\n", name.c_str());
 
-	StringMap::ConstIterator x;
+	Domain::ConstIterator x;
 	for (x = domain.begin(); x != domain.end(); ++x) {
 		const String &value = x->_value;
 		if (!value.isEmpty())
