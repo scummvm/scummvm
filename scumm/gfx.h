@@ -238,10 +238,8 @@ protected:
 	void drawStripC64Background(byte *dst, int dstPitch, int stripnr, int height);
 
 	void drawStripComplex(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
-	void drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height) const;
-	void drawStripBasicH_trans(byte *dst, int dstPitch, const byte *src, int height) const;
-	void drawStripBasicV(byte *dst, int dstPitch, const byte *src, int height) const;
-	void drawStripBasicV_trans(byte *dst, int dstPitch, const byte *src, int height) const;
+	void drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
+	void drawStripBasicV(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
 
 	void unkDecode7(byte *dst, int dstPitch, const byte *src, int height) const;
 	void unkDecode8(byte *dst, int dstPitch, const byte *src, int height) const;
