@@ -40,6 +40,9 @@ template<typename T> inline T ABS (T x)			{ return (x>=0) ? x : -x; }
 template<typename T> inline T MIN (T a, T b)	{ return (a<b) ? a : b; }
 template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
 
+// Default definition. See _MSVC_VER & FreeBSD for OS specific stuff
+#define ROUND(x) round(x)
+
 #if defined(_MSC_VER)
 
 	#define snprintf _snprintf
@@ -68,6 +71,9 @@ template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
 	#define START_PACK_STRUCTS pack(push, 1)
 	#define END_PACK_STRUCTS	 pack(pop)
 	#define GCC_PACK
+
+	#undef ROUND
+	#define ROUND(x) (x)
 
 #elif defined(__MINGW32__)
 
@@ -145,6 +151,11 @@ template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
 	#define END_PACK_STRUCTS	 pack ()
 	#define GCC_PACK
 	#define NORETURN
+	#endif
+
+	#ifdef __FreeBSD__
+	#undef ROUND
+	#define ROUND(x) rint(x)
 	#endif
 
 #elif defined(__MORPHOS__)
