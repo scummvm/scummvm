@@ -558,17 +558,14 @@ void Scumm::moveMemInPalRes(int start, int end, byte direction)
 	byte *startptr2, *endptr2;
 	int num;
 	byte tmp[6];
-	byte tmp2[6];
 
 	if (!_palManipCounter)
 		return;
 
-	startptr = getResourceAddress(rtTemp, 4) + start * 6;
-	endptr = getResourceAddress(rtTemp, 4) + end * 6;
-
-	startptr2 = getResourceAddress(rtTemp, 5) + start * 6;
-	endptr2 = getResourceAddress(rtTemp, 5) + end * 6;
-
+	startptr = _palManipPalette + start * 3;
+	endptr = _palManipPalette + end * 3;
+	startptr2 = _palManipIntermediatePal + start * 6;
+	endptr2 = _palManipIntermediatePal + end * 6;
 	num = end - start;
 
 	if (!endptr) {
@@ -577,19 +574,19 @@ void Scumm::moveMemInPalRes(int start, int end, byte direction)
 	}
 
 	if (!direction) {
-		memmove(tmp, endptr, 6);
-		memmove(startptr + 6, startptr, num * 6);
-		memmove(startptr, tmp, 6);
-		memmove(tmp2, endptr2, 6);
+		memmove(tmp, endptr, 3);
+		memmove(startptr + 3, startptr, num * 3);
+		memmove(startptr, tmp, 3);
+		memmove(tmp, endptr2, 6);
 		memmove(startptr2 + 6, startptr2, num * 6);
-		memmove(startptr2, tmp2, 6);
+		memmove(startptr2, tmp, 6);
 	} else {
-		memmove(tmp, startptr, 6);
-		memmove(startptr, startptr + 6, num * 6);
-		memmove(endptr, tmp, 6);
-		memmove(tmp2, startptr2, 6);
+		memmove(tmp, startptr, 3);
+		memmove(startptr, startptr + 3, num * 3);
+		memmove(endptr, tmp, 3);
+		memmove(tmp, startptr2, 6);
 		memmove(startptr2, startptr2 + 6, num * 6);
-		memmove(endptr2, tmp2, 6);
+		memmove(endptr2, tmp, 6);
 	}
 }
 
@@ -2465,54 +2462,42 @@ void Scumm::setCameraAtEx(int at)
 
 void Scumm::palManipulateInit(int start, int end, int string_id, int time)
 {
+	byte *pal, *target, *between;
+	byte *string1, *string2, *string3;
+	int i;
+
 	_palManipStart = start;
 	_palManipEnd = end;
 	_palManipCounter = 0;
+	
+	if (!_palManipPalette)
+		_palManipPalette = (byte *)calloc(0x300, 1);
+	if (!_palManipIntermediatePal)
+		_palManipIntermediatePal = (byte *)calloc(0x600, 1);
 
-	byte *startptr = getResourceAddress(rtTemp, 4);
-	if (startptr)
-		nukeResource(rtTemp, 4);
-	startptr = createResource(rtTemp, 4, 256 * 6);
-	if (!startptr) {
-		warning("palManipulateInit(%d,%d,%d,%d): Cannot create rtTemp resource index 4\n", start, end, string_id, time);
-		return;
-	}
-	startptr += _palManipStart * 6;
+	pal = _currentPalette + start * 3;
+	target = _palManipPalette + start * 3;
+	between = _palManipIntermediatePal + start * 6;
 
-	byte *endptr = getResourceAddress(rtTemp, 5);
-	if (endptr)
-		nukeResource(rtTemp, 5);
-	endptr = createResource(rtTemp, 5, 256 * 6);
-	if (!endptr) {
-		warning("palManipulateInit(%d,%d,%d,%d): Cannot create rtTemp resource index 5\n", start, end, string_id, time);
-		return;
-	}
-	endptr += _palManipStart * 6;
-
-	byte *curptr = _currentPalette + _palManipStart * 3;
-	byte *string1ptr = getStringAddress(string_id) + _palManipStart;
-	byte *string2ptr = getStringAddress(string_id + 1) + _palManipStart;
-	byte *string3ptr = getStringAddress(string_id + 2) + _palManipStart;
-	if (!string1ptr || !string2ptr || !string3ptr) {
+	string1 = getStringAddress(string_id) + start;
+	string2 = getStringAddress(string_id + 1) + start;
+	string3 = getStringAddress(string_id + 2) + start;
+	if (!string1 || !string2 || !string3) {
 		warning("palManipulateInit(%d,%d,%d,%d): Cannot obtain string resources %d, %d and %d\n",
 		        start, end, string_id, time, string_id, string_id + 1, string_id + 2);
 		return;
 	}
 
-	int i;
-	for (i = _palManipStart; i <= _palManipEnd; ++i) {
-		*((uint16 *)startptr) = ((uint16) *curptr++) << 8;
-		*((uint16 *)endptr) = ((uint16) *string1ptr++) << 8;
-		startptr += 2;
-		endptr += 2;
-		*((uint16 *)startptr) = ((uint16) *curptr++) << 8;
-		*((uint16 *)endptr) = ((uint16) *string2ptr++) << 8;
-		startptr += 2;
-		endptr += 2;
-		*((uint16 *)startptr) = ((uint16) *curptr++) << 8;
-		*((uint16 *)endptr) = ((uint16) *string3ptr++) << 8;
-		startptr += 2;
-		endptr += 2;
+	for (i = start; i < end; ++i) {
+		*target++ = *string1++;
+		*target++ = *string2++;
+		*target++ = *string3++;
+		*(uint16*)between = ((uint16) *pal++) << 8;
+		between += 2;
+		*(uint16*)between = ((uint16) *pal++) << 8;
+		between += 2;
+		*(uint16*)between = ((uint16) *pal++) << 8;
+		between += 2;
 	}
 
 	_palManipCounter = time;
@@ -2520,45 +2505,29 @@ void Scumm::palManipulateInit(int start, int end, int string_id, int time)
 
 void Scumm::palManipulate()
 {
-	byte *srcptr, *destptr;
-	byte *pal;
+	byte *target, *pal, *between;
 	int i, j;
 
-	if (!_palManipCounter)
+	if (!_palManipCounter || !_palManipPalette || !_palManipIntermediatePal)
 		return;
 	
-	srcptr = getResourceAddress(rtTemp, 4) + _palManipStart * 6;
-	destptr = getResourceAddress(rtTemp, 5) + _palManipStart * 6;
-	if (!srcptr || !destptr)
-		return;
-	
+	target = _palManipPalette + _palManipStart * 3;
 	pal = _currentPalette + _palManipStart * 3;
+	between = _palManipIntermediatePal + _palManipStart * 6;
 
-	i = _palManipStart;
-	while (i < _palManipEnd) {
-		j = (*((uint16 *)srcptr) += (*(uint16 *)destptr - *((uint16 *)srcptr)) / _palManipCounter);
+	for (i = _palManipStart; i < _palManipEnd; ++i) {
+		j = (*((uint16 *)between) += ((*target++ << 8) - *((uint16 *)between)) / _palManipCounter);
 		*pal++ = j >> 8;
-		srcptr += 2;
-		destptr += 2;
-
-		j = (*((uint16 *)srcptr) += (*(uint16 *)destptr - *((uint16 *)srcptr)) / _palManipCounter);
+		between += 2;
+		j = (*((uint16 *)between) += ((*target++ << 8) - *((uint16 *)between)) / _palManipCounter);
 		*pal++ = j >> 8;
-		srcptr += 2;
-		destptr += 2;
-
-		j = (*((uint16 *)srcptr) += (*(uint16 *)destptr - *((uint16 *)srcptr)) / _palManipCounter);
+		between += 2;
+		j = (*((uint16 *)between) += ((*target++ << 8) - *((uint16 *)between)) / _palManipCounter);
 		*pal++ = j >> 8;
-		srcptr += 2;
-		destptr += 2;
-
-		i++;
+		between += 2;
 	}
 	setDirtyColors(_palManipStart, _palManipEnd);
 	_palManipCounter--;
-	if (!_palManipCounter) {
-		nukeResource(rtTemp, 4);
-		nukeResource(rtTemp, 5);
-	}
 }
 
 void Scumm::unkRoomFunc3(int palstart, int palend, int rfact, int gfact, int bfact)

@@ -62,6 +62,12 @@ void Scumm_v2::readIndexFile()
 
 	_shadowPaletteSize = 256;
 	_shadowPalette = (byte *) calloc(_shadowPaletteSize, 1);	// FIXME - needs to be removed later
+
+	// Jamieson630: palManipulate variable initialization
+	_palManipCounter = 0;
+	_palManipPalette = 0; // Will allocate when needed
+	_palManipIntermediatePal = 0; // Will allocate when needed
+
 	_numFlObject = 50;
 	allocateArrays();
 

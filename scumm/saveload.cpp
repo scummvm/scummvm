@@ -397,6 +397,12 @@ void Scumm::saveOrLoad(Serializer *s)
 		MKLINE(Scumm, _switchRoomEffect2, sleByte),
 		MKLINE(Scumm, _BgNeedsRedraw, sleByte),
 
+		// Jamieson630: variables for palManipulate
+		// TODO: Add these next time save game format changes.
+		// MKLINE(Scumm, _palManipStart, sleByte),
+		// MKLINE(Scumm, _palManipEnd, sleByte),
+		// MKLINE(Scumm, _palManipCounter, sleUint16),
+
 		MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 200),
 		MKLINE(Scumm, gdi._transparency, sleByte),
 		MKARRAY(Scumm, _currentPalette[0], sleByte, 768),
@@ -501,6 +507,12 @@ void Scumm::saveOrLoad(Serializer *s)
 		MKLINE(Scumm, _newEffect, sleByte),
 		MKLINE(Scumm, _switchRoomEffect2, sleByte),
 		MKLINE(Scumm, _BgNeedsRedraw, sleByte),
+
+		// Jamieson630: variables for palManipulate
+		// TODO: Add these next time save game format changes.
+		// MKLINE(Scumm, _palManipStart, sleByte),
+		// MKLINE(Scumm, _palManipEnd, sleByte),
+		// MKLINE(Scumm, _palManipCounter, sleUint16),
 
 		MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 200),
 		MKLINE(Scumm, gdi._transparency, sleByte),
@@ -632,6 +644,16 @@ void Scumm::saveOrLoad(Serializer *s)
 
 	if (_shadowPaletteSize)
 		s->saveLoadArrayOf(_shadowPalette, _shadowPaletteSize, 1, sleByte);
+
+	_palManipCounter = 0; // TODO: Remove this once it's being loaded from disk
+	if (_palManipCounter) {
+		if (!_palManipPalette)
+			_palManipPalette = (byte *)calloc(0x300, 1);
+		if (!_palManipIntermediatePal)
+			_palManipPalette = (byte *)calloc(0x300, 1);
+		s->saveLoadArrayOf(_palManipPalette, 0x300, 1, sleByte);
+		s->saveLoadArrayOf(_palManipIntermediatePal, 0x600, 1, sleByte);
+	}
 
 	s->saveLoadArrayOf(_classData, _numGlobalObjects, sizeof(_classData[0]), sleUint32);
 

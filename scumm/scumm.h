@@ -868,7 +868,10 @@ public:
 
 	int _drawObjectQueNr;
 	byte _drawObjectQue[200];
-	int16 _palManipStart, _palManipEnd, _palManipCounter;
+	byte _palManipStart, _palManipEnd;
+	uint16 _palManipCounter;
+	byte *_palManipPalette;
+	byte *_palManipIntermediatePal;
 	uint32 gfxUsageBits[200];
 	byte *_shadowPalette;
 	int _shadowPaletteSize;
