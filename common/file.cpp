@@ -230,6 +230,11 @@ uint32 File::read(void *ptr, uint32 len) {
 byte File::readByte() {
 	byte b;
 
+	if (_handle == NULL) {
+		error("File is not open!");
+		return 0;
+	}
+
 	if (fread(&b, 1, 1, _handle) != 1) {
 		clearerr(_handle);
 		_ioFailed = true;
@@ -292,6 +297,10 @@ uint32 File::write(void *ptr, uint32 len) {
 
 void File::writeByte(byte value) {
 	value ^= _encbyte;
+
+	if (_handle == NULL) {
+		error("File is not open!");
+	}
 
 	if (fwrite(&value, 1, 1, _handle) != 1) {
 		clearerr(_handle);
