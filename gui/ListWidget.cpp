@@ -25,7 +25,7 @@
 #include "newgui.h"
 
 
-ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h)
+ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h)
 	: Widget(boss, x, y, w - kScrollBarWidth, h), CommandSender(boss) {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kListWidget;

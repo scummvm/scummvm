@@ -60,7 +60,7 @@ static uint32 down_arrow[8] = {
 	0x00001000,
 };
 
-ScrollBarWidget::ScrollBarWidget(Dialog *boss, int x, int y, int w, int h)
+ScrollBarWidget::ScrollBarWidget(GuiObject *boss, int x, int y, int w, int h)
 	: Widget (boss, x, y, w, h), CommandSender(boss) {
 	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG | WIDGET_WANT_TICKLE;
 	_type = kScrollBarWidget;

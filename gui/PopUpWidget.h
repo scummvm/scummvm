@@ -52,7 +52,7 @@ protected:
 	int				_selectedItem;
 
 public:
-	PopUpWidget(Dialog *boss, int x, int y, int w, int h);
+	PopUpWidget(GuiObject *boss, int x, int y, int w, int h);
 
 	void handleMouseDown(int x, int y, int button, int clickCount);
 /*

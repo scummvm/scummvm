@@ -28,6 +28,8 @@
 class BrowserDialog;
 class GameDetector;
 class PopUpWidget;
+class SliderWidget;
+class StaticTextWidget;
 
 class GlobalOptionsDialog : public Dialog {
 	typedef Common::String String;

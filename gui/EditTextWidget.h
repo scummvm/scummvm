@@ -36,7 +36,7 @@ protected:
 	int			_pos;
 	int			_labelOffset;
 public:
-	EditTextWidget(Dialog *boss, int x, int y, int w, int h, const String &text);
+	EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text);
 
 	virtual void handleTickle();
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);

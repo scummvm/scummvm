@@ -22,7 +22,9 @@
 #define DIALOG_H
 
 #include "common/scummsys.h"
-#include "widget.h"	// For CommandReceiver
+#include "common/str.h"
+
+#include "gui/object.h"
 
 class NewGui;
 class ButtonWidget;
@@ -33,13 +35,9 @@ enum {
 	kCloseCmd = 'clos'
 };
 
-class Dialog : public CommandReceiver {
-	friend class Widget;
+class Dialog : public GuiObject {
 	friend class NewGui;
 protected:
-	int16	_x, _y;
-	uint16	_w, _h;
-	Widget	*_firstWidget;
 	Widget	*_mouseWidget;
 	Widget  *_focusedWidget;
 	bool	_visible;
@@ -49,7 +47,7 @@ private:
 
 public:
 	Dialog(int x, int y, int w, int h)
-		: _x(x), _y(y), _w(w), _h(h), _firstWidget(0),
+		: GuiObject(x, y, w, h),
 		  _mouseWidget(0), _focusedWidget(0), _visible(false) {
 	}
 	virtual ~Dialog();
@@ -57,10 +55,8 @@ public:
 	virtual int runModal();
 
 	bool 	isVisible() const	{ return _visible; }
-	int16	getX() const		{ return _x; }
-	int16	getY() const		{ return _y; }
 
-	void releaseFocus();
+	void	releaseFocus();
 
 protected:
 	virtual void open();

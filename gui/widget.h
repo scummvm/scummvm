@@ -18,11 +18,12 @@
  * $Header$
  */
 
-#ifndef WIDGET_H
-#define WIDGET_H
+#ifndef GUI_WIDGET_H
+#define GUI_WIDGET_H
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "gui/object.h"
 
 class Dialog;
 
@@ -59,47 +60,19 @@ enum {
 };
 
 
-class CommandReceiver;
-class CommandSender;
-
-class CommandReceiver {
-	friend class CommandSender;
-protected:
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) = 0;
-};
-
-class CommandSender {
-	// TODO - allow for multiple targets, i.e. store targets in a list
-	// and add methods addTarget/removeTarget.
-protected:
-	CommandReceiver	*_target;
-public:
-	CommandSender(CommandReceiver *target) : _target(target) {}
-
-	void setTarget(CommandReceiver *target)	{ _target = target; }
-	CommandReceiver *getTarget() const		{ return _target; }
-
-	virtual void sendCommand(uint32 cmd, uint32 data) {
-		if (_target && cmd)
-			_target->handleCommand(this, cmd, data);
-	}
-};
-
 /* Widget */
-class Widget {
+class Widget : public GuiObject {
 	friend class Dialog;
 protected:
 	uint32		_type;
-	Dialog		*_boss;
+	GuiObject	*_boss;
 	Widget		*_next;
-	int16		_x, _y;
-	uint16		_w, _h;
 	uint16		_id;
 	uint16		_flags;
 	bool		_hasFocus;
 
 public:
-	Widget(Dialog *boss, int x, int y, int w, int h);
+	Widget(GuiObject *boss, int x, int y, int w, int h);
 	virtual ~Widget() {}
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) {}
@@ -131,6 +104,8 @@ protected:
 	virtual void lostFocusWidget() {}
 	
 	virtual Widget *findWidget(int x, int y) { return this; }
+
+	void releaseFocus() { _boss->releaseFocus(); }
 };
 
 /* StaticTextWidget */
@@ -141,7 +116,7 @@ protected:
 	String _label;
 	int		_align;
 public:
-	StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const String &text, int align);
+	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, int align);
 	void setValue(int value);
 	void setLabel(const String &label)	{ _label = label; }
 	const String &getLabel() const		{ return _label; }
@@ -159,7 +134,7 @@ protected:
 	uint32	_cmd;
 	uint8	_hotkey;
 public:
-	ButtonWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
+	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void setCmd(uint32 cmd)				{ _cmd = cmd; }
 	uint32 getCmd() const				{ return _cmd; }
@@ -177,7 +152,7 @@ class PushButtonWidget : public ButtonWidget {
 protected:
 	bool	_state;
 public:
-	PushButtonWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
+	PushButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void setState(bool state);
 	void toggleState()			{ setState(!_state); }
@@ -188,7 +163,7 @@ public:
 class CheckboxWidget : public PushButtonWidget {
 protected:
 public:
-	CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
+	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	virtual void handleMouseEntered(int button)	{}
@@ -205,7 +180,7 @@ protected:
 	int		_valueMin, _valueMax;
 	bool	_isDragging;
 public:
-	SliderWidget(Dialog *boss, int x, int y, int w, int h, uint32 cmd = 0, uint8 hotkey = 0);
+	SliderWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd = 0, uint8 hotkey = 0);
 	void setValue(int value)	{ _value = value; }
 	int getValue() const		{ return _value; }
 

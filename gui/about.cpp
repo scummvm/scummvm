@@ -19,10 +19,10 @@
  */
 
 #include "stdafx.h"
-#include "about.h"
-#include "newgui.h"
 #include "base/engine.h"
-#include "common/str.h"
+#include "gui/about.h"
+#include "gui/newgui.h"
+#include "gui/widget.h"
 
 AboutDialog::AboutDialog()
 	: Dialog(10, 20, 300, 124) {

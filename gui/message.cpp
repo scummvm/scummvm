@@ -19,15 +19,18 @@
  */
 
 #include "stdafx.h"
-#include "gui/message.h"
-#include "gui/newgui.h"
 #include "common/str.h"
 #include "common/list.h"
+#include "gui/message.h"
+#include "gui/newgui.h"
+#include "gui/widget.h"
 
 enum {
 	kOkCmd = 'OK  ',
 	kCancelCmd = 'CNCL'
 };
+
+// TODO: The default button should be visibly distinct from the alternate button
 
 MessageDialog::MessageDialog(const String &message, const char *defaultButton, const char *altButton)
 	: Dialog(30, 20, 260, 124) {

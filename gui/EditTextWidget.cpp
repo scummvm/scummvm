@@ -23,7 +23,7 @@
 #include "dialog.h"
 #include "newgui.h"
 
-EditTextWidget::EditTextWidget(Dialog *boss, int x, int y, int w, int h, const String &text)
+EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text)
 	: StaticTextWidget(boss, x, y-1, w, h+2, text, kTextAlignLeft), _backupString(text) {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
 	_type = kEditTextWidget;
@@ -83,7 +83,7 @@ bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	switch (keycode) {
 	case '\n':	// enter/return
 	case '\r':
-		_boss->releaseFocus();
+		releaseFocus();
 		dirty = true;
 		break;
 	case 27:	// escape
@@ -92,7 +92,7 @@ bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		_labelOffset = (g_gui.getStringWidth(_label) - (_w-6));
 		if (_labelOffset < 0)
 			_labelOffset = 0;
-		_boss->releaseFocus();
+		releaseFocus();
 		dirty = true;
 		break;
 	case 8:		// backspace

@@ -41,7 +41,7 @@ enum {
 };
 
 /* ListWidget */
-class ListWidget : public Widget, public CommandReceiver, public CommandSender {
+class ListWidget : public Widget, public CommandSender {
 	typedef Common::StringList StringList;
 	typedef Common::String String;
 protected:
@@ -58,7 +58,7 @@ protected:
 	bool			_caretVisible;
 	uint32			_caretTime;
 public:
-	ListWidget(Dialog *boss, int x, int y, int w, int h);
+	ListWidget(GuiObject *boss, int x, int y, int w, int h);
 	virtual ~ListWidget();
 	
 	void setList(const StringList& list);

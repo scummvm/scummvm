@@ -23,8 +23,9 @@
 #include "dialog.h"
 #include "newgui.h"
 
-Widget::Widget(Dialog *boss, int x, int y, int w, int h)
-	: _type(0), _boss(boss), _x(x), _y(y), _w(w), _h(h),
+
+Widget::Widget(GuiObject *boss, int x, int y, int w, int h)
+	: GuiObject(x, y, w, h), _type(0), _boss(boss),
 	  _id(0), _flags(0), _hasFocus(false) {
 	// Insert into the widget list of the boss
 	_next = _boss->_firstWidget;
@@ -72,9 +73,10 @@ void Widget::draw() {
 	_y -= _boss->_y;
 }
 
+
 #pragma mark -
 
-StaticTextWidget::StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const String &text, int align)
+StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, int align)
 	: Widget(boss, x, y, w, h), _align(align) {
 	_type = kStaticTextWidget;
 	setLabel(text);
@@ -93,7 +95,7 @@ void StaticTextWidget::drawWidget(bool hilite) {
 
 #pragma mark -
 
-ButtonWidget::ButtonWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
+ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, x, y, w, h, label, kTextAlignCenter), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey) {
 	_flags = WIDGET_ENABLED | WIDGET_BORDER | WIDGET_CLEARBG;
@@ -114,7 +116,7 @@ void ButtonWidget::drawWidget(bool hilite) {
 
 #pragma mark -
 
-PushButtonWidget::PushButtonWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
+PushButtonWidget::PushButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey), _state(false) {
 	_flags = WIDGET_ENABLED | WIDGET_BORDER | WIDGET_CLEARBG;
 	_type = kButtonWidget;
@@ -142,7 +144,7 @@ static uint32 checked_img[8] = {
 	0x00000000,
 };
 
-CheckboxWidget::CheckboxWidget(Dialog *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
+CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey)
 	: PushButtonWidget(boss, x, y, w, h, label, cmd, hotkey) {
 	_flags = WIDGET_ENABLED;
 	_type = kCheckboxWidget;
@@ -173,7 +175,7 @@ void CheckboxWidget::drawWidget(bool hilite) {
 
 #pragma mark -
 
-SliderWidget::SliderWidget(Dialog *boss, int x, int y, int w, int h, uint32 cmd, uint8 hotkey)
+SliderWidget::SliderWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, "", cmd, hotkey),
 	  _value(0), _oldValue(0),_valueMin(0), _valueMax(100), _isDragging(false) {
 	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG;

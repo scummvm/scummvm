@@ -24,6 +24,7 @@
 #include "common/str.h"
 #include "gui/about.h"
 #include "gui/dialog.h"
+#include "gui/widget.h"
 
 #ifndef DISABLE_HELP
 #include "scumm/help.h"

@@ -271,7 +271,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 // PopUpWidget
 //
 
-PopUpWidget::PopUpWidget(Dialog *boss, int x, int y, int w, int h)
+PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h)
 	: Widget(boss, x, y - 1, w, h + 2), CommandSender(boss) {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS;
 	_type = 'POPU';

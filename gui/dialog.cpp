@@ -27,10 +27,6 @@
 
 /*
  * TODO list
- * - If saving or loading fails (e.g. due to disk full/directory write protected),
- *   display an error dialog?
- * - The user can edit the name of the autosave game. Of course this will not
- *   do anything, but we should still prevent this.
  * - add some sense of the window being "active" (i.e. in front) or not. If it 
  *   was inactive and just became active, reset certain vars (like who is focused).
  *   Maybe we should just add lostFocus and receivedFocus methods to Dialog, just

@@ -57,7 +57,7 @@ public:
 	int		_currentPos;
 
 public:
-	ScrollBarWidget(Dialog *boss, int x, int y, int w, int h);
+	ScrollBarWidget(GuiObject *boss, int x, int y, int w, int h);
 
 	void handleMouseDown(int x, int y, int button, int clickCount);
 	void handleMouseUp(int x, int y, int button, int clickCount);
