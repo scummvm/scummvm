@@ -238,16 +238,8 @@ void Scene::setSoundPosition(const char *soundName, Vector3d pos) {
 	newVolume += _minVolume;
 	g_imuse->setVolume(soundName, newVolume);
 
-	vector.set(_currSetup->_interest.x() - cameraPos.x(), _currSetup->_interest.y() - cameraPos.y(),
-		_currSetup->_interest.z() - cameraPos.z());
-	vector2.set(pos.x() - cameraPos.x(), pos.y() - cameraPos.y(), pos.z() - cameraPos.z());
-//	printf("a pos (%2.2f, %2.2f, %2.2f) i pos (%2.2f, %2.2f, %2.2f) c pos (%2.2f, %2.2f, %2.2f)\n", pos.x(), pos.y(), pos.z(),
-//		_currSetup->_interest.x(), _currSetup->_interest.y(), _currSetup->_interest.z(),
-//		cameraPos.x(), cameraPos.y(), cameraPos.z());
-	float a = angle(vector, vector2);
-	int pan = a * 127 * 1.5;
-	pan = (pan / 2) + 64;
-//	g_imuse->setPan(soundName, pan);
+	//TODO
+	//g_imuse->setPan(soundName, pan);
 }
 
 void Scene::setSoundParameters(int minVolume, int maxVolume) {
