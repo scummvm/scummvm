@@ -214,8 +214,9 @@ enum ResTypes {
 	rtRoomScripts = 17,
 	rtRoomImage = 18,
 	rtImage = 19,
-	rtLast = 19,
-	rtNumTypes = 20
+	rtTalkie = 20,
+	rtLast = 20,
+	rtNumTypes = 21
 };
 
 enum {
@@ -480,6 +481,7 @@ protected:
 	int _numInventory;
 	int _numNewNames, _numGlobalScripts;
 	int _numActors, _numRoomVariables;
+	int _numTalkie;
 public:
 	int _numImages, _numRooms, _numScripts, _numSounds;	// Used by VARS in HE games
 	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette

@@ -573,8 +573,7 @@ void ScummEngine::readIndexFile() {
 			break;
 			
 		case MKID('DIRT'):
-			_fileHandle.seek(itemsize - 8, SEEK_CUR);
-			warning("DIRT index block not yet handled, skipping");
+			readResTypeList(rtTalkie, MKID('TLKE'), "talkie");
 			break;
 
 		case MKID('SVER'):
@@ -2321,7 +2320,7 @@ void ScummEngine::readMAXS(int blockSize) {
 		_fileHandle.readUint16LE(); // unknown
 		_fileHandle.readUint16LE(); // unknown
 		_fileHandle.readUint16LE(); // unknown
-		_fileHandle.readUint16LE(); // _numTalkie
+		_numTalkie = _fileHandle.readUint16LE();
 
 		/* TODO check these values */
 
@@ -2491,6 +2490,8 @@ void ScummEngine::allocateArrays() {
 	allocResTypeData(rtMatrix, MKID('NONE'), 10, "boxes", 0);
 	allocResTypeData(rtImage, MKID('AWIZ'), _numImages, "images", 1);
 	allocResTypeData(rtRoomImage, MKID('RMIM'), _numRooms, "room image", 1);
+	allocResTypeData(rtTalkie, MKID('TLKE'), _numTalkie, "talkie", 1);
+
 }
 
 void ScummEngine::dumpResource(const char *tag, int idx, const byte *ptr, int length) {
@@ -2718,6 +2719,8 @@ const char *resTypeFromId(int id) {
 		return "RoomImage";
 	case rtImage:
 		return "Image";
+	case rtTalkie:
+		return "Talkie";
 	case rtNumTypes:
 		return "NumTypes";
 	default:
