@@ -42,6 +42,9 @@ enum scriptVariableOffsets {
 	BUTTON = 15,
 	SPECIAL_ITEM = 17,
 	GET_OFF = 18,
+	CURSOR_ID = 22,
+	SAFEX = 25,
+	SAFEY = 26,
 	PLAYER_X = 27,
 	PLAYER_Y = 28,
 	PLAYER_MOOD = 29,
@@ -89,6 +92,7 @@ public:
 	void pause();
 	void waitSync();
 	void simpleAnim();
+	uint16 script(uint32 num) { return script((uint16)(num & 0xFFFF), (uint16)(num >> 16)); };
 	uint16 script(uint16 scriptNo, uint16 offset);
 
 	bool fnCacheChip(uint32 a, uint32 b, uint32 c);

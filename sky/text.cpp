@@ -176,6 +176,31 @@ void SkyText::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 	} while(textChar);
 }
 
+void SkyText::fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY) {
+
+	Compact *ptrComp = SkyState::fetchCompact(pointedId);
+	lowTextManager_t text = lowTextManager(ptrComp->cursorText, TEXT_MOUSE_WIDTH, L_CURSOR, 242, false);
+	SkyLogic::_scriptVariables[CURSOR_ID] = text.compactNum;
+	if (SkyLogic::_scriptVariables[MENU]) {
+		_mouseOfsY = TOP_LEFT_Y - 2;
+		if (mouseX < 150) _mouseOfsX = TOP_LEFT_X + 24;
+		else _mouseOfsX = TOP_LEFT_X  - 8 - _lowTextWidth;
+	} else {
+        _mouseOfsY = TOP_LEFT_Y - 10;
+		if (mouseX < 150) _mouseOfsX = TOP_LEFT_X + 13;
+		else _mouseOfsX = TOP_LEFT_X - 8 - _lowTextWidth;
+	}
+	Compact *textCompact = SkyState::fetchCompact(text.compactNum);
+	logicCursor(textCompact, mouseX, mouseY);
+}
+
+void SkyText::logicCursor(Compact *textCompact, uint16 mouseX, uint16 mouseY) {
+
+	textCompact->xcood = (uint16)(mouseX + _mouseOfsX);
+	textCompact->ycood = (uint16)(mouseY + _mouseOfsY);
+	if (textCompact->ycood < TOP_LEFT_Y) textCompact->ycood = TOP_LEFT_Y;
+}
+
 bool SkyText::getTBit() {
 	
 	if (_shiftBits) {
@@ -376,7 +401,7 @@ lowTextManager_t SkyText::lowTextManager(uint32 textNum, uint16 width, uint16 lo
 
 	cpt->logic = logicNum; 
 	cpt->status = ST_LOGIC | ST_FOREGROUND | ST_RECREATE;
-	cpt->screen = (uint16) SkyLogic::_scriptVariables[SCREEN]; 
+	cpt->screen = (uint16) SkyLogic::_scriptVariables[SCREEN];
 
 	struct lowTextManager_t ret;
 	ret.textData = _dtData;

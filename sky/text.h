@@ -23,6 +23,7 @@
 #define SKYTEXT_H
 
 #include "sky/disk.h"
+#include "sky/struc.h"
 
 struct HuffTree {
 	unsigned char lChild;
@@ -41,6 +42,8 @@ public:
 	struct lowTextManager_t lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool centre);
 	void fnSetFont(uint32 fontNr);
 	void fnTextModule(uint32 textInfoId, uint32 textNo);
+	void fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY);
+	void logicCursor(Compact *textCompact, uint16 mouseX, uint16 mouseY);
 
 protected:
 	bool getTBit();
@@ -79,7 +82,7 @@ protected:
 	uint32	_dtWidth;	//width of chars in last line (for editing (?))
 	uint32	_dtLastWidth;
 	bool	_dtCentre;	//set for centre text
-	uint32	_lowTextWidth;
+	uint32	_lowTextWidth, _mouseOfsX, _mouseOfsY;
 
 public:
 	uint32 _dtLetters;	//no of chars in message

@@ -396,7 +396,7 @@ void SkyLogic::turn() {
 }
 
 void SkyLogic::cursor() {
-	error("Stub: SkyLogic::cursor");
+	_skyText->logicCursor(_compact, _skyMouse->giveMouseX(), _skyMouse->giveMouseY());
 }
 
 /*
@@ -1470,7 +1470,7 @@ bool SkyLogic::fnKillId(uint32 id, uint32 b, uint32 c) {
 
 bool SkyLogic::fnNoHuman(uint32 a, uint32 b, uint32 c) {
 	if (!_scriptVariables[MOUSE_STOP]) {
-		_scriptVariables[MOUSE_STOP] &= 1;
+		_scriptVariables[MOUSE_STATUS] &= 1;
 		runGetOff();
 		fnBlankMouse(0, 0, 0);
 	}
@@ -1500,7 +1500,9 @@ bool SkyLogic::fnClearStop(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnPointerText(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnPointerText");
+	
+	_skyText->fnPointerText(a, _skyMouse->giveMouseX(), _skyMouse->giveMouseY());
+	return true;
 }
 
 bool SkyLogic::fnQuit(uint32 a, uint32 b, uint32 c) {
@@ -2050,7 +2052,8 @@ bool SkyLogic::fnFlushChip(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnSaveCoods(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnSaveCoods");
+	_skyMouse->fnSaveCoods();
+	return true;
 }
 
 bool SkyLogic::fnPlotGrid(uint32 x, uint32 y, uint32 width) {

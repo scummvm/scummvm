@@ -591,7 +591,7 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 	spriteData += sizeof(dataFileHeader);
 	int32 spriteY = sprCompact->ycood + (int16)FROM_LE_16(sprDataFile->s_offset_y) - TOP_LEFT_Y;
 	if (spriteY < 0) {
-		spriteY = ~spriteY;
+		spriteY = -spriteY;
 		if (_sprHeight <= (uint32)spriteY) {
 			_sprWidth = 0;
 			return ;
@@ -612,7 +612,7 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 	_sprY = (uint32)spriteY;
 	int32 spriteX = sprCompact->xcood + (int16)FROM_LE_16(sprDataFile->s_offset_x) - TOP_LEFT_X;
 	if (spriteX < 0) {
-		spriteX = ~spriteX;
+		spriteX = -spriteX;
 		if (_sprWidth <= (uint32)spriteX) {
 			_sprWidth = 0;
 			return ;
@@ -621,9 +621,9 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		_maskX1 = spriteX;
 		spriteX = 0;
 	} else {
-		int32 rightClip = GAME_SCREEN_WIDTH - FROM_LE_16(sprDataFile->s_width) - spriteX;
+		int32 rightClip = GAME_SCREEN_WIDTH - (FROM_LE_16(sprDataFile->s_width) + spriteX);
 		if (rightClip < 0) {
-			rightClip = ~rightClip;
+			rightClip = (-rightClip) + 1;
 			if (_sprWidth <= (uint32)rightClip) {
 				_sprWidth = 0;
 				return ;
@@ -643,7 +643,7 @@ void SkyScreen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 	for (uint8 cnty = 0; cnty < _sprHeight; cnty++) {
 		for (uint8 cntx = 0; cntx < _sprWidth; cntx++)
 			if (spriteData[cntx + _maskX1]) screenPtr[cntx] = spriteData[cntx + _maskX1];
-		spriteData += _sprWidth;
+		spriteData += _sprWidth + _maskX2;
 		screenPtr += GAME_SCREEN_WIDTH;
 	}
 	// Convert the sprite coordinate/size values to blocks for vertical mask and/or vector to game

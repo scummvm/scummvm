@@ -125,12 +125,6 @@ void SkyState::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
-void SkyState::pollMouseXY() {
-
-	_mouse_x = _sdl_mouse_x;
-	_mouse_y = _sdl_mouse_y;
-}
-
 void SkyState::go() {
 
 	if (!_dump_file)
@@ -147,6 +141,7 @@ void SkyState::go() {
 
 	while (1) {
 		delay(50);
+		_skyMouse->mouseEngine((uint16)_sdl_mouse_x, (uint16)_sdl_mouse_y);
 		_skyLogic->engine();
 		_skyScreen->recreate();
 		_skyScreen->spriteEngine();
@@ -174,16 +169,16 @@ void SkyState::initialise(void) {
 	_systemVars.systemFlags |= SF_PLAY_VOCS;
 
 	_skyText = new SkyText(_skyDisk);
-	_skyMouse = new SkyMouse(_system, _skyDisk, _skyLogic);
+	_skyMouse = new SkyMouse(_system, _skyDisk);
 	_skyScreen = new SkyScreen(_system, _skyDisk);
 
 	initVirgin();
-	//initMouse();
 	initItemList();
 	//initScript();
 	//initialiseRouter();
 	loadFixedItems();
 	_skyLogic = new SkyLogic(_skyScreen, _skyDisk, _skyText, _skyMusic, _skyMouse, _skySound);
+	_skyMouse->useLogicInstance(_skyLogic);
 	
 	_timer = Engine::_timer; // initialize timer *after* _skyScreen has been initialized.
 	_timer->installProcedure(&timerHandler, 1000000 / 50); //call 50 times per second
@@ -271,7 +266,6 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 	uint32 start = _system->get_msecs();
 	uint32 cur = start;
 	_key_pressed = 0;	//reset
-	_mouse_pos_changed = false;
 	_rnd.getRandomNumber(2);
 
 	do {
@@ -288,12 +282,12 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 				case OSystem::EVENT_MOUSEMOVE:
 					_sdl_mouse_x = event.mouse.x;
 					_sdl_mouse_y = event.mouse.y;
-					_mouse_pos_changed = true;
 					_system->set_mouse_pos(_sdl_mouse_x, _sdl_mouse_y);
 					break;
 
-					case OSystem::EVENT_LBUTTONDOWN:
+				case OSystem::EVENT_LBUTTONDOWN:
 					_left_button_down++;
+					_skyMouse->buttonPressed();
 #ifdef _WIN32_WCE
 					_sdl_mouse_x = event.mouse.x;
 					_sdl_mouse_y = event.mouse.y;

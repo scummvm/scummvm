@@ -65,15 +65,11 @@ protected:
 
 	uint16 _debugMode;
 	uint16 _debugLevel;
-	uint _mouse_x, _mouse_y;
-	uint _mouse_x_old, _mouse_y_old;
-	bool _mouse_pos_changed;
 	uint _left_button_down;
 
 	int _numScreenUpdates;
 
 	Timer *_timer;
-	//int _timer_id;
 
 	FILE *_dump_file;
 
@@ -116,7 +112,6 @@ public:
 protected:
 	void logic_engine();
 	void delay(uint amount);
-	void pollMouseXY();
 	void go();
 
 	//intro related

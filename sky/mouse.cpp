@@ -77,10 +77,9 @@ uint32 _mouseObjectList[] = {
 	24829
 };
 
-SkyMouse::SkyMouse(OSystem *system, SkyDisk *skyDisk, SkyLogic *skyLogic) {
+SkyMouse::SkyMouse(OSystem *system, SkyDisk *skyDisk) {
 
 	_skyDisk = skyDisk;
-	_skyLogic = skyLogic;
 	_system = system;
 	_mouseWidth = 6;
 	_mouseHeight = 6;
@@ -112,23 +111,6 @@ void SkyMouse::replaceMouseCursors(uint16 fileNo) {
 	_skyDisk->loadFile(fileNo, _objectMouseData);
 }
 
-/*bool SkyMouse::fnBlankMouse(void) {
-	_mouseXOff = 0;	//re-align mouse
-	spriteMouse(MOUSE_BLANK, 0, 0);
-	return true;
-}
-
-bool SkyMouse::fnDiskMouse(void) {
-	//turn the mouse into a disk mouse
-	spriteMouse(MOUSE_DISK, 11, 11);
-	return true;	//don't quit from the interpreter
-}
-
-bool SkyMouse::fnNormalMouse(void) {
-	spriteMouse(MOUSE_NORMAL, 0, 0);
-	return true;
-}*/
-
 bool SkyMouse::fnAddHuman(void) {
 	//reintroduce the mouse so that the human can control the player
 	//could still be switched out at high-level
@@ -148,15 +130,19 @@ bool SkyMouse::fnAddHuman(void) {
 		//get off may contain script to remove mouse pointer text
 		//surely this script should be run just in case
 		//I am going to try it anyway
-		uint32 getOff = SkyLogic::_scriptVariables[GET_OFF];
-		if (getOff)
-			_skyLogic->script((uint16)(getOff & 0xFFFF), (uint16)(getOff >> 16));
+		if (SkyLogic::_scriptVariables[GET_OFF])
+			_skyLogic->script(SkyLogic::_scriptVariables[GET_OFF]);
 	
 		SkyLogic::_scriptVariables[SPECIAL_ITEM] = 0xFFFFFFFF;
 		SkyLogic::_scriptVariables[GET_OFF] = RESET_MOUSE;
 	}
 
 	return true;
+}
+
+void SkyMouse::fnSaveCoods(void) { 
+	SkyLogic::_scriptVariables[SAFEX] = _tMouseX; 
+	SkyLogic::_scriptVariables[SAFEY] = _tMouseY; 
 }
 
 void SkyMouse::lockMouse(void) {
@@ -180,14 +166,10 @@ void SkyMouse::drawNewMouse() {
 	//drawMouse();
 }
 
-void SkyMouse::spriteMouse(uint16 frameNum, uint16 mouseX, uint16 mouseY) {
+void SkyMouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 	SkyState::_systemVars.mouseFlag |= MF_IN_INT;
 	_mouseType2 = frameNum;
-	_mouseOffsetX = mouseX;
-	_mouseOffsetY = mouseY;
 
-	//restoreMouseData(frameNum);
-	printf("drawing mouse %d\n",frameNum);
 	byte *mouseData = _miceData;
 	uint32 pos = ((struct dataFileHeader *)mouseData)->s_sp_size * frameNum;
 	pos += sizeof(struct dataFileHeader);
@@ -196,16 +178,18 @@ void SkyMouse::spriteMouse(uint16 frameNum, uint16 mouseX, uint16 mouseY) {
 	_mouseWidth = ((struct dataFileHeader *)mouseData)->s_width;
 	_mouseHeight = ((struct dataFileHeader *)mouseData)->s_height;
 
-	_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, mouseX, mouseY);
+	//_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, mouseX, mouseY);
+	// there's something wrong about the mouse's hotspot. using 0/0 works fine.
+	_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, 0, 0);
 	if (frameNum == MOUSE_BLANK) _system->show_mouse(false);
 	else _system->show_mouse(true);
-
-	//drawNewMouse();
 
 	SkyState::_systemVars.mouseFlag &= ~MF_IN_INT;
 }
 
-void SkyMouse::mouseEngine(void) {
+void SkyMouse::mouseEngine(uint16 mouseX, uint16 mouseY) {
+	_aMouseX = mouseX;
+	_aMouseY = mouseY;
 	_tMouseX = _aMouseX + TOP_LEFT_X;
 	_tMouseY = _aMouseY + TOP_LEFT_Y;
 
@@ -223,7 +207,39 @@ void SkyMouse::mouseEngine(void) {
 }
 
 void SkyMouse::pointerEngine(void) {
-	warning("Stub: pointerEngine()");
+	uint32 currentListNum = SkyLogic::_scriptVariables[MOUSE_LIST_NO];
+	uint16 *currentList;
+	do {
+		currentList = (uint16*)SkyState::fetchCompact(currentListNum);
+		while ((*currentList != 0) && (*currentList != 0xFFFF)) {
+			uint16 itemNum = *currentList;
+			Compact *itemData = SkyState::fetchCompact(itemNum);
+			currentList++;
+			if ((itemData->screen == SkyLogic::_scriptVariables[SCREEN]) &&	(itemData->status & 16)) {
+				if (itemData->xcood + itemData->mouseRelX > _tMouseX) continue;
+				if (itemData->xcood + itemData->mouseRelX + itemData->mouseSizeX < _tMouseX) continue;
+				if (itemData->ycood + itemData->mouseRelY > _tMouseY) continue;
+				if (itemData->ycood + itemData->mouseRelY + itemData->mouseSizeY < _tMouseY) continue;
+				// we've hit the item
+				if (SkyLogic::_scriptVariables[SPECIAL_ITEM] == itemNum)
+					return;
+				SkyLogic::_scriptVariables[SPECIAL_ITEM] = itemNum;
+				if (SkyLogic::_scriptVariables[GET_OFF])
+					_skyLogic->script(SkyLogic::_scriptVariables[GET_OFF]);
+				SkyLogic::_scriptVariables[GET_OFF] = itemData->mouseOff;
+				if (itemData->mouseOn) _skyLogic->script(itemData->mouseOn);
+				return;
+			}
+		}
+		if (*currentList == 0xFFFF) currentListNum = currentList[1];
+
+	} while (*currentList != 0);
+	if (SkyLogic::_scriptVariables[SPECIAL_ITEM] != 0) {
+		SkyLogic::_scriptVariables[SPECIAL_ITEM] = 0;
+		if (SkyLogic::_scriptVariables[GET_OFF])
+			_skyLogic->script(SkyLogic::_scriptVariables[GET_OFF]);
+		SkyLogic::_scriptVariables[GET_OFF] = 0;
+	}
 }
 
 void SkyMouse::buttonEngine1(void) {

@@ -33,21 +33,25 @@ class SkyMouse {
 
 public:
 
-	SkyMouse(OSystem *system, SkyDisk *skyDisk, SkyLogic *skyLogic);
+	SkyMouse(OSystem *system, SkyDisk *skyDisk);
 	~SkyMouse(void);
 
+	void mouseEngine(uint16 mouseX, uint16 mouseY);
 	void replaceMouseCursors(uint16 fileNo);
-	//void setMouseSprite(uint8 sprNum, uint16 mouseX, uint16 mouseY);
 	bool fnAddHuman(void);
+	void fnSaveCoods(void);
 	void lockMouse(void);
 	void unlockMouse(void);
 	void restoreMouseData(uint16 frameNum);
 	void drawNewMouse(void);
-	void spriteMouse(uint16 frameNum, uint16 mouseX, uint16 mouseY);
+	void spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY);
+	void useLogicInstance(SkyLogic *skyLogic) { _skyLogic = skyLogic; };
+	void buttonPressed(void) { _bMouseB = 1; };
+	uint16 giveMouseX(void) { return _aMouseX; };
+	uint16 giveMouseY(void) { return _aMouseY; };
 
 protected:
 
-	void mouseEngine(void);
 	void pointerEngine(void);
 	void buttonEngine1(void);
 
@@ -65,9 +69,6 @@ protected:
 
 	uint16 _lockMouseX;
 	uint16 _lockMouseY;
-
-	uint16 _mouseOffsetX;	//for offsetting the mouse
-	uint16 _mouseOffsetY;	//positive offsets only, mouse moves left or up
 
 	uint16	_mouseType2;	//number of current mouse
 	byte *_mouseData2;	//pointer to mouse data

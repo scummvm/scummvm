@@ -4299,5 +4299,7 @@
 #define MOUSE_CROSS		7	// angry mouse
 #define MOUSE_UP		8	// mouse up
 
+#define TEXT_MOUSE_WIDTH 0x80
+
 #endif
 
