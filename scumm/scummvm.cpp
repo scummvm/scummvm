@@ -260,6 +260,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	memset(&_objectIDMap,0,sizeof(ObjectIDMap));
 	_numObjectsInRoom = 0;
 	_userPut = 0;
+	_userState = 0;
 	_resourceHeaderSize = 0;
 	_saveLoadFlag = 0;
 	_saveLoadSlot = 0;
