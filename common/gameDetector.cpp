@@ -158,6 +158,7 @@ GameDetector::GameDetector() {
 #else
 	_gfx_mode = GFX_NORMAL;
 #endif
+	_default_gfx_mode = true;
 
 #if defined(USE_NULL_DRIVER)
 	_gfx_driver = GD_NULL;
@@ -467,8 +468,10 @@ void GameDetector::setGame(const String &name) {
 int GameDetector::parseGraphicsMode(const char *s) {
 	const GraphicsModes *gm = gfx_modes;
 	while(gm->name) {
-		if (!scumm_stricmp(gm->name, s))
+		if (!scumm_stricmp(gm->name, s)) {
+			_default_gfx_mode = false;
 			return gm->id;
+		}
 		gm++;
 	}
 

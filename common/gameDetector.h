@@ -68,6 +68,7 @@ enum GameFeatures {
 	GF_AMIGA               = 1 << 14,
 	GF_HUMONGOUS           = 1 << 15,
 	GF_NEW_COSTUMES        = 1 << 16,
+	GF_DEFAULT_TO_1X_SCALER = 1 << 17,
 
 	GF_HAS_ROOMTABLE       = GF_AFTER_V7,
 	GF_USE_ANGLES          = GF_AFTER_V7,
@@ -147,6 +148,7 @@ public:
 
 	int _gfx_driver;
 	int _gfx_mode;
+	bool _default_gfx_mode;
 	
 	int _cdrom;
 	int _save_slot;

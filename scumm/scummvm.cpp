@@ -137,7 +137,7 @@ static const VersionSettings scumm_settings[] = {
 
 	/* Scumm Version 8 */
 	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 1, 0,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_V7 | GF_AFTER_V8 | GF_NEW_COSTUMES, 0},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_V7 | GF_AFTER_V8 | GF_NEW_COSTUMES | GF_DEFAULT_TO_1X_SCALER, 0},
 
 	{NULL, NULL, 0, 0, 0, 0, 0, NULL}
 };

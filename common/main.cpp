@@ -197,6 +197,13 @@ int main(int argc, char *argv[]) {
 	prop.caption = detector.getGameName().c_str();
 	system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 
+	// See if the game should default to 1x scaler
+	if ((detector._default_gfx_mode) && 
+	   (detector._features & GF_DEFAULT_TO_1X_SCALER)) {
+		prop.gfx_mode = GFX_NORMAL;
+		system->property(OSystem::PROP_SET_GFX_MODE, &prop);
+	}
+	
 	// Create the game engine
 	Engine *engine = Engine::createFromDetector(&detector, system);
 
