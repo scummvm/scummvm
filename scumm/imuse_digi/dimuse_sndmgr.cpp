@@ -571,9 +571,17 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 			bool oggMode = false;
 			sprintf(fileName, "%s_reg%03d.mp3", soundHandle->name, region);
 			cmpFile = soundHandle->bundle->getFile(fileName, offs, len);
+#ifndef USE_MAD
+			if (cmpFile)
+				error("Mad library compiled support needed!");
+#endif
 			if (!cmpFile) {
 				sprintf(fileName, "%s_reg%03d.ogg", soundHandle->name, region);
 				cmpFile = soundHandle->bundle->getFile(fileName, offs, len);
+#ifndef USE_VORBIS
+			if (cmpFile)
+				error("Vorbis library compiled support needed!");
+#endif
 				assert(cmpFile);
 				oggMode = true;
 			}
