@@ -505,14 +505,14 @@ void Player_V1::nextPCjrCmd() {
 	}
 }
 
-void Player_V1::set_mplex (uint mplex) {
+void Player_V1::set_mplex(uint mplex) {
 	if (mplex == 0)
 		mplex = 65536;
 	_mplex = mplex;
 	_tick_len = _mplex_step * mplex;
 }
 
-void Player_V1::do_mix (int16 *data, uint len) {
+void Player_V1::do_mix(int16 *data, uint len) {
 	mutex_up();
 	uint step;
 

@@ -2561,6 +2561,8 @@ void Scumm_v5::o5_verbOps() {
 			error("o5_verbOps: unknown subopcode %d", _opcode & 0x1F);
 		}
 	}
+
+	// Force redraw of the modified verb slot
 	drawVerb(slot, 0);
 	verbMouseOver(0);
 }

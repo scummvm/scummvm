@@ -879,7 +879,7 @@ void Scumm_v2::o2_verbOps() {
 		break;
 	}
 
-	// FIXME - hack!
+	// Force redraw of the modified verb slot
 	drawVerb(slot, 0);
 	verbMouseOver(0);
 }
