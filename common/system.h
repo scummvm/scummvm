@@ -71,8 +71,7 @@ public:
 		PROP_SET_GFX_MODE = 4,
 		PROP_SHOW_DEFAULT_CURSOR = 5,
 		PROP_GET_SAMPLE_RATE = 6,
-		PROP_GET_FULLSCREEN = 7,
-		PROP_OVERLAY_IS_565 = 8
+		PROP_GET_FULLSCREEN = 7
 	};
 	union Property {
 		const char *caption;
@@ -168,6 +167,19 @@ public:
 	virtual void clear_overlay() = 0;
 	virtual void grab_overlay(int16 *buf, int pitch) = 0;
 	virtual void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h) = 0;
+
+	// Methods that convert RBG to/from colors suitable for the overlay.
+	// Default implementation assumes 565 mode.
+	virtual int16 RBGToColor(uint8 r, uint8 g, uint8 b)
+	{
+		return ((((r>>3)&0x1F) << 11) | (((g>>2)&0x3F) << 5) | ((b>>3)&0x1F));
+	}
+	virtual void colorToRBG(int16 color, uint8 &r, uint8 &g, uint8 &b)
+	{
+		r = (((color>>11)&0x1F) << 3);
+		g = (((color>>5)&0x3F) << 2);
+		b = ((color&0x1F) << 3);
+	}
 };
 
 

@@ -84,14 +84,6 @@ static byte guifont[] = {
 NewGui::NewGui(OSystem *system) : _system(system), _screen(0), _needRedraw(false),
 	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0)
 {
-	// Setup some default GUI colors.
-	// TODO - either use nicer values, or maybe make this configurable?
-	_bgcolor = RGB_TO_16(0, 0, 0);
-	_color = RGB_TO_16(96, 96, 96);
-	_shadowcolor = RGB_TO_16(64, 64, 64);
-	_textcolor = RGB_TO_16(32, 160, 32);
-	_textcolorhi = RGB_TO_16(0, 255, 0);
-	
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
 	
@@ -106,6 +98,18 @@ void NewGui::runLoop()
 
 	if (activeDialog == 0)
 		return;
+	
+	// Setup some default GUI colors. This has to be done here to ensure the
+	// overlay has been created already. Even then, one can get wrong colors, namely
+	// if the GUI is up and then the user toggles to full screen mode - on some system
+	// different color modes (555 vs 565) might be used depending on the resolution
+	// (e.g. that's the case on my system), so we still end up with wrong colors in those
+	// sitauations. At least now the user can fix it by closing and reopening the GUI.
+	_bgcolor = _system->RBGToColor(0, 0, 0);
+	_color = _system->RBGToColor(96, 96, 96);
+	_shadowcolor = _system->RBGToColor(64, 64, 64);
+	_textcolor = _system->RBGToColor(32, 160, 32);
+	_textcolorhi = _system->RBGToColor(0, 255, 0);
 	
 	if (!_stateIsSaved) {
 		saveState();
@@ -313,16 +317,18 @@ void NewGui::line(int x, int y, int x2, int y2, int16 color)
 
 void NewGui::blendRect(int x, int y, int w, int h, int16 color)
 {
-	int r = RED_FROM_16(color) * 3;
-	int g = GREEN_FROM_16(color) * 3;
-	int b = BLUE_FROM_16(color) * 3;
+	uint8 r, g, b;
+	uint8 ar, ag, ab;
+	_system->colorToRBG(color, r, g, b);
+	r *= 3;
+	g *= 3;
+	b *= 3;
 	int16 *ptr = getBasePtr(x, y);
 
 	while (h--) {
 		for (int i = 0; i < w; i++) {
-			ptr[i] = RGB_TO_16((RED_FROM_16(ptr[i])+r)/4,
-			                   (GREEN_FROM_16(ptr[i])+g)/4,
-			                   (BLUE_FROM_16(ptr[i])+b)/4);
+			_system->colorToRBG(ptr[i], ar, ag, ab);
+			ptr[i] = _system->RBGToColor((ar+r)/4, (ag+g)/4,  (ab+b)/4);
 		}
 		ptr += _screenPitch;
 	}

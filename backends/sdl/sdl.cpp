@@ -45,6 +45,10 @@ public:
 	virtual void grab_overlay(int16 *buf, int pitch);
 	virtual void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h);
 
+	// Methods that convert RBG to/from colors suitable for the overlay.
+	virtual int16 RBGToColor(uint8 r, uint8 g, uint8 b);
+	virtual void colorToRBG(int16 color, uint8 &r, uint8 &g, uint8 &b);
+
 protected:
 	typedef void ScalerProc(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 								uint8 *dstPtr, uint32 dstPitch, int width, int height);
@@ -153,7 +157,7 @@ void OSystem_SDL_Normal::draw_mouse() {
 			*bak++ = *dst;
 			color = *src++;
 			if (color != 0xFF)	// 0xFF = transparent, don't draw
-				*dst = RGB_TO_16(_currentPalette[color].r, _currentPalette[color].g, _currentPalette[color].b);
+				*dst = RBGToColor(_currentPalette[color].r, _currentPalette[color].g, _currentPalette[color].b);
 			dst++;
 			width--;
 		}
@@ -466,14 +470,20 @@ uint32 OSystem_SDL_Normal::property(int param, Property *value) {
 		}
 #endif
 		return 1;
-	} else if (param == PROP_OVERLAY_IS_565) {
-		assert(_tmpscreen != 0);
-		return (_tmpscreen->format->Rmask != 0x7C00);
 	}
 	
 	return OSystem_SDL_Common::property(param, value);
 }
 
+int16 OSystem_SDL_Normal::RBGToColor(uint8 r, uint8 g, uint8 b)
+{
+	return SDL_MapRGB(_tmpscreen->format, r, g, b);
+}
+
+void OSystem_SDL_Normal::colorToRBG(int16 color, uint8 &r, uint8 &g, uint8 &b)
+{
+	SDL_GetRGB(color, _tmpscreen->format, &r, &g, &b);
+}
 
 void OSystem_SDL_Normal::show_overlay()
 {

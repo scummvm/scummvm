@@ -22,8 +22,8 @@
 // Andre Souza <asouza@olinux.com.br>
 
 #include <SDL.h>
-//#include <SDL_opengl.h>
-#include <GL/gl.h>
+#include <SDL_opengl.h>
+//#include <GL/gl.h>	NOTE! Before anybody comments out SDL_opengl.h and enables this again, talk to Fingolfin first! GL/gl.h is NOT portable!
 #include <stdlib.h>
 #include <string.h>
 
