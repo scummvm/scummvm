@@ -26,12 +26,12 @@
 
 #define MAX_FILES_IN_LIST		60
 
-typedef struct __prefFile {
+struct PrefFile {
 	uint8 *data;
 	uint16 fileNr;
 	uint32 fileSize;
-	struct __prefFile *next;
-} prefFile;
+	PrefFile *next;
+};
 
 class SkyDisk {
 public:
@@ -53,8 +53,8 @@ public:
 protected:
 
 
-	prefFile *_prefRoot;
-    uint8 *givePrefetched(uint16 fileNr, uint32 *fSize);
+	PrefFile *_prefRoot;
+	uint8 *givePrefetched(uint16 fileNr, uint32 *fSize);
 
 	uint8 *getFileInfo(uint16 fileNr);
 	void dumpFile(uint16 fileNr);

@@ -64,10 +64,10 @@ SkyDisk::SkyDisk(char *gameDataPath) {
 
 SkyDisk::~SkyDisk(void) {
 
-	prefFile **fEntry = &_prefRoot;
+	PrefFile **fEntry = &_prefRoot;
 	while (*fEntry) {
 		free((*fEntry)->data);
-		prefFile *fTemp = *fEntry;
+		PrefFile *fTemp = *fEntry;
 		fEntry = &((*fEntry)->next);
 		delete fTemp;
 	}
@@ -203,7 +203,7 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 
 void SkyDisk::prefetchFile(uint16 fileNr) {
 
-    prefFile **fEntry = &_prefRoot;
+	PrefFile **fEntry = &_prefRoot;
 	bool found = false;
 	while (*fEntry) {
 		if ((*fEntry)->fileNr == fileNr) found = true;
@@ -214,7 +214,7 @@ void SkyDisk::prefetchFile(uint16 fileNr) {
 		return ;
 	}
 	uint8 *temp = loadFile(fileNr, NULL);
-	*fEntry = new prefFile;
+	*fEntry = new PrefFile;
 	(*fEntry)->data = temp;
 	(*fEntry)->fileSize = _lastLoadedFileSize;
 	(*fEntry)->fileNr = fileNr;
@@ -223,7 +223,7 @@ void SkyDisk::prefetchFile(uint16 fileNr) {
 
 uint8 *SkyDisk::givePrefetched(uint16 fileNr, uint32 *fSize) {
 	
-	prefFile **fEntry = &_prefRoot;
+	PrefFile **fEntry = &_prefRoot;
 	bool found = false;
 	while ((*fEntry) && (!found)) {
 		if ((*fEntry)->fileNr == fileNr) found = true;
@@ -234,7 +234,7 @@ uint8 *SkyDisk::givePrefetched(uint16 fileNr, uint32 *fSize) {
 		return NULL;
 	}
 	uint8 *retPtr = (*fEntry)->data;
-	prefFile *retStr = *fEntry;
+	PrefFile *retStr = *fEntry;
 	*fEntry = (*fEntry)->next;
 	*fSize = retStr->fileSize;
 	delete retStr;
@@ -316,7 +316,7 @@ void SkyDisk::fnCacheFiles(void) {
 		found = false;
 		while (_loadedFilesList[lCnt] && (!found)) {
 			if (_loadedFilesList[lCnt] == (_buildList[bCnt] & 0x7FFFU)) found = true;
-            lCnt++;
+			lCnt++;
 		}
 		if (found) {
 			bCnt++;
@@ -327,7 +327,7 @@ void SkyDisk::fnCacheFiles(void) {
 		targCnt++;
 		_loadedFilesList[targCnt] = 0;
 		SkyState::_itemList[_buildList[bCnt] & 2047] = (void**)loadFile(_buildList[bCnt] & 0x7FFF, NULL);
-        bCnt++;
+		bCnt++;
 	}
 	_buildList[0] = 0;
 }
