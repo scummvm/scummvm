@@ -73,7 +73,7 @@ Engine::Engine() :
 	printLineDefaults.fgColor._vals[1] = 255;
 	printLineDefaults.fgColor._vals[2] = 255;
 	printLineDefaults.font = NULL;
-	printLineDefaults.justify = 1;
+	printLineDefaults.justify = 2;
 }
 
 void Engine::mainLoop() {
