@@ -361,7 +361,7 @@ void FB2GL::update(void *fb, int w, int h, int pitch, int xskip, int yskip) {
 			// Update 320x256 texture
 			glBindTexture(GL_TEXTURE_2D, texture1);
 			glTexSubImage2D(GL_TEXTURE_2D, 0, xskip, yskip, 
-				329-xskip, 256-yskip, GL_COLOR_INDEX, 
+				320-xskip, 256-yskip, GL_COLOR_INDEX, 
 				GL_UNSIGNED_BYTE, palettedFrameBuffer1);
 		}
 
