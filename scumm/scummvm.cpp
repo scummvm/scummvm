@@ -197,8 +197,8 @@ static const ScummGameSettings scumm_settings[] = {
 	
 	 /* Note that both full versions of Humongous games and demos were often released for
 	  * several interpreter versions... */
-	 
-	/* Humongous Entertainment Scumm Version 7 */
+/*	 
+	// Humongous Entertainment Scumm Version 7 
 	{"catalog", "Humongous Interactive Catalog", GID_PUTTPUTT, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
 	{"farm", "Let's Explore the Farm with Buzzy", GID_PUTTPUTT, 6, MDT_NONE,
@@ -220,7 +220,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"freddemo", "Freddi Fish 1: Missing Kelp Seeds (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
 
-	/* Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80 */
+	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80 
 	{"pajama", "Pajama Sam 1: No Need to Hide", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
 	{"pjs-demo", "Pajama Sam 1: No Need to Hide (Demo)", GID_PJSDEMO, 6, MDT_NONE,
@@ -232,7 +232,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"freddi2", "Freddi Fish 2: Haunted Schoolbus", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
 
-	/* Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90 */
+	// Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90
 	{"timedemo", "Putt-Putt Travels Through Time (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
 	{"f3-mdemo", "Freddi Fish 3: Stolen Conch Shell (Demo)", GID_PJSDEMO, 6, MDT_NONE,
@@ -248,12 +248,12 @@ static const ScummGameSettings scumm_settings[] = {
 	{"1grademo", "Big Thinkers First Grade (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
 
-	/* Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95 */
+	// Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95
 	{"pj2demo", "Pajama Sam 2: Thunder and Lightning (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
 
-	/* Humongous Entertainment Scumm Version 9.8 ?  Scummsys.98
-	 * these and later games can easily be identified by the .(a) file instead of a .he1 */
+	// Humongous Entertainment Scumm Version 9.8 ?  Scummsys.98
+	// these and later games can easily be identified by the .(a) file instead of a .he1
 	{"racedemo", "Putt-Putt Enters the Race (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
 	{"puttrace", "Putt-Putt Enters the Race", GID_PJSDEMO, 6, MDT_NONE,
@@ -269,7 +269,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"blue'sbirthday-yellow", "Blue's Birthday Yellow", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
 
-	/* Humongous Entertainment Scumm Version ?  engine moved to c++ */
+	// Humongous Entertainment Scumm Version ?  engine moved to c++ 
 	{"pj3-demo", "Pajama Sam 3: You Are What You Eat (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
 	{"freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave", GID_PJSDEMO, 6, MDT_NONE,
@@ -277,7 +277,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"putttime", "Putt-Putt Travels Through Time", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
 	// bunch of backyard sports games...
-
+*/
 #endif
 	{NULL, NULL, 0, 0, MDT_NONE, 0}
 };
