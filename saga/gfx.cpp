@@ -994,6 +994,7 @@ void Gfx::palToBlackWait(SURFACE *surface, PALENTRY *src_pal, int duration) {
 		cur_time = _vm->_system->getMillis();
 
 		palToBlack(surface, src_pal, (double) (cur_time - start_time) / duration);
+		_vm->processInput();
 		_vm->_system->updateScreen();
 		_vm->_system->delayMillis(50);
 	} while (cur_time < start_time + duration);
@@ -1007,6 +1008,7 @@ void Gfx::blackToPalWait(SURFACE *surface, PALENTRY *src_pal, int duration) {
 		cur_time = _vm->_system->getMillis();
 
 		blackToPal(surface, src_pal, (double) (cur_time - start_time) / duration);
+		_vm->processInput();
 		_vm->_system->updateScreen();
 		_vm->_system->delayMillis(50);
 	} while (cur_time < start_time + duration);
