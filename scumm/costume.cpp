@@ -273,7 +273,6 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	CHECK_HEAP
 
 	if (_loaded._format == 0x57) {
-		v1.mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + v1.y * _numStrips;
 		// The v1 costume renderer needs the actor number, which is
 		// the same thing as the costume renderer's _dirty_id.
 		procC64(_dirty_id);
@@ -326,11 +325,22 @@ void CostumeRenderer::c64_ignorePakCols(int num) {
 	}
 }
 
-int v1_mm_actor_palatte_1 [] = { 8, 8, 8, 8, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0 };
-int v1_mm_actor_palatte_2 [] = { 0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7, 0 };
+static const int v1_mm_actor_palatte_1[] = { 8, 8, 8, 8, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0 };
+static const int v1_mm_actor_palatte_2[] = { 0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7, 0 };
+
+#define MASK_AT(xoff) \
+	(mask && ((mask[(v1.x+xoff) >> 3] | mask[((v1.x+xoff) >> 3) + v1.imgbufoffs]) & revBitMask[(v1.x+xoff) & 7]))
+#define LINE(c,p) \
+	pcolor = (color >> c) & 3; \
+	if (pcolor) { \
+		if (!MASK_AT(p)) \
+			dst[p] = palette[pcolor]; \
+		if (!MASK_AT(p+1)) \
+			dst[p+1] = palette[pcolor]; \
+	}
 
 void CostumeRenderer::procC64(int actor) {
-	const byte *src;
+	const byte *mask, *src;
 	byte *dst;
 	byte len;
 	uint y, height;
@@ -361,7 +371,7 @@ void CostumeRenderer::procC64(int actor) {
 	}
 
 	v1.skip_width >>= 3;
-	const byte *mask_ptr = v1.mask_ptr;
+	mask = v1.mask_ptr;
 
 	if (len)
 		goto StartPos;
@@ -378,23 +388,15 @@ void CostumeRenderer::procC64(int actor) {
 				color = *src++;
 			
 			if (y < _outheight) {
-#define MASK_AT(xoff)	(mask_ptr && ((mask_ptr[(v1.x+xoff) >> 3] | mask_ptr[((v1.x+xoff) >> 3) + v1.imgbufoffs]) & revBitMask[(v1.x+xoff) & 7]))
 				if (!_mirror) {
-					pcolor = (color >> 0) & 3; if (pcolor) { if (!MASK_AT(0)) dst[0] = palette[pcolor]; if (!MASK_AT(1)) dst[1] = palette[pcolor]; }
-					pcolor = (color >> 2) & 3; if (pcolor) { if (!MASK_AT(2)) dst[2] = palette[pcolor]; if (!MASK_AT(3)) dst[3] = palette[pcolor]; }
-					pcolor = (color >> 4) & 3; if (pcolor) { if (!MASK_AT(4)) dst[4] = palette[pcolor]; if (!MASK_AT(5)) dst[5] = palette[pcolor]; }
-					pcolor = (color >> 6) & 3; if (pcolor) { if (!MASK_AT(6)) dst[6] = palette[pcolor]; if (!MASK_AT(7)) dst[7] = palette[pcolor]; }
+					LINE(0, 0); LINE(2, 2); LINE(4, 4); LINE(6, 6);
 				} else {
-					pcolor = (color >> 6) & 3; if (pcolor) { if (!MASK_AT(0)) dst[0] = palette[pcolor]; if (!MASK_AT(1)) dst[1] = palette[pcolor]; }
-					pcolor = (color >> 4) & 3; if (pcolor) { if (!MASK_AT(2)) dst[2] = palette[pcolor]; if (!MASK_AT(3)) dst[3] = palette[pcolor]; }
-					pcolor = (color >> 2) & 3; if (pcolor) { if (!MASK_AT(4)) dst[4] = palette[pcolor]; if (!MASK_AT(5)) dst[5] = palette[pcolor]; }
-					pcolor = (color >> 0) & 3; if (pcolor) { if (!MASK_AT(6)) dst[6] = palette[pcolor]; if (!MASK_AT(7)) dst[7] = palette[pcolor]; }
+					LINE(6, 0); LINE(4, 2); LINE(2, 4); LINE(0, 6);
 				}
-#undef MASK_AT
 			}
 			dst += _outwidth;
 			y++;
-			mask_ptr += _numStrips;
+			mask += _numStrips;
 			if (!--height) {
 				if (!--v1.skip_width)
 					return;
@@ -403,13 +405,16 @@ void CostumeRenderer::procC64(int actor) {
 				v1.x += 8 * v1.scaleXstep;
 				if (v1.x < 0 || v1.x >= _vm->_screenWidth)
 					return;
-				mask_ptr = v1.mask_ptr + (v1.x >> 3);
+				mask = v1.mask_ptr;
 				v1.destptr += 8 * v1.scaleXstep;
 				dst = v1.destptr;
 			}
 		}
 	} while(1);
 }
+
+#undef LINE
+#undef MASK_AT
 
 void CostumeRenderer::proc3() {
 	const byte *mask, *src;
