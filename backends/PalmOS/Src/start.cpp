@@ -23,7 +23,6 @@
 #include <PalmOS.h>
 #include <SonyClie.h>
 
-#include "vibrate.h"
 #include "start.h"
 #include "games.h"
 #include "globals.h"
@@ -150,23 +149,6 @@ void SavePrefs() {
 	}
 }
 
-Boolean CheckVibratorExists() {
-	UInt32 romVersion;
-	Err err;
-	Boolean exists = false;
-
-	err = FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion);
-	if (!err) {
-		if (romVersion >= sysMakeROMVersion(4,0,0,sysROMStageRelease,0)) {
-			Boolean active = false;
-			err = HwrVibrateAttributes(0, kHwrVibrateActive, &active);
-			exists = (!err) ? true : exists;
-		}
-	}
-
-	return exists;
-}
-
 /***********************************************************************
  *
  * FUNCTION:    AppHandleEvent
@@ -208,7 +190,7 @@ static Boolean AppHandleEvent(EventPtr eventP)
 				FrmSetEventHandler(frmP, SkinsFormHandleEvent);
 				break;
 
-			case EditGameForm:
+			case GameEditForm:
 				FrmSetEventHandler(frmP, EditGameFormHandleEvent);
 				break;
 
@@ -325,8 +307,14 @@ static void AppLaunchCmdNotify(UInt16 LaunchFlags, SysNotifyParamType * pData)
 			break;
 
 		case sysNotifyDisplayResizedEvent:
-			if (gVars) {
-				if (gVars->pinUpdate) {
+			// FIXME : What the purpose of this code ??? it seems to be the part
+			// that make Zodiac silkarea be mad
+	/*		if (gVars) {
+				static Boolean resized = false;
+				
+				if (gVars->pinUpdate && !resized) {
+		//			resized = true;
+
 					EventType ev;
 					MemSet(&ev, sizeof(EventType), 0);
 					ev.eType = (enum eventsEnum)winDisplayChangedEvent;
@@ -334,8 +322,10 @@ static void AppLaunchCmdNotify(UInt16 LaunchFlags, SysNotifyParamType * pData)
 
 					PINGetScreenDimensions();
 					WinScreenGetPitch();
+				} else {
+		//			resized = false;
 				}
-			}
+			}*/
 			break;
 
 		case sonySysNotifyMsaEnforceOpenEvent:
@@ -400,4 +390,13 @@ end:
 UInt32 PilotMain( UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 {
 	return ScummVMPalmMain(cmd, cmdPBP, launchFlags);
+}
+
+// This is now required since ScummEngine are now very big :)
+#include "MemGlue.h"
+
+void *operator new(UInt32 size) {
+	void *ptr = MemGluePtrNew(size);
+	MemSet(ptr, 0, size);
+	return ptr;
 }
