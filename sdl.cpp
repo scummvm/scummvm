@@ -829,7 +829,7 @@ bool OSystem_SDL::set_sound_proc(void *param, SoundProc *proc, byte format) {
 
 	desired.freq = SAMPLES_PER_SEC;
 	desired.format = AUDIO_S16SYS;
-	desired.channels = 1;
+	desired.channels = 2;
 	desired.samples = 2048;
 	desired.callback = proc;
 	desired.userdata = param;

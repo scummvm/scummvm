@@ -84,14 +84,20 @@ int SoundMixer::play_mp3_cdtrack(PlayingSoundHandle *handle, FILE* file, mad_tim
 
 void SoundMixer::mix(int16 *buf, uint len) {
 
-	if (_paused)
+	if (_paused) {
+		memset(buf, 0, 2 * len * sizeof(int16));	
 		return;
+	}
 
 	if (_premix_proc) {
+		int i;
 		_premix_proc(_premix_param, buf, len);
+		for (i = (len - 1); i >= 0; i--) {
+			buf[2 * i] = buf[2 * i + 1] = buf[i];
+		}
 	} else {
 		/* no premixer available, zero the buf out */
-		memset(buf, 0, len * sizeof(int16));
+		memset(buf, 0, 2 * len * sizeof(int16));
 	}
 
 	/* now mix all channels */
@@ -101,7 +107,7 @@ void SoundMixer::mix(int16 *buf, uint len) {
 }
 
 void SoundMixer::on_generate_samples(void *s, byte *samples, int len) {
-	((SoundMixer*)s)->mix((int16*)samples, len>>1);
+	((SoundMixer*)s)->mix((int16*)samples, len>>2);
 }
 
 bool SoundMixer::bind_to_system(OSystem *syst) {	
@@ -207,6 +213,64 @@ void SoundMixer::Channel_RAW::append(void *data, uint32 len) {
   _mixer->_paused = false;	/* Mix again now */
 }
 
+static void mix_signed_mono_8(int16 *data, uint len, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab) {
+	uint32 fp_pos = *fp_pos_ptr;
+	byte *s = *s_ptr;
+	do {
+		fp_pos += fp_speed;
+		*data++ += vol_tab[*s];
+		*data++ += vol_tab[*s];
+		s += fp_pos >> 16;
+		fp_pos &= 0x0000FFFF;
+	} while (--len);
+
+	*fp_pos_ptr = fp_pos;
+	*s_ptr = s;
+}
+static void mix_unsigned_mono_8(int16 *data, uint len, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab) {
+	uint32 fp_pos = *fp_pos_ptr;
+	byte *s = *s_ptr;
+	do {
+		fp_pos += fp_speed;
+		*data++ += vol_tab[*s ^ 0x80];
+		*data++ += vol_tab[*s ^ 0x80];
+		s += fp_pos >> 16;
+		fp_pos &= 0x0000FFFF;
+	} while (--len);
+
+	*fp_pos_ptr = fp_pos;
+	*s_ptr = s;
+}
+static void mix_signed_stereo_8(int16 *data, uint len, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab) {
+	warning("Mixing stereo signed 8 bit is not supported yet ");
+}
+static void mix_unsigned_stereo_8(int16 *data, uint len, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab) {
+	warning("Mixing stereo unsigned 8 bit is not supported yet ");
+}
+static void mix_signed_mono_16(int16 *data, uint len, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab) {
+	warning("Mixing mono signed 16 bit is not supported yet ");
+}
+static void mix_unsigned_mono_16(int16 *data, uint len, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab) {
+	warning("Mixing mono unsigned 16 bit is not supported yet ");
+}
+static void mix_signed_stereo_16(int16 *data, uint len, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab) {
+	warning("Mixing stereo signed 16 bit is not supported yet ");
+}
+static void mix_unsigned_stereo_16(int16 *data, uint len, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab) {
+	warning("Mixing stereo unsigned 16 bit is not supported yet ");
+}
+
+static void (*mixer_helper_table[16])(int16 *data, uint len, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab) = {
+	mix_signed_mono_8,
+	mix_unsigned_mono_8,
+	mix_signed_stereo_8,
+	mix_unsigned_stereo_8,
+	mix_signed_mono_16,
+	mix_unsigned_mono_16,
+	mix_signed_stereo_16,
+	mix_unsigned_stereo_16
+};
+
 void SoundMixer::Channel_RAW::mix(int16 *data, uint len) {
 	byte *s, *s_org = NULL;
 	uint32 fp_pos;
@@ -245,21 +309,7 @@ void SoundMixer::Channel_RAW::mix(int16 *data, uint len) {
 	const uint32 fp_speed = _fp_speed;
 	const int16 *vol_tab = _mixer->_volume_table;
 
-	if (_flags & FLAG_UNSIGNED) {
-		do {
-			fp_pos += fp_speed;
-			*data++ += vol_tab[*s ^ 0x80];
-			s += fp_pos >> 16;
-			fp_pos &= 0x0000FFFF;
-		} while (--len);
-	} else {
-		do {
-			fp_pos += fp_speed;
-			*data++ += vol_tab[*s];
-			s += fp_pos >> 16;
-			fp_pos &= 0x0000FFFF;
-		} while (--len);
-	}
+	mixer_helper_table[_flags & 0x07](data, len, &s, &fp_pos, fp_speed, vol_tab);
 
 	_pos = s - (byte*) _ptr;
 	_fp_pos = fp_pos;
@@ -345,7 +395,9 @@ void SoundMixer::Channel_MP3::mix(int16 *data, uint len) {
 			if (_silence_cut > 0) {
 				_silence_cut--;
 			} else {
-				*data++ += (int16) ((scale_sample(*ch++) * volume) / 32);
+				int16 sample = (int16) ((scale_sample(*ch++) * volume) / 32);
+				*data++ += sample;
+				*data++ += sample;
 				len--;
 			}
 			_pos_in_frame++;
@@ -463,7 +515,9 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 		// Get samples, play samples ... 
 		ch = _synth.pcm.samples[0] + _pos_in_frame;
 		while ((_pos_in_frame < _synth.pcm.length) && (len > 0)) {
-			*data++ += (int16) ((scale_sample(*ch++) * volume) / 32);
+			int16 sample = (int16) ((scale_sample(*ch++) * volume) / 32);
+			*data++ += sample;
+			*data++ += sample;
 			len--;
 			_pos_in_frame++;
 		}

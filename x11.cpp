@@ -256,21 +256,18 @@ static void *sound_and_music_thread(void *params)
 
 	sched_yield();
 	while (1) {
-		unsigned short *buf = (unsigned short *)sound_buffer;
+		unsigned char *buf = (unsigned char *)sound_buffer;
 		int size, written;
 
-		sound_proc(proc_param, (byte *)sound_buffer, FRAG_SIZE >> 1);
-		/* Now convert to stereo */
-		for (int i = ((FRAG_SIZE >> 2) - 1); i >= 0; i--) {
-			buf[2 * i + 1] = buf[2 * i] = buf[i];
-		}
+		sound_proc(proc_param, (byte *)sound_buffer, FRAG_SIZE);
 #ifdef CAPTURE_SOUND
 		fwrite(buf, 2, FRAG_SIZE >> 1, f);
 		fflush(f);
 #endif
 		size = FRAG_SIZE;
 		while (size > 0) {
-			written = write(sound_fd, sound_buffer, size);
+			written = write(sound_fd, buf, size);
+			buf += written;
 			size -= written;
 		}
 	}

@@ -131,9 +131,12 @@ public:
 
 	/* start playing a raw sound */
 	enum {
-		FLAG_AUTOFREE = 1,
-		FLAG_UNSIGNED = 2, /* unsigned samples */
-		FLAG_FILE = 4,	   /* sound is a FILE * that's read from */
+		/* Do *NOT* change any of these flags without looking at the code in mixer.cpp */
+		FLAG_UNSIGNED   =  1, /* unsigned samples */
+		FLAG_STEREO     =  2, /* sound is in stereo */
+		FLAG_16BITS     =  4, /* sound is 16 bits wide */
+		FLAG_AUTOFREE   =  8, /* sound buffer is freed automagically at the end of playing */
+		FLAG_FILE       = 16, /* sound is a FILE * that's read from */
 	};
 	int play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags);
 #ifdef COMPRESSED_SOUND_FILE
