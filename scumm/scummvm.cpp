@@ -2142,6 +2142,8 @@ void Scumm::destroy() {
 	free(_bitVars);
 	free(_newNames);
 	free(_classData);
+	free(_exe_name);
+	free(_game_name);
 }
 
 //
