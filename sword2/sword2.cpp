@@ -252,11 +252,9 @@ int Sword2Engine::init(GameDetector &detector) {
 	if (!_mixer->isReady())
 		warning("Sound initialization failed");
 
-	// We have our own volume settings panel, so don't let ScummVM's mixer
-	// soften the sound in any way.
-
-	_mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, 256);
-	_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, 256);
+	_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(SoundMixer::kSpeechAudioDataType, ConfMan.getInt("speech_volume"));
+	_mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, ConfMan.getInt("sfx_volume"));
 
 	// During normal gameplay, we care neither about mouse button releases
 	// nor the scroll wheel.

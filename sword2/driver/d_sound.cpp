@@ -469,13 +469,10 @@ Sound::Sound(Sword2Engine *vm) {
 
 	_speechPaused = false;
 	_speechMuted = false;
-	_speechVol = 255;
 
 	_fxPaused = false;
 	_fxMuted = false;
-	_fxVol = 255;
 
-	_musicVol = 255;
 	_musicPaused = false;
 	_musicMuted = false;
 
@@ -485,7 +482,7 @@ Sound::Sound(Sword2Engine *vm) {
 	for (int i = 0; i < MAXMUS; i++)
 		_music[i] = NULL;
 
-	_vm->_mixer->setupPremix(this);
+	_vm->_mixer->setupPremix(this, SoundMixer::kMusicAudioDataType);
 }
 
 Sound::~Sound() {
@@ -545,7 +542,7 @@ int Sound::readBuffer(int16 *buffer, const int numSamples) {
 
 		if (!_musicMuted) {
 			for (int j = 0; j < len; j++) {
-				clampedAdd(buffer[j], (_musicVol * _mixBuffer[j]) / 255);
+				clampedAdd(buffer[j], _mixBuffer[j]);
 			}
 		}
 	}
@@ -601,26 +598,6 @@ void Sound::muteMusic(bool mute) {
 
 bool Sound::isMusicMute(void) {
 	return _musicMuted;
-}
-
-/**
- * Set the volume of any future as well as playing music.
- * @param volume volume, from 0 (silent) to 16 (max)
- */
-
-void Sound::setMusicVolume(uint volume) {
-	if (volume > 255)
-		volume = 255;
-
-	_musicVol = volume;
-}
-
-/**
- * @return the volume setting for music
- */
-
-uint8 Sound::getMusicVolume(void) {
-	return _musicVol;
 }
 
 /**
@@ -776,7 +753,7 @@ void Sound::muteSpeech(bool mute) {
 	_speechMuted = mute;
 
 	if (_soundHandleSpeech.isActive()) {
-		byte volume = mute ? 0 : _speechVol;
+		uint volume = mute ? 0 : SoundMixer::kMaxChannelVolume;
 
 		_vm->_mixer->setChannelVolume(_soundHandleSpeech, volume);
 	}
@@ -788,30 +765,6 @@ void Sound::muteSpeech(bool mute) {
 
 bool Sound::isSpeechMute(void) {
 	return _speechMuted;
-}
-
-/**
- * Set the volume of any future as well as playing speech samples.
- * @param volume volume, from 0 (silent) to 14 (max)
- */
-
-void Sound::setSpeechVolume(uint volume) {
-	if (volume > 255)
-		volume = 255;
-
-	_speechVol = volume;
-
-	if (_soundHandleSpeech.isActive() && !_speechMuted && _soundHandleSpeech.isActive()) {
-		_vm->_mixer->setChannelVolume(_soundHandleSpeech, _speechVol);
-	}
-}
-
-/**
- * @return the volume setting for speech
- */
-
-uint8 Sound::getSpeechVolume(void) {
-	return _speechVol;
 }
 
 /**
@@ -928,11 +881,11 @@ int32 Sound::playCompSpeech(uint32 speechid, uint8 vol, int8 pan) {
 
 	// Modify the volume according to the master volume
 
-	byte volume = _speechMuted ? 0 : vol * _speechVol / 16;
+	byte volume = _speechMuted ? 0 : vol * SoundMixer::kMaxChannelVolume / 16;
 	int8 p = _panTable[pan + 16];
 
 	// Start the speech playing
-	_vm->_mixer->playInputStream(SoundMixer::kSFXAudioDataType, &_soundHandleSpeech, input, -1, volume, p);
+	_vm->_mixer->playInputStream(SoundMixer::kSpeechAudioDataType, &_soundHandleSpeech, input, -1, volume, p);
 	return RD_OK;
 }
 
@@ -1014,7 +967,7 @@ void Sound::muteFx(bool mute) {
 	// Now update the volume of any fxs playing
 	for (int i = 0; i < MAXFX; i++) {
 		if (_fx[i]._id) {
-			byte volume = mute ? 0 : _fx[i]._volume * _fxVol / 16;
+			byte volume = mute ? 0 : _fx[i]._volume * SoundMixer::kMaxChannelVolume / 16;
 
 			_vm->_mixer->setChannelVolume(_fx[i]._handle, volume);
 		}
@@ -1027,35 +980,6 @@ void Sound::muteFx(bool mute) {
 
 bool Sound::isFxMute(void) {
 	return _fxMuted;
-}
-
-/**
- * @return the master volume setting for sound effects
- */
-
-uint8 Sound::getFxVolume(void) {
-	return _fxVol;
-}
-
-/**
- * Set the master volume of all sound effects. The effects still have their
- * own volume setting as well as the master volume.
- * @param volume volume, from 0 (silent) to 14 (max)
- */
-
-void Sound::setFxVolume(uint volume) {
-	if (volume > 255)
-		volume = 255;
-
-	_fxVol = volume;
-
-	if (_fxMuted)
-		return;
-
-	// Now update the volume of any fxs playing
-	for (int i = 0; i < MAXFX; i++)
-		if (_fx[i]._id)
-			_vm->_mixer->setChannelVolume(_fx[i]._handle, _fx[i]._volume * _fxVol / 16);
 }
 
 /**
@@ -1077,7 +1001,7 @@ int32 Sound::setFxIdVolumePan(int32 id, uint8 vol, int8 pan) {
 	_fx[i]._volume = vol;
 
 	if (!_fxMuted) {
-		_vm->_mixer->setChannelVolume(_fx[i]._handle, _fx[i]._volume * _fxVol / 16);
+		_vm->_mixer->setChannelVolume(_fx[i]._handle, _fx[i]._volume * SoundMixer::kMaxChannelVolume / 16);
 		_vm->_mixer->setChannelBalance(_fx[i]._handle, _panTable[pan + 16]);
 	}
 
@@ -1093,7 +1017,7 @@ int32 Sound::setFxIdVolume(int32 id, uint8 vol) {
 	_fx[i]._volume = vol;
 
 	if (!_fxMuted)
-		_vm->_mixer->setChannelVolume(_fx[i]._handle, vol * _fxVol / 16);
+		_vm->_mixer->setChannelVolume(_fx[i]._handle, vol * SoundMixer::kMaxChannelVolume / 16);
 
 	return RD_OK;
 }
@@ -1190,14 +1114,16 @@ int32 Sound::playFx(int32 id, byte *data, uint8 vol, int8 pan, uint8 type) {
 	if (!_soundOn)
 		return RD_OK;
 
-	byte volume = _fxMuted ? 0 : vol * _fxVol / 16;
+	byte volume = _fxMuted ? 0 : vol * SoundMixer::kMaxChannelVolume / 16;
+	SoundMixer::SoundType soundType = SoundMixer::kSFXAudioDataType;
 
 	// All lead-ins and lead-outs I've heard are music, so we use
 	// the music volume setting for them.
 
 	if (type == RDSE_FXLEADIN || type == RDSE_FXLEADOUT) {
 		id = (type == RDSE_FXLEADIN) ? -2 : -1;
-		volume = _musicMuted ? 0 : _musicVol;
+		volume = _musicMuted ? 0 : SoundMixer::kMaxChannelVolume;
+		soundType = SoundMixer::kMusicAudioDataType;
 	}
 
 	WavInfo wavInfo;
@@ -1253,7 +1179,7 @@ int32 Sound::playFx(int32 id, byte *data, uint8 vol, int8 pan, uint8 type) {
 
 	int8 p = _panTable[pan + 16];
 
-	_vm->_mixer->playRaw(&_fx[fxi]._handle, wavInfo.data, wavInfo.samples, wavInfo.rate, flags, -1, volume, p);
+	_vm->_mixer->playRaw(&_fx[fxi]._handle, wavInfo.data, wavInfo.samples, wavInfo.rate, flags, -1, volume, p, 0, 0, soundType);
 
 	return RD_OK;
 }

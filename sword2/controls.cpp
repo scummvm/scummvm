@@ -862,10 +862,14 @@ private:
 	Widget *_gfxPreview;
 	Button *_okButton;
 	Button *_cancelButton;
+	
+	SoundMixer *_mixer;
 
 public:
 	OptionsDialog(Gui *gui) : Dialog(gui) {
 		_fr = new FontRendererGui(gui, gui->_vm->_controlsFontId);
+		
+		_mixer = _gui->_vm->_mixer;
 
 		_panel = new Widget(this, 1);
 		_panel->createSurfaceImages(3405, 0, 40);
@@ -891,9 +895,9 @@ public:
 		_fxSwitch->linkSurfaceImages(_musicSwitch, 516, 250);
 		_fxSwitch->reverseStates();
 
-		_musicSlider = new Slider(this, _panel, 255, 309, 161, 170, 27);
-		_speechSlider = new Slider(this, _panel, 255, 309, 208, 170, 27, _musicSlider);
-		_fxSlider = new Slider(this, _panel, 255, 309, 254, 170, 27, _musicSlider);
+		_musicSlider = new Slider(this, _panel, SoundMixer::kMaxMixerVolume, 309, 161, 170, 27);
+		_speechSlider = new Slider(this, _panel, SoundMixer::kMaxMixerVolume, 309, 208, 170, 27, _musicSlider);
+		_fxSlider = new Slider(this, _panel, SoundMixer::kMaxMixerVolume, 309, 254, 170, 27, _musicSlider);
 		_gfxSlider = new Slider(this, _panel, 3, 309, 341, 170, 27, _musicSlider);
 
 		_gfxPreview = new Widget(this, 4);
@@ -928,9 +932,11 @@ public:
 		_musicSwitch->setValue(!_gui->_vm->_sound->isMusicMute());
 		_speechSwitch->setValue(!_gui->_vm->_sound->isSpeechMute());
 		_fxSwitch->setValue(!_gui->_vm->_sound->isFxMute());
-		_musicSlider->setValue(_gui->_vm->_sound->getMusicVolume());
-		_speechSlider->setValue(_gui->_vm->_sound->getSpeechVolume());
-		_fxSlider->setValue(_gui->_vm->_sound->getFxVolume());
+
+		_musicSlider->setValue(_mixer->getVolumeForSoundType(SoundMixer::kMusicAudioDataType));
+		_speechSlider->setValue(_mixer->getVolumeForSoundType(SoundMixer::kSpeechAudioDataType));
+		_fxSlider->setValue(_mixer->getVolumeForSoundType(SoundMixer::kSFXAudioDataType));
+
 		_gfxSlider->setValue(_gui->_vm->_graphics->getRenderLevel());
 		_gfxPreview->setState(_gui->_vm->_graphics->getRenderLevel());
 	}
@@ -989,7 +995,7 @@ public:
 		if (widget == _musicSwitch) {
 			_gui->_vm->_sound->muteMusic(result != 0);
 		} else if (widget == _musicSlider) {
-			_gui->_vm->_sound->setMusicVolume(result);
+			_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, result);
 			_gui->_vm->_sound->muteMusic(result == 0);
 			_musicSwitch->setValue(result != 0);
 		} else if (widget == _speechSlider) {
@@ -1008,9 +1014,9 @@ public:
 			_gui->_vm->_sound->muteMusic(!_musicSwitch->getValue());
 			_gui->_vm->_sound->muteSpeech(!_speechSwitch->getValue());
 			_gui->_vm->_sound->muteFx(!_fxSwitch->getValue());
-			_gui->_vm->_sound->setMusicVolume(_musicSlider->getValue());
-			_gui->_vm->_sound->setSpeechVolume(_speechSlider->getValue());
-			_gui->_vm->_sound->setFxVolume(_fxSlider->getValue());
+			_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, _musicSlider->getValue());
+			_mixer->setVolumeForSoundType(SoundMixer::kSpeechAudioDataType, _speechSlider->getValue());
+			_mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, _fxSlider->getValue());
 			_gui->_vm->_sound->buildPanTable(_gui->_stereoReversed);
 
 			_gui->updateGraphicsLevel(_gfxSlider->getValue());
@@ -1491,9 +1497,9 @@ void Gui::readOptionSettings(void) {
 
 	updateGraphicsLevel((uint8) ConfMan.getInt("gfx_details"));
 
-	_vm->_sound->setMusicVolume(ConfMan.getInt("music_volume"));
-	_vm->_sound->setSpeechVolume(ConfMan.getInt("speech_volume"));
-	_vm->_sound->setFxVolume(ConfMan.getInt("sfx_volume"));
+	_vm->_mixer->setVolumeForSoundType(SoundMixer::kMusicAudioDataType, ConfMan.getInt("music_volume"));
+	_vm->_mixer->setVolumeForSoundType(SoundMixer::kSpeechAudioDataType, ConfMan.getInt("speech_volume"));
+	_vm->_mixer->setVolumeForSoundType(SoundMixer::kSFXAudioDataType, ConfMan.getInt("sfx_volume"));
 	_vm->_sound->muteMusic(ConfMan.getBool("music_mute"));
 	_vm->_sound->muteSpeech(ConfMan.getBool("speech_mute"));
 	_vm->_sound->muteFx(ConfMan.getBool("sfx_mute"));
@@ -1501,9 +1507,9 @@ void Gui::readOptionSettings(void) {
 }
 
 void Gui::writeOptionSettings(void) {
-	ConfMan.set("music_volume", _vm->_sound->getMusicVolume());
-	ConfMan.set("speech_volume", _vm->_sound->getSpeechVolume());
-	ConfMan.set("sfx_volume", _vm->_sound->getFxVolume());
+	ConfMan.set("music_volume", _vm->_mixer->getVolumeForSoundType(SoundMixer::kMusicAudioDataType));
+	ConfMan.set("speech_volume",  _vm->_mixer->getVolumeForSoundType(SoundMixer::kSpeechAudioDataType));
+	ConfMan.set("sfx_volume",  _vm->_mixer->getVolumeForSoundType(SoundMixer::kSFXAudioDataType));
 	ConfMan.set("music_mute", _vm->_sound->isMusicMute());
 	ConfMan.set("speech_mute", _vm->_sound->isSpeechMute());
 	ConfMan.set("sfx_mute", _vm->_sound->isFxMute());
