@@ -2236,7 +2236,7 @@ static const bitmap_t _font_bits[] = {
    |            |
    |            |
    |            |
-   | *******    |
+   | ********   |
    |   *     *  |
    |   *      * |
    |   *      * |
@@ -2258,7 +2258,7 @@ static const bitmap_t _font_bits[] = {
 0x0000,
 0x0000,
 0x0000,
-0x7f00,
+0x7f80,
 0x1040,
 0x1020,
 0x1020,
