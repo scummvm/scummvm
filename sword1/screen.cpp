@@ -709,21 +709,24 @@ void SwordScreen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWid
 		*pSprWidth = (uint16)sprW;
 	*pSprX = (uint16)sprX;
 	*pSprY = (uint16)sprY;
-	
-	uint16 gridH = (*pSprHeight + SCRNGRID_Y - 1) / SCRNGRID_Y;
-	uint16 gridW = (*pSprWidth + SCRNGRID_X - 1) / SCRNGRID_X;
-	uint16 gridX = sprX / SCRNGRID_X;
-	uint16 gridY = sprY / SCRNGRID_Y;
-	uint8 *gridBuf = _screenGrid + gridX + gridY * _gridSizeX;
-	if (gridX + gridW > _gridSizeX)
-		gridW = _gridSizeX - gridX;
-	if (gridY + gridH > _gridSizeY)
-		gridH = _gridSizeY - gridY;
 
-	for (uint16 cnty = 0; cnty < gridH; cnty++) {
-		for (uint16 cntx = 0; cntx < gridW; cntx++)
-			gridBuf[cntx] |= 0x80;
-		gridBuf += _gridSizeX;
+	if (*pSprWidth && *pSprHeight) {
+		// sprite will be drawn, so mark it in the grid buffer
+		uint16 gridH = (*pSprHeight + SCRNGRID_Y - 1) / SCRNGRID_Y;
+		uint16 gridW = (*pSprWidth + SCRNGRID_X - 1) / SCRNGRID_X;
+		uint16 gridX = sprX / SCRNGRID_X;
+		uint16 gridY = sprY / SCRNGRID_Y;
+		uint8 *gridBuf = _screenGrid + gridX + gridY * _gridSizeX;
+		if (gridX + gridW > _gridSizeX)
+			gridW = _gridSizeX - gridX;
+		if (gridY + gridH > _gridSizeY)
+			gridH = _gridSizeY - gridY;
+
+		for (uint16 cnty = 0; cnty < gridH; cnty++) {
+			for (uint16 cntx = 0; cntx < gridW; cntx++)
+				gridBuf[cntx] |= 0x80;
+			gridBuf += _gridSizeX;
+		}
 	}
 }
 
