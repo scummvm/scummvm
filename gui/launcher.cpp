@@ -458,7 +458,7 @@ void LauncherDialog::updateListing() {
 			// Insert the game into the launcher list
 			int pos = 0, size = l.size();
 
-			while (pos < size && (description > l[pos]))
+			while (pos < size && (scumm_stricmp(description.c_str(), l[pos].c_str()) > 0))
 				pos++;
 			l.insert_at(pos, description);
 			_domains.insert_at(pos, iter->_key);
