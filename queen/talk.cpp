@@ -908,6 +908,7 @@ void Talk::defaultAnimation(
 			// Skip through text more quickly
 			if (_vm->input()->keyVerb() == VERB_SKIP_TEXT) {
 				_vm->input()->clearKeyVerb();
+				_vm->sound()->stopSfx();
 				break;
 			}
 		}
