@@ -569,7 +569,7 @@ int ScummEngine::addMessageToStack(const byte *msg, byte *dst, int dstSize) {
 		return 0;
 	}
 
-	if (_version >= 7 && msg[0] == '/') {
+	if (_version >= 7) {
 		translateText(msg, transBuf);
 		src = transBuf;
 	} else {
@@ -649,7 +649,7 @@ int ScummEngine::addMessageToStack(const byte *msg, byte *dst, int dstSize) {
 			error("addMessageToStack: buffer overflow!");
 	}
 	*dst = 0;
-	
+
 	return dstSize - (end - dst);
 }
 
@@ -896,6 +896,8 @@ void ScummEngine::loadLanguageBundle() {
 	
 				// That was another index entry
 				_languageIndexSize++;
+			} else {
+				error("Unknwon languag.bnd entry found: '%s'\n", ptr);
 			}
 
 			// Skip over newlines (and turn them into null bytes)
@@ -954,6 +956,9 @@ void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 	LangIndexNode target;
 	LangIndexNode *found = NULL;
 	int i;
+	
+	trans_buff[0] = 0;
+	_lastStringTag[0] = 0;
 	
 	if (_version >= 7 && text[0] == '/') {
 		// Extract the string tag from the text: /..../

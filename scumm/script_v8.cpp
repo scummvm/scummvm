@@ -1483,11 +1483,8 @@ void ScummEngine_v8::o8_getStringWidth() {
 	// Skip to the next instruction
 	_scriptPointer += resStrLen(_scriptPointer) + 1;
 
-	if (msg[0] == '/') {
-		translateText(msg, transBuf);
-		msg = transBuf;
-	} 
-
+	translateText(msg, transBuf);
+	msg = transBuf;
 
 	// Temporary set the specified charset id
 	_charset->setCurID(_string[charset].charset);
