@@ -323,7 +323,7 @@ private:
 	int sfLockUser(SCRIPTFUNC_PARAMS);
 	int SF_preDialog(SCRIPTFUNC_PARAMS);
 	int SF_killActorThreads(SCRIPTFUNC_PARAMS);
-	int SF_faceTowards(SCRIPTFUNC_PARAMS);
+	int sfFaceTowards(SCRIPTFUNC_PARAMS);
 	int sfSetFollower(SCRIPTFUNC_PARAMS);
 	int SF_gotoScene(SCRIPTFUNC_PARAMS);
 	int SF_setObjImage(SCRIPTFUNC_PARAMS);

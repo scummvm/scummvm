@@ -67,6 +67,9 @@ int SagaEngine::processInput() {
 			case 285: // F4
 				_render->toggleFlag(RF_OBJECTMAP_TEST);
 				break;
+			case 287: // F6
+				_render->toggleFlag(RF_ACTOR_PATH_TEST);
+				break;
 			case 9: // Tab
 				_script->SThreadDebugStep();
 				break;
@@ -84,7 +87,7 @@ int SagaEngine::processInput() {
 				switch (_interface->getMode()) {
 				case kPanelNull:
 					if (_scene->isInDemo())
-						_scene->skipScene();
+					_scene->skipScene();
 					else
 						_actor->abortAllSpeeches();
 					break;

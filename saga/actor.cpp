@@ -138,6 +138,9 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 		return;
 	}
 
+	_debugPoints = NULL;
+	_debugPointsAlloced = _debugPointsCount = 0;
+
 	_centerActor = _protagonist = NULL;
 	_lastTickMsec = 0;
 
@@ -193,6 +196,7 @@ Actor::~Actor() {
 	ActorData *actor;
 
 	debug(9, "Actor::~Actor()");
+	free(_debugPoints);
 	free(_pathCell);
 	//release resources
 	for (i = 0; i < ACTORCOUNT; i++) {
@@ -296,6 +300,37 @@ void Actor::realLocation(ActorLocation &location, uint16 objectId, uint16 walkFl
 			warning("ObjectId unsupported"); //todo: do it
 		}
 		
+	}
+}
+
+void Actor::actorFaceTowardsPoint(uint16 actorId, const ActorLocation &toLocation) {
+	ActorData *actor;
+	ActorLocation delta;
+
+	actor = getActor(actorId);
+
+	// tiled stuff
+	if (_vm->_scene->getMode() == SCENE_MODE_ISO) {
+		//todo: it
+	} else {
+		toLocation.delta(actor->location, delta);
+
+		if (ABS(delta.y) > ABS(delta.x * 2)) {
+			actor->facingDirection = (delta.y > 0) ? kDirDown : kDirUp;
+		} else {
+			actor->facingDirection = (delta.x > 0) ? kDirRight : kDirLeft;
+		}
+	}
+}
+
+void Actor::actorFaceTowardsObject(uint16 actorId, uint16 objectId) {
+	ActorData *actor;
+
+	if (IS_VALID_ACTOR_ID(objectId)) {
+		actor = getActor(objectId);
+		actorFaceTowardsPoint(actorId, actor->location);
+	} else {
+		warning("ObjectId unsupported"); //todo: do it
 	}
 }
 
@@ -556,8 +591,8 @@ void Actor::handleActions(int msec, bool setup) {
 		
 		//todo: dragon stuff
 
-		if (actor->index == 2)
-			debug(9, "Action: %d Flags: %x", actor->currentAction, actor->flags);
+/*		if (actor->index == 2)
+			debug(9, "Action: %d Flags: %x", actor->currentAction, actor->flags);*/
 
 		switch(actor->currentAction) {
 			case kActionWait:
@@ -568,7 +603,7 @@ void Actor::handleActions(int msec, bool setup) {
 				}
 
 				if (actor->targetObject != ID_NOTHING) {
-					//todo: facetowardsobject
+					actorFaceTowardsObject(actor->actorId, actor->targetObject);
 				}
 
 				if (actor->flags & kCycle) {
@@ -829,8 +864,8 @@ void Actor::calcActorScreenPosition(ActorData *actor) {
 		actor->location.toScreenPointXYZ(actor->screenPosition);
 	}
 
-	if (actor->index == 2)
-		debug(9, "act: %d. x: %d y: %d", actor->index, actor->screenPosition.x, actor->screenPosition.y);
+	/*if (actor->index == 2)
+		debug(9, "act: %d. x: %d y: %d", actor->index, actor->screenPosition.x, actor->screenPosition.y);*/
 }
 
 void Actor::createDrawOrderList() {
@@ -1314,6 +1349,7 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 	int i;
 	Rect intersect;
 	
+	_debugPointsCount = 0;
 
 	actor->walkStepsCount = 0;
 	if (fromPoint == toPoint) {
@@ -1325,7 +1361,7 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 		for (iteratorPoint.x = 0; iteratorPoint.x < _xCellCount; iteratorPoint.x++) {
 			maskType = _vm->_scene->getBGMaskType(iteratorPoint);
 			cellValue = maskType ? kPathCellBarrier : kPathCellEmpty;
-			setPathCell(iteratorPoint, cellValue);
+			setPathCell(iteratorPoint, cellValue);			
 		}
 	}
 
@@ -1343,7 +1379,16 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 		}
 	}
 	
+#if 1
 
+	for (iteratorPoint.y = 0; iteratorPoint.y < _yCellCount; iteratorPoint.y++) {
+		for (iteratorPoint.x = 0; iteratorPoint.x < _xCellCount; iteratorPoint.x++) {
+			if (getPathCell(iteratorPoint) == kPathCellBarrier) {
+				addDebugPoint(iteratorPoint, 24);
+			}
+		}
+	}
+#endif
 
 	if (scanPathLine(fromPoint, toPoint)) {
 		actor->addWalkStepPoint(fromPoint);
@@ -1466,6 +1511,8 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 
 	if (validPathCellPoint(fromPoint)) {
 		setPathCell(fromPoint, 0);
+		
+		addDebugPoint(fromPoint, 0x8a);
 	}	
 	
 	pathDirectionIterator = pathDirectionList.begin();
@@ -1480,7 +1527,8 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 			if (validPathCellPoint(nextPoint) && 
 				(getPathCell(nextPoint) == kPathCellEmpty)) {
 				setPathCell(nextPoint, samplePathDirection->direction);
-
+				
+				addDebugPoint(nextPoint, samplePathDirection->direction + 96);
 				newPathDirectionIterator = pathDirectionList.pushBack();
 				pathDirection = newPathDirectionIterator.operator->();
 				pathDirection->x = nextPoint.x;
@@ -1846,6 +1894,20 @@ void Actor::removePathPoints() {
 			_pathNodeList[j++] = _newPathNodeList[i];
 	}
 	_pathNodeIndex = j - 1;
+}
+
+void Actor::drawPathTest() {
+	int i;
+	SURFACE *surface;
+	surface = _vm->_gfx->getBackBuffer();
+	if (_debugPoints == NULL) {
+		return;
+	}
+
+
+	for (i = 0; i < _debugPointsCount; i++) {
+		*((byte *)surface->pixels + (_debugPoints[i].point.y * surface->pitch) + _debugPoints[i].point.x) = _debugPoints[i].color;
+	}
 }
 
 /*

@@ -62,7 +62,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(sfLockUser),
 		OPCODE(SF_preDialog),
 		OPCODE(SF_killActorThreads),
-		OPCODE(SF_faceTowards),
+		OPCODE(sfFaceTowards),
 		OPCODE(sfSetFollower),
 		OPCODE(SF_gotoScene),
 		OPCODE(SF_setObjImage),
@@ -324,11 +324,19 @@ int Script::SF_killActorThreads(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #14 (0x0E)
-int Script::SF_faceTowards(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord param1 = thread->pop();
-	ScriptDataWord param2 = thread->pop();
+// Param1: actor id
+// Param2: object id
+int Script::sfFaceTowards(SCRIPTFUNC_PARAMS) {
+	int16 actorId;
+	int16 targetObject;
+	ActorData *actor;
 
-	debug(1, "stub: SF_faceTowards(%d, %d)", param1, param2);
+	actorId = getSWord(thread->pop());
+	targetObject = getSWord(thread->pop());
+
+	actor = _vm->_actor->getActor(actorId);
+	actor->targetObject = targetObject;
+
 	return SUCCESS;
 }
 
@@ -945,7 +953,7 @@ int Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	PALENTRY *pal;
 	EVENT event;
 	EVENT *q_event;
-
+	
 	thread->wait(kWaitTypePlacard);
 
 	_vm->_interface->rememberMode();

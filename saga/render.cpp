@@ -136,6 +136,9 @@ int Render::drawScene() {
 
 		// Draw queued actors
 		_vm->_actor->drawActors();
+		if (getFlags() & RF_ACTOR_PATH_TEST) {
+			_vm->_actor->drawPathTest();
+		}
 	}
 
 	// Draw queued text strings
