@@ -710,7 +710,7 @@ bool Sound::isSoundInUse(int sound) const {
 		return false;
 
 	if (_scumm->_imuseDigital)
-		return _scumm->_imuseDigital->getSoundStatus(sound);
+		return (_scumm->_imuseDigital->getSoundStatus(sound) != 0);
 
 	if (_scumm->_imuse)
 		return _scumm->_imuse->get_sound_active(sound);
