@@ -501,8 +501,8 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	VAR_RIGHTBTN_HOLD = 0xFF;
 	VAR_MOUSE_BUTTONS = 0xFF;
 	VAR_MOUSE_HOLD = 0xFF;
-	VAR_UNK_SCRIPT = 0xFF;
-	VAR_UNK_SCRIPT_2 = 0xFF;
+	VAR_SAVELOAD_SCRIPT = 0xFF;
+	VAR_SAVELOAD_SCRIPT2 = 0xFF;
 
 	VAR_DEFAULT_TALK_DELAY = 0xFF;
 	VAR_CHARSET_MASK = 0xFF;
@@ -1767,13 +1767,13 @@ void Scumm::processKbd() {
 		} else
 			exitCutscene();
 	} else if (_lastKeyHit == saveloadkey && _currentRoom != 0) {
-		if (_features & GF_AFTER_V7)
-			runScript(VAR(VAR_UNK_SCRIPT), 0, 0, 0);
+		if (VAR_SAVELOAD_SCRIPT != 0xFF)
+			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
 
 		saveloadDialog();		// Display NewGui
 
-		if (_features & GF_AFTER_V7)
-			runScript(VAR(VAR_UNK_SCRIPT_2), 0, 0, 0);
+		if (VAR_SAVELOAD_SCRIPT2 != 0xFF)
+			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
 		return;
 	} else if (VAR_TALKSTOP_KEY != 0xFF && _lastKeyHit == VAR(VAR_TALKSTOP_KEY)) {
 		_talkDelay = 0;
