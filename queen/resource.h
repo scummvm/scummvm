@@ -26,6 +26,19 @@
 
 namespace Queen {
 
+enum {
+	VER_ENG_FLOPPY   = 0,
+	VER_ENG_TALKIE   = 1,
+	VER_FRE_FLOPPY   = 2,
+	VER_FRE_TALKIE   = 3,
+	VER_GER_FLOPPY   = 4,
+	VER_GER_TALKIE   = 5,
+	VER_ITA_FLOPPY   = 6,
+	VER_ITA_TALKIE   = 7,
+	VER_DEMO_PCGAMES = 8,
+	VER_DEMO         = 9
+};
+
 struct ResourceEntry {
 	char filename[13];
 	uint8 inBundle;
@@ -35,10 +48,9 @@ struct ResourceEntry {
 
 struct GameVersion {
 	char versionString[6];
-	uint32 resourceEntries;
 	bool isFloppy;   
 	bool isDemo;
-	const struct ResourceEntry *resourceTable;	
+	uint32 tableOffset;
 };
 
 
@@ -54,20 +66,18 @@ public:
 protected:
 	File *_resourceFile;
 	char *_datafilePath;
-	const struct GameVersion *_gameVersion;
-	static const struct GameVersion _gameVersionPE100v1;
-	static const struct GameVersion _gameVersionPE100v2;
-	static const struct GameVersion _gameVersionPEM10;
-	static const struct GameVersion _gameVersionCEM10;
-	static const struct ResourceEntry _resourceTablePE100v1[];
-	static const struct ResourceEntry _resourceTablePE100v2[];
-	static const struct ResourceEntry _resourceTablePEM10[];
-	static const struct ResourceEntry _resourceTableCEM10[];
+	const GameVersion *_gameVersion;
+	uint32 _resourceEntries;
+	ResourceEntry *_resourceTable;
+	static const GameVersion _gameVersions[];
+	static ResourceEntry _resourceTablePEM10[];
 
 	int32 resourceIndex(const char *filename);
 	uint32 fileSize(const char *filename);
 	uint32 fileOffset(const char *filename);
 	const char *JASVersion();
+	bool readTableFile();
+	static const GameVersion *detectGameVersion(uint32 dataFilesize);
 };
 
 } // End of namespace Queen
