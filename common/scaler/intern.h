@@ -35,6 +35,9 @@
 //
 #define USE_ALTIVEC	0
 
+// MSVC6 chokes on all but the most simplistic template usage.
+#ifndef MSVC6_COMPAT
+
 template<int bitFormat>
 struct ColorMasks {
 };
@@ -65,9 +68,6 @@ struct ColorMasks<555> {
 #define qlowBits	ColorMasks<bitFormat>::qlowBits
 #define redblueMask	ColorMasks<bitFormat>::redblueMask
 #define greenMask	ColorMasks<bitFormat>::greenMask
-
-
-extern int gBitFormat;
 
 
 /**
@@ -170,5 +170,16 @@ extern int   RGBtoYUV[65536];
 		else \
 			FUNC<555>(srcPtr, srcPitch, dstPtr, dstPitch, width, height); \
 	}
+
+#else // MSVC6_COMPAT is defined
+
+#define MAKE_WRAPPER(FUNC) \
+	void FUNC(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) { \
+		return; \
+	}
+
+#endif
+
+extern int gBitFormat;
 
 #endif
