@@ -30,21 +30,21 @@
 
 namespace Saga {
 
-#define R_TEXT_CENTERLIMIT 50
-#define R_TEXT_MARGIN 10
-#define R_TEXT_LINESPACING 2
+#define TEXT_CENTERLIMIT 50
+#define TEXT_MARGIN 10
+#define TEXT_LINESPACING 2
 
-struct R_TEXTLIST {
+struct TEXTLIST {
 	YS_DL_LIST *list;
 };
 
-enum R_TEXT_FLAGS {
+enum TEXT_FLAGS {
 	TEXT_TIMEOUT = 0x01
 };
 
-struct R_TEXTLIST_ENTRY {
-	R_TEXTLIST_ENTRY *next;
-	R_TEXTLIST_ENTRY *prev;
+struct TEXTLIST_ENTRY {
+	TEXTLIST_ENTRY *next;
+	TEXTLIST_ENTRY *prev;
 	int display;
 	int id;
 	int text_x;
@@ -55,7 +55,7 @@ struct R_TEXTLIST_ENTRY {
 	int font_id;
 	long time;
 	const char *string;
-	R_TEXTLIST_ENTRY() { memset(this, 0, sizeof(*this)); }
+	TEXTLIST_ENTRY() { memset(this, 0, sizeof(*this)); }
 };
 
 

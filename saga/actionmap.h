@@ -42,14 +42,14 @@ enum ACTION_FLAGS {
 	ACTION_TERMINUS = (1<<3)
 };
 
-struct R_ACTIONMAP_ENTRY {
+struct ACTIONMAP_ENTRY {
 	int flags;
 	int nClickareas;
 	int defaultVerb;
 	int exitScene;
 	int entranceNum;
 
-	R_CLICKAREA *clickareas;
+	CLICKAREA *clickareas;
 };
 
 class ActionMap {
@@ -60,7 +60,7 @@ class ActionMap {
 
 	const int getExitScene(int exitNum);
 	int hitTest(const Point& imousePt);
-	int draw(R_SURFACE *ds, int color);
+	int draw(SURFACE *ds, int color);
 
 	void info(void);
 
@@ -68,7 +68,7 @@ private:
 	SagaEngine *_vm;
 
 	int _nExits;
-	R_ACTIONMAP_ENTRY *_exitsTbl;
+	ACTIONMAP_ENTRY *_exitsTbl;
 };
 
 } // End of namespace Saga

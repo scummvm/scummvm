@@ -45,7 +45,7 @@ namespace Saga {
 const char *test_txt = "The quick brown fox jumped over the lazy dog. She sells sea shells down by the sea shore.";
 
 int Render::reg(void) {
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 Render::Render(SagaEngine *vm, OSystem *system) {
@@ -53,7 +53,7 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 	_system = system;
 	_initialized = false;
 
-	R_GAME_DISPLAYINFO disp_info;
+	GAME_DISPLAYINFO disp_info;
 	int tmp_w, tmp_h, tmp_bytepp;
 
 	// Initialize system graphics
@@ -104,9 +104,9 @@ bool Render::initialized() {
 }
 
 int Render::drawScene() {
-	R_SURFACE *backbuf_surface;
-	R_GAME_DISPLAYINFO disp_info;
-	R_SCENE_INFO scene_info;
+	SURFACE *backbuf_surface;
+	GAME_DISPLAYINFO disp_info;
+	SCENE_INFO scene_info;
 	SCENE_BGINFO bg_info;
 	Point bg_pt;
 	char txt_buf[20];
@@ -114,7 +114,7 @@ int Render::drawScene() {
 	Point mouse_pt;
 
 	if (!_initialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	_framecount++;
@@ -137,7 +137,7 @@ int Render::drawScene() {
 		if (_vm->_scene->_objectMap)
 			_vm->_scene->_objectMap->draw(backbuf_surface, mouse_pt, _vm->_gfx->getWhite(), _vm->_gfx->getBlack());
 		if (_vm->_scene->_actionMap)
-			_vm->_scene->_actionMap->draw(backbuf_surface, _vm->_gfx->matchColor(R_RGB_RED));
+			_vm->_scene->_actionMap->draw(backbuf_surface, _vm->_gfx->matchColor(RGB_RED));
 	}
 
 	// Draw queued actors
@@ -161,9 +161,9 @@ int Render::drawScene() {
 
 	// Display "paused game" message, if applicable
 	if (_flags & RF_RENDERPAUSE) {
-		int msg_len = strlen(R_PAUSEGAME_MSG);
-		int msg_w = _vm->_font->getStringWidth(BIG_FONT_ID, R_PAUSEGAME_MSG, msg_len, FONT_OUTLINE);
-		_vm->_font->draw(BIG_FONT_ID, backbuf_surface, R_PAUSEGAME_MSG, msg_len,
+		int msg_len = strlen(PAUSEGAME_MSG);
+		int msg_w = _vm->_font->getStringWidth(BIG_FONT_ID, PAUSEGAME_MSG, msg_len, FONT_OUTLINE);
+		_vm->_font->draw(BIG_FONT_ID, backbuf_surface, PAUSEGAME_MSG, msg_len,
 				(backbuf_surface->buf_w - msg_w) / 2, 90, _vm->_gfx->getWhite(), _vm->_gfx->getBlack(), FONT_OUTLINE);
 	}
 
@@ -189,7 +189,7 @@ int Render::drawScene() {
 							  backbuf_surface->buf_w, backbuf_surface->buf_h);
 
 	_system->updateScreen();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 unsigned int Render::getFrameCount() {
@@ -225,18 +225,18 @@ void Render::toggleFlag(unsigned int flag) {
 	_flags ^= flag;
 }
 
-int Render::getBufferInfo(R_BUFFER_INFO *r_bufinfo) {
-	assert(r_bufinfo != NULL);
+int Render::getBufferInfo(BUFFER_INFO *bufinfo) {
+	assert(bufinfo != NULL);
 
-	r_bufinfo->r_bg_buf = _bg_buf;
-	r_bufinfo->r_bg_buf_w = _bg_buf_w;
-	r_bufinfo->r_bg_buf_h = _bg_buf_h;
+	bufinfo->bg_buf = _bg_buf;
+	bufinfo->bg_buf_w = _bg_buf_w;
+	bufinfo->bg_buf_h = _bg_buf_h;
 
-	r_bufinfo->r_tmp_buf = _tmp_buf;
-	r_bufinfo->r_tmp_buf_w = _tmp_buf_w;
-	r_bufinfo->r_tmp_buf_h = _tmp_buf_h;
+	bufinfo->tmp_buf = _tmp_buf;
+	bufinfo->tmp_buf_w = _tmp_buf_w;
+	bufinfo->tmp_buf_h = _tmp_buf_h;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 } // End of namespace Saga

@@ -36,22 +36,22 @@ namespace Saga {
 
 #define RSC_MIN_FILESIZE (RSC_TABLEINFO_SIZE + RSC_TABLEENTRY_SIZE + 1)
 
-struct R_RSCFILE_RESOURCE {
+struct RSCFILE_RESOURCE {
 	int res_type;
 	size_t res_offset;
 	size_t res_size;
 };
 
-struct R_RSCFILE_CONTEXT {
+struct RSCFILE_CONTEXT {
 	const char *rc_file_fspec;
 	File *rc_file;
 	int rc_file_loaded;
-	R_RSCFILE_RESOURCE *rc_res_table;
+	RSCFILE_RESOURCE *rc_res_table;
 	size_t rc_res_ct;
 };
 
-int RSC_LoadRSC(R_RSCFILE_CONTEXT *rsc_context);
-int RSC_FreeRSC(R_RSCFILE_CONTEXT *rsc);
+int RSC_LoadRSC(RSCFILE_CONTEXT *rsc_context);
+int RSC_FreeRSC(RSCFILE_CONTEXT *rsc);
 
 } // End of namespace Saga
 

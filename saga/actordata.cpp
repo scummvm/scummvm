@@ -30,7 +30,7 @@ namespace Saga {
 // Lookup table to convert 8 cardinal directions to 4
 int ActorOrientationLUT[] = { 2, 0, 0, 0, 3, 1, 1, 1 };
 
-R_ACTORTABLE ActorTable[R_ACTORCOUNT] = {
+	ACTORTABLE ActorTable[ACTORCOUNT] = {
 
 //       namei                      sl_rn si_rn    col
 //       -----                      ----- -----    ---

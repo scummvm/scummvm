@@ -33,7 +33,7 @@
 
 namespace Saga {
 
-int SagaEngine::textDraw(int font_id, R_SURFACE *ds, const char *string, int text_x, int text_y, int color,
+int SagaEngine::textDraw(int font_id, SURFACE *ds, const char *string, int text_x, int text_y, int color,
 				int effect_color, int flags) {
 	int string_w;
 	int string_len;
@@ -55,34 +55,34 @@ int SagaEngine::textDraw(int font_id, R_SURFACE *ds, const char *string, int tex
 	if (flags & FONT_CENTERED) {
 		// Text is centered... format output
 		// Enforce minimum and maximum center points for centered text
-		if (text_x < R_TEXT_CENTERLIMIT) {
-			text_x = R_TEXT_CENTERLIMIT;
+		if (text_x < TEXT_CENTERLIMIT) {
+			text_x = TEXT_CENTERLIMIT;
 		}
 
-		if (text_x > ds->buf_w - R_TEXT_CENTERLIMIT) {
-			text_x = ds->buf_w - R_TEXT_CENTERLIMIT;
+		if (text_x > ds->buf_w - TEXT_CENTERLIMIT) {
+			text_x = ds->buf_w - TEXT_CENTERLIMIT;
 		}
 
-		if (text_x < (R_TEXT_MARGIN * 2)) {
+		if (text_x < (TEXT_MARGIN * 2)) {
 			// Text can't be centered if it's too close to the margin
-			return R_FAILURE;
+			return FAILURE;
 		}
 
 		string_w = _font->getStringWidth(font_id, string, string_len, flags);
 
 		if (text_x < (ds->buf_w / 2)) {
 			// Fit to right side
-			fit_w = (text_x - R_TEXT_MARGIN) * 2;
+			fit_w = (text_x - TEXT_MARGIN) * 2;
 		} else {
 			// Fit to left side
-			fit_w = ((ds->buf_w - R_TEXT_MARGIN) - text_x) * 2;
+			fit_w = ((ds->buf_w - TEXT_MARGIN) - text_x) * 2;
 		}
 
 		if (fit_w >= string_w) {
 			// Entire string fits, draw it
 			text_x = text_x - (string_w / 2);
 			_font->draw(font_id, ds, string, string_len, text_x, text_y, color, effect_color, flags);
-			return R_SUCCESS;
+			return SUCCESS;
 		}
 
 		// String won't fit on one line
@@ -112,13 +112,13 @@ int SagaEngine::textDraw(int font_id, R_SURFACE *ds, const char *string, int tex
 				// This word won't fit
 				if (wc == 0) {
 					// The first word in the line didn't fit. abort
-					return R_SUCCESS;
+					return SUCCESS;
 				}
 
 				// Wrap what we've got and restart
 				_font->draw(font_id, ds, start_p, len_total, text_x - (w_total / 2), text_y, color, 
 							effect_color, flags);
-				text_y += h + R_TEXT_LINESPACING;
+				text_y += h + TEXT_LINESPACING;
 				w_total = 0;
 				len_total = 0;
 				wc = 0;
@@ -133,7 +133,7 @@ int SagaEngine::textDraw(int font_id, R_SURFACE *ds, const char *string, int tex
 					// Since word hit NULL but fit, we are done
 					_font->draw(font_id, ds, start_p, len_total, text_x - (w_total / 2), text_y, color,
 								effect_color, flags);
-					return R_SUCCESS;
+					return SUCCESS;
 				}
 				search_p = measure_p + 1;
 			}
@@ -143,13 +143,13 @@ int SagaEngine::textDraw(int font_id, R_SURFACE *ds, const char *string, int tex
 		_font->draw(font_id, ds, string, string_len, text_x, text_y, color, effect_color, flags);
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-R_TEXTLIST *SagaEngine::textCreateList() {
-	R_TEXTLIST *new_textlist;
+TEXTLIST *SagaEngine::textCreateList() {
+	TEXTLIST *new_textlist;
 
-	new_textlist = (R_TEXTLIST *)malloc(sizeof *new_textlist);
+	new_textlist = (TEXTLIST *)malloc(sizeof *new_textlist);
 
 	if (new_textlist == NULL) {
 		return NULL;
@@ -165,7 +165,7 @@ R_TEXTLIST *SagaEngine::textCreateList() {
 	return new_textlist;
 }
 
-void SagaEngine::textClearList(R_TEXTLIST *tlist) {
+void SagaEngine::textClearList(TEXTLIST *tlist) {
 	if (tlist != NULL) {
 		ys_dll_delete_all(tlist->list);
 	}
@@ -173,7 +173,7 @@ void SagaEngine::textClearList(R_TEXTLIST *tlist) {
 	return;
 }
 
-void SagaEngine::textDestroyList(R_TEXTLIST *tlist) {
+void SagaEngine::textDestroyList(TEXTLIST *tlist) {
 	if (tlist != NULL) {
 		ys_dll_destroy(tlist->list);
 	}
@@ -182,31 +182,31 @@ void SagaEngine::textDestroyList(R_TEXTLIST *tlist) {
 	return;
 }
 
-int SagaEngine::textDrawList(R_TEXTLIST *textlist, R_SURFACE *ds) {
-	R_TEXTLIST_ENTRY *entry_p;
+int SagaEngine::textDrawList(TEXTLIST *textlist, SURFACE *ds) {
+	TEXTLIST_ENTRY *entry_p;
 	YS_DL_NODE *walk_p;
 
 	assert((textlist != NULL) && (ds != NULL));
 
 	for (walk_p = ys_dll_head(textlist->list); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
-		entry_p = (R_TEXTLIST_ENTRY *)ys_dll_get_data(walk_p);
+		entry_p = (TEXTLIST_ENTRY *)ys_dll_get_data(walk_p);
 		if (entry_p->display != 0) {
 			textDraw(entry_p->font_id, ds, entry_p->string, entry_p->text_x, entry_p->text_y, entry_p->color,
 			entry_p->effect_color, entry_p->flags);
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int SagaEngine::textProcessList(R_TEXTLIST *textlist, long ms) {
-	R_TEXTLIST_ENTRY *entry_p;
+int SagaEngine::textProcessList(TEXTLIST *textlist, long ms) {
+	TEXTLIST_ENTRY *entry_p;
 	YS_DL_NODE *walk_p;
 	YS_DL_NODE *temp_p;
 
 	for (walk_p = ys_dll_head(textlist->list); walk_p != NULL; walk_p = temp_p) {
 		temp_p = ys_dll_next(walk_p);
-		entry_p = (R_TEXTLIST_ENTRY *)ys_dll_get_data(walk_p);
+		entry_p = (TEXTLIST_ENTRY *)ys_dll_get_data(walk_p);
 		if (entry_p->flags & TEXT_TIMEOUT) {
 			entry_p->time -= ms;
 			if (entry_p->time <= 0) {
@@ -215,34 +215,34 @@ int SagaEngine::textProcessList(R_TEXTLIST *textlist, long ms) {
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 
 }
 
-R_TEXTLIST_ENTRY *SagaEngine::textAddEntry(R_TEXTLIST *textlist, R_TEXTLIST_ENTRY *entry) {
+TEXTLIST_ENTRY *SagaEngine::textAddEntry(TEXTLIST *textlist, TEXTLIST_ENTRY *entry) {
 	YS_DL_NODE *new_node = NULL;
 
 	if (entry != NULL) {
 		new_node = ys_dll_add_tail(textlist->list, entry, sizeof *entry);
 	}
 
-	return (new_node != NULL) ? (R_TEXTLIST_ENTRY *)new_node->data : NULL;
+	return (new_node != NULL) ? (TEXTLIST_ENTRY *)new_node->data : NULL;
 }
 
-int SagaEngine::textSetDisplay(R_TEXTLIST_ENTRY *entry, int val) {
+int SagaEngine::textSetDisplay(TEXTLIST_ENTRY *entry, int val) {
 	if (entry != NULL) {
 		entry->display = !!val;
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
-	return R_FAILURE;
+	return FAILURE;
 }
 
-int SagaEngine::textDeleteEntry(R_TEXTLIST *textlist, R_TEXTLIST_ENTRY *entry) {
+int SagaEngine::textDeleteEntry(TEXTLIST *textlist, TEXTLIST_ENTRY *entry) {
 	YS_DL_NODE *walk_p;
 
 	if (entry == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	for (walk_p = ys_dll_head(textlist->list); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
@@ -252,7 +252,7 @@ int SagaEngine::textDeleteEntry(R_TEXTLIST *textlist, R_TEXTLIST_ENTRY *entry) {
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 } // End of namespace Saga

@@ -42,14 +42,14 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	debug(0, "Initializing sprite subsystem...");
 
 	// Load sprite module resource context
-	result = GAME_GetFileContext(&_spriteContext, R_GAME_RESOURCEFILE, 0);
-	if (result != R_SUCCESS) {
+	result = GAME_GetFileContext(&_spriteContext, GAME_RESOURCEFILE, 0);
+	if (result != SUCCESS) {
 		return;
 	}
 
-	_decodeBufLen = R_DECODE_BUF_LEN;
+	_decodeBufLen = DECODE_BUF_LEN;
 
-	_decodeBuf = (byte *)malloc(R_DECODE_BUF_LEN);
+	_decodeBuf = (byte *)malloc(DECODE_BUF_LEN);
 	if (_decodeBuf == NULL) {
 		return;
 	}
@@ -67,20 +67,20 @@ Sprite::~Sprite(void) {
 	free(_decodeBuf);
 }
 
-int Sprite::loadList(int resource_num, R_SPRITELIST **sprite_list_p) {
-	R_SPRITELIST *new_slist;
+int Sprite::loadList(int resource_num, SPRITELIST **sprite_list_p) {
+	SPRITELIST *new_slist;
 	byte *spritelist_data;
 	size_t spritelist_len;
 	uint16 sprite_count;
 	uint16 i;
 
-	new_slist = (R_SPRITELIST *)malloc(sizeof *new_slist);
+	new_slist = (SPRITELIST *)malloc(sizeof *new_slist);
 	if (new_slist == NULL) {
-		return R_MEM;
+		return MEM;
 	}
 
-	if (RSC_LoadResource(_spriteContext, resource_num, &spritelist_data, &spritelist_len) != R_SUCCESS) {
-		return R_FAILURE;
+	if (RSC_LoadResource(_spriteContext, resource_num, &spritelist_data, &spritelist_len) != SUCCESS) {
+		return FAILURE;
 	}
 
 	MemoryReadStream readS(spritelist_data, spritelist_len);
@@ -89,10 +89,10 @@ int Sprite::loadList(int resource_num, R_SPRITELIST **sprite_list_p) {
 
 	new_slist->sprite_count = sprite_count;
 
-	new_slist->offset_list = (R_SPRITELIST_OFFSET *)malloc(sprite_count * sizeof *new_slist->offset_list);
+	new_slist->offset_list = (SPRITELIST_OFFSET *)malloc(sprite_count * sizeof *new_slist->offset_list);
 	if (new_slist->offset_list == NULL) {
 		free(new_slist);
-		return R_MEM;
+		return MEM;
 	}
 
 	for (i = 0; i < sprite_count; i++) {
@@ -106,10 +106,10 @@ int Sprite::loadList(int resource_num, R_SPRITELIST **sprite_list_p) {
 
 	*sprite_list_p = new_slist;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Sprite::appendList(int resource_num, R_SPRITELIST *spritelist) {
+int Sprite::appendList(int resource_num, SPRITELIST *spritelist) {
 	byte *spritelist_data;
 	size_t spritelist_len;
 	void *test_p;
@@ -118,12 +118,12 @@ int Sprite::appendList(int resource_num, R_SPRITELIST *spritelist) {
 	uint16 sprite_count;
 	int i;
 
-	if (spritelist->append_count >= (R_APPENDMAX - 1)) {
-		return R_FAILURE;
+	if (spritelist->append_count >= (APPENDMAX - 1)) {
+		return FAILURE;
 	}
 
-	if (RSC_LoadResource(_spriteContext, resource_num, &spritelist_data, &spritelist_len) != R_SUCCESS) {
-		return R_FAILURE;
+	if (RSC_LoadResource(_spriteContext, resource_num, &spritelist_data, &spritelist_len) != SUCCESS) {
+		return FAILURE;
 	}
 
 	MemoryReadStream readS(spritelist_data, spritelist_len);
@@ -135,10 +135,10 @@ int Sprite::appendList(int resource_num, R_SPRITELIST *spritelist) {
 
 	test_p = realloc(spritelist->offset_list, new_sprite_count * sizeof *spritelist->offset_list);
 	if (test_p == NULL) {
-		return R_MEM;
+		return MEM;
 	}
 
-	spritelist->offset_list = (R_SPRITELIST_OFFSET *)test_p;
+	spritelist->offset_list = (SPRITELIST_OFFSET *)test_p;
 
 	spritelist->sprite_count = new_sprite_count;
 	spritelist->append_count++;
@@ -150,14 +150,14 @@ int Sprite::appendList(int resource_num, R_SPRITELIST *spritelist) {
 
 	spritelist->sprite_data[spritelist->append_count] = spritelist_data;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Sprite::getListLen(R_SPRITELIST *spritelist) {
+int Sprite::getListLen(SPRITELIST *spritelist) {
 	return spritelist->sprite_count;
 }
 
-int Sprite::freeSprite(R_SPRITELIST *spritelist) {
+int Sprite::freeSprite(SPRITELIST *spritelist) {
 	int i;
 
 	for (i = 0; i <= spritelist->append_count; i++) {
@@ -168,10 +168,10 @@ int Sprite::freeSprite(R_SPRITELIST *spritelist) {
 	free(spritelist->offset_list);
 	free(spritelist);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Sprite::draw(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num, int spr_x, int spr_y) {
+int Sprite::draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, int spr_x, int spr_y) {
 	int offset;
 	int offset_idx;
 	byte *sprite_p;
@@ -187,7 +187,7 @@ int Sprite::draw(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num, int s
 	int y_align;
 
 	if (!_initialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	offset = sprite_list->offset_list[sprite_num].offset;
@@ -244,10 +244,10 @@ int Sprite::draw(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num, int s
 		src_row_p += s_width;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Sprite::drawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num, int spr_x, int spr_y) {
+int Sprite::drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, int spr_x, int spr_y) {
 	int offset;
 	int offset_idx;
 	byte *sprite_p;
@@ -263,14 +263,14 @@ int Sprite::drawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_nu
 	int s_height;
 	int x_align;
 	int y_align;
-	int z_lut[R_SPRITE_ZMAX];
+	int z_lut[SPRITE_ZMAX];
 	int e_slope;
 
 	// Clipinfo variables
 	Point spr_pt;
 	Rect spr_src_rect;
 	Rect spr_dst_rect;
-	R_CLIPINFO ci;
+	CLIPINFO ci;
 
 	// BG mask variables
 	int mask_w;
@@ -285,7 +285,7 @@ int Sprite::drawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_nu
 	int actor_z;
 
 	if (!_initialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (!_vm->_scene->isBGMaskPresent()) {
@@ -294,7 +294,7 @@ int Sprite::drawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_nu
 
 	if (sprite_num >= sprite_list->sprite_count) {
 		warning("Invalid sprite number (%d) for sprite list %d", sprite_num, sprite_list->slist_rn);
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	// Get sprite data from list 
@@ -321,7 +321,7 @@ int Sprite::drawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_nu
 
 	e_slope = zinfo.endSlope;
 
-	for (i = 0; i < R_SPRITE_ZMAX; i++) {
+	for (i = 0; i < SPRITE_ZMAX; i++) {
 		z_lut[i] = (int)(e_slope + ((137.0 - e_slope) / 14.0) * (15.0 - i));
 	}
 
@@ -352,7 +352,7 @@ int Sprite::drawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_nu
 	_vm->_gfx->getClipInfo(&ci);
 
 	if (ci.nodraw) {
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	decodeRLESprite(sprite_data_p, 64000, _decodeBuf, s_width * s_height);
@@ -369,7 +369,7 @@ int Sprite::drawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_nu
 		mask_p = mask_row_p;
 		for (x = 0; x < ci.draw_w; x++) {
 			if (*src_p != 0) {
-				mask_z = *mask_p & R_SPRITE_ZMASK;
+				mask_z = *mask_p & SPRITE_ZMASK;
 				if (actor_z > z_lut[mask_z]) {
 					*dst_p = *src_p;
 				}
@@ -390,7 +390,7 @@ int Sprite::drawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_nu
 		_vm->textDraw(2, ds, buf, spr_x - x_align, spr_y - y_align, 255, 0, FONT_OUTLINE);
 	}
 */
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Sprite::decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len) {
@@ -446,7 +446,7 @@ int Sprite::decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, s
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 } // End of namespace Saga

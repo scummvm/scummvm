@@ -34,8 +34,8 @@ namespace Saga {
 
 ActionMap::ActionMap(SagaEngine *vm, const byte * exmap_res, size_t exmap_res_len) : _vm(vm) {
 	// Loads exit map data from specified exit map resource
-	R_ACTIONMAP_ENTRY *exmap_entry;
-	R_CLICKAREA *clickarea;
+	ACTIONMAP_ENTRY *exmap_entry;
+	CLICKAREA *clickarea;
 	Point *point;
 
 	assert(exmap_res != NULL);
@@ -48,7 +48,7 @@ ActionMap::ActionMap(SagaEngine *vm, const byte * exmap_res, size_t exmap_res_le
 		return;
 	}
 
-	_exitsTbl = (R_ACTIONMAP_ENTRY *)malloc(_nExits * sizeof *_exitsTbl);
+	_exitsTbl = (ACTIONMAP_ENTRY *)malloc(_nExits * sizeof *_exitsTbl);
 	if (_exitsTbl == NULL) {
 		warning("Memory allocation failure");
 		return;
@@ -63,7 +63,7 @@ ActionMap::ActionMap(SagaEngine *vm, const byte * exmap_res, size_t exmap_res_le
 		exmap_entry->exitScene = readS.readUint16LE();
 		exmap_entry->entranceNum = readS.readUint16LE();
 
-		exmap_entry->clickareas = (R_CLICKAREA *)malloc(exmap_entry->nClickareas * sizeof *(exmap_entry->clickareas));
+		exmap_entry->clickareas = (CLICKAREA *)malloc(exmap_entry->nClickareas * sizeof *(exmap_entry->clickareas));
 
 		if (exmap_entry->clickareas == NULL) {
 			warning("Error: Memory allocation failed");
@@ -94,8 +94,8 @@ ActionMap::ActionMap(SagaEngine *vm, const byte * exmap_res, size_t exmap_res_le
 
 ActionMap::~ActionMap(void) {
 	// Frees the currently loaded exit map data
-	R_ACTIONMAP_ENTRY *exmap_entry;
-	R_CLICKAREA *clickarea;
+	ACTIONMAP_ENTRY *exmap_entry;
+	CLICKAREA *clickarea;
 	int i;
 
 	if (_exitsTbl) {
@@ -121,8 +121,8 @@ const int ActionMap::getExitScene(int exitNum) {
 
 
 int ActionMap::hitTest(const Point& imouse) {
-	R_ACTIONMAP_ENTRY *exmap_entry;
-	R_CLICKAREA *clickarea;
+	ACTIONMAP_ENTRY *exmap_entry;
+	CLICKAREA *clickarea;
 	Point *points;
 	int n_points;
 
@@ -157,9 +157,9 @@ int ActionMap::hitTest(const Point& imouse) {
 	return -1;
 }
 
-int ActionMap::draw(R_SURFACE *ds, int color) {
-	R_ACTIONMAP_ENTRY *exmap_entry;
-	R_CLICKAREA *clickarea;
+int ActionMap::draw(SURFACE *ds, int color) {
+	ACTIONMAP_ENTRY *exmap_entry;
+	CLICKAREA *clickarea;
 
 	int i, k;
 
@@ -178,7 +178,7 @@ int ActionMap::draw(R_SURFACE *ds, int color) {
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 void ActionMap::info(void) {

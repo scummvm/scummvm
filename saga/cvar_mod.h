@@ -40,35 +40,35 @@ typedef char cv_char_t;
 typedef void (*cv_func_t) (int cv_argc, char *cv_argv[], void *refCon);
 /******************************************/
 
-typedef struct R_CVAR *R_CVAR_P;	// opaque typedef
+typedef struct CVAR *CVAR_P;	// opaque typedef
 
-enum R_CVAR_TYPES {
-	R_CVAR_INVALID,
-	R_CVAR_INT,
-	R_CVAR_UINT,
-	R_CVAR_FLOAT,
-	R_CVAR_STRING,
-	R_CVAR_FUNC
+enum CVAR_TYPES {
+	CVAR_INVALID,
+	CVAR_INT,
+	CVAR_UINT,
+	CVAR_FLOAT,
+	CVAR_STRING,
+	CVAR_FUNC
 };
 
-enum R_CVAR_FLAGS {
-	R_CVAR_NONE,
-	R_CVAR_READONLY,
-	R_CVAR_LBOUND,
-	R_CVAR_UBOUND,
-	R_CVAR_CFG,
-	R_CVAR_SECTION
+enum CVAR_FLAGS {
+	CVAR_NONE,
+	CVAR_READONLY,
+	CVAR_LBOUND,
+	CVAR_UBOUND,
+	CVAR_CFG,
+	CVAR_SECTION
 };
 
-#define R_CVAR_BOUNDED ( R_CVAR_LBOUND | R_CVAR_UBOUND )
+#define CVAR_BOUNDED ( CVAR_LBOUND | CVAR_UBOUND )
 
 int CVAR_Shutdown();
-R_CVAR_P CVAR_Find(const char *var_str);
-int CVAR_SetValue(R_CVAR_P cvar, char *r_value);
-int CVAR_Print(R_CVAR_P con_cvar);
+CVAR_P CVAR_Find(const char *var_str);
+int CVAR_SetValue(CVAR_P cvar, char *r_value);
+int CVAR_Print(CVAR_P con_cvar);
 int CVAR_GetError(const char **err_str);
-int CVAR_IsFunc(R_CVAR_P cvar_func);
-int CVAR_Exec(R_CVAR_P cvar_func, char *r_value);
+int CVAR_IsFunc(CVAR_P cvar_func);
+int CVAR_Exec(CVAR_P cvar_func, char *r_value);
 int CVAR_RegisterFunc(cv_func_t func, const char *func_name,
 		  const char *func_argstr, uint16 flags, int min_args, int max_args, void *refCon);
 int CVAR_Register_I(cv_int_t * var_p, const char *var_name,
@@ -78,7 +78,7 @@ int CVAR_Register_UI(cv_uint16_t * var_p, const char *var_name,
 int CVAR_Register_F(cv_float_t * var_p, const char *var_name,
 					const char *section, uint16 flags, cv_float_t lbound, cv_float_t ubound);
 int CVAR_Register_S(cv_char_t * var_str, const char *var_name, const char *section, uint16 flags, int ubound);
-int EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P * expr_cvar, char **rvalue);
+int EXPR_Parse(const char **exp_pp, int *len, CVAR_P * expr_cvar, char **rvalue);
 char *EXPR_ReadString(const char **string_p, int *len, int term_char);
 int EXPR_GetError(const char **err_str);
 int EXPR_GetArgs(char *cmd_str, char ***expr_argv);

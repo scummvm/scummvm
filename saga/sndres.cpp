@@ -39,13 +39,13 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 	int result;
 
 	/* Load sound module resource file contexts */
-	result = GAME_GetFileContext(&_sfx_ctxt, R_GAME_SOUNDFILE, 0);
-	if (result != R_SUCCESS) {
+	result = GAME_GetFileContext(&_sfx_ctxt, GAME_SOUNDFILE, 0);
+	if (result != SUCCESS) {
 		return;
 	}
 
-	result = GAME_GetFileContext(&_voice_ctxt, R_GAME_VOICEFILE, 0);
-	if (result != R_SUCCESS) {
+	result = GAME_GetFileContext(&_voice_ctxt, GAME_VOICEFILE, 0);
+	if (result != SUCCESS) {
 		return;
 	}
 
@@ -56,22 +56,22 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 }
 
 int SndRes::playSound(uint32 sound_rn, int volume) {
-	R_SOUNDBUFFER snd_buffer;
+	SOUNDBUFFER snd_buffer;
 
 	debug(0, "SndRes::playSound(%ld)", sound_rn);
 
-	if (load(_sfx_ctxt, sound_rn, &snd_buffer) != R_SUCCESS) {
-debug(0, "Failed to load sound");
-		return R_FAILURE;
+	if (load(_sfx_ctxt, sound_rn, &snd_buffer) != SUCCESS) {
+		debug(0, "Failed to load sound");
+		return FAILURE;
 	}
 
 	_vm->_sound->playSound(&snd_buffer, volume);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int SndRes::playVoice(uint32 voice_rn) {
-	R_SOUNDBUFFER snd_buffer;
+	SOUNDBUFFER snd_buffer;
 	int result;
 
 	debug(0, "SndRes::playVoice(%ld)", voice_rn);
@@ -91,7 +91,7 @@ int SndRes::playVoice(uint32 voice_rn) {
 			f.open("P2_A.iaf");
 
 		if (!f.isOpen())
-			return R_FAILURE;
+			return FAILURE;
 
 		size = f.size();
 		byte *snd_res = (byte *)malloc(size);
@@ -105,7 +105,7 @@ int SndRes::playVoice(uint32 voice_rn) {
 			snd_buffer.s_buf = snd_res;
 			snd_buffer.s_buf_len = size;
 			snd_buffer.s_signed = 1;
-			result = R_SUCCESS;
+			result = SUCCESS;
 		} else {
 			result = loadVocSound(snd_res, size, &snd_buffer);
 			RSC_FreeResource(snd_res);
@@ -113,16 +113,16 @@ int SndRes::playVoice(uint32 voice_rn) {
 	} else
 		result = load(_voice_ctxt, voice_rn, &snd_buffer);
 
-	if (result != R_SUCCESS) {
-		return R_FAILURE;
+	if (result != SUCCESS) {
+		return FAILURE;
 	}
 
 	_vm->_sound->playVoice(&snd_buffer);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int SndRes::load(R_RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, R_SOUNDBUFFER *snd_buf_i) {
+int SndRes::load(RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, SOUNDBUFFER *snd_buf_i) {
 	byte *snd_res;
 	size_t snd_res_len;
 
@@ -131,12 +131,12 @@ int SndRes::load(R_RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, R_SOUNDBUFFER *snd_
 	assert((snd_ctxt != NULL) && (snd_buf_i != NULL));
 
 	result = RSC_LoadResource(snd_ctxt, snd_rn, &snd_res, &snd_res_len);
-	if (result != R_SUCCESS) {
-		return R_FAILURE;
+	if (result != SUCCESS) {
+		return FAILURE;
 	}
 
 	switch (_snd_info.res_type) {
-	case R_GAME_SOUND_PCM:
+	case GAME_SOUND_PCM:
 		snd_buf_i->s_freq = _snd_info.freq;
 		snd_buf_i->s_samplebits = _snd_info.sample_size;
 		snd_buf_i->s_stereo = _snd_info.stereo;
@@ -144,51 +144,51 @@ int SndRes::load(R_RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, R_SOUNDBUFFER *snd_
 		snd_buf_i->s_buf_len = snd_res_len;
 		snd_buf_i->s_signed = 1;
 		break;
-	case R_GAME_SOUND_VOC:
+	case GAME_SOUND_VOC:
 		result = loadVocSound(snd_res, snd_res_len, snd_buf_i);
 		RSC_FreeResource(snd_res);
-		if (result != R_SUCCESS) {
-			return R_FAILURE;
+		if (result != SUCCESS) {
+			return FAILURE;
 		}
 		break;
 	default:
 		/* Unknown sound type */
 		RSC_FreeResource(snd_res);
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_buf_i) {
-	R_VOC_HEADER_BLOCK voc_hb;
-	R_VOC_GENBLOCK voc_gb;
-	R_VOC_BLOCK1 voc_b1;
+int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf_i) {
+	VOC_HEADER_BLOCK voc_hb;
+	VOC_GENBLOCK voc_gb;
+	VOC_BLOCK1 voc_b1;
 	byte *data;
 
 	long byte_rate;
 	size_t i;
 
-	if (snd_res_len < R_VOC_HEADER_BLOCK_LEN) {
-		return R_FAILURE;
+	if (snd_res_len < VOC_HEADER_BLOCK_LEN) {
+		return FAILURE;
 	}
 
 	MemoryReadStream readS(snd_res, snd_res_len);
 
-	for (i = 0; i < R_VOC_FILE_DESC_LEN; i++)
+	for (i = 0; i < VOC_FILE_DESC_LEN; i++)
 		voc_hb.ft_desc[i] = readS.readByte();
 
-	if (memcmp(voc_hb.ft_desc, R_VOC_FILE_DESC, R_VOC_FILE_DESC_LEN) != 0) {
+	if (memcmp(voc_hb.ft_desc, VOC_FILE_DESC, VOC_FILE_DESC_LEN) != 0) {
 		/* Voc file desc string not found */
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	voc_hb.db_offset = readS.readUint16LE();
 	voc_hb.voc_version = readS.readUint16LE();
 	voc_hb.voc_fileid = readS.readUint16LE();
 
-	if ((int32)(snd_res_len - readS.pos()) < (int32)(voc_hb.db_offset + R_VOC_GENBLOCK_LEN)) {
-		return R_FAILURE;
+	if ((int32)(snd_res_len - readS.pos()) < (int32)(voc_hb.db_offset + VOC_GENBLOCK_LEN)) {
+		return FAILURE;
 	}
 
 	while (readS.pos() < voc_hb.db_offset)
@@ -196,13 +196,13 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_b
 
 	for (;;) {
 		/* Read generic block header */
-		if (snd_res_len - readS.pos() < R_VOC_GENBLOCK_LEN) {
-			return R_FAILURE;
+		if (snd_res_len - readS.pos() < VOC_GENBLOCK_LEN) {
+			return FAILURE;
 		}
 
 		voc_gb.block_id = readS.readByte();
 		if (voc_gb.block_id == 0) {
-			return R_FAILURE;
+			return FAILURE;
 		}
 
 		voc_gb.block_len = readS.readUint24LE();
@@ -215,10 +215,10 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_b
 
 			if (voc_b1.pack_method != 0) {
 				debug(0, "Packed VOC files not supported");
-				return R_FAILURE;
+				return FAILURE;
 			}
 
-			byte_rate = R_VOC_TIME_BASE / (R_VOC_TIME_CBASE - (voc_b1.time_constant << 8));
+			byte_rate = VOC_TIME_BASE / (VOC_TIME_CBASE - (voc_b1.time_constant << 8));
 
 			snd_buf_i->s_stereo = 0;
 			snd_buf_i->s_samplebits = 8;
@@ -227,14 +227,14 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_b
 
 			data = (byte *)malloc(snd_buf_i->s_buf_len);
 			if (!data) {
-				return R_FAILURE;
+				return FAILURE;
 			}
 
 			readS.read(data, snd_buf_i->s_buf_len);
 
 			snd_buf_i->s_buf = data;
 			snd_buf_i->s_signed = 0;
-			return R_SUCCESS;
+			return SUCCESS;
 		default:
 			for (i = 0; i < voc_gb.block_len; i++)
 				readS.readByte();
@@ -242,7 +242,7 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_b
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int SndRes::getVoiceLength(uint32 voice_rn) {
@@ -252,7 +252,7 @@ int SndRes::getVoiceLength(uint32 voice_rn) {
 	double ms_f;
 	int ms_i = -1;
 
-	int result = R_FAILURE;
+	int result = FAILURE;
 
 	assert(_init);
 
@@ -264,30 +264,30 @@ int SndRes::getVoiceLength(uint32 voice_rn) {
 
 	if (GAME_GetGameType() == GID_ITE && voice_rn == 4) {
 		if (f.open("p2_a.voc")) {
-			result = R_SUCCESS;
+			result = SUCCESS;
 			length = f.size();
-			res_type = R_GAME_SOUND_VOC;
+			res_type = GAME_SOUND_VOC;
 			f.close();
 		} else if (f.open("P2_A.iaf")) {
-			result = R_SUCCESS;
+			result = SUCCESS;
 			length = f.size();
-			res_type = R_GAME_SOUND_PCM;
+			res_type = GAME_SOUND_PCM;
 			f.close();
 		}
 	}
 
-	if (result == R_FAILURE) {
+	if (result == FAILURE) {
 		result = RSC_GetResourceSize(_voice_ctxt, voice_rn, &length);
 
-		if (result != R_SUCCESS) {
+		if (result != SUCCESS) {
 			return -1;
 		}
 	}
 
-	if (res_type == R_GAME_SOUND_PCM) {
+	if (res_type == GAME_SOUND_PCM) {
 		ms_f = (double)length / (_snd_info.sample_size / CHAR_BIT) / (_snd_info.freq) * 1000.0;
 		ms_i = (int)ms_f;
-	} else if (res_type == R_GAME_SOUND_VOC) {
+	} else if (res_type == GAME_SOUND_VOC) {
 		// Rough hack, fix this to be accurate
 		ms_f = (double)length / 14705 * 1000.0;
 		ms_i = (int)ms_f;
@@ -321,7 +321,7 @@ int SndRes::ITEVOC_Resample(long src_freq, long dst_freq, byte *src_buf,
 	resamp_len = (size_t) (src_buf_len * 1.5);
 	resamp_buf = (byte *)malloc(resamp_len);
 	if (resamp_buf == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	read_pa = src_buf;
@@ -350,7 +350,7 @@ int SndRes::ITEVOC_Resample(long src_freq, long dst_freq, byte *src_buf,
 	*dst_buf = resamp_buf;
 	*dst_buf_len = resamp_len;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 } // End of namespace Saga

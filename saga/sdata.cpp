@@ -35,36 +35,36 @@ SData::SData() {
 
 	debug(0, "Initializing script data buffers");
 
-	for (i = 0; i < R_SCRIPT_DATABUF_NUM; i++) {
+	for (i = 0; i < SCRIPT_DATABUF_NUM; i++) {
 		alloc_ptr = malloc(sizeof *_vm->_script->dataBuffer(0));
 
 		if (alloc_ptr == NULL) {
 			error("Couldn't allocate memory for script data buffer %d", i);
 		}
 
-		_vm->_script->setBuffer(i, (R_SCRIPT_DATABUF *)alloc_ptr);
+		_vm->_script->setBuffer(i, (SCRIPT_DATABUF *)alloc_ptr);
 	}
 
-	alloc_ptr = calloc(R_SCRIPT_DATABUF_LEN, sizeof(SDataWord_T));
+	alloc_ptr = calloc(SCRIPT_DATABUF_LEN, sizeof(SDataWord_T));
 
 	if (alloc_ptr == NULL) {
 		error("Couldn't allocate memory for shared script buffer");
 	}
 
 	// Buffer 0 is the shared data buffer. All scripts can access this.
-	_vm->_script->dataBuffer(0)->len = R_SCRIPT_DATABUF_LEN;
+	_vm->_script->dataBuffer(0)->len = SCRIPT_DATABUF_LEN;
 	_vm->_script->dataBuffer(0)->data = (SDataWord_T *)alloc_ptr;
 
 	// FIXME: Buffer 1 is the script's static area. The original
 	// interpreter uses part of buffer 0 for this, but I don't yet
 	// understand quite how. 
 
-	_vm->_script->setBuffer(1, (R_SCRIPT_DATABUF *)alloc_ptr);
-	_vm->_script->dataBuffer(1)->len = R_SCRIPT_DATABUF_LEN;
+	_vm->_script->setBuffer(1, (SCRIPT_DATABUF *)alloc_ptr);
+	_vm->_script->dataBuffer(1)->len = SCRIPT_DATABUF_LEN;
 	_vm->_script->dataBuffer(1)->data = (SDataWord_T *)alloc_ptr;
 
 	// Remaining buffers are per-script.
-	for (i = 2; i < R_SCRIPT_DATABUF_NUM; i++) {
+	for (i = 2; i < SCRIPT_DATABUF_NUM; i++) {
 		_vm->_script->dataBuffer(i)->len = 0;
 		_vm->_script->dataBuffer(i)->data = NULL;
 	}
@@ -75,35 +75,35 @@ SData::~SData() {
 }
 
 int SData::getWord(int n_buf, int n_word, SDataWord_T *data) {
-	if ((n_buf < 0) || (n_buf >= R_SCRIPT_DATABUF_NUM)) {
-		return R_FAILURE;
+	if ((n_buf < 0) || (n_buf >= SCRIPT_DATABUF_NUM)) {
+		return FAILURE;
 	}
 
 	if ((n_word < 0) || (n_word >= _vm->_script->dataBuffer(n_buf)->len)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (data == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	*data = _vm->_script->dataBuffer(n_buf)->data[n_word];
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int SData::putWord(int n_buf, int n_word, SDataWord_T data) {
-	if ((n_buf < 0) || (n_buf >= R_SCRIPT_DATABUF_NUM)) {
-		return R_FAILURE;
+	if ((n_buf < 0) || (n_buf >= SCRIPT_DATABUF_NUM)) {
+		return FAILURE;
 	}
 
 	if ((n_word < 0) || (n_word >= _vm->_script->dataBuffer(n_buf)->len)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	_vm->_script->dataBuffer(n_buf)->data[n_word] = data;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int SData::setBit(int n_buf, SDataWord_T n_bit, int bitstate) {
@@ -112,12 +112,12 @@ int SData::setBit(int n_buf, SDataWord_T n_bit, int bitstate) {
 
 	SDataWord_T bit_pattern = 0x01;
 
-	if ((n_buf < 0) || (n_buf >= R_SCRIPT_DATABUF_NUM)) {
-		return R_FAILURE;
+	if ((n_buf < 0) || (n_buf >= SCRIPT_DATABUF_NUM)) {
+		return FAILURE;
 	}
 
 	if (n_bit >= (unsigned long)_vm->_script->dataBuffer(n_buf)->len * (sizeof(SDataWord_T) * CHAR_BIT)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	n_word = n_bit / (sizeof(SDataWord_T) * CHAR_BIT);
@@ -131,7 +131,7 @@ int SData::setBit(int n_buf, SDataWord_T n_bit, int bitstate) {
 		_vm->_script->dataBuffer(n_buf)->data[n_word] &= ~bit_pattern;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int SData::getBit(int n_buf, SDataWord_T n_bit, int *bitstate) {
@@ -140,12 +140,12 @@ int SData::getBit(int n_buf, SDataWord_T n_bit, int *bitstate) {
 
 	SDataWord_T bit_pattern = 0x01;
 
-	if ((n_buf < 0) || (n_buf >= R_SCRIPT_DATABUF_NUM)) {
-		return R_FAILURE;
+	if ((n_buf < 0) || (n_buf >= SCRIPT_DATABUF_NUM)) {
+		return FAILURE;
 	}
 
 	if (n_bit >= (SDataWord_T) _vm->_script->dataBuffer(n_buf)->len * (sizeof(SDataWord_T) * CHAR_BIT)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	n_word = n_bit / (sizeof(SDataWord_T) * CHAR_BIT);
@@ -155,7 +155,7 @@ int SData::getBit(int n_buf, SDataWord_T n_bit, int *bitstate) {
 
 	*bitstate = (_vm->_script->dataBuffer(n_buf)->data[n_word] & bit_pattern) ? 1 : 0;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int SData::readWordS(SDataWord_T word) {

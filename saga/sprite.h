@@ -28,14 +28,14 @@
 
 namespace Saga {
 
-#define R_APPENDMAX 4
+#define APPENDMAX 4
 
-#define R_SPRITE_ZMAX  16
-#define R_SPRITE_ZMASK 0x0F
+#define SPRITE_ZMAX  16
+#define SPRITE_ZMASK 0x0F
 
-#define R_DECODE_BUF_LEN 64000
+#define DECODE_BUF_LEN 64000
 
-struct R_SPRITELIST_ENTRY {
+struct SPRITELIST_ENTRY {
 	int x_align;
 	int y_align;
 	int width;
@@ -43,17 +43,17 @@ struct R_SPRITELIST_ENTRY {
 
 };
 
-struct R_SPRITELIST_OFFSET {
+struct SPRITELIST_OFFSET {
 	uint16 data_idx;
 	size_t offset;
 };
 
-struct R_SPRITELIST {
+struct SPRITELIST {
 	int append_count;
 	int sprite_count;
-	R_SPRITELIST_OFFSET *offset_list;
+	SPRITELIST_OFFSET *offset_list;
 	int slist_rn;
-	byte *sprite_data[R_APPENDMAX];
+	byte *sprite_data[APPENDMAX];
 };
 
 
@@ -61,19 +61,19 @@ class Sprite {
  public:
 	Sprite(SagaEngine *vm);
 	~Sprite(void);
-	int loadList(int resource_num, R_SPRITELIST **sprite_list_p);
-	int appendList(int resource_num, R_SPRITELIST *spritelist);
-	int getListLen(R_SPRITELIST *spritelist);
-	int freeSprite(R_SPRITELIST *spritelist);
-	int draw(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num, int spr_x, int spr_y);
-	int drawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num, int spr_x, int spr_y);
+	int loadList(int resource_num, SPRITELIST **sprite_list_p);
+	int appendList(int resource_num, SPRITELIST *spritelist);
+	int getListLen(SPRITELIST *spritelist);
+	int freeSprite(SPRITELIST *spritelist);
+	int draw(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, int spr_x, int spr_y);
+	int drawOccluded(SURFACE *ds, SPRITELIST *sprite_list, int sprite_num, int spr_x, int spr_y);
 
  private:
 	int decodeRLESprite(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);
 
 	SagaEngine *_vm;
 	bool _initialized;
-	R_RSCFILE_CONTEXT *_spriteContext;
+	RSCFILE_CONTEXT *_spriteContext;
 	byte *_decodeBuf;
 	size_t _decodeBufLen;
 };

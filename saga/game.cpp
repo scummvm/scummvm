@@ -41,126 +41,126 @@ namespace Saga {
 
 // Inherit the Earth - DOS Demo version
 
-R_GAME_FILEDESC ITEDEMO_GameFiles[] = {
-	{"ITE.RSC", R_GAME_RESOURCEFILE},
-	{"ITE.DMO", R_GAME_DEMOFILE},
-	{"SCRIPTS.RSC", R_GAME_SCRIPTFILE},
-	{"VOICES.RSC", R_GAME_SOUNDFILE | R_GAME_VOICEFILE}
+GAME_FILEDESC ITEDEMO_GameFiles[] = {
+	{"ITE.RSC", GAME_RESOURCEFILE},
+	{"ITE.DMO", GAME_DEMOFILE},
+	{"SCRIPTS.RSC", GAME_SCRIPTFILE},
+	{"VOICES.RSC", GAME_SOUNDFILE | GAME_VOICEFILE}
 };
 
-R_GAME_FONTDESC ITEDEMO_GameFonts[] = {
-	{R_GAME_FONT_SMALL, 0},
-	{R_GAME_FONT_MEDIUM, 1}
+GAME_FONTDESC ITEDEMO_GameFonts[] = {
+	{GAME_FONT_SMALL, 0},
+	{GAME_FONT_MEDIUM, 1}
 };
 
-R_GAME_SOUNDINFO ITEDEMO_GameSound = {
-	R_GAME_SOUND_VOC, 0, 0, 0
+GAME_SOUNDINFO ITEDEMO_GameSound = {
+ GAME_SOUND_VOC, 0, 0, 0
 };
 
 // Inherit the Earth - win32 Wyrmkeep Demo version
-R_GAME_FILEDESC ITEWINDEMO_GameFiles[] = {
-	{"ITED.RSC", R_GAME_RESOURCEFILE},
-	{"SCRIPTSD.RSC", R_GAME_SCRIPTFILE},
-	{"SOUNDSD.RSC", R_GAME_SOUNDFILE},
-	{"VOICESD.RSC", R_GAME_VOICEFILE}
+GAME_FILEDESC ITEWINDEMO_GameFiles[] = {
+	{"ITED.RSC", GAME_RESOURCEFILE},
+	{"SCRIPTSD.RSC", GAME_SCRIPTFILE},
+	{"SOUNDSD.RSC", GAME_SOUNDFILE},
+	{"VOICESD.RSC", GAME_VOICEFILE}
 };
 
 // Inherit the Earth - Diskette version
-R_GAME_FILEDESC ITEDISK_GameFiles[] = {
-	{"ITE.RSC", R_GAME_RESOURCEFILE} ,
-	{"SCRIPTS.RSC", R_GAME_SCRIPTFILE} ,
-	{"VOICES.RSC", R_GAME_SOUNDFILE | R_GAME_VOICEFILE}
+GAME_FILEDESC ITEDISK_GameFiles[] = {
+	{"ITE.RSC", GAME_RESOURCEFILE} ,
+	{"SCRIPTS.RSC", GAME_SCRIPTFILE} ,
+	{"VOICES.RSC", GAME_SOUNDFILE | GAME_VOICEFILE}
 };
 
-R_GAME_FONTDESC ITEDISK_GameFonts[] = {
-	{R_GAME_FONT_MEDIUM, 0} ,
-	{R_GAME_FONT_LARGE, 1} ,
-	{R_GAME_FONT_SMALL, 2}
+GAME_FONTDESC ITEDISK_GameFonts[] = {
+	{GAME_FONT_MEDIUM, 0} ,
+	{GAME_FONT_LARGE, 1} ,
+	{GAME_FONT_SMALL, 2}
 };
 
-R_GAME_RESOURCEDESC ITE_Resources = {
+GAME_RESOURCEDESC ITE_Resources = {
 	ITE_SCENE_LUT,  // Scene lookup table RN
 	ITE_SCRIPT_LUT, // Script lookup table RN
 	ITE_COMMAND_PANEL,
 	ITE_DIALOGUE_PANEL
 };
 
-R_GAME_SOUNDINFO ITE_GameSound = {
-	R_GAME_SOUND_VOC, 0, 0, 0
+GAME_SOUNDINFO ITE_GameSound = {
+	GAME_SOUND_VOC, 0, 0, 0
 };
 
 // Inherit the Earth - CD Enhanced version
-R_GAME_FILEDESC ITECD_GameFiles[] = {
-	{"ITE.RSC", R_GAME_RESOURCEFILE},
-	{"SCRIPTS.RSC", R_GAME_SCRIPTFILE},
-	{"SOUNDS.RSC", R_GAME_SOUNDFILE},
-	{"VOICES.RSC", R_GAME_VOICEFILE}
+GAME_FILEDESC ITECD_GameFiles[] = {
+	{"ITE.RSC", GAME_RESOURCEFILE},
+	{"SCRIPTS.RSC", GAME_SCRIPTFILE},
+	{"SOUNDS.RSC", GAME_SOUNDFILE},
+	{"VOICES.RSC", GAME_VOICEFILE}
 };
 
-R_GAME_FONTDESC ITECD_GameFonts[] = {
-	{R_GAME_FONT_MEDIUM, 0},
-	{R_GAME_FONT_LARGE, 1},
-	{R_GAME_FONT_SMALL, 2}
+GAME_FONTDESC ITECD_GameFonts[] = {
+	{GAME_FONT_MEDIUM, 0},
+	{GAME_FONT_LARGE, 1},
+	{GAME_FONT_SMALL, 2}
 };
 
-R_GAME_SOUNDINFO ITECD_GameSound = {
-	R_GAME_SOUND_PCM,
+GAME_SOUNDINFO ITECD_GameSound = {
+	GAME_SOUND_PCM,
 	22050,
 	16,
 	0
 };
 
 // I Have No Mouth and I Must Scream - Demo version
-R_GAME_FILEDESC IHNMDEMO_GameFiles[] = {
-	{"SCREAM.RES", R_GAME_RESOURCEFILE},
-	{"SCRIPTS.RES", R_GAME_SCRIPTFILE},
-	{"SFX.RES", R_GAME_SOUNDFILE},
-	{"VOICESD.RES", R_GAME_VOICEFILE}
+GAME_FILEDESC IHNMDEMO_GameFiles[] = {
+	{"SCREAM.RES", GAME_RESOURCEFILE},
+	{"SCRIPTS.RES", GAME_SCRIPTFILE},
+	{"SFX.RES", GAME_SOUNDFILE},
+	{"VOICESD.RES", GAME_VOICEFILE}
 };
 
 // I Have No Mouth and I Must Scream - Retail CD version
-R_GAME_FILEDESC IHNMCD_GameFiles[] = {
-	{"MUSICFM.RES", R_GAME_MUSICFILE},
-	{"MUSICGM.RES", R_GAME_MUSICFILE},
-	{"SCREAM.RES", R_GAME_RESOURCEFILE},
-	{"SCRIPTS.RES", R_GAME_SCRIPTFILE},
-	{"SFX.RES", R_GAME_SOUNDFILE},
-	{"VOICES1.RES", R_GAME_VOICEFILE},
-	{"VOICES2.RES", R_GAME_VOICEFILE},
-	{"VOICES3.RES", R_GAME_VOICEFILE},
-	{"VOICES4.RES", R_GAME_VOICEFILE},
-	{"VOICES5.RES", R_GAME_VOICEFILE},
-	{"VOICES6.RES", R_GAME_VOICEFILE},
-	{"VOICESS.RES", R_GAME_VOICEFILE}
+GAME_FILEDESC IHNMCD_GameFiles[] = {
+	{"MUSICFM.RES", GAME_MUSICFILE},
+	{"MUSICGM.RES", GAME_MUSICFILE},
+	{"SCREAM.RES", GAME_RESOURCEFILE},
+	{"SCRIPTS.RES", GAME_SCRIPTFILE},
+	{"SFX.RES", GAME_SOUNDFILE},
+	{"VOICES1.RES", GAME_VOICEFILE},
+	{"VOICES2.RES", GAME_VOICEFILE},
+	{"VOICES3.RES", GAME_VOICEFILE},
+	{"VOICES4.RES", GAME_VOICEFILE},
+	{"VOICES5.RES", GAME_VOICEFILE},
+	{"VOICES6.RES", GAME_VOICEFILE},
+	{"VOICESS.RES", GAME_VOICEFILE}
 };
 
-R_GAME_FONTDESC IHNMCD_GameFonts[] = {
-	{R_GAME_FONT_MEDIUM, 2},
-	{R_GAME_FONT_LARGE, 3},
-	{R_GAME_FONT_SMALL, 4},
-	{R_GAME_FONT_SMALL2, 5},
-	{R_GAME_FONT_MEDIUM2, 6},
-	{R_GAME_FONT_LARGE2, 7},
-	{R_GAME_FONT_LARGE3, 8}
+GAME_FONTDESC IHNMCD_GameFonts[] = {
+	{GAME_FONT_MEDIUM, 2},
+	{GAME_FONT_LARGE, 3},
+	{GAME_FONT_SMALL, 4},
+	{GAME_FONT_SMALL2, 5},
+	{GAME_FONT_MEDIUM2, 6},
+	{GAME_FONT_LARGE2, 7},
+	{GAME_FONT_LARGE3, 8}
 };
 
-R_GAME_RESOURCEDESC IHNM_Resources = {
+GAME_RESOURCEDESC IHNM_Resources = {
 	IHNM_SCENE_LUT,  // Scene lookup table RN
 	IHNM_SCRIPT_LUT, // Script lookup table RN
 	IHNM_COMMAND_PANEL,
 	IHNM_DIALOGUE_PANEL
 };
 
-R_GAME_SOUNDINFO IHNM_GameSound = {
-	R_GAME_SOUND_WAV, 0, 0, 0
+GAME_SOUNDINFO IHNM_GameSound = {
+	GAME_SOUND_WAV, 0, 0, 0
 };
 
-R_GAMEDESC GameDescs[] = {
+GAMEDESC GameDescs[] = {
 	// Inherit the earth - DOS Demo version
 	{
 		"ite-demo",
 		GID_ITE,
-		R_GAME_ITE_DEMO, // Game id
+		GAME_ITE_DEMO, // Game id
 		"Inherit the Earth (DOS Demo)", // Game title
 		320, 200, // Logical resolution
 		137, // Scene viewport height
@@ -178,7 +178,7 @@ R_GAMEDESC GameDescs[] = {
 	{
 		"ite-demo-win",
 		GID_ITE,
-		R_GAME_ITE_WINDEMO,
+		GAME_ITE_WINDEMO,
 		"Inherit the Earth (Win32 Demo)",
 		320, 200,
 		137,
@@ -197,7 +197,7 @@ R_GAMEDESC GameDescs[] = {
 	{
 		"itecd",
 		GID_ITE,
-		R_GAME_ITE_CD,
+		GAME_ITE_CD,
 		"Inherit the Earth (DOS CD Version)",
 		320, 200,
 		137,
@@ -215,7 +215,7 @@ R_GAMEDESC GameDescs[] = {
 	{
 		"ite",
 		GID_ITE,
-		R_GAME_ITE_DISK,
+		GAME_ITE_DISK,
 		"Inherit the Earth (DOS)",
 		320, 200,
 		137,
@@ -233,7 +233,7 @@ R_GAMEDESC GameDescs[] = {
 	{
 		"ihnm-demo",
 		GID_IHNM,
-		R_GAME_IHNM_DEMO,
+		GAME_IHNM_DEMO,
 		"I Have No Mouth and I Must Scream (DOS Demo)",
 		640, 480,
 		304,
@@ -251,7 +251,7 @@ R_GAMEDESC GameDescs[] = {
 	{
 		"ihnm",
 		GID_IHNM,
-		R_GAME_IHNM_CD,
+		GAME_IHNM_CD,
 		"I Have No Mouth and I Must Scream (DOS)",
 		640, 480,
 		304,
@@ -266,48 +266,48 @@ R_GAMEDESC GameDescs[] = {
 	}
 };
 
-static R_GAMEMODULE GameModule;
+static GAMEMODULE GameModule;
 
 int GAME_Register() {
-	return R_SUCCESS;
+	return SUCCESS;
 
 	// Register "g_language" cfg cvar
-	strncpy(GameModule.game_language, "us", R_MAXPATH);
+	strncpy(GameModule.game_language, "us", MAXPATH);
 
 	if (CVAR_Register_S(GameModule.game_language, "g_language",
-						NULL, R_CVAR_CFG, R_GAME_LANGSTR_LIMIT) != R_SUCCESS) {
-		return R_FAILURE;
+						NULL, CVAR_CFG, GAME_LANGSTR_LIMIT) != SUCCESS) {
+		return FAILURE;
 	}
 
 	// Register "g_skipintro" cfg cvar
-	if (CVAR_Register_I(&GameModule.g_skipintro, "g_skipintro", NULL, R_CVAR_CFG, 0, 1) != R_SUCCESS) {
-		return R_FAILURE;
+	if (CVAR_Register_I(&GameModule.g_skipintro, "g_skipintro", NULL, CVAR_CFG, 0, 1) != SUCCESS) {
+		return FAILURE;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int GAME_Init() {
 	uint16 game_n;
 
-	if (DetectGame(&game_n) != R_SUCCESS) {
+	if (DetectGame(&game_n) != SUCCESS) {
 		warning("No valid games were found in the specified directory.");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	if (LoadGame(game_n) != R_SUCCESS) {
+	if (LoadGame(game_n) != SUCCESS) {
 		warning("Error loading game resource files.");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	// Load dialogue file 
 	LoadLanguage();
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int LoadLanguage() {
-	char lang_file[R_MAXPATH];
+	char lang_file[MAXPATH];
 	uint16 game_n;
 
 	File test_file;
@@ -315,22 +315,22 @@ int LoadLanguage() {
 	game_n = GameModule.game_number;
 
 	if (GameDescs[game_n].gd_game_type == GID_ITE) {
-		snprintf(lang_file, R_MAXPATH, "%s%s.%s", R_GAME_ITE_LANG_PREFIX, GameModule.game_language, R_GAME_LANG_EXT);
+		snprintf(lang_file, MAXPATH, "%s%s.%s", GAME_ITE_LANG_PREFIX, GameModule.game_language, GAME_LANG_EXT);
 		if (!test_file.open(lang_file)) {
 			debug(0, "Couldn't open language file %s. Using default (US English)", lang_file);
-			return R_SUCCESS;
+			return SUCCESS;
 		}
 
 		test_file.close();
 
-		if (_vm->_interface->registerLang() != R_SUCCESS) {
+		if (_vm->_interface->registerLang() != SUCCESS) {
 			warning("Error registering interface language cvars");
-			return R_FAILURE;
+			return FAILURE;
 		}
 
-		if (_vm->_scene->ITEIntroRegisterLang() != R_SUCCESS) {
+		if (_vm->_scene->ITEIntroRegisterLang() != SUCCESS) {
 			warning("Error registering intro sequence language cvars");
-			return R_FAILURE;
+			return FAILURE;
 		}
 
 		debug(0, "Using language file %s.", lang_file);
@@ -340,19 +340,19 @@ int LoadLanguage() {
 		debug(0, "Language support for this game not implemented.");
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int GAME_GetFileContext(R_RSCFILE_CONTEXT ** ctxt_p, uint16 r_type, int param) {
-	R_RSCFILE_CONTEXT *found_ctxt = NULL;
+int GAME_GetFileContext(RSCFILE_CONTEXT ** ctxt_p, uint16 type, int param) {
+	RSCFILE_CONTEXT *found_ctxt = NULL;
 	uint16 i;
 
 	if (ctxt_p == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	for (i = 0; i < GameModule.gfile_n; i++) {
-		if (GameModule.gfile_data[i].file_types & r_type) {
+		if (GameModule.gfile_data[i].file_types & type) {
 			found_ctxt = GameModule.gfile_data[i].file_ctxt;
 		}
 	}
@@ -363,7 +363,7 @@ int GAME_GetFileContext(R_RSCFILE_CONTEXT ** ctxt_p, uint16 r_type, int param) {
 		*ctxt_p = NULL;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 DetectedGameList GAME_ProbeGame(const FSList &fslist) {
@@ -424,7 +424,7 @@ int DetectGame(uint16 *game_n_p) {
 	int file_missing = 0;
 
 	if (game_n_p == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	for (game_n = 0; game_n < game_count; game_n++) {
@@ -448,28 +448,28 @@ int DetectGame(uint16 *game_n_p) {
 
 		debug(0, "Found game: %s", GameDescs[game_n].gd_title);
 		*game_n_p = game_n;
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
-	return R_FAILURE;
+	return FAILURE;
 }
 
 int LoadGame(uint16 game_n) {
-	R_RSCFILE_CONTEXT *load_ctxt;
+	RSCFILE_CONTEXT *load_ctxt;
 	uint16 game_count = ARRAYSIZE(GameDescs);
 	const char *game_fname;
 	uint16 game_filect;
 	uint16 i;
 
 	if (game_n >= game_count) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	game_filect = GameDescs[game_n].gd_filect;
 
-	GameModule.gfile_data = (R_GAME_FILEDATA *)malloc(game_filect * sizeof *GameModule.gfile_data);
+	GameModule.gfile_data = (GAME_FILEDATA *)malloc(game_filect * sizeof *GameModule.gfile_data);
 	if (GameModule.gfile_data == NULL) {
-		return R_MEM;
+		return MEM;
 	}
 
 	GameModule.gfile_n = game_filect;
@@ -478,8 +478,8 @@ int LoadGame(uint16 game_n) {
 	for (i = 0; i < game_filect; i++) {
 		load_ctxt = RSC_CreateContext();
 		game_fname = GameDescs[game_n].gd_filedescs[i].gf_fname;
-		if (RSC_OpenContext(load_ctxt, game_fname) != R_SUCCESS) {
-			return R_FAILURE;
+		if (RSC_OpenContext(load_ctxt, game_fname) != SUCCESS) {
+			return FAILURE;
 		}
 
 		debug(0, "Opened resource file: %s", game_fname);
@@ -497,32 +497,32 @@ int LoadGame(uint16 game_n) {
 	GameModule.gamedesc = &GameDescs[game_n];
 	GameModule.game_init = 1;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int GAME_GetResourceInfo(R_GAME_RESOURCEDESC *rsc_desc) {
+int GAME_GetResourceInfo(GAME_RESOURCEDESC *rsc_desc) {
 	assert(rsc_desc != NULL);
 
 	*rsc_desc = *GameModule.gamedesc->gd_resource_desc;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int GAME_GetSoundInfo(R_GAME_SOUNDINFO *snd_info) {
+int GAME_GetSoundInfo(GAME_SOUNDINFO *snd_info) {
 	assert(snd_info != NULL);
 
 	*snd_info = *GameModule.gamedesc->gd_soundinfo;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int GAME_GetDisplayInfo(R_GAME_DISPLAYINFO *disp_info) {
+int GAME_GetDisplayInfo(GAME_DISPLAYINFO *disp_info) {
 	int game_n;
 
 	assert(disp_info != NULL);
 
 	if (!GameModule.game_init) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	game_n = GameModule.game_number;
@@ -531,25 +531,25 @@ int GAME_GetDisplayInfo(R_GAME_DISPLAYINFO *disp_info) {
 	disp_info->logical_h = GameDescs[game_n].gd_logical_h;
 	disp_info->scene_h = GameDescs[game_n].gd_scene_h;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int GAME_GetFontInfo(R_GAME_FONTDESC **gf_desc, int *font_n) {
+int GAME_GetFontInfo(GAME_FONTDESC **gf_desc, int *font_n) {
 	assert((gf_desc != NULL) && (font_n != NULL));
 
 	*gf_desc = GameModule.gd_fontdescs;
 	*font_n = GameModule.gd_fontct;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int GAME_GetSceneInfo(R_GAME_SCENEDESC *gs_desc) {
+int GAME_GetSceneInfo(GAME_SCENEDESC *gs_desc) {
 	assert(gs_desc != NULL);
 
 	gs_desc->first_scene = GameModule.gamedesc->gd_startscene;
 	gs_desc->scene_lut_rn = GameModule.gamedesc->gd_resource_desc->scene_lut_rn;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int GAME_GetGame() {

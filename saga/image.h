@@ -28,13 +28,13 @@
 
 namespace Saga {
 
-#define R_MIN_IMG_RLECODE    3
+#define MIN_IMG_RLECODE    3
 #define MODEX_SCANLINE_LIMIT 200
 
 #define SAGA_IMAGE_DATA_OFFSET 776
 #define SAGA_IMAGE_HEADER_LEN  8
 
-struct R_IMAGE_HEADER {
+struct IMAGE_HEADER {
 	int width;
 	int height;
 	int unknown4;

@@ -36,25 +36,25 @@
 namespace Saga {
 
 Gfx::Gfx(OSystem *system, int width, int height) {
-	R_SURFACE r_back_buf;
+	SURFACE back_buf;
 
 	_system = system;
 	_system->initSize(width, height);
 
 	debug(0, "Init screen %dx%d", width, height);
 	// Convert surface data to R surface data
-	r_back_buf.buf = (byte *)calloc(1, width * height);
-	r_back_buf.buf_w = width;
-	r_back_buf.buf_h = height;
-	r_back_buf.buf_pitch = width;
+	back_buf.buf = (byte *)calloc(1, width * height);
+	back_buf.buf_w = width;
+	back_buf.buf_h = height;
+	back_buf.buf_pitch = width;
 
-	r_back_buf.clip_rect.left = 0;
-	r_back_buf.clip_rect.top = 0;
-	r_back_buf.clip_rect.right = width;
-	r_back_buf.clip_rect.bottom = height;
+	back_buf.clip_rect.left = 0;
+	back_buf.clip_rect.top = 0;
+	back_buf.clip_rect.right = width;
+	back_buf.clip_rect.bottom = height;
 
 	// Set module data
-	_back_buf = r_back_buf;
+	_back_buf = back_buf;
 	_init = 1;
 	_white_index = -1;
 	_black_index = -1;
@@ -70,7 +70,7 @@ Gfx::Gfx(OSystem *system, int width, int height) {
 }
  */
 
-int Gfx::drawPalette(R_SURFACE *dst_s) {
+int Gfx::drawPalette(SURFACE *dst_s) {
 	int x;
 	int y;
 	int color = 0;
@@ -93,7 +93,7 @@ int Gfx::drawPalette(R_SURFACE *dst_s) {
 	return 0;
 }
 
-int Gfx::simpleBlit(R_SURFACE *dst_s, R_SURFACE *src_s) {
+int Gfx::simpleBlit(SURFACE *dst_s, SURFACE *src_s) {
 	byte *src_p;
 	byte *dst_p;
 	int y, w, p;
@@ -115,7 +115,7 @@ int Gfx::simpleBlit(R_SURFACE *dst_s, R_SURFACE *src_s) {
 		src_p += p;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // TODO: I've fixed at least one clipping bug here, but I have a feeling there
@@ -129,8 +129,8 @@ int Gfx::simpleBlit(R_SURFACE *dst_s, R_SURFACE *src_s) {
 //    origin.
 // - If src_rect is NULL, the entire buffer is copied./
 // - The surface must match the logical dimensions of the buffer exactly.
-// - Returns R_FAILURE on error
-int Gfx::bufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h, 
+// - Returns FAILURE on error
+int Gfx::bufToSurface(SURFACE *ds, const byte *src, int src_w, int src_h, 
 					 Rect *src_rect, Point *dst_pt) {
 	const byte *read_p;
 	byte *write_p;
@@ -160,7 +160,7 @@ int Gfx::bufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h,
 
 	if (s.width() <= 0 || s.height() <= 0) {
 		// Empty or negative region
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	// Get destination origin and clip rectangle
@@ -197,7 +197,7 @@ int Gfx::bufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h,
 	if (d_x < clip.left) {
 		if (d_x <= (-src_draw_w)) {
 			// dst rect completely off left edge
-			return R_SUCCESS;
+			return SUCCESS;
 		}
 
 		src_off_x += (clip.left - d_x);
@@ -211,7 +211,7 @@ int Gfx::bufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h,
 	if (d_y < clip.top) {
 		if (d_y >= (-src_draw_h)) {
 			// dst rect completely off top edge
-			return R_SUCCESS;
+			return SUCCESS;
 		}
 
 		src_off_y += (clip.top - d_y);
@@ -224,7 +224,7 @@ int Gfx::bufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h,
 
 	if (d_x >= clip.right) {
 		// dst rect completely off right edge
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	if ((d_x + src_draw_w) > clip.right) {
@@ -235,7 +235,7 @@ int Gfx::bufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h,
 
 	if (d_y > clip.bottom) {
 		// dst rect completely off bottom edge
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	if ((d_y + src_draw_h) > clip.bottom) {
@@ -253,7 +253,7 @@ int Gfx::bufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h,
 		read_p += src_w;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Gfx::bufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
@@ -287,7 +287,7 @@ int Gfx::bufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
 
 	if (s.width() <= 0 || s.height() <= 0) {
 		// Empty or negative region
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	// Get destination origin and clip rectangle
@@ -317,7 +317,7 @@ int Gfx::bufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
 	if (d_x < clip.left) {
 		if (d_x <= (-src_draw_w)) {
 			// dst rect completely off left edge
-			return R_SUCCESS;
+			return SUCCESS;
 		}
 
 		src_off_x += (clip.left - d_x);
@@ -331,7 +331,7 @@ int Gfx::bufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
 	if (d_y < clip.top) {
 		if (d_y >= (-src_draw_h)) {
 			// dst rect completely off top edge
-			return R_SUCCESS;
+			return SUCCESS;
 		}
 
 		src_off_y += (clip.top - d_y);
@@ -344,7 +344,7 @@ int Gfx::bufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
 
 	if (d_x >= clip.right) {
 		// dst rect completely off right edge
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	if ((d_x + src_draw_w) > clip.right) {
@@ -355,7 +355,7 @@ int Gfx::bufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
 
 	if (d_y >= clip.bottom) {
 		// dst rect completely off bottom edge
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	if ((d_y + src_draw_h) > clip.bottom) {
@@ -373,12 +373,12 @@ int Gfx::bufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
 		read_p += src_w;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Fills a rectangle in the surface ds from point 'p1' to point 'p2' using
 // the specified color.
-int Gfx::drawRect(R_SURFACE *ds, Rect *dst_rect, int color) {
+int Gfx::drawRect(SURFACE *ds, Rect *dst_rect, int color) {
 	byte *write_p;
 
 	int w;
@@ -396,7 +396,7 @@ int Gfx::drawRect(R_SURFACE *ds, Rect *dst_rect, int color) {
 
 		if ((left >= right) || (top >= bottom)) {
 			// Empty or negative region
-			return R_FAILURE;
+			return FAILURE;
 		}
 	} else {
 		left = 0;
@@ -415,10 +415,10 @@ int Gfx::drawRect(R_SURFACE *ds, Rect *dst_rect, int color) {
 		write_p += ds->buf_pitch;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Gfx::drawFrame(R_SURFACE *ds, const Point *p1, const Point *p2, int color) {
+int Gfx::drawFrame(SURFACE *ds, const Point *p1, const Point *p2, int color) {
 	int left, top, right, bottom;
 
 	int min_x;
@@ -457,10 +457,10 @@ int Gfx::drawFrame(R_SURFACE *ds, const Point *p1, const Point *p2, int color) {
 	drawLine(ds, &n_p3, &n_p4, color);
 	drawLine(ds, &n_p4, &n_p1, color);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Gfx::drawPolyLine(R_SURFACE *ds, const Point *pts, int pt_ct, int draw_color) {
+int Gfx::drawPolyLine(SURFACE *ds, const Point *pts, int pt_ct, int draw_color) {
 	const Point *first_pt = pts;
 	int last_i = 1;
 	int i;
@@ -468,7 +468,7 @@ int Gfx::drawPolyLine(R_SURFACE *ds, const Point *pts, int pt_ct, int draw_color
 	assert((ds != NULL) & (pts != NULL));
 
 	if (pt_ct < 3) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	for (i = 1; i < pt_ct; i++) {
@@ -478,17 +478,17 @@ int Gfx::drawPolyLine(R_SURFACE *ds, const Point *pts, int pt_ct, int draw_color
 
 	drawLine(ds, &pts[last_i], first_pt, draw_color);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Gfx::getClipInfo(R_CLIPINFO *clipinfo) {
+int Gfx::getClipInfo(CLIPINFO *clipinfo) {
 	Common::Rect s;
 	int d_x, d_y;
 
 	Common::Rect clip;
 
 	if (clipinfo == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (clipinfo->dst_pt != NULL) {
@@ -518,7 +518,7 @@ int Gfx::getClipInfo(R_CLIPINFO *clipinfo) {
 		if (d_x <= -(clipinfo->draw_w)) {
 			// dst rect completely off left edge
 			clipinfo->nodraw = 1;
-			return R_SUCCESS;
+			return SUCCESS;
 		}
 
 		clipinfo->src_draw_x += (clip.left - d_x);
@@ -531,7 +531,7 @@ int Gfx::getClipInfo(R_CLIPINFO *clipinfo) {
 		if (d_y <= -(clipinfo->draw_h)) {
 			// dst rect completely off top edge
 			clipinfo->nodraw = 1;
-			return R_SUCCESS;
+			return SUCCESS;
 		}
 
 		clipinfo->src_draw_y += (clip.top - d_y);
@@ -544,7 +544,7 @@ int Gfx::getClipInfo(R_CLIPINFO *clipinfo) {
 	if (d_x >= clip.right) {
 		// dst rect completely off right edge
 		clipinfo->nodraw = 1;
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	if ((d_x + clipinfo->draw_w) > clip.right) {
@@ -555,17 +555,17 @@ int Gfx::getClipInfo(R_CLIPINFO *clipinfo) {
 	if (d_y >= clip.bottom) {
 		// dst rect completely off bottom edge
 		clipinfo->nodraw = 1;
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	if ((d_y + clipinfo->draw_h) > clip.bottom) {
 		clipinfo->draw_h = clip.bottom - d_y;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Gfx::clipLine(R_SURFACE *ds, const Point *src_p1, const Point *src_p2, 
+int Gfx::clipLine(SURFACE *ds, const Point *src_p1, const Point *src_p2, 
 				 Point *dst_p1, Point *dst_p2) {
 	const Point *n_p1;
 	const Point *n_p2;
@@ -637,7 +637,7 @@ int Gfx::clipLine(R_SURFACE *ds, const Point *src_p1, const Point *src_p2,
 // Coriolis Group Books, 1997
 //
 // Performs no clipping
-void Gfx::drawLine(R_SURFACE *ds, const Point *p1, const Point *p2, int color) {
+void Gfx::drawLine(SURFACE *ds, const Point *p1, const Point *p2, int color) {
 	byte *write_p;
 	int clip_result;
 	int temp;
@@ -812,7 +812,7 @@ void Gfx::drawLine(R_SURFACE *ds, const Point *p1, const Point *p2, int color) {
 	return;
 }
 
-R_SURFACE *Gfx::getBackBuffer() {
+SURFACE *Gfx::getBackBuffer() {
 	return &_back_buf;
 }
 
@@ -837,7 +837,7 @@ int Gfx::matchColor(unsigned long colormask) {
 	int best_index = 0;
 	byte *ppal;
 
-	for (i = 0, ppal = _cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+	for (i = 0, ppal = _cur_pal; i < PAL_ENTRIES; i++, ppal += 4) {
 		dr = ppal[0] - red;
 		dr = ABS(dr);
 		dg = ppal[1] - green;
@@ -846,7 +846,7 @@ int Gfx::matchColor(unsigned long colormask) {
 		db = ABS(db);
 		ppal[3] = 0;
 
-		color_delta = (long)(dr * R_RED_WEIGHT + dg * R_GREEN_WEIGHT + db * R_BLUE_WEIGHT);
+		color_delta = (long)(dr * RED_WEIGHT + dg * GREEN_WEIGHT + db * BLUE_WEIGHT);
 
 		if (color_delta == 0) {
 			return i;
@@ -861,7 +861,7 @@ int Gfx::matchColor(unsigned long colormask) {
 	return best_index;
 }
 
-int Gfx::setPalette(R_SURFACE *surface, PALENTRY *pal) {
+int Gfx::setPalette(SURFACE *surface, PALENTRY *pal) {
 	byte red;
 	byte green;
 	byte blue;
@@ -873,7 +873,7 @@ int Gfx::setPalette(R_SURFACE *surface, PALENTRY *pal) {
 	int i;
 	byte *ppal;
 
-	for (i = 0, ppal = _cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+	for (i = 0, ppal = _cur_pal; i < PAL_ENTRIES; i++, ppal += 4) {
 		red = pal[i].red;
 		ppal[0] = red;
 		color_delta = red;
@@ -907,25 +907,25 @@ int Gfx::setPalette(R_SURFACE *surface, PALENTRY *pal) {
 	_white_index = best_windex;
 	_black_index = best_bindex;
 
-	_system->setPalette(_cur_pal, 0, R_PAL_ENTRIES);
+	_system->setPalette(_cur_pal, 0, PAL_ENTRIES);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Gfx::getCurrentPal(PALENTRY *src_pal) {
 	int i;
 	byte *ppal;
 
-	for (i = 0, ppal = _cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+	for (i = 0, ppal = _cur_pal; i < PAL_ENTRIES; i++, ppal += 4) {
 		src_pal[i].red = ppal[0];
 		src_pal[i].green = ppal[1];
 		src_pal[i].blue = ppal[2];
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Gfx::palToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
+int Gfx::palToBlack(SURFACE *surface, PALENTRY *src_pal, double percent) {
 	int i;
 	//int fade_max = 255;
 	int new_entry;
@@ -943,7 +943,7 @@ int Gfx::palToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 	fpercent = 1.0 - fpercent;
 
 	// Use the correct percentage change per frame for each palette entry 
-	for (i = 0, ppal = _cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+	for (i = 0, ppal = _cur_pal; i < PAL_ENTRIES; i++, ppal += 4) {
 		new_entry = (int)(src_pal[i].red * fpercent);
 
 		if (new_entry < 0) {
@@ -970,12 +970,12 @@ int Gfx::palToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 		ppal[3] = 0;
 	}
 
-	_system->setPalette(_cur_pal, 0, R_PAL_ENTRIES);
+	_system->setPalette(_cur_pal, 0, PAL_ENTRIES);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Gfx::blackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
+int Gfx::blackToPal(SURFACE *surface, PALENTRY *src_pal, double percent) {
 	int new_entry;
 	double fpercent;
 	int color_delta;
@@ -996,7 +996,7 @@ int Gfx::blackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 	fpercent = 1.0 - fpercent;
 
 	// Use the correct percentage change per frame for each palette entry
-	for (i = 0, ppal = _cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+	for (i = 0, ppal = _cur_pal; i < PAL_ENTRIES; i++, ppal += 4) {
 		new_entry = (int)(src_pal[i].red - src_pal[i].red * fpercent);
 
 		if (new_entry < 0) {
@@ -1025,7 +1025,7 @@ int Gfx::blackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 
 	// Find the best white and black color indices again
 	if (percent >= 1.0) {
-		for (i = 0, ppal = _cur_pal; i < R_PAL_ENTRIES; i++, ppal += 4) {
+		for (i = 0, ppal = _cur_pal; i < PAL_ENTRIES; i++, ppal += 4) {
 			color_delta = ppal[0];
 			color_delta += ppal[1];
 			color_delta += ppal[2];
@@ -1049,9 +1049,9 @@ int Gfx::blackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 		setCursor(best_windex);
 	}
 
-	_system->setPalette(_cur_pal, 0, R_PAL_ENTRIES);
+	_system->setPalette(_cur_pal, 0, PAL_ENTRIES);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 void Gfx::setCursor(int best_white) {
@@ -1059,7 +1059,7 @@ void Gfx::setCursor(int best_white) {
 	byte keycolor = (best_white == 0) ? 1 : 0;
 
 	// Set up the mouse cursor
-	byte cursor_img[R_CURSOR_W * R_CURSOR_H] = {
+	byte cursor_img[CURSOR_W * CURSOR_H] = {
 		  0,   0,   0, 255,   0,   0,   0,
 		  0,   0,   0, 255,   0,   0,   0,
 		  0,   0,   0,   0,   0,   0,   0,
@@ -1069,14 +1069,14 @@ void Gfx::setCursor(int best_white) {
 		  0,   0,   0, 255,   0,   0,   0,
 	};
 
-	for (i = 0; i < R_CURSOR_W * R_CURSOR_H; i++) {
+	for (i = 0; i < CURSOR_W * CURSOR_H; i++) {
 		if (cursor_img[i] != 0)
 			cursor_img[i] = best_white;
 		else
 			cursor_img[i] = keycolor;
 	}
 
-	_system->setMouseCursor(cursor_img, R_CURSOR_W, R_CURSOR_H, 4, 4, keycolor);
+	_system->setMouseCursor(cursor_img, CURSOR_W, CURSOR_H, 4, 4, keycolor);
 }
 
 bool Gfx::hitTestPoly(const Point *points, unsigned int npoints, const Point& test_point) {

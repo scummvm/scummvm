@@ -54,18 +54,18 @@ static void CF_objectinfo(int argc, char *argv[], void *refCon);
 
 
 int Scene::reg() {
-	CVAR_Register_I(&_sceneNumber, "scene", NULL, R_CVAR_READONLY, 0, 0);
-	CVAR_RegisterFunc(CF_scenechange, "scene_change", "<Scene number>", R_CVAR_NONE, 1, 1, this);
-	CVAR_RegisterFunc(CF_sceneinfo, "scene_info", NULL, R_CVAR_NONE, 0, 0, this);
+	CVAR_Register_I(&_sceneNumber, "scene", NULL, CVAR_READONLY, 0, 0);
+	CVAR_RegisterFunc(CF_scenechange, "scene_change", "<Scene number>", CVAR_NONE, 1, 1, this);
+	CVAR_RegisterFunc(CF_sceneinfo, "scene_info", NULL, CVAR_NONE, 0, 0, this);
 	CVAR_RegisterFunc(CF_actioninfo,
-					  "action_info", NULL, R_CVAR_NONE, 0, 0, this);
-	CVAR_RegisterFunc(CF_objectinfo, "object_info", NULL, R_CVAR_NONE, 0, 0, this);
+					  "action_info", NULL, CVAR_NONE, 0, 0, this);
+	CVAR_RegisterFunc(CF_objectinfo, "object_info", NULL, CVAR_NONE, 0, 0, this);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
-	R_GAME_SCENEDESC gs_desc;
+	GAME_SCENEDESC gs_desc;
 	byte *scene_lut_p;
 	size_t scene_lut_len;
 	int result;
@@ -75,8 +75,8 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	GAME_GetSceneInfo(&gs_desc);
 
 	// Load scene module resource context
-	result = GAME_GetFileContext(&_sceneContext, R_GAME_RESOURCEFILE, 0);
-	if (result != R_SUCCESS) {
+	result = GAME_GetFileContext(&_sceneContext, GAME_RESOURCEFILE, 0);
+	if (result != SUCCESS) {
 		warning("Scene::Scene(): Couldn't load scene resource context");
 		return;
 	}
@@ -90,7 +90,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	// Load scene lookup table
 	debug(0, "Loading scene LUT from resource %u.", gs_desc.scene_lut_rn);
 	result = RSC_LoadResource(_sceneContext, gs_desc.scene_lut_rn, &scene_lut_p, &scene_lut_len);
-	if (result != R_SUCCESS) {
+	if (result != SUCCESS) {
 		warning("Scene::Scene(): Error: couldn't load scene LUT");
 		return;
 	}
@@ -154,13 +154,13 @@ Scene::~Scene() {
 	}
 }
 
-int Scene::queueScene(R_SCENE_QUEUE *scene_queue) {
+int Scene::queueScene(SCENE_QUEUE *scene_queue) {
 	assert(_initialized);
 	assert(scene_queue != NULL);
 
 	ys_dll_add_tail(_sceneQueue, scene_queue, sizeof *scene_queue);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Scene::clearSceneQueue() {
@@ -168,23 +168,23 @@ int Scene::clearSceneQueue() {
 
 	ys_dll_delete_all(_sceneQueue);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Scene::startScene() {
 	YS_DL_NODE *node;
-	R_SCENE_QUEUE *scene_qdat;
+	SCENE_QUEUE *scene_qdat;
 
 	assert(_initialized);
 
 	if (_sceneLoaded) {
 		warning("Scene::start(): Error: Can't start game...scene already loaded");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (_inGame) {
 		warning("Scene::start(): Error: Can't start game...game already started");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	switch (GAME_GetGameType()) {
@@ -202,31 +202,31 @@ int Scene::startScene() {
 	// Load the head node in scene queue
 	node = ys_dll_head(_sceneQueue);
 	if (node == NULL) {
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
-	scene_qdat = (R_SCENE_QUEUE *)ys_dll_get_data(node);
+	scene_qdat = (SCENE_QUEUE *)ys_dll_get_data(node);
 	assert(scene_qdat != NULL);
 
 	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->scene_desc, scene_qdat->fadeType);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Scene::nextScene() {
 	YS_DL_NODE *node;
-	R_SCENE_QUEUE *scene_qdat;
+	SCENE_QUEUE *scene_qdat;
 
 	assert(_initialized);
 
 	if (!_sceneLoaded) {
 		warning("Scene::next(): Error: Can't advance scene...no scene loaded");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (_inGame) {
 		warning("Scene::next(): Error: Can't advance scene...game already started");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	endScene();
@@ -234,7 +234,7 @@ int Scene::nextScene() {
 	// Delete the current head node in scene queue
 	node = ys_dll_head(_sceneQueue);
 	if (node == NULL) {
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	ys_dll_delete(node);
@@ -242,15 +242,15 @@ int Scene::nextScene() {
 	// Load the head node in scene queue
 	node = ys_dll_head(_sceneQueue);
 	if (node == NULL) {
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
-	scene_qdat = (R_SCENE_QUEUE *)ys_dll_get_data(node);
+	scene_qdat = (SCENE_QUEUE *)ys_dll_get_data(node);
 	assert(scene_qdat != NULL);
 
 	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->scene_desc, scene_qdat->fadeType);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Scene::skipScene() {
@@ -258,30 +258,30 @@ int Scene::skipScene() {
 	YS_DL_NODE *prev_node;
 	YS_DL_NODE *skip_node = NULL;
 
-	R_SCENE_QUEUE *scene_qdat = NULL;
-	R_SCENE_QUEUE *skip_qdat = NULL;
+	SCENE_QUEUE *scene_qdat = NULL;
+	SCENE_QUEUE *skip_qdat = NULL;
 
 	assert(_initialized);
 
 	if (!_sceneLoaded) {
 		warning("Scene::skip(): Error: Can't skip scene...no scene loaded");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (_inGame) {
 		warning("Scene::skip(): Error: Can't skip scene...game already started");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	// Walk down scene queue and try to find a skip target
 	node = ys_dll_head(_sceneQueue);
 	if (node == NULL) {
 		warning("Scene::skip(): Error: Can't skip scene...no scenes in queue");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	for (node = ys_dll_next(node); node != NULL; node = ys_dll_next(node)) {
-		scene_qdat = (R_SCENE_QUEUE *)ys_dll_get_data(node);
+		scene_qdat = (SCENE_QUEUE *)ys_dll_get_data(node);
 		assert(scene_qdat != NULL);
 
 		if (scene_qdat->scene_skiptarget) {
@@ -302,7 +302,7 @@ int Scene::skipScene() {
 	}
 	// Search for a scene to skip to
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Scene::changeScene(int scene_num) {
@@ -310,23 +310,23 @@ int Scene::changeScene(int scene_num) {
 
 	if (!_sceneLoaded) {
 		warning("Scene::changeScene(): Error: Can't change scene. No scene currently loaded. Game in invalid state");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if ((scene_num < 0) || (scene_num > _sceneMax)) {
 		warning("Scene::changeScene(): Error: Can't change scene. Invalid scene number");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (_sceneLUT[scene_num] == 0) {
 		warning("Scene::changeScene(): Error: Can't change scene; invalid scene descriptor resource number (0)");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	endScene();
 	loadScene(scene_num, BY_SCENE, SC_defaultScene, NULL, false);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Scene::getMode() {
@@ -341,11 +341,11 @@ int Scene::getZInfo(SCENE_ZINFO *zinfo) {
 	zinfo->beginSlope = _desc.beginSlope;
 	zinfo->endSlope = _desc.endSlope;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Scene::getBGInfo(SCENE_BGINFO *bginfo) {
-	R_GAME_DISPLAYINFO di;
+	GAME_DISPLAYINFO di;
 	int x, y;
 
 	assert(_initialized);
@@ -371,21 +371,21 @@ int Scene::getBGInfo(SCENE_BGINFO *bginfo) {
 	bginfo->bg_x = x;
 	bginfo->bg_y = y;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Scene::getBGPal(PALENTRY **pal) {
 	assert(_initialized);
 	*pal = _bg.pal;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Scene::getBGMaskInfo(int *w, int *h, byte **buf, size_t *buf_len) {
 	assert(_initialized);
 
 	if (!_bgMask.loaded) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	*w = _bgMask.w;
@@ -393,7 +393,7 @@ int Scene::getBGMaskInfo(int *w, int *h, byte **buf, size_t *buf_len) {
 	*buf = _bgMask.buf;
 	*buf_len = _bgMask.buf_len;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Scene::isBGMaskPresent() {
@@ -402,17 +402,17 @@ int Scene::isBGMaskPresent() {
 	return _bgMask.loaded;
 }
 
-int Scene::getInfo(R_SCENE_INFO *si) {
+int Scene::getInfo(SCENE_INFO *si) {
 	assert(_initialized);
 	assert(si != NULL);
 
 	si->text_list = _textList;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DESC *scene_desc_param, int fadeType) {
-	R_SCENE_INFO scene_info;
+int Scene::loadScene(int scene_num, int load_flag, SCENE_PROC scene_proc, SCENE_DESC *scene_desc_param, int fadeType) {
+	SCENE_INFO scene_info;
 	uint32 res_number = 0;
 	int result;
 	int i;
@@ -421,7 +421,7 @@ int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SC
 
 	if (_sceneLoaded) {
 		warning("Scene::loadScene(): Error, a scene is already loaded");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	_animList = ys_dll_create();
@@ -447,7 +447,7 @@ int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SC
 		break;
 	default:
 		warning("Scene::loadScene(): Error: Invalid scene load flag");
-		return R_FAILURE;
+		return FAILURE;
 		break;
 	}
 
@@ -458,14 +458,14 @@ int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SC
 		assert(_sceneResNum != 0);
 		debug(0, "Loading scene resource %u:", res_number);
 
-		if (loadSceneDescriptor(res_number) != R_SUCCESS) {
+		if (loadSceneDescriptor(res_number) != SUCCESS) {
 			warning("Scene::loadScene(): Error reading scene descriptor");
-			return R_FAILURE;
+			return FAILURE;
 		}
 
-		if (loadSceneResourceList(_desc.resListRN) != R_SUCCESS) {
+		if (loadSceneResourceList(_desc.resListRN) != SUCCESS) {
 			warning("Scene::loadScene(): Error reading scene resource list");
-			return R_FAILURE;
+			return FAILURE;
 		}
 	} else {
 		debug(0, "Loading memory scene resource.");
@@ -475,37 +475,37 @@ int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SC
 	for (i = 0; i < _resListEntries; i++) {
 		result = RSC_LoadResource(_sceneContext, _resList[i].res_number,
 								&_resList[i].res_data, &_resList[i].res_data_len);
-		if (result != R_SUCCESS) {
+		if (result != SUCCESS) {
 			warning("Scene::loadScene(): Error: Allocation failure loading scene resource list");
-			return R_FAILURE;
+			return FAILURE;
 		}
 	}
 
 	// Process resources from scene resource list
-	if (processSceneResources() != R_SUCCESS) {
+	if (processSceneResources() != SUCCESS) {
 		warning("Scene::loadScene(): Error loading scene resources");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	// Load scene script data
 	if (_desc.scriptNum > 0) {
-		if (_vm->_script->loadScript(_desc.scriptNum) != R_SUCCESS) {
+		if (_vm->_script->loadScript(_desc.scriptNum) != SUCCESS) {
 			warning("Scene::loadScene(): Error loading scene script");
-			return R_FAILURE;
+			return FAILURE;
 		}
 	}
 
 	_sceneLoaded = true;
 
 	if (fadeType == SCENE_FADE || fadeType == SCENE_FADE_NO_INTERFACE) {
-		R_EVENT event;
-		R_EVENT *q_event;
-		static PALENTRY current_pal[R_PAL_ENTRIES];
+		EVENT event;
+		EVENT *q_event;
+		static PALENTRY current_pal[PAL_ENTRIES];
 
 		// Fade to black out
 		_vm->_gfx->getCurrentPal(current_pal);
-		event.type = R_IMMEDIATE_EVENT;
-		event.code = R_PAL_EVENT;
+		event.type = IMMEDIATE_EVENT;
+		event.code = PAL_EVENT;
 		event.op = EVENT_PALTOBLACK;
 		event.time = 0;
 		event.duration = PALETTE_FADE_DURATION;
@@ -514,8 +514,8 @@ int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SC
 
 		if (fadeType != SCENE_FADE_NO_INTERFACE) {
 			// Activate user interface
-			event.type = R_IMMEDIATE_EVENT;
-			event.code = R_INTERFACE_EVENT;
+			event.type = IMMEDIATE_EVENT;
+			event.code = INTERFACE_EVENT;
 			event.op = EVENT_ACTIVATE;
 			event.time = 0;
 			event.duration = 0;
@@ -523,8 +523,8 @@ int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SC
 		}
 
 		// Display scene background, but stay with black palette
-		event.type = R_IMMEDIATE_EVENT;
-		event.code = R_BG_EVENT;
+		event.type = IMMEDIATE_EVENT;
+		event.code = BG_EVENT;
 		event.op = EVENT_DISPLAY;
 		event.param = NO_SET_PALETTE;
 		event.time = 0;
@@ -533,8 +533,8 @@ int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SC
 
 		// Start the scene pre script, but stay with black palette
 		if (_desc.startScriptNum > 0) {
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_SCRIPT_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = SCRIPT_EVENT;
 			event.op = EVENT_BLOCKING;
 			event.time = 0;
 			event.param = _desc.startScriptNum;
@@ -547,8 +547,8 @@ int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SC
 		}
 
 		// Fade in from black to the scene background palette
-		event.type = R_IMMEDIATE_EVENT;
-		event.code = R_PAL_EVENT;
+		event.type = IMMEDIATE_EVENT;
+		event.code = PAL_EVENT;
 		event.op = EVENT_BLACKTOPAL;
 		event.time = 0;
 		event.duration = PALETTE_FADE_DURATION;
@@ -567,7 +567,7 @@ int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SC
 
 	_sceneProc(SCENE_BEGIN, &scene_info, this);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Scene::loadSceneDescriptor(uint32 res_number) {
@@ -576,14 +576,14 @@ int Scene::loadSceneDescriptor(uint32 res_number) {
 	int result;
 
 	result = RSC_LoadResource(_sceneContext, res_number, &scene_desc_data, &scene_desc_len);
-	if (result != R_SUCCESS) {
+	if (result != SUCCESS) {
 		warning("Scene::loadSceneDescriptor(): Error: couldn't load scene descriptor");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (scene_desc_len != SAGA_SCENE_DESC_LEN) {
 		warning("Scene::loadSceneDescriptor(): Error: scene descriptor length invalid");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	MemoryReadStream readS(scene_desc_data, scene_desc_len);
@@ -599,7 +599,7 @@ int Scene::loadSceneDescriptor(uint32 res_number) {
 
 	RSC_FreeResource(scene_desc_data);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Scene::loadSceneResourceList(uint32 reslist_rn) {
@@ -610,9 +610,9 @@ int Scene::loadSceneResourceList(uint32 reslist_rn) {
 
 	// Load the scene resource table
 	result = RSC_LoadResource(_sceneContext, reslist_rn, &resource_list, &resource_list_len);
-	if (result != R_SUCCESS) {
+	if (result != SUCCESS) {
 		warning("Scene::loadSceneResourceList(): Error: couldn't load scene resource list");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	MemoryReadStream readS(resource_list, resource_list_len);
@@ -620,11 +620,11 @@ int Scene::loadSceneResourceList(uint32 reslist_rn) {
 	// Allocate memory for scene resource list 
 	_resListEntries = resource_list_len / SAGA_RESLIST_ENTRY_LEN;
 	debug(0, "Scene resource list contains %d entries.", _resListEntries);
-	_resList = (R_SCENE_RESLIST *)calloc(_resListEntries, sizeof *_resList);
+	_resList = (SCENE_RESLIST *)calloc(_resListEntries, sizeof *_resList);
 
 	if (_resList == NULL) {
 		warning("Scene::loadSceneResourceList(): Error: Memory allocation failed");
-		return R_MEM;
+		return MEM;
 	}
 
 	// Load scene resource list from raw scene 
@@ -638,7 +638,7 @@ int Scene::loadSceneResourceList(uint32 reslist_rn) {
 
 	RSC_FreeResource(resource_list);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Scene::processSceneResources() {
@@ -657,7 +657,7 @@ int Scene::processSceneResources() {
 		case SAGA_BG_IMAGE: // Scene background resource
 			if (_bg.loaded) {
 				warning("Scene::processSceneResources(): Multiple background resources encountered");
-				return R_FAILURE;
+				return FAILURE;
 			}
 
 			debug(0, "Loading background resource.");
@@ -670,14 +670,14 @@ int Scene::processSceneResources() {
 				&_bg.buf,
 				&_bg.buf_len,
 				&_bg.w,
-				&_bg.h) != R_SUCCESS) {
+				&_bg.h) != SUCCESS) {
 				warning("Scene::ProcessSceneResources(): Error loading background resource: %u", _resList[i].res_number);
-				return R_FAILURE;
+				return FAILURE;
 			}
 
 			pal_p = _vm->getImagePal(_bg.res_buf, _bg.res_len);
 			memcpy(_bg.pal, pal_p, sizeof _bg.pal);
-			_sceneMode = R_SCENE_MODE_NORMAL;
+			_sceneMode = SCENE_MODE_NORMAL;
 			break;
 		case SAGA_BG_MASK: // Scene background mask resource
 			if (_bgMask.loaded) {
@@ -697,9 +697,9 @@ int Scene::processSceneResources() {
 		case SAGA_OBJECT_MAP:
 			debug(0, "Loading object map resource...");
 			if (_objectMap->load(res_data,
-				res_data_len) != R_SUCCESS) {
+				res_data_len) != SUCCESS) {
 				warning("Scene::ProcessSceneResources(): Error loading object map resource");
-				return R_FAILURE;
+				return FAILURE;
 			}
 			break;
 		case SAGA_ACTION_MAP:
@@ -707,49 +707,49 @@ int Scene::processSceneResources() {
 			_actionMap = new ActionMap(_vm, res_data, res_data_len);
 			break;
 		case SAGA_ISO_TILESET:
-			if (_sceneMode == R_SCENE_MODE_NORMAL) {
+			if (_sceneMode == SCENE_MODE_NORMAL) {
 				warning("Scene::ProcessSceneResources(): Isometric tileset incompatible with normal scene mode");
-				return R_FAILURE;
+				return FAILURE;
 			}
 
 			debug(0, "Loading isometric tileset resource.");
 
-			if (_vm->_isoMap->loadTileset(res_data, res_data_len) != R_SUCCESS) {
+			if (_vm->_isoMap->loadTileset(res_data, res_data_len) != SUCCESS) {
 				warning("Scene::ProcessSceneResources(): Error loading isometric tileset resource");
-				return R_FAILURE;
+				return FAILURE;
 			}
 
-			_sceneMode = R_SCENE_MODE_ISO;
+			_sceneMode = SCENE_MODE_ISO;
 			break;
 		case SAGA_ISO_METAMAP:
-			if (_sceneMode == R_SCENE_MODE_NORMAL) {
+			if (_sceneMode == SCENE_MODE_NORMAL) {
 				warning("Scene::ProcessSceneResources(): Isometric metamap incompatible with normal scene mode");
-				return R_FAILURE;
+				return FAILURE;
 			}
 
 			debug(0, "Loading isometric metamap resource.");
 
-			if (_vm->_isoMap->loadMetamap(res_data, res_data_len) != R_SUCCESS) {
+			if (_vm->_isoMap->loadMetamap(res_data, res_data_len) != SUCCESS) {
 				warning("Scene::ProcessSceneResources(): Error loading isometric metamap resource");
-				return R_FAILURE;
+				return FAILURE;
 			}
 
-			_sceneMode = R_SCENE_MODE_ISO;
+			_sceneMode = SCENE_MODE_ISO;
 			break;
 		case SAGA_ISO_METATILESET:
-			if (_sceneMode == R_SCENE_MODE_NORMAL) {
+			if (_sceneMode == SCENE_MODE_NORMAL) {
 				warning("Scene::ProcessSceneResources(): Isometric metatileset incompatible with normal scene mode");
-				return R_FAILURE;
+				return FAILURE;
 			}
 
 			debug(0, "Loading isometric metatileset resource.");
 
-			if (_vm->_isoMap->loadMetaTileset(res_data, res_data_len) != R_SUCCESS) {
+			if (_vm->_isoMap->loadMetaTileset(res_data, res_data_len) != SUCCESS) {
 				warning("Scene::ProcessSceneResources(): Error loading isometric tileset resource");
-				return R_FAILURE;
+				return FAILURE;
 			}
 
-			_sceneMode = R_SCENE_MODE_ISO;
+			_sceneMode = SCENE_MODE_ISO;
 			break;
 		case SAGA_ANIM_1:
 		case SAGA_ANIM_2:
@@ -767,13 +767,13 @@ int Scene::processSceneResources() {
 				new_animinfo = (SCENE_ANIMINFO *)malloc(sizeof *new_animinfo);
 				if (new_animinfo == NULL) {
 					warning("Scene::ProcessSceneResources(): Memory allocation error");
-					return R_MEM;
+					return MEM;
 				}
 
 				if (_vm->_anim->load(_resList[i].res_data,
-					_resList[i].res_data_len, &new_anim_id) != R_SUCCESS) {
+					_resList[i].res_data_len, &new_anim_id) != SUCCESS) {
 					warning("Scene::ProcessSceneResources(): Error loading animation resource");
-					return R_FAILURE;
+					return FAILURE;
 				}
 
 				new_animinfo->anim_handle = new_anim_id;
@@ -797,12 +797,12 @@ int Scene::processSceneResources() {
 			break;
 		}
 	}
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Scene::draw(R_SURFACE *dst_s) {
-	R_GAME_DISPLAYINFO disp_info;
-	R_BUFFER_INFO buf_info;
+int Scene::draw(SURFACE *dst_s) {
+	GAME_DISPLAYINFO disp_info;
+	BUFFER_INFO buf_info;
 	Point bg_pt;
 
 	assert(_initialized);
@@ -815,24 +815,24 @@ int Scene::draw(R_SURFACE *dst_s) {
 
 	switch (_sceneMode) {
 
-	case R_SCENE_MODE_NORMAL:
-		_vm->_gfx->bufToSurface(dst_s, buf_info.r_bg_buf, disp_info.logical_w,
+	case SCENE_MODE_NORMAL:
+		_vm->_gfx->bufToSurface(dst_s, buf_info.bg_buf, disp_info.logical_w,
 						MAX(disp_info.scene_h, _bg.h), NULL, &bg_pt);
 		break;
-	case R_SCENE_MODE_ISO:
+	case SCENE_MODE_ISO:
 		_vm->_isoMap->draw(dst_s);
 		break;
 	default:
 		// Unknown scene mode
-		return R_FAILURE;
+		return FAILURE;
 		break;
 	};
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Scene::endScene() {
-	R_SCENE_INFO scene_info;
+	SCENE_INFO scene_info;
 
 	assert(_initialized);
 
@@ -888,7 +888,7 @@ int Scene::endScene() {
 
 	_sceneLoaded = false;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 void Scene::sceneChangeCmd(int argc, char *argv[]) {
@@ -907,7 +907,7 @@ void Scene::sceneChangeCmd(int argc, char *argv[]) {
 
 	clearSceneQueue();
 
-	if (changeScene(scene_num) == R_SUCCESS) {
+	if (changeScene(scene_num) == SUCCESS) {
 		_vm->_console->print("Scene changed.");
 	} else {
 		_vm->_console->print("Couldn't change scene!");
@@ -938,7 +938,7 @@ static void CF_sceneinfo(int argc, char *argv[], void *refCon) {
 	((Scene *)refCon)->sceneInfoCmd(argc, argv);
 }
 
-int Scene::SC_defaultScene(int param, R_SCENE_INFO *scene_info, void *refCon) {
+int Scene::SC_defaultScene(int param, SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->defaultScene(param, scene_info);
 }
 
@@ -957,25 +957,25 @@ static void CF_objectinfo(int argc, char *argv[], void *refCon) {
 }
 
 
-int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
-	R_EVENT event;
+int Scene::defaultScene(int param, SCENE_INFO *scene_info) {
+	EVENT event;
 
 	switch (param) {
 	case SCENE_BEGIN:
 		_vm->_sound->stopVoice();
 
 		if (_desc.musicRN >= 0) {
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_MUSIC_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = MUSIC_EVENT;
 			event.param = _desc.musicRN;
-			event.param2 = R_MUSIC_DEFAULT;
+			event.param2 = MUSIC_DEFAULT;
 			event.op = EVENT_PLAY;
 			event.time = 0;
 
 			_vm->_events->queue(&event);
 		} else {
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_MUSIC_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = MUSIC_EVENT;
 			event.op = EVENT_STOP;
 			event.time = 0;
 
@@ -983,8 +983,8 @@ int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 		}
 
 		// Set scene background
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_BG_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = BG_EVENT;
 		event.op = EVENT_DISPLAY;
 		event.param = SET_PALETTE;
 		event.time = 0;
@@ -992,16 +992,16 @@ int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 		_vm->_events->queue(&event);
 
 		// Activate user interface
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_INTERFACE_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = INTERFACE_EVENT;
 		event.op = EVENT_ACTIVATE;
 		event.time = 0;
 
 		_vm->_events->queue(&event);
 
 		// Begin palette cycle animation if present
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_PALANIM_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = PALANIM_EVENT;
 		event.op = EVENT_CYCLESTART;
 		event.time = 0;
 
@@ -1013,8 +1013,8 @@ int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 
 		// Start the scene main script
 		if (_desc.sceneScriptNum > 0) {
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_SCRIPT_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = SCRIPT_EVENT;
 			event.op = EVENT_NONBLOCKING;
 			event.time = 0;
 			event.param = _desc.sceneScriptNum;

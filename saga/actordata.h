@@ -40,7 +40,7 @@ enum {
 // TODO: This doesn't quite correspond to the original Actor struct, so I'm not
 // sure if I got it right.
 
-struct R_ACTORTABLE {
+struct ACTORTABLE {
 	byte type;		// Always 1 (remove this?)
 	byte flags;
 	byte name_index;
@@ -57,10 +57,10 @@ struct R_ACTORTABLE {
 	byte action_dir;
 };
 
-#define R_ACTORCOUNT 181
+#define ACTORCOUNT 181
 
 extern int ActorOrientationLUT[];
-extern R_ACTORTABLE ActorTable[R_ACTORCOUNT];
+extern ACTORTABLE ActorTable[ACTORCOUNT];
 
 } // End of namespace Saga
 

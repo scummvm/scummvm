@@ -28,32 +28,32 @@
 
 namespace Saga {
 
-#define R_CON_INPUTBUF_LEN 80
+#define CON_INPUTBUF_LEN 80
 
-#define R_CONSOLE_BGCOLOR   0x00A0A0A0UL
-#define R_CONSOLE_TXTCOLOR  0x00FFFFFFUL
-#define R_CONSOLE_TXTSHADOW 0x00202020UL
+#define CONSOLE_BGCOLOR   0x00A0A0A0UL
+#define CONSOLE_TXTCOLOR  0x00FFFFFFUL
+#define CONSOLE_TXTSHADOW 0x00202020UL
 
-struct R_CONSOLE_LINE {
-	R_CONSOLE_LINE *next;
-	R_CONSOLE_LINE *prev;
+struct CONSOLE_LINE {
+	CONSOLE_LINE *next;
+	CONSOLE_LINE *prev;
 	char *str_p;
 	int str_len;
 };
 
-struct R_CON_SCROLLBACK {
-	R_CONSOLE_LINE *head;
-	R_CONSOLE_LINE *tail;
+struct CON_SCROLLBACK {
+	CONSOLE_LINE *head;
+	CONSOLE_LINE *tail;
 	int lines;
 };
 
-#define R_CON_DEFAULTPOS 136
-#define R_CON_DEFAULTLINES 100
-#define R_CON_DEFAULTCMDS 10
-#define R_CON_DROPTIME 400
-#define R_CON_PRINTFLIMIT 1024
-#define R_CON_LINE_H 10
-#define R_CON_INPUT_H 10
+#define CON_DEFAULTPOS 136
+#define CON_DEFAULTLINES 100
+#define CON_DEFAULTCMDS 10
+#define CON_DROPTIME 400
+#define CON_PRINTFLIMIT 1024
+#define CON_LINE_H 10
+#define CON_INPUT_H 10
 
 class Console {
  public:
@@ -66,7 +66,7 @@ class Console {
 	bool isActive(void);
 
 	int type(int in_char);
-	int draw(R_SURFACE *ds);
+	int draw(SURFACE *ds);
 	int print(const char *fmt_str, ...);
 
 	int cmdUp(void);
@@ -78,16 +78,16 @@ class Console {
 	int raiseConsole(double percent);
 
  private:
-	int addLine(R_CON_SCROLLBACK *scroll, int line_max, const char *constr_p);
-	int deleteLine(R_CON_SCROLLBACK *scroll);
-	int deleteScroll(R_CON_SCROLLBACK *scroll);
+	int addLine(CON_SCROLLBACK *scroll, int line_max, const char *constr_p);
+	int deleteLine(CON_SCROLLBACK *scroll);
+	int deleteScroll(CON_SCROLLBACK *scroll);
 	int setDropPos(double percent);
 
  private:
 	SagaEngine *_vm;
 
-	R_CON_SCROLLBACK _scrollback;
-	R_CON_SCROLLBACK _history;
+	CON_SCROLLBACK _scrollback;
+	CON_SCROLLBACK _history;
 
 	int _resize;
 	int _droptime;
@@ -101,7 +101,7 @@ class Console {
 	int _yPos;
 	char *_prompt;
 	int _promptW;
-	char _inputBuf[R_CON_INPUTBUF_LEN + 1];
+	char _inputBuf[CON_INPUTBUF_LEN + 1];
 	int _inputPos;
 };
 

@@ -30,22 +30,22 @@
 
 namespace Saga {
 
-#define R_GAME_LANGSTR_LIMIT 3
-#define R_GAME_PATH_LIMIT 512
+#define GAME_LANGSTR_LIMIT 3
+#define GAME_PATH_LIMIT 512
 
-#define R_GAME_ITE_LANG_PREFIX "ite_"
-#define R_GAME_LANG_EXT "lng"
+#define GAME_ITE_LANG_PREFIX "ite_"
+#define GAME_LANG_EXT "lng"
 
 // Script lookup table entry sizes for game verification
-#define R_SCR_LUT_ENTRYLEN_ITECD 22
-#define R_SCR_LUT_ENTRYLEN_ITEDISK 16
+#define SCR_LUT_ENTRYLEN_ITECD 22
+#define SCR_LUT_ENTRYLEN_ITEDISK 16
 
-struct R_GAME_FILEDESC {
+struct GAME_FILEDESC {
 	const char *gf_fname;
 	uint16 gf_type;
 };
 
-struct R_GAMEDESC {
+struct GAMEDESC {
 	const char *name;
 	int gd_game_type;
 	uint32 gd_game_id;
@@ -54,12 +54,12 @@ struct R_GAMEDESC {
 	int gd_logical_h;
 	int gd_scene_h;
 	int gd_startscene;
-	R_GAME_RESOURCEDESC *gd_resource_desc;
+	GAME_RESOURCEDESC *gd_resource_desc;
 	int gd_filect;
-	R_GAME_FILEDESC *gd_filedescs;
+	GAME_FILEDESC *gd_filedescs;
 	int gd_fontct;
-	R_GAME_FONTDESC *gd_fontdescs;
-	R_GAME_SOUNDINFO *gd_soundinfo;
+	GAME_FONTDESC *gd_fontdescs;
+	GAME_SOUNDINFO *gd_soundinfo;
 	uint32 features;
 
 	GameSettings toGameSettings() const {
@@ -68,22 +68,22 @@ struct R_GAMEDESC {
 	}
 };
 
-struct R_GAME_FILEDATA {
-	R_RSCFILE_CONTEXT *file_ctxt;
+struct GAME_FILEDATA {
+	RSCFILE_CONTEXT *file_ctxt;
 	uint16 file_types;
 	uint16 file_flags;
 };
 
-struct R_GAMEMODULE {
+struct GAMEMODULE {
 	int game_init;
 	int game_number;
-	R_GAMEDESC *gamedesc;
+	GAMEDESC *gamedesc;
 	int g_skipintro;
-	char game_language[R_GAME_LANGSTR_LIMIT];
+	char game_language[GAME_LANGSTR_LIMIT];
 	uint16 gfile_n;
-	R_GAME_FILEDATA *gfile_data;
+	GAME_FILEDATA *gfile_data;
 	uint16 gd_fontct;
-	R_GAME_FONTDESC *gd_fontdescs;
+	GAME_FONTDESC *gd_fontdescs;
 	int err_n;
 	const char *err_str;
 };

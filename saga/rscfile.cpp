@@ -29,16 +29,16 @@
 
 namespace Saga {
 
-R_RSCFILE_CONTEXT *RSC_CreateContext() {
-	R_RSCFILE_CONTEXT empty_context;
+RSCFILE_CONTEXT *RSC_CreateContext() {
+	RSCFILE_CONTEXT empty_context;
 	empty_context.rc_file_fspec = NULL;
 	empty_context.rc_file_loaded = 0;
 	empty_context.rc_res_table = NULL;
 	empty_context.rc_res_ct = 0;
 	empty_context.rc_file = new File();
-	R_RSCFILE_CONTEXT *new_context;
+	RSCFILE_CONTEXT *new_context;
 
-	new_context = (R_RSCFILE_CONTEXT *)malloc(sizeof *new_context);
+	new_context = (RSCFILE_CONTEXT *)malloc(sizeof *new_context);
 	if (new_context == NULL) {
 		return NULL;
 	}
@@ -48,27 +48,27 @@ R_RSCFILE_CONTEXT *RSC_CreateContext() {
 	return new_context;
 }
 
-int RSC_OpenContext(R_RSCFILE_CONTEXT *rsc_context, const char *fspec) {
+int RSC_OpenContext(RSCFILE_CONTEXT *rsc_context, const char *fspec) {
 	if (rsc_context->rc_file->isOpen()) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (!rsc_context->rc_file->open(fspec)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	rsc_context->rc_file_fspec = fspec;
 
-	if (RSC_LoadRSC(rsc_context) != R_SUCCESS) {
-		return R_FAILURE;
+	if (RSC_LoadRSC(rsc_context) != SUCCESS) {
+		return FAILURE;
 	}
 
 	rsc_context->rc_file_loaded = 1;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int RSC_CloseContext(R_RSCFILE_CONTEXT *rsc_context) {
+int RSC_CloseContext(RSCFILE_CONTEXT *rsc_context) {
 	if (rsc_context->rc_file->isOpen()) {
 		rsc_context->rc_file->close();
 	}
@@ -77,10 +77,10 @@ int RSC_CloseContext(R_RSCFILE_CONTEXT *rsc_context) {
 
 	rsc_context->rc_file_loaded = 0;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int RSC_DestroyContext(R_RSCFILE_CONTEXT *rsc_context) {
+int RSC_DestroyContext(RSCFILE_CONTEXT *rsc_context) {
 	RSC_CloseContext(rsc_context);
 
 	if (rsc_context->rc_file_loaded) {
@@ -89,10 +89,10 @@ int RSC_DestroyContext(R_RSCFILE_CONTEXT *rsc_context) {
 
 	free(rsc_context);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int RSC_LoadRSC(R_RSCFILE_CONTEXT *rsc) {
+int RSC_LoadRSC(RSCFILE_CONTEXT *rsc) {
 	uint32 res_tbl_ct;
 	uint32 res_tbl_offset;
 
@@ -101,17 +101,17 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT *rsc) {
 	size_t tbl_len;
 	uint32 i;
 
-	R_RSCFILE_RESOURCE *rsc_restbl;
+	RSCFILE_RESOURCE *rsc_restbl;
 
 	if (rsc->rc_file->size() < RSC_MIN_FILESIZE) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	// Read resource table info from the rear end of file
 	rsc->rc_file->seek((long)(rsc->rc_file->size() - 8), SEEK_SET);
 
 	if (rsc->rc_file->read(tblinfo_buf, RSC_TABLEINFO_SIZE) != RSC_TABLEINFO_SIZE) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	MemoryReadStream readS(tblinfo_buf, RSC_TABLEINFO_SIZE);
@@ -122,7 +122,7 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT *rsc) {
 	// Check for sane table offset
 	if (res_tbl_offset != rsc->rc_file->size() - RSC_TABLEINFO_SIZE - RSC_TABLEENTRY_SIZE * res_tbl_ct) {
 
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	// Load resource table
@@ -130,20 +130,20 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT *rsc) {
 
 	tbl_buf = (byte *)malloc(tbl_len);
 	if (tbl_buf == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	rsc->rc_file->seek((long)res_tbl_offset, SEEK_SET);
 
 	if (rsc->rc_file->read(tbl_buf, tbl_len) != tbl_len) {
 		free(tbl_buf);
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	rsc_restbl = (R_RSCFILE_RESOURCE *)malloc(res_tbl_ct * sizeof *rsc_restbl);
+	rsc_restbl = (RSCFILE_RESOURCE *)malloc(res_tbl_ct * sizeof *rsc_restbl);
 	if (rsc_restbl == NULL) {
 		free(tbl_buf);
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	MemoryReadStream readS1(tbl_buf, tbl_len);
@@ -154,7 +154,7 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT *rsc) {
 		if ((rsc_restbl[i].res_offset > rsc->rc_file->size()) || (rsc_restbl[i].res_size > rsc->rc_file->size())) {
 			free(tbl_buf);
 			free(rsc_restbl);
-			return R_FAILURE;
+			return FAILURE;
 		}
 	}
 
@@ -163,12 +163,12 @@ int RSC_LoadRSC(R_RSCFILE_CONTEXT *rsc) {
 
 	free(tbl_buf);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int RSC_FreeRSC(R_RSCFILE_CONTEXT *rsc) {
+int RSC_FreeRSC(RSCFILE_CONTEXT *rsc) {
 	if (!rsc->rc_file_loaded) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	delete rsc->rc_file;
@@ -176,52 +176,52 @@ int RSC_FreeRSC(R_RSCFILE_CONTEXT *rsc) {
 
 	free(rsc->rc_res_table);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-uint32 RSC_GetResourceCount(R_RSCFILE_CONTEXT *rsc) {
+uint32 RSC_GetResourceCount(RSCFILE_CONTEXT *rsc) {
 	return (rsc == NULL) ? 0 : rsc->rc_res_ct;
 }
 
-int RSC_GetResourceSize(R_RSCFILE_CONTEXT *rsc, uint32 res_num, uint32 *res_size) {
+int RSC_GetResourceSize(RSCFILE_CONTEXT *rsc, uint32 res_num, uint32 *res_size) {
 	if ((rsc == NULL) || (res_size == NULL)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (res_num > (rsc->rc_res_ct - 1)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	*res_size = rsc->rc_res_table[res_num].res_size;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int RSC_GetResourceOffset(R_RSCFILE_CONTEXT *rsc, uint32 res_num, uint32 *res_offset) {
+int RSC_GetResourceOffset(RSCFILE_CONTEXT *rsc, uint32 res_num, uint32 *res_offset) {
 	if ((rsc == NULL) || (res_offset == NULL)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (res_num > (rsc->rc_res_ct - 1)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	*res_offset = rsc->rc_res_table[res_num].res_offset;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int RSC_LoadResource(R_RSCFILE_CONTEXT *rsc, uint32 res_num, byte **res_p, size_t *res_size_p) {
+int RSC_LoadResource(RSCFILE_CONTEXT *rsc, uint32 res_num, byte **res_p, size_t *res_size_p) {
 	uint32 res_offset;
 	size_t res_size;
 	byte *res_buf;
 
 	if ((rsc == NULL) || (res_p == NULL)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (res_num > (rsc->rc_res_ct - 1)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	res_offset = rsc->rc_res_table[res_num].res_offset;
@@ -231,12 +231,12 @@ int RSC_LoadResource(R_RSCFILE_CONTEXT *rsc, uint32 res_num, byte **res_p, size_
 
 	res_buf = (byte *)malloc(res_size);
 	if (res_buf == NULL) {
-		return R_MEM;
+		return MEM;
 	}
 
 	if (rsc->rc_file->read(res_buf, res_size) != res_size) {
 		free(res_buf);
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	*res_p = res_buf;
@@ -245,13 +245,13 @@ int RSC_LoadResource(R_RSCFILE_CONTEXT *rsc, uint32 res_num, byte **res_p, size_
 		*res_size_p = res_size;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int RSC_FreeResource(byte *resource_ptr) {
 	free(resource_ptr);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 } // End of namespace Saga

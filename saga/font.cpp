@@ -33,12 +33,12 @@
 namespace Saga {
 
 Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
-	R_GAME_FONTDESC *gamefonts;
+	GAME_FONTDESC *gamefonts;
 	int i;
 
 	// Load font module resource context 
 	if (GAME_GetFileContext(&_fontContext,
-		R_GAME_RESOURCEFILE, 0) != R_SUCCESS) {
+	 GAME_RESOURCEFILE, 0) != SUCCESS) {
 		error("Font::Font(): Couldn't get resource context.");
 	}
 
@@ -47,7 +47,7 @@ Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 	assert(_nFonts > 0);
 
-	_fonts = (R_FONT **)malloc(_nFonts * sizeof *_fonts);
+	_fonts = (FONT **)malloc(_nFonts * sizeof *_fonts);
 	if (_fonts == NULL) {
 		error("Font::Font(): Memory allocation failure.");
 	}
@@ -64,7 +64,7 @@ Font::~Font(void) {
 
 	debug(0, "Font::~Font(): Freeing fonts.");
 /*
-	for ( i = 0 ; i < R_FONT_COUNT ; i ++ ) {
+	for ( i = 0 ; i < FONT_COUNT ; i ++ ) {
 		if ( _fonts[i] != NULL ) {
 			if ( _fonts[i]->normal_loaded ) {
 				free( _fonts[i]->normal->font_free_p );
@@ -83,35 +83,35 @@ Font::~Font(void) {
 }
 
 int Font::loadFont(uint32 font_rn, int font_id) {
-	R_FONT_HEADER fh;
-	R_FONT *font;
-	R_FONT_STYLE *normal_font;
+	FONT_HEADER fh;
+	FONT *font;
+	FONT_STYLE *normal_font;
 	byte *fontres_p;
 	size_t fontres_len;
 	int nbits;
 	int c;
 
 	if ((font_id < 0) || (font_id >= _nFonts)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	// Load font resource
-	if (RSC_LoadResource(_fontContext, font_rn, &fontres_p, &fontres_len) != R_SUCCESS) {
+	if (RSC_LoadResource(_fontContext, font_rn, &fontres_p, &fontres_len) != SUCCESS) {
 		error("Font::loadFont(): Couldn't load font resource.");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	if (fontres_len < R_FONT_DESCSIZE) {
+	if (fontres_len < FONT_DESCSIZE) {
 		error("Font::loadFont(): Invalid font length.");
 	}
 
 	MemoryReadStream readS(fontres_p, fontres_len);
 
 	// Create new font structure
-	font = (R_FONT *)malloc(sizeof *font);
+	font = (FONT *)malloc(sizeof *font);
 	if (font == NULL) {
 		error("Font:loadFont(): Memory allocation error.");
-		return R_MEM;
+		return MEM;
 	}
 
 	// Read font header
@@ -121,16 +121,16 @@ int Font::loadFont(uint32 font_rn, int font_id) {
 
 	debug(1, "Font::loadFont(): Reading font resource...");
 
-	debug(2, "Character width:\t%d", fh.c_width);
-	debug(2, "Character height:\t%d", fh.c_height);
-	debug(2, "Row padding:\t%d", fh.row_length);
+	debug(2, "Character width: %d", fh.c_width);
+	debug(2, "Character height: %d", fh.c_height);
+	debug(2, "Row padding: %d", fh.row_length);
 
 	// Create normal font style
-	normal_font = (R_FONT_STYLE *)malloc(sizeof *normal_font);
+	normal_font = (FONT_STYLE *)malloc(sizeof *normal_font);
 	if (normal_font == NULL) {
 		error("Font::loadFont(): Memory allocation error.");
 		free(font);
-		return R_MEM;
+		return MEM;
 	}
 
 	normal_font->font_free_p = fontres_p;
@@ -138,29 +138,29 @@ int Font::loadFont(uint32 font_rn, int font_id) {
 	normal_font->hdr.c_width = fh.c_width;
 	normal_font->hdr.row_length = fh.row_length;
 
-	for (c = 0; c < R_FONT_CHARCOUNT; c++) {
+	for (c = 0; c < FONT_CHARCOUNT; c++) {
 		normal_font->fce[c].index = readS.readUint16LE();
 	}
 
-	for (c = 0; c < R_FONT_CHARCOUNT; c++) {
+	for (c = 0; c < FONT_CHARCOUNT; c++) {
 		nbits = normal_font->fce[c].width = readS.readByte();
 		normal_font->fce[c].byte_width = getByteLen(nbits);
 	}
 
-	for (c = 0; c < R_FONT_CHARCOUNT; c++) {
+	for (c = 0; c < FONT_CHARCOUNT; c++) {
 		normal_font->fce[c].flag = readS.readByte();
 	}
 
-	for (c = 0; c < R_FONT_CHARCOUNT; c++) {
+	for (c = 0; c < FONT_CHARCOUNT; c++) {
 		normal_font->fce[c].tracking = readS.readByte();
 	}
 
-	if (readS.pos() != R_FONT_DESCSIZE) {
+	if (readS.pos() != FONT_DESCSIZE) {
 		warning("Invalid font resource size.");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	normal_font->font_p = fontres_p + R_FONT_DESCSIZE;
+	normal_font->font_p = fontres_p + FONT_DESCSIZE;
 
 	font->normal = normal_font;
 	font->normal_loaded = 1;
@@ -172,19 +172,19 @@ int Font::loadFont(uint32 font_rn, int font_id) {
 	// Set font data 
 	_fonts[font_id] = font;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Font::getHeight(int font_id) {
-	R_FONT *font;
+	FONT *font;
 
 	if (!_initialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if ((font_id < 0) || (font_id >= _nFonts) || (_fonts[font_id] == NULL)) {
 		error("Font::getHeight(): Invalid font id.");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	font = _fonts[font_id];
@@ -192,8 +192,8 @@ int Font::getHeight(int font_id) {
 	return font->normal->hdr.c_height;
 }
 
-R_FONT_STYLE *Font::createOutline(R_FONT_STYLE *src_font) {
-	R_FONT_STYLE *new_font;
+FONT_STYLE *Font::createOutline(FONT_STYLE *src_font) {
+	FONT_STYLE *new_font;
 	unsigned char *new_font_data;
 	size_t new_font_data_len;
 	int s_width = src_font->hdr.c_width;
@@ -214,7 +214,7 @@ R_FONT_STYLE *Font::createOutline(R_FONT_STYLE *src_font) {
 	unsigned char c_rep;
 
 	// Create new font style structure
-	new_font = (R_FONT_STYLE *)malloc(sizeof *new_font);
+	new_font = (FONT_STYLE *)malloc(sizeof *new_font);
 
 	if (new_font == NULL) {
 		error("Font::createOutline(): Memory allocation error.");
@@ -224,11 +224,11 @@ R_FONT_STYLE *Font::createOutline(R_FONT_STYLE *src_font) {
 	memset(new_font, 0, sizeof *new_font);
 
 	// Populate new font style character data 
-	for (i = 0; i < R_FONT_CHARCOUNT; i++) {
+	for (i = 0; i < FONT_CHARCOUNT; i++) {
 		new_byte_width = 0;
 		old_byte_width = 0;
 		index = src_font->fce[i].index;
-		if ((index > 0) || (i == R_FONT_FIRSTCHAR)) {
+		if ((index > 0) || (i == FONT_FIRSTCHAR)) {
 			index += index_offset;
 		}
 
@@ -271,7 +271,7 @@ R_FONT_STYLE *Font::createOutline(R_FONT_STYLE *src_font) {
 	new_font->font_p = new_font_data;
 
 	// Generate outline font representation
-	for (i = 0; i < R_FONT_CHARCOUNT; i++) {
+	for (i = 0; i < FONT_CHARCOUNT; i++) {
 		for (row = 0; row < s_height; row++) {
 			for (current_byte = 0; current_byte < new_font->fce[i].byte_width; current_byte++) {
 				base_ptr = new_font->font_p + new_font->fce[i].index + current_byte;
@@ -338,19 +338,19 @@ int Font::getByteLen(int num_bits) {
 // into account any formatting options specified by 'flags'.
 // If 'test_str_ct' is 0, all characters of 'test_str' are counted.
 int Font::getStringWidth(int font_id, const char *test_str, size_t test_str_ct, int flags) {
-	R_FONT *font;
+	FONT *font;
 	size_t ct;
 	int width = 0;
 	int ch;
 	const byte *txt_p;
 
 	if (!_initialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if ((font_id < 0) || (font_id >= _nFonts) || (_fonts[font_id] == NULL)) {
 		error("Font::getStringWidth(): Invalid font id.");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	font = _fonts[font_id];
@@ -362,7 +362,7 @@ int Font::getStringWidth(int font_id, const char *test_str, size_t test_str_ct, 
 		ch = *txt_p & 0xFFU;
 		// Translate character
 		ch = _charMap[ch];
-		assert(ch < R_FONT_CHARCOUNT);
+		assert(ch < FONT_CHARCOUNT);
 		width += font->normal->fce[ch].tracking;
 	}
 
@@ -373,19 +373,19 @@ int Font::getStringWidth(int font_id, const char *test_str, size_t test_str_ct, 
 	return width;
 }
 
-int Font::draw(int font_id, R_SURFACE *ds, const char *draw_str, size_t draw_str_ct,
+int Font::draw(int font_id, SURFACE *ds, const char *draw_str, size_t draw_str_ct,
 			int text_x, int text_y, int color, int effect_color, int flags) {
-	R_FONT *font;
+	FONT *font;
 
 	if (!_initialized) {
 		error("Font::draw(): Font Module not initialized.");
 
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if ((font_id < 0) || (font_id >= _nFonts) || (_fonts[font_id] == NULL)) {
 		error("Font::draw(): Invalid font id.");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	font = _fonts[font_id];
@@ -400,10 +400,10 @@ int Font::draw(int font_id, R_SURFACE *ds, const char *draw_str, size_t draw_str
 		outFont(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color);
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Font::outFont(R_FONT_STYLE * draw_font, R_SURFACE * ds, const char *draw_str, size_t draw_str_ct,
+int Font::outFont(FONT_STYLE * draw_font, SURFACE * ds, const char *draw_str, size_t draw_str_ct,
 				int text_x, int text_y, int color) {
 	const byte *draw_str_p;
 	byte *c_data_ptr;
@@ -424,7 +424,7 @@ int Font::outFont(R_FONT_STYLE * draw_font, R_SURFACE * ds, const char *draw_str
 
 	if ((text_x > ds->buf_w) || (text_y > ds->buf_h)) {
 		// Output string can't be visible
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	draw_str_p = (const byte *) draw_str;
@@ -437,16 +437,16 @@ int Font::outFont(R_FONT_STYLE * draw_font, R_SURFACE * ds, const char *draw_str
 
 		// Translate character
 		c_code = _charMap[c_code];
-		assert(c_code < R_FONT_CHARCOUNT);
+		assert(c_code < FONT_CHARCOUNT);
 
 		// Check if character is defined
-		if ((draw_font->fce[c_code].index == 0) && (c_code != R_FONT_FIRSTCHAR)) {
-#if R_FONT_SHOWUNDEFINED
-			if (c_code == R_FONT_CH_SPACE) {
+		if ((draw_font->fce[c_code].index == 0) && (c_code != FONT_FIRSTCHAR)) {
+#if FONT_SHOWUNDEFINED
+			if (c_code == FONT_CH_SPACE) {
 				text_x += draw_font->fce[c_code].tracking;
 				continue;
 			}
-			c_code = R_FONT_CH_QMARK;
+			c_code = FONT_CH_QMARK;
 #else
 			// Character code is not defined, but advance tracking
 			// ( Not defined if offset is 0, except for 33 ('!') which
@@ -493,7 +493,7 @@ int Font::outFont(R_FONT_STYLE * draw_font, R_SURFACE * ds, const char *draw_str
 		text_x += draw_font->fce[c_code].tracking;
 	} // end per-character processing
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 } // End of namespace Saga

@@ -51,8 +51,8 @@ ObjectMap::~ObjectMap() {
 
 // Loads an object map resource ( objects ( clickareas ( points ) ) ) 
 int ObjectMap::load(const byte *om_res, size_t om_res_len) {
-	R_OBJECTMAP_ENTRY *object_map;
-	R_CLICKAREA *clickarea;
+	OBJECTMAP_ENTRY *object_map;
+	CLICKAREA *clickarea;
 	Point *point;
 
 	int i, k, m;
@@ -66,11 +66,11 @@ int ObjectMap::load(const byte *om_res, size_t om_res_len) {
 	// Obtain object count N and allocate space for N objects
 	_nObjects = readS.readUint16LE();
 
-	_objectMaps = (R_OBJECTMAP_ENTRY *)malloc(_nObjects * sizeof *_objectMaps);
+	_objectMaps = (OBJECTMAP_ENTRY *)malloc(_nObjects * sizeof *_objectMaps);
 
 	if (_objectMaps == NULL) {
 		warning("Error: Memory allocation failed");
-		return R_MEM;
+		return MEM;
 	}
 
 	// Load all N objects
@@ -82,11 +82,11 @@ int ObjectMap::load(const byte *om_res, size_t om_res_len) {
 		readS.readByte();
 		object_map->objectNum = readS.readUint16LE();
 		object_map->scriptNum = readS.readUint16LE();
-		object_map->clickareas = (R_CLICKAREA *)malloc(object_map->nClickareas * sizeof *(object_map->clickareas));
+		object_map->clickareas = (CLICKAREA *)malloc(object_map->nClickareas * sizeof *(object_map->clickareas));
 
 		if (object_map->clickareas == NULL) {
 			warning("Error: Memory allocation failed");
-			return R_MEM;
+			return MEM;
 		}
 
 		// Load all clickareas for this object
@@ -98,7 +98,7 @@ int ObjectMap::load(const byte *om_res, size_t om_res_len) {
 			clickarea->points = (Point *)malloc(clickarea->n_points * sizeof *(clickarea->points));
 			if (clickarea->points == NULL) {
 				warning("Error: Memory allocation failed");
-				return R_MEM;
+				return MEM;
 			}
 
 			// Load all points for this clickarea
@@ -114,18 +114,18 @@ int ObjectMap::load(const byte *om_res, size_t om_res_len) {
 
 	_objectsLoaded = true;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Frees all storage allocated for the current object map data
 int ObjectMap::freeMem() {
-	R_OBJECTMAP_ENTRY *object_map;
-	R_CLICKAREA *clickarea;
+	OBJECTMAP_ENTRY *object_map;
+	CLICKAREA *clickarea;
 
 	int i, k;
 
 	if (!_objectsLoaded) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	for (i = 0; i < _nObjects; i++) {
@@ -143,7 +143,7 @@ int ObjectMap::freeMem() {
 
 	_objectsLoaded = false;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Loads an object name list resource
@@ -170,7 +170,7 @@ int ObjectMap::loadNames(const unsigned char *onl_res, size_t onl_res_len) {
 
 	if (_names == NULL) {
 		warning("Error: Memory allocation failed");
-		return R_MEM;
+		return MEM;
 	}
 
 	for (i = 0; i < n_names; i++) {
@@ -182,13 +182,13 @@ int ObjectMap::loadNames(const unsigned char *onl_res, size_t onl_res_len) {
 
 	_namesLoaded = true;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Frees all storage allocated for the current object name list data
 int ObjectMap::freeNames() {
 	if (!_namesLoaded) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (_nNames) {
@@ -196,13 +196,13 @@ int ObjectMap::freeNames() {
 	}
 
 	_namesLoaded = false;
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // If 'object' is a valid object number in the currently loaded object 
 // name list resource, the funciton sets '*name' to the descriptive string
-// corresponding to 'object' and returns R_SUCCESS. Otherwise it returns
-// R_FAILURE.
+// corresponding to 'object' and returns SUCCESS. Otherwise it returns
+// FAILURE.
 const char *ObjectMap::getName(int object) {
 	assert(_namesLoaded);
 	assert((object > 0) && (object <= _nNames));
@@ -227,8 +227,8 @@ const uint16 ObjectMap::getFlags(int object) {
 
 // If 'object' is a valid object number in the currently loaded object 
 // name list resource, the funciton sets '*ep_num' to the entrypoint number
-// corresponding to 'object' and returns R_SUCCESS. Otherwise, it returns
-// R_FAILURE.
+// corresponding to 'object' and returns SUCCESS. Otherwise, it returns
+// FAILURE.
 const int ObjectMap::getEPNum(int object) {
 	int i;
 
@@ -246,9 +246,9 @@ const int ObjectMap::getEPNum(int object) {
 
 // Uses Gfx::drawLine to display all clickareas for each object in the 
 // currently loaded object map resource.
-int ObjectMap::draw(R_SURFACE *ds, const Point& imousePt, int color, int color2) {
-	R_OBJECTMAP_ENTRY *object_map;
-	R_CLICKAREA *clickarea;
+int ObjectMap::draw(SURFACE *ds, const Point& imousePt, int color, int color2) {
+	OBJECTMAP_ENTRY *object_map;
+	CLICKAREA *clickarea;
 
 	char txt_buf[32];
 
@@ -261,7 +261,7 @@ int ObjectMap::draw(R_SURFACE *ds, const Point& imousePt, int color, int color2)
 	int i, k;
 
 	if (!_objectsLoaded) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if ((objectNum = hitTest(imousePt)) != -1) {
@@ -298,13 +298,13 @@ int ObjectMap::draw(R_SURFACE *ds, const Point& imousePt, int color, int color2)
 				_vm->_gfx->getWhite(), _vm->_gfx->getBlack(), FONT_OUTLINE);
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int ObjectMap::hitTest(const Point& imousePt) {
 	Point imouse;
-	R_OBJECTMAP_ENTRY *object_map;
-	R_CLICKAREA *clickarea;
+	OBJECTMAP_ENTRY *object_map;
+	CLICKAREA *clickarea;
 	Point *points;
 	int n_points;
 

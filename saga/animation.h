@@ -28,8 +28,8 @@
 
 namespace Saga {
 
-#define R_MAX_ANIMATIONS 7
-#define R_DEFAULT_FRAME_TIME 140
+#define MAX_ANIMATIONS 7
+#define DEFAULT_FRAME_TIME 140
 
 #define SAGA_FRAME_HEADER_MAGIC 15
 #define SAGA_FRAME_HEADER_LEN 12
@@ -37,7 +37,7 @@ namespace Saga {
 // All animation resources begin with an ANIMATION_HEADER
 // at 0x00, followed by a RLE code stream
 
-struct R_ANIMATION_HEADER {
+struct ANIMATION_HEADER {
 	uint16 magic;
 
 	uint16 screen_w;
@@ -54,7 +54,7 @@ struct R_ANIMATION_HEADER {
 
 };
 
-struct R_FRAME_HEADER {
+struct FRAME_HEADER {
 	int x_start;
 	int y_start;
 
@@ -66,7 +66,7 @@ struct R_FRAME_HEADER {
 };
 
 // Animation info array member
-struct R_ANIMATION {
+struct ANIMATION {
 
 	const byte *resdata;
 	size_t resdata_len;
@@ -119,11 +119,11 @@ private:
 
 	uint16 _anim_count;
 	uint16 _anim_limit;
-	R_ANIMATION *_anim_tbl[R_MAX_ANIMATIONS];
+	ANIMATION *_anim_tbl[MAX_ANIMATIONS];
 
 };
 
 } // End of namespace Saga
 
-#endif				/* R_ANIMATION_H_ */
+#endif				/* ANIMATION_H_ */
 /* end "r_animation.h" */

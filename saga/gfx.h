@@ -31,7 +31,7 @@ namespace Saga {
 using Common::Point;
 using Common::Rect;
 
-struct R_CLIPINFO {
+struct CLIPINFO {
 	// input members
 	const Rect *src_rect;
 	const Rect *dst_rect;
@@ -53,14 +53,14 @@ struct PALENTRY {
 	byte blue;
 };
 
-struct R_COLOR {
+struct COLOR {
 	int red;
 	int green;
 	int blue;
 	int alpha;
 };
 
-struct R_SURFACE {
+struct SURFACE {
 	byte *buf;
 	int buf_w;
 	int buf_h;
@@ -68,54 +68,54 @@ struct R_SURFACE {
 	Rect clip_rect;
 };
 
-#define R_PAL_ENTRIES 256
+#define PAL_ENTRIES 256
 
-#define R_RGB_RED   0x00FF0000UL
-#define R_RGB_GREEN 0x0000FF00UL
-#define R_RGB_BLUE  0x000000FFUL
+#define RGB_RED   0x00FF0000UL
+#define RGB_GREEN 0x0000FF00UL
+#define RGB_BLUE  0x000000FFUL
 
-#define R_CURSOR_W 7
-#define R_CURSOR_H 7
+#define CURSOR_W 7
+#define CURSOR_H 7
 
-#define R_CURSOR_ORIGIN_X 4
-#define R_CURSOR_ORIGIN_Y 4
+#define CURSOR_ORIGIN_X 4
+#define CURSOR_ORIGIN_Y 4
 
-#define R_RED_WEIGHT 0.299
-#define R_GREEN_WEIGHT 0.587
-#define R_BLUE_WEIGHT 0.114
+#define RED_WEIGHT 0.299
+#define GREEN_WEIGHT 0.587
+#define BLUE_WEIGHT 0.114
 
 class Gfx {
 public:
-	int simpleBlit(R_SURFACE *dst_s, R_SURFACE *src_s);
-	int drawPalette(R_SURFACE *dst_s);
-	int bufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h, Rect *src_rect, Point *dst_pt);
+	int simpleBlit(SURFACE *dst_s, SURFACE *src_s);
+	int drawPalette(SURFACE *dst_s);
+	int bufToSurface(SURFACE *ds, const byte *src, int src_w, int src_h, Rect *src_rect, Point *dst_pt);
 	int bufToBuffer(byte * dst_buf, int dst_w, int dst_h, const byte *src,
 		int src_w, int src_h, Rect *src_rect, Point *dst_pt);
-	int drawRect(R_SURFACE *ds, Rect *dst_rect, int color);
-	int drawFrame(R_SURFACE *ds, const Point *p1, const Point *p2, int color);
-	int drawPolyLine(R_SURFACE *ds, const Point *pts, int pt_ct, int draw_color);
-	int getClipInfo(R_CLIPINFO *clipinfo);
-	int clipLine(R_SURFACE *ds, const Point *src_p1, const Point *src_p2, Point *dst_p1, Point *dst_p2);
-	void drawLine(R_SURFACE * ds, const Point *p1, const Point *p2, int color);
+	int drawRect(SURFACE *ds, Rect *dst_rect, int color);
+	int drawFrame(SURFACE *ds, const Point *p1, const Point *p2, int color);
+	int drawPolyLine(SURFACE *ds, const Point *pts, int pt_ct, int draw_color);
+	int getClipInfo(CLIPINFO *clipinfo);
+	int clipLine(SURFACE *ds, const Point *src_p1, const Point *src_p2, Point *dst_p1, Point *dst_p2);
+	void drawLine(SURFACE * ds, const Point *p1, const Point *p2, int color);
 
 	Gfx(OSystem *system, int width, int height);
-	R_SURFACE *getBackBuffer();
+	SURFACE *getBackBuffer();
 	int getWhite();
 	int getBlack();
 	int matchColor(unsigned long colormask);
-	int setPalette(R_SURFACE *surface, PALENTRY *pal);
+	int setPalette(SURFACE *surface, PALENTRY *pal);
 	int getCurrentPal(PALENTRY *src_pal);
-	int palToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent);
-	int blackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent);
+	int palToBlack(SURFACE *surface, PALENTRY *src_pal, double percent);
+	int blackToPal(SURFACE *surface, PALENTRY *src_pal, double percent);
 	bool hitTestPoly(const Point *points, unsigned int npoints, const Point& test_point);
 
 private:
 	void setCursor(int best_white);
 	int _init;
-	R_SURFACE _back_buf;
+	SURFACE _back_buf;
 	int _white_index;
 	int _black_index;
-	byte _cur_pal[R_PAL_ENTRIES * 4];
+	byte _cur_pal[PAL_ENTRIES * 4];
 	OSystem *_system;
 };
 

@@ -36,9 +36,9 @@ enum INTERFACE_UPDATE_FLAGS {
 	UPDATE_MOUSECLICK
 };
 
-#define R_VERB_STRLIMIT 32
+#define VERB_STRLIMIT 32
 
-#define R_STATUS_TEXT_LEN 128
+#define STATUS_TEXT_LEN 128
 
 #define COMMAND_DEFAULT_BUTTON 1
 
@@ -76,13 +76,13 @@ enum INTERFACE_UPDATE_FLAGS {
 #define IHNM_RPORTRAIT_X -1
 #define IHNM_RPORTRAIT_Y -1
 
-enum R_PANEL_MODES {
+enum PANEL_MODES {
 	kPanelNone,
 	kPanelCommand,
 	kPanelDialogue
 };
 
-enum R_BUTTON_FLAGS {
+enum BUTTON_FLAGS {
 	BUTTON_NONE = 0x0,
 	BUTTON_LABEL = 0x01,
 	BUTTON_BITMAP = 0x02,
@@ -92,7 +92,7 @@ enum R_BUTTON_FLAGS {
 
 #define BUTTON_VERB ( BUTTON_LABEL | BUTTON_BITMAP | BUTTON_SET )
 
-struct R_INTERFACE_BUTTON {
+struct INTERFACE_BUTTON {
 	int x1;
 	int y1;
 	int x2;
@@ -104,7 +104,7 @@ struct R_INTERFACE_BUTTON {
 	int data;
 };
 
-struct R_INTERFACE_PANEL {
+struct INTERFACE_PANEL {
 	byte *res;
 	size_t res_len;
 	int x;
@@ -115,11 +115,11 @@ struct R_INTERFACE_PANEL {
 	int img_h;
 	int set_button;
 	int nbuttons;
-	R_INTERFACE_BUTTON *buttons;
-	R_SPRITELIST *sprites;
+	INTERFACE_BUTTON *buttons;
+	SPRITELIST *sprites;
 };
 
-struct R_INTERFACE_DESC {
+struct INTERFACE_DESC {
 	int status_y;
 	int status_w;
 	int status_h;
@@ -136,7 +136,7 @@ struct R_INTERFACE_DESC {
 	int rportrait_y;
 };
 
-struct R_INTERFACE_MODULE {
+struct INTERFACE_MODULE {
 };
 
 enum INTERFACE_VERBS {
@@ -150,10 +150,10 @@ enum INTERFACE_VERBS {
 	I_VERB_GIVE
 };
 
-struct R_VERB_DATA {
+struct VERB_DATA {
 	int i_verb;
 	const char *verb_cvar;
-	char verb_str[R_VERB_STRLIMIT];
+	char verb_str[VERB_STRLIMIT];
 	int s_verb;
 };
 
@@ -177,32 +177,32 @@ class Interface {
 
  private:
 	int hitTest(const Point& imousePt, int *ibutton);
-	int drawStatusBar(R_SURFACE *ds);
-	int handleCommandUpdate(R_SURFACE *ds, const Point& imousePt);
-	int handleCommandClick(R_SURFACE *ds, const Point& imousePt);
-	int handlePlayfieldUpdate(R_SURFACE *ds, const Point& imousePt);
-	int handlePlayfieldClick(R_SURFACE *ds, const Point& imousePt);
+	int drawStatusBar(SURFACE *ds);
+	int handleCommandUpdate(SURFACE *ds, const Point& imousePt);
+	int handleCommandClick(SURFACE *ds, const Point& imousePt);
+	int handlePlayfieldUpdate(SURFACE *ds, const Point& imousePt);
+	int handlePlayfieldClick(SURFACE *ds, const Point& imousePt);
 
  private:
 	SagaEngine *_vm;
 
 	bool _initialized;
 	int _active;
-	R_RSCFILE_CONTEXT *_interfaceContext;
-	R_INTERFACE_DESC _iDesc;
+	RSCFILE_CONTEXT *_interfaceContext;
+	INTERFACE_DESC _iDesc;
 	int _panelMode;
-	R_INTERFACE_PANEL _cPanel;
-	R_INTERFACE_PANEL _dPanel;
-	char _statusText[R_STATUS_TEXT_LEN];
+	INTERFACE_PANEL _cPanel;
+	INTERFACE_PANEL _dPanel;
+	char _statusText[STATUS_TEXT_LEN];
 	int _leftPortrait;
 	int _rightPortrait;
-	R_SPRITELIST *_defPortraits;
-	R_SPRITELIST *_scenePortraits;
+	SPRITELIST *_defPortraits;
+	SPRITELIST *_scenePortraits;
 	int _activeVerb;
-	R_SCRIPT_THREAD *_iThread;
+	SCRIPT_THREAD *_iThread;
 };
 
 } // End of namespace Saga
 
-#endif				/* R_INTERFACE_H__ */
+#endif				/* INTERFACE_H__ */
 /* end "r_interface.h" */

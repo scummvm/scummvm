@@ -34,23 +34,23 @@
 namespace Saga {
 
 int Console::reg() {
-	CVAR_Register_I(&_resize, "con_h", NULL, R_CVAR_NONE, 12, R_CON_DEFAULTPOS);
-	CVAR_Register_I(&_droptime, "con_droptime", NULL, R_CVAR_NONE, 0, 5000);
-	CVAR_Register_I(&_lineMax, "con_lines", NULL, R_CVAR_NONE, 5, 5000);
-	return R_SUCCESS;
+	CVAR_Register_I(&_resize, "con_h", NULL, CVAR_NONE, 12, CON_DEFAULTPOS);
+	CVAR_Register_I(&_droptime, "con_droptime", NULL, CVAR_NONE, 0, 5000);
+	CVAR_Register_I(&_lineMax, "con_lines", NULL, CVAR_NONE, 5, 5000);
+	return SUCCESS;
 }
 
 Console::Console(SagaEngine *vm) : _vm(vm) {
 	memset(&_scrollback, 0, sizeof(_scrollback));
 	memset(&_history, 0, sizeof(_history));
 
-	_resize = R_CON_DEFAULTPOS;
-	_droptime = R_CON_DROPTIME;
+	_resize = CON_DEFAULTPOS;
+	_droptime = CON_DROPTIME;
 
 	_active = false;
-	_yMax = R_CON_DEFAULTPOS;
-	_lineMax = R_CON_DEFAULTLINES;
-	_histMax = R_CON_DEFAULTCMDS;
+	_yMax = CON_DEFAULTPOS;
+	_lineMax = CON_DEFAULTLINES;
+	_histMax = CON_DEFAULTCMDS;
 	_histPos = 0;
 	_linePos = 0;
 	_yPos = 0;
@@ -68,14 +68,14 @@ Console::~Console() {
 }
 
 int Console::activate() {
-	R_EVENT con_event;
+	EVENT con_event;
 
 	if (_active) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	con_event.type = R_CONTINUOUS_EVENT;
-	con_event.code = R_CONSOLE_EVENT | R_NODESTROY;
+	con_event.type = CONTINUOUS_EVENT;
+	con_event.code = CONSOLE_EVENT | NODESTROY;
 	con_event.op = EVENT_ACTIVATE;
 	con_event.time = 0;
 	con_event.duration = _droptime;
@@ -84,25 +84,25 @@ int Console::activate() {
 
 	_active = true;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Console::deactivate() {
-	R_EVENT con_event;
+	EVENT con_event;
 
 	if (!_active) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	con_event.type = R_CONTINUOUS_EVENT;
-	con_event.code = R_CONSOLE_EVENT | R_NODESTROY;
+	con_event.type = CONTINUOUS_EVENT;
+	con_event.code = CONSOLE_EVENT | NODESTROY;
 	con_event.op = EVENT_DEACTIVATE;
 	con_event.time = 0;
 	con_event.duration = _droptime;
 
 	_vm->_events->queue(&con_event);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 bool Console::isActive(void) {
@@ -121,19 +121,19 @@ int Console::type(int in_char) {
 	//char *lvalue;
 
 	char *rvalue = NULL;
-	R_CVAR_P con_cvar = NULL;
+	CVAR_P con_cvar = NULL;
 
 	const char *expr_err;
 	const char *err_str;
 
 	if (_yPos != _yMax) {
 		// Ignore keypress until console fully down
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	if ((in_char > 127) || (!in_char)) {
 		// Ignore non-ascii codes
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	switch (in_char) {
@@ -143,10 +143,10 @@ int Console::type(int in_char) {
 		expr_len = strlen(_inputBuf);
 		result = EXPR_Parse(&expr, &expr_len, &con_cvar, &rvalue);
 		_vm->_console->addLine(&_history, _histMax, _inputBuf);
-		memset(_inputBuf, 0, R_CON_INPUTBUF_LEN);
+		memset(_inputBuf, 0, CON_INPUTBUF_LEN);
 		_inputPos = 0;
 		_histPos = 0;
-		if (result != R_SUCCESS) {
+		if (result != SUCCESS) {
 			EXPR_GetError(&expr_err);
 			_vm->_console->print("Parse error: %s", expr_err);
 			break;
@@ -159,7 +159,7 @@ int Console::type(int in_char) {
 
 		if (CVAR_IsFunc(con_cvar)) {
 			CVAR_Exec(con_cvar, rvalue);
-		} else if (CVAR_SetValue(con_cvar, rvalue) != R_SUCCESS) {
+		} else if (CVAR_SetValue(con_cvar, rvalue) != SUCCESS) {
 			CVAR_GetError(&err_str);
 			_vm->_console->print("Illegal assignment: %s.", err_str);
 		}
@@ -172,7 +172,7 @@ int Console::type(int in_char) {
 		}
 		break;
 	default:
-		if (input_pos < R_CON_INPUTBUF_LEN) {
+		if (input_pos < CON_INPUTBUF_LEN) {
 			_inputBuf[input_pos] = (char)in_char;
 			_inputPos++;
 		}
@@ -182,20 +182,20 @@ int Console::type(int in_char) {
 	if (rvalue)
 		free(rvalue);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Console::draw(R_SURFACE *ds) {
+int Console::draw(SURFACE *ds) {
 	int line_y;
-	R_CONSOLE_LINE *walk_ptr;
-	R_CONSOLE_LINE *start_ptr;
+	CONSOLE_LINE *walk_ptr;
+	CONSOLE_LINE *start_ptr;
 	int txt_fgcolor;
 	int txt_shcolor;
 	Rect fill_rect;
 	int i;
 
 	if (!_active) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (_resize != _yMax) {
@@ -208,15 +208,15 @@ int Console::draw(R_SURFACE *ds) {
 	fill_rect.bottom = _yPos + 1;
 	fill_rect.right = ds->buf_w;
 
-	_vm->_gfx->drawRect(ds, &fill_rect, _vm->_gfx->matchColor(R_CONSOLE_BGCOLOR));
-	txt_fgcolor = _vm->_gfx->matchColor(R_CONSOLE_TXTCOLOR);
-	txt_shcolor = _vm->_gfx->matchColor(R_CONSOLE_TXTSHADOW);
+	_vm->_gfx->drawRect(ds, &fill_rect, _vm->_gfx->matchColor(CONSOLE_BGCOLOR));
+	txt_fgcolor = _vm->_gfx->matchColor(CONSOLE_TXTCOLOR);
+	txt_shcolor = _vm->_gfx->matchColor(CONSOLE_TXTSHADOW);
 
 	_vm->_font->draw(SMALL_FONT_ID, ds, ">", 1, 2, _yPos - 10, txt_fgcolor, txt_shcolor, FONT_SHADOW);
 	_vm->_font->draw(SMALL_FONT_ID, ds, _inputBuf, strlen(_inputBuf),
 				10, _yPos - 10, txt_fgcolor, txt_shcolor, FONT_SHADOW);
 
-	line_y = _yPos - (R_CON_INPUT_H + R_CON_LINE_H);
+	line_y = _yPos - (CON_INPUT_H + CON_LINE_H);
 	start_ptr = _scrollback.head;
 
 	for (i = 0; i < _linePos; i++) {
@@ -229,16 +229,16 @@ int Console::draw(R_SURFACE *ds) {
 
 	for (walk_ptr = start_ptr; walk_ptr; walk_ptr = walk_ptr->next) {
 		_vm->_font->draw(SMALL_FONT_ID, ds, walk_ptr->str_p, walk_ptr->str_len, 2, line_y, txt_fgcolor, txt_shcolor, FONT_SHADOW);
-		line_y -= R_CON_LINE_H;
-		if (line_y < -R_CON_LINE_H)
+		line_y -= CON_LINE_H;
+		if (line_y < -CON_LINE_H)
 			break;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Console::print(const char *fmt_str, ...) {
-	char vsstr_p[R_CON_PRINTFLIMIT + 1];
+	char vsstr_p[CON_PRINTFLIMIT + 1];
 	va_list argptr;
 	int ret_val;
 
@@ -253,11 +253,11 @@ int Console::print(const char *fmt_str, ...) {
 }
 
 int Console::cmdUp() {
-	R_CONSOLE_LINE *start_ptr = _history.head;
+	CONSOLE_LINE *start_ptr = _history.head;
 	int i;
 
 	if (!start_ptr) {
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	if (_histPos < _history.lines) {
@@ -272,29 +272,29 @@ int Console::cmdUp() {
 		}
 	}
 
-	memset(_inputBuf, 0, R_CON_INPUTBUF_LEN);
+	memset(_inputBuf, 0, CON_INPUTBUF_LEN);
 	strcpy(_inputBuf, start_ptr->str_p);
 	_inputPos = start_ptr->str_len - 1;
 
 	debug(0, "History pos: %d/%d", _histPos, _history.lines);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Console::cmdDown(void) {
-	R_CONSOLE_LINE *start_ptr = _history.head;
+	CONSOLE_LINE *start_ptr = _history.head;
 	int i;
 
 	if (_histPos == 1) {
 		debug(0, "Erased input buffer.");
-		memset(_inputBuf, 0, R_CON_INPUTBUF_LEN);
+		memset(_inputBuf, 0, CON_INPUTBUF_LEN);
 		_inputPos = 0;
 		_histPos--;
-		return R_SUCCESS;
+		return SUCCESS;
 	} else if (_histPos) {
 		_histPos--;
 	} else {
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	for (i = 1; i < _histPos; i++) {
@@ -305,30 +305,30 @@ int Console::cmdDown(void) {
 		}
 	}
 
-	memset(_inputBuf, 0, R_CON_INPUTBUF_LEN);
+	memset(_inputBuf, 0, CON_INPUTBUF_LEN);
 	strcpy(_inputBuf, start_ptr->str_p);
 	_inputPos = start_ptr->str_len - 1;
 
 	debug(0, "History pos: %d/%d", _histPos, _history.lines);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Console::pageUp() {
 	int n_lines;
-	n_lines = (_yMax - R_CON_INPUT_H) / R_CON_LINE_H;
+	n_lines = (_yMax - CON_INPUT_H) / CON_LINE_H;
 
 	if (_linePos < (_scrollback.lines - n_lines)) {
 		_linePos += n_lines;
 	}
 
 	debug(0, "Line pos: %d", _linePos);
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Console::pageDown() {
 	int n_lines;
-	n_lines = (_yMax - R_CON_INPUT_H) / R_CON_LINE_H;
+	n_lines = (_yMax - CON_INPUT_H) / CON_LINE_H;
 
 	if (_linePos > n_lines) {
 		_linePos -= n_lines;
@@ -336,11 +336,11 @@ int Console::pageDown() {
 		_linePos = 0;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Console::dropConsole(double percent) {
-	R_SURFACE *back_buf;
+	SURFACE *back_buf;
 
 	if (percent > 1.0) {
 		percent = 1.0;
@@ -350,11 +350,11 @@ int Console::dropConsole(double percent) {
 	_vm->_console->setDropPos(percent);
 	_vm->_console->draw(back_buf);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Console::raiseConsole(double percent) {
-	R_SURFACE *back_buf;
+	SURFACE *back_buf;
 
 	if (percent >= 1.0) {
 		percent = 1.0;
@@ -365,7 +365,7 @@ int Console::raiseConsole(double percent) {
 	_vm->_console->setDropPos(1.0 - percent);
 	_vm->_console->draw(back_buf);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Console::setDropPos(double percent) {
@@ -379,25 +379,25 @@ int Console::setDropPos(double percent) {
 	exp_percent = percent * percent;
 	_yPos = (int)(_yMax * exp_percent);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Console::addLine(R_CON_SCROLLBACK *scroll, int line_max, const char *constr_p) {
+int Console::addLine(CON_SCROLLBACK *scroll, int line_max, const char *constr_p) {
 	int constr_len;
 	char *newstr_p;
-	R_CONSOLE_LINE *newline_p;
+	CONSOLE_LINE *newline_p;
 	int del_lines;
 	int i;
 
 	constr_len = strlen(constr_p) + 1;
 	newstr_p = (char *)malloc(constr_len);
 	if (newstr_p == NULL) {
-		return R_MEM;
+		return MEM;
 	}
 
-	newline_p = (R_CONSOLE_LINE *)malloc(sizeof(R_CONSOLE_LINE));
+	newline_p = (CONSOLE_LINE *)malloc(sizeof(CONSOLE_LINE));
 	if (newline_p == NULL) {
-		return R_MEM;
+		return MEM;
 	}
 	newline_p->next = NULL;
 	newline_p->prev = NULL;
@@ -425,11 +425,11 @@ int Console::addLine(R_CON_SCROLLBACK *scroll, int line_max, const char *constr_
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Console::deleteLine(R_CON_SCROLLBACK *scroll) {
-	R_CONSOLE_LINE *temp_p = scroll->tail;
+int Console::deleteLine(CON_SCROLLBACK *scroll) {
+	CONSOLE_LINE *temp_p = scroll->tail;
 
 	if (temp_p->prev == NULL) {
 		scroll->head = NULL;
@@ -444,12 +444,12 @@ int Console::deleteLine(R_CON_SCROLLBACK *scroll) {
 	free(temp_p);
 	scroll->lines--;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Console::deleteScroll(R_CON_SCROLLBACK * scroll) {
-	R_CONSOLE_LINE *walk_ptr;
-	R_CONSOLE_LINE *temp_ptr;
+int Console::deleteScroll(CON_SCROLLBACK * scroll) {
+	CONSOLE_LINE *walk_ptr;
+	CONSOLE_LINE *temp_ptr;
 
 	for (walk_ptr = scroll->head; walk_ptr; walk_ptr = temp_ptr) {
 
@@ -459,7 +459,7 @@ int Console::deleteScroll(R_CON_SCROLLBACK * scroll) {
 		free(walk_ptr);
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 } // End of namespace Saga

@@ -35,21 +35,21 @@
 
 namespace Saga {
 
-void Script::setFramePtr(R_SCRIPT_THREAD *thread, int newPtr) {
+void Script::setFramePtr(SCRIPT_THREAD *thread, int newPtr) {
 	thread->framePtr = newPtr;
 	dataBuffer(3)->len = ARRAYSIZE(thread->stackBuf) - thread->framePtr;
 	dataBuffer(3)->data = (SDataWord_T *) &(thread->stackBuf[newPtr]);
 }
 
-R_SCRIPT_THREAD *Script::SThreadCreate() {
+SCRIPT_THREAD *Script::SThreadCreate() {
 	YS_DL_NODE *new_node;
-	R_SCRIPT_THREAD *new_thread;
+	SCRIPT_THREAD *new_thread;
 
 	if (!isInitialized()) {
 		return NULL;
 	}
 
-	new_thread = (R_SCRIPT_THREAD *)calloc(1, sizeof *new_thread);
+	new_thread = (SCRIPT_THREAD *)calloc(1, sizeof *new_thread);
 	if (new_thread == NULL) {
 		return NULL;
 	}
@@ -57,7 +57,7 @@ R_SCRIPT_THREAD *Script::SThreadCreate() {
 	new_node = ys_dll_add_head(threadList(), new_thread, sizeof *new_thread);
 	free(new_thread);
 
-	new_thread = (R_SCRIPT_THREAD *)ys_dll_get_data(new_node);
+	new_thread = (SCRIPT_THREAD *)ys_dll_get_data(new_node);
 
 	new_thread->stackPtr = ARRAYSIZE(new_thread->stackBuf) - 1;
 	setFramePtr(new_thread, new_thread->stackPtr);
@@ -71,31 +71,31 @@ R_SCRIPT_THREAD *Script::SThreadCreate() {
 	return new_thread;
 }
 
-int Script::SThreadDestroy(R_SCRIPT_THREAD *thread) {
+int Script::SThreadDestroy(SCRIPT_THREAD *thread) {
 	YS_DL_NODE *walk_p;
-	R_SCRIPT_THREAD *th;
+	SCRIPT_THREAD *th;
 
 	if (thread == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	for (walk_p = ys_dll_head(threadList()); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
-		th = (R_SCRIPT_THREAD *)ys_dll_get_data(walk_p);
+		th = (SCRIPT_THREAD *)ys_dll_get_data(walk_p);
 		if (thread == th) {
 			ys_dll_delete(walk_p);
 			break;
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Script::SThreadExecThreads(uint msec) {
 	YS_DL_NODE *walk_p, *next_p;
-	R_SCRIPT_THREAD *thread;
+	SCRIPT_THREAD *thread;
 
 	if (!isInitialized()) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	walk_p = ys_dll_head(threadList());
@@ -103,7 +103,7 @@ int Script::SThreadExecThreads(uint msec) {
 	while (walk_p != NULL) {
 		next_p = ys_dll_next(walk_p);
 
-		thread = (R_SCRIPT_THREAD *)ys_dll_get_data(walk_p);
+		thread = (SCRIPT_THREAD *)ys_dll_get_data(walk_p);
 
 		if (thread->flags & (kTFlagFinished | kTFlagAborted)) {
 			//if (thread->flags & kTFlagFinished) // FIXME. Missing function
@@ -134,7 +134,7 @@ int Script::SThreadExecThreads(uint msec) {
 		walk_p = next_p;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 void Script::SThreadCompleteThread(void) {
@@ -142,8 +142,8 @@ void Script::SThreadCompleteThread(void) {
 		SThreadExecThreads(0);
 }
 
-int Script::SThreadSetEntrypoint(R_SCRIPT_THREAD *thread, int ep_num) {
-	R_SCRIPT_BYTECODE *bytecode;
+int Script::SThreadSetEntrypoint(SCRIPT_THREAD *thread, int ep_num) {
+	SCRIPT_BYTECODE *bytecode;
 	int max_entrypoint;
 
 	assert(isInitialized());
@@ -152,20 +152,20 @@ int Script::SThreadSetEntrypoint(R_SCRIPT_THREAD *thread, int ep_num) {
 	max_entrypoint = bytecode->n_entrypoints;
 
 	if ((ep_num < 0) || (ep_num >= max_entrypoint)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	thread->ep_num = ep_num;
 	thread->ep_offset = bytecode->entrypoints[ep_num].offset;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Script::SThreadExecute(R_SCRIPT_THREAD *thread, int ep_num) {
+int Script::SThreadExecute(SCRIPT_THREAD *thread, int ep_num) {
 	assert(isInitialized());
 
 	if ((currentScript() == NULL) || (!currentScript()->loaded)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	SThreadSetEntrypoint(thread, ep_num);
@@ -173,7 +173,7 @@ int Script::SThreadExecute(R_SCRIPT_THREAD *thread, int ep_num) {
 	thread->i_offset = thread->ep_offset;
 	thread->flags = kTFlagNone;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 void Script::SThreadAbortAll(void) {
@@ -186,7 +186,7 @@ void Script::SThreadAbortAll(void) {
 		_vm->_script->SThreadExecThreads(0);
 }
 
-unsigned char *Script::SThreadGetReadPtr(R_SCRIPT_THREAD *thread) {
+unsigned char *Script::SThreadGetReadPtr(SCRIPT_THREAD *thread) {
 	return currentScript()->bytecode->bytecode_p + thread->i_offset;
 }
 
@@ -194,24 +194,24 @@ unsigned long Script::SThreadGetReadOffset(const byte *read_p) {
 	return (unsigned long)(read_p - (unsigned char *)currentScript()->bytecode->bytecode_p);
 }
 
-size_t Script::SThreadGetReadLen(R_SCRIPT_THREAD *thread) {
+size_t Script::SThreadGetReadLen(SCRIPT_THREAD *thread) {
 	return currentScript()->bytecode->bytecode_len - thread->i_offset;
 }
 
 
-int Script::SThreadHoldSem(R_SEMAPHORE *sem) {
+int Script::SThreadHoldSem(SEMAPHORE *sem) {
 	if (sem == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	sem->hold_count++;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Script::SThreadReleaseSem(R_SEMAPHORE *sem) {
+int Script::SThreadReleaseSem(SEMAPHORE *sem) {
 	if (sem == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	sem->hold_count--;
@@ -219,7 +219,7 @@ int Script::SThreadReleaseSem(R_SEMAPHORE *sem) {
 		sem->hold_count = 0;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Script::SThreadDebugStep() {
@@ -227,10 +227,10 @@ int Script::SThreadDebugStep() {
 		_dbg_dostep = 1;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit) {
+int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 	int instr_count;
 	uint32 saved_offset;
 	SDataWord_T param1;
@@ -256,7 +256,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit) {
 			instr_limit = 1;
 			_dbg_dostep = 0;
 		} else {
-			return R_SUCCESS;
+			return SUCCESS;
 		}
 	}
 
@@ -382,7 +382,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit) {
 
 				n_args = scriptS.readByte();
 				func_num = scriptS.readUint16LE();
-				if (func_num >= R_SFUNC_NUM) {
+				if (func_num >= SFUNC_NUM) {
 					_vm->_console->print(S_ERROR_PREFIX "Invalid script function number: (%X)\n", func_num);
 					thread->flags |= kTFlagAborted;
 					break;
@@ -398,7 +398,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit) {
 					}
 				} else {
 					sfuncRetVal = (this->*sfunc)(thread);
-					if (sfuncRetVal != R_SUCCESS) {
+					if (sfuncRetVal != SUCCESS) {
 						_vm->_console->print(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->i_offset, func_num);
 					}
 
@@ -835,7 +835,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit) {
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 } // End of namespace Saga

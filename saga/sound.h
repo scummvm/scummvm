@@ -32,7 +32,7 @@
 
 namespace Saga {
 
-struct R_SOUNDBUFFER {
+struct SOUNDBUFFER {
 	uint16 s_freq;
 	int s_samplebits;
 	int s_stereo;
@@ -48,19 +48,19 @@ public:
 	Sound(SagaEngine *vm, SoundMixer *mixer, int enabled);
 	~Sound();
 
-	int playSound(R_SOUNDBUFFER *buf, int volume);
+	int playSound(SOUNDBUFFER *buf, int volume);
 	int pauseSound();
 	int resumeSound();
 	int stopSound();
 
-	int playVoice(R_SOUNDBUFFER *buf);
+	int playVoice(SOUNDBUFFER *buf);
 	int pauseVoice();
 	int resumeVoice();
 	int stopVoice();
 
  private:
 
-	int playSoundBuffer(PlayingSoundHandle *handle, R_SOUNDBUFFER *buf, int volume, bool loop);
+	int playSoundBuffer(PlayingSoundHandle *handle, SOUNDBUFFER *buf, int volume, bool loop);
 
 	int _soundInitialized;
 	int _enabled;

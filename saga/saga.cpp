@@ -71,7 +71,7 @@ REGISTER_PLUGIN("SAGA Engine", Engine_SAGA_gameList, Engine_SAGA_create, Engine_
 
 namespace Saga {
 
-#define R_MAX_TIME_DELTA 100
+#define MAX_TIME_DELTA 100
 
 static void CF_quitfunc(int argc, char *argv[], void *refCon);
 static void CF_testfunc(int argc, char *argv[], void *refCon);
@@ -116,18 +116,18 @@ void SagaEngine::go() {
 
 	_console = new Console(this);
 
-	CVAR_RegisterFunc(CF_testfunc, "testfunc", "foo [ optional foo ]", R_CVAR_NONE, 0, -1, this);
+	CVAR_RegisterFunc(CF_testfunc, "testfunc", "foo [ optional foo ]", CVAR_NONE, 0, -1, this);
 
-	CVAR_Register_I(&_soundEnabled, "sound", NULL, R_CVAR_CFG, 0, 1);
+	CVAR_Register_I(&_soundEnabled, "sound", NULL, CVAR_CFG, 0, 1);
 
-	CVAR_Register_I(&_musicEnabled, "music", NULL, R_CVAR_CFG, 0, 1);
+	CVAR_Register_I(&_musicEnabled, "music", NULL, CVAR_CFG, 0, 1);
 
-	CVAR_RegisterFunc(CF_quitfunc, "quit", NULL, R_CVAR_NONE, 0, 0, this);
+	CVAR_RegisterFunc(CF_quitfunc, "quit", NULL, CVAR_NONE, 0, 0, this);
 
 	// Process config file
 	// FIXME
 	/*
-	if (CFG_Read(NULL) != R_SUCCESS) {
+	if (CFG_Read(NULL) != SUCCESS) {
 		warning("Couldn't read configuration file");
 	}
 	*/
@@ -135,7 +135,7 @@ void SagaEngine::go() {
 	// Process command line
 
 	// Detect game and open resource files
-	if (GAME_Init() != R_SUCCESS) {
+	if (GAME_Init() != SUCCESS) {
 		return;
 	}
 
@@ -162,7 +162,7 @@ void SagaEngine::go() {
 	_previousTicks = _system->getMillis();
 
 	// Initialize graphics
-	R_GAME_DISPLAYINFO disp_info;
+	GAME_DISPLAYINFO disp_info;
 	GAME_GetDisplayInfo(&disp_info);
 	_gfx = new Gfx(_system, disp_info.logical_w, disp_info.logical_h);
 
@@ -228,8 +228,8 @@ void SagaEngine::go() {
 				msec = currentTicks - _previousTicks;
 				_previousTicks = currentTicks;
 			}
-			if (msec > R_MAX_TIME_DELTA) {
-				msec = R_MAX_TIME_DELTA;
+			if (msec > MAX_TIME_DELTA) {
+				msec = MAX_TIME_DELTA;
 			}
 			_actor->direct(msec);
 			_events->handleEvents(msec);

@@ -40,17 +40,17 @@ static void CF_script_exec(int argc, char *argv[], void *refCon);
 static void CF_script_togglestep(int argc, char *argv[], void *refCon);
 
 int Script::reg() {
-	CVAR_RegisterFunc(CF_script_info, "script_info", NULL, R_CVAR_NONE, 0, 0, this);
-	CVAR_RegisterFunc(CF_script_exec, "script_exec", "<Script number>", R_CVAR_NONE, 1, 1, this);
-	CVAR_RegisterFunc(CF_script_togglestep, "script_togglestep", NULL, R_CVAR_NONE, 0, 0, this);
+	CVAR_RegisterFunc(CF_script_info, "script_info", NULL, CVAR_NONE, 0, 0, this);
+	CVAR_RegisterFunc(CF_script_exec, "script_exec", "<Script number>", CVAR_NONE, 1, 1, this);
+	CVAR_RegisterFunc(CF_script_togglestep, "script_togglestep", NULL, CVAR_NONE, 0, 0, this);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Initializes the scripting module.
 // Loads script resource look-up table, initializes script data system
 Script::Script() {
-	R_RSCFILE_CONTEXT *s_lut_ctxt;
+	RSCFILE_CONTEXT *s_lut_ctxt;
 	byte *rsc_ptr;
 	size_t rsc_len;
 	int prevTell;
@@ -70,27 +70,27 @@ Script::Script() {
 	
 	debug(0, "Initializing scripting subsystem");
 	// Load script resource file context
-	result = GAME_GetFileContext(&_scriptContext, R_GAME_SCRIPTFILE, 0);
-	if (result != R_SUCCESS) {
+	result = GAME_GetFileContext(&_scriptContext, GAME_SCRIPTFILE, 0);
+	if (result != SUCCESS) {
 		error("Couldn't get script file context");
 	}
 
 	// Load script LUT resource
-	result = GAME_GetFileContext(&s_lut_ctxt, R_GAME_RESOURCEFILE, 0);
-	if (result != R_SUCCESS) {
+	result = GAME_GetFileContext(&s_lut_ctxt, GAME_RESOURCEFILE, 0);
+	if (result != SUCCESS) {
 		error("Couldn't get resource file context");
 	}
 
 	result = RSC_LoadResource(s_lut_ctxt, ITE_SCRIPT_LUT, &rsc_ptr, &rsc_len);
-	if (result != R_SUCCESS) {
+	if (result != SUCCESS) {
 		error("Error: Couldn't load script resource look-up table");
 	}
 
 	// Create logical script LUT from resource
-	if (rsc_len % R_S_LUT_ENTRYLEN_ITECD == 0) {
-		_scriptLUTEntryLen = R_S_LUT_ENTRYLEN_ITECD;
-	} else if (rsc_len % R_S_LUT_ENTRYLEN_ITEDISK == 0) {
-		_scriptLUTEntryLen = R_S_LUT_ENTRYLEN_ITEDISK;
+	if (rsc_len % S_LUT_ENTRYLEN_ITECD == 0) {
+		_scriptLUTEntryLen = S_LUT_ENTRYLEN_ITECD;
+	} else if (rsc_len % S_LUT_ENTRYLEN_ITEDISK == 0) {
+		_scriptLUTEntryLen = S_LUT_ENTRYLEN_ITEDISK;
 	} else {
 		error("Error: Invalid script lookup table length");
 	}
@@ -99,7 +99,7 @@ Script::Script() {
 	_scriptLUTMax = rsc_len / _scriptLUTEntryLen;
 
 	// Allocate space for logical LUT
-	_scriptLUT = (R_SCRIPT_LUT_ENTRY *)malloc(_scriptLUTMax * sizeof(R_SCRIPT_LUT_ENTRY));
+	_scriptLUT = (SCRIPT_LUT_ENTRY *)malloc(_scriptLUTMax * sizeof(SCRIPT_LUT_ENTRY));
 	if (_scriptLUT == NULL) {
 		error("Error: Couldn't allocate memory for script resource look-up table");
 	}
@@ -140,7 +140,7 @@ Script::Script() {
 // Shut down script module gracefully; free all allocated module resources
 Script::~Script() {
 	YS_DL_NODE *thread_node;
-	R_SCRIPT_THREAD *thread;
+	SCRIPT_THREAD *thread;
 
 	if (!_initialized) {
 		error("Script not initialized");
@@ -155,7 +155,7 @@ Script::~Script() {
 
 	for (thread_node = ys_dll_head(_threadList); thread_node != NULL;
 				thread_node = ys_dll_next(thread_node)) {
-		thread = (R_SCRIPT_THREAD *)ys_dll_get_data(thread_node);
+		thread = (SCRIPT_THREAD *)ys_dll_get_data(thread_node);
 		SThreadDestroy(thread);
 	}
 
@@ -164,7 +164,7 @@ Script::~Script() {
 
 // Loads a script; including script bytecode and dialogue list 
 int Script::loadScript(int script_num) {
-	R_SCRIPTDATA *script_data;
+	SCRIPTDATA *script_data;
 	byte *bytecode_p;
 	size_t bytecode_len;
 	uint32 scriptl_rn;
@@ -177,13 +177,13 @@ int Script::loadScript(int script_num) {
 	int result;
 
 	if (GAME_GetGameType() == GID_IHNM) {
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	// Validate script number
 	if ((script_num < 0) || (script_num > _scriptLUTMax)) {
 		warning("Script::loadScript(): Invalid script number");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	// Release old script data if present
@@ -192,10 +192,10 @@ int Script::loadScript(int script_num) {
 	// Initialize script data structure
 	debug(0, "Loading script data for script #%d", script_num);
 
-	script_data = (R_SCRIPTDATA *)malloc(sizeof *script_data);
+	script_data = (SCRIPTDATA *)malloc(sizeof *script_data);
 	if (script_data == NULL) {
 		warning("Memory allocation failed");
-		return R_MEM;
+		return MEM;
 	}
 
 	script_data->loaded = 0;
@@ -209,10 +209,10 @@ int Script::loadScript(int script_num) {
 	scriptl_rn = _scriptLUT[script_num].script_rn;
 
 	result = RSC_LoadResource(_scriptContext, scriptl_rn, &bytecode_p, &bytecode_len);
-	if (result != R_SUCCESS) {
+	if (result != SUCCESS) {
 		warning("Error loading script bytecode resource");
 		free(script_data);
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	script_data->bytecode = loadBytecode(bytecode_p, bytecode_len);
@@ -221,7 +221,7 @@ int Script::loadScript(int script_num) {
 		warning("Error interpreting script bytecode resource");
 		free(script_data);
 		RSC_FreeResource(bytecode_p);
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	// Load script dialogue list
@@ -229,11 +229,11 @@ int Script::loadScript(int script_num) {
 
 	// Load dialogue list resource
 	result = RSC_LoadResource(_scriptContext, diagl_rn, &diagl_p, &diagl_len);
-	if (result != R_SUCCESS) {
+	if (result != SUCCESS) {
 		warning("Error loading dialogue list resource");
 		free(script_data);
 		RSC_FreeResource(bytecode_p);
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	// Convert dialogue list resource to logical dialogue list
@@ -243,7 +243,7 @@ int Script::loadScript(int script_num) {
 		free(script_data);
 		RSC_FreeResource(bytecode_p);
 		RSC_FreeResource(diagl_p);
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	// Load voice resource lookup table
@@ -252,12 +252,12 @@ int Script::loadScript(int script_num) {
 
 		// Load voice LUT resource
 		result = RSC_LoadResource(_scriptContext, voicelut_rn, &voicelut_p, &voicelut_len);
-		if (result != R_SUCCESS) {
+		if (result != SUCCESS) {
 			warning("Error loading voice LUT resource");
 			free(script_data);
 			RSC_FreeResource(bytecode_p);
 			RSC_FreeResource(diagl_p);
-			return R_FAILURE;
+			return FAILURE;
 		}
 
 		// Convert voice LUT resource to logical voice LUT
@@ -268,7 +268,7 @@ int Script::loadScript(int script_num) {
 			RSC_FreeResource(bytecode_p);
 			RSC_FreeResource(diagl_p);
 			RSC_FreeResource(voicelut_p);
-			return R_FAILURE;
+			return FAILURE;
 		}
 	}
 
@@ -276,17 +276,17 @@ int Script::loadScript(int script_num) {
 	script_data->loaded = 1;
 	_currentScript = script_data;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Frees all resources associated with current script.
 int Script::freeScript() {
 	if (_currentScript == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (!_currentScript->loaded) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	debug(0, "Releasing script data.");
@@ -314,14 +314,14 @@ int Script::freeScript() {
 
 	_currentScript = NULL;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Reads the entrypoint table from a script bytecode resource in memory. 
 // Returns NULL on failure.
-R_SCRIPT_BYTECODE *Script::loadBytecode(byte *bytecode_p, size_t bytecode_len) {
-	R_PROC_TBLENTRY *bc_ep_tbl = NULL;
-	R_SCRIPT_BYTECODE *bc_new_data = NULL;
+SCRIPT_BYTECODE *Script::loadBytecode(byte *bytecode_p, size_t bytecode_len) {
+	PROC_TBLENTRY *bc_ep_tbl = NULL;
+	SCRIPT_BYTECODE *bc_new_data = NULL;
 
 	unsigned long n_entrypoints; // Number of entrypoints
 	size_t ep_tbl_offset; // Offset of bytecode entrypoint table
@@ -337,12 +337,12 @@ R_SCRIPT_BYTECODE *Script::loadBytecode(byte *bytecode_p, size_t bytecode_len) {
 	ep_tbl_offset = scriptS.readUint32LE();
 
 	// Check that the entrypoint table offset is valid.
-	if ((bytecode_len - ep_tbl_offset) < (n_entrypoints * R_SCRIPT_TBLENTRY_LEN)) {
+	if ((bytecode_len - ep_tbl_offset) < (n_entrypoints * SCRIPT_TBLENTRY_LEN)) {
 		warning("Invalid table offset");
 		return NULL;
 	}
 
-	if (n_entrypoints > R_SCRIPT_MAX) {
+	if (n_entrypoints > SCRIPT_MAX) {
 		warning("Script limit exceeded");
 		return NULL;
 	}
@@ -350,13 +350,13 @@ R_SCRIPT_BYTECODE *Script::loadBytecode(byte *bytecode_p, size_t bytecode_len) {
 	// Allocate a new bytecode resource information structure and table of
 	// entrypoints
 
-	bc_new_data = (R_SCRIPT_BYTECODE *)malloc(sizeof *bc_new_data);
+	bc_new_data = (SCRIPT_BYTECODE *)malloc(sizeof *bc_new_data);
 	if (bc_new_data == NULL) {
 		warning("Memory allocation failure loading script bytecode");
 		return NULL;
 	}
 
-	bc_ep_tbl = (R_PROC_TBLENTRY *)malloc(n_entrypoints * sizeof *bc_ep_tbl);
+	bc_ep_tbl = (PROC_TBLENTRY *)malloc(n_entrypoints * sizeof *bc_ep_tbl);
 	if (bc_ep_tbl == NULL) {
 		warning("Memory allocation failure creating script entrypoint table");
 		free(bc_new_data);
@@ -396,8 +396,8 @@ R_SCRIPT_BYTECODE *Script::loadBytecode(byte *bytecode_p, size_t bytecode_len) {
 
 // Reads a logical dialogue list from a dialogue list resource in memory.
 // Returns NULL on failure.
-R_DIALOGUE_LIST *Script::loadDialogue(const byte *dialogue_p, size_t dialogue_len) {
-	R_DIALOGUE_LIST *dialogue_list;
+DIALOGUE_LIST *Script::loadDialogue(const byte *dialogue_p, size_t dialogue_len) {
+	DIALOGUE_LIST *dialogue_list;
 	uint16 n_dialogue;
 	uint16 i;
 	size_t offset;
@@ -405,7 +405,7 @@ R_DIALOGUE_LIST *Script::loadDialogue(const byte *dialogue_p, size_t dialogue_le
 	debug(0, "Loading dialogue list...");
 
 	// Allocate dialogue list structure
-	dialogue_list = (R_DIALOGUE_LIST *)malloc(sizeof *dialogue_list);
+	dialogue_list = (DIALOGUE_LIST *)malloc(sizeof *dialogue_list);
 	if (dialogue_list == NULL) {
 		return NULL;
 	}
@@ -458,13 +458,13 @@ R_DIALOGUE_LIST *Script::loadDialogue(const byte *dialogue_p, size_t dialogue_le
 
 // Reads a logical voice LUT from a voice LUT resource in memory.
 // Returns NULL on failure.
-R_VOICE_LUT *Script::loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, R_SCRIPTDATA *script) {
-	R_VOICE_LUT *voice_lut;
+VOICE_LUT *Script::loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, SCRIPTDATA *script) {
+	VOICE_LUT *voice_lut;
 
 	uint16 n_voices;
 	uint16 i;
 
-	voice_lut = (R_VOICE_LUT *)malloc(sizeof *voice_lut);
+	voice_lut = (VOICE_LUT *)malloc(sizeof *voice_lut);
 	if (voice_lut == NULL) {
 		return NULL;
 	}

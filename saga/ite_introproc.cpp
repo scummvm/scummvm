@@ -43,7 +43,7 @@
 
 namespace Saga {
 
-static R_INTRO_DIALOGUE IntroDiag[] = {
+static INTRO_DIALOGUE IntroDiag[] = {
 	{
 		CAVE_VOICE_0, "intro1a",
 		"We see the sky, we see the land, we see the water, "
@@ -111,7 +111,7 @@ static R_INTRO_DIALOGUE IntroDiag[] = {
 	},
 };
 
-R_SCENE_QUEUE ITE_IntroList[] = {
+SCENE_QUEUE ITE_IntroList[] = {
 	{ITE_INTRO_ANIM_SCENE, NULL, BY_RESOURCE, Scene::SC_ITEIntroAnimProc, 0, SCENE_NOFADE},
 	{ITE_CAVE_SCENE_1, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave1Proc, 0, SCENE_FADE_NO_INTERFACE},
 	{ITE_CAVE_SCENE_2, NULL, BY_RESOURCE, Scene::SC_ITEIntroCave2Proc, 0, SCENE_NOFADE},
@@ -127,8 +127,8 @@ int Scene::ITEStartProc() {
 	size_t n_introscenes;
 	size_t i;
 
-	R_SCENE_QUEUE first_scene;
-	R_GAME_SCENEDESC gs_desc;
+	SCENE_QUEUE first_scene;
+	GAME_SCENEDESC gs_desc;
 
 	n_introscenes = ARRAYSIZE(ITE_IntroList);
 
@@ -146,7 +146,7 @@ int Scene::ITEStartProc() {
 
 	_vm->_scene->queueScene(&first_scene);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Scene::ITEIntroRegisterLang() {
@@ -155,30 +155,30 @@ int Scene::ITEIntroRegisterLang() {
 	for (i = 0; i < ARRAYSIZE(IntroDiag); i++) {
 		if (CVAR_Register_S(IntroDiag[i].i_str,
 			IntroDiag[i].i_cvar_name,
-			NULL, R_CVAR_CFG, R_INTRO_STRMAX) != R_SUCCESS) {
+			NULL, CVAR_CFG, INTRO_STRMAX) != SUCCESS) {
 			warning("Error registering intro text cvars");
-			return R_FAILURE;
+			return FAILURE;
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Scene::SC_ITEIntroAnimProc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+int Scene::SC_ITEIntroAnimProc(int param, SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroAnimProc(param, scene_info);
 }
 
 // Handles the introductory Dreamer's Guild / NWC logo animation scene.
-int Scene::ITEIntroAnimProc(int param, R_SCENE_INFO *scene_info) {
-	R_EVENT event;
+int Scene::ITEIntroAnimProc(int param, SCENE_INFO *scene_info) {
+	EVENT event;
 
 	switch (param) {
 	case SCENE_BEGIN:
 
 		// Background for intro scene is the first frame of the
 		// intro animation; display it and set the palette
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_BG_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = BG_EVENT;
 		event.op = EVENT_DISPLAY;
 		event.param = SET_PALETTE;
 		event.time = 0;
@@ -207,10 +207,10 @@ int Scene::ITEIntroAnimProc(int param, R_SCENE_INFO *scene_info) {
 		_vm->_anim->play(0, 0);
 
 		// Queue intro music playback
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_MUSIC_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = MUSIC_EVENT;
 		event.param = MUSIC_1;
-		event.param2 = R_MUSIC_LOOP;
+		event.param2 = MUSIC_LOOP;
 		event.op = EVENT_PLAY;
 		event.time = 0;
 
@@ -226,27 +226,27 @@ int Scene::ITEIntroAnimProc(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroCave1Proc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+int Scene::SC_ITEIntroCave1Proc(int param, SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroCave1Proc(param, scene_info);
 }
 
 // Handles first introductory cave painting scene
-int Scene::ITEIntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
-	R_EVENT event;
-	R_EVENT *q_event;
+int Scene::ITEIntroCave1Proc(int param, SCENE_INFO *scene_info) {
+	EVENT event;
+	EVENT *q_event;
 	int event_time = 0;
 	int voice_len;
 	int voice_pad = 50;
-	R_TEXTLIST_ENTRY text_entry;
-	R_TEXTLIST_ENTRY *entry_p;
+	TEXTLIST_ENTRY text_entry;
+	TEXTLIST_ENTRY *entry_p;
 	int i;
 	int font_flags = FONT_OUTLINE | FONT_CENTERED;
 
 	switch (param) {
 	case SCENE_BEGIN:
 		// Begin palette cycling animation for candles
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_PALANIM_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = PALANIM_EVENT;
 		event.op = EVENT_CYCLESTART;
 		event.time = 0;
 
@@ -265,8 +265,8 @@ int Scene::ITEIntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_TEXT_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = TEXT_EVENT;
 			event.op = EVENT_DISPLAY;
 			event.data = entry_p;
 			event.time = event_time;
@@ -274,8 +274,8 @@ int Scene::ITEIntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 			q_event = _vm->_events->chain(q_event, &event);
 
 			// Play voice
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_VOICE_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = VOICE_EVENT;
 			event.op = EVENT_PLAY;
 			event.param = IntroDiag[i].i_voice_rn;
 			event.time = event_time;
@@ -288,8 +288,8 @@ int Scene::ITEIntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 			}
 
 			// Remove text
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_TEXT_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = TEXT_EVENT;
 			event.op = EVENT_REMOVE;
 			event.data = entry_p;
 			event.time = voice_len;
@@ -300,8 +300,8 @@ int Scene::ITEIntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 		}
 
 		// End scene after last dialogue over
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_SCENE_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
 		event.time = 0;
 
@@ -318,27 +318,27 @@ int Scene::ITEIntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroCave2Proc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+int Scene::SC_ITEIntroCave2Proc(int param, SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroCave2Proc(param, scene_info);
 }
 
 // Handles second introductory cave painting scene
-int Scene::ITEIntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
-	R_EVENT event;
-	R_EVENT *q_event;
+int Scene::ITEIntroCave2Proc(int param, SCENE_INFO *scene_info) {
+	EVENT event;
+	EVENT *q_event;
 	int event_time = 0;
 	int voice_len;
 	int voice_pad = 50;
-	R_TEXTLIST_ENTRY text_entry;
-	R_TEXTLIST_ENTRY *entry_p;
+	TEXTLIST_ENTRY text_entry;
+	TEXTLIST_ENTRY *entry_p;
 	int i;
 	int font_flags = FONT_OUTLINE | FONT_CENTERED;
 
 	switch (param) {
 	case SCENE_BEGIN:
 		// Start 'dissolve' transition to new scene background
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_TRANSITION_EVENT;
+		event.type = CONTINUOUS_EVENT;
+		event.code = TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
@@ -346,8 +346,8 @@ int Scene::ITEIntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
 		q_event = _vm->_events->queue(&event);
 
 		// Begin palette cycling animation for candles
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_PALANIM_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = PALANIM_EVENT;
 		event.op = EVENT_CYCLESTART;
 		event.time = 0;
 
@@ -366,8 +366,8 @@ int Scene::ITEIntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
 			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_TEXT_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = TEXT_EVENT;
 			event.op = EVENT_DISPLAY;
 			event.data = entry_p;
 			event.time = event_time;
@@ -375,8 +375,8 @@ int Scene::ITEIntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
 			q_event = _vm->_events->chain(q_event, &event);
 
 			// Play voice
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_VOICE_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = VOICE_EVENT;
 			event.op = EVENT_PLAY;
 			event.param = IntroDiag[i].i_voice_rn;
 			event.time = event_time;
@@ -389,8 +389,8 @@ int Scene::ITEIntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
 			}
 
 			// Remove text
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_TEXT_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = TEXT_EVENT;
 			event.op = EVENT_REMOVE;
 			event.data = entry_p;
 			event.time = voice_len;
@@ -401,8 +401,8 @@ int Scene::ITEIntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
 		}
 
 		// End scene after last dialogue over
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_SCENE_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
 		event.time = event_time;
 
@@ -418,27 +418,27 @@ int Scene::ITEIntroCave2Proc(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroCave3Proc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+int Scene::SC_ITEIntroCave3Proc(int param, SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroCave3Proc(param, scene_info);
 }
 
 // Handles third introductory cave painting scene
-int Scene::ITEIntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
-	R_EVENT event;
-	R_EVENT *q_event;
+int Scene::ITEIntroCave3Proc(int param, SCENE_INFO *scene_info) {
+	EVENT event;
+	EVENT *q_event;
 	int event_time = 0;
 	int voice_len;
 	int voice_pad = 50;
-	R_TEXTLIST_ENTRY text_entry;
-	R_TEXTLIST_ENTRY *entry_p;
+	TEXTLIST_ENTRY text_entry;
+	TEXTLIST_ENTRY *entry_p;
 	int i;
 	int font_flags = FONT_OUTLINE | FONT_CENTERED;
 
 	switch (param) {
 	case SCENE_BEGIN:
 		// Start 'dissolve' transition to new scene background
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_TRANSITION_EVENT;
+		event.type = CONTINUOUS_EVENT;
+		event.code = TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
@@ -446,8 +446,8 @@ int Scene::ITEIntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
 		q_event = _vm->_events->queue(&event);
 
 		// Begin palette cycling animation for candles
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_PALANIM_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = PALANIM_EVENT;
 		event.op = EVENT_CYCLESTART;
 		event.time = 0;
 
@@ -466,8 +466,8 @@ int Scene::ITEIntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
 			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_TEXT_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = TEXT_EVENT;
 			event.op = EVENT_DISPLAY;
 			event.data = entry_p;
 			event.time = event_time;
@@ -475,8 +475,8 @@ int Scene::ITEIntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
 			q_event = _vm->_events->chain(q_event, &event);
 
 			// Play voice
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_VOICE_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = VOICE_EVENT;
 			event.op = EVENT_PLAY;
 			event.param = IntroDiag[i].i_voice_rn;
 			event.time = event_time;
@@ -489,8 +489,8 @@ int Scene::ITEIntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
 			}
 
 			// Remove text
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_TEXT_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = TEXT_EVENT;
 			event.op = EVENT_REMOVE;
 			event.data = entry_p;
 			event.time = voice_len;
@@ -501,8 +501,8 @@ int Scene::ITEIntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
 		}
 
 		// End scene after last dialogue over
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_SCENE_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
 		event.time = event_time;
 
@@ -519,27 +519,27 @@ int Scene::ITEIntroCave3Proc(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroCave4Proc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+int Scene::SC_ITEIntroCave4Proc(int param, SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroCave4Proc(param, scene_info);
 }
 
 // Handles fourth introductory cave painting scene
-int Scene::ITEIntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
-	R_EVENT event;
-	R_EVENT *q_event;
+int Scene::ITEIntroCave4Proc(int param, SCENE_INFO *scene_info) {
+	EVENT event;
+	EVENT *q_event;
 	int event_time = 0;
 	int voice_len;
 	int voice_pad = 50;
-	R_TEXTLIST_ENTRY text_entry;
-	R_TEXTLIST_ENTRY *entry_p;
+	TEXTLIST_ENTRY text_entry;
+	TEXTLIST_ENTRY *entry_p;
 	int i;
 	int font_flags = FONT_OUTLINE | FONT_CENTERED;
 
 	switch (param) {
 	case SCENE_BEGIN:
 		// Start 'dissolve' transition to new scene background
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_TRANSITION_EVENT;
+		event.type = CONTINUOUS_EVENT;
+		event.code = TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
@@ -547,8 +547,8 @@ int Scene::ITEIntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
 		q_event = _vm->_events->queue(&event);
 
 		// Begin palette cycling animation for candles
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_PALANIM_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = PALANIM_EVENT;
 		event.op = EVENT_CYCLESTART;
 		event.time = 0;
 
@@ -567,8 +567,8 @@ int Scene::ITEIntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
 			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_TEXT_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = TEXT_EVENT;
 			event.op = EVENT_DISPLAY;
 			event.data = entry_p;
 			event.time = event_time;
@@ -576,8 +576,8 @@ int Scene::ITEIntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
 			q_event = _vm->_events->chain(q_event, &event);
 
 			// Play voice
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_VOICE_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = VOICE_EVENT;
 			event.op = EVENT_PLAY;
 			event.param = IntroDiag[i].i_voice_rn;
 			event.time = event_time;
@@ -590,8 +590,8 @@ int Scene::ITEIntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
 			}
 
 			// Remove text
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_TEXT_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = TEXT_EVENT;
 			event.op = EVENT_REMOVE;
 			event.data = entry_p;
 			event.time = voice_len;
@@ -602,8 +602,8 @@ int Scene::ITEIntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
 		}
 
 		// End scene after last dialogue over
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_SCENE_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
 		event.time = event_time;
 
@@ -620,16 +620,16 @@ int Scene::ITEIntroCave4Proc(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+int Scene::SC_ITEIntroValleyProc(int param, SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroValleyProc(param, scene_info);
 }
 
 // Handles intro title scene (valley overlook)
-int Scene::ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info) {
-	R_TEXTLIST_ENTRY text_entry;
-	R_TEXTLIST_ENTRY *entry_p;
-	R_EVENT event;
-	R_EVENT *q_event;
+int Scene::ITEIntroValleyProc(int param, SCENE_INFO *scene_info) {
+	TEXTLIST_ENTRY text_entry;
+	TEXTLIST_ENTRY *entry_p;
+	EVENT event;
+	EVENT *q_event;
 	int i;
 
 	const INTRO_CREDIT credits[] = {
@@ -661,8 +661,8 @@ int Scene::ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		// Begin ITE title theme music
 		_vm->_music->stop();
 
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_MUSIC_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = MUSIC_EVENT;
 		event.param = MUSIC_2;
 		event.param2 = 0;
 		event.op = EVENT_PLAY;
@@ -671,8 +671,8 @@ int Scene::ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		q_event = _vm->_events->queue(&event);
 		
 		// Pause animation before logo
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_ANIM_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = ANIM_EVENT;
 		event.op = EVENT_SETFLAG;
 		event.param = 0;
 		event.param2 = ANIM_PAUSE;
@@ -681,8 +681,8 @@ int Scene::ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Display logo
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_TRANSITION_EVENT;
+		event.type = CONTINUOUS_EVENT;
+		event.code = TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE_BGMASK;
 		event.time = 0;
 		event.duration = LOGO_DISSOLVE_DURATION;
@@ -690,8 +690,8 @@ int Scene::ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Remove logo
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_TRANSITION_EVENT;
+		event.type = CONTINUOUS_EVENT;
+		event.code = TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE;
 		event.time = 1000;
 		event.duration = LOGO_DISSOLVE_DURATION;
@@ -699,8 +699,8 @@ int Scene::ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Unpause animation before logo
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_ANIM_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = ANIM_EVENT;
 		event.op = EVENT_CLEARFLAG;
 		event.param = 0;
 		event.param2 = ANIM_PAUSE;
@@ -708,8 +708,8 @@ int Scene::ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 
 		q_event = _vm->_events->chain(q_event, &event);
 
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_ANIM_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = ANIM_EVENT;
 		event.op = EVENT_FRAME;
 		event.param = 0;
 		event.time = LOGO_DISSOLVE_DURATION;
@@ -730,8 +730,8 @@ int Scene::ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_TEXT_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = TEXT_EVENT;
 			event.op = EVENT_DISPLAY;
 			event.data = entry_p;
 			event.time = event_delay += credits[i].delta_time;
@@ -739,8 +739,8 @@ int Scene::ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 			q_event = _vm->_events->queue(&event);
 
 			// Remove text
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_TEXT_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = TEXT_EVENT;
 			event.op = EVENT_REMOVE;
 			event.data = entry_p;
 			event.time = credits[i].duration;
@@ -749,8 +749,8 @@ int Scene::ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		}
 
 		// End scene after credit display
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_SCENE_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
 		event.time = 1000;
 
@@ -766,16 +766,16 @@ int Scene::ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroTreeHouseProc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+int Scene::SC_ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroTreeHouseProc(param, scene_info);
 }
 
 // Handles second intro credit screen (treehouse view)
-int Scene::ITEIntroTreeHouseProc(int param, R_SCENE_INFO *scene_info) {
-	R_TEXTLIST_ENTRY text_entry;
-	R_TEXTLIST_ENTRY *entry_p;
-	R_EVENT event;
-	R_EVENT *q_event;
+int Scene::ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info) {
+	TEXTLIST_ENTRY text_entry;
+	TEXTLIST_ENTRY *entry_p;
+	EVENT event;
+	EVENT *q_event;
 
 	int i;
 
@@ -812,8 +812,8 @@ int Scene::ITEIntroTreeHouseProc(int param, R_SCENE_INFO *scene_info) {
 	switch (param) {
 	case SCENE_BEGIN:
 		// Start 'dissolve' transition to new scene background
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_TRANSITION_EVENT;
+		event.type = CONTINUOUS_EVENT;
+		event.code = TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
@@ -840,8 +840,8 @@ int Scene::ITEIntroTreeHouseProc(int param, R_SCENE_INFO *scene_info) {
 			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_TEXT_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = TEXT_EVENT;
 			event.op = EVENT_DISPLAY;
 			event.data = entry_p;
 			event.time = event_delay += credits[i].delta_time;
@@ -849,8 +849,8 @@ int Scene::ITEIntroTreeHouseProc(int param, R_SCENE_INFO *scene_info) {
 			q_event = _vm->_events->queue(&event);
 
 			// Remove text
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_TEXT_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = TEXT_EVENT;
 			event.op = EVENT_REMOVE;
 			event.data = entry_p;
 			event.time = credits[i].duration;
@@ -859,8 +859,8 @@ int Scene::ITEIntroTreeHouseProc(int param, R_SCENE_INFO *scene_info) {
 		}
 
 		// End scene after credit display
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_SCENE_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
 		event.time = 1000;
 
@@ -876,16 +876,16 @@ int Scene::ITEIntroTreeHouseProc(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroFairePathProc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+int Scene::SC_ITEIntroFairePathProc(int param, SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroFairePathProc(param, scene_info);
 }
 
 // Handles third intro credit screen (path to puzzle tent)
-int Scene::ITEIntroFairePathProc(int param, R_SCENE_INFO *scene_info) {
-	R_TEXTLIST_ENTRY text_entry;
-	R_TEXTLIST_ENTRY *entry_p;
-	R_EVENT event;
-	R_EVENT *q_event;
+int Scene::ITEIntroFairePathProc(int param, SCENE_INFO *scene_info) {
+	TEXTLIST_ENTRY text_entry;
+	TEXTLIST_ENTRY *entry_p;
+	EVENT event;
+	EVENT *q_event;
 	long event_delay = 0;
 	int i;
 
@@ -925,8 +925,8 @@ int Scene::ITEIntroFairePathProc(int param, R_SCENE_INFO *scene_info) {
 	case SCENE_BEGIN:
 
 		// Start 'dissolve' transition to new scene background
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_TRANSITION_EVENT;
+		event.type = CONTINUOUS_EVENT;
+		event.code = TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
@@ -953,8 +953,8 @@ int Scene::ITEIntroFairePathProc(int param, R_SCENE_INFO *scene_info) {
 			entry_p = _vm->textAddEntry(scene_info->text_list, &text_entry);
 
 			// Display text
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_TEXT_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = TEXT_EVENT;
 			event.op = EVENT_DISPLAY;
 			event.data = entry_p;
 			event.time = event_delay += credits[i].delta_time;
@@ -962,8 +962,8 @@ int Scene::ITEIntroFairePathProc(int param, R_SCENE_INFO *scene_info) {
 			q_event = _vm->_events->queue(&event);
 
 			// Remove text
-			event.type = R_ONESHOT_EVENT;
-			event.code = R_TEXT_EVENT;
+			event.type = ONESHOT_EVENT;
+			event.code = TEXT_EVENT;
 			event.op = EVENT_REMOVE;
 			event.data = entry_p;
 			event.time = credits[i].duration;
@@ -972,8 +972,8 @@ int Scene::ITEIntroFairePathProc(int param, R_SCENE_INFO *scene_info) {
 		}
 
 		// End scene after credit display
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_SCENE_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
 		event.time = 1000;
 
@@ -989,22 +989,22 @@ int Scene::ITEIntroFairePathProc(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroFaireTentProc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+int Scene::SC_ITEIntroFaireTentProc(int param, SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroFaireTentProc(param, scene_info);
 }
 
 // Handles fourth intro credit screen (treehouse view)
-int Scene::ITEIntroFaireTentProc(int param, R_SCENE_INFO *scene_info) {
-	R_EVENT event;
-	R_EVENT *q_event;
-	R_EVENT *q_event_start;
+int Scene::ITEIntroFaireTentProc(int param, SCENE_INFO *scene_info) {
+	EVENT event;
+	EVENT *q_event;
+	EVENT *q_event_start;
 
 	switch (param) {
 	case SCENE_BEGIN:
 
 		// Start 'dissolve' transition to new scene background
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_TRANSITION_EVENT;
+		event.type = CONTINUOUS_EVENT;
+		event.code = TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
@@ -1012,8 +1012,8 @@ int Scene::ITEIntroFaireTentProc(int param, R_SCENE_INFO *scene_info) {
 		q_event_start = _vm->_events->queue(&event);
 
 		// End scene after momentary pause
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_SCENE_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
 		event.time = 5000;
 		q_event = _vm->_events->chain(q_event_start, &event);

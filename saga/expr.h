@@ -28,7 +28,7 @@
 
 namespace Saga {
 
-#define R_EXPR_WHITESPACE "\t\n "
+#define EXPR_WHITESPACE " \n "
 
 int EXPR_ParseArgs(char *cmd_str, char **argv);
 

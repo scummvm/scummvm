@@ -42,20 +42,20 @@ namespace Saga {
 #define ACTOR_DIALOGUE_LETTERTIME 50
 #define ACTOR_DIALOGUE_HEIGHT 100
 
-#define R_ACTOR_LMULT 4
+#define ACTOR_LMULT 4
 
-enum R_ACTOR_INTENTS {
+enum ACTOR_INTENTS {
 	INTENT_NONE = 0,
 	INTENT_PATH = 1,
 	INTENT_SPEAK = 2
 };
 
-enum R_ACTOR_WALKFLAGS {
+enum ACTOR_WALKFLAGS {
 	WALK_NONE = 0x00,
 	WALK_NOREORIENT = 0x01
 };
 
-enum R_ACTOR_ORIENTATIONS {
+enum ACTOR_ORIENTATIONS {
 	ORIENT_N = 0,
 	ORIENT_NE = 1,
 	ORIENT_E = 2,
@@ -66,28 +66,28 @@ enum R_ACTOR_ORIENTATIONS {
 	ORIENT_NW = 7
 };
 
-enum R_ACTOR_ACTIONS {
+enum ACTOR_ACTIONS {
 	ACTION_IDLE = 0,
 	ACTION_WALK = 1,
 	ACTION_SPEAK = 2,
 	ACTION_COUNT
 };
 
-enum R_ACTOR_ACTIONFLAGS {
+enum ACTOR_ACTIONFLAGS {
 	ACTION_NONE = 0x00,
 	ACTION_LOOP = 0x01
 };
 
-struct R_ACTORACTIONITEM {
+struct ACTORACTIONITEM {
 	int frame_index;
 	int frame_count;
 };
 
-struct R_ACTORACTION {
-	R_ACTORACTIONITEM dir[4];
+struct ACTORACTION {
+ ACTORACTIONITEM dir[4];
 };
 
-struct R_WALKINTENT {
+struct WALKINTENT {
 	int wi_active;
 	uint16 wi_flags;
 	int wi_init;
@@ -102,33 +102,33 @@ struct R_WALKINTENT {
 	YS_DL_LIST *nodelist;
 
 	int sem_held;
-	R_SEMAPHORE *sem;
+	SEMAPHORE *sem;
 
-	R_WALKINTENT() { memset(this, 0, sizeof(*this)); }
+	WALKINTENT() { memset(this, 0, sizeof(*this)); }
 };
 
-struct R_WALKNODE {
+struct WALKNODE {
 	int calc_flag;
 	Point node_pt;
 };
 
-struct R_SPEAKINTENT {
+struct SPEAKINTENT {
 	int si_init;
 	uint16 si_flags;
 	int si_last_action;
 	YS_DL_LIST *si_diaglist;	/* Actor dialogue list */
 };
 
-struct R_ACTORINTENT {
+struct ACTORINTENT {
 	int a_itype;
 	uint16 a_iflags;
 	int a_idone;
 	void *a_data;
 
-	R_ACTORINTENT() { memset(this, 0, sizeof(*this)); }
+	ACTORINTENT() { memset(this, 0, sizeof(*this)); }
 };
 
-struct R_ACTOR {
+struct ACTOR {
 	int id;            // Actor id
 	int name_i;        // Actor's index in actor name string list
 	uint16 flags;
@@ -138,7 +138,7 @@ struct R_ACTOR {
 
 	int sl_rn;         // Actor's sprite list res #
 	int si_rn;         // Actor's sprite index res #
-	R_SPRITELIST *sl_p;// Actor's sprite list data
+	SPRITELIST *sl_p;// Actor's sprite list data
 
 	int idle_time;
 	int orient;
@@ -153,7 +153,7 @@ struct R_ACTOR {
 
 	YS_DL_LIST *a_intentlist;
 
-//	R_WALKPATH path;
+// WALKPATH path;
 
 	int def_action;
 	uint16 def_action_flags;
@@ -163,23 +163,23 @@ struct R_ACTOR {
 	int action_frame;
 	int action_time;
 
-	R_ACTORACTION *act_tbl; // Action lookup table
+	ACTORACTION *act_tbl; // Action lookup table
 	int action_ct;          // Number of actions in the action LUT
 	YS_DL_NODE *node;       // Actor's node in the actor list
-	R_ACTOR() { memset(this, 0, sizeof(*this)); }
+	ACTOR() { memset(this, 0, sizeof(*this)); }
 };
 
-struct R_ACTORDIALOGUE {
+struct ACTORDIALOGUE {
 	int d_playing;
 	const char *d_string;
 	uint16 d_voice_rn;
 	long d_time;
 	int d_sem_held;
-	R_SEMAPHORE *d_sem;
-	R_ACTORDIALOGUE() { memset(this, 0, sizeof(*this)); }
+	SEMAPHORE *d_sem;
+	ACTORDIALOGUE() { memset(this, 0, sizeof(*this)); }
 };
 
-struct R_ACTIONTIMES {
+struct ACTIONTIMES {
 	int action;
 	int time;
 };
@@ -202,11 +202,11 @@ class Actor {
 	int move(int index, const Point *move_pt);
 	int moveRelative(int index, const Point *move_pt);
 
-	int walkTo(int index, const Point *walk_pt, uint16 flags, R_SEMAPHORE *sem);
+	int walkTo(int index, const Point *walk_pt, uint16 flags, SEMAPHORE *sem);
 	
 	int getActorIndex(uint16 actor_id);
 	
-	int speak(int index, const char *d_string, uint16 d_voice_rn, R_SEMAPHORE *sem);
+	int speak(int index, const char *d_string, uint16 d_voice_rn, SEMAPHORE *sem);
 	
 	int skipDialogue();
 	
@@ -215,19 +215,19 @@ class Actor {
 	int setAction(int index, int action_n, uint16 action_flags);
 	int setDefaultAction(int index, int action_n, uint16 action_flags);
 
-	int addActor(R_ACTOR * actor);
+	int addActor(ACTOR * actor);
 	int deleteActor(int index);
-	R_ACTOR *lookupActor(int index);
+ ACTOR *lookupActor(int index);
 
  private:
-	int handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walk_int, int *complete_p, int msec);
-	int handleSpeakIntent(R_ACTOR *actor, R_SPEAKINTENT *a_speakint, int *complete_p, int msec);
-	int setPathNode(R_WALKINTENT *walk_int, Point *src_pt, Point *dst_pt, R_SEMAPHORE *sem);
-	int loadActorSpriteIndex(R_ACTOR *actor, int si_rn, int *last_frame_p);
+	int handleWalkIntent(ACTOR *actor, WALKINTENT *a_walk_int, int *complete_p, int msec);
+	int handleSpeakIntent(ACTOR *actor, SPEAKINTENT *a_speakint, int *complete_p, int msec);
+	int setPathNode(WALKINTENT *walk_int, Point *src_pt, Point *dst_pt, SEMAPHORE *sem);
+	int loadActorSpriteIndex(ACTOR *actor, int si_rn, int *last_frame_p);
 
 	SagaEngine *_vm;
 	bool _initialized;
-	R_RSCFILE_CONTEXT *_actorContext;
+	RSCFILE_CONTEXT *_actorContext;
 	uint16 _count;
 	int *_aliasTbl;
 	YS_DL_NODE **_tbl;

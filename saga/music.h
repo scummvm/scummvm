@@ -34,8 +34,8 @@
 
 namespace Saga {
 enum MUSIC_FLAGS {
-	R_MUSIC_LOOP = 0x0001,
-	R_MUSIC_DEFAULT = 0xffff
+	MUSIC_LOOP = 0x0001,
+	MUSIC_DEFAULT = 0xffff
 };
 
 struct MUSIC_MIDITABLE {
@@ -108,7 +108,7 @@ public:
 	void hasNativeMT32(bool b)		{ _player->hasNativeMT32(b); }
 	void setPassThrough(bool b)		{ _player->setPassThrough(b); }
 
-	int play(uint32 music_rn, uint16 flags = R_MUSIC_DEFAULT);
+	int play(uint32 music_rn, uint16 flags = MUSIC_DEFAULT);
 	int pause(void);
 	int resume(void);
 	int stop(void);

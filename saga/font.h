@@ -30,21 +30,21 @@
 
 namespace Saga {
 
-#define R_FONT_SHOWUNDEFINED 1	// Define to draw undefined characters * as ?'s
+#define FONT_SHOWUNDEFINED 1	// Define to draw undefined characters * as ?'s
 
 // The first defined character (!) is the only one that may 
 // have a valid offset of '0'
-#define R_FONT_FIRSTCHAR 33
+#define FONT_FIRSTCHAR 33
 
-#define R_FONT_CH_SPACE 32
-#define R_FONT_CH_QMARK 63
+#define FONT_CH_SPACE 32
+#define FONT_CH_QMARK 63
 
 // Minimum font header size without font data 
 // (6 + 512 + 256 + 256 + 256 )
-#define R_FONT_DESCSIZE 1286
+#define FONT_DESCSIZE 1286
 
-#define R_FONT_CHARCOUNT 256
-#define R_FONT_CHARMASK 0xFFU
+#define FONT_CHARCOUNT 256
+#define FONT_CHARMASK 0xFFU
 
 #define SAGA_FONT_HEADER_LEN 6
 
@@ -62,7 +62,7 @@ enum FONT_EFFECT_FLAGS {
 	FONT_CENTERED = 0x08
 };
 
-struct R_FONT_HEADER {
+struct FONT_HEADER {
 	int c_height;
 	int c_width;
 	int row_length;
@@ -76,21 +76,21 @@ struct FONT_CHAR_ENTRY {
 	int tracking;
 };
 
-struct R_FONT_STYLE {
-	R_FONT_HEADER hdr;
+struct FONT_STYLE {
+	FONT_HEADER hdr;
 	FONT_CHAR_ENTRY fce[256];
 	byte *font_free_p;
 	byte *font_p;
 };
 
-struct R_FONT {
+struct FONT {
 	uint32 font_rn;
 	int font_id;
 
 	int normal_loaded;
-	R_FONT_STYLE *normal;
+	FONT_STYLE *normal;
 	int outline_loaded;
-	R_FONT_STYLE *outline;
+	FONT_STYLE *outline;
 
 	byte *res_data;
 	size_t res_len;
@@ -100,7 +100,7 @@ class Font {
  public:
 	Font(SagaEngine *vm);
 	~Font(void);
-	int draw(int font_id, R_SURFACE *ds, const char *draw_str, size_t draw_str_len,
+	int draw(int font_id, SURFACE *ds, const char *draw_str, size_t draw_str_len,
 				  int text_x, int text_y, int color, int effect_color, int flags);
 	int getStringWidth(int font_id, const char *test_str, size_t test_str_ct, int flags);
 	int getHeight(int font_id);
@@ -108,8 +108,8 @@ class Font {
  private:
 
 	int loadFont(uint32 font_rn, int font_id);
-	R_FONT_STYLE *createOutline(R_FONT_STYLE * src_font);
-	int outFont(R_FONT_STYLE *font, R_SURFACE * ds, const char *draw_str, size_t draw_str_ct,
+	FONT_STYLE *createOutline(FONT_STYLE * src_font);
+	int outFont(FONT_STYLE *font, SURFACE * ds, const char *draw_str, size_t draw_str_ct,
 				 int text_x, int text_y, int color);
 	int getByteLen(int num_bits);
 
@@ -117,10 +117,10 @@ class Font {
 	SagaEngine *_vm;
 
 	bool _initialized;
-	R_RSCFILE_CONTEXT *_fontContext;
+	RSCFILE_CONTEXT *_fontContext;
 
 	int _nFonts;
-	R_FONT **_fonts;
+	FONT **_fonts;
 };
 
 } // End of namespace Saga

@@ -41,7 +41,7 @@
 
 namespace Saga {
 
-static R_VERB_DATA I_VerbData[] = {
+static VERB_DATA I_VerbData[] = {
 	{I_VERB_WALKTO, "verb_walkto", "Walk to", S_VERB_WALKTO},
 	{I_VERB_LOOKAT, "verb_lookat", "Look at", S_VERB_LOOKAT},
 	{I_VERB_PICKUP, "verb_pickup", "Pick up", S_VERB_PICKUP},
@@ -52,7 +52,7 @@ static R_VERB_DATA I_VerbData[] = {
 	{I_VERB_GIVE, "verb_give", "Give", S_VERB_GIVE}
 };
 
-static R_INTERFACE_DESC ITE_interface = {
+static INTERFACE_DESC ITE_interface = {
 	ITE_STATUS_Y,
 	ITE_STATUS_W,
 	ITE_STATUS_H,
@@ -72,7 +72,7 @@ static R_INTERFACE_DESC ITE_interface = {
 	ITE_RPORTRAIT_Y
 };
 
-static R_INTERFACE_BUTTON ITE_c_buttons[] = {
+static INTERFACE_BUTTON ITE_c_buttons[] = {
 	{5, 4, 46, 47, "Portrait", 0, 0, BUTTON_NONE, 0},
 	// "Walk To" and "Talk To" share button sprites
 	{52, 4, 109, 14, "Walk To", 1, 2, BUTTON_VERB, I_VERB_WALKTO},
@@ -96,7 +96,7 @@ static R_INTERFACE_BUTTON ITE_c_buttons[] = {
 	{306, 41, 314, 45, "InvDown", 0, 0, BUTTON_NONE, 0}
 };
 
-static R_INTERFACE_DESC IHNM_interface = {
+static INTERFACE_DESC IHNM_interface = {
 	IHNM_STATUS_Y,
 	IHNM_STATUS_W,
 	IHNM_STATUS_H,
@@ -116,7 +116,7 @@ static R_INTERFACE_DESC IHNM_interface = {
 	IHNM_RPORTRAIT_Y
 };
 
-static R_INTERFACE_BUTTON IHNM_c_buttons[] = {
+static INTERFACE_BUTTON IHNM_c_buttons[] = {
 	{5, 4, 46, 47, "Portrait", 0, 0, 0, 0}
 };
 
@@ -126,19 +126,19 @@ int Interface::registerLang(void) {
 	for (i = 0; i < ARRAYSIZE(I_VerbData); i++) {
 		if (CVAR_Register_S(I_VerbData[i].verb_str,
 			I_VerbData[i].verb_cvar,
-			NULL, R_CVAR_CFG, R_VERB_STRLIMIT) != R_SUCCESS) {
+			NULL, CVAR_CFG, VERB_STRLIMIT) != SUCCESS) {
 
-			return R_FAILURE;
+			return FAILURE;
 		}
 
 		assert(CVAR_Find(I_VerbData[i].verb_cvar) != NULL);
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
-	R_GAME_RESOURCEDESC g_resdesc;
+	GAME_RESOURCEDESC g_resdesc;
 
 	int game_type;
 	int result;
@@ -154,8 +154,8 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	}
 
 	// Load interface module resource file context
-	result = GAME_GetFileContext(&_interfaceContext, R_GAME_RESOURCEFILE, 0);
-	if (result != R_SUCCESS) {
+	result = GAME_GetFileContext(&_interfaceContext, GAME_RESOURCEFILE, 0);
+	if (result != SUCCESS) {
 		return;
 	}
 
@@ -182,14 +182,14 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	// Load command panel resource
 	result = RSC_LoadResource(_interfaceContext, g_resdesc.command_panel_rn,
 							&_cPanel.res, &_cPanel.res_len);
-	if (result != R_SUCCESS) {
+	if (result != SUCCESS) {
 		return;
 	}
 
 	// Load dialogue panel resource
 	result = RSC_LoadResource(_interfaceContext, g_resdesc.dialogue_panel_rn,
 							&_dPanel.res, &_dPanel.res_len);
-	if (result != R_SUCCESS) {
+	if (result != SUCCESS) {
 		return;
 	}
 
@@ -232,13 +232,13 @@ int Interface::activate() {
 	_active = 1;
 	draw();
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Interface::deactivate() {
 	_active = 0;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Interface::setMode(int mode) {
@@ -247,15 +247,15 @@ int Interface::setMode(int mode) {
 	_panelMode = mode;
 	draw();
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Interface::setStatusText(const char *new_txt) {
 	assert(new_txt != NULL);
 
-	strncpy(_statusText, new_txt, R_STATUS_TEXT_LEN);
+	strncpy(_statusText, new_txt, STATUS_TEXT_LEN);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Interface::loadScenePortraits(int res) {
@@ -269,19 +269,19 @@ int Interface::setLeftPortrait(int portrait) {
 	_leftPortrait = portrait;
 	draw();
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Interface::setRightPortrait(int portrait) {
 	_rightPortrait = portrait;
 	draw();
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Interface::draw() {
-	R_GAME_DISPLAYINFO g_di;
-	R_SURFACE *back_buf;
+	GAME_DISPLAYINFO g_di;
+	SURFACE *back_buf;
 
 	int xbase;
 	int ybase;
@@ -296,7 +296,7 @@ int Interface::draw() {
 	back_buf = _vm->_gfx->getBackBuffer();
 
 	if (!_active) {
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	// Get game display info
@@ -344,18 +344,18 @@ int Interface::draw() {
 		_vm->_sprite->draw(back_buf, _scenePortraits, _rightPortrait, rportrait_x, rportrait_y);
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Interface::update(const Point& imousePt, int update_flag) {
-	R_GAME_DISPLAYINFO g_di;
+	GAME_DISPLAYINFO g_di;
 
-	R_SURFACE *back_buf;
+	SURFACE *back_buf;
 
 	int imouse_x, imouse_y;
 
 	if (!_active) {
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	imouse_x = imousePt.x;
@@ -387,11 +387,11 @@ int Interface::update(const Point& imousePt, int update_flag) {
 
 	drawStatusBar(back_buf);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Interface::drawStatusBar(R_SURFACE *ds) {
-	R_GAME_DISPLAYINFO g_di;
+int Interface::drawStatusBar(SURFACE *ds) {
+	GAME_DISPLAYINFO g_di;
 	Rect rect;
 
 	int string_w;
@@ -412,10 +412,10 @@ int Interface::drawStatusBar(R_SURFACE *ds) {
 	_vm->_font->draw(SMALL_FONT_ID, ds, _statusText, 0, (_iDesc.status_w / 2) - (string_w / 2),
 			_iDesc.status_y + _iDesc.status_txt_y, _iDesc.status_txt_col, 0, 0);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Interface::handleCommandClick(R_SURFACE *ds, const Point& imousePt) {
+int Interface::handleCommandClick(SURFACE *ds, const Point& imousePt) {
 	int hit_button;
 	int ibutton_num;
 
@@ -429,9 +429,9 @@ int Interface::handleCommandClick(R_SURFACE *ds, const Point& imousePt) {
 	int set_button;
 
 	hit_button = hitTest(imousePt, &ibutton_num);
-	if (hit_button != R_SUCCESS) {
+	if (hit_button != SUCCESS) {
 		// Clicking somewhere other than a button doesn't do anything
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	x_base = _cPanel.x;
@@ -463,10 +463,10 @@ int Interface::handleCommandClick(R_SURFACE *ds, const Point& imousePt) {
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Interface::handleCommandUpdate(R_SURFACE *ds, const Point& imousePt) {
+int Interface::handleCommandUpdate(SURFACE *ds, const Point& imousePt) {
 	int hit_button;
 	int ibutton_num;
 
@@ -482,7 +482,7 @@ int Interface::handleCommandUpdate(R_SURFACE *ds, const Point& imousePt) {
 
 	hit_button = hitTest(imousePt, &ibutton_num);
 
-	if (hit_button == R_SUCCESS) {
+	if (hit_button == SUCCESS) {
 		// Hovering over a command panel button
 		setStatusText(I_VerbData[_activeVerb].verb_str);
 	}
@@ -517,10 +517,10 @@ int Interface::handleCommandUpdate(R_SURFACE *ds, const Point& imousePt) {
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Interface::handlePlayfieldClick(R_SURFACE *ds, const Point& imousePt) {
+int Interface::handlePlayfieldClick(SURFACE *ds, const Point& imousePt) {
 	int objectNum;
 	uint16 object_flags = 0;
 
@@ -533,7 +533,7 @@ int Interface::handlePlayfieldClick(R_SURFACE *ds, const Point& imousePt) {
 		// Player clicked on empty spot - walk here regardless of verb
 		_vm->_actor->StoA(&iactor_pt, imousePt);
 		_vm->_actor->walkTo(0, &iactor_pt, 0, NULL);
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	object_flags = _vm->_scene->_objectMap->getFlags(objectNum);
@@ -554,15 +554,15 @@ int Interface::handlePlayfieldClick(R_SURFACE *ds, const Point& imousePt) {
 		_vm->_actor->walkTo(0, &iactor_pt, 0, NULL);
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Interface::handlePlayfieldUpdate(R_SURFACE *ds, const Point& imousePt) {
+int Interface::handlePlayfieldUpdate(SURFACE *ds, const Point& imousePt) {
 	const char *object_name;
 	int objectNum;
 	uint16 object_flags = 0;
 
-	char new_status[R_STATUS_TEXT_LEN];
+	char new_status[STATUS_TEXT_LEN];
 
 	new_status[0] = 0;
 
@@ -571,7 +571,7 @@ int Interface::handlePlayfieldUpdate(R_SURFACE *ds, const Point& imousePt) {
 	if (objectNum == -1) {
 		// Cursor over nothing - just display current verb
 		setStatusText(I_VerbData[_activeVerb].verb_str);
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	object_flags = _vm->_scene->_objectMap->getFlags(objectNum);
@@ -580,20 +580,20 @@ int Interface::handlePlayfieldUpdate(R_SURFACE *ds, const Point& imousePt) {
 
 	if (object_flags & OBJECT_EXIT) { // FIXME. This is wrong
 		// Normal scene object - display as subject of verb
-		snprintf(new_status, R_STATUS_TEXT_LEN, "%s %s", I_VerbData[_activeVerb].verb_str, object_name);
+		snprintf(new_status, STATUS_TEXT_LEN, "%s %s", I_VerbData[_activeVerb].verb_str, object_name);
 	} else {
 		// Not normal scene object - override verb as we can only
 		// walk to this object
-		snprintf(new_status, R_STATUS_TEXT_LEN, "%s %s", I_VerbData[I_VERB_WALKTO].verb_str, object_name);
+		snprintf(new_status, STATUS_TEXT_LEN, "%s %s", I_VerbData[I_VERB_WALKTO].verb_str, object_name);
 	}
 
 	setStatusText(new_status);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Interface::hitTest(const Point& imousePt, int *ibutton) {
-	R_INTERFACE_BUTTON *buttons;
+	INTERFACE_BUTTON *buttons;
 
 	int nbuttons;
 	int xbase;
@@ -611,12 +611,12 @@ int Interface::hitTest(const Point& imousePt, int *ibutton) {
 		if ((imousePt.x >= (xbase + buttons[i].x1)) && (imousePt.x < (xbase + buttons[i].x2)) &&
 			(imousePt.y >= (ybase + buttons[i].y1)) && (imousePt.y < (ybase + buttons[i].y2))) {
 			*ibutton = i;
-			return R_SUCCESS;
+			return SUCCESS;
 		}
 	}
 
 	*ibutton = -1;
-	return R_FAILURE;
+	return FAILURE;
 }
 
 } // End of namespace Saga

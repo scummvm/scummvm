@@ -72,13 +72,13 @@ int EXPR_GetError(const char **err_str) {
 }
 
 // Parses an interactive expression.
-// Sets 'expr_cvar' to the cvar/cfunction identifier input by the user, and
+// Sets 'expCVAR' to the cvar/cfunction identifier input by the user, and
 // 'rvalue' to the corresponding rvalue ( in an expression ) or argument string
 // ( in a function call ).
 //
 // Memory pointed to by rvalue after return must be explicitly freed by the
 // caller.
-int EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P *expr_cvar, char **rvalue) {
+int EXPR_Parse(const char **exp_pp, int *len, CVAR_P *expCVAR, char **rvalue) {
 	int i;
 	int in_char;
 	int equ_offset = 0;
@@ -96,7 +96,7 @@ int EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P *expr_cvar, char **rvalue
 	int test_char = '\0';
 	int have_func = 0;
 
-	R_CVAR_P lvalue_cvar;
+	CVAR_P lvalue_cvar;
 
 	expr_p = *exp_pp;
 	expr_len = strlen(*exp_pp);
@@ -113,14 +113,14 @@ int EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P *expr_cvar, char **rvalue
 		if ((i == 0) && isdigit(in_char)) {
 			// First character of a valid identifier cannot be a digit
 			EXPR_ErrorState = EXERR_ILLEGAL;
-			return R_FAILURE;
+			return FAILURE;
 		}
 
 		// If we reach a character that isn't valid in an identifier...
 		if ((!isalnum(in_char)) && ((in_char != '_'))) {
 
 			// then eat remaining whitespace, if any
-			equ_offset = strspn(scan_p, R_EXPR_WHITESPACE);
+			equ_offset = strspn(scan_p, EXPR_WHITESPACE);
 			test_char = scan_p[equ_offset];
 			// and test for the only valid characters after an identifier
 			if ((test_char != '=') && (test_char != '\0') && (test_char != '(')) {
@@ -129,7 +129,7 @@ int EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P *expr_cvar, char **rvalue
 				} else {
 					EXPR_ErrorState = EXERR_EXPR;
 				}
-				return R_FAILURE;
+				return FAILURE;
 			}
 			break;
 		}
@@ -140,7 +140,7 @@ int EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P *expr_cvar, char **rvalue
 
 	if (lvalue_str == NULL) {
 		EXPR_ErrorState = EXERR_MEM;
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	strncpy(lvalue_str, expr_p, lvalue_len);
@@ -150,7 +150,7 @@ int EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P *expr_cvar, char **rvalue
 	lvalue_cvar = CVAR_Find(lvalue_str);
 	if (lvalue_cvar == NULL) {
 		EXPR_ErrorState = EXERR_NOTFOUND;
-		return R_FAILURE;
+		return FAILURE;
 	}
 	if (lvalue_str) {
 		free(lvalue_str);
@@ -170,7 +170,7 @@ int EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P *expr_cvar, char **rvalue
 			if (rvalue_str != NULL) {
 				// Successfully read string
 				//CON_Print("Read function parameters \"%s\".", rvalue_str);
-				*expr_cvar = lvalue_cvar;
+				*expCVAR = lvalue_cvar;
 				*rvalue = rvalue_str;
 
 				scan_len = (scan_p - expr_p);
@@ -179,26 +179,26 @@ int EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P *expr_cvar, char **rvalue
 				*len -= scan_len;
 
 				EXPR_ErrorState = EXERR_NONE;
-				return R_SUCCESS;
+				return SUCCESS;
 			} else {
 				EXPR_ErrorState = EXERR_PAREN;
-				return R_FAILURE;
+				return FAILURE;
 			}
 		} else {
 			EXPR_ErrorState = EXERR_NOTFUNC;
-			return R_FAILURE;
+			return FAILURE;
 		}
 	}
 
 	// Eat more whitespace
-	rvalue_offset = strspn(scan_p, R_EXPR_WHITESPACE);
+	rvalue_offset = strspn(scan_p, EXPR_WHITESPACE);
 
 	if (rvalue_offset + i == expr_len) {
 		// Only found single lvalue
-		*expr_cvar = lvalue_cvar;
+		*expCVAR = lvalue_cvar;
 		*exp_pp = scan_p;
 		*len -= scan_len;
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	scan_p += rvalue_offset;
@@ -217,7 +217,7 @@ int EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P *expr_cvar, char **rvalue
 			break;
 		} else {
 			EXPR_ErrorState = EXERR_LITERAL;
-			return R_FAILURE;
+			return FAILURE;
 		}
 		break;
 
@@ -238,16 +238,16 @@ int EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P *expr_cvar, char **rvalue
 				break;
 			} else {
 				EXPR_ErrorState = EXERR_STRING;
-				return R_FAILURE;
+				return FAILURE;
 			}
 		} else {
 			EXPR_ErrorState = EXERR_NUMBER;
-			return R_FAILURE;
+			return FAILURE;
 		}
 		break;
 	}
 
-	*expr_cvar = lvalue_cvar;
+	*expCVAR = lvalue_cvar;
 	*rvalue = rvalue_str;
 
 	scan_len = (scan_p - expr_p);
@@ -256,7 +256,7 @@ int EXPR_Parse(const char **exp_pp, int *len, R_CVAR_P *expr_cvar, char **rvalue
 	*len -= scan_len;
 
 	EXPR_ErrorState = EXERR_NONE;
-	return R_SUCCESS;
+	return SUCCESS;
 
 }
 
@@ -331,7 +331,7 @@ int EXPR_GetArgs(char *cmd_str, char ***expr_argv) {
 	*expr_argv = (char **)malloc((expr_argc + 1) * sizeof(**expr_argv));
 
 	if (expr_argv == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	EXPR_ParseArgs(cmd_str, *expr_argv);

@@ -51,21 +51,21 @@ static void CF_actor_moverel(int argc, char *argv[], void *refCon);
 static void CF_actor_seto(int argc, char *argv[], void *refCon);
 static void CF_actor_setact(int argc, char *argv[], void *refCon);
 
-R_ACTIONTIMES ActionTDeltas[] = {
+ACTIONTIMES ActionTDeltas[] = {
 	{ ACTION_IDLE, 80 },
 	{ ACTION_WALK, 80 },
 	{ ACTION_SPEAK, 200 }
 };
 
 int Actor::reg() {
-	CVAR_RegisterFunc(CF_actor_add, "actor_add", "<Actor id> <lx> <ly>", R_CVAR_NONE, 3, 3, this);
-	CVAR_RegisterFunc(CF_actor_del, "actor_del", "<Actor id>", R_CVAR_NONE, 1, 1, this);
-	CVAR_RegisterFunc(CF_actor_move, "actor_move", "<Actor id> <lx> <ly>", R_CVAR_NONE, 3, 3, this);
-	CVAR_RegisterFunc(CF_actor_moverel, "actor_moverel", "<Actor id> <lx> <ly>", R_CVAR_NONE, 3, 3, this);
-	CVAR_RegisterFunc(CF_actor_seto, "actor_seto", "<Actor id> <Orientation>", R_CVAR_NONE, 2, 2, this);
-	CVAR_RegisterFunc(CF_actor_setact, "actor_setact", "<Actor id> <Action #>", R_CVAR_NONE, 2, 2, this);
+	CVAR_RegisterFunc(CF_actor_add, "actor_add", "<Actor id> <lx> <ly>", CVAR_NONE, 3, 3, this);
+	CVAR_RegisterFunc(CF_actor_del, "actor_del", "<Actor id>", CVAR_NONE, 1, 1, this);
+	CVAR_RegisterFunc(CF_actor_move, "actor_move", "<Actor id> <lx> <ly>", CVAR_NONE, 3, 3, this);
+	CVAR_RegisterFunc(CF_actor_moverel, "actor_moverel", "<Actor id> <lx> <ly>", CVAR_NONE, 3, 3, this);
+	CVAR_RegisterFunc(CF_actor_seto, "actor_seto", "<Actor id> <Orientation>", CVAR_NONE, 2, 2, this);
+	CVAR_RegisterFunc(CF_actor_setact, "actor_setact", "<Actor id> <Action #>", CVAR_NONE, 2, 2, this);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 Actor::Actor(SagaEngine *vm) : _vm(vm), _initialized(false) {
@@ -73,24 +73,24 @@ Actor::Actor(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	int i;
 
 	// Get actor resource file context
-	result = GAME_GetFileContext(&_actorContext, R_GAME_RESOURCEFILE, 0);
-	if (result != R_SUCCESS) {
+	result = GAME_GetFileContext(&_actorContext, GAME_RESOURCEFILE, 0);
+	if (result != SUCCESS) {
 		error("Actor::Actor(): Couldn't load actor module resource context.");
 	}
 
 	// Create actor lookup table
-	_tbl = (YS_DL_NODE **)malloc(R_ACTORCOUNT * sizeof(*_tbl));
+	_tbl = (YS_DL_NODE **)malloc(ACTORCOUNT * sizeof(*_tbl));
 	if (_tbl == NULL) {
 		error("Actor::Actor(): Memory allocation error.");
 		return;
 	}
 
-	for (i = 0; i < R_ACTORCOUNT; i++) {
+	for (i = 0; i < ACTORCOUNT; i++) {
 		_tbl[i] = NULL;
 	}
 
 	// Create actor alias table
-	_aliasTbl = (int *)malloc(R_ACTORCOUNT * sizeof *_aliasTbl);
+	_aliasTbl = (int *)malloc(ACTORCOUNT * sizeof *_aliasTbl);
 	if (_aliasTbl == NULL) {
 		free(_tbl);
 		error("Actor::Actor(): Memory allocation error.");
@@ -98,7 +98,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	}
 
 	// Initialize alias table so each index contains itself
-	for (i = 0; i < R_ACTORCOUNT; i++) {
+	for (i = 0; i < ACTORCOUNT; i++) {
 		_aliasTbl[i] = i;
 	}
 
@@ -121,21 +121,21 @@ Actor::~Actor() {
 
 int Actor::direct(int msec) {
 	YS_DL_NODE *walk_p;
-	R_ACTOR *actor;
+	ACTOR *actor;
 
 	YS_DL_NODE *a_inode;
-	R_ACTORINTENT *a_intent;
+	ACTORINTENT *a_intent;
 
 	int o_idx;
 	int action_tdelta;
 
 	// Walk down the actor list and direct each actor
 	for (walk_p = ys_dll_head(_list); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
-		actor = (R_ACTOR *)ys_dll_get_data(walk_p);
+		actor = (ACTOR *)ys_dll_get_data(walk_p);
 		// Process the actor intent list
 		a_inode = ys_dll_head(actor->a_intentlist);
 		if (a_inode != NULL) {
-			a_intent = (R_ACTORINTENT *)ys_dll_get_data(a_inode);
+			a_intent = (ACTORINTENT *)ys_dll_get_data(a_inode);
 			switch (a_intent->a_itype) {
 			case INTENT_NONE:
 				// Actor doesn't really feel like doing anything at all
@@ -143,16 +143,16 @@ int Actor::direct(int msec) {
 			case INTENT_PATH:
 				// Actor intends to go somewhere. Well good for him
 				{
-					R_WALKINTENT *a_walkint;
-					a_walkint = (R_WALKINTENT *)a_intent->a_data;
+				 WALKINTENT *a_walkint;
+					a_walkint = (WALKINTENT *)a_intent->a_data;
 					handleWalkIntent(actor, a_walkint, &a_intent->a_idone, msec);
 				}
 				break;
 			case INTENT_SPEAK:
 				// Actor wants to blab
 				{
-					R_SPEAKINTENT *a_speakint;
-					a_speakint = (R_SPEAKINTENT *)a_intent->a_data;
+				 SPEAKINTENT *a_speakint;
+					a_speakint = (SPEAKINTENT *)a_intent->a_data;
 					handleSpeakIntent(actor, a_speakint, &a_intent->a_idone, msec);
 				}
 				break;
@@ -198,31 +198,31 @@ int Actor::direct(int msec) {
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Actor::drawList() {
 	YS_DL_NODE *walk_p;
-	R_ACTOR *actor;
+	ACTOR *actor;
 
 	YS_DL_NODE *a_inode;
-	R_ACTORINTENT *a_intent;
-	R_SPEAKINTENT *a_speakint;
+	ACTORINTENT *a_intent;
+	SPEAKINTENT *a_speakint;
 
 	YS_DL_NODE *a_dnode;
-	R_ACTORDIALOGUE *a_dialogue;
+	ACTORDIALOGUE *a_dialogue;
 
 	int o_idx; //Orientation index
 	int sprite_num;
 
 	int diag_x, diag_y; // dialog coordinates
 
-	R_SURFACE *back_buf;
+	SURFACE *back_buf;
 
 	back_buf = _vm->_gfx->getBackBuffer();
 
 	for (walk_p = ys_dll_head(_list); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
-		actor = (R_ACTOR *)ys_dll_get_data(walk_p);
+		actor = (ACTOR *)ys_dll_get_data(walk_p);
 		o_idx = ActorOrientationLUT[actor->orient];
 		sprite_num = actor->act_tbl[actor->action].dir[o_idx].frame_index;
 		sprite_num += actor->action_frame;
@@ -232,12 +232,12 @@ int Actor::drawList() {
 		// displaying his dialogue 
 		a_inode = ys_dll_head(actor->a_intentlist);
 		if (a_inode != NULL) {
-			a_intent = (R_ACTORINTENT *)ys_dll_get_data(a_inode);
+			a_intent = (ACTORINTENT *)ys_dll_get_data(a_inode);
 			if (a_intent->a_itype == INTENT_SPEAK) {
-				a_speakint = (R_SPEAKINTENT *)a_intent->a_data;
+				a_speakint = (SPEAKINTENT *)a_intent->a_data;
 				a_dnode = ys_dll_head(a_speakint->si_diaglist);
 				if (a_dnode != NULL) {
-					a_dialogue = (R_ACTORDIALOGUE *)ys_dll_get_data(a_dnode);
+					a_dialogue = (ACTORDIALOGUE *)ys_dll_get_data(a_dnode);
 					diag_x = actor->s_pt.x;
 					diag_y = actor->s_pt.y;
 					diag_y -= ACTOR_DIALOGUE_HEIGHT;
@@ -248,7 +248,7 @@ int Actor::drawList() {
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Called if the user wishes to skip a line of dialogue (spacebar in the 
@@ -257,32 +257,32 @@ int Actor::drawList() {
 
 int Actor::skipDialogue() {
 	YS_DL_NODE *walk_p;
-	R_ACTOR *actor;
+	ACTOR *actor;
 
 	YS_DL_NODE *a_inode;
-	R_ACTORINTENT *a_intent;
-	R_SPEAKINTENT *a_speakint;
+	ACTORINTENT *a_intent;
+	SPEAKINTENT *a_speakint;
 
 	YS_DL_NODE *a_dnode;
-	R_ACTORDIALOGUE *a_dialogue;
+	ACTORDIALOGUE *a_dialogue;
 
 	if (!_initialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	for (walk_p = ys_dll_head(_list); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
-		actor = (R_ACTOR *)ys_dll_get_data(walk_p);
+		actor = (ACTOR *)ys_dll_get_data(walk_p);
 		// Check the actor's current intent for a speak intent
 		a_inode = ys_dll_head(actor->a_intentlist);
 		if (a_inode != NULL) {
-			a_intent = (R_ACTORINTENT *)ys_dll_get_data(a_inode);
+			a_intent = (ACTORINTENT *)ys_dll_get_data(a_inode);
 			if (a_intent->a_itype == INTENT_SPEAK) {
 				// Okay, found a speak intent. Remove one dialogue entry 
 				// from it, releasing any semaphore */
-				a_speakint = (R_SPEAKINTENT *)a_intent->a_data;
+				a_speakint = (SPEAKINTENT *)a_intent->a_data;
 				a_dnode = ys_dll_head(a_speakint->si_diaglist);
 				if (a_dnode != NULL) {
-					a_dialogue = (R_ACTORDIALOGUE *)ys_dll_get_data(a_dnode);
+					a_dialogue = (ACTORDIALOGUE *)ys_dll_get_data(a_dnode);
 					if (a_dialogue->d_sem != NULL) {
 						_vm->_script->SThreadReleaseSem(a_dialogue->d_sem);
 					}
@@ -294,11 +294,11 @@ int Actor::skipDialogue() {
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Actor::create(int actor_id, int x, int y) {
-	R_ACTOR actor;
+	ACTOR actor;
 
 	if (actor_id == 1) {
 		actor_id = 0;
@@ -310,29 +310,29 @@ int Actor::create(int actor_id, int x, int y) {
 	actor.a_pt.x = x;
 	actor.a_pt.y = y;
 
-	if (addActor(&actor) != R_SUCCESS) {
+	if (addActor(&actor) != SUCCESS) {
 
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Actor::addActor(R_ACTOR * actor) {
+int Actor::addActor(ACTOR * actor) {
 	YS_DL_NODE *new_node;
 	int last_frame;
 	int i;
 
 	if (!_initialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	if ((actor->id < 0) || (actor->id >= R_ACTORCOUNT)) {
-		return R_FAILURE;
+	if ((actor->id < 0) || (actor->id >= ACTORCOUNT)) {
+		return FAILURE;
 	}
 
 	if (_tbl[actor->id] != NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	AtoS(&actor->s_pt, &actor->a_pt);
@@ -344,15 +344,15 @@ int Actor::addActor(R_ACTOR * actor) {
 
 	loadActorSpriteIndex(actor, actor->si_rn, &last_frame);
 
-	if (_vm->_sprite->loadList(actor->sl_rn, &actor->sl_p) != R_SUCCESS) {
-		return R_FAILURE;
+	if (_vm->_sprite->loadList(actor->sl_rn, &actor->sl_p) != SUCCESS) {
+		return FAILURE;
 	}
 
 	if (last_frame >= _vm->_sprite->getListLen(actor->sl_p)) {
 		debug(0, "Appending to sprite list %d.", actor->sl_rn);
 		if (_vm->_sprite->appendList(actor->sl_rn + 1,
-			actor->sl_p) != R_SUCCESS) {
-			return R_FAILURE;
+			actor->sl_p) != SUCCESS) {
+			return FAILURE;
 		}
 	}
 
@@ -370,16 +370,16 @@ int Actor::addActor(R_ACTOR * actor) {
 	new_node = ys_dll_insert(_list, actor, sizeof *actor, zCompare);
 
 	if (new_node == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	actor = (R_ACTOR *)ys_dll_get_data(new_node);
+	actor = (ACTOR *)ys_dll_get_data(new_node);
 	actor->node = new_node;
 
 	_tbl[i] = new_node;
 	_count++;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Actor::getActorIndex(uint16 actor_id) {
@@ -414,15 +414,15 @@ int Actor::actorExists(uint16 actor_id) {
 	return 1;
 }
 
-int Actor::speak(int index, const char *d_string, uint16 d_voice_rn, R_SEMAPHORE *sem) {
+int Actor::speak(int index, const char *d_string, uint16 d_voice_rn, SEMAPHORE *sem) {
 	YS_DL_NODE *node;
-	R_ACTOR *actor;
+	ACTOR *actor;
 	YS_DL_NODE *a_inode;
-	R_ACTORINTENT *a_intent_p = NULL;
-	R_SPEAKINTENT *a_speakint;
-	R_ACTORINTENT a_intent;
+	ACTORINTENT *a_intent_p = NULL;
+	SPEAKINTENT *a_speakint;
+	ACTORINTENT a_intent;
 	int use_existing_ai = 0;
-	R_ACTORDIALOGUE a_dialogue;
+	ACTORDIALOGUE a_dialogue;
 
 	a_dialogue.d_string = d_string;
 	a_dialogue.d_voice_rn = d_voice_rn;
@@ -432,10 +432,10 @@ int Actor::speak(int index, const char *d_string, uint16 d_voice_rn, R_SEMAPHORE
 
 	node = _tbl[index];
 	if (node == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	actor = (R_ACTOR *)ys_dll_get_data(node);
+	actor = (ACTOR *)ys_dll_get_data(node);
 
 	// If actor's last registered intent is to speak, we can queue the
 	// requested dialogue on that intent context; so examine the last
@@ -443,7 +443,7 @@ int Actor::speak(int index, const char *d_string, uint16 d_voice_rn, R_SEMAPHORE
 
 	a_inode = ys_dll_tail(actor->a_intentlist);
 	if (a_inode != NULL) {
-		a_intent_p = (R_ACTORINTENT *)ys_dll_get_data(a_inode);
+		a_intent_p = (ACTORINTENT *)ys_dll_get_data(a_inode);
 		if (a_intent_p->a_itype == INTENT_SPEAK) {
 			use_existing_ai = 1;
 		}
@@ -451,7 +451,7 @@ int Actor::speak(int index, const char *d_string, uint16 d_voice_rn, R_SEMAPHORE
 
 	if (use_existing_ai) {
 		// Store the current dialogue off the existing actor intent
-		a_speakint = (R_SPEAKINTENT *)a_intent_p->a_data;
+		a_speakint = (SPEAKINTENT *)a_intent_p->a_data;
 		ys_dll_add_tail(a_speakint->si_diaglist, &a_dialogue, sizeof a_dialogue);
 	} else {
 		// Create a new actor intent
@@ -459,9 +459,9 @@ int Actor::speak(int index, const char *d_string, uint16 d_voice_rn, R_SEMAPHORE
 		a_intent.a_idone = 0;
 		a_intent.a_iflags = 0;
 
-		a_speakint = (R_SPEAKINTENT *)malloc(sizeof *a_speakint);
+		a_speakint = (SPEAKINTENT *)malloc(sizeof *a_speakint);
 		if (a_speakint == NULL) {
-			return R_FAILURE;
+			return FAILURE;
 		}
 
 		a_speakint->si_init = 0;
@@ -477,14 +477,14 @@ int Actor::speak(int index, const char *d_string, uint16 d_voice_rn, R_SEMAPHORE
 		_vm->_script->SThreadHoldSem(sem);
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Actor::handleSpeakIntent(R_ACTOR *actor, R_SPEAKINTENT *a_speakint, int *complete_p, int msec) {
+int Actor::handleSpeakIntent(ACTOR *actor, SPEAKINTENT *a_speakint, int *complete_p, int msec) {
 	YS_DL_NODE *a_dnode;
 	YS_DL_NODE *a_dnext;
-	R_ACTORDIALOGUE *a_dialogue;
-	R_ACTORDIALOGUE *a_dialogue2;
+	ACTORDIALOGUE *a_dialogue;
+	ACTORDIALOGUE *a_dialogue2;
 	long carry_time;
 	int intent_complete = 0;
 
@@ -500,7 +500,7 @@ int Actor::handleSpeakIntent(R_ACTOR *actor, R_SPEAKINTENT *a_speakint, int *com
 	// Process actor dialogue list
 	a_dnode = ys_dll_head(a_speakint->si_diaglist);
 	if (a_dnode != NULL) {
-		a_dialogue = (R_ACTORDIALOGUE *)ys_dll_get_data(a_dnode);
+		a_dialogue = (ACTORDIALOGUE *)ys_dll_get_data(a_dnode);
 		if (!a_dialogue->d_playing) {
 			// Dialogue voice hasn't played yet - play it now
 			_vm->_sndRes->playVoice(a_dialogue->d_voice_rn);
@@ -523,7 +523,7 @@ int Actor::handleSpeakIntent(R_ACTOR *actor, R_SPEAKINTENT *a_speakint, int *com
 
 			a_dnext = ys_dll_next(a_dnode);
 			if (a_dnext != NULL) {
-				a_dialogue2 = (R_ACTORDIALOGUE *)ys_dll_get_data(a_dnode);
+				a_dialogue2 = (ACTORDIALOGUE *)ys_dll_get_data(a_dnode);
 				a_dialogue2->d_time -= carry_time;
 			}
 
@@ -545,7 +545,7 @@ int Actor::handleSpeakIntent(R_ACTOR *actor, R_SPEAKINTENT *a_speakint, int *com
 		*complete_p = 1;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Actor::getSpeechTime(const char *d_string, uint16 d_voice_rn) {
@@ -561,41 +561,41 @@ int Actor::getSpeechTime(const char *d_string, uint16 d_voice_rn) {
 }
 
 int Actor::setOrientation(int index, int orient) {
-	R_ACTOR *actor;
+	ACTOR *actor;
 
 	if (!_initialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if ((orient < 0) || (orient > 7)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	actor = lookupActor(index);
 	if (actor == NULL) {
 
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	actor->orient = orient;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Actor::setAction(int index, int action_n, uint16 action_flags) {
-	R_ACTOR *actor;
+	ACTOR *actor;
 
 	if (!_initialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	actor = lookupActor(index);
 	if (actor == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if ((action_n < 0) || (action_n >= actor->action_ct)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	actor->action = action_n;
@@ -603,40 +603,40 @@ int Actor::setAction(int index, int action_n, uint16 action_flags) {
 	actor->action_frame = 0;
 	actor->action_time = 0;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Actor::setDefaultAction(int index, int action_n, uint16 action_flags) {
-	R_ACTOR *actor;
+	ACTOR *actor;
 
 	if (!_initialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	actor = lookupActor(index);
 	if (actor == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if ((action_n < 0) || (action_n >= actor->action_ct)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	actor->def_action = action_n;
 	actor->def_action_flags = action_flags;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-R_ACTOR *Actor::lookupActor(int index) {
+ACTOR *Actor::lookupActor(int index) {
 	YS_DL_NODE *node;
-	R_ACTOR *actor;
+	ACTOR *actor;
 
 	if (!_initialized) {
 		return NULL;
 	}
 
-	if ((index < 0) || (index >= R_ACTORCOUNT)) {
+	if ((index < 0) || (index >= ACTORCOUNT)) {
 		return NULL;
 	}
 
@@ -645,36 +645,36 @@ R_ACTOR *Actor::lookupActor(int index) {
 	}
 
 	node = _tbl[index];
-	actor = (R_ACTOR *)ys_dll_get_data(node);
+	actor = (ACTOR *)ys_dll_get_data(node);
 
 	return actor;
 }
 
-int Actor::loadActorSpriteIndex(R_ACTOR * actor, int si_rn, int *last_frame_p) {
+int Actor::loadActorSpriteIndex(ACTOR * actor, int si_rn, int *last_frame_p) {
 	byte *res_p;
 	size_t res_len;
 	int s_action_ct;
-	R_ACTORACTION *action_p;
+	ACTORACTION *action_p;
 	int last_frame;
 	int i, orient;
 	int result;
 
 	result = RSC_LoadResource(_actorContext, si_rn, &res_p, &res_len);
-	if (result != R_SUCCESS) {
+	if (result != SUCCESS) {
 		warning("Couldn't load sprite action index resource");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	s_action_ct = res_len / 16;
 	debug(0, "Sprite resource contains %d sprite actions.", s_action_ct);
-	action_p = (R_ACTORACTION *)malloc(sizeof(R_ACTORACTION) * s_action_ct);
+	action_p = (ACTORACTION *)malloc(sizeof(ACTORACTION) * s_action_ct);
 
 	MemoryReadStream readS(res_p, res_len);
 
 	if (action_p == NULL) {
 		warning("Couldn't allocate memory for sprite actions");
 		RSC_FreeResource(res_p);
-		return R_MEM;
+		return MEM;
 	}
 
 	last_frame = 0;
@@ -699,27 +699,27 @@ int Actor::loadActorSpriteIndex(R_ACTOR * actor, int si_rn, int *last_frame_p) {
 		*last_frame_p = last_frame;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Actor::deleteActor(int index) {
 	YS_DL_NODE *node;
-	R_ACTOR *actor;
+	ACTOR *actor;
 
 	if (!_initialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	if ((index < 0) || (index >= R_ACTORCOUNT)) {
-		return R_FAILURE;
+	if ((index < 0) || (index >= ACTORCOUNT)) {
+		return FAILURE;
 	}
 
 	if (_tbl[index] == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	node = _tbl[index];
-	actor = (R_ACTOR *)ys_dll_get_data(node);
+	actor = (ACTOR *)ys_dll_get_data(node);
 
 	_vm->_sprite->freeSprite(actor->sl_p);
 
@@ -727,33 +727,33 @@ int Actor::deleteActor(int index) {
 
 	_tbl[index] = NULL;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Actor::walkTo(int id, const Point *walk_pt, uint16 flags, R_SEMAPHORE *sem) {
-	R_ACTORINTENT actor_intent;
-	R_WALKINTENT *walk_intent;
-	R_WALKINTENT zero_intent;
+int Actor::walkTo(int id, const Point *walk_pt, uint16 flags, SEMAPHORE *sem) {
+	ACTORINTENT actor_intent;
+	WALKINTENT *walk_intent;
+	WALKINTENT zero_intent;
 	YS_DL_NODE *node;
-	R_ACTOR *actor;
+	ACTOR *actor;
 
 	assert(_initialized);
 	assert(walk_pt != NULL);
 
-	if ((id < 0) || (id >= R_ACTORCOUNT)) {
-		return R_FAILURE;
+	if ((id < 0) || (id >= ACTORCOUNT)) {
+		return FAILURE;
 	}
 
 	if (_tbl[id] == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	node = _tbl[id];
-	actor = (R_ACTOR *)ys_dll_get_data(node);
+	actor = (ACTOR *)ys_dll_get_data(node);
 
-	walk_intent = (R_WALKINTENT *)malloc(sizeof *walk_intent);
+	walk_intent = (WALKINTENT *)malloc(sizeof *walk_intent);
 	if (walk_intent == NULL) {
-		return R_MEM;
+		return MEM;
 	}
 
 	*walk_intent = zero_intent;
@@ -776,11 +776,11 @@ int Actor::walkTo(int id, const Point *walk_pt, uint16 flags, R_SEMAPHORE *sem) 
 		_vm->_script->SThreadHoldSem(sem);
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Actor::setPathNode(R_WALKINTENT *walk_int, Point *src_pt, Point *dst_pt, R_SEMAPHORE *sem) {
-	R_WALKNODE new_node;
+int Actor::setPathNode(WALKINTENT *walk_int, Point *src_pt, Point *dst_pt, SEMAPHORE *sem) {
+	WALKNODE new_node;
 
 	walk_int->wi_active = 1;
 	walk_int->org = *src_pt;
@@ -793,14 +793,14 @@ int Actor::setPathNode(R_WALKINTENT *walk_int, Point *src_pt, Point *dst_pt, R_S
 
 	ys_dll_add_tail(walk_int->nodelist, &new_node, sizeof new_node);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Actor::handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *complete_p, int delta_time) {
+int Actor::handleWalkIntent(ACTOR *actor, WALKINTENT *a_walkint, int *complete_p, int delta_time) {
 	YS_DL_NODE *walk_p;
 	YS_DL_NODE *next_p;
 
-	R_WALKNODE *node_p;
+	WALKNODE *node_p;
 	int dx;
 	int dy;
 
@@ -833,7 +833,7 @@ int Actor::handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *comple
 	walk_p = ys_dll_head(a_walkint->nodelist);
 	next_p = ys_dll_next(walk_p);
 
-	node_p = (R_WALKNODE *)ys_dll_get_data(walk_p);
+	node_p = (WALKNODE *)ys_dll_get_data(walk_p);
 
 	if (node_p->calc_flag == 0) {
 
@@ -855,7 +855,7 @@ int Actor::handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *comple
 			}
 
 			*complete_p = 1;
-			return R_FAILURE;
+			return FAILURE;
 		}
 
 		a_walkint->slope = (float)dy / dx;
@@ -926,14 +926,14 @@ int Actor::handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *comple
 		actor->action_frame = 0;
 		actor->action = ACTION_IDLE;
 
-		endpoint.x = (int)new_a_x / R_ACTOR_LMULT;
-		endpoint.y = (int)new_a_y / R_ACTOR_LMULT;
+		endpoint.x = (int)new_a_x / ACTOR_LMULT;
+		endpoint.y = (int)new_a_y / ACTOR_LMULT;
 		if ((exitNum = _vm->_scene->_actionMap->hitTest(endpoint)) != -1) {
 			if (actor->flags & kProtagonist)
 				_vm->_scene->changeScene(_vm->_scene->_actionMap->getExitScene(exitNum));
 		}
 		*complete_p = 1;
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	actor_x = (int)new_a_x;
@@ -952,21 +952,21 @@ int Actor::handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *comple
 		ys_dll_reorder_down(_list, actor->node, zCompare);
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Actor::move(int index, const Point *move_pt) {
 	YS_DL_NODE *node;
-	R_ACTOR *actor;
+	ACTOR *actor;
 
 	int move_up = 0;
 
 	node = _tbl[index];
 	if (node == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	actor = (R_ACTOR *)ys_dll_get_data(node);
+	actor = (ACTOR *)ys_dll_get_data(node);
 
 	if (move_pt->y < actor->a_pt.y) {
 		move_up = 1;
@@ -984,19 +984,19 @@ int Actor::move(int index, const Point *move_pt) {
 		ys_dll_reorder_down(_list, actor->node, zCompare);
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Actor::moveRelative(int index, const Point *move_pt) {
 	YS_DL_NODE *node;
-	R_ACTOR *actor;
+	ACTOR *actor;
 
 	node = _tbl[index];
 	if (node == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	actor = (R_ACTOR *)ys_dll_get_data(node);
+	actor = (ACTOR *)ys_dll_get_data(node);
 
 	actor->a_pt.x += move_pt->x;
 	actor->a_pt.y += move_pt->y;
@@ -1012,12 +1012,12 @@ int Actor::moveRelative(int index, const Point *move_pt) {
 
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 static int zCompare(const void *elem1, const void *elem2) {
-	const R_ACTOR *actor1 = (const R_ACTOR *) elem1;
-	const R_ACTOR *actor2 = (const R_ACTOR *) elem2;
+	const ACTOR *actor1 = (const ACTOR *) elem1;
+	const ACTOR *actor2 = (const ACTOR *) elem2;
 
 	if (actor1->a_pt.y == actor2->a_pt.y) {
 		return 0;
@@ -1029,21 +1029,21 @@ static int zCompare(const void *elem1, const void *elem2) {
 }
 
 int Actor::AtoS(Point *screen, const Point *actor) {
-	screen->x = (actor->x / R_ACTOR_LMULT);
-	screen->y = (actor->y / R_ACTOR_LMULT);
+	screen->x = (actor->x / ACTOR_LMULT);
+	screen->y = (actor->y / ACTOR_LMULT);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Actor::StoA(Point *actor, const Point screen) {
-	actor->x = (screen.x * R_ACTOR_LMULT);
-	actor->y = (screen.y * R_ACTOR_LMULT);
+	actor->x = (screen.x * ACTOR_LMULT);
+	actor->y = (screen.y * ACTOR_LMULT);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 static void CF_actor_add(int argc, char *argv[], void *refCon) {
-	R_ACTOR actor;
+	ACTOR actor;
 
 	if (argc < 3)
 		return;
@@ -1124,7 +1124,7 @@ static void CF_actor_setact(int argc, char *argv[], void *refCon) {
 	int index = 0;
 	int action_n = 0;
 
-	R_ACTOR *actor;
+	ACTOR *actor;
 
 	if (argc < 2)
 		return;

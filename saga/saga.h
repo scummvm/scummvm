@@ -60,16 +60,16 @@ class PalAnim;
 
 using Common::MemoryReadStream;
 
-#define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
-#define R_MAXPATH 512
+#define PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
+#define MAXPATH 512
 
-struct R_RSCFILE_CONTEXT;
-struct R_SEMAPHORE;
+struct RSCFILE_CONTEXT;
+struct SEMAPHORE;
 
-enum R_ERRORCODE {
-	R_MEM = -2,
-	R_FAILURE = -1,
-	R_SUCCESS = 0
+enum ERRORCODE {
+	MEM = -2,
+	FAILURE = -1,
+	SUCCESS = 0
 };
 
 enum SAGAGameId {
@@ -78,7 +78,7 @@ enum SAGAGameId {
 	GID_IHNM
 };
 
-struct R_CLICKAREA {
+struct CLICKAREA {
 	int n_points;
 	Point *points;
 };
@@ -128,16 +128,16 @@ public:
 	const byte *getImagePal(const byte *image_data, size_t image_size);
 
 public:
-	R_TEXTLIST *textCreateList();
-	void textDestroyList(R_TEXTLIST *textlist);
-	void textClearList(R_TEXTLIST *textlist);
-	int textDrawList(R_TEXTLIST *textlist, R_SURFACE *ds);
-	R_TEXTLIST_ENTRY *textAddEntry(R_TEXTLIST *textlist, R_TEXTLIST_ENTRY *entry);
-	int textDeleteEntry(R_TEXTLIST *textlist, R_TEXTLIST_ENTRY *entry);
-	int textSetDisplay(R_TEXTLIST_ENTRY *entry, int val);
-	int textDraw(int font_id, R_SURFACE *ds, const char *string, int text_x, int text_y, int color,
+	TEXTLIST *textCreateList();
+	void textDestroyList(TEXTLIST *textlist);
+	void textClearList(TEXTLIST *textlist);
+	int textDrawList(TEXTLIST *textlist, SURFACE *ds);
+	TEXTLIST_ENTRY *textAddEntry(TEXTLIST *textlist, TEXTLIST_ENTRY *entry);
+	int textDeleteEntry(TEXTLIST *textlist, TEXTLIST_ENTRY *entry);
+	int textSetDisplay(TEXTLIST_ENTRY *entry, int val);
+	int textDraw(int font_id, SURFACE *ds, const char *string, int text_x, int text_y, int color,
 				  int effect_color, int flags);
-	int textProcessList(R_TEXTLIST *textlist, long ms);
+	int textProcessList(TEXTLIST *textlist, long ms);
 
 	int transitionDissolve(byte *dst_img, int dst_w, int dst_h, int dst_p, 
 			const byte *src_img, int src_w, int src_h, int src_p, int flags, int x, int y, 

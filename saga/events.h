@@ -27,36 +27,36 @@
 #define SAGA_EVENT_H
 
 namespace Saga {
-enum R_EVENT_TYPES {
-	R_ONESHOT_EVENT,
-	R_CONTINUOUS_EVENT,
-	R_INTERVAL_EVENT,
-	R_IMMEDIATE_EVENT
+enum EVENT_TYPES {
+	ONESHOT_EVENT,
+	CONTINUOUS_EVENT,
+	INTERVAL_EVENT,
+	IMMEDIATE_EVENT
 };
 
-enum R_EVENT_FLAGS {
-	R_SIGNALED = 0x8000,
-	R_NODESTROY = 0x4000
+enum EVENT_FLAGS {
+	SIGNALED = 0x8000,
+	NODESTROY = 0x4000
 };
 
-enum R_EVENT_CODES {
-	R_BG_EVENT = 1,
-	R_ANIM_EVENT,
-	R_MUSIC_EVENT,
-	R_VOICE_EVENT,
-	R_SOUND_EVENT,
-	R_SCENE_EVENT,
-	R_TEXT_EVENT,
-	R_PAL_EVENT,
-	R_PALANIM_EVENT,
-	R_TRANSITION_EVENT,
-	R_INTERFACE_EVENT,
-	R_CONSOLE_EVENT,
-	R_ACTOR_EVENT,
-	R_SCRIPT_EVENT
+enum EVENT_CODES {
+	BG_EVENT = 1,
+	ANIM_EVENT,
+	MUSIC_EVENT,
+	VOICE_EVENT,
+	SOUND_EVENT,
+	SCENE_EVENT,
+	TEXT_EVENT,
+	PAL_EVENT,
+	PALANIM_EVENT,
+	TRANSITION_EVENT,
+	INTERFACE_EVENT,
+	CONSOLE_EVENT,
+	ACTOEVENT,
+	SCRIPT_EVENT
 };
 
-enum R_EVENT_OPS {
+enum EVENT_OPS {
 	// INSTANTANEOUS events
 	// BG events
 	EVENT_DISPLAY = 1,
@@ -93,12 +93,12 @@ enum R_EVENT_OPS {
 	EVENT_DISSOLVE_BGMASK = 2
 };
 
-enum R_EVENT_PARAMS {
+enum EVENT_PARAMS {
 	NO_SET_PALETTE,
 	SET_PALETTE
 };
 
-struct R_EVENT {
+struct EVENT {
 	unsigned int type;
 	unsigned int code; // Event operation category & flags 
 	int op;            // Event operation
@@ -112,18 +112,18 @@ struct R_EVENT {
 	long duration;     // Duration of event
 	long d_reserved;
 
-	R_EVENT *chain;    // Event chain (For consecutive events)
-	R_EVENT() { memset(this, 0, sizeof(*this)); }
+	EVENT *chain;    // Event chain (For consecutive events)
+	EVENT() { memset(this, 0, sizeof(*this)); }
 };
 
-#define R_EVENT_WARNINGCOUNT 1000
-#define R_EVENT_MASK 0x00FF
+#define EVENT_WARNINGCOUNT 1000
+#define EVENT_MASK 0x00FF
 
-enum R_EVENT_STATUSCODE {
-	R_EVENT_INVALIDCODE = 0,
-	R_EVENT_DELETE,
-	R_EVENT_CONTINUE,
-	R_EVENT_BREAK
+enum EVENT_STATUSCODE {
+	EVENT_INVALIDCODE = 0,
+	EVENT_DELETE,
+	EVENT_CONTINUE,
+	EVENT_BREAK
 };
 
 class Events {
@@ -133,16 +133,16 @@ class Events {
 	int handleEvents(long msec);
 	int clearList();
 	int freeList();
-	R_EVENT *queue(R_EVENT *event);
-	R_EVENT *chain(R_EVENT *eead_event, R_EVENT *add_event);
+	EVENT *queue(EVENT *event);
+	EVENT *chain(EVENT *eead_event, EVENT *add_event);
 
  private:
-	int handleContinuous(R_EVENT * event);
-	int handleOneShot(R_EVENT * event);
-	int handleInterval(R_EVENT * event);
-	int handleImmediate(R_EVENT *event);
+	int handleContinuous(EVENT * event);
+	int handleOneShot(EVENT * event);
+	int handleInterval(EVENT * event);
+	int handleImmediate(EVENT *event);
 	int processEventTime(long msec);
-	int initializeEvent(R_EVENT * event);
+	int initializeEvent(EVENT * event);
 
  private:
 	SagaEngine *_vm;

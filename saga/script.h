@@ -31,27 +31,27 @@
 
 namespace Saga {
 
-#define R_SCRIPT_DATABUF_NUM 5
-#define R_SCRIPT_DATABUF_LEN 1024
+#define SCRIPT_DATABUF_NUM 5
+#define SCRIPT_DATABUF_LEN 1024
 
-#define R_S_LUT_ENTRYLEN_ITECD 22
-#define R_S_LUT_ENTRYLEN_ITEDISK 16
+#define S_LUT_ENTRYLEN_ITECD 22
+#define S_LUT_ENTRYLEN_ITEDISK 16
 
-#define R_SCRIPT_TBLENTRY_LEN 4
+#define SCRIPT_TBLENTRY_LEN 4
 
-#define R_SCRIPT_MAX 5000
-#define R_SCRIPTLIST_HDR 12
-#define R_SCRIPT_STRINGLIMIT 255
-#define R_TAB "    "
+#define SCRIPT_MAX 5000
+#define SCRIPTLIST_HDR 12
+#define SCRIPT_STRINGLIMIT 255
+#define TAB "    "
 
 #define S_ERROR_PREFIX "SError: "
 #define S_WARN_PREFIX "SWarning: "
 
-#define R_SFUNC_NUM 78
+#define SFUNC_NUM 78
 
 typedef unsigned int SDataWord_T;
 
-enum R_SCRIPT_VERBS {
+enum SCRIPT_VERBS {
 	S_VERB_WALKTO = 0,
 	S_VERB_LOOKAT = 2,
 	S_VERB_PICKUP = 1,
@@ -64,7 +64,7 @@ enum R_SCRIPT_VERBS {
 
 #define STHREAD_TIMESLICE 8
 
-struct R_SEMAPHORE {
+struct SEMAPHORE {
 	int hold_count;
 };
 
@@ -94,7 +94,7 @@ enum {
 	kTWaitPause
 };
 
-struct R_SCRIPT_THREAD {
+struct SCRIPT_THREAD {
 	int flags;
 	int waitType;
 
@@ -103,7 +103,7 @@ struct R_SCRIPT_THREAD {
 	unsigned long ep_offset; // Entrypoint offset
 	unsigned long i_offset; // Instruction offset
 
-	R_SEMAPHORE sem; // FIXME: no equivalent. should be replaced with flags
+	SEMAPHORE sem; // FIXME: no equivalent. should be replaced with flags
 
 	// The scripts are allowed to access the stack like any other memory
 	// area. It's therefore probably quite important that our stacks work
@@ -137,49 +137,49 @@ struct R_SCRIPT_THREAD {
 	}
 };
 
-struct R_PROC_TBLENTRY {
+struct PROC_TBLENTRY {
 	size_t name_offset;
 	size_t offset;
 };
 
-struct R_SCRIPT_BYTECODE {
+struct SCRIPT_BYTECODE {
 	unsigned char *bytecode_p;
 	size_t bytecode_len;
 	size_t ep_tbl_offset;
 	unsigned long n_entrypoints;
-	R_PROC_TBLENTRY *entrypoints;
+	PROC_TBLENTRY *entrypoints;
 };
 
-struct R_DIALOGUE_LIST {
+struct DIALOGUE_LIST {
 	unsigned int n_dialogue;
 	const char **str;
 	size_t *str_off;
 };
 
-struct R_VOICE_LUT {
+struct VOICE_LUT {
 	int n_voices;
 	int *voices;
 };
 
-struct R_SCRIPTDATA {
+struct SCRIPTDATA {
 	int loaded;
-	R_SCRIPT_BYTECODE *bytecode;
-	R_DIALOGUE_LIST *diag;
-	R_VOICE_LUT *voice;
+	SCRIPT_BYTECODE *bytecode;
+	DIALOGUE_LIST *diag;
+	VOICE_LUT *voice;
 };
 
-struct R_SCRIPT_LUT_ENTRY {
+struct SCRIPT_LUT_ENTRY {
 	int script_rn;
 	int diag_list_rn;
 	int voice_lut_rn;
 };
 
-struct R_SCRIPT_DATABUF {
+struct SCRIPT_DATABUF {
 	SDataWord_T *data;
 	int len;
 };
 
-#define R_SCRIPTFUNC_PARAMS R_SCRIPT_THREAD *thread
+#define SCRIPTFUNC_PARAMS SCRIPT_THREAD *thread
 
 class Script {
 public:
@@ -189,16 +189,16 @@ public:
 	int reg(void);
 	int loadScript(int scriptNum);
 	int freeScript();
-	R_SCRIPT_BYTECODE *loadBytecode(byte *bytecode_p, size_t bytecode_len);
-	R_DIALOGUE_LIST *loadDialogue(const byte *dialogue_p, size_t dialogue_len);
-	R_VOICE_LUT *loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, R_SCRIPTDATA *script);
-	int disassemble(R_SCRIPT_BYTECODE *script_list, R_DIALOGUE_LIST *diag_list);
+	SCRIPT_BYTECODE *loadBytecode(byte *bytecode_p, size_t bytecode_len);
+	DIALOGUE_LIST *loadDialogue(const byte *dialogue_p, size_t dialogue_len);
+	VOICE_LUT *loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, SCRIPTDATA *script);
+	int disassemble(SCRIPT_BYTECODE *script_list, DIALOGUE_LIST *diag_list);
 
 	bool isInitialized() const { return _initialized;  }
 	bool isVoiceLUTPresent() const { return _voiceLUTPresent; }
-	R_SCRIPTDATA *currentScript() { return _currentScript; }
-	void setBuffer(int idx, R_SCRIPT_DATABUF *ptr) { _dataBuf[idx] = ptr; }
-	R_SCRIPT_DATABUF *dataBuffer(int idx) { return _dataBuf[idx]; }
+	SCRIPTDATA *currentScript() { return _currentScript; }
+	void setBuffer(int idx, SCRIPT_DATABUF *ptr) { _dataBuf[idx] = ptr; }
+	SCRIPT_DATABUF *dataBuffer(int idx) { return _dataBuf[idx]; }
 	YS_DL_LIST *threadList() { return _threadList; }
 
 	void scriptInfo(int argc, char *argv[]);
@@ -207,12 +207,12 @@ public:
 protected:
 	bool _initialized;
 	bool _voiceLUTPresent;
-	R_RSCFILE_CONTEXT *_scriptContext;
-	R_SCRIPT_LUT_ENTRY *_scriptLUT;
+	RSCFILE_CONTEXT *_scriptContext;
+	SCRIPT_LUT_ENTRY *_scriptLUT;
 	int _scriptLUTMax;
 	uint16 _scriptLUTEntryLen;
-	R_SCRIPTDATA *_currentScript;
-	R_SCRIPT_DATABUF *_dataBuf[R_SCRIPT_DATABUF_NUM];
+	SCRIPTDATA *_currentScript;
+	SCRIPT_DATABUF *_dataBuf[SCRIPT_DATABUF_NUM];
 	YS_DL_LIST *_threadList;
 
 	bool _skipSpeeches;
@@ -221,86 +221,86 @@ protected:
 public:
 	int _dbg_singlestep;
 	int _dbg_dostep;
-	R_SCRIPT_THREAD *_dbg_thread;
-	R_TEXTLIST_ENTRY *_dbg_txtentry;
+	SCRIPT_THREAD *_dbg_thread;
+	TEXTLIST_ENTRY *_dbg_txtentry;
 
 public:
-	R_SCRIPT_THREAD *SThreadCreate();
-	int SThreadExecute(R_SCRIPT_THREAD *thread, int ep_num);
+	SCRIPT_THREAD *SThreadCreate();
+	int SThreadExecute(SCRIPT_THREAD *thread, int ep_num);
 	int SThreadExecThreads(uint msec);
-	int SThreadHoldSem(R_SEMAPHORE *sem);
-	int SThreadReleaseSem(R_SEMAPHORE *sem);
+	int SThreadHoldSem(SEMAPHORE *sem);
+	int SThreadReleaseSem(SEMAPHORE *sem);
 	int SThreadDebugStep();
 	void SThreadCompleteThread(void);
-	int SThreadDestroy(R_SCRIPT_THREAD *thread);
+	int SThreadDestroy(SCRIPT_THREAD *thread);
 	void SThreadAbortAll(void);
 
 private:
-	void setFramePtr(R_SCRIPT_THREAD *thread, int newPtr);
-	unsigned char *SThreadGetReadPtr(R_SCRIPT_THREAD *thread);
+	void setFramePtr(SCRIPT_THREAD *thread, int newPtr);
+	unsigned char *SThreadGetReadPtr(SCRIPT_THREAD *thread);
 	unsigned long SThreadGetReadOffset(const byte *read_p);
-	size_t SThreadGetReadLen(R_SCRIPT_THREAD *thread);
-	int SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit);
-	int SThreadSetEntrypoint(R_SCRIPT_THREAD *thread, int ep_num);
+	size_t SThreadGetReadLen(SCRIPT_THREAD *thread);
+	int SThreadRun(SCRIPT_THREAD *thread, int instr_limit);
+	int SThreadSetEntrypoint(SCRIPT_THREAD *thread, int ep_num);
 
 private:
-	typedef int (Script::*SFunc_T)(R_SCRIPTFUNC_PARAMS);
+	typedef int (Script::*SFunc_T)(SCRIPTFUNC_PARAMS);
 
-	struct R_SFUNC_ENTRY {
+	struct SFUNC_ENTRY {
 		int sfunc_num;
 		int sfunc_argc;
 		SFunc_T sfunc_fp;
 	};
 
-	const R_SFUNC_ENTRY *_SFuncList;
+	const SFUNC_ENTRY *_SFuncList;
 
 	void setupScriptFuncList(void);
-	int SDebugPrintInstr(R_SCRIPT_THREAD *thread);
+	int SDebugPrintInstr(SCRIPT_THREAD *thread);
 
-	int SF_sleep(R_SCRIPTFUNC_PARAMS);
-	int SF_takeObject(R_SCRIPTFUNC_PARAMS);
-	int SF_objectIsCarried(R_SCRIPTFUNC_PARAMS);
-	int SF_setStatusText(R_SCRIPTFUNC_PARAMS);
-	int SF_commandMode(R_SCRIPTFUNC_PARAMS);
-	int SF_actorWalkTo(R_SCRIPTFUNC_PARAMS);
-	int SF_setFacing(R_SCRIPTFUNC_PARAMS);
-	int SF_startBgdAnim(R_SCRIPTFUNC_PARAMS);
-	int SF_freezeInterface(R_SCRIPTFUNC_PARAMS);
-	int SF_dialogMode(R_SCRIPTFUNC_PARAMS);
-	int SF_startAnim(R_SCRIPTFUNC_PARAMS);
-	int SF_stopBgdAnim(R_SCRIPTFUNC_PARAMS);
-	int SF_actorWalkToAsync(R_SCRIPTFUNC_PARAMS);
-	int SF_moveTo(R_SCRIPTFUNC_PARAMS);
-	int SF_actorWalk(R_SCRIPTFUNC_PARAMS);
-	int SF_cycleActorFrames(R_SCRIPTFUNC_PARAMS);
-	int SF_setFrame(R_SCRIPTFUNC_PARAMS);
-	int SF_setRightPortrait(R_SCRIPTFUNC_PARAMS);
-	int SF_setLeftPortrait(R_SCRIPTFUNC_PARAMS);
-	int SF_linkAnim(R_SCRIPTFUNC_PARAMS);
-	int SF_placeActor(R_SCRIPTFUNC_PARAMS);
-	int SF_checkUserInterrupt(R_SCRIPTFUNC_PARAMS);
-	int SF_moveRelative(R_SCRIPTFUNC_PARAMS);
-	int SF_doAction(R_SCRIPTFUNC_PARAMS);
-	int SF_faceTowards(R_SCRIPTFUNC_PARAMS);
-	int SF_setFollower(R_SCRIPTFUNC_PARAMS);
-	int SF_setBgdAnimSpeed(R_SCRIPTFUNC_PARAMS);
-	int SF_centerActor(R_SCRIPTFUNC_PARAMS);
-	int SF_setActorState(R_SCRIPTFUNC_PARAMS);
-	int SF_finishBgdAnim(R_SCRIPTFUNC_PARAMS);
-	int SF_swapActors(R_SCRIPTFUNC_PARAMS);
-	int SF_scriptSpecialWalk(R_SCRIPTFUNC_PARAMS);
-	int SF_walkRelative(R_SCRIPTFUNC_PARAMS);
-	int SF_throwActor(R_SCRIPTFUNC_PARAMS);
-	int SF_waitWalk(R_SCRIPTFUNC_PARAMS);
-	int SF_changeActorScene(R_SCRIPTFUNC_PARAMS);
-	int SF_climb(R_SCRIPTFUNC_PARAMS);
-	int SF_setActorZ(R_SCRIPTFUNC_PARAMS);
-	int SF_getActorX(R_SCRIPTFUNC_PARAMS);
-	int SF_getActorY(R_SCRIPTFUNC_PARAMS);
-	int SF_playMusic(R_SCRIPTFUNC_PARAMS);
-	int SF_enableEscape(R_SCRIPTFUNC_PARAMS);
-	int SF_playSound(R_SCRIPTFUNC_PARAMS);
-	int SF_gotoScene(R_SCRIPTFUNC_PARAMS);
+	int SF_sleep(SCRIPTFUNC_PARAMS);
+	int SF_takeObject(SCRIPTFUNC_PARAMS);
+	int SF_objectIsCarried(SCRIPTFUNC_PARAMS);
+	int SF_setStatusText(SCRIPTFUNC_PARAMS);
+	int SF_commandMode(SCRIPTFUNC_PARAMS);
+	int SF_actorWalkTo(SCRIPTFUNC_PARAMS);
+	int SF_setFacing(SCRIPTFUNC_PARAMS);
+	int SF_startBgdAnim(SCRIPTFUNC_PARAMS);
+	int SF_freezeInterface(SCRIPTFUNC_PARAMS);
+	int SF_dialogMode(SCRIPTFUNC_PARAMS);
+	int SF_startAnim(SCRIPTFUNC_PARAMS);
+	int SF_stopBgdAnim(SCRIPTFUNC_PARAMS);
+	int SF_actorWalkToAsync(SCRIPTFUNC_PARAMS);
+	int SF_moveTo(SCRIPTFUNC_PARAMS);
+	int SF_actorWalk(SCRIPTFUNC_PARAMS);
+	int SF_cycleActorFrames(SCRIPTFUNC_PARAMS);
+	int SF_setFrame(SCRIPTFUNC_PARAMS);
+	int SF_setRightPortrait(SCRIPTFUNC_PARAMS);
+	int SF_setLeftPortrait(SCRIPTFUNC_PARAMS);
+	int SF_linkAnim(SCRIPTFUNC_PARAMS);
+	int SF_placeActor(SCRIPTFUNC_PARAMS);
+	int SF_checkUserInterrupt(SCRIPTFUNC_PARAMS);
+	int SF_moveRelative(SCRIPTFUNC_PARAMS);
+	int SF_doAction(SCRIPTFUNC_PARAMS);
+	int SF_faceTowards(SCRIPTFUNC_PARAMS);
+	int SF_setFollower(SCRIPTFUNC_PARAMS);
+	int SF_setBgdAnimSpeed(SCRIPTFUNC_PARAMS);
+	int SF_centerActor(SCRIPTFUNC_PARAMS);
+	int SF_setActorState(SCRIPTFUNC_PARAMS);
+	int SF_finishBgdAnim(SCRIPTFUNC_PARAMS);
+	int SF_swapActors(SCRIPTFUNC_PARAMS);
+	int SF_scriptSpecialWalk(SCRIPTFUNC_PARAMS);
+	int SF_walkRelative(SCRIPTFUNC_PARAMS);
+	int SF_throwActor(SCRIPTFUNC_PARAMS);
+	int SF_waitWalk(SCRIPTFUNC_PARAMS);
+	int SF_changeActorScene(SCRIPTFUNC_PARAMS);
+	int SF_climb(SCRIPTFUNC_PARAMS);
+	int SF_setActorZ(SCRIPTFUNC_PARAMS);
+	int SF_getActorX(SCRIPTFUNC_PARAMS);
+	int SF_getActorY(SCRIPTFUNC_PARAMS);
+	int SF_playMusic(SCRIPTFUNC_PARAMS);
+	int SF_enableEscape(SCRIPTFUNC_PARAMS);
+	int SF_playSound(SCRIPTFUNC_PARAMS);
+	int SF_gotoScene(SCRIPTFUNC_PARAMS);
 };
 
 } // End of namespace Saga

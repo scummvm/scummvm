@@ -30,7 +30,7 @@
 
 namespace Saga {
 
-#define R_PAUSEGAME_MSG "PAWS GAME"
+#define PAUSEGAME_MSG "PAWS GAME"
 enum RENDER_FLAGS {
 	RF_SHOW_FPS = 0x01,
 	RF_PALETTE_TEST = 0x02,
@@ -40,13 +40,13 @@ enum RENDER_FLAGS {
 	RF_GAMEPAUSE = 0x20
 };
 
-struct R_BUFFER_INFO {
-	byte *r_bg_buf;
-	int r_bg_buf_w;
-	int r_bg_buf_h;
-	byte *r_tmp_buf;
-	int r_tmp_buf_w;
-	int r_tmp_buf_h;
+struct BUFFER_INFO {
+	byte *bg_buf;
+	int bg_buf_w;
+	int bg_buf_h;
+	byte *tmp_buf;
+	int tmp_buf_w;
+	int tmp_buf_h;
 };
 
 class Render {
@@ -61,7 +61,7 @@ public:
 	void toggleFlag(unsigned int);
 	unsigned int getFrameCount(void);
 	unsigned int resetFrameCount(void);
-	int getBufferInfo(R_BUFFER_INFO *);
+	int getBufferInfo(BUFFER_INFO *);
 
 private:
 	static void fpsTimerCallback(void *refCon);
@@ -72,7 +72,7 @@ private:
 	bool _initialized;
 
 	// Module data
-	R_SURFACE *_backbuf_surface;
+	SURFACE *_backbuf_surface;
 
 	byte *_bg_buf;
 	int _bg_buf_w;
@@ -81,7 +81,7 @@ private:
 	int _tmp_buf_w;
 	int _tmp_buf_h;
 
-	R_SPRITELIST *_test_sprite;
+	SPRITELIST *_test_sprite;
 
 	unsigned int _fps;
 	unsigned int _framecount;

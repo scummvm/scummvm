@@ -33,10 +33,10 @@ namespace Saga {
 class ActionMap;
 class ObjectMap;
 
-enum R_SCENE_MODES {
-	R_SCENE_MODE_INVALID,
-	R_SCENE_MODE_NORMAL,
-	R_SCENE_MODE_ISO
+enum SCENE_MODES {
+	SCENE_MODE_INVALID,
+	SCENE_MODE_NORMAL,
+	SCENE_MODE_ISO
 };
 
 struct SCENE_ZINFO {
@@ -54,13 +54,13 @@ struct SCENE_BGINFO {
 	size_t bg_buflen;
 };
 
-struct R_SCENE_INFO {
+struct SCENE_INFO {
 	SCENE_ZINFO z_info;
 	SCENE_BGINFO bg_info;
-	R_TEXTLIST *text_list;
+	TEXTLIST *text_list;
 };
 
-typedef int (R_SCENE_PROC) (int, R_SCENE_INFO *, void *);
+typedef int (SCENE_PROC) (int, SCENE_INFO *, void *);
 
 #define PALETTE_FADE_DURATION 1000
 
@@ -99,7 +99,7 @@ enum SAGA_RESOURCE_TYPES {
 
 #define SAGA_RESLIST_ENTRY_LEN 4
 
-struct R_SCENE_RESLIST {
+struct SCENE_RESLIST {
 	uint32 res_number;
 	int res_type;
 	byte *res_data;
@@ -108,7 +108,7 @@ struct R_SCENE_RESLIST {
 
 #define SAGA_SCENE_DESC_LEN 16
 
-struct R_SCENE_DESC {
+struct SCENE_DESC {
 	int16 flags;
 	int16 resListRN;
 	int16 endSlope;
@@ -117,7 +117,7 @@ struct R_SCENE_DESC {
 	uint16 sceneScriptNum;
 	uint16 startScriptNum;
 	int16 musicRN;
-	R_SCENE_RESLIST *resList;
+	SCENE_RESLIST *resList;
 	size_t resListCnt;
 };
 
@@ -145,23 +145,23 @@ enum SCENE_FADE_TYPES {
 	SCENE_FADE_NO_INTERFACE = 2
 };
 
-struct R_SCENE_QUEUE {
+struct SCENE_QUEUE {
 	uint32 scene_n;
-	R_SCENE_DESC *scene_desc;
+	SCENE_DESC *scene_desc;
 	int load_flag;
-	R_SCENE_PROC *scene_proc;
+	SCENE_PROC *scene_proc;
 	int scene_skiptarget;
 	int fadeType;
 };
 
 ///// IHNM-specific stuff
-#define R_IHNM_PALFADE_TIME    1000
-#define R_IHNM_INTRO_FRAMETIME 80
-#define R_IHNM_DGLOGO_TIME     8000
-#define R_IHNM_TITLE_TIME      16000
+#define IHNM_PALFADE_TIME    1000
+#define IHNM_INTRO_FRAMETIME 80
+#define IHNM_DGLOGO_TIME     8000
+#define IHNM_TITLE_TIME      16000
 
 ///// ITE-specific stuff
-#define R_INTRO_STRMAX 256
+#define INTRO_STRMAX 256
 
 #define ITE_INTRO_FRAMETIME 90
 
@@ -175,7 +175,7 @@ struct R_SCENE_QUEUE {
 
 #define CREDIT_DURATION1 4000
 
-enum R_INTRO_SCENE_DIALOGUE_INFO {
+enum INTRO_SCENE_DIALOGUE_INFO {
 	INTRO_CAVE1_START = 0,
 	INTRO_CAVE1_END = 4,
 
@@ -189,10 +189,10 @@ enum R_INTRO_SCENE_DIALOGUE_INFO {
 	INTRO_CAVE4_END = 14
 };
 
-struct R_INTRO_DIALOGUE {
+struct INTRO_DIALOGUE {
 	uint32 i_voice_rn;
 	const char *i_cvar_name;
-	char i_str[R_INTRO_STRMAX];
+	char i_str[INTRO_STRMAX];
 };
 
 struct INTRO_CAPTION {
@@ -220,15 +220,15 @@ class Scene {
 	int nextScene();
 	int skipScene();
 	int endScene();
-	int queueScene(R_SCENE_QUEUE *scene_queue);
-	int draw(R_SURFACE *);
+	int queueScene(SCENE_QUEUE *scene_queue);
+	int draw(SURFACE *);
 	int getMode();
 	int getBGMaskInfo(int *w, int *h, byte **buf, size_t *buf_len);
 	int isBGMaskPresent(void);
 	int getBGInfo(SCENE_BGINFO *bginfo);
 	int getZInfo(SCENE_ZINFO *zinfo);
 	int getBGPal(PALENTRY **pal);
-	int getInfo(R_SCENE_INFO *si);
+	int getInfo(SCENE_INFO *si);
 
 	int clearSceneQueue(void);
 	int changeScene(int scene_num);
@@ -239,7 +239,7 @@ class Scene {
 	void sceneChangeCmd(int argc, char *argv[]);
 
  private:
-	int loadScene(int scene, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DESC *, 
+	int loadScene(int scene, int load_flag, SCENE_PROC scene_proc, SCENE_DESC *, 
 				  int fadeIn);
 	int loadSceneDescriptor(uint32 res_number);
 	int loadSceneResourceList(uint32 res_number);
@@ -249,7 +249,7 @@ class Scene {
 	SagaEngine *_vm;
 	bool _initialized;
 
-	R_RSCFILE_CONTEXT *_sceneContext;
+	RSCFILE_CONTEXT *_sceneContext;
 	int *_sceneLUT;
 	int _sceneCount;
 	int _sceneMax;
@@ -261,18 +261,18 @@ class Scene {
 	int _sceneResNum;
 	bool _inGame;
 	bool _loadDesc;
-	R_SCENE_DESC _desc;
+	SCENE_DESC _desc;
 	int _resListEntries;
-	R_SCENE_RESLIST *_resList;
+	SCENE_RESLIST *_resList;
 	int _animEntries;
 	YS_DL_LIST *_animList;
-	R_SCENE_PROC *_sceneProc;
-	R_TEXTLIST *_textList;
+	SCENE_PROC *_sceneProc;
+	TEXTLIST *_textList;
 	SCENE_IMAGE _bg;
 	SCENE_IMAGE _bgMask;
 
-	static int SC_defaultScene(int param, R_SCENE_INFO *scene_info, void *refCon);
-	int defaultScene(int param, R_SCENE_INFO *scene_info);
+	static int SC_defaultScene(int param, SCENE_INFO *scene_info, void *refCon);
+	int defaultScene(int param, SCENE_INFO *scene_info);
 
  public:
 	ActionMap *_actionMap;
@@ -283,39 +283,39 @@ class Scene {
 	int ITEStartProc();
 
  public:
-	static int SC_IHNMIntroMovieProc1(int param, R_SCENE_INFO *scene_info, void *refCon);
-	static int SC_IHNMIntroMovieProc2(int param, R_SCENE_INFO *scene_info, void *refCon);
-	static int SC_IHNMIntroMovieProc3(int param, R_SCENE_INFO *scene_info, void *refCon);
-	static int SC_IHNMHateProc(int param, R_SCENE_INFO *scene_info, void *refCon);
+	static int SC_IHNMIntroMovieProc1(int param, SCENE_INFO *scene_info, void *refCon);
+	static int SC_IHNMIntroMovieProc2(int param, SCENE_INFO *scene_info, void *refCon);
+	static int SC_IHNMIntroMovieProc3(int param, SCENE_INFO *scene_info, void *refCon);
+	static int SC_IHNMHateProc(int param, SCENE_INFO *scene_info, void *refCon);
 
  private:
-	int IHNMIntroMovieProc1(int param, R_SCENE_INFO *scene_info);
-	int IHNMIntroMovieProc2(int param, R_SCENE_INFO *scene_info);
-	int IHNMIntroMovieProc3(int param, R_SCENE_INFO *scene_info);
-	int IHNMHateProc(int param, R_SCENE_INFO *scene_info);
+	int IHNMIntroMovieProc1(int param, SCENE_INFO *scene_info);
+	int IHNMIntroMovieProc2(int param, SCENE_INFO *scene_info);
+	int IHNMIntroMovieProc3(int param, SCENE_INFO *scene_info);
+	int IHNMHateProc(int param, SCENE_INFO *scene_info);
 
  public:
 	int ITEIntroRegisterLang(void);
-	static int SC_ITEIntroAnimProc(int param, R_SCENE_INFO *scene_info, void *refCon);
-	static int SC_ITEIntroCave1Proc(int param, R_SCENE_INFO *scene_info, void *refCon);
-	static int SC_ITEIntroCave2Proc(int param, R_SCENE_INFO *scene_info, void *refCon);
-	static int SC_ITEIntroCave3Proc(int param, R_SCENE_INFO *scene_info, void *refCon);
-	static int SC_ITEIntroCave4Proc(int param, R_SCENE_INFO *scene_info, void *refCon);
-	static int SC_ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info, void *refCon);
-	static int SC_ITEIntroTreeHouseProc(int param, R_SCENE_INFO *scene_info, void *refCon);
-	static int SC_ITEIntroFairePathProc(int param, R_SCENE_INFO *scene_info, void *refCon);
-	static int SC_ITEIntroFaireTentProc(int param, R_SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroAnimProc(int param, SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroCave1Proc(int param, SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroCave2Proc(int param, SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroCave3Proc(int param, SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroCave4Proc(int param, SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroValleyProc(int param, SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroFairePathProc(int param, SCENE_INFO *scene_info, void *refCon);
+	static int SC_ITEIntroFaireTentProc(int param, SCENE_INFO *scene_info, void *refCon);
 
  private:
-	int ITEIntroAnimProc(int param, R_SCENE_INFO *scene_info);
-	int ITEIntroCave1Proc(int param, R_SCENE_INFO *scene_info);
-	int ITEIntroCave2Proc(int param, R_SCENE_INFO *scene_info);
-	int ITEIntroCave3Proc(int param, R_SCENE_INFO *scene_info);
-	int ITEIntroCave4Proc(int param, R_SCENE_INFO *scene_info);
-	int ITEIntroValleyProc(int param, R_SCENE_INFO *scene_info);
-	int ITEIntroTreeHouseProc(int param, R_SCENE_INFO *scene_info);
-	int ITEIntroFairePathProc(int param, R_SCENE_INFO *scene_info);
-	int ITEIntroFaireTentProc(int param, R_SCENE_INFO *scene_info);
+	int ITEIntroAnimProc(int param, SCENE_INFO *scene_info);
+	int ITEIntroCave1Proc(int param, SCENE_INFO *scene_info);
+	int ITEIntroCave2Proc(int param, SCENE_INFO *scene_info);
+	int ITEIntroCave3Proc(int param, SCENE_INFO *scene_info);
+	int ITEIntroCave4Proc(int param, SCENE_INFO *scene_info);
+	int ITEIntroValleyProc(int param, SCENE_INFO *scene_info);
+	int ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info);
+	int ITEIntroFairePathProc(int param, SCENE_INFO *scene_info);
+	int ITEIntroFaireTentProc(int param, SCENE_INFO *scene_info);
 
 };
 

@@ -28,7 +28,7 @@
 
 namespace Saga {
 
-struct R_ISOTILE_ENTRY {
+struct ISOTILE_ENTRY {
 	int tile_h;
 	int unknown01;
 	size_t tile_offset;
@@ -49,7 +49,7 @@ struct R_ISOTILE_ENTRY {
 #define SAGA_METAMAP_H 16
 #define SAGA_METAMAP_SIZE 256
 
-struct R_ISO_METATILE_ENTRY {
+struct ISO_METATILE_ENTRY {
 	int mtile_n;
 	int unknown02;
 	int unknown04;
@@ -67,23 +67,23 @@ public:
 	int loadTileset(const byte *, size_t);
 	int loadMetaTileset(const byte *, size_t);
 	int loadMetamap(const byte *mm_res_p, size_t mm_res_len);
-	int draw(R_SURFACE *dst_s);
+	int draw(SURFACE *dst_s);
 private:
-	int drawTile(R_SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y);
-	int drawMetaTile(R_SURFACE *dst_s, uint16 mtile_i, int mtile_x, int mtile_y);
-	int drawMetamap(R_SURFACE *dst_s, int map_x, int map_y);
+	int drawTile(SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y);
+	int drawMetaTile(SURFACE *dst_s, uint16 mtile_i, int mtile_x, int mtile_y);
+	int drawMetamap(SURFACE *dst_s, int map_x, int map_y);
 	int _init;
 	int _tiles_loaded;
 	const byte *_tileres_p;
 	size_t _tileres_len;
 	uint16 _tile_ct;
-	R_ISOTILE_ENTRY *_tile_tbl;
+	ISOTILE_ENTRY *_tile_tbl;
 
 	int _mtiles_loaded;
 	const byte *_mtileres_p;
 	size_t _mtileres_len;
 	uint16 _mtile_ct;
-	R_ISO_METATILE_ENTRY *_mtile_tbl;
+	ISO_METATILE_ENTRY *_mtile_tbl;
 
 	int _metamap_loaded;
 	int _metamap_n;

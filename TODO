@@ -295,7 +295,6 @@ SIMON
 SAGA
 ====
 * Remove use of yslib
-* Eliminate R_ prefix everywhere
 * Transition console to use ScummVM one
 * Remove any traces of the additional level of abstraction reinherit used
 * Change printf calls to warning/debug calls

@@ -64,7 +64,7 @@ int Events::handleEvents(long msec) {
 	YS_DL_NODE *walk_node;
 	YS_DL_NODE *next_node;
 
-	R_EVENT *event_p;
+	EVENT *event_p;
 
 	long delta_time;
 	int result;
@@ -74,7 +74,7 @@ int Events::handleEvents(long msec) {
 
 	// Process each event in list
 	for (walk_node = ys_dll_head(_eventList); walk_node != NULL; walk_node = next_node) {
-		event_p = (R_EVENT *)ys_dll_get_data(walk_node);
+		event_p = (EVENT *)ys_dll_get_data(walk_node);
 
 		// Save next event in case current event is handled and removed 
 		next_node = ys_dll_next(walk_node);
@@ -82,31 +82,31 @@ int Events::handleEvents(long msec) {
 		// Call the appropriate event handler for the specific event type
 		switch (event_p->type) {
 
-		case R_ONESHOT_EVENT:
+		case ONESHOT_EVENT:
 			result = handleOneShot(event_p);
 			break;
 
-		case R_CONTINUOUS_EVENT:
+		case CONTINUOUS_EVENT:
 			result = handleContinuous(event_p);
 			break;
 
-		case R_INTERVAL_EVENT:
+		case INTERVAL_EVENT:
 			result = handleInterval(event_p);
 			break;
 
-		case R_IMMEDIATE_EVENT:
+		case IMMEDIATE_EVENT:
 			result = handleImmediate(event_p);
 			break;
 
 		default:
-			result = R_EVENT_INVALIDCODE;
+			result = EVENT_INVALIDCODE;
 			warning("Invalid event code encountered");
 			break;
 		}
 
 		// Process the event appropriately based on result code from 
 		// handler
-		if ((result == R_EVENT_DELETE) || (result == R_EVENT_INVALIDCODE)) {
+		if ((result == EVENT_DELETE) || (result == EVENT_INVALIDCODE)) {
 			// If there is no event chain, delete the base event.
 			if (event_p->chain == NULL) {
 				ys_dll_delete(walk_node);
@@ -118,26 +118,26 @@ int Events::handleEvents(long msec) {
 
 				ys_dll_replace(walk_node, event_p->chain, sizeof *event_p);
 
-				event_p = (R_EVENT *)ys_dll_get_data(walk_node);
+				event_p = (EVENT *)ys_dll_get_data(walk_node);
 				event_p->time += delta_time;
 
 				next_node = walk_node;
 			}
-		} else if (result == R_EVENT_BREAK) {
+		} else if (result == EVENT_BREAK) {
 			break;
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Events::handleContinuous(R_EVENT *event) {
+int Events::handleContinuous(EVENT *event) {
 	double event_pc = 0.0; // Event completion percentage
 	int event_done = 0;
 
-	R_BUFFER_INFO buf_info;
+	BUFFER_INFO buf_info;
 	SCENE_BGINFO bg_info;
-	R_SURFACE *back_buf;
+	SURFACE *back_buf;
 
 	event_pc = ((double)event->duration - event->time) / event->duration;
 
@@ -149,15 +149,15 @@ int Events::handleContinuous(R_EVENT *event) {
 
 	if (event_pc < 0.0) {
 		// Event not signaled, skip it
-		return R_EVENT_CONTINUE;
-	} else if (!(event->code & R_SIGNALED)) {
+		return EVENT_CONTINUE;
+	} else if (!(event->code & SIGNALED)) {
 		// Signal event
-		event->code |= R_SIGNALED;
+		event->code |= SIGNALED;
 		event_pc = 0.0;
 	}
 
-	switch (event->code & R_EVENT_MASK) {
-	case R_PAL_EVENT:
+	switch (event->code & EVENT_MASK) {
+	case PAL_EVENT:
 		switch (event->op) {
 		case EVENT_BLACKTOPAL:
 			back_buf = _vm->_gfx->getBackBuffer();
@@ -172,13 +172,13 @@ int Events::handleContinuous(R_EVENT *event) {
 			break;
 		}
 		break;
-	case R_TRANSITION_EVENT:
+	case TRANSITION_EVENT:
 		switch (event->op) {
 		case EVENT_DISSOLVE:
 			_vm->_render->getBufferInfo(&buf_info);
 			_vm->_scene->getBGInfo(&bg_info);
-			_vm->transitionDissolve(buf_info.r_bg_buf, buf_info.r_bg_buf_w, 
-					buf_info.r_bg_buf_h, buf_info.r_bg_buf_w, bg_info.bg_buf, bg_info.bg_w, 
+			_vm->transitionDissolve(buf_info.bg_buf, buf_info.bg_buf_w, 
+					buf_info.bg_buf_h, buf_info.bg_buf_w, bg_info.bg_buf, bg_info.bg_w, 
 					bg_info.bg_h, bg_info.bg_p, 0, 0, 0, event_pc);
 			break;
 		case EVENT_DISSOLVE_BGMASK:
@@ -190,15 +190,15 @@ int Events::handleContinuous(R_EVENT *event) {
 
 			_vm->_render->getBufferInfo(&buf_info);
 			_vm->_scene->getBGMaskInfo(&w, &h, &mask_buf, &len);
-			_vm->transitionDissolve(buf_info.r_bg_buf, buf_info.r_bg_buf_w, 
-					buf_info.r_bg_buf_h, buf_info.r_bg_buf_w, mask_buf, w, h, 0, 1, 
+			_vm->transitionDissolve(buf_info.bg_buf, buf_info.bg_buf_w, 
+					buf_info.bg_buf_h, buf_info.bg_buf_w, mask_buf, w, h, 0, 1, 
 					(320 - w) / 2, (200 - h) / 2, event_pc);
 			break;
 		default:
 			break;
 		}
 		break;
-	case R_CONSOLE_EVENT:
+	case CONSOLE_EVENT:
 		switch (event->op) {
 		case EVENT_ACTIVATE:
 			_vm->_console->dropConsole(event_pc);
@@ -216,17 +216,17 @@ int Events::handleContinuous(R_EVENT *event) {
 	}
 
 	if (event_done) {
-		return R_EVENT_DELETE;
+		return EVENT_DELETE;
 	}
 
-	return R_EVENT_CONTINUE;
+	return EVENT_CONTINUE;
 }
 
-int Events::handleImmediate(R_EVENT *event) {
+int Events::handleImmediate(EVENT *event) {
 	double event_pc = 0.0; // Event completion percentage
 	bool event_done = false;
 
-	R_SURFACE *back_buf;
+	SURFACE *back_buf;
 
 	event_pc = ((double)event->duration - event->time) / event->duration;
 
@@ -238,15 +238,15 @@ int Events::handleImmediate(R_EVENT *event) {
 
 	if (event_pc < 0.0) {
 		// Event not signaled, skip it
-		return R_EVENT_BREAK;
-	} else if (!(event->code & R_SIGNALED)) {
+		return EVENT_BREAK;
+	} else if (!(event->code & SIGNALED)) {
 		// Signal event
-		event->code |= R_SIGNALED;
+		event->code |= SIGNALED;
 		event_pc = 0.0;
 	}
 
-	switch (event->code & R_EVENT_MASK) {
-	case R_PAL_EVENT:
+	switch (event->code & EVENT_MASK) {
+	case PAL_EVENT:
 		switch (event->op) {
 		case EVENT_BLACKTOPAL:
 			back_buf = _vm->_gfx->getBackBuffer();
@@ -261,9 +261,9 @@ int Events::handleImmediate(R_EVENT *event) {
 			break;
 		}
 		break;
-	case R_SCRIPT_EVENT:
-	case R_BG_EVENT:
-	case R_INTERFACE_EVENT:
+	case SCRIPT_EVENT:
+	case BG_EVENT:
+	case INTERFACE_EVENT:
 		handleOneShot(event);
 		event_done = true;
 		break;
@@ -273,35 +273,35 @@ int Events::handleImmediate(R_EVENT *event) {
 	}
 
 	if (event_done) {
-		return R_EVENT_DELETE;
+		return EVENT_DELETE;
 	}
 
-	return R_EVENT_BREAK;
+	return EVENT_BREAK;
 }
 
-int Events::handleOneShot(R_EVENT *event) {
-	R_SURFACE *back_buf;
-	R_SCRIPT_THREAD *sthread;
+int Events::handleOneShot(EVENT *event) {
+	SURFACE *back_buf;
+	SCRIPT_THREAD *sthread;
 
 	static SCENE_BGINFO bginfo;
 
 	if (event->time > 0) {
-		return R_EVENT_CONTINUE;
+		return EVENT_CONTINUE;
 	}
 
 	// Event has been signaled
 
-	switch (event->code & R_EVENT_MASK) {
-	case R_TEXT_EVENT:
+	switch (event->code & EVENT_MASK) {
+	case TEXT_EVENT:
 		switch (event->op) {
 		case EVENT_DISPLAY:
-			_vm->textSetDisplay((R_TEXTLIST_ENTRY *)event->data, 1);
+			_vm->textSetDisplay((TEXTLIST_ENTRY *)event->data, 1);
 			break;
 		case EVENT_REMOVE:
 			{
-				R_SCENE_INFO scene_info;
+			 SCENE_INFO scene_info;
 				_vm->_scene->getInfo(&scene_info);
-				_vm->textDeleteEntry(scene_info.text_list, (R_TEXTLIST_ENTRY *)event->data);
+				_vm->textDeleteEntry(scene_info.text_list, (TEXTLIST_ENTRY *)event->data);
 			}
 			break;
 		default:
@@ -309,20 +309,20 @@ int Events::handleOneShot(R_EVENT *event) {
 		}
 
 		break;
-	case R_VOICE_EVENT:
+	case VOICE_EVENT:
 		_vm->_sndRes->playVoice(event->param);
 		break;
-	case R_MUSIC_EVENT:
+	case MUSIC_EVENT:
 		_vm->_music->stop();
 		if (event->op == EVENT_PLAY)
 			_vm->_music->play(event->param, event->param2);
 		break;
-	case R_BG_EVENT:
+	case BG_EVENT:
 		{
-			R_BUFFER_INFO rbuf_info;
+		 BUFFER_INFO rbuf_info;
 			Point bg_pt;
 
-			if (_vm->_scene->getMode() == R_SCENE_MODE_NORMAL) {
+			if (_vm->_scene->getMode() == SCENE_MODE_NORMAL) {
 
 				back_buf = _vm->_gfx->getBackBuffer();
 
@@ -332,7 +332,7 @@ int Events::handleOneShot(R_EVENT *event) {
 				bg_pt.x = bginfo.bg_x;
 				bg_pt.y = bginfo.bg_y;
 
-				_vm->_gfx->bufToBuffer(rbuf_info.r_bg_buf, rbuf_info.r_bg_buf_w, rbuf_info.r_bg_buf_h,
+				_vm->_gfx->bufToBuffer(rbuf_info.bg_buf, rbuf_info.bg_buf_w, rbuf_info.bg_buf_h,
 								bginfo.bg_buf, bginfo.bg_w, bginfo.bg_h, NULL, &bg_pt);
 				if (event->param == SET_PALETTE) {
 					PALENTRY *pal_p;
@@ -342,7 +342,7 @@ int Events::handleOneShot(R_EVENT *event) {
 			}
 		}
 		break;
-	case R_ANIM_EVENT:
+	case ANIM_EVENT:
 		switch (event->op) {
 		case EVENT_FRAME:
 			_vm->_anim->play(event->param, event->time);
@@ -357,17 +357,17 @@ int Events::handleOneShot(R_EVENT *event) {
 			break;
 		}
 		break;
-	case R_SCENE_EVENT:
+	case SCENE_EVENT:
 		switch (event->op) {
 		case EVENT_END:
 			_vm->_scene->nextScene();
-			return R_EVENT_BREAK;
+			return EVENT_BREAK;
 			break;
 		default:
 			break;
 		}
 		break;
-	case R_PALANIM_EVENT:
+	case PALANIM_EVENT:
 		switch (event->op) {
 		case EVENT_CYCLESTART:
 			_vm->_palanim->cycleStart();
@@ -379,7 +379,7 @@ int Events::handleOneShot(R_EVENT *event) {
 			break;
 		}
 		break;
-	case R_INTERFACE_EVENT:
+	case INTERFACE_EVENT:
 		switch (event->op) {
 		case EVENT_ACTIVATE:
 			_vm->_interface->activate();
@@ -388,7 +388,7 @@ int Events::handleOneShot(R_EVENT *event) {
 			break;
 		}
 		break;
-	case R_SCRIPT_EVENT:
+	case SCRIPT_EVENT:
 		debug(0, "Starting start script #%d", event->param);
 
 		sthread = _vm->_script->SThreadCreate();
@@ -412,18 +412,18 @@ int Events::handleOneShot(R_EVENT *event) {
 		break;
 	}
 
-	return R_EVENT_DELETE;
+	return EVENT_DELETE;
 }
 
-int Events::handleInterval(R_EVENT *event) {
-	return R_EVENT_DELETE;
+int Events::handleInterval(EVENT *event) {
+	return EVENT_DELETE;
 }
 
 // Schedules an event in the event list; returns a pointer to the scheduled
 // event suitable for chaining if desired.
-R_EVENT *Events::queue(R_EVENT *event) {
+EVENT *Events::queue(EVENT *event) {
 	YS_DL_NODE *new_node;
-	R_EVENT *queued_event;
+	EVENT *queued_event;
 
 	event->chain = NULL;
 	new_node = ys_dll_add_tail(_eventList, event, sizeof *event);
@@ -432,7 +432,7 @@ R_EVENT *Events::queue(R_EVENT *event) {
 		return NULL;
 	}
 
-	queued_event = (R_EVENT *)ys_dll_get_data(new_node);
+	queued_event = (EVENT *)ys_dll_get_data(new_node);
 
 	initializeEvent(queued_event);
 
@@ -441,12 +441,12 @@ R_EVENT *Events::queue(R_EVENT *event) {
 
 // Places a 'add_event' on the end of an event chain given by 'head_event'
 // (head_event may be in any position in the event chain)
-R_EVENT *Events::chain(R_EVENT *head_event, R_EVENT *add_event) {
-	R_EVENT *walk_event;
-	R_EVENT *new_event;
+EVENT *Events::chain(EVENT *head_event, EVENT *add_event) {
+	EVENT *walk_event;
+	EVENT *new_event;
 
 	// Allocate space for new event
-	new_event = (R_EVENT *)malloc(sizeof *new_event);
+	new_event = (EVENT *)malloc(sizeof *new_event);
 	if (new_event == NULL) {
 		return NULL;
 	}
@@ -467,38 +467,38 @@ R_EVENT *Events::chain(R_EVENT *head_event, R_EVENT *add_event) {
 	return new_event;
 }
 
-int Events::initializeEvent(R_EVENT *event) {
+int Events::initializeEvent(EVENT *event) {
 	switch (event->type) {
-	case R_ONESHOT_EVENT:
+	case ONESHOT_EVENT:
 		break;
-	case R_CONTINUOUS_EVENT:
-	case R_IMMEDIATE_EVENT:
+	case CONTINUOUS_EVENT:
+	case IMMEDIATE_EVENT:
 		event->time += event->duration;
 		break;
-	case R_INTERVAL_EVENT:
+	case INTERVAL_EVENT:
 		break;
 	default:
-		return R_FAILURE;
+		return FAILURE;
 		break;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Events::clearList() {
 	YS_DL_NODE *walk_node;
 	YS_DL_NODE *next_node;
-	R_EVENT *chain_walk;
-	R_EVENT *next_chain;
-	R_EVENT *event_p;
+	EVENT *chain_walk;
+	EVENT *next_chain;
+	EVENT *event_p;
 
 	// Walk down event list
 	for (walk_node = ys_dll_head(_eventList); walk_node != NULL; walk_node = next_node) {
 		next_node = ys_dll_next(walk_node);
-		event_p = (R_EVENT *)ys_dll_get_data(walk_node);
+		event_p = (EVENT *)ys_dll_get_data(walk_node);
 
-		// Only remove events not marked R_NODESTROY (engine events)
-		if (!(event_p->code & R_NODESTROY)) {
+		// Only remove events not marked NODESTROY (engine events)
+		if (!(event_p->code & NODESTROY)) {
 			// Remove any events chained off this one */
 			for (chain_walk = event_p->chain; chain_walk != NULL; chain_walk = next_chain) {
 				next_chain = chain_walk->chain;
@@ -508,20 +508,20 @@ int Events::clearList() {
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-// Removes all events from the list (even R_NODESTROY)
+// Removes all events from the list (even NODESTROY)
 int Events::freeList() {
 	YS_DL_NODE *walk_node;
 	YS_DL_NODE *next_node;
-	R_EVENT *chain_walk;
-	R_EVENT *next_chain;
-	R_EVENT *event_p;
+	EVENT *chain_walk;
+	EVENT *next_chain;
+	EVENT *event_p;
 
 	// Walk down event list
 	for (walk_node = ys_dll_head(_eventList); walk_node != NULL; walk_node = next_node) {
-		event_p = (R_EVENT *)ys_dll_get_data(walk_node);
+		event_p = (EVENT *)ys_dll_get_data(walk_node);
 		// Remove any events chained off current node
 		for (chain_walk = event_p->chain; chain_walk != NULL; chain_walk = next_chain) {
 			next_chain = chain_walk->chain;
@@ -533,29 +533,29 @@ int Events::freeList() {
 		ys_dll_delete(walk_node);
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Walks down the event list, updating event times by 'msec'.
 int Events::processEventTime(long msec) {
 	YS_DL_NODE *walk_node;
-	R_EVENT *event_p;
+	EVENT *event_p;
 	uint16 event_count = 0;
 
 	for (walk_node = ys_dll_head(_eventList); walk_node != NULL; walk_node = ys_dll_next(walk_node)) {
-		event_p = (R_EVENT *)ys_dll_get_data(walk_node);
+		event_p = (EVENT *)ys_dll_get_data(walk_node);
 		event_p->time -= msec;
 		event_count++;
 
-		if (event_p->type == R_IMMEDIATE_EVENT)
+		if (event_p->type == IMMEDIATE_EVENT)
 			break;
 
-		if (event_count > R_EVENT_WARNINGCOUNT) {
-			warning("Event list exceeds %u", R_EVENT_WARNINGCOUNT);
+		if (event_count > EVENT_WARNINGCOUNT) {
+			warning("Event list exceeds %u", EVENT_WARNINGCOUNT);
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 } // End of namespace Saga

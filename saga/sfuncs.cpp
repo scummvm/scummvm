@@ -42,7 +42,7 @@ namespace Saga {
 #define OPCODE(x) &Script::x
 
 void Script::setupScriptFuncList(void) {
-	static const R_SFUNC_ENTRY SFuncList[R_SFUNC_NUM] = {
+	static const SFUNC_ENTRY SFuncList[SFUNC_NUM] = {
 		{0, 0, NULL},
 		{1, 1, OPCODE(SF_sleep)},
 		{2, 1, OPCODE(SF_takeObject)},
@@ -127,7 +127,7 @@ void Script::setupScriptFuncList(void) {
 
 // Script function #1 (0x01) blocking
 // Suspends thread execution for the specified time period
-int Script::SF_sleep(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_sleep(SCRIPTFUNC_PARAMS) {
 	SDataWord_T time_param;
 	long time;
 
@@ -138,19 +138,19 @@ int Script::SF_sleep(R_SCRIPTFUNC_PARAMS) {
 		thread->flags |= kTFlagWaiting;	// put thread to sleep
 		thread->waitType = kTWaitDelay;
 	}
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #2 (0x02)
-int Script::SF_takeObject(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_takeObject(SCRIPTFUNC_PARAMS) {
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #3 (0x03)
 // Unknown function; pops a parameter and pushes a return value
 // Param1: unknown
-int Script::SF_objectIsCarried(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_objectIsCarried(SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 	SDataWord_T param1;
 	param1 = thread->pop();
@@ -160,20 +160,20 @@ int Script::SF_objectIsCarried(R_SCRIPTFUNC_PARAMS) {
 
 	thread->retVal = 0;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #4 (0x04) nonblocking
 // Set the command display to the specified text string
 // Param1: dialogue index of string
-int Script::SF_setStatusText(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_setStatusText(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param = thread->pop();
 
 	return _vm->_interface->setStatusText(currentScript()->diag->str[param]);
 }
 
 // Script function #5 (0x05)
-int Script::SF_commandMode(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_commandMode(SCRIPTFUNC_PARAMS) {
 	return _vm->_interface->setMode(kPanelCommand);
 }
 
@@ -182,7 +182,7 @@ int Script::SF_commandMode(R_SCRIPTFUNC_PARAMS) {
 // Param1: actor id
 // Param2: actor destination x
 // Param3: actor destination y
-int Script::SF_actorWalkTo(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_actorWalkTo(SCRIPTFUNC_PARAMS) {
 	SDataWord_T actor_parm;
 	SDataWord_T x_parm;
 	SDataWord_T y_parm;
@@ -198,7 +198,7 @@ int Script::SF_actorWalkTo(R_SCRIPTFUNC_PARAMS) {
 	actor_idx = _vm->_actor->getActorIndex(actor_id);
 	if (actor_idx < 0) {
 		_vm->_console->print(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.", actor_id);
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	pt.x = _vm->_sdata->readWordS(x_parm);
@@ -206,23 +206,23 @@ int Script::SF_actorWalkTo(R_SCRIPTFUNC_PARAMS) {
 
 	_vm->_actor->walkTo(actor_idx, &pt, 0, &thread->sem);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #7 (0x07)
-int Script::SF_doAction(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_doAction(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
 	thread->pop();
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #8 (0x08) nonblocking
 // Sets the orientation of the specified actor.
 // Param1: actor id
 // Param2: actor orientation
-int Script::SF_setFacing(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_setFacing(SCRIPTFUNC_PARAMS) {
 	SDataWord_T actor_parm;
 	SDataWord_T orient_parm;
 	int actor_id;
@@ -237,24 +237,24 @@ int Script::SF_setFacing(R_SCRIPTFUNC_PARAMS) {
 	actor_idx = _vm->_actor->getActorIndex(actor_id);
 	if (actor_idx < 0) {
 		_vm->_console->print(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.", actor_id);
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	_vm->_actor->setOrientation(actor_idx, orientation);
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #9 (0x09)
-int Script::SF_startBgdAnim(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_startBgdAnim(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #10 (0x0A)
-int Script::SF_stopBgdAnim(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_stopBgdAnim(SCRIPTFUNC_PARAMS) {
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #11 (0x0B) nonblocking
@@ -262,7 +262,7 @@ int Script::SF_stopBgdAnim(R_SCRIPTFUNC_PARAMS) {
 // continues to run. If the parameter is false, the user interface is 
 // reenabled.
 // Param1: boolean
-int Script::SF_freezeInterface(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_freezeInterface(SCRIPTFUNC_PARAMS) {
 	SDataWord_T b_param;
 
 	b_param = thread->pop();
@@ -273,47 +273,47 @@ int Script::SF_freezeInterface(R_SCRIPTFUNC_PARAMS) {
 		_vm->_interface->activate();
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #12 (0x0C)
 // Disables mouse input, etc.
-int Script::SF_dialogMode(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_dialogMode(SCRIPTFUNC_PARAMS) {
 	return _vm->_interface->setMode(kPanelDialogue);
 }
 
 // Script function #14 (0x0E)
-int Script::SF_faceTowards(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_faceTowards(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #15 (0x0F)
-int Script::SF_setFollower(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_setFollower(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #16 (0x10)
-int Script::SF_gotoScene(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_gotoScene(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #23 (0x17)
-int Script::SF_setBgdAnimSpeed(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_setBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #25 (0x19)
-int Script::SF_centerActor(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_centerActor(SCRIPTFUNC_PARAMS) {
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #26 (0x1A) nonblocking
@@ -321,7 +321,7 @@ int Script::SF_centerActor(R_SCRIPTFUNC_PARAMS) {
 // Param1: ?
 // Param2: frames of animation to play or -1 to loop
 // Param3: animation id
-int Script::SF_startAnim(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_startAnim(SCRIPTFUNC_PARAMS) {
 // FIXME: implementation is wrong. Should link animation
 	SDataWord_T unk_parm;
 	SDataWord_T frame_parm;
@@ -336,12 +336,12 @@ int Script::SF_startAnim(R_SCRIPTFUNC_PARAMS) {
 	frame_count = _vm->_sdata->readWordS(frame_parm);
 	anim_id = _vm->_sdata->readWordS(anim_id_parm);
 
-	if (_vm->_anim->play(anim_id, 0) != R_SUCCESS) {
+	if (_vm->_anim->play(anim_id, 0) != SUCCESS) {
 		_vm->_console->print(S_WARN_PREFIX "SF.26: Anim::play() failed. Anim id: %u\n", anim_id);
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #27 (0x1B) nonblocking
@@ -349,7 +349,7 @@ int Script::SF_startAnim(R_SCRIPTFUNC_PARAMS) {
 // Param1: actor id
 // Param2: actor destination x
 // Param3: actor destination y
-int Script::SF_actorWalkToAsync(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_actorWalkToAsync(SCRIPTFUNC_PARAMS) {
 	SDataWord_T actor_parm;
 	SDataWord_T x_parm;
 	SDataWord_T y_parm;
@@ -366,21 +366,21 @@ int Script::SF_actorWalkToAsync(R_SCRIPTFUNC_PARAMS) {
 	if (actor_idx < 0) {
 		_vm->_console->print(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.",
 		    actor_id);
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	pt.x = _vm->_sdata->readWordS(x_parm);
 	pt.y = _vm->_sdata->readWordS(y_parm);
 	_vm->_actor->walkTo(actor_idx, &pt, 0, NULL);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #29 (0x1D)
-int Script::SF_setActorState(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_setActorState(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #30 (0x1E) nonblocking
@@ -389,7 +389,7 @@ int Script::SF_setActorState(R_SCRIPTFUNC_PARAMS) {
 // Param1: actor id
 // Param2: actor pos x
 // Param3: actor pos y
-int Script::SF_moveTo(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_moveTo(SCRIPTFUNC_PARAMS) {
 	SDataWord_T actor_parm;
 	SDataWord_T x_parm;
 	SDataWord_T y_parm;
@@ -408,29 +408,29 @@ int Script::SF_moveTo(R_SCRIPTFUNC_PARAMS) {
 
 	if (!_vm->_actor->actorExists(actor_id)) {
 		result = _vm->_actor->create(actor_id, pt.x, pt.y);
-		if (result != R_SUCCESS) {
+		if (result != SUCCESS) {
 			_vm->_console->print(S_WARN_PREFIX "SF.30: Couldn't create actor 0x%X.", actor_id);
-			return R_FAILURE;
+			return FAILURE;
 		}
 	} else {
 		actor_idx = _vm->_actor->getActorIndex(actor_id);
 		_vm->_actor->move(actor_idx, &pt);
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #33 (0x21)
-int Script::SF_finishBgdAnim(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_finishBgdAnim(SCRIPTFUNC_PARAMS) {
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #34 (0x22)
-int Script::SF_swapActors(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_swapActors(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #36 (0x24) ?
@@ -439,7 +439,7 @@ int Script::SF_swapActors(R_SCRIPTFUNC_PARAMS) {
 // Param2: actor destination x
 // Param3: actor destination y
 // Param4: unknown
-int Script::SF_actorWalk(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_actorWalk(SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 	SDataWord_T actor_parm;
 	SDataWord_T x_parm;
@@ -456,7 +456,7 @@ int Script::SF_actorWalk(R_SCRIPTFUNC_PARAMS) {
 	actor_idx = _vm->_actor->getActorIndex(_vm->_sdata->readWordS(actor_parm));
 	if (actor_idx < 0) {
 		_vm->_console->print(S_WARN_PREFIX "SF.36: Actor id 0x%X not found.", (int)actor_parm);
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	pt.x = _vm->_sdata->readWordS(x_parm);
@@ -468,7 +468,7 @@ int Script::SF_actorWalk(R_SCRIPTFUNC_PARAMS) {
 	_vm->_actor->walkTo(actor_idx, &pt, 0, &thread->sem);
 #endif
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #37 (0x25) nonblocking
@@ -477,7 +477,7 @@ int Script::SF_actorWalk(R_SCRIPTFUNC_PARAMS) {
 // Param2: unknown
 // Param3: actor action state
 // Param4: unknown
-int Script::SF_cycleActorFrames(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_cycleActorFrames(SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 	SDataWord_T actor_parm;
 	SDataWord_T unk1_parm;
@@ -496,12 +496,12 @@ int Script::SF_cycleActorFrames(R_SCRIPTFUNC_PARAMS) {
 	action = _vm->_sdata->readWordS(action_parm);
 	actor_idx = _vm->_actor->getActorIndex(actor_id);
 
-	if (_vm->_actor->setAction(actor_idx, action, ACTION_NONE) != R_SUCCESS) {
+	if (_vm->_actor->setAction(actor_idx, action, ACTION_NONE) != SUCCESS) {
 		_vm->_console->print(S_WARN_PREFIX "SF.37: Actor::setAction() failed.");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #38 (0x26) nonblocking
@@ -509,7 +509,7 @@ int Script::SF_cycleActorFrames(R_SCRIPTFUNC_PARAMS) {
 // Param1: actor id
 // Param2: actor action state
 // Param3: unknown
-int Script::SF_setFrame(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_setFrame(SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 
 	SDataWord_T actor_parm;
@@ -529,17 +529,17 @@ int Script::SF_setFrame(R_SCRIPTFUNC_PARAMS) {
 	action = _vm->_sdata->readWordS(action_parm);
 	actor_idx = _vm->_actor->getActorIndex(actor_id);
 
-	if (_vm->_actor->setAction(actor_idx, action, ACTION_NONE) != R_SUCCESS) {
+	if (_vm->_actor->setAction(actor_idx, action, ACTION_NONE) != SUCCESS) {
 		_vm->_console->print(S_WARN_PREFIX "SF.38: Actor::setAction() failed.");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #39 (0x27)
 // Sets the right-hand portrait
-int Script::SF_setRightPortrait(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_setRightPortrait(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param = thread->pop();
 
 	return _vm->_interface->setRightPortrait(param);
@@ -547,7 +547,7 @@ int Script::SF_setRightPortrait(R_SCRIPTFUNC_PARAMS) {
 
 // Script function #40 (0x28)
 // Sets the left-hand portrait
-int Script::SF_setLeftPortrait(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_setLeftPortrait(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param = thread->pop();
 
 	return _vm->_interface->setLeftPortrait(param);
@@ -560,7 +560,7 @@ int Script::SF_setLeftPortrait(R_SCRIPTFUNC_PARAMS) {
 // Param2: total linked frame count
 // Param3: animation id link target
 // Param4: animation id link source
-int Script::SF_linkAnim(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_linkAnim(SCRIPTFUNC_PARAMS) {
 	SDataWord_T unk_parm;
 	SDataWord_T tframes_parm;
 	SDataWord_T anim1_parm;
@@ -577,21 +577,21 @@ int Script::SF_linkAnim(R_SCRIPTFUNC_PARAMS) {
 	anim_id1 = _vm->_sdata->readWordU(anim1_parm);
 	anim_id2 = _vm->_sdata->readWordU(anim2_parm);
 
-	if (_vm->_anim->link(anim_id1, anim_id2) != R_SUCCESS) {
+	if (_vm->_anim->link(anim_id1, anim_id2) != SUCCESS) {
 		_vm->_console->print(S_WARN_PREFIX "SF.41: Anim::link() failed. (%u->%u)\n", anim_id1, anim_id2);
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #42 (0x2A)
-int Script::SF_scriptSpecialWalk(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_scriptSpecialWalk(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
 	thread->pop();
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #43 (0x2B) nonblocking
@@ -603,7 +603,7 @@ int Script::SF_scriptSpecialWalk(R_SCRIPTFUNC_PARAMS) {
 // Param4: ?
 // Param5: actor action
 // Param6: ?
-int Script::SF_placeActor(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_placeActor(SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 	SDataWord_T actor_parm;
 	SDataWord_T x_parm;
@@ -630,9 +630,9 @@ int Script::SF_placeActor(R_SCRIPTFUNC_PARAMS) {
 
 	if (!_vm->_actor->actorExists(actor_id)) {
 		result = _vm->_actor->create(actor_id, pt.x, pt.y);
-		if (result != R_SUCCESS) {
+		if (result != SUCCESS) {
 			_vm->_console->print(S_WARN_PREFIX "SF.43: Couldn't create actor 0x%X.", actor_id);
-			return R_FAILURE;
+			return FAILURE;
 		}
 	} else {
 		actor_idx = _vm->_actor->getActorIndex(actor_id);
@@ -643,93 +643,93 @@ int Script::SF_placeActor(R_SCRIPTFUNC_PARAMS) {
 	_vm->_actor->setDefaultAction(actor_idx, action_state, ACTION_NONE);
 	_vm->_actor->setAction(actor_idx, action_state, ACTION_NONE);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #44 (0x2C) nonblocking
 // Checks to see if the user has interrupted a currently playing 
 // game cinematic. Pushes a zero or positive value if the game 
 // has not been interrupted.
-int Script::SF_checkUserInterrupt(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_checkUserInterrupt(SCRIPTFUNC_PARAMS) {
 	thread->retVal = (_skipSpeeches == true);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #45 (0x2D)
-int Script::SF_walkRelative(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_walkRelative(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
 	thread->pop();
 	thread->pop();
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #46 (0x2E)
-int Script::SF_moveRelative(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_moveRelative(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
 	thread->pop();
 	thread->pop();
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #52 (0x34)
-int Script::SF_throwActor(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_throwActor(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
 	thread->pop();
 	thread->pop();
 	thread->pop();
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #53 (0x35)
-int Script::SF_waitWalk(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_waitWalk(SCRIPTFUNC_PARAMS) {
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #55 (0x37)
-int Script::SF_changeActorScene(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_changeActorScene(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #56 (0x38)
-int Script::SF_climb(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_climb(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
 	thread->pop();
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #58 (0x3A)
-int Script::SF_setActorZ(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_setActorZ(SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #60 (0x3C)
-int Script::SF_getActorX(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_getActorX(SCRIPTFUNC_PARAMS) {
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #61 (0x3D)
-int Script::SF_getActorY(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_getActorY(SCRIPTFUNC_PARAMS) {
 	thread->pop();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #63 (0x3F)
-int Script::SF_playMusic(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_playMusic(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param = thread->pop() + 9;
 
 	if (param >= 9 && param <= 34)
@@ -737,11 +737,11 @@ int Script::SF_playMusic(R_SCRIPTFUNC_PARAMS) {
 	else
 		_vm->_music->stop();
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // Script function #69
-int Script::SF_enableEscape(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_enableEscape(SCRIPTFUNC_PARAMS) {
 	if (thread->pop())
 		_abortEnabled = true;
 	else {
@@ -749,7 +749,7 @@ int Script::SF_enableEscape(R_SCRIPTFUNC_PARAMS) {
 		_abortEnabled = false;
 	}
 	
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 static struct {
@@ -824,7 +824,7 @@ static struct {
 };
 
 // Script function #70 (0x46)
-int Script::SF_playSound(R_SCRIPTFUNC_PARAMS) {
+int Script::SF_playSound(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param = thread->pop() - 13;
 
 	if (/* param >= 0 && */ param < ARRAYSIZE(sfxTable))
@@ -832,7 +832,7 @@ int Script::SF_playSound(R_SCRIPTFUNC_PARAMS) {
 	else
 		_vm->_sound->stopSound();
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 } // End of namespace Saga

@@ -36,51 +36,51 @@
 
 namespace Saga {
 
-R_SCENE_RESLIST IHNM_IntroMovie1RL[] = {
+SCENE_RESLIST IHNM_IntroMovie1RL[] = {
 	{30, SAGA_BG_IMAGE, 0, 0} ,
 	{31, SAGA_ANIM_1, 0, 0}
 };
 
-R_SCENE_DESC IHNM_IntroMovie1Desc = {
+SCENE_DESC IHNM_IntroMovie1Desc = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	IHNM_IntroMovie1RL,
 	ARRAYSIZE(IHNM_IntroMovie1RL)
 };
 
-R_SCENE_RESLIST IHNM_IntroMovie2RL[] = {
+SCENE_RESLIST IHNM_IntroMovie2RL[] = {
 	{32, SAGA_BG_IMAGE, 0, 0} ,
 	{33, SAGA_ANIM_1, 0, 0}
 };
 
-R_SCENE_DESC IHNM_IntroMovie2Desc = {
+SCENE_DESC IHNM_IntroMovie2Desc = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	IHNM_IntroMovie2RL,
 	ARRAYSIZE(IHNM_IntroMovie2RL)
 };
 
-R_SCENE_RESLIST IHNM_IntroMovie3RL[] = {
+SCENE_RESLIST IHNM_IntroMovie3RL[] = {
 	{34, SAGA_BG_IMAGE, 0, 0},
 	{35, SAGA_ANIM_1, 0, 0}
 };
 
-R_SCENE_DESC IHNM_IntroMovie3Desc = {
+SCENE_DESC IHNM_IntroMovie3Desc = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	IHNM_IntroMovie3RL,
 	ARRAYSIZE(IHNM_IntroMovie3RL)
 };
 
-R_SCENE_RESLIST IHNM_IntroMovie4RL[] = {
+SCENE_RESLIST IHNM_IntroMovie4RL[] = {
 	{1227, SAGA_BG_IMAGE, 0, 0},
 	{1226, SAGA_ANIM_1, 0, 0}
 };
 
-R_SCENE_DESC IHNM_IntroMovie4Desc = {
+SCENE_DESC IHNM_IntroMovie4Desc = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	IHNM_IntroMovie4RL,
 	ARRAYSIZE(IHNM_IntroMovie4RL)
 };
 
-R_SCENE_QUEUE IHNM_IntroList[] = {
+SCENE_QUEUE IHNM_IntroList[] = {
 	{0, &IHNM_IntroMovie1Desc, BY_DESC, Scene::SC_IHNMIntroMovieProc1, 0, SCENE_NOFADE},
 	{0, &IHNM_IntroMovie2Desc, BY_DESC, Scene::SC_IHNMIntroMovieProc2, 0, SCENE_NOFADE},
 	{0, &IHNM_IntroMovie3Desc, BY_DESC, Scene::SC_IHNMIntroMovieProc3, 0, SCENE_NOFADE},
@@ -97,27 +97,27 @@ int Scene::IHNMStartProc() {
 		_vm->_scene->queueScene(&IHNM_IntroList[i]);
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Scene::SC_IHNMIntroMovieProc1(int param, R_SCENE_INFO *scene_info, void *refCon) {
+int Scene::SC_IHNMIntroMovieProc1(int param, SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->IHNMIntroMovieProc1(param, scene_info);
 }
 
-int Scene::IHNMIntroMovieProc1(int param, R_SCENE_INFO *scene_info) {
-	R_EVENT event;
+int Scene::IHNMIntroMovieProc1(int param, SCENE_INFO *scene_info) {
+	EVENT event;
 
 	switch (param) {
 	case SCENE_BEGIN:
 		// Background for intro scene is the first frame of the
 		// intro animation; display it and set the palette
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_BG_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = BG_EVENT;
 		event.op = EVENT_DISPLAY;
 		event.param = SET_PALETTE;
 		event.time = 0;
 		_vm->_events->queue(&event);
-		_vm->_anim->setFrameTime(0, R_IHNM_INTRO_FRAMETIME);
+		_vm->_anim->setFrameTime(0, IHNM_INTRO_FRAMETIME);
 		_vm->_anim->setFlag(0, ANIM_ENDSCENE);
 		_vm->_anim->play(0, 0);
 		break;
@@ -128,35 +128,35 @@ int Scene::IHNMIntroMovieProc1(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_IHNMIntroMovieProc2(int param, R_SCENE_INFO *scene_info, void *refCon) {
+int Scene::SC_IHNMIntroMovieProc2(int param, SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->IHNMIntroMovieProc2(param, scene_info);
 }
 
-int Scene::IHNMIntroMovieProc2(int param, R_SCENE_INFO *scene_info) {
-	R_EVENT event;
-	R_EVENT *q_event;
+int Scene::IHNMIntroMovieProc2(int param, SCENE_INFO *scene_info) {
+	EVENT event;
+	EVENT *q_event;
 	PALENTRY *pal;
 
-	static PALENTRY current_pal[R_PAL_ENTRIES];
+	static PALENTRY current_pal[PAL_ENTRIES];
 	switch (param) {
 
 	case SCENE_BEGIN:
 		// Fade to black out of the intro CyberDreams logo anim
 		_vm->_gfx->getCurrentPal(current_pal);
 
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_PAL_EVENT;
+		event.type = CONTINUOUS_EVENT;
+		event.code = PAL_EVENT;
 		event.op = EVENT_PALTOBLACK;
 		event.time = 0;
-		event.duration = R_IHNM_PALFADE_TIME;
+		event.duration = IHNM_PALFADE_TIME;
 		event.data = current_pal;
 
 		q_event = _vm->_events->queue(&event);
 
 		// Background for intro scene is the first frame of the
 		// intro animation; display it but don't set palette
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_BG_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = BG_EVENT;
 		event.op = EVENT_DISPLAY;
 		event.param = NO_SET_PALETTE;
 		event.time = 0;
@@ -166,23 +166,23 @@ int Scene::IHNMIntroMovieProc2(int param, R_SCENE_INFO *scene_info) {
 		// Fade in from black to the scene background palette
 		_vm->_scene->getBGPal(&pal);
 
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_PAL_EVENT;
+		event.type = CONTINUOUS_EVENT;
+		event.code = PAL_EVENT;
 		event.op = EVENT_BLACKTOPAL;
 		event.time = 0;
-		event.duration = R_IHNM_PALFADE_TIME;
+		event.duration = IHNM_PALFADE_TIME;
 		event.data = pal;
 
 		q_event = _vm->_events->chain(q_event, &event);
 
 		_vm->_anim->setFlag(0, ANIM_LOOP);
-		_vm->_anim->play(0, R_IHNM_PALFADE_TIME * 2);
+		_vm->_anim->play(0, IHNM_PALFADE_TIME * 2);
 
 		// Queue end of scene after looping animation for a while
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_SCENE_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
-		event.time = R_IHNM_DGLOGO_TIME;
+		event.time = IHNM_DGLOGO_TIME;
 
 		q_event = _vm->_events->chain(q_event, &event);
 		break;
@@ -193,34 +193,34 @@ int Scene::IHNMIntroMovieProc2(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_IHNMIntroMovieProc3(int param, R_SCENE_INFO *scene_info, void *refCon) {
+int Scene::SC_IHNMIntroMovieProc3(int param, SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->IHNMIntroMovieProc3(param, scene_info);
 }
 
-int Scene::IHNMIntroMovieProc3(int param, R_SCENE_INFO *scene_info) {
-	R_EVENT event;
-	R_EVENT *q_event;
+int Scene::IHNMIntroMovieProc3(int param, SCENE_INFO *scene_info) {
+	EVENT event;
+	EVENT *q_event;
 	PALENTRY *pal;
-	static PALENTRY current_pal[R_PAL_ENTRIES];
+	static PALENTRY current_pal[PAL_ENTRIES];
 
 	switch (param) {
 	case SCENE_BEGIN:
 		// Fade to black out of the intro DG logo anim
 		_vm->_gfx->getCurrentPal(current_pal);
 
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_PAL_EVENT;
+		event.type = CONTINUOUS_EVENT;
+		event.code = PAL_EVENT;
 		event.op = EVENT_PALTOBLACK;
 		event.time = 0;
-		event.duration = R_IHNM_PALFADE_TIME;
+		event.duration = IHNM_PALFADE_TIME;
 		event.data = current_pal;
 
 		q_event = _vm->_events->queue(&event);
 
 		// Background for intro scene is the first frame of the
 		// intro animation; display it but don't set palette
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_BG_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = BG_EVENT;
 		event.op = EVENT_DISPLAY;
 		event.param = NO_SET_PALETTE;
 		event.time = 0;
@@ -230,11 +230,11 @@ int Scene::IHNMIntroMovieProc3(int param, R_SCENE_INFO *scene_info) {
 		// Fade in from black to the scene background palette
 		_vm->_scene->getBGPal(&pal);
 
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_PAL_EVENT;
+		event.type = CONTINUOUS_EVENT;
+		event.code = PAL_EVENT;
 		event.op = EVENT_BLACKTOPAL;
 		event.time = 0;
-		event.duration = R_IHNM_PALFADE_TIME;
+		event.duration = IHNM_PALFADE_TIME;
 		event.data = pal;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -242,10 +242,10 @@ int Scene::IHNMIntroMovieProc3(int param, R_SCENE_INFO *scene_info) {
 		_vm->_anim->play(0, 0);
 
 		// Queue end of scene after a while
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_SCENE_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
-		event.time = R_IHNM_TITLE_TIME;
+		event.time = IHNM_TITLE_TIME;
 
 		q_event = _vm->_events->chain(q_event, &event);
 		break;
@@ -256,20 +256,20 @@ int Scene::IHNMIntroMovieProc3(int param, R_SCENE_INFO *scene_info) {
 	return 0;
 }
 
-int Scene::SC_IHNMHateProc(int param, R_SCENE_INFO *scene_info, void *refCon) {
+int Scene::SC_IHNMHateProc(int param, SCENE_INFO *scene_info, void *refCon) {
 	return ((Scene *)refCon)->IHNMHateProc(param, scene_info);
 }
 
-int Scene::IHNMHateProc(int param, R_SCENE_INFO *scene_info) {
-	R_EVENT event;
-	R_EVENT *q_event;
+int Scene::IHNMHateProc(int param, SCENE_INFO *scene_info) {
+	EVENT event;
+	EVENT *q_event;
 
 	switch (param) {
 	case SCENE_BEGIN:
 		// Background for intro scene is the first frame of the
 		// intro animation; display it and set the palette
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_BG_EVENT;
+		event.type = ONESHOT_EVENT;
+		event.code = BG_EVENT;
 		event.op = EVENT_DISPLAY;
 		event.param = SET_PALETTE;
 		event.time = 0;

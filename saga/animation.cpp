@@ -38,17 +38,17 @@ namespace Saga {
 static void CF_anim_info(int argc, char *argv[], void *refCon);
 
 int Anim::reg() {
-	CVAR_RegisterFunc(CF_anim_info, "anim_info", NULL, R_CVAR_NONE, 0, 0, this);
-	return R_SUCCESS;
+	CVAR_RegisterFunc(CF_anim_info, "anim_info", NULL, CVAR_NONE, 0, 0, this);
+	return SUCCESS;
 }
 
 Anim::Anim(SagaEngine *vm) : _vm(vm) {
 	int i;
 
-	_anim_limit = R_MAX_ANIMATIONS;
+	_anim_limit = MAX_ANIMATIONS;
 	_anim_count = 0;
 
-	for (i = 0; i < R_MAX_ANIMATIONS; i++)
+	for (i = 0; i < MAX_ANIMATIONS; i++)
 		_anim_tbl[i] = NULL;
 
 	_initialized = true;
@@ -57,56 +57,56 @@ Anim::Anim(SagaEngine *vm) : _vm(vm) {
 Anim::~Anim(void) {
 	uint16 i;
 
-	for (i = 0; i < R_MAX_ANIMATIONS; i++)
+	for (i = 0; i < MAX_ANIMATIONS; i++)
 		free(_anim_tbl[i]);
 
 	_initialized = false;
 }
 
 int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_id_p) {
-	R_ANIMATION *new_anim;
+ ANIMATION *new_anim;
 
 	uint16 anim_id = 0;
 	uint16 i;
 
 	if (!_initialized) {
 		warning("Anim::load not initialised");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	// Find an unused animation slot
-	for (i = 0; i < R_MAX_ANIMATIONS; i++) {
+	for (i = 0; i < MAX_ANIMATIONS; i++) {
 		if (_anim_tbl[i] == NULL) {
 			anim_id = i;
 			break;
 		}
 	}
 
-	if (i == R_MAX_ANIMATIONS) {
+	if (i == MAX_ANIMATIONS) {
 		warning("Anim::load could not find unused animation slot");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	new_anim = (R_ANIMATION *)malloc(sizeof *new_anim);
+	new_anim = (ANIMATION *)malloc(sizeof *new_anim);
 	if (new_anim == NULL) {
 		warning("Anim::load Allocation failure");
-		return R_MEM;
+		return MEM;
 	}
 
 	new_anim->resdata = anim_resdata;
 	new_anim->resdata_len = anim_resdata_len;
 
 	if (GAME_GetGameType() == GID_ITE) {
-		if (getNumFrames(anim_resdata, anim_resdata_len, &new_anim->n_frames) != R_SUCCESS) {
+		if (getNumFrames(anim_resdata, anim_resdata_len, &new_anim->n_frames) != SUCCESS) {
 			warning("Anim::load Couldn't get animation frame count");
-			return R_FAILURE;
+			return FAILURE;
 		}
 
 		// Cache frame offsets
 		new_anim->frame_offsets = (size_t *)malloc(new_anim->n_frames * sizeof *new_anim->frame_offsets);
 		if (new_anim->frame_offsets == NULL) {
 			warning("Anim::load Allocation failure");
-			return R_MEM;
+			return MEM;
 		}
 
 		for (i = 0; i < new_anim->n_frames; i++) {
@@ -123,7 +123,7 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 	new_anim->end_frame = new_anim->n_frames;
 	new_anim->stop_frame = new_anim->end_frame;
 
-	new_anim->frame_time = R_DEFAULT_FRAME_TIME;
+	new_anim->frame_time = DEFAULT_FRAME_TIME;
 	new_anim->flags = 0;
 	new_anim->play_flag = 0;
 	new_anim->link_flag = 0;
@@ -135,22 +135,22 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 
 	_anim_count++;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Anim::link(uint16 anim_id1, uint16 anim_id2) {
-	R_ANIMATION *anim1;
-	R_ANIMATION *anim2;
+	ANIMATION *anim1;
+	ANIMATION *anim2;
 
 	if ((anim_id1 >= _anim_count) || (anim_id2 >= _anim_count)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	anim1 = _anim_tbl[anim_id1];
 	anim2 = _anim_tbl[anim_id2];
 
 	if ((anim1 == NULL) || (anim2 == NULL)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	anim1->link_id = anim_id2;
@@ -158,16 +158,16 @@ int Anim::link(uint16 anim_id1, uint16 anim_id2) {
 
 	anim2->frame_time = anim1->frame_time;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Anim::play(uint16 anim_id, int vector_time) {
-	R_EVENT event;
-	R_ANIMATION *anim;
-	R_ANIMATION *link_anim;
+	EVENT event;
+	ANIMATION *anim;
+	ANIMATION *link_anim;
 	uint16 link_anim_id;
 
-	R_BUFFER_INFO buf_info;
+	BUFFER_INFO buf_info;
 
 	byte *display_buf;
 
@@ -177,47 +177,47 @@ int Anim::play(uint16 anim_id, int vector_time) {
 	uint16 frame;
 	int result;
 
-	R_GAME_DISPLAYINFO disp_info;
+	GAME_DISPLAYINFO disp_info;
 
 	if (anim_id >= _anim_count) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	GAME_GetDisplayInfo(&disp_info);
 
 	_vm->_render->getBufferInfo(&buf_info);
-	display_buf = buf_info.r_bg_buf;
+	display_buf = buf_info.bg_buf;
 
 	anim = _anim_tbl[anim_id];
 	if (anim == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (anim->flags & ANIM_PAUSE)
-		return R_SUCCESS;
+		return SUCCESS;
 
 	if (anim->play_flag) {
 		frame = anim->current_frame;
 		if (GAME_GetGameType() == GID_ITE) {
 			result = ITE_DecodeFrame(anim->resdata, anim->resdata_len, anim->frame_offsets[frame - 1], display_buf,
 									disp_info.logical_w * disp_info.logical_h);
-			if (result != R_SUCCESS) {
+			if (result != SUCCESS) {
 				warning("ANIM::play: Error decoding frame %u", anim->current_frame);
 				anim->play_flag = 0;
-				return R_FAILURE;
+				return FAILURE;
 			}
 		} else {
 			if (anim->cur_frame_p == NULL) {
 				warning("ANIM::play: Frames exhausted");
-				return R_FAILURE;
+				return FAILURE;
 			}
 
 			result = IHNM_DecodeFrame(display_buf,  disp_info.logical_w * disp_info.logical_h,
 									anim->cur_frame_p, anim->cur_frame_len, &nextf_p, &nextf_len);
-			if (result != R_SUCCESS) {
+			if (result != SUCCESS) {
 				warning("ANIM::play: Error decoding frame %u", anim->current_frame);
 				anim->play_flag = 0;
-				return R_FAILURE;
+				return FAILURE;
 			}
 
 			anim->cur_frame_p = nextf_p;
@@ -256,101 +256,101 @@ int Anim::play(uint16 anim_id, int vector_time) {
 
 			if (anim->flags & ANIM_ENDSCENE) {
 				// This animation ends the scene
-				event.type = R_ONESHOT_EVENT;
-				event.code = R_SCENE_EVENT;
+				event.type = ONESHOT_EVENT;
+				event.code = SCENE_EVENT;
 				event.op = EVENT_END;
 				event.time = anim->frame_time + vector_time;
 				_vm->_events->queue(&event);
 			}
-			return R_SUCCESS;
+			return SUCCESS;
 		}
 	}
 
-	event.type = R_ONESHOT_EVENT;
-	event.code = R_ANIM_EVENT;
+	event.type = ONESHOT_EVENT;
+	event.code = ANIM_EVENT;
 	event.op = EVENT_FRAME;
 	event.param = anim_id;
 	event.time = anim->frame_time + vector_time;
 
 	_vm->_events->queue(&event);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Anim::reset() {
 	uint16 i;
 
-	for (i = 0; i < R_MAX_ANIMATIONS; i++) {
+	for (i = 0; i < MAX_ANIMATIONS; i++) {
 
 		freeId(i);
 	}
 
 	_anim_count = 0;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Anim::setFlag(uint16 anim_id, uint16 flag) {
-	R_ANIMATION *anim;
+	ANIMATION *anim;
 
 	if (anim_id > _anim_count) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	anim = _anim_tbl[anim_id];
 	if (anim == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	anim->flags |= flag;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Anim::clearFlag(uint16 anim_id, uint16 flag) {
-	R_ANIMATION *anim;
+	ANIMATION *anim;
 
 	if (anim_id > _anim_count) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	anim = _anim_tbl[anim_id];
 	if (anim == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	anim->flags &= ~flag;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Anim::setFrameTime(uint16 anim_id, int time) {
-	R_ANIMATION *anim;
+	ANIMATION *anim;
 
 	if (anim_id > _anim_count) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	anim = _anim_tbl[anim_id];
 	if (anim == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	anim->frame_time = time;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Anim::freeId(uint16 anim_id) {
-	R_ANIMATION *anim;
+	ANIMATION *anim;
 
 	if (anim_id > _anim_count) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	anim = _anim_tbl[anim_id];
 	if (anim == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (GAME_GetGameType() == GID_ITE) {
@@ -362,7 +362,7 @@ int Anim::freeId(uint16 anim_id) {
 	_anim_tbl[anim_id] = NULL;
 	_anim_count--;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 // The actual number of frames present in an animation resource is 
@@ -370,7 +370,7 @@ int Anim::freeId(uint16 anim_id) {
 // animation header. For this reason, the function attempts to find
 // the last valid frame number, which it returns via 'n_frames'
 int Anim::getNumFrames(const byte *anim_resource, size_t anim_resource_len, uint16 *n_frames) {
-	R_ANIMATION_HEADER ah;
+	ANIMATION_HEADER ah;
 
 	size_t offset;
 	int magic;
@@ -378,7 +378,7 @@ int Anim::getNumFrames(const byte *anim_resource, size_t anim_resource_len, uint
 	int x;
 
 	if (!_initialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	MemoryReadStream readS(anim_resource, anim_resource_len);
@@ -397,26 +397,26 @@ int Anim::getNumFrames(const byte *anim_resource, size_t anim_resource_len, uint
 
 	if (ah.magic == 68) {
 		for (x = ah.nframes; x > 0; x--) {
-			if (getFrameOffset(anim_resource, anim_resource_len, x, &offset) != R_SUCCESS) {
-				return R_FAILURE;
+			if (getFrameOffset(anim_resource, anim_resource_len, x, &offset) != SUCCESS) {
+				return FAILURE;
 			}
 
 			magic = *(anim_resource + offset);
 			if (magic == SAGA_FRAME_HEADER_MAGIC) {
 				*n_frames = x;
-				return R_SUCCESS;
+				return SUCCESS;
 			}
 		}
 
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	return R_FAILURE;
+	return FAILURE;
 }
 
 int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_offset, byte *buf, size_t buf_len) {
-	R_ANIMATION_HEADER ah;
-	R_FRAME_HEADER fh;
+	ANIMATION_HEADER ah;
+	FRAME_HEADER fh;
 
 	byte *write_p;
 
@@ -440,7 +440,7 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 	uint16 i;
 
 	if (!_initialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	MemoryReadStream headerReadS(resdata, resdata_len);
@@ -461,7 +461,7 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 	if ((screen_w * screen_h) > buf_len) {
 		// Buffer argument is too small to hold decoded frame, abort.
 		warning("ITE_DecodeFrame: Buffer size inadequate");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	// Read frame header
@@ -471,7 +471,7 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 	magic = readS.readByte();
 	if (magic != SAGA_FRAME_HEADER_MAGIC) {
 		warning("ITE_DecodeFrame: Invalid frame offset");
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	// For some strange reason, the animation header is in little 
@@ -528,7 +528,7 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 			continue;
 			break;
 		case 0x3F: // End of frame marker
-			return R_SUCCESS;
+			return SUCCESS;
 			break;
 		default:
 			break;
@@ -568,12 +568,12 @@ int Anim::ITE_DecodeFrame(const byte *resdata, size_t resdata_len, size_t frame_
 		default:
 			// Unknown marker found - abort
 			warning("ITE_DecodeFrame: Invalid RLE marker encountered");
-			return R_FAILURE;
+			return FAILURE;
 			break;
 		}
 	} while (mark_byte != 63); // end of frame marker
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *thisf_p,
@@ -600,7 +600,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 	byte *outbuf_endp = (decode_buf + decode_buf_len) - 1;
 	size_t outbuf_remain = decode_buf_len;
 
-	R_GAME_DISPLAYINFO di;
+	GAME_DISPLAYINFO di;
 
 	GAME_GetDisplayInfo(&di);
 
@@ -621,7 +621,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 
 				if (thisf_len - readS.pos() < 13) {
 					warning("0x%02X: Input buffer underrun", in_ch);
-					return R_FAILURE;
+					return FAILURE;
 				}
 
 				param1 = readS.readUint16BE();
@@ -640,7 +640,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 				if (outbuf_p > outbuf_endp) {
 					warning("0x%02X: (0x%X) Invalid output position. (x: %d, y: %d)",
 							in_ch, in_ch_offset, x_origin, y_origin);
-					return R_FAILURE;
+					return FAILURE;
 				}
 
 				outbuf_remain = (outbuf_endp - outbuf_p) + 1;
@@ -651,11 +651,11 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 			runcount = readS.readSint16BE();
 			if (thisf_len - readS.pos() < runcount) {
 				warning("0x%02X: Input buffer underrun", in_ch);
-				return R_FAILURE;
+				return FAILURE;
 			}
 			if (outbuf_remain < runcount) {
 				warning("0x%02X: Output buffer overrun", in_ch);
-				return R_FAILURE;
+				return FAILURE;
 			}
 
 			for (c = 0; c < runcount; c++) {
@@ -672,7 +672,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 		case 0x1F: // 31: Unusued?
 			if (thisf_len - readS.pos() < 3) {
 				warning("0x%02X: Input buffer underrun", in_ch);
-				return R_FAILURE;
+				return FAILURE;
 			}
 
 			readS.readByte();
@@ -683,7 +683,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 		case 0x20: // Long compressed run
 			if (thisf_len - readS.pos() <= 3) {
 				warning("0x%02X: Input buffer underrun", in_ch);
-				return R_FAILURE;
+				return FAILURE;
 			}
 
 			runcount = readS.readSint16BE();
@@ -699,7 +699,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 
 		case 0x2F: // End of row
 			if (thisf_len - readS.pos() <= 4) {
-				return R_FAILURE;
+				return FAILURE;
 			}
 
 			x_vector = readS.readSint16BE();
@@ -711,14 +711,14 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 			break;
 		case 0x30: // Reposition command
 			if (thisf_len - readS.pos() < 2) {
-				return R_FAILURE;
+				return FAILURE;
 			}
 
 			x_vector = readS.readSint16BE();
 
 			if (((x_vector > 0) && ((size_t) x_vector > outbuf_remain)) || (-x_vector > outbuf_p - decode_buf)) {
 				warning("0x30: Invalid x_vector");
-				return R_FAILURE;
+				return FAILURE;
 			}
 
 			outbuf_p += x_vector;
@@ -751,7 +751,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 		case 0xC0: // Run of empty pixels
 			runcount = param_ch + 1;
 			if (outbuf_remain < runcount) {
-				return R_FAILURE;
+				return FAILURE;
 			}
 
 			outbuf_p += runcount;
@@ -761,7 +761,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 		case 0x80: // Run of compressed data
 			runcount = param_ch + 1;
 			if ((outbuf_remain < runcount) || (thisf_len - readS.pos() <= 1)) {
-				return R_FAILURE;
+				return FAILURE;
 			}
 
 			data_pixel = readS.readByte();
@@ -776,7 +776,7 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 		case 0x40: // Uncompressed run
 			runcount = param_ch + 1;
 			if ((outbuf_remain < runcount) || (thisf_len - readS.pos() < runcount)) {
-				return R_FAILURE;
+				return FAILURE;
 			}
 
 			for (c = 0; c < runcount; c++) {
@@ -797,11 +797,11 @@ int Anim::IHNM_DecodeFrame(byte *decode_buf, size_t decode_buf_len, const byte *
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_frame, size_t *frame_offset_p) {
-	R_ANIMATION_HEADER ah;
+	ANIMATION_HEADER ah;
 
 	uint16 num_frames;
 	uint16 current_frame;
@@ -814,7 +814,7 @@ int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_fr
 	int i;
 
 	if (!_initialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	MemoryReadStream readS(resdata, resdata_len);
@@ -833,14 +833,14 @@ int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_fr
 	num_frames = ah.nframes;
 
 	if ((find_frame < 1) || (find_frame > num_frames)) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	for (current_frame = 1; current_frame < find_frame; current_frame++) {
 		magic = readS.readByte();
 		if (magic != SAGA_FRAME_HEADER_MAGIC) {
 			// Frame sync failure. Magic Number not found
-			return R_FAILURE;
+			return FAILURE;
 		}
 
 		// skip header
@@ -905,14 +905,14 @@ int Anim::getFrameOffset(const byte *resdata, size_t resdata_len, uint16 find_fr
 				break;
 			default:
 				// Encountered unknown RLE marker, abort
-				return R_FAILURE;
+				return FAILURE;
 				break;
 			}
 		} while (mark_byte != 63);
 	}
 
 	*frame_offset_p = readS.pos();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 void Anim::animInfo(int argc, char *argv[]) {

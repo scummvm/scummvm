@@ -51,13 +51,13 @@ int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
 	}
 
 	if (resdata == NULL) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	MemoryReadStream readS(resdata, resdata_len);
 
 	if (GAME_GetGameType() == GID_IHNM) {
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	_entryCount = readS.readUint16LE();
@@ -67,7 +67,7 @@ int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
 	test_p = calloc(_entryCount, sizeof(PALANIM_ENTRY));
 	if (test_p == NULL) {
 		warning("PalAnim::loadPalAnim(): Allocation failure");
-		return R_MEM;
+		return MEM;
 	}
 
 	_entries = (PALANIM_ENTRY *)test_p;
@@ -88,20 +88,20 @@ int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
 		test_p = calloc(1, sizeof(char) * pal_count);
 		if (test_p == NULL) {
 			warning("PalAnim::loadPalAnim(): Allocation failure");
-			return R_MEM;
+			return MEM;
 		}
 
 		_entries[i].pal_index = (byte *)test_p;
 
 		debug(2, "PalAnim::loadPalAnim(): Entry %d: Loading %d SAGA_COLOR structures.", i, color_count);
 
-		test_p = calloc(1, sizeof(R_COLOR) * color_count);
+		test_p = calloc(1, sizeof(COLOR) * color_count);
 		if (test_p == NULL) {
 			warning("PalAnim::loadPalAnim(): Allocation failure");
-			return R_MEM;
+			return MEM;
 		}
 
-		_entries[i].colors = (R_COLOR *)test_p;
+		_entries[i].colors = (COLOR *)test_p;
 
 		for (p = 0; p < pal_count; p++) {
 			_entries[i].pal_index[p] = readS.readByte();
@@ -115,28 +115,28 @@ int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
 	}
 
 	_loaded = true;
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int PalAnim::cycleStart() {
-	R_EVENT event;
+	EVENT event;
 
 	if (!_loaded) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	event.type = R_ONESHOT_EVENT;
-	event.code = R_PALANIM_EVENT;
+	event.type = ONESHOT_EVENT;
+	event.code = PALANIM_EVENT;
 	event.op = EVENT_CYCLESTEP;
 	event.time = PALANIM_CYCLETIME;
 
 	_vm->_events->queue(&event);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int PalAnim::cycleStep(int vectortime) {
-	R_SURFACE *back_buf;
+	SURFACE *back_buf;
 
 	static PALENTRY pal[256];
 	uint16 pal_index;
@@ -146,10 +146,10 @@ int PalAnim::cycleStep(int vectortime) {
 	uint16 cycle;
 	uint16 cycle_limit;
 
-	R_EVENT event;
+	EVENT event;
 
 	if (!_loaded) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	_vm->_gfx->getCurrentPal(pal);
@@ -175,21 +175,21 @@ int PalAnim::cycleStep(int vectortime) {
 
 	_vm->_gfx->setPalette(back_buf, pal);
 
-	event.type = R_ONESHOT_EVENT;
-	event.code = R_PALANIM_EVENT;
+	event.type = ONESHOT_EVENT;
+	event.code = PALANIM_EVENT;
 	event.op = EVENT_CYCLESTEP;
 	event.time = vectortime + PALANIM_CYCLETIME;
 
 	_vm->_events->queue(&event);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int PalAnim::freePalAnim() {
 	uint16 i;
 
 	if (!_loaded) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	for (i = 0; i < _entryCount; i++) {
@@ -205,7 +205,7 @@ int PalAnim::freePalAnim() {
 
 	_loaded = false;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 } // End of namespace Saga

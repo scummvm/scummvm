@@ -38,8 +38,8 @@ IsoMap::IsoMap(Gfx *gfx) {
 }
 
 int IsoMap::loadTileset(const byte *tileres_p, size_t tileres_len) {
-	R_ISOTILE_ENTRY first_entry;
-	R_ISOTILE_ENTRY *tile_tbl;
+	ISOTILE_ENTRY first_entry;
+	ISOTILE_ENTRY *tile_tbl;
 
 	uint16 i;
 
@@ -55,9 +55,9 @@ int IsoMap::loadTileset(const byte *tileres_p, size_t tileres_len) {
 
 	readS.seek(0);
 
-	tile_tbl = (R_ISOTILE_ENTRY *)malloc(_tile_ct * sizeof *tile_tbl);
+	tile_tbl = (ISOTILE_ENTRY *)malloc(_tile_ct * sizeof *tile_tbl);
 	if (tile_tbl == NULL) {
-		return R_MEM;
+		return MEM;
 	}
 
 	for (i = 0; i < _tile_ct; i++) {
@@ -73,11 +73,11 @@ int IsoMap::loadTileset(const byte *tileres_p, size_t tileres_len) {
 	_tileres_p = tileres_p;
 	_tileres_len = tileres_len;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int IsoMap::loadMetaTileset(const byte *mtileres_p, size_t mtileres_len) {
-	R_ISO_METATILE_ENTRY *mtile_tbl;
+	ISO_METATILE_ENTRY *mtile_tbl;
 	uint16 mtile_ct;
 	uint16 ct;
 	int i;
@@ -88,9 +88,9 @@ int IsoMap::loadMetaTileset(const byte *mtileres_p, size_t mtileres_len) {
 	MemoryReadStream readS(mtileres_p, mtileres_len);
 
 	mtile_ct = mtileres_len / SAGA_METATILE_ENTRY_LEN;
-	mtile_tbl = (R_ISO_METATILE_ENTRY *)malloc(mtile_ct * sizeof *mtile_tbl);
+	mtile_tbl = (ISO_METATILE_ENTRY *)malloc(mtile_ct * sizeof *mtile_tbl);
 	if (mtile_tbl == NULL) {
-		return R_MEM;
+		return MEM;
 	}
 
 	for (ct = 0; ct < mtile_ct; ct++) {
@@ -111,7 +111,7 @@ int IsoMap::loadMetaTileset(const byte *mtileres_p, size_t mtileres_len) {
 
 	_mtiles_loaded = 1;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int IsoMap::loadMetamap(const byte *mm_res_p, size_t mm_res_len) {
@@ -128,20 +128,20 @@ int IsoMap::loadMetamap(const byte *mm_res_p, size_t mm_res_len) {
 	_mm_res_len = mm_res_len;
 	_metamap_loaded = 1;
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int IsoMap::draw(R_SURFACE *dst_s) {
-	R_GAME_DISPLAYINFO disp_info;
+int IsoMap::draw(SURFACE *dst_s) {
+	GAME_DISPLAYINFO disp_info;
 	GAME_GetDisplayInfo(&disp_info);
 	Rect iso_rect(disp_info.logical_w, disp_info.scene_h);
 	_gfx->drawRect(dst_s, &iso_rect, 0);
 	drawMetamap(dst_s, -1000, -500);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int IsoMap::drawMetamap(R_SURFACE *dst_s, int map_x, int map_y) {
+int IsoMap::drawMetamap(SURFACE *dst_s, int map_x, int map_y) {
 	int meta_base_x = map_x;
 	int meta_base_y = map_y;
 	int meta_xi;
@@ -164,10 +164,10 @@ int IsoMap::drawMetamap(R_SURFACE *dst_s, int map_x, int map_y) {
 		meta_base_y += 64;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int IsoMap::drawMetaTile(R_SURFACE *dst_s, uint16 mtile_i, int mtile_x, int mtile_y) {
+int IsoMap::drawMetaTile(SURFACE *dst_s, uint16 mtile_i, int mtile_x, int mtile_y) {
 	int tile_xi;
 	int tile_yi;
 	int tile_x;
@@ -175,11 +175,11 @@ int IsoMap::drawMetaTile(R_SURFACE *dst_s, uint16 mtile_i, int mtile_x, int mtil
 	int tile_base_x;
 	int tile_base_y;
 	int tile_i;
-	R_ISO_METATILE_ENTRY *mtile_p;
+	ISO_METATILE_ENTRY *mtile_p;
 	assert(_init && _mtiles_loaded);
 
 	if (mtile_i >= _mtile_ct) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	mtile_p = &_mtile_tbl[mtile_i];
@@ -200,10 +200,10 @@ int IsoMap::drawMetaTile(R_SURFACE *dst_s, uint16 mtile_i, int mtile_x, int mtil
 		tile_base_y += SAGA_ISOTILE_BASEHEIGHT / 2 + 1;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int IsoMap::drawTile(R_SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y) {
+int IsoMap::drawTile(SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y) {
 	const byte *tile_p;
 	const byte *read_p;
 	byte *draw_p;
@@ -219,17 +219,17 @@ int IsoMap::drawTile(R_SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y) {
 	assert(_init && _tiles_loaded);
 
 	if (tile_i >= _tile_ct) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	/* temporary x clip */
 	if (tile_x < 0) {
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	/* temporary x clip */
 	if (tile_x >= 320 - 32) {
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	tile_p = _tileres_p + _tile_tbl[tile_i].tile_offset;
@@ -247,7 +247,7 @@ int IsoMap::drawTile(R_SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y) {
 
 	// temporary y clip
 	if (draw_y < 0) {
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	for (row = 0; row < tile_h; row++) {
@@ -256,7 +256,7 @@ int IsoMap::drawTile(R_SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y) {
 
 		// temporary y clip
 		if ((draw_y + row) >= 137) {
-			return R_SUCCESS;
+			return SUCCESS;
 		}
 
 		for (;;) {
@@ -276,7 +276,7 @@ int IsoMap::drawTile(R_SURFACE *dst_s, uint16 tile_i, int tile_x, int tile_y) {
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 } // End of namespace Saga

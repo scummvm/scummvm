@@ -132,7 +132,7 @@ int SagaEngine::processInput() {
 		}
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 Point SagaEngine::getMousePos() {

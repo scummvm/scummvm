@@ -44,11 +44,11 @@ Sound::~Sound() {
 	_soundInitialized = 0;
 }
 
-int Sound::playSoundBuffer(PlayingSoundHandle *handle, R_SOUNDBUFFER *buf, int volume, bool loop) {
+int Sound::playSoundBuffer(PlayingSoundHandle *handle, SOUNDBUFFER *buf, int volume, bool loop) {
 	byte flags;
 
 	if (!_soundInitialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	flags = SoundMixer::FLAG_AUTOFREE;
@@ -68,7 +68,7 @@ int Sound::playSoundBuffer(PlayingSoundHandle *handle, R_SOUNDBUFFER *buf, int v
 #if 0
 	int game_id = GAME_GetGame();
 
-	if((game_id == R_GAME_ITE_DISK) || (game_id == R_GAME_ITE_DEMO)) {
+	if((game_id == GAME_ITE_DISK) || (game_id == GAME_ITE_DEMO)) {
 		flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
 	} else {
 		flags = SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS |
@@ -78,75 +78,75 @@ int Sound::playSoundBuffer(PlayingSoundHandle *handle, R_SOUNDBUFFER *buf, int v
 
 	_mixer->playRaw(handle, buf->s_buf, buf->s_buf_len, buf->s_freq, flags, -1, volume);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Sound::playSound(R_SOUNDBUFFER *buf, int volume) {
+int Sound::playSound(SOUNDBUFFER *buf, int volume) {
 	return playSoundBuffer(&_effectHandle, buf, 2 * volume, false);
 }
 
 int Sound::pauseSound() {
 	if (!_soundInitialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	_mixer->pauseHandle(_effectHandle, true);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Sound::resumeSound() {
 	if (!_soundInitialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	_mixer->pauseHandle(_effectHandle, false);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Sound::stopSound() {
 	if (!_soundInitialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	_mixer->stopHandle(_effectHandle);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
-int Sound::playVoice(R_SOUNDBUFFER *buf) {
+int Sound::playVoice(SOUNDBUFFER *buf) {
 	return playSoundBuffer(&_voiceHandle, buf, 255, false);
 }
 
 int Sound::pauseVoice() {
 	if (!_soundInitialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	_mixer->pauseHandle(_voiceHandle, true);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Sound::resumeVoice() {
 	if (!_soundInitialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	_mixer->pauseHandle(_voiceHandle, false);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Sound::stopVoice() {
 	if (!_soundInitialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	_mixer->stopHandle(_voiceHandle);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 } // End of namespace Saga

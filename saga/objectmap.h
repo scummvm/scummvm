@@ -42,7 +42,7 @@ enum OBJECT_FLAGS {
 	OBJECT_PROJECT = (1<<3)
 };
 
-struct R_OBJECTMAP_ENTRY {
+struct OBJECTMAP_ENTRY {
 	byte flags;
 	byte defaultVerb;
 
@@ -50,7 +50,7 @@ struct R_OBJECTMAP_ENTRY {
 	int scriptNum;
 
 	int nClickareas;
-	R_CLICKAREA *clickareas;
+	CLICKAREA *clickareas;
 };
 
 class ObjectMap{
@@ -65,7 +65,7 @@ public:
 	const char *getName(int object);
 	const uint16 getFlags(int object);
 	const int getEPNum(int object);
-	int draw(R_SURFACE *draw_surface, const Point& imousePt, int color, int color2);
+	int draw(SURFACE *draw_surface, const Point& imousePt, int color, int color2);
 	int hitTest(const Point& imousePt);
 	void info(void);
 
@@ -73,7 +73,7 @@ private:
 
 	bool _objectsLoaded;
 	int _nObjects;
-	R_OBJECTMAP_ENTRY *_objectMaps;
+	OBJECTMAP_ENTRY *_objectMaps;
 
 	bool _namesLoaded;
 	int _nNames;

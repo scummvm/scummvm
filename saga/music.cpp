@@ -341,46 +341,46 @@ Music::~Music() {
 // reset.mid seems to be unused.
 
 const MUSIC_MIDITABLE Music::_midiTableITECD[26] = {
-	{ "cave.mid",       R_MUSIC_LOOP },	// 9
-	{ "intro.mid",      R_MUSIC_LOOP },	// 10
-	{ "fvillage.mid",   R_MUSIC_LOOP },	// 11
-	{ "elkhall.mid",    R_MUSIC_LOOP },	// 12
+	{ "cave.mid",       MUSIC_LOOP },	// 9
+	{ "intro.mid",      MUSIC_LOOP },	// 10
+	{ "fvillage.mid",   MUSIC_LOOP },	// 11
+	{ "elkhall.mid",    MUSIC_LOOP },	// 12
 	{ "mouse.mid",      0            },	// 13
-	{ "darkclaw.mid",   R_MUSIC_LOOP },	// 14
-	{ "birdchrp.mid",   R_MUSIC_LOOP },	// 15
-	{ "orbtempl.mid",   R_MUSIC_LOOP },	// 16
-	{ "spooky.mid",     R_MUSIC_LOOP },	// 17
-	{ "catfest.mid",    R_MUSIC_LOOP },	// 18
+	{ "darkclaw.mid",   MUSIC_LOOP },	// 14
+	{ "birdchrp.mid",   MUSIC_LOOP },	// 15
+	{ "orbtempl.mid",   MUSIC_LOOP },	// 16
+	{ "spooky.mid",     MUSIC_LOOP },	// 17
+	{ "catfest.mid",    MUSIC_LOOP },	// 18
 	{ "elkfanfare.mid", 0            },	// 19
-	{ "bcexpl.mid",     R_MUSIC_LOOP },	// 20
-	{ "boargtnt.mid",   R_MUSIC_LOOP },	// 21
-	{ "boarking.mid",   R_MUSIC_LOOP },	// 22
-	{ "explorea.mid",   R_MUSIC_LOOP },	// 23
-	{ "exploreb.mid",   R_MUSIC_LOOP },	// 24
-	{ "explorec.mid",   R_MUSIC_LOOP },	// 25
-	{ "sunstatm.mid",   R_MUSIC_LOOP },	// 26
-	{ "nitstrlm.mid",   R_MUSIC_LOOP },	// 27
-	{ "humruinm.mid",   R_MUSIC_LOOP },	// 28
-	{ "damexplm.mid",   R_MUSIC_LOOP },	// 29
-	{ "tychom.mid",     R_MUSIC_LOOP },	// 30
-	{ "kitten.mid",     R_MUSIC_LOOP },	// 31
-	{ "sweet.mid",      R_MUSIC_LOOP },	// 32
-	{ "brutalmt.mid",   R_MUSIC_LOOP },	// 33
-	{ "shiala.mid",     R_MUSIC_LOOP }	// 34
+	{ "bcexpl.mid",     MUSIC_LOOP },	// 20
+	{ "boargtnt.mid",   MUSIC_LOOP },	// 21
+	{ "boarking.mid",   MUSIC_LOOP },	// 22
+	{ "explorea.mid",   MUSIC_LOOP },	// 23
+	{ "exploreb.mid",   MUSIC_LOOP },	// 24
+	{ "explorec.mid",   MUSIC_LOOP },	// 25
+	{ "sunstatm.mid",   MUSIC_LOOP },	// 26
+	{ "nitstrlm.mid",   MUSIC_LOOP },	// 27
+	{ "humruinm.mid",   MUSIC_LOOP },	// 28
+	{ "damexplm.mid",   MUSIC_LOOP },	// 29
+	{ "tychom.mid",     MUSIC_LOOP },	// 30
+	{ "kitten.mid",     MUSIC_LOOP },	// 31
+	{ "sweet.mid",      MUSIC_LOOP },	// 32
+	{ "brutalmt.mid",   MUSIC_LOOP },	// 33
+	{ "shiala.mid",     MUSIC_LOOP }	// 34
 };
 
 int Music::play(uint32 music_rn, uint16 flags) {
-	R_RSCFILE_CONTEXT *rsc_ctxt = NULL;
+	RSCFILE_CONTEXT *rsc_ctxt = NULL;
 
 	byte *resource_data;
 	size_t resource_size;
 
 	if (!_musicInitialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
 	if (!_enabled) {
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	_player->stopMusic();
@@ -394,7 +394,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 
 	if (GAME_GetGameType() == GID_ITE) {
 		if (music_rn >= 9 && music_rn <= 34) {
-			if (flags == R_MUSIC_DEFAULT) {
+			if (flags == MUSIC_DEFAULT) {
 				flags = _midiTableITECD[music_rn - 9].flags;
 			}
 
@@ -403,7 +403,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 				uint32 length = _digiTableITECD[music_rn - 9].length;
 
 				if (length > 0) {
-					audioStream = makeRAWStream("music.rsc", start, length, flags == R_MUSIC_LOOP);
+					audioStream = makeRAWStream("music.rsc", start, length, flags == MUSIC_LOOP);
 				}
 			}
 
@@ -413,14 +413,14 @@ int Music::play(uint32 music_rn, uint16 flags) {
 		}
 	}
 
-	if (flags == R_MUSIC_DEFAULT) {
+	if (flags == MUSIC_DEFAULT) {
 		flags = 0;
 	}
 
 	if (audioStream) {
 		debug(0, "Playing digitized music");
 		_mixer->playInputStream(&_musicHandle, audioStream, true);
-		return R_SUCCESS;
+		return SUCCESS;
 	}
 
 	// FIXME: Is resource_data ever freed?
@@ -437,12 +437,12 @@ int Music::play(uint32 music_rn, uint16 flags) {
 	} else {
 		// Load XMI resource data
 
-		GAME_GetFileContext(&rsc_ctxt, R_GAME_RESOURCEFILE, 0);
+		GAME_GetFileContext(&rsc_ctxt, GAME_RESOURCEFILE, 0);
 
 		if (RSC_LoadResource(rsc_ctxt, music_rn, &resource_data, 
-				&resource_size) != R_SUCCESS ) {
+				&resource_size) != SUCCESS ) {
 			warning("Music::play(): Resource load failed: %u", music_rn);
-			return R_FAILURE;
+			return FAILURE;
 		}
 
 		_player->setGM(false);
@@ -463,37 +463,37 @@ int Music::play(uint32 music_rn, uint16 flags) {
 
 	_player->_parser = parser;
 	_player->setVolume(ConfMan.getInt("music_volume") * ConfMan.getInt("master_volume") / 255);
-	if (flags & R_MUSIC_LOOP)
+	if (flags & MUSIC_LOOP)
 		_player->setLoop(true);
 	else
 		_player->setLoop(false);
 
 	_player->playMusic();
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Music::pause(void) {
 	if (!_musicInitialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Music::resume(void) {
 	if (!_musicInitialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 int Music::stop(void) {
 	if (!_musicInitialized) {
-		return R_FAILURE;
+		return FAILURE;
 	}
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 } // End of namespace Saga

@@ -36,15 +36,15 @@ namespace Saga {
 #define SD_DISPLAY_LEN 128
 #define SD_ADDTXT( x ) strncat( disp_buf, x, SD_DISPLAY_LEN );
 
-int Script::SDebugPrintInstr(R_SCRIPT_THREAD *thread) {
-	R_TEXTLIST_ENTRY tl_e;
+int Script::SDebugPrintInstr(SCRIPT_THREAD *thread) {
+	TEXTLIST_ENTRY tl_e;
 	char tmp_buf[80] = { 0 };
 	static char disp_buf[SD_DISPLAY_LEN] = { 0 };
 	int in_char;
 //	int op_offset;
 	int n_switch;
 	int i;
-	R_SCENE_INFO si;
+	SCENE_INFO si;
 
 	_vm->_scene->getInfo(&si);
 
@@ -104,7 +104,7 @@ int Script::SDebugPrintInstr(R_SCRIPT_THREAD *thread) {
 			SD_ADDTXT(tmp_buf);
 /*
 			if(( param >= 0 ) && ( param < diag_list->n_dialogue )) {
-				printf(" ; \"%.*s\"", R_SCRIPT_STRINGLIMIT, diag_list->str[param] );
+				printf(" ; \"%.*s\"", SCRIPT_STRINGLIMIT, diag_list->str[param] );
 			}
 			else {
 				printf(" ; Invalid dialogue string.\n" );
@@ -328,10 +328,10 @@ int Script::SDebugPrintInstr(R_SCRIPT_THREAD *thread) {
 			for (i = 0; i < n_switch; i++) {
 				switch_num = readS.readUint16LE();
 				switch_jmp = readS.readUint16LE();
-				// printf( R_TAB "CASE %04X, %04X\n", switch_num, switch_jmp);
+				// printf( TAB "CASE %04X, %04X\n", switch_num, switch_jmp);
 			}
 			default_jmp = readS.readUint16LE();
-			//printf( R_TAB "DEF %04X", default_jmp);
+			//printf( TAB "DEF %04X", default_jmp);
 		}
 		break;
 		// Random branch
@@ -351,7 +351,7 @@ int Script::SDebugPrintInstr(R_SCRIPT_THREAD *thread) {
 				//printf("\n");
 				switch_num = readS.readUint16LE();
 				switch_jmp = readS.readUint16LE();
-				//printf( R_TAB "WEIGHT %04X, %04X", switch_num, switch_jmp);
+				//printf( TAB "WEIGHT %04X, %04X", switch_num, switch_jmp);
 			}
 		}
 		break;
@@ -515,7 +515,7 @@ int Script::SDebugPrintInstr(R_SCRIPT_THREAD *thread) {
 	_dbg_txtentry = _vm->textAddEntry(si.text_list, &tl_e);
 	_vm->textSetDisplay(_dbg_txtentry, 1);
 
-	return R_SUCCESS;
+	return SUCCESS;
 }
 
 } // End of namespace Saga

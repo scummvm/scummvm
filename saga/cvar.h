@@ -28,40 +28,40 @@
 
 namespace Saga {
 
-#define R_CVAR_HASHLEN 32
+#define CVAR_HASHLEN 32
 
-struct R_SUBCVAR_INT {
+struct SUBCVAR_INT {
 	cv_int_t *var_p;
 	cv_int_t ubound;
 	cv_int_t lbound;
 };
 
-struct R_SUBCVAR_UINT {
+struct SUBCVAR_UINT {
 	cv_uint16_t *var_p;
 	cv_uint16_t ubound;
 	cv_uint16_t lbound;
 
 };
 
-struct R_SUBCVAR_FLOAT {
+struct SUBCVAR_FLOAT {
 	cv_float_t *var_p;
 	cv_float_t ubound;
 	cv_float_t lbound;
 };
 
-struct R_SUBCVAR_STRING {
+struct SUBCVAR_STRING {
 	cv_char_t *var_str;
 	int ubound;
 };
 
-struct R_SUBCVAR_FUNC {
+struct SUBCVAR_FUNC {
 	cv_func_t func_p;
 	const char *func_argstr;
 	int min_args;
 	int max_args;
 };
 
-struct R_CVAR {
+struct CVAR {
 	int type;
 	const char *name;
 	const char *section;
@@ -69,14 +69,14 @@ struct R_CVAR {
 	void *refCon;
 
 	union {
-		R_SUBCVAR_INT i;
-		R_SUBCVAR_UINT ui;
-		R_SUBCVAR_FLOAT f;
-		R_SUBCVAR_STRING s;
-		R_SUBCVAR_FUNC func;
+	 SUBCVAR_INT i;
+	 SUBCVAR_UINT ui;
+	 SUBCVAR_FLOAT f;
+	 SUBCVAR_STRING s;
+	 SUBCVAR_FUNC func;
 	} t;
 
-	R_CVAR *next;
+	CVAR *next;
 
 };
 

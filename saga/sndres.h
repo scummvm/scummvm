@@ -32,29 +32,29 @@
 
 namespace Saga {
 
-#define R_VOC_TIME_BASE  256000000L
-#define R_VOC_TIME_CBASE 65536L
+#define VOC_TIME_BASE  256000000L
+#define VOC_TIME_CBASE 65536L
 
-#define R_VOC_FILE_DESC_LEN 20
-#define R_VOC_FILE_DESC "Creative Voice File\x1A"
+#define VOC_FILE_DESC_LEN 20
+#define VOC_FILE_DESC "Creative Voice File\x1A"
 
-struct R_VOC_HEADER_BLOCK {
+struct VOC_HEADER_BLOCK {
 	char ft_desc[20]; // BYTE [20]
 	uint16 db_offset; // WORD
 	uint16 voc_version;// WORD
 	uint16 voc_fileid; // WORD
 };
 
-#define R_VOC_HEADER_BLOCK_LEN 26
+#define VOC_HEADER_BLOCK_LEN 26
 
-struct R_VOC_GENBLOCK {
+struct VOC_GENBLOCK {
 	int block_id;		// BYTE
 	uint32 block_len;	// BYTE[3]
 };
 
-#define R_VOC_GENBLOCK_LEN 4
+#define VOC_GENBLOCK_LEN 4
 
-struct R_VOC_BLOCK1 {
+struct VOC_BLOCK1 {
 	int block_id; // BYTE
 	uint32 block_len; // BYTE[3]
 	uint16 time_constant; // BYTE
@@ -74,15 +74,15 @@ public:
 						size_t src_buf_len, byte **dst_buf, size_t *dst_buf_len);
 
  private:
-	int load(R_RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, R_SOUNDBUFFER *snd_buf_i);
-	int loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_buf_i);
+	int load(RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, SOUNDBUFFER *snd_buf_i);
+	int loadVocSound(byte *snd_res, size_t snd_res_len, SOUNDBUFFER *snd_buf_i);
 
 	int _init;
 
-	R_RSCFILE_CONTEXT *_sfx_ctxt;
-	R_RSCFILE_CONTEXT *_voice_ctxt;
+ RSCFILE_CONTEXT *_sfx_ctxt;
+	RSCFILE_CONTEXT *_voice_ctxt;
 
-	R_GAME_SOUNDINFO _snd_info;
+	GAME_SOUNDINFO _snd_info;
 
 	SagaEngine *_vm;
 };
