@@ -233,7 +233,6 @@ static int launcherDialog(GameDetector &detector, OSystem *system) {
 }
 
 static void runGame(GameDetector &detector, OSystem *system) {
-
 	// Set the window caption to the game name
 	Common::String caption(ConfMan.get("description", detector._targetName));
 
@@ -290,6 +289,7 @@ extern "C" int main(int argc, char *argv[]) {
 extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 #endif
 	char *cfgFilename = NULL, *s=argv[1];
+	bool running = true;
 
 #if defined(UNIX)
 	/* On Unix, do a quick endian / alignement check before starting */
@@ -386,7 +386,7 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 	// FIXME: We're now looping the launcher. This, of course, doesn't
 	// work as well as it should. In theory everything should be destroyed
 	// cleanly, so this is now enabled to encourage people to fix bits :)
-	while(1) {
+	while(running) {
 		// Verify the given game name is a valid supported game
 		if (detector.detectMain()) {
 			// Unload all plugins not needed for this game,
@@ -402,9 +402,10 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 			ConfMan.removeKey("save_slot", ConfMan.kTransientDomain);
 
 			// PluginManager::instance().unloadPlugins();
-			// PluginManager::instance().loadPlugins();
-                	launcherDialog(detector, system);
+			PluginManager::instance().loadPlugins();
 		}
+
+               	launcherDialog(detector, system);
 	}
 
 	// ...and quit (the return 0 should never be reached)

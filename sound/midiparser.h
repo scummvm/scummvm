@@ -277,7 +277,9 @@ protected:
 	bool   _autoLoop;       //!< For lightweight clients that don't provide their own flow control.
 	bool   _smartJump;      //!< Support smart expiration of hanging notes when jumping
 
-	byte * _tracks[32];     //!< Multi-track MIDI formats are supported, up to 32 tracks.
+	// FIXME: ? Was 32 here, Kyra tracks use 120(!!!) which seems wrong. this is a hacky
+	// workaround until situation is investigated.
+	byte * _tracks[120];     //!< Multi-track MIDI formats are supported, up to 120 tracks.
 	byte   _num_tracks;     //!< Count of total tracks for multi-track MIDI formats. 1 for single-track formats.
 	byte   _active_track;   //!< Keeps track of the currently active track, in multi-track formats.
 
