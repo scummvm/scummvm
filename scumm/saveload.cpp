@@ -383,6 +383,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	};
 
 	const SaveLoadEntry *actorEntries = Actor::getSaveLoadEntries();
+	const SaveLoadEntry *soundEntries = _sound->getSaveLoadEntries();
 
 	const SaveLoadEntry verbEntries[] = {
 		MKLINE(VerbSlot, curRect.left, sleInt16, VER(8)),
@@ -672,6 +673,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	}
 
 	s->saveLoadArrayOf(_actors, _numActors, sizeof(_actors[0]), actorEntries);
+	s->saveLoadEntries(_sound, soundEntries);
 
 	if (savegameVersion < VER(9))
 		s->saveLoadArrayOf(vm.slot, 25, sizeof(vm.slot[0]), scriptSlotEntries);

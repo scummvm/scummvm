@@ -32,6 +32,7 @@ class ScummEngine;
 class ScummFile;
 
 struct MP3OffsetTable;
+struct SaveLoadEntry;
 
 enum {
 	kTalkSoundID = 10000
@@ -72,8 +73,8 @@ protected:
 
 	int _overrideFreq;
 
-	int _currentCDSound;
-	int _currentMusic;
+	int16 _currentCDSound;
+	int16 _currentMusic;
 public:
 	PlayingSoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
 	PlayingSoundHandle _musicChannelHandle;	// Handle of mixer channel music is on
@@ -109,6 +110,9 @@ public:
 	int pollCD() const;
 	void updateCD();
 	int getCurrentCDSound() const { return _currentCDSound; }
+
+	// Used by the save/load system:
+	const SaveLoadEntry *getSaveLoadEntries();
 
 protected:
 	ScummFile *openSfxFile();
