@@ -4,8 +4,12 @@ CXX      = c++
 CFLAGS   = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar
 DEFINES  =
 LDFLAGS :=
-INCLUDES:= -I. -Icommon -Iscumm -Isound
+INCLUDES:= -I. -Icommon -Iscumm
 LIBS	 = -lncurses
+
+# Enable this if you want ScummVM to dump all scripts it runs.
+# This is mainly interesting for developers.
+# DEFINES += -DDUMP_SCRIPTS
 
 # Uncomment this to activate the MAD lib for compressed sound files
 DEFINES += -DCOMPRESSED_SOUND_FILE
@@ -40,10 +44,6 @@ DEFINES += -DMACOSX
 # LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib
 # INCLUDES+= -I/usr/X11R6/include
 # LIBS    += -lpthread -lXext -lX11
-
-# Enable this if you want ScummVM to dump all scripts it runs.
-# This is mainly interesting for developers.
-# DEFINES += -DDUMP_SCRIPTS
 
 CPPFLAGS= $(DEFINES) $(INCLUDES)
 

@@ -20,11 +20,11 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "fmopl.h"
-#include "mididrv.h"
-#include "imuse.h"
-#include "saveload.h"
+#include "scumm/scumm.h"
+#include "sound/fmopl.h"
+#include "sound/mididrv.h"
+#include "scumm/imuse.h"
+#include "scumm/saveload.h"
 
 /*
  * Some constants

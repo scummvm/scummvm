@@ -9,18 +9,18 @@ ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
 
 INCS	= scumm/scumm.h common/scummsys.h common/stdafx.h
 
-COMMON_OBJS = common/config-file.o common/gameDetector.o common/main.o \
-	common/timer.o common/util.o
+COMMON_OBJS = common/config-file.o common/engine.o common/gameDetector.o \
+	common/main.o common/timer.o common/util.o
 
 GUI_OBJS = gui/gui.o gui/newgui.o gui/widget.o gui/dialog.o gui/ListWidget.o \
 	gui/ScrollBarWidget.o 
 
 SCUMM_OBJS = scumm/actor.o scumm/akos.o scumm/boxes.o scumm/bundle.o \
-	scumm/costume.o scumm/debug.o scumm/debugrl.o scumm/engine.o scumm/gfx.o \
-	scumm/imuse.o scumm/insane.o scumm/object.o scumm/resource.o \
-	scumm/resource_v3.o scumm/resource_v4.o scumm/saveload.o scumm/scaler.o \
-	scumm/script.o scumm/script_v1.o scumm/script_v2.o scumm/scummvm.o \
-	scumm/string.o scumm/sys.o scumm/vars.o scumm/verbs.o
+	scumm/costume.o scumm/debug.o scumm/debugrl.o scumm/gfx.o scumm/imuse.o \
+	scumm/insane.o scumm/object.o scumm/resource.o scumm/resource_v3.o \
+	scumm/resource_v4.o scumm/saveload.o scumm/scaler.o scumm/script.o \
+	scumm/script_v1.o scumm/script_v2.o scumm/scummvm.o scumm/string.o \
+	scumm/sys.o scumm/vars.o scumm/verbs.o
 
 SIMON_OBJS = simon/debug.o simon/items.o simon/midi.o simon/res.o simon/simon.o \
 	simon/sys.o simon/verb.o simon/vga.o
@@ -49,7 +49,7 @@ simon/libsimon.a: $(SIMON_OBJS)
 clean:
 	rm -f $(OBJS) $(SCUMM_OBJS) $(SIMON_OBJS) scummvm$(EXEEXT)
 
-.PHONY: all clean dist
+.PHONY: all clean dist distclean
 
 # Default (dumb) compile & dependcy rules
 #.cpp.o:
@@ -71,3 +71,6 @@ DEPFILES = $(wildcard $(patsubst %,%/$(DEPDIR)/*.d,$(MODULES)))
 	rm -f "$(*D)/$(DEPDIR)/$(*F).d2"
 
 -include $(DEPFILES) /dev/null
+
+distclean: clean
+	rm -rf $(DEPDIRS)
