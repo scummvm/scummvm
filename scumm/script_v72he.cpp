@@ -524,7 +524,7 @@ int ScummEngine_v72he::copyScriptString(byte *dst) {
 			*dst++ = _stringBuffer[i++];
 	} else {
 		writeVar(0, array);
-		while (b = readArray(0, 0, i) != 0) {
+		while ((b = readArray(0, 0, i)) != 0) {
 			*dst++ = b;
 			i++;
 		}
