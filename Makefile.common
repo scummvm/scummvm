@@ -6,7 +6,6 @@ OBJS =\
 	lua/ldo.o \
 	lua/lfunc.o \
 	lua/lgc.o \
-	lua/lfunc.o \
 	lua/liolib.o \
 	lua/llex.o \
 	lua/lmathlib.o \
