@@ -100,6 +100,7 @@ struct SpriteInfo {
 	int field_7C;
 	int field_80;
 	int class_flags;
+	int field_88;
 };
 
 struct SpriteGroup {

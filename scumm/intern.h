@@ -938,6 +938,7 @@ protected:
 	void spriteInfoSet_field_78_64(int spriteId, int value);
 	void spriteInfoSet_setClassFlags(int spriteId, int value1, int value2);
 	void spriteInfoSet_resetClassFlags(int spriteId);
+	void spriteInfoSet_field_88(int spriteId, int value1, int value2);
 
 	void redrawSpriteGroup(int spriteGroupId);
 	void spriteGroupSet_case0_0(int spriteGroupId, int value1, int value2);

@@ -1234,8 +1234,16 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		}
 		break;
 	case 105: // HE 99+
-		pop();
-		pop();
+		args[1] = pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_field_88(spriteId, args[0], args[1]);
 		break;
 	case 106: // HE 99+
 		args[0] = pop();
