@@ -129,10 +129,6 @@ void Engine::mainLoop() {
 		} else if (_mode == ENGINE_MODE_NORMAL) {
 			g_driver->clearScreen();
 
-			if (_currScene != NULL) {
-				_currScene->setupCamera();
-			}
-
 			// Update actor costumes
 			for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
 				Actor *a = *i;
