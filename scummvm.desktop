@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=ScummVM
+Comment=Interpreter for several adventure games
+Exec=scummvm
+Icon=scummvm.xpm
+Terminal=false
+Type=Application
+Categories=Application;Game;AdventureGame;
+StartupNotify=false
