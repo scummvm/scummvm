@@ -605,9 +605,16 @@ void SmushPlayer::handleNewPalette(Chunk &b) {
 	updatePalette();
 }
 
-void SmushPlayer::decodeCodec(Chunk &b, const Rect &r, Decoder &codec) {
+void SmushPlayer::decodeCodec(Chunk &src, const Rect &r, Decoder &codec) {
 	assert(_curBuffer);
-	codec.decode((byte *)_curBuffer, b);
+
+	int32 chunk_size = src.getSize() - 14;
+	byte *chunk_buffer = (byte *)malloc(chunk_size);
+	assert(chunk_buffer);
+	src.read(chunk_buffer, chunk_size);
+	codec.decode((byte *)_curBuffer, chunk_buffer, chunk_size);
+	free(chunk_buffer);
+
 	if (_storeFrame == true) {
 		if (_frameBuffer == NULL) {
 			_frameBuffer = (byte *)malloc(_frameSize.getX() * _frameSize.getY());

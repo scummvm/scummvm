@@ -21,16 +21,12 @@
 
 #include <stdafx.h>
 #include "codec44.h"
-#include "chunk.h"
 
-bool Codec44Decoder::decode(byte *dst, Chunk & src) {
+bool Codec44Decoder::decode(byte *dst, const byte *src, int length) {
 	int32 size_line, num;
-	int32 length = src.getSize() - 14;
 	int32 width = getRect().width();
 	int32 height = getRect().height();
-	byte *src2 = (byte *)malloc(length);
-	byte *org_src2 = src2;
-	src.read(src2, length);
+	const byte *src2 = src;
 	byte *dst2 = _buffer;
 	byte val;
 
@@ -61,8 +57,6 @@ bool Codec44Decoder::decode(byte *dst, Chunk & src) {
 	} while (length > 1);
 
 	memcpy(dst, _buffer, width * height);
-
-	free(org_src2);
 
 	return true;
 }

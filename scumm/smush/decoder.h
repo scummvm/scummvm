@@ -28,8 +28,6 @@
 
 using ScummVM::Point;
 using ScummVM::Rect;
-class Blitter;
-class Chunk;
 
 /*!	@brief base class for codec decompression.
 
@@ -47,7 +45,7 @@ public:
 	Decoder() {};
 	virtual ~Decoder() {};
 	virtual bool initSize(const Point &p, const Rect &r) { _p = p; _r = r; return true; };
-	virtual bool decode(byte *dst, Chunk &src) = 0;
+	virtual bool decode(byte *dst, const byte *src, int length) = 0;
 };
 
 #endif

@@ -42,13 +42,13 @@ public:
 	virtual ~Codec37Decoder();
 protected:
 	void maketable(int32, int32);
-	void bompDecode(byte *dst, byte *src, int32 len);
-	void proc3WithFDFE(byte *, byte *, int32, int32, int32, int32, int16 *);
-	void proc3WithoutFDFE(byte *, byte *, int32, int32, int32, int32, int16 *);
-	void proc4WithFDFE(byte *, byte *, int32, int32, int32, int32, int16 *);
-	void proc4WithoutFDFE(byte *, byte *, int32, int32, int32, int32, int16 *);
+	void bompDecode(byte *dst, const byte *src, int len);
+	void proc3WithFDFE(byte *dst, const byte *src, int32, int32, int32, int32, int16 *);
+	void proc3WithoutFDFE(byte *dst, const byte *src, int32, int32, int32, int32, int16 *);
+	void proc4WithFDFE(byte *dst, const byte *src, int32, int32, int32, int32, int16 *);
+	void proc4WithoutFDFE(byte *dst, const byte *src, int32, int32, int32, int32, int16 *);
 public:
-	bool decode(byte *dst, Chunk &);
+	bool decode(byte *dst, const byte *src, int length);
 };
 
 #endif

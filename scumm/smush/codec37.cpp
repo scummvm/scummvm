@@ -21,7 +21,6 @@
 
 #include <stdafx.h>
 #include "codec37.h"
-#include "chunk.h"
 
 #include "common/engine.h"
 
@@ -258,7 +257,7 @@ void Codec37Decoder::maketable(int32 pitch, int32 index) {
 	}
 }
 
-void Codec37Decoder::bompDecode(byte *dst, byte *src, int32 len) {
+void Codec37Decoder::bompDecode(byte *dst, const byte *src, int len) {
 	byte code;
 	byte color;
 	int32 num;
@@ -369,7 +368,7 @@ void Codec37Decoder::bompDecode(byte *dst, byte *src, int32 len) {
 		dst += 4;						  \
 	} while(0)
 
-void Codec37Decoder::proc3WithFDFE(byte *dst, byte *src, int32 next_offs, int32 bw, int32 bh, int32 pitch, int16 *offset_table) {
+void Codec37Decoder::proc3WithFDFE(byte *dst, const byte *src, int32 next_offs, int32 bw, int32 bh, int32 pitch, int16 *offset_table) {
 	do {
 		int32 i = bw;
 		do {
@@ -389,7 +388,7 @@ void Codec37Decoder::proc3WithFDFE(byte *dst, byte *src, int32 next_offs, int32 
 	} while (--bh);
 }
 
-void Codec37Decoder::proc3WithoutFDFE(byte *dst, byte *src, int32 next_offs, int32 bw, int32 bh, int32 pitch, int16 *offset_table) {
+void Codec37Decoder::proc3WithoutFDFE(byte *dst, const byte *src, int32 next_offs, int32 bw, int32 bh, int32 pitch, int16 *offset_table) {
 	do {
 		int32 i = bw;
 		do {
@@ -405,7 +404,7 @@ void Codec37Decoder::proc3WithoutFDFE(byte *dst, byte *src, int32 next_offs, int
 	} while (--bh);
 }
 
-void Codec37Decoder::proc4WithFDFE(byte *dst, byte *src, int32 next_offs, int32 bw, int32 bh, int32 pitch, int16 *offset_table) {
+void Codec37Decoder::proc4WithFDFE(byte *dst, const byte *src, int32 next_offs, int32 bw, int32 bh, int32 pitch, int16 *offset_table) {
 	do {
 		int32 i = bw;
 		do {
@@ -441,7 +440,7 @@ void Codec37Decoder::proc4WithFDFE(byte *dst, byte *src, int32 next_offs, int32 
 	} while (--bh);
 }
 
-void Codec37Decoder::proc4WithoutFDFE(byte *dst, byte *src, int32 next_offs, int32 bw, int32 bh, int32 pitch, int16 *offset_table) {
+void Codec37Decoder::proc4WithoutFDFE(byte *dst, const byte *src, int32 next_offs, int32 bw, int32 bh, int32 pitch, int16 *offset_table) {
 	do {
 		int32 i = bw;
 		do {
@@ -473,23 +472,19 @@ void Codec37Decoder::proc4WithoutFDFE(byte *dst, byte *src, int32 next_offs, int
 	} while (--bh);
 }
 
-bool Codec37Decoder::decode(byte *dst, Chunk & src) {
+bool Codec37Decoder::decode(byte *dst, const byte *src, int length) {
 	int32 width = getRect().width();
 	int32 height = getRect().height();
 	int32 bw = (width + 3) >> 2, bh = (height + 3) >> 2;
 	int32 pitch = bw << 2;
 
-	int32 chunk_size = src.getSize() - 14;
-	byte *chunk_buffer = (byte *)malloc(chunk_size);
-	src.read(chunk_buffer, chunk_size);
-
-	int16 seq_nb = READ_LE_UINT16(chunk_buffer + 2);
-	int32 decoded_size = READ_LE_UINT32(chunk_buffer + 4);
-	byte mask_flags = chunk_buffer[12];
-	maketable(pitch, chunk_buffer[1]);
+	int16 seq_nb = READ_LE_UINT16(src + 2);
+	int32 decoded_size = READ_LE_UINT32(src + 4);
+	byte mask_flags = src[12];
+	maketable(pitch, src[1]);
 	int32 tmp;
 
-	switch(chunk_buffer[0]) {
+	switch(src[0]) {
 	case 0:
 		if ((_deltaBufs[_curtable] - _deltaBuf) > 0) {
 			memset(_deltaBuf, 0, _deltaBufs[_curtable] - _deltaBuf);
@@ -498,13 +493,13 @@ bool Codec37Decoder::decode(byte *dst, Chunk & src) {
 		if (tmp > 0) {
 			memset(_deltaBufs[_curtable] + decoded_size, 0, tmp);
 		}
-		memcpy(_deltaBufs[_curtable], chunk_buffer + 16, decoded_size);
+		memcpy(_deltaBufs[_curtable], src + 16, decoded_size);
 		break;
 	case 1:
 		error("codec37: missing opcode 1");
 		break;
 	case 2:
-		bompDecode(_deltaBufs[_curtable], chunk_buffer + 16, decoded_size);
+		bompDecode(_deltaBufs[_curtable], src + 16, decoded_size);
 		if ((_deltaBufs[_curtable] - _deltaBuf) > 0) {
 			memset(_deltaBuf, 0, _deltaBufs[_curtable] - _deltaBuf);
 		}
@@ -519,11 +514,11 @@ bool Codec37Decoder::decode(byte *dst, Chunk & src) {
 		}
 
 		if((mask_flags & 4) != 0) {
-			proc3WithFDFE(_deltaBufs[_curtable], chunk_buffer + 16,
+			proc3WithFDFE(_deltaBufs[_curtable], src + 16,
 										_deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable], bw, bh,
 										pitch, _offsetTable);
 		} else {
-			proc3WithoutFDFE(_deltaBufs[_curtable], chunk_buffer + 16,
+			proc3WithoutFDFE(_deltaBufs[_curtable], src + 16,
 										_deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable], bw, bh,
 										pitch, _offsetTable);
 		}
@@ -534,11 +529,11 @@ bool Codec37Decoder::decode(byte *dst, Chunk & src) {
 		}
 
 		if((mask_flags & 4) != 0) {
-			proc4WithFDFE(_deltaBufs[_curtable], chunk_buffer + 16,
+			proc4WithFDFE(_deltaBufs[_curtable], src + 16,
 										_deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable], bw, bh,
 										pitch, _offsetTable);
 		} else {
-			proc4WithoutFDFE(_deltaBufs[_curtable], chunk_buffer + 16,
+			proc4WithoutFDFE(_deltaBufs[_curtable], src + 16,
 										_deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable], bw, bh,
 										pitch, _offsetTable);
 		}
@@ -550,7 +545,6 @@ bool Codec37Decoder::decode(byte *dst, Chunk & src) {
 
 	memcpy(dst, _deltaBufs[_curtable], width * height);
 	
-	free(chunk_buffer);
 	return true;
 }
 

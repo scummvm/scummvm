@@ -21,31 +21,31 @@
 
 #include <stdafx.h>
 #include "codec1.h"
-#include "chunk.h"
 
 Codec1Decoder::~Codec1Decoder() {
 }
 
-bool Codec1Decoder::decode(byte *dst, Chunk &src) {
+bool Codec1Decoder::decode(byte *dst, const byte *src, int) {
 	byte val;
 	int32 size_line;
 	int32 code, length;
 	int32 h, height = getRect().height();
 
 	for(h = 0; h < height; h++) {
-		size_line = src.getWord(); // size of compressed line !
+		size_line = READ_LE_UINT16(src); // size of compressed line !
+		src += 2;
 #ifdef DEBUG_CODEC1
 		debug(7, "codec1 : h == %d, size_line == %d", h, size_line);
 #endif
 		while(size_line > 0) {
-			code = src.getByte();
+			code = *src++;
 			size_line--;
 			length = (code >> 1) + 1;
 #ifdef DEBUG_CODEC1
 			debug(7, "codec1 : length == %d", length);
 #endif
 			if(code & 1) {
-				val = src.getByte();
+				val = *src++;
 				size_line--;
 				if (val)
 					memset(dst, val, length);
@@ -59,7 +59,7 @@ bool Codec1Decoder::decode(byte *dst, Chunk &src) {
 				debug(7, "codec1 : blitting %d entries", length);
 #endif
 				while(length--) {
-					val = src.getByte();
+					val = *src++;
 					if (val)
 						*dst = val;
 					dst++;
@@ -67,11 +67,5 @@ bool Codec1Decoder::decode(byte *dst, Chunk &src) {
 			}
 		}
 	}
-#ifdef DEBUG_CODEC1
-	if(!src.eof()) {
-		int32 len = src.getSize() - src.tell();
-		debug(7, "codec1: remaining length after decode == %d", len);
-	}
-#endif
 	return true;
 }

@@ -20,10 +20,9 @@
  */
 
 #include <stdafx.h>
-#include "scumm/scumm.h"
-#include "engine.h"
 #include "codec47.h"
-#include "chunk.h"
+
+#include "common/engine.h"
 
 static int32 codec37_table[] = {
        0,       1,       2,       3,       3,       3,
@@ -427,7 +426,7 @@ void Codec47Decoder::makeTables47(int32 width) {
 	} while (c < 32768);
 }
 
-void Codec47Decoder::bompDecode(byte *dst, byte *src, int32 len) {
+void Codec47Decoder::bompDecode(byte *dst, const byte *src, int len) {
 	byte code;
 	byte color;
 	int32 num;
@@ -602,7 +601,7 @@ void Codec47Decoder::level1(byte *d_dst) {
 	}
 }
 
-void Codec47Decoder::decode2(byte *dst, byte *src, int32 width, int32 height, byte *param_ptr) {
+void Codec47Decoder::decode2(byte *dst, const byte *src, int32 width, int32 height, const byte *param_ptr) {
 	_d_src = src;
 	_paramPtr = param_ptr - 0xf8;
 	int32 bw = (width + 7) >> 3;
@@ -663,33 +662,29 @@ Codec47Decoder::~Codec47Decoder() {
 	clean();
 }
 
-bool Codec47Decoder::decode(byte *dst, Chunk &src) {
+bool Codec47Decoder::decode(byte *dst, const byte *src, int length) {
 	int32 width = getRect().width();
 	int32 height = getRect().height();
 	_offset1 = _deltaBufs[1] - _curBuf;
 	_offset2 = _deltaBufs[0] - _curBuf;
 
-	int32 chunk_size = src.getSize() - 14;
-	byte *chunk_buffer = (byte *)malloc(chunk_size);
-	src.read(chunk_buffer, chunk_size);
+	int32 seq_nb = READ_LE_UINT16(src + 0);
 
-	int32 seq_nb = READ_LE_UINT16(chunk_buffer + 0);
-
-	byte *gfx_data = chunk_buffer + 26;
+	const byte *gfx_data = src + 26;
 	byte *tmp_ptr;
 
 	if (seq_nb == 0) {
 		makeTables47(width);
-		memset(_deltaBufs[0], chunk_buffer[12], width * height);
-		memset(_deltaBufs[1], chunk_buffer[13], width * height);
+		memset(_deltaBufs[0], src[12], width * height);
+		memset(_deltaBufs[1], src[13], width * height);
 		_prevSeqNb = -1;
 	}
 
-	if ((chunk_buffer[4] & 1) != 0) {
+	if ((src[4] & 1) != 0) {
 		gfx_data += 32896;
 	}
 
-	switch(chunk_buffer[2]) {
+	switch(src[2]) {
 	case 0:
 		memcpy(_curBuf, gfx_data, width * height);
 		break;
@@ -698,7 +693,7 @@ bool Codec47Decoder::decode(byte *dst, Chunk &src) {
 		break;
 	case 2:
 		if (seq_nb == _prevSeqNb + 1) {
-			decode2(_curBuf, gfx_data, width,	height, chunk_buffer + 8);
+			decode2(_curBuf, gfx_data, width, height, src + 8);
 		}
 		break;
 	case 3:
@@ -708,18 +703,18 @@ bool Codec47Decoder::decode(byte *dst, Chunk &src) {
 		memcpy(_curBuf, _deltaBufs[0], width * height);
 		break;
 	case 5:
-		bompDecode(_curBuf, gfx_data, READ_LE_UINT32(chunk_buffer + 14));
+		bompDecode(_curBuf, gfx_data, READ_LE_UINT32(src + 14));
 		break;
 	}
 
 	memcpy(dst, _curBuf, width * height);
 
 	if (seq_nb == _prevSeqNb + 1) {
-		if (chunk_buffer[3] == 1) {
+		if (src[3] == 1) {
 			tmp_ptr = _curBuf;
 			_curBuf = _deltaBufs[1];
 			_deltaBufs[1] = tmp_ptr;
-		} else if (chunk_buffer[3] == 2) {
+		} else if (src[3] == 2) {
 			tmp_ptr = _deltaBufs[0];
 			_deltaBufs[0] = _deltaBufs[1];
 			_deltaBufs[1] = _curBuf;
@@ -727,8 +722,6 @@ bool Codec47Decoder::decode(byte *dst, Chunk &src) {
 		}
 	}
 	_prevSeqNb = seq_nb;
-
-	free(chunk_buffer);
 
 	return true;
 }
