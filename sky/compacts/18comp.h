@@ -157,7 +157,7 @@ Compact power_door = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	POWER_DOOR_LOGIC,	// baseSub
@@ -235,7 +235,7 @@ Compact right_lever = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	RIGHT_LEVER_LOGIC,	// baseSub
@@ -362,7 +362,7 @@ Compact power_switch = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	POWER_SWITCH_LOGIC,	// baseSub
@@ -459,7 +459,7 @@ Compact s18_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -529,7 +529,7 @@ Compact power_chair = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -584,7 +584,7 @@ Compact left_skull = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -638,7 +638,7 @@ Compact right_skull = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -720,7 +720,7 @@ Compact steam = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	STEAM_LOGIC,	// baseSub
@@ -752,7 +752,7 @@ Compact socket = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	POWER_PANEL_LOGIC,	// baseSub
@@ -784,7 +784,7 @@ Compact power_motor = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	POWER_MOTOR_LOGIC,	// baseSub
@@ -859,7 +859,7 @@ Compact left_lever = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	LEFT_LEVER_LOGIC,	// baseSub
@@ -1402,7 +1402,7 @@ Compact power_bang = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	POWER_BANG_LOGIC,	// baseSub
@@ -1593,7 +1593,7 @@ Compact right_exit_s18 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,

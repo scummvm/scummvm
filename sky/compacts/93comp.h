@@ -71,7 +71,7 @@ Compact door_l93 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_L93_LOGIC,	// baseSub
@@ -113,7 +113,7 @@ Compact adjust_book = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	ADJUST_BOOK_LOGIC,	// baseSub
@@ -168,7 +168,7 @@ Compact door_l93f = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_L93F_LOGIC,	// baseSub
@@ -214,7 +214,7 @@ Compact sc93_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -439,7 +439,7 @@ Compact persona = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	PERSONA_LOGIC,	// baseSub

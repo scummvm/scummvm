@@ -402,7 +402,7 @@ Compact s21_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -485,7 +485,7 @@ Compact cat_food = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	CAT_FOOD_LOGIC,	// baseSub
@@ -517,7 +517,7 @@ Compact video = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	VIDEO_LOGIC,	// baseSub
@@ -549,7 +549,7 @@ Compact video_screen = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	VIDEO_SCREEN_LOGIC,	// baseSub
@@ -842,7 +842,7 @@ Compact lambs_books = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1050,7 +1050,7 @@ Compact big_pict1 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1082,7 +1082,7 @@ Compact lambs_chair = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1157,7 +1157,7 @@ Compact cat = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	CAT_LOGIC,	// baseSub
@@ -1189,7 +1189,7 @@ Compact big_pict3 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1368,7 +1368,7 @@ Compact big_pict2 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1480,7 +1480,7 @@ Compact left_exit_21 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1514,7 +1514,7 @@ Compact inner_lamb_door = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	INNER_LAMB_DOOR_LOGIC,	// baseSub
@@ -1546,7 +1546,7 @@ Compact fake_floor_21 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1615,7 +1615,7 @@ Compact cassette = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -2034,7 +2034,7 @@ Compact dispensor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,

@@ -70,7 +70,7 @@ Compact sc67_vein = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -269,7 +269,7 @@ Compact sc67_door = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC67_DOOR_LOGIC,	// baseSub
@@ -301,7 +301,7 @@ Compact sc67_mend = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC67_MEND_LOGIC,	// baseSub
@@ -377,7 +377,7 @@ Compact sc67_plaster = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC67_PLASTER_LOGIC,	// baseSub
@@ -470,7 +470,7 @@ Compact sc67_rock = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC67_ROCK_LOGIC,	// baseSub
@@ -502,7 +502,7 @@ Compact sc67_crowbar = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC67_CROWBAR_LOGIC,	// baseSub
@@ -672,7 +672,7 @@ Compact sc67_pulse4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC67_PULSE4_LOGIC,	// baseSub
@@ -1124,7 +1124,7 @@ Compact sc67_pulse1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC67_PULSE1_LOGIC,	// baseSub
@@ -1179,7 +1179,7 @@ Compact sc67_brickwork = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1785,7 +1785,7 @@ Compact sc67_pulse2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC67_PULSE2_LOGIC,	// baseSub
@@ -1817,7 +1817,7 @@ Compact sc67_brick = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC67_BRICK_LOGIC,	// baseSub
@@ -1916,7 +1916,7 @@ Compact sc67_pulse3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC67_PULSE3_LOGIC,	// baseSub
@@ -1948,7 +1948,7 @@ Compact sc67_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -2081,7 +2081,7 @@ Compact sc67_clot = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC67_CLOT_LOGIC,	// baseSub

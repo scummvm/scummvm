@@ -51,7 +51,7 @@ Compact sc70_bar = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC70_BAR_LOGIC,	// baseSub
@@ -790,7 +790,7 @@ Compact sc70_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -956,7 +956,7 @@ Compact sc70_iris = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC70_IRIS_LOGIC,	// baseSub
@@ -1006,7 +1006,7 @@ Compact sc70_door = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1038,7 +1038,7 @@ Compact sc70_pit = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC70_PIT_LOGIC,	// baseSub
@@ -1105,7 +1105,7 @@ Compact sc70_control = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC70_CONTROL_LOGIC,	// baseSub
@@ -1187,7 +1187,7 @@ Compact sc70_grill = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,

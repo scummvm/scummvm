@@ -51,7 +51,7 @@ Compact sc40_body_2 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -128,7 +128,7 @@ Compact sc40_body_3 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -160,7 +160,7 @@ Compact sc40_cabinet = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -643,7 +643,7 @@ Compact sc40_locker_1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC40_LOCKER_1_LOGIC,	// baseSub
@@ -707,7 +707,7 @@ Compact sc40_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -753,7 +753,7 @@ Compact sc40_body_5 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -785,7 +785,7 @@ Compact sc40_locker_4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC40_LOCKER_4_LOGIC,	// baseSub
@@ -884,7 +884,7 @@ Compact sc40_locker_2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC40_LOCKER_2_LOGIC,	// baseSub
@@ -916,7 +916,7 @@ Compact sc40_locker_3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC40_LOCKER_3_LOGIC,	// baseSub
@@ -958,7 +958,7 @@ Compact sc40_exit_39 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -990,7 +990,7 @@ Compact sc40_body_1 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1057,7 +1057,7 @@ Compact sc40_trolley = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1089,7 +1089,7 @@ Compact sc40_locker_5 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC40_LOCKER_5_LOGIC,	// baseSub
@@ -1153,7 +1153,7 @@ Compact sc40_body_4 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,

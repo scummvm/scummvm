@@ -51,7 +51,7 @@ Compact sales_chart = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -496,7 +496,7 @@ Compact statue_25 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -528,7 +528,7 @@ Compact anchor_exit_25 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -621,7 +621,7 @@ Compact anchor = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	ANCHOR_LOGIC,	// baseSub
@@ -959,7 +959,7 @@ Compact hook = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	HOOK_LOGIC,	// baseSub
@@ -991,7 +991,7 @@ Compact spark_25 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	SPARK_25_LOGIC,	// baseSub
@@ -1023,7 +1023,7 @@ Compact lazer_25 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	LAZER_25_LOGIC,	// baseSub
@@ -1109,7 +1109,7 @@ Compact s25_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,

@@ -51,7 +51,7 @@ Compact blank5 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -83,7 +83,7 @@ Compact tape_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -115,7 +115,7 @@ Compact right_arrow = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -152,7 +152,7 @@ Compact glass_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -184,7 +184,7 @@ Compact lightbulb_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -216,7 +216,7 @@ Compact blank3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -248,7 +248,7 @@ Compact wd40_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -280,7 +280,7 @@ Compact plaster_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -312,7 +312,7 @@ Compact new_cable_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -344,7 +344,7 @@ Compact blank8 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -376,7 +376,7 @@ Compact joeyb_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -418,7 +418,7 @@ Compact blank6 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -450,7 +450,7 @@ Compact shades_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -482,7 +482,7 @@ Compact citycard_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -514,7 +514,7 @@ Compact blank9 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -546,7 +546,7 @@ Compact rope_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -578,7 +578,7 @@ Compact left_arrow = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -610,7 +610,7 @@ Compact magazine_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -642,7 +642,7 @@ Compact gallcard_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -674,7 +674,7 @@ Compact dog_food_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -706,7 +706,7 @@ Compact blank7 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -738,7 +738,7 @@ Compact blank2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -770,7 +770,7 @@ Compact blank11 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -802,7 +802,7 @@ Compact anchor_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -834,7 +834,7 @@ Compact anita_card_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -866,7 +866,7 @@ Compact tongs_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -898,7 +898,7 @@ Compact blank4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -930,7 +930,7 @@ Compact crow_bar_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -962,7 +962,7 @@ Compact secateurs_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -994,7 +994,7 @@ Compact sarnie_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -1026,7 +1026,7 @@ Compact spanner_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -1058,7 +1058,7 @@ Compact blank10 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -1090,7 +1090,7 @@ Compact skey_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -1122,7 +1122,7 @@ Compact blank1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -1154,7 +1154,7 @@ Compact ticket_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -1186,7 +1186,7 @@ Compact brick_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -1218,7 +1218,7 @@ Compact putty_menu = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	MENU_SCRIPT,	// baseSub
@@ -1250,7 +1250,7 @@ Compact menu_bar = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,

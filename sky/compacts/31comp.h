@@ -266,7 +266,7 @@ Compact sc31_exit_39 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -603,7 +603,7 @@ Compact sc31_plank = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC31_PLANK_LOGIC,	// baseSub
@@ -769,7 +769,7 @@ Compact sc31_rope = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC31_ROPE_LOGIC,	// baseSub
@@ -1188,7 +1188,7 @@ Compact sc31_exit_30 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1964,7 +1964,7 @@ Compact sc31_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1996,7 +1996,7 @@ Compact sc31_end_of_rope = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -2162,7 +2162,7 @@ Compact sc31_lift = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC31_LIFT_LOGIC,	// baseSub
@@ -2423,7 +2423,7 @@ Compact sc31_biscuits = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC31_BISCUITS_LOGIC,	// baseSub
@@ -2467,7 +2467,7 @@ Compact sc31_bricks = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC31_BRICKS_LOGIC,	// baseSub
@@ -2590,7 +2590,7 @@ Compact sc31_at_watcher = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC31_AT_WATCHER_LOGIC,	// baseSub
@@ -2686,7 +2686,7 @@ Compact sc31_joey = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC31_JOEY_LOGIC,	// baseSub
@@ -2718,7 +2718,7 @@ Compact sc31_lift_slot = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -2801,7 +2801,7 @@ Compact sc31_guard = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC31_GUARD_LOGIC,	// baseSub
@@ -2833,7 +2833,7 @@ Compact sc31_exit_32 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,

@@ -51,7 +51,7 @@ Compact sc74_monitor3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC74_MONITOR3_LOGIC,	// baseSub
@@ -83,7 +83,7 @@ Compact sc74_pod = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC74_POD_LOGIC,	// baseSub
@@ -115,7 +115,7 @@ Compact sc74_terminal = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -167,7 +167,7 @@ Compact sc74_interface = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1874,7 +1874,7 @@ Compact sc74_int_slot = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC74_INT_SLOT_LOGIC,	// baseSub
@@ -1942,7 +1942,7 @@ Compact sc74_monitor2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC74_MONITOR2_LOGIC,	// baseSub
@@ -1996,7 +1996,7 @@ Compact sc74_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -3005,7 +3005,7 @@ Compact sc74_left_tv = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC74_LEFT_TV_LOGIC,	// baseSub
@@ -3106,7 +3106,7 @@ Compact sc74_door = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -3138,7 +3138,7 @@ Compact sc74_monitor4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC74_MONITOR4_LOGIC,	// baseSub
@@ -4170,7 +4170,7 @@ Compact sc74_monitor1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC74_MONITOR1_LOGIC,	// baseSub
@@ -5635,7 +5635,7 @@ Compact sc74_right_tv = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC74_RIGHT_TV_LOGIC,	// baseSub
@@ -6650,7 +6650,7 @@ Compact sc74_lights = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC74_LIGHTS_LOGIC,	// baseSub

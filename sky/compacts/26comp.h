@@ -51,7 +51,7 @@ Compact bio_door = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	BIO_DOOR_LOGIC,	// baseSub
@@ -83,7 +83,7 @@ Compact plant_26 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -619,7 +619,7 @@ Compact right_exit_26 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -772,7 +772,7 @@ Compact left_exit_26 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -951,7 +951,7 @@ Compact holo = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	HELGA_LOGIC,	// baseSub
@@ -983,7 +983,7 @@ Compact poster2 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1123,7 +1123,7 @@ Compact poster3 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1155,7 +1155,7 @@ Compact leaflet = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	LEAFLET_LOGIC,	// baseSub
@@ -1216,7 +1216,7 @@ Compact poster4 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1263,7 +1263,7 @@ Compact poster1 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1295,7 +1295,7 @@ Compact s26_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,

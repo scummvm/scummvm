@@ -179,7 +179,7 @@ Compact sc66_rock3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC66_ROCK3_LOGIC,	// baseSub
@@ -211,7 +211,7 @@ Compact sc66_lo_beam = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC66_LO_BEAM_LOGIC,	// baseSub
@@ -490,7 +490,7 @@ Compact sc66_stones = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC66_STONES_LOGIC,	// baseSub
@@ -522,7 +522,7 @@ Compact sc66_rock1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC66_ROCK1_LOGIC,	// baseSub
@@ -752,7 +752,7 @@ Compact sc66_rock2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC66_ROCK2_LOGIC,	// baseSub
@@ -2517,7 +2517,7 @@ Compact sc66_hi_beam = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC66_HI_BEAM_LOGIC,	// baseSub
@@ -5619,7 +5619,7 @@ Compact sc66_hole = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC66_TIMER_LOGIC,	// baseSub
@@ -6070,7 +6070,7 @@ Compact sc66_door = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC66_DOOR_LOGIC,	// baseSub

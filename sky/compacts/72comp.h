@@ -106,7 +106,7 @@ Compact sc72_rot_light = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC72_ROT_LIGHT_LOGIC,	// baseSub
@@ -195,7 +195,7 @@ Compact sc72_chamber2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC72_CHAMBER2_LOGIC,	// baseSub
@@ -289,7 +289,7 @@ uint16 sc72_comp2_flash[] = {
 	0
 };
 
-uint8 wit_auto[64];
+uint16 wit_auto[32];
 
 Compact sc72_tank = {
 	L_SCRIPT,	// logic
@@ -315,7 +315,7 @@ Compact sc72_tank = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC72_TANK_LOGIC,	// baseSub
@@ -396,7 +396,7 @@ Compact sc72_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -469,7 +469,7 @@ Compact sc72_cham2_light = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC72_CHAM2_LIGHT_LOGIC,	// baseSub
@@ -501,7 +501,7 @@ Compact sc72_computer2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC72_COMPUTER2_LOGIC,	// baseSub
@@ -795,7 +795,7 @@ Compact sc72_exit = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1212,7 +1212,7 @@ Compact sc72_cham1_light = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC72_CHAM1_LIGHT_LOGIC,	// baseSub
@@ -1719,7 +1719,7 @@ Compact sc72_fake_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1759,7 +1759,7 @@ Compact sc72_tap = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1810,7 +1810,7 @@ Compact sc72_spill = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC72_SPILL_LOGIC,	// baseSub
@@ -1842,7 +1842,7 @@ Compact sc72_computer = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC72_COMPUTER_LOGIC,	// baseSub
@@ -1879,7 +1879,7 @@ Compact sc72_door = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -2111,7 +2111,7 @@ Compact sc72_chamber3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC72_CHAMBER3_LOGIC,	// baseSub
@@ -2282,7 +2282,7 @@ Compact witness = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	WITNESS_LOGIC,	// baseSub
@@ -2374,7 +2374,7 @@ Compact sc72_grill = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC72_GRILL_LOGIC,	// baseSub
@@ -2406,7 +2406,7 @@ Compact sc72_chamber1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC72_CHAMBER1_LOGIC,	// baseSub

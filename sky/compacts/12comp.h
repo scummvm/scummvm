@@ -755,7 +755,7 @@ Compact fact1_right_exit = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -787,7 +787,7 @@ Compact pipes = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
@@ -819,7 +819,7 @@ Compact botbelt = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	BOTBELT_LOGIC,	// baseSub
@@ -860,7 +860,7 @@ Compact welder = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	WELDER_LOGIC,	// baseSub
@@ -892,7 +892,7 @@ Compact factory_exit = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1381,7 +1381,7 @@ Compact topbelt = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
@@ -1444,7 +1444,7 @@ Compact console_12 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1897,7 +1897,7 @@ Compact stump = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1970,7 +1970,7 @@ Compact anita_spy = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	ANITA_SPY_LOGIC,	// baseSub
@@ -2002,7 +2002,7 @@ Compact s12_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,

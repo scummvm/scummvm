@@ -183,7 +183,7 @@ Compact window_3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	INFO_WINDOW_LOGIC,	// baseSub
@@ -217,7 +217,7 @@ Compact info_button = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	INFO_BUTTON_LOGIC,	// baseSub
@@ -257,7 +257,7 @@ Compact window_2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	INFO_WINDOW_LOGIC,	// baseSub
@@ -389,7 +389,7 @@ Compact window_1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	INFO_WINDOW_LOGIC,	// baseSub
@@ -545,7 +545,7 @@ Compact window_4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	INFO_WINDOW_LOGIC,	// baseSub

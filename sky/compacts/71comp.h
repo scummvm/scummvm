@@ -123,7 +123,7 @@ Compact sc71_door72 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -166,7 +166,7 @@ uint16 sc71_medi_charge[] = {
 	0
 };
 
-uint8 medi_auto[64];
+uint16 medi_auto[32];
 
 uint16 medi_up[] = {
 	1,
@@ -516,7 +516,7 @@ Compact medi = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	MEDI_LOGIC,	// baseSub
@@ -708,7 +708,7 @@ Compact sc71_chlite = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC71_CHLITE_LOGIC,	// baseSub
@@ -740,7 +740,7 @@ Compact sc71_controls = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC71_CONTROLS_LOGIC,	// baseSub
@@ -813,7 +813,7 @@ Compact sc71_panel2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC71_PANEL2_LOGIC,	// baseSub
@@ -910,7 +910,7 @@ Compact sc71_light1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC71_LIGHT1_LOGIC,	// baseSub
@@ -1392,7 +1392,7 @@ Compact sc71_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1424,7 +1424,7 @@ Compact sc71_door69 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1458,7 +1458,7 @@ Compact sc71_fake_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1490,7 +1490,7 @@ Compact sc71_medi_slot = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1522,7 +1522,7 @@ Compact sc71_monitor = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC71_MONITOR_LOGIC,	// baseSub
@@ -1595,7 +1595,7 @@ Compact sc71_locked_door = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1627,7 +1627,7 @@ Compact sc71_recharger = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC71_RECHARGER_LOGIC,	// baseSub

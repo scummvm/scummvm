@@ -78,7 +78,7 @@ Compact fact2_exit_left = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -110,7 +110,7 @@ Compact fact_console = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	FACT_CONSOLE_LOGIC,	// baseSub
@@ -142,7 +142,7 @@ Compact pipe1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
@@ -180,7 +180,7 @@ Compact sensor = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SENSOR_LOGIC,	// baseSub
@@ -741,7 +741,7 @@ Compact fact2_exit_right = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -778,7 +778,7 @@ Compact lite1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	ANIMATE_LOGIC,	// baseSub
@@ -892,7 +892,7 @@ Compact fact2_store_exit = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -924,7 +924,7 @@ Compact pipe4 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
@@ -1459,7 +1459,7 @@ Compact s13_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1491,7 +1491,7 @@ Compact cogs = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
@@ -1528,7 +1528,7 @@ Compact belts2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
@@ -1632,7 +1632,7 @@ Compact lite2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	ANIMATE_LOGIC,	// baseSub
@@ -1664,7 +1664,7 @@ Compact gears = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
@@ -1787,7 +1787,7 @@ Compact pipe3 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
@@ -1854,7 +1854,7 @@ Compact belts1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub
@@ -1931,7 +1931,7 @@ Compact sensors = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -2352,7 +2352,7 @@ uint16 foreman_down[] = {
 	0
 };
 
-uint8 foreman_auto[64];
+uint16 foreman_auto[32];
 
 uint16 foreman_up[] = {
 	2,
@@ -2544,7 +2544,7 @@ Compact foreman = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	0,	// mode
 	FOREMAN_LOGIC,	// baseSub
@@ -2839,7 +2839,7 @@ Compact fact2_spy_and_window = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	FACT2_SPY_LOGIC,	// baseSub
@@ -3062,7 +3062,7 @@ Compact pipe2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	STD_FACT_LOGIC,	// baseSub

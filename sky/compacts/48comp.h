@@ -51,7 +51,7 @@ Compact sc48_eyes = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC48_EYES_LOGIC,	// baseSub
@@ -120,7 +120,7 @@ Compact sc48_socket = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC48_SOCKET_LOGIC,	// baseSub
@@ -586,7 +586,7 @@ Compact sc48_hole = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC48_HOLE_LOGIC,	// baseSub
@@ -701,7 +701,7 @@ Compact sc48_exit_47 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -733,7 +733,7 @@ Compact sc48_exit_65 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -767,7 +767,7 @@ Compact sc48_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,

@@ -51,7 +51,7 @@ Compact sc33_lock = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -507,7 +507,7 @@ Compact sc33_shed_door = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC33_SHED_DOOR_LOGIC,	// baseSub
@@ -574,7 +574,7 @@ Compact sc33_exit_32 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -643,7 +643,7 @@ Compact sc33_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -675,7 +675,7 @@ Compact sc33_exit_30 = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,

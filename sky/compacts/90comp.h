@@ -59,7 +59,7 @@ Compact door_r90f = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_R90F_LOGIC,	// baseSub
@@ -91,7 +91,7 @@ Compact door_r90 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_R90_LOGIC,	// baseSub
@@ -141,7 +141,7 @@ Compact sc90_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -288,7 +288,7 @@ Compact door_l90 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_L90_LOGIC,	// baseSub
@@ -639,7 +639,7 @@ Compact eyeball_90 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	EYEBALL_90_LOGIC,	// baseSub
@@ -671,7 +671,7 @@ Compact sc90_smfloor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -703,7 +703,7 @@ Compact join_object = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	JOIN_OBJECT_LOGIC,	// baseSub
@@ -735,7 +735,7 @@ Compact door_l90f = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_L90F_LOGIC,	// baseSub
@@ -767,7 +767,7 @@ Compact oscillator = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	OSCILLATOR_LOGIC,	// baseSub

@@ -139,7 +139,7 @@ Compact sc75_console = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC75_CONSOLE_LOGIC,	// baseSub
@@ -300,7 +300,7 @@ Compact sc75_door = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -400,7 +400,7 @@ Compact sc75_light1 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC75_LIGHT1_LOGIC,	// baseSub
@@ -614,7 +614,7 @@ Compact sc75_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -652,7 +652,7 @@ Compact sc75_big_door = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -697,7 +697,7 @@ Compact sc75_live_tank = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC75_LIVE_TANK_LOGIC,	// baseSub
@@ -836,7 +836,7 @@ Compact sc75_tongs = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC75_TONGS_LOGIC,	// baseSub
@@ -1062,7 +1062,7 @@ Compact sc75_light2 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC75_LIGHT2_LOGIC,	// baseSub
@@ -1230,7 +1230,7 @@ Compact sc75_nitro_tank = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	SC75_NITRO_TANK_LOGIC,	// baseSub

@@ -237,7 +237,7 @@ Compact door_r95f = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_R95F_LOGIC,	// baseSub
@@ -755,7 +755,7 @@ Compact weight = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	WEIGHT_LOGIC,	// baseSub
@@ -787,7 +787,7 @@ Compact guardian = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	GUARDIAN_LOGIC,	// baseSub
@@ -845,7 +845,7 @@ Compact door_r95 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_R95_LOGIC,	// baseSub
@@ -891,7 +891,7 @@ Compact door_t95 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_T95_LOGIC,	// baseSub
@@ -997,7 +997,7 @@ Compact door_l95 = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_L95_LOGIC,	// baseSub
@@ -1029,7 +1029,7 @@ Compact door_l95f = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_L95F_LOGIC,	// baseSub
@@ -1226,7 +1226,7 @@ Compact sc95_floor = {
 	0,
 	0,
 	0,
-	0,
+	{ 0, 0, 0 },
 	0,
 	0,
 	0,
@@ -1275,7 +1275,7 @@ Compact door_t95r = {
 	0,	// getToFlag
 	0,	// flag
 	0,	// mood
-	0,	// grafixProg
+	{ 0, 0, 0 },
 	0,	// offset
 	C_BASE_MODE,	// mode
 	DOOR_T95R_LOGIC,	// baseSub
