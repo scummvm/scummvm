@@ -1070,12 +1070,24 @@ void SkySound::loadSection(uint8 pSection) {
 
 	if (_soundData) free(_soundData);
 	_soundData = _skyDisk->loadFile(pSection * 4 + SOUND_FILE_BASE, NULL);
-	if ((_soundData[0x7E] != 0x3C) || (_soundData[0xA5] != 0x8D) || (_soundData[0xA6] != 0x1E) ||
-		(_soundData[0xAD] != 0x8D) || (_soundData[0xAE] != 0x36))
-		error("Unknown sounddriver version!\n");
-	_soundsTotal = _soundData[0x7F];
-	uint16 sRateTabOfs = (_soundData[0xA8] << 8) | _soundData[0xA7];
-	_sfxBaseOfs = (_soundData[0xB0] << 8) | _soundData[0xAF];
+	uint16 asmOfs;
+	if (SkyState::_systemVars.gameVersion == 109) {
+		if (pSection == 0)
+			asmOfs = 0x78;
+		else
+			asmOfs = 0x7C;
+	} else
+		asmOfs = 0x7E;
+
+	if ((_soundData[asmOfs] != 0x3C) || (_soundData[asmOfs + 0x27] != 0x8D) ||
+		(_soundData[asmOfs + 0x28] != 0x1E) || (_soundData[asmOfs + 0x2F] != 0x8D) ||
+		(_soundData[asmOfs + 0x30] != 0x36))
+			error("Unknown sounddriver version!\n");
+
+	_soundsTotal = _soundData[asmOfs + 1];
+	uint16 sRateTabOfs = (_soundData[asmOfs + 0x2A] << 8) | _soundData[asmOfs + 0x29];
+	_sfxBaseOfs = (_soundData[asmOfs + 0x32] << 8) | _soundData[asmOfs + 0x31];
+
 	_sampleRates = _soundData + sRateTabOfs;
 	_sfxInfo = _soundData + _sfxBaseOfs;
 	for (uint8 cnt = 0; cnt < 4; cnt++)
