@@ -671,10 +671,20 @@ void ScummEngine_v90he::spriteInfoSet_flag22(int spriteId, int value) {
 void ScummEngine_v90he::spriteInfoSet_flagMarkDirty(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	if (value)
+	switch(value) {
+	case 2:
+		_spriteTable[spriteId].flags &= ~(kSFMarkDirty);
+		_spriteTable[spriteId].flags |= kSFBlitDirectly;
+		break;
+	case 1:
 		_spriteTable[spriteId].flags |= kSFMarkDirty | kSFBlitDirectly;
-	else
+		break;
+	case 0:
 		_spriteTable[spriteId].flags &= ~(kSFMarkDirty | kSFBlitDirectly);
+		break;
+	default:
+		error("spriteInfoSet_flagMarkDirty: Invalid value %d", value);
+	}
 }
 
 void ScummEngine_v90he::spriteInfoSet_flagHasImage(int spriteId, int value) {
@@ -834,12 +844,8 @@ void ScummEngine_v90he::spriteGroupSet_case0_3(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	for (int i = 1; i < _varNumSprites; i++) {
-		if (_spriteTable[i].groupNum == spriteGroupId) {
-			if (value)
-				_spriteTable[i].flags |= kSFMarkDirty | kSFBlitDirectly;
-			else
-				_spriteTable[i].flags &= ~(kSFMarkDirty | kSFBlitDirectly);
-		}
+		if (_spriteTable[i].groupNum == spriteGroupId)
+			spriteInfoSet_flagMarkDirty(i, value);
 	}
 }
 
