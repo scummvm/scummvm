@@ -315,16 +315,17 @@ void Operator2612::frequency(int freq) {
 void Operator2612::nextTick(uint16 rate, const int *phasebuf, int *outbuf, int buflen) {
 	if (_state == _s_ready)
 		return;
-	if (_state == _s_attacking && _attackTime <= 0)
+	if (_state == _s_attacking && _attackTime <= 0) {
+		_currentLevel = 0;
 		_state = _s_decaying;
+	}
 
-	int32 increment;
+	int32 levelIncrement;
 	int32 target;
 	State next_state;
-	bool switching;
+	const int32 zero_level = ((int32)0x7f << 15);
 
 	while (buflen) {
-		switching = false;
 		switch (_state) {
 		case _s_ready:
 			return;
@@ -333,23 +334,24 @@ void Operator2612::nextTick(uint16 rate, const int *phasebuf, int *outbuf, int b
 			next_state = _s_attacking;
 			break;
 		case _s_decaying:
-			increment = _decayRate;
+			levelIncrement = _decayRate;
 			target = _sustainLevel;
 			next_state = _s_sustaining;
 			break;
 		case _s_sustaining:
-			increment = _sustainRate;
-			target = ((int32)0x7f << 15);
+			levelIncrement = _sustainRate;
+			target = zero_level;
 			next_state = _s_ready;
 			break;
 		case _s_releasing:
-			increment = _releaseRate;
-			target = ((int32)0x7f << 15);
+			levelIncrement = _releaseRate;
+			target = zero_level;
 			next_state = _s_ready;
 			break;
 		}
 
-		for (; buflen && !switching; --buflen, ++phasebuf, ++outbuf) {
+		bool switching = false;
+		do {
 			if (next_state == _s_attacking) {
 				// Attack phase
 				++_tickCount;
@@ -369,7 +371,7 @@ void Operator2612::nextTick(uint16 rate, const int *phasebuf, int *outbuf, int b
 				}
 			} else {
 				// Decay, Sustain and Release phases
-				_currentLevel += increment;
+				_currentLevel += levelIncrement;
 				if (_currentLevel >= target) {
 					_currentLevel = target;
 					_state = next_state;
@@ -379,7 +381,7 @@ void Operator2612::nextTick(uint16 rate, const int *phasebuf, int *outbuf, int b
 
 			int32 level = _currentLevel + _totalLevel;
 			int32 output = 0;
-			if (level < ((int32)0x7f << 15)) {
+			if (level < zero_level) {
 				_phase &= 0x3ffff;
 				int phaseShift = *phasebuf >> 2; // 正しい変調量は?  3 じゃ小さすぎで 2 じゃ大きいような。
 				if (_feedbackLevel)
@@ -410,7 +412,10 @@ void Operator2612::nextTick(uint16 rate, const int *phasebuf, int *outbuf, int b
 
 			_lastOutput = output;
 			*outbuf += output;
-		}
+			 --buflen;
+			 ++phasebuf;
+			 ++outbuf;
+		} while (buflen && !switching);
 	}
 }
 
