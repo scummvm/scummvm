@@ -460,7 +460,7 @@ void Sound::playSound(int soundID) {
 						if (pollCD() == 1)
 							return;
 
-					playCDTrack(track, loops == 0xff ? -1 : loops, start, end);
+					playCDTrack(track, loops == 0xff ? -1 : loops, start, end - start);
 					_currentCDSound = soundID;
 					break;
 				}			
