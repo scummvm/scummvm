@@ -288,7 +288,7 @@ byte CostumeRenderer::mainRoutine(Actor * a, int slot, int frame)
 		masking = _vm->isMaskActiveAt(_left, _top, _right, _bottom,_vm->getResourceAddress(rtBuffer,9) +
 		                              _vm->gdi._imgBufOffs[_zbuf] + _vm->_screenStartStrip);
 
-	if (_zbuf || charsetmask) {
+	if (masking || charsetmask) {
 		_mask_ptr =_vm->getResourceAddress(rtBuffer,9) + _ypos * 40 + _vm->_screenStartStrip;
 		_imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
 		if (!charsetmask && _zbuf != 0)
