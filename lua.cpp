@@ -1422,8 +1422,20 @@ static void SetAmbientLight() {
 }
 
 static void EngineDisplay() {
-	/*bool mode = check_int(1) != 0;*/
 	// it enable/disable updating display
+	lua_Object param1 = lua_getparam(1);
+	bool mode;
+	if (lua_isnumber(param1)) {
+		mode = check_int(1) != 0;
+	} else if (lua_isnil(param1)) {
+		mode = false;
+	} else {
+		error("EngineDisplay() Unknown type of param");
+	}
+	if (mode)
+		printf("EngineDisplay() Enable\n");
+	else
+		printf("EngineDisplay() Disable\n");
 }
 
 // Stub function for builtin functions not yet implemented
