@@ -1574,6 +1574,7 @@ void Scumm::resetActorBgs() {
 
 	for (i = 0; i < gdi._numStrips; i++) {
 		int strip = _screenStartStrip + i;
+		clearGfxUsageBit(strip, USAGE_BIT_DIRTY);
 		for (j = 1; j < _numActors; j++) {
 			if (testGfxUsageBit(strip, j) &&
 				((_actors[j].top != 0xFF || _actors[j].needRedraw) || _actors[j].needBgReset)) {
