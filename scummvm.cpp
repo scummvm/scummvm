@@ -278,13 +278,13 @@ int Scumm::scummLoop(int delta)
 			saveState(_saveLoadSlot, _saveLoadCompatible);
 			// Ender: Disabled for small_header games, as
 			// can overwrite game variables (eg, Zak256 cashcards)
-			if (_saveLoadCompatible && !(features & GF_SMALL_HEADER)
-				_vars[VAR_GAME_LOADED] = 201;
+			if (_saveLoadCompatible && !(_features & GF_SMALL_HEADER))
+ 				_vars[VAR_GAME_LOADED] = 201;
 		} else {
 			loadState(_saveLoadSlot, _saveLoadCompatible);
 			// Ender: Disabled for small_header games, as
 			// can overwrite game variables (eg, Zak256 cashcards)
- 			if (_saveLoadCompatible && !(features & GF_SMALL_HEADER))
+ 			if (_saveLoadCompatible && !(_features & GF_SMALL_HEADER))
 				_vars[VAR_GAME_LOADED] = 203;
 		}
 		_saveLoadFlag = 0;
@@ -407,7 +407,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 		}
 	}
 
-	if (!(features & GF_SMALL_HEADER))  // Disable for SH games. Overwrites
+	if (!(_features & GF_SMALL_HEADER))  // Disable for SH games. Overwrites
 		_vars[VAR_NEW_ROOM] = room; // gamevars, eg Zak cashcards
 
 	runExitScript();
