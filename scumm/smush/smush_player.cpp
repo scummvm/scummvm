@@ -514,7 +514,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 
 	byte transBuf[512];
 	if (_vm->_gameId == GID_CMI) {
-		_vm->translateText((const byte *)str - 1, _transText);
+		_vm->translateText((const byte *)str - 1, transBuf);
 		while (*str++ != '/')
 			;
 		string2 = (char *)transBuf;
