@@ -268,7 +268,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		/* AC */
 		OPCODE(o6_soundKludge),
 		OPCODE(o6_isAnyOf),
-		OPCODE(o6_quitPauseRestart),
+		OPCODE(o7_quitPauseRestart),
 		OPCODE(o6_isActorInBox),
 		/* B0 */
 		OPCODE(o6_delay),
