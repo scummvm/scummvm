@@ -64,6 +64,7 @@ private:
 	BundleDirCache::AudioTable *_bundleTable;
 	CompTable *_compTable;
 	int32 _numFiles;
+	int32 _numCompItems;
 	int32 _curSample;
 	File _file;
 	bool _compTableLoaded;

@@ -117,6 +117,7 @@ BundleMgr::BundleMgr(BundleDirCache *cache) {
 	_bundleTable = NULL;
 	_compTable = NULL;
 	_numFiles = 0;
+	_numCompItems = 0;
 	_curSample = -1;
 	_fileBundleId = -1;
 }
@@ -150,6 +151,7 @@ void BundleMgr::closeFile() {
 		_file.close();
 		_bundleTable = NULL;
 		_numFiles = 0;
+		_numCompItems = 0;
 		_compTableLoaded = false;
 		_lastBlock = -1;
 		_lastCacheOutputSize = 0;
@@ -179,7 +181,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 	if (!_compTableLoaded) {
 		_file.seek(_bundleTable[index].offset, SEEK_SET);
 		tag = _file.readUint32BE();
-		num = _file.readUint32BE();
+		_numCompItems = num = _file.readUint32BE();
 		_file.readUint32BE();
 		_file.readUint32BE();
 
@@ -200,6 +202,10 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 
 	first_block = (offset + header_size) / 0x2000;
 	last_block = (offset + size + header_size - 1) / 0x2000;
+
+	// workaround for bug when (offset + size + header_size - 1) is more one byte after sound resource
+	if ((last_block >= _numCompItems) && (_numCompItems > 0))
+		last_block = _numCompItems - 1;
 
 	comp_output = (byte *)malloc(0x2000);
 	int32 blocks_final_size = 0x2000 * (1 + last_block - first_block);
