@@ -1372,6 +1372,23 @@ static void BlastText() {
 	warning("STUB: BlastText(\"%s\", x = %d, y = %d)\n", msg.c_str(), x, y);
 }
 
+static void LockFont() {
+	lua_Object param1 = lua_getparam(1);
+	if (lua_isstring(param1)) {
+		char *fontName = lua_getstring(param1);
+		void *result = NULL;//g_resourceloader->loadFont(fontName);
+		if (result) {
+			lua_pushusertag(result, MKID('FONT'));
+			return;
+		}
+	}
+	lua_pushnil();
+}
+
+static void EnableDebugKeys() {
+	// in residual all keys are handled/enabled
+}
+
 // Stub function for builtin functions not yet implemented
 
 static void stubWarning(char *funcName) {
@@ -1485,8 +1502,6 @@ STUB_FUNC(PreviousSetup)
 STUB_FUNC(NextSetup)
 STUB_FUNC(UnLockSet)
 STUB_FUNC(LockSet)
-STUB_FUNC(LockFont)
-STUB_FUNC(EnableDebugKeys)
 STUB_FUNC(WorldToScreen)
 STUB_FUNC(CompleteActorChore)
 STUB_FUNC(SetActorRoll)
