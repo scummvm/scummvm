@@ -1519,7 +1519,7 @@ void Scumm_v5::o5_resourceRoutines() {
 		ensureResourceLoaded(resType[op-1], resid);
 		break;
 	case 4:											// load room 
-		if (_features == GF_AFTER_V3) {
+		if (_features & GF_AFTER_V3) {
 			ensureResourceLoaded(rtRoom, resid);
 			if (resid > 0x7F)
 				resid = _resourceMapper[resid & 0x7F];
