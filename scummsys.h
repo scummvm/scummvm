@@ -58,29 +58,6 @@ typedef signed long int32;
 #define END_PACK_STRUCTS   pack(pop)
 #define GCC_PACK
 
-#elif defined(__CYGWIN__)
-
-#define scumm_stricmp stricmp
-#define CHECK_HEAP
-#define SCUMM_LITTLE_ENDIAN
-
-#define FORCEINLINE inline
-#define NORETURN __attribute__((__noreturn__))
-#define GCC_PACK __attribute__((packed))
-#define CDECL
-
-typedef unsigned char byte;
-typedef unsigned char uint8;
-typedef unsigned short uint16;
-typedef unsigned long uint32;
-typedef unsigned int uint;
-typedef signed char int8;
-typedef signed short int16;
-typedef signed long int32;
-
-#define START_PACK_STRUCTS pack (push,1)
-#define END_PACK_STRUCTS   pack(pop)
-
 #elif defined(__MINGW32__)
 
 #define scumm_stricmp stricmp

@@ -14,7 +14,7 @@ DEFINES = -DCOMPRESSED_SOUND_FILE
 LDFLAGS :=-mwindows -mconsole
 INCLUDES:= $(SDL_CFLAGS) -I./ -I./sound
 CPPFLAGS= $(DEFINES) $(INCLUDES)
-LIBS	= -lmingw32 -lwinmm -lwsock32 -lmad $(SDL_LIBS)
+LIBS	= -lmingw32 -lwinmm -lmad $(SDL_LIBS)
 EXEEXT	:=.exe
 
 OBJS	= sdl.o
