@@ -43,7 +43,7 @@ static bool arraysAllreadySort = false;
 
 static void recreateObj(TObject *obj) {
 	if (obj->ttype == LUA_T_CPROTO) {
-		int some = ((int)(obj->value.f)) >> 16;
+		long some = ((long)(obj->value.f)) >> 16;
 		luaL_libList *list = list_of_libs;
 		while (list != NULL) {
 			if (some == 0)
@@ -52,7 +52,7 @@ static void recreateObj(TObject *obj) {
 			list = list->next;
 		}
 
-		int numberFunc = (int)(obj->value.f) & 0xffff;
+		long numberFunc = (long)(obj->value.f) & 0xffff;
 		if ((list != NULL) && (some == 0) && (numberFunc < list->number)) {
 			obj->value.f = list->list[numberFunc].func;
 		} else {
@@ -103,7 +103,7 @@ static void recreateObj(TObject *obj) {
 			return;
 		}
 
-		obj->value.i = (unsigned int)found->object;
+		obj->value.i = (long)found->object;
 	}
 }
 
@@ -151,7 +151,7 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 			else
 				tempString = luaS_createudata(value, tag);
 			if (restoreCallback != NULL) {
-				tempString->u.s.globalval.value.ts = (TaggedString *)restoreCallback(tempString->u.s.globalval.ttype, (int)tempString->u.s.globalval.value.ts, restoreFunc);
+				tempString->u.s.globalval.value.ts = (TaggedString *)restoreCallback(tempString->u.s.globalval.ttype, (long)tempString->u.s.globalval.value.ts, restoreFunc);
 			}
 		}
 		tempString->constindex = constIndex;

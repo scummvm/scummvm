@@ -174,7 +174,7 @@ static TaggedString *insert_u (void *buff, int tag, stringtable *tb)
 
 TaggedString *luaS_createudata (void *udata, int tag)
 {
-  return insert_u(udata, tag, &L->string_root[(unsigned)udata%NUM_HASHS]);
+  return insert_u(udata, tag, &L->string_root[(long)udata%NUM_HASHS]);
 }
 
 TaggedString *luaS_newlstr (char *str, long l)

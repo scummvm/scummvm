@@ -52,7 +52,7 @@ typedef unsigned char  Byte;  /* unsigned 8 bits */
 #define MAX_WORD	65534
 #endif
 
-typedef unsigned int IntPoint; /* unsigned with same size as a pointer (for hashing) */
+typedef unsigned long IntPoint; /* unsigned with same size as a pointer (for hashing) */
 
 
 /*

@@ -120,7 +120,7 @@ static void LoadConstants(TProtoFunc* tf, ZIO* Z)
  {
   TObject* o=tf->consts+i;
   ttype(o)=(lua_Type)-ezgetc(Z);
-  switch (ttype(o))
+  switch ((unsigned)ttype(o))
   {
    case -'N':
         ttype(o)=LUA_T_NUMBER;
