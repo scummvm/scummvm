@@ -976,10 +976,13 @@ ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, cons
 #pragma mark --- Initialization ---
 #pragma mark -
 
-int ScummEngine::init() {
+int ScummEngine::init(GameDetector &detector) {
 
 	// Initialize backend
-	_system->initSize(_screenWidth, _screenHeight);
+	_system->beginGFXTransaction();
+		initCommonGFX(detector);
+		_system->initSize(_screenWidth, _screenHeight);
+	_system->endGFXTransaction();
 
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0 && (_features & GF_AUDIOTRACKS))

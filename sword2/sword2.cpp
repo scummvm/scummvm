@@ -223,11 +223,14 @@ void Sword2Engine::setupPersistentResources() {
 	_resman->openResource(CUR_PLAYER_ID);
 }
     
-int Sword2Engine::init() {
+int Sword2Engine::init(GameDetector &detector) {
 	// Get some falling RAM and put it in your pocket, never let it slip
 	// away
 
-	_graphics = new Graphics(this, 640, 480);
+	_system->beginGFXTransaction();
+		initCommonGFX(detector);
+		_graphics = new Graphics(this, 640, 480);
+	_system->endGFXTransaction();
 
 	// Create the debugger as early as possible (but not before the
 	// graphics object!) so that errors can be displayed in it. In

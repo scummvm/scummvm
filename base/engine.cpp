@@ -23,10 +23,10 @@
 #include <malloc.h>
 #endif
 #include "base/engine.h"
-#include "base/gameDetector.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/timer.h"
+#include "common/scaler.h"	// For GFX_NORMAL
 #include "sound/mixer.h"
 
 /* FIXME - BIG HACK for MidiEmu */
@@ -56,6 +56,29 @@ Engine::~Engine() {
 	delete _saveFileMan;
 
 	g_engine = NULL;
+}
+
+void Engine::initCommonGFX(GameDetector &detector) {
+	const bool useDefaultGraphicsMode =
+		!ConfMan.hasKey("gfx_mode", detector._targetName) ||
+		!scumm_stricmp(ConfMan.get("gfx_mode", detector._targetName).c_str(), "normal") ||
+		!scumm_stricmp(ConfMan.get("gfx_mode", detector._targetName).c_str(), "default");
+
+	// See if the game should default to 1x scaler
+	if (useDefaultGraphicsMode && (detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
+		_system->setGraphicsMode(GFX_NORMAL);
+	} else {
+		// Override global scaler with any game-specific define
+		if (ConfMan.hasKey("gfx_mode")) {
+			_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+		}
+	}
+	
+	// (De)activate aspect-ratio correction as determined by the config settings
+	_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+		
+	// (De)activate fullscreen mode as determined by the config settings 
+	_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 }
 
 const char *Engine::getSavePath() const {

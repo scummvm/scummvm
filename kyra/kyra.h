@@ -68,7 +68,7 @@ public:
 
 protected:
 	int go();
-	int init();
+	int init(GameDetector &detector);
 	void shutdown();
 	Resourcemanager* _resMgr;
 	MusicPlayer* _midiDriver;

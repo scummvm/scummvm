@@ -100,7 +100,7 @@ protected:
 	uint32 _lastSaveTime;
 
 	Text *getText();
-	int init();
+	int init(GameDetector &detector);
 	void initItemList();
 
 	void initVirgin();

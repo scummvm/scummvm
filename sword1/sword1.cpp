@@ -109,6 +109,16 @@ SwordEngine::SwordEngine(GameDetector *detector, OSystem *syst)
 
 	if (!_mixer->isReady())
 		warning("Sound initialization failed");
+
+	// Add default file directories
+	File::addDefaultDirectory(_gameDataPath + "CLUSTERS/");
+	File::addDefaultDirectory(_gameDataPath + "MUSIC/");
+	File::addDefaultDirectory(_gameDataPath + "SPEECH/");
+	File::addDefaultDirectory(_gameDataPath + "VIDEO/");
+	File::addDefaultDirectory(_gameDataPath + "clusters/");
+	File::addDefaultDirectory(_gameDataPath + "music/");
+	File::addDefaultDirectory(_gameDataPath + "speech/");
+	File::addDefaultDirectory(_gameDataPath + "video/");
 }
 
 SwordEngine::~SwordEngine() {
@@ -123,19 +133,13 @@ SwordEngine::~SwordEngine() {
 	delete _resMan;
 }
 
-int SwordEngine::init() {
+int SwordEngine::init(GameDetector &detector) {
 
-	// Add default file directories
-	File::addDefaultDirectory(_gameDataPath + "CLUSTERS/");
-	File::addDefaultDirectory(_gameDataPath + "MUSIC/");
-	File::addDefaultDirectory(_gameDataPath + "SPEECH/");
-	File::addDefaultDirectory(_gameDataPath + "VIDEO/");
-	File::addDefaultDirectory(_gameDataPath + "clusters/");
-	File::addDefaultDirectory(_gameDataPath + "music/");
-	File::addDefaultDirectory(_gameDataPath + "speech/");
-	File::addDefaultDirectory(_gameDataPath + "video/");
+	_system->beginGFXTransaction();
+		initCommonGFX(detector);
+		_system->initSize(640, 480);
+	_system->endGFXTransaction();
 
-	_system->initSize(640, 480);
 	debug(5, "Starting resource manager");
 	_resMan = new ResMan("swordres.rif");
 	debug(5, "Starting object manager");

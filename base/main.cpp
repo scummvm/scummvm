@@ -35,7 +35,6 @@
 #include "base/version.h"
 #include "common/config-manager.h"
 #include "common/file.h"
-#include "common/scaler.h"	// For GFX_NORMAL
 #include "common/timer.h"
 #include "gui/newgui.h"
 #include "gui/launcher.h"
@@ -247,11 +246,6 @@ static int runGame(GameDetector &detector, OSystem *system) {
 		system->setWindowCaption(caption.c_str());
 	}
 	
-	const bool useDefaultGraphicsMode =
-		!ConfMan.hasKey("gfx_mode", detector._targetName) ||
-		!scumm_stricmp(ConfMan.get("gfx_mode", detector._targetName).c_str(), "normal") ||
-		!scumm_stricmp(ConfMan.get("gfx_mode", detector._targetName).c_str(), "default");
-
 	// Create the game engine
 	Engine *engine = detector.createEngine(system);
 	assert(engine);
@@ -265,29 +259,8 @@ static int runGame(GameDetector &detector, OSystem *system) {
 
 	int result;
 
-	// Start GFX transaction
-	system->beginGFXTransaction();
-
-		// See if the game should default to 1x scaler
-		if (useDefaultGraphicsMode && (detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
-			system->setGraphicsMode(GFX_NORMAL);
-		} else {
-			// Override global scaler with any game-specific define
-			if (ConfMan.hasKey("gfx_mode")) {
-				system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
-			}
-		}
-	
-		// (De)activate aspect-ratio correction as determined by the config settings
-		system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
-		
-		// (De)activate fullscreen mode as determined by the config settings 
-		system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
-		
-		// Init the engine (this might change the screen parameters
-		result = engine->init();
-
-	system->endGFXTransaction();
+	// Init the engine (this might change the screen parameters
+	result = engine->init(detector);
 
 	// Run the game engine if the initialization was successful.
 	if (result == 0) {

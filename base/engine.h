@@ -24,6 +24,7 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/system.h"
+#include "base/gameDetector.h"
 
 class SoundMixer;
 class Timer;
@@ -46,7 +47,7 @@ public:
 	 * Init the engine.
 	 * @return 0 for success, else an error code.
 	 */
-	virtual int init() = 0;
+	virtual int init(GameDetector &detector) = 0;
 
 	/**
 	 * Start the main engine loop.
@@ -64,6 +65,8 @@ public:
 
 	/** Specific for each engine: prepare error string. */
 	virtual void errorString(const char *buf_input, char *buf_output) = 0;
+
+	void initCommonGFX(GameDetector &detector);
 };
 
 extern Engine *g_engine;

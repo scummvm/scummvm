@@ -171,7 +171,7 @@ public:
 	Sword2Engine(GameDetector *detector, OSystem *syst);
 	~Sword2Engine();
 	int go();
-	int init();
+	int init(GameDetector &detector);
 
 	void setupPersistentResources();
 

@@ -89,7 +89,7 @@ class SagaEngine : public Engine {
 
 protected:
 	int go();
-	int init();
+	int init(GameDetector &detector);
 
 public:
 	SagaEngine(GameDetector * detector, OSystem * syst);

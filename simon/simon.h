@@ -740,7 +740,7 @@ protected:
 
 	void resfile_read(void *dst, uint32 offs, uint32 size);
 
-	int init();
+	int init(GameDetector &detector);
 	int go();
 	void openGameFile();
 

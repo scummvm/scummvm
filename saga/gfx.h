@@ -98,7 +98,7 @@ bool hitTestPoly(const Point *points, unsigned int npoints, const Point& test_po
 class Gfx {
 public:
 
-	Gfx(OSystem *system, int width, int height);
+	Gfx(OSystem *system, int width, int height, GameDetector &detector);
 	SURFACE *getBackBuffer();
 	int getWhite();
 	int getBlack();

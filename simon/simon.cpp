@@ -661,14 +661,17 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		"\x5\x5\x4\x6\x5\x3\x4\x5\x6\x3\x5\x5\x4\x6\x5\x3\x4\x6\x5\x6\x6\x6\x5\x5\x5\x6\x5\x6\x6\x6\x6\x6", 32);
 }
 
-int SimonEngine::init() {
+int SimonEngine::init(GameDetector &detector) {
 	// Setup mixer
 	if (!_mixer->isReady())
 		warning("Sound initialization failed. "
 						"Features of the game that depend on sound synchronization will most likely break");
 	set_volume(ConfMan.getInt("sfx_volume"));
 
-	_system->initSize(320, 200);
+	_system->beginGFXTransaction();
+		initCommonGFX(detector);
+		_system->initSize(320, 200);
+	_system->endGFXTransaction();
 
 	// Setup midi driver
 	MidiDriver *driver = 0;

@@ -316,8 +316,11 @@ int QueenEngine::go() {
 	return 0;
 }
 
-int QueenEngine::init() {
-	_system->initSize(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+int QueenEngine::init(GameDetector &detector) {
+	_system->beginGFXTransaction();
+		initCommonGFX(detector);
+		_system->initSize(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+	_system->endGFXTransaction();
 
 	_bam = new BamScene(this);
 	_resource = new Resource();

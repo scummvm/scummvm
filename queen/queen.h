@@ -124,7 +124,7 @@ protected:
 	void errorString(const char *buf_input, char *buf_output);
 
 	int go();
-	int init();
+	int init(GameDetector &detector);
 
 
 	int _talkSpeed;

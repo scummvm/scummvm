@@ -1062,8 +1062,6 @@ void OSystem_SDL::toggleMouseGrab() {
 }
 
 void OSystem_SDL::draw_mouse() {
-	assert (_transactionMode == kTransactionNone);
-
 	if (_mouseDrawn || !_mouseVisible)
 		return;
 

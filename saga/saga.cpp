@@ -124,7 +124,7 @@ void SagaEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
 
-int SagaEngine::init() {
+int SagaEngine::init(GameDetector &detector) {
 	_soundEnabled = 1;
 	_musicEnabled = 1;
 
@@ -183,7 +183,7 @@ int SagaEngine::init() {
 	// Initialize graphics
 	GAME_DISPLAYINFO disp_info;
 	GAME_GetDisplayInfo(&disp_info);
-	_gfx = new Gfx(_system, disp_info.logical_w, disp_info.logical_h);
+	_gfx = new Gfx(_system, disp_info.logical_w, disp_info.logical_h, detector);
 
 	// Graphics should be initialized before music
 	int midiDriver = GameDetector::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE);

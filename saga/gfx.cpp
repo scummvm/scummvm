@@ -35,11 +35,13 @@
 
 namespace Saga {
 
-Gfx::Gfx(OSystem *system, int width, int height) {
+Gfx::Gfx(OSystem *system, int width, int height, GameDetector &detector) : _system(system) {
 	SURFACE back_buf;
 
-	_system = system;
-	_system->initSize(width, height);
+	_system->beginGFXTransaction();
+		_vm->initCommonGFX(detector);
+		_system->initSize(width, height);
+	_system->endGFXTransaction();
 
 	debug(0, "Init screen %dx%d", width, height);
 	// Convert surface data to R surface data
@@ -61,7 +63,7 @@ Gfx::Gfx(OSystem *system, int width, int height) {
 
 	// For now, always show the mouse cursor.
 	setCursor(1);
-	g_system->showMouse(true);
+	_system->showMouse(true);
 }
 
 /*

@@ -245,8 +245,11 @@ int SkyEngine::go() {
 	return 0;
 }
 
-int SkyEngine::init() {
-	_system->initSize(320, 200);
+int SkyEngine::init(GameDetector &detector) {
+	_system->beginGFXTransaction();
+		initCommonGFX(detector);
+		_system->initSize(320, 200);
+	_system->endGFXTransaction();
 
 	if (!_mixer->isReady())
 		warning("Sound initialisation failed");

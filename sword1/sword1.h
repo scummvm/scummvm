@@ -76,7 +76,7 @@ public:
 	uint32 _features;
 protected:
 	int go();
-	int init();
+	int init(GameDetector &detector);
 private:
 	void delay(uint amount);
 

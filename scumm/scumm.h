@@ -388,7 +388,7 @@ public:
 	int go();
 
 	// Init functions
-	int init();
+	int init(GameDetector &detector);
 
 	virtual void setupScummVars();
 	void initScummVars();
