@@ -26,7 +26,7 @@
 class Scumm;
 class ScummDebugger;
 
-typedef bool (ScummDebugger::*DebugProc)(char parm[255][255]);
+typedef bool (ScummDebugger::*DebugProc)(int argc, const char **argv);
 
 enum {
 	DVAR_INT,
@@ -68,10 +68,15 @@ protected:
 	bool RunCommand(char *input);
 
 	// Commands
-	bool Cmd_Exit(char _parameter[255][255]);
-	bool Cmd_Room(char _parameter[255][255]);
-	bool Cmd_LoadGame(char _parameter[255][255]);
-	bool Cmd_SaveGame(char _parameter[255][255]);
+	bool Cmd_Exit(int argc, const char **argv);
+	bool Cmd_Room(int argc, const char **argv);
+	bool Cmd_LoadGame(int argc, const char **argv);
+	bool Cmd_SaveGame(int argc, const char **argv);
+
+	bool Cmd_PrintActor(int argc, const char **argv);
+	bool Cmd_PrintBox(int argc, const char **argv);
+	
+	void printBox(int box);
 	
 #ifdef USE_CONSOLE
 	static bool debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon);

@@ -51,8 +51,12 @@ void ScummDebugger::attach(Scumm *s)
 	}
 
 	if (_dcmd_count < 1) {	// We need to register our commands
+		DCmd_Register("continue", &ScummDebugger::Cmd_Exit);
 		DCmd_Register("exit", &ScummDebugger::Cmd_Exit);
 		DCmd_Register("quit", &ScummDebugger::Cmd_Exit);
+
+		DCmd_Register("actor", &ScummDebugger::Cmd_PrintActor);
+		DCmd_Register("box", &ScummDebugger::Cmd_PrintBox);
 		DCmd_Register("room", &ScummDebugger::Cmd_Room);
 
 		DCmd_Register("loadgame", &ScummDebugger::Cmd_LoadGame);
@@ -147,52 +151,50 @@ void ScummDebugger::enter()
 
 // Command execution loop
 bool ScummDebugger::RunCommand(char *input) {
-	int i = 0, num_parms = 0;
-	char parm[255][255];
+	int i = 0, num_params = 0;
+	const char *param[256];
 
 	// Parse out any params
 	char *tok = strtok(input, " ");
 	if (tok) {
 		do {
-			strcpy(parm[num_parms++], tok);
+			param[num_params++] = tok;
 		} while ((tok = strtok(NULL, " ")) != NULL);
-	} else
-		strcpy(parm[0], input);
+	} else {
+		param[num_params++] = input;
+	}
 
 	for(i=0; i < _dcmd_count; i++) {
-		if (!strcmp(_dcmds[i].name, parm[0])) {
-			DebugProc cmd;
-
-			cmd = _dcmds[i].function;
-			return (this->*cmd)(parm);
+		if (!strcmp(_dcmds[i].name, param[0])) {
+			return (this->*_dcmds[i].function)(num_params, param);
 		}
 	}
 
 	// It's not a command, so things get a little tricky for variables. Do fuzzy matching to ignore things like subscripts.
 	for(i = 0; i < _dvar_count; i++) {
-		if (!strncmp(_dvars[i].name, parm[0], strlen(_dvars[i].name))) {
-			if (num_parms > 1) {
+		if (!strncmp(_dvars[i].name, param[0], strlen(_dvars[i].name))) {
+			if (num_params > 1) {
 				// Alright, we need to check the TYPE of the variable to deref and stuff... the array stuff is a bit ugly :)
 				switch(_dvars[i].type) {
 					// Integer
 					case DVAR_INT:
-						*(int *)_dvars[i].variable = atoi(parm[1]);
-						Debug_Printf("(int)%s = %d\n", parm[0], *(int *)_dvars[i].variable);
+						*(int *)_dvars[i].variable = atoi(param[1]);
+						Debug_Printf("(int)%s = %d\n", param[0], *(int *)_dvars[i].variable);
 					break;
 
 					// Integer Array
 					case DVAR_INTARRAY: {
-						char *chr = strchr(parm[0], '[');
+						char *chr = strchr(param[0], '[');
 						if (!chr) {
-							Debug_Printf("You must access this array as %s[element]\n", parm[0]);
+							Debug_Printf("You must access this array as %s[element]\n", param[0]);
 						} else {
 							int element = atoi(chr+1);
 							int16 *var = *(int16 **)_dvars[i].variable;
 							if (element > _dvars[i].optional) {
-								Debug_Printf("%s is out of range (array is %d elements big)\n", parm[0], _dvars[i].optional);
+								Debug_Printf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].optional);
 							} else {
-								var[element] = atoi(parm[1]);
-								Debug_Printf("(int)%s = %d\n", parm[0], var[element]);
+								var[element] = atoi(param[1]);
+								Debug_Printf("(int)%s = %d\n", param[0], var[element]);
 								
 							}
 						}
@@ -200,7 +202,7 @@ bool ScummDebugger::RunCommand(char *input) {
 					break;
 
 					default:
-						Debug_Printf("Failed to set variable %s to %s - unknown type\n", _dvars[i].name, parm[1]);
+						Debug_Printf("Failed to set variable %s to %s - unknown type\n", _dvars[i].name, param[1]);
 					break;
 				}
 			} else {
@@ -208,21 +210,21 @@ bool ScummDebugger::RunCommand(char *input) {
 				switch(_dvars[i].type) {
 					// Integer
 					case DVAR_INT:
-						Debug_Printf("(int)%s = %d\n", parm[0], *(int *)_dvars[i].variable);
+						Debug_Printf("(int)%s = %d\n", param[0], *(int *)_dvars[i].variable);
 					break;
 
 					// Integer array
 					case DVAR_INTARRAY: {
-						char *chr = strchr(parm[0], '[');
+						char *chr = strchr(param[0], '[');
 						if (!chr) {
-							Debug_Printf("You must access this array as %s[element]\n", parm[0]);
+							Debug_Printf("You must access this array as %s[element]\n", param[0]);
 						} else {
 							int element = atoi(chr+1);
 							int16 *var = *(int16 **)_dvars[i].variable;
 							if (element > _dvars[i].optional) {
-								Debug_Printf("%s is out of range (array is %d elements big)\n", parm[0], _dvars[i].optional);
+								Debug_Printf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].optional);
 							} else {
-								Debug_Printf("(int)%s = %d\n", parm[0], var[element]);
+								Debug_Printf("(int)%s = %d\n", param[0], var[element]);
 								
 							}
 						}
@@ -231,11 +233,11 @@ bool ScummDebugger::RunCommand(char *input) {
 
 					// String
 					case DVAR_STRING:
-						Debug_Printf("(string)%s = %s\n", parm[0], *(char **)_dvars[i].variable);
+						Debug_Printf("(string)%s = %s\n", param[0], *(char **)_dvars[i].variable);
 					break;
 
 					default:
-						Debug_Printf("%s = (unknown type)\n", parm[0]);
+						Debug_Printf("%s = (unknown type)\n", param[0]);
 					break;
 				}
 			}
@@ -249,38 +251,104 @@ bool ScummDebugger::RunCommand(char *input) {
 }
 
 // Commands
-bool ScummDebugger::Cmd_Exit(char _parameter[255][255]) {
+bool ScummDebugger::Cmd_Exit(int argc, const char **argv) {
 	_detach_now = true;
 	return false;
 }
 
-bool ScummDebugger::Cmd_Room(char _parameter[255][255]) {
-        int room = atoi(_parameter[1]);
-        _s->_actors[_s->_vars[_s->VAR_EGO]].room = room;
-        _s->startScene(room, 0, 0);
-        _s->_fullRedraw = 1;
+bool ScummDebugger::Cmd_Room(int argc, const char **argv) {
+	if (argc > 1) {
+		int room = atoi(argv[1]);
+		_s->_actors[_s->_vars[_s->VAR_EGO]].room = room;
+		_s->startScene(room, 0, 0);
+		_s->_fullRedraw = 1;
+		return false;
+	} else {
+		Debug_Printf("Current room: %d [%d]\n", _s->_currentRoom, _s->_roomResource);
+		return true;
+	}
+}
+	
+bool ScummDebugger::Cmd_LoadGame(int argc, const char **argv) {
+	if (argc > 1) {
+		int slot = atoi(argv[1]);
+		
+		_s->_saveLoadSlot = slot;
+		_s->_saveLoadFlag = 2;
+		_s->_saveLoadCompatible = false;
+		
+		_detach_now = true;
+	}
+	return false;
+}
+	
+bool ScummDebugger::Cmd_SaveGame(int argc, const char **argv) {
+	if (argc > 1) {
+		int slot = atoi(argv[1]);
+		
+		_s->_saveLoadSlot = slot;
+		_s->_saveLoadFlag = 1;
+		_s->_saveLoadCompatible = false;
+		
+		_detach_now = true;
+	}
+	return false;
+}
 
+bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
+	int i;
+	Actor *a;
+
+	Debug_Printf("+--------------------------------------------------------------------+\n");
+	Debug_Printf("|# |room|  x |  y |elev|cos|width|box|mov| zp|frame|scale|spd|dir|cls|\n");
+	Debug_Printf("+--+----+----+----+----+---+-----+---+---+---+-----+-----+---+---+---+\n");
+	for (i = 1; i < _s->NUM_ACTORS; i++) {
+		a = &_s->_actors[i];
+		if (a->visible)
+			Debug_Printf("|%2d|%4d|%4d|%4d|%4d|%3d|%5d|%3d|%3d|%3d|%5d|%5d|%3d|%3d|$%02x|\n",
+						 a->number, a->room, a->x, a->y, a->elevation, a->costume,
+						 a->width, a->walkbox, a->moving, a->forceClip, a->frame,
+						 a->scalex, a->speedx, a->facing, int(_s->_classData[a->number]&0xFF));
+	}
+	Debug_Printf("+--------------------------------------------------------------------+\n");
 	return true;
 }
 
-bool ScummDebugger::Cmd_LoadGame(char _parameter[255][255]) {
-        int slot = atoi(_parameter[1]);
+bool ScummDebugger::Cmd_PrintBox(int argc, const char **argv) {
+	int num, i = 0;
+	num = _s->getNumBoxes();
+/*
+	byte *boxm = _s->getBoxMatrixBaseAddr();
 
-        _s->_saveLoadSlot = slot;
-        _s->_saveLoadFlag = 2;
-        _s->_saveLoadCompatible = false;
-
-	_detach_now = true;
-	return false;
+	Debug_Printf("Walk matrix:\n");
+	for (i = 0; i < num; i++) {
+		while (*boxm != 0xFF) {
+			Debug_Printf("[%d] ", *boxm);
+			boxm++;
+		}
+		boxm++;
+		Debug_Printf("\n");
+	}
+*/
+	Debug_Printf("\nWalk boxes:\n");
+	for (i = 0; i < num; i++)
+		printBox(i);
+	return true;
 }
 
-bool ScummDebugger::Cmd_SaveGame(char _parameter[255][255]) {
-        int slot = atoi(_parameter[1]);
+void ScummDebugger::printBox(int box)
+{
+	BoxCoords coords;
+	int flags = _s->getBoxFlags(box);
+	int mask = _s->getMaskFromBox(box);
+	int scale = _s->getBoxScale(box);
 
-        _s->_saveLoadSlot = slot;
-        _s->_saveLoadFlag = 1;
-        _s->_saveLoadCompatible = false;
-
-	_detach_now = true;
-	return false;
+	_s->getBoxCoordinates(box, &coords);
+	
+	// Print out coords, flags, zbuffer mask
+	Debug_Printf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d], flags=0x%02x, mask=%d, scale=%d\n",
+	              box,
+	              coords.ul.x, coords.ul.y, coords.ll.x, coords.ll.y,
+	              coords.ur.x, coords.ur.y, coords.lr.x, coords.lr.y,
+	              flags, mask, scale);
 }
