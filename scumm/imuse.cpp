@@ -51,6 +51,7 @@
 // compile time.
 
 struct Part;
+struct Player;
 
 struct HookDatas {
 	byte _jump[2];
@@ -76,6 +77,27 @@ struct DeferredCommand {
 	MidiDriver *midi;
 	uint32 time_left;
 	int a, b, c, d, e, f;
+};
+
+struct VolumeFader {
+	Player *player;
+	bool active;
+	byte curvol;
+	uint16 speed_lo_max, num_steps;
+	int8 speed_hi;
+	int8 direction;
+	int8 speed_lo;
+	uint16 speed_lo_counter;
+
+	void initialize() {
+		active = false;
+	}
+	void on_timer(bool probe);
+	byte fading_to();
+	
+	VolumeFader() {
+		memset(this,0,sizeof(VolumeFader));
+	}
 };
 
 struct Player {
@@ -116,6 +138,7 @@ struct Player {
 
 	HookDatas _hook;
 	ParameterFade _parameterFades[4];
+	VolumeFader _volumeFader;
 
 	bool _mt32emulate;
 	bool _isGM;
@@ -176,30 +199,9 @@ struct Player {
 	void sequencer_timer();
 
 	Player() {
-		memset(this,0,sizeof(Player));	// palmos
+		memset(this,0,sizeof(Player));
 	}
 
-};
-
-struct VolumeFader {
-	Player *player;
-	bool active;
-	byte curvol;
-	uint16 speed_lo_max, num_steps;
-	int8 speed_hi;
-	int8 direction;
-	int8 speed_lo;
-	uint16 speed_lo_counter;
-
-	void initialize() {
-		active = false;
-	}
-	void on_timer(bool probe);
-	byte fading_to();
-	
-	VolumeFader() {
-		memset(this,0,sizeof(VolumeFader));	//palmos
-	}
 };
 
 struct SustainingNotes {
@@ -312,9 +314,7 @@ private:
 
 private:
 	bool _paused;
-	bool _active_volume_faders;
 	bool _initialized;
-	byte _volume_fader_counter;
 
 	int _tempoFactor;
 
@@ -340,7 +340,6 @@ private:
 
 	Player _players[8];
 	SustainingNotes _sustaining_notes[24];
-	VolumeFader _volume_fader[8];
 	Part _parts[32];
 
 	uint16 _active_notes[128];
@@ -357,13 +356,11 @@ private:
 	void initMidiDriver (MidiDriver *midi);
 	void init_players();
 	void init_parts();
-	void init_volume_fader();
 	void init_sustaining_notes();
 	void init_queue();
 
 	void sequencer_timers (MidiDriver *midi);
 	void expire_sustain_notes (MidiDriver *midi);
-	void expire_volume_faders (MidiDriver *midi);
 
 	MidiDriver *getBestMidiDriver (int sound);
 	Player *allocate_player(byte priority);
@@ -386,7 +383,6 @@ private:
 	int set_channel_volume(uint chan, uint vol);
 	void update_volumes();
 	void reset_tick();
-	VolumeFader *allocate_volume_fader();
 
 	int set_volchan(int sound, int volchan);
 
@@ -400,7 +396,7 @@ private:
 
 public:
 	IMuseInternal() {
-		memset(this,0,sizeof(IMuseInternal));	// palmos
+		memset(this,0,sizeof(IMuseInternal));
 	}
 	~IMuseInternal();
 
@@ -762,6 +758,7 @@ void IMuseInternal::init_players() {
 	for (i = ARRAYSIZE(_players); i != 0; i--, player++) {
 		player->_active = false;
 		player->_se = this;
+		player->_volumeFader.initialize();
 	}
 }
 
@@ -777,16 +774,6 @@ void IMuseInternal::init_sustaining_notes() {
 		next = sn;
 	}
 	_sustain_notes_free = next;
-}
-
-void IMuseInternal::init_volume_fader() {
-	VolumeFader *vf = _volume_fader;
-	int i;
-
-	for (i = ARRAYSIZE(_volume_fader); i != 0; i--, vf++)
-		vf->initialize();
-
-	_active_volume_faders = false;
 }
 
 void IMuseInternal::init_parts() {
@@ -832,7 +819,6 @@ void IMuseInternal::on_timer (MidiDriver *midi) {
 		handleDeferredCommands (midi);
 	sequencer_timers (midi);
 	expire_sustain_notes (midi);
-	expire_volume_faders (midi);
 }
 
 void IMuseInternal::sequencer_timers (MidiDriver *midi) {
@@ -950,27 +936,6 @@ void IMuseInternal::expire_sustain_notes (MidiDriver *midi) {
 			// And put it in the free list
 			sn->next = _sustain_notes_free;
 			_sustain_notes_free = sn;
-		}
-	}
-}
-
-void IMuseInternal::expire_volume_faders (MidiDriver *midi) {
-	VolumeFader *vf;
-	int i;
-
-	if (++_volume_fader_counter & 7)
-		return;
-
-	if (!_active_volume_faders)
-		return;
-
-	_active_volume_faders = false;
-	vf = _volume_fader;
-	for (i = ARRAYSIZE(_volume_fader); i != 0; i--, vf++) {
-		if (vf->active) {
-			_active_volume_faders = true;
-			if (vf->player->_midi == midi)
-				vf->on_timer(false);
 		}
 	}
 }
@@ -1634,22 +1599,6 @@ int HookDatas::set(byte cls, byte value, byte chan) {
 	return 0;
 }
 
-VolumeFader *IMuseInternal::allocate_volume_fader() {
-	VolumeFader *vf;
-	int i;
-
-	vf = _volume_fader;
-	for (i = ARRAYSIZE(_volume_fader); vf->active;) {
-		vf++;
-		if (!--i)
-			return NULL;
-	}
-
-	vf->active = true;
-	_active_volume_faders = true;
-	return vf;
-}
-
 Player *IMuseInternal::get_player_byid(int id) {
 	int i;
 	Player *player, *found = NULL;
@@ -1732,7 +1681,6 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi) {
 
 	init_players();
 	init_sustaining_notes();
-	init_volume_fader();
 	init_queue();
 	init_parts();
 
@@ -1786,10 +1734,9 @@ int Player::fade_vol(byte vol, int time) {
 		return 0;
 	}
 
-	vf = _se->allocate_volume_fader();
-	if (vf == NULL)
-		return -1;
+	vf = &_volumeFader;
 
+	vf->active = true;
 	vf->player = this;
 	vf->num_steps = vf->speed_lo_max = time;
 	vf->curvol = _volume;
@@ -1807,14 +1754,7 @@ int Player::fade_vol(byte vol, int time) {
 }
 
 bool Player::is_fading_out() {
-	VolumeFader *vf = _se->_volume_fader;
-	int i;
-
-	for (i = 0; i < 8; i++, vf++) {
-		if (vf->active && vf->direction < 0 && vf->player == this && vf->fading_to() == 0)
-			return true;
-	}
-	return false;
+	return (_volumeFader.active && _volumeFader.direction < 0 && _volumeFader.fading_to() == 0);
 }
 
 void Player::clear() {
@@ -1921,13 +1861,7 @@ void Player::set_tempo(uint32 b) {
 }
 
 void Player::cancel_volume_fade() {
-	VolumeFader *vf = _se->_volume_fader;
-	int i;
-
-	for (i = 0; i < 8; i++, vf++) {
-		if (vf->active && vf->player == this)
-			vf->active = false;
-	}
+	_volumeFader.active = false;
 }
 
 void Player::uninit_parts() {
@@ -2944,6 +2878,10 @@ void Player::sequencer_timer() {
 			}
 		}
 	}
+
+	// Now handle any volume fades
+	if (_volumeFader.active)
+		_volumeFader.on_timer (false);
 }
 
 void IMuseInternal::handleDeferredCommands (MidiDriver *midi) {
@@ -3225,14 +3163,19 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 		}
 	}
 
-	ser->saveLoadArrayOf(_volume_fader, ARRAYSIZE(_volume_fader),
-		                 sizeof(_volume_fader[0]), volumeFaderEntries);
+	// Volume faders used to be managed by IMuseInternal, but
+	// they are now maintained by each individual player.
+	{
+		int i;
+		for (i = 0; i < ARRAYSIZE(_players); ++i) {
+			ser->saveLoadEntries (&_players[i]._volumeFader, volumeFaderEntries);
+		}
+	}
 
 	if (!ser->isSaving()) {
 		// Load all sounds that we need
 		fix_players_after_load(scumm);
 		init_sustaining_notes();
-		_active_volume_faders = true;
 		fix_parts_after_load();
 		set_master_volume (_master_volume);
 
