@@ -22,15 +22,18 @@
 #include "wince.h"
 #include <aygshell.h>
 
+#ifdef WIN32_PLATFORM_WFSP
+
+
 #define IDM_SMARTFON_LIST_BASE 99100
 
 #define IDM_SMARTFON_MAP_BASE 99200
 
-#define SMARTFON_VERSION "Smartphone build 03.01.27/1"
+#define SMARTFON_VERSION "Smartphone build 03.02.09/1"
 
 #define SCAN_LOCATION "\\Storage Card"
 
-#define KEYS_VERSION 2
+#define KEYS_VERSION 1
 #define TOTAL_KEYS 10
 #define TOTAL_ZONES 3
 
@@ -160,7 +163,7 @@ const int DEFAULT_MAPPING[TOTAL_KEYS] = {
 	VK_F2,
 	VK_LWIN,
 	VK_ESCAPE,
-	0xff,
+	VK_F8,
 	0xff
 };
 
@@ -272,8 +275,11 @@ void SmartfonSkip(OSystem_WINCE3 *wm, BOOL repeat) {
 		wm->_event.event_code = OSystem::EVENT_KEYDOWN;
 		if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer] || g_scumm->_insaneState)
 			wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY];
-		else
+		else 
+		if (g_scumm->_talkDelay > 0)
 			wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_TALKSTOP_KEY];						
+		else
+			wm->_event.kbd.ascii = VK_ESCAPE;						
 }
 
 void SmartfonBoss(OSystem_WINCE3 *wm, BOOL repeat) {
@@ -281,11 +287,8 @@ void SmartfonBoss(OSystem_WINCE3 *wm, BOOL repeat) {
 
 	sound_activated = false;
 	Cls();
-	g_scumm->_saveLoadSlot = 0;
-	g_scumm->_saveLoadCompatible = false;
-	g_scumm->_saveLoadFlag = 1;
-	strcpy(g_scumm->_saveLoadName, "BOSS");
-	g_scumm->saveState(g_scumm->_saveLoadSlot, g_scumm->_saveLoadCompatible);
+	g_scumm->requestSave(0, "BOSS");
+	g_scumm->scummLoop(0);
 	dynamicGXCloseInput();
 	dynamicGXCloseDisplay();
 	SDL_AudioQuit();
@@ -500,6 +503,8 @@ int SmartphoneInitialMenu(HINSTANCE hInstance, HWND hWnd, char *game_name, TCHAR
 
 	game_chosen = -1;
 
+
+
 	for (;game_chosen < 0;) {
 		MSG msg;
 
@@ -687,3 +692,17 @@ BOOL SmartphoneWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OS
 
 	return TRUE;
 }
+
+#else
+
+int SmartphoneInitialMenu(HINSTANCE hInstance, HWND hWnd, char *game_name, TCHAR *directory) {
+	MessageBox(hWnd, TEXT("This executable was not compiled with Smartphone support !"), TEXT("PocketScumm error"), MB_OK);
+	exit(1);
+	return 0;
+}
+
+BOOL SmartphoneWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_WINCE3 *wm) {
+	return FALSE;
+}
+
+#endif
