@@ -604,14 +604,13 @@
 //
 //	---------------------------------------------------------------------------
 //
-//	int32 DrawSurface(_spriteInfo *s, uint32 surface)
+//	void DrawSurface(_spriteInfo *s, uint32 surface, ScummVM::Rect *clipRect)
 //
-//	Draws the sprite surface created earlier.  If the surface has been lost,
-//	it is recreated.
+//	Draws the sprite surface created earlier.
 //
 //	---------------------------------------------------------------------------
 //
-//	int32 DeleteSurface(uint32 surface)
+//	void DeleteSurface(uint32 surface)
 //
 //	Deletes a surface from video memory.
 //
@@ -1448,8 +1447,8 @@ extern void  GetKeyStatus(_drvKeyStatus *s);
 //-----------------------------------------------------------------------------
 extern int32 DrawSprite(_spriteInfo *s);
 extern int32 CreateSurface(_spriteInfo *s, uint8 **surface);
-extern int32 DrawSurface(_spriteInfo *s, uint8 *surface);
-extern int32 DeleteSurface(uint8 *surface);
+extern void DrawSurface(_spriteInfo *s, uint8 *surface, ScummVM::Rect *clipRect = NULL);
+extern void DeleteSurface(uint8 *surface);
 extern int32 OpenLightMask(_spriteInfo *s);
 extern int32 CloseLightMask(void);
 //-----------------------------------------------------------------------------

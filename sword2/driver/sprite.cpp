@@ -235,7 +235,7 @@
 //
 //	---------------------------------------------------------------------------
 //
-//	int32 DrawSurface(_spriteInfo *s, uint32 surface)
+//	int32 DrawSurface(_spriteInfo *s, uint32 surface, ScummVM::Rect *clipRect)
 //
 //	Draws the sprite surface created earlier.  If the surface has been lost,
 //	it is recreated.
@@ -1197,9 +1197,8 @@ int32 SoftwareRenderCompressed256(_spriteInfo *s)
 	return 0;
 }
 
-
-// The purpose of this function seems to be to decode a sprite to its
-// simplest form in advance.
+// The surface functions are only used by the in-game dialogs. Everything
+// that isn't needed for them (blending, scaling, etc.) has been removed.
 
 int32 CreateSurface(_spriteInfo *s, uint8 **sprite) {
 	uint8 *newSprite;
@@ -1211,7 +1210,7 @@ int32 CreateSurface(_spriteInfo *s, uint8 **sprite) {
 	if (s->type & RDSPR_NOCOMPRESSION) {
 		memcpy(*sprite, s->data, s->w * s->h);
 	} else {
-		if (s->type >> 8 == RDSPR_RLE16 >> 8) {
+		if ((s->type >> 8) == (RDSPR_RLE16 >> 8)) {
 			if (DecompressRLE16(*sprite, s->data, s->w * s->h, s->colourTable)) {
 				free(*sprite);
 				return RDERR_DECOMPRESSION;
@@ -1234,112 +1233,70 @@ int32 CreateSurface(_spriteInfo *s, uint8 **sprite) {
 			*sprite = newSprite;
 		}
 	}
+
 	return RD_OK;
 }
 
-
-int32 DrawSurface(_spriteInfo *s, uint8 *surface) {
+void DrawSurface(_spriteInfo *s, uint8 *surface, ScummVM::Rect *clipRect) {
 	ScummVM::Rect rd, rs;
-	uint16 x, y, srcPitch, scale;
-	uint8 *sprite, *src, *dst;
-	bool freeSprite = false;
-
-	// FIXME: It should be possible to implement this in terms of the
-	// DrawSprite() function.
-
-	if (s->type & RDSPR_DISPLAYALIGN) {
-		rd.top = s->y;
-		rd.left = s->x;
-	} else {
-		rd.top = s->y - scrolly;
-		rd.left = s->x - scrollx;
-	}
+	uint16 x, y, srcPitch;
+	uint8 *src, *dst;
 
 	rs.left = 0;
 	rs.right = s->w;
 	rs.top = 0;
 	rs.bottom = s->h;
 
-	scale = (s->scale == 0) ? 256 : s->scale;
+	srcPitch = s->w;
 
-	if (scale != 256) {
-		rs.right = s->scaledWidth;
-		rs.bottom = s->scaledHeight;
-		srcPitch = s->scaledWidth;
-	} else {
-		rs.right = s->w;
-		rs.bottom = s->h;
-		srcPitch = s->w;
-	}
-
+	rd.top = rs.top + s->y - scrolly;
+	rd.left = rs.left + s->x - scrollx;
 	rd.right = rd.left + rs.right;
 	rd.bottom = rd.top + rs.bottom;
 
-	// Do clipping
-	if (rd.top < 40) {
-		rs.top = (40 - rd.top) * 256 / s->scale;
-		rd.top = 40;
-	}
-	if (rd.bottom > 440) {
-		rs.bottom -= ((rd.bottom - 440) * 256 / s->scale);
-		rd.bottom = 440;
-	}
-	if (rd.left < 0) {
-		rs.left = (0 - rd.left) * 256 / s->scale;
-		rd.left = 0;
-	}
-	if (rd.right > 640) {
-		rs.right -= ((rd.right - 640) * 256 / s->scale);
-		rd.right = 640;
-	}
-
-	if (scale != 256) {
-		sprite = (uint8 *) malloc(s->scaledWidth * s->scaledHeight);
-		if (!sprite)
-			return RDERR_OUTOFMEMORY;
-		
-		if (scale < 256) {
-			SquashImage(sprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, surface, s->w, s->w, s->h, NULL);
-		} else {
-			StretchImage(sprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, surface, s->w, s->w, s->h, NULL);
+	if (clipRect) {
+		if (clipRect->left > rd.left) {
+			rs.left += (clipRect->left - rd.left);
+			rd.left = clipRect->left;
 		}
 
-		freeSprite = true;
-	} else
-		sprite = surface;
+		if (clipRect->top > rd.top) {
+			rs.top += (clipRect->top - rd.top);
+			rd.top = clipRect->top;
+		}
 
-	src = sprite + rs.top * srcPitch + rs.left;
+		if (clipRect->right < rd.right) {
+			rd.right = clipRect->right;
+		}
+
+		if (clipRect->bottom < rd.bottom) {
+			rd.bottom = clipRect->bottom;
+		}
+
+		if (rd.width() <= 0 || rd.height() <= 0)
+			return;
+	}
+
+	src = surface + rs.top * srcPitch + rs.left;
 	dst = lpBackBuffer + screenWide * rd.top + rd.left;
 
-	if (s->type & RDSPR_TRANS) {
-		for (y = 0; y < rd.bottom - rd.top; y++) {
-			for (x = 0; x < rd.right - rd.left; x++) {
-				if (src[x])
-					dst[x] = src[x];
-			}
-			src += srcPitch;
-			dst += screenWide;
+	// Surfaces are always transparent.
+
+	for (y = 0; y < rd.height(); y++) {
+		for (x = 0; x < rd.width(); x++) {
+			if (src[x])
+				dst[x] = src[x];
 		}
-	} else {
-		for (y = 0; y < rd.bottom - rd.top; y++)
-			memcpy(dst, src, screenWide);
 		src += srcPitch;
 		dst += screenWide;
 	}
 
-	if (freeSprite)
-		free(sprite);
-
-	// UploadRect(&rd);
+	UploadRect(&rd);
 	SetNeedRedraw();
-
-	return 0;
 }
 
-
-int32 DeleteSurface(uint8 *surface) {
+void DeleteSurface(uint8 *surface) {
 	free(surface);
-	return 0;
 }
 
 #define SCALE_MAXWIDTH 512
@@ -1371,7 +1328,7 @@ int32 DrawSprite(_spriteInfo *s) {
 		freeSprite = true;
 		if (!sprite)
 			return RDERR_OUTOFMEMORY;
-		if (s->type >> 8 == RDSPR_RLE16 >> 8) {
+		if ((s->type >> 8) == (RDSPR_RLE16 >> 8)) {
 			if (DecompressRLE16(sprite, s->data, s->w * s->h, s->colourTable)) {
 				free(sprite);
 				return RDERR_DECOMPRESSION;
@@ -1528,8 +1485,8 @@ int32 DrawSprite(_spriteInfo *s) {
 		src = sprite + rs.top * srcPitch + rs.left;
 		lightMap = lightMask + (rd.top + scrolly - 40) * locationWide + rd.left + scrollx;
 
-		for (i = 0; i < rs.bottom - rs.top; i++) {
-			for (j = 0; j < rs.right - rs.left; j++) {
+		for (i = 0; i < rs.height(); i++) {
+			for (j = 0; j < rs.width(); j++) {
 				if (src[j] && lightMap[j]) {
 					uint8 r = ((32 - lightMap[j]) * palCopy[src[j]][0]) >> 5;
 					uint8 g = ((32 - lightMap[j]) * palCopy[src[j]][1]) >> 5;
@@ -1551,8 +1508,8 @@ int32 DrawSprite(_spriteInfo *s) {
 
 	if (s->type & RDSPR_BLEND) {
 		if (renderCaps & RDBLTFX_ALLHARDWARE) {
-			for (i = 0; i < rs.bottom - rs.top; i++) {
-				for (j = 0; j < rs.right - rs.left; j++) {
+			for (i = 0; i < rs.height(); i++) {
+				for (j = 0; j < rs.width(); j++) {
 					if (src[j] && ((i & 1) == (j & 1)))
 						dst[j] = src[j];
 				}
@@ -1562,8 +1519,8 @@ int32 DrawSprite(_spriteInfo *s) {
 		} else {
 			if (s->blend & 0x01) {
 				red = s->blend >> 8;
-				for (i = 0; i < rs.bottom - rs.top; i++) {
-					for (j = 0; j < rs.right - rs.left; j++) {
+				for (i = 0; i < rs.height(); i++) {
+					for (j = 0; j < rs.width(); j++) {
 						if (src[j]) {
 							uint8 r = (palCopy[src[j]][0] * red + palCopy[dst[j]][0] * (8 - red)) >> 3;
 							uint8 g = (palCopy[src[j]][1] * red + palCopy[dst[j]][1] * (8 - red)) >> 3;
@@ -1591,8 +1548,8 @@ int32 DrawSprite(_spriteInfo *s) {
 				red = palCopy[s->blend >> 8][0];
 				green = palCopy[s->blend >> 8][0];
 				blue = palCopy[s->blend >> 8][0];
-				for (i = 0; i < rs.bottom - rs.top; i++) {
-					for (j = 0; j < rs.right - rs.left; j++) {
+				for (i = 0; i < rs.height(); i++) {
+					for (j = 0; j < rs.width(); j++) {
 						if (src[j]) {
 							uint8 r = (src[j] * red + (16 - src[j]) * palCopy[dst[j]][0]) >> 4;
 							uint8 g = (src[j] * green + (16 - src[j]) * palCopy[dst[j]][1]) >> 4;
@@ -1612,8 +1569,8 @@ int32 DrawSprite(_spriteInfo *s) {
 		}
 	} else {
 		if (s->type & RDSPR_TRANS) {
-			for (i = 0; i < rs.bottom - rs.top; i++) {
-				for (j = 0; j < rs.right - rs.left; j++) {
+			for (i = 0; i < rs.height(); i++) {
+				for (j = 0; j < rs.width(); j++) {
 					if (src[j])
 						dst[j] = src[j];
 				}
@@ -1621,8 +1578,8 @@ int32 DrawSprite(_spriteInfo *s) {
 				dst += screenWide;
 			}
 		} else {
-			for (i = 0; i < rs.bottom - rs.top; i++) {
-				memcpy(dst, src, rs.right - rs.left);
+			for (i = 0; i < rs.height(); i++) {
+				memcpy(dst, src, rs.width());
 				src += srcPitch;
 				dst += screenWide;
 			}
