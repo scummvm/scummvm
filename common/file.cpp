@@ -125,18 +125,14 @@ void File::decRef() {
 
 
 bool File::open(const char *filename, AccessMode mode, const char *directory) {
+	assert(mode == kFileReadMode || mode == kFileWriteMode);
+
 	if (_handle) {
-		error("File %s already opened", filename);
-		return false;
+		error("File::open: This file object already is opened (%s), won't open '%s'", _name, filename);
 	}
 
 	if (filename == NULL || *filename == 0) {
-		return false;
-	}
-
-	if (mode != kFileReadMode && mode != kFileWriteMode) {
-		error("Only read/write mode supported!");
-		return false;
+		error("File::open: No filename was specified!");
 	}
 
 	clearIOFailed();
@@ -146,6 +142,9 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 		_handle = fopenNoCase(filename, directory, modeStr);
 	} else {
 		Common::StringList::const_iterator x;
+		// First try the current directory
+		_handle = fopenNoCase(filename, "", modeStr);
+		// Next try all default directories
 		for (x = _defaultDirectories.begin(); _handle == NULL && x != _defaultDirectories.end(); ++x) {
 			_handle = fopenNoCase(filename, x->c_str(), modeStr);
 		}
