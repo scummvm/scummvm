@@ -145,6 +145,9 @@ void SkyState::go() {
 	while (1) {
 		delay(100);
 		_skyLogic->engine();
+		_skyScreen->recreate();
+		_skyScreen->spriteEngine();
+		_skyScreen->flip();
 	}
 }
 

@@ -75,6 +75,11 @@ public:
 	void fnDrawScreen(uint32 palette, uint32 scroll);
 	void clearScreen(void) { memset(_currentScreen, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT); };
 
+	void recreate(void);
+	void flip(void);
+
+	void spriteEngine(void);
+
 private:
 	OSystem *_system;
 	SkyDisk *_skyDisk;
@@ -108,14 +113,11 @@ private:
     //- more regular screen.asm + layer.asm routines
 	void convertPalette(uint8 *inPal, uint8* outPal);
 	void palette_fadedown_helper(uint32 *pal, uint num);
-	void recreate(void);
-	void flip(void);
-
+	
 	//- sprite.asm routines
 	// fixme: get rid of these globals
 	uint32 _sprWidth, _sprHeight, _sprX, _sprY, _maskX1, _maskX2;
-	void spriteEngine(void);
-    void doSprites(uint8 layer);
+	void doSprites(uint8 layer);
 	void sortSprites(void);
 	void drawSprite(uint8 *spriteData, Compact *sprCompact);
 	void verticalMask(void);
