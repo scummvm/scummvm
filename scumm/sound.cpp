@@ -371,12 +371,12 @@ void Sound::playSound(int soundID) {
 			if (size == 30) {
 				int track = *(ptr + 0x16);
 
-				if (track == _current_cd_sound)
+				if (soundID == _current_cd_sound)
 					if (pollCD() == 1)
 						return;
 
 				playCDTrack(track, 1, 0, 0);
-				_current_cd_sound = track;
+				_current_cd_sound = soundID;
 				return;
 			}
 	
