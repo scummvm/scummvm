@@ -50,7 +50,7 @@ void InitScalers(uint32 BitFormat) {
 	} else if (BitFormat == 555) {
 		dotmatrix = dotmatrix_555;
 	} else {
-		error("Unknwon bit format %d\n", BitFormat);
+		error("Unknown bit format %d\n", BitFormat);
 	}
 
 	gBitFormat = BitFormat;
@@ -263,6 +263,12 @@ MAKE_WRAPPER(TV2x)
 static inline uint16 DOT_16(uint16 c, int j, int i) {
   return c - ((c >> 2) & *(dotmatrix + ((j & 3) << 2) + (i & 3)));
 }
+
+// FIXME: This scaler doesn't quite work. Either it needs to know where on the
+// screen it's drawing, or the dirty rects will have to be adjusted so that
+// access to the dotmatrix array are made in a consistent way. (Doing that in
+// a way that also works together with aspect-ratio correction is left as an
+// exercise for the reader.)
 
 void DotMatrix(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 					int width, int height)
