@@ -89,7 +89,7 @@ public:
 	byte shadow_mode;
 	bool flip;
 	uint speedx, speedy;
-	byte frame;
+	byte frame; // FIXME - it seems this is never set?
 	byte walkbox;
 	byte mask;	// FIXME: This field is *NOT* used - remove next time save game format changes
 	byte animProgress, animSpeed;
