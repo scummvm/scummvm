@@ -601,15 +601,38 @@ void Gui::handleSoundDialogCommand(int cmd)
 	if (cmd == 50) {
 		close();
 	} else if (cmd == 40) {
+		// FIXME - slider ranges are 0-100, yet the volumes use different ones.
+		// We want to fix this, ideally by simply converting the GUI value
+		// range 0-100 to the 'real' ranges and back (for maximal backward
+		// compatibility). However, this is not easy, in fact with the current
+		// system it is impossible. For a quick overview, read this:
+		//
+		// Music volume range: 1-100
+		// iMUSE master volume range: 0-128
+		// Mixer master volume range: 0-256
+		// SFX volume range: 0-256
+		//
+		// Correct, the master volume range of iMUSE and the mixer don't match!
+		// Since both are steered by _sound_volume_master, we are screwed.
+		// This is really a big mess and sadly is not the only case of similar
+		// issues. The almost complete lack of any documentation (and I am not
+		// very demanding, I even count comments as docs) are not helping us
+		// either.
+		//
+		// Somebody (me if I have the time) should fix this by rewriting all
+		// the functions to take a nice range like 0-255 or 0-256. And while
+		// (s)he is at it, HiFi equipment uses logarithmic volume controls
+		// (not linear ones as we do) since they match the human ear better.
+
 		_s->_sound_volume_master = _gui_variables[0];	// Master
 		_s->_sound_volume_music = _gui_variables[1];	// Music
 		_s->_sound_volume_sfx = _gui_variables[2];	// SFX
 
-		IMuse *imuse = _s->_imuse;
-		imuse->set_music_volume(_s->_sound_volume_music);
-		imuse->set_master_volume(_s->_sound_volume_master);
+		_s->_imuse->set_music_volume(_s->_sound_volume_music);
+		_s->_imuse->set_master_volume(_s->_sound_volume_master);
 		_s->_mixer->set_volume(_s->_sound_volume_sfx);
 		_s->_mixer->set_music_volume(_s->_sound_volume_music);
+
 		scummcfg->set("master_volume", _s->_sound_volume_master);
 		scummcfg->set("music_volume", _s->_sound_volume_music);
 		scummcfg->set("sfx_volume", _s->_sound_volume_sfx);
