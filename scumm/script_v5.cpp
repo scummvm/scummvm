@@ -1019,9 +1019,16 @@ void Scumm_v5::o5_getActorY() {
 
 void Scumm_v5::o5_getAnimCounter() {
 	getResultPos();
-	int act = getVarOrDirectByte(0x80);
-	Actor *a = derefActor(act, "o5_getAnimCounter");
-	setResult(a->cost.animCounter);
+	// Loom uses this opcode in its load/save screen.
+	if (_gameId == GID_LOOM) {
+		byte a = getVarOrDirectByte(0x80);
+		warning("TODO: Loom saveLoad(%d)", a);
+		setResult(0);
+	} else {
+		int act = getVarOrDirectByte(0x80);
+		Actor *a = derefActor(act, "o5_getAnimCounter");
+		setResult(a->cost.animCounter);
+	}
 }
 
 void Scumm_v5::o5_getClosestObjActor() {
