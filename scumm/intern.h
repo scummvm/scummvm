@@ -648,9 +648,9 @@ protected:
 		int32 type;      //0
 		int32 dim1start; //4
 		int32 dim1end;   //8
-		int32 dim2start; //0c
+		int32 dim2start; //0C
 		int32 dim2end;   //10
-		byte data[1];
+		byte data[1];    //14
 	} GCC_PACK;
 
 #if !defined(__GNUC__)
