@@ -1212,7 +1212,7 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 			memcpy(ptr, "\x00\xf7", 2); ptr += 2;	// sysex end marker
 
 			// Finally we reinsert the end of song sysex, just in case
-			memcpy(ptr, "\x00\xff\x21\x00\x00", 5); ptr += 5;
+			memcpy(ptr, "\x00\xff\x2f\x00\x00", 5); ptr += 5;
 		}
 		
 		return 1;
