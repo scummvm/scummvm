@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.7  2002/03/14 08:20:38  ender
+ * Fix compile error when using USE_ADLIB
+ *
  * Revision 1.6  2002/03/14 08:04:21  ender
  * Rewire the MIDI subsystem to use drivers selecting from the commandline.
  * No -DTIMIDITY, etc! Yippie!. Also updated readme.
@@ -404,7 +407,7 @@ public:
 	void part_off(Part *part);
 	int part_update_active(Part *part,uint16 *active);
 	void adjust_priorities() {}
-
+	void midiSetDriver(int devicetype) {;}
 	bool wave_based() { return true; }	
 };
 
