@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "sound/mixer.h"
 #include "sound/mididrv.h"
 #include "sound/imuse.h"
 #include "actor.h"
@@ -64,6 +65,7 @@ uint Scumm::getRandomNumberRng(uint min, uint max)
 
 
 Scumm::Scumm (void) {
+	_mixer = new SoundMixer();
 	_newgui = new NewGui(this);
 	_bundle = new Bundle(this);
 	_timer = new Timer(this);
@@ -71,6 +73,7 @@ Scumm::Scumm (void) {
 
 Scumm::~Scumm (void) {
 	delete [] _actors;
+	delete _mixer;
 	delete _newgui;
 	delete _bundle;
 	delete _timer;

@@ -692,7 +692,7 @@ public:
 	void drawVerb(int verb, int mode);
 	void runInputScript(int a, int cmd, int mode);
 	void restoreVerbBG(int verb);
-	void drawVerbBitmap(int vrb, int x, int y);
+	void drawVerbBitmap(int verb, int x, int y);
 	int getVerbEntrypoint(int obj, int entry);
 	int getVerbSlot(int id, int mode);
 	void killVerb(int slot);
@@ -700,11 +700,7 @@ public:
 	void setVerbObject(uint room, uint object, uint verb);
 
 	/* Should be in Sound class */
-	union {
-		SoundMixer _mixer[1];
-		uint32 xxxx_1;
-	};
-	//SoundMixer _mixer[1];
+	SoundMixer *_mixer;
 
 //	MixerChannel _mixer_channel[NUM_MIXER];
 	byte _sfxMode;
