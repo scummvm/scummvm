@@ -1371,7 +1371,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		} else if (_vm->_version == 2) {
 			// Do nothing here for V2 games - drawing was already handled.
 		} else {
-			int offset;
+			uint32 offset;
 			if (_vm->_features & GF_16COLOR) {
 				offset = READ_LE_UINT16(smap_ptr + stripnr * 2 + 2);
 				assert(offset < READ_LE_UINT16(smap_ptr));
