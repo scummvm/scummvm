@@ -772,8 +772,8 @@ byte Gui::getDefaultColor(int color) {
 
 void Gui::init(Scumm *s) {
 	_s = s;
-	if (_s->_gameId) {
-		_bgcolor = getDefaultColor(0);
+	if (_s->_gameId && !(_s->_features & GF_SMALL_HEADER)) {
+		_bgcolor =  getDefaultColor(0);
 		_color = getDefaultColor(1);
 		_textcolor = getDefaultColor(2);
 		_textcolorhi = getDefaultColor(6);

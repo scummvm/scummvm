@@ -1486,7 +1486,7 @@ void Scumm::o5_loadRoomWithEgo() {
 
 void Scumm::o5_matrixOps() {
 	int a,b;
-
+	printf("o5_matrixOps\n");
 	if(_features & GF_OLD256) { /* FIXME: missing function call*/
 		a=getVarOrDirectByte(0x80);
 		b=fetchScriptByte();
