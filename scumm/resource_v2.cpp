@@ -32,7 +32,7 @@ void Scumm_v2::readClassicIndexFile() {
 
 	if (_gameId == GID_MANIAC) {
 		//FIXME the music driver was previously been set before detection of classic/enchanced version.
-		if (!(_features & GF_AMIGA))
+		if (!(_features & GF_AMIGA) && !(_features & GF_NES))
 			_playerV2 = new Player_V1(this);
 
 		_numGlobalObjects = 800;
