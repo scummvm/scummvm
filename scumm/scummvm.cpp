@@ -880,7 +880,7 @@ void Scumm::launch() {
 		if (_version < 7)
 			VAR(VAR_VERSION) = 21;
 	
-		if (!(_features & GF_MACINTOSH) && (_version == 3)) {
+		if (!((_features & GF_MACINTOSH) && (_version == 3))) {
 			// This is the for the Mac version of Indy3/Loom
 			VAR(VAR_DEBUGMODE) = _debugMode;
 		}
