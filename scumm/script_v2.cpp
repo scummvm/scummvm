@@ -433,6 +433,11 @@ void Scumm_v2::o2_assignVarByte() {
 	_vars[_resultVarNumber] = fetchScriptByte();
 }
 
+void Scumm_v2::o2_assignVarWord() {
+	getResultPos();
+	_vars[_resultVarNumber] = fetchScriptWord();
+}
+
 void Scumm_v2::o2_setObjY() {
 	int obj = getVarOrDirectWord(0x80);
 	int y = fetchScriptByte();
