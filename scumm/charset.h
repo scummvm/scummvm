@@ -88,7 +88,7 @@ protected:
 
 public:
 	CharsetRenderer(ScummEngine *vm);
-	virtual ~CharsetRenderer() {}
+	virtual ~CharsetRenderer();
 
 	void restoreCharsetBg();
 	void clearCharsetMask();

@@ -284,22 +284,8 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		setupV1ActorTalkColor();
 
 	// Regenerate strip table (for V1/V2 games)
-	if (_version == 1) {
-		roomptr = getResourceAddress(rtRoom, _roomResource);
-		_IM00_offs = 0;
-		for (i = 0; i < 4; i++){
-			gdi._C64.colors[i] = roomptr[6 + i];
-		}
-		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 10), gdi._C64.charMap, 2048);
-		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 12), gdi._C64.picMap, roomptr[4] * roomptr[5]);
-		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 14), gdi._C64.colorMap, roomptr[4] * roomptr[5]);
-		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 16), gdi._C64.maskMap, roomptr[4] * roomptr[5]);
-		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 18) + 2, gdi._C64.maskChar, READ_LE_UINT16(roomptr + READ_LE_UINT16(roomptr + 18)));
-		gdi._objectMode = true;
-	} else if (_version == 2) {
-		_roomStrips = gdi.generateStripTable(getResourceAddress(rtRoom, _roomResource) + _IM00_offs,
-		                                     _roomWidth, _roomHeight, _roomStrips);
-	}
+	roomptr = getResourceAddress(rtRoom, _roomResource);
+	gdi.roomChanged(roomptr, _IM00_offs);
 
 	if (!(_features & GF_NEW_CAMERA)) {
 		camera._last.x = camera._cur.x;

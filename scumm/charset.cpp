@@ -202,10 +202,21 @@ CharsetRenderer::CharsetRenderer(ScummEngine *vm) {
 	_blitAlso = false;
 	_firstChar = false;
 	_disableOffsX = false;
-	_textSurface.pixels = 0;
 
 	_vm = vm;
 	_curId = 0;
+
+	const int size = _vm->_screenWidth * _vm->_screenHeight;
+	_textSurface.pixels = malloc(size);
+	memset(_textSurface.pixels, CHARSET_MASK_TRANSPARENCY, size);
+	_textSurface.w = _vm->_screenWidth;
+	_textSurface.h = _vm->_screenHeight;
+	_textSurface.pitch = _vm->_screenWidth;
+	_textSurface.bytesPerPixel = 1;
+}
+
+CharsetRenderer::~CharsetRenderer() {
+	free(_textSurface.pixels);
 }
 
 void CharsetRendererCommon::setCurID(byte id) {

@@ -891,8 +891,6 @@ protected:
 	uint32 _CLUT_offs, _EPAL_offs;
 	uint32 _IM00_offs, _PALS_offs;
 
-	StripTable *_roomStrips;
-
 	//ender: fullscreen
 	bool _fullRedraw, _bgNeedsRedraw;
 	bool _screenEffectFlag, _completeScreenRedraw;

@@ -199,6 +199,8 @@ struct BompDrawData {
 
 struct StripTable;
 
+#define CHARSET_MASK_TRANSPARENCY	253
+
 class Gdi {
 	friend class ScummEngine;	// Mostly for the code in saveload.cpp ...
 	ScummEngine *_vm;
@@ -210,6 +212,7 @@ public:
 	int32 _numStrips;
 	
 	Gdi(ScummEngine *vm);
+	~Gdi();
 
 protected:
 	byte *_roomPalette;
@@ -235,6 +238,9 @@ protected:
 	byte _NESMasktable[16][8], _NESMasktableObj[16][8];
 	int _NESObj_x;
 	bool _NEShasmask;
+
+	/** For V2 games, we cache offsets into the room graphics, to speed up things. */
+	StripTable *_roomStrips;
 
 	/* Bitmap decompressors */
 	bool decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLinesToProcess);
@@ -272,13 +278,14 @@ protected:
 	int getZPlanes(const byte *smap_ptr, const byte *zplane_list[9], bool bmapImage) const;
 
 	void drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height, 
-	                int stripnr, int numstrip, StripTable *table);
+	                int stripnr, int numstrip);
 
 public:
 	void init();
+	void roomChanged(byte *roomptr, uint32 IM00_offs);
 
 	void drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
-	                int stripnr, int numstrip, byte flag, StripTable *table = 0);
+	                int stripnr, int numstrip, byte flag);
 
 	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table) const;
 	void decodeC64Gfx(const byte *src, byte *dst, int size) const;

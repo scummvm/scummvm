@@ -189,20 +189,65 @@ static const TransitionEffect transitionEffects[6] = {
 };
 #endif
 
-#pragma mark -
-#pragma mark --- Virtual Screens ---
-#pragma mark -
-
-
-#define CHARSET_MASK_TRANSPARENCY	253
 
 Gdi::Gdi(ScummEngine *vm) {
 	memset(this, 0, sizeof(*this));
 	_vm = vm;
 	_roomPalette = vm->_roomPalette;
+	_roomStrips = 0;
 	if ((vm->_features & GF_AMIGA) && (vm->_version >= 4))
 		_roomPalette += 16;
 }
+
+Gdi::~Gdi() {
+	free(_roomStrips);
+}
+
+void Gdi::init() {
+	_numStrips = _vm->_screenWidth / 8;
+
+	// Increase the number of screen strips by one; needed for smooth scrolling
+	if (_vm->_version >= 7) {
+		// We now have mostly working smooth scrolling code in place for V7+ games
+		// (i.e. The Dig, Full Throttle and COMI). It seems to work very well so far.
+		// One area which still may need some work are the AKOS codecs (except for
+		// codec 1, which I already updated): their masking code may need adjustments,
+		// similar to the treatment codec 1 received.
+		//
+		// To understand how we achieve smooth scrolling, first note that with it, the
+		// virtual screen strips don't match the display screen strips anymore. To
+		// overcome that problem, we simply use a screen pitch that is 8 pixel wider
+		// than the actual screen width, and always draw one strip more than needed to
+		// the backbuf (of course we have to treat the right border seperately). This
+		_numStrips += 1;
+	}
+}
+
+void Gdi::roomChanged(byte *roomptr, uint32 IM00_offs) {
+	if (_vm->_version == 1) {
+		if (_vm->_features & GF_NES) {
+			decodeNESGfx(roomptr);
+		} else {
+			for (int i = 0; i < 4; i++){
+				_C64.colors[i] = roomptr[6 + i];
+			}
+			decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 10), _C64.charMap, 2048);
+			decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 12), _C64.picMap, roomptr[4] * roomptr[5]);
+			decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 14), _C64.colorMap, roomptr[4] * roomptr[5]);
+			decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 16), _C64.maskMap, roomptr[4] * roomptr[5]);
+			decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 18) + 2, _C64.maskChar, READ_LE_UINT16(roomptr + READ_LE_UINT16(roomptr + 18)));
+			_objectMode = true;
+		}
+	} else if (_vm->_version == 2) {
+		_roomStrips = generateStripTable(roomptr + IM00_offs, _vm->_roomWidth, _vm->_roomHeight, _roomStrips);
+	}
+}
+
+
+#pragma mark -
+#pragma mark --- Virtual Screens ---
+#pragma mark -
+
 
 void ScummEngine::initScreens(int b, int h) {
 	int i;
@@ -239,46 +284,6 @@ void ScummEngine::initScreens(int b, int h) {
 	_screenH = h;
 	
 	gdi.init();
-
-	const int size = _screenWidth * _screenHeight;
-	free(_compositeBuf);
-	free(_charset->_textSurface.pixels);
-	free(_herculesBuf);
-	_compositeBuf = (byte *)malloc(size);
-	_charset->_textSurface.pixels = malloc(size);
-	memset(_compositeBuf, CHARSET_MASK_TRANSPARENCY, size);
-	memset(_charset->_textSurface.pixels, CHARSET_MASK_TRANSPARENCY, size);
-
-	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-		_herculesBuf = (byte *)malloc(Common::kHercW * Common::kHercH);
-		memset(_herculesBuf, CHARSET_MASK_TRANSPARENCY, Common::kHercW * Common::kHercH);
-	}
-
-	_charset->_textSurface.w = _screenWidth;
-	_charset->_textSurface.h = _screenHeight;
-	_charset->_textSurface.pitch = _screenWidth;
-	_charset->_textSurface.bytesPerPixel = 1;
-
-}
-
-void Gdi::init() {
-	_numStrips = _vm->_screenWidth / 8;
-
-	// Increase the number of screen strips by one; needed for smooth scrolling
-	if (_vm->_version >= 7) {
-		// We now have mostly working smooth scrolling code in place for V7+ games
-		// (i.e. The Dig, Full Throttle and COMI). It seems to work very well so far.
-		// One area which still may need some work are the AKOS codecs (except for
-		// codec 1, which I already updated): their masking code may need adjustments,
-		// similar to the treatment codec 1 received.
-		//
-		// To understand how we achieve smooth scrolling, first note that with it, the
-		// virtual screen strips don't match the display screen strips anymore. To
-		// overcome that problem, we simply use a screen pitch that is 8 pixel wider
-		// than the actual screen width, and always draw one strip more than needed to
-		// the backbuf (of course we have to treat the right border seperately). This
-		_numStrips += 1;
-	}
 }
 
 void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int width, int height, bool twobufs,
@@ -812,7 +817,7 @@ void ScummEngine::redrawBGStrip(int start, int num) {
 
 	gdi._objectMode = false;
 	gdi.drawBitmap(room + _IM00_offs,
-					&virtscr[0], s, 0, _roomWidth, virtscr[0].h, s, num, 0, _roomStrips);
+					&virtscr[0], s, 0, _roomWidth, virtscr[0].h, s, num, 0);
 }
 
 void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
@@ -1137,8 +1142,8 @@ void ScummEngine::setShake(int mode) {
 #pragma mark -
 
 
-void Gdi::drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height, int stripnr, int numstrip, StripTable *table) {
-	
+void Gdi::drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height, int stripnr, int numstrip) {
+	StripTable *table = (_objectMode ? 0 : _roomStrips);
 	const int left = (stripnr * 8);
 	const int right = left + (numstrip * 8);
 	byte *dst;
@@ -1318,7 +1323,7 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
  * and objects, used throughout all SCUMM versions.
  */
 void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
-					int stripnr, int numstrip, byte flag, StripTable *table) {
+					int stripnr, int numstrip, byte flag) {
 	assert(ptr);
 	assert(height > 0);
 	byte *dstPtr;
@@ -1365,7 +1370,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	// differently from all other (newer) graphic formats for this reason.
 	//
 	if (_vm->_version == 2)
-		drawBitmapV2Helper(ptr, vs, x, y, width, height, stripnr, numstrip, table);
+		drawBitmapV2Helper(ptr, vs, x, y, width, height, stripnr, numstrip);
 
 	sx = x - vs->xstart / 8;
 	if (sx < 0) {

@@ -806,7 +806,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	_doEffect = false;
 	memset(&_flashlight, 0, sizeof(_flashlight));
-	_roomStrips = 0;
 	_compositeBuf = 0;
 	_herculesBuf = 0;
 	_bompActorPalettePtr = NULL;
@@ -1127,6 +1126,12 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_screenHeight = 200;
 	}
 
+	_compositeBuf = (byte *)malloc(_screenWidth * _screenHeight);
+
+	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
+		_herculesBuf = (byte *)malloc(Common::kHercW * Common::kHercH);
+	}
+
 	_midi = gs.midi;
 }
 
@@ -1169,8 +1174,10 @@ ScummEngine::~ScummEngine() {
 	free(_classData);
 	free(_arraySlot);
 
-	free(_roomStrips);
 	free(_languageIndex);
+
+	free(_compositeBuf);
+	free(_herculesBuf);
 
 	delete _debugger;
 }
@@ -2304,24 +2311,9 @@ void ScummEngine::initRoomSubBlocks() {
 	// Find the room image data
 	//
 	if (_version == 1) {
-		if (_features & GF_NES) {
-			gdi.decodeNESGfx(roomptr);
-		} else {
-			_IM00_offs = 0;
-			for (i = 0; i < 4; i++){
-				gdi._C64.colors[i] = roomptr[6 + i];
-			}
-			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 10), gdi._C64.charMap, 2048);
-			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 12), gdi._C64.picMap, roomptr[4] * roomptr[5]);
-			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 14), gdi._C64.colorMap, roomptr[4] * roomptr[5]);
-			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 16), gdi._C64.maskMap, roomptr[4] * roomptr[5]);
-			gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 18) + 2, gdi._C64.maskChar, READ_LE_UINT16(roomptr + READ_LE_UINT16(roomptr + 18)));
-			gdi._objectMode = true;
-		}
+		_IM00_offs = 0;
 	} else if (_features & GF_OLD_BUNDLE) {
 		_IM00_offs = READ_LE_UINT16(roomptr + 0x0A);
-		if (_version == 2)
-			_roomStrips = gdi.generateStripTable(roomptr + _IM00_offs, _roomWidth, _roomHeight, _roomStrips);
 	} else if (_version == 8) {
 		_IM00_offs = getObjectImage(roomptr, 1) - roomptr;
 	} else if (_features & GF_SMALL_HEADER) {
@@ -2332,6 +2324,7 @@ void ScummEngine::initRoomSubBlocks() {
 	} else {
 		_IM00_offs = findResource(MKID('IM00'), findResource(MKID('RMIM'), roomptr)) - roomptr;
 	}
+	gdi.roomChanged(roomptr, _IM00_offs);
 
 	//
 	// Look for an exit script
