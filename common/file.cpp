@@ -30,6 +30,9 @@ FILE *File::fopenNoCase(const char *filename, const char * directory, const char
 	strcpy(buf, directory);
 	if (directory[0] != 0) {
 		strcpy(buf, directory);
+#ifdef __MORPHOS__
+		if (buf[strlen(buf)-1] != ':' && buf[strlen(buf)-1] != '/')
+#endif
 		strcat(buf, "/");
 	}
 	strcat(buf, filename);
@@ -51,6 +54,9 @@ FILE *File::fopenNoCase(const char *filename, const char * directory, const char
 		strcpy(buf, directory);
 		if (directory[0] != 0) {
 			strcpy(buf, directory);
+#ifdef __MORPHOS__
+			if (buf[strlen(buf)-1] != ':' && buf[strlen(buf)-1] != '/')
+#endif
 			strcat(buf, "/");
 		}
 		strcat(buf, dirs[l]);
