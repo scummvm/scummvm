@@ -22,7 +22,7 @@
 #include "queen/logic.h"
 
 QueenLogic::QueenLogic(QueenResource *resource) 
-	: _resource(resource), _maxStaticFrame(0), _maxAnimatedFrame(0) {
+	: _maxAnimatedFrame(0), _maxStaticFrame(0), _resource(resource) {
 	_jas = _resource->loadFile("QUEEN.JAS", 20);
 	
 	initialise();
