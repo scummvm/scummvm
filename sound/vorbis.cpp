@@ -178,7 +178,7 @@ void VorbisTrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int st
 #endif
 
 	AudioStream *input = makeVorbisStream(&_ov_file, duration * ov_info(&_ov_file, -1)->rate / 75);
-	mixer->playInputStream(SoundMixer::kMusicAudioDataType, handle, input);
+	mixer->playInputStream(SoundMixer::kMusicSoundType, handle, input);
 }
 
 DigitalTrackInfo *getVorbisTrack(int track) {

@@ -163,14 +163,14 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	} else {
 		const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
 		const int vol = track->vol / 1000;
-		SoundMixer::SoundType type = SoundMixer::kPlainAudioDataType;
+		SoundMixer::SoundType type = SoundMixer::kPlainSoundType;
 
 		if (track->volGroupId == 1)
-			type = SoundMixer::kSpeechAudioDataType;
+			type = SoundMixer::kSpeechSoundType;
 		if (track->volGroupId == 2)
-			type = SoundMixer::kSFXAudioDataType;
+			type = SoundMixer::kSFXSoundType;
 		if (track->volGroupId == 3)
-			type = SoundMixer::kMusicAudioDataType;
+			type = SoundMixer::kMusicSoundType;
 
 		// setup 1 second stream wrapped buffer
 		int32 streamBufferSize = track->iteration;
@@ -303,14 +303,14 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 	fadeTrack->volFadeStep = (fadeTrack->volFadeDest - fadeTrack->vol) * 60 * (1000 / _callbackFps) / (1000 * fadeDelay);
 	fadeTrack->volFadeUsed = true;
 
-	SoundMixer::SoundType type = SoundMixer::kPlainAudioDataType;
+	SoundMixer::SoundType type = SoundMixer::kPlainSoundType;
 
 	if (fadeTrack->volGroupId == 1)
-		type = SoundMixer::kSpeechAudioDataType;
+		type = SoundMixer::kSpeechSoundType;
 	if (fadeTrack->volGroupId == 2)
-		type = SoundMixer::kSFXAudioDataType;
+		type = SoundMixer::kSFXSoundType;
 	if (fadeTrack->volGroupId == 3)
-		type = SoundMixer::kMusicAudioDataType;
+		type = SoundMixer::kMusicSoundType;
 
 	// setup 1 second stream wrapped buffer
 	int32 streamBufferSize = fadeTrack->iteration;

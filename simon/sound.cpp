@@ -129,7 +129,7 @@ void WavSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 		error("playWav(%d): can't read WAVE header", sound);
 	}
 
-	_mixer->playInputStream(SoundMixer::kSFXAudioDataType, handle, stream);
+	_mixer->playInputStream(SoundMixer::kSFXSoundType, handle, stream);
 }
 
 void VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
@@ -177,7 +177,7 @@ void MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playInputStream(SoundMixer::kSFXAudioDataType, handle, makeMP3Stream(_file, size));
+	_mixer->playInputStream(SoundMixer::kSFXSoundType, handle, makeMP3Stream(_file, size));
 }
 #endif
 
@@ -201,7 +201,7 @@ void VorbisSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playInputStream(SoundMixer::kSFXAudioDataType, handle, makeVorbisStream(_file, size));
+	_mixer->playInputStream(SoundMixer::kSFXSoundType, handle, makeVorbisStream(_file, size));
 }
 #endif
 
@@ -225,7 +225,7 @@ void FlacSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	_mixer->playInputStream(SoundMixer::kSFXAudioDataType, handle, makeFlacStream(_file, size));
+	_mixer->playInputStream(SoundMixer::kSFXSoundType, handle, makeFlacStream(_file, size));
 }
 #endif
 

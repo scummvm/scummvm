@@ -772,7 +772,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 			//_vm->_imuseDigital->stopSound(kTalkSoundID);
 			_vm->_imuseDigital->startVoice(kTalkSoundID, input);
 		} else {
-			_vm->_mixer->playInputStream(SoundMixer::kSFXAudioDataType, handle, input, id);
+			_vm->_mixer->playInputStream(SoundMixer::kSFXSoundType, handle, input, id);
 		}
 	}
 }
@@ -1139,7 +1139,7 @@ ScummFile *Sound::openSfxFile() {
 }
 
 bool Sound::isSfxFinished() const {
-	return !_vm->_mixer->hasActiveChannelOfType(SoundMixer::kSFXAudioDataType);
+	return !_vm->_mixer->hasActiveChannelOfType(SoundMixer::kSFXSoundType);
 }
 
 // We use a real timer in an attempt to get better sync with CD tracks. This is

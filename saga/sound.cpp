@@ -221,7 +221,7 @@ int Sound::playVoxVoice(SOUNDBUFFER *buf) {
 	AudioStream *audioStream;
 
 	audioStream = makeVOXStream(buf->s_buf, buf->s_buf_len);
-	_mixer->playInputStream(SoundMixer::kSFXAudioDataType, &_voiceHandle, audioStream);
+	_mixer->playInputStream(SoundMixer::kSFXSoundType, &_voiceHandle, audioStream);
 
 	return SUCCESS;
 }

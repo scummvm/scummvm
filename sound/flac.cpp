@@ -783,7 +783,7 @@ void FlacTrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int star
 			flac->setLastSample(0);
 
 		if (flac->seekAbsolute(static_cast<FLAC__uint64>(startFrame) * (info.sample_rate / 75))) {
-			mixer->playInputStream(SoundMixer::kMusicAudioDataType, handle, flac);
+			mixer->playInputStream(SoundMixer::kMusicSoundType, handle, flac);
 			return;
 		}
 		// startSample is beyond the existing Samples

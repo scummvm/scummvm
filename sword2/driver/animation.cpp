@@ -182,7 +182,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 lea
 
 		leadIn += sizeof(StandardHeader);
 
-		_vm->_sound->playFx(&leadInHandle, leadIn, leadInLen, SoundMixer::kMaxChannelVolume, 0, false, SoundMixer::kMusicAudioDataType);
+		_vm->_sound->playFx(&leadInHandle, leadIn, leadInLen, SoundMixer::kMaxChannelVolume, 0, false, SoundMixer::kMusicSoundType);
 	}
 
 	byte *leadOut = NULL;
@@ -301,7 +301,7 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 		frameCounter++;
 
 		if (frameCounter == leadOutFrame && leadOut)
-			_vm->_sound->playFx(&_leadOutHandle, leadOut, leadOutLen, SoundMixer::kMaxChannelVolume, 0, false, SoundMixer::kMusicAudioDataType);
+			_vm->_sound->playFx(&_leadOutHandle, leadOut, leadOutLen, SoundMixer::kMaxChannelVolume, 0, false, SoundMixer::kMusicSoundType);
 
 		OSystem::Event event;
 		while (_sys->pollEvent(event)) {
@@ -516,7 +516,7 @@ void MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte 
 	// subtitles.
 
 	if (!skipCutscene && leadOut)
-		_vm->_sound->playFx(&_leadOutHandle, leadOut, leadOutLen, SoundMixer::kMaxChannelVolume, 0, false, SoundMixer::kMusicAudioDataType);
+		_vm->_sound->playFx(&_leadOutHandle, leadOut, leadOutLen, SoundMixer::kMaxChannelVolume, 0, false, SoundMixer::kMusicSoundType);
 
 	_vm->_screen->setPalette(0, 256, oldPal, RDPAL_INSTANT);
 }

@@ -71,11 +71,11 @@ public:
 	};
 	
 	enum SoundType {
-		kPlainAudioDataType = 0,
+		kPlainSoundType = 0,
 
-		kMusicAudioDataType = 1,
-		kSFXAudioDataType = 2,
-		kSpeechAudioDataType = 3
+		kMusicSoundType = 1,
+		kSFXSoundType = 2,
+		kSpeechSoundType = 3
 	};
 	
 	enum {
@@ -126,7 +126,7 @@ public:
 	 * is not limited to it. The premix stream is invoked by the mixer whenever
 	 * it needs to generate any data, before any other mixing takes place.
 	 */
-	void setupPremix(AudioStream *stream, SoundType type = kPlainAudioDataType);
+	void setupPremix(AudioStream *stream, SoundType type = kPlainSoundType);
 
 
 
@@ -140,7 +140,7 @@ public:
 				void *sound, uint32 size, uint rate, byte flags,
 				int id = -1, byte volume = 255, int8 balance = 0,
 				uint32 loopStart = 0, uint32 loopEnd = 0,
-				SoundType type = kSFXAudioDataType);
+				SoundType type = kSFXSoundType);
 
 	/**
 	 * Start playing the given audio input stream.
@@ -245,7 +245,7 @@ public:
 	/**
 	 * Check whether any channel of the given sound type is active.
 	 * For example, this can be used to check whether any SFX sound
-	 * is currently playing, by checking for type kSFXAudioDataType.
+	 * is currently playing, by checking for type kSFXSoundType.
 	 *
 	 * @param  type the sound type to look for
 	 * @return true if any channels of the specified type are active.

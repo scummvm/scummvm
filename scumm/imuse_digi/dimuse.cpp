@@ -187,14 +187,14 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 
 			const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
 			const int vol = track->vol / 1000;
-			SoundMixer::SoundType type = SoundMixer::kPlainAudioDataType;
+			SoundMixer::SoundType type = SoundMixer::kPlainSoundType;
 
 			if (track->volGroupId == 1)
-				type = SoundMixer::kSpeechAudioDataType;
+				type = SoundMixer::kSpeechSoundType;
 			if (track->volGroupId == 2)
-				type = SoundMixer::kSFXAudioDataType;
+				type = SoundMixer::kSFXSoundType;
 			if (track->volGroupId == 3)
-				type = SoundMixer::kMusicAudioDataType;
+				type = SoundMixer::kMusicSoundType;
 
 			_vm->_mixer->playInputStream(type, &track->handle, track->stream, -1, vol, pan, false);
 		}
@@ -241,14 +241,14 @@ void IMuseDigital::callback() {
 
 			const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
 			const int vol = track->vol / 1000;
-			SoundMixer::SoundType type = SoundMixer::kPlainAudioDataType;
+			SoundMixer::SoundType type = SoundMixer::kPlainSoundType;
 
 			if (track->volGroupId == 1)
-				type = SoundMixer::kSpeechAudioDataType;
+				type = SoundMixer::kSpeechSoundType;
 			if (track->volGroupId == 2)
-				type = SoundMixer::kSFXAudioDataType;
+				type = SoundMixer::kSFXSoundType;
 			if (track->volGroupId == 3)
-				type = SoundMixer::kMusicAudioDataType;
+				type = SoundMixer::kMusicSoundType;
 
 			if (track->stream) {
 				byte *data = NULL;

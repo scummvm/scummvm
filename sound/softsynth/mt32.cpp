@@ -269,7 +269,7 @@ int MidiDriver_MT32::open() {
 	_initialising = false;
 	g_system->clearScreen();
 	g_system->updateScreen();
-	_mixer->playInputStream(SoundMixer::kSFXAudioDataType, &_handle, this, -1, 255, 0, false, true);
+	_mixer->playInputStream(SoundMixer::kSFXSoundType, &_handle, this, -1, 255, 0, false, true);
 	return 0;
 }
 

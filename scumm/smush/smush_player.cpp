@@ -509,7 +509,7 @@ void SmushPlayer::handleIACT(Chunk &b) {
 
 					if (!_IACTchannel.isActive()) {
 						_IACTstream = makeAppendableAudioStream(22050, SoundMixer::FLAG_STEREO | SoundMixer::FLAG_16BITS, 400000);
-						_vm->_mixer->playInputStream(SoundMixer::kSFXAudioDataType, &_IACTchannel, _IACTstream);
+						_vm->_mixer->playInputStream(SoundMixer::kSFXSoundType, &_IACTchannel, _IACTstream);
 					}
 					_IACTstream->append(output_data, 0x1000);
 
@@ -1192,7 +1192,7 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 	if (_compressedFile.isOpen()) {
 		int size = _compressedFile.size();
 		_compressedFileMode = true;
-		_vm->_mixer->playInputStream(SoundMixer::kSFXAudioDataType, &_compressedFileSoundHandle, makeMP3Stream(&_compressedFile, size));
+		_vm->_mixer->playInputStream(SoundMixer::kSFXSoundType, &_compressedFileSoundHandle, makeMP3Stream(&_compressedFile, size));
 		return;
 	}
 #endif
@@ -1203,7 +1203,7 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 	if (_compressedFile.isOpen()) {
 		int size = _compressedFile.size();
 		_compressedFileMode = true;
-		_vm->_mixer->playInputStream(SoundMixer::kSFXAudioDataType, &_compressedFileSoundHandle, makeVorbisStream(&_compressedFile, size));
+		_vm->_mixer->playInputStream(SoundMixer::kSFXSoundType, &_compressedFileSoundHandle, makeVorbisStream(&_compressedFile, size));
 		return;
 	}
 #endif

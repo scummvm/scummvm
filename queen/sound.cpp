@@ -201,7 +201,7 @@ void SBSound::sfxPlay(const char *name, bool isSpeech) {
 void MP3Sound::sfxPlay(const char *name, bool isSpeech) {
 	uint32 size;
 	File *f = _vm->resource()->giveCompressedSound(name, &size);
-	_mixer->playInputStream(SoundMixer::kSFXAudioDataType, isSpeech ? &_speechHandle : &_sfxHandle, makeMP3Stream(f, size));
+	_mixer->playInputStream(SoundMixer::kSFXSoundType, isSpeech ? &_speechHandle : &_sfxHandle, makeMP3Stream(f, size));
 }
 #endif
 
@@ -209,7 +209,7 @@ void MP3Sound::sfxPlay(const char *name, bool isSpeech) {
 void OGGSound::sfxPlay(const char *name, bool isSpeech) {
 	uint32 size;
 	File *f = _vm->resource()->giveCompressedSound(name, &size);		
-	_mixer->playInputStream(SoundMixer::kSFXAudioDataType, isSpeech ? &_speechHandle : &_sfxHandle, makeVorbisStream(f, size));
+	_mixer->playInputStream(SoundMixer::kSFXSoundType, isSpeech ? &_speechHandle : &_sfxHandle, makeVorbisStream(f, size));
 }
 #endif
 
@@ -217,7 +217,7 @@ void OGGSound::sfxPlay(const char *name, bool isSpeech) {
 void FLACSound::sfxPlay(const char *name, bool isSpeech) {
 	uint32 size;
 	File *f = _vm->resource()->giveCompressedSound(name, &size);		
-	_mixer->playInputStream(SoundMixer::kSFXAudioDataType, isSpeech ? &_speechHandle : &_sfxHandle, makeFlacStream(f, size));
+	_mixer->playInputStream(SoundMixer::kSFXSoundType, isSpeech ? &_speechHandle : &_sfxHandle, makeFlacStream(f, size));
 }
 #endif
 
