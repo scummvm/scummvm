@@ -352,6 +352,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 #endif
 		MKLINE(Scumm,_actorToPrintStrFor,sleByte),
 		MKLINE(Scumm,_charsetColor,sleByte),
+		/* XXX Convert into word next time format changes */
 		MKLINE(Scumm,charset._bufPos,sleByte),
 		MKLINE(Scumm,_haveMsg,sleByte),
 		MKLINE(Scumm,_useTalkAnims,sleByte),

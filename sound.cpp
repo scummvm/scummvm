@@ -303,27 +303,29 @@ void Scumm::pauseSounds(bool pause) {
 	_soundsPaused = pause;
 }
 
-#pragma START_PACK_STRUCTS
-struct VOCHeader {
-	byte id[19];
-	byte extra[7];
-} GCC_PACK;
-#pragma END_PACK_STRUCTS 
+enum {
+	SOUND_HEADER_SIZE = 26,
+	SOUND_HEADER_BIG_SIZE = 26+8,
 
-static const char VALID_VOC_ID[] = "Creative Voice File";
+};
 
 void Scumm::startSfxSound(void *file) {
-	VOCHeader hdr;
+	char ident[8];
 	int block_type;
 	byte work[8];
 	uint size,i;
 	int rate,comp;
 	byte *data;
 
-	/* Full throttle audio fix HERE */
+	if ( fread(ident, 8, 1, (FILE*)file) != 1)
+		goto invalid;
 
-	if (fread(&hdr, sizeof(hdr), 1, (FILE*)file) != 1 || 
-		memcmp(hdr.id, VALID_VOC_ID, sizeof(hdr.id)) != 0) {
+	if (!memcmp(ident, "VTLK", 4)) {
+		fseek((FILE*)file, SOUND_HEADER_BIG_SIZE - 8, SEEK_CUR);
+	} else if (!memcmp(ident, "Creative", 8)) {
+		fseek((FILE*)file, SOUND_HEADER_SIZE - 8, SEEK_CUR);
+	} else {
+invalid:;
 		warning("startSfxSound: invalid header");
 		return;
 	}

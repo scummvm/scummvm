@@ -558,7 +558,7 @@ struct CharsetRenderer {
 
 	int _xpos2, _ypos2;
 	
-	byte _bufPos;
+	int _bufPos;
 	byte _unk12,_disableOffsX;
 	byte *_ptr;
 	byte _unk2, _bpp;

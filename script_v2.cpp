@@ -1319,9 +1319,9 @@ void Scumm::o6_roomOps() {
 		b = pop();
 		a = pop();
 		if (a < 160) a=160;
-		if (a > _scrWidth) a=_scrWidth;
 		if (b < 160) b=160;
-		if (b > _scrHeight) b=_scrHeight;
+		if (a > _scrWidth-160) a=_scrWidth-160;
+		if (b > _scrWidth-160) b=_scrWidth-160;
 		_vars[VAR_CAMERA_MIN_X] = a;
 		_vars[VAR_CAMERA_MAX_X] = b;
 		break;
