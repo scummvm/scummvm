@@ -22,8 +22,10 @@
 
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "intern.h"
+#include "scumm/scumm.h"
+#include "scumm/intern.h"
+
+namespace Scumm {
 
 void ScummEngine::setupScummVars() {
 	VAR_KEYPRESS = 0;
@@ -324,3 +326,5 @@ void ScummEngine_v8::setupScummVars() {
 	
 	VAR_CHARINC = 221;
 }
+
+} // End of namespace Scumm

@@ -25,6 +25,8 @@
 
 #include "common/rect.h"
 
+namespace Scumm {
+
 class ScummEngine;
 
 enum {					/** Camera modes */
@@ -197,5 +199,7 @@ public:
 //
 // #define V7_SMOOTH_SCROLLING_HACK
 
+
+} // End of namespace Scumm
 
 #endif

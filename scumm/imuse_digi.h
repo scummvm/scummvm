@@ -27,6 +27,8 @@
 #include "scumm/music.h"
 #include "sound/mixer.h"
 
+namespace Scumm {
+
 #define MAX_DIGITAL_CHANNELS 8
 #define MAX_IMUSE_JUMPS 1
 #define MAX_IMUSE_REGIONS 3
@@ -79,5 +81,7 @@ public:
 	int32 doCommand(int a, int b, int c, int d, int e, int f, int g, int h);
 	int getSoundStatus(int sound) const;
 };
+
+} // End of namespace Scumm
 
 #endif

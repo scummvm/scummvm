@@ -21,12 +21,17 @@
 
 #include "stdafx.h"
 #include "common/util.h"
-#include "smush_mixer.h"
-#include "channel.h"
-#include "sound/mixer.h"
+
+#include "scumm/smush/smush_mixer.h"
+#include "scumm/smush/channel.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/imuse.h"
+
+#include "sound/mixer.h"
+
+
+namespace Scumm {
 
 SmushMixer::SmushMixer(SoundMixer *m) :
 	_mixer(m),
@@ -158,3 +163,5 @@ bool SmushMixer::stop() {
 	}
 	return true;
 }
+
+} // End of namespace Scumm

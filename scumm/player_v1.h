@@ -23,7 +23,9 @@
 #ifndef PLAYER_V1_H
 #define PLAYER_V1_H
 
-#include "player_v2.h"
+#include "scumm/player_v2.h"
+
+namespace Scumm {
 
 #define FB_WNOISE 0x12000       /* feedback for white noise */
 #define FB_PNOISE 0x08000       /* feedback for periodic noise */
@@ -91,5 +93,7 @@ private:
 	uint  _start_2;
 	int   _delta_2;
 };
+
+} // End of namespace Scumm
 
 #endif

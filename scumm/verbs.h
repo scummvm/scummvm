@@ -24,6 +24,8 @@
 #include "common/scummsys.h"
 #include "common/rect.h"
 
+namespace Scumm {
+
 enum {
 	kTextVerbType = 0,
 	kImageVerbType = 1
@@ -42,5 +44,7 @@ struct VerbSlot {
 	uint8 prep;
 	uint16 imgindex;
 };
+
+} // End of namespace Scumm
 
 #endif

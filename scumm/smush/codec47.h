@@ -24,6 +24,8 @@
 
 #include "common/scummsys.h"
 
+namespace Scumm {
+
 class Codec47Decoder {
 private:
 
@@ -56,5 +58,7 @@ public:
 	void deinit();
 	bool decode(byte *dst, const byte *src);
 };
+
+} // End of namespace Scumm
 
 #endif

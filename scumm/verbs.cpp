@@ -21,11 +21,13 @@
  */
 
 #include "stdafx.h"
-#include "charset.h"
-#include "object.h"
-#include "resource.h"
-#include "scumm.h"
-#include "verbs.h"
+#include "scumm/charset.h"
+#include "scumm/object.h"
+#include "scumm/resource.h"
+#include "scumm/scumm.h"
+#include "scumm/verbs.h"
+
+namespace Scumm {
 
 enum {
 	kInventoryUpArrow = 4,
@@ -578,3 +580,5 @@ void ScummEngine::setVerbObject(uint room, uint object, uint verb) {
 		memcpy(getResourceAddress(rtVerb, verb), obimptr, size);
 	}
 }
+
+} // End of namespace Scumm

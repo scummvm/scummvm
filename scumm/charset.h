@@ -24,6 +24,8 @@
 #include "common/rect.h"
 #include "common/scummsys.h"
 
+namespace Scumm {
+
 class ScummEngine;
 class NutRenderer;
 struct VirtScreen;
@@ -142,5 +144,8 @@ public:
 	
 	int getFontHeight();
 };
+
+} // End of namespace Scumm
+
 
 #endif

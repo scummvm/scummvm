@@ -25,8 +25,11 @@
 #include "stdafx.h"
 #include "common/scummsys.h"
 
-class Serializer;
 class MidiChannel;
+
+namespace Scumm {
+
+class Serializer;
 class Instrument;
 
 class InstrumentInternal {
@@ -67,5 +70,7 @@ public:
 	void saveOrLoad (Serializer *s);
 	void send (MidiChannel *mc) { if (_instrument) _instrument->send (mc); }
 };
+
+} // End of namespace Scumm
 
 #endif

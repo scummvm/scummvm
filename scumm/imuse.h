@@ -27,12 +27,15 @@
 #include "common/system.h"
 #include "scumm/music.h"
 
-class IMuseInternal;
 class MidiDriver;
 class OSystem;
+class SoundMixer;
+
+namespace Scumm {
+
+class IMuseInternal;
 class ScummEngine;
 class Serializer;
-class SoundMixer;
 
 class IMuse : public MusicEngine {
 private:
@@ -79,5 +82,7 @@ public:
 	// Factory methods
 	static IMuse *create(OSystem *syst, SoundMixer *mixer, MidiDriver *midi);
 };
+
+} // End of namespace Scumm
 
 #endif

@@ -20,12 +20,14 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "intern.h"
-#include "player_v2.h"
-#include "player_v1.h"
-#include "resource.h"
+#include "scumm/scumm.h"
+#include "scumm/intern.h"
+#include "scumm/player_v2.h"
+#include "scumm/player_v1.h"
+#include "scumm/resource.h"
 #include "sound/mididrv.h"
+
+namespace Scumm {
 
 void ScummEngine_v2::readClassicIndexFile() {
 	int i;
@@ -202,3 +204,5 @@ void ScummEngine_v2::readMAXS() {
 void ScummEngine_v2::loadCharset(int num) {
 	// Stub, V2 font resources are hardcoded into the engine.
 }
+
+} // End of namespace Scumm

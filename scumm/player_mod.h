@@ -23,10 +23,12 @@
 #ifndef PLAYER_MOD_H
 #define PLAYER_MOD_H
 
-#include "scumm.h"
+#include "scumm/scumm.h"
 #include "sound/mixer.h"
 #include "sound/audiostream.h"
 #include "sound/rate.h"
+
+namespace Scumm {
 
 #define	MOD_MAXCHANS	16
 
@@ -74,5 +76,7 @@ private:
 	ModUpdateProc *_playproc;
 	void *_playparam;
 };
+
+} // End of namespace Scumm
 
 #endif

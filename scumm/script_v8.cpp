@@ -33,6 +33,8 @@
 #include "sound/mixer.h"
 
 
+namespace Scumm {
+
 #define OPCODE(x)	{ &ScummEngine_v8::x, #x }
 
 void ScummEngine_v8::setupOpcodes() {
@@ -1607,3 +1609,5 @@ void ScummEngine_v8::o8_drawObject() {
 
 	putState(obj, state);
 }
+
+} // End of namespace Scumm

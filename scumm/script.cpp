@@ -29,6 +29,8 @@
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
 
+namespace Scumm {
+
 /* Start executing script 'script' with the given parameters */
 void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, int *lvarptr) {
 	ScriptSlot *s;
@@ -1162,3 +1164,5 @@ void ScummEngine::endOverride() {
 	if (_version > 3)
 		VAR(VAR_OVERRIDE) = 0;
 }
+
+} // End of namespace Scumm

@@ -45,6 +45,8 @@ extern void force_keyboard(bool);
 
 extern uint16 _debugLevel;
 
+namespace Scumm {
+
 ScummDebugger::ScummDebugger() {
 	_s = 0;
 	_frame_countdown = 0;
@@ -1125,3 +1127,4 @@ bool ScummDebugger::TabComplete(const char *input, char*& completion) {
 	return true;
 }
 
+} // End of namespace Scumm

@@ -25,6 +25,8 @@
 #include "common/scummsys.h"
 #include "scumm/nut_renderer.h"
 
+namespace Scumm {
+
 class SmushFont : public NutRenderer {
 protected:
 	int _nbChars;
@@ -48,5 +50,7 @@ public:
 	void drawStringWrap        (const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int left, int right);
 	void drawStringWrapCentered(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int left, int right);
 };
+
+} // End of namespace Scumm
 
 #endif

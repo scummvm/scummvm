@@ -20,10 +20,12 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "intern.h"
-#include "actor.h"
-#include "charset.h"
+#include "scumm/scumm.h"
+#include "scumm/intern.h"
+#include "scumm/actor.h"
+#include "scumm/charset.h"
+
+namespace Scumm {
 
 void ScummEngine::setCameraAtEx(int at) {
 	if (!(_features & GF_NEW_CAMERA)) {
@@ -382,3 +384,4 @@ void ScummEngine::actorFollowCamera(int act) {
 	}
 }
 
+} // End of namespace Scumm

@@ -28,11 +28,13 @@
 #include "scumm/music.h"
 #include "scumm/player_mod.h"
 
+class SoundMixer;
+
+namespace Scumm {
+
 #define	V2A_MAXSLOTS 8
 
 class ScummEngine;
-class SoundMixer;
-
 class V2A_Sound;
 
 class Player_V2A : public MusicEngine {
@@ -62,5 +64,7 @@ private:
 	static void update_proc(void *param);
 	void updateSound();
 };
+
+} // End of namespace Scumm
 
 #endif

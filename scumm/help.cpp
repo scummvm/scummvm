@@ -18,9 +18,11 @@
  */
 
 #include "stdafx.h"
-#include "help.h"
-#include "scumm.h"
+#include "scumm/help.h"
+#include "scumm/scumm.h"
 #include "common/str.h"
+
+namespace Scumm {
 
 int ScummHelp::numPages(byte gameId) {
 	switch (gameId) {
@@ -330,3 +332,4 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page,
 #undef ADD_TEXT
 #undef ADD_LINE
 
+} // End of namespace Scumm

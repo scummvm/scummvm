@@ -21,12 +21,12 @@
  */
 
 #include "stdafx.h"
-#include "actor.h"
-#include "bundle.h"
-#include "imuse.h"
-#include "imuse_digi.h"
-#include "scumm.h"
-#include "sound.h"
+#include "scumm/actor.h"
+#include "scumm/bundle.h"
+#include "scumm/imuse.h"
+#include "scumm/imuse_digi.h"
+#include "scumm/scumm.h"
+#include "scumm/sound.h"
 
 #include "common/config-file.h"
 #include "common/timer.h"
@@ -37,6 +37,8 @@
 #include "sound/mixer.h"
 #include "sound/voc.h"
 
+
+namespace Scumm {
 
 enum {
 	SOUND_HEADER_SIZE = 26,
@@ -1701,3 +1703,5 @@ VorbisTrackInfo::~VorbisTrackInfo() {
 }
 
 #endif
+
+} // End of namespace Scumm

@@ -22,6 +22,8 @@
 #ifndef BOMP_H
 #define BOMP_H
 
+namespace Scumm {
+
 int32 setupBompScale(byte *scaling, int32 size, byte scale);
 
 void bompApplyMask(byte *line_buffer, byte *mask, byte maskbit, int32 size, byte transparency);
@@ -30,5 +32,7 @@ void bompApplyShadow(int shadowMode, const byte *shadowPalette, const byte *line
 void decompressBomp(byte *dst, const byte *src, int w, int h);
 void bompDecodeLine(byte *dst, const byte *src, int size);
 void bompDecodeLineReverse(byte *dst, const byte *src, int size);
+
+} // End of namespace Scumm
 
 #endif

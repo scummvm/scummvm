@@ -24,9 +24,12 @@
 #include "common/scummsys.h"
 #include "sound/mixer.h"
 
+class File;
+
+namespace Scumm {
+
 class Bundle;
 class DigitalTrackInfo;
-class File;
 class ScummEngine;
 
 struct MP3OffsetTable;
@@ -155,6 +158,8 @@ protected:
 
 	int getCachedTrack(int track);
 };
+
+} // End of namespace Scumm
 
 #endif
 

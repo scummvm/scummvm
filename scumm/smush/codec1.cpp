@@ -22,6 +22,8 @@
 #include "stdafx.h"
 #include "common/scummsys.h"
 
+namespace Scumm {
+
 void smush_decode_codec1(byte *dst, byte *src, int height) {
 	byte val, code;
 	int32 length;
@@ -52,3 +54,5 @@ void smush_decode_codec1(byte *dst, byte *src, int height) {
 		}
 	}
 }
+
+} // End of namespace Scumm

@@ -20,9 +20,11 @@
  */
 
 #include "stdafx.h"
-#include "channel.h"
-#include "chunk.h"
-#include "chunk_type.h"
+#include "scumm/smush/channel.h"
+#include "scumm/smush/chunk.h"
+#include "scumm/smush/chunk_type.h"
+
+namespace Scumm {
 
 ImuseChannel::ImuseChannel(int32 track, int32 freq) : 
 	_track(track), 
@@ -349,3 +351,5 @@ void ImuseChannel::getSoundData(int8 *snd, int32 size) {
 	_sbufferSize = 0;
 	_dataSize -= _srbufferSize;
 }
+
+} // End of namespace Scumm

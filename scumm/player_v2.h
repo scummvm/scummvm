@@ -27,6 +27,12 @@
 #include "common/system.h"
 #include "scumm/music.h"
 
+class SoundMixer;
+
+namespace Scumm {
+
+class ScummEngine;
+
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
 #endif	
@@ -65,11 +71,6 @@ union ChannelInfo {
 	channel_data d;
 	uint16 array[sizeof(channel_data)/2];
 };
-
-
-class ScummEngine;
-class SoundMixer;
-
 
 class Player_V2 : public MusicEngine {
 public:
@@ -144,5 +145,7 @@ private:
 	void execute_cmd(ChannelInfo *channel);
 	void next_freqs(ChannelInfo *channel);
 };
+
+} // End of namespace Scumm
 
 #endif

@@ -21,8 +21,10 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "intern.h"
+#include "scumm/scumm.h"
+#include "scumm/intern.h"
+
+namespace Scumm {
 
 void ScummEngine_v4::loadCharset(int no) {
 	uint32 size;
@@ -38,3 +40,5 @@ void ScummEngine_v4::loadCharset(int no) {
 	_fileHandle.read(createResource(6, no, size), size);
 	closeRoom();
 }
+
+} // End of namespace Scumm

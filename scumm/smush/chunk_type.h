@@ -23,7 +23,9 @@
 #define CHUNK_TYPE_H
 
 #include "common/scummsys.h"
-#include "chunk.h"
+#include "scumm/smush/chunk.h"
+
+namespace Scumm {
 
 static const Chunk::type TYPE_ANIM = 'ANIM';
 static const Chunk::type TYPE_AHDR = 'AHDR';
@@ -50,5 +52,7 @@ static const Chunk::type TYPE_STOP = 'STOP';
 static const Chunk::type TYPE_MAP_ = 'MAP ';
 static const Chunk::type TYPE_DATA = 'DATA';
 static const Chunk::type TYPE_ETRS = 'ETRS';
+
+} // End of namespace Scumm
 
 #endif

@@ -29,6 +29,8 @@
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
 
+namespace Scumm {
+
 #define OPCODE(x)	{ &ScummEngine_v2::x, #x }
 
 void ScummEngine_v2::setupOpcodes() {
@@ -1578,3 +1580,5 @@ void ScummEngine_v2::resetSentence() {
 	VAR(VAR_SENTENCE_OBJECT2) = 0;
 	VAR(VAR_SENTENCE_PREPOSITION) = 0;
 }
+
+} // End of namespace Scumm

@@ -28,6 +28,8 @@
 #include "scumm/smush/codec47.h"
 #include "sound/mixer.h"
 
+namespace Scumm {
+
 class SmushFont;
 class SmushMixer;
 class StringResource;
@@ -101,5 +103,7 @@ private:
 	
 	static void timerCallback(void *ptr);
 };
+
+} // End of namespace Scumm
 
 #endif

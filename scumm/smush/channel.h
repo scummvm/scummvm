@@ -24,6 +24,8 @@
 
 #include "common/util.h"
 
+namespace Scumm {
+
 class Chunk;
 class ContChunk;
 	
@@ -136,5 +138,7 @@ public:
 	};
 	virtual int32 getTrackIdentifier() const { return _track; };
 };
+
+} // End of namespace Scumm
 
 #endif

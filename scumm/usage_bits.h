@@ -19,9 +19,13 @@
 #ifndef USAGE_BITS_H
 #define USAGE_BITS_H
 
+namespace Scumm {
+
 enum {
 	USAGE_BIT_DIRTY = 96,
 	USAGE_BIT_RESTORED = 95
 };
+
+} // End of namespace Scumm
 
 #endif

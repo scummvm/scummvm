@@ -24,7 +24,9 @@
 #define BASE_COSTUME_H
 
 #include "common/scummsys.h"
-#include "actor.h"		// for CostumeData
+#include "scumm/actor.h"		// for CostumeData
+
+namespace Scumm {
 
 #if !defined(__GNUC__)
 #pragma START_PACK_STRUCTS
@@ -129,5 +131,7 @@ protected:
 
 	void codec1_ignorePakCols(int num);
 };
+
+} // End of namespace Scumm
 
 #endif

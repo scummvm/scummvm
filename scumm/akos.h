@@ -23,7 +23,9 @@
 #ifndef AKOS_H
 #define AKOS_H
 
-#include "base-costume.h"
+#include "scumm/base-costume.h"
+
+namespace Scumm {
 
 #ifdef __PALM_OS__
 extern const byte *defaultScaleTable;
@@ -97,5 +99,7 @@ protected:
 	void akos16Decompress(byte *dest, int32 pitch, const byte *src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency);
 	void akos16DecompressMask(byte *dest, int32 pitch, const byte *src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency, byte *maskptr, int32 bitpos_start);
 };
+
+} // End of namespace Scumm
 
 #endif

@@ -21,7 +21,9 @@
 #ifndef COSTUME_H
 #define COSTUME_H
 
-#include "base-costume.h"
+#include "scumm/base-costume.h"
+
+namespace Scumm {
 
 class LoadedCostume {
 protected:
@@ -77,5 +79,7 @@ protected:
 
 	byte mainRoutine(int xmoveCur, int ymoveCur);
 };
+
+} // End of namespace Scumm
 
 #endif

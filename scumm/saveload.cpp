@@ -38,6 +38,8 @@
 #include "sound/mixer.h"
 
 
+namespace Scumm {
+
 struct SaveGameHeader {
 	uint32 type;
 	uint32 size;
@@ -957,3 +959,5 @@ void Serializer::loadEntries(void *d, const SaveLoadEntry *sle) {
 		sle++;
 	}
 }
+
+} // End of namespace Scumm

@@ -63,6 +63,12 @@
 extern bool isSmartphone(void);
 #endif
 
+extern NewGui *g_gui;
+extern uint16 _debugLevel;
+extern uint16 _demo_mode;
+
+namespace Scumm {
+
 enum MouseButtonStatus {
 	msDown = 1,
 	msClicked = 2
@@ -71,10 +77,6 @@ enum MouseButtonStatus {
 // Use g_scumm from error() ONLY
 ScummEngine *g_scumm = 0;
 ScummDebugger *g_debugger;
-
-extern NewGui *g_gui;
-extern uint16 _debugLevel;
-extern uint16 _demo_mode;
 
 static const TargetSettings scumm_settings[] = {
 	/* Scumm Version 1 */
@@ -265,61 +267,6 @@ static const TargetSettings scumm_settings[] = {
 #endif
 	{NULL, NULL, 0, 0, MDT_NONE, 0, NULL}
 };
-
-const TargetSettings *Engine_SCUMM_targetList() {
-	return scumm_settings;
-}
-
-Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
-	Engine *engine;
-
-	if (detector->_amiga)
-		detector->_game.features |= GF_AMIGA;
-
-	switch (detector->_platform) {
-	case 1:
-		if (!(detector->_game.features & GF_AMIGA))
-			detector->_game.features |= GF_AMIGA;
-		break;
-	case 2:
-		detector->_game.features |= GF_ATARI_ST;
-		break;
-	case 3:
-		detector->_game.features |= GF_MACINTOSH;
-		break;
-	}
-
-	switch (detector->_game.version) {
-	case 1:
-	case 2:
-		engine = new ScummEngine_v2(detector, syst);
-		break;
-	case 3:
-		engine = new ScummEngine_v3(detector, syst);
-		break;
-	case 4:
-		engine = new ScummEngine_v4(detector, syst);
-		break;
-	case 5:
-		engine = new ScummEngine_v5(detector, syst);
-		break;
-	case 6:
-		engine = new ScummEngine_v6(detector, syst);
-		break;
-	case 7:
-		engine = new ScummEngine_v7(detector, syst);
-		break;
-	case 8:
-		engine = new ScummEngine_v8(detector, syst);
-		break;
-	default:
-		error("Engine_SCUMM_create(): Unknown version of game engine");
-	}
-
-	return engine;
-}
-
-REGISTER_PLUGIN("Scumm Engine", Engine_SCUMM_targetList, Engine_SCUMM_create);
 
 ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst), _pauseDialog(0), _optionsDialog(0), _saveLoadDialog(0) {
@@ -2690,3 +2637,62 @@ int normalizeAngle(int angle) {
 
 	return toSimpleDir(1, temp) * 45;
 }
+
+} // End of namespace Scumm
+
+using namespace Scumm;
+
+const TargetSettings *Engine_SCUMM_targetList() {
+	return scumm_settings;
+}
+
+Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
+	Engine *engine;
+
+	if (detector->_amiga)
+		detector->_game.features |= GF_AMIGA;
+
+	switch (detector->_platform) {
+	case 1:
+		if (!(detector->_game.features & GF_AMIGA))
+			detector->_game.features |= GF_AMIGA;
+		break;
+	case 2:
+		detector->_game.features |= GF_ATARI_ST;
+		break;
+	case 3:
+		detector->_game.features |= GF_MACINTOSH;
+		break;
+	}
+
+	switch (detector->_game.version) {
+	case 1:
+	case 2:
+		engine = new ScummEngine_v2(detector, syst);
+		break;
+	case 3:
+		engine = new ScummEngine_v3(detector, syst);
+		break;
+	case 4:
+		engine = new ScummEngine_v4(detector, syst);
+		break;
+	case 5:
+		engine = new ScummEngine_v5(detector, syst);
+		break;
+	case 6:
+		engine = new ScummEngine_v6(detector, syst);
+		break;
+	case 7:
+		engine = new ScummEngine_v7(detector, syst);
+		break;
+	case 8:
+		engine = new ScummEngine_v8(detector, syst);
+		break;
+	default:
+		error("Engine_SCUMM_create(): Unknown version of game engine");
+	}
+
+	return engine;
+}
+
+REGISTER_PLUGIN("Scumm Engine", Engine_SCUMM_targetList, Engine_SCUMM_create);

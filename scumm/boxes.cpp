@@ -21,10 +21,12 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "actor.h"
-#include "boxes.h"
+#include "scumm/scumm.h"
+#include "scumm/actor.h"
+#include "scumm/boxes.h"
 #include "common/util.h"
+
+namespace Scumm {
 
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
@@ -1278,3 +1280,4 @@ void ScummEngine::getGates(int trap1, int trap2, Common::Point gateA[2], Common:
 	}
 }
 
+} // End of namespace Scumm

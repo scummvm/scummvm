@@ -22,8 +22,10 @@
 
 #include "stdafx.h"
 #include "base/engine.h"
-#include "player_v2a.h"
-#include "scumm.h"
+#include "scumm/player_v2a.h"
+#include "scumm/scumm.h"
+
+namespace Scumm {
 
 #define BASE_FREQUENCY 3579545
 
@@ -1216,3 +1218,5 @@ int Player_V2A::getSoundStatus(int nr) const {
 	}
 	return 0;
 }
+
+} // End of namespace Scumm

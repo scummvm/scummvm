@@ -21,10 +21,12 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "actor.h"
-#include "costume.h"
+#include "scumm/scumm.h"
+#include "scumm/actor.h"
+#include "scumm/costume.h"
 #include "scumm/sound.h"
+
+namespace Scumm {
 
 const byte revBitMask[8] = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
 
@@ -868,3 +870,5 @@ _GRELEASEPTR(GBVARS_COSTSCALETABLE_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
+
+} // End of namespace Scumm

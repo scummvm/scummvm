@@ -20,11 +20,13 @@
  */
 
 #include "stdafx.h"
-#include "chunk.h"
+#include "scumm/smush/chunk.h"
 
 #include "common/file.h"
 #include "common/str.h"
 #include "common/util.h"
+
+namespace Scumm {
 
 class FilePtr : public File {
 	Common::String _filename;
@@ -253,3 +255,5 @@ uint32 MemoryChunk::getDword() {
 	_curPos += 4;
 	return READ_LE_UINT32(ptr);
 }
+
+} // End of namespace Scumm

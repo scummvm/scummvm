@@ -22,8 +22,10 @@
 
 #include "stdafx.h"
 #include "base/engine.h"
-#include "player_v3a.h"
-#include "scumm.h"
+#include "scumm/player_v3a.h"
+#include "scumm/scumm.h"
+
+namespace Scumm {
 
 static const uint16 note_freqs[4][12] = {
 	{0x06B0,0x0650,0x05F4,0x05A0,0x054C,0x0500,0x04B8,0x0474,0x0434,0x03F8,0x03C0,0x0388},
@@ -334,3 +336,5 @@ int Player_V3A::getSoundStatus(int nr) const {
 		return 1;
 	return 0;
 }
+
+} // End of namespace Scumm

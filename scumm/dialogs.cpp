@@ -19,17 +19,17 @@
  */
 
 #include "stdafx.h"
-#include "dialogs.h"
-#include "sound.h"
-#include "scumm.h"
-#include "imuse.h"
-#include "player_v2.h"
-#include "verbs.h"
+#include "scumm/dialogs.h"
+#include "scumm/sound.h"
+#include "scumm/scumm.h"
+#include "scumm/imuse.h"
+#include "scumm/player_v2.h"
+#include "scumm/verbs.h"
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
 #ifndef DISABLE_HELP
-#include "help.h"
+#include "scumm/help.h"
 #endif
 
 #include "gui/newgui.h"
@@ -43,6 +43,8 @@ extern void force_keyboard(bool);
 extern void save_key_mapping();
 extern void load_key_mapping();
 #endif
+
+namespace Scumm {
 
 struct ResString {
 	int num;
@@ -803,3 +805,5 @@ _GRELEASEPTR(GBVARS_STRINGMAPTABLEV5_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
+
+} // End of namespace Scumm

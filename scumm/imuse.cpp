@@ -34,6 +34,7 @@
 #include "sound/mididrv.h"
 
 
+namespace Scumm {
 
 ////////////////////////////////////////
 //
@@ -1782,3 +1783,5 @@ IMuse *IMuse::create(OSystem *syst, SoundMixer *mixer, MidiDriver *midi) {
 	IMuseInternal *engine = IMuseInternal::create(syst, mixer, midi);
 	return new IMuse(syst, engine);
 }
+
+} // End of namespace Scumm

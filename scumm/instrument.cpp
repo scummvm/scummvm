@@ -25,6 +25,8 @@
 #include "scumm/instrument.h"
 #include "sound/mididrv.h"
 
+namespace Scumm {
+
 static bool _native_mt32 = false;
 
 static const byte mt32_to_gm[128] = {
@@ -466,3 +468,5 @@ uint8 Instrument_Roland::getEquivalentGM() {
 	}
 	return 255;
 }
+
+} // End of namespace Scumm

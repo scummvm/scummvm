@@ -22,8 +22,10 @@
 
 #include "stdafx.h"
 #include "base/engine.h"
-#include "player_v1.h"
-#include "scumm.h"
+#include "scumm/player_v1.h"
+#include "scumm/scumm.h"
+
+namespace Scumm {
 
 #define TIMER_BASE_FREQ 1193000
 #define FIXP_SHIFT  16
@@ -605,3 +607,5 @@ void Player_V1::generatePCjrSamples(int16 *data, uint len) {
 	if (_level || hasdata)
 		lowPassFilter(data, len);
 }
+
+} // End of namespace Scumm

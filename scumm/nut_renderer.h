@@ -23,6 +23,8 @@
 
 #include "common/file.h"
 
+namespace Scumm {
+
 class ScummEngine;
 
 class NutRenderer {
@@ -58,5 +60,6 @@ public:
 	int getCharHeight(byte c);
 };
 
+} // End of namespace Scumm
 
 #endif

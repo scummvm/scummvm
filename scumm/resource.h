@@ -21,6 +21,8 @@
 #ifndef RESOURCE_H
 #define RESOURCE_H
 
+namespace Scumm {
+
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
 #endif	
@@ -72,5 +74,6 @@ public:
 	const byte *findNext(uint32 tag);
 };
 
+} // End of namespace Scumm
 
 #endif

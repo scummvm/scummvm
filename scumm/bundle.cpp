@@ -23,6 +23,8 @@
 #include "scumm/scumm.h"
 #include "scumm/bundle.h"
 
+namespace Scumm {
+
 #ifdef __PALM_OS__
 static const int16 *imcTable;
 #else
@@ -956,3 +958,5 @@ _GRELEASEPTR(GBVARS_IMCTABLE_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
+
+} // End of namespace Scumm

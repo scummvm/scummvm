@@ -31,6 +31,7 @@
 #include "sound/midiparser.h"
 
 
+namespace Scumm {
 
 ////////////////////////////////////////
 //
@@ -1198,3 +1199,5 @@ int Player::save_or_load(Serializer *ser) {
 		                  sizeof(ParameterFader), parameterFaderEntries);
 	return 0;
 }
+
+} // End of namespace Scumm

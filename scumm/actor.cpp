@@ -21,16 +21,18 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "actor.h"
-#include "akos.h"
-#include "boxes.h"
-#include "charset.h"
-#include "costume.h"
-#include "resource.h"
-#include "saveload.h"
-#include "sound.h"
-#include "usage_bits.h"
+#include "scumm/scumm.h"
+#include "scumm/actor.h"
+#include "scumm/akos.h"
+#include "scumm/boxes.h"
+#include "scumm/charset.h"
+#include "scumm/costume.h"
+#include "scumm/resource.h"
+#include "scumm/saveload.h"
+#include "scumm/sound.h"
+#include "scumm/usage_bits.h"
+
+namespace Scumm {
 
 byte Actor::kInvalidBox = 0;
 ScummEngine *Actor::_vm = 0;
@@ -1735,3 +1737,5 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 	
 	return actorEntries;
 }
+
+} // End of namespace Scumm

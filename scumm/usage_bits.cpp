@@ -17,8 +17,10 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "usage_bits.h"
+#include "scumm/scumm.h"
+#include "scumm/usage_bits.h"
+
+namespace Scumm {
 
 void ScummEngine::upgradeGfxUsageBits() {
 	int i;
@@ -80,3 +82,5 @@ bool ScummEngine::testGfxOtherUsageBits(int strip, int bit) {
 
 	return false;
 }
+
+} // End of namespace Scumm

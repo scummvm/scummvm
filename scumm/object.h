@@ -21,6 +21,8 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+namespace Scumm {
+
 struct ObjectData {
 	uint32 OBIMoffset;
 	uint32 OBCDoffset;
@@ -164,6 +166,8 @@ enum FindObjectWhat {
 	foImageHeader = 2,
 	foCheckAlreadyLoaded = 4
 };
+
+} // End of namespace Scumm
 
 
 #endif

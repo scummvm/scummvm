@@ -20,7 +20,9 @@
  *
  */
 
-#include "player_mod.h"
+#include "scumm/player_mod.h"
+
+namespace Scumm {
 
 ////////////////////////////////////////
 //
@@ -186,3 +188,5 @@ void Player_MOD::do_mix (int16 *data, uint len) {
 		dpos += dlen;
 	}
 }
+
+} // End of namespace Scumm

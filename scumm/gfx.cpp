@@ -20,13 +20,15 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "actor.h"
-#include "bomp.h"
-#include "charset.h"
-#include "resource.h"
-#include "usage_bits.h"
-#include "util.h"
+#include "common/util.h"
+#include "scumm/scumm.h"
+#include "scumm/actor.h"
+#include "scumm/bomp.h"
+#include "scumm/charset.h"
+#include "scumm/resource.h"
+#include "scumm/usage_bits.h"
+
+namespace Scumm {
 
 enum {
 	kScrolltime = 500,  // ms scrolling is supposed to take
@@ -2741,7 +2743,7 @@ void ScummEngine::stopCycle(int i) {
  * Cycle the colors in the given palette in the intervael [cycleStart, cycleEnd]
  * either one step forward or backward.
  */
-static void cyclePalette(byte *palette, int cycleStart, int cycleEnd, int size, bool forward) {
+static void doCyclePalette(byte *palette, int cycleStart, int cycleEnd, int size, bool forward) {
 	byte *start = palette + cycleStart * size;
 	byte *end = palette + cycleEnd * size;
 	int num = cycleEnd - cycleStart;
@@ -2769,7 +2771,7 @@ static void cyclePalette(byte *palette, int cycleStart, int cycleEnd, int size, 
  * palette by searching through it and replacing all indices that are in the
  * cycle range by the new (cycled) index.
  */
-static void cycleIndirectPalette(byte *palette, int cycleStart, int cycleEnd, bool forward) {
+static void doCycleIndirectPalette(byte *palette, int cycleStart, int cycleEnd, bool forward) {
 	int num = cycleEnd - cycleStart + 1;
 	int i;
 	int offset = forward ? 1 : num - 1;
@@ -2811,19 +2813,19 @@ void ScummEngine::cyclePalette() {
 			moveMemInPalRes(cycl->start, cycl->end, cycl->flags & 2);
 
 			if (!(_features & GF_SMALL_HEADER && _version > 2))
-				::cyclePalette(_currentPalette, cycl->start, cycl->end, 3, !(cycl->flags & 2));
+				doCyclePalette(_currentPalette, cycl->start, cycl->end, 3, !(cycl->flags & 2));
 
 			// Also cycle the other, indirect palettes
 			if (_proc_special_palette) {
-				::cycleIndirectPalette(_proc_special_palette, cycl->start, cycl->end, !(cycl->flags & 2));
+				doCycleIndirectPalette(_proc_special_palette, cycl->start, cycl->end, !(cycl->flags & 2));
 			}
 			
 			if (_shadowPalette) {
 				if (_version >= 7) {
 					for (j = 0; j < NUM_SHADOW_PALETTE; j++)
-						::cycleIndirectPalette(_shadowPalette + j * 256, cycl->start, cycl->end, !(cycl->flags & 2));
+						doCycleIndirectPalette(_shadowPalette + j * 256, cycl->start, cycl->end, !(cycl->flags & 2));
 				} else {
-					::cycleIndirectPalette(_shadowPalette, cycl->start, cycl->end, !(cycl->flags & 2));
+					doCycleIndirectPalette(_shadowPalette, cycl->start, cycl->end, !(cycl->flags & 2));
 				}
 			}
 		}
@@ -2838,8 +2840,8 @@ void ScummEngine::moveMemInPalRes(int start, int end, byte direction) {
 	if (!_palManipCounter)
 		return;
 
-	::cyclePalette(_palManipPalette, start, end, 3, !direction);
-	::cyclePalette(_palManipIntermediatePal, start, end, 6, !direction);
+	doCyclePalette(_palManipPalette, start, end, 3, !direction);
+	doCyclePalette(_palManipIntermediatePal, start, end, 6, !direction);
 }
 
 void ScummEngine::palManipulateInit(int start, int end, int string_id, int time) {
@@ -3645,3 +3647,5 @@ _GRELEASEPTR(GBVARS_TRANSITIONEFFECTS_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
+
+} // End of namespace Scumm

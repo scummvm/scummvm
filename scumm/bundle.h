@@ -24,6 +24,8 @@
 #include "common/scummsys.h"
 #include "common/file.h"
 
+namespace Scumm {
+
 class Bundle {
 
 private:
@@ -75,5 +77,7 @@ public:
 	int32 decompressMusicSampleByName(const char *name, int32 number, byte *comp_final);
 	int32 getNumberOfMusicSamplesByName(const char *name);
 };
+
+} // End of namespace Scumm
 
 #endif

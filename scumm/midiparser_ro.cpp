@@ -25,6 +25,8 @@
 #include "common/util.h"
 
 
+namespace Scumm {
+
 //////////////////////////////////////////////////
 //
 // The Standard MIDI File version of MidiParser
@@ -137,3 +139,5 @@ bool MidiParser_RO::loadMusic (byte *data, uint32 size) {
 }
 
 MidiParser *MidiParser_createRO() { return new MidiParser_RO; }
+
+} // End of namespace Scumm

@@ -24,6 +24,8 @@
 #include "scumm/bomp.h"
 #include "scumm/smush/codec47.h"
 
+namespace Scumm {
+
 #if defined(SCUMM_NEED_ALIGNMENT)
 
 #define COPY_4X1_LINE(dst, src)			\
@@ -627,3 +629,5 @@ _GRELEASEPTR(GBVARS_CODEC47TABLE_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
+
+} // End of namespace Scumm

@@ -26,6 +26,8 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
+namespace Scumm {
+
 /**
  * Pure virtual base class for the various music/sound engines used in Scumm
  * games. In particular, the iMuse code provides a subclass of this. There are
@@ -84,5 +86,7 @@ public:
 	 */
 	virtual void terminate() {}
 };
+
+} // End of namespace Scumm
 
 #endif

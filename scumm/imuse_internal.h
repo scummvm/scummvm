@@ -26,6 +26,12 @@
 #include "scumm/instrument.h"
 #include "sound/mididrv.h"
 
+class MidiParser;
+class OSystem;
+class SoundMixer;
+
+namespace Scumm {
+
 // Unremark this statement to activate some of
 // the most common iMuse diagnostic messages.
 // #define IMUSE_DEBUG
@@ -42,10 +48,7 @@ struct Part;
 class  IMuseInternal;
 
 // Some entities also referenced
-class MidiParser;
 class ScummEngine;
-class OSystem;
-class SoundMixer;
 
 
 
@@ -469,5 +472,7 @@ public:
 
 	static IMuseInternal *create(OSystem *syst, SoundMixer *mixer, MidiDriver *midi);
 };
+
+} // End of namespace Scumm
 
 #endif

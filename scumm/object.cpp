@@ -21,12 +21,14 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "actor.h"
-#include "bomp.h"
-#include "object.h"
-#include "resource.h"
-#include "usage_bits.h"
+#include "scumm/scumm.h"
+#include "scumm/actor.h"
+#include "scumm/bomp.h"
+#include "scumm/object.h"
+#include "scumm/resource.h"
+#include "scumm/usage_bits.h"
+
+namespace Scumm {
 
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
@@ -1661,3 +1663,5 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 
 	od->fl_object_index = slot;
 }
+
+} // End of namespace Scumm

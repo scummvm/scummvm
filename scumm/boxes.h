@@ -25,6 +25,8 @@
 
 #include "common/rect.h"
 
+namespace Scumm {
+
 #define SIZEOF_BOX_V2 8
 #define SIZEOF_BOX_V3 18
 #define SIZEOF_BOX 20
@@ -44,5 +46,7 @@ struct BoxCoords {			/* Box coordinates */
 	Common::Point ll;
 	Common::Point lr;
 };
+
+} // End of namespace Scumm
 
 #endif

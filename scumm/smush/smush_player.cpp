@@ -20,27 +20,32 @@
  */
 
 #include "stdafx.h"
-#include "scumm/scumm.h"
-#include "scumm/bomp.h"
-#include "scumm/sound.h"
-#include "scumm/imuse.h"
-#include "scumm/imuse_digi.h"
-#include "sound/mixer.h"
-#include "smush_player.h"
-#include "smush_mixer.h"
-#include "smush_font.h"
-#include "channel.h"
-#include "chunk.h"
-#include "chunk_type.h"
 
 #include "base/engine.h"
+
 #include "common/file.h"
 #include "common/util.h"
 #include "common/timer.h"
 
+#include "scumm/bomp.h"
+#include "scumm/imuse_digi.h"
+#include "scumm/imuse.h"
+#include "scumm/scumm.h"
+#include "scumm/sound.h"
+#include "scumm/smush/channel.h"
+#include "scumm/smush/chunk_type.h"
+#include "scumm/smush/chunk.h"
+#include "scumm/smush/smush_font.h"
+#include "scumm/smush/smush_mixer.h"
+#include "scumm/smush/smush_player.h"
+
+#include "sound/mixer.h"
+
 #ifdef DUMP_SMUSH_FRAMES
 #include <png.h>
 #endif
+
+namespace Scumm {
 
 const int MAX_STRINGS = 200;
 
@@ -982,3 +987,5 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 	// Reset mouse state
 	_scumm->_system->show_mouse(oldMouseState);
 }
+
+} // End of namespace Scumm

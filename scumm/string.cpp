@@ -21,12 +21,14 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "actor.h"
-#include "charset.h"
-#include "dialogs.h"
-#include "verbs.h"
+#include "scumm/scumm.h"
+#include "scumm/actor.h"
+#include "scumm/charset.h"
+#include "scumm/dialogs.h"
+#include "scumm/verbs.h"
 #include "scumm/sound.h"
+
+namespace Scumm {
 
 void ScummEngine::setStringVars(int slot) {
 	StringTab *st = &_string[slot];
@@ -947,3 +949,4 @@ void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 	}
 }
 
+} // End of namespace Scumm

@@ -21,9 +21,11 @@
 
 #include "stdafx.h"
 
-#include "channel.h"
-#include "chunk.h"
-#include "chunk_type.h"
+#include "scumm/smush/channel.h"
+#include "scumm/smush/chunk.h"
+#include "scumm/smush/chunk_type.h"
+
+namespace Scumm {
 
 void SaudChannel::handleStrk(Chunk &b) {
 	int32 size = b.getSize();
@@ -266,3 +268,5 @@ void SaudChannel::getSoundData(int16 *snd, int32 size) {
 	_sbuffer = 0;
 	_sbufferSize = 0;
 }
+
+} // End of namespace Scumm

@@ -28,11 +28,14 @@
 #include "scumm/music.h"
 #include "scumm/player_mod.h"
 
+class SoundMixer;
+
+namespace Scumm {
+
 #define	V3A_MAXMUS	8
 #define	V3A_MAXSFX	8
 
 class ScummEngine;
-class SoundMixer;
 
 class Player_V3A : public MusicEngine {
 public:
@@ -86,5 +89,7 @@ private:
 	static void update_proc(void *param);
 	void playMusic();
 };
+
+} // End of namespace Scumm
 
 #endif

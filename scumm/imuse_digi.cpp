@@ -20,11 +20,13 @@
 
 #include "stdafx.h"
 #include "common/timer.h"
-#include "imuse_digi.h"
-#include "scumm.h"
-#include "sound.h"
+#include "scumm/imuse_digi.h"
+#include "scumm/scumm.h"
+#include "scumm/sound.h"
 #include "sound/mixer.h"
 #include "sound/voc.h"
+
+namespace Scumm {
 
 ////////////////////////////////////////
 //
@@ -1194,3 +1196,5 @@ _GRELEASEPTR(GBVARS_FTSEQMUSICTABLE_INDEX		, GBVARS_SCUMM)
 _GEND
 
 #endif
+
+} // End of namespace Scumm

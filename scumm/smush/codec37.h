@@ -24,6 +24,8 @@
 
 #include "common/scummsys.h"
 
+namespace Scumm {
+
 class Codec37Decoder {
 private:
 
@@ -52,5 +54,7 @@ protected:
 public:
 	void decode(byte *dst, const byte *src);
 };
+
+} // End of namespace Scumm
 
 #endif

@@ -25,8 +25,9 @@
 #define ACTOR_H
 
 #include "common/scummsys.h"
+#include "scumm/scumm.h"
 
-#include "scumm.h"
+namespace Scumm {
 
 enum MoveFlags {
 	MF_NEW_LEG = 1,
@@ -207,5 +208,7 @@ protected:
 	bool findPathTowards(byte box, byte box2, byte box3, Common::Point &foundPath);
 	void findPathTowardsOld(byte box, byte box2, byte box3, Common::Point &p2, Common::Point &p3);
 };
+
+} // End of namespace Scumm
 
 #endif

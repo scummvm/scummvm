@@ -23,7 +23,9 @@
 #include "common/file.h"
 #include "scumm/scumm.h"
 
-#include "smush_font.h"
+#include "scumm/smush/smush_font.h"
+
+namespace Scumm {
 
 SmushFont::SmushFont(bool use_original_colors, bool new_colors) :
 	NutRenderer(g_scumm),	// FIXME: evil hack
@@ -317,3 +319,5 @@ void SmushFont::drawStringWrapCentered(const char *str, byte *buffer, int dst_wi
 	
 	free(s);
 }
+
+} // End of namespace Scumm

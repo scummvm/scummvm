@@ -23,7 +23,11 @@
 #ifndef INTERN_H
 #define INTERN_H
 
-#include "scumm.h"
+#include "scumm/scumm.h"
+
+
+namespace Scumm {
+
 class NutRenderer; // V8 Font Renderer
 
 class ScummEngine_v5 : public ScummEngine {
@@ -606,5 +610,6 @@ protected:
 
 };
 
+} // End of namespace Scumm
 
 #endif

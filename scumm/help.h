@@ -22,6 +22,8 @@
 
 #include "common/str.h"
 
+namespace Scumm {
+
 #define HELP_NUM_LINES 15
 
 class ScummHelp {
@@ -33,6 +35,8 @@ public:
 	static void updateStrings(byte gameId, byte version, int page,
 			String &title, String *&key, String *&dsc);
 };
+
+} // End of namespace Scumm
 
 #endif
 

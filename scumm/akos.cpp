@@ -21,12 +21,14 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "actor.h"
-#include "akos.h"
-#include "bomp.h"
-#include "imuse.h"
-#include "sound.h"
+#include "scumm/scumm.h"
+#include "scumm/actor.h"
+#include "scumm/akos.h"
+#include "scumm/bomp.h"
+#include "scumm/imuse.h"
+#include "scumm/sound.h"
+
+namespace Scumm {
 
 #if !defined(__GNUC__)
 #pragma START_PACK_STRUCTS
@@ -49,7 +51,6 @@ struct AkosOffset {
 #if !defined(__GNUC__)
 #pragma END_PACK_STRUCTS
 #endif
-
 
 
 enum AkosOpcodes {
@@ -1377,3 +1378,5 @@ _GRELEASEPTR(GBVARS_DEFAULTSCALETABLE_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
+
+} // End of namespace Scumm

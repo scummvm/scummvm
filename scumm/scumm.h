@@ -32,16 +32,19 @@
 #include "scumm/gfx.h"
 #include "scumm/script.h"
 
-class Actor;
-class BaseCostumeRenderer;
-class CharsetRenderer;
 class ConsoleDialog;
 class Dialog;
 class GameDetector;
+class NewGui;
+
+namespace Scumm {
+
+class Actor;
+class BaseCostumeRenderer;
+class CharsetRenderer;
 class IMuse;
 class IMuseDigital;
 class MusicEngine;
-class NewGui;
 class ScummEngine;
 class ScummDebugger;
 class Serializer;
@@ -1212,5 +1215,6 @@ int toSimpleDir(int dirtype, int dir);
 
 void checkRange(int max, int min, int no, const char *str);
 
+} // End of namespace Scumm
 
 #endif

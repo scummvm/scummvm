@@ -24,6 +24,8 @@
 
 #include "common/scummsys.h"
 
+namespace Scumm {
+
 class Chunk {
 public:
 	virtual ~Chunk() {};
@@ -97,5 +99,7 @@ public:
 	uint16 getWord();
 	uint32 getDword();
 };
+
+} // End of namespace Scumm
 
 #endif

@@ -40,6 +40,8 @@
 #include "scumm/dialogs.h"		// FIXME: This is just for the FT-INSANE warning. 
 				// Remove when INSANE is implemented
 
+namespace Scumm {
+
 #define OPCODE(x)	{ &ScummEngine_v6::x, #x }
 
 void ScummEngine_v6::setupOpcodes() {
@@ -3243,3 +3245,5 @@ void ScummEngine_v6::decodeParseString(int m, int n) {
 		error("decodeParseString: default case 0x%x", b);
 	}
 }
+
+} // End of namespace Scumm

@@ -21,6 +21,8 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+namespace Scumm {
+
 // Choose between text console or ScummConsole
 #define USE_CONSOLE	1
 
@@ -107,5 +109,7 @@ protected:
 	bool TabComplete(const char *input, char*& completion);
 
 };
+
+} // End of namespace Scumm
 
 #endif

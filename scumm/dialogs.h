@@ -26,10 +26,13 @@
 #include "gui/dialog.h"
 
 #ifndef DISABLE_HELP
-#include "help.h"
+#include "scumm/help.h"
 #endif
 
 class ListWidget;
+
+namespace Scumm {
+
 class ScummEngine;
 
 class ScummDialog : public Dialog {
@@ -191,5 +194,7 @@ protected:
 };
 
 #endif
+
+} // End of namespace Scumm
 
 #endif

@@ -21,8 +21,9 @@
  */
 
 #include "stdafx.h"
-#include "base-costume.h"
+#include "scumm/base-costume.h"
 
+namespace Scumm {
 
 byte BaseCostumeRenderer::drawCostume(const CostumeData &cost) {
 	int i;
@@ -59,3 +60,5 @@ void BaseCostumeRenderer::codec1_ignorePakCols(int num) {
 		} while (--v1.replen);
 	} while (1);
 }
+
+} // End of namespace Scumm

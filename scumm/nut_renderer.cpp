@@ -19,10 +19,12 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "nut_renderer.h"
-#include "bomp.h"
+#include "scumm/scumm.h"
+#include "scumm/nut_renderer.h"
+#include "scumm/bomp.h"
 
+
+namespace Scumm {
 
 NutRenderer::NutRenderer(ScummEngine *vm) :
 	_vm(vm),
@@ -345,3 +347,5 @@ void NutRenderer::draw2byte(byte *dst, byte *mask, int c, int x, int y, byte col
 			mask += _vm->gdi._numStrips;
 	}
 }
+
+} // End of namespace Scumm

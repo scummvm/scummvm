@@ -21,10 +21,11 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "intern.h"
-#include "resource.h"
+#include "scumm/scumm.h"
+#include "scumm/intern.h"
+#include "scumm/resource.h"
 
+namespace Scumm {
 
 void ScummEngine_v3::readIndexFile() {
 	if (_features & GF_OLD_BUNDLE) {
@@ -226,3 +227,5 @@ void ScummEngine_v3::readGlobalObjects() {
 		_objectStateTable[i] = tmp >> OF_STATE_SHL;
 	}
 }
+
+} // End of namespace Scumm

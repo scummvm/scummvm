@@ -20,10 +20,12 @@
  */
 
 #include "stdafx.h"
-#include "scumm.h"
-#include "akos.h"
-#include "bomp.h"
+#include "scumm/scumm.h"
+#include "scumm/akos.h"
+#include "scumm/bomp.h"
 
+
+namespace Scumm {
 
 static void bompScaleFuncX(byte *line_buffer, byte *scaling_x_ptr, byte skip, int32 size);
 
@@ -386,3 +388,4 @@ int32 setupBompScale(byte *scaling, int32 size, byte scale) {
 	return ret_value;
 }
 
+} // End of namespace Scumm

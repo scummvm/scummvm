@@ -22,10 +22,12 @@
 
 #include "stdafx.h"
 #include "base/engine.h"
-#include "player_v2.h"
-#include "scumm.h"
+#include "scumm/player_v2.h"
+#include "scumm/scumm.h"
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
+
+namespace Scumm {
 
 #define FREQ_HZ 236 // Don't change!
 
@@ -1019,3 +1021,5 @@ _GRELEASEPTR(GBVARS_PCJRFREQTABLE_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
+
+} // End of namespace Scumm

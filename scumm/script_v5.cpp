@@ -29,6 +29,8 @@
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
 
+namespace Scumm {
+
 #define OPCODE(x)	{ &ScummEngine_v5::x, #x }
 
 void ScummEngine_v5::setupOpcodes() {
@@ -2929,3 +2931,5 @@ void ScummEngine_v5::o5_pickupObjectOld() {
 	clearDrawObjectQueue();
 	runInventoryScript(1);
 }
+
+} // End of namespace Scumm

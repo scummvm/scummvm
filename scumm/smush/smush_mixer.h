@@ -19,9 +19,13 @@
  *
  */
 
-#include "stdafx.h"
+#ifndef SMUSH_MIXER_H
+#define SMUSH_MIXER_H
 
+#include "stdafx.h"
 #include "sound/mixer.h"
+
+namespace Scumm {
 
 class SmushChannel;
 
@@ -49,3 +53,7 @@ public:
 	bool update();
 	bool _silentMixer;
 };
+
+} // End of namespace Scumm
+
+#endif

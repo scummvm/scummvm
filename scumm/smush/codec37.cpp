@@ -24,6 +24,8 @@
 #include "scumm/bomp.h"
 #include "scumm/smush/codec37.h"
 
+namespace Scumm {
+
 void Codec37Decoder::init(int width, int height) {
 	deinit();
 	_width = width;
@@ -511,4 +513,6 @@ void Codec37Decoder::decode(byte *dst, const byte *src) {
 
 	memcpy(dst, _deltaBufs[_curtable], _frameSize);
 }
+
+} // End of namespace Scumm
 

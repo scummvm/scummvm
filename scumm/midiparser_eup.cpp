@@ -25,6 +25,8 @@
 #include "common/util.h"
 
 
+namespace Scumm {
+
 //////////////////////////////////////////////////
 //
 // The FM Towns Euphony version of MidiParser
@@ -189,3 +191,5 @@ void MidiParser_EUP::resetTracking() {
 }
 
 MidiParser *MidiParser_createEUP() { return new MidiParser_EUP; }
+
+} // End of namespace Scumm

@@ -34,6 +34,8 @@
 #include "scumm/verbs.h"
 #include "sound/mididrv.h" // Need MD_ enum values
 
+namespace Scumm {
+
 static uint16 newTag2Old(uint32 oldTag);
 static const char *resTypeFromId(int id);
 
@@ -2373,3 +2375,5 @@ const char *resTypeFromId(int id) {
 		return buf;
 	}
 }
+
+} // End of namespace Scumm

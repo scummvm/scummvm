@@ -19,10 +19,12 @@
  */
 
 #include "stdafx.h"
-#include "charset.h"
-#include "scumm.h"
-#include "nut_renderer.h"
+#include "scumm/charset.h"
+#include "scumm/scumm.h"
+#include "scumm/nut_renderer.h"
 #include "base/gameDetector.h"
+
+namespace Scumm {
 
 CharsetRenderer::CharsetRenderer(ScummEngine *vm) {
 
@@ -1321,3 +1323,5 @@ _GRELEASEPTR(GBVARS_SPANISHCHARSETDATAV2_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
+
+} // End of namespace Scumm

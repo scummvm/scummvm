@@ -25,6 +25,7 @@
 
 #include "base/engine.h"
 
+namespace Scumm {
 
 /* System Wide Constants */
 enum {
@@ -70,5 +71,6 @@ struct VirtualMachineState {
 	byte numNestedScripts;
 };
 
+} // End of namespace Scumm
 
 #endif
