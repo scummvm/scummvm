@@ -38,7 +38,11 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/extensions/XShm.h>
+#ifdef __linux__
 #include <linux/soundcard.h>
+#else
+#include <sys/soundcard.h>
+#endif
 
 #include <sched.h>
 #include <pthread.h>
@@ -1023,8 +1027,8 @@ bool OSystem_X11::poll_event(Event *scumm_event)
 void OSystem_X11::set_timer(TimerProc callback, int interval)
 {
 	if (callback != NULL) {
-		_timer_duration = timer;
-		_timer_next_expiry = get_msecs() + timer;
+		_timer_duration = interval;
+		_timer_next_expiry = get_msecs() + interval;
 		_timer_callback = callback;
 		_timer_active = true;
 	} else {
