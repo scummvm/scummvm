@@ -184,6 +184,13 @@ void SkyState::initialise(void) {
 		else
 			_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk, _system);
 	}
+
+        // Override global fullscreen setting with any game-specific define
+        if (g_config->getBool("fullscreen", false)) {
+                if (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0))
+                        _system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
+        }
+
 	if (isCDVersion())
 		_systemVars.systemFlags |= SF_ALLOW_SPEECH | SF_ALLOW_TEXT;
 	else
