@@ -101,12 +101,13 @@ int32 MemoryManager::encodePtr(byte *ptr) {
 
 	assert(id <= 0x03ff);
 	assert(offset <= 0x003fffff);
+	assert(offset < _memBlocks[id].size);
 
 	return (id << 22) | (ptr - _memBlocks[id].ptr);
 }
 
 byte *MemoryManager::decodePtr(int32 n) {
-	int16 id = (n >> 22) & 0x03ff;
+	uint32 id = (n & 0xffc00000) >> 22;
 	uint32 offset = n & 0x003fffff;
 
 	assert(_memBlocks[id].ptr);
