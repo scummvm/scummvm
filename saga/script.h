@@ -239,6 +239,8 @@ struct ScriptDataBuf {
 
 class Script {
 public:
+	StringsTable _mainStrings;
+
 	Script();
 	~Script();
 	
@@ -296,7 +298,7 @@ protected:
 	ScriptData *_currentScript;
 	ScriptDataBuf _dataBuf[SCRIPT_DATABUF_NUM];
 	ScriptThreadList _threadList;
-	StringsTable _mainStrings;
+	
 
 //verb	
 	bool _firstObjectSet;

@@ -349,38 +349,24 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 }
 
 const char *SagaEngine::getObjectName(uint16 objectId) {
+	ActorData *actor;
+	ObjectData *obj;
 	const HitZone *hitZone;
 	switch (objectTypeId(objectId)) {
+		case kGameObjectObject:
+							obj = _actor->getObj(objectId);
+							_script->_mainStrings.getString(obj->nameIndex);
+							break;
 		case kGameObjectActor: 
-							return _actor->getActorName(objectId);
+							actor = _actor->getActor(objectId);			
+							return _actor->_actorsStrings.getString(actor->nameIndex);
 							break;
 		case kGameObjectHitZone:
 							hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(objectId));
 							return _vm->_scene->_sceneStrings.getString(hitZone->getNameIndex());
 	}
-	//todo: object name & etc
+	warning("SagaEngine::getObjectName name not found for 0x%X", objectId);
 	return NULL;
-}
-
-int SagaEngine::getObjectScriptEntrypointNumber(uint16 objectId) {
-	ActorData *actor;
-	switch (objectTypeId(objectId)) {
-		case kGameObjectActor: 
-			actor = _vm->_actor->getActor(objectId);
-			return actor->scriptEntrypointNumber;
-			break;
-	}
-	//todo: object name & etc
-	return 0;
-}
-
-int SagaEngine::getObjectFlags(uint16 objectId) {
-	ActorData *actor;
-	if (objectTypeId(objectId) == kGameObjectActor) {
-			actor = _vm->_actor->getActor(objectId);
-			return actor->flags;
-	}
-	return 0;
 }
 
 const char *SagaEngine::getTextString(int textStringId) {

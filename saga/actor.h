@@ -35,6 +35,7 @@ namespace Saga {
 
 class HitZone;
 
+
 #define ACTOR_DEBUG
 
 #define ACTOR_BARRIERS_MAX 16
@@ -120,11 +121,6 @@ struct PathDirectionData {
 	int16 y;
 };
 
-struct PathNode {
-	Point point;
-	int link;
-};
-
 struct ActorFrameRange {
 	int frameIndex;
 	int frameCount;
@@ -169,28 +165,51 @@ struct Location {
 	}
 };
 
-struct ActorData {
-	bool disabled;				// Actor disabled in init section
-	int index;					// Actor index
-	uint16 actorId;				// Actor id
-	int nameIndex;				// Actor's index in actor name string list
-	byte speechColor;			// Actor dialogue color
-	uint16 flags;				// Actor initial flags
-	int scriptEntrypointNumber;		// Actor script entrypoint number
+class CommonObjectData {
+public:
+	int index;					// index in local array
+	uint16 id;					// object id
+	uint16 flags;				// initial flags
+	int nameIndex;				// index in name string list
+	int sceneNumber;			// scene
+	int scriptEntrypointNumber;	// script entrypoint number
 
-	int sceneNumber;			// scene of actor
-	Location location;		// Actor's logical coordinates
-
-	Point screenPosition;		// Actor's screen coordinates
+	Location location;			// logical coordinates
+	Point screenPosition;		// screen coordinates
 	int screenDepth;			//
 	int screenScale;			//
 
+	SpriteList spriteList;		// sprite list data
+	int spriteListResourceId;	// sprite list resource id
+
+	int frameNumber;			// current frame number
+
+	CommonObjectData() {
+		screenDepth = screenScale = 0;
+		flags = 0;
+		frameNumber = 0;
+	}
+};
+
+typedef CommonObjectData *CommonObjectDataPointer;
+
+typedef SortedList<CommonObjectDataPointer> CommonObjectOrderList;
+
+class ObjectData: public CommonObjectData {	
+public:
+	uint16 interactBits;
+};
+
+class ActorData: public CommonObjectData {
+public:
+	bool disabled;				// Actor disabled in init section
+	byte speechColor;			// Actor dialogue color
+	
 	uint16 actorFlags;			// dynamic flags
 	int currentAction;			// ActorActions type
 	int facingDirection;		// orientation
 	int actionDirection;
 	int actionCycle;
-	int frameNumber;			// current actor frame number
 	uint16 targetObject;
 	const HitZone *lastZone;
 	
@@ -198,9 +217,6 @@ struct ActorData {
 	uint8 cycleDelay;
 	uint8 cycleTimeCount;
 	uint8 cycleFlags;
-
-	SpriteList spriteList;		// Actor's sprite list data
-	int spriteListResourceId;	// Actor's sprite list resource id
 
 	ActorFrameSequence *frames;	// Actor's frames
 	int framesCount;			// Actor's frames count
@@ -242,8 +258,7 @@ struct ActorData {
 	}
 };
 
-typedef ActorData *ActorDataPointer;
-typedef SortedList<ActorDataPointer> ActorOrderList;
+
 
 struct SpeechData {
 	int speechColor[ACTOR_SPEECH_ACTORS_MAX];
@@ -270,15 +285,41 @@ class Actor {
 public:
 	ActorData *_centerActor;
 	ActorData *_protagonist;
+	StringsTable _actorsStrings;
 
 	Actor(SagaEngine *vm);
 	~Actor();
 
 	void cmdActorWalkTo(int argc, const char **argv);
 
-	bool validActorId(uint16 id) { return (id == ID_PROTAG) || ((id > OBJECT_TYPE_MASK) && (id < objectIndexToId(kGameObjectActor, _actorsCount))); }
+	bool validActorId(uint16 id) { return (id == ID_PROTAG) || ((id >= objectIndexToId(kGameObjectActor, 0)) && (id < objectIndexToId(kGameObjectActor, _actorsCount))); }
 	int actorIdToIndex(uint16 id) { return (id == ID_PROTAG ) ? 0 : objectIdToIndex(id); }
 	uint16 actorIndexToId(int index) { return (index == 0 ) ? ID_PROTAG : objectIndexToId(kGameObjectActor, index); }
+	ActorData *getActor(uint16 actorId);
+	
+// clarification: Obj - means game object, such Hat, Spoon etc,  Object - means Actor,Obj,HitZone,StepZone
+
+	bool validObjId(uint16 id) { return (id >= objectIndexToId(kGameObjectObject, 0)) && (id < objectIndexToId(kGameObjectObject, _objsCount)); }
+	int objIdToIndex(uint16 id) { return objectIdToIndex(id); }
+	uint16 objIndexToId(int index) { return objectIndexToId(kGameObjectObject, index); }
+	ObjectData *getObj(uint16 objId);
+	
+	int getObjectScriptEntrypointNumber(uint16 id) {
+		int objectType;
+		objectType = objectTypeId(id);
+		if (!(objectType & (kGameObjectObject | kGameObjectActor))) {
+			error("Actor::getObjectScriptEntrypointNumber wrong id 0x%X", id);
+		}
+		return (objectType == kGameObjectObject) ? getObj(id)->scriptEntrypointNumber : getActor(id)->scriptEntrypointNumber;
+	}
+	int getObjectFlags(uint16 id) {
+		int objectType;
+		objectType = objectTypeId(id);
+		if (!(objectType & (kGameObjectObject | kGameObjectActor))) {
+			error("Actor::getObjectFlags wrong id 0x%X", id);
+		}
+		return (objectType == kGameObjectObject) ? getObj(id)->flags : getActor(id)->flags;
+	}
 
 	int direct(int msec);
 	int drawActors();
@@ -288,14 +329,13 @@ public:
 
 	uint16 testHit(const Point& mousePointer){ return ID_NOTHING;}; //TODO: do it
 	void takeExit(uint16 actorId, const HitZone *hitZone);
-	const char * getActorName(uint16 actorId);
 	bool actorEndWalk(uint16 actorId, bool recurse);
-	bool actorWalkTo(uint16 actorId, const Location &toLocation);
-	ActorData *getActor(uint16 actorId);
+	bool actorWalkTo(uint16 actorId, const Location &toLocation);		
 	ActorFrameRange *getActorFrameRange(uint16 actorId, int frameType);
-	void realLocation(Location &location, uint16 objectId, uint16 walkFlags);
 	void actorFaceTowardsPoint(uint16 actorId, const Location &toLocation);
 	void actorFaceTowardsObject(uint16 actorId, uint16 objectId);
+
+	void realLocation(Location &location, uint16 objectId, uint16 walkFlags);
 
 //	speech 
 	void actorSpeech(uint16 actorId, const char **strings, int stringsCount, uint16 sampleResourceId, int speechFlags);
@@ -316,7 +356,8 @@ private:
 	void stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, bool stopped);
 
 	void createDrawOrderList();
-	void calcActorScreenPosition(ActorData *actor);
+	void calcScreenPosition(CommonObjectData *commonObjectData);
+
 	bool followProtagonist(ActorData *actor);
 	void findActorPath(ActorData *actor, const Point &fromPoint, const Point &toPoint);
 	void handleSpeech(int msec);
@@ -350,13 +391,22 @@ private:
 	int _lastTickMsec;
 	SagaEngine *_vm;
 	RSCFILE_CONTEXT *_actorContext;
-	ActorOrderList _drawOrderList;
+	CommonObjectOrderList _drawOrderList;
+	
 	int _actorsCount;
 	ActorData **_actors;
+
+	int _objsCount;
+	ObjectData **_objs;
+
 	SpeechData _activeSpeech;
-	StringsTable _actorsStrings;
 
 //path stuff
+	struct PathNode {
+		Point point;
+		int link;
+	};
+
 	Rect _barrierList[ACTOR_BARRIERS_MAX];
 	int _barrierCount;
 	int8 *_pathCell;
@@ -413,10 +463,9 @@ private:
 
 		}
 	}
-	void addNewPathNodeListPoint(const Point &point, int link) {
+	void addNewPathNodeListPoint(const PathNode &pathNode) {
 		incrementNewPathNodeListIndex();
-		_newPathNodeList[_newPathNodeListIndex].point = point;
-		_newPathNodeList[_newPathNodeListIndex].link = link;
+		_newPathNodeList[_newPathNodeListIndex] = pathNode;
 	}
 
 public:

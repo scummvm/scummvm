@@ -33,18 +33,20 @@ enum {
 	kObjNotFlat = 0x02
 };
 
-struct OBJECTTABLE {
+struct ObjectTableData {
 	byte nameIndex;
 	int32 sceneIndex;
-	int16 x, y, z;
-	int32 spritelistRn;
+	int16 x;
+	int16 y;
+	int16 z;
+	int32 spriteListResourceId;
 	byte scriptEntrypointNumber;
 	uint16 interactBits;
 };
 
-#define OBJECTCOUNT 39
+#define ITE_OBJECTCOUNT 39
 
-extern OBJECTTABLE ObjectTable[OBJECTCOUNT];
+extern ObjectTableData ITE_ObjectTable[ITE_OBJECTCOUNT];
 
 #endif
 

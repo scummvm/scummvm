@@ -663,8 +663,8 @@ void Script::doVerb() {
 	objectType = objectTypeId(_pendingObject[0]);
 
 	if (_pendingVerb == kVerbGive) {
-		scriptEntrypointNumber = _vm->getObjectScriptEntrypointNumber(_pendingObject[1]);
-		if (_vm->getObjectFlags(_pendingObject[1]) & (kFollower|kProtagonist|kExtended)) {
+		scriptEntrypointNumber = _vm->_actor->getObjectScriptEntrypointNumber(_pendingObject[1]);
+		if (_vm->_actor->getObjectFlags(_pendingObject[1]) & (kFollower|kProtagonist|kExtended)) {
 			scriptModuleNumber = 0;
 		} else {
 			scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
@@ -686,9 +686,9 @@ void Script::doVerb() {
 			
 		} else {
 			if (objectType & (kGameObjectActor | kGameObjectObject)) {
-				scriptEntrypointNumber = _vm->getObjectScriptEntrypointNumber(_pendingObject[0]);
+				scriptEntrypointNumber = _vm->_actor->getObjectScriptEntrypointNumber(_pendingObject[0]);
 
-				if ((objectType == kGameObjectActor) && !(_vm->getObjectFlags(_pendingObject[0]) & (kFollower|kProtagonist|kExtended))) {
+				if ((objectType == kGameObjectActor) && !(_vm->_actor->getObjectFlags(_pendingObject[0]) & (kFollower|kProtagonist|kExtended))) {
 					scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
 				} else {
 					scriptModuleNumber = 0;

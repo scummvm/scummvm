@@ -28,7 +28,7 @@
 namespace Saga {
 
 
-OBJECTTABLE ObjectTable[OBJECTCOUNT] = {
+ObjectTableData ITE_ObjectTable[ITE_OBJECTCOUNT] = {
 	{  8,  49, 1256,  760,  0,  9,  5, kObjNotFlat }, // Magic Hat
 	{  9,  52, 1080, 1864,  0, 10,  4, kObjUseWith }, // Berries
 	{ 10, 259,  744,  524,  0, 11, 42, kObjUseWith }, // Card Key

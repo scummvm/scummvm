@@ -529,7 +529,7 @@ void Interface::removeFromInventory(int sprite) {
 void Interface::drawInventory() {
 	if (_panelMode != kPanelMain)
 		return;
-
+/*
 	SURFACE *back_buf = _vm->_gfx->getBackBuffer();
 
 	// TODO: Inventory scrolling
@@ -560,7 +560,7 @@ void Interface::drawInventory() {
 			}
 			col = 0;
 		}
-	}
+	}*/
 }
 
 int Interface::inventoryTest(const Point& imousePt, int *ibutton) {

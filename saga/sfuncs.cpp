@@ -153,9 +153,12 @@ int Script::sfWait(SCRIPTFUNC_PARAMS) {
 
 // Script function #2 (0x02)
 int Script::SF_takeObject(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord param = thread->pop();
+	thread->pop();
+	warning("Not implemented");
+/*	ScriptDataWord param = thread->pop();
 	int index = param & 0x1FFF;
-
+	
+	
 	if (index >= ARRAYSIZE(ObjectTable)) {
 		return FAILURE;
 	}
@@ -163,7 +166,7 @@ int Script::SF_takeObject(SCRIPTFUNC_PARAMS) {
 	if (ObjectTable[index].sceneIndex != -1) {
 		ObjectTable[index].sceneIndex = -1;
 		_vm->_interface->addToInventory(index);
-	}
+	}*/
 
 	return SUCCESS;
 }
@@ -171,7 +174,11 @@ int Script::SF_takeObject(SCRIPTFUNC_PARAMS) {
 // Script function #3 (0x03)
 // Check if an object is carried.
 int Script::SF_objectIsCarried(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord param = thread->pop();
+	/*ScriptDataWord param =*/ thread->pop();
+	warning("Not implemented");
+	thread->retVal = 0;
+/*	
+	
 	int index = param & 0x1FFF;
 
 	if (index >= ARRAYSIZE(ObjectTable)) {
@@ -179,7 +186,7 @@ int Script::SF_objectIsCarried(SCRIPTFUNC_PARAMS) {
 		return FAILURE;
 	}
 
-	thread->retVal = (ObjectTable[index].sceneIndex == -1) ? 1 : 0;
+	thread->retVal = (ObjectTable[index].sceneIndex == -1) ? 1 : 0;*/
 	return SUCCESS;
 }
 
@@ -435,8 +442,10 @@ int Script::SF_gotoScene(SCRIPTFUNC_PARAMS) {
 
 // Script function #17 (0x11)
 int Script::SF_setObjImage(SCRIPTFUNC_PARAMS) {
-	int16 obj_param = getSWord(thread->pop());
+	error("Not implemented");
+/*	int16 obj_param = getSWord(thread->pop());
 	int16 sprite_param = getSWord(thread->pop());
+
 
 	int index = obj_param & 0x1FFF;
 
@@ -446,13 +455,15 @@ int Script::SF_setObjImage(SCRIPTFUNC_PARAMS) {
 
 	ObjectTable[index].spritelistRn = sprite_param + 9;
 	_vm->_interface->draw();
-
+*/
 	return SUCCESS;
 }
 
 // Script function #18 (0x12)
 int Script::SF_setObjName(SCRIPTFUNC_PARAMS) {
-	int obj_param = getSWord(thread->pop());
+	error("Not implemented");
+
+/*	int obj_param = getSWord(thread->pop());
 	int name_param = getSWord(thread->pop());
 
 	int index = obj_param & 0x1FFF;
@@ -461,13 +472,15 @@ int Script::SF_setObjName(SCRIPTFUNC_PARAMS) {
 		return FAILURE;
 	}
 
-	ObjectTable[index].nameIndex = name_param;
+	ObjectTable[index].nameIndex = name_param;*/
 	return SUCCESS;
 }
 
 // Script function #19 (0x13)
 int Script::SF_getObjImage(SCRIPTFUNC_PARAMS) {
-	int param = getSWord(thread->pop());
+	error("Not implemented");
+
+/*	int param = getSWord(thread->pop());
 	int index = param & 0x1FFF;
 
 	if (index >= ARRAYSIZE(ObjectTable)) {
@@ -475,7 +488,7 @@ int Script::SF_getObjImage(SCRIPTFUNC_PARAMS) {
 		return FAILURE;
 	}
 
-	thread->retVal = ObjectTable[index].spritelistRn;
+	thread->retVal = ObjectTable[index].spritelistRn;*/
 	return SUCCESS;
 }
 
@@ -647,7 +660,9 @@ int Script::SF_sceneEq(SCRIPTFUNC_PARAMS) {
 
 // Script function #32 (0x20)
 int Script::SF_dropObject(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord obj_param = thread->pop();
+	error("Not implemented");
+
+/*	ScriptDataWord obj_param = thread->pop();
 	ScriptDataWord sprite_param = thread->pop();
 	ScriptDataWord x_param = thread->pop();
 	ScriptDataWord y_param = thread->pop();
@@ -666,7 +681,7 @@ int Script::SF_dropObject(SCRIPTFUNC_PARAMS) {
 	ObjectTable[index].spritelistRn = 9 + sprite_param;
 	ObjectTable[index].x = x_param;
 	ObjectTable[index].y = y_param;
-
+*/
 	return SUCCESS;
 }
 

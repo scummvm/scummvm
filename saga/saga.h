@@ -460,8 +460,6 @@ public:
 	void loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength);
 
 	const char *getObjectName(uint16 objectId);
-	int getObjectScriptEntrypointNumber(uint16 objectId);
-	int getObjectFlags(uint16 objectId);
 public:
 	TEXTLIST *textCreateList();
 	void textDestroyList(TEXTLIST *textlist);
