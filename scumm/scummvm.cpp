@@ -1448,6 +1448,11 @@ void Scumm::waitForTimer(int msec_delay) {
 					&& (event.kbd.flags == OSystem::KBD_ALT ||
 						event.kbd.flags == OSystem::KBD_CTRL)) {
 					_saveLoadSlot = event.kbd.keycode - '0';
+
+					//  don't overwrite autosave (slot 0)
+	                                if (_saveLoadSlot == 0)
+						_saveLoadSlot = 10;
+					
 					sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
 					_saveLoadFlag = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
 					_saveLoadCompatible = false;
