@@ -245,7 +245,7 @@ uint32 File::readUint32BE() {
 	return (b << 16) | a;
 }
 
-uint32 File::write(void *ptr, uint32 size) {
+uint32 File::write(void *ptr, uint32 len) {
 	byte *ptr2 = (byte *)ptr;
 
 	if (_handle == NULL) {
@@ -253,22 +253,22 @@ uint32 File::write(void *ptr, uint32 size) {
 		return 0;
 	}
 
-	if (size == 0)
+	if (len == 0)
 		return 0;
 
 	if (_encbyte != 0) {
-		uint32 t_size = size;
+		uint32 t_size = len;
 		do {
 			*ptr2++ ^= _encbyte;
 		} while (--t_size);
 	}
 
-	if ((uint32)fwrite(ptr2, 1, size, _handle) != size) {
+	if ((uint32)fwrite(ptr2, 1, len, _handle) != len) {
 		clearerr(_handle);
 		_ioFailed = true;
 	}
 
-	return size;
+	return len;
 }
 
 void File::writeByte(byte value) {
