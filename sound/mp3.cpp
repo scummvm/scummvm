@@ -152,7 +152,7 @@ public:
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	int16 read();
-	bool eos() const			{ return eosIntern(); }
+	bool endOfData() const		{ return eosIntern(); }
 	bool isStereo() const		{ return _isStereo; }
 	
 	int getRate() const			{ return _frame.header.samplerate; }

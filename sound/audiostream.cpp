@@ -82,7 +82,7 @@ public:
 		return val;
 	}
 	bool isStereo() const		{ return stereo; }
-	bool eos() const			{ return eosIntern(); }
+	bool endOfData() const		{ return eosIntern(); }
 
 	int getRate() const			{ return _rate; }
 };
@@ -131,7 +131,8 @@ public:
 
 	int16 read();
 	bool isStereo() const		{ return stereo; }
-	bool eos() const			{ return _finalized && eosIntern(); }
+	bool endOfStream() const	{ return _finalized && eosIntern(); }
+	bool endOfData() const		{ return eosIntern(); }
 
 	int getRate() const			{ return _rate; }
 
@@ -276,7 +277,7 @@ public:
 		return *_pos++;
 	}
 	bool isStereo() const { return _isStereo; }
-	bool eos() const { return false; }
+	bool endOfData() const { return false; }
 	
 	int getRate() const { return _rate; }
 };

@@ -53,8 +53,24 @@ public:
 	/** Is this a stereo stream? */
 	virtual bool isStereo() const = 0;
 	
-	/** End of stream reached? */
-	virtual bool eos() const = 0;
+	/**
+	 * End of data reached? If this returns true, it means that at this
+	 * time there is no data available in the stream. However there may be
+	 * more data in the future.
+	 * This is used by e.g. a rate converter to decide whether to keep on
+	 * converting data or stop.
+	 */
+	virtual bool endOfData() const = 0;
+	
+	/**
+	 * End of stream reached? If this returns true, it means that all data
+	 * in this stream is used up and no additional data will appear in it
+	 * in the future.
+	 * This is used by the mixer to decide whether a given stream shall be
+	 * removed from the list of active streams (and thus be destroyed).
+	 * By default this maps to endOfData()
+	 */
+	virtual bool endOfStream() const { return endOfData(); }
 
 	/** Sample rate of the stream. */
 	virtual int getRate() const = 0;

@@ -61,14 +61,16 @@ public:
 
 	virtual int readBuffer(int16 *buffer, const int numSamples) {
 		int samples;
-		for (samples = 0; samples < numSamples && !eos(); samples++) {
+		for (samples = 0; samples < numSamples && !endOfData(); samples++) {
 			*buffer++ = read();
 		}
 		return samples;
 	}
 
 	int16 read();
-	bool eos() const;
+	bool endOfData() const;
+	// This stream never 'ends'
+	bool endOfStream() const { return false; }
 
 	MusicHandle() : _firstTime(false),
 			_streaming(false), _paused(false), _looping(false),

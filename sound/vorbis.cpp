@@ -166,7 +166,7 @@ public:
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	int16 read();
-	bool eos() const			{ return eosIntern(); }
+	bool endOfData() const		{ return eosIntern(); }
 	bool isStereo() const		{ return _numChannels >= 2; }
 	
 	int getRate() const			{ return ov_info(_ov_file, -1)->rate; }

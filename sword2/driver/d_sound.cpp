@@ -105,7 +105,7 @@ int16 MusicHandle::read() {
 	return out;
 }
 
-bool MusicHandle::eos() const {
+bool MusicHandle::endOfData() const {
 	return (!_streaming || _filePos >= _fileEnd);
 }
 

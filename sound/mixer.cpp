@@ -485,9 +485,11 @@ void Channel::destroy() {
  */
 void Channel::mix(int16 *data, uint len) {
 	assert(_input);
-	if (_input->eos()) {
-		// TODO: call drain method
+
+	if (_input->endOfStream()) {
 		destroy();
+	} else if (_input->endOfData()) {
+		// TODO: call drain method
 	} else {
 		assert(_converter);
 

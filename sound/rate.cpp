@@ -200,7 +200,7 @@ public:
 		int16 tmp[2];
 		st_size_t len = osamp;
 		assert(input.isStereo() == stereo);
-		while (!input.eos() && len--) {
+		while (!input.endOfData() && len--) {
 			tmp[0] = tmp[1] = input.read();
 			if (stereo)
 				tmp[reverseStereo ? 0 : 1] = input.read();
