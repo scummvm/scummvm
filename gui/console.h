@@ -108,13 +108,13 @@ protected:
 	void putcharIntern(int c);
 	void insertIntoPrompt(const char *str);
 	void print(const char *str);
-	void nextLine();
 	void updateScrollBar();
 	void scrollToCurrent();
 	inline int getBufferPos() const { return _currentPos % kBufferSize; }
 
 	// Line editing
 	void specialKeys(int keycode);
+	void nextLine();
 	void killChar();
 	void killLine();
 	void killLastWord();

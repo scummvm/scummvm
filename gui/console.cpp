@@ -136,11 +136,7 @@ void ConsoleDialog::handleTickle() {
 	uint32 time = g_system->get_msecs();
 	if (_caretTime < time) {
 		_caretTime = time + kCaretBlinkTime;
-		if (_caretVisible) {
-			drawCaret(true);
-		} else {
-			drawCaret(false);
-		}
+		drawCaret(_caretVisible);
 	}
 }
 
@@ -159,12 +155,10 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			
 		nextLine();
 
+		assert(_promptEndPos >= _promptStartPos);
 		int len = _promptEndPos - _promptStartPos;
 		bool keepRunning = true;
 
-		// FIXME - len should NEVER be negative. If anything makes it negative,
-		// then the code doing that is buggy and needs to be fixed.
-		assert(len >= 0);
 
 		if (len > 0) {
 
@@ -530,12 +524,11 @@ void ConsoleDialog::drawCaret(bool erase) {
 
 void ConsoleDialog::scrollToCurrent() {
 	int line = _currentPos / _lineWidth;
-	int displayLine = line - _scrollLine + _linesPerPage - 1;
 
-	if (displayLine < 0) {
+	if (line + _linesPerPage <= _scrollLine) {
 		// TODO - this should only occur for loong edit lines, though
-	} else if (displayLine >= _linesPerPage) {
-		_scrollLine = _currentPos / _lineWidth;
+	} else if (line > _scrollLine) {
+		_scrollLine = line;
 		updateScrollBar();
 	}
 }
