@@ -225,7 +225,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 98 */
 		OPCODE(o2_restart),
 		OPCODE(o2_doSentence),
-		OPCODE(o2_assignVarWord),
+		OPCODE(o5_move),
 		OPCODE(o2_setBitVar),
 		/* 9C */
 		OPCODE(o5_startSound),
@@ -250,7 +250,7 @@ void Scumm_v2::setupOpcodes() {
 		/* AC */
 		OPCODE(o2_drawSentence),
 		OPCODE(o5_putActorInRoom),
-		OPCODE(o2_waitForSentence),
+		OPCODE(o2_waitForMessage),
 		OPCODE(o2_ifNotState04),
 		/* B0 */
 		OPCODE(o2_matrixOps),
@@ -458,24 +458,14 @@ void Scumm_v2::o2_clearState01() {
 	clearStateCommon(0x01);
 }
 
-void Scumm_v2::o2_assignVarByteIndirect() {
-	getResultPosIndirect();
-	setResult(fetchScriptByte());
-}
-
 void Scumm_v2::o2_assignVarWordIndirect() {
 	getResultPosIndirect();
-	setResult(fetchScriptWord());
+	setResult(getVarOrDirectWord(0x80));
 }
 
 void Scumm_v2::o2_assignVarByte() {
 	getResultPos();
 	setResult(fetchScriptByte());
-}
-
-void Scumm_v2::o2_assignVarWord() {
-	getResultPos();
-	setResult(fetchScriptWord());
 }
 
 void Scumm_v2::o2_setObjY() {
@@ -599,6 +589,22 @@ void Scumm_v2::o2_waitForActor() {
 	}
 }
 
+void Scumm_v2::o2_waitForMessage() {
+	
+	if (_vars[VAR_HAVE_MSG]) {
+		_scriptPointer--;
+		o5_breakHere();
+	}
+}
+
+void Scumm_v2::o2_waitForSentence() {
+	if (_sentenceNum && !isScriptInUse(2))
+		return;
+
+	_scriptPointer--;
+	o5_breakHere();
+}
+
 void Scumm_v2::o2_actorSet() {
 	int act = getVarOrDirectByte(0x80);
 	int arg = getVarOrDirectByte(0x40);
@@ -635,15 +641,6 @@ void Scumm_v2::o2_actorSet() {
 		default:
 			warning("o2_actorSet: opcode %d not yet supported", _opcode);
 	}
-}
-
-void Scumm_v2::o2_waitForSentence() {
-	if (_sentenceNum)
-		if (!isScriptInUse(2))
-			return;
-
-	_scriptPointer--;
-	o5_breakHere();
 }
 
 void Scumm_v2::o2_restart() {

@@ -214,10 +214,8 @@ protected:
 	void o2_clearState02();
 	void o2_setState01();
 	void o2_clearState01();
-	void o2_assignVarByteIndirect();
 	void o2_assignVarWordIndirect();
 	void o2_assignVarByte();
-	void o2_assignVarWord();
 	void o2_setObjY();
 	void o2_getObjY();
 	void o2_setBitVar();
@@ -234,6 +232,7 @@ protected:
 	void o2_ifNotState01();
 	void o2_actorSet();
 	void o2_waitForActor();
+	void o2_waitForMessage();
 	void o2_waitForSentence();
 	void o2_restart();
 	void o2_drawObject();
