@@ -190,18 +190,6 @@
 			Filter="">
 			<File
 				RelativePath="..\..\scumm\insane\insane.cpp">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\scumm\insane\insane.h">
