@@ -98,6 +98,8 @@ sub begin_credits {
 	if ($mode eq "TEXT") {
 		#print html_entities_to_ascii($title)."\n";
 	} elsif ($mode eq "RTF") {
+		# TODO: The following is somewhat Mac/Cocoa specific and could probably
+		# be changed to be more portable... ?
 		print '{\rtf1\mac\ansicpg10000\cocoartf102' . "\n";
 		print '{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;}' . "\n";
 		print '{\colortbl;\red255\green255\blue255;\red0\green128\blue0;}' . "\n";
