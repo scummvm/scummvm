@@ -126,7 +126,7 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *syst)
 int KyraEngine::init() {
 
 	// Initialize backen
-	syst->initSize(320, 200);
+	_system->initSize(320, 200);
 	_screen = new uint8[320*200];
 	memset(_screen, 0, sizeof(uint8) * 320 * 200);
 
