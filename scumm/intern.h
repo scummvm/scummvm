@@ -883,8 +883,8 @@ protected:
 	void o90_getWizData();
 	void o90_unknown2F();
 	void o90_mod();
-	void o90_shl4();
-	void o90_shr4();
+	void o90_shl();
+	void o90_shr();
 	void o90_findAllObjectsWithClassOf();
 	void o90_getPolygonOverlap();
 	void o90_cond();
