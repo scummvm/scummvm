@@ -128,6 +128,7 @@ public:
 	//@}
 
 
+
 	/** @name Graphics */
 	//@{
 
@@ -296,6 +297,44 @@ public:
 
 
 
+	/** @name Overlay */
+	//@{
+	virtual void show_overlay() = 0;
+	virtual void hide_overlay() = 0;
+	virtual void clear_overlay() = 0;
+	virtual void grab_overlay(OverlayColor *buf, int pitch) = 0;
+	virtual void copy_rect_overlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) = 0;
+	virtual int16 get_overlay_height()	{ return getHeight(); }
+	virtual int16 get_overlay_width()	{ return getWidth(); }
+
+	/**
+	* Convert the given RGB triplet into an OverlayColor. A OverlayColor can
+	 * be 8bit, 16bit or 32bit, depending on the target system. The default
+	 * implementation generates a 16 bit color value, in the 565 format
+	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
+	 * @see colorToRGB
+	 */
+	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b) {
+		return ((((r >> 3) & 0x1F) << 11) | (((g >> 2) & 0x3F) << 5) | ((b >> 3) & 0x1F));
+	}
+
+	/**
+	 * Convert the given OverlayColor into a RGB triplet. An OverlayColor can
+	 * be 8bit, 16bit or 32bit, depending on the target system. The default
+	 * implementation takes a 16 bit color value and assumes it to be in 565 format
+	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
+	 * @see RGBToColor
+	 */
+	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
+		r = (((color >> 11) & 0x1F) << 3);
+		g = (((color >> 5) & 0x3F) << 2);
+		b = ((color&0x1F) << 3);
+	}
+
+	//@}
+
+
+
 	/** @name Mouse */
 	//@{
 
@@ -322,6 +361,8 @@ public:
 	virtual void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY) = 0;
 
 	//@}
+
+
 
 	/** @name Events and Time */
 	//@{
@@ -437,6 +478,53 @@ public:
 
 
 
+	/**
+	 * @name Mutex handling
+	 * Historically, the OSystem API used to have a method which allowed
+	 * creating threads. Hence mutex support was needed for thread syncing.
+	 * To ease portability, though, we decided to remove the threading API.
+	 * Instead, we now use timers (see setTimerCallback() and Common::Timer).
+	 * But since those may be implemented using threads (and in fact, that's
+	 * how our primary backend, the SDL one, does it on many systems), we
+	 * still have to do mutex syncing in our timer callbacks.
+	 *
+	 * Hence backends which do not use threads to implement the timers simply
+	 * can use dummy implementations for these methods.
+	 */
+	//@{
+
+	typedef struct Mutex *MutexRef;
+
+	/**
+	 * Create a new mutex.
+	 * @return the newly created mutex, or 0 if an error occured.
+	 */
+	virtual MutexRef createMutex(void) = 0;
+
+	/**
+	 * Lock the given mutex.
+	 * @param mutex	the mutex to lock.
+	 */
+	virtual void lockMutex(MutexRef mutex) = 0;
+
+	/**
+	 * Unlock the given mutex.
+	 * @param mutex	the mutex to unlock.
+	 */
+	virtual void unlockMutex(MutexRef mutex) = 0;
+
+	/**
+	 * Delete the given mutex. Make sure the mutex is unlocked before you delete it.
+	 * If you delete a locked mutex, the behavior is undefined, in particular, your
+	 * program may crash.
+	 * @param mutex	the mutex to delete.
+	 */
+	virtual void deleteMutex(MutexRef mutex) = 0;
+
+	//@}
+
+
+
 	/** @name Sound */
 	//@{
 	typedef void (*SoundProc)(void *param, byte *buf, int len);
@@ -462,8 +550,9 @@ public:
 	 * @return the output sample rate
 	 */
 	virtual int getOutputSampleRate() const = 0;
+
 	//@}
-		
+
 
 
 	/**
@@ -507,89 +596,6 @@ public:
 
 
 
-	/**
-	 * @name Mutex handling
-	 * Historically, the OSystem API used to have a method which allowed
-	 * creating threads. Hence mutex support was needed for thread syncing.
-	 * To ease portability, though, we decided to remove the threading API.
-	 * Instead, we now use timers (see setTimerCallback() and Common::Timer).
-	 * But since those may be implemented using threads (and in fact, that's
-	 * how our primary backend, the SDL one, does it on many systems), we
-	 * still have to do mutex syncing in our timer callbacks.
-	 *
-	 * Hence backends which do not use threads to implement the timers simply
-	 * can use dummy implementations for these methods.
-	 */
-	//@{
-
-	typedef struct Mutex *MutexRef;
-
-	/**
-	 * Create a new mutex.
-	 * @return the newly created mutex, or 0 if an error occured.
-	 */
-	virtual MutexRef createMutex(void) = 0;
-
-	/**
-	 * Lock the given mutex.
-	 * @param mutex	the mutex to lock.
-	 */
-	virtual void lockMutex(MutexRef mutex) = 0;
-
-	/**
-	 * Unlock the given mutex.
-	 * @param mutex	the mutex to unlock.
-	 */
-	virtual void unlockMutex(MutexRef mutex) = 0;
-
-	/**
-	 * Delete the given mutex. Make sure the mutex is unlocked before you delete it.
-	 * If you delete a locked mutex, the behavior is undefined, in particular, your
-	 * program may crash.
-	 * @param mutex	the mutex to delete.
-	 */
-	virtual void deleteMutex(MutexRef mutex) = 0;
-	//@}
-
-
-	
-	/** @name Overlay */
-	//@{
-	virtual void show_overlay() = 0;
-	virtual void hide_overlay() = 0;
-	virtual void clear_overlay() = 0;
-	virtual void grab_overlay(OverlayColor *buf, int pitch) = 0;
-	virtual void copy_rect_overlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) = 0;
-	virtual int16 get_overlay_height()	{ return getHeight(); }
-	virtual int16 get_overlay_width()	{ return getWidth(); }
-
-	/**
-	* Convert the given RGB triplet into an OverlayColor. A OverlayColor can
-	 * be 8bit, 16bit or 32bit, depending on the target system. The default
-	 * implementation generates a 16 bit color value, in the 565 format
-	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
-	 * @see colorToRGB
-	 */
-	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b) {
-		return ((((r >> 3) & 0x1F) << 11) | (((g >> 2) & 0x3F) << 5) | ((b >> 3) & 0x1F));
-	}
-
-	/**
-	 * Convert the given OverlayColor into a RGB triplet. An OverlayColor can
-	 * be 8bit, 16bit or 32bit, depending on the target system. The default
-	 * implementation takes a 16 bit color value and assumes it to be in 565 format
-	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
-	 * @see RGBToColor
-	 */
-	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
-		r = (((color >> 11) & 0x1F) << 3);
-		g = (((color >> 5) & 0x3F) << 2);
-		b = ((color&0x1F) << 3);
-	}
-	//@}
-
-
-
 	/** @name Miscellaneous */
 	//@{
 	/** Quit (exit) the application. */
@@ -606,6 +612,7 @@ public:
 	virtual SaveFileManager *get_savefile_manager() {
 		return new SaveFileManager();
 	}
+
 	//@}
 };
 
