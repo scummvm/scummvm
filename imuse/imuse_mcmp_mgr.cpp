@@ -18,16 +18,12 @@
 #include "../stdafx.h"
 #include "../bits.h"
 #include "../debug.h"
-#include "../timer.h"
 #include "../resource.h"
 
-#include "../mixer/mixer.h"
-#include "../mixer/audiostream.h"
-
 #include "imuse_mcmp_mgr.h"
-#include "imuse_sndmgr.h"
 
 uint16 imuseDestTable[5786];
+void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable);
 
 McmpMgr::McmpMgr() {
 	_compTable = NULL;
@@ -48,7 +44,7 @@ McmpMgr::~McmpMgr() {
 	_compInput = NULL;
 }
 
-bool McmpMgr::openSound(const char *filename, byte *resPtr, int &offsetData) {
+bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
 	_outputSize = 0;
 	_lastBlock = -1;
 
@@ -61,46 +57,48 @@ bool McmpMgr::openSound(const char *filename, byte *resPtr, int &offsetData) {
 
 	uint32 tag;
 	fread(&tag, 1, 4, _file);
-	tag = MKID_BE32(tag);
+	tag = MKID_BE(tag);
 	if (tag != MKID_BE('MCMP')) {
 		error("McmpMgr::loadCompTable() Expected MCMP tag");
+		return false;
 	}
 
 	fread(&_numCompItems, 1, 2, _file);
-	_numCompItems = MKID_BE16(_numCompItems);
+	_numCompItems = MKID_BE(_numCompItems);
 	assert(_numCompItems > 0);
 
 	int offset = ftell(_file) + (_numCompItems * 9) + 8;
 	_numCompItems--;
 	_compTable = (CompTable *)malloc(sizeof(CompTable) * _numCompItems);
-	int32 header_size;
 	fseek(_file, 5, SEEK_CUR);
-	fread(_compTable[i].decompSize, 1, 4, _file);
+	fread(&_compTable[0].decompSize, 1, 4, _file);
 
 	int32 maxSize = 0;
 	int i;
 	for (i = 0; i < _numCompItems; i++) {
-		fread(_compTable[i].codec, 1, 1, _file);
-		fread(_compTable[i].decompSize, 1, 4, _file);
-		_compTable[i].decompSize = MKID_BE32(_compTable[i].decompSize);
-		fread(_compTable[i].compSize, 1, 4, _file);
-		_compTable[i].compSize = MKID_BE32(_compTable[i].compSize);
+		fread(&_compTable[i].codec, 1, 1, _file);
+		fread(&_compTable[i].decompSize, 1, 4, _file);
+		_compTable[i].decompSize = MKID_BE(_compTable[i].decompSize);
+		fread(&_compTable[i].compSize, 1, 4, _file);
+		_compTable[i].compSize = MKID_BE(_compTable[i].compSize);
 		_compTable[i].offset = offset;
 		offset += _compTable[i].compSize;
-		if (_compTable[i].size > maxSize)
+		if (_compTable[i].compSize > maxSize)
 			maxSize = _compTable[i].compSize;
 	}
 	int16 sizeCodecs;
 	fread(&sizeCodecs, 1, 2, _file);
-	sizeCodecs = MKID_BE16(sizeCodecs);
+	sizeCodecs = MKID_BE(sizeCodecs);
 	for (i = 0; i < _numCompItems; i++) {
 		_compTable[i].offset += sizeCodecs;
 	}
 	fseek(_file, sizeCodecs, SEEK_CUR);
 	_compInput = (byte *)malloc(maxSize);
-	fread(_compInput, 1, _compTable[0].decompSize);
+	fread(_compInput, 1, _compTable[0].decompSize, _file);
 	*resPtr = _compInput;
 	offsetData = _compTable[0].compSize;
+
+	return true;
 }
 
 int32 McmpMgr::decompressSample(int32 offset, int32 size, byte **comp_final) {
@@ -118,6 +116,7 @@ int32 McmpMgr::decompressSample(int32 offset, int32 size, byte **comp_final) {
 
 	first_block = offset / 0x2000;
 	last_block = (offset + size - 1) / 0x2000;
+	skip = offset % 0x2000;
 
 	// Clip last_block by the total number of blocks (= "comp items")
 	if ((last_block >= _numCompItems) && (_numCompItems > 0))
@@ -127,12 +126,10 @@ int32 McmpMgr::decompressSample(int32 offset, int32 size, byte **comp_final) {
 	*comp_final = (byte *)malloc(blocks_final_size);
 	final_size = 0;
 
-	skip = (offset + header_size) % 0x2000;
-
 	for (i = first_block; i <= last_block; i++) {
 		if (_lastBlock != i) {
-			_file.seek(_compTable[i].offset, SEEK_SET);
-			_file.read(_compInput, _compTable[i].compSize);
+			fseek(_file, _compTable[i].offset, SEEK_SET);
+			fread(_compInput, 1, _compTable[i].compSize, _file);
 			decompressVima(_compInput, (int16 *)_compOutput, _compTable[i].decompSize, imuseDestTable);
 			_outputSize = _compTable[i].decompSize;
 			if (_outputSize > 0x2000) {

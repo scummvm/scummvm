@@ -25,10 +25,11 @@
 #include "../mixer/audiostream.h"
 
 #include "imuse_sndmgr.h"
+#include "imuse_mcmp_mgr.h"
 
-ImuseSndMgr::ImuseSndMgr(ScummEngine *scumm) {
+ImuseSndMgr::ImuseSndMgr() {
 	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
-		memset(&_sounds[l], 0, sizeof(soundStruct));
+		memset(&_sounds[l], 0, sizeof(SoundStruct));
 	}
 }
 
@@ -65,10 +66,10 @@ void ImuseSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps) {
 	} while (tag != MKID_BE('DATA'));
 }
 
-void ImuseSndMgr::parseSoundSound(byte *ptr, soundStruct *sound, int &headerSize) {
+void ImuseSndMgr::parseSoundHeader(byte *ptr, SoundStruct *sound, int &headerSize) {
 	if (READ_UINT32(ptr) == MKID('RIFF')) {
-		sound->region = (_region *)malloc(sizeof(_region));
-		sound->jump = (_jump *)malloc(0);
+		sound->region = (Region *)malloc(sizeof(Region));
+		sound->jump = (Jump *)malloc(0);
 		sound->numJumps = 0;
 		sound->numRegions = 1;
 		sound->region[0].offset = 0;
@@ -88,9 +89,9 @@ void ImuseSndMgr::parseSoundSound(byte *ptr, soundStruct *sound, int &headerSize
 
 		sound->numRegions = 0;
 		sound->numJumps = 0;
-		countElements(ptr, sound->numRegions, sound->numJumps, sound->numSyncs);
-		sound->region = (_region *)malloc(sizeof(_region) * sound->numRegions);
-		sound->jump = (_jump *)malloc(sizeof(_jump) * sound->numJumps);
+		countElements(ptr, sound->numRegions, sound->numJumps);
+		sound->region = (Region *)malloc(sizeof(Region) * sound->numRegions);
+		sound->jump = (Jump *)malloc(sizeof(Jump) * sound->numJumps);
 
 		do {
 			tag = READ_BE_UINT32(ptr); ptr += 4;
@@ -139,7 +140,7 @@ void ImuseSndMgr::parseSoundSound(byte *ptr, soundStruct *sound, int &headerSize
 	}
 }
 
-ImuseSndMgr::soundStruct *ImuseSndMgr::allocSlot() {
+ImuseSndMgr::SoundStruct *ImuseSndMgr::allocSlot() {
 	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
 		if (!_sounds[l].inUse) {
 			_sounds[l].inUse = true;
@@ -150,13 +151,12 @@ ImuseSndMgr::soundStruct *ImuseSndMgr::allocSlot() {
 	return NULL;
 }
 
-ImuseSndMgr::soundStruct *ImuseSndMgr::openSound(const char *soundName, int volGroupId) {
-	assert(oundType);
+ImuseSndMgr::SoundStruct *ImuseSndMgr::openSound(const char *soundName, int volGroupId) {
 	const char *extension = soundName + std::strlen(soundName) - 3;
 	byte *ptr = NULL;
 	int headerSize = 0;
 
-	soundStruct *sound = allocSlot();
+	SoundStruct *sound = allocSlot();
 	if (!sound) {
 		error("ImuseSndMgr::openSound() Can't alloc free sound slot");
 	}
@@ -165,9 +165,9 @@ ImuseSndMgr::soundStruct *ImuseSndMgr::openSound(const char *soundName, int volG
 	sound->volGroupId = volGroupId;
 
 	if (strcasecmp(extension, "imu") == 0) {
-		Block *b = getFileBlock(soundName);
+		Block *b = ResourceLoader::instance()->getFileBlock(soundName);
 		if (b != NULL) {
-			ptr = b->data();
+			ptr = (byte *)b->data();
 			delete b;
 			parseSoundHeader(ptr, sound, headerSize);
 			sound->mcmpData = false;
@@ -178,7 +178,7 @@ ImuseSndMgr::soundStruct *ImuseSndMgr::openSound(const char *soundName, int volG
 		}
 	} else if (strcasecmp(extension, "wav") == 0 || strcasecmp(extension, "imc") == 0) {
 		sound->mcmpMgr = new McmpMgr();
-		if (!sound->mcmpMgr->openSound(soundName, &ptr)) {
+		if (!sound->mcmpMgr->openSound(soundName, &ptr, headerSize)) {
 			closeSound(sound);
 			return NULL;
 		}
@@ -191,7 +191,7 @@ ImuseSndMgr::soundStruct *ImuseSndMgr::openSound(const char *soundName, int volG
 	return sound;
 }
 
-void ImuseSndMgr::closeSound(soundStruct *soundHandle) {
+void ImuseSndMgr::closeSound(SoundStruct *soundHandle) {
 	assert(checkForProperHandle(soundHandle));
 
 	if (soundHandle->mcmpMgr)
@@ -200,16 +200,16 @@ void ImuseSndMgr::closeSound(soundStruct *soundHandle) {
 	free(soundHandle->region);
 	free(soundHandle->jump);
 
-	memset(soundHandle, 0, sizeof(soundStruct));
+	memset(soundHandle, 0, sizeof(SoundStruct));
 }
 
-ImuseSndMgr::soundStruct *ImuseSndMgr::cloneSound(soundStruct *soundHandle) {
+ImuseSndMgr::SoundStruct *ImuseSndMgr::cloneSound(SoundStruct *soundHandle) {
 	assert(checkForProperHandle(soundHandle));
 
 	return openSound(soundHandle->name, soundHandle->volGroupId);
 }
 
-bool ImuseSndMgr::checkForProperHandle(soundStruct *soundHandle) {
+bool ImuseSndMgr::checkForProperHandle(SoundStruct *soundHandle) {
 	if (!soundHandle)
 		return false;
 
@@ -221,46 +221,44 @@ bool ImuseSndMgr::checkForProperHandle(soundStruct *soundHandle) {
 	return false;
 }
 
-int ImuseSndMgr::getFreq(soundStruct *soundHandle) {
+int ImuseSndMgr::getFreq(SoundStruct *soundHandle) {
 	assert(checkForProperHandle(soundHandle));
 	return soundHandle->freq;
 }
 
-int ImuseSndMgr::getBits(soundStruct *soundHandle) {
+int ImuseSndMgr::getBits(SoundStruct *soundHandle) {
 	assert(checkForProperHandle(soundHandle));
 	return soundHandle->bits;
 }
 
-int ImuseSndMgr::getChannels(soundStruct *soundHandle) {
+int ImuseSndMgr::getChannels(SoundStruct *soundHandle) {
 	assert(checkForProperHandle(soundHandle));
 	return soundHandle->channels;
 }
 
-bool ImuseSndMgr::isEndOfRegion(soundStruct *soundHandle, int region) {
+bool ImuseSndMgr::isEndOfRegion(SoundStruct *soundHandle, int region) {
 	assert(checkForProperHandle(soundHandle));
 	assert(region >= 0 && region < soundHandle->numRegions);
 	return soundHandle->endFlag;
 }
 
-int ImuseSndMgr::getNumRegions(soundStruct *soundHandle) {
+int ImuseSndMgr::getNumRegions(SoundStruct *soundHandle) {
 	assert(checkForProperHandle(soundHandle));
 	return soundHandle->numRegions;
 }
 
-int ImuseSndMgr::getNumJumps(soundStruct *soundHandle) {
+int ImuseSndMgr::getNumJumps(SoundStruct *soundHandle) {
 	assert(checkForProperHandle(soundHandle));
 	return soundHandle->numJumps;
 }
 
-int ImuseSndMgr::getRegionOffset(soundStruct *soundHandle, int region) {
-	debug(5, "getRegionOffset() region:%d", region);
+int ImuseSndMgr::getRegionOffset(SoundStruct *soundHandle, int region) {
 	assert(checkForProperHandle(soundHandle));
 	assert(region >= 0 && region < soundHandle->numRegions);
 	return soundHandle->region[region].offset;
 }
 
-int ImuseSndMgr::getJumpIdByRegionAndHookId(soundStruct *soundHandle, int region, int hookId) {
-	debug(5, "getJumpIdByRegionAndHookId() region:%d, hookId:%d", region, hookId);
+int ImuseSndMgr::getJumpIdByRegionAndHookId(SoundStruct *soundHandle, int region, int hookId) {
 	assert(checkForProperHandle(soundHandle));
 	assert(region >= 0 && region < soundHandle->numRegions);
 	int32 offset = soundHandle->region[region].offset;
@@ -274,8 +272,7 @@ int ImuseSndMgr::getJumpIdByRegionAndHookId(soundStruct *soundHandle, int region
 	return -1;
 }
 
-int ImuseSndMgr::getRegionIdByJumpId(soundStruct *soundHandle, int jumpId) {
-	debug(5, "getRegionIdByJumpId() jumpId:%d", jumpId);
+int ImuseSndMgr::getRegionIdByJumpId(SoundStruct *soundHandle, int jumpId) {
 	assert(checkForProperHandle(soundHandle));
 	assert(jumpId >= 0 && jumpId < soundHandle->numJumps);
 	int32 dest = soundHandle->jump[jumpId].dest;
@@ -288,22 +285,19 @@ int ImuseSndMgr::getRegionIdByJumpId(soundStruct *soundHandle, int jumpId) {
 	return -1;
 }
 
-int ImuseSndMgr::getJumpHookId(soundStruct *soundHandle, int number) {
-	debug(5, "getJumpHookId() number:%d", number);
+int ImuseSndMgr::getJumpHookId(SoundStruct *soundHandle, int number) {
 	assert(checkForProperHandle(soundHandle));
 	assert(number >= 0 && number < soundHandle->numJumps);
 	return soundHandle->jump[number].hookId;
 }
 
-int ImuseSndMgr::getJumpFade(soundStruct *soundHandle, int number) {
-	debug(5, "getJumpFade() number:%d", number);
+int ImuseSndMgr::getJumpFade(SoundStruct *soundHandle, int number) {
 	assert(checkForProperHandle(soundHandle));
 	assert(number >= 0 && number < soundHandle->numJumps);
 	return soundHandle->jump[number].fadeDelay;
 }
 
-int32 ImuseSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, byte **buf, int32 offset, int32 size) {
-	debug(5, "getDataFromRegion() region:%d, offset:%d, size:%d, numRegions:%d", region, offset, size, soundHandle->numRegions);
+int32 ImuseSndMgr::getDataFromRegion(SoundStruct *soundHandle, int region, byte **buf, int32 offset, int32 size) {
 	assert(checkForProperHandle(soundHandle));
 	assert(buf && offset >= 0 && size >= 0);
 	assert(region >= 0 && region < soundHandle->numRegions);
@@ -318,11 +312,11 @@ int32 ImuseSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, byte 
 		soundHandle->endFlag = false;
 	}
 
-	if (sound->mcmpData) {
+	if (soundHandle->mcmpData) {
 		size = soundHandle->mcmpMgr->decompressSample(region_offset + offset, size, buf);
 	} else {
 		*buf = (byte *)malloc(size);
-		memcpy(*buf, soundHandle->resPtr + start + offset, size);
+		memcpy(*buf, soundHandle->resPtr + region_offset + offset, size);
 	}
 	
 	return size;

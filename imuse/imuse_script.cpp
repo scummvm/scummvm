@@ -23,7 +23,12 @@
 #include "../mixer/mixer.h"
 #include "../mixer/audiostream.h"
 
+#include "imuse.h"
 #include "imuse_sndmgr.h"
+
+extern SoundMixer *g_mixer;
+
+
 /*
 void Imuse::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, int g, int h) {
 	int soundId = b;
@@ -100,11 +105,10 @@ void Imuse::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, int g, i
 	default:
 		error("Imuse::doCommand DEFAULT command %d", cmd);
 	}
-}
-*/
+}*/
+
 void Imuse::flushTracks() {
-	debug(5, "flushTracks()");
-	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
+	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && track->readyToRemove) {
 			if (track->stream) {
@@ -112,7 +116,7 @@ void Imuse::flushTracks() {
 	 				track->stream->finish();
 	 			}
 				if (track->stream->endOfStream()) {
-					_vm->_mixer->stopHandle(track->handle);
+					g_mixer->stopHandle(track->handle);
 					delete track->stream;
 					track->stream = NULL;
 					_sound->closeSound(track->soundHandle);
@@ -125,9 +129,8 @@ void Imuse::flushTracks() {
 }
 
 void Imuse::refreshScripts() {
-	debug(5, "refreshScripts()");
 	bool found = false;
-	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			found = true;
@@ -135,28 +138,24 @@ void Imuse::refreshScripts() {
 	}
 
 	if (!found && (_curMusicSeq != 0)) {
-		debug(5, "refreshScripts() Start Sequence");
-		parseScriptCmds(0x1001, 0, 0, 0, 0, 0, 0, 0);
+		setMusicSequence(0x1001);
 	}
 }
 
 void Imuse::startVoice(const char *soundName) {
-	debug(5, "startVoice(%s)", soundName);
 	startSound(soundName, IMUSE_VOLGRP_VOICE, 0, 127, 0, 127);
 }
 
 void Imuse::startMusic(const char *soundName, int hookId, int volume, int pan) {
-	debug(5, "startMusic(%s)", soundName);
 	startSound(soundName, IMUSE_VOLGRP_MUSIC, hookId, volume, pan, 126);
 }
 
 void Imuse::startSfx(const char *soundName, int priority) {
-	debug(5, "startSfx(%s)", soundName);
 	startSound(soundName, IMUSE_VOLGRP_SFX, 0, 127, 0, priority);
 }
 
 int32 Imuse::getPosInMs(const char *soundName) {
-	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
 			int32 pos = (5 * (track->dataOffset + track->regionOffset)) / (track->iteration / 200);
@@ -168,8 +167,7 @@ int32 Imuse::getPosInMs(const char *soundName) {
 }
 
 bool Imuse::getSoundStatus(const char *soundName) const {
-	debug(5, "Imuse::getSoundStatus(%s)", soundName);
-	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (strcmp(track->soundName, soundName) == 0) {
 			if (track->handle.isActive() || (track->stream && track->used && !track->readyToRemove)) {
@@ -182,8 +180,7 @@ bool Imuse::getSoundStatus(const char *soundName) const {
 }
 
 void Imuse::stopSound(const char *soundName) {
-	debug(5, "Imuse::stopSound(%s)", soundName);
-	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
 			track->toBeRemoved = true;
@@ -194,7 +191,7 @@ void Imuse::stopSound(const char *soundName) {
 int32 Imuse::getCurMusicPosInMs() {
 	const char *soundName = NULL;
 
-	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			soundName = track->soundName;
@@ -202,16 +199,13 @@ int32 Imuse::getCurMusicPosInMs() {
 	}
 
 	int32 msPos = getPosInMs(soundName);
-	debug(5, "Imuse::getCurMusicPosInMs(%s) = %d", soundName, msPos);
 	return msPos;
 }
 
 void Imuse::stopAllSounds() {
-	debug(5, "Imuse::stopAllSounds");
-
 	for(;;) {
 		bool foundNotRemoved = false;
-		for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
+		for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 			Track *track = _track[l];
 			if (track->used) {
 				track->toBeRemoved = true;

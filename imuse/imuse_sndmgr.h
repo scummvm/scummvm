@@ -26,6 +26,8 @@
 #include "../mixer/mixer.h"
 #include "../mixer/audiostream.h"
 
+class McmpMgr;
+
 class ImuseSndMgr {
 public:
 
@@ -36,12 +38,12 @@ public:
 #define IMUSE_VOLGRP_MUSIC 3
 
 private:
-	struct _region {
+	struct Region {
 		int32 offset;		// offset of region
 		int32 length;		// lenght of region
 	};
 
-	struct _jump {
+	struct Jump {
 		int32 offset;		// jump offset position
 		int32 dest;			// jump to dest position
 		byte hookId;		// id of hook
@@ -50,29 +52,30 @@ private:
 	
 public:
 
-	struct soundStruct {
+	struct SoundStruct {
 		uint16 freq;		// frequency
 		byte channels;		// stereo or mono
 		byte bits;			// 8, 12, 16
 		int numJumps;		// number of Jumps
 		int numRegions;		// number of Regions
-		_region *region;
-		_jump *jump;
+		Region *region;
+		Jump *jump;
 		bool endFlag;
 		bool inUse;
 		char name[32];
-		McmpMgr *_mcmpMgr;
+		McmpMgr *mcmpMgr;
 		int volGroupId;
 		byte *resPtr;
+		bool mcmpData;
 	};
 
 private:
 
-	soundStruct _sounds[MAX_IMUSE_SOUNDS];
+	SoundStruct _sounds[MAX_IMUSE_SOUNDS];
 
-	bool checkForProperHandle(soundStruct *soundHandle);
-	soundStruct *allocSlot();
-	void parseSoundHeader(byte *ptr, soundStruct *sound, int &headerSize);
+	bool checkForProperHandle(SoundStruct *soundHandle);
+	SoundStruct *allocSlot();
+	void parseSoundHeader(byte *ptr, SoundStruct *sound, int &headerSize);
 	void countElements(byte *ptr, int &numRegions, int &numJumps);
 
 public:
@@ -80,23 +83,23 @@ public:
 	ImuseSndMgr();
 	~ImuseSndMgr();
 
-	soundStruct *openSound(const char *soundName, int volGroupId);
-	void closeSound(soundStruct *soundHandle);
-	soundStruct *cloneSound(soundStruct *soundHandle);
+	SoundStruct *openSound(const char *soundName, int volGroupId);
+	void closeSound(SoundStruct *soundHandle);
+	SoundStruct *cloneSound(SoundStruct *soundHandle);
 
-	int getFreq(soundStruct *soundHandle);
-	int getBits(soundStruct *soundHandle);
-	int getChannels(soundStruct *soundHandle);
-	bool isEndOfRegion(soundStruct *soundHandle, int region);
-	int getNumRegions(soundStruct *soundHandle);
-	int getNumJumps(soundStruct *soundHandle);
-	int getRegionOffset(soundStruct *soundHandle, int region);
-	int getJumpIdByRegionAndHookId(soundStruct *soundHandle, int region, int hookId);
-	int getRegionIdByJumpId(soundStruct *soundHandle, int jumpId);
-	int getJumpHookId(soundStruct *soundHandle, int number);
-	int getJumpFade(soundStruct *soundHandle, int number);
+	int getFreq(SoundStruct *soundHandle);
+	int getBits(SoundStruct *soundHandle);
+	int getChannels(SoundStruct *soundHandle);
+	bool isEndOfRegion(SoundStruct *soundHandle, int region);
+	int getNumRegions(SoundStruct *soundHandle);
+	int getNumJumps(SoundStruct *soundHandle);
+	int getRegionOffset(SoundStruct *soundHandle, int region);
+	int getJumpIdByRegionAndHookId(SoundStruct *soundHandle, int region, int hookId);
+	int getRegionIdByJumpId(SoundStruct *soundHandle, int jumpId);
+	int getJumpHookId(SoundStruct *soundHandle, int number);
+	int getJumpFade(SoundStruct *soundHandle, int number);
 
-	int32 getDataFromRegion(soundStruct *soundHandle, int region, byte **buf, int32 offset, int32 size);
+	int32 getDataFromRegion(SoundStruct *soundHandle, int region, byte **buf, int32 offset, int32 size);
 };
 
 #endif

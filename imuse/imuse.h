@@ -21,14 +21,26 @@
 #include "../stdafx.h"
 #include "../bits.h"
 #include "../debug.h"
-#include "imuse.h"
-#include "imuse_sndmgr.h"
 
 #include "../mixer/mixer.h"
 #include "../mixer/audiostream.h"
 
+#include "imuse_sndmgr.h"
+#include "imuse_mcmp_mgr.h"
+
 #define MAX_IMUSE_TRACKS 8
 #define MAX_IMUSE_FADETRACKS 8
+
+struct ImuseTable {
+	byte opcode;
+	int16 soundId;
+	byte atribPos;
+	byte hookId;
+	int16 fadeOut60TicksDelay;
+	byte volume;
+	byte pan;
+	char filename[32];
+};
 
 class Imuse {
 private:
@@ -61,7 +73,7 @@ private:
 		int32 mixerVol;
 		int32 mixerPan;
 
-		ImuseSndMgr::soundStruct *soundHandle;
+		ImuseSndMgr::SoundStruct *soundHandle;
 		PlayingSoundHandle handle;
 		AppendableAudioStream *stream;
 
@@ -100,7 +112,7 @@ private:
 
 	void setMusicState(int stateId);
 	void setMusicSequence(int seqId);
-	void playMusic(const char *songName, const ImuseTable *table, int atribPos, bool sequence);
+	void playMusic(const ImuseTable *table, int atribPos, bool sequence);
 
 public:
 	Imuse(int fps);
@@ -130,19 +142,8 @@ public:
 //	void parseScriptCmds(int cmd, int soundId, int sub_cmd, int d, int e, int f, int g, int h);
 	void refreshScripts();
 	void flushTracks();
-	int getSoundStatus(const char *soundName) const;
+	bool getSoundStatus(const char *soundName) const;
 	int32 getCurMusicPosInMs();
-};
-
-struct ImuseTable {
-	byte opcode;
-	int16 soundId;
-	byte atribPos;
-	byte hookId;
-	int16 fadeOut60TicksDelay;
-	byte volume;
-	byte pan;
-	char filename[32];
 };
 
 #endif

@@ -27,6 +27,7 @@
 #include "timer.h"
 #include "smush.h"
 #include "mixer/mixer.h"
+#include "imuse/imuse.h"
 
 #include "driver_gl.h"
 
@@ -49,6 +50,7 @@ int PASCAL WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdL
 
 extern SoundMixer *g_mixer;
 extern Timer *g_timer;
+extern Imuse *g_imuse;
 
 static bool parseBoolStr(const char *val) {
 	if (val == NULL || val[0] == 0)
@@ -114,14 +116,11 @@ int main(int argc, char *argv[]) {
 	atexit(saveRegistry);
 
 	g_mixer = new SoundMixer();
+	g_mixer->setVolume(255);
 	g_timer = new Timer();
 	g_smush = new Smush();
-
 	g_driver = new Driver(640, 480, 24);
-	
-	g_mixer->setVolume(255);
-
-//	Mixer::instance()->start();
+	g_imuse = new Imuse(10);
 
 	Bitmap *splash_bm = ResourceLoader::instance()->loadBitmap("splash.bm");
 
@@ -162,6 +161,7 @@ int main(int argc, char *argv[]) {
 	lua_removelibslists();
 	lua_close();
 
+	delete g_imuse;
 	delete g_smush;
 	delete g_timer;
 	delete g_mixer;

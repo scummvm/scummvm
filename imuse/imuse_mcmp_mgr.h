@@ -48,17 +48,13 @@ private:
 	int _outputSize;
 	int _lastBlock;
 
-	bool loadCompTable(int32 index);
-
 public:
 
 	McmpMgr();
 	~McmpMgr();
 
-	bool openFile(const char *filename);
-	int32 decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final);
-	int32 decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **comp_final, int header_size);
-	int32 decompressSampleByCurIndex(int32 offset, int32 size, byte **comp_final, int header_size);
+	bool openSound(const char *filename, byte **resPtr, int &offsetData);
+	int32 decompressSample(int32 offset, int32 size, byte **comp_final);
 };
 
 #endif

@@ -18,12 +18,15 @@
 #include "../stdafx.h"
 #include "../bits.h"
 #include "../debug.h"
-#include "../timer.h"
 
 #include "../mixer/mixer.h"
 #include "../mixer/audiostream.h"
 
+#include "imuse.h"
 #include "imuse_sndmgr.h"
+
+extern SoundMixer *g_mixer;
+
 
 int Imuse::allocSlot(int priority) {
 	int l, lowest_priority = 127;
@@ -37,7 +40,7 @@ int Imuse::allocSlot(int priority) {
 	}
 
 	if (trackId == -1) {
-		debug(5, "Imuse::startSound(): All slots are full");
+		warning("Imuse::startSound(): All slots are full");
 		for (l = 0; l < MAX_IMUSE_TRACKS; l++) {
 			Track *track = _track[l];
 			if (track->used && !track->toBeRemoved && lowest_priority > track->priority) {
@@ -48,9 +51,9 @@ int Imuse::allocSlot(int priority) {
 		if (lowest_priority <= priority) {
 			assert(trackId != -1);
 			_track[trackId]->toBeRemoved = true;
-			debug(5, "Imuse::startSound(): Removed sound %s from track %d", _track[trackId]->soundName, trackId);
+			warning("Imuse::startSound(): Removed sound %s from track %d", _track[trackId]->soundName, trackId);
 		} else {
-			debug(5, "Imuse::startSound(): Priority sound too low");
+			warning("Imuse::startSound(): Priority sound too low");
 			return -1;
 		}
 	}
@@ -58,9 +61,7 @@ int Imuse::allocSlot(int priority) {
 	return trackId;
 }
 
-void Imuse::startSound(const char *soundName, int volGroupId, int hookId, int volume, int pan = 64, int priority) {
-	debug(5, "Imuse::startSound(%s)", soundName);
-
+void Imuse::startSound(const char *soundName, int volGroupId, int hookId, int volume, int pan, int priority) {
 	int l = allocSlot(priority);
 	if (l == -1) {
 		warning("Imuse::startSound() Can't start sound - no free slots");
@@ -98,7 +99,7 @@ void Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 	int bits = 0, freq = 0, channels = 0;
 
 	strcpy(track->soundName, soundName);
-	track->soundHandle = _sound->openSound(soundName, volGroupId, -1);
+	track->soundHandle = _sound->openSound(soundName, volGroupId);
 
 	if (track->soundHandle == NULL)
 		return;
@@ -141,13 +142,12 @@ void Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 	// setup 1 second stream wrapped buffer
 	int32 streamBufferSize = track->iteration;
 	track->stream = makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
-	_vm->_mixer->playInputStream(&track->handle, track->stream, false, -1, track->mixerVol, track->mixerPan, false);
+	g_mixer->playInputStream(&track->handle, track->stream, false, -1, track->mixerVol, track->mixerPan, false);
 	track->started = true;
 	track->used = true;
 }
 
 void Imuse::setPriority(const char *soundName, int priority) {
-	debug(5, "Imuse::setPriority(%s, %d)", soundName, priority);
 	assert ((priority >= 0) && (priority <= 127));
 
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
@@ -158,9 +158,7 @@ void Imuse::setPriority(const char *soundName, int priority) {
 	}
 }
 
-void Imuse::setVolume(int soundName, int volume) {
-	debug(5, "IMuseDigital::setVolume(%s, %d)", soundName, volume);
-
+void Imuse::setVolume(const char *soundName, int volume) {
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
@@ -170,8 +168,6 @@ void Imuse::setVolume(int soundName, int volume) {
 }
 
 void Imuse::setPan(const char *soundName, int pan) {
-	debug(5, "Imuse::setPan(%s, %d)", soundName, pan);
-
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
@@ -181,7 +177,6 @@ void Imuse::setPan(const char *soundName, int pan) {
 }
 
 void Imuse::selectVolumeGroup(const char *soundName, int volGroupId) {
-	debug(5, "Imuse::setGroupVolume(%s, %d)", soundName, volGroupId);
 	assert((volGroupId >= 1) && (volGroupId <= 4));
 
 	if (volGroupId == 4)
@@ -197,7 +192,6 @@ void Imuse::selectVolumeGroup(const char *soundName, int volGroupId) {
 
 void Imuse::setFade(const char *soundName, int destVolume, int delay60HzTicks) {
 	StackLock lock(_mutex);
-	debug(5, "Imuse::setFade(%s, %d, %d)", soundName, destVolume, delay60HzTicks);
 
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
@@ -211,7 +205,6 @@ void Imuse::setFade(const char *soundName, int destVolume, int delay60HzTicks) {
 }
 
 void Imuse::fadeOutMusic(int fadeDelay) {
-	debug(5, "Imuse::fadeOutMusic");
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
@@ -224,8 +217,6 @@ void Imuse::fadeOutMusic(int fadeDelay) {
 Imuse::Track *Imuse::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	assert(track);
 	Track *fadeTrack = 0;
-
-	debug(5, "Imuse::cloneToFadeOutTrack(%d, %d)", track->trackId, fadeDelay);
 
 	{
 		StackLock lock(_mutex);
@@ -265,7 +256,7 @@ Imuse::Track *Imuse::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	// setup 1 second stream wrapped buffer
 	int32 streamBufferSize = fadeTrack->iteration;
 	fadeTrack->stream = makeAppendableAudioStream(_sound->getFreq(fadeTrack->soundHandle), fadeTrack->mixerFlags, streamBufferSize);
-	_vm->_mixer->playInputStream(&fadeTrack->handle, fadeTrack->stream, false, -1, fadeTrack->vol / 1000, fadeTrack->pan, false);
+	g_mixer->playInputStream(&fadeTrack->handle, fadeTrack->stream, false, -1, fadeTrack->vol / 1000, fadeTrack->pan, false);
 	fadeTrack->started = true;
 	fadeTrack->used = true;
 

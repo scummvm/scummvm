@@ -26,6 +26,13 @@ OBJS =\
 	mixer/mixer.o \
 	mixer/rate.o \
 	mixer/audiostream.o \
+	imuse/imuse.o \
+	imuse/imuse_mcmp_mgr.o \
+	imuse/imuse_music.o \
+	imuse/imuse_script.o \
+	imuse/imuse_sndmgr.o \
+	imuse/imuse_tables.o \
+	imuse/imuse_track.o \
 	actor.o \
 	bitmap.o \
 	blocky16.o \
@@ -49,6 +56,7 @@ OBJS =\
 	scene.o \
 	screen.o \
 	smush.o \
+	sound.o \
 	textobject.o \
 	textsplit.o \
 	timer.o \
