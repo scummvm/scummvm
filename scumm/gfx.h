@@ -193,8 +193,6 @@ struct BompDrawData {
 	int srcwidth, srcheight;
 	uint16 shadowMode;
 
-	int32 scaleRight, scaleBottom;
-	byte *scalingXPtr, *scalingYPtr;
 	byte *maskPtr;
 	
 	BompDrawData() { memset(this, 0, sizeof(*this)); }

@@ -26,8 +26,6 @@
 
 namespace Scumm {
 
-int32 setupBompScale(byte *scaling, int32 size, byte scale);
-
 void bompApplyMask(byte *line_buffer, byte *mask, byte maskbit, int32 size, byte transparency);
 void bompApplyShadow(int shadowMode, const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency, byte HE7Check = false);
 

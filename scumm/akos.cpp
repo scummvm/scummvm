@@ -983,11 +983,6 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	bdd.scale_y = 255;
 	bdd.shadowMode = _shadow_mode;
 
-	bdd.scalingXPtr = NULL;
-	bdd.scalingYPtr = NULL;
-	bdd.scaleRight = 0;
-	bdd.scaleBottom = 0;
-
 	if (!_mirror) {
 		bdd.x = (_actorX - xmoveCur - _width) + 1;
 	} else {

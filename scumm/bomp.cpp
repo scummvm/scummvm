@@ -27,6 +27,8 @@
 
 namespace Scumm {
 
+static int32 setupBompScale(byte *scaling, int32 size, byte scale);
+
 static void bompScaleFuncX(byte *line_buffer, byte *scaling_x_ptr, byte skip, int32 size);
 
 static void bompApplyShadow0(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency, byte HE7Check);
@@ -200,10 +202,12 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 	byte *dst;
 	byte *mask = 0;
 	Common::Rect clip;
-	byte *scalingYPtr = bd.scalingYPtr;
+	byte *scalingYPtr = 0;
 	byte skip_y_bits = 0x80;
 	byte skip_y_new = 0;
 	byte tmp;
+	byte bomp_scaling_x[64];
+	byte bomp_scaling_y[64];
 
 
 	if (bd.x < 0) {
@@ -240,21 +244,23 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 
 	// Setup vertical scaling
 	if (bd.scale_y != 255) {
-		assert(scalingYPtr);
+		int scaleBottom = setupBompScale(bomp_scaling_y, bd.srcheight, bd.scale_y);
+		scalingYPtr = bomp_scaling_y;
 
 		skip_y_new = *scalingYPtr++;
 		skip_y_bits = 0x80;
 
-		if (clip.bottom > bd.scaleBottom) {
-			clip.bottom = bd.scaleBottom;
+		if (clip.bottom > scaleBottom) {
+			clip.bottom = scaleBottom;
 		}
 	}
 
 	// Setup horizontal scaling
 	if (bd.scale_x != 255) {
-		assert(bd.scalingXPtr);
-		if (clip.right > bd.scaleRight) {
-			clip.right = bd.scaleRight;
+		int scaleRight = setupBompScale(bomp_scaling_x, bd.srcwidth, bd.scale_x);
+
+		if (clip.right > scaleRight) {
+			clip.right = scaleRight;
 		}
 	}
 
@@ -296,7 +302,7 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 
 		// Perform horizontal scaling
 		if (bd.scale_x != 255) {
-			bompScaleFuncX(line_buffer, bd.scalingXPtr, 0x80, bd.srcwidth);
+			bompScaleFuncX(line_buffer, bomp_scaling_x, 0x80, bd.srcwidth);
 		}
 
 		// The first clip.top lines are to be clipped, i.e. not drawn

@@ -1519,21 +1519,11 @@ void ScummEngine::drawBlastObject(BlastObject *eo) {
 	bdd.maskPtr = NULL;
 
 	if ((bdd.scale_x != 255) || (bdd.scale_y != 255)) {
-		byte bomp_scaling_x[64], bomp_scaling_y[64];
-		bdd.scalingXPtr = bomp_scaling_x;
-		bdd.scalingYPtr = bomp_scaling_y;
-		bdd.scaleRight = setupBompScale(bomp_scaling_x, bdd.srcwidth, bdd.scale_x);
-		bdd.scaleBottom = setupBompScale(bomp_scaling_y, bdd.srcheight, bdd.scale_y);
 		bdd.shadowMode = 0;
-		drawBomp(bdd, false);
 	} else {
-		bdd.scalingXPtr = NULL;
-		bdd.scalingYPtr = NULL;
-		bdd.scaleRight = 0;
-		bdd.scaleBottom = 0;
 		bdd.shadowMode = eo->mode;
-		drawBomp(bdd, false);
 	}
+	drawBomp(bdd, false);
 
 	markRectAsDirty(vs->number, bdd.x, bdd.x + bdd.srcwidth, bdd.y, bdd.y + bdd.srcheight);
 }
