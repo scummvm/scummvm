@@ -7,6 +7,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 - Added option to choose between Adlib, PCjr and PC Speaker in earlier games.
 - Added Adlib support for indy3ega and loom (ega)
 - Added sound effects support for indy3/monkeyega/monkeyvga/pass
+- Added HQ3x scaler
 - Classic V1 versions of Maniac Mansion and Zak McKracken are now supported and completable
 - Rewrote sound mixer, and several iMUSE bugs fixed
 - Adlib GM emulation table revamped, providing more accurate software MIDI
