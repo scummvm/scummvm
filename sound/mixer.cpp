@@ -469,15 +469,15 @@ protected:
 	}
 };
 
-static inline int clamped_add_16(int a, int b) {
+static inline void clamped_add_16(int16& a, int16 b) {
 	int val = a + b;
 
-	if (val > 32767) {
-		return 32767;
-	} else if (val < -32768) {
-		return -32768;
-	} else
-		return val;
+	if (val > 32767)
+		a = 32767;
+	else if (val < -32768)
+		a = -32768;
+	else
+		a = val;
 }
 
 static void mix_signed_mono_8(int16 *data, uint &len, byte *&s, uint32 &fp_pos,
@@ -489,10 +489,8 @@ static void mix_signed_mono_8(int16 *data, uint &len, byte *&s, uint32 &fp_pos,
 		do {
 			result = interp.interpolate(fp_pos);
 
-			*data = clamped_add_16(*data, result);
-			data++;
-			*data = clamped_add_16(*data, result);
-			data++;
+			clamped_add_16(*data++, result);
+			clamped_add_16(*data++, result);
 
 			fp_pos += fp_speed;
 			inc = fp_pos >> 16;
@@ -518,10 +516,8 @@ static void mix_unsigned_mono_8(int16 *data, uint &len, byte *&s, uint32 &fp_pos
 		do {
 			result = interp.interpolate(fp_pos);
 
-			*data = clamped_add_16(*data, result);
-			data++;
-			*data = clamped_add_16(*data, result);
-			data++;
+			clamped_add_16(*data++, result);
+			clamped_add_16(*data++, result);
 
 			fp_pos += fp_speed;
 			inc = fp_pos >> 16;
@@ -551,15 +547,11 @@ static void mix_unsigned_stereo_8(int16 *data, uint &len, byte *&s, uint32 &fp_p
 	do {
 		do {
 			if (!reverse_stereo) {
-				*data = clamped_add_16(*data, left.interpolate(fp_pos));
-				data++;
-				*data = clamped_add_16(*data, right.interpolate(fp_pos));
-				data++;
+				clamped_add_16(*data++, left.interpolate(fp_pos));
+				clamped_add_16(*data++, right.interpolate(fp_pos));
 			} else {
-				*data = clamped_add_16(*data, right.interpolate(fp_pos));
-				data++;
-				*data = clamped_add_16(*data, left.interpolate(fp_pos));
-				data++;
+				clamped_add_16(*data++, right.interpolate(fp_pos));
+				clamped_add_16(*data++, left.interpolate(fp_pos));
 			}
 
 			fp_pos += fp_speed;
@@ -586,10 +578,8 @@ static void mix_signed_mono_16(int16 *data, uint &len, byte *&s, uint32 &fp_pos,
 		int16 sample = ((int16)READ_BE_UINT16(s) * volume) / 256;
 		fp_pos += fp_speed;
 
-		*data = clamped_add_16(*data, sample);
-		data++;
-		*data = clamped_add_16(*data, sample);
-		data++;
+		clamped_add_16(*data++, sample);
+		clamped_add_16(*data++, sample);
 
 		s += (fp_pos >> 16) << 1;
 		fp_pos &= 0x0000FFFF;
@@ -609,15 +599,11 @@ static void mix_signed_stereo_16(int16 *data, uint &len, byte *&s, uint32 &fp_po
 		fp_pos += fp_speed;
 
 		if (!reverse_stereo) {
-			*data = clamped_add_16(*data, leftS);
-			data++;
-			*data = clamped_add_16(*data, rightS);
-			data++;
+			clamped_add_16(*data++, leftS);
+			clamped_add_16(*data++, rightS);
 		} else {
-			*data = clamped_add_16(*data, rightS);
-			data++;
-			*data = clamped_add_16(*data, leftS);
-			data++;
+			clamped_add_16(*data++, rightS);
+			clamped_add_16(*data++, leftS);
 		}
 		s += (fp_pos >> 16) << 2;
 		fp_pos &= 0x0000FFFF;
@@ -700,7 +686,7 @@ void ChannelRaw::mix(int16 *data, uint len) {
 
 	_pos = s - _ptr;
 
-	if (_size < 1) {
+	if (_size <= 0) {
 		if (_flags & SoundMixer::FLAG_LOOP) {
 			_ptr = _loop_ptr;
 			_size = _loop_size;
@@ -895,10 +881,8 @@ void ChannelMP3::mix(int16 *data, uint len) {
 
 		while ((_posInFrame < _synth.pcm.length) && (len > 0)) {
 			int16 sample = (int16)((scale_sample(*ch++) * volume) / 32);
-			*data = clamped_add_16(*data, sample);
-			data++;
-			*data = clamped_add_16(*data, sample);
-			data++;
+			clamped_add_16(*data++, sample);
+			clamped_add_16(*data++, sample);
 			len--;
 			_posInFrame++;
 		}
@@ -991,10 +975,8 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 		ch = _synth.pcm.samples[0] + _posInFrame;
 		while ((_posInFrame < _synth.pcm.length) && (len > 0)) {
 			int16 sample = (int16)((scale_sample(*ch++) * volume) / 32);
-			*data = clamped_add_16(*data, sample);
-			data++;
-			*data = clamped_add_16(*data, sample);
-			data++;
+			clamped_add_16(*data++, sample);
+			clamped_add_16(*data++, sample);
 			len--;
 			_posInFrame++;
 		}
@@ -1106,12 +1088,10 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 	// Mix the samples in
 	for (uint i = 0; i < len; i++) {
 		int16 sample = (int16) ((int32) samples[i * channels] * volume / 256);
-		*data = clamped_add_16(*data, sample);
-		data++;
+		clamped_add_16(*data++, sample);
 		if (channels > 1)
 			sample = (int16) ((int32) samples[i * channels + 1] * volume / 256);
-		*data = clamped_add_16(*data, sample);
-		data++;
+		clamped_add_16(*data++, sample);
 	}
 
 	delete [] samples;
