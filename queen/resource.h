@@ -27,7 +27,7 @@
 
 namespace Queen {
 
-enum {
+enum Version {
 	VER_ENG_FLOPPY   = 0,
 	VER_ENG_TALKIE   = 1,
 	VER_FRE_FLOPPY   = 2,
@@ -36,8 +36,11 @@ enum {
 	VER_GER_TALKIE   = 5,
 	VER_ITA_FLOPPY   = 6,
 	VER_ITA_TALKIE   = 7,
-	VER_DEMO_PCGAMES = 8,
-	VER_DEMO         = 9
+	VER_SPA_TALKIE   = 8,
+	VER_DEMO_PCGAMES = 9,
+	VER_DEMO         = 10,
+
+	VER_NUMBER       = 11
 };
 
 struct ResourceEntry {
@@ -52,6 +55,7 @@ struct GameVersion {
 	bool isFloppy;   
 	bool isDemo;
 	uint32 tableOffset;
+	uint32 dataFileSize;
 };
 
 

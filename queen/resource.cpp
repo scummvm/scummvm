@@ -29,18 +29,21 @@ namespace Queen {
 
 static const char *tableFilename = "queen.tbl";
 
+
 const GameVersion Resource::_gameVersions[] = {
-	{ "PEM10", true,  false, 0x00000008 },
-	{ "CEM10", false, false, 0x0000584E },
-	{ "PFM10", true,  false, 0x0002CD93 },
-	{ "CFM10", false, false, 0x00032585 },
-	{ "PGM10", true,  false, 0x00059ACA },
-	{ "CGM10", false, false, 0x0005F2A7 },
-	{ "PIM10", true,  false, 0x000866B1 },
-	{ "CIM10", false, false, 0x0008BEE2 },
-	{ "PE100", true,  true,  0x000B343C },
-	{ "PE100", true,  true,  0x000B40F5 }
+	{ "PEM10", true,  false, 0x00000008,  22677657 },
+	{ "CEM10", false, false, 0x0000584E, 190787021 },
+	{ "PFM10", true,  false, 0x0002CD93,  22157304 },
+	{ "CFM10", false, false, 0x00032585, 186689095 },
+	{ "PGM10", true,  false, 0x00059ACA,  22240013 },
+	{ "CGM10", false, false, 0x0005F2A7, 217648975 },
+	{ "PIM10", true,  false, 0x000866B1,  22461366 },
+	{ "CIM10", false, false, 0x0008BEE2, 190795582 },
+	{ "CSM10", false, false, 0x000B343C, 190730602 },
+	{ "PE100", true,  true,  0x000DA981,   3724538 },
+	{ "PE100", true,  true,  0x000DB63A,   3732177 }
 };
+
 
 Resource::Resource(const Common::String &datafilePath, const char *datafileName)
 	: _JAS2Pos(0), _datafilePath(datafilePath), _resourceEntries(0), _resourceTable(NULL) {
@@ -187,50 +190,25 @@ Language Resource::getLanguage() {
 			return FRENCH;
 		case 'I':
 			return ITALIAN;
+		case 'S':
+			return SPANISH;
 		default:
 			return ENGLISH;
 	}
 }
 
 const GameVersion *Resource::detectGameVersion(uint32 dataFilesize) {
-	const GameVersion *pgv = NULL;
 	//detect game version based on resource file size.
 	//we try to verify that it is indeed the version we think it is later on
-	switch(dataFilesize) {
-	case 3724538:
-		pgv = &_gameVersions[VER_DEMO_PCGAMES];
-		break;
-	case 3732177:
-		pgv = &_gameVersions[VER_DEMO];
-		break;
-	case 22677657:
-		pgv = &_gameVersions[VER_ENG_FLOPPY];
-		break;
-	case 190787021:
-		pgv = &_gameVersions[VER_ENG_TALKIE];
-		break;
-	case 22157304: // computed from FREH_FAT.H
-		pgv = &_gameVersions[VER_FRE_FLOPPY];
-		break;
-	case 186689095:
-		pgv = &_gameVersions[VER_FRE_TALKIE];
-		break;
-	case 22240013: // computed from GERH_FAT.H
-		pgv = &_gameVersions[VER_GER_FLOPPY];
-		break;
-	case 217648975: // computed from GERC_FAT.H
-		pgv = &_gameVersions[VER_GER_TALKIE];
-		break;
-	case 22461366: // computed from ITAH_FAT.H
-		pgv = &_gameVersions[VER_ITA_FLOPPY];
-		break;
-	case 190795582: // computed from ITAC_FAT.H
-		pgv = &_gameVersions[VER_ITA_TALKIE];
-		break;
-	default:
-		error("Unknown/unsupported FOTAQ version");
+	const GameVersion *pgv = _gameVersions;
+	int i;
+	for (i = 0; i < VER_NUMBER; ++i, ++pgv) {
+		if (pgv->dataFileSize == dataFilesize) {
+			return pgv;
+		}
 	}
-	return pgv;
+	error("Unknown/unsupported FOTAQ version");
+	return NULL;
 }
 
 bool Resource::readTableFile() {
