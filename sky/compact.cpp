@@ -41,7 +41,7 @@
 #define MEGASET_SIZE (sizeof(megaSetOffsets)/sizeof(uint32))
 #define TURNTABLE_SIZE (sizeof(turnTableOffsets)/sizeof(uint32))
 
-#define OFFS(type,item) (((uint32)(&((type*)0)->item)))
+#define OFFS(type,item) (((long)(&((type*)0)->item)))
 #define MK32(type,item) OFFS(type, item),0,0,0
 #define MK16(type,item) OFFS(type, item),0
 #define MK32_A5(type, item) MK32(type, item[0]), MK32(type, item[1]), \
