@@ -573,7 +573,7 @@ void ScummEngine_v90he::spriteInfoSet_resetSprite(int spriteId) {
 	_spriteTable[spriteId].tx = 0;
 	_spriteTable[spriteId].ty = 0;
 
-	_spriteTable[spriteId].flags &= ~(kSF07 | kSFRotated);
+	_spriteTable[spriteId].flags &= ~(kSF14 | kSF15);
 	_spriteTable[spriteId].flags |= kSF01 | kSFNeedRedraw;
 	_spriteTable[spriteId].dx = 0;
 	_spriteTable[spriteId].dy = 0;
@@ -1160,9 +1160,8 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 	for (int i = 0; i < _numSpritesToProcess; i++) {
 		SpriteInfo *spi = _activeSpritesTable[i];
 
-		if (!(spi->flags & kSFNeedRedraw)) {
-			//continue; // HACK
-		}
+		if (!(spi->flags & kSFNeedRedraw))
+			continue;
 
 		spr_flags = spi->flags;
 
