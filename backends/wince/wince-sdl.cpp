@@ -1028,6 +1028,11 @@ bool OSystem_WINCE3::save_screenshot(const char *filename) {
 
 static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode)
 {
+
+	if (CEActions::Instance()->mappingActive()) {
+		return key;
+	}
+
 	if (key >= SDLK_F1 && key <= SDLK_F9) {
 		return key - SDLK_F1 + 315;
 	} else if (key >= SDLK_KP0 && key <= SDLK_KP9) {
@@ -1083,6 +1088,51 @@ void OSystem_WINCE3::warp_mouse(int x, int y) {
 }
 
 void OSystem_WINCE3::add_dirty_rect(int x, int y, int w, int h) {
+	// Align on boundaries
+	if (_scaleFactorXd > 1) {
+		while (x % _scaleFactorXd) {
+			x--;
+			w++;
+		}
+		while (w % _scaleFactorXd) w++;
+	}
+
+	if (_scaleFactorYd > 1) {
+		while (y % _scaleFactorYd) {
+			y--;
+			h++;
+		}
+		while (h % _scaleFactorYd) h++;
+	}
+
+	if (_scaler_proc == PocketPCHalfZoom) {
+		// Restrict rect if we're zooming
+		if (_zoomUp) {
+			if (y + h >= 240) {
+				if (y >= 240)
+					return;
+				else
+					h = 240 - y;
+			}
+		}
+		else
+		if (_zoomDown) {
+			if (y + h >= 240) {
+				if (y < 240) {
+					h = 240 - y;
+					y = 240;
+				}
+			}
+			else
+				return;
+		}
+	}
+
+	OSystem_SDL_Common::add_dirty_rect(x, y, w, h);
+}
+
+/*
+void OSystem_WINCE3::add_dirty_rect(int x, int y, int w, int h) {
 	if (_scaler_proc == PocketPCPortrait) {
 		// Align on a 4 bytes boundary for the Portrait mode
 		if (x != 0) {
@@ -1132,6 +1182,7 @@ void OSystem_WINCE3::add_dirty_rect(int x, int y, int w, int h) {
 
 	OSystem_SDL_Common::add_dirty_rect(x, y, w, h);
 }
+*/
 
 // FIXME
 // Remove useless mappings
@@ -1140,6 +1191,9 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 	SDL_Event ev;
 	byte b = 0;
 	Event temp_event;
+
+	memset(&temp_event, 0, sizeof(Event));
+	memset(event, 0, sizeof(Event));
 
 	// Check if the keys queue is empty
 	Key *key = _keysBuffer->Instance()->get();
@@ -1183,6 +1237,9 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 	while(SDL_PollEvent(&ev)) {
 		switch(ev.type) {
 		case SDL_KEYDOWN:
+
+			if (CEActions::Instance()->performMapped(ev.key.keysym.sym, true))
+				return true;
 
 			if (ev.key.keysym.mod & KMOD_SHIFT)
 				b |= KBD_SHIFT;
@@ -1295,27 +1352,16 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 				}
 			}
 
-			// Check mapping
-			if (CEActions::Instance()->mappingActive()) {
-				Key mappingKey;
-				mappingKey.setAscii(ev.key.keysym.sym ? ev.key.keysym.sym : ev.key.keysym.unicode);
-				mappingKey.setFlags(0xff);
-				_keysBuffer->Instance()->simulate(&mappingKey);
-				/*
-				event->event_code = EVENT_KEYDOWN;
-				event->kbd.ascii = (ev.key.keysym.sym ? ev.key.keysym.sym : ev.key.keysym.unicode);
-				event->kbd.flags = 0xff;
-				*/
-				return true;
-			}
-			else
-			if (CEActions::Instance()->performMapped((ev.key.keysym.sym ? ev.key.keysym.sym : ev.key.keysym.unicode), true))
-				return true;
-
 			event->event_code = EVENT_KEYDOWN;
 			event->kbd.keycode = ev.key.keysym.sym;
 			event->kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 			
+			if (CEActions::Instance()->mappingActive()) {
+				event->kbd.flags = 0xff;
+				return true;
+			}
+
+
 			switch(ev.key.keysym.sym) {
 			case SDLK_LEFT:
 				km.x_vel = -1;
@@ -1340,20 +1386,19 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 			return true;
 	
 		case SDL_KEYUP:
-			// Check mapping
-			if (CEActions::Instance()->mappingActive()) {
-				event->event_code = EVENT_KEYUP;
-				event->kbd.ascii = (ev.key.keysym.sym ? ev.key.keysym.sym : ev.key.keysym.unicode);
-				event->kbd.flags = 0xff;
+	
+			if (CEActions::Instance()->performMapped(ev.key.keysym.sym, false))
 				return true;
-			}
-			else
-			if (CEActions::Instance()->performMapped((ev.key.keysym.sym ? ev.key.keysym.sym : ev.key.keysym.unicode), false))
-				return true;
-			
+				
 			event->event_code = EVENT_KEYUP;
 			event->kbd.keycode = ev.key.keysym.sym;
 			event->kbd.ascii = mapKeyCE(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+
+			// Check mapping
+			if (CEActions::Instance()->mappingActive()) {
+				event->kbd.flags = 0xff;
+				return true;
+			}
 
 			switch(ev.key.keysym.sym) {
 			case SDLK_LEFT:
@@ -1455,8 +1500,10 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 void OSystem_WINCE3::quit() {
 	fclose(stdout_file);
 	fclose(stderr_file);
-	DeleteFile(TEXT("\\scummvm_stdout.txt"));
-	DeleteFile(TEXT("\\scummvm_stderr.txt"));
+	if (ConfMan.get("debuglevel").isEmpty()) {
+		DeleteFile(TEXT("\\scummvm_stdout.txt"));
+		DeleteFile(TEXT("\\scummvm_stderr.txt"));
+	}
 	CEDevice::disableHardwareKeyMapping();
 	OSystem_SDL_Common::quit();
 }

@@ -22,6 +22,10 @@
 #include "stdafx.h"
 #include "CEDevice.h"
 
+#include <SDL.h>
+
+#include "wince-sdl.h"
+
 bool CEDevice::_hasGAPIMapping = false;
 struct GXKeyList CEDevice::_portrait_keys = {0};
 
@@ -90,22 +94,7 @@ Common::String CEDevice::getKeyName(unsigned int keyCode) {
 
 	if (!keyCode)
 		return "No key";
-	if (keyCode == (unsigned int)_portrait_keys.vkA)
-		return "Button A";
-    if (keyCode == (unsigned int)_portrait_keys.vkB)
-		return "Button B";
-    if (keyCode == (unsigned int)_portrait_keys.vkC)
-		return "Button C";
-    if (keyCode == (unsigned int)_portrait_keys.vkStart)
-		return "Button Start";
-    if (keyCode == (unsigned int)_portrait_keys.vkUp)
-		return "Pad Up";
-    if (keyCode == (unsigned int)_portrait_keys.vkDown)
-		return "Pad Down";
-    if (keyCode == (unsigned int)_portrait_keys.vkLeft)
-		return "Pad Left";
-    if (keyCode == (unsigned int)_portrait_keys.vkRight)
-		return "Pad Right";
+
 	if (keyCode == KEY_CALENDAR)
 		return "Button Calendar";
 	if (keyCode == KEY_CONTACTS)
@@ -114,6 +103,14 @@ Common::String CEDevice::getKeyName(unsigned int keyCode) {
 		return "Button Inbox";
 	if (keyCode == KEY_TASK)
 		return "Button Tasks";
+	if (keyCode == SDLK_F1) 
+		return "F1 (hard 1)";
+	if (keyCode == SDLK_F2) 
+		return "F2 (hard 2)";
+	if (keyCode == SDLK_F3) 
+		return "F3 (hard 3)";
+	if (keyCode == SDLK_F4) 
+		return "F4 (hard 4)";
 
 	sprintf(key_name, "Key %.4x", keyCode);
 	return key_name;	

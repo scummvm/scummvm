@@ -186,7 +186,7 @@ bool CEActions::perform(ActionType action) {
 		case ACTION_QUIT:
 			GUI::MessageDialog alert("Do you want to quit ?", "Yes", "No");
 			if (alert.runModal() == 1)
-				_mainSystem->quit();
+				_mainSystem->quit(); 
 			return true;
 	}
 	return false;
