@@ -95,7 +95,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_unknown27),
 		/* 28 */
 		OPCODE(o90_unknown28),
-		OPCODE(o90_unknown29),
+		OPCODE(o90_getWizData),
 		OPCODE(o6_invalid),
 		OPCODE(o90_startScriptUnk),
 		/* 2C */
@@ -1197,8 +1197,30 @@ int ScummEngine_v90he::getWizImageStates(int resnum) {
 }
 
 int ScummEngine_v90he::isWizPixelNonTransparent(int restype, int resnum, int state, int x, int y, int flags) {
-	warning("ScummEngine_v90he::isWizPixelNonTransparent() unimplemented");
-	return 0;
+	int ret = 0;
+	const uint8 *data = getResourceAddress(restype, resnum);
+	assert(data);
+	const uint8 *wizh = findWrappedBlock(MKID('WIZH'), data, state, 0);
+	assert(wizh);
+	uint32 c = READ_LE_UINT32(wizh + 0x0);
+	int w = READ_LE_UINT32(wizh + 0x4);
+	int h = READ_LE_UINT32(wizh + 0x8);
+	const uint8 *wizd = findWrappedBlock(MKID('WIZD'), data, state, 0);
+	assert(wizd);
+	if (x >= 0 && x < w && y >= 0 && y < h) {
+		if (flags & 0x400) {
+			x = w - x - 1;
+		}
+		if (flags & 0x800) {
+			y = h - y - 1;
+		}
+		if (c == 1) {
+			ret = gdi.isWizPixelNonTransparent(wizd, x, y, w, h);
+		} else if (c == 0 || c == 2 || c == 3) {
+			ret = gdi.getRawWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR)) != VAR(VAR_WIZ_TCOLOR);
+		}
+	}
+	return ret;
 }
 
 uint8 ScummEngine_v90he::getWizPixelColor(int restype, int resnum, int state, int x, int y, int flags) {
@@ -1213,16 +1235,50 @@ uint8 ScummEngine_v90he::getWizPixelColor(int restype, int resnum, int state, in
 	const uint8 *wizd = findWrappedBlock(MKID('WIZD'), data, state, 0);
 	assert(wizd);		
 	if (c == 1) {
-		color = gdi.getWizPixelColor_type1(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR));
+		color = gdi.getWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR));
 	} else if (c == 0 || c == 2 || c == 3) {
-		color = gdi.getWizPixelColor_type0(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR));
+		color = gdi.getRawWizPixelColor(wizd, x, y, w, h, VAR(VAR_WIZ_TCOLOR));
 	} else {
 		color = VAR(VAR_WIZ_TCOLOR);
 	}
 	return color;
 }
 
-void ScummEngine_v90he::o90_unknown29() {
+int ScummEngine_v90he::computeWizHistogram(int resnum, int state, int x, int y, int w, int h) {
+	writeVar(0, 0);
+	defineArray(0, kDwordArray, 0, 0, 0, 255);
+	if (readVar(0) != 0) {
+		const uint8 *data = getResourceAddress(rtImage, resnum);
+		assert(data);
+		const uint8 *wizh = findWrappedBlock(MKID('WIZH'), data, state, 0);
+		assert(wizh);
+		uint32 ic = READ_LE_UINT32(wizh + 0x0);
+		uint32 iw = READ_LE_UINT32(wizh + 0x4);
+		uint32 ih = READ_LE_UINT32(wizh + 0x8);
+		const uint8 *wizd = findWrappedBlock(MKID('WIZD'), data, state, 0);
+		assert(wizd);
+		Common::Rect rWiz(iw, ih);
+		Common::Rect rCap(x, y, w + 1, h + 1);
+		if (rCap.intersects(rWiz)) {
+			rCap.clip(rWiz);
+			uint32 histogram[0x100];
+			memset(histogram, 0, sizeof(histogram));
+			if (ic == 1) {
+				gdi.computeWizHistogram(histogram, wizd, &rCap);
+			} else if (ic == 0) {
+				gdi.computeRawWizHistogram(histogram, wizd, w, &rCap);
+			} else {
+				warning("Unable to return histogram for type %d", ic);
+			}
+			for (int i = 0; i < 0x100; ++i) {
+				writeArray(0, 0, i, histogram[i]);
+			}
+		}
+	}
+	return readVar(0);
+}
+
+void ScummEngine_v90he::o90_getWizData() {
 	int state, resId;
 	int32 w, h;
 	int16 x, y;
@@ -1273,14 +1329,19 @@ void ScummEngine_v90he::o90_unknown29() {
 		resId = pop();
 		push(getWizPixelColor(rtImage, resId, state, x, y, 0));
 		break;
-	case 100: // SO_GET_WIZ_HISTOGRAM
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		push(0);
+	case 100:
+		h = pop();
+		w = pop();
+		y = pop();
+		x = pop();
+		state = pop();
+		resId = pop();
+		if (x == -1 && y == -1 && w == -1 && h == -1) {
+			getWizImageDim(resId, state, w, h);
+			x = 0;
+			y = 0;
+		}		
+		push(computeWizHistogram(resId, state, x, y, w, h));		
 		break;
 	case 109:
 		pop();
@@ -1288,10 +1349,8 @@ void ScummEngine_v90he::o90_unknown29() {
 		push(0);
 		break;		
 	default:
-		error("o90_unknown29: Unknown case %d", subOp);
+		error("o90_getWizData: Unknown case %d", subOp);
 	}
-
-	debug(1,"o90_unknown29 stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_unknown2F() {

@@ -877,6 +877,7 @@ protected:
 	void processWizImage(const WizParameters *params);
 	int isWizPixelNonTransparent(int restype, int resnum, int state, int x, int y, int flags);
 	uint8 getWizPixelColor(int restype, int resnum, int state, int x, int y, int flags);
+	int computeWizHistogram(int resnum, int state, int x, int y, int w, int h);
 	
 	/* HE version 90 script opcodes */
 	void o90_dup();
@@ -895,7 +896,7 @@ protected:
 	void o90_unknown26();
 	void o90_unknown27();
 	void o90_unknown28();
-	void o90_unknown29();
+	void o90_getWizData();
 	void o90_unknown2F();
 	void o90_mod();
 	void o90_unknown31();

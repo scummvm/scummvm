@@ -1624,7 +1624,50 @@ dec_next:
 	}
 }
 
-uint8 Gdi::getWizPixelColor_type0(const uint8 *data, int x, int y, int w, int h, uint8 color) {
+int Gdi::isWizPixelNonTransparent(const uint8 *data, int x, int y, int w, int h) {
+	int ret = 0;
+	while (y != 0) {
+		data += READ_LE_UINT16(data) + 2;
+		--y;
+	}
+	uint16 off = READ_LE_UINT16(data); data += 2;
+	if (off != 0) {
+		if (x == 0) {
+			ret = (~*data) & 1;			
+		} else {
+			do {
+				uint8 code = *data++;
+				if (code & 1) {
+					code >>= 1;
+					if (code > x) {
+						ret = 0;
+						break;
+					}
+					x -= code;
+				} else if (code & 2) {
+					code = (code >> 2) + 1;
+					if (code > x) {
+						ret = 1;
+						break;
+					}
+					x -= code;
+					++data;
+				} else {
+					code = (code >> 2) + 1;
+					if (code > x) {
+						ret = 1;
+						break;
+					}
+					x -= code;
+					data += code;
+				}				
+			} while (x > 0);
+		}
+	}
+	return ret;
+}
+
+uint8 Gdi::getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 color) {
 	uint8 c;
 	if (x >= 0 && x < w && y >= 0 && y < h) {
 		c = *(data + y * w + x);
@@ -1634,14 +1677,14 @@ uint8 Gdi::getWizPixelColor_type0(const uint8 *data, int x, int y, int w, int h,
 	return c;
 }
 
-uint8 Gdi::getWizPixelColor_type1(const uint8 *data, int x, int y, int w, int h, uint8 color) {
+uint8 Gdi::getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 color) {
 	uint8 c = color;
 	if (x >= 0 && x < w && y >= 0 && y < h) {
 		while (y != 0) {
 			data += READ_LE_UINT16(data) + 2;
 			--y;
 		}
-		uint16 off = READ_LE_UINT16(data);
+		uint16 off = READ_LE_UINT16(data); data += 2;
 		if (off != 0) {
 			if (x == 0) {
 				c = (*data & 1) ? color : *data;
@@ -1677,6 +1720,90 @@ uint8 Gdi::getWizPixelColor_type1(const uint8 *data, int x, int y, int w, int h,
 		}
 	}
 	return c;
+}
+
+void Gdi::computeWizHistogram(uint32 *histogram, const uint8 *data, const Common::Rect *srcRect) {
+	int y = srcRect->top;
+	while (y != 0) {
+		data += READ_LE_UINT16(data) + 2;
+		--y;
+	}
+	int ih = srcRect->height();
+	while (ih--) {
+		uint16 off = READ_LE_UINT16(data); data += 2;
+		if (off != 0) {
+			const uint8 *p = data;
+			int x1 = srcRect->left;
+			int x2 = srcRect->right;
+			uint8 code;
+			while (x1 > 0) {
+				code = *p++;
+				if (code & 1) {
+					code >>= 1;
+					if (code > x1) {
+						code -= x1;
+						x2 -= code;
+						break;
+					}
+					x1 -= code;
+				} else if (code & 2) {
+					code = (code >> 2) + 1;
+					if (code > x1) {
+						code -= x1;
+						goto dec_sub2;
+					}
+					x1 -= code;
+					++p;
+				} else {
+					code = (code >> 2) + 1;
+					if (code > x1) {
+						code -= x1;
+						p += x1;
+						goto dec_sub3;
+					}
+					x1 -= code;
+					p += code;
+				}
+			}
+			while (x2 > 0) {
+				code = *p++;
+				if (code & 1) {
+					code >>= 1;
+					x2 -= code;
+				} else if (code & 2) {
+					code = (code >> 2) + 1;
+dec_sub2:			x2 -= code;
+					if (x2 < 0) {
+						code += x2;
+					}
+					histogram[*p++] += code;
+				} else {
+					code = (code >> 2) + 1;
+dec_sub3:			x2 -= code;
+					if (x2 < 0) {
+						code += x2;
+					}
+					int n = code;
+					while (n--) {
+						++histogram[*p++];
+					}
+				}
+			}
+			data += off;
+		}
+	}
+}
+
+void Gdi::computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPitch, const Common::Rect *srcRect) {
+	data += srcRect->top * srcPitch + srcRect->left;
+	int iw = srcRect->width();
+	int ih = srcRect->height();
+	while (ih--) {
+		for (int i = 0; i < iw; ++i) {
+			++histogram[data[i]];
+		}
+		data += srcPitch;
+	}
 }
 
 void Gdi::copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect) {
