@@ -552,6 +552,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\scumm\script_v100he.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\scumm\script_v2.cpp"
 			>
 		</File>

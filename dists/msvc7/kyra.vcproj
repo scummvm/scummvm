@@ -98,10 +98,46 @@
 	</Configurations>
 	<Files>
 		<File
+			RelativePath="..\..\kyra\codecs.cpp">
+		</File>
+		<File
+			RelativePath="..\..\kyra\codecs.h">
+		</File>
+		<File
+			RelativePath="..\..\kyra\cpsimage.cpp">
+		</File>
+		<File
+			RelativePath="..\..\kyra\font.cpp">
+		</File>
+		<File
 			RelativePath="..\..\kyra\kyra.cpp">
 		</File>
 		<File
 			RelativePath="..\..\kyra\kyra.h">
+		</File>
+		<File
+			RelativePath="..\..\kyra\palette.cpp">
+		</File>
+		<File
+			RelativePath="..\..\kyra\resource.cpp">
+		</File>
+		<File
+			RelativePath="..\..\kyra\resource.h">
+		</File>
+		<File
+			RelativePath="..\..\kyra\script.cpp">
+		</File>
+		<File
+			RelativePath="..\..\kyra\script.h">
+		</File>
+		<File
+			RelativePath="..\..\kyra\script_v1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\kyra\wsamovie.cpp">
+		</File>
+		<File
+			RelativePath="..\..\kyra\wsamovie.h">
 		</File>
 	</Files>
 	<Globals>
