@@ -405,11 +405,7 @@ uint32 FontRenderer::buildNewBloc(uint8 *ascii, int16 x, int16 y, uint16 width, 
 	while (j < MAX_text_blocs && _blocList[j].text_mem)
 		j++;
 
-#ifdef _SWORD2_DEBUG
-	// we've run out - might as well stop the system
-	if (j == MAX_text_blocs)
-		error("Build_new_block ran out of blocks!");
-#endif
+	assert(j < MAX_text_blocs);
 
 	// make the sprite!
 	_blocList[j].text_mem = makeTextSprite(ascii, width, pen, fontRes);

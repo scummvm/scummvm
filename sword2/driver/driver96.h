@@ -24,10 +24,7 @@ namespace Sword2 {
 
 class Sword2Engine;
 
-//
-//	Defines
-//	-------
-//
+// Error codes
 
 enum {
 	// Generic error codes
@@ -78,12 +75,6 @@ enum {
 	RDERR_FXNOTOPEN,
 	RDERR_FXFUCKED,
 	RDERR_INVALIDID
-};
-
-// Key codes
-
-enum {
-//	RDKEY_ESCAPE			= 27
 };
 
 // Mouse button defines
@@ -180,10 +171,7 @@ enum {
 	RDBLTFX_EDGEBLEND		= 0x04
 };
 
-//
-//	Structure definitions
-//	---------------------
-//
+// Structure definitions
 
 typedef struct {
 	uint16 buttons;
@@ -209,7 +197,6 @@ struct _parallax {
 	#pragma END_PACK_STRUCTS
 #endif
 
-
 // The _spriteInfo structure is used to tell the driver96 code what attributes
 // are linked to a sprite for drawing.  These include position, scaling and
 // compression.
@@ -228,11 +215,11 @@ typedef struct {
 	uint8 *colourTable;	// pointer to 16-byte colour table, only applicable to 16-col compression type
 } _spriteInfo;
 
+// This is the format of a .WAV file.  Somewhere after this header is the
+// string 'DATA' followed by an int32 size which is the size of the data.
+// Following the size of the data is the data itself.
 
-// This is the format of a .WAV file.  Somewhere after this header is the string
-// 'DATA' followed by an int32 size which is the size of the data.  Following
-// the size of the data is the data itself.
-typedef struct {
+ typedef struct {
 	uint32 riff;
 	uint32 fileLength;
 	uint32 wavID;
@@ -248,10 +235,9 @@ typedef struct {
 	uint16 bitsPerSample;
 } _wavHeader;
 
-
-//  This is the structure which is passed to the sequence player.
-//	It includes the smack to play, and any text lines which are
-//	to be displayed over the top of the sequence.
+// This is the structure which is passed to the sequence player. It includes
+// the smack to play, and any text lines which are to be displayed over the top
+// of the sequence.
 
 typedef struct {
 	uint16 startFrame;
@@ -261,18 +247,9 @@ typedef struct {
 	uint16 *speech;
 } _movieTextObject;
 
-//
-//	Function Prototypes
-//	-------------------
-//
+// Input handling class
 
-//-----------------------------------------------------------------------------
-//	Language functions - from language.c
-//-----------------------------------------------------------------------------
-extern int32 GetLanguageVersion(uint8 *version);
-extern int32 SetLanguageVersion(uint8 version);
-//-----------------------------------------------------------------------------
-
+// Mouse buffer size
 #define MAX_MOUSE_EVENTS 16
 
 // Key buffer size

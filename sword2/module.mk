@@ -30,7 +30,6 @@ MODULE_OBJS := \
 	sword2/driver/d_draw.o \
 	sword2/driver/d_sound.o \
 	sword2/driver/keyboard.o \
-	sword2/driver/language.o \
 	sword2/driver/menu.o \
 	sword2/driver/_mouse.o \
 	sword2/driver/palette.o \
