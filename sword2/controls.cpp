@@ -205,11 +205,8 @@ uint32	Restore_control(void)	//Tony20Mar97
 //			  1 for restored ok
 
 
-	uint8 *colTablePtr=NULL;
-
 	int	breakOut=0;
 	uint32	j;
-	uint8 black[4]={0,0,0,0};
 	char	key_press=0;
 	uint8	description[SAVE_DESCRIPTION_LEN];
 	uint8	buf[8][SAVE_DESCRIPTION_LEN];
@@ -897,11 +894,8 @@ void	Save_control(void)	//Tony1Apr97	not a joke
 //largely the same as the restore code
 
 
-	uint8 *colTablePtr=NULL;
-
 	int	breakOut=0;
 	uint32	j;
-	uint8 black[4]={0,0,0,0};
 	char	key_press;
 	uint8	description[SAVE_DESCRIPTION_LEN];
 	uint8	buf[8][SAVE_DESCRIPTION_LEN];
@@ -914,14 +908,13 @@ void	Save_control(void)	//Tony1Apr97	not a joke
 	uint32	slab_text_x;
 	uint32	slab_text_y;
 
-	uint32	slot=1000;	//nothing selected
-	uint32	clicked_slot, edit_screen_slot=1000;
+	uint32	clicked_slot=1000, edit_screen_slot=1000;
 	uint32	cur_slot_states[9];
 
 	int	scroll_rate=0;
 //	static	uint32	base_slot=0;
 
-	int	edit_pos, first_chr, flash=0;
+	int	edit_pos=0, first_chr=0, flash=0;
 
 	uint8	save_text[MAX_STRING_LEN];
 	uint8	cancel_text[MAX_STRING_LEN];
@@ -931,7 +924,7 @@ void	Save_control(void)	//Tony1Apr97	not a joke
 
 	uint32	rv;	// return value for SaveGame
 
-	uint32	edit_width;
+	uint32	edit_width=0;
 
 	int	names_built=0;
 
@@ -1603,7 +1596,6 @@ uint32	Generic_mini_control(uint32	text_id)	//Tony2Apr97
 //	returns 1 for OK pressed
 // returns 0 for CANCEL pressed
 
-	uint8 black[4]={0,0,0,0};
 	int	breakOut=0;
 	char	c;
 
@@ -2082,7 +2074,6 @@ void	Option_control(void)	//Pete6Jun97
 #define WORD_BUTTON_GAP 10
 
 // some things left by the last tennant
-	uint8		 black[4] = {0,0,0,0};
 	char		 c;
 	_mouseEvent	*me;
 	int			 first = 0;
@@ -2108,14 +2099,14 @@ void	Option_control(void)	//Pete6Jun97
 	uint8	grfxLevel    = GetRenderType();
 
 // safe slider values for restoring on cancel
-	uint8   safe_musicVolume  = musicVolume;
-	uint8   safe_speechVolume = speechVolume;
-	uint8   safe_fxVolume     = fxVolume;
+	//uint8   safe_musicVolume  = musicVolume;
+	//uint8   safe_speechVolume = speechVolume;
+	//uint8   safe_fxVolume     = fxVolume;
 	uint8   safe_grfxLevel    = grfxLevel;
 
 // button state variables
 	uint8	dreverse_stereo_state = 0, dmusic_mute_state = 0, dspeech_mute_state = 0, dfx_mute_state = 0, dobject_state = 0, dsubtitle_state = 0;
-	uint8	touching_reverse_stereo, touching_music_mute, touching_fx_mute, touching_speech_mute, touching_object, touching_subtitle;
+	uint8	touching_reverse_stereo = 0, touching_music_mute = 0, touching_fx_mute = 0, touching_speech_mute = 0, touching_object = 0, touching_subtitle = 0;
 	uint8   lb_down = 0;
 
 // Slider targets
