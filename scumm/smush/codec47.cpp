@@ -225,7 +225,6 @@ static int16 codec47_table[] = {
 
 static byte smush_buf_big[99328];
 static byte smush_buf_small[32768];
-static byte smush_buffer[65536];
 static int16 smush_table[256];
 
 void Codec47Decoder::makeTables37(int32 param) {
