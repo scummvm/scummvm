@@ -1661,7 +1661,8 @@ void Scumm_v8::o8_kernelGetFunctions()
 		break;
 	case 0xE1:		// imGetMusicPosition
 		warning("o8_kernelGetFunctions: imGetMusicPosition(stub)\n");
-		push(0xFFFFF);
+		// FIXME - get this stuff to be properly implemented
+		push(_sound->_bundleMusicPosition);
 		break;
 	case 0xE2:		// musicLipSyncWidth
 	case 0xE3:		// musicLipSyncHeight

@@ -130,6 +130,7 @@ enum {
 public:
 
 	int _current_cache;
+	int32 _bundleMusicPosition;
 
 	int _talkChannel;	/* Mixer channel actor is talking on */
 	int _cd_timer_value;

@@ -987,6 +987,7 @@ void Sound::playBundleMusic(char * song) {
 		_currentSampleBundleMusic = 0;
 		_offsetSampleBundleMusic = 0;
 		_offsetBufBundleMusic = 0;
+		_bundleMusicPosition = 0;
 		_pauseBundleMusic = false;
 		_musicBundleToBeRemoved = false;
 		_musicBundleToBeChanged = false;
@@ -1045,6 +1046,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 		_offsetSampleBundleMusic = 0;
 		_offsetBufBundleMusic = 0;
 		_musicBundleToBeChanged = false;
+		_bundleMusicPosition = 0;
 	}
 
 	ptr = _musicBundleBufOutput;
@@ -1110,6 +1112,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 		_currentSampleBundleMusic = 0;
 		_offsetSampleBundleMusic = 0;
 		_offsetBufBundleMusic = 0;
+		_bundleMusicPosition = 0;
 	}
 
 	ptr = _musicBundleBufFinal;
@@ -1127,6 +1130,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 		return;
 	}
 
+	_bundleMusicPosition += final_size;
 	if (_bundleMusicTrack == -1) {
 		_bundleMusicTrack = _scumm->_mixer->playStream(NULL, _scumm->_mixer->_beginSlots - 1, buffer, final_size, rate,
 															SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO, -1, 2000000);
