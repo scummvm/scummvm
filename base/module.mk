@@ -17,4 +17,4 @@ MODULE_DIRS += \
 #base/gameDetector.o base/plugins.o: config.mak
 
 # Include common rules 
-include common.rules
+include $(srcdir)/common.rules

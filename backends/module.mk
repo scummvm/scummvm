@@ -22,4 +22,4 @@ MODULE_DIRS += \
 	backends/midi
 
 # Include common rules 
-include common.rules
+include $(srcdir)/common.rules

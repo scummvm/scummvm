@@ -120,7 +120,7 @@ MODULES += \
 CPPFLAGS:= $(DEFINES) $(INCLUDES)
 
 # Include the build instructions for all modules
--include $(addsuffix /module.mk,$(MODULES))
+-include $(addprefix $(srcdir)/, $(addsuffix /module.mk,$(MODULES)))
 
 # Depdir information
 DEPDIRS = $(addsuffix /$(DEPDIR),$(MODULE_DIRS))
@@ -171,4 +171,4 @@ endif
 
 # Include the dependency tracking files. We add /dev/null at the end
 # of the list to avoid a warning/error if no .d file exist
--include $(wildcard $(addsuffix /*.d,$(DEPDIRS))) /dev/null
+-include $(wildcard $(addprefix $(srcdir)/, $(addsuffix /*.d,$(DEPDIRS)))) /dev/null

@@ -22,4 +22,4 @@ PLUGIN := 1
 endif
 
 # Include common rules 
-include common.rules
+include $(srcdir)/common.rules

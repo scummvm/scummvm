@@ -20,4 +20,4 @@ MODULE_DIRS += \
 	common/scaler
 
 # Include common rules 
-include common.rules
+include $(srcdir)/common.rules

@@ -22,4 +22,4 @@ MODULE_DIRS += \
 	gui
 
 # Include common rules 
-include common.rules
+include $(srcdir)/common.rules

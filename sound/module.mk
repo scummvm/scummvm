@@ -20,4 +20,4 @@ MODULE_DIRS += \
 	sound
 
 # Include common rules 
-include common.rules
+include $(srcdir)/common.rules
