@@ -104,7 +104,7 @@ else
 # rule can get you into a bad state if you Ctrl-C at the wrong moment.
 # Also, with this GCC inserts additional dummy rules for the involved headers,
 # which ensures a smooth compilation even if said headers become obsolete.
-#.cpp.o:
+.cpp.o:
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 endif
