@@ -184,12 +184,11 @@ void CharsetRendererOld256::setColor(byte color)
 }
 
 void CharsetRendererOld256::printChar(int chr) {
-	// Indy3 / Zak256
+	// Indy3 / Zak256 / Loom
 	VirtScreen *vs;
-	byte *char_ptr, *dest_ptr;
-	unsigned int buffer = 0, mask = 0, x = 0, y = 0;
-	unsigned char color;
-
+	byte *char_ptr, *dest_ptr, *mask_ptr;
+	unsigned int buffer = 0, bit = 0, x = 0, y = 0;
+	bool useMask;
 	int w, h;
 
 	if (!_dropShadow) {
@@ -216,21 +215,50 @@ void CharsetRendererOld256::printChar(int chr) {
 
 	char_ptr = _fontPtr + chr * 8;
 	dest_ptr = vs->screenPtr + vs->xstart + (_top - vs->topline) * _vm->_realWidth + _left;
+	mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + _vm->_screenStartStrip + (_top - vs->topline) * _vm->gdi._numStrips + _left / 8;
+	useMask = (vs->number == 0 && !_ignoreCharsetMask);
+
 	_vm->updateDirtyRect(vs->number, _left, _left + w, _top - vs->topline, _top - vs->topline + h, 0);
+	if (vs->number == 0)
+		_hasMask = true;
 
 	for (y = 0; y < 8; y++) {
+		byte maskmask = revBitMask[_left & 7];
+		int maskpos = 0;
+
 		for (x = 0; x < 8; x++) {
-			if ((mask >>= 1) == 0) {
+			if ((bit >>= 1) == 0) {
 				buffer = *char_ptr++;
-				mask = 0x80;
+				bit = 0x80;
 			}
-			color = ((buffer & mask) != 0);
-			if (color) {
+			if (buffer & bit) {
+				byte *dst = dest_ptr + y * _vm->_realWidth + x;
+
 				if (_dropShadow)
-					*(dest_ptr + (y + 1) * _vm->_realWidth + x + 1) = 0;
-				*(dest_ptr + y * _vm->_realWidth + x) = _color;
+					*(dst + _vm->_realWidth + 1) = 0;
+				*dst = _color;
+
+				if (useMask) {
+					mask_ptr[maskpos] |= maskmask;
+					if (_dropShadow) {
+						int spos = maskpos + _vm->gdi._numStrips;
+						byte sbit = maskmask >> 1;
+
+						if (sbit == 0) {
+							sbit = 0x80;
+							spos++;
+						}
+						mask_ptr[spos] |= sbit;
+					}
+				}
+			}
+			maskmask >>= 1;
+			if (maskmask == 0) {
+				maskmask = 0x80;
+				maskpos++;
 			}
 		}
+		mask_ptr += _vm->gdi._numStrips;
 	}
 
 	// FIXME
