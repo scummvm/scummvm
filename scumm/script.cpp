@@ -516,7 +516,7 @@ int ScummEngine::readVar(uint var) {
 	}
 
 	if (var & 0x8000) {
-		if (_gameId == GID_PAJAMA) {
+		if (_gameId == GID_PAJAMA || _gameId == GID_WATER) {
 			var &= 0xFFF;
 			checkRange(_numRoomVariables - 1, 0, var, "Room variable %d out of range(w)");
 			return _roomVars[var];
@@ -599,7 +599,7 @@ void ScummEngine::writeVar(uint var, int value) {
 	}
 
 	if (var & 0x8000) {
-		if (_gameId == GID_PAJAMA) {
+		if (_gameId == GID_PAJAMA || _gameId == GID_WATER) {
 			var &= 0xFFF;
 			checkRange(_numRoomVariables - 1, 0, var, "Room variable %d out of range(w)");
 			_roomVars[var] = value;

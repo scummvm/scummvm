@@ -364,7 +364,7 @@ bool ScummDebugger::Cmd_PrintScript(int argc, const char **argv) {
 bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 	Actor *a;
 	int actnum;
-	int value = 0;
+	int value = 0, value2 = 0;
 
 	if (argc < 3) {
 		DebugPrintf("Syntax: actor <actornum> <command> <parameter>\n");
@@ -380,8 +380,15 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 	a = &_vm->_actors[actnum];
 	if (argc > 3)
 		value = atoi(argv[3]);
+	if (argc > 4)
+		value2 = atoi(argv[4]);
 
-	if (!strcmp(argv[2], "ignoreboxes")) {
+	if (!strcmp(argv[2], "animvar")) {
+
+		a->setAnimVar(value, value2);
+		DebugPrintf("Actor[%d].animVar[%d] = %d\n", actnum, value, a->getAnimVar(value));
+
+	} else if (!strcmp(argv[2], "ignoreboxes")) {
 		a->ignoreBoxes = (value > 0);
 		DebugPrintf("Actor[%d].ignoreBoxes = %d\n", actnum, a->ignoreBoxes);
 	} else if (!strcmp(argv[2], "x")) {

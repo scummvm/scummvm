@@ -29,6 +29,8 @@
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/sound.h"
 
+#include "common/util.h"
+
 namespace Scumm {
 
 #if !defined(__GNUC__)
@@ -59,6 +61,7 @@ enum AkosOpcodes {
 	AKC_SetVar = 0xC010,
 	AKC_CmdQue3 = 0xC015,
 	AKC_ComplexChan = 0xC020,
+	AKC_Unk3 = 0xC021,
 	AKC_Unk2 = 0xC025,
 	AKC_Jump = 0xC030,
 	AKC_JumpIfSet = 0xC031,
@@ -96,6 +99,7 @@ enum AkosOpcodes {
 	AKC_SkipG = 0xC094,
 	AKC_SkipGE = 0xC095,
 	AKC_ClearFlag = 0xC09F,
+	AKC_Unk4 = 0xC0A1,
 	AKC_EndSeq = 0xC0FF
 };
 
@@ -281,6 +285,9 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 
 	if (code == AKC_Return || code == AKC_EndSeq)
 		return 0;
+
+	if (code == 0xC025) 
+		error("akos_drawLimb: unsupported case %x", code);
 
 	if (code != AKC_ComplexChan) {
 		off = akof + (code & 0xFFF);
@@ -1163,6 +1170,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			case AKC_Flip:
 			case AKC_Jump:
 			case AKC_StartAnimInActor:
+			case AKC_Unk4:
 				curpos += 4;
 				break;
 			case AKC_ComplexChan:
@@ -1173,10 +1181,14 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 					curpos += (aksq[curpos] & 0x80) ? 2 : 1;
 				}
 				break;
+			case AKC_Unk3:
+				curpos += aksq[curpos + 2];
+				break;
 			default:
 				if ((code & 0xC000) == 0xC000)
 					error("akos_increaseAnim: invalid code %x", code);
 				curpos += (code & 0x8000) ? 2 : 1;
+				break;
 			}
 			break;
 		case 2:
@@ -1296,6 +1308,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 		case AKC_ComplexChan:
 		case AKC_Unk1:
 		case AKC_Unk2:
+		case AKC_Unk3:
 			break;
 
 		case AKC_Cmd3:
@@ -1314,6 +1327,9 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 				flag_value = true;
 			continue;
 
+		case AKC_Unk4:
+			curpos = GUW(2);
+			break;
 		default:
 			if ((code & 0xC000) == 0xC000)
 				error("Undefined uSweat token %X", code);
@@ -1332,56 +1348,84 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 }
 
 void ScummEngine::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) {
-	switch (cmd) {
-	case 1:
-		a->putActor(0, 0, 0);
-		break;
-	case 2:
-		warning("unimplemented akos_queCommand(2,%d,%d,%d)", a->number, param_1, param_2);
-		// start script token in actor
-		break;
-	case 3:
-		if (param_1 != 0) {
-			if (_features & GF_DIGI_IMUSE)
-				_imuseDigital->startSfx(param_1, 63);
-			else
-				_sound->addSoundToQueue(param_1);
-		}
-		break;
-	case 4:
-		a->startAnimActor(param_1);
-		break;
-	case 5:
-		a->forceClip = param_1;
-		break;
-	case 6:
-		a->offs_x = param_1;
-		a->offs_y = param_2;
-		break;
-	case 7:
-		if (param_1 != 0) {
-			if (_imuseDigital) {
-				_imuseDigital->setVolume(param_1, param_2);
-			}
-		}
-		break;
-	case 8:
-		if (param_1 != 0) {
-			if (_imuseDigital) {
-				_imuseDigital->setPan(param_1, param_2);
-			}
-		}
-		break;
-	case 9:
-		if (param_1 != 0) {
-			if (_imuseDigital) {
-				_imuseDigital->setPriority(param_1, param_2);
-			}
-		}
-		break;
+	if (_queuePos > 32)
+		error("overflow");
+;
+	_queuePos++;
+	_queueCmd[_queuePos] = cmd;
+	_queueActor[_queuePos] = a->number;
+	_queueParam1[_queuePos] = param_1;
+	_queueParam2[_queuePos] = param_2;
 
-	default:
-		warning("akos_queCommand(%d,%d,%d,%d)", cmd, a->number, param_1, param_2);
+
+	warning("_queuePos %d", _queuePos);
+}
+
+
+
+void ScummEngine::akos_processQueue() {
+	byte cmd;
+	int actor, param_1, param_2;
+
+	while (_queuePos) {
+		cmd = _queueCmd[_queuePos];	
+		actor = _queueActor[_queuePos];
+		param_1 = _queueParam1[_queuePos];
+		param_2 = _queueParam2[_queuePos];
+		_queuePos--;
+
+		Actor *a = derefActor(actor, "akos_processQueue");
+
+		switch (cmd) {
+		case 1:
+			a->putActor(0, 0, 0);
+			break;
+		case 2:
+			warning("unimplemented akos_queCommand(2,%d,%d,%d)", a->number, param_1, param_2);
+			// start script token in actor
+			break;
+		case 3:
+			if (param_1 != 0) {
+				if (_features & GF_DIGI_IMUSE)
+					_imuseDigital->startSfx(param_1, 63);
+				else
+					_sound->addSoundToQueue(param_1);
+			}
+			break;
+		case 4:
+			a->startAnimActor(param_1);
+			break;
+		case 5:
+			a->forceClip = param_1;
+			break;
+		case 6:
+			a->offs_x = param_1;
+			a->offs_y = param_2;
+			break;
+		case 7:
+			if (param_1 != 0) {
+				if (_imuseDigital) {
+					_imuseDigital->setVolume(param_1, param_2);
+				}
+			}
+			break;
+		case 8:
+			if (param_1 != 0) {
+				if (_imuseDigital) {
+					_imuseDigital->setPan(param_1, param_2);
+				}
+			}
+			break;
+		case 9:
+			if (param_1 != 0) {
+				if (_imuseDigital) {
+					_imuseDigital->setPriority(param_1, param_2);
+				}
+			}
+			break;
+		default:
+			warning("akos_queCommand(%d,%d,%d,%d)", cmd, a->number, param_1, param_2);
+		}
 	}
 }
 

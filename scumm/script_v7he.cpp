@@ -41,12 +41,6 @@
 
 namespace Scumm {
 
-// Compatibility notes:
-//
-// FREDDEMO (freddemo)
-//     stringLen is completely different
-//     unknownF4 is completely different
-
 #define OPCODE(x)	{ &ScummEngine_v7he::x, #x }
 
 void ScummEngine_v7he::setupOpcodes() {
@@ -421,9 +415,14 @@ void ScummEngine_v7he::o7_cursorCommand() {
 	switch (subOp) {
 	case 0x13:		// HE 7.2 (Not all games)
 	case 0x14:
-		// Maybe load cursor image
+		// Loads cursors from another resource
+		// Use old cursors for now
 		a = pop();
-		warning("o7_cursorCommand: case %d (%d)", subOp, a);
+		if (a == 2)
+			_Win32ResExtractor->setCursor(102);
+		else if (a == 5)
+			_Win32ResExtractor->setCursor(103);
+		debug(1, "o7_cursorCommand: case %x (%d)", subOp, a);
 		break;
 	case 0x90:		// SO_CURSOR_ON Turn cursor on
 		_cursor.state = 1;
@@ -718,20 +717,16 @@ void ScummEngine_v7he::o7_quitPauseRestart() {
 }
 
 void ScummEngine_v7he::o7_stringLen() {
-	int a, len;
+	int id, len;
 	byte *addr;
 
-	a = pop();
+	id = pop();
 
-	addr = getStringAddress(a);
-	if (!addr) {
-		// FIXME: should be error here
-		warning("o7_stringLen: Reference to zeroed array pointer (%d)", a);
-		push(0);
-		return;
-	}
+	addr = getStringAddress(id);
+	if (!addr)
+		error("o72_stringLen: Reference to zeroed array pointer (%d)", id);
 
-	len = stringLen(addr);
+	len = strlen((char *)getStringAddress(id));
 	push(len);
 }
 

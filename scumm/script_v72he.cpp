@@ -343,7 +343,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* EC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o72_stringLen),
+		OPCODE(o7_stringLen),
 		OPCODE(o6_invalid),
 		/* F0 */
 		OPCODE(o6_invalid),
@@ -1142,24 +1142,6 @@ void ScummEngine_v72he::redimArray(int arrayId, int newDim2start, int newDim2end
 }
 
 
-void ScummEngine_v72he::o72_stringLen() {
-	int a, len;
-	byte *addr;
-
-	a = pop();
-
-	addr = getStringAddress(a);
-	if (!addr) {
-		// FIXME: should be error here
-		warning("o72_stringLen: Reference to zeroed array pointer (%d)", a);
-		push(0);
-		return;
-	}
-
-	len = strlen((char *)getStringAddress(a));
-	push(len);
-}
-
 void ScummEngine_v72he::o72_readINI() {
 	byte name[100];
 	int type;
@@ -1185,16 +1167,22 @@ void ScummEngine_v72he::o72_readINI() {
 
 void ScummEngine_v72he::o72_unknownF4() {
 	byte b;
+	byte name[256], name2[1024];
+
 	b = fetchScriptByte();
 
 	switch (b) {
 	case 6:
 		pop();
+		copyScriptString(name);
 		break;
+		warning("o72_unknownF4 stub (%s)", name);
 	case 7:
+		copyScriptString(name2);
+		copyScriptString(name);
+		warning("o72_unknownF4 stub (%s, %s)", name, name2);
 		break;
 	}
-	warning("o72_unknownF4 stub");
 }
 
 void ScummEngine_v72he::o72_unknownFA() {

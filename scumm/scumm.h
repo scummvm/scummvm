@@ -840,9 +840,16 @@ public:
 	int cost_frameToAnim(Actor *a, int frame);
 
 	// Akos Class
+	int16 _queueCmd[32];
+	int16 _queueActor[32];
+	int16 _queueParam1[32];
+	int16 _queueParam2[32];
+	int16 _queuePos;
+
 	bool akos_increaseAnims(const byte *akos, Actor *a);
 	bool akos_increaseAnim(Actor *a, int i, const byte *aksq, const uint16 *akfo, int numakfo);
 	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
+	void akos_processQueue();
 	void akos_decodeData(Actor *a, int frame, uint usemask);
 	int akos_frameToAnim(Actor *a, int frame);
 	bool akos_hasManyDirections(int costume);

@@ -711,7 +711,6 @@ protected:
 	void o72_getPixel();
 	void o72_pickVarRandom();
 	void o72_redimArray();
-	void o72_stringLen();
 	void o72_readINI();
 	void o72_unknownF4();
 	void o72_unknownF8();

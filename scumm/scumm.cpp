@@ -277,7 +277,6 @@ static const ScummGameSettings scumm_settings[] = {
 	{"pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside", GID_PAJAMA, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
-#ifdef HEGAMES
 	// Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90
 	{"kinddemo", "Big Thinkers Kindergarten (Demo)", GID_PAJAMA, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
@@ -304,6 +303,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"chase", "Spy Fox in Cheese Chase Game", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
+#ifdef HEGAMES
 	// Humongous Entertainment Scumm Version 9.8 ?  Scummsys.98
 	// these and later games can easily be identified by the .(a) file instead of a .he1
 	// and INIB chunk in the .he0
@@ -658,6 +658,12 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_heSndLoop = 0;
 	_heSndSoundFreq = 0;
 	memset(_timers, 0, sizeof(_timers));
+
+	memset(_queueCmd, 0, sizeof(_queueCmd));
+	memset(_queueActor, 0, sizeof(_queueActor));
+	memset(_queueParam1, 0, sizeof(_queueParam1));
+	memset(_queueParam2, 0, sizeof(_queueParam2));
+	_queuePos = 0;
 
 	//
 	// Init all VARS to 0xFF
@@ -1367,8 +1373,11 @@ void ScummEngine::initScummVars() {
 	} else if (_version >= 7) {
 		VAR(VAR_V6_EMSSPACE) = 10000;
 		VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
-	} else if (_heversion >= 72) {
+	} else if (_heversion >= 71) {
 		// TODO
+
+		// Set amount of sound channels
+		VAR(9) = 8;
 	} else {
 		VAR(VAR_CURRENTDRIVE) = 0;
 		switch (_midiDriver) {

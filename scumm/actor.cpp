@@ -962,6 +962,9 @@ void ScummEngine::processActors() {
 	}
 	
 	delete [] actors;
+
+	if (_features & GF_NEW_COSTUMES)
+		akos_processQueue();
 }
 
 // Used in Scumm v8, to allow the verb coin to be drawn over the inventory
