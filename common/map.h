@@ -156,7 +156,7 @@ public:
 		// Replace this node with node 'rep'
 		if (rep)
 			rep->_parent = parent;
-		if (!parent) // Root node?
+		if (parent == _header) // Root node?
 			_root = rep;
 		else if (parent->_left == node)
 			parent->_left = rep;
