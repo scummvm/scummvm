@@ -139,7 +139,7 @@ static const TransitionEffect transitionEffects[5] = {
 
 	// Inverse iris effect, specially tailored for V1/V2 games
 	{
-		8,		// Number of iterations
+		9,		// Number of iterations
 		{
 			-1, -1,  1, -1,
 			-1,  1,  1,  1,
@@ -370,8 +370,8 @@ void Gdi::updateDirtyScreen(VirtScreen *vs) {
 
 	for (i = 0; i < _numStrips; i++) {
 		if (vs->bdirty[i]) {
-			const int bottom = vs->bdirty[i];
 			const int top = vs->tdirty[i];
+			const int bottom = vs->bdirty[i];
 			vs->tdirty[i] = vs->height;
 			vs->bdirty[i] = 0;
 			if (i != (_numStrips - 1) && vs->bdirty[i + 1] == bottom && vs->tdirty[i + 1] == top) {
@@ -381,6 +381,11 @@ void Gdi::updateDirtyScreen(VirtScreen *vs) {
 				continue;
 			}
 			// handle vertically scrolling rooms
+			// FIXME: This is an evil hack; it cures some of the symptoms, but
+			// doesn't solve the core problem. Apparently some other parts of the
+			// code aren't properly aware of vertical scrolling. As a result,
+			// this hack is needed, but also sometimes actors leave traces when
+			// scrolling occurs, and other bad things happen.
 			if (_vm->_features & GF_NEW_CAMERA)
 				drawStripToScreen(vs, start * 8, w, 0, vs->height);
 			else
@@ -2273,16 +2278,7 @@ void ScummEngine::transitionEffect(int a) {
 				while (l <= r) {
 					if (l >= 0 && l < gdi._numStrips && t < bottom) {
 						virtscr[0].tdirty[l] = t * 8;
-/*
-						//HACK: this is bad place of this hack
-		 				//it fix redraw last 8 lines in room gfx layer
-		 				//this is only for maniac classic version becouse that game
-		 				//has bigger height of room gfx layer
-						if ((_version == 1) && (_gameId == GID_MANIAC))
-							virtscr[0].bdirty[l] = (b + 2) * 8;
-						else
-*/
-							virtscr[0].bdirty[l] = (b + 1) * 8;
+						virtscr[0].bdirty[l] = (b + 1) * 8;
 					}
 					l++;
 				}
@@ -2294,15 +2290,7 @@ void ScummEngine::transitionEffect(int a) {
 				if (t < 0)
 					t = 0;
  				virtscr[0].tdirty[l] = t * 8;
-/* 				//HACK: this is bad place of this hack
- 				//it fix redraw last 8 lines in room gfx layer
- 				//this is only for maniac classic version becouse that game
- 				//has bigger height of room gfx layer
-				if ((_version == 1) && (_gameId == GID_MANIAC))
-					virtscr[0].bdirty[l] = (b + 2) * 8;
-				else
-*/
-					virtscr[0].bdirty[l] = (b + 1) * 8;
+				virtscr[0].bdirty[l] = (b + 1) * 8;
 			}
 			updateDirtyScreen(kMainVirtScreen);
 		}
