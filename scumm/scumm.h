@@ -291,6 +291,44 @@ struct AuxEntry {
 	int subIndex;
 };
 
+class ResourceManager {
+	friend class ScummDebugger;
+	friend class ScummEngine;
+protected:
+	ScummEngine *_vm;
+
+public:
+	byte mode[rtNumTypes];
+	uint16 num[rtNumTypes];
+	uint32 tags[rtNumTypes];
+	const char *name[rtNumTypes];
+	byte **address[rtNumTypes];
+	byte *flags[rtNumTypes];
+	byte *roomno[rtNumTypes];
+	uint32 *roomoffs[rtNumTypes];
+	uint32 *globsize[rtNumTypes];
+
+	uint32 _allocatedSize;
+	uint32 _maxHeapThreshold, _minHeapThreshold;
+	byte _expireCounter;
+
+public:
+	ResourceManager(ScummEngine *vm);
+
+	void nukeResource(int type, int i);	
+
+	void freeResources();
+
+	bool validateResource(const char *str, int type, int index) const;
+	bool isResourceLoaded(int type, int index) const;
+
+	void lock(int type, int i);
+	void unlock(int type, int i);
+
+	void setResourceCounter(int type, int index, byte flag);
+	void increaseResourceCounter();
+};
+
 class ScummEngine : public Engine {
 	friend class ScummDebugger;
 	friend class SmushPlayer;
@@ -325,20 +363,10 @@ public:
 	/** Graphics manager */
 	Gdi gdi;
 	
-protected:
 	/** Central resource data. */
-	struct {
-		byte mode[rtNumTypes];
-		uint16 num[rtNumTypes];
-		uint32 tags[rtNumTypes];
-		const char *name[rtNumTypes];
-		byte **address[rtNumTypes];
-		byte *flags[rtNumTypes];
-		byte *roomno[rtNumTypes];
-		uint32 *roomoffs[rtNumTypes];
-		uint32 *globsize[rtNumTypes];
-	} res;
+	ResourceManager res;
 
+protected:
 	VirtualMachineState vm;
 
 public:
@@ -534,13 +562,7 @@ public:
 	void requestSave(int slot, const char *name, bool temporary = false);
 	void requestLoad(int slot);
 
-	void lock(int type, int i);
-	void unlock(int type, int i);
-
 protected:
-	/* Heap and memory management */
-	uint32 _maxHeapThreshold, _minHeapThreshold;
-
 	/* Script VM - should be in Script class */
 	uint32 _localScriptOffsets[256];
 	const byte *_scriptPointer, *_scriptOrgPointer;
@@ -631,8 +653,6 @@ protected:
 	Common::String _targetName;	// This is the game the user calls it, so use for saving
 	bool _dynamicRoomOffsets;
 	byte _resourceMapper[128];
-	uint32 _allocatedSize;
-	byte _expire_counter;
 	byte *_heV7DiskOffsets;
 	byte *_heV7RoomOffsets;
 	uint32 *_heV7RoomIntOffsets;
@@ -652,11 +672,10 @@ protected:
 	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
 	byte *createResource(int type, int index, uint32 size);
 	int loadResource(int type, int i);
-	void nukeResource(int type, int i);	
+//	void nukeResource(int type, int i);	
 	int getResourceSize(int type, int idx);
 
 public:
-	bool isResourceLoaded(int type, int index) const;
 	byte *getResourceAddress(int type, int i);
 	byte *getStringAddress(int i);
 	byte *getStringAddressVar(int i);
@@ -669,9 +688,6 @@ protected:
 	void convertMac0Resource(int type, int index, byte *ptr, int size);
 	void convertADResource(int type, int index, byte *ptr, int size);
 	int readSoundResourceSmallHeader(int type, int index);
-	void setResourceCounter(int type, int index, byte flag);
-	bool validateResource(const char *str, int type, int index) const;
-	void increaseResourceCounter();
 	bool isResourceInUse(int type, int i) const;
 	void initRoomSubBlocks();
 	void clearRoomObjects();
@@ -695,7 +711,6 @@ public:
 protected:
 	void resourceStats();
 	void expireResources(uint32 size);
-	void freeResources();
 
 public:
 	/* Should be in Object class */

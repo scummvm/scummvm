@@ -782,9 +782,9 @@ void ScummEngine_v2::o2_resourceRoutines() {
 		ensureResourceLoaded(type, resid);
 	} else {
 		if (opcode & 1)
-			lock(type, resid);
+			res.lock(type, resid);
 		else
-			unlock(type, resid);
+			res.unlock(type, resid);
 	}
 }
 

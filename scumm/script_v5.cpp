@@ -1732,40 +1732,40 @@ void ScummEngine_v5::o5_resourceRoutines() {
 		if (_gameId == GID_ZAK256)
 			warning("o5_resourceRoutines %d should not occur in Zak256", op);
 		else
-			setResourceCounter(resType[op-5], resid, 0x7F);
+			res.setResourceCounter(resType[op-5], resid, 0x7F);
 		break;
 	case 9:			// SO_LOCK_SCRIPT
 		if (resid >= _numGlobalScripts)
 			break;
-		lock(rtScript, resid);
+		res.lock(rtScript, resid);
 		break;
 	case 10:		// SO_LOCK_SOUND
-		lock(rtSound, resid);
+		res.lock(rtSound, resid);
 		break;
 	case 11:		// SO_LOCK_COSTUME
-		lock(rtCostume, resid);
+		res.lock(rtCostume, resid);
 		break;
 	case 12:		// SO_LOCK_ROOM
 		if (resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
-		lock(rtRoom, resid);
+		res.lock(rtRoom, resid);
 		break;
 
 	case 13:		// SO_UNLOCK_SCRIPT
 		if (resid >= _numGlobalScripts)
 			break;
-		unlock(rtScript, resid);
+		res.unlock(rtScript, resid);
 		break;
 	case 14:		// SO_UNLOCK_SOUND
-		unlock(rtSound, resid);
+		res.unlock(rtSound, resid);
 		break;
 	case 15:		// SO_UNLOCK_COSTUME
-		unlock(rtCostume, resid);
+		res.unlock(rtCostume, resid);
 		break;
 	case 16:		// SO_UNLOCK_ROOM
 		if (resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
-		unlock(rtRoom, resid);
+		res.unlock(rtRoom, resid);
 		break;
 
 	case 17:		// SO_CLEAR_HEAP
@@ -2256,7 +2256,7 @@ void ScummEngine_v5::o5_stringOps() {
 	case 2:											/* copystring */
 		a = getVarOrDirectByte(PARAM_1);
 		b = getVarOrDirectByte(PARAM_2);
-		nukeResource(rtString, a);
+		res.nukeResource(rtString, a);
 		ptr = getResourceAddress(rtString, b);
 		if (ptr)
 			loadPtrToResource(rtString, a, ptr);
@@ -2287,7 +2287,7 @@ void ScummEngine_v5::o5_stringOps() {
 	case 5:											/* create empty string */
 		a = getVarOrDirectByte(PARAM_1);
 		b = getVarOrDirectByte(PARAM_2);
-		nukeResource(rtString, a);
+		res.nukeResource(rtString, a);
 		if (b) {
 			ptr = createResource(rtString, a, b);
 			if (ptr) {
@@ -2332,7 +2332,7 @@ void ScummEngine_v5::o5_verbOps() {
 		case 2:		// SO_VERB_NAME
 			loadPtrToResource(rtVerb, slot, NULL);
 			if (slot == 0)
-				nukeResource(rtVerb, slot);
+				res.nukeResource(rtVerb, slot);
 			vs->type = kTextVerbType;
 			vs->imgindex = 0;
 			break;
@@ -2446,12 +2446,12 @@ void ScummEngine_v5::o5_verbOps() {
 		case 20:	// SO_VERB_NAME_STR
 			ptr = getResourceAddress(rtString, getVarOrDirectWord(PARAM_1));
 			if (!ptr)
-				nukeResource(rtVerb, slot);
+				res.nukeResource(rtVerb, slot);
 			else {
 				loadPtrToResource(rtVerb, slot, ptr);
 			}
 			if (slot == 0)
-				nukeResource(rtVerb, slot);
+				res.nukeResource(rtVerb, slot);
 			vs->type = kTextVerbType;
 			vs->imgindex = 0;
 			break;

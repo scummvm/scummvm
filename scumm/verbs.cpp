@@ -613,7 +613,7 @@ void ScummEngine::killVerb(int slot) {
 	vs->verbid = 0;
 	vs->curmode = 0;
 
-	nukeResource(rtVerb, slot);
+	res.nukeResource(rtVerb, slot);
 
 	if (_version <= 6 && vs->saveid == 0) {
 		drawVerb(slot, 0);

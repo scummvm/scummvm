@@ -594,7 +594,9 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	  _heversion(gs.heversion),
 	  _numActors(gs.numActors),
 	  _features(gs.features),
-	  gdi(this), _pauseDialog(0), _mainMenuDialog(0), _versionDialog(0),
+	  gdi(this),
+	  res(this),
+	  _pauseDialog(0), _mainMenuDialog(0), _versionDialog(0),
 	  _targetName(detector->_targetName) {
 
 	// Copy MD5 checksum
@@ -758,8 +760,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_lastSaveTime = 0;
 	_saveTemporaryState = false;
 	memset(_saveLoadName, 0, sizeof(_saveLoadName));
-	_maxHeapThreshold = 0;
-	_minHeapThreshold = 0;
 	memset(_localScriptOffsets, 0, sizeof(_localScriptOffsets));
 	_scriptPointer = NULL;
 	_scriptOrgPointer = NULL;
@@ -776,8 +776,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_fileOffset = 0;
 	_dynamicRoomOffsets = false;
 	memset(_resourceMapper, 0, sizeof(_resourceMapper));
-	_allocatedSize = 0;
-	_expire_counter = 0;
 	_lastLoadedRoom = 0;
 	_roomResource = 0;
 	_substResFileNameIndex = 0;
@@ -1173,7 +1171,11 @@ ScummEngine::~ScummEngine() {
 
 	free(_shadowPalette);
 	
-	freeResources();
+	res.freeResources();
+	if (_heversion >= 70) {
+		free(_heV7RoomIntOffsets);
+		free(_heV7RoomOffsets);
+	}
 
 	free(_objectStateTable);
 	free(_objectRoomTable);
@@ -1309,18 +1311,18 @@ int ScummEngine::init(GameDetector &detector) {
 
 #ifdef __PALM_OS__
 	if (_features & GF_NEW_COSTUMES)
-		_maxHeapThreshold = gVars->memory[kMemScummNewCostGames];
+		res._maxHeapThreshold = gVars->memory[kMemScummNewCostGames];
 	else
-		_maxHeapThreshold = gVars->memory[kMemScummOldCostGames];
+		res._maxHeapThreshold = gVars->memory[kMemScummOldCostGames];
 #else
 	// Since the new costumes are very big, we increase the heap limit, to avoid having
 	// to constantly reload stuff from the data files.
 	if (_features & GF_NEW_COSTUMES)
-		_maxHeapThreshold = 2500000;
+		res._maxHeapThreshold = 2500000;
 	else
-		_maxHeapThreshold = 550000;
+		res._maxHeapThreshold = 550000;
 #endif
-	_minHeapThreshold = 400000;
+	res._minHeapThreshold = 400000;
 
 	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
 
@@ -2074,8 +2076,8 @@ load_game:
 
 	camera._last = camera._cur;
 
-	if (!(++_expire_counter)) {
-		increaseResourceCounter();
+	if (!(++res._expireCounter)) {
+		res.increaseResourceCounter();
 	}
 
 	animateCursor();
@@ -2174,7 +2176,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	VAR(VAR_ROOM) = room;
 	_fullRedraw = true;
 
-	increaseResourceCounter();
+	res.increaseResourceCounter();
 
 	_currentRoom = room;
 	VAR(VAR_ROOM) = room;
@@ -2391,8 +2393,8 @@ void ScummEngine::initRoomSubBlocks() {
 	//
 	// Load box data
 	//
-	nukeResource(rtMatrix, 1);
-	nukeResource(rtMatrix, 2);
+	res.nukeResource(rtMatrix, 1);
+	res.nukeResource(rtMatrix, 2);
 	if (_features & GF_SMALL_HEADER) {
 		if (_version <= 2)
 			ptr = roomptr + *(roomptr + 0x15);
@@ -2451,7 +2453,7 @@ void ScummEngine::initRoomSubBlocks() {
 	// Load scale data
 	//
 	for (i = 1; i < res.num[rtScaleTable]; i++)
-		nukeResource(rtScaleTable, i);
+		res.nukeResource(rtScaleTable, i);
 
 	if (_features & GF_OLD_BUNDLE)
 		ptr = 0;

@@ -779,40 +779,40 @@ void ScummEngine_v8::o8_resourceRoutines() {
 		break;
 
 	case 0x42:		// SO_HEAP_LOCK_COSTUME Lock costume in heap
-		lock(rtCostume, resid);
+		res.lock(rtCostume, resid);
 		break;
 	case 0x43:		// SO_HEAP_LOCK_ROOM Lock room in heap
-		lock(rtRoom, resid);
+		res.lock(rtRoom, resid);
 		break;
 	case 0x44:		// SO_HEAP_LOCK_SCRIPT Lock script in heap
-		lock(rtScript, resid);
+		res.lock(rtScript, resid);
 		break;
 	case 0x45:		// SO_HEAP_LOCK_SOUND Lock sound in heap
-		lock(rtSound, resid);
+		res.lock(rtSound, resid);
 		break;
 	case 0x46:		// SO_HEAP_UNLOCK_COSTUME Unlock costume
-		unlock(rtCostume, resid);
+		res.unlock(rtCostume, resid);
 		break;
 	case 0x47:		// SO_HEAP_UNLOCK_ROOM Unlock room
-		unlock(rtRoom, resid);
+		res.unlock(rtRoom, resid);
 		break;
 	case 0x48:		// SO_HEAP_UNLOCK_SCRIPT Unlock script
-		unlock(rtScript, resid);
+		res.unlock(rtScript, resid);
 		break;
 	case 0x49:		// SO_HEAP_UNLOCK_SOUND Unlock sound
-		unlock(rtSound, resid);
+		res.unlock(rtSound, resid);
 		break;
 	case 0x4A:		// SO_HEAP_NUKE_COSTUME Remove costume from heap
-		setResourceCounter(rtCostume, resid, 0x7F);
+		res.setResourceCounter(rtCostume, resid, 0x7F);
 		break;
 	case 0x4B:		// SO_HEAP_NUKE_ROOM Remove room from heap
-		setResourceCounter(rtRoom, resid, 0x7F);
+		res.setResourceCounter(rtRoom, resid, 0x7F);
 		break;
 	case 0x4C:		// SO_HEAP_NUKE_SCRIPT Remove script from heap
-		setResourceCounter(rtScript, resid, 0x7F);
+		res.setResourceCounter(rtScript, resid, 0x7F);
 		break;
 	case 0x4D:		// SO_HEAP_NUKE_SOUND Remove sound from heap
-		setResourceCounter(rtSound, resid, 0x7F);
+		res.setResourceCounter(rtSound, resid, 0x7F);
 		break;
 	default:
 		error("o8_resourceRoutines: default case 0x%x", subOp);
@@ -1214,13 +1214,13 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 	case 11: {	// lockObject
 		int objidx = getObjectIndex(args[1]);
 		assert(objidx != -1);
-		lock(rtFlObject, objidx);
+		res.lock(rtFlObject, objidx);
 		break;
 	}
 	case 12: {	// unlockObject
 		int objidx = getObjectIndex(args[1]);
 		assert(objidx != -1);
-		unlock(rtFlObject, objidx);
+		res.unlock(rtFlObject, objidx);
 		break;
 	}
 	case 13:	// remapCostume

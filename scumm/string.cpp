@@ -720,7 +720,7 @@ void ScummEngine::initCharset(int charsetno) {
 	int i;
 
 	if (_gameId == GID_FT) {
-		if (!isResourceLoaded(rtCharset, charsetno))
+		if (!res.isResourceLoaded(rtCharset, charsetno))
 			loadCharset(charsetno);
 	} else {
 		if (!getResourceAddress(rtCharset, charsetno))

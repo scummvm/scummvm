@@ -167,7 +167,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	for (i = rtFirst; i <= rtLast; i++)
 		if (i != rtTemp && i != rtBuffer && (i != rtSound || _saveSound || !compat))
 			for (j = 0; j < res.num[i]; j++) {
-				nukeResource(i, j);
+				res.nukeResource(i, j);
 				res.flags[i][j] = 0;
 			}
 

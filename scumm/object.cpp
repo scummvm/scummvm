@@ -521,7 +521,7 @@ void ScummEngine::clearRoomObjects() {
 			} else {
 				// Nuke all unlocked flObjects
 				if (!(res.flags[rtFlObject][_objs[i].fl_object_index] & RF_LOCK)) {
-					nukeResource(rtFlObject, _objs[i].fl_object_index);
+					res.nukeResource(rtFlObject, _objs[i].fl_object_index);
 					_objs[i].obj_nr = 0;
 					_objs[i].fl_object_index = 0;
 				}
@@ -896,7 +896,7 @@ void ScummEngine::clearOwnerOf(int obj) {
 			if (_objs[i].obj_nr == obj) {
 				if (!_objs[i].fl_object_index)
 					return;
-				nukeResource(rtFlObject, _objs[i].fl_object_index);
+				res.nukeResource(rtFlObject, _objs[i].fl_object_index);
 				_objs[i].obj_nr = 0;
 				_objs[i].fl_object_index = 0;
 			}
@@ -908,7 +908,7 @@ void ScummEngine::clearOwnerOf(int obj) {
 		if (_inventory[i] == obj) {
 			j = whereIsObject(obj);
 			if (j == WIO_INVENTORY) {
-				nukeResource(rtInventory, i);
+				res.nukeResource(rtInventory, i);
 				_inventory[i] = 0;
 			}
 			a = _inventory;
@@ -990,7 +990,7 @@ void ScummEngine::setObjectName(int obj) {
 
 	for (i = 0; i < _numNewNames; i++) {
 		if (_newNames[i] == obj) {
-			nukeResource(rtObjectName, i);
+			res.nukeResource(rtObjectName, i);
 			_newNames[i] = 0;
 			break;
 		}
@@ -1420,7 +1420,7 @@ void ScummEngine::nukeFlObjects(int min, int max) {
 
 	for (i = (_numLocalObjects-1), od = _objs; --i >= 0; od++)
 		if (od->fl_object_index && od->obj_nr >= min && od->obj_nr <= max) {
-			nukeResource(rtFlObject, od->fl_object_index);
+			res.nukeResource(rtFlObject, od->fl_object_index);
 			od->obj_nr = 0;
 			od->fl_object_index = 0;
 		}
@@ -1638,9 +1638,9 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 	isRoomLocked = ((res.flags[rtRoom][room] & RF_LOCK) != 0);
 	isRoomScriptsLocked = ((res.flags[rtRoomScripts][room] & RF_LOCK) != 0);
 	if (!isRoomLocked)
-		lock(rtRoom, room);
+		res.lock(rtRoom, room);
 	if (_version == 8 && !isRoomScriptsLocked)
-		lock(rtRoomScripts, room);
+		res.lock(rtRoomScripts, room);
 
 	// Allocate slot & memory for floating object
 	slot = findFlObjectSlot();
@@ -1656,9 +1656,9 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 
 	// Unlock room/roomScripts
 	if (!isRoomLocked)
-		unlock(rtRoom, room);
+		res.unlock(rtRoom, room);
 	if (_version == 8 && !isRoomScriptsLocked)
-		unlock(rtRoomScripts, room);
+		res.unlock(rtRoomScripts, room);
 
 	// Setup local object flags
 	setupRoomObject(od, flob, flob);

@@ -254,8 +254,8 @@ void ScummEngine::initScreens(int b, int h) {
 	int adj = 0;
 
 	for (i = 0; i < 3; i++) {
-		nukeResource(rtBuffer, i + 1);
-		nukeResource(rtBuffer, i + 5);
+		res.nukeResource(rtBuffer, i + 1);
+		res.nukeResource(rtBuffer, i + 5);
 	}
 
 	if (!getResourceAddress(rtBuffer, 4)) {

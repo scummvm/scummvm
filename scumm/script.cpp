@@ -364,7 +364,7 @@ void ScummEngine::nukeArrays(byte script) {
 
 	for (i = 1; i < _numArray; i++) {
 		if (_arraySlot[i] == script) {
-			nukeResource(rtString, i);
+			res.nukeResource(rtString, i);
 			_arraySlot[i] = 0;
 		}
 	}
@@ -897,7 +897,7 @@ void ScummEngine::killScriptsAndResources() {
 						continue;
 
 					_newNames[i] = 0;
-					nukeResource(rtObjectName, i);
+					res.nukeResource(rtObjectName, i);
 				}
 			}
 		}

@@ -466,7 +466,7 @@ void ScummEngine_v6::nukeArray(int a) {
 	data = readVar(a);
 
 	if (data)
-		nukeResource(rtString, data);
+		res.nukeResource(rtString, data);
 	if (_features & GF_HUMONGOUS)
 		_arraySlot[data] = 0;
 
@@ -1559,59 +1559,59 @@ void ScummEngine_v6::o6_resourceRoutines() {
 		if (_version >= 7)
 			if (resid >= _numGlobalScripts)
 				break;
-		setResourceCounter(rtScript, resid, 0x7F);
+		res.setResourceCounter(rtScript, resid, 0x7F);
 		break;
 	case 105:		// SO_NUKE_SOUND
 		resid = pop();
-		setResourceCounter(rtSound, resid, 0x7F);
+		res.setResourceCounter(rtSound, resid, 0x7F);
 		break;
 	case 106:		// SO_NUKE_COSTUME
 		resid = pop();
-		setResourceCounter(rtCostume, resid, 0x7F);
+		res.setResourceCounter(rtCostume, resid, 0x7F);
 		break;
 	case 107:		// SO_NUKE_ROOM
 		resid = pop();
-		setResourceCounter(rtRoom, resid, 0x7F);
+		res.setResourceCounter(rtRoom, resid, 0x7F);
 		break;
 	case 108:		// SO_LOCK_SCRIPT
 		resid = pop();
 		if (resid >= _numGlobalScripts)
 			break;
-		lock(rtScript, resid);
+		res.lock(rtScript, resid);
 		break;
 	case 109:		// SO_LOCK_SOUND
 		resid = pop();
-		lock(rtSound, resid);
+		res.lock(rtSound, resid);
 		break;
 	case 110:		// SO_LOCK_COSTUME
 		resid = pop();
-		lock(rtCostume, resid);
+		res.lock(rtCostume, resid);
 		break;
 	case 111:		// SO_LOCK_ROOM
 		resid = pop();
 		if (resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
-		lock(rtRoom, resid);
+		res.lock(rtRoom, resid);
 		break;
 	case 112:		// SO_UNLOCK_SCRIPT
 		resid = pop();
 		if (resid >= _numGlobalScripts)
 			break;
-		unlock(rtScript, resid);
+		res.unlock(rtScript, resid);
 		break;
 	case 113:		// SO_UNLOCK_SOUND
 		resid = pop();
-		unlock(rtSound, resid);
+		res.unlock(rtSound, resid);
 		break;
 	case 114:		// SO_UNLOCK_COSTUME
 		resid = pop();
-		unlock(rtCostume, resid);
+		res.unlock(rtCostume, resid);
 		break;
 	case 115:		// SO_UNLOCK_ROOM
 		resid = pop();
 		if (resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
-		unlock(rtRoom, resid);
+		res.unlock(rtRoom, resid);
 		break;
 	case 116:		// SO_CLEAR_HEAP
 		/* this is actually a scumm message */

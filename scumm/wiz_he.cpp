@@ -1424,7 +1424,7 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 					f.seek(0, SEEK_SET);
 					byte *p = createResource(rtImage, params->img.resNum, size);
 					if (f.read(p, size) != size) {
-						nukeResource(rtImage, params->img.resNum);
+						res.nukeResource(rtImage, params->img.resNum);
 						warning("i/o error when reading '%s'", params->filename);
 						VAR(VAR_GAME_LOADED) = -2;
 						VAR(119) = -2;

@@ -631,7 +631,7 @@ void ScummEngine::loadCharset(int no) {
 
 void ScummEngine::nukeCharset(int i) {
 	checkRange(_numCharsets - 1, 1, i, "Nuking illegal charset %d");
-	nukeResource(rtCharset, i);
+	res.nukeResource(rtCharset, i);
 }
 
 void ScummEngine::ensureResourceLoaded(int type, int i) {
@@ -749,7 +749,7 @@ int ScummEngine::loadResource(int type, int idx) {
 		return 1;
 	}
 
-	nukeResource(type, idx);
+	res.nukeResource(type, idx);
 
 	error("Cannot read resource");
 }
@@ -771,7 +771,7 @@ byte *ScummEngine::getResourceAddress(int type, int idx) {
 	byte *ptr;
 
 	CHECK_HEAP
-	if (!validateResource("getResourceAddress", type, idx))
+	if (!res.validateResource("getResourceAddress", type, idx))
 		return NULL;
 
 	if (!res.address[type]) {
@@ -788,7 +788,7 @@ byte *ScummEngine::getResourceAddress(int type, int idx) {
 		return NULL;
 	}
 
-	setResourceCounter(type, idx, 1);
+	res.setResourceCounter(type, idx, 1);
 
 	debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == %p", resTypeFromId(type), idx, ptr + sizeof(MemBlkHeader));
 	return ptr + sizeof(MemBlkHeader);
@@ -811,9 +811,23 @@ byte *ScummEngine::getStringAddressVar(int i) {
 	return getStringAddress(_scummVars[i]);
 }
 
-void ScummEngine::setResourceCounter(int type, int idx, byte flag) {
-	res.flags[type][idx] &= ~RF_USAGE;
-	res.flags[type][idx] |= flag;
+void ResourceManager::increaseResourceCounter() {
+	int i, j;
+	byte counter;
+
+	for (i = rtFirst; i <= rtLast; i++) {
+		for (j = num[i]; --j >= 0;) {
+			counter = flags[i][j] & RF_USAGE;
+			if (counter && counter < RF_USAGE_MAX) {
+				setResourceCounter(i, j, counter + 1);
+			}
+		}
+	}
+}
+
+void ResourceManager::setResourceCounter(int type, int idx, byte flag) {
+	flags[type][idx] &= ~RF_USAGE;
+	flags[type][idx] |= flag;
 }
 
 /* 2 bytes safety area to make "precaching" of bytes in the gdi drawer easier */
@@ -825,9 +839,9 @@ byte *ScummEngine::createResource(int type, int idx, uint32 size) {
 	CHECK_HEAP
 	debugC(DEBUG_RESOURCE, "createResource(%s,%d,%d)", resTypeFromId(type), idx, size);
 
-	if (!validateResource("allocating", type, idx))
+	if (!res.validateResource("allocating", type, idx))
 		return NULL;
-	nukeResource(type, idx);
+	res.nukeResource(type, idx);
 
 	expireResources(size);
 
@@ -837,35 +851,41 @@ byte *ScummEngine::createResource(int type, int idx, uint32 size) {
 		error("Out of memory while allocating %d", size);
 	}
 
-	_allocatedSize += size;
+	res._allocatedSize += size;
 
 	res.address[type][idx] = ptr;
 	((MemBlkHeader *)ptr)->size = size;
-	setResourceCounter(type, idx, 1);
+	res.setResourceCounter(type, idx, 1);
 	return ptr + sizeof(MemBlkHeader);	/* skip header */
 }
 
-bool ScummEngine::validateResource(const char *str, int type, int idx) const {
-	if (type < rtFirst || type > rtLast || (uint) idx >= (uint) res.num[type]) {
+ResourceManager::ResourceManager(ScummEngine *vm) {
+	memset(this, 0, sizeof(ResourceManager));
+	_vm = vm;
+//	_allocatedSize = 0;
+}
+
+bool ResourceManager::validateResource(const char *str, int type, int idx) const {
+	if (type < rtFirst || type > rtLast || (uint) idx >= (uint)num[type]) {
 		warning("%s Illegal Glob type %s (%d) num %d", str, resTypeFromId(type), type, idx);
 		return false;
 	}
 	return true;
 }
 
-void ScummEngine::nukeResource(int type, int idx) {
+void ResourceManager::nukeResource(int type, int idx) {
 	byte *ptr;
 
 	CHECK_HEAP
-	if (!res.address[type])
+	if (!address[type])
 		return;
 
-	assert(idx >= 0 && idx < res.num[type]);
+	assert(idx >= 0 && idx < num[type]);
 
-	if ((ptr = res.address[type][idx]) != NULL) {
+	if ((ptr = address[type][idx]) != NULL) {
 		debugC(DEBUG_RESOURCE, "nukeResource(%s,%d)", resTypeFromId(type), idx);
-		res.address[type][idx] = 0;
-		res.flags[type][idx] = 0;
+		address[type][idx] = 0;
+		flags[type][idx] = 0;
 		_allocatedSize -= ((MemBlkHeader *)ptr)->size;
 		free(ptr);
 	}
@@ -896,20 +916,20 @@ int ScummEngine::getResourceDataSize(const byte *ptr) const {
 		return READ_BE_UINT32(ptr - 4) - 8;
 }
 
-void ScummEngine::lock(int type, int i) {
+void ResourceManager::lock(int type, int i) {
 	if (!validateResource("Locking", type, i))
 		return;
-	res.flags[type][i] |= RF_LOCK;
+	flags[type][i] |= RF_LOCK;
 }
 
-void ScummEngine::unlock(int type, int i) {
+void ResourceManager::unlock(int type, int i) {
 	if (!validateResource("Unlocking", type, i))
 		return;
-	res.flags[type][i] &= ~RF_LOCK;
+	flags[type][i] &= ~RF_LOCK;
 }
 
 bool ScummEngine::isResourceInUse(int type, int i) const {
-	if (!validateResource("isResourceInUse", type, i))
+	if (!res.validateResource("isResourceInUse", type, i))
 		return false;
 	switch (type) {
 	case rtRoom:
@@ -927,20 +947,6 @@ bool ScummEngine::isResourceInUse(int type, int i) const {
 	}
 }
 
-void ScummEngine::increaseResourceCounter() {
-	int i, j;
-	byte counter;
-
-	for (i = rtFirst; i <= rtLast; i++) {
-		for (j = res.num[i]; --j >= 0;) {
-			counter = res.flags[i][j] & RF_USAGE;
-			if (counter && counter < RF_USAGE_MAX) {
-				setResourceCounter(i, j, counter + 1);
-			}
-		}
-	}
-}
-
 void ScummEngine::expireResources(uint32 size) {
 	int i, j;
 	byte flag;
@@ -948,15 +954,15 @@ void ScummEngine::expireResources(uint32 size) {
 	int best_type, best_res = 0;
 	uint32 oldAllocatedSize;
 
-	if (_expire_counter != 0xFF) {
-		_expire_counter = 0xFF;
-		increaseResourceCounter();
+	if (res._expireCounter != 0xFF) {
+		res._expireCounter = 0xFF;
+		res.increaseResourceCounter();
 	}
 
-	if (size + _allocatedSize < _maxHeapThreshold)
+	if (size + res._allocatedSize < res._maxHeapThreshold)
 		return;
 
-	oldAllocatedSize = _allocatedSize;
+	oldAllocatedSize = res._allocatedSize;
 
 	do {
 		best_type = 0;
@@ -976,32 +982,27 @@ void ScummEngine::expireResources(uint32 size) {
 
 		if (!best_type)
 			break;
-		nukeResource(best_type, best_res);
-	} while (size + _allocatedSize > _minHeapThreshold);
+		res.nukeResource(best_type, best_res);
+	} while (size + res._allocatedSize > res._minHeapThreshold);
 
-	increaseResourceCounter();
+	res.increaseResourceCounter();
 
-	debugC(DEBUG_RESOURCE, "Expired resources, mem %d -> %d", oldAllocatedSize, _allocatedSize);
+	debugC(DEBUG_RESOURCE, "Expired resources, mem %d -> %d", oldAllocatedSize, res._allocatedSize);
 }
 
-void ScummEngine::freeResources() {
+void ResourceManager::freeResources() {
 	int i, j;
 	for (i = rtFirst; i <= rtLast; i++) {
-		for (j = res.num[i]; --j >= 0;) {
+		for (j = num[i]; --j >= 0;) {
 			if (isResourceLoaded(i, j))
 				nukeResource(i, j);
 		}
-		free(res.address[i]);
-		free(res.flags[i]);
-		free(res.roomno[i]);
-		free(res.roomoffs[i]);
+		free(address[i]);
+		free(flags[i]);
+		free(roomno[i]);
+		free(roomoffs[i]);
 
-		if (_heversion >= 70)
-			free(res.globsize[i]);
-	}
-	if (_heversion >= 70) {
-		free(_heV7RoomIntOffsets);
-		free(_heV7RoomOffsets);
+		free(globsize[i]);
 	}
 }
 
@@ -1009,7 +1010,7 @@ void ScummEngine::loadPtrToResource(int type, int resindex, const byte *source) 
 	byte *alloced;
 	int i, len;
 
-	nukeResource(type, resindex);
+	res.nukeResource(type, resindex);
 
 	len = resStrLen(source) + 1;
 
@@ -1028,10 +1029,10 @@ void ScummEngine::loadPtrToResource(int type, int resindex, const byte *source) 
 	}
 }
 
-bool ScummEngine::isResourceLoaded(int type, int idx) const {
+bool ResourceManager::isResourceLoaded(int type, int idx) const {
 	if (!validateResource("isResourceLoaded", type, idx))
 		return false;
-	return res.address[type][idx] != NULL;
+	return address[type][idx] != NULL;
 }
 
 void ScummEngine::resourceStats() {
@@ -1048,7 +1049,7 @@ void ScummEngine::resourceStats() {
 			}
 		}
 
-	debug(1, "Total allocated size=%d, locked=%d(%d)", _allocatedSize, lockedSize, lockedNum);
+	debug(1, "Total allocated size=%d, locked=%d(%d)", res._allocatedSize, lockedSize, lockedNum);
 }
 
 void ScummEngine::readMAXS(int blockSize) {

@@ -1119,7 +1119,7 @@ int Insane::smlayer_loadSound(int id, int flag, int phase) {
 	if (phase == 2)
 		_vm->ensureResourceLoaded(rtSound, resid);
 	
-	_vm->setResourceCounter(rtSound, resid, 1);
+	_vm->res.setResourceCounter(rtSound, resid, 1);
 	
 	if (phase == 1) {
 		_objArray2Idx2++;
@@ -1141,7 +1141,7 @@ int Insane::smlayer_loadCostume(int id, int phase) {
 		return 0;
 	
 	_vm->ensureResourceLoaded(rtCostume, resid);
-	_vm->setResourceCounter(rtCostume, resid, 1);
+	_vm->res.setResourceCounter(rtCostume, resid, 1);
 	
 	// smlayer_lock(rtCostume, resid); // FIXME
 	

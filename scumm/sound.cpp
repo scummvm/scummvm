@@ -841,7 +841,7 @@ int Sound::isSoundRunning(int sound) const {
 	if (isSoundInQueue(sound))
 		return 1;
 
-	if (sound > _vm->_numSounds || !_vm->isResourceLoaded(rtSound, sound))
+	if (sound > _vm->_numSounds || !_vm->res.isResourceLoaded(rtSound, sound))
 		return 0;
 
 	if (_vm->_musicEngine)
@@ -872,7 +872,7 @@ bool Sound::isSoundInUse(int sound) const {
 	if (isSoundInQueue(sound))
 		return true;
 
-	if (!_vm->isResourceLoaded(rtSound, sound))
+	if (!_vm->res.isResourceLoaded(rtSound, sound))
 		return false;
 
 	if (_vm->_imuse)
