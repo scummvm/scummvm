@@ -33,7 +33,12 @@
 #include "sound/mididrv.h"
 
 #if (!( defined(__DC__) || defined(__GP32__)) && !defined(_MSC_VER))
+#include <sys/param.h>
 #include <unistd.h>
+#endif
+
+#if !(defined(MAXPATHLEN))
+#define MAXPATHLEN 1024
 #endif
 
 namespace GUI {
@@ -427,9 +432,6 @@ void GlobalOptionsDialog::open() {
 		_savePath->setLabel(dir);
 	} else {
 		// Default to the current directory...
-#if !(defined(MAXPATHLEN))
-#define MAXPATHLEN 1024
-#endif
 		char buf[MAXPATHLEN];
 		getcwd(buf, sizeof(buf));
 		_savePath->setLabel(buf);
