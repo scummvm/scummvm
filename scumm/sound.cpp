@@ -848,7 +848,7 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle)
 	if (file_size > 0) {
 		if (_vorbis_mode) {
 #ifdef USE_VORBIS
-			playSfxSound_Vorbis(_scumm->_mixer, file, file_size, handle);
+			_scumm->_mixer->playVorbis(handle, file, file_size);
 #endif
 		} else {
 #ifdef USE_MAD

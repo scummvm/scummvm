@@ -269,6 +269,9 @@ void SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_time
 #endif
 
 #ifdef USE_VORBIS
+void SoundMixer::playVorbis(PlayingSoundHandle *handle, File *file, uint32 size) {
+	playSfxSound_Vorbis(this, file, size, handle);
+}
 void SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume, int8 pan) {
 	// Create the input stream
 	AudioInputStream *input = makeVorbisStream(ov_file, duration);

@@ -32,7 +32,7 @@ General
   - convert said string representation back to FSNode
   Of course that can be added w/o a FileManager class, too - but it might be
   nice to have all of these integrated.
-  
+
 
 Documentation
 =============

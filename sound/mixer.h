@@ -104,6 +104,7 @@ public:
 	void playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume = 255, int8 pan = 0);
 #endif
 #ifdef USE_VORBIS
+	void playVorbis(PlayingSoundHandle *handle, File *file, uint32 size);
 	void playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track, byte volume = 255, int8 pan = 0);
 #endif
 
