@@ -380,6 +380,9 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 		break;
 	case 12: // ImuseSetParam
 		switch (sub_cmd) {
+		case 0x400: // set group volume
+			debug(5, "set group volume (0x400), sample(%d), group volume(%d)", sample, d);
+			break;
 		case 0x500: // set priority - could be ignored
 			break;
 		case 0x600: // set volume
@@ -445,6 +448,9 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 			warning("IMuseDigital::doCommand FadeParam DEFAULT sub command %d", sub_cmd);
 			break;
 		}
+		break;
+	case 25: // ImuseStartStream
+		debug(5, "ImuseStartStream (%d, %d, %d)", b, c, d);
 		break;
 	case 0x1000: // ImuseSetState
 		debug(5, "ImuseSetState (%d)", b);
