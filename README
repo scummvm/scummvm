@@ -533,6 +533,8 @@ simon games.
         Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-g                 - Runs in really REALLY fast mode
         Ctrl-d                 - Starts the debugger
+        Ctrl-t                 - Switch been 'Speech only', 'Speech and Subtitles'
+                                 and 'Subtitles only'
         Tilde (~)              - Show/hide the debugging console
         Ctrl-s                 - Shows memory consumption
         [ and ]                - Music volume, down/up
@@ -1064,6 +1066,7 @@ The following keywords are recognized:
 
         language        string   Specify language (en, de, fr, it, pt, es, jp,
                                  zh, kr,se, gb, hb, cz, ru)
+        speech_mute     bool     If true, speech is muted
         subtitles       bool     Set to true to enable subtitles.
         talkspeed       number   Text speed
 
@@ -1108,13 +1111,11 @@ Broken Sword II adds the following non-standard keywords:
         object_labels   bool     If true, object labels are enabled
         reverse_stereo  bool     If true, stereo channels are reversed
         sfx_mute        bool     If true, sound effects are muted
-        speech_mute     bool     If true, speech is muted
 
 Flight of the Amazon Queen adds the following non-standard keywords:
 
         music_mute      bool     If true, music is muted
         sfx_mute        bool     If true, sound effects are muted
-        speech_mute     bool     If true, speech is muted
 
 Simon the Sorcerer 1 & 2 add the following non-standard keywords:
 
@@ -1122,7 +1123,6 @@ Simon the Sorcerer 1 & 2 add the following non-standard keywords:
         music_mute      bool     If true, music is muted
         slow_down       number   Makes games slower (1- 10)
         sfx_mute        bool     If true, sound effects are muted
-        speech_mute     bool     If true, speech is muted
                                  [Simon the Sorcerer 2 only]
 
 9.0) Compiling:
