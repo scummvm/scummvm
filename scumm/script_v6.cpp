@@ -1467,7 +1467,8 @@ void ScummEngine_v6::o6_setBoxFlags() {
 void ScummEngine_v6::o6_createBoxMatrix() {
 	createBoxMatrix();
 
-	putActors();
+	if ((_gameId == GID_DIG) || (_gameId == GID_CMI))
+		putActors();
 }
 
 void ScummEngine_v6::o6_resourceRoutines() {
