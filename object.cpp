@@ -225,23 +225,33 @@ int Scumm::findObject(int x, int y) {
 	return 0;
 }
 
-void Scumm::drawRoomObjects(int arg) {
-	int i;
+void Scumm::drawRoomObject(int i, int arg) {
 	ObjectData *od;
 	byte a;
 
-	for(i=1; i<=_numObjectsInRoom; i++) {
-		od = &_objs[i];
-		if (!od->obj_nr || !od->state)
-			continue;
-		do {
-			a = od->parentstate;
-			if (!od->parent) {
-				drawObject(i, arg);
-				break;
-			}
-			od = &_objs[od->parent];
-		} while (od->state==a);
+	od = &_objs[i];
+	if (!od->obj_nr || !od->state)
+		return;
+
+	do {
+		a = od->parentstate;
+		if (!od->parent) {
+			drawObject(i, arg);
+			break;
+		}
+		od = &_objs[od->parent];
+	} while (od->state==a);
+}
+
+void Scumm::drawRoomObjects(int arg) {
+	int i;
+
+	if (_features & GF_DRAWOBJ_OTHER_ORDER) {
+		for(i=1; i<=_numObjectsInRoom; i++)
+			drawRoomObject(i,arg);
+	} else {
+		for(i=_numObjectsInRoom; i!=0; i--)
+			drawRoomObject(i,arg);
 	}
 }
 
@@ -407,9 +417,9 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room) {
 		od->x_pos = ((int16)READ_LE_UINT16(&cdhd->v6.x));
 		od->y_pos = ((int16)READ_LE_UINT16(&cdhd->v6.y));
 		if (cdhd->v6.flags == 0x80) {
-			od->parentstate = 1<<4;
+			od->parentstate = 1;
 		} else {
-			od->parentstate = (cdhd->v6.flags&0xF)<<OF_STATE_SHL;
+			od->parentstate = (cdhd->v6.flags&0xF);
 		}
 		od->parent = cdhd->v6.parent;
 		od->actordir = cdhd->v6.actordir;
@@ -419,9 +429,9 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room) {
 		od->x_pos = cdhd->v5.x<<3;
 		od->y_pos = cdhd->v5.y<<3;
 		if (cdhd->v5.flags == 0x80) {
-			od->parentstate = 1<<4;
+			od->parentstate = 1;
 		} else {
-			od->parentstate = (cdhd->v5.flags&0xF)<<OF_STATE_SHL;
+			od->parentstate = (cdhd->v5.flags&0xF);
 		}
 		od->parent = cdhd->v5.parent;
 		od->walk_x = READ_LE_UINT16(&cdhd->v5.walk_x);

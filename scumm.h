@@ -881,6 +881,7 @@ enum GameFeatures {
 	GF_HAS_ROOMTABLE = GF_AFTER_V7,
 	GF_USE_KEY = 8,
 	GF_USE_ANGLES = GF_AFTER_V7,
+	GF_DRAWOBJ_OTHER_ORDER = 16,
 
 	GF_DEFAULT = GF_USE_KEY,
 };
@@ -1659,6 +1660,7 @@ struct Scumm {
 
 	void redrawBGAreas();
 	void drawRoomObjects(int arg);
+	void drawRoomObject(int i, int arg);
 	void redrawBGStrip(int start, int num);
 	void drawObject(int obj, int arg);
 
