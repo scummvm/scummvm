@@ -329,7 +329,7 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 bool ScummDebugger::Cmd_PrintScript(int argc, const char **argv) {
 	int i;
 	ScriptSlot *ss = _vm->vm.slot;
-	DebugPrintf("+--------------------------------------+\n");
+	DebugPrintf("+-----------------------------------+\n");
 	DebugPrintf("|# | num|offst|sta|typ|fr|rec|fc|cut|\n");
 	DebugPrintf("+--+----+-----+---+---+--+---+--+---+\n");
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
@@ -340,7 +340,7 @@ bool ScummDebugger::Cmd_PrintScript(int argc, const char **argv) {
 					ss->freezeCount, ss->cutsceneOverride);
 		}
 	}
-	DebugPrintf("+--------------------------------------+\n");
+	DebugPrintf("+-----------------------------------+\n");
 
 	return true;
 }
@@ -365,32 +365,32 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 	value = atoi(argv[3]);
 
 	if (!strcmp(argv[2], "ignoreboxes")) {
-			a->ignoreBoxes = (value > 0);
-			DebugPrintf("Actor[%d].ignoreBoxes = %d\n", actnum, a->ignoreBoxes);
+		a->ignoreBoxes = (value > 0);
+		DebugPrintf("Actor[%d].ignoreBoxes = %d\n", actnum, a->ignoreBoxes);
 	} else if (!strcmp(argv[2], "x")) {
-			a->putActor(value, a->_pos.y, a->room);
-			DebugPrintf("Actor[%d].x = %d\n", actnum, a->_pos.x);
-			_vm->_fullRedraw = 1;
+		a->putActor(value, a->_pos.y, a->room);
+		DebugPrintf("Actor[%d].x = %d\n", actnum, a->_pos.x);
+		_vm->_fullRedraw = 1;
 	} else if (!strcmp(argv[2], "y")) {
-			a->putActor(a->_pos.x, value, a->room);
-			DebugPrintf("Actor[%d].y = %d\n", actnum, a->_pos.y);
-			_vm->_fullRedraw = 1;
+		a->putActor(a->_pos.x, value, a->room);
+		DebugPrintf("Actor[%d].y = %d\n", actnum, a->_pos.y);
+		_vm->_fullRedraw = 1;
 	} else if (!strcmp(argv[2], "elevation")) {
-			a->elevation = value;
-			DebugPrintf("Actor[%d].elevation = %d\n", actnum, a->elevation);
-			_vm->_fullRedraw = 1;
+		a->elevation = value;
+		DebugPrintf("Actor[%d].elevation = %d\n", actnum, a->elevation);
+		_vm->_fullRedraw = 1;
 	} else if (!strcmp(argv[2], "costume")) {
-			if (value >= _vm->res.num[rtCostume])
-					DebugPrintf("Costume not changed as %d exceeds max of %d\n", value, _vm->res.num[rtCostume]);
-			else {
-				a->setActorCostume( value );
-				_vm->_fullRedraw = 1;
-				DebugPrintf("Actor[%d].costume = %d\n", actnum, a->costume);
-			}
+		if (value >= _vm->res.num[rtCostume])
+				DebugPrintf("Costume not changed as %d exceeds max of %d\n", value, _vm->res.num[rtCostume]);
+		else {
+			a->setActorCostume( value );
+			_vm->_fullRedraw = 1;
+			DebugPrintf("Actor[%d].costume = %d\n", actnum, a->costume);
+		}
 	} else if (!strcmp(argv[2], "name")) {
-			DebugPrintf("Name of actor %d: %s\n", actnum, _vm->getObjOrActorName(actnum));
+		DebugPrintf("Name of actor %d: %s\n", actnum, _vm->getObjOrActorName(actnum));
 	} else {
-			DebugPrintf("Unknown actor command '%s'\nUse <ignoreboxes |costume> as command\n", argv[2]);
+		DebugPrintf("Unknown actor command '%s'\nUse <ignoreboxes |costume> as command\n", argv[2]);
 	}
 
 	return true;
