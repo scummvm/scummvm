@@ -200,7 +200,7 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGro
 				y += h / 2;
 			}
 
-			if(isWizPixelNonTransparent(rtImage, resId, state, x, y, spi->imgFlags))
+			if(isWizPixelNonTransparent(resId, state, x, y, spi->imgFlags))
 				return spi->id;
 		}
 	}
@@ -267,10 +267,10 @@ int ScummEngine_v90he::spriteInfoGet_flags_22(int spriteId) {
 	return ((_spriteTable[spriteId].flags & kSFDelayed) != 0) ? 1 : 0;
 }
 
-int ScummEngine_v90he::spriteInfoGet_flags_23(int spriteId) {
+int ScummEngine_v90he::spriteInfoGet_flagMarkDirty(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	return ((_spriteTable[spriteId].flags & kSF23) != 0) ? 1 : 0;
+	return ((_spriteTable[spriteId].flags & kSFMarkDirty) != 0) ? 1 : 0;
 }
 
 int ScummEngine_v90he::spriteInfoGet_flagHasImage(int spriteId) {
@@ -667,13 +667,13 @@ void ScummEngine_v90he::spriteInfoSet_flag22(int spriteId, int value) {
 		_spriteTable[spriteId].flags &= ~kSFDelayed;
 }
 
-void ScummEngine_v90he::spriteInfoSet_flag23(int spriteId, int value) {
+void ScummEngine_v90he::spriteInfoSet_flagMarkDirty(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
 	if (value)
-		_spriteTable[spriteId].flags |= kSF23 | kSFBlitDirectly;
+		_spriteTable[spriteId].flags |= kSFMarkDirty | kSFBlitDirectly;
 	else
-		_spriteTable[spriteId].flags &= ~(kSF23 | kSFBlitDirectly);
+		_spriteTable[spriteId].flags &= ~(kSFMarkDirty | kSFBlitDirectly);
 }
 
 void ScummEngine_v90he::spriteInfoSet_flagHasImage(int spriteId, int value) {
@@ -768,7 +768,7 @@ void ScummEngine_v90he::spriteAddImageToList(int spriteId, int imageNum, int *sp
 
 	if (_spriteTable[spriteId].res_id) {
 		_spriteTable[spriteId].res_wiz_states = getWizImageStates(_spriteTable[spriteId].res_id);
-		_spriteTable[spriteId].flags |= kSFActive | kSFDelayed | kSF23 | kSFBlitDirectly;
+		_spriteTable[spriteId].flags |= kSFActive | kSFDelayed | kSFMarkDirty | kSFBlitDirectly;
 
 		if (_spriteTable[spriteId].res_id != origResId || _spriteTable[spriteId].res_wiz_states != origResWizStates)
 			_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
@@ -835,9 +835,9 @@ void ScummEngine_v90he::spriteGroupSet_case0_3(int spriteGroupId, int value) {
 	for (int i = 1; i < _varNumSprites; i++) {
 		if (_spriteTable[i].group_num == spriteGroupId) {
 			if (value)
-				_spriteTable[i].flags |= kSF23 | kSFBlitDirectly;
+				_spriteTable[i].flags |= kSFMarkDirty | kSFBlitDirectly;
 			else
-				_spriteTable[i].flags &= ~(kSF23 | kSFBlitDirectly);
+				_spriteTable[i].flags &= ~(kSFMarkDirty | kSFBlitDirectly);
 		}
 	}
 }
@@ -1099,7 +1099,7 @@ void ScummEngine_v90he::spritesMarkDirty(bool unkFlag) {
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
 		SpriteInfo *spi = _activeSpritesTable[i];
 		if (!(spi->flags & (kSFNeedRedraw | kSF30))) {
-			if ((!unkFlag || spi->zorderPriority >= 0) && (spi->flags & kSF23)) {
+			if ((!unkFlag || spi->zorderPriority >= 0) && (spi->flags & kSFMarkDirty)) {
 				bool needRedraw = false;
 				int lp = MIN(79, spi->bbox.left / 8);
 				int rp = MIN(79, (spi->bbox.right + 7) / 8);
@@ -1174,7 +1174,7 @@ void ScummEngine_v90he::spritesSortActiveSprites() {
 		SpriteInfo *spi = &_spriteTable[i];
 
 		if (spi->flags & kSFActive) {
-			if (!(spi->flags & kSF23)) {
+			if (!(spi->flags & kSFMarkDirty)) {
 				if (!(spi->flags & kSF30))
 					spi->flags |= kSFNeedRedraw;
 				if (!(spi->flags & kSFImageless))

@@ -510,13 +510,10 @@ void ScummEngine_v80he::o80_cursorCommand() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 0x13: // Loads cursors from another resource
-		a = pop();
-		loadWizCursor(a, rtInventory, 0);
-		break;
+	case 0x13:
 	case 0x14:
 		a = pop();
-		loadWizCursor(a, rtInventory, 1);
+		loadWizCursor(a);
 		break;
 	case 0x90:		// SO_CURSOR_ON Turn cursor on
 		_cursor.state = 1;

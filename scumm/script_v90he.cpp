@@ -951,7 +951,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	case 94:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_flags_23(spriteId));
+			push(spriteInfoGet_flagMarkDirty(spriteId));
 		else
 			push(0);
 		break;
@@ -1248,7 +1248,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_flag23(spriteId, args[0]);
+			spriteInfoSet_flagMarkDirty(spriteId, args[0]);
 		break;
 	case 91:
 		n = getStackList(args, ARRAYSIZE(args));
@@ -1604,14 +1604,14 @@ void ScummEngine_v90he::o90_getWizData() {
 		x = pop();
 		state = pop();
 		resId = pop();
-		push(isWizPixelNonTransparent(rtImage, resId, state, x, y, 0));
+		push(isWizPixelNonTransparent(resId, state, x, y, 0));
 		break;
 	case 36:
 		y = pop();
 		x = pop();
 		state = pop();
 		resId = pop();
-		push(getWizPixelColor(rtImage, resId, state, x, y, 0));
+		push(getWizPixelColor(resId, state, x, y, 0));
 		break;
 	case 100:
 		h = pop();

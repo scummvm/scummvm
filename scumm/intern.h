@@ -743,9 +743,9 @@ protected:
 
 	void displayWizComplexImage(const WizParameters *params);
 	void drawWizComplexPolygon(int resnum, int state, int po_x, int po_y, int arg14, int angle, int zoom, const Common::Rect *r);
-	void captureWizImage(int restype, int resnum, const Common::Rect& r, bool frontBuffer, int compType);
+	void captureWizImage(int resnum, const Common::Rect& r, bool frontBuffer, int compType);
 	void getWizImageDim(int resnum, int state,  int32 &w, int32 &h);
-	uint8 *drawWizImage(int restype, const WizImage *pwi);
+	uint8 *drawWizImage(const WizImage *pwi);
 	void drawWizPolygon(int resnum, int state, int id, int flags);
 	void flushWizBuffer();
 
@@ -826,7 +826,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	void loadImgSpot(int resId, int state, int16 &x, int16 &y);
-	void loadWizCursor(int resId, int resType, bool state);
+	void loadWizCursor(int resId);
 	
 	/* HE version 80 script opcodes */
 	void o80_loadSBNG();
@@ -896,8 +896,8 @@ protected:
 	void fillWizRect(const WizParameters *params);
 	void processWizImage(const WizParameters *params);
 	int getWizImageStates(int resnum);	
-	int isWizPixelNonTransparent(int restype, int resnum, int state, int x, int y, int flags);
-	uint8 getWizPixelColor(int restype, int resnum, int state, int x, int y, int flags);
+	int isWizPixelNonTransparent(int resnum, int state, int x, int y, int flags);
+	uint8 getWizPixelColor(int resnum, int state, int x, int y, int flags);
 	int computeWizHistogram(int resnum, int state, int x, int y, int w, int h);
 	
 	uint8 *getHEPalette(int palSlot);
@@ -919,7 +919,7 @@ protected:
 	int spriteInfoGet_flagActive(int spriteId);
 	int spriteInfoGet_flagNeedPaletteRemap(int spriteId);
 	int spriteInfoGet_flags_22(int spriteId);
-	int spriteInfoGet_flags_23(int spriteId);	
+	int spriteInfoGet_flagMarkDirty(int spriteId);	
 	int spriteInfoGet_flagHasImage(int spriteId);
 	int spriteInfoGet_resId(int spriteId);
 	int spriteInfoGet_resState(int spriteId);
@@ -969,7 +969,7 @@ protected:
 	void spriteInfoSet_flagActive(int spriteId, int value);
 	void spriteInfoSet_flagNeedPaletteRemap(int spriteId, int value);
 	void spriteInfoSet_flag22(int spriteId, int value);
-	void spriteInfoSet_flag23(int spriteId, int value);
+	void spriteInfoSet_flagMarkDirty(int spriteId, int value);
 	void spriteInfoSet_flagHasImage(int spriteId, int value);
 	void spriteInfoSet_delay(int spriteId, int value);
 	void spriteInfoSet_setClassFlags(int spriteId, int value);

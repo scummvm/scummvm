@@ -2028,7 +2028,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_flag23(spriteId, args[0]);
+			spriteInfoSet_flagMarkDirty(spriteId, args[0]);
 		break;
 	case 83:
 		args[1] = pop();
@@ -2118,17 +2118,14 @@ void ScummEngine_v100he::o100_cursorCommand() {
 			_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
 		break;
 	case 0x80:
-		a = pop();
-		loadWizCursor(a, rtInventory, 0);
-		break;
 	case 0x81:
 		a = pop();
-		loadWizCursor(a, rtInventory, 0);
+		loadWizCursor(a);
 		break;
 	case 0x82:
 		pop();
 		a = pop();
-		loadWizCursor(a, rtInventory, 1);
+		loadWizCursor(a);
 		break;
 	case 0x86:		// SO_CURSOR_ON Turn cursor on
 		_cursor.state = 1;
@@ -2362,7 +2359,7 @@ void ScummEngine_v100he::o100_getWizData() {
 		x = pop();
 		state = pop();
 		resId = pop();
-		push(getWizPixelColor(rtImage, resId, state, x, y, 0));
+		push(getWizPixelColor(resId, state, x, y, 0));
 		break;		
 	case 6:
 		resId = pop();
@@ -2373,7 +2370,7 @@ void ScummEngine_v100he::o100_getWizData() {
 		x = pop();
 		state = pop();
 		resId = pop();
-		push(isWizPixelNonTransparent(rtImage, resId, state, x, y, 0));
+		push(isWizPixelNonTransparent(resId, state, x, y, 0));
 		break;
 	case 19:
 		state = pop();
@@ -2696,7 +2693,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 	case 82:
 		spriteId = pop();
 		if (spriteId)
-			push(spriteInfoGet_flags_23(spriteId));
+			push(spriteInfoGet_flagMarkDirty(spriteId));
 		else
 			push(0);
 		break;

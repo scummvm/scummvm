@@ -783,7 +783,7 @@ void ScummEngine_v72he::o72_captureWizImage() {
 	grab.right = pop() + 1;
 	grab.top = pop();
 	grab.left = pop();
-	captureWizImage(rtImage, pop(), grab, false, true);	
+	captureWizImage(pop(), grab, false, true);	
 }
 
 void ScummEngine_v72he::o72_getTimer() {
@@ -887,7 +887,7 @@ void ScummEngine_v72he::o72_printWizImage() {
 	wi.x1 = wi.y1 = 0;
 	wi.state = 0;
 	wi.flags = kWIFPrint;
-	drawWizImage(rtImage, &wi);
+	drawWizImage(&wi);
 }
 
 void ScummEngine_v72he::o72_getArrayDimSize() {
