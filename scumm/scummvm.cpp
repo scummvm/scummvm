@@ -1141,6 +1141,9 @@ void ScummEngine::initScummVars() {
 		VAR(VAR_LANGUAGE) = _language;
 	} else if (_version >= 7) {
 		VAR(VAR_V6_EMSSPACE) = 10000;
+	} else if (_features & GF_AFTER_HEV7) {
+		VAR(VAR_SOUNDPARAM) = 1; // soundblaster for music
+		VAR(VAR_SOUNDPARAM2) = 1; // soundblaster for sfx
 	} else {
 		VAR(VAR_CURRENTDRIVE) = 0;
 		VAR(VAR_FIXEDDISK) = true;
