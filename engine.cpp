@@ -38,6 +38,7 @@ Engine::Engine() :
 }
 
 void Engine::mainLoop() {
+	movieTime_ = 0;
 	frameTime_ = 0;
 	frameStart_ = SDL_GetTicks();
 
@@ -106,6 +107,7 @@ void Engine::mainLoop() {
 		}
 
 		if (g_smush->isPlaying()) {
+			movieTime_ = g_smush->getMovieTime();
 			if (g_smush->isUpdateNeeded()) {
 				g_driver->prepareSmushFrame(g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
 				g_smush->clearUpdateNeeded();
@@ -148,6 +150,10 @@ void Engine::mainLoop() {
 
 		lua_beginblock();
 		set_frameTime(frameTime_);
+		lua_endblock();
+
+		lua_beginblock();
+		set_movieTime(movieTime_);
 		lua_endblock();
 	}
 }

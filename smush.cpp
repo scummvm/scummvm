@@ -43,6 +43,7 @@ Smush::Smush() {
 	_freq = 22050;
 	_videoFinished = false;
 	_videoPause = true;
+	_movieTime = 0;
 }
 
 Smush::~Smush() {
@@ -51,6 +52,7 @@ Smush::~Smush() {
 
 void Smush::init() {
 	_frame = 0;
+	_movieTime = 0;
 	_videoFinished = false;
 	_videoPause = false;
 	g_timer->installTimerProc(&timerCallback, _speed, NULL);
@@ -137,6 +139,8 @@ void Smush::handleFrame() {
 	if (_frame == _nbframes) {
 		_videoFinished = true;
 	}
+	
+	_movieTime += _speed / 1000;
 }
 
 void Smush::handleFramesHeader() {

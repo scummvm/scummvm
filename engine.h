@@ -138,7 +138,7 @@ private:
 
 	Scene *currScene_;
 
-	unsigned frameStart_, frameTime_;
+	unsigned frameStart_, frameTime_, movieTime_;
 
 	bool controlsEnabled_[SDLK_EXTRA_LAST];
 

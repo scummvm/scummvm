@@ -844,6 +844,13 @@ void set_frameTime(float frameTime) {
 	lua_settable();
 }
 
+void set_movieTime(float movieTime) {
+	lua_pushobject(lua_getglobal("system"));
+	lua_pushstring("movieTime");
+	lua_pushnumber(movieTime);
+	lua_settable();
+}
+
 void PerSecond() {
 	float rate = luaL_check_number(1);
 	lua_pushnumber(Engine::instance()->perSecond(rate));

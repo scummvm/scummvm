@@ -107,6 +107,7 @@ private:
 	int32 _frame;
 	bool _updateNeeded;
 	int32 _speed;
+	int32 _movieTime;
 	int _channels;
 	int _freq;
 	bool _videoFinished;
@@ -131,7 +132,8 @@ public:
 	int getWidth() {return _width; }
 	int getHeight() { return _height; }
 	void clearUpdateNeeded() { _updateNeeded = false; }
-	bool isFullSize() { return (_width == 640 && _height == 480); }
+	bool isFullSize() { return ( _width == 640 && _height == 480); }
+	int32 getMovieTime() { return _movieTime; }
 
 private:
 	static void timerCallback(void *ptr);
