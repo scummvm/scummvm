@@ -342,8 +342,10 @@ void Sword2State::go() {
 		ServiceWindows();
 
 #ifdef _SWORD2_DEBUG
-		if (grabbingSequences && !console_status)
-			GrabScreenShot();
+// FIXME: If we want this, we should re-work it to use the backend's
+// screenshot functionality.
+//		if (grabbingSequences && !console_status)
+//			GrabScreenShot();
 #endif
 
 		// if we are closing down the game, break out of main game loop

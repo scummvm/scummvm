@@ -1323,7 +1323,6 @@ extern void ClearShadowFx(void);
 extern void SetShadowFx(void);
 extern int32 GetRenderType(void);
 extern int32 PlaySmacker(char *filename, _movieTextObject *textObjects[], uint8 *musicOut);
-extern int32 GrabScreenShot(void);
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

@@ -149,12 +149,7 @@ void Sword2State::parseEvents() {
 	
 	while (_system->poll_event(&event)) {
 		switch(event.event_code) {
-		
 		case OSystem::EVENT_KEYDOWN:
-			if (event.kbd.flags==OSystem::KBD_CTRL) {
-				if (event.kbd.keycode == 'w')
-					GrabScreenShot();
-			}
 			WriteKey(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
