@@ -1929,8 +1929,6 @@ struct luaL_reg mainOpcodes[] = {
 	{ "PutActorInSet", PutActorInSet },
 	{ "WalkActorVector", WalkActorVector },
 	{ "WalkActorForward", WalkActorForward },
-	{ "SetActorReflection", SetActorReflection },
-	{ "GetActorPuckVector", GetActorPuckVector },
 	{ "DriveActorTo", DriveActorTo },
 	{ "WalkActorTo", WalkActorTo },
 	{ "WalkActorToAvoiding", WalkActorToAvoiding },
