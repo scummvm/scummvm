@@ -586,15 +586,13 @@ int32 Insane::processKeyboard(void) {
 }
 
 void Insane::readFileToMem(const char *name, byte **buf) {
-	ScummFile *in;
+	ScummFile in;
 	uint32 len;
 
-	in = new ScummFile();
-	_vm->openFile(*in, name);
-	len = in->size();
+	_vm->openFile(in, name);
+	len = in.size();
 	*buf = (byte *)malloc(len);
-	in->read(*buf, len);
-	in->close();
+	in.read(*buf, len);
 }
 
 void Insane::startVideo(const char *filename, int num, int argC, int frameRate, 
