@@ -684,7 +684,7 @@ void AkosRenderer::codec1()
 	if (mirror)
 		v1.scaleXstep = -v1.scaleXstep;
 
-	if ((uint) y_top >= (uint) outheight || y_bottom <= 0)
+	if ((int) y_top >= (int) outheight || y_bottom <= 0)
 		return;
 
 	if ((int)x_left >= (int)outwidth || x_right <= 0)
