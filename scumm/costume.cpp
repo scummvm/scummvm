@@ -360,6 +360,7 @@ void CostumeRenderer::procC64(int actor) {
 	}
 
 	v1.skip_width >>= 3;
+	const byte *mask_ptr = v1.mask_ptr;
 
 	if (len)
 		goto StartPos;
@@ -376,7 +377,7 @@ void CostumeRenderer::procC64(int actor) {
 				color = *src++;
 			
 			if (y < _outheight) {
-#define MASK_AT(xoff)	(v1.mask_ptr && ((v1.mask_ptr[(v1.x+xoff) >> 3] | v1.mask_ptr[((v1.x+xoff) >> 3) + v1.imgbufoffs]) & revBitMask[(v1.x+xoff) & 7]))
+#define MASK_AT(xoff)	(mask_ptr && ((mask_ptr[(v1.x+xoff) >> 3] | mask_ptr[((v1.x+xoff) >> 3) + v1.imgbufoffs]) & revBitMask[(v1.x+xoff) & 7]))
 				if (!_mirror) {
 					pcolor = (color >> 0) & 3; if (pcolor) { if (!MASK_AT(0)) dst[0] = palette[pcolor]; if (!MASK_AT(1)) dst[1] = palette[pcolor]; }
 					pcolor = (color >> 2) & 3; if (pcolor) { if (!MASK_AT(2)) dst[2] = palette[pcolor]; if (!MASK_AT(3)) dst[3] = palette[pcolor]; }
@@ -392,6 +393,7 @@ void CostumeRenderer::procC64(int actor) {
 			}
 			dst += _outwidth;
 			y++;
+			mask_ptr += _numStrips;
 			if (!--height) {
 				if (!--v1.skip_width)
 					return;
@@ -400,6 +402,7 @@ void CostumeRenderer::procC64(int actor) {
 				v1.x += 8 * v1.scaleXstep;
 				if (v1.x < 0 || v1.x >= _vm->_screenWidth)
 					return;
+				mask_ptr = v1.mask_ptr + (v1.x >> 3);
 				v1.destptr += 8 * v1.scaleXstep;
 				dst = v1.destptr;
 			}
