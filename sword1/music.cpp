@@ -40,6 +40,10 @@ SwordMusic::SwordMusic(OSystem *system, SoundMixer *pMixer) {
 	assert(_mixer->getOutputRate() == 22050);
 }
 
+SwordMusic::~SwordMusic() {
+	_mixer->setupPremix(0, 0);
+}
+
 void SwordMusic::passMixerFunc(void *param, int16 *buf, uint len) {
 	((SwordMusic*)param)->mixer(buf, len);
 }

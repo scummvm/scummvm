@@ -46,7 +46,7 @@ SkyAdlibMusic::SkyAdlibMusic(SoundMixer *pMixer, SkyDisk *pSkyDisk, OSystem *sys
 
 SkyAdlibMusic::~SkyAdlibMusic(void) {
 
-	_mixer->setupPremix(NULL, NULL);
+	_mixer->setupPremix(0, 0);
 //	YM3812Shutdown();
 }
 

@@ -32,11 +32,11 @@
 #define WAVEHEADERSIZE 0x2C
 
 class SoundMixer;
-//class File;
 
 class SwordMusic {
 public:
 	SwordMusic(OSystem *system, SoundMixer *pMixer);
+	~SwordMusic();
 	void stream(void);
 	void startMusic(int32 tuneId, int32 loopFlag);
 	void fadeDown(void);

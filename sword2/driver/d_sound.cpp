@@ -140,6 +140,7 @@ Sound::Sound(Sword2Engine *vm) {
 }
 
 Sound::~Sound() {
+	_vm->_mixer->setupPremix(0, 0);
 	if (_mutex)
 		_vm->_system->delete_mutex(_mutex);
 }
