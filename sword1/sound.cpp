@@ -144,8 +144,6 @@ void Sound::quitScreen(void) {
 }
 
 void Sound::playSample(QueueElement *elem) {
-	//if (((elem->id == 11) || (elem->id == 12) || (elem->id == 224)) && SwordEngine::_systemVars.isDemo)
-	//	return;
 	uint8 *sampleData = (uint8*)_resMan->fetchRes(_fxList[elem->id].sampleId);
 	for (uint16 cnt = 0; cnt < MAX_ROOMS_PER_FX; cnt++) {
 		if (_fxList[elem->id].roomVolList[cnt].roomNo) {
