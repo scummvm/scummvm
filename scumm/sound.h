@@ -22,6 +22,7 @@
 #define SOUND_H
 
 #include "scummsys.h"
+#include "sound/mixer.h"
 
 class Bundle;
 class DigitalTrackInfo;
@@ -100,7 +101,7 @@ protected:
 public:
 	int32 _bundleMusicPosition;
 
-	int _talkChannel;	/* Mixer channel actor is talking on */
+	PlayingSoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
 	bool _soundsPaused;
 	byte _sfxMode;
 	
@@ -118,7 +119,7 @@ public:
 	void processSoundQues();
 	void playSound(int sound);
 	void processSfxQueues();
-	int startTalkSound(uint32 offset, uint32 b, int mode);
+	void startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle *handle = NULL);
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);
 	int isSoundRunning(int sound) const;
@@ -135,7 +136,7 @@ public:
 	void pauseBundleMusic(bool state);
 	void bundleMusicHandler(Scumm *scumm);
 	void stopBundleMusic();
-	int playBundleSound(char *sound);
+	void playBundleSound(char *sound, PlayingSoundHandle *handle);
 
 	uint32 decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo);
 
@@ -152,12 +153,12 @@ protected:
 	void clearSoundQue();
 
 	File *openSfxFile();
-	int startSfxSound(File *file, int file_size);
+	void startSfxSound(File *file, int file_size, PlayingSoundHandle *handle);
 	void stopSfxSound();
 	bool isSfxFinished() const;
-	int playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned);
-	int playSfxSound_MP3(void *sound, uint32 size);
-	int playSfxSound_Vorbis(void *sound, uint32 size);
+	void playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned, PlayingSoundHandle *handle);
+	void playSfxSound_MP3(void *sound, uint32 size, PlayingSoundHandle *handle);
+	void playSfxSound_Vorbis(void *sound, uint32 size, PlayingSoundHandle *handle);
 
 	int getCachedTrack(int track);
 	int playMP3CDTrack(int track, int numLoops, int startFrame, int endFrame);

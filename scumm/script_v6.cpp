@@ -2251,11 +2251,9 @@ void Scumm_v6::o6_talkActor() {
 		}
 		pointer[j] = 0;
 
-		// Stop any talking that's still going on
-		if (_sound->_talkChannel > -1)
-			_mixer->stop(_sound->_talkChannel);
+		// Play speech
+		_sound->playBundleSound(pointer, &_sound->_talkChannelHandle);
 
-		_sound->_talkChannel = _sound->playBundleSound(pointer);
 		_messagePtr = _transText;
 	}
 
@@ -3108,11 +3106,9 @@ void Scumm_v6::decodeParseString(int m, int n) {
 			}
 			pointer[j] = 0;
 
-			// Stop any talking that's still going on
-			if (_sound->_talkChannel > -1)
-				_mixer->stop(_sound->_talkChannel);
+			// Play speech
+			_sound->playBundleSound(pointer, &_sound->_talkChannelHandle);
 
-			_sound->_talkChannel = _sound->playBundleSound(pointer);
 			_messagePtr = _transText;
 		}
 

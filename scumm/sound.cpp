@@ -91,7 +91,7 @@ Sound::Sound(Scumm *parent) {
 	_musicBundleBufFinal = NULL;
 	_musicBundleBufOutput = NULL;
 	_musicDisk = 0;
-	_talkChannel = -1;
+	_talkChannelHandle = 0;
 	_current_cache = 0;
 	_currentCDSound = 0;
 
@@ -535,14 +535,15 @@ void Sound::processSfxQueues() {
 	if (_talk_sound_mode != 0) {
 		if (_talk_sound_mode & 1)
 			startTalkSound(_talk_sound_a1, _talk_sound_b1, 1);
-		if (_talk_sound_mode & 2)
-			_talkChannel = startTalkSound(_talk_sound_a2, _talk_sound_b2, 2);
+		if (_talk_sound_mode & 2) {
+			startTalkSound(_talk_sound_a2, _talk_sound_b2, 2, &_talkChannelHandle);
+		}
 		_talk_sound_mode = 0;
 	}
 
 	if (_scumm->VAR(_scumm->VAR_TALK_ACTOR)) { //_sfxMode & 2) {
 		act = _scumm->VAR(_scumm->VAR_TALK_ACTOR);
-		finished = (_talkChannel >= 0) && (_scumm->_mixer->_channels[_talkChannel] == NULL);
+		finished = !_talkChannelHandle;
 
 		if (act != 0 && (uint) act < 0x80 && !_scumm->_string[0].no_talk_anim) {
 			a = _scumm->derefActor(act, "processSfxQueues");
@@ -564,7 +565,6 @@ void Sound::processSfxQueues() {
 		if (finished && _scumm->_talkDelay == 0) {
 			_scumm->stopTalk();
 			_sfxMode &= ~2;
-			_talkChannel = -1;
 		}
 	}
 		
@@ -579,14 +579,14 @@ static int compareMP3OffsetTable(const void *a, const void *b) {
 	return ((const MP3OffsetTable *)a)->org_offset - ((const MP3OffsetTable *)b)->org_offset;
 }
 
-int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
+void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle *handle) {
 	int num = 0, i;
 	int size;
 	byte *sound;
 
 	if (_sfxFile->isOpen() == false) {
 		warning("startTalkSound: SFX file is not open");
-		return -1;
+		return;
 	}
 
 	// FIXME hack until more is known
@@ -597,8 +597,8 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 		_sfxFile->seek(offset + 48, SEEK_SET);
 		sound = (byte *)malloc(b - 64);
 		_sfxFile->read(sound, b - 64);
-		_scumm->_mixer->playRaw(NULL, sound, b - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
-		return -1;
+		_scumm->_mixer->playRaw(handle, sound, b - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		return;
 	}
 
 	// Some games frequently assume that starting one sound effect will
@@ -610,11 +610,13 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 	// HACK: Checking for script 99 in Sam & Max is to keep Conroy's song
 	// from being interrupted.
 
+	int talkChannel = (_talkChannelHandle - 1);
 	if (mode == 1 && (_scumm->_gameId == GID_TENTACLE
 		|| (_scumm->_gameId == GID_SAMNMAX && !_scumm->isScriptRunning(99)))) {
 		for (i = 0; i < _scumm->_mixer->NUM_CHANNELS; i++) {
-			if (i != _talkChannel)
+			if (i != talkChannel) {
 				_scumm->_mixer->stop(i);
+			}
 		}
 	}
 
@@ -631,7 +633,7 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 
 		if (result == NULL) {
 			warning("startTalkSound: did not find sound at offset %d !", offset);
-			return -1;
+			return;
 		}
 		if (2 * num != result->num_tags) {
 			warning("startTalkSound: number of tags do not match (%d - %d) !", b,
@@ -656,15 +658,12 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 	_curSoundPos = 0;
 	_mouthSyncMode = true;
 
-	return startSfxSound(_sfxFile, size);
+	startSfxSound(_sfxFile, size, handle);
 }
 
 void Sound::stopTalkSound() {
 	if (_sfxMode & 2) {
-		if (_talkChannel != -1) {
-			_scumm->_mixer->stop(_talkChannel);
-			_talkChannel = -1;
-		}
+		_scumm->_mixer->stopHandle(_talkChannelHandle);
 		_sfxMode &= ~2;
 	}
 }
@@ -904,7 +903,7 @@ void Sound::pauseSounds(bool pause) {
 	}
 }
 
-int Sound::startSfxSound(File *file, int file_size) {
+void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle) {
 	char ident[8];
 	int block_type;
 	byte work[8];
@@ -913,7 +912,7 @@ int Sound::startSfxSound(File *file, int file_size) {
 	byte *data;
 
 	if (_scumm->_noDigitalSamples)
-		return -1;
+		return;
 
 	if (file_size > 0) {
 		int alloc_size = file_size;
@@ -926,12 +925,12 @@ int Sound::startSfxSound(File *file, int file_size) {
 		if (file->read(data, file_size) != (uint)file_size) {
 			/* no need to free the memory since error will shut down */
 			error("startSfxSound: cannot read %d bytes", size);
-			return -1;
 		}
 		if (_vorbis_mode)
-			return playSfxSound_Vorbis(data, file_size);
+			playSfxSound_Vorbis(data, file_size, handle);
 		else
-			return playSfxSound_MP3(data, file_size);
+			playSfxSound_MP3(data, file_size, handle);
+		return;
 	}
 
 	if (file->read(ident, 8) != 8)
@@ -944,13 +943,13 @@ int Sound::startSfxSound(File *file, int file_size) {
 	} else {
 	invalid:;
 		warning("startSfxSound: invalid header");
-		return -1;
+		return;
 	}
 
 	block_type = file->readByte();
 	if (block_type != 1) {
 		warning("startSfxSound: Expecting block_type == 1, got %d", block_type);
-		return -1;
+		return;
 	}
 
 	file->read(work, 3);
@@ -961,22 +960,20 @@ int Sound::startSfxSound(File *file, int file_size) {
 
 	if (comp != 0) {
 		warning("startSfxSound: Unsupported compression type %d", comp);
-		return -1;
+		return;
 	}
 
 	data = (byte *)malloc(size);
 	if (data == NULL) {
 		error("startSfxSound: out of memory");
-		return -1;
 	}
 
 	if (file->read(data, size) != size) {
 		/* no need to free the memory since error will shut down */
 		error("startSfxSound: cannot read %d bytes", size);
-		return -1;
 	}
 
-	return playSfxSound(data, size, 1000000 / (256 - rate), true);
+	playSfxSound(data, size, 1000000 / (256 - rate), true, handle);
 }
 
 File *Sound::openSfxFile() {
@@ -1288,13 +1285,13 @@ void Sound::bundleMusicHandler(Scumm *scumm) {
 	free(buffer);
 }
 
-int Sound::playBundleSound(char *sound) {
-	byte *ptr = 0, *orig_ptr;
+void Sound::playBundleSound(char *sound, PlayingSoundHandle *handle) {
+	byte *ptr = 0, *orig_ptr = 0;
 	byte *final;
 	bool result;
 
 	if (_scumm->_noDigitalSamples)
-		return -1;	
+		return;	
 
 	if (_scumm->_gameId == GID_CMI) {
 		char voxfile[20];
@@ -1312,9 +1309,8 @@ int Sound::playBundleSound(char *sound) {
 	else
 		error("Don't know which bundle file to load");
 
-	if (!result) {
-		return -1;
-	}
+	if (!result)
+		return;
 
 	int32 rate = 22050, channels, output_size = 0;
 	int32 tag, size = -1, bits = 0;
@@ -1378,44 +1374,42 @@ int Sound::playBundleSound(char *sound) {
 
 	final = (byte *)malloc(size);
 	memcpy(final, ptr, size);
-	free(orig_ptr);
 
 	if (_scumm->_actorToPrintStrFor != 0xFF && _scumm->_actorToPrintStrFor != 0) {
 		Actor *a = _scumm->derefActor(_scumm->_actorToPrintStrFor, "playBundleSound");
 		rate = (rate * a->talkFrequency) / 256;
 	}
 	
+	// Stop any sound currently playing on the given handle
+	if (handle)
+		_scumm->_mixer->stopHandle(*handle);
+
 	if (bits == 8) {
-		return _scumm->_mixer->playRaw(NULL, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
-	} else if (bits == 16){
-		return _scumm->_mixer->playRaw(NULL, final, size, rate, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE);
+		_scumm->_mixer->playRaw(handle, final, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+	} else if (bits == 16) {
+		_scumm->_mixer->playRaw(handle, final, size, rate, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE);
 	} else {
 		warning("Sound::playBundleSound() to do more options to playRaw...");
-		return -1;
 	}
 	
 bail:
-	if (orig_ptr)
-		free(orig_ptr);
-	return -1;
+	free(orig_ptr);
 }
 
-int Sound::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned) {
+void Sound::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned, PlayingSoundHandle *handle) {
 	if (_soundsPaused)
-		return -1;
+		return;
 	byte flags = SoundMixer::FLAG_AUTOFREE;
 	if (isUnsigned)
 		flags |= SoundMixer::FLAG_UNSIGNED;
-	return _scumm->_mixer->playRaw(NULL, sound, size, rate, flags);
+	_scumm->_mixer->playRaw(handle, sound, size, rate, flags);
 }
 
-int Sound::playSfxSound_MP3(void *sound, uint32 size) {
+void Sound::playSfxSound_MP3(void *sound, uint32 size, PlayingSoundHandle *handle) {
 #ifdef USE_MAD
-	if (_soundsPaused || _scumm->_noDigitalSamples)
-		return -1;
-	return _scumm->_mixer->playMP3(NULL, sound, size, SoundMixer::FLAG_AUTOFREE);
+	if (!_soundsPaused && !_scumm->_noDigitalSamples)
+		_scumm->_mixer->playMP3(handle, sound, size, SoundMixer::FLAG_AUTOFREE);
 #endif
-	return -1;
 }
 
 #ifdef USE_VORBIS
@@ -1480,27 +1474,23 @@ static ov_callbacks data_wrap = {
 };
 #endif
 
-int Sound::playSfxSound_Vorbis(void *sound, uint32 size) {
+void Sound::playSfxSound_Vorbis(void *sound, uint32 size, PlayingSoundHandle *handle) {
 #ifdef USE_VORBIS
-	if (_soundsPaused || _scumm->_noDigitalSamples)
-		return -1;
-
-	OggVorbis_File *ov_file = new OggVorbis_File;
-	data_file_info *f = new data_file_info;
-	f->data = (char *) sound;
-	f->size = size;
-	f->curr_pos = 0;
-
-	if (ov_open_callbacks((void *) f, ov_file, NULL, 0, data_wrap) < 0) {
-		warning("Invalid file format");
-		delete ov_file;
-		delete f;
-		return -1;
+	if (!_soundsPaused && !_scumm->_noDigitalSamples) {
+		OggVorbis_File *ov_file = new OggVorbis_File;
+		data_file_info *f = new data_file_info;
+		f->data = (char *) sound;
+		f->size = size;
+		f->curr_pos = 0;
+	
+		if (ov_open_callbacks((void *) f, ov_file, NULL, 0, data_wrap) < 0) {
+			warning("Invalid file format");
+			delete ov_file;
+			delete f;
+		} else
+			_scumm->_mixer->playVorbis(handle, ov_file, 0, false);
 	}
-
-	return _scumm->_mixer->playVorbis(NULL, ov_file, 0, false);
 #endif
-	return -1;
 }
 
 // We use a real timer in an attempt to get better sync with CD tracks. This is
