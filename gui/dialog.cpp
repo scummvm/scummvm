@@ -28,7 +28,7 @@
 #include "ListWidget.h"
 #include "config-file.h"
 #include "sound/mididrv.h"
-#include "sound/imuse.h"
+#include "scumm/imuse.h"
 
 /*
  * TODO list
