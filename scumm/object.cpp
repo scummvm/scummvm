@@ -121,6 +121,14 @@ int Scumm::getObjectIndex(int object)
 			if (_objs[i].obj_nr == object)
 				return i;
 		}
+
+		// FIXME: Major HACK. This is probably the worst biggest
+		// hack in the whole engine. It's that bad.
+		// (Workaround flobject 188/189 not loaded bug)
+		if (_gameId == GID_CMI && ((object == 188 || object == 189))) {
+			loadFlObject(object, 3);
+			return getObjectIndex(object);
+		}
 		return -1;
 	}
 }
@@ -145,6 +153,7 @@ int Scumm::whereIsObject(int object)
 				return WIO_FLOBJECT;
 			return WIO_ROOM;
 		}
+
 	return WIO_NOT_FOUND;
 }
 
