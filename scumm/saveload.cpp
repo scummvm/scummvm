@@ -85,6 +85,7 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	int i, j;
 	SaveGameHeader hdr;
 	int sb, sh;
+	byte *roomptr;
 
 	makeSavegameName(filename, slot, compat);
 	if (!(out = mgr->open_savefile(filename, false)))
@@ -192,8 +193,20 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 
 	initBGBuffers(_roomHeight);
 
-	if (_version == 2) {
-		// Regenerate strip table when loading
+	// Regenerate strip table when loading
+	if (_version == 1) {
+		roomptr = getResourceAddress(rtRoom, _roomResource);
+		_IM00_offs = 0;
+		for (i = 0; i < 4; i++){
+			gdi._C64Colors[i] = roomptr[6 + i];
+		}
+		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 10), gdi._C64CharMap, 2048);
+		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 12), gdi._C64PicMap, roomptr[4] * roomptr[5]);
+		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 14), gdi._C64ColorMap, roomptr[4] * roomptr[5]);
+		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 16), gdi._C64MaskMap, roomptr[4] * roomptr[5]);
+		gdi.decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 18) + 2, gdi._C64MaskChar, READ_LE_UINT16(roomptr + READ_LE_UINT16(roomptr + 18)));
+		gdi._C64ObjectMode = true;
+	} else if (_version == 2) {
 		_roomStrips = gdi.generateStripTable(getResourceAddress(rtRoom, _roomResource) + _IM00_offs,
 		                                     _roomWidth, _roomHeight, _roomStrips);
 	}
