@@ -1025,8 +1025,8 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 
 	if (_draw_top > clip.top)
 		_draw_top = clip.top;
-	if (_draw_bottom < clip.bottom - 1)
-		_draw_bottom = clip.bottom - 1;
+	if (_draw_bottom < clip.bottom)
+		_draw_bottom = clip.bottom;
 
 	int32 width_unk, height_unk;
 
