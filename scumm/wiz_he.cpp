@@ -1378,6 +1378,9 @@ void ScummEngine_v90he::fillWizRect(const WizParameters *params) {
 void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 	debug(1, "processWizImage: processMode %d", params->processMode);
 	switch (params->processMode) {
+	case 0:
+		// Used in racedemo
+		break;
 	case 1:
 		displayWizComplexImage(params);
 		break;
@@ -1465,12 +1468,17 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 	// HE 99+
 	case 7:
 		// Used in soccer2004
+		// TODO
 		break;
 	case 8:
 		createWizEmptyImage(params);
 		break;
 	case 9:
 		fillWizRect(params);
+		break;
+	case 10:
+		// Used in footdemo
+		// TODO
 		break;
 	default:
 		error("Unhandled processWizImage mode %d", params->processMode);
