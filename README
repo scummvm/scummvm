@@ -102,17 +102,17 @@ the section on Reporting Bugs.
                 - No sound effects in simon1dos
                 - No inventory scrolling arrows shown in simon1dos and simon1talkie,
                   can still move around inventory though. 
-                - simon1dos freezes briefly after Swampling leaves his house and when
-                  talking to demons in Sordid's Tower
+                - simon1dos freezes briefly after Swampling leaves his house and
+                  when talking to demons in Sordid's Tower
                 - Some minor graphical glitches
 
        Simon The Sorcerer:II
                 - No music in simon2talkie and simon2win
                 - Part of title sequence is skipped
-                - May freeze briefly after arriving in Goblin's Camp and been thrown in 
-                  prison,
-                - simon2dos freezes briefly during sequence when Simon breaks chains
-                  and tries to escape from pirate ship.
+                - May freeze briefly after arriving in Goblin's Camp and been
+                  thrown in prison
+                - simon2dos freezes briefly during the sequence where Simon
+                  breaks chains and tries to escape from pirate ship.
                 - Some graphical glitches
 
        Indy 3 (The Last Crusade):
@@ -203,19 +203,19 @@ filtering by using OpenGL textures.
 On Win9x/NT/XP you can define USE_WINDBG and attach WinDbg to browse debug 
 messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
-        GCC:
+    GCC:
         * Type make (or gmake if that's what GNU make is called on your
           system) and hopefully ScummVM will compile for you.
 
-        Microsoft Visual C++:
+    Microsoft Visual C++:
         * Open the workspace, scummwm.dsw
         * Enter the path to the SDL include files in Tools|Options|Directories
         * Now it should compile successfully.
 
-        BeOS:
+    BeOS:
         * Open the 'scummvm.proj' file in BeIDE. Compile as normal.
 
-        PocketPC - Windows CE:
+    PocketPC - Windows CE:
         * Download the SDLAudio library:
           http://arisme.free.fr/PocketScumm/sources/SDLAudio-1.2.3-src.zip
         * Open and compile the SDLAudio WCEBuild/WCEBuild workspace in EVC++
@@ -224,7 +224,7 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * Enter the compiled SDLAudio.lib to your link libraries list
         * Now it should compile successfully
 
-        Debian GNU/Linux:
+    Debian GNU/Linux:
         * Install the packages 'build-essential', 'fakeroot', 'debhelper',
           'libsdl1.2-dev', and 'libmad0-dev' on your system.
         * Optional: Install the 'libvorbis-dev' and/or the 'libasound2-dev'
@@ -233,7 +233,7 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * Run 'make deb'.
         * Finally run 'dpkg -i ../scummvm-cvs*deb', and you're done.
         
-        Mac OS X
+    Mac OS X
         * Make sure you have the developer tools installed.
         * Edit backends/sdl/build.rules, and enable the Mac OS X specific line(s).
         * Depending on where you have installed SDL, you have to add the location
@@ -285,7 +285,7 @@ Command Line Options:
 
         scummvm [OPTIONS] [GAME]
 
-        [GAME]     - Short name of game to load. E.g. monkey for Monkey Island.
+        [GAME]     - Short name of game to load. For example, 'monkey' for Monkey Island.
         
         -p<path>   - Path to where the game is installed. Default is Cwd.
         -b<num>    - Start in room <num>.
@@ -491,11 +491,12 @@ If you have a WaveTable capable sound card, you have to load a sbk or sf2
 soundfont using the sfxload software. If you manage to do so, please mail
 me since I managed to get it working only once, and never again.
 
-If you don't have a MIDI capable soundcard, or if you want to take
-advantage of your TiMidity samples, then you can ask TiMidity to become an
-alsa sequencer output. Here is a quick way to do so:
+If you don't have a MIDI capable soundcard, or if you want to take advantage of
+your TiMidity samples, then you can ask TiMidity to become an ALSA sequencer
+output. Here is a quick way to do so:
   timidity -iAqqq -B2,8 -Os1S -s 44100 &
-If you get distorted output with this setting try dropping the -B2,8 or changing the value.
+If you get distorted output with this setting try dropping the -B2,8 or
+changing the value.
 
 Then the TiMidity port will be visible from the 'aconnect -o -l' list. You
 should launch it as root, since it will try to set up some real time
@@ -515,8 +516,8 @@ lame -t -q 0 -b 96 --resample 22.05 track1.wav track1.mp3
 
 Compressing MONSTER.SOU with MP3:.
 ---------------------------------
-You need LAME, and our extract util from the tools dir to perform this task,
-and ScummVM must be compiled with MAD support.
+You need LAME, and our extract util from the scummvm-tools package to perform
+this task, and ScummVM must be compiled with MAD support.
 
 Make a backup file of your MONSTER.SOU before attempting this. Copy your
 MONSTER.SOU file to a temporary folder. Then run:
