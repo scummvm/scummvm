@@ -491,7 +491,7 @@ void Scumm_v5::o5_actorSet() {
 			a->width = getVarOrDirectByte(0x80);
 			break;
 		case 17:										/* scale */
-			if ((_gameId == GID_MONKEY_VGA) || (_gameId == GID_MONKEY_EGA) || (_gameId == GID_PASS)) {
+			if (_version == 4) {
 				a->scalex = a->scaley = getVarOrDirectByte(0x80);
 			} else {
 				a->scalex = getVarOrDirectByte(0x80);
@@ -686,7 +686,7 @@ void Scumm_v5::o5_cursorCommand() {
 		initCharset(getVarOrDirectByte(0x80));
 		break;
 	case 14:											/* unk */
-		if (_gameId == GID_LOOM || _gameId == GID_INDY3) {
+		if (_version == 3) {
 			/*int a = */ getVarOrDirectByte(0x80);
 			/*int b = */ getVarOrDirectByte(0x40);
 			// This is some kind of "init charset" opcode. However, we don't have to do anything
