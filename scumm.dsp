@@ -343,6 +343,14 @@ SOURCE=.\scumm\imuse.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\scumm\instrument.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\instrument.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\scumm\object.cpp
 # End Source File
 # Begin Source File

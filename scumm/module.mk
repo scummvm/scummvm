@@ -10,6 +10,7 @@ SCUMM_OBJS = \
 	scumm/dialogs.o \
 	scumm/gfx.o \
 	scumm/imuse.o \
+	scumm/instrument.o \
 	scumm/object.o \
 	scumm/resource.o \
 	scumm/resource_v2.o \
