@@ -328,8 +328,14 @@ SAGA
   work in reinherit)
 * Remove homerolled high level data structures like stacks that should
   be provided by ScummVM if they aren't already.
-* OO'ify
+* OO'ify (blah_mod.h contains public stuff, blah.h private stuff)
 * Rewrite actor code, so it works with isometric rooms
+* Implement unimplemented opcodes
+* Remove use of floating point, especially doubles. Particularly
+  rewrite path finder
+* ITE intro misses game title
+* IHNM intro is very uncomplete
+* Support various demo versions
 
 #######################################################################
 # Backends
