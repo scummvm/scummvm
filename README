@@ -651,41 +651,42 @@ An example config file looks as follows:
 Credits:
 --------
  The core ScummVM team:
-        James Brown        - Lead developer
-        Vincent Hamm       - Developer (retired)
-        Max Horn           - Developer, MacOS X port, new GUI
-        Jeremy Newman      - Webmaster
-        Ludvig Strigeus    - Original ScummVM author, initial Simon support (retired)
+        James Brown          - Lead developer
+        Vincent Hamm         - Developer (retired)
+        Max Horn             - Developer, MacOS X port, new GUI
+        Jeremy Newman        - Webmaster
+        Ludvig Strigeus      - Original ScummVM author, initial Simon support (retired)
 
  Developers:
-        Torbjorn Andersson - Many different contributions
-        Nicolas Bacca      - PocketPC/WinCE port
-        Ralph Brorsen      - Helped write the new GUI (retired)
-        Jamieson Christian - Lots of work on iMuse/MIDI
-        Marcus Comstedt    - Dreamcast port
-        Jonathan Gray      - Expert weaver in the Loom
-        Ruediger Hanke     - MorphOS port
-        Travis Howell      - Daily Win32 builds, Simon The Sorcerer work
-        Felix Jakschitsch  - His hard work on Zak256
-        Oliver Kiehl       - Simon The Sorcerer work/Beneath a Steel Sky support
-        Pawel Kolodziejski - Added missing Dig/COMI SMUSH codecs, iMuse work
-        Mutwin Kraus       - MacOS Carbon port (retired)
-        Peter Moraliyski   - GP32 port
-        Nicolas Noble      - Config file and ALSA support
-        Joost Peters       - Beneath a Steel Sky support
-        Lionel Ulmer       - X11 backend
+        Torbjorn Andersson   - Many different contributions
+        Nicolas Bacca        - PocketPC/WinCE port
+        Ralph Brorsen        - Helped write the new GUI (retired)
+        Jamieson Christian   - Lots of work on iMuse/MIDI
+        Marcus Comstedt      - Dreamcast port
+        Robert Goeffringmann - Beneath a Steel Sky support
+        Jonathan Gray        - Expert weaver in the Loom
+        Ruediger Hanke       - MorphOS port
+        Travis Howell        - Daily Win32 builds, Simon The Sorcerer work
+        Felix Jakschitsch    - His hard work on Zak256
+        Oliver Kiehl         - Simon The Sorcerer work/Beneath a Steel Sky support
+        Pawel Kolodziejski   - Added missing Dig/COMI SMUSH codecs, iMuse work
+        Mutwin Kraus         - MacOS Carbon port (retired)
+        Peter Moraliyski     - GP32 port
+        Nicolas Noble        - Config file and ALSA support
+        Joost Peters         - Beneath a Steel Sky support
+        Lionel Ulmer         - X11 backend
 
  Contributors:
-        Janne Huttunen     - V3 actor mask support, Dig/FT SMUSH audio
-        Kovacs Endre Janos - Several fixes for Simon1
-        Jeroen Janssen     - Numerous readability and bugfix patches
-        Claudio Matsuoka   - Daily Linux/BeOS builds (http://scummvm.sf.net/daily/)
-        Gregory Montoir    - AdvanceMAME Scale-2X, TV 2x and Dot Matrix implementation
-        Mikesch Nepomuk    - MI1 VGA Floppy patches.
-        Edward Rudd        - Fixes for playing MP3 versions of MI1/Loom Audio
-        Daniel Schepler    - Final MI1 CD music support/ Initial Ogg Vorbis support
-        Andre Souza        - SDL-based OpenGL renderer
-        Tim 'realmz'       - Initial MI1 CD music support
+        Janne Huttunen       - V3 actor mask support, Dig/FT SMUSH audio
+        Kovacs Endre Janos   - Several fixes for Simon1
+        Jeroen Janssen       - Numerous readability and bugfix patches
+        Claudio Matsuoka     - Daily Linux/BeOS builds (http://scummvm.sf.net/daily/)
+        Gregory Montoir      - AdvanceMAME Scale-2X, TV 2x and Dot Matrix implementation
+        Mikesch Nepomuk      - MI1 VGA Floppy patches.
+        Edward Rudd          - Fixes for playing MP3 versions of MI1/Loom Audio
+        Daniel Schepler      - Final MI1 CD music support/ Initial Ogg Vorbis support
+        Andre Souza          - SDL-based OpenGL renderer
+        Tim 'realmz'         - Initial MI1 CD music support
 
         And to all the contributors, users, and beta testers we've missed.
         Thanks!
