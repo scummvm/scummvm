@@ -646,11 +646,6 @@ void SoundMixer::Channel_STREAM::append(void *data, uint32 len)
 		memcpy(_end_of_data, data, len);
 	}
 	_end_of_data = new_end;
-
-#ifdef __MORPHOS__
-	if (_to_be_destroyed)
-		_to_be_destroyed = false;
-#endif
 }
 
 void SoundMixer::Channel_STREAM::mix(int16 *data, uint len)
@@ -686,9 +681,6 @@ void SoundMixer::Channel_STREAM::mix(int16 *data, uint len)
 		//warning("Streaming underflow of %d bytes", len);
 		//real_destroy();
 		//return;
-#ifdef __MORPHOS__
-		_to_be_destroyed = true;
-#endif
 	}
 	_fp_pos = fp_pos;
 }

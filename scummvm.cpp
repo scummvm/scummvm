@@ -1299,9 +1299,7 @@ void Scumm::waitForTimer(int msec_delay) {
 					mouse.x = event.mouse.x;
 					mouse.y = event.mouse.y;
 					_system->set_mouse_pos(event.mouse.x, event.mouse.y);
-#if !defined(__MORPHOS__)
 					_system->update_screen();
-#endif
 				}
 				_newgui->handleEvent(event);
 				continue;
@@ -1333,9 +1331,7 @@ void Scumm::waitForTimer(int msec_delay) {
 				mouse.x = event.mouse.x;
 				mouse.y = event.mouse.y;
 				_system->set_mouse_pos(event.mouse.x, event.mouse.y);
-#if !defined(__MORPHOS__)
 				_system->update_screen();
-#endif
 				break;
 
 			case OSystem::EVENT_LBUTTONDOWN:
