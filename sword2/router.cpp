@@ -355,6 +355,7 @@ int32 Router::smoothestPath() {
 	// This is because I was unable to derive a function to relate number
 	// of steps taken between two points to the shrunken step size   
 
+	int i;
 	int32 steps = 0;
 	int32 lastDir;
 	int32 tempturns[4];
@@ -442,7 +443,7 @@ int32 Router::smoothestPath() {
 		tempturns[3] = DD;
 		turns[3] = 3;
 
-		for (int i = 0; i < 3; i++) {
+		for (i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
 				if (tempturns[j] > tempturns[j + 1]) {
 					SWAP(turns[j], turns[j + 1]);
@@ -459,7 +460,7 @@ int32 Router::smoothestPath() {
 
 		assert(options);
 
-		int i = 0; 
+		i = 0; 
 		steps = 0; 
 
 		do {
