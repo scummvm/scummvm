@@ -335,10 +335,10 @@ void Sound::playSound(int sound) {
 				int track = *ptr;
 	
 				if (track == _scumm->current_cd_sound)
-					result = pollCD();
-				if (result == 1) return;
-	
-					playCDTrack(track, 1, 0, 0);
+					if (pollCD() == 1) return;
+
+				playCDTrack(track, 1, 0, 0);
+				_scumm->current_cd_sound = track;
 				return;
 			}
 	
