@@ -2557,16 +2557,6 @@ void SimonEngine::vc_resume_sprite(byte *code_ptr, uint16 cur_file, uint16 cur_s
 void SimonEngine::add_vga_timer(uint num, byte *code_ptr, uint cur_sprite, uint cur_file) {
 	VgaTimerEntry *vte;
 
-	// When Simon talks to the Golum about stew in French version of
-	// Simon the Sorcerer 1 the code_ptr is at wrong location for
-	// sprite 200. This  was a bug in the original game, which 
-	// caused several glitches in this scene.
-	// We work around the problem by correcting the code_ptr for sprite
-	// 200 in this scene, if it is wrong.
-	if (!(_game & GF_SIMON2) && (_language == 2) &&
-		(code_ptr - _vga_buffer_pointers[cur_file].vgaFile1 == 4) && (cur_sprite == 200) && (cur_file == 2))
-		code_ptr += 0x66;
-
 	_lock_word |= 1;
 
 	for (vte = _vga_timer_list; vte->delay; vte++) {
@@ -4484,6 +4474,12 @@ void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 }
 
 byte *SimonEngine::read_vga_from_datfile_2(uint id) {
+	// !!! HACK !!!
+	// allocate more space for text to cope with foreign languages that use
+	// up more space than english. I hope 6400 bytes are enough. This number
+	// is base on: 2 (lines) * 320 (screen width) * 10 (textheight) -- olki
+	int extraBuffer = (id == 5 ? 6400 : 0);
+
 	if (_game & GF_OLD_BUNDLE) {
 		File in;
 		char buf[15];
@@ -4507,10 +4503,10 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id) {
 			byte *buffer = new byte[size];
 			if (in.read(buffer, size) != size)
 				error("read_vga_from_datfile_2: read failed");
-			dst = setup_vga_destination (READ_BE_UINT32 (buffer + size - 4));
+			dst = setup_vga_destination (READ_BE_UINT32 (buffer + size - 4) + extraBuffer);
 			decrunch_file_amiga (buffer, dst, size);
 		} else {
-			dst = setup_vga_destination(size);
+			dst = setup_vga_destination(size + extraBuffer);
 			if (in.read(dst, size) != size)
 				error("read_vga_from_datfile_2: read failed");
 		}
@@ -4522,7 +4518,7 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id) {
 		uint32 size = _game_offsets_ptr[id + 1] - offs_a;
 		byte *dst;
 
-		dst = setup_vga_destination(size);
+		dst = setup_vga_destination(size + extraBuffer);
 		resfile_read(dst, offs_a, size);
 
 		return dst;
