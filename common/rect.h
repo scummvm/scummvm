@@ -87,6 +87,13 @@ struct Rect {
 	bool contains(const Rect & r) const {
 		return (left <= r.right) && (r.left < right) && (top <= r.bottom) && (r.top < bottom);
 	}
+	
+	void grow(int16 offset) {
+		top -= offset;
+		left -= offset;
+		bottom += offset;
+		right += offset;
+	}
 };
 
 };	// End of namespace ScummVM
