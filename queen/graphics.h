@@ -101,26 +101,31 @@ struct TextSlot {
 };
 
 
-struct CarBamData {
-	struct Obj {
-		int16 x, y;
-		uint16 frame;
-	};
-	Obj truck;
-	Obj rico;
-	Obj fx;
+struct BamDataObj {
+	int16 x, y;
+	int16 frame;
+};
+
+struct BamDataBlock {
+	BamDataObj obj1; // truck / Frank
+	BamDataObj obj2; // Rico  / robot
+	BamDataObj fx;
 	int16 sfx;
 };
 
-
 struct BamData {
-	bool enable;
-	int16 index;
-	int16 sfx;
 
-	BamData()
-		: enable(false), index(0), sfx(0) {
-	}
+	BamData() : flag(0), index(0) {}
+
+	int16 flag;
+	int16 index;
+
+	bool _screenShaked;
+	const BamDataBlock *_fightData;
+	static const BamDataBlock _carData[];
+	static const BamDataBlock _fight1Data[];
+	static const BamDataBlock _fight2Data[];
+	static const BamDataBlock _fight3Data[];
 };
 
 
@@ -180,9 +185,13 @@ public:
 	int cameraBob() const { return _cameraBob; }
 
 	BamData *bamData() { return &_bam; }
+
 	void initCarBamScene();
 	void updateCarBamScene();
 	void cleanupCarBamScene(uint16 i);
+
+	void initFightBamScene();
+	void updateFightBamScene();
 
 	void update(uint16 room);
 
@@ -231,8 +240,6 @@ private:
 	Display *_display;
 	Input *_input;
 	Resource *_resource;
-
-	static const CarBamData _carBamData[];
 
 };
 

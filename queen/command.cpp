@@ -948,7 +948,7 @@ void Command::executeStandardStuff(const Verb& action, int16 subj1, int16 subj2)
 			}
 		}
 		else {
-			_logic->joeSpeak(1);
+			_logic->joeSpeak(2);
 		}
 		break;
 

@@ -166,18 +166,20 @@ public:
 	ObjectDescription *objectDescription(uint16 objNum) const { return &_objectDescription[objNum]; }
 	uint16 objectDescriptionCount() const { return _numObjDesc; }
 
-	uint16 joeFacing()	{ return _joe.facing; }
-	uint16 joeX()		{ return _joe.x; }
-	uint16 joeY()		{ return _joe.y; }
-	JoeWalkMode joeWalk()	{ return _joe.walk; }
-	uint16 joeScale()	{ return _joe.scale; }
-	uint16 joePrevFacing() { return _joe.prevFacing; }
+	uint16 joeFacing() const { return _joe.facing; }
+	uint16 joeX() const { return _joe.x; }
+	uint16 joeY() const { return _joe.y; }
+	JoeWalkMode joeWalk() const { return _joe.walk; }
+	uint16 joeScale() const { return _joe.scale; }
+	uint16 joeCutFacing() const { return _joe.cutFacing; }
+	uint16 joePrevFacing() const { return _joe.prevFacing; }
 
 	void joeFacing(uint16 dir);
 	void joeX(uint16 x);
 	void joeY(uint16 y);
 	void joeWalk(JoeWalkMode walking);
 	void joeScale(uint16 scale);
+	void joeCutFacing(uint16 dir);
 	void joePrevFacing(uint16 dir);
 	
 	const char *joeResponse(int i) const { return _joeResponse[i]; }
@@ -409,10 +411,10 @@ protected:
 	uint16 _numAFile;	//A_FILE_MAX
 
 	struct {
-		uint16	x, y;
-		uint16	facing, prevFacing;
+		uint16 x, y;
+		uint16 facing, cutFacing, prevFacing;
 		JoeWalkMode walk;
-		uint16  scale;
+		uint16 scale;
 	} _joe;
 	
 	int16 _gameState[GAME_STATE_COUNT];

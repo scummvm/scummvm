@@ -676,6 +676,11 @@ void Logic::joeScale(uint16 scale) {
 	_joe.scale = scale;
 }
 
+void Logic::joeCutFacing(uint16 dir) {
+
+	_joe.cutFacing = dir;
+}
+
 void Logic::joePrevFacing(uint16 dir) {
 	_joe.prevFacing = dir;
 }
@@ -1595,12 +1600,11 @@ void Logic::joeSetupFromBanks(const char *animBank, const char *standBank) {
 void Logic::joeSetup() {
 
 	joeSetupFromBanks("joe_a.BBK", "joe_b.BBK");
-	_joe.facing = DIR_FRONT;
+	joeFacing(DIR_FRONT);
 }
 
 
 ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
-	// queen.c SETUP_HERO()
 
 	debug(0, "Logic::joeSetupInRoom(%d, %d) joe.x=%d joe.y=%d", autoPosition, scale, _joe.x, _joe.y);
 
@@ -1646,24 +1650,43 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 		}
 	}
 
-	// XXX CUTJOEF (queen.c l.266-271)
-
-	// check to see which way Joe entered room
-	_joe.facing = State::findDirection(pod->state);
-	switch (_joe.facing) {
-	case DIR_BACK:
-		_joe.facing = DIR_FRONT;
-		break;
-	case DIR_FRONT:
-		_joe.facing = DIR_BACK;
-		break;
+	if (joeCutFacing() > 0) {
+		joeFacing(joeCutFacing());
+		joeCutFacing(0);
 	}
-	_joe.prevFacing = _joe.facing;
+	else {
+		// check to see which way Joe entered room
+		switch (State::findDirection(pod->state)) {
+		case DIR_BACK:
+			joeFacing(DIR_FRONT);
+			break;
+		case DIR_FRONT:
+			joeFacing(DIR_BACK);
+			break;
+		case DIR_LEFT:
+			joeFacing(DIR_RIGHT);
+			break;
+		case DIR_RIGHT:
+			joeFacing(DIR_LEFT);
+			break;
+		}
+	}
+	joePrevFacing(joeFacing());
 
 	BobSlot *pbs = _graphics->bob(0);
 	pbs->scale = _joe.scale;
 
-	// XXX room 108 specific (queen.c l.283-292)
+	if (_currentRoom == 108) {
+		_graphics->cameraBob(-1);
+		_graphics->bankLoad("joe_e.act", 7);
+		_graphics->bankUnpack(2, 29 + FRAMES_JOE_XTRA, 7);
+
+		_display->horizontalScroll(320);
+
+		joeFacing(DIR_RIGHT);
+		joeCutFacing(DIR_RIGHT);
+		joePrevFacing(DIR_RIGHT);
+	}
 
 	joeFace();
 	pbs->active = true;
@@ -1691,34 +1714,40 @@ uint16 Logic::joeFace() {
 	}
 	else {
 		frame = 33;
-		if (_joe.facing == DIR_FRONT) {
-			if (_joe.prevFacing == DIR_BACK) {
+		if (joeFacing() == DIR_FRONT) {
+			if (joePrevFacing() == DIR_BACK) {
 				pbs->frameNum = 33 + FRAMES_JOE_XTRA;
 				update();
 			}
 			frame = 34;
 		}
-		else if (_joe.facing == DIR_BACK) {
-			if (_joe.prevFacing == DIR_FRONT) {
+		else if (joeFacing() == DIR_BACK) {
+			if (joePrevFacing() == DIR_FRONT) {
 				pbs->frameNum = 33 + FRAMES_JOE_XTRA;
 				update();
 			}
 			frame = 35;
 		}
-		else if ((_joe.facing == DIR_LEFT && _joe.prevFacing == DIR_RIGHT) 
-			|| 	(_joe.facing == DIR_RIGHT && _joe.prevFacing == DIR_LEFT)) {
+		else if ((joeFacing() == DIR_LEFT && joePrevFacing() == DIR_RIGHT) 
+			|| 	(joeFacing() == DIR_RIGHT && joePrevFacing() == DIR_LEFT)) {
 			pbs->frameNum = 34 + FRAMES_JOE_XTRA;
 			update();
 		}
 		pbs->frameNum = frame + FRAMES_JOE_XTRA;
 		pbs->scale = _joe.scale;
-		pbs->xflip = (_joe.facing == DIR_LEFT);
+		pbs->xflip = (joeFacing() == DIR_LEFT);
 		update();
-		_joe.prevFacing = _joe.facing;
+		joePrevFacing(joeFacing());
 		switch (frame) {
-		case 33: frame = 1; break;
-		case 34: frame = 3; break;
-		case 35: frame = 5; break;
+		case 33:
+			frame = 1;
+			break;
+		case 34:
+			frame = 3;
+			break;
+		case 35:
+			frame = 5;
+			break;
 		}
 	}
 	pbs->frameNum = 29 + FRAMES_JOE_XTRA;
@@ -2502,7 +2531,7 @@ bool Logic::gameLoad(uint16 slot) {
 		return false;
 	}
 	
-	//CUTJOEF = _joe.facing;
+	joeCutFacing(joeFacing());
 	joeFace();
 	
 	//OLDX = _joe.x;

@@ -150,8 +150,8 @@ void Journal::restore() {
 
 	_logic->joeX(_prevJoeX);
 	_logic->joeY(_prevJoeY);
-
-    // XXX CUTJOEF=JOEF;
+	
+	_logic->joeCutFacing(_logic->joeFacing());
 
 	_logic->oldRoom(_logic->currentRoom());
 	_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE, 0, 0, false);

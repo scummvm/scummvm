@@ -180,7 +180,7 @@ USE_UNDERWEAR()				Logic::joeUseUnderwear
 USE_CLOTHES()				Logic::joeUseClothes
 USE_DRESS()					Logic::joeUseDress
 -
-CUTJOEF
+CUTJOEF						Logic::_joe.cutFacing
 JOE_RESPstr 				Logic::_joeResponse
 JOEF,JX,JY,JDIR				Logic::_joe.*
 JOEWALK						Logic::_joe.walk
@@ -234,7 +234,7 @@ A_FILE_MAX					Logic::_numAFile
 ACTOR_DATA_MAX				Logic::_numActors
 AREA						Logic::_area
 AREAMAX						Logic::_areaMax
-bamflag						Graphics::_bam.enable
+bamflag						Graphics::_bam.flag
 bamindex					Graphics::_bam.index
 DESCTOT						Logic::_numDescriptions
 ENTRY_OBJ					Logic::_entryObj

@@ -158,19 +158,18 @@ void Cutaway::load(const char *filename) {
 	if (entryString[0] == '*' &&
 			entryString[1] == 'F' &&
 			entryString[3] == '\0') {
-		warning("[Cutaway::load] CUTJOEF not handled");
 		switch (entryString[2]) {
 			case 'L':
-				/* CUTJOEF = LEFT; */
+				_logic->joeCutFacing(DIR_LEFT);
 				break;
 			case 'R':
-				/* CUTJOEF = RIGHT; */
+				_logic->joeCutFacing(DIR_RIGHT);
 				break;
 			case 'F':
-				/* CUTJOEF = FRONT; */
+				_logic->joeCutFacing(DIR_FRONT);
 				break;
 			case 'B':
-				/* CUTJOEF = BACK; */
+				_logic->joeCutFacing(DIR_BACK);
 				break;
 		}
 	}
@@ -326,6 +325,78 @@ void Cutaway::actionSpecialMove(int index) {
 			_graphics->cleanupCarBamScene(_logic->findBob(594)); // Oil object
 			break;
 
+		// c69e.cut -  Fight1 background animation
+		case 9:
+			_graphics->initFightBamScene();
+			_logic->gameState(148, 1);
+			break;
+
+		// c69e.cut
+		case 10:
+			_graphics->bamData()->flag = 2;
+			while (_graphics->bamData()->flag) {
+				_logic->update();
+			}
+			break;
+
+		// c69z.cut - Frank growing
+		case 11: {
+				_graphics->bankUnpack(1, 38, 15);
+				BobSlot *bobFrank = _graphics->bob(5);
+				bobFrank->frameNum = 38;
+				bobFrank->curPos(160, 200);
+				bobFrank->box.y2 = GAME_SCREEN_HEIGHT - 1;
+
+				int i;
+				for (i = 10; i <= 100; i += 4) {
+					bobFrank->scale = i;
+					_logic->update();
+				}
+				for (i = 0; i <= 20; ++i) {
+					_logic->update();
+				}
+
+				_logic->objectData(521)->name = ABS(_logic->objectData(521)->name); // Dinoray
+				_logic->objectData(526)->name = ABS(_logic->objectData(526)->name); // Frank obj
+				_logic->objectData(522)->name = -ABS(_logic->objectData(522)->name); // TMPD object off
+				_logic->objectData(525)->name = -ABS(_logic->objectData(525)->name); // Floda guards off
+				_logic->objectData(523)->name = -ABS(_logic->objectData(523)->name); // Sparky object off
+				_logic->gameState(157, 1); // No more Ironstein
+			}
+			break;
+
+		// c69z.cut - Robot growing
+		case 12: {
+				_graphics->bankUnpack(1, 38, 15);
+				BobSlot *bobRobot = _graphics->bob(5);
+				bobRobot->frameNum = 38;
+				bobRobot->curPos(160, 200);
+				bobRobot->box.y2 = GAME_SCREEN_HEIGHT - 1;
+
+				int i;
+				for (i = 10; i <= 100; i += 4) {
+					bobRobot->scale = i;
+					_logic->update();
+				}
+				for (i = 0; i <= 20; ++i) {
+					_logic->update();
+				}
+
+				_logic->objectData(524)->name = -ABS(_logic->objectData(524)->name); // Azura object off
+				_logic->objectData(526)->name = -ABS(_logic->objectData(526)->name); // Frank object off
+			}
+			break;
+
+		// Robot shrinking
+		case 13: {
+				int i;
+				for (i = 100; i >= 35; i -= 5) {
+					_graphics->bob(6)->scale = i;
+					_logic->update();
+				}
+			}
+			break;
+
 		// cdint.cut - put camera on Joe
 		case 16:
 			_graphics->cameraBob(0);
@@ -426,7 +497,10 @@ void Cutaway::actionSpecialMove(int index) {
 
 		// c75b.cut - Screen shake
 		case 32:
-			// TODO implement
+			OSystem::instance()->set_shake_pos(3);
+			_logic->update();
+			OSystem::instance()->set_shake_pos(0);
+			_logic->update();
 			break;
 
 		// cred.cut - scale title
@@ -1203,6 +1277,9 @@ void Cutaway::run(char *nextFilename) {
 
 	_input->cutawayRunning(true);
 
+	_logic->joeCutFacing(_logic->joeFacing());
+	_logic->joeFace();
+
 	_initialRoom = _temporaryRoom = _logic->currentRoom();
 
 	// FIXME: hack to hide the panel *before* displaying a talking head.
@@ -1362,7 +1439,7 @@ void Cutaway::run(char *nextFilename) {
 			}
 		}
 
-		// XXX CUTJOEF=0;
+		_logic->joeCutFacing(0);
 		_comPanel = 0;
 
 		int k = 0;
