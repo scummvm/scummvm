@@ -716,6 +716,7 @@ protected:
 	uint8 *drawWizImage(int restype, const WizImage *pwi);
 	void drawWizPolygon(int resnum, int state, int id, int flags);
 	void flushWizBuffer();
+	void captureWizImage(int restype, int resnum, const Common::Rect& r, bool frontBuffer, int compType);
 
 	int findObject(int x, int y, int num, int *args);
 	virtual void decodeParseString(int a, int b);
@@ -835,15 +836,15 @@ protected:
 		int unk_130;
 		int unk_134;
 		int unk_138;
-		int unk_148;
+		int compType;
 		int unk_14C;
 		int angle;
 		int zoom;
 		int unk_15C;
 		int unk_160;
-		uint8 remapBuf1[256];
-		uint8 remapBuf2[256];
-		int remapPos;
+		uint8 remapColor[256];
+		uint8 remapIndex[256];
+		int remapNum;
 		WizImage img;
 	};
 	

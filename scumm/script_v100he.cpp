@@ -983,7 +983,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.img.resNum = pop();
 		_wizParams.processMode = 0;
 		_wizParams.processFlags = 0;
-		_wizParams.remapPos = 0;
+		_wizParams.remapNum = 0;
 		_wizParams.img.flags = 0;
 		break;
 	case 6:
@@ -998,7 +998,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		_wizParams.box.right = pop();
 		_wizParams.box.top = pop();
 		_wizParams.box.left = pop();
-		_wizParams.unk_148 = pop();
+		_wizParams.compType = pop();
 		break;
 	case 29:
 		_wizParams.processMode = 1;

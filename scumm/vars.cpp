@@ -506,8 +506,10 @@ void ScummEngine::initScummVars() {
 		}
 		if (_heversion >= 80)
 			VAR(VAR_WINDOWS_VERSION) = 40;
-		if (_heversion >= 90)
+		if (_heversion >= 90) {
+			VAR(VAR_WIZ_TCOLOR) = 5;
 			VAR(VAR_NUM_SPRITES) = _numSprites - 1;
+		}
 		if (_heversion >= 99) {
 			VAR(VAR_NUM_PALETTES) = _numPalettes;
 			VAR(VAR_NUM_UNK) = _numUnk;

@@ -716,9 +716,11 @@ void ScummEngine_v70he::o70_kernelSetFunctions() {
 		break;
 	case 42:
 		// drawWizImage related
+		warning("o70_kernelSetFunctions: unhandled case 42");
 		break;
 	case 43:
 		// drawWizImage related
+		warning("o70_kernelSetFunctions: unhandled case 43");
 		break;
 	case 714:
 		break;

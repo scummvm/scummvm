@@ -378,7 +378,7 @@ const char *ScummEngine_v72he::getOpcodeDesc(byte i) {
 	return _opcodesV72he[i].desc;
 }
 
-static int arrayDataSizes[] = {0, 1, 4, 8, 8, 16, 32};
+static const int arrayDataSizes[] = { 0, 1, 4, 8, 8, 16, 32 };
 
 ScummEngine_v72he::ArrayHeader *ScummEngine_v72he::defineArray(int array, int type, int dim2start, int dim2end,
 											int dim1start, int dim1end) {
@@ -728,7 +728,6 @@ void ScummEngine_v72he::o72_getObjectImageX() {
 	push(_objs[objnum].x_pos);
 }
 
-
 void ScummEngine_v72he::o72_getObjectImageY() {
 	int object = pop();
 	int objnum = getObjectIndex(object);
@@ -741,15 +740,259 @@ void ScummEngine_v72he::o72_getObjectImageY() {
 	push(_objs[objnum].y_pos);
 }
 
-void ScummEngine_v72he::o72_captureWizImage() {
-	// Drawing related
-	int a = pop();
-	int b = pop();
-	int c = pop();
-	int d = pop();
-	int e = pop();
+struct wizPackCtx {
+	uint32 len;
+	uint8 saveCode;
+	uint8 saveBuf[0x100];
+};
 
-	debug(1, "stub o72_captureWizImage(%d, %d, %d, %d, %d)", a, b, c, d, e);
+static void wizPackType1Helper1(uint8 *&dst, int len, byte newColor, byte prevColor, wizPackCtx *ctx) {
+	assert(len > 0);
+	if (newColor == prevColor) {
+		do {
+			int blockLen = MIN(len, 0x7F);
+			len -= blockLen;
+			if (dst) {
+				*dst++ = (blockLen * 2) | 1;
+			}
+			++ctx->len;
+		} while (len > 0);
+	} else {
+		do {
+			int blockLen = MIN(len, 0x40);
+			len -= blockLen;
+			if (dst) {
+				*dst++ = ((blockLen - 1) * 4) | 2;
+			}
+			++ctx->len;
+			if (dst) {
+				*dst++ = newColor;
+			}
+			++ctx->len;
+		} while (len > 0);
+	}
+}
+
+static void wizPackType1Helper2(uint8 *&dst, int len, wizPackCtx *ctx) {
+	assert(len > 0);
+	const uint8 *src = ctx->saveBuf;
+	do {
+		int blockLen = MIN(len, 0x40);
+		len -= blockLen;
+		if (dst) {
+			*dst++ = (blockLen - 1) * 4;
+		}
+		++ctx->len;
+		while (blockLen--) {
+			if (dst) {
+				*dst++ = *src++;
+			}
+			++ctx->len;
+		}
+	} while (len > 0);
+}
+
+static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common::Rect& rCapt, uint8 tColor) {
+	debug(1, "wizPackType1(%d, [%d,%d,%d,%d])", tColor, rCapt.left, rCapt.top, rCapt.right, rCapt.bottom);
+	wizPackCtx ctx;
+	memset(&ctx, 0, sizeof(ctx));
+	
+	src += rCapt.top * srcPitch + rCapt.left;
+	int w = rCapt.width();
+	int h = rCapt.height();
+	
+	uint8 *nextDstPtr, *curDstPtr;
+	uint8 curColor, prevColor;
+	int saveBufPos;
+	
+	nextDstPtr = curDstPtr = 0;
+	
+	int dataSize = 0;
+	while (h--) {
+		if (dst) {
+			curDstPtr = dst;
+			nextDstPtr = dst;
+			dst += 2;
+		}
+		dataSize += 2;
+		int numBytes = 0;
+		
+		int i, code;
+		for (i = 0; i < w; ++i) {
+			if (src[i] != tColor)
+				break;
+		}
+		if (i != w) {
+			curDstPtr = dst;
+			ctx.len = 0;
+			prevColor = ctx.saveBuf[0] = *src;
+			const uint8 *curSrcPtr = src + 1;
+			saveBufPos = 1;
+			code = (tColor - ctx.saveBuf[0] == 0) ? 1 : 0;
+			int curw = w;
+			while (curw--) {
+				ctx.saveBuf[saveBufPos] = curColor = *curSrcPtr++;
+				++saveBufPos;
+				if (code == 0) {
+					if (curColor == tColor) {
+						--saveBufPos;
+						wizPackType1Helper2(curDstPtr, saveBufPos, &ctx);
+						code = saveBufPos = 1;
+						ctx.saveBuf[0] = curColor;
+						numBytes = 0;
+						prevColor = curColor;
+						continue;
+					}
+					if (saveBufPos > 0x80) {
+						--saveBufPos;
+						wizPackType1Helper2(curDstPtr, saveBufPos, &ctx);
+						saveBufPos = 1;
+						ctx.saveBuf[0] = curColor;
+						numBytes = 0;
+						prevColor = curColor;
+						continue;
+					}
+					if (prevColor != curColor) {
+						numBytes = saveBufPos - 1;
+						prevColor = curColor;
+						continue;
+					}
+					code = 1;
+					if (numBytes != 0) {
+						if (saveBufPos - numBytes < 3) {
+							code = 0;
+						} else {
+							wizPackType1Helper2(curDstPtr, numBytes, &ctx);
+						}
+					}
+				}
+				if (prevColor != curColor || saveBufPos - numBytes > 0x80) {
+					saveBufPos -= numBytes;
+					--saveBufPos;
+					wizPackType1Helper1(curDstPtr, saveBufPos, prevColor, tColor, &ctx);
+					saveBufPos = 1;
+					numBytes = 0;
+					ctx.saveBuf[0] = curColor;
+					code = (tColor - ctx.saveBuf[0] == 0) ? 1 : 0;
+				}
+				prevColor = curColor;
+			}
+			if (code == 0) {
+				wizPackType1Helper2(curDstPtr, saveBufPos, &ctx);
+			} else {
+				saveBufPos -= numBytes;
+				wizPackType1Helper1(curDstPtr, saveBufPos, prevColor, tColor, &ctx);
+			}
+			dataSize += ctx.len;
+			src += srcPitch;
+			if (dst) {
+				dst += ctx.len;
+				*(uint16 *)nextDstPtr = TO_LE_16(ctx.len);
+			}
+		}
+	}
+	return dataSize;
+}
+
+static int wizPackType0(uint8 *dst, const uint8 *src, int srcPitch, const Common::Rect& rCapt, uint8 tColor) {
+	int w = rCapt.width();
+	int h = rCapt.height();
+	int size = w * h;
+	if (dst) {
+		src += rCapt.top * srcPitch + rCapt.left;
+		while (h--) {
+			memcpy(dst, src, w);
+			dst += w;
+			src += srcPitch;
+		}
+	}
+	return size;
+}
+
+void ScummEngine_v72he::captureWizImage(int resType, int resNum, const Common::Rect& r, bool frontBuffer, int compType) {
+	debug(1, "ScummEngine_v72he::captureWizImage(%d, %d, %d, [%d,%d,%d,%d])", resType, resNum, compType, r.left, r.top, r.right, r.bottom);
+	uint8 *src = NULL;
+	VirtScreen *pvs = &virtscr[kMainVirtScreen];
+	if (frontBuffer) {
+		src = pvs->getPixels(0, 0);
+	} else {
+		src = pvs->getBackPixels(0, 0);
+	}
+	Common::Rect rCapt(0, 0, pvs->w, pvs->h);
+	if (rCapt.intersects(r)) {
+		rCapt.clip(r);
+		const uint8 *palPtr = _currentPalette;
+
+		int w = rCapt.width();
+		int h = rCapt.height();
+		int tColor = VAR(VAR_WIZ_TCOLOR);
+
+		// compute compressed size
+		int dataSize = 0;
+		int headerSize = palPtr ? 1080 : 36;
+		switch (compType) {
+		case 1:
+			dataSize = wizPackType1(0, src, pvs->pitch, rCapt, tColor);
+			break;
+		case 0:
+			dataSize = wizPackType0(0, src, pvs->pitch, rCapt, tColor);
+			break;
+		default:
+			warning("unhandled compression type %d", compType);
+			break;
+		}
+
+		// alignment
+		dataSize = (dataSize + 1) & ~1;
+		int wizSize = headerSize + dataSize;
+		// write header
+		uint8 *wizImg = createResource(resType, resNum, dataSize + headerSize);
+		*(uint32 *)(wizImg + 0x00) = MKID('AWIZ');
+		*(uint32 *)(wizImg + 0x04) = TO_BE_32(wizSize);
+		*(uint32 *)(wizImg + 0x08) = MKID('WIZH');
+		*(uint32 *)(wizImg + 0x0C) = TO_BE_32(0x14);
+		*(uint32 *)(wizImg + 0x10) = TO_LE_32(compType);
+		*(uint32 *)(wizImg + 0x14) = TO_LE_32(w);
+		*(uint32 *)(wizImg + 0x18) = TO_LE_32(h);
+		int curSize = 0x1C;
+		if (palPtr) {
+			*(uint32 *)(wizImg + 0x1C) = MKID('RGBS');
+			*(uint32 *)(wizImg + 0x20) = TO_BE_32(0x308);
+			memcpy(wizImg + 0x24, palPtr, 0x300);
+			*(uint32 *)(wizImg + 0x324) = MKID('RMAP');
+			*(uint32 *)(wizImg + 0x328) = TO_BE_32(0x10C);
+			*(uint32 *)(wizImg + 0x32C) = 0;
+			curSize = 0x330;
+			for (int i = 0; i < 256; ++i) {
+				wizImg[curSize] = i;
+				++curSize;
+			}
+		}
+		*(uint32 *)(wizImg + curSize + 0x0) = MKID('WIZD');
+		*(uint32 *)(wizImg + curSize + 0x4) = TO_BE_32(dataSize + 8);
+		curSize += 8;
+
+		// write compressed data
+		switch (compType) {
+		case 1:
+			wizPackType1(wizImg + headerSize, src, pvs->pitch, rCapt, tColor);
+			break;
+		case 0:
+			wizPackType0(wizImg + headerSize, src, pvs->pitch, rCapt, tColor);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void ScummEngine_v72he::o72_captureWizImage() {
+	Common::Rect grab;
+	grab.bottom = pop() + 1;
+	grab.right = pop() + 1;
+	grab.top = pop();
+	grab.left = pop();
+	captureWizImage(rtImage, pop(), grab, false, true);	
 }
 
 void ScummEngine_v72he::o72_getTimer() {

@@ -584,7 +584,7 @@ void ScummEngine::initBGBuffers(int height) {
 void ScummEngine::redrawBGAreas() {
 	int i;
 	int diff;
-	int val = 0;;
+	int val = 0;
 	bool cont = true;
 
 	if (!(_features & GF_NEW_CAMERA))

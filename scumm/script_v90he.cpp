@@ -559,6 +559,9 @@ void ScummEngine_v90he::displayWizComplexImage(const WizParameters *params) {
 	} else if (flags & 0x40) {
 		drawWizPolygon(params->img.resNum, state, po_x, flags); // XXX , VAR(117));
 	} else {
+		if ((flags & 0x200) || (flags & 0x24)) {
+			warning("ScummEngine_v90he::displayWizComplexImage() unhandled flags = 0x%X", flags);
+		}
 		// XXX flags 0x200, 0x24
 		WizImage wi;
 		wi.resNum = params->img.resNum;
@@ -576,6 +579,9 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 	switch (params->processMode) {
 	case 1:
 		displayWizComplexImage(params);
+		break;
+	case 2:
+ 		captureWizImage(rtImage, params->img.resNum, params->box, (params->img.flags & 8) == 8, params->compType);
 		break;
 	case 3:
 		if (params->processFlags & 0x800) {
@@ -625,8 +631,22 @@ void ScummEngine_v90he::processWizImage(const WizParameters *params) {
 			}
 		}
 		break;
-	case 2:
 	case 6:
+		if (params->processFlags & 0x40) {
+			int state = (params->processFlags & 0x400) ? params->img.state : 0;
+			int num = params->remapNum;
+			const uint8 *index = params->remapIndex;
+			uint8 *iwiz = getResourceAddress(rtImage, params->img.resNum);
+			assert(iwiz);
+			uint8 *rmap = findWrappedBlock(MKID('RMAP'), iwiz, state, 0) ;
+			assert(rmap);
+			*(uint32 *)(rmap + 8) = TO_BE_32(0x12345678);
+			while (num--) {
+				uint8 idx = *index++;
+				rmap[0xC + idx] = params->remapColor[idx];
+			}
+		}
+		break;
 	// HE 99+
 	case 7:
 	case 8:
@@ -685,7 +705,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.box.right = pop();
 		_wizParams.box.top = pop();
 		_wizParams.box.left = pop();
-		_wizParams.unk_148 = pop();
+		_wizParams.compType = pop();
 		break;
 	case 6:
 		_wizParams.processFlags |= 0x400;
@@ -711,7 +731,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.img.resNum = pop();
 		_wizParams.processMode = 0;
 		_wizParams.processFlags = 0;
-		_wizParams.remapPos = 0;
+		_wizParams.remapNum = 0;
 		_wizParams.img.flags = 0;
 		break;
 	case 16: // HE99+
@@ -729,13 +749,13 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		a = pop();
 		_wizParams.processFlags |= 0x40;
 		_wizParams.processMode = 6;
-		if (_wizParams.remapPos == 0) {
-			memset(_wizParams.remapBuf2, 0, sizeof(_wizParams.remapBuf2));
+		if (_wizParams.remapNum == 0) {
+			memset(_wizParams.remapIndex, 0, sizeof(_wizParams.remapIndex));
 		} else {
-			assert(_wizParams.remapPos < ARRAYSIZE(_wizParams.remapBuf2));
-			_wizParams.remapBuf2[_wizParams.remapPos] = a;
-			_wizParams.remapBuf1[a] = b;
-			++_wizParams.remapPos;
+			assert(_wizParams.remapNum < ARRAYSIZE(_wizParams.remapIndex));
+			_wizParams.remapIndex[_wizParams.remapNum] = a;
+			_wizParams.remapColor[a] = b;
+			++_wizParams.remapNum;
 		}
 		break;
 	case 21:
