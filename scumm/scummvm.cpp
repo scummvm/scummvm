@@ -193,10 +193,14 @@ static const ScummGameSettings scumm_settings[] = {
 
 	{"dig", "The Dig", GID_DIG, 7, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
+	{"digdemo", "The Dig", GID_DIGDEMO, 7, MDT_NONE,
+	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
 
 #ifndef __PALM_OS__ // these are SVGA games not supported under PalmOS
 	/* Scumm Version 8 */
 	{"comi", "The Curse of Monkey Island", GID_CMI, 8, MDT_NONE,
+	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER},
+	{"comidemo", "The Curse of Monkey Island", GID_CMIDEMO, 8, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER},
 	
 	 /* Note that both full versions of Humongous games and demos were often released for
