@@ -96,9 +96,8 @@ SCUMM
 * Implement file related opcode stubs needed for Humongous games
 * Add support for graphics codecs used in 3DO versions of Humongous games
 * Proper handling of .tlk files for Humongous games
-* Merge iMUSE and iMUSE Digital
 * Implement the needed INSANE bits for Full Throttle action sequences
-* iMUSE Digital enhancements/fixes for Full Throttle and COMI
+* Add fully implementation of iMUSE Digital for The Dig, COMI and FT
 * Try to remove all use of MAD/Ogg code from scumm/sound.cpp:
   Ideally, only code in sound/ should access these libs. This will
   become important for loadable module support
