@@ -217,6 +217,8 @@ void SmushPlayer::timerCallback(void *refCon) {
 
 SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 	_vm = scumm;
+	_mutex = g_system->createMutex();
+
 	_version = -1;
 	_nbframes = 0;
 	_smixer = 0;
@@ -245,26 +247,27 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 }
 
 SmushPlayer::~SmushPlayer() {
-	deinit();
+	release();
+	g_system->deleteMutex(_mutex);
 }
 
 void SmushPlayer::init() {
-
+	Common::StackLock lock(_mutex, "SmushPlayer::init()");
 	_frame = 0;
-
 	_vm->_videoFinished = false;
-
-	_smixer = new SmushMixer(_vm->_mixer);
-
 	_vm->setDirtyColors(0, 255);
 	_dst = _vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart;
+	_smixer = new SmushMixer(_vm->_mixer);
 	g_timer->installTimerProc(&timerCallback, _speed, this);
 
 	_alreadyInit = false;
 }
 
-void SmushPlayer::deinit() {
+void SmushPlayer::release() {
+	Common::StackLock lock(_mutex, "SmushPlayer::release()");
 	_vm->_timer->removeTimerProc(&timerCallback);
+
+	_vm->_videoFinished = true;
 
 	for (int i = 0; i < 5; i++) {
 		if (_sf[i]) {
@@ -956,6 +959,7 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 }
 
 void SmushPlayer::parseNextFrame() {
+	Common::StackLock lock(_mutex, "SmushPlayer::parseNextFrame()");
 	if (_vm->_smushPaused)
 		return;
 
@@ -1150,8 +1154,8 @@ void SmushPlayer::play(const char *filename, const char *directory, int32 offset
 		_vm->_system->delay_msecs(10);
 	};
 
-	deinit();
-	
+	release();
+
 	// Reset mouse state
 	_vm->_system->showMouse(oldMouseState);
 }

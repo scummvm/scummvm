@@ -42,6 +42,7 @@ private:
 	int _version;
 	int32 _nbframes;
 	SmushMixer *_smixer;
+	OSystem::MutexRef _mutex;
 	int16 _deltaPal[0x300];
 	byte _pal[0x300];
 	StringResource *_strings;
@@ -91,7 +92,7 @@ private:
 	void updatePalette(void);
 	void parseNextFrame();
 	void init();
-	void deinit();
+	void release();
 	void setupAnim(const char *file, const char *directory);
 	void updateScreen();
 
