@@ -19,11 +19,11 @@
 #include "../bits.h"
 #include "../debug.h"
 #include "../resource.h"
+#include "../engine.h"
 
 #include "imuse_mcmp_mgr.h"
 
 uint16 imuseDestTable[5786];
-void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable);
 
 McmpMgr::McmpMgr() {
 	_compTable = NULL;
@@ -49,7 +49,7 @@ bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
 	_file = g_resourceloader->openNewStream(filename);
 
 	if (!_file) {
-		warning("McmpMgr::openFile() Can't open MCMP file: %s", filename);
+		warning("McmpMgr::openSound() Can't open sound MCMP file: %s", filename);
 		return false;
 	}
 
@@ -104,7 +104,7 @@ int32 McmpMgr::decompressSample(int32 offset, int32 size, byte **comp_final) {
 	int skip, first_block, last_block;
 
 	if (!_file) {
-		warning("McmpMgr::decompressSampleByName() File is not open!");
+		error("McmpMgr::decompressSampleByName() File is not open!");
 		return 0;
 	}
 
@@ -127,7 +127,7 @@ int32 McmpMgr::decompressSample(int32 offset, int32 size, byte **comp_final) {
 			decompressVima(_compInput, (int16 *)_compOutput, _compTable[i].decompSize, imuseDestTable);
 			_outputSize = _compTable[i].decompSize;
 			if (_outputSize > 0x2000) {
-				error("_outputSize: %d", _outputSize);
+				error("McmpMgr::decompressSample() _outputSize: %d", _outputSize);
 			}
 			_lastBlock = i;
 		}

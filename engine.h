@@ -168,4 +168,7 @@ private:
 
 extern Engine *g_engine;
 
+void vimaInit(uint16 *destTable);
+void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable);
+
 #endif

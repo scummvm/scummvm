@@ -19,6 +19,7 @@
 #include "../bits.h"
 #include "../debug.h"
 #include "../timer.h"
+#include "../engine.h"
 
 #include "../mixer/mixer.h"
 #include "../mixer/audiostream.h"
@@ -28,6 +29,12 @@
 
 Imuse *g_imuse = NULL;
 
+extern uint16 imuseDestTable[];
+extern ImuseTable grimStateMusicTable[];
+extern ImuseTable grimSeqMusicTable[];
+extern ImuseTable grimDemoStateMusicTable[];
+extern ImuseTable grimDemoSeqMusicTable[];
+
 Imuse::Track::Track()
 	: used(false), stream(NULL) {
 }
@@ -36,13 +43,6 @@ void Imuse::timerHandler(void *refCon) {
 	Imuse *imuse = (Imuse *)refCon;
 	imuse->callback();
 }
-
-extern void vimaInit(uint16 *destTable);
-extern uint16 imuseDestTable[5786];
-extern ImuseTable grimStateMusicTable[];
-extern ImuseTable grimSeqMusicTable[];
-extern ImuseTable grimDemoStateMusicTable[];
-extern ImuseTable grimDemoSeqMusicTable[];
 
 Imuse::Imuse(int fps) {
 	_mutex = createMutex();

@@ -30,9 +30,6 @@
 
 Smush *g_smush;
 static uint16 smushDestTable[5786];
-void vimaInit(uint16 *destTable);
-void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable);
-
 
 void Smush::timerCallback(void *refCon) {
 	g_smush->handleFrame();
@@ -138,7 +135,7 @@ void Smush::handleFrame() {
 
 	assert(tag == MKID_BE('FRME'));
 	size = _file.readUint32BE();
-	byte *frame = (byte*)malloc(size);
+	byte *frame = (byte *)malloc(size);
 	_file.read(frame, size);
 
 	do {
@@ -153,7 +150,7 @@ void Smush::handleFrame() {
 				handleWave(frame + pos + 8 + 4, decompressed_size);
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
 		} else {
-			error("unknown tag");
+			error("Smush::handleFrame() unknown tag");
 		}
 	} while (pos < size);
 	free(frame);
@@ -189,7 +186,7 @@ void Smush::handleFramesHeader() {
 			_channels = READ_LE_UINT32(f_header + pos + 12);
 			pos += 20;
 		} else {
-			error("unknown tag");
+			error("Smush::handleFramesHeader() unknown tag");
 		}
 	} while (pos < size);
 	free(f_header);
@@ -263,7 +260,7 @@ bool zlibFile::open(const char *filename) {
 	_inBuf = (char *)calloc(1, 16385);
 
 	if (_handle) {
-		warning("File %s already opened", filename);
+		warning("zlibFile::open() File %s already opened", filename);
 		return false;
 	}
 
@@ -272,7 +269,7 @@ bool zlibFile::open(const char *filename) {
 
 	_handle = g_resourceloader->openNewStream(filename);
 	if (!_handle) {
-		warning("zlibFile %s not found", filename);
+		warning("zlibFile::open() zlibFile %s not found", filename);
 		return false;
 	}
 
@@ -283,7 +280,7 @@ bool zlibFile::open(const char *filename) {
 	fread(_inBuf, 6, sizeof(char), _handle);				// XFlags
 
 	if (((flags & 0x04) != 0) || ((flags & 0x10) != 0))		// Xtra & Comment
-		error("Unsupported header flag");
+		error("zlibFile::open() Unsupported header flag");
 
 	if ((flags & 0x08) != 0) {					// Orig. Name
 		do {
@@ -300,7 +297,7 @@ bool zlibFile::open(const char *filename) {
 	_stream.opaque = Z_NULL;
 
 	if (inflateInit2(&_stream, -15) != Z_OK)
-		error("inflateInit2 failed");
+		error("zlibFile::open() inflateInit2 failed");
 
 	_stream.next_in = NULL;
 	_stream.next_out = NULL;
@@ -331,7 +328,7 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 	bool fileEOF = false;
 
 	if (_handle == NULL) {
-		error("File is not open!");
+		error("zlibFile::read() File is not open!");
 		return 0;
 	}
 
@@ -354,17 +351,17 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 
 		result = inflate(&_stream, Z_NO_FLUSH);
 		if (result == Z_STREAM_END) {	// EOF
-			warning("Stream ended");
+			warning("zlibFile::read() Stream ended");
 			_fileDone = true;
 			break;
 		}
 		if (result == Z_DATA_ERROR) {
-			warning("Decompression error");
+			warning("zlibFile::read() Decompression error");
 			_fileDone = true;
 			break;
 		}
 		if (result != Z_OK || fileEOF) {
-			warning("Unknown decomp result: %d/%d\n", result, fileEOF);
+			warning("zlibFile::read() Unknown decomp result: %d/%d\n", result, fileEOF);
 			_fileDone = true;
 			break;
 		}
