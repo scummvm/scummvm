@@ -1119,7 +1119,11 @@ void Sound::bundleMusicHandler(Scumm *scumm) {
 				break;
 
 				default:
-					error("Unknown sound header %c%c%c%c", tag>>24, tag>>16, tag>>8, tag);
+					error("Unknown sound header %c%c%c%c",
+						(byte)(tag >> 24),
+						(byte)(tag >> 16),
+						(byte)(tag >> 8),
+						(byte)tag);
 				}
 			}
 			if (size < 0) {
@@ -1249,7 +1253,11 @@ int Sound::playBundleSound(char *sound) {
 			break;
 
 			default:
-			error("Unknown sound header %c%c%c%c", tag >> 24, tag >> 16, tag >> 8, tag);
+				error("Unknown sound header %c%c%c%c",
+					(byte)(tag >> 24),
+					(byte)(tag >> 16),
+					(byte)(tag >> 8),
+					(byte)tag);
 		}
 	}
 
