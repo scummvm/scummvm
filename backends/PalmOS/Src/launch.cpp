@@ -99,11 +99,6 @@ Boolean StartScummVM() {
 		// ScummVM
 		AddArg(&argvP[argc], "-", NULL, &argc);
 
-// TODO : remove this ?
-		// save scummvm.ini ?
-//		if (gPrefs->saveConfig)
-//			AddArg(&argvP[argc], "-w", NULL, &argc);
-
 		// path
 		AddArg(&argvP[argc], "-p", pathP, &argc);
 
@@ -152,10 +147,13 @@ Boolean StartScummVM() {
 					AddArg(&argvP[argc], "--platform=", "amiga", &argc);
 					break;
 				case 1:
-					AddArg(&argvP[argc], "--platform=", "atari-st", &argc);
+					AddArg(&argvP[argc], "--platform=", "atari", &argc);
 					break;
 				case 2:
-					AddArg(&argvP[argc], "--platform=", "macintosh", &argc);
+					AddArg(&argvP[argc], "--platform=", "mac", &argc);
+					break;
+				case 3:
+					AddArg(&argvP[argc], "--platform=", "pc", &argc);
 					break;
 			}		
 		}
@@ -217,6 +215,7 @@ Boolean StartScummVM() {
 	}
 
 	gVars->skinSet = false;
+	gVars->pinUpdate = false;
 	GamCloseDatabase(false);
 	FrmCloseAllForms();
 
