@@ -231,7 +231,7 @@ RSC=rc.exe
 # ADD RSC /l 0x409 /d UNDER_CE=$(CEVersion) /d _WIN32_WCE=$(CEVersion) /d "UNICODE" /d "_UNICODE" /d "DEBUG" /d "$(CePlatform)" /d "ARM" /d "_ARM_" /r
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../" /I "../../.." /I "../../../common" /I "../../../scumm" /I "../missing" /D "_LIB" /D "ARM" /D "_ARM_" /D "NDEBUG" /D "WIN32" /D UNDER_CE=$(CEVersion) /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "USE_VORBIS" /D "NONSTANDARD_PORT" /D "USE_WINDBG" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../" /I "../../.." /I "../../../common" /I "../../../scumm" /I "../missing" /D "NDEBUG" /D "WIN32" /D "USE_VORBIS" /D "USE_WINDBG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "DISABLE_SWORD2" /YX /M$(CECrtMTDebug) /c
 MTL=midl.exe
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o "NUL" /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o "NUL" /win32
@@ -241,10 +241,6 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 commctrl.lib coredll.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /debug /nodefaultlib:"$(CENoDefaultLib)" /subsystem:$(CESubsystem) /align:"4096" /MACHINE:ARM
 # ADD LINK32 commctrl.lib coredll.lib mad.lib SDLAudio.lib LibTremorCE.lib /nologo /base:"0x00010000" /stack:0x10000,0x1000 /entry:"WinMainCRTStartup" /debug /nodefaultlib:"$(CENoDefaultLib)" /out:"ARMDbg/PocketSCUMM.exe" /subsystem:$(CESubsystem) /align:"4096" /MACHINE:ARM
-# Begin Special Build Tool
-SOURCE="$(InputPath)"
-PostBuild_Cmds=h:\smartphone\spvprov\authenticode\signcode -v h:\smartphone\spvprov\cert\SPVcert.key -spc h:\smartphone\spvprov\cert\SPVcert.spc armdbg\PocketScumm.exe
-# End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
 
@@ -335,8 +331,8 @@ SOURCE="..\..\..\common\config-file.cpp"
 !IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
 
 DEP_CPP_CONFI=\
+	"..\..\..\base\engine.h"\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\savefile.h"\
@@ -347,38 +343,27 @@ DEP_CPP_CONFI=\
 	"..\..\..\common\util.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONFI=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
 
 DEP_CPP_CONFI=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
 	
 NODEP_CPP_CONFI=\
-	"..\..\..\common\common\list.h"\
-	"..\..\..\common\common\map.h"\
-	"..\..\..\common\common\str.h"\
-	"..\..\..\common\common\util.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
+	"..\..\..\common\base\engine.h"\
+	"..\..\..\common\common\config-file.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
 
 DEP_CPP_CONFI=\
+	"..\..\..\base\engine.h"\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\savefile.h"\
@@ -389,38 +374,27 @@ DEP_CPP_CONFI=\
 	"..\..\..\common\util.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONFI=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
 
 DEP_CPP_CONFI=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
 	
 NODEP_CPP_CONFI=\
-	"..\..\..\common\common\list.h"\
-	"..\..\..\common\common\map.h"\
-	"..\..\..\common\common\str.h"\
-	"..\..\..\common\common\util.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
+	"..\..\..\common\base\engine.h"\
+	"..\..\..\common\common\config-file.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
 
 DEP_CPP_CONFI=\
+	"..\..\..\base\engine.h"\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\savefile.h"\
@@ -436,14 +410,13 @@ DEP_CPP_CONFI=\
 NODEP_CPP_CONFI=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
 
 DEP_CPP_CONFI=\
+	"..\..\..\base\engine.h"\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\savefile.h"\
@@ -454,47 +427,31 @@ DEP_CPP_CONFI=\
 	"..\..\..\common\util.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONFI=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
 
 DEP_CPP_CONFI=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
 	
 NODEP_CPP_CONFI=\
-	"..\..\..\common\common\list.h"\
-	"..\..\..\common\common\map.h"\
-	"..\..\..\common\common\str.h"\
-	"..\..\..\common\common\util.h"\
-	"..\..\..\common\macos.h"\
+	"..\..\..\common\base\engine.h"\
+	"..\..\..\common\common\config-file.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
 
 DEP_CPP_CONFI=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
 	
 NODEP_CPP_CONFI=\
-	"..\..\..\common\common\list.h"\
-	"..\..\..\common\common\map.h"\
-	"..\..\..\common\common\str.h"\
-	"..\..\..\common\common\util.h"\
-	"..\..\..\common\macos.h"\
+	"..\..\..\common\base\engine.h"\
+	"..\..\..\common\common\config-file.h"\
 	
 
 !ENDIF 
@@ -506,320 +463,65 @@ SOURCE="..\..\..\common\config-file.h"
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\common\engine.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
-
-DEP_CPP_ENGIN=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
-	
-NODEP_CPP_ENGIN=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\sound\config.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_ENGIN=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	
-NODEP_CPP_ENGIN=\
-	"..\..\..\common\common\list.h"\
-	"..\..\..\common\common\map.h"\
-	"..\..\..\common\common\str.h"\
-	"..\..\..\common\common\util.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\sound\mixer.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
-
-DEP_CPP_ENGIN=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
-	
-NODEP_CPP_ENGIN=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\sound\config.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
-
-DEP_CPP_ENGIN=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	
-NODEP_CPP_ENGIN=\
-	"..\..\..\common\common\list.h"\
-	"..\..\..\common\common\map.h"\
-	"..\..\..\common\common\str.h"\
-	"..\..\..\common\common\util.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\sound\mixer.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
-
-DEP_CPP_ENGIN=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
-	
-NODEP_CPP_ENGIN=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\sound\config.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_ENGIN=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_ENGIN=\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	".\ad.h"\
-	".\DL_byteorder.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
-
-DEP_CPP_ENGIN=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	
-NODEP_CPP_ENGIN=\
-	"..\..\..\common\common\list.h"\
-	"..\..\..\common\common\map.h"\
-	"..\..\..\common\common\str.h"\
-	"..\..\..\common\common\util.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\sound\mixer.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
-
-DEP_CPP_ENGIN=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	
-NODEP_CPP_ENGIN=\
-	"..\..\..\common\common\list.h"\
-	"..\..\..\common\common\map.h"\
-	"..\..\..\common\common\str.h"\
-	"..\..\..\common\common\util.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\common\sound\mixer.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\common\engine.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\common\file.cpp
 
 !IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
 
 DEP_CPP_FILE_=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_FILE_=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
 
-DEP_CPP_FILE_=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	
 NODEP_CPP_FILE_=\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
+	"..\..\..\common\common\file.h"\
+	"..\..\..\common\common\util.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
 
 DEP_CPP_FILE_=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_FILE_=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
 
-DEP_CPP_FILE_=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	
 NODEP_CPP_FILE_=\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
+	"..\..\..\common\common\file.h"\
+	"..\..\..\common\common\util.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
 
 DEP_CPP_FILE_=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
@@ -827,53 +529,38 @@ DEP_CPP_FILE_=\
 NODEP_CPP_FILE_=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
 
 DEP_CPP_FILE_=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_FILE_=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
 
-DEP_CPP_FILE_=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	
 NODEP_CPP_FILE_=\
-	"..\..\..\common\macos.h"\
+	"..\..\..\common\common\file.h"\
+	"..\..\..\common\common\util.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
 
-DEP_CPP_FILE_=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	
 NODEP_CPP_FILE_=\
-	"..\..\..\common\macos.h"\
+	"..\..\..\common\common\file.h"\
+	"..\..\..\common\common\util.h"\
 	
 
 !ENDIF 
@@ -882,172 +569,6 @@ NODEP_CPP_FILE_=\
 # Begin Source File
 
 SOURCE=..\..\..\common\file.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\common\gameDetector.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
-
-DEP_CPP_GAMED=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scaler.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_GAMED=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_GAMED=\
-	"..\..\..\common\stdafx.h"\
-	
-NODEP_CPP_GAMED=\
-	"..\..\..\common\common\config-file.h"\
-	"..\..\..\common\common\engine.h"\
-	"..\..\..\common\common\gameDetector.h"\
-	"..\..\..\common\scumm\imuse.h"\
-	"..\..\..\common\sound\mididrv.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
-
-DEP_CPP_GAMED=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scaler.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_GAMED=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
-
-DEP_CPP_GAMED=\
-	"..\..\..\common\stdafx.h"\
-	
-NODEP_CPP_GAMED=\
-	"..\..\..\common\common\config-file.h"\
-	"..\..\..\common\common\engine.h"\
-	"..\..\..\common\common\gameDetector.h"\
-	"..\..\..\common\scumm\imuse.h"\
-	"..\..\..\common\sound\mididrv.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
-
-DEP_CPP_GAMED=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scaler.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_GAMED=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_GAMED=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scaler.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_GAMED=\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
-
-DEP_CPP_GAMED=\
-	"..\..\..\common\stdafx.h"\
-	
-NODEP_CPP_GAMED=\
-	"..\..\..\common\common\config-file.h"\
-	"..\..\..\common\common\engine.h"\
-	"..\..\..\common\common\gameDetector.h"\
-	"..\..\..\common\scumm\imuse.h"\
-	"..\..\..\common\sound\mididrv.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
-
-DEP_CPP_GAMED=\
-	"..\..\..\common\stdafx.h"\
-	
-NODEP_CPP_GAMED=\
-	"..\..\..\common\common\config-file.h"\
-	"..\..\..\common\common\engine.h"\
-	"..\..\..\common\common\gameDetector.h"\
-	"..\..\..\common\scumm\imuse.h"\
-	"..\..\..\common\sound\mididrv.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\common\gameDetector.h
 # End Source File
 # Begin Source File
 
@@ -1060,6 +581,107 @@ SOURCE=..\..\..\common\map.h
 # Begin Source File
 
 SOURCE=..\..\..\common\rect.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\common\savefile.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
+
+DEP_CPP_SAVEF=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SAVEF=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_SAVEF=\
+	"..\..\..\common\common\savefile.h"\
+	"..\..\..\common\common\util.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
+
+DEP_CPP_SAVEF=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SAVEF=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_SAVEF=\
+	"..\..\..\common\common\savefile.h"\
+	"..\..\..\common\common\util.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
+
+DEP_CPP_SAVEF=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_SAVEF=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_SAVEF=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_SAVEF=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
+
+NODEP_CPP_SAVEF=\
+	"..\..\..\common\common\savefile.h"\
+	"..\..\..\common\common\util.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
+
+NODEP_CPP_SAVEF=\
+	"..\..\..\common\common\savefile.h"\
+	"..\..\..\common\common\util.h"\
+	
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -1077,24 +699,20 @@ DEP_CPP_SCALE=\
 	"..\..\..\common\stdafx.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCALE=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
 
 DEP_CPP_SCALE=\
-	"..\..\..\common\scaler.h"\
-	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	
 NODEP_CPP_SCALE=\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
+	"..\..\..\common\common\scaler.h"\
+	"..\..\..\common\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
@@ -1105,24 +723,20 @@ DEP_CPP_SCALE=\
 	"..\..\..\common\stdafx.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCALE=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
 
 DEP_CPP_SCALE=\
-	"..\..\..\common\scaler.h"\
-	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	
 NODEP_CPP_SCALE=\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
+	"..\..\..\common\common\scaler.h"\
+	"..\..\..\common\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
@@ -1138,7 +752,6 @@ DEP_CPP_SCALE=\
 NODEP_CPP_SCALE=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -1149,33 +762,31 @@ DEP_CPP_SCALE=\
 	"..\..\..\common\stdafx.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCALE=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
 
 DEP_CPP_SCALE=\
-	"..\..\..\common\scaler.h"\
-	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	
 NODEP_CPP_SCALE=\
-	"..\..\..\common\macos.h"\
+	"..\..\..\common\common\scaler.h"\
+	"..\..\..\common\common\scummsys.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
 
 DEP_CPP_SCALE=\
-	"..\..\..\common\scaler.h"\
-	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	
 NODEP_CPP_SCALE=\
-	"..\..\..\common\macos.h"\
+	"..\..\..\common\common\scaler.h"\
+	"..\..\..\common\common\scummsys.h"\
 	
 
 !ENDIF 
@@ -1206,25 +817,19 @@ DEP_CPP_STR_C=\
 	"..\..\..\common\str.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STR_C=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
 
 DEP_CPP_STR_C=\
-	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
 	
 NODEP_CPP_STR_C=\
-	"..\..\..\common\common\list.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
+	"..\..\..\common\common\str.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
@@ -1236,25 +841,19 @@ DEP_CPP_STR_C=\
 	"..\..\..\common\str.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STR_C=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
 
 DEP_CPP_STR_C=\
-	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
 	
 NODEP_CPP_STR_C=\
-	"..\..\..\common\common\list.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
+	"..\..\..\common\common\str.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
@@ -1271,7 +870,6 @@ DEP_CPP_STR_C=\
 NODEP_CPP_STR_C=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -1283,35 +881,29 @@ DEP_CPP_STR_C=\
 	"..\..\..\common\str.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STR_C=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
 
 DEP_CPP_STR_C=\
-	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
 	
 NODEP_CPP_STR_C=\
-	"..\..\..\common\common\list.h"\
-	"..\..\..\common\macos.h"\
+	"..\..\..\common\common\str.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
 
 DEP_CPP_STR_C=\
-	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
 	
 NODEP_CPP_STR_C=\
-	"..\..\..\common\common\list.h"\
-	"..\..\..\common\macos.h"\
+	"..\..\..\common\common\str.h"\
 	
 
 !ENDIF 
@@ -1332,84 +924,70 @@ SOURCE=..\..\..\common\timer.cpp
 !IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
 
 DEP_CPP_TIMER=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TIMER=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
 
 DEP_CPP_TIMER=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
 	
 NODEP_CPP_TIMER=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
+	"..\..\..\common\common\scummsys.h"\
+	"..\..\..\common\common\timer.h"\
+	"..\..\..\common\common\util.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
 
 DEP_CPP_TIMER=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TIMER=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
 
 DEP_CPP_TIMER=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
 	
 NODEP_CPP_TIMER=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
+	"..\..\..\common\common\scummsys.h"\
+	"..\..\..\common\common\timer.h"\
+	"..\..\..\common\common\util.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
 
 DEP_CPP_TIMER=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
@@ -1417,57 +995,48 @@ DEP_CPP_TIMER=\
 NODEP_CPP_TIMER=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
 
 DEP_CPP_TIMER=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TIMER=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
 
 DEP_CPP_TIMER=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
 	
 NODEP_CPP_TIMER=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\common\common\scummsys.h"\
+	"..\..\..\common\common\timer.h"\
+	"..\..\..\common\common\util.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
 
 DEP_CPP_TIMER=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
 	
 NODEP_CPP_TIMER=\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\common\common\scummsys.h"\
+	"..\..\..\common\common\timer.h"\
+	"..\..\..\common\common\util.h"\
 	
 
 !ENDIF 
@@ -1484,19 +1053,18 @@ SOURCE=..\..\..\common\util.cpp
 !IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
 
 DEP_CPP_UTIL_=\
-	"..\..\..\common\engine.h"\
+	"..\..\..\base\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_UTIL_=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -1504,23 +1072,26 @@ NODEP_CPP_UTIL_=\
 DEP_CPP_UTIL_=\
 	"..\..\..\common\stdafx.h"\
 	
+NODEP_CPP_UTIL_=\
+	"..\..\..\common\base\engine.h"\
+	"..\..\..\common\common\util.h"\
+	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
 
 DEP_CPP_UTIL_=\
-	"..\..\..\common\engine.h"\
+	"..\..\..\base\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_UTIL_=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -1528,15 +1099,20 @@ NODEP_CPP_UTIL_=\
 DEP_CPP_UTIL_=\
 	"..\..\..\common\stdafx.h"\
 	
+NODEP_CPP_UTIL_=\
+	"..\..\..\common\base\engine.h"\
+	"..\..\..\common\common\util.h"\
+	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
 
 DEP_CPP_UTIL_=\
-	"..\..\..\common\engine.h"\
+	"..\..\..\base\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
@@ -1544,15 +1120,24 @@ DEP_CPP_UTIL_=\
 NODEP_CPP_UTIL_=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
 
 DEP_CPP_UTIL_=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_UTIL_=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -1560,11 +1145,19 @@ DEP_CPP_UTIL_=\
 DEP_CPP_UTIL_=\
 	"..\..\..\common\stdafx.h"\
 	
+NODEP_CPP_UTIL_=\
+	"..\..\..\common\base\engine.h"\
+	"..\..\..\common\common\util.h"\
+	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
 
 DEP_CPP_UTIL_=\
 	"..\..\..\common\stdafx.h"\
+	
+NODEP_CPP_UTIL_=\
+	"..\..\..\common\base\engine.h"\
+	"..\..\..\common\common\util.h"\
 	
 
 !ENDIF 
@@ -1580,12 +1173,176 @@ SOURCE=..\..\..\common\util.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\..\..\sound\audiostream.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
+
+DEP_CPP_AUDIO=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_AUDIO=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
+
+DEP_CPP_AUDIO=\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_AUDIO=\
+	"..\..\..\sound\base\engine.h"\
+	"..\..\..\sound\common\file.h"\
+	"..\..\..\sound\common\scummsys.h"\
+	"..\..\..\sound\common\system.h"\
+	"..\..\..\sound\common\util.h"\
+	"..\..\..\sound\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
+
+DEP_CPP_AUDIO=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_AUDIO=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
+
+DEP_CPP_AUDIO=\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_AUDIO=\
+	"..\..\..\sound\base\engine.h"\
+	"..\..\..\sound\common\file.h"\
+	"..\..\..\sound\common\scummsys.h"\
+	"..\..\..\sound\common\system.h"\
+	"..\..\..\sound\common\util.h"\
+	"..\..\..\sound\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
+
+DEP_CPP_AUDIO=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_AUDIO=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_AUDIO=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_AUDIO=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
+
+DEP_CPP_AUDIO=\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_AUDIO=\
+	"..\..\..\sound\base\engine.h"\
+	"..\..\..\sound\common\file.h"\
+	"..\..\..\sound\common\scummsys.h"\
+	"..\..\..\sound\common\system.h"\
+	"..\..\..\sound\common\util.h"\
+	"..\..\..\sound\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
+
+DEP_CPP_AUDIO=\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_AUDIO=\
+	"..\..\..\sound\base\engine.h"\
+	"..\..\..\sound\common\file.h"\
+	"..\..\..\sound\common\scummsys.h"\
+	"..\..\..\sound\common\system.h"\
+	"..\..\..\sound\common\util.h"\
+	"..\..\..\sound\stdafx.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\sound\audiostream.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\sound\fmopl.cpp
 
 !IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
 
 DEP_CPP_FMOPL=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -1593,12 +1350,13 @@ DEP_CPP_FMOPL=\
 	"..\..\..\sound\fmopl.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_FMOPL=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -1615,7 +1373,6 @@ NODEP_CPP_FMOPL=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
 
 DEP_CPP_FMOPL=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -1623,12 +1380,13 @@ DEP_CPP_FMOPL=\
 	"..\..\..\sound\fmopl.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_FMOPL=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -1645,11 +1403,30 @@ NODEP_CPP_FMOPL=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
 
 DEP_CPP_FMOPL=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_FMOPL=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_FMOPL=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sound\fmopl.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
@@ -1658,24 +1435,6 @@ DEP_CPP_FMOPL=\
 NODEP_CPP_FMOPL=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_FMOPL=\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\sound\fmopl.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_FMOPL=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\..\sound\ymdeltat.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -1727,12 +1486,12 @@ DEP_CPP_MIDIP=\
 	"..\..\..\sound\midiparser.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIP=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -1760,12 +1519,12 @@ DEP_CPP_MIDIP=\
 	"..\..\..\sound\midiparser.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIP=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -1793,12 +1552,12 @@ DEP_CPP_MIDIP=\
 	"..\..\..\sound\midiparser.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIP=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -1813,12 +1572,11 @@ DEP_CPP_MIDIP=\
 	"..\..\..\sound\midiparser.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIP=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -1870,12 +1628,12 @@ DEP_CPP_MIDIPA=\
 	"..\..\..\sound\midiparser.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIPA=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -1903,12 +1661,12 @@ DEP_CPP_MIDIPA=\
 	"..\..\..\sound\midiparser.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIPA=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -1936,12 +1694,12 @@ DEP_CPP_MIDIPA=\
 	"..\..\..\sound\midiparser.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIPA=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -1956,12 +1714,11 @@ DEP_CPP_MIDIPA=\
 	"..\..\..\sound\midiparser.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIPA=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -2009,12 +1766,12 @@ DEP_CPP_MIDIPAR=\
 	"..\..\..\sound\midiparser.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIPAR=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -2042,12 +1799,12 @@ DEP_CPP_MIDIPAR=\
 	"..\..\..\sound\midiparser.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIPAR=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -2075,12 +1832,12 @@ DEP_CPP_MIDIPAR=\
 	"..\..\..\sound\midiparser.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIPAR=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -2095,12 +1852,11 @@ DEP_CPP_MIDIPAR=\
 	"..\..\..\sound\midiparser.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIPAR=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -2139,7 +1895,6 @@ SOURCE=..\..\..\sound\mixer.cpp
 !IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
 
 DEP_CPP_MIXER=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
@@ -2149,19 +1904,20 @@ DEP_CPP_MIXER=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_MIXER=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -2188,7 +1944,6 @@ NODEP_CPP_MIXER=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
 
 DEP_CPP_MIXER=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
@@ -2198,19 +1953,20 @@ DEP_CPP_MIXER=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_MIXER=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -2237,7 +1993,6 @@ NODEP_CPP_MIXER=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
 
 DEP_CPP_MIXER=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
@@ -2245,6 +2000,37 @@ DEP_CPP_MIXER=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_MIXER=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_MIXER=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\rate.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	{$(INCLUDE)}"mad.h"\
@@ -2258,36 +2044,6 @@ DEP_CPP_MIXER=\
 NODEP_CPP_MIXER=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\..\sound\config.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_MIXER=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_MIXER=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\..\sound\config.h"\
-	".\ad.h"\
-	".\DL_byteorder.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -2334,7 +2090,6 @@ SOURCE=..\..\..\sound\mpu401.cpp
 !IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
 
 DEP_CPP_MPU40=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -2344,12 +2099,13 @@ DEP_CPP_MPU40=\
 	"..\..\..\sound\mpu401.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MPU40=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -2369,7 +2125,6 @@ NODEP_CPP_MPU40=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
 
 DEP_CPP_MPU40=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -2379,12 +2134,13 @@ DEP_CPP_MPU40=\
 	"..\..\..\sound\mpu401.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MPU40=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -2404,7 +2160,28 @@ NODEP_CPP_MPU40=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
 
 DEP_CPP_MPU40=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mpu401.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_MPU40=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\engine.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_MPU40=\
+	"..\..\..\base\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -2419,28 +2196,6 @@ DEP_CPP_MPU40=\
 NODEP_CPP_MPU40=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_MPU40=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\mpu401.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_MPU40=\
-	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -2478,10 +2233,421 @@ NODEP_CPP_MPU40=\
 
 SOURCE=..\..\..\sound\mpu401.h
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\..\sound\rate.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
+
+DEP_CPP_RATE_=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\rate.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_RATE_=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_RATE_=\
+	"..\..\..\sound\sound\audiostream.h"\
+	"..\..\..\sound\sound\rate.h"\
+	"..\..\..\sound\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
+
+DEP_CPP_RATE_=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\rate.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_RATE_=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_RATE_=\
+	"..\..\..\sound\sound\audiostream.h"\
+	"..\..\..\sound\sound\rate.h"\
+	"..\..\..\sound\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
+
+DEP_CPP_RATE_=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\rate.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_RATE_=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_RATE_=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\rate.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_RATE_=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
+
+NODEP_CPP_RATE_=\
+	"..\..\..\sound\sound\audiostream.h"\
+	"..\..\..\sound\sound\rate.h"\
+	"..\..\..\sound\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
+
+NODEP_CPP_RATE_=\
+	"..\..\..\sound\sound\audiostream.h"\
+	"..\..\..\sound\sound\rate.h"\
+	"..\..\..\sound\stdafx.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\sound\rate.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\sound\voc.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
+
+DEP_CPP_VOC_C=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\voc.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_VOC_C=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_VOC_C=\
+	"..\..\..\sound\common\util.h"\
+	"..\..\..\sound\sound\voc.h"\
+	"..\..\..\sound\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
+
+DEP_CPP_VOC_C=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\voc.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_VOC_C=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_VOC_C=\
+	"..\..\..\sound\common\util.h"\
+	"..\..\..\sound\sound\voc.h"\
+	"..\..\..\sound\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
+
+DEP_CPP_VOC_C=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\voc.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_VOC_C=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_VOC_C=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\voc.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_VOC_C=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
+
+NODEP_CPP_VOC_C=\
+	"..\..\..\sound\common\util.h"\
+	"..\..\..\sound\sound\voc.h"\
+	"..\..\..\sound\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
+
+NODEP_CPP_VOC_C=\
+	"..\..\..\sound\common\util.h"\
+	"..\..\..\sound\sound\voc.h"\
+	"..\..\..\sound\stdafx.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\sound\voc.h
+# End Source File
 # End Group
 # Begin Group "gui"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\..\gui\about.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
+
+DEP_CPP_ABOUT=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\gui\about.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\widget.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_ABOUT=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
+
+DEP_CPP_ABOUT=\
+	"..\..\..\gui\about.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\widget.h"\
+	
+NODEP_CPP_ABOUT=\
+	"..\..\..\gui\base\engine.h"\
+	"..\..\..\gui\common\scummsys.h"\
+	"..\..\..\gui\common\str.h"\
+	"..\..\..\gui\common\system.h"\
+	"..\..\..\gui\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
+
+DEP_CPP_ABOUT=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\gui\about.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\widget.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_ABOUT=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
+
+DEP_CPP_ABOUT=\
+	"..\..\..\gui\about.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\widget.h"\
+	
+NODEP_CPP_ABOUT=\
+	"..\..\..\gui\base\engine.h"\
+	"..\..\..\gui\common\scummsys.h"\
+	"..\..\..\gui\common\str.h"\
+	"..\..\..\gui\common\system.h"\
+	"..\..\..\gui\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
+
+DEP_CPP_ABOUT=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\gui\about.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\widget.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_ABOUT=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_ABOUT=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\gui\about.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\widget.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_ABOUT=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
+
+DEP_CPP_ABOUT=\
+	"..\..\..\gui\about.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\widget.h"\
+	
+NODEP_CPP_ABOUT=\
+	"..\..\..\gui\base\engine.h"\
+	"..\..\..\gui\common\scummsys.h"\
+	"..\..\..\gui\common\str.h"\
+	"..\..\..\gui\common\system.h"\
+	"..\..\..\gui\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
+
+DEP_CPP_ABOUT=\
+	"..\..\..\gui\about.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\widget.h"\
+	
+NODEP_CPP_ABOUT=\
+	"..\..\..\gui\base\engine.h"\
+	"..\..\..\gui\common\scummsys.h"\
+	"..\..\..\gui\common\str.h"\
+	"..\..\..\gui\common\system.h"\
+	"..\..\..\gui\stdafx.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\gui\about.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\..\gui\browser.cpp
@@ -2500,12 +2666,12 @@ DEP_CPP_BROWS=\
 	"..\..\..\gui\newgui.h"\
 	"..\..\..\gui\widget.h"\
 	"..\..\fs\fs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BROWS=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -2539,12 +2705,12 @@ DEP_CPP_BROWS=\
 	"..\..\..\gui\newgui.h"\
 	"..\..\..\gui\widget.h"\
 	"..\..\fs\fs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BROWS=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -2578,12 +2744,12 @@ DEP_CPP_BROWS=\
 	"..\..\..\gui\newgui.h"\
 	"..\..\..\gui\widget.h"\
 	"..\..\fs\fs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BROWS=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -2592,6 +2758,7 @@ DEP_CPP_BROWS=\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\gui\browser.h"\
@@ -2600,11 +2767,13 @@ DEP_CPP_BROWS=\
 	"..\..\..\gui\newgui.h"\
 	"..\..\..\gui\widget.h"\
 	"..\..\fs\fs.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BROWS=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -2665,12 +2834,12 @@ DEP_CPP_CHOOS=\
 	"..\..\..\gui\ListWidget.h"\
 	"..\..\..\gui\newgui.h"\
 	"..\..\..\gui\widget.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHOOS=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -2702,12 +2871,12 @@ DEP_CPP_CHOOS=\
 	"..\..\..\gui\ListWidget.h"\
 	"..\..\..\gui\newgui.h"\
 	"..\..\..\gui\widget.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHOOS=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -2739,12 +2908,12 @@ DEP_CPP_CHOOS=\
 	"..\..\..\gui\ListWidget.h"\
 	"..\..\..\gui\newgui.h"\
 	"..\..\..\gui\widget.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHOOS=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -2753,6 +2922,7 @@ DEP_CPP_CHOOS=\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\gui\chooser.h"\
@@ -2760,11 +2930,13 @@ DEP_CPP_CHOOS=\
 	"..\..\..\gui\ListWidget.h"\
 	"..\..\..\gui\newgui.h"\
 	"..\..\..\gui\widget.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHOOS=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -2813,7 +2985,6 @@ SOURCE=..\..\..\gui\console.cpp
 !IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
 
 DEP_CPP_CONSO=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
@@ -2827,12 +2998,13 @@ DEP_CPP_CONSO=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONSO=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -2855,7 +3027,6 @@ NODEP_CPP_CONSO=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
 
 DEP_CPP_CONSO=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
@@ -2869,12 +3040,13 @@ DEP_CPP_CONSO=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONSO=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -2897,7 +3069,32 @@ NODEP_CPP_CONSO=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
 
 DEP_CPP_CONSO=\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\gui\console.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\ScrollBarWidget.h"\
+	"..\..\..\gui\widget.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_CONSO=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\engine.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_CONSO=\
+	"..\..\..\base\engine.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
@@ -2916,31 +3113,6 @@ DEP_CPP_CONSO=\
 NODEP_CPP_CONSO=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_CONSO=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\gui\console.h"\
-	"..\..\..\gui\dialog.h"\
-	"..\..\..\gui\newgui.h"\
-	"..\..\..\gui\ScrollBarWidget.h"\
-	"..\..\..\gui\widget.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_CONSO=\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -3002,12 +3174,12 @@ DEP_CPP_DIALO=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIALO=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -3038,12 +3210,12 @@ DEP_CPP_DIALO=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIALO=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -3074,12 +3246,12 @@ DEP_CPP_DIALO=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIALO=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -3096,11 +3268,11 @@ DEP_CPP_DIALO=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIALO=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -3157,12 +3329,12 @@ DEP_CPP_EDITT=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_EDITT=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -3196,12 +3368,12 @@ DEP_CPP_EDITT=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_EDITT=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -3235,12 +3407,12 @@ DEP_CPP_EDITT=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_EDITT=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -3258,11 +3430,11 @@ DEP_CPP_EDITT=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_EDITT=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -3312,8 +3484,6 @@ SOURCE=..\..\..\gui\launcher.cpp
 
 DEP_CPP_LAUNC=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\savefile.h"\
@@ -3335,12 +3505,14 @@ DEP_CPP_LAUNC=\
 	"..\..\fs\fs.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LAUNC=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -3373,8 +3545,6 @@ NODEP_CPP_LAUNC=\
 
 DEP_CPP_LAUNC=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\savefile.h"\
@@ -3396,12 +3566,14 @@ DEP_CPP_LAUNC=\
 	"..\..\fs\fs.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LAUNC=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -3434,8 +3606,6 @@ NODEP_CPP_LAUNC=\
 
 DEP_CPP_LAUNC=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\savefile.h"\
@@ -3444,6 +3614,45 @@ DEP_CPP_LAUNC=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\gui\browser.h"\
+	"..\..\..\gui\chooser.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\EditTextWidget.h"\
+	"..\..\..\gui\launcher.h"\
+	"..\..\..\gui\ListWidget.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\options.h"\
+	"..\..\..\gui\widget.h"\
+	"..\..\fs\fs.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_LAUNC=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_LAUNC=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\plugins.h"\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\gui\about.h"\
 	"..\..\..\gui\browser.h"\
 	"..\..\..\gui\chooser.h"\
 	"..\..\..\gui\dialog.h"\
@@ -3462,41 +3671,6 @@ DEP_CPP_LAUNC=\
 NODEP_CPP_LAUNC=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_LAUNC=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gui\browser.h"\
-	"..\..\..\gui\chooser.h"\
-	"..\..\..\gui\dialog.h"\
-	"..\..\..\gui\EditTextWidget.h"\
-	"..\..\..\gui\launcher.h"\
-	"..\..\..\gui\ListWidget.h"\
-	"..\..\..\gui\message.h"\
-	"..\..\..\gui\newgui.h"\
-	"..\..\..\gui\options.h"\
-	"..\..\..\gui\widget.h"\
-	"..\..\fs\fs.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_LAUNC=\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -3578,12 +3752,12 @@ DEP_CPP_LISTW=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LISTW=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -3619,12 +3793,12 @@ DEP_CPP_LISTW=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LISTW=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -3660,12 +3834,12 @@ DEP_CPP_LISTW=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LISTW=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -3684,11 +3858,11 @@ DEP_CPP_LISTW=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LISTW=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -3751,12 +3925,12 @@ DEP_CPP_MESSA=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MESSA=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -3790,12 +3964,12 @@ DEP_CPP_MESSA=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MESSA=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -3829,12 +4003,12 @@ DEP_CPP_MESSA=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MESSA=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -3852,11 +4026,11 @@ DEP_CPP_MESSA=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MESSA=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -3916,13 +4090,13 @@ DEP_CPP_NEWGU=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NEWGU=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
 	"..\..\..\gui\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -3953,13 +4127,13 @@ DEP_CPP_NEWGU=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NEWGU=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
 	"..\..\..\gui\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -3990,13 +4164,13 @@ DEP_CPP_NEWGU=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NEWGU=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
 	"..\..\..\gui\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -4008,17 +4182,19 @@ DEP_CPP_NEWGU=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\newgui.h"\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NEWGU=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
+	"..\..\..\gui\palm.h"\
 	"..\..\..\gui\scumm_globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -4064,7 +4240,6 @@ SOURCE=..\..\..\gui\options.cpp
 
 DEP_CPP_OPTIO=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\savefile.h"\
@@ -4083,12 +4258,13 @@ DEP_CPP_OPTIO=\
 	"..\..\fs\fs.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_OPTIO=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -4116,7 +4292,6 @@ NODEP_CPP_OPTIO=\
 
 DEP_CPP_OPTIO=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\savefile.h"\
@@ -4135,12 +4310,13 @@ DEP_CPP_OPTIO=\
 	"..\..\fs\fs.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_OPTIO=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -4168,7 +4344,38 @@ NODEP_CPP_OPTIO=\
 
 DEP_CPP_OPTIO=\
 	"..\..\..\common\config-file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\gui\browser.h"\
+	"..\..\..\gui\chooser.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\options.h"\
+	"..\..\..\gui\PopUpWidget.h"\
+	"..\..\..\gui\widget.h"\
+	"..\..\fs\fs.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_OPTIO=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
 	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_OPTIO=\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\config-file.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\savefile.h"\
@@ -4192,37 +4399,6 @@ DEP_CPP_OPTIO=\
 NODEP_CPP_OPTIO=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_OPTIO=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gui\browser.h"\
-	"..\..\..\gui\chooser.h"\
-	"..\..\..\gui\dialog.h"\
-	"..\..\..\gui\newgui.h"\
-	"..\..\..\gui\options.h"\
-	"..\..\..\gui\PopUpWidget.h"\
-	"..\..\..\gui\widget.h"\
-	"..\..\fs\fs.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_OPTIO=\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -4281,7 +4457,6 @@ SOURCE=..\..\..\gui\PopUpWidget.cpp
 !IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
 
 DEP_CPP_POPUP=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
@@ -4294,12 +4469,13 @@ DEP_CPP_POPUP=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_POPUP=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -4322,7 +4498,6 @@ NODEP_CPP_POPUP=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
 
 DEP_CPP_POPUP=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
@@ -4335,12 +4510,13 @@ DEP_CPP_POPUP=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_POPUP=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -4363,7 +4539,31 @@ NODEP_CPP_POPUP=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
 
 DEP_CPP_POPUP=\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\PopUpWidget.h"\
+	"..\..\..\gui\widget.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_POPUP=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\engine.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_POPUP=\
+	"..\..\..\base\engine.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
@@ -4381,30 +4581,6 @@ DEP_CPP_POPUP=\
 NODEP_CPP_POPUP=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_POPUP=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\gui\dialog.h"\
-	"..\..\..\gui\newgui.h"\
-	"..\..\..\gui\PopUpWidget.h"\
-	"..\..\..\gui\widget.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_POPUP=\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -4467,12 +4643,12 @@ DEP_CPP_SCROL=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCROL=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -4505,12 +4681,12 @@ DEP_CPP_SCROL=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCROL=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -4543,12 +4719,12 @@ DEP_CPP_SCROL=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCROL=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -4566,11 +4742,11 @@ DEP_CPP_SCROL=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCROL=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -4628,12 +4804,12 @@ DEP_CPP_WIDGE=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WIDGE=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -4664,12 +4840,12 @@ DEP_CPP_WIDGE=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WIDGE=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -4700,12 +4876,12 @@ DEP_CPP_WIDGE=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WIDGE=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -4722,11 +4898,11 @@ DEP_CPP_WIDGE=\
 	"..\..\..\gui\widget.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WIDGE=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -4969,7 +5145,6 @@ SOURCE=..\findgame.cpp
 
 DEP_CPP_FINDG=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
@@ -4985,12 +5160,13 @@ DEP_CPP_FINDG=\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	"..\screen.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_FINDG=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -5008,7 +5184,6 @@ NODEP_CPP_FINDG=\
 
 DEP_CPP_FINDG=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
@@ -5024,12 +5199,13 @@ DEP_CPP_FINDG=\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	"..\screen.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_FINDG=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -5047,7 +5223,6 @@ NODEP_CPP_FINDG=\
 
 DEP_CPP_FINDG=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
@@ -5063,42 +5238,41 @@ DEP_CPP_FINDG=\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	"..\screen.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_FINDG=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
 
 DEP_CPP_FINDG=\
+	"..\..\..\base\engine.h"\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\scumm\boxes.h"\
 	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	"..\screen.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_FINDG=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -5139,8 +5313,10 @@ DEP_CPP_GAPI_=\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	"..\screen.h"\
-	{$(INCLUDE)}"gx.h"\
-	{$(INCLUDE)}"sipapi.h"\
+	
+NODEP_CPP_GAPI_=\
+	".\ipapi.h"\
+	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -5165,8 +5341,10 @@ DEP_CPP_GAPI_=\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	"..\screen.h"\
-	{$(INCLUDE)}"gx.h"\
-	{$(INCLUDE)}"sipapi.h"\
+	
+NODEP_CPP_GAPI_=\
+	".\ipapi.h"\
+	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -5191,8 +5369,10 @@ DEP_CPP_GAPI_=\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	"..\screen.h"\
-	{$(INCLUDE)}"gx.h"\
-	{$(INCLUDE)}"sipapi.h"\
+	
+NODEP_CPP_GAPI_=\
+	".\ipapi.h"\
+	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -5204,10 +5384,8 @@ DEP_CPP_GAPI_=\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
 	"..\screen.h"\
-	
-NODEP_CPP_GAPI_=\
-	".\ipapi.h"\
-	".\x.h"\
+	{$(INCLUDE)}"gx.h"\
+	{$(INCLUDE)}"sipapi.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -5255,9 +5433,7 @@ SOURCE=..\pocketpc.cpp
 
 DEP_CPP_POCKE=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\rect.h"\
@@ -5280,37 +5456,39 @@ DEP_CPP_POCKE=\
 	"..\screen.h"\
 	"..\smartphone.h"\
 	"..\wince.h"\
-	{$(INCLUDE)}"begin_code.h"\
-	{$(INCLUDE)}"close_code.h"\
-	{$(INCLUDE)}"GameX.h"\
-	{$(INCLUDE)}"gx.h"\
-	{$(INCLUDE)}"SDL.h"\
-	{$(INCLUDE)}"SDL_active.h"\
-	{$(INCLUDE)}"SDL_audio.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"SDL_cdrom.h"\
-	{$(INCLUDE)}"SDL_error.h"\
-	{$(INCLUDE)}"SDL_events.h"\
-	{$(INCLUDE)}"SDL_getenv.h"\
-	{$(INCLUDE)}"SDL_joystick.h"\
-	{$(INCLUDE)}"SDL_keyboard.h"\
-	{$(INCLUDE)}"SDL_keysym.h"\
-	{$(INCLUDE)}"SDL_main.h"\
-	{$(INCLUDE)}"SDL_mouse.h"\
-	{$(INCLUDE)}"SDL_mutex.h"\
-	{$(INCLUDE)}"SDL_quit.h"\
-	{$(INCLUDE)}"SDL_rwops.h"\
-	{$(INCLUDE)}"SDL_thread.h"\
-	{$(INCLUDE)}"SDL_timer.h"\
-	{$(INCLUDE)}"SDL_types.h"\
-	{$(INCLUDE)}"SDL_version.h"\
-	{$(INCLUDE)}"SDL_video.h"\
-	{$(INCLUDE)}"sipapi.h"\
 	
 NODEP_CPP_POCKE=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\macos.h"\
+	".\ameX.h"\
+	".\DL.h"\
+	".\DL_active.h"\
+	".\DL_audio.h"\
+	".\DL_byteorder.h"\
+	".\DL_cdrom.h"\
+	".\DL_error.h"\
+	".\DL_events.h"\
+	".\DL_getenv.h"\
+	".\DL_joystick.h"\
+	".\DL_keyboard.h"\
+	".\DL_keysym.h"\
+	".\DL_main.h"\
+	".\DL_mouse.h"\
+	".\DL_mutex.h"\
+	".\DL_quit.h"\
+	".\DL_rwops.h"\
+	".\DL_thread.h"\
+	".\DL_timer.h"\
+	".\DL_types.h"\
+	".\DL_version.h"\
+	".\DL_video.h"\
+	".\egin_code.h"\
+	".\ipapi.h"\
+	".\lose_code.h"\
+	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -5365,9 +5543,7 @@ NODEP_CPP_POCKE=\
 
 DEP_CPP_POCKE=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\rect.h"\
@@ -5390,37 +5566,39 @@ DEP_CPP_POCKE=\
 	"..\screen.h"\
 	"..\smartphone.h"\
 	"..\wince.h"\
-	{$(INCLUDE)}"begin_code.h"\
-	{$(INCLUDE)}"close_code.h"\
-	{$(INCLUDE)}"gx.h"\
-	{$(INCLUDE)}"SDL.h"\
-	{$(INCLUDE)}"SDL_active.h"\
-	{$(INCLUDE)}"SDL_audio.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"SDL_cdrom.h"\
-	{$(INCLUDE)}"SDL_error.h"\
-	{$(INCLUDE)}"SDL_events.h"\
-	{$(INCLUDE)}"SDL_getenv.h"\
-	{$(INCLUDE)}"SDL_joystick.h"\
-	{$(INCLUDE)}"SDL_keyboard.h"\
-	{$(INCLUDE)}"SDL_keysym.h"\
-	{$(INCLUDE)}"SDL_main.h"\
-	{$(INCLUDE)}"SDL_mouse.h"\
-	{$(INCLUDE)}"SDL_mutex.h"\
-	{$(INCLUDE)}"SDL_quit.h"\
-	{$(INCLUDE)}"SDL_rwops.h"\
-	{$(INCLUDE)}"SDL_thread.h"\
-	{$(INCLUDE)}"SDL_timer.h"\
-	{$(INCLUDE)}"SDL_types.h"\
-	{$(INCLUDE)}"SDL_version.h"\
-	{$(INCLUDE)}"SDL_video.h"\
-	{$(INCLUDE)}"sipapi.h"\
 	
 NODEP_CPP_POCKE=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\macos.h"\
 	"..\GameX.h"\
+	".\DL.h"\
+	".\DL_active.h"\
+	".\DL_audio.h"\
+	".\DL_byteorder.h"\
+	".\DL_cdrom.h"\
+	".\DL_error.h"\
+	".\DL_events.h"\
+	".\DL_getenv.h"\
+	".\DL_joystick.h"\
+	".\DL_keyboard.h"\
+	".\DL_keysym.h"\
+	".\DL_main.h"\
+	".\DL_mouse.h"\
+	".\DL_mutex.h"\
+	".\DL_quit.h"\
+	".\DL_rwops.h"\
+	".\DL_thread.h"\
+	".\DL_timer.h"\
+	".\DL_types.h"\
+	".\DL_version.h"\
+	".\DL_video.h"\
+	".\egin_code.h"\
+	".\ipapi.h"\
+	".\lose_code.h"\
+	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -5475,9 +5653,7 @@ NODEP_CPP_POCKE=\
 
 DEP_CPP_POCKE=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\rect.h"\
@@ -5492,6 +5668,71 @@ DEP_CPP_POCKE=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\fs\fs.h"\
+	"..\dynamic_imports.h"\
+	"..\gapi_keys.h"\
+	"..\missing\unistd.h"\
+	"..\pocketpc.h"\
+	"..\portdefs.h"\
+	"..\screen.h"\
+	"..\smartphone.h"\
+	"..\wince.h"\
+	
+NODEP_CPP_POCKE=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\macos.h"\
+	"..\GameX.h"\
+	".\DL.h"\
+	".\DL_active.h"\
+	".\DL_audio.h"\
+	".\DL_byteorder.h"\
+	".\DL_cdrom.h"\
+	".\DL_error.h"\
+	".\DL_events.h"\
+	".\DL_getenv.h"\
+	".\DL_joystick.h"\
+	".\DL_keyboard.h"\
+	".\DL_keysym.h"\
+	".\DL_main.h"\
+	".\DL_mouse.h"\
+	".\DL_mutex.h"\
+	".\DL_quit.h"\
+	".\DL_rwops.h"\
+	".\DL_thread.h"\
+	".\DL_timer.h"\
+	".\DL_types.h"\
+	".\DL_version.h"\
+	".\DL_video.h"\
+	".\egin_code.h"\
+	".\ipapi.h"\
+	".\lose_code.h"\
+	".\x.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_POCKE=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\script.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\fs\fs.h"\
+	"..\..\intern.h"\
 	"..\dynamic_imports.h"\
 	"..\gapi_keys.h"\
 	"..\missing\unistd.h"\
@@ -5529,83 +5770,7 @@ DEP_CPP_POCKE=\
 NODEP_CPP_POCKE=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	"..\GameX.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_POCKE=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gui\newgui.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\simon\intern.h"\
-	"..\..\..\simon\midi.h"\
-	"..\..\..\simon\simon.h"\
-	"..\..\..\simon\sound.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\fs\fs.h"\
-	"..\dynamic_imports.h"\
-	"..\gapi_keys.h"\
-	"..\missing\unistd.h"\
-	"..\pocketpc.h"\
-	"..\portdefs.h"\
-	"..\screen.h"\
-	"..\smartphone.h"\
-	"..\wince.h"\
-	
-NODEP_CPP_POCKE=\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\scumm\debug.h"\
-	"..\GameX.h"\
-	".\ad.h"\
-	".\DL.h"\
-	".\DL_active.h"\
-	".\DL_audio.h"\
-	".\DL_byteorder.h"\
-	".\DL_cdrom.h"\
-	".\DL_error.h"\
-	".\DL_events.h"\
-	".\DL_getenv.h"\
-	".\DL_joystick.h"\
-	".\DL_keyboard.h"\
-	".\DL_keysym.h"\
-	".\DL_main.h"\
-	".\DL_mouse.h"\
-	".\DL_mutex.h"\
-	".\DL_quit.h"\
-	".\DL_rwops.h"\
-	".\DL_thread.h"\
-	".\DL_timer.h"\
-	".\DL_types.h"\
-	".\DL_version.h"\
-	".\DL_video.h"\
-	".\egin_code.h"\
-	".\ipapi.h"\
-	".\lose_code.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
-	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -5683,9 +5848,7 @@ SOURCE=..\screen.cpp
 
 DEP_CPP_SCREE=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\rect.h"\
@@ -5708,37 +5871,39 @@ DEP_CPP_SCREE=\
 	"..\screen.h"\
 	"..\smartphone.h"\
 	"..\wince.h"\
-	{$(INCLUDE)}"begin_code.h"\
-	{$(INCLUDE)}"close_code.h"\
-	{$(INCLUDE)}"GameX.h"\
-	{$(INCLUDE)}"gx.h"\
-	{$(INCLUDE)}"SDL.h"\
-	{$(INCLUDE)}"SDL_active.h"\
-	{$(INCLUDE)}"SDL_audio.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"SDL_cdrom.h"\
-	{$(INCLUDE)}"SDL_error.h"\
-	{$(INCLUDE)}"SDL_events.h"\
-	{$(INCLUDE)}"SDL_getenv.h"\
-	{$(INCLUDE)}"SDL_joystick.h"\
-	{$(INCLUDE)}"SDL_keyboard.h"\
-	{$(INCLUDE)}"SDL_keysym.h"\
-	{$(INCLUDE)}"SDL_main.h"\
-	{$(INCLUDE)}"SDL_mouse.h"\
-	{$(INCLUDE)}"SDL_mutex.h"\
-	{$(INCLUDE)}"SDL_quit.h"\
-	{$(INCLUDE)}"SDL_rwops.h"\
-	{$(INCLUDE)}"SDL_thread.h"\
-	{$(INCLUDE)}"SDL_timer.h"\
-	{$(INCLUDE)}"SDL_types.h"\
-	{$(INCLUDE)}"SDL_version.h"\
-	{$(INCLUDE)}"SDL_video.h"\
-	{$(INCLUDE)}"sipapi.h"\
 	
 NODEP_CPP_SCREE=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\macos.h"\
+	".\ameX.h"\
+	".\DL.h"\
+	".\DL_active.h"\
+	".\DL_audio.h"\
+	".\DL_byteorder.h"\
+	".\DL_cdrom.h"\
+	".\DL_error.h"\
+	".\DL_events.h"\
+	".\DL_getenv.h"\
+	".\DL_joystick.h"\
+	".\DL_keyboard.h"\
+	".\DL_keysym.h"\
+	".\DL_main.h"\
+	".\DL_mouse.h"\
+	".\DL_mutex.h"\
+	".\DL_quit.h"\
+	".\DL_rwops.h"\
+	".\DL_thread.h"\
+	".\DL_timer.h"\
+	".\DL_types.h"\
+	".\DL_version.h"\
+	".\DL_video.h"\
+	".\egin_code.h"\
+	".\ipapi.h"\
+	".\lose_code.h"\
+	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -5793,9 +5958,7 @@ NODEP_CPP_SCREE=\
 
 DEP_CPP_SCREE=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\rect.h"\
@@ -5818,37 +5981,39 @@ DEP_CPP_SCREE=\
 	"..\screen.h"\
 	"..\smartphone.h"\
 	"..\wince.h"\
-	{$(INCLUDE)}"begin_code.h"\
-	{$(INCLUDE)}"close_code.h"\
-	{$(INCLUDE)}"gx.h"\
-	{$(INCLUDE)}"SDL.h"\
-	{$(INCLUDE)}"SDL_active.h"\
-	{$(INCLUDE)}"SDL_audio.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"SDL_cdrom.h"\
-	{$(INCLUDE)}"SDL_error.h"\
-	{$(INCLUDE)}"SDL_events.h"\
-	{$(INCLUDE)}"SDL_getenv.h"\
-	{$(INCLUDE)}"SDL_joystick.h"\
-	{$(INCLUDE)}"SDL_keyboard.h"\
-	{$(INCLUDE)}"SDL_keysym.h"\
-	{$(INCLUDE)}"SDL_main.h"\
-	{$(INCLUDE)}"SDL_mouse.h"\
-	{$(INCLUDE)}"SDL_mutex.h"\
-	{$(INCLUDE)}"SDL_quit.h"\
-	{$(INCLUDE)}"SDL_rwops.h"\
-	{$(INCLUDE)}"SDL_thread.h"\
-	{$(INCLUDE)}"SDL_timer.h"\
-	{$(INCLUDE)}"SDL_types.h"\
-	{$(INCLUDE)}"SDL_version.h"\
-	{$(INCLUDE)}"SDL_video.h"\
-	{$(INCLUDE)}"sipapi.h"\
 	
 NODEP_CPP_SCREE=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\macos.h"\
 	"..\GameX.h"\
+	".\DL.h"\
+	".\DL_active.h"\
+	".\DL_audio.h"\
+	".\DL_byteorder.h"\
+	".\DL_cdrom.h"\
+	".\DL_error.h"\
+	".\DL_events.h"\
+	".\DL_getenv.h"\
+	".\DL_joystick.h"\
+	".\DL_keyboard.h"\
+	".\DL_keysym.h"\
+	".\DL_main.h"\
+	".\DL_mouse.h"\
+	".\DL_mutex.h"\
+	".\DL_quit.h"\
+	".\DL_rwops.h"\
+	".\DL_thread.h"\
+	".\DL_timer.h"\
+	".\DL_types.h"\
+	".\DL_version.h"\
+	".\DL_video.h"\
+	".\egin_code.h"\
+	".\ipapi.h"\
+	".\lose_code.h"\
+	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -5903,9 +6068,7 @@ NODEP_CPP_SCREE=\
 
 DEP_CPP_SCREE=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\rect.h"\
@@ -5920,6 +6083,71 @@ DEP_CPP_SCREE=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\fs\fs.h"\
+	"..\dynamic_imports.h"\
+	"..\gapi_keys.h"\
+	"..\missing\unistd.h"\
+	"..\pocketpc.h"\
+	"..\portdefs.h"\
+	"..\screen.h"\
+	"..\smartphone.h"\
+	"..\wince.h"\
+	
+NODEP_CPP_SCREE=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\macos.h"\
+	"..\GameX.h"\
+	".\DL.h"\
+	".\DL_active.h"\
+	".\DL_audio.h"\
+	".\DL_byteorder.h"\
+	".\DL_cdrom.h"\
+	".\DL_error.h"\
+	".\DL_events.h"\
+	".\DL_getenv.h"\
+	".\DL_joystick.h"\
+	".\DL_keyboard.h"\
+	".\DL_keysym.h"\
+	".\DL_main.h"\
+	".\DL_mouse.h"\
+	".\DL_mutex.h"\
+	".\DL_quit.h"\
+	".\DL_rwops.h"\
+	".\DL_thread.h"\
+	".\DL_timer.h"\
+	".\DL_types.h"\
+	".\DL_version.h"\
+	".\DL_video.h"\
+	".\egin_code.h"\
+	".\ipapi.h"\
+	".\lose_code.h"\
+	".\x.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_SCREE=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\script.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\fs\fs.h"\
+	"..\..\intern.h"\
 	"..\dynamic_imports.h"\
 	"..\gapi_keys.h"\
 	"..\missing\unistd.h"\
@@ -5957,83 +6185,7 @@ DEP_CPP_SCREE=\
 NODEP_CPP_SCREE=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	"..\GameX.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_SCREE=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gui\newgui.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\simon\intern.h"\
-	"..\..\..\simon\midi.h"\
-	"..\..\..\simon\simon.h"\
-	"..\..\..\simon\sound.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\fs\fs.h"\
-	"..\dynamic_imports.h"\
-	"..\gapi_keys.h"\
-	"..\missing\unistd.h"\
-	"..\pocketpc.h"\
-	"..\portdefs.h"\
-	"..\screen.h"\
-	"..\smartphone.h"\
-	"..\wince.h"\
-	
-NODEP_CPP_SCREE=\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\scumm\debug.h"\
-	"..\GameX.h"\
-	".\ad.h"\
-	".\DL.h"\
-	".\DL_active.h"\
-	".\DL_audio.h"\
-	".\DL_byteorder.h"\
-	".\DL_cdrom.h"\
-	".\DL_error.h"\
-	".\DL_events.h"\
-	".\DL_getenv.h"\
-	".\DL_joystick.h"\
-	".\DL_keyboard.h"\
-	".\DL_keysym.h"\
-	".\DL_main.h"\
-	".\DL_mouse.h"\
-	".\DL_mutex.h"\
-	".\DL_quit.h"\
-	".\DL_rwops.h"\
-	".\DL_thread.h"\
-	".\DL_timer.h"\
-	".\DL_types.h"\
-	".\DL_version.h"\
-	".\DL_video.h"\
-	".\egin_code.h"\
-	".\ipapi.h"\
-	".\lose_code.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
-	".\x.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -6107,9 +6259,7 @@ SOURCE=..\smartphone.cpp
 
 DEP_CPP_SMART=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\rect.h"\
@@ -6132,38 +6282,40 @@ DEP_CPP_SMART=\
 	"..\screen.h"\
 	"..\smartphone.h"\
 	"..\wince.h"\
-	{$(INCLUDE)}"Aygshell.h"\
-	{$(INCLUDE)}"begin_code.h"\
-	{$(INCLUDE)}"close_code.h"\
-	{$(INCLUDE)}"GameX.h"\
-	{$(INCLUDE)}"gx.h"\
-	{$(INCLUDE)}"SDL.h"\
-	{$(INCLUDE)}"SDL_active.h"\
-	{$(INCLUDE)}"SDL_audio.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"SDL_cdrom.h"\
-	{$(INCLUDE)}"SDL_error.h"\
-	{$(INCLUDE)}"SDL_events.h"\
-	{$(INCLUDE)}"SDL_getenv.h"\
-	{$(INCLUDE)}"SDL_joystick.h"\
-	{$(INCLUDE)}"SDL_keyboard.h"\
-	{$(INCLUDE)}"SDL_keysym.h"\
-	{$(INCLUDE)}"SDL_main.h"\
-	{$(INCLUDE)}"SDL_mouse.h"\
-	{$(INCLUDE)}"SDL_mutex.h"\
-	{$(INCLUDE)}"SDL_quit.h"\
-	{$(INCLUDE)}"SDL_rwops.h"\
-	{$(INCLUDE)}"SDL_thread.h"\
-	{$(INCLUDE)}"SDL_timer.h"\
-	{$(INCLUDE)}"SDL_types.h"\
-	{$(INCLUDE)}"SDL_version.h"\
-	{$(INCLUDE)}"SDL_video.h"\
-	{$(INCLUDE)}"sipapi.h"\
 	
 NODEP_CPP_SMART=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\macos.h"\
+	".\ameX.h"\
+	".\DL.h"\
+	".\DL_active.h"\
+	".\DL_audio.h"\
+	".\DL_byteorder.h"\
+	".\DL_cdrom.h"\
+	".\DL_error.h"\
+	".\DL_events.h"\
+	".\DL_getenv.h"\
+	".\DL_joystick.h"\
+	".\DL_keyboard.h"\
+	".\DL_keysym.h"\
+	".\DL_main.h"\
+	".\DL_mouse.h"\
+	".\DL_mutex.h"\
+	".\DL_quit.h"\
+	".\DL_rwops.h"\
+	".\DL_thread.h"\
+	".\DL_timer.h"\
+	".\DL_types.h"\
+	".\DL_version.h"\
+	".\DL_video.h"\
+	".\egin_code.h"\
+	".\ipapi.h"\
+	".\lose_code.h"\
+	".\x.h"\
+	".\ygshell.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -6219,9 +6371,7 @@ NODEP_CPP_SMART=\
 
 DEP_CPP_SMART=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\rect.h"\
@@ -6244,38 +6394,40 @@ DEP_CPP_SMART=\
 	"..\screen.h"\
 	"..\smartphone.h"\
 	"..\wince.h"\
-	{$(INCLUDE)}"Aygshell.h"\
-	{$(INCLUDE)}"begin_code.h"\
-	{$(INCLUDE)}"close_code.h"\
-	{$(INCLUDE)}"gx.h"\
-	{$(INCLUDE)}"SDL.h"\
-	{$(INCLUDE)}"SDL_active.h"\
-	{$(INCLUDE)}"SDL_audio.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"SDL_cdrom.h"\
-	{$(INCLUDE)}"SDL_error.h"\
-	{$(INCLUDE)}"SDL_events.h"\
-	{$(INCLUDE)}"SDL_getenv.h"\
-	{$(INCLUDE)}"SDL_joystick.h"\
-	{$(INCLUDE)}"SDL_keyboard.h"\
-	{$(INCLUDE)}"SDL_keysym.h"\
-	{$(INCLUDE)}"SDL_main.h"\
-	{$(INCLUDE)}"SDL_mouse.h"\
-	{$(INCLUDE)}"SDL_mutex.h"\
-	{$(INCLUDE)}"SDL_quit.h"\
-	{$(INCLUDE)}"SDL_rwops.h"\
-	{$(INCLUDE)}"SDL_thread.h"\
-	{$(INCLUDE)}"SDL_timer.h"\
-	{$(INCLUDE)}"SDL_types.h"\
-	{$(INCLUDE)}"SDL_version.h"\
-	{$(INCLUDE)}"SDL_video.h"\
-	{$(INCLUDE)}"sipapi.h"\
 	
 NODEP_CPP_SMART=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\macos.h"\
 	"..\GameX.h"\
+	".\DL.h"\
+	".\DL_active.h"\
+	".\DL_audio.h"\
+	".\DL_byteorder.h"\
+	".\DL_cdrom.h"\
+	".\DL_error.h"\
+	".\DL_events.h"\
+	".\DL_getenv.h"\
+	".\DL_joystick.h"\
+	".\DL_keyboard.h"\
+	".\DL_keysym.h"\
+	".\DL_main.h"\
+	".\DL_mouse.h"\
+	".\DL_mutex.h"\
+	".\DL_quit.h"\
+	".\DL_rwops.h"\
+	".\DL_thread.h"\
+	".\DL_timer.h"\
+	".\DL_types.h"\
+	".\DL_version.h"\
+	".\DL_video.h"\
+	".\egin_code.h"\
+	".\ipapi.h"\
+	".\lose_code.h"\
+	".\x.h"\
+	".\ygshell.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -6331,9 +6483,7 @@ NODEP_CPP_SMART=\
 
 DEP_CPP_SMART=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\rect.h"\
@@ -6348,6 +6498,73 @@ DEP_CPP_SMART=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\fs\fs.h"\
+	"..\dynamic_imports.h"\
+	"..\gapi_keys.h"\
+	"..\missing\unistd.h"\
+	"..\pocketpc.h"\
+	"..\portdefs.h"\
+	"..\screen.h"\
+	"..\smartphone.h"\
+	"..\wince.h"\
+	
+NODEP_CPP_SMART=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\macos.h"\
+	"..\GameX.h"\
+	".\DL.h"\
+	".\DL_active.h"\
+	".\DL_audio.h"\
+	".\DL_byteorder.h"\
+	".\DL_cdrom.h"\
+	".\DL_error.h"\
+	".\DL_events.h"\
+	".\DL_getenv.h"\
+	".\DL_joystick.h"\
+	".\DL_keyboard.h"\
+	".\DL_keysym.h"\
+	".\DL_main.h"\
+	".\DL_mouse.h"\
+	".\DL_mutex.h"\
+	".\DL_quit.h"\
+	".\DL_rwops.h"\
+	".\DL_thread.h"\
+	".\DL_timer.h"\
+	".\DL_types.h"\
+	".\DL_version.h"\
+	".\DL_video.h"\
+	".\egin_code.h"\
+	".\ibrate.h"\
+	".\ipapi.h"\
+	".\lose_code.h"\
+	".\x.h"\
+	".\ygshell.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_SMART=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\script.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\fs\fs.h"\
+	"..\..\intern.h"\
 	"..\dynamic_imports.h"\
 	"..\gapi_keys.h"\
 	"..\missing\unistd.h"\
@@ -6387,85 +6604,7 @@ DEP_CPP_SMART=\
 NODEP_CPP_SMART=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	"..\GameX.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_SMART=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gui\newgui.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\simon\intern.h"\
-	"..\..\..\simon\midi.h"\
-	"..\..\..\simon\simon.h"\
-	"..\..\..\simon\sound.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\fs\fs.h"\
-	"..\dynamic_imports.h"\
-	"..\gapi_keys.h"\
-	"..\missing\unistd.h"\
-	"..\pocketpc.h"\
-	"..\portdefs.h"\
-	"..\screen.h"\
-	"..\smartphone.h"\
-	"..\wince.h"\
-	
-NODEP_CPP_SMART=\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\scumm\debug.h"\
-	"..\GameX.h"\
-	".\ad.h"\
-	".\DL.h"\
-	".\DL_active.h"\
-	".\DL_audio.h"\
-	".\DL_byteorder.h"\
-	".\DL_cdrom.h"\
-	".\DL_error.h"\
-	".\DL_events.h"\
-	".\DL_getenv.h"\
-	".\DL_joystick.h"\
-	".\DL_keyboard.h"\
-	".\DL_keysym.h"\
-	".\DL_main.h"\
-	".\DL_mouse.h"\
-	".\DL_mutex.h"\
-	".\DL_quit.h"\
-	".\DL_rwops.h"\
-	".\DL_thread.h"\
-	".\DL_timer.h"\
-	".\DL_types.h"\
-	".\DL_version.h"\
-	".\DL_video.h"\
-	".\egin_code.h"\
-	".\ibrate.h"\
-	".\ipapi.h"\
-	".\lose_code.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
-	".\x.h"\
-	".\ygshell.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -6541,9 +6680,7 @@ SOURCE=..\wince.cpp
 
 DEP_CPP_WINCE=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\rect.h"\
@@ -6566,43 +6703,45 @@ DEP_CPP_WINCE=\
 	"..\screen.h"\
 	"..\smartphone.h"\
 	"..\wince.h"\
-	{$(INCLUDE)}"Aygshell.h"\
-	{$(INCLUDE)}"begin_code.h"\
-	{$(INCLUDE)}"close_code.h"\
-	{$(INCLUDE)}"GameX.h"\
-	{$(INCLUDE)}"gx.h"\
-	{$(INCLUDE)}"SDL.h"\
-	{$(INCLUDE)}"SDL_active.h"\
-	{$(INCLUDE)}"SDL_audio.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"SDL_cdrom.h"\
-	{$(INCLUDE)}"SDL_error.h"\
-	{$(INCLUDE)}"SDL_events.h"\
-	{$(INCLUDE)}"SDL_getenv.h"\
-	{$(INCLUDE)}"SDL_joystick.h"\
-	{$(INCLUDE)}"SDL_keyboard.h"\
-	{$(INCLUDE)}"SDL_keysym.h"\
-	{$(INCLUDE)}"SDL_main.h"\
-	{$(INCLUDE)}"SDL_mouse.h"\
-	{$(INCLUDE)}"SDL_mutex.h"\
-	{$(INCLUDE)}"SDL_quit.h"\
-	{$(INCLUDE)}"SDL_rwops.h"\
-	{$(INCLUDE)}"SDL_thread.h"\
-	{$(INCLUDE)}"SDL_timer.h"\
-	{$(INCLUDE)}"SDL_types.h"\
-	{$(INCLUDE)}"SDL_version.h"\
-	{$(INCLUDE)}"SDL_video.h"\
-	{$(INCLUDE)}"sipapi.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_WINCE=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\macos.h"\
+	".\ameX.h"\
+	".\DL.h"\
+	".\DL_active.h"\
+	".\DL_audio.h"\
+	".\DL_byteorder.h"\
+	".\DL_cdrom.h"\
+	".\DL_error.h"\
+	".\DL_events.h"\
+	".\DL_getenv.h"\
+	".\DL_joystick.h"\
+	".\DL_keyboard.h"\
+	".\DL_keysym.h"\
+	".\DL_main.h"\
+	".\DL_mouse.h"\
+	".\DL_mutex.h"\
+	".\DL_quit.h"\
+	".\DL_rwops.h"\
+	".\DL_thread.h"\
+	".\DL_timer.h"\
+	".\DL_types.h"\
+	".\DL_version.h"\
+	".\DL_video.h"\
+	".\egin_code.h"\
+	".\ipapi.h"\
+	".\lose_code.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
+	".\x.h"\
+	".\ygshell.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -6658,9 +6797,7 @@ NODEP_CPP_WINCE=\
 
 DEP_CPP_WINCE=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\rect.h"\
@@ -6683,43 +6820,45 @@ DEP_CPP_WINCE=\
 	"..\screen.h"\
 	"..\smartphone.h"\
 	"..\wince.h"\
-	{$(INCLUDE)}"Aygshell.h"\
-	{$(INCLUDE)}"begin_code.h"\
-	{$(INCLUDE)}"close_code.h"\
-	{$(INCLUDE)}"gx.h"\
-	{$(INCLUDE)}"SDL.h"\
-	{$(INCLUDE)}"SDL_active.h"\
-	{$(INCLUDE)}"SDL_audio.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"SDL_cdrom.h"\
-	{$(INCLUDE)}"SDL_error.h"\
-	{$(INCLUDE)}"SDL_events.h"\
-	{$(INCLUDE)}"SDL_getenv.h"\
-	{$(INCLUDE)}"SDL_joystick.h"\
-	{$(INCLUDE)}"SDL_keyboard.h"\
-	{$(INCLUDE)}"SDL_keysym.h"\
-	{$(INCLUDE)}"SDL_main.h"\
-	{$(INCLUDE)}"SDL_mouse.h"\
-	{$(INCLUDE)}"SDL_mutex.h"\
-	{$(INCLUDE)}"SDL_quit.h"\
-	{$(INCLUDE)}"SDL_rwops.h"\
-	{$(INCLUDE)}"SDL_thread.h"\
-	{$(INCLUDE)}"SDL_timer.h"\
-	{$(INCLUDE)}"SDL_types.h"\
-	{$(INCLUDE)}"SDL_version.h"\
-	{$(INCLUDE)}"SDL_video.h"\
-	{$(INCLUDE)}"sipapi.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_WINCE=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
+	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\macos.h"\
 	"..\GameX.h"\
+	".\DL.h"\
+	".\DL_active.h"\
+	".\DL_audio.h"\
+	".\DL_byteorder.h"\
+	".\DL_cdrom.h"\
+	".\DL_error.h"\
+	".\DL_events.h"\
+	".\DL_getenv.h"\
+	".\DL_joystick.h"\
+	".\DL_keyboard.h"\
+	".\DL_keysym.h"\
+	".\DL_main.h"\
+	".\DL_mouse.h"\
+	".\DL_mutex.h"\
+	".\DL_quit.h"\
+	".\DL_rwops.h"\
+	".\DL_thread.h"\
+	".\DL_timer.h"\
+	".\DL_types.h"\
+	".\DL_version.h"\
+	".\DL_video.h"\
+	".\egin_code.h"\
+	".\ipapi.h"\
+	".\lose_code.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
+	".\x.h"\
+	".\ygshell.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -6775,9 +6914,7 @@ NODEP_CPP_WINCE=\
 
 DEP_CPP_WINCE=\
 	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\rect.h"\
@@ -6800,9 +6937,81 @@ DEP_CPP_WINCE=\
 	"..\screen.h"\
 	"..\smartphone.h"\
 	"..\wince.h"\
+	
+NODEP_CPP_WINCE=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\gameDetector.h"\
+	"..\..\..\common\macos.h"\
+	".\ameX.h"\
+	".\DL.h"\
+	".\DL_active.h"\
+	".\DL_audio.h"\
+	".\DL_byteorder.h"\
+	".\DL_cdrom.h"\
+	".\DL_error.h"\
+	".\DL_events.h"\
+	".\DL_getenv.h"\
+	".\DL_joystick.h"\
+	".\DL_keyboard.h"\
+	".\DL_keysym.h"\
+	".\DL_main.h"\
+	".\DL_mouse.h"\
+	".\DL_mutex.h"\
+	".\DL_quit.h"\
+	".\DL_rwops.h"\
+	".\DL_thread.h"\
+	".\DL_timer.h"\
+	".\DL_types.h"\
+	".\DL_version.h"\
+	".\DL_video.h"\
+	".\egin_code.h"\
+	".\ipapi.h"\
+	".\lose_code.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
+	".\x.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_WINCE=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\script.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\fs\fs.h"\
+	"..\..\intern.h"\
+	"..\dynamic_imports.h"\
+	"..\gapi_keys.h"\
+	"..\missing\unistd.h"\
+	"..\pocketpc.h"\
+	"..\portdefs.h"\
+	"..\screen.h"\
+	"..\smartphone.h"\
+	"..\wince.h"\
+	{$(INCLUDE)}"Aygshell.h"\
 	{$(INCLUDE)}"begin_code.h"\
 	{$(INCLUDE)}"close_code.h"\
-	{$(INCLUDE)}"GameX.h"\
 	{$(INCLUDE)}"gx.h"\
 	{$(INCLUDE)}"SDL.h"\
 	{$(INCLUDE)}"SDL_active.h"\
@@ -6826,6 +7035,7 @@ DEP_CPP_WINCE=\
 	{$(INCLUDE)}"SDL_version.h"\
 	{$(INCLUDE)}"SDL_video.h"\
 	{$(INCLUDE)}"sipapi.h"\
+	{$(INCLUDE)}"vibrate.h"\
 	{$(INCLUDE)}"vorbis\config_types.h"\
 	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
 	{$(INCLUDE)}"vorbis\ogg.h"\
@@ -6835,84 +7045,7 @@ DEP_CPP_WINCE=\
 NODEP_CPP_WINCE=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_WINCE=\
-	"..\..\..\common\config-file.h"\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\gameDetector.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\gui\newgui.h"\
-	"..\..\..\scumm\boxes.h"\
-	"..\..\..\scumm\gfx.h"\
-	"..\..\..\scumm\scumm.h"\
-	"..\..\..\simon\intern.h"\
-	"..\..\..\simon\midi.h"\
-	"..\..\..\simon\simon.h"\
-	"..\..\..\simon\sound.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\fs\fs.h"\
-	"..\dynamic_imports.h"\
-	"..\gapi_keys.h"\
-	"..\missing\unistd.h"\
-	"..\pocketpc.h"\
-	"..\portdefs.h"\
-	"..\screen.h"\
-	"..\smartphone.h"\
-	"..\wince.h"\
-	
-NODEP_CPP_WINCE=\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\..\common\morphos_timer.h"\
-	"..\..\..\scumm\debug.h"\
 	"..\GameX.h"\
-	".\ad.h"\
-	".\DL.h"\
-	".\DL_active.h"\
-	".\DL_audio.h"\
-	".\DL_byteorder.h"\
-	".\DL_cdrom.h"\
-	".\DL_error.h"\
-	".\DL_events.h"\
-	".\DL_getenv.h"\
-	".\DL_joystick.h"\
-	".\DL_keyboard.h"\
-	".\DL_keysym.h"\
-	".\DL_main.h"\
-	".\DL_mouse.h"\
-	".\DL_mutex.h"\
-	".\DL_quit.h"\
-	".\DL_rwops.h"\
-	".\DL_thread.h"\
-	".\DL_timer.h"\
-	".\DL_types.h"\
-	".\DL_version.h"\
-	".\DL_video.h"\
-	".\egin_code.h"\
-	".\ibrate.h"\
-	".\ipapi.h"\
-	".\lose_code.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
-	".\x.h"\
-	".\ygshell.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -6998,12 +7131,12 @@ DEP_CPP_WINDO=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\str.h"\
 	"..\..\fs\fs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WINDO=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -7023,12 +7156,12 @@ DEP_CPP_WINDO=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\str.h"\
 	"..\..\fs\fs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WINDO=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -7048,12 +7181,12 @@ DEP_CPP_WINDO=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\str.h"\
 	"..\..\fs\fs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WINDO=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
@@ -7063,11 +7196,11 @@ DEP_CPP_WINDO=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\str.h"\
 	"..\..\fs\fs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WINDO=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -7109,7 +7242,6 @@ SOURCE=..\..\midi\adlib.cpp
 !IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
 
 DEP_CPP_ADLIB=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -7120,25 +7252,26 @@ DEP_CPP_ADLIB=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
 
 NODEP_CPP_ADLIB=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\base\engine.h"\
 	"..\..\midi\common\util.h"\
 	"..\..\midi\sound\fmopl.h"\
 	"..\..\midi\sound\mididrv.h"\
@@ -7149,7 +7282,6 @@ NODEP_CPP_ADLIB=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
 
 DEP_CPP_ADLIB=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -7160,25 +7292,26 @@ DEP_CPP_ADLIB=\
 	"..\..\..\sound\mixer.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"mad.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	{$(INCLUDE)}"vorbis\config_types.h"\
-	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
-	{$(INCLUDE)}"vorbis\ogg.h"\
-	{$(INCLUDE)}"vorbis\os_types.h"\
-	{$(INCLUDE)}"vorbis\vorbisfile.h"\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
 	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
 
 NODEP_CPP_ADLIB=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\base\engine.h"\
 	"..\..\midi\common\util.h"\
 	"..\..\midi\sound\fmopl.h"\
 	"..\..\midi\sound\mididrv.h"\
@@ -7189,7 +7322,36 @@ NODEP_CPP_ADLIB=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
 
 DEP_CPP_ADLIB=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\fmopl.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_ADLIB=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\engine.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\..\sound\config.h"\
+	".\ad.h"\
+	".\DL_byteorder.h"\
+	".\orbis\config_types.h"\
+	".\orbis\ivorbiscodec.h"\
+	".\orbis\ogg.h"\
+	".\orbis\os_types.h"\
+	".\orbis\vorbisfile.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_ADLIB=\
+	"..\..\..\base\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -7211,41 +7373,12 @@ DEP_CPP_ADLIB=\
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\..\sound\config.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_ADLIB=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\sound\fmopl.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_ADLIB=\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\ad.h"\
-	".\DL_byteorder.h"\
-	".\orbis\config_types.h"\
-	".\orbis\ivorbiscodec.h"\
-	".\orbis\ogg.h"\
-	".\orbis\os_types.h"\
-	".\orbis\vorbisfile.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
 
 NODEP_CPP_ADLIB=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\base\engine.h"\
 	"..\..\midi\common\util.h"\
 	"..\..\midi\sound\fmopl.h"\
 	"..\..\midi\sound\mididrv.h"\
@@ -7256,7 +7389,7 @@ NODEP_CPP_ADLIB=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
 
 NODEP_CPP_ADLIB=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\base\engine.h"\
 	"..\..\midi\common\util.h"\
 	"..\..\midi\sound\fmopl.h"\
 	"..\..\midi\sound\mididrv.h"\
@@ -7274,7 +7407,6 @@ SOURCE=..\..\midi\alsa.cpp
 !IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
 
 DEP_CPP_ALSA_=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -7283,19 +7415,20 @@ DEP_CPP_ALSA_=\
 	"..\..\..\sound\mpu401.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ALSA_=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
 	"..\..\midi\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
 
 NODEP_CPP_ALSA_=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\common\util.h"\
 	"..\..\midi\config.h"\
 	"..\..\midi\sound\mpu401.h"\
 	"..\..\midi\stdafx.h"\
@@ -7304,7 +7437,6 @@ NODEP_CPP_ALSA_=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
 
 DEP_CPP_ALSA_=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -7313,19 +7445,20 @@ DEP_CPP_ALSA_=\
 	"..\..\..\sound\mpu401.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ALSA_=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
 	"..\..\midi\config.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
 
 NODEP_CPP_ALSA_=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\common\util.h"\
 	"..\..\midi\config.h"\
 	"..\..\midi\sound\mpu401.h"\
 	"..\..\midi\stdafx.h"\
@@ -7334,11 +7467,32 @@ NODEP_CPP_ALSA_=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
 
 DEP_CPP_ALSA_=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mpu401.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_ALSA_=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\midi\config.h"\
+	".\DL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_ALSA_=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mpu401.h"\
 	"..\missing\unistd.h"\
@@ -7348,33 +7502,13 @@ DEP_CPP_ALSA_=\
 NODEP_CPP_ALSA_=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	"..\..\midi\config.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_ALSA_=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\mpu401.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_ALSA_=\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
 
 NODEP_CPP_ALSA_=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\common\util.h"\
 	"..\..\midi\config.h"\
 	"..\..\midi\sound\mpu401.h"\
 	"..\..\midi\stdafx.h"\
@@ -7383,7 +7517,7 @@ NODEP_CPP_ALSA_=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
 
 NODEP_CPP_ALSA_=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\common\util.h"\
 	"..\..\midi\config.h"\
 	"..\..\midi\sound\mpu401.h"\
 	"..\..\midi\stdafx.h"\
@@ -7404,12 +7538,12 @@ DEP_CPP_COREA=\
 	"..\..\..\common\system.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mpu401.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COREA=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -7426,12 +7560,12 @@ DEP_CPP_COREA=\
 	"..\..\..\common\system.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mpu401.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COREA=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -7448,25 +7582,30 @@ DEP_CPP_COREA=\
 	"..\..\..\common\system.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mpu401.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COREA=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
 
 DEP_CPP_COREA=\
+	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mpu401.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COREA=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -7491,7 +7630,6 @@ SOURCE=..\..\midi\morphos.cpp
 !IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
 
 DEP_CPP_MORPH=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -7500,20 +7638,22 @@ DEP_CPP_MORPH=\
 	"..\..\..\sound\mpu401.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MORPH=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
 	"..\..\midi\morphos.h"\
 	"..\..\midi\morphos_sound.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
 
 NODEP_CPP_MORPH=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\base\engine.h"\
+	"..\..\midi\common\util.h"\
 	"..\..\midi\morphos.h"\
 	"..\..\midi\morphos_sound.h"\
 	"..\..\midi\sound\mpu401.h"\
@@ -7523,7 +7663,6 @@ NODEP_CPP_MORPH=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
 
 DEP_CPP_MORPH=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -7532,20 +7671,22 @@ DEP_CPP_MORPH=\
 	"..\..\..\sound\mpu401.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MORPH=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
 	"..\..\midi\morphos.h"\
 	"..\..\midi\morphos_sound.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
 
 NODEP_CPP_MORPH=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\base\engine.h"\
+	"..\..\midi\common\util.h"\
 	"..\..\midi\morphos.h"\
 	"..\..\midi\morphos_sound.h"\
 	"..\..\midi\sound\mpu401.h"\
@@ -7555,11 +7696,34 @@ NODEP_CPP_MORPH=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
 
 DEP_CPP_MORPH=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mpu401.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_MORPH=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	"..\..\midi\morphos.h"\
+	"..\..\midi\morphos_sound.h"\
+	".\DL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_MORPH=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mpu401.h"\
 	"..\missing\unistd.h"\
@@ -7569,36 +7733,15 @@ DEP_CPP_MORPH=\
 NODEP_CPP_MORPH=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
 	"..\..\midi\morphos.h"\
 	"..\..\midi\morphos_sound.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_MORPH=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\mpu401.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_MORPH=\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	"..\..\midi\morphos.h"\
-	"..\..\midi\morphos_sound.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
 
 NODEP_CPP_MORPH=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\base\engine.h"\
+	"..\..\midi\common\util.h"\
 	"..\..\midi\morphos.h"\
 	"..\..\midi\morphos_sound.h"\
 	"..\..\midi\sound\mpu401.h"\
@@ -7608,7 +7751,8 @@ NODEP_CPP_MORPH=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
 
 NODEP_CPP_MORPH=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\base\engine.h"\
+	"..\..\midi\common\util.h"\
 	"..\..\midi\morphos.h"\
 	"..\..\midi\morphos_sound.h"\
 	"..\..\midi\sound\mpu401.h"\
@@ -7633,12 +7777,12 @@ DEP_CPP_NULL_=\
 	"..\..\..\sound\mpu401.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NULL_=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
@@ -7659,12 +7803,12 @@ DEP_CPP_NULL_=\
 	"..\..\..\sound\mpu401.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NULL_=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
@@ -7685,18 +7829,17 @@ DEP_CPP_NULL_=\
 	"..\..\..\sound\mpu401.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NULL_=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
 
 DEP_CPP_NULL_=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -7705,11 +7848,11 @@ DEP_CPP_NULL_=\
 	"..\..\..\sound\mpu401.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NULL_=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
@@ -7736,96 +7879,212 @@ SOURCE=..\..\midi\quicktime.cpp
 !IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
 
 DEP_CPP_QUICK=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mpu401.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_QUICK=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
 
 NODEP_CPP_QUICK=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\common\util.h"\
 	"..\..\midi\sound\mpu401.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
 
 DEP_CPP_QUICK=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mpu401.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_QUICK=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
 
 NODEP_CPP_QUICK=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\common\util.h"\
 	"..\..\midi\sound\mpu401.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
 
 DEP_CPP_QUICK=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mpu401.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_QUICK=\
 	"..\..\..\common\config.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_QUICK=\
 	"..\..\..\common\engine.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\mpu401.h"\
-	
-NODEP_CPP_QUICK=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
 	".\DL_byteorder.h"\
 	
 
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_QUICK=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mpu401.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_QUICK=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
 
 NODEP_CPP_QUICK=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\common\util.h"\
 	"..\..\midi\sound\mpu401.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
 
 NODEP_CPP_QUICK=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\common\util.h"\
 	"..\..\midi\sound\mpu401.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\midi\seq.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
+
+DEP_CPP_SEQ_C=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mpu401.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SEQ_C=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_SEQ_C=\
+	"..\..\midi\common\util.h"\
+	"..\..\midi\sound\mpu401.h"\
+	"..\..\midi\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
+
+DEP_CPP_SEQ_C=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mpu401.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_SEQ_C=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_SEQ_C=\
+	"..\..\midi\common\util.h"\
+	"..\..\midi\sound\mpu401.h"\
+	"..\..\midi\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
+
+DEP_CPP_SEQ_C=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mpu401.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_SEQ_C=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_SEQ_C=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mpu401.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_SEQ_C=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
+
+NODEP_CPP_SEQ_C=\
+	"..\..\midi\common\util.h"\
+	"..\..\midi\sound\mpu401.h"\
+	"..\..\midi\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
+
+NODEP_CPP_SEQ_C=\
+	"..\..\midi\common\util.h"\
+	"..\..\midi\sound\mpu401.h"\
+	"..\..\midi\stdafx.h"\
 	
 
 !ENDIF 
@@ -7838,7 +8097,6 @@ SOURCE=..\..\midi\windows.cpp
 !IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
 
 DEP_CPP_WINDOW=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -7847,18 +8105,19 @@ DEP_CPP_WINDOW=\
 	"..\..\..\sound\mpu401.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WINDOW=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
 
 NODEP_CPP_WINDOW=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\common\util.h"\
 	"..\..\midi\sound\mpu401.h"\
 	"..\..\midi\stdafx.h"\
 	
@@ -7866,7 +8125,6 @@ NODEP_CPP_WINDOW=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
 
 DEP_CPP_WINDOW=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
@@ -7875,18 +8133,19 @@ DEP_CPP_WINDOW=\
 	"..\..\..\sound\mpu401.h"\
 	"..\missing\unistd.h"\
 	"..\portdefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_WINDOW=\
 	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
 
 NODEP_CPP_WINDOW=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\common\util.h"\
 	"..\..\midi\sound\mpu401.h"\
 	"..\..\midi\stdafx.h"\
 	
@@ -7894,11 +8153,31 @@ NODEP_CPP_WINDOW=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
 
 DEP_CPP_WINDOW=\
-	"..\..\..\common\engine.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\system.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mpu401.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_WINDOW=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\engine.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\macos.h"\
+	".\DL_byteorder.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_WINDOW=\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mpu401.h"\
 	"..\missing\unistd.h"\
@@ -7908,32 +8187,12 @@ DEP_CPP_WINDOW=\
 NODEP_CPP_WINDOW=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
-
-DEP_CPP_WINDOW=\
-	"..\..\..\common\engine.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\sound\mididrv.h"\
-	"..\..\..\sound\mpu401.h"\
-	"..\missing\unistd.h"\
-	"..\portdefs.h"\
-	
-NODEP_CPP_WINDOW=\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\macos.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
 
 NODEP_CPP_WINDOW=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\common\util.h"\
 	"..\..\midi\sound\mpu401.h"\
 	"..\..\midi\stdafx.h"\
 	
@@ -7941,7 +8200,7 @@ NODEP_CPP_WINDOW=\
 !ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
 
 NODEP_CPP_WINDOW=\
-	"..\..\midi\common\engine.h"\
+	"..\..\midi\common\util.h"\
 	"..\..\midi\sound\mpu401.h"\
 	"..\..\midi\stdafx.h"\
 	
@@ -7950,6 +8209,505 @@ NODEP_CPP_WINDOW=\
 
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=..\..\intern.h
+# End Source File
+# End Group
+# Begin Group "base"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\..\base\engine.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
+
+DEP_CPP_ENGIN=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_ENGIN=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_ENGIN=\
+	"..\..\..\base\base\engine.h"\
+	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\common\config-file.h"\
+	"..\..\..\base\common\timer.h"\
+	"..\..\..\base\sound\mixer.h"\
+	"..\..\..\base\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
+
+DEP_CPP_ENGIN=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_ENGIN=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_ENGIN=\
+	"..\..\..\base\base\engine.h"\
+	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\common\config-file.h"\
+	"..\..\..\base\common\timer.h"\
+	"..\..\..\base\sound\mixer.h"\
+	"..\..\..\base\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
+
+DEP_CPP_ENGIN=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_ENGIN=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_ENGIN=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_ENGIN=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
+
+NODEP_CPP_ENGIN=\
+	"..\..\..\base\base\engine.h"\
+	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\common\config-file.h"\
+	"..\..\..\base\common\timer.h"\
+	"..\..\..\base\sound\mixer.h"\
+	"..\..\..\base\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
+
+NODEP_CPP_ENGIN=\
+	"..\..\..\base\base\engine.h"\
+	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\common\config-file.h"\
+	"..\..\..\base\common\timer.h"\
+	"..\..\..\base\sound\mixer.h"\
+	"..\..\..\base\stdafx.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\base\engine.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\base\gameDetector.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
+
+DEP_CPP_GAMED=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\plugins.h"\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scaler.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\intern.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_GAMED=\
+	"..\..\..\base\config.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_GAMED=\
+	"..\..\..\base\backends\intern.h"\
+	"..\..\..\base\base\engine.h"\
+	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\base\plugins.h"\
+	"..\..\..\base\common\config-file.h"\
+	"..\..\..\base\common\scaler.h"\
+	"..\..\..\base\config.h"\
+	"..\..\..\base\sound\mididrv.h"\
+	"..\..\..\base\sound\mixer.h"\
+	"..\..\..\base\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
+
+DEP_CPP_GAMED=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\plugins.h"\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scaler.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\intern.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_GAMED=\
+	"..\..\..\base\config.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_GAMED=\
+	"..\..\..\base\backends\intern.h"\
+	"..\..\..\base\base\engine.h"\
+	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\base\plugins.h"\
+	"..\..\..\base\common\config-file.h"\
+	"..\..\..\base\common\scaler.h"\
+	"..\..\..\base\config.h"\
+	"..\..\..\base\sound\mididrv.h"\
+	"..\..\..\base\sound\mixer.h"\
+	"..\..\..\base\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
+
+DEP_CPP_GAMED=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\plugins.h"\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scaler.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\intern.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_GAMED=\
+	"..\..\..\base\config.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_GAMED=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\plugins.h"\
+	"..\..\..\common\config-file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scaler.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\intern.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"mad.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	{$(INCLUDE)}"vorbis\config_types.h"\
+	{$(INCLUDE)}"vorbis\ivorbiscodec.h"\
+	{$(INCLUDE)}"vorbis\ogg.h"\
+	{$(INCLUDE)}"vorbis\os_types.h"\
+	{$(INCLUDE)}"vorbis\vorbisfile.h"\
+	
+NODEP_CPP_GAMED=\
+	"..\..\..\base\config.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
+
+NODEP_CPP_GAMED=\
+	"..\..\..\base\backends\intern.h"\
+	"..\..\..\base\base\engine.h"\
+	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\base\plugins.h"\
+	"..\..\..\base\common\config-file.h"\
+	"..\..\..\base\common\scaler.h"\
+	"..\..\..\base\config.h"\
+	"..\..\..\base\sound\mididrv.h"\
+	"..\..\..\base\sound\mixer.h"\
+	"..\..\..\base\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
+
+NODEP_CPP_GAMED=\
+	"..\..\..\base\backends\intern.h"\
+	"..\..\..\base\base\engine.h"\
+	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\base\plugins.h"\
+	"..\..\..\base\common\config-file.h"\
+	"..\..\..\base\common\scaler.h"\
+	"..\..\..\base\config.h"\
+	"..\..\..\base\sound\mididrv.h"\
+	"..\..\..\base\sound\mixer.h"\
+	"..\..\..\base\stdafx.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\base\gameDetector.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\base\plugins.cpp
+
+!IF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Release"
+
+DEP_CPP_PLUGI=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\plugins.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_PLUGI=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE MIPS) Debug"
+
+NODEP_CPP_PLUGI=\
+	"..\..\..\base\base\engine.h"\
+	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\base\plugins.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Release"
+
+DEP_CPP_PLUGI=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\plugins.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	
+NODEP_CPP_PLUGI=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE SH3) Debug"
+
+NODEP_CPP_PLUGI=\
+	"..\..\..\base\base\engine.h"\
+	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\base\plugins.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Release"
+
+DEP_CPP_PLUGI=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\plugins.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_PLUGI=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE ARM) Debug"
+
+DEP_CPP_PLUGI=\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\plugins.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\missing\unistd.h"\
+	"..\portdefs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_PLUGI=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Release"
+
+NODEP_CPP_PLUGI=\
+	"..\..\..\base\base\engine.h"\
+	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\base\plugins.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scummvm - Win32 (WCE x86em) Debug"
+
+NODEP_CPP_PLUGI=\
+	"..\..\..\base\base\engine.h"\
+	"..\..\..\base\base\gameDetector.h"\
+	"..\..\..\base\base\plugins.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\base\plugins.h
+# End Source File
 # End Group
 # End Group
 # Begin Group "Resource Files"
