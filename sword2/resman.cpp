@@ -972,6 +972,12 @@ void ResourceManager::getCd(int cd) {
 	// CD had been inserted, but our backend doesn't support that, and
 	// anyway I don't know if all systems allow that sort of thing. So we
 	// wait for the user to press any key instead, or click the mouse.
+	//
+	// But just in case we ever try to identify the CDs by their labels,
+	// they should be:
+	//
+	// CD1: "RBSII1" (or "PCF76" for the PCF76 version, whatever that is)
+	// CD2: "RBSII2"
 
 	while (1) {
 		_keyboardEvent ke;

@@ -20,33 +20,25 @@
 #ifndef	SAVE_REST_H
 #define	SAVE_REST_H
 
-#include "sword2/memory.h"
-
 namespace Sword2 {
 
 #define	SAVE_DESCRIPTION_LEN	64
 
 // Save & Restore error codes
 
-#define SR_OK			0x00000000	// No worries
-#define SR_ERR_FILEOPEN		0x00000001	// can't open file - Couldn't
-						// create file for saving, or
-						// couldn't find file for
-						// loading.
-#define SR_ERR_INCOMPATIBLE	0x00000002	// (RestoreGame only)
-						// incompatible savegame data.
-						// Savegame file is obsolete.
-						// (Won't happen after
-						// development stops)
-#define SR_ERR_READFAIL		0x00000003	// (RestoreGame only) failed on
-						// reading savegame file -
-						// Something screwed up during
-						// the fread()
-#define SR_ERR_WRITEFAIL	0x00000004	// (SaveGame only) failed on
-						// writing savegame file -
-						// Something screwed up during
-						// the fwrite() - could be
-						// hard-drive full..?
+enum {
+	SR_OK,			// No worries
+	SR_ERR_FILEOPEN,	// Can't open file - Couldn't create file for
+				// saving, or couldn't find file for loading.
+	SR_ERR_INCOMPATIBLE,	// (Restore) Incompatible savegame data.
+				// Savegame file is obsolete. (Won't happen
+				// after development stops)
+	SR_ERR_READFAIL,	// (Restore) Failed on reading savegame file -
+				// Something screwed up during the read
+	SR_ERR_WRITEFAIL	// (Save) Failed on writing savegame file -
+				// Something screwed up during the write -
+				// could be hard-drive full..?
+};
 
 } // End of namespace Sword2
 

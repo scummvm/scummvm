@@ -30,6 +30,7 @@
 #include "sword2/header.h"
 #include "sword2/icons.h"
 #include "sword2/layers.h"
+#include "sword2/memory.h"
 #include "sword2/mouse.h"
 #include "sword2/object.h"
 #include "sword2/save_rest.h"
@@ -44,19 +45,6 @@ namespace Sword2 {
 enum {
 	GF_DEMO	= 1 << 0
 };
-
-// Bodge for PCF76 version so that their demo CD can be labelled "PCF76"
-// rather than "RBSII1"
-
-#ifdef _PCF76
-	#define CD1_LABEL	"PCF76"
-#else
-	#define CD1_LABEL	"RBSII1"
-#endif
-
-#define	CD2_LABEL		"RBSII2"
-
-// TODO move stuff into class
 
 class Sword2Engine : public Engine {
 private:
