@@ -1516,7 +1516,7 @@ void ScummEngine::drawBlastObject(BlastObject *eo) {
 	bdd.y = eo->rect.top;
 	bdd.scale_x = (byte)eo->scaleX;
 	bdd.scale_y = (byte)eo->scaleY;
-
+	bdd.maskPtr = NULL;
 
 	if ((bdd.scale_x != 255) || (bdd.scale_y != 255)) {
 		byte bomp_scaling_x[64], bomp_scaling_y[64];
