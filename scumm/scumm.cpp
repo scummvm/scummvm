@@ -688,7 +688,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_languageIndex = NULL;
 	_costumeRenderer = NULL;
 	_2byteFontPtr = 0;
-	_V1_talkingActor = 0;
+	_V1TalkingActor = 0;
 	_wizNumPolygons = 200; // Used as constant in original
 	_wizPolygons = NULL;
 
