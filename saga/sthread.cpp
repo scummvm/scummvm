@@ -260,7 +260,7 @@ void Script::runThread(ScriptThread *thread, int instr_limit) {
 //		debug print (opCode name etc) should be placed here
 //		SDebugPrintInstr(thread)
 
-//		debug(2, "Executing thread offset: %lu (%x) stack: %d", thread->instructionOffset, operandChar, thread->stackSize());
+		debug(8, "Executing thread offset: %lu (%x) stack: %d", thread->instructionOffset, operandChar, thread->stackSize());
 		switch (operandChar) {
 		case 0x01: // nextblock
 			// Some sort of "jump to the start of the next memory
@@ -463,6 +463,7 @@ void Script::runThread(ScriptThread *thread, int instr_limit) {
 
 				data = thread->pop();
 				n_switch = scriptS.readUint16LE();
+
 				for (i = 0; i < n_switch; i++) {
 					switch_num = scriptS.readUint16LE();
 					switch_jmp = scriptS.readUint16LE();

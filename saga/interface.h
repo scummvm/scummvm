@@ -91,6 +91,16 @@ struct Converse {
 	int replyBit;
 };
 
+enum ITEColors {
+	kITEColorBrightWhite = 0x2,
+	kITEColorGrey = 0xa,
+	kITEColorDarkGrey = 0xb,
+	kITEColorGreen = 0xba,
+	kITEColorBlack = 0xf,
+	kITEColorBlue = 0x93
+};
+
+
 class Interface {
 public:
 	Interface(SagaEngine *vm);
@@ -105,6 +115,7 @@ public:
 	void restoreMode();
 	bool isInMainMode() { return _inMainMode; }
 	int setStatusText(const char *new_txt);
+	void setStatusOnceColor(int color) { _statusOnceColor = color; }
 	int loadScenePortraits(int resourceId);
 	int setLeftPortrait(int portrait);
 	int setRightPortrait(int portrait);
@@ -165,6 +176,7 @@ private:
 	int _lockedMode;
 	bool _inMainMode;
 	char _statusText[STATUS_TEXT_LEN];
+	int _statusOnceColor;
 	int _leftPortrait;
 	int _rightPortrait;
 	

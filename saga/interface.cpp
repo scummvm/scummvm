@@ -133,6 +133,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_savedMode = -1;
 	_inMainMode = false;
 	*_statusText = 0;
+	_statusOnceColor = -1;
 
 	_inventoryCount = 0;
 	_inventorySize = ITE_INVENTORY_SIZE;
@@ -283,6 +284,7 @@ int Interface::setStatusText(const char *new_txt) {
 	assert(new_txt != NULL);
 
 	strncpy(_statusText, new_txt, STATUS_TEXT_LEN);
+	_statusOnceColor = -1;
 
 	return SUCCESS;
 }
@@ -417,6 +419,7 @@ int Interface::drawStatusBar(SURFACE *ds) {
 	Rect rect;
 
 	int string_w;
+	int color;
 
 	// Disable this for IHNM for now, since that game uses the full screen
 	// in some cases.
@@ -436,8 +439,13 @@ int Interface::drawStatusBar(SURFACE *ds) {
 
 	string_w = _vm->_font->getStringWidth(SMALL_FONT_ID, _statusText, 0, 0);
 
+	if (_statusOnceColor == -1)
+		color = _vm->getDisplayInfo().statusTextColor;
+	else
+		color = _statusOnceColor;
+
 	_vm->_font->draw(SMALL_FONT_ID, ds, _statusText, 0, (_vm->getDisplayInfo().statusWidth / 2) - (string_w / 2),
-			_vm->getDisplayInfo().statusY + _vm->getDisplayInfo().statusTextY, _vm->getDisplayInfo().statusTextColor, 0, 0);
+			_vm->getDisplayInfo().statusY + _vm->getDisplayInfo().statusTextY, color, 0, 0);
 
 	return SUCCESS;
 }
@@ -742,15 +750,6 @@ bool Interface::converseAddText(const char *text, int replyId, byte replyFlags, 
 	return false;
 }
 
-enum converseColors {
-	kColorBrightWhite = 0x2,
-	kColorGrey = 0xa,
-	kColorDarkGrey = 0xb,
-	kColorGreen = 0xba,
-	kColorBlack = 0xf,
-	kColorBlue = 0x93
-};
-
 void Interface::converseDisplayText(int pos) {
 	int end;
 
@@ -768,7 +767,7 @@ void Interface::converseDisplayText(int pos) {
 
 	_converseEndPos = end;
 
-	converseDisplayTextLine(kColorBrightWhite, false, true);
+	converseDisplayTextLine(kITEColorBrightWhite, false, true);
 }
 
 
@@ -796,10 +795,10 @@ void Interface::converseDisplayTextLine(int textcolor, bool btnDown, bool rebuil
 			&& _converseText[_conversePos].stringNum
 						== _converseText[relpos].stringNum) {
 			textcolors[0][i] = textcolor;
-			textcolors[1][i] = (!btnDown) ? kColorDarkGrey : kColorGrey;
+			textcolors[1][i] = (!btnDown) ? kITEColorDarkGrey : kITEColorGrey;
 		} else {
-			textcolors[0][i] = kColorBlue;
-			textcolors[1][i] = kColorDarkGrey;
+			textcolors[0][i] = kITEColorBlue;
+			textcolors[1][i] = kITEColorDarkGrey;
 		}
 	}
 		// if no colors have changed, exit
@@ -813,7 +812,7 @@ void Interface::converseDisplayTextLine(int textcolor, bool btnDown, bool rebuil
 
 	rect.moveTo(_conversePanel.x + x, _conversePanel.y + y);
 
-	drawRect(ds, &rect, kColorDarkGrey);
+	drawRect(ds, &rect, kITEColorDarkGrey);
 
 	rect.top = rect.left = 0;
 	rect.right = CONVERSE_MAX_TEXT_WIDTH;
@@ -836,13 +835,13 @@ void Interface::converseDisplayTextLine(int textcolor, bool btnDown, bool rebuil
 			byte tcolor, bcolor;
 
 			if (_converseText[relpos].textNum == 0) { // first entry
-				tcolor = kColorGreen;
-				bcolor = kColorBlack;
+				tcolor = kITEColorGreen;
+				bcolor = kITEColorBlack;
 				_vm->_font->draw(SMALL_FONT_ID, ds, bullet, strlen(bullet),
 								 scrx + 2, scry, tcolor, bcolor, FONT_SHADOW | FONT_DONTMAP);
 			}
 			_vm->_font->draw(SMALL_FONT_ID, ds, str, strlen(str),
-							 scrx + 9, scry, foregnd, kColorBlack, FONT_SHADOW);
+							 scrx + 9, scry, foregnd, kITEColorBlack, FONT_SHADOW);
 		}
 	}
 
@@ -853,7 +852,7 @@ void Interface::converseChangePos(int chg) {
 	if ((chg < 0 && _converseStartPos + chg >= 0) ||
 		(chg > 0 && _converseStartPos  < _converseEndPos)) {
 		_converseStartPos += chg;
-		converseDisplayTextLine(kColorBlue, false, true);
+		converseDisplayTextLine(kITEColorBlue, false, true);
 	}
 }
 
@@ -865,7 +864,7 @@ void Interface::converseSetPos(int key) {
 		return;
 
 	// FIXME: wait until Andrew defines proper color
-	converseSetTextLines(selection, kColorBrightWhite, false);
+	converseSetTextLines(selection, kITEColorBrightWhite, false);
 
 	ct = &_converseText[_conversePos];
 

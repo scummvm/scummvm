@@ -563,7 +563,7 @@ void Script::scriptExec(int argc, const char **argv) {
 }
 
 // verb
-void Script::showVerb() {
+void Script::showVerb(int statuscolor) {
 	const char *verbName;
 	const char *object1Name;
 	const char *object2Name;
@@ -609,6 +609,8 @@ void Script::showVerb() {
 			_vm->_interface->setStatusText(statusString);
 		}
 	}
+	if (statuscolor != -1)
+		_vm->_interface->setStatusOnceColor(statuscolor);
 }
 
 void Script::setVerb(int verb) {
@@ -683,7 +685,6 @@ void Script::doVerb() {
 			if ((hitZone->getFlags() & kHitZoneExit) == 0) {
 				scriptEntrypointNumber = hitZone->getScriptNumber();
 			}
-			
 		} else {
 			if (objectType & (kGameObjectActor | kGameObjectObject)) {
 				scriptEntrypointNumber = _vm->_actor->getObjectScriptEntrypointNumber(_pendingObject[0]);
@@ -752,11 +753,10 @@ void Script::hitObject(bool leftButton) {
 				_pendingVerb = verb;
 
 				_leftButtonVerb = verb;
-				if (_pendingVerb > kVerbNone) {
-					//	statusColor = BRIGHT_WHITE;
-				}				
-				showVerb();
-				/*statusColor = GREEN_BA;*/
+				if (_pendingVerb > kVerbNone)
+					showVerb(kITEColorBrightWhite);
+				else
+					showVerb();
 
 				_secondObjectNeeded = false;
 				_firstObjectSet = false;
@@ -787,11 +787,10 @@ void Script::hitObject(bool leftButton) {
 		}
 
 		_leftButtonVerb = verb;
-		if (_pendingVerb > kVerbNone) {
-		//	statusColor = BRIGHT_WHITE;
-		}
-		showVerb();
-		//statusColor = GREEN_BA;
+		if (_pendingVerb > kVerbNone)
+			showVerb(kITEColorBrightWhite);
+		else
+			showVerb();
 	}
 	
 }

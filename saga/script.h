@@ -262,7 +262,7 @@ public:
 	const char * getScriptString(int index) const { return _currentScript->strings.getString(index); }
 
 	void doVerb();
-	void showVerb();
+	void showVerb(int statuscolor = -1);
 	void setVerb(int verb);
 	int getCurrentVerb() const { return _currentVerb; }
 	void setPointerVerb();
