@@ -485,8 +485,8 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name) {
 		}
 		for (i = 0; i < num; i++) {
 			res.roomoffs[id][i] = _fileHandle.readUint16LE();
-			if (roomoffs[id][i] == 0xFFFF)
-				roomoffs[id][i] = 0xFFFFFFFF;
+			if (res.roomoffs[id][i] == 0xFFFF)
+				res.roomoffs[id][i] = 0xFFFFFFFF;
 		}
 
 	} else if (_features & GF_SMALL_HEADER) {
@@ -623,6 +623,9 @@ int Scumm::loadResource(int type, int idx) {
 	openRoom(roomNr);
 
 	_fileHandle.seek(fileOffs + _fileOffset, SEEK_SET);
+if (type == rtSound) {
+	printf("fileOffs = %d, _fileOffset = %d\n", fileOffs, _fileOffset);
+}
 
 	if (_features & GF_OLD_BUNDLE) {
 		size = _fileHandle.readUint16LE();
@@ -659,6 +662,10 @@ int Scumm::loadResource(int type, int idx) {
 	// dump the resource if requested
 	if (_dumpScripts && type == rtScript) {
 		dumpResource("script-", idx, getResourceAddress(rtScript, idx));
+	}
+
+	if (type == rtSound) {
+		dumpResource("sound-", idx, getResourceAddress(rtScript, idx));
 	}
 
 	if (!_fileHandle.ioFailed()) {
