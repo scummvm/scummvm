@@ -1092,9 +1092,11 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		ptr[0] = 0; ptr[1] = 0; ptr[2] = 0; ptr[3] = 1; // MIDI format 0 with 1 track
 		ptr += 4;
 
-		// FIXME: should we convert ticks here? I.e. BE vs LE, or maybe another scale is
-		// needed? In fact does anything *read* this value, ever?
-		memcpy(ptr, &ticks, 2); ptr += 2;
+		// We will ignore the PPQN in the original resource, because
+		// it's invalid anyway. We use a constant PPQN of 480.
+		// memcpy(ptr, &ticks, 2); ptr += 2;
+		*ptr++ = 480 >> 8;
+		*ptr++ = 480 & 0xFF;
 
 		memcpy(ptr, "MTrk", 4); ptr += 4;
 		*ptr++ = ((sizeof(OLD256_MIDI_HACK) + size + 7) >> 24) & 0xFF;
