@@ -34,8 +34,6 @@ namespace Sword1 {
 
 #define TOTAL_TUNES 270
 
-#define WAVEHEADERSIZE 0x2C
-
 enum MusicMode {
 	MusicNone = 0,
 	MusicWave,
