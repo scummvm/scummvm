@@ -329,7 +329,7 @@ int IMuseInternal::getMusicTimer() {
 				best_time = timer;
 		}
 	}
-	return best_time / 1000000;
+	return best_time;
 }
 
 void IMuseInternal::sequencer_timers(MidiDriver *midi) {

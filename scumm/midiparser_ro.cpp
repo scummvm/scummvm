@@ -33,7 +33,8 @@
 
 class MidiParser_RO : public MidiParser {
 protected:
-	int _markerCount; // Number of markers encountered in stream so far
+	int _markerCount;     // Number of markers encountered in stream so far
+	int _lastMarkerCount; // Cache markers until parsed event is actually consumed
 
 protected:
 	void compressToType0();
@@ -41,7 +42,7 @@ protected:
 
 public:
 	bool loadMusic (byte *data, uint32 size);
-	uint32 getTime() { return (uint32) _markerCount * 1000000; }
+	uint32 getTick() { return (uint32) _markerCount * _ppqn / 2; }
 };
 
 
@@ -53,16 +54,17 @@ public:
 //////////////////////////////////////////////////
 
 void MidiParser_RO::parseNextEvent (EventInfo &info) {
+	_markerCount += _lastMarkerCount;
+	_lastMarkerCount = 0;
+
 	info.delta = 0;
 	do {
 		info.start = _position._play_pos;
 		info.event = *(_position._play_pos++);
 		if (info.command() == 0xA) {
-			++_markerCount;
-			continue;
-		} // end if
-
-		if (info.event == 0xF0) {
+			++_lastMarkerCount;
+			info.event = 0xF0;
+		} else if (info.event == 0xF0) {
 			byte delay = *(_position._play_pos++);
 			info.delta += delay;
 			continue;
@@ -71,9 +73,15 @@ void MidiParser_RO::parseNextEvent (EventInfo &info) {
 	} while (true);
 
 	// Seems to indicate EOT
-	if (info.event == 0)
-		info.event = 0xF0;
-	else if (info.event < 0x80)
+	if (info.event == 0) {
+		info.event = 0xFF;
+		info.ext.type = 0x2F;
+		info.length = 0;
+		info.ext.data = 0;
+		return;
+	}
+
+	if (info.event < 0x80)
 		return;
 
 	_position._running_status = info.event;
@@ -91,13 +99,16 @@ void MidiParser_RO::parseNextEvent (EventInfo &info) {
 		info.length = 0;
 		break;
 
-	case 0xF: // End of Track messages
-		if (info.event == 0xFF)
-			_autoLoop = true;
-		info.event = 0xFF;
-		info.ext.type = 0x2F;
+	case 0xF: // Marker and EOT messages
 		info.length = 0;
 		info.ext.data = 0;
+		if (info.event == 0xFF) {
+			_autoLoop = true;
+			info.ext.type = 0x2F;
+		} else {
+			info.ext.type = 0x7F; // Bogus META
+		}
+		info.event = 0xFF;
 		break;
 	}
 }
@@ -114,7 +125,7 @@ bool MidiParser_RO::loadMusic (byte *data, uint32 size) {
 	_num_tracks = 1;
 	_ppqn = 120;
 	_tracks[0] = pos + 2;
-	_markerCount = 0;
+	_markerCount = _lastMarkerCount = 0;
 
 	// Note that we assume the original data passed in
 	// will persist beyond this call, i.e. we do NOT

@@ -261,7 +261,7 @@ public:
 	int    setTranspose(byte relative, int b);
 	int    setVolume(byte vol);
 	bool   startSound(int sound, MidiDriver *midi);
-	uint32  getMusicTimer();
+	int    getMusicTimer();
 
 public:
 	// MidiDriver interface
