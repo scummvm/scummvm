@@ -228,9 +228,14 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		_scummVars[VAR_CAMERA_ACCEL_Y] = _scummVars[110];
 	}
 
-	// Sync with current config setting
-	if (_version >= 7)
-		VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
+	// With version 22, we replaced the scale items with scale slots. So when
+	// loading such an old save game, try to upgrade the old to new format.
+	if (hdr.ver < VER(22)) {
+		// Convert all rtScaleTable resources to matching scale items
+		for (i = 1; i < res.num[rtScaleTable]; i++) {
+			convertScaleTableToScaleSlot(i);
+		}
+	}
 
 	// We could simply dirty colours 0-15 for 16-colour games -- nowadays
 	// they handle their palette pretty much like the more recent games
@@ -290,15 +295,6 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// Reset charset mask
 	_charset->_hasMask = false;
 
-	// With version 22, we replaced the scale items with scale slots. So when
-	// loading such an old save game, try to upgrade the old to new format.
-	if (hdr.ver < VER(22)) {
-		// Convert all rtScaleTable resources to matching scale items
-		for (i = 1; i < res.num[rtScaleTable]; i++) {
-			convertScaleTableToScaleSlot(i);
-		}
-	}
-
 	_lastCodePtr = NULL;
 	_drawObjectQueNr = 0;
 	_verbMouseOver = 0;
@@ -306,6 +302,13 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	cameraMoved();
 
 	initBGBuffers(_roomHeight);
+
+	if (VAR_ROOM_FLAG != 0xFF)
+		VAR(VAR_ROOM_FLAG) = 1;
+
+	// Sync with current config setting
+	if (_version >= 7)
+		VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
 
 	CHECK_HEAP
 	debug(1, "State loaded from '%s'", filename);

@@ -625,7 +625,7 @@ void ScummEngine::ensureResourceLoaded(int type, int i) {
 
 	loadResource(type, i);
 
-	if (VAR_ROOM_FLAG != 0xFF)
+	if (_version == 5)
 		if (type == rtRoom && i == _roomResource)
 			VAR(VAR_ROOM_FLAG) = 1;
 }
