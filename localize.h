@@ -18,7 +18,8 @@
 #ifndef LOCALIZE_H
 #define LOCALIZE_H
 
-#include "hash_map.h"
+#include <map>
+#include <string>
 
 class Localizer {
 public:
@@ -32,7 +33,7 @@ private:
 
   static Localizer *instance_;
 
-  typedef std::hash_map<std::string, std::string> string_map;
+  typedef std::map<std::string, std::string> string_map;
   string_map entries_;
 };
 

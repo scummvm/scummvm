@@ -19,7 +19,7 @@
 #define RESOURCE_H
 
 #include "lab.h"
-#include "hash_map.h"
+#include "map"
 #include <list>
 #include <string>
 
@@ -114,7 +114,7 @@ private:
 
   const Lab *findFile(const char *filename) const;
 
-  typedef std::hash_map<std::string, Resource *> cache_type;
+  typedef std::map<std::string, Resource *> cache_type;
   cache_type cache_;
 
   // Shut up pointless g++ warning

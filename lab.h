@@ -20,7 +20,7 @@
 
 #include <string>
 #include <cstdio>
-#include "hash_map.h"
+#include <map>
 
 class Block {
 public:
@@ -60,7 +60,7 @@ private:
   };
 
   std::FILE *f_;
-  typedef std::hash_map<std::string, LabEntry> file_map_type;
+  typedef std::map<std::string, LabEntry> file_map_type;
   file_map_type file_map_;
 
   file_map_type::const_iterator find_filename(const char *filename) const;

@@ -164,9 +164,6 @@
 				RelativePath="engine.h">
 			</File>
 			<File
-				RelativePath="hash_map.h">
-			</File>
-			<File
 				RelativePath="keyframe.cpp">
 			</File>
 			<File
