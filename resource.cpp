@@ -201,7 +201,7 @@ bool Scumm::openResourceFile(const char *filename)
 
 void Scumm::askForDisk(const char *filename)
 {
-	error("Cannot find '%s'", filename);
+	error("ask Cannot find '%s'", filename);
 }
 
 void Scumm::readIndexFile()

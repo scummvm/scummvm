@@ -530,6 +530,11 @@ int GameDetector::detectMain(int argc, char **argv)
 	if (!_gameDataPath) {
 		warning("No path was provided. Assuming the data files are in the current directory");
 		_gameDataPath = Scumm::Strdup("");
+	} else if (_gameDataPath[strlen(_gameDataPath)-1] != '/' && _gameDataPath[strlen(_gameDataPath)-1] != '\\') {
+		char slashless[1024];	/* Append slash to path */
+		strcpy(slashless, _gameDataPath);
+		_gameDataPath = (char *)malloc((strlen(slashless) + 1) * sizeof(char));
+		sprintf(_gameDataPath, "%s/", slashless);
 	}
 
 	if (_amiga)
