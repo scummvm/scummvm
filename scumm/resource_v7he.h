@@ -134,7 +134,9 @@ class Win32ResExtractor {
  * Structures 
  */
 
+#if !defined (WIN32)
 #define PACKED __attribute__ ((packed))
+#endif
 #pragma pack(1) 
 
 	struct WinLibrary {
