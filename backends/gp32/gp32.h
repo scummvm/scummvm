@@ -115,6 +115,10 @@ public:
 	void grab_overlay(int16 *buf, int pitch);
 	void copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h);
 
+	// Savefiles
+	SaveFileManager *get_savefile_manager();
+
+
 	static OSystem *create(int gfx_mode, bool full_screen);
 private:
 	typedef void ScalerProc(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,

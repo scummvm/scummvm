@@ -85,38 +85,12 @@ struct SaveLoadEntry {
 	uint8 maxVersion;
 };
 
-struct SerializerStream {
-#ifdef NONSTANDARD_SAVE
-	void *context;
-
-	bool fopen(const char *filename, const char *mode);
-	void fclose();
-	int fread(void *buf, int size, int cnt);
-	int fwrite(void *buf, int size, int cnt);
-#else
-	FILE *out;
-
-	FILE *fopen(const char *filename, const char *mode) {
-		return out = ::fopen(filename, mode);
-	}
-	void fclose() {
-		::fclose(out);
-	}
-	int fread(void *buf, int size, int cnt) {
-		return ::fread(buf, size, cnt, out);
-	}
-	int fwrite(void *buf, int size, int cnt) {
-		return ::fwrite(buf, size, cnt, out);
-	}
-#endif
-};
-
 typedef int SerializerSaveReference(void *me, byte type, void *ref);
 typedef void *SerializerLoadReference(void *me, byte type, int ref);
 
 class Serializer {
 public:
-	Serializer(SerializerStream stream, bool saveOrLoad, uint32 savegameVersion)
+	Serializer(SaveFile *stream, bool saveOrLoad, uint32 savegameVersion)
 		: _save_ref(0), _load_ref(0), _ref_me(0),
 		  _saveLoadStream(stream), _saveOrLoad(saveOrLoad),
 		  _savegameVersion(savegameVersion)
@@ -146,7 +120,7 @@ public:
 	void loadBytes(void *b, int len);
 	
 protected:
-	SerializerStream _saveLoadStream;
+	SaveFile *_saveLoadStream;
 	bool _saveOrLoad;
 	uint32 _savegameVersion;
 

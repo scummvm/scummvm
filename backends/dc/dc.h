@@ -84,6 +84,9 @@ class OSystem_Dreamcast : public OSystem {
   virtual void unlock_mutex(void *mutex);
   virtual void delete_mutex(void *mutex);
 
+  // Savefile handling
+  virtual SaveFileManager *get_savefile_manager();
+
 
   static OSystem *create();
 

@@ -240,7 +240,6 @@
 	#define CDECL	
 	#define SCUMM_NEED_ALIGNMENT
 	#define SCUMM_LITTLE_ENDIAN	
-	#define NONSTANDARD_SAVE	
 
   #define scumm_stricmp stricmp
   #define CHECK_HEAP

@@ -439,13 +439,28 @@ public:
 	bool _saveLoadCompatible;
 	char _saveLoadName[32];
 
-	bool saveState(int slot, bool compat);
-	bool loadState(int slot, bool compat);
+	bool saveState(int slot, bool compat, SaveFileManager *mgr);
+	bool loadState(int slot, bool compat, SaveFileManager *mgr);
+	bool saveState(int slot, bool compat)
+	{
+		SaveFileManager *mgr = _system->get_savefile_manager();
+		bool result = saveState(slot, compat, mgr);
+		delete mgr;
+		return result;
+	}
+	bool loadState(int slot, bool compat)
+	{
+		SaveFileManager *mgr = _system->get_savefile_manager();
+		bool result = loadState(slot, compat, mgr);
+		delete mgr;
+		return result;
+	}
 	void saveOrLoad(Serializer *s, uint32 savegameVersion);
 
-	bool getSavegameName(int slot, char *desc);
+	bool getSavegameName(int slot, char *desc, SaveFileManager *mgr);
 	void makeSavegameName(char *out, int slot, bool compatible);
 	void saveLoadResource(Serializer *ser, int type, int index);
+	void listSavegames(bool *marks, int num, SaveFileManager *mgr);
 
 	/* Heap and memory management */
 	uint32 _maxHeapThreshold, _minHeapThreshold;

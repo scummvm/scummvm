@@ -24,6 +24,7 @@
 #define COMMON_SYSTEM_H
 
 #include "scummsys.h"
+#include "savefile.h"
 
 class Timer;
 
@@ -179,6 +180,12 @@ public:
 		r = (((color>>11)&0x1F) << 3);
 		g = (((color>>5)&0x3F) << 2);
 		b = ((color&0x1F) << 3);
+	}
+
+	// Savefile management
+	virtual SaveFileManager *get_savefile_manager()
+	{
+		return new SaveFileManager();
 	}
 };
 

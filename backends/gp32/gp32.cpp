@@ -1221,26 +1221,47 @@ extern "C" int write(int fd, void *p, size_t n);
 int write(int fd, void *p, size_t n) { return 0; } //ph0x hack!
 
 // fixme - unnecessary?
-int SerializerStream::fwrite(void *buf, int size, int cnt) {
-	// implement me
-	return ::fwrite(buf, size, cnt, (FILE*)context);
+class GP32SaveFile : public SaveFile {
+private:
+	FILE *fh;
+public:
+	GP32SaveFile(FILE *f) : fh(f) { }
+
+	~GP32SaveFile();
+
+	int fread(void *buf, int size, int cnt);
+	int fwrite(void *buf, int size, int cnt);
 }
 
-bool SerializerStream::fopen(const char *filename, const char *mode) {
-	// implement me
-	(FILE*)context = ::fopen(filename, mode);
-	//if (tolower(mode[0])=='w') 	error("Autosaving..");
-	return context != NULL;
+class GP32SaveFileManager : public SaveFileManager {
+	SaveFile *open_savefile(const char *filename, bool saveOrLoad);
 }
 
-void SerializerStream::fclose() {
+int GP32SaveFile::fwrite(void *buf, int size, int cnt) {
 	// implement me
-	::fclose((FILE*)context);
+	return ::fwrite(buf, size, cnt, fh);
 }
-int SerializerStream::fread(void *buf, int size, int cnt) {
-	// implement me
-	return 	::fread(buf, size, cnt, (FILE*)context);
 
+SaveFile GP32SaveFileManager::open_savefile(const char *filename,
+					    bool saveOrLoad) {
+	// implement me
+	FILE *fh = ::fopen(filename, (saveOrLoad? "wb":"rb"));
+	//if (saveOrLoad) 	error("Autosaving..");
+	return fh? new GP32SaveFile(fh) : NULL;
+}
+
+void GP32SaveFile::~GP32SaveFile() {
+	// implement me
+	::fclose(fh);
+}
+int GP32SaveFile::fread(void *buf, int size, int cnt) {
+	// implement me
+	return 	::fread(buf, size, cnt, fh);
+
+}
+
+SaveFileManager *OSystem_GP32::get_savefile_manager() {
+	return new GP32SaveFileManager();
 }
 
 // Converts 8bit rgb values to a GP32 palette value 

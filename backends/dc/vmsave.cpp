@@ -155,6 +155,33 @@ static bool tryLoad(char *&buffer, int &size, const char *filename, int vm)
   return false;
 }
 
+static void tryList(const char *prefix, bool *marks, int num, int vm)
+{
+  struct vmsinfo info;
+  struct superblock super;
+  struct dir_iterator iter;
+  struct dir_entry de;
+  int pl = strlen(prefix);
+
+  if(!vmsfs_check_unit(vm, 0, &info))
+    return;
+  if(!vmsfs_get_superblock(&info, &super))
+    return;
+  vmsfs_open_dir(&super, &iter);
+  while(vmsfs_next_dir_entry(&iter, &de))
+    if(de.entry[0]) {
+      char buf[16], *endp = NULL;
+      strncpy(buf, (char *)de.entry+4, 12);
+      buf[12] = 0;
+      int l = strlen(buf);
+      long i = 42;
+      if(l > pl && !strncmp(buf, prefix, pl) &&
+	 (i = strtol(buf+pl, &endp, 10))>=0 && i<num &&
+	 (endp - buf) == l)
+	marks[i] = true;
+    }
+}
+
 vmsaveResult writeSaveGame(const char *gamename, const char *data, int size,
 			   const char *filename, class Icon &icon)
 {
@@ -190,104 +217,130 @@ bool readSaveGame(char *&buffer, int &size, const char *filename)
 }
 
 
-struct vmStreamContext {
+class VMSave : public SaveFile {
+private:
   bool issave;
   char *buffer;
   int pos, size;
   char filename[16];
-};
 
-bool SerializerStream::fopen(const char *filename, const char *mode)
-{
-  vmStreamContext *c = new vmStreamContext;
-  context = c;
-  if(strchr(mode, 'w')) {
-    c->issave = true;
-    strncpy(c->filename, filename, 16);
-    c->pos = 0;
-    c->buffer = new char[c->size = MAX_SAVE_SIZE];
-    return true;
-  } else if(readSaveGame(c->buffer, c->size, filename)) {
-    if(c->size > 0 && c->buffer[0] != 'S') {
+public:
+  VMSave(const char *_filename, bool _saveOrLoad) 
+    : issave(_saveOrLoad), pos(0), buffer(NULL)
+  {
+    strncpy(filename, _filename, 16);
+    if(issave)
+      buffer = new char[size = MAX_SAVE_SIZE];
+  }
+
+  ~VMSave();
+
+  virtual int fread(void *buf, int size, int cnt);
+  virtual int fwrite(void *buf, int size, int cnt);
+
+  bool readSaveGame()
+  { return ::readSaveGame(buffer, size, filename); }
+
+  void tryUncompress()
+  {
+    if(size > 0 && buffer[0] != 'S') {
       // Data does not start with "SCVM".  Maybe compressed?
       char *expbuf = new char[MAX_SAVE_SIZE];
       unsigned long destlen = MAX_SAVE_SIZE;
-      if(!uncompress((Bytef*)expbuf, &destlen, (Bytef*)c->buffer, c->size)) {
-	delete(c->buffer);
-	c->buffer = expbuf;
-	c->size = destlen;
+      if(!uncompress((Bytef*)expbuf, &destlen, (Bytef*)buffer, size)) {
+	delete(buffer);
+	buffer = expbuf;
+	size = destlen;
       } else delete expbuf;
     }
-    c->issave = false;
-    c->pos = 0;
-    return true;
+  }
+};
+
+class VMSaveManager : public SaveFileManager {
+  virtual SaveFile *open_savefile(const char *filename, bool saveOrLoad);
+  virtual void list_savefiles(const char *prefix, bool *marks, int num);
+};
+
+SaveFile *VMSaveManager::open_savefile(const char *filename,
+				       bool saveOrLoad)
+{
+  VMSave *s = new VMSave(filename, saveOrLoad);
+  if(saveOrLoad)
+    return s;
+  else if(s->readSaveGame()) {
+    s->tryUncompress();
+    return s;
   } else {
-    delete c;
-    context = NULL;
-    return false;
+    delete s;
+    return NULL;
   }
 }
 
-void SerializerStream::fclose()
+VMSave::~VMSave()
 {
   extern const char *gGameName;
   extern Icon icon;
 
-  if(context) {
-    vmStreamContext *c = (vmStreamContext *)context;
-    if(c->issave) {
-      if(c->pos) {
-	// Try compression
-	char *compbuf = new char[c->pos];
-	unsigned long destlen = c->pos;
-	if(!compress((Bytef*)compbuf, &destlen, (Bytef*)c->buffer, c->pos)) {
-	  delete c->buffer;
-	  c->buffer = compbuf;
-	  c->pos = destlen;
-	} else delete compbuf;
-      }
-      displaySaveResult(writeSaveGame(gGameName, c->buffer,
-				      c->pos, c->filename, icon));
+  if(issave) {
+    if(pos) {
+      // Try compression
+      char *compbuf = new char[pos];
+      unsigned long destlen = pos;
+      if(!compress((Bytef*)compbuf, &destlen, (Bytef*)buffer, pos)) {
+	delete buffer;
+	buffer = compbuf;
+	pos = destlen;
+      } else delete compbuf;
     }
-    delete c->buffer;
-    delete c;
-    context = NULL;
+    displaySaveResult(writeSaveGame(gGameName, buffer,
+				    pos, filename, icon));
   }
+  delete buffer;
 }
 
-int SerializerStream::fread(void *buf, int size, int cnt)
+int VMSave::fread(void *buf, int sz, int cnt)
 {
-  vmStreamContext *c = (vmStreamContext *)context;
-
-  if (!c || c->issave)
+  if (issave)
     return -1; 
 
-  int nbyt = size*cnt;
-  if (c->pos + nbyt > c->size) {
-    cnt = (c->size - c->pos)/size;
-    nbyt = size*cnt;
+  int nbyt = sz*cnt;
+  if (pos + nbyt > size) {
+    cnt = (size - pos)/sz;
+    nbyt = sz*cnt;
   }
   if (nbyt)
-    memcpy(buf, c->buffer + c->pos, nbyt);
-  c->pos += nbyt;
+    memcpy(buf, buffer + pos, nbyt);
+  pos += nbyt;
   return cnt;
 }
 
-int SerializerStream::fwrite(void *buf, int size, int cnt)
+int VMSave::fwrite(void *buf, int sz, int cnt)
 {
-  vmStreamContext *c = (vmStreamContext *)context;
-
-  if (!c || !c->issave)
+  if (!issave)
     return -1;
 
-  int nbyt = size*cnt;
-  if (c->pos + nbyt > c->size) {
-    cnt = (c->size - c->pos)/size;
-    nbyt = size*cnt;
+  int nbyt = sz*cnt;
+  if (pos + nbyt > size) {
+    cnt = (size - pos)/sz;
+    nbyt = sz*cnt;
   }
   if (nbyt)
-    memcpy(c->buffer + c->pos, buf, nbyt);
-  c->pos += nbyt;
+    memcpy(buffer + pos, buf, nbyt);
+  pos += nbyt;
   return cnt;
 }
 
+
+void VMSaveManager::list_savefiles(const char *prefix,
+				   bool *marks, int num)
+{
+  memset(marks, false, num*sizeof(bool));
+  
+  for(int i=0; i<24; i++)
+    tryList(prefix, marks, num, i);
+}
+
+SaveFileManager *OSystem_Dreamcast::get_savefile_manager()
+{
+  return new VMSaveManager();
+}

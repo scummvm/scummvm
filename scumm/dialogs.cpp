@@ -406,11 +406,19 @@ void SaveLoadDialog::fillList()
 	ScummVM::StringList l;
 	char name[32];
 	int i = _saveMode ? 1 : 0;
+	bool avail_saves[81];
+	SaveFileManager *mgr = _scumm->_system->get_savefile_manager();
 
+	_scumm->listSavegames(avail_saves, 81, mgr);
 	for (; i <= 80; i++) {		// 80 - got this value from the old GUI
-		_scumm->getSavegameName(i, name);
+		if(avail_saves[i])
+			_scumm->getSavegameName(i, name, mgr);
+		else
+			name[0] = 0;
 		l.push_back(name);
 	}
+
+	delete mgr;
 
 	_savegameList->setList(l);
 	_savegameList->setNumberingMode(_saveMode ? kListNumberingOne : kListNumberingZero);
