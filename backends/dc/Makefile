@@ -2,7 +2,7 @@
 
 ronindir = /usr/local/ronin
 
-# BUILD_PLUGINS = 1
+BUILD_PLUGINS = 1
 
 srcdir = ../..
 VPATH = $(srcdir)
@@ -28,6 +28,8 @@ HAVE_GCC3 = true
 
 ifdef BUILD_PLUGINS
 DEFINES += -DDYNAMIC_MODULES
+PRE_OBJS_FLAGS = -Wl,--whole-archive
+POST_OBJS_FLAGS = -Wl,--no-whole-archive
 endif
 
 OBJS :=	dcmain.o time.o display.o audio.o input.o selector.o icon.o \
@@ -39,4 +41,14 @@ include $(srcdir)/Makefile.common
 
 scummvm.bin : scummvm.elf
 	sh-elf-objcopy -S -R .stack -O binary $< $@
+
+SCUMMVM.BIN : scummvm.bin
+	scramble $< $@
+
+plugin_dist :
+	find . -name '*.plg' | while read p; do \
+	  sh-elf-strip -g -o "`basename \"$$p\" | tr '[:lower:]' '[:upper:]'`" "$$p"; \
+	done
+
+dist : SCUMMVM.BIN plugins plugin_dist
 

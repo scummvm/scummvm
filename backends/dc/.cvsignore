@@ -14,4 +14,6 @@ common
 base
 backends
 scummvm.elf
-*.plg
+scummvm.bin
+SCUMMVM.BIN
+*.PLG
