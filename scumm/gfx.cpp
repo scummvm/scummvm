@@ -26,6 +26,11 @@
 #include "scumm/resource.h"
 #include "scumm/usage_bits.h"
 
+#if defined(__PALM_OS__)
+#include "arm/native.h"
+#include "arm/macros.h"
+#endif
+
 namespace Scumm {
 
 static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
@@ -447,6 +452,19 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 	byte *dst = _compositeBuf + x + y * _vm->_screenWidth;
 	const byte *text = (byte *)_textSurface.pixels + x + y * _textSurface.pitch;
 
+#ifdef __PALM_OS__
+	ARM_START(DrawStripType)
+		ARM_ADDM(width)
+		ARM_ADDM(height)
+		ARM_ADDM(src)
+		ARM_ADDM(dst)
+		ARM_ADDM(text)
+		ARM_ADDV(_vm_screenWidth, _vm->_screenWidth)
+		ARM_ADDV(vs_pitch, vs->pitch)
+		ARM_ADDV(_textSurface_pitch, _textSurface.pitch)
+		PCE_CALL(PNO_DRAWSTRIP, ARM_DATA())
+	ARM_CONTINUE()
+#endif
 	// Compose the text over the game graphics
 	for (int h = 0; h < height; ++h) {
 		for (int w = 0; w < width; ++w) {
@@ -2744,6 +2762,15 @@ void ScummEngine::transitionEffect(int a) {
  * dissolveEffect(virtsrc[0].width, 1) produces a line-by-line dissolve
  */
 void ScummEngine::dissolveEffect(int width, int height) {
+#ifdef __PALM_OS__
+	// Remove this dissolve effect for now on PalmOS since it is a bit
+	// too slow using 68k emulation
+	if (width == 1 && height == 1) {
+		waitForTimer(30);
+		return;
+	}
+#endif
+
 	VirtScreen *vs = &virtscr[0];
 	int *offsets;
 	int blits_before_refresh, blits;
