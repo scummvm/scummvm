@@ -161,10 +161,13 @@ FilesystemNode *POSIXFilesystemNode::parent() const {
 		const char *end = lastPathComponent(_path);
 
 		p->_path = String(start, end - start);
-		p->_isValid = true;
-		p->_isDirectory = true;
 		p->_displayName = lastPathComponent(p->_path);
+	} else {
+		p->_path = _path;
+		p->_displayName = _displayName;
 	}
+	p->_isValid = true;
+	p->_isDirectory = true;
 	return p;
 }
 
