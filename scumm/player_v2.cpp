@@ -589,10 +589,15 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				break;
 
 			case 0xfd: // clear other channel
-				value = READ_LE_UINT16 (script_ptr);
-				debug(9, "clear channel %d", value/50);
+				value = READ_LE_UINT16 (script_ptr) / sizeof (ChannelInfo);
+				debug(9, "clear channel %d", value);
 				script_ptr += 2;
-				channel = &_channels[value / sizeof(ChannelInfo)];
+				// In Indy3, when traveling to Venice a command is
+				// issued to clear channel 4, which is OOB. So, we
+				// check first.
+				if (value >= ARRAYSIZE (_channels))
+					break;
+				channel = &_channels[value];
 				// fall through
 
 			case 0xfa: // clear current channel
