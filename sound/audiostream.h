@@ -83,6 +83,7 @@ public:
 class WrappedAudioInputStream : public AudioInputStream {
 public:
 	virtual void append(const byte *data, uint32 len) = 0;
+	virtual void finish() = 0;
 };
 
 class ZeroInputStream : public AudioInputStream {

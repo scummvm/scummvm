@@ -88,13 +88,12 @@ public:
 };
 
 class ChannelStream : public Channel {
-	bool _finished;
 public:
 	ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan);
-	void mix(int16 *data, uint len);
 	void append(void *sound, uint32 size);
 	bool isMusicChannel() const		{ return true; }
-	void finish()					{ _finished = true; }
+
+	void finish();
 };
 
 #ifdef USE_MAD
@@ -523,11 +522,11 @@ ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *soun
 		_input = makeLinearInputStream(flags, _ptr, size, 0, 0);
 	}
 
-	// Get a rate converter instance
-	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
-
 	if (!(flags & SoundMixer::FLAG_AUTOFREE))
 		_ptr = 0;
+
+	// Get a rate converter instance
+	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
 }
 
 ChannelRaw::~ChannelRaw() {
@@ -544,35 +543,18 @@ ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle,
 	_input = makeWrappedInputStream(flags, buffer_size);
 	
 	// Append the initial data
-	((WrappedAudioInputStream *)_input)->append((const byte *)sound, size);
+	append(sound, size);
 
 	// Get a rate converter instance
 	_converter = makeRateConverter(rate, mixer->getOutputRate(), _input->isStereo(), (flags & SoundMixer::FLAG_REVERSE_STEREO) != 0);
+}
 
-	_finished = false;
+void ChannelStream::finish() {
+	((WrappedAudioInputStream *)_input)->finish();
 }
 
 void ChannelStream::append(void *data, uint32 len) {
 	((WrappedAudioInputStream *)_input)->append((const byte *)data, len);
-}
-
-void ChannelStream::mix(int16 *data, uint len) {
-	assert(_input);
-	if (_input->eos()) {
-		// TODO: call drain method
-
-		// Normally, the stream stays around even if all its data is used up.
-		// This is in case more data is streamed into it. To make the stream
-		// go away, one can either stop() it (which takes effect immediately,
-		// ignoring any remaining sound data), or finish() it, which means
-		// it will finish playing before it terminates itself.
-		if (_finished) {
-			destroy();
-		}
-	} else {
-		// Invoke the parent implementation.
-		Channel::mix(data, len);
-	}
 }
 
 #ifdef USE_MAD

@@ -118,6 +118,7 @@ protected:
 	byte *_bufferEnd;
 	byte *_pos;
 	byte *_end;
+	bool _finalized;
 
 	inline bool eosIntern() const { return _end == _pos; };
 public:
@@ -126,10 +127,11 @@ public:
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	int16 read();
-	bool eos() const			{ return eosIntern(); }
+	bool eos() const			{ return _finalized; }
 	bool isStereo() const		{ return stereo; }
 
 	void append(const byte *data, uint32 len);
+	void finish()				{ _finalized = true; }
 };
 
 
@@ -145,6 +147,8 @@ WrappedMemoryStream<stereo, is16Bit, isUnsigned>::WrappedMemoryStream(uint buffe
 	_bufferStart = (byte *)malloc(bufferSize);
 	_pos = _end = _bufferStart;
 	_bufferEnd = _bufferStart + bufferSize;
+	
+	_finalized = false;
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
@@ -189,6 +193,9 @@ void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, 
 		assert((len & 3) == 0);
 	else if (is16Bit || stereo)
 		assert((len & 1) == 0);
+	
+	// Verify the stream has not been finalized (by a call to finish()) yet
+	assert(!_finalized);
 
 	if (_end + len > _bufferEnd) {
 		// Wrap-around case
