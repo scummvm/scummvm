@@ -989,7 +989,7 @@ void Scumm_v6::o6_stopScript() {
 void Scumm_v6::o6_walkActorToObj() {
 	int act, obj, dist;
 	Actor *a, *a2;
-	int x;
+	int x, y;
 
 	dist = pop();
 	obj = pop();
@@ -999,7 +999,7 @@ void Scumm_v6::o6_walkActorToObj() {
 	if (obj >= _numActors) {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return;
-		int y, dir;
+		int dir;
 		getObjectXYPos(obj, x, y, dir);
 		a->startWalkActor(x, y, dir);
 	} else {
@@ -1015,14 +1015,15 @@ void Scumm_v6::o6_walkActorToObj() {
 			return;
 		if (dist == 0) {
 			dist = a2->scalex * a2->width / 0xFF;
-			dist += dist >> 1;
+			dist += dist / 2;
 		}
 		x = a2->x;
+		y = a2->y;
 		if (x < a->x)
 			x += dist;
 		else
 			x -= dist;
-		a->startWalkActor(x, a2->y, -1);
+		a->startWalkActor(x, y, -1);
 	}
 }
 

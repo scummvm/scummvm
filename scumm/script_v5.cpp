@@ -2372,7 +2372,7 @@ void Scumm_v5::o5_walkActorTo() {
 }
 
 void Scumm_v5::o5_walkActorToActor() {
-	int x;
+	int x, y;
 	Actor *a, *a2;
 	int nr = getVarOrDirectByte(0x80);
 	int nr2 = getVarOrDirectByte(0x40);
@@ -2403,16 +2403,22 @@ void Scumm_v5::o5_walkActorToActor() {
 	if (_version <= 2)
 		dist *= 8;
 	else if (dist == 0xFF) {
-		dist = a2->scalex * a->width / 0xFF;
+		dist = a2->scalex * a2->width / 0xFF;
 		dist += dist / 2;
 	}
 	x = a2->x;
+	y = a2->y;
 	if (x < a->x)
 		x += dist;
 	else
 		x -= dist;
-	
-	a->startWalkActor(x, a2->y, -1);
+
+	if (_version <= 3) {
+		AdjustBoxResult abr = a->adjustXYToBeInBox(x, y);
+		x = abr.x;
+		y = abr.y;
+	}
+	a->startWalkActor(x, y, -1);
 }
 
 void Scumm_v5::o5_walkActorToObject() {
