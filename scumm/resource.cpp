@@ -2324,6 +2324,9 @@ void ScummEngine::readMAXS(int blockSize) {
 		_numGlobalObjects = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE();
 
+		// FIXME: Where is this set???
+		_numVerbs = 200;
+
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 
 		// FIXME: Is this correct??? A V6+ game which doesn't use object name

@@ -169,7 +169,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		/* 5C */
 		OPCODE(o6_if),
 		OPCODE(o6_ifNot),
-		OPCODE(o6_startScript),
+		OPCODE(o7_startScript),
 		OPCODE(o6_startScriptQuick),
 		/* 60 */
 		OPCODE(o6_startObject),
@@ -257,7 +257,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_getActorElevation),
 		OPCODE(o6_getVerbEntrypoint),
 		/* A4 */
-		OPCODE(o6_arrayOps),
+		OPCODE(o7_arrayOps),
 		OPCODE(o6_saveRestoreVerbs),
 		OPCODE(o6_drawBox),
 		OPCODE(o6_pop),
@@ -287,7 +287,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_talkActor),
 		OPCODE(o6_talkEgo),
 		/* BC */
-		OPCODE(o6_dimArray),
+		OPCODE(o7_dimArray),
 		OPCODE(o6_dummy),
 		OPCODE(o6_startObjectQuick),
 		OPCODE(o6_startScriptQuick2),
@@ -668,6 +668,103 @@ void ScummEngine_v7he::o7_getActorRoom() {
 		push(a->room);
 	} else
 		push(getObjectRoom(act));
+}
+
+void ScummEngine_v7he::o7_dimArray() {
+	if (_heversion <= 71) {
+		ScummEngine_v6:o6_dimArray();
+		return;
+	}
+
+	int data;
+	int type = fetchScriptByte();
+
+	switch (type) {
+	case 5:		// SO_INT_ARRAY
+		data = kIntArray;
+		break;
+	case 2:		// SO_BIT_ARRAY
+		data = kBitArray;
+		break;
+	case 3:		// SO_NIBBLE_ARRAY
+		data = kNibbleArray;
+		break;
+	case 4:		// SO_BYTE_ARRAY
+		data = kByteArray;
+		break;
+	case 7:		// SO_STRING_ARRAY
+		data = kStringArray;
+		break;
+	case 204:		// SO_UNDIM_ARRAY
+		nukeArray(fetchScriptWord());
+		return;
+	default:
+		error("o7_dimArray: default case %d", type);
+	}
+
+	defineArray(fetchScriptWord(), data, 0, pop());
+}
+
+void ScummEngine_v7he::o7_arrayOps() {
+	byte subOp = fetchScriptByte();
+	int array = fetchScriptWord();
+	int b, c, d, len;
+	ArrayHeader *ah;
+	int list[128];
+
+	switch (subOp) {
+	case 7:			// SO_ASSIGN_STRING
+		len = resStrLen(_scriptPointer);
+		ah = defineArray(array, kStringArray, 0, len + 1);
+		copyScriptString(ah->data);
+		break;
+	case 205:		// SO_ASSIGN_STRING
+		b = pop();
+		len = resStrLen(_scriptPointer);
+		ah = defineArray(array, kStringArray, 0, len + 1);
+		copyScriptString(ah->data + b);
+		break;
+	case 208:		// SO_ASSIGN_INT_LIST
+		b = pop();
+		c = pop();
+		d = readVar(array);
+		if (d == 0) {
+			defineArray(array, kIntArray, 0, b + c);
+		}
+		while (c--) {
+			writeArray(array, 0, b + c, pop());
+		}
+		break;
+	case 212:		// SO_ASSIGN_2DIM_LIST
+		b = pop();
+		len = getStackList(list, ARRAYSIZE(list));
+		d = readVar(array);
+		if (d == 0)
+			error("Must DIM a two dimensional array before assigning");
+		c = pop();
+		while (--len >= 0) {
+			writeArray(array, c, b + len, list[len]);
+		}
+		break;
+	default:
+		error("o7_arrayOps: default case %d (array %d)", subOp, array);
+	}
+}
+
+void ScummEngine_v7he::o7_startScript() {
+	if (_heversion <= 71) {
+		ScummEngine_v6:o6_startScript();
+		return;
+	}
+
+	int args[16];
+	int script, flags;
+
+	getStackList(args, ARRAYSIZE(args));
+	script = pop();
+	flags = fetchScriptByte();
+	
+	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
 }
 
 void ScummEngine_v7he::o7_startSound() {
