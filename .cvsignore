@@ -1,3 +1,5 @@
+.DS_Store
+.gdb_history
 .deps
 build.rules
 scummvm

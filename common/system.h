@@ -72,7 +72,7 @@ public:
 		PROP_GET_FULLSCREEN = 7
 	};
 	union Property {
-		char *caption;
+		const char *caption;
 		int cd_num;
 		int gfx_mode;
 		bool show_cursor;

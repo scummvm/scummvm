@@ -89,3 +89,4 @@ DEPFILES = $(wildcard $(patsubst %,%/$(DEPDIR)/*.d,$(MODULES)))
 
 distclean: clean
 	$(RM_REC) $(DEPDIRS)
+	$(RM) build.rules config.h
