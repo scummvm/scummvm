@@ -1795,7 +1795,7 @@ void ScummEngine_v6::o6_actorOps() {
 			if (a->top > top_actor) {
 				a->bottom = top_actor;
 			}
-			if (a->bottom > bottom_actor) {
+			if (a->bottom < bottom_actor) {
 				a->bottom = bottom_actor;
 			}
 		}
@@ -1934,7 +1934,7 @@ void ScummEngine_v6::o6_verbOps() {
 		b = pop();
 		a = pop();
 		// HACK Prevent puttmoon from loading no existant objects.
-		if ((_gameId == GID_PUTTPUTT) && (a < 700 || a > 900))
+		if ((_gameId == GID_PUTTPUTT) && (a < 700 || a == 776 || a > 900))
 			break;
 
 		if (slot && a != vs->imgindex) {
@@ -2978,6 +2978,7 @@ void ScummEngine_v6::o6_stopTalking() {
 	stopTalk();
 }
 
+// Humongous Entertainment games only
 void ScummEngine_v6::o6_openFile() {
 	int mode, len, slot, l, r;
 	byte filename[100];
@@ -3016,12 +3017,14 @@ void ScummEngine_v6::o6_openFile() {
 	push(slot);
 }
 
+// Humongous Entertainment games only
 void ScummEngine_v6::o6_closeFile() {
 	int slot = pop();
 	_hFileTable[slot].close();
 	warning("o6_closeFile(%d)", slot);
 }
 
+// Humongous Entertainment games only
 void ScummEngine_v6::o6_deleteFile() {
 	int len, r;
 	byte filename[100];
@@ -3041,6 +3044,7 @@ void ScummEngine_v6::o6_deleteFile() {
 	warning("stub o6_deleteFile(\"%s\")", filename + r);
 }
 
+// Humongous Entertainment games only
 void ScummEngine_v6::o6_rename() {
 	int len, r1, r2;
 	byte filename[100],filename2[100];
@@ -3082,6 +3086,7 @@ int ScummEngine_v6::readFileToArray(int slot, int32 size) {
 	return readVar(0);
 }
 
+// Humongous Entertainment games only
 void ScummEngine_v6::o6_readFile() {
 	int32 size = pop();
 	int slot = pop();
@@ -3103,6 +3108,7 @@ void ScummEngine_v6::writeFileFromArray(int slot, int resID) {
 	_hFileTable[slot].write(ptr, size);
 }
 
+// Humongous Entertainment games only
 void ScummEngine_v6::o6_writeFile() {
 	int32 size = pop();
 	int16 resID = pop();
@@ -3118,6 +3124,7 @@ void ScummEngine_v6::o6_writeFile() {
 	warning("o6_writeFile(%d, %d)", slot, resID);
 }
 
+// Humongous Entertainment games only
 void ScummEngine_v6::o6_findAllObjects() {
 	// FIXME verifty correctness of this opcode
 	int a = pop();
@@ -3256,6 +3263,7 @@ void ScummEngine_v6::o6_unknownE1() {
 	push(area);
 }
 
+// Humongous Entertainment games only
 void ScummEngine_v6::o6_unknownE0() {
 	int a = fetchScriptByte();
 	a -= 222;
@@ -3269,10 +3277,12 @@ void ScummEngine_v6::o6_unknownE0() {
 	}
 }
 
+// Humongous Entertainment games only
 void ScummEngine_v6::o6_unknownE4() {
 	warning("o6_unknownE4(%d) stub", pop());
 }
 
+// Humongous Entertainment games only
 void ScummEngine_v6::o6_unknownFA() {
 	int len, a = fetchScriptByte();
 	
@@ -3281,6 +3291,7 @@ void ScummEngine_v6::o6_unknownFA() {
 	_scriptPointer += len + 1;
 }
 
+// Humongous Entertainment games only
 void ScummEngine_v6::o6_unknownEA() {
 	int edi, esi, eax;
 	edi = pop();
@@ -3309,6 +3320,7 @@ void ScummEngine_v6::unknownEA_func(int a, int b, int c, int d, int e) {
 	warning("unknownEA_func(%d, %d, %d, %d, %d) stub", a, b, c, d, e);
 }
 
+// Humongous Entertainment games only
 void ScummEngine_v6::o6_readINI() {
 	int len;
 
@@ -3320,6 +3332,7 @@ void ScummEngine_v6::o6_readINI() {
 	
 }
 
+// Humongous Entertainment games only
 void ScummEngine_v6::o6_localizeArray() {
 	warning("stub localizeArray(%d)", pop());
 }
