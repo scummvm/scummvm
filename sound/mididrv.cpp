@@ -25,6 +25,7 @@
 #include "base/engine.h"
 #include "common/config-manager.h"
 #include "common/str.h"
+#include "common/util.h"
 #include "sound/mididrv.h"
 
 /** Internal list of all available 'midi' drivers. */

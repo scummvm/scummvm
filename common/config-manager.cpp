@@ -23,6 +23,7 @@
 #include "stdafx.h"
 
 #include "common/config-manager.h"
+#include "common/util.h"
 
 DECLARE_SINGLETON(Common::ConfigManager);
 

@@ -28,7 +28,6 @@
 #include "common/scummsys.h"
 #include "base/engine.h"
 #include "base/gameDetector.h"
-#include "base/plugins.h"
 
 #include "common/util.h"
 #include "common/stream.h"
