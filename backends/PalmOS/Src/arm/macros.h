@@ -5,26 +5,29 @@
 	// macros for ARM calls
 	#define ARM_START(TYPE) \
 			if (OPTIONS_TST(kOptDeviceARM)) { \
-				TYPE data;
+				TYPE dataARM;
 
 	#define ARM_CHECK_EXEC(test)	if (test) {
 	#define ARM_CHECK_END()			}
 
-	#define ARM_ADDP(member)		data.member = &member;
-	#define ARM_ADDM(member)		data.member = member;
-	#define ARM_ADDV(member, var)	data.member = var;
-//	#define ARM_INIT(id)			data.funcID = id;
+	#define ARM_ADDP(member)		dataARM.member = &member;
+	#define ARM_ADDM(member)		dataARM.member = member;
+	#define ARM_ADDV(member, var)	dataARM.member = var;
+	#define ARM_INIT(id)			PnoType pno = { id, &dataARM };
+	
+	#define ARM_GETM(member)		member = dataARM.member;
+	#define ARM_GETV(member, var)	var = dataARM.member;
 
-	#define ARM_DATA()		&data
+	#define PNO_DATA()		&pno
 	#define ARM_CONTINUE()	} else
 	#define ARM_END()		return; \
 						}
 
-	#define PNO_CALL(pno, data)				_PnoCall(&ARM(pno).pnoDesc, data);
-	#define PNO_CALL_RETURN(pno, data, var)	var  = _PnoCall(&ARM(pno).pnoDesc, data);
+	#define ARM_CALL(rsc, data)				ARM(rsc).alignedHeader->userDataP = (UInt32)data; \
+											PceNativeCall(ARM(rsc).pnoDesc.entry, ARM(rsc).alignedHeader);
 
-	#define PCE_CALL(pno, data)				_PceCall(ARM(pno).pnoPtr, data);
-	#define PCE_CALL_RETURN(pno, data, var)	var  = _PceCall(ARM(pno).pnoPtr, data);
+	#define ARM_CALL_RETURN(rsc, data, var)		ARM(rsc).alignedHeader->userDataP = (UInt32)data; \
+												var = PceNativeCall(ARM(rsc).pnoDesc.entry, ARM(rsc).alignedHeader);
 
 #else
 	// no ARM = empty definition
@@ -36,18 +39,15 @@
 	#define ARM_ADDP(member)
 	#define ARM_ADDM(member)
 	#define ARM_ADDV(member, var)
-//	#define ARM_INIT(id)
+	#define ARM_INIT(id)
 
 	#define ARM_DATA()
 	#define ARM_CONTINUE()
 	#define ARM_END()
 
-	#define PNO_CALL(data)
-	#define PNO_CALL_RETURN(data, var)
+	#define ARM_CALL(data)
+	#define ARM_CALL_RETURN(data, var)
 
-	#define PCE_CALL(data)
-	#define PCE_CALL_RETURN(data, var)
-	
 #endif
 
 	// Data access
@@ -63,6 +63,8 @@
 	#define  _GET8(ptr, base, member, type)		(type)((byte *)ptr + OffsetOf(base, member))[0]
 	#define  _SET8(base, member, type, var)		type var = _GET8(userData68KP, base, member, type);
 
+	#define  _MEMBER(base, member)		((byte *)userData68KP + OffsetOf(base, member))
+
 	// convenient macros to ease data access
 	#ifdef MAIN_TYPE 
 	#	define SETPTRV(type, member, var)	_SETPTR(MAIN_TYPE, member, type, var)
@@ -70,6 +72,8 @@
 	#	define SET32(type, member)			_SET32 (MAIN_TYPE, member, type, member)
 	#	define SET16(type, member)			_SET16 (MAIN_TYPE, member, type, member)
 	#	define SET8(type, member)			_SET8  (MAIN_TYPE, member, type, member)
+
+	#	define RETVAL(member)				WriteUnaligned32(_MEMBER(MAIN_TYPE, member), member)
 	#endif
 
 #endif
