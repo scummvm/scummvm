@@ -1369,13 +1369,13 @@ load_game:
 			checkV2MouseOver(_mouse);
 		}
 
-		drawBlastTexts();
 		drawBlastObjects();
+		drawBlastTexts();
 		if (_version == 8)
 			processUpperActors();
 		drawDirtyScreenParts();
-		removeBlastObjects();
 		removeBlastTexts();
+		removeBlastObjects();
 
 		if (_version <= 5)
 			playActorSounds();
