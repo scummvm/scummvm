@@ -1130,16 +1130,32 @@ uint32 SkyLogic::fnInteract(uint32 targetId, uint32 b, uint32 c) {
 	return 0;
 }
 
-uint32 SkyLogic::fnStartSub(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnStartSub");
+uint32 SkyLogic::fnStartSub(uint32 scr, uint32 b, uint32 c) {
+	_compact->mode += 4;
+	uint16 *scriptNo = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode);
+	uint16 *offset   = (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2);
+	*scriptNo = (uint16)(scr & 0xffff);
+	*offset   = (uint16)(scr >> 16);
+	return 0;
 }
 
-uint32 SkyLogic::fnTheyStartSub(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnTheyStartSub");
+uint32 SkyLogic::fnTheyStartSub(uint32 mega, uint32 scr, uint32 c) {
+	Compact *cpt = SkyState::fetchCompact(mega);
+	cpt->mode += 4;
+	uint16 *scriptNo = (uint16 *)SkyCompact::getCompactElem(cpt, C_BASE_SUB + _compact->mode);
+	uint16 *offset   = (uint16 *)SkyCompact::getCompactElem(cpt, C_BASE_SUB + _compact->mode + 2);
+	*scriptNo = (uint16)(scr & 0xffff);
+	*offset   = (uint16)(scr >> 16);
+	return 1;
 }
 
-uint32 SkyLogic::fnAssignBase(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnAssignBase");
+uint32 SkyLogic::fnAssignBase(uint32 id, uint32 scr, uint32 c) {
+	Compact *cpt = SkyState::fetchCompact(id);
+	cpt->mode = C_BASE_MODE;
+	cpt->logic = L_SCRIPT;
+	cpt->baseSub     = (uint16)(scr & 0xffff);
+	cpt->baseSub_off = (uint16)(scr >> 16);
+	return 1;
 }
 
 uint32 SkyLogic::fnDiskMouse(uint32 a, uint32 b, uint32 c) {
@@ -1229,15 +1245,17 @@ uint32 SkyLogic::fnTurnTo(uint32 dir, uint32 b, uint32 c) {
 	return 0; // drop out of script
 }
 
-uint32 SkyLogic::fnArrived(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnArrived");
+uint32 SkyLogic::fnArrived(uint32 scriptVar, uint32 b, uint32 c) {
+	_compact->extCompact->leaving = (uint16)(scriptVar & 0xffff);
+	_scriptVariables[scriptVar]++;
+	return 1;
 }
 
 uint32 SkyLogic::fnLeaving(uint32 a, uint32 b, uint32 c) {
 	_compact->extCompact->atWatch = 0;
 
 	if (_compact->extCompact->leaving) {
-		_scriptVariables[_compact->extCompact->leaving/4] -= 1; // decrement the script variable
+		_scriptVariables[_compact->extCompact->leaving/4]--;
 		_compact->extCompact->leaving = 0; // I shall do this only once
 	}
 
@@ -1250,12 +1268,21 @@ uint32 SkyLogic::fnSetAlternate(uint32 scr, uint32 b, uint32 c) {
 	return 0;
 }
 
-uint32 SkyLogic::fnAltSetAlternate(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnAltSetAlternate");
+uint32 SkyLogic::fnAltSetAlternate(uint32 target, uint32 scr, uint32 c) {
+	Compact *cpt = SkyState::fetchCompact(target);
+	cpt->extCompact->alt = (uint16)(scr & 0xffff);
+	cpt->logic = L_ALT;
+	return 0;
 }
 
-uint32 SkyLogic::fnKillId(uint32 a, uint32 b, uint32 c) {
-	error("Stub: fnKillId");
+uint32 SkyLogic::fnKillId(uint32 id, uint32 b, uint32 c) {
+	if (id) {
+		Compact *cpt = SkyState::fetchCompact(id);
+		if (cpt->status & (1 << 7))
+			_skyGrid->removeObjectFromWalk(cpt);
+		cpt->status = 0;
+	}
+	return 1;
 }
 
 uint32 SkyLogic::fnNoHuman(uint32 a, uint32 b, uint32 c) {
