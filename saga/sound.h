@@ -33,9 +33,6 @@
 namespace Saga {
 
 struct R_SOUNDBUFFER {
-	byte *res_data;
-	uint32 res_len;
-
 	uint16 s_freq;
 	int s_samplebits;
 	int s_stereo;

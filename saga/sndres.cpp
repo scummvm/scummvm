@@ -62,18 +62,9 @@ int SndRes::playVoice(uint32 voice_rn) {
 	debug(0, "SndRes::playVoice(%ld)", voice_rn);
 
 	if (GAME_GetGameType() == GID_ITE && voice_rn == 4) {
-		// The Windows version of the Wyrmkeep release of Inherit the
-		// Earth provides a separate VOC file, sound/p2_a.voc, to
-		// correct voice 4 in the intro. In the Linux version, it's
-		// called P2_A.iaf and appears to be plain raw data.
-		//
-		// In either case, use the file if available.
-		// 
-		// FIXME: In the VOC case there's a nasty 'pop' at the
-		// beginning of the sound, , and a smaller one at the end. In
-		// the IAF case, the next voice will overlap. At least part of
-		// this is because of an obvious bug in playVoice(). See the
-		// FIXME comment there.
+		// The Wyrmkeep release of Inherit the Earth provides a
+		// separate file (p2_a.voc or P2_A.iaf), to correct voice 4 in
+		// the intro. Use that, if available.
 
 		File f;
 		uint32 size;
@@ -93,18 +84,17 @@ int SndRes::playVoice(uint32 voice_rn) {
 		f.close();
 
 		if (!voc) {
-			// FIXME: Verify this!
 			snd_buffer.s_stereo = 0;
 			snd_buffer.s_samplebits = 16;
 			snd_buffer.s_freq = 22050;
-			snd_buffer.res_data = snd_res;
-			snd_buffer.res_len = size;
-			snd_buffer.s_buf = snd_res + 16760;
-			snd_buffer.s_buf_len = size - 16760;
+			snd_buffer.s_buf = snd_res;
+			snd_buffer.s_buf_len = size;
 			snd_buffer.s_signed = 1;
 			result = R_SUCCESS;
-		} else
+		} else {
 			result = loadVocSound(snd_res, size, &snd_buffer);
+			RSC_FreeResource(snd_res);
+		}
 	} else
 		result = load(_voice_ctxt, voice_rn, &snd_buffer);
 
@@ -135,15 +125,14 @@ int SndRes::load(R_RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, R_SOUNDBUFFER *snd_
 		snd_buf_i->s_freq = _snd_info.freq;
 		snd_buf_i->s_samplebits = _snd_info.sample_size;
 		snd_buf_i->s_stereo = _snd_info.stereo;
-		snd_buf_i->res_data = snd_res;
-		snd_buf_i->res_len = snd_res_len;
 		snd_buf_i->s_buf = snd_res;
 		snd_buf_i->s_buf_len = snd_res_len;
 		snd_buf_i->s_signed = 1;
 		break;
 	case R_GAME_SOUND_VOC:
-		if (loadVocSound(snd_res, snd_res_len, snd_buf_i) != R_SUCCESS) {
-			RSC_FreeResource(snd_res);
+		result = loadVocSound(snd_res, snd_res_len, snd_buf_i);
+		RSC_FreeResource(snd_res);
+		if (result != R_SUCCESS) {
 			return R_FAILURE;
 		}
 		break;
@@ -151,7 +140,6 @@ int SndRes::load(R_RSCFILE_CONTEXT *snd_ctxt, uint32 snd_rn, R_SOUNDBUFFER *snd_
 		/* Unknown sound type */
 		RSC_FreeResource(snd_res);
 		return R_FAILURE;
-		break;
 	}
 
 	return R_SUCCESS;
@@ -161,6 +149,7 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_b
 	R_VOC_HEADER_BLOCK voc_hb;
 	R_VOC_GENBLOCK voc_gb;
 	R_VOC_BLOCK1 voc_b1;
+	byte *data;
 
 	long byte_rate;
 	size_t i;
@@ -219,16 +208,18 @@ int SndRes::loadVocSound(byte *snd_res, size_t snd_res_len, R_SOUNDBUFFER *snd_b
 			snd_buf_i->s_stereo = 0;
 			snd_buf_i->s_samplebits = 8;
 			snd_buf_i->s_freq = byte_rate;
-
-			snd_buf_i->res_data = snd_res;
-			snd_buf_i->res_len = snd_res_len;
-
-			snd_buf_i->s_buf = snd_res + readS.pos();
 			snd_buf_i->s_buf_len = snd_res_len - readS.pos() - 1;	/* -1 for end block */
 
+			data = (byte *)malloc(snd_buf_i->s_buf_len);
+			if (!data) {
+				return R_FAILURE;
+			}
+
+			readS.read(data, snd_buf_i->s_buf_len);
+
+			snd_buf_i->s_buf = data;
 			snd_buf_i->s_signed = 0;
 			return R_SUCCESS;
-			break;
 		default:
 			for (i = 0; i < voc_gb.block_len; i++)
 				readS.readByte();
@@ -246,21 +237,31 @@ int SndRes::getVoiceLength(uint32 voice_rn) {
 	double ms_f;
 	int ms_i = -1;
 
-	int result;
+	int result = R_FAILURE;
 
 	assert(_init);
 
 	File f;
 
-	// The Wyrmkeep release of Inherit the Earth provides a separate VOC
-	// file, sound/p2_a.voc, to correct voice 4 in the intro. Use that, if
-	// available.
+	// The Wyrmkeep release of Inherit the Earth provides a separate file
+	// (p2_a.voc or P2_A.iaf), to correct voice 4 in the intro. Use that,
+	// if available.
 
-	if (GAME_GetGameType() == GID_ITE && voice_rn == 4 && f.open("sound/p2_a.voc")) {
-		length = f.size();
-		res_type = R_GAME_SOUND_VOC;
-		f.close();
-	} else {
+	if (GAME_GetGameType() == GID_ITE && voice_rn == 4) {
+		if (f.open("p2_a.voc")) {
+			result = R_SUCCESS;
+			length = f.size();
+			res_type = R_GAME_SOUND_VOC;
+			f.close();
+		} else if (f.open("P2_A.iaf")) {
+			result = R_SUCCESS;
+			length = f.size();
+			res_type = R_GAME_SOUND_PCM;
+			f.close();
+		}
+	}
+
+	if (result == R_FAILURE) {
 		result = RSC_GetResourceSize(_voice_ctxt, voice_rn, &length);
 
 		if (result != R_SUCCESS) {

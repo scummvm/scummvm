@@ -130,12 +130,7 @@ int Sound::playVoice(R_SOUNDBUFFER *buf) {
 	}
 #endif
 
-	// FIXME: No, no, NO! We should use buf->s_buf and buf->s_buf_len, not
-	//        buf->res_data and buf->res_len. Right now, we're playing the
-	//        resource header as if it was a sound! But we can't just
-	//        change it without also removing FLAG_AUTOFREE...
-
-	_mixer->playRaw(&_voiceHandle, buf->res_data, buf->res_len, buf->s_freq, flags);
+	_mixer->playRaw(&_voiceHandle, buf->s_buf, buf->s_buf_len, buf->s_freq, flags);
 
 	return R_SUCCESS;
 }
