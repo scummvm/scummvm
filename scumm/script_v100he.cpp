@@ -62,7 +62,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_panCameraTo),
 		/* 10 */
 		OPCODE(o6_invalid),
-		OPCODE(o72_jumpToScript),
+		OPCODE(o100_jumpToScript),
 		OPCODE(o6_setClass),
 		OPCODE(o60_closeFile),
 		/* 14 */
@@ -196,7 +196,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_stampObject),
 		OPCODE(o72_startObject),
 		/* 7C */
-		OPCODE(o72_startScript),
+		OPCODE(o100_startScript),
 		OPCODE(o6_startScriptQuick),
 		OPCODE(o80_setState),
 		OPCODE(o6_stopObjectScript),
@@ -713,6 +713,18 @@ void ScummEngine_v100he::o100_arrayOps() {
 	default:
 		error("o100_arrayOps: default case %d (array %d)", subOp, array);
 	}
+}
+
+void ScummEngine_v100he::o100_jumpToScript() {
+	int args[25];
+	int script;
+	byte flags;
+
+	getStackList(args, ARRAYSIZE(args));
+	script = pop();
+	flags = fetchScriptByte();
+	stopObjectCode();
+	runScript(script, (flags == 128 || flags == 129), (flags == 130 || flags == 129), args);
 }
 
 void ScummEngine_v100he::o100_loadSBNG() {
@@ -1969,6 +1981,17 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 	default:
 		error("o100_setSpriteInfo: Unknown case %d", subOp);
 	}
+}
+
+void ScummEngine_v100he::o100_startScript() {
+	int args[25];
+	int script;
+	byte flags;
+
+	getStackList(args, ARRAYSIZE(args));
+	script = pop();
+	flags = fetchScriptByte();
+	runScript(script, (flags == 128 || flags == 129), (flags == 130 || flags == 129), args);
 }
 
 void ScummEngine_v100he::o100_quitPauseRestart() {

@@ -1079,6 +1079,7 @@ protected:
 	void o100_setSpriteGroupInfo();
 	void o100_resourceRoutines();
 	void o100_wizImageOps();
+	void o100_jumpToScript();
 	void o100_loadSBNG();
 	void o100_dim2dim2Array();
 	void o100_paletteOps();
@@ -1086,6 +1087,7 @@ protected:
 	void o100_roomOps();
 	void o100_startSound();
 	void o100_setSpriteInfo();
+	void o100_startScript();
 	void o100_quitPauseRestart();
 	void o100_cursorCommand();
 	void o100_wait();
