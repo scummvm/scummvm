@@ -20,11 +20,11 @@
 // Initialisation Functions
 void ScummDebugger::attach(Scumm *s)
 {
-        if (_s)
-                detach();
-
-        _s = s;
-        s->_debugger = this;
+	if (_s)
+		detach();
+	
+	_s = s;
+	s->_debugger = this;
 	_frame_countdown = 1;
 	_detach_now = false;
 
@@ -50,34 +50,34 @@ void ScummDebugger::attach(Scumm *s)
 void ScummDebugger::detach()
 {
 #ifdef USE_CONSOLE
-        if (_s->_debuggerDialog)
-        	_s->_debuggerDialog->setInputeCallback(0, 0);
+	if (_s->_debuggerDialog)
+		_s->_debuggerDialog->setInputeCallback(0, 0);
 #endif
-
-        _s->_debugger = NULL;
-        _s = NULL;
+	
+	_s->_debugger = NULL;
+	_s = NULL;
 	_detach_now = false;
 }
 
 
 // Temporary execution handler
 void ScummDebugger::on_frame() {
-        if (_frame_countdown == 0)
-                return;
-        --_frame_countdown;
-
-        if (!_frame_countdown) {
-	        // Pause sound output
-        	bool old_soundsPaused = _s->_sound->_soundsPaused;
-       		_s->_sound->pauseSounds(true);
-
+	if (_frame_countdown == 0)
+		return;
+	--_frame_countdown;
+	
+	if (!_frame_countdown) {
+		// Pause sound output
+		bool old_soundsPaused = _s->_sound->_soundsPaused;
+		_s->_sound->pauseSounds(true);
+		
 		// Enter debugger
-                enter();
-
-        	_s->_sound->pauseSounds(old_soundsPaused);	// Resume previous sound state
-
+		enter();
+		
+		_s->_sound->pauseSounds(old_soundsPaused);	// Resume previous sound state
+		
 		if (_detach_now)	// Detach if we're finished with the debugger
-			detach();
+		detach();
 	}
 }
 
@@ -85,8 +85,8 @@ void ScummDebugger::on_frame() {
 #ifdef USE_CONSOLE
 bool ScummDebugger::debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon)
 {
-        ScummDebugger *debugger = (ScummDebugger *)refCon;
-
+	ScummDebugger *debugger = (ScummDebugger *)refCon;
+	
 	return debugger->RunCommand((char*)input);
 }
 #endif
@@ -115,15 +115,15 @@ void ScummDebugger::DCmd_Register(char *cmdname, DebugProc pointer) {
 void ScummDebugger::enter()
 {
 #ifdef USE_CONSOLE
-        if (!_s->_debuggerDialog) {
-                _s->_debuggerDialog = new ConsoleDialog(_s->_newgui);
+	if (!_s->_debuggerDialog) {
+		_s->_debuggerDialog = new ConsoleDialog(_s->_newgui);
 		Debug_Printf("Debugger started, type 'exit' to return to the game\n");
 	}
-
-        _s->_debuggerDialog->setInputeCallback(debuggerInputCallback, this);
-        _s->_debuggerDialog->runModal();
+	
+	_s->_debuggerDialog->setInputeCallback(debuggerInputCallback, this);
+	_s->_debuggerDialog->runModal();
 #else
-        printf("Debugger entered, please switch to this console for input.\n");
+	printf("Debugger entered, please switch to this console for input.\n");
 //	while(1) {
 //		;
 //	}
@@ -144,7 +144,7 @@ bool ScummDebugger::RunCommand(char *input) {
 	} else
 		strcpy(parm[0], input);
 
-	for(i=0;i<_dcmd_count;i++) {
+	for(i=0; i < _dcmd_count; i++) {
 		if (!strcmp(_dcmds[i].name, parm[0])) {
 			DebugProc cmd;
 
@@ -154,7 +154,7 @@ bool ScummDebugger::RunCommand(char *input) {
 	}
 
 	// It's not a command, so things get a little tricky for variables. Do fuzzy matching to ignore things like subscripts.
-	for(i=0;i<_dvar_count;i++) {
+	for(i = 0; i < _dvar_count; i++) {
 		if (!strncmp(_dvars[i].name, parm[0], strlen(_dvars[i].name))) {
 			if (num_parms > 1) {
 				// Alright, we need to check the TYPE of the variable to deref and stuff... the array stuff is a bit ugly :)
