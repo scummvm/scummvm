@@ -762,6 +762,11 @@ void Actor::showActor() {
 		}
 		costumeNeedsInit = false;
 	}
+
+	// FIXME: Evil hack to work around bug #770717
+	if (!moving && _vm->_version <= 2)
+		startAnimActor(standFrame);
+
 	moving = 0;
 	visible = true;
 	needRedraw = true;
