@@ -696,7 +696,7 @@ public:
 
 	void walkActors();
 	void playActorSounds();
-	void setActorRedrawFlags();
+	void setActorRedrawFlags(bool fg, bool bg);
 	void resetActorBgs();
 	void processActors();
 	int getActorFromPos(int x, int y);

@@ -449,13 +449,13 @@ int Scumm::scummLoop(int delta)
 		}
 
 		processDrawQue();
-		setActorRedrawFlags();
+		setActorRedrawFlags(true, true);
 		resetActorBgs();
 
 		if (!(_vars[VAR_CURRENT_LIGHTS] & LIGHTMODE_screen) &&
 		      _vars[VAR_CURRENT_LIGHTS] & LIGHTMODE_flashlight) {
 			drawFlashlight();
-			setActorRedrawFlags();
+			setActorRedrawFlags(true, false);
 		}
 
 		processActors();

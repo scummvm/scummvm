@@ -151,7 +151,7 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount)
 		_focusedWidget = w;
 	}
 
-	if (w == _focusedWidget)
+	if (w && w == _focusedWidget)
 		_focusedWidget->handleMouseDown(x - _focusedWidget->_x, y - _focusedWidget->_y, button, clickCount);
 }
 
@@ -428,8 +428,8 @@ AboutDialog::AboutDialog(NewGui *gui)
 	: Dialog (gui, 30, 20, 260, 124)
 {
 	addButton(110, 100, 40, 16, CUSTOM_STRING(23), kCloseCmd, 'C');	// Close dialog - FIXME
-	new StaticTextWidget(this, 10, 10, 240, 16, "Build " SCUMMVM_VERSION " (" SCUMMVM_CVS ")", kTextAlignCenter);
-	new StaticTextWidget(this, 10, 30, 240, 16, "ScummVM http://scummvm.sourceforge.net", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 10, 240, 16, "ScummVM " SCUMMVM_VERSION " (" SCUMMVM_CVS ")", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 30, 240, 16, "http://scummvm.sourceforge.net", kTextAlignCenter);
 	new StaticTextWidget(this, 10, 50, 240, 16, "All games (c) LucasArts", kTextAlignCenter);
 	new StaticTextWidget(this, 10, 64, 240, 16, "Except", kTextAlignCenter);
 	new StaticTextWidget(this, 10, 78, 240, 16, "Simon the Sorcerer (c) Adventuresoft", kTextAlignCenter);

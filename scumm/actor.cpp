@@ -966,7 +966,7 @@ void Actor::animateCostume()
 	}
 }
 
-void Scumm::setActorRedrawFlags()
+void Scumm::setActorRedrawFlags(bool fg, bool bg)
 {
 	int i, j;
 	uint32 bits;
@@ -974,8 +974,10 @@ void Scumm::setActorRedrawFlags()
 	if (_fullRedraw) {
 		for (j = 0; j < NUM_ACTORS; j++) {
 			Actor *a = derefActor(j);
-			a->needRedraw = true;
-			a->needBgReset = true;
+			if (fg)
+				a->needRedraw = true;
+			if (bg)
+				a->needBgReset = true;
 		}
 	} else {
 		for (i = 0; i < 40; i++) {
@@ -984,8 +986,10 @@ void Scumm::setActorRedrawFlags()
 				for (j = 0; j < NUM_ACTORS; j++) {
 					if ((bits & (1 << j)) && bits != (uint32)(1 << j)) {
 						Actor *a = derefActor(j);
-						a->needRedraw = true;
-						a->needBgReset = true;
+						if (fg)
+							a->needRedraw = true;
+						if (bg)
+							a->needBgReset = true;
 					}
 				}
 			}
