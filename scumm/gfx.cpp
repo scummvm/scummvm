@@ -1373,8 +1373,8 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
  * Draw a bitmap onto a virtual screen. This is main drawing method for room backgrounds
  * used throughout in 7.2+ HE versions.
  *
- * TODO: This function essentially is a stripped down & special cased version of
- * the generic Gdi::drawBitmap() method. We might consider merging those two.
+ * @note This function essentially is a stripped down & special cased version of
+ * the generic Gdi::drawBitmap() method.
  */
 void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip) {
 	assert(ptr);
@@ -1389,7 +1389,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip) {
 
 	code = *bmap_ptr++;
 
-	// TODO: The following few lines more or less duplicate decompressBitmap(), only
+	// The following few lines more or less duplicate decompressBitmap(), only
 	// for an area spanning multiple strips. In particular, the codecs 13 & 14
 	// in decompressBitmap call drawStripHE()
 	if (code == 150) {
@@ -1705,8 +1705,8 @@ dec_next:
 }
 
 void Gdi::copyVirtScreenBuffers(const Common::Rect &rect) {
-	int rw = rect.right - rect.left;
-	int rh = rect.bottom - rect.top;
+	const int rw = rect.width();
+	const int rh = rect.height();
 	byte *src, *dst;
 	
 	src = _vm->virtscr[0].getBackPixels(rect.left, rect.top);

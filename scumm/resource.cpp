@@ -594,7 +594,7 @@ void ScummEngine::readIndexFile() {
 			readResTypeList(rtRoomImage, MKID('RMIM'), "room image");
 			break;
 
-		case MKID('ANAM'):
+		case MKID('ANAM'):		// Used by: The Dig, FT
 			debug(9, "found ANAM block, reading audio names");
 			_numAudioNames = _fileHandle.readUint16LE();
 			_audioNames = (char*)malloc(_numAudioNames * 9);
