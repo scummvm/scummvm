@@ -272,7 +272,7 @@ int Scumm::scummLoop(int delta) {
 	_vars[VAR_DEBUGMODE] = _debugMode;
 
 	if (_features & GF_AUDIOTRACKS)
-		_vars[VAR_MI1_TIMER]+=40;
+		_vars[VAR_MI1_TIMER]+=5;
 
 	if (_saveLoadFlag) {
 		if (_saveLoadFlag==1) {

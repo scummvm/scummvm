@@ -672,11 +672,10 @@ void CharsetRenderer::printChar(int chr) {
 	if (chr=='@')
 		return;
 
-        if (_vm->_features & GF_SMALL_HEADER)
-               _ptr -= 12;
-
 	_ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
-
+	if (_vm->_features & GF_SMALL_HEADER)
+		_ptr -=12;
+	
 	_bpp = _unk2 = *_ptr;
 	_invNumBits = 8 - _bpp;
 	_bitMask = 0xFF << _invNumBits;
