@@ -968,8 +968,9 @@ void MidiDriver_QT::send(uint32 b)
 			// pitch bend changes - ignore those for now
 			break;
 
-		case 0x12:
-			// What is this ?!? Ignore it for now
+		case 0x12:	// Occurs in Scumm games
+		case 0x79:	// Occurs in Simon1
+			// What are these ?!? Ignore it for now
 			break;
 
 		default:
