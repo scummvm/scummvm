@@ -898,6 +898,10 @@ void ScummEngine_v72he::o72_getArrayDimSize() {
 	int subOp = fetchScriptByte();
 	int32 val1, val2;
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(fetchScriptWord()));
+	if (!ah) {
+		push(0);
+		return;
+	}
 
 	switch (subOp) {
 	case 1:
