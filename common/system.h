@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/util.h"
+#include "common/mutex.h"
 #include "common/rect.h"
 #include "common/savefile.h"
 #include "common/singleton.h"
@@ -541,8 +542,8 @@ public:
 	 * can use dummy implementations for these methods.
 	 */
 	//@{
-
-	typedef struct Mutex *MutexRef;
+	
+	typedef Common::MutexRef	MutexRef;
 
 	/**
 	 * Create a new mutex.
@@ -679,27 +680,8 @@ public:
 };
 
 
-
 /** The global OSystem instance. Inited in main(). */
 #define g_system	(&OSystem::instance())
-
-namespace Common {
-
-/**
- * Auxillary class to (un)lock a mutex on the stack.
- */
-class StackLock {
-	OSystem::MutexRef _mutex;
-	const char *_mutexName;
-
-	void lock();
-	void unlock();
-public:
-	StackLock(OSystem::MutexRef mutex, const char *mutexName = NULL);
-	~StackLock();
-};
-
-}	// End of namespace Common
 
 
 #endif 
