@@ -128,6 +128,12 @@ void Scumm::setBoxScale(int box, int scale)
 		b->old.scale = TO_LE_16(scale);
 }
 
+void Scumm::setBoxScaleSlot(int box, int slot)
+{
+	Box *b = getBoxBaseAddr(box);
+	b->v8.scaleSlot = TO_LE_32(slot);
+}
+
 int Scumm::getScale(int box, int x, int y)
 {
 	Box *ptr = getBoxBaseAddr(box);

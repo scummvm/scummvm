@@ -368,6 +368,13 @@ void Actor::setupActorScale()
 		return;
 
 	scale = _vm->getScale(walkbox, x, y);
+	if (_vm->_features & GF_AFTER_V8) {
+		// At least in COMI, scale values are clipped to range 1-255
+		if (scale < 1)
+			scale = 1;
+		else if (scale > 255)
+			scale = 255;
+	}
 
 	// FIXME - Hack for The Dig 'Tomb' (room 88)
 	//	Otherwise walking to the far-left door causes the actor
@@ -393,12 +400,6 @@ void Actor::setupActorScale()
 	}
 
 	if (scale > 255) {
-		if (_vm->_features & GF_AFTER_V8) {
-			// In COMI, the scale values often are bigger than 255;
-			// however, the original engine seems to just cap them at 255,
-			// hence we do the same (the result looks correct, too);
-			scale = 255;
-		} else
 			warning("Actor %d at %d, scale %d out of range", number, y, scale);
 	}
 	scalex = (byte)scale;

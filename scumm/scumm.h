@@ -864,7 +864,7 @@ public:
 	};
 	ScaleSlot _scaleSlots[20];	// FIXME - not sure if this limit is right, but based on my observations it is
 	void setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2);
-	
+	void setBoxScaleSlot(int box, int slot);
 
 	byte getNumBoxes();
 	byte *getBoxMatrixBaseAddr();
