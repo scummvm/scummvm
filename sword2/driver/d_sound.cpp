@@ -1196,7 +1196,7 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 			primaryStream = 1;
 
 		musFading[primaryStream] = 0;
-		g_engine->_mixer->endStream(soundHandleMusic[primaryStream]);
+		g_engine->_mixer->stop(soundHandleMusic[primaryStream]);
 		musStreaming[primaryStream] = 0;
 		soundHandleMusic[primaryStream] = 0;
 	}
@@ -1754,7 +1754,7 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 			if (musFading[i]) {
 				if (musFading[i] < 0) {
 					if (++musFading[i] == 0) {
-						g_engine->_mixer->endStream(soundHandleMusic[i]);
+						g_engine->_mixer->stop(soundHandleMusic[i]);
 						musStreaming[i] = 0;
 						musLooping[i] = 0;
 						soundHandleMusic[i] = 0;
