@@ -25,6 +25,26 @@
 
 #include "icon.h"
 
+void Icon::create_vmicon(void *buffer)
+{
+  unsigned short *pal = (unsigned short *)buffer;
+  unsigned char *pix = ((unsigned char *)buffer)+32;
+
+  for(int n = 0; n<16; n++) {
+    int p = palette[n];
+    pal[n] = 
+      ((p>>16)&0xf000)|
+      ((p>>12)&0x0f00)|
+      ((p>> 8)&0x00f0)|
+      ((p>> 4)&0x000f);
+  }
+
+  for(int line = 0; line < 32; line++) {
+    memcpy(pix, &bitmap[32/2*(31-line)], 32/2);
+    pix += 32/2;
+  }
+}
+
 void Icon::create_texture()
 {
   static char tt[16] = { 0, 1, 4, 5, 16, 17, 20, 21,
