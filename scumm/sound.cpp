@@ -191,7 +191,7 @@ void Sound::playSound(int soundID, int offset) {
 			skip = 0;
 
 		musicFile.seek(+28, SEEK_CUR);
-		if (musicFile.readUint32LE() == MKID('SGEN')) {
+		if (musicFile.readUint32LE() == TO_LE_32(MKID('SGEN'))) {
 			// Skip to correct music header
 			skip *= 21;
 
@@ -646,22 +646,22 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 		}
 
 		if (_vm->_features & GF_HUMONGOUS) {
-			int extra = 0;;
+			int extra = 0;
 			_sfxMode |= mode;
 
-			// SKIP TALK (8) HSHD (24)
+			// Skip the TALK (8) and HSHD (24) chunks
 			_sfxFile->seek(offset + 32, SEEK_SET);
 
-			if (_sfxFile->readUint32LE() == MKID('SBNG')) {
-				// SKIP SBNG
+			if (_sfxFile->readUint32LE() == TO_LE_32(MKID('SBNG'))) {
+				// Skip the SBNG, so we end up at the SDAT chunk
 				extra = _sfxFile->readUint32BE();
-				_sfxFile->seek(+extra + 8, SEEK_CUR);
-				extra += 8;
+				_sfxFile->seek(extra - 4, SEEK_CUR);
+				size = _sfxFile->readUint32BE() - 8;
 			} else {
 				_sfxFile->seek(+4, SEEK_CUR);
+				size = b - 40;
 			}
 
-			size = b - 40 - extra ;
 			sound = (byte *)malloc(size);
 			_sfxFile->read(sound, size);
 			_vm->_mixer->playRaw(handle, sound, size, 11000, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
