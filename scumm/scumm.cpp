@@ -380,11 +380,13 @@ static const ScummGameSettings he_md5_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"566165a7338fa11029e7c14d94fa70d0", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo) (spyfox cd)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"0855496dde35356b1a9691e22ba84cdc", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo) (spyfox cd)", GID_HEGAME, 6, 72, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"8ffd618a776a4c0d8922bb28b09f8ce8", "Let's Explore the Airport with Buzzy (Demo) (farm cd)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"e144f5f49d9241d2a9dee2576b3d09cb", "Let's Explore the Airport with Buzzy (Demo) (spyfox cd)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
-	{"df047cc4792150f601290357566d36a6", "Freddi Fish 1: The Case of the Missing Kelp Seeds *updated)", GID_HEGAME, 6, 72, MDT_NONE,
+	{"df047cc4792150f601290357566d36a6", "Freddi Fish 1: The Case of the Missing Kelp Seeds *updated)", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, 0, 0}
