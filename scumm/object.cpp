@@ -477,10 +477,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 	if (numstrip != 0) {
 		byte flags;
 		if (_version == 8) 
-			// TODO: This makes no sense, Kirben: flag bit 4 (16 = 2^4) isn't used;
-			// even if it was, it'd probably mean something different for us than for
-			// COMI. Maybe you mean: "flags = (od.flag & 16) != 0;" ?
-			flags = (od.flag & 16);
+			flags = (od.flag & 16) == 0;
 		else if (_features & GF_HUMONGOUS)
 			// TODO: Should be read from object header
 			flags = 0;
