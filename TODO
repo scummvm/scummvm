@@ -17,20 +17,6 @@ Residual TODO list (in rough order of priority):
 
 MSVC notes:
  These things need doing (At least) for it to be compilable under MSVC..
- Get rid of stdint.h include when using MSVC
  Get rid of hash_map usage (not supported in MSVC)
- Add global include of Windows.h 
- Add global definitions of:
-	#define strcasecmp stricmp
-	#define M_PI 3.14159265
-        typedef unsigned char byte;^M
-        typedef unsigned char uint8_t;^M
-        typedef unsigned short uint16_t;^M
-        typedef unsigned long uint32_t;^M
-        typedef unsigned int uint_t;^M
-        typedef signed char int8_t;^M
-        typedef signed short int16_t;^M
-        typedef signed long int32_t;^M
- GL_UNSIGNED_SHORT_5_6_5 in bitmap.cc does not exist in MSVC
  round() function in lua.cpp's check_int does not exist in MSVC
  vsscanf function does not exist in MSVC (already worked around)
