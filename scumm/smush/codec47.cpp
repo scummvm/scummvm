@@ -66,26 +66,23 @@
 		(dst)[1] = val;	\
 	} while (0)
 
-#ifdef __PALM_OS__
-static int16 *codec47_table;
-#else
-static int32 codec47_table_small1[] = {
+static int8 codec47_table_small1[] = {
   0, 1, 2, 3, 3, 3, 3, 2, 1, 0, 0, 0, 1, 2, 2, 1,
 };
 
-static int32 codec47_table_small2[] = {
+static int8 codec47_table_small2[] = {
   0, 0, 0, 0, 1, 2, 3, 3, 3, 3, 2, 1, 1, 1, 2, 2,
 };
 
-static int32 codec47_table_big1[] = {
+static int8 codec47_table_big1[] = {
   0, 2, 5, 7, 7, 7, 7, 7, 7, 5, 2, 0, 0, 0, 0, 0,
 };
 
-static int32 codec47_table_big2[] = {
+static int8 codec47_table_big2[] = {
   0, 0, 0, 0, 1, 3, 4, 6, 7, 7, 7, 7, 6, 4, 3, 1,
 };
 
-static int16 codec47_table[] = {
+static int8 codec47_table[] = {
 		0,   0,  -1, -43,   6, -43,  -9, -42,  13, -41,
 	-16, -40,  19, -39, -23, -36,  26, -34,  -2, -33,
 	  4, -33, -29, -32,  -9, -32,  11, -31, -16, -29,
@@ -138,14 +135,14 @@ static int16 codec47_table[] = {
 	 23,  36, -19,  39,  16,  40, -13,  41,   9,  42,
 	 -6,  43,   1,  43,   0,   0,   0,   0,   0,   0
 };
-#endif
 
 void Codec47Decoder::makeTablesInterpolation(int param) {
 	int32 variable1, variable2;
 	int32 b1, b2;
 	int32 value_table47_1_2, value_table47_1_1, value_table47_2_2, value_table47_2_1;
 	int32 tableSmallBig[64], tmp, s;
-	int32 *table47_1 = 0, *table47_2 = 0, *ptr_small_big;
+	int8 *table47_1 = 0, *table47_2 = 0;
+	int32 *ptr_small_big;
 	byte *ptr;
 	int i, x, y;
 
@@ -616,22 +613,4 @@ bool Codec47Decoder::decode(byte *dst, const byte *src) {
 
 	return true;
 }
-
-#ifdef __PALM_OS__
-#include "scumm_globals.h" // init globals
-void Codec47_initGlobals() {
-	GSETPTR(codec47_table_small1,	GBVARS_CODEC47TABLE_SMALL1_INDEX,	int32	, GBVARS_SCUMM)
-	GSETPTR(codec47_table_small2,	GBVARS_CODEC47TABLE_SMALL2_INDEX,	int32	, GBVARS_SCUMM)
-	GSETPTR(codec47_table_big1,	GBVARS_CODEC47TABLE_BIG1_INDEX,	int32	, GBVARS_SCUMM)
-	GSETPTR(codec47_table_big2,	GBVARS_CODEC47TABLE_BIG2_INDEX,	int32	, GBVARS_SCUMM)
-	GSETPTR(codec47_table,	GBVARS_CODEC47TABLE_INDEX,	int16	, GBVARS_SCUMM)
-}
-void Codec47_releaseGlobals() {
-	GRELEASEPTR(GBVARS_CODEC47TABLE_SMALL1_INDEX		, GBVARS_SCUMM)
-	GRELEASEPTR(GBVARS_CODEC47TABLE_SMALL2_INDEX		, GBVARS_SCUMM)
-	GRELEASEPTR(GBVARS_CODEC47TABLE_BIG1_INDEX		, GBVARS_SCUMM)
-	GRELEASEPTR(GBVARS_CODEC47TABLE_BIG2_INDEX		, GBVARS_SCUMM)
-	GRELEASEPTR(GBVARS_CODEC47TABLE_INDEX		, GBVARS_SCUMM)
-}
-#endif
 
