@@ -26,7 +26,7 @@ void TabDeleteTabs(TabType *tabP) {
 	delete tabP;
 }
 
-Err TabAddContent(FormType **frmP, TabType *tabP, const Char *nameP, UInt16 rscID) {
+Err TabAddContent(FormType **frmP, TabType *tabP, const Char *nameP, UInt16 rscID, TabProc *preInit) {
 	FormType *srcP;
 	UInt16 cnt;
 	void *objP, **dstP;
@@ -37,6 +37,11 @@ Err TabAddContent(FormType **frmP, TabType *tabP, const Char *nameP, UInt16 rscI
 	
 	dstP = (void **)frmP;
 	srcP = FrmInitForm(rscID);
+
+	if (preInit) {
+		preInit(srcP);
+	}
+
 	objNum = FrmGetNumberOfObjects(srcP);
 
 	// save tab data
@@ -49,7 +54,7 @@ Err TabAddContent(FormType **frmP, TabType *tabP, const Char *nameP, UInt16 rscI
 	tabP->tabs[tabP->count].last	= FrmGetObjectId(srcP, objNum - 1);
 	tabP->count++;
 	tabP->active = tabP->count;
-	
+
 	// create tab
 	FntSetFont(stdFont);
 	x = 4 + tabP->width;
@@ -123,6 +128,13 @@ Err TabAddContent(FormType **frmP, TabType *tabP, const Char *nameP, UInt16 rscI
 				FrmNewLabel((FormType **)dstP, id, textP, x, y, font);
 				FrmHideObject((FormType *)*dstP, FrmGetObjectIndex((FormType *)*dstP, id));
 				break;
+			}
+
+			case frmBitmapObj: {
+/*				UInt16 family = id + 1;
+				FrmNewBitmap((FormType **)dstP, id, id, x, y);
+				//FrmHideObject((FormType *)*dstP, FrmGetObjectIndex((FormType *)*dstP, id));
+*/				break;
 			}
 		}
 	}

@@ -13,9 +13,11 @@ typedef struct {
 	TabDataPtr tabs;
 } TabType, *TabPtr;
 
+typedef void (TabProc)(FormType *);
+
 TabType	*TabNewTabs		(UInt16 cnt);
 void 	 TabDeleteTabs	(TabType *tabP);
-Err 	 TabAddContent	(FormType **frmP, TabType *tabP, const Char *nameP, UInt16 rscID);
+Err 	 TabAddContent	(FormType **frmP, TabType *tabP, const Char *nameP, UInt16 rscID, TabProc *preInit = 0);
 void 	 TabSetActive	(FormType *frmP, TabType *tabP, UInt16 num);
 
 #endif
