@@ -138,23 +138,6 @@ uint16 input_bits(uint8 amount)
 
 }
 
-// RCL/RCR functions..operate on 16 bit ints only
-uint16 rcl(uint16 reg, uint16 *cflag)
-{
-        uint16 lsb = *cflag;
-        *cflag = reg >> 15;
-        return (reg << 1) | lsb;
-}
-
-uint16 rcr(uint16 reg, uint16 *cflag)
-{
-        uint16 msb = *cflag << 15;
-	*cflag = reg & 1;
-	return (reg >> 1) | msb;
-}
-
-
-
 void make_huftable(uint16 *table) 
 {
 	uint16 bitLength, i, j;
@@ -176,13 +159,9 @@ void make_huftable(uint16 *table)
 
 				uint16 b = huffCode >> (16 - bitLength);
 				uint16 a = 0;
-				uint16 carry = 0;
 
-				for (j = 0; j < bitLength; j++) {
-					b = rcr(b, &carry);
-					a = rcl(a, &carry);
-					
-				}
+				for (j = 0; j < bitLength; j++)
+					a |= ((b >> j) & 1) << (bitLength - j - 1);
 				*table++ = a;
 
 				*(table+0x1e) = (huffLength[i]<<8)|(i & 0x00FF);
@@ -191,7 +170,6 @@ void make_huftable(uint16 *table)
 		}
 	}
 }
-
 
 uint16 input_value(uint16 *table)
 {
