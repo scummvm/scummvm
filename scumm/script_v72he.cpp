@@ -668,7 +668,7 @@ const byte *ScummEngine_v72he::findWrappedBlock(uint32 tag, const byte *ptr, int
 
 		offs += READ_LE_UINT32(offs + state * sizeof(uint32));
 		offs = findResourceData(tag, offs - 8);
-;		if (offs)
+		if (offs)
 			return offs;
 
 		offs = findResourceData(MKID('DEFA'), ptr);
