@@ -343,6 +343,16 @@ int Scumm::readVar(uint var)
 		return _vars[var];
 
 	if (var & 0x8000) {
+		if (_gameId == GID_ZAK256) {
+			// Emulate a wierd hack in Zak256 to read individual
+			// bits of a normal global
+			int b = (var & 0x000F);
+			var &= 0x0FFF;
+			var >>= 4;
+			checkRange(_numVariables - 1, 0, var, "Variable %d out of range(rzb)");
+			return (_vars[ var ] & ( 1 << b ) ) ? 1 : 0;
+		}
+
 		var &= 0x7FFF;
 		checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(r)");
 		return (_bitVars[var >> 3] & (1 << (var & 7))) ? 1 : 0;
@@ -380,6 +390,19 @@ void Scumm::writeVar(uint var, int value)
 	}
 
 	if (var & 0x8000) {
+		if (_gameId == GID_ZAK256) {
+			// Emulate a wierd hack in Zak256 to read individual
+			// bits of a normal global
+			int b = (var & 0x000F);
+			var &= 0x7FFF;
+			var >>= 4;
+			checkRange(_numVariables - 1, 0, var, "Variable %d out of range(wzb)");
+			if(value)
+ 				_vars[ var ] |= ( 1 << b );
+			else
+				_vars[ var ] &= ~( 1 << b );
+			return;
+		}
 		var &= 0x7FFF;
 		checkRange(_numBitVariables - 1, 0, var, "Bit variable %d out of range(w)");
 
