@@ -21,7 +21,7 @@
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4702"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../;../../common"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="TRUE"
 				BasicRuntimeChecks="3"
@@ -467,12 +467,6 @@
 				RelativePath="..\..\gui\dialog.h">
 			</File>
 			<File
-				RelativePath="..\..\gui\font.cpp">
-			</File>
-			<File
-				RelativePath="..\..\gui\font.h">
-			</File>
-			<File
 				RelativePath="..\..\gui\launcher.cpp">
 			</File>
 			<File
@@ -483,9 +477,6 @@
 			</File>
 			<File
 				RelativePath="..\..\gui\message.h">
-			</File>
-			<File
-				RelativePath="..\..\gui\newfont.cpp">
 			</File>
 			<File
 				RelativePath="..\..\gui\newgui.cpp">
@@ -503,13 +494,35 @@
 				RelativePath="..\..\gui\options.h">
 			</File>
 			<File
-				RelativePath="..\..\gui\scummfont.cpp">
-			</File>
-			<File
 				RelativePath="..\..\gui\widget.cpp">
 			</File>
 			<File
 				RelativePath="..\..\gui\widget.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="graphics"
+			Filter="">
+			<File
+				RelativePath="..\..\graphics\animation.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\animation.h">
+			</File>
+			<File
+				RelativePath="..\..\graphics\font.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\font.h">
+			</File>
+			<File
+				RelativePath="..\..\graphics\newfont.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\scummfont.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\surface.h">
 			</File>
 		</Filter>
 	</Files>

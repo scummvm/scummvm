@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
-	Name="sword1"
-	ProjectGUID="{C8AAE83E-198B-4ECA-A877-166827953979}"
+	Name="saga"
+	ProjectGUID="{676DB4C5-9A3E-4EE1-8483-EBB79DC0700E}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="sword1_Debug"
-			IntermediateDirectory="sword1_Debug"
+			OutputDirectory="saga_Debug"
+			IntermediateDirectory="saga_Debug"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -21,7 +21,7 @@
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4702"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../;../../common"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2"
+				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="TRUE"
 				BasicRuntimeChecks="3"
@@ -38,7 +38,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/sword1.lib"/>
+				OutputFile="$(OutDir)/saga.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -54,8 +54,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="sword1_Release"
-			IntermediateDirectory="sword1_Release"
+			OutputDirectory="saga_Release"
+			IntermediateDirectory="saga_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
 			WholeProgramOptimization="FALSE">
@@ -66,7 +66,7 @@
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
 				AdditionalIncludeDirectories="../../;../../common"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2"
+				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				StringPooling="TRUE"
 				ExceptionHandling="TRUE"
 				RuntimeLibrary="0"
@@ -81,7 +81,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/sword1.lib"/>
+				OutputFile="$(OutDir)/saga.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -98,115 +98,34 @@
 	</Configurations>
 	<Files>
 		<File
-			RelativePath="..\..\sword1\animation.cpp">
+			RelativePath="..\..\saga\binread.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\animation.h">
+			RelativePath="..\..\saga\binread.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\collision.h">
+			RelativePath="..\..\saga\gamedesc.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\control.cpp">
+			RelativePath="..\..\saga\gamedesc.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\control.h">
+			RelativePath="..\..\saga\gamedesc_priv.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\debug.cpp">
+			RelativePath="..\..\saga\resfile.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\debug.h">
+			RelativePath="..\..\saga\resfile.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\eventman.cpp">
+			RelativePath="..\..\saga\resnames.h">
 		</File>
 		<File
-			RelativePath="..\..\sword1\eventman.h">
+			RelativePath="..\..\saga\saga.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sword1\logic.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword1\logic.h">
-		</File>
-		<File
-			RelativePath="..\..\sword1\memman.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword1\memman.h">
-		</File>
-		<File
-			RelativePath="..\..\sword1\menu.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword1\menu.h">
-		</File>
-		<File
-			RelativePath="..\..\sword1\mouse.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword1\mouse.h">
-		</File>
-		<File
-			RelativePath="..\..\sword1\music.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword1\music.h">
-		</File>
-		<File
-			RelativePath="..\..\sword1\object.h">
-		</File>
-		<File
-			RelativePath="..\..\sword1\objectman.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword1\objectman.h">
-		</File>
-		<File
-			RelativePath="..\..\sword1\resman.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword1\resman.h">
-		</File>
-		<File
-			RelativePath="..\..\sword1\router.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword1\router.h">
-		</File>
-		<File
-			RelativePath="..\..\sword1\screen.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword1\screen.h">
-		</File>
-		<File
-			RelativePath="..\..\sword1\sound.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword1\sound.h">
-		</File>
-		<File
-			RelativePath="..\..\sword1\staticres.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword1\sword1.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword1\sword1.h">
-		</File>
-		<File
-			RelativePath="..\..\sword1\sworddefs.h">
-		</File>
-		<File
-			RelativePath="..\..\sword1\swordres.h">
-		</File>
-		<File
-			RelativePath="..\..\sword1\text.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sword1\text.h">
+			RelativePath="..\..\saga\saga.h">
 		</File>
 	</Files>
 	<Globals>
