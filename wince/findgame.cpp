@@ -25,6 +25,20 @@ struct InstalledScummGame {
 };
 
 static const ScummGame GameList[] = {
+	{	 
+		 "Simon The Sorcerer 1 (win)",
+		 "To be tested",
+		 "", "SIMON.GME", "GAMEPC",
+		 "simon1win",
+		 0
+	},
+	{	 
+		 "Simon The Sorcerer 2 (win)",
+		 "To be tested",
+		 "", "SIMON2.GME", "GSPTR30",
+		 "simon2win",
+		 0
+	},
 	{ 
 		 "Indiana Jones 3 (new)", 
 	     "Buggy, unplayable", 
@@ -55,7 +69,7 @@ static const ScummGame GameList[] = {
 	},
 	{
 		 "Loom (VGA)",
-		 "Buggy, playable a bit",
+		 "Completable",
 		 "loomcd", "", "",
 		 "loomcd",
 		 0
@@ -137,12 +151,21 @@ static const ScummGame GameList[] = {
 
 void findGame(TCHAR*);
 int displayFoundGames(void);
+void doScan();
+void startFindGame();
 
 char gamesFound[MAX_GAMES];
 unsigned char listIndex[MAX_GAMES];
 InstalledScummGame gamesInstalled[MAX_GAMES];
 int installedGamesNumber;
 HWND hwndDlg;
+TCHAR basePath[MAX_PATH];
+TCHAR old_basePath[MAX_PATH];
+BOOL prescanning;
+
+BOOL isPrescanning() {
+	return prescanning;
+}
 
 void setFindGameDlgHandle(HWND x) {
 	hwndDlg = x;
@@ -155,6 +178,8 @@ bool loadGameSettings() {
 	int				index;
 	int				i;
 	unsigned char	references[MAX_PATH];
+
+	prescanning = FALSE;
 
 	if(RegCreateKeyEx(HKEY_CURRENT_USER, TEXT("Software\\PocketSCUMM"), 
 		 0, NULL, 0, 0, NULL, &hkey, &disposition) == ERROR_SUCCESS) {
@@ -179,6 +204,12 @@ bool loadGameSettings() {
 			 gamesFound[references[i]] = 1;
 
 		 keyType = REG_SZ;
+		 keySize = MAX_PATH;
+		 if (RegQueryValueEx(hkey, TEXT("BasePath"), NULL, &keyType, (unsigned char*)basePath, &keySize) != ERROR_SUCCESS) {
+			basePath[0] = '\0';
+			basePath[1] = '\0';
+		 }
+
 		 for (i=0; i<index; i++) {
 			 char work[100];
 			 TCHAR keyname[100];
@@ -246,27 +277,117 @@ int displayFoundGames() {
 
 }
 
+void changeScanPath() {
+	int item;
+	TCHAR path[MAX_PATH];
+
+	item = SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_GETCURSEL, 0, 0);
+	if (item == LB_ERR)
+		return;
+
+	SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_GETTEXT, item, (LPARAM)path);
+
+	if (wcscmp(path, TEXT("..")) != 0) {
+		wcscat(basePath, TEXT("\\"));
+		wcscat(basePath, path);
+	}
+	else {
+		TCHAR *work;
+		
+		work = wcsrchr(basePath, '\\');
+		*work = 0;
+		*(work + 1) = 0;
+	}
+
+	doScan();
+}
+
+void doScan() {
+	WIN32_FIND_DATA	 desc;
+	TCHAR			 searchPath[MAX_PATH];
+	HANDLE			 x;
+
+	SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_RESETCONTENT, 0, 0);
+
+	if (wcslen(basePath) != 0)
+		SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_ADDSTRING, 0, (LPARAM)TEXT(".."));
+
+	wsprintf(searchPath, TEXT("%s\\*"), basePath);
+
+	x = FindFirstFile(searchPath, &desc);
+	if (x == INVALID_HANDLE_VALUE)
+		return;
+	if (desc.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+		TCHAR *work;
+
+		work = wcsrchr(desc.cFileName, '\\');
+		SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), 
+			LB_ADDSTRING, 0, (LPARAM)(work ? work + 1 : desc.cFileName));
+	}
+	while (FindNextFile(x, &desc))
+		if (desc.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+		TCHAR *work;
+
+		work = wcsrchr(desc.cFileName, '\\');
+		SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), 
+			LB_ADDSTRING, 0, (LPARAM)(work ? work + 1 : desc.cFileName));
+	}	
+	FindClose(x);
+}
+
+void startScan() {
+	prescanning = TRUE;
+	wcscpy(old_basePath, basePath);
+	SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Choose the games root directory"));
+	SetDlgItemText(hwndDlg, IDC_SCAN, TEXT("OK"));
+	SetDlgItemText(hwndDlg, IDC_GAMEDESC, TEXT(""));
+	ShowWindow(GetDlgItem(hwndDlg, IDC_PLAY), SW_HIDE);
+	doScan();
+}
+
+void endScanPath() {
+	prescanning = FALSE;
+	SetDlgItemText(hwndDlg, IDC_SCAN, TEXT("Scan"));
+	ShowWindow(GetDlgItem(hwndDlg, IDC_PLAY), SW_SHOW);
+	startFindGame();
+}
+
+void abortScanPath() {
+	prescanning = FALSE;
+	wcscpy(basePath, old_basePath);
+	SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT(""));
+	SetDlgItemText(hwndDlg, IDC_SCAN, TEXT("Scan"));	
+	SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_RESETCONTENT, 0, 0);
+	ShowWindow(GetDlgItem(hwndDlg, IDC_PLAY), SW_SHOW);
+	displayFoundGames();
+}
+
 void startFindGame() {
-	TCHAR			fileName[MAX_PATH];
-	TCHAR			*tempo;
+	//TCHAR			fileName[MAX_PATH];
+	//TCHAR			*tempo;
 	int				i = 0;
 	int		    	index = 0;
 	HKEY			hkey;
 	DWORD			disposition, keyType, keySize, dummy;
 	unsigned char	references[MAX_GAMES];
 
+	prescanning = FALSE;
+
 	SetDlgItemText(hwndDlg, IDC_FILEPATH, TEXT("Scanning, please wait"));
 
 	SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_RESETCONTENT, 0, 0);
 
 	memset(gamesFound, 0, MAX_GAMES);
+	/*
 	GetModuleFileName(NULL, fileName, MAX_PATH);
 	tempo = wcsrchr(fileName, '\\');
 	*tempo = '\0';
 	*(tempo + 1) = '\0';
+	*/
 	installedGamesNumber = 0;
 
-	findGame(fileName);
+	//findGame(fileName);
+	findGame(basePath);
 
 	// Display the results
 	index = displayFoundGames();
@@ -289,6 +410,8 @@ void startFindGame() {
 		 RegSetValueEx(hkey, TEXT("GamesReferences"), 0, keyType, references, 
 						keySize);	
 		 keyType = REG_SZ;
+		 keySize = (wcslen(basePath) + 1) * 2;
+		 RegSetValueEx(hkey, TEXT("BasePath"), 0, keyType, (unsigned char*)basePath, keySize);
 		 for (i=0; i<index; i++) {
 			 char work[100];
 			 TCHAR keyname[100];

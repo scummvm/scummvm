@@ -27,12 +27,24 @@
 
 #define MAX(a,b) (((a)<(b)) ? (b) : (a))
 #define MIN(a,b) (((a)>(b)) ? (b) : (a))
-#define SAMPLES_PER_SEC 11025
-#define VERSION "(VM " SCUMMVM_CVS ")"
+#define POCKETSCUMM_BUILD "042102"
+
+#define VERSION "Build " POCKETSCUMM_BUILD " (VM " SCUMMVM_CVS ")"
 
 GameDetector detector;
 Gui gui;
 Scumm *g_scumm;
+
+extern void Cls();
+
+extern BOOL isPrescanning();
+extern void changeScanPath();
+extern void startScan();
+extern void endScanPath();
+extern void abortScanPath();
+
+void registry_init();
+void keypad_init();
 
 class OSystem_WINCE3 : public OSystem {
 public:
@@ -99,16 +111,24 @@ public:
 
 	static OSystem *create(int gfx_mode, bool full_screen);
 
+	// Added for hardware keys mapping
+
+	void addEventKeyPressed(int ascii_code);
+
+	void addEventRightButtonClicked();
+
 private:
 	// Windows callbacks & stuff
-	bool handleMessage();
+	//bool handleMessage();
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	
 	byte *_gfx_buf;
 	uint32 _start_time;
 	Event _event;
+	Event _last_mouse_event;
 	HMODULE hInst;
 	HWND hWnd;
+	bool _display_cursor;
 
 
 	enum {
@@ -188,6 +208,7 @@ ToolbarSelected getToolbarSelection(int, int);
 extern bool toolbar_drawn;
 extern bool draw_keyboard;
 bool hide_toolbar;
+bool hide_cursor;
 
 bool get_key_mapping;
 static char _directory[MAX_PATH];
@@ -255,12 +276,20 @@ BOOL CALLBACK SelectDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 
 	case WM_COMMAND:
 
-		if (LOWORD(wParam) == IDC_LISTAVAILABLE && HIWORD(wParam) == LBN_SELCHANGE)
-			displayGameInfo();
+		if (LOWORD(wParam) == IDC_LISTAVAILABLE && HIWORD(wParam) == LBN_SELCHANGE) {
+			if (!isPrescanning()) 
+				displayGameInfo();
+			else
+				changeScanPath();
+		}
 
-		if (wParam == IDC_SCAN)
-			startFindGame();
-
+		if (wParam == IDC_SCAN) {
+			if (!isPrescanning()) 
+				startScan();
+			else
+				endScanPath();
+		}
+		
 		if (wParam == IDC_PLAY) {
 			int item;
 
@@ -272,8 +301,12 @@ BOOL CALLBACK SelectDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 				EndDialog(hwndDlg, item + 1000);
 		}
 
-		if (wParam == IDC_EXIT)
-			EndDialog(hwndDlg, 0);	
+		if (wParam == IDC_EXIT) {
+			if (!isPrescanning()) 
+				EndDialog(hwndDlg, 0);	
+			else
+				abortScanPath();
+		}
 		return TRUE;
 	default:
 		return FALSE;
@@ -337,11 +370,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 		Scumm *scumm = Scumm::createFromDetector(&detector, system);
 		g_scumm = scumm;
 
+		registry_init();
+		keypad_init();
+		
+		hide_cursor = TRUE;
+		if (scumm->_gameId == GID_SAMNMAX || scumm->_gameId == GID_FT || scumm->_gameId == GID_DIG)
+			hide_cursor = FALSE;
+
 		/* bind to Gui */
 		scumm->_gui = &gui;
-		//Warning(TEXT("Initing GUI"));
 		gui.init(scumm);	/* Reinit GUI after loading a game */
-		//Warning(TEXT("ScummGO"));
 		scumm->go();
 	}
 	
@@ -451,13 +489,12 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			break;
 		
 		case IDC_SOUND:
-			// FIXME
 			sound_activated = !sound_activated;
 			CheckMenuItem (
 				SHMenuBar_GetMenu (hWnd_MainMenu, IDM_POCKETSCUMM),
 				IDC_SOUND, 
 				MF_BYCOMMAND | (sound_activated ? MF_CHECKED : MF_UNCHECKED));	
-			//wm->_scumm->_soundsPaused2 = !sound_activated;
+			g_scumm->pauseSounds(!sound_activated);
 			break;     
 		
       break;
@@ -509,6 +546,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			wm->_event.event_code = EVENT_MOUSEMOVE;
 			wm->_event.mouse.x = x;
 			wm->_event.mouse.y = y;
+			wm->_last_mouse_event = wm->_event;
 		}
 		break;
 	case WM_LBUTTONDOWN:
@@ -549,6 +587,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				wm->_event.event_code = EVENT_LBUTTONDOWN;
 				wm->_event.mouse.x = x;
 				wm->_event.mouse.y = y;
+				wm->_last_mouse_event = wm->_event;
 				break;
 
 			}
@@ -560,6 +599,7 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				wm->_event.event_code = EVENT_LBUTTONDOWN;
 				wm->_event.mouse.x = x;
 				wm->_event.mouse.y = y;
+				wm->_last_mouse_event = wm->_event;
 			
 				if(y > 200 && !hide_toolbar)
 				{
@@ -596,9 +636,8 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 						wm->_event.kbd.ascii = mapKey(VK_ESCAPE);				
 						break;
 					case ToolbarSound:
-						// FIXME !!!!!
 						sound_activated = !sound_activated;
-						//wm->_scumm->_soundsPaused2 = !sound_activated;
+						g_scumm->pauseSounds(!sound_activated);
 						redrawSoundItem();
 						break;
 					default:
@@ -610,8 +649,12 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 	case WM_LBUTTONUP:
 		{
 			// pinched from the SDL code. Distinguishes between taps and not
+			int x = ((int16*)&lParam)[0];
+			int y = ((int16*)&lParam)[1];
+			Translate(&x, &y);
 			wm->_event.event_code = EVENT_LBUTTONUP;
-
+			wm->_event.mouse.x = x;
+			wm->_event.mouse.y = y;
 		}
 		break;
 	case WM_LBUTTONDBLCLK:  // doesn't seem to work right now
@@ -622,26 +665,6 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
    }
    return 0;
 }
-
-
-bool OSystem_WINCE3::handleMessage() {
-	MSG msg;
-
-	if (!PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		return false;
-
-	if (msg.message==WM_QUIT) {
-		terminated=true;
-		do_quit();
-		return true;
-	}
-
-	TranslateMessage(&msg);
-	DispatchMessage(&msg);
-
-	return true;
-}
-
 
 /*************** Registry support ***********/
 
@@ -720,6 +743,93 @@ void registry_save() {
 	 }
 }
 
+/*************** Hardware keys support ***********/
+
+void OSystem_WINCE3::addEventKeyPressed(int ascii_code) {
+	_event.event_code = EVENT_KEYDOWN;
+	_event.kbd.ascii = ascii_code;
+}
+
+void OSystem_WINCE3::addEventRightButtonClicked() {
+	_last_mouse_event.event_code = EVENT_RBUTTONDOWN;
+	_event = _last_mouse_event;
+}
+
+void action_right_click() {
+	OSystem_WINCE3* system;
+	system = (OSystem_WINCE3*)g_scumm->_system;
+
+	system->addEventRightButtonClicked();	
+}
+
+void action_pause() {
+	OSystem_WINCE3* system;
+	system = (OSystem_WINCE3*)g_scumm->_system;
+
+	system->addEventKeyPressed(mapKey(VK_SPACE));
+}
+
+void action_save() {
+	OSystem_WINCE3* system;
+	system = (OSystem_WINCE3*)g_scumm->_system;
+
+	if (GetScreenMode()) {
+		draw_keyboard = true;
+		if (!hide_toolbar)
+			toolbar_drawn = false;
+	}
+
+	system->addEventKeyPressed(mapKey(VK_F5));
+}
+
+void action_quit() {
+	do_quit();
+}
+
+void action_skip() {
+	OSystem_WINCE3* system;
+	system = (OSystem_WINCE3*)g_scumm->_system;
+
+	system->addEventKeyPressed(mapKey(VK_ESCAPE));
+}
+
+void action_hide() {
+	hide_toolbar = !hide_toolbar;
+	Cls();
+	toolbar_drawn = hide_toolbar;
+	g_scumm->_system->update_screen();
+}
+
+void action_keyboard() {
+	if (GetScreenMode()) {
+		draw_keyboard = !draw_keyboard;
+		if (!hide_toolbar)
+			toolbar_drawn = false;
+	}
+}
+
+void action_sound() {
+	sound_activated = !sound_activated;
+	g_scumm->pauseSounds(!sound_activated);
+}
+
+void action_cursoronoff() {
+	hide_cursor = !hide_cursor;
+}
+
+void keypad_init() {
+	static pAction actions[TOTAL_ACTIONS] =
+	{ action_pause, action_save, action_quit, action_skip, action_hide, 
+	  action_keyboard, action_sound, action_right_click, action_cursoronoff };
+	
+	GAPIKeysInit(actions);
+	
+}
+
+void keypad_close() {
+	GXCloseInput();	
+}
+
 
 /************* OSystem Main **********************/
 OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
@@ -727,6 +837,7 @@ OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
 	syst->_mode = gfx_mode;
 	syst->_full_screen = full_screen;
 	syst->_event.event_code = -1;
+	syst->_start_time = GetTickCount();
 
 	/* Retrieve the handle of this module */
 	syst->hInst = GetModuleHandle(NULL);
@@ -792,7 +903,6 @@ OSystem *OSystem_WINCE3_create() {
 void OSystem_WINCE3::set_palette(const byte *colors, uint start, uint num) {
 	const byte *b = colors;
 	uint i;
-	//SDL_Color *base = _cur_pal + start;
 	for(i=0;i!=num;i++) {
 		SetPalEntry(i + start, b[0], b[1], b[2]);
 		b += 4;
@@ -805,6 +915,7 @@ void OSystem_WINCE3::load_gfx_mode() {
 	force_full = true;
 
 	_gfx_buf = (byte*)malloc((320 * 240) * sizeof(byte));	
+	_ms_backup = (byte*)malloc((40 * 40) * sizeof(byte));
 }
 
 void OSystem_WINCE3::unload_gfx_mode() {
@@ -818,6 +929,9 @@ void OSystem_WINCE3::init_size(uint w, uint h) {
 void OSystem_WINCE3::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
 	byte *dst;
 
+	if (!hide_cursor && _mouse_drawn)
+		undraw_mouse();
+
 	dst = _gfx_buf + y * 320 + x;
 	do {
 		memcpy(dst, buf, w);
@@ -826,9 +940,11 @@ void OSystem_WINCE3::copy_rect(const byte *buf, int pitch, int x, int y, int w, 
 	} while (--h);
 }
 
-
-
 void OSystem_WINCE3::update_screen() {
+
+	if (!hide_cursor)
+		draw_mouse();
+
 	Blt(_gfx_buf);
 }
 
@@ -841,6 +957,99 @@ bool OSystem_WINCE3::show_mouse(bool visible) {
 
 	return last;
 }
+
+// From X11 port
+
+void OSystem_WINCE3::draw_mouse() {
+	if (_mouse_drawn || !_mouse_visible)
+		return;
+	_mouse_drawn = true;
+
+	int xdraw = _ms_cur.x - _ms_hotspot_x;
+	int ydraw = _ms_cur.y - _ms_hotspot_y;
+	int w = _ms_cur.w;
+	int h = _ms_cur.h;
+	int real_w;
+	int real_h;
+	int real_h_2;
+
+	byte *dst;
+	byte *dst2;
+	const byte *buf = _ms_buf;
+	byte *bak = _ms_backup;
+
+	assert(w <= 40 && h <= 40);
+
+	if (ydraw < 0) {
+		real_h = h + ydraw;
+		buf += (-ydraw) * w;
+		ydraw = 0;
+	} else {
+		real_h = (ydraw + h) > 200 ? (200 - ydraw) : h;
+	}
+	if (xdraw < 0) {
+		real_w = w + xdraw;
+		buf += (-xdraw);
+		xdraw = 0;
+	} else {
+		real_w = (xdraw + w) > 320 ? (320 - xdraw) : w;
+	}
+
+	dst = _gfx_buf + (ydraw * 320) + xdraw;
+	dst2 = dst;
+
+	if ((real_h == 0) || (real_w == 0)) {
+		_mouse_drawn = false;
+		return;
+	}
+
+	_ms_old.x = xdraw;
+	_ms_old.y = ydraw;
+	_ms_old.w = real_w;
+	_ms_old.h = real_h;
+
+	real_h_2 = real_h;
+	while (real_h_2 > 0) {
+		memcpy(bak, dst, real_w);
+		bak += 40;
+		dst += 320;
+		real_h_2--;
+	}
+	while (real_h > 0) {
+		int width = real_w;
+		while (width > 0) {
+			byte color = *buf;
+			if (color != 0xFF) {
+				*dst2 = color;
+			}
+			buf++;
+			dst2++;
+			width--;
+		}
+		buf += w - real_w;
+		dst2 += 320 - real_w;
+		real_h--;
+	}
+}
+
+void OSystem_WINCE3::undraw_mouse() {
+	if (!_mouse_drawn)
+		return;
+	_mouse_drawn = false;
+
+	int old_h = _ms_old.h;
+
+	byte *dst = _gfx_buf + (_ms_old.y * 320) + _ms_old.x;
+	byte *bak = _ms_backup;
+
+	while (old_h > 0) {
+		memcpy(dst, bak, _ms_old.w);
+		bak += 40;
+		dst += 320;
+		old_h--;
+	}
+}
+
 	
 void OSystem_WINCE3::set_mouse_pos(int x, int y) {
 	if (x != _ms_cur.x || y != _ms_cur.y) {
@@ -866,7 +1075,7 @@ uint32 OSystem_WINCE3::get_msecs() {
 }
 	
 void OSystem_WINCE3::delay_msecs(uint msecs) {
-	handleMessage();
+	//handleMessage();
 	Sleep(msecs);
 }
 	
@@ -883,13 +1092,30 @@ int mapKey(int key, byte mod)
 }
 	
 bool OSystem_WINCE3::poll_event(Event *event) {
-	if (_event.event_code < 0)
-		return false;
 
-	*event = _event;
-	_event.event_code = -1;
+	for (;;) {
+		MSG msg;
 
-	return true;
+		_event.event_code = -1;
+
+		if (!PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			return false;
+
+		if (msg.message==WM_QUIT) {
+			terminated=true;
+			do_quit();
+			return false;
+		}
+
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+
+		*event = _event;
+
+		return true;
+	}
+	
+	return false;
 }
 	
 bool OSystem_WINCE3::set_sound_proc(void *param, SoundProc *proc, byte format) {
@@ -942,7 +1168,6 @@ void OSystem_WINCE3::quit() {
 	unload_gfx_mode();		
 	exit(1);
 }
-
 
 /* CDRom Audio */
 void OSystem_WINCE3::stop_cdrom() {;}
