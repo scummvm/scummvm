@@ -600,7 +600,7 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 		BS2_SetPalette(0, 256, tmpPal, RDPAL_INSTANT);
 
 		while (1) {
-			PlayingSoundHandle handle;
+			PlayingSoundHandle handle = 0;
 
 			if (!text[textCounter])
 				break;
