@@ -1,8 +1,11 @@
+# $Id$
+
 CC	= gcc
 CFLAGS	= -g -Wno-multichar
 DEFINES	= -DUNIX
-LDFLAGS := `sdl-config --libs`
-INCLUDES:= `sdl-config --cflags`
+LDFLAGS :=
+INCLUDES:= -ISDL -D_REENTRANT
+LIBS	:= -lSDL
 CPPFLAGS= $(DEFINES) $(INCLUDES)
 ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
 
@@ -35,3 +38,6 @@ dist:
 
 check:
 $(OBJS): $(INCS)
+
+$(OBJS): Makefile
+
