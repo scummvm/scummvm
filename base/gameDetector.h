@@ -91,7 +91,6 @@ public:
 
 protected:
 	bool detectGame(void);
-	void list_games();
 };
 
 #endif

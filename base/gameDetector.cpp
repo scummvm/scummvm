@@ -207,32 +207,42 @@ GameDetector::GameDetector() {
 	_plugin = 0;
 }
 
-void GameDetector::list_games() {
-	// FIXME / TODO: config rewrite
-	// Right now this lists all known built-in targets; and also for each of
-	// those it tells the user if the target is "configured".
-	// To me this seems like an ill mix of two different functionalities.
-	// IMHO we should split this into two seperate commands/options:
-	// 1) List all built-in gameids (e.g. monkey, atlantis, ...) similiar to 
-	//    what this code does, but without the "Config" column.
-	// 2) List all available (configured) targets, including those with custom
-	//    names, e.g. "monkey-mac", "skycd-demo", ...
+/** List all supported games, i.e. all games which any loaded plugin supports. */
+void listGames() {
 	const PluginList &plugins = PluginManager::instance().getPlugins();
 
-	printf("Game             Full Title                                            \n"
-	       "---------------- ------------------------------------------------------\n");
+	printf("Game ID              Full Title                                            \n"
+	       "-------------------- ------------------------------------------------------\n");
 
 	PluginList::ConstIterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		GameList list = (*iter)->getSupportedGames();
 		for (GameList::Iterator v = list.begin(); v != list.end(); ++v) {
-#if 1
-			printf("%-17s%-56s\n", v->gameName, v->description);
-#else
-			const char *config = (g_config->has_domain(v->gameName)) ? "Yes" : "";
-			printf("%-17s%-56s%s\n", v->gameName, v->description, config);
-#endif
+			printf("%-20s %s\n", v->gameName, v->description);
 		}
+	}
+}
+
+/** List all targets which are configured in the config file. */
+void listTargets() {
+	using namespace Common;
+	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+
+	printf("Target               Description                                           \n"
+	       "-------------------- ------------------------------------------------------\n");
+
+	ConfigManager::DomainMap::ConstIterator iter = domains.begin();
+	for (iter = domains.begin(); iter != domains.end(); ++iter) {
+		String name(iter->_key);
+		String description(iter->_value.get("description"));
+
+		if (description.isEmpty()) {
+			GameSettings g = GameDetector::findGame(name);
+			if (g.description)
+				description = g.description;
+		}
+
+		printf("%-20s %s\n", name.c_str(), description.c_str());
 	}
 }
 
@@ -381,7 +391,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 #endif
 			case 'z':
 				CHECK_OPTION();
-				list_games();
+				listGames();
 				exit(0);
 			case '-':
 				// Long options. Let the fun begin!
@@ -393,7 +403,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 
 					ConfMan.set("platform", platform);
 					break;
-				} 
+				}
 
 				if (!strncmp(s, "no-", 3)) {
 					long_option_value = false;
