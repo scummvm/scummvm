@@ -21,6 +21,7 @@
  */
 
 #define SP_MAX_FONTS 5
+#define MAX_STREAMER 10
 
 class SmushPlayer {
 
@@ -72,16 +73,23 @@ struct CodecData {
 		int32 _mixerNum;
 
 		// PSAD: Full Throttle audio
-		uint32 _saudSize[8], _saudSubSize[8];
-		uint32 _psadTrk[8], _strkRate[8];
-		uint32 _saudSubTag[8];
+		uint32 _saudSize[MAX_STREAMER], _saudSubSize[MAX_STREAMER];
+		uint32 _psadTrk[MAX_STREAMER], _strkRate[MAX_STREAMER];
+		uint32 _saudSubTag[MAX_STREAMER];
+		uint32 _strkFinalSize[MAX_STREAMER];
+		bool _strkNewMixer[MAX_STREAMER];
+		byte * _strkBuf[MAX_STREAMER];
 
 		// IACT: The Dig audio
-		uint32 _imusSize[8], _imusSubSize[8];
-		uint32 _imusTrk[8], _imusRate[8], _imusChan[8];
-		uint32 _imusSubTag[8];
-		byte _imusData[8][3];
-		uint32 _imusPos[8], _imusCodec[8];
+		uint32 _imusSize[MAX_STREAMER], _imusSubSize[MAX_STREAMER];
+		uint32 _imusTrk[MAX_STREAMER], _imusRate[MAX_STREAMER], _imusChan[MAX_STREAMER];
+		uint32 _imusSubTag[MAX_STREAMER];
+		byte _imusData[MAX_STREAMER][3];
+		uint32 _imusPos[MAX_STREAMER], _imusCodec[MAX_STREAMER];
+		uint32 _imusFinalSize[MAX_STREAMER];
+		byte _imusFlags[MAX_STREAMER];
+		byte * _imusBuf[MAX_STREAMER];
+		bool _imusNewMixer[MAX_STREAMER];
 
 		// Codec37
 		PersistentCodecData37 pcd37;

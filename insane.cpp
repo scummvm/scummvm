@@ -31,8 +31,6 @@
 #include "scumm.h"
 #include "smush.h"
 
-#define MAX_STREAMER 10
-
 static SmushPlayer * h_sp;
 
 SmushPlayer::SmushPlayer(Scumm * parent) {
@@ -597,14 +595,10 @@ void SmushPlayer::parseIACT() {
 			debug(3, "trk %d: iMUSE play part, len 0x%x rate %d remain 0x%x",
 						trk, bpos, _imusRate[idx], _imusSubSize[idx]);
 
-			if (new_mixer) {
-				g_mixer->play_stream(NULL, idx, buf, bpos, _imusRate[idx], flags);
-			} else {
-				g_mixer->append(idx, buf, bpos, _imusRate[idx], flags);
-			}
-
-			/* FIXME: append with re-used idx may cause problems
-			   with signed/unsigned issues */
+			_imusBuf[idx] = buf;
+			_imusFinalSize[idx] = bpos;
+			_imusFlags[idx] = flags;
+			_imusNewMixer[idx] = new_mixer;
 
 			break;
 		default:
@@ -1254,13 +1248,9 @@ void SmushPlayer::parsePSAD() {		// FIXME: Needs to append to a sound buffer
 
 			debug(3, "trk %d: SDAT part len 0x%x rate %d", trk, sublen, _strkRate[idx]);
 
-			if (new_mixer) {
-				g_mixer->play_stream(NULL, idx, buf, sublen, _strkRate[idx],
-																		 SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
-			} else {
-				g_mixer->append(idx, buf, sublen,
-																_strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
-			}
+			_strkBuf[idx] = buf;
+			_strkFinalSize[idx] = sublen;
+			_strkNewMixer[idx] = new_mixer;
 			break;
 		case 'SMRK':
 			_psadTrk[idx] = 0;
@@ -1377,7 +1367,7 @@ void SmushPlayer::init() {
 		loadTres();
 		loadFonts();
 	}
-	_scumm->_timer->installProcedure(&smush_handler, 83);
+	_scumm->_timer->installProcedure(&smush_handler, 75);
 }
 
 void SmushPlayer::deinit() {
@@ -1423,6 +1413,7 @@ void SmushPlayer::update() {
 
 void SmushPlayer::startVideo(short int arg, byte *videoFile) {
 	int32 frameIndex = 0;
+	int32 idx;
 
 	_in = NULL;
 	_paletteChanged = false;
@@ -1467,6 +1458,35 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile) {
 		parseTag();
 		frameIndex++;
 
+		do {
+			_scumm->waitForTimer(1);
+		} while (_lock);
+		_lock = true;
+
+		if (_scumm->_gameId == GID_DIG) {
+			for (idx = 0; idx < MAX_STREAMER; idx++) {
+				if (_imusTrk[idx] != 0) {
+					if (_imusNewMixer[idx]) {
+						g_mixer->play_stream(NULL, idx, _imusBuf[idx], _imusFinalSize[idx], _imusRate[idx], _imusFlags[idx]);
+					} else {
+						g_mixer->append(idx, _imusBuf[idx], _imusFinalSize[idx], _imusRate[idx], _imusFlags[idx]);
+					}
+        		}
+			}
+		}
+
+		if (_scumm->_gameId == GID_FT) {
+			for (idx = 0; idx < MAX_STREAMER; idx++) {
+				if (_psadTrk[idx] != 0) {
+					if (_strkNewMixer) {
+						g_mixer->play_stream(NULL, idx, _strkBuf[idx], _strkFinalSize[idx], _strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+					} else {
+						g_mixer->append(idx, _strkBuf[idx], _strkFinalSize[idx], _strkRate[idx], SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+					}
+				}
+			}
+		}
+
 		if (_paletteChanged) {
 			_paletteChanged = false;
 			setPalette();
@@ -1477,11 +1497,6 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile) {
 			_scumm->_system->copy_rect(_scumm->_videoBuffer, 320, 0, 0, 320, 200);
 			_scumm->_system->update_screen();
 		}
-
-		do {
-			_scumm->waitForTimer(10);
-		} while (_lock);
-		_lock = true;
 
 		_scumm->processKbd();
 
