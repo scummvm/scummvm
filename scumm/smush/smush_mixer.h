@@ -32,7 +32,6 @@ private:
 	struct {
 		int id;
 		SmushChannel *chan;
-		bool first;
 		int mixer_index;
 	} _channels[SoundMixer::NUM_CHANNELS];
 
