@@ -293,7 +293,7 @@ void Synth::initPCMList() {
 		int rLenExp = (tps[i].len & 0x70) >> 4;
 		int rLen = 0x800 << rLenExp;
 		bool rLoop = (tps[i].len & 0x80) != 0;
-		Bit8u rFlag = tps[i].len & 0x0F;
+		//Bit8u rFlag = tps[i].len & 0x0F;
 		Bit16u rTuneOffset = (tps[i].pitchMSB << 8) | tps[i].pitchLSB;
 		//FIXME:KG: Pick a number, any number. The one below sounded best to me in listening tests, but needs to be confirmed.
 		double STANDARDFREQ = 432.1;
@@ -313,7 +313,6 @@ void Synth::initRhythmTimbre(int timbreNum, const Bit8u *mem) {
 	char drumname[11];
 	strncpy(drumname, timbre->common.name, 10);
 	drumname[10] = 0;
-	bool breakout = false;
 	for (int t = 0; t < 4; t++) {
 		if (((timbre->common.pmute >> t) & 0x1) == 0x1) {
 			memcpy(&timbre->partial[t], mem, 58);
@@ -323,8 +322,8 @@ void Synth::initRhythmTimbre(int timbreNum, const Bit8u *mem) {
 }
 
 void Synth::initRhythmTimbres() {
-	TempPCMStruct *tps = (TempPCMStruct *)&controlROMData[0x3000];
-	const Bit8u *drumMap = &controlROMData[0x3200];
+	//TempPCMStruct *tps = (TempPCMStruct *)&controlROMData[0x3000];
+	//const Bit8u *drumMap = &controlROMData[0x3200];
 	int timbreNum = 192;
 	for (Bit16u i = 0x3200; i < 0x323C; i += 2) {
 		Bit16u address = (controlROMData[i + 1] << 8) | controlROMData[i];
@@ -934,7 +933,7 @@ bool Synth::dumpTimbre(File *file, const TimbreParam *timbre, Bit32u address) {
 		return false;
 
 	//Checksum
-	unsigned char checksum = calcSysexChecksum((unsigned char *)timbre, 246, msb + isb + lsb);
+	unsigned char checksum = calcSysexChecksum((const Bit8u *)timbre, 246, msb + isb + lsb);
 	if (!file->writeBit8u(checksum))
 		return false;
 
