@@ -29,6 +29,27 @@
 #include "sky/musicbase.h"
 #include "sky/mouse.h"
 
+enum scriptVariableOffsets {
+	RESULT = 0,
+	SCREEN = 1,
+	LOGIC_LIST_NO = 2,
+	CUR_ID = 12,
+	MOUSE_STATUS = 13,
+	MOUSE_STOP = 14,
+	GET_OFF = 18,
+	PLAYER_X = 27,
+	PLAYER_Y = 28,
+	PLAYER_MOOD = 29,
+	PLAYER_SCREEN = 30,
+	HIT_ID = 37,
+	THE_CHOSEN_ONE = 51,
+	TEXT1 = 53,
+	MENU_LENGTH = 100,
+	SCROLL_OFFSET = 101,
+	MENU = 102,
+	CUR_SECTION = 143
+};
+
 class SkyLogic {
 public:
 	SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound, uint32 gameVersion);
