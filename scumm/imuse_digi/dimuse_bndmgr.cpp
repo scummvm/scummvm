@@ -198,24 +198,15 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 		_compTableLoaded = true;
 	}
 
-	if (header_outside) {
-		first_block = offset / 0x2000;
-		last_block = (offset + size - 1) / 0x2000;
-	} else {
-		first_block = (offset + header_size) / 0x2000;
-		last_block = (offset + size + header_size - 1) / 0x2000;
-	}
+	first_block = (offset + header_size) / 0x2000;
+	last_block = (offset + size + header_size - 1) / 0x2000;
 
 	comp_output = (byte *)malloc(0x2000);
 	int32 blocks_final_size = 0x2000 * (1 + last_block - first_block);
 	*comp_final = (byte *)malloc(blocks_final_size);
 	final_size = 0;
 
-	if (header_outside) {
-		skip = offset - (first_block * 0x2000);
-	} else {
-		skip = offset - (first_block * 0x2000) + header_size;
-	}
+	skip = offset - (first_block * 0x2000) + header_size;
 
 	for (i = first_block; i <= last_block; i++) {
 		byte *curBuf;
@@ -239,8 +230,6 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 		}
 
 		if (header_outside) {
-			if ((header_size != 0) && (i == 0))
-				skip += header_size;
 			output_size -= skip;
 		} else {
 			if ((header_size != 0) && (skip >= header_size))
@@ -250,8 +239,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 		if (output_size > size)
 			output_size = size;
 
-		if (final_size + output_size > blocks_final_size)
-			error("");
+		assert(final_size + output_size <= blocks_final_size);
 
 		memcpy(*comp_final + final_size, curBuf + skip, output_size);
 
