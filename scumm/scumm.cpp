@@ -690,7 +690,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_debugger = NULL;
 	_debugFlags = 0;
 	_sound = NULL;
-	memset(&res, 0, sizeof(res));
 	memset(&vm, 0, sizeof(vm));
 	_smushVideoShouldFinish = false;
 	_smushPaused = false;
