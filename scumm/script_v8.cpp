@@ -1173,9 +1173,13 @@ void Scumm_v8::o6_kernelSetFunctions()
 	switch (args[0]) {
 	case 11:	// lockObject
 		warning("o6_kernelSetFunctions: lockObject(%d)", args[1]);
+//		getObjectIndex(args[1]);
+//		ObjData.field_24 = 1;
 		break;
 	case 12:	// unlockObject
 		warning("o6_kernelSetFunctions: unlockObject(%d)", args[1]);
+//		getObjectIndex(args[1]);
+//		ObjData.field_24 = 0;
 		break;
 	case 13:	// remapCostume
 		derefActorSafe(args[1], "o6_kernelSetFunctions:remapCostume")->remapActorPalette(args[2], args[3], args[4], -1);
