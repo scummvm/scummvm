@@ -124,92 +124,67 @@ void prewarp(double *a0, double *a1, double *a2, double fc, double fs) {
 	*a1 = (*a1) / wp;
 }
 
-/*
- * ----------------------------------------------------------
- * bilinear()
+/**
+ * Transform the numerator and denominator coefficients of s-domain biquad
+ * section into corresponding z-domain coefficients.
  *
- * Transform the numerator and denominator coefficients
- * of s-domain biquad section into corresponding
- * z-domain coefficients.
+ * Store the 4 IIR coefficients in array pointed by coef in following order:
+ *     beta1, beta2    (denominator)
+ *     alpha1, alpha2  (numerator)
  *
- *      Store the 4 IIR coefficients in array pointed by coef
- *      in following order:
- *             beta1, beta2    (denominator)
- *             alpha1, alpha2  (numerator)
+ * @param a0-a2 s-domain numerator coefficients
+ * @param b0-b2 s-domain denominator coefficients
+ * @param k     filter gain factor. initially set to 1 and modified by each
+ *              biquad section in such a way, as to make it the coefficient by
+ *              which to multiply the overall filter gain in order to achieve a
+ *              desired overall filter gain, specified in initial value of k.
+ * @param fs    sampling rate (Hz)
+ * @param coef  array of z-domain coefficients to be filled in.
  *
- * Arguments:
- *             a0-a2   - s-domain numerator coefficients
- *             b0-b2   - s-domain denominator coefficients
- *             k               - filter gain factor. initially set to 1
- *                                and modified by each biquad section in such
- *                                a way, as to make it the coefficient by
- *                                which to multiply the overall filter gain
- *                                in order to achieve a desired overall filter gain,
- *                                specified in initial value of k.
- *             fs             - sampling rate (Hz)
- *             coef    - array of z-domain coefficients to be filled in.
- *
- * Return:
- *             On return, set coef z-domain coefficients
- * ----------------------------------------------------------
+ * @returns On return, set coef z-domain coefficients
  */
-void bilinear(
-    double a0, double a1, double a2,    /* numerator coefficients */
-    double b0, double b1, double b2,    /* denominator coefficients */
-    double *k,           /* overall gain factor */
-    double fs,           /* sampling rate */
-    float *coef         /* pointer to 4 iir coefficients */
-)
-{
-    double ad, bd;
 
-                 /* alpha (Numerator in s-domain) */
-    ad = 4. * a2 * fs * fs + 2. * a1 * fs + a0;
-                 /* beta (Denominator in s-domain) */
-    bd = 4. * b2 * fs * fs + 2. * b1* fs + b0;
+void bilinear(double a0, double a1, double a2, double b0, double b1, double b2, double *k, double fs, float *coef) {
+	double ad, bd;
 
-                 /* update gain constant for this section */
-    *k *= ad/bd;
+	// alpha (Numerator in s-domain)
+	ad = 4. * a2 * fs * fs + 2. * a1 * fs + a0;
+	// beta (Denominator in s-domain)
+	bd = 4. * b2 * fs * fs + 2. * b1 * fs + b0;
 
-                 /* Denominator */
-    *coef++ = (2. * b0 - 8. * b2 * fs * fs)
-                           / bd;         /* beta1 */
-    *coef++ = (4. * b2 * fs * fs - 2. * b1 * fs + b0)
-                           / bd; /* beta2 */
+	// update gain constant for this section
+	*k *= ad / bd;
 
-                 /* Nominator */
-    *coef++ = (2. * a0 - 8. * a2 * fs * fs)
-                           / ad;         /* alpha1 */
-    *coef = (4. * a2 * fs * fs - 2. * a1 * fs + a0)
-                           / ad;   /* alpha2 */
+	// Denominator
+	*coef++ = (2. * b0 - 8. * b2 * fs * fs) / bd;		// beta1
+	*coef++ = (4. * b2 * fs * fs - 2. * b1 * fs + b0) / bd;	// beta2
+
+	// Nominator
+	*coef++ = (2. * a0 - 8. * a2 * fs * fs) / ad;		// alpha1
+	*coef = (4. * a2 * fs * fs - 2. * a1 * fs + a0) / ad;	// alpha2
 }
 
-void szxform(
-    double *a0, double *a1, double *a2, /* numerator coefficients */
-    double *b0, double *b1, double *b2, /* denominator coefficients */
-    double fc,         /* Filter cutoff frequency */
-    double fs,         /* sampling rate */
-    double *k,         /* overall gain factor */
-    float *coef)         /* pointer to 4 iir coefficients */
-{
-                 /* Calculate a1 and a2 and overwrite the original values */
-        prewarp(a0, a1, a2, fc, fs);
-        prewarp(b0, b1, b2, fc, fs);
-        bilinear(*a0, *a1, *a2, *b0, *b1, *b2, k, fs, coef);
+/**
+ * @param a0-a2 numerator coefficients
+ * @param b0-b2 denominator coefficients
+ * @param fc    filter cutoff frequency
+ * @param fs    sampling rate
+ * @param coef  pointer to 4 iir coefficients
+ */
+
+void szxform(double *a0, double *a1, double *a2, double *b0, double *b1, double *b2, double fc, double fs, double *k, float *coef) {
+	// Calculate a1 and a2 and overwrite the original values
+ 	prewarp(a0, a1, a2, fc, fs);
+	prewarp(b0, b1, b2, fc, fs);
+	bilinear(*a0, *a1, *a2, *b0, *b1, *b2, k, fs, coef);
 }
-
-
 
 #ifdef HAVE_X86
 #if defined(WIN32) && !(defined(__CYGWIN__) || defined(__MINGW32__))
-bool DetectSIMD()
-{
+bool DetectSIMD() {
+	bool found_simd = false;
 
-	bool found_simd;
-	_asm
-
-	{
-
+	_asm {
 		pushfd
 		pop eax // get EFLAGS into eax
 		mov ebx,eax // keep a copy
@@ -238,15 +213,15 @@ bool DetectSIMD()
 		jmp DONE
 		NO_SIMD:
 		mov found_simd,0
-		DONE:
+DONE:
 	}
 
 	return found_simd;
-
 }
 
 bool Detect3DNow() {
 	bool found3D = false;
+
 	__asm {
 		pushfd
 		pop eax
@@ -271,17 +246,16 @@ bool Detect3DNow() {
 		jz NO_3DNOW
 		mov found3D, 1
 NO_3DNOW:
-
 	}
+
 	return found3D;
 }
 #else
-bool DetectSIMD()
-{
+bool DetectSIMD() {
 	return atti386_DetectSIMD();
 }
-bool Detect3DNow()
-{
+
+bool Detect3DNow() {
 	return atti386_Detect3DNow();
 }
 #endif
@@ -289,9 +263,9 @@ bool Detect3DNow()
 
 #ifdef NOMANSLAND
 
-//#define SETRATE 32000
+// #define SETRATE 32000
 #define SETRATE myProp.SampleRate
-//#define SETRATE 44100
+// #define SETRATE 44100
 
 // Used to regenerate waveform file after sampling rate change
 #define MAKEWAVES 0
@@ -308,8 +282,6 @@ bool Detect3DNow()
 #define MONITORPARTIALS 1
 // Dump syx file of temp tibres right before reset
 #define SAVECUSTOM 0
-
-
 	
 // Constant tuning for now
 #define TUNING 440.0
@@ -338,7 +310,7 @@ bool Detect3DNow()
 #define REV_PLATET60 ( REV_PLATESIZE * REV_PLATESIZE * REV_PLATESIZE ) / 7
 #define REV_TAPT60 ( REV_TAPSIZE * REV_TAPSIZE * REV_TAPSIZE ) / 1
 
-//#define HLRATIO 2.0f
+// #define HLRATIO 2.0f
 
 #define SYSEX_SIZE 512
 
