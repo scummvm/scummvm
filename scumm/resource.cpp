@@ -2302,8 +2302,8 @@ void ScummEngine::readMAXS(int blockSize) {
 	} else if (_heversion >= 70 && blockSize > 38) { // sputm7.2
 		if (blockSize != 32 + 8)
 				error("MAXS block of size %d not supported, please report", blockSize);
-		_fileHandle.readUint16LE();
 		_numVariables = _fileHandle.readUint16LE();
+		_fileHandle.readUint16LE();
 		_numBitVariables = _fileHandle.readUint16LE();
 		_numLocalObjects = _fileHandle.readUint16LE();
 		_numArray = _fileHandle.readUint16LE();
