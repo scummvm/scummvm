@@ -1096,12 +1096,7 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9]) const {
 	int numzbuf;
 	int i;
 
-	if (_vm->_features & GF_SMALL_HEADER)
-		zplane_list[0] = ptr;
-	else if (_vm->_version == 8)
-		zplane_list[0] = ptr;
-	else
-		zplane_list[0] = _vm->findResource(MKID('SMAP'), ptr);
+	zplane_list[0] = ptr;
 
 	if (_zbufferDisabled)
 		numzbuf = 0;
