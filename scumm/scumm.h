@@ -798,6 +798,7 @@ protected:
 	void setActorRedrawFlags();
 	void putActors();
 	void showActors();
+	void setupV1ActorTalkColor();
 	void resetActorBgs();
 	void processActors();
 	void processUpperActors();

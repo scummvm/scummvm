@@ -1101,8 +1101,6 @@ void ScummEngine::launch() {
 	}
 }
 
-int v1MMActorTalkColor[] = {1, 7, 2, 14, 8, 1, 3, 7, 7, 12, 1, 13, 1, 4, 5, 5, 4, 3, 1, 5, 1, 1, 1, 7, 7, 0};
-
 void ScummEngine::scummInit() {
 	int i;
 
@@ -1166,13 +1164,14 @@ void ScummEngine::scummInit() {
 		// this is from IDB
 		if ((_version == 1) || (_gameId == GID_MANIAC && _demoMode)) {
 			_actors[i].setActorCostume(i);
-			_actors[i].talkColor = v1MMActorTalkColor[i];
 		}
 	}
 
-	// HACK Some palette changes needed for demo script
-	// in Maniac Mansion (Enchanced)
-	if (_gameId == GID_MANIAC && _version == 2 && _demoMode) {
+	if (_gameId == GID_MANIAC && _version == 1) {
+		setupV1ActorTalkColor();
+	} else if (_gameId == GID_MANIAC && _version == 2 && _demoMode) {
+		// HACK Some palette changes needed for demo script
+		// in Maniac Mansion (Enchanced)
 		_actors[3].setPalette(3, 1);
 		_actors[9].talkColor = 15;
 		_actors[10].talkColor = 7;

@@ -256,6 +256,9 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		setDirtyColors(0, 255);
 
 
+	if (_gameId == GID_MANIAC && _version == 1)
+		setupV1ActorTalkColor();
+
 	// Regenerate strip table (for V1/V2 games)
 	if (_version == 1) {
 		roomptr = getResourceAddress(rtRoom, _roomResource);
