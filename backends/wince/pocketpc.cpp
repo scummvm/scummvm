@@ -50,9 +50,8 @@
 #include "dynamic_imports.h"
 
 #if defined(MIPS) || defined(SH3)
-#if 0
+// Comment this out if you don't want to support GameX
 #define GAMEX
-#endif
 #endif
 
 #ifdef GAMEX
@@ -73,12 +72,13 @@ typedef BOOL (*tSHFullScreen)(HWND,DWORD);
 //typedef BOOL (WINSHELLAPI *tSHHandleWMSettingChange)(HWND,WPARAM,LPARAM,SHACTIVATEINFO*);
 typedef BOOL (*tSHSipPreference)(HWND,SIPSTATE);
 
+/*
 // Dynamically linked SDLAudio
 typedef void (*tSDL_AudioQuit)(void);
 typedef int (*tSDL_Init)(Uint32);
 typedef void (*tSDL_PauseAudio)(int);
 typedef int (*tSDL_OpenAudio)(SDL_AudioSpec*, SDL_AudioSpec*);
-
+*/
 
 // GAPI "emulation"
 typedef struct pseudoGAPI {
@@ -130,6 +130,8 @@ int _pseudoGAPI_device;
 
 /* Default SDLAUDIO */
 
+/*
+
 void defaultSDL_AudioQuit() {
 }
 
@@ -143,6 +145,8 @@ void defaultSDL_PauseAudio(int pause) {
 int defaultSDL_OpenAudio(SDL_AudioSpec *desired, SDL_AudioSpec *obtained) {
 	return 0;
 }
+
+*/
 
 /* Default AYGSHELL */
 
@@ -320,10 +324,6 @@ int timer_interval;
 tSHFullScreen dynamicSHFullScreen = NULL;
 //tSHHandleWMSettingChange dynamicSHHandleWMSettingChange = NULL;
 tSHSipPreference dynamicSHSipPreference = NULL;
-tSDL_AudioQuit dynamicSDL_AudioQuit = NULL;
-tSDL_Init dynamicSDL_Init = NULL;
-tSDL_PauseAudio dynamicSDL_PauseAudio = NULL;
-tSDL_OpenAudio dynamicSDL_OpenAudio = NULL;
 tGXOpenInput dynamicGXOpenInput = NULL;
 tGXGetDefaultKeys dynamicGXGetDefaultKeys = NULL;
 tGXCloseDisplay dynamicGXCloseDisplay = NULL;
@@ -588,7 +588,7 @@ void close_GAPI() {
 	dynamicSHFullScreen(hWnd_Window, SHFS_SHOWTASKBAR | SHFS_SHOWSIPBUTTON | SHFS_SHOWSTARTICON);
 	dynamicGXCloseInput();
 	dynamicGXCloseDisplay();
-	dynamicSDL_AudioQuit();
+	SDL_AudioQuit();
 	UpdateWindow(hWnd_Window);
 	closing = true;
 }
@@ -637,7 +637,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	bool need_rescan = false;
 
 	HMODULE aygshell_handle;
-	HMODULE SDLAudio_handle;
+	//HMODULE SDLAudio_handle;
 	HMODULE GAPI_handle;
 
 	hide_toolbar = false;
@@ -653,22 +653,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 		dynamicSHFullScreen = defaultSHFullScreen;
 		dynamicSHSipPreference = defaultSHSipPreference;
 		//dynamicSHHandleWMSettingChange = defaultSHHandleWMSettingChange;
-	}
-
-	// See if SDLAudio.dll is present
-	SDLAudio_handle = LoadLibrary(TEXT("SDLAudio.dll"));
-	if (SDLAudio_handle) {
-		IMPORT(SDLAudio_handle, dynamicSDL_AudioQuit, tSDL_AudioQuit, "SDL_AudioQuit")
-		IMPORT(SDLAudio_handle, dynamicSDL_Init, tSDL_Init, "SDL_Init")
-		IMPORT(SDLAudio_handle, dynamicSDL_PauseAudio, tSDL_PauseAudio, "SDL_PauseAudio")
-		IMPORT(SDLAudio_handle, dynamicSDL_OpenAudio, tSDL_OpenAudio, "SDL_OpenAudio")
-	}
-	else {
-		MessageBox(NULL, TEXT("SDLAudio.dll not found - games will play without sound"), TEXT("Missing DLL"), MB_OK);
-		dynamicSDL_AudioQuit = defaultSDL_AudioQuit;
-		dynamicSDL_Init = defaultSDL_Init;
-		dynamicSDL_PauseAudio = defaultSDL_PauseAudio;
-		dynamicSDL_OpenAudio = defaultSDL_OpenAudio;
 	}
 
 	// See if GX.dll is present 
@@ -1354,7 +1338,7 @@ void action_boss() {
 	g_scumm->saveState(g_scumm->_saveLoadSlot, g_scumm->_saveLoadCompatible);
 	dynamicGXCloseInput();
 	dynamicGXCloseDisplay();
-	dynamicSDL_AudioQuit();
+	SDL_AudioQuit();
 	memset(&se, 0, sizeof(se));
 	se.cbSize = sizeof(se);
 	se.hwnd = NULL;
@@ -1469,7 +1453,7 @@ OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
 	
 	// Mini SDL init
 
-	if (dynamicSDL_Init(SDL_INIT_AUDIO)==-1) {		
+	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_TIMER)==-1) {		
 	    exit(1);
 	}
 
@@ -1755,10 +1739,10 @@ bool OSystem_WINCE3::set_sound_proc(void *param, SoundProc *proc, byte format) {
 	desired.samples = 128;
 	desired.callback = own_soundProc;
 	desired.userdata = param;
-	if (dynamicSDL_OpenAudio(&desired, NULL) != 0) {
+	if (SDL_OpenAudio(&desired, NULL) != 0) {
 		return false;
 	}
-	dynamicSDL_PauseAudio(0);
+	SDL_PauseAudio(0);
 	return true;
 }
 
