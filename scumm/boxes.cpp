@@ -765,7 +765,7 @@ static void printMatrix2(byte *matrix, int num) {
 		printf("%2d: ", i);
 		for (j = 0; j < num; j++) {
 			int val = matrix[i * 64 + j];
-			if (val == 250)
+			if (val == Actor::kInvalidBox)
 				printf(" ? ");
 			else
 				printf("%2d ", val);
@@ -800,7 +800,7 @@ void Scumm::createBoxMatrix() {
 				itineraryMatrix[i * 64 + j] = j;
 			} else {
 				adjacentMatrix[i * 64 + j] = 255;
-				itineraryMatrix[i * 64 + j] = 0;
+				itineraryMatrix[i * 64 + j] = Actor::kInvalidBox;
 			}
 		}
 	}
@@ -811,9 +811,9 @@ void Scumm::createBoxMatrix() {
 	// a) extremly obfuscated
 	// b) incorrect: it didn't always find the shortest paths
 	// c) not any faster in reality for our sparse & small adjacent matrices
-	for (k = 1; k < num; k++) {
-		for (i = 1; i < num; i++) {
-			for (j = 1; j < num; j++) {
+	for (k = 0; k < num; k++) {
+		for (i = 0; i < num; i++) {
+			for (j = 0; j < num; j++) {
 				if (i == j)
 					continue;
 				byte distIK = adjacentMatrix[64 * i + k];
@@ -844,15 +844,11 @@ void Scumm::createBoxMatrix() {
 
 	#define addToMatrix(b)	do { *matrixStart++ = (b); assert(matrixStart < matrixEnd); } while (0)
 
-	addToMatrix(0xFF);
-	addToMatrix(0);
-	addToMatrix(0);
-	addToMatrix(0);
-	for (i = 1; i < num; i++) {
+	for (i = 0; i < num; i++) {
 		addToMatrix(0xFF);
-		for (j = 1; j < num; j++) {
+		for (j = 0; j < num; j++) {
 			byte itinerary = itineraryMatrix[64 * i + j];
-			if (itinerary != 0) {
+			if (itinerary != Actor::kInvalidBox) {
 				addToMatrix(j);
 				while (j < num && itinerary == itineraryMatrix[64 * i + (j + 1)])
 					j++;
