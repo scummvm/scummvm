@@ -30,6 +30,12 @@
 #include "sound/mididrv.h"
 #include "sound/imuse.h"
 
+/*
+ * TODO list
+ * - if save or load fails, popup an error dialog?
+ * ...
+ */
+
 Dialog::~Dialog()
 {
 	teardownScreenBuf();
