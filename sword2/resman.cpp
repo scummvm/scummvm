@@ -408,8 +408,10 @@ static void convertEndian(uint8 *file, uint32 len) {
 			}
 
 			uint16 *node = (uint16 *) (file + sizeof(_walkGridHeader) + walkGridHeader->numBars * sizeof(_barData));
-			for (i = 0; i < walkGridHeader->numNodes*2; i++)
-				*node = SWAP_BYTES_16(*node++);
+			for (i = 0; i < walkGridHeader->numNodes*2; i++) {
+				SWAP16(*node);
+				node++;
+			}
 
 			break;
 		}
