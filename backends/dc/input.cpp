@@ -183,11 +183,15 @@ bool OSystem_Dreamcast::pollEvent(Event &event)
     _timer_next_expiry = t+USEC_TO_TIMER(1000*_timer_duration);
   }
 
+  if(!_devpoll)
+    _devpoll = t;
   if(((int)(t-_devpoll))<0)
     return false;
   _devpoll += USEC_TO_TIMER(17000);
   if(((int)(t-_devpoll))>=0)
     _devpoll = t + USEC_TO_TIMER(17000);
+  if(!_devpoll)
+    ++ _devpoll;
 
   int mask = getimask();
   setimask(15);

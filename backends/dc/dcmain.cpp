@@ -48,7 +48,8 @@ OSystem *OSystem_Dreamcast::create() {
 OSystem_Dreamcast::OSystem_Dreamcast()
   : screen(NULL), mouse(NULL), overlay(NULL), _softkbd(this), _ms_buf(NULL),
     _sound_proc(NULL), _timer_active(false), _current_shake_pos(0),
-    _aspect_stretch(false), _softkbd_on(false), _softkbd_motion(0)
+    _aspect_stretch(false), _softkbd_on(false), _softkbd_motion(0),
+    _devpoll(0)
 {
   memset(screen_tx, 0, sizeof(screen_tx));
   memset(mouse_tx, 0, sizeof(mouse_tx));
