@@ -1488,6 +1488,7 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 
 	// 8/9 used in 3do version of puttputt joins the parade maybe others
 	case 8:
+		useOrDecompress = true;
 		unkDecode12(bgbak_ptr, src, numLinesToProcess);
 		break;
 
