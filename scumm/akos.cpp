@@ -1311,8 +1311,6 @@ void AkosRenderer::akos16DecompressMask(byte * dest, int32 pitch, byte * src, in
 }
 
 void AkosRenderer::codec16() {
-	warning("akos_codec16");
-
 	int32 clip_left;
 
 	if(!mirror) {
