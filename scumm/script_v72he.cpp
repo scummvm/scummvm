@@ -1760,15 +1760,6 @@ void ScummEngine_v72he::o72_openFile() {
 
 	mode = pop();
 	copyScriptString(filename);
-	// The boot script in some HE games doen't set the 
-	// complete data file name. So we work around that.
-	if (!strcmp((char *)filename,".he7")) {
-		memset(filename, 0, sizeof(filename));
-		sprintf((char *)filename, "%s.he7", _gameName.c_str());
-	} else if (!strcmp((char *)filename,".he3")) {
-		memset(filename, 0, sizeof(filename));
-		sprintf((char *)filename, "%s.he3", _gameName.c_str());
-	}
 
 	debug(1,"File %s", filename);
 	
