@@ -951,6 +951,8 @@ void Scumm::redrawBGStrip(int start, int num) {
 			_curVirtScreen->height,
 			_scrHeight);
 	}
+	if (_currentRoom == 79 && _gameID = GID_INDY3_256)	// FIXME: Indy3 workaround
+			_curVirtScreen->height = 136;
 
 	gdi.drawBitmap(getResourceAddress(rtRoom, _roomResource)+_IM00_offs,
 		_curVirtScreen, s, 0, _curVirtScreen->height, s, num, 0);
