@@ -146,6 +146,15 @@ pseudoGAPI availablePseudoGAPI[] = {
 	  16,
 	  0xA8
 	},
+	{ TEXT("ORG_FR"),			   /* smartphone SPV - more tests :) */
+	  (void*)0x46000020,
+	  176,
+	  220,
+	  2,
+	  352,
+	  16,
+	  0xA0
+	},
 	{ 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
@@ -158,7 +167,8 @@ bool canCacheGAPIBuffer;
 
 extern char noGAPI;
 
-
+extern bool wide_screen;
+extern bool extra_wide_screen;
 
 extern float _screen_factor;
 
@@ -573,6 +583,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 
 	// See if GX.dll is present 
 	GAPI_handle = LoadLibrary(TEXT("gx.dll"));
+
 	if (GAPI_handle) {
 		IMPORT(GAPI_handle, dynamicGXOpenInput, tGXOpenInput, "?GXOpenInput@@YAHXZ", NULL)
 		IMPORT(GAPI_handle, dynamicGXGetDefaultKeys, tGXGetDefaultKeys, "?GXGetDefaultKeys@@YA?AUGXKeyList@@H@Z", NULL)
@@ -1279,7 +1290,7 @@ OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
 
 	reducePortraitGeometry();
 
-	if (smartphone || high_res || ((noGAPI || !gfx_mode_switch) && GetSystemMetrics(SM_CXSCREEN) < 320)) 
+	if (smartphone || (high_res && !wide_screen) || ((noGAPI || !gfx_mode_switch) && GetSystemMetrics(SM_CXSCREEN) < 320)) 
 		SetScreenMode(1);
 
 	Cls();
@@ -1322,14 +1333,34 @@ void OSystem_WINCE3::load_gfx_mode() {
 
 	if (!high_res) {
 		_gfx_buf = (byte*)malloc((320 * 240) * sizeof(byte));	
+		if (!_gfx_buf) {
+			drawError("Not enough memory - main buffer");
+			exit(1);
+		}
 		_overlay_buf = (byte*)malloc((320 * 240) * sizeof(uint16));
+		if (!_overlay_buf) {
+			drawError("Not enough memory - overlay buffer");
+			exit(1);
+		}
 	}
 	else {
 		_gfx_buf = (byte*)malloc((640 * 480) * sizeof(byte));	
+		if (!_gfx_buf) {
+			drawError("Not enough memory - main buffer");
+			exit(1);
+		}
 		_overlay_buf = (byte*)malloc((320 * 240) * sizeof(uint16));
+		if (!_overlay_buf) {
+			drawError("Not enough memory - overlay buffer");
+			exit(1);
+		}
 	}
 	//_ms_backup = (byte*)malloc((40 * 40 * 3) * sizeof(byte));
 	_ms_backup = (byte*)malloc((MAX_MOUSE_W * MAX_MOUSE_H) * sizeof(uint16));
+	if (!_ms_backup) {
+		drawError("Not enogh memory - mouse cursor");
+		exit(1);
+	}
 }
 
 void OSystem_WINCE3::unload_gfx_mode() {
@@ -1383,14 +1414,21 @@ void OSystem_WINCE3::update_screen() {
 		}
 		else {
 			int i;
+			
 			for (i=0; i<num_of_dirty_square; i++) {
+				if (wide_screen && extra_wide_screen) 
+					Blt_part(_gfx_buf + ((high_res ? 640 : 320) * ds[i].y) + ds[i].x, ds[i].x, ds[i].y, ds[i].w, ds[i].h, (high_res ? 640 : 320), false);
+				else
+				if (wide_screen)
+					Blt_part(_gfx_buf + ((high_res ? 640 : 320) * ds[i].y) + ds[i].x, (!high_res ? ds[i].x : ds[i].x/2), (!high_res ? ds[i].y : ds[i].y/2), ds[i].w, ds[i].h, (high_res ? 640 : 320), false);
+				else
 				if (smartphone)
 					Blt_part(_gfx_buf + (320 * ds[i].y) + ds[i].x, ds[i].x * 2 / 3, ds[i].y * 7 / 8, ds[i].w, ds[i].h, 320, false);
 				else
 				if (high_res)
 					Blt_part(_gfx_buf + (640 * ds[i].y) + ds[i].x, ds[i].x/2, ds[i].y/2, ds[i].w, ds[i].h, 640, false);
 				else
-					Blt_part(_gfx_buf + (320 * ds[i].y) + ds[i].x, ((GetScreenMode() || GetSystemMetrics(SM_CXSCREEN) >= 320) ? ds[i].x : ds[i].x * 3/4), ds[i].y, ds[i].w, ds[i].h, 320, false);
+					Blt_part(_gfx_buf + (320 * ds[i].y) + ds[i].x, (GetScreenMode() ? ds[i].x : ds[i].x * 3/4), ds[i].y, ds[i].w, ds[i].h, 320, false);
 			}
 			num_of_dirty_square = 0;
 		}
@@ -1419,8 +1457,14 @@ void OSystem_WINCE3::draw_mouse() {
 	int h = _ms_cur.h;
 	byte color;
 	byte *src = _ms_buf;		// Image representing the mouse
+	int toolbar_offset = (high_res && wide_screen ? 440 : 200);
 
 	if (_overlay_visible && (x >= 320 || y>=240))
+		return;
+
+	
+	// Do not draw the mouse over the toolbar
+	if (!hide_toolbar && (y >= toolbar_offset))
 		return;
 
 	// clip the mouse rect, and addjust the src pointer accordingly
