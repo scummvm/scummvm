@@ -899,7 +899,10 @@ void Actor::drawActorCostume()
 		// FIXME - Hack to fix two glitches in the scene where Bobbin
 		// heals Rusty: Bobbin's feet get masked when Rusty shows him
 		// what happens to The Forge, and Rusty gets masked after
-		// Bobbin heals him.
+		// Bobbin heals him. (Room 34)
+		//
+		// It also fixes a much less noticable glitch when Bobbin
+		// jumps out of Mandible's cage. (Room 43)
 		//
 		// When an actor is moved around without regards to walkboxes,
 		// its walkbox is set to 0. Unfortunately that's a valid
@@ -910,24 +913,25 @@ void Actor::drawActorCostume()
 		// to be at the moment or, if it's not in any box, don't mask
 		// at all.
 		//
-		// Checking if ignoreBoxes != 0 isn't enough to fix all the
-		// glitches, so I have to check for walkbox 0. However, that
-		// gives too many false positives -- it breaks masking in a
-		// few other rooms, e.g. when Stoke leaves the room where he
+		// This is similar to the clipping == 100 check used for AKOS
+		// costumes, except I haven't been able to figure out the
+		// proper check here. It's not quite enough to check if
+		// ignoreBoxes != 0 and checking if walkbox == 0 yields too
+		// many false positives, e.g. Bobbin leaving the sandy beach
+		// towards the forest, or Stoke leaving the room where he
 		// locks up "Rusty".
 		//
 		// Until someone can find the proper fix, only apply it to the
-		// one room where it's actually needed.
+		// rooms where it's actually known to be needed.
 
-		if (_vm->_gameId == GID_LOOM256 && _vm->_currentRoom == 34 && walkbox == 0) {
+		if (_vm->_gameId == GID_LOOM256 && (_vm->_currentRoom == 34 || _vm->_currentRoom == 43) && walkbox == 0) {
 			int num_boxes, i;
 
 			cr._zbuf = 0;
 			num_boxes = _vm->getNumBoxes();
 
-			// For this particular room it won't matter in which
-			// direction we loop. In other rooms, looping in the
-			// other direction may pick the wrong box.
+			// Sometimes boxes overlap, so the direction of this
+			// loop matters in some rooms.
 
 			for (i = 0; i < num_boxes; i++) {
 				if (_vm->checkXYInBoxBounds(i, x, y)) {
