@@ -61,7 +61,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui)
 	PopUpWidget *gfxPopUp;
 	gfxPopUp = new PopUpWidget(this, 105, 10, 180, kLineHeight);
 	gfxPopUp->appendEntry("<default>");
-	gfxPopUp->appendEntry("-");
+	gfxPopUp->appendEntry("");
 	gfxPopUp->appendEntry("Normal (no scaling)");
 	gfxPopUp->appendEntry("2x");
 	gfxPopUp->appendEntry("3x");

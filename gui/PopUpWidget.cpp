@@ -70,6 +70,9 @@ protected:
 	int findItem(int x, int y) const;
 	void setSelection(int item);
 	bool isMouseDown();
+	
+	void moveUp();
+	void moveDown();
 };
 
 PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
@@ -139,13 +142,10 @@ void PopUpDialog::handleMouseUp(int x, int y, int button, int clickCount)
 
 void PopUpDialog::handleMouseWheel(int x, int y, int direction)
 {
-	if (direction < 0) {
-		if (_selection > 0)
-			setSelection(_selection-1);
-	} else if (direction > 0) {
-		if (_selection < _popUpBoss->_entries.size()-1)
-			setSelection(_selection+1);
-	}
+	if (direction < 0)
+		moveUp();
+	else if (direction > 0)
+		moveDown();
 }
 
 void PopUpDialog::handleMouseMoved(int x, int y, int button)
@@ -153,7 +153,7 @@ void PopUpDialog::handleMouseMoved(int x, int y, int button)
 	// Compute over which item the mouse is...
 	int item = findItem(x, y);
 
-	if (item >= 0 && _popUpBoss->_entries[item].name[0] == '-')
+	if (item >= 0 && _popUpBoss->_entries[item].name.size() == 0)
 		item = -1;
 
 	if (item == -1 && !isMouseDown())
@@ -180,12 +180,10 @@ void PopUpDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 			close();
 			break;
 		case 256+17:	// up arrow
-			if (_selection > 0)
-				setSelection(_selection-1);
+			moveUp();
 			break;
 		case 256+18:	// down arrow
-			if (_selection < _popUpBoss->_entries.size()-1)
-				setSelection(_selection+1);
+			moveDown();
 			break;
 		case 256+22:	// home
 			setSelection(0);
@@ -229,6 +227,37 @@ bool PopUpDialog::isMouseDown()
 	return false;
 }
 
+void PopUpDialog::moveUp()
+{
+	if (_selection < 0) {
+		setSelection(_popUpBoss->_entries.size() - 1);
+	} else if (_selection > 0) {
+		int item = _selection;
+		do {
+			item--;
+		} while (item >= 0 && _popUpBoss->_entries[item].name.size() == 0);
+		if (item >= 0)
+			setSelection(item);
+	}
+}
+
+void PopUpDialog::moveDown()
+{
+	int lastItem = _popUpBoss->_entries.size() - 1;
+
+	if (_selection < 0) {
+		setSelection(0);
+	} else if (_selection < lastItem) {
+		int item = _selection;
+		do {
+			item++;
+		} while (item <= lastItem && _popUpBoss->_entries[item].name.size() == 0);
+		if (item <= lastItem)
+			setSelection(item);
+	}
+}
+
+
 void PopUpDialog::drawMenuEntry(int entry, bool hilite)
 {
 	// Draw one entry of the popup menu, including selection
@@ -239,7 +268,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite)
 	ScummVM::String &name = _popUpBoss->_entries[entry].name;
 
 	_gui->fillRect(x, y, w, kLineHeight, hilite ? _gui->_textcolorhi : _gui->_bgcolor);
-	if (name[0] == '-') {
+	if (name.size() == 0) {
 		// Draw a seperator
 		_gui->hline(x, y+kLineHeight/2, x+w-1, _gui->_color);
 		_gui->hline(x+1, y+1+kLineHeight/2, x+w-1, _gui->_shadowcolor);
