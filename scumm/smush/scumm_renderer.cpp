@@ -29,6 +29,7 @@
 #include "scumm/sound.h"
 #include "scumm/actor.h"
 
+
 class ScummMixer : public Mixer {
 private:
 	SoundMixer * _mixer; //!< pointer to the SoundMixer instance
@@ -216,7 +217,7 @@ Mixer * ScummRenderer::getMixer() {
 }
 
 ScummRenderer::~ScummRenderer() {
-	_scumm->_insaneState = 0;
+	_scumm->_insaneState = false;
 	_scumm->exitCutscene();
 	if(_smixer) {
 		_scumm->_timer->releaseProcedure(&smush_handler);
@@ -240,8 +241,8 @@ bool ScummRenderer::wait(int32 ms) {
 
 bool ScummRenderer::startDecode(const char * fname, int32 version, int32 nbframes) {
 	_scumm->_sound->pauseBundleMusic(true);
-	_scumm->videoFinished = 0;
-	_scumm->_insaneState = 1;
+	_scumm->_videoFinished = false;
+	_scumm->_insaneState = true;
 	return true;
 }
 
@@ -274,7 +275,8 @@ void ScummRenderer::save(int32 frame) {
 
 bool ScummRenderer::prematureClose() { 
 	
-	return _scumm->videoFinished ? true : false;
+	return _scumm->_videoFinished || _scumm->_saveLoadFlag;
+
 }
 
 bool ScummRenderer::update() {

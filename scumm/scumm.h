@@ -381,8 +381,8 @@ public:
 	/* _insane vars */
 
 	int _insaneFlag;
-	int _insaneState;
-	int videoFinished;
+	bool _insaneState;
+	bool _videoFinished;
 	
 	
 	void scummInit();

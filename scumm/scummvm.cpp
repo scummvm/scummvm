@@ -417,7 +417,7 @@ int Scumm::scummLoop(int delta)
 			tempMusic = 0;
 			_vars[VAR_MUSIC_FLAG]++;
 		} else {
-			tempMusic ++;
+			tempMusic++;
 		}
 	}
 
@@ -1054,7 +1054,7 @@ void Scumm::processKbd()
 
 	if (_lastKeyHit == _vars[VAR_CUTSCENEEXIT_KEY]) {
 		if (_insaneState) {
-			videoFinished = 1;
+			_videoFinished = true;
 		} else
 			exitCutscene();
 	} else if (_lastKeyHit == saveloadkey && _currentRoom != 0) {
@@ -1071,23 +1071,23 @@ void Scumm::processKbd()
 		if (_sound->_sfxMode & 2)
 			stopTalk();
 		return;
-	} else if (_lastKeyHit == '[') { // [, eg volume down
+	} else if (_lastKeyHit == '[') { // [ volume down
 		_sound->_sound_volume_master-=5;
 		if (_sound->_sound_volume_master < 0)
 			_sound->_sound_volume_master = 0;
 		_imuse->set_master_volume(_sound->_sound_volume_master);
-	} else if (_lastKeyHit == ']') { // ], eg volume down
+	} else if (_lastKeyHit == ']') { // ] volume down
 		_sound->_sound_volume_master+=5;
 		if (_sound->_sound_volume_master > 128)
 			_sound->_sound_volume_master = 128;		
 		_imuse->set_master_volume(_sound->_sound_volume_master);
-	} else if (_lastKeyHit == '-') { // -, eg text speed down
+	} else if (_lastKeyHit == '-') { // - text speed down
 		_defaultTalkDelay+=5;
 		if (_defaultTalkDelay > 90)
 			_defaultTalkDelay = 90;
 
 		_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
-	} else if (_lastKeyHit == '+') { // +, eg text speed up
+	} else if (_lastKeyHit == '+') { // + text speed up
 		_defaultTalkDelay-=5;
 		if (_defaultTalkDelay < 5)
 			_defaultTalkDelay = 5;
