@@ -489,22 +489,19 @@ void Sound::playSound(int soundID) {
 	if ((_scumm->_features & GF_AMIGA) && (_scumm->_version == 3))
 	{
 		// experimental support for Indy3 Amiga sound effects
-		bool amigatest = (READ_BE_UINT16(ptr + 26) == 0x00FF) || (READ_BE_UINT16(ptr + 26) == 0x0001) || (READ_BE_UINT16(ptr + 26) == 0x0101);
-		if (amigatest) {
-			if (READ_BE_UINT16(ptr + 26) == 0x00FF)		// looped sound
-				// TODO: support looping sounds
-				// ptr + 14 seems to be looping duration
-				flags = 0;
-			else if (READ_BE_UINT16(ptr + 26) == 0x0001)	// nonlooped sound
-				flags = 0;	// 
-			else if (READ_BE_UINT16(ptr + 26) == 0x0101)	// background music
-				// TODO: support music
-				return;
-			size = READ_BE_UINT16(ptr + 12);
-			rate = 11000;
-			_scumm->_mixer->playRaw(NULL, ptr + 28, size, rate, flags, soundID);
+		if (READ_BE_UINT16(ptr + 26) == 0x00FF)		// looped sound
+			// TODO: support looping sounds
+			// ptr + 14 seems to be looping duration
+			flags = 0;
+		else if (READ_BE_UINT16(ptr + 26) == 0x0001)	// nonlooped sound
+			flags = 0;	// 
+		else if (READ_BE_UINT16(ptr + 26) == 0x0101)	// background music
+			// TODO: support music
 			return;
-		}
+		size = READ_BE_UINT16(ptr + 12);
+		rate = 11000;
+		_scumm->_mixer->playRaw(NULL, ptr + 28, size, rate, flags, soundID);
+		return;
 	}
 
 	if (_scumm->_features & GF_OLD_BUNDLE) {
