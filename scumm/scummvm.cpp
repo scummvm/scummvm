@@ -809,7 +809,7 @@ void Scumm::initScummVars() {
 			VAR(VAR_SOUNDPARAM) = 0;
 		VAR(VAR_SOUNDPARAM2) = 0;
 		VAR(VAR_SOUNDPARAM3) = 0;
-		if (_features & GF_AFTER_V6)
+		if (_features & GF_AFTER_V6 && VAR_V6_EMSSPACE != 0xFF)
 			VAR(VAR_V6_EMSSPACE) = 10000;
 
 		VAR(VAR_59) = 3;
@@ -1103,7 +1103,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr) {
 		}
 	}
 
-	if (!(_features & GF_SMALL_HEADER))  // Disable for SH games. Overwrites
+	if (!(_features & GF_SMALL_HEADER) && VAR_NEW_ROOM != 0xFF)  // Disable for SH games. Overwrites
 		VAR(VAR_NEW_ROOM) = room; // gamevars, eg Zak cashcards
 
 	runExitScript();
@@ -1138,7 +1138,8 @@ void Scumm::startScene(int room, Actor * a, int objectNr) {
 	else
 		_roomResource = room;
 
-	VAR(VAR_ROOM_RESOURCE) = _roomResource;
+	if (VAR_ROOM_RESOURCE != 0xFF)
+		VAR(VAR_ROOM_RESOURCE) = _roomResource;
 
 	if (room != 0)
 		ensureResourceLoaded(rtRoom, room);
@@ -1165,7 +1166,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr) {
 		camera._cur.y = camera._dest.y = _screenHeight / 2;
 	}
 
-	if (_features & GF_AFTER_V6) {
+	if (_features & GF_AFTER_V6 && VAR_V6_SCREEN_WIDTH != 0xFF) {
 		VAR(VAR_V6_SCREEN_WIDTH) = _roomWidth;
 		VAR(VAR_V6_SCREEN_HEIGHT) = _roomHeight;
 	}
