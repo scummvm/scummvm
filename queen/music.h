@@ -39,6 +39,7 @@ public:
 	void playMusic();
 	void stopMusic();
 	void setLoop(bool loop)		{ _looping = loop; }
+	void queueTuneList(int16 tuneList);
 	bool queueSong(uint16 songNum);
 	void queueClear();
 	
@@ -59,10 +60,11 @@ public:
 protected:
 
 	enum {
-		MUSIC_QUEUE_SIZE	=	8
+		MUSIC_QUEUE_SIZE	=	14
 	};
 
 	void queueUpdatePos();
+	uint8 randomQueuePos();
 	static void onTimer(void *data);
 	uint32 songOffset(uint16 songNum);
 	uint32 songLength(uint16 songNum);
@@ -71,9 +73,12 @@ protected:
 	MidiParser *_parser;
 	MidiChannel *_channel[16];
 	byte _channelVolume[16];
-		
+	
+	Common::RandomSource _rnd;
+				
 	bool _isPlaying;
 	bool _looping;
+	bool _randomLoop;
 	byte _volume;
 	uint8 _queuePos;
 	int16 _lastSong;	//first song from previous queue
@@ -89,11 +94,9 @@ public:
 	Music(MidiDriver *_driver, QueenEngine *vm);
 	~Music();
 	void playSong(uint16 songNum);
-	void queueClear()		{ return _player->queueClear(); }
-	bool queueSong(uint16 songNum);	
-	void playMusic()		{ return _player->playMusic(); }
-	void stopSong();
-	void loop(bool val)		{ return _player->setLoop(val); }
+	void queueTuneList(int16 tuneList)	{ return _player->queueTuneList(tuneList); }
+	void playMusic()					{ return _player->playMusic(); }
+	void stopSong()						{ return _player->stopMusic(); }
 	
 protected:
 	byte *_musicData;

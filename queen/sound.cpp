@@ -123,26 +123,8 @@ void Sound::playSong(int16 songNum) {
 	
 	_lastOverride = songNum;
 	
-	switch (_tune[newTune].mode) {
-		//Random loop
-		case  0:
-			warning("Music: Random loop not yet supported (doing sequential loop instead)");
-		//Sequential loop
-		case  1:
-			_vm->music()->loop(true);
-			break;
-		//Play once
-		case  2:
-		default:
-			_vm->music()->loop(false);
-			break;
-	}
-
-	_vm->music()->queueClear();
-	int i = 0;
-	while(_tune[newTune].tuneNum[i])
-		_vm->music()->queueSong(_tune[newTune].tuneNum[i++] - 1);
-	_vm->music()->playMusic();	
+	_vm->music()->queueTuneList(newTune);
+	_vm->music()->playMusic();
 }
 
 void Sound::saveState(byte *&ptr) {

@@ -1701,4 +1701,6 @@ const char *Sound::_sfxName[] = {
 	"1034ssss"
 };
 
+const int16 Sound::_jungleList[] = { 15, 16, 17, 18, 7, 8, 9, 10, 11, 12, 13, 14, 0 };
+
 } // End of namespace Queen

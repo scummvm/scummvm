@@ -23,12 +23,13 @@
 #include "queen/music.h"
 #include "queen/queen.h"
 #include "queen/resource.h"
+#include "queen/sound.h"
 
 #include "sound/midiparser.h"
 
 namespace Queen {
 
-	MusicPlayer::MusicPlayer(MidiDriver *driver, byte *data, uint32 size) : _driver(driver), _isPlaying(false), _looping(false), _volume(255), _queuePos(0), _musicData(data), _musicDataSize(size) {
+	MusicPlayer::MusicPlayer(MidiDriver *driver, byte *data, uint32 size) : _driver(driver), _isPlaying(false), _looping(false), _randomLoop(false), _volume(255), _queuePos(0), _musicData(data), _musicDataSize(size) {
 		memset(_channel, 0, sizeof(_channel));
 		queueClear();
 		_lastSong = 0;
@@ -55,7 +56,12 @@ namespace Queen {
 		
 		if (!emptySlots)
 			return false;
-			
+		
+		// Work around bug in Roland music, note that these numbers are 'one-off'
+		// from the original code
+		if (/*isRoland && */ songNum == 88 || songNum == 89)
+			songNum = 62;
+
 		_songQueue[MUSIC_QUEUE_SIZE - emptySlots] = songNum;
 		return true;
 	}
@@ -63,6 +69,7 @@ namespace Queen {
 	void MusicPlayer::queueClear() {
 		_lastSong = _songQueue[0];
 		_queuePos = 0;
+		_looping = _randomLoop = false;
 		memset(_songQueue, 0, sizeof(_songQueue));
 	}
 	
@@ -126,6 +133,47 @@ namespace Queen {
 			music->_parser->onTimer();
 	}
 	
+	void MusicPlayer::queueTuneList(int16 tuneList) {
+		queueClear();
+		
+		//Jungle is the only part of the game that uses multiple tunelists.
+		//For the sake of code simplification we just hardcode the extended list ourselves
+		if ((tuneList + 1) == 3) {
+			_randomLoop = true;
+			int i = 0;
+			while(Sound::_jungleList[i])
+				queueSong(Sound::_jungleList[i++] - 1);
+			return;
+		}
+		
+		switch (Sound::_tune[tuneList].mode) {
+			//Random loop
+			case  0:
+				_randomLoop = true;
+				setLoop(false);
+				break;
+			//Sequential loop
+			case  1:
+				if (_songQueue[1])
+					setLoop(false);
+				else
+					setLoop(true);
+				break;
+			//Play once
+			case  2:
+			default:
+				setLoop(false);
+				break;
+	}
+		
+		int i = 0;
+		while(Sound::_tune[tuneList].tuneNum[i])
+			queueSong(Sound::_tune[tuneList].tuneNum[i++] - 1);
+			
+		if (_randomLoop)
+			_queuePos = randomQueuePos();
+	}
+	
 	void MusicPlayer::playMusic() {
 		if (!_queuePos && !_songQueue[_queuePos]) {
 			debug(5, "MusicPlayer::playMusic - Music queue is empty!");
@@ -135,11 +183,18 @@ namespace Queen {
 		uint16 songNum = _songQueue[_queuePos];
 
 		//Special type
-		//2000: (songNum + 1) - repeat music from previous queue
-		if (songNum == 1999) {
-			songNum = _lastSong;
-			queueClear();
-			queueSong(songNum);
+		// > 1000 && < 2000 -> queue different tunelist
+		// 2000 -> repeat music from previous queue
+		if (songNum > 999) {
+			if ((songNum + 1) == 2000) {
+				songNum = _lastSong;
+				queueClear();
+				queueSong(songNum);
+			} else {
+				queueTuneList(songNum - 1000);
+				_queuePos = _randomLoop ? randomQueuePos() : 0;
+				songNum = _songQueue[_queuePos];
+			}
 		}
 		
 		_parser->loadMusic(_musicData + songOffset(songNum), songLength(songNum));
@@ -150,10 +205,23 @@ namespace Queen {
 	}
 	
 	void MusicPlayer::queueUpdatePos() {
-		if (_queuePos < (MUSIC_QUEUE_SIZE - 1) && _songQueue[_queuePos + 1])
-			_queuePos++;
-		else
-			_queuePos = 0;
+		if (_randomLoop)
+			_queuePos = randomQueuePos();
+		else {
+			if (_queuePos < (MUSIC_QUEUE_SIZE - 1) && _songQueue[_queuePos + 1])
+				_queuePos++;
+			else
+				_queuePos = 0;
+		}
+	}
+	
+	uint8 MusicPlayer::randomQueuePos() {
+		int queueSize = 0;
+		for (int i = 0; i < MUSIC_QUEUE_SIZE; i++)
+			if (_songQueue[i])
+				queueSize++;
+				
+		return (uint8) _rnd.getRandomNumber(queueSize) & 0xFF;
 	}
 	
 	void MusicPlayer::stopMusic() {
@@ -189,24 +257,11 @@ namespace Queen {
 		delete _player;
 		delete[] _musicData;	
 	}
-
-	bool Music::queueSong(uint16 songNum) {
-		// Work around bug in Roland music, note that these numbers are 'one-off'
-		// from the original code
-		if (/*isRoland && */ songNum == 88 || songNum == 89)
-			songNum = 62;
-			
-		return _player->queueSong(songNum);
-	}
 	
 	void Music::playSong(uint16 songNum) {
 		_player->queueClear();
 		_player->queueSong(songNum);
 		_player->playMusic();				
-	}
-
-	void Music::stopSong() {
-		return _player->stopMusic();
 	}
 	
 } // End of namespace Queen

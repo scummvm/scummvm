@@ -78,13 +78,14 @@ public:
 	void saveState(byte *&ptr);
 	void loadState(uint32 ver, byte *&ptr);
 
-protected:
-	SoundMixer *_mixer;
-	QueenEngine *_vm;
-
 	static const songData _song[];
 	static const tuneData _tune[];
 	static const char *_sfxName[];
+	static const int16 _jungleList[];
+
+protected:
+	SoundMixer *_mixer;
+	QueenEngine *_vm;
 
 	bool _sfxToggle;
 	bool _speechToggle;
