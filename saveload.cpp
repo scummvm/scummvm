@@ -15,33 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.7  2001/11/05 19:21:49  strigeus
- * bug fixes,
- * speech in dott
- *
- * Revision 1.6  2001/10/26 17:34:50  strigeus
- * bug fixes, code cleanup
- *
- * Revision 1.5  2001/10/18 20:04:58  strigeus
- * flags were not saved properly
- *
- * Revision 1.4  2001/10/17 10:07:39  strigeus
- * fixed verbs not saved in non dott games,
- * implemented a screen effect
- *
- * Revision 1.3  2001/10/16 10:01:47  strigeus
- * preliminary DOTT support
- *
- * Revision 1.2  2001/10/10 10:02:33  strigeus
- * alternative mouse cursor
- * basic save&load
- *
- * Revision 1.1.1.1  2001/10/09 14:30:13  strigeus
- *
- * initial revision
- *
+ * $Header$
  *
  */
 
@@ -156,8 +130,8 @@ void Scumm::saveOrLoad(Serializer *s) {
 	const SaveLoadEntry objectEntries[] = {
 		MKLINE(ObjectData,offs_obim_to_room,sleUint32),
 		MKLINE(ObjectData,offs_obcd_to_room,sleUint32),
-		MKLINE(ObjectData,cdhd_10,sleUint16),
-		MKLINE(ObjectData,cdhd_12,sleUint16),
+		MKLINE(ObjectData,walk_x,sleUint16),
+		MKLINE(ObjectData,walk_y,sleUint16),
 		MKLINE(ObjectData,obj_nr,sleUint16),
 		MKLINE(ObjectData,x_pos,sleInt16),
 		MKLINE(ObjectData,y_pos,sleInt16),

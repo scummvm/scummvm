@@ -17,6 +17,11 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.12  2001/11/06 20:00:47  strigeus
+ * full screen flag,
+ * better mouse cursors,
+ * removed change log from individual files
+ *
  * Revision 1.11  2001/11/06 07:47:00  strigeus
  * fixed integer overflow for large sounds
  *
@@ -926,8 +931,9 @@ void waitForTimer(Scumm *s) {
 	wm->handleMessage();
 }
 
-void initGraphics(Scumm *s) {
-
+void initGraphics(Scumm *s, bool fullScreen) {
+	if(fullScreen)
+		warning("Use SDL for fullscreen support");
 }
 
 void drawMouse(Scumm *s, int, int, int, byte*, bool) {

@@ -15,59 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.15  2001/11/05 19:21:49  strigeus
- * bug fixes,
- * speech in dott
- *
- * Revision 1.14  2001/10/29 23:07:24  strigeus
- * better MI1 compatibility
- *
- * Revision 1.13  2001/10/26 17:34:50  strigeus
- * bug fixes, code cleanup
- *
- * Revision 1.12  2001/10/24 20:12:52  strigeus
- * fixed some bugs related to string handling
- *
- * Revision 1.11  2001/10/23 19:51:50  strigeus
- * recompile not needed when switching games
- * debugger skeleton implemented
- *
- * Revision 1.10  2001/10/17 10:07:40  strigeus
- * fixed verbs not saved in non dott games,
- * implemented a screen effect
- *
- * Revision 1.9  2001/10/16 20:31:27  strigeus
- * misc fixes
- *
- * Revision 1.8  2001/10/16 12:20:22  strigeus
- * made files compile on unix
- *
- * Revision 1.7  2001/10/16 10:01:48  strigeus
- * preliminary DOTT support
- *
- * Revision 1.6  2001/10/11 11:49:51  strigeus
- * Determine caption from file name.
- *
- * Revision 1.5  2001/10/10 16:29:59  strigeus
- * temporary fix to prevent freeze in stan's room until sound is there
- *
- * Revision 1.4  2001/10/10 10:02:33  strigeus
- * alternative mouse cursor
- * basic save&load
- *
- * Revision 1.3  2001/10/09 19:02:28  strigeus
- * command line parameter support
- *
- * Revision 1.2  2001/10/09 18:35:02  strigeus
- * fixed object parent bug
- * fixed some signed/unsigned comparisons
- *
- * Revision 1.1.1.1  2001/10/09 14:30:13  strigeus
- *
- * initial revision
- *
+ * $Header$
  *
  */
 
@@ -130,7 +78,7 @@ void Scumm::scummInit() {
 	initScreens(0, 16, 320, 144);
 
 	setShake(0);
-	setCursor(0);
+	setupCursor();
 
 	for (i=1,a=getFirstActor(); ++a,i<13; i++) {
 		a->number = i;
@@ -276,7 +224,7 @@ void Scumm::scummMain(int argc, char **argv) {
 		_bootParam = -7873;
 	}
 
-	initGraphics(this);
+	initGraphics(this, _fullScreen);
 
 	if (_majorScummVersion==6)
 		initThingsV6();
@@ -446,6 +394,9 @@ void Scumm::parseCommandLine(int argc, char **argv) {
 				case 'b': 
 					_bootParam = atoi(s+1);
 					goto NextArg;
+				case 'f':
+					_fullScreen = true;
+					break;
 				default:
 ShowHelpAndExit:;
 					printf(
@@ -453,7 +404,8 @@ ShowHelpAndExit:;
 						"Syntax:\n"
 						"\tscummvm [-b<num>] game\n"
 						"Flags:\n"
-						"\tb<num> - start in that room\n");
+						"\tb<num> - start in that room\n"
+						"\tf - fullscreen mode\n");
 					exit(1);
 				}
 				s++;
@@ -908,12 +860,14 @@ Actor *Scumm::derefActorSafe(int id, const char *errmsg) {
 	return derefActor(id);
 }
 
-void Scumm::new_unk_1(int a) {
-	warning("stub new_unk_1(%d)", a);
-}
+void Scumm::makeCursorColorTransparent(int a) {
+	int i,size;
 
-void Scumm::setCursorHotspot2(int x,int y) {
-	warning("stub setCursorHotspot2(%d,%d)", x,y);
+	size = _cursorWidth * _cursorHeight;
+
+	for(i=0; i<size; i++)
+		if (_grabbedCursor[i] == (byte)a)
+			_grabbedCursor[i] = 0xFF;
 }
 
 void Scumm::setStringVars(int slot) {

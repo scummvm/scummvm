@@ -15,46 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.11  2001/11/05 19:21:49  strigeus
- * bug fixes,
- * speech in dott
- *
- * Revision 1.10  2001/10/29 23:07:24  strigeus
- * better MI1 compatibility
- *
- * Revision 1.9  2001/10/26 17:34:50  strigeus
- * bug fixes, code cleanup
- *
- * Revision 1.8  2001/10/23 19:51:50  strigeus
- * recompile not needed when switching games
- * debugger skeleton implemented
- *
- * Revision 1.7  2001/10/17 10:07:39  strigeus
- * fixed verbs not saved in non dott games,
- * implemented a screen effect
- *
- * Revision 1.6  2001/10/17 07:12:37  strigeus
- * fixed nasty signed/unsigned bug
- *
- * Revision 1.5  2001/10/16 20:31:27  strigeus
- * misc fixes
- *
- * Revision 1.4  2001/10/16 10:01:47  strigeus
- * preliminary DOTT support
- *
- * Revision 1.3  2001/10/10 12:52:21  strigeus
- * fixed bug in GDI_UnkDecode7()
- *
- * Revision 1.2  2001/10/10 10:02:33  strigeus
- * alternative mouse cursor
- * basic save&load
- *
- * Revision 1.1.1.1  2001/10/09 14:30:14  strigeus
- *
- * initial revision
- *
+ * $Header$
  *
  */
 
@@ -1721,6 +1682,23 @@ void Scumm::setPalColor(int index, int r, int g, int b) {
 void Scumm::drawMouse() {
 	/* TODO: handle shake here */
 
+	if (_cursorAnimate) {
+		if (!(_cursorAnimateIndex&0x3))
+			decompressDefaultCursor((_cursorAnimateIndex>>2)&3);
+		_cursorAnimateIndex++;
+		
+	}
+
+	::drawMouse(this, 
+		mouse.x - _cursorHotspotX, 
+		mouse.y - _cursorHotspotY,
+		_cursorWidth,
+		_cursorHeight,
+		_grabbedCursor,
+		gdi._unk4>0
+	);
+
+/*
 	::drawMouse(this,
 		mouse.x - gdi._hotspot_x,
 		mouse.y - gdi._hotspot_y,
@@ -1728,6 +1706,7 @@ void Scumm::drawMouse() {
 		gdi._mouseMask + ((gdi._drawMouseX&7)<<6),
 		gdi._unk4>0
 		);
+	*/
 }
 
 void Scumm::setCursorHotspot(int cursor, int x, int y) {
@@ -1736,33 +1715,9 @@ void Scumm::setCursorHotspot(int cursor, int x, int y) {
 	cur->hotspot_y = y;
 }
 
-void Scumm::setCursorImg(int room, int img) {
-	byte *ptr;
-	int index;
-	CodeHeader *cdhd;
-	ImageHeader *imhd;
-	int w,h;
-	byte *roomptr;
-	RoomHeader *rmhd;
-
-	if (getObjectIndex(img)!=-1) {
-		cdhd = (CodeHeader*)getObjectAddress(img);
-		ptr = (byte*)cdhd + READ_BE_UINT32(&cdhd->size);
-		cdhd = (CodeHeader*)findResource(MKID('CDHD'), (byte*)cdhd, 0);
-		w = READ_LE_UINT16(&cdhd->v6.w)>>3;
-		h = READ_LE_UINT16(&cdhd->v6.h)>>3;
-		imhd = (ImageHeader*)findResource(MKID('IMHD'), ptr, 0);
-	} else {
-//		error("setCursorImg: -1 not impl");
-	}
-
-	
-	
-//	offs = ((uint32*)ptr)[img+1];
-//	if (!offs)
-//		return;
-
-	warning("stub setCursorImg(%d,%d)", room, img);
+void Scumm::setCursorHotspot2(int x,int y) {
+	_cursorHotspotX = x;
+	_cursorHotspotY = y;
 }
 
 byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
@@ -1876,30 +1831,119 @@ void Scumm::darkenPalette(int a, int b, int c, int d, int e) {
 	}
 }
 
-void Scumm::unkMiscOp4(int a, int b, int c, int d) {
-	VirtScreen *vs = findVirtScreen(b);
+void Scumm::grabCursor(int x, int y, int w, int h) {
+	VirtScreen *vs = findVirtScreen(y);
 
 	if (vs==NULL) {
-		warning("unkMiscOp4: invalid virtscreen %d", b);
+		warning("grabCursor: invalid Y %d", y);
 		return;
 	}
 
 	grabCursor(
-		getResourceAddress(rtBuffer, vs->number+1) + (b-vs->topline)*320 + a, 
-		c,d);
+		getResourceAddress(rtBuffer, vs->number+1) + (y-vs->topline)*320 + x, 
+		w,h);
 
-//	_cursor_width = c;
-//	_cursor_height = d;
+}
+
+void Scumm::decompressBomp(byte *dst, byte *src, int w, int h) {
+	int len,num;
+	byte code,color;
+
+	src += 8;
+
+	do {
+		len = w;
+		src += 2;
+		while (len) {
+			code = *src++;
+			num = (code>>1)+1;
+			if (num>len) num=len;
+			len -= num;
+			if (code&1) {
+				color = *src++;
+				do *dst++ = color; while (--num);
+			} else {
+				do *dst++ = *src++; while (--num);
+			}
+		}
+	} while (--h);
 }
 
 void Scumm::grabCursor(byte *ptr, int width, int height) {
-#if 0
-	int size;
-	byte *ptr;
+	uint size;
+	byte *dst;
 	
 	size = width * height;
-	if (size > 10240)
+	if (size > sizeof(_grabbedCursor))
 		error("grabCursor: grabbed cursor too big");
-	ptr = createResource(
-#endif
+
+	_cursorWidth = width;
+	_cursorHeight = height;
+	_cursorAnimate = false;
+
+	dst = _grabbedCursor;
+	for(;height;height--) {
+		memcpy(dst, ptr, width);
+		dst += width;
+		ptr += 320;
+	}
+
+}
+
+void Scumm::useIm01Cursor(byte *im, int w, int h) {
+	VirtScreen *vs = &virtscr[0];
+	
+	w<<=3;
+	h<<=3;
+	
+	drawBox(0,0,w-1,h-1,0xFF);
+
+	vs->alloctwobuffers = false;
+	gdi._disable_zbuffer = true;
+	gdi.drawBitmap(im, vs, _screenStartStrip, 0, h, 0, w>>3, 0);
+	vs->alloctwobuffers = true;
+	gdi._disable_zbuffer = false;
+
+	grabCursor(getResourceAddress(rtBuffer, 1) + vs->xstart, w, h);
+	
+	blit(getResourceAddress(rtBuffer, 1) + vs->xstart, getResourceAddress(rtBuffer, 5) + vs->xstart, w, h);
+}
+
+void Scumm::useBompCursor(byte *im, int width, int height) {
+	uint size;
+
+	width<<=3;
+	height<<=3;
+	
+	size = width * height;
+	if (size > sizeof(_grabbedCursor))
+		error("useBompCursor: cursor too big");
+
+	_cursorWidth = width;
+	_cursorHeight = height;
+	_cursorAnimate = false;
+
+	decompressBomp(_grabbedCursor, im+10, width, height);
+}
+
+static const byte default_cursor_colors[4] = {
+	15,15,7,8
+};
+
+void Scumm::decompressDefaultCursor(int index) {
+	int i;
+	byte color;
+
+	memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
+	_cursorWidth = 16;
+	_cursorHeight = 16;
+	_cursorHotspotX = 8;
+	_cursorHotspotY = 7;
+
+	color = default_cursor_colors[index];
+	
+	for(i=0; i<16; i++) {
+		_grabbedCursor[16*8+i] = color;
+		_grabbedCursor[16*i+8] = color;
+	}
 }

@@ -15,24 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.5  2001/11/05 19:21:49  strigeus
- * bug fixes,
- * speech in dott
- *
- * Revision 1.4  2001/10/26 17:34:50  strigeus
- * bug fixes, code cleanup
- *
- * Revision 1.3  2001/10/24 20:12:52  strigeus
- * fixed some bugs related to string handling
- *
- * Revision 1.2  2001/10/23 19:51:50  strigeus
- * recompile not needed when switching games
- * debugger skeleton implemented
- *
- * Revision 1.1  2001/10/16 10:01:47  strigeus
- * preliminary DOTT support
+ * $Header$
  *
  */
 
@@ -743,7 +726,7 @@ void Scumm::o6_cursorCommand() {
 			charset._colorMap[i] = _charsetData[string[1].t_charset][i] = args[i];
 		break;
 	case 0xD6:
-		new_unk_1(pop());
+		makeCursorColorTransparent(pop());
 		break;
 	}
 
@@ -2013,7 +1996,7 @@ void Scumm::o6_miscOps() {
 		warning("o6_miscOps: nothing in 3");
 		break;
 	case 4:
-		unkMiscOp4(args[1], args[2], args[3], args[4]);
+		grabCursor(args[1], args[2], args[3], args[4]);
 		break;
 	case 5:
 		unkVirtScreen4(args[1]);

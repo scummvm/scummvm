@@ -15,55 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.15  2001/11/06 07:47:01  strigeus
- * fixed integer overflow for large sounds
- *
- * Revision 1.14  2001/11/05 20:45:07  strigeus
- * fixed playSfxSound types
- *
- * Revision 1.13  2001/11/05 19:21:49  strigeus
- * bug fixes,
- * speech in dott
- *
- * Revision 1.12  2001/10/26 17:34:50  strigeus
- * bug fixes, code cleanup
- *
- * Revision 1.11  2001/10/23 19:51:50  strigeus
- * recompile not needed when switching games
- * debugger skeleton implemented
- *
- * Revision 1.10  2001/10/17 11:30:19  strigeus
- * *** empty log message ***
- *
- * Revision 1.9  2001/10/16 20:31:27  strigeus
- * misc fixes
- *
- * Revision 1.8  2001/10/16 10:01:48  strigeus
- * preliminary DOTT support
- *
- * Revision 1.7  2001/10/11 11:49:51  strigeus
- * Determine caption from file name.
- *
- * Revision 1.6  2001/10/11 10:15:58  strigeus
- * no SDL cursor
- *
- * Revision 1.5  2001/10/10 11:53:39  strigeus
- * smoother mouse + bug fix
- *
- * Revision 1.4  2001/10/10 10:02:33  strigeus
- * alternative mouse cursor
- * basic save&load
- *
- * Revision 1.3  2001/10/09 19:02:28  strigeus
- * command line parameter support
- *
- * Revision 1.2  2001/10/09 17:38:20  strigeus
- * Autodetection of endianness.
- *
- * Revision 1.1.1.1  2001/10/09 14:30:13  strigeus
- * initial revision
+ * $Header$
  *
  */
 
@@ -192,8 +144,12 @@ int numDirtyRects;
 bool fullRedraw;
 
 int old_mouse_x, old_mouse_y;
+int old_mouse_h, old_mouse_w;
 bool has_mouse,hide_mouse;
-byte old_backup[24*16*2];
+
+#define BAK_WIDTH 40
+#define BAK_HEIGHT 24
+byte old_backup[BAK_WIDTH*BAK_HEIGHT*2];
 
 
 void addDirtyRect(int x, int y, int w, int h) {
@@ -295,6 +251,109 @@ void updateScreen(Scumm *s) {
 	}
 
 	numDirtyRects = 0;
+}
+
+void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool visible) {
+	int x,y;
+	byte *dst,*bak;
+	byte color;
+
+	if (hide_mouse)
+		visible = false;
+
+	if (SDL_LockSurface(screen)==-1)
+		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
+
+#if defined(SCALEUP_2x2)
+
+	if (has_mouse) {
+		dst = (byte*)screen->pixels + old_mouse_y*640*2 + old_mouse_x*2;
+		bak = old_backup;
+
+		for (y=0; y<old_mouse_h; y++,bak+=BAK_WIDTH*2,dst+=640*2) {
+			if ( (uint)(old_mouse_y + y) < 200) {
+				for (x=0; x<old_mouse_w; x++) {
+					if ((uint)(old_mouse_x + x) < 320) {
+						dst[x*2+640] = dst[x*2] = bak[x*2];
+						dst[x*2+640+1] = dst[x*2+1] = bak[x*2+1];
+					}
+				}
+			}
+		}
+	}
+
+	if (visible) {
+		dst = (byte*)screen->pixels + ydraw*640*2 + xdraw*2;
+		bak = old_backup;
+
+		for (y=0; y<h; y++,dst+=640*2,bak+=BAK_WIDTH*2,buf+=w) {
+			if ((uint)(ydraw+y)<200) {
+				for (x=0; x<w; x++) {
+					if ((uint)(xdraw+x)<320) {
+						bak[x*2] = dst[x*2];
+						bak[x*2+1] = dst[x*2+1];
+						if ((color=buf[x])!=0xFF) {
+							dst[x*2] = color;
+							dst[x*2+1] = color;
+							dst[x*2+640] = color;
+							dst[x*2+1+640] = color;
+						}
+					}
+				}
+			}
+		}
+	}
+#else
+	if (has_mouse) {
+		dst = (byte*)screen->pixels + old_mouse_y*320 + old_mouse_x;
+		bak = old_backup;
+
+		for (y=0; y<h; y++,bak+=BAK_WIDTH,dst+=320) {
+			if ( (uint)(old_mouse_y + y) < 200) {
+				for (x=0; x<w; x++) {
+					if ((uint)(old_mouse_x + x) < 320) {
+						dst[x] = bak[x];
+					}
+				}
+			}
+		}
+	}
+	if (visible) {
+		dst = (byte*)screen->pixels + ydraw*320 + xdraw;
+		bak = old_backup;
+
+		for (y=0; y<h; y++,dst+=320,bak+=BAK_WIDTH,buf+=w) {
+			if ((uint)(ydraw+y)<200) {
+				for (x=0; x<w; x++) {
+					if ((uint)(xdraw+x)<320) {
+						bak[x] = dst[x];
+						if ((color=buf[x])!=0xFF) {
+							dst[x] = color;
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+#endif	
+
+	SDL_UnlockSurface(screen);
+
+	if (has_mouse) {
+		has_mouse = false;
+		addDirtyRectClipped(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
+	}
+
+	if (visible) {
+		has_mouse = true;
+		addDirtyRectClipped(xdraw, ydraw, w, h);
+		old_mouse_x = xdraw;
+		old_mouse_y = ydraw;
+		old_mouse_w = w;
+		old_mouse_h = h;
+	}
 }
 
 void drawMouse(Scumm *s, int xdraw, int ydraw, int color, byte *mask, bool visible) {
@@ -468,7 +527,7 @@ void fill_sound(void *userdata, Uint8 *stream, int len) {
 	mix_sound((int16*)stream, len>>1);
 }
 
-void initGraphics(Scumm *s) {
+void initGraphics(Scumm *s, bool fullScreen) {
 	SDL_AudioSpec desired;
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)==-1) {
@@ -496,11 +555,10 @@ void initGraphics(Scumm *s) {
 	SDL_WM_SetCaption(buf,buf);
 	SDL_ShowCursor(SDL_DISABLE);
 
-
 #if !defined(SCALEUP_2x2)
-	screen = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE);
+	screen = SDL_SetVideoMode(320, 200, 8, fullScreen ? (SDL_SWSURFACE | SDL_FULLSCREEN) : SDL_SWSURFACE);
 #else
-	screen = SDL_SetVideoMode(640, 400, 8, SDL_SWSURFACE);
+	screen = SDL_SetVideoMode(640, 400, 8, fullScreen ? (SDL_SWSURFACE | SDL_FULLSCREEN) : SDL_SWSURFACE);
 #endif
 
 	printf("%d %d, %d %d, %d %d %d, %d %d %d %d %d\n", 

@@ -15,33 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.7  2001/11/05 19:21:49  strigeus
- * bug fixes,
- * speech in dott
- *
- * Revision 1.6  2001/10/26 17:34:50  strigeus
- * bug fixes, code cleanup
- *
- * Revision 1.5  2001/10/23 19:51:50  strigeus
- * recompile not needed when switching games
- * debugger skeleton implemented
- *
- * Revision 1.4  2001/10/16 20:31:27  strigeus
- * misc fixes
- *
- * Revision 1.3  2001/10/16 10:01:45  strigeus
- * preliminary DOTT support
- *
- * Revision 1.2  2001/10/09 18:35:02  strigeus
- * fixed object parent bug
- * fixed some signed/unsigned comparisons
- *
- * Revision 1.1.1.1  2001/10/09 14:30:14  strigeus
- *
- * initial revision
- *
+ * $Header$
  *
  */
 

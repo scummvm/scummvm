@@ -15,63 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.17  2001/11/05 20:45:07  strigeus
- * fixed playSfxSound types
- *
- * Revision 1.16  2001/11/05 19:21:49  strigeus
- * bug fixes,
- * speech in dott
- *
- * Revision 1.15  2001/10/29 23:07:24  strigeus
- * better MI1 compatibility
- *
- * Revision 1.14  2001/10/26 17:34:50  strigeus
- * bug fixes, code cleanup
- *
- * Revision 1.13  2001/10/24 20:12:52  strigeus
- * fixed some bugs related to string handling
- *
- * Revision 1.12  2001/10/23 19:51:50  strigeus
- * recompile not needed when switching games
- * debugger skeleton implemented
- *
- * Revision 1.11  2001/10/17 10:07:40  strigeus
- * fixed verbs not saved in non dott games,
- * implemented a screen effect
- *
- * Revision 1.10  2001/10/17 07:12:37  strigeus
- * fixed nasty signed/unsigned bug
- *
- * Revision 1.9  2001/10/16 20:31:27  strigeus
- * misc fixes
- *
- * Revision 1.8  2001/10/16 10:01:47  strigeus
- * preliminary DOTT support
- *
- * Revision 1.7  2001/10/11 12:07:35  strigeus
- * Determine caption from file name.
- *
- * Revision 1.6  2001/10/11 08:00:42  strigeus
- * Dump scripts by using DUMP_SCRIPTS as a compile option instead.
- *
- * Revision 1.5  2001/10/10 10:02:33  strigeus
- * alternative mouse cursor
- * basic save&load
- *
- * Revision 1.4  2001/10/09 19:02:28  strigeus
- * command line parameter support
- *
- * Revision 1.3  2001/10/09 18:35:02  strigeus
- * fixed object parent bug
- * fixed some signed/unsigned comparisons
- *
- * Revision 1.2  2001/10/09 17:38:20  strigeus
- * Autodetection of endianness.
- *
- * Revision 1.1.1.1  2001/10/09 14:30:12  strigeus
- * initial revision
+ * $Header$
  *
  */
 
@@ -187,7 +131,7 @@ class ObjectData {
 public:
 	uint32 offs_obim_to_room;
 	uint32 offs_obcd_to_room;
-	uint16 cdhd_10, cdhd_12;
+	uint16 walk_x, walk_y;
 	uint16 obj_nr;
 	int16 x_pos;
 	int16 y_pos;
@@ -217,8 +161,8 @@ struct CodeHeader {
 			byte x,y,w,h;
 			byte flags;
 			byte parent;
-			uint16 unk2;
-			uint16 unk3;
+			uint16 walk_x;
+			uint16 walk_y;
 			byte actordir;
 		} v5;
 
@@ -226,8 +170,8 @@ struct CodeHeader {
 			int16 x, y;
 			uint16 w,h;
 			byte flags, parent;
+			uint16 unk1;
 			uint16 unk2;
-			uint16 unk3;
 			byte actordir;
 		} v6;
 	};
@@ -742,6 +686,8 @@ struct Scumm {
 	uint32 _maxHeapThreshold;
 	uint32 _minHeapThreshold;
 	
+	bool _fullScreen;
+
 	byte _bkColor;
 	uint16 _lastXstart;
 		
@@ -749,6 +695,11 @@ struct Scumm {
 	int16 _shakeMode;
 
 	int16 _virtual_mouse_x, _virtual_mouse_y;
+
+	int _cursorHotspotX, _cursorHotspotY;
+	int _cursorWidth, _cursorHeight;
+	byte _cursorAnimateIndex;
+	bool _cursorAnimate;
 
 	byte _charsetColor;
 
@@ -928,7 +879,7 @@ struct Scumm {
 	int _boxPathVertexHeapIndex;
 	int _boxMatrixItem;
 
-//	void _grabbedCursor[1024];
+	byte _grabbedCursor[1024];
 	
 	OpcodeProc getOpcode(int i) { return _opcodes[i]; }
 
@@ -1450,7 +1401,7 @@ struct Scumm {
 
 	void walkActorTo(Actor *a, int x, int y, int direction);
 
-	void setCursorImg(int cursor, int img);
+	void setCursorImg(uint cursor, uint img);
 	void setCursorHotspot(int cursor, int x, int y);
 	void initCharset(int charset);
 	void addObjectToDrawQue(int object);
@@ -1460,7 +1411,7 @@ struct Scumm {
 	void setBoxFlags(int box, int val);
 	void setBoxScale(int box, int b);
 	void createBoxMatrix();
-	void addObjectToInventory(int obj, int room);
+	void addObjectToInventory(uint obj, uint room);
 	void removeObjectFromRoom(int obj);
 	void decodeParseString();
 	void pauseGame(int i);
@@ -1480,7 +1431,7 @@ struct Scumm {
 	byte *getObjOrActorName(int obj);
 	void clearOwnerOf(int obj);
 	void runVerbCode(int script, int entry, int a, int b, int16 *vars);
-	void setVerbObject(int room, int object, int verb);
+	void setVerbObject(uint room, uint object, uint verb);
 	void unkMessage1();
 	void unkMessage2();
 	void actorTalk();
@@ -1549,7 +1500,7 @@ struct Scumm {
 
 	void setCursorHotspot2(int x,int y);
 
-	void new_unk_1(int a);
+	void makeCursorColorTransparent(int a);
 
 	void faceActorToObj(int act, int obj);
 	void animateActor(int act, int anim);
@@ -1590,7 +1541,7 @@ struct Scumm {
 	void nukeArray(int a);
 	int defineArray(int a, int b, int c, int d);
 	int getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f);
-	void unkMiscOp4(int a, int b, int c, int d);
+	void grabCursor(int x, int y, int w, int h);
 	void unkMiscOp9();
 	void startManiac();
 	void readIndexFileV5(int i);
@@ -1613,6 +1564,15 @@ struct Scumm {
 	
 	void freeResources();
 	void destroy();
+
+	void useIm01Cursor(byte *im, int w, int h);
+	void useBompCursor(byte *im, int w, int h);
+
+	void decompressBomp(byte *dst, byte *src, int w, int h);
+
+	void setupCursor() { _cursorAnimate = true; }
+
+	void decompressDefaultCursor(int index);
 };
 
 struct ScummDebugger {
@@ -1686,10 +1646,11 @@ void NORETURN CDECL error(const char *s, ...);
 void CDECL warning(const char *s, ...);
 void CDECL debug(int level, const char *s, ...);
 void checkHeap();
-void initGraphics(Scumm *s);
+void initGraphics(Scumm *s, bool fullScreen);
 void updateScreen(Scumm *s);
 
 void drawMouse(Scumm *s, int x, int y, int color, byte *mask, bool visible);
+void drawMouse(Scumm *s, int x, int y, int w, int h, byte *buf, bool visible);
 void blit(byte *dst, byte *src, int w, int h);
 byte *findResource(uint32 id, byte *searchin, int index);
 void playSfxSound(void *sound, uint32 size, uint rate);

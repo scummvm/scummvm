@@ -15,36 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.8  2001/11/05 19:21:49  strigeus
- * bug fixes,
- * speech in dott
- *
- * Revision 1.7  2001/10/26 17:34:50  strigeus
- * bug fixes, code cleanup
- *
- * Revision 1.6  2001/10/23 19:51:50  strigeus
- * recompile not needed when switching games
- * debugger skeleton implemented
- *
- * Revision 1.5  2001/10/17 12:37:50  strigeus
- * fixed big endian bug
- *
- * Revision 1.4  2001/10/16 12:20:18  strigeus
- * made files compile on unix
- *
- * Revision 1.3  2001/10/16 10:01:47  strigeus
- * preliminary DOTT support
- *
- * Revision 1.2  2001/10/09 18:35:02  strigeus
- * fixed object parent bug
- * fixed some signed/unsigned comparisons
- *
- * Revision 1.1.1.1  2001/10/09 14:30:14  strigeus
- *
- * initial revision
- *
+ * $Header$
  *
  */
 
@@ -169,8 +140,8 @@ void Scumm::getObjectXYPos(int object) {
 		x = od->x_pos*8 + (int16)READ_LE_UINT16(&imhd->hotspot[state].x);
 		y = od->y_pos*8 + (int16)READ_LE_UINT16(&imhd->hotspot[state].y);
 	} else {
-		x = od->cdhd_10;
-		y = od->cdhd_12;
+		x = od->walk_x;
+		y = od->walk_y;
 	}
 
 	abr = adjustXYToBeInBox(0, x, y);
@@ -401,38 +372,38 @@ void Scumm::loadRoomObjects() {
 
 	od = &_objs[1];
 	for (i=1; i<=_numObjectsInRoom; i++,od++) {
-		ptr = room + _objs[i].offs_obcd_to_room;
+		ptr = room + od->offs_obcd_to_room;
 		cdhd = (CodeHeader*)findResource(MKID('CDHD'), ptr,0);
-		_objs[i].obj_nr = READ_LE_UINT16(&cdhd->obj_id);
+		od->obj_nr = READ_LE_UINT16(&cdhd->obj_id);
 
 		if (_majorScummVersion == 6) {
-			_objs[i].numstrips = READ_LE_UINT16(&cdhd->v6.w)>>3;
-			_objs[i].height = READ_LE_UINT16(&cdhd->v6.h)>>3;
-			_objs[i].x_pos = ((int16)READ_LE_UINT16(&cdhd->v6.x))>>3;
-			_objs[i].y_pos = ((int16)READ_LE_UINT16(&cdhd->v6.y))>>3;
+			od->numstrips = READ_LE_UINT16(&cdhd->v6.w)>>3;
+			od->height = READ_LE_UINT16(&cdhd->v6.h)>>3;
+			od->x_pos = ((int16)READ_LE_UINT16(&cdhd->v6.x))>>3;
+			od->y_pos = ((int16)READ_LE_UINT16(&cdhd->v6.y))>>3;
 			if (cdhd->v6.flags == 0x80) {
-				_objs[i].parentstate = 1<<4;
+				od->parentstate = 1<<4;
 			} else {
-				_objs[i].parentstate = (cdhd->v6.flags&0xF)<<4;
+				od->parentstate = (cdhd->v6.flags&0xF)<<4;
 			}
-			_objs[i].parent = cdhd->v6.parent;
-			_objs[i].actordir = cdhd->v6.actordir;
+			od->parent = cdhd->v6.parent;
+			od->actordir = cdhd->v6.actordir;
 		} else {
-			_objs[i].numstrips = cdhd->v5.w;
-			_objs[i].height = cdhd->v5.h;
-			_objs[i].x_pos = cdhd->v5.x;
-			_objs[i].y_pos = cdhd->v5.y;
+			od->numstrips = cdhd->v5.w;
+			od->height = cdhd->v5.h;
+			od->x_pos = cdhd->v5.x;
+			od->y_pos = cdhd->v5.y;
 			if (cdhd->v5.flags == 0x80) {
-				_objs[i].parentstate = 1<<4;
+				od->parentstate = 1<<4;
 			} else {
-				_objs[i].parentstate = (cdhd->v5.flags&0xF)<<4;
+				od->parentstate = (cdhd->v5.flags&0xF)<<4;
 			}
-			_objs[i].parent = cdhd->v5.parent;
-			_objs[i].cdhd_10 = READ_LE_UINT16(&cdhd->v5.unk2);
-			_objs[i].cdhd_12 = READ_LE_UINT16(&cdhd->v5.unk3);
-			_objs[i].actordir = cdhd->v5.actordir;
+			od->parent = cdhd->v5.parent;
+			od->walk_x = READ_LE_UINT16(&cdhd->v5.walk_x);
+			od->walk_y = READ_LE_UINT16(&cdhd->v5.walk_y);
+			od->actordir = cdhd->v5.actordir;
 		}
-		_objs[i].fl_object_index = 0;
+		od->fl_object_index = 0;
 	}
 
 	CHECK_HEAP
@@ -576,7 +547,7 @@ byte *Scumm::getObjectAddress(int obj) {
 	return 0;
 }
 
-void Scumm::addObjectToInventory(int obj, int room) {
+void Scumm::addObjectToInventory(uint obj, uint room) {
 	int i, slot;
 	byte *ptr,*obcdptr;
 	uint32 size,cdoffs;
@@ -764,4 +735,70 @@ int Scumm::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e,
 	}
 
 	return getDist(x,y,x2,y2) * 0xFF / ((i + j)>>1);
+}
+
+void Scumm::setCursorImg(uint room, uint img) {
+	byte *ptr;
+	int index;
+	CodeHeader *cdhd;
+	ImageHeader *imhd;
+	int w,h;
+	byte *roomptr,*obcd,*obim,*dataptr,*bomp;
+	RoomHeader *rmhd;
+	int i,numobj;
+	uint32 size;
+
+	if (getObjectIndex(img)!=-1) {
+		obim = getObjectAddress(img);
+		ptr = obim + READ_BE_UINT32(&((ImageHeader*)obim)->size);
+		cdhd = (CodeHeader*)findResource(MKID('CDHD'), obim, 0);
+		imhd = (ImageHeader*)findResource(MKID('IMHD'), ptr, 0);
+	} else {
+		ensureResourceLoaded(1, room);
+		roomptr = getResourceAddress(1, room);
+		rmhd = (RoomHeader*)findResource(MKID('RMHD'), roomptr, 0);
+
+		numobj = READ_LE_UINT16(&rmhd->numObjects);
+		for(i=0; ;i++) {
+			if (i>=numobj)
+				error("setCursorImg: object %d code not found in room %d", img, room);
+			
+			obcd = findResource(MKID('OBCD'), roomptr, i);
+			if (obcd==NULL)
+				error("setCursorImg: not enough code blocks in room %d", room);
+			cdhd = (CodeHeader*)findResource(MKID('CDHD'), obcd, 0);
+			if (READ_LE_UINT16(&cdhd->obj_id) == img)
+				break;
+		}
+
+		for(i=0; ;i++) {
+			if (i>=numobj)
+				error("setCursorImg: object %d image not found in room %d", img, room);
+			obim = findResource(MKID('OBIM'), roomptr, i);
+			if (obim==NULL)
+				error("setCursorImg: not enough image blocks in room %d", room);
+			imhd = (ImageHeader*)findResource(MKID('IMHD'), obim, 0);
+			if (READ_LE_UINT16(&imhd->obj_id) == img)
+				break;
+		}
+	}
+
+	setCursorHotspot2(
+		READ_LE_UINT16(&imhd->hotspot[0].x),
+		READ_LE_UINT16(&imhd->hotspot[0].y));
+
+	w = READ_LE_UINT16(&cdhd->v6.w)>>3;
+	h = READ_LE_UINT16(&cdhd->v6.h)>>3;
+
+	size = READ_BE_UINT32(&cdhd->size);
+	if (size > 1000)
+		error("setCursorImg: Cursor image too large");
+	
+	dataptr = findResource(MKID('IM01'),obim, 0);
+
+	if ((bomp = findResource(MKID('BOMP'), dataptr, 0)) != NULL)
+		useBompCursor(bomp, w, h);
+	else
+		useIm01Cursor(dataptr, w, h);
+
 }

@@ -15,36 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.8  2001/11/06 10:34:48  cmatsuoka
- * Added missing missing/sys files.
- *
- * Revision 1.7  2001/11/05 19:21:49  strigeus
- * bug fixes,
- * speech in dott
- *
- * Revision 1.6  2001/11/03 06:33:29  cmatsuoka
- * Protecting VC++-specific pragmas with ifdef _MSC_VER to allow
- * a clean Cygwin build.
- *
- * Revision 1.5  2001/10/23 19:51:50  strigeus
- * recompile not needed when switching games
- * debugger skeleton implemented
- *
- * Revision 1.4  2001/10/16 10:01:47  strigeus
- * preliminary DOTT support
- *
- * Revision 1.3  2001/10/09 18:35:02  strigeus
- * fixed object parent bug
- * fixed some signed/unsigned comparisons
- *
- * Revision 1.2  2001/10/09 17:38:20  strigeus
- * Autodetection of endianness.
- *
- * Revision 1.1.1.1  2001/10/09 14:30:14  strigeus
- * initial revision
- *
+ * $Header$
  *
  */
 
@@ -131,16 +102,16 @@ typedef signed long int32;
 #define MKID(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
 
 #if defined(SCUMM_NEED_ALIGNMENT)
-	int FORCEINLINE READ_LE_UINT16(void *ptr) {
+	uint FORCEINLINE READ_LE_UINT16(void *ptr) {
 		return (((byte*)ptr)[1]<<8)|((byte*)ptr)[0];
 	}
 #else
-	int FORCEINLINE READ_LE_UINT16(void *ptr) {
+	uint FORCEINLINE READ_LE_UINT16(void *ptr) {
 		return *(uint16*)(ptr);
 	}
 #endif
 
-int FORCEINLINE READ_BE_UINT16(void *ptr) {
+uint FORCEINLINE READ_BE_UINT16(void *ptr) {
 	return (((byte*)ptr)[0]<<8)|((byte*)ptr)[1];
 }
 
@@ -197,16 +168,16 @@ uint32 FORCEINLINE READ_BE_UINT32(void *ptr) {
 	return *(uint32*)(ptr);
 }
 
-int FORCEINLINE READ_LE_UINT16(void *ptr) {
+uint FORCEINLINE READ_LE_UINT16(void *ptr) {
 	byte *b = (byte*)ptr;
 	return (b[1]<<8) + b[0];
 }
 
-int FORCEINLINE READ_BE_UINT16(void *ptr) {
+uint FORCEINLINE READ_BE_UINT16(void *ptr) {
 	return *(uint16*)(ptr);
 }
 
-int FORCEINLINE READ_BE_UINT16_UNALIGNED(void *ptr) {
+uint FORCEINLINE READ_BE_UINT16_UNALIGNED(void *ptr) {
 	return (((byte*)ptr)[0]<<8)|((byte*)ptr)[1];
 }
 
