@@ -485,7 +485,7 @@ enum {
 };
 
 OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
-	: ScummDialog(gui, scumm, 30, 20, 260, 124)
+	: ScummDialog(gui, scumm, 40, 30, 240, 124)
 {
 	//
 	// Add the buttons
@@ -502,21 +502,21 @@ OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
 	//
 	// Sound controllers
 	//
-	new StaticTextWidget(this, 25, 10, 85, 16, "Master volume:", kTextAlignRight);
-	new StaticTextWidget(this, 25, 26, 85, 16, "Music volume:", kTextAlignRight);
-	new StaticTextWidget(this, 25, 42, 85, 16, "SFX volume:", kTextAlignRight);
+	new StaticTextWidget(this, 15, 10, 95, 16, "Master volume:", kTextAlignRight);
+	new StaticTextWidget(this, 15, 26, 95, 16, "Music volume:", kTextAlignRight);
+	new StaticTextWidget(this, 15, 42, 95, 16, "SFX volume:", kTextAlignRight);
 
-	masterVolumeSlider = new SliderWidget(this, 115, 8, 80, 12, "Volume1", kMasterVolumeChanged);
-	musicVolumeSlider  = new SliderWidget(this, 115, 24, 80, 12, "Volume2", kMusicVolumeChanged);
-	sfxVolumeSlider    = new SliderWidget(this, 115, 40, 80, 12, "Volume3", kSfxVolumeChanged);
+	masterVolumeSlider = new SliderWidget(this, 125, 8, 80, 12, "Volume1", kMasterVolumeChanged);
+	musicVolumeSlider  = new SliderWidget(this, 125, 24, 80, 12, "Volume2", kMusicVolumeChanged);
+	sfxVolumeSlider    = new SliderWidget(this, 125, 40, 80, 12, "Volume3", kSfxVolumeChanged);
 
 	masterVolumeSlider->setMinValue(0);	masterVolumeSlider->setMaxValue(255);
 	musicVolumeSlider->setMinValue(0);	musicVolumeSlider->setMaxValue(255);
 	sfxVolumeSlider->setMinValue(0);	sfxVolumeSlider->setMaxValue(255);
 
-	masterVolumeLabel = new StaticTextWidget(this, 200, 10, 40, 16, "Volume1", kTextAlignLeft);
-	musicVolumeLabel  = new StaticTextWidget(this, 200, 26, 40, 16, "Volume2", kTextAlignLeft);
-	sfxVolumeLabel    = new StaticTextWidget(this, 200, 42, 40, 16, "Volume3", kTextAlignLeft);
+	masterVolumeLabel = new StaticTextWidget(this, 210, 10, 24, 16, "Volume1", kTextAlignLeft);
+	musicVolumeLabel  = new StaticTextWidget(this, 210, 26, 24, 16, "Volume2", kTextAlignLeft);
+	sfxVolumeLabel    = new StaticTextWidget(this, 210, 42, 24, 16, "Volume3", kTextAlignLeft);
 	
 	masterVolumeLabel->setFlags(WIDGET_CLEARBG);
 	musicVolumeLabel->setFlags(WIDGET_CLEARBG);
@@ -525,8 +525,8 @@ OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
 	//
 	// Some misc options
 	//
-	subtitlesCheckbox = new CheckboxWidget(this, 25, 62, 100, 16, "Show subtitles", 0, 'S');
-	amigaPalCheckbox  = new CheckboxWidget(this, 25, 80, 100, 16, "Amiga palette conversion", 0, 'P');
+	subtitlesCheckbox = new CheckboxWidget(this, 15, 62, 200, 16, "Show subtitles", 0, 'S');
+	amigaPalCheckbox  = new CheckboxWidget(this, 15, 80, 200, 16, "Amiga palette conversion", 0, 'P');
 
 
 	//
