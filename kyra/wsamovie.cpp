@@ -92,9 +92,9 @@ namespace Kyra {
 			}
 			
 			uint8* frameData = 0;
-			uint8 image40[64000]; // I think this crash on Plam OS :)
+			uint8 image40[64000]; // I think this will crash on Plam OS :)
 			
-			if (frame = _prefetchedFrame + 1) {
+			if (frame == _prefetchedFrame + 1) {
 				frameData = _buffer + _offsetTable[frame] + (hasPalette() ? 768 : 0);
 				Compression::decode80(frameData, image40);
 				Compression::decode40(image40, _currentFrame);
