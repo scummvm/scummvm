@@ -583,7 +583,8 @@ void Scumm_v8::o8_mod()
 
 void Scumm_v8::o8_breakHereVar()
 {
-	warning("o8_breakHereVar NYI");
+	int var = pop();
+	warning("o8_breakHereVar(%d) NYI", var);
 	o6_breakHere();
 }
 
