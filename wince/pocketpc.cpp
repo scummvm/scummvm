@@ -241,7 +241,7 @@ void WndMan::setPalette(byte *ctab, int first, int num) {
 	int i;
 
 	for (i=0; i<256; i++)
-		SetPalEntry(i, ctab[i*3+0]<<2, ctab[i*3+1]<<2, ctab[i*3+2]<<2);
+		SetPalEntry(i, ctab[i*3+0], ctab[i*3+1], ctab[i*3+2]);
 }
 
 

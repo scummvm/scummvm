@@ -1045,6 +1045,57 @@ bool Scumm::isCostumeInUse(int cost) {
 	return false;
 }
 
-void Scumm::remapActor(Actor *a, int b, int c, int d, int e) {
-	warning("stub remapActor(%d,%d,%d,%d,%d)", a->number, b, c, d, e);
+void Scumm::remapActor(Actor *a, int r_fact, int g_fact, int b_fact, int threshold) {
+	byte *akos, *rgbs,*akpl;
+	int akpl_size, i;
+	int r,g,b;
+	byte akpl_color;
+
+	if (a->room != _currentRoom) {
+		warning("Remap actor %d not in current room",a->number);
+		return;
+	}
+
+	if (a->costume < 1 || a->costume >= _numCostumes-1){
+		warning("Remap actor %d invalid costume",a->number,a->costume);
+		return;
+	}
+
+	akos = getResourceAddress(rtCostume, a->costume);
+	akpl = findResource(MKID('AKPL'), akos);
+	
+	//get num palette entries
+	akpl_size=RES_SIZE(akpl) - 8;
+
+	//skip resource header
+	akpl = RES_DATA(akpl);
+	
+	rgbs = findResource(MKID('RGBS'), akos);
+
+	if (!rgbs) {
+		warning("Can't remap actor %d costume %d doesn't contain an RGB block",a->number,a->costume);
+		return;
+	}
+	// skip resource header
+	rgbs = RES_DATA(rgbs);
+	
+	for(i=0; i<akpl_size; i++) {
+		r=*rgbs++;
+		g=*rgbs++;
+		b=*rgbs++;
+
+		akpl_color=*akpl++;
+
+		// allow remap of generic palette entry?
+		if (!a->unk1 || akpl_color>=16) {
+			if (r_fact!=256) r = (r*r_fact) >> 8;
+			if (r_fact!=256) g = (g*g_fact) >> 8;
+			if (r_fact!=256) b = (b*b_fact) >> 8;
+			a->palette[i]=remapPaletteColor(r,g,b,threshold);
+		}
+	}
+}
+
+void Scumm::setupShadowPalette(int slot,int rfact,int gfact,int bfact,int from,int to) {
+	warning("stub setupShadowPalette(%d,%d,%d,%d,%d,%d)", slot,rfact,gfact,bfact,from,to);
 }

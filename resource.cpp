@@ -537,7 +537,7 @@ byte *Scumm::getResourceAddress(int type, int index) {
 
 	setResourceCounter(type, index, 1);
 
-	return ptr + sizeof(ResHeader);
+	return ptr + sizeof(MemBlkHeader);
 }
 
 byte *Scumm::getStringAddress(int i) {
@@ -575,7 +575,7 @@ byte *Scumm::createResource(int type, int index, uint32 size) {
 
 	CHECK_HEAP
 	
-	ptr = (byte*)alloc(size + sizeof(ResHeader) + SAFETY_AREA);
+	ptr = (byte*)alloc(size + sizeof(MemBlkHeader) + SAFETY_AREA);
 	if (ptr==NULL) {
 		error("Out of memory while allocating %d", size);
 	}
@@ -583,9 +583,9 @@ byte *Scumm::createResource(int type, int index, uint32 size) {
 	_allocatedSize += size;
 
 	res.address[type][index] = ptr;
-	((ResHeader*)ptr)->size = size;
+	((MemBlkHeader*)ptr)->size = size;
 	setResourceCounter(type, index, 1);
-	return ptr + sizeof(ResHeader); /* skip header */
+	return ptr + sizeof(MemBlkHeader); /* skip header */
 }
 
 void Scumm::validateResource(const char *str, int type, int index) {
@@ -606,7 +606,7 @@ void Scumm::nukeResource(int type, int index) {
 	if ((ptr = res.address[type][index]) != NULL) {
 		res.address[type][index] = 0;
 		res.flags[type][index] = 0;
-		_allocatedSize -= ((ResHeader*)ptr)->size;
+		_allocatedSize -= ((MemBlkHeader*)ptr)->size;
 		free(ptr);
 	}
 }
@@ -823,7 +823,7 @@ void Scumm::resourceStats() {
 		for(j=res.num[i]; --j>=0;) {
 			flag = res.flags[i][j];
 			if (flag&0x80 && res.address[i][j]) {
-				lockedSize += ((ResHeader*)res.address[i][j])->size;
+				lockedSize += ((MemBlkHeader*)res.address[i][j])->size;
 				lockedNum++;
 			}
 		}

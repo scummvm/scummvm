@@ -266,7 +266,7 @@ void Scumm::executeScript() {
 }
 
 byte Scumm::fetchScriptByte() {
-	if (*_lastCodePtr + sizeof(ResHeader) != _scriptOrgPointer) {
+	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
 		uint32 oldoffs = _scriptPointer - _scriptOrgPointer;
 		getScriptBaseAddress();
 		_scriptPointer = _scriptOrgPointer + oldoffs;
@@ -276,7 +276,7 @@ byte Scumm::fetchScriptByte() {
 
 int Scumm::fetchScriptWord() {
 	int a;
-	if (*_lastCodePtr + sizeof(ResHeader) != _scriptOrgPointer) {
+	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
 		uint32 oldoffs = _scriptPointer - _scriptOrgPointer;
 		getScriptBaseAddress();
 		_scriptPointer = _scriptOrgPointer + oldoffs;

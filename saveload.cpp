@@ -520,10 +520,10 @@ void Scumm::saveLoadResource(Serializer *ser, int type, int index) {
 			return;
 		}
 
-		size = ((ResHeader*)ptr)->size;
+		size = ((MemBlkHeader*)ptr)->size;
 
 		ser->saveUint32(size);
-		ser->saveLoadBytes(ptr+sizeof(ResHeader),size);
+		ser->saveLoadBytes(ptr+sizeof(MemBlkHeader),size);
 
 		if (type==rtInventory) {
 			ser->saveWord(_inventory[index]);

@@ -331,9 +331,9 @@ void WndMan::setPalette(byte *ctab, int first, int num) {
 
 #if 1
 	for (i=0; i<256; i++) {
-		dib.pal[i].rgbRed = ctab[i*3+0]<<2;
-		dib.pal[i].rgbGreen = ctab[i*3+1]<<2;
-		dib.pal[i].rgbBlue = ctab[i*3+2]<<2;
+		dib.pal[i].rgbRed = ctab[i*3+0];
+		dib.pal[i].rgbGreen = ctab[i*3+1];
+		dib.pal[i].rgbBlue = ctab[i*3+2];
 	}
 #else
 	for (i=0; i<256; i++) {

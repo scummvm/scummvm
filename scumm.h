@@ -49,6 +49,11 @@ struct Point {
 	int x,y;
 };
 
+struct MemBlkHeader {
+	uint32 size;
+};
+
+
 #pragma START_PACK_STRUCTS
 	
 #define SIZEOF_BOX 20
@@ -62,9 +67,13 @@ struct Box { /* file format */
 	uint16 scale;
 } GCC_PACK;
 
-struct ResHeader {
-	uint32 size;
+struct ResHdr {
+	uint32 tag, size;
 } GCC_PACK;
+
+#define RES_DATA(x) (((byte*)x) + sizeof(ResHdr))
+#define RES_SIZE(x) ( READ_BE_UINT32(&((ResHdr*)x)->size) )
+
 
 struct RoomHeader {
 	uint32 tag, size;
@@ -1960,7 +1969,7 @@ struct Scumm {
 
 	void runTalkScript(int frame);
 
-	int remapPaletteColor(byte r, byte g, byte b, uint threshold);
+	int remapPaletteColor(int r, int g, int b, uint threshold);
 	void remapActor(Actor *a, int b, int c, int d, int e);
 
 	byte *findResourceData(uint32 tag, byte *ptr);

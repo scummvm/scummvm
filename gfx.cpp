@@ -343,23 +343,13 @@ void Scumm::setPaletteFromPtr(byte *ptr) {
 		g = *ptr++;
 		b = *ptr++;
 		if (i<=15 || r<252 || g<252 || b<252) {
-			*dest++ = r>>2;
-			*dest++ = g>>2;
-			*dest++ = b>>2;
+			*dest++ = r;
+			*dest++ = g;
+			*dest++ = b;
 		} else {
 			dest += 3;
 		}
 	}
-
-#if 0
-	if (_videoMode==0xE) {
-		epal = getResourceAddress(rtRoom, _roomResource) + _EPAL_offs + 8;
-		for (i=0; i<256; i++,epal++) {
-			_currentPalette[i] = *epal&0xF;
-			_currentPalette[i+256] = *epal>>4;
-		}
-	}
-#endif
 
 	setDirtyColors(0, numcolor-1);
 }
@@ -1689,9 +1679,9 @@ void Gdi::resetBackground(byte top, byte bottom, int strip) {
 }
 
 void Scumm::setPalColor(int index, int r, int g, int b) {
-	_currentPalette[index*3+0] = r>>2;
-	_currentPalette[index*3+1] = g>>2;
-	_currentPalette[index*3+2] = b>>2;
+	_currentPalette[index*3+0] = r;
+	_currentPalette[index*3+1] = g;
+	_currentPalette[index*3+2] = b;
 	setDirtyColors(index,index);
 }
 
@@ -1796,7 +1786,7 @@ byte *Scumm::getPalettePtr() {
 void Scumm::darkenPalette(int a, int b, int c, int d, int e) {
 	byte *cptr, *cur;
 	int num;
-	byte color;
+	int color;
 
 	cptr = getPalettePtr();
 	cptr += 8 + a*3;
@@ -1805,28 +1795,22 @@ void Scumm::darkenPalette(int a, int b, int c, int d, int e) {
 		num = b - a + 1;
 
 		do {
-			if (c != 0xFF) {
-				color = *cptr++ * (c>>2) / 0xFF;
-			} else {
-				color = *cptr++ >> 2;
-			}
-			if(color>63) color = 63;
+			color = *cptr++;
+			if (c != 0xFF)
+				color = color * c / 0xFF;
+			if(color>255) color = 255;
 			*cur++=color;
 
-			if (d != 0xFF) {
-				color = *cptr++ * (d>>2) / 0xFF;
-			} else {
-				color = *cptr++ >> 2;
-			}
-			if(color>63) color = 63;
+			color = *cptr++;
+			if (d != 0xFF)
+				color = color * d / 0xFF;
+			if(color>255) color = 255;
 			*cur++=color;
 
-			if (e != 0xFF) {
-				color = *cptr++ * (e>>2) / 0xFF;
-			} else {
-				color = *cptr++ >> 2;
-			}
-			if(color>63) color = 63;
+			color = *cptr++;
+			if (e != 0xFF)
+				color = color * e / 0xFF;
+			if(color>255) color = 255;
 			*cur++=color;
 		} while (--num);
 	}
@@ -1951,11 +1935,15 @@ void Scumm::decompressDefaultCursor(int index) {
 }
 
 
-int Scumm::remapPaletteColor(byte r, byte g, byte b, uint threshold) {
+int Scumm::remapPaletteColor(int r, int g, int b, uint threshold) {
 	int i;
-	byte ar,ag,ab;
+	int ar,ag,ab;
 	uint sum,j,bestsum,bestitem;
 	byte *pal = _currentPalette;
+
+	if (r>255) r=255;
+	if (g>255) g=255;
+	if (b>255) b=255;
 
 	bestsum = (uint)-1;
 
@@ -1970,12 +1958,12 @@ int Scumm::remapPaletteColor(byte r, byte g, byte b, uint threshold) {
 		if (ar==r && ag==g && ab==b)
 			return i;
 
-		j=abs(ar-r)*3;
-		sum = j*j;
-		j=abs(ag-g)*6;
-		sum += j*j;
-		j=abs(ab-b)*2;
-		sum += j*j;
+		j=abs(ar-r);
+		sum = j*j*3;
+		j=abs(ag-g);
+		sum += j*j*6;
+		j=abs(ab-b);
+		sum += j*j*2;
 
 		if (sum < bestsum) {
 			bestsum = sum;
@@ -1983,7 +1971,7 @@ int Scumm::remapPaletteColor(byte r, byte g, byte b, uint threshold) {
 		}
 	}
 
-	if (threshold != -1 && bestsum > threshold*threshold*(2+3+6)) {
+	if (threshold != (uint)-1 && bestsum > threshold*threshold*(2+3+6)) {
 		pal = _currentPalette + (256-2)*3;
 		for(i=254; i>48; i--,pal-=3) {
 			if (pal[0]>=252 && pal[1]>=252 && pal[2]>=252) {
@@ -1994,10 +1982,6 @@ int Scumm::remapPaletteColor(byte r, byte g, byte b, uint threshold) {
 	}
 
 	return bestitem;
-}
-
-void Scumm::setupShadowPalette(int slot,int rfact,int gfact,int bfact,int from,int to) {
-	
 }
 
 void Scumm::drawBomp(BompDrawData *bd) {

@@ -50,9 +50,9 @@ void updatePalette(Scumm *s) {
 
 	data += first*3;
 	for (i=0; i<num; i++,data+=3) {
-		colors[i].r = data[0]<<2;
-		colors[i].g = data[1]<<2;
-		colors[i].b = data[2]<<2;
+		colors[i].r = data[0];
+		colors[i].g = data[1];
+		colors[i].b = data[2];
 		colors[i].unused = 0;
 	}
 	
