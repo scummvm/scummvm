@@ -143,10 +143,10 @@ public:
 			double percent);
 
 	int processInput(void);
-	R_POINT getMousePos();
+	Point getMousePos();
 
  private:
-	R_POINT _mousePos;
+	Point _mousePos;
 };
 
 // FIXME: Global var. We use it until everything will be turned into objects

@@ -316,7 +316,7 @@ int Events::handleOneShot(R_EVENT *event) {
 	case R_BG_EVENT:
 		{
 			R_BUFFER_INFO rbuf_info;
-			R_POINT bg_pt;
+			Point bg_pt;
 
 			if (_vm->_scene->getMode() == R_SCENE_MODE_NORMAL) {
 

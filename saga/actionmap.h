@@ -35,7 +35,7 @@ struct R_ACTIONMAP_ENTRY {
 	int unknown06;
 
 	int pt_count;
-	R_POINT *pt_tbl;
+	Point *pt_tbl;
 };
 
 class ActionMap {

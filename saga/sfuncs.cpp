@@ -186,7 +186,7 @@ int Script::SF_actorWalkTo(R_SCRIPTFUNC_PARAMS) {
 	SDataWord_T y_parm;
 	int actor_id;
 	int actor_idx;
-	R_POINT pt;
+	Point pt;
 
 	actor_parm = thread->pop();
 	x_parm = thread->pop();
@@ -346,7 +346,7 @@ int Script::SF_actorWalkToAsync(R_SCRIPTFUNC_PARAMS) {
 	SDataWord_T y_parm;
 	int actor_id;
 	int actor_idx;
-	R_POINT pt;
+	Point pt;
 
 	actor_parm = thread->pop();
 	x_parm = thread->pop();
@@ -387,7 +387,7 @@ int Script::SF_moveTo(R_SCRIPTFUNC_PARAMS) {
 	int actor_id;
 	int actor_idx;
 	int result;
-	R_POINT pt;
+	Point pt;
 
 	actor_parm = thread->pop();
 	x_parm = thread->pop();
@@ -437,7 +437,7 @@ int Script::SF_actorWalk(R_SCRIPTFUNC_PARAMS) {
 	SDataWord_T y_parm;
 	SDataWord_T unk_parm;
 	int actor_idx;
-	R_POINT pt;
+	Point pt;
 
 	actor_parm = thread->pop();
 	x_parm = thread->pop();
@@ -603,7 +603,7 @@ int Script::SF_placeActor(R_SCRIPTFUNC_PARAMS) {
 	int actor_idx;
 	int action_state;
 	int result;
-	R_POINT pt;
+	Point pt;
 
 	actor_parm = thread->pop();
 	x_parm = thread->pop();

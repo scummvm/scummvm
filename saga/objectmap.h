@@ -34,7 +34,7 @@ enum R_OBJECT_FLAGS {
 
 struct R_CLICKAREA {
 	int n_points;
-	R_POINT *points;
+	Point *points;
 };
 
 struct R_OBJECTMAP_ENTRY {
@@ -62,8 +62,8 @@ public:
 	int getName(int object, const char **name);
 	int getFlags(int object, uint16 *flags);
 	int getEPNum(int object, int *ep_num);
-	int draw(R_SURFACE *draw_surface, R_POINT *imouse_pt, int color, int color2);
-	int hitTest(R_POINT *imouse_pt, int *object_num);
+	int draw(R_SURFACE *draw_surface, Point *imouse_pt, int color, int color2);
+	int hitTest(Point *imouse_pt, int *object_num);
 	void objectInfo(int argc, char *argv[]);
 private:
 	int _initialized;

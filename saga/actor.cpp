@@ -727,7 +727,7 @@ int Actor::deleteActor(int index) {
 	return R_SUCCESS;
 }
 
-int Actor::walkTo(int id, R_POINT *walk_pt, uint16 flags, R_SEMAPHORE *sem) {
+int Actor::walkTo(int id, Point *walk_pt, uint16 flags, R_SEMAPHORE *sem) {
 	R_ACTORINTENT actor_intent;
 	R_WALKINTENT *walk_intent;
 	R_WALKINTENT zero_intent;
@@ -776,7 +776,7 @@ int Actor::walkTo(int id, R_POINT *walk_pt, uint16 flags, R_SEMAPHORE *sem) {
 	return R_SUCCESS;
 }
 
-int Actor::setPathNode(R_WALKINTENT *walk_int, R_POINT *src_pt, R_POINT *dst_pt, R_SEMAPHORE *sem) {
+int Actor::setPathNode(R_WALKINTENT *walk_int, Point *src_pt, Point *dst_pt, R_SEMAPHORE *sem) {
 	R_WALKNODE new_node;
 
 	walk_int->wi_active = 1;
@@ -960,7 +960,7 @@ int Actor::handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walkint, int *comple
 	return R_SUCCESS;
 }
 
-int Actor::move(int index, R_POINT *move_pt) {
+int Actor::move(int index, Point *move_pt) {
 	YS_DL_NODE *node;
 	R_ACTOR *actor;
 
@@ -992,7 +992,7 @@ int Actor::move(int index, R_POINT *move_pt) {
 	return R_SUCCESS;
 }
 
-int Actor::moveRelative(int index, R_POINT *move_pt) {
+int Actor::moveRelative(int index, Point *move_pt) {
 	YS_DL_NODE *node;
 	R_ACTOR *actor;
 
@@ -1033,14 +1033,14 @@ static int zCompare(const void *elem1, const void *elem2) {
 	}
 }
 
-int Actor::AtoS(R_POINT *screen, const R_POINT *actor) {
+int Actor::AtoS(Point *screen, const Point *actor) {
 	screen->x = (actor->x / R_ACTOR_LMULT);
 	screen->y = (actor->y / R_ACTOR_LMULT);
 
 	return R_SUCCESS;
 }
 
-int Actor::StoA(R_POINT *actor, const R_POINT *screen) {
+int Actor::StoA(Point *actor, const Point *screen) {
 	actor->x = (screen->x * R_ACTOR_LMULT);
 	actor->y = (screen->y * R_ACTOR_LMULT);
 
@@ -1078,7 +1078,7 @@ static void CF_actor_del(int argc, char *argv[], void *refCon) {
 
 static void CF_actor_move(int argc, char *argv[], void *refCon) {
 	int id;
-	R_POINT move_pt;
+	Point move_pt;
 
 	if (argc < 2)
 		return;
@@ -1095,7 +1095,7 @@ static void CF_actor_move(int argc, char *argv[], void *refCon) {
 
 static void CF_actor_moverel(int argc, char *argv[], void *refCon) {
 	int id;
-	R_POINT move_pt;
+	Point move_pt;
 
 	if (argc < 3)
 		return;

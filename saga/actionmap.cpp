@@ -58,7 +58,7 @@ ActionMap::~ActionMap(void) {
 int ActionMap::loadMap(const byte * exmap_res, size_t exmap_res_len) {
 	// Loads exit map data from specified exit map resource
 	R_ACTIONMAP_ENTRY *exmap_entry;
-	R_POINT *exmap_pt_tbl;
+	Point *exmap_pt_tbl;
 
 	int exit_ct;
 	int i, pt;
@@ -92,7 +92,7 @@ int ActionMap::loadMap(const byte * exmap_res, size_t exmap_res_len) {
 			return R_FAILURE;
 		}
 
-		exmap_pt_tbl = (R_POINT *)malloc(exmap_entry[i].pt_count * sizeof *exmap_pt_tbl);
+		exmap_pt_tbl = (Point *)malloc(exmap_entry[i].pt_count * sizeof *exmap_pt_tbl);
 		if (exmap_pt_tbl == NULL) {
 			warning("Memory allocation failure");
 			return R_MEM;
@@ -171,7 +171,7 @@ int ActionMap::draw(R_SURFACE * ds, int color) {
 }
 
 void ActionMap::actionInfo(int argc, char *argv[]) {
-	R_POINT *pt;
+	Point *pt;
 
 	int i;
 	int pt_i;

@@ -95,10 +95,10 @@ struct R_WALKINTENT {
 	int time;
 	float slope;
 	int x_dir;
-	R_POINT org;
-	R_POINT cur;
+	Point org;
+	Point cur;
 
-	R_POINT dst_pt;
+	Point dst_pt;
 	YS_DL_LIST *nodelist;
 
 	int sem_held;
@@ -109,7 +109,7 @@ struct R_WALKINTENT {
 
 struct R_WALKNODE {
 	int calc_flag;
-	R_POINT node_pt;
+	Point node_pt;
 };
 
 struct R_SPEAKINTENT {
@@ -133,8 +133,8 @@ struct R_ACTOR {
 	int name_i;        // Actor's index in actor name string list
 	uint16 flags;
 
-	R_POINT a_pt;      // Actor's logical coordinates
-	R_POINT s_pt;      // Actor's screen coordinates
+	Point a_pt;      // Actor's logical coordinates
+	Point s_pt;      // Actor's screen coordinates
 
 	int sl_rn;         // Actor's sprite list res #
 	int si_rn;         // Actor's sprite index res #
@@ -196,13 +196,13 @@ class Actor {
 	int actorExists(uint16 actor_id);
 
 	int drawList();
-	int AtoS(R_POINT *logical, const R_POINT *actor);
-	int StoA(R_POINT *actor, const R_POINT *screen);
+	int AtoS(Point *logical, const Point *actor);
+	int StoA(Point *actor, const Point *screen);
 
-	int move(int index, R_POINT *move_pt);
-	int moveRelative(int index, R_POINT *move_pt);
+	int move(int index, Point *move_pt);
+	int moveRelative(int index, Point *move_pt);
 
-	int walkTo(int index, R_POINT *walk_pt, uint16 flags, R_SEMAPHORE *sem);
+	int walkTo(int index, Point *walk_pt, uint16 flags, R_SEMAPHORE *sem);
 	
 	int getActorIndex(uint16 actor_id);
 	
@@ -222,7 +222,7 @@ class Actor {
  private:
 	int handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walk_int, int *complete_p, int msec);
 	int handleSpeakIntent(R_ACTOR *actor, R_SPEAKINTENT *a_speakint, int *complete_p, int msec);
-	int setPathNode(R_WALKINTENT *walk_int, R_POINT *src_pt, R_POINT *dst_pt, R_SEMAPHORE *sem);
+	int setPathNode(R_WALKINTENT *walk_int, Point *src_pt, Point *dst_pt, R_SEMAPHORE *sem);
 	int loadActorSpriteIndex(R_ACTOR *actor, int si_rn, int *last_frame_p);
 
 	SagaEngine *_vm;

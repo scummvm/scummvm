@@ -75,7 +75,7 @@ int Gfx::drawPalette(R_SURFACE *dst_s) {
 	int y;
 	int color = 0;
 
-	R_RECT pal_rect;
+	Rect pal_rect;
 
 	for (y = 0; y < 16; y++) {
 		pal_rect.top = (y * 8) + 4;
@@ -128,7 +128,7 @@ int Gfx::simpleBlit(R_SURFACE *dst_s, R_SURFACE *src_s) {
 // - The surface must match the logical dimensions of the buffer exactly.
 // - Returns R_FAILURE on error
 int Gfx::bufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h, 
-					 R_RECT *src_rect, R_POINT *dst_pt) {
+					 Rect *src_rect, Point *dst_pt) {
 	const byte *read_p;
 	byte *write_p;
 
@@ -254,7 +254,7 @@ int Gfx::bufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h,
 }
 
 int Gfx::bufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
-					int src_w, int src_h, R_RECT *src_rect, R_POINT *dst_pt) {
+					int src_w, int src_h, Rect *src_rect, Point *dst_pt) {
 	const byte *read_p;
 	byte *write_p;
 	int row;
@@ -375,7 +375,7 @@ int Gfx::bufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
 
 // Fills a rectangle in the surface ds from point 'p1' to point 'p2' using
 // the specified color.
-int Gfx::drawRect(R_SURFACE *ds, R_RECT *dst_rect, int color) {
+int Gfx::drawRect(R_SURFACE *ds, Rect *dst_rect, int color) {
 	byte *write_p;
 
 	int w;
@@ -415,7 +415,7 @@ int Gfx::drawRect(R_SURFACE *ds, R_RECT *dst_rect, int color) {
 	return R_SUCCESS;
 }
 
-int Gfx::drawFrame(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
+int Gfx::drawFrame(R_SURFACE *ds, Point *p1, Point *p2, int color) {
 	int left, top, right, bottom;
 
 	int min_x;
@@ -423,10 +423,10 @@ int Gfx::drawFrame(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 	int min_y;
 	int max_y;
 
-	R_POINT n_p1; /* 1 .. 2 */
-	R_POINT n_p2; /* .    . */
-	R_POINT n_p3; /* .    . */
-	R_POINT n_p4; /* 4 .. 3 */
+	Point n_p1; /* 1 .. 2 */
+	Point n_p2; /* .    . */
+	Point n_p3; /* .    . */
+	Point n_p4; /* 4 .. 3 */
 
 	assert((ds != NULL) && (p1 != NULL) && (p2 != NULL));
 
@@ -457,8 +457,8 @@ int Gfx::drawFrame(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 	return R_SUCCESS;
 }
 
-int Gfx::drawPolyLine(R_SURFACE *ds, R_POINT *pts, int pt_ct, int draw_color) {
-	R_POINT *first_pt = pts;
+int Gfx::drawPolyLine(R_SURFACE *ds, Point *pts, int pt_ct, int draw_color) {
+	Point *first_pt = pts;
 	int last_i = 1;
 	int i;
 
@@ -562,10 +562,10 @@ int Gfx::getClipInfo(R_CLIPINFO *clipinfo) {
 	return R_SUCCESS;
 }
 
-int Gfx::clipLine(R_SURFACE *ds, const R_POINT *src_p1, const R_POINT *src_p2, 
-				 R_POINT *dst_p1, R_POINT *dst_p2) {
-	const R_POINT *n_p1;
-	const R_POINT *n_p2;
+int Gfx::clipLine(R_SURFACE *ds, const Point *src_p1, const Point *src_p2, 
+				 Point *dst_p1, Point *dst_p2) {
+	const Point *n_p1;
+	const Point *n_p2;
 
 	Common::Rect clip;
 	int left, top, right, bottom;
@@ -634,7 +634,7 @@ int Gfx::clipLine(R_SURFACE *ds, const R_POINT *src_p1, const R_POINT *src_p2,
 // Coriolis Group Books, 1997
 //
 // Performs no clipping
-void Gfx::drawLine(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
+void Gfx::drawLine(R_SURFACE *ds, Point *p1, Point *p2, int color) {
 	byte *write_p;
 	int clip_result;
 	int temp;
@@ -646,7 +646,7 @@ void Gfx::drawLine(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 	int init_run;
 	int run;
 	int end_run;
-	R_POINT clip_p1, clip_p2;
+	Point clip_p1, clip_p2;
 	int left, top, right, bottom;
 	int i, k;
 

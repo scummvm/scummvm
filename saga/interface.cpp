@@ -251,8 +251,8 @@ int Interface::draw() {
 	int lportrait_x;
 	int lportrait_y;
 
-	R_RECT rect;
-	R_POINT origin;
+	Rect rect;
+	Point origin;
 
 	back_buf = _vm->_gfx->getBackBuffer();
 
@@ -302,7 +302,7 @@ int Interface::draw() {
 	return R_SUCCESS;
 }
 
-int Interface::update(R_POINT *imouse_pt, int update_flag) {
+int Interface::update(Point *imouse_pt, int update_flag) {
 	R_GAME_DISPLAYINFO g_di;
 
 	R_SURFACE *back_buf;
@@ -347,7 +347,7 @@ int Interface::update(R_POINT *imouse_pt, int update_flag) {
 
 int Interface::drawStatusBar(R_SURFACE *ds) {
 	R_GAME_DISPLAYINFO g_di;
-	R_RECT rect;
+	Rect rect;
 
 	int string_w;
 
@@ -370,7 +370,7 @@ int Interface::drawStatusBar(R_SURFACE *ds) {
 	return R_SUCCESS;
 }
 
-int Interface::handleCommandClick(R_SURFACE *ds, R_POINT *imouse_pt) {
+int Interface::handleCommandClick(R_SURFACE *ds, Point *imouse_pt) {
 	int hit_button;
 	int ibutton_num;
 
@@ -421,7 +421,7 @@ int Interface::handleCommandClick(R_SURFACE *ds, R_POINT *imouse_pt) {
 	return R_SUCCESS;
 }
 
-int Interface::handleCommandUpdate(R_SURFACE *ds, R_POINT *imouse_pt) {
+int Interface::handleCommandUpdate(R_SURFACE *ds, Point *imouse_pt) {
 	int hit_button;
 	int ibutton_num;
 
@@ -475,13 +475,13 @@ int Interface::handleCommandUpdate(R_SURFACE *ds, R_POINT *imouse_pt) {
 	return R_SUCCESS;
 }
 
-int Interface::handlePlayfieldClick(R_SURFACE *ds, R_POINT *imouse_pt) {
+int Interface::handlePlayfieldClick(R_SURFACE *ds, Point *imouse_pt) {
 	int hit_object;
 	int object_num;
 	uint16 object_flags = 0;
 
 	int script_num;
-	R_POINT iactor_pt;
+	Point iactor_pt;
 
 	hit_object = _vm->_objectMap->hitTest(imouse_pt, &object_num);
 
@@ -516,7 +516,7 @@ int Interface::handlePlayfieldClick(R_SURFACE *ds, R_POINT *imouse_pt) {
 	return R_SUCCESS;
 }
 
-int Interface::handlePlayfieldUpdate(R_SURFACE *ds, R_POINT *imouse_pt) {
+int Interface::handlePlayfieldUpdate(R_SURFACE *ds, Point *imouse_pt) {
 	const char *object_name;
 	int object_num;
 	uint16 object_flags = 0;
@@ -556,7 +556,7 @@ int Interface::handlePlayfieldUpdate(R_SURFACE *ds, R_POINT *imouse_pt) {
 	return R_SUCCESS;
 }
 
-int Interface::hitTest(R_POINT *imouse_pt, int *ibutton) {
+int Interface::hitTest(Point *imouse_pt, int *ibutton) {
 	R_INTERFACE_BUTTON *buttons;
 
 	int nbuttons;

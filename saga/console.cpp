@@ -191,7 +191,7 @@ int Console::draw(R_SURFACE *ds) {
 	R_CONSOLE_LINE *start_ptr;
 	int txt_fgcolor;
 	int txt_shcolor;
-	R_RECT fill_rect;
+	Rect fill_rect;
 	int i;
 
 	if (!_active) {

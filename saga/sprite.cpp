@@ -267,9 +267,9 @@ int Sprite::drawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_nu
 	int e_slope;
 
 	// Clipinfo variables
-	R_POINT spr_pt;
-	R_RECT spr_src_rect;
-	R_RECT spr_dst_rect;
+	Point spr_pt;
+	Rect spr_src_rect;
+	Rect spr_dst_rect;
 	R_CLIPINFO ci;
 
 	// BG mask variables

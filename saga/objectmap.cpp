@@ -69,7 +69,7 @@ ObjectMap::~ObjectMap() {
 int ObjectMap::load(const byte *om_res, size_t om_res_len) {
 	R_OBJECTMAP_ENTRY *object_map;
 	R_CLICKAREA *clickarea;
-	R_POINT *point;
+	Point *point;
 
 	int i, k, m;
 
@@ -115,7 +115,7 @@ int ObjectMap::load(const byte *om_res, size_t om_res_len) {
 			clickarea->n_points = readS.readUint16LE();
 			assert(clickarea->n_points != 0);
 
-			clickarea->points = (R_POINT *)malloc(clickarea->n_points * sizeof *(clickarea->points));
+			clickarea->points = (Point *)malloc(clickarea->n_points * sizeof *(clickarea->points));
 			if (clickarea->points == NULL) {
 				warning("Error: Memory allocation failed");
 				return R_MEM;
@@ -287,7 +287,7 @@ int ObjectMap::getEPNum(int object, int *ep_num) {
 
 // Uses Gfx::drawLine to display all clickareas for each object in the 
 // currently loaded object map resource.
-int ObjectMap::draw(R_SURFACE *ds, R_POINT *imouse_pt, int color, int color2) {
+int ObjectMap::draw(R_SURFACE *ds, Point *imouse_pt, int color, int color2) {
 	R_OBJECTMAP_ENTRY *object_map;
 	R_CLICKAREA *clickarea;
 
@@ -348,14 +348,14 @@ int ObjectMap::draw(R_SURFACE *ds, R_POINT *imouse_pt, int color, int color2) {
 	return R_SUCCESS;
 }
 
-static bool MATH_HitTestPoly(R_POINT *points, unsigned int npoints, R_POINT test_point) {
+static bool MATH_HitTestPoly(Point *points, unsigned int npoints, Point test_point) {
 	int yflag0;
 	int yflag1;
 	bool inside_flag = false;
 	unsigned int pt;
 
-	R_POINT *vtx0 = &points[npoints - 1];
-	R_POINT *vtx1 = &points[0];
+	Point *vtx0 = &points[npoints - 1];
+	Point *vtx1 = &points[0];
 
 	yflag0 = (vtx0->y >= test_point.y);
 	for (pt = 0; pt < npoints; pt++, vtx1++) {
@@ -373,11 +373,11 @@ static bool MATH_HitTestPoly(R_POINT *points, unsigned int npoints, R_POINT test
 	return inside_flag;
 }
 
-int ObjectMap::hitTest(R_POINT * imouse_pt, int *object_num) {
-	R_POINT imouse;
+int ObjectMap::hitTest(Point * imouse_pt, int *object_num) {
+	Point imouse;
 	R_OBJECTMAP_ENTRY *object_map;
 	R_CLICKAREA *clickarea;
-	R_POINT *points;
+	Point *points;
 	int n_points;
 
 	int i, k;

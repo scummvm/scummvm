@@ -110,10 +110,10 @@ int Render::drawScene() {
 	R_GAME_DISPLAYINFO disp_info;
 	R_SCENE_INFO scene_info;
 	SCENE_BGINFO bg_info;
-	R_POINT bg_pt;
+	Point bg_pt;
 	char txt_buf[20];
 	int fps_width;
-	R_POINT mouse_pt;
+	Point mouse_pt;
 
 	if (!_initialized) {
 		return R_FAILURE;

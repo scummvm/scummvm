@@ -774,7 +774,7 @@ int Scene::processSceneResources() {
 int Scene::draw(R_SURFACE *dst_s) {
 	R_GAME_DISPLAYINFO disp_info;
 	R_BUFFER_INFO buf_info;
-	R_POINT bg_pt;
+	Point bg_pt;
 
 	assert(_initialized);
 

@@ -28,14 +28,14 @@
 
 namespace Saga {
 
-typedef Common::Point R_POINT;
-typedef Common::Rect R_RECT;
+using Common::Point;
+using Common::Rect;
 
 struct R_CLIPINFO {
 	// input members
-	const R_RECT *src_rect;
-	const R_RECT *dst_rect;
-	const R_POINT *dst_pt;
+	const Rect *src_rect;
+	const Rect *dst_rect;
+	const Point *dst_pt;
 
 	// output members
 	int nodraw;
@@ -65,7 +65,7 @@ struct R_SURFACE {
 	int buf_w;
 	int buf_h;
 	int buf_pitch;
-	R_RECT clip_rect;
+	Rect clip_rect;
 };
 
 #define R_PAL_ENTRIES 256
@@ -88,15 +88,15 @@ class Gfx {
 public:
 	int simpleBlit(R_SURFACE *dst_s, R_SURFACE *src_s);
 	int drawPalette(R_SURFACE *dst_s);
-	int bufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h, R_RECT *src_rect, R_POINT *dst_pt);
+	int bufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h, Rect *src_rect, Point *dst_pt);
 	int bufToBuffer(byte * dst_buf, int dst_w, int dst_h, const byte *src,
-		int src_w, int src_h, R_RECT *src_rect, R_POINT *dst_pt);
-	int drawRect(R_SURFACE *ds, R_RECT *dst_rect, int color);
-	int drawFrame(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color);
-	int drawPolyLine(R_SURFACE *ds, R_POINT *pts, int pt_ct, int draw_color);
+		int src_w, int src_h, Rect *src_rect, Point *dst_pt);
+	int drawRect(R_SURFACE *ds, Rect *dst_rect, int color);
+	int drawFrame(R_SURFACE *ds, Point *p1, Point *p2, int color);
+	int drawPolyLine(R_SURFACE *ds, Point *pts, int pt_ct, int draw_color);
 	int getClipInfo(R_CLIPINFO *clipinfo);
-	int clipLine(R_SURFACE *ds, const R_POINT *src_p1, const R_POINT *src_p2, R_POINT *dst_p1, R_POINT *dst_p2);
-	void drawLine(R_SURFACE * ds, R_POINT *p1, R_POINT *p2, int color);
+	int clipLine(R_SURFACE *ds, const Point *src_p1, const Point *src_p2, Point *dst_p1, Point *dst_p2);
+	void drawLine(R_SURFACE * ds, Point *p1, Point *p2, int color);
 
 	Gfx(OSystem *system, int width, int height);
 	R_SURFACE *getBackBuffer();

@@ -35,7 +35,7 @@ namespace Saga {
 int SagaEngine::processInput() {
 	OSystem::Event event;
 
-	R_POINT imouse_pt;
+	Point imouse_pt;
 
 	while (g_system->pollEvent(event)) {
 		int in_char;
@@ -129,7 +129,7 @@ int SagaEngine::processInput() {
 	return R_SUCCESS;
 }
 
-R_POINT SagaEngine::getMousePos() {
+Point SagaEngine::getMousePos() {
 	return _mousePos;
 }
 
