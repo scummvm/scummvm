@@ -107,37 +107,21 @@ void SimonState::focusVerb(uint hitarea_id)
 {
 	uint x;
 	const char *txt;
+	const char * const *verb_prep_names;
 
 	hitarea_id -= 101;
 
-	if (_language == 20) {
-		CHECK_BOUNDS(hitarea_id, hebrew_verb_prep_names);
-	} else if (_language == 5) {
-		CHECK_BOUNDS(hitarea_id, spanish_verb_prep_names);
-	} else if (_language == 3) {
-		CHECK_BOUNDS(hitarea_id, italian_verb_prep_names);
-	} else if (_language == 2) {
-		CHECK_BOUNDS(hitarea_id, french_verb_prep_names);
-	} else if (_language == 1) {
-		CHECK_BOUNDS(hitarea_id, german_verb_prep_names);
-	} else {
-		CHECK_BOUNDS(hitarea_id, english_verb_prep_names);
-	}
-
 	if (_show_preposition) {
-		if (_language == 20) {
-		CHECK_BOUNDS(hitarea_id, hebrew_verb_prep_names);
-		} else if (_language == 5) {
-			txt = spanish_verb_prep_names[hitarea_id];
-		} else if (_language == 3) {
-			txt = italian_verb_prep_names[hitarea_id];
-		} else if (_language == 2) {
-			txt = french_verb_prep_names[hitarea_id];
-		} else if (_language == 1) {
-			txt = german_verb_prep_names[hitarea_id];
-		} else {
-			txt = english_verb_prep_names[hitarea_id];
+		switch (_language) {
+		case 20: verb_prep_names = hebrew_verb_prep_names; break;
+		case  5: verb_prep_names = spanish_verb_prep_names; break;
+		case  3: verb_prep_names = italian_verb_prep_names; break;
+		case  2: verb_prep_names = french_verb_prep_names; break;
+		case  1: verb_prep_names = german_verb_prep_names; break;
+		default: verb_prep_names = english_verb_prep_names; break;
 		}
+		CHECK_BOUNDS(hitarea_id, verb_prep_names);
+		txt = english_verb_prep_names[hitarea_id];
 	} else {
 		txt = verb_names[hitarea_id];
 	}
