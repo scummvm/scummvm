@@ -176,8 +176,8 @@ protected:
 	bool	_isDragging;
 public:
 	SliderWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd = 0, uint8 hotkey = 0);
-	void setValue(uint8 value)	{ _value = value; }
-	uint8 getValue() const		{ return _value; }
+	void setValue(int value)	{ _value = value; }
+	int getValue() const		{ return _value; }
 
 	void setMinValue(int value)	{ _valueMin = value; }
 	int getMinValue() const		{ return _valueMin; }
