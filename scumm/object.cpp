@@ -485,8 +485,8 @@ void ScummEngine::drawObject(int obj, int arg) {
 	if (numstrip != 0) {
 		byte flags = od.flags;
 
+		gdi._objectMode = true;
 		if (_version == 1) {
-			gdi._objectMode = true;
 			if (_features & GF_NES) {
 				gdi.decodeNESObject(ptr, xpos, ypos, width, height);
 			} else {
