@@ -35,6 +35,8 @@
 
 namespace Saga {
 
+static void CF_anim_info(int argc, char *argv[]);
+
 static R_ANIMINFO AnimInfo;
 
 int Anim::reg() {

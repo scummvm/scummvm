@@ -118,8 +118,6 @@ private:
 	int getFrameOffset(const byte *anim_resource, size_t anim_resource_len, uint16 find_frame, size_t *frame_offset);
 };
 
-static void CF_anim_info(int argc, char *argv[]);
-
 } // End of namespace Saga
 
 #endif				/* R_ANIMATION_H_ */
