@@ -508,7 +508,7 @@ bool Codec37Decoder::decode(Blitter & dst, Chunk & src) {
 		memcpy(_deltaBufs[_curtable], chunk_buffer + 16, decoded_size);
 		break;
 	case 1:
-		error("missing opcode codec47");
+		error("codec37: missing opcode 1");
 		break;
 	case 2:
 		bompDecode(_deltaBufs[_curtable], chunk_buffer + 16, decoded_size);
