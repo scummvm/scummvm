@@ -905,7 +905,9 @@ void Scumm::addObjectToInventory(uint obj, uint room) {
 		size = READ_BE_UINT32_UNALIGNED(ptr + 4);
 	} else {
 		findObjectInRoom(&foir, foCodeHeader, obj, room);
-		if (_features & GF_SMALL_HEADER)
+		if (_features & GF_OLD_BUNDLE)
+			size = READ_LE_UINT16(foir.obcd);
+		else if (_features & GF_SMALL_HEADER)
 			size = READ_LE_UINT32(foir.obcd);
 		else
 			size = READ_BE_UINT32_UNALIGNED(foir.obcd + 4);
