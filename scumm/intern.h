@@ -231,6 +231,7 @@ protected:
 	void o2_ifNotState02();
 	void o2_ifState01();
 	void o2_ifNotState01();
+	void o2_printEgo();
 	void o2_actorSet();
 	void o2_waitForActor();
 	void o2_waitForSentence();

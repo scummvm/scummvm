@@ -303,7 +303,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_getActorMoving),
 		OPCODE(o2_setState02),
 		/* D8 */
-		OPCODE(o5_printEgo),
+		OPCODE(o2_printEgo),
 		OPCODE(o5_doSentence),
 		OPCODE(o5_add),
 		OPCODE(o5_divide),
@@ -823,3 +823,14 @@ void Scumm_v2::o2_equalZero() {
 	else
 		o5_jumpRelative();
 }
+
+void Scumm_v2::o2_printEgo() {
+	//_actorToPrintStrFor = (unsigned char)_vars[VAR_EGO];
+	//_messagePtr = _scriptPointer;
+
+	printf("o2_printEgo(%s)\n", _scriptPointer);
+	_scriptPointer += resStrLen(_scriptPointer) + 1;
+	//_messagePtr = addMessageToStack(_messagePtr);
+	//_scriptPointer = _messagePtr;
+}
+
