@@ -1137,7 +1137,7 @@ void ScummEngine_v6he::o6_seekFile() {
 	offset = pop();
 	slot = pop();
 
-	warning("stub o6_seekFile(%d, %d, %d)", slot, offset, mode);
+	debug(1, "o6_seekFile(%d, %d, %d)", slot, offset, mode);
 
 	switch (mode) {
 	case 1:
@@ -1160,13 +1160,13 @@ void ScummEngine_v6he::seekWrapper(int slot, int offset, int mode) {
 
 	switch (mode) {
 	case 0:
-		// _hFileTable[slot].seek(offset, SEEK_SET);
+		_hFileTable[slot].seek(offset, SEEK_SET);
 		break;
 	case 1:
-		// _hFileTable[slot].seek(offset, SEEK_CUR);
+		_hFileTable[slot].seek(offset, SEEK_CUR);
 		break;
 	case 2:
-		// _hFileTable[slot].seek(offset, SEEK_END);
+		_hFileTable[slot].seek(offset, SEEK_END);
 		break;
 	}
 }
@@ -1174,15 +1174,14 @@ void ScummEngine_v6he::seekWrapper(int slot, int offset, int mode) {
 void ScummEngine_v6he::o6_tellFile() {
 	int slot = pop();
 
-	warning("stub o6_tellFile(%d)", slot);
+	debug(1, "o6_tellFile(%d)", slot);
 
 	if (slot == -1) {
 		push(0);
 		return;
 	}
 
-	// push(_hFileTable[slot].tell());
-	push(0);
+	push(_hFileTable[slot].pos());
 }
 
 void ScummEngine_v6he::o6_redimArray() {
