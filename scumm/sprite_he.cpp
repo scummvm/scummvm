@@ -80,10 +80,10 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroupId, in
 				int16 x1, x2, y1, y2;
 
 				state = getWizImageStates(spi->field_80);
-				state /= spi->field_48;
+				state /= spi->cur_img_state;
 
-				x -= spi->field_34;
-				y -= spi->field_38;
+				x -= spi->pos.x;
+				y -= spi->pos.y;
 
 				loadImgSpot(spi->field_4C, state, x1, y1);
 				loadImgSpot(spi->field_80, state, x2, y2);
@@ -104,9 +104,9 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroupId, in
 				if (spi->bbox.bottom < y)
 					continue;
 
-				x -= spi->field_34;
-				y -= spi->field_38;
-				state = spi->field_48;
+				x -= spi->pos.x;
+				y -= spi->pos.y;
+				state = spi->cur_img_state;
 			}
 
 			rot_angle = spi->field_68;
@@ -742,7 +742,7 @@ void ScummEngine_v90he::spriteAddImageToList(int spriteId, int imageNum, int *sp
 		_spriteTable[spriteId].flags &= ~(kSFImageless);
 		_spriteTable[spriteId].flags |= kSFChanged | kSFBlitDirectly;
 		_spriteTable[spriteId].field_4C = 0;
-		_spriteTable[spriteId].field_48 = 0;
+		_spriteTable[spriteId].cur_img_state = 0;
 		_spriteTable[spriteId].res_wiz_states = 0;
 	}
 }
@@ -1287,13 +1287,13 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			wiz.img.y1 = spi->ty - spr_wiz_y;
 		}
 
-		spi->field_48 = wiz.img.state = res_state;
+		spi->cur_img_state = wiz.img.state = res_state;
 		spi->field_4C = wiz.img.resNum = res_id;
 		wiz.processFlags = kWPFNewState | kWPFSetPos;
 		spi->field_68 = spi->rot_angle;
 		spi->field_6C = spi->zoom;
-		spi->field_34 = wiz.img.x1;
-		spi->field_38 = wiz.img.y1;
+		spi->pos.x = wiz.img.x1;
+		spi->pos.y = wiz.img.y1;
 		bboxPtr = &spi->bbox;
 		if (res_id) {
 			rot_angle = spi->rot_angle;
@@ -1369,7 +1369,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		if (spi->group_num && (_spriteGroups[spi->group_num].flags & kSGFClipBox)) {
 			if (spi->bbox.intersects(_spriteGroups[spi->group_num].bbox)) {
 				spi->bbox.clip(_spriteGroups[spi->group_num].bbox);
-				wiz.processFlags |= 0x200;
+				wiz.processFlags |= kWPFClipBox;
 				wiz.box = spi->bbox;
 			} else {
 				bboxPtr->left = 1234;

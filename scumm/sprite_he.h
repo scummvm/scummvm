@@ -76,12 +76,11 @@ struct SpriteInfo {
 	Common::Rect bbox;
 	int dx;
 	int dy;
-	int field_34;
-	int field_38;
+	Common::Point pos;
 	int tx;
 	int ty;
 	int field_44;
-	int field_48;
+	int cur_img_state;
 	int field_4C;
 	int imglist_num;
 	int field_54;
@@ -117,18 +116,6 @@ struct SpriteGroup {
 	int scale_y_ratio_mul;
 	int scale_y_ratio_div;
 };
-
-	int _varNumSpriteGroups;
-	int _numSpritesToProcess;
-	int _varNumSprites;
-	int _varMaxSprites;
-	SpriteInfo *_spriteTable;
-	SpriteGroup *_spriteGroups;
-	SpriteInfo **_activeSpritesTable;
-	uint16 *_imageListTable;
-	uint16 *_imageListStack;
-	int _curSprImageListNum;
-
 
 } // End of namespace Scumm
 

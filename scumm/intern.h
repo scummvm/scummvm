@@ -838,6 +838,9 @@ protected:
 	void o80_pickVarRandom();
 };
 
+struct SpriteInfo;
+struct SpriteGroup;
+
 class ScummEngine_v90he : public ScummEngine_v80he {
 protected:
 	typedef void (ScummEngine_v90he::*OpcodeProcV90he)();
@@ -864,6 +867,16 @@ protected:
 	int _curMaxSpriteId;
 	int _curSpriteId;
 	int _curSpriteGroupId;
+	int _varNumSpriteGroups;
+	int _numSpritesToProcess;
+	int _varNumSprites;
+	int _varMaxSprites;
+	SpriteInfo *_spriteTable;
+	SpriteGroup *_spriteGroups;
+	SpriteInfo **_activeSpritesTable;
+	uint16 *_imageListTable;
+	uint16 *_imageListStack;
+	int _curSprImageListNum;
 
 public:
 	ScummEngine_v90he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v80he(detector, syst, gs, md5sum) {}
