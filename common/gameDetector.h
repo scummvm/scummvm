@@ -88,15 +88,15 @@ enum GameFeatures {
 struct VersionSettings {
 	const char *filename;
 	const char *gamename;
-	const byte id, major, middle, minor;
-	const uint32 features;
-	const char *detectname;
+	byte id, major, middle, minor;
+	uint32 features;
+	char *detectname;
 };
 
 struct MusicDrivers {
 	const char *name;
 	const char *description;
-	const int id;
+	int id;
 };
 
 struct GraphicsModes {
