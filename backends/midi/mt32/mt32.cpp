@@ -33,7 +33,7 @@ class MidiDriver_MT32 : public MidiDriver_Emulated {
 private:
 	CSynthMT32 *_synth;
 
-	const char *rom_path;
+	int _outputRate;
 
 protected:
 	void generate_samples(int16 *buf, int len);
@@ -56,7 +56,7 @@ public:
 
 	// AudioStream API
 	bool isStereo() const { return true; }
-	int getRate() const { return 32000; }
+	int getRate() const { return _outputRate; }
 };
 
 
@@ -69,11 +69,30 @@ public:
 
 MidiDriver_MT32::MidiDriver_MT32(SoundMixer *mixer, const char *path)
 	: MidiDriver_Emulated(mixer) {
+	File fp;
+
 	_synth = new CSynthMT32();
-	rom_path = path;
 	File::addDefaultDirectory(path);
 
 	_baseFreq = 1000;
+
+	fp.open("waveforms.raw");
+
+	if(!fp.isOpen()) {
+		error("Unable to open waveforms.raw");
+	}
+
+	switch(fp.size()) {
+	case 1410000:
+		_outputRate = 32000;
+		break;
+	case 1944040:
+		_outputRate = 44100;
+		break;
+	default:
+		error("MT-32: Unknown waveforms.raw file sample rate");
+	}
+	fp.close();
 }
 
 MidiDriver_MT32::~MidiDriver_MT32() {
@@ -95,7 +114,7 @@ int MidiDriver_MT32::open() {
 	//prop.RevTime = 5;
 	//prop.RevLevel = 3;
 
-	_synth->ClassicOpen(rom_path, prop);
+	_synth->ClassicOpen(prop);
 
 	_mixer->setupPremix(this);
 

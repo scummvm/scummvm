@@ -85,7 +85,7 @@ typedef void (*recalcStatusCallback)(int percDone);
 // sampling rate.  The callback routine provides interactivity to let the user know what
 // percentage is complete in regenerating the waveforms.  When a NULL pointer is used as the
 // callback routine, no status is reported.
-bool RecalcWaveforms(char * baseDir, int sampRate, recalcStatusCallback callBack);
+bool RecalcWaveforms(int sampRate, recalcStatusCallback callBack);
 
 typedef float (*iir_filter_type)(float input,float *hist1_ptr, float *coef_ptr, int revLevel);
 extern iir_filter_type usefilter;
@@ -125,16 +125,15 @@ private:
 	bool isOpen;
 	SynthProperties myProp;
 	
-	bool InitTables(const char * baseDir);
+	bool InitTables();
 
 public:
 	CSynthMT32() : isOpen(false) {};
 
-	// Used to initialized the MT-32.  The baseDir parameter points to the location in the
-	// filesystem where the ROM and data files are located.  The second parameter specifies
+	// Used to initialized the MT-32.  The useProp parameter specifies
 	// properties for the synthesizer, as outlined in the structure above.
 	// Returns TRUE if initialization was sucessful, otherwise returns FALSE.
-	bool ClassicOpen(const char *baseDir, SynthProperties useProp);
+	bool ClassicOpen(SynthProperties useProp);
 
 	// Closes the MT-32 and deallocates any memory used by the synthesizer
 	void Close(void);

@@ -2761,7 +2761,7 @@ MidiChannel *mchan[16];
 #endif	
 
 
-bool CSynthMT32::InitTables(const char *baseDir ) {
+bool CSynthMT32::InitTables() {
 
 #ifdef NOMANSLAND
 
@@ -2794,11 +2794,8 @@ bool CSynthMT32::InitTables(const char *baseDir ) {
 	fp.open("waveforms.raw");
 #endif
 	if(!fp.isOpen()) {
-		// TODO : Fail driver init
-		return false;
-
 		error("Unable to open waveforms.raw");
-		exit(0);
+		return false;
 	}
 
 	for(f=12;f<109;f++) {
@@ -3352,7 +3349,7 @@ bool CSynthMT32::InitTables(const char *baseDir ) {
 	return true;
 }
 
-bool RecalcWaveforms(char * baseDir, int sampRate, recalcStatusCallback callBack) {
+bool RecalcWaveforms(int sampRate, recalcStatusCallback callBack) {
 
 #ifdef NOMANSLAND
 
@@ -3457,7 +3454,7 @@ bool RecalcWaveforms(char * baseDir, int sampRate, recalcStatusCallback callBack
 	return true;
 }
 
-bool CSynthMT32::ClassicOpen(const char *baseDir, SynthProperties useProp) {
+bool CSynthMT32::ClassicOpen(SynthProperties useProp) {
 
 #ifdef NOMANSLAND
 
@@ -3495,8 +3492,6 @@ bool CSynthMT32::ClassicOpen(const char *baseDir, SynthProperties useProp) {
 				// TODO : Fail driver init
 				error("Unable to open Preset1.syx");
 				return false;
-
-				//exit(0);
 			}
 			break;
 		case 1:
@@ -3505,8 +3500,6 @@ bool CSynthMT32::ClassicOpen(const char *baseDir, SynthProperties useProp) {
 				// TODO : Fail driver init
 				error("Unable to open Preset2.syx");
 				return false;
-
-				//exit(0);
 			}
 			break;
 		default:
@@ -3543,8 +3536,6 @@ bool CSynthMT32::ClassicOpen(const char *baseDir, SynthProperties useProp) {
 		// printf("MT-32 Init Error - Missing drumpat.rom\n");
 		error("Unable to open drumpat.rom");
 		return false;
-
-		//exit(0);
 	}
 	int drumnum=0;
 	while(!fDrums.eof()) {
@@ -3615,8 +3606,6 @@ bool CSynthMT32::ClassicOpen(const char *baseDir, SynthProperties useProp) {
 		// printf("MT-32 Init Error - Missing patchlog.cfg\n");
 		error("Unable to open patchlog.cfg");
 		return false;
-
-		//exit(0);
 	}
 
 	for(i=0;i<54;i++) {
@@ -3770,8 +3759,6 @@ bool CSynthMT32::ClassicOpen(const char *baseDir, SynthProperties useProp) {
 		// printf("MT-32 Init Error - Missing MT32_PCM.ROM\n");
 		error("Unable to open MT32_PCM.ROM");
 		return false;
-
-		//exit(0);
 	}
 	i=0;
 	//int32 maxamp = 0;
@@ -3881,7 +3868,7 @@ bool CSynthMT32::ClassicOpen(const char *baseDir, SynthProperties useProp) {
 	// For resetting mt32 mid-execution
 	memcpy(&mt32default, &mt32ram, sizeof(mt32ram));
 
-	if (!InitTables(baseDir)) return false;
+	if (!InitTables()) return false;
 	if(myProp.UseDefault) {
 		InitReverb(0,5,SETRATE);
 	} else {
@@ -4075,15 +4062,18 @@ void CSynthMT32::PlaySysex(uint8 * sysex,uint32 len) {
 	//int dummy = 0;                                                                  
 	int32 lens = len;                                                              
 
-	// For some reason commands in IMuseInternal::initMT32 do not have prefix byte
-	if(READ_BE_UINT32(header) != 0x41101612) {
+	// HACK: For some reason commands in IMuseInternal::initMT32 do not have prefix byte
+	// Also in some cases, particularly in mi2 "glop" sound at difficulty select screen
+	// header is wrong. I don't know what causes this as original has neither of these
+	// problems.
+	if((READ_BE_UINT32(header) != 0x41101612) || (READ_BE_UINT32(header) == 0x41001612)) {
 		if((READ_LE_UINT32(sysex) == 0x41101612) || (READ_BE_UINT32(sysex) == 0x41001612)) {
 			header = (uint32 *)sysex;
 			sysex--; // We don't access sysex[0], so it's safe
 		}
 	}
 
-	if((READ_BE_UINT32(header) == 0x41101612) || (READ_BE_UINT32(header) == 0x41001612)) {
+	if(READ_BE_UINT32(header) == 0x41101612) {
 		addr = (sysex[5] << 16) | (sysex[6] << 8) | (sysex[7]);
 		//LOG_MSG("Sysex addr: %x", addr);
 		if (addr<0x30000) {
