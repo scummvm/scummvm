@@ -36,14 +36,10 @@ namespace Sky {
 #define HEADER_LEN	18
 
 RncDecoder::RncDecoder() {
-	_bitBuffl = 0;
-	_bitBuffh = 0;
-	_bitCount = 0;
+	initCrc();
 }
 
-RncDecoder::~RncDecoder() {
-
-}
+RncDecoder::~RncDecoder() { }
 
 void RncDecoder::initCrc() {
 	uint16 cnt = 0;
@@ -175,10 +171,13 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 	uint16 crcUnpacked = 0;
 	uint16 crcPacked = 0;
 	
-	initCrc();
+
+	_bitBuffl = 0;
+	_bitBuffh = 0;
+	_bitCount = 0;
 
 	//Check for "RNC "
-	if (READ_BE_UINT32(inputptr) != 0x524e4301)
+	if (READ_BE_UINT32(inputptr) != RNC_SIGNATURE)
 		return NOT_PACKED;
 
 	inputptr += 4;

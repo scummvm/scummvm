@@ -24,6 +24,8 @@
 
 #include "stdafx.h"
 
+#define RNC_SIGNATURE   0x524E4301 // "RNC\001"
+
 namespace Sky {
 
 class RncDecoder {

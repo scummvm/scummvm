@@ -25,6 +25,7 @@
 #include "stdafx.h"
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "sky/rnc_deco.h"
 
 class File;
 
@@ -74,7 +75,8 @@ protected:
 	uint8 *_dinnerTableArea;
 	File *_dataDiskHandle;
 	File *_dnrHandle;
-
+	RncDecoder _rncDecoder;
+	
 	uint16 _buildList[MAX_FILES_IN_LIST];
 	uint32 _loadedFilesList[MAX_FILES_IN_LIST];
 };
