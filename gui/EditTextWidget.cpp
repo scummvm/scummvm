@@ -32,6 +32,11 @@ EditTextWidget::EditTextWidget(Dialog *boss, int x, int y, int w, int h, const S
 	_caretTime = 0;
 
 	_pos = _label.size();
+
+	NewGui *gui = _boss->getGui();
+	_labelOffset = (gui->getStringWidth(_label) - (_w - 6));
+	if (_labelOffset < 0)
+		_labelOffset = 0;
 }
 
 void EditTextWidget::handleTickle() {
@@ -46,9 +51,26 @@ void EditTextWidget::handleTickle() {
 	}
 }
 
-void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
-	// TODO - once we support "real editing" (i.e. caret can be at any spot),
-	// a mouse click should place the caret.
+void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount){
+	// First remove caret
+	if (_caretVisible)
+		drawCaret(true);
+
+	NewGui *gui = _boss->getGui();
+
+	x += _labelOffset;
+
+	int width = 0;
+	int i;
+
+	for (i = 0; i < _label.size(); ++i) {
+		width += gui->getCharWidth(_label[i]);
+		if (width >= x)
+			break;
+	}
+	_pos = i;
+	if (adjustOffset())
+		draw();
 }
 
 bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
@@ -67,8 +89,10 @@ bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			break;
 		case 27:	// escape
 			_label = _backupString;
-			if (_pos >= _label.size())
-				_pos = _label.size() - 1;
+			_pos = _label.size() - 1;
+			_labelOffset = (_boss->getGui()->getStringWidth(_label) - (_w-6));
+			if (_labelOffset < 0)
+				_labelOffset = 0;
 			_boss->releaseFocus();
 			dirty = true;
 			break;
@@ -84,18 +108,24 @@ bool EditTextWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			dirty = true;
 			break;
 		case 256 + 20:	// left arrow
-			if (_pos > 0)
+			if (_pos > 0) {
 				_pos--;
+				dirty = adjustOffset();
+			}
 			break;
 		case 256 + 19:	// right arrow
-			if (_pos < _label.size())
+			if (_pos < _label.size()) {
 				_pos++;
+				dirty = adjustOffset();
+			}
 			break;
 		case 256 + 22:	// home
 			_pos = 0;
+			dirty = adjustOffset();
 			break;
 		case 256 + 23:	// end
 			_pos = _label.size();
+			dirty = adjustOffset();
 			break;
 		default:
 			if (isprint((char)ascii)) {
@@ -123,8 +153,19 @@ void EditTextWidget::drawWidget(bool hilite) {
 	gui->vline(_x + _w - 1, _y, _y + _h - 1, gui->_shadowcolor);
 
 	// Draw the text
-	_align = (gui->getStringWidth(_label) > _w - 6) ? kTextAlignRight : kTextAlignLeft;
-	gui->drawString(_label, _x + 2, _y + 3, _w - 6, gui->_textcolor, _align);
+	adjustOffset();
+	gui->drawString(_label, _x + 2, _y + 3, _w - 6, gui->_textcolor, kTextAlignLeft, -_labelOffset);
+}
+
+int EditTextWidget::getCaretPos() {
+	NewGui *gui = _boss->getGui();
+	int caretpos = 0;
+	for (int i = 0; i < _pos; i++)
+		caretpos += gui->getCharWidth(_label[i]);
+
+	caretpos -= _labelOffset;
+
+	return caretpos;
 }
 
 void EditTextWidget::drawCaret(bool erase) {
@@ -138,16 +179,44 @@ void EditTextWidget::drawCaret(bool erase) {
 	int x = _x + _boss->getX() + 2;
 	int y = _y + _boss->getY() + 1;
 
-	int width = 0;
-	for (int i = 0; i < _pos; i++)
-		width += gui->getCharWidth(_label[i]);
-
-	if (gui->getStringWidth(_label) - (_w - 6) > 0)
-		width -= gui->getStringWidth(_label) - (_w - 6);
+	int width = getCaretPos();
 	x += width;
 
 	gui->vline(x, y, y + kLineHeight, color);
 	gui->addDirtyRect(x, y, 2, kLineHeight);
 
 	_caretVisible = !erase;
+}
+
+
+
+bool EditTextWidget::adjustOffset() {
+	// check if the caret is still within the textbox; if it isn't,
+	// adjust _labelOffset 
+
+	int caretpos = getCaretPos();
+
+	if (caretpos < 0) {
+		// scroll left
+		_labelOffset += caretpos;
+		return true;
+	}
+	else if (caretpos >= _w - 6)
+	{
+		// scroll right
+		_labelOffset -= (_w - 6 - caretpos);
+		return true;
+	}
+	else if (_labelOffset > 0)
+	{
+		int width = _boss->getGui()->getStringWidth(_label);
+		if (width - _labelOffset < (_w - 6)) {
+			// scroll right
+			_labelOffset = (width - (_w - 6));
+			if (_labelOffset < 0)
+				_labelOffset = 0;
+		}
+	}
+
+	return false;
 }

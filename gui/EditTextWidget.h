@@ -34,6 +34,7 @@ protected:
 	bool			_caretVisible;
 	uint32		_caretTime;
 	int				_pos;
+	int				_labelOffset;
 public:
 	EditTextWidget(Dialog *boss, int x, int y, int w, int h, const String &text);
 
@@ -47,6 +48,9 @@ protected:
 	void drawWidget(bool hilite);
 	void drawCaret(bool erase);
 	void lostFocusWidget() { _backupString = _label; drawCaret(true); }
+
+	int getCaretPos();
+	bool adjustOffset();
 };
 
 #endif

@@ -429,13 +429,14 @@ int NewGui::getCharWidth(byte c) {
 	return guifont[c+6];
 }
 
-void NewGui::drawString(const String &str, int x, int y, int w, NewGuiColor color, int align) {
+void NewGui::drawString(const String &str, int x, int y, int w, NewGuiColor color, int align, int deltax) {
 	const int leftX = x, rightX = x + w;
 	int width = getStringWidth(str);
 	if (align == kTextAlignCenter)
 		x = x + (w - width - 1)/2;
 	else if (align == kTextAlignRight)
 		x = x + w - width;
+	x += deltax;
 
 	for (int i = 0; i < str.size(); ++i) {
 		w = getCharWidth(str[i]);
