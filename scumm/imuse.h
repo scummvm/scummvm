@@ -20,8 +20,15 @@
  *
  */
 
+#ifndef IMUSE_H
+#define IMUSE_H
+
 class IMuseInternal;
 class MidiDriver;
+class OSystem;
+class Scumm;
+class Serializer;
+class SoundMixer;
 
 class IMuse {
 public:
@@ -106,7 +113,7 @@ private:
 		bool _initialized;
 	} _channel[MAX_DIGITAL_CHANNELS];
 
-	Scumm * _scumm;
+	Scumm *_scumm;
 	bool _pause;
 
 public:
@@ -121,3 +128,4 @@ public:
 	int getSoundStatus(int sound);
 };
 
+#endif
