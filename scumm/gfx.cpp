@@ -803,10 +803,10 @@ void Scumm::restoreBG(ScummVM::Rect rect, byte backColor) {
 	byte *backbuff, *bgbak;
 	bool lightsOn;
 
-	if (rect.left >= rect.right || rect.top >= rect.bottom)
-		return;
 	if (rect.top < 0)
 		rect.top = 0;
+	if (rect.left >= rect.right || rect.top >= rect.bottom)
+		return;
 
 	if ((vs = findVirtScreen(rect.top)) == NULL)
 		return;

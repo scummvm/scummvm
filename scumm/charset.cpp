@@ -597,7 +597,7 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	_vm->checkRange(_vm->_maxCharsets - 1, 1, _curId, "Printing with bad charset %d");
 	
-	if ((vs = _vm->findVirtScreen(_top)) == NULL)
+	if ((vs = _vm->findVirtScreen(_top)) == NULL && (vs = _vm->findVirtScreen(_top + getFontHeight())) == NULL)
 		return;
 
 	if (chr == '@')
@@ -671,8 +671,6 @@ void CharsetRendererClassic::printChar(int chr) {
 		_str.top = _top;
 
 	int drawTop = _top - vs->topline;
-	if (drawTop < 0)
-		drawTop = 0;
 
 	_vm->updateDirtyRect(vs->number, _left, _left + width, drawTop, drawTop + height + offsY, 0);
 
@@ -740,7 +738,7 @@ void CharsetRendererClassic::drawBitsN(VirtScreen *vs, byte *dst, const byte *sr
 		for (x = 0; x < width; x++) {
 			color = (bits >> (8 - bpp)) & 0xFF;
 			
-			if (color) {
+			if (color && y + drawTop >= 0) {
 				*dst = _vm->_charsetColorMap[color];
 				if (useMask) {
 					mask[maskpos] |= maskmask;
@@ -778,7 +776,7 @@ void CharsetRendererCommon::drawBits1(VirtScreen *vs, byte *dst, const byte *src
 		for (x = 0; x < width; x++) {
 			if ((x % 8) == 0)
 				bits = *src++;
-			if (bits & revBitMask[x % 8]) {
+			if ((bits & revBitMask[x % 8]) && y + drawTop >= 0) {
 				if (_dropShadow) {
 					*(dst + 1) = 0;
 					*(dst + _vm->_screenWidth) = 0;

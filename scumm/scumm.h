@@ -919,7 +919,7 @@ protected:
 	BlastObject _blastObjectQueue[128];
 
 	int _blastTextQueuePos;
-	BlastText _blastTextQueue[32];	// FIXME - how many blast texts can there be at once?
+	BlastText _blastTextQueue[35];	// FIXME - how many blast texts can there be at once? The Dig needs 33 for its end credits.
 
 	void enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center);
 	void drawBlastTexts();

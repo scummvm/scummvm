@@ -690,8 +690,25 @@ void Scumm::initCharset(int charsetno) {
 }
 
 void Scumm::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center) {
+	// The Dig will keep enqueueing texts long after they've scrolled off
+	// the screen, eventually overflowing the blast text queue if left
+	// unchecked.
+
+	if (y < 0) {
+		byte old_charset;
+		int font_height;
+
+		old_charset = _charset->getCurID();
+		_charset->setCurID(charset);
+		font_height = _charset->getFontHeight();
+		_charset->setCurID(old_charset);
+
+		if (y <= -font_height)
+			return;
+	}
+
 	BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
-	assert(_blastTextQueuePos <= 32);
+	assert(_blastTextQueuePos <= ARRAYSIZE(_blastTextQueue));
 	
 	strcpy((char *)bt.text, (const char *)text);
 	bt.xpos = x;
