@@ -20,7 +20,7 @@
  */
 
 #include <stdafx.h>
-#include "../scumm.h"
+#include "scumm/scumm.h"
 #include "engine.h"
 #include "codec47.h"
 #include "chunk.h"
@@ -283,7 +283,7 @@ void mk_tables(int32 param) {
 	int32 * tmp_table37_1_2, * tmp_table37_1_1, * tmp_table37_2_2, * tmp_table37_2_1;
 	int32 value_table37_1_1, value_table37_1_2;
 	int32 table[64], tmp_a, tmp_c, tmp_d, s, p, d, tmp_ib, tmp;
-	int32 * table37_1, * table37_2, * tmp_table, l;
+	int32 * table37_1 = 0, * table37_2 = 0, * tmp_table, l;
 	byte * ptr;
 
 	if (param == 8) {
@@ -938,11 +938,13 @@ static void codec47_subgfx_lev2() {
 
 static byte * g_out;
 
+/*
 static void disp() {
 	g_scumm->_system->copy_rect((const byte *)g_out, 640, 0, 0, 640, 480);
 	g_scumm->_system->update_screen();
 	g_scumm->waitForTimer(100);
 }
+*/
 
 static void decode2(byte * dst, byte * src, int32 offset1, int32 offset2, int32 pitch,
 						 int16 * tmp_table, byte * param_ptr, int32 height, int32,
