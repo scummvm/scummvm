@@ -128,7 +128,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		/* 44 */
 		OPCODE(o6_invalid),
 		OPCODE(o80_loadSBNG),
-		OPCODE(o6_invalid),
+		OPCODE(o80_getFileSize),
 		OPCODE(o6_wordArrayWrite),
 		/* 48 */
 		OPCODE(o80_stringToInt),
@@ -393,6 +393,22 @@ void ScummEngine_v80he::o80_loadSBNG() {
 		warning("o80_loadSBNG: default case %d", subOp);
 	}
 	debug(1,"o80_loadSBNG stub (%d)",subOp);
+}
+
+void ScummEngine_v80he::o80_getFileSize() {
+	byte filename[256];
+
+	copyScriptString(filename);
+
+	File f;
+	if (f.open((char *)filename) == false) {
+		push(-1);
+		return;
+	}
+
+	f.seek(0, SEEK_END);
+	push(f.pos());
+	f.close();
 }
 
 void ScummEngine_v80he::o80_stringToInt() {
