@@ -245,7 +245,7 @@ the section on Reporting Bugs.
                 - Some minor graphical glitches remain
 
        Zak McKracken (Enhanced)
-                - Pushing the feet on the Mars Sarcophagous may not open the
+                - Pushing the feet on the Mars sarcophagus may not open the
                   hidden door. A workaround is to use 'Push' on the floor just
                   before the feet.
 
@@ -321,7 +321,7 @@ arguments - see the next section.
         -a             - Enable amiga pal conversion, for playing Amiga
                          versions
         -q<lang>       - Select language. See below.
-        -c<num>        - Drive to play cd audio from.  E.g., 0 is first drive.
+        -c<num>        - Drive to play CD audio from.  E.g., 0 is first drive.
         -m<num>        - Set the music volume, 0-255.  Default is '192'
         -o<num>        - Set the master volume, 0-255. Default is '192'
         -s<num>        - Set the sfx volume, 0-255.    Default is '192'
@@ -341,7 +341,7 @@ arguments - see the next section.
         --aspect-ratio - enable aspect ratio correction
         --floppy-intro - Use floppy version intro for Beneath a Steel Sky CD
 
-The meaning of long options can be inversed by prefixing them with "no-", e.g.
+The meaning of long options can be inverted by prefixing them with "no-", e.g.
 --no-aspect-ratio. This is useful if you want to override a setting in the
 configuration file.
 
@@ -352,7 +352,7 @@ file. You can also get the current list of games and game names at:
 
 Examples:
  * Win32:
-  Running Monkey Island, fullscreen, from the harddisk:
+  Running Monkey Island, fullscreen, from a hard disk:
    C:\Games\LucasArts\scummvm.exe -f -pC:\Games\LucasArts\monkey\ monkey
   Running Full Throttle from CD, fullscreen and with subtitles disabled:
    C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ ft
@@ -452,7 +452,7 @@ the software scalers (see above).
 
 5.4 Hot Keys:
 --- ---------
-ScummVM supports various in game hotkeys. They differ between the scumm and
+ScummVM supports various in game hotkeys. They differ between the SCUMM and
 simon games.
 
     Common:
@@ -460,7 +460,7 @@ simon games.
         Keyboard Arrow Keys    - simulate mouse movement
         Ctrl-f                 - runs in fast mode.
         Ctrl-Alt 0-9           - Switch between graphics filters
-        Ctrl-Alt b             - Switch beetwen bilinear and non-linear
+        Ctrl-Alt b             - Switch between bilinear and non-linear
                                  filtering [OpenGL backend]
         Ctrl-Alt a             - Toggle aspect-ratio correction on/off.
                                  Most of the games use a 320x200 pixel
@@ -469,7 +469,7 @@ simon games.
                                  stretches the image to use 320x240 pixels
                                  instead, or a multiple thereof.
 
-    Scumm:
+    SCUMM:
         Ctrl 0-9 and Alt 0-9   - load and save game state
         Ctrl-g                 - runs in really REALLY fast mode.
         Ctrl-d                 - starts the debugger.
@@ -498,15 +498,15 @@ being ran faster than their normal speed, as scripts will lose synchronisation
 
 5.5 Using data files from Macintosh game versions:
 --- ----------------------------------------------
-All LucasArts Scumm based adventures except CMI also exist in versions for the
+All LucasArts SCUMM based adventures except CMI also exist in versions for the
 Macintosh. ScummVM can use most (all?) of them, however, in some case some
-additional work is required. First off, if you are not using a Macintoh for
+additional work is required. First off, if you are not using a Macintosh for
 this, accessing the CD/floppy data might be tricky. There are various tools on
 the net for this, though.
 
 Secondly, most of the newer games shipped only with a  single data file on the
 Macintosh. You first have to run the 'rescumm' tool from the scummvm-tools
-package to extract the data files ScummVM excpects. You invoke rescumm like
+package to extract the data files ScummVM expects. You invoke rescumm like
 this (where DATAFILE is the path to the single big data file):
 
    rescumm DATAFILE
@@ -673,7 +673,8 @@ MONSTER.SOU file to a temporary folder. Then run:
   extract monster.sou
 
 In about 30 minutes or so, you will have a much smaller monster.so3 file,
-copy this file to your game dir. You can safely remove the monster.sou file.
+copy this file to your game directory. You can safely remove the monster.sou
+file.
 
 
 7.5.3) Compressing MONSTER.SOU with Ogg Vorbis:
@@ -683,7 +684,7 @@ As above but run:
   extract --vorbis monster.sou
 
 This should produce a smaller monster.sog file, which you should copy to your
-game dir.
+game directory.
 
 
 7.5.4) Compressing sfx/speech in Simon the Sorcerer 1 and 2
@@ -905,7 +906,7 @@ X.X Credits:
         Jim Leiterman   - Various info on his FmTowns/Marty SCUMM ports
         Jimmi Thogersen - For ScummRev, and much obscure code/documentation
 
-        Tony Warriner and everyone at Revolution Sofware Ltd. for sharing
+        Tony Warriner and everyone at Revolution Software Ltd. for sharing
         with us the source of some of their brilliant games, allowing us to
         release Beneath a Steel Sky as freeware... and generally being
         supportive above and beyond the call of duty.
