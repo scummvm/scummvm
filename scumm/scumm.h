@@ -360,9 +360,6 @@ public:
 	void parseEvents();
 	void waitForTimer(int msec_delay);
 	void processKbd();
-	int checkKeyHit();
-	void convertKeysToClicks();
-	int getKeyInput();
 	void clearClickedStatus();
 
 	// Misc utility functions

@@ -1467,51 +1467,105 @@ void Scumm::parseEvents() {
 }
 
 void Scumm::clearClickedStatus() {
-	checkKeyHit();
+	_keyPressed = 0;
 	_mouseButStat = 0;
 	_leftBtnPressed &= ~msClicked;
 	_rightBtnPressed &= ~msClicked;
 }
 
-int Scumm::checkKeyHit() {
-	int a = _keyPressed;
-	_keyPressed = 0;
-	if (_version <= 2 && 315 <= a && a < 315+12) {
-		// Convert F-Keys
-		a -= 314;
-	}
-	return a;
-}
-
 void Scumm::processKbd() {
 	int saveloadkey;
-	getKeyInput();
 
-	if (_version <= 2)
-		saveloadkey = 5;	// F5
-	else if ((_features & GF_OLD256) || (_gameId == GID_CMI) || (_features & GF_16COLOR)) /* FIXME: Support ingame screen ? */
-		saveloadkey = 319;	// F5
-	else
-		saveloadkey = VAR(VAR_SAVELOADDIALOG_KEY);
+	_lastKeyHit = _keyPressed;
+	_keyPressed = 0;
+	if (_version <= 2 && 315 <= _lastKeyHit && _lastKeyHit < 315+12) {
+		// Convert F-Keys for V1/V2 games (they start at 1 instead of at 315)
+		_lastKeyHit -= 314;
+	}
+	
+	
+	//
+	// Clip the mouse coordinates, and compute _virtualMouse.x (and clip it, too)
+	//
+	if (_mouse.x < 0)
+		_mouse.x = 0;
+	if (_mouse.x > _screenWidth-1)
+		_mouse.x = _screenWidth-1;
+	if (_mouse.y < 0)
+		_mouse.y = 0;
+	if (_mouse.y > _screenHeight-1)
+		_mouse.y = _screenHeight-1;
 
 	_virtualMouse.x = _mouse.x + virtscr[0].xstart;
-
+	_virtualMouse.y = _mouse.y - virtscr[0].topline;
 	if (_features & GF_NEW_CAMERA)
-		_virtualMouse.y = _mouse.y + camera._cur.y - (_screenHeight / 2);
-	else
-		_virtualMouse.y = _mouse.y;
-
-	_virtualMouse.y -= virtscr[0].topline;
+		_virtualMouse.y += camera._cur.y - (_screenHeight / 2);
 
 	if (_virtualMouse.y < 0)
 		_virtualMouse.y = -1;
-
 	if (_virtualMouse.y >= virtscr[0].height)
 		_virtualMouse.y = -1;
+
+	//
+	// Determine the mouse button state.
+	//
+	_mouseButStat = 0;
+
+	// Interpret 'return' as left click and 'tab' as right click
+	if (_lastKeyHit && _cursor.state > 0) {
+		if (_lastKeyHit == 9) {
+			_mouseButStat = MBS_RIGHT_CLICK;
+			_lastKeyHit = 0;
+		} else if (_lastKeyHit == 13) {
+			_mouseButStat = MBS_LEFT_CLICK;
+			_lastKeyHit = 0;
+		}
+	}
+
+	if (_leftBtnPressed & msClicked && _rightBtnPressed & msClicked) {
+		// Pressing both mouse buttons is treated as if you pressed
+		// the cutscene exit key (i.e. ESC in most games). That mimicks
+		// the behaviour of the original engine where pressing both
+		// mouse buttons also skips the current cutscene.
+		_mouseButStat = 0;
+		_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
+	} else if (_leftBtnPressed & msClicked) {
+		_mouseButStat = MBS_LEFT_CLICK;
+	} else if (_rightBtnPressed & msClicked) {
+		_mouseButStat = MBS_RIGHT_CLICK;
+	}
+
+	if (_version == 8) {
+		VAR(VAR_MOUSE_BUTTONS) = 0;
+		VAR(VAR_MOUSE_HOLD) = 0;
+		VAR(VAR_RIGHTBTN_HOLD) = 0;
+
+		if (_leftBtnPressed & msClicked)
+			VAR(VAR_MOUSE_BUTTONS) += 1;
+
+		if (_rightBtnPressed & msClicked)
+			VAR(VAR_MOUSE_BUTTONS) += 2;
+
+		if (_leftBtnPressed & msDown)
+			VAR(VAR_MOUSE_HOLD) += 1;
+
+		if (_rightBtnPressed & msDown) {
+			VAR(VAR_RIGHTBTN_HOLD) = 1;
+			VAR(VAR_MOUSE_HOLD) += 2;
+		}
+	} else if (_version == 7) {
+		VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
+		VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
+	}
+
+	_leftBtnPressed &= ~msClicked;
+	_rightBtnPressed &= ~msClicked;
 
 	if (!_lastKeyHit)
 		return;
 
+	// If a key script was specified (a V8 feature), and it's trigger
+	// key was pressed, run it.
 	if (_keyScriptNo && (_keyScriptKey == _lastKeyHit)) {
 		runScript(_keyScriptNo, 0, 0, 0);
 		return;
@@ -1554,8 +1608,18 @@ void Scumm::processKbd() {
 		return;
 	}
 
+	if (_version <= 2)
+		saveloadkey = 5;	// F5
+	else if ((_features & GF_OLD256) || (_gameId == GID_CMI) || (_features & GF_16COLOR)) /* FIXME: Support ingame screen ? */
+		saveloadkey = 319;	// F5
+	else
+		saveloadkey = VAR(VAR_SAVELOADDIALOG_KEY);
+
 	if (_lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY) ||
 		(VAR(VAR_CUTSCENEEXIT_KEY) == 4 && _lastKeyHit == 27)) {
+		// Skip cutscene (or active SMUSH video). For the V2 games, which
+		// normally use F4 for this, we add in a hack that makes escape work,
+		// too (just for convenience).
 		if (_insaneState) {
 			_videoFinished = true;
 		} else
@@ -1566,7 +1630,7 @@ void Scumm::processKbd() {
 
 		saveloadDialog();		// Display NewGui
 
-		if (VAR_SAVELOAD_SCRIPT2 != 0xFF)
+		if (VAR_SAVELOAD_SCRIPT != 0xFF)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
 		return;
 	} else if (VAR_TALKSTOP_KEY != 0xFF && _lastKeyHit == VAR(VAR_TALKSTOP_KEY)) {
@@ -1615,71 +1679,6 @@ void Scumm::processKbd() {
 	}
 
 	_mouseButStat = _lastKeyHit;
-}
-
-int Scumm::getKeyInput() {
-	_mouseButStat = 0;
-
-	_lastKeyHit = checkKeyHit();
-	convertKeysToClicks();
-
-	if (_mouse.x < 0)
-		_mouse.x = 0;
-	if (_mouse.x > _screenWidth-1)
-		_mouse.x = _screenWidth-1;
-	if (_mouse.y < 0)
-		_mouse.y = 0;
-	if (_mouse.y > _screenHeight-1)
-		_mouse.y = _screenHeight-1;
-
-	if (_leftBtnPressed & msClicked && _rightBtnPressed & msClicked) {
-		_mouseButStat = 0;
-		_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
-	} else if (_leftBtnPressed & msClicked) {
-		_mouseButStat = MBS_LEFT_CLICK;
-	} else if (_rightBtnPressed & msClicked) {
-		_mouseButStat = MBS_RIGHT_CLICK;
-	}
-
-	if (_version == 8) {
-		VAR(VAR_MOUSE_BUTTONS) = 0;
-		VAR(VAR_MOUSE_HOLD) = 0;
-		VAR(VAR_RIGHTBTN_HOLD) = 0;
-
-		if (_leftBtnPressed & msClicked)
-			VAR(VAR_MOUSE_BUTTONS) += 1;
-
-		if (_rightBtnPressed & msClicked)
-			VAR(VAR_MOUSE_BUTTONS) += 2;
-
-		if (_leftBtnPressed & msDown)
-			VAR(VAR_MOUSE_HOLD) += 1;
-
-		if (_rightBtnPressed & msDown) {
-			VAR(VAR_RIGHTBTN_HOLD) = 1;
-			VAR(VAR_MOUSE_HOLD) += 2;
-		}
-	} else if (_version == 7) {
-		VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
-		VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
-	}
-
-	_leftBtnPressed &= ~msClicked;
-	_rightBtnPressed &= ~msClicked;
-
-	return _lastKeyHit;
-}
-
-void Scumm::convertKeysToClicks() {
-	if (_lastKeyHit && _cursor.state > 0) {
-		if (_lastKeyHit == 9) {
-			_mouseButStat = MBS_RIGHT_CLICK;
-		} else if (_lastKeyHit == 13) {
-			_mouseButStat = MBS_LEFT_CLICK;
-		} else
-			return;
-		_lastKeyHit = 0;
-	}
 }
 
 #pragma mark -
