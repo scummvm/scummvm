@@ -666,8 +666,8 @@ static void codec47_subgfx_lev4() {
 		return;
 	}
 	if (code == 0xFF) {
-		*(uint16*)(d_dst + (d_pitch * 0)) = *(uint16*)(d_src + (d_pitch * 0) + 1);
-		*(uint16*)(d_dst + (d_pitch * 1)) = *(uint16*)(d_src + (d_pitch * 1) + 3);
+		*(uint16*)(d_dst + (d_pitch * 0)) = *(uint16*)(d_src + 1);
+		*(uint16*)(d_dst + (d_pitch * 1)) = *(uint16*)(d_src + 3);
 		d_src += 5;
 		return;
 	}
