@@ -133,6 +133,8 @@ bool File::open(const char *filename, const char *directory, int mode, byte encb
 	_encbyte = encbyte;
 
 	int len = strlen(filename);
+	if (_name != 0)
+		delete [] _name;
 	_name = new char[len+1];
 	memcpy(_name, filename, len+1);
 
