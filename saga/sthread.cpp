@@ -95,6 +95,11 @@ int STHREAD_ExecThreads(int msec) {
 	return R_SUCCESS;
 }
 
+void STHREAD_completeThread(void) {
+	for (int i = 0; i < 40 && (ys_dll_head(_vm->_script->threadList()) != NULL); i++)
+		STHREAD_ExecThreads(0);
+}
+
 int STHREAD_SetEntrypoint(R_SCRIPT_THREAD *thread, int ep_num) {
 	R_SCRIPT_BYTECODE *bytecode;
 	int max_entrypoint;
@@ -218,10 +223,12 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 		}
 
 		saved_offset = thread->i_offset;
-		debug(2, "Executing thread offset: %lu", thread->i_offset);
+
 		MemoryReadStream readS(GetReadPtr(thread), GetReadLen(thread));
 
 		in_char = readS.readByte();
+
+		debug(0, "Executing thread offset: %lu (%x)", thread->i_offset, in_char);
 
 		switch (in_char) {
 			// Align (ALGN)

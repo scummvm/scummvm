@@ -46,3 +46,8 @@ Scene.c
  resInfo->entryScript      _desc.sceneScriptNum
  resInfo->preScript        _desc.startScriptNum
  resInfo->backgroundMusic  _desc.musicRN
+
+Interp.c
+========
+ dispatchThreads()         STHREAD_ExecThreads()
+ runThread()               STHREAD_completeThread()

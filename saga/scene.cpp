@@ -949,7 +949,17 @@ int Scene::defaultScene(int param, R_SCENE_INFO *scene_info) {
 		_vm->_anim->play(0, 0);
 
 		if (_desc.startScriptNum > 0) {
+			R_SCRIPT_THREAD *_startScriptThread;
+
 			debug(0, "Starting start script #%d", _desc.startScriptNum);
+
+			_startScriptThread= STHREAD_Create();
+			if (_startScriptThread == NULL) {
+				_vm->_console->print("Thread creation failed.");
+				break;
+			}
+			STHREAD_Execute(_startScriptThread, _desc.startScriptNum);
+			STHREAD_completeThread();
 		}
 
 		debug(0, "Scene started");

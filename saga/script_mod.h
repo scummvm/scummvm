@@ -49,6 +49,7 @@ int STHREAD_ExecThreads(int msec);
 int STHREAD_HoldSem(R_SEMAPHORE *sem);
 int STHREAD_ReleaseSem(R_SEMAPHORE *sem);
 int STHREAD_DebugStep();
+void STHREAD_completeThread(void);
 
 } // End of namespace Saga
 

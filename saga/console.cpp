@@ -245,6 +245,7 @@ int Console::print(const char *fmt_str, ...) {
 	va_start(argptr, fmt_str);
 	ret_val = vsprintf(vsstr_p, fmt_str, argptr);
 	_vm->_console->addLine(&_scrollback, _lineMax, vsstr_p);
+	debug(0, vsstr_p);
 	va_end(argptr);
 	_linePos = 0;
 
