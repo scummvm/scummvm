@@ -33,6 +33,8 @@ byte Scumm::getBoxFlags(int box) {
 }
 
 int Scumm::getBoxScale(int box) {
+	if(_features & GF_NO_SCALLING)
+		return(255);
 	Box *ptr = getBoxBaseAddr(box);
 	return FROM_LE_16(ptr->scale);
 }
