@@ -1202,13 +1202,16 @@ void Scumm_v8::o8_cameraOps()
 
 void Scumm_v8::o8_verbOps()
 {
-	// TODO
 	byte subOp = fetchScriptByte();
 	VerbSlot *vs = NULL;
 	int slot, a, b;
 
+	_verbRedraw = true;
+
 	if (0 <= _curVerbSlot && _curVerbSlot < _maxVerbs)
 		vs = &_verbs[_curVerbSlot];
+	if (subOp != 0x96)
+		assert(vs);
 
 	switch (subOp) {
 	case 0x96:		// SO_VERB_INIT Choose verb number for editing
@@ -1217,8 +1220,7 @@ void Scumm_v8::o8_verbOps()
 		checkRange(_maxVerbs - 1, 0, _curVerbSlot, "Illegal new verb slot %d");
 		break;
 	case 0x97:		// SO_VERB_NEW New verb
-		slot = getVerbSlot(_curVerb, 0);
-		if (slot == 0) {
+		if (_curVerbSlot == 0) {
 			for (slot = 1; slot < _maxVerbs; slot++) {
 				if (_verbs[slot].verbid == 0)
 					break;
@@ -1227,7 +1229,7 @@ void Scumm_v8::o8_verbOps()
 				error("Too many verbs");
 			_curVerbSlot = slot;
 		}
-		vs = &_verbs[slot];
+		vs = &_verbs[_curVerbSlot];
 		vs->verbid = _curVerb;
 		vs->color = 2;
 		vs->hicolor = 0;
@@ -1302,6 +1304,9 @@ void Scumm_v8::o8_verbOps()
 		break;
 	case 0xA7:		// SO_VERB_LINE_SPACING Choose linespacing for verb
 		// FIXME - TODO
+		// Note: it seems that var596 stores the "line spacing". It is used by various
+		// scripts that place verbs for that.
+		// Also, var595 contains the vertical position at which to start placing verbs (330)
 		pop();
 		break;
 	default:

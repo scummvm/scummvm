@@ -32,10 +32,10 @@ struct VerbSlot {
 	int16 x, y;
 	int16 right, bottom;
 	int16 oldleft, oldtop, oldright, oldbottom;
-	uint8 verbid;
+	uint16 verbid;
 	uint8 color, hicolor, dimcolor, bkcolor, type;
 	uint8 charset_nr, curmode;
-	uint8 saveid;
+	uint16 saveid;
 	uint8 key;
 	bool center;
 	uint8 field_1B;

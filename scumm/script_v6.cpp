@@ -2012,7 +2012,13 @@ void Scumm_v6::o6_saveRestoreVerbs()
 	b = pop();
 	a = pop();
 
-	switch (fetchScriptByte()) {
+	byte subOp = fetchScriptByte();
+	if (_features & GF_AFTER_V8) {
+		subOp = (subOp - 141) + 0xB4;
+		printf("o8_saveRestoreVerbs:%d\n", (int)subOp);
+	}
+	
+	switch (subOp) {
 	case 141:
 		while (a <= b) {
 			slot = getVerbSlot(a, 0);
