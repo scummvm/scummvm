@@ -699,6 +699,9 @@ void ScummEngine::readResTypeList(int id, uint32 tag, const char *name) {
 		}
 		for (i = 0; i < num; i++) {
 			res.roomoffs[id][i] = _fileHandle.readUint32LE();
+
+			if (id == rtRoom && _heversion >= 70)
+				_heV7RoomIntOffsets[i] = res.roomoffs[id][i];
 		}
 
 		if (_heversion >= 70) {
@@ -730,6 +733,9 @@ void ScummEngine::allocResTypeData(int id, uint32 tag, int num, const char *name
 
 	if (_heversion >= 70) {
 		res.globsize[id] = (uint32 *)calloc(num, sizeof(uint32));
+
+		if (id == rtRoom)
+			_heV7RoomIntOffsets = (uint32 *)calloc(num, sizeof(uint32));
 	}
 }
 
@@ -826,7 +832,7 @@ int ScummEngine::loadResource(int type, int idx) {
 		if (_version == 8)
 			fileOffs = 8;
 		else if (_heversion >= 70)
-			fileOffs = res.roomoffs[type][idx];
+			fileOffs = _heV7RoomIntOffsets[idx];
 		else
 			fileOffs = 0;
 	} else {
@@ -2180,6 +2186,7 @@ void ScummEngine::freeResources() {
 			free(res.globsize[i]);
 	}
 	if (_heversion >= 70) {
+		free(_heV7RoomIntOffsets);
 		free(_heV7RoomOffsets);
 	}
 }
