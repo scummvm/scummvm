@@ -865,7 +865,10 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 					outputWord = 0;
 					imcTableEntry = 7;
 				}
-				left = (origLeft - 1) / (2 * channels) + 1;
+				
+				left = (origLeft - 1) / (2 * (channels - channel)) + 1;
+				origLeft -= 2* left;
+
 				destPos = startPos + 2 * channel;
 				while (left--) {
 					curTableEntry = _destImcTable[curTablePos];
