@@ -19,16 +19,19 @@
  */
 
 #include "stdafx.h"
-#include "launcher.h"
-#include "browser.h"
-#include "chooser.h"
-#include "message.h"
-#include "newgui.h"
-#include "options.h"
-#include "EditTextWidget.h"
-#include "ListWidget.h"
+
+#include "gui/about.h"
+#include "gui/browser.h"
+#include "gui/chooser.h"
+#include "gui/launcher.h"
+#include "gui/message.h"
+#include "gui/newgui.h"
+#include "gui/options.h"
+#include "gui/EditTextWidget.h"
+#include "gui/ListWidget.h"
 
 #include "backends/fs/fs.h"
+
 #include "common/config-file.h"
 #include "common/engine.h"
 #include "common/gameDetector.h"
@@ -36,6 +39,7 @@
 
 enum {
 	kStartCmd = 'STRT',
+	kAboutCmd = 'ABOU',
 	kOptionsCmd = 'OPTN',
 	kAddGameCmd = 'ADDG',
 	kEditGameCmd = 'EDTG',
@@ -172,9 +176,16 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 	new StaticTextWidget(this, 10, 8, 300, kLineHeight, gScummVMFullVersion, kTextAlignCenter);
 
 	// Add three buttons at the bottom
-	addButton(1 * (_w - kButtonWidth) / 6, _h - 24, "Quit", kQuitCmd, 'Q');
-	addButton(3 * (_w - kButtonWidth) / 6, _h - 24, "Options", kOptionsCmd, 'O');
-	_startButton = addButton(5 * (_w - kButtonWidth)/6, _h - 24, "Start", kStartCmd, 'S');
+	const int border = 10;
+	const int space = 8;
+	const int buttons = 4;
+	const int width = (_w - 2 * border - space * (buttons - 1)) / buttons;
+	int x = border;
+	new ButtonWidget(this, x, _h - 24, width, 16, "Quit", kQuitCmd, 'Q'); x += space + width;
+	new ButtonWidget(this, x, _h - 24, width, 16, "About", kAboutCmd, 'B'); x += space + width;
+	new ButtonWidget(this, x, _h - 24, width, 16, "Options", kOptionsCmd, 'O'); x += space + width;
+	_startButton =
+	new ButtonWidget(this, x, _h - 24, width, 16, "Start", kStartCmd, 'S'); x += space + width;
 
 	// Add list with game titles
 	_list = new ListWidget(this, 10, 28, 300, 112);
@@ -435,6 +446,11 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		// - default volumes (sfx/master/music)
 		GlobalOptionsDialog options(_gui, _detector);
 		options.runModal();
+		}
+		break;
+	case kAboutCmd: {
+		AboutDialog about(_gui);
+		about.runModal();
 		}
 		break;
 	case kStartCmd:
