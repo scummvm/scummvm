@@ -146,7 +146,7 @@ void ScummDialog::addResText(int x, int y, int w, int h, int resID)
 	const char *str = queryResString(resID);
 	if (!str)
 		str = "Dummy!";
-	new StaticTextWidget(this, x, y, w, h, str, kTextAlignLeft);
+	new StaticTextWidget(this, x, y, w, h, str, kTextAlignCenter);
 }
 
 
@@ -241,21 +241,19 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kListItemChangedCmd:
 	case kSaveCmd:
 		if (_savegameList->getSelected() >= 1 && !_savegameList->getSelectedString().isEmpty()) {
-			Scumm *s = _scumm;
-			s->_saveLoadSlot = _savegameList->getSelected();
-			s->_saveLoadCompatible = false;
-			s->_saveLoadFlag = 1;		// 1 for save, I assume (Painelf)
-			strcpy(s->_saveLoadName, _savegameList->getSelectedString().c_str());
+			_scumm->_saveLoadSlot = _savegameList->getSelected();
+			_scumm->_saveLoadCompatible = false;
+			_scumm->_saveLoadFlag = 1;		// 1 for save, I assume (Painelf)
+			strcpy(_scumm->_saveLoadName, _savegameList->getSelectedString().c_str());
 			close();
 		}
 		break;
 	case kListItemDoubleClickedCmd:
 	case kLoadCmd:
 		if (_savegameList->getSelected() >= 0 && !_savegameList->getSelectedString().isEmpty()) {
-			Scumm *s = _scumm;
-			s->_saveLoadSlot = _savegameList->getSelected();
-			s->_saveLoadCompatible = false;
-			s->_saveLoadFlag = 2;		// 2 for load. Magic number anyone?
+			_scumm->_saveLoadSlot = _savegameList->getSelected();
+			_scumm->_saveLoadCompatible = false;
+			_scumm->_saveLoadFlag = 2;		// 2 for load. Magic number anyone?
 			close();
 		}
 		break;
@@ -263,7 +261,7 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		close();
 		break;
 	case kOptionsCmd:
-		_gui->optionsDialog();
+		_scumm->optionsDialog();
 		break;
 	case kQuitCmd: {
 			_scumm->_system->quit();
@@ -321,7 +319,6 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	}
 }
 
-
 #pragma mark -
 
 AboutDialog::AboutDialog(NewGui *gui, Scumm *scumm)
@@ -335,11 +332,15 @@ AboutDialog::AboutDialog(NewGui *gui, Scumm *scumm)
 	new StaticTextWidget(this, 10, 78, 240, 16, "Simon the Sorcerer (c) Adventuresoft", kTextAlignCenter);
 }
 
+#pragma mark -
+
 PauseDialog::PauseDialog(NewGui *gui, Scumm *scumm)
-	: ScummDialog(gui, scumm, 50, 80, 220, 16)
+	: ScummDialog(gui, scumm, 35, 80, 250, 16)
 {
-	addResText(4, 4, 220, 16, 10);
+	addResText(4, 4, 250-8, 16, 10);
 }
+
+#pragma mark -
 
 SoundDialog::SoundDialog(NewGui *gui, Scumm *scumm)
 	: ScummDialog(gui, scumm, 30, 20, 260, 110)

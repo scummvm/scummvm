@@ -29,6 +29,7 @@
 #include "scumm/bundle.h"
 #include "actor.h"
 #include "debug.h"
+#include "dialogs.h"
 #include "gameDetector.h"
 #include "gui/gui.h"
 #include "gui/newgui.h"
@@ -68,9 +69,8 @@ uint Scumm::getRandomNumberRng(uint min, uint max)
 	return getRandomNumber(max - min) + min;
 }
 
-
 Scumm::Scumm (GameDetector *detector, OSystem *syst) 
-	: Engine(detector, syst)
+	: Engine(detector, syst), _pauseDialog(0), _optionsDialog(0), _saveLoadDialog(0)
 {
 	OSystem::Property prop;
 
@@ -156,8 +156,17 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 Scumm::~Scumm ()
 {
 	delete [] _actors;
+
+	if (_pauseDialog)
+		delete _pauseDialog;
+	if (_optionsDialog)
+		delete _optionsDialog;
+	if (_saveLoadDialog)
+		delete _saveLoadDialog;
+
 	delete _gui;
 	delete _newgui;
+
 	delete _bundle;
 	delete _sound;
 	delete _imuse;
@@ -459,7 +468,7 @@ int Scumm::scummLoop(int delta)
 		}
 
 		processActors();
-		clear_fullRedraw();
+		_fullRedraw = false;
 		cyclePalette();
 		palManipulate();
 
@@ -883,12 +892,6 @@ void Scumm::dumpResource(char *tag, int idx, byte *ptr)
 	out.close();
 }
 
-
-void Scumm::clear_fullRedraw()
-{
-	_fullRedraw = 0;
-}
-
 void Scumm::clearClickedStatus()
 {
 	checkKeyHit();
@@ -907,13 +910,34 @@ int Scumm::checkKeyHit()
 void Scumm::pauseGame(bool user)
 {
 	//_gui->pause();
-	_newgui->pauseDialog();
+	pauseDialog();
 }
 
 void Scumm::setOptions()
 {
 	_gui->options();
 	//_newgui->optionsDialog();
+}
+
+void Scumm::pauseDialog()
+{
+	if (!_pauseDialog)
+		_pauseDialog = new PauseDialog(_newgui, this);
+	_pauseDialog->open();
+}
+
+void Scumm::saveloadDialog()
+{
+	if (!_saveLoadDialog)
+		_saveLoadDialog = new SaveLoadDialog(_newgui, this);
+	_saveLoadDialog->open();
+}
+
+void Scumm::optionsDialog()
+{
+	if (!_optionsDialog)
+		_optionsDialog = new OptionsDialog(_newgui, this);
+	_optionsDialog->open();
 }
 
 void Scumm::shutDown(int i)
@@ -1017,7 +1041,7 @@ void Scumm::processKbd()
 
 		_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
 	} else if (_lastKeyHit == 321) { // F7, display new GUI
-		_newgui->saveloadDialog();
+		saveloadDialog();
 	}
 			
 	_mouseButStat = _lastKeyHit;
@@ -1510,12 +1534,6 @@ void Scumm::setupGUIColors() {
 		_gui->_textcolor = getDefaultGUIColor(2);
 		_gui->_textcolorhi = getDefaultGUIColor(6);
 		_gui->_shadowcolor = getDefaultGUIColor(8);
-
-		_newgui->_bgcolor = _gui->_bgcolor;
-		_newgui->_color = _gui->_color;
-		_newgui->_textcolor = _gui->_textcolor;
-		_newgui->_textcolorhi = _gui->_textcolorhi;
-		_newgui->_shadowcolor = _gui->_shadowcolor;
 	}
 }
 

@@ -28,13 +28,12 @@
 
 /*
  * TODO list
- * - use a nice font
- * - implement the missing / incomplete dialogs
+ * - get a nicer font which contains diacrits (ŠšŸ§Žˆ etc.)
  * - add more widgets
  * - allow multi line (l/c/r aligned) text via StaticTextWidget ?
  * - add "close" widget to all dialogs (with a flag to turn it off) ?
  * - make dialogs "moveable" ?
- * - come up with a new look&feel / theme for the GUI 
+ * - come up with a new look & feel / theme for the GUI 
  * - ...
  */
 
@@ -68,31 +67,16 @@ static byte guifont[] = {0,0,99,1,226,8,4,8,6,8,6,0,0,0,0,0,0,0,0,0,0,0,8,2,1,8,
 
 // Constructor
 NewGui::NewGui(Scumm *s) : _s(s), _system(s->_system), _screen(0),
-	_use_alpha_blending(true), _need_redraw(false),_prepare_for_gui(true),
-	_pauseDialog(0), _saveLoadDialog(0), _aboutDialog(0), _optionsDialog(0),
+	_use_alpha_blending(true), _need_redraw(false), _prepare_for_gui(true),
 	_currentKeyDown(0)
 {
-}
-
-void NewGui::pauseDialog()
-{
-	if (!_pauseDialog)
-		_pauseDialog = new PauseDialog(this, _s);
-	_pauseDialog->open();
-}
-
-void NewGui::saveloadDialog()
-{
-	if (!_saveLoadDialog)
-		_saveLoadDialog = new SaveLoadDialog(this, _s);
-	_saveLoadDialog->open();
-}
-
-void NewGui::optionsDialog()
-{
-	if (!_optionsDialog)
-		_optionsDialog = new OptionsDialog(this, _s);
-	_optionsDialog->open();
+	// Setup some default GUI colors.
+	// TODO - either use nicer values, or maybe make this configurable?
+	_bgcolor = RGB_TO_16(0, 0, 0);
+	_color = RGB_TO_16(80, 80, 80);
+	_shadowcolor = RGB_TO_16(64, 64, 64);
+	_textcolor = RGB_TO_16(32, 160, 32);
+	_textcolorhi = RGB_TO_16(0, 255, 0);
 }
 
 void NewGui::loop()
@@ -102,13 +86,6 @@ void NewGui::loop()
 	
 	if (_prepare_for_gui) {
 		saveState();
-
-		// Setup some default GUI colors
-		_bgcolor = RGB_TO_16(0, 0, 0);
-		_color = RGB_TO_16(80, 80, 80);
-		_shadowcolor = RGB_TO_16(64, 64, 64);
-		_textcolor = RGB_TO_16(32, 192, 32);
-		_textcolorhi = RGB_TO_16(0, 255, 0);
 
 		_eventList.clear();
 		_currentKeyDown = 0;
@@ -203,8 +180,6 @@ void NewGui::loop()
 		}
 		_keyRepeatLoopCount++;
 	}
-
-	_s->drawDirtyScreenParts();
 }
 
 #pragma mark -
@@ -234,8 +209,6 @@ void NewGui::saveState()
 
 void NewGui::restoreState()
 {
-	_s->_fullRedraw = true;
-	_s->_completeScreenRedraw = true;
 	_s->_cursorAnimate--;
 
 	// Restore old cursor
@@ -333,19 +306,18 @@ void NewGui::line(int x, int y, int x2, int y2, int16 color)
 
 void NewGui::blendRect(int x, int y, int w, int h, int16 color)
 {
-	int r = RED_FROM_16(color) * 2;
-	int g = GREEN_FROM_16(color) * 2;
-	int b = BLUE_FROM_16(color) * 2;
+	int r = RED_FROM_16(color) * 3;
+	int g = GREEN_FROM_16(color) * 3;
+	int b = BLUE_FROM_16(color) * 3;
 	int16 *ptr = getBasePtr(x, y);
 	if (ptr == NULL)
 		return;
 
 	while (h--) {
 		for (int i = 0; i < w; i++) {
-			ptr[i] = RGB_TO_16((RED_FROM_16(ptr[i])+r)/3,
-			                   (GREEN_FROM_16(ptr[i])+g)/3,
-			                   (BLUE_FROM_16(ptr[i])+b)/3);
-//			ptr[i] = color;
+			ptr[i] = RGB_TO_16((RED_FROM_16(ptr[i])+r)/4,
+			                   (GREEN_FROM_16(ptr[i])+g)/4,
+			                   (BLUE_FROM_16(ptr[i])+b)/4);
 		}
 		ptr += _screen_pitch;
 	}

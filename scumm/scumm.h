@@ -30,6 +30,7 @@
 class GameDetector;
 class Gui;
 class NewGui;
+class Dialog;
 class Scumm;
 class IMuse;
 class Actor;
@@ -325,8 +326,6 @@ public:
 	 * That results in a shorter form of the opcode
 	 * on some architectures. */
 	IMuse *_imuse;
-	Gui *_gui;
-	NewGui *_newgui;
 	uint32 _features;
 	VerbSlot *_verbs;
 	ObjectData *_objs;
@@ -390,12 +389,25 @@ public:
 	void shutDown(int i);
 	void setOptions(void);
 
+
+	// GUI
+	Gui *_gui;
+	NewGui *_newgui;
+
+	Dialog *_pauseDialog;
+	Dialog *_optionsDialog;
+	Dialog *_saveLoadDialog;
+
+	void pauseDialog();
+	void saveloadDialog();
+	void optionsDialog();
+
+	// Misc startup/event functions
 	void main();
 	void parseCommandLine(int argc, char **argv);
 	void showHelpAndExit();
 	bool detectGame();
 	void processKbd();
-	void clear_fullRedraw();
 
 	int checkKeyHit();
 	void convertKeysToClicks();

@@ -68,11 +68,6 @@ public:
 	int16 _textcolor;
 	int16 _textcolorhi;
 
-	// Dialogs
-	void pauseDialog();
-	void saveloadDialog();
-	void optionsDialog();
-
 	void loop();
 
 	bool isActive()	{ return ! _dialogStack.empty(); }
@@ -92,12 +87,6 @@ protected:
 	bool		_prepare_for_gui;
 	DialogStack	_dialogStack;
 	
-	Dialog		*_pauseDialog;
-	Dialog		*_saveLoadDialog;
-	Dialog		*_aboutDialog;
-	Dialog		*_optionsDialog;
-	Dialog		*_soundDialog;
-
 	// for continuous events (keyDown)
 	int			_currentKeyDown, _currentKeyDownFlags;
 	int			_keyRepeatLoopCount;
