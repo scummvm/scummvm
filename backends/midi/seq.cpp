@@ -38,6 +38,7 @@
 ////////////////////////////////////////
 
 #define SEQ_MIDIPUTC 5
+#define EV_SYSEX     0x94
 
 class MidiDriver_SEQ : public MidiDriver_MPU401 {
 public:
