@@ -203,7 +203,7 @@ int32 MoviePlayer::play(char *filename, MovieTextObject *text[], uint8 *musicOut
 		// frame rate the original movies had, or even if it
 		// was constant, but this seems to work reasonably.
 
-		while (_vm->_system->get_msecs() < ticks);
+		_vm->sleepUntil(ticks);
 		ticks += 82;
 
 	}
