@@ -250,7 +250,7 @@ void SkyState::loadBase0(void) {
 void SkyState::loadFixedItems(void) {
 
 	if (!isDemo())
-		_itemList[36] = (void **)_skyDisk->loadFile(26, NULL);
+		_itemList[36] = (void **)_skyDisk->loadFile(36, NULL);
 
 	_itemList[49] = (void **)_skyDisk->loadFile(49, NULL);
 	_itemList[50] = (void **)_skyDisk->loadFile(50, NULL);
