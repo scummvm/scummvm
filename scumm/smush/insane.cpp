@@ -1361,13 +1361,14 @@ void Insane::blah(void) {
 		if (!smlayer_isSoundRunning(87))
 			smlayer_startSound1(87);
 
+		_scumm->_sound->processSoundQues();
+
 		_scumm->parseEvents();
 		_scumm->processKbd();
 
 		_scumm->setActorRedrawFlags();
 		_scumm->resetActorBgs();
 		_scumm->processActors();
-		_scumm->_sound->processSoundQues();
 
 		_scumm->drawDirtyScreenParts();
 		_scumm->_system->update_screen();
@@ -1487,6 +1488,10 @@ void Insane::readState(void) {
 	_actor[0].inventory[INV_DUST] = readArray(_numberArray, 55) != 0; // Dust
 	_actor[0].inventory[INV_HAND] = 1; // Boot
 	_actor[0].inventory[INV_BOOT] = 1; // Hand
+
+	for (int i = 0; i < 7; i++) // PATCH
+		_actor[0].inventory[i] = 1;
+
 	_smlayer_room = readArray(_numberArray, 320);
 	_smlayer_room2 = readArray(_numberArray, 321);
 	_val55d = readArray(_numberArray, 322);
@@ -2704,8 +2709,87 @@ void Insane::postCase10(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 						int32 setupsan13, int32 curFrame, int32 maxFrame) {
-	// FIXME: implement
-	warning("stub Insane::postCase12(...)");
+	if (_actor[1].y <= 200) {
+		initScene(3);
+		_actor[1].y = 200;
+
+		switch (_currEnemy) {
+		case EN_ROTT2:
+			actorsReaction(true);
+
+			if (_enemy[1].field_8 <= 1)
+				prepareScenePropScene(scenePropIdx[32], 0, 1);
+			else
+				prepareScenePropScene(scenePropIdx[33], 0, 1);
+			break;
+		case EN_ROTT3:
+			actorsReaction(true);
+
+			if (_enemy[1].field_8 <= 1)
+				prepareScenePropScene(scenePropIdx[25], 0, 1);
+			break;
+		case EN_VULTF1:
+			actorsReaction(true);
+
+			if (_enemy[1].field_8 <= 1)
+				prepareScenePropScene(scenePropIdx[2], 0, 1);
+			break;
+		case EN_VULTF2:
+			actorsReaction(true);
+
+			if (_enemy[1].field_8 <= 1)
+				prepareScenePropScene(scenePropIdx[9], 0, 1);
+			else
+				prepareScenePropScene(scenePropIdx[16], 0, 1);
+			break;
+		case EN_VULTM2:
+			actorsReaction(true);
+
+			prepareScenePropScene(scenePropIdx[18], 0, 1);
+			_val39_ = false;
+			break;
+		case EN_TORQUE:
+			actorsReaction(false);
+			setWordInString(_numberArray, 1, _val51d);
+			smush_setToFinish();
+			break;
+		case EN_ROTT1:
+		case EN_VULTM1:
+		case EN_CAVEFISH:
+		default:
+			actorsReaction(true);
+			break;
+		}
+	} else {
+		switch (_currEnemy) {
+		case EN_VULTM2:
+			if (_enemy[EN_VULTM2].field_8 <= 1)
+				actorsReaction(false);
+			else
+				actorsReaction(true);
+			break;
+		case EN_TORQUE:
+			actorsReaction(false);
+			if (_actor[1].y != 300)
+				prepareScenePropScene(scenePropIdx[57], 1, 0);
+			break;
+		default:
+			actorsReaction(true);
+		}
+		_actor[1].y -= (_actor[1].y - 200) / 20 + 1;
+	}
+
+	checkEnemyLoose(false);
+
+	if (curFrame == 0)
+		smlayer_setFluPalette(_smush_roadrashRip, 0);
+
+	if (curFrame >= maxFrame)
+		smush_rewindCurrentSan(1088, -1, -1);
+
+	_val119_ = 0;
+	_val120_ = 0;
+	_continueFrame = curFrame;
 }
 
 void Insane::postCase23(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -5333,6 +5417,9 @@ void Insane::smush_setupSanFile(const char *filename, int32 offset) {
 	debug(0, "smush_setupSanFile(%s, %d)", filename, offset);
 
 	_player->seekSan(filename, _scumm->getGameDataPath(), offset);
+
+	_scumm->_imuseDigital->pause(false);
+	_scumm->_sound->pauseBundleMusic(false);
 }
 
 }
