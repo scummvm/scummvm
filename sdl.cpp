@@ -746,7 +746,7 @@ void OSystem_SDL::kbd_mouse() {
 			km.x += km.xv;
 			km.y += km.yv;
 
-			if (km.x <= 0) {
+			if (km.x < 0) {
 				km.x = 0;
 				km.xv = -1;
 				km.xd = 1;
@@ -756,7 +756,7 @@ void OSystem_SDL::kbd_mouse() {
 				km.xd = 1;
 			}
 
-			if (km.y <= 0) {
+			if (km.y < 0) {
 				km.y = 0;
 				km.yv = -1;
 				km.yd = 1;
