@@ -1,30 +1,25 @@
-/****************************************************************************\
- ____      ___       _               _ _
-|  _ \ ___|_ _|_ __ | |__   ___ _ __(_) |_
-| |_) / _ \| || '_ \| '_ \ / _ \ '__| | __|
-|  _ <  __/| || | | | | | |  __/ |  | | |_
-|_| \_\___|___|_| |_|_| |_|\___|_|  |_|\__|
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2004 The ScummVM project
+ *
+ * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
 
- ----------------------------------------------------------------------------
- Project:		ReInherit Engine
- Version:		.1a
- 
- The ReInherit Engine is (C)2000-2001 by Daniel Balsom
- This code is subject to the terms and conditions of the General Public
- License (GPL).
- 
- ----------------------------------------------------------------------------
- 
- File:			sys_interface.h
- Revision:		$Revision$
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * GNU General Public License for more details.
 
- Description:	
- 
-	(Linux) System-specific interface data
-
- Notes: 
- 
-\****************************************************************************/
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header$
+ *
+ */
 #ifndef REINHERIT_SYSINTERFACE_H
 #define REINHERIT_SYSINTERFACE_H
 
