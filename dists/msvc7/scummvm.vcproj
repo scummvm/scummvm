@@ -276,12 +276,6 @@
 				RelativePath="..\..\sound\rate.h">
 			</File>
 			<File
-				RelativePath="..\..\sound\resample.cpp">
-			</File>
-			<File
-				RelativePath="..\..\sound\resample.h">
-			</File>
-			<File
 				RelativePath="..\..\sound\voc.cpp">
 			</File>
 			<File
