@@ -410,15 +410,12 @@ void Script::sfSetFollower(SCRIPTFUNC_PARAMS) {
 	}
 }
 
-struct SceneSubstitutes {
+static struct SceneSubstitutes {
     int sceneId;
     const char *message;
     const char *name;
     const char *image;
-};
-
-/*
-static SceneSubstitutes sceneSubstitutes[] = {
+} sceneSubstitutes[] = {
     { 
 		7,
 		"Tycho says he knows much about the northern lands. Can Rif convince "
@@ -466,7 +463,6 @@ static SceneSubstitutes sceneSubstitutes[] = {
 		"boarhall.bbm"
 	}
 };
-*/
 
 // Script function #16 (0x10)
 void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
@@ -478,18 +474,20 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 	if (sceneNumber < 0) {
 		//TODO: quit from game at all
 	}
-	
+
+	// This is used for latter demos where all places on world map except
+	// Tent Faire are substituted with LBM picture and short description
+	// TODO: implement
+	for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++)
+		if (sceneSubstitutes[i].sceneId == sceneNumber)
+			debug(0, "Scene %d substitute exists", sceneNumber);
+
 //	_vm->_scene->loadScene(sceneNumber, BY_SCENE, _vm->_scene->SC_defaultScene, NULL, (sceneNumber = RID_ITE_ENDCREDIT_SCENE_1) ? SCENE_FADE : SCENE_NOFADE, entrance);
 
 	//TODO: placard stuff
 	_pendingVerb = kVerbNone;
 	_currentObject[0] = _currentObject[1] = ID_NOTHING;
 	showVerb();
-/*	for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++)
-		if (sceneSubstitutes[i].sceneId == sceneNum)
-			debug(0, "Scene %d substitute exists", sceneNum);
-
-	debug(1, "stub: SF_gotoScene(%d, %d)", sceneNum, entrance);*/
 }
 
 // Script function #17 (0x11)
