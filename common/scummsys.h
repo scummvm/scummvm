@@ -151,6 +151,41 @@
 	#define NORETURN
 	#endif
 
+#elif defined(__PALMOS_TRAPS__)	// PALMOS
+  #include <PalmOS.h>
+  #include <stdio.h>
+  #include "extend.h"
+
+  #define __PALM_OS__
+  #define scumm_stricmp stricmp// FIXME - this is definitly wrong. Try strcasecmp?
+  
+  #define CHECK_HEAP
+  #define SCUMM_BIG_ENDIAN
+  #define SCUMM_NEED_ALIGNMENT
+  #define NONSTANDARD_SAVE
+  
+  #define FORCEINLINE inline
+  #define CDECL 
+  
+  typedef unsigned char byte;
+  typedef unsigned char uint8;
+  typedef unsigned short uint16;
+  typedef unsigned long uint32;
+  typedef unsigned int uint;
+  typedef signed char int8;
+  typedef signed short int16;
+  typedef signed long int32;
+  typedef Boolean bool;
+  
+  #define START_PACK_STRUCTS pack (1)
+  #define END_PACK_STRUCTS   pack ()
+  #define GCC_PACK
+  #define NORETURN
+  #define NEED_STRDUP
+  
+  #define NEWGUI_256
+  typedef byte NewGuiColor;	// NEWGUI to 256 colors
+
 #elif defined(macintosh)
 	#include <stdio.h>
 
@@ -384,7 +419,9 @@
 /* Initialized operator new */
 // FIXME - get rid of these new/delete overrides!!! They conflict with the
 // Standard C++ library, and they are only there to support lazy programmers anyway.
+#ifndef __PALM_OS__
 void * operator new(size_t size);
 void operator delete(void *ptr);
+#endif
 
 #endif

@@ -24,8 +24,9 @@
 //
 // 8-bit alpha blending routines
 //
+#ifndef __PALM_OS__
 static int BlendCache[256][256];
-
+#endif
 //
 // Find the entry in the given palette which matches the color defined by
 // the tripel (r,b,g) most closely.
@@ -54,6 +55,7 @@ int RGBMatch(byte *palette, int r, int g, int b) {
 // Blend two 8 bit colors into a third, all colors being defined by palette indices.
 //
 int Blend(int src, int dst, byte *palette) {
+#ifndef __PALM_OS__
 	int r, g, b;
 	int alpha = 128;	// Level of transparency [0-256]
 	byte *srcpal = palette + (dst * 3);
@@ -75,17 +77,22 @@ int Blend(int src, int dst, byte *palette) {
 	b /= 256;
 
 	return (BlendCache[dst][src] = RGBMatch(palette, r , g , b ));
+#else
+	return 0;
+#endif
 }
 
 //
 // Reset the blending cache
 //
 void ClearBlendCache(byte *palette, int weight) {
+#ifndef __PALM_OS__
 	for (int i = 0; i < 256; i++)
 		for (int j = 0 ; j < 256 ; j++)
 //			BlendCache[i][j] = i;	// No alphablending
 //			BlendCache[i][j] = j;	// 100% translucent
 			BlendCache[i][j] = -1;	// Enable alphablending
+#endif
 }
 
 //

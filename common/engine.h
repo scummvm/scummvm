@@ -82,7 +82,6 @@ void checkHeap();
 // in this header. This serves two purposes:
 // 1) Clean seperation from the game modules (scumm, simon) and the generic code
 // 2) Faster (compiler doesn't have to parse lengthy header files)
-
 #ifndef DISABLE_SCUMM
 extern const VersionSettings *Engine_SCUMM_targetList();
 extern Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst);

@@ -160,6 +160,9 @@ int main(int argc, char *argv[]) {
 		GetWindowsDirectory(scummhome, 256);
 		strcat(scummhome, "\\");
 		strcat(scummhome, DEFAULT_CONFIG_FILE);
+	#elif defined(__PALM_OS__)
+		strcpy(scummhome,"/PALM/Programs/ScummVM/");
+		strcat(scummhome, DEFAULT_CONFIG_FILE);
 	#else
 		strcpy(scummhome, DEFAULT_CONFIG_FILE);
 	#endif
@@ -225,10 +228,11 @@ int main(int argc, char *argv[]) {
 
 	// ...and quit (the return 0 should never be reached)
 	system->quit();
-
+	delete system;	// palmos leaks
 	return 0;
 }
 
+#ifndef __PALM_OS__
 void *operator new(size_t size) {
 	return calloc(size, 1);
 }
@@ -236,4 +240,4 @@ void *operator new(size_t size) {
 void operator delete(void *ptr) {
 	free(ptr);
 }
-
+#endif

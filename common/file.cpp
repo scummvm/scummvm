@@ -33,8 +33,8 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 		if (buf[strlen(buf)-1] != ':' && buf[strlen(buf)-1] != '/')
 #endif
 
-#ifndef __GP32__
-			strcat(buf, "/");
+#if !defined(__GP32__) && !defined(__PALM_OS__)
+		strcat(buf, "/");	// prevent double /
 #endif
 	}
 	strcat(buf, filename);
@@ -61,7 +61,9 @@ FILE *File::fopenNoCase(const char *filename, const char *directory, const char 
 #ifdef __MORPHOS__
 			if (buf[strlen(buf) - 1] != ':' && buf[strlen(buf) - 1] != '/')
 #endif
-			strcat(buf, "/");
+#ifndef __PALM_OS__
+			strcat(buf, "/");	// PALMOS
+#endif
 		}
 		strcat(buf, dirs[l]);
 		int8 len = strlen(buf);

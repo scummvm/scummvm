@@ -27,6 +27,8 @@
 static Engine * eng;
 
 Timer::Timer(Engine * engine) {
+	memset(this,0,sizeof(Timer)); //palmos
+	
 	_initialized = false;
 	_timerRunning = false;
 	eng = _engine = engine;

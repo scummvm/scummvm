@@ -38,6 +38,9 @@
                             current_option = NULL
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
+#ifdef __PALM_OS__
+static const char USAGE_STRING[] = "NoUsageString"; // save more data segment space
+#else
 static const char USAGE_STRING[] = 
 	"ScummVM - Scumm Interpreter\n"
 	"Syntax:\n"
@@ -73,13 +76,14 @@ static const char USAGE_STRING[] =
 	"\t-d[<num>]  - enable debug output (debug level [1])\n"
 	"\t-u         - dump scripts\n"
 ;
-
+#endif
 // This contains a pointer to a list of all supported games.
 const VersionSettings *version_settings = NULL;
 
 static const struct GraphicsMode gfx_modes[] = {
 	{"normal", "Normal (no scaling)", GFX_NORMAL},
 	{"1x", "Normal (no scaling)", GFX_NORMAL},
+#ifndef __PALM_OS__	// reduce contant data size
 	{"2x", "2x", GFX_DOUBLESIZE},
 	{"3x", "3x", GFX_TRIPLESIZE},
 	{"2xsai", "2xSAI", GFX_2XSAI},
@@ -88,6 +92,10 @@ static const struct GraphicsMode gfx_modes[] = {
 	{"advmame2x", "AdvMAME2x", GFX_ADVMAME2X},
 	{"tv2x", "TV2x", GFX_TV2X},
 	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
+#else
+	{"flipping", "Page Flipping", GFX_FLIPPING},
+	{"dbuffer", "Double Buffer", GFX_DOUBLEBUFFER},
+#endif
 	{0, 0}
 };
 
@@ -108,6 +116,7 @@ static const struct Language languages[] = {
 static const struct MusicDriver music_drivers[] = {
 	{"auto", "Default", MD_AUTO},
 	{"null", "No music", MD_NULL},
+#ifndef __PALM_OS__	// reduce contant data size
 	{"windows", "Windows MIDI", MD_WINDOWS},
 	{"seq", "SEQ", MD_SEQ},
 	{"qt", "QuickTime", MD_QTMUSIC},
@@ -115,6 +124,9 @@ static const struct MusicDriver music_drivers[] = {
 	{"etude", "Etude", MD_ETUDE},
 	{"alsa", "ALSA", MD_ALSA},
 	{"adlib", "Adlib", MD_ADLIB},
+#else
+	{"ypa1", "Yamaha Pa1", MD_YPA1},
+#endif
 	{0, 0, 0}
 };
 
@@ -493,7 +505,11 @@ bool GameDetector::isMusicDriverAvailable(int drv) {
 	switch(drv) {
 	case MD_AUTO:
 	case MD_NULL: return true;
+#ifndef __PALM_OS__	// not avalaible on palmos : Clie use only ADPCM data and cannot be converted on the fly, may be possible on TT ?
 	case MD_ADLIB: return true;
+#else
+	case MD_YPA1: return true;
+#endif
 #if defined(WIN32) && !defined(_WIN32_WCE)
 	case MD_WINDOWS: return true;
 #endif
@@ -588,14 +604,17 @@ int GameDetector::detectMain() {
 	/* Use the adlib sound driver if auto mode is selected,
 	 * and the game is one of those that want adlib as
 	 * default */
+#ifndef __PALM_OS__ // currently adlib is not supported, is this really needed ?
 	if (_midi_driver == MD_AUTO && _features & GF_ADLIB_DEFAULT) {
 		_midi_driver = MD_ADLIB;
 		_use_adlib = true;
 	}
+#endif
 
 	if (!_gameDataPath) {
 		warning("No path was provided. Assuming the data files are in the current directory");
 		_gameDataPath = "";
+#ifndef __PALM_OS__	// add last slash also in File::fopenNoCase, so this is not needed
 	} else if (_gameDataPath[strlen(_gameDataPath)-1] != '/'
 #ifdef __MORPHOS__
 					&& _gameDataPath[strlen(_gameDataPath)-1] != ':'
@@ -607,6 +626,7 @@ int GameDetector::detectMain() {
 		// need to allocate 2 extra bytes, one for the "/" and one for the NULL terminator
 		_gameDataPath = (char *)malloc((strlen(slashless) + 2) * sizeof(char));
 		sprintf(_gameDataPath, "%s/", slashless);
+#endif
 	}
 
 	return (0);
@@ -627,6 +647,8 @@ OSystem *GameDetector::createSystem() {
 	return OSystem_MAC_create(_gfx_mode, _fullScreen);
 #elif defined(__GP32__)	// ph0x
 	return OSystem_GP32_create(GFX_NORMAL, true);
+#elif defined(__PALM_OS__) //chrilith
+	return OSystem_PALMOS_create(_gfx_mode);
 #else
 	/* SDL is the default driver for now */
 	return OSystem_SDL_create(_gfx_mode, _fullScreen);
@@ -639,13 +661,15 @@ MidiDriver *GameDetector::createMidi() {
 
 	if (drv == MD_AUTO) {
 #if defined (WIN32) && !defined(_WIN32_WCE)
-	drv = MD_WINDOWS;	// MD_WINDOWS is default MidiDriver on windows targets
+		drv = MD_WINDOWS; // MD_WINDOWS is default MidiDriver on windows targets
 #elif defined(MACOSX)
-	drv = MD_COREAUDIO;
+		drv = MD_COREAUDIO;
+#elif defined(__PALM_OS__)	// must be before mac
+		drv = MD_YPA1;
 #elif defined(macintosh)
-	drv = MD_QTMUSIC;
+		drv = MD_QTMUSIC;
 #elif defined(__MORPHOS__)
-	drv = MD_ETUDE;
+		drv = MD_ETUDE;
 #elif defined (_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND)
 	// Always use MIDI emulation via adlib driver on CE and UNIX device
 
@@ -658,7 +682,11 @@ MidiDriver *GameDetector::createMidi() {
 	switch(drv) {
 	case MD_AUTO:
 	case MD_NULL:		return MidiDriver_NULL_create();
+#ifndef __PALM_OS__
 	case MD_ADLIB:		_use_adlib = true; return MidiDriver_ADLIB_create();
+#else
+	case MD_YPA1:		return MidiDriver_YamahaPa1_create();
+#endif
 #if defined(WIN32) && !defined(_WIN32_WCE)
 	case MD_WINDOWS:	return MidiDriver_WIN_create();
 #endif
@@ -668,7 +696,7 @@ MidiDriver *GameDetector::createMidi() {
 #if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX)
 	case MD_SEQ:		return MidiDriver_SEQ_create();
 #endif
-#if defined(MACOSX) || defined(macintosh)
+#if (defined(MACOSX) || defined(macintosh)) && !defined(__PALM_OS__)
 	case MD_QTMUSIC:	return MidiDriver_QT_create();
 #endif
 #if defined(MACOSX)
