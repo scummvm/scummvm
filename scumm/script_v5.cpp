@@ -2258,7 +2258,6 @@ void ScummEngine_v5::o5_isSoundRunning() {
 
 void ScummEngine_v5::o5_soundKludge() {
 	int items[16];
-	int i;
 
 	if (_features & GF_SMALL_HEADER) {	// Is WaitForSentence in SCUMM V3
 		if (_sentenceNum) {
@@ -2272,11 +2271,7 @@ void ScummEngine_v5::o5_soundKludge() {
 		return;
 	}
 
-	for (i = 0; i < 16; i++)
-		items[i] = 0;
-
 	int num = getWordVararg(items);
-
 	_sound->soundKludge(items, num);
 }
 

@@ -632,11 +632,11 @@ int Sound::isSoundRunning(int sound) const {
  */
 bool Sound::isSoundInUse(int sound) const {
 
-	if (sound == _currentCDSound)
-		return pollCD() != 0;
-
 	if (_scumm->_imuseDigital)
 		return (_scumm->_imuseDigital->getSoundStatus(sound) != 0);
+
+	if (sound == _currentCDSound)
+		return pollCD() != 0;
 
 	if (isSoundInQueue(sound))
 		return true;
@@ -651,30 +651,25 @@ bool Sound::isSoundInUse(int sound) const {
 }
 
 bool Sound::isSoundInQueue(int sound) const {
-	int i, j, num;
-	int16 table[16];
+	int i, num;
 
 	i = _soundQue2Pos;
 	while (i--) {
 		if (_soundQue2[i] == sound)
-			return 1;
+			return true;
 	}
 
 	i = 0;
 	while (i < _soundQuePos) {
 		num = _soundQue[i++];
 
-		memset(table, 0, sizeof(table));
-
 		if (num > 0) {
-			for (j = 0; j < num; j++)
-				table[j] = _soundQue[i + j];
+			if (_soundQue[i + 0] == 0x10F && _soundQue[i + 1] == 8 && _soundQue[i + 2] == sound)
+				return true;
 			i += num;
-			if (table[0] == 0x10F && table[1] == 8 && table[2] == sound)
-				return 1;
 		}
 	}
-	return 0;
+	return false;
 }
 
 void Sound::stopSound(int a) {
@@ -692,7 +687,7 @@ void Sound::stopSound(int a) {
 	if (_scumm->_musicEngine)
 		_scumm->_musicEngine->stopSound(a);
 
-	for (i = 0; i < 10; i++)
+	for (i = 0; i < ARRAYSIZE(_soundQue2); i++)
 		if (_soundQue2[i] == a)
 			_soundQue2[i] = 0;
 }
@@ -734,13 +729,12 @@ void Sound::soundKludge(int *list, int num) {
 
 	if (list[0] == -1) {
 		processSoundQues();
-		return;
-	}
-
-	_soundQue[_soundQuePos++] = num;
-	
-	for (i = 0; i < num; i++) {
-		_soundQue[_soundQuePos++] = list[i];
+	} else {
+		_soundQue[_soundQuePos++] = num;
+		
+		for (i = 0; i < num; i++) {
+			_soundQue[_soundQuePos++] = list[i];
+		}
 	}
 }
 
@@ -771,8 +765,6 @@ void Sound::setupSound() {
 		_scumm->_imuse->setMasterVolume(ConfMan.getInt("master_volume"));
 		_scumm->_imuse->set_music_volume(ConfMan.getInt("music_volume"));
 	}
-	_scumm->_mixer->setVolume(ConfMan.getInt("sfx_volume") * ConfMan.getInt("master_volume") / 255);
-	_scumm->_mixer->setMusicVolume(ConfMan.getInt("music_volume"));
 	delete _sfxFile;
 	_sfxFile = openSfxFile();
 }
@@ -937,7 +929,7 @@ File *Sound::openSfxFile() {
 
 	if (!file->isOpen()) {
 		sprintf(buf, "%s.tlk", _scumm->getGameName());
-		file->open(buf, _scumm->getGameDataPath(), 1, 0x69);
+		file->open(buf, _scumm->getGameDataPath(), File::kFileReadMode, 0x69);
 	}
 	return file;
 }

@@ -66,13 +66,11 @@ public:
 	void addSoundToQueue2(int sound);
 	void processSoundQues();
 	void playSound(int sound);
-	void processSfxQueues();
 	void startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle *handle = NULL);
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);
 	int isSoundRunning(int sound) const;
 	bool isSoundInUse(int sound) const;
-	bool isSoundInQueue(int sound) const;
 	void stopSound(int a);
 	void stopAllSounds();
 	void soundKludge(int *list, int num);
@@ -93,6 +91,9 @@ protected:
 	File *openSfxFile();
 	void startSfxSound(File *file, int file_size, PlayingSoundHandle *handle, int id = -1);
 	bool isSfxFinished() const;
+	void processSfxQueues();
+
+	bool isSoundInQueue(int sound) const;
 };
 
 } // End of namespace Scumm

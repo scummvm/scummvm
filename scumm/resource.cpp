@@ -217,7 +217,7 @@ bool ScummEngine::openResourceFile(const char *filename, byte encByte) {
 		_fileHandle.close();
 	}
 
-	_fileHandle.open(filename, getGameDataPath(), 1, encByte);
+	_fileHandle.open(filename, getGameDataPath(), File::kFileReadMode, encByte);
 
 	return _fileHandle.isOpen();
 }
@@ -2213,13 +2213,10 @@ void ScummEngine::dumpResource(const char *tag, int idx, const byte *ptr, int le
 	sprintf(buf, "dumps/%s%d.dmp", tag, idx);
 #endif
 
-	out.open(buf, "", 1);
-	if (out.isOpen() == false) {
-		out.open(buf, "", 2);
-		if (out.isOpen() == false)
-			return;
-		out.write(ptr, size);
-	}
+	out.open(buf, "", File::kFileWriteMode);
+	if (out.isOpen() == false)
+		return;
+	out.write(ptr, size);
 	out.close();
 }
 
