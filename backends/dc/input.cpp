@@ -149,6 +149,8 @@ bool OSystem_Dreamcast::poll_event(Event *event)
   if(((int)(t-_devpoll))<0)
     return false;
   _devpoll += USEC_TO_TIMER(17000);
+  if(((int)(t-_devpoll))>=0)
+    _devpoll = t + USEC_TO_TIMER(17000);
   int mask = getimask();
   setimask(15);
   checkSound();
