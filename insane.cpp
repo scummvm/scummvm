@@ -563,6 +563,11 @@ void SmushPlayer::startVideo(short int arg, byte* videoFile)
 
 		updateScreen(sm);
 
+		waitForTimer(sm,20);
+
+		if(sm->_keyPressed == sm->_vars[sm->VAR_CUTSCENEEXIT_KEY])
+			return;
+
 	} while (1);
 }
 
