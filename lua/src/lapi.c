@@ -242,7 +242,7 @@ void lua_rawsetglobal (char *name)
 
 int lua_isnil (lua_Object o)
 {
-  return (o!= LUA_NOOBJECT) && (ttype(Address(o)) == LUA_T_NIL);
+  return (o == LUA_NOOBJECT) || (ttype(Address(o)) == LUA_T_NIL);
 }
 
 int lua_istable (lua_Object o)
