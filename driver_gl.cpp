@@ -100,8 +100,8 @@ void DriverGL::drawModelFace(const Model::Face *face, float *vertices, float *ve
 	for (int i = 0; i < face->_numVertices; i++) {
 		glNormal3fv(vertNormals + 3 * face->_vertices[i]);
 
-		if (face->_texVertices != NULL)
-			glTexCoord2fv(textureVerts + 2 * face->_texVertices[i]);
+//		if (face->_texVertices != NULL)
+//			glTexCoord2fv(textureVerts + 2 * face->_texVertices[i]);
 
 		glVertex3fv(vertices + 3 * face->_vertices[i]);
 	}
@@ -136,6 +136,56 @@ void DriverGL::drawHierachyNode(const Model::HierNode *node) {
 	if (node->_sibling != NULL)
 		node->_sibling->draw();
 }
+
+void DriverGL::disableLights() {
+	glDisable(GL_LIGHTING);
+}
+
+void DriverGL::setupLight(Scene::Light *light, int lightId) {
+	glEnable(GL_LIGHTING);
+	float ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	float diffuseLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	float specularLight[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	float lightPos[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	float lightDir[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	lightPos[0] = light->_pos.x();
+	lightPos[1] = light->_pos.y();
+	lightPos[2] = light->_pos.z();
+	ambientLight[0] = (float)light->_color.red() / 256.0f;
+	ambientLight[1] = (float)light->_color.blue() / 256.0f;
+	ambientLight[2] = (float)light->_color.green() / 256.0f;
+//	diffuseLight[0] = (float)light->_intensity;
+//	diffuseLight[1] = (float)light->_intensity;
+//	diffuseLight[2] = (float)light->_intensity;
+
+	if (strcmp(light->_type.c_str(), "omni") == 0) {
+//		glLightfv(GL_LIGHT0 + lightId, GL_AMBIENT, ambientLight);
+		glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, diffuseLight);
+		glLightfv(GL_LIGHT0 + lightId, GL_SPECULAR, specularLight);
+		glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
+//		glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, 1.8f);
+//		glLightf(GL_LIGHT0 + lightId, GL_LINEAR_ATTENUATION, light->_intensity);
+		glEnable(GL_LIGHT0 + lightId);
+	} else if (strcmp(light->_type.c_str(), "direct") == 0) {
+		lightDir[0] = light->_dir.x();
+		lightDir[1] = light->_dir.y();
+		lightDir[2] = light->_dir.z();
+		lightDir[3] = 0.0f;
+//		glLightfv(GL_LIGHT0 + lightId, GL_AMBIENT, ambientLight);
+		glLightfv(GL_LIGHT0 + lightId, GL_DIFFUSE, diffuseLight);
+		glLightfv(GL_LIGHT0 + lightId, GL_SPECULAR, specularLight);
+		glLightfv(GL_LIGHT0 + lightId, GL_POSITION, lightPos);
+		glLightfv(GL_LIGHT0 + lightId, GL_SPOT_DIRECTION, lightDir);
+//		glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, 1.8f);
+//		glLightf(GL_LIGHT0 + lightId, GL_SPOT_EXPONENT, 2.0f);
+//		glLightf(GL_LIGHT0 + lightId, GL_LINEAR_ATTENUATION, light->_intensity);
+		glEnable(GL_LIGHT0 + lightId);
+	} else {
+		error("Scene::setupLights() Unknown type of light: %s", light->_type);
+	}
+}
+
+#define BITMAP_TEXTURE_SIZE 256
 
 void DriverGL::createBitmap(Bitmap *bitmap) {
 	GLuint *textures;
@@ -313,7 +363,6 @@ void DriverGL::createMaterial(Material *material, const char *data, const CMap *
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, material->_width, material->_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texdata);
 		data += 24;
 	}
@@ -321,6 +370,7 @@ void DriverGL::createMaterial(Material *material, const char *data, const CMap *
 }
 
 void DriverGL::selectMaterial(const Material *material) {
+return;
 	GLuint *textures;
 	textures = (GLuint *)material->_textures;
 	glBindTexture(GL_TEXTURE_2D, textures[material->_currImage]);

@@ -28,7 +28,6 @@
 #include "imuse/imuse.h"
 
 #include <SDL.h>
-#include "tinygl/gl.h"
 #include <cmath>
 
 Scene::Scene(const char *name, const char *buf, int len) :
@@ -171,57 +170,15 @@ void Scene::Setup::setupCamera() const {
 }
 
 void Scene::setupLights() {
-/*	glMatrixMode(GL_MODELVIEW);
 	if (!_enableLights) {
-		glDisable(GL_LIGHTING);
+		g_driver->disableLights();
 		return;
 	}
 
-	glEnable(GL_LIGHTING);
-
 	for (int i = 0; i < _numLights; i++) {
-		assert(i < GL_MAX_LIGHTS);
-		Light *light = &_lights[i];
-		GLfloat ambientLight[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-		GLfloat diffuseLight[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		GLfloat specularLight[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-		GLfloat lightPos[4];
-		GLfloat lightDir[4];
-		lightPos[0] = light->_pos._coords[0];
-		lightPos[1] = light->_pos._coords[1];
-		lightPos[2] = light->_pos._coords[2];
-		lightPos[3] = 1.0f;
-		diffuseLight[0] = light->_color.red / 256.0f;
-		diffuseLight[1] = light->_color.blue / 256.0f;
-		diffuseLight[2] = light->_color.green / 256.0f;
-		diffuseLight[3] = 1.0f;
-
-		if (strcmp(light->_type.c_str(), "omni") == 0) {
-//			glLightfv(GL_LIGHT0 + i, GL_AMBIENT, ambientLight);
-			glLightfv(GL_LIGHT0 + i, GL_DIFFUSE, diffuseLight);
-			glLightfv(GL_LIGHT0 + i, GL_SPECULAR, specularLight);
-			glLightfv(GL_LIGHT0 + i, GL_POSITION, lightPos);
-			glEnable(GL_LIGHT0 + i);
-		} else if (strcmp(light->_type.c_str(), "direct") == 0) {
-			lightDir[0] = light->_dir._coords[0];
-			lightDir[1] = light->_dir._coords[1];
-			lightDir[2] = light->_dir._coords[2];
-			lightDir[3] = 1.0f;
-//			glLightfv(GL_LIGHT0 + i, GL_AMBIENT, ambientLight);
-			glLightfv(GL_LIGHT0 + i, GL_DIFFUSE, diffuseLight);
-			glLightfv(GL_LIGHT0 + i, GL_SPECULAR, specularLight);
-			glLightfv(GL_LIGHT0 + i, GL_POSITION, lightPos);
-			glLightfv(GL_LIGHT0 + i, GL_SPOT_DIRECTION, lightDir);
-			glEnable(GL_LIGHT0 + i);
-		} else {
-			error("Scene::setupLights() Unknown type of light: %s", light->_type);
-		}
+		assert(i < TGL_MAX_LIGHTS);
+		g_driver->setupLight(&_lights[i], i);
 	}
-	glEnable(GL_COLOR_MATERIAL);
-
-	GLfloat materialLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialLight);
-*/
 }
 
 void Scene::setSetup(int num) {

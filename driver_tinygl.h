@@ -31,8 +31,6 @@
 
 #include <SDL.h>
 
-#define BITMAP_TEXTURE_SIZE 256
-
 class DriverTinyGL : public Driver {
 public:
 	DriverTinyGL(int screenW, int screenH, int screenBPP);
@@ -51,6 +49,9 @@ public:
 
 	void drawHierachyNode(const Model::HierNode *node);
 	void drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts);
+
+	void disableLights();
+	void setupLight(Scene::Light *light, int lightId);
 
 	void createMaterial(Material *material, const char *data, const CMap *cmap);
 	void selectMaterial(const Material *material);

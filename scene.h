@@ -88,7 +88,6 @@ public:
 	}
 	ObjectState *findState(const char *filename);
 
-private:
 	struct Setup {		// Camera setup data
 		void load(TextSplitter &ts);
 		void setupCamera() const;
@@ -106,6 +105,8 @@ private:
 		Color _color;
 		float _intensity, _umbraangle, _penumbraangle;
 	};
+
+private:
 
 	std::string _name;
 	int _numCmaps;

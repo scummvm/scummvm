@@ -22,8 +22,11 @@
 #include "vector3d.h"
 #include "color.h"
 #include "model.h"
+#include "scene.h"
 #include "colormap.h"
-#include "bitmap.h"
+
+class Material;
+class Bitmap;
 
 class Driver {
 public:
@@ -43,6 +46,9 @@ public:
 
 	virtual void drawHierachyNode(const Model::HierNode *node) = 0;
 	virtual void drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) = 0;
+
+	virtual void disableLights() = 0;
+	virtual void setupLight(Scene::Light *light, int lightId) = 0;
 
 	virtual void createMaterial(Material *material, const char *data, const CMap *cmap) = 0;
 	virtual void selectMaterial(const Material *material) = 0;

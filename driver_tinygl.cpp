@@ -23,6 +23,9 @@
 #include "tinygl/gl.h"
 #include "tinygl/zgl.h"
 
+// enable define below to turn on lights without texture mapping,
+// TinyGL doesn't support texture mapping with lights currently
+//#define TURN_ON_LIGTHS_WITHOUT_TEXTURES
 
 // func below is from Mesa glu sources
 static void lookAt(TGLfloat eyex, TGLfloat eyey, TGLfloat eyez, TGLfloat centerx,
@@ -145,7 +148,9 @@ void DriverTinyGL::flipBuffer() {
 }
 
 void DriverTinyGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
+#ifndef TURN_ON_LIGTHS_WITHOUT_TEXTURES
 	tglEnable(TGL_TEXTURE_2D);
+#endif
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
 	tglTranslatef(pos.x(), pos.y(), pos.z());
@@ -205,6 +210,54 @@ void DriverTinyGL::drawHierachyNode(const Model::HierNode *node) {
 
 	if (node->_sibling != NULL)
 		node->_sibling->draw();
+}
+
+void DriverTinyGL::disableLights() {
+	tglDisable(TGL_LIGHTING);
+}
+
+void DriverTinyGL::setupLight(Scene::Light *light, int lightId) {
+	tglEnable(TGL_LIGHTING);
+	float ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	float diffuseLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	float specularLight[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	float lightPos[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	float lightDir[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	lightPos[0] = light->_pos.x();
+	lightPos[1] = light->_pos.y();
+	lightPos[2] = light->_pos.z();
+	ambientLight[0] = (float)light->_color.red() / 256.0f;
+	ambientLight[1] = (float)light->_color.blue() / 256.0f;
+	ambientLight[2] = (float)light->_color.green() / 256.0f;
+//	diffuseLight[0] = (float)light->_intensity;
+//	diffuseLight[1] = (float)light->_intensity;
+//	diffuseLight[2] = (float)light->_intensity;
+
+	if (strcmp(light->_type.c_str(), "omni") == 0) {
+//		tglLightfv(TGL_LIGHT0 + lightId, TGL_AMBIENT, ambientLight);
+		tglLightfv(TGL_LIGHT0 + lightId, TGL_DIFFUSE, diffuseLight);
+		tglLightfv(TGL_LIGHT0 + lightId, TGL_SPECULAR, specularLight);
+		tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);
+//		tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_CUTOFF, 1.8f);
+//		tglLightf(TGL_LIGHT0 + lightId, TGL_LINEAR_ATTENUATION, light->_intensity);
+		tglEnable(TGL_LIGHT0 + lightId);
+	} else if (strcmp(light->_type.c_str(), "direct") == 0) {
+		lightDir[0] = light->_dir.x();
+		lightDir[1] = light->_dir.y();
+		lightDir[2] = light->_dir.z();
+		lightDir[3] = 0.0f;
+//		tglLightfv(TGL_LIGHT0 + lightId, TGL_AMBIENT, ambientLight);
+		tglLightfv(TGL_LIGHT0 + lightId, TGL_DIFFUSE, diffuseLight);
+		tglLightfv(TGL_LIGHT0 + lightId, TGL_SPECULAR, specularLight);
+		tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);
+		tglLightfv(TGL_LIGHT0 + lightId, TGL_SPOT_DIRECTION, lightDir);
+//		tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_CUTOFF, 1.8f);
+//		tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_EXPONENT, 2.0f);
+//		tglLightf(TGL_LIGHT0 + lightId, TGL_LINEAR_ATTENUATION, light->_intensity);
+		tglEnable(TGL_LIGHT0 + lightId);
+	} else {
+		error("Scene::setupLights() Unknown type of light: %s", light->_type);
+	}
 }
 
 void DriverTinyGL::createBitmap(Bitmap *bitmap) {
@@ -277,7 +330,6 @@ void DriverTinyGL::createMaterial(Material *material, const char *data, const CM
 		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
 		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
 		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
-		tglTexEnvi(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_MODE, /*TGL_REPLACE*/ TGL_DECAL);
 		tglTexImage2D(TGL_TEXTURE_2D, 0, 3, material->_width, material->_height, 0, TGL_RGB, TGL_UNSIGNED_BYTE, texdata);
 		data += 24;
 	}
@@ -285,6 +337,9 @@ void DriverTinyGL::createMaterial(Material *material, const char *data, const CM
 }
 
 void DriverTinyGL::selectMaterial(const Material *material) {
+#ifdef TURN_ON_LIGTHS_WITHOUT_TEXTURES
+return;
+#endif
 	TGLuint *textures = (TGLuint *)material->_textures;
 	tglBindTexture(TGL_TEXTURE_2D, textures[material->_currImage]);
 	tglPushMatrix();

@@ -29,8 +29,6 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 
-#define BITMAP_TEXTURE_SIZE 256
-
 class DriverGL : public Driver {
 public:
 	DriverGL(int screenW, int screenH, int screenBPP);
@@ -48,6 +46,9 @@ public:
 
 	void drawHierachyNode(const Model::HierNode *node);
 	void drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts);
+
+	void disableLights();
+	void setupLight(Scene::Light *light, int lightId);
 
 	void createMaterial(Material *material, const char *data, const CMap *cmap);
 	void selectMaterial(const Material *material);
