@@ -1206,8 +1206,8 @@ void ScummEngine::initScummVars() {
 		VAR(59) = 3;	// FIXME: What is this good for?
 	}
 	
-	if (!(_features & GF_MACINTOSH) && (_version == 3)) {
-		// This is NOT the for the Mac version of Indy3/Loom
+	if ((_features & GF_MACINTOSH) && (_version == 3)) {
+		// This is the for the Mac version of Indy3/Loom
 		VAR(39) = 320;
 	}
 
