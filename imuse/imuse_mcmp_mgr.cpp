@@ -38,7 +38,7 @@ McmpMgr::McmpMgr() {
 
 McmpMgr::~McmpMgr() {
 	if (_file) {
-		fclose(_file);
+//		fclose(_file);
 	}
 	free(_compTable);
 	free(_compInput);
@@ -52,14 +52,14 @@ bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
 		return false;
 	}
 
-	int filePos = ftell(_file);
-	_file = fdopen(fileno(_file), "rb");
-	fseek(_file, filePos, SEEK_SET);
+//	int filePos = ftell(_file);
+//	_file = fdopen(fileno(_file), "rb");
+//	fseek(_file, filePos, SEEK_SET);
 
 	uint32 tag;
 	fread(&tag, 1, 4, _file);
 	if (READ_BE_UINT32(&tag) != MKID_BE('MCMP')) {
-		error("McmpMgr::loadCompTable() Expected MCMP tag");
+		error("McmpMgr::openSound() Expected MCMP tag");
 		return false;
 	}
 
