@@ -44,8 +44,8 @@ Mouse::~Mouse(void) {
 	setLuggage(0, 0);
 	setPointer(0, 0);
 
-	for (uint8 cnt = 0; cnt < 17; cnt++)	 // force res manager to keep mouse 
-		_resMan->resClose(MSE_POINTER + cnt); // cursors in memory all the time
+	for (uint8 cnt = 0; cnt < 17; cnt++)	 // close mouse cursor resources
+		_resMan->resClose(MSE_POINTER + cnt);
 }
 
 void Mouse::initialize(void) {

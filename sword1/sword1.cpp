@@ -122,6 +122,7 @@ SwordEngine::~SwordEngine() {
 	delete _mouse;
 	delete _objectMan;
 	_resMan->flush(); // free all memory
+	_memMan->flush();
 	delete _resMan;
 	delete _memMan;
 }
@@ -1309,7 +1310,6 @@ void SwordEngine::delay(uint amount) { //copied and mutilated from sky.cpp
 				_mouseState |= BS1R_BUTTON_UP;
 				break;
 			case OSystem::EVENT_QUIT:
-				//_system->quit();
 				_systemVars.engineQuit = true;
 				break;
 			default:
