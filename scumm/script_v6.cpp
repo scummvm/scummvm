@@ -2923,7 +2923,7 @@ void Scumm_v6::o6_getDateTime() {
 }
 
 void Scumm_v6::o6_unknownE1() {
-	// this opcode check ground area in minigame in the dig
+	// this opcode check ground area in minigame "Asteroid Lander" in the dig
 	int x = pop();
 	int y = pop();
 
@@ -2949,9 +2949,7 @@ void Scumm_v6::o6_unknownE1() {
 	}
 
 	// FIXME: something is wrong, it take wrong position or wrong buffer check
-	// Fingolfin says: the vs->tdirty[0] makes no sense to me at all, what is this
-	// supposed to do ?!?
-	int offset = (y - vs->topline) * _realWidth + x + vs->tdirty[0];
+	int offset = (y - vs->topline) * _realWidth + x + _screenLeft;
 
 	byte area = *(getResourceAddress(rtBuffer, vs->number + 1) + offset);
 	push(area);
