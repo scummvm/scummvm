@@ -630,6 +630,7 @@ void Scumm::initRoomSubBlocks()
 		while ((ptr = findResourceSmall(MKID('LSCR'), searchptr)) != NULL) {
 			int id = 0;
 			ptr += _resourceHeaderSize;	/* skip tag & size */
+			id = ptr[0];
 #ifdef DUMP_SCRIPTS
 			do {
 				char buf[32];
@@ -637,7 +638,6 @@ void Scumm::initRoomSubBlocks()
 				dumpResource(buf, id, ptr - 6);
 			} while (0);
 #endif
-			id = ptr[0];
 			_localScriptList[id - _numGlobalScripts] = ptr + 1 - roomptr;
 			searchptr = NULL;
 		}
