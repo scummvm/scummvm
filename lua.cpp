@@ -2109,7 +2109,7 @@ void register_lua() {
 	lua_setglobal("HOT");
 
 	saveCallback = SaveCallback;
-	restoreCallback	= RestoreCallback;
+	restoreCallback = RestoreCallback;
 }
 
 int bundle_dofile(const char *filename) {
