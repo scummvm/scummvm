@@ -3251,7 +3251,6 @@ bool SimonState::has_vgastruct_with_id(uint16 id, uint16 file)
 
 void SimonState::processSpecialKeys()
 {
-	//warning("Key press %d",_key_pressed);
 	switch (_key_pressed) {
 		case 27: // escape
 			_exit_cutscene = true;
