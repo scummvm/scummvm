@@ -53,24 +53,25 @@ public:
 	int  getMusicTimer() const;
 
 protected:
+	virtual void nextTick();
+	virtual void clear_channel(int i);
+	virtual void chainSound(int nr, byte *data);
+
+	virtual void generateSpkSamples(int16 *data, uint len);
+	virtual void generatePCjrSamples(int16 *data, uint len);
+
 	void restartSound();
 	void next_speaker_cmd(ChannelInfo *channel);
-	void clear_channel(int i);
-	void chainSound(int nr, byte *data);
-
-	void do_mix(int16 *buf, uint len);
 
 	void set_mplex(uint mplex);
 	void parseSpeakerChunk();
 	void nextSpeakerCmd();
 	void parsePCjrChunk();
 	void nextPCjrCmd();
-	void generateSpkSamples(int16 *data, uint len);
-	void generatePCjrSamples(int16 *data, uint len);
-
-	channel_data_v1 _channels[4];
 
 private:
+	channel_data_v1 _channels[4];
+
 	byte *_next_chunk;
 	byte *_repeat_chunk;
 	uint  _chunk_type;

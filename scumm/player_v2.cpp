@@ -838,20 +838,24 @@ void Player_V2::do_mix(int16 *data, uint len) {
 		_next_tick -= step << FIXP_SHIFT;
 
 		if (!(_next_tick >> FIXP_SHIFT)) {
-			for (int i = 0; i < 4; i++) {
-				if (!_channels[i].d.time_left)
-					continue;
-				next_freqs(&_channels[i]);
-			}
 			_next_tick += _tick_len;
-			if (_music_timer_ctr++ >= _ticks_per_music_timer) {
-				_music_timer_ctr = 0;
-				_music_timer++;
-			}
+			nextTick();
 		}
 	} while (len -= step);
 
 	mutex_down();
+}
+
+void Player_V2::nextTick() {
+	for (int i = 0; i < 4; i++) {
+		if (!_channels[i].d.time_left)
+			continue;
+		next_freqs(&_channels[i]);
+	}
+	if (_music_timer_ctr++ >= _ticks_per_music_timer) {
+		_music_timer_ctr = 0;
+		_music_timer++;
+	}
 }
 
 void Player_V2::lowPassFilter(int16 *sample, uint len) {

@@ -102,15 +102,8 @@ protected:
 	unsigned int _RNG;
 	unsigned int _volumetable[16];
 
-	int _music_timer;
-	int _music_timer_ctr;
-	int _ticks_per_music_timer;
 	int _timer_count[4];
 	int _timer_output;
-
-	const uint16 *_freqs_table;
-
-	ChannelInfo _channels[5];
 
 	int   _current_nr;
 	byte *_current_data;
@@ -118,26 +111,39 @@ protected:
 	byte *_next_data;
 	byte *_retaddr;
 
+private:
+	int _music_timer;
+	int _music_timer_ctr;
+	int _ticks_per_music_timer;
+
+	const uint16 *_freqs_table;
+
 	OSystem::MutexRef _mutex;
+	ChannelInfo _channels[5];
+
+protected:
 	void mutex_up() { _system->lock_mutex (_mutex); }
 	void mutex_down() { _system->unlock_mutex (_mutex); }
 
-	virtual void set_pcjr(bool pcjr);
-	void execute_cmd(ChannelInfo *channel);
-	virtual void next_freqs(ChannelInfo *channel);
+	virtual void nextTick();
 	virtual void clear_channel(int i);
 	virtual void chainSound(int nr, byte *data);
 	virtual void chainNextSound();
 
-	static void premix_proc(void *param, int16 *buf, uint len);
-	virtual void do_mix (int16 *buf, uint len);
+	virtual void generateSpkSamples(int16 *data, uint len);
+	virtual void generatePCjrSamples(int16 *data, uint len);
 
 	void lowPassFilter(int16 *data, uint len);
 	void squareGenerator(int channel, int freq, int vol,
 	                     int noiseFeedback, int16 *sample, uint len);
-	void generateSpkSamples(int16 *data, uint len);
-	void generatePCjrSamples(int16 *data, uint len);
     
+private:
+	static void premix_proc(void *param, int16 *buf, uint len);
+	void do_mix(int16 *buf, uint len);
+
+	void set_pcjr(bool pcjr);
+	void execute_cmd(ChannelInfo *channel);
+	void next_freqs(ChannelInfo *channel);
 };
 
 #endif

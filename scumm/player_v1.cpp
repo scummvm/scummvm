@@ -56,7 +56,6 @@ void Player_V1::chainSound(int nr, byte *data) {
 	_current_nr = nr;
 	_current_data = data;
 	_repeat_chunk = _next_chunk = data + (_pcjr ? 2 : 4);
-	_music_timer = 0;
 
 	debug(4, "Chaining new sound %d", nr);
 	if (_pcjr)
@@ -512,43 +511,23 @@ void Player_V1::set_mplex(uint mplex) {
 	_tick_len = _mplex_step * mplex;
 }
 
-void Player_V1::do_mix(int16 *data, uint len) {
-	mutex_up();
-	uint step;
-
-	do {
-		step = len;
-		if (step > (_next_tick >> FIXP_SHIFT))
-			step = (_next_tick >> FIXP_SHIFT);
+void Player_V1::nextTick() {
+	if (_next_chunk) {
 		if (_pcjr)
-			generatePCjrSamples(data, step);
+			nextPCjrCmd();
 		else
-			generateSpkSamples(data, step);
-		data += 2 * step;
-		_next_tick -= step << FIXP_SHIFT;
-
-		if (!(_next_tick >> FIXP_SHIFT)) {
-			_next_tick += _tick_len;
-			if (_next_chunk) {
-				if (_pcjr)
-					nextPCjrCmd();
-				else
-					nextSpeakerCmd();
-			}
-		}
-	} while (len -= step);
-	mutex_down();
+			nextSpeakerCmd();
+	}
 }
 
 void Player_V1::generateSpkSamples(int16 *data, uint len) {
 	uint i;
 
-	memset (data, 0, sizeof(int16) * len);
+	memset(data, 0, 2 * sizeof(int16) * len);
 	if (_channels[0].freq == 0) {
 		if (_forced_level) {
-			for (i = 0; i < len; i++) {
-				data[i] = _volumetable[0];
-			}
+			for (i = 0; i < len; i++)
+				data[2*i] = data[2*i+1] = _volumetable[0];
 			debug(9, "speaker: %8x: forced one", _tick_len);
 		} else if (!_level) {
 			return;
@@ -566,11 +545,11 @@ void Player_V1::generatePCjrSamples(int16 *data, uint len) {
 	uint freq, vol;
 	bool hasdata = false;
 
-	memset(data, 0, sizeof(int16) * len);
+	memset(data, 0, 2 * sizeof(int16) * len);
 
 	if (_forced_level) {
 		for (i = 0; i < len; i++)
-			data[i] = _volumetable[0];
+			data[2*i] = data[2*i+1] = _volumetable[0];
 		hasdata = true;
 		debug(9, "channel[4]: %8x: forced one", _tick_len);
 	}
