@@ -205,6 +205,34 @@ SOURCE=.\simon\simonverb.cpp
 SOURCE=.\simon\simonvga.cpp
 # End Source File
 # End Group
+# Begin Group "gui"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\gui\dialog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\dialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\newgui.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\newgui.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\widget.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\widget.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\2xsai.cpp
