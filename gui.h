@@ -70,6 +70,10 @@ protected:
 	// optiondialog specifics
 	int _gui_variables[100];
 
+	// checkboxes
+	bool _cbox_checked[100];
+	const char *_cbox_cfg_key[100];
+
 	// savedialog specifics	
 	int _slotIndex;
 	int _editString;
@@ -103,6 +107,10 @@ protected:
 	void addLetter(byte letter);	
 	void queryMessage(const char *msg, const char *alts);
 	byte getDefaultColor(int color);
+	bool getCheckboxChecked(int id);
+	void setCheckbox(bool state, int id);
+	void clearCheckboxes();
+	void checkHotKey(int keycode);
 
 	char _gui_scroller[255];
 
@@ -110,5 +118,6 @@ protected:
 	void handleOptionsDialogCommand(int cmd);
 	void handleKeysDialogCommand(int cmd);
 	void handleLauncherDialogCommand(int cmd);
+	void handleMiscDialogCommand(int cmd);
 };
 #endif

@@ -54,7 +54,8 @@ enum {
 	GUI_KEYTEXT = 7,
 	GUI_SCROLLTEXT = 8,
 	GUI_NEXTTEXT = 9,
-	GUI_UPDOWNARROW = 10
+	GUI_UPDOWNARROW = 10,
+	GUI_CHECKBOX = 11
 };
 
 enum {
@@ -74,6 +75,7 @@ struct GuiWidget {
 	uint16 _w,_h;
 	uint16 _id;
 	byte _string_number;
+	uint8 _hotkey;
 };
 
 enum {
@@ -83,7 +85,8 @@ enum {
 	KEYS_DIALOG,
 	OPTIONS_DIALOG,
 	ABOUT_DIALOG,
-	LAUNCHER_DIALOG
+	LAUNCHER_DIALOG,
+	MISC_DIALOG
 };
 
 
@@ -112,6 +115,16 @@ static uint32 down_arrow[IMG_SIZE] = {
 	0x00011000,
 };
 
+static uint32 checked_img[IMG_SIZE] = {
+	0x00000000,
+	0x01000010,
+	0x00100100,
+	0x00011000,
+	0x00011000,
+	0x00100100,
+	0x01000010,
+	0x00000000,
+};
 
 const GuiWidget launcher_dialog[] = {
 	{GUI_STAT, 0xFF, GWF_DEFAULT, 0, 0, 320, 200, 0, 0},
@@ -162,20 +175,34 @@ const GuiWidget keys_dialog[] = {
 };
 
 const GuiWidget about_dialog[] = {
-	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 20, 260, 120, 0, 0},
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 20, 260, 135, 0, 0},
 	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 68, 20 + 10 + 15 + 5, 160, 15, 0, 9},	// Build
-	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 10, 20 + 10 + 15 + 5 + 15, 230, 15, 0, 10},	// ScummVM Url
+	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 10, 20 + 10 + 15 + 5 + 15, 240, 15, 0, 10},	// ScummVM Url
 	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 75, 20 + 10 + 15 + 5 + 15 + 15 + 15, 150, 15, 0, 11},	// Lucasarts
+	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 110, 20 + 10 + 15 + 5 + 15 + 15 + 15 + 15, 40, 15, 0, 21}, // Except:
+	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 25, 20 + 100, 210, 15, 0, 22}, // Adventuresoft
 	{GUI_SCROLLTEXT, 0x01, 0, 30 + 95, 20 + 10, 100, 15, 0},
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 113, 20 + 96, 54, 16, 40, 9},
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 100, 20 + 112, 54, 16, 40, 9},
 	{0, 0, 0, 0, 0, 0, 0, 0, 0}
 };
 
 const GuiWidget options_dialog[] = {
-	{GUI_STAT, 0xFF, GWF_DEFAULT, 50, 80, 210, 35, 0, 0},
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10, 80 + 10, 40, 15, 1, 5},	// Sound
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30, 80 + 10, 40, 15, 2, 6},	// Keys
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30 + 40 + 30, 80 + 10, 40, 15, 3, 7},	// About
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 50, 80, 210, 60, 0, 0},
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10, 80 + 10, 40, 15, 1, 5, 83},	// Sound
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30, 80 + 10, 40, 15, 2, 6, 75},	// Keys
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30 + 40 + 30, 80 + 10, 40, 15, 3, 7, 65},	// About
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10, 80 + 10 + 15 + 10, 40, 15, 4, 18, 77}, // Misc
+	{0, 0, 0, 0, 0, 0, 0, 0, 0}
+};
+
+const GuiWidget misc_dialog[] = {
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 50, 80, 210, 65, 0, 0},
+	{GUI_CHECKBOX, 0x01, GWF_DEFAULT, 50 + 10, 80 + 6, 14, 14, 1, 0, 83}, // checkbox for subtitles
+	{GUI_CUSTOMTEXT, 0x01, 0, 50 + 10 + 20, 80 + 10, 140, 15, 0, 19}, // "Show speech subtitles"
+	{GUI_CHECKBOX, 0x01, GWF_DEFAULT, 50 + 10, 80 + 6 + 16, 14, 14, 5, 0, 65}, // checkbox for amiga pallete
+	{GUI_CUSTOMTEXT, 0x01, 0, 50 + 10 + 20, 80 + 10 + 15, 140, 15, 0, 20}, // "Amiga pallete conversion"
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 50 + 10 + 20, 80 + 10 + 15 + 20, 54, 16, 3, 9, 13}, // ok
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 50 + 10 + 20 + 80, 80 + 10 + 15 + 20, 54, 16, 4, 7}, // cancel
 	{0, 0, 0, 0, 0, 0, 0, 0, 0}
 };
 
@@ -190,7 +217,7 @@ const GuiWidget sound_dialog[] = {
 	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 20 + 25 + 25 + 11, 15, 15, 21, 3},	// Plus
 	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 20 + 25 + 25 + 11, 15, 15, 22, 4},	// Minus
 	{GUI_VARTEXT, 0x01, GWF_BUTTON, 30 + 73, 20 + 25 + 25 + 11, 128, 15, 23, 2},	// SFX
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + (260 / 2) - 80, 20 + 25 + 25 + 11 + 25, 54, 16, 40, 9},	/* OK */
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + (260 / 2) - 80, 20 + 25 + 25 + 11 + 25, 54, 16, 40, 9, 13},	/* OK */
 	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + (260 / 2), 20 + 25 + 25 + 11 + 25, 54, 16, 50, 7},	/* Cancel */
 	{0, 0, 0, 0, 0, 0, 0, 0, 0}
 };
@@ -217,11 +244,11 @@ const GuiWidget save_load_dialog[] = {
 	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 94, 160, 10, 27, 0},
 	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 104, 160, 10, 28, 0},
 
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 20, 54, 16, 3, 4},	/* Save */
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 40, 54, 16, 4, 5},	/* Load */
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 60, 54, 16, 5, 6},	/* Play */
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 200, 80, 54, 16, 9, 17},	/* Options */
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 100, 54, 16, 6, 8},	/* Quit */
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 20, 54, 16, 3, 4, 83},	/* Save */
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 40, 54, 16, 4, 5, 76},	/* Load */
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 60, 54, 16, 5, 6, 80},	/* Play */
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 200, 80, 54, 16, 9, 17, 79},	/* Options */
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 100, 54, 16, 6, 8, 81},	/* Quit */
 
 	{GUI_RESTEXT, 0x02, GWF_BUTTON, 200, 60, 54, 16, 7, 7},	/* Cancel */
 
@@ -408,14 +435,20 @@ void Gui::drawWidget(const GuiWidget * w)
 	case GUI_IMAGE:
 		break;
 	case GUI_UPDOWNARROW:
+	case GUI_CHECKBOX:
 		{
 			uint32 *data;
 			byte color = (_clickWidget && _clickWidget == w->_id) ? _textcolorhi : _textcolor;
 
-			if (w->_string_number == 0)
-				data = up_arrow;
-			else
-				data = down_arrow;
+			if (w->_type == GUI_UPDOWNARROW) {
+				if (w->_string_number == 0)
+					data = up_arrow;
+				else
+					data = down_arrow;
+				// if not an updownarrow, it must be a checkbox
+			} else {
+				data = checked_img;
+			}
 
 			// Center the image
 			x += w->_w/2 - IMG_SIZE/2;
@@ -429,14 +462,17 @@ void Gui::drawWidget(const GuiWidget * w)
 			if (ptr == NULL)
 				return;
 	
-			for (int y2 = 0; y2 < IMG_SIZE; y2++) {
-				uint32 mask = 0xF0000000;
-				for (int x2 = 0; x2 < IMG_SIZE; x2++) {
-					if (data[y2] & mask)
-						ptr[x2] = color;
-					mask >>= 4;
+			// If the checkbox is checked, or this is not a checkbox, draw the image
+			if ((getCheckboxChecked(w->_id) == true) || (w->_type != GUI_CHECKBOX)) {
+				for (int y2 = 0; y2 < IMG_SIZE; y2++) {
+					uint32 mask = 0xF0000000;
+					for (int x2 = 0; x2 < IMG_SIZE; x2++) {
+						if (data[y2] & mask)
+							ptr[x2] = color;
+						mask >>= 4;
+					}
+					ptr += 320;
 				}
-				ptr += 320;
 			}
 		}
 		break;
@@ -645,6 +681,56 @@ void Gui::handleOptionsDialogCommand(int cmd)
 		_dialog = ABOUT_DIALOG;
 		draw(0, 100);
 		return;
+	case 4:
+		_widgets[0] = misc_dialog;
+		_active = true;
+		_cur_page = 0;
+		_return_to = 0;
+		_dialog = MISC_DIALOG;
+		clearCheckboxes();
+		setCheckbox(!(_s->_noSubtitles), 1);
+		if (_s->_features & GF_AMIGA)
+			setCheckbox(true, 5);
+		else
+			setCheckbox(false, 5);
+		draw(0, 100);
+		return;
+	}
+}
+
+void Gui::handleMiscDialogCommand(int cmd)
+{
+	switch (cmd) {
+	case 1:
+		if ((getCheckboxChecked(1)) == true)
+			setCheckbox(false, 1);
+		else
+			setCheckbox(true, 1);
+		draw(1, 1);
+		return;
+	case 5:
+		if (getCheckboxChecked(5) == true)
+			setCheckbox(false, 5);
+		else
+			setCheckbox(true, 5);
+		draw(5, 5);
+		return;
+	case 3:
+	case 4:
+		// OK button - perform the actions of the checkboxes
+		if (cmd == 3) {
+			// The opposite of the checkbox(1) is set because the internal variable is 'no subtitles' but
+			// a "Show subtitles" option makes more usability sense
+			_s->_noSubtitles = (!getCheckboxChecked(1));
+
+			// Amiga pallete conversion checkbox
+			if (getCheckboxChecked(5))
+					_s->_features = _s->_features | GF_AMIGA;
+			else
+					_s->_features = _s->_features & ~GF_AMIGA;
+			_s->_fullRedraw = true;
+		}
+		close();
 	}
 }
 
@@ -725,6 +811,9 @@ void Gui::handleCommand(int cmd)
 		return;
 	case OPTIONS_DIALOG:
 		handleOptionsDialogCommand(cmd);
+		return;
+	case MISC_DIALOG:
+		handleMiscDialogCommand(cmd);
 		return;
 	case KEYS_DIALOG:
 		handleKeysDialogCommand(cmd);
@@ -932,6 +1021,23 @@ void Gui::addLetter(byte letter)
 	}
 }
 
+bool Gui::getCheckboxChecked(int id)
+{
+	return _cbox_checked[id];
+}
+
+void Gui::setCheckbox(bool state, int id)
+{
+	_cbox_checked[id] = state;
+}
+
+void Gui::clearCheckboxes()
+{
+	for (int id = 0; id <= 100; id++){
+		_cbox_checked[id] = false;
+	}
+}
+
 void Gui::init(Scumm *s)
 {
 	/* Default GUI colors */
@@ -972,8 +1078,10 @@ void Gui::loop()
 		if (_dialog != KEYS_DIALOG) {
 			if (_s->_lastKeyHit == 27)
 				close();
-			else
+			else {
 				addLetter((unsigned char)_s->_lastKeyHit);
+				checkHotKey(_s->_lastKeyHit);
+			}
 #ifdef _WIN32_WCE
 		} else if (_s->_lastKeyHit > 1000) {	// GAPI
 			addLetter(_s->_lastKeyHit - 1000);
@@ -1021,6 +1129,32 @@ void Gui::close()
 	}
 
 #endif
+}
+
+void Gui::checkHotKey(int keycode)
+{
+	byte page;
+	for (int i = 0; i < (int)(sizeof(_widgets) / sizeof(_widgets[0])); i++) {
+		const GuiWidget *w = _widgets[i];
+		if (w) {
+			while (w->_type != GUI_NONE) {
+	
+				// This rubbish is needed because the current page is 0 when really it should be 1
+				if (_cur_page == 0)
+					page = 1;
+				else
+					page = _cur_page;
+
+				// Only check for widgets that are on the current GUI page (otherwise save dialog problems occur)
+				if (w->_page == page) {
+					// Check the actual key pressed, and the uppercase version. For people who have caps lock on
+					if (keycode == w->_hotkey || (keycode - 32) == w->_hotkey)
+						handleCommand(w->_id);
+				}
+				w++;
+			}
+		}
+	}
 }
 
 void Gui::saveLoadDialog()

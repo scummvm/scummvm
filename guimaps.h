@@ -45,7 +45,12 @@ static const char* string_map_table_custom[] = {
 	"Save",											//14
 	"Skip",											//15
 	"Hide",											//16
-	"Options"										//17
+	"Options",									//17
+	"Misc",											//18
+	"Show speech subtitles",		//19
+	"Amiga pallete conversion",	//20
+	"Except:",									//21
+	"Simon the Sorcerer (c) Adventuresoft" //22
 };
 
 static ResString string_map_table_v7[] = {
