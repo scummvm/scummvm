@@ -621,9 +621,11 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 	UInt32 current_msecs;
 	UInt32 keyCurrentState;
 	Coord x, y;
-	
-	if(_quit)
+
+	if(_quit) {
+		exit(0);	// resend an exit event
 		return false;
+	}
 
 	current_msecs = get_msecs();
 	//thread handler
@@ -641,6 +643,9 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 		_timer.duration = _timer.callback(_timer.duration);
 		_timer.next_expiry = current_msecs + _timer.duration;
 	}
+
+	if (_selfQuit)
+		quit();
 
 	for(;;) {
 		EvtGetEvent(&ev, evtNoWait);
@@ -677,10 +682,8 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 
 				case vchrCalc:
 					if (_lastKeyPressed == vchrCalc)
-						if ((get_msecs() - _exit_delay) <= (EXITDELAY)) {
+						if ((get_msecs() - _exit_delay) <= (EXITDELAY))
 							_selfQuit = true;
-							quit();
-						}
 
 					_exit_delay = get_msecs();
 					_lastKeyPressed = vchrCalc;
@@ -735,7 +738,6 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 				case vchrHardCradle:
 				case vchrHardCradle2:
 					_selfQuit = true;
-					quit();
 			}
 		}
 		// check for hardkey repeat
@@ -779,7 +781,6 @@ bool OSystem_PALMOS::poll_event(Event *event) {
 					
 					if  (ev.data.keyDown.chr == 'z' && b == KBD_CTRL) {
 						_selfQuit = true;
-						quit();
 
 					} else if (ev.data.keyDown.chr == 'n' && b == KBD_CTRL) {
 						UInt8 *scr = _screenP + _screenWidth * (_screenHeight + 2);
@@ -1144,7 +1145,7 @@ void OSystem_PALMOS::play_cdrom(int track, int num_loops, int start_frame, int e
 	
 	// stop current play if any
 	MsaStop(_msaRefNum, true);
-	// retreive track info
+	// retreive track infos
 	e = MsaGetTrackInfo(_msaRefNum, _msaTrack, 0, msa_LANG_CODE_ASCII, &trackH);
 //	if (e) doErr(e, "MsaGetTrackInfo");
 	// track exists
