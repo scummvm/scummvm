@@ -320,6 +320,12 @@
 				Name="sound"
 				Filter="">
 				<File
+					RelativePath="sound\audiostream.cpp">
+				</File>
+				<File
+					RelativePath="sound\audiostream.h">
+				</File>
+				<File
 					RelativePath=".\sound\fmopl.cpp">
 				</File>
 				<File
@@ -351,6 +357,9 @@
 				</File>
 				<File
 					RelativePath=".\sound\mpu401.h">
+				</File>
+				<File
+					RelativePath="sound\rate.cpp">
 				</File>
 			</Filter>
 			<Filter

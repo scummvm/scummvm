@@ -80,7 +80,7 @@
 				AssemblerListingLocation=".\bs2___Debug/"
 				ObjectFile=".\bs2___Debug/"
 				ProgramDataBaseFileName=".\bs2___Debug/"
-				WarningLevel="2"
+				WarningLevel="3"
 				WarnAsError="TRUE"
 				SuppressStartupBanner="TRUE"
 				DebugInformationFormat="4"
