@@ -43,13 +43,11 @@ public:
 	void writeUint16BE(uint16 value);
 	void writeUint32BE(uint32 value);
 
-/*
 	void writeSint16LE(int16 value);
 	void writeSint32LE(int32 value);
 
 	void writeSint16BE(int16 value);
 	void writeSint32BE(int32 value);
-*/
 };
 
 
@@ -67,13 +65,11 @@ public:
 	uint16 readUint16BE();
 	uint32 readUint32BE();
 
-/*
 	int16 readSint16LE();
 	int32 readSint32LE();
 
 	int16 readSint16BE();
 	int32 readSint32BE();
-*/
 };
 
 /**

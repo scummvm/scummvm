@@ -59,6 +59,24 @@ uint32 ReadStream::readUint32BE() {
 }
 
 
+int16 ReadStream::readSint16LE() {
+	return (int16)readUint16LE();
+}
+
+int32 ReadStream::readSint32LE() {
+	return (int32)readUint32LE();
+}
+
+int16 ReadStream::readSint16BE() {
+	return (int16)readUint16BE();
+}
+
+int32 ReadStream::readSint32BE() {
+	return (int32)readUint32BE();
+}
+
+
+
 void WriteStream::writeByte(byte value) {
 	write(&value, 1);
 }
@@ -81,6 +99,23 @@ void WriteStream::writeUint16BE(uint16 value) {
 void WriteStream::writeUint32BE(uint32 value) {
 	writeUint16BE((uint16)(value >> 16));
 	writeUint16BE((uint16)(value & 0xffff));
+}
+
+
+void WriteStream::writeSint16LE(int16 value) {
+	writeUint16LE((uint16)value);
+}
+
+void WriteStream::writeSint32LE(int32 value) {
+	writeUint32LE((uint32)value);
+}
+
+void WriteStream::writeSint16BE(int16 value) {
+	writeUint16BE((uint16)value);
+}
+
+void WriteStream::writeSint32BE(int32 value) {
+	writeUint32BE((uint32)value);
 }
 
 }	// End of namespace Common
