@@ -23,7 +23,7 @@ CP  = cp
 # Default compilation parameters. Normally don't edit these           #
 #######################################################################
 
-CXXFLAGS:= -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
+CXXFLAGS:= -g -O -Wall -Wuninitialized -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
 DEFINES :=
 LDFLAGS :=
 INCLUDES:= -I. -Icommon -Iscumm $(SDL_CFLAGS)

@@ -16,7 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
+<<<<<<< string.cpp
  * $Header$
+=======
+ * $Header$
+>>>>>>> 1.153
  *
  */
 
@@ -310,7 +314,10 @@ void Scumm::CHARSET_1() {
 			if (_version <= 3) {
 				_charset->printChar(c);
 			} else {
-				if (_noSubtitles && (_haveMsg == 0xFE || _sound->_talkChannelHandle)) {
+				if ((_gameId == GID_LOOM256) && _noSubtitles) {
+					// FIXME Special case for loomcd, since it only uses CD audio.for sound
+					// We need a way to check if CD audio is been used
+				} else if (_noSubtitles && (_haveMsg == 0xFE || _sound->_talkChannelHandle)) {
 					// Subtitles are turned off, and there is a voice version
 					// of this message -> don't print it. 
 				} else
