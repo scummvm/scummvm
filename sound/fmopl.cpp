@@ -6,6 +6,8 @@
 ** Modified for ScummVM by Ludvig Strigeus
 ** Version 0.37a (modified)
 **
+** ENDER: This file is not GPL. Need to replace or have
+**        relicensed before 0.2.0 release.
 */
 
 #include "stdafx.h"

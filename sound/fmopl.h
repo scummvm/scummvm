@@ -1,3 +1,4 @@
+/* ENDER: Not GPLed. Replace or relicense before 0.2.0 */
 
 #ifndef __FMOPL_H_
 #define __FMOPL_H_

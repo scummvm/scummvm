@@ -2640,7 +2640,9 @@ CHECK_HEAP;
 }
 
 
+
 /* Yazoo: This function create the specialPalette used for semi-transparency in SamnMax */
+
 
 void Scumm::createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, int16 colorMin, int16 colorMax)
 {
@@ -2648,8 +2650,12 @@ void Scumm::createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, in
 	byte *curPtr;
 	byte *searchPtr;
 
+
+
 	byte readComp1;
+
 	byte readComp2;
+
 	byte readComp3;
 
 	int colorComp1;
@@ -2677,9 +2683,14 @@ void Scumm::createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, in
 
 	for(i=colorMin;i<colorMax;i++)
 	{
+
 		readComp1=*(curPtr++);
+
 		readComp2=*(curPtr++);
+
 		readComp3=*(curPtr++);
+
+
 
 
 		colorComp1=((readComp1)*c)>>8;
