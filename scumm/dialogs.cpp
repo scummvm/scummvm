@@ -318,12 +318,6 @@ MainMenuDialog::~MainMenuDialog() {
 	delete _loadDialog;
 }
 
-void MainMenuDialog::open() {
-	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-
-	ScummDialog::open();
-}
-
 void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kSaveCmd:
@@ -355,15 +349,11 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
-void MainMenuDialog::close() {
-	ScummDialog::close();
-
-	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-}
-
 void MainMenuDialog::save() {
 	int idx;
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	_saveDialog->setList(generateSavegameList(_vm, true));
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	idx = _saveDialog->runModal();
 	if (idx >= 0) {
 		const String &result = _saveDialog->getResultString();

@@ -61,8 +61,6 @@ public:
 	MainMenuDialog(ScummEngine *scumm);
 	~MainMenuDialog();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void open();	
-	virtual void close();
 
 protected:
 	GUI::Dialog		*_aboutDialog;
