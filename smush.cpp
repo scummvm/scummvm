@@ -93,97 +93,97 @@ void Smush::handleWave(const byte *src, uint32 size) {
 #define BITMAP_TEXTURE_SIZE 256
 
 void Smush::updateGLScreen() {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    int num_tex_;
-    GLuint *tex_ids_;
+	int num_tex_;
+	GLuint *tex_ids_;
 
 	// create texture
-    num_tex_ = ((_width + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
-      ((_height + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
-    tex_ids_ = new GLuint[num_tex_];
-    glGenTextures(num_tex_, tex_ids_);
-    for (int i = 0; i < num_tex_; i++) {
-      glBindTexture(GL_TEXTURE_2D, tex_ids_[i]);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-		   BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0,
-		   GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
+	num_tex_ = ((_width + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
+				((_height + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
+	tex_ids_ = new GLuint[num_tex_];
+	glGenTextures(num_tex_, tex_ids_);
+	for (int i = 0; i < num_tex_; i++) {
+		glBindTexture(GL_TEXTURE_2D, tex_ids_[i]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+				   BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0,
+				   GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
     }
-    
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, _width);
 
-    int cur_tex_idx = 0;
-    for (int y = 0; y < _height; y += BITMAP_TEXTURE_SIZE) {
-      for (int x = 0; x < _width; x += BITMAP_TEXTURE_SIZE) {
-	int width  = (x + BITMAP_TEXTURE_SIZE >= _width)  ? (_width  - x) : BITMAP_TEXTURE_SIZE;
-	int height = (y + BITMAP_TEXTURE_SIZE >= _height) ? (_height - y) : BITMAP_TEXTURE_SIZE;
-	glBindTexture(GL_TEXTURE_2D, tex_ids_[cur_tex_idx]);
-	glTexSubImage2D(GL_TEXTURE_2D,
-			0,
-			0, 0,
-			width, height,
-			GL_RGB,
-			GL_UNSIGNED_SHORT_5_6_5,
-			_dst + (y * 2 * _width) + (2 * x));
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, _width);
+
+	int cur_tex_idx = 0;
+	for (int y = 0; y < _height; y += BITMAP_TEXTURE_SIZE) {
+		for (int x = 0; x < _width; x += BITMAP_TEXTURE_SIZE) {
+			int width  = (x + BITMAP_TEXTURE_SIZE >= _width)  ? (_width  - x) : BITMAP_TEXTURE_SIZE;
+			int height = (y + BITMAP_TEXTURE_SIZE >= _height) ? (_height - y) : BITMAP_TEXTURE_SIZE;
+			glBindTexture(GL_TEXTURE_2D, tex_ids_[cur_tex_idx]);
+			glTexSubImage2D(GL_TEXTURE_2D,
+							0,
+							0, 0,
+							width, height,
+							GL_RGB,
+							GL_UNSIGNED_SHORT_5_6_5,
+							_dst + (y * 2 * _width) + (2 * x));
 			cur_tex_idx++;
-      }
-    }
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	      }
+	}
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // prepare view
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, 640, 480, 0, 0, 1);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glMatrixMode(GL_TEXTURE);
-    glLoadIdentity();
-    // A lot more may need to be put there : disabling Alpha test, blending, ...
-    // For now, just keep this here :-)
-    glDisable(GL_LIGHTING);
-    glEnable(GL_TEXTURE_2D);
+	// prepare view
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, 640, 480, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glMatrixMode(GL_TEXTURE);
+	glLoadIdentity();
+	// A lot more may need to be put there : disabling Alpha test, blending, ...
+	// For now, just keep this here :-)
+	glDisable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
+
+	// draw
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+	glEnable(GL_SCISSOR_TEST);
+	cur_tex_idx = 0;
+	for (int y = 0; y < _height; y += BITMAP_TEXTURE_SIZE) {
+		for (int x = 0; x < _width; x += BITMAP_TEXTURE_SIZE) {
+			int width  = (x + BITMAP_TEXTURE_SIZE >= _width)  ? (_width - x) : BITMAP_TEXTURE_SIZE;
+			int height = (y + BITMAP_TEXTURE_SIZE >= _height) ? (_height - y) : BITMAP_TEXTURE_SIZE;
+			glBindTexture(GL_TEXTURE_2D, tex_ids_[cur_tex_idx]);
+			glScissor(x, 480 - (y + height), x + width, 480 - y);
+			glBegin(GL_QUADS);
+			glTexCoord2f(0.0, 0.0);
+			glVertex2i(x, y);
+			glTexCoord2f(1.0, 0.0);
+			glVertex2i(x + BITMAP_TEXTURE_SIZE, y);
+			glTexCoord2f(1.0, 1.0);
+			glVertex2i(x + BITMAP_TEXTURE_SIZE, y + BITMAP_TEXTURE_SIZE);
+			glTexCoord2f(0.0, 1.0);
+			glVertex2i(x, y + BITMAP_TEXTURE_SIZE);
+			glEnd();
+			cur_tex_idx++;
+		}
+	}
+	glDisable(GL_SCISSOR_TEST);
+	glDisable(GL_TEXTURE_2D);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+
+	SDL_GL_SwapBuffers();
   
-    // draw
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
-    glEnable(GL_SCISSOR_TEST);
-    cur_tex_idx = 0;
-    for (int y = 0; y < _height; y += BITMAP_TEXTURE_SIZE) {
-      for (int x = 0; x < _width; x += BITMAP_TEXTURE_SIZE) {
-		int width  = (x + BITMAP_TEXTURE_SIZE >= _width)  ? (_width - x) : BITMAP_TEXTURE_SIZE;
-		int height = (y + BITMAP_TEXTURE_SIZE >= _height) ? (_height - y) : BITMAP_TEXTURE_SIZE;
-		glBindTexture(GL_TEXTURE_2D, tex_ids_[cur_tex_idx]);
-		glScissor(x, 480 - (y + height), x + width, 480 - y);
-		glBegin(GL_QUADS);
-		glTexCoord2f(0.0, 0.0);
-		glVertex2i(x, y);
-		glTexCoord2f(1.0, 0.0);
-		glVertex2i(x + BITMAP_TEXTURE_SIZE, y);
-		glTexCoord2f(1.0, 1.0);
-		glVertex2i(x + BITMAP_TEXTURE_SIZE, y + BITMAP_TEXTURE_SIZE);
-		glTexCoord2f(0.0, 1.0);
-		glVertex2i(x, y + BITMAP_TEXTURE_SIZE);
-		glEnd();
-		cur_tex_idx++;
-      }
-    }
-    glDisable(GL_SCISSOR_TEST);
-    glDisable(GL_TEXTURE_2D);
-    glDepthMask(GL_TRUE);
-    glEnable(GL_DEPTH_TEST);
-
-    SDL_GL_SwapBuffers();
-  
-    // remove
-    glDeleteTextures(num_tex_, tex_ids_);
-    delete[] tex_ids_;
-}	
+	// remove
+	glDeleteTextures(num_tex_, tex_ids_);
+	delete[] tex_ids_;
+}
 
 void Smush::handleFrame() {
 	uint32 tag;
@@ -280,10 +280,9 @@ void Smush::play(const char *filename, const char *directory) {
 	// Load the video
 	setupAnim(filename, directory);
 	handleFramesHeader();
-	init();
 
 	SDL_Surface* image;
-	image = SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
+	image = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
 
 	SDL_Rect src;
 	src.x = 0;
@@ -293,7 +292,7 @@ void Smush::play(const char *filename, const char *directory) {
 
 	_dst = (byte *)image->pixels;
 
-	_videoFinished = false;
+	init();
 
 	while (!_videoFinished) {
 		SDL_Delay(10);
