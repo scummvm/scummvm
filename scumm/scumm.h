@@ -160,19 +160,6 @@ enum {
 	MBS_MAX_KEY	= 0x0200
 };
 
-// possible languages for comi
-enum Languages {
-	EN_USA = 0,
-	DE_DEU = 1,
-	FR_FRA = 2,
-	IT_ITA = 3,
-	PT_BRA = 4,
-	ES_ESP = 5,
-	JA_JPN = 6,
-	ZH_TWN = 7,
-	KO_KOR = 8
-};
-
 #define _maxRooms res.num[rtRoom]
 #define _maxScripts res.num[rtScript]
 #define _maxCostumes res.num[rtCostume]
@@ -393,6 +380,7 @@ public:
 	uint16 _debugMode, _soundCardType;
 
 	/* Not sure where this stuff goes */
+	uint16 _language;
 	byte isMaskActiveAt(int l, int t, int r, int b, byte *mem);
 	void startScene(int room, Actor *a, int b);
 	virtual void setupScummVars();

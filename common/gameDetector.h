@@ -105,6 +105,12 @@ struct GraphicsModes {
 	int id;
 };
 
+struct Languages {
+	const char *name;
+	const char *description;
+	int id;
+};
+
 extern const VersionSettings version_settings[];
 
 
@@ -132,6 +138,7 @@ public:
 	int _sfx_volume;
 	int _master_volume;
 	bool _amiga;
+	int _language;
 
 	uint16 _talkSpeed;
 	uint16 _debugMode;
@@ -166,6 +173,7 @@ public:
 protected:
 	bool detectGame(void);
 	bool parseMusicDriver(const char *s);
+	int parseLanguage(const char *s);
 	void list_games();
 };
 

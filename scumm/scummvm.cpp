@@ -94,6 +94,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_noSubtitles = detector->_noSubtitles;
 	_defaultTalkDelay = detector->_talkSpeed;
 	_use_adlib = detector->_use_adlib;
+	_language = detector->_language;
 	memset(&res, 0, sizeof(res));
 	_allocatedSize = 0;
 	_roomResource = 0;
@@ -367,6 +368,7 @@ void Scumm::initScummVars()
 
 	if (_features & GF_AFTER_V8) {	// Fixme: How do we deal with non-cd installs?
 		_vars[VAR_CURRENTDISK] = 1;
+		_vars[VAR_LANGUAGE] = _language;
 	}
 }	
 

@@ -50,6 +50,7 @@ static const char USAGE_STRING[] =
 	"\t-g<mode>   - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x,tv2x)\n"
 	"\t-e<mode>   - set music engine (see README for details)\n"
 	"\t-a         - specify game is amiga version\n"
+	"\t-q<lang>   - specify language for comi (en,de,fr,it,pt,es,ja,zh,ko)\n"
 	"\n"
 	"\t-c<num>    - use cdrom <num> for cd audio\n"
 	"\t-m<num>    - set music volume to <num> (0-255)\n"
@@ -186,6 +187,19 @@ static const struct GraphicsModes gfx_modes[] = {
 	{0, 0}
 };
 
+static const struct Languages languages[] = {
+	{"en", "English", EN_USA},
+	{"de", "German", DE_DEU},
+	{"fr", "French", FR_FRA},
+	{"it", "Italian", IT_ITA},
+	{"pt", "Portuguese", PT_BRA},
+	{"es", "Spanish", ES_ESP},
+	{"jp", "Japanese", JA_JPN},
+	{"zh", "Chinese (Taiwan)", ZH_TWN},
+	{"ko", "Korean", KO_KOR},
+	{0, 0, 0}
+};
+
 static const struct MusicDrivers music_drivers[] = {
 	{"auto", "Default", MD_AUTO},
 	{"null", "No music", MD_NULL},
@@ -211,6 +225,7 @@ GameDetector::GameDetector()
 	_music_volume = kDefaultMusicVolume;
 	_sfx_volume = kDefaultSFXVolume;
 	_amiga = false;
+	_language = 0;
 
 	_talkSpeed = 60;
 	_debugMode = 0;
@@ -277,6 +292,13 @@ void GameDetector::updateconfig()
 	if ((val = g_config->get("gfx_mode")))
 		if ((_gfx_mode = parseGraphicsMode(val)) == -1) {
 			printf("Error in the config file: invalid gfx_mode.\n");
+			printf(USAGE_STRING);
+			exit(-1);
+		}
+
+	if ((val = g_config->get("language")))
+		if ((_language = parseLanguage(val)) == -1) {
+			printf("Error in the config file: invalid language.\n");
 			printf(USAGE_STRING);
 			exit(-1);
 		}
@@ -422,6 +444,13 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				_gameDataPath = option;
 				g_config->set("path", _gameDataPath);
 				break;
+			case 'q':
+				HANDLE_OPTION();
+				_language = parseLanguage(option);
+				if (_language == -1)
+					goto ShowHelpAndExit;
+				g_config->set("language", option);
+				break;
 			case 'r':
 				HANDLE_OPTION();
 				// Ignore -r for now, to ensure backward compatibility.
@@ -513,6 +542,18 @@ int GameDetector::parseGraphicsMode(const char *s)
 		if (!scumm_stricmp(gm->name, s))
 			return gm->id;
 		gm++;
+	}
+
+	return -1;
+}
+
+int GameDetector::parseLanguage(const char *s)
+{
+	const Languages *l = languages;
+	while(l->name) {
+		if (!scumm_stricmp(l->name, s))
+			return l->id;
+		l++;
 	}
 
 	return -1;

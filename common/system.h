@@ -237,6 +237,19 @@ enum {
 	GD_GP32 //ph0x
 };
 
+/* Languages */
+enum {
+	EN_USA = 0,
+	DE_DEU = 1,
+	FR_FRA = 2,
+	IT_ITA = 3,
+	PT_BRA = 4,
+	ES_ESP = 5,
+	JA_JPN = 6,
+	ZH_TWN = 7,
+	KO_KOR = 8
+};
+
 enum {
 #ifdef _WIN32_WCE
 	SAMPLES_PER_SEC_OLD =  11025,
