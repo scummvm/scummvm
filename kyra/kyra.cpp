@@ -122,6 +122,11 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *syst)
 		error("unknown game");
 	}
 
+	// Initialize backen
+	syst->initSize(320, 200);
+	_screen = new uint8[320*200];
+	memset(_screen, 0, sizeof(uint8) * 320 * 200);
+
 	int midiDrv = GameDetector::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE);
 	bool native_mt32 = (ConfMan.getBool("native_mt32") || (midiDrv == MD_MT32));
 
@@ -140,11 +145,6 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *syst)
 
 	if (midiDrv == MD_MT32)
 		_midiDriver->setPassThrough(true);
-	
-	// Initialize backen
-	syst->initSize(320, 200);
-	_screen = new uint8[320*200];
-	memset(_screen, 0, sizeof(uint8) * 320 * 200);
 
 	_resMgr = new Resourcemanager(this);
 	assert(_resMgr);
