@@ -55,15 +55,15 @@ CFG=simon - Win32 (WCE emulator) Debug
 # PROP CPU_ID "{32E52003-403E-442D-BE48-DE10F8C6131D}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 CPP=cl.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2 /c
 # ADD CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "NDEBUG" /D "_LIB" /YX /Gs8192 /GF /O2 /c
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE emulator) Debug"
 
@@ -81,15 +81,15 @@ CPP=cl.exe
 # PROP CPU_ID "{32E52003-403E-442D-BE48-DE10F8C6131D}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 CPP=cl.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF /c
 # ADD CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "_i386_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_X86_" /D "x86" /D "_LIB" /YX /Gs8192 /GF /c
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Release"
 
@@ -263,15 +263,15 @@ CPP=clmips.exe
 # PROP CPU_ID "{D6519020-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 CPP=shcl.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
 # ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /M$(CECrtMTDebug) /c
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
 
@@ -289,15 +289,15 @@ CPP=shcl.exe
 # PROP CPU_ID "{D6519020-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
+CPP=shcl.exe
+# ADD BASE CPP /nologo /W3 /Oxs /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /Oxs /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /YX /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
-CPP=shcl.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /YX /Oxs /M$(CECrtMT) /c
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
 
 !ENDIF 
 
@@ -322,7 +322,21 @@ SOURCE=..\..\..\simon\charset.cpp
 
 !IF  "$(CFG)" == "simon - Win32 (WCE emulator) Release"
 
+NODEP_CPP_CHARS=\
+	"..\..\..\simon\scumm_globals.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE emulator) Debug"
+
+NODEP_CPP_CHARS=\
+	"..\..\..\simon\scumm_globals.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Release"
 
@@ -337,6 +351,7 @@ DEP_CPP_CHARS=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
@@ -344,14 +359,13 @@ DEP_CPP_CHARS=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHARS=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\simon\scumm_globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Debug"
@@ -367,6 +381,7 @@ DEP_CPP_CHARS=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
@@ -374,14 +389,13 @@ DEP_CPP_CHARS=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHARS=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\simon\scumm_globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -394,7 +408,61 @@ NODEP_CPP_CHARS=\
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
 
+DEP_CPP_CHARS=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_CHARS=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\simon\scumm_globals.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
+
+DEP_CPP_CHARS=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_CHARS=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\simon\scumm_globals.h"\
+	
 
 !ENDIF 
 
@@ -405,7 +473,23 @@ SOURCE=..\..\..\simon\cursor.cpp
 
 !IF  "$(CFG)" == "simon - Win32 (WCE emulator) Release"
 
+NODEP_CPP_CURSO=\
+	"..\..\..\simon\common\system.h"\
+	"..\..\..\simon\scumm_globals.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE emulator) Debug"
+
+NODEP_CPP_CURSO=\
+	"..\..\..\simon\common\system.h"\
+	"..\..\..\simon\scumm_globals.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Release"
 
@@ -423,6 +507,7 @@ DEP_CPP_CURSO=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
@@ -430,14 +515,13 @@ DEP_CPP_CURSO=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CURSO=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\simon\scumm_globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Debug"
@@ -456,6 +540,7 @@ DEP_CPP_CURSO=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
@@ -463,14 +548,13 @@ DEP_CPP_CURSO=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CURSO=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\simon\scumm_globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -483,7 +567,67 @@ NODEP_CPP_CURSO=\
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
 
+DEP_CPP_CURSO=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_CURSO=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\simon\scumm_globals.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
+
+DEP_CPP_CURSO=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_CURSO=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\simon\scumm_globals.h"\
+	
 
 !ENDIF 
 
@@ -494,7 +638,23 @@ SOURCE=..\..\..\simon\debug.cpp
 
 !IF  "$(CFG)" == "simon - Win32 (WCE emulator) Release"
 
+NODEP_CPP_DEBUG=\
+	"..\..\..\simon\simon\debug.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\simon\vga.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE emulator) Debug"
+
+NODEP_CPP_DEBUG=\
+	"..\..\..\simon\simon\debug.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\simon\vga.h"\
+	"..\..\..\simon\stdafx.h"\
+	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Release"
 
@@ -509,6 +669,7 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\debug.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
@@ -518,13 +679,12 @@ DEP_CPP_DEBUG=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Debug"
@@ -540,6 +700,7 @@ DEP_CPP_DEBUG=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\debug.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
@@ -549,13 +710,12 @@ DEP_CPP_DEBUG=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -568,7 +728,63 @@ NODEP_CPP_DEBUG=\
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
 
+DEP_CPP_DEBUG=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\debug.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\simon\vga.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_DEBUG=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
+
+DEP_CPP_DEBUG=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\debug.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\simon\vga.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_DEBUG=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
 
 !ENDIF 
 
@@ -583,7 +799,23 @@ SOURCE=..\..\..\simon\debugger.cpp
 
 !IF  "$(CFG)" == "simon - Win32 (WCE emulator) Release"
 
+NODEP_CPP_DEBUGG=\
+	"..\..\..\simon\common\config-manager.h"\
+	"..\..\..\simon\common\debugger.cpp"\
+	"..\..\..\simon\simon\debugger.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE emulator) Debug"
+
+NODEP_CPP_DEBUGG=\
+	"..\..\..\simon\common\config-manager.h"\
+	"..\..\..\simon\common\debugger.cpp"\
+	"..\..\..\simon\simon\debugger.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Release"
 
@@ -606,6 +838,7 @@ DEP_CPP_DEBUGG=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\graphics\font.h"\
 	"..\..\..\graphics\fontman.h"\
 	"..\..\..\graphics\surface.h"\
@@ -621,13 +854,12 @@ DEP_CPP_DEBUGG=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUGG=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Debug"
@@ -651,6 +883,60 @@ DEP_CPP_DEBUGG=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\fontman.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\gui\console.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\simon\debugger.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_DEBUGG=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Release"
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Debug"
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Release"
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
+
+DEP_CPP_DEBUGG=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\debugger.cpp"\
+	"..\..\..\common\debugger.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stack.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\graphics\font.h"\
 	"..\..\..\graphics\fontman.h"\
 	"..\..\..\graphics\surface.h"\
@@ -668,24 +954,54 @@ DEP_CPP_DEBUGG=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_DEBUGG=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
-!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
-
-!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Release"
-
-!ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Debug"
-
-!ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Release"
-
-!ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
-
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
+
+DEP_CPP_DEBUGG=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\debugger.cpp"\
+	"..\..\..\common\debugger.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stack.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\fontman.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\gui\console.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\simon\debugger.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_DEBUGG=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
 
 !ENDIF 
 
@@ -700,7 +1016,21 @@ SOURCE=..\..\..\simon\icons.cpp
 
 !IF  "$(CFG)" == "simon - Win32 (WCE emulator) Release"
 
+NODEP_CPP_ICONS=\
+	"..\..\..\simon\common\file.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE emulator) Debug"
+
+NODEP_CPP_ICONS=\
+	"..\..\..\simon\common\file.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Release"
 
@@ -717,6 +1047,7 @@ DEP_CPP_ICONS=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
@@ -724,13 +1055,12 @@ DEP_CPP_ICONS=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ICONS=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Debug"
@@ -748,6 +1078,7 @@ DEP_CPP_ICONS=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
@@ -755,13 +1086,12 @@ DEP_CPP_ICONS=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ICONS=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -774,7 +1104,63 @@ NODEP_CPP_ICONS=\
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
 
+DEP_CPP_ICONS=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_ICONS=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
+
+DEP_CPP_ICONS=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_ICONS=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
 
 !ENDIF 
 
@@ -789,7 +1175,21 @@ SOURCE=..\..\..\simon\items.cpp
 
 !IF  "$(CFG)" == "simon - Win32 (WCE emulator) Release"
 
+NODEP_CPP_ITEMS=\
+	"..\..\..\simon\common\system.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE emulator) Debug"
+
+NODEP_CPP_ITEMS=\
+	"..\..\..\simon\common\system.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Release"
 
@@ -807,6 +1207,7 @@ DEP_CPP_ITEMS=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
@@ -814,13 +1215,12 @@ DEP_CPP_ITEMS=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ITEMS=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Debug"
@@ -839,6 +1239,7 @@ DEP_CPP_ITEMS=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
@@ -846,13 +1247,12 @@ DEP_CPP_ITEMS=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ITEMS=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -865,7 +1265,65 @@ NODEP_CPP_ITEMS=\
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
 
+DEP_CPP_ITEMS=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_ITEMS=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
+
+DEP_CPP_ITEMS=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_ITEMS=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
 
 !ENDIF 
 
@@ -876,7 +1334,25 @@ SOURCE=..\..\..\simon\midi.cpp
 
 !IF  "$(CFG)" == "simon - Win32 (WCE emulator) Release"
 
+NODEP_CPP_MIDI_=\
+	"..\..\..\simon\common\file.h"\
+	"..\..\..\simon\common\scummsys.h"\
+	"..\..\..\simon\common\system.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\sound\mixer.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE emulator) Debug"
+
+NODEP_CPP_MIDI_=\
+	"..\..\..\simon\common\file.h"\
+	"..\..\..\simon\common\scummsys.h"\
+	"..\..\..\simon\common\system.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\sound\mixer.h"\
+	"..\..\..\simon\stdafx.h"\
+	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Release"
 
@@ -896,6 +1372,7 @@ DEP_CPP_MIDI_=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
@@ -903,13 +1380,12 @@ DEP_CPP_MIDI_=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDI_=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Debug"
@@ -930,6 +1406,7 @@ DEP_CPP_MIDI_=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
@@ -937,13 +1414,12 @@ DEP_CPP_MIDI_=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDI_=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -956,7 +1432,69 @@ NODEP_CPP_MIDI_=\
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
 
+DEP_CPP_MIDI_=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_MIDI_=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
+
+DEP_CPP_MIDI_=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_MIDI_=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
 
 !ENDIF 
 
@@ -971,7 +1509,21 @@ SOURCE=..\..\..\simon\midiparser_s1d.cpp
 
 !IF  "$(CFG)" == "simon - Win32 (WCE emulator) Release"
 
+NODEP_CPP_MIDIP=\
+	"..\..\..\simon\common\util.h"\
+	"..\..\..\simon\sound\mididrv.h"\
+	"..\..\..\simon\sound\midiparser.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE emulator) Debug"
+
+NODEP_CPP_MIDIP=\
+	"..\..\..\simon\common\util.h"\
+	"..\..\..\simon\sound\mididrv.h"\
+	"..\..\..\simon\sound\midiparser.h"\
+	"..\..\..\simon\stdafx.h"\
+	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Release"
 
@@ -983,15 +1535,15 @@ DEP_CPP_MIDIP=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIP=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Debug"
@@ -1004,15 +1556,15 @@ DEP_CPP_MIDIP=\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIP=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -1025,7 +1577,43 @@ NODEP_CPP_MIDIP=\
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
 
+DEP_CPP_MIDIP=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	
+NODEP_CPP_MIDIP=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
+
+DEP_CPP_MIDIP=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	
+NODEP_CPP_MIDIP=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
 
 !ENDIF 
 
@@ -1036,7 +1624,21 @@ SOURCE=..\..\..\simon\res.cpp
 
 !IF  "$(CFG)" == "simon - Win32 (WCE emulator) Release"
 
+NODEP_CPP_RES_C=\
+	"..\..\..\simon\common\file.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE emulator) Debug"
+
+NODEP_CPP_RES_C=\
+	"..\..\..\simon\common\file.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Release"
 
@@ -1053,6 +1655,7 @@ DEP_CPP_RES_C=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
@@ -1060,13 +1663,12 @@ DEP_CPP_RES_C=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RES_C=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Debug"
@@ -1084,6 +1686,7 @@ DEP_CPP_RES_C=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
@@ -1091,13 +1694,12 @@ DEP_CPP_RES_C=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RES_C=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -1110,7 +1712,63 @@ NODEP_CPP_RES_C=\
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
 
+DEP_CPP_RES_C=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_RES_C=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
+
+DEP_CPP_RES_C=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_RES_C=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
 
 !ENDIF 
 
@@ -1121,7 +1779,27 @@ SOURCE=..\..\..\simon\saveload.cpp
 
 !IF  "$(CFG)" == "simon - Win32 (WCE emulator) Release"
 
+NODEP_CPP_SAVEL=\
+	"..\..\..\simon\common\savefile.h"\
+	"..\..\..\simon\common\system.h"\
+	"..\..\..\simon\gui\about.h"\
+	"..\..\..\simon\gui\message.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE emulator) Debug"
+
+NODEP_CPP_SAVEL=\
+	"..\..\..\simon\common\savefile.h"\
+	"..\..\..\simon\common\system.h"\
+	"..\..\..\simon\gui\about.h"\
+	"..\..\..\simon\gui\message.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Release"
 
@@ -1141,6 +1819,7 @@ DEP_CPP_SAVEL=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\gui\about.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\message.h"\
@@ -1152,13 +1831,12 @@ DEP_CPP_SAVEL=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVEL=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Debug"
@@ -1179,6 +1857,53 @@ DEP_CPP_SAVEL=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\gui\about.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_SAVEL=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Release"
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Debug"
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Release"
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
+
+DEP_CPP_SAVEL=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\gui\about.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\message.h"\
@@ -1192,24 +1917,47 @@ DEP_CPP_SAVEL=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_SAVEL=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
-!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
-
-!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Release"
-
-!ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Debug"
-
-!ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Release"
-
-!ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
-
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
+
+DEP_CPP_SAVEL=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\gui\about.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_SAVEL=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
 
 !ENDIF 
 
@@ -1224,7 +1972,49 @@ SOURCE=..\..\..\simon\simon.cpp
 
 !IF  "$(CFG)" == "simon - Win32 (WCE emulator) Release"
 
+NODEP_CPP_SIMON=\
+	"..\..\..\simon\backends\fs\fs.h"\
+	"..\..\..\simon\base\gameDetector.h"\
+	"..\..\..\simon\base\plugins.h"\
+	"..\..\..\simon\common\config-manager.h"\
+	"..\..\..\simon\common\file.h"\
+	"..\..\..\simon\common\md5.h"\
+	"..\..\..\simon\common\system.h"\
+	"..\..\..\simon\globals.h"\
+	"..\..\..\simon\gui\about.h"\
+	"..\..\..\simon\gui\message.h"\
+	"..\..\..\simon\scumm_globals.h"\
+	"..\..\..\simon\simon\debugger.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon-md5.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\simon\vga.h"\
+	"..\..\..\simon\sound\mididrv.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE emulator) Debug"
+
+NODEP_CPP_SIMON=\
+	"..\..\..\simon\backends\fs\fs.h"\
+	"..\..\..\simon\base\gameDetector.h"\
+	"..\..\..\simon\base\plugins.h"\
+	"..\..\..\simon\common\config-manager.h"\
+	"..\..\..\simon\common\file.h"\
+	"..\..\..\simon\common\md5.h"\
+	"..\..\..\simon\common\system.h"\
+	"..\..\..\simon\globals.h"\
+	"..\..\..\simon\gui\about.h"\
+	"..\..\..\simon\gui\message.h"\
+	"..\..\..\simon\scumm_globals.h"\
+	"..\..\..\simon\simon\debugger.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon-md5.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\simon\vga.h"\
+	"..\..\..\simon\sound\mididrv.h"\
+	"..\..\..\simon\stdafx.h"\
+	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Release"
 
@@ -1251,6 +2041,7 @@ DEP_CPP_SIMON=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\gui\about.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\message.h"\
@@ -1265,15 +2056,14 @@ DEP_CPP_SIMON=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SIMON=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\simon\globals.h"\
 	"..\..\..\simon\scumm_globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Debug"
@@ -1301,6 +2091,65 @@ DEP_CPP_SIMON=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\gui\about.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\simon\debugger.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon-md5.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\simon\vga.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_SIMON=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\simon\globals.h"\
+	"..\..\..\simon\scumm_globals.h"\
+	
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Release"
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Debug"
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Release"
+
+!ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
+
+DEP_CPP_SIMON=\
+	"..\..\..\backends\fs\fs.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\plugins.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\debugger.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\md5.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\gui\about.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\message.h"\
@@ -1317,26 +2166,61 @@ DEP_CPP_SIMON=\
 	"..\..\..\sound\mixer.h"\
 	
 NODEP_CPP_SIMON=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\simon\globals.h"\
 	"..\..\..\simon\scumm_globals.h"\
-	".\DL_byteorder.h"\
 	
 
-!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
-
-!ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Release"
-
-!ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Debug"
-
-!ELSEIF  "$(CFG)" == "simon - Win32 (WCE MIPS) Release"
-
-!ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
-
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
+
+DEP_CPP_SIMON=\
+	"..\..\..\backends\fs\fs.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\plugins.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\debugger.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\md5.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\gui\about.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\simon\debugger.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon-md5.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\simon\vga.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_SIMON=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\simon\globals.h"\
+	"..\..\..\simon\scumm_globals.h"\
+	
 
 !ENDIF 
 
@@ -1351,7 +2235,31 @@ SOURCE=..\..\..\simon\sound.cpp
 
 !IF  "$(CFG)" == "simon - Win32 (WCE emulator) Release"
 
+NODEP_CPP_SOUND=\
+	"..\..\..\simon\common\file.h"\
+	"..\..\..\simon\common\util.h"\
+	"..\..\..\simon\simon\sound.h"\
+	"..\..\..\simon\sound\flac.h"\
+	"..\..\..\simon\sound\mp3.h"\
+	"..\..\..\simon\sound\voc.h"\
+	"..\..\..\simon\sound\vorbis.h"\
+	"..\..\..\simon\sound\wave.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE emulator) Debug"
+
+NODEP_CPP_SOUND=\
+	"..\..\..\simon\common\file.h"\
+	"..\..\..\simon\common\util.h"\
+	"..\..\..\simon\simon\sound.h"\
+	"..\..\..\simon\sound\flac.h"\
+	"..\..\..\simon\sound\mp3.h"\
+	"..\..\..\simon\sound\voc.h"\
+	"..\..\..\simon\sound\vorbis.h"\
+	"..\..\..\simon\sound\wave.h"\
+	"..\..\..\simon\stdafx.h"\
+	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Release"
 
@@ -1366,6 +2274,7 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\sound.h"\
 	"..\..\..\sound\flac.h"\
@@ -1374,12 +2283,11 @@ DEP_CPP_SOUND=\
 	"..\..\..\sound\voc.h"\
 	"..\..\..\sound\vorbis.h"\
 	"..\..\..\sound\wave.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Debug"
@@ -1395,6 +2303,7 @@ DEP_CPP_SOUND=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\sound.h"\
 	"..\..\..\sound\flac.h"\
@@ -1403,12 +2312,11 @@ DEP_CPP_SOUND=\
 	"..\..\..\sound\voc.h"\
 	"..\..\..\sound\vorbis.h"\
 	"..\..\..\sound\wave.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -1421,7 +2329,59 @@ NODEP_CPP_SOUND=\
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
 
+DEP_CPP_SOUND=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\flac.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\mp3.h"\
+	"..\..\..\sound\voc.h"\
+	"..\..\..\sound\vorbis.h"\
+	"..\..\..\sound\wave.h"\
+	
+NODEP_CPP_SOUND=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
+
+DEP_CPP_SOUND=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\flac.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\mp3.h"\
+	"..\..\..\sound\voc.h"\
+	"..\..\..\sound\vorbis.h"\
+	"..\..\..\sound\wave.h"\
+	
+NODEP_CPP_SOUND=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	
 
 !ENDIF 
 
@@ -1436,7 +2396,19 @@ SOURCE=..\..\..\simon\verb.cpp
 
 !IF  "$(CFG)" == "simon - Win32 (WCE emulator) Release"
 
+NODEP_CPP_VERB_=\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE emulator) Debug"
+
+NODEP_CPP_VERB_=\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\stdafx.h"\
+	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Release"
 
@@ -1451,6 +2423,7 @@ DEP_CPP_VERB_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
@@ -1458,13 +2431,12 @@ DEP_CPP_VERB_=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VERB_=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Debug"
@@ -1480,6 +2452,7 @@ DEP_CPP_VERB_=\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
@@ -1487,13 +2460,12 @@ DEP_CPP_VERB_=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VERB_=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -1506,7 +2478,59 @@ NODEP_CPP_VERB_=\
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
 
+DEP_CPP_VERB_=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_VERB_=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
+
+DEP_CPP_VERB_=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_VERB_=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
 
 !ENDIF 
 
@@ -1517,7 +2541,23 @@ SOURCE=..\..\..\simon\vga.cpp
 
 !IF  "$(CFG)" == "simon - Win32 (WCE emulator) Release"
 
+NODEP_CPP_VGA_C=\
+	"..\..\..\simon\common\system.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\simon\vga.h"\
+	"..\..\..\simon\stdafx.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE emulator) Debug"
+
+NODEP_CPP_VGA_C=\
+	"..\..\..\simon\common\system.h"\
+	"..\..\..\simon\simon\intern.h"\
+	"..\..\..\simon\simon\simon.h"\
+	"..\..\..\simon\simon\vga.h"\
+	"..\..\..\simon\stdafx.h"\
+	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Release"
 
@@ -1535,6 +2575,7 @@ DEP_CPP_VGA_C=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
@@ -1543,13 +2584,12 @@ DEP_CPP_VGA_C=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VGA_C=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Debug"
@@ -1568,6 +2608,7 @@ DEP_CPP_VGA_C=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
 	"..\..\..\simon\intern.h"\
 	"..\..\..\simon\midi.h"\
 	"..\..\..\simon\simon.h"\
@@ -1576,13 +2617,12 @@ DEP_CPP_VGA_C=\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VGA_C=\
-	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
@@ -1595,7 +2635,67 @@ NODEP_CPP_VGA_C=\
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Debug"
 
+DEP_CPP_VGA_C=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\simon\vga.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_VGA_C=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE SH3) Release"
+
+DEP_CPP_VGA_C=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\simon\intern.h"\
+	"..\..\..\simon\midi.h"\
+	"..\..\..\simon\simon.h"\
+	"..\..\..\simon\sound.h"\
+	"..\..\..\simon\vga.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\midiparser.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_VGA_C=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
 
 !ENDIF 
 
@@ -1604,6 +2704,10 @@ NODEP_CPP_VGA_C=\
 
 SOURCE=..\..\..\simon\vga.h
 # End Source File
+# End Group
+# Begin Group "Header Files"
+
+# PROP Default_Filter "h;hpp;hxx;hm;inl"
 # End Group
 # End Target
 # End Project

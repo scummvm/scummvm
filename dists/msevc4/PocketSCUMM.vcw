@@ -48,10 +48,10 @@ Package=<4>
     Project_Dep_Name sword2
     End Project Dependency
     Begin Project Dependency
-    Project_Dep_Name sword1
+    Project_Dep_Name queen
     End Project Dependency
     Begin Project Dependency
-    Project_Dep_Name queen
+    Project_Dep_Name sword1
     End Project Dependency
 }}}
 
