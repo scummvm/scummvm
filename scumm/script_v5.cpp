@@ -2358,8 +2358,7 @@ void Scumm_v5::o5_walkActorToActor() {
 	int nr;
 	int nr2 = getVarOrDirectByte(0x80);
 	a = derefActorSafe(nr2, "o5_walkActorToActor");
-	if (!a)
-		return;
+	assert(a);
 
 	if (!a->isInCurrentRoom()) {
 		getVarOrDirectByte(0x40);
@@ -2375,8 +2374,7 @@ void Scumm_v5::o5_walkActorToActor() {
 	}
 	// warning("walk actor %d to actor %d", nr, nr2);
 	a2 = derefActorSafe(nr, "o5_walkActorToActor(2)");
-	if (!a2)
-		return;
+	assert(a2);
 
 	if (!a2->isInCurrentRoom()) {
 		fetchScriptByte();

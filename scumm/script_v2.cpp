@@ -642,7 +642,9 @@ void Scumm_v2::o2_subtract() {
 }
 
 void Scumm_v2::o2_waitForActor() {
-	if (derefActorSafe(getVarOrDirectByte(0x80), "o2_waitForActor")->moving) {
+	Actor *a = derefActorSafe(getVarOrDirectByte(0x80), "o2_waitForActor");
+	assert(a);
+	if (a->moving) {
 		_scriptPointer -= 2;
 		o5_breakHere();
 	}
@@ -672,6 +674,8 @@ void Scumm_v2::o2_actorSet() {
 
 	_opcode = fetchScriptByte();
 	if (!a) {
+		// This case happens in the Zak/MM bootscript exactly once each, to
+		// set the default talk color (9).
 		return;
 	}
 
@@ -983,10 +987,11 @@ void Scumm_v2::o2_walkActorTo() {
 	int x, y;
 	Actor *a;
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_walkActorTo");
+	assert(a);
+
 	x = getVarOrDirectByte(0x40) * 8;
 	y = getVarOrDirectByte(0x20) * 2;
 
-	assert(a);
 	a->startWalkActor(x, y, -1);
 }
 
@@ -1050,9 +1055,7 @@ void Scumm_v2::o2_setActorElevation() {
 	int elevation = getVarOrDirectByte(0x40);
 
 	Actor *a = derefActorSafe(act, "o2_setActorElevation");
-	if (!a)
-		return;
-
+	assert(a);
 	a->elevation = elevation;
 }
 
@@ -1061,9 +1064,7 @@ void Scumm_v2::o2_animateActor() {
 	int anim = getVarOrDirectByte(0x40);
 
 	Actor *a = derefActorSafe(act, "o2_animateActor");
-	if (!a)
-		return;
-
+	assert(a);
 	a->animateActor(anim);
 }
 
@@ -1114,6 +1115,7 @@ void Scumm_v2::o2_loadRoomWithEgo() {
 	room = getVarOrDirectByte(0x40);
 
 	a = derefActorSafe(VAR(VAR_EGO), "o2_loadRoomWithEgo");
+	assert(a);
 
 	a->putActor(0, 0, room);
 	_egoPositioned = false;
@@ -1364,10 +1366,8 @@ void Scumm_v2::o2_getActorWalkBox() {
 	Actor *a;
 	getResultPos();
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_getActorWalkbox");
-	if (a)
-		setResult(a->walkbox);
-	else
-		setResult(0);
+	assert(a);
+	setResult(a->walkbox);
 }
 
 void Scumm_v2::o2_dummy() {
