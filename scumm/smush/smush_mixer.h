@@ -53,7 +53,6 @@ public:
 	bool handleFrame();
 	bool stop();
 	bool update();
-	bool _silentMixer;
 };
 
 } // End of namespace Scumm

@@ -82,17 +82,22 @@ private:
 	int _musicVolume;
 
 	bool _paused;
-
+	
 	Channel *_channels[NUM_CHANNELS];
+
+	bool _mixerReady;
 
 public:
 	SoundMixer();
 	~SoundMixer();
 
-	/** bind to the OSystem object => mixer will be
-	 * invoked automatically when samples need
-	 * to be generated */
-	bool bindToSystem(OSystem *syst);
+	/**
+	 * Is the mixer ready and setup? This may not be the case on systems which
+	 * don't support digital sound output. In that case, the mixer proc may
+	 * never be called. That in turn can cause breakage in games which use the
+	 * premix callback for syncing. In particular, the Adlib MIDI emulation...
+	 */
+	bool isReady() const { return _mixerReady; };
 
 	/**
 	 * Set the premix procedure. This is mainly used for the adlib music, but

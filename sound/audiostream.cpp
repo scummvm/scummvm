@@ -218,7 +218,7 @@ void WrappedMemoryStream<stereo, is16Bit, isUnsigned>::append(const byte *data, 
 	else if (is16Bit || stereo)
 		assert((len & 1) == 0);
 	
-	// Verify the stream has not been finalized (by a call to finish()) yet
+	// Verify that the stream has not yet been finalized (by a call to finish())
 	assert(!_finalized);
 
 	if (_end + len > _bufferEnd) {

@@ -101,22 +101,27 @@ public:
 
 
 SoundMixer::SoundMixer() {
-	_syst = 0;
-	_mutex = 0;
+	_syst = OSystem::instance();
+	_mutex = _syst->create_mutex();
 
 	_premixParam = 0;
 	_premixProc = 0;
 	int i = 0;
 
-	_outputRate = 0;
+	_outputRate = (uint) _syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
+
+	if (_outputRate == 0)
+		error("OSystem returned invalid sample rate");
 
 	_globalVolume = 0;
 	_musicVolume = 0;
 
 	_paused = false;
-
+	
 	for (i = 0; i != NUM_CHANNELS; i++)
 		_channels[i] = 0;
+
+	_mixerReady = _syst->set_sound_proc(mixCallback, this, OSystem::SOUND_16BIT);
 }
 
 SoundMixer::~SoundMixer() {
@@ -125,17 +130,6 @@ SoundMixer::~SoundMixer() {
 		delete _channels[i];
 	}
 	_syst->delete_mutex(_mutex);
-}
-
-bool SoundMixer::bindToSystem(OSystem *syst) {
-	_syst = syst;
-	_mutex = _syst->create_mutex();
-	_outputRate = (uint) syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
-
-	if (_outputRate == 0)
-		error("OSystem returned invalid sample rate");
-
-	return syst->set_sound_proc(mixCallback, this, OSystem::SOUND_16BIT);
 }
 
 void SoundMixer::setupPremix(PremixProc *proc, void *param) {

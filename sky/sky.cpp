@@ -115,7 +115,7 @@ SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false };
 SkyEngine::SkyEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst) {
 	
-	if (!_mixer->bindToSystem(syst))
+	if (!_mixer->isReady())
 		warning("Sound initialisation failed.");
 
 	_mixer->setVolume(ConfMan.getInt("sfx_volume")); //unnecessary?

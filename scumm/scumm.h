@@ -969,8 +969,6 @@ protected:
 	bool _copyProtection;
 	bool _demoMode;
 	bool _confirmExit;
-public:
-	bool _silentDigitalImuse, _noDigitalSamples;
 
 #ifdef INSANE
 public:

@@ -825,7 +825,7 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 	int rate, comp;
 	byte *data;
 
-	if (_soundsPaused || _scumm->_noDigitalSamples)
+	if (_soundsPaused || !_scumm->_mixer->isReady())
 		return;
 
 	if (file_size > 0) {

@@ -800,7 +800,7 @@ void IMuseDigital::mixerCallback() {
 			memcpy(buf, _channel[l].data + _channel[l].offset, mixer_size);
 			_channel[l].offset += mixer_size;
 
-			if (_scumm->_silentDigitalImuse == false) {
+			if (_scumm->_mixer->isReady()) {
 				if (!_channel[l].handle.isActive())
 					_scumm->_mixer->newStream(&_channel[l].handle, _channel[l].freq, 
 											_channel[l].mixerFlags, 100000);
@@ -1243,7 +1243,7 @@ void IMuseDigital::music_handler(void *refCon) {
 }
 
 void IMuseDigital::playBundleMusic(const char *song) {
-	if (_scumm->_silentDigitalImuse) {
+	if (!_scumm->_mixer->isReady()) {
 		return;
 	}
 
@@ -1430,7 +1430,7 @@ void IMuseDigital::playBundleSound(const char *sound, PlayingSoundHandle *handle
 	byte *final;
 	bool result;
 
-	if (_scumm->_noDigitalSamples)
+	if (!_scumm->_mixer->isReady())
 		return;	
 
 	if (_scumm->_gameId == GID_CMI) {

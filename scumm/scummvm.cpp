@@ -459,8 +459,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_defaultTalkDelay = 0;
 	_midiDriver = MD_NULL;
 	tempMusic = 0;
-	_silentDigitalImuse = 0;
-	_noDigitalSamples = 0;
 	_saveSound = 0;
 	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
 	memset(_scaleSlots, 0, sizeof(_scaleSlots));
@@ -707,8 +705,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 #ifndef __GP32__ //ph0x FIXME, "quick dirty hack"
 	/* Bind the mixer to the system => mixer will be invoked
 	 * automatically when samples need to be generated */
-	_silentDigitalImuse = false;
-	if (!_mixer->bindToSystem(syst)) {
+	if (!_mixer->isReady()) {
 		warning("Sound mixer initialization failed");
 		if (_midiDriver == MD_ADLIB ||
 				_midiDriver == MD_PCSPK ||
@@ -716,8 +713,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 			_midiDriver = MD_NULL;
 			warning("MIDI driver depends on sound mixer, switching to null MIDI driver");
 		}
-		_silentDigitalImuse = true;
-		_noDigitalSamples = true;
 	}
 	_mixer->setVolume(ConfMan.getInt("sfx_volume") * ConfMan.getInt("master_volume") / 255);
 	_mixer->setMusicVolume(ConfMan.getInt("music_volume"));

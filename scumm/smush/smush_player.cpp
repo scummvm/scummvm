@@ -252,7 +252,6 @@ void SmushPlayer::init() {
 	_smixer = new SmushMixer(_scumm->_mixer);
 
 	_scumm->setDirtyColors(0, 255);
-	_smixer->_silentMixer = _scumm->_silentDigitalImuse;
 	_dst = _scumm->virtscr[0].screenPtr + _scumm->virtscr[0].xstart;
 	g_timer->installTimerProc(&timerCallback, _speed, this);
 

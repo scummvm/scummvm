@@ -107,7 +107,7 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	_debugLevel = ConfMan.getInt("debuglevel");
 
 	// Setup mixer
-	if (!_mixer->bindToSystem(syst))
+	if (!_mixer->isReady())
 		warning("Sound initialization failed");
 
 	// We have our own volume settings panel, so don't let ScummVM's mixer

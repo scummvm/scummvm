@@ -89,7 +89,7 @@ SwordEngine::SwordEngine(GameDetector *detector, OSystem *syst)
 	_system = syst;
 	_debugLevel = ConfMan.getInt("debuglevel");
 	
-	if (!_mixer->bindToSystem(syst))
+	if (!_mixer->isReady())
 		warning("Sound initialization failed");
 }
 

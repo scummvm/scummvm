@@ -530,7 +530,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 
 	// Setup mixer
-	if (!_mixer->bindToSystem(syst))
+	if (!_mixer->isReady())
 		warning("Sound initialization failed. "
 						"Features of the game that depend on sound synchronization will most likely break");
 	set_volume(ConfMan.getInt("sfx_volume"));

@@ -89,7 +89,7 @@ namespace Queen {
 QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst) {
 
-	if (!_mixer->bindToSystem(syst))
+	if (!_mixer->isReady())
 		warning("Sound initialisation failed.");
 
 	_mixer->setVolume(ConfMan.getInt("sfx_volume"));
