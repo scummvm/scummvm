@@ -329,6 +329,11 @@ int Scumm::readVar(uint var)
 			copyprotbypassed = true;
 			var = 518;
 		}
+
+		if (var == 179 && _gameId == GID_MONKEY_VGA && !copyprotbypassed) {
+			copyprotbypassed = true;
+			var = 266;
+		}
 #endif
 
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
