@@ -319,6 +319,14 @@ SOURCE=.\scumm\debugrl.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\scumm\dialogs.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\dialogs.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\scumm\gfx.cpp
 # End Source File
 # Begin Source File
