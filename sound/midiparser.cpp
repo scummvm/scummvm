@@ -252,7 +252,7 @@ void MidiParser::resetTracking() {
 }
 
 bool MidiParser::setTrack (int track) {
-	if (track >= _num_tracks)
+	if (track < 0 || track >= _num_tracks)
 		return false;
 	else if (track == _active_track)
 		return true;
