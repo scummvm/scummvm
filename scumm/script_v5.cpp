@@ -143,7 +143,7 @@ void Scumm_v5::setupOpcodes() {
 		OPCODE(o5_getActorMoving),
 		OPCODE(o5_or),
 		/* 58 */
-		OPCODE(o5_overRide),
+		OPCODE(o5_beginOverride),
 		OPCODE(o5_doSentence),
 		OPCODE(o5_add),
 		OPCODE(o5_divide),
@@ -1412,7 +1412,7 @@ void Scumm_v5::o5_or() {
 	setResult(readVar(_resultVarNumber) | a);
 }
 
-void Scumm_v5::o5_overRide() {
+void Scumm_v5::o5_beginOverride() {
 	if (fetchScriptByte() != 0)
 		beginOverride();
 	else

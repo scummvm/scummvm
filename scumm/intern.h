@@ -119,7 +119,7 @@ protected:
 	void o5_notEqualZero();
 	void o5_oldRoomEffect();
 	void o5_or();
-	void o5_overRide();
+	void o5_beginOverride();
 	void o5_panCameraTo();
 	void o5_pickupObject();
 	void o5_pickupObjectOld();
@@ -220,6 +220,7 @@ protected:
 	void o2_animateActor();
 	void o2_assignVarByte();
 	void o2_assignVarWordIndirect();
+	void o2_beginOverride();
 	void o2_chainScript();
 	void o2_clearState01();
 	void o2_clearState02();

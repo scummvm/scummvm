@@ -1316,6 +1316,7 @@ void Scumm::initRoomSubBlocks() {
 	int ENCD_len = -1;
 	if (_features & GF_AFTER_V2) {
 		_ENCD_offs = READ_LE_UINT16(roomptr + 0x1A);
+		// TODO: determine v2 entry script length
 	} else if (_features & GF_OLD_BUNDLE) {
 		_ENCD_offs = READ_LE_UINT16(roomptr + 0x1B);
 		// FIXME - the following is a hack which assumes that immediately after
@@ -1759,7 +1760,8 @@ void Scumm::processKbd() {
 		return;
 	}
 
-	if (_lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY)) {
+	if (_lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY) ||
+		(VAR(VAR_CUTSCENEEXIT_KEY) == 4 && _lastKeyHit == 27)) {
 		if (_insaneState) {
 			_videoFinished = true;
 		} else

@@ -143,7 +143,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_getActorMoving),
 		OPCODE(o2_setState02),
 		/* 58 */
-		OPCODE(beginOverride),
+		OPCODE(o2_beginOverride),
 		OPCODE(o2_doSentence),
 		OPCODE(o5_add),
 		OPCODE(o2_setBitVar),
@@ -852,9 +852,9 @@ void Scumm_v2::o2_doSentence() {
 		warning("TODO o2_doSentence(%d, %d, %d): execute", st->verb, st->objectA, st->objectB);
 
 		// FIXME / TODO: The following is hackish, and probably incomplete, but it works somewhat.
-		_scummVars[VAR_ACTIVE_VERB] = st->verb;
-		_scummVars[VAR_ACTIVE_OBJECT1] = st->objectA;
-		_scummVars[VAR_ACTIVE_OBJECT2] = st->objectB;
+		VAR(VAR_ACTIVE_VERB) = st->verb;
+		VAR(VAR_ACTIVE_OBJECT1) = st->objectA;
+		VAR(VAR_ACTIVE_OBJECT2) = st->objectB;
 		runObjectScript(st->objectA, st->verb, 0, 0, NULL);
 
 		break;
@@ -863,9 +863,9 @@ void Scumm_v2::o2_doSentence() {
 		_sentenceNum--;
 		warning("TODO o2_doSentence(%d, %d, %d): print", st->verb, st->objectA, st->objectB);
 		
-		_scummVars[VAR_SENTENCE_VERB] = st->verb;
-		_scummVars[VAR_SENTENCE_OBJECT1] = st->objectA;
-		_scummVars[VAR_SENTENCE_OBJECT2] = st->objectB;
+		VAR(VAR_SENTENCE_VERB) = st->verb;
+		VAR(VAR_SENTENCE_OBJECT1) = st->objectA;
+		VAR(VAR_SENTENCE_OBJECT2) = st->objectB;
 
 		o2_drawSentence();
 		break;
@@ -876,22 +876,22 @@ void Scumm_v2::o2_drawSentence() {
 	ScummVM::Rect sentenceline;
 	static char sentence[80];
 	byte *temp;
-	int slot = getVerbSlot(_scummVars[VAR_SENTENCE_VERB],0);
+	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB),0);
 
 	if (!(_userState & 32))
 		return;
 
 	strcpy(sentence, (char*)getResourceAddress(rtVerb, slot));
-	if (_scummVars[VAR_SENTENCE_OBJECT1] > 0) {
-		temp = getObjOrActorName(_scummVars[VAR_SENTENCE_OBJECT1]);
+	if (VAR(VAR_SENTENCE_OBJECT1) > 0) {
+		temp = getObjOrActorName(VAR(VAR_SENTENCE_OBJECT1));
 		if (temp) {
 			strcat(sentence, " ");
 			strcat(sentence, (char*)temp);
 		}
 	}
 
-	if (_scummVars[VAR_SENTENCE_OBJECT2] > 0) {
-		temp = getObjOrActorName(_scummVars[VAR_SENTENCE_OBJECT2]);
+	if (VAR(VAR_SENTENCE_OBJECT2) > 0) {
+		temp = getObjOrActorName(VAR(VAR_SENTENCE_OBJECT2));
 		if (temp) {
 			strcat(sentence, " with ");
 			strcat(sentence, (char*)temp);
@@ -1152,13 +1152,55 @@ void Scumm_v2::o2_roomOps() {
 
 void Scumm_v2::o2_cutscene() {
 	warning("TODO o2_cutscene()");
+
+	vm.cutSceneData[0] = _userState;
+	vm.cutSceneData[1] = VAR(VAR_CURSORSTATE);
+	vm.cutSceneData[2] = _currentRoom;
+	vm.cutSceneData[3] = camera._mode;
+	
+	VAR(VAR_CURSORSTATE) = 200;
+	
+	// TODO: some cursor command stuff (hide mouse etc maybe?)
+	
 	_sentenceNum = 0;
 	stopScript(SENTENCE_SCRIPT);
 	resetSentence();
+
+	vm.cutScenePtr[0] = 0;
 }
 
 void Scumm_v2::o2_endCutscene() {
 	warning("TODO o2_endCutscene()");
+
+	vm.cutSceneStackPointer = 0;
+
+	VAR(VAR_OVERRIDE) = 0;
+	vm.cutSceneScript[0] = 0;
+	vm.cutScenePtr[0] = 0;
+	
+	VAR(VAR_CURSORSTATE) = vm.cutSceneData[1];
+
+	// TODO: some cursor command stuff (probably to reset it to the pre-cutscene state)
+	
+	if (_gameId == GID_MANIAC) {
+		camera._mode = vm.cutSceneData[3];
+		if (camera._mode == CM_FOLLOW_ACTOR) {
+			actorFollowCamera(VAR(VAR_EGO));
+		} else if (vm.cutSceneData[2] != _currentRoom) {
+			startScene(vm.cutSceneData[2], 0, 0);
+		}
+	} else {
+		actorFollowCamera(VAR(VAR_EGO));
+	}
+}
+
+void Scumm_v2::o2_beginOverride() {
+	vm.cutScenePtr[0] = _scriptPointer - _scriptOrgPointer;
+	vm.cutSceneScript[0] = _currentScript;
+
+	// Skip the jump instruction following the override instruction
+	fetchScriptByte();
+	fetchScriptWord();
 }
 
 void Scumm_v2::o2_chainScript() {
@@ -1236,7 +1278,7 @@ void Scumm_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
 	int a2 = cmd >> 8;
 
 	if (cmd & 0xFF) {	// (?)
-		_scummVars[21] = cmd & 0xFF;
+		VAR(VAR_CURSORSTATE) = cmd & 0xFF;
 		printf("Set cmd %d\n", cmd & 0xFF);
 	}
 
@@ -1280,8 +1322,8 @@ void Scumm_v2::o2_dummy() {
 }
 
 void Scumm_v2::resetSentence() {
-	_scummVars[VAR_SENTENCE_VERB] = _scummVars[VAR_BACKUP_VERB];
-	_scummVars[VAR_SENTENCE_OBJECT1] = 0;
-	_scummVars[VAR_SENTENCE_OBJECT2] = 0;
+	VAR(VAR_SENTENCE_VERB) = VAR(VAR_BACKUP_VERB);
+	VAR(VAR_SENTENCE_OBJECT1) = 0;
+	VAR(VAR_SENTENCE_OBJECT2) = 0;
 	_scummVars[29] = 0;
 }

@@ -2063,6 +2063,8 @@ void Scumm::setCameraAt(int pos_x, int pos_y) {
 }
 
 void Scumm::setCameraFollows(Actor *a) {
+	assert(a != NULL);
+
 	if (_features & GF_AFTER_V7) {
 		byte oldfollow = camera._follows;
 		int ax, ay;

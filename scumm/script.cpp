@@ -1103,6 +1103,7 @@ void Scumm::beginOverride() {
 	// why we record the current script position in vm.cutScenePtr).
 	fetchScriptByte();
 	fetchScriptWord();
+	
 	VAR(VAR_OVERRIDE) = 0;
 }
 
