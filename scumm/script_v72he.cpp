@@ -1556,7 +1556,7 @@ void ScummEngine_v72he::o72_openFile() {
 
 	// HACK Correct incorrect filenames
 	if (!strcmp((char *)filename,".he3")) {
-		// For freddicove (Unencrypted)
+		// For freddicove (Unencrypted and Updated Ru)
 		memset(filename, 0, sizeof(filename));
 		sprintf((char *)filename, "%s.he3", _gameName.c_str());
 		debug(0,"New filename %s", filename);
@@ -1567,6 +1567,13 @@ void ScummEngine_v72he::o72_openFile() {
 		sprintf((char *)filename, "%s.he9", _gameName.c_str());
 		debug(0,"New filename %s", filename);
 
+	}
+
+	if (_substResFileNameIndex > 0) {
+		char buf1[128];
+
+		generateSubstResFileName((char *)filename, buf1, 256, 0, _substResFileNameIndex);
+		strcpy((char *)filename, buf1);
 	}
 
 	// HACK: Convert paths

@@ -392,6 +392,11 @@ void ScummEngine_v100he::o100_actorOps() {
 		return;
 
 	switch (subOp) {
+	case 0:
+		// freddicove Ru Updated
+		// FIXME: check stack parameters
+		debug(0,"o100_actorOps: case 0 UNHANDLED");
+		break;
 	case 3:
 		pop();
 		pop();
