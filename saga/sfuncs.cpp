@@ -42,6 +42,7 @@
 #include "saga/objectmap.h"
 
 #include "saga/scene.h"
+#include "saga/isomap.h"
 
 namespace Saga {
 
@@ -583,7 +584,7 @@ void Script::sfScriptOpenDoor(SCRIPTFUNC_PARAMS) {
 	doorNumber = thread->pop();
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
-		//todo: it
+		_vm->_isoMap->setTileDoorState(doorNumber, 1);
 	} else {
 		_vm->_scene->setDoorState(doorNumber, 0);
 	}
@@ -596,7 +597,7 @@ void Script::sfScriptCloseDoor(SCRIPTFUNC_PARAMS) {
 	doorNumber = thread->pop();
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
-		//todo: it
+		_vm->_isoMap->setTileDoorState(doorNumber, 0);
 	} else {
 		_vm->_scene->setDoorState(doorNumber, 0xff);
 	}
@@ -1319,7 +1320,7 @@ void Script::sfSetDoorState(SCRIPTFUNC_PARAMS) {
 	doorState = thread->pop();
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
-		//todo: it
+		_vm->_isoMap->setTileDoorState(doorNumber, doorState);
 	} else {
 		_vm->_scene->setDoorState(doorNumber, doorState);
 	}

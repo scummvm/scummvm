@@ -133,13 +133,26 @@ bool HitZone::hitTest(const Point &testPoint) {
 }
 
 void HitZone::draw(SURFACE *ds, int color) {
-	int i, pointsCount;
+	int i, pointsCount, j;
+	Location location;
 	HitZone::ClickArea *clickArea;
 	Point *points;
 	for (i = 0; i < _clickAreasCount; i++) {
 		clickArea = &_clickAreas[i];
 		pointsCount = clickArea->pointsCount;
-		points = clickArea->points;
+		if (_vm->_scene->getFlags() & kSceneFlagISO) {
+			points = (Point*)malloc(sizeof(Point) * pointsCount);
+			for (j = 0; j < pointsCount; j++) {
+				location.u() = clickArea->points[j].x;
+				location.v() = clickArea->points[j].y;
+				location.z = 0;
+				_vm->_isoMap->tileCoordsToScreenPoint(location, points[j]);
+			}
+			//
+		} else {
+			points = clickArea->points;
+		}
+
 		if (pointsCount == 2) {
 			// 2 points represent a box
 			drawFrame(ds, &points[0], &points[1], color);
@@ -149,6 +162,10 @@ void HitZone::draw(SURFACE *ds, int color) {
 				drawPolyLine(ds, points, pointsCount, color);
 			}
 		}
+		if (_vm->_scene->getFlags() & kSceneFlagISO) {
+			free(points);
+		}
+
 	}
 }
 

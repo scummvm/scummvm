@@ -228,7 +228,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 								operandName = #opName;					\
 							}
 						
-		debug(8, "Executing thread offset: %lu (%x) stack: %d", thread->_instructionOffset, operandChar, thread->pushedSize());
+//		debug(8, "Executing thread offset: %lu (%x) stack: %d", thread->_instructionOffset, operandChar, thread->pushedSize());
 		operandName="";
 		switch (operandChar) {
 		CASEOP(opNextBlock)

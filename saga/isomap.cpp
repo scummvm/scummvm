@@ -230,7 +230,7 @@ void IsoMap::loadMulti(const byte * resourcePointer, size_t resourceLength) {
 	if (_multiTable == NULL) {
 		memoryError("IsoMap::loadMulti");
 	}
-	debug(0,"resourceLength=%d but should be %d",resourceLength, 14*_multiCount + 2);
+
 	for (i = 0; i < _multiCount; i++) {
 		multiTileEntryData = &_multiTable[i];
 		readS.readUint32();//skip
@@ -370,7 +370,6 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 				warning("something terrible happened");
 				return 1;
 			}
-
 			return tileIndex;
 		}
 	}
@@ -606,7 +605,7 @@ void IsoMap::drawSpritePlatform(SURFACE *ds, uint16 platformIndex, const Point &
 	int16 u, v;
 	Point s;
 	Point s0;
-	int16 tileIndex;
+	uint16 tileIndex;
 	Location copyLocation(location);
 
 	if (_tilePlatformsCount <= platformIndex) {
@@ -646,7 +645,7 @@ void IsoMap::drawSpritePlatform(SURFACE *ds, uint16 platformIndex, const Point &
 				tileIndex = tilePlatform->tiles[u][v];
 				if (tileIndex != 0) {
 					if (tileIndex & SAGA_MULTI_TILE) {
-						tileIndex = findMulti(tileIndex, absU + u, absU + v, absH);
+						tileIndex = findMulti(tileIndex, absU + u, absV + v, absH);
 					}
 
 					drawTile(ds, tileIndex, s, &copyLocation);
@@ -661,7 +660,7 @@ void IsoMap::drawPlatform(SURFACE *ds, uint16 platformIndex, const Point &point,
 	int16 u, v;
 	Point s;
 	Point s0;
-	int16 tileIndex;
+	uint16 tileIndex;
 
 	if (_tilePlatformsCount <= platformIndex) {
 		error("IsoMap::drawPlatform wrong platformIndex");
@@ -698,7 +697,7 @@ void IsoMap::drawPlatform(SURFACE *ds, uint16 platformIndex, const Point &point,
 				tileIndex = tilePlatform->tiles[u][v];
 				if (tileIndex > 1) {
 					if (tileIndex & SAGA_MULTI_TILE) {
-						tileIndex = findMulti(tileIndex, absU + u, absU + v, absH);
+						tileIndex = findMulti(tileIndex, absU + u, absV + v, absH);
 					}
 
 					drawTile(ds, tileIndex, s, NULL);
@@ -1342,6 +1341,17 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 	}
 }
 
+void IsoMap::setTileDoorState(int doorNumber, int doorState) {
+	MultiTileEntryData *multiTileEntryData;
+
+	if ((doorNumber < 0) || (doorNumber >= _multiCount)) {
+		error("setTileDoorState: doorNumber >= _multiCount");
+	}
+	
+	multiTileEntryData = &_multiTable[doorNumber];
+	multiTileEntryData->currentState = doorState;
+}
+
 static const int16 directions[8][2] = {
 	{	16,		16},
 	{	16,		0},
@@ -1352,6 +1362,7 @@ static const int16 directions[8][2] = {
 	{	-16,	16},
 	{	0,		16}
 };
+
 
 
 bool IsoMap::nextTileTarget(ActorData* actor) {

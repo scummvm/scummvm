@@ -124,15 +124,15 @@ int Render::drawScene() {
 
 		if (_vm->_interface->getMode() != kPanelFade) {
 			// Display scene maps, if applicable
+
+			// Draw queued actors
+			_vm->_actor->drawActors();
 			if (getFlags() & RF_OBJECTMAP_TEST) {
 				if (_vm->_scene->_objectMap)
 					_vm->_scene->_objectMap->draw(backbuf_surface, mouse_pt, kITEColorBrightWhite, kITEColorBlack);
 				if (_vm->_scene->_actionMap)
 					_vm->_scene->_actionMap->draw(backbuf_surface, mouse_pt, kITEColorRed, kITEColorBlack);
 			}
-
-			// Draw queued actors
-			_vm->_actor->drawActors();
 			if (getFlags() & RF_ACTOR_PATH_TEST) {
 				_vm->_actor->drawPathTest();
 			}

@@ -166,7 +166,8 @@ public:
 	void placeOnTileMap(const Location &start, Location &result, int16 distance, uint16 direction);
 	void findTilePath(ActorData* actor, const Location &start, const Location &end);
 	bool nextTileTarget(ActorData* actor);
-	
+	void setTileDoorState(int doorNumber, int doorState);
+
 private:
 	void drawTiles(SURFACE *ds, const Location *location);
 	void drawMetaTile(SURFACE *ds, uint16 metaTileIndex, const Point &point, int16 absU, int16 absV);

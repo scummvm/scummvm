@@ -268,7 +268,7 @@ void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
 			stopMusic();
 		break;
 	default:
-		warning("Unhandled meta event: %02x", type);
+		//warning("Unhandled meta event: %02x", type);
 		break;
 	}
 }

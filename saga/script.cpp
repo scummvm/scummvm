@@ -743,10 +743,12 @@ void Script::whichObject(const Point& mousePoint) {
 						newRightButtonVerb = _leftButtonVerb = kVerbWalkTo;
 					}
 				} else {
-					if (_firstObjectSet) {
-						objectId = ID_NOTHING;
-					} else {
-						newRightButtonVerb = _leftButtonVerb = kVerbLookAt;
+					if (newRightButtonVerb == kVerbLookOnly) {
+						if (_firstObjectSet) {
+							objectId = ID_NOTHING;
+						} else {
+							newRightButtonVerb = _leftButtonVerb = kVerbLookAt;
+						}
 					}
 				}
 
