@@ -164,6 +164,23 @@ bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	// it is not, hence we check & correct it here.
 	if (_screenTop < 0)
 		_screenTop = 0;
+	
+	// For a long time, we used incorrect locations for some camera related
+	// scumm vars. We now know the proper locations. To be able to properly use
+	// old save games, we update the old (bad) variables to the new (correct)
+	// ones.
+	if (hdr.ver <= 27 && _version == 8) {
+		_scummVars[VAR_CAMERA_MIN_X] = _scummVars[101];
+		_scummVars[VAR_CAMERA_MAX_X] = _scummVars[102];
+		_scummVars[VAR_CAMERA_MIN_Y] = _scummVars[103];
+		_scummVars[VAR_CAMERA_MAX_Y] = _scummVars[104];
+		_scummVars[VAR_CAMERA_THRESHOLD_X] = _scummVars[105];
+		_scummVars[VAR_CAMERA_THRESHOLD_Y] = _scummVars[106];
+		_scummVars[VAR_CAMERA_SPEED_X] = _scummVars[107];
+		_scummVars[VAR_CAMERA_SPEED_Y] = _scummVars[108];
+		_scummVars[VAR_CAMERA_ACCEL_X] = _scummVars[109];
+		_scummVars[VAR_CAMERA_ACCEL_Y] = _scummVars[110];
+	}
 
 	// We could simply dirty colours 0-15 for 16-colour games -- nowadays
 	// they handle their palette pretty much like the more recent games
