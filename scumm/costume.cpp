@@ -342,13 +342,19 @@ void CostumeRenderer::procC64(int actor) {
 	// TODO:
 	// * test masking (once we implement any masking for V1 games)
 
-	byte palette[4] = { 0, 8, 0, 0 };
+	byte palette[4] = { 0, 0, 0, 0 };
 
 	if (_vm->_gameId == GID_MANIAC) {
 		palette[1] = v1_mm_actor_palatte_1[actor];
 		palette[2] = v1_mm_actor_palatte_2[actor];
 	} else {
-		palette[2] = _palette[0];
+		if (!(_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
+			palette[2] = 11;
+			palette[3] = 11;
+		} else {
+			palette[1] = 8;
+			palette[2] = _palette[0];
+		}
 	}
 
 	v1.skip_width >>= 3;
@@ -728,7 +734,8 @@ void CostumeRenderer::setPalette(byte *palette) {
 	byte color;
 
 	if (_loaded._format == 0x57) {
-		_palette[0] = palette[0];
+			_palette[0] = palette[0];
+
 		return;
 	}
 
