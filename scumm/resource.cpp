@@ -623,9 +623,6 @@ int Scumm::loadResource(int type, int idx) {
 	openRoom(roomNr);
 
 	_fileHandle.seek(fileOffs + _fileOffset, SEEK_SET);
-if (type == rtSound) {
-	printf("fileOffs = %d, _fileOffset = %d\n", fileOffs, _fileOffset);
-}
 
 	if (_features & GF_OLD_BUNDLE) {
 		size = _fileHandle.readUint16LE();
@@ -662,10 +659,6 @@ if (type == rtSound) {
 	// dump the resource if requested
 	if (_dumpScripts && type == rtScript) {
 		dumpResource("script-", idx, getResourceAddress(rtScript, idx));
-	}
-
-	if (type == rtSound) {
-		dumpResource("sound-", idx, getResourceAddress(rtScript, idx));
 	}
 
 	if (!_fileHandle.ioFailed()) {
