@@ -70,6 +70,8 @@ protected:
 };
 
 extern Timer *g_timer;
+extern bool g_timerLock;
+extern bool g_timerCallbackRunning;
 
 #endif
 

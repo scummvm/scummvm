@@ -68,6 +68,7 @@ void Smush::init() {
 	_videoFinished = false;
 	_videoPause = false;
 	_updateNeeded = false;
+
 	if (!_surface) {
 		_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 16, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
 		_dst = (byte *)_surface->pixels;
@@ -77,17 +78,15 @@ void Smush::init() {
 	    _buf = (byte *)_bufSurface->pixels;
 	}
 
-	{
-	    StackLock lock(_timerMutex);
-	    g_timer->installTimerProc(&timerCallback, _speed, NULL);
-	}
+	while (g_timerCallbackRunning) {};
+	g_timerLock = true;
+	g_timer->installTimerProc(&timerCallback, _speed, NULL);
+	g_timerLock = false;
 }
 
 void Smush::deinit() {
-	{
-	    StackLock lock(_timerMutex);
-	    g_timer->removeTimerProc(&timerCallback);
-	}
+    g_timer->removeTimerProc(&timerCallback);
+	g_timerLock = false;
 
 	_videoFinished = true;
 	_videoPause = true;

@@ -22,6 +22,8 @@
 #include <SDL.h>
 
 Timer *g_timer = NULL;
+bool g_timerLock;
+bool g_timerCallbackRunning;
 
 Timer::Timer() :
 	_mutex(0),
@@ -31,6 +33,8 @@ Timer::Timer() :
 	create_mutex();
 
 	g_timer = this;
+	g_timerLock = false;
+	g_timerCallbackRunning = false;
 
 	for (int i = 0; i < MAX_TIMERS; i++) {
 		_timerSlots[i].procedure = NULL;
@@ -66,6 +70,9 @@ Timer::~Timer() {
 	// we might end up unlocking the mutex then immediately deleting it, while
 	// the timer thread is about to lock it.
 	delete_mutex(_mutex);
+
+	g_timerLock = false;
+	g_timerCallbackRunning = false;
 }
 
 int Timer::timer_handler(int t) {
@@ -77,6 +84,13 @@ int Timer::timer_handler(int t) {
 int Timer::handler(int t) {
 	StackLock lock(_mutex);
 	uint32 interval, l;
+
+	g_timerCallbackRunning = true;
+
+	if (g_timerLock) {
+		g_timerCallbackRunning = false;
+		return t;
+	}
 
 	_lastTime = _thisTime;
 	_thisTime = SDL_GetTicks();
@@ -95,6 +109,8 @@ int Timer::handler(int t) {
 		}
 	}
 
+	g_timerCallbackRunning = false;
+
 	return t;
 }
 
@@ -102,15 +118,21 @@ bool Timer::installTimerProc(TimerProc procedure, int32 interval, void *refCon) 
 	assert(interval > 0);
 	StackLock lock(_mutex);
 
+	while (g_timerCallbackRunning) {};
+	g_timerLock = true;
+
 	for (int l = 0; l < MAX_TIMERS; l++) {
 		if (!_timerSlots[l].procedure) {
 			_timerSlots[l].procedure = procedure;
 			_timerSlots[l].interval = interval;
 			_timerSlots[l].counter = interval;
 			_timerSlots[l].refCon = refCon;
+			g_timerLock = false;
 			return true;
 		}
 	}
+
+	g_timerLock = false;
 
 	warning("Couldn't find free timer slot!");
 	return false;
@@ -118,6 +140,9 @@ bool Timer::installTimerProc(TimerProc procedure, int32 interval, void *refCon) 
 
 void Timer::removeTimerProc(TimerProc procedure) {
 	StackLock lock(_mutex);
+
+	while (g_timerCallbackRunning) {};
+	g_timerLock = true;
 
 	for (int l = 0; l < MAX_TIMERS; l++) {
 		if (_timerSlots[l].procedure == procedure) {
@@ -127,6 +152,8 @@ void Timer::removeTimerProc(TimerProc procedure) {
 			_timerSlots[l].refCon = 0;
 		}
 	}
+
+	g_timerLock = false;
 }
 
 MutexRef Timer::getMutex() {
