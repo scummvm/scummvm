@@ -60,7 +60,7 @@ public:
 	 * For maximum efficency, subclasses should always override
 	 * the default implementation!
 	 */
-	virtual int readBuffer(int16 *buffer, int numSamples) {
+	virtual int readBuffer(int16 *buffer, const int numSamples) {
 		int samples;
 		for (samples = 0; samples < numSamples && !eos(); samples++) {
 			*buffer++ = read();

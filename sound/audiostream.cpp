@@ -26,6 +26,9 @@
 #include "common/file.h"
 #include "common/util.h"
 
+//#define WHY_DOES_THIS_NOT_WORK 1
+
+
 // This used to be an inline template function, but
 // buggy template function handling in MSVC6 forced
 // us to go with the macro approach. So far this is
@@ -68,7 +71,7 @@ public:
 		if (stereo)	// Stereo requires even sized data
 			assert(len % 2 == 0);
 	}
-	int readBuffer(int16 *buffer, int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples);
 
 	int16 read()				{ return readIntern(); }
 	bool eos() const			{ return eosIntern(); }
@@ -76,24 +79,27 @@ public:
 };
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
-int LinearMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, int numSamples) {
+int LinearMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
-		const int len = MIN(numSamples, (int)(_end - _ptr) / (is16Bit ? 2 : 1));
+#ifdef WHY_DOES_THIS_NOT_WORK
+		const int len = MIN(numSamples, samples + (int)(_end - _ptr) / (is16Bit ? 2 : 1));
 		while (samples < len) {
+#else
+		while (samples < numSamples && !eosIntern()) {
+#endif
 			*buffer++ = READSAMPLE(is16Bit, isUnsigned, _ptr);
 			_ptr += (is16Bit ? 2 : 1);
 			samples++;
 		}
 		// Loop, if looping was specified
-		if (_loopPtr && _ptr == _end) {
+		if (_loopPtr && eosIntern()) {
 			_ptr = _loopPtr;
 			_end = _loopEnd;
 		}
 	}
 	return samples;
 }
-
 
 
 #pragma mark -
@@ -115,7 +121,7 @@ protected:
 public:
 	WrappedMemoryStream(uint bufferSize);
 	~WrappedMemoryStream()		{ free(_bufferStart); }
-	int readBuffer(int16 *buffer, int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples);
 
 	int16 read()				{ return readIntern(); }
 	bool eos() const			{ return eosIntern(); }
@@ -148,12 +154,16 @@ inline int16 WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readIntern() {
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned>
-int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, int numSamples) {
+int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
+#ifdef WHY_DOES_THIS_NOT_WORK
 		const byte *endMarker = (_pos > _end) ? _bufferEnd : _end;
-		const int len = MIN(numSamples, (int)(endMarker - _pos) / (is16Bit ? 2 : 1));
+		const int len = MIN(numSamples, samples + (int)(endMarker - _pos) / (is16Bit ? 2 : 1));
 		while (samples < len) {
+#else
+		while (samples < numSamples && !eosIntern()) {
+#endif
 			*buffer++ = READSAMPLE(is16Bit, isUnsigned, _pos);
 			_pos += (is16Bit ? 2 : 1);
 			samples++;
@@ -215,7 +225,7 @@ class MP3InputStream : public MusicStream {
 public:
 	MP3InputStream(File *file, mad_timer_t duration, uint size = 0);
 	~MP3InputStream();
-	int readBuffer(int16 *buffer, int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples);
 
 	int16 read()				{ return readIntern(); }
 	bool eos() const			{ return eosIntern(); }
@@ -401,12 +411,16 @@ inline int16 MP3InputStream::readIntern() {
 	return sample;
 }
 
-int MP3InputStream::readBuffer(int16 *buffer, int numSamples) {
+int MP3InputStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	assert(_curChannel == 0);	// Paranoia check
 	while (samples < numSamples && !eosIntern()) {
-		const int len = MIN(numSamples, (int)(_synth.pcm.length - _posInFrame) * (_isStereo ? 2 : 1));
+#ifdef WHY_DOES_THIS_NOT_WORK
+		const int len = MIN(numSamples, samples + (int)(_synth.pcm.length - _posInFrame) * (_isStereo ? 2 : 1));
 		while (samples < len) {
+#else
+		while (samples < numSamples && !eosIntern()) {
+#endif
 			*buffer++ = (int16)scale_sample(_synth.pcm.samples[0][_posInFrame]);
 			samples++;
 			if (_isStereo) {
@@ -450,7 +464,7 @@ class VorbisInputStream : public MusicStream {
 	inline bool eosIntern() const;
 public:
 	VorbisInputStream(OggVorbis_File *file, int duration);
-	int readBuffer(int16 *buffer, int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples);
 
 	int16 read()				{ return readIntern(); }
 	bool eos() const			{ return eosIntern(); }
@@ -493,13 +507,13 @@ inline bool VorbisInputStream::eosIntern() const {
 	return (_end_pos <= ov_pcm_tell(_ov_file));
 }
 
-int VorbisInputStream::readBuffer(int16 *buffer, int numSamples) {
+int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
 		if (_pos >= _bufferEnd) {
 			refill();
 		}
-		const int len = MIN(numSamples, _bufferEnd - _pos);
+		const int len = MIN(numSamples, samples + (int)(_bufferEnd - _pos));
 		memcpy(buffer, _pos, len * 2);
 		buffer += len;
 		_pos += len;
