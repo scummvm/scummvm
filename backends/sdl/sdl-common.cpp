@@ -194,38 +194,43 @@ void OSystem_SDL_Common::copy_rect(const byte *buf, int pitch, int x, int y, int
 
 
 void OSystem_SDL_Common::move_screen(int dx, int dy, int height) {
-	if ((dx == 0) && (dy == 0))
-		return;
 
-	if (dx == 0) {
-		// vertical movement
-		if (dy > 0) {
-			// move down
-			// copy from bottom to top
-			for (int y = height - 1; y >= dy; y--)
-				copy_rect((byte *)_screen->pixels + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
-		} else {
-			// move up
-			// copy from top to bottom
-			for (int y = 0; y < height + dx; y++)
-				copy_rect((byte *)_screen->pixels + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
-		}
-	} else if (dy == 0) {
-		// horizontal movement
-		if (dx > 0) {
-			// move right
-			// copy from right to left
-			for (int x = _screenWidth - 1; x >= dx; x--)
-				copy_rect((byte *)_screen->pixels + x - dx, _screenWidth, x, 0, 1, height);
-		} else {
-			// move left
-			// copy from left to right
-			for (int x = 0; x < _screenWidth; x++)
-				copy_rect((byte *)_screen->pixels + x - dx, _screenWidth, x, 0, 1, height);
-		}
-	} else {
-		// free movement
-		// not neccessary for now
+	// Short circuit check - do we have to do anything anyway?
+	if ((dx == 0 && dy == 0) || height <= 0)
+		return;
+	
+	int x, y;
+	
+	// We'll have to do a full screen redraw anyway, so set the flag.
+	_forceFull = true;
+	
+	// Hide the mouse
+	if (_mouseDrawn)
+		undraw_mouse();
+
+	// FIXME - calling copy rect repeatedly is horribly inefficient, as it (un)locks the surface repeatedly
+	// and it performs unneeded clipping checks etc.
+	
+	// vertical movement
+	if (dy > 0) {
+		// move down - copy from bottom to top
+		for (y = height - 1; y >= dy; y--)
+			copy_rect((byte *)_screen->pixels + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
+	} else if (dy < 0) {
+		// move up - copy from top to bottom
+		for (y = 0; y < height + dx; y++)
+			copy_rect((byte *)_screen->pixels + _screenWidth * (y - dy), _screenWidth, 0, y, _screenWidth, 1);
+	}
+
+	// horizontal movement
+	if (dx > 0) {
+		// move right - copy from right to left
+		for (x = _screenWidth - 1; x >= dx; x--)
+			copy_rect((byte *)_screen->pixels + x - dx, _screenWidth, x, 0, 1, height);
+	} else if (dx < 0)  {
+		// move left - copy from left to right
+		for (x = 0; x < _screenWidth; x++)
+			copy_rect((byte *)_screen->pixels + x - dx, _screenWidth, x, 0, 1, height);
 	}
 }
 
