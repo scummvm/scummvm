@@ -103,34 +103,3 @@ void MidiDriver_YamahaPa1::send(uint32 b) {
 MidiDriver *MidiDriver_YamahaPa1_create() {
 	return new MidiDriver_YamahaPa1();
 }
-
-//////////////////////////////////////////
-// thread emu
-#include "palm.h"
-
-int MidiDriver_MPU401::midi_driver_thread(void *param) {
-	MidiDriver_MPU401 *mid = (MidiDriver_MPU401 *)param;
-	int cur_time;
-	
-	if (mid->_started_thread) {
-		UInt8 id = ((OSystem_PALMOS *)g_system)->_threadID;
-		ThreadEmuPtr thread = &(((OSystem_PALMOS *)g_system)->_thread[id]);
-
-		// wait 10 msecs
-		cur_time = g_system->get_msecs();
-		if (cur_time - thread->old_time >= 10)
-			thread->sleep = false;
-
-		// if 10 msecs
-		if (!thread->sleep) {
-			thread->sleep = true;
-			while (thread->old_time < cur_time) {
-				thread->old_time += 10;
-				if (mid->_timer_proc)
-					(*(mid->_timer_proc)) (mid->_timer_param);
-			}
-		}
-	}
-
-	return 0;
-}

@@ -20,7 +20,8 @@
 
 #include "stdafx.h"
 #include "mpu401.h"
-#include "base/engine.h"	// for g_system
+#include "base/engine.h"	// for g_engine
+#include "common/timer.h"
 #include "common/util.h"	// for ARRAYSIZE
 
 
@@ -82,10 +83,7 @@ const char *MidiDriver::getErrorName(int error_code) {
 
 MidiDriver_MPU401::MidiDriver_MPU401() :
 	MidiDriver(),
-	_started_thread (false),
-	_mutex (0),
 	_timer_proc (0),
-	_timer_param (0),
 	_channel_mask (0xFFFF) // Permit all 16 channels by default
 {
 	
@@ -96,14 +94,11 @@ MidiDriver_MPU401::MidiDriver_MPU401() :
 }
 
 void MidiDriver_MPU401::close() {
-	if (_mutex) {
-		_started_thread = false;
-		g_system->lock_mutex (_mutex); // Wait for the timer thread to shutdown.
-		g_system->unlock_mutex (_mutex);
-		g_system->delete_mutex (_mutex);
-	}
-	int i;
-	for (i = 0; i < 16; ++i)
+	// FIXME: I'd really prefer a g_timer instead of going through g_engine
+	if (_timer_proc)
+		g_engine->_timer->releaseProcedure (_timer_proc);
+	_timer_proc = 0;
+	for (int i = 0; i < 16; ++i)
 		send (0x7B << 8 | 0xB0 | i);
 }
 
@@ -133,47 +128,13 @@ MidiChannel *MidiDriver_MPU401::allocateChannel() {
 	return NULL;
 }
 
-void MidiDriver_MPU401::setTimerCallback (void *timer_param, TimerCallback timer_proc) {
+void MidiDriver_MPU401::setTimerCallback (void *timer_param, TimerProc timer_proc) {
+	// FIXME: I'd really prefer a g_timer instead of going through g_engine
 	if (!_timer_proc || !timer_proc) {
+		if (_timer_proc)
+			g_engine->_timer->releaseProcedure (_timer_proc);
 		_timer_proc = timer_proc;
-		_timer_param = timer_param;
-		if (!_started_thread && timer_proc) {
-			// TODO: This is the only place in ScummVM where create_thread is
-			// being used. And it's used for a timer like thread. So if we
-			// could convert it to use the timer API instead, we could get
-			// rid of create_thread completely.
-			_mutex = g_system->create_mutex();
-			_started_thread = true;
-			g_system->create_thread(midi_driver_thread, this);
-		}
+		if (timer_proc)
+			g_engine->_timer->installProcedure (timer_proc, 10000, timer_param);
 	}
 }
-
-#if !defined(__MORPHOS__) && !defined(__PALM_OS__)
-
-int MidiDriver_MPU401::midi_driver_thread(void *param) {
-	MidiDriver_MPU401 *mid = (MidiDriver_MPU401 *)param;
-	int old_time, cur_time;
-
-	// Grab the MidiDriver's mutex. When the MidiDriver
-	// shuts down, it will wait on that mutex until we've
-	// detected the shutdown and quit looping.
-	g_system->lock_mutex (mid->_mutex);
-
-	old_time = g_system->get_msecs();
-	while (mid->_started_thread) {
-		g_system->delay_msecs(10);
-
-		cur_time = g_system->get_msecs();
-		while (old_time < cur_time) {
-			old_time += 10;
-			if (mid->_timer_proc)
-				(*(mid->_timer_proc)) (mid->_timer_param);
-		}
-	}
-
-	g_system->unlock_mutex (mid->_mutex);
-	return 0;
-}
-#endif
-
