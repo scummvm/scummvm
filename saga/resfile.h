@@ -66,7 +66,7 @@ public:
 	ResourceFile();
 	virtual ~ResourceFile();
 
-	bool open( const char *filename, const char *directory );
+	bool open(const char *filename, const char *directory);
 	void close();
 
 	inline int16 readSint16LE() {

@@ -30,7 +30,7 @@ BinReader::BinReader() {
 	_bufLen = 0;
 }
 
-BinReader::BinReader( const byte *buf, size_t buflen ) {
+BinReader::BinReader(const byte *buf, size_t buflen) {
 	_buf    = buf;
 	_bufPtr = buf;
 	_bufEnd = buf + buflen;
@@ -38,29 +38,25 @@ BinReader::BinReader( const byte *buf, size_t buflen ) {
 }
 
 BinReader::~BinReader() {
-
 }
 
-void BinReader::setBuf( const byte *buf, size_t buflen )
-{
+void BinReader::setBuf(const byte *buf, size_t buflen) {
 	_buf    = buf;
 	_bufPtr = buf;
 	_bufEnd = buf + buflen;
 	_bufLen = buflen;
 }
 
-void BinReader::skip( size_t skip_ct )
-{
-	assert(( _bufPtr + skip_ct ) <= _bufEnd );
+void BinReader::skip(size_t skip_ct) {
+	assert((_bufPtr + skip_ct) <= _bufEnd );
 
 	_bufPtr += skip_ct;
 }
 
 unsigned int BinReader::readUint16LE() {
+	assert((_bufPtr + 2) <= _bufEnd);
 	
-	assert(( _bufPtr + 2 ) <= _bufEnd );
-	
-	unsigned int u16_le = ((unsigned int)_bufPtr[1] << 8 ) | _bufPtr[0];
+	unsigned int u16_le = ((unsigned int)_bufPtr[1] << 8) | _bufPtr[0];
 
 	_bufPtr += 2;
 
@@ -68,10 +64,9 @@ unsigned int BinReader::readUint16LE() {
 }
 
 unsigned int BinReader::readUint16BE() {
+	assert((_bufPtr + 2) <= _bufEnd);
 
-	assert(( _bufPtr + 2 ) <= _bufEnd );
-
-	unsigned int u16_be = ((unsigned int)_bufPtr[0] << 8 ) | _bufPtr[1];
+	unsigned int u16_be = ((unsigned int)_bufPtr[0] << 8) | _bufPtr[1];
  
 	_bufPtr += 2;
 	    
@@ -79,10 +74,9 @@ unsigned int BinReader::readUint16BE() {
 }
 
 int BinReader::readSint16LE() {
+	assert((_bufPtr + 2) <= _bufEnd);
 
-	assert(( _bufPtr + 2 ) <= _bufEnd );
-
-	unsigned int u16_le = ((unsigned int)_bufPtr[1] << 8 ) | _bufPtr[0];
+	unsigned int u16_le = ((unsigned int)_bufPtr[1] << 8) | _bufPtr[0];
 
 	_bufPtr += 2;
 
@@ -90,10 +84,9 @@ int BinReader::readSint16LE() {
 }
 
 int BinReader::readSint16BE() {
+	assert((_bufPtr + 2) <= _bufEnd);
 
-	assert(( _bufPtr + 2 ) <= _bufEnd );
-
-	unsigned int u16_be = ((unsigned int)_bufPtr[0] << 8 ) | _bufPtr[1];
+	unsigned int u16_be = ((unsigned int)_bufPtr[0] << 8) | _bufPtr[1];
  
 	_bufPtr += 2;
 	    
@@ -101,14 +94,12 @@ int BinReader::readSint16BE() {
 }
 
 
-uint32 BinReader::readUint32LE()
-{
+uint32 BinReader::readUint32LE() {
+	assert((_bufPtr + 4) <= _bufEnd);
 
-	assert(( _bufPtr + 4 ) <= _bufEnd );
-
-	unsigned long u32_le = ((unsigned long)_bufPtr[3] << 24 ) | 
-	                       ((unsigned long)_bufPtr[2] << 16 ) |
-	                       ((unsigned long)_bufPtr[1] << 8  ) |
+	unsigned long u32_le = ((unsigned long)_bufPtr[3] << 24) | 
+	                       ((unsigned long)_bufPtr[2] << 16) |
+	                       ((unsigned long)_bufPtr[1] << 8 ) |
 	                       _bufPtr[0];
 
 	_bufPtr += 4;
@@ -116,14 +107,12 @@ uint32 BinReader::readUint32LE()
 	return u32_le;
 }
 
-uint32 BinReader::readUint32BE()
-{
+uint32 BinReader::readUint32BE() {
+	assert((_bufPtr + 4) <= _bufEnd);
 
-	assert(( _bufPtr + 4 ) <= _bufEnd );
-
-	unsigned long u32_be = ((unsigned long)_bufPtr[0] << 24 ) | 
-	                       ((unsigned long)_bufPtr[1] << 16 ) |
-	                       ((unsigned long)_bufPtr[2] << 8  ) |
+	unsigned long u32_be = ((unsigned long)_bufPtr[0] << 24) | 
+	                       ((unsigned long)_bufPtr[1] << 16) |
+	                       ((unsigned long)_bufPtr[2] << 8 ) |
 	                       _bufPtr[3];
 
 	_bufPtr += 4;
@@ -131,14 +120,12 @@ uint32 BinReader::readUint32BE()
 	return u32_be;
 }
 
-int32 BinReader::readSint32LE()
-{
+int32 BinReader::readSint32LE() {
+	assert((_bufPtr + 4) <= _bufEnd);
 
-	assert(( _bufPtr + 4 ) <= _bufEnd );
-
-	unsigned long u32_le = ((unsigned long)_bufPtr[3] << 24 ) | 
-	                       ((unsigned long)_bufPtr[2] << 16 ) |
-	                       ((unsigned long)_bufPtr[1] << 8  ) |
+	unsigned long u32_le = ((unsigned long)_bufPtr[3] << 24) | 
+	                       ((unsigned long)_bufPtr[2] << 16) |
+	                       ((unsigned long)_bufPtr[1] << 8 ) |
 	                       _bufPtr[0];
 
 	_bufPtr += 4;
@@ -146,14 +133,12 @@ int32 BinReader::readSint32LE()
 	return u32_le;
 }
 
-int32 BinReader::readSint32BE()
-{
+int32 BinReader::readSint32BE() {
+	assert((_bufPtr + 4) <= _bufEnd);
 
-	assert(( _bufPtr + 4 ) <= _bufEnd );
-
-	unsigned long u32_be = ((unsigned long)_bufPtr[0] << 24 ) | 
-	                       ((unsigned long)_bufPtr[1] << 16 ) |
-	                       ((unsigned long)_bufPtr[2] << 8  ) |
+	unsigned long u32_be = ((unsigned long)_bufPtr[0] << 24) | 
+	                       ((unsigned long)_bufPtr[1] << 16) |
+	                       ((unsigned long)_bufPtr[2] << 8 ) |
 	                       _bufPtr[3];
 
 	_bufPtr += 4;

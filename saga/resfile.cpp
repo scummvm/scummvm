@@ -28,7 +28,6 @@
 
 
 ResourceFile::ResourceFile() {
-
 	_resTblOffset = 0;
 	_resTblCt     = 0;
 	_resTblLoaded = false;
@@ -36,30 +35,27 @@ ResourceFile::ResourceFile() {
 }
 
 ResourceFile::~ResourceFile() {
-
 	close();
 }
 
-bool
-ResourceFile::open( const char *filename, const char *directory ) {
-
+bool ResourceFile::open(const char *filename, const char *directory) {
 	byte * temp_tbl;
 	uint32 tbl_len;
 
-	if( !File::open( filename, directory )) {
+	if (!File::open(filename, directory)) {
 		return false;
 	}
 
 	/* Seek to end of file to read resource table 'trailer' */
 	_file_len = size();
 
-	seek( _file_len - RSC_TABLEINFO_SIZE, SEEK_SET );
+	seek(_file_len - RSC_TABLEINFO_SIZE, SEEK_SET);
 
 	_resTblOffset = readSint32LE();
 	_resTblCt     = readSint32LE();
 
 	/* Check for sane values */
-	if( _resTblOffset != _file_len - RSC_TABLEINFO_SIZE - 
+	if (_resTblOffset != _file_len - RSC_TABLEINFO_SIZE - 
 		(RSC_TABLEENTRY_SIZE * _resTblCt)) {
 		return false;
 	}
@@ -67,26 +63,25 @@ ResourceFile::open( const char *filename, const char *directory ) {
 	/* Load resource table */
 	_resTbl = new Resource[_resTblCt];
 
-	seek( _resTblOffset, SEEK_SET );
+	seek(_resTblOffset, SEEK_SET);
 
 	tbl_len = _resTblCt * RSC_TABLEENTRY_SIZE;
 	temp_tbl = new byte[tbl_len];
 
-	if( read( temp_tbl, tbl_len ) != tbl_len ) {
+	if (read(temp_tbl, tbl_len) != tbl_len) {
 		delete [] _resTbl;
 		delete [] temp_tbl;
 		return false;
 	}
 
-	BinReader bread( temp_tbl, tbl_len );
+	BinReader bread(temp_tbl, tbl_len);
 
-	for( int i = 0 ; i < _resTblCt ; i++ ) {
-		
+	for (int i = 0; i < _resTblCt; i++) {
 		_resTbl[i].res_offset = bread.readSint32LE();
 		_resTbl[i].res_len    = bread.readSint32LE();
 	}
 
-	delete [] temp_tbl;
+	delete[] temp_tbl;
 
 	_resTblLoaded = true;
 
@@ -95,8 +90,7 @@ ResourceFile::open( const char *filename, const char *directory ) {
 
 
 void ResourceFile::close() {
-
-	if( _resTblLoaded ) {
+	if ( _resTblLoaded) {
 		delete [] _resTbl;
 		_resTblLoaded = false;
 		_resTbl = NULL;
@@ -105,57 +99,52 @@ void ResourceFile::close() {
 	_resTblOffset = 0;
 	_resTblCt = 0;
 
-	if( File::isOpen() ) {
+	if (File::isOpen()) {
 		File::close();
 	}
 }
 
 int32 ResourceFile::getResourceCt() {
-
 	return (_resTblLoaded) ? _resTblCt : -1;
 }
 
-int32 ResourceFile::getResourceOffset( int32 rn ) {
-
-	if (!R_PBOUNDS( rn, _resTblCt )) {
+int32 ResourceFile::getResourceOffset(int32 rn) {
+	if (!R_PBOUNDS(rn, _resTblCt))
 		return -1;
-	}
 
 	return _resTbl[rn].res_offset;
 }
 
-int32 ResourceFile::getResourceLen( int32 rn ) {
-
-	if (!R_PBOUNDS( rn, _resTblCt )) {
+int32 ResourceFile::getResourceLen(int32 rn) {
+	if (!R_PBOUNDS(rn, _resTblCt))
 		return -1;
-	}
 
 	return _resTbl[rn].res_len;
 }
 
-bool ResourceFile::loadResource( int32 rn, byte **res, int32 *res_len ) {
-	
+bool ResourceFile::loadResource(int32 rn, byte **res, int32 *res_len) {
 	byte *new_res;
 	uint32 new_res_len;
 
-	assert( res != NULL && res_len != NULL );
+	assert(res != NULL && res_len != NULL);
 	*res = NULL;
 	*res_len = NULL;
 
-	if( !R_PBOUNDS( rn, _resTblCt )) {
+	if (!R_PBOUNDS( rn, _resTblCt)) {
 		return false;
 	}
 
 	new_res_len = _resTbl[rn].res_len;
-	new_res = new byte[ new_res_len ];
-	if( !new_res ) {
+	new_res = new byte[new_res_len];
+
+	if (!new_res) {
 		return false;
 	}
 
-	seek( _resTbl[rn].res_offset, SEEK_SET );
+	seek(_resTbl[rn].res_offset, SEEK_SET);
 
-	if( read( new_res, new_res_len ) != new_res_len ) {
-		delete [] new_res;
+	if (read(new_res, new_res_len) != new_res_len) {
+		delete[] new_res;
 		return false;
 	}
 
@@ -165,9 +154,8 @@ bool ResourceFile::loadResource( int32 rn, byte **res, int32 *res_len ) {
 	return true;
 }
 
-void ResourceFile::freeResource( byte *res ) {
-
-	delete [] res;
+void ResourceFile::freeResource(byte *res) {
+	delete[] res;
 }
 
 

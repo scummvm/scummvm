@@ -29,13 +29,11 @@
 namespace SagaGameDesc {
 
 enum R_GAME_BASETYPES {
-	
 	R_GAMETYPE_ITE,
 	R_GAMETYPE_IHNM
 };
 
 enum R_GAME_IDS {
-	
 	R_GAME_ITE_DEMO  = 0,
 	R_GAME_ITE_DISK  = 1,
 	R_GAME_ITE_CD    = 2,
@@ -44,7 +42,6 @@ enum R_GAME_IDS {
 };
 
 enum R_GAME_FILETYPES {
-
 	R_GAME_RESOURCEFILE = 0x01,
 	R_GAME_SCRIPTFILE   = 0x02,
 	R_GAME_SOUNDFILE    = 0x04,
@@ -56,14 +53,12 @@ enum R_GAME_FILETYPES {
 };
 
 enum R_GAME_SOUNDINFO_TYPES {
-	
 	R_GAME_SOUND_PCM = 0,
 	R_GAME_SOUND_VOC,
 	R_GAME_SOUND_WAV
 };
 
 enum R_GAME_FONT_IDS {
-
 	R_GAME_FONT_SMALL = 0,
 	R_GAME_FONT_MEDIUM,
 	R_GAME_FONT_LARGE,
@@ -74,7 +69,6 @@ enum R_GAME_FONT_IDS {
 };
 
 typedef struct R_GAME_DISPLAYINFO_tag {
-
 	int logical_w;
 	int logical_h;
 	int scene_h;
@@ -85,7 +79,6 @@ typedef struct R_GAME_DISPLAYINFO_tag {
 } R_GAME_DISPLAYINFO;
 
 typedef struct R_GAMESOUND_INFO_tag {
-
 	int  res_type;
 	long freq;
 	int  sample_size;
@@ -94,21 +87,18 @@ typedef struct R_GAMESOUND_INFO_tag {
 } R_GAME_SOUNDINFO;
 
 typedef struct R_GAMEFONT_DESC_tag {
-	
 	unsigned int  font_id;
 	unsigned long font_rn;
 	
 } R_GAME_FONTDESC;
 
 typedef struct R_GAMESCENE_DESC_tag {
-
 	unsigned long scene_lut_rn;
 	unsigned long first_scene;
 
 } R_GAME_SCENEDESC;
 
 typedef struct R_GAME_RESOURCEINFO_tag {
-	
 	unsigned long scene_lut_rn;
 	unsigned long script_lut_rn;
 
