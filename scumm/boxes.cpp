@@ -627,7 +627,7 @@ void Scumm::createBoxMatrix()
 	_maxBoxVertexHeap = 1000;
 	createResource(rtMatrix, 4, _maxBoxVertexHeap);
 	_boxPathVertexHeap = getResourceAddress(rtMatrix, 4);
-	_boxPathVertexHeapIndex = 1;
+	_boxPathVertexHeapIndex = _boxMatrixItem = 0;
 	
 	// Temporary 64*65 distance matrix
 	createResource(rtMatrix, 3, 65 * 64);
