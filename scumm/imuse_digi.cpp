@@ -1062,9 +1062,9 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 			}
 		} else if ((_scumm->_gameId == GID_CMI) && (_scumm->_features & GF_DEMO)) {
 			if (b == 2) {
-				_scumm->_sound->playBundleMusic("in2.imx");
+				_scumm->_sound->playBundleMusic("in1.imx");
 			} else if (b == 8) {
-				_scumm->_sound->playBundleMusic("out2.imx");
+				_scumm->_sound->playBundleMusic("out1.imx");
 			} else {
 				warning("imuse digital: set state unknown for cmi demo: %d, room: %d", b, this->_scumm->_currentRoom);
 				return 1;
