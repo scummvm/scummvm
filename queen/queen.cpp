@@ -354,9 +354,6 @@ int QueenEngine::init(GameDetector &detector) {
 	_music = new Music(driver, this);
 	_music->hasNativeMT32(ConfMan.getBool("native_mt32") || (midiDriver == MD_MT32));
 
-	if (midiDriver == MD_MT32)
-		_music->setPassThrough(true);
-	
 	_sound = Sound::giveSound(_mixer, this, _resource->compression());
 	_walk = new Walk(this);
 
