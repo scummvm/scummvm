@@ -690,7 +690,7 @@ void Blocky16::decode(byte *dst, const byte *src) {
 	case 0:
 #ifdef SYSTEM_BIG_ENDIAN
 		for (int i = 0; i < _width * _height; i++) {
-			((uint16 *)_curBuf)[i] = READ_LE_UINT16(((uint16 *)gfx_data)[i]);
+			((uint16 *)_curBuf)[i] = READ_LE_UINT16(gfx_data + i * 2);
 		}
 #else
 		memcpy(_curBuf, gfx_data, _frameSize);
