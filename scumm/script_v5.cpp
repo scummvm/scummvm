@@ -732,7 +732,7 @@ void Scumm_v5::o5_divide() {
 }
 
 void Scumm_v5::o5_doSentence() {
-	int a, b;
+	int a;
 	SentenceTab *st;
 
 	a = getVarOrDirectByte(0x80);
@@ -747,12 +747,8 @@ void Scumm_v5::o5_doSentence() {
 
 	st->verb = a;
 	st->objectA = getVarOrDirectWord(0x40);
-	b = st->objectB = getVarOrDirectWord(0x20);
-	if (b == 0) {
-		st->unk2 = 0;
-	} else {
-		st->unk2 = 1;
-	}
+	st->objectB = getVarOrDirectWord(0x20);
+	st->unk2 = (st->objectB != 0);
 	st->freezeCount = 0;
 }
 

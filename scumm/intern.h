@@ -238,7 +238,7 @@ protected:
 	void o2_getActorX();
 	void o2_getActorY();
 	void o2_getBitVar();
-	void o2_getObjY();
+	void o2_getObjUnknown();
 	void o2_ifClassOfIs();
 	void o2_ifNotState01();
 	void o2_ifNotState02();
@@ -249,7 +249,7 @@ protected:
 	void o2_ifState04();
 	void o2_ifState08();
 	void o2_loadRoomWithEgo();
-	void o2_matrixOps();
+	void o2_setBoxFlags();
 	void o2_panCameraTo();
 	void o2_pickupObject();
 	void o2_putActor();
@@ -262,7 +262,7 @@ protected:
 	void o2_setBitVar();
 	void o2_setCameraAt();
 	void o2_setObjectName();
-	void o2_setObjY();
+	void o2_setObjUnknown();
 	void o2_setOwnerOf();
 	void o2_setState01();
 	void o2_setState02();

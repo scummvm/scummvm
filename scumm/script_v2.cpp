@@ -46,7 +46,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_isNotEqual),
 		OPCODE(o5_faceActor),
 		OPCODE(o2_assignVarWordIndirect),
-		OPCODE(o2_setObjY),
+		OPCODE(o2_setObjUnknown),
 		/* 0C */
 		OPCODE(o2_resourceRoutines),
 		OPCODE(o5_walkActorToActor),
@@ -93,7 +93,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_delay),
 		OPCODE(o2_ifNotState04),
 		/* 30 */
-		OPCODE(o2_matrixOps),
+		OPCODE(o2_setBoxFlags),
 		OPCODE(o2_getBitVar),
 		OPCODE(o2_setCameraAt),
 		OPCODE(o2_roomOps),
@@ -126,7 +126,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_isEqual),
 		OPCODE(o5_faceActor),
 		OPCODE(o2_chainScript),
-		OPCODE(o2_setObjY),
+		OPCODE(o2_setObjUnknown),
 		/* 4C */
 		OPCODE(o2_waitForSentence),
 		OPCODE(o5_walkActorToActor),
@@ -168,7 +168,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_subIndirect),
 		OPCODE(o2_dummy),
 		/* 6C */
-		OPCODE(o2_getObjY),
+		OPCODE(o2_getObjUnknown),
 		OPCODE(o5_putActorInRoom),
 		OPCODE(o2_dummy),
 		OPCODE(o2_ifState04),
@@ -206,7 +206,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_isNotEqual),
 		OPCODE(o5_faceActor),
 		OPCODE(o2_assignVarWordIndirect),
-		OPCODE(o2_setObjY),
+		OPCODE(o2_setObjUnknown),
 		/* 8C */
 		OPCODE(o2_resourceRoutines),
 		OPCODE(o5_walkActorToActor),
@@ -253,7 +253,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_waitForMessage),
 		OPCODE(o2_ifNotState04),
 		/* B0 */
-		OPCODE(o2_matrixOps),
+		OPCODE(o2_setBoxFlags),
 		OPCODE(o2_getBitVar),
 		OPCODE(o2_setCameraAt),
 		OPCODE(o2_roomOps),
@@ -286,7 +286,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_isEqual),
 		OPCODE(o5_faceActor),
 		OPCODE(o2_chainScript),
-		OPCODE(o2_setObjY),
+		OPCODE(o2_setObjUnknown),
 		/* CC */
 		OPCODE(o5_pseudoRoom),
 		OPCODE(o5_walkActorToActor),
@@ -328,7 +328,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_subIndirect),
 		OPCODE(o2_dummy),
 		/* EC */
-		OPCODE(o2_getObjY),
+		OPCODE(o2_getObjUnknown),
 		OPCODE(o5_putActorInRoom),
 		OPCODE(o2_dummy),
 		OPCODE(o2_ifState04),
@@ -506,17 +506,17 @@ void Scumm_v2::o2_assignVarByte() {
 	setResult(fetchScriptByte());
 }
 
-void Scumm_v2::o2_setObjY() {
+void Scumm_v2::o2_setObjUnknown() {
 	int obj = getVarOrDirectWord(0x80);
-	int y = fetchScriptByte();
+	int unk = fetchScriptByte();
 
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		ObjectData *od = &_objs[getObjectIndex(obj)];
-		od->walk_y = (y << 5) | (od->walk_y & 0x1F);
+		od->walk_y = (unk << 5) | (od->walk_y & 0x1F);
 	}
 }
 
-void Scumm_v2::o2_getObjY() {
+void Scumm_v2::o2_getObjUnknown() {
 	int obj = getVarOrDirectWord(0x80);
 	getResultPos();
 
@@ -841,6 +841,7 @@ void Scumm_v2::o2_doSentence() {
 	st->verb = a;
 	st->objectA = getVarOrDirectWord(0x40);
 	st->objectB = getVarOrDirectWord(0x20);
+	st->unk2 = (st->objectB != 0);
 	st->freezeCount = 0;
 	
 	// TODO
@@ -1092,7 +1093,7 @@ void Scumm_v2::o2_delay() {
 	o5_breakHere();
 }
 
-void Scumm_v2::o2_matrixOps() {
+void Scumm_v2::o2_setBoxFlags() {
 	int a, b;
 
 	a = getVarOrDirectByte(0x80);
