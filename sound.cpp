@@ -278,7 +278,7 @@ void Scumm::playSound(int sound)
 			if (result == 1) return;
 
 #ifdef COMPRESSED_SOUND_FILE
-        	        if (playMP3CDTrack(track, 1, 1, 0) == -1)
+        	        if (playMP3CDTrack(track, 1, 0, 0) == -1)
 #endif
 	                _system->play_cdrom(track, 0, 0, 0);
 	                current_cd_sound = track;
