@@ -266,7 +266,6 @@ Mixer::Mixer() :
 void Mixer::start() {
 	Sound::init();
 	g_mixer->setupPremix(this);
-	g_mixer->setVolume(100);
 }
 
 void Mixer::playVoice(Sound *s) {

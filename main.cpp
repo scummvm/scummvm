@@ -120,6 +120,8 @@ int main(int argc, char *argv[]) {
 
 	g_driver = new Driver(640, 480, 24);
 	
+	g_mixer->setVolume(255);
+
 	Mixer::instance()->start();
 
 	Bitmap *splash_bm = ResourceLoader::instance()->loadBitmap("splash.bm");
@@ -170,22 +172,22 @@ int main(int argc, char *argv[]) {
 
 StackLock::StackLock(MutexRef mutex) :
 		_mutex(mutex) {
-	lock_mutex(_mutex);
+	lockMutex(_mutex);
 }
 
 StackLock::~StackLock() {
-	unlock_mutex(_mutex);
+	unlockMutex(_mutex);
 }
 
 MutexRef createMutex() {
 	return (MutexRef)SDL_CreateMutex();
 }
 
-void lock_mutex(MutexRef mutex) {
+void lockMutex(MutexRef mutex) {
 	SDL_mutexP((SDL_mutex *)mutex);
 }
 
-void unlock_mutex(MutexRef mutex) {
+void unlockMutex(MutexRef mutex) {
 	SDL_mutexV((SDL_mutex *)mutex);
 }
 
