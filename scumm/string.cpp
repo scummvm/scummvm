@@ -762,11 +762,14 @@ void Scumm::loadLanguageBundle() {
 	} else {
 		return;
 	}
+printf("Looking for language.bnd...");
 
 	if(file.isOpen() == false) {
 		_existLanguageFile = false;
+		printf(" not found!\n");
 		return;
 	}
+	printf(" found!\n");
 
 	size = file.size();
 	_languageBuffer = (char *)calloc(1, size+1);
@@ -830,37 +833,35 @@ void Scumm::loadLanguageBundle() {
 }
 
 void Scumm::translateText(const byte *text, byte *trans_buff) {
-	char name[20], tmp[500], tmp2[20], num_s[20], number[4], enc;
-	int32 num, l, j, k, r, pos = 0;
-	char *buf = _languageBuffer;
-
-	if (_gameId == GID_CMI) {
-		if ((text[0] == '/') && (_existLanguageFile == true)) {
+	int l;
+	
+	if ((text[0] == '/') && _existLanguageFile) {
+		if (_gameId == GID_CMI) {
 			struct langIndexNode target;
 			struct langIndexNode *found = NULL;
-
+	
 			// copy name from text /..../
 			for (l = 0; (l < 8) && (text[l + 1] != '/'); l++)
 				target.tag[l] = toupper(text[l + 1]);
 			target.tag[l] = 0;
-
+	
 			// HACK: These are used for the object line when
 			// using one object on another. I don't know if the
 			// text in the language file is a placeholder or if
 			// we're supposed to use it, but at least in the
 			// English version things will work so much better if
 			// we can't find translations for these.
-
+	
 			if (strcmp(target.tag, "PU_M001") != 0 && strcmp(target.tag, "PU_M002") != 0)
 				found = (struct langIndexNode *)bsearch(&target, _languageIndex, _languageStrCount, sizeof(struct langIndexNode), indexCompare);
 			if (found != NULL) {
 				File file;
-
+	
 				file.open("language.tab", getGameDataPath());
 				if (file.isOpen()) {
 					byte *ptr = trans_buff;
 					byte c;
-
+	
 					file.seek(found->offset, SEEK_SET);
 					for (;;) {
 						c = file.readByte();
@@ -877,15 +878,14 @@ void Scumm::translateText(const byte *text, byte *trans_buff) {
 					_existLanguageFile = false;
 				}
 			}
-		}
-		byte *pointer = (byte *)strchr((const char *)text + 1, '/');
-		if (pointer != NULL) {
-			pointer++;
-			memcpy(trans_buff, pointer, resStrLen(pointer) + 1);
-			return;
-		}
-	} else if (_gameId == GID_DIG) {
-		if ((text[0] == '/') && (_existLanguageFile == true)) {
+		} else if (_gameId == GID_DIG) {
+			// FIXME: This code really could stand a rewrite
+			// It's rather inefficient and if a string isn't found it'll read past the
+			// end of the _languageBuffer.
+			char name[20], tmp[500], tmp2[20], num_s[20], number[4], enc;
+			int32 num, j, k, r, pos = 0;
+			char *buf = _languageBuffer;
+	
 			// copy name from text /..../
 			for (l = 0; (l < 20) && (text[l + 1] != '.'); l++) {
 				name[l] = text[l + 1];
@@ -899,15 +899,18 @@ void Scumm::translateText(const byte *text, byte *trans_buff) {
 			number[3] = 0;
 			num = atol(number);
 			sprintf(num_s, "%d", num);
-
+	
 			// determine is file encoded
-			if (buf[pos] == 'e') {
+			if (buf[0] == 'e') {
 				enc = 0x13;
 				pos += 3;
+			} else if (buf[3] == 'e') {
+				enc = 0x13;
+				pos += 6;
 			} else {
 				enc = 0;
 			}
-
+	
 			// skip translation if flag 'h' exist
 			if (buf[pos] == 'h') {
 				pos += 3;
@@ -918,7 +921,7 @@ void Scumm::translateText(const byte *text, byte *trans_buff) {
 					trans_buff[0] = '\0';
 				return;
 			}
-
+	
 			for(;;) {
 				// search char @
 				if (buf[pos++] == '@') {
@@ -969,17 +972,22 @@ void Scumm::translateText(const byte *text, byte *trans_buff) {
 				}
 			}
 		}
-		byte *pointer = (byte *)strchr((const char *)text + 1, '/');
-		if (pointer != NULL) {
-			pointer++;
+	}
+	
+	byte *pointer = (byte *)strchr((const char *)text + 1, '/');
+	if (pointer != NULL) {
+		pointer++;
+		if (_gameId == GID_CMI) {
+			memcpy(trans_buff, pointer, resStrLen(pointer) + 1);
+		} else if (_gameId == GID_DIG) {
 			l = 0;
 			while (*pointer != '/' && *pointer != 0xff && *pointer != 0) {
 				trans_buff[l++] = *pointer++;
 			}
 			trans_buff[l] = '\0';
-			return;
 		}
+	} else {
+		memcpy(trans_buff, text, resStrLen(text) + 1);
 	}
-	memcpy(trans_buff, text, resStrLen(text) + 1);
 }
 
