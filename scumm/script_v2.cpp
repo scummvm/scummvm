@@ -61,7 +61,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_print),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o5_getRandomNr),
-		OPCODE(o2_setState02),
+		OPCODE(o2_clearState02),
 		/* 18 */
 		OPCODE(o5_jumpRelative),
 		OPCODE(o2_doSentence),
@@ -141,7 +141,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_setObjectName),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o5_getActorMoving),
-		OPCODE(o2_clearState02),
+		OPCODE(o2_setState02),
 		/* 58 */
 		OPCODE(o2_beginOverride),
 		OPCODE(o2_doSentence),
@@ -221,7 +221,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_print),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o5_getRandomNr),
-		OPCODE(o2_setState02),
+		OPCODE(o2_clearState02),
 		/* 98 */
 		OPCODE(o2_restart),
 		OPCODE(o2_doSentence),
@@ -301,7 +301,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_setObjectName),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o5_getActorMoving),
-		OPCODE(o2_clearState02),
+		OPCODE(o2_setState02),
 		/* D8 */
 		OPCODE(o5_printEgo),
 		OPCODE(o2_doSentence),
