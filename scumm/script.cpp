@@ -335,8 +335,6 @@ int Scumm::readVar(uint var)
 #endif
 	debug(9, "readvar=%d", var);
 	if (!(var & 0xF000)) {
-		if (var == 175)
-			return 1;
 #if defined(BYPASS_COPY_PROT)
 		if (var == 490 && _gameId == GID_MONKEY2 && !copyprotbypassed) {
 			copyprotbypassed = true;
