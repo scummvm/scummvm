@@ -257,8 +257,10 @@ void SmushPlayer::parseIACT() {
 
 			break;
 		default :
-			error("trk %d: unknown tag inside iMUS %08x",
-			      trk, _imusSubTag[idx]);
+			error("trk %d: unknown tag inside iMUS %08x [%c%c%c%c]",
+			      trk, _imusSubTag[idx], _imusSubTag[idx] >> 24, 
+				  _imusSubTag[idx] >> 16, _imusSubTag[idx] >> 8,
+				  _imusSubTag[idx]);
 		}
 
 		_imusSubSize[idx] -= sublen;

@@ -557,13 +557,12 @@ int Scumm::readSoundResource(int type, int idx)
 	basetag = fileReadDword();
 	total_size = fileReadDwordBE();
 
-	if (_gameId == GID_SAMNMAX || _features & GF_AFTER_V7) {
-		if (basetag == MKID('MIDI')) {
-			fileSeek(_fileHandle, -8, SEEK_CUR);
-			fileRead(_fileHandle, createResource(type, idx, total_size + 8),
-							 total_size + 8);
-			return 1;
-		}
+	//if (_gameId == GID_SAMNMAX || _features & GF_AFTER_V7) {
+	if (basetag == MKID('MIDI') || basetag == MKID('iMUS')) {
+		fileSeek(_fileHandle, -8, SEEK_CUR);
+		fileRead(_fileHandle, createResource(type, idx, total_size + 8),
+						 total_size + 8);
+		return 1;
 	} else if (basetag == MKID('SOU ')) {
 		best_pri = -1;
 		while (pos < total_size) {
