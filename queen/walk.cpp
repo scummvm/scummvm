@@ -292,6 +292,7 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 
 int16 Walk::joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway) {
 
+	_joeMoveBlock = false;
 	int16 can = 0;
 	initWalkData();
 
@@ -330,6 +331,7 @@ int16 Walk::joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway) {
 	// XXX walkgameload=0;
 	if (_joeMoveBlock) {
 		can = -2;
+		_joeMoveBlock = false;
 	}
 	else if (direction > 0) {
 		_logic->joeFacing(direction);
@@ -595,7 +597,6 @@ void Walk::initWalkData() {
 	memset(_areaStrike, 0, sizeof(_areaStrike));
 	_areaListCount = 0;
 	memset(_areaList, 0, sizeof(_areaList));
-	_joeMoveBlock = false;
 }
 
 
