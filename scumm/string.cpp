@@ -229,8 +229,11 @@ void Scumm::CHARSET_1() {
 		if (c == 13) {
 		newLine:;
 			if (_features & GF_AFTER_V3) {
-				_charset->_nextTop = 8;
-				_charset->_nextLeft = 0;
+				_charset->_nextTop += 8;
+				_charset->_nextLeft = _string[0].xpos;
+				if (_charset->_center) {
+					_charset->_nextLeft -= _charset->getStringWidth(0, buffer) >> 1;
+				}
 				continue;
 			} else {
 				_charset->_nextLeft = _string[0].xpos;
