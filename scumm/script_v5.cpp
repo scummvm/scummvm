@@ -2044,7 +2044,7 @@ void Scumm_v5::o5_startMusic() {
 			break;
 		}
 		warning("unknown: o5_startMusic(%d)", b);
-		setResult(0);
+		setResult(result);
 	} else {
 		_sound->addSoundToQueue(getVarOrDirectByte(0x80));
 	}

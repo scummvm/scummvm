@@ -106,6 +106,10 @@ OSystem_SDL_Common::OSystem_SDL_Common()
 
 	// reset mouse state
 	memset(&km, 0, sizeof(km));
+	cd_end_time = 0;
+	cd_num_loops = 0;
+	cd_duration = 0;
+	cd_stop_time = 0;
 }
 
 OSystem_SDL_Common::~OSystem_SDL_Common() {
