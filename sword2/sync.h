@@ -20,13 +20,10 @@
 #ifndef	_SYNC
 #define	_SYNC
 
-//#include "src\driver96.h"
 #include "object.h"
 
-
-void	Init_sync_system(void);	//Tony27Nov96
-void	Clear_syncs(uint32	id);	//Tony27Nov96
-uint32	Get_sync(void);	//Tony27Nov96
-
+void Init_sync_system(void);	// Tony27Nov96
+void Clear_syncs(uint32	id);	// Tony27Nov96
+uint32 Get_sync(void);		// Tony27Nov96
 
 #endif

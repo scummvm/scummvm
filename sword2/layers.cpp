@@ -17,55 +17,44 @@
  * $Header$
  */
 
-//------------------------------------------------------------------------------------
-//high level layer initialising
+// high level layer initialising
 
-//the system supports:
-//		1 optional background parallax layer
-//		1 not optional normal backdrop layer
-//		3 normal sorted layers
-//		up to 2 foreground parallax layers
-
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
+// the system supports:
+//	1 optional background parallax layer
+//	1 not optional normal backdrop layer
+//	3 normal sorted layers
+//	up to 2 foreground parallax layers
 
 #include "stdafx.h"
-#include "driver/driver96.h"
 #include "build_display.h"
-#include "console.h"
 #include "debug.h"
 #include "header.h"
 #include "layers.h"
-#include "memory.h"
-#include "object.h"
 #include "protocol.h"
 #include "resman.h"
 #include "sound.h"	// (James22july97) for Clear_fx_queue() called from FN_init_background()
 
-//------------------------------------------------------------------------------------
+// this_screen describes the current back buffer and its in-game scroll
+// positions, etc.
 
+screen_info this_screen;
 
-screen_info	this_screen;	//this_screen describes the current back buffer and its in-game scroll positions, etc.
-//------------------------------------------------------------------------------------
-int32 FN_init_background(int32 *params)	//Tony11Sept96
-{
-//param	0 res id of normal background layer - cannot be 0
-//param	1 1 yes 0 no for a new palette
-//this screen defines the size of the back buffer
+int32 FN_init_background(int32 *params)	{	// Tony11Sept96
+	// param     0 res id of normal background layer - cannot be 0
+	// param     1 1 yes 0 no for a new palette
+	// this screen defines the size of the back buffer
 
 	_multiScreenHeader *screenLayerTable;	// James 06feb97
-	_screenHeader	*screen_head;
-	_layerHeader	*layer;
- 	_spriteInfo		spriteInfo;
-	uint32	j;
-	uint8	*file;
-	uint32	rv;
+	_screenHeader *screen_head;
+	_layerHeader *layer;
+ 	_spriteInfo spriteInfo;
+	uint32 j;
+	uint8 *file;
+	uint32 rv;
 
-
+#ifdef _SWORD2_DEBUG
 	//--------------------------------------
 	// Write to walkthrough file (zebug0.txt)
-	#ifdef _SWORD2_DEBUG
 	Zdebug(0,"=====================================");
 	Zdebug(0,"CHANGED TO LOCATION \"%s\"", FetchObjectName(*params));
 	Zdebug(0,"=====================================");
@@ -74,222 +63,192 @@ int32 FN_init_background(int32 *params)	//Tony11Sept96
 	Zdebug("=====================================");
 	Zdebug("CHANGED TO LOCATION \"%s\"", FetchObjectName(*params));
 	Zdebug("=====================================");
-	#endif
  	//--------------------------------------
+#endif
 
-	Clear_fx_queue();		// stops all fx & clears the queue (James22july97)
-
+	// stop all fx & clears the queue (James22july97)
+	Clear_fx_queue();
 
 #ifdef _SWORD2_DEBUG
 	Zdebug("FN_init_background(%d)", *params);
 
-	if	(!*params)
-	{
-		Con_fatal_error("ERROR: FN_set_background cannot have 0 for background layer id! (%s line=%u)",__FILE__,__LINE__);
+	if (!*params) {
+		Con_fatal_error("ERROR: FN_set_background cannot have 0 for background layer id! (%s line=%u)", __FILE__, __LINE__);
 	}
-#endif // _SWORD2_DEBUG
+#endif
 
-
-	//-------------------------------------------------------
 	// if the screen is still fading down then wait for black
 	WaitForFade();
 
-	//-------------------------------------------------------
-
-	if (this_screen.mask_flag)	// if last screen was using a shading mask (see below) (James 08apr97)
-	{
+	// if last screen was using a shading mask (see below) (James 08apr97)
+	if (this_screen.mask_flag) {
 		rv = CloseLightMask();
-
 		if (rv)
 			ExitWithReport("Driver Error %.8x [%s line %u]", rv, __FILE__, __LINE__);
 	}
 	
-	//--------------------------------------------------------
 	// New stuff for faster screen drivers (James 06feb97)
 
-	if (this_screen.background_layer_id)	// for drivers: close the previous screen if one is open
+	// for drivers: close the previous screen if one is open
+	if (this_screen.background_layer_id)
 		CloseBackgroundLayer();
 
-	//--------------------------------------------------------
+	this_screen.background_layer_id = *params;	// set the res id
+	this_screen.new_palette = *(params + 1);	// yes or no - palette is taken from layer file
 
+	// ok, now read the resource and pull out all the normal sort layer
+	// info/and set them up at the beginning of the sort list - why do it
+	// each cycle
 
-	this_screen.background_layer_id=*params;	//set the res id
-	this_screen.new_palette = *(params+1);	//yes or no - palette is taken from layer file
-
-
-//ok, now read the resource and pull out all the normal sort layer info
-//and set them up at the beginning of the sort list - why do it each cycle
-
-
-	file = res_man.Res_open(this_screen.background_layer_id);	//file points to 1st byte in the layer file
+	// file points to 1st byte in the layer file
+	file = res_man.Res_open(this_screen.background_layer_id);
 	
 	screen_head = FetchScreenHeader(file);
 
-	this_screen.number_of_layers= screen_head->noLayers;	//set number of special sort layers
+	//set number of special sort layers
+	this_screen.number_of_layers = screen_head->noLayers;
 	this_screen.screen_wide = screen_head->width;
 	this_screen.screen_deep = screen_head->height;
 
 	Zdebug("res test layers=%d width=%d depth=%d", screen_head->noLayers, screen_head->width, screen_head->height);
 
-	SetLocationMetrics(screen_head->width, screen_head->height);	//initialise the driver back buffer
+	//initialise the driver back buffer
+	SetLocationMetrics(screen_head->width, screen_head->height);
 
+	if (screen_head->noLayers) {
+		for (j = 0; j < screen_head->noLayers; j++) {
+			// get layer header for layer j
+			layer = FetchLayerHeader(file, j);
 
-	if	(screen_head->noLayers)
-		for	(j=0;j<screen_head->noLayers;j++)
-		{
-			layer=FetchLayerHeader(file,j);	//get layer header for layer j
+			// add into the sort list
 
-//			add into the sort list
-
-			sort_list[j].sort_y = layer->y+layer->height;	//need this for sorting - but leave the rest blank, we'll take from the header at print time
-			sort_list[j].layer_number=j+1;	//signifies a layer
+			// need this for sorting - but leave the rest blank,
+			// we'll take from the header at print time
+			sort_list[j].sort_y = layer->y + layer->height;
+			// signifies a layer
+			sort_list[j].layer_number = j + 1;
 
 			Zdebug("init layer %d", j);
 		}
-
-
-
-//using the screen size setup the scrolling variables
-
-	if( ((screen_head->width) > screenWide) || (screen_head->height>screenDeep) )	// if layer is larger than physical screen
-	{
-		this_screen.scroll_flag = 2;	//switch on scrolling (2 means first time on screen)
-
-//	note, if we've already set the player up then we could do the initial scroll set here
-
-		this_screen.scroll_offset_x = 0;	//reset scroll offsets
-		this_screen.scroll_offset_y = 0;
-
-//		calc max allowed offsets (to prevent scrolling off edge) - MOVE TO NEW_SCREEN in GTM_CORE.C !!
-		this_screen.max_scroll_offset_x = screen_head->width-screenWide;		// NB. min scroll offsets are both zero
-		this_screen.max_scroll_offset_y = screen_head->height-(screenDeep-(RDMENU_MENUDEEP*2));	// 'screenDeep' includes the menu's, so take away 80 pixels
-	}
-	else	//layer fits on physical screen - scrolling not required
-	{
-		this_screen.scroll_flag = 0;	//switch off scrolling
-		this_screen.scroll_offset_x = 0;	//reset scroll offsets
-		this_screen.scroll_offset_y = 0;
 	}
 
-	ResetRenderEngine();	//no inter-cycle scrol between new screens (see setScrollTarget in build display)
+	// using the screen size setup the scrolling variables
+
+	// if layer is larger than physical screen
+	if (screen_head->width > screenWide || screen_head->height > screenDeep) {
+		// switch on scrolling (2 means first time on screen)
+		this_screen.scroll_flag = 2;
+
+		// note, if we've already set the player up then we could do
+		// the initial scroll set here
+
+		// reset scroll offsets
+
+		this_screen.scroll_offset_x = 0;
+		this_screen.scroll_offset_y = 0;
+
+		// calc max allowed offsets (to prevent scrolling off edge) -
+		// MOVE TO NEW_SCREEN in GTM_CORE.C !!
+		// NB. min scroll offsets are both zero
+		this_screen.max_scroll_offset_x = screen_head->width-screenWide;
+		// 'screenDeep' includes the menu's, so take away 80 pixels
+		this_screen.max_scroll_offset_y = screen_head->height - (screenDeep - (RDMENU_MENUDEEP * 2));
+	} else {
+		// layer fits on physical screen - scrolling not required
+		this_screen.scroll_flag = 0;		// switch off scrolling
+		this_screen.scroll_offset_x = 0;	// reset scroll offsets
+		this_screen.scroll_offset_y = 0;
+	}
+
+	// no inter-cycle scroll between new screens (see setScrollTarget in
+	// build display)
+	ResetRenderEngine();
 
 	// these are the physical screen coords where the system
 	// will try to maintain George's actual feet coords
-	this_screen.feet_x=320;
-	this_screen.feet_y=340;
+	this_screen.feet_x = 320;
+	this_screen.feet_y = 340;
 
-
-	//----------------------------------------------------
 	// shading mask
 
 	screenLayerTable = (_multiScreenHeader *) ((uint8 *) file + sizeof(_standardHeader));
 
-	if (screenLayerTable->maskOffset)
-	{
-		spriteInfo.x			= 0;
-		spriteInfo.y			= 0;
-		spriteInfo.w			= screen_head->width;
-		spriteInfo.h			= screen_head->height;
-		spriteInfo.scale		= 0;
-		spriteInfo.scaledWidth	= 0;
-		spriteInfo.scaledHeight	= 0;
-		spriteInfo.type			= 0;
-		spriteInfo.blend		= 0;
-		spriteInfo.data			= FetchShadingMask(file);
-		spriteInfo.colourTable	= 0;
+	if (screenLayerTable->maskOffset) {
+		spriteInfo.x = 0;
+		spriteInfo.y = 0;
+		spriteInfo.w = screen_head->width;
+		spriteInfo.h = screen_head->height;
+		spriteInfo.scale = 0;
+		spriteInfo.scaledWidth = 0;
+		spriteInfo.scaledHeight = 0;
+		spriteInfo.type = 0;
+		spriteInfo.blend = 0;
+		spriteInfo.data = FetchShadingMask(file);
+		spriteInfo.colourTable = 0;
 
-		rv = OpenLightMask( &spriteInfo );
+		rv = OpenLightMask(&spriteInfo);
 		if (rv)
 			ExitWithReport("Driver Error %.8x [%s line %u]", rv, __FILE__, __LINE__);
 
-		this_screen.mask_flag=1;	// so we know to close it later! (see above)
+		// so we know to close it later! (see above)
+		this_screen.mask_flag = 1;
+	} else {
+		// no need to close a mask later
+		this_screen.mask_flag = 0;
 	}
-	else
-		this_screen.mask_flag=0;	// no need to close a mask later
 
-	//----------------------------------------------------
-
-   	res_man.Res_close(this_screen.background_layer_id);	//close the screen file
+	// close the screen file
+   	res_man.Res_close(this_screen.background_layer_id);
 
 	SetUpBackgroundLayers();
 
-
 	Zdebug("end init");
-	return(1);
+	return 1;
 }
-//------------------------------------------------------------------------------------
+
 // called from FN_init_background & also from control panel
 
-void SetUpBackgroundLayers(void)	// James(13jun97)
-{
+void SetUpBackgroundLayers(void) {		// James(13jun97)
 	_multiScreenHeader *screenLayerTable;	// James 06feb97
-	_screenHeader	*screen_head;
-	uint8	*file;
+	_screenHeader *screen_head;
+	uint8 *file;
+	int i;
 
-
-	if (this_screen.background_layer_id)	// if we actually have a screen to initialise (in case called from control panel)
-	{
-		//------------------------------
+	// if we actually have a screen to initialise (in case not called from
+	// control panel)
+	if (this_screen.background_layer_id) {
 		// open resource & set pointers to headers
+		// file points to 1st byte in the layer file
 
-		file = res_man.Res_open(this_screen.background_layer_id);	//file points to 1st byte in the layer file
+		file = res_man.Res_open(this_screen.background_layer_id);
 
 		screen_head = FetchScreenHeader(file);
 
 		screenLayerTable = (_multiScreenHeader *) ((uint8 *) file + sizeof(_standardHeader));
 
-		//------------------------------
-		// first background parallax
+		// Background parallax layers
 
-		if (screenLayerTable->bg_parallax[0])
-			InitialiseBackgroundLayer(FetchBackgroundParallaxLayer(file,0));
-		else
-			InitialiseBackgroundLayer(NULL);
+		for (i = 0; i < 2; i++) {
+			if (screenLayerTable->bg_parallax[i])
+				InitialiseBackgroundLayer(FetchBackgroundParallaxLayer(file, i));
+			else
+				InitialiseBackgroundLayer(NULL);
+		}
 
-		//------------------------------
-		// second background parallax
-
-		if (screenLayerTable->bg_parallax[1])
-			InitialiseBackgroundLayer(FetchBackgroundParallaxLayer(file,1));
-		else
-			InitialiseBackgroundLayer(NULL);
-
-		//------------------------------
-		// normal backround layer
+		// Normal backround layer
 
 		InitialiseBackgroundLayer(FetchBackgroundLayer(file));
 
-		//------------------------------
-		// first foreground parallax
+		// Foreground parallax layers
 
-		if (screenLayerTable->fg_parallax[0])
-			InitialiseBackgroundLayer(FetchForegroundParallaxLayer(file,0));
-		else
-			InitialiseBackgroundLayer(NULL);
+		for (i = 0; i < 2; i++) {
+			if (screenLayerTable->fg_parallax[i])
+				InitialiseBackgroundLayer(FetchForegroundParallaxLayer(file, i));
+			else
+				InitialiseBackgroundLayer(NULL);
+		}
 
-		//------------------------------
-		// second foreground parallax
-
-		if (screenLayerTable->fg_parallax[1])
-			InitialiseBackgroundLayer(FetchForegroundParallaxLayer(file,1));
-		else
-			InitialiseBackgroundLayer(NULL);
-
- 		//----------------------------------------------------
-
-		res_man.Res_close(this_screen.background_layer_id);	//close the screen file
-
-	 	//----------------------------------------------------
-	}
-	else	// no current screen to initialise! (In case called from control panel)
-	{
+		// close the screen file
+		res_man.Res_close(this_screen.background_layer_id);
 	}
 }
-
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
