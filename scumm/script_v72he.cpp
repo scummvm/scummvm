@@ -323,7 +323,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* DC */
 		OPCODE(o72_writeFile),
 		OPCODE(o72_findAllObjects),
-		OPCODE(o6_deleteFile),
+		OPCODE(o72_deleteFile),
 		OPCODE(o6_rename),
 		/* E0 */
 		OPCODE(o6_soundOps),
@@ -1070,6 +1070,20 @@ void ScummEngine_v72he::o72_findAllObjects() {
 	push(readVar(0));
 }
 
+void ScummEngine_v72he::o72_deleteFile() {
+	int len, r;
+	byte filename[100];
+
+	copyScriptString(filename);
+
+	for (r = strlen((char*)filename); r != 0; r--) {
+		if (filename[r - 1] == '\\')
+			break;
+	}
+
+	debug(1, "stub o72_deleteFile(\"%s\")", filename + r);
+}
+
 void ScummEngine_v72he::o72_getPixel() {
 	byte area;
 	int x = pop();
@@ -1118,7 +1132,11 @@ void ScummEngine_v72he::o72_pickVarRandom() {
 	num = readArray(value, 0, 0);
 
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, num);
-	var_A = FROM_LE_32(ah->dim1end);
+	// FIXME
+	if (!ah)
+		var_A = 0;
+	else
+		var_A = FROM_LE_32(ah->dim1end);
 
 	if (var_A-1 <= num) {
 		int16 var_2 = readArray(value, 0, num - 1);

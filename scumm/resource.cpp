@@ -2240,9 +2240,6 @@ void ScummEngine::resourceStats() {
 
 void ScummEngine::readMAXS(int blockSize) {
 	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
-	// FIXME: trying to detect multiple targets probably a better way to do this
-	if (_heversion >= 70 && blockSize > 38 && _heversion < 72)
-			_heversion = 72;
 
 	if (_version == 8) {                    // CMI
 		_fileHandle.seek(50 + 50, SEEK_CUR);            // 176 - 8

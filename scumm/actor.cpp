@@ -57,7 +57,7 @@ Actor::Actor() {
 	walkbox = 0;
 	animProgress = 0;
 	skipLimb = false;
-	actorDrawVirScr = false;
+	drawToBackBuf = false;
 	memset(animVariable, 0, sizeof(animVariable));
 	memset(palette, 0, sizeof(palette));
 	memset(sound, 0, sizeof(sound));
@@ -129,6 +129,7 @@ void Actor::initActor(int mode) {
 		talkStopFrame = 5;
 	}
 
+	talking = false;
 	walkScript = 0;
 	talkScript = 0;
 
@@ -1062,7 +1063,7 @@ void Actor::drawActorCostume() {
 	
 	// If the actor is partially hidden, redraw it next frame.
 	// Only done for pre-AKOS, though.
-	if (bcr->drawCostume(_vm->virtscr[0], cost, actorDrawVirScr) & 1) {
+	if (bcr->drawCostume(_vm->virtscr[0], cost, drawToBackBuf) & 1) {
 		needRedraw = (_vm->_version <= 6);
 	}
 
@@ -1224,6 +1225,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 			if ((_version <= 7 && !_keepText) || (_version == 8 && VAR(VAR_HAVE_MSG)))
 				stopTalk();
 			setTalkingActor(a->number);
+			a->talking = true;
 			if (!_string[0].no_talk_anim) {
 				a->runActorTalkScript(a->talkStartFrame);
 				_useTalkAnims = true;
@@ -1287,6 +1289,7 @@ void ScummEngine::stopTalk() {
 		}
 		if (_version <= 7 && !(_features & GF_HUMONGOUS))
 			setTalkingActor(0xFF);
+		a->talking = false;
 	}
 	if (_version == 8 || _features & GF_HUMONGOUS)
 		setTalkingActor(0);
@@ -1828,7 +1831,7 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, speedy, sleUint16, VER(8)),
 		MKLINE(Actor, cost.animCounter, sleUint16, VER(8)),
 		MKLINE(Actor, cost.soundCounter, sleByte, VER(8)),
-		MKLINE(Actor, actorDrawVirScr, sleByte, VER(32)),
+		MKLINE(Actor, drawToBackBuf, sleByte, VER(32)),
 		MKLINE(Actor, flip, sleByte, VER(32)),
 		MKLINE(Actor, skipLimb, sleByte, VER(32)),
 

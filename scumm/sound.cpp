@@ -180,7 +180,7 @@ void Sound::playSound(int soundID, int offset) {
 
 		musicFile.seek(+40, SEEK_CUR);
 		if (musicFile.readUint32LE() == MKID('SGEN')) {
-			// TODO Work out skpi calcution
+			// TODO Work out skip calcution
 			//skip = (soundID - 8001) * 21;
 			musicFile.seek(+skip, SEEK_CUR);
 
@@ -191,8 +191,8 @@ void Sound::playSound(int soundID, int offset) {
 			// Rewind
 			musicFile.seek(-44, SEEK_CUR);
 
-			// Skip header junk
-			musicFile.seek(+20, SEEK_CUR);
+			// Skip SGHD header (16)
+			musicFile.seek(+16, SEEK_CUR);
 
 			// Skip to correct music header
 			if (soundID >= 8000)
@@ -201,8 +201,6 @@ void Sound::playSound(int soundID, int offset) {
 				skip = (soundID - 4001) * 25;
 			musicFile.seek(+skip, SEEK_CUR);
 
-			// Skip to offsets
-			musicFile.seek(+21, SEEK_CUR);
 		}
 
 

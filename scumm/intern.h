@@ -715,6 +715,7 @@ protected:
 	void o72_readFile();
 	void o72_writeFile();
 	void o72_findAllObjects();
+	void o72_deleteFile();
 	void o72_getPixel();
 	void o72_pickVarRandom();
 	void o72_redimArray();

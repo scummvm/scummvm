@@ -59,7 +59,7 @@ enum AkosOpcodes {
 	AKC_SetVar = 0xC010,
 	AKC_CmdQue3 = 0xC015,
 	AKC_ComplexChan = 0xC020,
-	AKC_Unk3 = 0xC021,
+	AKC_C021 = 0xC021,
 	AKC_ComplexChan2 = 0xC025,
 	AKC_Jump = 0xC030,
 	AKC_JumpIfSet = 0xC031,
@@ -88,7 +88,7 @@ enum AkosOpcodes {
 	AKC_Cmd3 = 0xC08B,
 	AKC_Ignore3 = 0xC08C,
 	AKC_Ignore2 = 0xC08D,
-	AKC_Unk1 = 0xC08E,
+	AKC_C08E = 0xC08E,
 	AKC_SkipStart = 0xC090,
 	AKC_SkipE = 0xC090,
 	AKC_SkipNE = 0xC091,
@@ -97,7 +97,10 @@ enum AkosOpcodes {
 	AKC_SkipG = 0xC094,
 	AKC_SkipGE = 0xC095,
 	AKC_ClearFlag = 0xC09F,
-	AKC_Unk4 = 0xC0A1,
+	AKC_C0A0 = 0xC0A0,
+	AKC_C0A1 = 0xC0A1,
+	AKC_C0A2 = 0xC0A2,
+	AKC_C0A3 = 0xC0A3,
 	AKC_EndSeq = 0xC0FF
 };
 
@@ -1137,6 +1140,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			case AKC_StartAnim:
 			case AKC_StartVarAnim:
 			case AKC_CmdQue3:
+			case AKC_C0A3:
 				curpos += 3;
 				break;
 			case AKC_SoundStuff:
@@ -1170,7 +1174,9 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			case AKC_Flip:
 			case AKC_Jump:
 			case AKC_StartAnimInActor:
-			case AKC_Unk4:
+			case AKC_C0A0:
+			case AKC_C0A1:
+			case AKC_C0A2:
 				curpos += 4;
 				break;
 			case AKC_ComplexChan2:
@@ -1184,7 +1190,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 					curpos += (aksq[curpos] & 0x80) ? 2 : 1;
 				}
 				break;
-			case AKC_Unk3:
+			case AKC_C021:
 				curpos += aksq[curpos + 2];
 				break;
 			default:
@@ -1309,9 +1315,9 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 		case AKC_Return:
 		case AKC_EndSeq:
 		case AKC_ComplexChan:
-		case AKC_Unk1:
+		case AKC_C08E:
 		case AKC_ComplexChan2:
-		case AKC_Unk3:
+		case AKC_C021:
 			break;
 
 		case AKC_Cmd3:
@@ -1329,10 +1335,24 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			if (akos_compare(a->getAnimVar(GB(4)), GW(2), code - AKC_SkipStart) == 0)
 				flag_value = true;
 			continue;
-
-		case AKC_Unk4:
-			curpos = GUW(2);
-			break;
+		case AKC_C0A0:
+			//akos_queCommand(8, a, GB(2), 0);
+			continue;
+		case AKC_C0A1:
+			if (a->talking) {
+				curpos = GUW(2);
+				break;
+			}
+			continue;
+		case AKC_C0A2:
+			if (!a->talking) {
+				curpos = GUW(2);
+				break;
+			}
+			continue;
+		case AKC_C0A3:
+			//akos_queCommand(8, a, a->getAnimVar(GB(2), 0);
+			continue;
 		default:
 			if ((code & 0xC000) == 0xC000)
 				error("Undefined uSweat token %X", code);
@@ -1343,7 +1363,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 	int code2 = aksq[curpos];
 	if (code2 & 0x80)
 		code2 = (code2 << 8) | aksq[curpos + 1];
-	assert((code2 & 0xC000) != 0xC000 || code2 == AKC_ComplexChan || code2 == AKC_Return || code2 == AKC_EndSeq || code2 == AKC_Unk1 || code2 == AKC_ComplexChan2);
+	assert((code2 & 0xC000) != 0xC000 || code2 == AKC_ComplexChan || code2 == AKC_Return || code2 == AKC_EndSeq || code2 == AKC_C08E || code2 == AKC_ComplexChan2);
 
 	a->cost.curpos[chan] = curpos;
 

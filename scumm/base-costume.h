@@ -126,7 +126,7 @@ public:
 	virtual void setCostume(int costume) = 0;
 
 
-	byte drawCostume(const VirtScreen &vs, const CostumeData &cost, bool actorDrawVirScr);
+	byte drawCostume(const VirtScreen &vs, const CostumeData &cost, bool drawToBackBuf);
 
 protected:
 

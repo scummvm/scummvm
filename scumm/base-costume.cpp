@@ -25,11 +25,11 @@
 
 namespace Scumm {
 
-byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, const CostumeData &cost, bool drawVirScr) {
+byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, const CostumeData &cost, bool drawToBackBuf) {
 	int i;
 	byte result = 0;
 
-	if (drawVirScr)
+	if (drawToBackBuf)
 		_outptr = vs.getBackPixels(0, 0);
 	else
 		_outptr = vs.getPixels(0, 0);
