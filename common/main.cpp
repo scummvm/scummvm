@@ -200,39 +200,38 @@ int main(int argc, char *argv[]) {
 		launcherDialog(detector, system);
 
 	// Verify the given game name
-	if (detector.detectMain())
-		goto exitNow;
+	if (!detector.detectMain()) {
+		// Set the window caption to the game name
+		prop.caption = g_config->get("description", detector._gameFileName);
+		if (prop.caption == NULL)	
+			prop.caption = detector.getGameName().c_str();
+		system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 
-	// Set the window caption to the game name
-	prop.caption = g_config->get("description", detector._gameFileName);
-	if (prop.caption == NULL)	
-		prop.caption = detector.getGameName().c_str();
-	system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
+		// See if the game should default to 1x scaler
+		if ((detector._default_gfx_mode) && 
+		   (detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
+			prop.gfx_mode = GFX_NORMAL;
+			system->property(OSystem::PROP_SET_GFX_MODE, &prop);
+		}
 
-	// See if the game should default to 1x scaler
-	if ((detector._default_gfx_mode) && 
-	   (detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
-		prop.gfx_mode = GFX_NORMAL;
-		system->property(OSystem::PROP_SET_GFX_MODE, &prop);
+		// Create the game engine
+		Engine *engine = Engine::createFromDetector(&detector, system);
+
+		// print a message if gameid is invalid
+		if (engine == NULL)
+			error("%s is an invalid target. Use the -z parameter to list targets\n", 
+					detector._gameFileName.c_str());
+
+		// Run the game engine
+		engine->go();
+
+		// Stop all sound processing now (this prevents some race conditions later on)
+		system->clear_sound_proc();
+
+		// Free up memory
+		delete engine;
 	}
 
-	// Create the game engine
-	Engine *engine = Engine::createFromDetector(&detector, system);
-
-	// print a message if gameid is invalid
-	if (engine == NULL)
-		error("%s is an invalid target. Use the -z parameter to list targets\n", 
-				detector._gameFileName.c_str());
-
-	// Run the game engine
-	engine->go();
-
-	// Stop all sound processing now (this prevents some race conditions later on)
-	system->clear_sound_proc();
-
-	// Free up memory
-	delete engine;
-exitNow:
 	delete g_gui;
 	delete g_config;
 
