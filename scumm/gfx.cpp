@@ -206,7 +206,7 @@ Gdi::Gdi(ScummEngine *vm) {
 	memset(this, 0, sizeof(*this));
 	_vm = vm;
 	_roomPalette = vm->_roomPalette;
-	if (vm->_features & GF_AMIGA)
+	if ((vm->_features & GF_AMIGA) && (vm->_version >= 4))
 		_roomPalette += 16;
 }
 
