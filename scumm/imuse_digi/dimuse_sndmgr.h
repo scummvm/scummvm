@@ -37,7 +37,6 @@ public:
 #define MAX_IMUSE_SOUNDS 16
 #define MAX_IMUSE_JUMPS 80
 #define MAX_IMUSE_REGIONS 85
-#define MAX_IMUSE_MARKERS 60
 #define MAX_IMUSE_SYNCS 4
 
 #define IMUSE_RESOURCE 1
