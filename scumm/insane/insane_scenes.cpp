@@ -34,6 +34,11 @@
 namespace Scumm {
 
 void Insane::runScene(int arraynum) {
+#ifndef FTDOSDEMO
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+		return;
+#endif
+
 	_insaneIsRunning = true;
 	_player = new SmushPlayer(_vm, _speed);
 	_player->insanity(true);

@@ -85,12 +85,13 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			break;
 		}
 
-		if (_val32d == -1) {
+		if (_approachAnim == -1) {
 			proc62(); //PATCH
-			_val32d = _enemy[_currEnemy].field_34;
+			_currEnemy = EN_VULTM2;
+			_approachAnim = _enemy[_currEnemy].apprAnim;
 		}
 
-		if (_val32d == par4)
+		if (_approachAnim == par4)
 			clearBit(par5);
 		else
 			setBit(par5);
@@ -98,11 +99,11 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	case 3:
 		if (par3 == 1) {
 			setBit(b.getWord());
-			_val32d = -1;
+			_approachAnim = -1;
 		}
 		break;
 	case 4:
-		if (par3 == 1 && (_val32d < 0 || _val32d > 4))
+		if (par3 == 1 && (_approachAnim < 0 || _approachAnim > 4))
 			setBit(b.getWord());
 		break;
 	case 5:
@@ -138,29 +139,12 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			_roadBranch = true;
 			_iactSceneId = par4;
 			break;
-		case 7:
-			if (readArray(4) != 0)
-				return;
-
-			smlayer_drawSomething(renderBitmap, codecparam, 160-13, 20-10, 3, // QW
-								  _smush_icons2Nut, 8, 0, 0);
-			_roadStop = true;
-			break;
-		case 8:
-			if (readArray(4) == 0 || readArray(6) == 0)
-				return;
-
-			writeArray(1, _posBrokenTruck);
-			writeArray(3, _val57d);
-			smush_setToFinish();
-
-			break;
 		case 25:				
 			_roadBumps = true;
 			_actor[0].y1 = -_actor[0].y1;
 			break;
 		case 11:
-			if (_val32d >= 1 && _val32d <= 4 && !_needSceneSwitch)
+			if (_approachAnim >= 1 && _approachAnim <= 4 && !_needSceneSwitch)
 				queueSceneSwitch(13, _smush_minefiteFlu, "minefite.san", 64, 0,
 								 _continueFrame1, 1300);
 			break;
@@ -192,7 +176,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		break;
 	}
 
-	if (_val32d < 0 || _val32d > 4)
+	if (_approachAnim < 0 || _approachAnim > 4)
 		if (readArray(8)) {
 			smlayer_drawSomething(renderBitmap, codecparam, 270-19, 20-18, 3, 
 								  _smush_iconsNut, 20, 0, 0);
@@ -581,7 +565,7 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	case 4:
 		if (par3 == 1) {
 			setBit(b.getWord());
-			_val32d = -1;
+			_approachAnim = -1;
 		}
 		break;
 	case 6:

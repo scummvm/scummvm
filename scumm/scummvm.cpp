@@ -190,7 +190,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"ft", "Full Throttle", GID_FT, 7, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
 	{"ftdemo", "Full Throttle (Mac. Demo)", GID_FT, 7, MDT_NONE,
-	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
+	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, 0},
 	{"ftpcdemo", "Full Throttle (PC Demo)", GID_FT, 7, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, "ft"},
 
@@ -644,6 +644,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 		if (_features & GF_AFTER_HEV7) {
 			sprintf(buf, "%s.he0", _gameName.c_str());
+		} else if ((_gameId == GID_FT) && (_features & GF_PC) && (_features & GF_DEMO)) {
+			sprintf(buf, "%s.000", _gameName.c_str());
 		} else if (_version >= 7) {
 			sprintf(buf, "%s.la0", _gameName.c_str());
 		} else if (_features & GF_HUMONGOUS)

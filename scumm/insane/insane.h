@@ -53,6 +53,8 @@ namespace Scumm {
 
 #define INSANE_DBG 5
 
+#undef FTDOSDEMO
+
 class Insane {
  public:
 	Insane(ScummEngine_v6 *scumm);
@@ -172,7 +174,7 @@ class Insane {
 	bool _mineCaveIsNear;
 	bool _objectDetected;
 	bool _roadBumps;
-	int32 _val32d;
+	int32 _approachAnim;
 	int32 _val54d;
 	int32 _val57d;
 	bool _val115_;
@@ -195,7 +197,7 @@ class Insane {
 		int32 costume5;
 		int16 costumevar;
 		int32 maxframe;
-		int32 field_34;
+		int32 apprAnim;
 	};
   
 	struct enemy _enemy[9];

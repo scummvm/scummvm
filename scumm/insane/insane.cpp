@@ -39,8 +39,6 @@
 #include "scumm/insane/insane.h"
 
 // TODO (in no particular order):
-// o Long TRS messages get rendered just in one line, so text overlaps
-// o Approaching enemy animation is wrong sometimes
 // o Code review/cleanup
 // o DOS demo INSANE
 
@@ -53,30 +51,33 @@ static const int actorAnimationData[21] = {20, 21, 22, 23, 24, 25, 26, 13, 14, 1
 Insane::Insane(ScummEngine_v6 *scumm) {
 	_vm = scumm;
 	
-	// Demo has different insane, so disable it now
-	if (_vm->_features & GF_DEMO)
+#ifndef FTDOSDEMO
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
 		return;
+#endif
 
 	initvars();
 
-	readFileToMem("roadrash.rip", &_smush_roadrashRip);
-	readFileToMem("roadrsh2.rip", &_smush_roadrsh2Rip);
-	readFileToMem("roadrsh3.rip", &_smush_roadrsh3Rip);
-	readFileToMem("goglpalt.rip", &_smush_goglpaltRip);
-	readFileToMem("tovista1.flu", &_smush_tovista1Flu);
-	readFileToMem("tovista2.flu", &_smush_tovista2Flu);
-	readFileToMem("toranch.flu", &_smush_toranchFlu);
-	readFileToMem("minedriv.flu", &_smush_minedrivFlu);
-	readFileToMem("minefite.flu", &_smush_minefiteFlu);
+	if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))) {
+		readFileToMem("roadrash.rip", &_smush_roadrashRip);
+		readFileToMem("roadrsh2.rip", &_smush_roadrsh2Rip);
+		readFileToMem("roadrsh3.rip", &_smush_roadrsh3Rip);
+		readFileToMem("goglpalt.rip", &_smush_goglpaltRip);
+		readFileToMem("tovista1.flu", &_smush_tovista1Flu);
+		readFileToMem("tovista2.flu", &_smush_tovista2Flu);
+		readFileToMem("toranch.flu", &_smush_toranchFlu);
+		readFileToMem("minedriv.flu", &_smush_minedrivFlu);
+		readFileToMem("minefite.flu", &_smush_minefiteFlu);
+		_smush_bensgoggNut = new NutRenderer(_vm);
+		_smush_bensgoggNut->loadFont("bensgogg.nut", _vm->getGameDataPath());
+		_smush_bencutNut = new NutRenderer(_vm);
+		_smush_bencutNut->loadFont("bencut.nut", _vm->getGameDataPath());
+	}
 
 	_smush_iconsNut = new NutRenderer(_vm);
 	_smush_iconsNut->loadFont("icons.nut", _vm->getGameDataPath());
 	_smush_icons2Nut = new NutRenderer(_vm);
 	_smush_icons2Nut->loadFont("icons2.nut", _vm->getGameDataPath());
-	_smush_bensgoggNut = new NutRenderer(_vm);
-	_smush_bensgoggNut->loadFont("bensgogg.nut", _vm->getGameDataPath());
-	_smush_bencutNut = new NutRenderer(_vm);
-	_smush_bencutNut->loadFont("bencut.nut", _vm->getGameDataPath());
 }
 
 Insane::~Insane(void) {
@@ -154,7 +155,7 @@ void Insane::initvars(void) {
 	_benHasGoggles = false;
 	_mineCaveIsNear = false;
 	_objectDetected = false;
-	_val32d = -1;
+	_approachAnim = -1;
 	_val54d = 0;
 	_val57d = 0;
 	_val115_ = false;
@@ -453,7 +454,7 @@ void Insane::init_enemyStruct(int n, int32 handler, int32 initializer,
 								   int16 occurences, int32 maxdamage, int32 field_10,
 								   int32 weapon, int32 sound, const char *filename,
 								   int32 costume4, int32 costume6, int32 costume5,
-								   int16 costumevar, int32 maxframe, int32 field_34) {
+								   int16 costumevar, int32 maxframe, int32 apprAnim) {
 	assert(strlen(filename) < 20);
 
 	_enemy[n].handler = handler;
@@ -469,7 +470,7 @@ void Insane::init_enemyStruct(int n, int32 handler, int32 initializer,
 	_enemy[n].costume5 = costume5;
 	_enemy[n].costumevar = costumevar;
 	_enemy[n].maxframe = maxframe;
-	_enemy[n].field_34 = field_34;
+	_enemy[n].apprAnim = apprAnim;
 }
 
 void Insane::init_fluConfStruct(int n, int sceneId, byte **fluPtr, 
@@ -597,11 +598,6 @@ void Insane::readFileToMem(const char *name, byte **buf) {
 
 void Insane::startVideo(const char *filename, int num, int argC, int frameRate, 
 						 int doMainLoop, byte *fluPtr, int32 numFrames) {
-
-	// Demo has different insane, so disable it now
-	if (_vm->_features & GF_DEMO)
-		return;
-
 	_smush_curFrame = 0;
 	_smush_isSanFileSetup = 0;
 	_smush_setupsan4 = 0;
@@ -680,7 +676,7 @@ void Insane::setupValues(void) {
 	_actor[0].cursorX = 0;
 	_actor[0].lost = false;
 	_currEnemy = -1;
-	_val32d = -1;
+	_approachAnim = -1;
 	smush_warpMouse(160, 100, -1);
 }
 
@@ -947,8 +943,7 @@ bool Insane::actor1StateFlags(int state) {
 void Insane::escapeKeyHandler(void) {
 	struct fluConf *flu;
 
-	//if (!_ptrMainLoop) { } // We don't need it
- 	// Demo has different insane, so disable it now
+	// Demos have just one scene
 	if (!_insaneIsRunning || _vm->_features & GF_DEMO) {
 		smush_setToFinish();
 		return;
@@ -1275,12 +1270,15 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 	// bit 1 - not used     2
 	// bit 2 - ???          4
 	// bit 3 - wrap around  8
-	switch (flags & 9) {
+	switch (flags) {
 	case 0: 
 		sf->drawStringAbsolute(str, renderBitmap, _player->_width, pos_x, pos_y);
 		break;
 	case 1:
 		sf->drawStringCentered(str, renderBitmap, _player->_width, _player->_height, pos_x, MAX(pos_y, top));
+		break;
+	case 5:
+		sf->drawStringWrapCentered(str, renderBitmap, _player->_width, _player->_height, pos_x, pos_y, 10, 300);
 		break;
 	default:
 		warning("Insane::smlayer_showStatusMsg. Not handled flags: %d", flags);
@@ -1295,6 +1293,8 @@ void Insane::procSKIP(Chunk &b) {
 	par1 = b.getWord();
 	par2 = b.getWord();
 
+	_player->_skipNext = false;
+
 	if (!par2) {
 		if (isBitSet(par1))
 			_player->_skipNext = true;
@@ -1308,24 +1308,21 @@ void Insane::procSKIP(Chunk &b) {
 }
 
 bool Insane::isBitSet(int n) {
-	if (n >= 0x80 * 8)
-		return false;
+	assert (n < 0x80);
 
-	return ((_iactBits[n / 8] & (0x80 >> (n % 8))) != 0);
+	return (_iactBits[n] != 0);
 }
 
 void Insane::setBit(int n) {
-	if (n >= 0x80 * 8)
-		return;
+	assert (n < 0x80);
 
-	_iactBits[n / 8] |= 0x80 >> (n % 8);
+	_iactBits[n] = 1;
 }
 
 void Insane::clearBit(int n) {
-	if (n >= 0x80 * 8)
-		return;
+	assert (n < 0x80);
 
-	_iactBits[n / 8] &= ~(0x80 >> (n % 8));
+	_iactBits[n] = 0;
 }
 
 void Insane::smlayer_setActorFacing(int actornum, int actnum, int frame, int direction) {

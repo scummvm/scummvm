@@ -2040,7 +2040,8 @@ void ScummEngine::readMAXS() {
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 
-		if ((_gameId == GID_FT) && (_features & GF_DEMO))
+		if ((_gameId == GID_FT) && (_features & GF_DEMO) && 
+		    (_features & GF_PC))
 			_numGlobalScripts = 300;
 		else
 			_numGlobalScripts = 2000;

@@ -2557,21 +2557,19 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 
 				debug(1, "INSANE Arg: %d %d", args[1], args[2]);
 
-				SmushPlayer *sp = new SmushPlayer(this, speed);
-
 				// INSANE mode 0: SMUSH movie playback
 				if (args[1] == 0) {
-					sp->play((char *)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
-				} else if (_gameId == GID_FT) {
-					const int insaneVarNum = (_features & GF_DEMO) ? 232 : 233;
+					SmushPlayer *sp = new SmushPlayer(this, speed);
 
-					// PC demo uses different INSANE
-					if (!(_features & GF_DEMO)) {
-						_insane->setSmushParams(speed);
-						_insane->runScene(insaneVarNum);
-					}
+					sp->play((char *)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
+					delete sp;
+				} else if (_gameId == GID_FT) {
+					const int insaneVarNum = ((_features & GF_DEMO) && (_features & GF_PC)) 
+						? 232 : 233;
+
+					_insane->setSmushParams(speed);
+					_insane->runScene(insaneVarNum);
 				}
-				delete sp;
 			}
 			break;
 		case 12:
