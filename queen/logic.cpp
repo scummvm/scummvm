@@ -2316,9 +2316,11 @@ void Logic::handlePinnacleRoom() {
 
 	// camera follows Joe again
 	_graphics->cameraBob(0);
-
+	
 	// XXX COMPANEL=1;
-	_display->panel(true);
+	// _display->panel(true); // cyx: to me, that's completely useless
+
+	_display->palFadeOut(0, 223, 7);
 }
 
 
@@ -2510,7 +2512,7 @@ void Logic::sceneStart(bool showMouseCursor) {
 	_display->mouseCursorShow(showMouseCursor);
 
 	if (1 == _scene && _input->cutawayRunning()) {
-		_display->panel(false);
+		_display->panel(true);
 		_display->palFadePanel();
 	}
 

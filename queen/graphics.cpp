@@ -325,7 +325,6 @@ void BobSlot::animReset() {
 
 	if(active && animating) {
 		const AnimFrame *af = anim.string.buffer;
-		printf("animReset() - %X %X", af->frame, af->speed);
 		if (af != NULL) {
 			anim.string.curPos = af;
 			frameNum = af->frame;

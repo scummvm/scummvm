@@ -1322,12 +1322,12 @@ int16 Talk::selectSentence() {
 
 						if (zone > 0) {
 							for (y = _logic->zoneBox(ZONE_PANEL, zone).y1; y < _logic->zoneBox(ZONE_PANEL, zone).y2; y += 10)
-								_graphics->textColor(y, INK_JOE);
+								_graphics->textColor(150 + y, INK_JOE);
 						}
 
 						if (oldZone > 0) {
 							for (y = _logic->zoneBox(ZONE_PANEL, oldZone).y1; y < _logic->zoneBox(ZONE_PANEL, oldZone).y2; y += 10)
-								_graphics->textColor(y, INK_TALK_NORMAL);
+								_graphics->textColor(150 + y, INK_TALK_NORMAL);
 						}
 
 						oldZone = zone;

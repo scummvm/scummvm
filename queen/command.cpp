@@ -841,6 +841,9 @@ bool Command::executeIfCutaway(const char *description) {
 
 	if (strlen(description) > 4 && 
 		scumm_stricmp(description + strlen(description) - 4, ".cut") == 0) {
+
+		_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
+
 		char nextCutaway[20];
 		memset(nextCutaway, 0, sizeof(nextCutaway));
 		_logic->playCutaway(description, nextCutaway);
