@@ -10,6 +10,26 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
  SCUMM:
    - Added graphics decoders for 3DO Humongous Entertainment games
+   - Rewrote parts of the text engine for improved subtitle support
+   - Many improvements made to iMuseDigital (used by The Dig, FT and COMI)
+   - Fixed several annoying bugs
+   - Fixed crash on 64 bit architectures (like AMD64)
+
+ Queen:
+   - Various fixes [TODO: Somebody of the Queen team please fill this in]
+
+ Sword1:
+   - ??? [TODO: Somebody of the Sword1 team please fill this in]
+
+ Sword2:
+   - Various fixes [TODO: Somebody of the Sword2 team please fill this in]
+
+ BASS
+   - ???
+
+ Simon
+   - ???
+ 
 
 0.6.0 (2004-03-14)
  New Games:
@@ -31,11 +51,11 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 	 and plugin capabilities
 
  Simon:
-  - Added data files decoder for Amiga disk versions
-  - Added support for inventory graphics in Amiga versions
-  - Fixed various brief freezes
-  - Fixed minor glitches in load/save dialog in non-English versions
-  - Fixed missing inventory arrows in some versions of Simon the Sorcerer 1
+   - Added data files decoder for Amiga disk versions
+   - Added support for inventory graphics in Amiga versions
+   - Fixed various brief freezes
+   - Fixed minor glitches in load/save dialog in non-English versions
+   - Fixed missing inventory arrows in some versions of Simon the Sorcerer 1
 
  SCUMM:
    - Many, Many, Many SCUMM game engine fixes. Many of them. And that's a lot.
