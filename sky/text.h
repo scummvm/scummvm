@@ -63,7 +63,7 @@ protected:
 		uint8 *addr;
 		uint32 charHeight;
 		uint32 charSpacing;
-	} _mainCharacterSet, _linkCharacterSet, _controlCharacterSet;	
+	} _mainCharacterSet, _linkCharacterSet, _controlCharacterSet;
 	
 	uint32	_curCharSet;
 	uint8	*_characterSet;
@@ -85,6 +85,15 @@ protected:
 	uint32	_dtLastWidth;
 	bool	_dtCentre;	//set for centre text
 	uint32	_lowTextWidth, _mouseOfsX, _mouseOfsY;
+
+	static const HuffTree _huffTree_00267[]; // trees moved to hufftext.cpp
+	static const HuffTree _huffTree_00288[];
+	static const HuffTree _huffTree_00303[];
+	static const HuffTree _huffTree_00331[];
+	static const HuffTree _huffTree_00348[];
+	static const HuffTree _huffTree_00365[];
+	static const HuffTree _huffTree_00368[];
+	static const HuffTree _huffTree_00372[];
 
 public:
 	uint32 _dtLetters;	//no of chars in message
