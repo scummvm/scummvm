@@ -89,10 +89,14 @@ int Timer::handler(int t) {
 	interval = 1000 * (_thisTime - _lastTime);
 
 	for (l = 0; l < MAX_TIMERS; l++) {
-		if ((_timerSlots[l].procedure) && (_timerSlots[l].interval > 0)) {
+		if (_timerSlots[l].procedure && _timerSlots[l].interval > 0) {
 			_timerSlots[l].counter -= interval;
-			while (_timerSlots[l].counter <= 0) {
-				assert(_timerSlots[l].interval > 0);
+			// FIXME: We only check the value of _timerSlots[l].interval here
+			// because the timer might remove itself.
+			// Strictly spoken, that is a dirty thing to do for a timer, but for
+			// now the bundle timer requires this. Of course the whole bundle
+			// music timer is kind of scary anyway...
+			while (_timerSlots[l].counter <= 0 && _timerSlots[l].interval > 0) {
 				_timerSlots[l].counter += _timerSlots[l].interval;
 				_timerSlots[l].procedure(_timerSlots[l].refCon);
 			}
@@ -108,10 +112,10 @@ bool Timer::installProcedure(TimerProc procedure, int32 interval, void *refCon) 
 
 	for (int l = 0; l < MAX_TIMERS; l++) {
 		if (!_timerSlots[l].procedure) {
+			_timerSlots[l].procedure = procedure;
 			_timerSlots[l].interval = interval;
 			_timerSlots[l].counter = interval;
 			_timerSlots[l].refCon = refCon;
-			_timerSlots[l].procedure = procedure;
 			return true;
 		}
 	}
