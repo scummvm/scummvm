@@ -859,7 +859,8 @@ void Scumm::loadLanguageBundle() {
 	} else {
 		for (i = 0; i < _languageIndexSize; i++) {
 			// First 8 chars in the line give the string ID / 'tag'
-			for (int j = 0; j < 8 && !isspace(*ptr); j++, ptr++)
+			int j;
+			for (j = 0; j < 8 && !isspace(*ptr); j++, ptr++)
 				_languageIndex[i].tag[j] = toupper(*ptr);
 			_languageIndex[i].tag[j] = 0;
 	
