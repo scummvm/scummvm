@@ -112,6 +112,7 @@ const char *Config::get(const String &key, const String &d) const
 	else
 		domain = d;
 
+	domain.toLowercase();
 	if (domains.contains(domain) && domains[domain].contains(key))
 		return domains[domain][key].c_str();
 
@@ -145,6 +146,7 @@ void Config::set(const String &key, const String &value, const String &d)
 	else
 		domain = d;
 
+	domain.toLowercase();
 	domains[domain][key] = value;
 }
 
@@ -203,21 +205,27 @@ void Config::flush() const
 
 void Config::rename_domain(const String &d)
 {
-	if (d == defaultDomain)
+	String domain(d);
+	domain.toLowercase();
+
+	if (domain == defaultDomain)
 		return;
 
 	StringMap &oldHash = domains[defaultDomain];
-	StringMap &newHash = domains[d];
+	StringMap &newHash = domains[domain];
 
 	newHash.merge(oldHash);
 	
 	domains.remove(defaultDomain);
 	
-	defaultDomain = d;
+	defaultDomain = domain;
 }
 
 void Config::delete_domain(const String &d)
 {
+	String domain(d);
+	domain.toLowercase();
+
 	domains.remove(d);
 }
 
