@@ -638,58 +638,46 @@ static int gfxPrimitivesCompareInt(const void *a, const void *b) {
 	return (*(const int *)a) - (*(const int *)b);
 }
 
-static void fillQuad(ScummEngine *scumm, int16 vx[4], int16 vy[4], int color) {
+static void fillQuad(ScummEngine *scumm, Common::Point v[4], int color) {
 	const int N = 4;
 	int i;
 	int y;
 	int miny, maxy;
-	int x1, y1;
-	int x2, y2;
-	int ind1, ind2;
-	int ints;
+	Common::Point pt1, pt2;
 
 	int polyInts[N];
 
 
 	// Determine Y maxima
-	miny = vy[0];
-	maxy = vy[0];
+	miny = maxy = v[0].y;
 	for (i = 1; i < N; i++) {
-		if (vy[i] < miny) {
-			miny = vy[i];
-		} else if (vy[i] > maxy) {
-			maxy = vy[i];
+		if (v[i].y < miny) {
+			miny = v[i].y;
+		} else if (v[i].y > maxy) {
+			maxy = v[i].y;
 		}
 	}
 
 	// Draw, scanning y
 	for (y = miny; y <= maxy; y++) {
-		ints = 0;
+		int ints = 0;
 		for (i = 0; i < N; i++) {
-			if (i == 0) {
-				ind1 = N - 1;
-			} else {
-				ind1 = i - 1;
+			int ind1 = i;
+			int ind2 = (i + 1) % N;
+			pt1 = v[ind1];
+			pt2 = v[ind2];
+			if (pt1.y > pt2.y) {
+				SWAP(pt1, pt2);
 			}
-			ind1 = (i - 1 + N) % N;
-			ind2 = i;
-			y1 = vy[ind1];
-			y2 = vy[i];
-			if (y1 < y2) {
-				x1 = vx[ind1];
-				x2 = vx[i];
-			} else if (y1 > y2) {
-				y2 = vy[ind1];
-				y1 = vy[i];
-				x2 = vx[ind1];
-				x1 = vx[i];
-			} else {
-				continue;
-			}
-			if ((y >= y1) && (y < y2)) {
-				polyInts[ints++] = (y - y1) * (x2 - x1) / (y2 - y1) + x1;
-			} else if ((y == maxy) && (y > y1) && (y <= y2)) {
-				polyInts[ints++] = (y - y1) * (x2 - x1) / (y2 - y1) + x1;
+
+			if (pt1.y <= y && y <= pt2.y) {
+				if (y == pt1.y && y == pt2.y) {
+					hlineColor(scumm, pt1.x, pt2.x, y, color);
+				} else if ((y >= pt1.y) && (y < pt2.y)) {
+					polyInts[ints++] = (y - pt1.y) * (pt2.x - pt1.x) / (pt2.y - pt1.y) + pt1.x;
+				} else if ((y == maxy) && (y > pt1.y) && (y <= pt2.y)) {
+					polyInts[ints++] = (y - pt1.y) * (pt2.x - pt1.x) / (pt2.y - pt1.y) + pt1.x;
+				}
 			}
 		}
 		qsort(polyInts, ints, sizeof(int), gfxPrimitivesCompareInt);
@@ -704,21 +692,17 @@ static void fillQuad(ScummEngine *scumm, int16 vx[4], int16 vy[4], int color) {
 
 void ScummDebugger::drawBox(int box) {
 	BoxCoords coords;
-	int16 rx[4], ry[4];
+	Common::Point r[4];
 
 	_vm->getBoxCoordinates(box, &coords);
 
-	rx[0] = coords.ul.x;
-	ry[0] = coords.ul.y;
-	rx[1] = coords.ur.x;
-	ry[1] = coords.ur.y;
-	rx[2] = coords.lr.x;
-	ry[2] = coords.lr.y;
-	rx[3] = coords.ll.x;
-	ry[3] = coords.ll.y;
+	r[0] = coords.ul;
+	r[1] = coords.ur;
+	r[2] = coords.lr;
+	r[3] = coords.ll;
 
 	// TODO - maybe use different colors for each box, and/or print the box number inside it?
-	fillQuad(_vm, rx, ry, 13);
+	fillQuad(_vm, r, 13);
 
 	VirtScreen *vs = _vm->findVirtScreen(coords.ul.y);
 	if (vs != NULL)
