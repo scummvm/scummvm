@@ -1157,7 +1157,7 @@ bool ScummEngine_v7he::polygonContains(WizPolygon &pol, int x, int y) {
 	bool curdir;
 	bool r = false;
 
-	for (int i = 0; i < pol.numVerts - 1; i++) {
+	for (int i = 0; i < pol.numVerts; i++) {
 		curdir = (y <= pol.vert[i].y);
 
 		if (curdir != diry) {
