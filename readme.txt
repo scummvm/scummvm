@@ -202,8 +202,9 @@ and you wish to disable subtitles and run in fullscreen:
   C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ ft
 
 Note that if you run the game once this way, and specify the -w commandline
-parameter (or edit scummvm.ini manually), ScummVM will remember the path,
-and other settings for this game.
+parameter (or edit the config file manually), ScummVM will remember the
+path, and other settings for this game. Documentation on the configuration
+file can be found near the end of this readme.
 
 The short game name you see at the end of the command line is very
 important. A short list is contained at the top of this file. You can also
@@ -236,7 +237,7 @@ Command Line Options:
         -a         - Enable amiga pal conversion, for playing Amiga versions
         -d[<num>]  - Set debug verbosity to <num>
         -w[<file>] - Write configuration file
-        -l<file>   - Load alternate configration file (default: scummvm.ini)
+        -l<file>   - Load alternate configration file
 
 In game Hot Keys:
 -----------------
@@ -392,6 +393,39 @@ is kept standard:
 -Tint16 -Tint32 -TArrayHeader -TMemBlkHeader -TVerbSlot -TObjectData
 -TImageHeader -TRoomHeader -TCodeHeader -TResHdr -TBompHeader
 -TMidiChannelAdl -TGui -TScumm -TSoundEngine -TPart -TPlayer
+
+
+Configuration file:
+-------------------
+By default, the configuration file is saved in, and loaded from:
+
+        Windows: <windir>\scummvm.ini,
+        Linux:   ~/.scummvmrc
+        Others:  scummvm.ini in the current directory
+
+An example config file is as follows:
+
+        [scummvm]
+        gfx_mode=supereagle
+        fullscreen=true
+
+        [tentacle]
+        path=C:\tentacle\
+        nosubtitles=true
+        master_volume=98
+        music_volume=40
+        sfx_volume=255
+
+        [loomcd]
+        cdrom=1
+        path=C:\loom\
+        talkspeed=55
+        
+        [monkey2]
+        path=C:\amiga_mi2\
+        music_driver=windows
+        amiga=true
+
 
 
 Credits:

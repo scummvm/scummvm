@@ -144,7 +144,15 @@ game settings!
 	/* On Unix, do a quick endian / alignement check before starting */
 	do_memory_test();
 #else
-	scummcfg = new Config(DEFAULT_CONFIG_FILE, "scummvm");
+    char scummhome[255];
+	#if defined (WIN32) && !defined(_WIN32_WCE)
+		GetWindowsDirectory(scummhome, 255);
+		strcat(scummhome, "\\");
+		strcat(scummhome, DEFAULT_CONFIG_FILE);
+	#else	
+		strcpy(scummhome,DEFAULT_CONFIG_FILE);
+	#endif
+	scummcfg = new Config(scummhome, "scummvm");
 #endif
 	scummcfg->set("versioninfo", SCUMMVM_VERSION);
 	if (detector.detectMain(argc, argv))
