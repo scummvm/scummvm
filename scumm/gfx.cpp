@@ -1293,12 +1293,12 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width)
 	}
 
 	code = *bmap_ptr++;
-	debug(0, "code: %d", code);
+
 	if ((code >= 134 && code <= 138) || (code >= 144 && code <= 148)) {
 		int decomp_shr = code % 10;
 		int decomp_mask = 0xFF >> (8 - decomp_shr);
 
-		decompressBMAPbg((byte *)vs->backBuf + startstrip * 8, width, vs->w, vs->h, bmap_ptr, decomp_shr, decomp_mask);
+		decompressBMAPbg((byte *)vs->backBuf, width, vs->w, vs->h, bmap_ptr, decomp_shr, decomp_mask);
 	}
 	copyVirtScreenBuffers(0, 0, vs->w - 1, vs->h - 1);
 
@@ -1336,60 +1336,52 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width)
 		}
 }
 
-void Gdi::decompressBMAPbg(byte *dst, int screenwidth, int w, int h, const byte *ptr, int shr, int mask) {
-	int reswidth = screenwidth - w;
-	int al, cl, eax, w_, ebp, ecx, ebx, edx;
+void Gdi::decompressBMAPbg(byte *dst, int screenwidth, int w, int height, const byte *src, int shr, int mask) {
+	uint32 color, dataBit, data, shift, iteration;
 
-	// FIXME: This will be translated to C after debugging
-	ebx = *ptr++;
-	al = *ptr++;
-	cl = *ptr++;
-	eax = (cl << 8) | al;
-	cl = *ptr++;
-	eax |= cl << 16;
+     color = *src;
+	 src++;
+	 data = READ_LE_UINT24(src);
+	 src += 3;
+     shift = 24;
 
-	edx = 24;
-
-	do {
-		w_ = w;
-
-		do {
-			*dst++ = ebx;
-			if (edx <= 16) {
-				ebp = *ptr++;
-				ebp <<= edx;
-				eax |= ebp;
-				edx += 8;
-				ebp = *ptr++;
-				ebp <<= edx;
-				eax |= ebp;
-				edx += 8;
-			}
-			ecx = eax & 1;
-			edx--;
-			eax >>= 1;
-
-			if (ecx) {
-				ecx = eax & 1;
-				edx--;
-				eax >>= 1;
-				if (!ecx) {
-					ebx = eax & mask;
-					edx -= shr;
-					eax >>= shr;
-				} else {
-					ecx = eax & 7;
-					edx -= 3;
-					eax >>= 3;
-					if (ecx >= 4)
-						ebx += ecx - 3;
-					else
-						ebx += ecx - 4;
-				}
-			}
-		} while (--w_ > 0);
-		dst += reswidth;
-	} while (--h > 400); // FIXME: should be zero. But overwrites memory due to bugs
+	 while (height) {
+		 for (iteration = 0; iteration < w; iteration++) {
+			 *dst++ = color;
+			 if (shift <= 16) {
+				 data |= *src << shift;
+				 src++;
+				 shift += 8;
+				 data |= *src << shift;
+				 src++;
+				 shift += 8;
+			 }
+			 
+			 dataBit = data & 1;
+			 shift--;
+			 data >>= 1;
+			 if (dataBit) {
+				 dataBit = data & 1;
+				 shift--;
+				 data >>= 1;
+				 if (!dataBit) {
+					 color = mask & data;
+					 shift -= shr;
+					 data >>= shr;
+				 } else {
+					 dataBit = data & 7;
+					 shift -= 3;
+					 data >>= 3;
+					 if (dataBit >= 4)
+						 color += dataBit - 3;
+					 else
+						 color += dataBit - 4;
+				 }
+			 }
+		 }
+		 dst += screenwidth - w;
+		 height--;
+	 }
 }
 
 void Gdi::copyVirtScreenBuffers(int x, int y, int w, int h) {
