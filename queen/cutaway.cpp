@@ -140,7 +140,7 @@ void Cutaway::load(const char *filename) {
 
 	byte *bankNamesPtr  = _fileData + READ_BE_UINT16(ptr);
 	ptr += 2;
-	debug(0, "Bank name file offset = %08x", 20 + bankNamesPtr - _fileData);
+	//debug(0, "Bank name file offset = %08x", 20 + bankNamesPtr - _fileData);
 
 	_objectData = ptr;
 
@@ -182,7 +182,7 @@ void Cutaway::loadStrings(byte *ptr) {
 	int bankNameCount = READ_BE_UINT16(ptr);
 	ptr += 2;
 
-	debug(0, "Bank name count = %i", bankNameCount);
+	//debug(0, "Bank name count = %i", bankNameCount);
 
 	/*
 		 The _bankNames zero-based array is the one-based BANK_NAMEstr array in
@@ -193,7 +193,7 @@ void Cutaway::loadStrings(byte *ptr) {
 		ptr = Talk::getString(ptr, _bankNames[j], MAX_FILENAME_LENGTH);
 
 		if (_bankNames[j][0]) {
-			debug(0, "Bank name %i = '%s'", j, _bankNames[j]);
+			//debug(0, "Bank name %i = '%s'", j, _bankNames[j]);
 			j++;
 		}
 	}
@@ -664,7 +664,7 @@ Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
 byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 	// lines 1531-1607 in cutaway.c
 
-	debug(0, "[Cutaway::getCutawayAnim] header=%i", header);
+	//debug(0, "[Cutaway::getCutawayAnim] header=%i", header);
 
 	// XXX why is Joe flying???
 	if (_logic->currentRoom() == 112 && header == 0) {
@@ -881,10 +881,10 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 					// Unpack animation, but do not unpack moving people
 
 					if (!((objAnim[i].mx || objAnim[i].my) && InRange(objAnim[i].object, 0, 3))) {
-						debug(0, "Animation - bankUnpack(%i, %i, %i);",
+						/*debug(0, "Animation - bankUnpack(%i, %i, %i);",
 								objAnim[i].unpackFrame, 
 								objAnim[i].originalFrame,
-								objAnim[i].bank);
+								objAnim[i].bank);*/
 						_graphics->bankUnpack(
 								objAnim[i].unpackFrame, 
 								objAnim[i].originalFrame,
@@ -1434,7 +1434,7 @@ void Cutaway::handleText(
 		const char *sentence) {
 	// lines 1776-1863 in cutaway.c
 
-	debug(0, "----- Write '%s' ----", sentence);
+	//debug(0, "----- Write '%s' ----", sentence);
 
 	int spaces = countSpaces(type, sentence);
 
@@ -1446,14 +1446,14 @@ void Cutaway::handleText(
 		flags = 2;
 	}
 	else {
-		x = object.moveToX;
+		x = object.bobStartX;
 		flags = 1;
 	}
 
 	BobSlot *bob = 
 		_graphics->bob( _logic->findBob(abs(object.objectNumber)) );
 
-	_graphics->bobSetText(bob, sentence, x, object.moveToY, object.specialMove, flags);
+	_graphics->bobSetText(bob, sentence, x, object.bobStartY, object.specialMove, flags);
 
 	if (OBJECT_TYPE_TEXT_SPEAK == type || OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK == type) {
 		// XXX: speak
