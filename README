@@ -65,6 +65,8 @@ your own risk, and please do not file bug reports about them. If you want
 the latest updates on game compatibility, visit our web site and view the
 compatibility chart.
 
+        Maniac Mansion                             [Game: maniac]
+        Zak McKracken (16 color floppy version)    [Game: zak]
         Putt-Putt Goes To The Moon                 [Game: puttmoon]
         Putt-Putt's Fun Pack                       [Game: funpack]
         Fatty Bear's Birthday Surprise             [Game: fbear]
@@ -73,8 +75,6 @@ compatibility chart.
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
-        Maniac Mansion
-        Zak McKracken (16 color floppy version)
         Putt-Putt Joins the Parade
         Most other Humongous Entertainment titles
 
