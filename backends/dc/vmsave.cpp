@@ -69,9 +69,8 @@ static void displaySaveResult(vmsaveResult res)
     break;
   }
 
-  Dialog *dialog = new MessageDialog(g_gui, buf);
-  dialog->runModal();
-  delete dialog;
+  MessageDialog dialog(g_gui, buf);
+  dialog.runModal();
 }
 
 static vmsaveResult trySave(const char *gamename, const char *data, int size,

@@ -1366,7 +1366,7 @@ load_game:
 #endif
 			sprintf(buf, "Successfully saved game state in file:\n\n%s", filename);
 	
-			MessageDialog dialog(_newgui, buf, 1500, false);
+			TimedMessageDialog dialog(_newgui, buf, 1500);
 			runDialog(dialog);
 		}
 		if (success && _saveLoadFlag != 1)
@@ -2496,7 +2496,7 @@ char ScummEngine::displayError(bool showCancel, const char *message, ...) {
 	vsprintf(buf, message, va);
 	va_end(va);
 
-	MessageDialog dialog(_newgui, buf, 0, true, showCancel);
+	MessageDialog dialog(_newgui, buf, true, showCancel);
 	return runDialog(dialog);
 }
 

@@ -21,23 +21,34 @@
 #ifndef MESSAGE_DIALOG_H
 #define MESSAGE_DIALOG_H
 
-#include "dialog.h"
-#include "common/str.h"
-#include "common/list.h"
+#include "gui/dialog.h"
+
+namespace Common {
+	class String;
+	class StringList;
+}
 
 class MessageDialog : public Dialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 public:
-	MessageDialog(NewGui *gui, const String &message, uint32 timer = 0, bool showOKButton = true, bool showCancelButton = false);
-	
-	void handleTickle();
+	MessageDialog(NewGui *gui, const Common::String &message, bool showOKButton = true, bool showCancelButton = false);
+
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
-	uint32 _timer;
-
-	int addLine(StringList &lines, const char *line, int size);
+	int addLine(Common::StringList &lines, const char *line, int size);
 };
+
+class TimedMessageDialog : public MessageDialog {
+public:
+	TimedMessageDialog(NewGui *gui, const Common::String &message, uint32 timer);
+
+	void handleTickle();
+
+protected:
+	uint32 _timer;
+};
+
 
 #endif

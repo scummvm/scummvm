@@ -19,15 +19,17 @@
  */
 
 #include "stdafx.h"
-#include "message.h"
-#include "newgui.h"
+#include "gui/message.h"
+#include "gui/newgui.h"
+#include "common/str.h"
+#include "common/list.h"
 
 enum {
 	kOkCmd = 'OK  ',
 	kCancelCmd = 'CNCL'
 };
 
-MessageDialog::MessageDialog(NewGui *gui, const String &message, uint32 timer, bool showOkButton, bool showCancelButton)
+MessageDialog::MessageDialog(NewGui *gui, const String &message, bool showOkButton, bool showCancelButton)
 	: Dialog(gui, 30, 20, 260, 124) {
 	// First, determine the size the dialog needs. For this we have to break
 	// down the string into lines, and taking the maximum of their widths.
@@ -87,17 +89,6 @@ MessageDialog::MessageDialog(NewGui *gui, const String &message, uint32 timer, b
 
 	if (showCancelButton)
 		addButton(cancelButtonPos, _h - 24, "CANCEL", kCancelCmd, '\27');	// Cancel dialog
-	
-	if (timer)
-		_timer = _gui->get_time() + timer;
-	else
-		_timer = 0;
-}
-
-void MessageDialog::handleTickle() {
-	Dialog::handleTickle();
-	if (_timer && _gui->get_time() > _timer)
-		close();
 }
 
 int MessageDialog::addLine(StringList &lines, const char *line, int size) {
@@ -157,3 +148,13 @@ void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	}
 }
 
+TimedMessageDialog::TimedMessageDialog(NewGui *gui, const Common::String &message, uint32 timer)
+	: MessageDialog(gui, message, false, false) {
+	_timer = _gui->get_time() + timer;
+}
+
+void TimedMessageDialog::handleTickle() {
+	MessageDialog::handleTickle();
+	if (_gui->get_time() > _timer)
+		close();
+}
