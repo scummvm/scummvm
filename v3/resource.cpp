@@ -3,49 +3,48 @@
 
 
 void Scumm_v3::readIndexFile() {
-       uint16 blocktype;
-       uint32 itemsize;
-       int numblock = 0;
-       int num, i;
-       byte* _oldClass; 
+	uint16 blocktype;
+	uint32 itemsize;
+	int numblock = 0;
+	int num, i;
+	byte* _oldClass; 
 
-       debug(9, "readIndexFile()");
+	debug(9, "readIndexFile()");
 
-       openRoom(-1);
-       openRoom(0);
+	openRoom(-1);
+	openRoom(0);
 
-       if (!(_features & GF_AFTER_V6)) {
-               while (!fileEof(_fileHandle)) {
-                       itemsize = fileReadDwordLE();
-                       blocktype = fileReadWordLE();
-                       if (fileReadFailed(_fileHandle))
-                               break;
+	while (!fileEof(_fileHandle)) {
+		itemsize = fileReadDwordLE();
+			blocktype = fileReadWordLE();
+			if (fileReadFailed(_fileHandle))
+				break;
 
-                       switch(blocktype) {
-                       case 0x4E52:
-                               fileReadWordLE();
-                               break;
-                       case 0x5230:
-                               _numRooms = fileReadWordLE();
-                               break;
-                       case 0x5330:
-                               _numScripts = fileReadWordLE();
-                               break;
-                       case 0x4E30:
-                               _numSounds = fileReadWordLE();
-                               break;
-                       case 0x4330:
-                               _numCostumes = fileReadWordLE();
-                               break;
-                       case 0x4F30:
-                               _numGlobalObjects = fileReadWordLE();
-                               break;
-                       }
-                       fileSeek(_fileHandle, itemsize-8,SEEK_CUR);
-               }
-               clearFileReadFailed(_fileHandle);
-               fileSeek(_fileHandle, 0, SEEK_SET);
-       }
+			switch(blocktype) {
+				case 0x4E52:
+					fileReadWordLE();
+					break;
+				case 0x5230:
+					_numRooms = fileReadWordLE();
+					break;
+				case 0x5330:
+					_numScripts = fileReadWordLE();
+					break;
+				case 0x4E30:
+					_numSounds = fileReadWordLE();
+					break;
+				case 0x4330:
+					_numCostumes = fileReadWordLE();
+					break;
+				case 0x4F30:
+					_numGlobalObjects = fileReadWordLE();
+					break;
+			}
+		fileSeek(_fileHandle, itemsize-8,SEEK_CUR);
+	}
+	
+	clearFileReadFailed(_fileHandle);
+	fileSeek(_fileHandle, 0, SEEK_SET);
 
        /* I'm not sure for those values yet, they will have to be rechecked */
 
