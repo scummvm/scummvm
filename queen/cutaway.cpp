@@ -284,6 +284,7 @@ void Cutaway::dumpCutawayObject(int index, CutawayObject &object)
 }
 
 void Cutaway::actionSpecialMove(int index) {
+	warning("Special move: %i", index);
 
 	switch (index) {
 
@@ -346,6 +347,7 @@ void Cutaway::actionSpecialMove(int index) {
 			}
 			break;
 
+#if 0
 		// cdint.cut - pan left to bomb
 		case 39: 
 			{
@@ -384,6 +386,7 @@ void Cutaway::actionSpecialMove(int index) {
 				// XXX fastmode = 0;
 			}
 			break;
+#endif
 
 		default:
 			warning("Unhandled special move: %i", index);
@@ -640,6 +643,7 @@ byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 	else {
 		if (anim.bank != 13) {
 			/* XXX if (OLDBANK != T) */ {
+				debug(0, "Loading bank '%s'", _bankNames[anim.bank-1]);
 				_graphics->bankLoad(_bankNames[anim.bank-1], 8);
 				// XXX OLDBANK=T;
 			}
@@ -724,7 +728,6 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 			error("Header too large");
 
 		ptr = getCutawayAnim(ptr, header, objAnim[frameCount]);
-		dumpCutawayAnim(objAnim[frameCount]);
 
 		frameCount++;
 
@@ -735,7 +738,7 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 	if (object.animType == 1) {
 		// lines 1615-1636 in cutaway.c
 		
-		debug(0, "----- Not normal cutaway animation (animType = %i) -----", object.animType);
+		debug(0, "----- Complex cutaway animation (animType = %i) -----", object.animType);
 
 		if (/*(P_BNUM==1) &&*/ (_logic->currentRoom() == 47 || _logic->currentRoom() == 63)) {
 			// The oracle
@@ -786,6 +789,9 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 		debug(0, "----- Normal cutaway animation (animType = %i) -----", object.animType);
 		
 		for (i = 0; i < frameCount; i++) {
+			debug(0, "===== Animating frame %i =====", i);
+			dumpCutawayAnim(objAnim[i]);
+
 			BobSlot *bob = _graphics->bob(objAnim[i].object);
 			bob->active = true;
 			if (bob->animating) {
@@ -804,11 +810,16 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 				if (object.animType == 2 || object.animType == 0) {
 					// Unpack animation, but do not unpack moving people
 
-					if (!(objAnim[i].mx || objAnim[i].my) && InRange(objAnim[i].object, 0, 3))
+					if (!((objAnim[i].mx || objAnim[i].my) && InRange(objAnim[i].object, 0, 3))) {
+						debug(0, "Animation - bankUnpack(%i, %i, %i);",
+								objAnim[i].unpackFrame, 
+								objAnim[i].originalFrame,
+								objAnim[i].bank);
 						_graphics->bankUnpack(
 								objAnim[i].unpackFrame, 
 								objAnim[i].originalFrame,
 								objAnim[i].bank);
+					}
 
 					if (0 == objAnim[i].object) {
 						// Scale Joe
