@@ -134,8 +134,6 @@ void QueenEngine::checkOptionSettings() {
 		_talkSpeed = 100;
 	}
 
-	// XXX check master_volume value
-
 	// ensure text is always on when voice is off
 	if (!_sound->speechOn()) {
 		_subtitles = true;
@@ -143,7 +141,7 @@ void QueenEngine::checkOptionSettings() {
 }
 
 void QueenEngine::readOptionSettings() {
-	// XXX master_volume
+	_music->setVolume(ConfMan.getInt("music_volume"));
 	_sound->musicToggle(!ConfMan.getBool("music_mute"));
 	_sound->sfxToggle(!ConfMan.getBool("sfx_mute"));
 	_talkSpeed = ConfMan.getInt("talkspeed");
@@ -153,7 +151,7 @@ void QueenEngine::readOptionSettings() {
 }
 
 void QueenEngine::writeOptionSettings() {
-	// XXX master_volume
+	ConfMan.set("music_volume", _music->volume());
 	ConfMan.set("music_mute", !_sound->musicOn());
 	ConfMan.set("sfx_mute", !_sound->sfxOn());
 	ConfMan.set("talkspeed", _talkSpeed);

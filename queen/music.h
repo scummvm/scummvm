@@ -35,6 +35,8 @@ class MusicPlayer : public MidiDriver {
 public:
 	MusicPlayer(MidiDriver *driver, byte *data, uint32 size);
 	~MusicPlayer();
+	void setVolume(int volume);
+	int getVolume()				{ return _masterVolume; }
 
 	void hasNativeMT32(bool b)	{ _nativeMT32 = b; }
 	void playMusic();
@@ -81,7 +83,7 @@ protected:
 	bool _isPlaying;
 	bool _looping;
 	bool _randomLoop;
-	byte _volume;
+	byte _masterVolume;
 	uint8 _queuePos;
 	int16 _currentSong;
 	int16 _lastSong;	//first song from previous queue
@@ -102,6 +104,9 @@ public:
 	void queueTuneList(int16 tuneList)	{ _player->queueTuneList(tuneList); }
 	void playMusic()			{ _player->playMusic(); }
 	void stopSong()				{ _player->stopMusic(); }
+	
+	void setVolume(int vol)			{ _player->setVolume(vol); }
+	int volume()				{ return _player->getVolume(); }
 	
 protected:
 	byte *_musicData;
