@@ -70,17 +70,17 @@ private:
 
 	bool _musicPaused;
 	bool _musicMuted;
-	uint _musicVol;
+	int _musicVol;
 
 	PlayingSoundHandle _soundHandleSpeech;
 	bool _speechPaused;
 	bool _speechMuted;
-	uint _speechVol;
+	int _speechVol;
 
 	FxHandle _fx[MAXFX];
 	bool _fxPaused;
 	bool _fxMuted;
-	uint _fxVol;
+	int _fxVol;
 
 	int32 getFxIndex(int32 id);
 	void stopFxHandle(int i);
