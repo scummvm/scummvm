@@ -1497,8 +1497,8 @@ void SkyControl::restartGame(void) {
 	parseSaveData((uint8*)resetData);
 	free(resetData);
 	_skyScreen->forceRefresh();
-	memset(_skyScreen->giveCurrent(), GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT, 0);
-	//_skyScreen->showScreen(_skyScreen->giveCurrent());
+	memset(_skyScreen->giveCurrent(), 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
+	_skyScreen->showScreen(_skyScreen->giveCurrent());
 	_skyScreen->setPalette((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
 	_skyMouse->spriteMouse(_savedMouse, 0, 0);
 	SkyState::_systemVars.pastIntro = true;
