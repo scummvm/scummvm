@@ -538,23 +538,24 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 	int args[31];
 	int num = 0, val = 0;
 	int len;
-	byte chr, name[256];
+	byte chr, string[256];
+	memset(string, 0, sizeof(string));
 
 	getStackList(args, ARRAYSIZE(args));
 	pop();
 
 	if (scriptString) {
-		addMessageToStack(_scriptPointer, name, sizeof(name));
+		addMessageToStack(_scriptPointer, string, sizeof(string));
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
 	} else {
-		len = copyScriptString(name);
+		len = copyScriptString(string);
 	}
 
 	while (len--) {
-		chr = name[num++];
+		chr = string[num++];
 		if (chr == 0x25) {
-			chr = name[num++];
+			chr = string[num++];
 			if (chr == 0x64)
 				dst += snprintf((char *)dst, 5, "%d", args[val++]);
 			else if (chr == 0x73)
