@@ -3255,9 +3255,6 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm)
 		MKEND()
 	};
 
-	if (!ser->isSaving()) {
-		stop_all_sounds();
-	}
 #ifdef _WIN32_WCE								// Don't break savegames made with andys' build
 	if (!ser->isSaving() && ser->checkEOFLoadStream())
 		return 0;
@@ -3279,6 +3276,7 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm)
 		_active_volume_faders = true;
 		fix_parts_after_load();
 		_driver->update_pris();
+		set_master_volume (_master_volume);
 	}
 
 	return 0;

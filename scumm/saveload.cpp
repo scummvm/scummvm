@@ -631,11 +631,14 @@ void Scumm::saveOrLoad(Serializer *s)
 	int var120Backup;
 	int var98Backup;
 
-	if (_mixer && !s->isSaving()) {
-		if (_imuseDigital) {
-			_imuseDigital->stopAll();
-		} else {
-			_mixer->stopAll();
+	if (!s->isSaving()) {
+		_sound->stopAllSounds();
+		if (_mixer) {
+			if (_imuseDigital) {
+				_imuseDigital->stopAll();
+			} else {
+				_mixer->stopAll();
+			}
 		}
 	}
 
