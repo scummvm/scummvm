@@ -55,7 +55,7 @@ static const char USAGE_STRING[] =
 	"\t-f         - fullscreen mode\n"
 	"\t-g<mode>   - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x)\n"
 	"\t-l<file>   - load config file instead of default\n"
-	"\t-m<num>    - set music volume to <num> (0-100)\n"
+	"\t-m<num>    - set music volume to <num> (0-255)\n"
 	"\t-n         - no subtitles for speech\n"
 	"\t-o<num>    - set master volume to <num> (0-255)\n"
 	"\t-p<path>   - look for game in <path>\n"
