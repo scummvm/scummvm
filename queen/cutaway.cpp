@@ -496,12 +496,10 @@ byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 
 	if (0 == header) {
 		anim.object = 0;
-		// XXX
-#if 0
-		anim.originalFrame =29+XTRA;
+		anim.originalFrame = 29 + FRAMES_JOE_XTRA;
+		
 		// 21/9/94, Make sure that bobs are clipped on 150 screens
-		if(FULLSCREEN) bobs[0].y2=199;
-#endif
+		// XXX if(FULLSCREEN) bobs[0].y2=199;
 	}
 	else {
 		warning("Stuff not yet implemented in Cutaway::handleAnimation()");
@@ -626,26 +624,18 @@ void Cutaway::handlePersonRecord(
 		const char *sentence) {
 	// Lines 1455-1516 in cutaway.c
 
-	char name[MAX_STRING_SIZE];
+	Person p;
 
 	if (object.objectNumber == OBJECT_JOE) {
 		if (object.moveToX || object.moveToY) {
 			_walk->joeMove(0, object.moveToX, object.moveToY, true);
 		} 
-		strcpy(name, "JOE");
 	}
 	else {
-		Person p;
 		_logic->personSetData(
 				object.objectNumber - _logic->roomData(object.room), 
 				"", true, &p);
-#if 0
-		debug(0, "Moving person '%s' (%i) = actor '%s' to (%i,%i)", 
-				_logic->objectName(object.objectNumber),
-				object.objectNumber,
-				p.name, object.moveToX, object.moveToY);
-#endif
-		strcpy(name, p.name);
+
 		if (object.bobStartX || object.bobStartY) {
 			BobSlot *bob = _graphics->bob(p.actor->bobNum);
 			bob->scale = 100; // XXX SF;
@@ -653,14 +643,12 @@ void Cutaway::handlePersonRecord(
 			bob->y = object.bobStartY;
 		}
 
-#if 1
 		_walk->personMove(
 				&p, 
 				object.moveToX, object.moveToY,
 				_logic->numFrames() + 1, 		// XXX CI+1
 				_logic->objectData(object.objectNumber)->image
 				);
-#endif
 	}
 
 	if (_quit)
@@ -691,7 +679,7 @@ void Cutaway::handlePersonRecord(
 
 			char voiceFilePrefix[MAX_STRING_SIZE];
 			findCdCut(_basename, index, voiceFilePrefix);
-			Talk::speak(sentence, name, voiceFilePrefix,
+			Talk::speak(sentence, (object.objectNumber == OBJECT_JOE) ? NULL : &p, voiceFilePrefix,
 				_graphics, _logic, _resource);
 		}
 

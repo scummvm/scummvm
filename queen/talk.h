@@ -45,7 +45,7 @@ class Talk {
 	//! Public interface to speak a sentence
 	static bool speak(
 		const char *sentence, 
-		const char *person, 
+		Person *person, 
 		const char *voiceFilePrefix,
 		Graphics *graphics,
 		Logic *logic,
@@ -73,6 +73,8 @@ class Talk {
 	  SPEAK_FACE_RIGHT   = -2,
 	  SPEAK_FACE_FRONT   = -3,
 	  SPEAK_FACE_BACK    = -4,
+	  SPEAK_ORACLE       = -5,
+	  SPEAK_UNKNOWN_6    = -6,
 	  SPEAK_AMAL_ON      = -7,
 	  SPEAK_PAUSE        = -8,
 	  SPEAK_NONE         = -9
@@ -89,6 +91,14 @@ class Talk {
 	  int16 dialogueNodeValue1;
 	  int16 gameStateIndex;
 	  int16 gameStateValue;
+	};
+
+	struct SpeechParameters {
+		const char *name;								// Nstr
+		signed char state,faceDirection;				// S,F
+		signed char body,bf,rf,af;
+		const char *animation;							// SANIMstr
+		signed char ff;
 	};
 
 	Graphics  *_graphics;
@@ -122,6 +132,9 @@ class Talk {
 	//! Set to true to quit talking
 	bool _quit;
 
+	//! Is a talking head
+	bool _talkHead;
+
 	//! IDs for sentences
 	DialogueNode _dialogueTree[18][6];
 
@@ -136,6 +149,8 @@ class Talk {
 
 	char _talkString[5][MAX_STRING_SIZE];
 	char _joeVoiceFilePrefix[5][MAX_STRING_SIZE];
+
+	static const SpeechParameters _speechParameters[];
 
 	Talk(Graphics *graphics, Logic *logic, Resource *resource);
 	~Talk();
@@ -162,21 +177,27 @@ class Talk {
 	int16 selectSentence();
 
 	//! Speak sentence
-	bool speak(const char *sentence, const char *person, const char *voiceFilePrefix);
+	bool speak(const char *sentence, Person *person, const char *voiceFilePrefix);
 
 	//! Convert command in sentence to command code
 	int getSpeakCommand(const char *sentence, unsigned &index);
 
 	//! Speak a part of a sentence
 	void speakSegment(
-		const char *segment, 
-		int length,
-		const char *person, 
-		int command,
-		const char *voiceFilePrefix,
-		int index);
+			const char *segment, 
+			int length,
+			Person *person, 
+			int command,
+			const char *voiceFilePrefix,
+			int index);
 
 	int countSpaces(const char *segment);
+
+	//! Get special parameters for speech
+	const SpeechParameters *findSpeechParameters(
+			const char *name, 
+			int state, 
+			int faceDirection); // FIND_SACTION
 
 	static int splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]);
 

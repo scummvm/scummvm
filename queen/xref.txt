@@ -147,7 +147,7 @@ FIND_BOB()					Logic::findBob
 FIND_DEFAULT()
 FIND_FRAME()				Logic::findFrame
 FIND_GRAPHIC()
-FIND_SACTION()
+FIND_SACTION()				Talk::findSpeechParameters
 FIND_SCALE()				Logic::findScale
 FIND_VERB()
 LOOK()
