@@ -1,5 +1,5 @@
 // Residual - Virtual machine to run LucasArts' 3D adventure games
-// Copyright (C) 2003 The ScummVM-Residual Team (www.scummvm.org)
+// Copyright (C) 2003-2004 The ScummVM-Residual Team (www.scummvm.org)
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -24,35 +24,35 @@
 
 class Bitmap : public Resource {
 public:
-  // Construct a bitmap from the given data.
-  Bitmap(const char *filename, const char *data, int len);
+	// Construct a bitmap from the given data.
+	Bitmap(const char *filename, const char *data, int len);
 
-  // Set up Driver for drawing bitmaps
-  static void prepareDraw();
-  void draw() const;
+	// Set up Driver for drawing bitmaps
+	static void prepareDraw();
+	void draw() const;
 
-  // Set which image in an animated bitmap to use
-  void setNumber(int n) { curr_image_ = n; }
+	// Set which image in an animated bitmap to use
+	void setNumber(int n) { curr_image_ = n; }
 
-  int numImages() const { return num_images_; }
-  int currentImage() const { return curr_image_; }
+	int numImages() const { return num_images_; }
+	int currentImage() const { return curr_image_; }
 
-  int width() const { return width_; }
-  int height() const { return height_; }
-  int x() const { return x_; }
-  int y() const { return y_; }
+	int width() const { return width_; }
+	int height() const { return height_; }
+	int x() const { return x_; }
+	int y() const { return y_; }
 
-  char * getData() { return data_[curr_image_]; }
+	char * getData() { return data_[curr_image_]; }
 
-  ~Bitmap();
+	~Bitmap();
 
 private:
-  char **data_;
-  int num_images_, curr_image_;
-  int width_, height_, x_, y_;
-  int format_;
-  int num_tex_;
-  GLuint *tex_ids_;
+	char **data_;
+	int num_images_, curr_image_;
+	int width_, height_, x_, y_;
+	int format_;
+	int num_tex_;
+	GLuint *tex_ids_;
 };
 
 #endif
