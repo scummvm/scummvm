@@ -934,7 +934,7 @@ void Scumm_v2::o2_drawSentence() {
 	static char sentence[256];
 	const byte *temp;
 	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB),0);
-	printf("slot is %d\n");
+
 	if (!(_userState & 32))
 		return;
 
@@ -951,16 +951,16 @@ void Scumm_v2::o2_drawSentence() {
 		}
 	
 		if ((_version == 1) && (VAR(VAR_SENTENCE_PREPOSITION) == 0)) {
-        	        byte *ptr = getOBCDFromObject(VAR(VAR_SENTENCE_OBJECT1)) + 12;
+			byte *ptr = getOBCDFromObject(VAR(VAR_SENTENCE_OBJECT1)) + 12;
 			VerbSlot *vs = &_verbs[slot];
-
+	
 			if (ptr) {
 				if (vs->prep == 0)
 					VAR(VAR_SENTENCE_PREPOSITION) = (*ptr >> 5);
 				else
 					VAR(VAR_SENTENCE_PREPOSITION) = vs->prep;
 			}
-        	}
+		}
 	}
 
 	if (0 < VAR(VAR_SENTENCE_PREPOSITION) && VAR(VAR_SENTENCE_PREPOSITION) <= 4) {
