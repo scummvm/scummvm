@@ -337,7 +337,6 @@ void Sound::playSound(int sound) {
 			
 			ptr += 0x16;
 			if (size == 30) {
-				int result = 0;
 				int track = *ptr;
 	
 				if (track == _scumm->current_cd_sound)
@@ -699,7 +698,7 @@ int Sound::startSfxSound(File *file, int file_size) {
 	if (file_size > 0) {
 		data = (byte *)calloc(file_size + MAD_BUFFER_GUARD, 1);
 
-		if (file->read(data, file_size) != file_size) {
+		if (file->read(data, file_size) != (uint)file_size) {
 			/* no need to free the memory since error will shut down */
 			error("startSfxSound: cannot read %d bytes", size);
 			return -1;

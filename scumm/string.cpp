@@ -1075,7 +1075,7 @@ void Scumm::translateText(char * text, char * trans_buff) {
 		number[2] = *(text + l + 3);
 		number[3] = 0;
 		num = atol(number);
-		sprintf(num_s, "%d", num);
+		sprintf(num_s, "%ld", num);
 
 		char * buf = _languageBuffer;
 		// determine is file encoded
