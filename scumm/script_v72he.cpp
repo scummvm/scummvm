@@ -355,7 +355,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_unknownF6),
 		OPCODE(o6_invalid),
 		/* F8 */
-		OPCODE(o72_unknownF8),
+		OPCODE(o72_getResourceSize),
 		OPCODE(o72_setFilePath),
 		OPCODE(o72_unknownFA),
 		OPCODE(o70_polygonOps),
@@ -2411,12 +2411,40 @@ void ScummEngine_v72he::o72_unknownF6() {
 	debug(1,"stub o72_unknownF6");
 }
 
-void ScummEngine_v72he::o72_unknownF8() {
-	int id = pop();
-	byte subOp = fetchScriptByte();
-	push(10);
+void ScummEngine_v72he::o72_getResourceSize() {
+	int size, type;
 
-	debug(1,"stub o72_unknownF8: subOp %d, id %d", subOp, id);
+	int idx = pop();
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 13:
+		if (idx > _numSounds) {
+			// TODO Music resource size
+			push(100);
+			return;
+		}
+		type = rtSound;
+		break;
+	case 14:
+		type = rtRoomImage;
+		break;
+	case 15:
+		type = rtImage;
+		break;
+	case 16:
+		type = rtCostume;
+		break;
+	case 17:
+		type = rtScript;
+		break;
+	default:
+		error("o72_getResourceSize: default type %d", subOp);
+	}
+
+	const byte *ptr = getResourceAddress(type, idx);
+	size = READ_BE_UINT32(ptr + 4) - 8;	
+	push(size);
 }
 
 void ScummEngine_v72he::o72_setFilePath() {

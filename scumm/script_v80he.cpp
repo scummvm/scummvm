@@ -354,7 +354,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o72_unknownF6),
 		OPCODE(o6_invalid),
 		/* F8 */
-		OPCODE(o72_unknownF8),
+		OPCODE(o72_getResourceSize),
 		OPCODE(o72_setFilePath),
 		OPCODE(o72_unknownFA),
 		OPCODE(o70_polygonOps),
