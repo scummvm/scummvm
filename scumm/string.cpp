@@ -453,7 +453,7 @@ void ScummEngine::drawString(int a) {
 					// Sam and Max seems to blitAlso 32 a lot, which does
 					// nothing anyway. So just hide that one for brevity.
 					if (c != 32) 
-						debug(1, "Would have set _charset->_blitAlso = true (wanted to print '%c' = %d)", c, c);
+						warning("Would have set _charset->_blitAlso = true (wanted to print '%c' = %d)", c, c);
 					_charset->_blitAlso = true;
 				}
 			}
