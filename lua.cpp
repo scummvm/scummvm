@@ -538,7 +538,26 @@ static void MakeCurrentSet() {
 
 static void MakeCurrentSetup() {
   int num = check_int(1);
+  int prevSetup = Engine::instance()->currScene()->setup();
+
   Engine::instance()->currScene()->setSetup(num);
+
+  lua_beginblock();
+  lua_Object camChangeHandler = getEventHandler("camChangeHandler");
+  if (camChangeHandler != LUA_NOOBJECT) {
+    lua_pushnumber(prevSetup);
+    lua_pushnumber(num);
+    lua_callfunction(camChangeHandler);
+  }
+  lua_endblock();
+
+  lua_beginblock();
+  lua_Object postCamChangeHandler = getEventHandler("postCamChangeHandler");
+  if (postCamChangeHandler != LUA_NOOBJECT) {
+    lua_pushnumber(num);
+    lua_callfunction(postCamChangeHandler);
+  }
+  lua_endblock();
 }
 
 static void GetCurrentSetup() {
