@@ -181,8 +181,8 @@ void MidiParser::onTimer() {
 		_position._last_event_tick += info.delta;
 		if (info.event < 0x80) {
 			warning("Bad command or running status %02X", info.event);
-			//_position._play_pos = 0;
-			//return;
+			_position._play_pos = 0;
+			return;
 		}
 
 		if (info.event == 0xF0) {
