@@ -582,7 +582,7 @@ void Scumm::fadeToBlackEffect(int a)
 	case 1:
 	case 2:
 	case 3:
-		unkScreenEffect7(a - 1);
+		transitionEffect(a - 1);
 		break;
 	case 128:
 		unkScreenEffect6();
@@ -1742,40 +1742,49 @@ void Scumm::unkScreenEffect4()
 }
 
 static const int8 screen_eff7_table1[4][16] = {
-	{1, 1, -1, 1, -1, 1, -1, -1,
-	 1, -1, -1, -1, 1, 1, 1, -1},
-	{0, 1, 2, 1, 2, 0, 2, 1,
-	 2, 0, 2, 1, 0, 0, 0, 0},
-	{-2, -1, 0, -1, -2, -1, -2, 0 - 2, -1, -2, 0, 0, 0, 0, 0},
-	{0, -1, -2, -1, -2, 0, -2, -1 - 2, 0, -2, -1, 0, 0, 0, 0}
+	{ 1,  1, -1,  1, -1,  1, -1, -1,
+	  1, -1, -1, -1,  1,  1,  1, -1},
+	{ 0,  1,  2,  1,  2,  0,  2,  1,
+	  2,  0,  2,  1,  0,  0,  0,  0},
+	{-2, -1,  0, -1, -2, -1, -2,  0, -2, -1, -2, 0, 0, 0, 0, 0},
+	{ 0, -1, -2, -1, -2,  0, -2, -1, -2, 0, -2, -1, 0, 0, 0, 0}
 };
 
 static const byte screen_eff7_table2[4][16] = {
-	{0, 0, 39, 0, 39, 0, 39, 24,
-	 0, 24, 39, 24, 0, 0, 0, 24},
-	{0, 0, 0, 0, 0, 0, 0, 0,
-	 1, 0, 1, 0, 255, 0, 0, 0},
-	{39, 24, 39, 24, 39, 24, 39, 24,
-	 38, 24, 38, 24, 255, 0, 0, 0},
-	{0, 24, 39, 24, 39, 0, 39, 24,
-	 38, 0, 38, 24, 255, 0, 0, 0}
+	{ 0,  0, 39,  0,  39,  0, 39, 24,
+	  0, 24, 39, 24,   0,  0,  0, 24},
+	{ 0,  0,  0,  0,   0,  0,  0,  0,
+	  1,  0,  1,  0, 255,  0,  0,  0},
+	{39, 24, 39, 24,  39, 24, 39, 24,
+	 38, 24, 38, 24, 255,  0,  0,  0},
+	{ 0, 24, 39, 24,  39,  0, 39, 24,
+	 38,  0, 38, 24, 255,  0,  0,  0}
 };
 
-static const byte screen_eff7_table3[4] = {
+static const byte transition_num_of_iterations[4] = {
 	13, 25, 25, 25
 };
 
-/* Transition effect */
-void Scumm::unkScreenEffect7(int a)
+/* Transition effect. There are four different effects possible,
+ * indicated by the value of a:
+ * 0: Iris effect
+ * 1: ?
+ * 2: ?
+ * 3: ?
+ * All effects basically operate on 8x8 blocks of the screen. These blocks
+ * are updated in a certain order; the exact order determines how the
+ * effect appears to the user.
+ */
+void Scumm::transitionEffect(int a)
 {
-	int tab_1[16];
+	int delta[16];	// Offset applied during each iteration
 	int tab_2[16];
 	int i, j;
 	int bottom;
 	int l, t, r, b;
 
 	for (i = 0; i < 16; i++) {
-		tab_1[i] = screen_eff7_table1[a][i];
+		delta[i] = screen_eff7_table1[a][i];
 		j = screen_eff7_table2[a][i];
 		if (j == 24)
 			j = (virtscr[0].height >> 3) - 1;
@@ -1783,7 +1792,7 @@ void Scumm::unkScreenEffect7(int a)
 	}
 
 	bottom = virtscr[0].height >> 3;
-	for (j = 0; j < screen_eff7_table3[a]; j++) {
+	for (j = 0; j < transition_num_of_iterations[a]; j++) {
 		for (i = 0; i < 4; i++) {
 			l = tab_2[i * 4];
 			t = tab_2[i * 4 + 1];
@@ -1809,8 +1818,10 @@ void Scumm::unkScreenEffect7(int a)
 		}
 
 		for (i = 0; i < 16; i++)
-			tab_2[i] += tab_1[i];
+			tab_2[i] += delta[i];
 
+		// Draw the current state to the screen and wait half a sec so the user
+		// can watch the effect taking place.
 		updatePalette();
 		_system->update_screen();
 		waitForTimer(30);
@@ -2177,7 +2188,7 @@ void Scumm::screenEffect(int effect)
 	case 1:
 	case 2:
 	case 3:
-		unkScreenEffect7(effect - 1);
+		transitionEffect(effect - 1);
 		break;
 	case 128:
 		unkScreenEffect6();

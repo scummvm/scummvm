@@ -1169,7 +1169,7 @@ public:
 	void unkScreenEffect4();
 	void unkScreenEffect5(int a);
 	void unkScreenEffect6();
-	void unkScreenEffect7(int a);
+	void transitionEffect(int a);		// former unkScreenEffect7
 
 	void decompressBomp(byte *dst, byte *src, int w, int h);
 	uint _shakeFrame;
