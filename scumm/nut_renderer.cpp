@@ -209,6 +209,8 @@ void NutRenderer::drawChar(byte c, int32 x, int32 y, byte color, bool useMask) {
 			maskpos = 0;
 			for (int32 tx = 0; tx < width; tx++) {
 				byte pixel = *src++;
+				if (x + tx >= 640 || y + ty >= 480)
+					continue;
 #if 1
 				if (pixel != 0) {
 					dst[tx] = color;
