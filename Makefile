@@ -17,12 +17,12 @@ CP  = cp
 # Default compilation parameters. Normally don't edit these           #
 #######################################################################
 
-CFLAGS   = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
-DEFINES  =
+CFLAGS  := -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
+DEFINES :=
 LDFLAGS :=
 INCLUDES:= -I. -Icommon
-LIBS	 =
-OBJS	 =
+LIBS	:=
+OBJS	:=
 
 # Load the build rules & settings for the chosen backend
 -include build.rules
@@ -56,7 +56,7 @@ LIBS    += -lmad
 #######################################################################
 
 # Concat DEFINES and INCLUDES to for the CPPFLAGS
-CPPFLAGS= $(DEFINES) $(INCLUDES)
+CPPFLAGS:= $(DEFINES) $(INCLUDES)
 
 include Makefile.common
 
