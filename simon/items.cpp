@@ -1485,7 +1485,7 @@ void SimonEngine::o_unk_132_helper_3() {
 		set_hitarea_bit_0x40(i);
 }
 
-void SimonEngine::o_unk_132_helper_2(FillOrCopyStruct *fcs, int x, byte b) {
+void SimonEngine::o_clear_character(FillOrCopyStruct *fcs, int x, byte b) {
 	byte old_text;
 
 	video_putchar(fcs, x, b);

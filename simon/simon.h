@@ -788,7 +788,7 @@ protected:
 	void save_or_load_dialog(bool load);
 	void o_unk_132_helper_3();
 	int o_unk_132_helper(bool *b, char *buf);
-	void o_unk_132_helper_2(FillOrCopyStruct *fcs, int x, byte b = 0);
+	void o_clear_character(FillOrCopyStruct *fcs, int x, byte b = 0);
 	void savegame_dialog(char *buf);
 
 	int count_savegames();

@@ -2785,7 +2785,7 @@ restart:;
 						goto get_out;
 					clear_hitarea_bit_0x40(0xd0 + unk132_result);
 					if (_saveload_flag) {
-						o_unk_132_helper_2(_fcs_ptr_array_3[5], 8);
+						o_clear_character(_fcs_ptr_array_3[5], 8);
 						// move code
 					}
 					goto if_1;
@@ -2799,7 +2799,7 @@ restart:;
 			} while (i >= 0x80 || i == 0);
 
 			// after_do_2
-			o_unk_132_helper_2(_fcs_ptr_array_3[5], 8);
+			o_clear_character(_fcs_ptr_array_3[5], 8);
 			if (i == 10 || i == 13)
 				break;
 			if (i == 8) {
@@ -2818,7 +2818,7 @@ restart:;
 
 					name[name_len] = 0;
 
-					o_unk_132_helper_2(_fcs_ptr_array_3[5], x, m);
+					o_clear_character(_fcs_ptr_array_3[5], x, m);
 				}
 			} else if (i >= 32 && name_len != 17) {
 				name[name_len++] = i;
