@@ -1334,14 +1334,11 @@ void NORETURN CDECL error(const char *s, ...)
 #endif
 	}
 	
-	// Finally exit. quit() will terminate the program
-	g_scumm->_system->quit();
+	// Finally exit. quit() will terminate the program if g_system iss present
+	if (g_system)
+		g_system->quit();
 	
-	
-	// This point should never be reached. However, since virtual methods (like quit() is)
-	// can't be marked as noreturn, gcc will complain at this point. Thus we add in this
-	// call to exit(0) even though it is never reached.
-	exit(0);
+	exit(1);
 }
 
 ScummDebugger g_debugger;
