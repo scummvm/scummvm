@@ -28,28 +28,29 @@
 namespace Queen {
 
 /*
-	 Functions needed:
+   TODO soon
 
-	 queen.c:
-	 
-	 DISP_ROOM
-	 FACE_JOE
-	 FIND_GRAPHIC
-	 FIND_SCALE
-	 MOVE_JOE
-	 MOVE_OTHER
-	 SET_PERSON_DATA
+   - Implement CUTAWAY_SCALE
 
-	 talk.c:
-	 
-	 SPEAK
+   - Finish Cutaway::handleAnimation
+
+   - Support the remaining cutaway object types:
+	   OBJECT_TYPE_TEXT_SPEAK
+	   OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK
+	   OBJECT_TYPE_TEXT_DISPLAY
+
+   - Find out why one digit is missing in the voice file names
 
 
-	 Data needed:
+   TODO later
 
-	 CURRSONG
-	 JOEF					(Joe's face direction)
-	 JX,JY        (Joe's coordintes)
+   - Finish Cutaway::goToFinalRoom
+
+   - Show credits
+
+   - Play voices
+
+   - Play songs 
 
  */
 
