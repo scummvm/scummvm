@@ -571,8 +571,7 @@ int32 PlaySmacker(char *filename, _movieTextObject *text[], uint8 *musicOut) {
 		msgSprite.y = RDMENU_MENUDEEP / 2 - frame->height / 2;
 		msgSprite.w = frame->width;
 		msgSprite.h = frame->height;
-		msgSprite.h = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
-		msgSprite.type = RDSPR_NOCOMPRESSION;
+		msgSprite.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
 		msgSprite.data = data->ad + sizeof(_frameHeader);
 
 		CreateSurface(&msgSprite, &msgSurface);
