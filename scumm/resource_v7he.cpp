@@ -1302,14 +1302,13 @@ int MacResExtractor::extractResource(int id, byte **buf) {
 	// we haven't calculated it
 	if (_resOffset == -1) {
 		if (!init(in))
-			error("Invalid file format (%s)", _fileName);
-		debug(0, "ResOffset: %d", _resOffset);
+			error("Resource fork is missing in file '%s'", _fileName);
 	}
 
 	*buf = getResource(in, "crsr", 1000 + id, &size);
 
 	if (*buf == NULL)
-		error("Cannot read cursor ID: %d", id);
+		error("There is no cursor ID #%d", id);
 
 	return size;
 }
@@ -1362,7 +1361,7 @@ bool MacResExtractor::init(File in) {
 	_dataLength = in.readUint32BE();
 	_mapLength = in.readUint32BE();
 
-	debug(0, "got header: data %d [%d] map %d [%d]", 
+	debug(7, "got header: data %d [%d] map %d [%d]", 
 		_dataOffset, _dataLength, _mapOffset, _mapLength);
 
 	readMap(in);
@@ -1418,9 +1417,6 @@ void MacResExtractor::readMap(File in) {
 	_resMap.numTypes = in.readUint16BE();
 	_resMap.numTypes++;
 
-	debug(0, "Read %d types, type offset %d, name offset %d", _resMap.numTypes,
-		_resMap.typeOffset, _resMap.nameOffset);
-
 	in.seek(_mapOffset + _resMap.typeOffset + 2);
 	_resTypes = new ResType[_resMap.numTypes];
 
@@ -1431,13 +1427,6 @@ void MacResExtractor::readMap(File in) {
 		_resTypes[i].items++;
 	}
 	
-	for (i = 0; i < _resMap.numTypes; i++) {
-		debug(0, "resource '%c%c%c%c': items %d, offset %d", 
-			_resTypes[i].id[0], _resTypes[i].id[1], 
-			_resTypes[i].id[2], _resTypes[i].id[3],
-			_resTypes[i].items, _resTypes[i].offset);
-	}	
-
 	_resLists = new ResPtr[_resMap.numTypes];
 	
 	for (i = 0; i < _resMap.numTypes; i++) {
@@ -1455,11 +1444,6 @@ void MacResExtractor::readMap(File in) {
 			
 			resPtr->attr = resPtr->dataOffset >> 24;
 			resPtr->dataOffset &= 0xFFFFFF;
-
-			debug(0, "resource '%c%c%c%c' %d: name %d, data %d, attr %d", 
-				_resTypes[i].id[0], _resTypes[i].id[1], 
-				_resTypes[i].id[2], _resTypes[i].id[3],
-				resPtr->id, resPtr->nameOffset, resPtr->dataOffset, resPtr->attr);
 		}
 
 		for (j = 0; j < _resTypes[i].items; j++) {
@@ -1470,7 +1454,6 @@ void MacResExtractor::readMap(File in) {
 				_resLists[i][j].name = new byte[len + 1];
 				_resLists[i][j].name[len] = 0;
 				in.read(_resLists[i][j].name, len);
-				debug(0, "name of %d: %s", _resLists[i][j].id, _resLists[i][j].name);
 			}
 		}
 	}
