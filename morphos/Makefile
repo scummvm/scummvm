@@ -2,7 +2,7 @@ vpath %.cpp ../:../sound/:../v3/:../v4/:../simon/:../gui/
 vpath %.h   ../
 
 CC      = g++
-CFLAGS  = -Wno-multichar -fstrength-reduce -O2
+CFLAGS  = -Wno-multichar -fstrength-reduce -fno-rtti -O2
 DEFINES = -DNO_PPCINLINE_STDARG -DNO_PPCINLINE_VARARGS
 LDFLAGS := -noixemul -s
 INCLUDES:= -I../ -I../sound
@@ -18,10 +18,10 @@ SIMONOBJS =	midi.o simon.o simondebug.o simonitems.o simonres.o simonsys.o simon
 
 OBJS	= actor.o akos.o boxes.o config-file.o costume.o gfx.o object.o resource.o \
 	saveload.o script.o scummvm.o sound.o string.o sys.o verbs.o \
-	morphos.o morphos_sound.o morphos_start.o script_v1.o script_v2.o debug.o gui.o \
+	morphos.o morphos_sound.o morphos_start.o morphos_timer.o script_v1.o script_v2.o debug.o gui.o \
 	imuse.o fmopl.o mixer.o mididrv.o debugrl.o vars.o insane.o \
 	gameDetector.o init.o resource_v3.o resource_v4.o util.o main.o \
-	bundle.o timer.o $(GUIOBJS) $(SIMONOBJS)
+	bundle.o $(GUIOBJS) $(SIMONOBJS)
 
 DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
 	windows.cpp debugrl.h whatsnew.txt readme.txt copying.txt \

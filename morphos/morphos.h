@@ -105,6 +105,8 @@ class OSystem_MorphOS : public OSystem
 		static OSystem_MorphOS *create  ( int game_id, SCALERTYPE gfx_scaler, bool full_screen );
 		static uint32 make_color( int pixfmt, int r, int g, int b );
 
+		static void OpenATimer( struct MsgPort **port, struct IORequest **req, ULONG unit );
+
 		static SCALERTYPE  FindScaler		  ( const char *ScalerName );
 
 	private:
@@ -129,8 +131,6 @@ class OSystem_MorphOS : public OSystem
 
 		void   draw_mouse();
 		void   undraw_mouse();
-
-		void   OpenATimer( struct MsgPort **port, struct IORequest **req, ULONG unit );
 
 		/* Display-related attributes */
 		struct Screen  	  *ScummScreen;
@@ -196,11 +196,6 @@ class OSystem_MorphOS : public OSystem
 		/* Timer-related attributes */
 		struct MsgPort 	 *TimerMsgPort;
 		struct timerequest *TimerIORequest;
-		struct MsgPort 	 *SaveTimerMsgPort;
-		struct timerequest *SaveTimerIORequest;
-		int 					(*TimerCallback)(int);
-		bool					  SaveTimerRun;
-		int					  TimerInterval;
 
 		/* Game-related attributes */
 		int   GameID;

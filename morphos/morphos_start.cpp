@@ -22,6 +22,7 @@
  */
 
 #include <exec/types.h>
+#include <exec/devices.h>
 #include <exec/memory.h>
 #include <exec/libraries.h>
 #include <workbench/startup.h>
@@ -58,7 +59,7 @@ static OSystem_MorphOS::SCALERTYPE ScummGfxScaler = OSystem_MorphOS::ST_INVALID;
 static BPTR OrigDirLock = 0;
 
 struct Library *CDDABase = NULL;
-struct Library *CyberGfxBase = NULL;
+struct Device *TimerBase = NULL;
 
 OSystem_MorphOS *TheSystem = NULL;
 
@@ -92,6 +93,9 @@ void close_resources()
 	if( TheSystem )
 		delete TheSystem;
 
+	if( g_scumm )
+		delete g_scumm;
+
 	if( ScummPath )
 		FreeVec( ScummPath );
 
@@ -106,9 +110,6 @@ void close_resources()
 
 	if( CDDABase )
 		CloseLibrary( CDDABase );
-
-	if( CyberGfxBase )
-		CloseLibrary( CyberGfxBase );
 }
 
 static STRPTR FindMusicDriver( STRPTR argval )
@@ -247,13 +248,7 @@ int main()
 	InitSemaphore( &ScummSoundThreadRunning );
 	InitSemaphore( &ScummMusicThreadRunning );
 
-	CyberGfxBase = OpenLibrary( "cybergraphics.library", 41 );
-	if( CyberGfxBase == NULL )
-	{
-		puts( "Failed to open cybergraphics.library" );
-		exit( 1 );
-	}
-
+	g_scumm = NULL;
 	atexit( &close_resources );
 
 	if( _WBenchMsg == NULL )

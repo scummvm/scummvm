@@ -21,8 +21,6 @@
  *
  */
 
-#include <devices/timer.h>
-
 #include "stdafx.h"
 #include "scumm.h"
 
@@ -125,13 +123,10 @@ OSystem_MorphOS::OSystem_MorphOS( int game_id, SCALERTYPE gfx_mode, bool full_sc
 	strcpy( ScummWndTitle, "ScummVM MorphOS" );
 	TimerMsgPort = NULL;
 	TimerIORequest = NULL;
-	SaveTimerMsgPort = NULL;
-	SaveTimerIORequest = NULL;
-	SaveTimerRun = false;
 
 	OpenATimer( &TimerMsgPort, (struct IORequest **)&TimerIORequest, UNIT_MICROHZ );
-	OpenATimer( &SaveTimerMsgPort, (struct IORequest **)&SaveTimerIORequest, UNIT_VBLANK );
 
+	TimerBase = TimerIORequest->tr_node.io_Device;
 	ScummNoCursor = (UWORD *)AllocVec( 16, MEMF_CHIP | MEMF_CLEAR );
 }
 
@@ -151,21 +146,6 @@ OSystem_MorphOS::~OSystem_MorphOS()
 
 	if( TimerMsgPort )
 		DeleteMsgPort( TimerMsgPort );
-
-	if( SaveTimerRun )
-	{
-		AbortIO( (struct IORequest *)SaveTimerIORequest );
-		WaitIO( (struct IORequest *)SaveTimerIORequest );
-	}
-
-	if( SaveTimerIORequest )
-	{
-		CloseDevice( (struct IORequest *)SaveTimerIORequest );
-		DeleteIORequest( (struct IORequest *)SaveTimerIORequest );
-	}
-
-	if( SaveTimerMsgPort )
-		DeleteMsgPort( SaveTimerMsgPort );
 
 	if( ScummMusicThread )
 	{
@@ -245,22 +225,7 @@ void OSystem_MorphOS::delay_msecs(uint msecs)
 
 void OSystem_MorphOS::set_timer(int timer, int (*callback)(int))
 {
-	if( timer )
-	{
-		SaveTimerRun = true;
-		TimerCallback = callback;
-		TimerInterval = timer;
-
-		SaveTimerIORequest->tr_node.io_Command  = TR_ADDREQUEST;
-		SaveTimerIORequest->tr_time.tv_secs  = timer/1000;
-		SaveTimerIORequest->tr_time.tv_micro = timer%1000;
-		SendIO( (struct IORequest *)SaveTimerIORequest );
-	}
-	else
-	{
-		SaveTimerRun = false;
-		TimerInterval = 0;
-	}
+	warning("set_timer() unexpectedly called");
 }
 
 void *OSystem_MorphOS::create_thread(ThreadProc *proc, void *param)
@@ -733,13 +698,6 @@ void OSystem_MorphOS::SwitchScalerTo( SCALERTYPE newScaler )
 bool OSystem_MorphOS::poll_event( Event *event )
 {
 	struct IntuiMessage *ScummMsg;
-
-	if( SaveTimerRun && CheckIO( (struct IORequest *)SaveTimerIORequest ) )
-	{
-		WaitIO( (struct IORequest *)SaveTimerIORequest );
-		TimerInterval = (*TimerCallback)( TimerInterval );
-		set_timer( TimerInterval, TimerCallback );
-	}
 
 	if( ScummMsg = (struct IntuiMessage *)GetMsg( ScummWindow->UserPort ) )
 	{

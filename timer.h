@@ -25,6 +25,10 @@
 
 #define MAX_TIMERS 3
 
+#ifdef __MORPHOS__
+#include "morphos/morphos_timer.h"
+#else
+
 class OSystem;
 
 class Timer {
@@ -58,5 +62,7 @@ public:
 	bool installProcedure (int ((*procedure)(int)), int32 interval);
 	void releaseProcedure (int ((*procedure)(int)));
 };
+
+#endif
 
 #endif
