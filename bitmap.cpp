@@ -120,8 +120,7 @@ void Bitmap::prepareGL() {
 }
 
 void Bitmap::draw() const {
-
-  if (format_ == 1) {
+  if (format_ == 1) {		// Normal image
     if (curr_image_ != 0) {
       warning("Animation not handled yet in GL texture path !\n");
     }
@@ -152,8 +151,11 @@ void Bitmap::draw() const {
     glDisable(GL_TEXTURE_2D);
     glDepthMask(GL_TRUE);
     glEnable(GL_DEPTH_TEST);
-  } else if (format_ == 5) {
-#if 0
+  } else if (format_ == 5) {	// ZBuffer image
+    // Only draw the manual zbuffer when we are not using screenblocks, and when enabled
+    if ((ZBUFFER_GLOBAL == 0) || (SCREENBLOCKS_GLOBAL == 1))
+	return;
+
     if (curr_image_ != 0) {
       warning("Animation not handled yet in GL texture path !\n");
     }
@@ -171,7 +173,6 @@ void Bitmap::draw() const {
     }
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); 
     glDepthFunc(GL_LESS);
-#endif
   }
 }
 

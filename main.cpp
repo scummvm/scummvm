@@ -30,6 +30,9 @@
 #include <unistd.h>
 #endif
 
+// Hacky global toggles for experimental/debug code
+int ZBUFFER_GLOBAL, SCREENBLOCKS_GLOBAL;
+
 static void saveRegistry() {
   Registry::instance()->save();
 }
@@ -40,8 +43,28 @@ static void saveRegistry() {
 }
 #endif
 
-int main(int /* argc */, char ** /* argv */) {
+int main(int argc, char *argv[]) {
   char 	GLDriver[1024];
+  int i;
+
+  // Parse command line
+  ZBUFFER_GLOBAL = 0;
+  SCREENBLOCKS_GLOBAL = 0;
+  for (i=1;i<argc;i++) {
+	if (strcmp(argv[i], "-zbuffer") == 0)
+		ZBUFFER_GLOBAL = 1;
+	else if (strcmp(argv[i], "-screenblocks") ==0)
+		SCREENBLOCKS_GLOBAL = 1;
+	else {
+		printf("Residual CVS Version\n");
+		printf("--------------------\n");
+		printf("Recognised options:\n");
+		printf("\t-zbuffer\t\tEnable ZBuffers (Very slow on older cards)\n");
+		printf("\t-screenblocks\t\tEnable Screenblocks (Experimental zbuffer speedup on older cards - BROKEN!!\n");
+		exit(-1);
+	}
+  }
+
   if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     return 1;
   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);

@@ -17,6 +17,8 @@
 
 #ifndef DEBUG_H
 #define DEBUG_H
+// Hacky toggles for experimental / debug code (defined/set in main.cpp)
+extern int ZBUFFER_GLOBAL, SCREENBLOCKS_GLOBAL;
 
 void warning(const char *fmt, ...);
 void error(const char *fmt, ...);

@@ -169,6 +169,9 @@ void Scene::Setup::setupCamera() const {
 void Scene::setSetup(int num)
 {
 	currSetup_ = setups_ + num;
+
+	if (SCREENBLOCKS_GLOBAL == 0)
+		return;
 	if(currSetup_->bkgnd_zbm_)
 		screenBlocksInit( currSetup_->bkgnd_zbm_->getData() );
 	else

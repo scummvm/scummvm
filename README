@@ -1,5 +1,5 @@
 Residual: A LucasArts 3D game interpreter            Version 0.01-CVS
-(C) 2003- The ScummVM-Residual team                  Last Updated: 24st Aug 2003
+(C) 2003- The ScummVM-Residual team                  Last Updated: 21st Sept 2003
 --------------------------------------------------------------------------------
 
 What is Residual?
@@ -26,6 +26,7 @@ UNIX:
      Create a ~/.residualrc file, containing the following lines:
        DataDir=[path to all the .lab files]
        good_times=TRUE
+
 Win32:
      Copy 'residual.exe' into the directory containing your .lab files, and
 create a file in this directory called 'residual.ini'. This file should contain
@@ -33,15 +34,18 @@ the lines:
        DataDir=.
        good_times=TRUE
 
-It runs really slow!
---------------------
+Residual understands two options: '-zbuffer' which enables masking, and '-screenblocks'
+which is a (currently broken) attempt to speed up masking on older cards.
+
+It runs really slow when using -zbuffer!
+----------------------------------------
 A large portion of older cards (Such as 3dfx cards, Radeon 7500 and earlier,
 Matrox G4xx series cards, etc) do not have a fast glDrawPixels implementation.
 Unix users can achieve a usable speed by using Mesa 5.0 or newer, but people
 unable to upgrade or Windows users are stuck.
 
-We are working on this problem, however it is a tricky one and no easy
-solution has yet been found.
+We do have a possible solution (-screenblocks), however it is experimental
+untested, and currently will thrash memory and potentially crash.
 
 What is the state of Residual?
 -------------------------------

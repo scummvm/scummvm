@@ -84,7 +84,7 @@ void Engine::mainLoop() {
 
     // Run asynchronous tasks
     lua_runtasks();
-
+    if (SCREENBLOCKS_GLOBAL == 1)
 	screenBlocksReset();
 
     // Draw the screen
@@ -118,8 +118,8 @@ void Engine::mainLoop() {
     }
     glDisable(GL_TEXTURE_2D);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (SCREENBLOCKS_GLOBAL == 1)
 	screenBlocksBlitDirtyBlocks();
 
     Bitmap::prepareGL();
