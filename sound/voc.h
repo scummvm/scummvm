@@ -33,7 +33,7 @@ class File;
 #pragma START_PACK_STRUCTS
 #endif
 
-struct VocHeader {
+struct VocFileHeader {
 	uint8 desc[20];
 	uint16 datablock_offset;
 	uint16 version;

@@ -70,7 +70,7 @@ byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops, int &begin_
 			int packing = ptr[offset++];
 			len -= 2;
 			rate = getSampleRateFromVOCRate(time_constant);
-			debug(9, "VOC Data Bloc : %d, %d, %d", rate, packing, len);
+			debug(9, "VOC Data Block: %d, %d, %d", rate, packing, len);
 			if (packing == 0) {
 				if (size) {
 					ret_sound = (byte *)realloc(ret_sound, size + len);
@@ -98,62 +98,78 @@ byte *readVOCFromMemory(byte *ptr, int &size, int &rate, int &loops, int &begin_
 		// FIXME some FT samples (ex. 362) has bad length, 2 bytes too short
 		offset += len;
 	}
-	debug(9, "VOC Data Size : %d", size);
+	debug(4, "VOC Data Size : %d", size);
 	return ret_sound;
 }
 
-enum {
-	SOUND_HEADER_SIZE = 26
-};
-
 // FIXME/TODO: loadVOCFile() essentially duplicates all the code from
-// readCreativeVoc(). Obviously this is bad, it should rather use that function
-// (after some tweaks to readCreativeVoc, to deal with the alternate VTLK
-// header).
+// readCreativeVoc(). Obviously this is bad, they should share as much
+// code as possible. One way to do that would be to abstract the
+// reading from memory / from file into a stream class (similar to the
+// RWOps of SDL, for example).
 byte *loadVOCFile(File *file, int &size, int &rate) {
-	char ident[8];
+	VocFileHeader fileHeader;
 
-	if (file->read(ident, 8) != 8)
+	if (file->read(&fileHeader, 8) != 8)
 		goto invalid;
 
-	if (!memcmp(ident, "VTLK", 4)) {
-		file->seek(SOUND_HEADER_SIZE, SEEK_CUR);
-	} else if (!memcmp(ident, "Creative", 8)) {
-		file->seek(SOUND_HEADER_SIZE - 8, SEEK_CUR);
+	if (!memcmp(&fileHeader, "VTLK", 4)) {
+		if (file->read(&fileHeader, sizeof(VocFileHeader)) != sizeof(VocFileHeader))
+			goto invalid;
+	} else if (!memcmp(&fileHeader, "Creative", 8)) {
+		if (file->read(((byte *)&fileHeader) + 8, sizeof(VocFileHeader) - 8) != sizeof(VocFileHeader) - 8)
+			goto invalid;
 	} else {
 	invalid:;
 		warning("loadVOCFile: invalid header");
 		return NULL;
 	}
 
-	VocBlockHeader voc_block_hdr;
+	assert(memcmp(&fileHeader, "Creative Voice File\x1A", 20) == 0);
+	//int32 offset = FROM_LE_16(fileHeader.datablock_offset);
+	int16 version = FROM_LE_16(fileHeader.version);
+	int16 code = FROM_LE_16(fileHeader.id);
+	assert(version == 0x010A || version == 0x0114);
+	assert(code == ~version + 0x1234);
 
-	file->read(&voc_block_hdr, sizeof(voc_block_hdr));
-	if (voc_block_hdr.blocktype != 1) {
-		warning("loadVOCFile: Expecting block_type == 1, got %d", voc_block_hdr.blocktype);
-		return NULL;
+	bool quit = false;
+	byte *ret_sound = 0;
+	size = 0;
+
+	while (!quit) {
+		int len = file->readUint32LE();
+		code = len & 0xFF;
+		len >>= 8;
+		switch(code) {
+		case 0:
+			quit = true;
+			break;
+		case 1: {
+			int time_constant = file->readByte();
+			int packing = file->readByte();
+			len -= 2;
+			rate = getSampleRateFromVOCRate(time_constant);
+			debug(9, "VOC Data Block: %d, %d, %d", rate, packing, len);
+			if (packing == 0) {
+				if (size) {
+					ret_sound = (byte *)realloc(ret_sound, size + len);
+				} else {
+					ret_sound = (byte *)malloc(len);
+				}
+				file->read(ret_sound + size, len);
+				size += len;
+			} else {
+				warning("VOC file packing %d unsupported", packing);
+			}
+			} break;
+		default:
+			warning("Invalid code in VOC file : %d", code);
+			quit = true;
+			break;
+		}
 	}
-
-	size = voc_block_hdr.size[0] + (voc_block_hdr.size[1] << 8) + (voc_block_hdr.size[2] << 16) - 2;
-	rate = getSampleRateFromVOCRate(voc_block_hdr.sr);
-	int comp = voc_block_hdr.pack;
-
-	if (comp != 0) {
-		warning("loadVOCFile: Unsupported compression type %d", comp);
-		return NULL;
-	}
-
-	byte *data = (byte *)malloc(size);
-	if (data == NULL) {
-		error("loadVOCFile: out of memory");
-	}
-
-	if ((int)file->read(data, size) != size) {
-		/* no need to free the memory since error will shut down */
-		error("loadVOCFile: cannot read %d bytes", size);
-	}
-
-	return data;
+	debug(4, "VOC Data Size : %d", size);
+	return ret_sound;
 }
 
 AudioStream *makeVOCStream(byte *ptr) {
