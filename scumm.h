@@ -34,7 +34,7 @@
 #define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
 
-struct Scumm;
+class Scumm;
 struct Actor;
 
 struct gate_location
@@ -879,222 +879,15 @@ struct BoxCoords {
 	ScummPoint lr;
 };
 
-#ifdef COMPRESSED_SOUND_FILE
-struct OffsetTable {
+struct OffsetTable {	/* Compressed Sound (.SO3) */
 	int org_offset;
 	int new_offset;
 	int num_tags;
 	int compressed_size;
 };
-#endif
 
-struct Scumm {
-	uint32 _features;
-	const char *_gameText;
-	byte _gameId;
-//	byte _majorScummVersion;
-//	byte _middleScummVersion;
-//	byte _minorScummVersion;
-	ScummDebugger *_debugger;
-	void *_gui; /* actually a pointer to a Gui */
-
-	byte OF_OWNER_ROOM;
-	
-    int _gameTempo, _saveSound;
-	int _lastLoadedRoom;
-	int _roomResource;
-	
-	byte _encbyte;
-	void *_fileHandle;
-	void *_sfxFile;
-	char *_exe_name;
-	char *_gameDataPath;
-        char *_savegame_dir;
-	int akos_findManyDirection(int16 ManyDirection, uint16 facing);
-	
-	byte _saveLoadFlag;
-	byte _saveLoadSlot;
-	bool _saveLoadCompatible;
-
-	bool _dynamicRoomOffsets;
-	byte _resFilePathId;
-
-	bool _soundsPaused;
-	bool _soundsPaused2;
-	bool _useTalkAnims;
-	
-	char *_resFilePrefix;
-	char *_resFilePath;
-
-	int _keyPressed;
-
-	int _midi_driver;	
-	void *_soundEngine;
-
-	uint16 *_inventory;
-	byte *_arrays;
-	VerbSlot *_verbs;
-	ObjectData *_objs;
-	uint16 *_newNames;
-	int16 *_vars;
-	int16 _varwatch;
-	byte *_bitVars;
-
-	const OpcodeProc *_opcodes;
-	const char* *_opcodes_lookup;
-
-	int _xPos, _yPos;
-	int _dir;
-
-	byte _curActor;
-	int _curVerb;
-	int _curVerbSlot;
-
-	int _curPalIndex;
-
-	VirtScreen *_curVirtScreen;
-
-	
-	byte *_scriptPointer, *_scriptOrgPointer;
-	byte *_scriptPointerStart;
-	byte _opcode;
-
-	int _numVariables;
-	int _numBitVariables;
-	int _numLocalObjects;
-	int _numGlobalObjects;
-	int _numArray;
-	int _numVerbs;
-	int _numFlObject;
-	int _numInventory;
-	int _numRooms;
-	int _numScripts;
-	int _numSounds;
-	int _numCharsets;
-	int _numCostumes;
-	int _numNewNames;
-	int _numGlobalScripts;
-
-	byte *_msgPtrToAdd;
-	
-	uint8 *_roomFileIndexes;
-	byte *_objectOwnerTable;
-	byte *_objectRoomTable;
-	byte *_objectStateTable;
-	uint32 *_classData;
-
-	byte _expire_counter;
-
-	bool _noTalkAnims;
-
-	bool _mouthSyncMode;
-	bool _endOfMouthSync;
-
-	uint32 _randSeed1;
-	uint32 _randSeed2;
-
-	uint16 _screenB, _screenH;
-
-	uint16 _defaultTalkDelay;
-	byte _haveMsg;
-	byte _newEffect;
-	bool _fullRedraw;
-	uint16 _soundParam,_soundParam2,_soundParam3;
-	
-	byte _switchRoomEffect2, _switchRoomEffect;
-
-	int _resourceHeaderSize;
-
-	bool _egoPositioned;
-	bool _doEffect;
-	bool _screenEffectFlag;
-	bool _keepText;
-
-	uint32 _maxHeapThreshold;
-	uint32 _minHeapThreshold;
-	
-	bool _fullScreen;
-	int  _videoMode;
-
-	byte _bkColor;
-	uint16 _lastXstart;
-		
-	int16 _talkDelay;
-
-	bool _shakeEnabled;
-	uint _shakeFrame;
-
-	int16 _virtual_mouse_x, _virtual_mouse_y;
-
-	int _cursorHotspotX, _cursorHotspotY;
-	int _cursorWidth, _cursorHeight;
-	byte _cursorAnimateIndex;
-	byte _cursorAnimate;
-
-	byte _charsetColor;
-
-	uint16 _debugMode;
-
-	uint16 _noSubtitles;  // skip all subtitles?
-	unsigned int _scale;  // multiplier to resolution (2 is default)
-
-	byte *_messagePtr;
-
-	byte _numNestedScripts;
-	byte _currentScript;
-
-	byte _currentRoom;
-	byte _numObjectsInRoom;
-	byte _actorToPrintStrFor;
-
-	int _screenStartStrip;
-	int _screenEndStrip;
-
-	int _screenLeft;
-	int _screenTop;
-
-	byte _fastMode;
-	
-	bool _completeScreenRedraw;
-
-	int8 _userPut;
-	int8 _cursorState;
-
-	byte _sfxMode;
-
-	uint16 _mouseButStat;
-	byte _leftBtnPressed, _rightBtnPressed;
-
-	int _numInMsgStack;
-
-	uint32 _localScriptList[NUM_LOCALSCRIPT];
-
-	VirtScreen virtscr[4];
-
-	uint32 _ENCD_offs, _EXCD_offs;
-	uint32 _CLUT_offs, _EPAL_offs;
-	uint32 _IM00_offs;
-	uint32 _PALS_offs;
-
-	uint32 _allocatedSize;
-
-	uint32 _talk_sound_a, _talk_sound_b;
-	byte _talk_sound_mode;
-
-	int _drawObjectQueNr;
-	byte _drawObjectQue[200];
-
-	uint16 _currentDrive;
-	uint16 _soundCardType;
-	byte _mousePresent;
-
-	int16 _palManipStart;
-	int16 _palManipEnd;
-        int16 _palManipCounter;
-
-	int16 _sound_volume_master;
-	int16 _sound_volume_music;
-	int16 _sound_volume_sfx;
+class Scumm {
+public:
 
 	struct {
 		byte mode[rtNumTypes];
@@ -1122,121 +915,712 @@ struct Scumm {
 		int16 x,y;
 	} mouse;
 
+	/* Init functions, etc*/
+	byte _fastMode;
+	char *getGameName();
+
+	void scummInit();
+	void scummMain(int argc, char **argv);
+	int scummLoop(int delta);
+	void initScummVars();
+
+	void pauseGame(bool user);
+	void shutDown(int i);
+	void setOptions(void);
+
+	void main();
+	void parseCommandLine(int argc, char **argv);
+	void showHelpAndExit();
+	bool detectGame();
+	void processKbd();
+	void clear_fullRedraw();
+
+	int checkKeyHit();
+	void convertKeysToClicks();
+
+	/* Random number generation */
+	uint32 _randSeed1, _randSeed2;
+	void initRandSeeds();
+	uint getRandomNumber(uint max);
+	uint getRandomNumberRng(uint min, uint max);
+
+	/* Core variable definitions */
+	uint32 _features;
+	byte _gameId;
+	const char *_gameText;
+	char *_gameDataPath;
+
+	/* Core class/array definitions */
+	void *_soundEngine;
+	void *_gui;
+	Gdi gdi;
+
 	Actor actor[MAX_ACTORS];
-
-	uint32 gfxUsageBits[200];
-
-	CharsetRenderer charset;
+	VerbSlot *_verbs;
+	ObjectData *_objs;
+	ScummDebugger *_debugger;
 	
-	byte _charsetData[10][16];
+	uint16 *_inventory;
+	byte *_arrays;
+	uint16 *_newNames;
+	int16 *_vars;
+	int16 _varwatch;
+	byte *_bitVars;
 
-	byte _resourceMapper[128];
+	/* Global resource tables */
+	int _numVariables, _numBitVariables, _numLocalObjects;
+	int _numGlobalObjects, _numArray, _numVerbs, _numFlObject;
+	int _numInventory, _numRooms, _numScripts, _numSounds;
+	int _numCharsets, _numCostumes, _numNewNames, _numGlobalScripts;
+	int NUM_ACTORS;
 
-	uint16 _extraBoxFlags[65];
+	/* Current objects - can go in their respective classes */
+	byte _curActor;
+	int _curVerb;
+	int _curVerbSlot;
+	int _curPalIndex;
+	byte _currentRoom;
+	VirtScreen *_curVirtScreen;
 
+	bool _egoPositioned;
+	int _xPos, _yPos, _dir;
+	int _keyPressed;
+	uint16 _lastKeyHit;
+	uint16 _mouseButStat;
+	byte _leftBtnPressed, _rightBtnPressed;
+
+	int16 _virtual_mouse_x, _virtual_mouse_y, _bootParam;
+	uint16 _debugMode, _currentDrive, _soundCardType;
+	byte _mousePresent;
+
+	/* Not sure where this stuff goes */
+	byte isMaskActiveAt(int l, int t, int r, int b, byte *mem);
+	void startScene(int room, Actor *a, int b);
+	void setupScummVarsOld();	// Both of these will simply be one
+	void setupScummVarsNew();	// 'setupScummVars' in each Scumm_Vx
+	byte *_objectOwnerTable, *_objectRoomTable, *_objectStateTable;
+	byte _numObjectsInRoom;
+	int8 _userPut;
+	int _resourceHeaderSize;
+	void unkRoomFunc3(int a, int b, int c, int d, int e);
+	void unkRoomFunc4(int a, int b, int c, int d, int e);
+	void setScaleItem(int slot, int a, int b, int c, int d);
+	void clearClickedStatus();
+	void startManiac();
+
+	/* GUI class */
+	void drawString(int a);
+	int getKeyInput(int a);
+
+	/* Save/Load class - some of this may be GUI */
+	byte _saveLoadFlag, _saveLoadSlot;
+	bool _saveLoadCompatible;
+	char _saveLoadName[32];
+
+	bool saveState(int slot, bool compat);
+	bool loadState(int slot, bool compat);
+	void saveOrLoad(Serializer *s);
+
+	bool getSavegameName(int slot, char *desc);
+	void makeSavegameName(char *out, int slot, bool compatible);
+	void saveLoadResource(Serializer *ser, int type, int index);
+
+	/* Heap and memory management */
+	uint32 _maxHeapThreshold, _minHeapThreshold;
+	void checkRange(int max, int min, int no, const char *str);
+	void lock(int type, int i);
+	void unlock(int type, int i);
+	void heapClear(int mode);
+	void unkHeapProc2(int a, int b);
+
+	/* Script VM - should be in Script class */
+	uint32 _localScriptList[NUM_LOCALSCRIPT];
+	byte *_scriptPointer, *_scriptOrgPointer, *_scriptPointerStart;
+	byte _opcode, _numNestedScripts, _currentScript;
+	uint16 _curExecScript;
+	const OpcodeProc *_opcodes;
+	const char* *_opcodes_lookup;
 	byte **_lastCodePtr;
-
-	byte *_shadowPalette;
-	int _shadowPaletteSize;
+	int _resultVarNumber, _scummStackPos;
+	int16 _localParamList[16],  _scummStack[150];
 	
-//	int _numSoundTags;
-//	byte *_soundTagTable;
+	OpcodeProc getOpcode(int i) { return _opcodes[i]; }
+	void initializeLocals(int slot, int16 *vars);
+	int	getScriptSlot();
+	void runScript(int script, int a, int b, int16 *lvarptr);
+	void stopScriptNr(int script);
+	void runScriptNested(int script);
+	void executeScript();	
+	void updateScriptPtr();
+	void getScriptBaseAddress();
+	void getScriptEntryPoint();
+	byte fetchScriptByte();
+	int fetchScriptWord();
+	void ignoreScriptWord() { fetchScriptWord(); }
+	void ignoreScriptByte() { fetchScriptByte(); }
+	uint getVarOrDirectWord(byte mask);
+	uint getVarOrDirectByte(byte mask);
+	void getResultPos();
+	void setResult(int result);
+	int readVar(uint var);
+	void writeVar(uint var, int value);
+	void push(int a);
+	int pop();
+	void runHook(int i);
+	bool isScriptInUse(int script);
+	int getStringLen(byte *ptr);
+	
+	void freezeScripts(int scr);
+	void unfreezeScripts();
+	void runAllScripts();
+	void setupOpcodes();
+	void setupOpcodes2();	
+	void cutscene(int16 *args);
+	void endCutscene();
+	void exitCutscene();
+	void runExitScript();
+	void runEntryScript();
 
-	int16 _bootParam;
+	void beginOverride();
+	void endOverride();
+	void killScriptsAndResources();
+	void checkAndRunVar33();
+	void decreaseScriptDelay(int amount);
+	bool isScriptRunning(int script);
+	bool isRoomScriptRunning(int script);
+	void arrayop_1(int a, byte *ptr);
+	void copyString(byte *dst, byte *src, int len);
+	void doSentence(int c, int b, int a);
+	int popRoomAndObj(int *room);
+	int getWordVararg(int16 *ptr);
+	void decodeParseString();
+	void decodeParseString2(int a, int b);
 
+	/* Script VM or Object class? */
+	void stopObjectCode();
+	void stopObjectScript(int script);
+
+
+	
+	/* Should be in Resource class */
+	byte _encbyte;
+	void *_fileHandle;
+	char *_resFilePrefix, *_resFilePath;
 	uint32 _fileOffset;
+	char *_exe_name;
+	bool _dynamicRoomOffsets;
+	byte _resourceMapper[128];
+	uint32 _allocatedSize;
+	byte _expire_counter;
 
-	byte _fileReadFailed;
-	byte _fileMode;
+	void allocateArrays();
+	void openRoom(int room);
+	void deleteRoomOffsets();
+	void readRoomsOffsets();
+	void askForDisk(const char *filename);
+	bool openResourceFile(const char *filename);
+	void loadPtrToResource(int type, int i, byte *ptr);
+	void readResTypeList(int id, uint32 tag, const char *name);
+	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
+	byte *createResource(int type, int index, uint32 size);
+	void nukeResource(int type, int i);	
+	byte *getResourceAddress(int type, int i);
+	byte *getStringAddress(int i);
+	void ensureResourceLoaded(int type, int i);
+	int loadResource(int type, int i);
+	int getResourceRoomNr(int type, int index);
+	int readSoundResource(int type, int index);
+	void setResourceCounter(int type, int index, byte flag);
+	void validateResource(const char *str, int type, int index);
+	void increaseResourceCounter();
+	bool isResourceInUse(int type, int i);
+	bool isResourceLoaded(int type, int index);
+	void initRoomSubBlocks();
+	void loadRoomObjects();
+    void loadRoomObjectsSmall();
+	void readArrayFromIndexFile();
+	void readMAXS();
+    void readIndexFile();
+    void readIndexFileSmall();
+	void loadCharset(int i);
+	void nukeCharset(int i);
 
-	uint32 _whereInResToRead;
+	bool fileReadFailed(void *handle);
+	void clearFileReadFailed(void *handle);
 
-	CameraData camera;
+	int _lastLoadedRoom, _roomResource;
+	byte _resFilePathId, _fileReadFailed;
+	byte *findResourceData(uint32 tag, byte *ptr);
+	int getResourceDataSize(byte *ptr);
+	
+	int getArrayId();
+	void nukeArray(int a);
+	int defineArray(int a, int b, int c, int d);
+	int readArray(int array, int index, int base);
+	void writeArray(int array, int index, int base, int value);
 
-	int _resultVarNumber;
+	void resourceStats();
+	void expireResources(uint32 size);
+	void freeResources();
+	void destroy();
+	void dumpResource(char *tag, int index, byte *ptr);
 
+
+	/* Should be in Object class */
+	byte OF_OWNER_ROOM;
+	struct FindObjectInRoom {
+		CodeHeader *cdhd;
+		byte *obcd;
+		ImageHeader *imhd;
+		byte *obim;
+		byte *roomptr;
+	};
+
+	enum FindObjectWhat {
+		foCodeHeader = 1,
+		foImageHeader = 2,
+		foCheckAlreadyLoaded = 4
+	};
+	int getInventorySlot();
+	void SamInventoryHack(int obj);	// FIXME: Sam and Max hack
+	int findInventory(int owner, int index);
+	int getInventoryCount(int owner);
+
+	void setupRoomObject(ObjectData *od, byte *room);
+	void removeObjectFromRoom(int obj);
+	void loadFlObject(uint object, uint room);
+	void nukeFlObjects(int min, int max);
+	int findFlObjectSlot();
+	void addObjectToInventory(uint obj, uint room);
+	void fixObjectFlags();
+	bool getClass(int obj, int cls);
+	void putClass(int obj, int cls, bool set);
+	int getState(int obj);
+	void putState(int obj, int state);
+	void setObjectState(int obj, int state, int x, int y);
+	int getOwner(int obj);
+	void putOwner(int obj, int owner);
+	void setOwnerOf(int obj, int owner);
+	void clearOwnerOf(int obj);
+	int getObjectRoom(int obj);
+	int getObjX(int obj);
+	int getObjY(int obj);
+	void getObjectXYPos(int object);
+	int getObjOldDir(int obj);
+	int getObjNewDir(int obj);
+	int getObjectIndex(int object);
+	int whereIsObject(int object);
+	int findObject(int x, int y);
+	void findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint object, uint room);	
+	int getObjectOrActorXY(int object);		 // Object and Actor...
+	int getObjActToObjActDist(int a, int b); // Not sure how to handle
+	byte *getObjOrActorName(int obj);		 // these three..
+
+	void addObjectToDrawQue(int object);
+	void clearDrawObjectQueue();
+	void processDrawQue();
+
+	uint32 getOBCDOffs(int object);
+	byte *getOBCDFromObject(int obj);	
+	int getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f);
+
+
+
+	/* Should be in akos class */
+	bool akos_drawCostume(AkosRenderer *ar);
+	void akos_setPalette(AkosRenderer *ar, byte *palette);
+	void akos_setCostume(AkosRenderer *ar, int costume);
+	void akos_setFacing(AkosRenderer *ar, Actor *a);
+	bool akos_drawCostumeChannel(AkosRenderer *ar, int chan);
+	void akos_codec1(AkosRenderer *ar);
+	void akos_codec5(AkosRenderer *ar);
+	void akos_codec16(AkosRenderer *ar);
+	void akos_codec1_ignorePakCols(AkosRenderer *ar, int num);
+	void akos_c1_spec2(AkosRenderer *ar);
+	void akos_c1_spec3(AkosRenderer *ar);
+
+	void akos_c1_0_decode(AkosRenderer *ar);
+	void akos_c1_12_decode(AkosRenderer *ar);
+	void akos_c1_12y_decode(AkosRenderer *ar);
+	void akos_c1_3_decode(AkosRenderer *ar);
+	void akos_c1_4_decode(AkosRenderer *ar);
+	void akos_c1_4y_decode(AkosRenderer *ar);
+	void akos_c1_56_decode(AkosRenderer *ar);
+	void akos_c1_56y_decode(AkosRenderer *ar);
+	void akos_c1_7_decode(AkosRenderer *ar);
+
+	bool akos_increaseAnims(byte *akos, Actor *a);
+	bool akos_increaseAnim(Actor *a, int i, byte *aksq, uint16 *akfo, int numakfo);
+
+	int getAnimVar(Actor *a, byte var);
+	void setAnimVar(Actor *a, byte var, int value);
+
+	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
+	bool akos_compare(int a, int b, byte cmd);
+	void akos_decodeData(Actor *a, int frame, uint usemask);
+	int akos_frameToAnim(Actor *a, int frame);
+	bool akos_hasManyDirections(Actor *a);
+	int akos_findManyDirection(int16 ManyDirection, uint16 facing);
+
+
+
+	/* Should be in Costume class */
+	void loadCostume(LoadedCostume *lc, int costume);
+	void cost_setPalette(CostumeRenderer *cr, byte *palette);
+	void cost_setFacing(CostumeRenderer *cr, Actor *a);
+	void cost_setCostume(CostumeRenderer *cr, int costume);
+	byte cost_increaseAnims(LoadedCostume *lc, Actor *a);
+	byte cost_increaseAnim(LoadedCostume *lc, Actor *a, int slot);
+	void cost_decodeData(Actor *a, int frame, uint usemask);
+	int cost_frameToAnim(Actor *a, int frame);
+
+
+	/* Should be in Verb class */
+	uint16 _verbMouseOver;	
+	void redrawVerbs();
+	void checkExecVerbs();
+	void verbMouseOver(int verb);
+	int checkMouseOver(int x, int y);
+	void drawVerb(int verb, int mode);
+	void runInputScript(int a, int cmd, int mode);
+	void restoreVerbBG(int verb);
+	void drawVerbBitmap(int vrb, int x, int y);
+	int getVerbEntrypoint(int obj, int entry);
+	int getVerbSlot(int id, int mode);
+	void killVerb(int slot);
+	void runVerbCode(int script, int entry, int a, int b, int16 *vars);
+	void setVerbObject(uint room, uint object, uint verb);
+
+
+	/* Should be in Sound class */
+	MixerChannel _mixer_channel[NUM_MIXER];
+	int _gameTempo, _midi_driver;	
+	byte _sfxMode;
+	int16 _sound_volume_master, _sound_volume_music, _sound_volume_sfx;
+	int _saveSound;
+	void *_sfxFile;
+	uint16 _soundParam,_soundParam2,_soundParam3;
+	uint32 _talk_sound_a, _talk_sound_b;
+	byte _talk_sound_mode;
+	bool _mouthSyncMode;
+	bool _endOfMouthSync;
+	uint16 _mouthSyncTimes[52];
+	uint _curSoundPos;
+	int current_cd_sound;
+
+	int16 _soundQuePos, _soundQue[0x100];
+	byte _soundQue2Pos, _soundQue2[10];
+	bool _soundsPaused, _soundsPaused2;
+
+	void setupSound();
+	void processSoundQues();
+	void playSound(int sound);
+	void stopAllSounds();
+	void stopSound(int sound);
+	bool isSoundInQueue(int sound);
+	void clearSoundQue();
+	void talkSound(uint32 a, uint32 b, int mode);
+	void processSfxQueues();
+	void startTalkSound(uint32 a, uint32 b, int mode);
+	void stopTalkSound();
+	bool isMouthSyncOff(uint pos);
+	void startSfxSound(void *file, int size);
+	void *openSfxFile();
+	void addSoundToQueue(int sound);
+	void addSoundToQueue2(int sound);
+	void soundKludge(int16 *list);
+	OffsetTable *offset_table;	// SO3 MP3 compressed audio
+	int num_sound_effects;		// SO3 MP3 compressed audio
+
+	void pauseSounds(bool pause);
+	MixerChannel *allocateMixer();
+	bool isSfxFinished();
+	void playSfxSound(void *sound, uint32 size, uint rate);
+  	void playSfxSound_MP3(void *sound, uint32 size);
+	void stopSfxSound();
+	void mixWaves(int16 *sounds, int len);
+
+	bool _useTalkAnims;
+	uint16 _defaultTalkDelay;
+	byte _haveMsg;
+	int isSoundRunning(int a);
+
+
+	/* Should be in Actor class */
+	Actor *derefActor(int id) {return &actor[id];}
+	Actor *derefActorSafe(int id, const char *errmsg);
+	Actor *getFirstActor() {return actor;} 
+	void putActor(Actor *a, int x, int y, byte room);
+	void hideActor(Actor *a);
+	void showActor(Actor *a);
+	void showActors();
+
+	void initActor(Actor *a, int mode);
+	void setActorWalkSpeed(Actor *a, uint speed1, uint speed2);
+	int calcMovementFactor(Actor *a, int newx, int newy);
+	int actorWalkStep(Actor *a);
+	int remapDirection(Actor *a, int dir);
+	void setupActorScale(Actor *a);
+	void stopActorMoving(Actor *a);
+	uint32 *_classData;
+	void startWalkAnim(Actor *a, int cmd, int angle);
+	void startAnimActor(Actor *a, int frame);
+	void setActorBox(Actor *a, int box);
+
+	int newDirToOldDir(int dir);
+	int oldDirToNewDir(int dir);
+
+	static int normalizeAngle(int angle);
+	int getAngleFromPos(int x, int y);
+	static int fromSimpleDir(int dirtype, int dir);
+	static int toSimpleDir(int dirtype, int dir);
+	static int numSimpleDirDirections(int dirType);
+	int updateActorDirection(Actor *a);
+	void startAnimActorEx(Actor *a, int frame, int direction);
+	int getProgrDirChange(Actor *a, int mode);
+	void initActorCostumeData(Actor *a);
+	void fixActorDirection(Actor *a, int direction);
+
+	int getActorXYPos(Actor *a);
+	void adjustActorPos(Actor *a);	
+	void turnToDirection(Actor *a, int newdir);
+	AdjustBoxResult adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom);
+	void walkActors();
+	void playActorSounds();
+	void walkActor(Actor *a);
+	void setActorRedrawFlags();
+	void resetActorBgs();
+	void processActors();
+	void drawActorCostume(Actor *a);
+	void actorAnimate(Actor *a);
+	int getActorFromPos(int x, int y);
+	void setActorCostume(Actor *a, int c);
+	byte *getActorName(Actor *a);
+	void faceActorToObj(int act, int obj);
+	void animateActor(int act, int anim);
+	void actorFollowCamera(int act);
+	void startWalkActor(Actor *a, int x, int y, int dir);
+	
+	void remapActor(Actor *a, int b, int c, int d, int e);
+	void walkActorOld(Actor *a);
+	bool isCostumeInUse(int i);
+
+	/* Actor talking stuff */
+	byte _actorToPrintStrFor;
 	int _sentenceNum;
 	SentenceTab sentence[6];
-
 	StringTab string[6];
+	void actorTalk();
+	void stopTalk();	
 
-	uint16 _mouthSyncTimes[52];
 
-	int16 _soundQuePos;
-	int16 _soundQue[0x100];
 
+
+	/* Should be in Graphics class? */
+	uint16 _screenB, _screenH;
+	int _scrHeight, _scrWidth;
+	VirtScreen virtscr[4];		// Virtual screen areas
+	CameraData camera;			// 'Camera' - viewport
+	ColorCycle _colorCycle[16];	// Palette cycles
+
+	uint32 _ENCD_offs, _EXCD_offs;
+	uint32 _CLUT_offs, _EPAL_offs;
+	uint32 _IM00_offs, _PALS_offs;
+
+	bool _fullScreen, _fullRedraw, _BgNeedsRedraw, _shakeEnabled;
+	bool _screenEffectFlag, _completeScreenRedraw;
+
+	int _cursorHotspotX, _cursorHotspotY, _cursorWidth, _cursorHeight;
+	byte _cursorAnimate, _cursorAnimateIndex, _grabbedCursor[2048];
+	int8 _cursorState;
+
+	byte _newEffect, _switchRoomEffect2, _switchRoomEffect;
+	bool _doEffect;
+
+	void getGraphicsPerformance();
+	void initScreens(int a, int b, int w, int h);
+	void initVirtScreen(int slot, int top, int height, bool twobufs, bool fourextra);
+	void initBGBuffers();
+	void initCycl(byte *ptr);	// Color cycle
+
+	void drawObject(int obj, int arg);	
+	void drawRoomObjects(int arg);
+	void drawRoomObject(int i, int arg);
+	void drawMouse();
+	void drawBox(int x, int y, int x2, int y2, int color);
+	void drawBomp(BompDrawData *bd);
+
+	void restoreBG(int left, int top, int right, int bottom);
+	void redrawBGStrip(int start, int num);	
+	void redrawBGAreas();
+	void redrawLines(int from, int to);	
+	
+	void moveCamera();
+	void cameraMoved();
+	void setCameraAtEx(int at);
+	void setCameraAt(int pos_x, int pos_y);
+	void panCameraTo(int x, int y);
+	void setCameraFollows(Actor *a);
+	void clampCameraPos(ScummPoint *pt);
+
+	byte *getPalettePtr();
+	void setPalette(int pal);
+	void setPaletteFromPtr(byte *ptr);
+	void setPaletteFromRes();
+	void setPalColor(int index, int r, int g, int b);
+	void setDirtyColors(int min, int max);
+	byte *findPalInPals(byte *pal, int index);
+	void swapPalColors(int a, int b);
+	void cyclePalette();
+	void stopCycle(int i);
+	void palManipulate();
+	int remapPaletteColor(int r, int g, int b, uint threshold);
+	void moveMemInPalRes(int start, int end, byte direction);
+	void setupShadowPalette(int slot,int rfact,int gfact,int bfact,int from,int to);
+	void darkenPalette(int a, int b, int c, int d, int e);
+
+	void setShake(int mode);
+
+	void setCursor(int cursor);
+	void setCursorImg(uint img, uint room, uint imgindex);
+	void setCursorHotspot2(int x,int y);
+	void grabCursor(int x, int y, int w, int h);
+	void grabCursor(byte *ptr, int width, int height);
+	void makeCursorColorTransparent(int a);
+	void setupCursor() { _cursorAnimate = 1; }
+	void decompressDefaultCursor(int index);
+	void useIm01Cursor(byte *im, int w, int h);
+	void useBompCursor(byte *im, int w, int h);
+
+
+	void updateDirtyRect(int virt, int left, int right, int top, int bottom, uint32 dirtybits);
+	void setDirtyRange(int slot, int a, int height);
+	void drawDirtyScreenParts();
+	void updateDirtyScreen(int slot);
+
+	VirtScreen *findVirtScreen(int y);
+	void unkVirtScreen4(int a);
+	static void setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom);
+
+	void screenEffect(int effect);
+	void unkScreenEffect1();
+	void unkScreenEffect2();
+	void unkScreenEffect3();
+	void unkScreenEffect4();
+	void unkScreenEffect5(int a);
+	void unkScreenEffect6();
+	void unkScreenEffect7(int a);
+
+	void decompressBomp(byte *dst, byte *src, int w, int h);
+	int  _videoMode;
+	uint _shakeFrame;
+	int _screenStartStrip, _screenEndStrip;
+	int _screenLeft, _screenTop;
+	unsigned int _scale;	// Resolution multiplier (2 is default)	
 	uint16 _enqueue_b,_enqueue_c,_enqueue_d,_enqueue_e;
-
 	int _enqueuePos; 
 	EnqueuedObject _enqueuedObjects[32];
 
-	byte _soundQue2Pos;
-	byte _soundQue2[10];
+	void enqueueObject(int a, int b, int c, int d, int e, int f, int g, int h, int mode);
+	void clearEnqueue() { _enqueuePos = 0; }
+	void drawEnqueuedObjects();
+	void drawEnqueuedObject(EnqueuedObject *eo);
+	void removeEnqueuedObjects();
+	void removeEnqueuedObject(EnqueuedObject *eo);
 
-	int16 _vararg_temp_pos[16];
-
-	uint16 _curExecScript;
-
-	int _scrWidth;
-	int _scrHeight;
-
+	int _drawObjectQueNr;
+	byte _drawObjectQue[200];
+	int16 _palManipStart, _palManipEnd, _palManipCounter;
+	uint32 gfxUsageBits[200];
+	byte *_shadowPalette;
+	int _shadowPaletteSize;
 	byte _currentPalette[0x300];
-
 	int _palDirtyMin, _palDirtyMax;
+	byte _bkColor;
+	uint16 _lastXstart;
 
-	uint _curSoundPos;
-
-	ColorCycle _colorCycle[16];
-
-	Gdi gdi;
 	
-	bool _BgNeedsRedraw;
 
-	int16 _localParamList[16];
 
-	uint16 _verbMouseOver;
 
-	int16 _foundPathX;
-	int16 _foundPathY;
-
-	uint16 _lastKeyHit;
-
-	int _scummStackPos;
-	int16 _scummStack[150];
-
+	/* Walkbox / Navigation class */
 	int _maxBoxVertexHeap;
 	byte *_boxMatrixPtr4, *_boxMatrixPtr1, *_boxMatrixPtr3;
 	int _boxPathVertexHeapIndex;
 	int _boxMatrixItem;
 
-	byte _grabbedCursor[2048];
+	gate_location p[5];
+	int gate1ax, gate1ay, gate1bx, gate1by, gate2ax, gate2ay, gate2bx, gate2by;
+	uint16 _extraBoxFlags[65];
+	int16 _foundPathX, _foundPathY;
+	int CloX[8], CloY[8];
 
-	char _saveLoadName[32];
-
-	MixerChannel _mixer_channel[NUM_MIXER];
-
-	OpcodeProc getOpcode(int i) { return _opcodes[i]; }
-
-#ifdef COMPRESSED_SOUND_FILE
-	OffsetTable *offset_table;
-	int num_sound_effects;
-#endif
-
-	int current_cd_sound;
-
-	void openRoom(int room);
-	void deleteRoomOffsets();
-	void readRoomsOffsets();
-	void askForDisk(const char *filename);
-
-	bool openResourceFile(const char *filename);
+	PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node);
+	PathNode *unkMatrixProc2(PathVertex *vtx, int i);
+	bool areBoxesNeighbours(int i, int j);
+	void addToBoxMatrix(byte b);
+	int CompareSlope(int X1,int Y1,int X2,int Y2,int X3,int Y3);
+	void SetGate(int line1,int line2, int polyx[8], int polyy[8]);
+	void *addToBoxVertexHeap(int size);
+	PathVertex *addPathVertex();
+	bool checkXYInBoxBounds(int box, int x, int y);
+	uint distanceFromPt(int x, int y, int ptx, int pty);
+	ScummPoint closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
+	bool getSideOfLine(int x1,int y1, int x2, int y2, int x, int y, int box);
+	void getBoxCoordinates(int boxnum, BoxCoords *bc);
+	byte getMaskFromBox(int box);
+	Box *getBoxBaseAddr(int box);
+	byte getBoxFlags(int box);
+	int getBoxScale(int box);
+	byte getNumBoxes();
+	byte *getBoxMatrixBaseAddr();
+	int getPathToDestBox(byte from, byte to);
+	int findPathTowards(Actor *a, byte box, byte box2, byte box3);
+	int findPathTowardsOld(Actor *a, byte box, byte box2, byte box3);
+	void GetGates(int trap1,int trap2);
+	bool inBoxQuickReject(int box, int x, int y, int threshold);
+	AdjustBoxResult getClosestPtOnBox(int box, int x, int y);
 	
+	void setBoxFlags(int box, int val);
+	void setBoxScale(int box, int b);
+	void createBoxMatrix();
+
+
+
+	/* String class */
+	CharsetRenderer charset;
+	byte _charsetColor;
+	uint16 _noSubtitles;	// Skip all subtitles?
+	byte _charsetData[10][16];
+	void initCharset(int charset);
+	void restoreCharsetBg();
+	int hasCharsetMask(int x, int y, int x2, int y2);
+	void CHARSET_1();
+	byte *_msgPtrToAdd;
+	byte *addMessageToStack(byte *msg);
+	void unkAddMsgToStack2(int var);
+	void unkAddMsgToStack3(int var);
+	void unkAddMsgToStack4(int var);
+	void unkAddMsgToStack5(int var);
+	void unkMessage1();
+	void unkMessage2();
+	void clearMsgQueue();
+	int _numInMsgStack;
+	byte *_messagePtr;
+	int16 _talkDelay;
+	bool _keepText;
+
+
+	/* Should be in System class */
+	byte _fileMode;
+	uint32 _whereInResToRead;
 	void fileClose(void *file);
 	void *fileOpen(const char *filename, int mode);
 	void fileSeek(void *file, long offs, int whence);
 	void fileRead(void *handle, void *ptr, uint32 size);
 	bool fileEof(void *handle);
 	uint32 filePos(void *handle);
+	bool checkFixedDisk();
 
 	int fileReadByte();
 	uint32 fileReadDwordLE();
@@ -1252,116 +1636,7 @@ struct Scumm {
 	static byte *alloc(int size);
 	static void free(void *mem);
 
-	void readResTypeList(int id, uint32 tag, const char *name);
-	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
-
-	void initRandSeeds();
-
-	uint getRandomNumber(uint max);
-	uint getRandomNumberRng(uint min, uint max);
-
-	void loadCharset(int i);
-	void nukeCharset(int i);
-	void initScreens(int a, int b, int w, int h);
-
-	void setShake(int mode);
-	void setCursor(int cursor);
-
-	void clearDrawObjectQueue();
-
-	byte *createResource(int type, int index, uint32 size);
-
-	void initScummVars();
-	void getGraphicsPerformance();
-
-	void nukeResource(int type, int i);
-	byte *getResourceAddress(int type, int i);
-	byte *getStringAddress(int i);
-	void ensureResourceLoaded(int type, int i);
-	int loadResource(int type, int i);
-	int getResourceRoomNr(int type, int index);
-	int readSoundResource(int type, int index);
-	void setResourceCounter(int type, int index, byte flag);
-	void validateResource(const char *str, int type, int index);
-	
-	void initVirtScreen(int slot, int top, int height, bool twobufs, bool fourextra);
-	void setDirtyRange(int slot, int a, int height);
-	void drawDirtyScreenParts();
-	void updateDirtyScreen(int slot);
-	void unkVirtScreen4(int a);
-	
-	void restoreMouse();
-	void initActor(Actor *a, int mode);
-	bool checkFixedDisk();
-
-	void setActorWalkSpeed(Actor *a, uint speed1, uint speed2);
-	int calcMovementFactor(Actor *a, int newx, int newy);
-	int actorWalkStep(Actor *a);
-	int remapDirection(Actor *a, int dir);
-
-	bool checkXYInBoxBounds(int box, int x, int y);
-	void setupActorScale(Actor *a);
-	
-	void checkRange(int max, int min, int no, const char *str);
-
-	bool fileReadFailed(void *handle);
-	void clearFileReadFailed(void *handle);
-
-	bool getClass(int obj, int cls);
-	void putClass(int obj, int cls, bool set);
-	int getState(int obj);
-	void putState(int obj, int state);
-	int getOwner(int obj);
-	void putOwner(int obj, int owner);
-	int getObjectRoom(int obj);
-	void SamInventoryHack(int obj);	// FIXME: Sam and Max hack
-
-	void main();
-
-	uint distanceFromPt(int x, int y, int ptx, int pty);
-	ScummPoint closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
-	bool getSideOfLine(int x1,int y1, int x2, int y2, int x, int y, int box);
-	void getBoxCoordinates(int boxnum, BoxCoords *bc);
-	byte getMaskFromBox(int box);
-	Box *getBoxBaseAddr(int box);
-	byte getBoxFlags(int box);
-	int getBoxScale(int box);
-	byte getNumBoxes();
-	byte *getBoxMatrixBaseAddr();
-
-//	void startAnimActor(Actor *a, int frame);
-	void startAnimActor(Actor *a, int frame);
-	void startAnimActorEx(Actor *a, int frame, int direction);
-//	void startAnimActor(Actor *a, int frame, byte direction);
-	int getProgrDirChange(Actor *a, int mode);
-	void initActorCostumeData(Actor *a);
-	void fixActorDirection(Actor *a, int direction);
-	void cpst_decodeData(Actor *a, int frame, uint mask);
-
-	void scummInit();
-	void scummMain(int argc, char **argv);
-
-	void runScript(int script, int a, int b, int16 *lvarptr);
-	void stopScriptNr(int script);
-	int getScriptSlot();
-	void runScriptNested(int script);
-	void updateScriptPtr();
-	void getScriptBaseAddress();
-	void getScriptEntryPoint();
-	void executeScript();
-	byte fetchScriptByte();
-	int fetchScriptWord();
-	void ignoreScriptWord() { fetchScriptWord(); }
-	void ignoreScriptByte() { fetchScriptByte(); }
-	uint getVarOrDirectWord(byte mask);
-	uint getVarOrDirectByte(byte mask);
-	int readVar(uint var);
-	void writeVar(uint var, int value);
-	void getResultPos();
-	void setResult(int result);
-	
-	int getObjectIndex(int object);
-
+	/* Version 5 script opcodes */
 	void o5_actorFollowCamera();
 	void o5_actorFromPos();
 	void o5_actorSet();
@@ -1463,9 +1738,14 @@ struct Scumm {
 	void o5_walkActorTo();
 	void o5_walkActorToActor();
 	void o5_walkActorToObject();
-        void o5_oldRoomEffect();
+    void o5_oldRoomEffect();
 	void o5_pickupObjectOld();
-	
+
+	/* Version 6 script opcodes */
+	int getStackList(int16 *args, uint maxnum);
+	void setStringVars(int i);
+	void unkMiscOp9();
+
 	void o6_bompWindow();
 	void o6_pushByte();
 	void o6_pushWord();
@@ -1615,456 +1895,8 @@ struct Scumm {
 	void o6_getAnimateVariable();
 	void o6_drawBlastObject();
 
-	int popRoomAndObj(int *room);
-
-	void soundKludge(int16 *list);
-
-	void stopObjectCode();
-	void stopObjectScript(int script);
-	void putActor(Actor *a, int x, int y, byte room);
-	void clearMsgQueue();
-	void adjustActorPos(Actor *a);
-	
-	void hideActor(Actor *a);
-	void showActor(Actor *a);
-	void showActors();
-	void turnToDirection(Actor *a, int newdir);
-
-	int whereIsObject(int object);
-	int getObjectOrActorXY(int object);
-	void addSoundToQueue(int sound);
-	void addSoundToQueue2(int sound);
-	bool isScriptInUse(int script);
-	int getActorXYPos(Actor *a);
-	void getObjectXYPos(int object);
-	AdjustBoxResult adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom);
-
-	int getWordVararg(int16 *ptr);
-
-	int getObjActToObjActDist(int a, int b);
-	void processSoundQues();
-	bool inBoxQuickReject(int box, int x, int y, int threshold);
-	AdjustBoxResult getClosestPtOnBox(int box, int x, int y);
-
-	void setCameraAt(int pos_x, int pos_y);
-	void stopTalk();
-	void restoreCharsetBg();
-
-	void setCameraFollows(Actor *a);
-	void runHook(int i);
-	void startScene(int room, Actor *a, int b);
-
-	void freezeScripts(int scr);
-	void unfreezeScripts();
-
-	void runAllScripts();
-
-	int findObject(int x, int y);
-	void stopCycle(int i);
-	void killScriptsAndResources();
-	void runExitScript();
-	void runEntryScript();
-
-	void increaseResourceCounter();
-	bool isResourceInUse(int type, int i);
-	void initRoomSubBlocks();
-	void loadRoomObjects();
-        void loadRoomObjectsSmall();
-
-	void setPaletteFromRes();
-	void initCycl(byte *ptr);
-	void initBGBuffers();
-	void setDirtyColors(int min, int max);
-
-	void setScaleItem(int slot, int a, int b, int c, int d);
-
-	void cyclePalette();
-
-	void moveMemInPalRes(int start, int end, byte direction);
-
-	void redrawBGAreas();
-	void drawRoomObjects(int arg);
-	void drawRoomObject(int i, int arg);
-	void redrawBGStrip(int start, int num);
-	void drawObject(int obj, int arg);
-
-	int hasCharsetMask(int x, int y, int x2, int y2);
-
-	void restoreBG(int left, int top, int right, int bottom);
-	void updateDirtyRect(int virt, int left, int right, int top, int bottom, uint32 dirtybits);
-	VirtScreen *findVirtScreen(int y);
-
-	void unkScreenEffect1();
-	void unkScreenEffect2();
-	void unkScreenEffect3();
-	void unkScreenEffect4();
-	void unkScreenEffect5(int a);
-	void unkScreenEffect6();
-	void unkScreenEffect7(int a);
-	
-	void playSound(int sound);
-
-	void decreaseScriptDelay(int amount);
-	void processKbd();
-	
-	void redrawVerbs();
-	void checkExecVerbs();
-	void checkAndRunVar33();
-	void CHARSET_1();
-	void walkActors();
-	void moveCamera();
-	void fixObjectFlags();
-	void clear_fullRedraw();
-	void palManipulate();
-	void screenEffect(int effect);
-	void clearClickedStatus();
-	void verbMouseOver(int verb);
-	int checkMouseOver(int x, int y);
-	void playActorSounds();
-	void processDrawQue();
-	void setActorRedrawFlags();
-	void resetActorBgs();
-	void processActors();
-	void drawVerb(int verb, int mode);
-
-	void runInputScript(int a, int cmd, int mode);
-
-	void cameraMoved();
-
-	void walkActor(Actor *a);
-
-	int checkKeyHit();
-
-	int getPathToDestBox(byte from, byte to);
-	int findPathTowards(Actor *a, byte box, byte box2, byte box3);
-	int findPathTowardsOld(Actor *a, byte box, byte box2, byte box3);
-	
-	void drawActorCostume(Actor *a);
-	void actorAnimate(Actor *a);
-
-	int getActorFromPos(int x, int y);
-
-	void restoreVerbBG(int verb);
-
-	void drawString(int a);
-	void drawVerbBitmap(int vrb, int x, int y);
-
-	void setActorCostume(Actor *a, int c);
-	void loadPtrToResource(int type, int i, byte *ptr);
-
-	void push(int a);
-	int pop();
-
-	void walkActorTo(Actor *a, int x, int y, int direction);
-
-	void setCursorImg(uint img, uint room, uint imgindex);
-//	void setCursorHotspot(int cursor, int x, int y);
-	void initCharset(int charset);
-	void addObjectToDrawQue(int object);
-	int getVerbEntrypoint(int obj, int entry);
-	int isSoundRunning(int a);
-	void startWalkActor(Actor *a, int x, int y, int dir);
-	void setBoxFlags(int box, int val);
-	void setBoxScale(int box, int b);
-	void createBoxMatrix();
-	void addObjectToInventory(uint obj, uint room);
-	void removeObjectFromRoom(int obj);
-	void decodeParseString();
-	void pauseGame(bool user);
-    void setOptions(void);
-	void shutDown(int i);
-	void lock(int type, int i);
-	void unlock(int type, int i);
-	void heapClear(int mode);
-	void unkHeapProc2(int a, int b);
-	void loadFlObject(uint object, uint room);
-	void setPalColor(int index, int r, int g, int b);
-	void darkenPalette(int a, int b, int c, int d, int e);
-	void unkRoomFunc3(int a, int b, int c, int d, int e);
-	void unkRoomFunc4(int a, int b, int c, int d, int e);
-	int getVerbSlot(int id, int mode);
-	void killVerb(int slot);
-	byte *getOBCDFromObject(int obj);
-	byte *getObjOrActorName(int obj);
-	void clearOwnerOf(int obj);
-	void runVerbCode(int script, int entry, int a, int b, int16 *vars);
-	void setVerbObject(uint room, uint object, uint verb);
-	void unkMessage1();
-	void unkMessage2();
-	void actorTalk();
-
-	byte *addMessageToStack(byte *msg);
-
-	void unkAddMsgToStack2(int var);
-	void unkAddMsgToStack3(int var);
-	void unkAddMsgToStack4(int var);
-	void unkAddMsgToStack5(int var);
-
-	byte *getActorName(Actor *a);
-	uint32 getOBCDOffs(int object);
-
-	byte isMaskActiveAt(int l, int t, int r, int b, byte *mem);
-
-	int getInventorySlot();
-
-
-	int getKeyInput(int a);
-	void convertKeysToClicks();
-
-	void drawBox(int x, int y, int x2, int y2, int color);
-
-	void drawMouse();
-
-	void dumpResource(char *tag, int index, byte *ptr);
-
-	bool saveState(int slot, bool compat);
-	bool loadState(int slot, bool compat);
-	void saveOrLoad(Serializer *s);
-
-	void saveLoadResource(Serializer *ser, int type, int index);
-	bool isResourceLoaded(int type, int index);
-
-
-	Actor *derefActor(int id) { return &actor[id]; }
-	Actor *derefActorSafe(int id, const char *errmsg);
-	Actor *getFirstActor() { return actor; } 
-
-	PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node);
-	PathNode *unkMatrixProc2(PathVertex *vtx, int i);
-	bool areBoxesNeighbours(int i, int j);
-	void addToBoxMatrix(byte b);
-	PathVertex *addPathVertex();
-	void *addToBoxVertexHeap(int size);
-
-	void parseCommandLine(int argc, char **argv);
-
-	void showHelpAndExit();
-	
-	char *getGameName();
-	bool detectGame();
-
-	void setupOpcodes();
-	void setupOpcodes2();
-	void endCutscene();
-	void cutscene(int16 *args);
-
-	void setOwnerOf(int obj, int owner);
-	void panCameraTo(int x, int y);
-	void actorFollowCamera(int act);
-	void setCameraAtEx(int at);
-
-	void clampCameraPos(ScummPoint *pt);
-
-	void setCursorHotspot2(int x,int y);
-
-	void makeCursorColorTransparent(int a);
-
-	void faceActorToObj(int act, int obj);
-	void animateActor(int act, int anim);
-	bool isScriptRunning(int script);
-	bool isRoomScriptRunning(int script);
-	int getObjX(int obj);
-	int getObjY(int obj);
-	int getObjOldDir(int obj);
-	int getObjNewDir(int obj);
-	int findInventory(int owner, int index);
-	int getInventoryCount(int owner);
-
-	void beginOverride();
-	void endOverride();
-
-	void setPalette(int pal);
-	void setPaletteFromPtr(byte *ptr);
-	byte *findPalInPals(byte *pal, int index);
-
-	int getStringLen(byte *ptr);
-
-	void readArrayFromIndexFile();
-	void readMAXS();
-        void readIndexFile();
-        void readIndexFileSmall();
-
-	int readArray(int array, int index, int base);
-	void writeArray(int array, int index, int base, int value);
-	
-	int getStackList(int16 *args, uint maxnum);
-	void setObjectState(int obj, int state, int x, int y);
-
-	void setStringVars(int i);
-	void decodeParseString2(int a, int b);
-
-	void arrayop_1(int a, byte *ptr);
-	
-	void copyString(byte *dst, byte *src, int len);
-	int getArrayId();
-
-	void nukeArray(int a);
-	int defineArray(int a, int b, int c, int d);
-	int getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f);
-	void grabCursor(int x, int y, int w, int h);
-	void unkMiscOp9();
-	void startManiac();
-
-	void grabCursor(byte *ptr, int width, int height);
-	byte *getPalettePtr();
-	void setupSound();
-	void stopAllSounds();
-	void stopSound(int sound);
-	bool isSoundInQueue(int sound);
-	void clearSoundQue();
-	void talkSound(uint32 a, uint32 b, int mode);
-	void processSfxQueues();
-	void startTalkSound(uint32 a, uint32 b, int mode);
-	void stopTalkSound();
-	bool isMouthSyncOff(uint pos);
-	void startSfxSound(void *file, int size);
-	void *openSfxFile();
-	void resourceStats();
-	bool isCostumeInUse(int i);
-	void expireResources(uint32 size);
-	
-	void freeResources();
-	void destroy();
-
-	void useIm01Cursor(byte *im, int w, int h);
-	void useBompCursor(byte *im, int w, int h);
-
-	void decompressBomp(byte *dst, byte *src, int w, int h);
-
-	void setupCursor() { _cursorAnimate = 1; }
-
-	void decompressDefaultCursor(int index);
-
-	void allocateArrays();
-
-	void initializeLocals(int slot, int16 *vars);
-
-	static void setVirtscreenDirty(VirtScreen *vs, int left, int top, int right, int bottom);
-	int scummLoop(int delta);
-
-	bool getSavegameName(int slot, char *desc);
-	void makeSavegameName(char *out, int slot, bool compatible);
-
-	void exitCutscene();
-	void nukeFlObjects(int min, int max);
-
-	void swapPalColors(int a, int b);
-
-	void enqueueObject(int a, int b, int c, int d, int e, int f, int g, int h, int mode);
-
-	void clearEnqueue() { _enqueuePos = 0; }
-	void drawEnqueuedObjects();
-	void drawEnqueuedObject(EnqueuedObject *eo);
-	void removeEnqueuedObjects();
-	void removeEnqueuedObject(EnqueuedObject *eo);
-
-	void pauseSounds(bool pause);
-
-	MixerChannel *allocateMixer();
-	bool isSfxFinished();
-	void playSfxSound(void *sound, uint32 size, uint rate);
-#ifdef COMPRESSED_SOUND_FILE
-  	void playSfxSound_MP3(void *sound, uint32 size);
-#endif
-	void stopSfxSound();
-
-	void mixWaves(int16 *sounds, int len);
-
-	struct FindObjectInRoom {
-		CodeHeader *cdhd;
-		byte *obcd;
-		ImageHeader *imhd;
-		byte *obim;
-		byte *roomptr;
-	};
-
-	enum FindObjectWhat {
-		foCodeHeader = 1,
-		foImageHeader = 2,
-		foCheckAlreadyLoaded = 4
-	};
-
-	void findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint object, uint room);
-	void setupRoomObject(ObjectData *od, byte *room);
-	int findFlObjectSlot();
-
-	void runTalkScript(int frame);
-
-	int remapPaletteColor(int r, int g, int b, uint threshold);
-	void remapActor(Actor *a, int b, int c, int d, int e);
-
-	byte *findResourceData(uint32 tag, byte *ptr);
-	int getResourceDataSize(byte *ptr);
-
-	void akos_decodeData(Actor *a, int frame, uint usemask);
-	int akos_frameToAnim(Actor *a, int frame);
-	bool akos_hasManyDirections(Actor *a);
-	void stopActorMoving(Actor *a);
-
-	int newDirToOldDir(int dir);
-	int oldDirToNewDir(int dir);
-	void startWalkAnim(Actor *a, int cmd, int angle);
-	void setActorBox(Actor *a, int box);
-	int getAngleFromPos(int x, int y);
-	int updateActorDirection(Actor *a);
-
-	bool akos_drawCostume(AkosRenderer *ar);
-	void akos_setPalette(AkosRenderer *ar, byte *palette);
-	void akos_setCostume(AkosRenderer *ar, int costume);
-	void akos_setFacing(AkosRenderer *ar, Actor *a);
-	bool akos_drawCostumeChannel(AkosRenderer *ar, int chan);
-	void akos_codec1(AkosRenderer *ar);
-	void akos_codec5(AkosRenderer *ar);
-	void akos_codec16(AkosRenderer *ar);
-	void akos_codec1_ignorePakCols(AkosRenderer *ar, int num);
-	void akos_c1_spec2(AkosRenderer *ar);
-	void akos_c1_spec3(AkosRenderer *ar);
-
-	void akos_c1_0_decode(AkosRenderer *ar);
-	void akos_c1_12_decode(AkosRenderer *ar);
-	void akos_c1_12y_decode(AkosRenderer *ar);
-	void akos_c1_3_decode(AkosRenderer *ar);
-	void akos_c1_4_decode(AkosRenderer *ar);
-	void akos_c1_4y_decode(AkosRenderer *ar);
-	void akos_c1_56_decode(AkosRenderer *ar);
-	void akos_c1_56y_decode(AkosRenderer *ar);
-	void akos_c1_7_decode(AkosRenderer *ar);
-
-	bool akos_increaseAnims(byte *akos, Actor *a);
-	bool akos_increaseAnim(Actor *a, int i, byte *aksq, uint16 *akfo, int numakfo);
-
-	int getAnimVar(Actor *a, byte var);
-	void setAnimVar(Actor *a, byte var, int value);
-
-	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
-	bool akos_compare(int a, int b, byte cmd);
-
-	static int normalizeAngle(int angle);
-	static int fromSimpleDir(int dirtype, int dir);
-	static int toSimpleDir(int dirtype, int dir);
-	static int numSimpleDirDirections(int dirType);
-
-	void doSentence(int c, int b, int a);
-	int cost_frameToAnim(Actor *a, int frame);
-
-	void setupShadowPalette(int slot,int rfact,int gfact,int bfact,int from,int to);
-
-	void drawBomp(BompDrawData *bd);
-	void loadCostume(LoadedCostume *lc, int costume);
-
-	void cost_setPalette(CostumeRenderer *cr, byte *palette);
-	void cost_setFacing(CostumeRenderer *cr, Actor *a);
-	void cost_setCostume(CostumeRenderer *cr, int costume);
-	byte cost_increaseAnims(LoadedCostume *lc, Actor *a);
-	byte cost_increaseAnim(LoadedCostume *lc, Actor *a, int slot);
-	void cost_decodeData(Actor *a, int frame, uint usemask);
-
-	void redrawLines(int from, int to);
-
-	void setupScummVarsOld();
-	void setupScummVarsNew();
-
-	byte VAR_EGO;
+	/* Scumm Vars */
+		byte VAR_EGO;
 	byte VAR_CAMERA_POS_X;
 	byte VAR_HAVE_MSG;
 	byte VAR_ROOM;
@@ -2164,30 +1996,10 @@ struct Scumm {
 	byte VAR_UNK_SCRIPT;
 	byte VAR_UNK_SCRIPT_2;
 
-	void GetGates(int trap1,int trap2);
-	
 	byte VAR_DEFAULT_TALK_DELAY;
 	byte VAR_CHARSET_MASK;
-	
-	int NUM_ACTORS;
-
-	byte _videoPath[50];
-
-	gate_location p[5];
-
-	int CompareSlope(int X1,int Y1,int X2,int Y2,int X3,int Y3);
-	void SetGate(int line1,int line2, int polyx[8], int polyy[8]);
-
-	int gate1ax, gate1ay;
-	int gate1bx, gate1by;
-	int gate2ax, gate2ay;
-	int gate2bx, gate2by;
-
-	int CloX[8];
-	int CloY[8];
-
-	void walkActorOld(Actor *a);
 };
+
 
 enum AkosOpcodes{
 	AKC_Return  = 0xC001,
