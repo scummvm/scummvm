@@ -221,7 +221,6 @@ public:
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	int16 read();
 	bool endOfData() const		{ return eosIntern(); }
 	bool isStereo() const		{ return _numChannels >= 2; }
 	
@@ -257,16 +256,6 @@ VorbisInputStream::~VorbisInputStream() {
 	ov_clear(_ov_file);
 	if (_deleteFileAfterUse)
 		delete _ov_file;
-}
-
-inline int16 VorbisInputStream::read() {
-	assert(!eosIntern());
-
-	int16 sample = *_pos++;
-	if (_pos >= _bufferEnd) {
-		refill();
-	}
-	return sample;
 }
 
 inline bool VorbisInputStream::eosIntern() const {

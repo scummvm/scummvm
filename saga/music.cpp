@@ -74,7 +74,6 @@ public:
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	int16 read();
 	bool endOfData() const	{ return eosIntern(); }
 	bool isStereo() const	{ return true; }
 	int getRate() const	{ return 11025; }
@@ -97,16 +96,6 @@ RAWInputStream::RAWInputStream(File *file, int size, bool looping)
 
 RAWInputStream::~RAWInputStream() {
 	_file->decRef();
-}
-
-inline int16 RAWInputStream::read() {
-	assert(!eosIntern());
-
-	int16 sample = *_pos++;
-	if (_pos >= _bufferEnd) {
-		refill();
-	}
-	return sample;
 }
 
 inline bool RAWInputStream::eosIntern() const {

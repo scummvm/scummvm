@@ -93,7 +93,6 @@ public:
 	// AudioStream API
 
 	int readBuffer(int16 *buffer, const int numSamples);
-	int16 read();
 	bool isStereo() const;
 	bool endOfData() const;
 	int getRate() const;

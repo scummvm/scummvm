@@ -59,7 +59,6 @@ public:
 	~MP3InputStream();
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	int16 read();
 	bool endOfData() const		{ return eosIntern(); }
 	bool isStereo() const		{ return _isStereo; }
 	
@@ -242,30 +241,6 @@ static inline int scale_sample(mad_fixed_t sample) {
 
 	// quantize and scale to not saturate when mixing a lot of channels
 	return sample >> (MAD_F_FRACBITS + 1 - 16);
-}
-
-inline int16 MP3InputStream::read() {
-	assert(!eosIntern());
-
-	int16 sample;
-	if (_isStereo) {
-		sample = (int16)scale_sample(_synth.pcm.samples[_curChannel][_posInFrame]);
-		if (_curChannel == 0) {
-			_curChannel = 1;
-		} else {
-			_posInFrame++;
-			_curChannel = 0;
-		}
-	} else {
-		sample = (int16)scale_sample(_synth.pcm.samples[0][_posInFrame]);
-		_posInFrame++;
-	}
-
-	if (_posInFrame >= _synth.pcm.length) {
-		refill();
-	}
-
-	return sample;
 }
 
 int MP3InputStream::readBuffer(int16 *buffer, const int numSamples) {

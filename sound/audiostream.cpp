@@ -149,16 +149,6 @@ public:
 	}
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	int16 read() {
-		//assert(_ptr < _end);
-		int16 val = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _ptr, isLE);
-		_ptr += (is16Bit ? 2 : 1);
-		if (_loopPtr && eosIntern()) {
-			_ptr = _loopPtr;
-			_end = _loopEnd;
-		}
-		return val;
-	}
 	bool isStereo() const		{ return stereo; }
 	bool endOfData() const		{ return eosIntern(); }
 
@@ -209,7 +199,6 @@ public:
 	~AppendableMemoryStream()		{ free(_bufferStart); }
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	int16 read();
 	bool isStereo() const		{ return stereo; }
 	bool endOfStream() const	{ return _finalized && eosIntern(); }
 	bool endOfData() const		{ return eosIntern(); }
@@ -233,20 +222,6 @@ AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::AppendableMemoryStrea
 	_bufferStart = (byte *)malloc(bufferSize);
 	_pos = _end = _bufferStart;
 	_bufferEnd = _bufferStart + bufferSize;
-}
-
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-inline int16 AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::read() {
-	assert(!eosIntern());
-
-	// Wrap around?
-	if (_pos >= _bufferEnd)
-		_pos = _pos - (_bufferEnd - _bufferStart);
-
-	int16 val = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _pos, isLE);
-	_pos += (is16Bit ? 2 : 1);
-
-	return val;
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>

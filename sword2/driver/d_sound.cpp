@@ -166,7 +166,6 @@ public:
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	int16 read();
 	bool endOfData() const	{ return eosIntern(); }
 	bool isStereo() const	{ return false; }
 	int getRate() const	{ return 22050; }
@@ -187,16 +186,6 @@ CLUInputStream::CLUInputStream(File *file, int size)
 
 CLUInputStream::~CLUInputStream() {
 	_file->decRef();
-}
-
-inline int16 CLUInputStream::read() {
-	assert(!eosIntern());
-
-	int16 sample = *_pos++;
-	if (_pos >= _bufferEnd) {
-		refill();
-	}
-	return sample;
 }
 
 inline bool CLUInputStream::eosIntern() const {
@@ -564,10 +553,6 @@ int Sound::readBuffer(int16 *buffer, const int numSamples) {
 		fpMus.close();
 
 	return numSamples;
-}
-
-int16 Sound::read() {
-	error("ProcInputStream::read not supported");
 }
 
 bool Sound::isStereo() const { return false; }

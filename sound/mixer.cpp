@@ -122,12 +122,6 @@ public:
 		(_proc)(_refCon, buffer, _isStereo ? (numSamples / 2) : numSamples);
 		return numSamples;
 	}
-	int16 read() {
-		error("ProcInputStream::read not supported");
-		int16 sample[2] = { 0, 0 };
-		(_proc)(_refCon, sample, 1);
-		return sample[0];
-	}
 	bool isStereo() const { return _isStereo; }
 	bool endOfData() const { return false; }
 	

@@ -45,11 +45,6 @@ public:
 	 */
 	virtual int readBuffer(int16 *buffer, const int numSamples) = 0;
 
-	/**
-	 * Read a single (16 bit signed) sample from the stream.
-	 */
-//	virtual int16 read() = 0;
-	
 	/** Is this a stereo stream? */
 	virtual bool isStereo() const = 0;
 	
@@ -103,7 +98,6 @@ public:
 		_len -= samples;
 		return samples;
 	}
-	int16 read() { assert(_len > 0); _len--; return 0; }
 	bool isStereo() const { return false; }
 	bool eos() const { return _len <= 0; }
 	

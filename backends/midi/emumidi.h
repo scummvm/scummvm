@@ -103,8 +103,5 @@ public:
 
 		return numSamples;
 	}
-	int16 read() {
-		error("ProcInputStream::read not supported");
-	}
 	bool endOfData() const { return false; }
 };
