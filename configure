@@ -877,7 +877,14 @@ echocheck "libmpeg2 >= 0.3.2"
 if test "$_mpeg2" = auto ; then
   _mpeg2=no
   cat > $TMPC << EOF
-#include <inttypes.h>
+typedef signed $type_1_byte int8_t;
+typedef signed $type_2_byte int16_t;
+typedef signed $type_4_byte int32_t;
+
+typedef unsigned $type_1_byte uint8_t;
+typedef unsigned $type_2_byte uint16_t;
+typedef unsigned $type_4_byte uint32_t;
+
 #include <mpeg2dec/mpeg2.h>
 int main(void) {
 	/* mpeg2_state_t first appears in 0.4.0 */

@@ -30,7 +30,7 @@ class AudioStream;
 // Uncomment this if you are using libmpeg2 0.3.1.
 // #define USE_MPEG2_0_3_1
 
-#ifdef _MSC_VER
+#ifdef USE_MPEG2
 typedef int8 int8_t;
 typedef int16 int16_t;
 typedef int32 int32_t;
@@ -38,13 +38,7 @@ typedef int32 int32_t;
 typedef uint8 uint8_t;
 typedef uint16 uint16_t;
 typedef uint32 uint32_t; 
-#else
-#ifndef __PALM_OS__
-#include <inttypes.h>
-#endif
-#endif
 
-#ifdef USE_MPEG2
 extern "C" {
 	#include <mpeg2dec/mpeg2.h>
 }
