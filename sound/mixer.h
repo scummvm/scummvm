@@ -37,7 +37,7 @@
 #include "common/system.h"
 
 
-typedef uint32 PlayingSoundHandle;
+typedef int32 PlayingSoundHandle;
 
 class Channel;
 class File;
