@@ -337,6 +337,7 @@ public:
 	// Core variables
 	byte _gameId;
 	byte _version;
+	byte _heversion;
 	uint32 _features;						// Should only be accessed for reading (TODO enforce it compiler-wise with making it private and creating an accessor)
 
 	/** Random number generator */
