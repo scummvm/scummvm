@@ -108,7 +108,7 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
         UNIX            - SDL           (Linux, Solaris, IRIX, *BSD)
 
 
-Known Problems in ScummVM 0.4.0:
+Known Problems in ScummVM 0.4.1:
 --------------------------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
