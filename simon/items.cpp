@@ -917,8 +917,7 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 163:{									/* sound 1 */
-				// Is this opcode actually used in games?
+		case 163:{									/* play sound */
 				o_unk_163(getVarOrWord());
 			}
 			break;
