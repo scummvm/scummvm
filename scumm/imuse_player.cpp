@@ -982,6 +982,16 @@ int Player::addParameterFader (int param, int target, int time) {
 
 	switch (param) {
 	case ParameterFader::pfVolume:
+		// HACK: If volume is set to 0 with 0 time,
+		// set it so immediately but DON'T clear
+		// the player. This fixes a problem with
+		// music being cleared inappropriately
+		// in S&M when playing with the Dinosaur.
+		if (!target && !time) {
+			setVolume (0);
+			return 0;
+		}
+
 		// Volume fades are handled differently.
 		start = _volume;
 		break;
