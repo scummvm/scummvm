@@ -228,7 +228,6 @@ Command Line Options:
         -g<mode>   - Select graphics scaler. See below.
         -f         - Full-screen mode.
         -n         - Disable subtitles. Use with games that have voice.
-        -r         - Enable Roland conversion. Try if music sounds incorrect.
         -a         - Enable amiga pal conversion, for playing Amiga versions
         -d[<num>]  - Set debug verbosity to <num>
         -w[<file>] - Write configuration file

@@ -53,7 +53,6 @@ static const char USAGE_STRING[] =
 	"\t-m<num>    - set music volume to <num> (0-100)\n"
 	"\t-s<num>    - set sfx volume to <num> (0-255)\n"
 	"\t-e<mode>   - set music engine (see readme.txt for details)\n"
-	"\t-r         - emulate roland mt32 instruments\n"
 	"\t-f         - fullscreen mode\n"
 	"\t-g<mode>   - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x)\n"
 	"\t-a         - specify game is amiga version\n"
@@ -93,12 +92,6 @@ void GameDetector::updateconfig()
 	if ((val = scummcfg->get("sfx_volume")))
 		_sfx_volume = atoi(val);
 
-	if ((val = scummcfg->get("mt32emulate")))
-		if (!scumm_stricmp(val, "true"))
-			_mt32emulate = true;
-		else
-			_mt32emulate = false;
-	
 	if ((val = scummcfg->get("nosubtitles")))
 		if (!scumm_stricmp(val, "true"))
 			_noSubtitles = true;
@@ -210,9 +203,8 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				scummcfg->set("path", _gameDataPath);
 				break;
 			case 'r':
-				CHECK_OPTION();
-				_mt32emulate = true;
-				scummcfg->set("mt32emulate", "true");
+				HANDLE_OPTION();
+				// Ignore -r for now, to ensure backward compatibility.
 				break;
 			case 's':
 				HANDLE_OPTION();

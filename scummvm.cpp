@@ -1392,7 +1392,6 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 			imuse = IMuse::create_midi(syst, detector->createMidi());
 		}
 		
-		imuse->property(IMuse::PROP_MT32_EMULATE, detector->_mt32emulate);
 		if (detector->_gameTempo != 0)
 			imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);
 		

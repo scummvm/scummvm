@@ -116,6 +116,8 @@ struct Player {
 
 	HookDatas _hook;
 
+	bool _mt32emulate;
+
 	/* Player part */
 	void hook_clear();
 	void clear();
@@ -320,8 +322,6 @@ private:
 	byte _locked;
 	byte _hardware_type;
 
-public:
-	bool _mt32emulate;
 private:
 	
 
@@ -359,6 +359,7 @@ private:
 	CommandQueue _cmd_queue[64];
 
 	byte *findTag(int sound, char *tag, int index);
+	bool isMT32(int sound);
 	int get_queue_sound_status(int sound);
 	Player *allocate_player(byte priority);
 	void handle_marker(uint id, byte data);
@@ -494,7 +495,7 @@ struct MidiChannelAdl : MidiChannel {
 	Struct11 _s11b;
 };
 
-struct IMuseAdlib : public IMuseDriver {
+class IMuseAdlib : public IMuseDriver {
 private:
 	FM_OPL *_opl;
 	byte *_adlib_reg_cache;
@@ -592,7 +593,7 @@ class IMuseGM : public IMuseDriver {
 	void midiEffectLevel(byte chan, byte level);
 	void midiChorus(byte chan, byte chorus);
 	void midiControl0(byte chan, byte value);
-	void midiProgram(byte chan, byte program);
+	void midiProgram(byte chan, byte program, bool mt32emulate);
 	void midiPan(byte chan, int8 pan);
 	void midiNoteOn(byte chan, byte note, byte velocity);
 	void midiNoteOff(byte chan, byte note);
@@ -774,7 +775,34 @@ byte *IMuseInternal::findTag(int sound, char *tag, int index)
 	
 	debug(1, "IMuseInternal::findTag failed finding sound %d", sound);
 	return NULL;
+}
 
+bool IMuseInternal::isMT32(int sound)
+{
+	byte *ptr = NULL;
+	uint32 tag;
+
+	if (_base_sounds)
+		ptr = _base_sounds[sound];
+
+	if (ptr == NULL)
+		return false;
+
+	tag = *(((uint32 *)ptr)+1);
+	switch (tag) {
+	case MKID('ADL '):
+		return false;
+	case MKID('ROL '):
+		return true;
+	case MKID('GMD '):
+		return false;
+	case MKID('MAC '):
+		return true;
+	case MKID('SPK '):
+		return false;
+	}
+	
+	return false;
 }
 
 bool IMuseInternal::start_sound(int sound)
@@ -919,46 +947,6 @@ void IMuseInternal::sequencer_timers()
 	for (i = ARRAYSIZE(_players); i != 0; i--, player++) {
 		if (player->_active)
 			player->sequencer_timer();
-	}
-}
-
-void Player::sequencer_timer()
-{
-	byte *mtrk;
-	uint32 counter;
-	byte *song_ptr;
-
-	counter = _timer_counter + _timer_speed;
-	_timer_counter = counter & 0xFFFF;
-	_cur_pos += counter >> 16;
-	_tick_index += counter >> 16;
-
-	if (_tick_index >= _ticks_per_beat) {
-		_beat_index += _tick_index / _ticks_per_beat;
-		_tick_index %= _ticks_per_beat;
-	}
-	if (_loop_counter && _beat_index >= _loop_from_beat
-			&& _tick_index >= _loop_from_tick) {
-		_loop_counter--;
-		jump(_track_index, _loop_to_beat, _loop_to_tick);
-	}
-	if (_next_pos <= _cur_pos) {
-		mtrk = _se->findTag(_song_index, "MTrk", _track_index);
-		if (!mtrk) {
-			warning("Sound %d was unloaded while active", _song_index);
-			clear();
-		} else {
-			song_ptr = mtrk + _song_offset;
-			_abort = false;
-
-			while (_next_pos <= _cur_pos) {
-				song_ptr = parse_midi(song_ptr);
-				if (!song_ptr || _abort)
-					return;
-				_next_pos += get_delta_time(&song_ptr);
-			}
-			_song_offset = song_ptr - mtrk;
-		}
 	}
 }
 
@@ -1577,10 +1565,6 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 	case IMuse::PROP_TEMPO_BASE:
 		_game_tempo = value;
 		break;
-
-	case IMuse::PROP_MT32_EMULATE:
-		_mt32emulate = !!value;
-		break;
 	}
 	return 0;
 }
@@ -1719,6 +1703,7 @@ bool Player::start_sound(int sound)
 			return false;
 		}
 	}
+	_mt32emulate = _se->isMT32(sound);
 	_parts = NULL;
 	_active = true;
 	_id = sound;
@@ -2728,6 +2713,46 @@ int Player::query_part_param(int param, byte chan)
 	return 129;
 }
 
+void Player::sequencer_timer()
+{
+	byte *mtrk;
+	uint32 counter;
+	byte *song_ptr;
+
+	counter = _timer_counter + _timer_speed;
+	_timer_counter = counter & 0xFFFF;
+	_cur_pos += counter >> 16;
+	_tick_index += counter >> 16;
+
+	if (_tick_index >= _ticks_per_beat) {
+		_beat_index += _tick_index / _ticks_per_beat;
+		_tick_index %= _ticks_per_beat;
+	}
+	if (_loop_counter && _beat_index >= _loop_from_beat
+			&& _tick_index >= _loop_from_tick) {
+		_loop_counter--;
+		jump(_track_index, _loop_to_beat, _loop_to_tick);
+	}
+	if (_next_pos <= _cur_pos) {
+		mtrk = _se->findTag(_song_index, "MTrk", _track_index);
+		if (!mtrk) {
+			warning("Sound %d was unloaded while active", _song_index);
+			clear();
+		} else {
+			song_ptr = mtrk + _song_offset;
+			_abort = false;
+
+			while (_next_pos <= _cur_pos) {
+				song_ptr = parse_midi(song_ptr);
+				if (!song_ptr || _abort)
+					return;
+				_next_pos += get_delta_time(&song_ptr);
+			}
+			_song_offset = song_ptr - mtrk;
+		}
+	}
+}
+
 /*******************************************************************/
 
 #define OFFS(type,item) ((int)(&((type*)0)->item))
@@ -2912,6 +2937,7 @@ void IMuseInternal::fix_players_after_load(Scumm *scumm)
 		if (player->_active) {
 			player->set_tempo(player->_tempo);
 			scumm->getResourceAddress(rtSound, player->_id);
+			player->_mt32emulate = isMT32(player->_id);
 		}
 	}
 }
@@ -4153,10 +4179,10 @@ void IMuseGM::midiControl0(byte chan, byte value)
 }
 
 
-void IMuseGM::midiProgram(byte chan, byte program)
+void IMuseGM::midiProgram(byte chan, byte program, bool mt32emulate)
 {
 //	if ((chan + 1) != 10) {				/* Ignore percussion prededed by patch change */
-		if (_se->_mt32emulate)
+		if (mt32emulate)
 			program = mt32_to_gmidi[program];
 
 		_md->send(program << 8 | 0xC0 | chan);
@@ -4197,7 +4223,7 @@ void IMuseGM::part_key_on(Part *part, byte note, byte velocity)
 		midiNoteOn(mc->_chan, note, velocity);
 	} else if (part->_percussion) {
 		midiVolume(SPECIAL_CHANNEL, part->_vol_eff);
-		midiProgram(SPECIAL_CHANNEL, part->_bank);
+		midiProgram(SPECIAL_CHANNEL, part->_bank, part->_player->_mt32emulate);
 		midiNoteOn(SPECIAL_CHANNEL, note, velocity);
 	}
 }
@@ -4408,10 +4434,10 @@ void IMuseGM::part_changed(Part *part, byte what)
 	if (what & pcProgram) {
 		if (part->_bank) {
 			midiControl0(mc->_chan, part->_bank);
-			midiProgram(mc->_chan, part->_program);
+			midiProgram(mc->_chan, part->_program, part->_player->_mt32emulate);
 			midiControl0(mc->_chan, 0);
 		} else {
-			midiProgram(mc->_chan, part->_program);
+			midiProgram(mc->_chan, part->_program, part->_player->_mt32emulate);
 		}
 	}
 

@@ -26,7 +26,6 @@ class IMuse {
 public:
 	enum {
 		PROP_TEMPO_BASE = 1,
-		PROP_MT32_EMULATE = 2,
 	};
 
 	IMuse();
