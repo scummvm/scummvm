@@ -782,11 +782,13 @@ byte *IMuse::findTag(int sound, char *tag, int index)
 	ptr += 4;
 
 	pos = 0;
+	
 	while (pos < size) {
 		if (!memcmp(ptr + pos, tag, 4) && !index--)
 			return ptr + pos + 8;
 		pos += READ_BE_UINT32_UNALIGNED(ptr + pos + 4) + 8;
 	}
+	
 	debug(1, "IMuse::findTag failed finding sound %d", sound);
 	return NULL;
 
@@ -1627,7 +1629,7 @@ int IMuse::initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer)
 	_driver = driv;
 	_hardware_type = driv->get_hardware_type();
 	_game_tempo = driv->get_base_tempo();
-
+	
 	driv->init(this,syst);
 
 	_master_volume = 127;

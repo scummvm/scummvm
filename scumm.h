@@ -705,6 +705,7 @@ public:
 
 	/* Save/Load class - some of this may be GUI */
 	byte _saveLoadFlag, _saveLoadSlot;
+	bool _doAutosave;
 	bool _saveLoadCompatible;
 	char _saveLoadName[32];
 

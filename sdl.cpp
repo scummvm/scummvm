@@ -179,6 +179,7 @@ private:
 	void hotswap_gfx_mode();
 
 	void get_320x200_image(byte *buf);
+	static uint32 autosave(uint32);
 };
 
 int Init_2xSaI (uint32 BitFormat);
@@ -191,23 +192,30 @@ void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
 								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
-
-
 void atexit_proc() {
 	SDL_ShowCursor(SDL_ENABLE);
 	SDL_Quit();
 }
+
+uint32 OSystem_SDL::autosave(uint32 interval)
+{
+	g_scumm->_doAutosave = true;
+
+	return interval;
+}
+
 
 OSystem *OSystem_SDL::create(int gfx_mode, bool full_screen) {
 	OSystem_SDL *syst = new OSystem_SDL();
 	syst->_mode = gfx_mode;
 	syst->_full_screen = full_screen;
 
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) ==-1) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) ==-1) {
 		error("Could not initialize SDL: %s.\n", SDL_GetError());
 	}
 
 	SDL_ShowCursor(SDL_DISABLE);
+	SDL_SetTimer(5 * 60 * 1000, (SDL_TimerCallback) autosave);
 
 	/* Clean up on exit */
  	atexit(atexit_proc);

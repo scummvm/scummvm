@@ -654,7 +654,7 @@ void Gui::handleCommand(int cmd)
 		getSavegameNames(_slotIndex + 9);
 		draw(20, 28);
 		return;
-	case 3:											/* save button */
+	case 3:											/* save button */		
 		_cur_page = 2;
 		getSavegameNames(0);
 		draw(0, 100);
@@ -677,6 +677,9 @@ void Gui::handleCommand(int cmd)
 	case 8:
 		if (lastEdit == -1 || game_names[lastEdit][0] == 0)
 			return;
+		if (_cur_page == 2)
+			_slotIndex++;
+
 		_s->_saveLoadSlot = lastEdit + _slotIndex;
 		_s->_saveLoadCompatible = false;
 		_s->_saveLoadFlag = 1;
@@ -711,6 +714,9 @@ void Gui::getSavegameNames(int start)
 {
 	int i;
 	_slotIndex = start;
+	if (_cur_page == 2)
+		start++;
+
 	for (i = 0; i < 9; i++, start++) {
 		valid_games[i] = _s->getSavegameName(start, game_names[i]);
 	}

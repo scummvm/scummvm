@@ -91,7 +91,7 @@ void CALLBACK MidiDriver_WIN::midi_callback(HMIDIOUT hmo, UINT wMsg,
 	}
 }
 
-int MidiDriver_WIN::open(int mode) {
+int MidiDriver_WIN::open(int mode) {	
 	if (_mode != 0)
 		return MERR_ALREADY_OPEN;
 	

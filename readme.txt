@@ -236,23 +236,45 @@ Note that filters are very slow when ScummVM is compiled in a debug
 configuration without optimisations. And there is always a speed impact when
 using any form of anti-aliasing/linear filtering.
 
+Autosaves:
+----------
+
+Because ScummVM is still a beta product, it -can- crash and/or hang
+occasionally. As such, every five minutes it will save a game in Slot 0.
+
+
+Savegames:
+----------
+
+Savegames are by default put in the current directory. You can use the
+environment variable SCUMMVM_SAVEPATH to specify where to put save games.
+Don't forget the trailing directory separator. Also be aware that saved games
+can, and probably WILL, break between ScummVM releases.
+
+Bash Example:
+        export SCUMMVM_SAVEPATH=/tmp/scummvm_savegames/
+
+Windows example:
+        set SCUMMVM_SAVEPATH=C:\saved_games\
+
 
 Music and Sound: 
 ----------------
 By default, on most operating systems, ScummVM will automatically use ADLIB
 emulation. However, some games do not include Adlib music - such as Sam and
-Max. Note: MIDI may not be available on all operating systems or may need manual
-configuration.
+Max. Note: MIDI may not be available on all operating systems or may need
+manual configuration.
 
 If you ARE using MIDI, you have several different choices of output, 
 depending on your operating system and configuration.
         
 	-eadlib     - Uses internal Adlib Emulation (default) 
-        -ewindows   - Windows MIDI. Uses built-in sequencer. Only on Windows
+        -ewindows   - Windows MIDI. Uses built-in sequencer, for Windows users
 	-etimidity  - Uses Timidity for music. Requires Timidity.
-	-eseq       - Uses /dev/sequencer for MIDI. *nix only.
+        -eseq       - Uses /dev/sequencer for MIDI, *nix users.
         -eqt        - Quicktime sound, for Macintosh users.
-	-eamidi     - Uses the MorphOS MIDI system. MorphOS only.
+        -ecore      - Core sound, for Macintosh users.
+        -eamidi     - Uses the MorphOS MIDI system, for MorphOS users
 	-enull      - Null output. Don't play any music.
 	
 
@@ -303,22 +325,6 @@ MONSTER.SOU file to a temporary folder. Then run:
   extract monster.sou
 In about 30 minutes or so, you will have a much smaller monster.so3 file, copy
 this file to your game dir. You can safely remove the monter.sou file.
-
-
-Savegames:
-----------
-
-Savegames are by default put in the current directory. You can use the
-environment variable SCUMMVM_SAVEPATH to specify where to put save games.
-Don't forget the trailing directory separator. Also be aware that saved games
-can, and probably WILL, break between ScummVM releases.
-
-Bash Example:
-        export SCUMMVM_SAVEPATH=/tmp/scummvm_savegames/
-
-Windows example:
-        set SCUMMVM_SAVEPATH=C:\saved_games\
-
 
 Coding style:
 ------------

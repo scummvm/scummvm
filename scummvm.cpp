@@ -274,6 +274,14 @@ int Scumm::scummLoop(int delta)
 		_saveLoadFlag = 0;
 	}
 
+	if (_doAutosave) {
+		_saveLoadSlot = 0;
+		sprintf(_saveLoadName, "Autosave %d", _saveLoadSlot);
+		_saveLoadFlag = 1;
+		_saveLoadCompatible = false;
+		_doAutosave = false;
+	}
+
 	if (_completeScreenRedraw) {
 		int i;
 		Actor *a;
