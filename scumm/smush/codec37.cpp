@@ -318,7 +318,7 @@ void Codec37Decoder::proc3WithoutFDFE(Blitter & dst, Chunk & src, int32 next_off
 	} while (--bh);
 }
 
-void Codec37Decoder::proc4(Blitter & dst, Chunk & src, int32 next_offs, int32 bw, int32 bh) {
+void Codec37Decoder::proc4WithFDFE(Blitter & dst, Chunk & src, int32 next_offs, int32 bw, int32 bh) {
 	do {
 		int32 i = bw;
 		do {
@@ -336,6 +336,46 @@ void Codec37Decoder::proc4(Blitter & dst, Chunk & src, int32 next_offs, int32 bw
 				dst.putBlock(expand(src.getByte()), expand(src.getByte()), expand(src.getByte()), expand(src.getByte()));
 #endif
 			} else if (code == 0xFF) {
+#ifdef USE_COLOR_CODE_FOR_BLOCK
+				dst.putBlock(expand(9));
+#else
+				dst.putBlock(src);
+#endif
+			} else if (code == 0x00) {
+				int32 length = src.getByte() + 1;
+				for (int32 l = 0; l < length; l++) {
+#ifdef USE_COLOR_CODE_FOR_BLOCK
+					dst.putBlock(expand(10));
+#else
+					dst.blockCopy(next_offs);
+#endif
+					i--;
+					if (i == 0) {
+						dst.advance(0, 3); // advance 3 lines
+						bh--;
+						i = bw;
+					}
+				}
+				if(bh == 0) return;
+				i++;
+			} else {
+#ifdef USE_COLOR_CODE_FOR_BLOCK
+				dst.putBlock(expand(11));
+#else
+				dst.blockCopy(_offsetTable[code] + next_offs); // copy from an offset !
+#endif
+			}
+		} while (--i);
+		dst.advance(0, 3); // advance 3 lines
+	} while (--bh);
+}
+
+void Codec37Decoder::proc4WithoutFDFE(Blitter & dst, Chunk & src, int32 next_offs, int32 bw, int32 bh) {
+	do {
+		int32 i = bw;
+		do {
+			int32 code = src.getByte();
+			if (code == 0xFF) {
 #ifdef USE_COLOR_CODE_FOR_BLOCK
 				dst.putBlock(expand(9));
 #else
@@ -414,13 +454,16 @@ bool Codec37Decoder::decode(Blitter & dst, Chunk & src) {
 		proc2(blit, src, decoded_size);
 		break;
 	case 3:
-		if(mask_flag & 1)
+		if(mask_flag & 4)
 			proc3WithFDFE(blit, src, _deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable], bw, bh);
 		else
 			proc3WithoutFDFE(blit, src, _deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable], bw, bh);
 		break;
 	case 4:
-		proc4(blit, src, _deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable], bw, bh);
+		if(mask_flag & 4)
+			proc4WithFDFE(blit, src, _deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable], bw, bh);
+		else
+			proc4WithoutFDFE(blit, src, _deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable], bw, bh);
 		break;
 	default:
 #ifdef DEBUG_CODEC37

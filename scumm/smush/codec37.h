@@ -78,7 +78,8 @@ protected:
 	void proc2(Blitter &, Chunk &, int32);
 	void proc3WithFDFE(Blitter &, Chunk &, int32, int32, int32);
 	void proc3WithoutFDFE(Blitter &, Chunk &, int32, int32, int32);
-	void proc4(Blitter &, Chunk &, int32, int32, int32);
+	void proc4WithFDFE(Blitter &, Chunk &, int32, int32, int32);
+	void proc4WithoutFDFE(Blitter &, Chunk &, int32, int32, int32);
 public:
 	bool decode(Blitter &, Chunk &);
 };

@@ -2444,9 +2444,12 @@ void Scumm_v6::o6_miscOps()
 				uint32 speed;
 				if (strcmp((char*)getStringAddressVar(VAR_VIDEONAME), "sq3.san") == 0)
 	 				speed = 71;
-				else
+				else {
+					if (_insaneFlag == 0) 
+						_insaneFlag = 13;
 					speed = 1000 / _insaneFlag;
-
+				}
+				
 				debug(1, "INSANE Arg: %d", args[1]);
 
 				ScummRenderer * sr = new ScummRenderer(this, speed);
