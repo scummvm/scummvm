@@ -1706,7 +1706,7 @@ bool OSystem_MorphOS::set_sound_proc( void *param, OSystem::SoundProc *proc, byt
 	MySoundEmulFunc.StackSize = 8192;
 	MySoundEmulFunc.Extension = 0;
 	MySoundEmulFunc.Arg1	     = (ULONG)this;
-	MySoundEmulFunc.Arg2	     = AHIST_M16S;
+	MySoundEmulFunc.Arg2	     = AHIST_S16S;
 
 	soundProcTags[ 0 ].ti_Data = (ULONG)&MySoundEmulFunc;
 	ScummSoundThread = CreateNewProc( soundProcTags );
