@@ -675,6 +675,12 @@ Then the TiMidity port will be visible from the 'aconnect -o -l' list. You
 should launch it as root, since it will try to set up some real time
 priority.
 
+You can also use FluidSynth for a software synth that supports sound fonts,
+if you don't have any MIDI hardware.
+
+An example usage of FluidSynth might look like this:
+  fluidsynth -m alsa_seq /path/to/8mbgmsfx.sf2
+Then use 'aconnect -o -l' as above to find what port its on.
 
 Using MP3 files for CD audio:
 -----------------------------
