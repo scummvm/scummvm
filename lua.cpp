@@ -1832,7 +1832,9 @@ struct luaL_reg builtins[] = {
 	{ "ChangePrimitive", ChangePrimitive },
 	{ "DrawRectangle", DrawRectangle },
 	{ "DrawPolygon", DrawPolygon },
-	{ "DrawLine", DrawLine }
+	{ "DrawLine", DrawLine },
+	{ "pause_scripts", pause_scripts },
+	{ "unpause_scripts", unpause_scripts }
 };
 
 void register_lua() {
