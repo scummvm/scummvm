@@ -261,8 +261,6 @@ public:
 	void dialogue(const char *dlgFile, int personInRoom, char *cutaway);
 	void playCutaway(const char *cutFile, char *next = NULL);
 
-	const char *objectOrItemName(int16 obj) const;
-
 	Verb findVerbUnderCursor(int16 cursorx, int16 cursory) const;
 	uint16 findObjectUnderCursor(int16 cursorx, int16 cursory) const;
 

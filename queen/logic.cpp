@@ -1937,20 +1937,6 @@ void Logic::joeSpeak(uint16 descNum, bool objectType) {
 }
 
 
-const char* Logic::objectOrItemName(int16 obj) const {
-
-	uint16 name;
-	if (obj < 0) {
-		name = _itemData[ABS(obj)].name;
-	}
-	else {
-		name = _objectData[obj].name;
-	}
-	return _objName[name];
-
-}
-
-
 Verb Logic::findVerbUnderCursor(int16 cursorx, int16 cursory) const {
 
 	return Verb(PANEL_VERBS[zoneIn(ZONE_PANEL, cursorx, cursory)]);
@@ -1976,7 +1962,7 @@ uint16 Logic::findObjectRoomNumber(uint16 zoneNum) const {
 	debug(0, "Logic::findObjectRoomNumber(%X, %X)", zoneNum, objectMax);
 	if (zoneNum > objectMax) {
 		// this is an area box, check for associated object
-		uint16 obj = _area[_currentRoom][zoneNum - objectMax].object;
+		uint16 obj = currentRoomArea(zoneNum - objectMax)->object;
 		if (obj != 0 && objectData(obj)->name != 0) {
 			// there is an object, get its number
 			noun = obj - _roomData[_currentRoom];
