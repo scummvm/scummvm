@@ -1273,7 +1273,8 @@ void ScummEngine_v6he::redimArray(int arrayId, int newX, int newY, int type) {
 
 void ScummEngine_v6he::decodeParseString(int m, int n) {
 	byte b;
-	int c;
+	int i, color;
+	int args[16];
 
 	b = fetchScriptByte();
 
@@ -1326,15 +1327,16 @@ void ScummEngine_v6he::decodeParseString(int m, int n) {
 
 		break;
 	case 0xF9:
-		c = pop();
-		if (c == 1) {
+		color = pop();
+		if (color == 1) {
 			_string[m].color = pop();
 		} else {	
-			push(c);
-			int args[16];
+			push(color);
 			getStackList(args, ARRAYSIZE(args));
+			for (i = 0; i < 16; i++)
+				_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
+			_string[m].color = color;
 		}
-		warning("decodeParseString case 0xF9 stub");
 		break;
 	case 0xFE:
 		_string[m].loadDefault();
