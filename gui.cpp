@@ -882,8 +882,8 @@ void Gui::getSavegameNames(int start)
 	int i;
 	_slotIndex = start;
 
-	for (i = 0; i < 9; i++, start++) {
-		valid_games[i] = _s->getSavegameName(start, game_names[i]);
+	for (i = 0; i < 9; i++) {
+		valid_games[i] = _s->getSavegameName(start + i, game_names[i]);
 	}
 }
 

@@ -32,7 +32,10 @@
 
 /*
  * TODO list
- * - if save or load fails, popup an error dialog?
+ * - if save or load fails (e.g. due to disk full/directory write protected),
+ *   display an error dialog?
+ * - The user can edit the name of the autosave game. Of course this will not
+ *   do anything, but we should still prevent this.
  * ...
  */
 
@@ -293,7 +296,8 @@ SaveLoadDialog::SaveLoadDialog(NewGui *gui)
 	addButton(200, 100, 54, 16, RES_STRING(8), kQuitCmd, 'Q');	// Quit
 	
 	_savegameList = new ListWidget(this, 10, 20, 180, 94);
-
+	_savegameList->setNumberingMode(kListNumberingZero);
+	
 	// Get savegame names
 	ScummVM::StringList l;
 	char name[32];
@@ -312,7 +316,7 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	switch (cmd) {
 	case kListItemChangedCmd:
 	case kSaveCmd:
-		if (_savegameList->getSelected() > 0 && !_savegameList->getSelectedString().isEmpty()) {
+		if (_savegameList->getSelected() >= 1 && !_savegameList->getSelectedString().isEmpty()) {
 			Scumm *s = _gui->getScumm();
 			s->_saveLoadSlot = _savegameList->getSelected();
 			s->_saveLoadCompatible = false;
@@ -323,7 +327,7 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kListItemDoubleClickedCmd:
 	case kLoadCmd:
-		if (_savegameList->getSelected() > 0 && !_savegameList->getSelectedString().isEmpty()) {
+		if (_savegameList->getSelected() >= 0 && !_savegameList->getSelectedString().isEmpty()) {
 			Scumm *s = _gui->getScumm();
 			s->_saveLoadSlot = _savegameList->getSelected();
 			s->_saveLoadCompatible = false;
