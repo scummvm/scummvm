@@ -67,8 +67,15 @@ ScrollBarWidget::ScrollBarWidget(Dialog *boss, int x, int y, int w, int h)
 	_type = kScrollBarWidget;
 
 	_part = kNoPart;
-	_draggingPart = kNoPart;
+	_sliderHeight = 0;
+	_sliderPos = 0;
 
+	_draggingPart = kNoPart;
+	_sliderDeltaMouseDownPos = 0;
+
+	_numEntries = 0;
+	_entriesPerPage = 0;
+	_currentPos = 0;
 }
 
 void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount)
