@@ -1197,8 +1197,9 @@ int32 SoftwareRenderCompressed256(_spriteInfo *s)
 	return 0;
 }
 
-// The surface functions are only used by the in-game dialogs. Everything
-// that isn't needed for them (blending, scaling, etc.) has been removed.
+// The surface functions are used by the in-game dialogs and for displaying
+// cutscene subtitles. Everything that isn't needed for those cases (blending,
+// scaling, etc.) has been removed.
 
 int32 CreateSurface(_spriteInfo *s, uint8 **sprite) {
 	uint8 *newSprite;
