@@ -403,6 +403,9 @@
 			RelativePath="..\..\scumm\script_v6.cpp">
 		</File>
 		<File
+			RelativePath="..\..\scumm\script_v6he.cpp">
+		</File>
+		<File
 			RelativePath="..\..\scumm\script_v8.cpp">
 		</File>
 		<File
