@@ -163,8 +163,7 @@ void IMuseDigital::flushTracks() {
 	debug(5, "flushTracks()");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used &&
-			(track->readyToRemove || (!_vm->_videoFinished && track->toBeRemoved))) {
+		if (track->used && (track->readyToRemove || (_vm->_insaneRunning && track->toBeRemoved))) {
 			if ((track->stream) && (!track->stream->endOfStream())) {
 	 			track->stream->finish();
 			} else if ((track->stream) && (track->stream->endOfStream())) {
@@ -375,6 +374,7 @@ void IMuseDigital::stopAllSounds() {
 		if (!foundNotRemoved)
 			break;
 		flushTracks();
+		_vm->_system->delay_msecs(50);
 	}
 }
 

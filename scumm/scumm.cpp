@@ -352,6 +352,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_smushFrameRate = 0;
 	_videoFinished = false;
 	_smushPaused = false;
+	_insaneRunning = false;
 	_quit = false;
 	_pauseDialog = NULL;
 	_optionsDialog = NULL;

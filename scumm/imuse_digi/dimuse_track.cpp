@@ -179,6 +179,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			track->used = true;
 			return;
 		}
+		_vm->_system->delay_msecs(50);
 	}
 }
 
