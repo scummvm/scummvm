@@ -19,10 +19,38 @@
  * $Header$
  *
  */
+#ifndef __SKIN_H__
+#define __SKIN_H__
 
+// skin 
+#define	sknInfoState		0
+#define	sknInfoPosX			1
+#define	sknInfoPosY			2
+
+#define	sknInfoMaxWOrH		3
+#define	sknInfoDrawMode		4
+#define	sknInfoKeepXOrY1	5
+#define	sknInfoKeepXOrY2	7
+
+#define sknInfoListWidth	sknInfoMaxWOrH
+#define sknInfoListHeight	sknInfoDrawMode
+#define sknInfoListSize		sknInfoListHeight
+#define sknInfoListItemSize	12
+
+#define	sknPosRsc			'sPos'
+#define	sknColorsRsc		'sCol'
+
+#define sknStateNormal		0
+#define sknStateSelected	10
+#define sknStateDisabled	20
+
+#define sknSelectedState(bmp)	(bmp + sknStateSelected)
+#define sknDisabledState(bmp)	(bmp + sknStateDisabled)
+
+// skin elements
 #define skinList					500
 #define	skinColors	600
-//#define skinPalette					510
+#define skinPalette					610
 #define skinButtonNone				0
 
 #define skinSliderUpArrow			2000
@@ -75,3 +103,21 @@
 #define skinButtonPlayNormal		7000
 #define skinButtonPlayOver			7010
 #define skinButtonPlayDisabled		7040
+
+// protos
+void SknApplySkin();
+void SknGetObjectBounds(DmOpenRef skinDBP, DmResID resID, RectangleType *rP);
+DmOpenRef SknOpenSkin();
+void SknCloseSkin(DmOpenRef skinDBP);
+UInt8 SknSetState(DmOpenRef skinDBP, DmResID resID, UInt8 newState);
+void SknShowObject(DmOpenRef skinDBP, DmResID resID);
+UInt8 SknGetState(DmOpenRef skinDBP, DmResID resID);
+void SknUpdateList();
+void SknGetListBounds(RectangleType *rAreaP, RectangleType *rArea2xP);
+UInt16 SknCheckClick(DmOpenRef skinDBP, Coord mx, Coord my);
+void SknSelect(Coord x, Coord y);
+Boolean SknProcessArrowAction(UInt16 button);
+
+extern UInt16 lastIndex;
+
+#endif
