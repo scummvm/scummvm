@@ -1230,6 +1230,7 @@ void AkosRenderer::codec16() {
 	int32 maxw = outwidth - 1;
 	int32 maxh = outheight - 1;
 	int32 tmp_x, tmp_y;
+	byte transparency = (_vm->_features & GF_HUMONGOUS) ? 0 : 255;
 
 /*
 	tmp_x = clip_left;
@@ -1324,13 +1325,13 @@ void AkosRenderer::codec16() {
 	byte *dest = outptr + width_unk + height_unk * _vm->_screenWidth;
 
 	if (_zbuf == 0) {
-		akos16Decompress(dest, pitch, srcptr, cur_x, out_height, dir, numskip_before, numskip_after, 255);
+		akos16Decompress(dest, pitch, srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency);
 		return;
 	}
 
 	byte *ptr = _vm->_screenStartStrip + _vm->getResourceAddress(rtBuffer, 9) + _vm->gdi._imgBufOffs[_zbuf];
 	ptr += _numStrips * clip_top + (clip_left / 8);
-	akos16DecompressMask(dest, pitch, srcptr, cur_x, out_height, dir, numskip_before, numskip_after, 255, ptr, clip_left / 8);
+	akos16DecompressMask(dest, pitch, srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency, ptr, clip_left / 8);
 }
 
 bool Scumm::akos_increaseAnims(byte *akos, Actor *a) {
