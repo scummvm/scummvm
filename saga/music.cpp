@@ -345,13 +345,13 @@ const MUSIC_MIDITABLE Music::_midiTableITECD[26] = {
 	{ "intro.mid",      MUSIC_LOOP },	// 10
 	{ "fvillage.mid",   MUSIC_LOOP },	// 11
 	{ "elkhall.mid",    MUSIC_LOOP },	// 12
-	{ "mouse.mid",      0            },	// 13
+	{ "mouse.mid",      0          },	// 13
 	{ "darkclaw.mid",   MUSIC_LOOP },	// 14
 	{ "birdchrp.mid",   MUSIC_LOOP },	// 15
 	{ "orbtempl.mid",   MUSIC_LOOP },	// 16
 	{ "spooky.mid",     MUSIC_LOOP },	// 17
 	{ "catfest.mid",    MUSIC_LOOP },	// 18
-	{ "elkfanfare.mid", 0            },	// 19
+	{ "elkfanfare.mid", 0          },	// 19
 	{ "bcexpl.mid",     MUSIC_LOOP },	// 20
 	{ "boargtnt.mid",   MUSIC_LOOP },	// 21
 	{ "boarking.mid",   MUSIC_LOOP },	// 22
