@@ -75,7 +75,7 @@ void Graphics::blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *
 	}
 
 	// UploadRect(r);
-	setNeedFullRedraw();
+	// setNeedFullRedraw();
 }
 
 // I've made the scaling two separate functions because there were cases from
@@ -519,6 +519,7 @@ void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 void Graphics::setLocationMetrics(uint16 w, uint16 h) {
 	_locationWide = w;
 	_locationDeep = h;
+	setNeedFullRedraw();
 }
 
 /**
@@ -598,6 +599,9 @@ void Graphics::startRenderCycle(void) {
 		_renderTooSlow = false;
 	}
 
+	if (_scrollXOld != _scrollX || _scrollYOld != _scrollY)
+		setNeedFullRedraw();
+
 	_framesPerGameCycle = 0;
 }
 
@@ -655,6 +659,9 @@ bool Graphics::endRenderCycle(void) {
 		_scrollX = (int16) (_scrollXOld + ((_scrollXTarget - _scrollXOld) * (_startTime - _initialTime + _renderAverageTime)) / (_totalTime - _initialTime));
 		_scrollY = (int16) (_scrollYOld + ((_scrollYTarget - _scrollYOld) * (_startTime - _initialTime + _renderAverageTime)) / (_totalTime - _initialTime));
 	}
+
+	if (_scrollX != _scrollXOld || _scrollY != _scrollYOld)
+		setNeedFullRedraw();
 
 	return false;
 }

@@ -41,6 +41,10 @@ namespace Sword2 {
 #define SCALE_MAXWIDTH		512
 #define SCALE_MAXHEIGHT		512
 
+// Dirty grid cell size
+#define CELLWIDE		10
+#define CELLDEEP		20
+
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
 #endif
@@ -85,6 +89,10 @@ private:
 	Sword2Engine *_vm;
 
 	byte *_buffer;
+	byte *_dirtyGrid;
+
+	uint16 _gridWide;
+	uint16 _gridDeep;
 
 	int32 _renderCaps;
 	int8 _renderLevel;
@@ -179,6 +187,7 @@ private:
 
 public:
 	Graphics(Sword2Engine *vm, int16 width, int16 height);
+	~Graphics();
 
 	// Game screen metrics
 	int16 _screenWide;
@@ -197,7 +206,7 @@ public:
 	int32 setMenuIcon(uint8 menu, uint8 pocket, uint8 *icon);
 	void closeMenuImmediately(void);
 
-	void updateDisplay(void);
+	void updateDisplay(bool redrawScene = true);
 	void setWindowName(const char *windowName);
 	void setNeedFullRedraw(void);
 

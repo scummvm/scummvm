@@ -283,7 +283,7 @@ int Dialog::run() {
 	while (!_finish) {
 		// So that the menu icons will reach their full size
 		_gui->_vm->_graphics->processMenu();
-		_gui->_vm->_graphics->updateDisplay();
+		_gui->_vm->_graphics->updateDisplay(false);
 
 		int16 newMouseX = _gui->_vm->_input->_mouseX;
 		int16 newMouseY = _gui->_vm->_input->_mouseY + 40;

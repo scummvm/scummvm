@@ -66,28 +66,78 @@ void Input::parseEvents(void) {
 	}
 }
 
-void Graphics::setNeedFullRedraw() {
+/**
+ * Tell updateDisplay() that the scene needs to be completely updated.
+ */
+
+void Graphics::setNeedFullRedraw(void) {
 	_needFullRedraw = true;
 }
 
 /**
- * This function should be called at a high rate (> 20 per second) to service
- * windows and the interface it provides.
+ * This function has two purposes: It redraws the scene, and it handles input
+ * events, palette fading, etc. It should be called at a high rate (> 20 per
+ * second), but the scene is usually only redrawn about 12 times per second,
+ * except when then screen is scrolling.
+ *
+ * @param redrawScene If true, redraw the scene.
  */
 
-void Graphics::updateDisplay(void) {
+void Graphics::updateDisplay(bool redrawScene) {
 	_vm->_input->parseEvents();
 	fadeServer();
 
-	// FIXME: We re-render the entire picture area of the screen for each
-	// frame, which is pretty horrible.
+	if (redrawScene) {
+		int i;
 
-	if (_needFullRedraw) {
-		_vm->_system->copy_rect(_buffer + MENUDEEP * _screenWide, _screenWide, 0, MENUDEEP, _screenWide, _screenDeep - 2 * MENUDEEP);
-		_needFullRedraw = false;
+		// Note that the entire scene is always rendered, which is less
+		// than optimal, but at least we can try to be intelligent
+		// about updating the screen afterwards.
+
+		if (_needFullRedraw) {
+			// Update the entire screen. This is necessary when
+			// scrolling, fading, etc.
+
+			_vm->_system->copy_rect(_buffer + MENUDEEP * _screenWide, _screenWide, 0, MENUDEEP, _screenWide, _screenDeep - 2 * MENUDEEP);
+			_needFullRedraw = false;
+		} else {
+			// Update only the dirty areas of the screen
+
+			int j, x, y;
+			int stripWide;
+
+			for (i = 0; i < _gridDeep; i++) {
+				stripWide = 0;
+
+				for (j = 0; j < _gridWide; j++) {
+					if (_dirtyGrid[i * _gridWide + j]) {
+						stripWide++;
+					} else if (stripWide) {
+						x = CELLWIDE * (j - stripWide);
+						y = CELLDEEP * i;
+						_vm->_system->copy_rect(_buffer + y * _screenWide + x, _screenWide, x, y, stripWide * CELLWIDE, CELLDEEP);
+						stripWide = 0;
+					}
+				}
+
+				if (stripWide) {
+					x = CELLWIDE * (j - stripWide);
+					y = CELLDEEP * i;
+					_vm->_system->copy_rect(_buffer + y * _screenWide + x, _screenWide, x, y, stripWide * CELLWIDE, CELLDEEP);
+					stripWide = 0;
+				}
+			}
+		}
+
+		// Age the dirty cells one generation. This way we keep track
+		// of both the cells that were updated this time, and the ones
+		// that were updated the last time.
+
+		for (i = 0; i < _gridWide * _gridDeep; i++)
+			_dirtyGrid[i] >>= 1;
 	}
 
-	// We still need to update because of fades, menu animations, etc.
+	// We always need to update because of fades, menu animations, etc.
 	_vm->_system->update_screen();
 }
 

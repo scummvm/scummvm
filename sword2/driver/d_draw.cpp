@@ -32,11 +32,23 @@ Graphics::Graphics(Sword2Engine *vm, int16 width, int16 height)
 
 	int i, j;
 
+	_buffer = _dirtyGrid = NULL;
+
 	_buffer = (byte *) malloc(width * height);
 	if (!_buffer)
 		error("Could not initialise display");
 
 	_vm->_system->init_size(width, height);
+
+	_gridWide = width / CELLWIDE;
+	_gridDeep = height / CELLDEEP;
+
+	if ((width % CELLWIDE) || (height % CELLDEEP))
+		error("Bad cell size");
+
+	_dirtyGrid = (byte *) calloc(_gridWide, _gridDeep);
+	if (!_buffer)
+		error("Could not initialise dirty grid");
 
 	for (i = 0; i < ARRAYSIZE(_blockSurfaces); i++)
 		_blockSurfaces[i] = NULL;
@@ -49,6 +61,11 @@ Graphics::Graphics(Sword2Engine *vm, int16 width, int16 height)
 
 		_menuStatus[i] = RDMENU_HIDDEN;
 	}
+}
+
+Graphics::~Graphics() {
+	free(_buffer);
+	free(_dirtyGrid);
 }
 
 /**
@@ -199,6 +216,7 @@ int32 MoviePlayer::play(char *filename, MovieTextObject *text[], uint8 *musicOut
 			if (frameCounter == text[textCounter]->endFrame) {
 				closeTextObject(text[textCounter]);
 				_vm->_graphics->clearScene();
+				_vm->_graphics->setNeedFullRedraw();
 				textCounter++;
 			}
 

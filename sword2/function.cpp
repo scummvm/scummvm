@@ -623,7 +623,6 @@ int32 Logic::fnPlayCredits(int32 *params) {
 		bool foundStartLine = false;
 
 		_vm->_graphics->clearScene();
-		_vm->_graphics->setNeedFullRedraw();
 
 		for (i = startLine; i < lineCount; i++) {
 			// Free any sprites that have scrolled off the screen

@@ -327,8 +327,6 @@ void Sword2Engine::go() {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
 
-		_graphics->updateDisplay();
-
 #ifdef _SWORD2_DEBUG
 // FIXME: If we want this, we should re-work it to use the backend's
 // screenshot functionality.
@@ -456,10 +454,10 @@ void Sword2Engine::startGame(void) {
 
 void Sword2Engine::sleepUntil(uint32 time) {
 	while (_system->get_msecs() < time) {
-		// Make sure menu animations and fades don't suffer
+		// Make sure menu animations and fades don't suffer, but don't
+		// redraw the entire scene.
 		_graphics->processMenu();
-		_graphics->updateDisplay();
-
+		_graphics->updateDisplay(false);
 		_system->delay_msecs(10);
 	}
 }

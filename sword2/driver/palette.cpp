@@ -113,10 +113,14 @@ uint8 Graphics::quickMatch(uint8 r, uint8 g, uint8 b) {
 void Graphics::setPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, uint8 fadeNow) {
 	if (noEntries) {
 		memcpy(&_palCopy[startEntry][0], colourTable, noEntries * 4);
-		if (fadeNow == RDPAL_INSTANT)
+		if (fadeNow == RDPAL_INSTANT) {
 			_vm->_system->set_palette((const byte *) _palCopy, startEntry, noEntries);
-	} else
+			setNeedFullRedraw();
+		}
+	} else {
 		_vm->_system->set_palette((const byte *) _palCopy, 0, 256);
+		setNeedFullRedraw();
+	}
 }
 
 void Graphics::dimPalette(void) {
@@ -126,6 +130,7 @@ void Graphics::dimPalette(void) {
 		p[i] /= 2;
 
 	_vm->_system->set_palette(p, 0, 256);
+	setNeedFullRedraw();
 }
 
 /**
@@ -227,6 +232,7 @@ void Graphics::fadeServer(void) {
 	}
 
 	_vm->_system->set_palette(newPalette, 0, 256);
+	setNeedFullRedraw();
 }
 
 } // End of namespace Sword2
