@@ -612,7 +612,6 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_mixer->setVolume(kDefaultSFXVolume * kDefaultMasterVolume / 255);
 	_mixer->setMusicVolume(kDefaultMusicVolume);
 
-	warning("_midiDriver is %d", _midiDriver);
 	// Init iMuse
 	_imuse = NULL;
 	_imuseDigital = NULL;
