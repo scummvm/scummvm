@@ -310,7 +310,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_getAnimateVariable),
 		OPCODE(o6_invalid),
 		/* D4 */
-		OPCODE(o72_shuffle),
+		OPCODE(o6_shuffle),
 		OPCODE(o72_jumpToScript),
 		OPCODE(o6_band),
 		OPCODE(o6_bor),

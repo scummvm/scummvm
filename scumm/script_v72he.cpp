@@ -310,7 +310,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_getAnimateVariable),
 		OPCODE(o6_invalid),
 		/* D4 */
-		OPCODE(o72_shuffle),
+		OPCODE(o6_shuffle),
 		OPCODE(o72_jumpToScript),
 		OPCODE(o6_band),
 		OPCODE(o6_bor),
@@ -1705,12 +1705,6 @@ void ScummEngine_v72he::o72_unknownCF() {
 	//memcpy(ah->data, string, len);
 
 	push(readVar(0));
-}
-
-void ScummEngine_v72he::o72_shuffle() {
-	int b = pop();
-	int a = pop();
-	shuffleArray(fetchScriptWord(), a, b);
 }
 
 void ScummEngine_v72he::o72_jumpToScript() {
