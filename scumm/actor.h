@@ -93,6 +93,7 @@ public:
 	int talkFrequency;
 	byte talkPan;
 	byte talkVolume;
+	uint16 boxscale;
 	byte scalex, scaley;
 	byte charset;
 	byte moving;

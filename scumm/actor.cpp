@@ -89,7 +89,7 @@ void Actor::initActor(int mode) {
 	talkColor = 15;
 	talkPosX = 0;
 	talkPosY = -80;
-	scaley = scalex = 0xFF;
+	boxscale = scaley = scalex = 0xFF;
 	charset = 0;
 	memset(sound, 0, sizeof(sound));
 	targetFacing = facing;
@@ -421,6 +421,8 @@ void Actor::setupActorScale() {
 	// Older games used the flag 0x20 differently, though.
 	if (_vm->_version >= 6 && (_vm->getBoxFlags(walkbox) & kBoxIgnoreScale))
 		return;
+
+	boxscale = _vm->getBoxScale(walkbox);
 
 	uint16 scale = _vm->getScale(walkbox, _pos.x, _pos.y);
 	assert(scale <= 0xFF);
@@ -1005,8 +1007,12 @@ void Actor::drawActorCostume() {
 			bcr->_actorX += 8;
 	}
 
-	bcr->_scaleX = scalex;
-	bcr->_scaleY = scaley;
+	if (_vm->_version == 4 && boxscale & 0x8000) {
+		bcr->_scaleX = bcr->_scaleY = _vm->getScale(walkbox, _pos.x, _pos.y);
+	} else {
+		bcr->_scaleX = scalex;
+		bcr->_scaleY = scaley;
+	}
 
 	bcr->_shadow_mode = shadow_mode;
 	if (_vm->_features & GF_SMALL_HEADER)
@@ -1798,6 +1804,7 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, talkFrequency, sleInt16, VER(16)),
 		MKLINE(Actor, talkPan, sleInt16, VER(24)),
 		MKLINE(Actor, talkVolume, sleInt16, VER(29)),
+		MKLINE(Actor, boxscale, sleUint16, VER(34)),
 		MKLINE(Actor, scalex, sleByte, VER(8)),
 		MKLINE(Actor, scaley, sleByte, VER(8)),
 		MKLINE(Actor, charset, sleByte, VER(8)),
