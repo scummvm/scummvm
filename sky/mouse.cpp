@@ -168,6 +168,18 @@ void SkyMouse::drawNewMouse() {
 	//drawMouse();
 }
 
+//original sky uses different colors for transparency than our backends do,
+//so we simply swap our "transparent"-white with another one.
+void SkyMouse::fixMouseTransparency(byte *mouseData) {
+	for (int i = 0; i < (_mouseWidth * _mouseHeight); i++) {
+		if (mouseData[i] == 255)
+			mouseData[i] = 242;
+		else
+			if (mouseData[i] == 0)
+				mouseData[i] = 255;
+	}
+}
+
 void SkyMouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 	SkyState::_systemVars.mouseFlag |= MF_IN_INT;
 	_mouseType2 = frameNum;
@@ -182,6 +194,7 @@ void SkyMouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 
 	//_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, mouseX, mouseY);
 	// there's something wrong about the mouse's hotspot. using 0/0 works fine.
+	fixMouseTransparency(_mouseData2);
 	_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, 0, 0);
 	if (frameNum == MOUSE_BLANK) _system->show_mouse(false);
 	else _system->show_mouse(true);

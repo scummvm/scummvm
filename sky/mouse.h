@@ -54,7 +54,8 @@ protected:
 
 	void pointerEngine(void);
 	void buttonEngine1(void);
-
+	void fixMouseTransparency(byte *mouseData);
+	
 	uint16 _eMouseB;
 	uint16 _bMouseB;
 	
