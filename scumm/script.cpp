@@ -351,12 +351,11 @@ void ScummEngine::updateScriptPtr() {
 void ScummEngine::nukeArrays(int script) {
 	int i;
 
-	if (!script)
+	if (_heversion < 60 || !script)
 		return;
 
-	//FIXME Should be used all the time
-	// Only required in puttmoon
-	if (_gameId != GID_PUTTMOON)
+	//FIXME Nukes wrong arrays in fbear
+	if (_gameId == GID_FBEAR)
 		return;
 
 	for (i = 1; i < _numArray; i++) {
