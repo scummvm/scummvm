@@ -1180,12 +1180,16 @@ void OSystem_MorphOS::DrawMouse()
 		return;
 	MouseDrawn = true;
 
-	const int ydraw = MouseY - MouseHotspotY;
-	const int xdraw = MouseX - MouseHotspotX;
-	const int w = MouseWidth;
-	const int h = MouseHeight;
-	bak = MouseBackup;
-	byte *buf = MouseImage;
+	int ydraw = MouseY - MouseHotspotY;
+	int xdraw = MouseX - MouseHotspotX;
+	int w = MouseWidth;
+	int h = MouseHeight;
+	int x_mouseimg_offs = 0;
+	int y_mouseimg_offs = 0;
+	byte *buf;
+
+	if (xdraw < 0) { x_mouseimg_offs = -xdraw; w += xdraw; xdraw = 0; }
+	if (ydraw < 0) { y_mouseimg_offs = -ydraw; h += ydraw; ydraw = 0; }
 
 	MouseOldX = xdraw;
 	MouseOldY = ydraw;
@@ -1195,8 +1199,9 @@ void OSystem_MorphOS::DrawMouse()
 	AddUpdateRect(xdraw, ydraw, w, h);
 	dst = (byte*)ScummBuffer + ydraw*ScummBufferWidth + xdraw;
 	bak = MouseBackup;
+	buf = MouseImage + y_mouseimg_offs*MAX_MOUSE_W + x_mouseimg_offs;
 
-	for (y = 0; y < h; y++, dst += ScummBufferWidth, bak += MAX_MOUSE_W, buf += w)
+	for (y = 0; y < h; y++, dst += ScummBufferWidth, bak += MAX_MOUSE_W, buf += MouseWidth)
 	{
 		if (ydraw+y < ScummBufferHeight)
 		{

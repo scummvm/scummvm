@@ -123,8 +123,8 @@ class OSystem_MorphOS : public OSystem
 	private:
 		typedef enum { CSDSPTYPE_WINDOWED, CSDSPTYPE_FULLSCREEN, CSDSPTYPE_TOGGLE, CSDSPTYPE_KEEP } CS_DSPTYPE;
 
-		static const int MAX_MOUSE_W = 40;
-		static const int MAX_MOUSE_H = 40;
+		static const int MAX_MOUSE_W = 80;
+		static const int MAX_MOUSE_H = 80;
 
 		void   CreateScreen(CS_DSPTYPE dspType);
 		void 	 SwitchScalerTo(SCALERTYPE newScaler);
