@@ -1,0 +1,304 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2002-2003 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
+
+#include "stdafx.h"
+#include "help.h"
+#include "scumm.h"
+#include "common/str.h"
+
+int ScummHelp::numPages(byte gameId) {
+	switch (gameId) {
+	case GID_MANIAC:
+	case GID_ZAK:
+	case GID_ZAK256:
+		return 4;
+		break;
+	case GID_INDY3:
+	case GID_INDY3_256:
+		return 6;
+		break;
+	case GID_LOOM:
+	case GID_LOOM256:
+	case GID_MONKEY_EGA:
+	case GID_MONKEY_VGA:
+	case GID_MONKEY:
+	case GID_MONKEY2:
+	case GID_INDY4:
+ 	case GID_TENTACLE:
+	case GID_SAMNMAX:
+	case GID_DIG:
+	case GID_FT:
+	case GID_CMI:
+		return 3;
+		break;  
+/*	TODO - I don't know the controls for these games
+	case GID_PUTTDEMO:
+*/	
+	default:
+		return 2;
+	}
+}
+
+#define ADD_BIND(k,d) key[i] = k; dsc[i] = d; i++;
+#define ADD_TEXT(d) ADD_BIND("",d)
+#define ADD_LINE ADD_BIND("","")
+
+void ScummHelp::updateStrings(byte gameId, int page, String &title,
+			String *&key, String *&dsc) {
+	key = new String[HELP_NUM_LINES];
+	dsc = new String[HELP_NUM_LINES];
+	int i = 0;
+	switch (page) {
+	case 1:
+		title = "Common keyboard commands:";
+		ADD_BIND("F5", "Save / Load dialog");
+		ADD_BIND(".", "Skip line of text");
+		ADD_BIND("Esc", "Skip cutscene");
+		ADD_BIND("Space", "Pause game");
+		ADD_BIND("Ctrl 0-9", "Load game state 1-10");
+		ADD_BIND("Alt 0-9", "Save game state 1-10");
+		ADD_BIND("Alt x, Ctrl q", "Quit");
+		ADD_BIND("Alt Enter", "Toggle fullscreen");
+		ADD_BIND("[, ]", "Music volume up / down");
+		ADD_BIND("-, +", "Text speed slower / faster");
+		ADD_BIND("Enter", "Simulate left mouse button");
+		ADD_BIND("Tab", "Simulate right mouse button");
+		ADD_BIND("Arrow Keys", "Simulate mouse movement");
+		break;
+	case 2:
+		title = "Special keyboard commands:";
+		ADD_BIND("~, #", "Show / Hide console");
+		ADD_BIND("Ctrl d", "Start the debugger");
+		ADD_BIND("Ctrl s", "Show memory consumption");
+		ADD_BIND("Ctrl f", "Run in fast mode *");
+		ADD_BIND("Ctrl g", "Run in really fast mode *");
+		ADD_BIND("Ctrl Alt 0-9", "Set graphics filter");
+		ADD_LINE;
+		ADD_LINE;
+		ADD_LINE;
+		ADD_LINE;
+		ADD_TEXT("* Note that using ctrl-f and");
+		ADD_TEXT("ctrl-g are not recommended");
+		ADD_TEXT("since they may cause crashes");
+		ADD_TEXT("or incorrect game behaviour.");
+		break;
+	case 3:
+		if (gameId == GID_LOOM || gameId == GID_LOOM256)
+			title = "Spinning drafts on the keyboard:";
+		else
+			title = "Main game controls:";
+		switch (gameId) {
+		case GID_ZAK:
+		case GID_ZAK256:
+		case GID_MANIAC:
+			ADD_BIND("q", "Push");
+			ADD_BIND("a", "Pull");
+			ADD_BIND("z", "Give");
+			ADD_BIND("w", "Open");
+			ADD_BIND("s", "Close");
+			ADD_BIND("x", "Read");
+			ADD_BIND("e", "Walk to");
+			ADD_BIND("d", "Pick up");
+			ADD_BIND("c", "What is");
+			if (gameId == GID_ZAK || gameId == GID_ZAK256) {
+				ADD_BIND("r", "Put on");
+				ADD_BIND("f", "Take off");
+			} else {
+				ADD_BIND("r", "New kid");
+				ADD_BIND("f", "Unlock");
+			}
+			ADD_BIND("v", "Use");
+			ADD_BIND("t", "Turn on");
+			ADD_BIND("g", "Turn off");
+			break;
+		case GID_INDY3:
+		case GID_INDY3_256:
+			ADD_BIND("q", "Push");
+			ADD_BIND("a", "Pull");
+			ADD_BIND("z", "Give");
+			ADD_BIND("w", "Open");
+			ADD_BIND("s", "Close");
+			ADD_BIND("x", "Look");
+			ADD_BIND("e", "Walk to");
+			ADD_BIND("d", "Pick up");
+			ADD_BIND("c", "What is");
+			ADD_BIND("r", "Use");
+			ADD_BIND("f", "Turn on");
+			ADD_BIND("v", "Turn off");
+			ADD_BIND("t", "Talk");
+			ADD_BIND("g", "Travel");
+			break;
+		case GID_LOOM:
+		case GID_LOOM256:
+			ADD_BIND("q, c", "play C minor on distaff");
+			ADD_BIND("w, d", "play D on distaff");
+			ADD_BIND("e, e", "play E on distaff");
+			ADD_BIND("r, f", "play F on distaff");
+			ADD_BIND("t, g", "play G on distaff");
+			ADD_BIND("y, a", "play A on distaff");
+			ADD_BIND("u, b", "play B on distaff");
+			ADD_BIND("i, C", "play C major on distaff");
+			break;
+		case GID_MONKEY_EGA:
+		case GID_MONKEY_VGA:
+			ADD_BIND("o", "Open");
+			ADD_BIND("c", "Close");
+			ADD_BIND("s", "puSh");
+			ADD_BIND("y", "pull (Yank)");
+			ADD_BIND("w", "Walk to");
+			ADD_BIND("p", "Pick up");
+			ADD_BIND("t", "Talk to");
+			ADD_BIND("g", "Give");
+			ADD_BIND("u", "Use");
+			ADD_BIND("l", "Look at");
+			ADD_BIND("n", "turn oN");
+			ADD_BIND("f", "turn oFf");
+			break;
+		case GID_MONKEY:
+		case GID_MONKEY2:
+		case GID_INDY4:
+		case GID_TENTACLE:
+			ADD_BIND("g", "Give");
+			ADD_BIND("o", "Open");
+			ADD_BIND("c", "Close");
+			ADD_BIND("p", "Pick up");
+			ADD_BIND("l", "Look at");
+			ADD_BIND("t", "Talk to");
+			ADD_BIND("u", "Use");
+			ADD_BIND("s", "puSh");
+			ADD_BIND("y", "pull (Yank)");
+			break;
+		case GID_SAMNMAX:
+			ADD_BIND("w", "Walk");
+			ADD_BIND("t", "Talk");
+			ADD_BIND("u", "Use");
+			ADD_BIND("i", "Inventory");
+			ADD_BIND("o", "Object");
+			ADD_BIND("p", "Pick up");
+			ADD_BIND("l", "Look");
+			ADD_BIND("b", "Black and White / Color");
+			break;
+		case GID_FT:
+			ADD_BIND("e", "Eyes");
+			ADD_BIND("t", "Tongue");
+			ADD_BIND("i", "Inventory");
+			ADD_BIND("p", "Punch");
+			ADD_BIND("k", "Kick");
+			break;
+		case GID_DIG:
+			ADD_BIND("e", "Examine");
+			ADD_BIND("t", "Regular cursor");
+			ADD_BIND("i", "Inventory");
+			ADD_BIND("c", "Comm");
+			break;
+		case GID_CMI:
+			ADD_BIND("F1", "Save / Load / Options");
+			ADD_BIND("e", "Examine");
+			ADD_BIND("t", "Talk to");
+			ADD_BIND("i", "Inventory");
+			ADD_BIND("u", "Use");
+			break;
+		}
+		break;
+	case 4:
+		switch (gameId) {
+		case GID_MANIAC:
+		case GID_ZAK:
+		case GID_ZAK256:
+			title = "Main game controls:";
+			if (gameId == GID_ZAK || gameId == GID_ZAK256) {
+				ADD_BIND("b", "Switch");
+			} else {
+				ADD_BIND("b", "Fix");
+			}
+			ADD_LINE;
+			ADD_TEXT("Inventory Controls (not implemented):");
+			ADD_BIND("u", "Scroll list up");
+			ADD_BIND("j", "Scroll list down");
+			ADD_BIND("i", "Upper left item");
+			ADD_BIND("k", "Lower left item");
+			ADD_BIND("o", "Upper right item");
+			ADD_BIND("l", "Lower right item");
+			break;
+		case GID_INDY3:
+		case GID_INDY3_256:
+			title = "Main game controls:";
+			ADD_BIND("b", "To Henry / To Indy");
+			ADD_LINE;
+			ADD_TEXT("Inventory Controls:");
+			ADD_BIND("y", "Upper left item");
+			ADD_BIND("h", "Middle left item");
+			ADD_BIND("n", "Lower left item");
+			ADD_BIND("u", "Upper right item");
+			ADD_BIND("j", "Middle right item");
+			ADD_BIND("m", "Lower right item");
+			ADD_BIND("o", "Scroll list up");
+			ADD_BIND("l", "Scroll list down");
+			break;
+		}
+		break;
+	case 5:
+		switch (gameId) {
+		case GID_INDY3:
+		case GID_INDY3_256:
+			title = "Fighting controls (numpad):";
+			ADD_BIND("7", "Step back");
+			ADD_BIND("4", "Step back");
+			ADD_BIND("1", "Step back");
+			ADD_BIND("8", "Block high");
+			ADD_BIND("5", "Block middle");
+			ADD_BIND("2", "Block low");
+			ADD_BIND("9", "Punch high");
+			ADD_BIND("6", "Punch middle");
+			ADD_BIND("3", "Punch low");
+			ADD_LINE;
+			ADD_TEXT("These are for Indy on left.");
+			ADD_TEXT("When Indy is on the right,");
+			ADD_TEXT("7, 4, and 1 are switched with");
+			ADD_TEXT("9, 6, and 3, respectively.");
+			break;
+		}
+		break;
+	case 6:
+		switch (gameId) {
+		case GID_INDY3:
+		case GID_INDY3_256:
+			title = "Biplane controls (numpad):";
+			ADD_BIND("7", "Fly to upper left");
+			ADD_BIND("4", "Fly to left");
+			ADD_BIND("1", "Fly to lower left");
+			ADD_BIND("8", "Fly upwards");
+			ADD_BIND("5", "Fly straight");
+			ADD_BIND("2", "Fly down");
+			ADD_BIND("9", "Fly to upper right");
+			ADD_BIND("6", "Fly to right");
+			ADD_BIND("3", "Fly to lower right");
+			break;
+		}
+		break;
+	}
+	while (i < HELP_NUM_LINES) {
+		ADD_LINE;
+	}
+}
+
+#undef ADD_BIND
+#undef ADD_TEXT
+#undef ADD_LINE
+

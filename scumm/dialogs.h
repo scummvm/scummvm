@@ -24,6 +24,10 @@
 #include "common/str.h"
 #include "gui/dialog.h"
 
+#ifndef DISABLE_HELP
+#include "help.h"
+#endif
+
 class ListWidget;
 class Scumm;
 
@@ -50,16 +54,22 @@ protected:
 class SaveLoadDialog : public ScummDialog {
 public:
 	SaveLoadDialog(NewGui *gui, Scumm *scumm);
+	~SaveLoadDialog();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void open();	
 	virtual void close();
 
 protected:
-	ListWidget       *_savegameList;
+	ListWidget	 *_savegameList;
 
 	PushButtonWidget *_saveButton;
 	PushButtonWidget *_loadButton;
 	
+	Dialog		*_aboutDialog;
+#ifndef DISABLE_HELP
+	Dialog		*_helpDialog;
+#endif
+
 	bool _saveMode;
 
 	void fillList();
@@ -74,9 +84,35 @@ public:
 	AboutDialog(NewGui *gui, Scumm *scumm);
 };
 
+#ifndef DISABLE_HELP
+
+class HelpDialog : public ScummDialog {
+public:
+	HelpDialog(NewGui *gui, Scumm *scumm);
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+
+protected:
+	typedef ScummVM::String String;
+
+	PushButtonWidget *_nextButton;
+	PushButtonWidget *_prevButton;
+
+	StaticTextWidget *_title;
+	StaticTextWidget *_key[HELP_NUM_LINES];
+	StaticTextWidget *_dsc[HELP_NUM_LINES];
+
+	int _page;
+	int _numPages;
+
+	byte _gameId;
+
+	void displayKeyBindings();
+};
+
+#endif
+
 class OptionsDialog : public ScummDialog {
 protected:
-	Dialog		*_aboutDialog;
 #ifdef _WIN32_WCE
 	Dialog		*_keysDialog;
 #endif

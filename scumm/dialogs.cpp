@@ -27,6 +27,10 @@
 #include "player_v2.h"
 #include "verbs.h"
 
+#ifndef DISABLE_HELP
+#include "help.h"
+#endif
+
 #include "gui/newgui.h"
 #include "gui/ListWidget.h"
 #include "common/config-file.h"
@@ -79,7 +83,8 @@ static const char* string_map_table_custom[] = {
 	"Map",												//24
 	"Choose an action to map",							//25
 	"Press the key to associate",						//26
-	"Please select an action"							//27
+	"Please select an action",							//27
+	"Help"										//28
 };
 
 #ifdef __PALM_OS__
@@ -220,25 +225,51 @@ enum {
 	kLoadCmd = 'LOAD',
 	kPlayCmd = 'PLAY',
 	kOptionsCmd = 'OPTN',
+	kHelpCmd = 'HELP',
+	kAboutCmd = 'ABOU',
 	kQuitCmd = 'QUIT'
 };
 
 SaveLoadDialog::SaveLoadDialog(NewGui *gui, Scumm *scumm)
-	: ScummDialog(gui, scumm, 30, 18, 260, 162) {
+	: ScummDialog(gui, scumm, 20, 8, 280, 184) {
 	const int x = _w - kButtonWidth - 8;
+	int y = 20;
 
 	// The headline
 	addResText(0, 7, 260, 16, 1);
 
 	// The five buttons on the side
-	_saveButton = addPushButton(x, 20, queryResString(4), kSaveCmd, 'S');
-	_loadButton = addPushButton(x, 40, queryResString(5), kLoadCmd, 'L');
-	addButton(x, 60, queryResString(6), kPlayCmd, 'P');	// Play
-	addButton(x, 80, queryCustomString(17), kOptionsCmd, 'O');	// Options
-	addButton(x, 100, queryResString(8), kQuitCmd, 'Q');	// Quit
+	_saveButton = addPushButton(x, y, queryResString(4), kSaveCmd, 'S'); y += 20;
+	_loadButton = addPushButton(x, y, queryResString(5), kLoadCmd, 'L'); y += 20;
+	y += 5;
+
+	addButton(x, y, "About", kAboutCmd, 'A'); y += 20;	// About
+#ifndef DISABLE_HELP
+	addButton(x, y, queryCustomString(28), kHelpCmd, 'H'); y += 20;	// Help
+#endif
+	addButton(x, y, queryCustomString(17), kOptionsCmd, 'O'); y += 20;	// Options
+	y += 5;
+
+	addButton(x, y, queryResString(6), kPlayCmd, 'P'); y += 20;	// Play
+	addButton(x, y, queryResString(8), kQuitCmd, 'Q'); y += 20;	// Quit
+
+	//
+	// Create the sub dialog(s)
+	//
+	_aboutDialog = new AboutDialog(gui, scumm);
+#ifndef DISABLE_HELP
+	_helpDialog = new HelpDialog(gui, scumm);
+#endif
 
 	// The save game list
-	_savegameList = new ListWidget(this, 8, 20, x - 14, 134);
+	_savegameList = new ListWidget(this, 8, 20, x - 14, 156);
+}
+
+SaveLoadDialog::~SaveLoadDialog() {
+	delete _aboutDialog;
+#ifndef DISABLE_HELP
+	delete _helpDialog;
+#endif
 }
 
 void SaveLoadDialog::open() {
@@ -297,6 +328,14 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kOptionsCmd:
 		_scumm->optionsDialog();
 		break;
+	case kAboutCmd:
+		_aboutDialog->runModal();
+		break;
+#ifndef DISABLE_HELP
+	case kHelpCmd:
+		_helpDialog->runModal();
+		break;
+#endif
 	case kQuitCmd:
 		_scumm->_quit = true;
 		close();
@@ -383,8 +422,7 @@ enum {
 };
 
 enum {
-	kKeysCmd = 'KEYS',
-	kAboutCmd = 'ABOU'
+	kKeysCmd = 'KEYS'
 };
 
 #ifndef _WIN32_WCE
@@ -401,14 +439,10 @@ OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
 	addButton(_w-kButtonWidth-8, _h-24 - kButtonHeight - 4, "OK", kOKCmd, 'O');
 	addButton(_w-2*kButtonWidth-12, _h-24 - kButtonHeight - 4, "Cancel", kCancelCmd, 'C');
 
-	addButton(8, _h-24 - kButtonHeight - 4, "About", kAboutCmd, 'A');
-
 	addButton(kButtonWidth+12, _h-24, "Keys", kKeysCmd, 'K');
 #else
 	addButton(_w-kButtonWidth-8, _h-24, "OK", kOKCmd, 'O');
 	addButton(_w-2*kButtonWidth-12, _h-24, "Cancel", kCancelCmd, 'C');
-
-	addButton(8, _h-24, "About", kAboutCmd, 'A');
 #endif
 
 	//
@@ -441,16 +475,14 @@ OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
 	amigaPalCheckbox  = new CheckboxWidget(this, 15, 80, 200, 16, "Amiga palette conversion", 0, 'P');
 
 	//
-	// Finally create the sub dialogs
+	// Create the sub dialog(s)
 	//
-	_aboutDialog = new AboutDialog(gui, scumm);
 #ifdef _WIN32_WCE
 	_keysDialog = new KeysDialog(gui, scumm);
 #endif
 }
 
 OptionsDialog::~OptionsDialog() {
-	delete _aboutDialog;
 #ifdef _WIN32_WCE
 	delete _keysDialog;
 #endif
@@ -483,9 +515,6 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 #ifdef _WIN32_WCE
 		_keysDialog->runModal();
 #endif
-		break;
-	case kAboutCmd:
-		_aboutDialog->runModal();
 		break;
 	case kMasterVolumeChanged:
 		_soundVolumeMaster = _masterVolumeSlider->getValue();
@@ -557,6 +586,82 @@ AboutDialog::AboutDialog(NewGui *gui, Scumm *scumm)
 	new StaticTextWidget(this, 10, 64, 240, 16, "Except", kTextAlignCenter);
 	new StaticTextWidget(this, 10, 78, 240, 16, "Simon the Sorcerer (c) Adventuresoft", kTextAlignCenter);
 }
+
+#ifndef DISABLE_HELP
+
+#pragma mark -
+
+enum {
+	kNextCmd = 'NEXT',
+	kPrevCmd = 'PREV'
+};
+
+HelpDialog::HelpDialog(NewGui *gui, Scumm *scumm)
+	: ScummDialog(gui, scumm, 15, 10, 290, 184) {
+
+	_page = 1;
+	_gameId = scumm->_gameId;
+	_numPages = ScummHelp::numPages(_gameId);
+
+	_prevButton = addPushButton(10, 160, "Previous", kPrevCmd, 'P');
+	_nextButton = addPushButton(90, 160, "Next", kNextCmd, 'N');
+	addButton(210, 160, "Close", kCloseCmd, 'C');
+	_prevButton->clearFlags(WIDGET_ENABLED);
+
+	_title = new StaticTextWidget(this, 10, 5, 270, 16, "", kTextAlignCenter);
+	for (int i = 0; i < HELP_NUM_LINES; i++) {
+		_key[i] = new StaticTextWidget(this, 10, 20 + (10 * i), 80, 16, "", kTextAlignLeft);
+		_dsc[i] = new StaticTextWidget(this, 90, 20 + (10 * i), 190, 16, "", kTextAlignLeft);
+	}
+
+	displayKeyBindings();
+}
+
+void HelpDialog::displayKeyBindings() {
+	String titleStr, *keyStr, *dscStr;
+
+	ScummHelp::updateStrings(_gameId, _page, titleStr, keyStr, dscStr);
+
+	_title->setLabel(titleStr);
+	for (int i = 0; i < HELP_NUM_LINES; i++) {
+		_key[i]->setLabel(keyStr[i]);
+		_dsc[i]->setLabel(dscStr[i]);
+	}
+
+	delete [] keyStr;
+	delete [] dscStr;
+}
+
+void HelpDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	case kNextCmd:
+		_page++;
+		if (_page >= _numPages) {
+			_nextButton->clearFlags(WIDGET_ENABLED);
+		}
+		if (_page >= 2) {
+			_prevButton->setFlags(WIDGET_ENABLED);
+		}
+		displayKeyBindings();
+		draw();
+		break;
+	case kPrevCmd:
+		_page--;
+		if (_page <= _numPages) {
+			_nextButton->setFlags(WIDGET_ENABLED);
+		}
+		if (_page <= 1) {
+			_prevButton->clearFlags(WIDGET_ENABLED);
+		}
+		displayKeyBindings();
+		draw();
+		break;
+	default:
+		ScummDialog::handleCommand(sender, cmd, data);
+	}
+}
+
+#endif
 
 #pragma mark -
 
