@@ -583,7 +583,7 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 				dst += snprintf((char *)dst, 10, "%d", args[val--]);
 				continue;
 			} else if (chr == 's') {
-				dst += addStringToStack(dst, 512, id++);
+				dst += addStringToStack(dst, 512, args[val--]);
 				continue;
 			}
 		}
