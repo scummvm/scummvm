@@ -117,6 +117,12 @@
 			RelativePath="..\..\queen\graphics.h">
 		</File>
 		<File
+			RelativePath="..\..\queen\input.cpp">
+		</File>
+		<File
+			RelativePath="..\..\queen\input.h">
+		</File>
+		<File
 			RelativePath="..\..\queen\logic.cpp">
 		</File>
 		<File
