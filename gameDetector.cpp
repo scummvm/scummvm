@@ -415,6 +415,8 @@ static const VersionSettings version_settings[] = {
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT},
 	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 4, 2,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER},
+	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0,
+	GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT},
 	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0,
 	GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT},
 	
