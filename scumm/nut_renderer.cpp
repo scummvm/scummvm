@@ -67,20 +67,6 @@ void NutRenderer::decodeCodec44(byte *dst, byte *src, uint32 length) {
 	} while (length > 1);
 }
 
-void NutRenderer::bindDisplay(byte *dst, int32 width, int32 height, int32 pitch) {
-	debug(2,  "NutRenderer::init() called");
-	if (_initialized == true) {
-		debug(2, "NutRenderer::init() Already initialized, ok, changing...");
-	}
-
-	_dstPtr = dst;
-	_dstWidth = width;
-	_dstHeight = height;
-	_dstPitch = pitch;
-
-	_initialized = true;
-}
-
 bool NutRenderer::loadFont(const char *filename, const char *dir) {
 	debug(2,  "NutRenderer::loadFont() called");
 	if (_loaded == true) {
@@ -188,7 +174,7 @@ void NutRenderer::drawString(const char *string, int32 x, int32 y, byte color, i
 	int left = x;
 	int height = 0, tmp;
 	do {
-		if ((x < 0) || (y < 0) || (x > _dstWidth) || (y > _dstHeight)) {
+		if ((x < 0) || (y < 0) || (x > _vm->_realWidth) || (y > _vm->_realHeight)) {
 			debug(2, "NutRenderer::drawString() position x, y out of range");
 			return;
 		}
@@ -212,7 +198,7 @@ void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
 	}
 
 	byte * src = (byte*)(_dataSrc + _offsets[c] + 14);
-	byte * dst = _dstPtr + y * _dstPitch + x;
+	byte * dst = _vm->virtscr[0].screenPtr + y * _vm->_realWidth + x;
 	uint32 length = READ_BE_UINT32(_dataSrc + _offsets[c] - 4) - 14;
 
 	decodeCodec44(_tmpCodecBuffer, src, length);
@@ -232,6 +218,6 @@ void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
 				dst[tx] = pixel;
 			}
 		}
-		dst += _dstPitch;
+		dst += _vm->_realWidth;
 	}
 }

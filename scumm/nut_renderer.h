@@ -31,10 +31,8 @@ private:
 	int32 _offsets[256];
 	byte _tmpCodecBuffer[2000];
 	byte *_dataSrc;
-	byte *_dstPtr;
 	bool _initialized;
 	bool _loaded;
-	int32 _dstWidth, _dstHeight, _dstPitch;
 
 	void decodeCodec44(byte *dst, byte *src, uint32 length);
 
@@ -42,7 +40,6 @@ public:
 	NutRenderer(Scumm *vm);
 	~NutRenderer();
 
-	void bindDisplay(byte *dst, int32 width, int32 height, int32 pitch);
 	bool loadFont(const char *filename, const char *dir);
 	void drawChar(char c, int32 x, int32 y, byte color);
 	void drawString(const char *string, int32 x, int32 y, byte color, int32 mode);

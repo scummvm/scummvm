@@ -403,8 +403,6 @@ CharsetRendererNut::CharsetRendererNut(Scumm *vm)
 			delete _fr[i];
 			_fr[i] = NULL;
 		}
-	
-		_fr[i]->bindDisplay(_vm->virtscr[0].screenPtr, _vm->_realWidth, _vm->_realHeight, _vm->_realWidth);
 	}
 }
 
