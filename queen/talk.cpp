@@ -896,13 +896,7 @@ void Talk::speakSegment(
 	segment[length] = '\0';
 	
 	char voiceFileName[MAX_STRING_SIZE];
-#ifndef __PALM_OS__
 	snprintf(voiceFileName, sizeof(voiceFileName), "%s%1x", voiceFilePrefix, index + 1);
-#else
-	// %(X)x is not supported on PalmOS
-	sprintf(voiceFileName, "%s%1x", voiceFilePrefix, index + 1);
-	strncpy(voiceFileName + strlen(voiceFileName) - 8, voiceFileName + strlen(voiceFileName) - 1, 2); 
-#endif
 
 	// debug(6, "Sentence segment '%*s' is said by person '%s' and voice file '%s' is played",
 	//		length, segment, person->name, voiceFileName);
