@@ -249,7 +249,18 @@ static void mix_signed_stereo_8(int16 *data, uint len, byte **s_ptr, uint32 *fp_
 	warning("Mixing stereo signed 8 bit is not supported yet ");
 }
 static void mix_unsigned_stereo_8(int16 *data, uint len, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab) {
-	warning("Mixing stereo unsigned 8 bit is not supported yet ");
+	uint32 fp_pos = *fp_pos_ptr;
+	byte *s = *s_ptr;
+	do {
+		fp_pos += fp_speed;
+		*data++ += vol_tab[*s ^ 0x80];
+		*data++ += vol_tab[*(s + 1) ^ 0x80];
+		s += (fp_pos >> 16) << 1;
+		fp_pos &= 0x0000FFFF;
+	} while (--len);
+
+	*fp_pos_ptr = fp_pos;
+	*s_ptr = s;
 }
 static void mix_signed_mono_16(int16 *data, uint len, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab) {
 	uint32 fp_pos = *fp_pos_ptr;
@@ -257,8 +268,8 @@ static void mix_signed_mono_16(int16 *data, uint len, byte **s_ptr, uint32 *fp_p
 	do {
 		fp_pos += fp_speed;
 		// FIXME: missing volume table
-		*data++ += (*s << 8) + *(s + 1);
-		*data++ += (*s << 8) + *(s + 1);
+		*data++ += ((*s << 8) | *(s + 1));
+		*data++ += ((*s << 8) | *(s + 1));
 		s += (fp_pos >> 16) << 1;
 		fp_pos &= 0x0000FFFF;
 	} while (--len);
@@ -270,7 +281,19 @@ static void mix_unsigned_mono_16(int16 *data, uint len, byte **s_ptr, uint32 *fp
 	warning("Mixing mono unsigned 16 bit is not supported yet ");
 }
 static void mix_signed_stereo_16(int16 *data, uint len, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab) {
-	warning("Mixing stereo signed 16 bit is not supported yet ");
+	uint32 fp_pos = *fp_pos_ptr;
+	byte *s = *s_ptr;
+	do {
+		fp_pos += fp_speed;
+		// FIXME: missing volume table
+		*data++ += ((*s << 8) | *(s + 1));
+		*data++ += ((*(s + 2) << 8) | *(s + 3));
+		s += (fp_pos >> 16) << 2;
+		fp_pos &= 0x0000FFFF;
+	} while (--len);
+
+	*fp_pos_ptr = fp_pos;
+	*s_ptr = s;
 }
 static void mix_unsigned_stereo_16(int16 *data, uint len, byte **s_ptr, uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab) {
 	warning("Mixing stereo unsigned 16 bit is not supported yet ");

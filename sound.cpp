@@ -116,35 +116,40 @@ void Scumm::processSoundQues()
 						}
 						if (tag == MKID_BE('DATA')) break;
 					}
-					if (chan == 1)
-					{
-						if (bits == 8) {
-							byte * buffer = (byte*)malloc (size);
-							memcpy(buffer, ptr, size);
+					if (bits == 8) {
+						byte * buffer = (byte*)malloc (size);
+						memcpy(buffer, ptr, size);
+						if (chan == 1) {
 							_mixer->play_raw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED);
 						}
-						if (bits == 12) {
-							uint32 s_size = (size * 2) / 3;
-							byte * buffer = (byte*)malloc (s_size + 4);
-							uint32 l = 0, r = 0, tmp;
-							for (; l < size; l += 3)
-							{
-								tmp = (ptr[l + 1] & 0x0f) << 8;
-								tmp = (tmp | ptr[l + 0]) << 4;
-								tmp -= 0x8000;
-								buffer[r++] = (uint8)((tmp >> 8) & 0xff);
-								buffer[r++] = (uint8)(tmp & 0xff);
+						else if (chan == 2) {
+							_mixer->play_raw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_STEREO);
+						}
+					}
+					if (bits == 12) {
+						uint32 s_size = (size * 4) / 3;
+						byte * buffer = (byte*)malloc (s_size + 4);
+						uint32 l = 0, r = 0, tmp;
+						for (; l < size; l += 3)
+						{
+							tmp = (ptr[l + 1] & 0x0f) << 8;
+							tmp = (tmp | ptr[l + 0]) << 4;
+							tmp -= 0x8000;
+							buffer[r++] = (uint8)((tmp >> 8) & 0xff);
+							buffer[r++] = (uint8)(tmp & 0xff);
 
-								tmp = (ptr[l + 1] & 0xf0) << 4;
-								tmp = (tmp | ptr[l + 2]) << 4;
-								tmp -= 0x8000;
-								buffer[r++] = (uint8)((tmp >> 8) & 0xff);
-								buffer[r++] = (uint8)(tmp & 0xff);
-							} 
+							tmp = (ptr[l + 1] & 0xf0) << 4;
+							tmp = (tmp | ptr[l + 2]) << 4;
+							tmp -= 0x8000;
+							buffer[r++] = (uint8)((tmp >> 8) & 0xff);
+							buffer[r++] = (uint8)(tmp & 0xff);
+						} 
+						if (chan == 1) {
 							_mixer->play_raw(NULL, buffer, s_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS);
 						}
-					} else {
-						warning("DIG: ignoring stereo sample");
+						else if (chan == 2) {
+							_mixer->play_raw(NULL, buffer, s_size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO);
+						}
 					}
 				}
 			}
