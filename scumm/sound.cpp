@@ -748,7 +748,9 @@ int Sound::isSoundRunning(int sound) const {
 		return pollCD();
 
 	if (_vm->_features & GF_HUMONGOUS) {
-		if (sound == -2 || sound == 10001) {
+		if (sound == 10002) {
+			return !_talkChannelHandle.isActive();
+		} else if (sound == -2 || sound == 10001) {
 			return !isSfxFinished();
 		} else if (sound == -1 || sound == 10000 || sound == _currentMusic) {
 			// getSoundStatus(), with a -1, will return the
@@ -825,13 +827,15 @@ bool Sound::isSoundInQueue(int sound) const {
 	return false;
 }
 
-void Sound::stopSound(int a) {
+void Sound::stopSound(int sound) {
 	int i;
 
 	if (_vm->_features & GF_HUMONGOUS) {
-		if (a == -2 || a == 10001) {
+		if (sound == 10002) {
+			_vm->stopTalk();
+		} else if (sound == -2 || sound == 10001) {
 			// Stop current sfx
-		} else if (a == -1 || a == 10000) {
+		} else if (sound == -1 || sound == 10000) {
 			// Stop current music
 			if (_vm->_heversion >= 70  || _currentMusic)
 				_vm->_mixer->stopID(_currentMusic);
@@ -840,20 +844,20 @@ void Sound::stopSound(int a) {
 		}
 	}
 
-	if (a != 0 && a == _currentCDSound) {
+	if (sound != 0 && sound == _currentCDSound) {
 		_currentCDSound = 0;
 		stopCD();
 		stopCDTimer();
 	}
 
 	if (!(_vm->_features & GF_DIGI_IMUSE))
-		_vm->_mixer->stopID(a);
+		_vm->_mixer->stopID(sound);
 
 	if (_vm->_musicEngine)
-		_vm->_musicEngine->stopSound(a);
+		_vm->_musicEngine->stopSound(sound);
 
 	for (i = 0; i < ARRAYSIZE(_soundQue2Sound); i++) {
-		if (_soundQue2Sound[i] == a) {
+		if (_soundQue2Sound[i] == sound) {
 			_soundQue2Sound[i] = 0;
 			_soundQue2Offset[i] = 0;
 		}

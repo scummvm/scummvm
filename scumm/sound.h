@@ -95,7 +95,7 @@ public:
 	bool isMouthSyncOff(uint pos);
 	int isSoundRunning(int sound) const;
 	bool isSoundInUse(int sound) const;
-	void stopSound(int a);
+	void stopSound(int sound);
 	void stopAllSounds();
 	void soundKludge(int *list, int num);
 	void talkSound(uint32 a, uint32 b, int mode, int channel = 0);
