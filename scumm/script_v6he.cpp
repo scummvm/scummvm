@@ -1272,7 +1272,7 @@ void ScummEngine_v60he::redimArray(int arrayId, int newX, int newY, int type) {
 
 void ScummEngine_v60he::decodeParseString(int m, int n) {
 	byte b;
-	int i, color;
+	int i, colors;
 	int args[31];
 
 	b = fetchScriptByte();
@@ -1312,15 +1312,15 @@ void ScummEngine_v60he::decodeParseString(int m, int n) {
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
 		break;
 	case 0xF9:
-		color = pop();
-		if (color == 1) {
+		colors = pop();
+		if (colors == 1) {
 			_string[m].color = pop();
 		} else {	
-			push(color);
+			push(colors);
 			getStackList(args, ARRAYSIZE(args));
 			for (i = 0; i < 16; i++)
 				_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
-			_string[m].color = color;
+			_string[m].color = _charsetColorMap[0];
 		}
 		break;
 	case 0xFE:

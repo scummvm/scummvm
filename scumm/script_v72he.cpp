@@ -2528,7 +2528,7 @@ void ScummEngine_v72he::o72_setWindowCaption() {
 }
 
 void ScummEngine_v72he::decodeParseString(int m, int n) {
-	int i, color, size;
+	int i, colors, size;
 	int args[31];
 	byte name[1024];
 
@@ -2582,15 +2582,15 @@ void ScummEngine_v72he::decodeParseString(int m, int n) {
 		}
 		break;
 	case 0xF9:
-		color = pop();
-		if (color == 1) {
+		colors = pop();
+		if (colors == 1) {
 			_string[m].color = pop();
 		} else {	
-			push(color);
+			push(colors);
 			getStackList(args, ARRAYSIZE(args));
 			for (i = 0; i < 16; i++)
 				_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
-			_string[m].color = color;
+			_string[m].color = _charsetColorMap[0];
 		}
 		break;
 	case 0xFE:
