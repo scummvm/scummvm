@@ -302,11 +302,27 @@ SOURCE=.\gui\guimaps.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\gui\launcher.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\launcher.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\gui\ListWidget.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\gui\ListWidget.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\message.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\message.h
 # End Source File
 # Begin Source File
 
