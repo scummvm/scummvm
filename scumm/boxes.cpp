@@ -475,17 +475,13 @@ void ScummEngine::getBoxCoordinates(int boxnum, BoxCoords *box) {
 		// elaborate?
 
 		if (box->ul.y > box->ll.y && box->ur.y > box->lr.y) {
-			SWAP(box->ul.x, box->ll.x);
-			SWAP(box->ul.y, box->ll.y);
-			SWAP(box->ur.x, box->lr.x);
-			SWAP(box->ur.y, box->lr.y);
+			SWAP(box->ul, box->ll);
+			SWAP(box->ur, box->lr);
 		}
 
 		if (box->ul.x > box->ur.x && box->ll.x > box->lr.x) {
-			SWAP(box->ul.x, box->ur.x);
-			SWAP(box->ul.y, box->ur.y);
-			SWAP(box->ll.x, box->lr.x);
-			SWAP(box->ll.y, box->lr.y);
+			SWAP(box->ul, box->ur);
+			SWAP(box->ll, box->lr);
 		}
 	} else if (_version <= 2) {
 		box->ul.x = bp->v2.ulx * 8;
@@ -643,7 +639,7 @@ int ScummEngine::getClosestPtOnBox(int b, int x, int y, int16& outX, int16& outY
 	BoxCoords box;
 
 	getBoxCoordinates(b, &box);
-
+	
 	pt = closestPtOnLine(box.ul.x, box.ul.y, box.ur.x, box.ur.y, x, y);
 	dist = distanceFromPt(x, y, pt.x, pt.y);
 	if (dist < bestdist) {
