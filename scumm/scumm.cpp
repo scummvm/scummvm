@@ -194,7 +194,7 @@ static const ScummGameSettings scumm_settings[] = {
 	// Humongous Entertainment Scumm Version 6
 	{"puttputt", "Putt-Putt Joins The Parade", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"puttdemo", "Putt-Putt Joins The Parade (Demo)", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	{"puttdemo", "Putt-Putt Joins The Parade (Demo)", GID_PUTTDEMO, 6, 0, MDT_ADLIB | MDT_NATIVE,
 	  GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS, 0},
 	{"moondemo", "Putt-Putt Goes To The Moon (Demo)", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
@@ -3026,7 +3026,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		engine = new ScummEngine_v5(detector, syst, game);
 		break;
 	case 6:
-		if (game.features & GF_HUMONGOUS) {
+		if (game.heversion >= 60) {
 			// TODO: probably use another variable with version number
 #ifndef __PALM_OS__
 			if (game.heversion >= 70)

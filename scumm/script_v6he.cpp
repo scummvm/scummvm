@@ -45,9 +45,6 @@ namespace Scumm {
 // FBEAR (fbear, fbeardemo)
 //     transparency in akos.cpp
 //     negative size in file read/write
-// PUTTDEMO (puttdemo)
-//     startSound issue -- check
-//     actorOps sub 86 -- check
 
 #define OPCODE(x)	{ &ScummEngine_v6he::x, #x }
 
@@ -404,12 +401,9 @@ void ScummEngine_v6he::o6_setState() {
 }
 
 void ScummEngine_v6he::o6_startSound() {
-	if (_gameId != GID_PUTTDEMO) {
-		// Seems to range between 952 - 9000
-		int offset = pop();
-		debug(2, "o6_startSound: offset %d", offset);
-	}
-
+	// Seems to range between 952 - 9000
+	int offset = pop();
+	debug(2, "o6_startSound: offset %d", offset);
 	_sound->addSoundToQueue(pop());
 }
 
@@ -561,10 +555,6 @@ void ScummEngine_v6he::o6_actorOps() {
 
 	switch (b) {
 	case 30:
-		if (_heversion <= 70) {
-			error("o6_actorOps: default case %d", b);
-		}
-
 		k = pop();
 		j = pop();
 		i = pop();
@@ -616,10 +606,7 @@ void ScummEngine_v6he::o6_actorOps() {
 		j = pop();
 		i = pop();
 		checkRange(255, 0, i, "Illegal palette slot %d");
-		if (_gameId != GID_PUTTDEMO)
-			a->remapActorPaletteColor(i, j);
-		else
-			a->setPalette(i, j);
+		a->setPalette(i, j);
 		break;
 	case 87:		// SO_TALK_COLOR
 		a->talkColor = pop();
@@ -708,12 +695,8 @@ void ScummEngine_v6he::o6_actorOps() {
 		a->needBgReset = true;
 		break;
 	case 225:		// SO_ALWAYS_ZCLIP
-		if (_heversion < 70) {
-			a->forceClip = pop(); // FIXME: where does this come from?
-		} else {
-			i = pop(); // talkie slot
-			warning("o6_actorOps: stub case %d", b);
-		}
+		i = pop(); // talkie slot
+		warning("o6_actorOps: stub case %d", b);
 		break;
 	default:
 		error("o6_actorOps: default case %d", b);
