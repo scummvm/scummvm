@@ -732,8 +732,8 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 	if (_draw_top > rect.top)
 		_draw_top = rect.top;
-	if (_draw_bottom < rect.bottom)
-		_draw_bottom = rect.bottom;
+	if (_draw_bottom < rect.bottom - 1)
+		_draw_bottom = rect.bottom - 1;
 
 	v1.destptr = _outptr + v1.y * _outwidth + v1.x;
 
@@ -762,22 +762,22 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	}
 
 	clip.top = _actorY + ymoveCur;
-	clip.right = (clip.left + _width) - 1;
-	clip.bottom = (clip.top + _height) - 1;
-	maxw = _outwidth - 1;
-	maxh = _outheight - 1;
+	clip.right = clip.left + _width;
+	clip.bottom = clip.top + _height;
+	maxw = _outwidth;
+	maxh = _outheight;
 
-	_vm->markRectAsDirty(kMainVirtScreen, clip.left, clip.right + 1, clip.top, clip.bottom + 1, _actorID);
+	_vm->markRectAsDirty(kMainVirtScreen, clip , _actorID);
 
 	clip.clip(maxw, maxh);
 
-	if ((clip.left >= clip.right) || (clip.top >= clip.bottom))
+	if (!clip.isValidRect())
 		return 0;
 
 	if (_draw_top > clip.top)
 		_draw_top = clip.top;
-	if (_draw_bottom < clip.bottom)
-		_draw_bottom = clip.bottom + 1;
+	if (_draw_bottom < clip.bottom - 1)
+		_draw_bottom = clip.bottom - 1;
 
 	BompDrawData bdd;
 
@@ -805,10 +805,8 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 
 	if (_zbuf != 0) {
 		bdd.maskPtr = _vm->getMaskBuffer(0, 0, _zbuf);
-		_vm->drawBomp(bdd, !_mirror);
-	} else {
-		_vm->drawBomp(bdd, !_mirror);
 	}
+	_vm->drawBomp(bdd, !_mirror);
 
 	_vm->_bompActorPalettePtr = NULL;
 	
@@ -966,17 +964,17 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	}
 
 	clip.top = ymoveCur + _actorY;
-	clip.right = (clip.left + _width) - 1;
-	clip.bottom = (clip.top + _height) - 1;
-	maxw = _outwidth - 1;
-	maxh = _outheight - 1;
+	clip.right = clip.left + _width;
+	clip.bottom = clip.top + _height;
+	maxw = _outwidth;
+	maxh = _outheight;
 
 	skip_x = 0;
 	skip_y = 0;
 	cur_x = _width - 1;
 	cur_y = _height - 1;
 
-	_vm->markRectAsDirty(kMainVirtScreen, clip.left, clip.right + 1, clip.top, clip.bottom + 1, _actorID);
+	_vm->markRectAsDirty(kMainVirtScreen, clip, _actorID);
 
 	if (clip.left < 0) {
 		skip_x = -clip.left;
@@ -998,13 +996,13 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 		clip.bottom = maxh;
 	}
 
-	if ((clip.left >= clip.right) || (clip.top >= clip.bottom))
+	if (!clip.isValidRect())
 		return 0;
 
 	if (_draw_top > clip.top)
 		_draw_top = clip.top;
-	if (_draw_bottom < clip.bottom)
-		_draw_bottom = clip.bottom + 1;
+	if (_draw_bottom < clip.bottom - 1)
+		_draw_bottom = clip.bottom - 1;
 
 	int32 width_unk, height_unk;
 
@@ -1019,7 +1017,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 		int tmp_skip_x = skip_x;
 		skip_x = _width - 1 - cur_x;
 		cur_x = _width - 1 - tmp_skip_x;
-		width_unk = clip.right;
+		width_unk = clip.right - 1;
 	} else {
 		dir = 1;
 		width_unk = clip.left;
