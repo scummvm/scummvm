@@ -795,6 +795,7 @@ The following keywords are recognized:
         sfx_volume      int      The sfx volume setting (0-255)
         tempo           int      The music tempo (50-200) (default: 100)
 
+        demo_mode       bool     Start demo in Maniac Mansion (Classic version)
         floppy_intro    bool     Use floppy version of introduction in Beneath
                                  a Steel Sky (CD version)
 
