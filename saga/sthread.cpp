@@ -270,7 +270,8 @@ void Script::runThread(ScriptThread *thread, int instr_limit) {
 
 // STACK INSTRUCTIONS
 		case 0x02: // Dup top element (DUP)
-			thread->push(thread->stackTop());
+			param1 = thread->stackTop();
+			thread->push(param1);
 			break;
 		case 0x03: // Pop nothing (POPN)
 			thread->pop();
@@ -304,12 +305,11 @@ void Script::runThread(ScriptThread *thread, int instr_limit) {
 		case 0x0F: // Modify flag (MODF)
 			n_buf = scriptS.readByte();
 			param1 = (ScriptDataWord)scriptS.readUint16LE();
-			bitstate = getUWord(param1);
 			data = thread->stackTop();
-			if (bitstate) {
-				setBit(n_buf, data, 1);
+			if (data) {
+				setBit(n_buf, param1, 1);
 			} else {
-				setBit(n_buf, data, 0);
+				setBit(n_buf, param1, 0);
 			}
 			break;
 		case 0x10: // Put word (PUTW)
@@ -321,9 +321,8 @@ void Script::runThread(ScriptThread *thread, int instr_limit) {
 		case 0x13: // Modify flag and pop (MDFP)
 			n_buf = scriptS.readByte();
 			param1 = (ScriptDataWord)scriptS.readUint16LE();
-			param1 = thread->pop();
-			bitstate = getUWord(param1);
-			if (bitstate) {
+			data = thread->pop();
+			if (data) {
 				setBit(n_buf, param1, 1);
 			} else {
 				setBit(n_buf, param1, 0);
@@ -398,6 +397,7 @@ void Script::runThread(ScriptThread *thread, int instr_limit) {
 			break;
 		case opReturn: // Return with value
 			scriptRetVal = thread->pop();
+			// Fall through
 		case opReturnV: // Return with void
 			thread->stackPtr = thread->framePtr;
 			setFramePtr(thread, thread->pop());
@@ -509,45 +509,43 @@ void Script::runThread(ScriptThread *thread, int instr_limit) {
 			// (NEG) Negate stack by 2's complement
 		case 0x25:
 			data = thread->pop();
-			data = ~data;
-			data++;
-			thread->push(data);
+			thread->push(-data);
 			break;
 			// (TSTZ) Test for zero
 		case 0x26:
 			data = thread->pop();
-			data = data ? 0 : 1;
-			thread->push(data);
+			thread->push(!data);
 			break;
 			// (NOT) Binary not
 		case 0x27:
 			data = thread->pop();
-			data = ~data;
-			thread->push(data);
+			thread->push(~data);
 			break;
 		case 0x28: // inc_v increment, don't push
-			unhandled = 1;
-			//debug(2, "??? ");
-			scriptS.readByte();
-			scriptS.readUint16LE();
+			n_buf = scriptS.readByte();
+			param1 = scriptS.readUint16LE();
+			getWord(n_buf, param1, &data);
+			putWord(n_buf, param1, data + 1);
 			break;
 		case 0x29: // dec_v decrement, don't push
-			unhandled = 1;
-			//debug(2, "??? ");
-			scriptS.readByte();
-			scriptS.readUint16LE();
+			n_buf = scriptS.readByte();
+			param1 = scriptS.readUint16LE();
+			getWord(n_buf, param1, &data);
+			putWord(n_buf, param1, data - 1);
 			break;
 		case 0x2A: // postinc
-			unhandled = 1;
-			//debug(2, "??? ");
-			scriptS.readByte();
-			scriptS.readUint16LE();
+			n_buf = scriptS.readByte();
+			param1 = scriptS.readUint16LE();
+			getWord(n_buf, param1, &data);
+			thread->push(data);
+			putWord(n_buf, param1, data + 1);
 			break;
 		case 0x2B: // postdec
-			unhandled = 1;
-			//debug(2, "??? ");
-			scriptS.readByte();
-			scriptS.readUint16LE();
+			n_buf = scriptS.readByte();
+			param1 = scriptS.readUint16LE();
+			getWord(n_buf, param1, &data);
+			thread->push(data);
+			putWord(n_buf, param1, data - 1);
 			break;
 
 // ARITHMETIC INSTRUCTIONS    
