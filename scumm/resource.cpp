@@ -1268,7 +1268,10 @@ byte *Scumm::getStringAddressVar(int i) {
 
 	addr = getResourceAddress(rtString, _scummVars[i]);
 	if (addr == NULL)
-		error("NULL string var %d slot %d", i, _scummVars[i]);
+		// as this is used for string mapping in the gui
+		// it must be allowed to return NULL
+		// error("NULL string var %d slot %d", i, _scummVars[i]);
+		return NULL;
 
 	if (_features & GF_NEW_OPCODES)
 		return ((ArrayHeader *)addr)->data;
