@@ -60,6 +60,8 @@ int SoundMixer::append(int index, void *sound, uint32 size, uint rate, byte flag
 		chan = _channels[index];
 	} else {
 		chan->append(sound, size);
+		if (flags & FLAG_AUTOFREE)
+			free(sound);
 	}
 
 	_syst->unlock_mutex(_mutex);
