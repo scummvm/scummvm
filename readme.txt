@@ -100,9 +100,7 @@ listed here, nor in the compatibility table on the website, please see below.
                   You'll have to guess where to throw :)
 
        Loom (256 Talkie):
-                - CD music and voices are not always syncronised
-                - Actor masks are not yet used - actors will always appear
-                  'on top' of everything.
+                - CD music and voices are not totally syncronised
                 - If you are having random crashes, this is a Windows bug.
                   Try copying the data files from CD to your harddisk.
 
