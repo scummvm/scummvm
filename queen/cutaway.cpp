@@ -1193,8 +1193,10 @@ void Cutaway::run(char *nextFilename) {
 
 	_currentImage = _logic->numFrames();
 
-	int initialJoeX = _logic->joeX();
-	int initialJoeY = _logic->joeY();
+	BobSlot *joeBob = _graphics->bob(0);
+	int initialJoeX = joeBob->x;
+	int initialJoeY = joeBob->y;
+	debug(0, "[Cutaway::run] Joe started at (%i, %i)", initialJoeX, initialJoeY);
 
 	_input->cutawayRunning(true);
 
@@ -1320,20 +1322,21 @@ void Cutaway::run(char *nextFilename) {
 
 			restorePersonData();
 
+			debug(0, "_logic->entryObj() = %i", _logic->entryObj());
 			if (_logic->entryObj() > 0)
 				_initialRoom = _logic->objectData(_logic->entryObj())->room;
 			else {
 				// We're not returning to new room, so return to old Joe X,Y coords
+				debug(0, "[Cutaway::run] Moving joe to (%i, %i)", initialJoeX, initialJoeY);
 				_logic->joeX(initialJoeX);
-				_logic->joeX(initialJoeY);
+				_logic->joeY(initialJoeY);
 			}
 
 			if (_logic->currentRoom() != _initialRoom) {
-				_logic->currentRoom(_initialRoom);
-				// XXX should call SETUP_ROOM here but that would introduce a circual dependency...
-				// if (_logic->currentRoom() == _logic->newRoom())
-				//	_logic->newRoom(0);
-				// XXX so I try to set newRoom to the room instead
+				// XXX should call SETUP_ROOM here but that would introduce a
+				// circual dependency, so we try to set newRoom to the room
+				// instead
+				debug(0, "[Cutaway::run] Not calling SETUP_ROOM here, just setting newRoom to %i", _initialRoom);
 				_logic->newRoom(_initialRoom);
 			}
 		}
@@ -1370,7 +1373,6 @@ void Cutaway::run(char *nextFilename) {
 
 	}
 
-	BobSlot *joeBob = _graphics->bob(0);
 	joeBob->animating = 0;
 	joeBob->moving    = 0;
 	// Make sure Joe is clipped!
@@ -1399,16 +1401,18 @@ void Cutaway::stop() {
 	int16 joeRoom = READ_BE_UINT16(ptr); ptr += 2;
 	int16 joeX    = READ_BE_UINT16(ptr); ptr += 2;
 	int16 joeY    = READ_BE_UINT16(ptr); ptr += 2;
+	
+	debug(0, "[Cutaway::stop] Final position is room %i and coordinates (%i, %i)", 
+			joeRoom, joeX, joeY);
 
 	if ((!_input->cutawayQuit() || (!_anotherCutaway && joeRoom == _finalRoom)) &&
 			joeRoom != _temporaryRoom &&
 			joeRoom != 0) {
-
-		debug(0, "[Cutaway::stop] Changing room to %i and moving Joe to (%i, %i)", 
-				joeRoom, joeX, joeY);
+		
+		debug(0, "[Cutaway::stop] Changing rooms and moving Joe");
 
 		_logic->joeX(joeX);
-		_logic->joeY(joeX);
+		_logic->joeY(joeY);
 		_logic->currentRoom(joeRoom);
 		_logic->oldRoom(_initialRoom);
 		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE_XY, 0, _comPanel, true);
@@ -1513,6 +1517,9 @@ void Cutaway::stop() {
 			joeRoom != 106 &&   // XXX hard coded room number
 			(joeX || joeY)) {
 		BobSlot *joeBob = _graphics->bob(0);
+		
+		debug(0, "[Cutaway::stop] Moving Joe");
+
 		joeBob->x = joeX;
 		joeBob->y = joeY;
 		joeBob->scale = _logic->findScale(joeX, joeY);
