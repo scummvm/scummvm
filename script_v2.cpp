@@ -2728,10 +2728,18 @@ void Scumm::o6_miscOps()
 			_insaneFlag = args[1];
 			break;
 		case 16:
-			byte buf[200];
-			_msgPtrToAdd = buf;
-			addMessageToStack(getStringAddressVar(VAR_STRING2DRAW));
-			
+			if (_gameId == GID_DIG) {
+				_msgPtrToAdd = charset._buffer;
+				_messagePtr = addMessageToStack(getStringAddressVar(VAR_STRING2DRAW));
+				i = 0;
+				while (charset._buffer[i] != 0)	{
+					if (charset._buffer[i] == '/') {
+						charset._bufPos = i + 1;
+					}
+					i++;
+				}
+				description();
+			}
 			break;
 		case 17:
 			warning("o6_miscOps: stub17(%d,%d,%d,%d)", args[1], args[2], args[3],

@@ -440,6 +440,57 @@ void Scumm::CHARSET_1()
 	gdi._mask_bottom = charset._strBottom;
 }
 
+void Scumm::description()
+{
+	int c;
+	byte *buffer;
+
+	buffer = charset._buffer + charset._bufPos;
+	string[0].ypos = camera._cur.y + 88;
+	string[0].xpos = 160 - (charset.getStringWidth(0, buffer, 0) >> 1);
+	if (string[0].xpos < 0)
+		string[0].xpos = 0;
+
+	charset._top = string[0].ypos;
+	charset._left = string[0].xpos;
+	charset._left2 = string[0].xpos;
+	charset._right = 319;
+	charset._xpos2 = string[0].xpos;
+	charset._ypos2 = string[0].ypos;
+	charset._disableOffsX = charset._unk12 = 1;
+	charset._curId = 3;
+	charset._center = false;
+	charset._color = 15;
+	_bkColor = 0;
+	_talkDelay = 1;
+
+	restoreCharsetBg();
+
+	_lastXstart = virtscr[0].xstart;
+
+	do {
+		c = *buffer++;
+		if (c == 0) {
+			_haveMsg = 1;
+			break;
+		}
+		if (c != 0xFF) {
+			charset._left = charset._xpos2;
+			charset._top = charset._ypos2;
+			charset.printChar(c);
+			charset._xpos2 = charset._left;
+			charset._ypos2 = charset._top;
+			continue;
+		}
+
+	} while (1);
+
+	gdi._mask_left = charset._strLeft;
+	gdi._mask_right = charset._strRight;
+	gdi._mask_top = charset._strTop;
+	gdi._mask_bottom = charset._strBottom;
+}
+
 void Scumm::drawString(int a)
 {
 	byte buf[256];
