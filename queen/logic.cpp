@@ -65,7 +65,6 @@ Common::RandomSource Logic::randomizer;
 Logic::Logic(Resource *theResource, Graphics *graphics, Display *theDisplay, Input *input, Sound *sound)
 	: _resource(theResource), _graphics(graphics), _display(theDisplay), 
 	_input(input), _sound(sound) {
-	_jas = _resource->loadFile("QUEEN.JAS", 20);
 	_joe.x = _joe.y = 0;
 	_joe.scale = 100;
 	_walk = new Walk(this, _graphics);
@@ -77,15 +76,20 @@ Logic::Logic(Resource *theResource, Graphics *graphics, Display *theDisplay, Inp
 }
 
 Logic::~Logic() {
-	delete[] _jas;
 	delete _walk;
 	delete _cmd;
 	delete _dbg;
 }
 
 void Logic::initialise() {
+	
 	int16 i, j;
-	uint8 *ptr = _jas;
+
+
+	// Step 1 : read queen.jas file and 'unserialize' some arrays
+
+	uint8 *jas = _resource->loadFile("QUEEN.JAS", 20);
+	uint8 *ptr = jas;
 
 	_numRooms = READ_BE_UINT16(ptr); ptr += 2;
 	_numNames = READ_BE_UINT16(ptr); ptr += 2;
@@ -218,6 +222,11 @@ void Logic::initialise() {
 	if(memcmp(ptr, _resource->JASVersion(), 5) != 0) {
 		warning("Unexpected queen.jas file format");
 	}
+
+	delete[] jas;
+
+
+	// Step 2 : read queen2.jas and grab all description texts
 	
 	_objDescription = new char*[_numDescriptions + 1];
 	_objDescription[0] = 0;
@@ -263,6 +272,9 @@ void Logic::initialise() {
 	_aFile[0] = 0;
 	for (i = 1; i <= _numAFile; i++)
 		_aFile[i] = _resource->getJAS2Line();
+
+
+	// Step 3 : initialise game state / variables
 
 	_cmd->clear(false);
 	_scene = 0;
@@ -2210,7 +2222,7 @@ void Logic::handlePinnacleRoom() {
 				_entryObj = objData->entryObj;
 				char textCmd[CmdText::MAX_COMMAND_LEN];
 				sprintf(textCmd, "%s %s", Verb(VERB_WALK_TO).name(), _objName[objData->name]);
-				_graphics->textCurrentColor(INK_MAP7);
+				_graphics->textCurrentColor(INK_PINNACLE_ROOM);
 				_graphics->textSetCentered(5, textCmd);
 			}
 			prevObj = curObj;

@@ -126,7 +126,7 @@ private:
 		SCREEN_W   = 320,
 		SCREEN_H   = 200,
 		PANEL_W    = 320,
-		PANEL_H    = 50
+		PANEL_H    =  50
 	};
 
 	TextRenderer _textRenderer;

@@ -61,7 +61,7 @@ enum Direction {
 enum {
 	INK_BG_PANEL      = 226,
 	INK_JOURNAL       = 248,
-	INK_MAP7          = 243,
+	INK_PINNACLE_ROOM = 243,
 	INK_CMD_SELECT    = 255,
 	INK_CMD_NORMAL    = 225,
 	INK_CMD_LOCK      = 234,
@@ -70,11 +70,6 @@ enum {
 	INK_OUTLINED_TEXT = 16
 };
 
-
-enum {
-	ZONE_ROOM  = 0,
-	ZONE_PANEL = 1
-};
 
 enum {
 	ITEM_NONE                     =  0,
@@ -277,14 +272,6 @@ enum Language {
 	HEBREW   = 'H',
 	ITALIAN  = 'I',
 	SPANISH  = 'S'
-};
-
-
-enum JoeWalkMode {
-	JWM_NORMAL  = 0,
-	JWM_MOVE    = 1,
-	JWM_EXECUTE = 2,
-	JWM_SPEAK   = 3
 };
 
 

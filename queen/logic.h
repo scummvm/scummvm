@@ -37,6 +37,18 @@ enum RoomDisplayMode {
 	RDM_FADE_JOE_XY = 3  // display Joe at the current X, Y coords
 };
 
+enum {
+	ZONE_ROOM  = 0,
+	ZONE_PANEL = 1
+};
+
+enum JoeWalkMode {
+	JWM_NORMAL  = 0,
+	JWM_MOVE    = 1,
+	JWM_EXECUTE = 2,
+	JWM_SPEAK   = 3
+};
+
 struct ZoneSlot {
 	bool valid;
 	Box box;
@@ -305,9 +317,6 @@ public:
 protected:
 
 	void initialise();
-
-	//! Contents of queen.jas file
-	uint8 *_jas;
 
 	uint16 _currentRoom;
 	uint16 _oldRoom;
