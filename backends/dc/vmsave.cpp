@@ -29,7 +29,7 @@
 #include <gui/newgui.h>
 #include <gui/message.h>
 
-#include <ronin/zlib.h>
+#include <zlib.h>
 
 
 // Savegame can not be bigger than this, even before compression
