@@ -322,7 +322,6 @@ int Interface::draw() {
 	int rportrait_x;
 	int rportrait_y;
 
-	Rect rect;
 	Point origin;
 
 	back_buf = _vm->_gfx->getBackBuffer();
@@ -334,13 +333,7 @@ int Interface::draw() {
 	// Get game display info
 	GAME_GetDisplayInfo(&g_di);
 
-	// Erase background of status bar
-	rect.left = 0;
-	rect.top = _iDesc.status_y;
-	rect.right = g_di.logical_w;
-	rect.bottom = _iDesc.status_y + _iDesc.status_h;
-
-	drawRect(back_buf, &rect, _iDesc.status_bgcol);
+	drawStatusBar(back_buf);
 
 	// Draw command panel background
 	if (_panelMode == kPanelCommand) {
@@ -429,6 +422,13 @@ int Interface::drawStatusBar(SURFACE *ds) {
 	Rect rect;
 
 	int string_w;
+
+	// Disable this for IHNM for now, since that game uses the full screen
+	// in some cases.
+
+	if (GAME_GetGameType() == GID_IHNM) {
+		return SUCCESS;
+	}
 
 	// Get game display info
 	GAME_GetDisplayInfo(&g_di);
