@@ -990,11 +990,17 @@ void Blt_part(UBYTE * src_ptr, int x, int y, int width, int height, int pitch, b
 	if (toolbar_available && !toolbar_drawn && !hide_toolbar)
 		drawAllToolbar();
 
+	if (y > _geometry_h)
+		return;
+
+	if (y + height > _geometry_h)
+		height = _geometry_h - y;
+
 	pBlt_part(src_ptr, x, y, width, height, NULL, pitch);
 
-	if (check && (y > _geometry_h || (y + height) > _geometry_h)) {
-		toolbar_drawn = false;
-	}
+	//if (check && (y > _geometry_h || (y + height) > _geometry_h)) {
+	//	toolbar_drawn = false;
+	//}
 
 }
 
@@ -1149,8 +1155,10 @@ void mono_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 			scr_ptr_limit = scr_ptr + (pitch ? pitch : width) * height;
 			src_limit = scr_ptr + width;
 
+			/*
 			 if (scr_ptr_limit > scr_ptr + geom[useMode].lineLimit)
                 scr_ptr_limit = scr_ptr + geom[useMode].lineLimit;
+			*/
 
 			/* CMI rendering */
             if (high_res && !own_palette && !extra_wide_screen) {
@@ -1704,8 +1712,10 @@ void palette_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
 		scr_ptr_limit = scr_ptr + (pitch ? pitch : width) * height;
         src_limit = scr_ptr + width;
 
+		/*
 		if (scr_ptr_limit > scr_ptr + geom[useMode].lineLimit)
             scr_ptr_limit = scr_ptr + geom[useMode].lineLimit;
+		*/
 
 		/* CMI rendering */
         if (high_res && !own_palette && !extra_wide_screen) {
@@ -1926,8 +1936,10 @@ void hicolor555_Blt_part(UBYTE * scr_ptr,int x, int y, int width, int height,
         scraddr += y * linestep;
         scr_ptr_limit = scr_ptr + (pitch ? pitch : width) * height;
 
+		/*
 		if (scr_ptr_limit > scr_ptr + geom[useMode].lineLimit)
             scr_ptr_limit = scr_ptr + geom[useMode].lineLimit;
+		*/
 
         src_limit = scr_ptr + width;
 
@@ -2277,8 +2289,10 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 		scraddr += y * linestep;
 		scr_ptr_limit = scr_ptr + (pitch ? pitch : width) * height;
 
+		/*
 		if (scr_ptr_limit > scr_ptr + geom[useMode].lineLimit)
 			scr_ptr_limit = scr_ptr + geom[useMode].lineLimit;
+		*/
 
 		src_limit = scr_ptr + width;
 
