@@ -43,6 +43,10 @@
 #include "gui/message.h"
 #include "sound/mixer.h"
 #include "sound/mididrv.h"
+
+#include "akos.h"
+#include "costume.h"
+
 #ifdef MACOSX
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -413,6 +417,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_languageBuffer = NULL;
 	_languageIndex = NULL;
 	memset(_transText,0,sizeof(_transText));
+	_bcr = NULL;
 
 	//
 	// Init all VARS to 0xFF
@@ -724,6 +729,8 @@ Scumm::~Scumm ()
 	delete _languageBuffer;
 	delete _audioNames;
 
+	delete _bcr;
+
 	if (_shadowPalette)
 		free(_shadowPalette);
 	
@@ -734,7 +741,19 @@ Scumm::~Scumm ()
 
 void Scumm::setFeatures (uint32 newFeatures)
 {
+	bool newCostumes = _features & GF_NEW_COSTUMES;
+	bool newNewCostumes = newFeatures & GF_NEW_COSTUMES;
+
 	_features = newFeatures;
+	
+	if (!_bcr || newCostumes!=newNewCostumes)
+	{
+		delete _bcr;
+		if (newNewCostumes)
+			_bcr = new AkosRenderer (this);
+		else
+			_bcr = new CostumeRenderer(this);
+	}
 }
 
 void Scumm::scummInit() {

@@ -47,6 +47,7 @@ class Bundle;
 class ScummDebugger;
 class Serializer;
 struct FindObjectInRoom;
+class BaseCostumeRenderer;
 
 typedef ScummVM::Map<ScummVM::String, int> ObjectIDMap;
 
@@ -419,6 +420,8 @@ protected:
 	int _numActors;
 public:
 	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette
+
+	BaseCostumeRenderer* _bcr;
 	
 	char *_audioNames;
 	int32 _numAudioNames;
