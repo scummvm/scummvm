@@ -562,7 +562,7 @@ void Scumm_v2::o2_actorSet() {
 	int i;
 
 	if (!a) {
-		fetchscriptByte();
+		fetchScriptByte();
 		return;
 	}
 
