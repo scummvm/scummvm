@@ -39,6 +39,7 @@
 
 #define	sknPosRsc			'sPos'
 #define	sknColorsRsc		'sCol'
+#define	sknDepthRsc			'sDep'
 
 #define sknStateNormal		0
 #define sknStateSelected	10
@@ -49,8 +50,9 @@
 
 // skin elements
 #define skinList					500
-#define	skinColors	600
-#define skinPalette					610
+#define	skinColors					600
+#define skinDepth					700
+
 #define skinButtonNone				0
 
 #define skinSliderUpArrow			2000
@@ -62,8 +64,8 @@
 #define skinButtonGameDelete		4000
 #define skinButtonGameStart			7000
 
-#define	skinBackgroundImageTop		1000
-#define	skinBackgroundImageBottom	1010
+#define	skinBackgroundImageTop			1000
+#define	skinBackgroundImageBottom		1010
 ///
 
 
@@ -117,6 +119,7 @@ void SknGetListBounds(RectangleType *rAreaP, RectangleType *rArea2xP);
 UInt16 SknCheckClick(DmOpenRef skinDBP, Coord mx, Coord my);
 void SknSelect(Coord x, Coord y);
 Boolean SknProcessArrowAction(UInt16 button);
+UInt8 SknGetDepth(DmOpenRef skinDBP);
 
 extern UInt16 lastIndex;
 

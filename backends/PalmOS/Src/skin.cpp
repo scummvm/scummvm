@@ -22,6 +22,7 @@
 
 #include <PalmOS.h>
 #include <PalmOSGlue.h>
+#include <SonyClie.h>
 
 #include "start.h"
 #include "games.h"
@@ -30,8 +31,45 @@
 #include "StarterRsc.h"
 
 UInt16 lastIndex = dmMaxRecordIndex;	// last select index in the list to prevent flash
+static WinHandle winLockH = NULL;
 
-static void SknGetListColors(DmOpenRef skinDBP, DmResID resID, UInt8 *text, UInt8 *selected, UInt8 *background) {
+MemPtr SknScreenLock(WinLockInitType initMode) {
+	if (!OPTIONS_TST(kOptDeviceZodiac)) {
+		WinSetDrawWindow(WinGetDisplayWindow());
+		// WARNING : this doesn't work on < OS5 with 16bit mode
+		return WinScreenLock(initMode);	
+	}
+
+	Err e;
+	RectangleType r;
+
+	WinGetBounds(WinGetDisplayWindow(), &r);
+	winLockH = WinCreateOffscreenWindow(r.extent.x, r.extent.y, nativeFormat, &e);
+	WinSetDrawWindow(winLockH);
+
+	if (initMode == winLockCopy)
+		WinCopyRectangle(WinGetDisplayWindow(), winLockH, &r, 0, 0, winPaint);
+
+	return BmpGetBits(WinGetBitmap(winLockH));
+}
+
+void SknScreenUnlock() {
+	if (!OPTIONS_TST(kOptDeviceZodiac)) {
+		WinSetDrawWindow(WinGetDisplayWindow());
+		WinScreenUnlock();
+		return;
+	}
+
+	RectangleType r;
+
+	WinGetBounds(winLockH, &r);
+	WinCopyRectangle(winLockH, WinGetDisplayWindow(), &r, 0, 0, winPaint);
+	WinSetDrawWindow(WinGetDisplayWindow());
+	WinDeleteWindow(winLockH, false);
+	winLockH = NULL;
+}
+
+static void SknGetListColors(DmOpenRef skinDBP, UInt8 *text, UInt8 *selected, UInt8 *background) {
 	UInt16 colIndex;
 	MemHandle colH;
 	UInt8 *colTemp;
@@ -42,7 +80,7 @@ static void SknGetListColors(DmOpenRef skinDBP, DmResID resID, UInt8 *text, UInt
 	*background = UIColorGetTableEntryIndex (UIMenuSelectedFill);
 
 	if (skinDBP) {
-		colIndex = DmFindResource (skinDBP, sknColorsRsc, resID, NULL);
+		colIndex = DmFindResource (skinDBP, sknColorsRsc, skinColors, NULL);
 		
 		if (colIndex != (UInt16)-1) {
 			colH = DmGetResourceIndex(skinDBP, colIndex);
@@ -61,14 +99,13 @@ static void SknGetListColors(DmOpenRef skinDBP, DmResID resID, UInt8 *text, UInt
 	}
 }
 
-static void SknCopyBits(DmOpenRef skinDBP, DmResID bitmapID, const RectangleType *srcRect, Coord destX, Coord destY, Boolean standard) {
+static void SknCopyBits(DmOpenRef skinDBP, DmResID bitmapID, const RectangleType *srcRect, Coord destX, Coord destY) {
 	MemHandle hTemp;
 	BitmapPtr bmpTemp;
 	UInt16 index;
-	UInt8 *bmpData;
 
 	Coord cx, cy, cw, ch, bw, bh;
-	UInt8 *dst, *src;
+	RectangleType copy, old;
 
 	if (skinDBP) {
 		// find the bitmap
@@ -92,20 +129,41 @@ static void SknCopyBits(DmOpenRef skinDBP, DmResID bitmapID, const RectangleType
 					cw = srcRect->extent.x;
 					ch = srcRect->extent.y;
 				}
-
-				if (ch) {
-					Coord picth = gVars->screenPitch;
-					dst = (UInt8 *)BmpGetBits(WinGetBitmap(WinGetDisplayWindow()));
 				
-					dst+= destX + destY * picth;
-					bmpData = (UInt8 *)BmpGetBits(bmpTemp);
-					src	= bmpData + cx + cy * bw;
+				if (ch) {
+					WinGetClip(&old);
+					if (gVars->HRrefNum != sysInvalidRefNum) {
+						copy.topLeft.x = destX;
+						copy.topLeft.y = destY;
+						copy.extent.x = cw;
+						copy.extent.y = ch;
 
-					do {
-						MemMove(dst, src, cw);
-						dst += picth;
-						src += bw;
-					} while (--ch);
+						HRWinSetClip(gVars->HRrefNum, &copy);
+						HRWinDrawBitmap(gVars->HRrefNum, bmpTemp, destX - cx, destY - cy);
+					} else {
+						Err e;
+						BitmapTypeV3 *bmp2P;
+						
+						// create an uncompressed version of the bitmap
+						WinHandle win = WinCreateOffscreenWindow(bw, bh, screenFormat, &e);
+						WinHandle old = WinGetDrawWindow();
+						WinSetDrawWindow(win);
+						WinDrawBitmap(bmpTemp, 0, 0);
+						WinSetDrawWindow(old);
+						
+ 						bmp2P = BmpCreateBitmapV3(WinGetBitmap(win), kDensityDouble, BmpGetBits(WinGetBitmap(win)), NULL);
+
+						copy.topLeft.x = destX / 2;
+						copy.topLeft.y = destY / 2;
+						copy.extent.x = cw / 2;
+						copy.extent.y = ch / 2;
+
+						WinSetClip(&copy);
+						WinDrawBitmap((BitmapPtr)bmp2P, (destX - cx) / 2, (destY - cy) / 2);
+						BmpDelete((BitmapPtr)bmp2P);
+						WinDeleteWindow(win, false);
+					}
+					WinSetClip(&old);
 				}
 
 				MemPtrUnlock(bmpTemp);
@@ -120,13 +178,12 @@ void SknApplySkin() {
 	RectangleType r;
 	FormPtr frmP = FrmGetActiveForm();
 
-	WinSetDrawWindow(WinGetDisplayWindow());
-	WinScreenLock(winLockDontCare);
-	//SknSetPalette();
-	RctSetRectangle(&r,0,0,160,160);
-	WinEraseRectangle(&r,0);
+	// draw skin
 	FrmDrawForm(frmP);
+	SknScreenLock(winLockCopy);
 
+	skinDBP = SknOpenSkin();
+	
 	if (gPrefs->card.volRefNum != sysInvalidRefNum)
 		FrmShowObject(frmP, FrmGetObjectIndex (frmP, MainMSBitMap));
 	else
@@ -137,19 +194,18 @@ void SknApplySkin() {
 	WinDrawLine (0, 14, 159, 14);
 	WinDrawLine (0, 13, 159, 13);
 
-	skinDBP = SknOpenSkin();
 	SknGetObjectBounds(skinDBP, skinBackgroundImageTop, &r);
-	SknCopyBits(skinDBP, skinBackgroundImageTop, 0, r.topLeft.x, r.topLeft.y, 0);
+	SknCopyBits(skinDBP, skinBackgroundImageTop, 0, r.topLeft.x, r.topLeft.y);
 	SknGetObjectBounds(skinDBP, skinBackgroundImageBottom, &r);
-	SknCopyBits(skinDBP, skinBackgroundImageBottom, 0, r.topLeft.x, r.topLeft.y, 0);
-
+	SknCopyBits(skinDBP, skinBackgroundImageBottom, 0, r.topLeft.x, r.topLeft.y);
+	
 	for (UInt16 resID = 1100; resID <= 7000; resID += 100) {
 		SknSetState(skinDBP, resID, sknStateNormal);
 		SknShowObject(skinDBP, resID);
 	}
 
 	SknCloseSkin(skinDBP);
-	WinScreenUnlock();
+	SknScreenUnlock();
 	SknUpdateList();
 	
 	gVars->skinSet = true;	// for winDisplayChangedEvent redraw
@@ -237,6 +293,30 @@ UInt8 SknSetState(DmOpenRef skinDBP, DmResID resID, UInt8 newState) {
 	return oldState;
 }
 
+UInt8 SknGetDepth(DmOpenRef skinDBP) {
+	UInt16 index;
+	MemHandle hStr;
+	UInt8 *strTemp;
+	UInt8 depth = 8;
+
+	if (skinDBP) {
+		index = DmFindResource (skinDBP, sknDepthRsc, skinDepth, NULL);
+		
+		if (index != (UInt16)-1) {
+			hStr = DmGetResourceIndex(skinDBP, index);
+			
+			if (hStr) {
+				strTemp = (UInt8 *)MemHandleLock(hStr);
+				depth = *strTemp;
+				MemPtrUnlock(strTemp);					
+				DmReleaseResource(hStr);				
+			}
+		}
+	}
+	
+	return depth;
+}
+
 UInt8 SknGetState(DmOpenRef skinDBP, DmResID resID) {
 
 	UInt16 index;
@@ -267,7 +347,7 @@ void SknShowObject(DmOpenRef skinDBP, DmResID resID) {
 	RectangleType r;
 	UInt8 state = SknGetState(skinDBP, resID);
 	SknGetObjectBounds(skinDBP, resID, &r);
-	SknCopyBits(skinDBP, resID + state, NULL, r.topLeft.x, r.topLeft.y, 0);
+	SknCopyBits(skinDBP, resID + state, NULL, r.topLeft.x, r.topLeft.y);
 }
 
 void SknGetListBounds(RectangleType *rAreaP, RectangleType *rArea2xP) {
@@ -352,35 +432,6 @@ static void SknRedrawSlider(DmOpenRef skinDBP, UInt16 index, UInt16 maxIndex, UI
 	}
 }
 
-/*
-static void SknSetPalette() {
-
-	UInt16 palIndex;
-	ColorTableType *palTemp;
-	MemHandle palH;
-
-	DmOpenRef skinDBP = SknOpenSkin();
-
-	if (skinDBP) {
-		palIndex = DmFindResource (skinDBP, colorTableRsc, skinPalette, NULL);
-
-		if (palIndex != 0xFFFF) {
-			palH = DmGetResourceIndex(skinDBP, palIndex);
-			
-			if (palH) {
-				palTemp = (ColorTableType *)MemHandleLock(palH);
-				WinPalette(winPaletteSet, 0, 256, ColorTableEntries(palTemp));
-				MemPtrUnlock(palTemp);					
-				DmReleaseResource(palH);
-			}
-		}
-	}
-	
-	SknCloseSkin(skinDBP);
-
-}
-*/
-
 void SknUpdateList() {
 	MemHandle record;
 	Int32 index, maxIndex, maxView;
@@ -391,9 +442,7 @@ void SknUpdateList() {
 	UInt8 txtColor, norColor, selColor, bkgColor;
 	UInt16 x,y;
 	
-	// prevent flashing screen on Zodiac ?
-	if (!OPTIONS_TST(kOptDeviceZodiac))
-		WinScreenLock(winLockCopy);
+	SknScreenLock(winLockCopy);
 
 	SknGetListBounds(&rArea, &rArea2x);
 	skinDBP = SknOpenSkin();
@@ -407,7 +456,7 @@ void SknUpdateList() {
 	y = rCopy.topLeft.y;
 	rCopy.topLeft.x	-= rField.topLeft.x;
 	rCopy.topLeft.y	-= rField.topLeft.y;	
-	SknCopyBits(skinDBP, skinBackgroundImageTop, &rCopy, x, y, 0);
+	SknCopyBits(skinDBP, skinBackgroundImageTop, &rCopy, x, y);
 	// copy bottom bg
 	SknGetObjectBounds(skinDBP, skinBackgroundImageBottom, &rField);
 	RctGetIntersection(&rArea2x, &rField, &rCopy);
@@ -415,7 +464,7 @@ void SknUpdateList() {
 	y = rCopy.topLeft.y;
 	rCopy.topLeft.x	-= rField.topLeft.x;
 	rCopy.topLeft.y	-= rField.topLeft.y;	
-	SknCopyBits(skinDBP, skinBackgroundImageBottom, &rCopy, x, y, 0);
+	SknCopyBits(skinDBP, skinBackgroundImageBottom, &rCopy, x, y);
 
 	FntSetFont(stdFont);
 
@@ -433,7 +482,7 @@ void SknUpdateList() {
 
 	SknRedrawSlider(skinDBP, index, maxIndex, maxView);
 	SknRedrawTools(skinDBP);
-	SknGetListColors(skinDBP, skinColors, &norColor, &selColor, &bkgColor);
+	SknGetListColors(skinDBP, &norColor, &selColor, &bkgColor);
 
 	SknCloseSkin(skinDBP);
 
@@ -475,9 +524,7 @@ void SknUpdateList() {
 
 	RctSetRectangle(&rArea,0,0,160,160);
 	WinSetClip(&rArea);
-	
-	if (!OPTIONS_TST(kOptDeviceZodiac))
-		WinScreenUnlock();
+	SknScreenUnlock();
 }
 
 UInt16 SknCheckClick(DmOpenRef skinDBP, Coord mx, Coord my) {
