@@ -334,8 +334,6 @@ protected:
 
 	FILE *_dump_file;
 
-	int _number_of_savegames;
-
 	int _saveload_row_curpos;
 	int _num_savegame_rows;
 	bool _savedialog_flag;

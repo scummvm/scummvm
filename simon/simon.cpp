@@ -424,7 +424,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	_dump_file = 0;
 
-	_number_of_savegames = 0;
 	_saveload_row_curpos = 0;
 	_num_savegame_rows = 0;
 	_savedialog_flag = false;
@@ -2607,7 +2606,7 @@ void SimonEngine::savegame_dialog(char *buf) {
 
 void SimonEngine::save_or_load_dialog(bool load) {
 	time_t save_time;
-	int num = _number_of_savegames;
+	int number_of_savegames;
 	int i;
 	int unk132_result;
 	FillOrCopyStruct *fcs;
@@ -2622,18 +2621,18 @@ void SimonEngine::save_or_load_dialog(bool load) {
 
 	_copy_partial_mode = 1;
 
-	_number_of_savegames = num = count_savegames();
+	number_of_savegames = count_savegames();
 	if (!load)
-		num++;
-	num -= 6;
-	if (num < 0)
-		num = 0;
-	num++;
-	_num_savegame_rows = num;
+		number_of_savegames++;
+	number_of_savegames -= 6;
+	if (number_of_savegames < 0)
+		number_of_savegames = 0;
+	number_of_savegames++;
+	_num_savegame_rows = number_of_savegames;
 
 	_saveload_row_curpos = 1;
 	if (!load)
-		_saveload_row_curpos = num;
+		_saveload_row_curpos = number_of_savegames;
 
 	_saveload_flag = false;
 

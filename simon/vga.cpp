@@ -673,8 +673,6 @@ void SimonEngine::vc_10_draw() {
 		state.depack_src = vc_10_depack_swap(state.depack_src, width, height);
 	} else if (state.e & 1) {
 		state.depack_src = vc_10_no_depack_swap(state.depack_src, width, height);
-//		debug(5,"vc_10_no_depack_swap unimpl");
-//		state.depack_src = vc_10_depack_swap(state.depack_src, width, height);
 	}
 
 	vlut = &_video_windows[_video_palette_mode * 4];
