@@ -434,7 +434,6 @@ void ScummEngine::drawString(int a, const byte *msg) {
 
 	fontHeight = _charset->getFontHeight();
 
-
 	// trim from the right
 	byte *tmp = buf;
 	space = NULL;
@@ -491,7 +490,11 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				} else {
 					_charset->_left = _charset->_startLeft;
 				}
-				_charset->_top += fontHeight;
+				if (_string[0].height) {
+					_charset->_nextTop += _string[0].height;
+				} else {
+					_charset->_top += fontHeight;
+				}
 				break;
 			case 12:
 				color = buf[i] + (buf[i + 1] << 8);
