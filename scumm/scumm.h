@@ -1065,6 +1065,7 @@ protected:
 	byte _charsetBuffer[512];
 
 public:
+	bool _demo_mode;
 	bool _noSubtitles;	// Whether to skip all subtitles
 	bool _confirmExit;
 protected:

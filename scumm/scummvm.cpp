@@ -393,6 +393,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	memset(_charsetData, 0, sizeof(_charsetData));
 	_charsetBufPos = 0;
 	memset(_charsetBuffer, 0, sizeof(_charsetBuffer));
+	_demo_mode = false;
 	_noSubtitles = false;
 	_confirmExit = false;
 	_numInMsgStack = 0;
@@ -545,6 +546,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_version = detector->_game.version;
 	setFeatures(detector->_game.features);
 
+	_demo_mode = detector->_demo_mode;
 	_noSubtitles = detector->_noSubtitles;
 	_confirmExit = detector->_confirmExit;
 	_defaultTalkDelay = detector->_talkSpeed;
@@ -826,7 +828,10 @@ void Scumm::launch() {
 
 	// If requested, load a save game instead of running the boot script
 	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveLoadCompatible)) {
-		runScript(1, 0, 0, &_bootParam);
+		if (_gameId == GID_MANIAC && _demo_mode)
+			runScript(9, 0, 0, &_bootParam);
+		else
+			runScript(1, 0, 0, &_bootParam);
 	}
 	_saveLoadFlag = 0;
 }

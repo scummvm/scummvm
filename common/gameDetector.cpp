@@ -83,6 +83,9 @@ static const char USAGE_STRING[] =
 	"\t--multi-midi   - enable combination Adlib and native MIDI\n"
 	"\t--native-mt32  - true Roland MT-32 (disable GM emulation)\n"
 	"\t--aspect-ratio - enable aspect ratio correction\n"
+#ifndef DISABLE_SCUMM
+	"\t--demo-mode    - Start demo mode of Maniac Mansion (Classic version)\n"
+#endif
 #ifndef DISABLE_SKY
 	"\t--floppy-intro - Use floppy version intro for Beneath a Steel Sky CD\n"
 #endif
@@ -167,6 +170,10 @@ GameDetector::GameDetector() {
 	_sfx_volume = kDefaultSFXVolume;
 	_amiga = false;
 	_language = 0;
+
+#ifndef DISABLE_SCUMM
+	_demo_mode = false;
+#endif
 
 #ifndef DISABLE_SKY
 	_floppyIntro = false;
@@ -284,6 +291,10 @@ void GameDetector::updateconfig() {
 
 #ifndef DISABLE_SKY
 	_floppyIntro = g_config->getBool("floppy_intro", _floppyIntro);
+#endif
+
+#ifndef DISABLE_SCUMM
+	_demo_mode = g_config->getBool("demo_mode", _demo_mode);
 #endif
 
 	if ((val = g_config->get("language")))
@@ -494,6 +505,12 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				} else if (!strcmp (s, "aspect-ratio")) {
 					_aspectRatio = long_option_value;
 					g_config->setBool ("aspect_ratio", _aspectRatio);
+#ifndef DISABLE_SCUMM
+				} else if (!strcmp (s, "demo-mode")) {
+					_demo_mode = long_option_value;
+					g_config->setBool ("demo_mode", _demo_mode);
+#endif
+
 #ifndef DISABLE_SKY
 				} else if (!strcmp (s, "floppy-intro")) {
 					_floppyIntro = long_option_value;

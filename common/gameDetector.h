@@ -122,6 +122,7 @@ public:
 	bool _amiga;
 	int _language;
 
+	bool _demo_mode;
 	bool _floppyIntro;
 
 	uint16 _talkSpeed;
