@@ -419,7 +419,7 @@ int ImuseDigiSndMgr::getNumJumps(soundStruct *soundHandle) {
 }
 
 int ImuseDigiSndMgr::getRegionOffset(soundStruct *soundHandle, int region) {
-	debug(5, "getRegionOffset() region:%d");
+	debug(5, "getRegionOffset() region:%d", region);
 	assert(checkForProperHandle(soundHandle));
 	assert(region >= 0 && region < soundHandle->numRegions);
 	return soundHandle->region[region].offset;

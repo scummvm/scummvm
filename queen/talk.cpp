@@ -1078,7 +1078,7 @@ void Talk::getString(const byte *ptr, uint16 &offset, char *str, int maxLength, 
 	++offset;
 
 	if (length > maxLength) {
-		error("String too long. Length = %i, maxLength = %i", length, maxLength, length);
+		error("String too long. Length = %i, maxLength = %i", length, maxLength);
 	} else if (length) {
 		if (str) {
 			memcpy(str, ptr + offset, length);

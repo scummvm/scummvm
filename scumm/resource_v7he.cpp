@@ -296,7 +296,7 @@ byte *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 		    }
 		    if ((uint32)iconsize != icondir->entries[c].bytes_in_res) {
 				debugC(DEBUG_RESOURCE, "%s: mismatch of size in icon resource `%s' and group (%d != %d)", 
-					fi->file->name(), name, iconsize, 1, icondir->entries[c].bytes_in_res);
+					fi->file->name(), name, iconsize, icondir->entries[c].bytes_in_res);
 		    }
 		    size += iconsize; /* size += icondir->entries[c].bytes_in_res; */
 
