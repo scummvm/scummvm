@@ -328,6 +328,7 @@ int Scumm::scummLoop(int delta)
 			if (camera._cur.x != camera._last.x || camera._cur.y != camera._last.y
 					|| _BgNeedsRedraw || _fullRedraw) {
 				redrawBGAreas();
+				_videoBuffer = virtscr[0].screenPtr + (camera._cur.y - 100) * 328;
 			}
 		}
 		processDrawQue();
@@ -456,6 +457,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 	if (!(_features & GF_AFTER_V7)) {
 		camera._mode = CM_NORMAL;
 		camera._cur.x = camera._dest.x = 160;
+		camera._cur.y = camera._dest.y = 100;
 	}
 
 	if (_features & GF_AFTER_V6) {
@@ -707,7 +709,9 @@ void Scumm::initRoomSubBlocks()
 	else
 		gdi._transparency = 255;
 
-	initBGBuffers();
+	initBGBuffers(_scrHeight);
+
+	_videoBuffer = virtscr[0].screenPtr;
 
 	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
 }
@@ -817,7 +821,11 @@ void Scumm::processKbd()
 	getKeyInput(0);
 
 	_virtual_mouse_x = mouse.x + virtscr[0].xstart;
-	_virtual_mouse_y = mouse.y;
+
+	if(_features & GF_AFTER_V7)
+		_virtual_mouse_y = mouse.y + camera._cur.y-100;
+	else
+		_virtual_mouse_y = mouse.y;
 
 	if (!(_features & GF_OLD256))
 		_virtual_mouse_y += virtscr[0].topline;
@@ -1251,10 +1259,10 @@ void Scumm::launch()
 	_minHeapThreshold = 400000;
 
 	/* Create a primary virtual screen */
-	_videoBuffer = (byte*)malloc(328*200);
+	_videoBuffer = (byte*)malloc(328*800);
 
 	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
-	initVirtScreen(0, 0, 200, false, false);
+	initVirtScreen(0, 0, 0, 320, 200, false, false);
 
 	if (_features & GF_AFTER_V7)
 		setupScummVarsNew();

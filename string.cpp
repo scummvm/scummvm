@@ -237,6 +237,8 @@ void Scumm::CHARSET_1()
 			string[0].ypos = ((a->new_1 - s) >> 1) + s - a->elevation + a->y;
 			if (string[0].ypos < 1)
 				string[0].ypos = 1;
+			if (string[0].ypos < camera._cur.y - 100)
+				string[0].ypos = camera._cur.y - 100;
 
 			s = a->scalex * a->new_2 / 0xFF;
 			string[0].xpos = ((a->new_2 - s) >> 1) + s + a->x - camera._cur.x + 160;

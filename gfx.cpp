@@ -51,23 +51,23 @@ void Scumm::initScreens(int a, int b, int w, int h)
 	int i;
 
 	for (i = 0; i < 3; i++) {
-//    nukeResource(rtBuffer, i+1);
+	    nukeResource(rtBuffer, i+1);
 		nukeResource(rtBuffer, i + 5);
 	}
 
 	if (!getResourceAddress(rtBuffer, 4)) {
-		initVirtScreen(3, 80, 13, false, false);
+		initVirtScreen(3, 0, 80, 320, 13, false, false);
 	}
-	initVirtScreen(0, b, h - b, true, true);
-	initVirtScreen(1, 0, b, false, false);
-	initVirtScreen(2, h, 200 - h, false, false);
+	initVirtScreen(0, 0, b, 320, h - b, true, true);
+	initVirtScreen(1, 0, 0, 320, b, false, false);
+	initVirtScreen(2, 0, h, 320, 200 - h, false, false);
 
 	_screenB = b;
 	_screenH = h;
 
 }
 
-void Scumm::initVirtScreen(int slot, int top, int height, bool twobufs,
+void Scumm::initVirtScreen(int slot, int number, int top, int width, int height, bool twobufs,
 													 bool fourextra)
 {
 	VirtScreen *vs = &virtscr[slot];
@@ -92,9 +92,10 @@ void Scumm::initVirtScreen(int slot, int top, int height, bool twobufs,
 
 	if (vs->scrollable)
 		size += 320 * 4;
-//  createResource(rtBuffer, slot+1, size);
 
-	vs->screenPtr = _videoBuffer + 328 * top;
+	createResource(rtBuffer, slot+1, size);
+
+	vs->screenPtr = getResourceAddress(rtBuffer, slot+1);
 
 	ptr = vs->screenPtr;
 	for (i = 0; i < size; i++)		// reset background ?
@@ -130,6 +131,7 @@ void Scumm::drawDirtyScreenParts()
 {
 	int i;
 	VirtScreen *vs;
+	byte * src;
 
 	updateDirtyScreen(2);
 	if (_features & GF_OLD256)
@@ -141,9 +143,10 @@ void Scumm::drawDirtyScreenParts()
 		updateDirtyScreen(0);
 	} else {
 		vs = &virtscr[0];
-
-		_system->copy_rect(vs->screenPtr + _screenStartStrip * 8, 320, 
-					0, vs->topline, 320, vs->height);
+		
+		src = vs->screenPtr + _screenStartStrip * 8 + camera._cur.y - 100;
+		
+		_system->copy_rect(src , 320, 0, vs->topline, 320, vs->height);
 
 		for (i = 0; i < 40; i++) {
 			vs->tdirty[i] = (byte)vs->height;
@@ -180,6 +183,9 @@ void Gdi::updateDirtyScreen(VirtScreen * vs)
 
 	for (i = 0; i < 40; i++) {
 		bottom = vs->bdirty[i];
+		if (_vm->camera._cur.y != _vm->camera._last.y)
+			drawStripToScreen(vs, start, w, 0, vs->height);
+		else
 		if (bottom) {
 			top = vs->tdirty[i];
 			vs->tdirty[i] = (byte)vs->height;
@@ -189,7 +195,8 @@ void Gdi::updateDirtyScreen(VirtScreen * vs)
 				w += 8;
 				continue;
 			}
-			drawStripToScreen(vs, start, w, top, bottom);
+		//	drawStripToScreen(vs, start, w, top, bottom);
+			drawStripToScreen(vs, start, w, 0, vs->height);
 			w = 8;
 		}
 		start = i + 1;
@@ -199,6 +206,14 @@ void Gdi::updateDirtyScreen(VirtScreen * vs)
 void Gdi::drawStripToScreen(VirtScreen * vs, int x, int w, int t, int b)
 {
 	byte *ptr;
+	int scrollY;
+	int width = w;
+	int height;
+
+	height = b - t;
+
+	if(height > 200)
+		height = 200;
 
 	if (b <= t)
 		return;
@@ -209,15 +224,20 @@ void Gdi::drawStripToScreen(VirtScreen * vs, int x, int w, int t, int b)
 	if (b > vs->height)
 		b = vs->height;
 
-	ptr = vs->screenPtr + (t * 40 + x) * 8 + _readOffs;
+	scrollY = _vm->camera._cur.y - 100;
+	if(scrollY == -100)
+		scrollY = 0;
+
+	ptr = vs->screenPtr + (t * 40 + x) * 8 + _readOffs + scrollY * 320;
 	
 	_vm->_system->copy_rect(
-		ptr, 320, x * 8, vs->topline + t, w, b - t);
+		ptr, 320, x * 8, vs->topline + t , w, height);
 }
 
 void blit(byte *dst, byte *src, int w, int h)
 {
 	assert(h > 0);
+
 	do {
 		memcpy(dst, src, w);
 		dst += 320;
@@ -332,11 +352,16 @@ void Scumm::setCameraFollows(Actor * a)
 	}
 }
 
-void Scumm::initBGBuffers()
+void Scumm::initBGBuffers(int height)
 {
 	byte *ptr;
 	int size, itemsize, i;
 	byte *room;
+
+	if (_features & GF_AFTER_V7)
+	{
+		initVirtScreen(0, 0, virtscr[0].topline, 200, height, 1, 1);
+	}
 
 	room = getResourceAddress(rtRoom, _roomResource);
 	if (_features & GF_SMALL_HEADER) {
@@ -347,7 +372,8 @@ void Scumm::initBGBuffers()
 	}
 	assert(gdi._numZBuffer >= 1 && gdi._numZBuffer <= 5);
 
-	itemsize = (_scrHeight + 4) * 40;
+//	itemsize = (_scrHeight + 4) * 40;
+	itemsize = (virtscr[0].height +4) * 40;
 	size = itemsize * gdi._numZBuffer;
 
 	createResource(rtBuffer, 9, size);
@@ -671,7 +697,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 
 	bottom = y + h;
 	if (bottom > vs->height) {
-		error("Gdi::drawBitmap, strip drawn to %d below window bottom %d", bottom,
+		warning("Gdi::drawBitmap, strip drawn to %d below window bottom %d", bottom,
 					vs->height);
 	}
 
@@ -1902,7 +1928,11 @@ void Scumm::moveCamera()
 		if (cd->_cur.x != old.x || cd->_cur.y != old.y) {
 			_vars[VAR_CAMERA_POS_X] = cd->_cur.x;
 			_vars[VAR_CAMERA_POS_Y] = cd->_cur.y;
-			runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
+			_vars[VAR_CAMERA_DEST_X] = cd->_dest.x;
+			_vars[VAR_CAMERA_DEST_Y] = cd->_dest.y;
+			_vars[VAR_CAMERA_FOLLOWED_ACTOR] = cd ->_follows;
+			if(_vars[VAR_SCROLL_SCRIPT])
+				runScript(_vars[VAR_SCROLL_SCRIPT], 0, 0, 0);
 		}
 	} else {
 		CameraData *cd = &camera;
@@ -2173,7 +2203,8 @@ void Scumm::resetActorBgs()
 		while (onlyActorFlags) {
 			if (onlyActorFlags & 1 && a->top != 0xFF && a->needBgReset) {
 				gfxUsageBits[_screenStartStrip + i] ^= bitpos;
-				gdi.resetBackground(a->top, a->bottom, i);
+				if((a->bottom - a->top) >=0)
+					gdi.resetBackground(a->top, a->bottom, i);
 			}
 			bitpos <<= 1;
 			onlyActorFlags >>= 1;
@@ -2186,7 +2217,7 @@ void Scumm::resetActorBgs()
 	}
 }
 
-void Gdi::resetBackground(byte top, byte bottom, int strip)
+void Gdi::resetBackground(int top, int bottom, int strip)
 {
 	VirtScreen *vs = &_vm->virtscr[0];
 	int offs;
@@ -2197,7 +2228,7 @@ void Gdi::resetBackground(byte top, byte bottom, int strip)
 	if (bottom > vs->bdirty[strip])
 		vs->bdirty[strip] = bottom;
 
-	offs = (top * 40 + _vm->_screenStartStrip + strip);
+	offs = (top * 40 + _vm->_screenStartStrip + strip );
 	_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + offs;
 	_bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + (offs << 3);
 	_backbuff_ptr = vs->screenPtr + (offs << 3);

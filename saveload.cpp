@@ -175,7 +175,7 @@ bool Scumm::loadState(int slot, bool compat)
 	if (_features & GF_AFTER_V7)
 		cameraMoved();
 
-	initBGBuffers();
+	initBGBuffers(_scrHeight);
 
 	CHECK_HEAP debug(1, "State loaded from '%s'", filename);
 

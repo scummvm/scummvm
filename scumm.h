@@ -1145,8 +1145,8 @@ public:
 
 	void getGraphicsPerformance();
 	void initScreens(int a, int b, int w, int h);
-	void initVirtScreen(int slot, int top, int height, bool twobufs, bool fourextra);
-	void initBGBuffers();
+	void initVirtScreen(int slot, int number, int top, int width, int height, bool twobufs, bool fourextra);
+	void initBGBuffers(int height);
 	void initCycl(byte *ptr);	// Color cycle
 
 	void createSpecialPalette(int16 a, int16 b, int16 c, int16 d, int16 e, int16 colorMin, int16 colorMax);
@@ -1692,6 +1692,9 @@ public:
 	byte VAR_CAMERA_SPEED_Y;
 	byte VAR_CAMERA_ACCEL_X;
 	byte VAR_CAMERA_ACCEL_Y;
+	byte VAR_CAMERA_DEST_X;
+	byte VAR_CAMERA_DEST_Y;
+	byte VAR_CAMERA_FOLLOWED_ACTOR;
 
 	byte VAR_LEFTBTN_DOWN;
 	byte VAR_RIGHTBTN_DOWN;

@@ -683,9 +683,6 @@ byte *Scumm::createResource(int type, int idx, uint32 size)
 
 	CHECK_HEAP debug(9, "createResource(%d,%d,%d)", type, idx, size);
 
-	if (size > 65536 * 4 + 37856)
-		warning("Probably invalid size allocating %d", size);
-
 	validateResource("allocating", type, idx);
 	nukeResource(type, idx);
 

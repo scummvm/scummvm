@@ -106,8 +106,8 @@ struct Gdi {
 	byte _disable_zbuffer;
 
 	bool _useOrDecompress;
-	byte _numLinesToProcess;
-	byte _tempNumLines;
+	int _numLinesToProcess;
+	int _tempNumLines;
 	byte _currentX;
 	byte _hotspot_x;
 	byte _hotspot_y;
@@ -132,7 +132,7 @@ struct Gdi {
 	byte _palette_mod;
 	byte _decomp_shr, _decomp_mask;
 	byte _transparency;
-	uint16 _vertStripNextInc;
+	uint32 _vertStripNextInc;
 	byte *_backupIsWhere;
 
 	/* Bitmap decompressors */
@@ -161,7 +161,7 @@ struct Gdi {
 	void decompressMaskImgOr();
 	void decompressMaskImg();
 
-	void resetBackground(byte top, byte bottom, int strip);
+	void resetBackground(int top, int bottom, int strip);
 	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
 	void updateDirtyScreen(VirtScreen *vs);
 
