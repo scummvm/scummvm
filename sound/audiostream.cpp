@@ -52,7 +52,7 @@ protected:
 		//assert(_ptr < _end);
 		int16 val = READSAMPLE(is16Bit, isUnsigned, _ptr);
 		_ptr += (is16Bit ? 2 : 1);
-		if (_loopPtr && _ptr == _end) {
+		if (_loopPtr && eosIntern()) {
 			_ptr = _loopPtr;
 			_end = _loopEnd;
 		}
