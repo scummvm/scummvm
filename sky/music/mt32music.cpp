@@ -111,6 +111,7 @@ bool SkyMT32Music::processPatchSysEx(uint8 *sysExData) {
 		crc -= sysExBuf[cnt];
 	sysExBuf[14] = crc & 0x7F;					// crc
 	_midiDrv->sysEx(sysExBuf, 15);
+	g_system->delay_msecs (5);
 	return true;
 }
 
@@ -157,6 +158,7 @@ void SkyMT32Music::startDriver(void) {
 		sendBuf[len] = crc & 0x7F;
 		len++;
 		_midiDrv->sysEx(sendBuf, len);
+		g_system->delay_msecs (5);
 	}
 
 	while (processPatchSysEx(sysExData))
