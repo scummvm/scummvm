@@ -39,9 +39,8 @@ void Surface::hLine(int x, int y, int x2, uint32 color) const {
 	
 	if (bytesPerPixel == 1) {
 		byte *ptr = (byte *)getBasePtr(x, y);
-		while (x++ <= x2) {
-			*ptr++ = (byte)color;
-		}
+		if (x2 >= x)
+			memset(ptr, (byte)color, x2-x+1);
 	} else if (bytesPerPixel == 2) {
 		uint16 *ptr = (uint16 *)getBasePtr(x, y);
 		while (x++ <= x2) {
@@ -96,9 +95,7 @@ void Surface::fillRect(const Common::Rect &rOld, uint32 color) const {
 	if (bytesPerPixel == 1) {
 		byte *ptr = (byte *)getBasePtr(r.left, r.top);
 		while (height--) {
-			for (i = 0; i < width; i++) {
-				ptr[i] = (byte)color;
-			}
+			memset(ptr, (byte)color, width);
 			ptr += pitch;
 		}
 	} else if (bytesPerPixel == 2) {
