@@ -218,8 +218,13 @@ void Scumm_v8::setupScummVars()
 	VAR_CAMERA_POS_Y = 10;
 	VAR_CAMERA_DEST_X = 11;
 	VAR_CAMERA_DEST_Y = 12;
+	VAR_CAMERA_FOLLOWED_ACTOR = 13;
+
 	VAR_TALK_ACTOR = 15;	// FIXME: I think this is wrong also, but it works for the moment
-	VAR_LEFTBTN_HOLD = 16;	// FIXME: Is this right?
+	VAR_LEFTBTN_HOLD = 16;
+	VAR_RIGHTBTN_HOLD = 17;
+	VAR_LEFTBTN_DOWN = 18;
+	VAR_RIGHTBTN_DOWN = 19;
 
 	VAR_ROOM = 31;
 	VAR_CURRENTDISK = 42;
