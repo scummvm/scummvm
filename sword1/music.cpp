@@ -41,28 +41,19 @@ WaveAudioStream *makeWaveStream(File *source, uint32 size) {
 }
 
 WaveAudioStream::WaveAudioStream(File *source, uint32 pSize) {
-	uint32 size;
-	uint8 wavHeader[WAVEHEADERSIZE];
+	int rate, size;
+	byte flags;
 
 	_sourceFile = source;
 	_sampleBuf = (uint8*)malloc(SMP_BUFSIZE);
 	_sourceFile->incRef();
-	if (_sourceFile->isOpen()) {
-		// TODO: use loadWAVFromStream to load the WAVE data!
-		/*
-		int rate, size;
-		bye flags;
-		const uint32 initialPos = _sourceFile->pos();
-		isValidWAV = loadWAVFromStream(*_sourceFile, size, rate, flags);
-		*/
-
-
-		_sourceFile->read(wavHeader, WAVEHEADERSIZE);
-		_isStereo = (READ_LE_UINT16(wavHeader + 0x16) == 2);
-		_rate = READ_LE_UINT16(wavHeader + 0x18);
-		size = ((pSize) ? pSize : READ_LE_UINT32(wavHeader + 0x28));
-		assert(size <= (source->size() - source->pos()));
-		_bitsPerSample = READ_LE_UINT16(wavHeader + 0x22);
+	if (_sourceFile->isOpen() && loadWAVFromStream(*_sourceFile, size, rate, flags)) {
+		_isStereo = (flags & SoundMixer::FLAG_STEREO) != 0;
+		_rate = rate;
+		if (pSize && (int)pSize < size)
+			size = pSize;
+		assert((uint32)size <= (source->size() - source->pos()));
+		_bitsPerSample = ((flags & SoundMixer::FLAG_16BITS) != 0) ? 16 : 8;
 		_samplesLeft = (size * 8) / _bitsPerSample;
 		if ((_bitsPerSample != 16) && (_bitsPerSample != 8))
 			error("WaveAudioStream: unknown wave type");
@@ -80,11 +71,11 @@ WaveAudioStream::~WaveAudioStream(void) {
 }
 
 int WaveAudioStream::readBuffer(int16 *buffer, const int numSamples) {
-	int samples = ((int)_samplesLeft < numSamples) ? (int)_samplesLeft : numSamples;
+	int samples = MIN((int)_samplesLeft, numSamples);
 	int retVal = samples;
 
 	while (samples > 0) {
-		int readBytes = (samples * (_bitsPerSample >> 3) > SMP_BUFSIZE) ? SMP_BUFSIZE : samples * (_bitsPerSample >> 3);
+		int readBytes = MIN(samples * (_bitsPerSample >> 3), SMP_BUFSIZE);
 		_sourceFile->read(_sampleBuf, readBytes);
 		if (_bitsPerSample == 16) {
 			readBytes >>= 1;
