@@ -346,7 +346,7 @@ bool MidiParser::jumpToTick (uint32 tick, bool fireEvents) {
 		}
 	}
 
-	if (!_smartJump) {
+	if (!_smartJump || !currentPos._play_pos) {
 		allNotesOff();
 	} else {
 		EventInfo targetEvent (_next_event);
@@ -362,4 +362,12 @@ bool MidiParser::jumpToTick (uint32 tick, bool fireEvents) {
 
 	_abort_parse = true;
 	return true;
+}
+
+void MidiParser::unloadMusic() {
+	resetTracking();
+	allNotesOff();
+	_num_tracks = 0;
+	_active_track = 255;
+	_abort_parse = true;
 }

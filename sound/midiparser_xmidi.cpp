@@ -34,7 +34,6 @@
 
 class MidiParser_XMIDI : public MidiParser {
 protected:
-	byte *_data;
 	NoteTimer _notes_cache[32];
 	uint32 _inserted_delta; // Track simulated deltas for note-off events
 
@@ -44,11 +43,10 @@ protected:
 	void parseNextEvent (EventInfo &info);
 
 public:
-	MidiParser_XMIDI() : _data(0), _inserted_delta(0) {}
+	MidiParser_XMIDI() : _inserted_delta(0) {}
 	~MidiParser_XMIDI() { }
 
 	bool loadMusic (byte *data, uint32 size);
-	void unloadMusic();
 };
 
 
@@ -274,7 +272,6 @@ bool MidiParser_XMIDI::loadMusic (byte *data, uint32 size) {
 		// Note that we assume the original data passed in
 		// will persist beyond this call, i.e. we do NOT
 		// copy the data to our own buffer. Take warning....
-		_data = data;
 		_ppqn = 60;
 		resetTracking();
 		setTempo (500000);
@@ -284,15 +281,6 @@ bool MidiParser_XMIDI::loadMusic (byte *data, uint32 size) {
 	}
 
 	return false;
-}
-
-void MidiParser_XMIDI::unloadMusic() {
-	resetTracking();
-	allNotesOff();
-	_inserted_delta = 0;
-	_data = 0;
-	_num_tracks = 0;
-	_active_track = 255;
 }
 
 void MidiParser_XMIDI::resetTracking() {

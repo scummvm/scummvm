@@ -160,7 +160,7 @@ public:
 	virtual ~MidiParser() { allNotesOff(); }
 
 	virtual bool loadMusic (byte *data, uint32 size) = 0;
-	virtual void unloadMusic() = 0;
+	virtual void unloadMusic();
 	virtual void property (int prop, int value);
 
 	void setMidiDriver (MidiDriver *driver) { _driver = driver; }

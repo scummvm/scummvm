@@ -34,7 +34,6 @@
 
 class MidiParser_SMF : public MidiParser {
 protected:
-	byte *_data;
 	byte *_buffer;
 	bool _malformedPitchBends;
 
@@ -43,11 +42,10 @@ protected:
 	void parseNextEvent (EventInfo &info);
 
 public:
-	MidiParser_SMF() : _data(0), _buffer(0), _malformedPitchBends(false) {}
+	MidiParser_SMF() : _buffer(0), _malformedPitchBends(false) {}
 	~MidiParser_SMF();
 
 	bool loadMusic (byte *data, uint32 size);
-	void unloadMusic();
 	void property (int property, int value);
 };
 
@@ -235,11 +233,8 @@ bool MidiParser_SMF::loadMusic (byte *data, uint32 size) {
 	if (midi_type == 1) {
 		_buffer = (byte *) calloc (size, 1);
 		compressToType0();
-		_data = _buffer;
 		_num_tracks = 1;
 		_tracks[0] = _buffer;
-	} else {
-		_data = data;
 	}
 
 	// Note that we assume the original data passed in
@@ -365,14 +360,6 @@ void MidiParser_SMF::compressToType0() {
 	}
 
 	*output++ = 0x00;
-}
-
-void MidiParser_SMF::unloadMusic() {
-	resetTracking();
-	allNotesOff();
-	_data = 0;
-	_num_tracks = 0;
-	_active_track = 255;
 }
 
 MidiParser *MidiParser::createParser_SMF() { return new MidiParser_SMF; }

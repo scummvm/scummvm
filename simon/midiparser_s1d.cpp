@@ -46,7 +46,6 @@ public:
 	MidiParser_S1D() : _data(0), _no_delta(false) {}
 
 	bool loadMusic (byte *data, uint32 size);
-	void unloadMusic();
 };
 
 
@@ -158,14 +157,6 @@ bool MidiParser_S1D::loadMusic (byte *data, uint32 size) {
 void MidiParser_S1D::resetTracking() {
 	MidiParser::resetTracking();
 	_no_delta = false;
-}
-
-void MidiParser_S1D::unloadMusic() {
-	resetTracking();
-	allNotesOff();
-	_data = 0;
-	_num_tracks = 0;
-	_active_track = 255;
 }
 
 MidiParser *MidiParser_createS1D() { return new MidiParser_S1D; }

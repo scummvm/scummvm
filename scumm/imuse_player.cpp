@@ -145,7 +145,7 @@ bool Player::isFadingOut() {
 
 void Player::clear() {
 	if (_parser)
-		_parser->jumpToTick (0);
+		_parser->unloadMusic();
 	uninit_parts();
 	_se->ImFireAllTriggers (_id);
 	_active = false;
