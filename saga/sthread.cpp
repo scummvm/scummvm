@@ -62,6 +62,9 @@ R_SCRIPT_THREAD *Script::SThreadCreate() {
 	new_thread->stackPtr = ARRAYSIZE(new_thread->stackBuf) - 1;
 	setFramePtr(new_thread, new_thread->stackPtr);
 
+	new_thread->flags = kTFlagWaiting;
+	new_thread->waitType = kTWaitPause;
+
 	dataBuffer(4)->len = ARRAYSIZE(new_thread->threadVars);
 	dataBuffer(4)->data = new_thread->threadVars;
 
@@ -69,26 +72,66 @@ R_SCRIPT_THREAD *Script::SThreadCreate() {
 }
 
 int Script::SThreadDestroy(R_SCRIPT_THREAD *thread) {
+	YS_DL_NODE *walk_p;
+	R_SCRIPT_THREAD *th;
+
 	if (thread == NULL) {
 		return R_FAILURE;
+	}
+
+	for (walk_p = ys_dll_head(threadList()); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
+		th = (R_SCRIPT_THREAD *)ys_dll_get_data(walk_p);
+		if (thread == th) {
+			ys_dll_delete(walk_p);
+			break;
+		}
 	}
 
 	return R_SUCCESS;
 }
 
-int Script::SThreadExecThreads(int msec) {
-	YS_DL_NODE *walk_p;
+int Script::SThreadExecThreads(uint msec) {
+	YS_DL_NODE *walk_p, *next_p;
 	R_SCRIPT_THREAD *thread;
 
 	if (!isInitialized()) {
 		return R_FAILURE;
 	}
 
-	for (walk_p = ys_dll_head(threadList()); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
+	walk_p = ys_dll_head(threadList());
+
+	while (walk_p != NULL) {
+		next_p = ys_dll_next(walk_p);
+
 		thread = (R_SCRIPT_THREAD *)ys_dll_get_data(walk_p);
-		if (thread->executing) {
-			SThreadRun(thread, STHREAD_DEF_INSTR_COUNT, msec);
+
+		if (thread->flags & (kTFlagFinished | kTFlagAborted)) {
+			//if (thread->flags & kTFlagFinished) // FIXME. Missing function
+
+			SThreadDestroy(thread);
+			walk_p = next_p;
+			continue;
 		}
+
+		if (thread->flags & kTFlagWaiting) {
+			switch(thread->waitType) {
+			case kTWaitDelay:
+				if (thread->sleepTime < msec) {
+					thread->sleepTime = 0;
+				} else {
+					thread->sleepTime -= msec;
+				}
+
+				if (thread->sleepTime == 0)
+					thread->flags &= ~kTFlagWaiting;
+				break;
+			}
+		}
+
+		if (!(thread->flags & kTFlagWaiting))
+			SThreadRun(thread, STHREAD_TIMESLICE);
+
+		walk_p = next_p;
 	}
 
 	return R_SUCCESS;
@@ -128,9 +171,19 @@ int Script::SThreadExecute(R_SCRIPT_THREAD *thread, int ep_num) {
 	SThreadSetEntrypoint(thread, ep_num);
 
 	thread->i_offset = thread->ep_offset;
-	thread->executing = 1;
+	thread->flags = kTFlagNone;
 
 	return R_SUCCESS;
+}
+
+void Script::SThreadAbortAll(void) {
+	// TODO: stop current speech
+
+	if (_abortEnabled) 
+		_skipSpeeches = true;
+
+	for (int i = 0; i < 10; i++)
+		_vm->_script->SThreadExecThreads(0);
 }
 
 unsigned char *Script::SThreadGetReadPtr(R_SCRIPT_THREAD *thread) {
@@ -177,7 +230,7 @@ int Script::SThreadDebugStep() {
 	return R_SUCCESS;
 }
 
-int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
+int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit) {
 	int instr_count;
 	uint32 saved_offset;
 	SDataWord_T param1;
@@ -199,7 +252,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 	if ((thread == _dbg_thread) && _dbg_singlestep) {
 		if (_dbg_dostep) {
 			debug_print = 1;
-			thread->sleep_time = 0;
+			thread->sleepTime = 0;
 			instr_limit = 1;
 			_dbg_dostep = 0;
 		} else {
@@ -215,18 +268,8 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 	scriptS.seek(thread->i_offset);
 
 	for (instr_count = 0; instr_count < instr_limit; instr_count++) {
-		if ((!thread->executing) || (thread->sem.hold_count)) {
-			break;
-		}
-
-		thread->sleep_time -= msec;
-		if (thread->sleep_time < 0) {
-			thread->sleep_time = 0;
-		}
-
-		if (thread->sleep_time) {
-			break;
-		}
+		if (thread->sem.hold_count)
+			break;                                                  
 
 		saved_offset = thread->i_offset;
 		in_char = scriptS.readByte();
@@ -341,7 +384,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 				func_num = scriptS.readUint16LE();
 				if (func_num >= R_SFUNC_NUM) {
 					_vm->_console->print(S_ERROR_PREFIX "Invalid script function number: (%X)\n", func_num);
-					thread->executing = 0;
+					thread->flags |= kTFlagAborted;
 					break;
 				}
 
@@ -359,8 +402,16 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 						_vm->_console->print(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->i_offset, func_num);
 					}
 
-					if (in_char == 0x18)
+					if (func_num == 16) { // SF_gotoScene
+						instr_count = instr_limit; // break the loop
+						break;
+					}
+
+					if (in_char == 0x18) // CALL function
 						thread->push(thread->retVal);
+
+					if (thread->flags & kTFlagAsleep)
+						instr_count = instr_limit;	// break out of loop!
 				}
 			}
 			break;
@@ -378,7 +429,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			setFramePtr(thread, thread->pop());
 			if (thread->stackSize() == 0) {
 				_vm->_console->print("Script execution complete.");
-				thread->executing = 0;
+				thread->flags |= kTFlagFinished;
 			} else {
 				thread->i_offset = thread->pop();
 				/* int n_args = */ thread->pop();
@@ -765,7 +816,7 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 		default:
 
 			_vm->_console->print(S_ERROR_PREFIX "%X: Invalid opcode encountered: " "(%X).\n", thread->i_offset, in_char);
-			thread->executing = 0;
+			thread->flags |= kTFlagAborted;
 			break;
 		}
 
@@ -777,9 +828,9 @@ int Script::SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 		}
 		if (unhandled) {
 			_vm->_console->print(S_ERROR_PREFIX "%X: Unhandled opcode.\n", thread->i_offset);
-			thread->executing = 0;
+			thread->flags |= kTFlagAborted;
 		}
-		if (thread->executing && debug_print) {
+		if ((thread->flags == kTFlagNone) && debug_print) {
 			SDebugPrintInstr(thread);
 		}
 	}

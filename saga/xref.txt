@@ -59,8 +59,8 @@ Scene.c
 
 Interp.c
 ========
- dispatchThreads()         STHREAD_ExecThreads()
- runThread()               STHREAD_completeThread()
+ dispatchThreads()         SThreadExecThreads()
+ runThread()               SThreadCompleteThread()
  moduleList                _scriptLUT
  ModuleEntry->codeID       _scriptLUT->script_rn
  ModuleEntry->strID        _scriptLUT->diag_list_rn
@@ -69,3 +69,7 @@ Interp.c
  threadBase.theObject      threadVars[kVarObject]
  threadBase.withObject     threadVars[kVarWithObject]
  threadBase.theActor       threadVars[kVarActor]
+
+Actor.c
+=======
+ abortAllSpeeches()        SThreadAbortAll()

@@ -64,6 +64,8 @@ Script::Script() {
 	_scriptLUTEntryLen = 0;
 	_currentScript = 0;
 	_threadList = 0;
+	_abortEnabled = true;
+	_skipSpeeches = false;
 	memset(_dataBuf, 0, sizeof(_dataBuf));
 	
 	debug(0, "Initializing scripting subsystem");

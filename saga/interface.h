@@ -77,8 +77,9 @@ enum INTERFACE_UPDATE_FLAGS {
 #define IHNM_RPORTRAIT_Y -1
 
 enum R_PANEL_MODES {
-	PANEL_COMMAND,
-	PANEL_DIALOGUE
+	kPanelNone,
+	kPanelCommand,
+	kPanelDialogue
 };
 
 enum R_BUTTON_FLAGS {
@@ -164,7 +165,8 @@ class Interface {
 	int registerLang();
 	int activate();
 	int deactivate();
-	int setMode(R_PANEL_MODES mode);
+	int setMode(int mode);
+	int getMode(void) { return _panelMode; }
 	int setStatusText(const char *new_txt);
 	int loadScenePortraits(int res);
 	int setLeftPortrait(int portrait);
@@ -188,7 +190,7 @@ class Interface {
 	int _active;
 	R_RSCFILE_CONTEXT *_interfaceContext;
 	R_INTERFACE_DESC _iDesc;
-	R_PANEL_MODES _panelMode;
+	int _panelMode;
 	R_INTERFACE_PANEL _cPanel;
 	R_INTERFACE_PANEL _dPanel;
 	char _statusText[R_STATUS_TEXT_LEN];

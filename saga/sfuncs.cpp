@@ -59,7 +59,7 @@ void Script::setupScriptFuncList(void) {
 		{13, 0, NULL},
 		{14, 2, OPCODE(SF_faceTowards)},
 		{15, 2, OPCODE(SF_setFollower)},
-		{16, 0, NULL},
+		{16, 2, OPCODE(SF_gotoScene)},
 		{17, 0, NULL},
 		{18, 0, NULL},
 		{19, 0, NULL},
@@ -127,14 +127,17 @@ void Script::setupScriptFuncList(void) {
 
 // Script function #1 (0x01) blocking
 // Suspends thread execution for the specified time period
-// Param1: time to suspend ( units? )
 int Script::SF_sleep(R_SCRIPTFUNC_PARAMS) {
 	SDataWord_T time_param;
-	int time;
+	long time;
 
-	time_param = thread->pop();
-	time = _vm->_sdata->readWordU(time_param);
-	thread->sleep_time = time * 10;
+	if (!_skipSpeeches) {
+		time_param = thread->pop();
+		time = _vm->_sdata->readWordU(time_param);
+		time = time * 10;  // 72.8 ticks per second
+		thread->flags |= kTFlagWaiting;	// put thread to sleep
+		thread->waitType = kTWaitDelay;
+	}
 	return R_SUCCESS;
 }
 
@@ -171,7 +174,7 @@ int Script::SF_setStatusText(R_SCRIPTFUNC_PARAMS) {
 
 // Script function #5 (0x05)
 int Script::SF_commandMode(R_SCRIPTFUNC_PARAMS) {
-	return _vm->_interface->setMode(PANEL_COMMAND);
+	return _vm->_interface->setMode(kPanelCommand);
 }
 
 // Script function #6 (0x06) blocking
@@ -276,7 +279,7 @@ int Script::SF_freezeInterface(R_SCRIPTFUNC_PARAMS) {
 // Script function #12 (0x0C)
 // Disables mouse input, etc.
 int Script::SF_dialogMode(R_SCRIPTFUNC_PARAMS) {
-	return _vm->_interface->setMode(PANEL_DIALOGUE);
+	return _vm->_interface->setMode(kPanelDialogue);
 }
 
 // Script function #14 (0x0E)
@@ -288,6 +291,13 @@ int Script::SF_faceTowards(R_SCRIPTFUNC_PARAMS) {
 
 // Script function #15 (0x0F)
 int Script::SF_setFollower(R_SCRIPTFUNC_PARAMS) {
+	thread->pop();
+	thread->pop();
+	return R_SUCCESS;
+}
+
+// Script function #16 (0x10)
+int Script::SF_gotoScene(R_SCRIPTFUNC_PARAMS) {
 	thread->pop();
 	thread->pop();
 	return R_SUCCESS;
@@ -641,9 +651,7 @@ int Script::SF_placeActor(R_SCRIPTFUNC_PARAMS) {
 // game cinematic. Pushes a zero or positive value if the game 
 // has not been interrupted.
 int Script::SF_checkUserInterrupt(R_SCRIPTFUNC_PARAMS) {
-	thread->retVal = 0;
-
-	// INCOMPLETE
+	thread->retVal = (_skipSpeeches == true);
 
 	return R_SUCCESS;
 }
@@ -734,7 +742,13 @@ int Script::SF_playMusic(R_SCRIPTFUNC_PARAMS) {
 
 // Script function #69
 int Script::SF_enableEscape(R_SCRIPTFUNC_PARAMS) {
-	thread->pop();
+	if (thread->pop())
+		_abortEnabled = true;
+	else {
+		_skipSpeeches = false;
+		_abortEnabled = false;
+	}
+	
 	return R_SUCCESS;
 }
 

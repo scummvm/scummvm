@@ -62,7 +62,7 @@ enum R_SCRIPT_VERBS {
 	S_VERB_GIVE
 };
 
-#define STHREAD_DEF_INSTR_COUNT 8
+#define STHREAD_TIMESLICE 8
 
 struct R_SEMAPHORE {
 	int hold_count;
@@ -75,15 +75,35 @@ enum {
 	kVarActor
 };
 
-struct R_SCRIPT_THREAD {
-	int executing;
+enum {
+	kTFlagNone = 0,
+	kTFlagWaiting = 1,	// wait for even denoted in waitType
+	kTFlagFinished = 2,
+	kTFlagAborted = 4,
+	kTFlagAsleep = 7	// Combination of all flags which can halt a thread
+};
 
-	int sleep_time;
+enum {
+	kTWaitNone = 0,		// waiting for nothing
+	kTWaitDelay,		// waiting for a timer
+	kTWaitSpeech,		// waiting for speech to finish
+	kTWaitDialogEnd,	// waiting for my dialog to finish
+	kTWaitDialogBegin,	// waiting for other dialog to finish
+	kTWaitWalk,			// waiting to finish walking
+	kTWaitRequest,		// a request is up
+	kTWaitPause
+};
+
+struct R_SCRIPT_THREAD {
+	int flags;
+	int waitType;
+
+	uint sleepTime;
 	int ep_num; // Entrypoint number
 	unsigned long ep_offset; // Entrypoint offset
 	unsigned long i_offset; // Instruction offset
 
-	R_SEMAPHORE sem;
+	R_SEMAPHORE sem; // FIXME: no equivalent. should be replaced with flags
 
 	// The scripts are allowed to access the stack like any other memory
 	// area. It's therefore probably quite important that our stacks work
@@ -195,6 +215,9 @@ protected:
 	R_SCRIPT_DATABUF *_dataBuf[R_SCRIPT_DATABUF_NUM];
 	YS_DL_LIST *_threadList;
 
+	bool _skipSpeeches;
+	bool _abortEnabled;
+
 public:
 	int _dbg_singlestep;
 	int _dbg_dostep;
@@ -204,19 +227,20 @@ public:
 public:
 	R_SCRIPT_THREAD *SThreadCreate();
 	int SThreadExecute(R_SCRIPT_THREAD *thread, int ep_num);
-	int SThreadExecThreads(int msec);
+	int SThreadExecThreads(uint msec);
 	int SThreadHoldSem(R_SEMAPHORE *sem);
 	int SThreadReleaseSem(R_SEMAPHORE *sem);
 	int SThreadDebugStep();
 	void SThreadCompleteThread(void);
 	int SThreadDestroy(R_SCRIPT_THREAD *thread);
+	void SThreadAbortAll(void);
 
 private:
 	void setFramePtr(R_SCRIPT_THREAD *thread, int newPtr);
 	unsigned char *SThreadGetReadPtr(R_SCRIPT_THREAD *thread);
 	unsigned long SThreadGetReadOffset(const byte *read_p);
 	size_t SThreadGetReadLen(R_SCRIPT_THREAD *thread);
-	int SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit, int msec);
+	int SThreadRun(R_SCRIPT_THREAD *thread, int instr_limit);
 	int SThreadSetEntrypoint(R_SCRIPT_THREAD *thread, int ep_num);
 
 private:
@@ -276,6 +300,7 @@ private:
 	int SF_playMusic(R_SCRIPTFUNC_PARAMS);
 	int SF_enableEscape(R_SCRIPTFUNC_PARAMS);
 	int SF_playSound(R_SCRIPTFUNC_PARAMS);
+	int SF_gotoScene(R_SCRIPTFUNC_PARAMS);
 };
 
 } // End of namespace Saga

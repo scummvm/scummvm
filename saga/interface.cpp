@@ -218,7 +218,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_activeVerb = I_VERB_WALKTO;
 
 	_active = 0;
-	_panelMode = PANEL_COMMAND;
+	_panelMode = kPanelNone;
 	*_statusText = 0;
 
 	_initialized = true;
@@ -241,7 +241,7 @@ int Interface::deactivate() {
 	return R_SUCCESS;
 }
 
-int Interface::setMode(R_PANEL_MODES mode) {
+int Interface::setMode(int mode) {
 	// TODO: Is this where we should hide/show the mouse cursor?
 
 	_panelMode = mode;
@@ -311,7 +311,7 @@ int Interface::draw() {
 	_vm->_gfx->drawRect(back_buf, &rect, _iDesc.status_bgcol);
 
 	// Draw command panel background
-	if (_panelMode == PANEL_COMMAND) {
+	if (_panelMode == kPanelCommand) {
 		xbase = _cPanel.x;
 		ybase = _cPanel.y;
 
@@ -337,7 +337,7 @@ int Interface::draw() {
 
 	_vm->_sprite->draw(back_buf, _defPortraits, _leftPortrait, lportrait_x, lportrait_y);
 
-	if (_panelMode == PANEL_DIALOGUE && _iDesc.rportrait_x >= 0) {
+	if (_panelMode == kPanelDialogue && _iDesc.rportrait_x >= 0) {
 		rportrait_x = xbase + _iDesc.rportrait_x;
 		rportrait_y = ybase + _iDesc.rportrait_y;
 
@@ -366,7 +366,7 @@ int Interface::update(const Point& imousePt, int update_flag) {
 	// Get game display info
 	GAME_GetDisplayInfo(&g_di);
 
-	if (_panelMode == PANEL_COMMAND) {
+	if (_panelMode == kPanelCommand) {
 		// Update playfield space ( only if cursor is inside )
 		if (imouse_y < g_di.scene_h) {
 			// Mouse is in playfield space

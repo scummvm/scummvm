@@ -104,7 +104,10 @@ int SagaEngine::processInput() {
 				break;
 			case 27: // Esc
 				// Skip to next scene skip target
-				_vm->_scene->skipScene();
+				if (!_vm->_interface->getMode() == kPanelNone) // FIXME: hack
+					_vm->_script->SThreadAbortAll();
+				else
+					_vm->_scene->skipScene();
 				break;
 			default:
 				break;
