@@ -83,7 +83,7 @@ void Insane::turnBen(bool controllable) {
 			if (_currEnemy == EN_TORQUE)
 				buttons = 0;
 		}
-		debug(1, "00:%d 01:%d 02:%d 03:%d", _actor[0].act[0].state, 
+		debug(5, "00:%d 01:%d 02:%d 03:%d", _actor[0].act[0].state, 
 				_actor[0].act[1].state, _actor[0].act[2].state, _actor[0].act[3].state);
 		actor01Reaction(buttons);
 		actor02Reaction(buttons);
@@ -504,198 +504,54 @@ void Insane::actor02Reaction(int32 buttons) {
 	int32 tmp, tmp2;
 	
 	switch(_actor[0].act[2].state) {
-	case 106:
+	case 1:
 		smlayer_setActorLayer(0, 2, 5);
-		_actor[0].weaponClass = 1;
+		_actor[0].weaponClass = 2;
 		_actor[0].kicking = false;
-		smlayer_setActorFacing(0, 2, 29, 180);
-		_actor[0].act[2].state = 107;
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 107:
-		smlayer_setActorLayer(0, 2, 5);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		if (_actor[0].act[2].frame >= 9) {
-			_actor[0].act[2].state = 1;
-			_actor[0].inventory[INV_MACE] = 0;
-			smlayer_startVoice(318);
-			switchBenWeapon();
+
+		switch (_actor[0].tilt) {
+		case -3:
+			if (_actor[0].act[2].animTilt != -3) {
+				smlayer_setActorFacing(0, 2, 6, 180);
+				_actor[0].act[2].animTilt = -3;
+			}
+			break;
+		case -2:
+			if (_actor[0].field_8 == 48)
+				smlayer_setActorFacing(0, 2, 7, 180);
+			_actor[0].act[2].animTilt = -2;
+			break;
+		case -1:
+			if (_actor[0].field_8 == 46)
+				smlayer_setActorFacing(0, 2, 8, 180);
+			_actor[0].act[2].animTilt = -1;
+			break;
+		case 0:
+			if (_actor[0].act[2].animTilt) {
+				smlayer_setActorFacing(0, 2, 9, 180);
+				_actor[0].act[2].animTilt = 0;
+			}
+			break;
+		case 1:
+			if (_actor[0].field_8 == 49)
+				smlayer_setActorFacing(0, 2, 10, 180);
+			_actor[0].act[2].animTilt = 1;
+			break;
+		case 2:
+			if (_actor[0].field_8 == 51)
+				smlayer_setActorFacing(0, 2, 11, 180);
+			_actor[0].act[2].animTilt = 2;
+			break;
+		case 3:
+			if (_actor[0].act[2].animTilt != 3) {
+				smlayer_setActorFacing(0, 2, 12, 180);
+				_actor[0].act[2].animTilt = 3;
+			}
+			break;
+		default:
+			break;
 		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 104:
-		smlayer_setActorLayer(0, 2, 5);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		smlayer_setActorFacing(0, 2, 28, 180);
-		_actor[0].act[2].state = 105;
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 105:
-		smlayer_setActorLayer(0, 2, 5);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		if (_actor[0].act[2].frame >= 5) {
-			_actor[0].act[2].state = 1;
-			_actor[0].inventory[INV_MACE] = 0;
-			smlayer_startVoice(318);
-			switchBenWeapon();
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 108:
-		smlayer_setActorLayer(0, 2, 5);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		smlayer_setActorFacing(0, 2, 28, 180);
-		_actor[0].act[2].state = 109;
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 109:
-		smlayer_setActorLayer(0, 2, 5);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		if (_actor[0].act[2].frame >= 5) {
-			_actor[0].act[2].state = 1;
-			_actor[0].inventory[INV_CHAIN] = 0; // Chain
-			smlayer_startVoice(318);
-			switchBenWeapon();
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 73:
-		smlayer_setActorLayer(0, 2, 6);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		_actor[0].field_44 = true;
-		if (_actor[0].act[2].frame >= 2 && !_kickBenProgress) {
-			smlayer_setActorFacing(0, 2, 19, 180);
-			_actor[0].act[2].state = 74;
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 74:
-		smlayer_setActorLayer(0, 2, 6);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		_actor[0].field_44 = false;
-		if (_actor[0].act[2].frame >= 2) {
-			smlayer_setActorFacing(0, 2, 9, 180);
-			_actor[0].act[2].state = 1;
-			_actor[0].weaponClass = 2;
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 79:
-		smlayer_setActorLayer(0, 2, 6);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		_actor[0].field_44 = true;
-		if (_actor[0].act[2].frame >= 2) {
-			smlayer_setActorFacing(0, 2, 23, 180);
-			_actor[0].act[2].state = 80;
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 80:
-		smlayer_setActorLayer(0, 2, 6);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		_actor[0].field_44 = false;
-		if (_actor[0].act[2].frame >= 6) {
-			smlayer_setActorFacing(0, 2, 25, 180);
-			_actor[0].act[2].state = 63;
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 81:
-		smlayer_setActorLayer(0, 2, 6);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		_actor[0].field_44 = true;
-		if (_actor[0].act[2].frame >= 2 && !_kickBenProgress) {
-			smlayer_setActorFacing(0, 2, 23, 180);
-			_actor[0].act[2].state = 82;
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 82:
-		smlayer_setActorLayer(0, 2, 6);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		_actor[0].field_44 = false;
-		if (_actor[0].act[2].frame >= 3) {
-			smlayer_setActorFacing(0, 2, 26, 180);
-			_actor[0].act[2].state = 64;
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 77:
-		smlayer_setActorLayer(0, 2, 6);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		_actor[0].field_44 = true;
-		if (_actor[0].act[2].frame >= 2) {
-			smlayer_setActorFacing(0, 2, 23, 180);
-			_actor[0].act[2].state = 78;
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 78:
-		smlayer_setActorLayer(0, 2, 6);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		_actor[0].field_44 = false;
-		if (_actor[0].act[2].frame >= 5) {
-			smlayer_setActorFacing(0, 2, 25, 180);
-			_actor[0].act[2].state = 65;
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 83:
-		smlayer_setActorLayer(0, 2, 6);
-		_actor[0].weaponClass = 0;
-		_actor[0].kicking = false;
-		_actor[0].field_44 = true;
-		if (_actor[0].act[2].frame >= 2 && !_kickBenProgress) {
-			smlayer_setActorFacing(0, 2, 23, 180);
-			_actor[0].act[2].state = 84;
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 84:
-		smlayer_setActorLayer(0, 2, 6);
-		_actor[0].weaponClass = 0;
-		_actor[0].kicking = false;
-		_actor[0].field_44 = false;
-		if (_actor[0].act[2].frame >= 5) {
-			smlayer_setActorFacing(0, 2, 25, 180);
-			_actor[0].act[2].state = 66;
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 75:
-		smlayer_setActorLayer(0, 2, 6);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		_actor[0].field_44 = true;
-		if (_actor[0].act[2].frame >= 4 && !_kickBenProgress) {
-			smlayer_setActorFacing(0, 2, 23, 180);
-			_actor[0].act[2].state = 76;
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 76:
-		smlayer_setActorLayer(0, 2, 6);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		_actor[0].field_44 = false;
-		if (_actor[0].act[2].frame >= 4) {
-			smlayer_setActorFacing(0, 2, 25, 180);
-			_actor[0].act[2].state = 62;
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		_actor[0].act[2].tilt = 0;
 		break;
 	case 2:
 		smlayer_setActorLayer(0, 2, 4);
@@ -746,110 +602,6 @@ void Insane::actor02Reaction(int32 buttons) {
 	case 5:
 		smlayer_setActorLayer(0, 2, 5);
 		break;
-	case 10:
-		smlayer_setActorLayer(0, 2, 4);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = true;
-		smlayer_setActorFacing(0, 2, 19, 180);
-		_actor[0].act[2].state = 11;
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		smlayer_startSfx(75);
-		break;
-	case 11:
-		smlayer_setActorLayer(0, 2, 4);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = true;
-		if (_actor[0].act[2].frame >= 2) {
-			if (_currEnemy == EN_VULTM2) {
-				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) &&
-					(_actor[1].x - _actor[0].x >= weaponMinRange(0)) &&
-					calcEnemyDamage(0, 0)) {
-					smlayer_setActorFacing(0, 2, 20, 180);
-					_actor[0].act[2].state = 97;
-					_actor[0].act[2].room = 0;
-					_actor[0].act[1].room = 0;
-					_actor[0].act[0].room = 0;
-					smlayer_setActorLayer(0, 2, 25);
-					smlayer_setActorCostume(1, 2, readArray(45));
-					smlayer_setActorFacing(1, 2, 6, 180);
-					smlayer_startSfx(101);
-					_actor[1].act[2].state = 97;
-					_actor[1].lost = true;
-					_actor[1].act[2].room = 1;
-					_actor[1].act[1].room = 0;
-					_actor[1].act[0].room = 0;
-				} else {
-					smlayer_setActorFacing(0, 2, 20, 180);
-					_actor[0].act[2].state = 12;
-				}
-			} else {
-				smlayer_setActorFacing(0, 2, 20, 180);
-				_actor[0].act[2].state = 12;
-			}
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 97:
-		smlayer_setActorLayer(0, 2, 5);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = true;
-		if (_actor[0].act[2].frame >= 5) {
-			_actor[0].act[2].room = 1;
-			_actor[0].act[1].room = 1;
-			_actor[0].act[0].room = 1;
-			smlayer_setActorFacing(0, 2, 21, 180);
-			_actor[0].act[2].state = 13;
-			_actor[0].x = _actor[1].x - 116;
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 12:
-		smlayer_setActorLayer(0, 2, 4);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = true;
-		if (_actor[0].act[2].frame >= 1) {
-			if (_currEnemy != EN_CAVEFISH) {
-				switch (_actor[1].weapon) {
-				case INV_CHAIN:
-				case INV_CHAINSAW:
-				case INV_MACE:
-				case INV_2X4:
-				case INV_DUST:
-					tmp = calcEnemyDamage(1, 1);
-					if (tmp == 1)
-						smlayer_startSfx(73);
-					if (tmp == 1000)
-						smlayer_startSfx(74);
-					break;
-				case INV_WRENCH:
-				case INV_BOOT:
-				case INV_HAND:
-					if(calcEnemyDamage(1, 0) == 1)
-						smlayer_startSfx(73);
-					break;
-				}
-			} else {
-				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) &&
-					(_actor[1].x - _actor[0].x >= weaponMinRange(0)) &&
-					!_actor[0].field_54)
-					prepareScenePropScene(1, 0, 0);
-		
-			}
-			smlayer_setActorFacing(0, 2, 21, 180);
-			_actor[0].act[2].state = 13;
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 13:
-		smlayer_setActorLayer(0, 2, 5);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		if (_actor[0].act[2].frame >= 3) {
-			smlayer_setActorFacing(0, 2, 25, 180);
-			_actor[0].act[2].state = 63;
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
 	case 6:
 		smlayer_setActorLayer(0, 2, 4);
 		_actor[0].weaponClass = 2;
@@ -897,6 +649,94 @@ void Insane::actor02Reaction(int32 buttons) {
 			smlayer_setActorCostume(0, 2, readArray(12));
 			_actor[0].field_34 = 2;
 			_actor[0].act[2].state = 1;
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 10:
+		smlayer_setActorLayer(0, 2, 4);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = true;
+		smlayer_setActorFacing(0, 2, 19, 180);
+		_actor[0].act[2].state = 11;
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		smlayer_startSfx(75);
+		break;
+	case 11:
+		smlayer_setActorLayer(0, 2, 4);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = true;
+		if (_actor[0].act[2].frame >= 2) {
+			if (_currEnemy == EN_VULTM2) {
+				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) &&
+					(_actor[1].x - _actor[0].x >= weaponMinRange(0)) &&
+					calcEnemyDamage(0, 0)) {
+					smlayer_setActorFacing(0, 2, 20, 180);
+					_actor[0].act[2].state = 97;
+					_actor[0].act[2].room = 0;
+					_actor[0].act[1].room = 0;
+					_actor[0].act[0].room = 0;
+					smlayer_setActorLayer(0, 2, 25);
+					smlayer_setActorCostume(1, 2, readArray(45));
+					smlayer_setActorFacing(1, 2, 6, 180);
+					smlayer_startSfx(101);
+					_actor[1].act[2].state = 97;
+					_actor[1].lost = true;
+					_actor[1].act[2].room = 1;
+					_actor[1].act[1].room = 0;
+					_actor[1].act[0].room = 0;
+				} else {
+					smlayer_setActorFacing(0, 2, 20, 180);
+					_actor[0].act[2].state = 12;
+				}
+			} else {
+				smlayer_setActorFacing(0, 2, 20, 180);
+				_actor[0].act[2].state = 12;
+			}
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 12:
+		smlayer_setActorLayer(0, 2, 4);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = true;
+		if (_actor[0].act[2].frame >= 1) {
+			if (_currEnemy != EN_CAVEFISH) {
+				switch (_actor[1].weapon) {
+				case INV_CHAIN:
+				case INV_CHAINSAW:
+				case INV_MACE:
+				case INV_2X4:
+				case INV_DUST:
+					tmp = calcEnemyDamage(1, 1);
+					if (tmp == 1)
+						smlayer_startSfx(73);
+					if (tmp == 1000)
+						smlayer_startSfx(74);
+					break;
+				default:
+					if(calcEnemyDamage(1, 0) == 1)
+						smlayer_startSfx(73);
+					break;
+				}
+			} else {
+				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) &&
+					(_actor[1].x - _actor[0].x >= weaponMinRange(0)) &&
+					!_actor[0].field_54)
+					prepareScenePropScene(1, 0, 0);
+		
+			}
+			smlayer_setActorFacing(0, 2, 21, 180);
+			_actor[0].act[2].state = 13;
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 13:
+		smlayer_setActorLayer(0, 2, 5);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		if (_actor[0].act[2].frame >= 3) {
+			smlayer_setActorFacing(0, 2, 25, 180);
+			_actor[0].act[2].state = 63;
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
 		break;
@@ -1011,7 +851,7 @@ void Insane::actor02Reaction(int32 buttons) {
 				break;
 			case INV_CHAINSAW:
 				if (_actor[1].kicking || _actor[1].field_44)
-					_actor[0].act[2].state = 106;
+					_actor[0].act[2].state = 20;
 				else {
 					smlayer_setActorFacing(0, 2, 20, 180);
 					_actor[0].act[2].state = 20;
@@ -1024,14 +864,14 @@ void Insane::actor02Reaction(int32 buttons) {
 					_actor[0].act[2].state = 77;
 					break;
 				}
+				// break skipped intentionally
 			default:
-				smlayer_setActorFacing(0, 2, 19, 180);
-				_actor[0].act[2].state = 19;
+				smlayer_setActorFacing(0, 2, 20, 180);
+				_actor[0].act[2].state = 20;
 				break;
 			}
-			smlayer_setActorFacing(0, 2, 20, 180);
-			_actor[0].act[2].state = 20;
 		}
+
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
 		break;
 	case 20:
@@ -1052,8 +892,8 @@ void Insane::actor02Reaction(int32 buttons) {
 						smlayer_startSfx(68);
 					break;
 				default:
-					smlayer_setActorFacing(0, 2, 19, 180);
-					_actor[0].act[2].state = 19;
+					if (calcEnemyDamage(1, 0))
+						smlayer_startSfx(67);
 					break;
 				}
 			} else {
@@ -1074,25 +914,6 @@ void Insane::actor02Reaction(int32 buttons) {
 		if (_actor[0].act[2].frame >= 6) {
 			smlayer_setActorFacing(0, 2, 25, 180);
 			_actor[0].act[2].state = 65;
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 110:
-		smlayer_setActorLayer(0, 2, 4);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		smlayer_setActorFacing(0, 2, 30, 180);
-		_actor[0].act[2].state = 111;
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 111:
-		smlayer_setActorLayer(0, 2, 4);
-		_actor[0].weaponClass = 1;
-		_actor[0].kicking = false;
-		if (_actor[0].act[2].frame >= 7) {
-			smlayer_setActorFacing(0, 2, 25, 180);
-			_actor[0].act[2].state = 65;
-			_actor[0].inventory[INV_CHAIN] = 1; // Chain
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
 		break;
@@ -1120,15 +941,14 @@ void Insane::actor02Reaction(int32 buttons) {
 				if (weaponBenIsEffective()) {
 					smlayer_setActorFacing(0, 2, 22, 180);
 					_actor[0].act[2].state = 83;
+					break;
 				}
-				break;
+				// break missed intentionally
 			default:
 				smlayer_setActorFacing(0, 2, 20, 180);
 				_actor[0].act[2].state = 24;
 				break;
 			}
-			smlayer_setActorFacing(0, 2, 21, 180);
-			_actor[0].act[2].state = 21;
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
 		break;
@@ -1192,10 +1012,6 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = true;
 		if (_actor[0].act[2].frame >= 1) {
 			switch (_actor[1].weapon) {
-			case INV_HAND:
-				smlayer_setActorFacing(0, 2, 20, 180);
-				_actor[0].act[2].state = 28;
-				break;
 			case INV_CHAIN:
 			case INV_CHAINSAW:
 			case INV_MACE:
@@ -1207,6 +1023,7 @@ void Insane::actor02Reaction(int32 buttons) {
 					_actor[0].act[2].state = 75;
 					break;
 				}
+				// break missed intentionaly
 			default:
 				smlayer_setActorFacing(0, 2, 20, 180);
 				_actor[0].act[2].state = 28;
@@ -1234,8 +1051,8 @@ void Insane::actor02Reaction(int32 buttons) {
 					if (tmp == 1000)
 						smlayer_startSfx(71);
 					break;
-				case 6:
-					if (!calcEnemyDamage(0, 1))
+				case INV_HAND:
+					if (!calcEnemyDamage(1, 0))
 						smlayer_startSfx(70);
 					break;
 				default:
@@ -1313,6 +1130,28 @@ void Insane::actor02Reaction(int32 buttons) {
 		if (_actor[0].act[2].frame >= 5) {
 			smlayer_setActorCostume(0, 2, readArray(12));
 			_actor[0].act[2].state = 1;
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 34:
+		smlayer_setActorLayer(0, 2, 5);
+		_actor[0].kicking = false;
+		
+		if (!smlayer_actorNeedRedraw(0, 2)) {
+			setBenState();
+			_actor[0].act[2].tilt = 0;
+			// for some reason there is no break at this
+			// place, so tilt gets overriden on next line
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 35:
+		smlayer_setActorLayer(0, 2, 5);
+		_actor[0].kicking = false;
+		
+		if (!smlayer_actorNeedRedraw(0, 2)) {
+			switchBenWeapon();
+			_actor[0].act[2].tilt = 0;
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
 		break;
@@ -1410,28 +1249,6 @@ void Insane::actor02Reaction(int32 buttons) {
 			_actor[0].act[2].state = 38;
 		}
 		break;
-	case 34:
-		smlayer_setActorLayer(0, 2, 5);
-		_actor[0].kicking = false;
-		
-		if (!smlayer_actorNeedRedraw(0, 2)) {
-			setBenState();
-			_actor[0].act[2].tilt = 0;
-			// for some reason there is no break at this
-			// place, so tilt gets overriden on next line
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
-	case 35:
-		smlayer_setActorLayer(0, 2, 5);
-		_actor[0].kicking = false;
-		
-		if (!smlayer_actorNeedRedraw(0, 2)) {
-			switchBenWeapon();
-			_actor[0].act[2].tilt = 0;
-		}
-		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		break;
 	case 63:
 		smlayer_setActorLayer(0, 2, 5);
 		if (_actor[0].act[2].animTilt) {
@@ -1482,54 +1299,231 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = false;
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
 		break;
-	case 1:
-		smlayer_setActorLayer(0, 2, 5);
-		_actor[0].weaponClass = 2;
+	case 73:
+		smlayer_setActorLayer(0, 2, 6);
+		_actor[0].weaponClass = 1;
 		_actor[0].kicking = false;
-
-		switch (_actor[0].tilt) {
-		case -3:
-			if (_actor[0].act[2].animTilt != -3) {
-				smlayer_setActorFacing(0, 2, 6, 180);
-				_actor[0].act[2].animTilt = -3;
-			}
-			break;
-		case -2:
-			if (_actor[0].field_8 == 48)
-				smlayer_setActorFacing(0, 2, 7, 180);
-			_actor[0].act[2].animTilt = -2;
-			break;
-		case -1:
-			if (_actor[0].field_8 == 46)
-				smlayer_setActorFacing(0, 2, 8, 180);
-			_actor[0].act[2].animTilt = -1;
-			break;
-		case 0:
-			if (_actor[0].act[2].animTilt) {
-				smlayer_setActorFacing(0, 2, 9, 180);
-				_actor[0].act[2].animTilt = 0;
-			}
-			break;
-		case 1:
-			if (_actor[0].field_8 == 49)
-				smlayer_setActorFacing(0, 2, 10, 180);
-			_actor[0].act[2].animTilt = 1;
-			break;
-		case 2:
-			if (_actor[0].field_8 == 51)
-				smlayer_setActorFacing(0, 2, 11, 180);
-			_actor[0].act[2].animTilt = 2;
-			break;
-		case 3:
-			if (_actor[0].act[2].animTilt != 3) {
-				smlayer_setActorFacing(0, 2, 12, 180);
-				_actor[0].act[2].animTilt = 3;
-			}
-			break;
-		default:
-			break;
+		_actor[0].field_44 = true;
+		if (_actor[0].act[2].frame >= 2 && !_kickBenProgress) {
+			smlayer_setActorFacing(0, 2, 19, 180);
+			_actor[0].act[2].state = 74;
 		}
-		_actor[0].act[2].tilt = 0;
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 74:
+		smlayer_setActorLayer(0, 2, 6);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		_actor[0].field_44 = false;
+		if (_actor[0].act[2].frame >= 2) {
+			smlayer_setActorFacing(0, 2, 9, 180);
+			_actor[0].act[2].state = 1;
+			_actor[0].weaponClass = 2;
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 75:
+		smlayer_setActorLayer(0, 2, 6);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		_actor[0].field_44 = true;
+		if (_actor[0].act[2].frame >= 4 && !_kickBenProgress) {
+			smlayer_setActorFacing(0, 2, 23, 180);
+			_actor[0].act[2].state = 76;
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 76:
+		smlayer_setActorLayer(0, 2, 6);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		_actor[0].field_44 = false;
+		if (_actor[0].act[2].frame >= 4) {
+			smlayer_setActorFacing(0, 2, 25, 180);
+			_actor[0].act[2].state = 62;
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 77:
+		smlayer_setActorLayer(0, 2, 6);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		_actor[0].field_44 = true;
+		if (_actor[0].act[2].frame >= 2) {
+			smlayer_setActorFacing(0, 2, 23, 180);
+			_actor[0].act[2].state = 78;
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 78:
+		smlayer_setActorLayer(0, 2, 6);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		_actor[0].field_44 = false;
+		if (_actor[0].act[2].frame >= 5) {
+			smlayer_setActorFacing(0, 2, 25, 180);
+			_actor[0].act[2].state = 65;
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 79:
+		smlayer_setActorLayer(0, 2, 6);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		_actor[0].field_44 = true;
+		if (_actor[0].act[2].frame >= 2) {
+			smlayer_setActorFacing(0, 2, 23, 180);
+			_actor[0].act[2].state = 80;
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 80:
+		smlayer_setActorLayer(0, 2, 6);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		_actor[0].field_44 = false;
+		if (_actor[0].act[2].frame >= 6) {
+			smlayer_setActorFacing(0, 2, 25, 180);
+			_actor[0].act[2].state = 63;
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 81:
+		smlayer_setActorLayer(0, 2, 6);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		_actor[0].field_44 = true;
+		if (_actor[0].act[2].frame >= 2 && !_kickBenProgress) {
+			smlayer_setActorFacing(0, 2, 23, 180);
+			_actor[0].act[2].state = 82;
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 82:
+		smlayer_setActorLayer(0, 2, 6);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		_actor[0].field_44 = false;
+		if (_actor[0].act[2].frame >= 3) {
+			smlayer_setActorFacing(0, 2, 26, 180);
+			_actor[0].act[2].state = 64;
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 83:
+		smlayer_setActorLayer(0, 2, 6);
+		_actor[0].weaponClass = 0;
+		_actor[0].kicking = false;
+		_actor[0].field_44 = true;
+		if (_actor[0].act[2].frame >= 2 && !_kickBenProgress) {
+			smlayer_setActorFacing(0, 2, 23, 180);
+			_actor[0].act[2].state = 84;
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 84:
+		smlayer_setActorLayer(0, 2, 6);
+		_actor[0].weaponClass = 0;
+		_actor[0].kicking = false;
+		_actor[0].field_44 = false;
+		if (_actor[0].act[2].frame >= 5) {
+			smlayer_setActorFacing(0, 2, 25, 180);
+			_actor[0].act[2].state = 66;
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 97:
+		smlayer_setActorLayer(0, 2, 5);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = true;
+		if (_actor[0].act[2].frame >= 5) {
+			_actor[0].act[2].room = 1;
+			_actor[0].act[1].room = 1;
+			_actor[0].act[0].room = 1;
+			smlayer_setActorFacing(0, 2, 21, 180);
+			_actor[0].act[2].state = 13;
+			_actor[0].x = _actor[1].x - 116;
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 104:
+		smlayer_setActorLayer(0, 2, 5);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		smlayer_setActorFacing(0, 2, 28, 180);
+		_actor[0].act[2].state = 105;
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 105:
+		smlayer_setActorLayer(0, 2, 5);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		if (_actor[0].act[2].frame >= 5) {
+			_actor[0].act[2].state = 1;
+			_actor[0].inventory[INV_MACE] = 0;
+			smlayer_startVoice(318);
+			switchBenWeapon();
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 106:
+		smlayer_setActorLayer(0, 2, 5);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		smlayer_setActorFacing(0, 2, 29, 180);
+		_actor[0].act[2].state = 107;
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 107:
+		smlayer_setActorLayer(0, 2, 5);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		if (_actor[0].act[2].frame >= 9) {
+			_actor[0].act[2].state = 1;
+			_actor[0].inventory[INV_MACE] = 0;
+			smlayer_startVoice(318);
+			switchBenWeapon();
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 108:
+		smlayer_setActorLayer(0, 2, 5);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		smlayer_setActorFacing(0, 2, 28, 180);
+		_actor[0].act[2].state = 109;
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 109:
+		smlayer_setActorLayer(0, 2, 5);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		if (_actor[0].act[2].frame >= 5) {
+			_actor[0].act[2].state = 1;
+			_actor[0].inventory[INV_CHAIN] = 0; // Chain
+			smlayer_startVoice(318);
+			switchBenWeapon();
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 110:
+		smlayer_setActorLayer(0, 2, 4);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		smlayer_setActorFacing(0, 2, 30, 180);
+		_actor[0].act[2].state = 111;
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
+		break;
+	case 111:
+		smlayer_setActorLayer(0, 2, 4);
+		_actor[0].weaponClass = 1;
+		_actor[0].kicking = false;
+		if (_actor[0].act[2].frame >= 7) {
+			smlayer_setActorFacing(0, 2, 25, 180);
+			_actor[0].act[2].state = 65;
+			_actor[0].inventory[INV_CHAIN] = 1; // Chain
+		}
+		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
 		break;
 	default:
 		break;
@@ -1721,53 +1715,8 @@ void Insane::actor03Reaction(int32 buttons) {
 	int32 tmp;
 
 	switch (_actor[0].act[3].state) {
-	case 117:
-		reinitActors();
-		smlayer_setActorFacing(0, 3, 13, 180);
-		_actor[0].act[3].state = 69;
-		break;
-	case 69:
-		if (_actor[0].act[3].frame >= 2)
-			_actor[0].act[3].state = 70;
-		break;
-	case 70:
-		if (_actor[0].scenePropSubIdx) {
-			smlayer_setActorFacing(0, 3, 4, 180);
-			tmp = _currScenePropIdx + _actor[0].scenePropSubIdx;
-			if (!smlayer_startVoice(_sceneProp[tmp].sound))
-				_actor[0].runningSound = 0;
-			else
-				_actor[0].runningSound = _sceneProp[tmp].sound;
-			_actor[0].act[3].state = 72;
-		} else {
-			_actor[0].act[3].state = 118;
-		}
-		break;
-	case 72:
-		if (_actor[0].runningSound) {
-			if (!smlayer_isSoundRunning(_actor[0].runningSound)) {
-				smlayer_setActorFacing(0, 3, 5, 180);
-				_actor[0].act[3].state = 70;
-				_actor[0].scenePropSubIdx = 0;
-			}
-		} else {
-			tmp = _currScenePropIdx + _actor[0].scenePropSubIdx;
-			if (_sceneProp[tmp].counter >= _sceneProp[tmp].maxCounter) {
-				smlayer_setActorFacing(0, 3, 5, 180);
-				_actor[0].act[3].state = 70;
-				_actor[0].scenePropSubIdx = 0;
-				_actor[0].runningSound = 0;
-			}
-		}
-		break;
-	case 118:
-		smlayer_setActorFacing(0, 3, 14, 180);
-		_actor[0].act[3].state = 71;
-		break;
-	case 71:
+	case 1:
 		_actor[0].field_54 = 0;
-		if (_actor[0].act[3].frame >= 2)
-			_actor[0].act[3].state = 1;
 		break;
 	case 52:
 		if (_actor[0].runningSound)
@@ -1790,8 +1739,53 @@ void Insane::actor03Reaction(int32 buttons) {
 		break;
 	case 54:
 		break;
-	case 1:
+	case 69:
+		if (_actor[0].act[3].frame >= 2)
+			_actor[0].act[3].state = 70;
+		break;
+	case 70:
+		if (_actor[0].scenePropSubIdx) {
+			smlayer_setActorFacing(0, 3, 4, 180);
+			tmp = _currScenePropIdx + _actor[0].scenePropSubIdx;
+			if (!smlayer_startVoice(_sceneProp[tmp].sound))
+				_actor[0].runningSound = 0;
+			else
+				_actor[0].runningSound = _sceneProp[tmp].sound;
+			_actor[0].act[3].state = 72;
+		} else {
+			_actor[0].act[3].state = 118;
+		}
+		break;
+	case 71:
 		_actor[0].field_54 = 0;
+		if (_actor[0].act[3].frame >= 2)
+			_actor[0].act[3].state = 1;
+		break;
+	case 72:
+		if (_actor[0].runningSound) {
+			if (!smlayer_isSoundRunning(_actor[0].runningSound)) {
+				smlayer_setActorFacing(0, 3, 5, 180);
+				_actor[0].act[3].state = 70;
+				_actor[0].scenePropSubIdx = 0;
+			}
+		} else {
+			tmp = _currScenePropIdx + _actor[0].scenePropSubIdx;
+			if (_sceneProp[tmp].counter >= _sceneProp[tmp].maxCounter) {
+				smlayer_setActorFacing(0, 3, 5, 180);
+				_actor[0].act[3].state = 70;
+				_actor[0].scenePropSubIdx = 0;
+				_actor[0].runningSound = 0;
+			}
+		}
+		break;
+	case 117:
+		reinitActors();
+		smlayer_setActorFacing(0, 3, 13, 180);
+		_actor[0].act[3].state = 69;
+		break;
+	case 118:
+		smlayer_setActorFacing(0, 3, 14, 180);
+		_actor[0].act[3].state = 71;
 		break;
 	default:
 		break;

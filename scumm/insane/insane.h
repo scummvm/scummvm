@@ -169,11 +169,11 @@ class Insane {
 	bool _benHasGoggles;
 	bool _mineCaveIsNear;
 	bool _objectDetected;
+	bool _roadBumps;
 	int32 _val32d;
 	int32 _val54d;
 	int32 _val57d;
 	bool _val115_;
-	bool _val121_;
 	int32 _val211d;
 	int32 _val213d;
 	int32 _val215d;
@@ -292,7 +292,6 @@ class Insane {
 	int32 readArray(int item);
 	void writeArray(int item, int value);
 
-	int smlayer_mainLoop(void);
 	void mainLoop(void);
 	bool idx1Compare(void);
 	bool idx2Compare(void);

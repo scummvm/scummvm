@@ -51,12 +51,11 @@ void Insane::runScene(int arraynum) {
 	_currScenePropSubIdx = 0;
 	_currTrsMsg = 0;
 
-	smush_proc41();
 	smush_warpMouse(160, 100, -1);
 	putActors();
 	readState();
 
-	debug(0, "INSANE Arg: %d", readArray(0));
+	debug(5, "INSANE Arg: %d", readArray(0));
 
 	switch (readArray(0)) {
 	case 1:
@@ -131,9 +130,7 @@ void Insane::runScene(int arraynum) {
 		break;
 	}
 
-	smush_proc39();
 	putActors();
-	smush_proc40();
 	_vm->_sound->pauseSounds(0); // IMUSE_Resume();
 	_enemy[EN_ROTT3].maxdamage = 120;
 
@@ -167,7 +164,7 @@ void Insane::runScene(int arraynum) {
 }
 
 int Insane::initScene(int sceneId) {
-	debug(0, "initScene(%d)", sceneId);
+	debug(5, "initScene(%d)", sceneId);
 
 	if (_needSceneSwitch)
 		return 1;
@@ -189,7 +186,7 @@ int Insane::initScene(int sceneId) {
 void Insane::stopSceneSounds(int sceneId) {
 	int flag = 0;
 
-	debug(0, "stopSceneSounds(%d)", sceneId);
+	debug(5, "stopSceneSounds(%d)", sceneId);
 
 	switch (sceneId) {
 	case 1:
@@ -267,7 +264,6 @@ void Insane::stopSceneSounds(int sceneId) {
 	case 23:
 		break;
 	}
-	smush_proc39();
 	if (!flag)
 		return;
 
@@ -282,7 +278,7 @@ void Insane::stopSceneSounds(int sceneId) {
 }
 
 void Insane::shutCurrentScene(void) {
-	debug(0, "shutCurrentScene()");
+	debug(5, "shutCurrentScene()");
 
 	_currScenePropIdx = 0;
 	_currTrsMsg = 0;
@@ -311,7 +307,7 @@ void Insane::shutCurrentScene(void) {
 int Insane::loadSceneData(int scene, int flag, int phase) {
 	int retvalue = 1;
 
-	debug(0, "Insane::loadSceneData(%d, %d, %d)", scene, flag, phase);
+	debug(5, "Insane::loadSceneData(%d, %d, %d)", scene, flag, phase);
 	//if (phase == 1) /// FIXME
 	//	insane_unlock();
 	switch (scene) {
@@ -605,7 +601,7 @@ int Insane::loadSceneData(int scene, int flag, int phase) {
 }
 
 void Insane::setSceneCostumes(int sceneId) {
-	debug(0, "Insane::setSceneCostumes(%d)", sceneId);
+	debug(5, "Insane::setSceneCostumes(%d)", sceneId);
 
 	switch (sceneId) {
 	case 1:
@@ -631,7 +627,7 @@ void Insane::setSceneCostumes(int sceneId) {
 		return;
 		break;
 	case 21:
-		_currEnemy = EN_ROTT3;
+		_currEnemy = EN_ROTT3; //PATCH
 		setEnemyCostumes();
 		_actor[1].y = 200;
 		smlayer_setFluPalette(_smush_roadrashRip, 0);
@@ -655,7 +651,7 @@ void Insane::setSceneCostumes(int sceneId) {
 void Insane::setEnemyCostumes(void) {
 	int i;
 
-	debug(0, "setEnemyCostumes(%d)", _currEnemy);
+	debug(5, "setEnemyCostumes(%d)", _currEnemy);
 
 	smlayer_setActorCostume(0, 2, readArray(12));
 	smlayer_setActorCostume(0, 0, readArray(14));
@@ -1005,7 +1001,7 @@ void Insane::postCase0(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	if (curFrame >= maxFrame)
 		smush_rewindCurrentSan(1088, -1, -1);
 	
-	_val121_ = false;
+	_roadBumps = false;
 	_roadLeftBranch = false;
 	_roadRightBranch = false;
 	_benHasGoggles = false;
@@ -1064,7 +1060,7 @@ void Insane::postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		smush_rewindCurrentSan(1088, -1, -1);
 		smlayer_setFluPalette(_smush_goglpaltRip, 0);
 	}
-	_val121_ = false;
+	_roadBumps = false;
 	_mineCaveIsNear = false;
 	_roadLeftBranch = false;
 	_roadRightBranch = false;
@@ -1099,7 +1095,7 @@ void Insane::postCase2(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	if (curFrame >= maxFrame)
 		smush_rewindCurrentSan(1088, -1, -1);
 
-	_val121_ = false;
+	_roadBumps = false;
 	_roadLeftBranch = false;
 	_roadRightBranch = false;
 	_continueFrame = curFrame;
@@ -1113,7 +1109,7 @@ void Insane::postCase20(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	if (curFrame >= maxFrame)
 		smush_rewindCurrentSan(1088, -1, -1);
 	
-	_val121_ = false;
+	_roadBumps = false;
 	_roadLeftBranch = false;
 	_roadRightBranch = false;
 	_continueFrame = curFrame;
@@ -1331,10 +1327,12 @@ void Insane::postCase12(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				prepareScenePropScene(16, 0, 1);
 			break;
 		case EN_VULTM2:
-			turnBen(true);
-
-			prepareScenePropScene(18, 0, 1);
-			_battleScene = false;
+			if (_enemy[EN_VULTM2].occurences <= 1) {
+				turnBen(false);
+				prepareScenePropScene(18, 0, 1);
+				_battleScene = false;
+			} else
+				turnBen(true);
 			break;
 		case EN_TORQUE:
 			turnBen(false);
