@@ -309,6 +309,7 @@ bool SoundMixer::bindToSystem(OSystem *syst) {
 }
 
 void SoundMixer::stopAll() {
+	StackLock lock(_mutex);	
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i])
 			_channels[i]->destroy();
@@ -320,12 +321,13 @@ void SoundMixer::stop(int index) {
 		return;
 	}
 
+	StackLock lock(_mutex);	
 	if (_channels[index])
 		_channels[index]->destroy();
 }
 
 void SoundMixer::stopID(int id) {
-
+	StackLock lock(_mutex);	
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] != NULL && _channels[i]->_id == id) {
 			_channels[i]->destroy();
@@ -343,6 +345,7 @@ bool SoundMixer::hasActiveSFXChannel() {
 	// (and maybe also voice) here to work properly in iMuseDigital
 	// games. In the past that was achieve using the _beginSlots hack.
 	// Since we don't have that anymore, it's not that simple anymore.
+	StackLock lock(_mutex);	
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i] && !_channels[i]->isMusicChannel())
 			return true;
@@ -350,6 +353,7 @@ bool SoundMixer::hasActiveSFXChannel() {
 }
 
 bool SoundMixer::isActiveChannel(int index) {
+	StackLock lock(_mutex);	
 	if (_channels[index])
 		return _channels[index]->isActive();
 	return false;
