@@ -117,6 +117,7 @@ GameDetector::GameDetector() {
 
 	// Game specifc
 	ConfMan.registerDefault("path", "");
+	ConfMan.registerDefault("savepath", "");
 
 //	ConfMan.registerDefault("amiga", false);
 	ConfMan.registerDefault("platform", Common::kPlatformPC);
@@ -403,6 +404,11 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 
 			DO_LONG_OPTION_BOOL("aspect-ratio")
 				ConfMan.set("aspect_ratio", cmdValue, kTransientDomain);
+			END_OPTION
+
+			DO_LONG_OPTION("savepath")
+				// TODO: Verify whether the path is valid
+				ConfMan.set("savepath", option, kTransientDomain);
 			END_OPTION
 
 #ifndef DISABLE_SCUMM

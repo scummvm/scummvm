@@ -70,9 +70,7 @@ const char *Engine::getSavePath() const {
 	if (!dir || dir[0] == 0)
 		dir = ConfMan.get("savepath").c_str();
 
-	// If no save path was specified, use no directory prefix
-	if (dir == NULL)
-		dir = "";
+	assert(dir);
 
 	return dir;
 #endif
