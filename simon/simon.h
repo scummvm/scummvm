@@ -181,7 +181,6 @@ protected:
 
 	bool _mouse_pos_changed;
 	uint16 _debugMode;
-	uint16 _debugLevel;
 	uint16 _language;
 	bool _noSubtitles;
 	bool _start_mainscript;

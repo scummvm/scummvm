@@ -29,6 +29,8 @@
 #include <errno.h>
 #include <time.h>
 
+extern uint16 _debugLevel;
+
 #ifdef _WIN32_WCE
 
 extern bool toolbar_drawn;
@@ -1077,8 +1079,7 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 		}
 	}
 
-	if (_debugMode)
-		warning("loadTablesIntoMem: didn't find %d", subr_id);
+		debug(1,"loadTablesIntoMem: didn't find %d", subr_id);
 }
 
 void SimonEngine::playSting(uint a) {
@@ -1124,8 +1125,7 @@ Subroutine *SimonEngine::getSubroutineByID(uint subroutine_id) {
 			return cur;
 	}
 
-	if (_debugMode)
-		warning("getSubroutineByID: subroutine %d not found", subroutine_id);
+	debug(1,"getSubroutineByID: subroutine %d not found", subroutine_id);
 	return NULL;
 }
 
@@ -3646,9 +3646,7 @@ void SimonEngine::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte
 	h = ha->height;
 
 	if (!(h > 0 && w > 0 && ha->x + w <= 320 && ha->y + h <= 200)) {
-		if (_debugMode)
-			warning("Invalid coordinates in video_toggle_colors (%d,%d,%d,%d)", ha->x, ha->y, ha->width,
-						ha->height);
+		debug(1,"Invalid coordinates in video_toggle_colors (%d,%d,%d,%d)", ha->x, ha->y, ha->width, ha->height);
 		_lock_word &= ~0x8000;
 		return;
 	}
@@ -4728,10 +4726,10 @@ void SimonEngine::loadMusic (uint music) {
 		if (_game & GF_AMIGA) {
 			if (_game != GAME_SIMON1CD32) {
 				// TODO Add support for decruncher
-				warning("playMusic - Decrunch %dtune attempt", music);
+				debug(1,"playMusic - Decrunch %dtune attempt", music);
 			}
 			// TODO Add Protracker support for simon1amiga/cd32
-			warning("playMusic - Load %dtune attempt", music);
+			debug(1,"playMusic - Load %dtune attempt", music);
 		} else {
 			midi.stop();
 			midi.setLoop (true); // Must do this BEFORE loading music. (GMF may have its own override.)

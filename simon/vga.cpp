@@ -658,7 +658,7 @@ void SimonEngine::vc_10_draw() {
 	} else if (state.e & 1) {
 		// FIXME: vc_10_no_depack_swap should be called but is currently not supported
 		//state.depack_src = vc_10_no_depack_swap(state.depack_src);
-		warning("vc_10_no_depack_swap unimpl");
+		debug(1,"vc_10_no_depack_swap unimpl");
 		state.depack_src = vc_10_depack_swap(state.depack_src, width, height);
 	}
 
@@ -869,8 +869,7 @@ void SimonEngine::vc_10_draw() {
 		if (_game & GF_SIMON2 && state.e & 0x4 && _bit_array[10] & 0x800) {
 			state.surf_addr = state.surf2_addr;
 			state.surf_pitch = state.surf2_pitch;
-			if (_debugMode)
-				warning("vc_10_draw: (state.e&0x4)");
+			debug(1,"vc_10_draw: (state.e&0x4)");
 		}
 
 		if (state.e & 0x8) {

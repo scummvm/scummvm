@@ -31,6 +31,8 @@
 #include <errno.h>
 #include <time.h>
 
+extern uint16 _debugLevel;
+
 #ifdef _WIN32_WCE
 
 extern bool toolbar_drawn;

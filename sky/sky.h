@@ -72,7 +72,6 @@ protected:
 	bool _floppyIntro;
 
 	uint16 _debugMode;
-	uint16 _debugLevel;
 
 	int _numScreenUpdates;
 
