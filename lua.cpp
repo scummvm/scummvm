@@ -378,7 +378,7 @@ static void GetActorYawToPoint() {
 static void PutActorInSet() {
 	Actor *act = check_actor(1);
 	const char *set = "";
-	if (! lua_isnil(lua_getparam(2)))
+	if (!lua_isnil(lua_getparam(2)))
 		set = luaL_check_string(2);
 	act->putInSet(set);
 }
@@ -627,11 +627,31 @@ static void SetActorHead() {
 	act->setHead(joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
 }
 
-static void SetActorFollowBoxes() {	// Constrain actor to walkplanes?
+static void PutActorAtInterest() {
+	Actor *act = check_actor(1);
+	if (!g_engine->currScene())
+		return;
+
+	act->setPos(g_engine->currScene()->_currSetup->_interest);
+}
+
+static void SetActorFollowBoxes() {
+	Actor *act = check_actor(1);
+	bool mode = !lua_isnil(lua_getparam(2));
+
+	warning("SetActorFollowBoxes() not implemented");
+	// that is not walkbox walking, but temporary hack
+	// act->enableWalkbox(mode);
+	act->setConstrain(mode);
+}
+
+static void SetActorConstrain() {
 	Actor *act = check_actor(1);
 	bool constrain = !lua_isnil(lua_getparam(2));
 
-	act->setConstrain(constrain);
+	// that below should be enabled, but for now it's disabled realated to 
+	// above func SetActorFollowBoxes.
+//	act->setConstrain(constrain);
 }
 
 static void GetVisibleThings() {
@@ -1028,8 +1048,10 @@ static void SetSoundPosition() {
 		}
 		minVolume = check_int(3);
 		maxVolume = check_int(4);
+	} else if (lua_isnumber(lua_getparam(2))) {
+		error("SetSoundPosition() Position x,y,z as params is not suported.");
 	} else {
-		error("SetSoundPosition() Position sound params not supported.");
+		return;
 	}
 
 	if (g_engine->currScene()) {
@@ -1557,11 +1579,9 @@ STUB_FUNC(GetPointSector)
 STUB_FUNC(IsPointInSector)
 STUB_FUNC(SetActorFrustrumCull)
 STUB_FUNC(SetActorWalkDominate)
-STUB_FUNC(SetActorConstrain)
 STUB_FUNC(GetCameraActor)
 STUB_FUNC(DriveActorTo)
 STUB_FUNC(WalkActorVector)
-STUB_FUNC(PutActorAtInterest)
 STUB_FUNC(SetActorReflection)
 STUB_FUNC(GetActorRect)
 STUB_FUNC(GetActorNodeLocation)
