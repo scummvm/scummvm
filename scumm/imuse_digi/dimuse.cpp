@@ -495,21 +495,17 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 				}
 			}
 		} else if ((_vm->_gameId == GID_CMI) && (_vm->_features & GF_DEMO)) {
+			fadeOutMusic(120);
 			if (b == 2) {
-				fadeOutMusic(120);
-				startMusic("in1.imx", 2002, 0, 127);
+				startMusic("in1.imx", 1100, 0, 127);
 			} else if (b == 4) {
-				fadeOutMusic(120);
-				startMusic("in2.imx", 2004, 0, 127);
+				startMusic("in2.imx", 1120, 0, 127);
 			} else if (b == 8) {
-				fadeOutMusic(120);
-				startMusic("out1.imx", 2008, 0, 127);
+				startMusic("out1.imx", 1140, 0, 127);
 			} else if (b == 9) {
-				fadeOutMusic(120);
-				startMusic("out2.imx", 2009, 0, 127);
+				startMusic("out2.imx", 1150, 0, 127);
 			} else if (b == 16) {
-				fadeOutMusic(120);
-				startMusic("gun.imx", 2016, 0, 127);
+				startMusic("gun.imx", 1210, 0, 127);
 			} else {
 				warning("imuse digital: set state unknown for cmi demo: %d, room: %d", b, _vm->_currentRoom);
 			}

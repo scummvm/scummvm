@@ -152,7 +152,7 @@ const imuseRoomMap _digStateMusicMap[] = {
 };
 
 const imuseDigTable _digStateMusicTable[] = {
-	{0,   60, "STATE_NULL",          0, 0, ""},
+	{0, 1000, "STATE_NULL",          0, 0, ""},
 	{0, 1001, "stateNoChange",       0, 0, ""},
 	{3, 1100, "stateAstShip",        2, 0, "ASTERO~1.IMU"},
 	{3, 1120, "stateAstClose",       2, 0, "ASTERO~2.IMU"},
