@@ -233,7 +233,7 @@ void SagaEngine::go() {
 		}
 		// Per frame processing
 		_render->drawScene();
-		_system->delay_msecs(0);
+		_system->delay_msecs(10);
 	}
 }
 

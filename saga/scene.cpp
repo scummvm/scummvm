@@ -205,7 +205,7 @@ int Scene::startScene() {
 	scene_qdat = (R_SCENE_QUEUE *)ys_dll_get_data(node);
 	assert(scene_qdat != NULL);
 
-	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->scene_desc);
+	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->scene_desc, scene_qdat->fadeType);
 
 	return R_SUCCESS;
 }
@@ -245,7 +245,7 @@ int Scene::nextScene() {
 	scene_qdat = (R_SCENE_QUEUE *)ys_dll_get_data(node);
 	assert(scene_qdat != NULL);
 
-	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->scene_desc);
+	loadScene(scene_qdat->scene_n, scene_qdat->load_flag, scene_qdat->scene_proc, scene_qdat->scene_desc, scene_qdat->fadeType);
 
 	return R_SUCCESS;
 }
@@ -295,7 +295,7 @@ int Scene::skipScene() {
 			ys_dll_delete(node);
 		}
 		endScene();
-		loadScene(skip_qdat->scene_n, skip_qdat->load_flag, skip_qdat->scene_proc, skip_qdat->scene_desc);
+		loadScene(skip_qdat->scene_n, skip_qdat->load_flag, skip_qdat->scene_proc, skip_qdat->scene_desc, skip_qdat->fadeType);
 	}
 	// Search for a scene to skip to
 
@@ -321,7 +321,7 @@ int Scene::changeScene(int scene_num) {
 	}
 
 	endScene();
-	loadScene(scene_num, BY_SCENE, defaultScene, NULL);
+	loadScene(scene_num, BY_SCENE, defaultScene, NULL, false);
 
 	return R_SUCCESS;
 }
@@ -408,7 +408,7 @@ int Scene::getInfo(R_SCENE_INFO *si) {
 	return R_SUCCESS;
 }
 
-int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DESC *scene_desc_param) {
+int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DESC *scene_desc_param, int fadeType) {
 	R_SCENE_INFO scene_info;
 	uint32 res_number = 0;
 	int result;
@@ -493,6 +493,51 @@ int Scene::loadScene(int scene_num, int load_flag, R_SCENE_PROC scene_proc, R_SC
 	}
 
 	_sceneLoaded = true;
+
+	if (fadeType == SCENE_FADE || fadeType == SCENE_FADE_NO_INTERFACE) {
+		R_EVENT event;
+		R_EVENT *q_event;
+		static PALENTRY current_pal[R_PAL_ENTRIES];
+
+		// Fade to black out
+		_vm->_gfx->getCurrentPal(current_pal);
+		event.type = R_IMMEDIATE_EVENT;
+		event.code = R_PAL_EVENT;
+		event.op = EVENT_PALTOBLACK;
+		event.time = 0;
+		event.duration = PALETTE_FADE_DURATION;
+		event.data = current_pal;
+		q_event = _vm->_events->queue(&event);
+
+		if (fadeType != SCENE_FADE_NO_INTERFACE) {
+			// Activate user interface
+			event.type = R_IMMEDIATE_EVENT;
+			event.code = R_INTERFACE_EVENT;
+			event.op = EVENT_ACTIVATE;
+			event.time = 0;
+			event.duration = 0;
+			q_event = _vm->_events->chain(q_event, &event);
+		}
+
+		// Display scene background, but stay with black palette
+		event.type = R_IMMEDIATE_EVENT;
+		event.code = R_BG_EVENT;
+		event.op = EVENT_DISPLAY;
+		event.param = NO_SET_PALETTE;
+		event.time = 0;
+		event.duration = 0;
+		q_event = _vm->_events->chain(q_event, &event);
+
+		// Fade in from black to the scene background palette
+		event.type = R_IMMEDIATE_EVENT;
+		event.code = R_PAL_EVENT;
+		event.op = EVENT_BLACKTOPAL;
+		event.time = 0;
+		event.duration = PALETTE_FADE_DURATION;
+		event.data = _bg.pal;
+
+		q_event = _vm->_events->chain(q_event, &event);
+	}
 
 	if (scene_proc == NULL) {
 		_sceneProc = defaultScene;
@@ -872,6 +917,9 @@ int defaultScene(int param, R_SCENE_INFO *scene_info) {
 
 	switch (param) {
 	case SCENE_BEGIN:
+		_vm->_music->stop();
+		_vm->_sound->stopVoice();
+
 		// Set scene background
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_BG_EVENT;
@@ -896,6 +944,8 @@ int defaultScene(int param, R_SCENE_INFO *scene_info) {
 		event.time = 0;
 
 		_vm->_events->queue(&event);
+
+		debug(0, "Scene started");
 		break;
 	case SCENE_END:
 		break;

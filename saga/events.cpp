@@ -94,6 +94,10 @@ int Events::handleEvents(long msec) {
 			result = handleInterval(event_p);
 			break;
 
+		case R_IMMEDIATE_EVENT:
+			result = handleImmediate(event_p);
+			break;
+
 		default:
 			result = R_EVENT_INVALIDCODE;
 			warning("Invalid event code encountered");
@@ -216,6 +220,62 @@ int Events::handleContinuous(R_EVENT *event) {
 	}
 
 	return R_EVENT_CONTINUE;
+}
+
+int Events::handleImmediate(R_EVENT *event) {
+	double event_pc = 0.0; // Event completion percentage
+	bool event_done = false;
+
+	R_SURFACE *back_buf;
+
+	event_pc = ((double)event->duration - event->time) / event->duration;
+
+	if (event_pc >= 1.0) {
+		// Cap percentage to 100
+		event_pc = 1.0;
+		event_done = true;
+	}
+
+	if (event_pc < 0.0) {
+		// Event not signaled, skip it
+		return R_EVENT_BREAK;
+	} else if (!(event->code & R_SIGNALED)) {
+		// Signal event
+		event->code |= R_SIGNALED;
+		event_pc = 0.0;
+	}
+
+	switch (event->code & R_EVENT_MASK) {
+	case R_PAL_EVENT:
+		switch (event->op) {
+		case EVENT_BLACKTOPAL:
+			back_buf = _vm->_gfx->getBackBuffer();
+			_vm->_gfx->blackToPal(back_buf, (PALENTRY *)event->data, event_pc);
+			break;
+
+		case EVENT_PALTOBLACK:
+			back_buf = _vm->_gfx->getBackBuffer();
+			_vm->_gfx->palToBlack(back_buf, (PALENTRY *)event->data, event_pc);
+			break;
+		default:
+			break;
+		}
+		break;
+	case R_BG_EVENT:
+	case R_INTERFACE_EVENT:
+		handleOneShot(event);
+		event_done = true;
+		break;
+	default:
+		break;
+
+	}
+
+	if (event_done) {
+		return R_EVENT_DELETE;
+	}
+
+	return R_EVENT_BREAK;
 }
 
 int Events::handleOneShot(R_EVENT *event) {
@@ -388,6 +448,7 @@ int Events::initializeEvent(R_EVENT *event) {
 	case R_ONESHOT_EVENT:
 		break;
 	case R_CONTINUOUS_EVENT:
+	case R_IMMEDIATE_EVENT:
 		event->time += event->duration;
 		break;
 	case R_INTERVAL_EVENT:
@@ -461,6 +522,9 @@ int Events::processEventTime(long msec) {
 		event_p = (R_EVENT *)ys_dll_get_data(walk_node);
 		event_p->time -= msec;
 		event_count++;
+
+		if (event_p->type == R_IMMEDIATE_EVENT)
+			break;
 
 		if (event_count > R_EVENT_WARNINGCOUNT) {
 			warning("Event list exceeds %u", R_EVENT_WARNINGCOUNT);

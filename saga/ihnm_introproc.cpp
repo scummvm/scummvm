@@ -87,10 +87,10 @@ R_SCENE_DESC IHNM_IntroMovie4Desc = {
 };
 
 R_SCENE_QUEUE IHNM_IntroList[] = {
-	{0, &IHNM_IntroMovie1Desc, BY_DESC, IHNM_IntroMovieProc1, 0} ,
-	{0, &IHNM_IntroMovie2Desc, BY_DESC, IHNM_IntroMovieProc2, 0} ,
-	{0, &IHNM_IntroMovie3Desc, BY_DESC, IHNM_IntroMovieProc3, 0} ,
-	{0, &IHNM_IntroMovie4Desc, BY_DESC, IHNM_HateProc, 0}
+	{0, &IHNM_IntroMovie1Desc, BY_DESC, IHNM_IntroMovieProc1, 0, SCENE_NOFADE},
+	{0, &IHNM_IntroMovie2Desc, BY_DESC, IHNM_IntroMovieProc2, 0, SCENE_NOFADE},
+	{0, &IHNM_IntroMovie3Desc, BY_DESC, IHNM_IntroMovieProc3, 0, SCENE_NOFADE},
+	{0, &IHNM_IntroMovie4Desc, BY_DESC, IHNM_HateProc, 0, SCENE_NOFADE}
 };
 
 int IHNM_StartProc() {

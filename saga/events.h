@@ -30,7 +30,8 @@ namespace Saga {
 enum R_EVENT_TYPES {
 	R_ONESHOT_EVENT,
 	R_CONTINUOUS_EVENT,
-	R_INTERVAL_EVENT
+	R_INTERVAL_EVENT,
+	R_IMMEDIATE_EVENT
 };
 
 enum R_EVENT_FLAGS {
@@ -132,6 +133,7 @@ class Events {
 	int handleContinuous(R_EVENT * event);
 	int handleOneShot(R_EVENT * event);
 	int handleInterval(R_EVENT * event);
+	int handleImmediate(R_EVENT *event);
 	int processEventTime(long msec);
 	int initializeEvent(R_EVENT * event);
 

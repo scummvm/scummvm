@@ -53,7 +53,6 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info);
 int ITE_IntroTreeHouseProc(int param, R_SCENE_INFO *scene_info);
 int ITE_IntroFairePathProc(int param, R_SCENE_INFO *scene_info);
 int ITE_IntroFaireTentProc(int param, R_SCENE_INFO *scene_info);
-int initialScene(int param, R_SCENE_INFO *scene_info);
 
 static R_INTRO_DIALOGUE IntroDiag[] = {
 	{
@@ -124,15 +123,15 @@ static R_INTRO_DIALOGUE IntroDiag[] = {
 };
 
 R_SCENE_QUEUE ITE_IntroList[] = {
-	{ITE_INTRO_ANIM_SCENE, NULL, BY_RESOURCE, ITE_IntroAnimProc, 0},
-	{ITE_CAVE_SCENE_1, NULL, BY_RESOURCE, ITE_IntroCave1Proc, 0},
-	{ITE_CAVE_SCENE_2, NULL, BY_RESOURCE, ITE_IntroCave2Proc, 0},
-	{ITE_CAVE_SCENE_3, NULL, BY_RESOURCE, ITE_IntroCave3Proc, 0},
-	{ITE_CAVE_SCENE_4, NULL, BY_RESOURCE, ITE_IntroCave4Proc, 0},
-	{ITE_VALLEY_SCENE, NULL, BY_RESOURCE, ITE_IntroValleyProc, 0},
-	{ITE_TREEHOUSE_SCENE, NULL, BY_RESOURCE, ITE_IntroTreeHouseProc, 0},
-	{ITE_FAIREPATH_SCENE, NULL, BY_RESOURCE, ITE_IntroFairePathProc, 0},
-	{ITE_FAIRETENT_SCENE, NULL, BY_RESOURCE, ITE_IntroFaireTentProc, 0}
+	{ITE_INTRO_ANIM_SCENE, NULL, BY_RESOURCE, ITE_IntroAnimProc, 0, SCENE_NOFADE},
+	{ITE_CAVE_SCENE_1, NULL, BY_RESOURCE, ITE_IntroCave1Proc, 0, SCENE_FADE_NO_INTERFACE},
+	{ITE_CAVE_SCENE_2, NULL, BY_RESOURCE, ITE_IntroCave2Proc, 0, SCENE_NOFADE},
+	{ITE_CAVE_SCENE_3, NULL, BY_RESOURCE, ITE_IntroCave3Proc, 0, SCENE_NOFADE},
+	{ITE_CAVE_SCENE_4, NULL, BY_RESOURCE, ITE_IntroCave4Proc, 0, SCENE_NOFADE},
+	{ITE_VALLEY_SCENE, NULL, BY_RESOURCE, ITE_IntroValleyProc, 0, SCENE_FADE_NO_INTERFACE},
+	{ITE_TREEHOUSE_SCENE, NULL, BY_RESOURCE, ITE_IntroTreeHouseProc, 0, SCENE_NOFADE},
+	{ITE_FAIREPATH_SCENE, NULL, BY_RESOURCE, ITE_IntroFairePathProc, 0, SCENE_NOFADE},
+	{ITE_FAIRETENT_SCENE, NULL, BY_RESOURCE, ITE_IntroFaireTentProc, 0, SCENE_NOFADE}
 };
 
 int ITE_StartProc() {
@@ -153,7 +152,8 @@ int ITE_StartProc() {
 	first_scene.load_flag = BY_SCENE;
 	first_scene.scene_n = gs_desc.first_scene;
 	first_scene.scene_skiptarget = 1;
-	first_scene.scene_proc = initialScene;
+	first_scene.scene_proc = NULL;
+	first_scene.fadeType = SCENE_FADE;
 
 	_vm->_scene->queueScene(&first_scene);
 
@@ -242,49 +242,18 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 	int voice_pad = 50;
 	R_TEXTLIST_ENTRY text_entry;
 	R_TEXTLIST_ENTRY *entry_p;
-	PALENTRY *pal;
-	static PALENTRY current_pal[R_PAL_ENTRIES];
 	int i;
 	int font_flags = FONT_OUTLINE | FONT_CENTERED;
 
 	switch (param) {
 	case SCENE_BEGIN:
-		// Fade to black out of the intro DG/NWC logo animation
-		_vm->_gfx->getCurrentPal(current_pal);
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_PAL_EVENT;
-		event.op = EVENT_PALTOBLACK;
-		event.time = 0;
-		event.duration = PALETTE_FADE_DURATION;
-		event.data = current_pal;
-		q_event = _vm->_events->queue(&event);
-
-		// Display scene background, but stay with black palette
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_BG_EVENT;
-		event.op = EVENT_DISPLAY;
-		event.param = NO_SET_PALETTE;
-		event.time = 0;
-		q_event = _vm->_events->chain(q_event, &event);
-
-		// Fade in from black to the scene background palette
-		_vm->_scene->getBGPal(&pal);
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_PAL_EVENT;
-		event.op = EVENT_BLACKTOPAL;
-		event.time = 0;
-		event.duration = PALETTE_FADE_DURATION;
-		event.data = pal;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
 		// Begin palette cycling animation for candles
 		event.type = R_ONESHOT_EVENT;
 		event.code = R_PALANIM_EVENT;
 		event.op = EVENT_CYCLESTART;
 		event.time = 0;
 
-		q_event = _vm->_events->chain(q_event, &event);
+		q_event = _vm->_events->queue(&event);
 
 		// Queue narrator dialogue list
 		text_entry.color = 255;
@@ -648,8 +617,6 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 	R_TEXTLIST_ENTRY *entry_p;
 	R_EVENT event;
 	R_EVENT *q_event;
-	PALENTRY *pal;
-	static PALENTRY current_pal[R_PAL_ENTRIES];
 	int i;
 
 	const INTRO_CREDIT credits[] = {
@@ -672,38 +639,6 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 
 	switch (param) {
 	case SCENE_BEGIN:
-
-		// Fade to black out of the cave
-		_vm->_gfx->getCurrentPal(current_pal);
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_PAL_EVENT;
-		event.op = EVENT_PALTOBLACK;
-		event.time = 0;
-		event.duration = PALETTE_FADE_DURATION;
-		event.data = current_pal;
-
-		q_event = _vm->_events->queue(&event);
-
-		// Display ITE title screen background
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_BG_EVENT;
-		event.op = EVENT_DISPLAY;
-		event.param = NO_SET_PALETTE;
-		event.time = 0;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		// Fade in from black to the scene background palette
-		_vm->_scene->getBGPal(&pal);
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_PAL_EVENT;
-		event.op = EVENT_BLACKTOPAL;
-		event.time = 0;
-		event.duration = PALETTE_FADE_DURATION;
-		event.data = pal;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
 		debug(0, "Beginning animation playback.");
 
 		// Begin title screen background animation 
@@ -719,7 +654,7 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_PLAY;
 		event.time = 0;
 
-		q_event = _vm->_events->chain(q_event, &event);
+		q_event = _vm->_events->queue(&event);
 		
 		// Pause animation before logo
 		event.type = R_ONESHOT_EVENT;
@@ -729,13 +664,13 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		event.param2 = ANIM_PAUSE;
 		event.time = 3000;
 
-		q_event = _vm->_events->queue(&event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Display logo
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE_BGMASK;
-		event.time = 3000;
+		event.time = 0;
 		event.duration = LOGO_DISSOLVE_DURATION;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -744,7 +679,7 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE;
-		event.time = 3000;
+		event.time = 1000;
 		event.duration = LOGO_DISSOLVE_DURATION;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -755,7 +690,7 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		event.op = EVENT_CLEARFLAG;
 		event.param = 0;
 		event.param2 = ANIM_PAUSE;
-		event.time = 3000 + LOGO_DISSOLVE_DURATION;
+		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
 
@@ -763,7 +698,7 @@ int ITE_IntroValleyProc(int param, R_SCENE_INFO *scene_info) {
 		event.code = R_ANIM_EVENT;
 		event.op = EVENT_FRAME;
 		event.param = 0;
-		event.time = 3000 + LOGO_DISSOLVE_DURATION;
+		event.time = LOGO_DISSOLVE_DURATION;
 
 		q_event = _vm->_events->chain(q_event, &event);
 
@@ -1066,82 +1001,5 @@ int ITE_IntroFaireTentProc(int param, R_SCENE_INFO *scene_info) {
 
 	return 0;
 }
-
-int initialScene(int param, R_SCENE_INFO *scene_info) {
-	R_EVENT event;
-	R_EVENT *q_event;
-	int delay_time = 0;
-	static PALENTRY current_pal[R_PAL_ENTRIES];
-	PALENTRY *pal;
-
-	switch (param) {
-	case SCENE_BEGIN:
-		_vm->_music->stop();
-		_vm->_sound->stopVoice();
-
-		// Fade palette to black from intro scene
-		_vm->_gfx->getCurrentPal(current_pal);
-
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_PAL_EVENT;
-		event.op = EVENT_PALTOBLACK;
-		event.time = 0;
-		event.duration = PALETTE_FADE_DURATION;
-		event.data = current_pal;
-
-		delay_time += PALETTE_FADE_DURATION;
-
-		q_event = _vm->_events->queue(&event);
-
-		// Activate user interface
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_INTERFACE_EVENT;
-		event.op = EVENT_ACTIVATE;
-		event.time = 0;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		// Set first scene background w/o changing palette
-		event.type = R_ONESHOT_EVENT;
-		event.code = R_BG_EVENT;
-		event.op = EVENT_DISPLAY;
-		event.param = NO_SET_PALETTE;
-		event.time = 0;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		// Fade in to first scene background palette
-		_vm->_scene->getBGPal(&pal);
-
-		event.type = R_CONTINUOUS_EVENT;
-		event.code = R_PAL_EVENT;
-		event.op = EVENT_BLACKTOPAL;
-		event.time = delay_time;
-		event.duration = PALETTE_FADE_DURATION;
-		event.data = pal;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		event.code = R_PALANIM_EVENT;
-		event.op = EVENT_CYCLESTART;
-		event.time = 0;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		_vm->_anim->setFlag(0, ANIM_LOOP);
-		_vm->_anim->play(0, delay_time);
-
-		debug(0, "Scene started");
-		break;
-	case SCENE_END:
-		break;
-	default:
-		warning("Scene::initialScene(): Illegal scene procedure parameter");
-		break;
-	}
-
-	return 0;
-}
-
 
 } // End of namespace Saga

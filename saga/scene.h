@@ -134,12 +134,19 @@ struct SCENE_ANIMINFO {
 	SCENE_ANIMINFO *next;
 };
 
+enum SCENE_FADE_TYPES {
+	SCENE_NOFADE = 0,
+	SCENE_FADE = 1,
+	SCENE_FADE_NO_INTERFACE = 2
+};
+
 struct R_SCENE_QUEUE {
 	uint32 scene_n;
 	R_SCENE_DESC *scene_desc;
 	int load_flag;
 	R_SCENE_PROC *scene_proc;
 	int scene_skiptarget;
+	int fadeType;
 };
 
 class Scene {
@@ -171,7 +178,8 @@ class Scene {
 	void sceneChangeCmd(int argc, char *argv[]);
 
  private:
-	int loadScene(int scene, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DESC *);
+	int loadScene(int scene, int load_flag, R_SCENE_PROC scene_proc, R_SCENE_DESC *, 
+				  int fadeIn);
 	int loadSceneDescriptor(uint32 res_number);
 	int loadSceneResourceList(uint32 res_number);
 	int processSceneResources();
