@@ -41,6 +41,7 @@ class Channel {
 private:
 	SoundMixer *_mixer;
 	PlayingSoundHandle *_handle;
+	const bool _isMusic;
 	byte _volume;
 	int8 _pan;
 	bool _paused;
@@ -52,16 +53,17 @@ protected:
 public:
 	int _id;
 
-	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, byte volume, int8 pan)
-		: _mixer(mixer), _handle(handle), _converter(0), _input(0), _volume(volume), _pan(pan), _paused(false), _id(-1) {
+	Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, byte volume, int8 pan)
+		: _mixer(mixer), _handle(handle), _isMusic(isMusic), _volume(volume), _pan(pan), _paused(false), _converter(0), _input(0), _id(-1) {
 		assert(mixer);
 	}
 	virtual ~Channel();
 	void destroy();
 	virtual void mix(int16 *data, uint len);
 
-	virtual bool isMusicChannel() const	= 0;
-
+	bool isMusicChannel() const {
+		return _isMusic;
+	}
 	void pause(bool paused) {
 		_paused = paused;
 	}
@@ -84,34 +86,28 @@ class ChannelRaw : public Channel {
 public:
 	ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, byte volume, int8 pan, int id, uint32 loopStart, uint32 loopEnd);
 	~ChannelRaw();
-	bool isMusicChannel() const		{ return false; }
 };
 
 class ChannelStream : public Channel {
 public:
 	ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, uint32 buffer_size, byte volume, int8 pan);
 	void append(void *sound, uint32 size);
-	bool isMusicChannel() const		{ return true; }
 
 	void finish();
 };
 
 #ifdef USE_MAD
 class ChannelMP3 : public Channel {
-	const bool _isMusic;
 public:
 	ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size, byte volume, int8 pan);
 	ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan);
-	bool isMusicChannel() const		{ return _isMusic; }
 };
 #endif // USE_MAD
 
 #ifdef USE_VORBIS
 class ChannelVorbis : public Channel {
-	const bool _isMusic;
 public:
 	ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool isMusic, byte volume, int8 pan);
-	bool isMusicChannel() const		{ return _isMusic; }
 };
 #endif // USE_VORBIS
 
@@ -506,7 +502,7 @@ void Channel::mix(int16 *data, uint len) {
 
 /* RAW mixer */
 ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, byte volume, int8 pan, int id, uint32 loopStart, uint32 loopEnd)
-	: Channel(mixer, handle, volume, pan) {
+	: Channel(mixer, handle, false, volume, pan) {
 	_id = id;
 	_ptr = (byte *)sound;
 	
@@ -536,7 +532,7 @@ ChannelRaw::~ChannelRaw() {
 ChannelStream::ChannelStream(SoundMixer *mixer, PlayingSoundHandle *handle,
 							void *sound, uint32 size, uint rate,
 							byte flags, uint32 buffer_size, byte volume, int8 pan)
-	: Channel(mixer, handle, volume, pan) {
+	: Channel(mixer, handle, true, volume, pan) {
 	assert(size <= buffer_size);
 
 	// Create the input stream
@@ -559,7 +555,7 @@ void ChannelStream::append(void *data, uint32 len) {
 
 #ifdef USE_MAD
 ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, uint size, byte volume, int8 pan)
-	: Channel(mixer, handle, volume, pan), _isMusic(false) {
+	: Channel(mixer, handle, false, volume, pan) {
 	// Create the input stream
 	_input = makeMP3Stream(file, mad_timer_zero, size);
 
@@ -568,7 +564,7 @@ ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file
 }
 
 ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration, byte volume, int8 pan) 
-	: Channel(mixer, handle, volume, pan), _isMusic(true) {
+	: Channel(mixer, handle, true, volume, pan) {
 	// Create the input stream
 	_input = makeMP3Stream(file, duration, 0);
 
@@ -579,7 +575,7 @@ ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, File *file
 
 #ifdef USE_VORBIS
 ChannelVorbis::ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool isMusic, byte volume, int8 pan)
-	: Channel(mixer, handle, volume, pan), _isMusic(isMusic) {
+	: Channel(mixer, handle, isMusic, volume, pan) {
 	// Create the input stream
 	_input = makeVorbisStream(ov_file, duration);
 
