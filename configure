@@ -206,7 +206,15 @@ Optional Libraries:
   --disable-mpeg2          disable mpeg2 codec for cutscenes [autodetect]
   --with-mpeg2-prefix=PFX  Prefix where libmpeg2 is installed (optional)
   --with-sdl-prefix=PFX    Prefix where the sdl-config script is installed
- 
+
+Some influential environment variables:
+  LDFLAGS	linker flags, e.g. -L<lib dir> if you have libraries in a
+  		nonstandard directory <lib dir>
+  CXX		C++ compiler command
+  CXXFLAGS	C++ compiler flags
+  CPPFLAGS	C++ preprocessor flags, e.g. -I<include dir> if you have
+  		headers in a nonstandard directory <include dir>
+
 EOF
     exit 0
   fi
