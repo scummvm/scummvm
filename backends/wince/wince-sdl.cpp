@@ -1294,7 +1294,9 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 void OSystem_WINCE3::quit() {
 	fclose(stdout_file);
 	fclose(stderr_file);
-	DeleteFile(TEXT("\\scummvm_stdout.txt"));
-	DeleteFile(TEXT("\\scummvm_stderr.txt"));
+	if (!ConfMan.hasKey("debuglevel")) {
+		DeleteFile(TEXT("\\scummvm_stdout.txt"));
+		DeleteFile(TEXT("\\scummvm_stderr.txt"));
+	}
 	OSystem_SDL::quit();
 }
