@@ -282,11 +282,11 @@ byte CostumeRenderer::mainRoutine(Actor * a, int slot, int frame)
 												_vm->virtscr[0].topline + _bottom);
 	masking = 0;
 
-	if (_zbuf) {
+	if (_vm->_features & GF_SMALL_HEADER)
+		masking = _zbuf;
+	else
 		masking = _vm->isMaskActiveAt(_left, _top, _right, _bottom,_vm->getResourceAddress(rtBuffer,9) +
-																	_vm->gdi._imgBufOffs[_zbuf] +
-																	_vm->_screenStartStrip);
-	}
+		                              _vm->gdi._imgBufOffs[_zbuf] + _vm->_screenStartStrip);
 
 	if (_zbuf || charsetmask) {
 		_mask_ptr =_vm->getResourceAddress(rtBuffer,9) + _ypos * 40 + _vm->_screenStartStrip;
@@ -1045,7 +1045,6 @@ byte Scumm::cost_increaseAnim(LoadedCostume * lc, Actor * a, int slot)
 			if (i != end)
 				i++;
 		}
-
 		nc = lc->_dataptr[i];
 
 		if (nc == 0x7C) {
