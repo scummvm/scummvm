@@ -26,6 +26,7 @@
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/sprite_he.h"
+#include "scumm/usage_bits.h"
 #include "scumm/wiz_he.h"
 
 namespace Scumm {
@@ -1061,7 +1062,7 @@ void ScummEngine_v90he::spritesBlitToScreen() {
 			spi->flags &= ~kSFChanged;
 			if (spi->bbox.left <= spi->bbox.right && spi->bbox.top <= spi->bbox.bottom) {
 				if (spi->flags & kSFBlitDirectly) {
-					gdi.copyVirtScreenBuffers(spi->bbox); // XXX 0, 0x40000000);
+					gdi.copyVirtScreenBuffers(spi->bbox, USAGE_BIT_RESTORED);
 				} else if (firstLoop) {
 					xmin = spi->bbox.left;
 					ymin = spi->bbox.top;
@@ -1090,7 +1091,7 @@ void ScummEngine_v90he::spritesBlitToScreen() {
 		}
 	}
 	if (refreshScreen) {
-		gdi.copyVirtScreenBuffers(Common::Rect(xmin, ymin, xmax, ymax)); // , 0, 0x40000000);
+		gdi.copyVirtScreenBuffers(Common::Rect(xmin, ymin, xmax, ymax), USAGE_BIT_RESTORED);
 	}
 }
 
@@ -1210,10 +1211,8 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 	for (int i = 0; i < _numSpritesToProcess; i++) {
 		SpriteInfo *spi = _activeSpritesTable[i];
 
-		// HACK Sprite redraws aren't always been triggered
-		// so leave disabled for now.
-		//if (!(spi->flags & kSFNeedRedraw))
-		//	continue;
+		if (!(spi->flags & kSFNeedRedraw))
+			continue;
 
 		spr_flags = spi->flags;
 

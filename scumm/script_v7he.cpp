@@ -748,11 +748,11 @@ void ScummEngine_v70he::o70_kernelSetFunctions() {
 		break;
 	case 24:
 		_skipProcessActors = 1;
-		_fullRedraw = 1;
+		redrawAllActors();
 		break;
 	case 25:
 		_skipProcessActors = 0;
-		_fullRedraw = 1;
+		redrawAllActors();
 		break;
 	case 30:
 		a = derefActor(args[1], "o70_kernelSetFunctions: 30");

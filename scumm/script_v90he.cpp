@@ -2307,11 +2307,11 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		break;
 	case 24:
 		_skipProcessActors = 1;
-		//_fullRedraw = 1;
+		redrawAllActors();
 		break;
 	case 25:
 		_skipProcessActors = 0;
-		//_fullRedraw = 1;
+		redrawAllActors();
 		break;
 	case 42:
 		_wiz._rectOverrideEnabled = true;

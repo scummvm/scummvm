@@ -1171,6 +1171,15 @@ void Actor::animateLimb(int limb, int f) {
 	}
 }
 
+void ScummEngine::redrawAllActors() {
+	int j;
+
+	for (j = 1; j < _numActors; j++) {
+		_actors[j]._needRedraw = true;
+		_actors[j]._needBgReset = true;
+	}
+}
+
 void ScummEngine::setActorRedrawFlags() {
 	int i, j;
 
@@ -1927,7 +1936,6 @@ void ScummEngine::postProcessAuxQueue() {
 						break;
 					default:
 						error("unimplemented compression type %d", comp);
-						break;
 					}
 				}
 				const uint8 *axur = findResourceData(MKID('AXUR'), auxd);
@@ -1938,7 +1946,7 @@ void ScummEngine::postProcessAuxQueue() {
 						int y1 = (int16)READ_LE_UINT16(axur + 2) + dy;
 						int x2 = (int16)READ_LE_UINT16(axur + 4) + dx;
 						int y2 = (int16)READ_LE_UINT16(axur + 6) + dy;					
-						markRectAsDirty(kMainVirtScreen, x1, x2, y1, y2 + 1);
+						markRectAsDirty(kMainVirtScreen, x1, x2, y1, y2 + 1, a->_number);
 						axur += 8;
 					}
 				}

@@ -2012,7 +2012,6 @@ load_game:
 			}
 
 			processActors();
-			postProcessAuxQueue();
 
 		} else {
 			processActors();
@@ -2020,6 +2019,9 @@ load_game:
 		
 		_fullRedraw = false;
 
+		if (_heversion >= 71) {
+			postProcessAuxQueue();
+		}
 		if (_heversion >= 90) {
 			((ScummEngine_v90he *)this)->spritesMarkDirty(1);
 			((ScummEngine_v90he *)this)->spritesProcessWiz(false);

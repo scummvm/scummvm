@@ -815,6 +815,7 @@ public:
 protected:
 	void walkActors();
 	void playActorSounds();
+	void redrawAllActors();
 	void setActorRedrawFlags();
 	void putActors();
 	void showActors();

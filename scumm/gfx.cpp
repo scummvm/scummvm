@@ -777,21 +777,16 @@ void ScummEngine_v70he::redrawBGAreas() {
 		return;
 	}
 
-	int val = 0;
 	if (camera._cur.x != camera._last.x && _charset->_hasMask)
 		stopTalk();
 
 	byte *room = getResourceAddress(rtRoomImage, _roomResource) + _IM00_offs;
-	if (findResource(MKID('BMAP'), room) != NULL) {
-		if (_fullRedraw) {
-			_bgNeedsRedraw = false;
-			gdi.drawBMAPBg(room, &virtscr[0]);
-		}
-	} else if (findResource(MKID('SMAP'), room) == NULL) {
-		warning("redrawBGAreas(): Both SMAP and BMAP are missing...");
+	if (_fullRedraw) {
+		_bgNeedsRedraw = false;
+		gdi.drawBMAPBg(room, &virtscr[0]);
 	}
 
-	drawRoomObjects(val);
+	drawRoomObjects(0);
 	_bgNeedsRedraw = false;
 }
 
@@ -1629,7 +1624,7 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 	}
 }
 
-void Gdi::copyVirtScreenBuffers(Common::Rect rect) {
+void Gdi::copyVirtScreenBuffers(Common::Rect rect, int dirtybit) {
 	byte *src, *dst;
 	VirtScreen *vs = &_vm->virtscr[0];
 
