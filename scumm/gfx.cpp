@@ -1092,11 +1092,16 @@ void Gdi::drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, cons
 	}
 }
 
-int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9]) const {
+int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage) const {
 	int numzbuf;
 	int i;
 
-	zplane_list[0] = ptr;
+	if ((_vm->_features & GF_SMALL_HEADER) || _vm->_version == 8)
+		zplane_list[0] = ptr;
+	else if (bmapImage)
+		zplane_list[0] = _vm->findResource(MKID('BMAP'), ptr);
+	else
+		zplane_list[0] = _vm->findResource(MKID('SMAP'), ptr);
 
 	if (_zbufferDisabled)
 		numzbuf = 0;
@@ -1187,7 +1192,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 	assert(smap_ptr);
 
-	numzbuf = getZPlanes(ptr, zplane_list);
+	numzbuf = getZPlanes(ptr, zplane_list, false);
 	
 	bottom = y + height;
 	if (bottom > vs->h) {
@@ -1395,22 +1400,19 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width)
 	if (_numZBuffer <= 1)
 		return;
 	
-	getZPlanes(ptr, zplane_list);
+	getZPlanes(ptr, zplane_list, true);
 
+	uint32 offs;
 	for (int stripnr = 0; stripnr < _numStrips; stripnr++)
 		for (int i = 1; i < _numZBuffer; i++) {
-			uint32 offs;
-
 			if (!zplane_list[i])
 				continue;
 
 			offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
-
 			mask_ptr = getMaskBuffer(stripnr, 0, i);
 
 			if (offs) {
 				z_plane_ptr = zplane_list[i] + offs;
-
 				decompressMaskImg(mask_ptr, z_plane_ptr, vs->h);
 			}
 		}

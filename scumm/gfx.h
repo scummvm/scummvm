@@ -261,7 +261,7 @@ protected:
 	
 	byte *getMaskBuffer(int x, int y, int z);
 	
-	int getZPlanes(const byte *smap_ptr, const byte *zplane_list[9]) const;
+	int getZPlanes(const byte *smap_ptr, const byte *zplane_list[9], bool bmapImage) const;
 
 	void drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height, 
 	                int stripnr, int numstrip, StripTable *table);
