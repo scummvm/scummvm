@@ -424,14 +424,16 @@ void Scumm::writeArray(int array, int idx, int base, int value) {
 		ah->data[base] = value;
 	} else if (_features & GF_AFTER_V8) {
 #if defined(SCUMM_NEED_ALIGNMENT)
-		memcpy(&ah->data[base], &TO_LE_32(value), 4);
+		uint32 tmp = TO_LE_32(value);
+		memcpy(&ah->data[base], &tmp, 4);
 #else
 		((uint32 *)ah->data)[base] = TO_LE_32(value);
 #endif
 		
 	} else {
 #if defined(SCUMM_NEED_ALIGNMENT)
-		memcpy(&ah->data[base], &TO_LE_16(value), 2);
+		uint16 tmp = TO_LE_16(value);
+		memcpy(&ah->data[base], &tmp, 2);
 #else
 		((uint16 *)ah->data)[base] = TO_LE_16(value);
 #endif
