@@ -1354,6 +1354,8 @@ void Cutaway::run(char *nextFilename) {
 				_logic->newRoom(_initialRoom);
 				_logic->display()->fullscreen(true);
 			}
+			_logic->joeX(0);
+			_logic->joeY(0);
 		}
 
 		// XXX CUTJOEF=0;

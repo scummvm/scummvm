@@ -1595,6 +1595,8 @@ void Logic::joeSetup() {
 ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 	// queen.c SETUP_HERO()
 
+	debug(0, "Logic::joeSetupInRoom(%d, %d) joe.x=%d joe.y=%d", autoPosition, scale, _joe.x, _joe.y);
+
 	uint16 oldx;
 	uint16 oldy;
 	WalkOffData *pwo = NULL;
@@ -1603,9 +1605,9 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 		error("Logic::joeSetupInRoom() - No object data for obj %d", _entryObj);
 	}
 
-	if (!autoPosition || _joe.x != 0 || _joe.y != 0) {
-		oldx = _joe.x;
-		oldy = _joe.y;
+	if (!autoPosition || joeX() != 0 || joeY() != 0) {
+		oldx = joeX();
+		oldy = joeY();
 	}
 	else {
 		// find the walk off point for the entry object and make 
@@ -1661,8 +1663,8 @@ ObjectData *Logic::joeSetupInRoom(bool autoPosition, uint16 scale) {
 	pbs->x = oldx;
 	pbs->y = oldy;
 	pbs->frameNum = 29 + FRAMES_JOE_XTRA;
-	_joe.x = 0;
-	_joe.y = 0;
+	joeX(0);
+	joeY(0);
 
 	if (pwo != NULL) {
 		// entryObj has a walk off point, then walk from there to object x,y
