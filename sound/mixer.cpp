@@ -53,7 +53,7 @@ int SoundMixer::append(int index, void * sound, uint32 size, uint rate, byte fla
 
 	Channel * chan = _channels[index];
 	if (!chan) {
-		warning("Trying to stream to an unexistant streamer : %d", index);
+		debug(2, "Trying to stream to an unexistant streamer : %d", index);
 		playStream(NULL, index, sound, size, rate, flags);
 		chan = _channels[index];
 	} else {

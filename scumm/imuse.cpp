@@ -5657,7 +5657,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					}
 				}
 				if (chan == -1) {
-					warning("IMuseDigital::doCommand 12,6 sample(%d) not exist in channels", sample);
+					debug(2, "IMuseDigital::doCommand 12,6 sample(%d) not exist in channels", sample);
 					return 1;
 				}
 				_channel[chan]._volume = d;
@@ -5683,7 +5683,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					}
 				}
 				if (chan == -1) {
-					warning("IMuseDigital::doCommand 12,7 sample(%d) not exist in channels", sample);
+					debug(2, "IMuseDigital::doCommand 12,7 sample(%d) not exist in channels", sample);
 					return 1;
 				}
 				_channel[chan]._volumeRight = d;
@@ -5703,7 +5703,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					}
 				}
 				if (chan == -1) {
-						warning("IMuseDigital::doCommand 14,6 sample %d not exist in channels", sample);
+						debug(2, "IMuseDigital::doCommand 14,6 sample %d not exist in channels", sample);
 					return 1;
 				}
 				_channel[chan]._volumeFade = d;
