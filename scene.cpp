@@ -149,7 +149,12 @@ void Scene::Light::load(TextSplitter &ts) {
 	ts.scanString(" intensity %f", 1, &_intensity);
 	ts.scanString(" umbraangle %f", 1, &_umbraangle);
 	ts.scanString(" penumbraangle %f", 1, &_penumbraangle);
-	ts.scanString(" color %d %d %d", 3, &_color.red(), &_color.green(), &_color.blue());
+	
+	int r, g, b;
+	ts.scanString(" color %d %d %d", 3, &r, &g, &b);
+	_color.red() = r;
+	_color.green() = g;
+	_color.blue() = b;
 }
 
 void Scene::Setup::setupCamera() const {
