@@ -47,6 +47,24 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS( str, "fooX" );
 	}
 
+	void test_hasPrefix( void )
+	{
+		Common::String str("this/is/a/test, haha");
+		TS_ASSERT_EQUALS( str.hasPrefix(""), true );
+		TS_ASSERT_EQUALS( str.hasPrefix("this"), true );
+		TS_ASSERT_EQUALS( str.hasPrefix("thit"), false );
+		TS_ASSERT_EQUALS( str.hasPrefix("foo"), false );
+	}
+
+	void test_hasSuffix( void )
+	{
+		Common::String str("this/is/a/test, haha");
+		TS_ASSERT_EQUALS( str.hasSuffix(""), true );
+		TS_ASSERT_EQUALS( str.hasSuffix("haha"), true );
+		TS_ASSERT_EQUALS( str.hasSuffix("hahb"), false );
+		TS_ASSERT_EQUALS( str.hasSuffix("hahah"), false );
+	}
+
 	void test_toLowercase( void )
 	{
 		Common::String str("Test it, NOW! 42");
