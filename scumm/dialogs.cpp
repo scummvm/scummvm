@@ -276,23 +276,6 @@ enum {
 	kMainMenuHeight 	= 7*rowHeight + 3*5 + 7 + 5
 };
 
-class SeperatorWidget : public Widget {
-protected:
-	typedef Common::String String;
-
-	String _label;
-	int		_align;
-public:
-	SeperatorWidget(GuiObject *boss, int x, int y, int w) : Widget(boss, x, y, w, 2) { }
-
-protected:
-	void drawWidget(bool hilite) {
-		g_gui.hLine(_x, _y, _x + _w - 2, g_gui._color);
-		g_gui.hLine(_x+1, _y+1, _x + _w - 1, g_gui._shadowcolor);
-	}
-};
-
-
 MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
 	: ScummDialog(scumm, (320 - kMainMenuWidth)/2, (200 - kMainMenuHeight)/2, kMainMenuWidth, kMainMenuHeight) {
 	int y = 7;
