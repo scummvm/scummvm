@@ -46,12 +46,22 @@ private:
 	ScummMixer *_smixer;
 	uint32 _insaneSpeed;
 	volatile int _pending_updates;
+	int32 _width;			//!< The current frame's width
+	int32 _height;		//!< The current frame's height
+	int32 _frame;			//!< The current frame number
+	char *_data;		//!< The current frame buffer
 public:
 	ScummRenderer(Scumm *scumm, uint32 speed);
 	virtual ~ScummRenderer();
+	virtual int32 getWidth() const { return _width; };	//!< accessor for current width
+	virtual int32 getHeight() const { return _height; };	//!< accessor for current height
+	virtual const char *data() const { return _data; };	//!< accessor for current frame buffer
 	virtual bool wait(int32 ms);
 	bool update();
 protected:
+	virtual bool initFrame(const Point &size);
+	virtual char *lockFrame(int32 frame);
+	virtual void clean();
 	virtual bool startDecode(const char *fname, int32 version, int32 nbframes);
 	virtual bool setPalette(const Palette & pal);
 	virtual void save(int32 frame = -1);

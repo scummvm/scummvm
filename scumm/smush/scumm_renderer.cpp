@@ -209,6 +209,26 @@ static void smush_handler(void *engine) {
 	s_renderer->update();
 }
 
+bool ScummRenderer::initFrame(const Point &p) {
+	clean();
+	_width = p.getX();
+	_height = p.getY();
+	assert(_width && _height);
+	_data = (char *)_scumm->virtscr[0].screenPtr + _scumm->virtscr[0].xstart;
+	return true;
+}
+
+void ScummRenderer::clean() {
+	_data = 0;
+	_width = _height = 0;
+}
+
+char *ScummRenderer::lockFrame(int32 frame) {
+	_frame = frame; 
+	if(!_data) error("no allocated image buffer in lock_frame");
+	return _data;
+}
+
 Mixer *ScummRenderer::getMixer() {
 	if(_smixer == 0) {
 		_smixer = new ScummMixer(_scumm->_mixer);
@@ -233,17 +253,7 @@ ScummRenderer::~ScummRenderer() {
 	}
 	_scumm->_sound->pauseBundleMusic(false);
 
-
 	_scumm->_fullRedraw = 1;
-#if 0
-	// FIXME - enabling this breaks the COMI demo. OTOH I am not aware
-	// what disabling this breaks... if anybody knows of any regressions
-	// turning this off causes, please tell me.
-	_scumm->redrawBGAreas();
-	for (int32 i = 0; i < _scumm->NUM_ACTORS; i++)
-		_scumm->derefActor(i)->needRedraw = true;
-	_scumm->processActors();
-#endif
 }
 
 bool ScummRenderer::wait(int32 ms) {
