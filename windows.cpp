@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.4  2001/10/12 07:24:06  strigeus
+ * fast mode support
+ *
  * Revision 1.3  2001/10/10 10:02:33  strigeus
  * alternative mouse cursor
  * basic save&load
@@ -148,6 +151,11 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 				else if (GetAsyncKeyState(VK_CONTROL)<0)
 					wm->_scumm->_saveLoadFlag = 2;
 			}
+
+			if (wParam=='F') {
+				wm->_scumm->_fastMode ^= 1;
+			}
+
 			break;
 
 		case WM_MOUSEMOVE:
@@ -794,6 +802,9 @@ void initGraphics(Scumm *s) {
 
 }
 
+void drawMouse(Scumm *s, int, int, int, byte*, bool) {
+}
+
 #undef main
 int main(int argc, char* argv[]) {
 	scumm._videoMode = 0x13;
@@ -802,7 +813,6 @@ int main(int argc, char* argv[]) {
 	wm->init();
 	wm->_vgabuf = (byte*)calloc(320,200);
 	wm->_scumm = &scumm;
-	
 	
 	scumm.scummMain(argc, argv);
 
