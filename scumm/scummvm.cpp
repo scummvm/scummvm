@@ -231,9 +231,9 @@ static const ScummGameSettings scumm_settings[] = {
 	{"zoodemo", "Putt-Putt Saves the Zoo (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds", GID_PUTTPUTT, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_DEFAULT_TO_1X_SCALER, 0},
 	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_DEFAULT_TO_1X_SCALER, 0},
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80 
 	{"pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside", GID_PJSDEMO, 6, MDT_NONE,
@@ -659,6 +659,9 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	} else if (_features & GF_NES) {
 		_screenWidth = 256;
 		_screenHeight = 240;
+	} else if (_features & GF_AFTER_HEV7) { // TODO: check with other HEV7 games
+		_screenWidth = 640;
+		_screenHeight = 480;
 	} else {
 		_screenWidth = 320;
 		_screenHeight = 200;
