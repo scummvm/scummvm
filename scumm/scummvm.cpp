@@ -410,7 +410,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_languageBuffer = NULL;
 	_languageIndex = NULL;
 	memset(_transText, 0, sizeof(_transText));
-	_bcr = NULL;
+	_costumeRenderer = NULL;
 	_2byteFontPtr = 0;
 
 	//
@@ -725,7 +725,7 @@ Scumm::~Scumm () {
 	delete _languageBuffer;
 	delete _audioNames;
 
-	delete _bcr;
+	delete _costumeRenderer;
 
 	if (_shadowPalette)
 		free(_shadowPalette);
@@ -741,12 +741,12 @@ void Scumm::setFeatures (uint32 newFeatures) {
 
 	_features = newFeatures;
 	
-	if (!_bcr || newCostumes != newNewCostumes) {
-		delete _bcr;
+	if (!_costumeRenderer || newCostumes != newNewCostumes) {
+		delete _costumeRenderer;
 		if (newNewCostumes)
-			_bcr = new AkosRenderer(this);
+			_costumeRenderer = new AkosRenderer(this);
 		else
-			_bcr = new CostumeRenderer(this);
+			_costumeRenderer = new CostumeRenderer(this);
 	}
 }
 

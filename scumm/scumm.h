@@ -421,7 +421,7 @@ protected:
 public:
 	int _numCostumes;	// FIXME - should be protected, used by Actor::remapActorPalette
 
-	BaseCostumeRenderer* _bcr;
+	BaseCostumeRenderer* _costumeRenderer;
 	
 	char *_audioNames;
 	int32 _numAudioNames;

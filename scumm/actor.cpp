@@ -884,7 +884,7 @@ void Actor::drawActorCostume() {
 
 	setupActorScale();
 
-	BaseCostumeRenderer* bcr = _vm->_bcr;
+	BaseCostumeRenderer* bcr = _vm->_costumeRenderer;
 
 	bcr->updateNbStrips ();
 
