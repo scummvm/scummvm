@@ -416,7 +416,7 @@ void Actor::setupActorScale() {
 }
 
 void Actor::startAnimActor(int f) {
-	if (_vm->_features & GF_NEW_COSTUMES) {
+	if ((_vm->_features & GF_NEW_COSTUMES) && !(_vm->_features & GF_HUMONGOUS)) {
 		switch (f) {
 		case 1001:
 			f = initFrame;
@@ -434,17 +434,6 @@ void Actor::startAnimActor(int f) {
 			f = talkStopFrame;
 			break;
 		}
-
-		frame = f;
-
-		if (costume != 0) {
-			animProgress = 0;
-			needRedraw = true;
-			if (f == initFrame)
-				cost.reset();
-			_vm->akos_decodeData(this, f, (uint) - 1);
-		}
-
 	} else {
 		switch (f) {
 		case 0x38:
@@ -463,7 +452,19 @@ void Actor::startAnimActor(int f) {
 			f = talkStopFrame;
 			break;
 		}
-		
+	}
+
+	if (_vm->_features & GF_NEW_COSTUMES) {
+		frame = f;
+
+		if (costume != 0) {
+			animProgress = 0;
+			needRedraw = true;
+			if (f == initFrame)
+				cost.reset();
+			_vm->akos_decodeData(this, f, (uint) - 1);
+		}
+	} else {		
 		assert(f != 0x3E);
 		frame = f;
 
