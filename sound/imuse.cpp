@@ -187,7 +187,7 @@ bool SoundEngine::start_sound(int sound) {
 	player = allocate_player(128);
 	if (!player)
 		return false;
-
+	
 	player->clear();
 	return player->start_sound(sound);
 }
@@ -220,7 +220,7 @@ void SoundEngine::init_players() {
 
 	for (i=ARRAYSIZE(_players); i!=0; i--, player++) {
 		player->_active = false;
-		player->_se = this;
+		player->_se = this;		
 	}
 }
 
@@ -1059,8 +1059,12 @@ int Player::start_seq_sound(int sound) {
 
 void Player::set_tempo(uint32 b) {
 	uint32 i,j;
-
-	i = TEMPO_BASE;
+printf("is: %d\n", _se->_s->_gameTempo);
+        if (_se->_s->_gameTempo < 1000)
+                i = TEMPO_BASE;
+        else
+                i = _se->_s->_gameTempo;
+	printf("Tempo set to: %d\n", i);
 	j = _tempo = b;
 
 	while (i&0xFFFF0000 || j&0xFFFF0000) { i>>=1; j>>=1; }

@@ -799,7 +799,8 @@ struct Scumm {
 //	byte _minorScummVersion;
 	ScummDebugger *_debugger;
 	void *_gui; /* actually a pointer to a Gui */
-	
+
+        int _gameTempo;
 	int _lastLoadedRoom;
 	int _roomResource;
 	byte _encbyte;

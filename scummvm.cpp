@@ -195,7 +195,8 @@ void Scumm::scummMain(int argc, char **argv) {
 	_minHeapThreshold = 400000;
 
 	_gameDataPath = NULL;
-	
+        _gameTempo = 0;
+
 	parseCommandLine(argc, argv);
 
 	if (_exe_name==NULL)
@@ -208,7 +209,7 @@ void Scumm::scummMain(int argc, char **argv) {
 
 	if (!_gameDataPath) {
 		warning("No path was provided. Assuming that data file are in the current directory");
-        _gameDataPath = (char *)malloc(sizeof(char) * 2);
+                _gameDataPath = (char *)malloc(sizeof(char) * 2);
 		strcpy(_gameDataPath, "");        
 	}
 
@@ -413,6 +414,9 @@ void Scumm::parseCommandLine(int argc, char **argv) {
 				case 'p':
 					_gameDataPath = argv[++i];
 					break;
+                case 't':
+                    _gameTempo = atoi(s+1);
+                    goto NextArg;
 				default:
 ShowHelpAndExit:;
 					printf(
@@ -421,6 +425,7 @@ ShowHelpAndExit:;
 						"\tscummvm [-b<num>] [-p path] game\n"
 						"Flags:\n"
 						"\tb<num> - start in that room\n"
+                                                "\tt<num> - Set music tempo. Suggested: 1F0000\n"
 						"\tf - fullscreen mode\n");
 					exit(1);
 				}
