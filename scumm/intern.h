@@ -913,11 +913,11 @@ protected:
 
 	int findSpriteWithClassOf(int x, int y, int spriteGroupId, int d, int num, int *args);
 	int spriteInfoGet_classFlags(int spriteId, int num, int *args);
-	int spriteInfoGet_flags_13(int spriteId);
+	int spriteInfoGet_flagDoubleBuffered(int spriteId);
 	int spriteInfoGet_flagYFlipped(int spriteId);
 	int spriteInfoGet_flagXFlipped(int spriteId);
 	int spriteInfoGet_flagActive(int spriteId);
-	int spriteInfoGet_flags_20(int spriteId);
+	int spriteInfoGet_flagNeedPaletteRemap(int spriteId);
 	int spriteInfoGet_flags_22(int spriteId);
 	int spriteInfoGet_flags_23(int spriteId);	
 	int spriteInfoGet_flagHasImage(int spriteId);
@@ -963,11 +963,11 @@ protected:
 	void spriteInfoSet_Inc_tx_ty(int spriteId, int value1, int value2);
 	void spriteInfoSet_zoom(int spriteId, int value);
 	void spriteInfoSet_rotAngle(int spriteId, int value);
-	void spriteInfoSet_flag13(int spriteId, int value);
+	void spriteInfoSet_flagDoubleBuffered(int spriteId, int value);
 	void spriteInfoSet_flagYFlipped(int spriteId, int value);
 	void spriteInfoSet_flagXFlipped(int spriteId, int value);
 	void spriteInfoSet_flagActive(int spriteId, int value);
-	void spriteInfoSet_flag20(int spriteId, int value);
+	void spriteInfoSet_flagNeedPaletteRemap(int spriteId, int value);
 	void spriteInfoSet_flag22(int spriteId, int value);
 	void spriteInfoSet_flag23(int spriteId, int value);
 	void spriteInfoSet_flagHasImage(int spriteId, int value);

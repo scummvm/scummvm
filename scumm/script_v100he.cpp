@@ -1935,10 +1935,10 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 				spriteInfoSet_flagActive(spriteId, args[0]);
 				break;
 			case 3:
-				spriteInfoSet_flag13(spriteId, args[0]);
+				spriteInfoSet_flagDoubleBuffered(spriteId, args[0]);
 				break;
 			case 4:
-				spriteInfoSet_flag20(spriteId, args[0]);
+				spriteInfoSet_flagNeedPaletteRemap(spriteId, args[0]);
 				break;
 			default:
 				break;
@@ -2643,10 +2643,10 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 				push(spriteInfoGet_flagActive(spriteId));
 				break;
 			case 3:
-				push(spriteInfoGet_flags_13(spriteId));
+				push(spriteInfoGet_flagDoubleBuffered(spriteId));
 				break;
 			case 4:
-				push(spriteInfoGet_flags_20(spriteId));
+				push(spriteInfoGet_flagNeedPaletteRemap(spriteId));
 				break;
 			default:
 				push(0);

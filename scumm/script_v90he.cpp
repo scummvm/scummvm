@@ -844,10 +844,10 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 				push(spriteInfoGet_flagActive(spriteId));
 				break;
 			case 3:
-				push(spriteInfoGet_flags_13(spriteId));
+				push(spriteInfoGet_flagDoubleBuffered(spriteId));
 				break;
 			case 4:
-				push(spriteInfoGet_flags_20(spriteId));
+				push(spriteInfoGet_flagNeedPaletteRemap(spriteId));
 				break;
 			default:
 				push(0);
@@ -1060,10 +1060,10 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 				spriteInfoSet_flagActive(spriteId, args[0]);
 				break;
 			case 3:
-				spriteInfoSet_flag13(spriteId, args[0]);
+				spriteInfoSet_flagDoubleBuffered(spriteId, args[0]);
 				break;
 			case 4:
-				spriteInfoSet_flag20(spriteId, args[0]);
+				spriteInfoSet_flagNeedPaletteRemap(spriteId, args[0]);
 				break;
 			default:
 				break;
@@ -2241,7 +2241,7 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 	case 714:
 		break;
 	case 1492:
-		spriteInfoSet_flag13(args[1], args[2]);
+		spriteInfoSet_flagDoubleBuffered(args[1], args[2]);
 		break;
 	case 2001:
 		// Used in SoccerMLS/Soccer2004

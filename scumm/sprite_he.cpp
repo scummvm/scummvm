@@ -167,7 +167,7 @@ int ScummEngine_v90he::spriteInfoGet_classFlags(int spriteId, int num, int *args
 	return 1;
 }
 
-int ScummEngine_v90he::spriteInfoGet_flags_13(int spriteId) {
+int ScummEngine_v90he::spriteInfoGet_flagDoubleBuffered(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
 	return ((_spriteTable[spriteId].flags & kSFDoubleBuffered) != 0) ? 1 : 0;
@@ -191,7 +191,7 @@ int ScummEngine_v90he::spriteInfoGet_flagActive(int spriteId) {
 	return ((_spriteTable[spriteId].flags & kSFActive) != 0) ? 1 : 0;
 }
 
-int ScummEngine_v90he::spriteInfoGet_flags_20(int spriteId) {
+int ScummEngine_v90he::spriteInfoGet_flagNeedPaletteRemap(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
 	return ((_spriteTable[spriteId].flags & kSFNeedPaletteRemap) != 0) ? 1 : 0;
@@ -533,7 +533,7 @@ void ScummEngine_v90he::spriteInfoSet_rotAngle(int spriteId, int value) {
 	}
 }
 
-void ScummEngine_v90he::spriteInfoSet_flag13(int spriteId, int value) {
+void ScummEngine_v90he::spriteInfoSet_flagDoubleBuffered(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
 	int oldFlags = _spriteTable[spriteId].flags;
@@ -581,7 +581,7 @@ void ScummEngine_v90he::spriteInfoSet_flagActive(int spriteId, int value) {
 		_spriteTable[spriteId].flags &= ~kSFActive;
 }
 
-void ScummEngine_v90he::spriteInfoSet_flag20(int spriteId, int value) {
+void ScummEngine_v90he::spriteInfoSet_flagNeedPaletteRemap(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
 	int oldFlags = _spriteTable[spriteId].flags;
