@@ -352,13 +352,13 @@ protected:
 	void o6_distObjectObject();
 	void o6_distObjectPt();
 	void o6_distPtPt();
-	void o6_miscOps();
+	void o6_kernelSetFunctions();
 	void o6_delayFrames();
 	void o6_pickOneOf();
 	void o6_pickOneOfDefault();
 	void o6_jumpToScript();
 	void o6_isRoomScriptRunning();
-	void o6_kernelFunction();
+	void o6_kernelGetFunctions();
 	void o6_getAnimateVariable();
 	void o6_drawBlastObject();
 	void o6_getActorLayer();

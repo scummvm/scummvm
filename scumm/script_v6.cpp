@@ -293,8 +293,8 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_distObjectPt),
 		OPCODE(o6_distPtPt),
 		/* C8 */
-		OPCODE(o6_kernelFunction),
-		OPCODE(o6_miscOps),
+		OPCODE(o6_kernelGetFunctions),
+		OPCODE(o6_kernelSetFunctions),
 		OPCODE(o6_delayFrames),
 		OPCODE(o6_pickOneOf),
 		/* CC */
@@ -2456,7 +2456,7 @@ void Scumm_v6::o6_setBlastObjectWindow()
 	// sub_274EF(a, b, c, d);
 }
 
-void Scumm_v6::o6_miscOps()
+void Scumm_v6::o6_kernelSetFunctions()
 {
 	int args[30];
 	int i;
@@ -2554,22 +2554,22 @@ void Scumm_v6::o6_miscOps()
  			}
 			break;
 		case 7:
-			warning("o6_miscOps: stub7()");
+			warning("o6_kernelSetFunctions: stub7()");
 			break;
 		case 10:
-			warning("o6_miscOps: stub10(%d,%d,%d,%d)", args[1], args[2], args[3], args[4]);
+			warning("o6_kernelSetFunctions: stub10(%d,%d,%d,%d)", args[1], args[2], args[3], args[4]);
 			break;
 		case 11:
-			warning("o6_miscOps: stub11(%d)", args[1]);
+			warning("o6_kernelSetFunctions: stub11(%d)", args[1]);
 			break;
 		case 12:
 			setCursorImg(args[1], (uint) - 1, args[2]);
 			break;
 		case 13:
-			derefActorSafe(args[1], "o6_miscOps:14")->remapActorPalette(args[2], args[3], args[4], -1);
+			derefActorSafe(args[1], "o6_kernelSetFunctions:14")->remapActorPalette(args[2], args[3], args[4], -1);
 			break;
 		case 14:
-			derefActorSafe(args[1], "o6_miscOps:14")->remapActorPalette(args[2], args[3], args[4], args[5]);
+			derefActorSafe(args[1], "o6_kernelSetFunctions:14")->remapActorPalette(args[2], args[3], args[4], args[5]);
 			break;
 		case 15:
 			_smushFrameRate = args[1];
@@ -2598,13 +2598,13 @@ void Scumm_v6::o6_miscOps()
 			}
 			break;
 		case 17:
-			warning("o6_miscOps: stub17(%d,%d,%d,%d)", args[1], args[2], args[3], args[4]);
+			warning("o6_kernelSetFunctions: stub17(%d,%d,%d,%d)", args[1], args[2], args[3], args[4]);
 			break;
 		case 18:
-			warning("o6_miscOps: stub18(%d,%d)", args[1], args[2]);
+			warning("o6_kernelSetFunctions: stub18(%d,%d)", args[1], args[2]);
 			break;
 		case 107:
-			a = derefActorSafe(args[1], "o6_miscops: 107");
+			a = derefActorSafe(args[1], "o6_kernelSetFunctions: 107");
 			a->scalex = (unsigned char)args[2];
 			a->needBgReset = true;
 			a->needRedraw = true;
@@ -2616,7 +2616,7 @@ void Scumm_v6::o6_miscOps()
 			setupShadowPalette(0, args[1], args[2], args[3], args[4], args[5]);
 			break;
 		case 114:
-			warning("o6_miscOps: stub114()");
+			warning("o6_kernelSetFunctions: stub114()");
 			break;
 		case 117:
 			freezeScripts(2);
@@ -2628,16 +2628,18 @@ void Scumm_v6::o6_miscOps()
 			enqueueObject(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], 0);
 			break;
 		case 120:
-			warning("o6_miscOps: stub120(%d,%d)", args[1], args[2]);
+			// FIXME: isn't it likely that this does the same as the pre-V7 opcode with the same id?
+			warning("o6_kernelSetFunctions: stub120(%d,%d)", args[1], args[2]);
 			break;
 		case 124:
-			warning("o6_miscOps: stub124(%d)", args[1]);
+			// FIXME: isn't it likely that this does the same as the pre-V7 opcode with the same id?
+			warning("o6_kernelSetFunctions: stub124(%d)", args[1]);
 			break;
 		}
 	} else {
 		switch (args[0]) {
 		case 3:
-			warning("o6_miscOps: nothing in 3");
+			warning("o6_kernelSetFunctions: nothing in 3");
 			break;
 		case 4:
 			grabCursor(args[1], args[2], args[3], args[4]);
@@ -2665,11 +2667,11 @@ void Scumm_v6::o6_miscOps()
 			break;
 
 		case 106:
-			error("stub o6_miscOps_106()");
+			error("stub o6_kernelSetFunctions_106()");
 			break;
 
 		case 107:									/* set actor scale */
-			a = derefActorSafe(args[1], "o6_miscops: 107");
+			a = derefActorSafe(args[1], "o6_kernelSetFunctions: 107");
 			a->scalex = (unsigned char)args[2];
 			a->needBgReset = true;
 			a->needRedraw = true;
@@ -2677,7 +2679,7 @@ void Scumm_v6::o6_miscOps()
 
 		case 108:									/* create proc_special_palette */
 		case 109:
-
+			// FIXME: are 108 and 109 really identical?! That seems unlikely.
 			createSpecialPalette(args[1], args[2], args[3], args[4], args[5], 0, 256);
 			break;
 
@@ -2686,7 +2688,7 @@ void Scumm_v6::o6_miscOps()
 			break;
 
 		case 111:
-			a = derefActorSafe(args[1], "o6_miscops: 111");
+			a = derefActorSafe(args[1], "o6_kernelSetFunctions: 111");
 			a->shadow_mode = args[2] + args[3];
 			break;
 
@@ -2709,15 +2711,15 @@ void Scumm_v6::o6_miscOps()
 				// still be drawn in color.
 				setDirtyColors(0, 255);
 			} else
-				warning("stub o6_miscOps_114()");
+				warning("stub o6_kernelSetFunctions_114()");
 			break;
 
 		case 117:
-			warning("stub o6_miscOps_117()");
+			warning("stub o6_kernelSetFunctions_117()");
 			break;
 
 		case 118:
-			error("stub o6_miscOps_118(%d,%d,%d,%d,%d,%d,%d)",
+			error("stub o6_kernelSetFunctions_118(%d,%d,%d,%d,%d,%d,%d)",
 						args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
 			break;
 
@@ -2730,7 +2732,7 @@ void Scumm_v6::o6_miscOps()
 			break;
 
 		case 121:
-			error("stub o6_miscOps_121(%d)", args[1]);
+			error("stub o6_kernelSetFunctions_121(%d)", args[1]);
 			break;
 
 		case 122:
@@ -2745,17 +2747,17 @@ void Scumm_v6::o6_miscOps()
 			break;
 
 		case 124:									/* samnmax */
-			warning("o6_miscOps: _saveSound=%d", args[1]);
+			warning("o6_kernelSetFunctions: _saveSound=%d", args[1]);
 			_saveSound = args[1];
 			break;
 
 		default:
-			error("o6_miscOps: default case %d", args[0]);
+			error("o6_kernelSetFunctions: default case %d", args[0]);
 		}
 	}
 }
 
-void Scumm_v6::o6_kernelFunction()
+void Scumm_v6::o6_kernelGetFunctions()
 {
 	int args[30];
 	int i;
@@ -2820,11 +2822,11 @@ void Scumm_v6::o6_kernelFunction()
 			break;
 		}
 
-		warning("o6_kernelFunction: getInput(%d) against %d", args[1], _lastKeyHit);
+		warning("o6_kernelGetFunctions: getInput(%d) against %d", args[1], _lastKeyHit);
 		push(0);
 		break;
 	case 212:
-		a = derefActorSafe(args[1], "o6_kernelFunction:212");
+		a = derefActorSafe(args[1], "o6_kernelGetFunctions:212");
 		// This is used by walk scripts
 		push(a->frame);
 		break;
@@ -2832,13 +2834,11 @@ void Scumm_v6::o6_kernelFunction()
 		if ((_extraBoxFlags[args[1]] & 0x00FF) == 0x00C0) {
 			push(_extraBoxFlags[args[1]]);
 		} else {
-//			byte *temp = (byte *)getBoxBaseAddr(args[1]);
-//			push((byte)(*(temp + 17)));
 			push(getBoxFlags(args[1]));
 		}
 		break;
 	default:
-		error("o6_kernelFunction: default case %d", args[0]);
+		error("o6_kernelGetFunctions: default case %d", args[0]);
 	}
 }
 
