@@ -1263,7 +1263,7 @@ void CharsetRenderer::translateColor() {
 		_color = CGAtextColorMap[_color & 0x0f];
 	}
 
-	if (_vm->_renderMode == Common::kRenderHerc) {
+	if (_vm->_renderMode == Common::kRenderHercA || _vm->_renderMode == Common::kRenderHercG) {
 		static byte HercTextColorMap[16] = {0, 15,  2, 15, 15,  5, 15,  15, 
 										   8, 15, 15, 15, 15, 15, 15, 15};
 		_color = HercTextColorMap[_color & 0x0f];

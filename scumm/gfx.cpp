@@ -232,7 +232,7 @@ void Gdi::init() {
 	memset(_compositeBuf, CHARSET_MASK_TRANSPARENCY, size);
 	memset(_textSurface.pixels, CHARSET_MASK_TRANSPARENCY, size);
 
-	if (_vm->_renderMode == Common::kRenderHerc) {
+	if (_vm->_renderMode == Common::kRenderHercA || _vm->_renderMode == Common::kRenderHercG) {
 		_herculesBuf = (byte *)malloc(Common::kHercW * Common::kHercH);
 		memset(_herculesBuf, CHARSET_MASK_TRANSPARENCY, Common::kHercW * Common::kHercH);
 	}
@@ -519,7 +519,7 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 	if (_vm->_renderMode == Common::kRenderCGA)
 		ditherCGA(_compositeBuf + x + y * _vm->_screenWidth, _vm->_screenWidth, x, y, width, height);
 
-	if (_vm->_renderMode == Common::kRenderHerc) {
+	if (_vm->_renderMode == Common::kRenderHercA || _vm->_renderMode == Common::kRenderHercG) {
 		ditherHerc(_compositeBuf + x + y * _vm->_screenWidth, _herculesBuf, _vm->_screenWidth, &x, &y, &width, &height);
 		// center image on the screen
 		_vm->_system->copyRectToScreen(_herculesBuf + x + y * Common::kHercW, 

@@ -50,7 +50,11 @@ void ScummEngine::setupAmigaPalette() {
 
 void ScummEngine::setupHercPalette() {
 	setPalColor( 0,   0,   0,   0);
-	setPalColor( 1, 0xAE, 0x69, 0x38);
+
+	if (_renderMode == Common::kRenderHercA)
+		setPalColor( 1, 0xAE, 0x69, 0x38);
+	else
+		setPalColor( 1, 0x00, 0xFF, 0x00);
 
 	// Setup cursor palette
 	setPalColor( 7, 170, 170, 170);

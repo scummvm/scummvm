@@ -1022,7 +1022,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_renderMode = Common::kRenderDefault;
 
 	switch (_renderMode) {
-	case Common::kRenderHerc:
+	case Common::kRenderHercA:
+	case Common::kRenderHercG:
 		if (_version > 2 && _gameId != GID_MONKEY_EGA)
 			_renderMode = Common::kRenderDefault;
 		break;
@@ -1058,7 +1059,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	} else if (_features & GF_NES) {
 		_screenWidth = 256;
 		_screenHeight = 240;
-	} else if (_renderMode == Common::kRenderHerc) {
+	} else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		_features |= GF_DEFAULT_TO_1X_SCALER;
 		_screenWidth = 320;
 		_screenHeight = 200;
@@ -1152,7 +1153,7 @@ int ScummEngine::init(GameDetector &detector) {
 	// Initialize backend
 	_system->beginGFXTransaction();
 		initCommonGFX(detector);
-		if (_renderMode == Common::kRenderHerc) {
+		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 			_system->initSize(Common::kHercW, Common::kHercH);
 			_features |= GF_DEFAULT_TO_1X_SCALER;
 			_system->setGraphicsMode("1x");
@@ -1317,7 +1318,7 @@ void ScummEngine::scummInit() {
 			_shadowPalette[i] = i;
 		if ((_features & GF_AMIGA) || (_features & GF_ATARI_ST))
 			setupAmigaPalette();
-		else if (_renderMode == Common::kRenderHerc)
+		else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG)
 			setupHercPalette();
 		else if (_renderMode == Common::kRenderCGA)
 			setupCGAPalette();

@@ -223,7 +223,8 @@ const char *getPlatformDescription(Platform id) {
 
 
 const RenderModeDescription g_renderModes[] = {
-	{"hercules", "Hercules", kRenderHerc},
+	{"hercGreen", "Hercules Green", kRenderHercG},
+	{"hercAmber", "Hercules Amber", kRenderHercA},
 	{"cga", "CGA", kRenderCGA},
 	{"ega", "EGA", kRenderEGA},
 	{0, 0, kRenderDefault}

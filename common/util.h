@@ -159,10 +159,11 @@ extern const char *getPlatformDescription(Platform id);
  * such low-level adapters as CGA or Hercules.
  */
 enum RenderMode {
-	kRenderDefault = -1,
+	kRenderDefault = 0,
 	kRenderEGA = 1,
 	kRenderCGA = 2,
-	kRenderHerc = 3
+	kRenderHercG = 3,
+	kRenderHercA = 4
 };
 
 enum HerculesDimesnions {

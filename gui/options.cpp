@@ -182,7 +182,7 @@ void OptionsDialog::close() {
 					ConfMan.set("gfx_mode", _gfxPopUp->getSelectedString(), _domain);
 
 				if ((int32)_renderModePopUp->getSelectedTag() >= 0)
-					ConfMan.set("render_mode", _renderModePopUp->getSelectedString(), _domain);
+					ConfMan.set("render_mode", Common::getRenderModeCode((Common::RenderMode)_renderModePopUp->getSelectedTag()), _domain);
 			} else {
 				ConfMan.removeKey("fullscreen", _domain);
 				ConfMan.removeKey("aspect_ratio", _domain);
@@ -303,7 +303,7 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset) {
 	// RenderMode popup
 	_renderModePopUp = new PopUpWidget(boss, x-5, yoffset, w+5, kLineHeight, "Render mode: ", 100);
 	yoffset += 16;
-	_renderModePopUp->appendEntry("<default>");
+	_renderModePopUp->appendEntry("<default>", Common::kRenderDefault);
 	_renderModePopUp->appendEntry("");
 	const Common::RenderModeDescription *rm = Common::g_renderModes;
 	for (; rm->code; ++rm) {
