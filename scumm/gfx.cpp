@@ -2293,6 +2293,7 @@ void ScummEngine::transitionEffect(int a) {
 				while (l <= r) {
 					if (l >= 0 && l < gdi._numStrips && (uint) t < (uint) bottom) {
 						virtscr[0].tdirty[l] = t * 8;
+/*
 						//HACK: this is bad place of this hack
 		 				//it fix redraw last 8 lines in room gfx layer
 		 				//this is only for maniac classic version becouse that game
@@ -2300,6 +2301,7 @@ void ScummEngine::transitionEffect(int a) {
 						if ((_version == 1) && (_gameId == GID_MANIAC))
 							virtscr[0].bdirty[l] = (t + 2) * 8;
 						else
+*/
 							virtscr[0].bdirty[l] = (t + 1) * 8;
 					}
 					l++;
@@ -2312,13 +2314,14 @@ void ScummEngine::transitionEffect(int a) {
 				if (t < 0)
 					t = 0;
  				virtscr[0].tdirty[l] = t * 8;
- 				//HACK: this is bad place of this hack
+/* 				//HACK: this is bad place of this hack
  				//it fix redraw last 8 lines in room gfx layer
  				//this is only for maniac classic version becouse that game
  				//has bigger height of room gfx layer
 				if ((_version == 1) && (_gameId == GID_MANIAC))
 					virtscr[0].bdirty[l] = (b + 2) * 8;
 				else
+*/
 					virtscr[0].bdirty[l] = (b + 1) * 8;
 			}
 			updateDirtyScreen(kMainVirtScreen);
