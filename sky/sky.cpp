@@ -200,7 +200,13 @@ void SkyState::go() {
 
 	if (introSkipped)
 		_skyControl->restartGame();
-
+	else {	//workaround for bug #791207
+		_skySound->loadSection(1);
+		_skyMusic->loadSection(1);
+		_skyMusic->startMusic(2);
+		_systemVars.currentMusic = 2;
+	}
+	
 	_lastSaveTime = _system->get_msecs();
 
 	while (1) {
