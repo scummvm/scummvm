@@ -91,6 +91,9 @@ void ScummDebugger::attach(Scumm *s, char *entry) {
 		DCmd_Register("scripts", &ScummDebugger::Cmd_PrintScript);
 		DCmd_Register("importres", &ScummDebugger::Cmd_ImportRes);
 
+		if ((_s->_gameId == GID_LOOM) || (_s->_gameId == GID_LOOM256))
+			DCmd_Register("drafts", &ScummDebugger::Cmd_PrintDraft);
+
 		DCmd_Register("loadgame", &ScummDebugger::Cmd_LoadGame);
 		DCmd_Register("savegame", &ScummDebugger::Cmd_SaveGame);
 
@@ -698,4 +701,85 @@ void ScummDebugger::printBox(int box) {
 								coords.ul.x, coords.ul.y, coords.ll.x, coords.ll.y,
 								coords.ur.x, coords.ur.y, coords.lr.x, coords.lr.y,
 								flags, mask, scale);
+}
+
+bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
+	char *names[] = {
+		"Opening",      "Straw to Gold", "Dyeing",
+		"Night Vision",	"Twisting",      "Sleep",
+		"Emptying",     "Invisibility",  "Terror",
+		"Sharpening",   "Reflection",    "Healing",
+		"Silence",      "Shaping",       "Unmaking",
+		"Transcendence"
+	};
+	int odds[] = {
+		15162, 15676, 16190,    64, 16961, 17475, 17989, 18503,
+		   73, 19274,    76,    77, 20302, 20816, 21330,    84
+	};
+		
+	char *notes = "cdefgabC";
+	int i, base, draft;
+
+	if (_s->_gameId != GID_LOOM && _s->_gameId != GID_LOOM256) {
+		Debug_Printf("Command only works with Loom/LoomCD\n");
+		return true;
+	}
+
+	// There are 16 drafts, stored from variable 50 or 100 and upwards.
+	// Each draft occupies two variables. Even-numbered variables contain
+	// the notes for each draft, and a number of flags:
+	//
+	// +---+---+---+---+-----+-----+-----+-----+
+	// | A | B | C | D | 444 | 333 | 222 | 111 |
+	// +---+---+---+---+-----+-----+-----+-----+
+	//
+	// A   Unknown
+	// B   The player has used the draft successfully at least once
+	// C   The player has knowledge of the draft
+	// D   Unknown
+	// 444 The fourth note
+	// 333 The third note
+	// 222 The second note
+	// 111 The first note
+	//
+	// I don't yet know what the odd-numbered variables are used for.
+	// Possibly they store information on where and/or how the draft can
+	// be used. They appear to remain constant throughout the game.
+
+	base = (_s->_gameId == GID_LOOM) ? 50 : 100;
+
+	// During the testing of EGA Loom we had some trouble with the drafts
+	// data structure being overwritten. I don't expect this command is
+	// particularly useful any more, but it will attempt to repair the
+	// (probably) static part of it.
+
+	if (argc == 2 && strcmp(argv[1], "fix") == 0) {
+		for (i = 0; i < 16; i++) {
+			_s->_vars[base + 2 * i + 1] = odds[i];
+		}
+		Debug_Printf(
+			"An attempt has been made to repair\n"
+			"the internal drafts data structure.\n"
+			"Continue on your own risk.\n");
+		return true;
+	}
+
+	// More useful, list the drafts.
+
+	for (i = 0; i < 16; i++) {
+		draft = _s->_vars[base + i * 2];
+		Debug_Printf("%d %-13s %c%c%c%c %c%c %5d %c\n",
+			base + 2 * i,
+			names[i],
+			notes[draft & 0x0007],
+			notes[(draft & 0x0038) >> 3],
+			notes[(draft & 0x01c0) >> 6],
+			notes[(draft & 0x0e00) >> 9],
+			(draft & 0x2000) ? 'K' : ' ',
+			(draft & 0x4000) ? 'U' : ' ',
+			_s->_vars[base + 2 * i + 1],
+			(_s->_vars[base + 2 * i + 1] != odds[i]) ? '!' : ' ');
+	}
+
+	return true;
 }

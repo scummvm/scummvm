@@ -83,7 +83,9 @@ protected:
 	bool Cmd_Script(int argc, const char **argv);
 	bool Cmd_PrintScript(int argc, const char **argv);
 	bool Cmd_ImportRes(int argc, const char **argv);
-	
+
+	bool Cmd_PrintDraft(int argc, const char **argv);
+
 	bool Cmd_DebugLevel(int argc, const char **argv);
 	bool Cmd_Help(int argc, const char **argv);
 
