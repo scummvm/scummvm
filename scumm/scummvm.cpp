@@ -1831,7 +1831,10 @@ void ScummEngine::processKbd() {
 		// too (just for convenience).
 		if (_insaneState) {
 #ifdef INSANE
-			_insane->escapeKeyHandler();
+			if (_gameId == GID_FT)
+				_insane->escapeKeyHandler();
+			else
+				_videoFinished = true;
 #else
 			_videoFinished = true;
 #endif
