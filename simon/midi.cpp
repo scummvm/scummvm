@@ -174,6 +174,8 @@ void MidiPlayer::startTrack (int track) {
 
 void MidiPlayer::stop() {
 	_system->lock_mutex (_mutex);
+	if (_parser)
+		_parser->jumpToTick(0);
 	_currentTrack = 255;
 	_system->unlock_mutex (_mutex);
 }
