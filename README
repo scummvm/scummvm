@@ -185,15 +185,6 @@ any answer. Chances are that it will work.
 
 3.2) Simon the Sorcerer 1 and 2 notes:
 ---- ---------------------------------
-The following three game targets were removed in ScummVM 0.7.x:
- simon1win    - Used for Simon the Sorcerer 1 Talkie (Windows)
- simon2win    - Used for Simon the Sorcerer 2 Talkie (Windows)
- simon2mac    - Used for Simon the Sorcerer 2 Talkie (Amiga or Mac)
-
-If you were using these three targets the games will no longer load or
-error out. Each game should be removed and added again via the launcher
-to correct the targets used.
-
 The current game targets are:
  simon1acorn  - Use for Simon the Sorcerer 1 for Acorn (CD)
  simon1dos    - Use for Simon the Sorcerer 1 for DOS (Disk)

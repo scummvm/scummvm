@@ -68,7 +68,10 @@ static const SimonGameSettings simon_settings[] = {
 	{"simon1amiga", "Simon the Sorcerer 1 (Amiga)", GAME_SIMON1AMIGA, "gameamiga"},
 	{"simon2dos", "Simon the Sorcerer 2 (DOS)", GAME_SIMON2DOS, "GAME32"},
 	{"simon1talkie", "Simon the Sorcerer 1 Talkie", GAME_SIMON1TALKIE, "GAMEPC"},
+	{"simon1win", "Simon the Sorcerer 1 Talkie (Windows)", GAME_SIMON1WIN, 0},
 	{"simon2talkie", "Simon the Sorcerer 2 Talkie", GAME_SIMON2TALKIE, "GSPTR30"},
+	{"simon2win", "Simon the Sorcerer 2 Talkie (Windows)", GAME_SIMON2WIN, 0},
+	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", GAME_SIMON2WIN, 0},
 	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)", GAME_SIMON1CD32, "gameamiga"},
 	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", GAME_SIMON1DEMO, "GDEMO"}, 
 
@@ -101,6 +104,9 @@ DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
 	StringSet fileSet;
 
 	for (g = simon_settings; g->name; ++g) {
+		if (g->detectname == NULL)
+			continue;
+
 		strcpy(detectName, g->detectname);
 		strcpy(detectName2, g->detectname);
 		strcat(detectName2, ".");
@@ -287,41 +293,53 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	_game = game.features;
 
-#if 1
-	// HACK HACK HACK
-	// This is not how, and where, MD5 computation should be done in the
-	// real world. Rather this is meant as a proof-of-concept hack. 
-	// It's quick, it's dirty, and it'll go again eventually :-)
-	char buf[100];
-	uint8 md5sum[16];
-
-	sprintf(buf, g->detectname);
-
-	if (md5_file(buf, md5sum)) {
-		// HACK : changed to this code since PalmOS doesn't handle correctly %02x.
-		// It returns only 8 chars string in upper case so i need to use hex[],
-		// copy last 2 chars to md5str and convert result to lower case
-		int j;
-		char md5str[32+1];
-		char hex[8+1];
-		for (j = 0; j < 16; j++) {
-			sprintf(hex, "%02x", (int)md5sum[j]);
-			memcpy(md5str+j*2, hex + strlen(hex) - 2, 2);
+	// Convert older targets
+	if (g->detectname == NULL) {
+		if (!strcmp("simon1win", g->name)) {
+			ConfMan.set("gameid", "simon1talkie"); 
+			ConfMan.set("platform", "Windows"); 
+		} else if (!strcmp("simon2win", g->name) || !strcmp("simon2mac", g->name)) {
+			ConfMan.set("gameid", "simon2talkie"); 
+			ConfMan.set("platform", "Windows"); 
 		}
+		ConfMan.flushToDisk();
+	} else {
+#if 1
+		// HACK HACK HACK
+		// This is not how, and where, MD5 computation should be done in the
+		// real world. Rather this is meant as a proof-of-concept hack. 
+		// It's quick, it's dirty, and it'll go again eventually :-)
+		char buf[100];
+		uint8 md5sum[16];
 
-		for (j = 0; j < 32; j++)
-			md5str[j] = tolower(md5str[j]);
-		md5str[32] = 0;
-		printf("%s  %s\n", md5str, buf);
-		const MD5Table *elem;
-		elem = (const MD5Table *)bsearch(md5str, md5table, ARRAYSIZE(md5table)-1, sizeof(MD5Table), compareMD5Table);
-		if (elem)
-			printf("Match found in database: target %s, language %s, platform %s\n",
-				elem->target, Common::getLanguageDescription(elem->language), Common::getPlatformDescription(elem->platform));
-		else
-			printf("Unknown MD5! Please report the details (language, platform, etc.) of this game to the ScummVM team\n");
-	}
+		sprintf(buf, g->detectname);
+
+		if (md5_file(buf, md5sum)) {
+			// HACK : changed to this code since PalmOS doesn't handle correctly %02x.
+			// It returns only 8 chars string in upper case so i need to use hex[],
+			// copy last 2 chars to md5str and convert result to lower case
+			int j;
+			char md5str[32+1];
+			char hex[8+1];
+			for (j = 0; j < 16; j++) {
+				sprintf(hex, "%02x", (int)md5sum[j]);
+				memcpy(md5str+j*2, hex + strlen(hex) - 2, 2);
+			}
+
+			for (j = 0; j < 32; j++)
+				md5str[j] = tolower(md5str[j]);
+			md5str[32] = 0;
+			printf("%s  %s\n", md5str, buf);
+			const MD5Table *elem;
+			elem = (const MD5Table *)bsearch(md5str, md5table, ARRAYSIZE(md5table)-1, sizeof(MD5Table), compareMD5Table);
+			if (elem)
+				printf("Match found in database: target %s, language %s, platform %s\n",
+					elem->target, Common::getLanguageDescription(elem->language), Common::getPlatformDescription(elem->platform));
+			else
+				printf("Unknown MD5! Please report the details (language, platform, etc.) of this game to the ScummVM team\n");
+		}
 #endif
+	}
 
 	VGA_DELAY_BASE = 1;
 	if (_game & GF_SIMON2) {
