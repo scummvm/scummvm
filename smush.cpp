@@ -205,97 +205,9 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 bool Smush::play(const char *filename, int x, int y) {
 	stop();
 
-	// Tempfile version of decompression code
-	#ifdef ZLIB_MEMORY
-		// zlibFile version of code. Experimental.
-		// Load the video
-		if (!setupAnim(filename, x, y))
-			return false;
-	#else
-		char tmpOut[256];
-		FILE *tmp = ResourceLoader::instance()->openNewStream(filename);
-		FILE *outFile = NULL;
-		sprintf(tmpOut, "smush.temp");
-
-		if (tmp != NULL) {
-			z_stream z;
-			char inBuf[1024], outBuf[1024], flags;
-			int status = 0;
-
-			warning("Decompressing SMUSH cutscene %s - This may take a minute", filename);
-			fread(inBuf, 4, sizeof(byte), tmp);		//	Header, Method, Flags
-			flags = inBuf[3];
-			fread(inBuf, 6, sizeof(byte), tmp);		// 	XFlags
-
-			if (((flags & 0x04) != 0) || ((flags & 0x10) != 0))	// Misc
-				error("Unsupported header flag");
-
-			if ((flags & 0x08) != 0) {				// Name
-				printf("Decompressing ");
-				do {
-					fread(inBuf, 1, sizeof(char), tmp);
-					printf("%c", inBuf[0]);
-				} while(inBuf[0] != 0);
-				printf("\n");
-			}
-
-			if ((flags & 0x02) != 0)				// CRC
-				fread(inBuf, 2, sizeof(byte), tmp);
-
-			z.zalloc = NULL;
-			z.zfree = NULL;
-			z.opaque = Z_NULL;
-
-			if (inflateInit2(&z, -15) != Z_OK)
-			error("Smush::play() - inflateInit error");
-	
-			z.next_in = (Bytef *)inBuf;
-			z.avail_in = (uInt)fread(inBuf, 1, sizeof(inBuf), tmp);
-			z.next_out = (Bytef *)outBuf;
-			z.avail_out = sizeof(outBuf);
-
-			for (;;) {
-				if (z.avail_in == 0) {
-					z.next_in = (Bytef *)inBuf;
-					z.avail_in = (uInt)fread(inBuf, 1, sizeof(inBuf), tmp);
-				}
-
-				status = inflate(&z, Z_NO_FLUSH);
-				if (status == Z_STREAM_END) {
-					if (sizeof(outBuf) - z.avail_out) {
-						if (outFile == NULL)
-							outFile = fopen(tmpOut, "wb");
-						fwrite(outBuf, 1, sizeof(outBuf) - z.avail_out, outFile);
-					}
-					break;
-				}
-
-				if (status != Z_OK) {
-					warning("Smush::play() - Error inflating stream (%d) [-3 means bad data]", status);
-					return false;
-				}
-
-				if (z.avail_out == 0) {
-					if (outFile == NULL)
-						outFile = fopen(tmpOut, "wb");
-
-					fwrite(outBuf, 1, sizeof(outBuf), outFile);
-					z.next_out = (Bytef *)outBuf;
-					z.avail_out = sizeof(outBuf);
-				}
-			}
-
-			inflateEnd(&z);
-			fclose(outFile);
-			warning("Smush::play() Open okay for %s!\n", filename);
-		} else {
-			return false;
-		}
-
-		// Load the video
-		if (!setupAnim(tmpOut, x, y))
-			return false;
-	#endif
+	// Load the video
+	if (!setupAnim(filename, x, y))
+		return false;
 
 	handleFramesHeader();
 
@@ -320,246 +232,8 @@ bool Smush::play(const char *filename, int x, int y) {
 	return true;
 }
 
-FILE *File::fopenNoCase(const char *filename, const char *directory, const char *mode) {
-	FILE *file;
-	char buf[512];
-	char *ptr;
-
-	assert(directory);
-	strcpy(buf, directory);
-
-#ifdef WIN32
-	// Fix for Win98 issue related with game directory pointing to root drive ex. "c:\"
-	if ((buf[0] != 0) && (buf[1] == ':') && (buf[2] == '\\') && (buf[3] == 0)) {
-		buf[2] = 0;
-	}
-#endif
-
-	// Record the length of the dir name (so we can cut of anything trailing it
-	// later, when we try with different file names).
-	const int dirLen = (int)strlen(buf);
-
-	if (dirLen > 0) {
-		strcat(buf, "/");	// prevent double /
-	}
-	strcat(buf, filename);
-
-	file = fopen(buf, mode);
-	if (file)
-		return file;
-
-	const char *dirs[] = {
-		"",
-		"video/",
-		"VIDEO/",
-	};
-
-	for (int dirIdx = 0; dirIdx < ARRAYSIZE(dirs); dirIdx++) {
-		buf[dirLen] = 0;
-		strcat(buf, dirs[dirIdx]);
-		int len = (int)strlen(buf);
-		strcat(buf, filename);
-
-		ptr = buf + len;
-		do
-			*ptr = toupper(*ptr);
-		while (*ptr++);
-		file = fopen(buf, mode);
-		if (file)
-			return file;
-
-		ptr = buf + len;
-		do
-			*ptr = tolower(*ptr);
-		while (*ptr++);
-		file = fopen(buf, mode);
-		if (file)
-			return file;
-	}
-
-	return NULL;
-}
-
-File::File() {
-	_handle = NULL;
-	_ioFailed = false;
-	_encbyte = 0;
-	_name = 0;
-}
-
-File::~File() {
-	close();
-	delete [] _name;
-}
-
-bool File::open(const char *filename, const char *directory, int mode, byte encbyte) {
-	if (_handle) {
-		warning("File %s already opened", filename);
-		return false;
-	}
-
-	if (filename == NULL || *filename == 0)
-		return false;
-	
-	// If no directory was specified, use the default directory (if any).
-	if (directory == NULL)
-		directory = "";
-
-	clearIOFailed();
-
-	if (mode == kFileReadMode) {
-		_handle = fopenNoCase(filename, directory, "rb");
-		if (_handle == NULL) {
-			warning("File %s not found", filename);
-			return false;
-		}
-	}	else {
-		warning("Only read/write mode supported!");
-		return false;
-	}
-
-	_encbyte = encbyte;
-
-	int len = (int)strlen(filename);
-	if (_name != 0)
-		delete [] _name;
-	_name = new char[len+1];
-	memcpy(_name, filename, len+1);
-
-	return true;
-}
-
-void File::close() {
-	if (_handle)
-		fclose(_handle);
-	_handle = NULL;
-}
-
-bool File::isOpen() {
-	return _handle != NULL;
-}
-
-bool File::ioFailed() {
-	return _ioFailed != 0;
-}
-
-void File::clearIOFailed() {
-	_ioFailed = false;
-}
-
-bool File::eof() {
-	if (_handle == NULL) {
-		error("File is not open!");
-		return false;
-	}
-
-	return feof(_handle) != 0;
-}
-
-uint32 File::pos() {
-	if (_handle == NULL) {
-		error("File is not open!");
-		return 0;
-	}
-
-	return ftell(_handle);
-}
-
-uint32 File::size() {
-	if (_handle == NULL) {
-		error("File is not open!");
-		return 0;
-	}
-
-	uint32 oldPos = ftell(_handle);
-	fseek(_handle, 0, SEEK_END);
-	uint32 length = ftell(_handle);
-	fseek(_handle, oldPos, SEEK_SET);
-
-	return length;
-}
-
-void File::seek(int32 offs, int whence) {
-	if (_handle == NULL) {
-		error("File is not open!");
-		return;
-	}
-
-	if (fseek(_handle, offs, whence) != 0)
-		clearerr(_handle);
-}
-
-uint32 File::read(void *ptr, uint32 len) {
-	byte *ptr2 = (byte *)ptr;
-	uint32 real_len;
-
-	if (_handle == NULL) {
-		error("File is not open!");
-		return 0;
-	}
-
-	if (len == 0)
-		return 0;
-
-	real_len = (uint32)fread(ptr2, 1, len, _handle);
-	if (real_len < len) {
-		clearerr(_handle);
-		_ioFailed = true;
-	}
-
-	if (_encbyte != 0) {
-		uint32 t_size = real_len;
-		do {
-			*ptr2++ ^= _encbyte;
-		} while (--t_size);
-	}
-
-	return real_len;
-}
-
-byte File::readByte() {
-	byte b;
-
-	if (_handle == NULL) {
-		error("File is not open!");
-		return 0;
-	}
-
-	if (fread(&b, 1, 1, _handle) != 1) {
-		clearerr(_handle);
-		_ioFailed = true;
-	}
-	return b ^ _encbyte;
-}
-
-uint16 File::readUint16LE() {
-	uint16 a = readByte();
-	uint16 b = readByte();
-	return a | (b << 8);
-}
-
-uint32 File::readUint32LE() {
-	uint32 a = readUint16LE();
-	uint32 b = readUint16LE();
-	return (b << 16) | a;
-}
-
-uint16 File::readUint16BE() {
-	uint16 b = readByte();
-	uint16 a = readByte();
-	return a | (b << 8);
-}
-
-uint32 File::readUint32BE() {
-	uint32 b = readUint16BE();
-	uint32 a = readUint16BE();
-	return (b << 16) | a;
-}
-///////////////////////////////////
-
 zlibFile::zlibFile() {
 	_handle = NULL;
-	usedBuffer = 0;
 }
 
 zlibFile::~zlibFile() {
@@ -568,6 +242,7 @@ zlibFile::~zlibFile() {
 
 bool zlibFile::open(const char *filename) {
 	char flags = 0;
+	inBuf = (char*)calloc(1, 16385);
 
 	if (_handle) {
 		warning("File %s already opened", filename);
@@ -583,46 +258,39 @@ bool zlibFile::open(const char *filename) {
 		return false;
 	}
 
-	warning("zlibFile %s opening...", filename);
-
 	// Read in the GZ header
-	fread(inBuf, 4, sizeof(char), _handle); // Header, Method, Flags
-	flags = inBuf[3];
-	fread(inBuf, 6, sizeof(char), _handle); // XFlags
+	fread(inBuf, 2, sizeof(char), _handle);				// Header
+	fread(inBuf, 1, sizeof(char), _handle);				// Method
+	fread(inBuf, 1, sizeof(char), _handle); flags=inBuf[0];		// Flags
+	fread(inBuf, 6, sizeof(char), _handle);				// XFlags
 
-	if (((flags & 0x04) != 0) || ((flags & 0x10) != 0)) // Misc
+	if (((flags & 0x04) != 0) || ((flags & 0x10) != 0))		// Xtra & Comment
 		error("Unsupported header flag");
 
-	if ((flags & 0x08) != 0) { // Name
-		printf("Decompressing ");
+	if ((flags & 0x08) != 0) {					// Orig. Name
 		do {
 			fread(inBuf, 1, sizeof(char), _handle);
 			printf("%c", inBuf[0]);
 		} while(inBuf[0] != 0);
-		printf("\n");
-}
+	}
 
 	if ((flags & 0x02) != 0) // CRC
 		fread(inBuf, 2, sizeof(char), _handle);
 
+	memset(inBuf, 0, 16384);			// Zero buffer (debug)
 	stream.zalloc = NULL;
 	stream.zfree = NULL;
 	stream.opaque = Z_NULL;
 
 	if (inflateInit2(&stream, -15) != Z_OK)
-		error("zlibFile::(constructor) - inflateInit2 failed");
+		error("inflateInit2 failed");
 
-	// Initial buffer pump
-	stream.next_in = (Bytef*)inBuf;
-	stream.avail_in = fread(inBuf, 1, sizeof(inBuf), _handle);
-	stream.next_out = (Bytef *)outBuf;
-	stream.avail_out = sizeof(outBuf);
-	if (!fillZlibBuffer()) {
-		warning("Error during initial zlib decompression for %s", filename);
-		return false;
-	}
+	stream.next_in = NULL;
+	stream.next_out = NULL;
+	stream.avail_in = 0;
+	stream.avail_out = 16384;
 
-	warning("zlibFile %s opened!", filename);
+	warning("zlibFile %s opened", filename);
 	return true;
 }
 
@@ -630,6 +298,7 @@ void zlibFile::close() {
 	if (_handle)
 		fclose(_handle);
 	_handle = NULL;
+	free(inBuf);
 }
 
 bool zlibFile::isOpen() {
@@ -656,7 +325,8 @@ void zlibFile::seek(int32 offs, int whence) {
 }
 
 uint32 zlibFile::read(void *ptr, uint32 len) {
-	byte *ptr2 = (byte *)ptr;
+	int result = Z_OK;
+	bool fileEOF = false;
 
 	if (_handle == NULL) {
 		error("File is not open!");
@@ -665,80 +335,47 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 
 	if (len == 0)
 		return 0;
-	int bufferLeft = sizeof(outBuf) - usedBuffer;
 
-	printf("zlibFile::read(%d). usedBuffer: %d. bufferLeft: %d\n", len, usedBuffer, bufferLeft);
+	stream.next_out = (Bytef*)ptr;
+	stream.avail_out = len;
 
-	// Do we need to get more than one buffer-read to complete this request?
-	if (len > bufferLeft) {
-		int maxBuffer = sizeof(outBuf);
-		int ptr2Pos = bufferLeft;
-		int neededAmount = len - bufferLeft;
-		
-		memcpy(ptr2, outBuf+usedBuffer, bufferLeft);	// Copy what we've got
-
-		while (neededAmount > 0) {
-			fillZlibBuffer();
-
-			if (neededAmount > maxBuffer) {
-				memcpy(ptr2+ptr2Pos, outBuf, maxBuffer);
- 
-				neededAmount-=maxBuffer;
-				ptr2Pos+=maxBuffer;
-				usedBuffer+=maxBuffer;
-			} else {
-				memcpy(ptr2+ptr2Pos, outBuf, neededAmount);
-				usedBuffer+=neededAmount;
-				neededAmount = 0;
+	fileDone = false;
+	while (stream.avail_out != 0) {
+		if (stream.avail_in == 0) {	// !eof
+	        	stream.avail_in = fread(inBuf, 1, 16384, _handle);
+			if (stream.avail_in == 0) {
+				fileEOF = true;
+				break;
 			}
+			stream.next_in = (Byte*)inBuf;
 		}
-	} else {
-		memcpy(ptr2, outBuf + usedBuffer, len);
-		usedBuffer+=len;
+
+		result = inflate(&stream, Z_NO_FLUSH);
+		if (result == Z_STREAM_END) {	// EOF
+			warning("Stream ended");
+			fileDone = true;
+			break;
+		}
+		if (result == Z_DATA_ERROR) {
+			warning("Decompression error");
+			fileDone = true;
+			break;
+		}
+		if (result != Z_OK || fileEOF) {
+			warning("Unknown decomp result: %d/%d\n", result, fileEOF);
+			fileDone = true;
+			break;
+		}
 	}
-	return len;
+
+	return (int)(len - stream.avail_out);
 }
  
-bool zlibFile::fillZlibBuffer() {
-	int status = 0;
-
-	if (stream.avail_in == 0) {
-		stream.next_in = (Bytef*)inBuf;
-		stream.avail_in = fread(inBuf, 1, sizeof(inBuf), _handle);
-	}
-
-	status = inflate(&stream, Z_NO_FLUSH);
-	if (status == Z_STREAM_END) {
-		if (sizeof(outBuf) - stream.avail_out)
-			warning("fillZlibBuffer: End of buffer");
-		return true;
-	}
-
-	if (status != Z_OK) {
-		warning("Smush::play() - Error inflating stream (%d) [-3 means bad data]", status);
-		return false;
-	}
-
-
-	if (stream.avail_out == 0) {
-		stream.next_out = (Bytef*)outBuf;
-		stream.avail_out = sizeof(outBuf);
-	}
-	usedBuffer = 0;
-
-	return true;
-}
-
 byte zlibFile::readByte() {
-	if (_handle == NULL) {
-		error("File is not open!");
-		return 0;
-	}
+	unsigned char c;
 
-	if (usedBuffer >= sizeof(outBuf))
-		fillZlibBuffer();
-
-	return outBuf[usedBuffer++];
+	read(&c, 1);
+	return c;
 }
 
 uint16 zlibFile::readUint16LE() {

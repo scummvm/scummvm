@@ -18,10 +18,6 @@
 #ifndef SMUSH_PLAYER_H
 #define SMUSH_PLAYER_H
 
-// Use experimental (probably non-functional) in-memory zlib decompression.
-// Leave undefined to use WORKING tempfile version.
-//#define ZLIB_MEMORY
-
 #include "bits.h"
 #include "debug.h"
 #include <cstring>
@@ -30,53 +26,16 @@
 #include "blocky16.h"
 #include "mixer/mixer.h"
 
-class File {
-private:
-
-	FILE * _handle;
-	bool _ioFailed;
-	uint8 _encbyte;
-	char *_name;	// For debugging
-
-	static FILE *fopenNoCase(const char *filename, const char *directory, const char *mode);
-
-public:
-	enum {
-		kFileReadMode = 1,
-	};
-	
-	File();
-	virtual ~File();
-	bool open(const char *filename, const char *directory = NULL, int mode = kFileReadMode, byte encbyte = 0);
-	void close();
-	bool isOpen();
-	bool ioFailed();
-	void clearIOFailed();
-	bool eof();
-	uint32 pos();
-	uint32 size();
-	const char *name() const { return _name; }
-	void seek(int32 offs, int whence = SEEK_SET);
-	uint32 read(void *ptr, uint32 size);
-	uint8 readByte();
-	uint16 readUint16LE();
-	uint32 readUint32LE();
-	uint16 readUint16BE();
-	uint32 readUint32BE();
-	void setEnc(byte value) { _encbyte = value; }
-};
-
 class zlibFile {
 private:
 	FILE *_handle;
-	z_stream stream;	// zlib stream
-	uint32 usedBuffer;	// how much of outBuf has been processed by ::read*()
-	char inBuf[1024], outBuf[1024]; // Buffers for decompression
-	bool fillZlibBuffer();
+	z_stream stream;	// Zlib stream
+	char *inBuf;		// Buffer for decompression
+	bool fileDone;
 
 public:
 	zlibFile();
-	virtual ~zlibFile();
+	~zlibFile();
 	bool open(const char *filename);
 	void close();
 	bool isOpen();
@@ -97,11 +56,7 @@ class Smush {
 private:
 	int32 _nbframes;
 	Blocky16 _blocky16;
-	#ifdef ZLIB_MEMORY
-		zlibFile _file;
-	#else
-		File _file;
-	#endif
+	zlibFile _file;
 	PlayingSoundHandle _soundHandle;
 
 	int32 _frame;
