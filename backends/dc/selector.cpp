@@ -146,6 +146,7 @@ static Game the_game;
 
 static bool checkName(const char *base, char *text = 0)
 {
+  GameDetector g;
   const VersionSettings *gnl = version_settings;
 
   do {
