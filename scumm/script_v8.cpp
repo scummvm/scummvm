@@ -528,7 +528,7 @@ void Scumm_v8::decodeParseString(int m, int n)
 			if (_sound->_talkChannel > -1)
 				_mixer->stop(_sound->_talkChannel);
 
-//			_sound->_talkChannel = _sound->playBundleSound(pointer);
+			_sound->_talkChannel = _sound->playBundleSound(pointer);
 			_messagePtr = _transText;
 		}
 		
@@ -1067,7 +1067,7 @@ void Scumm_v8::o8_actorOps()
 		break;
 	case 0x6D:		// SO_ACTOR_DEFAULT
 		// FIXME - is this right? Or maybe a->initActor(2) ?
-		warning("o8_actorOps: SO_ACTOR_DEFAULT");
+		//warning("o8_actorOps: SO_ACTOR_DEFAULT");
 		a->initActor(0);
 		break;
 	case 0x6E:		// SO_ACTOR_ELEVATION
