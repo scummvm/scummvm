@@ -110,7 +110,7 @@ void CEKeysDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		// GAPI key was selected
 		char selection[100];
 
-		CEActions::Instance()->setMapping((ActionType)_actionSelected, (ascii & 0xff));
+		CEActions::Instance()->setMapping((ActionType)_actionSelected, ascii);
 		
 		sprintf(selection, "Associated key : %s", CEDevice::getKeyName(CEActions::Instance()->getMapping((ActionType)_actionSelected)).c_str());
 		_actionTitle->setLabel("Choose an action to map");
