@@ -1187,8 +1187,8 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 					if (_ftSeqMusicTable[l].audioname[0] != 0) {
 						for (r = 0; r < _scumm->_numAudioNames; r++) {
 							if (strcmp(_ftSeqMusicTable[l].audioname, &_scumm->_audioNames[r * 9]) == 0) {
-								startSound(r);
-								parseScriptCmds(12, r, 1536, _ftSeqMusicTable[l].volume, 0, 0, 0, 0);
+//								startSound(r);
+//								parseScriptCmds(12, r, 1536, _ftSeqMusicTable[l].volume, 0, 0, 0, 0);
 							}
 						}
 					}
