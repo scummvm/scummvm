@@ -883,14 +883,16 @@ void Scumm_v2::o2_drawSentence() {
 
 	strcpy(sentence, (char*)getResourceAddress(rtVerb, slot));
 	if (_scummVars[VAR_SENTENCE_OBJECT1] > 0) {
-		if (temp = getObjOrActorName(_scummVars[VAR_SENTENCE_OBJECT1])) {
+		temp = getObjOrActorName(_scummVars[VAR_SENTENCE_OBJECT1]);
+		if (temp) {
 			strcat(sentence, " ");
 			strcat(sentence, (char*)temp);
 		}
 	}
 
 	if (_scummVars[VAR_SENTENCE_OBJECT2] > 0) {
-		if (temp = getObjOrActorName(_scummVars[VAR_SENTENCE_OBJECT2])) {
+		temp = getObjOrActorName(_scummVars[VAR_SENTENCE_OBJECT2]);
+		if (temp) {
 			strcat(sentence, " with ");
 			strcat(sentence, (char*)temp);
 		}
