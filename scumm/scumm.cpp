@@ -1747,13 +1747,13 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 			if (ss->cutsceneOverride && _version >= 5)
 				error("Object %d stopped with active cutscene/override in exit", ss->number);
 
-			nukeArrays(_currentScript);
+			nukeArrays(ss->number);
 			_currentScript = 0xFF;
 		} else if (ss->where == WIO_LOCAL) {
 			if (ss->cutsceneOverride && _version >= 5)
 				error("Script %d stopped with active cutscene/override in exit", ss->number);
 
-			nukeArrays(_currentScript);
+			nukeArrays(ss->number);
 			_currentScript = 0xFF;
 		}
 	}
