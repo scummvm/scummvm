@@ -89,6 +89,7 @@ public:
 	bool isDemo() const { return !strcmp(_versionString, "PE100"); }
 	bool isInterview() const { return !strcmp(_versionString, "PEint"); }
 	bool isFloppy() const { return _versionString[0] == 'P'; }
+	bool isCdRom() const { return _versionString[0] == 'C'; }
 	uint8 compression() const { return _compression; }
 	const char *JASVersion() const { return _versionString; }
 	Language getLanguage() const;
