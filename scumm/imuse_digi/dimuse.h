@@ -56,9 +56,9 @@ private:
 		int curHookId;
 		int soundGroup;
 		int iteration;
-		void *soundHandle;
-		int32 pullSize;
 		int mod;
+		int32 pullSize;
+		ImuseDigiSndMgr::soundStruct *soundHandle;
 		PlayingSoundHandle handle;
 		AppendableAudioStream *stream;
 		AudioStream *stream2;

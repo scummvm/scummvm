@@ -30,6 +30,7 @@ namespace Scumm {
 
 class ScummEngine;
 class BundleMgr;
+class ImuseDigital;
 
 class ImuseDigiSndMgr {
 public:
@@ -61,6 +62,8 @@ private:
 	struct _marker {
 		char name[256];		// name of marker
 	};
+	
+public:
 
 	struct soundStruct {
 		int freq;			// frequency
@@ -80,9 +83,13 @@ private:
 		_region region[MAX_IMUSE_REGIONS];
 		_marker marker[MAX_IMUSE_MARKERS];
 		_jump jump[MAX_IMUSE_JUMPS];
-	} _sounds[MAX_IMUSE_SOUNDS];
+	};
 
-	bool checkForProperHandle(void *soundHandle);
+private:
+
+	soundStruct _sounds[MAX_IMUSE_SOUNDS];
+
+	bool checkForProperHandle(soundStruct *soundHandle);
 	int allocSlot();
 	void prepareSound(byte *ptr, int slot);
 
@@ -99,23 +106,23 @@ public:
 	ImuseDigiSndMgr(ScummEngine *scumm);
 	~ImuseDigiSndMgr();
 	
-	void *openSound(int32 soundId, const char *soundName, int soundType, int soundGroup);
-	void closeSound(void *soundHandle);
+	soundStruct * openSound(int32 soundId, const char *soundName, int soundType, int soundGroup);
+	void closeSound(soundStruct *soundHandle);
 
-	int getFreq(void *soundHandle);
-	int getBits(void *soundHandle);
-	int getChannels(void *soundHandle);
-	bool isEndOfRegion(void *soundHandle, int region);
-	int getNumRegions(void *soundHandle);
-	int getNumJumps(void *soundHandle);
-	int getNumMarkers(void *soundHandle);
-	int getJumpIdByRegion(void *soundHandle, int number);
-	int getJumpDestRegionId(void *soundHandle, int number);
-	int getJumpHookId(void *soundHandle, int number);
-	int getJumpFade(void *soundHandle, int number);
-	char *getMarker(void *soundHandle, int number);
+	int getFreq(soundStruct *soundHandle);
+	int getBits(soundStruct *soundHandle);
+	int getChannels(soundStruct *soundHandle);
+	bool isEndOfRegion(soundStruct *soundHandle, int region);
+	int getNumRegions(soundStruct *soundHandle);
+	int getNumJumps(soundStruct *soundHandle);
+	int getNumMarkers(soundStruct *soundHandle);
+	int getJumpIdByRegion(soundStruct *soundHandle, int number);
+	int getJumpDestRegionId(soundStruct *soundHandle, int number);
+	int getJumpHookId(soundStruct *soundHandle, int number);
+	int getJumpFade(soundStruct *soundHandle, int number);
+	char *getMarker(soundStruct *soundHandle, int number);
 
-	int32 getDataFromRegion(void *soundHandle, int region, byte **buf, int32 offset, int32 size);
+	int32 getDataFromRegion(soundStruct *soundHandle, int region, byte **buf, int32 offset, int32 size);
 };
 
 } // End of namespace Scumm
