@@ -797,8 +797,6 @@ protected:
 	void o72_checkGlobQueue();
 	void o72_readINI();
 	void o72_writeINI();
-	void o72_unknownF5();
-	void o72_unknownF6();
 	void o72_getResourceSize();
 	void o72_setFilePath();
 	void o72_setWindowCaption();
