@@ -36,7 +36,6 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 #include "sound/voc.h"
-#include "sound/vorbis.h"
 
 
 namespace Scumm {
