@@ -28,21 +28,11 @@
 #define SCREEN_H 200
 #define MOUSE_W 64
 #define MOUSE_H 64
-#define NUM_BUFFERS 4
 
 #define TOP_OFFSET 40.0
 
 #define QACR0 (*(volatile unsigned int *)(void *)0xff000038)
 #define QACR1 (*(volatile unsigned int *)(void *)0xff00003c)
-
-
-static unsigned char *screen = NULL;
-static unsigned short *mouse = NULL;
-static void *screen_tx[NUM_BUFFERS] = { NULL, };
-static void *mouse_tx[NUM_BUFFERS] = { NULL, };
-static int current_buffer = 0;
-static int shakePos = 0;
-unsigned short palette[256];
 
 
 #define COPYPIXEL(n) do {			\
@@ -100,38 +90,79 @@ void commit_dummy_transpoly()
 }
 
 
-void updatePalette(Scumm *s)
+void OSystem_Dreamcast::set_palette(const byte *colors, uint start, uint num)
 {
-  int first = s->_palDirtyMin;
-  int num = s->_palDirtyMax - first + 1;
-  unsigned char *src = s->_currentPalette;
-  unsigned short *dst = palette + first;
-  src += first*3;
+  unsigned short *dst = palette + start;
   if(num>0)
     while( num-- ) {
-      *dst++ = ((src[0]<<7)&0x7c00)|
-	((src[1]<<2)&0x03e0)|
-	((src[2]>>3)&0x001f);
-      src += 3;
+      *dst++ = ((colors[0]<<7)&0x7c00)|
+	((colors[1]<<2)&0x03e0)|
+	((colors[2]>>3)&0x001f);
+      colors += 4;
     }
 }
 
-void blitToScreen(Scumm *s, unsigned char *src, int x, int y, int w, int h)
+void OSystem_Dreamcast::init_size(uint w, uint h)
+{
+  assert(w == SCREEN_W && h == SCREEN_H);
+
+  ta_sync();
+  if(!screen)
+    screen = new unsigned char[SCREEN_W*SCREEN_H];
+  for(int i=0; i<NUM_BUFFERS; i++)
+    if(!screen_tx[i])
+      screen_tx[i] = ta_txalloc(SCREEN_W*SCREEN_H*2);
+  for(int i=0; i<NUM_BUFFERS; i++)
+    if(!mouse_tx[i])
+      mouse_tx[i] = ta_txalloc(MOUSE_W*MOUSE_H*2);
+  current_buffer = 0;
+  *(volatile unsigned int *)(0xa05f80e4) = SCREEN_W/32; //stride
+  //  dc_reset_screen(0, 0);
+}
+
+void OSystem_Dreamcast::copy_rect(const byte *buf, int pitch, int x, int y,
+				  int w, int h)
 {
   unsigned char *dst = screen + y*SCREEN_W + x;
   do {
-    memcpy(dst, src, w);
+    memcpy(dst, buf, w);
     dst += SCREEN_W;
-    src += SCREEN_W;
+    buf += pitch;
   } while (--h);
 }
 
-void setShakePos(Scumm *s, int shake_pos)
-{
-  shakePos = shake_pos;
+bool OSystem_Dreamcast::show_mouse(bool visible)
+{	
+  bool last = _ms_visible;
+  _ms_visible = visible;
+
+  return last;
 }
 
-void updateScreen(Scumm *s)
+void OSystem_Dreamcast::set_mouse_pos(int x, int y)
+{
+  _ms_cur_x = x;
+  _ms_cur_y = y;
+}
+
+void OSystem_Dreamcast::set_mouse_cursor(const byte *buf, uint w, uint h,
+					 int hotspot_x, int hotspot_y)
+{
+  _ms_cur_w = w;
+  _ms_cur_h = h;
+  
+  _ms_hotspot_x = hotspot_x;
+  _ms_hotspot_y = hotspot_y;
+  
+  _ms_buf = (byte*)buf;
+}
+
+void OSystem_Dreamcast::set_shake_pos(int shake_pos)
+{
+  _current_shake_pos = shake_pos;
+}
+
+void OSystem_Dreamcast::update_screen(void)
 {
   struct polygon_list mypoly;
   struct packed_colour_vertex_list myvertex;
@@ -142,10 +173,6 @@ void updateScreen(Scumm *s)
   // while((*((volatile unsigned int *)(void*)0xa05f810c) & 0x3ff) != 200);
   // *((volatile unsigned int *)(void*)0xa05f8040) = 0xff0000;
   
-  if(s->_palDirtyMax != -1) {
-    updatePalette(s);
-  }
-
   for( int y = 0; y<SCREEN_H; y++ )
   {
     texture_memcpy64_pal( dst, src, SCREEN_W>>5, palette );
@@ -179,7 +206,7 @@ void updateScreen(Scumm *s)
   myvertex.v = 0.0;
 
   myvertex.x = 0.0;
-  myvertex.y = shakePos*2.0+TOP_OFFSET;
+  myvertex.y = _current_shake_pos*2.0+TOP_OFFSET;
   ta_commit_list(&myvertex);
 
   myvertex.x = SCREEN_W*2.0;
@@ -199,7 +226,7 @@ void updateScreen(Scumm *s)
 
   ta_commit_end();
   // *((volatile unsigned int *)(void*)0xa05f8040) = 0xffff00;
-  s->drawMouse();
+  drawMouse(_ms_cur_x, _ms_cur_y, _ms_cur_w, _ms_cur_h, _ms_buf, _ms_visible);
   // *((volatile unsigned int *)(void*)0xa05f8040) = 0xff00ff;
   ta_commit_frame();
 
@@ -208,8 +235,8 @@ void updateScreen(Scumm *s)
   // *((volatile unsigned int *)(void*)0xa05f8040) = 0x0;
 }
 
-void drawMouse(int xdraw, int ydraw, int w, int h,
-	       unsigned char *buf, bool visible)
+void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
+				  unsigned char *buf, bool visible)
 {
   struct polygon_list mypoly;
   struct packed_colour_vertex_list myvertex;
@@ -253,15 +280,15 @@ void drawMouse(int xdraw, int ydraw, int w, int h,
   myvertex.u = 0.0;
   myvertex.v = 0.0;
 
-  myvertex.x = xdraw*2.0;
-  myvertex.y = (ydraw+shakePos)*2.0 + TOP_OFFSET;
+  myvertex.x = (xdraw-_ms_hotspot_y)*2.0;
+  myvertex.y = (ydraw+_current_shake_pos-_ms_hotspot_x)*2.0 + TOP_OFFSET;
   ta_commit_list(&myvertex);
 
   myvertex.x += w*2.0;
   myvertex.u = w*(1.0/MOUSE_W);
   ta_commit_list(&myvertex);
 
-  myvertex.x = xdraw*2.0;
+  myvertex.x = (xdraw-_ms_hotspot_y)*2.0;
   myvertex.y += h*2.0;
   myvertex.u = 0.0;
   myvertex.v = h*(1.0/MOUSE_H);
@@ -273,19 +300,3 @@ void drawMouse(int xdraw, int ydraw, int w, int h,
   ta_commit_list(&myvertex);
 }
 
-void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor)
-{
-  ta_sync();
-  if(!screen)
-    screen = new unsigned char[SCREEN_W*SCREEN_H];
-  for(int i=0; i<NUM_BUFFERS; i++)
-    if(!screen_tx[i])
-      screen_tx[i] = ta_txalloc(SCREEN_W*SCREEN_H*2);
-  for(int i=0; i<NUM_BUFFERS; i++)
-    if(!mouse_tx[i])
-      mouse_tx[i] = ta_txalloc(MOUSE_W*MOUSE_H*2);
-  current_buffer = 0;
-  shakePos = 0;
-  *(volatile unsigned int *)(0xa05f80e4) = SCREEN_W/32; //stride
-  //  dc_reset_screen(0, 0);
-}

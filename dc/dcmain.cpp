@@ -22,33 +22,127 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "gui.h"
+#include "mididrv.h"
+#include "gameDetector.h"
 #include "dc.h"
 #include "icon.h"
 
 
-Scumm scumm;
-ScummDebugger debugger;
-Gui gui;
 Icon icon;
 
-IMuse sound;
-SOUND_DRIVER_TYPE snd_driv;
 
-/* CD Audio stubs */
-void cd_playtrack(int track, int offset, int delay) {;}
-void cd_play(int track, int num_loops, int start_frame) {;}
-void cd_stop() {;}
-int cd_is_running() {return 0;}
-
-void launcherLoop() {
-  /* No launcher on DC yet => stub function */
+OSystem *OSystem_Dreamcast_create() {
+	return OSystem_Dreamcast::create();
 }
 
-void BoxTest(int num) {
-  /* No debugger on the DC => stub function */
+OSystem *OSystem_Dreamcast::create() {
+	OSystem_Dreamcast *syst = new OSystem_Dreamcast();
+	return syst;
 }
 
+/* CD Audio */
+static bool find_track(int track, int &first_sec, int &last_sec)
+{
+  struct TOC *toc = cdfs_gettoc();
+  if(!toc)
+    return false;
+  int i, first, last;
+  first = TOC_TRACK(toc->first);
+  last = TOC_TRACK(toc->last);
+  if(first < 1 || last > 99 || first > last)
+    return false;
+  for(i=last; i>=first; --i)
+    if(!(TOC_CTRL(toc->entry[i-1])&4))
+      if(track==1) {
+	first_sec = TOC_LBA(toc->entry[i-1]);
+	last_sec = TOC_LBA(toc->entry[i]);
+	return true;
+      } else
+	--track;
+  return false;
+}
+
+void OSystem_Dreamcast::play_cdrom(int track, int num_loops,
+				   int start_frame, int end_frame)
+{
+  int first_sec, last_sec;
+#if 1
+  if(num_loops)
+    --num_loops;
+#endif
+  if(num_loops>14) num_loops=14;
+  else if(num_loops<0) num_loops=15; // infinity
+  if(!find_track(track, first_sec, last_sec))
+    return;
+  if(end_frame)
+    last_sec = first_sec + start_frame + end_frame;
+  first_sec += start_frame;
+  play_cdda_sectors(first_sec, last_sec, num_loops);
+}
+
+void OSystem_Dreamcast::stop_cdrom()
+{
+  stop_cdda();
+}
+
+bool OSystem_Dreamcast::poll_cdrom()
+{
+  extern int getCdState();
+  return getCdState() == 3;
+}
+
+void OSystem_Dreamcast::update_cdrom()
+{
+  // Dummy.  The CD drive takes care of itself.
+}
+
+uint32 OSystem_Dreamcast::property(int param, uint32 value)
+{
+  switch(param) {
+
+  case PROP_GET_SAMPLE_RATE:
+    return 22050;
+
+  }
+  
+  return 0;
+}
+
+void OSystem_Dreamcast::quit() {
+  exit(0);
+}
+
+void *OSystem_Dreamcast::create_thread(ThreadProc *proc, void *param) {
+  warning("Creating a thread! (not supported.)\n");
+}
+
+uint32 OSystem_Dreamcast::get_msecs()
+{
+  static uint32 msecs=0;
+  static unsigned int t0=0;
+
+  unsigned int t = Timer();
+  unsigned int dm, dt = t - t0;
+
+  t0 = t;
+  dm = (dt << 6)/3125U;
+  dt -= (dm * 3125U)>>6;
+  t0 -= dt;
+
+  return msecs += dm;
+}
+
+void OSystem_Dreamcast::delay_msecs(uint msecs)
+{
+  get_msecs();
+  unsigned int t, start = Timer();
+  int time = (((unsigned int)msecs)*100000U)>>11;
+  while(((int)((t = Timer())-start))<time)
+    checkSound();
+  get_msecs();
+}
+
+/*
 void waitForTimer(Scumm *s, int time)
 {
   if(time<0)
@@ -62,26 +156,25 @@ void waitForTimer(Scumm *s, int time)
   while(((int)((t = Timer())-start))<time)
     if(((int)(t-devpoll))>0) {
       setimask(15);
-      checkSound(s);
+      checkSound();
       handleInput(locked_get_pads(), s->mouse.x, s->mouse.y,
 		  s->_leftBtnPressed, s->_rightBtnPressed, s->_keyPressed);
       setimask(mask);
       devpoll += USEC_TO_TIMER(17000);
       if(s->mouse.x != oldmousex || s->mouse.y != oldmousey) {
+	extern void updateScreen(Scumm *s);
 	updateScreen(s);
 	oldmousex = s->mouse.x;
 	oldmousey = s->mouse.y;
       }
     }
 }
+*/
 
-static char *argv[] = { "scummvm", NULL, NULL, NULL };
-static int argc = 3;
-
-int main()
+int dc_setup(GameDetector &detector)
 {
-  int delta,tmp;
-  int last_time, new_time;
+  static char *argv[] = { "scummvm", NULL, NULL, NULL };
+  static int argc = 3;
 
 #ifndef NOSERIAL
   serial_init(57600);
@@ -96,33 +189,10 @@ int main()
 
   initSound();
 
-  if(!selectGame(&scumm, argv[2], argv[1], icon))
+  if(!selectGame(&detector, argv[2], argv[1], icon))
     exit(0);
 
-  sound.initialize(&scumm, &snd_driv);
+  //  sound.initialize(&scumm, &snd_driv);
 
-  scumm._gui = &gui;
-  scumm.scummMain(argc, argv);
-
-  gui.init(&scumm);
-
-  last_time = Timer();
-  delta = 0;
-  do {
-    updateScreen(&scumm);
-
-    new_time = Timer();
-    waitForTimer(&scumm, delta * 15 - ((new_time - last_time)<<11)/100000);
-    last_time = Timer();
-
-    if (gui._active) {
-      gui.loop();
-      delta = 5;
-    } else {
-      delta = scumm.scummLoop(delta);
-    }
-  } while(1);
-  
-  /* NOTREACHED */
-  exit(0);
+  detector.parseCommandLine(argc, argv);
 }

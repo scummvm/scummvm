@@ -22,6 +22,8 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "mididrv.h"
+#include "gameDetector.h"
 #include "dc.h"
 #include "icon.h"
 
@@ -42,7 +44,7 @@ enum vmsaveResult {
 
 static int lastvm=-1;
 
-static vmsaveResult trySave(Scumm *s, const char *data, int size,
+static vmsaveResult trySave(GameDetector *d, const char *data, int size,
 			    const char *filename, class Icon &icon, int vm)
 {
   struct vmsinfo info;
@@ -66,7 +68,7 @@ static vmsaveResult trySave(Scumm *s, const char *data, int size,
 
   memset(&header, 0, sizeof(header));
   strncpy(header.shortdesc, "ScummVM savegame", 16);
-  char *game_name = s->getGameName();
+  char *game_name = d->getGameName();
   strncpy(header.longdesc, game_name, 32);
   free(game_name);
   strncpy(header.id, "ScummVM", 16);
@@ -125,17 +127,17 @@ static bool tryLoad(char *&buffer, int &size, const char *filename, int vm)
   return false;
 }
 
-vmsaveResult writeSaveGame(Scumm *s, const char *data, int size,
+vmsaveResult writeSaveGame(GameDetector *d, const char *data, int size,
 			   const char *filename, class Icon &icon)
 {
   vmsaveResult r, res = VMSAVE_NOVM;
 
   if(lastvm >= 0 &&
-     (res = trySave(s, data, size, filename, icon, lastvm)) == VMSAVE_OK)
+     (res = trySave(d, data, size, filename, icon, lastvm)) == VMSAVE_OK)
     return res;
 
   for(int i=0; i<24; i++)
-    if((r = trySave(s, data, size, filename, icon, i)) == VMSAVE_OK) {
+    if((r = trySave(d, data, size, filename, icon, i)) == VMSAVE_OK) {
       lastvm = i;
       return r;
     } else if(r > res)
@@ -200,7 +202,7 @@ bool SerializerStream::fopen(const char *filename, const char *mode)
 
 void SerializerStream::fclose()
 {
-  extern Scumm scumm;
+  extern GameDetector detector;
   extern Icon icon;
 
   if(context) {
@@ -216,7 +218,7 @@ void SerializerStream::fclose()
 	  c->pos = destlen;
 	} else delete compbuf;
       }
-      writeSaveGame(&scumm, c->buffer, c->pos,
+      writeSaveGame(&detector, c->buffer, c->pos,
 		    c->filename, icon);
     }
     delete c->buffer;

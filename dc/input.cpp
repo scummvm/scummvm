@@ -24,12 +24,13 @@
 #include "scumm.h"
 #include "dc.h"
 
-void handleInput(struct mapledev *pad, int16 &mouse_x, int16 &mouse_y,
-		 byte &leftBtnPressed, byte &rightBtnPressed, int &keyPressed)
+int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
+		byte &shiftFlags)
 {
   int lmb=0, rmb=0, newkey=0;
   static int lastkey = 0;
   static byte lastlmb = 0, lastrmb = 0;
+  shiftFlags = 0;
   for(int i=0; i<4; i++, pad++)
     if(pad->func & MAPLE_FUNC_CONTROLLER) {
       int buttons = pad->cond.controller.buttons;
@@ -68,8 +69,11 @@ void handleInput(struct mapledev *pad, int16 &mouse_x, int16 &mouse_y,
 	int key = pad->cond.kbd.key[p];
 	if(shift & 0x08) lmb++;
 	if(shift & 0x80) rmb++;
+	if(shift & 0x11) shiftFlags |= OSystem::KBD_CTRL;
+	if(shift & 0x44) shiftFlags |= OSystem::KBD_ALT;
+	if(shift & 0x22) shiftFlags |= OSystem::KBD_SHIFT;
 	if(key >= 4 && key <= 0x1d)
-	  newkey = key+((shift & 0x22)? ('A'-4) : ('a'-4));
+	  newkey = key+('a'-4);
 	else if(key >= 0x1e && key <= 0x26)
 	  newkey = key+((shift & 0x22)? ('!'-0x1e) : ('1'-0x1e));
 	else if(key >= 0x59 && key <= 0x61)
@@ -106,28 +110,64 @@ void handleInput(struct mapledev *pad, int16 &mouse_x, int16 &mouse_y,
     }
 
   if(lmb && !lastlmb) {
-    leftBtnPressed |= msClicked|msDown;
     lastlmb = 1;
+    return -OSystem::EVENT_LBUTTONDOWN;
   } else if(lastlmb && !lmb) {
-    leftBtnPressed &= ~msDown;
     lastlmb = 0;
+    return -OSystem::EVENT_LBUTTONUP;
   }
   if(rmb && !lastrmb) {
-    rightBtnPressed |= msClicked|msDown;
     lastrmb = 1;
+    return -OSystem::EVENT_RBUTTONDOWN;
   } else if(lastrmb && !rmb) {
-    rightBtnPressed &= ~msDown;    
     lastrmb = 0;
+    return -OSystem::EVENT_RBUTTONUP;
   }
 
   if(!newkey)
     lastkey = 0;
   else if(newkey != lastkey)
-    keyPressed = lastkey = newkey;
+    return lastkey = newkey;
 
-  if (mouse_x<0) mouse_x=0;
-  if (mouse_x>319) mouse_x=319;
-  if (mouse_y<0) mouse_y=0;
-  if (mouse_y>199) mouse_y=199;
+  return 0;
+}
+
+bool OSystem_Dreamcast::poll_event(Event *event)
+{
+  unsigned int t = Timer();
+  if(((int)(t-_devpoll))<0)
+    return false;
+  _devpoll += USEC_TO_TIMER(17000);
+  int mask = getimask();
+  setimask(15);
+  checkSound();
+  int e = handleInput(locked_get_pads(), _ms_cur_x, _ms_cur_y,
+		      event->kbd.flags);
+  setimask(mask);
+  if (_ms_cur_x<0) _ms_cur_x=0;
+  if (_ms_cur_x>319) _ms_cur_x=319;
+  if (_ms_cur_y<0) _ms_cur_y=0;
+  if (_ms_cur_y>199) _ms_cur_y=199;
+  event->mouse.x = _ms_cur_x;
+  event->mouse.y = _ms_cur_y;
+  event->kbd.ascii = event->kbd.keycode = 0;
+  if(e<0) {
+    event->event_code = -e;
+    return true;
+  } else if(e>0) {
+    event->event_code = EVENT_KEYDOWN;
+    event->kbd.keycode = e;
+    event->kbd.ascii = (e>='a' && e<='z' && (event->kbd.flags & KBD_SHIFT)?
+			e &~ 0x20 : e);
+    return true;
+  } else if(_ms_cur_x != _ms_old_x || _ms_cur_y != _ms_old_y) {
+    event->event_code = EVENT_MOUSEMOVE;
+    _ms_old_x = _ms_cur_x;
+    _ms_old_y = _ms_cur_y;
+    return true;
+  } else {
+    event->event_code = 0;
+    return false;
+  }
 }
 

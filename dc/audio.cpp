@@ -24,19 +24,32 @@
 #include "scumm.h"
 #include "dc.h"
 
-#include <ronin/soundcommon.h>
-
 EXTERN_C void *memcpy4(void *s1, const void *s2, unsigned int n);
-short temp_sound_buffer[RING_BUFFER_SAMPLES];
 
 void initSound()
 {
   stop_sound();
-  do_sound_command(CMD_SET_FREQ(0));
-  do_sound_command(CMD_SET_BUFFER(0));
+  do_sound_command(CMD_SET_FREQ_EXP(FREQ_22050_EXP));
+  do_sound_command(CMD_SET_BUFFER(3));
 }
 
-void checkSound(Scumm *s)
+bool OSystem_Dreamcast::set_sound_proc(void *param, SoundProc *proc,
+				       byte format)
+{
+#if SAMPLE_MODE == 0
+  assert(format == SOUND_16BIT);
+#elif SAMPLE_MODE == 1
+  assert(format == SOUND_8BIT);
+#else
+#error Invalid SAMPLE_MODE
+#endif
+  _sound_proc_param = param;
+  _sound_proc = proc;
+
+  return true;
+}
+
+void OSystem_Dreamcast::checkSound()
 {
   int n;
   int curr_ring_buffer_samples;
@@ -56,7 +69,8 @@ void checkSound(Scumm *s)
   if(n<100)
     return;
 
-  s->mixWaves((short*)temp_sound_buffer, n);
+  _sound_proc(_sound_proc_param, (byte*)temp_sound_buffer,
+	      SAMPLES_TO_BYTES(n));
 
   if(fillpos+n > curr_ring_buffer_samples) {
     int r = curr_ring_buffer_samples - fillpos;

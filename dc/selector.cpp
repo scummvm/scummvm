@@ -22,6 +22,8 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "mididrv.h"
+#include "gameDetector.h"
 #include "dc.h"
 #include "icon.h"
 #include "label.h"
@@ -159,16 +161,27 @@ static bool isGame(const char *fn, char *base)
   return false;
 }
 
-static void checkName(Scumm *s, Game &game)
+static void checkName(GameDetector *d, Game &game)
 {
-  s->_exe_name = game.filename_base;
-  if(s->detectGame()) {
-    char *n = s->getGameName();
+  d->_exe_name = game.filename_base;
+  if(d->detectGame()) {
+    char *n = d->getGameName();
     strcpy(game.text, n);
     free(n);
   } else
     strcpy(game.text, game.filename_base);
-  s->_exe_name = NULL;
+  d->_exe_name = NULL;
+}
+
+static bool checkExe(const char *dir, const char *f)
+{
+  char fn[520];
+  int fd;
+  sprintf(fn, "%s%s.EXE", dir, f);
+  if((fd = open(fn, O_RDONLY))<0)
+    return false;
+  close(fd);
+  return true;
 }
 
 static bool isIcon(const char *fn)
@@ -202,7 +215,7 @@ static void makeDefIcon(Icon &icon)
   icon.load(NULL, 0);
 }
 
-static int findGames(Scumm *s, Game *games, int max)
+static int findGames(GameDetector *d, Game *games, int max)
 {
   Dir *dirs = new Dir[MAX_DIR];
   int curr_game = 0, curr_dir = 0, num_dirs = 1;
@@ -242,8 +255,10 @@ static int findGames(Scumm *s, Game *games, int max)
 		games[curr_game].dir[i+1]='\0';
 #endif
 	      }
+	      if(checkExe(games[curr_game].dir, "loom"))
+		strcpy(games[curr_game].filename_base, "loomcd");
 	    }
-	    checkName(s, games[curr_game]);
+	    checkName(d, games[curr_game]);
 #if 0
 	    printf("Registered game <%s> in <%s> <%s> because of <%s> <%s>\n",
 		   games[curr_game].text, games[curr_game].dir,
@@ -306,13 +321,12 @@ void waitForDisk()
 
     ta_commit_frame();
 
-    int16 mousex = 0, mousey = 0;
-    byte lmb=0, rmb=0;
-    int key=0;
+    int mousex = 0, mousey = 0;
+    byte shiftFlags;
 
     int mask = getimask();
     setimask(15);
-    handleInput(locked_get_pads(), mousex, mousey, lmb, rmb, key);
+    handleInput(locked_get_pads(), mousex, mousey, shiftFlags);
     setimask(mask);
   }
 }
@@ -329,7 +343,7 @@ static void drawGameLabel(Game &game, int pal, float x, float y,
 int gameMenu(Game *games, int num_games)
 {
   int top_game = 0, selector_pos = 0;
-  int16 mousex = 0, mousey = 64;
+  int mousex = 0, mousey = 0;
 
   if(!num_games)
     return -1;
@@ -361,15 +375,15 @@ int gameMenu(Game *games, int num_games)
 
     ta_commit_frame();
 
-    byte lmb=0, rmb=0;
-    int key=0;
+    byte shiftFlags;
+    int event;
 
     int mask = getimask();
     setimask(15);
-    handleInput(locked_get_pads(), mousex, mousey, lmb, rmb, key);
+    event = handleInput(locked_get_pads(), mousex, mousey, shiftFlags);
     setimask(mask);
     
-    if(lmb || key==13 || key==319) {
+    if(event==-OSystem::EVENT_LBUTTONDOWN || event==13 || event==319) {
       int selected_game = top_game + selector_pos;
 
       for(int fade=0; fade<=256; fade+=4) {
@@ -402,14 +416,14 @@ int gameMenu(Game *games, int num_games)
       return selected_game;
     }
 
-    if(mousey>=64+16) {
+    if(mousey>=16) {
       if(selector_pos + top_game + 1 < num_games)
 	if(++selector_pos >= 10) {
 	  --selector_pos;
 	  ++top_game;
 	}
       mousey -= 16;
-    } else if(mousey<=64-16) {
+    } else if(mousey<=-16) {
       if(selector_pos + top_game > 0)
 	if(--selector_pos < 0) {
 	  ++selector_pos;
@@ -420,7 +434,7 @@ int gameMenu(Game *games, int num_games)
   }
 }
 
-bool selectGame(Scumm *s, char *&ret, char *&dir_ret, Icon &icon)
+bool selectGame(GameDetector *d, char *&ret, char *&dir_ret, Icon &icon)
 {
   Game *games = new Game[MAX_GAMES];
   int selected, num_games;
@@ -429,7 +443,7 @@ bool selectGame(Scumm *s, char *&ret, char *&dir_ret, Icon &icon)
   void *mark = ta_txmark();
 
   for(;;) {
-    num_games = findGames(s, games, MAX_GAMES);
+    num_games = findGames(d, games, MAX_GAMES);
 
     for(int i=0; i<num_games; i++) {
       games[i].icon.create_texture();
