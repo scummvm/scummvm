@@ -768,11 +768,27 @@ void Scumm::decompressBundleSound(int index) {
 			free(CompFinal);
 			return;
 		}
-		size = READ_BE_UINT32(ptr); ptr+=4;
-		tag = READ_BE_UINT32(ptr);  ptr+=4;
-		size = READ_BE_UINT32(ptr); ptr+=size+4;
-		tag = READ_BE_UINT32(ptr);  ptr+=4;
-		size = READ_BE_UINT32(ptr); ptr+=4;
+
+		ptr+=12;       /* Skip header */
+		while(tag != 'DATA') {
+			tag = READ_BE_UINT32(ptr);  ptr+=4;
+			switch(tag) {
+				case 'FRMT':
+				case 'TEXT':
+				case 'REGN':
+				case 'STOP':
+				size = READ_BE_UINT32(ptr); ptr+=size+4;
+				break;
+
+				case 'DATA':
+				size = READ_BE_UINT32(ptr); ptr+=4;
+				break;
+
+				default:
+				error("Unknown bundle header %c%c%c%c", tag>>24, tag>>16, tag>>8, tag);
+			}
+		}
+
 		Final = (unsigned char *)malloc(size);
 		memcpy(&Final[0], &ptr[0], size);
 		_mixer->play_raw(NULL, Final, size, 22050, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
