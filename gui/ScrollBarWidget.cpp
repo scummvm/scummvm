@@ -26,8 +26,7 @@
 
 /*
  * TODO:
- * - Dragging the slider with the mouse
- * - Auto-repeast: if one clicks & holds on one of the arrows, then after a
+ * - Auto-repeat: if one clicks & holds on one of the arrows, then after a
  *   brief delay, it should start to contiously scroll
  * - Allow for a horizontal scrollbar, too?
  */
