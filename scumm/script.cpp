@@ -477,13 +477,6 @@ int ScummEngine::fetchScriptWordSigned() {
 }
 
 int ScummEngine::readVar(uint var) {
-	// HACK Seems to variable difference
-	// Correct values for now
-	if (_gameId == GID_PAJAMA && var == 32770) 
-		return 5;
-	else if (_gameId == GID_WATER && var == 32770) 
-		return 23
-;
 	int a;
 	static byte copyprotbypassed;
 	if (!_copyProtection)
@@ -523,7 +516,12 @@ int ScummEngine::readVar(uint var) {
 	}
 
 	if (var & 0x8000) {
-		if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE) || 
+		if (_gameId == GID_PAJAMA) {
+			var &= 0xFFF;
+			checkRange(_numBitVariables, 0, var, "Room variable %d out of range(w)");
+			return _roomVars[var];
+
+		} else if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE) || 
 			(_gameId == GID_LOOM && (_features & GF_FMTOWNS))) {
 			int bit = var & 0xF;
 			var = (var >> 4) & 0xFF;
@@ -557,7 +555,10 @@ int ScummEngine::readVar(uint var) {
 			var &= 0xFFF;
 		}
 
-		checkRange(20, 0, var, "Local variable %d out of range(r)");
+		if (_heversion >= 72)
+			checkRange(24, 0, var, "Local variable %d out of range(r)");
+		else
+			checkRange(20, 0, var, "Local variable %d out of range(r)");
 		return vm.localvar[_currentScript][var];
 	}
 
@@ -598,7 +599,12 @@ void ScummEngine::writeVar(uint var, int value) {
 	}
 
 	if (var & 0x8000) {
-		if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE) ||
+		if (_gameId == GID_PAJAMA) {
+			var &= 0xFFF;
+			checkRange(_numBitVariables, 0, var, "Room variable %d out of range(w)");
+			_roomVars[var] = value;
+
+		} else if ((_gameId == GID_ZAK256) || (_features & GF_OLD_BUNDLE) ||
 			(_gameId == GID_LOOM && (_features & GF_FMTOWNS))) {
 			// In the old games, the bit variables were using the same memory
 			// as the normal variables!
@@ -628,7 +634,11 @@ void ScummEngine::writeVar(uint var, int value) {
 			var &= 0xFFF;
 		}
 
-		checkRange(20, 0, var, "Local variable %d out of range(w)");
+		if (_heversion >= 72)
+			checkRange(24, 0, var, "Local variable %d out of range(w)");
+		else
+			checkRange(20, 0, var, "Local variable %d out of range(w)");
+
 		vm.localvar[_currentScript][var] = value;
 		return;
 	}

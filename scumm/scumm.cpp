@@ -491,6 +491,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_inventory = NULL;
 	_newNames = NULL;
 	_scummVars = NULL;
+	_roomVars = NULL;
 	_varwatch = 0;
 	_bitVars = NULL;
 	_numVariables = 0;

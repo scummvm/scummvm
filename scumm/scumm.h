@@ -472,6 +472,7 @@ public:
 
 protected:
 	int16 _varwatch;
+	int32 *_roomVars;
 	int32 *_scummVars;
 	byte *_bitVars;
 
