@@ -1,4 +1,4 @@
-//Microsoft Developer Studio generated resource script.
+//Microsoft eMbedded Visual C++ generated resource script.
 //
 #include "resource.h"
 
@@ -103,10 +103,17 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Bitmap
+// BINARY
 //
 
-IDB_LOGO                BITMAP  DISCARDABLE     "logo.bmp"
+PANEL_GENERIC           BINARY  DISCARDABLE     "images\\panelbig.bmp"
+PANEL_KEYBOARD          BINARY  DISCARDABLE     "images\\keyboard.bmp"
+ITEM_SKIP               BINARY  DISCARDABLE     "images\\Action.bmp"
+ITEM_OPTIONS            BINARY  DISCARDABLE     "images\\DiskwFolder.bmp"
+ITEM_SOUND_ON           BINARY  DISCARDABLE     "images\\SoundOn.bmp"
+ITEM_SOUND_OFF          BINARY  DISCARDABLE     "images\\SoundOff.bmp"
+ITEM_VIEW_PORTRAIT      BINARY  DISCARDABLE     "images\\MonkeyPortrait.bmp"
+ITEM_VIEW_LANDSCAPE     BINARY  DISCARDABLE     "images\\MonkeyLandscape.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
