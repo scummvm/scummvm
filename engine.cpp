@@ -136,7 +136,11 @@ void Engine::mainLoop() {
 			if (currScene_ != NULL) {
 				currScene_->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
 				currScene_->drawBitmaps(ObjectState::OBJSTATE_STATE);
+				currScene_->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 			}
+
+			if (SHOWFPS_GLOBAL)
+				g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
 
 			g_driver->set3DMode();
 
@@ -156,10 +160,6 @@ void Engine::mainLoop() {
 				(*i)->draw();
 			}
 
-			if (SHOWFPS_GLOBAL)
-				g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
-
-			currScene_->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 		}
 
 		g_driver->flipBuffer();
