@@ -119,4 +119,10 @@ SDL backend
          4x mode goes to 1x)
     1-9: switch between the "base" scalers: normal (point) scaler, advmame,
          hq (high quality), 2xsai, super2xsai, supereagle, tv2x, dotmatrix, ...
-    
+* Fix the "auto dirty rect" computing code - in particular, use a proper checksum
+  algorithm, this should solve many of the problems with some luck
+* OpenGL code: either fix it (see open bug tracker items and various hacks in the code),
+  or remove it. Does anybody really need this???
+* Joystick code: either fix it, or remove it, or make it possible to turn it on/off.
+  It causes crashs and/or odd behaviour for many people with joysticks (and apparently
+  also in a few odd cases to people without joystick?! Not confirmed)
