@@ -1222,8 +1222,6 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 	Common::Rect clip, src, dst;
 
-	debug(0, "codec32(%d, %d)", xmoveCur, ymoveCur);
-
 	if (!_mirror) {
 		dst.left = (_actorX - xmoveCur - _width) + 1;
 	} else {
