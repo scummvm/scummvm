@@ -48,7 +48,10 @@ int16 TabWidget::getChildY() const {
 
 int TabWidget::addTab(const String &title) {
 	// Add a new tab page
-	Tab newTab = { title, NULL };
+	Tab newTab;
+	 newTab.title = title;
+	 newTab.firstWidget = NULL;
+
 	_tabs.push_back(newTab);
 	
 	int numTabs = _tabs.size();
