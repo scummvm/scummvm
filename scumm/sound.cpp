@@ -692,13 +692,17 @@ void Sound::soundKludge(int *list, int num) {
 		processSoundQues();
 		return;
 	}
+
+	if ((_soundQuePos + num) > 0x100) {
+		warning("Sound que buffer overflow");
+		return;
+	}
+
 	_soundQue[_soundQuePos++] = num;
 	
-	for (i = 0; i < num; i++)
+	for (i = 0; i < num; i++) {
 		_soundQue[_soundQuePos++] = list[i];
-
-	if (_soundQuePos > 0x100)
-		error("Sound que buffer overflow");
+	}
 }
 
 void Sound::talkSound(uint32 a, uint32 b, int mode, int frame) {
