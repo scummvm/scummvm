@@ -2045,8 +2045,8 @@ void Scumm_v6::o6_wait() {
 		if (a->isInCurrentRoom() && a->moving) {
 			_scriptPointer += offs;
 			o6_breakHere();
+		}
 		return;
-	}
 	case 169:
 		// HACK: For Conroy Bumpus' song in Sam & Max.
 		// During the song three calls to o6_wait() appear,
