@@ -361,7 +361,7 @@ void Graphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	}
 	else {
 		// copy data 'over' destination frame (without changing frame header)
-		memcpy(_frames[dstframe].data, p, src_w * src_h);
+		memcpy(_frames[dstframe].data, p + 8, src_w * src_h);
 	}
 	
 	debug(5, "Overpacked frame %d from bank slot %d to frame slot %d", srcframe, bankslot, dstframe);
