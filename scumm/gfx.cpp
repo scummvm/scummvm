@@ -50,7 +50,7 @@ void Scumm::getGraphicsPerformance()
 	if (!(_features & GF_SMALL_HEADER))	// Variable is reserved for game scripts in earlier games
 		_vars[VAR_PERFORMANCE_2] = 0;
 
-	if (_gameId == GID_DIG)
+	if (_features & GF_AFTER_V7)
 		initScreens(0, 0, _realWidth, _realHeight);
 	else
 		initScreens(0, 16, _realWidth, 144);
@@ -88,7 +88,7 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 	assert(height >= 0);
 	assert(slot >= 0 && slot < 4);
 
-	if (_gameId == GID_DIG) {
+	if (_features & GF_AFTER_V7) {
 		if ((!slot) && (_scrHeight != 0))
 			height = _scrHeight;
 	}
@@ -105,8 +105,11 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 	vs->size = size;
 	vs->backBuf = NULL;
 
-	if (vs->scrollable)
+	if ((vs->scrollable) && (_features & GF_AFTER_V7)) {
 		size += _realWidth * 8;
+	} else {
+		size += _realWidth * 4;
+	}
 
 	createResource(rtBuffer, slot + 1, size);
 	vs->screenPtr = getResourceAddress(rtBuffer, slot + 1);
@@ -1224,7 +1227,9 @@ void Gdi::decompressMaskImg()
 	int height = _numLinesToProcess;
 	byte b, c;
 	
-	height--;		// FIXME: This seems to fix The Dig nexus wrapping corrupting memory..
+	if (_vm->_gameId == GID_DIG)
+		height--;
+				// FIXME: This seems to fix The Dig nexus wrapping corrupting memory..
 				//	  and doesn't break any other games.. but is it correct? If so,
 				//	  do we need to mirror this change anywhere else?
 	while (1) {

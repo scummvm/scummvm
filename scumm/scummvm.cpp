@@ -206,7 +206,11 @@ void Scumm::scummInit()
 	if (!(_features & GF_SMALL_NAMES))
 		loadCharset(1);
 
-	initScreens(0, 16, _realWidth, 144);
+	if (_features & GF_AFTER_V7) {
+		initScreens(0, 0, _realWidth, _realHeight);
+	} else {
+		initScreens(0, 16, _realWidth, 144);
+	}
 
 	setShake(0);
 	setupCursor();
