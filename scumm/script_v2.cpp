@@ -918,17 +918,44 @@ void Scumm_v2::o2_doSentence() {
 		
 		if (st->verb == 254) {
 			Scumm::stopObjectScript(st->objectA);
-		} else if (st->verb != 253 && st->verb != 250) {
-			VAR(VAR_ACTIVE_VERB) = st->verb;
-			VAR(VAR_ACTIVE_OBJECT1) = st->objectA;	
-			VAR(VAR_ACTIVE_OBJECT2) = st->objectB;
-
-			stopObjectScript(st->objectA, false);
-			runObjectScript(st->objectA, st->verb, false, false, NULL);
 		} else {
-			bool isBackgroundScript = (st->verb == 250);
-			stopObjectScript(st->objectA, isBackgroundScript);
-			runObjectScript(st->objectA, 253, isBackgroundScript, false, NULL);
+			bool isBackgroundScript;
+			bool isSpecialVerb;
+			if (st->verb != 253 && st->verb != 250) {
+				VAR(VAR_ACTIVE_VERB) = st->verb;
+				VAR(VAR_ACTIVE_OBJECT1) = st->objectA;	
+				VAR(VAR_ACTIVE_OBJECT2) = st->objectB;
+				
+				isBackgroundScript = false;
+				isSpecialVerb = false;
+			} else {
+				isBackgroundScript = (st->verb == 250);
+				isSpecialVerb = true;
+				st->verb = 253;
+			}
+
+			// Check if an object script for this object is already running. If
+			// so, reuse its script slot. Note that we abuse two script flags:
+			// freezeResistant and recursive. We use them to track two
+			// script flags used in V1/V2 games. The main reason we do it this
+			// ugly evil way is to avoid having to introduce yet another save
+			// game revision.
+			int slot = -1;
+			ScriptSlot *ss;
+			int i;
+		
+			ss = vm.slot;
+			for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
+				if (st->objectA == ss->number &&
+					ss->freezeResistant == isBackgroundScript &&
+					ss->recursive == isSpecialVerb &&
+					(ss->where == WIO_ROOM || ss->where == WIO_INVENTORY || ss->where == WIO_FLOBJECT)) {
+					slot = i;
+					break;
+				}
+			}
+
+			runObjectScript(st->objectA, st->verb, isBackgroundScript, isSpecialVerb, NULL, slot);
 		}
 		break;
 	case 2:
@@ -1549,49 +1576,4 @@ void Scumm_v2::resetSentence() {
 	VAR(VAR_SENTENCE_OBJECT1) = 0;
 	VAR(VAR_SENTENCE_OBJECT2) = 0;
 	VAR(VAR_SENTENCE_PREPOSITION) = 0;
-}
-
-enum {
-	ssDead = 0,
-	ssPaused = 1,
-	ssRunning = 2
-};
-
-/* Stop an object script 'script'*/
-void Scumm_v2::stopObjectScript(int script, bool background) {
-	ScriptSlot *ss;
-	NestedScript *nest;
-	int i, num;
-
-	if (script == 0)
-		return;
-
-	ss = vm.slot;
-	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
-		if (script == ss->number && ss->status != ssDead &&
-		    ss->freezeResistant == background &&
-		    (ss->where == WIO_ROOM || ss->where == WIO_INVENTORY || ss->where == WIO_FLOBJECT)) {
-			if (ss->cutsceneOverride)
-				error("Object %d stopped with active cutscene/override", script);
-			ss->number = 0;
-			ss->status = ssDead;
-			if (_currentScript == i)
-				_currentScript = 0xFF;
-		}
-	}
-
-	nest = vm.nest;
-	num = _numNestedScripts;
-
-	while (num > 0) {
-		if (nest->number == script &&
-			vm.slot[nest->slot].freezeResistant == background && 
-		    (nest->where == WIO_ROOM || nest->where == WIO_INVENTORY || nest->where == WIO_FLOBJECT)) {
-			nest->number = 0xFF;
-			nest->slot = 0xFF;
-			nest->where = 0xFF;
-		}
-		nest++;
-		num--;
-	}
 }

@@ -563,7 +563,7 @@ public:
 	bool isScriptRunning(int script) const;	// FIXME - should be protected, used by Sound::startTalkSound
 
 protected:
-	void runObjectScript(int script, int entry, bool freezeResistant, bool recursive, int *vars);
+	void runObjectScript(int script, int entry, bool freezeResistant, bool recursive, int *vars, int slot = -1);
 	void runScriptNested(int script);
 	void executeScript();
 	void updateScriptPtr();

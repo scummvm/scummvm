@@ -76,15 +76,15 @@ void Scumm::runScript(int script, bool freezeResistant, bool recursive, int *lva
 	runScriptNested(slot);
 }
 
-void Scumm::runObjectScript(int object, int entry, bool freezeResistant, bool recursive, int *vars) {
+void Scumm::runObjectScript(int object, int entry, bool freezeResistant, bool recursive, int *vars, int slot) {
 	ScriptSlot *s;
 	uint32 obcd;
-	int slot, where, offs;
+	int where, offs;
 
 	if (!object)
 		return;
 
-	if (!recursive)
+	if (!recursive && (_version >= 3))
 		stopObjectScript(object);
 
 	where = whereIsObject(object);
@@ -95,7 +95,10 @@ void Scumm::runObjectScript(int object, int entry, bool freezeResistant, bool re
 	}
 
 	obcd = getOBCDOffs(object);
-	slot = getScriptSlot();
+	
+	// Find a free object slot, unless one was specified
+	if (slot == -1)
+		slot = getScriptSlot();
 
 	offs = getVerbEntrypoint(object, entry);
 	if (offs == 0)

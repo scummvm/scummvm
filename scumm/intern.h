@@ -220,8 +220,6 @@ protected:
 	void resetSentence();
 	void setUserState(byte state);
 
-	void stopObjectScript(int script, bool background);
-
 	/* Version 2 script opcodes */
 	void o2_actorFromPos();
 	void o2_actorSet();
