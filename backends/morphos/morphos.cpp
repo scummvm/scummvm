@@ -1404,7 +1404,7 @@ void OSystem_MorphOS::set_mouse_cursor(const byte *buf, uint w, uint h, int hots
 	UndrawMouse();
 }
 
-bool OSystem_MorphOS::set_sound_proc(void *param, OSystem::SoundProc *proc, byte format)
+bool OSystem_MorphOS::set_sound_proc(OSystem::SoundProc *proc, void *param, OSystem::SoundFormat format)
 {
 	SoundProc = proc;
 	SoundParam = param;

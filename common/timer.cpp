@@ -24,26 +24,28 @@
 #include "scummsys.h"
 #include "timer.h"
 
-static Engine * eng;
+static Timer *g_timer = NULL;
 
 Timer::Timer(Engine * engine) {
 	memset(this,0,sizeof(Timer)); //palmos
 	
 	_initialized = false;
 	_timerRunning = false;
-	eng = _engine = engine;
+	_engine = engine;
+	g_timer = this;
 }
 
 Timer::~Timer() {
 	release();
 }
 
-static int timer_handler (int t) {
-	eng->_timer->handler(&t);
-	return t;
+int Timer::timer_handler(int t) {
+	if (g_timer)
+		return g_timer->handler(t);
+	return 0;
 }
 
-int Timer::handler(int * t) {
+int Timer::handler(int t) {
 	uint32 interval, l;
 
 	if (_timerRunning) {
@@ -62,16 +64,16 @@ int Timer::handler(int * t) {
 		}
 	}
 
-	return *t;
+	return t;
 }
 
 bool Timer::init() {
 	int32 l;
 
 	if (_engine->_system == NULL) {
-	printf("Timer: OSystem not initialized !\n");
-	return false;
-}
+		warning("Timer: OSystem not initialized!");
+		return false;
+	}
 
 	if (_initialized == true) 
 		return true;
@@ -112,7 +114,7 @@ bool Timer::installProcedure (TimerProc procedure, int32 interval) {
 	bool found = false;
 
 	if (_initialized == false) {
-		printf ("Timer: is not initialized !");
+		warning("Timer: is not initialized!");
 		return false;
 	}
 
@@ -129,7 +131,7 @@ bool Timer::installProcedure (TimerProc procedure, int32 interval) {
 
 	_timerRunning = true;
 	if (!found)	{
-		printf ("Can't find free slot !");
+		warning("Can't find free slot!");
 		return false;
 	}
 
@@ -140,7 +142,7 @@ void Timer::releaseProcedure (TimerProc procedure) {
 	int32 l;
 
 	if (_initialized == false) {
-		printf ("Timer: is not initialized !");
+		warning("Timer: is not initialized!");
 		return;
 	}
 

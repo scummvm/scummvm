@@ -27,16 +27,25 @@
 #include "savefile.h"
 
 /**
- * Interface for ScummVM backends.
+ * Interface for ScummVM backends. If you want to port ScummVM to a system
+ * which is not currently covered by any of our backends, this is the place
+ * to start. ScummVM will create an instance of a subclass of this interface
+ * and use it to interact with the system.
+ *
+ * In particular, a backend provides a video surface for ScummVM to draw in;
+ * methods to create threads and timers, to handle user input events,
+ * control audio CD playback, and sound output.
  */
 class OSystem {
 public:
 	typedef void *MutexRef;
 	typedef int ThreadProc(void *param);
 	typedef void SoundProc(void *param, byte *buf, int len);
+	//typedef int TimerProc(int interval);
 
 	/**
 	 * The types of events backends can generate.
+	 * @todo Add events for quit request, and screen size change.
 	 * @see Event
 	 */
 	enum EventCode {
@@ -92,16 +101,35 @@ public:
 		bool show_cursor;
 	};
 	
-	enum {
+	enum SoundFormat {
 		SOUND_8BIT = 0,
 		SOUND_16BIT = 1
 	};
-	
-	/** Set colors of the palette. */
-	virtual void set_palette(const byte *colors, uint start, uint num) = 0;
+
+
+
+	/** @name Graphics */
+	//@{
 
 	/** Set the size of the video bitmap. Typically 320x200 pixels. */
 	virtual void init_size(uint w, uint h) = 0;
+
+	/**
+	 * Returns the currently set screen height.
+	 * @see init_size
+	 * @return the currently set screen height
+	 */
+	virtual int16 get_height() = 0;
+
+	/**
+	 * Returns the currently set screen width.
+	 * @see init_size
+	 * @return the currently set screen width
+	 */
+	virtual int16 get_width() = 0;
+
+	/** Set colors of the palette. */
+	virtual void set_palette(const byte *colors, uint start, uint num) = 0;
 
 	/**
 	 * Draw a bitmap to screen.
@@ -123,6 +151,46 @@ public:
 	/** Update the dirty areas of the screen. */
 	virtual void update_screen() = 0;
 
+	/**
+	 * Set current shake position, a feature needed for some SCUMM screen effects.
+	 * The effect causes the displayed graphics to be shifted upwards by the specified 
+	 * (always positive) offset. The area at the bottom of the screen which is moved
+	 * into view by this is filled by black. This does not cause any graphic data to
+	 * be lost - that is, to restore the original view, the game engine only has to
+	 * call this method again with a 0 offset. No calls to copy_rect are necessary.
+	 * @param shakeOffset	the shake offset
+	 */
+	virtual void set_shake_pos(int shakeOffset) = 0;
+
+	/** Convert the given RGB triplet into a NewGuiColor. A NewGuiColor can be
+	 * 8bit, 16bit or 32bit, depending on the target system. The default
+	 * implementation generates a 16 bit color value, in the 565 format
+	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
+	 * @see colorToRGB
+	 */
+	virtual NewGuiColor RGBToColor(uint8 r, uint8 g, uint8 b) {
+		return ((((r >> 3) & 0x1F) << 11) | (((g >> 2) & 0x3F) << 5) | ((b >> 3) & 0x1F));
+	}
+
+	/** Convert the given NewGuiColor into a RGB triplet. A NewGuiColor can be
+	 * 8bit, 16bit or 32bit, depending on the target system. The default
+	 * implementation takes a 16 bit color value and assumes it to be in 565 format
+	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
+	 * @see RGBToColor
+	 */
+	virtual void colorToRGB(NewGuiColor color, uint8 &r, uint8 &g, uint8 &b) {
+		r = (((color >> 11) & 0x1F) << 3);
+		g = (((color >> 5) & 0x3F) << 2);
+		b = ((color&0x1F) << 3);
+	}
+
+	//@}
+
+
+
+	/** @name Mouse */
+	//@{
+
 	/** Show or hide the mouse cursor. */
 	virtual bool show_mouse(bool visible) = 0;
 	
@@ -142,18 +210,14 @@ public:
 	
 	/** Set the bitmap used for drawing the cursor. */
 	virtual void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) = 0;
+
+	//@}
 	
-	/**
-	 * Set current shake position, a feature needed for some SCUMM screen effects.
-	 * The effect causes the displayed graphics to be shifted upwards by the specified 
-	 * (always positive) offset. The area at the bottom of the screen which is moved
-	 * into view by this is filled by black. This does not cause any graphic data to
-	 * be lost - that is, to restore the original view, the game engine only has to
-	 * call this method again with a 0 offset. No calls to copy_rect are necessary.
-	 * @param shakeOffset	the shake offset
-	 */
-	virtual void set_shake_pos(int shakeOffset) = 0;
-		
+	
+
+	/** @name Events and Threads */
+	//@{
+
 	/** Get the number of milliseconds since the program was started. */
 	virtual uint32 get_msecs() = 0;
 	
@@ -163,24 +227,38 @@ public:
 	/**
 	 * Create a thread with the given entry procedure.
 	 * @param proc	the thread main procedure
-	 * @param param	an arbitrary parameter which is stored and passed to
-	 *              proc when it is invoked in its own thread.
+	 * @param param	an arbitrary parameter which is stored and passed to proc
 	 * @return 
 	 */
 	virtual void create_thread(ThreadProc *proc, void *param) = 0;
 	
-	// Get the next event.
-	// Returns true if an event was retrieved.	
+	/** Add a new callback timer. */
+	virtual void set_timer(int timer, int (*callback)(int)) = 0;
+	
+	/**
+	 * Get the next event in the event queue.
+	 * @param event	point to an Event struct, which will be filled with the event data.
+	 * @return true if an event was retrieved.
+	 */
 	virtual bool poll_event(Event *event) = 0;
 
-	// Set the function to be invoked whenever samples need to be generated
-	// Format is the sample type format.
-	// Only 16-bit signed mode is needed for simon & scumm
-	virtual bool set_sound_proc(void *param, SoundProc *proc, byte format) = 0;
-	
-	// Get or set a property
-	virtual uint32 property(int param, Property *value) = 0;
+	//@}
+
+
+
+	/** @name Sound */
+	//@{
+	/**
+	 * Set the audio callback which is invoked whenever samples need to be generated.
+	 * Currently, only the 16-bit signed mode is ever used for Simon & Scumm
+	 * @param proc		pointer to the callback.
+	 * @param param		an arbitrary parameter which is stored and passed to proc.
+	 * @param format	the sample type format.
+	 */
+	virtual bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format) = 0;
+	//@} 
 		
+
 
 	/**
 	 * @name Audio CD
@@ -215,12 +293,8 @@ public:
 	//@} 
 
 
-	// Add a new callback timer
-	virtual void set_timer(int timer, int (*callback)(int)) = 0;
 
-	/**
-	 * @name Mutex handling
-	 */
+	/** @name Mutex handling */
 	//@{
 	/**
 	 * Create a new mutex.
@@ -249,12 +323,9 @@ public:
 	virtual void delete_mutex(MutexRef mutex) = 0;
 	//@} 
 
-	// Quit
-	virtual void quit() = 0;
+
 	
-	/**
-	 * @name Overlay
-	 */
+	/** @name Overlay */
 	//@{
 	virtual void show_overlay() = 0;
 	virtual void hide_overlay() = 0;
@@ -263,25 +334,21 @@ public:
 	virtual void copy_rect_overlay(const NewGuiColor *buf, int pitch, int x, int y, int w, int h) = 0;
 	//@} 
 
-	// Low-level graphics access
-	virtual int16 get_height() {return 200;}
-	virtual int16 get_width() {return 320;}
 
-	// Methods that convert RGB to/from colors suitable for the overlay.
-	// Default implementation assumes 565 mode.
-	virtual NewGuiColor RGBToColor(uint8 r, uint8 g, uint8 b) {
-		return ((((r >> 3) & 0x1F) << 11) | (((g >> 2) & 0x3F) << 5) | ((b >> 3) & 0x1F));
-	}
-	virtual void colorToRGB(NewGuiColor color, uint8 &r, uint8 &g, uint8 &b) {
-		r = (((color >> 11) & 0x1F) << 3);
-		g = (((color >> 5) & 0x3F) << 2);
-		b = ((color&0x1F) << 3);
-	}
 
-	// Savefile management
+	/** @name Miscellaneous */
+	//@{
+	/** Get or set a backend property. */
+	virtual uint32 property(int param, Property *value) = 0;
+
+	/** Quit (exit) the application. */
+	virtual void quit() = 0;
+
+	/** Savefile management. */
 	virtual SaveFileManager *get_savefile_manager() {
 		return new SaveFileManager();
 	}
+	//@}
 };
 
 /* Factory functions. This means we don't have to include the headers for

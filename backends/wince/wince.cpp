@@ -1673,7 +1673,7 @@ void own_soundProc(void *buffer, byte *samples, int len) {
 		memset(samples, 0, len);
 }
 
-bool OSystem_WINCE3::set_sound_proc(void *param, SoundProc *proc, byte format) {
+bool OSystem_WINCE3::set_sound_proc(SoundProc *proc, void *param, SoundFormat format) {
 	SDL_AudioSpec desired;
 
 	/* only one format supported at the moment */

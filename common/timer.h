@@ -52,11 +52,14 @@ public:
 	  Timer(Engine *engine);
 	 ~Timer();
 
-	int handler(int *t);
 	bool init();
 	void release();
 	bool installProcedure(TimerProc procedure, int32 interval);
 	void releaseProcedure(TimerProc procedure);
+
+protected:
+	static int timer_handler(int t);
+	int handler(int t);
 };
 
 #endif

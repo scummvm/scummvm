@@ -188,7 +188,7 @@ bool SoundMixer::bindToSystem(OSystem *syst) {
 	if (rate == 0)
 		error("OSystem returned invalid sample rate");
 
-	return syst->set_sound_proc(this, onGenerateSamples, OSystem::SOUND_16BIT);
+	return syst->set_sound_proc(onGenerateSamples, this, OSystem::SOUND_16BIT);
 }
 
 void SoundMixer::stopAll() {

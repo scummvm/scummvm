@@ -827,7 +827,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 	return false;
 }
 
-bool OSystem_SDL_Common::set_sound_proc(void *param, SoundProc *proc, byte /* format */) {
+bool OSystem_SDL_Common::set_sound_proc(SoundProc *proc, void *param, SoundFormat format) {
 	SDL_AudioSpec desired;
 
 	memset(&desired, 0, sizeof(desired));

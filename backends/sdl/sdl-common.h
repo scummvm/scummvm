@@ -78,7 +78,7 @@ public:
 	bool poll_event(Event *event);
 
 	// Set function that generates samples 
-	bool set_sound_proc(void *param, SoundProc *proc, byte sound);
+	bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format);
 
 	// Poll CD status
 	// Returns true if cd audio is playing

@@ -86,7 +86,7 @@ public:
 	void SimulateArrowKeys(Event *event, Int8 iHoriz, Int8 iVert, Boolean repeat);
 
 	// Set function that generates samples 
-	bool set_sound_proc(void *param, SoundProc *proc, byte sound);
+	bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format);
 
 	// Poll cdrom status
 	// Returns true if cd audio is playing

@@ -80,7 +80,7 @@ public:
 	// Set the function to be invoked whenever samples need to be generated
 	// Format is the sample type format.
 	// Only 16-bit signed mode is needed for simon & scumm
-	bool set_sound_proc(void *param, SoundProc *proc, byte format);
+	bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format);
 	
 	// Get or set a property
 	uint32 property(int param, Property *value);

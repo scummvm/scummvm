@@ -42,7 +42,7 @@ public:
 	void delay_msecs(uint msecs);
 	void create_thread(ThreadProc *proc, void *param) { }
 	bool poll_event(Event *event) { return false; }
-	bool set_sound_proc(void *param, SoundProc *proc, byte sound) {}
+	bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format) {}
 	void quit() { exit(1); }
 	uint32 property(int param, Property *value) { return 0; }
 	static OSystem *create(int gfx_mode, bool full_screen);

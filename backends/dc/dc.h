@@ -48,7 +48,7 @@ class OSystem_Dreamcast : public OSystem {
   bool poll_event(Event *event);
   
   // Set function that generates samples 
-  bool set_sound_proc(void *param, SoundProc *proc, byte sound);
+  bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format);
 		
   // Poll cdrom status
   // Returns true if cd audio is playing

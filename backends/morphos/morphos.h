@@ -99,7 +99,7 @@ class OSystem_MorphOS : public OSystem
 		virtual void warp_mouse(int x, int y);
 
 		// Set the function to be invoked whenever samples need to be generated
-		virtual bool set_sound_proc(void *param, SoundProc *proc, byte format);
+		virtual bool set_sound_proc(SoundProc *proc, void *param, SoundFormat format);
 				  void fill_sound    (byte * stream, int len);
 
 		virtual uint32 property(int param, Property *value);
