@@ -344,7 +344,9 @@ void Scumm::getScriptBaseAddress() {
 	ss = &vm.slot[_currentScript];
 	switch (ss->where) {
 	case WIO_INVENTORY:					/* inventory script * */
-		idx = getObjectIndex(ss->number);
+		for (idx = 0; idx < _maxInventoryItems; idx++)
+			if (_inventory[idx] == ss->number)
+				break;
 		_scriptOrgPointer = getResourceAddress(rtInventory, idx);
 		assert(idx < _maxInventoryItems);
 		_lastCodePtr = &_baseInventoryItems[idx];

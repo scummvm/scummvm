@@ -129,7 +129,21 @@ int Scumm::getObjectIndex(int object) {
 	if (object < 1)
 		return -1;
 
-	/* OF_OWNER_ROOM should be 0xFF for full throttle, else 0xF */
+#if 1
+	for (i = (_numLocalObjects-1); i > 0; i--) {
+		if (_objs[i].obj_nr == object)
+			return i;
+	}
+	return -1;
+#else
+	// FIXME: this function searches thru the _inventory. Yet almost all
+	// functions calling it assumg the index will always be into _objs.
+	// For script_v2.cpp this already caused some hard to track buglets.
+	// Maybe it also causes problems in other places. The question is,
+	// under which cirumstances would the _inventory result ever be
+	// useful for us?
+
+	// OF_OWNER_ROOM should be 0xFF for full throttle, else 0xF
 	if (_objectOwnerTable[object] != OF_OWNER_ROOM) {
 		for (i = 0; i < _maxInventoryItems; i++)
 			if (_inventory[i] == object)
@@ -142,6 +156,7 @@ int Scumm::getObjectIndex(int object) {
 		}
 		return -1;
 	}
+#endif
 }
 
 int Scumm::whereIsObject(int object) {

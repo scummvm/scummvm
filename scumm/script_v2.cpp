@@ -517,8 +517,10 @@ void Scumm_v2::o2_setObjPreposition() {
 	int unk = fetchScriptByte();
 
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
-		ObjectData *od = &_objs[getObjectIndex(obj)];
-		od->walk_y = (unk << 5) | (od->walk_y & 0x1F);
+		// FIXME: this might not work properly the moment we save and restore the game.
+		byte *ptr = getOBCDFromObject(obj) + 12;
+		*ptr &= 0x1F;
+		*ptr |= unk << 5;
 	}
 }
 
@@ -527,8 +529,8 @@ void Scumm_v2::o2_getObjPreposition() {
 	int obj = getVarOrDirectWord(0x80);
 
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
-		ObjectData *od = &_objs[getObjectIndex(obj)];
-		setResult(od->walk_y >> 5);
+		byte *ptr = getOBCDFromObject(obj) + 12;
+		setResult(*ptr >> 5);
 	} else {
 		setResult(0xFF);
 	}
