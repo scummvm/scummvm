@@ -56,7 +56,7 @@ int Logic::processSession(void) {
 		head = (StandardHeader *) _vm->_resman->openResource(run_list);
 
 		if (head->fileType != RUN_LIST)
-			error("Logic_engine %d not a run_list", run_list);
+			error("processSession: %d not a run_list", run_list);
 
 		game_object_list = (uint32 *) (head + 1);
 
@@ -80,7 +80,7 @@ int Logic::processSession(void) {
 		head = (StandardHeader *) _vm->_resman->openResource(ID);
 
 		if (head->fileType != GAME_OBJECT)
-			error("Logic_engine %d not an object", ID);
+			error("processSession: %d not an object", ID);
 
 		_curObjectHub = (ObjectHub *) (head + 1);
 
@@ -126,7 +126,7 @@ int Logic::processSession(void) {
 				far_head = (StandardHeader *) _vm->_resman->openResource(script / SIZE);
 
 				if (far_head->fileType != GAME_OBJECT && far_head->fileType != SCREEN_MANAGER)
-					error("Logic_engine %d not a far object (its a %d)", script / SIZE, far_head->fileType);
+					error("processSession: %d not a far object (its a %d)", script / SIZE, far_head->fileType);
 
 				// raw_script_ad = (char *) (head + 1) + sizeof(StandardHeader);
 
