@@ -289,17 +289,15 @@ void ScummEngine::akos_decodeData(Actor *a, int frame, uint usemask) {
 }
 
 void AkosRenderer::setPalette(byte *new_palette) {
-	const byte *the_akpl;
 	uint size, i;
 
-	the_akpl = _vm->findResourceData(MKID('AKPL'), akos);
 	size = _vm->getResourceDataSize(akpl);
 
 	if (size > 256)
 		error("akos_setPalette: %d is too many colors", size);
 
 	for (i = 0; i < size; i++) {
-		palette[i] = new_palette[i] != 0xFF ? new_palette[i] : the_akpl[i];
+		palette[i] = new_palette[i] != 0xFF ? new_palette[i] : akpl[i];
 	}
 
 	if (_vm->_heversion == 70 && size) {

@@ -978,7 +978,7 @@ protected:
 	virtual void palManipulateInit(int resID, int start, int end, int time);
 	void palManipulate();
 public:
-	int remapPaletteColor(int r, int g, int b, uint threshold);		// Used by Actor::remapActorPalette
+	int remapPaletteColor(int r, int g, int b, int threshold);		// Used by Actor::remapActorPalette
 protected:
 	void moveMemInPalRes(int start, int end, byte direction);
 	void setupShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor);

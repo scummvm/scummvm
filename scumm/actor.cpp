@@ -1805,12 +1805,9 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 
 		// allow remap of generic palette entry?
 		if (!shadow_mode || akpl_color >= 16) {
-			if (r_fact != 256)
-				r = (r * r_fact) >> 8;
-			if (g_fact != 256)
-				g = (g * g_fact) >> 8;
-			if (b_fact != 256)
-				b = (b * b_fact) >> 8;
+			r = (r * r_fact) >> 8;
+			g = (g * g_fact) >> 8;
+			b = (b * b_fact) >> 8;
 			palette[i] = _vm->remapPaletteColor(r, g, b, threshold);
 		}
 	}

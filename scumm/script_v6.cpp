@@ -2705,7 +2705,7 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 		push(checkXYInBoxBounds(args[3], args[1], args[2]));
 		break;
 	case 206:
-		push(remapPaletteColor(args[1], args[2], args[3], (uint) - 1));
+		push(remapPaletteColor(args[1], args[2], args[3], -1));
 		break;
 	case 207:
 		i = getObjectIndex(args[1]);

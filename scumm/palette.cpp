@@ -436,7 +436,7 @@ void ScummEngine::setupShadowPalette(int slot, int redScale, int greenScale, int
 		*table++ = remapPaletteColor((curpal[0] * redScale) >> 8,
 									 (curpal[1] * greenScale) >> 8,
 									 (curpal[2] * blueScale) >> 8,
-									 (uint) - 1);
+									 -1);
 		curpal += 3;
 	}
 }
@@ -658,7 +658,7 @@ void ScummEngine::desaturatePalette(int hueScale, int satScale, int lightScale, 
 }
 
 
-int ScummEngine::remapPaletteColor(int r, int g, int b, uint threshold) {
+int ScummEngine::remapPaletteColor(int r, int g, int b, int threshold) {
 	int i;
 	int ar, ag, ab;
 	uint sum, bestsum, bestitem = 0;
@@ -692,7 +692,7 @@ int ScummEngine::remapPaletteColor(int r, int g, int b, uint threshold) {
 		}
 	}
 
-	if (threshold != (uint) - 1 && bestsum > colorWeight(threshold, threshold, threshold)) {
+	if (threshold != -1 && bestsum > colorWeight(threshold, threshold, threshold)) {
 		// Best match exceeded threshold. Try to find an unused palette entry and
 		// use it for our purpose.
 		pal = _currentPalette + (256 - 2) * 3;

@@ -1362,7 +1362,7 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		push(getKeyState(args[1]));
 		break;
 	case 0xCE:		// getRGBSlot
-		push(remapPaletteColor(args[1], args[2], args[3], (uint) - 1));
+		push(remapPaletteColor(args[1], args[2], args[3], -1));
 		break;
 	case 0xD7:		// getBox
 		push(checkXYInBoxBounds(args[3], args[1], args[2]));
