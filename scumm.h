@@ -145,32 +145,34 @@ struct CodeHeader {
 	};
 } GCC_PACK;
 
-#if defined(FULL_THROTTLE)
 struct ImageHeader { /* file format */
-	uint32 version;
-	uint16 obj_id;
-	uint16 unk[1];
-	int16 x_pos,y_pos;
-	uint16 width,height;
-	byte unk2[3];
-	byte actordir;
-	uint16 unk_2;
-	struct {
-		int16 x,y;
-	} hotspot[15];
+	union {
+		struct {
+			uint16 obj_id;
+			uint16 unk[5];
+			uint16 width;
+			uint16 height;
+			uint16 unk_2;
+			struct {
+				int16 x,y;
+			} hotspot[15];
+		} old;
+
+		struct {
+			uint32 version;
+			uint16 obj_id;
+			uint16 unk[1];
+			int16 x_pos,y_pos;
+			uint16 width,height;
+			byte unk2[3];
+			byte actordir;
+			uint16 unk_2;
+			struct {
+				int16 x,y;
+			} hotspot[15];
+		} v7;
+	};
 } GCC_PACK;
-#else
-struct ImageHeader { /* file format */
-	uint16 obj_id;
-	uint16 unk[5];
-	uint16 width;
-	uint16 height;
-	uint16 unk_2;
-	struct {
-		int16 x,y;
-	} hotspot[15];
-} GCC_PACK;
-#endif
 #pragma END_PACK_STRUCTS
 
 struct AdjustBoxResult {

@@ -149,8 +149,13 @@ void Scumm::getObjectXYPos(int object) {
                         }
                         assert(ptr);
                         imhd = (ImageHeader*)findResourceData(MKID('IMHD'), ptr);
-                        x = od->x_pos + (int16)READ_LE_UINT16(&imhd->hotspot[state].x);
-                        y = od->y_pos + (int16)READ_LE_UINT16(&imhd->hotspot[state].y);
+			if( _features & GF_AFTER_V7) {
+			        x = od->x_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].x);
+				y = od->y_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].y);
+			} else {
+                        	x = od->x_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].x);
+	                        y = od->y_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].y);
+			}
                 } else {
                         x = (int16)READ_LE_UINT16(&od->walk_x);
                         y = (int16)READ_LE_UINT16(&od->walk_y);
@@ -400,7 +405,10 @@ void Scumm::loadRoomObjects() {
 			error("Room %d missing image blocks(s)", _roomResource);
 
 		imhd = (ImageHeader*)findResourceData(MKID('IMHD'), ptr);
-		obim_id = READ_LE_UINT16(&imhd->obj_id);
+		if (_features & GF_AFTER_V7)
+			obim_id = READ_LE_UINT16(&imhd->v7.obj_id);
+		else
+			obim_id = READ_LE_UINT16(&imhd->old.obj_id);
 
 		for(j=1; j<=_numObjectsInRoom; j++) {
 			if (_objs[j].obj_nr==obim_id)
@@ -752,6 +760,7 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 	RoomHeader *roomhdr;
 	ImageHeader *imhd;
 	int id2;
+	int id3;
 	
 	if (findWhat&foCheckAlreadyLoaded && getObjectIndex(id) != -1) {
 		fo->obcd = obcdptr = getOBCDFromObject(id);
@@ -829,7 +838,11 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
                                         break;
                                 }
                         } else {
-                                if (READ_LE_UINT16(&imhd->obj_id) == (uint16)id) {
+				if(_features & GF_AFTER_V7)
+					id3 = READ_LE_UINT16(&imhd->v7.obj_id);
+				else
+					id3 = READ_LE_UINT16(&imhd->old.obj_id);
+                                if (id3 == (uint16)id) {
                                         fo->obim = obimptr;
                                         fo->imhd = imhd;
                                         break;
@@ -1022,9 +1035,15 @@ void Scumm::setCursorImg(uint img, uint room, uint imgindex) {
 
 	findObjectInRoom(&foir, foCodeHeader | foImageHeader | foCheckAlreadyLoaded, img, room);
 
-	setCursorHotspot2(
-		READ_LE_UINT16(&foir.imhd->hotspot[0].x),
-		READ_LE_UINT16(&foir.imhd->hotspot[0].y));
+	if(_features & GF_AFTER_V7)
+		setCursorHotspot2(
+			READ_LE_UINT16(&foir.imhd->v7.hotspot[0].x),
+			READ_LE_UINT16(&foir.imhd->v7.hotspot[0].y));
+	else
+		setCursorHotspot2(
+			READ_LE_UINT16(&foir.imhd->old.hotspot[0].x),
+			READ_LE_UINT16(&foir.imhd->old.hotspot[0].y));
+	
 
 #if !defined(FULL_THROTTLE)
 	w = READ_LE_UINT16(&foir.cdhd->v6.w)>>3;

@@ -194,8 +194,13 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 				imptr = (obim+8);
         } else {
                 imhd = (ImageHeader*)findResourceData(MKID('IMHD'), obim);
-                imgw = READ_LE_UINT16(&imhd->width) >> 3;
-                imgh = READ_LE_UINT16(&imhd->height) >> 3;
+		if (_features & GF_AFTER_V7) {
+			imgw = READ_LE_UINT16(&imhd->v7.width) >> 3;
+			imgh = READ_LE_UINT16(&imhd->v7.height) >> 3;
+		} else {
+                	imgw = READ_LE_UINT16(&imhd->old.width) >> 3;
+	                imgh = READ_LE_UINT16(&imhd->old.height) >> 3;
+		}
 	
                 imptr = findResource(MKID('IM01'), obim);
                 if (!imptr)
