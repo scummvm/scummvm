@@ -1854,7 +1854,7 @@ void ScummEngine::processKbd() {
 		return;
 	}
 
-	if (_version <= 2)
+	if ((_version <= 2) || (_features & GF_FMTOWNS))
 		saveloadkey = 5;	// F5
 	else if ((_version <= 3) || (_gameId == GID_SAMNMAX) || (_gameId == GID_CMI))
 		saveloadkey = 319;	// F5
