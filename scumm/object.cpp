@@ -440,16 +440,15 @@ void Scumm::loadRoomObjects()
 		else
 			od->obj_nr = READ_LE_UINT16(&(cdhd->v5.obj_id));
 
-#ifdef DUMP_SCRIPTS
-		do {
+		if (_dumpScripts) {
 			char buf[32];
 			sprintf(buf, "roomobj-%d-", _roomResource);
 			if (_features & GF_AFTER_V8)
 				// TODO - maybe V8 is not the only that needs this?
 				ptr = findResource(MKID('VERB'), ptr, 0);
 			dumpResource(buf, od->obj_nr, ptr);
-		} while (0);
-#endif
+		}
+
 		searchptr = NULL;
 	}
 
@@ -514,13 +513,12 @@ void Scumm::loadRoomObjectsSmall()
 		od->OBCDoffset = ptr - room;
 		od->obj_nr = READ_LE_UINT16(ptr + 6);
 
-#ifdef DUMP_SCRIPTS
-		do {
+		if (_dumpScripts) {
 			char buf[32];
 			sprintf(buf, "roomobj-%d-", _roomResource);
 			dumpResource(buf, od->obj_nr, ptr);
-		} while (0);
-#endif
+		}
+
 		searchptr = NULL;
 	}
 

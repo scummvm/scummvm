@@ -85,6 +85,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 
 	_debugMode = detector->_debugMode;
 	_debugLevel = detector->_debugLevel;
+	_dumpScripts = detector->_dumpScripts;
 	_bootParam = detector->_bootParam;
 	_exe_name = (char*)detector->_gameRealName.c_str();
 	_game_name = (char*)detector->_gameFileName.c_str();
@@ -755,18 +756,16 @@ void Scumm::initRoomSubBlocks()
 	ptr = findResourceData(MKID('EXCD'), roomResPtr);
 	if (ptr) {
 		_EXCD_offs = ptr - roomResPtr;
-#ifdef DUMP_SCRIPTS
-		dumpResource("exit-", _roomResource, ptr - _resourceHeaderSize);
-#endif
+		if (_dumpScripts)
+			dumpResource("exit-", _roomResource, ptr - _resourceHeaderSize);
 	}
 
 	// Look for an entry script
 	ptr = findResourceData(MKID('ENCD'), roomResPtr);
 	if (ptr) {
 		_ENCD_offs = ptr - roomResPtr;
-#ifdef DUMP_SCRIPTS
-		dumpResource("entry-", _roomResource, ptr - _resourceHeaderSize);
-#endif
+		if (_dumpScripts)
+			dumpResource("entry-", _roomResource, ptr - _resourceHeaderSize);
 	}
 
 	if (_features & GF_SMALL_HEADER) {
@@ -856,13 +855,13 @@ void Scumm::initRoomSubBlocks()
 			int id = 0;
 			ptr += _resourceHeaderSize;	/* skip tag & size */
 			id = ptr[0];
-#ifdef DUMP_SCRIPTS
-			do {
+
+			if (_dumpScripts) {
 				char buf[32];
 				sprintf(buf, "room-%d-", _roomResource);
 				dumpResource(buf, id, ptr - 6);
-			} while (0);
-#endif
+			}
+
 			_localScriptList[id - _numGlobalScripts] = ptr + 1 - roomptr;
 			searchptr = NULL;
 		}
@@ -884,13 +883,13 @@ void Scumm::initRoomSubBlocks()
 				id = ptr[0];
 				_localScriptList[id - _numGlobalScripts] = ptr + 1 - roomResPtr;
 			}
-#ifdef DUMP_SCRIPTS
-			do {
+
+			if (_dumpScripts) {
 				char buf[32];
 				sprintf(buf, "room-%d-", _roomResource);
 				dumpResource(buf, id, ptr - 8);
-			} while (0);
-#endif
+			}
+
 			searchptr = NULL;
 		}
 	}

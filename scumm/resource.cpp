@@ -585,12 +585,10 @@ int Scumm::loadResource(int type, int idx)
 	}
 	_fileHandle.read(createResource(type, idx, size), size);
 
-	/* dump the resource */
-#ifdef DUMP_SCRIPTS
-	if (type == rtScript) {
+	// dump the resource if requested
+	if (_dumpScripts && type == rtScript) {
 		dumpResource("script-", idx, getResourceAddress(rtScript, idx));
 	}
-#endif
 
 	if (!_fileHandle.ioFailed()) {
 		return 1;

@@ -71,6 +71,7 @@ static const char USAGE_STRING[] =
 	"\n"
 	"\t-b<num>    - start in room <num>\n"
 	"\t-d[<num>]  - enable debug output (debug level [1])\n"
+	"\t-u         - dump scripts\n"
 ;
 
 
@@ -205,8 +206,9 @@ GameDetector::GameDetector()
 	_amiga = false;
 
 	_talkSpeed = 60;
-	_debugLevel = 0;
 	_debugMode = 0;
+	_debugLevel = 0;
+	_dumpScripts = 0;
 	_noSubtitles = false;
 	_bootParam = 0;
 
@@ -426,6 +428,10 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				HANDLE_OPTION();
 				_gameTempo = strtol(option, 0, 0);
 				g_config->set("tempo", option);
+				break;
+			case 'u':
+				CHECK_OPTION();
+				_dumpScripts = true;
 				break;
 			case 'v':
 				CHECK_OPTION();

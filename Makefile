@@ -31,10 +31,6 @@ OBJS	:=
 # Compile options - you can modify these to tweak ScummVM compilation #
 #######################################################################
 
-# Enable this if you want ScummVM to dump all scripts it runs.
-# This is mainly interesting for developers.
-# DEFINES += -DDUMP_SCRIPTS
-
 # Uncomment this to activate the MAD lib for compressed sound files
 DEFINES += -DUSE_MAD
 LIBS    += -lmad

@@ -12,7 +12,6 @@
 # * command line options to...
 #   - override the host settings (for cross compiles
 #   - select the desired backend (sdl, x11, ...)
-#   - whether to dump scripts (sets -DDUMP_SCRIPTS)
 #   - whether mad should be used (--enabled-mad) -> set LIBS/DEFINES
 #   - whether to do a debug build (with -g) or an optimized build (-O3 etc.)
 # * detect whether the chosen backend is available (e.g. call sdl-config)
@@ -108,9 +107,6 @@ for x in $@; do
       x--with-mad)
 		echo "#define USE_MAD" >> config.h
 		LIBS="$LIBS -lmad"
-		;;
-      x--enable-dump-scripts)
-		echo "#define DUMP_SCRIPTS" >> config.h
 		;;
     esac;
 done;
