@@ -120,7 +120,7 @@ template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
 	#endif
 
 	// You need to set this manually if necessary
-//	#define SCUMM_NEED_ALIGNMENT
+//	#define SYSTEM_NEED_ALIGNMENT
 
 	#define FORCEINLINE inline
 	#define CDECL 
