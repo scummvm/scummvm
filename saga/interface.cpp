@@ -31,7 +31,6 @@
 #include "console_mod.h"
 #include "font_mod.h"
 #include "gfx_mod.h"
-#include "image_mod.h"
 #include "objectmap_mod.h"
 #include "rscfile_mod.h"
 #include "script_mod.h"
@@ -196,10 +195,10 @@ int INTERFACE_Init(void) {
 
 	SPRITE_LoadList(ITE_DEFAULT_PORTRAITS, &IfModule.def_portraits);
 
-	IMG_DecodeBGImage(IfModule.c_panel.res, IfModule.c_panel.res_len, &IfModule.c_panel.img,
+	_vm->decodeBGImage(IfModule.c_panel.res, IfModule.c_panel.res_len, &IfModule.c_panel.img,
 					&IfModule.c_panel.img_len, &IfModule.c_panel.img_w, &IfModule.c_panel.img_h);
 
-	IMG_DecodeBGImage(IfModule.d_panel.res, IfModule.d_panel.res_len,
+	_vm->decodeBGImage(IfModule.d_panel.res, IfModule.d_panel.res_len,
 					&IfModule.d_panel.img, &IfModule.d_panel.img_len,
 					&IfModule.d_panel.img_w, &IfModule.d_panel.img_h);
 

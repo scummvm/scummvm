@@ -27,7 +27,6 @@
 
 #include "game_mod.h"
 
-#include "image_mod.h"
 #include "image.h"
 
 namespace Saga {
@@ -50,8 +49,8 @@ static int granulate(int value, int granularity) {
 	}
 }
 
-int IMG_DecodeBGImage(const byte * image_data, size_t image_size,
-					byte ** output_buf, size_t * output_buf_len, int *w, int *h) {
+int SagaEngine::decodeBGImage(const byte *image_data, size_t image_size,
+					byte **output_buf, size_t *output_buf_len, int *w, int *h) {
 	R_IMAGE_HEADER hdr;
 	int modex_height;
 	const byte *RLE_data_ptr;
@@ -109,7 +108,7 @@ int IMG_DecodeBGImage(const byte * image_data, size_t image_size,
 	return R_SUCCESS;
 }
 
-int DecodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len) {
+int SagaEngine::DecodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len) {
 	const byte *inbuf_ptr;
 	byte *outbuf_ptr;
 	uint32 inbuf_remain;
@@ -303,7 +302,7 @@ int DecodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t o
 	return R_SUCCESS;
 }
 
-int FlipImage(byte *img_buf, int columns, int scanlines) {
+int SagaEngine::FlipImage(byte *img_buf, int columns, int scanlines) {
 	int line;
 	byte *tmp_scan;
 
@@ -333,7 +332,7 @@ int FlipImage(byte *img_buf, int columns, int scanlines) {
 	return R_SUCCESS;
 }
 
-int UnbankBGImage(byte *dst_buf, const byte *src_buf, int columns, int scanlines) {
+int SagaEngine::UnbankBGImage(byte *dst_buf, const byte *src_buf, int columns, int scanlines) {
 	int x, y;
 	int temp;
 	int quadruple_rows;
@@ -431,7 +430,7 @@ int UnbankBGImage(byte *dst_buf, const byte *src_buf, int columns, int scanlines
 	return R_SUCCESS;
 }
 
-const byte *IMG_GetImagePal(const byte *image_data, size_t image_size) {
+const byte *SagaEngine::getImagePal(const byte *image_data, size_t image_size) {
 	if (image_size <= SAGA_IMAGE_HEADER_LEN) {
 		return NULL;
 	}

@@ -34,7 +34,6 @@
 #include "events_mod.h"
 #include "actionmap_mod.h"
 #include "gfx_mod.h"
-#include "image_mod.h"
 #include "isomap_mod.h"
 #include "script_mod.h"
 #include "objectmap_mod.h"
@@ -584,7 +583,7 @@ int ProcessSceneResources() {
 			SceneModule.bg.res_len = SceneModule.reslist[i].res_data_len;
 			SceneModule.bg.loaded = 1;
 
-			if (IMG_DecodeBGImage(SceneModule.bg.res_buf,
+			if (_vm->decodeBGImage(SceneModule.bg.res_buf,
 				SceneModule.bg.res_len,
 				&SceneModule.bg.buf,
 				&SceneModule.bg.buf_len,
@@ -594,7 +593,7 @@ int ProcessSceneResources() {
 				return R_FAILURE;
 			}
 
-			pal_p = IMG_GetImagePal(SceneModule.bg.res_buf, SceneModule.bg.res_len);
+			pal_p = _vm->getImagePal(SceneModule.bg.res_buf, SceneModule.bg.res_len);
 			memcpy(SceneModule.bg.pal, pal_p, sizeof SceneModule.bg.pal);
 			SceneModule.scene_mode = R_SCENE_MODE_NORMAL;
 			break;
@@ -606,7 +605,7 @@ int ProcessSceneResources() {
 			SceneModule.bg_mask.res_buf = SceneModule.reslist[i].res_data;
 			SceneModule.bg_mask.res_len = SceneModule.reslist[i].res_data_len;
 			SceneModule.bg_mask.loaded = 1;
-			IMG_DecodeBGImage(SceneModule.bg_mask.res_buf, SceneModule.bg_mask.res_len, &SceneModule.bg_mask.buf,
+			_vm->decodeBGImage(SceneModule.bg_mask.res_buf, SceneModule.bg_mask.res_len, &SceneModule.bg_mask.buf,
 							&SceneModule.bg_mask.buf_len, &SceneModule.bg_mask.w, &SceneModule.bg_mask.h);
 			break;
 		case SAGA_OBJECT_NAME_LIST:

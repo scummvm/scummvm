@@ -69,6 +69,16 @@ public:
 	Sound *_sound;
 	Music *_music;
 	Anim *_anim;
+
+private:
+	int DecodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);
+	int FlipImage(byte *img_buf, int columns, int scanlines);
+	int UnbankBGImage(byte *dest_buf, const byte *src_buf, int columns, int scanlines);
+
+public:
+	int decodeBGImage(const byte *image_data, size_t image_size,
+						byte **output_buf, size_t *output_buf_len, int *w, int *h);
+	const byte *getImagePal(const byte *image_data, size_t image_size);
 };
 
 // FIXME: Global var. We use it until everything will be turned into objects
