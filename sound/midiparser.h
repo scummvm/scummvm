@@ -182,7 +182,7 @@ protected:
 	virtual void parseNextEvent (EventInfo &info) = 0;
 
 	void activeNote (byte channel, byte note, bool active);
-	void hangingNote (byte channel, byte note, uint32 ticks_left);
+	void hangingNote (byte channel, byte note, uint32 ticks_left, bool recycle = true);
 	void hangAllActiveNotes();
 
 	//! Platform independent BE uint32 read-and-advance.

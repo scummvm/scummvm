@@ -100,7 +100,7 @@ void MidiParser::activeNote (byte channel, byte note, bool active) {
 	}
 }
 
-void MidiParser::hangingNote (byte channel, byte note, uint32 time_left) {
+void MidiParser::hangingNote (byte channel, byte note, uint32 time_left, bool recycle) {
 	NoteTimer *best = 0;
 	NoteTimer *ptr = _hanging_notes;
 	int i;
@@ -112,11 +112,11 @@ void MidiParser::hangingNote (byte channel, byte note, uint32 time_left) {
 
 	for (i = ARRAYSIZE(_hanging_notes); i; --i, ++ptr) {
 		if (ptr->channel == channel && ptr->note == note) {
-			if (ptr->time_left && ptr->time_left < time_left)
+			if (ptr->time_left && ptr->time_left < time_left && recycle)
 				return;
 			best = ptr;
 			if (ptr->time_left) {
-				_driver->send (0x80 | channel | note << 8);
+				if (recycle) _driver->send (0x80 | channel | note << 8);
 				--_hanging_notes_count;
 			}
 			break;
@@ -272,28 +272,32 @@ bool MidiParser::setTrack (int track) {
 void MidiParser::hangAllActiveNotes() {
 	// Search for note off events until we have
 	// accounted for every active note.
+	uint16 temp_active [128];
+	memcpy (temp_active, _active_notes, sizeof (temp_active));
+
 	uint32 advance_tick = _position._last_event_tick;
 	while (true) {
 		int i, j;
 		for (i = 0; i < 128; ++i)
-			if (_active_notes[i] != 0) break;
+			if (temp_active[i] != 0) break;
 		if (i == 128) break;
 		parseNextEvent (_next_event);
 		advance_tick += _next_event.delta;
 		if (_next_event.command() == 0x8) {
-			if (_active_notes [_next_event.basic.param1] & (1 << _next_event.channel())) {
-				hangingNote (_next_event.channel(), _next_event.basic.param1, (advance_tick - _position._last_event_tick) * _psec_per_tick);
-				_active_notes [_next_event.basic.param1] &= ~ (1 << _next_event.channel());
+			if (temp_active[_next_event.basic.param1] & (1 << _next_event.channel())) {
+				hangingNote (_next_event.channel(), _next_event.basic.param1, (advance_tick - _position._last_event_tick) * _psec_per_tick, false);
+				temp_active[_next_event.basic.param1] &= ~ (1 << _next_event.channel());
 			}
 		} else if (_next_event.event == 0xFF && _next_event.ext.type == 0x2F) {
 			// printf ("MidiParser::hangAllActiveNotes(): Hit End of Track with active notes left!\n");
 			for (i = 0; i < 128; ++i) {
 				for (j = 0; j < 16; ++j) {
-					if (_active_notes[i] & (1 << j))
+					if (temp_active[i] & (1 << j)) {
+						activeNote (j, i, false);
 						_driver->send (0x80 | j | i << 8);
+					}
 				}
 			}
-			memset (_active_notes, 0, sizeof (_active_notes));
 			break;
 		}
 	}
