@@ -24,9 +24,10 @@
 #include "widget.h"
 
 // FIXME - use own list class later, this is for rapid development
-#include <string>
-#include <vector>
-typedef	std::vector<std::string>	StringList;
+//#include <string>
+//#include <vector>
+//typedef	std::vector<std::string>	StringList;
+typedef int StringList;	// FIXME placeholder
 
 
 enum {
