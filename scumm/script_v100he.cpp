@@ -116,7 +116,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_wordArrayInc),
 		OPCODE(o6_jump),
 		/* 3C */
-		OPCODE(o70_kernelSetFunctions),
+		OPCODE(o90_kernelSetFunctions),
 		OPCODE(o6_land),
 		OPCODE(o6_le),
 		OPCODE(o60_localizeArrayToScript),
@@ -278,7 +278,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* BC */
 		OPCODE(o6_isAnyOf),
 		OPCODE(o6_getInventoryCount),
-		OPCODE(o72_kernelGetFunctions),
+		OPCODE(o90_kernelGetFunctions),
 		OPCODE(o90_max),
 		/* C0 */
 		OPCODE(o90_min),

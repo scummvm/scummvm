@@ -829,16 +829,6 @@ void ScummEngine_v70he::o70_kernelSetFunctions() {
 		// drawWizImage related
 		warning("o70_kernelSetFunctions: unhandled case 43");
 		break;
-	case 714:
-		break;
-	case 1492:
-		// Used in baseball
-		warning("o70_kernelSetFunctions: unhandled case 1492");
-		break;
-	case 2001:
-		// Used in SoccerMLS/Soccer2004
-		warning("o70_kernelSetFunctions: unhandled case 2001");
-		break;
 	default:
 		error("o70_kernelSetFunctions: default case %d (param count %d)", args[0], num);
 	}

@@ -291,8 +291,8 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_distObjectPt),
 		OPCODE(o6_distPtPt),
 		/* C8 */
-		OPCODE(o72_kernelGetFunctions),
-		OPCODE(o70_kernelSetFunctions),
+		OPCODE(o90_kernelGetFunctions),
+		OPCODE(o90_kernelSetFunctions),
 		OPCODE(o6_delayFrames),
 		OPCODE(o6_pickOneOf),
 		/* CC */
@@ -2173,6 +2173,89 @@ void ScummEngine_v90he::o90_unknownA5() {
 void ScummEngine_v90he::o90_getActorAnimProgress() {
 	Actor *a = derefActor(pop(), "o90_getActorAnimProgress");
 	push(a->getAnimProgress());
+}
+
+void ScummEngine_v90he::o90_kernelGetFunctions() {
+	int args[29];
+	int num;
+	ArrayHeader *ah;
+
+	num = getStackList(args, ARRAYSIZE(args));
+
+	switch (args[0]) {
+	case 1001:
+		{
+		double a = args[1] * PI / 180.;
+		push((int)(sin(a) * 100000));
+		}
+		break;
+	case 1002:
+		{
+		double a = args[1] * PI / 180.;
+		push((int)(cos(a) * 100000));
+		}
+		break;
+	case 2001:
+		// Used in football
+		warning("o90_kernelGetFunctions: U32 code (Num %d, args1 %d args 2 %d)", num, args[1], args[2]);
+		push(0);
+		break;
+	default:
+		error("o90_kernelGetFunctions: default case %d", args[0]);
+	}
+}
+
+void ScummEngine_v90he::o90_kernelSetFunctions() {
+	int args[29];
+	int num;
+	Actor *a;
+
+	num = getStackList(args, ARRAYSIZE(args));
+
+	debug(1, "o90_kernelSetFunctions: case %d (param count %d)", args[0], num);
+	switch (args[0]) {
+	case 20:
+		a = derefActor(args[1], "o90_kernelSetFunctions: 20");
+		queueAuxBlock(a);
+		break;
+	case 21:
+		_skipDrawObject = 1;
+		break;
+	case 22:
+		_skipDrawObject = 0;
+		break;
+	case 23:
+		_charset->clearCharsetMask();
+		_fullRedraw = 1;
+		break;
+	case 24:
+		_skipProcessActors = 1;
+		_fullRedraw = 1;
+		break;
+	case 25:
+		_skipProcessActors = 0;
+		_fullRedraw = 1;
+		break;
+	case 42:
+		// drawWizImage related
+		warning("o90_kernelSetFunctions: unhandled case 42");
+		break;
+	case 43:
+		// drawWizImage related
+		warning("o90_kernelSetFunctions: unhandled case 43");
+		break;
+	case 714:
+		break;
+	case 1492:
+		spriteInfoSet_flag13(args[1], args[2]);
+		break;
+	case 2001:
+		// Used in SoccerMLS/Soccer2004
+		warning("o90_kernelSetFunctions: U32 code (Num %d, args1 %d args 2 %d)", num, args[1], args[2]);
+		break;
+	default:
+		error("o90_kernelSetFunctions: default case %d (param count %d)", args[0], num);
+	}
 }
 
 } // End of namespace Scumm

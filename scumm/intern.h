@@ -1047,6 +1047,8 @@ protected:
 	void o90_paletteOps();
 	void o90_unknownA5();
 	void o90_getActorAnimProgress();
+	void o90_kernelGetFunctions();
+	void o90_kernelSetFunctions();
 };
 
 class ScummEngine_v100he : public ScummEngine_v90he {
