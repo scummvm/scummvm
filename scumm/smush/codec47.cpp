@@ -537,6 +537,9 @@ void Codec47Decoder::deinit() {
 		_deltaBufs[0] = NULL;
 		_deltaBufs[1] = NULL;
 	}
+}
+
+Codec47Decoder::~Codec47Decoder() {
 	if (_tableBig) {
 		free(_tableBig);
 		_tableBig = NULL;
@@ -545,9 +548,6 @@ void Codec47Decoder::deinit() {
 		free(_tableSmall);
 		_tableSmall = NULL;
 	}
-}
-
-Codec47Decoder::~Codec47Decoder() {
 	deinit();
 }
 
