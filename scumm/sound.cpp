@@ -515,7 +515,7 @@ void Sound::processSfxQueues() {
 			finished = !_talkChannelHandle.isActive();
 		}
 
-		if ((uint) act < 0x80 && !_vm->_string[0].no_talk_anim && (finished || !_endOfMouthSync)) {
+		if ((uint) act < 0x80 && ((_vm->_version == 8) || (_vm->_version <= 7 && !_vm->_string[0].no_talk_anim)) && (finished || !_endOfMouthSync)) {
 			a = _vm->derefActor(act, "processSfxQueues");
 			if (a->isInCurrentRoom()) {
 				b = finished || isMouthSyncOff(_curSoundPos);
@@ -531,7 +531,8 @@ void Sound::processSfxQueues() {
 		}
 
 		if ((!ConfMan.getBool("subtitles") && finished && _vm->_version <= 6) || (finished && _vm->_talkDelay == 0)) {
-			_vm->stopTalk();
+			if (!(_vm->_version == 8 && _vm->VAR(_vm->VAR_HAVE_MSG) == 0))
+				_vm->stopTalk();
 		}
 	}
 

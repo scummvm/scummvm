@@ -1468,7 +1468,8 @@ int ScummEngine::scummLoop(int delta) {
 	} else {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 	}
-	VAR(VAR_HAVE_MSG) = (_haveMsg == 0xFE) ? 0xFF : _haveMsg;
+	if (_version <= 7)
+		VAR(VAR_HAVE_MSG) = (_haveMsg == 0xFE) ? 0xFF : _haveMsg;
 	if (_version <= 2) {
 		VAR(VAR_VIRT_MOUSE_X) = _virtualMouse.x / 8;
 		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y / 2;

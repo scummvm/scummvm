@@ -1172,8 +1172,9 @@ void ScummEngine::actorTalk(const byte *msg) {
 	}
 
 	if (_actorToPrintStrFor == 0xFF) {
-		if (!_keepText)
+		if ((_version <= 7 && !_keepText) || (_version == 8 && VAR(VAR_HAVE_MSG))) {
 			stopTalk();
+		}
 		setTalkingActor(0xFF);
 	} else {
 		int oldact;
@@ -1188,10 +1189,10 @@ void ScummEngine::actorTalk(const byte *msg) {
 		if (!a->isInCurrentRoom() && (_version <= 6)) {
 			oldact = 0xFF;
 		} else {
-			if (!_keepText)
+			if ((_version <= 7 && !_keepText) || (_version == 8 && VAR(VAR_HAVE_MSG)))
 				stopTalk();
 			setTalkingActor(a->number);
-			if (!_string[0].no_talk_anim) {
+			if ((_version == 8) || (_version <= 7 && !_string[0].no_talk_anim)) {
 				a->runActorTalkScript(a->talkStartFrame);
 				_useTalkAnims = true;
 			}
@@ -1210,13 +1211,17 @@ void ScummEngine::actorTalk(const byte *msg) {
 	_charsetBufPos = 0;
 	_talkDelay = 0;
 	_haveMsg = 0xFF;
-	VAR(VAR_HAVE_MSG) = 0xFF;
+	if (_version <= 7)
+		VAR(VAR_HAVE_MSG) = 0xFF;
 	if (VAR_CHARCOUNT != 0xFF)
 		VAR(VAR_CHARCOUNT) = 0;
 	CHARSET_1();
 }
 
 void Actor::runActorTalkScript(int f) {
+	if (_vm->_version == 8 && _vm->VAR(_vm->VAR_HAVE_MSG) == 2) 
+		return;
+
 	if (talkScript) {
 		int script = talkScript;
 		int args[16];
@@ -1225,8 +1230,10 @@ void Actor::runActorTalkScript(int f) {
 		args[0] = number;
 
 		_vm->runScript(script, 1, 0, args);
-	} else
-		startAnimActor(f);
+	} else {
+		if (frame != f)
+			startAnimActor(f);
+	}
 }
 
 void ScummEngine::stopTalk() {
@@ -1240,15 +1247,19 @@ void ScummEngine::stopTalk() {
 	act = getTalkingActor();
 	if (act && act < 0x80) {
 		Actor *a = derefActor(act, "stopTalk");
-		if ((a->isInCurrentRoom() && _useTalkAnims) || (_features & GF_NEW_COSTUMES)) {
-			a->runActorTalkScript(a->talkStopFrame);
-			_useTalkAnims = false;
+		if (a->isInCurrentRoom()) {
+			if (_version == 8 || (_version == 7 && !_string[0].no_talk_anim) || (_version <= 6 && _useTalkAnims)) {
+				a->runActorTalkScript(a->talkStopFrame);
+				_useTalkAnims = false;
+			}
 		}
-		if (!(_features & GF_HUMONGOUS))
+		if (_version <= 7 && !(_features & GF_HUMONGOUS))
 			setTalkingActor(0xFF);
 	}
-	if (_features & GF_HUMONGOUS)
+	if (_version == 8 || _features & GF_HUMONGOUS)
 		setTalkingActor(0);
+	if (_version == 8)
+		VAR(VAR_HAVE_MSG) = 0;
 	_keepText = false;
 	_charset->restoreCharsetBg();
 }

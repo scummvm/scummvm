@@ -143,7 +143,7 @@ void ScummEngine::CHARSET_1() {
 	if (_talkDelay)
 		return;
 
-	if (_haveMsg == 1) {
+	if ((_version <= 7 && _haveMsg == 1) || (_version == 8 && VAR(VAR_HAVE_MSG))) {
 		if ((_sound->_sfxMode & 2) == 0)
 			stopTalk();
 		return;
@@ -306,6 +306,10 @@ void ScummEngine::CHARSET_1() {
 	} while (c != 2 && c != 3);
 
 	_charsetBufPos = buffer - _charsetBuffer;
+
+	// TODO Verify this is correct spot
+	if (_version == 8)
+		VAR(VAR_HAVE_MSG) = (_string[0].no_talk_anim) ? 2 : 1;
 
 	// FIXME: Remove this and the next two lines eventually!
 	if (_charset->_hasMask != (_charset->_str.left != -1))
