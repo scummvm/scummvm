@@ -378,9 +378,9 @@ static void convertEndian(uint8 *file, uint32 len) {
 		}
 		case WALK_GRID_FILE: {
 			_walkGridHeader	*walkGridHeader = (_walkGridHeader *)file;
+
 			walkGridHeader->numBars = SWAP_BYTES_32(walkGridHeader->numBars);
 			walkGridHeader->numNodes = SWAP_BYTES_32(walkGridHeader->numNodes);
-
 			break;
 		}
 		case GLOBAL_VAR_FILE:

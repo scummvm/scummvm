@@ -465,6 +465,8 @@ int32 Sword2Sound::PreFetchCompSpeech(const char *filename, uint32 speechid, uin
 
 	fp.close();
 
+	// FIXME: potential endian problem, maybe this should be
+	///data16[0] = READ_LE_UINT16(data8);
 	data16[0] = *((int16*)data8);	// Starting Value
 	i = 1;
 
@@ -480,12 +482,11 @@ int32 Sword2Sound::PreFetchCompSpeech(const char *filename, uint32 speechid, uin
 }
 
 int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan) {
- 	uint32 			i;
-	uint16			*data16;
-	uint8				*data8;
-	uint32			speechIndex[2];
-	void 				*lpv1;
-	File			  fp;
+ 	uint32	i;
+	uint16	*data16;
+	uint8	*data8;
+	uint32	speechIndex[2];
+	File	fp;
 	uint32	bufferSize;
 	
 	if (!speechMuted) {
@@ -527,11 +528,11 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 
 		fp.close();
 
-		lpv1 = malloc(bufferSize);
-		
-		// decompress data into speech buffer.
-		data16 = (uint16*)lpv1;
+		// Decompress data into speech buffer.
+		data16 = (uint16*)malloc(bufferSize);
 			
+		// FIXME: potential endian problem, maybe this should be
+		///data16[0] = READ_LE_UINT16(data8);
 		data16[0] = *((int16*)data8);	// Starting Value
 		i = 1;
 
@@ -545,7 +546,7 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 
 		free(data8);
 
-		//  Modify the volume according to the master volume
+		// Modify the volume according to the master volume
 		byte volume;
 		int8 p;
 		if (speechMuted) {
@@ -555,15 +556,17 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 		}
 		p = panTable[pan + 16];
 
-		//	Start the speech playing
+		// Start the speech playing
 		speechPaused = 1;
 			
 		uint32 flags = SoundMixer::FLAG_16BITS;
 		flags |= SoundMixer::FLAG_AUTOFREE;
 
-		//Until the mixer supports LE samples natively, we need to convert our LE ones to BE
+#ifndef SCUMM_BIG_ENDIAN
+		// Until the mixer supports LE samples natively, we need to convert our LE ones to BE
 		for (uint j = 0; j < (bufferSize / 2); j++)
-			data16[j] = TO_BE_16(data16[j]);
+			data16[j] = SWAP_BYTES_16(data16[j]);
+#endif
 
 		_mixer->playRaw(&soundHandleSpeech, data16, bufferSize, 22050, flags, -1, volume, pan);
 

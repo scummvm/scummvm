@@ -173,42 +173,44 @@ typedef	struct
 //--------------------------------------------------------------------------------------
 // Function prototypes
 
-int32	GetRoute(void);
-void	ExtractRoute(void);
-void	LoadWalkGrid(void);
-void	SetUpWalkGrid(Object_mega *ob_mega, int32 x, int32 y, int32 dir);
-void	LoadWalkData(Object_walkdata *ob_walkdata);
-void	PlotCross(int16 x, int16 y, uint8 colour);
+static int32	GetRoute(void);
+static void		ExtractRoute(void);
+static void		LoadWalkGrid(void);
+static void		SetUpWalkGrid(Object_mega *ob_mega, int32 x, int32 y, int32 dir);
+static void		LoadWalkData(Object_walkdata *ob_walkdata);
+static void		PlotCross(int16 x, int16 y, uint8 colour);
 
-int32	Scan(int32);     
-int32	NewCheck(int32, int32 , int32 , int32 , int32);
-int32	LineCheck(int32 , int32 , int32 , int32);
-int32	VertCheck(int32 , int32 , int32);
-int32	HorizCheck(int32 , int32 , int32);
-int32	Check(int32 , int32 , int32 , int32);
-int32	CheckTarget(int32 , int32);
+static int32	Scan(int32);     
+static int32	NewCheck(int32, int32 , int32 , int32 , int32);
+static int32	LineCheck(int32 , int32 , int32 , int32);
+static int32	VertCheck(int32 , int32 , int32);
+static int32	HorizCheck(int32 , int32 , int32);
+static int32	Check(int32 , int32 , int32 , int32);
+static int32	CheckTarget(int32 , int32);
 
-int32	SmoothestPath();
-int32	SlidyPath();
-int32	SolidPath();
+static int32	SmoothestPath();
+static int32	SlidyPath();
+static int32	SolidPath();
 
-int32	SmoothCheck(int32 best, int32 p, int32 dirS, int32 dirD);
+static int32	SmoothCheck(int32 best, int32 p, int32 dirS, int32 dirD);
 
-int32	AddSlowInFrames(_walkData *walkAnim);
-void	AddSlowOutFrames(_walkData *walkAnim);
-void	SlidyWalkAnimator(_walkData *walkAnim);
-int32	SolidWalkAnimator(_walkData *walkAnim);
-void	RouteLine(int32 x1,int32 y1,int32 x2,int32 y2 ,int32 colour);
+static int32	AddSlowInFrames(_walkData *walkAnim);
+static void		AddSlowOutFrames(_walkData *walkAnim);
+static void		SlidyWalkAnimator(_walkData *walkAnim);
+static int32	SolidWalkAnimator(_walkData *walkAnim);
+#ifdef PLOT_PATHS
+static void		RouteLine(int32 x1,int32 y1,int32 x2,int32 y2 ,int32 colour);
+#endif
 
 //--------------------------------------------------------------------------------------
 #define MAX_WALKGRIDS		10
 
-int32	walkGridList[MAX_WALKGRIDS];
+static int32	walkGridList[MAX_WALKGRIDS];
 
 //--------------------------------------------------------------------------------------
 #define TOTAL_ROUTE_SLOTS	2				// because we only have 2 megas in the game!
 
-mem		*route_slots[TOTAL_ROUTE_SLOTS];	// stores pointers to mem blocks containing routes created & used by megas (NULL if slot not in use)
+static mem		*route_slots[TOTAL_ROUTE_SLOTS];	// stores pointers to mem blocks containing routes created & used by megas (NULL if slot not in use)
 
 //--------------------------------------------------------------------------------------
 // Local Variables
@@ -341,7 +343,7 @@ void AllocateRouteMem(void)
 	}
 	//------------------------------------------
 
-	route_slots[slotNo] = Twalloc( 4800, MEM_locked, UID_walk_anim );
+	route_slots[slotNo] = Twalloc( sizeof(_walkData)*O_WALKANIM_SIZE, MEM_locked, UID_walk_anim );
 	// 12000 bytes were used for this in Sword1 mega compacts, based on 20 bytes per '_walkData' frame
 	// ie. allowing for 600 frames including end-marker
 	// Now '_walkData' is 8 bytes, so 8*600 = 4800 bytes.
@@ -1309,6 +1311,7 @@ void SlidyWalkAnimator(_walkData *walkAnim)
 	currentDir = 99;// this ensures that we don't put in turn frames for the start		
 	do
 	{
+		assert(stepCount < O_WALKANIM_SIZE);
 		while (modularPath[p].num == 0)
 		{
 			p = p + 1;
