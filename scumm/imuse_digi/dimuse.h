@@ -46,6 +46,8 @@ private:
 	int _callbackFps;
 
 	struct Track {
+		int trackId;
+
 		int8 pan;			// pan
 		int32 vol;			// volume
 		int32 volFadeDest;	//
@@ -101,7 +103,7 @@ private:
 
 	static void timer_handler(void *refConf);
 	void callback();
-	void switchToNextRegion(int trackId);
+	void switchToNextRegion(Track *track);
 	int allocSlot(int priority);
 	void startSound(int soundId, const char *soundName, int soundType, int volGroupId, AudioStream *input, int hookId, int volume, int priority);
 	void selectVolumeGroup(int soundId, int volGroupId);
@@ -111,7 +113,7 @@ private:
 
 	int getSoundIdByName(const char *soundName);
 	void fadeOutMusic(int fadeDelay);
-	int cloneToFadeOutTrack(int trackId, int fadeDelay);
+	Track *cloneToFadeOutTrack(Track *track, int fadeDelay);
 
 	void setFtMusicState(int stateId);
 	void setFtMusicSequence(int seqId);
@@ -156,7 +158,7 @@ public:
 	void stopSound(int sound);
 	void stopAllSounds();
 	void pause(bool pause);
-	void parseScriptCmds(int a, int b, int c, int d, int e, int f, int g, int h);
+	void parseScriptCmds(int cmd, int soundId, int sub_cmd, int d, int e, int f, int g, int h);
 	void refreshScripts();
 	void flushTracks();
 	int getSoundStatus(int sound) const;

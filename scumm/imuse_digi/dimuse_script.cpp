@@ -32,8 +32,7 @@
 
 namespace Scumm {
 
-void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int g, int h) {
-	int cmd = a;
+void IMuseDigital::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, int g, int h) {
 	int soundId = b;
 	int sub_cmd = c;
 

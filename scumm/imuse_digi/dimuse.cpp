@@ -53,6 +53,7 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm, int fps)
 	resetState();
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		_track[l] = new Track;
+		_track[l]->trackId = l;
 		_track[l]->used = false;
 	}
 	_vm->_timer->installTimerProc(timer_handler, 1000000 / _callbackFps, this);
@@ -209,7 +210,7 @@ void IMuseDigital::callback() {
 				int32 result = 0;
 
 				if (track->curRegion == -1) {
-					switchToNextRegion(l);
+					switchToNextRegion(track);
 					if (track->toBeRemoved)
 						continue;
 				}
@@ -277,7 +278,7 @@ void IMuseDigital::callback() {
 					}
 
 					if (_sound->isEndOfRegion(track->soundHandle, track->curRegion)) {
-						switchToNextRegion(l);
+						switchToNextRegion(track);
 						if (track->toBeRemoved)
 							break;
 					}
@@ -299,13 +300,13 @@ void IMuseDigital::callback() {
 	}
 }
 
-void IMuseDigital::switchToNextRegion(int trackId) {
-	debug(5, "switchToNextRegion(track:%d)", trackId);
+void IMuseDigital::switchToNextRegion(Track *track) {
+	assert(track);
+	debug(5, "switchToNextRegion(track:%d)", track->trackId);
 
-	Track *track = _track[trackId];
-	if (trackId >= MAX_DIGITAL_TRACKS) {
+	if (track->trackId >= MAX_DIGITAL_TRACKS) {
 		track->toBeRemoved = true;
-		debug(5, "exit (fadetrack can't go next region) switchToNextRegion(trackId:%d)", trackId);
+		debug(5, "exit (fadetrack can't go next region) switchToNextRegion(trackId:%d)", track->trackId);
 		return;
 	}
 
@@ -313,7 +314,7 @@ void IMuseDigital::switchToNextRegion(int trackId) {
 
 	if (++track->curRegion == num_regions) {
 		track->toBeRemoved = true;
-		debug(5, "exit (end of regions) switchToNextRegion(track:%d)", trackId);
+		debug(5, "exit (end of regions) switchToNextRegion(track:%d)", track->trackId);
 		return;
 	}
 
@@ -330,8 +331,7 @@ void IMuseDigital::switchToNextRegion(int trackId) {
 		if (sampleHookId != 0) {
 			if (track->curHookId == sampleHookId) {
 				if (fadeDelay != 0) {
-					int fadeTrackId = cloneToFadeOutTrack(trackId, fadeDelay);
-					Track *fadeTrack = _track[fadeTrackId];
+					Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 					fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundHandle, fadeTrack->curRegion);
 					fadeTrack->regionOffset = 0;
 					debug(5, "switchToNextRegion-sound(%d) select %d region, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
@@ -343,8 +343,7 @@ void IMuseDigital::switchToNextRegion(int trackId) {
 			}
 		} else {
 			if (fadeDelay != 0) {
-				int fadeTrackId = cloneToFadeOutTrack(trackId, fadeDelay);
-				Track *fadeTrack = _track[fadeTrackId];
+				Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 				fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundHandle, fadeTrack->curRegion);
 				fadeTrack->regionOffset = 0;
 				debug(5, "switchToNextRegion-sound(%d) select %d region, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);

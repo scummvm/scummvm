@@ -33,7 +33,7 @@
 namespace Scumm {
 
 int IMuseDigital::allocSlot(int priority) {
-	int l, lower_priority = 127;
+	int l, lowest_priority = 127;
 	int trackId = -1;
 
 	for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
@@ -48,17 +48,12 @@ int IMuseDigital::allocSlot(int priority) {
 		for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 			Track *track = _track[l];
 			if (track->used && !track->toBeRemoved &&
-					(lower_priority > track->priority) && !track->stream2)
-				lower_priority = track->priority;
-		}
-		if (lower_priority <= priority) {
-			for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
-				Track *track = _track[l];
-				if (track->used && !track->toBeRemoved &&
-						(lower_priority == track->priority) && !track->stream2) {
-					trackId = l;
-				}
+					(lowest_priority > track->priority) && !track->stream2) {
+				lowest_priority = track->priority;
+				trackId = l;
 			}
+		}
+		if (lowest_priority <= priority) {
 			assert(trackId != -1);
 			_track[trackId]->toBeRemoved = true;
 			debug(5, "IMuseDigital::startSound(): Removed sound %d from track %d", _track[trackId]->soundId, trackId);
@@ -81,108 +76,106 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	}
 
 	Track *track = _track[l];
-	for (;;) {
+	while (track->used) {
 #if defined(_WIN32_WCE) || defined (__PALM_OS__)
 		_vm->parseEvents(); // timers are events, we need to consume them
 #endif
 		flushTracks();
-		if (!track->used) {
-			track->pan = 64;
-			track->vol = volume * 1000;
-			track->volFadeDest = 0;
-			track->volFadeStep = 0;
-			track->volFadeDelay = 0;
-			track->volFadeUsed = false;
-			track->soundId = soundId;
-			track->started = false;
-			track->volGroupId = volGroupId;
-			track->curHookId = hookId;
-			track->priority = priority;
-			track->curRegion = -1;
-			track->dataOffset = 0;
-			track->regionOffset = 0;
-			track->mod = 0;
-			track->mixerFlags = 0;
-			track->mixerPan = 0;
-			track->mixerVol = volume;
-			track->toBeRemoved = false;
-			track->readyToRemove = false;
-			track->soundType = soundType;
-
-			int bits = 0, freq = 0, channels = 0;
-
-			if (input) {
-				track->iteration = 0;
-				track->souStream = true;
-				track->soundName[0] = 0;
-			} else {
-				track->souStream = false;
-				strcpy(track->soundName, soundName);
-				track->soundHandle = _sound->openSound(soundId, soundName, soundType, volGroupId, -1);
-
-				if (track->soundHandle == NULL)
-					return;
-
-				bits = _sound->getBits(track->soundHandle);
-				channels = _sound->getChannels(track->soundHandle);
-				freq = _sound->getFreq(track->soundHandle);
-
-				if ((soundId == kTalkSoundID) && (soundType == IMUSE_BUNDLE)) {
-					if (_vm->_actorToPrintStrFor != 0xFF && _vm->_actorToPrintStrFor != 0) {
-						Actor *a = _vm->derefActor(_vm->_actorToPrintStrFor, "IMuseDigital::startSound");
-						freq = (freq * a->talkFrequency) / 256;
-						track->pan = a->talkPan;
-						track->vol = a->talkVolume * 1000;
-					}
-				}
-
-				assert(bits == 8 || bits == 12 || bits == 16);
-				assert(channels == 1 || channels == 2);
-				assert(0 < freq && freq <= 65535);
-
-				track->iteration = freq * channels;
-				if (channels == 2)
-					track->mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
-
-				if ((bits == 12) || (bits == 16)) {
-					track->mixerFlags |= SoundMixer::FLAG_16BITS;
-					track->iteration *= 2;
-				} else if (bits == 8) {
-					track->mixerFlags |= SoundMixer::FLAG_UNSIGNED;
-				} else
-					error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
-			}
-
-			if (input) {
-				track->stream2 = input;
-				track->stream = NULL;
-				track->started = false;
-			} else {
-				int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
-				int vol = track->vol / 1000;
-
-				if (track->volGroupId == 1)
-					vol = (vol * _volVoice) / 128;
-				if (track->volGroupId == 2)
-					vol = (vol * _volSfx) / 128;
-				if (track->volGroupId == 3)
-					vol = (vol * _volMusic) / 128;
-
-				track->mixerPan = pan;
-				track->mixerVol = vol;
-
-				// setup 1 second stream wrapped buffer
-				int32 streamBufferSize = track->iteration;
-				track->stream2 = NULL;
-				track->stream = makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
-				_vm->_mixer->playInputStream(&track->handle, track->stream, false, track->mixerVol, track->mixerPan, -1, false);
-				track->started = true;
-			}
-
-			track->used = true;
-			return;
-		}
 	}
+
+	track->pan = 64;
+	track->vol = volume * 1000;
+	track->volFadeDest = 0;
+	track->volFadeStep = 0;
+	track->volFadeDelay = 0;
+	track->volFadeUsed = false;
+	track->soundId = soundId;
+	track->started = false;
+	track->volGroupId = volGroupId;
+	track->curHookId = hookId;
+	track->priority = priority;
+	track->curRegion = -1;
+	track->dataOffset = 0;
+	track->regionOffset = 0;
+	track->mod = 0;
+	track->mixerFlags = 0;
+	track->mixerPan = 0;
+	track->mixerVol = volume;
+	track->toBeRemoved = false;
+	track->readyToRemove = false;
+	track->soundType = soundType;
+
+	int bits = 0, freq = 0, channels = 0;
+
+	if (input) {
+		track->iteration = 0;
+		track->souStream = true;
+		track->soundName[0] = 0;
+	} else {
+		track->souStream = false;
+		strcpy(track->soundName, soundName);
+		track->soundHandle = _sound->openSound(soundId, soundName, soundType, volGroupId, -1);
+
+		if (track->soundHandle == NULL)
+			return;
+
+		bits = _sound->getBits(track->soundHandle);
+		channels = _sound->getChannels(track->soundHandle);
+		freq = _sound->getFreq(track->soundHandle);
+
+		if ((soundId == kTalkSoundID) && (soundType == IMUSE_BUNDLE)) {
+			if (_vm->_actorToPrintStrFor != 0xFF && _vm->_actorToPrintStrFor != 0) {
+				Actor *a = _vm->derefActor(_vm->_actorToPrintStrFor, "IMuseDigital::startSound");
+				freq = (freq * a->talkFrequency) / 256;
+				track->pan = a->talkPan;
+				track->vol = a->talkVolume * 1000;
+			}
+		}
+
+		assert(bits == 8 || bits == 12 || bits == 16);
+		assert(channels == 1 || channels == 2);
+		assert(0 < freq && freq <= 65535);
+
+		track->iteration = freq * channels;
+		if (channels == 2)
+			track->mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
+
+		if ((bits == 12) || (bits == 16)) {
+			track->mixerFlags |= SoundMixer::FLAG_16BITS;
+			track->iteration *= 2;
+		} else if (bits == 8) {
+			track->mixerFlags |= SoundMixer::FLAG_UNSIGNED;
+		} else
+			error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
+	}
+
+	if (input) {
+		track->stream2 = input;
+		track->stream = NULL;
+		track->started = false;
+	} else {
+		int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
+		int vol = track->vol / 1000;
+
+		if (track->volGroupId == 1)
+			vol = (vol * _volVoice) / 128;
+		if (track->volGroupId == 2)
+			vol = (vol * _volSfx) / 128;
+		if (track->volGroupId == 3)
+			vol = (vol * _volMusic) / 128;
+
+		track->mixerPan = pan;
+		track->mixerVol = vol;
+
+		// setup 1 second stream wrapped buffer
+		int32 streamBufferSize = track->iteration;
+		track->stream2 = NULL;
+		track->stream = makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
+		_vm->_mixer->playInputStream(&track->handle, track->stream, false, track->mixerVol, track->mixerPan, -1, false);
+		track->started = true;
+	}
+
+	track->used = true;
 }
 
 void IMuseDigital::setPriority(int soundId, int priority) {
@@ -254,32 +247,29 @@ void IMuseDigital::fadeOutMusic(int fadeDelay) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
-			cloneToFadeOutTrack(l, fadeDelay);
+			cloneToFadeOutTrack(track, fadeDelay);
 			track->toBeRemoved = true;
 		}
 	}
 }
 
-int IMuseDigital::cloneToFadeOutTrack(int trackId, int fadeDelay) {
-	int fadeTrackId = -1;
-	Track *track;
+IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
+	assert(track);
 	Track *fadeTrack;
 
-	debug(5, "IMuseDigital::cloneToFadeOutTrack(%d, %d)", trackId, fadeDelay);
+	debug(5, "IMuseDigital::cloneToFadeOutTrack(%d, %d)", track->trackId, fadeDelay);
 
 	{
 		Common::StackLock lock(_mutex, "IMuseDigital::cloneToFadeOutTrack()");
 		for (int l = MAX_DIGITAL_TRACKS; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 			if (!_track[l]->used) {
-				fadeTrackId = l;
+				fadeTrack = _track[l];
 				break;
 			}
 		}
-		if (fadeTrackId == -1)
+		if (fadeTrack == 0)
 			error("IMuseDigital::cloneTofadeTrackId() Can't find free fade track");
 
-		track = _track[trackId];
-		fadeTrack = _track[fadeTrackId];
 		fadeTrack->pan = track->pan;
 		fadeTrack->vol = track->vol;
 		fadeTrack->volGroupId = track->volGroupId;
@@ -317,7 +307,7 @@ int IMuseDigital::cloneToFadeOutTrack(int trackId, int fadeDelay) {
 	fadeTrack->started = true;
 	fadeTrack->used = true;
 
-	return fadeTrackId;
+	return fadeTrack;
 }
 
 } // End of namespace Scumm
