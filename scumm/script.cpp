@@ -497,68 +497,6 @@ int Scumm::pop() {
 	return _scummStack[--_scummStackPos];
 }
 
-void Scumm::drawBox(int x, int y, int x2, int y2, int color) {
-	int width, height;
-	VirtScreen *vs;
-	byte *backbuff, *bgbuff;
-
-	if ((vs = findVirtScreen(y)) == NULL)
-		return;
-
-	if (x > x2)
-		SWAP(x, x2);
-
-	if (y > y2)
-		SWAP(y, y2);
-
-	x2++;
-	y2++;
-
-	// Adjust for the topline of the VirtScreen
-	y -= vs->topline;
-	y2 -= vs->topline;
-	
-	// Clip the coordinates
-	if (x < 0)
-		x = 0;
-	else if (x >= vs->width)
-		return;
-
-	if (x2 < 0)
-		return;
-	else if (x2 > vs->width)
-		x2 = vs->width;
-
-	if (y < 0)
-		y = 0;
-	else if (y > vs->height)
-		return;
-
-	if (y2 < 0)
-		return;
-	else if (y2 > vs->height)
-		y2 = vs->height;
-	
-	updateDirtyRect(vs->number, x, x2, y, y2, 0);
-
-	backbuff = vs->screenPtr + vs->xstart + y * _screenWidth + x;
-
-	width = x2 - x;
-	height = y2 - y;
-	if (color == -1) {
-		if (vs->number != 0)
-			error("can only copy bg to main window");
-		bgbuff = getResourceAddress(rtBuffer, vs->number + 5) + vs->xstart + y * _screenWidth + x;
-		blit(backbuff, bgbuff, width, height);
-	} else {
-		while (height--) {
-			memset(backbuff, color, width);
-			backbuff += _screenWidth;
-		}
-	}
-}
-
-
 void Scumm::stopObjectCode() {
 	ScriptSlot *ss;
 
