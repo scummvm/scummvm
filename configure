@@ -208,7 +208,7 @@ echo "typedef unsigned $type_1_byte byte;" >> config.h
 echo "typedef unsigned int uint;" >> config.h
 echo "typedef unsigned $type_1_byte uint8;" >> config.h
 echo "typedef unsigned $type_2_byte uint16;" >> config.h
-echo "typedef unsigned $type_3_byte uint32;" >> config.h
+echo "typedef unsigned $type_4_byte uint32;" >> config.h
 echo "typedef signed $type_1_byte int8;" >> config.h
 echo "typedef signed $type_2_byte int16;" >> config.h
 echo "typedef signed $type_4_byte int32;" >> config.h
