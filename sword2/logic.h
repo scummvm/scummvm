@@ -17,46 +17,54 @@
  * $Header$
  */
 
-//logic management
+// logic management
 
-#ifndef	_LOGIC
-#define	_LOGIC
+#ifndef _LOGIC
+#define _LOGIC
 
-//#include "src\driver96.h"
 #include "defs.h"
 #include "header.h"
 
-#define	TREE_SIZE	3
+#define	TREE_SIZE 3
 
+class logic {
+public:
+	//do one cycle of the current session
+	int Process_session(void);
 
+	// cause the logic loop to terminate and drop out
+	void Express_change_session(uint32 sesh_id);
 
-class	logic
-{
-	public:
+	// new logic begins next cycle
+	void Natural_change_session(uint32 sesh_id);
 
-	int		Process_session(void);	//do one cycle of the current session
-	void	Express_change_session(uint32	sesh_id);	//cause the logic loop to terminate and drop out
-	void	Natural_change_session(uint32	sesh_id);	//new logic begins next cycle
-	uint32	Return_run_list(void);
-	void	Logic_up(uint32	new_script);	//setup script_id and script_pc in cur_object_hub - called by FN_gosub()
-	void	Logic_replace(uint32	new_script);
-	void	Logic_one(uint32	new_script);
-	void	Total_restart(void);
-	uint32	Examine_run_list(void);
-	void	Reset_kill_list(void);	//James 25mar97
+	uint32 Return_run_list(void);
 
+	// setup script_id and script_pc in cur_object_hub - called by
+	// FN_gosub()
+	void Logic_up(uint32 new_script);
 
-	private:
+	void Logic_replace(uint32 new_script);
+	void Logic_one(uint32 new_script);
+	void Total_restart(void);
+	uint32 Examine_run_list(void);
+	void Reset_kill_list(void);	// James 25mar97
 
-  	uint32	current_run_list;	//denotes the res id of the game-object-list in current use
-	void	Process_kill_list(void);
-	uint32	pc;	//pc during logic loop
-	_object_hub	*cur_object_hub;	//each object has one of these tacked onto the beginning
+private:
+	// denotes the res id of the game-object-list in current use
+  	uint32 current_run_list;
 
+	void Process_kill_list(void);
+
+	//pc during logic loop
+	uint32 pc;
+
+	// each object has one of these tacked onto the beginning
+	_object_hub *cur_object_hub;
 };
 
-extern	logic	LLogic;
+extern logic LLogic;
 
-int32 FN_add_to_kill_list(int32 *params);	//James9jan97
+int32 FN_add_to_kill_list(int32 *params);	// James9jan97
 
 #endif

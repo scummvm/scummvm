@@ -17,413 +17,443 @@
  * $Header$
  */
 
-//------------------------------------------------------------------------------------
-// #include <libsn.h> PSX?
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "stdafx.h"
-//#include "src\driver96.h"
 #include "build_display.h"
 #include "console.h"
 #include "debug.h"
-#include "header.h"
 #include "interpreter.h"
 #include "logic.h"
-#include "memory.h"
-#include "resman.h"
 #include "router.h"	// for ClearWalkGridList()
 #include "sound.h"
-#include "sword2.h"	// (James19aug97) for CloseGame()
 #include "sync.h"
 
-//------------------------------------------------------------------------------------
-logic	LLogic;	//declare the object
+logic LLogic;
 
-#define	LEVEL cur_object_hub->logic_level
+#define	LEVEL 			(cur_object_hub->logic_level)
 
-#define	OBJECT_KILL_LIST_SIZE	50	// this must allow for the largest number of objects in a screen
+// this must allow for the largest number of objects in a screen
+#define	OBJECT_KILL_LIST_SIZE	50
 
-uint32	object_kill_list[OBJECT_KILL_LIST_SIZE];
-uint32	kills=0;	// keeps note of no. of objects in the kill list
+uint32 object_kill_list[OBJECT_KILL_LIST_SIZE];
 
-//------------------------------------------------------------------------------------
-int	logic::Process_session(void)	//Tony6June96 (first run 21Oct96)
-{
-//do one cycle of the current session
+// keeps note of no. of objects in the kill list
+uint32 kills = 0;
 
+int logic::Process_session(void) {	// Tony6June96 (first run 21Oct96)
+	// do one cycle of the current session
 
+	uint32 run_list;
+	uint32 ret, script;
+	uint32 *game_object_list;
+	char *raw_script_ad;
+	char *raw_data_ad;
+	uint32 null_pc;
+	_standardHeader *head;
+	_standardHeader *far_head;
+	uint32 id;
 
-	uint32	run_list;
-	uint32	ret,script;
-	uint32	*game_object_list;
-	char	*raw_script_ad;
-	char	*raw_data_ad;
-	uint32	null_pc;
-	_standardHeader	*head;
-	_standardHeader	*far_head;
-	uint32	id;
+	// might change during the session, so take a copy here
+	run_list = current_run_list;
 
-	run_list=current_run_list;	//might change during the session, so take a copy here
-	pc=0;	//point to first object in list
+	// point to first object in list
+	pc = 0;
 
-	static uint32 cycle=0;
+	static uint32 cycle = 1;
 
+	// Zdebug("\n CYCLE %d", cycle);
 
-	cycle++;
-//	Zdebug("\n CYCLE %d", cycle);
+	// by minusing the pc we can cause an immediate cessation of logic
+	// processing on the current list
 
-	while(pc!=0xffffffff)	//by minusing the pc we can cause an immediate cessation of logic processing on the current list
-	{
+	while (pc != 0xffffffff) {
 		head = (_standardHeader*) res_man.Res_open(run_list);
-		if	(head->fileType!=RUN_LIST)
+
+		if (head->fileType != RUN_LIST)
 			Con_fatal_error("Logic_engine %d not a run_list", run_list);
 
-		game_object_list = (uint32	*) (head+1);
-		ID = game_object_list[pc++];	//read the next id
-		id=ID;
-		res_man.Res_close(run_list);	//release the list again so it can float in memory - at this point not one thing should be locked
+		game_object_list = (uint32 *) (head + 1);
 
+		// read the next id
+		ID = game_object_list[pc++];
+		id = ID;
 
-//		Zdebug("%d", ID);
+		// release the list again so it can float in memory - at this
+		// point not one thing should be locked
 
-		if	(!ID)	//null terminated
-			return(0);	//end the session naturally
+		res_man.Res_close(run_list);
+
+		// Zdebug("%d", ID);
+
+		// null terminated
+		if (!ID) {
+			// end the session naturally
+			return 0;
+		}
 
 		head = (_standardHeader*) res_man.Res_open(ID);
-		if	(head->fileType!=GAME_OBJECT)
+
+		if (head->fileType != GAME_OBJECT)
 			Con_fatal_error("Logic_engine %d not an object", ID);
 
-		cur_object_hub = (_object_hub *) (head+1);
+		cur_object_hub = (_object_hub *) (head + 1);
 
-//		Zdebug(" %d id(%d) pc(%d)", cur_object_hub->logic_level, cur_object_hub->script_id[cur_object_hub->logic_level], cur_object_hub->script_pc[cur_object_hub->logic_level]);
+		// Zdebug(" %d id(%d) pc(%d)",
+		//	cur_object_hub->logic_level,
+		//	cur_object_hub->script_id[cur_object_hub->logic_level],
+		//	cur_object_hub->script_pc[cur_object_hub->logic_level]);
 
+		// do the logic for this object
+		// we keep going until a function says to stop - remember,
+		// system operations are run via function calls to drivers now
 
+		do {
+			// get the script id as we may be running a script
+			// from another object...
 
-//		do the logic for this object
-//		we keep going until a function says to stop - remember, system operations are run via function calls to drivers now
-		do
-		{
-			script = cur_object_hub->script_id[LEVEL];	//get the script id as we may be running a script from another object...
+			script = cur_object_hub->script_id[LEVEL];
 
+			// there is a distinction between running one of our
+			// own scripts and that of another object
+			if (script / SIZE == ID) {
+				// its our script
 
-//			there is a distinction between running one of our own scripts and that of another object
-			if	((script/SIZE)==ID)	//its our script
-			{
-//				Zdebug("run script %d pc%d", script/SIZE, cur_object_hub->script_pc[LEVEL]);
+				// Zdebug("run script %d pc%d",
+				//	script / SIZE,
+				//	cur_object_hub->script_pc[LEVEL]);
 
-//				raw_script_ad = (char *) (cur_object_hub+1);	//this is the script data
+				// this is the script data
+				// raw_script_ad = (char *) (cur_object_hub + 1);
 
 				raw_script_ad = (char*) head;
 
-				ret=RunScript( raw_script_ad, raw_script_ad, &cur_object_hub->script_pc[LEVEL] );	//script and data object are us/same
+				// script and data object are us/same
+				ret = RunScript(raw_script_ad, raw_script_ad, &cur_object_hub->script_pc[LEVEL]);
+			} else {
+				// we're running the script of another game
+				// object - get our data object address
 
+				// get the foreign objects script data address
+
+				raw_data_ad = (char*) head;
+
+				far_head = (_standardHeader*) res_man.Res_open(script / SIZE);
+
+				if (far_head->fileType != GAME_OBJECT && far_head->fileType != SCREEN_MANAGER)
+					Con_fatal_error("Logic_engine %d not a far object (its a %d)", script / SIZE, far_head->fileType);
+
+				// raw_script_ad = (char*) (head + 1) + sizeof(_standardHeader);
+
+				// get our objects data address
+				// raw_data_ad = (char*) (cur_object_hub + 1);
+
+				raw_script_ad = (char*) far_head;
+
+				ret = RunScript(raw_script_ad, raw_data_ad, &cur_object_hub->script_pc[LEVEL]);
+
+				// close foreign object again
+				res_man.Res_close(script / SIZE);
+
+				// reset to us for service script
+				raw_script_ad = raw_data_ad;
 			}
-			else	//we're running the script of another game object - get our data object address
-			{
-//				get the foreign objects script data address
 
-				raw_data_ad=(char*)head;
+			// this script has finished - drop down a level
 
-				far_head = (_standardHeader*) res_man.Res_open(script/SIZE);
-				if	((far_head->fileType!=GAME_OBJECT)&&((far_head->fileType!=SCREEN_MANAGER)))
-					Con_fatal_error("Logic_engine %d not a far object (its a %d)", script/SIZE, far_head->fileType);
-
-//				raw_script_ad = (char*) (head+1) + sizeof(_standardHeader);
-
-//				get our objects data address
-//				raw_data_ad = (char*) (cur_object_hub+1);
-
-				raw_script_ad=(char*)far_head;
-
-				ret=RunScript( raw_script_ad, raw_data_ad, &cur_object_hub->script_pc[LEVEL] );
-
-				res_man.Res_close(script/SIZE);	//close foreign object again
-
-				raw_script_ad=raw_data_ad;	//reset to us for service script
-			}
-
-			if	(ret==1)	//this script has finished - drop down a level
-			{
-				if (cur_object_hub->logic_level)	//check that it's not already on level 0 !
+			if (ret == 1) {
+				// check that it's not already on level 0 !
+				if (cur_object_hub->logic_level)
 					cur_object_hub->logic_level--;
-				else	//Hmmm, level 0 terminated :-| Let's be different this time and simply let it restart next go :-)
-				{
-					cur_object_hub->script_pc[LEVEL]=(cur_object_hub->script_id[LEVEL]&0xffff);	//reset to rerun
-//					Zdebug("**WARNING object %d script 0 terminated!", id);
-					ret=0;	//cause us to drop out for a cycle
+				else {
+					// Hmmm, level 0 terminated :-| Let's
+					// be different this time and simply
+					// let it restart next go :-)
+
+					// Zdebug("**WARNING object %d script 0 terminated!", id);
+
+					// reset to rerun
+					cur_object_hub->script_pc[LEVEL] = cur_object_hub->script_id[LEVEL] & 0xffff;
+
+					// cause us to drop out for a cycle
+					ret = 0;
 				}
-			}
-			else	if	(ret>2)
-			{
-				Con_fatal_error("Process_session: illegal script return type %d (%s line %u)",ret,__FILE__,__LINE__);
+			} else if (ret > 2) {
+				Con_fatal_error("Process_session: illegal script return type %d (%s line %u)", ret, __FILE__, __LINE__);
 			}
 
-//			if ret==2 then we simply go around again - a new script or subroutine will kick in and run
+			// if ret == 2 then we simply go around again - a new
+			// script or subroutine will kick in and run
 
+			// keep processing scripts until 0 for quit is returned
+		} while(ret);
+
+		// any post logic system requests to go here
+
+		// clear any syncs that were waiting for this character - it
+		// has used them or now looses them
+
+		Clear_syncs(ID);
+
+		if (pc != 0xffffffff) {
+			// the session is still valid so run the service script
+			null_pc = 0;
+
+			// call the base script - this is the graphic/mouse
+			// service call
+
+			RunScript(raw_script_ad, raw_script_ad, &null_pc);
 		}
-		while(ret);	//keep processing scripts until 0 for quit is returned
 
+		// made for all live objects
 
-//		any post logic system requests to go here
+		// and that's it so close the object resource
 
-		Clear_syncs(ID);	//clear any syncs that were waiting for this character - it has used them or now looses them
-
-		if	(pc!=0xffffffff)	//the session is still valid so run the service script
-		{	null_pc=0;
-			RunScript( raw_script_ad, raw_script_ad, &null_pc );	//call the base script - this is the graphic/mouse service call
-		}
-																				//made for all live objects
-
-//		and that's it so close the object resource
 		res_man.Res_close(ID);
-	};
+	}
 
-
-	Process_kill_list();	//leaving a room so remove all ids that must reboot correctly
+	// leaving a room so remove all ids that must reboot correctly
+	Process_kill_list();
 
 	Zdebug("RESTART the loop");
-	
 
-	return(1);	//means restart the loop
+	// means restart the loop
+	return 1;
 }
-//------------------------------------------------------------------------------------
-void	logic::Express_change_session(uint32	sesh_id)	//Tony6June96
-{
-//a game-object can bring an immediate halt to the session and cause a new one to start without a screen update
 
-	current_run_list=sesh_id;	//set to new
-	pc=0xffffffff;	//causes session to quit
+void logic::Express_change_session(uint32 sesh_id) {	// Tony6June96
+	// a game-object can bring an immediate halt to the session and cause
+	// a new one to start without a screen update
 
-	EXIT_FADING=0;	// reset now in case we double-clicked an exit prior to changing screen
+	//set to new
+	current_run_list = sesh_id;
 
-	Init_sync_system();		// we're trashing the list - presumably to change room
-							// in theory sync waiting in the list could be left behind and never removed - so we trash the lot
+	//causes session to quit
+	pc = 0xffffffff;
 
-	ClearWalkGridList();	// reset walkgrid list (see FN_register_walkgrid)
-	Clear_fx_queue();		// stops all fx & clears the queue
-	FreeAllRouteMem();		// free all the route memory blocks from previous game
+	// reset now in case we double-clicked an exit prior to changing screen
+	EXIT_FADING = 0;
+
+	// we're trashing the list - presumably to change room
+	// in theory sync waiting in the list could be left behind and never
+	// removed - so we trash the lot
+
+	Init_sync_system();
+
+	// reset walkgrid list (see FN_register_walkgrid)
+	ClearWalkGridList();
+
+	// stops all fx & clears the queue
+	Clear_fx_queue();
+
+	// free all the route memory blocks from previous game
+	FreeAllRouteMem();
 }
-//------------------------------------------------------------------------------------
-void	logic::Natural_change_session(uint32	sesh_id)	//Tony7June96
-{
-//a new session will begin next game cycle.
-//the current cycle will conclude and build the screen and flip into view as normal
 
-	current_run_list=sesh_id;	//set to new
+void logic::Natural_change_session(uint32 sesh_id) {	// Tony7June96
+	// a new session will begin next game cycle.
+	// the current cycle will conclude and build the screen and flip
+	// into view as normal
+
+	//set to new
+	current_run_list = sesh_id;
 }
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
-uint32	logic::Return_run_list(void)	//Tony18Sept96
-{
-//pass back the private cur_object_list variable - not sure we need this
 
-	return(current_run_list);	//return the id
+uint32 logic::Return_run_list(void) {	// Tony18Sept96
+	// pass back the private cur_object_list variable - not sure we need
+	// this
+
+	//return the id
+	return current_run_list;
 }
-//------------------------------------------------------------------------------------
-int32 FN_set_session(int32 *params)	//Tony29Oct96
-{
-//used by player invoked start scripts
 
-//param	0 id of new run list
-	LLogic.Express_change_session(*params);	//now!
+int32 FN_set_session(int32 *params) {	// Tony29Oct96
+	// used by player invoked start scripts
+	// param	0 id of new run list
 
-	return(IR_CONT);	//cont
+	//now!
+	LLogic.Express_change_session(*params);
+	return IR_CONT;
 }
-//------------------------------------------------------------------------------------
-int32 FN_end_session(int32 *params)	//Tony21Sept96
-{
-//causes no more objects in this logic loop to be processed
-//the logic engine will restart at the beginning of the new list
-// !!the current screen will not be drawn!!
 
-//param	0	id of new run-list
+int32 FN_end_session(int32 *params) {	// Tony21Sept96
+	// causes no more objects in this logic loop to be processed
+	// the logic engine will restart at the beginning of the new list
+	// !!the current screen will not be drawn!!
 
-	LLogic.Express_change_session(*params);	//terminate current and change to next run-list
+	// param	0 id of new run-list
 
-	return(0);	//stop the script - logic engine will now go around and the new screen will begin
+	// terminate current and change to next run-list
+	LLogic.Express_change_session(*params);
+
+	// stop the script - logic engine will now go around and the new
+	// screen will begin
+	return IR_STOP;
 }
-//------------------------------------------------------------------------------------
-void	logic::Logic_up(uint32	new_script)	//Tony23Sept96
-{
-//move the current object up a level
-//called by FN_gosub command - remember, only the logic object has access to cur_object_hub
 
+void logic::Logic_up(uint32 new_script)	{	// Tony23Sept96
+	// move the current object up a level
+	// called by FN_gosub command - remember, only the logic object has
+	// access to cur_object_hub
 
-	cur_object_hub->logic_level++;	//going up a level - and we'll keeping going this cycle
+	// going up a level - and we'll keeping going this cycle
+	cur_object_hub->logic_level++;
 
-	if	(cur_object_hub->logic_level==3)	//can be 0,1,2
+	// can be 0, 1, 2
+	if (cur_object_hub->logic_level == 3)
 		Con_fatal_error("Logic_up id %d has run off script tree! :-O", ID);
 
-	cur_object_hub->script_id[cur_object_hub->logic_level]=new_script;	//setup new script on next level (not the current level)
-	cur_object_hub->script_pc[cur_object_hub->logic_level]=new_script&0xffff;
+	//setup new script on next level (not the current level)
 
-	//Zdebug("new pc = %d", new_script&0xffff);
+	// Zdebug("new pc = %d", new_script & 0xffff);
 
+	cur_object_hub->script_id[cur_object_hub->logic_level] = new_script;
+	cur_object_hub->script_pc[cur_object_hub->logic_level] = new_script & 0xffff;
 }
-//------------------------------------------------------------------------------------
-void	logic::Logic_one(uint32	new_script)	//Tony4Dec96
-{
-//force to level one
 
-	cur_object_hub->logic_level=1;
+void logic::Logic_one(uint32 new_script) {	// Tony4Dec96
+	// force to level one
 
-	cur_object_hub->script_id[1]=new_script;	//setup new script on level 1
-	cur_object_hub->script_pc[1]=new_script&0xffff;
+	cur_object_hub->logic_level = 1;
 
+	// setup new script on level 1
+	cur_object_hub->script_id[1] = new_script;
+	cur_object_hub->script_pc[1] = new_script & 0xffff;
 }
-//------------------------------------------------------------------------------------
 
-void	logic::Logic_replace(uint32	new_script)	//Tony13Nov96
-{
-//change current logic - script must quit with a TERMINATE directive - which does not write to &pc
+void logic::Logic_replace(uint32 new_script) {	// Tony13Nov96
+	// change current logic - script must quit with a TERMINATE directive
+	// - which does not write to &pc
 
-	cur_object_hub->script_id[cur_object_hub->logic_level]=new_script;	//setup new script on this level
-	cur_object_hub->script_pc[cur_object_hub->logic_level]=new_script&0xffff;
-
+	// setup new script on this level
+	cur_object_hub->script_id[cur_object_hub->logic_level] = new_script;
+	cur_object_hub->script_pc[cur_object_hub->logic_level] = new_script & 0xffff;
 }
-//------------------------------------------------------------------------------------
-uint32	logic::Examine_run_list(void)	//Tony25Oct96
-{
-	uint32	*game_object_list;
-	_standardHeader	*file_header;
-	int	scrolls=0;
-	char	c;
 
+uint32 logic::Examine_run_list(void) {	// Tony25Oct96
+	uint32 *game_object_list;
+	_standardHeader *file_header;
+	int scrolls = 0;
+	char c;
 
-	if	(current_run_list)
-	{
-		game_object_list = (uint32	*) (res_man.Res_open(current_run_list)+sizeof(_standardHeader));	//open and lock in place
+	if (current_run_list) {
+		// open and lock in place
+		game_object_list = (uint32 *) (res_man.Res_open(current_run_list) + sizeof(_standardHeader));
 
 		Print_to_console("runlist number %d", current_run_list);
 
-		while(*(game_object_list))
-		{
+		while(*(game_object_list)) {
 			file_header = (_standardHeader*) res_man.Res_open(*(game_object_list));
-			Print_to_console(" %d %s",*(game_object_list), file_header->name);
+			Print_to_console(" %d %s", *(game_object_list), file_header->name);
 			res_man.Res_close(*(game_object_list++));
 
 			scrolls++;
 			Build_display();
 
-			if	(scrolls==18)
-			{
+			if (scrolls == 18) {
 				Temp_print_to_console("- Press ESC to stop or any other key to continue");
 				Build_display();
 
-				do
-				{
+				do {
 					ServiceWindows();
-				}
-				while(!KeyWaiting());
+				} while(!KeyWaiting());
 
-				ReadKey(&c);	//kill the key we just pressed
-				if	(c==27)	//ESC
+				// kill the key we just pressed
+				ReadKey(&c);
+				if (c == 27)
 					break;
 
-				Clear_console_line();	//clear the Press Esc message ready for the new line
-				scrolls=0;
+				// clear the Press Esc message ready for the
+				// new line
+
+				Clear_console_line();
+				scrolls = 0;
 			}
-
-
 		}
 
-
-
-
 		res_man.Res_close(current_run_list);
-	}
-	else	Print_to_console("no run list set");
-
+	} else
+		Print_to_console("no run list set");
 
 	Scroll_console();
-	return(1);
+	return 1;
 }
-//------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------
-void	logic::Total_restart(void)	//Tony18Sept96
-{
-//reset the object restart script 1 on level 0
 
-	cur_object_hub->logic_level=0;
+void logic::Total_restart(void) {	// Tony18Sept96
+	// reset the object restart script 1 on level 0
 
-	//cur_object_hub->script_id[0]=1;
-	cur_object_hub->script_pc[0]=1;	//reset to rerun
+	cur_object_hub->logic_level = 0;
+	// cur_object_hub->script_id[0] = 1;
 
+	// reset to rerun
+	cur_object_hub->script_pc[0] = 1;
 }
-//------------------------------------------------------------------------------------
-int32 FN_total_restart(int32 *params)	//Tony5Dec96
-{
-//mega runs this to restart its base logic again - like being cached in again
+
+int32 FN_total_restart(int32 *params) {	// Tony5Dec96
+	// mega runs this to restart its base logic again - like being cached
+	// in again
 
 	LLogic.Total_restart();
 
-	if (params);
-
-	return(IR_TERMINATE);	//drop out without saving pc and go around again
+	// drop out without saving pc and go around again
+	return IR_TERMINATE;
 }
-//------------------------------------------------------------------------------------
-int32 FN_add_to_kill_list(int32 *params)	//James9jan97
-{
+
+int32 FN_add_to_kill_list(int32 *params) {	//James9jan97
 	// call *once* from object's logic script - ie. in startup code
 	// - so not re-called every time script drops off & restarts!
 
-	// mark this object for killing - to be killed when player leaves this screen
-	// - so object reloads & script restarts upon re-entry to screen
-	// - causes this object's startup logic to be re-run every time we enter the screen
-	// - "which is nice"
+	// Mark this object for killing - to be killed when player leaves
+	// this screen. Object reloads & script restarts upon re-entry to
+	// screen, which causes this object's startup logic to be re-run
+	// every time we enter the screen. "Which is nice"
 
 	// params: none
 
 	uint32 entry;
 
+	// DON'T EVER KILL GEORGE!
+	if (ID != 8) {
+		// first, scan list to see if this object is already included
+		// (05mar97 James)
 
-	if (ID != 8)	// DON'T EVER KILL GEORGE!
-	{
-		// first, scan list to see if this object is already included (05mar97 James)
-		entry=0;
-		while ((entry < kills) && (object_kill_list[entry] != ID))
+		entry = 0;
+		while (entry < kills && object_kill_list[entry] != ID)
 			entry++;
 
-		if (entry == kills)	// if this ID isn't already in the list, then add it, (otherwise finish) (05mar97 James)
-		{
-			#ifdef _SWORD2_DEBUG
-			if (kills == OBJECT_KILL_LIST_SIZE)	// no room at the inn
-				Con_fatal_error("List full in FN_add_to_kill_list(%u) (%s line %u)",ID,__FILE__,__LINE__);
-			#endif
+		// if this ID isn't already in the list, then add it,
+		// (otherwise finish) (05mar97 James)
 
-			object_kill_list[kills] = ID;	// add this 'ID' to the kill list
-			kills++;						// "another one bites the dust"
+		if (entry == kills) {
+#ifdef _SWORD2_DEBUG
+			// no room at the inn
+			if (kills == OBJECT_KILL_LIST_SIZE)
+				Con_fatal_error("List full in FN_add_to_kill_list(%u) (%s line %u)", ID, __FILE__, __LINE__);
+#endif
 
-			// when we leave the screen, all these object resources are to be cleaned out of memory
-			// and the kill list emptied by doing 'kills=0'
-			// - ensuring that all resources are in fact still in memory & more importantly closed
-			// before killing!
+			// add this 'ID' to the kill list
+			object_kill_list[kills] = ID;
+			kills++;
+
+			// "another one bites the dust"
+
+			// when we leave the screen, all these object
+			// resources are to be cleaned out of memory and the
+			// kill list emptied by doing 'kills = 0', ensuring
+			// that all resources are in fact still in memory &
+			// more importantly closed before killing!
 		}
 	}
 
-	return(IR_CONT);	// continue script
+	// continue script
+	return IR_CONT;
 }
-//------------------------------------------------------------------------------------
-void	logic::Process_kill_list(void)	//Tony10Jan97
-{
 
-	uint32	j;
+void logic::Process_kill_list(void) {	// Tony10Jan97
+	for (uint32 j = 0; j < kills; j++)
+		res_man.Remove_res(object_kill_list[j]);
 
-
-	if	(kills)
-		for	(j=0;j<kills;j++)
-			res_man.Remove_res(object_kill_list[j]);
-
-
-	kills=0;
-
+	kills = 0;
 }
-//------------------------------------------------------------------------------------
-void	logic::Reset_kill_list(void)	//James 25mar97
-{
-	kills=0;
-}
-//------------------------------------------------------------------------------------
 
+void logic::Reset_kill_list(void) {	// James 25mar97
+	kills = 0;
+}
