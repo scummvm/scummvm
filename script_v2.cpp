@@ -23,6 +23,8 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "sound/mididrv.h"
+#include "sound/imuse.h"
 
 void Scumm::setupOpcodes2()
 {
@@ -2671,6 +2673,7 @@ void Scumm::o6_miscOps()
 	int16 args[30];
 	int i;
 	Actor *a;
+	IMuse *se = _imuse; //yazoo: not very nice
 
 	getStackList(args, sizeof(args) / sizeof(args[0]));
 
@@ -2842,10 +2845,9 @@ void Scumm::o6_miscOps()
 			break;
 
 		case 122:
-			warning("stub o6_miscOps_122(%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d)",
-							args[1], args[2], args[3], args[4],
-							args[5], args[6], args[7], args[8],
-							args[9], args[10], args[11], args[12]);
+			_vars[VAR_SOUNDRESULT] = se->do_command(	args[1], args[2], args[3], args[4],
+							args[5], args[6], args[7], args[8]
+							);
 			break;
 
 		case 123:
