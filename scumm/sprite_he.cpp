@@ -741,8 +741,10 @@ void ScummEngine_v90he::spriteAddImageToList(int spriteId, int imageNum, int *sp
 		if (_spriteTable[spriteId].res_id != origResId || _spriteTable[spriteId].res_wiz_states != origResWizStates)
 			_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 	} else {
-		_spriteTable[spriteId].flags &= ~(kSFImageless);
-		_spriteTable[spriteId].flags |= kSFChanged | kSFBlitDirectly;
+		if (_spriteTable[spriteId].flags & kSFImageless)
+			_spriteTable[spriteId].flags = 0;
+		else
+			_spriteTable[spriteId].flags = kSFChanged | kSFBlitDirectly;
 		_spriteTable[spriteId].field_4C = 0;
 		_spriteTable[spriteId].cur_img_state = 0;
 		_spriteTable[spriteId].res_wiz_states = 0;
