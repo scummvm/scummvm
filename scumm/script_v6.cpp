@@ -2949,8 +2949,8 @@ void Scumm_v6::decodeParseString(int m, int n)
 				_scriptPointer += resStrLen((char*)_scriptPointer)+ 1;
 				translateText(_messagePtr, _transText);
 				for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
-				if (_messagePtr[i] != '/')
-					pointer[j++] = _messagePtr[i];
+					if (_messagePtr[i] != '/')
+						pointer[j++] = _messagePtr[i];
 				}
 				pointer[j] = 0;
 

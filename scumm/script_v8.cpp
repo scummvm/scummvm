@@ -526,20 +526,45 @@ void Scumm_v8::decodeParseString(int m, int n)
 		error("decodeParseString: SO_PRINT_MUMBLE");
 		break;
 	case 0xD1: {
-		_messagePtr = _scriptPointer;
 
 		byte buffer[1024];
-		_msgPtrToAdd = buffer;
-		_scriptPointer = _messagePtr = addMessageToStack(_messagePtr);
+		_messagePtr = _scriptPointer;
+
+		if (_messagePtr[0] == '/') {
+			char pointer[20];
+			int i, j;
+
+			// Skip over the string
+			_scriptPointer += resStrLen((char*)_scriptPointer) + 1;
+	
+			translateText(_messagePtr, _transText);
+			for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
+				if (_messagePtr[i] != '/')
+					pointer[j++] = _messagePtr[i];
+			}
+			pointer[j] = 0;
+
+			// Stop any talking that's still going on
+			if (_sound->_talkChannel > -1)
+				_mixer->stop(_sound->_talkChannel);
+
+			// FIXME: no 'digvoice.bun' in COMI
+			// _sound->_talkChannel = _sound->playBundleSound(pointer);
+
+			_messagePtr = _transText;
+			_msgPtrToAdd = buffer;
+			_messagePtr = addMessageToStack(_messagePtr);
+		} else {
+			_msgPtrToAdd = buffer;
+			_scriptPointer = _messagePtr = addMessageToStack(_messagePtr);
+		}
 
 		if (_fr[_string[m].charset] == NULL)	// FIXME: Put this elsewhere?
-	                       loadCharset(_string[m].charset);
+			loadCharset(_string[m].charset);
 
 		if (_fr[_string[m].charset] != NULL) {
 			_fr[_string[m].charset]->drawString((char *)buffer, (int)_string[m].xpos, (int)_string[m].ypos, (unsigned char)_string[m].color, 0);
-			//warning("Printing font loaded in slot %d: %s\n", _string[m].charset, buffer);
 		}
-
 		break;
 	}
 	case 0xD2:		// SO_PRINT_WRAP Set print wordwrap
