@@ -198,6 +198,14 @@ SOURCE=.\common\map.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\common\plugins.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\plugins.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\common\rect.h
 # End Source File
 # Begin Source File
@@ -315,6 +323,14 @@ SOURCE=.\sound\rate.cpp
 # Begin Source File
 
 SOURCE=.\sound\rate.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sound\voc.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sound\voc.h
 # End Source File
 # End Group
 # Begin Group "gui"
