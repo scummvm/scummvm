@@ -726,7 +726,7 @@ void Scumm::o5_doSentence()
 	} else {
 		st->unk2 = 1;
 	}
-	st->unk = 0;
+	st->freezeCount = 0;
 }
 
 void Scumm::o5_drawBox()
@@ -2018,7 +2018,7 @@ void Scumm::o5_soundKludge()
 
 	if (_features & GF_SMALL_HEADER) {	// Is WaitForSentence in SCUMM V3
                 if (_sentenceNum) {
-                        if (_sentence[_sentenceNum - 1].unk && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+                        if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
                                 return;
 		} else if (!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
                         	return;
@@ -2344,7 +2344,7 @@ void Scumm::o5_wait()
 		return;
 	case 4:											/* wait for sentence */
 		if (_sentenceNum) {
-			if (_sentence[_sentenceNum - 1].unk && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
 				return;
 			break;
 		}

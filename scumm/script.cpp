@@ -66,7 +66,7 @@ void Scumm::runScript(int script, int a, int b, int16 *lvarptr)
 	s = &vm.slot[slot];
 	s->number = script;
 	s->offs = scriptOffs;
-	s->status = 2;
+	s->status = ssRunning;
 	s->where = scriptType;
 	s->unk1 = a;
 	s->unk2 = b;
@@ -92,7 +92,7 @@ void Scumm::stopScriptNr(int script)
 	ss = &vm.slot[1];
 
 	for (i = 1; i < NUM_SCRIPT_SLOT; i++, ss++) {
-		if (script != ss->number || ss->where != WIO_GLOBAL && ss->where != WIO_LOCAL || ss->status == 0)
+		if (script != ss->number || ss->where != WIO_GLOBAL && ss->where != WIO_LOCAL || ss->status == ssDead)
 			continue;
 
 		if (ss->cutsceneOverride)
@@ -133,7 +133,7 @@ void Scumm::stopObjectScript(int script)
 	for (i = 1; i < NUM_SCRIPT_SLOT; i++, ss++) {
 		if (script == ss->number && (ss->where == WIO_ROOM ||
 																 ss->where == WIO_INVENTORY || ss->where == WIO_FLOBJECT)
-				&& ss->status != 0) {
+				&& ss->status != ssDead) {
 			if (ss->cutsceneOverride)
 				error("Object %d stopped with active cutscene/override", script);
 			ss->number = 0;
@@ -167,7 +167,7 @@ int Scumm::getScriptSlot()
 	ss = &vm.slot[1];
 
 	for (i = 1; i < NUM_SCRIPT_SLOT; i++, ss++) {
-		if (ss->status == 0)
+		if (ss->status == ssDead)
 			return i;
 	}
 	error("Too many scripts running, %d max", NUM_SCRIPT_SLOT);
@@ -210,7 +210,7 @@ void Scumm::runScriptNested(int script)
 	if (nest->number != 0xFF) {
 		slot = &vm.slot[nest->slot];
 		if (slot->number == nest->number && slot->where == nest->where &&
-				slot->status != 0 && slot->freezeCount == 0) {
+				slot->status != ssDead && slot->freezeCount == 0) {
 			_currentScript = nest->slot;
 			getScriptBaseAddress();
 			getScriptEntryPoint();
@@ -544,7 +544,7 @@ void Scumm::stopObjectCode()
 		}
 	}
 	ss->number = 0;
-	ss->status = 0;
+	ss->status = ssDead;
 	_currentScript = 0xFF;
 }
 
@@ -583,7 +583,7 @@ void Scumm::freezeScripts(int flag)
 	}
 
 	for (i = 0; i < 6; i++)
-		_sentence[i].unk++;
+		_sentence[i].freezeCount++;
 
 	if (vm.cutSceneScriptIndex != 0xFF) {
 		vm.slot[vm.cutSceneScriptIndex].status &= 0x7F;
@@ -603,8 +603,8 @@ void Scumm::unfreezeScripts()
 	}
 
 	for (i = 0; i < 6; i++) {
-		if (_sentence[i].unk > 0)
-			_sentence[i].unk--;
+		if (_sentence[i].freezeCount > 0)
+			_sentence[i].freezeCount--;
 	}
 }
 
@@ -694,11 +694,11 @@ void Scumm::killScriptsAndResources()
 		if (ss->where == WIO_ROOM || ss->where == WIO_FLOBJECT) {
 			if (ss->cutsceneOverride)
 				error("Object %d stopped with active cutscene/override in exit", ss->number);
-			ss->status = 0;
+			ss->status = ssDead;
 		} else if (ss->where == WIO_LOCAL) {
 			if (ss->cutsceneOverride)
 				error("Script %d stopped with active cutscene/override in exit", ss->number);
-			ss->status = 0;
+			ss->status = ssDead;
 		}
 	}
 
@@ -721,7 +721,7 @@ void Scumm::killScriptsAndResources()
 	}
 }
 
-void Scumm::checkAndRunVar33()
+void Scumm::checkAndRunSentenceScript()
 {
 	int i;
 	ScriptSlot *ss;
@@ -730,11 +730,11 @@ void Scumm::checkAndRunVar33()
 	if (isScriptInUse(_vars[VAR_SENTENCE_SCRIPT])) {
 		ss = vm.slot;
 		for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++)
-			if (ss->number == _vars[VAR_SENTENCE_SCRIPT] && ss->status != 0 && ss->freezeCount == 0)
+			if (ss->number == _vars[VAR_SENTENCE_SCRIPT] && ss->status != ssDead && ss->freezeCount == 0)
 				return;
 	}
 
-	if (!_sentenceNum || _sentence[_sentenceNum - 1].unk)
+	if (!_sentenceNum || _sentence[_sentenceNum - 1].freezeCount)
 		return;
 
 	_sentenceNum--;
@@ -767,10 +767,10 @@ void Scumm::decreaseScriptDelay(int amount)
 	ScriptSlot *ss = &vm.slot[0];
 	int i;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
-		if (ss->status == 1) {
+		if (ss->status == ssPaused) {
 			ss->delay -= amount;
 			if (ss->delay < 0) {
-				ss->status = 2;
+				ss->status = ssRunning;
 				ss->delay = 0;
 			}
 		}
@@ -945,7 +945,7 @@ bool Scumm::isScriptRunning(int script)
 	int i;
 	ScriptSlot *ss = vm.slot;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++)
-		if (ss->number == script && (ss->where == WIO_GLOBAL || ss->where == WIO_LOCAL) && ss->status)
+		if (ss->number == script && (ss->where == WIO_GLOBAL || ss->where == WIO_LOCAL) && ss->status != ssDead)
 			return true;
 	return false;
 }
@@ -955,7 +955,7 @@ bool Scumm::isRoomScriptRunning(int script)
 	int i;
 	ScriptSlot *ss = vm.slot;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++)
-		if (ss->number == script && ss->where == WIO_ROOM && ss->status)
+		if (ss->number == script && ss->where == WIO_ROOM && ss->status != ssDead)
 			return true;
 	return false;
 
@@ -1101,7 +1101,7 @@ void Scumm::exitCutscene()
 	if (offs) {
 		ScriptSlot *ss = &vm.slot[vm.cutSceneScript[vm.cutSceneStackPointer]];
 		ss->offs = offs;
-		ss->status = 2;
+		ss->status = ssRunning;
 		ss->freezeCount = 0;
 
 		if (ss->cutsceneOverride > 0)
@@ -1147,5 +1147,5 @@ void Scumm::doSentence(int c, int b, int a)
 	st->unk5 = c;
 	st->unk4 = b;
 	st->unk3 = a;
-	st->unk = 0;
+	st->freezeCount = 0;
 }

@@ -471,7 +471,7 @@ void Scumm::saveOrLoad(Serializer *s)
 		MKLINE(ScriptSlot, freezeCount, sleByte, VER_V8),
 		MKLINE(ScriptSlot, didexec, sleByte, VER_V8),
 		MKLINE(ScriptSlot, cutsceneOverride, sleByte, VER_V8),
-		MKLINE(ScriptSlot, unk5, sleByte, VER_V8),
+		MK_OBSOLETE(ScriptSlot, unk5, sleByte, VER_V8, VER_V10),
 		MKEND()
 	};
 
@@ -487,7 +487,7 @@ void Scumm::saveOrLoad(Serializer *s)
 		MKLINE(SentenceTab, unk2, sleUint8, VER_V8),
 		MKLINE(SentenceTab, unk4, sleUint16, VER_V8),
 		MKLINE(SentenceTab, unk3, sleUint16, VER_V8),
-		MKLINE(SentenceTab, unk, sleUint8, VER_V8),
+		MKLINE(SentenceTab, freezeCount, sleUint8, VER_V8),
 		MKEND()
 	};
 

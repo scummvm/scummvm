@@ -499,7 +499,7 @@ int Scumm::scummLoop(int delta)
 
 	runAllScripts();
 	checkExecVerbs();
-	checkAndRunVar33();
+	checkAndRunSentenceScript();
 
 	if (_currentRoom == 0) {
 		gdi._cursorActive = 0;

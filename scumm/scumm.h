@@ -99,9 +99,9 @@ struct ScriptSlot {
 	uint16 delayFrameCount;
 	byte status;
 	byte where;
-	byte unk1, unk2, freezeCount, didexec;
+	byte unk1, unk2, freezeCount;
+	bool didexec;
 	byte cutsceneOverride;
-	byte unk5;
 };
 
 struct NestedScript {
@@ -237,8 +237,7 @@ struct SentenceTab {
 	byte unk2;
 	uint16 unk4;
 	uint16 unk3;
-	int8 unk;
-	byte pad;
+	uint8 freezeCount;
 };
 
 // TODO / FIXME: next time save game format changes, Fingolfin would like to
@@ -495,7 +494,7 @@ public:
 	void beginOverride();
 	void endOverride();
 	void killScriptsAndResources();
-	void checkAndRunVar33();
+	void checkAndRunSentenceScript();
 	void decreaseScriptDelay(int amount);
 	bool isScriptRunning(int script);
 	bool isRoomScriptRunning(int script);

@@ -2067,7 +2067,7 @@ void Scumm::o6_wait()
 	case 171:
 		printf("wait for sentence");
 		if (_sentenceNum) {
-			if (_sentence[_sentenceNum - 1].unk && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
 				return;
 			break;
 		}

@@ -278,6 +278,16 @@ void Scumm::setCursor(int cursor)
 		warning("setCursor(%d)", cursor);
 }
 
+void Scumm::setCameraAtEx(int at)
+{
+	if (!(_features & GF_AFTER_V7)) {
+		camera._mode = CM_NORMAL;
+		camera._cur.x = at;
+		setCameraAt(at, 0);
+		camera._movingToActor = false;
+	}
+}
+
 void Scumm::setCameraAt(int pos_x, int pos_y)
 {
 	if (_features & GF_AFTER_V7) {
@@ -2393,7 +2403,7 @@ void Scumm::moveCamera()
 					if (t < 5)
 						camera._dest.x = actorx - 80;
 				} else
-					camera._movingToActor = 1;
+					camera._movingToActor = true;
 			}
 		}
 
@@ -2419,7 +2429,7 @@ void Scumm::moveCamera()
 
 		/* a is set a bit above */
 		if (camera._movingToActor && camera._cur.x >> 3 == a->x >> 3) {
-			camera._movingToActor = 0;
+			camera._movingToActor = false;
 		}
 
 		cameraMoved();
@@ -2464,7 +2474,7 @@ void Scumm::panCameraTo(int x, int y)
 
 		camera._dest.x = x;
 		camera._mode = CM_PANNING;
-		camera._movingToActor = 0;
+		camera._movingToActor = false;
 	}
 }
 
@@ -2477,7 +2487,7 @@ void Scumm::actorFollowCamera(int act)
 		if (act == 0) {
 			camera._mode = CM_NORMAL;
 			camera._follows = 0;
-			camera._movingToActor = 0;
+			camera._movingToActor = false;
 			return;
 		}
 
@@ -2486,17 +2496,7 @@ void Scumm::actorFollowCamera(int act)
 		if (camera._follows != old)
 			runHook(0);
 
-		camera._movingToActor = 0;
-	}
-}
-
-void Scumm::setCameraAtEx(int at)
-{
-	if (!(_features & GF_AFTER_V7)) {
-		camera._mode = CM_NORMAL;
-		camera._cur.x = at;
-		setCameraAt(at, 0);
-		camera._movingToActor = 0;
+		camera._movingToActor = false;
 	}
 }
 
