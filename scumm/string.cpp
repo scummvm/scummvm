@@ -104,7 +104,7 @@ void Scumm::CHARSET_1()
 				s = (a->scaley * (int)_vars[VAR_V5_TALK_STRING_Y]) / 0xFF;
 				_string[0].ypos = ((_vars[VAR_V5_TALK_STRING_Y] - s) >> 1) + s - a->elevation + a->y;
 			} else {
-				_string[0].ypos = _vars[VAR_V5_TALK_STRING_Y];
+				_string[0].ypos = (int)_vars[VAR_V5_TALK_STRING_Y];
 			}
 			if (_string[0].ypos < 1)
 				_string[0].ypos = 1;
@@ -254,7 +254,7 @@ void Scumm::CHARSET_1()
 
 			_charset->_nextLeft = _charset->_left;
 			_charset->_nextTop = _charset->_top;
-			_talkDelay += _vars[VAR_CHARINC];
+			_talkDelay += (int)_vars[VAR_CHARINC];
 			continue;
 		}
 

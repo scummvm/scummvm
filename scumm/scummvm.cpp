@@ -1205,7 +1205,7 @@ int Scumm::getKeyInput(int a)
 
 	if (_leftBtnPressed & msClicked && _rightBtnPressed & msClicked) {
 		_mouseButStat = 0;
-		_lastKeyHit = _vars[VAR_CUTSCENEEXIT_KEY];
+		_lastKeyHit = (uint)_vars[VAR_CUTSCENEEXIT_KEY];
 	} else if (_leftBtnPressed & msClicked) {
 		_mouseButStat = MBS_LEFT_CLICK;
 	} else if (_rightBtnPressed & msClicked) {
