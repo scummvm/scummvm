@@ -454,9 +454,9 @@ static inline uint colorWeight(int red, int green, int blue) {
 
 void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor, int start, int end) {
 	const byte *basepal = getPalettePtr(_curPalIndex);
-	const byte *pal = basepal;
 	const byte *compareptr;
-	byte *table = _shadowPalette;
+	const byte *pal = basepal + start * 3;
+	byte *table = _shadowPalette + start * 3;
 	int i;
 
 	// This is a correction of the patch supplied for BUG #588501.
