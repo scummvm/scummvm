@@ -1076,7 +1076,7 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		nukeResource(type, idx);
 		total_size = 8 + 16 + 14 + 8 + 7 + sizeof(OLD256_MIDI_HACK) + size;
 		if (!play_once)
-			total_size += 20;	// Up to 20 additional bytes are needed for the jump sysex
+			total_size += 24;	// Up to 24 additional bytes are needed for the jump sysex
 
 		// Write the ADL header (see also above for more information)
 		ptr = createResource(type, idx, total_size);
@@ -1212,7 +1212,7 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 			memcpy(ptr, "\x00\xf7", 2); ptr += 2;	// sysex end marker
 
 			// Finally we reinsert the end of song sysex, just in case
-			memcpy(ptr, "\x00\xff\x21", 3); ptr += 3;
+			memcpy(ptr, "\x00\xff\x21\x00\x00", 5); ptr += 5;
 		}
 		
 		return 1;
