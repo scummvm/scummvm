@@ -608,10 +608,10 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	if (_version == 1) {
 		// FIXME: lc._numColors is 0 for C64 codec...
 		// Is this code here really correct? If I compare V1 and V2 maniac,
-		// I noticed that for V1, there are 3 bytes / entry (i.e. the offsets
-		// increase in steps of 3), while for V2 there are 10 bytes / entry.
-		// That makes me wonder if the following decoder is correct *at all*
-		// for the C64 data
+		// looking at the case Actor 1, frame 1, anim 6, I notice that for V1,
+		// there are 3 bytes / entry (i.e. the offsets) increase in steps of 3)
+		// But for V2 there are 10 bytes / entry. That makes me wonder if the
+		// following decoder is correct *at all* for the C64 data
 		r = lc._baseptr + READ_LE_UINT16(lc._ptr + anim * 2 + lc._numColors + 30);
 	} else {
 		r = lc._baseptr + READ_LE_UINT16(lc._ptr + anim * 2 + lc._numColors + 42);
