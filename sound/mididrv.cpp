@@ -77,7 +77,7 @@ private:
 	uint32 property(int prop, uint32 param);
 
 	static void CALLBACK midi_callback(HMIDIOUT hmo, UINT wMsg,
-																		 DWORD dwInstance, DWORD dwParam1, DWORD dwParam2);
+	                                   DWORD dwInstance, DWORD dwParam1, DWORD dwParam2);
 };
 
 void MidiDriver_WIN::set_stream_callback(void *param, StreamCallback *sc)
@@ -263,7 +263,7 @@ void MidiDriver_WIN::check_error(MMRESULT result)
 	char buf[200];
 	if (result != MMSYSERR_NOERROR) {
 		midiOutGetErrorText(result, buf, 200);
-		error("MM System Error '%s'", buf);
+		warning("MM System Error '%s'", buf);
 	}
 }
 
