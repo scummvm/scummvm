@@ -148,12 +148,15 @@ public:
 	FontRendererGui(Gui *gui, int fontId);
 	~FontRendererGui();
 
-	void fetchText(int textId, char *buf);
+	void fetchText(int textId, uint8 *buf);
 
-	int getTextWidth(char *text);
+	int getCharWidth(uint8 c);
+	int getCharHeight(uint8 c);
+
+	int getTextWidth(uint8 *text);
 	int getTextWidth(int textId);
 
-	void drawText(char *text, int x, int y, int alignment = kAlignLeft);
+	void drawText(uint8 *text, int x, int y, int alignment = kAlignLeft);
 	void drawText(int textId, int x, int y, int alignment = kAlignLeft);
 };
 
@@ -183,7 +186,7 @@ FontRendererGui::~FontRendererGui() {
 		_gui->_vm->_graphics->deleteSurface(_glyph[i]._data);
 }
 
-void FontRendererGui::fetchText(int textId, char *buf) {
+void FontRendererGui::fetchText(int textId, uint8 *buf) {
 	uint8 *data = _gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff);
 	int i;
 
@@ -196,22 +199,35 @@ void FontRendererGui::fetchText(int textId, char *buf) {
 	_gui->_vm->_resman->closeResource(textId / SIZE);
 }
 
-int FontRendererGui::getTextWidth(char *text) {
+int FontRendererGui::getCharWidth(uint8 c) {
+	if (c < 32)
+		return 0;
+	return _glyph[c - 32]._width;
+}
+
+int FontRendererGui::getCharHeight(uint8 c) {
+	if (c < 32)
+		return 0;
+	return _glyph[c - 32]._height;
+}
+
+int FontRendererGui::getTextWidth(uint8 *text) {
 	int textWidth = 0;
 
 	for (int i = 0; text[i]; i++)
-		textWidth += (_glyph[text[i] - 32]._width - CHARACTER_OVERLAP);
+		if (text[i] >= ' ')
+			textWidth += (getCharWidth(text[i]) - CHARACTER_OVERLAP);
 	return textWidth;
 }
 
 int FontRendererGui::getTextWidth(int textId) {
-	char text[MAX_STRING_LEN];
+	uint8 text[MAX_STRING_LEN];
 
 	fetchText(textId, text);
 	return getTextWidth(text);
 }
 
-void FontRendererGui::drawText(char *text, int x, int y, int alignment) {
+void FontRendererGui::drawText(uint8 *text, int x, int y, int alignment) {
 	SpriteInfo sprite;
 	int i;
 
@@ -232,17 +248,19 @@ void FontRendererGui::drawText(char *text, int x, int y, int alignment) {
 	sprite.y = y;
 
 	for (i = 0; text[i]; i++) {
-		sprite.w = _glyph[text[i] - 32]._width;
-		sprite.h = _glyph[text[i] - 32]._height;
+		if (text[i] >= ' ') {
+			sprite.w = getCharWidth(text[i]);
+			sprite.h = getCharHeight(text[i]);
 
-		_gui->_vm->_graphics->drawSurface(&sprite, _glyph[text[i] - 32]._data);
+			_gui->_vm->_graphics->drawSurface(&sprite, _glyph[text[i] - 32]._data);
 
-		sprite.x += (_glyph[(int) text[i] - 32]._width - CHARACTER_OVERLAP);
+			sprite.x += (getCharWidth(text[i]) - CHARACTER_OVERLAP);
+		}
 	}
 }
 
 void FontRendererGui::drawText(int textId, int x, int y, int alignment) {
-	char text[MAX_STRING_LEN];
+	uint8 text[MAX_STRING_LEN];
 
 	fetchText(textId, text);
 	drawText(text, x, y, alignment);
@@ -1022,7 +1040,7 @@ class Slot : public Widget {
 private:
 	int _mode;
 	FontRendererGui *_fr;
-	char _text[SAVE_DESCRIPTION_LEN];
+	uint8 _text[SAVE_DESCRIPTION_LEN];
 	bool _clickable;
 	bool _editable;
 
@@ -1049,15 +1067,15 @@ public:
 		return _editable;
 	}
 
-	void setText(FontRendererGui *fr, int slot, char *text) {
+	void setText(FontRendererGui *fr, int slot, uint8 *text) {
 		_fr = fr;
 		if (text)
-			sprintf(_text, "%d.  %s", slot, text);
+			sprintf((char *) _text, "%d.  %s", slot, text);
 		else
-			sprintf(_text, "%d.  ", slot);
+			sprintf((char *) _text, "%d.  ", slot);
 	}
 
-	char *getText() {
+	uint8 *getText() {
 		return &_text[0];
 	}
 
@@ -1097,8 +1115,12 @@ public:
 		if (_editable) {
 			if (ke->keycode == 8)
 				_parent->onAction(this, 8);
-			else if (ke->ascii >= ' ' && ke->ascii <= 'z')
-				_parent->onAction(this, ke->ascii);
+			else if (ke->ascii >= ' ' && ke->ascii <= 255) {
+				// Accept the character if the font renderer
+				// has what looks like a valid glyph for it.
+				if (_fr->getCharWidth(ke->ascii) > 0)
+					_parent->onAction(this, ke->ascii);
+			}
 		}
 	}
 
@@ -1121,7 +1143,7 @@ public:
 class SaveLoadDialog : public Dialog {
 private:
 	int _mode, _selectedSlot;
-	char _editBuffer[SAVE_DESCRIPTION_LEN];
+	uint8 _editBuffer[SAVE_DESCRIPTION_LEN];
 	int _editPos, _firstPos;
 	int _cursorTick;
 
@@ -1136,7 +1158,7 @@ private:
 	Button *_okButton;
 	Button *_cancelButton;
 
-	void saveLoadError(char *text);
+	void saveLoadError(uint8 *text);
 
 public:
 	SaveLoadDialog(Gui *gui, int mode)
@@ -1221,7 +1243,7 @@ public:
 			}
 
 			if (_gui->_vm->getSaveDescription(_gui->_baseSlot + i, description) == SR_OK) {
-				slot->setText(fr, _gui->_baseSlot + i, (char *) description);
+				slot->setText(fr, _gui->_baseSlot + i, description);
 				slot->setClickable(true);
 			} else {
 				slot->setText(fr, _gui->_baseSlot + i, NULL);
@@ -1269,7 +1291,7 @@ public:
 		} else {
 			Slot *slot = (Slot *) widget;
 			int textWidth;
-			char tmp;
+			uint8 tmp;
 			int i;
 			int j;
 
@@ -1304,8 +1326,8 @@ public:
 				else
 					_firstPos = 4;
 
-				strcpy(_editBuffer, slot->getText());
-				_editPos = strlen(_editBuffer);
+				strcpy((char *) _editBuffer, (char *) slot->getText());
+				_editPos = strlen((char *) _editBuffer);
 				_cursorTick = 0;
 				_editBuffer[_editPos] = '_';
 				_editBuffer[_editPos + 1] = 0;
@@ -1405,7 +1427,7 @@ public:
 					break;
 				}
 
-				saveLoadError((char *) (_gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff) + 2));
+				saveLoadError(_gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff) + 2);
 				result = 0;
 			}
 		} else {
@@ -1426,7 +1448,7 @@ public:
 					break;
 				}
 
-				saveLoadError((char *) (_gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff) + 2));
+				saveLoadError(_gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff) + 2);
 				result = 0;
 			} else {
 				// Prime system with a game cycle
@@ -1448,7 +1470,7 @@ public:
 	}
 };
 
-void SaveLoadDialog::saveLoadError(char* text) {
+void SaveLoadDialog::saveLoadError(uint8* text) {
 	// Print a message on screen. Second parameter is duration.
 	_gui->_vm->displayMsg((uint8 *) text, 0);
 
