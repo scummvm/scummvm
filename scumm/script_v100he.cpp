@@ -1582,7 +1582,7 @@ void ScummEngine_v100he::o100_startSound() {
 
 void ScummEngine_v100he::o100_setSpriteInfo() {
 	int args[16];
-	int spriteId, tmp[2];
+	int spriteId, n, tmp[2];
 	static int storedFields[2];
 	byte string[80];
 
@@ -1654,7 +1654,27 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteInfoSet_field_7C(spriteId, args[0]);
 		break;
 	case 16:
-		getStackList(args, ARRAYSIZE(args));
+		n = getStackList(args, ARRAYSIZE(args));
+		if (_curSpriteId != 0 && _curMaxSpriteId != 0 && n != 0) {
+			int *p = &args[n - 1];
+			do {
+				int code = *p;
+				if (code == 0) {
+					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
+						spriteInfoSet_resetClassFlags(i);					
+					}
+				} else if (code & 0x80) {
+					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
+						spriteInfoSet_setClassFlag(i, code & 0x7F, 1);
+					}
+				} else {
+					for (int i = _curSpriteId; i <= _curMaxSpriteId; ++i) {
+						spriteInfoSet_setClassFlag(i, code & 0x7F, 0);
+					}
+				}
+				--p;
+			} while (--n);
+		}
 		break;
 	case 32:
 		args[0] = pop();
@@ -1726,6 +1746,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteInfoSet_resetSprite(spriteId);
 		break;
 	case 54:
+		// TODO
 		pop();
 		pop();
 		break;
@@ -1881,9 +1902,25 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteInfoSet_field_44(spriteId, args[0], args[1]);
 		break;
 	case 88:
-		pop();
+		args[0] = pop();
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_setClassFlags(spriteId, args[0]);
 		break;
 	case 89:
+		if (_curSpriteId > _curMaxSpriteId)
+			break;
+		spriteId = _curSpriteId;
+		if (!spriteId)
+			spriteId++;
+
+		for (; spriteId <= _curMaxSpriteId; spriteId++)
+			spriteInfoSet_resetClassFlags(spriteId);
 		break;
 	default:
 		error("o100_setSpriteInfo: Unknown case %d", subOp);
@@ -2421,6 +2458,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 			push(0);
 		break;
 	case 54:
+		// TODO
 		pop();
 		pop();
 		push(0);
@@ -2506,6 +2544,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 		}
 		break;
 	case 82:
+		// TODO
 		pop();
 		push(0);
 		break;

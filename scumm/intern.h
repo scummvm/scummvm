@@ -937,7 +937,8 @@ protected:
 	void spriteInfoSet_flags23_26(int spriteId, int value);
 	void spriteInfoSet_flag31(int spriteId, int value);
 	void spriteInfoSet_field_78_64(int spriteId, int value);
-	void spriteInfoSet_setClassFlags(int spriteId, int value1, int value2);
+	void spriteInfoSet_setClassFlags(int spriteId, int value);
+	void spriteInfoSet_setClassFlag(int spriteId, int classId, int toggle);
 	void spriteInfoSet_resetClassFlags(int spriteId);
 	void spriteInfoSet_field_88(int spriteId, int type, int value);
 

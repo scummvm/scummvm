@@ -517,7 +517,13 @@ void ScummEngine_v90he::spriteInfoSet_field_78_64(int spriteId, int value) {
 	_spriteTable[spriteId].field_64 = value;
 }
 
-void ScummEngine_v90he::spriteInfoSet_setClassFlags(int spriteId, int classId, int toggle) {
+void ScummEngine_v90he::spriteInfoSet_setClassFlags(int spriteId, int value) {
+	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
+	
+	_spriteTable[spriteId].class_flags = value;
+}
+
+void ScummEngine_v90he::spriteInfoSet_setClassFlag(int spriteId, int classId, int toggle) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 	checkRange(32, 1, classId, "class %d out of range in statement");
 	
