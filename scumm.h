@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.5  2001/10/10 10:02:33  strigeus
+ * alternative mouse cursor
+ * basic save&load
+ *
  * Revision 1.4  2001/10/09 19:02:28  strigeus
  * command line parameter support
  *
@@ -133,7 +137,12 @@ struct NestedScript {
 	uint8 slot;
 };
 
-struct ObjectData {
+struct ResHeader {
+	uint32 size;
+};
+
+class ObjectData {
+public:
 	uint32 offs_obim_to_room;
 	uint32 offs_obcd_to_room;
 	uint16 cdhd_10, cdhd_12;
@@ -174,6 +183,8 @@ struct ImageHeader { /* file format */
 	uint16 obj_id;
 };
 
+#pragma END_PACK_STRUCTS
+
 struct PathNode {
 	uint index;
 	struct PathNode *left, *right;
@@ -184,7 +195,19 @@ struct PathVertex {
 	PathNode *right;
 };
 
-#pragma END_PACK_STRUCTS
+struct SaveLoadEntry {
+	uint16 offs;
+	uint8 type;
+	uint8 size;
+};
+
+enum {
+	sleByte = 1,
+	sleInt16 = 2,
+	sleUint16 = 3,
+	sleInt32 = 4,
+	sleUint32 = 5
+};
 
 enum ScummVars {
 	VAR_UNK_ACTOR = 1,
@@ -344,6 +367,7 @@ struct CostumeRenderer {
 	byte _height2;
 	int _height;
 	int _xpos, _ypos;
+	
 	int _scaleIndexXStep;
 	int _scaleIndexYStep;
 	byte _scaleIndexX; /* must wrap at 256*/
@@ -419,6 +443,8 @@ struct Scumm {
 	byte _encbyte;
 	void *_fileHandle;
 	char *_exe_name;
+
+	int _saveLoadSlot;
 	
 	bool _dynamicRoomOffsets;
 	byte _resFilePathId;
@@ -440,6 +466,8 @@ struct Scumm {
 	
 	uint32 _randSeed1;
 	uint32 _randSeed2;
+
+	uint16 _screenB, _screenH;
 
 	uint16 dseg_3A76;
 	uint16 _defaultTalkDelay;
@@ -505,7 +533,6 @@ struct Scumm {
 	int8 _userPut;
 	int8 _cursorState;
 
-	
 	uint16 _mouseButStat;
 	byte _leftBtnPressed, _rightBtnPressed;
 
@@ -516,6 +543,7 @@ struct Scumm {
 
 	uint32 _ENCD_offs, _EXCD_offs;
 	uint32 _CLUT_offs, _EPAL_offs;
+	uint32 _IM00_offs;
 
 	int _drawObjectQueNr;
 	byte _drawObjectQue[0xC8];
@@ -544,8 +572,6 @@ struct Scumm {
 	struct {
 		int16 vars[801];
 		byte bitvars[256];
-		uint16 scriptoffs[180];
-		uint16 inventory[80];
 		uint32 cutScenePtr[5];
 		byte cutSceneScript[5];
 		int16 cutSceneData[5];
@@ -559,7 +585,6 @@ struct Scumm {
 	struct {
 		int16 x,y;
 	} mouse;
-
 
 	struct {
 		int16 x[6];
@@ -578,7 +603,6 @@ struct Scumm {
 		uint16 drawHeight;
 		uint16 drawWidth;
 		uint16 draw8xPos;
-		uint16 unk3;
 		int16 virtScreen;
 		uint16 drawBottom;
 		uint16 drawTop;
@@ -610,7 +634,7 @@ struct Scumm {
 		byte transparency;
 		uint16 vertStripNextInc;
 		byte *backupIsWhere;
-		byte mouseBackup[16*24];
+//		byte mouseBackup[16*24];
 	} gdi;
 
 	Actor actor[13];
@@ -634,11 +658,8 @@ struct Scumm {
 
 	byte _resourceMapper[128];
 
-	uint16 _resIndexToLoad, _resTypeToLoad;
-
 	byte **_lastCodePtr;
-	byte _dir;
-
+	
 	int _numSoundTags;
 	byte *_soundTagTable;
 
@@ -656,6 +677,7 @@ struct Scumm {
 	byte _opcode;
 
 	int _xPos, _yPos;
+	byte _dir;
 
 	CameraData camera;
 
@@ -694,14 +716,10 @@ struct Scumm {
 
 	int16 _vararg_temp_pos[16];
 
-	int16 _curExecScript;
+	uint16 _curExecScript;
 
 	int _scrWidthIn8Unit;
 	int _scrHeight;
-
-	uint32 _IM00_offs;
-
-	int _colorsInPalette;
 
 	byte _currentPalette[0x300];
 
@@ -734,8 +752,6 @@ struct Scumm {
 	int16 _foundPathX;
 	int16 _foundPathY;
 
-	uint16 _onlyActorFlags;
-
 	uint16 _lastKeyHit;
 
 	int _scummStackPos;
@@ -746,7 +762,6 @@ struct Scumm {
 	int _boxPathVertexHeapIndex;
 	int _boxMatrixItem;
 	
-	/* all these can be made local */
 	byte *_msgPtrToAdd;
 
 	void openRoom(int room);
@@ -816,9 +831,6 @@ struct Scumm {
 	void unkVirtScreen4(int a);
 	void unkVirtScreen5(int a);
 
-	void removeMouseCursor();
-
-	void showMouseCursor();
 	void drawStripToScreen();
 	void restoreMouse();
 	void initActor(Actor *a, int mode);
@@ -1207,6 +1219,19 @@ struct Scumm {
 	bool loadState(const char *filename);
 	void saveOrLoad(FILE *inout, bool mode);
 	void saveLoadBytes(void *b, int len);
+	void saveLoadResource(int type, int index);
+	bool isResourceLoaded(int type, int index);
+
+	void saveLoadEntries(void *d, const SaveLoadEntry *sle);
+
+	void saveUint32(uint32 d);
+	void saveWord(uint16 d);
+	void saveByte(byte b);
+
+	byte loadByte();
+	uint16 loadWord();
+	uint32 loadUint32();
+
 
 	Actor *derefActor(int id) { return &actor[id]; }
 	Actor *derefActorSafe(int id, const char *errmsg);
@@ -1224,6 +1249,7 @@ struct Scumm {
 	void parseCommandLine(int argc, char **argv);
 
 	void showHelpAndExit();
+
 };
 
 void waitForTimer(Scumm *s);
@@ -1237,3 +1263,5 @@ void CDECL debug(int level, const char *s, ...);
 void checkHeap();
 void initGraphics(Scumm *s);
 void updateScreen(Scumm *s);
+
+void drawMouse(Scumm *s, int x, int y, int color, byte *mask, bool visible);

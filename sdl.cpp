@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.4  2001/10/10 10:02:33  strigeus
+ * alternative mouse cursor
+ * basic save&load
+ *
  * Revision 1.3  2001/10/09 19:02:28  strigeus
  * command line parameter support
  *
@@ -69,6 +73,20 @@ void waitForTimer(Scumm *s) {
 			switch(event.type) {
 			case SDL_KEYDOWN:
 				s->_keyPressed = event.key.keysym.sym;
+				if (event.key.keysym.sym >= '0' && event.key.keysym.sym<='9') {
+					s->_saveLoadSlot = event.key.keysym.sym - '0';
+					if (event.key.keysym.mod&KMOD_SHIFT)
+						s->_saveLoadFlag = 1;
+					else if (event.key.keysym.mod&KMOD_CTRL)
+						s->_saveLoadFlag = 2;
+				}
+				if (event.key.keysym.sym=='z' && event.key.keysym.mod&KMOD_CTRL) {
+					exit(1);
+				}
+				if (event.key.keysym.sym=='f' && event.key.keysym.mod&KMOD_CTRL) {
+					s->_fastMode ^= 1;
+				}
+				
 				break;
 			case SDL_MOUSEMOTION:
 #if !defined(SCALEUP_2x2)
@@ -108,36 +126,13 @@ SDL_Rect dirtyRects[MAX_DIRTY_RECTS];
 int numDirtyRects;
 bool fullRedraw;
 
-/* Copy part of bitmap */
-void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
-	byte *dst;
+int old_mouse_x, old_mouse_y;
+bool has_mouse,hide_mouse;
+byte old_backup[24*16*2];
+
+
+void addDirtyRect(int x, int y, int w, int h) {
 	SDL_Rect *r;
-	int i;
-
-	if (SDL_LockSurface(screen)==-1)
-		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
-
-#if !defined(SCALEUP_2x2)
-	dst = (byte*)screen->pixels + y*320 + x;
-
-	if (numDirtyRects==MAX_DIRTY_RECTS)
-		fullRedraw = true;
-	else if (!fullRedraw) {
-		r = &dirtyRects[numDirtyRects++];
-		r->x = x;
-		r->y = y;
-		r->w = w;
-		r->h = h;
-	}
-		
-	do {
-		memcpy(dst, src, w);
-		dst += 640;
-		src += 320;
-	} while (--h);
-#else
-	dst = (byte*)screen->pixels + y*640*2 + x*2;
-
 	if (numDirtyRects==MAX_DIRTY_RECTS)
 		fullRedraw = true;
 	else if (!fullRedraw) {
@@ -147,7 +142,40 @@ void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 		r->w = w*2;
 		r->h = h*2;
 	}
-		
+}
+
+void addDirtyRectClipped(int x, int y, int w, int h) {
+	if (x<0) { w += x; x=0; }
+	if (y<0) { h += y; y=0; }
+	if (w >= 320-x) w = 320-x;
+	if (h >= 200-y) h = 200-y;
+	addDirtyRect(x,y,w,h);
+}
+
+/* Copy part of bitmap */
+void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
+	byte *dst;
+	int i;
+
+	hide_mouse = true;
+	if (has_mouse) {
+		s->drawMouse();
+	}
+
+	if (SDL_LockSurface(screen)==-1)
+		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
+
+#if !defined(SCALEUP_2x2)
+	dst = (byte*)screen->pixels + y*320 + x;
+	addDirtyRect(x,y,w,h);
+	do {
+		memcpy(dst, src, w);
+		dst += 640;
+		src += 320;
+	} while (--h);
+#else
+	dst = (byte*)screen->pixels + y*640*2 + x*2;
+	addDirtyRect(x,y,w,h);		
 	do {
 		i=0;
 		do {
@@ -164,7 +192,12 @@ void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 }
 
 void updateScreen(Scumm *s) {
-
+	
+	if (hide_mouse) {
+		hide_mouse = false;
+		s->drawMouse();
+	}
+	
 	if(s->_palDirtyMax != -1) {
 		updatePalette(s);
 	}
@@ -184,8 +217,71 @@ void updateScreen(Scumm *s) {
 		SDL_UpdateRects(screen, numDirtyRects, dirtyRects);	
 	}
 
-
 	numDirtyRects = 0;
+}
+
+void drawMouse(Scumm *s, int xdraw, int ydraw, int color, byte *mask, bool visible) {
+	int x,y;
+	uint32 bits;
+	byte *dst,*bak;
+
+	if (hide_mouse)
+		visible = false;
+
+	if (SDL_LockSurface(screen)==-1)
+		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
+
+	if (has_mouse) {
+		dst = (byte*)screen->pixels + old_mouse_y*640*2 + old_mouse_x*2;
+		bak = old_backup;
+
+		for (y=0; y<16; y++,bak+=48,dst+=640*2) {
+			if ( (uint)(old_mouse_y + y) < 200) {
+				for (x=0; x<24; x++) {
+					if ((uint)(old_mouse_x + x) < 320) {
+						dst[x*2+640] = dst[x*2] = bak[x*2];
+						dst[x*2+640+1] = dst[x*2+1] = bak[x*2+1];
+					}
+				}
+			}
+		}
+	}
+
+	if (visible) {
+		dst = (byte*)screen->pixels + ydraw*640*2 + xdraw*2;
+		bak = old_backup;
+
+		for (y=0; y<16; y++,dst+=640*2,bak+=48) {
+			bits = mask[3] | (mask[2]<<8) | (mask[1]<<16);
+			mask += 4;
+			if ((uint)(ydraw+y)<200) {
+				memcpy(bak,dst,48);
+				for (x=0; bits; x++,bits>>=1) {
+					if (bits&1 && (uint)(xdraw+x)<320) {
+						dst[x*2] = color;
+						dst[x*2+1] = color;
+						dst[x*2+640] = color;
+						dst[x*2+1+640] = color;
+					}
+				}
+			}
+		}
+	}
+
+	SDL_UnlockSurface(screen);
+
+	if (has_mouse) {
+		has_mouse = false;
+		addDirtyRectClipped(old_mouse_x, old_mouse_y, 24, 16);
+	}
+
+	if (visible) {
+		has_mouse = true;
+		addDirtyRectClipped(xdraw, ydraw, 24, 16);
+		old_mouse_x = xdraw;
+		old_mouse_y = ydraw;
+	}
+	
 }
 
 void initGraphics(Scumm *s) {
@@ -197,20 +293,23 @@ void initGraphics(Scumm *s) {
 	/* Clean up on exit */
   atexit(SDL_Quit);
 
+	SDL_WM_SetCaption("ScummVM - Monkey Island 2: LeChuck's revenge","ScummVM - Monkey Island 2: LeChuck's revenge");
+
 #if !defined(SCALEUP_2x2)
 	screen = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE);
 #else
 	screen = SDL_SetVideoMode(640, 400, 8, SDL_SWSURFACE);
 #endif
 
-	printf("%d %d, %d %d, %d %d %d, %d %d %d %d %d\n", 
+	printf("%d %d, %d %d, %d %d %d, %d %d %d %d %d %d\n", 
 		sizeof(int8), sizeof(uint8),
 		sizeof(int16), sizeof(uint16),
 		sizeof(int32), sizeof(uint32),
 		sizeof(void*),
 		sizeof(Box), sizeof(MouseCursor),sizeof(CodeHeader),
 		sizeof(ImageHeader),
-		&((CodeHeader*)0)->unk4
+		&((CodeHeader*)0)->unk4,
+		sizeof(Scumm)
 	);
 
 
@@ -218,6 +317,7 @@ void initGraphics(Scumm *s) {
 
 #undef main
 int main(int argc, char* argv[]) {
+	scumm._exe_name = "monkey2";
 	scumm._videoMode = 0x13;
 	scumm.scummMain(argc, argv);
 	return 0;

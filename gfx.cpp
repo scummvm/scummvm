@@ -17,8 +17,13 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.1  2001/10/09 14:30:14  strigeus
- * Initial revision
+ * Revision 1.2  2001/10/10 10:02:33  strigeus
+ * alternative mouse cursor
+ * basic save&load
+ *
+ * Revision 1.1.1.1  2001/10/09 14:30:14  strigeus
+ *
+ * initial revision
  *
  *
  */
@@ -61,6 +66,10 @@ void Scumm::initScreens(int a, int b, int w, int h) {
 	initVirtScreen(0, b, h-b, true, true);
 	initVirtScreen(1, 0, b, false, false);
 	initVirtScreen(2, h, 200-h, false, false);
+
+	_screenB = b;
+	_screenH = h;
+
 }
 
 void Scumm::initVirtScreen(int slot, int top, int height, bool twobufs, bool fourextra) {
@@ -107,8 +116,6 @@ void Scumm::setDirtyRange(int slot, int top, int bottom) {
 }
 
 void Scumm::unkVirtScreen2() {
-	removeMouseCursor();
-
 	dseg_3DB6 = 1;
 
 	updateDirtyScreen(2);
@@ -135,7 +142,6 @@ void Scumm::unkVirtScreen2() {
 			virtscr[0].bdirty[gdi.draw8xPos] = 0;
 		}
 	}
-	showMouseCursor();
 }
 
 void Scumm::updateDirtyScreen(int slot) {
@@ -217,9 +223,6 @@ void Scumm::drawStripToScreen() {
 	blitToScreen(this, gdi.readPtr, gdi.draw8xPos*8, gdi.drawY+gdi.drawTop, gdi.drawWidth, gdi.drawBottom-gdi.drawTop);
 }
 
-void Scumm::showMouseCursor() {
-	gdi.unk3 = 1;
-}
 
 void blit(byte *dst, byte *src, int w, int h) {
 	do {
@@ -366,7 +369,7 @@ void Scumm::initBGBuffers() {
 	itemsize = (_scrHeight + 4) * 40;
 	size = itemsize * _numZBuffer;
 
-	memset(createResource(0xA, 9, size), 0, size);
+	memset(createResource(10, 9, size), 0, size);
 	
 	for (i=0; i<4; i++)
 		_imgBufOffs[i] = i*itemsize;
@@ -377,17 +380,18 @@ void Scumm::setPaletteFromRes() {
 	uint32 size = READ_BE_UINT32_UNALIGNED(ptr+4);
 	int i, r, g, b;
 	byte *dest, *epal;
+	int numcolor;
 
-	_colorsInPalette = (size-8) / 3;
+	numcolor = (size-8) / 3;
 
 	ptr += 8;
 
-	checkRange(256, 0, _colorsInPalette, "Too many colors (%d) in Palette");
+	checkRange(256, 0, numcolor, "Too many colors (%d) in Palette");
 
 	dest = _currentPalette;
 
 	if (_videoMode==0x13) {
-		for (i=0; i<_colorsInPalette; i++) {
+		for (i=0; i<numcolor; i++) {
 			r = *ptr++;
 			g = *ptr++;
 			b = *ptr++;
@@ -409,7 +413,7 @@ void Scumm::setPaletteFromRes() {
 		}
 	}
 	
-	setDirtyColors(0, _colorsInPalette-1);
+	setDirtyColors(0, numcolor-1);
 }
 
 
@@ -531,7 +535,6 @@ void Scumm::unkVirtScreen4(int a) {
 
 	setDirtyRange(0, 0, 0);
 	camera._lastPos = camera._curPos;
-	removeMouseCursor();
 	dseg_3DB6 = 2;
 	dseg_3DB6 = 1;
 	if (dseg_4EA0 == 0)
@@ -620,6 +623,8 @@ void Scumm::drawBmp(byte *ptr, int a, int b, int c, const char *str, int objnr) 
 	int x;
 	byte *where_draw_ptr;
 
+	checkHeap();
+
 	smap_ptr = findResource(MKID('SMAP'), ptr);
 
 	if (objnr==209) {
@@ -654,6 +659,8 @@ void Scumm::drawBmp(byte *ptr, int a, int b, int c, const char *str, int objnr) 
 		if (vs->fourlinesextra)
 			x -= _screenStartStrip;
 
+		checkHeap();
+
 		if (x >= 40) 
 			return;
 
@@ -673,6 +680,8 @@ void Scumm::drawBmp(byte *ptr, int a, int b, int c, const char *str, int objnr) 
 		where_draw_ptr = gdi.where_to_draw_ptr;
 		decompressBitmap();
 
+		checkHeap();
+
 		if (twobufs) {
 			gdi.where_to_draw_ptr = where_draw_ptr;
 			if (vm.vars[VAR_DRAWFLAGS]&2) {
@@ -688,6 +697,7 @@ void Scumm::drawBmp(byte *ptr, int a, int b, int c, const char *str, int objnr) 
 					clear8Col();
 			}
 		}
+		checkHeap();
 
 		for (i=1; i<_numZBuffer; i++) {
 			if (!zplane_list[i])
@@ -699,6 +709,7 @@ void Scumm::drawBmp(byte *ptr, int a, int b, int c, const char *str, int objnr) 
 			else
 				decompressMaskImg();
 		}
+		checkHeap();
 		_drawBmpX++;
 		a++;
 	} while (--b);
@@ -709,6 +720,8 @@ void Scumm::decompressBitmap() {
 	const byte decompress_table[] = {
 		0x0, 0x1, 0x3, 0x7, 0xF, 0x1F, 0x3F, 0x7F, 0xFF, 0x0,
 	};
+
+	dseg_4E3B = 0;
 
 	byte code = *gdi.smap_ptr++;
 
@@ -899,7 +912,7 @@ void Scumm::redrawBGStrip(int start, int num) {
 			gdi.numLinesToProcess,
 			_scrHeight);
 	}
-
+	
 	drawBmp(
 		getResourceAddress(1, _roomResource) + _IM00_offs,
 		s,
@@ -1431,7 +1444,6 @@ void Scumm::palManipulate() {
 }
 
 void Scumm::screenEffect(int effect) {
-	removeMouseCursor();
 	dseg_3DB6 = 1;
 	warning("stub screenEffect(%d)",effect);
 	/* TODO: not implemented */
@@ -1442,14 +1454,15 @@ void Scumm::resetActorBgs() {
 	Actor *a;
 	int i,bitpos;
 	int top,bottom;
+	uint16 onlyActorFlags;
 	
 	for(i=0; i<40; i++) {
-		_onlyActorFlags = (actorDrawBits[_screenStartStrip + i]&=0x3FFF);
+		onlyActorFlags = (actorDrawBits[_screenStartStrip + i]&=0x3FFF);
 		a = getFirstActor();
 		bitpos = 1;
 
-		while (_onlyActorFlags) {
-			if(_onlyActorFlags&1 && a->top!=0xFF && a->needBgReset) {
+		while (onlyActorFlags) {
+			if(onlyActorFlags&1 && a->top!=0xFF && a->needBgReset) {
 				top = a->top;
 				bottom = a->bottom;
 				if (a->top < virtscr[0].tdirty[i])
@@ -1478,7 +1491,7 @@ void Scumm::resetActorBgs() {
 				}
 			}
 			bitpos<<=1;
-			_onlyActorFlags>>=1;
+			onlyActorFlags>>=1;
 			a++;
 		}
 	}
@@ -1500,25 +1513,16 @@ void Scumm::setPalColor(int index, int r, int g, int b) {
 	}
 }
 
-void Scumm::removeMouseCursor() {
-	gdi.unk3 = 0;
-	drawMouse();
-}
-
 void Scumm::drawMouse() {
 	/* TODO: handle shake here */
-	
-	GDI_removeMouse();
-	if (gdi.unk3 && gdi.unk4>0) {
-		gdi.mouseColor = gdi.mouseColors[((++gdi.mouseColorIndex)>>2)&3];
-		gdi.drawMouseX = mouse.x - gdi.hotspot_x;
-		gdi.drawMouseY = mouse.y - gdi.hotspot_y;
-		gdi.mouseMaskPtr = gdi.mouseMask + ((gdi.drawMouseX&7)<<6);
-		gdi.mouseClipMask1 = (gdi.drawMouseX<0) ? 0 : 0xFF;
-		gdi.mouseClipMask2 = (gdi.drawMouseX>=312) ? 0 : 0xFF;
-		gdi.mouseClipMask3 = (gdi.drawMouseX>=304) ? 0 : 0xFF;
-		GDI_drawMouse();
-	}
+
+	::drawMouse(this,
+		mouse.x - gdi.hotspot_x,
+		mouse.y - gdi.hotspot_y,
+		gdi.mouseColors[((++gdi.mouseColorIndex)>>2)&3],
+		gdi.mouseMask + ((gdi.drawMouseX&7)<<6),
+		gdi.unk4>0
+		);
 }
 
 void Scumm::setCursorHotspot(int cursor, int x, int y) {
@@ -1537,7 +1541,7 @@ void Scumm::setCursorImg(int cursor, int img) {
 //	if (!offs)
 //		return;
 
-	warning("setCursorImg: not fully implemented");
+	warning("setCursorImg: not implemented");
 }
 
 byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
@@ -1559,8 +1563,8 @@ byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem) {
 	return false;
 }
 
-void Scumm::GDI_drawMouse() {
 #if 0
+void Scumm::GDI_drawMouse() {
 	byte *dst,*src,*dstorg;
 	int y,h;
 	byte color,val;
@@ -1626,7 +1630,6 @@ void Scumm::GDI_drawMouse() {
 		
 		dstorg += 320;
 	} while (--h);
-#endif
 }
 
 void Scumm::GDI_removeMouse() {
@@ -1643,3 +1646,4 @@ void Scumm::GDI_removeMouse() {
 		} while (--h);
 	}
 }
+#endif

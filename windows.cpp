@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.3  2001/10/10 10:02:33  strigeus
+ * alternative mouse cursor
+ * basic save&load
+ *
  * Revision 1.2  2001/10/09 19:02:28  strigeus
  * command line parameter support
  *
@@ -135,6 +139,17 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 		case WM_CHAR:
 			wm->_scumm->_keyPressed = wParam;
 			break;
+
+		case WM_KEYDOWN:
+			if (wParam>='0' && wParam<='9') {
+				wm->_scumm->_saveLoadSlot = wParam - '0';
+				if (GetAsyncKeyState(VK_SHIFT)<0)
+					wm->_scumm->_saveLoadFlag = 1;
+				else if (GetAsyncKeyState(VK_CONTROL)<0)
+					wm->_scumm->_saveLoadFlag = 2;
+			}
+			break;
+
 		case WM_MOUSEMOVE:
 			wm->_scumm->mouse.x = ((int16*)&lParam)[0];
 			wm->_scumm->mouse.y = ((int16*)&lParam)[1];
@@ -195,7 +210,6 @@ void copy_320x200_to_640x400(byte *s, byte *d) {
 		pop ebp
 	}
 }
-
 
 bool WndMan::allocateDIB(int w, int h) {
 	struct {
@@ -783,10 +797,12 @@ void initGraphics(Scumm *s) {
 #undef main
 int main(int argc, char* argv[]) {
 	scumm._videoMode = 0x13;
+	scumm._exe_name = "monkey2";
 
 	wm->init();
 	wm->_vgabuf = (byte*)calloc(320,200);
 	wm->_scumm = &scumm;
+	
 	
 	scumm.scummMain(argc, argv);
 

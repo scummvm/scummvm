@@ -17,8 +17,13 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.1  2001/10/09 14:30:14  strigeus
- * Initial revision
+ * Revision 1.2  2001/10/10 10:02:33  strigeus
+ * alternative mouse cursor
+ * basic save&load
+ *
+ * Revision 1.1.1.1  2001/10/09 14:30:14  strigeus
+ *
+ * initial revision
  *
  *
  */
@@ -357,8 +362,6 @@ int Scumm::loadResource(int type, int index) {
 		
 	do {
 		for (i=0; i<5; i++) {
-			_resIndexToLoad = index;
-			_resTypeToLoad = type;
 			openRoom(roomNr);
 
 			fileSeek(_fileHandle, fileOffs + _fileOffset, SEEK_SET);
@@ -459,7 +462,7 @@ byte *Scumm::getResourceAddress(int type, int index) {
 	if (!ptr)
 		return NULL;
 
-	return ptr + 8;
+	return ptr + sizeof(ResHeader);
 }
 
 void Scumm::setResourceFlags(int type, int index, byte flag) {
@@ -479,17 +482,21 @@ byte *Scumm::createResource(int type, int index, uint32 size) {
 
 	validateResource("allocating", type, index);
 	nukeResource(type, index);
+
+	checkHeap();
 	
-	ptr = (byte*)alloc(size + 8);
+	ptr = (byte*)alloc(size + sizeof(ResHeader));
 	if (ptr==NULL) {
 		error("Out of memory while allocating %d", size);
 	}
 
 	res.address[type][index] = ptr;
 
+	((ResHeader*)ptr)->size = size;
+
 	setResourceFlags(type, index, 1);
 
-	return ptr + 8; /* skip header */
+	return ptr + sizeof(ResHeader); /* skip header */
 }
 
 void Scumm::validateResource(const char *str, int type, int index) {

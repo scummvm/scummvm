@@ -12,9 +12,7 @@ You need SDL-1.2.2 (maybe older versions will work), and a supported compiler. A
 
 GCC:
 ----
-* Edit the makefile and replace /usr/local/include/SDL/ with the path to your SDL include files.
-  If your processor architecture is big endian, replace -DSCUMM_LITTLE_ENDIAN by -DSCUMM_BIG_ENDIAN -DSCUMM_NEED_ALIGNMENT
-* Now type make (or gmake if that's what GNU make is called on your system) and hopefully ScummVM will compile for you.
+* Type make (or gmake if that's what GNU make is called on your system) and hopefully ScummVM will compile for you.
 
 Please note that big endian support is preliminary and contains bugs.
 
@@ -31,7 +29,6 @@ Microsoft Visual C++:
 Running:
 --------
 Before you run the engine, you need to put the game's datafiles in the same directory as the scummvm executable. The filenames must be in lowercase (monkey2.000 and monkey2.001).
-
 
 Good Luck,
 Ludvig Strigeus

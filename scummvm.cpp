@@ -17,6 +17,10 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.4  2001/10/10 10:02:33  strigeus
+ * alternative mouse cursor
+ * basic save&load
+ *
  * Revision 1.3  2001/10/09 19:02:28  strigeus
  * command line parameter support
  *
@@ -83,8 +87,6 @@ void Scumm::scummInit() {
 
 	memset(vm.vars, 0, sizeof(vm.vars));
 	memset(vm.bitvars, 0, sizeof(vm.bitvars));
-	memset(vm.scriptoffs, 0, sizeof(vm.scriptoffs));
-	memset(vm.inventory, 0, sizeof(vm.inventory));
 
 	_defaultTalkDelay = 60;
 	vm.vars[37] = 4;
@@ -165,7 +167,7 @@ void Scumm::scummInit() {
 
 	_numInMsgStack = 0;
 
-	createResource(0xC, 6, 500);
+	createResource(12, 6, 500);
 
 	initScummVars();
 
@@ -199,8 +201,6 @@ void Scumm::scummMain(int argc, char **argv) {
 
 	charset._vm = this;
 	cost._vm = this;
-
-	_exe_name = "monkey2";
 
 	_fileHandle = NULL;
 	
@@ -262,7 +262,14 @@ void Scumm::scummMain(int argc, char **argv) {
 		vm.vars[VAR_DEBUGMODE] = _debugMode;
 
 		if (_saveLoadFlag) {
-			error("Loading/saving not implemented");
+			char buf[256];
+			sprintf(buf, "savegame.%d", _saveLoadSlot);
+			if (_saveLoadFlag==1) {
+				saveState(buf);
+			} else {
+				loadState(buf);
+			}
+			_saveLoadFlag = 0;
 		}
 
 		if (_completeScreenRedraw) {
@@ -275,9 +282,13 @@ void Scumm::scummMain(int argc, char **argv) {
 				a->needRedraw = 1;
 		}
 
+		checkHeap();
 		runAllScripts();
+		checkHeap();
 		checkExecVerbs();
+		checkHeap();
 		checkAndRunVar33();
+		checkHeap();
 
 		if (_currentRoom==0) {
 			gdi.unk4 = 0;
@@ -288,25 +299,38 @@ void Scumm::scummMain(int argc, char **argv) {
 			continue;
 		}
 
+		checkHeap();
 		walkActors();
+		checkHeap();
 		moveCamera();
+		checkHeap();
 		fixObjectFlags();
+		checkHeap();
 		CHARSET_1();
+		checkHeap();
 		if (camera._curPos != camera._lastPos || _BgNeedsRedraw || _fullRedraw) {
 			redrawBGAreas();
+			checkHeap();
 		}
 		processDrawQue();
+		checkHeap();
 		setActorRedrawFlags();
+		checkHeap();
 		resetActorBgs();
+		checkHeap();
 
 		if (!(vm.vars[VAR_DRAWFLAGS]&2) && vm.vars[VAR_DRAWFLAGS]&4) {
 			error("Flashlight not implemented in this version");
 		}
 
 		processActors(); /* process actors makes the heap invalid */
+		checkHeap();
 		clear_fullRedraw();
+		checkHeap();
 		cyclePalette();
+		checkHeap();
 		palManipulate();
+		checkHeap();
 		
 		if (dseg_4F8A) {
 			screenEffect(_newEffect);
@@ -369,7 +393,6 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 
 	checkHeap();
 
-	removeMouseCursor();
 	clearMsgQueue();
 
 	unkVirtScreen4(_switchRoomEffect2);
@@ -511,7 +534,7 @@ void Scumm::initRoomSubBlocks() {
 	ptr = findResource(MKID('BOXD'), roomptr);
 	if (ptr) {
 		int size = READ_BE_UINT32_UNALIGNED(ptr+4);
-		createResource(0xE, 2, size);
+		createResource(14, 2, size);
 		roomptr = getResourceAddress(1, _roomResource);
 		ptr = findResource(MKID('BOXD'), roomptr);
 		memcpy(getResourceAddress(0xE, 2), ptr, size);
@@ -520,7 +543,7 @@ void Scumm::initRoomSubBlocks() {
 	ptr = findResource(MKID('BOXM'), roomptr);
 	if (ptr) {
 		int size = READ_BE_UINT32_UNALIGNED(ptr+4);
-		createResource(0xE, 1, size);
+		createResource(14, 1, size);
 		roomptr = getResourceAddress(1, _roomResource);
 		ptr = findResource(MKID('BOXM'), roomptr);
 		memcpy(getResourceAddress(0xE, 1), ptr, size);
@@ -579,7 +602,7 @@ void Scumm::setScaleItem(int slot, int a, int b, int c, int d) {
 	byte *ptr;
 	int cur,amounttoadd,i,tmp;
 
-	ptr = createResource(0xB, slot, 200);
+	ptr = createResource(11, slot, 200);
 
 	if (a==c)
 		return;
@@ -835,10 +858,11 @@ void CDECL debug(int level, const char *s, ...) {
 }
 
 void checkHeap() {
-#if 0
-	if (_heapchk() != _HEAPOK) {
-		error("Heap is invalid!");
-	}
+#if 1
+
+//if (_heapchk() != _HEAPOK) {
+//		error("Heap is invalid!");
+//	}
 #endif
 }
 

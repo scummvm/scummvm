@@ -17,8 +17,13 @@
  *
  * Change Log:
  * $Log$
- * Revision 1.1  2001/10/09 14:30:13  strigeus
- * Initial revision
+ * Revision 1.2  2001/10/10 10:02:33  strigeus
+ * alternative mouse cursor
+ * basic save&load
+ *
+ * Revision 1.1.1.1  2001/10/09 14:30:13  strigeus
+ *
+ * initial revision
  *
  *
  */
@@ -144,6 +149,9 @@ uint32 Scumm::fileReadDwordBE() {
 
 byte *Scumm::alloc(int size) {
 	byte *me = (byte*)::calloc(size+4,1);
+	if (me==NULL)
+		return NULL;
+
 	*((uint32*)me) = 0xDEADBEEF;
 	return me + 4;
 }
