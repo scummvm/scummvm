@@ -20,6 +20,10 @@
  *
  */
 
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif	
+
 struct AkosHeader {
 	byte x_1[2];
 	byte flags;
