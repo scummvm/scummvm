@@ -1523,8 +1523,8 @@ void ScummEngine_v8::o8_getActorZPlane() {
 	int z = a->forceClip;
 	if (z == 100) {
 		z = getMaskFromBox(a->walkbox);
-		if (z > gdi._numZBuffer)
-			z = gdi._numZBuffer;
+		if (z > gdi._numZBuffer - 1)
+			z = gdi._numZBuffer - 1;
 	}
 
 	push(z);
