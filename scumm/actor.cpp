@@ -472,7 +472,8 @@ void Actor::startAnimActor(int f) {
 		}
 	} else {		
 		assert(f != 0x3E);
-		frame = f;
+		// Not sure it this should apply to samnmax
+		frame = (_vm->_version == 6) ? 0: f;
 
 		if (isInCurrentRoom() && costume != 0) {
 			animProgress = 0;
