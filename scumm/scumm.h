@@ -287,7 +287,7 @@ public:
 			if (_gameDataPath[0] == '\0')
 				return "resource";
 
-			sprintf(resourcePath, "%s/resource", _gameDataPath);
+			sprintf(resourcePath, "%sresource", _gameDataPath);
 			return resourcePath;
 		}
 		return _gameDataPath; 
