@@ -834,6 +834,7 @@ void Scumm::animateActor(int act, int anim) {
 	Actor *a;
 
 	a = derefActorSafe(act, "animateActor");
+	if (!a) return;
 
 	dir = anim&3;
 
