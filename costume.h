@@ -19,6 +19,7 @@
 #define COSTUME_H
 
 #include <string>
+#include "matrix4.h"
 
 #define MAX_TALK_CHORES 10
 class TextSplitter;
@@ -49,10 +50,13 @@ public:
 
   void update();
   void draw();
+  void setPosRotate( Vector3d pos_, float pitch_, float yaw_, float roll_ );
 
   class Component {
   public:
     Component(Component *parent, int parentID);
+
+	virtual void setMatrix( Matrix4 matrix ) { };
     virtual void init() { }
     virtual void setKey(int /* val */) { }
     virtual void update() { }
@@ -63,6 +67,7 @@ public:
   protected:
     int parentID_;
     Component *parent_, *child_, *sibling_;
+	Matrix4 matrix_;
     void setParent(Component *newParent);
 
     friend class Costume;
@@ -124,6 +129,7 @@ private:
   int numChores_;
   Chore *chores_;
   int talkChores_[MAX_TALK_CHORES];
+  Matrix4 matrix_;
 };
 
 #endif

@@ -204,4 +204,6 @@ void KeyframeAnim::KeyframeNode::animate(Model::HierNode &node,
     node.animYaw_ += yaw;
     node.animRoll_ += roll;
   }
+
+//  node
 }

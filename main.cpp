@@ -36,7 +36,7 @@ static void saveRegistry() {
 
 int main(int /* argc */, char ** /* argv */) {
   char 	GLDriver[1024];
-  if (SDL_Init(SDL_INIT_VIDEO) < 0)
+  if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     return 1;
   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);

@@ -210,13 +210,16 @@ void Actor::update() {
       pos_ += dir * walkAmt;
   }
 
+  for (std::list<Costume *>::iterator i = costumeStack_.begin();
+       i != costumeStack_.end(); i++)
+  {
+	(*i)->setPosRotate( pos_, pitch_, yaw_, roll_ );
+    (*i)->update();
+  }
+
   if (lookingMode_) {
 	  float lookAtAmt = Engine::instance()->perSecond(lookAtRate_);
   }
-
-  for (std::list<Costume *>::iterator i = costumeStack_.begin();
-       i != costumeStack_.end(); i++)
-    (*i)->update();
 }
 
 void Actor::draw() {

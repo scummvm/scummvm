@@ -19,6 +19,7 @@
 #define MODEL_H
 
 #include "vector3d.h"
+#include "matrix4.h"
 #include "resource.h"
 #include <cstring>
 
@@ -44,6 +45,8 @@ public:
     void draw() const;
     void addChild(HierNode *child);
     void removeChild(HierNode *child);
+	void setMatrix(Matrix4 matrix);
+	void update();
 
     char name_[64];
     Mesh *mesh_;
@@ -56,6 +59,9 @@ public:
     float animPitch_, animYaw_, animRoll_;
     bool meshVisible_, hierVisible_;
     int priority_, totalWeight_;
+	Matrix4 matrix_;
+	Matrix4 localMatrix_;
+	Matrix4 pivotMatrix;
   };
 
   HierNode *copyHierarchy();
@@ -95,6 +101,7 @@ private:
 
     int numFaces_;
     Face *faces_;
+	Matrix4 matrix_;
   };
 
   struct Geoset {

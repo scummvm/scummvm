@@ -108,6 +108,7 @@ public:
   void update();
   void reset();
   void setColormap(Colormap *c);
+  void setMatrix(Matrix4 matrix) { matrix_ = matrix; };
   ~ModelComponent();
 
   Model::HierNode *hierarchy() { return hier_; }
@@ -118,6 +119,7 @@ protected:
   ResPtr<Model> obj_;
   ResPtr<Colormap> cmap_;
   Model::HierNode *hier_;
+  Matrix4 matrix_;
 };
 
 class MainModelComponent : public ModelComponent {
@@ -143,14 +145,18 @@ public:
 		const char *name);
   void init();
   void setKey(int val);
+  void update();
   void reset();
   ~MeshComponent() { }
+
+  void setMatrix(Matrix4 matrix) { matrix_ = matrix; };
 
   Model::HierNode *node() { return node_; }
 
 private:
   int num_;
   Model::HierNode *node_;
+  Matrix4 matrix_;
 };
 
 BitmapComponent::BitmapComponent(Costume::Component *parent, int parentID,
@@ -418,6 +424,11 @@ void MeshComponent::setKey(int val) {
 
 void MeshComponent::reset() {
   node_->meshVisible_ = true;
+}
+
+void MeshComponent::update() {
+  node_->setMatrix( matrix_ );
+  node_->update();
 }
 
 class LuaVarComponent : public Costume::Component {
@@ -744,7 +755,10 @@ void Costume::update() {
     chores_[i].update();
   for (int i = 0; i < numComponents_; i++)
     if (components_[i] != NULL)
-      components_[i]->update();
+	{
+		components_[i]->setMatrix( matrix_ );
+		components_[i]->update();
+	}
 }
 
 void Costume::setHead( int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw )
@@ -755,4 +769,10 @@ void Costume::setHead( int joint1, int joint2, int joint3, float maxRoll, float 
 	head_.maxRoll = maxRoll;
 	head_.maxPitch = maxPitch;
 	head_.maxYaw = maxYaw;
+}
+
+void Costume::setPosRotate( Vector3d pos_, float pitch_, float yaw_, float roll_ )
+{
+	matrix_.pos_ = pos_;
+	matrix_.rot_.buildFromPitchYawRoll( pitch_, yaw_, roll_ );
 }

@@ -455,9 +455,182 @@ void Model::HierNode::removeChild(HierNode *child) {
   }
 }
 
+void Model::HierNode::setMatrix(Matrix4 matrix) {
+	matrix_ = matrix;
+}
+
+void Model::HierNode::update() {
+	localMatrix_.pos_.set( animPos_.x() / totalWeight_, animPos_.y() / totalWeight_, animPos_.z() / totalWeight_ );
+	localMatrix_.rot_.buildFromPitchYawRoll( animPitch_ / totalWeight_, animYaw_ / totalWeight_, animRoll_ / totalWeight_);
+
+	matrix_ *= localMatrix_;
+
+	pivotMatrix = matrix_;
+
+	pivotMatrix.translate( pivot_.x(), pivot_.y(), pivot_.z() );
+
+	if( mesh_ != NULL )
+	{
+		mesh_->matrix_ = pivotMatrix;
+	}
+
+	if( child_ != NULL )
+	{
+		child_->setMatrix( matrix_ );
+		child_->update();
+	}
+}
+
+
 void Model::Mesh::draw() const {
   for (int i = 0; i < numFaces_; i++)
     faces_[i].draw(vertices_, vertNormals_, textureVerts_);
+
+// Yaz: debug
+// this draw the model node in red
+
+  glPushMatrix();
+  glLoadIdentity();
+  glDisable(GL_DEPTH_TEST);
+  glPointSize( 3.f );
+  glColor4f( 1.f, 0.f, 0.f, 1.f );
+  glDisable(GL_TEXTURE_2D );
+  glBegin( GL_POINTS );
+  glVertex3f( matrix_.pos_.x(), matrix_.pos_.y(), matrix_.pos_.z() );
+  glEnd();
+  glEnable(GL_DEPTH_TEST);
+  glPopMatrix();
+  glEnable(GL_TEXTURE_2D );
+
+// Yaz: debug
+// this draw the poly points
+
+  glPushMatrix();
+  glLoadIdentity();
+  glPointSize( 3.f );
+  glColor4f( 0.f, 1.f, 0.f, 1.f );
+  glDisable(GL_TEXTURE_2D );
+  glBegin( GL_POINTS );
+
+  for (int i = 0; i < numFaces_; i++)
+  {
+	  Vector3d v;
+	  Matrix4 tempMatrix = matrix_;
+	  float* pVertices;
+	  int j;
+
+	  for( j =0; j< faces_[i].numVertices_; j++ )
+	  {
+			pVertices = vertices_ + 3 * faces_[i].vertices_[j];
+
+			v.set( *(pVertices), *(pVertices+1), *(pVertices+2) );
+
+			tempMatrix.rot_.transform( v );
+			v+= tempMatrix.pos_;
+			
+			glVertex3f( v.x(), v.y(), v.z() );
+
+	  }
+  }
+
+  glEnd();
+  glEnable(GL_DEPTH_TEST);
+  glPopMatrix();
+  glEnable(GL_TEXTURE_2D );
+
+// Yaz: debug
+// this compute the dirty rect for the mesh
+
+  glPushMatrix();
+  glLoadIdentity();
+
+  GLdouble modelView[500];
+  GLdouble projection[500];
+  GLint viewPort[500];
+
+  glGetDoublev( GL_MODELVIEW_MATRIX, modelView );
+  glGetDoublev( GL_PROJECTION_MATRIX, projection );
+  glGetIntegerv( GL_VIEWPORT, viewPort);
+
+  GLdouble top = 1000;
+  GLdouble right = -1000;
+  GLdouble left = 1000;
+  GLdouble bottom = -1000;
+
+  for (int i = 0; i < numFaces_; i++)
+  {
+	  Vector3d v;
+	  Matrix4 tempMatrix = matrix_;
+	  float* pVertices;
+	  int j;
+
+	  for( j =0; j< faces_[i].numVertices_; j++ )
+	  {
+			pVertices = vertices_ + 3 * faces_[i].vertices_[j];
+
+			v.set( *(pVertices), *(pVertices+1), *(pVertices+2) );
+
+			tempMatrix.rot_.transform( v );
+			v+= tempMatrix.pos_;
+
+			GLdouble winX;
+			GLdouble winY;
+			GLdouble winZ;
+			
+			gluProject( v.x(), v.y(), v.z(), modelView, projection, viewPort, &winX, &winY, &winZ);
+
+			if( winX > right )
+				right = winX;
+			if( winX < left )
+				left = winX;
+			if( winY < top )
+				top = winY;
+			if( winY > bottom )
+				bottom = winY;
+
+
+	  }
+  }
+
+  glDisable(GL_DEPTH_TEST);
+  glPointSize( 3.f );
+  glColor4f( 1.f, 1.f, 0.f, 1.f );
+  glDisable(GL_TEXTURE_2D );
+
+  glBegin(GL_LINES);
+
+  GLdouble objx;
+  GLdouble objy;
+  GLdouble objz;
+
+  // top
+  gluUnProject( left, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
+  glVertex3f( objx, objy, objz );
+  gluUnProject( right, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
+  glVertex3f( objx, objy, objz );
+
+  // bottom
+  gluUnProject( left, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
+  glVertex3f( objx, objy, objz );
+  gluUnProject( right, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
+  glVertex3f( objx, objy, objz );
+
+  // left
+  gluUnProject( left, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
+  glVertex3f( objx, objy, objz );
+  gluUnProject( left, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
+  glVertex3f( objx, objy, objz );
+
+  // right
+  gluUnProject( right, top, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
+  glVertex3f( objx, objy, objz );
+  gluUnProject( right, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
+  glVertex3f( objx, objy, objz );
+
+  glEnd();
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_TEXTURE_2D );
+  glPopMatrix();
 }
 
 void Model::Face::draw(float *vertices, float *vertNormals,

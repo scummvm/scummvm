@@ -81,6 +81,10 @@ public:
     return std::sqrt(x() * x() + y() * y() + z() * z());
   }
 
+  float dotProduct( float sx, float sy, float sz ) {
+	  return x()*sx + y()*sy + z()*sz;
+  }
+
   bool isZero() {
 	  if(x() == 0.f && y() == 0.f && z() == 0.f)
 		  return true;

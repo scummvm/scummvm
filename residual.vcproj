@@ -237,14 +237,30 @@
 				RelativePath="textsplit.h">
 			</File>
 			<File
-				RelativePath="vector3d.h">
-			</File>
-			<File
 				RelativePath="walkplane.cpp">
 			</File>
 			<File
 				RelativePath="walkplane.h">
 			</File>
+			<Filter
+				Name="3DEngine"
+				Filter="">
+				<File
+					RelativePath="matrix3.cpp">
+				</File>
+				<File
+					RelativePath="matrix3.h">
+				</File>
+				<File
+					RelativePath="matrix4.cpp">
+				</File>
+				<File
+					RelativePath="matrix4.h">
+				</File>
+				<File
+					RelativePath="vector3d.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
