@@ -54,9 +54,12 @@ public:
 		else
 			return 0;
 	}
-	void pop() {
+	T pop() {
+		T tmp;
 		assert(_size > 0);
+		tmp = _stack[_size];
 		_stack[--_size] = 0;
+		return tmp;
 	}
 	int size() const {
 		return _size;
@@ -94,8 +97,10 @@ public:
 		else
 			return 0;
 	}
-	void pop() {
+	T pop() {
+		T tmp = top();
 		_stack.remove_at(size() - 1);
+		return tmp;
 	}
 	int size() const {
 		return _stack.size();
