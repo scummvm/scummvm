@@ -188,6 +188,7 @@ private:
 	uint16 doSpeedSlide(void);
 	uint16 toggleFx(SkyConResource *pButton);
 	uint16 toggleText(void);
+	void toggleMusic(void);
 	uint16 shiftDown(uint8 speed);
 	uint16 shiftUp(uint8 speed);
 	void drawTextCross(uint32 flags);

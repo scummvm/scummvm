@@ -71,7 +71,7 @@ Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst) {
 
 void **SkyState::_itemList[300];
 
-SystemVars SkyState::_systemVars = {0, 0, 0, 0, 4316, 0, false, false };
+SystemVars SkyState::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false };
 
 SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst) {
@@ -245,6 +245,7 @@ void SkyState::loadBase0(void) {
 
 	_skyLogic->fnEnterSection(0, 0, 0);
 	_skyMusic->startMusic(2);
+	_systemVars.currentMusic = 2;
 }
 
 void SkyState::loadFixedItems(void) {

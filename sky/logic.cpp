@@ -2235,6 +2235,7 @@ bool SkyLogic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
 			error("End of demo");
 
 	_scriptVariables[CUR_SECTION] = sectionNo;
+	SkyState::_systemVars.currentMusic = 0;
 
 	if (sectionNo == 5) //linc section - has different mouse icons
 		_skyMouse->replaceMouseCursors(60302);
@@ -2380,12 +2381,15 @@ bool SkyLogic::fnStopFx(uint32 a, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnStartMusic(uint32 a, uint32 b, uint32 c) {
-	_skyMusic->startMusic((uint16)a);
+	if (!(SkyState::_systemVars.systemFlags & SF_MUS_OFF))
+		_skyMusic->startMusic((uint16)a);
+	SkyState::_systemVars.currentMusic = (uint16)a;
 	return true;
 }
 
 bool SkyLogic::fnStopMusic(uint32 a, uint32 b, uint32 c) {
 	_skyMusic->startMusic(0);
+	SkyState::_systemVars.currentMusic = 0;
 	return true;
 }
 

@@ -556,7 +556,9 @@ uint16 SkyControl::handleClick(SkyConResource *pButton) {
 			return toggleFx(pButton);
 
 		case TOGGLE_MS:
-			return 0;
+			animClick(pButton);
+			toggleMusic();
+			return TOGGLED;
 
 		case TOGGLE_TEXT:
 			animClick(pButton);
@@ -732,6 +734,19 @@ uint16 SkyControl::toggleText(void) {
 
 	_system->update_screen();
 	return TOGGLED;
+}
+
+void SkyControl::toggleMusic(void) {
+	
+	if (SkyState::_systemVars.systemFlags & SF_MUS_OFF) {
+		SkyState::_systemVars.systemFlags &= ~SF_MUS_OFF;
+		_skyMusic->startMusic(SkyState::_systemVars.currentMusic);
+		_statusBar->setToText(0x7000 + 88);
+	} else {
+		SkyState::_systemVars.systemFlags |= SF_MUS_OFF;
+		_skyMusic->startMusic(0);
+		_statusBar->setToText(0x7000 + 89);
+	}
 }
 
 uint16 SkyControl::shiftDown(uint8 speed) {
