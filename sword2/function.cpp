@@ -369,6 +369,8 @@ struct CreditsLine {
 #define CREDITS_LINE_SPACING 20
 
 int32 Logic::fnPlayCredits(int32 *params) {
+	uint32 loopingMusicId = _vm->_loopingMusicId;
+
 	// This function just quits the game if this is the playable demo, ie.
 	// credits are NOT played in the demo any more!
 
@@ -383,11 +385,8 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 	_vm->setMouse(0);
 
-	_vm->_sound->saveMusicState();
-
 	_vm->_sound->muteFx(true);
 	_vm->_sound->muteSpeech(true);
-	_vm->_sound->stopMusic();
 
 	_vm->_graphics->waitForFade();
 	_vm->_graphics->fadeDown();
@@ -703,9 +702,15 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	if (_vm->_quit)
 		return IR_CONT;
 
-	_vm->_sound->restoreMusicState();
 	_vm->_sound->muteFx(false);
 	_vm->_sound->muteSpeech(false);
+
+	if (loopingMusicId) {
+		pars[0] = loopingMusicId;
+		pars[1] = FX_LOOP;
+		fnPlayMusic(pars);
+	} else
+		fnStopMusic(NULL);
 
 	_vm->_thisScreen.new_palette = 99;
 

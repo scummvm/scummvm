@@ -34,7 +34,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
  Sword2:
    - Simplified memory/resource management
    - Simplified sound effects handling
-   - Added support for compressed speech.
+   - Added support for compressed speech and music.
    - Fixed various minor bugs.
 
 0.6.1b (2004-08-03)

@@ -28,6 +28,8 @@ class RateConverter;
 
 namespace Sword2 {
 
+class MusicInputStream;
+
 // Max number of sound fx
 #define MAXFX 16
 #define MAXMUS 2
@@ -55,36 +57,6 @@ struct FxHandle {
 	PlayingSoundHandle _handle;
 };
 
-class MusicHandle : public AudioStream {
-public:
-	RateConverter *_converter;
-	bool _firstTime;
-	bool _streaming;
-	bool _paused;
-	bool _looping;
-	int32 _fading;
-	int32 _fileStart;
-	int32 _filePos;
-	int32 _fileEnd;
-	uint16 _lastSample;
-
-	bool isStereo(void) const	{ return false; }
-	int getRate(void) const		{ return 22050; }
-
-	void fadeDown(void);
-	void fadeUp(void);
-	int32 play(uint32 musicId, bool looping);
-	void stop(void);
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool endOfData(void) const;
-	// This stream never 'ends'
-	bool endOfStream(void) const { return false; }
-
-	MusicHandle() : _firstTime(false), _streaming(false), _paused(false),
-			_looping(false), _fading(0), _fileStart(0),
-			_filePos(0), _fileEnd(0), _lastSample(0) {}
-};
-
 class Sound {
 private:
 	Sword2Engine *_vm;
@@ -95,13 +67,13 @@ private:
 	bool _soundOn;
 
 	static int32 _musicVolTable[17];
-	MusicHandle _music[MAXMUS + 1];
-	char *savedMusicFilename;
+	MusicInputStream *_music[MAXMUS];
+	RateConverter *_converter[MAXMUS];
+	bool _musicPaused;
 	bool _musicMuted;
 	uint8 _musicVol;
 
 	PlayingSoundHandle _soundHandleSpeech;
-	bool _speechStatus;
 	bool _speechPaused;
 	bool _speechMuted;
 	uint8 _speechVol;
@@ -113,9 +85,6 @@ private:
 
 	int32 getFxIndex(int32 id);
 	void stopFxHandle(int i);
-
-	int openSoundFile(File *fp, const char *base);
-	AudioStream *getAudioStream(File *fp, const char *base, uint32 id, uint32 *numSamples);
 
 public:
 	Sound(Sword2Engine *vm);
@@ -133,8 +102,6 @@ public:
 	void pauseMusic(void);
 	void unpauseMusic(void);
 	void stopMusic(void);
-	void saveMusicState(void);
-	void restoreMusicState(void);
 	void waitForLeadOut(void);
 	int32 streamCompMusic(uint32 musicId, bool looping);
 	int32 musicTimeRemaining(void);
