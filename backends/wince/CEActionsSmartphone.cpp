@@ -48,7 +48,7 @@ const String smartphoneActionNames[] = {
 #ifdef SIMU_SMARTPHONE
 const int ACTIONS_SMARTPHONE_DEFAULT[] = { 0x111, 0x112, 0x114, 0x113, 0x11a, 0x11b, VK_LWIN, VK_ESCAPE, VK_F8 };
 #else
-const int ACTIONS_SMARTPHONE_DEFAULT[] = { '4', '6', '8', '2', 0x11a, 0x11b, '0', VK_ESCAPE, VK_F10 };
+const int ACTIONS_SMARTPHONE_DEFAULT[] = { '4', '6', '8', '2', 0x11a, 0x11b, '0', VK_ESCAPE, '9' };
 #endif
 
 void CEActionsSmartphone::init(GameDetector &detector) {
@@ -137,7 +137,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	else
 		_key_action[SMARTPHONE_ACTION_SKIP].setAscii(Scumm::KEY_ALL_SKIP);
 	// Zone
-	_key_action[SMARTPHONE_ACTION_ZONE] = true;
+	_action_enabled[SMARTPHONE_ACTION_ZONE] = true;
 }
 
 
