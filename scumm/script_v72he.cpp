@@ -93,7 +93,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 24 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknown26),
 		OPCODE(o6_invalid),
 		/* 28 */
 		OPCODE(o6_invalid),
@@ -578,6 +578,55 @@ void ScummEngine_v72he::o72_unknown1C() {
 	}
 
 	warning("o72_unknown1C stub (%d)", value);
+}
+
+void ScummEngine_v72he::o72_unknown26() {
+	// Maybe HE 7.3?
+	// Incomplete
+	int args[16];
+	int subOp = fetchScriptByte();
+	switch (subOp) {
+		case 30:
+		case 31:
+		case 32:
+		case 33:
+		case 34:
+		case 35:
+		case 36:
+		case 37:
+		case 38:
+		case 39:
+		case 43:
+		case 52:
+		case 63:
+		case 68:
+		case 82:
+		case 92:
+		case 97:
+		case 98:
+		case 124:
+			pop();
+			break;
+		case 42:
+		case 198:
+			pop();
+			pop();
+			break;
+		case 45:
+			pop();
+			pop();
+			pop();
+			break;
+		case 125:
+			getStackList(args, ARRAYSIZE(args));
+			pop();
+			break;
+		default:
+			error("o72_unknown26: Unknown case %d", subOp);
+	}
+	push(0);
+
+	warning("o72_unknown26 stub (%d)", subOp);
 }
 
 void ScummEngine_v72he::o72_wordArrayWrite() {

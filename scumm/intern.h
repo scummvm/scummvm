@@ -690,6 +690,7 @@ protected:
 	void o72_wordArrayIndexedWrite();
 	void o72_compareStackList();
 	void o72_unknown1C();
+	void o72_unknown26();
 	void o72_unknown50();
 	void o72_wordArrayInc();
 	void o72_objectX();
