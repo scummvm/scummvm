@@ -184,17 +184,19 @@ void Dialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	}
 
 	// Hotkey handling
-	Widget *w = _firstWidget;
-	ascii = toupper(ascii);
-	while (w) {
-		if (w->_type == kButtonWidget && ascii == toupper(((ButtonWidget *)w)->_hotkey)) {
-			// The hotkey for widget w was pressed. We fake a mouse click into the
-			// button by invoking the appropriate methods.
-			w->handleMouseDown(0, 0, 1, 1);
-			w->handleMouseUp(0, 0, 1, 1);
-			return;
+	if (ascii != 0) {
+		Widget *w = _firstWidget;
+		ascii = toupper(ascii);
+		while (w) {
+			if (w->_type == kButtonWidget && ascii == toupper(((ButtonWidget *)w)->_hotkey)) {
+				// The hotkey for widget w was pressed. We fake a mouse click into the
+				// button by invoking the appropriate methods.
+				w->handleMouseDown(0, 0, 1, 1);
+				w->handleMouseUp(0, 0, 1, 1);
+				return;
+			}
+			w = w->_next;
 		}
-		w = w->_next;
 	}
 
 	// ESC closes all dialogs by default
