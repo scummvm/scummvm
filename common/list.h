@@ -49,11 +49,26 @@ public:
 			delete [] _data;
 	}
 	
-	void push_back(const T& str)
+	void push_back(const T& element)
 	{
 		ensureCapacity(_size + 1);
-		_data[_size++] = str;
+		_data[_size++] = element;
 	}
+	
+	void insert_at(int idx, const T& element)
+	{
+		assert(idx >= 0 && idx <= _size);
+		ensureCapacity(_size + 1);
+		// The following loop is not efficient if you can just memcpy things around.
+		// e.g. if you have a list of ints. But for real objects (String...), memcpy
+		// is *not* usually a good idea!
+		for (int i = _size; i > idx; i--) {
+			_data[i] = _data[i-1];
+		}
+		_data[idx] = element;
+		_size++;
+	}
+
 	
 	// TODO: insert, remove, ...
 	
