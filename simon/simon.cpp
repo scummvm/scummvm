@@ -336,7 +336,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_continous_vgascript = 0;
 	_draw_images_debug = 0;
 	_dump_images = 0;
-	_speech = false;
+	_speech = true;
 	_subtitles = false;
 	_fade = true;
 	_mouse_cursor = 0;
@@ -553,6 +553,9 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		_fade = 0;
 	if (ConfMan.hasKey("slow_down") && ConfMan.getInt("slow_down") >= 1)
 		_speed = ConfMan.getInt("slow_down");
+
+	if ((_game & GF_SIMON2) && ConfMan.hasKey("speech") && ConfMan.getBool("speech") == 0)
+		_speech = 0;
 
 	_system->init_size(320, 200);
 
@@ -4778,7 +4781,6 @@ void SimonEngine::go() {
 		_start_mainscript = true;
 
 	if (_game & GF_TALKIE) {
-		_speech = true;
 		// English and German versions of Simon the Sorcerer 1 don't have full subtitles
 		if (!(_game & GF_SIMON2) && _language < 2) 
 			_subtitles = false;
