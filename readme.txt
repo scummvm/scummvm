@@ -393,7 +393,7 @@ Credits:
         Tim 'realmz'       - Initial MI1 CD music support
         Jonathan 'khalek'  - Expert weaver in the Loom
         Nicolas Noble      - Config file support
-        Pawe3 Ko3odziejski - Added missing Dig SMUSH codecs
+        Pawel Kolodziejski - Added missing Dig SMUSH codecs
 
         And to all the contributors, users, and beta testers we've missed.
         Thanks!
