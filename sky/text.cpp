@@ -253,7 +253,7 @@ displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint
 		if (pixelWidth <= lineWidth) {
 	
 			if (*(lastSpace-1) == 10)
-				warning("line width exceeded!");
+				error("line width exceeded!");
 
 			*(lastSpace-1) = 10;
 			lineWidth = 0;
