@@ -70,6 +70,7 @@ private:
 	SagaEngine *_vm;
 	OSystem *_system;
 	bool _initialized;
+	Gfx *_gfx;
 
 	// Module data
 	R_SURFACE *_backbuf_surface;

@@ -25,7 +25,7 @@
 #include "saga.h"
 
 #include "cvar_mod.h"
-#include "gfx_mod.h"
+#include "gfx.h"
 #include "console_mod.h"
 
 #include "actionmap.h"
@@ -159,11 +159,11 @@ int ActionMap::draw(R_SURFACE * ds, int color) {
 
 	for (i = 0; i < _n_exits; i++) {
 		if (_exits_tbl[i].pt_count == 2) {
-			GFX_DrawFrame(ds,
+			_vm->_gfx->drawFrame(ds,
 				&_exits_tbl[i].pt_tbl[0],
 				&_exits_tbl[i].pt_tbl[1], color);
 		} else if (_exits_tbl[i].pt_count > 2) {
-			GFX_DrawPolyLine(ds, _exits_tbl[i].pt_tbl,
+			_vm->_gfx->drawPolyLine(ds, _exits_tbl[i].pt_tbl,
 							 _exits_tbl[i].pt_count, color);
 		}
 	}

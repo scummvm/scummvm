@@ -24,7 +24,7 @@
 // Game interface module
 #include "saga.h"
 
-#include "gfx_mod.h"
+#include "gfx.h"
 #include "game_mod.h"
 #include "cvar_mod.h"
 #include "actor_mod.h"
@@ -250,7 +250,7 @@ int INTERFACE_Draw() {
 	R_RECT rect;
 	R_POINT origin;
 
-	back_buf = GFX_GetBackBuffer();
+	back_buf = _vm->_gfx->getBackBuffer();
 
 	if (!IfModule.active) {
 		return R_SUCCESS;
@@ -266,7 +266,7 @@ int INTERFACE_Draw() {
 	rect.right = g_di.logical_w - 1;
 	rect.bottom = IfModule.i_desc.status_y;
 
-	GFX_DrawRect(back_buf, &rect, IfModule.i_desc.status_bgcol);
+	_vm->_gfx->drawRect(back_buf, &rect, IfModule.i_desc.status_bgcol);
 
 	// Draw command panel background
 	if (IfModule.panel_mode == PANEL_COMMAND) {
@@ -276,7 +276,7 @@ int INTERFACE_Draw() {
 		origin.x = 0;
 		origin.y = g_di.logical_h - IfModule.c_panel.img_h;
 
-		GFX_BufToSurface(back_buf, IfModule.c_panel.img, IfModule.c_panel.img_w,
+		_vm->_gfx->bufToSurface(back_buf, IfModule.c_panel.img, IfModule.c_panel.img_w,
 						IfModule.c_panel.img_h, NULL, &origin);
 	} else {
 		xbase = IfModule.d_panel.x;
@@ -285,7 +285,7 @@ int INTERFACE_Draw() {
 		origin.x = 0;
 		origin.y = g_di.logical_h - IfModule.c_panel.img_h;
 
-		GFX_BufToSurface(back_buf, IfModule.d_panel.img, IfModule.d_panel.img_w,
+		_vm->_gfx->bufToSurface(back_buf, IfModule.d_panel.img, IfModule.d_panel.img_w,
 						IfModule.d_panel.img_h, NULL, &origin);
 	}
 
@@ -314,7 +314,7 @@ int INTERFACE_Update(R_POINT *imouse_pt, int update_flag) {
 	imouse_x = imouse_pt->x;
 	imouse_y = imouse_pt->y;
 
-	back_buf = GFX_GetBackBuffer();
+	back_buf = _vm->_gfx->getBackBuffer();
 
 	// Get game display info
 	GAME_GetDisplayInfo(&g_di);
@@ -356,7 +356,7 @@ int DrawStatusBar(R_SURFACE *ds) {
 	rect.right = g_di.logical_w - 1;
 	rect.bottom = IfModule.i_desc.status_y + IfModule.i_desc.status_h - 1;
 
-	GFX_DrawRect(ds, &rect, IfModule.i_desc.status_bgcol);
+	_vm->_gfx->drawRect(ds, &rect, IfModule.i_desc.status_bgcol);
 
 	string_w = FONT_GetStringWidth(SMALL_FONT_ID, IfModule.status_txt, 0, 0);
 

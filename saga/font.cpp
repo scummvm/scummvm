@@ -23,7 +23,7 @@
 
 // Font management and font drawing module
 #include "saga.h"
-#include "gfx_mod.h"
+#include "gfx.h"
 
 #include "rscfile_mod.h"
 #include "game_mod.h"

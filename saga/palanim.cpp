@@ -23,7 +23,7 @@
 
 // Palette animation module
 #include "saga.h"
-#include "gfx_mod.h"
+#include "gfx.h"
 
 #include "events_mod.h"
 #include "game_mod.h"
@@ -146,8 +146,8 @@ int PALANIM_CycleStep(int vectortime) {
 		return R_FAILURE;
 	}
 
-	GFX_GetCurrentPal(pal);
-	back_buf = GFX_GetBackBuffer();
+	_vm->_gfx->getCurrentPal(pal);
+	back_buf = _vm->_gfx->getBackBuffer();
 
 	for (i = 0; i < PAnimData.entry_count; i++) {
 		cycle = PAnimData.entries[i].cycle;
@@ -167,7 +167,7 @@ int PALANIM_CycleStep(int vectortime) {
 		}
 	}
 
-	GFX_SetPalette(back_buf, pal);
+	_vm->_gfx->setPalette(back_buf, pal);
 
 	event.type = R_ONESHOT_EVENT;
 	event.code = R_PALANIM_EVENT;

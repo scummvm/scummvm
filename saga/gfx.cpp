@@ -28,7 +28,6 @@
 // Coriolis Group Books, 1997
 
 #include "saga/saga.h"
-#include "saga/gfx_mod.h"
 #include "saga/gfx.h"
 
 #include "common/system.h"
@@ -41,7 +40,7 @@ static OSystem *_system;
 
 static byte cur_pal[R_PAL_ENTRIES * 4];
 
-int GFX_Init(OSystem *system, int width, int height) {
+Gfx::Gfx(OSystem *system, int width, int height) {
 	R_SURFACE r_back_buf;
 
 	_system = system;
@@ -66,10 +65,8 @@ int GFX_Init(OSystem *system, int width, int height) {
 	GfxModule.black_index = -1;
 
 	// For now, always show the mouse cursor.
-	GFX_SetCursor(1);
+	setCursor(1);
 	g_system->showMouse(true);
-
-	return R_SUCCESS;
 }
 
 /*
@@ -78,7 +75,7 @@ int GFX_Init(OSystem *system, int width, int height) {
 }
  */
 
-int GFX_DrawPalette(R_SURFACE *dst_s) {
+int Gfx::drawPalette(R_SURFACE *dst_s) {
 	int x;
 	int y;
 	int color = 0;
@@ -93,7 +90,7 @@ int GFX_DrawPalette(R_SURFACE *dst_s) {
 			pal_rect.left = (x * 8) + 4;
 			pal_rect.right = pal_rect.left + 8;
 
-			GFX_DrawRect(dst_s, &pal_rect, color);
+			drawRect(dst_s, &pal_rect, color);
 			color++;
 		}
 	}
@@ -101,7 +98,7 @@ int GFX_DrawPalette(R_SURFACE *dst_s) {
 	return 0;
 }
 
-int GFX_SimpleBlit(R_SURFACE *dst_s, R_SURFACE *src_s) {
+int Gfx::simpleBlit(R_SURFACE *dst_s, R_SURFACE *src_s) {
 	byte *src_p;
 	byte *dst_p;
 	int y, w, p;
@@ -135,7 +132,7 @@ int GFX_SimpleBlit(R_SURFACE *dst_s, R_SURFACE *src_s) {
 // - If src_rect is NULL, the entire buffer is copied./
 // - The surface must match the logical dimensions of the buffer exactly.
 // - Returns R_FAILURE on error
-int GFX_BufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h, 
+int Gfx::bufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h, 
 					 R_RECT *src_rect, R_POINT *dst_pt) {
 	const byte *read_p;
 	byte *write_p;
@@ -261,7 +258,7 @@ int GFX_BufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h,
 	return R_SUCCESS;
 }
 
-int GFX_BufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
+int Gfx::bufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
 					int src_w, int src_h, R_RECT *src_rect, R_POINT *dst_pt) {
 	const byte *read_p;
 	byte *write_p;
@@ -383,7 +380,7 @@ int GFX_BufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
 
 // Fills a rectangle in the surface ds from point 'p1' to point 'p2' using
 // the specified color.
-int GFX_DrawRect(R_SURFACE *ds, R_RECT *dst_rect, int color) {
+int Gfx::drawRect(R_SURFACE *ds, R_RECT *dst_rect, int color) {
 	byte *write_p;
 
 	int w;
@@ -423,7 +420,7 @@ int GFX_DrawRect(R_SURFACE *ds, R_RECT *dst_rect, int color) {
 	return R_SUCCESS;
 }
 
-int GFX_DrawFrame(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
+int Gfx::drawFrame(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 	int left, top, right, bottom;
 
 	int min_x;
@@ -457,15 +454,15 @@ int GFX_DrawFrame(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 	n_p4.x = min_x;
 	n_p4.y = max_y;
 
-	GFX_DrawLine(ds, &n_p1, &n_p2, color);
-	GFX_DrawLine(ds, &n_p2, &n_p3, color);
-	GFX_DrawLine(ds, &n_p3, &n_p4, color);
-	GFX_DrawLine(ds, &n_p4, &n_p1, color);
+	drawLine(ds, &n_p1, &n_p2, color);
+	drawLine(ds, &n_p2, &n_p3, color);
+	drawLine(ds, &n_p3, &n_p4, color);
+	drawLine(ds, &n_p4, &n_p1, color);
 
 	return R_SUCCESS;
 }
 
-int GFX_DrawPolyLine(R_SURFACE *ds, R_POINT *pts, int pt_ct, int draw_color) {
+int Gfx::drawPolyLine(R_SURFACE *ds, R_POINT *pts, int pt_ct, int draw_color) {
 	R_POINT *first_pt = pts;
 	int last_i = 1;
 	int i;
@@ -477,16 +474,16 @@ int GFX_DrawPolyLine(R_SURFACE *ds, R_POINT *pts, int pt_ct, int draw_color) {
 	}
 
 	for (i = 1; i < pt_ct; i++) {
-		GFX_DrawLine(ds, &pts[i], &pts[i - 1], draw_color);
+		drawLine(ds, &pts[i], &pts[i - 1], draw_color);
 		last_i = i;
 	}
 
-	GFX_DrawLine(ds, &pts[last_i], first_pt, draw_color);
+	drawLine(ds, &pts[last_i], first_pt, draw_color);
 
 	return R_SUCCESS;
 }
 
-int GFX_GetClipInfo(R_CLIPINFO *clipinfo) {
+int Gfx::getClipInfo(R_CLIPINFO *clipinfo) {
 	Common::Rect s;
 	int d_x, d_y;
 
@@ -570,7 +567,7 @@ int GFX_GetClipInfo(R_CLIPINFO *clipinfo) {
 	return R_SUCCESS;
 }
 
-int GFX_ClipLine(R_SURFACE *ds, const R_POINT *src_p1, const R_POINT *src_p2, 
+int Gfx::clipLine(R_SURFACE *ds, const R_POINT *src_p1, const R_POINT *src_p2, 
 				 R_POINT *dst_p1, R_POINT *dst_p2) {
 	const R_POINT *n_p1;
 	const R_POINT *n_p2;
@@ -642,7 +639,7 @@ int GFX_ClipLine(R_SURFACE *ds, const R_POINT *src_p1, const R_POINT *src_p2,
 // Coriolis Group Books, 1997
 //
 // Performs no clipping
-void GFX_DrawLine(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
+void Gfx::drawLine(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 	byte *write_p;
 	int clip_result;
 	int temp;
@@ -658,7 +655,7 @@ void GFX_DrawLine(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 	int left, top, right, bottom;
 	int i, k;
 
-	clip_result = GFX_ClipLine(ds, p1, p2, &clip_p1, &clip_p2);
+	clip_result = clipLine(ds, p1, p2, &clip_p1, &clip_p2);
 	if (clip_result < 0) {
 		// Line not visible
 		return;
@@ -817,19 +814,19 @@ void GFX_DrawLine(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color) {
 	return;
 }
 
-R_SURFACE *GFX_GetBackBuffer() {
+R_SURFACE *Gfx::getBackBuffer() {
 	return &GfxModule.r_back_buf;
 }
 
-int GFX_GetWhite(void) {
+int Gfx::getWhite(void) {
 	return GfxModule.white_index;
 }
 
-int GFX_GetBlack(void) {
+int Gfx::getBlack(void) {
 	return GfxModule.black_index;
 }
 
-int GFX_MatchColor(unsigned long colormask) {
+int Gfx::matchColor(unsigned long colormask) {
 	int i;
 	int red = (colormask & 0x0FF0000UL) >> 16;
 	int green = (colormask & 0x000FF00UL) >> 8;
@@ -866,7 +863,7 @@ int GFX_MatchColor(unsigned long colormask) {
 	return best_index;
 }
 
-int GFX_SetPalette(R_SURFACE *surface, PALENTRY *pal) {
+int Gfx::setPalette(R_SURFACE *surface, PALENTRY *pal) {
 	byte red;
 	byte green;
 	byte blue;
@@ -905,7 +902,7 @@ int GFX_SetPalette(R_SURFACE *surface, PALENTRY *pal) {
 	// correct. We may have to reconsider this code later, but for now
 	// there is only one cursor image.
 	if (GfxModule.white_index != best_windex) {
-		GFX_SetCursor(best_windex);
+		setCursor(best_windex);
 	}
 
 	// Set whitest and blackest color indices
@@ -917,7 +914,7 @@ int GFX_SetPalette(R_SURFACE *surface, PALENTRY *pal) {
 	return R_SUCCESS;
 }
 
-int GFX_GetCurrentPal(PALENTRY *src_pal) {
+int Gfx::getCurrentPal(PALENTRY *src_pal) {
 	int i;
 	byte *ppal;
 
@@ -930,7 +927,7 @@ int GFX_GetCurrentPal(PALENTRY *src_pal) {
 	return R_SUCCESS;
 }
 
-int GFX_PalToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
+int Gfx::palToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 	int i;
 	//int fade_max = 255;
 	int new_entry;
@@ -980,7 +977,7 @@ int GFX_PalToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 	return R_SUCCESS;
 }
 
-int GFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
+int Gfx::blackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 	int new_entry;
 	double fpercent;
 	int color_delta;
@@ -1051,7 +1048,7 @@ int GFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 	// correct. We may have to reconsider this code later, but for now
 	// there is only one cursor image.
 	if (GfxModule.white_index != best_windex) {
-		GFX_SetCursor(best_windex);
+		setCursor(best_windex);
 	}
 
 	_system->setPalette(cur_pal, 0, R_PAL_ENTRIES);
@@ -1059,7 +1056,7 @@ int GFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 	return R_SUCCESS;
 }
 
-void GFX_SetCursor(int best_white) {
+void Gfx::setCursor(int best_white) {
 	int i;
 	byte keycolor = (best_white == 0) ? 1 : 0;
 

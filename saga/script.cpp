@@ -25,7 +25,7 @@
 #include "saga.h"
 #include "yslib.h"
 
-#include "gfx_mod.h"
+#include "gfx.h"
 #include "rscfile_mod.h"
 #include "game_mod.h"
 #include "text_mod.h"

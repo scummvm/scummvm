@@ -24,7 +24,7 @@
 // Main rendering loop
 #include "saga.h"
 
-#include "gfx_mod.h"
+#include "gfx.h"
 #include "timer.h"
 #include "actor_mod.h"
 #include "console_mod.h"
@@ -56,9 +56,8 @@ Render::Render(SagaEngine *vm, OSystem *system) : _vm(vm), _system(system), _ini
 	// Initialize system graphics
 	GAME_GetDisplayInfo(&disp_info);
 
-	if (GFX_Init(system, disp_info.logical_w, disp_info.logical_h) != R_SUCCESS) {
-		return;
-	}
+	_vm->_gfx = new Gfx(system, disp_info.logical_w, disp_info.logical_h);
+	_gfx = _vm->_gfx;
 
 	// Initialize FPS timer callback
 	g_timer->installTimerProc(&fpsTimerCallback, 1000000, this);
@@ -87,7 +86,7 @@ Render::Render(SagaEngine *vm, OSystem *system) : _vm(vm), _system(system), _ini
 	_tmp_buf_w = tmp_w;
 	_tmp_buf_h = tmp_h;
 
-	_backbuf_surface = GFX_GetBackBuffer();
+	_backbuf_surface = _gfx->getBackBuffer();
 	_flags = 0;
 
 	_initialized = true;
@@ -135,8 +134,8 @@ int Render::drawScene() {
 
 	// Display scene maps, if applicable
 	if (getFlags() & RF_OBJECTMAP_TEST) {
-		OBJECTMAP_Draw(backbuf_surface, &mouse_pt, GFX_GetWhite(), GFX_GetBlack());
-		_vm->_actionMap->draw(backbuf_surface, GFX_MatchColor(R_RGB_RED));
+		OBJECTMAP_Draw(backbuf_surface, &mouse_pt, _gfx->getWhite(), _gfx->getBlack());
+		_vm->_actionMap->draw(backbuf_surface, _gfx->matchColor(R_RGB_RED));
 	}
 
 	// Draw queued actors
@@ -155,7 +154,7 @@ int Render::drawScene() {
 		sprintf(txt_buf, "%d", _fps);
 		fps_width = FONT_GetStringWidth(SMALL_FONT_ID, txt_buf, 0, FONT_NORMAL);
 		FONT_Draw(SMALL_FONT_ID, backbuf_surface, txt_buf, 0, backbuf_surface->buf_w - fps_width, 2,
-					GFX_GetWhite(), GFX_GetBlack(), FONT_OUTLINE);
+					_gfx->getWhite(), _gfx->getBlack(), FONT_OUTLINE);
 	}
 
 	// Display "paused game" message, if applicable
@@ -163,7 +162,7 @@ int Render::drawScene() {
 		int msg_len = strlen(R_PAUSEGAME_MSG);
 		int msg_w = FONT_GetStringWidth(BIG_FONT_ID, R_PAUSEGAME_MSG, msg_len, FONT_OUTLINE);
 		FONT_Draw(BIG_FONT_ID, backbuf_surface, R_PAUSEGAME_MSG, msg_len,
-				(backbuf_surface->buf_w - msg_w) / 2, 90, GFX_GetWhite(), GFX_GetBlack(), FONT_OUTLINE);
+				(backbuf_surface->buf_w - msg_w) / 2, 90, _gfx->getWhite(), _gfx->getBlack(), FONT_OUTLINE);
 	}
 
 	// Update user interface
@@ -173,12 +172,12 @@ int Render::drawScene() {
 	// Display text formatting test, if applicable
 	if (_flags & RF_TEXT_TEST) {
 		TEXT_Draw(MEDIUM_FONT_ID, backbuf_surface, test_txt, mouse_pt.x, mouse_pt.y,
-				GFX_GetWhite(), GFX_GetBlack(), FONT_OUTLINE | FONT_CENTERED);
+				_gfx->getWhite(), _gfx->getBlack(), FONT_OUTLINE | FONT_CENTERED);
 	}
 
 	// Display palette test, if applicable
 	if (_flags & RF_PALETTE_TEST) {
-		GFX_DrawPalette(backbuf_surface);
+		_gfx->drawPalette(backbuf_surface);
 	}
 
 	// Draw console

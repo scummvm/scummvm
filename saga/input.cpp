@@ -22,7 +22,7 @@
  */
 #include "saga/saga.h"
 
-#include "saga/gfx_mod.h"
+#include "saga/gfx.h"
 #include "saga/actor_mod.h"
 #include "saga/console_mod.h"
 #include "saga/interface_mod.h"

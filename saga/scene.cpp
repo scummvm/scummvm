@@ -25,7 +25,7 @@
 #include "saga.h"
 #include "yslib.h"
 
-#include "gfx_mod.h"
+#include "gfx.h"
 #include "game_mod.h"
 #include "animation.h"
 #include "console_mod.h"
@@ -731,7 +731,7 @@ int SCENE_Draw(R_SURFACE *dst_s) {
 	switch (SceneModule.scene_mode) {
 
 	case R_SCENE_MODE_NORMAL:
-		GFX_BufToSurface(dst_s, buf_info.r_bg_buf, disp_info.logical_w,
+		_vm->_gfx->bufToSurface(dst_s, buf_info.r_bg_buf, disp_info.logical_w,
 						MAX(disp_info.scene_h, SceneModule.bg.h), NULL, &bg_pt);
 		break;
 	case R_SCENE_MODE_ISO:
@@ -855,7 +855,7 @@ int initialScene(int param, R_SCENE_INFO *scene_info) {
 		_vm->_sound->stopVoice();
 
 		// Fade palette to black from intro scene
-		GFX_GetCurrentPal(current_pal);
+		_vm->_gfx->getCurrentPal(current_pal);
 
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_PAL_EVENT;

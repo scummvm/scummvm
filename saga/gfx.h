@@ -28,6 +28,49 @@
 
 namespace Saga {
 
+struct R_CLIPINFO {
+	// input members
+	const R_RECT *src_rect;
+	const R_RECT *dst_rect;
+	const R_POINT *dst_pt;
+
+	// output members
+	int nodraw;
+	int src_draw_x;
+	int src_draw_y;
+	int dst_draw_x;
+	int dst_draw_y;
+	int draw_w;
+	int draw_h;
+};
+
+struct PALENTRY {
+	byte red;
+	byte green;
+	byte blue;
+};
+
+struct R_COLOR {
+	int red;
+	int green;
+	int blue;
+	int alpha;
+};
+
+struct R_SURFACE {
+	byte *buf;
+	int buf_w;
+	int buf_h;
+	int buf_pitch;
+	R_RECT clip_rect;
+};
+
+#define R_PAL_ENTRIES 256
+
+#define R_RGB_RED   0x00FF0000UL
+#define R_RGB_GREEN 0x0000FF00UL
+#define R_RGB_BLUE  0x000000FFUL
+
 #define R_CURSOR_W 7
 #define R_CURSOR_H 7
 
@@ -47,7 +90,32 @@ struct R_GFX_MODULE {
 	int black_index;
 };
 
-void GFX_SetCursor(int best_white);
+class Gfx {
+public:
+	int simpleBlit(R_SURFACE *dst_s, R_SURFACE *src_s);
+	int drawPalette(R_SURFACE *dst_s);
+	int bufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h, R_RECT *src_rect, R_POINT *dst_pt);
+	int bufToBuffer(byte * dst_buf, int dst_w, int dst_h, const byte *src,
+		int src_w, int src_h, R_RECT *src_rect, R_POINT *dst_pt);
+	int drawRect(R_SURFACE *ds, R_RECT *dst_rect, int color);
+	int drawFrame(R_SURFACE *ds, R_POINT *p1, R_POINT *p2, int color);
+	int drawPolyLine(R_SURFACE *ds, R_POINT *pts, int pt_ct, int draw_color);
+	int getClipInfo(R_CLIPINFO *clipinfo);
+	int clipLine(R_SURFACE *ds, const R_POINT *src_p1, const R_POINT *src_p2, R_POINT *dst_p1, R_POINT *dst_p2);
+	void drawLine(R_SURFACE * ds, R_POINT *p1, R_POINT *p2, int color);
+
+	Gfx(OSystem *system, int width, int height);
+	R_SURFACE *getBackBuffer();
+	int getWhite();
+	int getBlack();
+	int matchColor(unsigned long colormask);
+	int setPalette(R_SURFACE *surface, PALENTRY *pal);
+	int getCurrentPal(PALENTRY *src_pal);
+	int palToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent);
+	int blackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent);
+private:
+	void setCursor(int best_white);
+};
 
 } // End of namespace Saga
 

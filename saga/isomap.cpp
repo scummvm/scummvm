@@ -25,7 +25,7 @@
 #include "saga.h"
 
 #include "game_mod.h"
-#include "gfx_mod.h"
+#include "gfx.h"
 
 #include "isomap_mod.h"
 #include "isomap.h"
@@ -138,7 +138,7 @@ int ISOMAP_Draw(R_SURFACE *dst_s) {
 	R_GAME_DISPLAYINFO disp_info;
 	GAME_GetDisplayInfo(&disp_info);
 	R_RECT iso_rect(disp_info.logical_w - 1, disp_info.scene_h - 1);
-	GFX_DrawRect(dst_s, &iso_rect, 0);
+	_vm->_gfx->drawRect(dst_s, &iso_rect, 0);
 	ISOMAP_DrawMetamap(dst_s, -1000, -500);
 
 	return R_SUCCESS;

@@ -23,7 +23,7 @@
 
 // Background animation management module
 #include "saga.h"
-#include "gfx_mod.h"
+#include "gfx.h"
 
 #include "cvar_mod.h"
 #include "console_mod.h"

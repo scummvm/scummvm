@@ -23,7 +23,7 @@
 
 #include "saga.h"
 #include "yslib.h"
-#include "gfx_mod.h"
+#include "gfx.h"
 
 #include "game_mod.h"
 #include "cvar_mod.h"
@@ -220,7 +220,7 @@ int ACTOR_DrawList() {
 
 	R_SURFACE *back_buf;
 
-	back_buf = GFX_GetBackBuffer();
+	back_buf = _vm->_gfx->getBackBuffer();
 
 	for (walk_p = ys_dll_head(ActorModule.list); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
 		actor = (R_ACTOR *)ys_dll_get_data(walk_p);

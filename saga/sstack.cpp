@@ -25,7 +25,7 @@
 
 #include "saga.h"
 
-#include "gfx_mod.h"
+#include "gfx.h"
 #include "console_mod.h"
 #include "text_mod.h"
 

@@ -25,7 +25,7 @@
 #include "saga.h"
 
 #include "game_mod.h"
-#include "gfx_mod.h"
+#include "gfx.h"
 #include "scene_mod.h"
 #include "rscfile_mod.h"
 
@@ -360,7 +360,7 @@ int SPRITE_DrawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_num
 	ci.src_rect = &spr_src_rect;
 	ci.dst_pt = &spr_pt;
 
-	GFX_GetClipInfo(&ci);
+	_vm->_gfx->getClipInfo(&ci);
 
 	if (ci.nodraw) {
 		return R_SUCCESS;

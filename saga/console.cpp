@@ -24,11 +24,10 @@
 // Console module
 
 #include "saga.h"
-#include "gfx_mod.h"
+#include "gfx.h"
 #include "font_mod.h"
 #include "cvar_mod.h"
 #include "events_mod.h"
-#include "gfx_mod.h"
 
 #include "console_mod.h"
 #include "console.h"
@@ -216,9 +215,9 @@ int CON_Draw(R_SURFACE *ds) {
 	fill_rect.bottom = ConInfo.y_pos;
 	fill_rect.right = ds->buf_w - 1;
 
-	GFX_DrawRect(ds, &fill_rect, GFX_MatchColor(R_CONSOLE_BGCOLOR));
-	txt_fgcolor = GFX_MatchColor(R_CONSOLE_TXTCOLOR);
-	txt_shcolor = GFX_MatchColor(R_CONSOLE_TXTSHADOW);
+	_vm->_gfx->drawRect(ds, &fill_rect, _vm->_gfx->matchColor(R_CONSOLE_BGCOLOR));
+	txt_fgcolor = _vm->_gfx->matchColor(R_CONSOLE_TXTCOLOR);
+	txt_shcolor = _vm->_gfx->matchColor(R_CONSOLE_TXTSHADOW);
 
 	FONT_Draw(SMALL_FONT_ID, ds, ">", 1, 2, ConInfo.y_pos - 10, txt_fgcolor, txt_shcolor, FONT_SHADOW);
 	FONT_Draw(SMALL_FONT_ID, ds, ConInfo.input_buf, strlen(ConInfo.input_buf),
@@ -353,7 +352,7 @@ int CON_DropConsole(double percent) {
 		percent = 1.0;
 	}
 
-	back_buf = GFX_GetBackBuffer();
+	back_buf = _vm->_gfx->getBackBuffer();
 	CON_SetDropPos(percent);
 	CON_Draw(back_buf);
 
@@ -368,7 +367,7 @@ int CON_RaiseConsole(double percent) {
 		ConInfo.active = 0;
 	}
 
-	back_buf = GFX_GetBackBuffer();
+	back_buf = _vm->_gfx->getBackBuffer();
 	CON_SetDropPos(1.0 - percent);
 	CON_Draw(back_buf);
 

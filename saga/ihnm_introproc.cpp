@@ -25,7 +25,7 @@
 
 #include "saga.h"
 #include "yslib.h"
-#include "gfx_mod.h"
+#include "gfx.h"
 
 #include "animation.h"
 #include "cvar_mod.h"
@@ -139,7 +139,7 @@ int IHNM_IntroMovieProc2(int param, R_SCENE_INFO *scene_info) {
 
 	case SCENE_BEGIN:
 		// Fade to black out of the intro CyberDreams logo anim
-		GFX_GetCurrentPal(current_pal);
+		_vm->_gfx->getCurrentPal(current_pal);
 
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_PAL_EVENT;
@@ -199,7 +199,7 @@ int IHNM_IntroMovieProc3(int param, R_SCENE_INFO *scene_info) {
 	switch (param) {
 	case SCENE_BEGIN:
 		// Fade to black out of the intro DG logo anim
-		GFX_GetCurrentPal(current_pal);
+		_vm->_gfx->getCurrentPal(current_pal);
 
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_PAL_EVENT;

@@ -25,7 +25,7 @@
 // Intro sequence scene procedures
 
 #include "saga.h"
-#include "gfx_mod.h"
+#include "gfx.h"
 #include "yslib.h"
 
 #include "animation.h"
@@ -240,7 +240,7 @@ int ITE_IntroCave1Proc(int param, R_SCENE_INFO *scene_info) {
 	switch (param) {
 	case SCENE_BEGIN:
 		// Fade to black out of the intro DG/NWC logo animation
-		GFX_GetCurrentPal(current_pal);
+		_vm->_gfx->getCurrentPal(current_pal);
 		event.type = R_CONTINUOUS_EVENT;
 		event.code = R_PAL_EVENT;
 		event.op = EVENT_PALTOBLACK;

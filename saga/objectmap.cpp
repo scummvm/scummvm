@@ -28,7 +28,7 @@
 // p. 24-46, code: p. 34-45
 #include "saga.h"
 
-#include "gfx_mod.h"
+#include "gfx.h"
 #include "cvar_mod.h"
 #include "console_mod.h"
 #include "font_mod.h"
@@ -291,7 +291,7 @@ int OBJECTMAP_GetEPNum(int object, int *ep_num) {
 	return R_FAILURE;
 }
 
-// Uses GFX_DrawLine to display all clickareas for each object in the 
+// Uses Gfx::drawLine to display all clickareas for each object in the 
 // currently loaded object map resource.
 int OBJECTMAP_Draw(R_SURFACE *ds, R_POINT *imouse_pt, int color, int color2) {
 	R_OBJECTMAP_ENTRY *object_map;
@@ -338,16 +338,17 @@ int OBJECTMAP_Draw(R_SURFACE *ds, R_POINT *imouse_pt, int color, int color2) {
 			pointcount = 0;
 			if (clickarea->n_points == 2) {
 				// 2 points represent a box
-				GFX_DrawFrame(ds, &clickarea->points[0], &clickarea->points[1], draw_color);
+				_vm->_gfx->drawFrame(ds, &clickarea->points[0], &clickarea->points[1], draw_color);
 			} else if (clickarea->n_points > 2) {
 				// Otherwise draw a polyline
-				GFX_DrawPolyLine(ds, clickarea->points, clickarea->n_points, draw_color);
+				_vm->_gfx->drawPolyLine(ds, clickarea->points, clickarea->n_points, draw_color);
 			}
 		}
 	}
 
 	if (draw_txt) {
-		FONT_Draw(SMALL_FONT_ID, ds, txt_buf, 0, 2, 2, GFX_GetWhite(), GFX_GetBlack(), FONT_OUTLINE);
+		FONT_Draw(SMALL_FONT_ID, ds, txt_buf, 0, 2, 2,
+				_vm->_gfx->getWhite(), _vm->_gfx->getBlack(), FONT_OUTLINE);
 	}
 
 	return R_SUCCESS;

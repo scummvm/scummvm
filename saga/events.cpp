@@ -25,14 +25,13 @@
 
 
 #include "saga.h"
-#include "gfx_mod.h"
+#include "gfx.h"
 
 #include "yslib.h"
 
 #include "animation.h"
 #include "console_mod.h"
 #include "scene_mod.h"
-#include "gfx_mod.h"
 #include "interface_mod.h"
 #include "text_mod.h"
 #include "palanim_mod.h"
@@ -159,13 +158,13 @@ int HandleContinuous(R_EVENT *event) {
 	case R_PAL_EVENT:
 		switch (event->op) {
 		case EVENT_BLACKTOPAL:
-			back_buf = GFX_GetBackBuffer();
-			GFX_BlackToPal(back_buf, (PALENTRY *)event->data, event_pc);
+			back_buf = _vm->_gfx->getBackBuffer();
+			_vm->_gfx->blackToPal(back_buf, (PALENTRY *)event->data, event_pc);
 			break;
 
 		case EVENT_PALTOBLACK:
-			back_buf = GFX_GetBackBuffer();
-			GFX_PalToBlack(back_buf, (PALENTRY *)event->data, event_pc);
+			back_buf = _vm->_gfx->getBackBuffer();
+			_vm->_gfx->palToBlack(back_buf, (PALENTRY *)event->data, event_pc);
 			break;
 		default:
 			break;
@@ -249,7 +248,7 @@ static int HandleOneShot(R_EVENT *event) {
 
 			if (SCENE_GetMode() == R_SCENE_MODE_NORMAL) {
 
-				back_buf = GFX_GetBackBuffer();
+				back_buf = _vm->_gfx->getBackBuffer();
 
 				_vm->_render->getBufferInfo(&rbuf_info);
 				SCENE_GetBGInfo(&bginfo);
@@ -257,12 +256,12 @@ static int HandleOneShot(R_EVENT *event) {
 				bg_pt.x = bginfo.bg_x;
 				bg_pt.y = bginfo.bg_y;
 
-				GFX_BufToBuffer(rbuf_info.r_bg_buf, rbuf_info.r_bg_buf_w, rbuf_info.r_bg_buf_h,
+				_vm->_gfx->bufToBuffer(rbuf_info.r_bg_buf, rbuf_info.r_bg_buf_w, rbuf_info.r_bg_buf_h,
 								bginfo.bg_buf, bginfo.bg_w, bginfo.bg_h, NULL, &bg_pt);
 				if (event->param == SET_PALETTE) {
 					PALENTRY *pal_p;
 					SCENE_GetBGPal(&pal_p);
-					GFX_SetPalette(back_buf, pal_p);
+					_vm->_gfx->setPalette(back_buf, pal_p);
 				}
 			}
 		}

@@ -23,7 +23,7 @@
 // Type SDataWord_T must be unpadded
 #include "saga.h"
 
-#include "gfx_mod.h"
+#include "gfx.h"
 #include "text_mod.h"
 #include "script_mod.h"
 #include "script.h"
