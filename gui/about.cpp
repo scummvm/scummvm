@@ -100,6 +100,8 @@ const char *about_lines[] = {
 "\\L\\c2""    iMUSE, MIDI, all things musical.",
 "\\L\\c0""  Jochen Hoenicke",
 "\\L\\c2""    Speaker & PCjr sound support, Adlib work",
+"\\L\\c0""  Jerome Fisher",
+"\\L\\c2""    MT-32 emulator",
 "\\L\\c0""  Jeremy Newman",
 "\\L\\c2""    Webmaster",
 "\\L\\c0""",
