@@ -41,7 +41,7 @@ struct WizImage {
 	int y1;
 	int flags;
 	int state;
-	int unk;
+	int xmapNum;
 	int paletteNum;
 };
 
@@ -62,7 +62,7 @@ struct WizParameters {
 	int fileWriteMode;
 	int angle;
 	int zoom;
-	int unk_15C;
+	int xmapNum;
 	int unk_160;
 	int unk_164;
 	int resDefImgW;

@@ -626,7 +626,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		break;
 	case 52:
 		_wizParams.processFlags |= 4;
-		_wizParams.unk_15C = pop();
+		_wizParams.xmapNum = pop();
 		break;
 	case 85: // HE99+
 		_wizParams.processFlags |= 0x1000 | 0x100 | 0x2;

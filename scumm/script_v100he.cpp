@@ -1293,7 +1293,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		break;
 	case 70:
 		_wizParams.processFlags |= 4;
-		_wizParams.unk_15C = pop();
+		_wizParams.xmapNum = pop();
 		break;
 	case 73:
 		_wizParams.processFlags |= kWPFNewState;

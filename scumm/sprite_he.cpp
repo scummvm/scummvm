@@ -38,18 +38,18 @@ void ScummEngine_v90he::allocateArrays() {
 void ScummEngine_v90he::getSpriteBounds(int spriteId, bool checkGroup, Common::Rect &bound) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 	int16 spr_wiz_x, spr_wiz_y;
-	int rot_angle, zoom, x1, y1;
+	int angle, zoom, x1, y1;
 	int32 w, h;
 
 	SpriteInfo *spi = &_spriteTable[spriteId];
 
-	loadImgSpot(spi->res_id, spi->res_state, spr_wiz_x, spr_wiz_y);
-	if (checkGroup && spi->group_num) {
-		SpriteGroup *spg = &_spriteGroups[spi->group_num];
+	loadImgSpot(spi->resId, spi->resState, spr_wiz_x, spr_wiz_y);
+	if (checkGroup && spi->groupNum) {
+		SpriteGroup *spg = &_spriteGroups[spi->groupNum];
 
 		if (spg->scaling) {
-			x1 = spi->tx * spg->scale_x - spr_wiz_x + spg->tx;
-			y1 = spi->ty * spg->scale_y - spr_wiz_y + spg->ty;
+			x1 = spi->tx * spg->scaleX - spr_wiz_x + spg->tx;
+			y1 = spi->ty * spg->scaleY - spr_wiz_y + spg->ty;
 		} else {
 			x1 = spi->tx - spr_wiz_x + spg->tx;
 			y1 = spi->ty - spr_wiz_y + spg->ty;
@@ -59,10 +59,10 @@ void ScummEngine_v90he::getSpriteBounds(int spriteId, bool checkGroup, Common::R
 		y1 = spi->ty - spr_wiz_y;
 	}
 
-	if (spi->res_id) {
-		rot_angle = spi->rot_angle;
+	if (spi->resId) {
+		angle = spi->angle;
 		zoom = spi->zoom;
-		getWizImageDim(spi->res_id, spi->res_state, w, h);
+		getWizImageDim(spi->resId, spi->resState, w, h);
 		if (!(spi->flags & (kSFZoomed | kSFRotated))) {
 			bound.left = x1;
 			bound.top = y1;
@@ -81,8 +81,8 @@ void ScummEngine_v90he::getSpriteBounds(int spriteId, bool checkGroup, Common::R
 					pts[j].y = pts[j].y * zoom / 256;
 				}
 			}
-			if ((spi->flags & kSFRotated) && rot_angle)
-				_wiz.polygonRotatePoints(pts, 4, rot_angle);
+			if ((spi->flags & kSFRotated) && angle)
+				_wiz.polygonRotatePoints(pts, 4, angle);
 
 			for (int j = 0; j < 4; ++j) {
 				pts[j].x += x1;
@@ -109,10 +109,10 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGro
 
 	for (int i = (_numSpritesToProcess - 1); i >= 0; i--) {
 		SpriteInfo *spi = _activeSpritesTable[i];
-		if (!spi->cur_res_id)
+		if (!spi->curResId)
 			continue;
 
-		if (spriteGroupId && spi->group_num != spriteGroupId)
+		if (spriteGroupId && spi->groupNum != spriteGroupId)
 			continue;
 
 		cond = true;
@@ -121,10 +121,10 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGro
 			classId &= 0x7F;
 			checkRange(32, 1, classId, "class %d out of range in statement");
 			if (code & 0x80) {
-				if (!(spi->class_flags & (1 << (classId - 1))))
+				if (!(spi->classFlags & (1 << (classId - 1))))
 					cond = 0;
 			} else {
-				if ((spi->class_flags & (1 << (classId - 1))))
+				if ((spi->classFlags & (1 << (classId - 1))))
 					cond = 0;
 			}
 		}
@@ -146,20 +146,20 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGro
 				continue;
 			return spi->id;
 		} else {
-			int resId, state, rot_angle, zoom;
+			int resId, resState, angle, zoom;
 			int32 w, h;
 
-			resId = spi->cur_res_id;
+			resId = spi->curResId;
 			if (spi->field_80) {
 				int16 x1, x2, y1, y2;
 
-				state = spi->cur_img_state / getWizImageStates(spi->field_80);
+				resState = spi->curImageState / getWizImageStates(spi->field_80);
 
 				x = x_pos - spi->pos.x;
 				y = y_pos - spi->pos.y;
 
-				loadImgSpot(spi->cur_res_id, state, x1, y1);
-				loadImgSpot(spi->field_80, state, x2, y2);
+				loadImgSpot(spi->curResId, resState, x1, y1);
+				loadImgSpot(spi->field_80, resState, x2, y2);
 
 				x += (x2 - x1);
 				y += (y2 - y1);
@@ -179,28 +179,28 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGro
 
 				x = x_pos - spi->pos.x;
 				y = y_pos - spi->pos.y;
-				state = spi->cur_img_state;
+				resState = spi->curImageState;
 			}
 
-			rot_angle = spi->cur_rot_angle;
+			angle = spi->curAngle;
 			zoom = spi->cur_zoom;
 			if ((spi->flags & kSFZoomed) || (spi->flags & kSFRotated)) {
 				if (spi->flags & kSFZoomed && zoom) {
 					x = x * 256 / zoom;
 					y = y * 256 / zoom;
 				}
-				if (spi->flags & kSFRotated && rot_angle) {
-					rot_angle = (360 - rot_angle) % 360;
+				if (spi->flags & kSFRotated && angle) {
+					angle = (360 - angle) % 360;
 					Common::Point pts[1];
-					_wiz.polygonRotatePoints(pts, 1, rot_angle);
+					_wiz.polygonRotatePoints(pts, 1, angle);
 				}
 
-				getWizImageDim(resId, state, w, h);
+				getWizImageDim(resId, resState, w, h);
 				x += w / 2;
 				y += h / 2;
 			}
 
-			if(isWizPixelNonTransparent(resId, state, x, y, spi->imgFlags))
+			if(isWizPixelNonTransparent(resId, resState, x, y, spi->imgFlags))
 				return spi->id;
 		}
 	}
@@ -213,17 +213,17 @@ int ScummEngine_v90he::spriteInfoGet_classFlags(int spriteId, int num, int *args
 	int code, classId;
 
 	if (num == 0)
-		return _spriteTable[spriteId].class_flags; 
+		return _spriteTable[spriteId].classFlags; 
 
 	for (int i = 0; i < num; i++) {
 		code = classId = args[i];
 		classId &= 0x7F;
 		checkRange(32, 1, classId, "class %d out of range in statement");
 		if (code & 0x80) {
-			if (!(_spriteTable[spriteId].class_flags & (1 << (classId - 1))))
+			if (!(_spriteTable[spriteId].classFlags & (1 << (classId - 1))))
 				return 0;
 		} else {
-			if ((_spriteTable[spriteId].class_flags & (1 << (classId - 1))))
+			if ((_spriteTable[spriteId].classFlags & (1 << (classId - 1))))
 				return 0;
 		}
 	}
@@ -282,19 +282,19 @@ int ScummEngine_v90he::spriteInfoGet_flagHasImage(int spriteId) {
 int ScummEngine_v90he::spriteInfoGet_resId(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	return _spriteTable[spriteId].res_id;
+	return _spriteTable[spriteId].resId;
 }
 
 int ScummEngine_v90he::spriteInfoGet_resState(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	return _spriteTable[spriteId].res_state;
+	return _spriteTable[spriteId].resState;
 }
 
 int ScummEngine_v90he::spriteInfoGet_groupNum(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	return _spriteTable[spriteId].group_num;
+	return _spriteTable[spriteId].groupNum;
 }
 
 int ScummEngine_v90he::spriteInfoGet_paletteNum(int spriteId) {
@@ -312,8 +312,8 @@ int ScummEngine_v90he::spriteInfoGet_zorderPriority(int spriteId) {
 int ScummEngine_v90he::spriteInfoGet_grp_tx(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	if (_spriteTable[spriteId].group_num)
-		return _spriteTable[spriteId].tx + _spriteGroups[_spriteTable[spriteId].group_num].tx;
+	if (_spriteTable[spriteId].groupNum)
+		return _spriteTable[spriteId].tx + _spriteGroups[_spriteTable[spriteId].groupNum].tx;
 	else
 		return _spriteTable[spriteId].tx;
 }
@@ -321,8 +321,8 @@ int ScummEngine_v90he::spriteInfoGet_grp_tx(int spriteId) {
 int ScummEngine_v90he::spriteInfoGet_grp_ty(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	if (_spriteTable[spriteId].group_num)
-		return _spriteTable[spriteId].ty + _spriteGroups[_spriteTable[spriteId].group_num].ty;
+	if (_spriteTable[spriteId].groupNum)
+		return _spriteTable[spriteId].ty + _spriteGroups[_spriteTable[spriteId].groupNum].ty;
 	else
 		return _spriteTable[spriteId].ty;
 }
@@ -336,7 +336,7 @@ int ScummEngine_v90he::spriteInfoGet_field_44(int spriteId) {
 int ScummEngine_v90he::spriteInfoGet_field_54(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	return _spriteTable[spriteId].field_54;
+	return _spriteTable[spriteId].xmapNum;
 }
 
 int ScummEngine_v90he::spriteInfoGet_wizSize(int spriteId) {
@@ -381,8 +381,8 @@ int ScummEngine_v90he::spriteInfoGet_field_88(int spriteId, int type) {
 void ScummEngine_v90he::getSpriteImageDim(int spriteId, int32 &w, int32 &h) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	if (_spriteTable[spriteId].res_id) {
-		getWizImageDim(_spriteTable[spriteId].res_id, _spriteTable[spriteId].res_state, w, h);
+	if (_spriteTable[spriteId].resId) {
+		getWizImageDim(_spriteTable[spriteId].resId, _spriteTable[spriteId].resState, w, h);
 	} else {
 		w = 0;
 		h = 0;
@@ -412,7 +412,7 @@ int ScummEngine_v90he::spriteGroupGet_allocateGroupSpritesList(int spriteGroupId
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	for (i = 1; i < _varNumSprites; i++) {
-		if (_spriteTable[i].group_num == spriteGroupId)
+		if (_spriteTable[i].groupNum == spriteGroupId)
 			sprites++;
 	}
 
@@ -424,7 +424,7 @@ int ScummEngine_v90he::spriteGroupGet_allocateGroupSpritesList(int spriteGroupId
 	writeArray(0, 0, 0, sprites);
 	
 	for (i = (_varNumSprites - 1); i > 0; i--) {
-		if (_spriteTable[i].group_num == spriteGroupId)
+		if (_spriteTable[i].groupNum == spriteGroupId)
 			writeArray(0, 0, ++j, i);
 	}
 	
@@ -504,13 +504,13 @@ void ScummEngine_v90he::spriteInfoSet_field_80(int spriteId, int value) {
 void ScummEngine_v90he::spriteInfoSet_resState(int spriteId, int state) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	if (_spriteTable[spriteId].res_id) {
+	if (_spriteTable[spriteId].resId) {
 		int res_wiz_states = _spriteTable[spriteId].res_wiz_states - 1;
 		state = MAX(0, state);
 		state = MIN(state, res_wiz_states);
 	
-		if (_spriteTable[spriteId].res_state != state) {
-			_spriteTable[spriteId].res_state = state;
+		if (_spriteTable[spriteId].resState != state) {
+			_spriteTable[spriteId].resState = state;
 			_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 		}
 	}
@@ -530,7 +530,7 @@ void ScummEngine_v90he::spriteInfoSet_groupNum(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 	checkRange(_varNumSpriteGroups, 0, value, "Invalid sprite group %d");
 
-	_spriteTable[spriteId].group_num = value;
+	_spriteTable[spriteId].groupNum = value;
 	_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 }
 
@@ -544,8 +544,8 @@ void ScummEngine_v90he::spriteInfoSet_dx_dy(int spriteId, int value1, int value2
 void ScummEngine_v90he::spriteInfoSet_field_54(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	_spriteTable[spriteId].field_54 = value;
-	if (_spriteTable[spriteId].res_id)
+	_spriteTable[spriteId].xmapNum = value;
+	if (_spriteTable[spriteId].resId)
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 }
 
@@ -579,7 +579,7 @@ void ScummEngine_v90he::spriteInfoSet_zoom(int spriteId, int value) {
 	if (_spriteTable[spriteId].zoom != value) {
 		_spriteTable[spriteId].zoom = value;
 
-		if (_spriteTable[spriteId].res_id)
+		if (_spriteTable[spriteId].resId)
 			_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 	}
 }
@@ -589,10 +589,10 @@ void ScummEngine_v90he::spriteInfoSet_rotAngle(int spriteId, int value) {
 
 	_spriteTable[spriteId].flags |= kSFRotated;
 
-	if (_spriteTable[spriteId].rot_angle != value) {
-		_spriteTable[spriteId].rot_angle = value;
+	if (_spriteTable[spriteId].angle != value) {
+		_spriteTable[spriteId].angle = value;
 
-		if (_spriteTable[spriteId].res_id)
+		if (_spriteTable[spriteId].resId)
 			_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 	}
 }
@@ -606,7 +606,7 @@ void ScummEngine_v90he::spriteInfoSet_flagDoubleBuffered(int spriteId, int value
 	else
 		_spriteTable[spriteId].flags &= ~kSFDoubleBuffered;
 
-	if (_spriteTable[spriteId].res_id && _spriteTable[spriteId].flags != oldFlags)
+	if (_spriteTable[spriteId].resId && _spriteTable[spriteId].flags != oldFlags)
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 }
 
@@ -619,7 +619,7 @@ void ScummEngine_v90he::spriteInfoSet_flagYFlipped(int spriteId, int value) {
 	else
 		_spriteTable[spriteId].flags &= ~kSFYFlipped;
 
-	if (_spriteTable[spriteId].res_id && _spriteTable[spriteId].flags != oldFlags)
+	if (_spriteTable[spriteId].resId && _spriteTable[spriteId].flags != oldFlags)
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 }
 
@@ -632,7 +632,7 @@ void ScummEngine_v90he::spriteInfoSet_flagXFlipped(int spriteId, int value) {
 	else
 		_spriteTable[spriteId].flags &= ~kSFXFlipped;
 
-	if (_spriteTable[spriteId].res_id && _spriteTable[spriteId].flags != oldFlags)
+	if (_spriteTable[spriteId].resId && _spriteTable[spriteId].flags != oldFlags)
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 }
 
@@ -654,7 +654,7 @@ void ScummEngine_v90he::spriteInfoSet_flagNeedPaletteRemap(int spriteId, int val
 	else
 		_spriteTable[spriteId].flags &= ~kSFNeedPaletteRemap;
 
-	if (_spriteTable[spriteId].res_id && _spriteTable[spriteId].flags != oldFlags)
+	if (_spriteTable[spriteId].resId && _spriteTable[spriteId].flags != oldFlags)
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 }
 
@@ -696,7 +696,7 @@ void ScummEngine_v90he::spriteInfoSet_delay(int spriteId, int value) {
 void ScummEngine_v90he::spriteInfoSet_setClassFlags(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 	
-	_spriteTable[spriteId].class_flags = value;
+	_spriteTable[spriteId].classFlags = value;
 }
 
 void ScummEngine_v90he::spriteInfoSet_setClassFlag(int spriteId, int classId, int toggle) {
@@ -704,16 +704,16 @@ void ScummEngine_v90he::spriteInfoSet_setClassFlag(int spriteId, int classId, in
 	checkRange(32, 1, classId, "class %d out of range in statement");
 	
 	if (toggle) {
-		_spriteTable[spriteId].class_flags |= (1 << (classId - 1));
+		_spriteTable[spriteId].classFlags |= (1 << (classId - 1));
 	} else {
-		_spriteTable[spriteId].class_flags &= ~(1 << (classId - 1));
+		_spriteTable[spriteId].classFlags &= ~(1 << (classId - 1));
 	}
 }
 
 void ScummEngine_v90he::spriteInfoSet_resetClassFlags(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	_spriteTable[spriteId].class_flags = 0;
+	_spriteTable[spriteId].classFlags = 0;
 }
 
 void ScummEngine_v90he::spriteInfoSet_field_88(int spriteId, int type, int value) {
@@ -728,13 +728,13 @@ void ScummEngine_v90he::spriteInfoSet_field_88(int spriteId, int type, int value
 void ScummEngine_v90he::spriteInfoSet_resetSprite(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	_spriteTable[spriteId].rot_angle = 0;
+	_spriteTable[spriteId].angle = 0;
 	_spriteTable[spriteId].zoom = 0;
 
 	int tmp = 0;
 	spriteAddImageToList(spriteId, 1, &tmp);
 
-	_spriteTable[spriteId].field_54 = 0;
+	_spriteTable[spriteId].xmapNum = 0;
 	_spriteTable[spriteId].tx = 0;
 	_spriteTable[spriteId].ty = 0;
 
@@ -743,10 +743,10 @@ void ScummEngine_v90he::spriteInfoSet_resetSprite(int spriteId) {
 	_spriteTable[spriteId].dx = 0;
 	_spriteTable[spriteId].dy = 0;
 	_spriteTable[spriteId].field_44 = 0;
-	_spriteTable[spriteId].group_num = 0;
+	_spriteTable[spriteId].groupNum = 0;
 	_spriteTable[spriteId].delayAmount = 0;
 	_spriteTable[spriteId].delayCount = 0;
-	_spriteTable[spriteId].class_flags = 0;
+	_spriteTable[spriteId].classFlags = 0;
 	_spriteTable[spriteId].paletteNum = 0;
 	_spriteTable[spriteId].field_7C = 0;
 	_spriteTable[spriteId].field_80 = 0;
@@ -759,26 +759,26 @@ void ScummEngine_v90he::spriteAddImageToList(int spriteId, int imageNum, int *sp
 
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	origResId = _spriteTable[spriteId].res_id;
+	origResId = _spriteTable[spriteId].resId;
 	origResWizStates = _spriteTable[spriteId].res_wiz_states;
 
-	_spriteTable[spriteId].res_id = *spriteIdptr;
+	_spriteTable[spriteId].resId = *spriteIdptr;
 	_spriteTable[spriteId].field_74 = 0;
-	_spriteTable[spriteId].res_state = 0;
+	_spriteTable[spriteId].resState = 0;
 
-	if (_spriteTable[spriteId].res_id) {
-		_spriteTable[spriteId].res_wiz_states = getWizImageStates(_spriteTable[spriteId].res_id);
+	if (_spriteTable[spriteId].resId) {
+		_spriteTable[spriteId].res_wiz_states = getWizImageStates(_spriteTable[spriteId].resId);
 		_spriteTable[spriteId].flags |= kSFActive | kSFDelayed | kSFMarkDirty | kSFBlitDirectly;
 
-		if (_spriteTable[spriteId].res_id != origResId || _spriteTable[spriteId].res_wiz_states != origResWizStates)
+		if (_spriteTable[spriteId].resId != origResId || _spriteTable[spriteId].res_wiz_states != origResWizStates)
 			_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 	} else {
 		if (_spriteTable[spriteId].flags & kSFImageless)
 			_spriteTable[spriteId].flags = 0;
 		else
 			_spriteTable[spriteId].flags = kSFChanged | kSFBlitDirectly;
-		_spriteTable[spriteId].cur_res_id = 0;
-		_spriteTable[spriteId].cur_img_state = 0;
+		_spriteTable[spriteId].curResId = 0;
+		_spriteTable[spriteId].curImageState = 0;
 		_spriteTable[spriteId].res_wiz_states = 0;
 	}
 }
@@ -789,7 +789,7 @@ void ScummEngine_v90he::spriteAddImageToList(int spriteId, int imageNum, int *sp
 void ScummEngine_v90he::redrawSpriteGroup(int spriteGroupId) {
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
 		SpriteInfo *spi = _activeSpritesTable[i];
-		if (spi->group_num == spriteGroupId) {
+		if (spi->groupNum == spriteGroupId) {
 			spi->flags |= kSFChanged | kSFNeedRedraw;
 		}
 	}
@@ -799,7 +799,7 @@ void ScummEngine_v90he::spriteGroupSet_case0_0(int spriteGroupId, int value1, in
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	for (int i = 1; i < _varNumSprites; i++) {
-		if (_spriteTable[i].group_num == spriteGroupId) {
+		if (_spriteTable[i].groupNum == spriteGroupId) {
 			_spriteTable[i].tx += value1;
 			_spriteTable[i].ty += value2;
 
@@ -813,7 +813,7 @@ void ScummEngine_v90he::spriteGroupSet_case0_1(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	for (int i = 1; i < _varNumSprites; i++) {
-		if (_spriteTable[i].group_num == spriteGroupId)
+		if (_spriteTable[i].groupNum == spriteGroupId)
 			_spriteTable[i].zorderPriority = value;
 	}
 }
@@ -822,8 +822,8 @@ void ScummEngine_v90he::spriteGroupSet_case0_2(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	for (int i = 1; i < _varNumSprites; i++) {
-		if (_spriteTable[i].group_num == spriteGroupId) {
-			_spriteTable[i].group_num = value;
+		if (_spriteTable[i].groupNum == spriteGroupId) {
+			_spriteTable[i].groupNum = value;
 			_spriteTable[i].flags |= kSFChanged | kSFNeedRedraw;
 		}
 	}
@@ -833,7 +833,7 @@ void ScummEngine_v90he::spriteGroupSet_case0_3(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	for (int i = 1; i < _varNumSprites; i++) {
-		if (_spriteTable[i].group_num == spriteGroupId) {
+		if (_spriteTable[i].groupNum == spriteGroupId) {
 			if (value)
 				_spriteTable[i].flags |= kSFMarkDirty | kSFBlitDirectly;
 			else
@@ -846,7 +846,7 @@ void ScummEngine_v90he::spriteGroupSet_case0_4(int spriteGroupId) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	for (int i = 1; i < _varNumSprites; i++) {
-		if (_spriteTable[i].group_num == spriteGroupId)
+		if (_spriteTable[i].groupNum == spriteGroupId)
 			spriteInfoSet_resetSprite(i);
 	}
 }
@@ -855,7 +855,7 @@ void ScummEngine_v90he::spriteGroupSet_case0_5(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	for (int i = 1; i < _varNumSprites; i++) {
-		if (_spriteTable[i].group_num == spriteGroupId) {
+		if (_spriteTable[i].groupNum == spriteGroupId) {
 			_spriteTable[i].delayAmount = value;
 			_spriteTable[i].delayCount = value;
 		}
@@ -866,7 +866,7 @@ void ScummEngine_v90he::spriteGroupSet_case0_6(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	for (int i = 1; i < _varNumSprites; i++) {
-		if (_spriteTable[i].group_num == spriteGroupId) {
+		if (_spriteTable[i].groupNum == spriteGroupId) {
 			if (value)
 				_spriteTable[i].flags |= kSFDelayed;
 			else
@@ -879,9 +879,9 @@ void ScummEngine_v90he::spriteGroupSet_case0_7(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	for (int i = 1; i < _varNumSprites; i++) {
-		if (_spriteTable[i].group_num == spriteGroupId) {
-			_spriteTable[i].field_54 = value;
-			if (_spriteTable[i].res_id)
+		if (_spriteTable[i].groupNum == spriteGroupId) {
+			_spriteTable[i].xmapNum = value;
+			if (_spriteTable[i].resId)
 				_spriteTable[i].flags |= kSFChanged | kSFNeedRedraw;
 		}
 	}
@@ -950,7 +950,7 @@ void ScummEngine_v90he::spriteGroupSet_scale_x_ratio_mul(int spriteGroupId, int 
 
 	if (_spriteGroups[spriteGroupId].scale_x_ratio_mul != value) {
 		_spriteGroups[spriteGroupId].scale_x_ratio_mul = value;
-		_spriteGroups[spriteGroupId].scale_x = _spriteGroups[spriteGroupId].scale_x_ratio_mul / _spriteGroups[spriteGroupId].scale_x_ratio_div;
+		_spriteGroups[spriteGroupId].scaleX = _spriteGroups[spriteGroupId].scale_x_ratio_mul / _spriteGroups[spriteGroupId].scale_x_ratio_div;
 
 		spriteGroupSet_scaling(spriteGroupId);
 		redrawSpriteGroup(spriteGroupId);
@@ -965,7 +965,7 @@ void ScummEngine_v90he::spriteGroupSet_scale_x_ratio_div(int spriteGroupId, int 
 
 	if (_spriteGroups[spriteGroupId].scale_x_ratio_div != value) {
 		_spriteGroups[spriteGroupId].scale_x_ratio_div = value;
-		_spriteGroups[spriteGroupId].scale_x = _spriteGroups[spriteGroupId].scale_x_ratio_mul / _spriteGroups[spriteGroupId].scale_x_ratio_div;
+		_spriteGroups[spriteGroupId].scaleX = _spriteGroups[spriteGroupId].scale_x_ratio_mul / _spriteGroups[spriteGroupId].scale_x_ratio_div;
 
 		spriteGroupSet_scaling(spriteGroupId);
 		redrawSpriteGroup(spriteGroupId);
@@ -977,7 +977,7 @@ void ScummEngine_v90he::spriteGroupSet_scale_y_ratio_mul(int spriteGroupId, int 
 
 	if (_spriteGroups[spriteGroupId].scale_y_ratio_mul != value) {
 		_spriteGroups[spriteGroupId].scale_y_ratio_mul = value;
-		_spriteGroups[spriteGroupId].scale_y = _spriteGroups[spriteGroupId].scale_y_ratio_mul / _spriteGroups[spriteGroupId].scale_y_ratio_div;
+		_spriteGroups[spriteGroupId].scaleY = _spriteGroups[spriteGroupId].scale_y_ratio_mul / _spriteGroups[spriteGroupId].scale_y_ratio_div;
 
 		spriteGroupSet_scaling(spriteGroupId);
 		redrawSpriteGroup(spriteGroupId);
@@ -992,7 +992,7 @@ void ScummEngine_v90he::spriteGroupSet_scale_y_ratio_div(int spriteGroupId, int 
 
 	if (_spriteGroups[spriteGroupId].scale_y_ratio_div != value) {
 		_spriteGroups[spriteGroupId].scale_y_ratio_div = value;
-		_spriteGroups[spriteGroupId].scale_y = _spriteGroups[spriteGroupId].scale_y_ratio_mul / _spriteGroups[spriteGroupId].scale_y_ratio_div;
+		_spriteGroups[spriteGroupId].scaleY = _spriteGroups[spriteGroupId].scale_y_ratio_mul / _spriteGroups[spriteGroupId].scale_y_ratio_div;
 
 		spriteGroupSet_scaling(spriteGroupId);
 		redrawSpriteGroup(spriteGroupId);
@@ -1028,10 +1028,10 @@ void ScummEngine_v90he::spritesResetGroup(int spriteGroupId) {
 
 	spg->dstResNum = 0;
 	spg->scaling = 0;
-	spg->scale_x = 0x3F800000;
+	spg->scaleX = 0x3F800000;
 	spg->scale_x_ratio_mul = 1;
 	spg->scale_x_ratio_div = 1;
-	spg->scale_y = 0x3F800000;
+	spg->scaleY = 0x3F800000;
 	spg->scale_y_ratio_mul = 1;
 	spg->scale_y_ratio_div = 1;
 }
@@ -1084,7 +1084,7 @@ void ScummEngine_v90he::spritesBlitToScreen() {
 					}
 					refreshScreen = true;
 				}
-				if (!(spi->flags & (kSFNeedRedraw | kSF30)) && spi->res_id)
+				if (!(spi->flags & (kSFNeedRedraw | kSF30)) && spi->resId)
 					spi->flags |= kSFNeedRedraw;
 			}
 		}
@@ -1137,11 +1137,11 @@ void ScummEngine_v90he::spritesUpdateImages() {
 
 				spi->delayCount = spi->delayAmount;
 			}
-			int state = spi->res_state;
-			++spi->res_state;
-			if (spi->res_state >= spi->res_wiz_states) {
-				spi->res_state = 0;
-				if (state == 0)
+			int resState = spi->resState;
+			++spi->resState;
+			if (spi->resState >= spi->res_wiz_states) {
+				spi->resState = 0;
+				if (resState == 0)
 					continue;
 			}
 			spi->flags |= kSFChanged | kSFNeedRedraw;
@@ -1180,8 +1180,8 @@ void ScummEngine_v90he::spritesSortActiveSprites() {
 				if (!(spi->flags & kSFImageless))
 					spi->flags |= kSFChanged;
 			}
-			if (spi->group_num)
-				groupZorder = _spriteGroups[spi->group_num].zorderPriority;
+			if (spi->groupNum)
+				groupZorder = _spriteGroups[spi->groupNum].zorderPriority;
 			else
 				groupZorder = 0;
 
@@ -1201,9 +1201,9 @@ void ScummEngine_v90he::spritesSortActiveSprites() {
 void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 	int spr_flags;
 	int16 spr_wiz_x, spr_wiz_y;
-	int res_id, res_state;
+	int resId, resState;
 	Common::Rect *bboxPtr;
-	int rot_angle, zoom;
+	int angle, zoom;
 	int32 w, h;
 	WizParameters wiz;
 
@@ -1226,16 +1226,16 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		}
 		
 		spi->flags &= ~kSFNeedRedraw;
-		res_id = spi->res_id;
-		res_state = spi->res_state;
-		loadImgSpot(spi->res_id, spi->res_state, spr_wiz_x, spr_wiz_y);
+		resId = spi->resId;
+		resState = spi->resState;
+		loadImgSpot(spi->resId, spi->resState, spr_wiz_x, spr_wiz_y);
 
-		if (spi->group_num) {
-			SpriteGroup *spg = &_spriteGroups[spi->group_num];
+		if (spi->groupNum) {
+			SpriteGroup *spg = &_spriteGroups[spi->groupNum];
 
 			if (spg->scaling) {
-				wiz.img.x1 = spi->tx * spg->scale_x - spr_wiz_x + spg->tx;
-				wiz.img.y1 = spi->ty * spg->scale_y - spr_wiz_y + spg->ty;
+				wiz.img.x1 = spi->tx * spg->scaleX - spr_wiz_x + spg->tx;
+				wiz.img.y1 = spi->ty * spg->scaleY - spr_wiz_y + spg->ty;
 			} else {
 				wiz.img.x1 = spi->tx - spr_wiz_x + spg->tx;
 				wiz.img.y1 = spi->ty - spr_wiz_y + spg->ty;
@@ -1245,18 +1245,18 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			wiz.img.y1 = spi->ty - spr_wiz_y;
 		}
 
-		spi->cur_img_state = wiz.img.state = res_state;
-		spi->cur_res_id = wiz.img.resNum = res_id;
+		spi->curImageState = wiz.img.state = resState;
+		spi->curResId = wiz.img.resNum = resId;
 		wiz.processFlags = kWPFNewState | kWPFSetPos;
-		spi->cur_rot_angle = spi->rot_angle;
+		spi->curAngle = spi->angle;
 		spi->cur_zoom = spi->zoom;
 		spi->pos.x = wiz.img.x1;
 		spi->pos.y = wiz.img.y1;
 		bboxPtr = &spi->bbox;
-		if (res_id) {
-			rot_angle = spi->rot_angle;
+		if (resId) {
+			angle = spi->angle;
 			zoom = spi->zoom;
-			getWizImageDim(res_id, res_state, w, h);
+			getWizImageDim(resId, resState, w, h);
 			if (!(spi->flags & (kSFZoomed | kSFRotated))) {
 				bboxPtr->left = wiz.img.x1;
 				bboxPtr->top = wiz.img.y1;
@@ -1275,8 +1275,8 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 						pts[j].y = pts[j].y * zoom / 256;
 					}
 				}
-				if ((spi->flags & kSFRotated) && rot_angle)
-					_wiz.polygonRotatePoints(pts, 4, rot_angle);
+				if ((spi->flags & kSFRotated) && angle)
+					_wiz.polygonRotatePoints(pts, 4, angle);
 
 				for (int j = 0; j < 4; ++j) {
 					pts[j].x += wiz.img.x1;
@@ -1301,10 +1301,10 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			wiz.img.flags &= ~kWIFMarkBufferDirty;
 			wiz.img.flags |= kWIFBlitToFrontVideoBuffer;
 		}
-		if (spi->field_54) {
+		if (spi->xmapNum) {
 			wiz.img.flags |= 0x200;
 			wiz.processFlags |= 4;
-			wiz.unk_15C = spi->field_54;
+			wiz.xmapNum = spi->xmapNum;
 		}
 		if (spr_flags & kSFNeedPaletteRemap)
 			wiz.img.flags |= kWIFRemapPalette;
@@ -1316,7 +1316,7 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		
 		if (spr_flags & kSFRotated) {
 			wiz.processFlags |= kWPFRotate;
-			wiz.angle = spi->rot_angle;
+			wiz.angle = spi->angle;
 		}
 		if (spr_flags & kSFZoomed) {
 			wiz.processFlags |= kWPFZoom;
@@ -1324,9 +1324,9 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		}
 		spi->imgFlags = wiz.img.flags;
 		
-		if (spi->group_num && (_spriteGroups[spi->group_num].flags & kSGFClipBox)) {
-			if (spi->bbox.intersects(_spriteGroups[spi->group_num].bbox)) {
-				spi->bbox.clip(_spriteGroups[spi->group_num].bbox);
+		if (spi->groupNum && (_spriteGroups[spi->groupNum].flags & kSGFClipBox)) {
+			if (spi->bbox.intersects(_spriteGroups[spi->groupNum].bbox)) {
+				spi->bbox.clip(_spriteGroups[spi->groupNum].bbox);
 				wiz.processFlags |= kWPFClipBox;
 				wiz.box = spi->bbox;
 			} else {
@@ -1341,9 +1341,9 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 			wiz.processFlags |= kWPFPaletteNum;
 			wiz.img.paletteNum = spi->paletteNum;
 		}
-		if (spi->res_id && spi->group_num && _spriteGroups[spi->group_num].dstResNum) {
+		if (spi->resId && spi->groupNum && _spriteGroups[spi->groupNum].dstResNum) {
 			wiz.processFlags |= kWPFDstResNum;
-			wiz.dstResNum = _spriteGroups[spi->group_num].dstResNum;
+			wiz.dstResNum = _spriteGroups[spi->groupNum].dstResNum;
 		}
 		displayWizComplexImage(&wiz);
 	}
