@@ -100,6 +100,12 @@ struct GameSpecificSettings;
 
 class SimonState : public Engine {
 public:
+	File *_mus_file;
+	uint16 *_mus_offsets;
+
+	void SimonState::readSting(uint a);
+	void SimonState::playSting(uint a);
+	
 	byte *_vc_ptr;								/* video code ptr */
 
 	uint32 *_game_offsets_ptr;
@@ -246,6 +252,7 @@ public:
 	bool _skip_speech;
 	byte _video_var_9;
 
+	uint _midi_sfx;
 	uint _last_music_played;
 
 	bool _show_preposition;

@@ -1594,7 +1594,9 @@ void SimonState::vc_52_play_sound()
 {
 	uint16 a = vc_read_next_word();
 
-	if (!(_game & GAME_SIMON2)) {
+	if (_game == GAME_SIMON1DOS) {
+			playSting(a);
+	} else if (!(_game & GAME_SIMON2)) {
 		_sound->playEffects(a);
 	} else {
 		if (a >= 0x8000) {

@@ -31,7 +31,9 @@ class MidiPlayer {
 public:
 	MidiPlayer();
 
+	bool _midi_sfx_toggle;
 	void read_all_songs (File *in, uint music);
+	void read_all_songs_old (File *in, uint music, uint16 size);
 	void read_all_songs_old (File *in, uint music);
 	void initialize();
 	void shutdown();
@@ -76,9 +78,9 @@ private:
 	byte _masterVolume;    // 0-255
 	bool _paused;
 
-	void read_mthd(File *in, Song *s, bool old, uint music);
+	void read_mthd(File *in, Song *s, bool old, uint music, uint16 size);
 
-	void read_one_song(File *in, Song *s, uint music);
+	void read_one_song(File *in, Song *s, uint music, uint16 size = 0);
 
 	static uint32 track_read_gamma(Track *t);
 	static byte track_read_byte(Track *t);

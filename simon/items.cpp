@@ -1045,7 +1045,7 @@ int SimonState::runScript()
 		case 185:{
 				if (_game & GAME_SIMON2)
 					goto invalid_opcode;
-				getVarOrWord();
+				_midi_sfx = getVarOrWord();
 			}
 			break;
 
@@ -1527,7 +1527,10 @@ void SimonState::o_unk_120(uint a)
 
 void SimonState::o_unk_163(uint a)
 {
-	_sound->playEffects(a);
+	if (_game == GAME_SIMON1DOS)
+		playSting(a);
+	else
+		_sound->playEffects(a);
 }
 
 void SimonState::o_unk_160(uint a)

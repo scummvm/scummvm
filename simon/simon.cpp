@@ -806,7 +806,7 @@ void SimonState::loadTablesIntoMem(uint subr_id)
 				closeTablesFile(in);
 
 				memcpy(filename, "SFXXXX", 6);
-				if (_game == GAME_SIMON1WIN )
+				if (_game == GAME_SIMON1WIN)
 					_sound->readSfxFile(filename, _gameDataPath);
 				else if (_game & GAME_SIMON2) {
 					_sound->loadSfxTable(_game_file, _game_offsets_ptr[atoi(filename + 6) - 1 + gss->SOUND_INDEX_BASE]);
@@ -826,6 +826,45 @@ void SimonState::loadTablesIntoMem(uint subr_id)
 
 	if (_debugMode)
 		warning("loadTablesIntoMem: didn't find %d", subr_id);
+}
+
+void SimonState::readSting(uint a)
+{
+	char filename[11];
+	uint16 size;
+
+	_mus_file = new File();
+	
+	sprintf(filename, "stings%i.mus", a);
+
+	_mus_file->open(filename, _gameDataPath);
+
+	if (!_mus_file->isOpen())
+		return;
+
+	size = _mus_file->readUint16LE();
+
+	_mus_offsets = (uint16 *)malloc(size);
+
+	_mus_file->seek(0, SEEK_SET);
+
+	if (_mus_file->read(_mus_offsets, size) != size)
+		error("Cannot read offsets");
+}
+
+void SimonState::playSting(uint a)
+{
+	if (!midi._midi_sfx_toggle)
+		return;
+
+	readSting(_midi_sfx);
+	
+	midi.shutdown();
+	_mus_file->seek(_mus_offsets[a], SEEK_SET);
+	midi.read_all_songs_old(_mus_file, a, _mus_offsets[a+1] - _mus_offsets[a]);
+
+	midi.initialize();
+	midi.play();
 }
 
 Subroutine *SimonState::getSubroutineByID(uint subroutine_id)
@@ -3099,7 +3138,14 @@ void SimonState::processSpecialKeys()
 			break;
 
 		case 's':
-			_sound->effectsPause(_effects_paused ^= 1);
+			if (_game == GAME_SIMON1DOS) {
+				midi._midi_sfx_toggle ^= 1;
+				if (midi._midi_sfx_toggle)				
+					midi.shutdown();
+				else
+					playMusic(0, _last_music_played);
+			} else
+				_sound->effectsPause(_effects_paused ^= 1);
 			break;
 
 		case 'b':
@@ -4502,6 +4548,8 @@ void SimonState::go()
 	} else {
 		_vk_t_toggle = true;
 	}
+
+	midi._midi_sfx_toggle = false;
 	
 	while (1) {
 		hitarea_stuff();
@@ -4810,6 +4858,9 @@ bool SimonState::load_game(uint slot)
 
 void SimonState::playMusic(uint music_unk, uint music)
 {
+	if (midi._midi_sfx_toggle)
+		return;
+
 	if (_game & GAME_SIMON2) {        // Simon 2 music
 		if (_game & GAME_WIN) {	
 			midi.shutdown();

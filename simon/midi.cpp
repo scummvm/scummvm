@@ -61,7 +61,16 @@ void MidiPlayer::read_all_songs_old(File *in, uint music)
 	}
 }
 
-void MidiPlayer::read_mthd(File *in, Song *s, bool old, uint music)
+void MidiPlayer::read_all_songs_old(File *in, uint music, uint16 size)
+{
+	_currentSong = _songs;
+
+	_lastDelay = 0;
+
+	read_one_song(in, &_songs[0], music, size);
+}
+
+void MidiPlayer::read_mthd(File *in, Song *s, bool old, uint music, uint16 size)
 {
 	Track *t;
 	uint i;
@@ -98,6 +107,9 @@ void MidiPlayer::read_mthd(File *in, Song *s, bool old, uint music)
 						6570, 5384, 8909, 6457, 16321, 2742, 8968, 4804, 8442, 7717,
 						9444, 5800, 1381, 5660, 6684, 2456, 4744, 2455, 1177, 1232,
 						17256, 5103, 8794, 4884, 16};
+			if (size)
+				t->data_size = size - 8;
+			else
 			t->data_size = music_data_size[music] - 8;
 		}
 
@@ -123,7 +135,7 @@ void MidiPlayer::read_mthd(File *in, Song *s, bool old, uint music)
 	}
 }
 
-void MidiPlayer::read_one_song(File *in, Song *s, uint music)
+void MidiPlayer::read_one_song(File *in, Song *s, uint music, uint16 size)
 {
 	_lastDelay = 0;
 
@@ -136,11 +148,11 @@ void MidiPlayer::read_one_song(File *in, Song *s, uint music)
 
 	switch (id) {
 	case 'MThd':
-		read_mthd(in, s, false, music);
+		read_mthd(in, s, false, music, size);
 		break;
 
 	case 'GMF\x1':
-		read_mthd(in, s, true, music);
+		read_mthd(in, s, true, music, size);
 		break;
 
 	default:
@@ -281,6 +293,9 @@ bool MidiPlayer::fill_helper(NoteRec *nr, MidiEvent *me)
 
 void MidiPlayer::reset_tracks()
 {
+	if (_midi_sfx_toggle)
+		return;
+
 	Track *t;
 	uint i;
 
