@@ -2416,16 +2416,32 @@ void Scumm_v5::decodeParseString() {
 		case 1:										/* color */
 			_string[textSlot].color = getVarOrDirectByte(0x80);
 			break;
-		case 2:										/* right */
+		case 2:										/* clipping */
 			_string[textSlot].right = getVarOrDirectWord(0x80);
+			break;
+		case 3:										/* erase */
+			{
+			int a = getVarOrDirectWord(0x80);
+			int b = getVarOrDirectWord(0x40);
+			warning("Scumm_v5::decodeParseString: Unhandled case 3: %d, %d\n", a, b);
+			}
 			break;
 		case 4:										/* center */
 			_string[textSlot].center = true;
 			_string[textSlot].overhead = false;
 			break;
 		case 6:										/* left */
-			_string[textSlot].center = false;
-			_string[textSlot].overhead = false;
+			// FIXME: not sure if GF_OLD_BUNDLE is the right thing to check...
+			// but Loom needs this, for sure.
+			if (_features & GF_OLD_BUNDLE) {
+				// FIXME: this value seems to be some kind of override
+				// for text spacing?!?
+				/* int a = */ getVarOrDirectWord(0x80);
+				
+			} else {
+				_string[textSlot].center = false;
+				_string[textSlot].overhead = false;
+			}
 			break;
 		case 7:										/* overhead */
 			_string[textSlot].overhead = true;
@@ -2484,6 +2500,7 @@ void Scumm_v5::decodeParseString() {
 			_scriptPointer = _messagePtr;
 			return;
 		default:
+			warning("Scumm_v5::decodeParseString: Unhandled case %d", _opcode & 0xF);
 			return;
 		}
 	}
