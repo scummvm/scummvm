@@ -48,10 +48,8 @@ static const VersionSettings simon_settings[] = {
 	{"simon1cd32", "Simon the Sorcerer 1 Talkie for Amiga CD32", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1CD32, "gameamiga"},
 	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2WIN, "GSPTR30"},
 	{"simon2win", "Simon the Sorcerer 2 Talkie for Windows", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2WIN, "GSPTR30."},
-	{"simon2amiga", "Simon the Sorcerer 2 Talkie for Amiga", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2MAC, "GSPTR30"},
-	{"simon2mac", "Simon the Sorcerer 2 Talkie for Mac", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2MAC, "GSPTR30"},
+	{"simon2mac", "Simon the Sorcerer 2 Talkie for Amiga or Mac", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2MAC, "GSPTR30"},
 	{"simon1demo", "Simon the Sorcerer 1 for DOS (Demo)", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1DEMO, "GDEMO"}, 
-	{"simon2demo", "Simon the Sorcerer 2 Talkie for DOS (Demo)", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2TALKIE, "GSPTR30"}, 
 
 	{NULL, NULL, 0, 0, 0, 0, 0, NULL}
 };
