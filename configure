@@ -567,7 +567,7 @@ else
 fi
 echo "$_zlib"
 
-echocheck "mpeg2 - version >= 0.4.0"
+echocheck "libmpeg2 >= 0.4.0"
 if test "$_mpeg2" = auto ; then
   _mpeg2=no
   cat > $TMPC << EOF
