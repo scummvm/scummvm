@@ -1213,7 +1213,13 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			a->flip = GW(2) != 0;
 			continue;
 		case AKC_CmdQue3:
-			tmp = GB(2);
+			// FIXME/TODO this is exception fot FT game for missing "half" footsteps
+			// see bug #886201
+			// this fix/hack was introduced a long time ago
+			if (_gameId == GID_FT)
+				tmp = GB(2) - 1;
+			else
+				tmp = GB(2);
 			if ((uint) tmp < 8)
 				akos_queCommand(3, a, a->sound[tmp], 0);
 			continue;
