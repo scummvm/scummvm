@@ -184,16 +184,23 @@ const char *getLanguageDescription(Language id) {
 
 struct PlatformDescription {
 	const char *code;
+	const char *code2;
 	const char *description;
 	Common::Platform id;
 };
 
 static const PlatformDescription g_platforms[] = {
-	{"pc", "PC", kPlatformPC},
-	{"amiga", "Amiga", kPlatformAmiga},
-	{"atari", "Atari ST", kPlatformAtariST},
-	{"macintosh", "Macintosh", kPlatformMacintosh},
-	{0, "Default", kPlatformUnknown}
+	{"pc", "dos", "PC", kPlatformPC},
+	{"amiga", "ami", "Amiga", kPlatformAmiga},
+	{"atari", "atari-st", "Atari ST", kPlatformAtariST},
+	{"macintosh", "mac", "Macintosh", kPlatformMacintosh},
+
+	// The 'official' spelling seems to be "FM-TOWNS" (e.g. in the Indy4 demo).
+	// However, on the net many variations can be seen, like "FMTOWNS",
+	// "FM TOWNS", "FmTowns", etc.
+	{"fmtowns", "towns", "FM-TOWNS", kPlatformFMTowns},
+
+	{0, 0, "Default", kPlatformUnknown}
 };
 
 Platform parsePlatform(const String &str) {
@@ -204,16 +211,16 @@ Platform parsePlatform(const String &str) {
 	
 	// Handle some special case separately, for compatibility with old config
 	// files.
-	if (!scumm_stricmp(s, "amiga") || !scumm_stricmp(s, "1"))
+	if (!strcmp(s, "1"))
 		return kPlatformAmiga;
-	else if (!scumm_stricmp(s, "atari-st") || !scumm_stricmp(s, "2"))
+	else if (!strcmp(s, "2"))
 		return kPlatformAtariST;
-	else if (!scumm_stricmp(s, "mac") || !scumm_stricmp(s, "3"))
+	else if (!strcmp(s, "3"))
 		return kPlatformMacintosh;
 
 	const PlatformDescription *l = g_platforms;
 	for (; l->code; ++l) {
-		if (!scumm_stricmp(l->code, s))
+		if (!scumm_stricmp(l->code, s) || !scumm_stricmp(l->code2, s))
 			return l->id;
 	}
 

@@ -137,11 +137,11 @@ enum Platform {
 	kPlatformPC = 0,
 	kPlatformAmiga = 1,
 	kPlatformAtariST = 2,
-	kPlatformMacintosh = 3
+	kPlatformMacintosh = 3,
+	kPlatformFMTowns = 4
 /*
 	kPlatformNES,
 	kPlatformSEGA,
-	kPlatformFMTowns,
 	kPlatformPCEngine
 */
 };
