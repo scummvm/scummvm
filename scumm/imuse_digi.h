@@ -35,18 +35,6 @@ class Scumm;
 class IMuseDigital {
 private:
 
-	struct Region {
-		int32 _offset;		// begin of region
-		int32 _length;		// length of region
-	};
-
-	struct Jump {
-		int32 _offset;		// jump position
-		int32 _dest;			// jump to 
-		int _hookId;			// id of jump
-		int _fadeParam;		// fade param
-	};
-
 	struct Channel {
 		int8 _volumeRight;
 		int8 _volume;
@@ -54,13 +42,7 @@ private:
 		int8 _volumeFadeParam;
 		int8 _volumeFadeStep;
 		int _delay;
-		bool _isJump;
-		int _numLoops;
 		int32 _offsetStop;
-		Jump _jump[MAX_IMUSE_JUMPS];
-		int _numJumps;
-		Region _region[MAX_IMUSE_REGIONS];
-		int _numRegions;
 		int32 _offset;
 		byte *_data;
 		int _freq;

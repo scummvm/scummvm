@@ -773,42 +773,27 @@ void IMuseDigital::handler() {
 
 			if (_channel[l]._offset + mixer_size > _channel[l]._size) {
 				new_size = _channel[l]._size - _channel[l]._offset;
-				if (_channel[l]._numLoops == 0) {
-					_channel[l]._toBeRemoved = true;
-					mixer_size = new_size;
-				}
+			}
+
+			if (_channel[l]._offset + mixer_size > _channel[l]._size) {
+				new_size = _channel[l]._size - _channel[l]._offset;
+				_channel[l]._toBeRemoved = true;
+				mixer_size = new_size;
 			}
 
 			byte *buf = (byte*)malloc(mixer_size);
 			memcpy(buf, _channel[l]._data + _channel[l]._offset, new_size);
 			_channel[l]._offset += mixer_size;
 
-			if (_channel[l]._bits == 12) {
-				for (i = 0; i < (mixer_size / 4); i++) {
-					byte sample1 = buf[i * 4 + 0];
-					byte sample2 = buf[i * 4 + 1];
-					byte sample3 = buf[i * 4 + 2];
-					byte sample4 = buf[i * 4 + 3];
-					uint16 sample_a = (uint16)(((int16)((sample1 << 8) | sample2) * _channel[l]._volumeRight) >> 8);
-					uint16 sample_b = (uint16)(((int16)((sample3 << 8) | sample4) * _channel[l]._volume) >> 8);
-					buf[i * 4 + 0] = (byte)(sample_a >> 8);
-					buf[i * 4 + 1] = (byte)(sample_a & 0xff);
-					buf[i * 4 + 2] = (byte)(sample_b >> 8);
-					buf[i * 4 + 3] = (byte)(sample_b & 0xff);
-				}
-			} else if (_channel[l]._bits == 8) {
-				for (i = 0; i < (mixer_size / 2); i++) {
-					buf[i * 2 + 0] = (byte)(((int8)(buf[i * 2 + 0] ^ 0x80) * _channel[l]._volumeRight) >> 8) ^ 0x80;
-					buf[i * 2 + 1] = (byte)(((int8)(buf[i * 2 + 1] ^ 0x80) * _channel[l]._volume) >> 8) ^ 0x80;
-				}
-			}
-
 			if (_scumm->_silentDigitalImuse == false) {
+				int8	pan = _channel[l]._volumeRight - _channel[l]._volume;
 				if (_channel[l]._mixerChannel == 0) {
 					_scumm->_mixer->newStream(&_channel[l]._mixerChannel, buf, mixer_size,
-					                           _channel[l]._freq, _channel[l]._mixerFlags, 100000, 255, 0);
+					                           _channel[l]._freq, _channel[l]._mixerFlags, 100000, _channel[l]._volume, pan);
 				} else {
 					_scumm->_mixer->appendStream(_channel[l]._mixerChannel, buf, mixer_size);
+					_scumm->_mixer->setChannelVolume(_channel[l]._mixerChannel, _channel[l]._volume);
+					_scumm->_mixer->setChannelPan(_channel[l]._mixerChannel, pan);
 				}
 			}
 			free(buf);
@@ -830,8 +815,6 @@ void IMuseDigital::startSound(int sound) {
 			}
 			_channel[l]._idSound = sound;
 			_channel[l]._offset = 0;
-			_channel[l]._numRegions = 0;
-			_channel[l]._numJumps = 0;
 			_channel[l]._volumeRight = 127;
 			_channel[l]._volume = 127;
 			_channel[l]._volumeFade = -1;
@@ -840,7 +823,7 @@ void IMuseDigital::startSound(int sound) {
 
 			uint32 tag;
 			int32 size = 0;
-			int r, t;
+			int t;
 
 			if (READ_UINT32(ptr) == MKID('Crea')) {
 				_channel[l]._bits = 8;
@@ -850,7 +833,6 @@ void IMuseDigital::startSound(int sound) {
 				_channel[l]._channels = 2;
 				_channel[l]._mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO | SoundMixer::FLAG_UNSIGNED;
 				byte *t_ptr= readCreativeVocFile(ptr, size, _channel[l]._freq);
-				_channel[l]._numLoops = 0;
 				
 				if (_channel[l]._freq == 22222) {
 					_channel[l]._freq = 22050;
@@ -882,33 +864,14 @@ void IMuseDigital::startSound(int sound) {
 							size = READ_BE_UINT32(ptr); ptr += size + 4;
 						break;
 						case MKID_BE('REGN'):
-							ptr += 4;
-							if (_channel[l]._numRegions >= MAX_IMUSE_REGIONS) {
-								warning("IMuseDigital::startSound(%d) Not enough space for Region", sound);
-								ptr += 8;
-								break;
-							}
-							_channel[l]._region[_channel[l]._numRegions]._offset = READ_BE_UINT32(ptr); ptr += 4;
-							_channel[l]._region[_channel[l]._numRegions]._length = READ_BE_UINT32(ptr); ptr += 4;
-							_channel[l]._numRegions++;
+							ptr += 12;
 						break;
 						case MKID_BE('STOP'):
 							ptr += 4;
 							_channel[l]._offsetStop = READ_BE_UINT32(ptr); ptr += 4;
 						break;
 						case MKID_BE('JUMP'):
-							ptr += 4;
-							if (_channel[l]._numJumps >= MAX_IMUSE_JUMPS) {
-								warning("IMuseDigital::startSound(%d) Not enough space for Jump", sound);
-								ptr += 16;
-								break;
-							}
-							_channel[l]._jump[_channel[l]._numJumps]._offset = READ_BE_UINT32(ptr); ptr += 4;
-							_channel[l]._jump[_channel[l]._numJumps]._dest = READ_BE_UINT32(ptr); ptr += 4;
-							_channel[l]._jump[_channel[l]._numJumps]._hookId = READ_BE_UINT32(ptr); ptr += 4;
-							_channel[l]._jump[_channel[l]._numJumps]._fadeParam = READ_BE_UINT32(ptr); ptr += 4;
-							_channel[l]._isJump = true;
-							_channel[l]._numJumps++;
+							ptr += 20;
 						break;
 						case MKID_BE('DATA'):
 							size = READ_BE_UINT32(ptr); ptr += 4;
@@ -919,32 +882,10 @@ void IMuseDigital::startSound(int sound) {
 					if (tag == MKID_BE('DATA')) break;
 				}
 
-//				if ((sound == 131) || (sound == 123) || (sound == 122)) {
-					_channel[l]._isJump = false;
-					_channel[l]._numJumps = 0;
-//				}
-
 				uint32 header_size = ptr - s_ptr;
 				_channel[l]._offsetStop -= header_size;
 				if (_channel[l]._bits == 12) {
 					_channel[l]._offsetStop = (_channel[l]._offsetStop / 3) * 4;
-				}
-				for (r = 0; r < _channel[l]._numRegions; r++) {
-					_channel[l]._region[r]._offset -= header_size;
-					if (_channel[l]._bits == 12) {
-						_channel[l]._region[r]._offset = (_channel[l]._region[r]._offset / 3) * 4;
-						_channel[l]._region[r]._length = (_channel[l]._region[r]._length / 3) * 4;
-					}
-				}
-				if (_channel[l]._numJumps > 0) {
-					for (r = 0; r < _channel[l]._numJumps; r++) {
-						_channel[l]._jump[r]._offset -= header_size;
-						_channel[l]._jump[r]._dest -= header_size;
-						if (_channel[l]._bits == 12) {
-							_channel[l]._jump[r]._offset = (_channel[l]._jump[r]._offset / 3) * 4;
-							_channel[l]._jump[r]._dest = (_channel[l]._jump[r]._dest / 3) * 4;
-						}
-					}
 				}
 
 				// Always output stereo, because in IMuseDigital::handler the data is expected to be in stereo, and
