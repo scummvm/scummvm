@@ -2078,6 +2078,7 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 	//now form the text sprite
 	struct lowTextManager_t textInfo;
 	textInfo = _skyText->lowTextManager(textNum, FIXED_TEXT_WIDTH, 0, (uint8)target->extCompact->spColour, true);    
+	Compact *textCompact = SkyState::fetchCompact(textInfo.compactNum);
 	target->extCompact->spTextId = textInfo.compactNum;	//So we know what text to kill
 	byte *textGfx = textInfo.textData;
 
@@ -2103,13 +2104,13 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 			xPos -= FIXED_TEXT_WIDTH;
 		}
 			
-		_compact->xcood = xPos;
+		textCompact->xcood = xPos;
 		uint16 yPos = target->ycood + ((struct dataFileHeader *)targetGfx)->s_offset_y - 6 - ((struct dataFileHeader *)textGfx)->s_height;
 		
 		if (yPos < TOP_LEFT_Y)
 			yPos = TOP_LEFT_Y;
 
-		_compact->ycood = yPos;
+		textCompact->ycood = yPos;
 		//_logicTalkButtonRelease = 1;  
 			
 	} else {
