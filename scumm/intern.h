@@ -76,6 +76,7 @@ protected:
 	void setBuiltinCursor(int index);
 	void redefineBuiltinCursorFromChar(int index, int chr);
 	void redefineBuiltinCursorHotspot(int index, int x, int y);
+	void saveOrLoadCursorImages(Serializer *s);
 
 	/* Version 5 script opcodes */
 	void o5_actorFollowCamera();

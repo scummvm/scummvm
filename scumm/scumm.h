@@ -386,6 +386,7 @@ public:
 	void updateCursor();
 	virtual void animateCursor() {}
 	void updatePalette();
+	virtual void saveOrLoadCursorImages(Serializer *s) {}
 
 	/**
 	 * Flag which signals that the SMUSH video playback should end now

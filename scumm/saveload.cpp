@@ -877,6 +877,9 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		_imuseDigital->saveOrLoad(s);
 	}
 
+	// This is probably only needed for Loom.
+	saveOrLoadCursorImages(s);
+
 	if (s->isLoading())
 		setupVolumes();
 }

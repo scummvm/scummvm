@@ -26,6 +26,7 @@
 #include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource_v7he.h"
+#include "scumm/saveload.h"
 #include "scumm/scumm.h"
 
 
@@ -393,6 +394,16 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 	}
 
 	updateCursor();
+}
+
+void ScummEngine_v5::saveOrLoadCursorImages(Serializer *s) {
+	const SaveLoadEntry cursorEntries[] = {
+		MKARRAY2(ScummEngine_v5, _cursorImages[0][0], sleUint16, 16, 4, (byte*)_cursorImages[1] - (byte*)_cursorImages[0], VER(44)),
+		MKARRAY(ScummEngine_v5, _cursorHotspots[0], sleByte, 8, VER(44)),
+		MKEND()
+	};
+
+	s->saveLoadEntries(this, cursorEntries);
 }
 
 } // End of namespace Scumm

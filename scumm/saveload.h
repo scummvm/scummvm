@@ -32,11 +32,11 @@ namespace Scumm {
 // Can be useful for other ports too :)
 
 #define VER(x) x
-#define CURRENT_VER 43
+#define CURRENT_VER 44
 
 // To work around a warning in GCC 3.2 (and 3.1 ?) regarding non-POD types,
 // we use a small trick: instead of 0 we use 42. Why? Well, it seems newer GCC
-// versions hae a heuristic built in to detect "offset-of" patterns - which is exactly
+// versions have a heuristic built in to detect "offset-of" patterns - which is exactly
 // what our OFFS macro does. Now, for non-POD types this is not really legal, because
 // member need not be at a fixed offset relative to the variable, even if they are in
 // current reality (many of our complex structs are non-POD; for an explanation of 
