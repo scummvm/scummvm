@@ -59,8 +59,13 @@ inline uint32_t get_BE_uint32(const char *data) {
 }
 
 inline float get_float(const char *data) {
-  #error get_float not implemented on BE machines yet
-  return *(reinterpret_cast<const float *>(data));
+  const unsigned char *udata = reinterpret_cast<const unsigned char *>(data);
+  unsigned char fdata[4];
+  fdata[0] = udata[3];
+  fdata[1] = udata[2];
+  fdata[2] = udata[1];
+  fdata[3] = udata[0];
+  return *(reinterpret_cast<const float *>(fdata));
 }
 
 #else
