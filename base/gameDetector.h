@@ -79,7 +79,7 @@ public:
 
 	static int parseGraphicsMode(const String &s);	// Used in main()
 	static int detectMusicDriver(int midiFlags);
-	
+
 	static GameSettings findGame(const String &gameName, const Plugin **plugin = NULL);
 
 protected:

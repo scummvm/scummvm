@@ -232,7 +232,7 @@ int main(int argc, char *argv[]) {
 
 	// Update the config file
 	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
-	
+
 	// Load the plugins
 	PluginManager::instance().loadPlugins();
 
@@ -242,7 +242,7 @@ int main(int argc, char *argv[]) {
 
 	// Create the system object
 	OSystem *system = OSystem::instance();
-	
+
 	// Create the timer services
 	g_timer = new Timer(system);
 
@@ -270,7 +270,7 @@ int main(int argc, char *argv[]) {
 
 		// See if the game should default to 1x scaler
 		if (!ConfMan.hasKey("gfx_mode", detector._targetName) && 
-		   (detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
+			(detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
 			prop.gfx_mode = GFX_NORMAL;
 			system->property(OSystem::PROP_SET_GFX_MODE, &prop);
 		} else
@@ -279,7 +279,7 @@ int main(int argc, char *argv[]) {
 			prop.gfx_mode = detector.parseGraphicsMode(ConfMan.get("gfx_mode"));
 			system->property(OSystem::PROP_SET_GFX_MODE, &prop);
 		}
-	
+
 		// (De)activate fullscreen mode as determined by the config settings 
 		if (ConfMan.getBool("fullscreen") != (system->property(OSystem::PROP_GET_FULLSCREEN, 0) != 0))
 			system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);

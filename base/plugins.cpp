@@ -48,7 +48,6 @@ typedef GameList (*DetectFunc)(const FSList &fslist);
 
 #pragma mark -
 
-
 GameSettings Plugin::findGame(const char *gameName) const {
 	// Find the GameSettings for this game
 	assert(gameName);
@@ -63,9 +62,7 @@ GameSettings Plugin::findGame(const char *gameName) const {
 	return result;
 }
 
-
 #pragma mark -
-
 
 class StaticPlugin : public Plugin {
 	const char *_name;
@@ -89,9 +86,7 @@ public:
 	}
 };
 
-
 #pragma mark -
-
 
 #ifdef DYNAMIC_MODULES
 
@@ -103,13 +98,13 @@ class DynamicPlugin : public Plugin {
 	EngineFactory _ef;
 	DetectFunc _df;
 	GameList _games;
-	
+
 	void *findSymbol(const char *symbol);
 
 public:
 	DynamicPlugin(const char *filename)
 		: _dlHandle(0), _filename(filename), _ef(0), _df(0), _games() {}
-	
+
 	const char *getName() const					{ return _name.c_str(); }
 
 	Engine *createInstance(GameDetector *detector, OSystem *syst) const {
@@ -148,12 +143,12 @@ void *DynamicPlugin::findSymbol(const char *symbol) {
 bool DynamicPlugin::loadPlugin() {
 	assert(!_dlHandle);
 	_dlHandle = dlopen(_filename.c_str(), RTLD_LAZY);
-	
+
 	if (!_dlHandle) {
 		warning("Failed loading plugin '%s' (%s)", _filename.c_str(), dlerror());
 		return false;
 	}
-	
+
 	// Query the plugin's name
 	NameFunc nameFunc = (NameFunc)findSymbol("PLUGIN_name");
 	if (!nameFunc) {
@@ -161,7 +156,7 @@ bool DynamicPlugin::loadPlugin() {
 		return false;
 	}
 	_name = nameFunc();
-	
+
 	// Query the plugin for the targets it supports
 	TargetListFunc gameListFunc = (TargetListFunc)findSymbol("PLUGIN_getSupportedGames");
 	if (!gameListFunc) {
@@ -169,14 +164,14 @@ bool DynamicPlugin::loadPlugin() {
 		return false;
 	}
 	_games = gameListFunc();
-	
+
 	// Retrieve the factory function
 	_ef = (EngineFactory)findSymbol("PLUGIN_createEngine");
 	if (!_ef) {
 		unloadPlugin();
 		return false;
 	}
-	
+
 	// Retrieve the detector function
 	_df = (DetectFunc)findSymbol("PLUGIN_detectGames");
 	if (!_df) {
@@ -197,7 +192,6 @@ void DynamicPlugin::unloadPlugin() {
 #endif	// DYNAMIC_MODULES
 
 #pragma mark -
-
 
 PluginManager::PluginManager() {
 }

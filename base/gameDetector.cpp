@@ -225,7 +225,7 @@ GameSettings GameDetector::findGame(const String &gameName, const Plugin **plugi
 	// Find the GameSettings for this target
 	const PluginList &plugins = PluginManager::instance().getPlugins();
 	GameSettings result = {NULL, NULL, MDT_NONE, 0, NULL};
-	
+
 	PluginList::ConstIterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		result = (*iter)->findGame(gameName.c_str());
@@ -237,7 +237,6 @@ GameSettings GameDetector::findGame(const String &gameName, const Plugin **plugi
 	}
 	return result;
 }
-
 
 //
 // Various macros used by the command line parser.
@@ -280,7 +279,6 @@ GameSettings GameDetector::findGame(const String &gameName, const Plugin **plugi
 		continue; \
 	}
 
-
 void GameDetector::parseCommandLine(int argc, char **argv) {
 	int i;
 	char *s;
@@ -292,7 +290,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 	// Iterate over all command line arguments, backwards.
 	for (i = argc - 1; i >= 1; i--) {
 		s = argv[i];
-		
+
 		if (s[0] != '-' || s[1] == '\0') {
 			// Last argument: this could be a target name.
 			// To verify this, check if there is either a game domain (i.e
@@ -307,12 +305,12 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 					goto ShowHelpAndExit;
 			}
 		} else {
-			
+
 			shortCmdLower = tolower(s[1]);
 			isLongCmd = (s[0] == '-' && s[1] == '-');
 			cmdValue = (shortCmdLower == s[1]);
 			s += 2;
-	
+
 			DO_OPTION('b', "boot-param")
 				ConfMan.set("boot_param", (int)strtol(option, 0, 10));
 			END_OPTION
@@ -335,11 +333,11 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 					goto ShowHelpAndExit;
 				ConfMan.set("music_driver", option);
 			END_OPTION
-			
+
 			DO_OPTION_BOOL('f', "fullscreen")
 				ConfMan.set("fullscreen", cmdValue);
 			END_OPTION
-			
+
 			DO_OPTION('g', "gfx-mode")
 				int gfx_mode = parseGraphicsMode(option);
 				// TODO: Instead of just showing the generic help text,
@@ -350,90 +348,90 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 					goto ShowHelpAndExit;
 				ConfMan.set("gfx_mode", option);
 			END_OPTION
-	
+
 			DO_OPTION_CMD('h', "help")
 				printf(USAGE_STRING);
 				exit(0);
 			END_OPTION
-			
+
 			DO_OPTION('m', "music-volume")
 				ConfMan.set("music_volume", (int)strtol(option, 0, 10));
 			END_OPTION
-			
+
 			DO_OPTION_BOOL('n', "nosubtitles")
 				ConfMan.set("nosubtitles", cmdValue);
 			END_OPTION
-			
+
 			DO_OPTION('o', "master-volume")
 				ConfMan.set("master_volume", (int)strtol(option, 0, 10));
 			END_OPTION
-			
+
 			DO_OPTION('p', "path")
 				// TODO: Verify whether the path is valid
 				ConfMan.set("path", option);
 			END_OPTION
-			
+
 			DO_OPTION('q', "language")
 				if (Common::parseLanguage(option) == Common::UNK_LANG)
 					goto ShowHelpAndExit;
 				ConfMan.set("language", option);
 			END_OPTION
-			
+
 			DO_OPTION('s', "sfx-volume")
 				ConfMan.set("sfx_volume", (int)strtol(option, 0, 10));
 			END_OPTION
-			
+
 			DO_OPTION_CMD('t', "list-targets")
 				listTargets();
 				exit(0);
 			END_OPTION
-			
+
 			DO_OPTION_BOOL('u', "dump-scripts")
 				_dumpScripts = true;
 			END_OPTION
-			
+
 			DO_OPTION_CMD('v', "version")
 				printf("%s\n", gScummVMFullVersion);
 				exit(0);
 			END_OPTION
-			
+
 			DO_OPTION('x', "save-slot")
 				ConfMan.set("save_slot", (option != NULL) ? (int)strtol(option, 0, 10) : 0);
 			END_OPTION
-			
+
 			DO_OPTION_CMD('z', "list-games")
 				listGames();
 				exit(0);
 			END_OPTION
-			
+
 			DO_LONG_OPTION("cdrom")
 				ConfMan.set("cdrom", (int)strtol(option, 0, 10));
 			END_OPTION
-	
+
 			DO_LONG_OPTION_OPT("joystick")
 				ConfMan.set("joystick_num", (option != NULL) ? (int)strtol(option, 0, 10) : 0);
 			END_OPTION
-			
+
 			DO_LONG_OPTION("platform")
 				int platform = Common::parsePlatform(option);
 				if (platform == Common::kPlatformUnknown)
 					goto ShowHelpAndExit;
-	
+
 				ConfMan.set("platform", platform);
 			END_OPTION
-	
+
 			DO_LONG_OPTION_BOOL("multi-midi")
 				ConfMan.set("multi_midi", cmdValue);
 			END_OPTION
-	
+
 			DO_LONG_OPTION_BOOL("native-mt32")
 				ConfMan.set("native_mt32", cmdValue);
 			END_OPTION
-	
+
 			DO_LONG_OPTION_BOOL("aspect-ratio")
 				ConfMan.set("aspect_ratio", cmdValue);
 			END_OPTION
-	
+
 #ifndef DISABLE_SCUMM
 			DO_LONG_OPTION("tempo")
 				// Use the special value '0' for the base in (int)strtol. 
@@ -441,7 +439,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				// as "0x1234", but also decimal values ("123").
 				ConfMan.set("tempo", (int)strtol(option, 0, 0));
 			END_OPTION
-			
+
 			DO_LONG_OPTION("talkspeed")
 				ConfMan.set("talkspeed", (int)strtol(option, 0, 10));
 			END_OPTION
@@ -450,18 +448,18 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				ConfMan.set("demo_mode", cmdValue);
 			END_OPTION
 #endif
-	
+
 #ifndef DISABLE_SKY
 			DO_LONG_OPTION_BOOL("floppy-intro")
 				ConfMan.set("floppy_intro", cmdValue);
 			END_OPTION
 #endif
-	
+
 			// If we get till here, the option is unhandled and hence unknown.
 			goto ShowHelpAndExit;
 		}
 	}
-	
+
 	if (current_option) {
 ShowHelpAndExit:
 		printf(USAGE_STRING);
@@ -498,9 +496,9 @@ bool GameDetector::detectGame() {
 	else
 		realGame = _targetName;
 	printf("Looking for %s\n", realGame.c_str());
-	
+
 	_game = findGame(realGame, &_plugin);
-	
+
 	if (_game.gameName) {
 		printf("Trying to start game '%s'\n", _game.description);
 		return true;
@@ -534,7 +532,7 @@ int GameDetector::detectMusicDriver(int midiFlags) {
 					// whether a sequencer is available, and use it instead.
 					musicDriver = MD_ADLIB;
 				#else
-				    musicDriver = MD_NULL;
+					musicDriver = MD_NULL;
 				#endif
 			} else
 				musicDriver = MD_ADLIB;

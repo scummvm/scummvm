@@ -38,7 +38,7 @@ Engine::Engine(GameDetector *detector, OSystem *syst)
 	_mixer = detector->createMixer();
 
 	_timer = g_timer;
-	
+
 	// Set default file directory
 	File::setDefaultDirectory(_gameDataPath);
 }
@@ -121,7 +121,7 @@ void NORETURN CDECL error(const char *s, ...) {
 	// Finally exit. quit() will terminate the program if g_system iss present
 	if (g_system)
 		g_system->quit();
-	
+
 	exit(1);
 }
 
