@@ -794,6 +794,8 @@ void IMuseDigital::mixerCallback() {
 				_channel[l].toBeRemoved = true;
 			}
 
+			mixer_size &= ~1;	// Size *must* be even, after all this is stereo data
+
 			byte *buf = (byte *)malloc(mixer_size);
 			memcpy(buf, _channel[l].data + _channel[l].offset, mixer_size);
 			_channel[l].offset += mixer_size;
