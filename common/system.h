@@ -100,13 +100,15 @@ public:
 		PROP_TOGGLE_ASPECT_RATIO,
 		PROP_TOGGLE_MOUSE_GRAB,
 		PROP_WANT_RECT_OPTIM,
-		PROP_HAS_SCALER
+		PROP_HAS_SCALER,
+		PROP_TOGGLE_VIRTUAL_KEYBOARD
 	};
 	union Property {
 		const char *caption;
 		int cd_num;
 		int gfx_mode;
 		bool show_cursor;
+		bool show_keyboard;
 	};
 	
 	enum SoundFormat {
