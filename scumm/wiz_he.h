@@ -103,11 +103,13 @@ struct Wiz {
 	void polygonClear();
 	void polygonLoad(const uint8 *polData);
 	void polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, int vert2y, int vert3x, int vert3y, int vert4x, int vert4y);
+	void polygonCalcBoundBox(Common::Point *vert, int numVerts, Common::Rect & bound);
 	void polygonErase(int fromId, int toId);
 	int polygonHit(int id, int x, int y);
 	bool polygonDefined(int id);
 	bool polygonContains(const WizPolygon &pol, int x, int y);
-	
+	void polygonRotatePoints(Common::Point *pts, int num, int alpha);
+
 	static void copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch);	
 	static void copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect);
 	static void copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor);

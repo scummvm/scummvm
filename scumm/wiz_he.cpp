@@ -88,18 +88,35 @@ void Wiz::polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, in
 	wp->vert[4].x = vert1x;
 	wp->vert[4].y = vert1y;
 	wp->id = id;
-	wp->numVerts = 5;
+	wp->numVerts = 5;  
 	wp->flag = flag;	
 
-	wp->bound.left = 10000;
-	wp->bound.top = 10000;
-	wp->bound.right = -10000;
-	wp->bound.bottom = -10000;
+	polygonCalcBoundBox(wp->vert, wp->numVerts, wp->bound);
+}
+
+void Wiz::polygonRotatePoints(Common::Point *pts, int num, int angle) {
+	double alpha = angle * PI / 180.;
+	double cos_alpha = cos(alpha);
+	double sin_alpha = sin(alpha);
+
+	for (int i = 0; i < num; ++i) {
+		int16 x = pts[i].x;
+		int16 y = pts[i].y;
+		pts[i].x = (int16)(x * cos_alpha - y * sin_alpha);
+		pts[i].y = (int16)(y * cos_alpha + x * sin_alpha);
+	}
+}
+
+void Wiz::polygonCalcBoundBox(Common::Point *vert, int numVerts, Common::Rect &bound) {
+	bound.left = 10000;
+	bound.top = 10000;
+	bound.right = -10000;
+	bound.bottom = -10000;
 
 	// compute bounding box
-	for (int j = 0; j < wp->numVerts; j++) {
-		Common::Rect r(wp->vert[j].x, wp->vert[j].y, wp->vert[j].x + 1, wp->vert[j].y + 1);
-		wp->bound.extend(r);
+	for (int j = 0; j < numVerts; j++) {
+		Common::Rect r(vert[j].x, vert[j].y, vert[j].x + 1, vert[j].y + 1);
+		bound.extend(r);
 	}
 }
 
@@ -1163,21 +1180,14 @@ void ScummEngine_v90he::drawWizComplexPolygon(int resnum, int state, int po_x, i
 			pts[i].y = pts[i].y * zoom / 256;
 		}
 	}
-	if (angle != 0) {
-		double alpha = angle * PI / 180.;
-		double cos_alpha = cos(alpha);
-		double sin_alpha = sin(alpha);
-		for (int i = 0; i < 4; ++i) {
-			int16 x = pts[i].x;
-			int16 y = pts[i].y;
-			pts[i].x = (int16)(x * cos_alpha - y * sin_alpha);
-			pts[i].y = (int16)(y * cos_alpha + x * sin_alpha);
-		}
-	}
+	if (angle)
+		_wiz.polygonRotatePoints(pts, 4, angle);
+
 	for (int i = 0; i < 4; ++i) {
 		pts[i].x += po_x;
 		pts[i].y += po_y;
 	}
+
 	// XXX drawWizPolygonPoints(resnum, state, pts, r, VAR(117));
 	warning("ScummEngine_v90he::drawWizComplexPolygon() partially implemented");
 }

@@ -1222,28 +1222,15 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 						pts[j].y = pts[i].y * zoom / 256;
 					}
 				}
-				if (spi->flags & kSFRotated) {
-					double alpha = rot_angle * PI / 180.;
-					double cos_alpha = cos(alpha);
-					double sin_alpha = sin(alpha);
-					for (int j = 0; j < 4; ++j) {
-						int16 x = pts[j].x;
-						int16 y = pts[j].y;
-						pts[j].x = (int16)(x * cos_alpha - y * sin_alpha);
-						pts[j].y = (int16)(y * cos_alpha + x * sin_alpha);
-					}
-				}
+				if (spi->flags & kSFRotated)
+					_wiz.polygonRotatePoints(pts, 4, rot_angle);
 
 				for (int j = 0; j < 4; ++j) {
 					pts[j].x += wiz.img.x1;
 					pts[j].y += wiz.img.y1;
 				}
 
-				for (int j = 0; j < 4; j++) {
-					Common::Rect r(pts[j].x, pts[j].y, pts[j].x + 1, pts[j].y + 1);
-					spi->bbox.extend(r);
-				}
-
+				_wiz.polygonCalcBoundBox(pts, 4, spi->bbox);
 			}
 		} else {
 			bboxPtr->left = 1234;
