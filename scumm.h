@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.6  2001/10/11 08:00:42  strigeus
+ * Dump scripts by using DUMP_SCRIPTS as a compile option instead.
+ *
  * Revision 1.5  2001/10/10 10:02:33  strigeus
  * alternative mouse cursor
  * basic save&load
@@ -41,7 +44,6 @@
 #define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
 
 #define BYPASS_COPY_PROT
-#define DUMP_SCRIPTS
 
 struct Scumm;
 struct Actor;
