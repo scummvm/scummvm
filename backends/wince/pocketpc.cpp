@@ -177,8 +177,8 @@ pseudoGAPI availablePseudoGAPI[] = {
 	},
 	{ TEXT("Compaq iPAQ H3600"),   /* this is just a test for my device :) */
 	  (void*)0xAC05029E,
-	  320,
 	  240,
+	  320,
 	  640,
 	  -2,
 	  16,
@@ -249,7 +249,7 @@ BOOL defaultSHSipPreference(HWND handle, SIPSTATE state) {
 /* Default GAPI */
 
 int defaultGXOpenDisplay(HWND hWnd, DWORD dwFlags) {
-	return 0;
+	return GAPI_SIMU;
 }
 
 int defaultGXCloseDisplay() {
@@ -311,8 +311,8 @@ GameX *gameX;
 int gameXGXOpenDisplay(HWND hWnd, DWORD dwFlags) {
 	gameX = new GameX();
 	if (!gameX->OpenGraphics()) {
-		MessageBox(NULL, TEXT("Couldn't initialize GameX"), TEXT("Error"), MB_OK);
-		exit(1);
+		MessageBox(NULL, TEXT("Couldn't initialize GameX. Reverting to GDI graphics"), TEXT("PocketScumm rendering"), MB_OK);
+		noGAPI = 1;
 	}
 	return 0;
 }
@@ -418,6 +418,8 @@ extern void endScanPath();
 extern void abortScanPath();
 
 void keypad_init();
+
+extern char noGAPI;
 
 class OSystem_WINCE3 : public OSystem {
 public:
@@ -707,7 +709,32 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	//HMODULE SDLAudio_handle;
 	HMODULE GAPI_handle;
 
+	/* Create the main window */
+	WNDCLASS wcex;
+	wcex.style			= CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc	= (WNDPROC)OSystem_WINCE3::WndProc;
+	wcex.cbClsExtra		= 0;
+	wcex.cbWndExtra		= 0;
+	wcex.hInstance		= GetModuleHandle(NULL);
+	wcex.hIcon			= 0;
+	wcex.hCursor		= NULL;
+	wcex.hbrBackground	= (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wcex.lpszMenuName	= 0;	
+	wcex.lpszClassName	= TEXT("ScummVM");
+	if (!RegisterClass(&wcex))
+		Error(TEXT("Cannot register window class!"));
+
+	hWnd_Window = CreateWindow(TEXT("ScummVM"), TEXT("ScummVM"), WS_VISIBLE,
+      0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, GetModuleHandle(NULL), NULL);
+
+	ShowWindow(hWnd_Window, SW_SHOW);
+	UpdateWindow(hWnd_Window);
+
 	hide_toolbar = false;
+	noGAPI = 0;
+
+	g_config = new Config("scummvm.ini", "scummvm");
+	g_config->set_writing(true);
 
 	// See if we're running on a Windows CE version supporting aygshell
 	aygshell_handle = LoadLibrary(TEXT("aygshell.dll"));
@@ -754,8 +781,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 		}
 
 		if (!availablePseudoGAPI[i].device) {
-			MessageBox(NULL, TEXT("Cannot find GX.dll and no workaround for this device ! better luck next time ..."), TEXT("GAPI not found"), MB_OK);
-			exit(1);
+			noGAPI = 1;
+		}
+		else {
+			if (!g_config->getBool("DirectVideoCheck", false, "wince")) {
+				if (MessageBox(NULL, TEXT("Direct video support is available for this device. Do you want to use it ?"), TEXT("PocketScumm Rendering"), MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON1|MB_APPLMODAL) == IDNO)
+					noGAPI = 1;
+				MessageBox(NULL, TEXT("Delete scummvm.ini or remove the DirectVideoCheck key if you want to change this setting later"), TEXT("PocketScumm Rendering"), MB_OK|MB_APPLMODAL);
+				g_config->setBool("DirectVideoCheck", true, "wince");
+				g_config->flush();
+			}
 		}
 
 		dynamicGXOpenInput = defaultGXOpenInput;
@@ -787,9 +822,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 		gfx_mode_switch = false;
 	}
 
-	g_config = new Config("scummvm.ini", "scummvm");
-	g_config->set_writing(true);
-
 	sound = g_config->getBool("Sound", true, "wince");
 	if (sound) 
 		sound_activated = sound;
@@ -802,26 +834,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 
 	select_game = true;
 
-	/* Create the main window */
-	WNDCLASS wcex;
-	wcex.style			= CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc	= (WNDPROC)OSystem_WINCE3::WndProc;
-	wcex.cbClsExtra		= 0;
-	wcex.cbWndExtra		= 0;
-	wcex.hInstance		= GetModuleHandle(NULL);
-	wcex.hIcon			= 0;
-	wcex.hCursor		= NULL;
-	wcex.hbrBackground	= (HBRUSH)GetStockObject(BLACK_BRUSH);
-	wcex.lpszMenuName	= 0;	
-	wcex.lpszClassName	= TEXT("ScummVM");
-	if (!RegisterClass(&wcex))
-		Error(TEXT("Cannot register window class!"));
 
-	hWnd_Window = CreateWindow(TEXT("ScummVM"), TEXT("ScummVM"), WS_VISIBLE,
-      0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, GetModuleHandle(NULL), NULL);
-
-	ShowWindow(hWnd_Window, SW_SHOW);
-	UpdateWindow(hWnd_Window);
 	GraphicsOn(hWnd_Window, gfx_mode_switch);  // open GAPI in Portrait mode
 	GAPIKeysInit();
 	Cls();
@@ -925,10 +938,11 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 	switch (message) 
 	{
 	case WM_CREATE:
+
 		memset(&sai, 0, sizeof(sai));
 		dynamicSHSipPreference(hWnd, SIP_FORCEDOWN);
 //		SHSipPreference(hWnd, SIP_INPUTDIALOG);
-
+		
 		return 0;
 
 	case WM_DESTROY:
@@ -1520,12 +1534,16 @@ OSystem *OSystem_WINCE3::create(int gfx_mode, bool full_screen) {
 
 	reducePortraitGeometry();
 
+	if ((noGAPI || !gfx_mode_switch) && GetSystemMetrics(SM_CXSCREEN) < 320) 
+		SetScreenMode(1);
+
 	Cls();
 	drawWait();
 
 	// Set mode, portrait or landscape
 	display_mode = g_config->get("DisplayMode", "wince");
-	if (display_mode)
+
+	if (display_mode && !(noGAPI || !gfx_mode_switch))
 		SetScreenMode(atoi(display_mode));
 
 	return syst;
@@ -1799,10 +1817,36 @@ bool OSystem_WINCE3::poll_event(Event *event) {
 	
 	return false;
 }
+
+//#define MAX_DEBUG_SOUND 10
 	
 void own_soundProc(void *buffer, byte *samples, int len) {
 
+/*
+	static int debug_sound_counter = 0;
+
+	static FILE *debug_sound = NULL;
+*/
+
 	(*real_soundproc)(buffer, samples, len);
+
+/*
+	if (debug_sound_counter < MAX_DEBUG_SOUND) {
+		int i;
+
+		for (i=0; i<len; i++)
+			if (samples[i])
+				break;
+		if (i != len) {
+			if (!debug_sound_counter)
+				debug_sound = fopen("\\Carte de stockage\\sound.dmp", "wb");
+			fwrite(samples, 1, len, debug_sound);
+			debug_sound_counter++;
+			if (debug_sound_counter == MAX_DEBUG_SOUND)
+				fclose(debug_sound);
+		}
+	}
+*/
 
 	if (!sound_activated)
 		memset(samples, 0, len);

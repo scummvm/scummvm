@@ -854,6 +854,11 @@ void handleSelectGame(int x, int y) {
 	x -= _game_selection_X_offset;
 	y -= _game_selection_Y_offset;
 
+	if (y < start - 10) {
+		drawVideoDevice();
+		return;
+	}
+
 	/* See if it's a selection */
 
 	for (i=0; i<MAX_DISPLAYED_GAMES; i++) {

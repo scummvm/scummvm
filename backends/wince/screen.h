@@ -35,6 +35,8 @@
 #define GAME_SELECTION_X_OFFSET 15
 #define GAME_SELECTION_Y_OFFSET 25
 
+#define GAPI_SIMU 0x123456
+
 void SetScreenGeometry(int w, int h);
 void LimitScreenGeometry();
 void RestoreScreenGeometry();
@@ -55,6 +57,7 @@ void Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height);
 void SetScreenMode(int mode);
 int GetScreenMode();
 void drawWait();
+void drawVideoDevice();
 
 void drawBlankGameSelection();
 void reducePortraitGeometry();

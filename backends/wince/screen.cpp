@@ -118,6 +118,11 @@ int toolbar_available;
 
 UBYTE *toolbar = NULL;
 
+UBYTE *noGAPI_video_buffer = NULL;
+HDC noGAPI_compat;
+
+char noGAPI = 0;
+
 /* Using vectorized function to save on branches */
 typedef void (*tCls)();
 typedef void (*tBlt)(UBYTE*);
@@ -127,22 +132,29 @@ typedef void (*tSet_565)(INT16 *buffer, int pitch, int x, int y, int width, int 
 void mono_Cls();
 void mono_Blt(UBYTE*);
 void mono_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int);
+void mono_Set_565(INT16*, int, int, int, int, int);
+
 
 void palette_Cls();
 void palette_Blt(UBYTE*);
 void palette_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int);
+void palette_Set_565(INT16*, int, int, int, int, int);
+
 
 void hicolor_Cls();
 void hicolor555_Blt(UBYTE*);
 void hicolor555_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int);
+void hicolor555_Set_565(INT16*, int, int, int, int, int);
+
 void hicolor565_Blt(UBYTE*);
 void hicolor565_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int);
 void hicolor565_Get_565(INT16*, int, int, int, int, int);
 void hicolor565_Set_565(INT16*, int, int, int, int, int);
-void hicolor555_Set_565(INT16*, int, int, int, int, int);
-void palette_Set_565(INT16*, int, int, int, int, int);
-void mono_Set_565(INT16*, int, int, int, int, int);
 
+void noGAPI_Cls();
+void noGAPI_Blt(UBYTE*);
+void noGAPI_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int);
+void noGAPI_Set_565(INT16*, int, int, int, int, int);
 
 void NULL_Get_565(INT16*, int, int, int, int, int);
 void NULL_Set_565(INT16*, int, int, int, int, int);
@@ -187,6 +199,39 @@ static int _geometry_h;
 static int _saved_geometry_h;
 
 HWND hWndMain;
+
+typedef enum {
+	DEVICE_GAPI = 0,
+	DEVICE_VIDEO,
+	DEVICE_GDI
+} gfxDevice;
+
+typedef enum {
+	VIDEO_565 = 0,
+	VIDEO_555,
+	VIDEO_PALETTED,
+	VIDEO_MONO,
+	VIDEO_DONT_CARE
+} gfxOption;
+
+
+unsigned char* gfx_device_name[] = {
+	(unsigned char*)"GAPI",
+	(unsigned char*)"Direct Video",
+	(unsigned char*)"GDI"
+};
+
+unsigned char* gfx_device_options_name[] = {
+	(unsigned char*)"565",
+	(unsigned char*)"555",
+	(unsigned char*)"paletted",
+	(unsigned char*)"mono",
+	(unsigned char*)""
+};
+
+gfxDevice _gfx_device;
+gfxOption _gfx_option;
+
 
 unsigned char *image_expand(unsigned char *src) {
 	int i = 0;
@@ -280,7 +325,11 @@ void RestoreScreenGeometry() {
 int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 {
 	hWndMain = hWndMain_param;
-	dynamicGXOpenDisplay(hWndMain, GX_FULLSCREEN);
+
+	_gfx_device = DEVICE_GAPI;
+
+	if (dynamicGXOpenDisplay(hWndMain, GX_FULLSCREEN) == GAPI_SIMU)
+		_gfx_device = DEVICE_VIDEO;
 
 	_gfx_mode_switch = gfx_mode_switch;
 
@@ -293,6 +342,8 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 		_game_selection_Y_offset = 0;
 	}
 	
+	memset(&gxdp, 0, sizeof(gxdp));
+
 	gxdp = dynamicGXGetDisplayProperties();
 
 	// Possible Aero problem
@@ -306,7 +357,28 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 		gxdp.ffFormat = kfDirect | kfDirect565;
 	}
 
-	if(gxdp.ffFormat & kfDirect565)
+	if(noGAPI) 
+	{
+		HDC hdc;
+
+		pCls = noGAPI_Cls;
+		pBlt = noGAPI_Blt;
+		pBlt_part = noGAPI_Blt_part;
+		pSet_565 = noGAPI_Set_565;
+
+		toolbar_available = 1;
+
+		// Init GDI
+		noGAPI_video_buffer = (UBYTE*)malloc(320 * 240 * 2);
+
+		hdc = GetDC(hWndMain);
+		noGAPI_compat = CreateCompatibleDC(hdc);
+		ReleaseDC(hWndMain, hdc);
+
+		_gfx_device = DEVICE_GDI;
+		_gfx_option = VIDEO_DONT_CARE;
+	}
+	else if(gxdp.ffFormat & kfDirect565)
 	{
 		pCls =    hicolor_Cls;
 		pBlt =    hicolor565_Blt;
@@ -315,6 +387,8 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 		filter_available = 1;
 		smooth_filter = 1;
 		toolbar_available = 1;
+
+		_gfx_option = VIDEO_565;
 	}
 	else if(gxdp.ffFormat & kfDirect555)
 	{
@@ -325,6 +399,8 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 		filter_available = 1;
 		smooth_filter = 1;
 		toolbar_available = 1;
+
+		_gfx_option = VIDEO_555;	
 	}
 	else if((gxdp.ffFormat & kfDirect) && (gxdp.cBPP <= 8))
 	{
@@ -341,6 +417,8 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 			filter_available = 1;
 
 		toolbar_available = 1;
+
+		_gfx_option = VIDEO_MONO;
 	}
 	else if(gxdp.ffFormat & kfPalette)
 	{
@@ -350,6 +428,8 @@ int GraphicsOn(HWND hWndMain_param, bool gfx_mode_switch)
 		pSet_565 = palette_Set_565;
 		
 		toolbar_available = 1;
+
+		_gfx_option = VIDEO_PALETTED;
 	}
 
 
@@ -593,6 +673,14 @@ void drawBlankGameSelection() {
 	/* Store empty comment */
 	memcpy(comment_zone, decomp + (206 * 220), 8 * 220); 
 	pBlt_part(decomp, _game_selection_X_offset, _game_selection_Y_offset, 220, 250, item_startup_colors, 0);
+}
+
+void drawVideoDevice() {
+	char video_device[100];
+
+	sprintf(video_device, "Video device : %s %s", gfx_device_name[_gfx_device], gfx_device_options_name[_gfx_option]);
+	printString(video_device, 10, 270, 2, 0);
+	pBlt_part(decomp + (270 * 220), 0, 5, 220, 8, item_startup_colors, 0);
 }
 
 void drawCommentString(char *comment) {
@@ -1923,6 +2011,145 @@ void hicolor565_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
 		dynamicGXEndDraw();
 	}
 }
+
+/* ********************************* NO GAPI DISPLAY ********************************* */
+
+void noGAPI_Cls() {
+	HBITMAP old;
+	RECT rc;
+	HDC hdc = GetDC(hWndMain);
+	HBITMAP hb;
+
+	GetWindowRect(hWndMain, &rc);
+	memset(noGAPI_video_buffer, 0x00, sizeof(noGAPI_video_buffer));
+	if (currentScreenMode)
+		hb = CreateBitmap(320, 240, 1, 16, noGAPI_video_buffer);
+	else
+		hb = CreateBitmap(240, 320, 1, 16, noGAPI_video_buffer);
+	old = (HBITMAP)SelectObject(noGAPI_compat, hb);
+	if (currentScreenMode)
+		BitBlt(hdc, 0, 0, 320, 240, noGAPI_compat, 0, 0, SRCCOPY);
+	else
+		BitBlt(hdc, 0, 0, 240, 320, noGAPI_compat, 0, 0, SRCCOPY);
+	SelectObject(noGAPI_compat, old);
+	ReleaseDC(hWndMain, hdc);
+	DeleteObject(hb);
+}
+
+void noGAPI_Blt(UBYTE *src_ptr) {
+	noGAPI_Blt_part(src_ptr, 0, 0, _geometry_w, _geometry_h, NULL, 0);
+}
+
+void noGAPI_Set_565(INT16 *buffer, int pitch, int x, int y, int width, int height) {
+	HBITMAP old;
+	RECT rc;
+	HDC hdc = GetDC(hWndMain);
+	HBITMAP hb;
+	UBYTE *work_buffer;
+	int i;
+	int j;
+	long skipmask;
+
+	skipmask = geom[useMode].xSkipMask;
+
+
+	GetWindowRect(hWndMain, &rc);
+
+	work_buffer = noGAPI_video_buffer;
+	unsigned short *work_buffer_2 = (unsigned short*)work_buffer;
+	if (currentScreenMode) {
+	
+		for (i=0; i<width; i++) {
+			for (j=0; j<height; j++) {
+				work_buffer_2[i * height + j] = 
+					buffer[(pitch ? pitch : width) * j + (width - i)];
+			}			
+		}
+	}
+	else {
+		for (i=0; i<height; i++) {
+			for (j=0; j<width; j++) {
+				*(unsigned short*)work_buffer = buffer[j];
+				work_buffer += 2;
+			}
+		}
+	}
+
+	if (currentScreenMode)
+		hb = CreateBitmap(height, width, 1, 16, noGAPI_video_buffer);
+	else
+		hb = CreateBitmap(width, height, 1, 16, noGAPI_video_buffer);
+	old = (HBITMAP)SelectObject(noGAPI_compat, hb);
+	if (currentScreenMode)
+		BitBlt(hdc, y , 320 - (x + width), height, width, noGAPI_compat, 0, 0, SRCCOPY);
+	else
+		BitBlt(hdc, x, y, width, height, noGAPI_compat, 0, 0, SRCCOPY);
+	SelectObject(noGAPI_compat, old);
+	ReleaseDC(hWndMain, hdc);
+	DeleteObject(hb);
+}
+
+void noGAPI_Blt_part(UBYTE * scr_ptr, int x, int y, int width, int height,
+					 UBYTE * own_palette, int pitch) {
+	HBITMAP old;
+	RECT rc;
+	HDC hdc = GetDC(hWndMain);
+	HBITMAP hb;
+	UBYTE *work_buffer;
+	int i;
+	int j;
+	long skipmask;
+
+	skipmask = geom[useMode].xSkipMask;
+
+
+	GetWindowRect(hWndMain, &rc);
+
+	work_buffer = noGAPI_video_buffer;
+	if (currentScreenMode) {
+		unsigned short *work_buffer_2 = (unsigned short*)work_buffer;
+		for (i=0; i<width; i++)
+			for (j=0; j<height; j++) 
+				if (!own_palette)
+					work_buffer_2[i * height + j] = 
+					pal[scr_ptr[(pitch ? pitch : width) * j + (width - i)]];
+				else
+					work_buffer_2[i * height + j] =
+						COLORCONV565(own_palette[3 * scr_ptr[(pitch ? pitch : width) * j + (width - i)]],
+									own_palette[(3 * scr_ptr[(pitch ? pitch : width) * j + (width - i)]) + 1], 
+									own_palette[(3 * scr_ptr[(pitch ? pitch : width) * j + (width - i)]) + 2]);
+	}
+	else {
+	for (i=0; i<height; i++) {
+		for (j=0; j<width; j++) {
+				if (!own_palette)
+					*(unsigned short*)work_buffer = 
+						pal[scr_ptr[(pitch ? pitch : width) * i + j]];	
+				else
+					*(unsigned short*)work_buffer =
+								COLORCONV565(own_palette[3 * scr_ptr[(pitch ? pitch : width) * i + j]],
+									own_palette[(3 * scr_ptr[(pitch ? pitch : width) * i + j]) + 1], 
+									own_palette[(3 * scr_ptr[(pitch ? pitch : width) * i + j]) + 2]);
+
+				work_buffer += 2;
+			}
+	}
+	}
+
+	if (currentScreenMode)
+		hb = CreateBitmap(height, width, 1, 16, noGAPI_video_buffer);
+	else
+		hb = CreateBitmap(width, height, 1, 16, noGAPI_video_buffer);
+	old = (HBITMAP)SelectObject(noGAPI_compat, hb);
+	if (currentScreenMode)
+		BitBlt(hdc, y , 320 - (x + width), height, width, noGAPI_compat, 0, 0, SRCCOPY);
+	else
+		BitBlt(hdc, x, y, width, height, noGAPI_compat, 0, 0, SRCCOPY);
+	SelectObject(noGAPI_compat, old);
+	ReleaseDC(hWndMain, hdc);
+	DeleteObject(hb);
+}
+
 
 /* ************************** STYLUS TRANSLATION ************************* */
 
