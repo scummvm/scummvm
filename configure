@@ -177,6 +177,8 @@ EOF
   fi
 done # for parm in ...
 
+DEBFLAGS="-g"
+
 for ac_option in $@; do
     case "$ac_option" in
       --disable-scumm)		_build_scumm=no ;;
@@ -212,8 +214,11 @@ for ac_option in $@; do
       --backend=*)
         _backend=`echo $ac_option | cut -d '=' -f 2`
 	;;
-      --enable-debug)
-        CXXFLAGS="$CXXFLAGS -g"
+      --disable-debug)
+	DEBFLAGS=""
+        ;;
+      --enable-release)
+	DEBFLAGS=""
         ;;
       *)
         echo "error: unrecognised option: $ac_option
@@ -223,6 +228,7 @@ Try \`$0 --help' for more information." >&2
     esac;
 done;
 
+CXXFLAGS="$CXXFLAGS $DEBFLAGS"
 #
 # Determine the C++ compiler
 #
