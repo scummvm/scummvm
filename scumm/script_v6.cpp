@@ -37,7 +37,7 @@
 
 #define OPCODE(x)	{ &Scumm::x, #x }
 
-void Scumm::setupOpcodes2()
+void Scumm::setupOpcodes_V6()
 {
 	static const OpcodeEntry opcodes[256] = {
 		/* 00 */

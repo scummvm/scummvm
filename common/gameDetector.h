@@ -49,8 +49,10 @@ enum GameId {
 	GID_DIG = 12,
 	GID_MONKEY_VGA = 13,
 	GID_CMI = 14,
-	//GID_MANIAC = 15;
-	//GID_ZAK = 16;
+	GID_MANIAC = 15,
+	GID_ZAK = 16,
+	//GID_MANIAC64 = 17,
+	//GID_ZAK64 = 18,
 
 	/* Simon the Sorcerer */
 	GID_SIMON_FIRST = 20,

@@ -1566,10 +1566,10 @@ void Scumm::launch()
 
 	readIndexFile();
 
-	if (_features & GF_NEW_OPCODES)
-		setupOpcodes2();
+	if (_features & GF_AFTER_V6)
+		setupOpcodes_V6();
 	else
-		setupOpcodes();
+		setupOpcodes_V5();
 
 	scummInit();
 

@@ -482,9 +482,9 @@ public:
 	void freezeScripts(int scr);
 	void unfreezeScripts();
 	void runAllScripts();
-	void setupOpcodes();
-	void setupOpcodes2();	
-	//void setupOpcodes3();	
+	void setupOpcodes_V5();
+	void setupOpcodes_V6();	
+	//void setupOpcodes_V8();	
 	void cutscene(int16 *args);
 	void endCutscene();
 	void exitCutscene();

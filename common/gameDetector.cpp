@@ -432,12 +432,12 @@ bool GameDetector::parseMusicDriver(const char *s) {
 
 const VersionSettings version_settings[] = {
 	/* Scumm Version 1 */
-//      {"maniac",      "Maniac Mansion (C64)",                         GID_MANIAC64, 1, 0, 0,},
-//      {"zak",         "Zak McKracken and the Alien Mindbenders (C64)", GID_ZAK64, 1, 0, 0,},
+//	{"maniac64",      "Maniac Mansion (C64)",                         GID_MANIAC64, 1, 0, 0,},
+//      {"zak64",         "Zak McKracken and the Alien Mindbenders (C64)", GID_ZAK64, 1, 0, 0,},
 
 	/* Scumm Version 2 */
-//      {"maniac",      "Maniac Mansion", GID_MANIAC, 2, 0, 0,
-//      GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "MANIACEX.EXE"},
+	{"maniac",      "Maniac Mansion", GID_MANIAC, 2, 0, 0,
+	GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "MANIACEX.EXE"},
 //      {"zak",         "Zak McKracken and the Alien Mindbenders",      GID_ZAK,     2, 0, 0,
 //      GF_SMALL_HEADER | GF_USE_KEY | GF_SMALL_NAMES | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALLING, "ZAKEXE.EXE"},
 //      {"indy3",       "Indiana Jones and the Last Crusade",           GID_INDY3,   2, 0, 0,},
