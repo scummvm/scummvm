@@ -318,15 +318,15 @@ void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box) {
 	Box *bp = getBoxBaseAddr(boxnum);
 
 	if (_features & GF_AFTER_V8) {
-		box->ul.x = (int32)FROM_LE_32(bp->v8.ulx);
-		box->ul.y = (int32)FROM_LE_32(bp->v8.uly);
-		box->ur.x = (int32)FROM_LE_32(bp->v8.urx);
-		box->ur.y = (int32)FROM_LE_32(bp->v8.ury);
+		box->ul.x = (short)FROM_LE_32(bp->v8.ulx);
+		box->ul.y = (short)FROM_LE_32(bp->v8.uly);
+		box->ur.x = (short)FROM_LE_32(bp->v8.urx);
+		box->ur.y = (short)FROM_LE_32(bp->v8.ury);
 	
-		box->ll.x = (int32)FROM_LE_32(bp->v8.llx);
-		box->ll.y = (int32)FROM_LE_32(bp->v8.lly);
-		box->lr.x = (int32)FROM_LE_32(bp->v8.lrx);
-		box->lr.y = (int32)FROM_LE_32(bp->v8.lry);
+		box->ll.x = (short)FROM_LE_32(bp->v8.llx);
+		box->ll.y = (short)FROM_LE_32(bp->v8.lly);
+		box->lr.x = (short)FROM_LE_32(bp->v8.lrx);
+		box->lr.y = (short)FROM_LE_32(bp->v8.lry);
 
 		// FIXME: Some walkboxes in CMI appear to have been flipped,
 		// in the sense that for instance the lower boundary is above
