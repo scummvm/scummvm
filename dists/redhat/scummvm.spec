@@ -9,7 +9,7 @@
 #------------------------------------------------------------------------------
 Name		: scummvm
 Version		: 0.6.0
-Release		: 1
+Release		: 2
 Summary		: Graphic adventure game interpreter
 Group		: Interpreters
 License		: GPL
@@ -19,7 +19,13 @@ Url             : http://www.scummvm.org
 Source		: %{name}-%{version}.tar.bz2
 Source1		: libmad-0.15.1b.tar.bz2
 Source2		: mpeg2dec-0.4.0b.tar.bz2
+Source3		: scummvm.desktop
 BuildRoot	: %{_tmppath}/%{name}-%{version}-root
+
+BuildRequires: desktop-file-utils
+BuildRequires: libogg-devel
+BuildRequires: libvorbis-devel
+BuildRequires: SDL-devel >= 1.2.2
 
 #------------------------------------------------------------------------------
 #   Description
@@ -45,7 +51,9 @@ make
 
 %install
 install -m755 -D scummvm %{buildroot}%{_bindir}/scummvm
-install -m644 -D scummvm.6 %{buildroot}/%{_mandir}/man6/scummvm.6
+install -m644 -D scummvm.6 %{buildroot}%{_mandir}/man6/scummvm.6
+install -m644 -D scummvm.xpm %{buildroot}%{_datadir}/pixmaps/scummvm.xpm
+desktop-file-install --vendor scummvm --dir=%{buildroot}/%{_datadir}/applications %{SOURCE3}
 
 %clean
 rm -Rf ${RPM_BUILD_ROOT}
@@ -55,14 +63,19 @@ rm -Rf ${RPM_BUILD_ROOT}
 #------------------------------------------------------------------------------
 %files
 %defattr(0644,root,root,0755)
-%doc README NEWS COPYING scummvm.xpm
+%doc README NEWS COPYING
 %attr(0755,root,root)%{_bindir}/scummvm
+%{_datadir}/applications/*
+%{_datadir}/pixmaps/scummvm.xpm
 %{_mandir}/man6/scummvm.6*
 
 #------------------------------------------------------------------------------
 #   Change Log
 #------------------------------------------------------------------------------
 %changelog
+* Thu Jul 15 2004 (0.6.0-2)
+  - added .desktop file (modified from patch 891909)
+  - used some elements of the .spec file for scummvm from http://livna.org/
 * Mon Mar 15 2004 (0.6.0)
   - included libmad and libmpeg2
 * Sat Aug 02 2003 (0.5.0)
