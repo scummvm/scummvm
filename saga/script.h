@@ -298,7 +298,7 @@ private:
 	int SF_checkUserInterrupt(SCRIPTFUNC_PARAMS);
 	int SF_walkRelative(SCRIPTFUNC_PARAMS);
 	int SF_moveRelative(SCRIPTFUNC_PARAMS);
-	int SF_simulSPeech2(SCRIPTFUNC_PARAMS);
+	int SF_simulSpeech2(SCRIPTFUNC_PARAMS);
 	int SF_placard(SCRIPTFUNC_PARAMS);
 	int SF_placardOff(SCRIPTFUNC_PARAMS);
 	int SF_setProtagState(SCRIPTFUNC_PARAMS);

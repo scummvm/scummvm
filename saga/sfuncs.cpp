@@ -93,7 +93,7 @@ void Script::setupScriptFuncList(void) {
 		OPCODE(SF_checkUserInterrupt),
 		OPCODE(SF_walkRelative),
 		OPCODE(SF_moveRelative),
-		OPCODE(SF_simulSPeech2),
+		OPCODE(SF_simulSpeech2),
 		OPCODE(SF_placard),
 		OPCODE(SF_placardOff),
 		OPCODE(SF_setProtagState),
@@ -874,11 +874,11 @@ int Script::SF_moveRelative(SCRIPTFUNC_PARAMS) {
 }
 
 // Script function #47 (0x2F)
-int Script::SF_simulSPeech2(SCRIPTFUNC_PARAMS) {
+int Script::SF_simulSpeech2(SCRIPTFUNC_PARAMS) {
 	for (int i = 0; i < nArgs; i++)
 		thread->pop();
 
-	debug(1, "stub: SF_simulSPeech2(), %d args", nArgs);
+	debug(1, "stub: SF_simulSpeech2(), %d args", nArgs);
 	return SUCCESS;
 }
 
