@@ -76,8 +76,8 @@ void Widget::draw()
 #pragma mark -
 
 
-StaticTextWidget::StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const char *text)
-	: Widget (boss, x, y, w, h), _label(0), _centred(false)
+StaticTextWidget::StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const char *text, bool centred)
+	: Widget (boss, x, y, w, h), _label(0), _centred(centred)
 {
 	_type = kStaticTextWidget;
 	setLabel(text);

@@ -120,7 +120,7 @@ protected:
 	char	*_label;
 	bool	_centred;
 public:
-	StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const char *text);
+	StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const char *text, bool centred = false);
 	~StaticTextWidget();
 	void setLabel(const char *label);
 	const char *getLabel() const	{ return _label; }

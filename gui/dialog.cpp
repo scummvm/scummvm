@@ -369,6 +369,16 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 
 #pragma mark -
 
+AboutDialog::AboutDialog(NewGui *gui)
+	: Dialog (gui, 30, 10, 260, 134)
+{
+	addButton(110, 110, 40, 15, CUSTOM_STRING(23), kCloseCmd, 'C');	// Close dialog - FIXME
+	new StaticTextWidget(this, 10, 17, 240, 16, "Build " SCUMMVM_VERSION " (" SCUMMVM_CVS ")", true);
+	new StaticTextWidget(this, 10, 37, 240, 16, "ScummVM http://scummvm.sourceforge.net", true);
+	new StaticTextWidget(this, 10, 67, 240, 16, "All games (c) LucasArts", true);
+	new StaticTextWidget(this, 10, 84, 240, 16, "Except", true);
+	new StaticTextWidget(this, 10, 97, 240, 16, "Simon the Sorcerer (c) Adventuresoft", true);
+}
 
 PauseDialog::PauseDialog(NewGui *gui)
 	: Dialog (gui, 50, 80, 220, 16)

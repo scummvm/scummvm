@@ -92,6 +92,11 @@ class SoundDialog;
 class KeysDialog;
 class MiscDialog;
 
+class AboutDialog : public Dialog {
+public:
+	AboutDialog(NewGui *gui);
+};
+
 class OptionsDialog : public Dialog {
 protected:
 	SoundDialog		*_soundDialog;

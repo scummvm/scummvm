@@ -60,9 +60,9 @@ void NewGui::saveloadDialog()
 
 void NewGui::aboutDialog()
 {
-//	if (!_aboutDialog)
-//		_aboutDialog = new AboutDialog(this);
-//	openDialog(_aboutDialog);
+	if (!_aboutDialog)
+		_aboutDialog = new AboutDialog(this);
+	openDialog(_aboutDialog);
 }
 
 void NewGui::optionsDialog()
