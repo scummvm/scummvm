@@ -137,6 +137,9 @@ class Cutaway {
 		//! Raw .cut file data (without 20 byte header)
 		byte *_fileData;
 
+		//! COMPANEL
+		int16 _comPanel;
+
 		//! Game state data inside of _fileDat
 		byte *_gameStatePtr;
 

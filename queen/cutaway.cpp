@@ -97,9 +97,8 @@ void Cutaway::load(const char *filename) {
 	strcpy(_basename, filename);
 	_basename[strlen(_basename)-4] = '\0';
 
-	int COMPANEL = READ_BE_UINT16(ptr);
+	_comPanel = READ_BE_UINT16(ptr);
 	ptr += 2;
-	debug(0, "COMPANEL = %i", COMPANEL);
 
 	_cutawayObjectCount = READ_BE_UINT16(ptr);
 	ptr += 2;
@@ -334,6 +333,10 @@ void Cutaway::restorePersonData() {
 void Cutaway::changeRooms(CutawayObject &object) {
 	// Lines 1291-1385 in cutaway.c
 
+	debug(0, "Changing from room %i to room %i", 
+			_temporaryRoom, 
+			object.room);
+
 	restorePersonData();
 	_personDataCount = 0;
 
@@ -352,7 +355,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 				_personData[_personDataCount].image = objectData->image;
 				_personDataCount++;
 
-				// Now, check to see if(we need to keep the person on
+				// Now, check to see if we need to keep the person on
 				bool on = false;
 				for (int j = 0; j < object.personCount; j++) {
 					if (object.person[j] == i) {
@@ -360,6 +363,11 @@ void Cutaway::changeRooms(CutawayObject &object) {
 						break;
 					}
 				}
+
+				debug(0, "Person '%s' (%i) is %s", 
+						_logic->objectName(objectData->name),
+						objectData->name,
+						on ? "on" : "off");
 
 				if (on) {
 					// It is needed, so ensure it's ON
@@ -401,7 +409,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 			mode = RDM_FADE_JOE_XY;
 	}
 
-	_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), mode, 0, 0 /*COMPANEL*/, true);
+	_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), mode, 0, _comPanel, true);
 
 	// XXX CI=FRAMES;
 
@@ -448,7 +456,9 @@ Cutaway::ObjectType Cutaway::getObjectType(CutawayObject &object) {
 			ObjectData *objectData = _logic->objectData(object.objectNumber);
 			objectData->name = abs(objectData->name);
 		}
+
 		// XXX REDISP_OBJECT(OBJECT);
+		debug(0, "REDISP_OBJECT needed for object %i", object.objectNumber);
 
 		// Skip doing any anim stuff
 		objectType = OBJECT_TYPE_NO_ANIMATION;
@@ -629,22 +639,29 @@ void Cutaway::handlePersonRecord(
 		Person p;
 		_logic->personSetData(
 				object.objectNumber - _logic->roomData(object.room), 
-				"", false, &p);
+				"", true, &p);
+
+		debug(0, "Moving person '%s' (%i) = actor '%s' to (%i,%i)", 
+				_logic->objectName(object.objectNumber),
+				object.objectNumber,
+				p.name, object.moveToX, object.moveToY);
 
 		strcpy(name, p.name);
 		if (object.moveToX || object.moveToY) {
 			BobSlot *bob = _graphics->bob(p.actor->bobNum);
-			// XXX bob->scale = SF;
+			bob->scale = 100; // XXX SF;
 			bob->x = object.moveToX;
 			bob->y = object.moveToY;
 		}
 
+#if 0
 		_walk->personMove(
 				&p, 
 				object.moveToX, object.moveToY,
 				_logic->numFrames() + 1, 		// XXX CI+1
 				_logic->objectData(object.objectNumber)->image
 				);
+#endif
 	}
 
 	if (_quit)
@@ -897,7 +914,7 @@ void Cutaway::goToFinalRoom() {
 		_logic->joeY(joeX);
 		_logic->currentRoom(joeRoom);
 		_logic->oldRoom(_initialRoom);
-		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE_XY, 0, 0 /*COMPANEL*/, true);
+		_logic->roomDisplay(_logic->roomName(_logic->currentRoom()), RDM_FADE_JOE_XY, 0, _comPanel, true);
 	}
 
 	if (_quit) {
@@ -988,12 +1005,14 @@ void Cutaway::updateGameState() {
 				if (fromObject > 0)
 					objectCopy(fromObject, objectIndex);
 				// XXX REDISP_OBJECT(objectIndex);
+				debug(0, "REDISP_OBJECT needed for object %i", objectIndex);
 			}
 			else if (objectIndex < 0) {               // Hide the object
 				objectIndex             = -objectIndex;
 				ObjectData *objectData  = _logic->objectData(objectIndex);
 				objectData->name        = -abs(objectData->name);
 				// XXX REDISP_OBJECT(objectIndex);
+				debug(0, "REDISP_OBJECT needed for object %i", objectIndex);
 			}
 
 			if (areaIndex > 0) {
