@@ -37,13 +37,13 @@
 #define	FIRST_TEXT_COMPACT	23
 
 // scriptVariable offsets
-#define RESULT 1
-#define LOGIC_LIST_NO 3
-#define CUR_ID 13
-#define HIT_ID 38
-#define THE_CHOSEN_ONE 52
-#define TEXT1 54
-#define CUR_SECTION	144
+#define RESULT 0
+#define LOGIC_LIST_NO 2
+#define CUR_ID 12
+#define HIT_ID 37
+#define THE_CHOSEN_ONE 51
+#define TEXT1 53
+#define CUR_SECTION	143
 
 //screen/grid defines
 #define GAME_SCREEN_WIDTH	320

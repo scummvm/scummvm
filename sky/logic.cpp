@@ -71,7 +71,7 @@ void SkyLogic::engine() {
 	while (uint16 id = *logicList++) { // 0 means end of list
 		if (id == 0xffff) {
 			// Change logic data address
-			logicList = (uint16 *)SkyState::fetchCompact(id);
+			logicList = (uint16 *)SkyState::fetchCompact(*logicList);
 			continue;
 		}
 
@@ -792,39 +792,39 @@ void SkyLogic::initScriptVariables() {
 	for (uint i = 0; i < sizeof(_scriptVariables)/sizeof(uint32); i++)
 		_scriptVariables[i] = 0;
 
-	_scriptVariables[3] = 141;
-	_scriptVariables[110] = 62;
-	_scriptVariables[146] = 1;
-	_scriptVariables[147] = 2;
-	_scriptVariables[451] = 8371;
-	_scriptVariables[641] = 1;
-	_scriptVariables[679] = 1;
-	_scriptVariables[694] = 3;
-	_scriptVariables[705] = 1;
+	_scriptVariables[2] = 141;
+	_scriptVariables[109] = 62;
+	_scriptVariables[145] = 1;
+	_scriptVariables[146] = 2;
+	_scriptVariables[450] = 8371;
+	_scriptVariables[640] = 1;
+	_scriptVariables[678] = 1;
+	_scriptVariables[693] = 3;
+	_scriptVariables[704] = 1;
+	_scriptVariables[709] = 1;
 	_scriptVariables[710] = 1;
 	_scriptVariables[711] = 1;
-	_scriptVariables[712] = 1;
+	_scriptVariables[79] = 1;
 	_scriptVariables[720] = 1;
-	_scriptVariables[721] = 1;
-	_scriptVariables[794] = 1;
+	_scriptVariables[793] = 1;
+	_scriptVariables[797] = 1;
 	_scriptVariables[798] = 1;
-	_scriptVariables[799] = 1;
+	_scriptVariables[804] = 1;
 	_scriptVariables[805] = 1;
-	_scriptVariables[806] = 1;
-	_scriptVariables[807] = 16731;
-	_scriptVariables[808] = 1;
-	_scriptVariables[809] = 2;
+	_scriptVariables[806] = 16731;
+	_scriptVariables[807] = 1;
+	_scriptVariables[808] = 2;
+	_scriptVariables[817] = 1;
 	_scriptVariables[818] = 1;
 	_scriptVariables[819] = 1;
 	_scriptVariables[820] = 1;
 	_scriptVariables[821] = 1;
-	_scriptVariables[822] = 1;
 
-	memcpy(_scriptVariables + 353, forwardList1b, sizeof(forwardList1b));
-	memcpy(_scriptVariables + 657, forwardList2b, sizeof(forwardList2b));
-	memcpy(_scriptVariables + 722, forwardList3b, sizeof(forwardList3b));
-	memcpy(_scriptVariables + 664, forwardList4b, sizeof(forwardList4b));
-	memcpy(_scriptVariables + 506, forwardList5b, sizeof(forwardList5b));
+	memcpy(_scriptVariables + 352, forwardList1b, sizeof(forwardList1b));
+	memcpy(_scriptVariables + 656, forwardList2b, sizeof(forwardList2b));
+	memcpy(_scriptVariables + 721, forwardList3b, sizeof(forwardList3b));
+	memcpy(_scriptVariables + 663, forwardList4b, sizeof(forwardList4b));
+	memcpy(_scriptVariables + 505, forwardList5b, sizeof(forwardList5b));
 }
 
 uint32 SkyLogic::script(Compact *compact, uint16 scriptNo, uint16 offset) {
