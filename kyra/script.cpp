@@ -32,6 +32,7 @@
 namespace Kyra {
 	VMContext::VMContext(KyraEngine* engine) {
 		_engine = engine;
+		_error = false;
 		
 		// now we create a list of all Command/Opcode procs and so
 		static CommandEntry commandProcs[] = {
@@ -767,7 +768,6 @@ namespace Kyra {
 		assert(script_start);
 		
 		uint32 scriptStateAtStart = _scriptState;
-		_error = false;
 
 		// runs the script
 		while(true) {
