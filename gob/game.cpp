@@ -840,7 +840,6 @@ int16 game_inputArea(int16 xPos, int16 yPos, int16 width, int16 height, int16 ba
 		case 0x3c00:	// F2
 		case 0x3d00:	// F3
 		case 0x3e00:	// F4
-		case 0x3f00:	// F5
 		case 0x4000:	// F6
 		case 0x4100:	// F7
 		case 0x4200:	// F8
@@ -1693,6 +1692,7 @@ void game_loadImFile(void) {
 	char path[20];
 	int16 handle;
 
+	// If demo
 	if (game_totFileData[0x3d] != 0 && game_totFileData[0x3b] == 0)
 		return;
 

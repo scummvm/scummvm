@@ -47,9 +47,9 @@ int16 util_translateKey(int16 key) {
 		int16 from;
 		int16 to;
 	} keys[] = {
-		{8, 0xe08   },	// Backspace
-		{13, 0x1C0D },	// Enter
-		{27, 0x11b  },	// ESC 
+		{8,   0x0e08},	// Backspace
+		{13,  0x1C0D},	// Enter
+		{27,  0x011b},	// ESC 
 		{127, 0x5300},	// Del
 		{273, 0x4800},	// Up arrow
 		{274, 0x5000},	// Down arrow
@@ -59,7 +59,7 @@ int16 util_translateKey(int16 key) {
 		{283, 0x3c00},	// F2
 		{284, 0x3d00},	// F3
 		{285, 0x3E00},	// F4
-		{286, 0x3F00},	// F5
+		{286, 0x011b},	// F5
 		{287, 0x4000},	// F6
 		{288, 0x4100},	// F7
 		{289, 0x4200},	// F8
@@ -136,19 +136,11 @@ void util_processInput() {
 }
 
 void util_getMouseState(int16 *pX, int16 *pY, int16 *pButtons) {
-//	int16 x = 0;
-//	int16 y = 0;
-//	int16 buttons = 0;
-
 	*pX = _mouseX;
 	*pY = _mouseY;
 
 	if (pButtons != 0)
 		*pButtons = _mouseButtons;
-//	if (pX != 0)
-//		*pX = x >> mouseXShift;
-//	if (pY != 0)
-//		*pY = y >> mouseYShift;
 }
 
 void util_setMousePos(int16 x, int16 y) {

@@ -146,7 +146,7 @@ void inter_printText(void) {
 	char buf[60];
 	int16 i;
 
-	debug(0, "inter_printText");
+	debug(3, "inter_printText");
 	draw_destSpriteX = parse_parseValExpr();
 	draw_destSpriteY = parse_parseValExpr();
 
@@ -811,9 +811,9 @@ void inter_loadCursor(void) {
 	debug(0, "inter_loadCursor");
 	id = inter_load16();
 	index = *inter_execPtr++;
-
 	itemPtr = &game_totResourceTable->items[id];
 	offset = itemPtr->offset;
+
 	if (offset >= 0) {
 		dataBuf =
 		    ((char *)game_totResourceTable) + szGame_TotResTable +
@@ -895,7 +895,6 @@ void inter_storeKey(int16 key) {
 	else if ((key & 0xff) != 0)
 		key &= 0xff;
 
-	debug(0, "key: %d", key);
 	WRITE_LE_UINT32(inter_variables, key);
 
 	if (key != 0)

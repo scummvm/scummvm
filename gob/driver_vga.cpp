@@ -65,7 +65,31 @@ void VGAVideoDriver::putPixel(int16 x, int16 y, byte color, SurfaceDesc *dest) {
 }
 
 void VGAVideoDriver::drawLetter(char item, int16 x, int16 y, FontDesc *fontDesc, byte color1, byte color2, byte transp, SurfaceDesc *dest) {
-	STUB_FUNC;
+	byte *src, *dst;
+	uint16 data;
+	int i, j;
+	
+	src = (byte *)fontDesc->dataPtr + (item - fontDesc->startItem) * (fontDesc->itemSize & 0xff);
+	dst = dest->vidPtr + x + dest->width * y;
+
+	for (i = 0; i < fontDesc->itemHeight; i++) {
+		data = READ_BE_UINT16(src);
+		src += 2;
+		if (fontDesc->itemSize <= 8)
+			src--;
+
+		for (j = 0; j < fontDesc->itemWidth; j++) {
+			if (data & 0x8000) {
+				*dst = color2;
+			} else {
+				if (color1 == 0)
+					*dst = transp;
+			}
+			dst++;
+			data <<= 1;
+		}
+		dst += dest->width - fontDesc->itemWidth;
+	}
 }
 
 void VGAVideoDriver::drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1, int16 y1, byte color) {
