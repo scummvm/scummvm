@@ -55,10 +55,11 @@ Scene::Scene(const char *name, const char *buf, int len) :
 
   // Calculate the number of sectors
   ts.expectString("section: sectors");
+  if (ts.eof()) 	// Sometimes there ARE no sectors (eg, inv room)
+	return;
   ts.scanString(" sector %256s", 1, tempBuf);
   ts.scanString(" id %d", 1, &numSectors_);
   sectors_ = new Sector[numSectors_];
-
   // FIXME: This would be nicer if we could rewind the textsplitter
   // stream...
   sectors_[0].load0(ts, tempBuf, numSectors_);
