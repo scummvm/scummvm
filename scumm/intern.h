@@ -824,6 +824,7 @@ protected:
 	
 	/* HE version 80 script opcodes */
 	void o80_loadSBNG();
+	void o80_getFileSize();
 	void o80_stringToInt();
 	void o80_getSoundVar();
 	void o80_localizeArrayToRoom();

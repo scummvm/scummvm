@@ -252,7 +252,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o90_cos),
 		/* A8 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o80_getFileSize),
 		OPCODE(o6_getActorFromXY),
 		OPCODE(o72_findAllObjects),
 		/* AC */

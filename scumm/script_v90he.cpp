@@ -128,7 +128,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		/* 44 */
 		OPCODE(o90_getObjectData),
 		OPCODE(o80_loadSBNG),
-		OPCODE(o6_invalid),
+		OPCODE(o80_getFileSize),
 		OPCODE(o6_wordArrayWrite),
 		/* 48 */
 		OPCODE(o80_stringToInt),
