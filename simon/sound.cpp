@@ -31,7 +31,7 @@ protected:
 public:
 	BaseSound(SoundMixer *mixer, File *file, uint32 base = 0);
 	BaseSound(SoundMixer *mixer, File *file, uint32 *offsets);
-	virtual ~BaseSound() { delete _file; }
+	virtual ~BaseSound();
 	virtual int playSound(uint sound, PlayingSoundHandle *handle, byte flags = 0) = 0;
 };
 
@@ -89,6 +89,11 @@ BaseSound::BaseSound(SoundMixer *mixer, File *file, uint32 *offsets) {
 	_mixer = mixer;
 	_file = file;
 	_offsets = offsets;
+}
+
+BaseSound::~BaseSound() {
+	free(_offsets);
+	delete _file;
 }
 
 #if !defined(__GNUC__)
@@ -320,6 +325,14 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const c
 		}
 #endif
 	}
+}
+
+SimonSound::~SimonSound() {
+	delete _voice;
+	delete _effects;
+	
+	free(_filenums);
+	free(_offsets);
 }
 
 void SimonSound::readSfxFile(const char *filename, const char *gameDataPath) {

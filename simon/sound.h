@@ -50,7 +50,8 @@ public:
 	uint _ambient_playing;
 
 	SimonSound(const byte game, const GameSpecificSettings *gss, const char *gameDataPath, SoundMixer *mixer);
-
+	~SimonSound();
+	
 	void readSfxFile(const char *filename, const char *gameDataPath);
 	void loadSfxTable(File *gameFile, uint32 base);
 
