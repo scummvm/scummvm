@@ -64,6 +64,19 @@ struct HookDatas {
 	int set(byte cls, byte value, byte chan);
 };
 
+struct ParameterFade {
+	int param;
+	int start;
+	int end;
+	uint32 total_time;
+	uint32 current_time;
+};
+
+struct DeferredCommand {
+	MidiDriver *midi;
+	uint32 time_left;
+	int a, b, c, d, e, f;
+};
 
 struct Player {
 	IMuseInternal *_se;
@@ -102,6 +115,7 @@ struct Player {
 	bool _abort;
 
 	HookDatas _hook;
+	ParameterFade _parameterFades[4];
 
 	bool _mt32emulate;
 	bool _isGM;
@@ -135,6 +149,9 @@ struct Player {
 	void turn_off_parts();
 	void play_active_notes();
 	void cancel_volume_fade();
+
+	void addParameterTransition (int param, int target, int time);
+	void transitionParameters();
 
 	static void decode_sysex_bytes(byte *src, byte *dst, int len);
 
@@ -329,6 +346,7 @@ private:
 	uint16 _active_notes[128];
 	Instrument _global_adlib_instruments[32];
 	CommandQueue _cmd_queue[64];
+	DeferredCommand _deferredCommands[4];
 
 	byte *findTag(int sound, char *tag, int index);
 	bool isMT32(int sound);
@@ -354,6 +372,9 @@ private:
 	int32 ImSetTrigger (int sound, int id, int a, int b, int c, int d);
 	int32 ImClearTrigger (int sound, int id);
 	int32 ImFireAllTriggers (int sound);
+
+	void addDeferredCommand (int time, int a, int b, int c, int d, int e, int f);
+	void handleDeferredCommands (MidiDriver *midi);
 
 	int enqueue_command(int a, int b, int c, int d, int e, int f, int g);
 	int enqueue_trigger(int sound, int marker);
@@ -807,6 +828,8 @@ void IMuseInternal::on_timer (MidiDriver *midi) {
 	if (_paused)
 		return;
 
+	if (midi == _midi_native || !_midi_native)
+		handleDeferredCommands (midi);
 	sequencer_timers (midi);
 	expire_sustain_notes (midi);
 	expire_volume_faders (midi);
@@ -1297,19 +1320,11 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 			return getSoundStatus(b);
 		case 14:
 			// Sam and Max: Parameter transition
-			switch (d) {
-			case 1:
-				// Volume fade
-				player = this->get_player_byid (b);
-				if (player)
-					player->fade_vol (e, f);
-				return 0;
+			player = this->get_player_byid (b);
+			if (player)
+				player->addParameterTransition (d, e, f);
+			return 0;
 
-			default:
-				warning ("[%02d] doCommand (14): Unknown transition %d to value %d over %d ticks", b, d, e, f);
-			}
-
-			return -1;
 		case 15:
 			// Sam & Max: Set hook for a "maybe" jump
 			for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
@@ -1356,10 +1371,9 @@ int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, 
 			return ImClearTrigger (b, d);
 		case 20:
 			// Sam & Max: Deferred Command
-			// FIXME: Right now this acts as an immediate command.
-			// The significance of parameter b is unknown.
-			warning ("Incomplete support for iMuse::doCommand(20)");
-			return doCommand (c, d, e, f, g, h, 0, 0);
+			// warning ("[--] doCommand (20): %3d %3d %3d %3d %3d %3d  (%d)", c, d, e, f, g, h, b);
+			addDeferredCommand (b, c, d, e, f, g, h);
+			return 0;
 		case 2:
 		case 3:
 			return 0;
@@ -2901,6 +2915,10 @@ void Player::sequencer_timer() {
 	uint32 counter;
 	byte *song_ptr;
 
+	// First handle any parameter transitions
+	// that are occuring.
+	transitionParameters();
+
 	counter = _timer_counter + _timer_speed;
 	_timer_counter = counter & 0xFFFF;
 	_cur_pos += counter >> 16;
@@ -2931,6 +2949,136 @@ void Player::sequencer_timer() {
 				_song_offset = song_ptr - mtrk;
 			}
 		}
+	}
+}
+
+void IMuseInternal::handleDeferredCommands (MidiDriver *midi) {
+	uint32 advance = midi->getBaseTempo() / 500;
+
+	DeferredCommand *ptr = &_deferredCommands[0];
+	int i;
+	for (i = ARRAYSIZE(_deferredCommands); i; --i, ++ptr) {
+		if (!ptr->time_left)
+			continue;
+		if (ptr->time_left <= advance) {
+			doCommand (ptr->a, ptr->b, ptr->c, ptr->d, ptr->e, ptr->f, 0, 0);
+			ptr->time_left = advance;
+		}
+		ptr->time_left -= advance;
+	}
+}
+
+// "time" is referenced as hundredths of a second.
+// IS THAT CORRECT??
+// We convert it to microseconds before prceeding
+void IMuseInternal::addDeferredCommand (int time, int a, int b, int c, int d, int e, int f) {
+	DeferredCommand *ptr = &_deferredCommands[0];
+	int i;
+	for (i = ARRAYSIZE(_deferredCommands); i; --i, ++ptr) {
+		if (!ptr->time_left)
+			break;
+	}
+
+	if (ptr) {
+		ptr->midi = _midi_native ? _midi_native : _midi_adlib;
+		ptr->time_left = time * 10000;
+		ptr->a = a;
+		ptr->b = b;
+		ptr->c = c;
+		ptr->d = d;
+		ptr->e = e;
+		ptr->f = f;
+	}
+}
+
+// "time" is referenced as hundredths of a second.
+// IS THAT CORRECT??
+// We convert it to microseconds before prceeding
+void Player::addParameterTransition (int param, int target, int time) {
+	int start;
+
+	switch (param) {
+	case 1:
+		// Volume fades are handled differently.
+		fade_vol (target, time);
+		return;
+
+	case 3:
+		// FIXME: Is this transpose? And what's the scale?
+		// It's set to fade to -2400 in the tunnel of love.
+		warning ("parameterTransition(3) outside Tunnel of Love?");
+		start = _transpose;
+		target /= 200;
+		break;
+
+	case 4:
+		// FIXME: Is the speed from 0-100?
+		// Right now I convert it to 0-128.
+		start = _speed;
+		target = target * 128 / 100;
+		break;
+
+	case 127:
+		// FIXME: This MIGHT fade ALL supported parameters,
+		// but I'm not sure.
+		return;
+
+	default:
+		warning ("Unknown transition parameter %d", param);
+		return;
+	}
+
+	ParameterFade *ptr = &_parameterFades[0];
+	ParameterFade *best = 0;
+	int i;
+	for (i = ARRAYSIZE(_parameterFades); i; --i, ++ptr) {
+		if (ptr->param == param) {
+			best = ptr;
+			start = ptr->end;
+			break;
+		} else if (!ptr->param) {
+			best = ptr;
+		}
+	}
+
+	if (best) {
+		best->param = param;
+		best->start = start;
+		best->end = target;
+		best->total_time = (uint32) time * 10000;
+		best->current_time = 0;
+	}
+}
+
+void Player::transitionParameters() {
+	uint32 advance = _midi->getBaseTempo() / 500;
+	int value;
+
+	ParameterFade *ptr = &_parameterFades[0];
+	int i;
+	for (i = ARRAYSIZE(_parameterFades); i; --i, ++ptr) {
+		if (!ptr->param)
+			continue;
+
+		ptr->current_time += advance;
+		if (ptr->current_time > ptr->total_time)
+			ptr->current_time = ptr->total_time;
+		value = (int32) ptr->start + (int32) (ptr->end - ptr->start) * (int32) ptr->current_time / (int32) ptr->total_time;
+
+		switch (ptr->param) {
+		case 4:
+			// Speed.
+			set_speed ((byte) value);
+			break;
+
+		case 3:
+			// FIXME: Is this really transpose?
+			set_transpose (0, value);
+			break;
+		}
+
+		if (ptr->current_time >= ptr->total_time)
+			ptr->param = 0;
 	}
 }
 
