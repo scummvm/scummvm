@@ -1620,7 +1620,7 @@ void ScummEngine_v6::o6_resourceRoutines() {
 			if (_heversion < 70)
 				error("o6_resourceRoutines: default case %d", op);
 			
-			warning("stub queueload resource 2, %d", pop());
+			debug(1,"stub queueload resource 2, %d", pop());
 			// QL_QueGlobForLoad(2, pop(), 1);
 			break;
 		}
@@ -1629,7 +1629,7 @@ void ScummEngine_v6::o6_resourceRoutines() {
 			if (_heversion < 70)
 				error("o6_resourceRoutines: default case %d", op);
 
-			warning("stub queueload resource 4, %d", pop());
+			debug(1,"stub queueload resource 4, %d", pop());
 			// QL_QueGlobForLoad(4, pop(), 1);
 			break;
 		}
@@ -1638,7 +1638,7 @@ void ScummEngine_v6::o6_resourceRoutines() {
 			if (_heversion < 70)
 				error("o6_resourceRoutines: default case %d", op);
 
-			warning("stub queueload resource 3, %d", pop());
+			debug(1,"stub queueload resource 3, %d", pop());
 			// QL_QueGlobForLoad(3, pop(), 1);
 			break;
 		}
@@ -1648,19 +1648,19 @@ void ScummEngine_v6::o6_resourceRoutines() {
 				error("o6_resourceRoutines: default case %d", op);
 
 			resid = pop();
-			warning("stub queueload resource 18, %d", resid);
+			debug(1,"stub queueload resource 18, %d", resid);
 			// QL_QueGlobForLoad(18, resid, 1);
 			// QL_QueGlobForLoad(1, resid, 1);
 			break;
 		}
 	case 233:
 		resid = pop();
-		warning("stub o6_resourceRoutines resource %d, 1", resid);
+		debug(1,"stub o6_resourceRoutines resource %d, 1", resid);
 		// foo(resid, 1);
 		break;
 	case 235:
 		resid = pop();
-		warning("stub o6_resourceRoutines resource %d, 0", resid);
+		debug(1,"stub o6_resourceRoutines resource %d, 0", resid);
 		// foo(resid, 0);
 		break;
 	default:

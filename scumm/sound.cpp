@@ -160,6 +160,7 @@ void Sound::playSound(int soundID, int offset) {
 	int size = -1;
 	int rate;
 	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
+	bool music = false;
 	
 	debugC(DEBUG_SOUND, "playSound #%d (room %d)", soundID, 
 		_vm->getResourceRoomNr(rtSound, soundID));
@@ -189,20 +190,24 @@ void Sound::playSound(int soundID, int offset) {
 		music_offs = musicFile.readUint32LE();
 		size = musicFile.readUint32LE();
 
-		if (music_offs > total_size || (size + music_offs) > total_size)
-			error("Bad music offsets");
+		if (music_offs > total_size || (size + music_offs) > total_size) {
+			warning("Bad music offsets");
+			musicFile.close();
+			return;
+		}
 
 		musicFile.seek(music_offs, SEEK_SET);
 		ptr = (byte *) calloc(size, 1);
 		musicFile.read(ptr, size);
 		musicFile.close();
 
+		_currentMusic = soundID;
+		music = true;
 		if (_vm->_heversion == 70) {
 			// Allocate a sound buffer, copy the data into it, and play
 			sound = (char *)malloc(size);
 			memcpy(sound, ptr, size);
 			free(ptr);
-			_currentMusic = soundID;
 			_vm->_mixer->stopHandle(_musicChannelHandle);
 			_vm->_mixer->playRaw(&_musicChannelHandle, sound, size, 11025, flags, soundID);
 			return;
@@ -251,7 +256,12 @@ void Sound::playSound(int soundID, int offset) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + offset + 8, size);
-		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+
+		if (music == true) {
+			_vm->_mixer->stopHandle(_musicChannelHandle);
+			_vm->_mixer->playRaw(&_musicChannelHandle, sound, size, rate, flags, soundID);
+		} else
+			_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 	else if (READ_UINT32(ptr) == MKID('MRAW')) {
 		// pcm music in 3DO humongous games

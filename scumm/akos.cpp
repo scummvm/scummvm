@@ -86,6 +86,7 @@ enum AkosOpcodes {
 	AKC_Cmd3 = 0xC08B,
 	AKC_Ignore3 = 0xC08C,
 	AKC_Ignore2 = 0xC08D,
+	AKC_Unk1 = 0xC08E,
 	AKC_SkipStart = 0xC090,
 	AKC_SkipE = 0xC090,
 	AKC_SkipNE = 0xC091,
@@ -263,6 +264,9 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 	int xmoveCur, ymoveCur;
 
 	if (_skipLimb)
+		return 0;
+
+	if (_vm->_heversion >= 70 && cost.active[limb] == 8)
 		return 0;
 
 	if (!cost.active[limb] || cost.stopped & (1 << limb))
@@ -1289,6 +1293,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 		case AKC_Return:
 		case AKC_EndSeq:
 		case AKC_ComplexChan:
+		case AKC_Unk1:
 			break;
 
 		case AKC_Cmd3:
@@ -1317,7 +1322,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 	int code2 = aksq[curpos];
 	if (code2 & 0x80)
 		code2 = (code2 << 8) | aksq[curpos + 1];
-	assert((code2 & 0xC000) != 0xC000 || code2 == AKC_ComplexChan || code2 == AKC_Return || code2 == AKC_EndSeq);
+	assert((code2 & 0xC000) != 0xC000 || code2 == AKC_ComplexChan || code2 == AKC_Return || code2 == AKC_EndSeq || code2 == AKC_Unk1);
 
 	a->cost.curpos[chan] = curpos;
 

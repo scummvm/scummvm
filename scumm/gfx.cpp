@@ -1028,8 +1028,10 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		smap_ptr = _vm->findResource(MKID('SMAP'), ptr);
 
 	// newer Humongous titles use this
+	//	smap_ptr = _vm->findResource(MKID('BMAP'), ptr);
+	// HACK Until BMAP support is added
 	if (smap_ptr == NULL)
-		smap_ptr = _vm->findResource(MKID('BMAP'), ptr);
+		return;
 
 	assert(smap_ptr);
 
