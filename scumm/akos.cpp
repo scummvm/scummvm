@@ -1273,6 +1273,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 		case AKC_ComplexChan:
 			break;
 
+		case AKC_Cmd3:
 		case AKC_Ignore:
 		case AKC_Ignore2:
 		case AKC_Ignore3:

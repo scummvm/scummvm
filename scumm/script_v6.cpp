@@ -1856,6 +1856,8 @@ void ScummEngine_v6::o6_verbOps() {
 		if (_curVerbSlot) {
 			setVerbObject(_roomResource, a, slot);
 			vs->type = kImageVerbType;
+			if (_features & GF_HUMONGOUS)
+				vs->imgindex = a;
 		}
 		break;
 	case 125:		// SO_VERB_NAME
