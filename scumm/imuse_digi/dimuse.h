@@ -155,19 +155,17 @@ struct imuseRoomMap {
 };
 
 struct imuseDigTable {
-	char title[30];
 	int opcode;
 	int soundId;
-	char name[30];
+	char name[20];
 	int param;
 	char filename[13];
 };
 
 struct imuseComiTable {
-	char title[30];
 	int opcode;
 	int soundId;
-	char name[24];
+	char name[20];
 	int param;
 	int hookId;
 	int fadeDelay;

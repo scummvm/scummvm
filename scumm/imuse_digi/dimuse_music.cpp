@@ -30,7 +30,7 @@ void IMuseDigital::setDigMusicState(int stateId) {
 
 	for (l = 0; _digStateMusicTable[l].soundId != -1; l++) {
 		if ((_digStateMusicTable[l].soundId == stateId)) {
-			debug(5, "Set music state: %s, %s, %s", _digStateMusicTable[l].name, _digStateMusicTable[l].title, _digStateMusicTable[l].filename);
+			debug(5, "Set music state: %s, %s, %s", _digStateMusicTable[l].name, _digStateMusicTable[l].filename);
 			num = l;
 			break;
 		}
@@ -61,7 +61,7 @@ void IMuseDigital::setDigMusicState(int stateId) {
 		}
 	}
 
-	debug(5, "Set music state: %s, %s, %s", _digStateMusicTable[num].name, _digStateMusicTable[num].title, _digStateMusicTable[num].filename);
+	debug(5, "Set music state: %s, %s, %s", _digStateMusicTable[num].name, _digStateMusicTable[num].filename);
 
 	if (_curMusicState == num)
 		return;
@@ -84,7 +84,7 @@ void IMuseDigital::setDigMusicSequence(int seqId) {
 
 	for (l = 0; _digSeqMusicTable[l].soundId != -1; l++) {
 		if ((_digSeqMusicTable[l].soundId == seqId)) {
-			debug(5, "Set music sequence: %s, %s, %s", _digSeqMusicTable[l].name, _digSeqMusicTable[l].title, _digSeqMusicTable[l].filename);
+			debug(5, "Set music sequence: %s, %s, %s", _digSeqMusicTable[l].name, _digSeqMusicTable[l].filename);
 			num = l;
 			break;
 		}
@@ -187,7 +187,7 @@ void IMuseDigital::setComiMusicState(int stateId) {
 
 	for (l = 0; _comiStateMusicTable[l].soundId != -1; l++) {
 		if ((_comiStateMusicTable[l].soundId == stateId)) {
-			debug(5, "Set music state: %s, %s, %s", _comiStateMusicTable[l].name, _comiStateMusicTable[l].title, _comiStateMusicTable[l].filename);
+			debug(5, "Set music state: %s, %s, %s", _comiStateMusicTable[l].name, _comiStateMusicTable[l].filename);
 			num = l;
 			break;
 		}
@@ -215,7 +215,7 @@ void IMuseDigital::setComiMusicSequence(int seqId) {
 
 	for (l = 0; _comiSeqMusicTable[l].soundId != -1; l++) {
 		if ((_comiSeqMusicTable[l].soundId == seqId)) {
-			debug(5, "Set music sequence: %s, %s, %s", _comiSeqMusicTable[l].name, _comiSeqMusicTable[l].title, _comiSeqMusicTable[l].filename);
+			debug(5, "Set music sequence: %s, %s, %s", _comiSeqMusicTable[l].name, _comiSeqMusicTable[l].filename);
 			num = l;
 			break;
 		}
