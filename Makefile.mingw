@@ -12,7 +12,7 @@ DEFINES = -DUSE_ADLIB -DCOMPRESSED_SOUND_FILE
 LDFLAGS :=
 INCLUDES:= $(SDL_CFLAGS) -I./ -I./sound
 CPPFLAGS= $(DEFINES) $(INCLUDES)
-LIBS	= -lmingw32 $(SDL_LIBS) -lmad -mwindows -mconsole
+LIBS	= -lmingw32 -lwinmm -lwsock32 $(SDL_LIBS) -lmad -mwindows -mconsole
 
 EXEC=scummvm.exe
 
