@@ -157,7 +157,7 @@ void *DynamicPlugin::findSymbol(const char *symbol) {
 #ifdef UNIX
 	void *func = dlsym(_dlHandle, symbol);
 	if (!func)
-		warning("Failed loading symbold '%s' from plugin '%s' (%s)\n", symbol, _filename.c_str(), dlerror());
+		warning("Failed loading symbold '%s' from plugin '%s' (%s)", symbol, _filename.c_str(), dlerror());
 	return func;
 #else
 #error TODO
@@ -172,7 +172,7 @@ bool DynamicPlugin::loadPlugin() {
 	_dlHandle = dlopen(_filename.c_str(), RTLD_LAZY);
 	
 	if (!_dlHandle) {
-		warning("Failed loading plugin '%s' (%s)\n", _filename.c_str(), dlerror());
+		warning("Failed loading plugin '%s' (%s)", _filename.c_str(), dlerror());
 		return false;
 	}
 	
@@ -205,7 +205,7 @@ bool DynamicPlugin::loadPlugin() {
 void DynamicPlugin::unloadPlugin() {
 	if (_dlHandle) {
 		if (dlclose(_dlHandle) != 0)
-			warning("Failed unloading plugin '%s' (%s)\n", _filename.c_str(), dlerror());
+			warning("Failed unloading plugin '%s' (%s)", _filename.c_str(), dlerror());
 	}
 }
 
