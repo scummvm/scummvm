@@ -2721,7 +2721,7 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 
 const char *ScummEngine::getGameDataPath() const {
 #ifdef MACOSX
-	if (_version == 8 && _gameDataPath == "/Volumes/MONKEY3_") {
+	if (_version == 8 && !memcmp(_gameDataPath.c_str(), "/Volumes/MONKEY3_", 17)) {
 		// Special case for COMI on Mac OS X. The mount points on OS X depend
 		// on the volume name. Hence if playing from CD, we'd get a problem.
 		// So if loading of a resource file fails, we fall back to the (fixed)
