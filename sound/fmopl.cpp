@@ -62,16 +62,16 @@
 
 /* output level entries (envelope,sinwave) */
 /* envelope counter lower bits */
-#define ENV_BITS 16
+int ENV_BITS;
 /* envelope output entries */
-#define EG_ENT   4096
+int EG_ENT;
+
 /* used dynamic memory = EG_ENT*4*4(byte)or EG_ENT*6*4(byte) */
 /* used static  memory = EG_ENT*4 (byte)                     */
-
-#define EG_OFF   ((2*EG_ENT)<<ENV_BITS)  /* OFF          */
-#define EG_DED   EG_OFF
-#define EG_DST   (EG_ENT<<ENV_BITS)      /* DECAY  START */
-#define EG_AED   EG_DST
+int EG_OFF;								 /* OFF */
+int EG_DED;
+int EG_DST;								 /* DECAY START */
+int EG_AED;
 #define EG_AST   0                       /* ATTACK START */
 
 #define EG_STEP (96.0/EG_ENT) /* OPL is 0.1875 dB step  */
@@ -104,61 +104,59 @@ static const int slot_array[32]=
 	-1,-1,-1,-1,-1,-1,-1,-1
 };
 
-#define SC(mydb) ((uint) (mydb / (EG_STEP/2)))
+static uint KSL_TABLE[8 * 16];
 
-static const uint KSL_TABLE[8 * 16] = {
+static const double KSL_TABLE_SEED[8 * 16] = {
 	/* OCT 0 */
-	SC(0.000), SC(0.000), SC(0.000), SC(0.000),
-	SC(0.000), SC(0.000), SC(0.000), SC(0.000),
-	SC(0.000), SC(0.000), SC(0.000), SC(0.000),
-	SC(0.000), SC(0.000), SC(0.000), SC(0.000),
+	0.000, 0.000, 0.000, 0.000,
+	0.000, 0.000, 0.000, 0.000,
+	0.000, 0.000, 0.000, 0.000,
+	0.000, 0.000, 0.000, 0.000,
 	/* OCT 1 */
-	SC(0.000), SC(0.000), SC(0.000), SC(0.000),
-	SC(0.000), SC(0.000), SC(0.000), SC(0.000),
-	SC(0.000), SC(0.750), SC(1.125), SC(1.500),
-	SC(1.875), SC(2.250), SC(2.625), SC(3.000),
+	0.000, 0.000, 0.000, 0.000,
+	0.000, 0.000, 0.000, 0.000,
+	0.000, 0.750, 1.125, 1.500,
+	1.875, 2.250, 2.625, 3.000,
 	/* OCT 2 */
-	SC(0.000), SC(0.000), SC(0.000), SC(0.000),
-	SC(0.000), SC(1.125), SC(1.875), SC(2.625),
-	SC(3.000), SC(3.750), SC(4.125), SC(4.500),
-	SC(4.875), SC(5.250), SC(5.625), SC(6.000),
+	0.000, 0.000, 0.000, 0.000,
+	0.000, 1.125, 1.875, 2.625,
+	3.000, 3.750, 4.125, 4.500,
+	4.875, 5.250, 5.625, 6.000,
 	/* OCT 3 */
-	SC(0.000), SC(0.000), SC(0.000), SC(1.875),
-	SC(3.000), SC(4.125), SC(4.875), SC(5.625),
-	SC(6.000), SC(6.750), SC(7.125), SC(7.500),
-	SC(7.875), SC(8.250), SC(8.625), SC(9.000),
+	0.000, 0.000, 0.000, 1.875,
+	3.000, 4.125, 4.875, 5.625,
+	6.000, 6.750, 7.125, 7.500,
+	7.875, 8.250, 8.625, 9.000,
 	/* OCT 4 */
-	SC(0.000), SC(0.000), SC(3.000), SC(4.875),
-	SC(6.000), SC(7.125), SC(7.875), SC(8.625),
-	SC(9.000), SC(9.750), SC(10.125), SC(10.500),
-	SC(10.875), SC(11.250), SC(11.625), SC(12.000),
+	0.000, 0.000, 3.000, 4.875,
+	6.000, 7.125, 7.875, 8.625,
+	9.000, 9.750, 10.125, 10.500,
+	10.875, 11.250, 11.625, 12.000,
 	/* OCT 5 */
-	SC(0.000), SC(3.000), SC(6.000), SC(7.875),
-	SC(9.000), SC(10.125), SC(10.875), SC(11.625),
-	SC(12.000), SC(12.750), SC(13.125), SC(13.500),
-	SC(13.875), SC(14.250), SC(14.625), SC(15.000),
+	0.000, 3.000, 6.000, 7.875,
+	9.000, 10.125, 10.875, 11.625,
+	12.000, 12.750, 13.125, 13.500,
+	13.875, 14.250, 14.625, 15.000,
 	/* OCT 6 */
-	SC(0.000), SC(6.000), SC(9.000), SC(10.875),
-	SC(12.000), SC(13.125), SC(13.875), SC(14.625),
-	SC(15.000), SC(15.750), SC(16.125), SC(16.500),
-	SC(16.875), SC(17.250), SC(17.625), SC(18.000),
+	0.000, 6.000, 9.000, 10.875,
+	12.000, 13.125, 13.875, 14.625,
+	15.000, 15.750, 16.125, 16.500,
+	16.875, 17.250, 17.625, 18.000,
 	/* OCT 7 */
-	SC(0.000), SC(9.000), SC(12.000), SC(13.875),
-	SC(15.000), SC(16.125), SC(16.875), SC(17.625),
-	SC(18.000), SC(18.750), SC(19.125), SC(19.500),
-	SC(19.875), SC(20.250), SC(20.625), SC(21.000)
+	0.000, 9.000, 12.000, 13.875,
+	15.000, 16.125, 16.875, 17.625,
+	18.000, 18.750, 19.125, 19.500,
+	19.875, 20.250, 20.625, 21.000
 };
-#undef SC
-
 
 /* sustain lebel table (3db per step) */
 /* 0 - 15: 0, 3, 6, 9,12,15,18,21,24,27,30,33,36,39,42,93 (dB)*/
-#define SC(db) (int)(db*((3/EG_STEP)*(1<<ENV_BITS)))+EG_DST
-static const int SL_TABLE[16]={
- SC( 0),SC( 1),SC( 2),SC(3 ),SC(4 ),SC(5 ),SC(6 ),SC( 7),
- SC( 8),SC( 9),SC(10),SC(11),SC(12),SC(13),SC(14),SC(31)
+
+static int SL_TABLE[16];
+
+static const uint SL_TABLE_SEED[16]={
+ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 31
 };
-#undef SC
 
 #define TL_MAX (EG_ENT*2) /* limit(tl + ksr + envelope) + sinwave */
 /* TotalLevel : 48 24 12  6  3 1.5 0.75 (dB) */
@@ -175,7 +173,8 @@ static int *VIB_TABLE;
 
 /* envelope output curve table */
 /* attack + decay + OFF */
-static int ENV_CURVE[2*EG_ENT+1];
+//static int ENV_CURVE[2*EG_ENT+1];
+static int ENV_CURVE[2 * 4096+1];   // to keep it static ...
 
 /* multiple table */
 #define ML(a) (int)(a*2)
@@ -211,6 +210,32 @@ int  *vib_table;
 static int amsIncr;
 static int vibIncr;
 static int feedback2;		/* connect for SLOT 2 */
+
+/* --------------------- rebuild tables ------------------- */
+
+#define SC_KSL(mydb) ((uint) (mydb / (EG_STEP/2)))
+#define SC_SL(db) (int)(db*((3/EG_STEP)*(1<<ENV_BITS)))+EG_DST
+
+void OPLBuildTables(int ENV_BITS_PARAM, int EG_ENT_PARAM) {
+	int i;
+
+	ENV_BITS = ENV_BITS_PARAM;
+	EG_ENT = EG_ENT_PARAM;
+	EG_OFF =  ((2*EG_ENT)<<ENV_BITS);  /* OFF          */
+	EG_DED = EG_OFF;
+	EG_DST = (EG_ENT<<ENV_BITS);     /* DECAY  START */
+	EG_AED = EG_DST;
+	//EG_STEP = (96.0/EG_ENT);
+
+	for (i=0; i<sizeof(KSL_TABLE_SEED); i++)
+		KSL_TABLE[i] = SC_KSL(KSL_TABLE_SEED[i]);
+
+	for (i=0; i<sizeof(SL_TABLE_SEED); i++)
+		SL_TABLE[i] = SC_SL(SL_TABLE_SEED[i]);
+}
+
+#undef SC_KSL
+#undef SC_SL
 
 /* --------------------- subroutines  --------------------- */
 
@@ -431,7 +456,7 @@ inline void OPL_CALC_CH( OPL_CH *CH )
 	/* SLOT 1 */
 	SLOT = &CH->SLOT[SLOT1];
 	env_out=OPL_CALC_SLOT(SLOT);
-	if( env_out < EG_ENT-1 )
+	if( env_out < (uint)(EG_ENT-1))
 	{
 		/* PG */
 		if(SLOT->vib) SLOT->Cnt += (SLOT->Incr*vib/VIB_RATE);
@@ -455,7 +480,7 @@ inline void OPL_CALC_CH( OPL_CH *CH )
 	/* SLOT 2 */
 	SLOT = &CH->SLOT[SLOT2];
 	env_out=OPL_CALC_SLOT(SLOT);
-	if( env_out < EG_ENT-1 )
+	if( env_out < (uint)(EG_ENT-1) )
 	{
 		/* PG */
 		if(SLOT->vib) SLOT->Cnt += (SLOT->Incr*vib/VIB_RATE);
@@ -537,16 +562,16 @@ inline void OPL_CALC_RH( OPL_CH *CH )
 	tone8 = OP_OUT(SLOT8_2,whitenoise,0 );
 
 	/* SD */
-	if( env_sd < EG_ENT-1 )
+	if( env_sd < (uint)(EG_ENT-1) )
 		outd[0] += OP_OUT(SLOT7_1,env_sd, 0)*8;
 	/* TAM */
-	if( env_tam < EG_ENT-1 )
+	if( env_tam < (uint)(EG_ENT-1) )
 		outd[0] += OP_OUT(SLOT8_1,env_tam, 0)*2;
 	/* TOP-CY */
-	if( env_top < EG_ENT-1 )
+	if( env_top < (uint)(EG_ENT-1) )
 		outd[0] += OP_OUT(SLOT7_2,env_top,tone8)*2;
 	/* HH */
-	if( env_hh  < EG_ENT-1 )
+	if( env_hh  < (uint)(EG_ENT-1) )
 		outd[0] += OP_OUT(SLOT7_2,env_hh,tone8)*2;
 }
 

@@ -135,6 +135,8 @@ typedef struct fm_opl_f {
 #define OPL_TYPE_YM3526 (0)
 #define OPL_TYPE_YM3812 (OPL_TYPE_WAVESEL)
 
+void OPLBuildTables(int ENV_BITS_PARAM, int EG_ENT_PARAM);
+
 FM_OPL *OPLCreate(int type, int clock, int rate);
 void OPLDestroy(FM_OPL *OPL);
 void OPLSetTimerHandler(FM_OPL *OPL,OPL_TIMERHANDLER TimerHandler,int channelOffset);

@@ -72,7 +72,9 @@ public:
 		PROP_SET_GFX_MODE = 4,
 		PROP_SHOW_DEFAULT_CURSOR = 5,
 		PROP_GET_SAMPLE_RATE = 6,
-		PROP_GET_FULLSCREEN = 7
+		PROP_GET_FULLSCREEN = 7,
+		PROP_GET_FMOPL_ENV_BITS = 8,
+		PROP_GET_FMOPL_EG_ENT = 9
 	};
 	union Property {
 		const char *caption;
@@ -258,6 +260,13 @@ enum {
 #else
 	SAMPLES_PER_SEC =  22050
 #endif
+};
+
+enum {
+	FMOPL_ENV_BITS_HQ = 16,
+	FMOPL_ENV_BITS_LQ = 8,
+	FMOPL_EG_ENT_HQ = 4096,
+	FMOPL_EG_ENT_LQ = 128
 };
 
 #endif 
