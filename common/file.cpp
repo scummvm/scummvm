@@ -57,14 +57,14 @@ bool File::open(const char *filename, int mode, byte encbyte) {
 			do
 				*ptr++ = toupper(*ptr);
 			while (*ptr);
-			_handle = fopen(buf + pos, "rb");
+			_handle = fopen(buf, "rb");
 		}
 		if (_handle == NULL) {
 			ptr = buf + pos;
 			do
 				*ptr++ = tolower(*ptr);
 			while (*ptr);
-			_handle = fopen(buf + pos, "rb");
+			_handle = fopen(buf, "rb");
 		}
 		if (_handle == NULL) {
 			debug(2, "File %s not found", filename);
