@@ -1278,7 +1278,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 			return;
 	}
 
-	if (getTalkingActor() > 0x7F) {
+	if (_heversion >= 72 || getTalkingActor() > 0x7F) {
 		_charsetColor = (byte)_string[0].color;
 	} else {
 		a = derefActor(getTalkingActor(), "actorTalk(2)");

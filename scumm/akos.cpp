@@ -1681,6 +1681,7 @@ void ScummEngine::akos_processQueue() {
 				a->_talkColor = a->_heTalkQueue[param_1].color;
 
 				_string[0].loadDefault();
+				_string[0].color = a->_talkColor;
 				actorTalk(a->_heTalkQueue[param_1].sentence);
 
 			} else if (param_1 != 0) {

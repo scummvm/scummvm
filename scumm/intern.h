@@ -779,6 +779,8 @@ protected:
 	void o72_actorOps();
 	void o72_verbOps();
 	void o72_arrayOps();
+	void o72_talkActor();
+	void o72_talkEgo();
 	void o72_dimArray();
 	void o72_dim2dimArray();
 	void o72_traceStatus();

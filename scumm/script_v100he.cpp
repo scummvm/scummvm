@@ -174,9 +174,9 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o100_roomOps),
 		OPCODE(o6_printActor),
 		OPCODE(o6_printEgo),
-		OPCODE(o6_talkActor),
+		OPCODE(o72_talkActor),
 		/* 6C */
-		OPCODE(o6_talkEgo),
+		OPCODE(o72_talkEgo),
 		OPCODE(o6_invalid),
 		OPCODE(o60_seekFilePos),
 		OPCODE(o6_setBoxFlags),

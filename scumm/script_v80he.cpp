@@ -273,8 +273,8 @@ void ScummEngine_v80he::setupOpcodes() {
 		/* B8 */
 		OPCODE(o6_printActor),
 		OPCODE(o6_printEgo),
-		OPCODE(o6_talkActor),
-		OPCODE(o6_talkEgo),
+		OPCODE(o72_talkActor),
+		OPCODE(o72_talkEgo),
 		/* BC */
 		OPCODE(o72_dimArray),
 		OPCODE(o6_stopObjectCode),

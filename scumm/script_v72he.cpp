@@ -276,8 +276,8 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* B8 */
 		OPCODE(o6_printActor),
 		OPCODE(o6_printEgo),
-		OPCODE(o6_talkActor),
-		OPCODE(o6_talkEgo),
+		OPCODE(o72_talkActor),
+		OPCODE(o72_talkEgo),
 		/* BC */
 		OPCODE(o72_dimArray),
 		OPCODE(o6_stopObjectCode),
@@ -1457,6 +1457,24 @@ void ScummEngine_v72he::o72_arrayOps() {
 	}
 }
 
+void ScummEngine_v72he::o72_talkActor() {
+	Actor *a;
+
+	_actorToPrintStrFor = pop();
+	a = derefActorSafe(_actorToPrintStrFor, "o72_talkActor");
+
+	_string[0].loadDefault();
+	_string[0].color = a->_talkColor;
+	actorTalk(_scriptPointer);
+
+	_scriptPointer += resStrLen(_scriptPointer) + 1;
+}
+
+void ScummEngine_v72he::o72_talkEgo() {
+	push(VAR(VAR_EGO));
+	o6_talkActor();
+}
+
 void ScummEngine_v72he::o72_dimArray() {
 	int data;
 	int type = fetchScriptByte();
@@ -2039,6 +2057,7 @@ void ScummEngine_v72he::o72_setWindowCaption() {
 }
 
 void ScummEngine_v72he::decodeParseString(int m, int n) {
+	Actor *a;
 	int i, colors, size;
 	int args[31];
 	byte name[1024];
@@ -2106,8 +2125,11 @@ void ScummEngine_v72he::decodeParseString(int m, int n) {
 		break;
 	case 0xFE:
 		_string[m].loadDefault();
-		if (n)
+		if (n) {
 			_actorToPrintStrFor = pop();
+			a = derefActorSafe(_actorToPrintStrFor, "decodeParseString");
+			_string[0].color = a->_talkColor;
+		}
 		break;
 	case 0xFF:
 		_string[m].saveDefault();
