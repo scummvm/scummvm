@@ -76,9 +76,14 @@ void SmushPlayer::openFile(byte* fileName) {
 
 	byte buf[100];
 
-	sprintf((char*)buf,"%s%s%s",(char*)sm->_gameDataPath,(char*)sm->_videoPath,(char*)fileName);
-
+	sprintf((char*)buf,"%sVIDEO/%s",(char*)sm->_gameDataPath,(char*)fileName);
 	_in = fopen((char*)buf, "rb");
+
+	if(_in==NULL){
+        	sprintf((char*)buf,"%svideo/%s",(char*)sm->_gameDataPath,(char*)fileName);
+		_in = fopen((char*)buf, "rb");
+		
+	}
 
 }
 
