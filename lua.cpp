@@ -1019,14 +1019,14 @@ static void GetTextObjectDimensions() {
 
 static void StartFullscreenMovie() {
 	bool mode = getbool(2);
-	pushbool(g_smush->play(lua_getstring(lua_getparam(1)), 0, 0));
+	pushbool(g_smush->play(luaL_check_string(1), 0, 0));
 }
 
 static void StartMovie() {
 	bool mode = getbool(2);
 	int x = lua_getparam(3);
 	int y = lua_getparam(4);
-	pushbool(g_smush->play(lua_getstring(lua_getparam(1)), x, y));
+	pushbool(g_smush->play(luaL_check_string(1), x, y));
 }
 
 static void IsFullscreenMoviePlaying() {
