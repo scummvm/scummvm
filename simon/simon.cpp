@@ -42,6 +42,8 @@
 #include <errno.h>
 #include <time.h>
 
+#include <memory>
+
 #ifdef __PALM_OS__
 #include "globals.h"
 #endif
@@ -2623,7 +2625,8 @@ int SimonEngine::count_savegames() {
 	uint i = 1;
 	bool marks[256];
 
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	char *prefix = gen_savename(999);
 	prefix[strlen(prefix)-3] = '\0';
 	mgr->list_savefiles(prefix, getSavePath(), marks, 256);
@@ -2637,7 +2640,6 @@ int SimonEngine::count_savegames() {
 		} else
 			break;
 	}
-	delete mgr;
 	return i;
 }
 
@@ -2651,7 +2653,8 @@ int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 
 	slot = curpos;
 
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 
 	while (curpos + 6 > slot) {
 		if(!(in = mgr->open_savefile(gen_savename(slot), getSavePath(), false)))
@@ -2684,8 +2687,6 @@ int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 			}
 		}
 	}
-
-	delete mgr;
 
 	return slot - curpos;
 }
@@ -4806,11 +4807,11 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 	errno = 0;
 #endif
 
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 
 	f = mgr->open_savefile(gen_savename(slot), getSavePath(), true);
 	if (f == NULL) {
-		delete mgr;
 		_lock_word &= ~0x100;
 		return false;
 	}
@@ -4881,7 +4882,6 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 		f->writeUint16BE(_bit_array[i]);
 
 	delete f;
-	delete mgr;
 
 	_lock_word &= ~0x100;
 
@@ -4892,9 +4892,9 @@ char *SimonEngine::gen_savename(int slot) {
 	static char buf[15];
 
 	if (_game & GF_SIMON2) {
-	sprintf(buf, "simon2.%.3d", slot);
+		sprintf(buf, "simon2.%.3d", slot);
 	} else {
-	sprintf(buf, "simon1.%.3d", slot);
+		sprintf(buf, "simon1.%.3d", slot);
 	}
 	return buf;
 }
@@ -4910,11 +4910,11 @@ bool SimonEngine::load_game(uint slot) {
 	errno = 0;
 #endif
 
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 
 	f = mgr->open_savefile(gen_savename(slot), getSavePath(), false);
 	if (f == NULL) {
-		delete mgr;
 		_lock_word &= ~0x100;
 		return false;
 	}
@@ -4925,7 +4925,6 @@ bool SimonEngine::load_game(uint slot) {
 
 	if (f->readUint32BE() != 0xFFFFFFFF || num != _itemarray_inited - 1) {
 		delete f;
-		delete mgr;
 		_lock_word &= ~0x100;
 		return false;
 	}
@@ -5003,7 +5002,6 @@ bool SimonEngine::load_game(uint slot) {
 		_bit_array[i] = f->readUint16BE();
 
 	delete f;
-	delete mgr;
 
 	_no_parent_notify = false;
 

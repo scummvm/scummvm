@@ -37,6 +37,8 @@
 #include "sword1/sworddefs.h"
 #include "sword1/swordres.h"
 
+#include <memory>
+
 namespace Sword1 {
 
 #define SAVEFILE_WRITE true
@@ -665,7 +667,8 @@ bool Control::restoreFromFile(void) {
 }
 
 void Control::readSavegameDescriptions(void) {
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	SaveFile *inf;
 	inf = mgr->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_READ);
 	_saveScrollPos = _saveFiles = 0;
@@ -692,7 +695,6 @@ void Control::readSavegameDescriptions(void) {
 		for (uint8 cnt = 0; cnt < 64; cnt++)
 			_saveNames[cnt][0] = '\0';
 	delete inf;
-	delete mgr;
 }
 
 int Control::displayMessage(const char *altButton, const char *message, ...) {
@@ -712,7 +714,8 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 }
 
 void Control::writeSavegameDescriptions(void) {
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	SaveFile *outf;
 	outf = mgr->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_WRITE);
 	
@@ -734,18 +737,17 @@ void Control::writeSavegameDescriptions(void) {
 			outf->writeByte(255);
 	}
 	delete outf;
-	delete mgr;
 }
 
 bool Control::savegamesExist(void) {
 	bool retVal = false;
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	SaveFile *inf;
 	inf = mgr->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_READ);
 	if (inf && inf->isOpen())
 		retVal = true;
 	delete inf;
-	delete mgr;
 	return retVal;
 }
 
@@ -898,7 +900,8 @@ void Control::saveGameToFile(uint8 slot) {
 	uint16 cnt;
 	sprintf(fName, "SAVEGAME.%03d", slot);
 	uint16 liveBuf[TOTAL_SECTIONS];
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	SaveFile *outf;
 	outf = mgr->open_savefile(fName, _savePath, SAVEFILE_WRITE);
 	if (!outf || !outf->isOpen()) {
@@ -926,20 +929,19 @@ void Control::saveGameToFile(uint8 slot) {
 	for (uint32 cnt2 = 0; cnt2 < playerSize; cnt2++)
 		outf->writeUint32LE(playerRaw[cnt2]);
 	delete outf;
-	delete mgr;
 }
 
 bool Control::restoreGameFromFile(uint8 slot) {
 	char fName[15];
 	uint16 cnt;
 	sprintf(fName, "SAVEGAME.%03d", slot);
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	SaveFile *inf;
 	inf = mgr->open_savefile(fName, _savePath, SAVEFILE_READ);
 	if (!inf || !inf->isOpen()) {
 		// Display an error message, and do nothing
 		displayMessage(0, "Can't open file '%s' in directory '%s'", fName, _savePath);
-		delete mgr;
 		return false;
 	}
 
@@ -963,7 +965,6 @@ bool Control::restoreGameFromFile(uint8 slot) {
 		playerBuf[cnt2] = inf->readUint32LE();
 
 	delete inf;
-	delete mgr;
 	return true;
 }
 

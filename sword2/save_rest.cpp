@@ -33,6 +33,8 @@
 #include "sword2/logic.h"
 #include "sword2/resman.h"
 
+#include <memory>
+
 namespace Sword2 {
 
 // A savegame consists of a header and the global variables
@@ -163,18 +165,17 @@ uint32 Sword2Engine::saveData(uint16 slotNo, byte *buffer, uint32 bufferSize) {
 
 	sprintf(saveFileName, "%s.%.3d", _targetName, slotNo);
 
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	SaveFile *out;
 
 	if (!(out = mgr->open_savefile(saveFileName, getSavePath(), true))) {
-		delete mgr;
 		return SR_ERR_FILEOPEN;
 	}
 
 	uint32 itemsWritten = out->write(buffer, bufferSize);
 
 	delete out;
-	delete mgr;
 
 	if (itemsWritten == bufferSize)
 		return SR_OK;
@@ -213,12 +214,12 @@ uint32 Sword2Engine::restoreData(uint16 slotNo, byte *buffer, uint32 bufferSize)
 
 	sprintf(saveFileName, "%s.%.3d", _targetName, slotNo);
 
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	SaveFile *in;
 
 	if (!(in = mgr->open_savefile(saveFileName, getSavePath(), false))) {
 		// error: couldn't open file
-		delete mgr;
 		return SR_ERR_FILEOPEN;
 	}
 
@@ -226,14 +227,11 @@ uint32 Sword2Engine::restoreData(uint16 slotNo, byte *buffer, uint32 bufferSize)
 	uint32 itemsRead = in->read(buffer, bufferSize);
 
 	delete in;
-	delete mgr;
 
 	if (itemsRead != bufferSize) {
 		// We didn't get all of it. At the moment we have no way of
 		// knowing why, so assume that it's an incompatible savegame.
 
-		delete in;
-		delete mgr;
 		return SR_ERR_INCOMPATIBLE;
 	}
 
@@ -363,11 +361,11 @@ uint32 Sword2Engine::getSaveDescription(uint16 slotNo, byte *description) {
 
 	sprintf(saveFileName, "%s.%.3d", _targetName, slotNo);
 
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	SaveFile *in;
 
 	if (!(in = mgr->open_savefile(saveFileName, getSavePath(), false))) {
-		delete mgr;
 		return SR_ERR_FILEOPEN;
 	}
 
@@ -375,7 +373,6 @@ uint32 Sword2Engine::getSaveDescription(uint16 slotNo, byte *description) {
 
 	in->read(&dummy, sizeof(dummy));
 	delete in;
-	delete mgr;
 
 	strcpy((char *) description, dummy.description);
 	return SR_OK;
@@ -393,16 +390,15 @@ bool Sword2Engine::saveExists(uint16 slotNo) {
 
 	sprintf(saveFileName, "%s.%.3d", _targetName, slotNo);
 
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	SaveFile *in;
 
 	if (!(in = mgr->open_savefile(saveFileName, getSavePath(), false))) {
-		delete mgr;
 		return false;
 	}
 
 	delete in;
-	delete mgr;
 	return true;
 }
 

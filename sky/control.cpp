@@ -35,6 +35,7 @@
 #include "sky/struc.h"
 #include "sky/text.h"
 
+#include <memory>
 
 namespace Sky {
 
@@ -783,13 +784,13 @@ bool Control::autoSaveExists(void) {
 		strcpy(fName, "SKY-VM-CD.ASD");
 	else
 		sprintf(fName, "SKY-VM%03d.ASD", SkyEngine::_systemVars.gameVersion);
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	f = mgr->open_savefile(fName, _savePath, false);
 	if (f != NULL) {
 		test = true;
 		delete f;
 	}
-	delete mgr;
 	return test;
 }
 
@@ -1003,7 +1004,8 @@ void Control::loadDescriptions(uint8 *destBuf) {
 
 	memset(destBuf, 0, MAX_SAVE_GAMES * MAX_TEXT_LEN);
 
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	SaveFile *inf;
 	inf = mgr->open_savefile("SKY-VM.SAV",_savePath,false);
 	if (inf != NULL) {
@@ -1028,7 +1030,6 @@ void Control::loadDescriptions(uint8 *destBuf) {
 			destPos += MAX_TEXT_LEN;
 		}
 	}
-	delete mgr;
 }
 
 bool Control::loadSaveAllowed(void) {
@@ -1064,13 +1065,13 @@ void Control::saveDescriptions(uint8 *srcBuf) {
 		srcPos += MAX_TEXT_LEN;
 	}
 	SaveFile *outf;
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	outf = mgr->open_savefile("SKY-VM.SAV", _savePath, true);
 	if (outf != NULL) {
 		outf->write(tmpBuf, tmpPos - tmpBuf);
 		delete outf;
 	}
-	delete mgr;
 	free(tmpBuf);	
 }
 
@@ -1081,11 +1082,11 @@ void Control::doAutoSave(void) {
 	else
 		sprintf(fName, "SKY-VM%03d.ASD", SkyEngine::_systemVars.gameVersion);
 	SaveFile *outf;
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	outf = mgr->open_savefile(fName, _savePath, true);
 	if (outf == NULL) {
 		warning("Can't create file %s for autosaving", fName);
-		delete mgr;
 		return;
 	}
 	uint8 *saveData = (uint8 *)malloc(0x20000);
@@ -1094,7 +1095,6 @@ void Control::doAutoSave(void) {
 	if (outf->write(saveData, fSize) != fSize)
 		warning("Can't write file %s for autosaving. Disk full?", fName);
 	delete outf;
-	delete mgr;
 	free(saveData);
 }
 
@@ -1102,11 +1102,11 @@ uint16 Control::saveGameToFile(void) {
 
 	char fName[20];
 	sprintf(fName,"SKY-VM.%03d", _selectedGame);
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	SaveFile *outf;
 	outf = mgr->open_savefile(fName, _savePath, true);
 	if (outf == NULL) {
-		delete mgr;
 		return NO_DISK_SPACE;
 	}
 
@@ -1116,11 +1116,9 @@ uint16 Control::saveGameToFile(void) {
 	if (outf->write(saveData, fSize) != fSize) {
 		free(saveData);
 		delete outf;
-		delete mgr;
 		return NO_DISK_SPACE;
 	}
 	delete outf;
-	delete mgr;
 	free(saveData);
 	return GAME_SAVED;
 }
@@ -1509,11 +1507,11 @@ uint16 Control::restoreGameFromFile(bool autoSave) {
 	} else
 		sprintf(fName,"SKY-VM.%03d", _selectedGame);
 
-	SaveFileManager *mgr = _system->get_savefile_manager();
+	const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 	SaveFile *inf;
 	inf = mgr->open_savefile(fName, _savePath, false);
 	if (inf == NULL) {
-		delete mgr;
 		return RESTORE_FAILED;
 	}
 
@@ -1526,14 +1524,12 @@ uint16 Control::restoreGameFromFile(bool autoSave) {
 		warning("Can't read from file!");
 		free(saveData);
 		delete inf;
-		delete mgr;
 		return RESTORE_FAILED;
 	}
 
 	uint16 res = parseSaveData(saveData);
 	SkyEngine::_systemVars.pastIntro = true;
 	delete inf;
-	delete mgr;
 	free(saveData);
 	return res;
 }

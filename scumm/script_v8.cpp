@@ -34,6 +34,7 @@
 #include "scumm/smush/smush_player.h"
 #include "sound/mixer.h"
 
+#include <memory>
 
 namespace Scumm {
 
@@ -1322,7 +1323,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		warning("o8_kernelSetFunctions: clearTextQueue()");
 		break;
 	case 25: {	// saveGameReadName
-		SaveFileManager *mgr = _system->get_savefile_manager();
+		const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
 		char *address = (char*)getStringAddress(args[2]);
 		char name[30];
 
@@ -1330,13 +1331,14 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 			warning("o8_kernelSetFunctions: saveGameReadName failed finding slot string %d", args[2]);
 			break;
 		}
-		getSavegameName(args[1] - 1, name, mgr);
+		getSavegameName(args[1] - 1, name, mgr.get());
 		if (strlen(name) > 0 && strlen(name) < 30)
 			strcpy(address, name);
 		break;
 	}
 	case 26: {	// saveGame?
-		//SaveFileManager *mgr = _system->get_savefile_manager();
+		//const std::auto_ptr<SaveFileManager> mgr(_system->get_savefile_manager());
+
 		//char *address = (char*)getStringAddress(args[2]);
 		char address[30];
 		warning("o8_kernelSetFunctions: saveGame?(%d, %s)", args[1], address);
