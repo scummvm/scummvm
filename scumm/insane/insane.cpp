@@ -857,7 +857,7 @@ void Insane::smush_rewindCurrentSan(int arg_0, int arg_4, int arg_8) {
 	debugC(DEBUG_INSANE, "smush_rewindCurrentSan(%d, %d, %d)", arg_0, arg_4, arg_8);
 	_smush_setupsan2 = arg_0;
 	
-	smush_setupSanFile(0, 8, 0);
+	smush_setupSanFile(0, 0, 0);
 	_smush_isSanFileSetup = 1;
 	smush_setFrameSteps(arg_4, arg_8);
 
@@ -1437,7 +1437,7 @@ void Insane::smush_setupSanFromStart(const char *filename, int32 setupsan2, int3
 	debugC(DEBUG_INSANE, "Insane::smush_setupFromStart(%s)", filename);
 	_smush_setupsan1 = setupsan1;
 	_smush_setupsan2 = setupsan2;
-	smush_setupSanFile(filename, 8, 0);
+	smush_setupSanFile(filename, 0, 0);
 	_smush_isSanFileSetup = 1;
 	smush_setFrameSteps(step1, step2);
 	smush_warpMouse(160, 100, -1);

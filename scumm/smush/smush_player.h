@@ -75,7 +75,6 @@ private:
 	bool _updateNeeded;
 	bool _insanity;
 	bool _middleAudio;
-	bool _skipPalette;
 #ifdef _WIN32_WCE
 	bool _inTimer;
 	int16 _inTimerCount;
