@@ -54,6 +54,8 @@ protected:
 	const String queryResString(int stringno);
 };
 
+class SaveLoadChooser;
+
 class MainMenuDialog : public ScummDialog {
 public:
 	MainMenuDialog(ScummEngine *scumm);
@@ -67,6 +69,8 @@ protected:
 #ifndef DISABLE_HELP
 	GUI::Dialog		*_helpDialog;
 #endif
+	SaveLoadChooser	*_saveDialog;
+	SaveLoadChooser	*_loadDialog;
 
 	void save();
 	void load();

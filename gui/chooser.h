@@ -42,7 +42,9 @@ protected:
 	ButtonWidget	*_chooseButton;
 
 public:
-	ChooserDialog(const String &title, const StringList &list, const String &buttonLabel = "Choose", int height = 140);
+	ChooserDialog(const String &title, const String &buttonLabel = "Choose", int height = 140);
+
+	void setList(const StringList& list);
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 };

@@ -198,14 +198,14 @@ protected:
 	bool _saveMode;
 
 public:
-	SaveLoadChooser(const String &title, const StringList& list, const String &buttonLabel, bool saveMode);
+	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode);
 	
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	const String &getResultString() const;
 };
 
-SaveLoadChooser::SaveLoadChooser(const String &title, const StringList& list, const String &buttonLabel, bool saveMode)
-	: ChooserDialog(title, list, buttonLabel, 182), _saveMode(saveMode) {
+SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode)
+	: ChooserDialog(title, buttonLabel, 182), _saveMode(saveMode) {
 
 	_list->setEditable(saveMode);
 	_list->setNumberingMode(saveMode ? kListNumberingOne : kListNumberingZero);
@@ -303,6 +303,8 @@ MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
 #ifndef DISABLE_HELP
 	_helpDialog = new HelpDialog(scumm);
 #endif
+	_saveDialog = new SaveLoadChooser("Save game:", "Save", true);
+	_loadDialog = new SaveLoadChooser("Load game:", "Load", false);
 }
 
 MainMenuDialog::~MainMenuDialog() {
@@ -310,6 +312,8 @@ MainMenuDialog::~MainMenuDialog() {
 #ifndef DISABLE_HELP
 	delete _helpDialog;
 #endif
+	delete _saveDialog;
+	delete _loadDialog;
 }
 
 void MainMenuDialog::open() {
@@ -361,10 +365,10 @@ void MainMenuDialog::close() {
 
 void MainMenuDialog::save() {
 	int idx;
-	SaveLoadChooser dialog("Save game:", generateSavegameList(_scumm, true), "Save", true);
-	idx = dialog.runModal();
+	_saveDialog->setList(generateSavegameList(_scumm, true));
+	idx = _saveDialog->runModal();
 	if (idx >= 0) {
-		const String &result = dialog.getResultString();
+		const String &result = _saveDialog->getResultString();
 		char buffer[20];
 		const char *str;
 		if (result.isEmpty()) {
@@ -380,8 +384,8 @@ void MainMenuDialog::save() {
 
 void MainMenuDialog::load() {
 	int idx;
-	SaveLoadChooser dialog("Load game:", generateSavegameList(_scumm, false), "Load", false);
-	idx = dialog.runModal();
+	_loadDialog->setList(generateSavegameList(_scumm, false));
+	idx = _loadDialog->runModal();
 	if (idx >= 0) {
 		_scumm->requestLoad(idx);
 		close();

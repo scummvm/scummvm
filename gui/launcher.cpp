@@ -428,7 +428,8 @@ void LauncherDialog::addGame() {
 			for (idx = 0; idx < candidates.size(); idx++)
 				list.push_back(candidates[idx].description);
 			
-			ChooserDialog dialog("Pick the game:", list);
+			ChooserDialog dialog("Pick the game:");
+			dialog.setList(list);
 			idx = dialog.runModal();
 		}
 		if (0 <= idx && idx < candidates.size()) {
