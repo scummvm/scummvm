@@ -151,6 +151,7 @@ private:
 	int fake_right_mouse;
 	int report_presses;
 	int current_shake_pos;
+	int new_shake_pos;
 	struct timeval start_time;
 
 	enum {
@@ -179,6 +180,8 @@ typedef struct {
 	byte format;
 } THREAD_PARAM;
 
+#undef CAPTURE_SOUND
+
 #define FRAG_SIZE 4096
 static void *sound_and_music_thread(void *params)
 {
@@ -187,6 +190,10 @@ static void *sound_and_music_thread(void *params)
 	unsigned char sound_buffer[FRAG_SIZE];
 	OSystem::SoundProc *sound_proc = ((THREAD_PARAM *) params)->sound_proc;
 	void *proc_param = ((THREAD_PARAM *) params)->param;
+
+#ifdef CAPTURE_SOUND
+	FILE *f = fopen("sound.raw", "wb");
+#endif
 
 	sound_fd = open("/dev/dsp", O_WRONLY);
 	audio_buf_info info;
@@ -248,6 +255,10 @@ static void *sound_and_music_thread(void *params)
 		for (int i = ((FRAG_SIZE >> 2) - 1); i >= 0; i--) {
 			buf[2 * i + 1] = buf[2 * i] = buf[i];
 		}
+#ifdef CAPTURE_SOUND
+		fwrite(buf, 2, FRAG_SIZE >> 1, f);
+		fflush(f);
+#endif
 		size = FRAG_SIZE;
 		while (size > 0) {
 			written = write(sound_fd, sound_buffer, size);
@@ -299,6 +310,7 @@ OSystem_X11::OSystem_X11()
 	fake_right_mouse = 0;
 	report_presses = 1;
 	current_shake_pos = 0;
+	new_shake_pos = 0;
 	_palette_changed = false;
 	num_of_dirty_square = MAX_NUMBER_OF_DIRTY_SQUARES;
 
@@ -515,13 +527,25 @@ void OSystem_X11::update_screen() {
 			update_screen_helper(&(ds[num_of_dirty_square]), &dout);
 		}
 	}
-	if (need_redraw == true) {
+
+	if (current_shake_pos != new_shake_pos) {
+		/* Redraw first the 'black borders' in case of resize */
+		if (current_shake_pos < new_shake_pos)
+			XFillRectangle(display, window, black_gc, 0, current_shake_pos, window_width, new_shake_pos);
+		else
+			XFillRectangle(display, window, black_gc, 0, window_height - current_shake_pos, 
+			               window_width, window_height - new_shake_pos);
+		XShmPutImage(display, window, DefaultGC(display, screen), image,
+		             0, 0, scumm_x, scumm_y + new_shake_pos,
+		             320, 200, 0);
+		current_shake_pos = new_shake_pos;
+	} else if (need_redraw == true) {
 #ifdef USE_XV_SCALING
 		XvShmPutImage(display, 65, window, DefaultGC(display, screen), image,
 			      0, 0, 320, 200, 0, 0, window_width, window_height, 0);
 #else
 		XShmPutImage(display, window, DefaultGC(display, screen), image,
-		             dout.x, dout.y, scumm_x + dout.x, scumm_y + dout.y,
+		             dout.x, dout.y, scumm_x + dout.x, scumm_y + dout.y + current_shake_pos,
 		             dout.w - dout.x, dout.h - dout.y, 0);
 #endif
 		XFlush(display);
@@ -659,7 +683,7 @@ void OSystem_X11::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_
 }
 	
 void OSystem_X11::set_shake_pos(int shake_pos) {
-	warning("Shaking not implemented yet (%d) ", shake_pos);
+	new_shake_pos = shake_pos;
 }
 
 void *OSystem_X11::create_thread(ThreadProc *proc, void *param) {
