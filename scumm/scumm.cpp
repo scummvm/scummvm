@@ -616,7 +616,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_IM00_offs = 0;
 	_PALS_offs = 0;
 	_fullRedraw = false;
-	_BgNeedsRedraw = false;
+	_bgNeedsRedraw = false;
 	_screenEffectFlag = false;
 	_completeScreenRedraw = false;
 	memset(&_cursor, 0, sizeof(_cursor));
@@ -681,8 +681,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_costumeRenderer = NULL;
 	_2byteFontPtr = 0;
 	_V1_talkingActor = 0;
-	_WizNumPolygons = 200; // Used as constant in original
-	_WizPolygons = NULL;
+	_wizNumPolygons = 200; // Used as constant in original
+	_wizPolygons = NULL;
 
 	_actorClipOverride.top = 0;
 	_actorClipOverride.bottom = 479;
@@ -973,7 +973,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	loadLanguageBundle();
 
 	// Load CJK font
-	_CJKMode = false;
+	_useCJKMode = false;
 	if ((_gameId == GID_DIG || _gameId == GID_CMI) && (_language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN)) {
 		File fp;
 		const char *fontFile = NULL;
@@ -994,7 +994,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		}
 		if (fontFile && fp.open(fontFile)) {
 			debug(2, "Loading CJK Font");
-			_CJKMode = true;
+			_useCJKMode = true;
 			fp.seek(2, SEEK_CUR);
 			_2byteWidth = fp.readByte();
 			_2byteHeight = fp.readByte();
@@ -1024,7 +1024,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_2byteHeight = 16;
 		//use FM Towns font rom, since game files don't have kanji font resources
 		if (fp.open("fmt_fnt.rom")) { 
-			_CJKMode = true;
+			_useCJKMode = true;
 			debug(2, "Loading FM Towns Kanji rom");
 			_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
 			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
@@ -1117,7 +1117,7 @@ ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const Scum
 
 ScummEngine_v7he::ScummEngine_v7he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16])
  : ScummEngine_v6he(detector, syst, gs, md5sum) {
-	 _Win32ResExtractor = new Win32ResExtractor(this);
+	 _win32ResExtractor = new Win32ResExtractor(this);
 }
 
 void ScummEngine::go() {
@@ -1397,10 +1397,10 @@ void ScummEngine::scummInit() {
 		_keyDownMap[i] = false;
 
 	if (_heversion >= 70) {
-		if (_WizPolygons)
-			free (_WizPolygons);
+		if (_wizPolygons)
+			free (_wizPolygons);
 
-		_WizPolygons = (WizPolygon *)calloc(_WizNumPolygons, sizeof(WizPolygon));
+		_wizPolygons = (WizPolygon *)calloc(_wizNumPolygons, sizeof(WizPolygon));
 	}
 
 	initScummVars();
@@ -1808,7 +1808,7 @@ load_game:
 		if (_version > 3)
 			CHARSET_1();
 
-		if (camera._cur.x != camera._last.x || _BgNeedsRedraw || _fullRedraw
+		if (camera._cur.x != camera._last.x || _bgNeedsRedraw || _fullRedraw
 				|| ((_features & GF_NEW_CAMERA) && camera._cur.y != camera._last.y)) {
 			redrawBGAreas();
 		}
@@ -2343,8 +2343,8 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		stopCycle(0);
 	_sound->processSoundQues();
 
-	if (_heversion >= 70 && _WizPolygons) {		
-		memset(_WizPolygons, 0, _WizNumPolygons * sizeof(WizPolygon));
+	if (_heversion >= 70 && _wizPolygons) {		
+		memset(_wizPolygons, 0, _wizNumPolygons * sizeof(WizPolygon));
 	}
 
 	for (i = 0; i < _numRoomVariables; i++)

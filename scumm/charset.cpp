@@ -82,7 +82,7 @@ void CharsetRendererV3::setCurID(byte id) {
 
 // do spacing for variable width old-style font
 int CharsetRendererClassic::getCharWidth(byte chr) {
-	if (chr >= 0x80 && _vm->_CJKMode)
+	if (chr >= 0x80 && _vm->_useCJKMode)
 		return 6;
 	int spacing = 0;
 
@@ -1043,7 +1043,7 @@ void CharsetRendererClassic::printChar(int chr) {
 	int offsX, offsY;
 	VirtScreen *vs;
 	const byte *charPtr;
-	int is2byte = (chr >= 0x80 && _vm->_CJKMode) ? 1 : 0;
+	int is2byte = (chr >= 0x80 && _vm->_useCJKMode) ? 1 : 0;
 
 	checkRange(_vm->_numCharsets - 1, 1, _curId, "Printing with bad charset %d");
 	
@@ -1318,7 +1318,7 @@ void CharsetRendererNut::printChar(int chr) {
 	int width = _current->getCharWidth(chr);
 	int height = _current->getCharHeight(chr);
 
-	if (chr >= 256 && _vm->_CJKMode)
+	if (chr >= 256 && _vm->_useCJKMode)
 		width = 16;
 
 	shadow.right = _left + width + 2;

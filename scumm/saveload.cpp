@@ -538,7 +538,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKLINE(ScummEngine, _switchRoomEffect, sleByte, VER(8)),
 		MKLINE(ScummEngine, _newEffect, sleByte, VER(8)),
 		MKLINE(ScummEngine, _switchRoomEffect2, sleByte, VER(8)),
-		MKLINE(ScummEngine, _BgNeedsRedraw, sleByte, VER(8)),
+		MKLINE(ScummEngine, _bgNeedsRedraw, sleByte, VER(8)),
 
 		// The state of palManipulate is stored only since V10
 		MKLINE(ScummEngine, _palManipStart, sleByte, VER(10)),
@@ -718,7 +718,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		s->saveLoadArrayOf(vm.slot, NUM_SCRIPT_SLOT, sizeof(vm.slot[0]), scriptSlotEntries);
 
 	if (_heversion >= 71)
-		s->saveLoadArrayOf(_WizPolygons, _WizNumPolygons, sizeof(_WizPolygons[0]), polygonEntries);
+		s->saveLoadArrayOf(_wizPolygons, _wizNumPolygons, sizeof(_wizPolygons[0]), polygonEntries);
 	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]), objectEntries);
 	if (s->isLoading() && savegameVersion < VER(13)) {
 		// Since roughly v13 of the save games, the objs storage has changed a bit

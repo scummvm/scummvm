@@ -937,46 +937,46 @@ void ScummEngine::polygonStore(int id, bool flag, int vert1x, int vert1y, int ve
 							int vert2y, int vert3x, int vert3y, int vert4x, int vert4y) {
 	int i;
 
-	for (i = 0; i < _WizNumPolygons; i++)
-		if (_WizPolygons[i].id == 0)
+	for (i = 0; i < _wizNumPolygons; i++)
+		if (_wizPolygons[i].id == 0)
 			break;
 	
-	if (i == _WizNumPolygons) {
+	if (i == _wizNumPolygons) {
 		error("ScummEngine::polygonStore: out of polygon slot, max = %d", 
-			  _WizNumPolygons);
+			  _wizNumPolygons);
 	}
 
-	_WizPolygons[i].vert[0].x = vert1x;
-	_WizPolygons[i].vert[0].y = vert1y;
-	_WizPolygons[i].vert[1].x = vert2x;
-	_WizPolygons[i].vert[1].y = vert2y;
-	_WizPolygons[i].vert[2].x = vert3x;
-	_WizPolygons[i].vert[2].y = vert3y;
-	_WizPolygons[i].vert[3].x = vert4x;
-	_WizPolygons[i].vert[3].y = vert4y;
-	_WizPolygons[i].vert[4].x = vert1x;
-	_WizPolygons[i].vert[4].y = vert1y;
-	_WizPolygons[i].id = id;
-	_WizPolygons[i].numVerts = 5;
-	_WizPolygons[i].flag = flag;
+	_wizPolygons[i].vert[0].x = vert1x;
+	_wizPolygons[i].vert[0].y = vert1y;
+	_wizPolygons[i].vert[1].x = vert2x;
+	_wizPolygons[i].vert[1].y = vert2y;
+	_wizPolygons[i].vert[2].x = vert3x;
+	_wizPolygons[i].vert[2].y = vert3y;
+	_wizPolygons[i].vert[3].x = vert4x;
+	_wizPolygons[i].vert[3].y = vert4y;
+	_wizPolygons[i].vert[4].x = vert1x;
+	_wizPolygons[i].vert[4].y = vert1y;
+	_wizPolygons[i].id = id;
+	_wizPolygons[i].numVerts = 5;
+	_wizPolygons[i].flag = flag;
 
-	_WizPolygons[i].bound.left = 10000;
-	_WizPolygons[i].bound.top = 10000;
-	_WizPolygons[i].bound.right = -10000;
-	_WizPolygons[i].bound.bottom = -10000;
+	_wizPolygons[i].bound.left = 10000;
+	_wizPolygons[i].bound.top = 10000;
+	_wizPolygons[i].bound.right = -10000;
+	_wizPolygons[i].bound.bottom = -10000;
 
 	for (int j = 0; j < 5; j++) {
-		_WizPolygons[i].bound.left = MIN(_WizPolygons[i].bound.left, _WizPolygons[i].vert[j].x);
-		_WizPolygons[i].bound.top = MIN(_WizPolygons[i].bound.top, _WizPolygons[i].vert[j].y);
-		_WizPolygons[i].bound.right = MAX(_WizPolygons[i].bound.right, _WizPolygons[i].vert[j].x);
-		_WizPolygons[i].bound.bottom = MAX(_WizPolygons[i].bound.bottom, _WizPolygons[i].vert[j].y);
+		_wizPolygons[i].bound.left = MIN(_wizPolygons[i].bound.left, _wizPolygons[i].vert[j].x);
+		_wizPolygons[i].bound.top = MIN(_wizPolygons[i].bound.top, _wizPolygons[i].vert[j].y);
+		_wizPolygons[i].bound.right = MAX(_wizPolygons[i].bound.right, _wizPolygons[i].vert[j].x);
+		_wizPolygons[i].bound.bottom = MAX(_wizPolygons[i].bound.bottom, _wizPolygons[i].vert[j].y);
 	}
 }
 
 void ScummEngine_v7he::polygonErase(int fromId, int toId) {
-	for (int i = 0; i < _WizNumPolygons; i++) {
-		if (_WizPolygons[i].id >= fromId && _WizPolygons[i].id <= toId)
-			memset(&_WizPolygons[i], 0, sizeof(WizPolygon));
+	for (int i = 0; i < _wizNumPolygons; i++) {
+		if (_wizPolygons[i].id >= fromId && _wizPolygons[i].id <= toId)
+			memset(&_wizPolygons[i], 0, sizeof(WizPolygon));
 	}
 }
 
@@ -988,10 +988,10 @@ void ScummEngine_v7he::o70he_polygonHit() {
 }
 
 int ScummEngine_v7he::polygonHit(int id, int x, int y) {
-	for (int i = 0; i < _WizNumPolygons; i++) {
-		if ((!id || _WizPolygons[i].id == id) && _WizPolygons[i].bound.contains(x, y)) {
-			if (polygonContains(_WizPolygons[i], x, y)) {
-				return _WizPolygons[i].id;
+	for (int i = 0; i < _wizNumPolygons; i++) {
+		if ((!id || _wizPolygons[i].id == id) && _wizPolygons[i].bound.contains(x, y)) {
+			if (polygonContains(_wizPolygons[i], x, y)) {
+				return _wizPolygons[i].id;
 			}
 		}
 	}
@@ -1000,8 +1000,8 @@ int ScummEngine_v7he::polygonHit(int id, int x, int y) {
 }
 
 bool ScummEngine_v7he::polygonDefined(int id) {
-	for (int i = 0; i < _WizNumPolygons; i++)
-		if (_WizPolygons[i].id == id)
+	for (int i = 0; i < _wizNumPolygons; i++)
+		if (_wizPolygons[i].id == id)
 			return true;
 
 	return false;

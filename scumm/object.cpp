@@ -430,7 +430,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 	int x, a, numstrip;
 	int tmp;
 
-	if (_BgNeedsRedraw)
+	if (_bgNeedsRedraw)
 		arg = 0;
 
 	if (od.obj_nr == 0)
@@ -924,7 +924,7 @@ void ScummEngine::markObjectRectAsDirty(int obj) {
 					setGfxUsageBit(strip, USAGE_BIT_DIRTY);
 				}
 			}
-			_BgNeedsRedraw = true;
+			_bgNeedsRedraw = true;
 			return;
 		}
 	}

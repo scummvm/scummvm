@@ -664,12 +664,12 @@ protected:
 	byte _resourceMapper[128];
 	uint32 _allocatedSize;
 	byte _expire_counter;
-	byte *_HEV7RoomOffsets;
-	uint32 *_HEV7RoomIntOffsets;
+	byte *_heV7RoomOffsets;
+	uint32 *_heV7RoomIntOffsets;
 	const byte *_resourceLastSearchBuf; // FIXME: need to put it to savefile?
 	uint32 _resourceLastSearchSize;    // FIXME: need to put it to savefile?
-	int _WizNumPolygons;
-	WizPolygon *_WizPolygons;
+	int _wizNumPolygons;
+	WizPolygon *_wizPolygons;
 
 	void allocateArrays();
 	void openRoom(int room);
@@ -914,7 +914,7 @@ protected:
 	StripTable *_roomStrips;
 
 	//ender: fullscreen
-	bool _fullRedraw, _BgNeedsRedraw;
+	bool _fullRedraw, _bgNeedsRedraw;
 	bool _screenEffectFlag, _completeScreenRedraw;
 
 	struct {
@@ -1190,7 +1190,7 @@ public:
 	void translateText(const byte *text, byte *trans_buff);	// Used by class ScummDialog
 
 	// Somewhat hackish stuff for 2 byte support (Chinese/Japanese/Korean)
-	bool _CJKMode;
+	bool _useCJKMode;
 	int _2byteHeight;
 	int _2byteWidth;
 	byte *get2byteCharPtr(int idx);

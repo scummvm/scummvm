@@ -344,7 +344,7 @@ void ScummEngine::CHARSET_1() {
 		} else {
 			_charset->_left = _charset->_nextLeft;
 			_charset->_top = _charset->_nextTop;
-			if (c & 0x80 && _CJKMode)
+			if (c & 0x80 && _useCJKMode)
 				if (_language == 6 && ((c > 0x84 && c < 0x88) || (c > 0x9f && c < 0xe0) || (c > 0xea && c <= 0xff)))
 					c = 0x20; //not in S-JIS
 				else
@@ -477,7 +477,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 					_charset->_blitAlso = true;
 				}
 			}
-			if (c >= 0x80 && _CJKMode)
+			if (c >= 0x80 && _useCJKMode)
 				c += buf[i++] * 256;
 			_charset->printChar(c);
 			_charset->_blitAlso = false;
@@ -719,7 +719,7 @@ void ScummEngine::drawBlastTexts() {
 			if (c != 0 && c != 0xFF) {
 				_charset->_left = _charset->_nextLeft;
 				_charset->_top = _charset->_nextTop;
-				if (c >= 0x80 && _CJKMode)
+				if (c >= 0x80 && _useCJKMode)
 					c += *buf++ * 256;
 				_charset->printChar(c);
 				_charset->_nextLeft = _charset->_left;

@@ -350,8 +350,8 @@ void ScummEngine::readRoomsOffsets() {
 		return;
 
 	if (_heversion >= 70) { // Windows titles
-		num = READ_LE_UINT16(_HEV7RoomOffsets);
-		ptr = _HEV7RoomOffsets + 2;
+		num = READ_LE_UINT16(_heV7RoomOffsets);
+		ptr = _heV7RoomOffsets + 2;
 		for (i = 0; i < num; i++) {
 			_roomFileOffsets[i] = READ_LE_UINT32(ptr);	
 			ptr += 4;
@@ -563,8 +563,8 @@ void ScummEngine::readIndexFile() {
 		case MKID('DLFL'):
 			i = _fileHandle.readUint16LE();
 			_fileHandle.seek(-2, SEEK_CUR);
-			_HEV7RoomOffsets = (byte *)calloc(2 + (i * 4), 1);
-			_fileHandle.read(_HEV7RoomOffsets, (2 + (i * 4)) );
+			_heV7RoomOffsets = (byte *)calloc(2 + (i * 4), 1);
+			_fileHandle.read(_heV7RoomOffsets, (2 + (i * 4)) );
 			break;
 
 		case MKID('DIRM'):
@@ -701,7 +701,7 @@ void ScummEngine::readResTypeList(int id, uint32 tag, const char *name) {
 			res.roomoffs[id][i] = _fileHandle.readUint32LE();
 
 			if (id == rtRoom && _heversion >= 70)
-				_HEV7RoomIntOffsets[i] = res.roomoffs[id][i];
+				_heV7RoomIntOffsets[i] = res.roomoffs[id][i];
 		}
 
 		if (_heversion >= 70) {
@@ -735,7 +735,7 @@ void ScummEngine::allocResTypeData(int id, uint32 tag, int num, const char *name
 		res.globsize[id] = (uint32 *)calloc(num, sizeof(uint32));
 
 		if (id == rtRoom)
-			_HEV7RoomIntOffsets = (uint32 *)calloc(num, sizeof(uint32));
+			_heV7RoomIntOffsets = (uint32 *)calloc(num, sizeof(uint32));
 	}
 }
 
@@ -832,7 +832,7 @@ int ScummEngine::loadResource(int type, int idx) {
 		if (_version == 8)
 			fileOffs = 8;
 		else if (_heversion >= 70)
-			fileOffs = _HEV7RoomIntOffsets[idx];
+			fileOffs = _heV7RoomIntOffsets[idx];
 		else
 			fileOffs = 0;
 	} else {
@@ -2186,8 +2186,8 @@ void ScummEngine::freeResources() {
 			free(res.globsize[i]);
 	}
 	if (_heversion >= 70) {
-		free(_HEV7RoomIntOffsets);
-		free(_HEV7RoomOffsets);
+		free(_heV7RoomIntOffsets);
+		free(_heV7RoomOffsets);
 	}
 }
 

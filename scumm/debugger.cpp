@@ -494,7 +494,7 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 	} else if (!strcmp(argv[2], "state")) {
 		_vm->putState(obj, atoi(argv[3]));
 		//is BgNeedsRedraw enough?
-		_vm->_BgNeedsRedraw = true;
+		_vm->_bgNeedsRedraw = true;
 	} else if (!strcmp(argv[2], "name")) {
 		DebugPrintf("Name of object %d: %s\n", obj, _vm->getObjOrActorName(obj));
 	} else {

@@ -2073,7 +2073,7 @@ void ScummEngine_v5::o5_setState() {
 	state = getVarOrDirectByte(PARAM_2);
 	putState(obj, state);
 	markObjectRectAsDirty(obj);
-	if (_BgNeedsRedraw)
+	if (_bgNeedsRedraw)
 		clearDrawObjectQueue();
 }
 

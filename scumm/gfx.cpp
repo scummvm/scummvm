@@ -571,7 +571,7 @@ void ScummEngine::redrawBGAreas() {
 		byte *room = getResourceAddress(rtRoomImage, _roomResource) + _IM00_offs;
 		if (findResource(MKID('BMAP'), room) != NULL) {
 			if (_fullRedraw) {
-				_BgNeedsRedraw = false;
+				_bgNeedsRedraw = false;
 				gdi.drawBMAPBg(room, &virtscr[0], _screenStartStrip, _screenWidth);
 			}
 			cont = false;
@@ -582,13 +582,13 @@ void ScummEngine::redrawBGAreas() {
 
 		if (!cont) {
 			drawRoomObjects(val);
-			_BgNeedsRedraw = false;
+			_bgNeedsRedraw = false;
 			return;
 		}
 	}
 
 	// Redraw parts of the background which are marked as dirty.
-	if (!_fullRedraw && _BgNeedsRedraw) {
+	if (!_fullRedraw && _bgNeedsRedraw) {
 		for (i = 0; i != gdi._numStrips; i++) {
 			if (testGfxUsageBit(_screenStartStrip + i, USAGE_BIT_DIRTY)) {
 				redrawBGStrip(i, 1);
@@ -605,7 +605,7 @@ void ScummEngine::redrawBGAreas() {
 			val = 1;
 			redrawBGStrip(0, 1);
 		} else if (_fullRedraw != 0 || diff != 0) {
-			_BgNeedsRedraw = false;
+			_bgNeedsRedraw = false;
 			redrawBGStrip(0, gdi._numStrips);
 		}
 	} else {
@@ -616,14 +616,14 @@ void ScummEngine::redrawBGAreas() {
 			val = 1;
 			redrawBGStrip(0, 1);
 		} else if (_fullRedraw != 0 || camera._cur.x != camera._last.x) {
-			_BgNeedsRedraw = false;
+			_bgNeedsRedraw = false;
 			_flashlight.isDrawn = false;
 			redrawBGStrip(0, gdi._numStrips);
 		}
 	}
 
 	drawRoomObjects(val);
-	_BgNeedsRedraw = false;
+	_bgNeedsRedraw = false;
 }
 
 void ScummEngine::redrawBGStrip(int start, int num) {

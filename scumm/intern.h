@@ -616,7 +616,7 @@ protected:
 		const char *desc;
 	};
 	
-	Win32ResExtractor *_Win32ResExtractor;
+	Win32ResExtractor *_win32ResExtractor;
 
 	const OpcodeEntryV7he *_opcodesV7he;
 

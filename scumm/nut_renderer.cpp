@@ -204,7 +204,7 @@ int NutRenderer::getCharWidth(byte c) {
 		return 0;
 	}
 
-	if (c >= 0x80 && _vm->_CJKMode) {
+	if (c >= 0x80 && _vm->_useCJKMode) {
 		if (_vm->_gameId == GID_CMI)
 			return 8;
 		if (_vm->_gameId == GID_DIG)
@@ -225,7 +225,7 @@ int NutRenderer::getCharHeight(byte c) {
 		return 0;
 	}
 
-	if (c >= 0x80 && _vm->_CJKMode) {
+	if (c >= 0x80 && _vm->_useCJKMode) {
 		if (_vm->_gameId == GID_CMI)
 			return 16;
 		if (_vm->_gameId == GID_DIG)
@@ -265,7 +265,7 @@ void NutRenderer::drawShadowChar(const Graphics::Surface &s, int c, int x, int y
 		y += offsetY[i];
 		color = cTable[i];
 		
-		if (c >= 256 && _vm->_CJKMode)
+		if (c >= 256 && _vm->_useCJKMode)
 			draw2byte(s, c, x, y, color);
 		else
 			drawChar(s, (byte)c, x, y, color);

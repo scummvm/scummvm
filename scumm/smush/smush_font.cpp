@@ -146,7 +146,7 @@ void SmushFont::drawSubstring(const char *str, byte *buffer, int dst_width, int 
 		x = 0;
 
 	for (int i = 0; str[i] != 0; i++) {
-		if ((byte)str[i] >= 0x80 && _vm->_CJKMode) {
+		if ((byte)str[i] >= 0x80 && _vm->_useCJKMode) {
 			x += draw2byte(buffer, dst_width, x, y, (byte)str[i] + 256 * (byte)str[i+1]);
 			i++;
 		} else

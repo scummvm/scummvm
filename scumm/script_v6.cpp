@@ -1064,7 +1064,7 @@ void ScummEngine_v6::o6_setState() {
 
 	putState(obj, state);
 	markObjectRectAsDirty(obj);
-	if (_BgNeedsRedraw)
+	if (_bgNeedsRedraw)
 		clearDrawObjectQueue();
 }
 
