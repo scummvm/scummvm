@@ -733,7 +733,8 @@ int Scumm::readArray(int array, int idx, int base)
 void Scumm::writeArray(int array, int idx, int base, int value)
 {
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
-	assert(ah);
+	if (!ah)
+		return;
 	base += idx * ah->dim1_size;
 
 	assert(base >= 0 && base < ah->dim1_size * ah->dim2_size);

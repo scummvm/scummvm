@@ -515,7 +515,7 @@ void SmushPlayer::handleFrameObject(Chunk & b) {
 		decodeCodec(b, r, _codec1);
 		break;
 	case 37:
-		assert(left == 0 && top == 0);
+		// assert(left == 0 && top == 0);
 		initSize(r, true, false);
 		decodeCodec(b, r, _codec37);
 		_codec37Called = true;
