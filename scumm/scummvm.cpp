@@ -578,7 +578,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 	_currentRoom = room;
 	_vars[VAR_ROOM] = room;
 
-	if (room >= 0x80)
+	if (room >= 0x80 &&  !(_features & GF_AFTER_V7))
 		_roomResource = _resourceMapper[room & 0x7F];
 	else
 		_roomResource = room;

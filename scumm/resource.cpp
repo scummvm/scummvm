@@ -470,7 +470,7 @@ void Scumm::ensureResourceLoaded(int type, int i)
 
 	debug(9, "ensureResourceLoaded(%s,%d)", resTypeFromId(type), i);
 
-	if (type == rtRoom && i > 127) {
+	if (type == rtRoom && i > 127 && !(_features & GF_AFTER_V7)) {
 		i = _resourceMapper[i & 127];
 	}
 
