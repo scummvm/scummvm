@@ -282,7 +282,16 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				bits = _sound->getBits(_track[l].soundHandle);
 				channels = _sound->getChannels(_track[l].soundHandle);
 				freq = _sound->getFreq(_track[l].soundHandle);
-				
+
+				if ((soundId == kTalkSoundID) && (soundType == IMUSE_BUNDLE)) {
+					if (_vm->_actorToPrintStrFor != 0xFF && _vm->_actorToPrintStrFor != 0) {
+						Actor *a = _vm->derefActor(_vm->_actorToPrintStrFor, "IMuseDigital::startSound");
+						freq = (freq * a->talkFrequency) / 256;
+						_track[l].pan = a->talkPan;
+						_track[l].vol = a->talkVolume * 1000;
+					}
+				}
+
 				assert(bits == 8 || bits == 12 || bits == 16);
 				assert(channels == 1 || channels == 2);
 				assert(0 < freq && freq <= 65535);

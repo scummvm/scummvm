@@ -1078,18 +1078,12 @@ void ScummEngine_v8::o8_actorOps() {
 		break;
 	case 0x87:		// SO_ACTOR_VOLUME Set volume of actor speech
 		a->talkVolume = pop();
-		_imuseDigital->setVolume(kTalkSoundID, a->talkVolume);
 		break;
 	case 0x88:		// SO_ACTOR_FREQUENCY Set frequency of actor speech
 		a->talkFrequency = pop();
 		break;
 	case 0x89:		// SO_ACTOR_PAN
-		// 0 = left, 64 = middle, 127 = right.
 		a->talkPan = pop();
-		if (_actorToPrintStrFor == a->number) {
-			_imuseDigital->setPan(kTalkSoundID, a->talkPan);
-		}
-
 		break;
 	default:
 		error("o8_actorOps: default case 0x%x", subOp);
