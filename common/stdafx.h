@@ -113,25 +113,4 @@
 
 #endif
 
-
-/* Semi-Platform-specific version info */
-#ifdef ALLOW_X11
-/* Assume pure X11 is used, then... */
-#define SCUMMVM_PLATFORM_VERSION  "X11 version"
-
-#else
-
-#ifdef MACOS_CARBON
-#define SCUMMVM_PLATFORM_VERSION "Macintosh version"
-#else
-
-#ifdef SDL_COMPILEDVERSION
-#define SCUMMVM_PLATFORM_VERSION  "SDL version"
-//SDL_COMPILEDVERSION is a number... :(
-//SDL_Linked_Version returns an SDL_Version structure...
-
-#endif
-#endif
-#endif
-
 #endif
