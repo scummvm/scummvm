@@ -140,6 +140,10 @@ String &String::operator += (char c) {
 	return *this;
 }
 
+char lastChar() const {
+	return (_len > 0) ? _str[_len-1] : 0;
+}
+
 void String::deleteLastChar() {
 	if (_len > 0) {
 		ensureCapacity(_len - 1, true);

@@ -108,6 +108,7 @@ public:
 		return _str[idx];
 	}
 
+	char lastChar() const;
 	void deleteLastChar();
 	void deleteChar(int p);
 	void clear();
