@@ -804,10 +804,17 @@ uint32 Sound::preFetchCompSpeech(uint32 speechid, uint16 **buf) {
 	if (!soundMode)
 		return 0;
 
-	fp.seek((speechid + 1) * 8, SEEK_SET);
+	if (soundMode == kWAVMode)
+		fp.seek((speechid + 1) * 8, SEEK_SET);
+	else
+		fp.seek((speechid + 1) * 12, SEEK_SET);
 
 	uint32 speechPos = fp.readUint32LE();
 	uint32 speechLength = fp.readUint32LE();
+	uint32 encLength = 0;
+
+	if (soundMode != kWAVMode)
+		encLength = fp.readUint32LE();
 
 	if (!speechPos || !speechLength) {
 		fp.close();
@@ -819,17 +826,17 @@ uint32 Sound::preFetchCompSpeech(uint32 speechid, uint16 **buf) {
 	switch (soundMode) {
 #ifdef USE_MAD
 	case kMP3Mode:
-		input = makeMP3Stream(&fp, speechLength);
+		input = makeMP3Stream(&fp, encLength);
 		break;
 #endif
 #ifdef USE_VORBIS
 	case kVorbisMode:
-		input = makeVorbisStream(&fp, speechLength);
+		input = makeVorbisStream(&fp, encLength);
 		break;
 #endif
 #ifdef USE_FLAC
 	case kFlacMode:
-		input = makeFlacStream(&fp, speechLength);
+		input = makeFlacStream(&fp, encLength);
 		break;
 #endif
 	default:
