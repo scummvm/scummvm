@@ -493,7 +493,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 			flags |= Gdi::dbDrawMaskOnAll;
 
 		if (_heversion >= 70 && findResource(MKID('SMAP'), ptr) == NULL)
-			gdi.drawBMAPObject(ptr, &virtscr[0], obj, od.x_pos * 8, od.y_pos * 8, od.width * 8, od.height * 8);
+			gdi.drawBMAPObject(ptr, &virtscr[0], obj, od.x_pos, od.y_pos, od.width, od.height);
 		else
 			gdi.drawBitmap(ptr, &virtscr[0], x, ypos, width * 8, height, x - xpos, numstrip, flags);
 	}
