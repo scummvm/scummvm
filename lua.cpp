@@ -291,7 +291,7 @@ static void SetSayLineDefaults() {
 
 		key_text = lua_getstring(key);		
 		if (strstr(key_text, "font"))
-			Actor::setSayLineFont(check_font(2));
+			sayLineDefaults.font = check_font(2);
 		else
 			error("Unknown SetSayLineDefaults key %s\n", key_text);
 	}
@@ -1208,13 +1208,14 @@ static void MakeTextObject() {
 	lua_Object tableObj = lua_getparam(2);
 
 	TextObject *textObject = new TextObject();
-	textObject->setDefaultsTextObjectParams();
+	textObject->setDefaults(&textObjectDefaults);
 
 	if (lua_istable(tableObj))
 		getTextObjectParams(textObject, tableObj);
 
 	textObject->setText(line);
 	textObject->createBitmap();
+	g_engine->registerTextObject(textObject);
 
 	lua_pushusertag(textObject, MKID('TEXT'));
 	lua_pushnumber(textObject->getBitmapWidth());
@@ -1261,10 +1262,12 @@ static void ChangeTextObject() {
 
 	modifyObject->destroyBitmap();
 
+	textObject->setDefaults(&textObjectDefaults);
 	if (lua_istable(tableObj))
 		getTextObjectParams(modifyObject, tableObj);
 
 	modifyObject->createBitmap();
+	g_engine->registerTextObject(modifyObject);
 
 	lua_pushnumber(modifyObject->getBitmapWidth());
 	lua_pushnumber(modifyObject->getBitmapHeight());
@@ -1274,6 +1277,12 @@ static void GetTextObjectDimensions() {
 	TextObject *textObjectParam = check_textobject(1);
 	lua_pushnumber(textObjectParam->getBitmapWidth());
 	lua_pushnumber(textObjectParam->getBitmapHeight());
+}
+
+static void BlastText() {
+	// there is some diffrence to MakeTextObject
+	// it draw directly to gfx buffer from here, not from main loop
+	MakeTextObject();
 }
 
 static void SetSpeechMode() {
@@ -1400,48 +1409,6 @@ static int SaveCallback(int /*tag*/, int value, SaveRestoreFunc /*saveFunc*/) {
 
 static int RestoreCallback(int /*tag*/, int value, SaveRestoreFunc /*saveFunc*/) {
 	return value;
-}
-
-static void BlastText() {
-	char * str = luaL_check_string(1), *key_text = NULL;
-	lua_Object table_obj = lua_getparam(2), key;
-	int x = 0, y = 0;//, height = 0, width = 0;
-	Color *fgColor = NULL;
-
-	for (;;) {
-		lua_pushobject(table_obj);
-		if (key_text)
-			lua_pushobject(key);
-		else
-			lua_pushnil();
-
-		lua_call("next");
-		key = lua_getresult(1);
-
-		if (lua_isnil(key)) 
-			break;
-
-		key_text = lua_getstring(key);
-		//val_text=lua_getstring(lua_getresult(2));
-		if (strstr(key_text, "x"))
-			x = atoi(lua_getstring(lua_getresult(2)));
-		else if (strstr(key_text, "y"))
-			y = atoi(lua_getstring(lua_getresult(2)));
-		else if (strstr(key_text, "fgcolor"))
-			fgColor = check_color(2);
-		else if (strstr(key_text, "font"))
-			lua_getresult(2);
-		else if (strstr(key_text, "center")) // TRUE or FALSE
-			lua_getresult(2);
-		else if (strstr(key_text, "disabled")) // TRUE or FALSE
-			lua_getresult(2);
-		else
-			error("Unknown BlastText key %s\n", key_text);
-	}
-
-	char msgId[32];
-	std::string msg = parseMsgText(str, msgId);
-	warning("STUB: BlastText(\"%s\", x = %d, y = %d)\n", msg.c_str(), x, y);
 }
 
 static void LockFont() {

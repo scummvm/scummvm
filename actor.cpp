@@ -31,8 +31,6 @@
 #include <cmath>
 #include <cstring>
 
-Font *Actor::_sayLineFont = NULL;
-
 Actor::Actor(const char *name) :
 		_name(name), _talkColor(255, 255, 255), _pos(0, 0, 0),
 		_pitch(0), _yaw(0), _roll(0), _walkRate(0), _turnRate(0),
@@ -221,7 +219,6 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	if (msg[0] == '/' || msg[0] == 0 || msgId[0] == 0)
 		return;
 
-	//	_sayLineText = new TextObject(msg, 10, 20, _sayLineFont, _talkColor);
 	// During movies, SayLine is called for text display only
 	if (!g_smush->isPlaying()) {
 		
@@ -251,10 +248,18 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 		_talkAnim = -1;
 	}
 
-	if (_sayLineText != NULL) {
+	if (_sayLineText) {
 		g_engine->killTextObject(_sayLineText);
 		delete _sayLineText;
+		_sayLineText = NULL;
 	}
+
+	_sayLineText = new TextObject();
+	_sayLineText->setDefaults(&sayLineDefaults);
+	_sayLineText->setText((char *)msg);
+	_sayLineText->setFGColor(&_talkColor);
+	_sayLineText->createBitmap();
+	g_engine->registerTextObject(_sayLineText);
 }
 
 bool Actor::talking() {
@@ -270,6 +275,12 @@ void Actor::shutUp() {
 		_lipSynch = NULL;
 	} else if (_mumbleChore >= 0) {
 		_mumbleCostume->stopChore(_mumbleChore);
+	}
+
+	if (_sayLineText != NULL) {
+		g_engine->killTextObject(_sayLineText);
+		delete _sayLineText;
+		_sayLineText = NULL;
 	}
 }
 

@@ -43,7 +43,37 @@ Engine::Engine() :
 		_currScene(NULL), _selectedActor(NULL) {
 	for (int i = 0; i < SDLK_EXTRA_LAST; i++)
 		_controlsEnabled[i] = false;
-	_speechMode = 2; // VOICE_ONLY
+	_speechMode = 3; // VOICE + TEXT
+
+	textObjectDefaults.x = 0;
+	textObjectDefaults.y = 200;
+	textObjectDefaults.width = 10;
+	textObjectDefaults.height = 0;
+	textObjectDefaults.fgColor._vals[0] = 255;
+	textObjectDefaults.fgColor._vals[1] = 255;
+	textObjectDefaults.fgColor._vals[2] = 255;
+	textObjectDefaults.font = NULL;
+	textObjectDefaults.justify = 2;
+
+	sayLineDefaults.x = 0;
+	sayLineDefaults.y = 100;
+	sayLineDefaults.width = 0;
+	sayLineDefaults.height = 0;
+	sayLineDefaults.fgColor._vals[0] = 255;
+	sayLineDefaults.fgColor._vals[1] = 255;
+	sayLineDefaults.fgColor._vals[2] = 255;
+	sayLineDefaults.font = NULL;
+	sayLineDefaults.justify = 1;
+
+	printLineDefaults.x = 0;
+	printLineDefaults.y = 100;
+	printLineDefaults.width = 0;
+	printLineDefaults.height = 0;
+	printLineDefaults.fgColor._vals[0] = 255;
+	printLineDefaults.fgColor._vals[1] = 255;
+	printLineDefaults.fgColor._vals[2] = 255;
+	printLineDefaults.font = NULL;
+	printLineDefaults.justify = 1;
 }
 
 void Engine::mainLoop() {

@@ -655,5 +655,5 @@ void DriverGL::drawTextBitmap(int x, int y, TextObjectHandle *handle) {
 
 void DriverGL::destroyTextBitmap(TextObjectHandle *handle) {
 	glDeleteTextures(handle->numTex, (GLuint *)handle->texIds);
-	delete[] handle->texIds;
+	delete[] (GLuint *)handle->texIds;
 }

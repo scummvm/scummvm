@@ -23,6 +23,10 @@
 
 std::string parseMsgText(const char *msg, char *msgId);
 
+TextObjectDefaults sayLineDefaults;
+TextObjectDefaults printLineDefaults;
+TextObjectDefaults textObjectDefaults;
+
 TextObject::TextObject() :
 		_created(false), _x(0), _y(0), _width(0), _height(0), _justify(0),
 		_font(NULL), _text(NULL), _textBitmap(NULL), _bitmapWidth(0),
@@ -37,17 +41,14 @@ TextObject::~TextObject() {
 	destroyBitmap();
 }
 
-void TextObject::setDefaultsTextObjectParams() {
-	_x = 0;
-	_y = 0;
-	_width = 0;
-	_height = 0;
-	_font = NULL;
-	_fgColor._vals[0] = 0;
-	_fgColor._vals[1] = 0;
-	_fgColor._vals[2] = 0;
-	_justify = 0;
-	_text = NULL;
+void TextObject::setDefaults(TextObjectDefaults *defaults) {
+	_x = defaults->x;
+	_y = defaults->x;
+	_width = defaults->width;
+	_height = defaults->height;
+	_font = defaults->font;
+	_fgColor = defaults->fgColor;
+	_justify = defaults->justify;
 }
 
 void TextObject::createBitmap() {
@@ -96,7 +97,6 @@ void TextObject::createBitmap() {
 
 	delete[] _textBitmap;
 	_created = true;
-	g_engine->registerTextObject(this);
 }
 
 void TextObject::destroyBitmap() {

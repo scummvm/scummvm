@@ -26,13 +26,25 @@
 #include <string>
 #include <SDL.h>
 
+struct TextObjectDefaults {
+	Color fgColor;
+	int x, y;
+	int width, height;
+	int justify;
+	Font *font;
+};
+
+extern TextObjectDefaults sayLineDefaults;
+extern TextObjectDefaults printLineDefaults;
+extern TextObjectDefaults textObjectDefaults;
+
 class TextObject {
 public:
 	TextObject();
 	~TextObject();
 	void createBitmap();
 	void destroyBitmap();
-	void setDefaultsTextObjectParams();
+	void setDefaults(TextObjectDefaults *defaults);
 	void setText(char *text) { _text = text; }
 	void setX(int x) { _x = x; }
 	void setY(int y) { _y = y; }

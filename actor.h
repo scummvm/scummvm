@@ -116,8 +116,6 @@ public:
 	}
 	void setHead( int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
 
-	static void setSayLineFont(Font *font) { _sayLineFont = font; }
-
 private:
 	std::string _name;
 	std::string _setName;
