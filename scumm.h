@@ -416,7 +416,7 @@ struct CostumeRenderer {
 	void proc3();
 	void proc2();
 	void proc1();
-	void proc_special(byte code);
+	void proc_special(Actor *a, byte mask);
 	byte mainRoutine(Actor *a, int slot, int frame);
 	void ignorePakCols(int num);
 
@@ -1223,6 +1223,7 @@ public:
 	byte *_shadowPalette;
 	int _shadowPaletteSize;
 	byte _currentPalette[0x300];
+	byte _proc_special_palette[256];
 	int _palDirtyMin, _palDirtyMax;
 	byte _bkColor;
 	uint16 _lastXstart;

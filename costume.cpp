@@ -274,8 +274,7 @@ byte CostumeRenderer::mainRoutine(Actor * a, int slot, int frame)
 	}
 
 	_bgbak_ptr =
-		_vm->getResourceAddress(rtBuffer,
-														5) + _vm->virtscr[0].xstart + _ypos * 320 + _xpos;
+		_vm->getResourceAddress(rtBuffer,5) + _vm->virtscr[0].xstart + _ypos * 320 + _xpos;
 	_backbuff_ptr =
 		_vm->virtscr[0].screenPtr + _vm->virtscr[0].xstart + _ypos * 320 + _xpos;
 	charsetmask =
@@ -284,18 +283,13 @@ byte CostumeRenderer::mainRoutine(Actor * a, int slot, int frame)
 	masking = 0;
 
 	if (_zbuf) {
-		masking = _vm->isMaskActiveAt(_left, _top, _right, _bottom,
-																	_vm->getResourceAddress(rtBuffer,
-																													9) +
+		masking = _vm->isMaskActiveAt(_left, _top, _right, _bottom,_vm->getResourceAddress(rtBuffer,9) +
 																	_vm->gdi._imgBufOffs[_zbuf] +
 																	_vm->_screenStartStrip);
 	}
 
 	if (_zbuf || charsetmask) {
-		_mask_ptr =
-			_vm->getResourceAddress(rtBuffer,
-															9) + _ypos * 40 + _vm->_screenStartStrip;
-
+		_mask_ptr =_vm->getResourceAddress(rtBuffer,9) + _ypos * 40 + _vm->_screenStartStrip;
 		_imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
 		if (!charsetmask && _zbuf != 0)
 			_mask_ptr += _imgbufoffs;
@@ -303,30 +297,30 @@ byte CostumeRenderer::mainRoutine(Actor * a, int slot, int frame)
 	}
 
 	CHECK_HEAP if (a->shadow_mode) {
-		proc_special(a->shadow_mode);
+		proc_special(a,(masking<<1)+charsetmask);
 		return b;
 	}
 
 	switch ((scaling << 2) | (masking << 1) | charsetmask) {
 	case 0:
-		proc6();
+		proc6(); // no scaling, no masking, no charsetmask
 		break;
 	case 1:
 	case 2:
-		proc5();
+		proc5(); // no scaling, masking or charsetmask
 		break;
 	case 3:
-		proc4();
+		proc4(); // no scaling, masking and charsetmask
 		break;
 	case 4:
-		proc1();
+		proc1(); // scaling, no masking, no charsetmask
 		break;
 	case 5:
 	case 6:
-		proc2();
+		proc2(); // scaling, masking or charsetmask
 		break;
 	case 7:
-		proc3();
+		proc3(); // scaling, masking and charsetmask
 		break;
 	}
 
@@ -538,8 +532,7 @@ void CostumeRenderer::proc3()
 			len = *src++;
 		do {
 			if (cost_scaleTable[_scaleIndexY++] < _scaleY) {
-				if (color && y < _outheight
-						&& !((*mask | mask[_imgbufoffs]) & maskbit)) {
+				if (color && y < _outheight && !((*mask | mask[_imgbufoffs]) & maskbit)) {
 					pcolor = _palette[color];
 					if (pcolor == 13)
 						pcolor = _transEffect[*dst];
@@ -695,9 +688,107 @@ void CostumeRenderer::proc1()
 	} while (1);
 }
 
-void CostumeRenderer::proc_special(byte code)
+void CostumeRenderer::proc_special(Actor *a, byte mask2)
 {
-	warning("stub CostumeRenderer::proc_special(%d) not implemented");
+	byte *mask, *src, *dst, *dstorg;
+	byte maskbit, len, height, pcolor, width;
+	uint y;
+	int color;
+	int t;
+
+	byte shadow1;
+	byte shadow2;
+	byte shadow3;
+	byte shadow4;
+	byte shadow5;
+
+	shadow1=a->shadow_mode & 0x80;
+	shadow2=a->shadow_mode & 0x40;
+	shadow3=a->shadow_mode & 0x20;
+	shadow4=a->shadow_mode & 0x10;
+	shadow5=a->shadow_mode & 0x0F;
+
+	mask = _mask_ptr = _mask_ptr_dest;
+	maskbit = revBitMask[_xpos & 7];
+	y = _ypos;
+
+	mask = _mask_ptr_dest;
+	dstorg = dst = _backbuff_ptr;
+	height = _height2;
+	width = _width2;
+	len = _replen;
+	color = _repcolor;
+	src = _srcptr;
+
+	if(_mirror == 0)
+		shadow5=-shadow5;
+
+	maskbit = revBitMask[_xpos & 7];
+
+	dst = _backbuff_ptr;
+
+	if(mask2 !=0 && mask2 < 3)
+		_imgbufoffs = 0;
+
+	if (_docontinue)
+		goto StartPos;
+
+	do {
+		len = *src++;
+		color = len >> _shrval;
+		len &= _maskval;
+		if (!len)
+			len = *src++;
+
+		do { // ok
+			if (cost_scaleTable[_scaleIndexY++] < _scaleY) {
+				if (color && y < _outheight) {
+					if (!mask2 || (mask2 && !((*mask | mask[_imgbufoffs]) & maskbit)))
+					{
+						if(shadow3 == 0)
+						{
+							pcolor = _palette[color];
+							if (pcolor != 13)
+								goto proc_special_end;
+
+						}
+						if(shadow2 != 0)
+						{
+							warning("proc_special: shadow2 unimplemented");
+						}
+						else // we don't need all the random stuff, just the background copy
+						{
+							pcolor=_vm->_proc_special_palette[*dst];
+						}
+proc_special_end:;			*dst = pcolor;
+					}
+				}
+				dst += 320;
+				mask += 40;
+				y++;
+			}
+			if (!--height) {
+				if (!--width)
+					return;
+				height = _height;
+				y = _ypostop;
+				_scaleIndexY = _scaleIndexYTop;
+				t = _scaleIndexX;
+				_scaleIndexX = t + _scaleIndexXStep;
+				if (cost_scaleTable[t] < _scaleX) {
+					_xpos += _scaleIndexXStep;
+					if (_xpos >= 320)
+						return;
+					maskbit = revBitMask[_xpos & 7];
+					_backbuff_ptr += _scaleIndexXStep;
+				}
+				dst = _backbuff_ptr;
+				mask = _mask_ptr + (_xpos >> 3);
+			}
+		StartPos:;
+		} while (--len);
+	} while (1);
+	
 }
 
 #if 0
