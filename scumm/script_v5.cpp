@@ -1517,7 +1517,7 @@ void Scumm_v5::o5_panCameraTo() {
 
 void Scumm_v5::o5_pickupObject() {
 	int obj, room;
-	if (_version == 3) {
+	if (_version == 3 || _version == 4) {
 		o5_drawObject();
 		return;
 	}
