@@ -49,13 +49,12 @@ public:
 	void sysEx (byte *msg, uint16 length);
 };
 
-int MidiDriver_WIN::open()
-{
+int MidiDriver_WIN::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
 	_streamEvent = CreateEvent (NULL, true, true, NULL);
-	MMRESULT res = midiOutOpen((HMIDIOUT *) &_mo, MIDI_MAPPER, (unsigned long) _streamEvent, 0, CALLBACK_EVENT);
+	MMRESULT res = midiOutOpen((HMIDIOUT *)&_mo, MIDI_MAPPER, (unsigned long) _streamEvent, 0, CALLBACK_EVENT);
 	if (res != MMSYSERR_NOERROR) {
 		check_error(res);
 		return MERR_DEVICE_NOT_AVAILABLE;
@@ -65,8 +64,7 @@ int MidiDriver_WIN::open()
 	return 0;
 }
 
-void MidiDriver_WIN::close()
-{
+void MidiDriver_WIN::close() {
 	_isOpen = false;
 	check_error(midiOutClose(_mo));
 	CloseHandle (_streamEvent);
@@ -100,7 +98,7 @@ void MidiDriver_WIN::sysEx (byte *msg, uint16 length)
 
 	midiOutUnprepareHeader (_mo, &_streamHeader, sizeof (_streamHeader));
 	_streamBuffer [0] = 0xFF;
-	memcpy (&_streamBuffer[1], msg, length);
+	memcpy(&_streamBuffer[1], msg, length);
 	_streamBuffer [length+1] = 0xF7;
 
 	_streamHeader.lpData = (char *) _streamBuffer;
@@ -115,17 +113,16 @@ void MidiDriver_WIN::sysEx (byte *msg, uint16 length)
 		return;
 	}
 
-	ResetEvent (_streamEvent);
+	ResetEvent(_streamEvent);
 	result = midiOutLongMsg (_mo, &_streamHeader, sizeof (_streamHeader));
 	if (result != MMSYSERR_NOERROR) {
-		check_error (result);
-		SetEvent (_streamEvent);
+		check_error(result);
+		SetEvent(_streamEvent);
 		return;
 	}
 }
 
-void MidiDriver_WIN::check_error(MMRESULT result)
-{
+void MidiDriver_WIN::check_error(MMRESULT result) {
 	char buf[200];
 	if (result != MMSYSERR_NOERROR) {
 		midiOutGetErrorText(result, buf, 200);
@@ -133,8 +130,7 @@ void MidiDriver_WIN::check_error(MMRESULT result)
 	}
 }
 
-MidiDriver *MidiDriver_WIN_create()
-{
+MidiDriver *MidiDriver_WIN_create() {
 	return new MidiDriver_WIN();
 }
 

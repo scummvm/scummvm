@@ -186,22 +186,22 @@ FSList *WindowsFilesystemNode::listDir(ListMode mode) const {
 }
 
 const char *lastPathComponent(const ScummVM::String &str) {
-        const char *start = str.c_str();
-        const char *cur = start + str.size() - 2;
+	const char *start = str.c_str();
+	const char *cur = start + str.size() - 2;
 
-        while (cur > start && *cur != '\\') {
-                --cur;
-        }
+	while (cur > start && *cur != '\\') {
+		--cur;
+	}
 
-        return cur+1;
+	return cur + 1;
 }
 
 FilesystemNode *WindowsFilesystemNode::parent() const {
 	assert(_isValid || _isPseudoRoot);
 	WindowsFilesystemNode *p = new WindowsFilesystemNode();
 	if (!_isPseudoRoot && _path.size() > 3) {
-        const char *start = _path.c_str();
-        const char *end = lastPathComponent(_path);
+		const char *start = _path.c_str();
+		const char *end = lastPathComponent(_path);
 
 		p->_path = String(start, end - start);
 		p->_isValid = true;

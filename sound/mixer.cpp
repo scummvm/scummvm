@@ -37,7 +37,7 @@ SoundMixer::~SoundMixer() {
 	free(_volumeTable);
 }
 
-void SoundMixer::unInsert(Channel * chan) {
+void SoundMixer::unInsert(Channel *chan) {
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == chan) {
 			if (_handles[i]) {
@@ -51,10 +51,10 @@ void SoundMixer::unInsert(Channel * chan) {
 	error("SoundMixer::channel_deleted chan not found");
 }
 
-int SoundMixer::append(int index, void * sound, uint32 size, uint rate, byte flags) {
+int SoundMixer::append(int index, void *sound, uint32 size, uint rate, byte flags) {
 	_syst->lock_mutex(_mutex);
 
-	Channel * chan = _channels[index];
+	Channel *chan = _channels[index];
 	if (!chan) {
 		debug(2, "Trying to stream to an unexistant streamer : %d", index);
 		playStream(NULL, index, sound, size, rate, flags);
@@ -69,7 +69,7 @@ int SoundMixer::append(int index, void * sound, uint32 size, uint rate, byte fla
 	return 1;
 }
 
-int SoundMixer::insertAt(PlayingSoundHandle * handle, int index, Channel * chan) {
+int SoundMixer::insertAt(PlayingSoundHandle *handle, int index, Channel *chan) {
 	if(index == -1) {
 		for (int i = _beginSlots; i != NUM_CHANNELS; i++)
 			if (_channels[i] == NULL) { index = i; break; }
@@ -88,7 +88,7 @@ int SoundMixer::insertAt(PlayingSoundHandle * handle, int index, Channel * chan)
 	return index;
 }
 
-int SoundMixer::playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags) {
+int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags) {
 	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
 			return insertAt(handle, i, new ChannelRaw(this, sound, size, rate, flags, -1));
@@ -99,7 +99,7 @@ int SoundMixer::playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, 
 	return -1;
 }
 
-int SoundMixer::playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags, int id) {
+int SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id) {
 	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
 			return insertAt(handle, i, new ChannelRaw(this, sound, size, rate, flags, id));
@@ -110,8 +110,8 @@ int SoundMixer::playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, 
 	return -1;
 }
 
-int SoundMixer::playStream(PlayingSoundHandle * handle, int idx, void * sound, uint32 size,
-														uint rate, byte flags, int32 timeout, int32 buffer_size) {
+int SoundMixer::playStream(PlayingSoundHandle *handle, int idx, void *sound, uint32 size,
+													uint rate, byte flags, int32 timeout, int32 buffer_size) {
 	return insertAt(handle, idx, new ChannelStream(this, sound, size, rate, flags, timeout, buffer_size));
 }
 
@@ -124,7 +124,7 @@ void SoundMixer::beginSlots(int index) {
 }
 
 #ifdef USE_MAD
-int SoundMixer::playMP3(PlayingSoundHandle * handle, void *sound, uint32 size, byte flags) {
+int SoundMixer::playMP3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags) {
 	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
 			return insertAt(handle, i, new ChannelMP3(this, sound, size, flags));
@@ -134,7 +134,7 @@ int SoundMixer::playMP3(PlayingSoundHandle * handle, void *sound, uint32 size, b
 	warning("SoundMixer::out of mixer slots");
 	return -1;
 }
-int SoundMixer::playMP3CDTrack(PlayingSoundHandle * handle, File * file, mad_timer_t duration) {
+int SoundMixer::playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration) {
 	/* Stop the previously playing CD track (if any) */
 	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
@@ -148,7 +148,7 @@ int SoundMixer::playMP3CDTrack(PlayingSoundHandle * handle, File * file, mad_tim
 #endif
 
 #ifdef USE_VORBIS
-int SoundMixer::playVorbis(PlayingSoundHandle * handle, OggVorbis_File * ov_file, int duration, bool is_cd_track) {
+int SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track) {
 	for (int i = _beginSlots; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == NULL) {
 			return insertAt(handle, i, new ChannelVorbis(this, ov_file, duration, is_cd_track));
@@ -185,15 +185,13 @@ void SoundMixer::mix(int16 *buf, uint len) {
 	_syst->unlock_mutex(_mutex);
 }
 
-void SoundMixer::onGenerateSamples(void * s, byte * samples, int len) {
+void SoundMixer::onGenerateSamples(void *s, byte *samples, int len) {
 	((SoundMixer *)s)->mix((int16 *)samples, len >> 2);
 }
 
-bool SoundMixer::bindToSystem(OSystem * syst) {
+bool SoundMixer::bindToSystem(OSystem *syst) {
 	uint rate = (uint) syst->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
-
 	_outputRate = rate;
-
 	_syst = syst;
 	_mutex = _syst->create_mutex();
 
@@ -230,7 +228,7 @@ bool SoundMixer::hasActiveChannel() {
 	return false;
 }
 
-void SoundMixer::setupPremix(void * param, PremixProc * proc) {
+void SoundMixer::setupPremix(void *param, PremixProc *proc) {
 	_premixParam = param;
 	_premixProc = proc;
 }
@@ -267,12 +265,12 @@ bool SoundMixer::Channel::soundFinished() {
 	return false;
 }
 
-void SoundMixer::Channel::append(void * sound, uint32 size) {
+void SoundMixer::Channel::append(void *sound, uint32 size) {
 	error("append method should never be called on something else than a _STREAM mixer ");
 }
 
 /* RAW mixer */
-SoundMixer::ChannelRaw::ChannelRaw(SoundMixer * mixer, void * sound, uint32 size, uint rate, byte flags, int id) {
+SoundMixer::ChannelRaw::ChannelRaw(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags, int id) {
 	_id = id;
 	_mixer = mixer;
 	_flags = flags;
@@ -300,7 +298,6 @@ SoundMixer::ChannelRaw::ChannelRaw(SoundMixer * mixer, void * sound, uint32 size
 	}
 }
 
-
 /*
  * Class that performs cubic interpolation on integer data.
  * It is expected that the data is equidistant, i.e. all have the same
@@ -312,14 +309,12 @@ protected:
 	int a, b, c, d;
 	
 public:
-	CubicInterpolator(int a0, int b0, int c0) : x0(2 * a0 - b0), x1(a0), x2(b0), x3(c0)
-	{
+	CubicInterpolator(int a0, int b0, int c0) : x0(2 * a0 - b0), x1(a0), x2(b0), x3(c0) {
 		// We use a simple linear interpolation for x0
 		updateCoefficients();
 	}
 	
-	inline void feedData()
-	{
+	inline void feedData() {
 		x0 = x1;
 		x1 = x2;
 		x2 = x3;
@@ -327,8 +322,7 @@ public:
 		updateCoefficients();
 	}
 
-	inline void feedData(int xNew)
-	{
+	inline void feedData(int xNew) {
 		x0 = x1;
 		x1 = x2;
 		x2 = x3;
@@ -337,8 +331,7 @@ public:
 	}
 	
 	/* t must be a 16.16 fixed point number between 0 and 1 */
-	inline int interpolate(uint32 fpPos)
-	{
+	inline int interpolate(uint32 fpPos) {
 		int result = 0;
 		int t = fpPos >> 8;
 		result = (a * t + b) >> 8;
@@ -350,8 +343,7 @@ public:
 	}
 		
 protected:
-	inline void updateCoefficients()
-	{
+	inline void updateCoefficients() {
 		a = ((-x0 * 2) + (x1 * 5) - (x2 * 4) + x3);
 		b = ((x0 + x2 - (2 * x1)) * 6) << 8;
 		c = ((-4 * x0) + x1 + (x2 * 4) - x3) << 8;
@@ -370,12 +362,12 @@ static inline int clamped_add_16(int a, int b) {
 		return val;
 }
 
-static int16 * mix_signed_mono_8(int16 * data, uint * len_ptr, byte ** s_ptr, uint32 * fp_pos_ptr,
-								int fp_speed, const int16 * vol_tab, byte * s_end, bool reverse_stereo) {
+static int16 *mix_signed_mono_8(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+								int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
 	uint32 fp_pos = *fp_pos_ptr;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
-	
+
 	int inc = 1, result;
 	CubicInterpolator interp(vol_tab[*s], vol_tab[*(s + 1)], vol_tab[*(s + 2)]);
 
@@ -409,12 +401,12 @@ static int16 * mix_signed_mono_8(int16 * data, uint * len_ptr, byte ** s_ptr, ui
 	return data;
 }
 
-static int16 * mix_unsigned_mono_8(int16 * data, uint * len_ptr, byte ** s_ptr, uint32 * fp_pos_ptr,
-											int fp_speed, const int16 * vol_tab, byte * s_end, bool reverse_stereo) {
+static int16 *mix_unsigned_mono_8(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+											int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
 	uint32 fp_pos = *fp_pos_ptr;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
-	
+
 	int inc = 1, result;
 	CubicInterpolator interp(vol_tab[*s ^ 0x80], vol_tab[*(s + 1) ^ 0x80], vol_tab[*(s + 2) ^ 0x80]);
 
@@ -448,18 +440,18 @@ static int16 * mix_unsigned_mono_8(int16 * data, uint * len_ptr, byte ** s_ptr, 
 	return data;
 }
 
-static int16 * mix_signed_stereo_8(int16 * data, uint * len_ptr, byte ** s_ptr, uint32 * fp_pos_ptr,
-										int fp_speed, const int16 * vol_tab, byte *s_end, bool reverse_stereo) {
+static int16 *mix_signed_stereo_8(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+										int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
 	warning("Mixing stereo signed 8 bit is not supported yet ");
 
 	return data;
 }
-static int16 * mix_unsigned_stereo_8(int16 * data, uint * len_ptr, byte ** s_ptr, uint32 * fp_pos_ptr,
-										int fp_speed, const int16 * vol_tab, byte * s_end, bool reverse_stereo) {
+static int16 *mix_unsigned_stereo_8(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+										int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
 	uint32 fp_pos = *fp_pos_ptr;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
-	
+
 	int inc = 1;
 	CubicInterpolator	left(vol_tab[*s ^ 0x80], vol_tab[*(s + 2) ^ 0x80], vol_tab[*(s + 4) ^ 0x80]);
 	CubicInterpolator	right(vol_tab[*(s + 1) ^ 0x80], vol_tab[*(s + 3) ^ 0x80], vol_tab[*(s + 5) ^ 0x80]);
@@ -501,8 +493,8 @@ static int16 * mix_unsigned_stereo_8(int16 * data, uint * len_ptr, byte ** s_ptr
 
 	return data;
 }
-static int16 * mix_signed_mono_16(int16 * data, uint * len_ptr, byte ** s_ptr, uint32 * fp_pos_ptr,
-										 int fp_speed, const int16 * vol_tab, byte * s_end, bool reverse_stereo) {
+static int16 *mix_signed_mono_16(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+										 int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
 	uint32 fp_pos = *fp_pos_ptr;
 	unsigned char volume = ((int)vol_tab[1]) / 8;
 	byte *s = *s_ptr;
@@ -526,14 +518,14 @@ static int16 * mix_signed_mono_16(int16 * data, uint * len_ptr, byte ** s_ptr, u
 
 	return data;
 }
-static int16 *mix_unsigned_mono_16(int16 *data, uint * len_ptr, byte ** s_ptr, uint32 * fp_pos_ptr,
-										 int fp_speed, const int16 * vol_tab, byte * s_end, bool reverse_stereo) {
+static int16 *mix_unsigned_mono_16(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+										 int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
 	warning("Mixing mono unsigned 16 bit is not supported yet ");
 
 	return data;
 }
-static int16 *mix_signed_stereo_16(int16 * data, uint * len_ptr, byte ** s_ptr, uint32 * fp_pos_ptr,
-										 int fp_speed, const int16 * vol_tab, byte * s_end, bool reverse_stereo) {
+static int16 *mix_signed_stereo_16(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+										 int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
 	uint32 fp_pos = *fp_pos_ptr;
 	unsigned char volume = ((int)vol_tab[1]) / 8;
 	byte *s = *s_ptr;
@@ -562,16 +554,16 @@ static int16 *mix_signed_stereo_16(int16 * data, uint * len_ptr, byte ** s_ptr, 
 
 	return data;
 }
-static int16 * mix_unsigned_stereo_16(int16 * data, uint * len_ptr, byte ** s_ptr, uint32 * fp_pos_ptr,
-											 int fp_speed, const int16 * vol_tab, byte * s_end, bool reverse_stereo) {
+static int16 *mix_unsigned_stereo_16(int16 *data, uint *len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
+											 int fp_speed, const int16 *vol_tab, byte *s_end, bool reverse_stereo) {
 	warning("Mixing stereo unsigned 16 bit is not supported yet ");
 
 	return data;
 }
 
-static int16 * (*mixer_helper_table[8]) (int16 * data, uint * len_ptr, byte ** s_ptr,
-										 uint32 * fp_pos_ptr, int fp_speed, const int16 * vol_tab,
-										 byte * s_end, bool reverse_stereo) = { 
+static int16 *(*mixer_helper_table[8]) (int16 *data, uint *len_ptr, byte **s_ptr,
+										 uint32 *fp_pos_ptr, int fp_speed, const int16 *vol_tab,
+										 byte *s_end, bool reverse_stereo) = { 
 	mix_signed_mono_8, mix_unsigned_mono_8, 
 	mix_signed_stereo_8, mix_unsigned_stereo_8,
 	mix_signed_mono_16, mix_unsigned_mono_16, 
@@ -585,7 +577,7 @@ static int16 mixer_element_size[] = {
 	4, 4
 };
 
-void SoundMixer::ChannelRaw::mix(int16 * data, uint len) {
+void SoundMixer::ChannelRaw::mix(int16 *data, uint len) {
 	byte *s, *s_org = NULL;
 	uint32 fp_pos;
 	byte *end;
@@ -657,7 +649,7 @@ void SoundMixer::ChannelRaw::realDestroy() {
 
 #define WARP_WORKAROUND 50000
 
-SoundMixer::ChannelStream::ChannelStream(SoundMixer * mixer, void * sound, uint32 size, uint rate,
+SoundMixer::ChannelStream::ChannelStream(SoundMixer *mixer, void *sound, uint32 size, uint rate,
 										 byte flags, int32 timeout, int32 buffer_size) {
 	_mixer = mixer;
 	_flags = flags;
@@ -681,7 +673,7 @@ SoundMixer::ChannelStream::ChannelStream(SoundMixer * mixer, void * sound, uint3
 	_rate = rate;
 }
 
-void SoundMixer::ChannelStream::append(void * data, uint32 len) {
+void SoundMixer::ChannelStream::append(void *data, uint32 len) {
 	byte *new_end = _endOfData + len;
 	byte *cur_pos = _pos;					/* This is just to prevent the variable to move during the tests :-) */
 	if (new_end > (_ptr + _bufferSize)) {
@@ -705,11 +697,11 @@ void SoundMixer::ChannelStream::append(void * data, uint32 len) {
 	_endOfData = new_end;
 }
 
-void SoundMixer::ChannelStream::mix(int16 * data, uint len) {
+void SoundMixer::ChannelStream::mix(int16 *data, uint len) {
 	uint32 fp_pos;
 	const uint32 fp_speed = _fpSpeed;
-	const int16 * vol_tab = _mixer->_volumeTable;
-	byte * end_of_data = _endOfData;
+	const int16 *vol_tab = _mixer->_volumeTable;
+	byte *end_of_data = _endOfData;
 
 	if (_toBeDestroyed) {
 		realDestroy();
@@ -734,7 +726,7 @@ void SoundMixer::ChannelStream::mix(int16 * data, uint len) {
 		int wrap_offset = 0;
 
 		// see if we will wrap
-		if (_pos + (mixer_element_size[_flags & 0x07] * len) > _endOfBuffer) {			
+		if (_pos + (mixer_element_size[_flags & 0x07] * len) > _endOfBuffer) {
 			wrap_offset = _pos + (mixer_element_size[_flags & 0x07] * len) - _endOfBuffer;
 			debug(9, "using wrap workaround for %d bytes", wrap_offset);
 			memcpy(_endOfBuffer, _ptr, wrap_offset);
@@ -766,7 +758,7 @@ void SoundMixer::ChannelStream::realDestroy() {
 }
 
 #ifdef USE_MAD
-SoundMixer::ChannelMP3::ChannelMP3(SoundMixer * mixer, void * sound, uint size, byte flags) {
+SoundMixer::ChannelMP3::ChannelMP3(SoundMixer *mixer, void *sound, uint size, byte flags) {
 	_mixer = mixer;
 	_flags = flags;
 	_posInFrame = 0xFFFFFFFF;
@@ -812,7 +804,7 @@ static inline int scale_sample(mad_fixed_t sample) {
 	return sample >> (MAD_F_FRACBITS + 1 - 16);
 }
 
-void SoundMixer::ChannelMP3::mix(int16 * data, uint len) {
+void SoundMixer::ChannelMP3::mix(int16 *data, uint len) {
 	mad_fixed_t const * ch;
 	const int16 * vol_tab = _mixer->_volumeTable;
 	unsigned char volume = ((int)vol_tab[1]) / 8;
@@ -885,7 +877,7 @@ void SoundMixer::ChannelMP3::realDestroy() {
 
 #define MP3CD_BUFFERING_SIZE 131072
 
-SoundMixer::ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer * mixer, File * file,
+SoundMixer::ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, File *file,
 														 mad_timer_t duration){
 	_mixer = mixer;
 	_file = file;
@@ -905,7 +897,7 @@ SoundMixer::ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer * mixer, File * file
 	mad_synth_init(&_synth);
 }
 
-void SoundMixer::ChannelMP3CDMusic::mix(int16 * data, uint len) {
+void SoundMixer::ChannelMP3CDMusic::mix(int16 *data, uint len) {
 	mad_fixed_t const *ch;
 	mad_timer_t frame_duration;
 	unsigned char volume = _mixer->_musicVolume / 8;
@@ -1022,7 +1014,7 @@ void SoundMixer::ChannelMP3CDMusic::realDestroy() {
 #endif
 
 #ifdef USE_VORBIS
-SoundMixer::ChannelVorbis::ChannelVorbis(SoundMixer * mixer, OggVorbis_File * ov_file, int duration, bool is_cd_track) {
+SoundMixer::ChannelVorbis::ChannelVorbis(SoundMixer *mixer, OggVorbis_File *ov_file, int duration, bool is_cd_track) {
 	_mixer = mixer;
 	_ov_file = ov_file;
 
@@ -1036,7 +1028,7 @@ SoundMixer::ChannelVorbis::ChannelVorbis(SoundMixer * mixer, OggVorbis_File * ov
 	_toBeDestroyed = false;
 }
 
-void SoundMixer::ChannelVorbis::mix(int16 * data, uint len) {
+void SoundMixer::ChannelVorbis::mix(int16 *data, uint len) {
 	if (_toBeDestroyed) {
 		realDestroy();
 		return;
@@ -1109,8 +1101,7 @@ void SoundMixer::ChannelVorbis::realDestroy() {
 }
 
 bool SoundMixer::ChannelVorbis::soundFinished() {
-	return _eof_flag || (_end_pos > 0 &&
-			     ov_pcm_tell(_ov_file) >= _end_pos);
+	return _eof_flag || (_end_pos > 0 && ov_pcm_tell(_ov_file) >= _end_pos);
 }
 
 #endif

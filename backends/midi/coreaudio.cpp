@@ -50,8 +50,7 @@ private:
 };
 
 
-int MidiDriver_CORE::open()
-{
+int MidiDriver_CORE::open() {
 	if (au_output != NULL)
 		return MERR_ALREADY_OPEN;
 
@@ -90,8 +89,7 @@ int MidiDriver_CORE::open()
 	return 0;
 }
 
-void MidiDriver_CORE::close()
-{
+void MidiDriver_CORE::close() {
 	// Stop the output
 	AudioOutputUnitStop(au_output);
 
@@ -100,8 +98,7 @@ void MidiDriver_CORE::close()
 	CloseComponent(au_MusicDevice);
 }
 
-void MidiDriver_CORE::send(uint32 b)
-{
+void MidiDriver_CORE::send(uint32 b) {
 	unsigned char first_byte, seccond_byte, status_byte;
 	status_byte = (b & 0x000000FF);
 	first_byte = (b & 0x0000FF00) >> 8;
@@ -115,13 +112,11 @@ void MidiDriver_CORE::send(uint32 b)
 	MusicDeviceMIDIEvent(au_MusicDevice, status_byte, first_byte, seccond_byte, 0);
 }
 
-void MidiDriver_CORE::sysEx(byte *msg, uint16 length)
-{
+void MidiDriver_CORE::sysEx(byte *msg, uint16 length) {
 	MusicDeviceSysEx(au_MusicDevice, msg, length);
 }
 
-MidiDriver *MidiDriver_CORE_create()
-{
+MidiDriver *MidiDriver_CORE_create() {
 	return new MidiDriver_CORE();
 }
 

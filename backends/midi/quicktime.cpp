@@ -64,13 +64,11 @@ private:
 	byte _pitchbend_range [16];
 };
 
-MidiDriver_QT::MidiDriver_QT()
-{
+MidiDriver_QT::MidiDriver_QT() {
 	qtNoteAllocator = NULL;
 }
 
-int MidiDriver_QT::open()
-{
+int MidiDriver_QT::open() {
 	ComponentResult qtErr = noErr;
 	int i;
 
@@ -129,8 +127,7 @@ void MidiDriver_QT::close()
 	}
 }
 
-void MidiDriver_QT::send(uint32 b)
-{
+void MidiDriver_QT::send(uint32 b) {
 	MusicMIDIPacket midPacket;
 	unsigned char *midiCmd = midPacket.data;
 	midPacket.length = 3;
@@ -214,7 +211,7 @@ void MidiDriver_QT::send(uint32 b)
 			// mysterious reasons the actual factor we have to use is more like 1/32 or 3/64.
 			// Maybe the QT docs are right, and 
 			_pitchbend[chanID] = ((uint16) midiCmd[1] | (uint16) (midiCmd[2] << 7));
- 			long theBend = ((long) _pitchbend[chanID] - 0x2000) * _pitchbend_range[chanID] / 32;
+			long theBend = ((long) _pitchbend[chanID] - 0x2000) * _pitchbend_range[chanID] / 32;
 
 			NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerPitchBend, theBend);
 		}
@@ -227,8 +224,7 @@ void MidiDriver_QT::send(uint32 b)
 	}
 }
 
-void MidiDriver_QT::setPitchBendRange (byte channel, uint range)
-{
+void MidiDriver_QT::setPitchBendRange (byte channel, uint range) {
 	if (_pitchbend_range[channel] == range)
 		return;
 	_pitchbend_range[channel] = range;
@@ -238,8 +234,7 @@ void MidiDriver_QT::setPitchBendRange (byte channel, uint range)
 	NASetController(qtNoteAllocator, qtNoteChannel[channel], kControllerPitchBend, theBend);
 }
 
-MidiDriver *MidiDriver_QT_create()
-{
+MidiDriver *MidiDriver_QT_create() {
 	return new MidiDriver_QT();
 }
 

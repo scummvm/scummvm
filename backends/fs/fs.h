@@ -148,14 +148,12 @@ public:
  */
 class FSList : ScummVM::List<FilesystemNode *> {
 public:
-	~FSList()
-	{
+	~FSList() {
 		for (int i = 0; i < _size; i++)
 			delete _data[i];
 	}
 
-	void push_back(const FilesystemNode& element)
-	{
+	void push_back(const FilesystemNode &element) {
 		ensureCapacity(_size + 1);
 		// Determine where to insert the item.
 		// TODO this is inefficient, should use binary search instead
@@ -163,13 +161,12 @@ public:
 		while (i < _size && *_data[i] < element)
 			i++;
 		if (i < _size)
-			memmove(&_data[i+1], &_data[i], (_size - i) * sizeof(FilesystemNode *));
+			memmove(&_data[i + 1], &_data[i], (_size - i) * sizeof(FilesystemNode *));
 		_data[i] = element.clone();
 		_size++;
 	}
 	
-	const FilesystemNode& operator [](int idx) const
-	{
+	const FilesystemNode& operator [](int idx) const {
 		assert(idx >= 0 && idx < _size);
 		return *_data[idx];
 	}

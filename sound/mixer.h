@@ -56,8 +56,8 @@ private:
 	};
 
 	class ChannelRaw : public Channel {
-		SoundMixer * _mixer;
-		void * _ptr;
+		SoundMixer *_mixer;
+		void *_ptr;
 		uint32 _pos;
 		uint32 _size;
 		uint32 _fpSpeed;
@@ -68,18 +68,18 @@ private:
 		uint32 _loop_size;
 
 	public:
-		ChannelRaw(SoundMixer * mixer, void * sound, uint32 size, uint rate, byte flags, int id);
+		ChannelRaw(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags, int id);
 
-		void mix(int16 * data, uint len);
+		void mix(int16 *data, uint len);
 		void realDestroy();
 	};
 
 	class ChannelStream : public Channel {
-		SoundMixer * _mixer;
-		byte * _ptr;
-		byte * _endOfData;
-		byte * _endOfBuffer;
-		byte * _pos;
+		SoundMixer *_mixer;
+		byte *_ptr;
+		byte *_endOfData;
+		byte *_endOfBuffer;
+		byte *_pos;
 		uint32 _fpSpeed;
 		uint32 _fpPos;
 		uint32 _bufferSize;
@@ -89,17 +89,17 @@ private:
 		byte _flags;
 
 	public:
-		ChannelStream(SoundMixer * mixer, void * sound, uint32 size, uint rate, byte flags, int32 timout, int32 buffer_size);
+		ChannelStream(SoundMixer *mixer, void *sound, uint32 size, uint rate, byte flags, int32 timout, int32 buffer_size);
 
-		void append(void * sound, uint32 size);
-		void mix(int16 * data, uint len);
+		void append(void *sound, uint32 size);
+		void mix(int16 *data, uint len);
 		void realDestroy();
 	};
 
 #ifdef USE_MAD
 
 	class ChannelMP3 : public Channel {
-		SoundMixer * _mixer;
+		SoundMixer *_mixer;
 		void *_ptr;
 		struct mad_stream _stream;
 		struct mad_frame _frame;
@@ -111,16 +111,16 @@ private:
 		byte _flags;
 
 	public:
-		ChannelMP3(SoundMixer * mixer, void *sound, uint size, byte flags);
+		ChannelMP3(SoundMixer *mixer, void *sound, uint size, byte flags);
 
-		void mix(int16 * data, uint len);
+		void mix(int16 *data, uint len);
 		void realDestroy();
 
 	};
 
 	class ChannelMP3CDMusic:public Channel {
-		SoundMixer * _mixer;
-		void * _ptr;
+		SoundMixer *_mixer;
+		void *_ptr;
 		struct mad_stream _stream;
 		struct mad_frame _frame;
 		struct mad_synth _synth;
@@ -128,14 +128,14 @@ private:
 		uint32 _size;
 		uint32 _bufferSize;
 		mad_timer_t _duration;
-		File * _file;
+		File *_file;
 		bool _initialized;
 
 
 	public:
-		ChannelMP3CDMusic(SoundMixer * mixer, File * file, mad_timer_t duration);
+		ChannelMP3CDMusic(SoundMixer *mixer, File *file, mad_timer_t duration);
 
-		void mix(int16 * data, uint len);
+		void mix(int16 *data, uint len);
 		void realDestroy();
 		bool soundFinished();
 	};
@@ -144,31 +144,31 @@ private:
 
 #ifdef USE_VORBIS
 	class ChannelVorbis : public Channel {
-		SoundMixer * _mixer;
-		OggVorbis_File * _ov_file;
+		SoundMixer *_mixer;
+		OggVorbis_File *_ov_file;
 		int _end_pos;
 		bool _eof_flag, _is_cd_track;
 
 	public:
-		ChannelVorbis(SoundMixer * mixer, OggVorbis_File * ov_file, int duration, bool is_cd_track);
+		ChannelVorbis(SoundMixer *mixer, OggVorbis_File *ov_file, int duration, bool is_cd_track);
 
-		void mix(int16 * data, uint len);
+		void mix(int16 *data, uint len);
 		void realDestroy();
 		bool soundFinished();
 	};
 #endif
 
-	static void onGenerateSamples(void * s, byte * samples, int len);
+	static void onGenerateSamples(void *s, byte *samples, int len);
 
 public:
-	typedef void PremixProc (void * param, int16 * data, uint len);
+	typedef void PremixProc (void *param, int16 *data, uint len);
 
-	OSystem * _syst;
-	void * _mutex;
+	OSystem *_syst;
+	void *_mutex;
 
 	uint _outputRate;
 
-	int16 * _volumeTable;
+	int16 *_volumeTable;
 	int _musicVolume;
 
 	bool _paused;
@@ -177,20 +177,20 @@ public:
 		NUM_CHANNELS = 16
 	};
 
-	void * _premixParam;
-	PremixProc * _premixProc;
+	void *_premixParam;
+	PremixProc *_premixProc;
 
-	Channel * _channels[NUM_CHANNELS];
-	PlayingSoundHandle * _handles[NUM_CHANNELS];
+	Channel *_channels[NUM_CHANNELS];
+	PlayingSoundHandle *_handles[NUM_CHANNELS];
 
 	int _beginSlots;
 
 	SoundMixer();
 	~SoundMixer();
 
-	int insertAt(PlayingSoundHandle * handle, int index, Channel * chan);
-	void append(void * data, uint32 len);
-	void unInsert(Channel * chan);
+	int insertAt(PlayingSoundHandle *handle, int index, Channel *chan);
+	void append(void *data, uint32 len);
+	void unInsert(Channel *chan);
 	void beginSlots(int index);
 
 	// start playing a raw sound
@@ -204,16 +204,16 @@ public:
 		FLAG_REVERSE_STEREO = 32,   // sound should be reverse stereo
 		FLAG_LOOP = 64              // loop the audio
 	};
-	int playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags);
-	int playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags, int id);
-	int playStream(PlayingSoundHandle * handle, int index, void * sound, uint32 size, uint rate,
+	int playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags);
+	int playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id);
+	int playStream(PlayingSoundHandle *handle, int index, void *sound, uint32 size, uint rate,
 									byte flags, int32 timeout = 3, int32 buffer_size = 2000000);
 #ifdef USE_MAD
-	int playMP3(PlayingSoundHandle * handle, void * sound, uint32 size, byte flags);
-	int playMP3CDTrack(PlayingSoundHandle * handle, File * file, mad_timer_t duration);
+	int playMP3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags);
+	int playMP3CDTrack(PlayingSoundHandle *handle, File *file, mad_timer_t duration);
 #endif
 #ifdef USE_VORBIS
-	int playVorbis(PlayingSoundHandle * handle, OggVorbis_File * ov_file, int duration, bool is_cd_track);
+	int playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, int duration, bool is_cd_track);
 #endif
 
 	/* Premix procedure, useful when using fmopl adlib */

@@ -141,7 +141,6 @@ const char *lastPathComponent(const ScummVM::String &str) {
 }
 
 FilesystemNode *POSIXFilesystemNode::parent() const {
-	
 	POSIXFilesystemNode *p = new POSIXFilesystemNode();
 
 	// Root node is its own parent. Still we can't just return this

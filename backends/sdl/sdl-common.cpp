@@ -73,7 +73,7 @@ OSystem *OSystem_SDL_Common::create(int gfx_mode, bool full_screen) {
 #ifndef MACOSX		// Work around a bug in OS X
 	// Clean up on exit
 	atexit_proc_installed = true;
- 	atexit(atexit_proc);
+	atexit(atexit_proc);
 #endif
 
 	// enable joystick
@@ -95,21 +95,18 @@ OSystem_SDL_Common::OSystem_SDL_Common()
 	_cdrom(0), _dirty_checksums(0),
 	_mouseVisible(false), _mouseDrawn(false), _mouseData(0),
 	_mouseHotspotX(0), _mouseHotspotY(0),
-	_currentShakePos(0), _newShakePos(0)
-{
+	_currentShakePos(0), _newShakePos(0) {
 	// allocate palette storage
-	_currentPalette = (SDL_Color*)calloc(sizeof(SDL_Color), 256);
+	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
 
 	// allocate the dirty rect storage
-	_mouseBackup = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING * 2);
-	
+	_mouseBackup = (byte *)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING * 2);
+
 	// reset mouse state
 	memset(&km, 0, sizeof(km));
-
 }
 
-OSystem_SDL_Common::~OSystem_SDL_Common()
-{
+OSystem_SDL_Common::~OSystem_SDL_Common() {
 	if (_dirty_checksums)
 		free(_dirty_checksums);
 	free(_currentPalette);
@@ -117,17 +114,16 @@ OSystem_SDL_Common::~OSystem_SDL_Common()
 }
 
 void OSystem_SDL_Common::init_size(uint w, uint h) {
-
 	// Avoid redundant res changes
 	if ((int)w == _screenWidth && (int)h == _screenHeight)
 		return;
 
 	_screenWidth = w;
 	_screenHeight = h;
-	CKSUM_NUM = (_screenWidth*_screenHeight/(8*8));
+	CKSUM_NUM = (_screenWidth * _screenHeight / (8 * 8));
 	if (_dirty_checksums)
 		free(_dirty_checksums);
-	_dirty_checksums = (uint32*)calloc(CKSUM_NUM*2, sizeof(uint32));
+	_dirty_checksums = (uint32 *)calloc(CKSUM_NUM * 2, sizeof(uint32));
 
 	unload_gfx_mode();
 	load_gfx_mode();
@@ -145,18 +141,33 @@ void OSystem_SDL_Common::copy_rect(const byte *buf, int pitch, int x, int y, int
 		return;
 
 	if (((uint32)buf & 3) == 0 && pitch == _screenWidth && x==0 && y==0 &&
-	    w==_screenWidth && h==_screenHeight && _mode_flags&DF_WANT_RECT_OPTIM) {
+			w==_screenWidth && h==_screenHeight && _mode_flags&DF_WANT_RECT_OPTIM) {
 		/* Special, optimized case for full screen updates.
 		 * It tries to determine what areas were actually changed,
 		 * and just updates those, on the actual display. */
 		add_dirty_rgn_auto(buf);
 	} else {
 		/* Clip the coordinates */
-		if (x < 0) { w+=x; buf-=x; x = 0; }
-		if (y < 0) { h+=y; buf-=y*pitch; y = 0; }
-		if (w > _screenWidth-x) { w = _screenWidth - x; }
-		if (h > _screenHeight-y) { h = _screenHeight - y; }
-			
+		if (x < 0) {
+			w += x;
+			buf -= x;
+			x = 0;
+		}
+
+		if (y < 0) {
+			h += y;
+			buf -= y * pitch;
+			y = 0;
+		}
+
+		if (w > _screenWidth - x) {
+			w = _screenWidth - x;
+		}
+
+		if (h > _screenHeight - y) {
+			h = _screenHeight - y;
+		}
+
 		if (w <= 0 || h <= 0)
 			return;
 
@@ -183,7 +194,6 @@ void OSystem_SDL_Common::copy_rect(const byte *buf, int pitch, int x, int y, int
 
 
 void OSystem_SDL_Common::move_screen(int dx, int dy, int height) {
-
 	if ((dx == 0) && (dy == 0))
 		return;
 
@@ -227,7 +237,6 @@ void OSystem_SDL_Common::add_dirty_rect(int x, int y, int w, int h) {
 		_forceFull = true;
 	else {
 		SDL_Rect *r = &_dirty_rect_list[_num_dirty_rects++];
-		
 		// Extend the dirty region by 1 pixel for scalers
 		// that "smear" the screen, e.g. 2xSAI
 		if (_mode_flags & DF_UPDATE_EXPAND_1_PIXEL) {
@@ -238,10 +247,22 @@ void OSystem_SDL_Common::add_dirty_rect(int x, int y, int w, int h) {
 		}
 
 		// clip
-		if (x < 0) { w+=x; x=0; }
-		if (y < 0) { h+=y; y=0; }
-		if (w > _screenWidth-x) { w = _screenWidth - x; }
-		if (h > _screenHeight-y) { h = _screenHeight - y; }
+		if (x < 0) {
+			w += x; x = 0;
+		}
+
+		if (y < 0) {
+			h += y;
+			y=0;
+		}
+
+		if (w > _screenWidth - x) {
+			w = _screenWidth - x;
+		}
+
+		if (h > _screenHeight - y) {
+			h = _screenHeight - y;
+		}
 	
 		r->x = x;
 		r->y = y;
@@ -250,18 +271,19 @@ void OSystem_SDL_Common::add_dirty_rect(int x, int y, int w, int h) {
 	}
 }
 
-#define ROL(a,n) a = (a<<(n)) | (a>>(32-(n)))
-#define DOLINE(x) a ^= ((uint32*)buf)[0+(x)*(_screenWidth/4)]; b ^= ((uint32*)buf)[1+(x)*(_screenWidth/4)]
+#define ROL(a,n) a = (a << (n)) | (a >> (32 - (n)))
+#define DOLINE(x) a ^= ((uint32*)buf)[0 + (x) * (_screenWidth / 4)]; b ^= ((uint32 *)buf)[1 + (x) * (_screenWidth / 4)]
+
 void OSystem_SDL_Common::mk_checksums(const byte *buf) {
 	uint32 *sums = _dirty_checksums;
 	uint x,y;
-	const uint last_x = (uint)_screenWidth/8;
-	const uint last_y = (uint)_screenHeight/8;
+	const uint last_x = (uint)_screenWidth / 8;
+	const uint last_y = (uint)_screenHeight / 8;
 
 	/* the 8x8 blocks in buf are enumerated starting in the top left corner and
 	 * reading each line at a time from left to right */
-	for(y=0; y != last_y; y++, buf+=_screenWidth*(8-1))
-		for(x=0; x != last_x; x++, buf+=8) {
+	for(y = 0; y != last_y; y++, buf += _screenWidth * (8 - 1))
+		for(x=0; x != last_x; x++, buf += 8) {
 			uint32 a = x;
 			uint32 b = y;
 
@@ -270,8 +292,8 @@ void OSystem_SDL_Common::mk_checksums(const byte *buf) {
 			DOLINE(4); ROL(a,13); ROL(b,11);
 			DOLINE(6); ROL(a,13); ROL(b,11);
 
-			a*=0xDEADBEEF;
-			b*=0xBAADF00D;
+			a *= 0xDEADBEEF;
+			b *= 0xBAADF00D;
 
 			DOLINE(1); ROL(a,13); ROL(b,11);
 			DOLINE(3); ROL(a,13); ROL(b,11);
@@ -279,15 +301,14 @@ void OSystem_SDL_Common::mk_checksums(const byte *buf) {
 			DOLINE(7); ROL(a,13); ROL(b,11);
 
 			/* output the checksum for this block */
-			*sums++=a+b;
+			*sums++ = a + b;
 		}
 }
 #undef DOLINE
 #undef ROL
 
-
 void OSystem_SDL_Common::add_dirty_rgn_auto(const byte *buf) {
-	assert( ((uint32)buf & 3) == 0);
+	assert(((uint32)buf & 3) == 0);
 	
 	/* generate a table of the checksums */
 	mk_checksums(buf);
@@ -304,18 +325,18 @@ void OSystem_SDL_Common::add_dirty_rgn_auto(const byte *buf) {
 		int x,y,w;
 		uint32 *ck = _dirty_checksums;
 		
-		for(y=0; y!=_screenHeight/8; y++) {
-			for(x=0; x!=_screenWidth/8; x++,ck++) {
+		for(y = 0; y!=_screenHeight / 8; y++) {
+			for(x = 0; x!=_screenWidth / 8; x++,ck++) {
 				if (ck[0] != ck[CKSUM_NUM]) {
 					/* found a dirty 8x8 block, now go as far to the right as possible,
 						 and at the same time, unmark the dirty status by setting old to new. */
 					w=0;
 					do {
-						ck[w+CKSUM_NUM] = ck[w];
+						ck[w + CKSUM_NUM] = ck[w];
 						w++;
-					} while (x+w != _screenWidth/8 && ck[w] != ck[w+CKSUM_NUM]);
-					
-					add_dirty_rect(x*8, y*8, w*8, 8);
+					} while (x + w != _screenWidth / 8 && ck[w] != ck[w + CKSUM_NUM]);
+
+					add_dirty_rect(x * 8, y * 8, w * 8, 8);
 
 					if (_forceFull)
 						goto get_out;
@@ -338,18 +359,18 @@ void OSystem_SDL_Common::kbd_mouse() {
 			km.x_down_count = 2;
 		}
 		if (km.y_down_count == 1) {
-			km.y_down_time = time;      
+			km.y_down_time = time;
 			km.y_down_count = 2;
 		}
 
 		if (km.x_vel || km.y_vel) {
 			if (km.x_down_count) {
-				if (time > km.x_down_time + km.delay_time*12) {
+				if (time > km.x_down_time + km.delay_time * 12) {
 					if (km.x_vel > 0)
 						km.x_vel++;
 					else
 						km.x_vel--;
-				} else if (time > km.x_down_time + km.delay_time*8) {
+				} else if (time > km.x_down_time + km.delay_time * 8) {
 					if (km.x_vel > 0)
 						km.x_vel = 5;
 					else
@@ -357,12 +378,12 @@ void OSystem_SDL_Common::kbd_mouse() {
 				}
 			}
 			if (km.y_down_count) {
-				if (time > km.y_down_time + km.delay_time*12) {
+				if (time > km.y_down_time + km.delay_time * 12) {
 					if (km.y_vel > 0)
 						km.y_vel++;
 					else
 						km.y_vel--;
-				} else if (time > km.y_down_time + km.delay_time*8) {
+				} else if (time > km.y_down_time + km.delay_time * 8) {
 					if (km.y_vel > 0)
 						km.y_vel = 5;
 					else
@@ -412,7 +433,7 @@ bool OSystem_SDL_Common::show_mouse(bool visible) {
 
 	return last;
 }
-	
+
 void OSystem_SDL_Common::set_mouse_pos(int x, int y) {
 	if (x != _mouseCurState.x || y != _mouseCurState.y) {
 		_mouseCurState.x = x;
@@ -427,7 +448,6 @@ void OSystem_SDL_Common::warp_mouse(int x, int y) {
 }
 	
 void OSystem_SDL_Common::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
-
 	assert(0 <= w && w <= MAX_MOUSE_W);
 	assert(0 <= h && h <= MAX_MOUSE_H);
 	_mouseCurState.w = w;
@@ -436,23 +456,23 @@ void OSystem_SDL_Common::set_mouse_cursor(const byte *buf, uint w, uint h, int h
 	_mouseHotspotX = hotspot_x;
 	_mouseHotspotY = hotspot_y;
 
-	_mouseData = (byte*)buf;
+	_mouseData = (byte *)buf;
 
 	undraw_mouse();
 }
-	
+
 void OSystem_SDL_Common::set_shake_pos(int shake_pos) {
 	_newShakePos = shake_pos;
 }
-		
+
 uint32 OSystem_SDL_Common::get_msecs() {
 	return SDL_GetTicks();	
 }
-	
+
 void OSystem_SDL_Common::delay_msecs(uint msecs) {
 	SDL_Delay(msecs);
 }
-	
+
 void *OSystem_SDL_Common::create_thread(ThreadProc *proc, void *param) {
 	return SDL_CreateThread(proc, param);
 }
@@ -472,7 +492,7 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode)
 	}
 	return key;
 }
-	
+
 bool OSystem_SDL_Common::poll_event(Event *event) {
 	SDL_Event ev;
 	int axis;
@@ -579,7 +599,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 					default:
 					break;
 				}
-	
+
 				return true;
 			}
 
@@ -589,7 +609,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 			event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 
 				switch(ev.key.keysym.sym){
-					case SDLK_LEFT:                
+					case SDLK_LEFT:
 						if (km.x_vel < 0) {
 							km.x_vel = 0;
 							km.x_down_count = 0;
@@ -717,7 +737,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				} 
 			}
 			return true;
-			
+
 		case SDL_JOYAXISMOTION:
 			axis = ev.jaxis.value;
 			if ( axis > JOY_DEADZONE) {
@@ -728,7 +748,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				event->event_code = EVENT_MOUSEMOVE;
 			} else
 				axis = 0;
-			
+
 			if ( ev.jaxis.axis == JOY_XAXIS) { 
 #ifdef JOY_ANALOG
 				km.x_vel = axis/2000;
@@ -748,11 +768,11 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				axis = -axis;
 #endif
 #ifdef JOY_ANALOG
-				km.y_vel = -axis/2000;
+				km.y_vel = -axis / 2000;
 				km.y_down_count = 0;
 #else
 				if (axis != 0) {
-					km.y_vel = (-axis > 0) ? 1:-1;
+					km.y_vel = (-axis > 0) ? 1: -1;
 					km.y_down_count = 1;
 				} else {
 					km.y_vel = 0;
@@ -760,7 +780,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 				}
 #endif
 			}
-			return true;	
+			return true;
 
 		case SDL_QUIT:
 			quit();
@@ -772,7 +792,6 @@ bool OSystem_SDL_Common::set_sound_proc(void *param, SoundProc *proc, byte forma
 	SDL_AudioSpec desired;
 
 	/* only one format supported at the moment */
-
 	desired.freq = SAMPLES_PER_SEC;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
@@ -818,13 +837,13 @@ uint32 OSystem_SDL_Common::property(int param, Property *value) {
 
 	return 0;
 }
-		
+
 void OSystem_SDL_Common::quit() {
 	if(_cdrom) {
 		SDL_CDStop(_cdrom);
 		SDL_CDClose(_cdrom);
 	}
-	unload_gfx_mode();		
+	unload_gfx_mode();
 	exit(0);
 }
 
@@ -868,10 +887,9 @@ void OSystem_SDL_Common::draw_mouse() {
 	_mouseOldState.h = h;
 
 	// Draw the mouse cursor; backup the covered area in "bak"
-	
 	if (SDL_LockSurface(_overlayVisible ? _tmpscreen : _screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
-	
+
 	// Mark as dirty
 	add_dirty_rect(x, y, w, h);
 
@@ -897,10 +915,10 @@ void OSystem_SDL_Common::draw_mouse() {
 		}
 	
 	} else {
-		uint16 *bak = (uint16*)_mouseBackup;	// Surface used to backup the area obscured by the mouse
+		uint16 *bak = (uint16 *)_mouseBackup;	// Surface used to backup the area obscured by the mouse
 		uint16 *dst;					// Surface we are drawing into
 	
-		dst = (uint16 *)_tmpscreen->pixels + (y+1) * _tmpScreenWidth + (x+1);
+		dst = (uint16 *)_tmpscreen->pixels + (y + 1) * _tmpScreenWidth + (x + 1);
 		while (h > 0) {
 			int width = w;
 			while (width > 0) {
@@ -916,11 +934,10 @@ void OSystem_SDL_Common::draw_mouse() {
 			dst += _tmpScreenWidth - w;
 			h--;
 		}
-	
 	}
 
 	SDL_UnlockSurface(_overlayVisible ? _tmpscreen : _screen);
-	
+
 	// Finally, set the flag to indicate the mouse has been drawn
 	_mouseDrawn = true;
 }
@@ -940,9 +957,8 @@ void OSystem_SDL_Common::undraw_mouse() {
 	int x, y;
 
 	if (!_overlayVisible) {
-	
 		byte *dst, *bak = _mouseBackup;
-	
+
 		// No need to do clipping here, since draw_mouse() did that already
 		dst = (byte *)_screen->pixels + old_mouse_y * _screenWidth + old_mouse_x;
 		for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _screenWidth) {
@@ -956,7 +972,7 @@ void OSystem_SDL_Common::undraw_mouse() {
 		uint16 *dst, *bak = (uint16 *)_mouseBackup;
 	
 		// No need to do clipping here, since draw_mouse() did that already
-		dst = (uint16 *)_tmpscreen->pixels + (old_mouse_y+1) * _tmpScreenWidth + (old_mouse_x+1);
+		dst = (uint16 *)_tmpscreen->pixels + (old_mouse_y + 1) * _tmpScreenWidth + (old_mouse_x + 1);
 		for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _tmpScreenWidth) {
 			for (x = 0; x < old_mouse_w; ++x) {
 				dst[x] = bak[x];
@@ -972,7 +988,6 @@ void OSystem_SDL_Common::undraw_mouse() {
 void OSystem_SDL_Common::stop_cdrom() {	/* Stop CD Audio in 1/10th of a second */
 	cd_stop_time = SDL_GetTicks() + 100;
 	cd_num_loops = 0;
-
 }
 
 void OSystem_SDL_Common::play_cdrom(int track, int num_loops, int start_frame, int end_frame) {
@@ -983,7 +998,7 @@ void OSystem_SDL_Common::play_cdrom(int track, int num_loops, int start_frame, i
 		return;
 	
 	if (end_frame > 0)
-		end_frame+=5;
+		end_frame +=5;
 
 	cd_track = track;
 	cd_num_loops = num_loops;
@@ -1009,7 +1024,7 @@ bool OSystem_SDL_Common::poll_cdrom() {
 void OSystem_SDL_Common::update_cdrom() {
 	if (!_cdrom)
 		return;
-		
+
 	if (cd_stop_time != 0 && SDL_GetTicks() >= cd_stop_time) {
 		SDL_CDStop(_cdrom);
 		cd_num_loops = 0;
@@ -1098,8 +1113,7 @@ void OSystem_SDL_Common::delete_mutex(void *mutex) {
 	SDL_DestroyMutex((SDL_mutex *) mutex);
 }
 
-void OSystem_SDL_Common::show_overlay()
-{
+void OSystem_SDL_Common::show_overlay() {
 	// hide the mouse
 	undraw_mouse();
 
@@ -1107,8 +1121,7 @@ void OSystem_SDL_Common::show_overlay()
 	clear_overlay();
 }
 
-void OSystem_SDL_Common::hide_overlay()
-{
+void OSystem_SDL_Common::hide_overlay() {
 	// hide the mouse
 	undraw_mouse();
 
@@ -1116,8 +1129,7 @@ void OSystem_SDL_Common::hide_overlay()
 	_forceFull = true;
 }
 
-void OSystem_SDL_Common::clear_overlay()
-{
+void OSystem_SDL_Common::clear_overlay() {
 	if (!_overlayVisible)
 		return;
 	
@@ -1144,8 +1156,7 @@ int16 OSystem_SDL_Common::get_width() {
 	return _screenWidth;
 }
 
-void OSystem_SDL_Common::grab_overlay(int16 *buf, int pitch)
-{
+void OSystem_SDL_Common::grab_overlay(int16 *buf, int pitch) {
 	if (!_overlayVisible)
 		return;
 
@@ -1169,8 +1180,7 @@ void OSystem_SDL_Common::grab_overlay(int16 *buf, int pitch)
 	SDL_UnlockSurface(_tmpscreen);
 }
 
-void OSystem_SDL_Common::copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h)
-{
+void OSystem_SDL_Common::copy_rect_overlay(const int16 *buf, int pitch, int x, int y, int w, int h) {
 	if (!_overlayVisible)
 		return;
 
@@ -1178,13 +1188,28 @@ void OSystem_SDL_Common::copy_rect_overlay(const int16 *buf, int pitch, int x, i
 		return;
 
 	// Clip the coordinates
-	if (x < 0) { w+=x; buf-=x; x = 0; }
-	if (y < 0) { h+=y; buf-=y*pitch; y = 0; }
-	if (w > _screenWidth-x) { w = _screenWidth - x; }
-	if (h > _screenHeight-y) { h = _screenHeight - y; }
+	if (x < 0) {
+		w += x;
+		buf -= x;
+		x = 0;
+	}
+
+	if (y < 0) {
+		h += y; buf -= y * pitch;
+		y = 0;
+	}
+
+	if (w > _screenWidth - x) {
+		w = _screenWidth - x;
+	}
+
+	if (h > _screenHeight-y) {
+		h = _screenHeight - y;
+	}
+
 	if (w <= 0 || h <= 0)
 		return;
-	
+
 	// Mark the modified region as dirty
 	cksum_valid = false;
 	add_dirty_rect(x, y, w, h);
@@ -1195,9 +1220,9 @@ void OSystem_SDL_Common::copy_rect_overlay(const int16 *buf, int pitch, int x, i
 	if (SDL_LockSurface(_tmpscreen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	int16 *dst = (int16 *)_tmpscreen->pixels + (y+1) * _tmpScreenWidth + (x+1);
+	int16 *dst = (int16 *)_tmpscreen->pixels + (y + 1) * _tmpScreenWidth + (x + 1);
 	do {
-		memcpy(dst, buf, w*2);
+		memcpy(dst, buf, w * 2);
 		dst += _tmpScreenWidth;
 		buf += pitch;
 	} while (--h);
@@ -1205,12 +1230,10 @@ void OSystem_SDL_Common::copy_rect_overlay(const int16 *buf, int pitch, int x, i
 	SDL_UnlockSurface(_tmpscreen);
 }
 
-int16 OSystem_SDL_Common::RBGToColor(uint8 r, uint8 g, uint8 b)
-{
+int16 OSystem_SDL_Common::RBGToColor(uint8 r, uint8 g, uint8 b) {
 	return SDL_MapRGB(_tmpscreen->format, r, g, b);
 }
 
-void OSystem_SDL_Common::colorToRBG(int16 color, uint8 &r, uint8 &g, uint8 &b)
-{
+void OSystem_SDL_Common::colorToRBG(int16 color, uint8 &r, uint8 &g, uint8 &b) {
 	SDL_GetRGB(color, _tmpscreen->format, &r, &g, &b);
 }

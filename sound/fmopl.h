@@ -76,10 +76,10 @@ typedef struct fm_opl_channel {
 	int op1_out[2];		/* slot1 output for selfeedback		*/
 
 	/* phase generator state */
-	uint  block_fnum;	/* block+fnum						*/
+	uint block_fnum;	/* block+fnum						*/
 	uint8 kcode;		/* key code        : KeyScaleCode	*/
-	uint  fc;			/* Freq. Increment base				*/
-	uint  ksl_base;		/* KeyScaleLevel Base step			*/
+	uint fc;			/* Freq. Increment base				*/
+	uint ksl_base;		/* KeyScaleLevel Base step			*/
 	uint8 keyon;		/* key on/off flag					*/
 } OPL_CH;
 
@@ -139,14 +139,14 @@ void OPLBuildTables(int ENV_BITS_PARAM, int EG_ENT_PARAM);
 
 FM_OPL *OPLCreate(int type, int clock, int rate);
 void OPLDestroy(FM_OPL *OPL);
-void OPLSetTimerHandler(FM_OPL *OPL,OPL_TIMERHANDLER TimerHandler,int channelOffset);
-void OPLSetIRQHandler(FM_OPL *OPL,OPL_IRQHANDLER IRQHandler,int param);
-void OPLSetUpdateHandler(FM_OPL *OPL,OPL_UPDATEHANDLER UpdateHandler,int param);
+void OPLSetTimerHandler(FM_OPL *OPL, OPL_TIMERHANDLER TimerHandler, int channelOffset);
+void OPLSetIRQHandler(FM_OPL *OPL, OPL_IRQHANDLER IRQHandler, int param);
+void OPLSetUpdateHandler(FM_OPL *OPL, OPL_UPDATEHANDLER UpdateHandler, int param);
 
 void OPLResetChip(FM_OPL *OPL);
-int OPLWrite(FM_OPL *OPL,int a,int v);
-unsigned char OPLRead(FM_OPL *OPL,int a);
-int OPLTimerOver(FM_OPL *OPL,int c);
+int OPLWrite(FM_OPL *OPL, int a, int v);
+unsigned char OPLRead(FM_OPL *OPL, int a);
+int OPLTimerOver(FM_OPL *OPL, int c);
 void OPLWriteReg(FM_OPL *OPL, int r, int v);
 void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length);
 #endif

@@ -70,8 +70,7 @@ MidiDriver_ALSA::MidiDriver_ALSA()
 {
 }
 
-int MidiDriver_ALSA::open()
-{
+int MidiDriver_ALSA::open() {
 	char *var;
 	unsigned int caps;
 
@@ -128,16 +127,13 @@ int MidiDriver_ALSA::open()
 	return 0;
 }
 
-void MidiDriver_ALSA::close()
-{
+void MidiDriver_ALSA::close() {
 	_isOpen = false;
 	if (seq_handle)
 		snd_seq_close(seq_handle);
 }
 
-
-void MidiDriver_ALSA::send(uint32 b)
-{
+void MidiDriver_ALSA::send(uint32 b) {
 	unsigned int midiCmd[4];
 	ev.type = SND_SEQ_EVENT_OSS;
 
@@ -168,7 +164,6 @@ void MidiDriver_ALSA::send(uint32 b)
 		snd_seq_ev_set_pgmchange(&ev, chanID, midiCmd[1]);
 		send_event(0);
 		break;
-
 	case 0xE0:{
 			// long theBend = ((((long)midiCmd[1] + (long)(midiCmd[2] << 7))) - 0x2000) / 4;
 			// snd_seq_ev_set_pitchbend(&ev, chanID, theBend);
@@ -186,8 +181,7 @@ void MidiDriver_ALSA::send(uint32 b)
 	}
 }
 
-int MidiDriver_ALSA::parse_addr(char *arg, int *client, int *port)
-{
+int MidiDriver_ALSA::parse_addr(char *arg, int *client, int *port) {
 	char *p;
 
 	if (isdigit(*arg)) {
@@ -205,8 +199,7 @@ int MidiDriver_ALSA::parse_addr(char *arg, int *client, int *port)
 	return 0;
 }
 
-void MidiDriver_ALSA::send_event(int do_flush)
-{
+void MidiDriver_ALSA::send_event(int do_flush) {
 	snd_seq_ev_set_direct(&ev);
 	snd_seq_ev_set_source(&ev, my_port);
 	snd_seq_ev_set_dest(&ev, seq_client, seq_port);
@@ -216,8 +209,7 @@ void MidiDriver_ALSA::send_event(int do_flush)
 		snd_seq_flush_output(seq_handle);
 }
 
-MidiDriver *MidiDriver_ALSA_create()
-{
+MidiDriver *MidiDriver_ALSA_create() {
 	return new MidiDriver_ALSA();
 }
 

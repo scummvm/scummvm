@@ -24,20 +24,19 @@
 #include "common/util.h"
 
 MidiStreamer::MidiStreamer (MidiDriver *target) :
-_target (target),
-_stream_proc (0),
-_stream_param (0),
-_isOpen (false),
-_paused (false),
-_event_count (0),
-_event_index (0),
-_tempo (500000), // 120 BPM = 500,000 microseconds between each beat
-_ticks_per_beat (96),
-_delay (0)
+	_target (target),
+	_stream_proc (0),
+	_stream_param (0),
+	_isOpen (false),
+	_paused (false),
+	_event_count (0),
+	_event_index (0),
+	_tempo (500000), // 120 BPM = 500,000 microseconds between each beat
+	_ticks_per_beat (96),
+	_delay (0)
 { }
 
-void MidiStreamer::set_stream_callback (void *param, StreamCallback *sc)
-{
+void MidiStreamer::set_stream_callback (void *param, StreamCallback *sc) {
 	_stream_param = param;
 	_stream_proc = sc;
 
@@ -51,8 +50,7 @@ void MidiStreamer::timer_thread (void *param) {
 	((MidiStreamer *) param)->on_timer();
 }
 
-void MidiStreamer::on_timer()
-{
+void MidiStreamer::on_timer() {
 	if (_paused || !_stream_proc)
 		return;
 
@@ -80,8 +78,7 @@ void MidiStreamer::on_timer()
 	} // end while
 }
 
-int MidiStreamer::open()
-{
+int MidiStreamer::open() {
 	if (_isOpen)
 		close();
 
@@ -99,8 +96,7 @@ int MidiStreamer::open()
 	return 0;
 }
 
-void MidiStreamer::close()
-{
+void MidiStreamer::close() {
 	if (!_isOpen)
 		return;
 
@@ -116,8 +112,7 @@ void MidiStreamer::close()
 	_paused = true;
 }
 
-uint32 MidiStreamer::property (int prop, uint32 param)
-{
+uint32 MidiStreamer::property (int prop, uint32 param) {
 	switch (prop) {
 
 	// 16-bit time division according to standard midi specification

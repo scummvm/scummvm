@@ -31,18 +31,13 @@
 #include "common/engine.h"	// for warning/error/debug
 #include "common/util.h"	// for ARRAYSIZE
 
-
-
 /* Default (empty) property method */
-uint32 MidiDriver::property(int prop, uint32 param)
-{
+uint32 MidiDriver::property(int prop, uint32 param) {
 	return 0;
 }
 
-
 /* retrieve a string representation of an error code */
-const char *MidiDriver::getErrorName(int error_code)
-{
+const char *MidiDriver::getErrorName(int error_code) {
 	static const char *const midi_errors[] = {
 		"No error",
 		"Cannot connect",
@@ -66,22 +61,20 @@ public:
 	int open();
 	void close();
 	void send(uint32 b);
-	void sysEx (byte *msg, uint16 length);
+	void sysEx(byte *msg, uint16 length);
 
 private:
 	bool _isOpen;
 	int device, _device_num;
 };
 
-MidiDriver_SEQ::MidiDriver_SEQ()
-{
+MidiDriver_SEQ::MidiDriver_SEQ() {
 	_isOpen = false;
 	device = 0;
 	_device_num = 0;
 }
 
-int MidiDriver_SEQ::open()
-{
+int MidiDriver_SEQ::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 	_isOpen = true;
@@ -109,15 +102,12 @@ int MidiDriver_SEQ::open()
 	return 0;
 }
 
-void MidiDriver_SEQ::close()
-{
+void MidiDriver_SEQ::close() {
 	::close(device);
 	_isOpen = false;
 }
 
-
-void MidiDriver_SEQ::send(uint32 b)
-{
+void MidiDriver_SEQ::send(uint32 b) {
 	unsigned char buf[256];
 	int position = 0;
 
@@ -158,8 +148,7 @@ void MidiDriver_SEQ::send(uint32 b)
 	write(device, buf, position);
 }
 
-void MidiDriver_SEQ::sysEx (byte *msg, uint16 length)
-{
+void MidiDriver_SEQ::sysEx (byte *msg, uint16 length) {
 	if (length > 254) {
 		warning ("Cannot send SysEx block - data too large");
 		return;
@@ -188,8 +177,7 @@ void MidiDriver_SEQ::sysEx (byte *msg, uint16 length)
 	write (device, buf, position);
 }
 
-MidiDriver *MidiDriver_SEQ_create()
-{
+MidiDriver *MidiDriver_SEQ_create() {
 	return new MidiDriver_SEQ();
 }
 

@@ -140,7 +140,6 @@ normal_mode:;
 	if (_screen == NULL)
 		error("_screen failed");
 
-
 	//
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	//
@@ -161,9 +160,9 @@ normal_mode:;
 		Init_2xSaI(565);
 	
 	// Need some extra bytes around when using 2xSaI
-	uint16 *tmp_screen = (uint16*)calloc(_tmpScreenWidth*(_screenHeight+3), sizeof(uint16));
+	uint16 *tmp_screen = (uint16 *)calloc(_tmpScreenWidth * (_screenHeight + 3), sizeof(uint16));
 	_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
-						_tmpScreenWidth, _screenHeight + 3, 16, _tmpScreenWidth*2,
+						_tmpScreenWidth, _screenHeight + 3, 16, _tmpScreenWidth * 2,
 						_hwscreen->format->Rmask,
 						_hwscreen->format->Gmask,
 						_hwscreen->format->Bmask,
@@ -171,13 +170,12 @@ normal_mode:;
 
 	if (_tmpscreen == NULL)
 		error("_tmpscreen failed");
-	
+
 	// keyboard cursor control, some other better place for it?
 	km.x_max = _screenWidth * _scaleFactor - 1;
 	km.y_max = _screenHeight * _scaleFactor - 1;
 	km.delay_time = 25;
 	km.last_time = 0;
-
 }
 
 void OSystem_SDL::unload_gfx_mode() {
@@ -230,12 +228,11 @@ void OSystem_SDL::hotswap_gfx_mode() {
 }
 
 void OSystem_SDL::update_screen() {
-	
 	assert(_hwscreen != NULL);
 
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
-		SDL_Rect blackrect = {0, 0, _screenWidth*_scaleFactor, _newShakePos*_scaleFactor};
+		SDL_Rect blackrect = {0, 0, _screenWidth * _scaleFactor, _newShakePos * _scaleFactor};
 		SDL_FillRect(_hwscreen, &blackrect, 0);
 
 		_currentShakePos = _newShakePos;
@@ -270,11 +267,11 @@ void OSystem_SDL::update_screen() {
 
 	// Only draw anything if necessary
 	if (_num_dirty_rects > 0) {
-	
+
 		SDL_Rect *r; 
 		uint32 srcPitch, dstPitch;
 		SDL_Rect *last_rect = _dirty_rect_list + _num_dirty_rects;
-	
+
 		// Convert appropriate parts of the 8bpp image into 16bpp
 		if (!_overlayVisible) {
 			SDL_Rect dst;
@@ -286,7 +283,7 @@ void OSystem_SDL::update_screen() {
 					error("SDL_BlitSurface failed: %s", SDL_GetError());
 			}
 		}
-	
+
 		SDL_LockSurface(_tmpscreen);
 		SDL_LockSurface(_hwscreen);
 	
@@ -300,11 +297,11 @@ void OSystem_SDL::update_screen() {
 				dst_h = r->h;
 				if (dst_h > _screenHeight - dst_y)
 					dst_h = _screenHeight - dst_y;
-				
+
 				dst_y *= _scaleFactor;
-				
-				_scaler_proc((byte*)_tmpscreen->pixels + (r->x*2+2) + (r->y+1)*srcPitch, srcPitch, NULL, 
-					(byte*)_hwscreen->pixels + r->x*2*_scaleFactor + dst_y*dstPitch, dstPitch, r->w, dst_h);
+
+				_scaler_proc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch, NULL, 
+					(byte *)_hwscreen->pixels + r->x * 2 * _scaleFactor + dst_y * dstPitch, dstPitch, r->w, dst_h);
 			}
 			
 			r->x *= _scaleFactor;
@@ -332,7 +329,6 @@ void OSystem_SDL::update_screen() {
 }
 
 uint32 OSystem_SDL::property(int param, Property *value) {
-
 	if (param == PROP_TOGGLE_FULLSCREEN) {
 		assert(_hwscreen != 0);
 		_full_screen ^= true;
@@ -358,8 +354,6 @@ uint32 OSystem_SDL::property(int param, Property *value) {
 		return 1;
 	}
 
-
-	
 	return OSystem_SDL_Common::property(param, value);
 }
 

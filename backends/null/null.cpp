@@ -63,7 +63,7 @@ uint32 OSystem_NULL::get_ticks() {
 #ifdef UNIX
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
-	a = tv.tv_sec * 1000 + tv.tv_usec/1000;
+	a = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 #endif
 
 	return a;
@@ -74,7 +74,7 @@ void OSystem_NULL::delay_msecs(uint msecs) {
 	Sleep(msecs);
 #endif
 #ifdef UNIX
-	usleep(msecs*1000);
+	usleep(msecs * 1000);
 #endif
 }
 

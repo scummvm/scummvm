@@ -45,7 +45,6 @@ public:
 		PROP_SMALLHEADER = 2
 	};
 
-
 	// Open the midi driver.
 	// Returns 0 if successful, otherwise an error code.
 	virtual int open() = 0;
@@ -83,8 +82,6 @@ public:
 	virtual MidiChannel *getPercussionChannel() = 0;
 };
 
-
-
 class MidiChannel {
 public:
 	virtual MidiDriver *device() = 0;
@@ -114,8 +111,6 @@ public:
 	virtual void sysEx_customInstrument (uint32 type, byte *instr) = 0;
 };
 
-
-
 // MIDI Driver Types
 enum {
 	MD_AUTO = 0,
@@ -130,7 +125,6 @@ enum {
 	MD_ALSA = 9,
 	MD_ADLIB = 10
 };
-
 
 // Factory functions, for faster compile
 extern MidiDriver *MidiDriver_NULL_create();

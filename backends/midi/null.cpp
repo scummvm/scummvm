@@ -30,13 +30,11 @@ public:
 	void send(uint32 b) { }
 };
 
-int MidiDriver_NULL::open()
-{
+int MidiDriver_NULL::open() {
 	warning("Music not enabled - MIDI support selected with no MIDI driver available. Try Adlib");
 	return 0;
 }
 
-MidiDriver *MidiDriver_NULL_create()
-{
+MidiDriver *MidiDriver_NULL_create() {
 	return new MidiDriver_NULL();
 }

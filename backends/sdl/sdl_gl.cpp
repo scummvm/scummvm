@@ -108,14 +108,14 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 	//
 
 	gl_flags =  FB2GL_320 | FB2GL_RGBA | FB2GL_16BIT;
-        if (_full_screen) {
-	  gl_flags |= (FB2GL_FS);
-	  _glScreenStart = 0;
+	if (_full_screen) {
+		gl_flags |= (FB2GL_FS);
+		_glScreenStart = 0;
 	}
 	// 640x480 screen resolution
-	fb2gl.init(640,480,0,_glScreenStart? 15: 70,gl_flags);
+	fb2gl.init(640, 480, 0,_glScreenStart? 15: 70,gl_flags);
 
-	SDL_SetGamma(1.25,1.25,1.25);
+	SDL_SetGamma(1.25, 1.25, 1.25);
 
 	
 	//
@@ -123,9 +123,9 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 	//
 
 	// Need some extra bytes around when using 2xSaI
-	uint16 *tmp_screen = (uint16*)calloc(_tmpScreenWidth*(_screenHeight+3),sizeof(uint16));
+	uint16 *tmp_screen = (uint16 *)calloc(_tmpScreenWidth * (_screenHeight + 3),sizeof(uint16));
 	_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
-						_tmpScreenWidth, _screenHeight + 3, 16, _tmpScreenWidth*2,
+						_tmpScreenWidth, _screenHeight + 3, 16, _tmpScreenWidth * 2,
 						Rmask,
 						Gmask,
 						Bmask,
@@ -144,16 +144,15 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 	tmpBlackRect.y = 0;
 	tmpBlackRect.w = _screenWidth;
 	tmpBlackRect.h = 256-_screenHeight-_glScreenStart;
-	
+
 	if (_tmpscreen == NULL)
 		error("_tmpscreen failed");
-	
+
 	// keyboard cursor control, some other better place for it?
 	km.x_max = _screenWidth * _scaleFactor - 1;
 	km.y_max = _screenHeight * _scaleFactor - 1;
 	km.delay_time = 25;
 	km.last_time = 0;
-
 }
 
 void OSystem_SDL_OpenGL::unload_gfx_mode() {
@@ -163,20 +162,19 @@ void OSystem_SDL_OpenGL::unload_gfx_mode() {
 	}
 
 	if (_tmpscreen) {
-		free((uint16*)_tmpscreen->pixels);
+		free((uint16 *)_tmpscreen->pixels);
 		SDL_FreeSurface(_tmpscreen);
 		_tmpscreen = NULL;
 	}
 }
 
 void OSystem_SDL_OpenGL::update_screen() {
-	
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
 		SDL_Rect blackrect = {0, _glScreenStart, _screenWidth, _newShakePos+_glScreenStart};
 		
 		SDL_FillRect(tmpSurface, &blackrect, 0);
-		fb2gl.blit16(tmpSurface,1,&blackrect,0,0);
+		fb2gl.blit16(tmpSurface, 1, &blackrect, 0, 0);
 
 		_currentShakePos = _newShakePos;
 
@@ -227,13 +225,14 @@ void OSystem_SDL_OpenGL::update_screen() {
 		}
 
 		// Almost the same thing as SDL_UpdateRects
-		fb2gl.blit16(_tmpscreen,_num_dirty_rects,_dirty_rect_list,0,
-		    _currentShakePos+_glScreenStart);
+		fb2gl.blit16(_tmpscreen, _num_dirty_rects, _dirty_rect_list, 0,
+									_currentShakePos+_glScreenStart);
 
-		tmpBlackRect.h = 256-_screenHeight-_glScreenStart-_currentShakePos;
-		
+		tmpBlackRect.h = 256 - _screenHeight - _glScreenStart - _currentShakePos;
+
 		SDL_FillRect(tmpSurface, &tmpBlackRect, 0);
-		fb2gl.blit16(tmpSurface,1,&tmpBlackRect,0,_screenHeight+_glScreenStart+_currentShakePos);
+		fb2gl.blit16(tmpSurface, 1, &tmpBlackRect, 0,_screenHeight
+												+ _glScreenStart+_currentShakePos);
 
 		fb2gl.display();
 	}
@@ -243,67 +242,61 @@ void OSystem_SDL_OpenGL::update_screen() {
 }
 
 uint32 OSystem_SDL_OpenGL::property(int param, Property *value) {
+	int i;
 
 	if (param == PROP_TOGGLE_FULLSCREEN) {
 		_full_screen ^= true;
-	
+
 		SDL_WM_ToggleFullScreen(fb2gl.screen);
 		return 1;
 	}
 	else if (param == PROP_SET_GFX_MODE) {
-		SDL_Rect full = {0,0,_screenWidth,_screenHeight};
+		SDL_Rect full = {0, 0, _screenWidth, _screenHeight};
 		glPopMatrix();
 
 		switch(value->gfx_mode) {
-		  case 0: // Bilinear Filtering (on/off)
-		    _glBilinearFilter ^= true;
-		    for (int i=0; i<2; i++) {
-		      glBindTexture(GL_TEXTURE_2D,i);
-		      if (_glBilinearFilter) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
-			    GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
-			    GL_LINEAR);
-		      }
-		      else {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
-			    GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
-			    GL_NEAREST);
-		      }
-		    }
-		    break;
-		  case 1: // Don't fit the whole screen
-		    fb2gl.init(0,0,0,15,gl_flags);
-		    _glScreenStart = 20;
-		    SDL_FillRect(tmpSurface,&tmpBlackRect,0);
-		    fb2gl.blit16(tmpSurface,1,&tmpBlackRect,0,0);
-		    break;
-		  case 2: // Fit the whole screen
-		    fb2gl.init(0,0,0,70,gl_flags);
-		    _glScreenStart = 0;
-		    break;
-		  default: // Zooming
-		    glPushMatrix();
-/*		    SDL_FillRect(tmpSurface, &full, 0);
-		    fb2gl.blit16(tmpSurface,1,&full,0,_glScreenStart);
-		    fb2gl.display();
-		    double x = (double)((_mouseCurState.x) 
-			- (_screenWidth/2)) / (_screenWidth/2);
-		    double y = (double)((_mouseCurState.y) 
-			- (_screenHeight/2)) / (_screenHeight/2);
-		    glTranslatef(-x,y,0);
+			case 0: // Bilinear Filtering (on/off)
+				_glBilinearFilter ^= true;
+				for (i = 0; i < 2; i++) {
+					glBindTexture(GL_TEXTURE_2D, i);
+					if (_glBilinearFilter) {
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+					} else {
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+					}
+				}
+				break;
+			case 1: // Don't fit the whole screen
+				fb2gl.init(0, 0, 0, 15, gl_flags);
+				_glScreenStart = 20;
+				SDL_FillRect(tmpSurface, &tmpBlackRect, 0);
+				fb2gl.blit16(tmpSurface, 1, &tmpBlackRect, 0, 0);
+				break;
+			case 2: // Fit the whole screen
+				fb2gl.init(0, 0, 0, 70, gl_flags);
+				_glScreenStart = 0;
+				break;
+			default: // Zooming
+				glPushMatrix();
+/*				SDL_FillRect(tmpSurface, &full, 0);
+				fb2gl.blit16(tmpSurface, 1, &full,0, _glScreenStart);
+				fb2gl.display();
+				double x = (double)((_mouseCurState.x) 
+						- (_screenWidth / 2)) / (_screenWidth / 2);
+				double y = (double)((_mouseCurState.y) 
+						- (_screenHeight / 2)) / (_screenHeight / 2);
+				glTranslatef(-x, y, 0);
 */
-		    glScalef(1.0+(double)(value->gfx_mode-1)/10,
-		      1.0+(double)(value->gfx_mode-1)/10,
-		      0);
+				glScalef(1.0 + (double)(value->gfx_mode - 1) / 10,
+						1.0 + (double)(value->gfx_mode - 1) / 10, 0);
 		};
-		fb2gl.blit16(_tmpscreen,1,&full,0,_glScreenStart);
+		fb2gl.blit16(_tmpscreen, 1, &full, 0, _glScreenStart);
 		fb2gl.display();
-		
+
 		return 1;
 	}
-	
-	
+
 	return OSystem_SDL_Common::property(param, value);
 }

@@ -35,7 +35,7 @@ class MidiStreamer {
 public:
 	// Called whenever more MIDI commands need to be generated.
 	// Return 0 to tell MidiStreamer that end of stream was reached.
-	typedef int StreamCallback (void *param, MidiEvent * ev, int num);
+	typedef int StreamCallback (void *param, MidiEvent *ev, int num);
 
 	// Special events that can be inserted in a MidiEvent.
 	// event = (ME_xxx<<24) | <24-bit data associated with event>
@@ -51,7 +51,7 @@ private:
 	bool _isOpen;
 	bool _paused;
 
-	MidiEvent _events [64];
+	MidiEvent _events[64];
 	int _event_count;
 	int _event_index;
 
