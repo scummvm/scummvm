@@ -451,11 +451,11 @@ enum genMethods {
 	kGenPC
 };
 
-static struct substDataFileNames {
+static struct substResFileNames {
 	const char *winName;
 	const char *macName;
 	int genMethod;
-} substDataFileNameTable[] = {
+} substResFileNameTable[] = {
 	{ "Intentionally/left/blank", "", kGenMacNoParens},
 	{ "racedemo", "500demo", kGenPC},
 	{ "Spydemo", "foxdemo", kGenPC},
@@ -2696,8 +2696,8 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 					if (0 == scumm_stricmp(detectName, name)) {
 						// Match found, add to list of candidates, then abort inner loop.
 						if (substLastIndex > 0 && // HE Mac versions.
-							(substDataFileNameTable[substLastIndex].genMethod == kGenMac ||
-							 substDataFileNameTable[substLastIndex].genMethod == kGenMacNoParens)) {
+							(substResFileNameTable[substLastIndex].genMethod == kGenMac ||
+							 substResFileNameTable[substLastIndex].genMethod == kGenMacNoParens)) {
 							detectedGames.push_back(DetectedGame(g->toGameSettings(), 
 																 Common::UNK_LANG, 
 																 Common::kPlatformMacintosh));
@@ -2789,24 +2789,24 @@ static int generateSubstResFileName_(const char *filename, char *buf, int bufsiz
 	if (index > 0)
 		cont = index;
 
-	for (int i = cont; i < ARRAYSIZE(substDataFileNameTable); i++) {
-		if (!scumm_strnicmp(filename, substDataFileNameTable[i].winName, len)) {
-			switch (substDataFileNameTable[i].genMethod) {
+	for (int i = cont; i < ARRAYSIZE(substResFileNameTable); i++) {
+		if (!scumm_strnicmp(filename, substResFileNameTable[i].winName, len)) {
+			switch (substResFileNameTable[i].genMethod) {
 			case kGenMac:
 			case kGenMacNoParens:
 				if (num == '3') { // special case for cursors
 					// For mac they're stored in game binary
-					strncpy(buf, substDataFileNameTable[i].macName, bufsize);
+					strncpy(buf, substResFileNameTable[i].macName, bufsize);
 				} else {
-					if (substDataFileNameTable[i].genMethod == kGenMac)
-						snprintf(buf, bufsize, "%s (%c)", substDataFileNameTable[i].macName, num);
+					if (substResFileNameTable[i].genMethod == kGenMac)
+						snprintf(buf, bufsize, "%s (%c)", substResFileNameTable[i].macName, num);
 					else 
-						snprintf(buf, bufsize, "%s %c", substDataFileNameTable[i].macName, num);
+						snprintf(buf, bufsize, "%s %c", substResFileNameTable[i].macName, num);
 				}
 				break;
 
 			case kGenPC:
-				snprintf(buf, bufsize, "%s%s", substDataFileNameTable[i].macName, ext);
+				snprintf(buf, bufsize, "%s%s", substResFileNameTable[i].macName, ext);
 				break;
 
 			default:
@@ -2874,8 +2874,8 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 	// Force game to have Mac platform if needed
 	if (substLastIndex > 0) {
-		if (substDataFileNameTable[substLastIndex].genMethod == kGenMac ||
-			substDataFileNameTable[substLastIndex].genMethod == kGenMacNoParens)
+		if (substResFileNameTable[substLastIndex].genMethod == kGenMac ||
+			substResFileNameTable[substLastIndex].genMethod == kGenMacNoParens)
 			game.features |= GF_MACINTOSH;
 	}
 
