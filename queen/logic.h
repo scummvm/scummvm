@@ -288,10 +288,10 @@ public:
 	void sceneReset() { _scene = 0; }
 
 	//! Make a scene
-	void sceneStart(bool showMouseCursor);
+	void sceneStart();
 
 	//! Stop making a scene
-	void sceneStop(bool showMouseCursor);
+	void sceneStop();
 
 	//! Copy data from dummy object to object
 	void objectCopy(int dummyObjectIndex, int objectIndex);

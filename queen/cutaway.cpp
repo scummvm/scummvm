@@ -1204,8 +1204,18 @@ void Cutaway::run(char *nextFilename) {
 
 	_initialRoom = _temporaryRoom = _logic->currentRoom();
 
-	if (_comPanel == 0 || _comPanel == 2)
-		_logic->sceneStart(false);
+	// FIXME: hack to hide the panel *before* displaying a talking head.
+	// This was not handled in the original game, but I think it is 
+	// better like that.
+	if (_talkTo != 0) {
+		_comPanel = 2;
+	}
+
+	_logic->display()->screenMode(_comPanel, true);
+
+	if (_comPanel == 0 || _comPanel == 2) {
+		_logic->sceneStart();
+	}
 
 	byte *ptr = _objectData;
 
@@ -1308,11 +1318,13 @@ void Cutaway::run(char *nextFilename) {
 	talk(nextFilename);
 
 	if (_comPanel == 0 || (_comPanel == 2 && !_anotherCutaway)) {
-		_logic->sceneStop(true);
+		_logic->sceneStop();
 		_comPanel = 0;
 	}
 
 	if (nextFilename[0] == '\0' && !_anotherCutaway) {
+		_logic->display()->fullscreen(false);
+
 		// Lines 2138-2182 in cutaway.c
 		if (_finalRoom) {
 			_logic->newRoom(0);
@@ -1340,12 +1352,12 @@ void Cutaway::run(char *nextFilename) {
 				// instead
 				debug(0, "[Cutaway::run] Not calling SETUP_ROOM here, just setting newRoom to %i", _initialRoom);
 				_logic->newRoom(_initialRoom);
+				_logic->display()->fullscreen(true);
 			}
 		}
 
 		// XXX CUTJOEF=0;
 		_comPanel = 0;
-		_logic->display()->fullscreen(false);
 
 		// XXX some string animations
 		int k = 0;

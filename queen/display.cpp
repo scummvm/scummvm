@@ -621,36 +621,28 @@ void Display::palCustomFlash() {
 
 void Display::screenMode(int comPanel, bool inCutaway) {
 
-	if (comPanel == 2 && inCutaway) {
-		if (_bdHeight == GAME_SCREEN_HEIGHT) {
-			_fullscreen = true;
-			_panel = false;
-		}
-		else {
-			_fullscreen = false;
-			_panel = true;
-		}
+	debug(0, "Display::screenMode(%d, %d)", comPanel, inCutaway);
+
+	// FIXME: this is temporary, just to see if my theory is right
+	if (comPanel == 2 && !inCutaway) {
+		warning("Display::screenMode() - (comPanel == 2 && !inCutaway)");
 	}
-	else {
-		_fullscreen = 0;
-		if (comPanel == 1) {
-			_panel = true;
-		}
+
+	if (comPanel == 2 && inCutaway) {
+		_fullscreen = (_bdHeight == GAME_SCREEN_HEIGHT);
+	}
+	else if (comPanel == 1) {
+		_fullscreen = false;
 	}
 }
 
 
 void Display::prepareUpdate() {
 
-	if (_panel) {
+	if (!_fullscreen) {
 		// draw the panel
 		memcpy(_buffers[RB_SCREEN] + _bufPitch[RB_SCREEN] * ROOM_ZONE_HEIGHT, 
 			_buffers[RB_PANEL], PANEL_W * PANEL_H);
-	}
-	else if (!_fullscreen) {
-		// clear the panel
-		memset(_buffers[RB_SCREEN] + _bufPitch[RB_SCREEN] * ROOM_ZONE_HEIGHT, 
-			0, PANEL_W * PANEL_H);
 	}
 
 	// draw the backdrop bitmap

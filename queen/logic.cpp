@@ -1835,7 +1835,9 @@ void Logic::dialogue(const char *dlgFile, int personInRoom, char *cutaway) {
 	if (cutaway == NULL) {
 		cutaway = cutawayFile;
 	}
+	_display->fullscreen(true);
 	Talk::talk(dlgFile, personInRoom, cutaway, _graphics, _input, this, _resource, _sound);
+	_display->fullscreen(false);
 }
 
 
@@ -2507,21 +2509,20 @@ bool Logic::gameLoad(uint16 slot) {
 	return true;
 }
 
-void Logic::sceneStart(bool showMouseCursor) {
+void Logic::sceneStart() {
 	debug(0, "[Logic::sceneStart] _scene = %i", _scene);
 	_scene++;
 
-	_display->mouseCursorShow(showMouseCursor);
+	_display->mouseCursorShow(false);
 
-	if (1 == _scene && _input->cutawayRunning()) {
-		_display->panel(true);
+	if (1 == _scene) { // && _input->cutawayRunning()) { // sceneStart is always called when cutaway is running
 		_display->palFadePanel();
 	}
 
 	update();
 }
 
-void Logic::sceneStop(bool showMouseCursor) {
+void Logic::sceneStop() {
 	debug(0, "[Logic::sceneStop] _scene = %i", _scene);
 	_scene--;
 
@@ -2529,8 +2530,7 @@ void Logic::sceneStop(bool showMouseCursor) {
 		return;
 
 	_display->palSetAllDirty();
-	_display->panel(true);
-	_display->mouseCursorShow(showMouseCursor);
+	_display->mouseCursorShow(true);
 	zoneSetupPanel();
 }
 

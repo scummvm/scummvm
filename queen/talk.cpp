@@ -116,10 +116,6 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	// XXX 	SPEAK(JOE_RESPstr[k],"JOE",find_cd_desc(k));
 	// XXX 	return;
 	// XXX }
-	// XXX panelflag=0;
-
-	_wasFullscren = _logic->display()->fullscreen();
-	_logic->display()->fullscreen(true);
 
 	load(filename);
 
@@ -353,7 +349,6 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		pbs->x = person.actor->x;
 		pbs->y = person.actor->y;
 		
-		_logic->display()->fullscreen(_wasFullscren);
 		// Better kick start the persons anim sequence
 		pbs->animating = true;
 		pbs->animReset();
@@ -623,8 +618,8 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 		person = &joe_person;
 	}
 	
-	debug(0, "Sentence '%s' is said by person '%s' and voice files with prefix '%s' played",
-			sentence, person->name, voiceFilePrefix);
+	//debug(0, "Sentence '%s' is said by person '%s' and voice files with prefix '%s' played",
+	//		sentence, person->name, voiceFilePrefix);
 
 	if (sentence[0] == '\0') {
 		goto exit;

@@ -101,10 +101,8 @@ public:
 	void horizontalScroll(int16 scroll);
 	int16 horizontalScroll() const { return _horizontalScroll; }
 
-	void fullscreen(bool fs) { _fullscreen = fs; }
+	void fullscreen(bool fs) { debug(0, "Display::fullscreen(%d)", fs); _fullscreen = fs; }
 	bool fullscreen() const { return _fullscreen; }
-
-	void panel(bool on) { _panel = on; }
 
 	void handleTimer();
 	void waitForTimer();
@@ -140,7 +138,6 @@ private:
 	uint16 _bufPitch[3];
 
 	bool _fullscreen;
-	bool _panel;
 
 	uint16 _horizontalScroll;
 	uint16 _bdWidth, _bdHeight;
