@@ -159,15 +159,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /M$(CECrtMTDebug) /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=clarm.exe
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /M$(CECrtMTDebug) /c
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
 
@@ -185,15 +185,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=clarm.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /Oxs /M$(CECrtMT) /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=clarm.exe
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /Oxs /M$(CECrtMT) /c
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
 
@@ -211,15 +211,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{D6519010-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=clmips.exe
-# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /M$(CECrtMTDebug) /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=clmips.exe
+# ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /M$(CECrtMTDebug) /c
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
 
@@ -237,15 +237,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{D6519010-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-CPP=clmips.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /Oxs /M$(CECrtMT) /c
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+CPP=clmips.exe
+# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /Oxs /M$(CECrtMT) /c
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
 
@@ -290,8 +290,8 @@ BSC32=bscmake.exe
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
 CPP=shcl.exe
-# ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /Oxs /M$(CECrtMT) /c
+# ADD BASE CPP /nologo /W3 /Oxs /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /Oxs /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "SHx" /D "SH3" /D "_SH3_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -383,10 +383,10 @@ DEP_CPP_CHUNK=\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\smush\chunk.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHUNK=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -404,10 +404,10 @@ DEP_CPP_CHUNK=\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHUNK=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -425,10 +425,10 @@ DEP_CPP_CHUNK=\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHUNK=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -446,10 +446,10 @@ DEP_CPP_CHUNK=\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHUNK=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -467,10 +467,10 @@ DEP_CPP_CHUNK=\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHUNK=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -488,10 +488,10 @@ DEP_CPP_CHUNK=\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHUNK=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -509,10 +509,10 @@ DEP_CPP_CHUNK=\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\smush\chunk.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHUNK=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -566,10 +566,10 @@ DEP_CPP_CODEC=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\config.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -580,10 +580,10 @@ DEP_CPP_CODEC=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\config.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -594,10 +594,10 @@ DEP_CPP_CODEC=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\config.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -608,10 +608,10 @@ DEP_CPP_CODEC=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\config.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -622,10 +622,10 @@ DEP_CPP_CODEC=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\config.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -636,10 +636,10 @@ DEP_CPP_CODEC=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\config.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -650,10 +650,10 @@ DEP_CPP_CODEC=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\config.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -713,10 +713,10 @@ DEP_CPP_CODEC3=\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\bomp.h"\
 	"..\..\..\scumm\smush\codec37.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC3=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -732,10 +732,10 @@ DEP_CPP_CODEC3=\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\bomp.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC3=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -751,10 +751,10 @@ DEP_CPP_CODEC3=\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\bomp.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC3=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -770,10 +770,10 @@ DEP_CPP_CODEC3=\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\bomp.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC3=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -789,10 +789,10 @@ DEP_CPP_CODEC3=\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\bomp.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC3=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -808,10 +808,10 @@ DEP_CPP_CODEC3=\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\bomp.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC3=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -827,10 +827,10 @@ DEP_CPP_CODEC3=\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\bomp.h"\
 	"..\..\..\scumm\smush\codec37.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC3=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -897,11 +897,11 @@ DEP_CPP_CODEC4=\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\bomp.h"\
 	"..\..\..\scumm\smush\codec47.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC4=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\smush\scumm_globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -917,11 +917,11 @@ DEP_CPP_CODEC4=\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\bomp.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC4=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\smush\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -937,11 +937,11 @@ DEP_CPP_CODEC4=\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\bomp.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC4=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\smush\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -957,11 +957,11 @@ DEP_CPP_CODEC4=\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\bomp.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC4=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\smush\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -977,11 +977,11 @@ DEP_CPP_CODEC4=\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\bomp.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC4=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\smush\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -997,11 +997,11 @@ DEP_CPP_CODEC4=\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\bomp.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC4=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\smush\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -1017,11 +1017,11 @@ DEP_CPP_CODEC4=\
 	"..\..\..\config.h"\
 	"..\..\..\scumm\bomp.h"\
 	"..\..\..\scumm\smush\codec47.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CODEC4=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\smush\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -1087,10 +1087,10 @@ DEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -1107,10 +1107,10 @@ DEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -1127,10 +1127,10 @@ DEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -1147,10 +1147,10 @@ DEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -1167,10 +1167,10 @@ DEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -1187,10 +1187,10 @@ DEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -1207,10 +1207,10 @@ DEP_CPP_IMUSE=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -1272,10 +1272,10 @@ DEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAUD_=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -1292,10 +1292,10 @@ DEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAUD_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -1312,10 +1312,10 @@ DEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAUD_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -1332,10 +1332,10 @@ DEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAUD_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -1352,10 +1352,10 @@ DEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAUD_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -1372,10 +1372,10 @@ DEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAUD_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -1392,10 +1392,10 @@ DEP_CPP_SAUD_=\
 	"..\..\..\scumm\smush\channel.h"\
 	"..\..\..\scumm\smush\chunk.h"\
 	"..\..\..\scumm\smush\chunk_type.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAUD_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -1473,10 +1473,10 @@ DEP_CPP_SMUSH=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\smush\smush_font.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -1501,10 +1501,10 @@ DEP_CPP_SMUSH=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\smush\smush_font.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -1529,10 +1529,10 @@ DEP_CPP_SMUSH=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\smush\smush_font.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -1557,10 +1557,10 @@ DEP_CPP_SMUSH=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\smush\smush_font.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -1585,10 +1585,10 @@ DEP_CPP_SMUSH=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\smush\smush_font.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -1613,10 +1613,10 @@ DEP_CPP_SMUSH=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\smush\smush_font.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -1641,10 +1641,10 @@ DEP_CPP_SMUSH=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\smush\smush_font.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -1748,10 +1748,10 @@ DEP_CPP_SMUSH_=\
 	"..\..\..\scumm\smush\smush_mixer.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH_=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -1780,10 +1780,10 @@ DEP_CPP_SMUSH_=\
 	"..\..\..\scumm\smush\smush_mixer.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -1812,10 +1812,10 @@ DEP_CPP_SMUSH_=\
 	"..\..\..\scumm\smush\smush_mixer.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -1844,10 +1844,10 @@ DEP_CPP_SMUSH_=\
 	"..\..\..\scumm\smush\smush_mixer.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -1876,10 +1876,10 @@ DEP_CPP_SMUSH_=\
 	"..\..\..\scumm\smush\smush_mixer.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -1908,10 +1908,10 @@ DEP_CPP_SMUSH_=\
 	"..\..\..\scumm\smush\smush_mixer.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -1940,10 +1940,10 @@ DEP_CPP_SMUSH_=\
 	"..\..\..\scumm\smush\smush_mixer.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -2098,11 +2098,11 @@ DEP_CPP_SMUSH_P=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH_P=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -2148,11 +2148,11 @@ DEP_CPP_SMUSH_P=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH_P=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -2198,11 +2198,11 @@ DEP_CPP_SMUSH_P=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH_P=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -2248,11 +2248,11 @@ DEP_CPP_SMUSH_P=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH_P=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -2298,11 +2298,11 @@ DEP_CPP_SMUSH_P=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH_P=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -2348,11 +2348,11 @@ DEP_CPP_SMUSH_P=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH_P=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -2398,11 +2398,11 @@ DEP_CPP_SMUSH_P=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SMUSH_P=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -2534,10 +2534,10 @@ DEP_CPP_INSAN=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSAN=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -2578,10 +2578,10 @@ DEP_CPP_INSAN=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSAN=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -2622,10 +2622,10 @@ DEP_CPP_INSAN=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSAN=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -2666,10 +2666,10 @@ DEP_CPP_INSAN=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSAN=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -2710,10 +2710,10 @@ DEP_CPP_INSAN=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSAN=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -2754,10 +2754,10 @@ DEP_CPP_INSAN=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSAN=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -2798,10 +2798,10 @@ DEP_CPP_INSAN=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSAN=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -2892,10 +2892,10 @@ DEP_CPP_INSANE=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -2926,10 +2926,10 @@ DEP_CPP_INSANE=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -2960,10 +2960,10 @@ DEP_CPP_INSANE=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -2994,10 +2994,10 @@ DEP_CPP_INSANE=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -3028,10 +3028,10 @@ DEP_CPP_INSANE=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -3062,10 +3062,10 @@ DEP_CPP_INSANE=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -3096,10 +3096,10 @@ DEP_CPP_INSANE=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -3186,10 +3186,10 @@ DEP_CPP_INSANE_=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -3220,10 +3220,10 @@ DEP_CPP_INSANE_=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -3254,10 +3254,10 @@ DEP_CPP_INSANE_=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -3288,10 +3288,10 @@ DEP_CPP_INSANE_=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -3322,10 +3322,10 @@ DEP_CPP_INSANE_=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -3356,10 +3356,10 @@ DEP_CPP_INSANE_=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -3390,10 +3390,10 @@ DEP_CPP_INSANE_=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -3490,10 +3490,10 @@ DEP_CPP_INSANE_I=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_I=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -3525,10 +3525,10 @@ DEP_CPP_INSANE_I=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_I=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -3560,10 +3560,10 @@ DEP_CPP_INSANE_I=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_I=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -3595,10 +3595,10 @@ DEP_CPP_INSANE_I=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_I=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -3630,10 +3630,10 @@ DEP_CPP_INSANE_I=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_I=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -3665,10 +3665,10 @@ DEP_CPP_INSANE_I=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_I=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -3700,10 +3700,10 @@ DEP_CPP_INSANE_I=\
 	"..\..\..\scumm\smush\codec47.h"\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_I=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -3802,10 +3802,10 @@ DEP_CPP_INSANE_S=\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_S=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -3839,10 +3839,10 @@ DEP_CPP_INSANE_S=\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_S=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -3876,10 +3876,10 @@ DEP_CPP_INSANE_S=\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_S=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -3913,10 +3913,10 @@ DEP_CPP_INSANE_S=\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_S=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -3950,10 +3950,10 @@ DEP_CPP_INSANE_S=\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_S=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -3987,10 +3987,10 @@ DEP_CPP_INSANE_S=\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_S=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -4024,10 +4024,10 @@ DEP_CPP_INSANE_S=\
 	"..\..\..\scumm\smush\smush_player.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSANE_S=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -4134,11 +4134,11 @@ DEP_CPP_DIMUS=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -4170,11 +4170,11 @@ DEP_CPP_DIMUS=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -4206,11 +4206,11 @@ DEP_CPP_DIMUS=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -4242,11 +4242,11 @@ DEP_CPP_DIMUS=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -4278,11 +4278,11 @@ DEP_CPP_DIMUS=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -4314,11 +4314,11 @@ DEP_CPP_DIMUS=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -4350,11 +4350,11 @@ DEP_CPP_DIMUS=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -4434,10 +4434,10 @@ DEP_CPP_DIMUSE=\
 	"..\..\..\scumm\imuse_digi\dimuse_bndmgr.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -4461,10 +4461,10 @@ DEP_CPP_DIMUSE=\
 	"..\..\..\scumm\imuse_digi\dimuse_bndmgr.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -4488,10 +4488,10 @@ DEP_CPP_DIMUSE=\
 	"..\..\..\scumm\imuse_digi\dimuse_bndmgr.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -4515,10 +4515,10 @@ DEP_CPP_DIMUSE=\
 	"..\..\..\scumm\imuse_digi\dimuse_bndmgr.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -4542,10 +4542,10 @@ DEP_CPP_DIMUSE=\
 	"..\..\..\scumm\imuse_digi\dimuse_bndmgr.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -4569,10 +4569,10 @@ DEP_CPP_DIMUSE=\
 	"..\..\..\scumm\imuse_digi\dimuse_bndmgr.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -4596,10 +4596,10 @@ DEP_CPP_DIMUSE=\
 	"..\..\..\scumm\imuse_digi\dimuse_bndmgr.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -4660,11 +4660,11 @@ DEP_CPP_DIMUSE_=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\imuse_digi\scumm_globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -4678,11 +4678,11 @@ DEP_CPP_DIMUSE_=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\imuse_digi\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -4696,11 +4696,11 @@ DEP_CPP_DIMUSE_=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\imuse_digi\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -4714,11 +4714,11 @@ DEP_CPP_DIMUSE_=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\imuse_digi\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -4732,11 +4732,11 @@ DEP_CPP_DIMUSE_=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\imuse_digi\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -4750,11 +4750,11 @@ DEP_CPP_DIMUSE_=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\imuse_digi\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -4768,11 +4768,11 @@ DEP_CPP_DIMUSE_=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
 	"..\..\..\config.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\imuse_digi\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -4858,10 +4858,10 @@ DEP_CPP_DIMUSE_M=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_M=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -4890,10 +4890,10 @@ DEP_CPP_DIMUSE_M=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_M=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -4922,10 +4922,10 @@ DEP_CPP_DIMUSE_M=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_M=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -4954,10 +4954,10 @@ DEP_CPP_DIMUSE_M=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_M=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -4986,10 +4986,10 @@ DEP_CPP_DIMUSE_M=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_M=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -5018,10 +5018,10 @@ DEP_CPP_DIMUSE_M=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_M=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -5050,10 +5050,10 @@ DEP_CPP_DIMUSE_M=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_M=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -5139,10 +5139,10 @@ DEP_CPP_DIMUSE_S=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\voc.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_S=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -5168,10 +5168,10 @@ DEP_CPP_DIMUSE_S=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\voc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_S=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -5197,10 +5197,10 @@ DEP_CPP_DIMUSE_S=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\voc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_S=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -5226,10 +5226,10 @@ DEP_CPP_DIMUSE_S=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\voc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_S=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -5255,10 +5255,10 @@ DEP_CPP_DIMUSE_S=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\voc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_S=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -5284,10 +5284,10 @@ DEP_CPP_DIMUSE_S=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\voc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_S=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -5313,10 +5313,10 @@ DEP_CPP_DIMUSE_S=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\voc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_S=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -5393,11 +5393,11 @@ DEP_CPP_DIMUSE_T=\
 	"..\..\..\scumm\music.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_T=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\imuse_digi\scumm_globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -5420,11 +5420,11 @@ DEP_CPP_DIMUSE_T=\
 	"..\..\..\scumm\music.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_T=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\imuse_digi\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -5447,11 +5447,11 @@ DEP_CPP_DIMUSE_T=\
 	"..\..\..\scumm\music.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_T=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\imuse_digi\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -5474,11 +5474,11 @@ DEP_CPP_DIMUSE_T=\
 	"..\..\..\scumm\music.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_T=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\imuse_digi\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -5501,11 +5501,11 @@ DEP_CPP_DIMUSE_T=\
 	"..\..\..\scumm\music.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_T=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\imuse_digi\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -5528,11 +5528,11 @@ DEP_CPP_DIMUSE_T=\
 	"..\..\..\scumm\music.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_T=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\imuse_digi\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -5555,11 +5555,11 @@ DEP_CPP_DIMUSE_T=\
 	"..\..\..\scumm\music.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIMUSE_T=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\imuse_digi\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -5676,10 +5676,10 @@ DEP_CPP_ACTOR=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ACTOR=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -5713,10 +5713,10 @@ DEP_CPP_ACTOR=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ACTOR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -5750,10 +5750,10 @@ DEP_CPP_ACTOR=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ACTOR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -5787,10 +5787,10 @@ DEP_CPP_ACTOR=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ACTOR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -5824,10 +5824,10 @@ DEP_CPP_ACTOR=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ACTOR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -5861,10 +5861,10 @@ DEP_CPP_ACTOR=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ACTOR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -5898,10 +5898,10 @@ DEP_CPP_ACTOR=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\usage_bits.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ACTOR=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -6016,11 +6016,11 @@ DEP_CPP_AKOS_=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AKOS_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -6055,11 +6055,11 @@ DEP_CPP_AKOS_=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AKOS_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -6094,11 +6094,11 @@ DEP_CPP_AKOS_=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AKOS_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -6133,11 +6133,11 @@ DEP_CPP_AKOS_=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AKOS_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -6172,11 +6172,11 @@ DEP_CPP_AKOS_=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AKOS_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -6211,11 +6211,11 @@ DEP_CPP_AKOS_=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AKOS_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -6250,11 +6250,11 @@ DEP_CPP_AKOS_=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AKOS_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -6332,10 +6332,10 @@ DEP_CPP_BASE_=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BASE_=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -6360,10 +6360,10 @@ DEP_CPP_BASE_=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BASE_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -6388,10 +6388,10 @@ DEP_CPP_BASE_=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BASE_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -6416,10 +6416,10 @@ DEP_CPP_BASE_=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BASE_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -6444,10 +6444,10 @@ DEP_CPP_BASE_=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BASE_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -6472,10 +6472,10 @@ DEP_CPP_BASE_=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BASE_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -6500,10 +6500,10 @@ DEP_CPP_BASE_=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BASE_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -6589,10 +6589,10 @@ DEP_CPP_BOMP_=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOMP_=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -6619,10 +6619,10 @@ DEP_CPP_BOMP_=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOMP_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -6649,10 +6649,10 @@ DEP_CPP_BOMP_=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOMP_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -6679,10 +6679,10 @@ DEP_CPP_BOMP_=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOMP_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -6709,10 +6709,10 @@ DEP_CPP_BOMP_=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOMP_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -6739,10 +6739,10 @@ DEP_CPP_BOMP_=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOMP_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -6769,10 +6769,10 @@ DEP_CPP_BOMP_=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOMP_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -6856,10 +6856,10 @@ DEP_CPP_BOXES=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOXES=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -6884,10 +6884,10 @@ DEP_CPP_BOXES=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOXES=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -6912,10 +6912,10 @@ DEP_CPP_BOXES=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOXES=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -6940,10 +6940,10 @@ DEP_CPP_BOXES=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOXES=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -6968,10 +6968,10 @@ DEP_CPP_BOXES=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOXES=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -6996,10 +6996,10 @@ DEP_CPP_BOXES=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOXES=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -7024,10 +7024,10 @@ DEP_CPP_BOXES=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_BOXES=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -7113,10 +7113,10 @@ DEP_CPP_CAMER=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CAMER=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -7142,10 +7142,10 @@ DEP_CPP_CAMER=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CAMER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -7171,10 +7171,10 @@ DEP_CPP_CAMER=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CAMER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -7200,10 +7200,10 @@ DEP_CPP_CAMER=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CAMER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -7229,10 +7229,10 @@ DEP_CPP_CAMER=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CAMER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -7258,10 +7258,10 @@ DEP_CPP_CAMER=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CAMER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -7287,10 +7287,10 @@ DEP_CPP_CAMER=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CAMER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -7371,11 +7371,11 @@ DEP_CPP_CHARS=\
 	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHARS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -7400,11 +7400,11 @@ DEP_CPP_CHARS=\
 	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHARS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -7429,11 +7429,11 @@ DEP_CPP_CHARS=\
 	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHARS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -7458,11 +7458,11 @@ DEP_CPP_CHARS=\
 	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHARS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -7487,11 +7487,11 @@ DEP_CPP_CHARS=\
 	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHARS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -7516,11 +7516,11 @@ DEP_CPP_CHARS=\
 	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHARS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -7545,11 +7545,11 @@ DEP_CPP_CHARS=\
 	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CHARS=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -7648,11 +7648,11 @@ DEP_CPP_COSTU=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COSTU=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -7680,11 +7680,11 @@ DEP_CPP_COSTU=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COSTU=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -7712,11 +7712,11 @@ DEP_CPP_COSTU=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COSTU=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -7744,11 +7744,11 @@ DEP_CPP_COSTU=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COSTU=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -7776,11 +7776,11 @@ DEP_CPP_COSTU=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COSTU=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -7808,11 +7808,11 @@ DEP_CPP_COSTU=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COSTU=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -7840,11 +7840,11 @@ DEP_CPP_COSTU=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COSTU=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -7922,10 +7922,10 @@ DEP_CPP_CURSO=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CURSO=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -7949,10 +7949,10 @@ DEP_CPP_CURSO=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CURSO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -7976,10 +7976,10 @@ DEP_CPP_CURSO=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CURSO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -8003,10 +8003,10 @@ DEP_CPP_CURSO=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CURSO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -8030,10 +8030,10 @@ DEP_CPP_CURSO=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CURSO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -8057,10 +8057,10 @@ DEP_CPP_CURSO=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CURSO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -8084,10 +8084,10 @@ DEP_CPP_CURSO=\
 	"..\..\..\scumm\gfx.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CURSO=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -8219,10 +8219,10 @@ DEP_CPP_DEBUG=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -8262,10 +8262,10 @@ DEP_CPP_DEBUG=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -8305,10 +8305,10 @@ DEP_CPP_DEBUG=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -8348,10 +8348,10 @@ DEP_CPP_DEBUG=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -8391,10 +8391,10 @@ DEP_CPP_DEBUG=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -8434,10 +8434,10 @@ DEP_CPP_DEBUG=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -8477,10 +8477,10 @@ DEP_CPP_DEBUG=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -8634,12 +8634,12 @@ DEP_CPP_DIALO=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIALO=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\scumm\scumm_globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -8684,12 +8684,12 @@ DEP_CPP_DIALO=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIALO=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -8734,12 +8734,12 @@ DEP_CPP_DIALO=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIALO=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -8784,12 +8784,12 @@ DEP_CPP_DIALO=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIALO=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -8834,12 +8834,12 @@ DEP_CPP_DIALO=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIALO=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -8884,12 +8884,12 @@ DEP_CPP_DIALO=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIALO=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -8934,12 +8934,12 @@ DEP_CPP_DIALO=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DIALO=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -9034,11 +9034,11 @@ DEP_CPP_GFX_C=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GFX_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -9065,11 +9065,11 @@ DEP_CPP_GFX_C=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GFX_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -9096,11 +9096,11 @@ DEP_CPP_GFX_C=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GFX_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -9127,11 +9127,11 @@ DEP_CPP_GFX_C=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GFX_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -9158,11 +9158,11 @@ DEP_CPP_GFX_C=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GFX_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -9189,11 +9189,11 @@ DEP_CPP_GFX_C=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GFX_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -9220,11 +9220,11 @@ DEP_CPP_GFX_C=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GFX_C=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -9304,10 +9304,10 @@ DEP_CPP_HELP_=\
 	"..\..\..\scumm\help.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_HELP_=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -9331,10 +9331,10 @@ DEP_CPP_HELP_=\
 	"..\..\..\scumm\help.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_HELP_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -9358,10 +9358,10 @@ DEP_CPP_HELP_=\
 	"..\..\..\scumm\help.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_HELP_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -9385,10 +9385,10 @@ DEP_CPP_HELP_=\
 	"..\..\..\scumm\help.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_HELP_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -9412,10 +9412,10 @@ DEP_CPP_HELP_=\
 	"..\..\..\scumm\help.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_HELP_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -9439,10 +9439,10 @@ DEP_CPP_HELP_=\
 	"..\..\..\scumm\help.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_HELP_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -9466,10 +9466,10 @@ DEP_CPP_HELP_=\
 	"..\..\..\scumm\help.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_HELP_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -9486,6 +9486,7 @@ SOURCE=..\..\..\scumm\imuse.cpp
 !IF  "$(CFG)" == "scumm - Win32 (WCE emulator) Release"
 
 NODEP_CPP_IMUSE_=\
+	"..\..\..\scumm\base\version.h"\
 	"..\..\..\scumm\common\util.h"\
 	"..\..\..\scumm\scumm\imuse.h"\
 	"..\..\..\scumm\scumm\imuse_internal.h"\
@@ -9499,6 +9500,7 @@ NODEP_CPP_IMUSE_=\
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE emulator) Debug"
 
 NODEP_CPP_IMUSE_=\
+	"..\..\..\scumm\base\version.h"\
 	"..\..\..\scumm\common\util.h"\
 	"..\..\..\scumm\scumm\imuse.h"\
 	"..\..\..\scumm\scumm\imuse_internal.h"\
@@ -9549,6 +9551,7 @@ DEP_CPP_IMUSE_=\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
+	"..\..\..\base\version.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\list.h"\
 	"..\..\..\common\map.h"\
@@ -9570,11 +9573,11 @@ DEP_CPP_IMUSE_=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -9604,11 +9607,11 @@ DEP_CPP_IMUSE_=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -9638,11 +9641,11 @@ DEP_CPP_IMUSE_=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -9672,11 +9675,11 @@ DEP_CPP_IMUSE_=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -9706,11 +9709,11 @@ DEP_CPP_IMUSE_=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -9740,11 +9743,11 @@ DEP_CPP_IMUSE_=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -9774,11 +9777,11 @@ DEP_CPP_IMUSE_=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -9879,11 +9882,11 @@ DEP_CPP_IMUSE_P=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_P=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -9912,11 +9915,11 @@ DEP_CPP_IMUSE_P=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_P=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -9945,11 +9948,11 @@ DEP_CPP_IMUSE_P=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_P=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -9978,11 +9981,11 @@ DEP_CPP_IMUSE_P=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_P=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -10011,11 +10014,11 @@ DEP_CPP_IMUSE_P=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_P=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -10044,11 +10047,11 @@ DEP_CPP_IMUSE_P=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_P=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -10077,11 +10080,11 @@ DEP_CPP_IMUSE_P=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_IMUSE_P=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -10166,11 +10169,11 @@ DEP_CPP_INSTR=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSTR=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -10197,11 +10200,11 @@ DEP_CPP_INSTR=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSTR=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -10228,11 +10231,11 @@ DEP_CPP_INSTR=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSTR=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -10259,11 +10262,11 @@ DEP_CPP_INSTR=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSTR=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -10290,11 +10293,11 @@ DEP_CPP_INSTR=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSTR=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -10321,11 +10324,11 @@ DEP_CPP_INSTR=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSTR=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -10352,11 +10355,11 @@ DEP_CPP_INSTR=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INSTR=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -10427,11 +10430,11 @@ DEP_CPP_MIDIP=\
 	"..\..\..\config.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIP=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -10448,11 +10451,11 @@ DEP_CPP_MIDIP=\
 	"..\..\..\config.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIP=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -10469,11 +10472,11 @@ DEP_CPP_MIDIP=\
 	"..\..\..\config.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIP=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -10490,11 +10493,11 @@ DEP_CPP_MIDIP=\
 	"..\..\..\config.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIP=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -10511,11 +10514,11 @@ DEP_CPP_MIDIP=\
 	"..\..\..\config.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIP=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -10532,11 +10535,11 @@ DEP_CPP_MIDIP=\
 	"..\..\..\config.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIP=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -10553,11 +10556,11 @@ DEP_CPP_MIDIP=\
 	"..\..\..\config.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIP=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -10620,11 +10623,11 @@ DEP_CPP_MIDIPA=\
 	"..\..\..\config.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIPA=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -10641,11 +10644,11 @@ DEP_CPP_MIDIPA=\
 	"..\..\..\config.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIPA=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -10662,11 +10665,11 @@ DEP_CPP_MIDIPA=\
 	"..\..\..\config.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIPA=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -10683,11 +10686,11 @@ DEP_CPP_MIDIPA=\
 	"..\..\..\config.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIPA=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -10704,11 +10707,11 @@ DEP_CPP_MIDIPA=\
 	"..\..\..\config.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIPA=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -10725,11 +10728,11 @@ DEP_CPP_MIDIPA=\
 	"..\..\..\config.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIPA=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -10746,11 +10749,11 @@ DEP_CPP_MIDIPA=\
 	"..\..\..\config.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\midiparser.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MIDIPA=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -10832,10 +10835,10 @@ DEP_CPP_NUT_R=\
 	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NUT_R=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -10860,10 +10863,10 @@ DEP_CPP_NUT_R=\
 	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NUT_R=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -10888,10 +10891,10 @@ DEP_CPP_NUT_R=\
 	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NUT_R=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -10916,10 +10919,10 @@ DEP_CPP_NUT_R=\
 	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NUT_R=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -10944,10 +10947,10 @@ DEP_CPP_NUT_R=\
 	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NUT_R=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -10972,10 +10975,10 @@ DEP_CPP_NUT_R=\
 	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NUT_R=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -11000,10 +11003,10 @@ DEP_CPP_NUT_R=\
 	"..\..\..\scumm\nut_renderer.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_NUT_R=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -11097,10 +11100,10 @@ DEP_CPP_OBJEC=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_OBJEC=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -11128,10 +11131,10 @@ DEP_CPP_OBJEC=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_OBJEC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -11159,10 +11162,10 @@ DEP_CPP_OBJEC=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_OBJEC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -11190,10 +11193,10 @@ DEP_CPP_OBJEC=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_OBJEC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -11221,10 +11224,10 @@ DEP_CPP_OBJEC=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_OBJEC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -11252,10 +11255,10 @@ DEP_CPP_OBJEC=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_OBJEC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -11283,10 +11286,10 @@ DEP_CPP_OBJEC=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_OBJEC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -11370,10 +11373,10 @@ DEP_CPP_PALET=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PALET=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -11398,10 +11401,10 @@ DEP_CPP_PALET=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PALET=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -11426,10 +11429,10 @@ DEP_CPP_PALET=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PALET=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -11454,10 +11457,10 @@ DEP_CPP_PALET=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PALET=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -11482,10 +11485,10 @@ DEP_CPP_PALET=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PALET=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -11510,10 +11513,10 @@ DEP_CPP_PALET=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PALET=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -11538,10 +11541,10 @@ DEP_CPP_PALET=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PALET=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -11631,10 +11634,10 @@ DEP_CPP_PLAYE=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\rate.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYE=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -11661,10 +11664,10 @@ DEP_CPP_PLAYE=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\rate.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -11691,10 +11694,10 @@ DEP_CPP_PLAYE=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\rate.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -11721,10 +11724,10 @@ DEP_CPP_PLAYE=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\rate.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -11751,10 +11754,10 @@ DEP_CPP_PLAYE=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\rate.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -11781,10 +11784,10 @@ DEP_CPP_PLAYE=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\rate.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -11811,10 +11814,10 @@ DEP_CPP_PLAYE=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\rate.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -11898,10 +11901,10 @@ DEP_CPP_PLAYER=\
 	"..\..\..\scumm\player_v2.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -11927,10 +11930,10 @@ DEP_CPP_PLAYER=\
 	"..\..\..\scumm\player_v2.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -11956,10 +11959,10 @@ DEP_CPP_PLAYER=\
 	"..\..\..\scumm\player_v2.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -11985,10 +11988,10 @@ DEP_CPP_PLAYER=\
 	"..\..\..\scumm\player_v2.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -12014,10 +12017,10 @@ DEP_CPP_PLAYER=\
 	"..\..\..\scumm\player_v2.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -12043,10 +12046,10 @@ DEP_CPP_PLAYER=\
 	"..\..\..\scumm\player_v2.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -12072,10 +12075,10 @@ DEP_CPP_PLAYER=\
 	"..\..\..\scumm\player_v2.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -12177,12 +12180,12 @@ DEP_CPP_PLAYER_=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\scumm\scumm_globals.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -12210,12 +12213,12 @@ DEP_CPP_PLAYER_=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -12243,12 +12246,12 @@ DEP_CPP_PLAYER_=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -12276,12 +12279,12 @@ DEP_CPP_PLAYER_=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -12309,12 +12312,12 @@ DEP_CPP_PLAYER_=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -12342,12 +12345,12 @@ DEP_CPP_PLAYER_=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -12375,12 +12378,12 @@ DEP_CPP_PLAYER_=\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\scumm\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -12473,10 +12476,10 @@ DEP_CPP_PLAYER_V=\
 	"..\..\..\scumm\player_v2a.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_V=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -12502,10 +12505,10 @@ DEP_CPP_PLAYER_V=\
 	"..\..\..\scumm\player_v2a.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_V=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -12531,10 +12534,10 @@ DEP_CPP_PLAYER_V=\
 	"..\..\..\scumm\player_v2a.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_V=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -12560,10 +12563,10 @@ DEP_CPP_PLAYER_V=\
 	"..\..\..\scumm\player_v2a.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_V=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -12589,10 +12592,10 @@ DEP_CPP_PLAYER_V=\
 	"..\..\..\scumm\player_v2a.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_V=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -12618,10 +12621,10 @@ DEP_CPP_PLAYER_V=\
 	"..\..\..\scumm\player_v2a.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_V=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -12647,10 +12650,10 @@ DEP_CPP_PLAYER_V=\
 	"..\..\..\scumm\player_v2a.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_V=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -12743,10 +12746,10 @@ DEP_CPP_PLAYER_V3=\
 	"..\..\..\scumm\player_v3a.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_V3=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -12772,10 +12775,10 @@ DEP_CPP_PLAYER_V3=\
 	"..\..\..\scumm\player_v3a.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_V3=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -12801,10 +12804,10 @@ DEP_CPP_PLAYER_V3=\
 	"..\..\..\scumm\player_v3a.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_V3=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -12830,10 +12833,10 @@ DEP_CPP_PLAYER_V3=\
 	"..\..\..\scumm\player_v3a.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_V3=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -12859,10 +12862,10 @@ DEP_CPP_PLAYER_V3=\
 	"..\..\..\scumm\player_v3a.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_V3=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -12888,10 +12891,10 @@ DEP_CPP_PLAYER_V3=\
 	"..\..\..\scumm\player_v3a.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_V3=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -12917,10 +12920,10 @@ DEP_CPP_PLAYER_V3=\
 	"..\..\..\scumm\player_v3a.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_PLAYER_V3=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -12937,7 +12940,6 @@ SOURCE=..\..\..\scumm\resource.cpp
 !IF  "$(CFG)" == "scumm - Win32 (WCE emulator) Release"
 
 NODEP_CPP_RESOU=\
-	"..\..\..\scumm\common\map.h"\
 	"..\..\..\scumm\common\str.h"\
 	"..\..\..\scumm\scumm\dialogs.h"\
 	"..\..\..\scumm\scumm\imuse.h"\
@@ -12954,7 +12956,6 @@ NODEP_CPP_RESOU=\
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE emulator) Debug"
 
 NODEP_CPP_RESOU=\
-	"..\..\..\scumm\common\map.h"\
 	"..\..\..\scumm\common\str.h"\
 	"..\..\..\scumm\scumm\dialogs.h"\
 	"..\..\..\scumm\scumm\imuse.h"\
@@ -13058,11 +13059,11 @@ DEP_CPP_RESOU=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -13105,11 +13106,11 @@ DEP_CPP_RESOU=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -13152,11 +13153,11 @@ DEP_CPP_RESOU=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -13199,11 +13200,11 @@ DEP_CPP_RESOU=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -13246,11 +13247,11 @@ DEP_CPP_RESOU=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -13293,11 +13294,11 @@ DEP_CPP_RESOU=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -13340,11 +13341,11 @@ DEP_CPP_RESOU=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOU=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -13443,11 +13444,11 @@ DEP_CPP_RESOUR=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOUR=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -13477,11 +13478,11 @@ DEP_CPP_RESOUR=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOUR=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -13511,11 +13512,11 @@ DEP_CPP_RESOUR=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOUR=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -13545,11 +13546,11 @@ DEP_CPP_RESOUR=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOUR=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -13579,11 +13580,11 @@ DEP_CPP_RESOUR=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOUR=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -13613,11 +13614,11 @@ DEP_CPP_RESOUR=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOUR=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -13647,11 +13648,11 @@ DEP_CPP_RESOUR=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOUR=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -13729,10 +13730,10 @@ DEP_CPP_RESOURC=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURC=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -13757,10 +13758,10 @@ DEP_CPP_RESOURC=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -13785,10 +13786,10 @@ DEP_CPP_RESOURC=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -13813,10 +13814,10 @@ DEP_CPP_RESOURC=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -13841,10 +13842,10 @@ DEP_CPP_RESOURC=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -13869,10 +13870,10 @@ DEP_CPP_RESOURC=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -13897,10 +13898,10 @@ DEP_CPP_RESOURC=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURC=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -13974,10 +13975,10 @@ DEP_CPP_RESOURCE=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURCE=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -14001,10 +14002,10 @@ DEP_CPP_RESOURCE=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURCE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -14028,10 +14029,10 @@ DEP_CPP_RESOURCE=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURCE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -14055,10 +14056,10 @@ DEP_CPP_RESOURCE=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURCE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -14082,10 +14083,10 @@ DEP_CPP_RESOURCE=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURCE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -14109,10 +14110,10 @@ DEP_CPP_RESOURCE=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURCE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -14136,10 +14137,10 @@ DEP_CPP_RESOURCE=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESOURCE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -14270,10 +14271,10 @@ DEP_CPP_SAVEL=\
 	"..\..\..\sound\audiocd.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVEL=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -14313,10 +14314,10 @@ DEP_CPP_SAVEL=\
 	"..\..\..\sound\audiocd.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVEL=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -14356,10 +14357,10 @@ DEP_CPP_SAVEL=\
 	"..\..\..\sound\audiocd.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVEL=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -14399,10 +14400,10 @@ DEP_CPP_SAVEL=\
 	"..\..\..\sound\audiocd.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVEL=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -14442,10 +14443,10 @@ DEP_CPP_SAVEL=\
 	"..\..\..\sound\audiocd.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVEL=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -14485,10 +14486,10 @@ DEP_CPP_SAVEL=\
 	"..\..\..\sound\audiocd.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVEL=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -14528,10 +14529,10 @@ DEP_CPP_SAVEL=\
 	"..\..\..\sound\audiocd.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SAVEL=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -14623,10 +14624,10 @@ DEP_CPP_SCRIP=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIP=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -14654,10 +14655,10 @@ DEP_CPP_SCRIP=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIP=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -14685,10 +14686,10 @@ DEP_CPP_SCRIP=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIP=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -14716,10 +14717,10 @@ DEP_CPP_SCRIP=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIP=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -14747,10 +14748,10 @@ DEP_CPP_SCRIP=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIP=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -14778,10 +14779,10 @@ DEP_CPP_SCRIP=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIP=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -14809,10 +14810,10 @@ DEP_CPP_SCRIP=\
 	"..\..\..\scumm\resource.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIP=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -14918,10 +14919,10 @@ DEP_CPP_SCRIPT=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -14951,10 +14952,10 @@ DEP_CPP_SCRIPT=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -14984,10 +14985,10 @@ DEP_CPP_SCRIPT=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -15017,10 +15018,10 @@ DEP_CPP_SCRIPT=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -15050,10 +15051,10 @@ DEP_CPP_SCRIPT=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -15083,10 +15084,10 @@ DEP_CPP_SCRIPT=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -15116,10 +15117,10 @@ DEP_CPP_SCRIPT=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -15221,10 +15222,10 @@ DEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -15254,10 +15255,10 @@ DEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -15287,10 +15288,10 @@ DEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -15320,10 +15321,10 @@ DEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -15353,10 +15354,10 @@ DEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -15386,10 +15387,10 @@ DEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -15419,10 +15420,10 @@ DEP_CPP_SCRIPT_=\
 	"..\..\..\scumm\sound.h"\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -15576,11 +15577,11 @@ DEP_CPP_SCRIPT_V=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_V=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -15627,11 +15628,11 @@ DEP_CPP_SCRIPT_V=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_V=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -15678,11 +15679,11 @@ DEP_CPP_SCRIPT_V=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_V=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -15729,11 +15730,11 @@ DEP_CPP_SCRIPT_V=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_V=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -15780,11 +15781,11 @@ DEP_CPP_SCRIPT_V=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_V=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -15831,11 +15832,11 @@ DEP_CPP_SCRIPT_V=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_V=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -15882,9 +15883,258 @@ DEP_CPP_SCRIPT_V=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_V=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
+	
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\scumm\script_v6he.cpp
+
+!IF  "$(CFG)" == "scumm - Win32 (WCE emulator) Release"
+
+NODEP_CPP_SCRIPT_V6=\
+	"..\..\..\scumm\common\config-manager.h"\
+	"..\..\..\scumm\scumm\actor.h"\
+	"..\..\..\scumm\scumm\charset.h"\
+	"..\..\..\scumm\scumm\imuse.h"\
+	"..\..\..\scumm\scumm\imuse_digi\dimuse.h"\
+	"..\..\..\scumm\scumm\intern.h"\
+	"..\..\..\scumm\scumm\object.h"\
+	"..\..\..\scumm\scumm\resource.h"\
+	"..\..\..\scumm\scumm\scumm.h"\
+	"..\..\..\scumm\scumm\smush\smush_player.h"\
+	"..\..\..\scumm\scumm\sound.h"\
+	"..\..\..\scumm\scumm\verbs.h"\
+	"..\..\..\scumm\sound\mididrv.h"\
+	"..\..\..\scumm\sound\mixer.h"\
+	"..\..\..\scumm\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE emulator) Debug"
+
+NODEP_CPP_SCRIPT_V6=\
+	"..\..\..\scumm\common\config-manager.h"\
+	"..\..\..\scumm\scumm\actor.h"\
+	"..\..\..\scumm\scumm\charset.h"\
+	"..\..\..\scumm\scumm\imuse.h"\
+	"..\..\..\scumm\scumm\imuse_digi\dimuse.h"\
+	"..\..\..\scumm\scumm\intern.h"\
+	"..\..\..\scumm\scumm\object.h"\
+	"..\..\..\scumm\scumm\resource.h"\
+	"..\..\..\scumm\scumm\scumm.h"\
+	"..\..\..\scumm\scumm\smush\smush_player.h"\
+	"..\..\..\scumm\scumm\sound.h"\
+	"..\..\..\scumm\scumm\verbs.h"\
+	"..\..\..\scumm\sound\mididrv.h"\
+	"..\..\..\scumm\sound\mixer.h"\
+	"..\..\..\scumm\stdafx.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARMV4) Release"
+
+DEP_CPP_SCRIPT_V6=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\scumm\actor.h"\
+	"..\..\..\scumm\charset.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\imuse.h"\
+	"..\..\..\scumm\imuse_digi\dimuse.h"\
+	"..\..\..\scumm\imuse_digi\dimuse_bndmgr.h"\
+	"..\..\..\scumm\imuse_digi\dimuse_sndmgr.h"\
+	"..\..\..\scumm\intern.h"\
+	"..\..\..\scumm\music.h"\
+	"..\..\..\scumm\object.h"\
+	"..\..\..\scumm\resource.h"\
+	"..\..\..\scumm\script.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\smush\chunk.h"\
+	"..\..\..\scumm\smush\codec37.h"\
+	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_SCRIPT_V6=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARMV4) Debug"
+
+DEP_CPP_SCRIPT_V6=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\scumm\actor.h"\
+	"..\..\..\scumm\charset.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\imuse.h"\
+	"..\..\..\scumm\imuse_digi\dimuse.h"\
+	"..\..\..\scumm\imuse_digi\dimuse_bndmgr.h"\
+	"..\..\..\scumm\imuse_digi\dimuse_sndmgr.h"\
+	"..\..\..\scumm\intern.h"\
+	"..\..\..\scumm\music.h"\
+	"..\..\..\scumm\object.h"\
+	"..\..\..\scumm\resource.h"\
+	"..\..\..\scumm\script.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\smush\chunk.h"\
+	"..\..\..\scumm\smush\codec37.h"\
+	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_SCRIPT_V6=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
+
+DEP_CPP_SCRIPT_V6=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\scumm\actor.h"\
+	"..\..\..\scumm\charset.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\imuse.h"\
+	"..\..\..\scumm\imuse_digi\dimuse.h"\
+	"..\..\..\scumm\imuse_digi\dimuse_bndmgr.h"\
+	"..\..\..\scumm\imuse_digi\dimuse_sndmgr.h"\
+	"..\..\..\scumm\intern.h"\
+	"..\..\..\scumm\music.h"\
+	"..\..\..\scumm\object.h"\
+	"..\..\..\scumm\resource.h"\
+	"..\..\..\scumm\script.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\smush\chunk.h"\
+	"..\..\..\scumm\smush\codec37.h"\
+	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_SCRIPT_V6=\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\morphos_timer.h"\
+	
+
+!ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
+
+DEP_CPP_SCRIPT_V6=\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\list.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\config.h"\
+	"..\..\..\scumm\actor.h"\
+	"..\..\..\scumm\charset.h"\
+	"..\..\..\scumm\gfx.h"\
+	"..\..\..\scumm\imuse.h"\
+	"..\..\..\scumm\imuse_digi\dimuse.h"\
+	"..\..\..\scumm\imuse_digi\dimuse_bndmgr.h"\
+	"..\..\..\scumm\imuse_digi\dimuse_sndmgr.h"\
+	"..\..\..\scumm\intern.h"\
+	"..\..\..\scumm\music.h"\
+	"..\..\..\scumm\object.h"\
+	"..\..\..\scumm\resource.h"\
+	"..\..\..\scumm\script.h"\
+	"..\..\..\scumm\scumm.h"\
+	"..\..\..\scumm\smush\chunk.h"\
+	"..\..\..\scumm\smush\codec37.h"\
+	"..\..\..\scumm\smush\codec47.h"\
+	"..\..\..\scumm\smush\smush_player.h"\
+	"..\..\..\scumm\sound.h"\
+	"..\..\..\scumm\verbs.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mididrv.h"\
+	"..\..\..\sound\mixer.h"\
+	
+NODEP_CPP_SCRIPT_V6=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
 	
@@ -16023,10 +16273,10 @@ DEP_CPP_SCRIPT_V8=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_V8=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -16070,10 +16320,10 @@ DEP_CPP_SCRIPT_V8=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_V8=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -16117,10 +16367,10 @@ DEP_CPP_SCRIPT_V8=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_V8=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -16164,10 +16414,10 @@ DEP_CPP_SCRIPT_V8=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_V8=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -16211,10 +16461,10 @@ DEP_CPP_SCRIPT_V8=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_V8=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -16258,10 +16508,10 @@ DEP_CPP_SCRIPT_V8=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_V8=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -16305,10 +16555,10 @@ DEP_CPP_SCRIPT_V8=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCRIPT_V8=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -16546,11 +16796,11 @@ DEP_CPP_SCUMM=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCUMM=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -16624,11 +16874,11 @@ DEP_CPP_SCUMM=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCUMM=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -16702,11 +16952,11 @@ DEP_CPP_SCUMM=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCUMM=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -16780,11 +17030,11 @@ DEP_CPP_SCUMM=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCUMM=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -16858,11 +17108,11 @@ DEP_CPP_SCUMM=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCUMM=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -16936,11 +17186,11 @@ DEP_CPP_SCUMM=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCUMM=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -17014,11 +17264,11 @@ DEP_CPP_SCUMM=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCUMM=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -17152,11 +17402,11 @@ DEP_CPP_SOUND=\
 	"..\..\..\sound\mp3.h"\
 	"..\..\..\sound\voc.h"\
 	"..\..\..\sound\vorbis.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -17196,11 +17446,11 @@ DEP_CPP_SOUND=\
 	"..\..\..\sound\mp3.h"\
 	"..\..\..\sound\voc.h"\
 	"..\..\..\sound\vorbis.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -17240,11 +17490,11 @@ DEP_CPP_SOUND=\
 	"..\..\..\sound\mp3.h"\
 	"..\..\..\sound\voc.h"\
 	"..\..\..\sound\vorbis.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -17284,11 +17534,11 @@ DEP_CPP_SOUND=\
 	"..\..\..\sound\mp3.h"\
 	"..\..\..\sound\voc.h"\
 	"..\..\..\sound\vorbis.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -17328,11 +17578,11 @@ DEP_CPP_SOUND=\
 	"..\..\..\sound\mp3.h"\
 	"..\..\..\sound\voc.h"\
 	"..\..\..\sound\vorbis.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -17372,11 +17622,11 @@ DEP_CPP_SOUND=\
 	"..\..\..\sound\mp3.h"\
 	"..\..\..\sound\voc.h"\
 	"..\..\..\sound\vorbis.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -17416,11 +17666,11 @@ DEP_CPP_SOUND=\
 	"..\..\..\sound\mp3.h"\
 	"..\..\..\sound\voc.h"\
 	"..\..\..\sound\vorbis.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\morphos_timer.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -17545,10 +17795,10 @@ DEP_CPP_STRIN=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STRIN=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -17590,10 +17840,10 @@ DEP_CPP_STRIN=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STRIN=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -17635,10 +17885,10 @@ DEP_CPP_STRIN=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STRIN=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -17680,10 +17930,10 @@ DEP_CPP_STRIN=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STRIN=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -17725,10 +17975,10 @@ DEP_CPP_STRIN=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STRIN=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -17770,10 +18020,10 @@ DEP_CPP_STRIN=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STRIN=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -17815,10 +18065,10 @@ DEP_CPP_STRIN=\
 	"..\..\..\scumm\verbs.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STRIN=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -17892,10 +18142,10 @@ DEP_CPP_USAGE=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_USAGE=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -17919,10 +18169,10 @@ DEP_CPP_USAGE=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_USAGE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -17946,10 +18196,10 @@ DEP_CPP_USAGE=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_USAGE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -17973,10 +18223,10 @@ DEP_CPP_USAGE=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_USAGE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -18000,10 +18250,10 @@ DEP_CPP_USAGE=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_USAGE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -18027,10 +18277,10 @@ DEP_CPP_USAGE=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_USAGE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -18054,10 +18304,10 @@ DEP_CPP_USAGE=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\usage_bits.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_USAGE=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -18135,10 +18385,10 @@ DEP_CPP_VARS_=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VARS_=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -18162,10 +18412,10 @@ DEP_CPP_VARS_=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VARS_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -18189,10 +18439,10 @@ DEP_CPP_VARS_=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VARS_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -18216,10 +18466,10 @@ DEP_CPP_VARS_=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VARS_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -18243,10 +18493,10 @@ DEP_CPP_VARS_=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VARS_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -18270,10 +18520,10 @@ DEP_CPP_VARS_=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VARS_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -18297,10 +18547,10 @@ DEP_CPP_VARS_=\
 	"..\..\..\scumm\intern.h"\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VARS_=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
@@ -18386,10 +18636,10 @@ DEP_CPP_VERBS=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\verbs.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VERBS=\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Debug"
@@ -18416,10 +18666,10 @@ DEP_CPP_VERBS=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\verbs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VERBS=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE ARM) Release"
@@ -18446,10 +18696,10 @@ DEP_CPP_VERBS=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\verbs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VERBS=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Debug"
@@ -18476,10 +18726,10 @@ DEP_CPP_VERBS=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\verbs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VERBS=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE MIPS) Release"
@@ -18506,10 +18756,10 @@ DEP_CPP_VERBS=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\verbs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VERBS=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Debug"
@@ -18536,10 +18786,10 @@ DEP_CPP_VERBS=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\verbs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VERBS=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "scumm - Win32 (WCE SH3) Release"
@@ -18566,10 +18816,10 @@ DEP_CPP_VERBS=\
 	"..\..\..\scumm\script.h"\
 	"..\..\..\scumm\scumm.h"\
 	"..\..\..\scumm\verbs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_VERBS=\
 	"..\..\..\common\extend.h"\
+	".\DL_byteorder.h"\
 	
 
 !ENDIF 
