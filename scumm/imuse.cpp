@@ -2127,7 +2127,8 @@ void Player::parse_sysex(byte *p, uint len) {
 					// 0 is a valid program number. MI2 tests show that in such
 					// cases, a regular program change message always seems to follow
 					// anyway.
-					part->_instrument.program ((p[15] & 0x0F) << 4 | (p[16] & 0x0F), _mt32emulate);
+					if (_isGM)
+						part->_instrument.program ((p[15] & 0x0F) << 4 | (p[16] & 0x0F), _mt32emulate);
 					part->sendAll();
 				}
 			}
