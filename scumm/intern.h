@@ -888,7 +888,7 @@ protected:
 	void o90_startScriptUnk();
 	void o90_jumpToScriptUnk();
 	void o90_wizImageOps();
-	void o90_unknown24();
+	void o90_getDistanceBetweenPoints();
 	void o90_unknown25();
 	void o90_unknown26();
 	void o90_unknown27();

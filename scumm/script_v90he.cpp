@@ -89,7 +89,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_atan2),
 		OPCODE(o90_getSegmentAngle),
 		/* 24 */
-		OPCODE(o90_unknown24),
+		OPCODE(o90_getDistanceBetweenPoints),
 		OPCODE(o90_unknown25),
 		OPCODE(o90_unknown26),
 		OPCODE(o90_unknown27),
@@ -831,29 +831,45 @@ void ScummEngine_v90he::o90_wizImageOps() {
 	debug(1,"o90_wizImageOps stub (%d)", subOp);
 }
 
-void ScummEngine_v90he::o90_unknown24() {
+void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
 	byte subOp = fetchScriptByte();
+	int x1, y1, z1, x2, y2, z2, dx, dy, dz, d;
 
 	switch (subOp) {
 	case 28:
-		pop();
-		pop();
-		pop();
-		pop();
+		y2 = pop();
+		x2 = pop();
+		y1 = pop();
+		x1 = pop();
+		dx = x2 - x1;
+		dy = y2 - y1;
+		d = dx * dx + dy * dy;
+		if (d < 2) {
+			push(d);
+		} else {
+			push((int)sqrt((double)(d + 1)));
+		}
 		break;
 	case 29:
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
+		z2 = pop();
+		y2 = pop();
+		x2 = pop();
+		z1 = pop();
+		y1 = pop();
+		x1 = pop();
+		dx = x2 - x1;
+		dy = y2 - y1;
+		dz = z2 - z1;
+		d = dx * dx + dy * dy + dz * dz;
+		if (d < 2) {
+			push(d);
+		} else {
+			push((int)sqrt((double)(d + 1)));
+		}		
 		break;
 	default:
-		error("o90_unknown24: Unknown case %d", subOp);
+		error("o90_getDistanceBetweenPoints: Unknown case %d", subOp);
 	}
-	push(0);
-	debug(1,"o90_unknown24 stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_unknown25() {
