@@ -557,12 +557,12 @@ NextArg:;
 			_exe_name = s;
 		}
 	}
-	#else
 	
-	//sprintf(_gameDataPath, ":%s:", *argv);
-	//_gameDataPath = *argv;
+	#else
 	_midi_driver = 4;
 	_exe_name = *argv;
+	_gameDataPath = (char*)malloc(strlen(_exe_name) + 3);
+	sprintf(_gameDataPath, ":%s:", _exe_name);
 	#endif
 
 }
@@ -1012,9 +1012,13 @@ void Scumm::dumpResource(char *tag, int idx, byte *ptr) {
                 size = READ_LE_UINT32(ptr);
         else
                 size = READ_BE_UINT32_UNALIGNED(ptr+4);
-
+	
+	#if defined(__APPLE__CW)
+	sprintf(buf, ":dumps:%s%d.dmp", tag,idx);
+	#else
 	sprintf(buf, "dumps/%s%d.dmp", tag,idx);
-
+	#endif
+	
 	out = fopen(buf,"rb");
 	if (!out) {
 		out = fopen(buf, "wb");

@@ -959,8 +959,6 @@ void main(void)
 	
 	sound.initialize(&scumm,&snd_driv);
 	
-	scumm._gui = &gui;
-	
 	scumm.scummMain(2, &gameTitle);
 	
 	setWindowName(wm->_scumm);
