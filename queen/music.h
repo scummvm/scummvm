@@ -66,9 +66,11 @@ protected:
 	void queueUpdatePos();
 	uint8 randomQueuePos();
 	static void onTimer(void *data);
-	bool isBadSong(uint16 songNum);
-	uint32 songOffset(uint16 songNum);
-	uint32 songLength(uint16 songNum);
+	bool isBadSong(uint16 songNum) const;
+	uint8 validSongs() const;
+	uint16 nextValidSong();
+	uint32 songOffset(uint16 songNum) const;
+	uint32 songLength(uint16 songNum) const;
 
 	MidiDriver *_driver;
 	MidiParser *_parser;

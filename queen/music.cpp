@@ -200,12 +200,9 @@ static const byte mt32_to_gm[128] = {
 			return;
 		}
 	
-		//Don't play if there's only 1 song in the queue and it's a bad one
-		if (!_songQueue[1] && isBadSong(_songQueue[_queuePos]))
+		//Don't play if the queue doesn't have any valid songs
+		if (!validSongs())
 			return;
-		
-		while(isBadSong(_songQueue[_queuePos]))
-				queueUpdatePos();
 		
 		uint16 songNum = _songQueue[_queuePos];
 
@@ -223,8 +220,12 @@ static const byte mt32_to_gm[128] = {
 				songNum = _songQueue[_queuePos];
 			}
 		}
-	
-		_currentSong = songNum = isBadSong(songNum) ? 0 : songNum;	
+
+		_currentSong = songNum = isBadSong(songNum) ? nextValidSong() : songNum;
+		if (!songNum) {
+			stopMusic();
+			return;
+		}	
 		_parser->loadMusic(_musicData + songOffset(songNum), songLength(songNum));
 		_parser->setTrack(0);	
 		//debug(0, "Playing song %d [queue position: %d]", songNum, _queuePos);
@@ -256,7 +257,7 @@ static const byte mt32_to_gm[128] = {
 		return (uint8) _rnd.getRandomNumber(queueSize - 1) & 0xFF;
 	}
 	
-	bool MusicPlayer::isBadSong(uint16 songNum) {
+	bool MusicPlayer::isBadSong(uint16 songNum) const {
 		//Songs which are (apparently?) bogus
 		//Atleast they don't contain a valid MThd/MTrk
 		switch(songNum) {
@@ -272,19 +273,55 @@ static const byte mt32_to_gm[128] = {
 				break;
 		}
 	}
+
+	uint8  MusicPlayer::validSongs() const {
+		uint8 valid = 0;
+		for (int i = 0; i < MUSIC_QUEUE_SIZE; i++)
+			if (_songQueue[i] && !isBadSong(_songQueue[i]))
+					valid++;
+
+		return valid;
+	}
+
+	uint16 MusicPlayer::nextValidSong() {
+		if (_randomLoop && validSongs() > 1) {
+			uint8 pos = randomQueuePos(); 
+			while(isBadSong(_songQueue[pos]))
+				pos = randomQueuePos(); 
+			_queuePos = pos;
+			return _songQueue[pos];
+		}
 	
+		if (!_looping && validSongs() < 2)
+			return 0;
+		
+		for (int i = _queuePos + 1; i < MUSIC_QUEUE_SIZE; i++)  
+			if (_songQueue[i] && !isBadSong(_songQueue[i])) {
+				_queuePos = i;
+				return _songQueue[i];
+			}
+
+		for (int i = 0; i < _queuePos; i++) 
+			if (_songQueue[i] && !isBadSong(_songQueue[i])) {
+				_queuePos = i;
+				return _songQueue[i];	
+			}
+		
+		return 0;
+	}
+
 	void MusicPlayer::stopMusic() {
 		_isPlaying = false;
 		_parser->unloadMusic();
 	}
 
-	uint32 MusicPlayer::songOffset(uint16 songNum) {
+	uint32 MusicPlayer::songOffset(uint16 songNum) const {
 		uint16 offsLo = READ_LE_UINT16(_musicData + (songNum * 4) + 2);
 		uint16 offsHi = READ_LE_UINT16(_musicData + (songNum * 4) + 4);
 		return (offsHi << 4) | offsLo;
 	}
 
-	uint32 MusicPlayer::songLength(uint16 songNum) {
+	uint32 MusicPlayer::songLength(uint16 songNum) const {
 		if (songNum < _numSongs)
 			return (songOffset(songNum + 1) - songOffset(songNum));
 		return (_musicDataSize - songOffset(songNum));
