@@ -372,6 +372,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 		uint j = 0;
 		extra = p[3];
 		uint8 n = extra;
+		assert(n < ARRAYSIZE(seq3Idx));
 		while (n--) {
 			seq3Idx[j++] = aksq[s++];
 		}
