@@ -24,10 +24,11 @@ Usage: scummvm [OPTIONS]... [GAME]\\
   -n, --subtitles         &Enable subtitles (use with games that have voice)\\
   -b, --boot-param=NUM    &Pass number to the boot script (boot param)\\
   -d, --debuglevel=NUM    &Set debug verbosity level\\
-  -u, --dump-scripts      &Enable script dumping if a directory called 'dumps'\\
-                          &exists in the current directory\\
+  -u, --dump-scripts      &Enable script dumping if a directory called\\
+                          &'dumps' exists in the current directory\\
 \\
-  --cdrom=NUM             &CD drive to play CD audio from (default: 0 = first drive)\\
+  --cdrom=NUM             &CD drive to play CD audio from\\
+                          &(default: 0 = first drive)\\
   --joystick[=NUM]        &Enable input with joystick (default: 0 = first\\
                           &joystick)\\
   --platform=WORD         &Specify version of game (allowed values: amiga,\\
@@ -37,11 +38,11 @@ Usage: scummvm [OPTIONS]... [GAME]\\
   --aspect-ratio          &Enable aspect ratio correction\\
 \\
   --floppy-intro          &Use floppy version intro for Beneath a Steel Sky CD\\
-  --copy-protection       &Enable copy protection in SCUMM games ,when\\
+  --copy-protection       &Enable copy protection in SCUMM games, when\\
                           &ScummVM disables it by default.\\
   --demo-mode             &Start demo mode of Maniac Mansion (Classic version)\\
-  --tempo=NUM             &Set music tempo (in percent, 50-200) for SCUMM games\\
-                          &(default: 100)\\
+  --tempo=NUM             &Set music tempo (in percent, 50-200) for SCUMM\\
+                          &games (default: 100)\\
   --talkspeed=NUM         &Set talk speed for SCUMM games (default: 60)\\
 \end{tabular}
 
@@ -62,12 +63,11 @@ Examples:
 \item Win32:\\
 Running Monkey Island, fullscreen, from a hard disk:
 \begin{verbatim}
-C:\Games\LucasArts\scummvm.exe -f 
-                -pC:\Games\LucasArts\monkey\ monkey
+C:\Games\scummvm.exe -f -pC:\Games\monkey\ monkey
 \end{verbatim}
   Running Full Throttle from CD, fullscreen and with subtitles enabled:
 \begin{verbatim}
-C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ ft
+C:\Games\scummvm.exe -f -n -pD:\resource\ ft
 \end{verbatim}
  \item Unix:\\
   Running Monkey Island, fullscreen, from a hard disk:
