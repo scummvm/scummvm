@@ -889,61 +889,11 @@ void Scumm::faceActorToObj(int act, int obj)
 
 void Scumm::animateActor(int act, int anim)
 {
-	if (_features & GF_AFTER_V7) {
-		int cmd, dir;
-		Actor *a;
+	Actor *a = derefActorSafe(act, "animateActor");
+	if (!a)
+		return;
 
-		a = derefActorSafe(act, "animateActor");
-
-		if (anim == 0xFF)
-			anim = 2000;
-
-		cmd = anim / 1000;
-		dir = anim % 1000;
-
-		switch (cmd) {
-		case 2:
-			a->stopActorMoving();
-			a->startAnimActor(a->standFrame);
-			break;
-		case 3:
-			a->moving &= ~MF_TURN;
-			a->setActorDirection(dir);
-			break;
-		case 4:
-			a->turnToDirection(dir);
-			break;
-		default:
-			a->startAnimActor(anim);
-		}
-
-	} else {
-		int dir;
-		Actor *a;
-
-		a = derefActorSafe(act, "animateActor");
-		if (!a)
-			return;
-
-		dir = anim & 3;
-
-		switch (anim >> 2) {
-		case 0x3F:
-			a->stopActorMoving();
-			a->startAnimActor(a->standFrame);
-			break;
-		case 0x3E:
-			a->moving &= ~MF_TURN;
-			a->setActorDirection(oldDirToNewDir(dir));
-			break;
-		case 0x3D:
-			a->turnToDirection(oldDirToNewDir(dir));
-			break;
-		default:
-			a->startAnimActor(anim);
-		}
-
-	}
+	a->animateActor(anim);
 }
 
 bool Scumm::isScriptRunning(int script)

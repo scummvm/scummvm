@@ -452,6 +452,45 @@ void Actor::startAnimActor(int frame)
 	}
 }
 
+void Actor::animateActor(int anim)
+{
+	int cmd, dir;
+
+	if (_vm->_features & GF_AFTER_V7) {
+
+		if (anim == 0xFF)
+			anim = 2000;
+
+		cmd = anim / 1000;
+		dir = anim % 1000;
+
+	} else {
+
+		cmd = anim >> 2;
+		dir = Scumm::oldDirToNewDir(anim & 3);
+
+		// Convert into old cmd code
+		cmd = 0x3F - cmd + 2;
+
+	}
+
+	switch (cmd) {
+	case 2:
+		stopActorMoving();
+		startAnimActor(standFrame);
+		break;
+	case 3:
+		moving &= ~MF_TURN;
+		setActorDirection(dir);
+		break;
+	case 4:
+		turnToDirection(dir);
+		break;
+	default:
+		startAnimActor(anim);
+	}
+}
+
 void Actor::setActorDirection(int direction)
 {
 	uint aMask;
@@ -499,7 +538,7 @@ void Scumm::putActor(Actor * a, int dstX, int dstY, byte room)
 	}
 
 	if (a->visible) {
-		if (_currentRoom == room) {
+		if (a->isInCurrentRoom()) {
 			if (a->moving) {
 				a->startAnimActor(a->standFrame);
 				a->moving = 0;
@@ -509,7 +548,7 @@ void Scumm::putActor(Actor * a, int dstX, int dstY, byte room)
 			a->hideActor();
 		}
 	} else {
-		if (_currentRoom == room)
+		if (a->isInCurrentRoom())
 			a->showActor();
 	}
 }
@@ -526,7 +565,7 @@ int Scumm::getActorXYPos(Actor * a)
 	return 0;
 }
 
-AdjustBoxResult Scumm::adjustXYToBeInBox(Actor * a, int dstX, int dstY, int pathfrom)
+AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 {
 	AdjustBoxResult abr, tmp;
 	uint threshold;
@@ -535,7 +574,7 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor * a, int dstX, int dstY, int path
 	int firstValidBox, j;
 	byte flags, b;
 
-	if (_features & GF_SMALL_HEADER)
+	if (_vm->_features & GF_SMALL_HEADER)
 		firstValidBox = 0;
 	else
 		firstValidBox = 1;
@@ -544,44 +583,44 @@ AdjustBoxResult Scumm::adjustXYToBeInBox(Actor * a, int dstX, int dstY, int path
 	abr.y = dstY;
 	abr.dist = 0;
 
-	if ((_features & GF_SMALL_HEADER) && getClass(a->number, 22))
+	if ((_vm->_features & GF_SMALL_HEADER) && _vm->getClass(number, 22))
 		return abr;
 
-	if (a && a->ignoreBoxes == 0) {
+	if (ignoreBoxes == 0) {
 		threshold = 30;
 
 		while (1) {
 			iterations++;
 			if (iterations > 1000)
 				return abr;							/* Safety net */
-			box = getNumBoxes() - 1;
+			box = _vm->getNumBoxes() - 1;
 			if (box == 0)
 				return abr;
 
 			best = (uint) 0xFFFF;
 			b = 0;
 
-			if (((_features & GF_SMALL_HEADER) && box)
-					|| !(_features & GF_SMALL_HEADER))
+			if (((_vm->_features & GF_SMALL_HEADER) && box)
+					|| !(_vm->_features & GF_SMALL_HEADER))
 				for (j = box; j >= firstValidBox; j--) {
-					flags = getBoxFlags(j);
-					if (flags & 0x80 && (!(flags & 0x20) || getClass(a->number, 0x1F)))
+					flags = _vm->getBoxFlags(j);
+					if (flags & 0x80 && (!(flags & 0x20) || _vm->getClass(number, 0x1F)))
 						continue;
 
-					if (pathfrom && (getPathToDestBox(pathfrom, j) == -1))
+					if (pathfrom && (_vm->getPathToDestBox(pathfrom, j) == -1))
 						continue;
 
-					if (!inBoxQuickReject(j, dstX, dstY, threshold))
+					if (!_vm->inBoxQuickReject(j, dstX, dstY, threshold))
 						continue;
 
-					if (checkXYInBoxBounds(j, dstX, dstY)) {
+					if (_vm->checkXYInBoxBounds(j, dstX, dstY)) {
 						abr.x = dstX;
 						abr.y = dstY;
 						abr.dist = j;
 						return abr;
 					}
 
-					tmp = getClosestPtOnBox(j, dstX, dstY);
+					tmp = _vm->getClosestPtOnBox(j, dstX, dstY);
 
 					if (tmp.dist >= best)
 						continue;
@@ -612,7 +651,7 @@ void Actor::adjustActorPos()
 	AdjustBoxResult abr;
 	byte flags;
 
-	abr = _vm->adjustXYToBeInBox(this, x, y, 0);
+	abr = adjustXYToBeInBox(x, y, 0);
 
 	x = abr.x;
 	y = abr.y;
@@ -920,7 +959,7 @@ void Scumm::processActors()
 		return;
 
 	// Sort actors by position before we draw them (to ensure that actors in
-	// front are drawn after thos behind them).
+	// front are drawn after those "behind" them).
 	ac = actors;
 	cnt = numactors;
 	do {
@@ -1182,7 +1221,7 @@ void Actor::startWalkActor(int destX, int destY, int dir)
 {
 	AdjustBoxResult abr;
 
-	abr = _vm->adjustXYToBeInBox(this, destX, destY, walkbox);
+	abr = adjustXYToBeInBox(destX, destY, walkbox);
 
 	if (!isInCurrentRoom()) {
 		x = abr.x;
@@ -1199,7 +1238,7 @@ void Actor::startWalkActor(int destX, int destY, int dir)
 		if (_vm->checkXYInBoxBounds(walkdata.destbox, abr.x, abr.y)) {
 			abr.dist = walkdata.destbox;
 		} else {
-			abr = _vm->adjustXYToBeInBox(this, abr.x, abr.y, walkbox);
+			abr = adjustXYToBeInBox(abr.x, abr.y, walkbox);
 		}
 		if (moving && walkdata.destdir == dir
 				&& walkdata.destx == abr.x && walkdata.desty == abr.y)
@@ -1379,4 +1418,33 @@ void Actor::walkActorOld()
 	moving &= MF_IN_LEG;
 	moving |= MF_NEW_LEG;
 	goto restart;
+}
+
+void Scumm::resetActorBgs()
+{
+	Actor *a;
+	int i;
+	uint32 onlyActorFlags, bitpos;
+
+	for (i = 0; i < 40; i++) {
+		onlyActorFlags = (gfxUsageBits[_screenStartStrip + i] &= 0x3FFFFFFF);
+		a = getFirstActor();
+		bitpos = 1;
+
+		while (onlyActorFlags) {
+			if (onlyActorFlags & 1 && a->top != 0xFF && a->needBgReset) {
+				gfxUsageBits[_screenStartStrip + i] ^= bitpos;
+
+				if((a->bottom - a->top) >=0)
+					gdi.resetBackground(a->top, a->bottom, i);
+			}
+			bitpos <<= 1;
+			onlyActorFlags >>= 1;
+			a++;
+		}
+	}
+
+	for (i = 1, a = getFirstActor(); ++a, i < NUM_ACTORS; i++) {
+		a->needBgReset = false;
+	}
 }

@@ -311,8 +311,8 @@ void Scumm::setCameraFollows(Actor * a)
 
 		cd->_follows = a->number;
 
-		if (a->room != _currentRoom) {
-			startScene(a->room, 0, 0);
+		if (!a->isInCurrentRoom()) {
+			startScene(a->getRoom(), 0, 0);
 		}
 
 		ax = abs(a->x - cd->_cur.x);
@@ -332,8 +332,8 @@ void Scumm::setCameraFollows(Actor * a)
 		cd->_mode = CM_FOLLOW_ACTOR;
 		cd->_follows = a->number;
 
-		if (a->room != _currentRoom) {
-			startScene(a->room, 0, 0);
+		if (!a->isInCurrentRoom()) {
+			startScene(a->getRoom(), 0, 0);
 			cd->_mode = CM_FOLLOW_ACTOR;
 			cd->_cur.x = a->x;
 			setCameraAt(cd->_cur.x, 0);
@@ -346,7 +346,7 @@ void Scumm::setCameraFollows(Actor * a)
 			setCameraAt(a->x, 0);
 
 		for (i = 1, a = getFirstActor(); ++a, i < NUM_ACTORS; i++) {
-			if (a->room == _currentRoom)
+			if (a->isInCurrentRoom())
 				a->needRedraw = true;
 		}
 		runHook(0);
@@ -2214,35 +2214,6 @@ void Scumm::screenEffect(int effect)
 		warning("Unknown screen effect, %d", effect);
 	}
 	_screenEffectFlag = true;
-}
-
-void Scumm::resetActorBgs()
-{
-	Actor *a;
-	int i;
-	uint32 onlyActorFlags, bitpos;
-
-	for (i = 0; i < 40; i++) {
-		onlyActorFlags = (gfxUsageBits[_screenStartStrip + i] &= 0x3FFFFFFF);
-		a = getFirstActor();
-		bitpos = 1;
-
-		while (onlyActorFlags) {
-			if (onlyActorFlags & 1 && a->top != 0xFF && a->needBgReset) {
-				gfxUsageBits[_screenStartStrip + i] ^= bitpos;
-
-				if((a->bottom - a->top) >=0)
-					gdi.resetBackground(a->top, a->bottom, i);
-			}
-			bitpos <<= 1;
-			onlyActorFlags >>= 1;
-			a++;
-		}
-	}
-
-	for (i = 1, a = getFirstActor(); ++a, i < NUM_ACTORS; i++) {
-		a->needBgReset = false;
-	}
 }
 
 void Gdi::resetBackground(int top, int bottom, int strip)

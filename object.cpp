@@ -224,8 +224,8 @@ int Scumm::getObjActToObjActDist(int a, int b)
 	if (b < NUM_ACTORS)
 		actb = derefActorSafe(b, "getObjActToObjActDist(2)");
 
-	if (acta && actb && acta->room == actb->room && acta->room &&
-			acta->room != _currentRoom)
+	if (acta && actb && acta->getRoom() == actb->getRoom() && acta->getRoom() &&
+			!acta->isInCurrentRoom())
 		return 0;
 
 	if (getObjectOrActorXY(a) == -1)
@@ -238,7 +238,7 @@ int Scumm::getObjActToObjActDist(int a, int b)
 		return 0xFF;
 
 	if (acta) {
-		AdjustBoxResult r = adjustXYToBeInBox(acta, _xPos, _yPos, 0);
+		AdjustBoxResult r = acta->adjustXYToBeInBox(_xPos, _yPos, 0);
 		_xPos = r.x;
 		_yPos = r.y;
 	}

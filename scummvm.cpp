@@ -789,10 +789,62 @@ void Scumm::unkRoomFunc3(int a, int b, int c, int d, int e)
 }
 
 
-void Scumm::unkRoomFunc4(int a, int b, int c, int d, int e)
+void Scumm::palManipulate(int palettes, int brightness, int color, int time, int e)
 {
+	byte *cptr;
+
 	/* TODO: implement this */
-	warning("unkRoomFunc4: not implemented");
+	warning("palManipulate(%d, %d, %d, %d): not implemented", palettes, brightness, color, time);
+	
+	printf("_curPalIndex=%d\n", _curPalIndex);
+
+	cptr = _currentPalette + color * 3;
+	printf("color %d = (%d,%d,%d)\n", color, (int)*cptr++, (int)*cptr++, (int)*cptr++);
+
+//	darkenPalette(0, 255, 0xFF+0x10, brightness, brightness);
+	{
+		int startColor = 0;
+		int endColor = 255;
+		int redScale = 0xFF;
+		int greenScale = brightness;
+		int blueScale = brightness;
+		byte *cur;
+		int num;
+		int color;
+	
+		cptr = _currentPalette + startColor * 3;
+		cur = _currentPalette + startColor * 3;
+		num = endColor - startColor + 1;
+
+		do {
+			color = *cptr++;
+			if (redScale != 0xFF)
+				color = color * redScale / 0xFF;
+			if (color > 255)
+				color = 255;
+			*cur++ = color;
+
+			color = *cptr++;
+			if (greenScale != 0xFF)
+				color = color * greenScale / 0xFF;
+			if (color > 255)
+				color = 255;
+			*cur++ = color;
+
+			color = *cptr++;
+			if (blueScale != 0xFF)
+				color = color * blueScale / 0xFF;
+			if (color > 255)
+				color = 255;
+			*cur++ = color;
+		} while (--num);
+		setDirtyColors(startColor, endColor);
+	}
+
+	cptr = _currentPalette + color * 3;
+	printf("color %d = (%d,%d,%d)\n", color, (int)*cptr++, (int)*cptr++, (int)*cptr++);
+
+//	setPalette(palettes);
 }
 
 void Scumm::pauseGame(bool user)

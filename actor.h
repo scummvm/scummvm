@@ -70,7 +70,6 @@ struct CostumeData {
 
 class Actor {
 
-//protected:
 public:
 	int x, y, top, bottom;
 	int elevation;
@@ -131,6 +130,7 @@ public:
 	int updateActorDirection();
 	void setActorDirection(int direction);
 
+	AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY, int pathfrom);
 	void adjustActorPos();	
 	void turnToDirection(int newdir);
 	void walkActor();
@@ -142,8 +142,11 @@ public:
 	
 	void remapActor(int b, int c, int d, int e);
 	void walkActorOld();
+
+	void animateActor(int anim);
 	
 	bool isInCurrentRoom()					{ return room == _vm->_currentRoom; }
+	int getRoom()							{ return room; }
 
 	int getAnimVar(byte var)				{ return animVariable[var]; }
 	void setAnimVar(byte var, int value)	{ animVariable[var] = value; }

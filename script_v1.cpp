@@ -801,7 +801,7 @@ void Scumm::o5_actorSet()
 			a->ignoreBoxes = 1;
 			a->forceClip = 0;
 		FixRoom:
-			if (a->room == _currentRoom)
+			if (a->isInCurrentRoom())
 				putActor(a, a->x, a->y, a->room);
 			break;
 		case 21:										/* followboxes */
@@ -2047,14 +2047,14 @@ void Scumm::o5_roomOps()
 			;
 		warning("roomops:14 load-string(%d,\"%s\") not implemented", a, buf);
 		break;
-	case 15:											/* palmanip? */
+	case 15:											/* palmanip */
 		a = getVarOrDirectByte(0x80);
 		_opcode = fetchScriptByte();
 		b = getVarOrDirectByte(0x80);
 		c = getVarOrDirectByte(0x40);
 		_opcode = fetchScriptByte();
 		d = getVarOrDirectByte(0x80);
-		unkRoomFunc4(b, c, a, d, 1);
+		palManipulate(b, c, a, d, 1);
 		break;
 
 	case 16:			
@@ -2566,7 +2566,7 @@ void Scumm::o5_walkActorToActor()
 	if (!a)
 		return;
 
-	if (a->room != _currentRoom) {
+	if (!a->isInCurrentRoom()) {
 		getVarOrDirectByte(0x40);
 		fetchScriptByte();
 		return;
@@ -2583,7 +2583,7 @@ void Scumm::o5_walkActorToActor()
 	if (!a2)
 		return;
 
-	if (a2->room != _currentRoom) {
+	if (!a2->isInCurrentRoom()) {
 		fetchScriptByte();
 		return;
 	}

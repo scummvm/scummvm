@@ -1351,7 +1351,7 @@ void Scumm::o6_walkActorToObj()
 		a2 = derefActorSafe(obj, "o6_walkActorToObj(2)");
 		if (!a2)
 			return;
-		if (a2->room != _currentRoom || a->room != _currentRoom)
+		if (!a->isInCurrentRoom() || !a->isInCurrentRoom())
 			return;
 		if (dist == 0) {
 			dist = a2->scalex * a2->width / 0xFF;
@@ -1883,7 +1883,7 @@ void Scumm::o6_roomOps()
 		c = pop();
 		b = pop();
 		a = pop();
-		unkRoomFunc4(a, b, c, d, 1);
+		palManipulate(a, b, c, d, 1);
 		break;
 
 	case 187:										/* color cycle delay */
@@ -2001,7 +2001,7 @@ void Scumm::o6_actorSet()
 		else
 			a->forceClip = 0;
 	FixRooms:;
-		if (a->room == _currentRoom)
+		if (a->isInCurrentRoom())
 			putActor(a, a->x, a->y, a->room);
 		break;
 	case 96:
@@ -2049,7 +2049,7 @@ void Scumm::o6_actorSet()
 		a->startAnimActor(a->standFrame);
 		break;
 	case 230:										/* set direction */
-		a->moving &= ~4;
+		a->moving &= ~MF_TURN;
 		a->setActorDirection(pop());
 		break;
 	case 231:										/* turn to direction */
@@ -2369,7 +2369,7 @@ void Scumm::o6_wait()
 	case 226:{										/* wait until actor drawn */
 			Actor *a = derefActorSafe(pop(), "o6_wait:226");
 			int offs = (int16) fetchScriptWord();
-			if (a->room == _currentRoom && a->needRedraw) {
+			if (a->isInCurrentRoom() && a->needRedraw) {
 				_scriptPointer += offs;
 				o6_breakHere();
 			}
@@ -2378,7 +2378,7 @@ void Scumm::o6_wait()
 	case 232:{										/* wait until actor stops turning */
 			Actor *a = derefActorSafe(pop(), "o6_wait:226");
 			int offs = (int16) fetchScriptWord();
-			if (a->room == _currentRoom && a->moving & 4) {
+			if (a->isInCurrentRoom() && a->moving & MF_TURN) {
 				_scriptPointer += offs;
 				o6_breakHere();
 			}

@@ -639,7 +639,7 @@ public:
 	int8 _userPut;
 	int _resourceHeaderSize;
 	void unkRoomFunc3(int a, int b, int c, int d, int e);
-	void unkRoomFunc4(int a, int b, int c, int d, int e);
+	void palManipulate(int a, int b, int c, int d, int e);
 	void setScaleItem(int slot, int a, int b, int c, int d);
 	void clearClickedStatus();
 	void startManiac();
@@ -863,9 +863,6 @@ public:
 
 	/* Should be in Costume class */
 	void loadCostume(LoadedCostume *lc, int costume);
-//	void cost_setPalette(CostumeRenderer *cr, byte *palette);
-//	void cost_setFacing(CostumeRenderer *cr, Actor *a);
-//	void cost_setCostume(CostumeRenderer *cr, int costume);
 	byte cost_increaseAnims(LoadedCostume *lc, Actor *a);
 	byte cost_increaseAnim(LoadedCostume *lc, Actor *a, int slot);
 	void cost_decodeData(Actor *a, int frame, uint usemask);
@@ -984,8 +981,8 @@ public:
 
 	uint32 *_classData;
 
-	int newDirToOldDir(int dir);
-	int oldDirToNewDir(int dir);
+	static int newDirToOldDir(int dir);
+	static int oldDirToNewDir(int dir);
 
 	static int normalizeAngle(int angle);
 	int getAngleFromPos(int x, int y);
@@ -996,7 +993,6 @@ public:
 	int getProgrDirChange(Actor *a, int mode);
 
 	int getActorXYPos(Actor *a);
-	AdjustBoxResult adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom);
 	void walkActors();
 	void playActorSounds();
 	void setActorRedrawFlags();
