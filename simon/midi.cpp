@@ -104,17 +104,15 @@ void MidiPlayer::metaEvent (byte type, byte *data, uint16 length) {
 
 void MidiPlayer::onTimer (void *data) {
 	MidiPlayer *player = (MidiPlayer *) data;
-	if (player->_paused)
+	if (player->_paused || !player->_parser)
 		return;
-	if (player->_parser) {
-		player->_system->lock_mutex (player->_mutex);
-		player->_parser->onTimer();
-		player->_system->unlock_mutex (player->_mutex);
-	}
+	player->_system->lock_mutex (player->_mutex);
+	player->_parser->onTimer();
+	player->_system->unlock_mutex (player->_mutex);
 }
 
 void MidiPlayer::jump (uint16 track, uint16 tick) {
-	if (track == _currentTrack)
+	if (track == _currentTrack || !_parser)
 		return;
 
 	if (_num_songs > 0) {
@@ -142,15 +140,15 @@ void MidiPlayer::jump (uint16 track, uint16 tick) {
 		for (int i = ARRAYSIZE (_volumeTable); i; --i)
 			_volumeTable[i-1] = 127;
 		_parser = parser; // That plugs the power cord into the wall
-
-		_system->unlock_mutex (_mutex);
 	} else if (_parser) {
 		_system->lock_mutex (_mutex);
 		_currentTrack = (byte) track;
 		_parser->setTrack ((byte) track);
-		_parser->jumpToTick (tick - 1);
-		_system->unlock_mutex (_mutex);
 	}
+
+	_parser->jumpToTick (tick ? tick - 1 : 0);
+	pause (false);
+	_system->unlock_mutex (_mutex);
 }
 
 void MidiPlayer::stop() {
@@ -162,7 +160,7 @@ void MidiPlayer::stop() {
 }
 
 void MidiPlayer::pause (bool b) {
-	if (_paused == b)
+	if (_paused == b || !_driver)
 		return;
 	_paused = b;
 
@@ -251,9 +249,10 @@ void MidiPlayer::playSMF (File *in, int song) {
 		parser = 0;
 	}
 
-	_currentTrack = 0;
+	_currentTrack = 255;
 	for (int i = ARRAYSIZE (_volumeTable); i; --i)
 		_volumeTable[i-1] = 127;
+	_paused = true;
 	_parser = parser; // That plugs the power cord into the wall
 	_system->unlock_mutex (_mutex);
 }
@@ -307,8 +306,10 @@ void MidiPlayer::playMultipleSMF (File *in) {
 		_song_sizes[i] = size;
 	}
 
+	_paused = true;
+	_currentTrack = 255;
 	_system->unlock_mutex (_mutex);
-	jump (0, 1);
+//	jump (0, 1);
 }
 
 void MidiPlayer::playXMIDI (File *in) {
@@ -320,7 +321,19 @@ void MidiPlayer::playXMIDI (File *in) {
 	uint32 size = 4;
 	in->read (buf, 4);
 	if (!memcmp (buf, "FORM", 4)) {
-		while (memcmp (buf, "CAT ", 4)) { size += 4; in->read (buf, 4); }
+		int i;
+		for (i = 0; i < 16; ++i) {
+			if (!memcmp (buf, "CAT ", 4))
+				break;
+			size += 2;
+			memcpy (buf, &buf[2], 2);
+			in->read (&buf[2], 2);
+		}
+		if (memcmp (buf, "CAT ", 4)) {
+			printf ("ERROR! Could not find 'CAT ' tag to determine resource size!\n");
+			_system->unlock_mutex (_mutex);
+			return;
+		}
 		size += 4 + in->readUint32BE();
 		in->seek (pos, 0);
 		_data = (byte *) calloc (size, 1);
@@ -340,9 +353,10 @@ void MidiPlayer::playXMIDI (File *in) {
 		parser = 0;
 	}
 
-	_currentTrack = 0;
+	_currentTrack = 255;
 	for (int i = ARRAYSIZE (_volumeTable); i; --i)
 		_volumeTable[i-1] = 127;
+	_paused = true;
 	_parser = parser; // That plugs the power cord into the wall
 	_system->unlock_mutex (_mutex);
 }
