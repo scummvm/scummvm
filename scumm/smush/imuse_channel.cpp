@@ -185,27 +185,29 @@ void ImuseChannel::decode() {
 			_tbufferSize += remaining_size;
 		}
 	}
+
+	// FIXME: Code duplication! See decode12BitsSample() in scumm/imuse_digi.cpp
+
 	int loop_size = _sbufferSize / 3;
-	int new_size = loop_size * 2;
+	int new_size = loop_size * 4;
 	byte *keep, *decoded;
 	uint32 value;
-	keep = decoded = new byte[new_size * 2];
+	keep = decoded = new byte[new_size];
 	assert(keep);
 	unsigned char * source = _sbuffer;
-		while (loop_size--) {
+
+	while (loop_size--) {
 		byte v1 =  *source++;
 		byte v2 =  *source++;
 		byte v3 =  *source++;
 		value = ((((v2 & 0x0f) << 8) | v1) << 4) - 0x8000;
-		*decoded++ = (byte)((value >> 8) & 0xff);
-		*decoded++ = (byte)(value & 0xff);
+		WRITE_BE_UINT16(decoded, value); decoded += 2;
 		value = ((((v2 & 0xf0) << 4) | v3) << 4) - 0x8000;
-		*decoded++ = (byte)((value >> 8) & 0xff);
-		*decoded++ = (byte)(value & 0xff);
+		WRITE_BE_UINT16(decoded, value); decoded += 2;
 	}
 	delete []_sbuffer;
 	_sbuffer = (byte *)keep;
-	_sbufferSize = new_size * sizeof(int16);
+	_sbufferSize = new_size;
 }
 
 bool ImuseChannel::handleSubTags(int32 &offset) {

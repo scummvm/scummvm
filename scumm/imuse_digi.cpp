@@ -687,8 +687,8 @@ static byte *readCreativeVocFile(byte *ptr, int32 &size, int &rate) {
 }
 
 static uint32 decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo) {
-	uint32 s_size = (size / 3) * 4;
-	uint32 loop_size = s_size / 4;
+	uint32 loop_size = size / 3;
+	uint32 s_size = loop_size * 4;
 	if (stereo) {
 		s_size *= 2;
 	}
@@ -700,18 +700,14 @@ static uint32 decode12BitsSample(byte *src, byte **dst, uint32 size, bool stereo
 		byte v2 = *src++;
 		byte v3 = *src++;
 		tmp = ((((v2 & 0x0f) << 8) | v1) << 4) - 0x8000;
-		*ptr++ = (byte)((tmp >> 8) & 0xff);
-		*ptr++ = (byte)(tmp & 0xff);
+		WRITE_BE_UINT16(ptr, tmp); ptr += 2;
 		if (stereo) {
-			*ptr++ = (byte)((tmp >> 8) & 0xff);
-			*ptr++ = (byte)(tmp & 0xff);
+			WRITE_BE_UINT16(ptr, tmp); ptr += 2;
 		}
 		tmp = ((((v2 & 0xf0) << 4) | v3) << 4) - 0x8000;
-		*ptr++ = (byte)((tmp >> 8) & 0xff);
-		*ptr++ = (byte)(tmp & 0xff);
+		WRITE_BE_UINT16(ptr, tmp); ptr += 2;
 		if (stereo) {
-			*ptr++ = (byte)((tmp >> 8) & 0xff);
-			*ptr++ = (byte)(tmp & 0xff);
+			WRITE_BE_UINT16(ptr, tmp); ptr += 2;
 		}
 	}
 	return s_size;
