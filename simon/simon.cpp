@@ -323,7 +323,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_in_callback = 0;
 	_cepe_flag = 0;
 	_copy_partial_mode = 0;
-	_slow_mode = 0;
+	_speed = 1;
 	_fast_mode = 0;
 	_dx_use_3_or_4_for_lock = 0;
 
@@ -542,6 +542,9 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_debugLevel = ConfMan.getInt("debuglevel");
 	_language = Common::parseLanguage(ConfMan.get("language"));
 	_subtitles = ConfMan.getBool("subtitles");
+
+	if (ConfMan.hasKey("slow_down") && ConfMan.getInt("slow_down") >= 1)
+		_speed = ConfMan.getInt("slow_down");
 
 	_system->init_size(320, 200);
 
@@ -4846,14 +4849,12 @@ void SimonEngine::delay(uint amount) {
 	uint32 cur = start;
 	uint this_delay, vga_period;
 
-	if (_slow_mode)
-		vga_period = 500;
-	else if (_fast_mode)
+	if (_fast_mode)
 	 	vga_period = 10;
 	else if (_game & GF_SIMON2)
-		vga_period = 45;
+		vga_period = 45 * _speed;
 	else
-		vga_period = 50;
+		vga_period = 50 * _speed;
 
 	_rnd.getRandomNumber(2);
 
@@ -4894,10 +4895,8 @@ void SimonEngine::delay(uint amount) {
 						GUI::Dialog *_aboutDialog;
 						_aboutDialog = new GUI::AboutDialog();
 						_aboutDialog->runModal();
-					} else if (event.kbd.keycode == 'f') {
+					} else if (event.kbd.keycode == 'f')
 						_fast_mode ^= 1;
-					} else if  (event.kbd.keycode == 's')
-						_slow_mode ^= 1;
 				}
 				// Make sure backspace works right (this fixes a small issue on OS X)
 				if (event.kbd.keycode == 8)
@@ -4935,10 +4934,7 @@ void SimonEngine::delay(uint amount) {
 			break;
 
 		{
-			if (_slow_mode)
-				this_delay = 200;
-			else
-				this_delay = _fast_mode ? 1 : 20;
+			this_delay = _fast_mode ? 1 : 20 * _speed;
 			if (this_delay > amount)
 				this_delay = amount;
 			_system->delay_msecs(this_delay);
