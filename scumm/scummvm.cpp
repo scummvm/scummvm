@@ -233,6 +233,8 @@ static const TargetSettings scumm_settings[] = {
 	 * these and later games can easily be identified by the .(a) file instead of a .he1 */
 	{"racedemo", "Putt-Putt Enters the Race (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"puttrace", "Putt-Putt Enters the Race", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"f4-demo", "Freddi Fish 4: Hogfish Rustlers of Briny Gulch (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"bluesabctimedemo", "Blue's ABC Time Activities (Demo)", GID_PJSDEMO, 6, MDT_NONE,
