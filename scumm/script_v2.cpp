@@ -1784,12 +1784,12 @@ void Scumm::o6_verbOps()
 		a = pop();
 		if (_curVerbSlot) {
 			setVerbObject(_roomResource, a, slot);
-			vs->type = 1;
+			vs->type = kImageVerbType;
 		}
 		break;
 	case 125:
 		loadPtrToResource(rtVerb, slot, NULL);
-		vs->type = 0;
+		vs->type = kTextVerbType;
 		vs->imgindex = 0;
 		break;
 	case 126:
@@ -1827,7 +1827,7 @@ void Scumm::o6_verbOps()
 		vs->color = 2;
 		vs->hicolor = 0;
 		vs->dimcolor = 8;
-		vs->type = 0;
+		vs->type = kTextVerbType;
 		vs->charset_nr = _string[0].t_charset;
 		vs->curmode = 0;
 		vs->saveid = 0;
@@ -1855,7 +1855,7 @@ void Scumm::o6_verbOps()
 			ptr = getStringAddress(a);
 		}
 		loadPtrToResource(rtVerb, slot, ptr);
-		vs->type = 0;
+		vs->type = kTextVerbType;
 		vs->imgindex = 0;
 		break;
 	case 139:
@@ -1863,7 +1863,7 @@ void Scumm::o6_verbOps()
 		a = pop();
 		if (slot && a != vs->imgindex) {
 			setVerbObject(b, a, slot);
-			vs->type = 1;
+			vs->type = kImageVerbType;
 			vs->imgindex = a;
 		}
 		break;

@@ -2155,14 +2155,14 @@ void Scumm::o5_verbOps()
 			a = getVarOrDirectWord(0x80);
 			if (slot) {
 				setVerbObject(_roomResource, a, slot);
-				vs->type = 1;
+				vs->type = kImageVerbType;
 			}
 			break;
 		case 2:										/* load from code */
 			loadPtrToResource(rtVerb, slot, NULL);
 			if (slot == 0)
 				nukeResource(rtVerb, slot);
-			vs->type = 0;
+			vs->type = kTextVerbType;
 			vs->imgindex = 0;
 			break;
 		case 3:										/* color */
@@ -2224,7 +2224,7 @@ void Scumm::o5_verbOps()
 			vs->color = 2;
 			vs->hicolor = 0;
 			vs->dimcolor = 8;
-			vs->type = 0;
+			vs->type = kTextVerbType;
 			vs->charset_nr = _string[0].t_charset;
 			vs->curmode = 0;
 			vs->saveid = 0;
@@ -2254,7 +2254,7 @@ void Scumm::o5_verbOps()
 			}
 			if (slot == 0)
 				nukeResource(rtVerb, slot);
-			vs->type = 0;
+			vs->type = kTextVerbType;
 			vs->imgindex = 0;
 			break;
 		case 22:										/* assign object */
@@ -2262,7 +2262,7 @@ void Scumm::o5_verbOps()
 			b = getVarOrDirectByte(0x40);
 			if (slot && vs->imgindex != a) {
 				setVerbObject(b, a, slot);
-				vs->type = 1;
+				vs->type = kImageVerbType;
 				vs->imgindex = a;
 			}
 			break;

@@ -82,12 +82,12 @@ void Scumm::verbMouseOver(int verb)
 	if (_verbMouseOver == verb)
 		return;
 
-	if (_verbs[_verbMouseOver].type != 1) {
+	if (_verbs[_verbMouseOver].type != kImageVerbType) {
 		drawVerb(_verbMouseOver, 0);
 		_verbMouseOver = verb;
 	}
 
-	if (_verbs[verb].type != 1 && _verbs[verb].hicolor) {
+	if (_verbs[verb].type != kImageVerbType && _verbs[verb].hicolor) {
 		drawVerb(verb, 1);
 		_verbMouseOver = verb;
 	}
@@ -126,7 +126,7 @@ void Scumm::drawVerb(int vrb, int mode)
 	vs = &_verbs[vrb];
 
 	if (!vs->saveid && vs->curmode && vs->verbid) {
-		if (vs->type == 1) {
+		if (vs->type == kImageVerbType) {
 			drawVerbBitmap(vrb, vs->x, vs->y);
 			return;
 		}

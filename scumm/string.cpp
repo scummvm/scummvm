@@ -242,7 +242,7 @@ void Scumm::CHARSET_1()
 
 	charset._top = _string[0].ypos;
 	charset._left = _string[0].xpos;
-	charset._left2 = _string[0].xpos;
+	charset._startLeft = _string[0].xpos;
 	charset._curId = _string[0].charset;
 
 	if (a && a->charset)
@@ -475,7 +475,7 @@ void Scumm::description()
 
 	charset._top = _string[0].ypos;
 	charset._left = _string[0].xpos;
-	charset._left2 = _string[0].xpos;
+	charset._startLeft = _string[0].xpos;
 	charset._right = _realWidth - 1;
 	charset._xpos2 = _string[0].xpos;
 	charset._ypos2 = _string[0].ypos;
@@ -523,7 +523,7 @@ void Scumm::drawDescString(byte *msg)
 	charset._bufPos = 0;
 	charset._top = _string[0].ypos;
 	charset._left = _string[0].xpos;
-	charset._left2 = _string[0].xpos;
+	charset._startLeft = _string[0].xpos;
 	charset._right = _realWidth - 1;
 	charset._xpos2 = _string[0].xpos;
 	charset._ypos2 = _string[0].ypos;
@@ -568,13 +568,13 @@ void Scumm::drawString(int a)
 	byte buf[256];
 	byte *charsetptr, *space;
 	int i;
-	byte byte1 = 0, chr;
+	byte fontHeight = 0, chr;
 	uint color;
 
 	_msgPtrToAdd = buf;
 	_messagePtr = addMessageToStack(_messagePtr);
 
-	charset._left2 = charset._left = _string[a].xpos;
+	charset._startLeft = charset._left = _string[a].xpos;
 	charset._top = _string[a].ypos;
 	charset._curId = _string[a].charset;
 	charset._center = _string[a].center;
@@ -595,7 +595,7 @@ void Scumm::drawString(int a)
 			else
 				charset._colorMap[i] = _charsetData[charset._curId][i];
 
-		byte1 = charsetptr[1];
+		fontHeight = charsetptr[1];
 	}
 
 	_msgPtrToAdd = buf;
@@ -648,11 +648,11 @@ void Scumm::drawString(int a)
 			case 1:
 			case 8:
 				if (charset._center) {
-					charset._left = charset._left2 - charset.getStringWidth(a, buf, i);	// FIXME - shouldn't this be getStringWidth() / 2 ?!?
+					charset._left = charset._startLeft - charset.getStringWidth(a, buf, i);
 				} else {
-					charset._left = charset._left2;
+					charset._left = charset._startLeft;
 				}
-				charset._top += byte1;
+				charset._top += fontHeight;
 				break;
 			case 12:
 				color = buf[i] + (buf[i + 1] << 8);
@@ -872,7 +872,7 @@ void Scumm::initCharset(int charsetno)
 	_string[0].t_charset = charsetno;
 	_string[1].t_charset = charsetno;
 
-	for (i = 0; i < 0x10; i++)
+	for (i = 0; i < 16; i++)
 		if (_features & GF_SMALL_HEADER)
 			charset._colorMap[i] = _charsetData[charset._curId][i - 12];	// FIXME - do we really want to access index -12 to -9 ?
 		else

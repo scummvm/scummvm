@@ -23,6 +23,11 @@
 
 #include "scummsys.h"
 
+enum {
+	kTextVerbType = 0,
+	kImageVerbType = 1
+};
+
 struct VerbSlot {
 	int16 x, y;
 	int16 right, bottom;

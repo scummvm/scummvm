@@ -174,7 +174,7 @@ struct CharsetRenderer {
 	Scumm *_vm;
 	int _top;
 	int _drawTop;
-	int _left, _left2;
+	int _left, _startLeft;
 	byte _center;
 	int _right;
 	byte _color;
