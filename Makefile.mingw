@@ -48,6 +48,10 @@ LIBS    += -lmpeg2
 DEFINES += -DUSE_ZLIB
 LIBS    += -lz
 
+# Uncomment this to activate the FLAC lib for compressed sound files
+DEFINES += -USE_FLAC
+LIBS    += -lflac
+
 # Uncomment this to activate the MAD lib for compressed sound files
 DEFINES += -DUSE_MAD
 LIBS    += -lmad
