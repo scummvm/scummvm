@@ -998,8 +998,11 @@ void Scumm_v6::o6_walkActorToObj() {
 	a = derefActor(act, "o6_walkActorToObj");
 
 	if (obj >= _numActors) {
-		if (whereIsObject(obj) == WIO_NOT_FOUND)
+		int wio = whereIsObject(obj);
+
+		if (wio != WIO_FLOBJECT && wio != WIO_ROOM)
 			return;
+
 		int dir;
 		getObjectXYPos(obj, x, y, dir);
 		a->startWalkActor(x, y, dir);
