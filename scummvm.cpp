@@ -892,7 +892,6 @@ void Scumm::processKbd()
 		_vars[VAR_CHARINC] = _defaultTalkDelay / 20;
 	}
 			
-
 	_mouseButStat = _lastKeyHit;
 }
 

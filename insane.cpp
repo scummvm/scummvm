@@ -130,6 +130,16 @@ void SmushPlayer::parseAHDR()
 }
 
 
+void SmushPlayer::parseIACT() {
+	unsigned char *src = _cur;
+	int size, codec;
+	_cur-=8;	/* Move back to beginning of IACT block */
+	
+	_cur+=4; size = READ_BE_UINT32(_cur) - 18;
+	_cur+=10; codec = READ_LE_UINT16(_cur);	
+
+	_cur = src;
+}
 
 void SmushPlayer::parseNPAL()
 {
@@ -692,7 +702,7 @@ void SmushPlayer::parseFRME()
 			parseXPAL();
 			break;
 		case 'IACT':
-			parseTRES();
+			parseIACT();
 			break;
 		case 'STOR':
 		case 'FTCH':

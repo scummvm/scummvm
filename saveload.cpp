@@ -606,10 +606,9 @@ void Scumm::saveOrLoad(Serializer * s)
 
 	s->saveLoadArrayOf(actor, NUM_ACTORS, sizeof(actor[0]), actorEntries);
 
-	if (_current_version < VER_V9) {
-		printf("Loading pre-v9\n");
+	if (_current_version < VER_V9)
 		s->saveLoadArrayOf(vm.slot, 25, sizeof(vm.slot[0]), scriptSlotEntries);
-	} else
+	else
 		s->saveLoadArrayOf(vm.slot, NUM_SCRIPT_SLOT, sizeof(vm.slot[0]), scriptSlotEntries);
 	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]),
 										 objectEntries);

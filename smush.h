@@ -82,7 +82,7 @@ struct SmushPlayer {
         void parsePSAD(); 
         void parseTRES();
         void parseXPAL();
-
+		void parseIACT();
         void fileRead(void *mem, int len);
 
         uint32 nextBE32();

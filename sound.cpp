@@ -722,8 +722,8 @@ void Scumm::decompressBundleSound(int index) {
 
 		switch(table[i].codec) {
 			case 0:
-				warning("Unimplemented bundle codec 1");
-				outputSize = 0;
+				outputSize = table[i].size;
+				memcpy(&CompOutput[0], &CompInput[0], outputSize);
 			break;
 
 			case 1:

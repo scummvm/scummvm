@@ -434,7 +434,7 @@ void akos_c1_spec1(AkosRenderer * ar)
 								|| !((mask[0] | mask[ar->v1.imgbufoffs]) & maskbit))) {
 					pcolor = ar->palette[color];
 					if (pcolor == 13)
-						pcolor = ar->shadow_table[*dst];
+						pcolor = ar->shadow_table[*dst];						
 					*dst = pcolor;
 				}
 				mask += 40;
