@@ -57,29 +57,23 @@ void SwordScreen::setScrolling(int16 offsetX, int16 offsetY) {
 	if (!SwordLogic::_scriptVars[SCROLL_FLAG])
 		return ; // screen is smaller than 640x400 => no need for scrolling
 
-	uint32 scrlToX, scrlToY;
-
 	offsetX = inRange(0, offsetX, SwordLogic::_scriptVars[MAX_SCROLL_OFFSET_X]);
 	offsetY = inRange(0, offsetY, SwordLogic::_scriptVars[MAX_SCROLL_OFFSET_Y]);
-	_oldScrollX = SwordLogic::_scriptVars[SCROLL_OFFSET_X];
-	_oldScrollY = SwordLogic::_scriptVars[SCROLL_OFFSET_Y];
-	scrlToX = (uint32)offsetX;
-	scrlToY = (uint32)offsetY;
 
-	if (SwordLogic::_scriptVars[SCROLL_FLAG] == 2) // first time on this screen - need absolute scroll immediately!
+	if (SwordLogic::_scriptVars[SCROLL_FLAG] == 2) { // first time on this screen - need absolute scroll immediately!
+		_oldScrollX = SwordLogic::_scriptVars[SCROLL_OFFSET_X] = (uint32)offsetX;
+		_oldScrollY = SwordLogic::_scriptVars[SCROLL_OFFSET_Y] = (uint32)offsetY;
 		SwordLogic::_scriptVars[SCROLL_FLAG] = 1;
-	scrlToX = inRange(0, scrlToX, SwordLogic::_scriptVars[MAX_SCROLL_OFFSET_X]);
-	scrlToY = inRange(0, scrlToY, SwordLogic::_scriptVars[MAX_SCROLL_OFFSET_Y]);
-	if ((scrlToX != SwordLogic::_scriptVars[SCROLL_OFFSET_X]) || (scrlToY != SwordLogic::_scriptVars[SCROLL_OFFSET_Y])) {
 		_fullRefresh = true;
-		SwordLogic::_scriptVars[SCROLL_OFFSET_X] = scrlToX;
-		SwordLogic::_scriptVars[SCROLL_OFFSET_Y] = scrlToY;
-	} else
-		_fullRefresh = false;
-	if (SwordLogic::_scriptVars[SCROLL_FLAG] == 2) {
-		_oldScrollX = scrlToX;
-		_oldScrollY = scrlToY;
-		SwordLogic::_scriptVars[SCROLL_FLAG] = 1;
+	} else if (SwordLogic::_scriptVars[SCROLL_FLAG] == 1) {
+		_oldScrollX = SwordLogic::_scriptVars[SCROLL_OFFSET_X];
+		_oldScrollY = SwordLogic::_scriptVars[SCROLL_OFFSET_Y];
+		int32 distX = inRange(-MAX_SCROLL_DISTANCE, _oldScrollX - offsetX, MAX_SCROLL_DISTANCE);
+		int32 distY = inRange(-MAX_SCROLL_DISTANCE, _oldScrollY - offsetY, MAX_SCROLL_DISTANCE);
+		if ((distX != 0) || (distY != 0))
+			_fullRefresh = true;
+		SwordLogic::_scriptVars[SCROLL_OFFSET_X] -= distX;
+		SwordLogic::_scriptVars[SCROLL_OFFSET_Y] -= distY;
 	}
 }
 
