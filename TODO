@@ -114,7 +114,6 @@ SCUMM
 * Implement file related opcode stubs needed for Humongous games
 * Add support for graphics codecs used in 3DO versions of Humongous games
 * Proper handling of .tlk files for Humongous games
-* Implement the needed INSANE bits for Full Throttle action sequences
 * Add fully implementation of iMUSE Digital for The Dig, COMI and FT
 * Try to remove all use of MAD/Ogg code from scumm/sound.cpp:
   Ideally, only code in sound/ should access these libs. This will
@@ -164,7 +163,6 @@ Broken Sword 2
 
 SIMON
 =====
-* Add support for debugger interface
 * Add support for dictionary files in Amiga and Macintosh versons of
   Simon the Sorcerer 2
 * Add support for Protracker music format used in Amiga versions
