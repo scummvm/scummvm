@@ -212,11 +212,12 @@ struct CostumeData {
 };
 
 struct ActorWalkData {
-	int16 destx,desty;
+	int16 destx,desty;			// Final destination
 	byte destbox;
 	int16 destdir;
 	byte curbox;
-	int16 x,y,newx,newy;
+	int16 x,y;					// Current position
+	int16 newx,newy;			// Next position on our way to the destination
 	int32 XYFactor, YXFactor;
 	uint16 xfrac,yfrac;
 	int point3x, point3y;
