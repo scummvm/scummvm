@@ -301,6 +301,15 @@ protected:
 	}
 };
 
+static inline int clamped_add_16(int a, int b)
+{
+	int val = a + b;
+	if (val > 0xFFFF)
+		return 0xFFFF;
+	else
+		return val;
+}
+
 static int16 *mix_signed_mono_8(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
 																int fp_speed, const int16 *vol_tab, byte *s_end)
 {
@@ -314,9 +323,11 @@ static int16 *mix_signed_mono_8(int16 *data, uint * len_ptr, byte **s_ptr, uint3
 	do {
 		do {
 			result = interp.interpolate(fp_pos);
-	
-			*data++ += result;
-			*data++ += result;
+			
+			*data = clamped_add_16(*data, result);
+			*data++;
+			*data = clamped_add_16(*data, result);
+			*data++;
 	
 			fp_pos += fp_speed;
 			inc = fp_pos >> 16;
@@ -341,24 +352,6 @@ static int16 *mix_signed_mono_8(int16 *data, uint * len_ptr, byte **s_ptr, uint3
 static int16 *mix_unsigned_mono_8(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
 																	int fp_speed, const int16 *vol_tab, byte *s_end)
 {
-#if OLD
-	uint32 fp_pos = *fp_pos_ptr;
-	byte *s = *s_ptr;
-	uint len = *len_ptr;
-	do {
-		fp_pos += fp_speed;
-		*data++ += vol_tab[*s ^ 0x80];
-		*data++ += vol_tab[*s ^ 0x80];
-		s += fp_pos >> 16;
-		fp_pos &= 0x0000FFFF;
-	} while ((--len) && (s < s_end));
-
-	*fp_pos_ptr = fp_pos;
-	*s_ptr = s;
-	*len_ptr = len;
-
-	return data;
-#else
 	uint32 fp_pos = *fp_pos_ptr;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
@@ -370,8 +363,10 @@ static int16 *mix_unsigned_mono_8(int16 *data, uint * len_ptr, byte **s_ptr, uin
 		do {
 			result = interp.interpolate(fp_pos);
 	
-			*data++ += result;
-			*data++ += result;
+			*data = clamped_add_16(*data, result);
+			*data++;
+			*data = clamped_add_16(*data, result);
+			*data++;
 	
 			fp_pos += fp_speed;
 			inc = fp_pos >> 16;
@@ -392,7 +387,6 @@ static int16 *mix_unsigned_mono_8(int16 *data, uint * len_ptr, byte **s_ptr, uin
 	*len_ptr = len;
 
 	return data;
-#endif
 }
 static int16 *mix_signed_stereo_8(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
 																	int fp_speed, const int16 *vol_tab, byte *s_end)
@@ -404,24 +398,6 @@ static int16 *mix_signed_stereo_8(int16 *data, uint * len_ptr, byte **s_ptr, uin
 static int16 *mix_unsigned_stereo_8(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
 																		int fp_speed, const int16 *vol_tab, byte *s_end)
 {
-#if OLD
-	uint32 fp_pos = *fp_pos_ptr;
-	byte *s = *s_ptr;
-	uint len = *len_ptr;
-	do {
-		fp_pos += fp_speed;
-		*data++ += vol_tab[*s ^ 0x80];
-		*data++ += vol_tab[*(s + 1) ^ 0x80];
-		s += (fp_pos >> 16) << 1;
-		fp_pos &= 0x0000FFFF;
-	} while ((--len) && (s < s_end));
-
-	*fp_pos_ptr = fp_pos;
-	*s_ptr = s;
-	*len_ptr = len;
-
-	return data;
-#else
 	uint32 fp_pos = *fp_pos_ptr;
 	byte *s = *s_ptr;
 	uint len = *len_ptr;
@@ -432,9 +408,11 @@ static int16 *mix_unsigned_stereo_8(int16 *data, uint * len_ptr, byte **s_ptr, u
 
 	do {
 		do {
-			*data++ += left.interpolate(fp_pos);
-			*data++ += right.interpolate(fp_pos);
-	
+			*data = clamped_add_16(*data, left.interpolate(fp_pos));
+			*data++;
+			*data = clamped_add_16(*data, right.interpolate(fp_pos));
+			*data++;
+
 			fp_pos += fp_speed;
 			inc = (fp_pos >> 16) << 1;
 			s += inc;
@@ -457,7 +435,6 @@ static int16 *mix_unsigned_stereo_8(int16 *data, uint * len_ptr, byte **s_ptr, u
 	*len_ptr = len;
 
 	return data;
-#endif
 }
 static int16 *mix_signed_mono_16(int16 *data, uint * len_ptr, byte **s_ptr, uint32 *fp_pos_ptr,
 																 int fp_speed, const int16 *vol_tab, byte *s_end)
@@ -470,8 +447,12 @@ static int16 *mix_signed_mono_16(int16 *data, uint * len_ptr, byte **s_ptr, uint
 	do {
 		int16 sample = (((int16)(*s << 8) | *(s + 1)) * volume) / 32;
 		fp_pos += fp_speed;
-		*data++ += sample;
-		*data++ += sample;
+
+		*data = clamped_add_16(*data, sample);
+		*data++;
+		*data = clamped_add_16(*data, sample);
+		*data++;
+
 		s += (fp_pos >> 16) << 1;
 		fp_pos &= 0x0000FFFF;
 	} while ((--len) && (s < s_end));
@@ -499,8 +480,12 @@ static int16 *mix_signed_stereo_16(int16 *data, uint * len_ptr, byte **s_ptr, ui
 	uint len = *len_ptr;
 	do {
 		fp_pos += fp_speed;
-		*data++ += (((int16)(*(s) << 8) | *(s + 1)) * volume) / 32;
-		*data++ += (((int16)(*(s + 2) << 8) | *(s + 3)) * volume) / 32;
+
+		*data = clamped_add_16(*data, (((int16)(*(s) << 8) | *(s + 1)) * volume) / 32);
+		*data++;
+		*data = clamped_add_16(*data, (((int16)(*(s + 2) << 8) | *(s + 3)) * volume) / 32);
+		*data++;
+
 		s += (fp_pos >> 16) << 2;
 		fp_pos &= 0x0000FFFF;
 	} while ((--len) && (s < s_end));
