@@ -835,12 +835,13 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 			pop();
 			pop();
 			pop();
+			push(0);
 		} else {
 			pop();
 			pop();
 			pop();
+			push(0);
 		}
-		push(0);
 		break;
 	case 22:
 		spriteId = pop();
