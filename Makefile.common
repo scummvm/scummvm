@@ -98,4 +98,4 @@ DEPFILES = $(wildcard $(addsuffix /*.d,$(DEPDIRS)))
 
 distclean: clean
 	$(RM_REC) $(DEPDIRS)
-	$(RM) build.rules config.h
+	$(RM) build.rules config.h config.mak

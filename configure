@@ -30,8 +30,10 @@ _build_scumm=yes
 _build_simon=yes
 _build_sky=yes
 _need_memalign=no
-# binary names
+# more defaults
+_backend=sdl
 _ranlib=ranlib
+_sdlconfig=sdl-config
 
 cc_check() {
   echo >> "$TMPLOG"
@@ -126,6 +128,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
+  --backend=BACKEND      backend to build (sdl, x11, morphos, dc, gp32) [sdl]
 
 Optional Features:
   --disable-scumm        don't build the SCUMM engine
@@ -142,8 +145,8 @@ EOF
   fi
 done # for parm in ...
 
-for x in $@; do
-    case $x in
+for ac_option in $@; do
+    case "$ac_option" in
       --disable-scumm)		_build_scumm=no ;;
       --disable-simon)		_build_simon=no ;;
       --disable-sky)		_build_sky=no ;;
@@ -153,6 +156,10 @@ for x in $@; do
       --disable-vorbis)		_vorbis=no	;;
       --enable-mad)		_mad=yes	;;
       --disable-mad)		_mad=no		;;
+
+      --backend=*)
+        _backend=`echo $ac_option | cut -d '=' -f 2`
+	;;
     esac;
 done;
 
@@ -351,6 +358,9 @@ if test "$_build_sky" = yes ; then
 fi
 echo
 
+echo -n "Backend... "
+echo "$_backend"
+echo
 
 echo "Creating config.h"
 cat > config.h << EOF
@@ -394,5 +404,6 @@ cat > config.mak << EOF
 CXX := $CXX
 LIBS := $LIBS
 RANLIB := $_ranlib
+BACKEND := $_backend
 
 EOF
