@@ -86,7 +86,11 @@ This release has the following known bugs. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
 listed here, nor in the compatibility table on the website, please see below.
 
-        Sam and Max:
+       Indy 4 (Fate Of Atlantis):
+                - Keyboard fighting does not work. ScummVM now defaults to
+                  using mouse fighting.
+
+       Sam and Max:
                 - Subgames are not fully functional.
                 - Game may freeze if you look at the Dragon Heart, or trip
                   an alarm, at Bumpusville
@@ -97,10 +101,8 @@ listed here, nor in the compatibility table on the website, please see below.
                 - CD music and voices are not always syncronised
                 - Actor masks are not yet used - actors will always appear
                   'on top' of everything.
-                - Some voices may be skipped altogether
-                - Staff notes draw incorrectly
-                - Copy data files from CD to harddisk. Windows (XP at least)
-                  cannot correctly access data from a volume playing music.
+                - If you are having random crashes, this is a Windows bug.
+                  Try copying the data files from CD to your harddisk.
 
 
 Reporting Bugs:
