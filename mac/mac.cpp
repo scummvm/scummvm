@@ -92,10 +92,13 @@ public:
 	void update_cdrom();
 
 	// Add a new callback timer
-	void set_timer(int timer, int (*callback)(int))
-	{
-		// FIXME - TODO
-	}
+	void set_timer(int timer, int (*callback)(int))		{ /* FIXME - TODO */ }
+
+	// Mutex handling
+	void *create_mutex(void)			{ return NULL; /* FIXME - TODO */ }
+	void lock_mutex(void *mutex)		{ /* FIXME - TODO */ }
+	void unlock_mutex(void *mutex)		{ /* FIXME - TODO */ }
+	void delete_mutex(void *mutex)		{ /* FIXME - TODO */ }
 
 	// Quit
 	void quit();
@@ -1199,7 +1202,8 @@ bool OSystem_MAC::poll_event(Event *event)
 					
 					if(wref != FrontWindow())
 					{
-						ActivateWindow(wref, true);
+// FIXME - seems some versions of the CarbonLib stub are missing ActivateWindow
+//						ActivateWindow(wref, true);
 						BringToFront(wref);
 					}
 					return true;
@@ -1274,7 +1278,8 @@ bool OSystem_MAC::poll_event(Event *event)
 						NULL, &theWin);
 					if(theWin != FrontWindow())
 					{
-						ActivateWindow(theWin, true);
+// FIXME - seems some versions of the CarbonLib stub are missing ActivateWindow
+//						ActivateWindow(theWin, true);
 						BringToFront(theWin);
 					}
 					
