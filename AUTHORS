@@ -1,17 +1,18 @@
 The ScummVM team:
        James Brown           - Lead developer
        Max Horn              - Lead developer
-       Torbjorn Andersson    - Engine: SCUMM, Broken Sword II
+       Torbjorn Andersson    - Engine: SCUMM, Broken Sword II, SAGA
        David Eriksson        - Engine: Flight of the Amazon Queen
        Robert Goeffringmann  - Engine: Beneath a Steel Sky, Broken Sword I
-       Jonathan Gray         - Engine: SCUMM, Broken Sword II
-       Travis Howell         - Engine: SCUMM, Simon the Sorcerer
+       Jonathan Gray         - Engine: SCUMM, HE, Broken Sword II
+       Travis Howell         - Engine: SCUMM, HE, Simon the Sorcerer
        Oliver Kiehl          - Engine: Beneath a Steel Sky, Simon
-       Pawel Kolodziejski    - Engine: SCUMM (Codecs, iMUSE, Smush, etc.)
-       Gregory Montoir       - Engine: Flight of the Amazon Queen
+       Pawel Kolodziejski    - Engine: SCUMM (Codecs, iMUSE, Smush, etc)
+       Gregory Montoir       - Engine: Flight of the Amazon Queen, HE
        Joost Peters          - Engine: Beneath a Steel Sky, Flight of the
                                Amazon Queen
-       Eugene Sandulenko     - Engine: SCUMM (FT INSANE, bugfixes)
+       Eugene Sandulenko     - Engine: SCUMM (FT INSANE), HE, SAGA
+       Andrew Kurushin       - Engine: SAGA
        Chris Apers           - Port: PalmOS
        Nicolas Bacca         - Port: PocketPC/WinCE
        Marcus Comstedt       - Port: Dreamcast
