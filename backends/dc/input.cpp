@@ -140,6 +140,12 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
 bool OSystem_Dreamcast::poll_event(Event *event)
 {
   unsigned int t = Timer();
+
+  if(_timer_active && ((int)(t-_timer_next_expiry))>=0) {
+    _timer_duration = _timer_callback(_timer_duration);
+    _timer_next_expiry = t+USEC_TO_TIMER(1000*_timer_duration);
+  }
+
   if(((int)(t-_devpoll))<0)
     return false;
   _devpoll += USEC_TO_TIMER(17000);

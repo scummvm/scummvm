@@ -122,10 +122,6 @@ void *OSystem_Dreamcast::create_thread(ThreadProc *proc, void *param) {
   warning("Creating a thread! (not supported.)\n");
 }
 
-void OSystem_Dreamcast::set_timer(int timer, int (*callback)(int))
-{
-  warning("Setting a timer! (not supported.)\n");  
-}
 
 /* Mutex handling */
 void *OSystem_Dreamcast::create_mutex(void)

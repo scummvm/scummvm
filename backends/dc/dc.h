@@ -104,6 +104,10 @@ class OSystem_Dreamcast : public OSystem {
   int _screen_buffer, _overlay_buffer, _mouse_buffer;
   float _overlay_fade;
 
+  uint32 _timer_duration, _timer_next_expiry;
+  bool _timer_active;
+  int (*_timer_callback) (int);
+
   unsigned char *screen;
   unsigned short *mouse;
   unsigned short *overlay;

@@ -53,6 +53,18 @@ void OSystem_Dreamcast::delay_msecs(uint msecs)
   get_msecs();
 }
 
+void OSystem_Dreamcast::set_timer(int timer, int (*callback)(int))
+{
+  if (callback != NULL) {
+    _timer_duration = timer;
+    _timer_next_expiry = Timer() + USEC_TO_TIMER(1000*timer);
+    _timer_callback = callback;
+    _timer_active = true;
+  } else {
+    _timer_active = false;
+  }
+}
+
 
 /*
 void waitForTimer(Scumm *s, int time)
