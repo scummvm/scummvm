@@ -437,10 +437,10 @@ void OSystem_WINCE3::load_gfx_mode() {
 	}
 
 	// Check if the scaler can be accepted, if not get back to normal scaler
-	if (_scaleFactor && (_scaleFactor * _screenWidth > GetSystemMetrics(SM_CXSCREEN) &&
+	if (_scaleFactor && ((_scaleFactor * _screenWidth > GetSystemMetrics(SM_CXSCREEN) &&
 						  _scaleFactor * _screenWidth > GetSystemMetrics(SM_CYSCREEN))
 					 || (_scaleFactor * _screenHeight > GetSystemMetrics(SM_CXSCREEN) &&
-						_scaleFactor * _screenHeight > GetSystemMetrics(SM_CYSCREEN))) {
+						_scaleFactor * _screenHeight > GetSystemMetrics(SM_CYSCREEN)))) {
 				_scaleFactor = 1;
 				_scaler_proc = Normal1x;
 	}
