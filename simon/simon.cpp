@@ -5310,6 +5310,14 @@ void SimonState::loadMusic (uint music) {
 			midi.setLoop (true); // Must do this BEFORE loading music. (GMF may have its own override.)
 
 			if (_game & GF_WIN) {	
+				// FIXME: The very last music resource, a cymbal crash for when the
+				// two golems... er... gargoyles crash into each other, should NOT
+				// be looped like the other music tracks. In simon1dos the GMF
+				// resource includes a loop override that acomplishes this, but
+				// there seems to be nothing for this in the SMF resources.
+				if (music == 35)
+					midi.setLoop (false);
+
 				_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
 				midi.loadMultipleSMF (_game_file);
 			} else if (_game & GF_TALKIE) {	
