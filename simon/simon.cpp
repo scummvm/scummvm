@@ -4346,7 +4346,7 @@ void SimonState::go()
 
 	_last_music_played = (uint) - 1;
 	_vga_base_delay = 1;
-	_vk_t_toggle = true;
+	_vk_t_toggle = false;
 
 	prop.show_cursor = true;
 	_system->property(OSystem::PROP_SHOW_DEFAULT_CURSOR, &prop);
