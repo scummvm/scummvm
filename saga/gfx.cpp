@@ -254,10 +254,10 @@ GFX_BufToSurface(R_SURFACE * ds,
 
 	int row;
 
-	int s_x1, s_y1, s_x2, s_y2;
+	Common::Rect s;
 	int d_x, d_y;
 
-	int clip_x1, clip_y1, clip_x2, clip_y2;
+	Common::Rect clip;
 
 	int dst_off_x, dst_off_y;
 	int src_off_x, src_off_y;
@@ -269,20 +269,17 @@ GFX_BufToSurface(R_SURFACE * ds,
 
 		src_rect->clip(src_w - 1, src_h - 1);
 
-		s_x1 = src_rect->left;
-		s_y1 = src_rect->top;
-		s_x2 = src_rect->right;
-		s_y2 = src_rect->bottom;
+		s = *src_rect;
 
-		if ((s_x1 >= s_x2) || (s_y1 >= s_y2)) {
+		if ((s.left >= s.right) || (s.top >= s.bottom)) {
 			/* Empty or negative region */
 			return R_FAILURE;
 		}
 	} else {
-		s_x1 = 0;
-		s_y1 = 0;
-		s_x2 = src_w - 1;
-		s_y2 = src_h - 1;
+		s.left = 0;
+		s.top = 0;
+		s.right = src_w - 1;
+		s.bottom = src_h - 1;
 	}
 
 	/* Get destination origin and clip rectangle
@@ -295,78 +292,75 @@ GFX_BufToSurface(R_SURFACE * ds,
 		d_y = 0;
 	}
 
-	clip_x1 = ds->clip_rect.left;
-	clip_y1 = ds->clip_rect.top;
-	clip_x2 = ds->clip_rect.right;
-	clip_y2 = ds->clip_rect.bottom;
+	clip = ds->clip_rect;
 
-	if (clip_x1 == clip_x2) {
-		clip_x1 = 0;
-		clip_x2 = ds->buf_w - 1;
+	if (clip.left == clip.right) {
+		clip.left = 0;
+		clip.right = ds->buf_w - 1;
 	}
 
-	if (clip_y1 == clip_y2) {
-		clip_y1 = 0;
-		clip_y2 = ds->buf_h - 1;
+	if (clip.top == clip.bottom) {
+		clip.top = 0;
+		clip.bottom = ds->buf_h - 1;
 	}
 
 	/* Clip source rectangle to destination surface
 	 * \*------------------------------------------------------------- */
 	dst_off_x = d_x;
 	dst_off_y = d_y;
-	src_off_x = s_x1;
-	src_off_y = s_y1;
-	src_draw_w = (s_x2 - s_x1) + 1;
-	src_draw_h = (s_y2 - s_y1) + 1;
+	src_off_x = s.left;
+	src_off_y = s.top;
+	src_draw_w = (s.right - s.left) + 1;
+	src_draw_h = (s.bottom - s.top) + 1;
 
 	/* Clip to left edge */
 
-	if (d_x < clip_x1) {
+	if (d_x < clip.left) {
 		if (d_x <= (-src_draw_w)) {
 			/* dst rect completely off left edge */
 			return R_SUCCESS;
 		}
 
-		src_off_x += (clip_x1 - d_x);
-		src_draw_w -= (clip_x1 - d_x);
+		src_off_x += (clip.left - d_x);
+		src_draw_w -= (clip.left - d_x);
 
-		dst_off_x = clip_x1;
+		dst_off_x = clip.left;
 	}
 
 	/* Clip to top edge */
 
-	if (d_y < clip_y1) {
+	if (d_y < clip.top) {
 		if (d_y >= (-src_draw_h)) {
 			/* dst rect completely off top edge */
 			return R_SUCCESS;
 		}
 
-		src_off_y += (clip_y1 - d_y);
-		src_draw_h -= (clip_y1 - d_y);
+		src_off_y += (clip.top - d_y);
+		src_draw_h -= (clip.top - d_y);
 
-		dst_off_y = clip_y1;
+		dst_off_y = clip.top;
 	}
 
 	/* Clip to right edge */
 
-	if (d_x > clip_x2) {
+	if (d_x > clip.right) {
 		/* dst rect completely off right edge */
 		return R_SUCCESS;
 	}
 
-	if ((d_x + src_draw_w - 1) > clip_x2) {
-		src_draw_w -= (clip_x2 - (d_x + src_draw_w - 1));
+	if ((d_x + src_draw_w - 1) > clip.right) {
+		src_draw_w -= (clip.right - (d_x + src_draw_w - 1));
 	}
 
 	/* Clip to bottom edge */
 
-	if (d_x > clip_y2) {
+	if (d_x > clip.bottom) {
 		/* dst rect completely off bottom edge */
 		return R_SUCCESS;
 	}
 
-	if ((d_y + src_draw_h - 1) > clip_y2) {
-		src_draw_h -= (clip_y2 - (d_y + src_draw_h - 1));
+	if ((d_y + src_draw_h - 1) > clip.bottom) {
+		src_draw_h -= (clip.bottom - (d_y + src_draw_h - 1));
 	}
 
 	/* Transfer buffer data to surface
@@ -400,10 +394,10 @@ GFX_BufToBuffer(uchar * dst_buf,
 
 	int row;
 
-	int s_x1, s_y1, s_x2, s_y2;
+	Common::Rect s;
 	int d_x, d_y;
 
-	int clip_x1, clip_y1, clip_x2, clip_y2;
+	Common::Rect clip;
 
 	int dst_off_x, dst_off_y;
 	int src_off_x, src_off_y;
@@ -415,20 +409,20 @@ GFX_BufToBuffer(uchar * dst_buf,
 
 		src_rect->clip(src_w - 1, src_h - 1);
 
-		s_x1 = src_rect->left;
-		s_y1 = src_rect->top;
-		s_x2 = src_rect->right;
-		s_y2 = src_rect->bottom;
+		s.left = src_rect->left;
+		s.top = src_rect->top;
+		s.right = src_rect->right;
+		s.bottom = src_rect->bottom;
 
-		if ((s_x1 >= s_x2) || (s_y1 >= s_y2)) {
+		if ((s.left >= s.right) || (s.top >= s.bottom)) {
 			/* Empty or negative region */
 			return R_FAILURE;
 		}
 	} else {
-		s_x1 = 0;
-		s_y1 = 0;
-		s_x2 = src_w - 1;
-		s_y2 = src_h - 1;
+		s.left = 0;
+		s.top = 0;
+		s.right = src_w - 1;
+		s.bottom = src_h - 1;
 	}
 
 	/* Get destination origin and clip rectangle
@@ -441,68 +435,68 @@ GFX_BufToBuffer(uchar * dst_buf,
 		d_y = 0;
 	}
 
-	clip_x1 = 0;
-	clip_y1 = 0;
-	clip_x2 = dst_w - 1;
-	clip_y2 = dst_h - 1;
+	clip.left = 0;
+	clip.top = 0;
+	clip.right = dst_w - 1;
+	clip.bottom = dst_h - 1;
 
 	/* Clip source rectangle to destination surface
 	 * \*------------------------------------------------------------- */
 	dst_off_x = d_x;
 	dst_off_y = d_y;
-	src_off_x = s_x1;
-	src_off_y = s_y1;
-	src_draw_w = (s_x2 - s_x1) + 1;
-	src_draw_h = (s_y2 - s_y1) + 1;
+	src_off_x = s.left;
+	src_off_y = s.top;
+	src_draw_w = (s.right - s.left) + 1;
+	src_draw_h = (s.bottom - s.top) + 1;
 
 	/* Clip to left edge */
 
-	if (d_x < clip_x1) {
+	if (d_x < clip.left) {
 		if (d_x <= (-src_draw_w)) {
 			/* dst rect completely off left edge */
 			return R_SUCCESS;
 		}
 
-		src_off_x += (clip_x1 - d_x);
-		src_draw_w -= (clip_x1 - d_x);
+		src_off_x += (clip.left - d_x);
+		src_draw_w -= (clip.left - d_x);
 
-		dst_off_x = clip_x1;
+		dst_off_x = clip.left;
 	}
 
 	/* Clip to top edge */
 
-	if (d_y < clip_y1) {
+	if (d_y < clip.top) {
 		if (d_y >= (-src_draw_h)) {
 			/* dst rect completely off top edge */
 			return R_SUCCESS;
 		}
 
-		src_off_y += (clip_y1 - d_y);
-		src_draw_h -= (clip_y1 - d_y);
+		src_off_y += (clip.top - d_y);
+		src_draw_h -= (clip.top - d_y);
 
-		dst_off_y = clip_y1;
+		dst_off_y = clip.top;
 	}
 
 	/* Clip to right edge */
 
-	if (d_x > clip_x2) {
+	if (d_x > clip.right) {
 		/* dst rect completely off right edge */
 		return R_SUCCESS;
 	}
 
-	if ((d_x + src_draw_w - 1) > clip_x2) {
-		src_draw_w -= (clip_x2 - (d_x + src_draw_w - 1));
+	if ((d_x + src_draw_w - 1) > clip.right) {
+		src_draw_w -= (clip.right - (d_x + src_draw_w - 1));
 	}
 
 	/* Clip to bottom edge */
 
-	if (d_x > clip_y2) {
+	if (d_x > clip.bottom) {
 		/* dst rect completely off bottom edge */
 		return R_SUCCESS;
 	}
 
-	if ((d_y + src_draw_h - 1) > clip_y2) {
-		src_draw_h -= (clip_y2 - (d_y + src_draw_h - 1));
+	if ((d_y + src_draw_h - 1) > clip.bottom) {
+		src_draw_h -= (clip.bottom - (d_y + src_draw_h - 1));
 	}
 
 	/* Transfer buffer data to surface
@@ -711,10 +705,10 @@ int GFX_DrawPolyLine(R_SURFACE * ds, R_POINT * pts, int pt_ct, int draw_color)
 int GFX_GetClipInfo(R_CLIPINFO * clipinfo)
 {
 
-	int s_x1, s_y1, s_x2, s_y2;
+	Common::Rect s;
 	int d_x, d_y;
 
-	int clip_x1, clip_y1, clip_x2, clip_y2;
+	Common::Rect clip;
 
 	if (clipinfo == NULL) {
 		return R_FAILURE;
@@ -728,30 +722,24 @@ int GFX_GetClipInfo(R_CLIPINFO * clipinfo)
 		d_y = 0;
 	}
 
-	s_x1 = clipinfo->src_rect->left;
-	s_y1 = clipinfo->src_rect->top;
-	s_x2 = clipinfo->src_rect->right;
-	s_y2 = clipinfo->src_rect->bottom;
+	s = *clipinfo->src_rect;
 
-	clip_x1 = clipinfo->dst_rect->left;
-	clip_y1 = clipinfo->dst_rect->top;
-	clip_x2 = clipinfo->dst_rect->right;
-	clip_y2 = clipinfo->dst_rect->bottom;
+	clip = *clipinfo->dst_rect;
 
 	/* Clip source rectangle to destination surface
 	 * \*------------------------------------------------------------- */
 	clipinfo->dst_draw_x = d_x;
 	clipinfo->dst_draw_y = d_y;
-	clipinfo->src_draw_x = s_x1;
-	clipinfo->src_draw_y = s_y1;
-	clipinfo->draw_w = (s_x2 - s_x1) + 1;
-	clipinfo->draw_h = (s_y2 - s_y1) + 1;
+	clipinfo->src_draw_x = s.left;
+	clipinfo->src_draw_y = s.top;
+	clipinfo->draw_w = (s.right - s.left) + 1;
+	clipinfo->draw_h = (s.bottom - s.top) + 1;
 
 	clipinfo->nodraw = 0;
 
 	/* Clip to left edge */
 
-	if (d_x < clip_x1) {
+	if (d_x < clip.left) {
 		if (d_x <= -(clipinfo->draw_w)) {
 			/* dst rect completely off left edge */
 			clipinfo->nodraw = 1;
@@ -759,15 +747,15 @@ int GFX_GetClipInfo(R_CLIPINFO * clipinfo)
 			return R_SUCCESS;
 		}
 
-		clipinfo->src_draw_x += (clip_x1 - d_x);
-		clipinfo->draw_w -= (clip_x1 - d_x);
+		clipinfo->src_draw_x += (clip.left - d_x);
+		clipinfo->draw_w -= (clip.left - d_x);
 
-		clipinfo->dst_draw_x = clip_x1;
+		clipinfo->dst_draw_x = clip.left;
 	}
 
 	/* Clip to top edge */
 
-	if (d_y < clip_y1) {
+	if (d_y < clip.top) {
 		if (d_y <= -(clipinfo->draw_h)) {
 			/* dst rect completely off top edge */
 			clipinfo->nodraw = 1;
@@ -775,36 +763,36 @@ int GFX_GetClipInfo(R_CLIPINFO * clipinfo)
 			return R_SUCCESS;
 		}
 
-		clipinfo->src_draw_y += (clip_y1 - d_y);
-		clipinfo->draw_h -= (clip_y1 - d_y);
+		clipinfo->src_draw_y += (clip.top - d_y);
+		clipinfo->draw_h -= (clip.top - d_y);
 
-		clipinfo->dst_draw_y = clip_y1;
+		clipinfo->dst_draw_y = clip.top;
 	}
 
 	/* Clip to right edge */
 
-	if (d_x > clip_x2) {
+	if (d_x > clip.right) {
 		/* dst rect completely off right edge */
 		clipinfo->nodraw = 1;
 
 		return R_SUCCESS;
 	}
 
-	if ((d_x + clipinfo->draw_w - 1) > clip_x2) {
-		clipinfo->draw_w += (clip_x2 - (d_x + clipinfo->draw_w - 1));
+	if ((d_x + clipinfo->draw_w - 1) > clip.right) {
+		clipinfo->draw_w += (clip.right - (d_x + clipinfo->draw_w - 1));
 	}
 
 	/* Clip to bottom edge */
 
-	if (d_y > clip_y2) {
+	if (d_y > clip.bottom) {
 		/* dst rect completely off bottom edge */
 		clipinfo->nodraw = 1;
 
 		return R_SUCCESS;
 	}
 
-	if ((d_y + clipinfo->draw_h - 1) > clip_y2) {
-		clipinfo->draw_h += (clip_y2 - (d_y + clipinfo->draw_h - 1));
+	if ((d_y + clipinfo->draw_h - 1) > clip.bottom) {
+		clipinfo->draw_h += (clip.bottom - (d_y + clipinfo->draw_h - 1));
 	}
 
 	return R_SUCCESS;
@@ -819,17 +807,14 @@ GFX_ClipLine(R_SURFACE * ds,
 	const R_POINT *n_p1;
 	const R_POINT *n_p2;
 
-	int clip_x1, clip_y1, clip_x2, clip_y2;
+	Common::Rect clip;
 	int left, top, right, bottom;
 	int dx, dy;
 
 	float m;
 	int y_icpt_l, y_icpt_r;
 
-	clip_x1 = ds->clip_rect.left;
-	clip_y1 = ds->clip_rect.top;
-	clip_x2 = ds->clip_rect.right;
-	clip_y2 = ds->clip_rect.bottom;
+	clip = ds->clip_rect;
 
 	/* Normalize points by x */
 	if (src_p1->x < src_p2->x) {
@@ -870,19 +855,19 @@ GFX_ClipLine(R_SURFACE * ds,
 		dst_p1->y = y_icpt_l;
 	}
 
-	if (bottom > clip_x2) {
+	if (bottom > clip.right) {
 
-		if (left > clip_x2) {
+		if (left > clip.right) {
 			/* Line completely off right edge */
 			return -1;
 		}
 
 		/* Clip to right edge */
 		m = ((float)top - bottom) / (right - left);
-		y_icpt_r = (int)(top - ((clip_x2 - left) * m) + 0.5f);
+		y_icpt_r = (int)(top - ((clip.right - left) * m) + 0.5f);
 
 		dst_p1->y = y_icpt_r;
-		dst_p2->x = clip_x2;
+		dst_p2->x = clip.right;
 	}
 
 	return 1;
