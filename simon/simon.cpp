@@ -2647,7 +2647,8 @@ void SimonState::timer_proc1()
 {
 	_timer_4++;
 
-	if ((_game & GAME_SIMON2) && (_lock_word & 0x80E9 || _lock_word & 2)) {
+	if (_game & GAME_SIMON2) (
+		if (_lock_word & 0x80E9 || _lock_word & 2)
 		return;
 	} else if (_lock_word & 0xC0E9 || _lock_word & 2)
 		return;
