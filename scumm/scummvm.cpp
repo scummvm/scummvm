@@ -2501,6 +2501,18 @@ void ScummEngine::restart() {
 	for (i = 0; i < _numGlobalObjects; i++)
 		clearOwnerOf(i);
 
+	// Reallocate and Reinitialize actors
+	Actor::initActorClass(this);
+	_actors = new Actor[_numActors];
+	for (i = 0; i < _numActors; i++) {
+		_actors[i].number = i;
+		_actors[i].initActor(1);
+	
+		// this is from IDB
+		if (_version == 1)
+			_actors[i].setActorCostume(i);
+	}
+
 	// Reinit things
 	allocateArrays();                   // Reallocate arrays
 	readIndexFile();                    // Reread index (reset objectstate etc)
