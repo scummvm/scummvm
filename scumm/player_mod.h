@@ -60,7 +60,7 @@ private:
 		uint8 vol;
 		int8 pan;
 		uint16 freq;
-		const byte *ptr;
+		byte *ptr;
 		RateConverter *converter;
 		AudioInputStream *input;
 	} _channels[MOD_MAXCHANS];
