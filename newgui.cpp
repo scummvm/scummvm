@@ -29,7 +29,6 @@
  * TODO list
  * - implement the missing / incomplete dialogs
  * - add more widgets
- * - add support for right/center aligned text
  * - allow multi line (l/c/r aligned) text via StaticTextWidget ?
  * - add "close" widget to all dialogs (with a flag to turn it off) ?
  * - make dialogs "moveable" ?
@@ -438,22 +437,30 @@ void NewGui::drawChar(const char str, int xx, int yy)
 
 }
 
-void NewGui::drawString(const char *str, int x, int y, int w, byte color, bool center)
+void NewGui::drawString(const char *str, int x, int y, int w, byte color, int align)
 {
 	if (_s->_gameId) {						/* If a game is active.. */
 		StringTab *st = &_s->string[5];
 		st->charset = 1;
-		st->center = center;
+		st->center = (align == kTextAlignCenter);
 		st->color = color;
-		st->xpos = center ? x+w/2 : x;
+
+		if (align == kTextAlignLeft)
+			st->xpos = x;
+		else if (align == kTextAlignCenter)
+			st->xpos = x + w/2;
+		else if (align == kTextAlignRight)
+			st->xpos = x + w - _s->charset.getStringWidth(0, (byte *)str, 0);
+
 		st->ypos = y;
 		st->right = x + w;
 	
 		_s->_messagePtr = (byte *)str;
 		_s->drawString(5);
 	} else {
-		// FIXME - support center, use nicer custom font. Ultimately, we might
-		// want to *always* draw our messages this way.
+		// FIXME - support center/right align, use nicer custom font.
+		// Ultimately, we might want to *always* draw our messages this way,
+		// but only if we have a nice font.
 		uint len = strlen(str);
 		for (uint letter = 0; letter < len; letter++)
 			drawChar(str[letter], x + (letter * 8), y);

@@ -118,15 +118,15 @@ protected:
 class StaticTextWidget : public Widget {
 protected:
 	char	*_label;
-	bool	_centred;
+	int		_align;
 public:
-	StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const char *text, bool centred = false);
+	StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const char *text, int align);
 	~StaticTextWidget();
 	void setValue(int value);
 	void setLabel(const char *label);
 	const char *getLabel() const	{ return _label; }
-	void setCentred(bool centred)	{ _centred = centred; }
-	bool isCentred() const			{ return _centred; }
+	void setAlign(int align)		{ _align = align; }
+	int getAlign() const			{ return _align; }
 
 protected:
 	void drawWidget(bool hilite);

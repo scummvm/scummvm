@@ -31,6 +31,12 @@ class Scumm;
 #define hline(x, y, x2, color) line(x, y, x2, y, color);
 #define vline(x, y, y2, color) line(x, y, x, y2, color);
 
+enum {
+	kTextAlignLeft,
+	kTextAlignCenter,
+	kTextAlignRight,
+};
+
 // Extremly simple stack class, doesn't even do any error checking (for now)
 class DialogStack {
 protected:
@@ -124,7 +130,7 @@ public:
 	void frameRect(int x, int y, int w, int h, byte color);
 	void addDirtyRect(int x, int y, int w, int h);
 	void drawChar(const char c, int x, int y);
-	void drawString(const char *str, int x, int y, int w, byte color, bool center = false);
+	void drawString(const char *str, int x, int y, int w, byte color, int align = kTextAlignLeft);
 
 	void drawBitmap(uint32 bitmap[8], int x, int y, byte color);
 	void blitTo(byte buffer[320*200], int x, int y, int w, int h);

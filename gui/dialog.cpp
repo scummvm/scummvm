@@ -244,7 +244,7 @@ void Dialog::addResText(int x, int y, int w, int h, int resID)
 	const char *str = _gui->queryResString(resID);
 	if (!str)
 		str = "Dummy!";
-	new StaticTextWidget(this, x, y, w, h, str);
+	new StaticTextWidget(this, x, y, w, h, str, kTextAlignLeft);
 }
 
 void Dialog::addButton(int x, int y, int w, int h, const char *label, uint32 cmd, char hotkey)
@@ -385,11 +385,11 @@ AboutDialog::AboutDialog(NewGui *gui)
 	: Dialog (gui, 30, 10, 260, 134)
 {
 	addButton(110, 110, 40, 16, CUSTOM_STRING(23), kCloseCmd, 'C');	// Close dialog - FIXME
-	new StaticTextWidget(this, 10, 17, 240, 16, "Build " SCUMMVM_VERSION " (" SCUMMVM_CVS ")", true);
-	new StaticTextWidget(this, 10, 37, 240, 16, "ScummVM http://scummvm.sourceforge.net", true);
-	new StaticTextWidget(this, 10, 67, 240, 16, "All games (c) LucasArts", true);
-	new StaticTextWidget(this, 10, 84, 240, 16, "Except", true);
-	new StaticTextWidget(this, 10, 97, 240, 16, "Simon the Sorcerer (c) Adventuresoft", true);
+	new StaticTextWidget(this, 10, 17, 240, 16, "Build " SCUMMVM_VERSION " (" SCUMMVM_CVS ")", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 37, 240, 16, "ScummVM http://scummvm.sourceforge.net", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 67, 240, 16, "All games (c) LucasArts", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 84, 240, 16, "Except", kTextAlignCenter);
+	new StaticTextWidget(this, 10, 97, 240, 16, "Simon the Sorcerer (c) Adventuresoft", kTextAlignCenter);
 }
 
 PauseDialog::PauseDialog(NewGui *gui)
@@ -405,21 +405,25 @@ SoundDialog::SoundDialog(NewGui *gui)
 	// set up dialog
 	addButton(70, 90, 54, 16, "OK", kOKCmd, 'O');	// Confirm dialog
 	addButton(136, 90, 54, 16, "Cancel", kCancelCmd, 'C');	// Abort dialog
-	new StaticTextWidget(this, 10, 17, 140, 16, "Master volume:", false);
-	new StaticTextWidget(this, 10, 37, 140, 16, "Music volume:", false);
-	new StaticTextWidget(this, 10, 57, 140, 16, "SFX volume:", false);
+	new StaticTextWidget(this, 20, 17, 85, 16, "Master volume:", kTextAlignRight);
+	new StaticTextWidget(this, 20, 37, 85, 16, "Music volume:", kTextAlignRight);
+	new StaticTextWidget(this, 20, 57, 85, 16, "SFX volume:", kTextAlignRight);
 
-	masterVolumeSlider = new SliderWidget(this, 100, 13, 80, 16, "Volume1", kMasterVolumeChanged);
-	musicVolumeSlider = new SliderWidget(this, 100, 33, 80, 16, "Volume2", kMusicVolumeChanged);
-	sfxVolumeSlider = new SliderWidget(this, 100, 53, 80, 16, "Volume3", kSfxVolumeChanged);
+	masterVolumeSlider = new SliderWidget(this, 110, 13, 80, 16, "Volume1", kMasterVolumeChanged);
+	musicVolumeSlider = new SliderWidget(this, 110, 33, 80, 16, "Volume2", kMusicVolumeChanged);
+	sfxVolumeSlider = new SliderWidget(this, 110, 53, 80, 16, "Volume3", kSfxVolumeChanged);
 
 	masterVolumeSlider->setMinValue(0);	masterVolumeSlider->setMaxValue(255);
 	musicVolumeSlider->setMinValue(0);	musicVolumeSlider->setMaxValue(255);
 	sfxVolumeSlider->setMinValue(0);	sfxVolumeSlider->setMaxValue(255);
 
-	masterVolumeLabel = new StaticTextWidget(this, 190, 16, 60, 16, "Volume1");
-	musicVolumeLabel = new StaticTextWidget(this, 190, 36, 60, 16, "Volume2");
-	sfxVolumeLabel = new StaticTextWidget(this, 190, 56, 60, 16, "Volume3");
+	masterVolumeLabel = new StaticTextWidget(this, 195, 17, 60, 16, "Volume1", kTextAlignLeft);
+	musicVolumeLabel = new StaticTextWidget(this, 195, 37, 60, 16, "Volume2", kTextAlignLeft);
+	sfxVolumeLabel = new StaticTextWidget(this, 195, 57, 60, 16, "Volume3", kTextAlignLeft);
+	
+	masterVolumeLabel->setFlags(WIDGET_CLEARBG);
+	musicVolumeLabel->setFlags(WIDGET_CLEARBG);
+	sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 }
 
 void SoundDialog::open()
@@ -449,14 +453,17 @@ void SoundDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 	case kMasterVolumeChanged:
 		_soundVolumeMaster = masterVolumeSlider->getValue();
 		masterVolumeLabel->setValue(_soundVolumeMaster);
+		masterVolumeLabel->draw();
 		break;
 	case kMusicVolumeChanged:
 		_soundVolumeMusic = musicVolumeSlider->getValue();
 		musicVolumeLabel->setValue(_soundVolumeMusic);
+		musicVolumeLabel->draw();
 		break;
 	case kSfxVolumeChanged:
 		_soundVolumeSfx = sfxVolumeSlider->getValue();
 		sfxVolumeLabel->setValue(_soundVolumeSfx);
+		sfxVolumeLabel->draw();
 		break;
 	case kOKCmd: {
 		Scumm	*scumm = _gui->getScumm();
@@ -482,7 +489,4 @@ void SoundDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}
-
-	draw();
-
 }

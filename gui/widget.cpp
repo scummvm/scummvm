@@ -76,8 +76,8 @@ void Widget::draw()
 #pragma mark -
 
 
-StaticTextWidget::StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const char *text, bool centred)
-	: Widget (boss, x, y, w, h), _label(0), _centred(centred)
+StaticTextWidget::StaticTextWidget(Dialog *boss, int x, int y, int w, int h, const char *text, int align)
+	: Widget (boss, x, y, w, h), _label(0), _align(align)
 {
 	_type = kStaticTextWidget;
 	setLabel(text);
@@ -117,7 +117,7 @@ void StaticTextWidget::setValue(int value)
 void StaticTextWidget::drawWidget(bool hilite)
 {
 	NewGui *gui = _boss->getGui();
-	gui->drawString(_label, _x, _y, _w, hilite ? gui->_textcolorhi : gui->_textcolor, _centred);
+	gui->drawString(_label, _x, _y, _w, hilite ? gui->_textcolorhi : gui->_textcolor, _align);
 }
 
 
@@ -125,13 +125,11 @@ void StaticTextWidget::drawWidget(bool hilite)
 
 
 ButtonWidget::ButtonWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd, uint8 hotkey)
-	: StaticTextWidget(boss, x, y, w, h, label), CommandSender(boss), _cmd(cmd), _hotkey(hotkey)
+	: StaticTextWidget(boss, x, y, w, h, label, kTextAlignCenter), CommandSender(boss), _cmd(cmd), _hotkey(hotkey)
 {
 	assert(label);
 	_flags = WIDGET_ENABLED | WIDGET_BORDER | WIDGET_CLEARBG ;
 	_type = kButtonWidget;
-	
-	setCentred(true);
 }
 
 ButtonWidget::~ButtonWidget()
