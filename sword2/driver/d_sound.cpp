@@ -691,6 +691,9 @@ uint32 Sound::preFetchCompSpeech(uint32 speechId, uint16 **buf) {
 
 	AudioStream *input = getAudioStream(&fp, "speech", _vm->_resman->whichCd(), speechId, &numSamples);
 
+	if (!input)
+		return 0;
+
 	*buf = NULL;
 
 	// Decompress data into speech buffer.
