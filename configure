@@ -286,7 +286,7 @@ for ac_option in $@; do
 	DEBFLAGS=""
         ;;
       --enable-release)
-	DEBFLAGS=""
+	DEBFLAGS="-O2"
         ;;
       --with-sdl-prefix=*)
 	arg=`echo $ac_option | cut -d '=' -f 2`
