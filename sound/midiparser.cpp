@@ -248,12 +248,18 @@ void MidiParser::allNotesOff() {
 		}
 	}
 
+	// Turn off all hanging notes
+	for (i = 0; i < ARRAYSIZE(_hanging_notes); i++) {
+		if (_hanging_notes[i].time_left) {
+			_driver->send (0x80 | _hanging_notes[i].channel | _hanging_notes[i].note << 8);
+			_hanging_notes[i].time_left = 0;
+		}
+	}
+	_hanging_notes_count = 0;
+
 	// To be sure, send an "All Note Off" event (but not all MIDI devices support this...)
 	for (i = 0; i < 16; ++i)
 		_driver->send (0x007BB0 | i);
-	for (i = 0; i < ARRAYSIZE(_hanging_notes); ++i)
-		_hanging_notes[i].time_left = 0;
-	_hanging_notes_count = 0;
 	memset (_active_notes, 0, sizeof(_active_notes));
 }
 
