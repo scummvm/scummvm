@@ -1884,7 +1884,7 @@ void SimonEngine::f10_key() {
 						continue;
 				}
 
-				if (ha->y >= limit || ha->y >= _vga_var8)
+				if (ha->y >= limit || ((_game & GF_SIMON2) && ha->y >= _vga_var8))
 					continue;
 
 				y_ = (ha->height >> 1) - 4 + ha->y;
