@@ -2058,7 +2058,7 @@ void SimonEngine::o_print_str() {
 	case GAME_SIMON1CD32:
 		if (speech_id != 0)
 			talk_with_speech(speech_id, num_1);
-		if ((speech_id == 0) || (string_ptr != NULL && _subtitles))
+		if (string_ptr != NULL && (_subtitles || speech_id == 0))
 			talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
 		break;
 
