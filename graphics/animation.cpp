@@ -21,3 +21,160 @@
 
 #include "common/stdafx.h"
 #include "graphics/animation.h"
+#include "common/file.h"
+#include "sound/audiostream.h"
+
+namespace Graphics {
+
+BaseAnimationState::BaseAnimationState(SoundMixer *snd, OSystem *sys, int width, int height) 
+	: _snd(snd), _sys(sys), MOVIE_WIDTH(width), MOVIE_HEIGHT(height) {
+}
+
+BaseAnimationState::~BaseAnimationState() {
+#ifdef USE_MPEG2
+	_snd->stopHandle(bgSound);
+	if (decoder)
+		mpeg2_close(decoder);
+	delete mpgfile;
+	delete sndfile;
+#ifndef BACKEND_8BIT
+	_sys->hide_overlay();
+	free(overlay);
+#endif
+	if (bgSoundStream)
+		delete bgSoundStream;
+#endif
+}
+
+
+
+#ifdef BACKEND_8BIT
+
+/**
+ * Build 'Best-Match' RGB lookup table
+ */
+void BaseAnimationState::buildLookup(int p, int lines) {
+	int y, cb;
+	int r, g, b, ii;
+
+	if (p >= maxPalnum)
+		return;
+  
+	if (p != curpal) {
+		curpal = p;
+		cr = 0;
+		pos = 0;
+	}
+
+	if (cr > BITDEPTH)
+		return;
+
+	for (ii = 0; ii < lines; ii++) {
+		r = (-16 * 256 + (int) (256 * 1.596) * ((cr << SHIFT) - 128)) / 256;
+		for (cb = 0; cb <= BITDEPTH; cb++) {
+			g = (-16 * 256 - (int) (0.813 * 256) * ((cr << SHIFT) - 128) - (int) (0.391 * 256) * ((cb << SHIFT) - 128)) / 256;
+			b = (-16 * 256 + (int) (2.018 * 256) * ((cb << SHIFT) - 128)) / 256;
+
+			for (y = 0; y <= BITDEPTH; y++) {
+				int idx, bst = 0;
+				int dis = 2 * SQR(r - palettes[p].pal[0]) + 4 * SQR(g - palettes[p].pal[1]) + SQR(b - palettes[p].pal[2]);
+
+				for (idx = 1; idx < 256; idx++) {
+					long d2 = 2 * SQR(r - palettes[p].pal[4 * idx]) + 4 * SQR(g - palettes[p].pal[4 * idx + 1]) + SQR(b - palettes[p].pal[4 * idx + 2]);
+					if (d2 < dis) {
+						bst = idx;
+						dis = d2;
+					}
+				}
+				lut2[pos++] = bst;
+	
+				r += (1 << SHIFT);
+				g += (1 << SHIFT);
+				b += (1 << SHIFT);
+			}
+			r -= (BITDEPTH+1)*(1 << SHIFT);
+		}
+		cr++;
+		if (cr > BITDEPTH)
+			return;
+	}
+}
+
+bool BaseAnimationState::checkPaletteSwitch() {
+	// if we have reached the last image with this palette, switch to new one
+	if (framenum == palettes[palnum].end) {
+		unsigned char *l = lut2;
+		palnum++;
+		setPalette(palettes[palnum].pal);
+		lutcalcnum = (BITDEPTH + palettes[palnum].end - (framenum + 1) + 2) / (palettes[palnum].end - (framenum + 1) + 2);
+		lut2 = lut;
+		lut = l;
+		return true;
+	}
+
+	return false;
+}
+
+#else
+
+OverlayColor *BaseAnimationState::lookup = 0;
+
+void BaseAnimationState::buildLookup() {
+	if (lookup)
+		return;
+
+	lookup = (OverlayColor *)calloc((BITDEPTH+1) * (BITDEPTH+1) * 256, sizeof(OverlayColor));
+
+	int y, cb, cr;
+	int r, g, b;
+	int pos = 0;
+
+	for (cr = 0; cr <= BITDEPTH; cr++) {
+		for (cb = 0; cb <= BITDEPTH; cb++) {
+			for (y = 0; y < 256; y++) {
+				r = ((y - 16) * 256 + (int) (256 * 1.596) * ((cr << SHIFT) - 128)) / 256;
+				g = ((y - 16) * 256 - (int) (0.813 * 256) * ((cr << SHIFT) - 128) - (int) (0.391 * 256) * ((cb << SHIFT) - 128)) / 256;
+				b = ((y - 16) * 256 + (int) (2.018 * 256) * ((cb << SHIFT) - 128)) / 256;
+
+				if (r < 0) r = 0;
+				else if (r > 255) r = 255;
+				if (g < 0) g = 0;
+				else if (g > 255) g = 255;
+				if (b < 0) b = 0;
+				else if (b > 255) b = 255;
+
+				lookup[pos++] = _sys->RGBToColor(r, g, b);
+			}
+		}
+	}
+}
+
+void BaseAnimationState::plotYUV(OverlayColor *lut, int width, int height, byte *const *dat) {
+
+	OverlayColor *ptr = overlay + (MOVIE_HEIGHT - height) / 2 * MOVIE_WIDTH + (MOVIE_WIDTH - width) / 2;
+
+	int x, y;
+
+	int ypos = 0;
+	int cpos = 0;
+	int linepos = 0;
+
+	for (y = 0; y < height; y += 2) {
+		for (x = 0; x < width; x += 2) {
+			int i = ((((dat[2][cpos] + ROUNDADD) >> SHIFT) * (BITDEPTH+1)) + ((dat[1][cpos] + ROUNDADD)>>SHIFT)) * 256;
+			cpos++;
+
+			ptr[linepos                ] = lut[i + dat[0][        ypos  ]];
+			ptr[MOVIE_WIDTH + linepos++] = lut[i + dat[0][width + ypos++]];
+			ptr[linepos                ] = lut[i + dat[0][        ypos  ]];
+			ptr[MOVIE_WIDTH + linepos++] = lut[i + dat[0][width + ypos++]];
+
+		}
+		linepos += (2 * MOVIE_WIDTH - width);
+		ypos += width;
+	}
+}
+
+#endif
+
+} // End of namespace Graphics

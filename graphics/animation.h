@@ -22,6 +22,11 @@
 #ifndef GRAPHICS_ANIMATION_H
 #define GRAPHICS_ANIMATION_H
 
+#include "common/scummsys.h"
+#include "sound/mixer.h"
+
+class AudioStream;
+
 // Uncomment this if you are using libmpeg2 0.3.1.
 // #define USE_MPEG2_0_3_1
 
@@ -50,7 +55,85 @@ typedef sequence_t mpeg2_sequence_t;
 
 #endif
 
+#ifdef BACKEND_8BIT
+#define SQR(x) ((x) * (x))
+#define SHIFT 3
+#else
+#define SHIFT 1
+#endif
+
+#define BITDEPTH (1 << (8 - SHIFT))
+#define ROUNDADD (1 << (SHIFT - 1))
+
+#define BUFFER_SIZE 4096
 
 
+namespace Graphics {
+
+class BaseAnimationState {
+protected:
+	const int MOVIE_WIDTH;
+	const int MOVIE_HEIGHT;
+	
+	SoundMixer *_snd;
+	OSystem *_sys;
+
+	uint framenum;
+	uint frameskipped;
+	uint32 ticks;
+
+#ifdef USE_MPEG2
+	mpeg2dec_t *decoder;
+	const mpeg2_info_t *info;
+#endif
+
+	File *mpgfile;
+	File *sndfile;
+
+	byte buffer[BUFFER_SIZE];
+
+	PlayingSoundHandle bgSound;
+	AudioStream *bgSoundStream;
+
+#ifdef BACKEND_8BIT
+	int palnum;
+	int maxPalnum;
+
+	byte lookup[2][(BITDEPTH+1) * (BITDEPTH+1) * (BITDEPTH+1)];
+	byte *lut;
+	byte *lut2;
+	int lutcalcnum;
+
+	int curpal;
+	int cr;
+	int pos;
+
+	struct {
+		uint cnt;
+		uint end;
+		byte pal[4 * 256];
+	} palettes[50];
+#else
+	static OverlayColor *lookup;
+	OverlayColor *overlay;
+#endif
+
+public:
+	BaseAnimationState(SoundMixer *snd, OSystem *sys, int width, int height);
+	virtual ~BaseAnimationState();
+
+protected:
+#ifdef BACKEND_8BIT
+	void buildLookup(int p, int lines);
+	bool checkPaletteSwitch();
+	virtual void setPalette(byte *pal) = 0;
+#else
+	void buildLookup(void);
+	void plotYUV(OverlayColor *lut, int width, int height, byte *const *dat);
+#endif
+};
+
+
+} // End of namespace Graphics
 
 #endif

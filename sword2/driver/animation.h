@@ -29,66 +29,11 @@
 
 namespace Sword2 {
 
-#ifdef BACKEND_8BIT
-#define SQR(x) ((x) * (x))
-#define SHIFT 3
-#else
-#define SHIFT 1
-#endif
-
-#define BITDEPTH (1 << (8 - SHIFT))
-#define ROUNDADD (1 << (SHIFT - 1))
-
-#define BUFFER_SIZE 4096
-
-class AnimationState {
+class AnimationState : public ::Graphics::BaseAnimationState {
 private:
 	Sword2Engine *_vm;
-	SoundMixer *_snd;
-	OSystem *_sys;
-
-	uint framenum;
-	uint frameskipped;
-	int ticks;
-
-#ifdef USE_MPEG2
-	mpeg2dec_t *decoder;
-	const mpeg2_info_t *info;
-#endif
-
-	File *mpgfile;
-	File *sndfile;
-
-	byte buffer[BUFFER_SIZE];
-
-	PlayingSoundHandle bgSound;
-	AudioStream *bgSoundStream;
-
-#ifdef BACKEND_8BIT
-	int palnum;
-	int maxPalnum;
-
-	byte lookup[2][(BITDEPTH+1) * (BITDEPTH+1) * (BITDEPTH+1)];
-	byte *lut;
-	byte *lut2;
-	int lutcalcnum;
-
-	int curpal;
-	int cr;
-	int pos;
-
-	struct {
-		uint cnt;
-		uint end;
-		byte pal[4 * 256];
-	} palettes[50];
-#else
-	static OverlayColor *lookup;
-	OverlayColor *overlay;
-#endif
 
 public:
-
 	AnimationState(Sword2Engine *vm);
 	~AnimationState();
 
@@ -104,12 +49,7 @@ public:
 private:
 
 #ifdef BACKEND_8BIT
-	void buildLookup(int p, int lines);
-	bool checkPaletteSwitch();
 	void setPalette(byte *pal);
-#else
-	void buildLookup(void);
-	void plotYUV(OverlayColor *lut, int width, int height, byte *const *dat);
 #endif
 };
 
