@@ -2785,6 +2785,12 @@ void Scumm::o5_pickupObjectOld()
 {
 	int obj = getVarOrDirectWord(0x80);
 
+	// FIXME: Zak256 (Zaire): Why does this happen at all?
+	if (obj < 1) {
+		warning("pickupObjectOld recieved negative index");
+		return;
+	}
+
 	if (getObjectIndex(obj) == -1)
 		return;
 
