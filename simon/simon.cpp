@@ -3631,10 +3631,10 @@ void SimonState::draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y) {
 	byte *dst;
 	byte *src;
 
-	if (!(_game & GF_SIMON2)) {
-		_lock_word |= 0x8000;
+	_lock_word |= 0x8000;
+	dst = dx_lock_2();
 
-		dst = dx_lock_2();
+	if (!(_game & GF_SIMON2)) {
 		dst += (x + fcs->x) * 8;
 		dst += (y * 25 + fcs->y) * _dx_surface_pitch;
 
@@ -3642,13 +3642,7 @@ void SimonState::draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y) {
 		src += READ_LE_UINT16(&((uint16 *)src)[icon]);
 
 		decompress_icon(dst, src, 24, 12, 0xE0, _dx_surface_pitch);
-
-		dx_unlock_2();
-		_lock_word &= ~0x8000;
 	} else {
-		_lock_word |= 0x8000;
-		dst = dx_lock_2();
-
 		dst += 110;
 		dst += x;
 		dst += (y + fcs->y) * _dx_surface_pitch;
@@ -3660,10 +3654,10 @@ void SimonState::draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y) {
 		src = _icon_file_ptr;
 		src += READ_LE_UINT16(&((uint16 *)src)[icon * 2 + 1]);
 		decompress_icon(dst, src, 20, 10, 0xD0, _dx_surface_pitch);
-
-		dx_unlock_2();
-		_lock_word &= ~0x8000;
 	}
+
+	dx_unlock_2();
+	_lock_word &= ~0x8000;
 }
 
 void SimonState::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte d) {
