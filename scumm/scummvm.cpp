@@ -1357,7 +1357,7 @@ int ScummEngine::scummLoop(int delta) {
 		// TODO: The music delay (given in milliseconds) might have to be tuned a little
 		// to get it correct for all games. Without the ability to watch/listen to the
 		// original games, I can't do that myself.
-		const int MUSIC_DELAY = 480;
+		const int MUSIC_DELAY = 350;
 		tempMusic += delta * 15;	// Convert delta to milliseconds
 		if (tempMusic >= MUSIC_DELAY) {
 			tempMusic -= MUSIC_DELAY;
