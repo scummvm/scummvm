@@ -122,8 +122,6 @@ struct GameSpecificSettings {
 	uint NUM_VIDEO_OP_CODES;
 	uint VGA_MEM_SIZE;
 	uint TABLES_MEM_SIZE;
-	uint NUM_VOICE_RESOURCES;
-	uint NUM_EFFECTS_RESOURCES;
 	uint MUSIC_INDEX_BASE;
 	uint SOUND_INDEX_BASE;
 	const char *gme_filename;

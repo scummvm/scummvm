@@ -44,8 +44,6 @@ static const GameSpecificSettings simon1_settings = {
 	64,										/* NUM_VIDEO_OP_CODES */
 	1000000,									/* VGA_MEM_SIZE */
 	50000,										/* TABLES_MEM_SIZE */
-	3624,										/* NUM_VOICE_RESOURCES */
-	141,										/* NUM_EFFECT_RESOURCES */
 	1316 / 4,									/* MUSIC_INDEX_BASE */
 	0,										/* SOUND_INDEX_BASE */
 	"SIMON.GME",									/* gme_filename */
@@ -65,8 +63,6 @@ static const GameSpecificSettings simon1demo_settings = {
 	64,										/* NUM_VIDEO_OP_CODES */
 	1000000,									/* VGA_MEM_SIZE */
 	50000,										/* TABLES_MEM_SIZE */
-	3624,										/* NUM_VOICE_RESOURCES */
-	141,										/* NUM_EFFECT_RESOURCES */
 	1316 / 4,									/* MUSIC_INDEX_BASE */
 	0,										/* SOUND_INDEX_BASE */
 	"",										/* gme_filename */
@@ -86,8 +82,6 @@ static const GameSpecificSettings simon2win_settings = {
 	75,										/* NUM_VIDEO_OP_CODES */
 	2000000,									/* VGA_MEM_SIZE */
 	100000,										/* TABLES_MEM_SIZE */
-	12256,										/* NUM_VOICE_RESOURCES */
-	0,										/* NUM_EFFECT_RESOURCES */
 	1128 / 4,									/* MUSIC_INDEX_BASE */
 	1660 / 4,									/* SOUND_INDEX_BASE */
 	"SIMON2.GME",									/* gme_filename */
@@ -107,8 +101,6 @@ static const GameSpecificSettings simon2dos_settings = {
 	75,										/* NUM_VIDEO_OP_CODES */
 	2000000,									/* VGA_MEM_SIZE */
 	100000,										/* TABLES_MEM_SIZE */
-	12256,										/* NUM_VOICE_RESOURCES */
-	0,										/* NUM_EFFECT_RESOURCES */
 	1128 / 4,									/* MUSIC_INDEX_BASE */
 	1660 / 4,									/* SOUND_INDEX_BASE */
 	"SIMON2.GME",									/* gme_filename */
