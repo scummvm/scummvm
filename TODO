@@ -193,25 +193,42 @@ Game Detector
 
 GUI
 ===
-* Remove hardcoded 320x200 assumptions, use game screen size
+* Remove hard coded 320x200 assumptions, use game screen size
 * Add ability to scale GUI (ie. to make the GUI less tiny in COMI)
 * Remove code duplication between EditTextWidget and ListWidget (i.e. text 
   editing code; maybe we can factor that out into a common base or aggregate
   class... not yet sure).
 * Fix EditTextWidget::drawCaret and ListWidget::drawCaret support for alternate
   fonts (the current code overdraws chars partly, and relies on the fact that
-  our default built-in font has a seperation pixel column on the *left* side;
+  our default built-in font has a separation pixel column on the *left* side;
   most other bitmap fonts have it on the right, though). To this end, we maybe
   should backup the background before drawing the caret, and restore it when
   erasing the caret.
 * Eye candy: add a nice credits scroller to the AboutDialog class, which then
   displays (scrolling) all the ScummVM credits...
+* Add a new "options" dialog which is used by all frontends: for this, we'd
+  agree on a hotkey used in all engines to invoke that dialog; it would sport
+  settings for the volume, graphics, paths, etc.; it would co-exist with the
+  engines "native" option dialogs.
+  The about dialog would be reachable from here, too, as well as a quit button.
+  Justification: This ensures that all settings are really reachable from
+  all of the engines, which is not the case currently.
 
 Launcher
 ========
 * Add more options to global options dialog
 * Add more options to game target options dialog 
 
+Plugins
+=======
+* Add a plugin API that allows querying a plugin for the savegames associated
+  with a given game; that is, you pass the name of a target from the config
+  to the plugin, and it returns a list of savegames. How that list would look
+  like exactly is debatable; but it should be possible to extract a user
+  friendly name; a slot ID corresponding to the "-x" command line param;
+  and possibly a filename.
+  Justification: This API would make it possible to directly load savegames
+  from the launcher.
 
 #######################################################################
 # Engines / frontends
