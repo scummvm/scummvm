@@ -71,6 +71,7 @@ int CharsetRenderer::getStringWidth(int arg, byte *text, int pos)
 		}
 		width += getSpacing(chr, ptr);
 	}
+
 	return width;
 }
 
@@ -125,6 +126,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth)
 
 		if (chr == ' ')
 			lastspace = pos - 1;
+
 		curw += getSpacing(chr, ptr);
 		if (lastspace == -1)
 			continue;
@@ -1019,20 +1021,20 @@ void CharsetRenderer::drawBits()
 }
 
 // do spacing for variable width old-style font
-int CharsetRenderer::getSpacing(char chr, byte *ptr)
+int CharsetRenderer::getSpacing(byte chr, byte *charset)
 {
-	int spacing;
+	int spacing = 0;
 	
 	if (_vm->_features & GF_OLD256) {
-		spacing = *(ptr - 11 + chr);
+		spacing = *(charset - 11 + chr);
 	} else {
-		int offs = READ_LE_UINT32(ptr + chr * 4 + 4);
+		int offs = READ_LE_UINT32(charset + chr * 4 + 4);
 		if (offs) {
-			spacing = ptr[offs];
-			if (ptr[offs + 2] >= 0x80) {
-				spacing += ptr[offs + 2] - 0x100;
+			spacing = charset[offs];
+			if (charset[offs + 2] >= 0x80) {
+				spacing += charset[offs + 2] - 0x100;
 			} else {
-				spacing += ptr[offs + 2];
+				spacing += charset[offs + 2];
 			}
 		}
 	}
