@@ -46,12 +46,17 @@ class Actor;
 class ScummEngine;
 struct VirtScreen;
 
-class BaseCostume {
+class BaseCostumeLoader {
+protected:
+	ScummEngine *_vm;
+
 public:
-	virtual ~BaseCostume() {}
+	BaseCostumeLoader(ScummEngine *vm) : _vm(vm) {}
+	virtual ~BaseCostumeLoader() {}
 	
 	virtual void loadCostume(int id) = 0;
 	virtual byte increaseAnims(Actor *a) = 0;
+	virtual void costumeDecodeData(Actor *a, int frame, uint usemask) = 0;
 };
 
 

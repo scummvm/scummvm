@@ -25,10 +25,7 @@
 
 namespace Scumm {
 
-class ClassicCostume : public BaseCostume {
-protected:
-	ScummEngine *_vm;
-
+class ClassicCostumeLoader : public BaseCostumeLoader {
 public:
 	int _id;
 	const byte *_baseptr;
@@ -41,21 +38,30 @@ public:
 	byte _format;
 	bool _mirror;
 
-	ClassicCostume(ScummEngine *vm) :
-		_vm(vm), _id(-1), _baseptr(0), _animCmds(0), _dataOffsets(0), _palette(0),
+	ClassicCostumeLoader(ScummEngine *vm) :
+		BaseCostumeLoader(vm),
+		_id(-1), _baseptr(0), _animCmds(0), _dataOffsets(0), _palette(0),
 		_frameOffsets(0), _numColors(0), _numAnim(0), _format(0), _mirror(false) {}
 
 	void loadCostume(int id);
+	void costumeDecodeData(Actor *a, int frame, uint usemask);
 	byte increaseAnims(Actor *a);
 
 protected:
 	byte increaseAnim(Actor *a, int slot);
 };
 
-class NESCostume : public ClassicCostume {
+class NESCostumeLoader : public BaseCostumeLoader {
 public:
-	NESCostume(ScummEngine *vm) : ClassicCostume(vm) {}
+	int _id;
+	const byte *_baseptr;
+	const byte *_dataOffsets;
+	byte _numAnim;
+
+	NESCostumeLoader(ScummEngine *vm) : BaseCostumeLoader(vm) {}
 	void loadCostume(int id);
+	void costumeDecodeData(Actor *a, int frame, uint usemask);
+	byte increaseAnims(Actor *a);
 
 protected:
 	byte increaseAnim(Actor *a, int slot);
@@ -63,7 +69,7 @@ protected:
 
 class ClassicCostumeRenderer : public BaseCostumeRenderer {
 protected:
-	ClassicCostume _loaded;
+	ClassicCostumeLoader _loaded;
 	
 	byte _scaleIndexX;						/* must wrap at 256 */
 	byte _scaleIndexY;
@@ -89,7 +95,7 @@ protected:
 
 class NESCostumeRenderer : public BaseCostumeRenderer {
 protected:
-	NESCostume _loaded;
+	NESCostumeLoader _loaded;
 
 public:
 	NESCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}

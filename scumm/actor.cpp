@@ -1128,7 +1128,7 @@ void Actor::animateCostume() {
 	if (_animProgress >= _animSpeed) {
 		_animProgress = 0;
 		
-		BaseCostume *cost = 0;
+		BaseCostumeLoader *cost = 0;
 
 		if (_vm->_features & GF_NEW_COSTUMES) {
 			byte *akos = _vm->getResourceAddress(rtCostume, _costume);
@@ -1138,9 +1138,9 @@ void Actor::animateCostume() {
 			}
 		} else {
 			if (_vm->_features & GF_NES)
-				cost = new NESCostume(_vm);
+				cost = new NESCostumeLoader(_vm);
 			else
-				cost = new ClassicCostume(_vm);
+				cost = new ClassicCostumeLoader(_vm);
 			cost->loadCostume(_costume);
 			if (cost->increaseAnims(this)) {
 				_needRedraw = true;

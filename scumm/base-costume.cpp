@@ -22,6 +22,7 @@
 
 #include "stdafx.h"
 #include "scumm/base-costume.h"
+#include "scumm/costume.h"
 
 namespace Scumm {
 
@@ -88,12 +89,17 @@ bool ScummEngine::isCostumeInUse(int cost) const {
 }
 
 void ScummEngine::costumeDecodeData(Actor *a, int frame, uint usemask) {
+	// TODO: This should eventually become a method of the appropriate
+	// BaseCostumeLoader subclasses.
 	if (_features & GF_NEW_COSTUMES)
 		akos_decodeData(a, frame, usemask);
-	else if (_features & GF_NES)
-		NES_cost_decodeData(a, frame, usemask);
-	else
-		cost_decodeData(a, frame, usemask);
+	else if (_features & GF_NES) {
+		NESCostumeLoader lc(this);
+		lc.costumeDecodeData(a, frame, usemask);
+	} else {
+		ClassicCostumeLoader lc(this);
+		lc.costumeDecodeData(a, frame, usemask);
+	}
 }
 
 } // End of namespace Scumm

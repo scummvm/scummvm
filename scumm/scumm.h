@@ -848,13 +848,6 @@ public:
 	void costumeDecodeData(Actor *a, int frame, uint usemask);
 	bool isCostumeInUse(int i) const;
 
-	// Classic costume class
-	void cost_decodeData(Actor *a, int frame, uint usemask);
-
-	// NEWS costume class
-	void NES_cost_decodeData(Actor *a, int frame, uint usemask);
-	void cost_decodeNESCostumeGfx();
-
 	// Akos Class
 	struct {
 		int16 cmd;

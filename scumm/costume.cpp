@@ -74,6 +74,15 @@ const byte cost_scaleTable[256] = {
 };
 #endif
 
+static const int v1MMNESLookup[25] = {
+	0x00, 0x03, 0x01, 0x06, 0x08,
+	0x02, 0x00, 0x07, 0x0C, 0x04,
+	0x09, 0x0A, 0x12, 0x0B, 0x14,
+	0x0D, 0x11, 0x0F, 0x0E, 0x10,
+	0x17, 0x00, 0x01, 0x05, 0x16 
+};
+
+
 byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	int i, skip = 0;
 	byte drawFlag = 1;
@@ -564,46 +573,7 @@ void ClassicCostumeRenderer::proc3_ami(Codec1 &v1) {
 	} while (1);
 }
 
-static const int v1MMNESLookup[25] = {
-	0x00, 0x03, 0x01, 0x06, 0x08,
-	0x02, 0x00, 0x07, 0x0C, 0x04,
-	0x09, 0x0A, 0x12, 0x0B, 0x14,
-	0x0D, 0x11, 0x0F, 0x0E, 0x10,
-	0x17, 0x00, 0x01, 0x05, 0x16 
-};
-
-/**
- * costume ID -> v1MMNESLookup[] -> desc -> lens & offs -> data -> Gfx & pal
- */
-void NESCostume::loadCostume(int id) {
-	const byte *src;
-	int frameset, framenum;
-	int offset;
-
-	_id = id;
-	_baseptr = _vm->getResourceAddress(rtCostume, id);
-
-	_format = 0x01;
-	_mirror = 0;
-	_dataOffsets = _baseptr + 4;
-
-	frameset = 0;
-	framenum = 0;
-
-	src = _dataOffsets;
-	// Cost(a)
-	offset = src[(frameset * 4 + framenum) * 2];
-
-	// Lookup & desc
-	offset = READ_LE_UINT16(_vm->_NEScostdesc + v1MMNESLookup[_id] * 2);
-	if (v1MMNESLookup[_id] * 2 + 2 < READ_LE_UINT16(_vm->_NEScostdesc - 2)) {
-		_numAnim = (READ_LE_UINT16(_vm->_NEScostdesc + v1MMNESLookup[_id] * 2 + 2) - offset);
-	} else {
-		_numAnim = ((READ_LE_UINT16(_vm->_NEScostlens - 2) - 2) - offset);
-	}
-}
-
-void ClassicCostume::loadCostume(int id) {
+void ClassicCostumeLoader::loadCostume(int id) {
 	_id = id;
 	byte *ptr = _vm->getResourceAddress(rtCostume, id);
 
@@ -824,54 +794,36 @@ void NESCostumeRenderer::setPalette(byte *palette) {
 }
 
 void NESCostumeRenderer::setFacing(const Actor *a) {
-	_mirror = newDirToOldDir(a->getFacing()) != 0 || _loaded._mirror;
+	// TODO
+	//_mirror = newDirToOldDir(a->getFacing()) != 0 || _loaded._mirror;
 }
 
 void NESCostumeRenderer::setCostume(int costume) {
 	_loaded.loadCostume(costume);
 }
 
-void ScummEngine::NES_cost_decodeData(Actor *a, int frame, uint usemask) {
-	int anim;
-	NESCostume lc(this);
-
-	lc.loadCostume(a->_costume);
-
-	anim = newDirToOldDir(a->getFacing()) + frame * 4;
-
-	if (anim > lc._numAnim) {
-		return;
-	}
-
-	a->_cost.curpos[0] = 0;
-	a->_cost.start[0] = 0;
-	a->_cost.end[0] = lc._baseptr[2 + 8 * frame + 2 * newDirToOldDir(a->getFacing()) + 1];
-	a->_cost.frame[0] = frame;
-}
-
-void ScummEngine::cost_decodeData(Actor *a, int frame, uint usemask) {
+void ClassicCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 	const byte *r;
 	uint mask, j;
 	int i;
 	byte extra, cmd;
 	int anim;
-	ClassicCostume lc(this);
 
-	lc.loadCostume(a->_costume);
+	loadCostume(a->_costume);
 
 	anim = newDirToOldDir(a->getFacing()) + frame * 4;
 
-	if (anim > lc._numAnim) {
+	if (anim > _numAnim) {
 		return;
 	}
 
-	r = lc._baseptr + READ_LE_UINT16(lc._dataOffsets + anim * 2);
+	r = _baseptr + READ_LE_UINT16(_dataOffsets + anim * 2);
 
-	if (r == lc._baseptr) {
+	if (r == _baseptr) {
 		return;
 	}
 
-	if (_version == 1) {
+	if (_vm->_version == 1) {
 		mask = *r++ << 8;
 	} else {
 		mask = READ_LE_UINT16(r);
@@ -880,7 +832,7 @@ void ScummEngine::cost_decodeData(Actor *a, int frame, uint usemask) {
 	i = 0;
 	do {
 		if (mask & 0x8000) {
-			if (_version <= 3) {
+			if (_vm->_version <= 3) {
 				j = *r++;
 
 				if (j == 0xFF)
@@ -896,7 +848,7 @@ void ScummEngine::cost_decodeData(Actor *a, int frame, uint usemask) {
 					a->_cost.frame[i] = frame;
 				} else {
 					extra = *r++;
-					cmd = lc._animCmds[j];
+					cmd = _animCmds[j];
 					if (cmd == 0x7A) {
 						a->_cost.stopped &= ~(1 << i);
 					} else if (cmd == 0x79) {
@@ -957,7 +909,7 @@ void ClassicCostumeRenderer::setCostume(int costume) {
 	_loaded.loadCostume(costume);
 }
 
-byte ClassicCostume::increaseAnims(Actor *a) {
+byte ClassicCostumeLoader::increaseAnims(Actor *a) {
 	int i;
 	byte r = 0;
 
@@ -968,14 +920,7 @@ byte ClassicCostume::increaseAnims(Actor *a) {
 	return r;
 }
 
-byte NESCostume::increaseAnim(Actor *a, int slot) {
-	a->_cost.curpos[slot]++;
-	if (a->_cost.curpos[slot] >= a->_cost.end[slot])
-		a->_cost.curpos[slot] = a->_cost.start[slot];
-	return 0;
-}
-
-byte ClassicCostume::increaseAnim(Actor *a, int slot) {
+byte ClassicCostumeLoader::increaseAnim(Actor *a, int slot) {
 	int highflag;
 	int i, end;
 	byte code, nc;
@@ -1028,6 +973,71 @@ byte ClassicCostume::increaseAnim(Actor *a, int slot) {
 		return (_animCmds[i] & 0x7F) != code;
 	} while (1);
 }
+
+/**
+ * costume ID -> v1MMNESLookup[] -> desc -> lens & offs -> data -> Gfx & pal
+ */
+void NESCostumeLoader::loadCostume(int id) {
+	const byte *src;
+	int frameset, framenum;
+	int offset;
+
+	_id = id;
+	_baseptr = _vm->getResourceAddress(rtCostume, id);
+
+	_dataOffsets = _baseptr + 4;
+
+	frameset = 0;
+	framenum = 0;
+
+	src = _dataOffsets;
+	// Cost(a)
+	offset = src[(frameset * 4 + framenum) * 2];
+
+	// Lookup & desc
+	offset = READ_LE_UINT16(_vm->_NEScostdesc + v1MMNESLookup[_id] * 2);
+	if (v1MMNESLookup[_id] * 2 + 2 < READ_LE_UINT16(_vm->_NEScostdesc - 2)) {
+		_numAnim = (READ_LE_UINT16(_vm->_NEScostdesc + v1MMNESLookup[_id] * 2 + 2) - offset);
+	} else {
+		_numAnim = ((READ_LE_UINT16(_vm->_NEScostlens - 2) - 2) - offset);
+	}
+}
+
+void NESCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
+	int anim;
+
+	loadCostume(a->_costume);
+
+	anim = newDirToOldDir(a->getFacing()) + frame * 4;
+
+	if (anim > _numAnim) {
+		return;
+	}
+
+	a->_cost.curpos[0] = 0;
+	a->_cost.start[0] = 0;
+	a->_cost.end[0] = _baseptr[2 + 8 * frame + 2 * newDirToOldDir(a->getFacing()) + 1];
+	a->_cost.frame[0] = frame;
+}
+
+byte NESCostumeLoader::increaseAnims(Actor *a) {
+	int i;
+	byte r = 0;
+
+	for (i = 0; i != 16; i++) {
+		if (a->_cost.curpos[i] != 0xFFFF)
+			r += increaseAnim(a, i);
+	}
+	return r;
+}
+
+byte NESCostumeLoader::increaseAnim(Actor *a, int slot) {
+	a->_cost.curpos[slot]++;
+	if (a->_cost.curpos[slot] >= a->_cost.end[slot])
+		a->_cost.curpos[slot] = a->_cost.start[slot];
+	return 0;
+}
+
 
 } // End of namespace Scumm
 

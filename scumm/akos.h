@@ -38,10 +38,15 @@ struct AkosHeader;
 struct AkosOffset;
 
 /* TODO:
-class AkosCostume : public BaseCostume {
+class AkosCostumeLoader : public BaseCostumeLoader {
 public:
+	AkosCostumeLoader(ScummEngine *vm);
+
 	void loadCostume(int id);
 	byte increaseAnims(Actor *a);
+	void costumeDecodeData(Actor *a, int frame, uint usemask);
+	
+	//void animateLimb(int limb, int f);
 };
 */
 
