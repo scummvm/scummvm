@@ -815,7 +815,7 @@ int Sound::isSoundRunning(int sound) const {
 
 	if (_vm->_features & GF_HUMONGOUS) {
 		if (sound == -2) {
-			return -1;
+			return !isSfxFinished();
 		} else if (sound == -1) {
 			// getSoundStatus(), with a -1, will return the
 			// ID number of the first active music it finds.
@@ -828,6 +828,8 @@ int Sound::isSoundRunning(int sound) const {
 			// channel = sound - 10000
 			if (sound == 10000)
 				return (_vm->_mixer->isSoundIDActive(_currentMusic) ? _currentMusic : 0);
+			else if (sound == 10001)
+				return _vm->_mixer->isSoundHandleActive(_talkChannelHandle);
 			else
 				return 0;
 		}
