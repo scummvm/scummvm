@@ -844,7 +844,7 @@ void IMuseDigital::startSound(int sound) {
 						case MKID_BE('REGN'):
 							ptr += 4;
 							if (_channel[l]._numRegions >= MAX_IMUSE_REGIONS) {
-								warning("IMuseDigital::startSound(%d) Not enough space for Region");
+								warning("IMuseDigital::startSound(%d) Not enough space for Region", sound);
 								ptr += 8;
 								break;
 							}
@@ -859,7 +859,7 @@ void IMuseDigital::startSound(int sound) {
 						case MKID_BE('JUMP'):
 							ptr += 4;
 							if (_channel[l]._numJumps >= MAX_IMUSE_JUMPS) {
-								warning("IMuseDigital::startSound(%d) Not enough space for Jump");
+								warning("IMuseDigital::startSound(%d) Not enough space for Jump", sound);
 								ptr += 16;
 								break;
 							}
@@ -874,7 +874,7 @@ void IMuseDigital::startSound(int sound) {
 							size = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
 						break;
 						default:
-							error("IMuseDigital::startSound(%d) Unknown sfx header %c%c%c%c", tag>>24, tag>>16, tag>>8, tag);
+							error("IMuseDigital::startSound(%d) Unknown sfx header %c%c%c%c", sound, (byte)(tag >> 24), (byte)(tag >> 16), (byte)(tag >> 8), (byte)tag);
 					}
 					if (tag == MKID_BE('DATA')) break;
 				}

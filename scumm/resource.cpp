@@ -1110,7 +1110,7 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 
 		// Conver the ticks into a MIDI tempo. 
 		dw = (500000 * 256) / ticks;
-		debug(4, "  ticks = %d, speed = %ld", ticks, dw);
+		debug(4, "  ticks = %d, speed = %u", ticks, dw);
 		
 		// Write a tempo change SysEx
 		memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
@@ -1254,7 +1254,7 @@ byte *Scumm::getResourceAddress(int type, int idx) {
 
 	setResourceCounter(type, idx, 1);
 
-	debug(9, "getResourceAddress(%s,%d) == %ld", resTypeFromId(type), idx, ptr + sizeof(MemBlkHeader));
+	debug(9, "getResourceAddress(%s,%d) == %p", resTypeFromId(type), idx, ptr + sizeof(MemBlkHeader));
 	return ptr + sizeof(MemBlkHeader);
 }
 
