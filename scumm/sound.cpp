@@ -518,11 +518,11 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 	while (num > 0) {
 		_sfxFile->read(&file_byte, sizeof(file_byte));
 		_sfxFile->read(&file_byte_2, sizeof(file_byte_2));
-		assert(i < ARRAYSIZE(_mouthSyncTimes));
+		assert(i < (int)ARRAYSIZE(_mouthSyncTimes));
 		_mouthSyncTimes[i++] = file_byte | (file_byte_2 << 8);
 		num--;
 	}
-	assert(i < ARRAYSIZE(_mouthSyncTimes));
+	assert(i < (int)ARRAYSIZE(_mouthSyncTimes));
 	_mouthSyncTimes[i] = 0xFFFF;
 	_sfxMode |= mode;
 	_curSoundPos = 0;
