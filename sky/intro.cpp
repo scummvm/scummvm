@@ -482,6 +482,6 @@ void SkyState::introFx(uint32 *&cmdPtr) {
 
 void SkyState::introVol(uint32 *&cmdPtr) {
 
-	_mixer->setVolume(((cmdPtr[2] & 0x7F) + 1) << 1);
+	_skySound->playSound(1, (uint16)(cmdPtr[2] & 0x7F));
 	cmdPtr += 3;
 }

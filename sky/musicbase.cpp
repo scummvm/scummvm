@@ -26,6 +26,7 @@ SkyMusicBase::SkyMusicBase(SkyDisk *pSkyDisk) {
 	_musicData = NULL;
 	_allowedCommands = 0;
 	_skyDisk = pSkyDisk;
+	_currentMusic = 0;
 }
 
 SkyMusicBase::~SkyMusicBase(void)

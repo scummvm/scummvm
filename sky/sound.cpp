@@ -38,7 +38,7 @@ SkySound::SkySound(SoundMixer *mixer, SkyDisk *pDisk) {
 
 SkySound::~SkySound(void) {
 
-	if (_ingameSound) _mixer->stop(_ingameSound - 1);
+	_mixer->stopAll();
 	if (_soundData) free(_soundData);
 }
 
@@ -102,7 +102,7 @@ void SkySound::playSound(uint16 sound, uint16 volume) {
 	if (dataSize == dataLoop)
 		flags |= SoundMixer::FLAG_LOOP;
 	
-	if (_ingameSound) _mixer->stop(_ingameSound - 1);
+	_mixer->stopAll();
 	_mixer->setVolume(volume);
 	_mixer->playRaw(&_ingameSound, _soundData + dataOfs, dataSize, sampleRate, flags);
 }
