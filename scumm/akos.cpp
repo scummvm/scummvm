@@ -926,9 +926,9 @@ void AkosRenderer::codec5() {
 	if (clipping != 0) {
 		_vm->_bompMaskPtr = _vm->getResourceAddress(rtBuffer, 9) + _vm->_screenStartStrip + _vm->gdi._imgBufOffs[clipping];
 		_vm->_bompMaskPitch = _vm->_realWidth / 8;
-		_vm->drawBomp(&bdd, 0, bdd.dataptr, decode_mode, 1);
+		_vm->drawBomp(&bdd, decode_mode, 1);
 	} else {
-		_vm->drawBomp(&bdd, 0, bdd.dataptr, decode_mode, 0);
+		_vm->drawBomp(&bdd, decode_mode, 0);
 	}
 
 	_vm->_bompActorPalletePtr = NULL;

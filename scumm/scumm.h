@@ -851,7 +851,7 @@ public:
 
 	// bomp
 	void decompressBomp(byte *dst, byte *src, int w, int h);
-	void drawBomp(BompDrawData * bd, int param1, byte *data_ptr, int decode_mode, int mask);
+	void drawBomp(BompDrawData * bd, int decode_mode, int mask);
 	int32 setupBompScale(byte * scalling, int32 size, byte scale);
 	void bompScaleFuncX(byte * line_buffer, byte * scalling_x_ptr, byte skip, int32 size);
 	int32 bompDecodeLineMode0(byte * src, byte * line_buffer, int32 size);

@@ -3246,7 +3246,7 @@ void Scumm::bompScaleFuncX(byte * line_buffer, byte * scalling_x_ptr, byte skip,
 	}
 }
 
-void Scumm::drawBomp(BompDrawData * bd, int param1, byte * data_ptr, int decode_mode, int mask) {
+void Scumm::drawBomp(BompDrawData * bd, int decode_mode, int mask) {
 	byte skip_y = 128;
 	byte skip_y_new = 0;	// FIXME - is this a sensible default value?
 	byte bits = 0;	// FIXME - is this a sensible default value?
