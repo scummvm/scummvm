@@ -194,11 +194,6 @@ protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(int i);
 	virtual const char *getOpcodeDesc(int i);
-	virtual void getResultPos();
-	virtual void getResultPosDirect();
-	virtual int getVar();
-	virtual int getVarOrDirectByte(byte mask);
-	virtual int getVarOrDirectWord(byte mask);
 	virtual void ifStateCommon(byte type);
 	virtual void ifNotStateCommon(byte type);
 	virtual void setStateCommon(byte type);
@@ -283,15 +278,12 @@ protected:
 	void o2_roomOps();
 	void o2_getDist();
 	void o2_findObject();
-	void o2_subtract();
 	void o2_cutscene();
-	void o2_increment();
 	void o2_chainScript();
 	void o2_pickupObject();
 	void o2_actorFollowCamera();
 	void o2_setObjectName();
 	void o2_getActorMoving();
-	void o2_add();
 	void o2_cursorCommand();
 	void o2_stopScript();
 	void o2_getActorFacing();
@@ -304,7 +296,6 @@ protected:
 	void o2_delay();
 	void o2_stopSound();
 	void o2_endCutscene();
-	void o2_decrement();
 	void o2_drawSentence();
 };
 

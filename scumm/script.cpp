@@ -330,6 +330,25 @@ int Scumm::fetchScriptWordSigned() {
 	return (int16)fetchScriptWord();
 }
 
+int Scumm::getVarOrDirectByte(byte mask) {
+	if (_opcode & mask)
+		if (_features & GF_AFTER_V2)
+			return readVar(fetchScriptByte());
+		else
+			return readVar(fetchScriptWord());
+
+	return fetchScriptByte();
+}
+
+int Scumm::getVarOrDirectWord(byte mask) {
+	if (_opcode & mask)
+		if (_features & GF_AFTER_V2)
+			return readVar(fetchScriptByte());
+		else
+			return readVar(fetchScriptWord());
+	return fetchScriptWord();
+}
+
 #ifndef BYPASS_COPY_PROT
 #define BYPASS_COPY_PROT
 #endif
@@ -352,7 +371,12 @@ int Scumm::readVar(uint var) {
 #endif
 
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
-		return _vars[var];
+
+		if ((_features & GF_AFTER_V2) && (var >= 14) && (var <= 16)) {
+			return _vars[_vars[var]];
+		} else {
+			return _vars[var];
+		}
 	}
 
 	if (var & 0x2000 && !(_features & GF_NEW_OPCODES)) {
@@ -470,8 +494,17 @@ void Scumm::writeVar(uint var, int value) {
 	error("Illegal varbits (w)");
 }
 
+void Scumm::getResultPosDirect() {
+	_resultVarNumber = _vars[fetchScriptByte()];
+}
+
 void Scumm::getResultPos() {
 	int a;
+
+	if (_features & GF_AFTER_V2) {
+		_resultVarNumber = fetchScriptByte();
+		return;
+	}
 
 	_resultVarNumber = fetchScriptWord();
 	if (_resultVarNumber & 0x2000) {

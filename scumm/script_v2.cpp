@@ -105,7 +105,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 38 */
 		OPCODE(o2_lessOrEqual),
 		OPCODE(o2_doSentence),
-		OPCODE(o2_subtract),
+		OPCODE(o5_subtract),
 		OPCODE(o2_waitForActor),
 		/* 3C */
 		OPCODE(o2_stopSound),
@@ -120,7 +120,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 44 */
 		OPCODE(o2_isLess),
 		OPCODE(o2_drawObject),
-		OPCODE(o2_increment),
+		OPCODE(o5_increment),
 		OPCODE(o2_setState08),
 		/* 48 */
 		OPCODE(o2_isEqual),
@@ -145,7 +145,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 58 */
 		OPCODE(beginOverride),
 		OPCODE(o2_doSentence),
-		OPCODE(o2_add),
+		OPCODE(o5_add),
 		OPCODE(o2_setBitVar),
 		/* 5C */
 		OPCODE(o5_dummy),
@@ -265,7 +265,7 @@ void Scumm_v2::setupOpcodes() {
 		/* B8 */
 		OPCODE(o2_lessOrEqual),
 		OPCODE(o2_doSentence),
-		OPCODE(o2_subtract),
+		OPCODE(o5_subtract),
 		OPCODE(o2_waitForActor),
 		/* BC */
 		OPCODE(o2_stopSound),
@@ -280,7 +280,7 @@ void Scumm_v2::setupOpcodes() {
 		/* C4 */
 		OPCODE(o2_isLess),
 		OPCODE(o2_drawObject),
-		OPCODE(o2_decrement),
+		OPCODE(o5_decrement),
 		OPCODE(o2_clearState08),
 		/* C8 */
 		OPCODE(o2_isEqual),
@@ -305,7 +305,7 @@ void Scumm_v2::setupOpcodes() {
 		/* D8 */
 		OPCODE(o2_printEgo),
 		OPCODE(o2_doSentence),
-		OPCODE(o2_add),
+		OPCODE(o5_add),
 		OPCODE(o2_setBitVar),
 		/* DC */
 		OPCODE(o5_dummy),
@@ -366,25 +366,6 @@ const char *Scumm_v2::getOpcodeDesc(int i) {
 	return _opcodesV2[i].desc;
 }
 
-int Scumm_v2::getVar() {
-	int var_id = fetchScriptByte();
-	if ((var_id >= 14) && (var_id <= 16))
-		return _vars[_vars[var_id]];
-	return _vars[var_id];
-}
-
-int Scumm_v2::getVarOrDirectByte(byte mask) {
-	if (_opcode & mask)
-		return getVar();
-	return fetchScriptByte();
-}
-
-int Scumm_v2::getVarOrDirectWord(byte mask) {
-	if (_opcode & mask)
-		return getVar();
-	return fetchScriptWord();
-}
-
 void Scumm_v2::setStateCommon(byte type) {
 	int obj = getVarOrDirectWord(0x80);
 	putState(obj, getState(obj) | type);
@@ -433,32 +414,24 @@ void Scumm_v2::o2_clearState01() {
 	clearStateCommon(0x01);
 }
 
-void Scumm_v2::getResultPos() {
-	_resultVarNumber = fetchScriptByte();
-}
-
-void Scumm_v2::getResultPosDirect() {
-	_resultVarNumber = _vars[fetchScriptByte()];
+void Scumm_v2::o2_assignVarByteDirect() {
+	getResultPosDirect();
+	setResult(fetchScriptByte());
 }
 
 void Scumm_v2::o2_assignVarWordDirect() {
 	getResultPosDirect();
-	_vars[_resultVarNumber] = fetchScriptWord();
-}
-
-void Scumm_v2::o2_assignVarByteDirect() {
-	getResultPosDirect();
-	_vars[_resultVarNumber] = fetchScriptByte();
+	setResult(fetchScriptWord());
 }
 
 void Scumm_v2::o2_assignVarByte() {
 	getResultPos();
-	_vars[_resultVarNumber] = fetchScriptByte();
+	setResult(fetchScriptByte());
 }
 
 void Scumm_v2::o2_assignVarWord() {
 	getResultPos();
-	_vars[_resultVarNumber] = fetchScriptWord();
+	setResult(fetchScriptWord());
 }
 
 void Scumm_v2::o2_setObjY() {
@@ -746,7 +719,7 @@ void Scumm_v2::o2_verbOps() {
 }
 
 void Scumm_v2::o2_isEqual() {
-	int a = getVar();
+	int a = readVar(fetchScriptByte());
 	int b = getVarOrDirectWord(0x80);
 
 	if (b == a)
@@ -757,7 +730,7 @@ void Scumm_v2::o2_isEqual() {
 }
 
 void Scumm_v2::o2_isGreater() {
-	int16 a = getVar();
+	int16 a = readVar(fetchScriptByte());
 	int16 b = getVarOrDirectWord(0x80);
 
 	if (b > a)
@@ -767,7 +740,7 @@ void Scumm_v2::o2_isGreater() {
 }
 
 void Scumm_v2::o2_isGreaterEqual() {
-	int16 a = getVar();
+	int16 a = readVar(fetchScriptByte());
 	int16 b = getVarOrDirectWord(0x80);
 
 	if (b >= a)
@@ -777,7 +750,7 @@ void Scumm_v2::o2_isGreaterEqual() {
 }
 
 void Scumm_v2::o2_isLess() {
-	int16 a = getVar();
+	int16 a = readVar(fetchScriptByte());
 	int16 b = getVarOrDirectWord(0x80);
 
 	if (b < a)
@@ -787,7 +760,7 @@ void Scumm_v2::o2_isLess() {
 }
 
 void Scumm_v2::o2_lessOrEqual() {
-	int16 a = getVar();
+	int16 a = readVar(fetchScriptByte());
 	int16 b = getVarOrDirectWord(0x80);
 
 	if (b <= a)
@@ -797,7 +770,7 @@ void Scumm_v2::o2_lessOrEqual() {
 }
 
 void Scumm_v2::o2_isNotEqual() {
-	int16 a = getVar();
+	int16 a = readVar(fetchScriptByte());
 	int16 b = getVarOrDirectWord(0x80);
 
 	if (b != a)
@@ -807,7 +780,7 @@ void Scumm_v2::o2_isNotEqual() {
 }
 
 void Scumm_v2::o2_notEqualZero() {
-	int a = getVar();
+	int a = readVar(fetchScriptByte());
 
 	if (a != 0)
 		ignoreScriptWord();
@@ -816,7 +789,7 @@ void Scumm_v2::o2_notEqualZero() {
 }
 
 void Scumm_v2::o2_equalZero() {
-	int a = getVar();
+	int a = readVar(fetchScriptByte());
 
 	if (a == 0)
 		ignoreScriptWord();
@@ -1164,7 +1137,7 @@ void Scumm_v2::o2_setOwnerOf() {
 }
 
 void Scumm_v2::o2_delayVariable() {
-	vm.slot[_currentScript].delay = getVar();
+	vm.slot[_currentScript].delay = readVar(fetchScriptByte());
 	vm.slot[_currentScript].status = 1;
 	o5_breakHere();
 }
@@ -1235,29 +1208,12 @@ void Scumm_v2::o2_findObject() {
 	_vars[_resultVarNumber] = findObject(x, y);
 }
 
-void Scumm_v2::o2_subtract() {
-	int a;
-	getResultPos();
-	a = getVarOrDirectWord(0x80);
-	_vars[_resultVarNumber] -= a;
-}
-
 void Scumm_v2::o2_cutscene() {
 	// TODO
 }
 
 void Scumm_v2::o2_endCutscene() {
 	// TODO
-}
-
-void Scumm_v2::o2_increment() {
-	getResultPos();
-	_vars[_resultVarNumber]++;
-}
-
-void Scumm_v2::o2_decrement() {
-	getResultPos();
-	_vars[_resultVarNumber]--;
 }
 
 void Scumm_v2::o2_chainScript() {
@@ -1346,13 +1302,6 @@ void Scumm_v2::o2_getActorMoving() {
 	}
 
 	_vars[_resultVarNumber] = a->moving;
-}
-
-void Scumm_v2::o2_add() {
-	int a;
-	getResultPos();
-	a = getVarOrDirectWord(0x80);
-	_vars[_resultVarNumber] += a;
 }
 
 void Scumm_v2::o2_cursorCommand() {

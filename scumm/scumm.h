@@ -512,9 +512,12 @@ protected:
 	void ignoreScriptWord() { fetchScriptWord(); }
 	void ignoreScriptByte() { fetchScriptByte(); }
 	void getResultPos();
+	void getResultPosDirect();
 	void setResult(int result);
 	void push(int a);
 	int pop();
+	int getVarOrDirectByte(byte mask);
+	int getVarOrDirectWord(byte mask);
 public:
 	virtual int readVar(uint var);	// FIXME - should be protected, used in scumm/dialogs.cpp
 protected:
