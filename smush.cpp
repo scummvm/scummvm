@@ -109,7 +109,10 @@ void Smush::handleWave(const byte *src, uint32 size) {
 	int16 *dst = new int16[size * _channels];
 	decompressVima((char *)src, dst, size * _channels * 2, destTable);
 	
-	int flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_LITTLE_ENDIAN | SoundMixer::FLAG_AUTOFREE;
+	int flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
+#endif
 	if (_channels == 2)
 		flags |= SoundMixer::FLAG_STEREO;
 
