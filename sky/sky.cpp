@@ -106,8 +106,8 @@ void SkyState::initialise(void) {
 
 	//initialise_memory();
 
-	_skySound = new SkySound(_mixer);
 	_skyDisk = new SkyDisk(_gameDataPath);
+	_skySound = new SkySound(_mixer, _skyDisk);
 	
 	if (_detector->getMidiDriverType() == MD_ADLIB) {
 		_skyMusic = new SkyAdlibMusic(_mixer, _skyDisk);
@@ -127,7 +127,7 @@ void SkyState::initialise(void) {
 	//initialiseRouter();
 	loadFixedItems();
 	_skyGrid = new SkyGrid(_skyDisk);
-	_skyLogic = new SkyLogic(_skyDisk, _skyGrid, _skyText, _skyMusic, _skyMouse, _gameVersion);
+	_skyLogic = new SkyLogic(_skyDisk, _skyGrid, _skyText, _skyMusic, _skyMouse, _skySound, _gameVersion);
 	
 	_timer = Engine::_timer; // initialize timer *after* _skyScreen has been initialized.
 	_timer->installProcedure(&timerHandler, 1000000 / 50); //call 50 times per second

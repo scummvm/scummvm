@@ -31,7 +31,7 @@
 
 class SkyLogic {
 public:
-	SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, uint32 gameVersion);
+	SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound, uint32 gameVersion);
 	void engine();
 
 	void lreturn();
@@ -196,6 +196,7 @@ protected:
 	SkyGrid *_skyGrid;
 	SkyText *_skyText;
 	SkyMusicBase *_skyMusic;
+	SkySound *_skySound;
 	SkyAutoRoute *_skyAutoRoute;
 	SkyMouse *_skyMouse;
 };

@@ -48,11 +48,12 @@ static const LogicTable logicTable[] = {
 	&SkyLogic::simpleAnim,	 // 16 Module anim without x,y's
 };
 
-SkyLogic::SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, uint32 gameVersion) {
+SkyLogic::SkyLogic(SkyDisk *skyDisk, SkyGrid *skyGrid, SkyText *skyText, SkyMusicBase *skyMusic, SkyMouse *skyMouse, SkySound *skySound, uint32 gameVersion) {
 	_skyDisk = skyDisk;
 	_skyGrid = skyGrid;
 	_skyText = skyText;
 	_skyMusic = skyMusic;
+	_skySound = skySound;
 	_skyMouse = skyMouse;
 	_gameVersion = gameVersion;
 	_skyAutoRoute = new SkyAutoRoute(_skyGrid);
@@ -1552,7 +1553,8 @@ uint32 SkyLogic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
 			_saveCurrentSection = sectionNo;
 
 			sectionNo++;
-			_skyMusic->loadSectionMusic((byte)sectionNo);
+			_skyMusic->loadSection((byte)sectionNo);
+			_skySound->loadSection((byte)sectionNo);
 			_skyGrid->loadGrids();
 
 		}

@@ -197,7 +197,8 @@ void SkyState::intro(void) {
 	_skyDisk->prefetchFile(60112); // revolution screen
 	_skyDisk->prefetchFile(60113); // revolution palette
 
-	_skyMusic->loadSectionMusic(0);
+	_skyMusic->loadSection(0);
+	_skySound->loadSection(0);
 	
 	delay(3000); //keep virgin screen up for 3 seconds
 	CHECK_ESC
@@ -475,12 +476,12 @@ void SkyState::removeText(uint32 *&cmdPtr) {
 
 void SkyState::introFx(uint32 *&cmdPtr) {
 
-	warning("introFx() not implemented yet");
+	_skySound->playSound((uint16)cmdPtr[2], (uint16)cmdPtr[3]);
 	cmdPtr += 4;
 }
 
 void SkyState::introVol(uint32 *&cmdPtr) {
 
-	warning("introVol() not implemented yet");
+	_mixer->setVolume(((cmdPtr[2] & 0x7F) + 1) << 1);
 	cmdPtr += 3;
 }

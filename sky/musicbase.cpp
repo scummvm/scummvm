@@ -34,7 +34,7 @@ SkyMusicBase::~SkyMusicBase(void)
 	if (_musicData) free(_musicData);
 }
 
-void SkyMusicBase::loadSectionMusic(uint8 pSection)
+void SkyMusicBase::loadSection(uint8 pSection)
 {
 	if (_currentMusic) stopMusic();
 	if (_musicData) free(_musicData);

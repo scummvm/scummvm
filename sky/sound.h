@@ -19,8 +19,9 @@
  *
  */
 
-
 #include "sound/mixer.h"
+#include "sky/disk.h"
+#include "common/engine.h"
 
 class SkySound {
 protected:
@@ -31,15 +32,24 @@ public:
 	PlayingSoundHandle _voiceHandle;
 	PlayingSoundHandle _effectHandle;
 	PlayingSoundHandle _bgSoundHandle;
+	PlayingSoundHandle _ingameSound;
 
 protected:
 
 	int playSound(byte *sound, uint32 size, PlayingSoundHandle *handle);
 
 public:
-	SkySound(SoundMixer *mixer);
+	SkySound(SoundMixer *mixer, SkyDisk *pDisk);
+	~SkySound(void);
 	int playVoice(byte *sound, uint32 size);
 	int playBgSound(byte *sound, uint32 size);
 
+	void loadSection(uint8 pSection);
+	void playSound(uint16 sound, uint16 volume);
+
+private:
+	SkyDisk *_skyDisk;
+    uint8 *_soundData;
+	uint8 *_sampleRates, *_sfxInfo;
 };
 
