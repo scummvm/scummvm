@@ -481,6 +481,8 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode)
 {
 	if (key >= SDLK_F1 && key <= SDLK_F9) {
 		return key - SDLK_F1 + 315;
+	} else if (key >= SDLK_KP0 && key <= SDLK_KP9) {
+		return key - SDLK_KP0 + '0';
 	} else if (key >= SDLK_UP && key <= SDLK_PAGEDOWN) {
 		return key;
 	} else if (unicode) {
