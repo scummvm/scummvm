@@ -72,8 +72,8 @@ bool ImuseChannel::checkParameters(int32 index, int32 nbframes, int32 size, int3
 bool ImuseChannel::appendData(Chunk &b, int32 size) {
 	if (_dataSize == -1) {
 		assert(size > 8);
-		Chunk::type imus_type = b.getDword(); imus_type = SWAP_BYTES(imus_type);
-		uint32 imus_size = b.getDword(); imus_size = SWAP_BYTES(imus_size);
+		Chunk::type imus_type = b.getDword(); imus_type = SWAP_BYTES_32(imus_type);
+		uint32 imus_size = b.getDword(); imus_size = SWAP_BYTES_32(imus_size);
 		if (imus_type != TYPE_iMUS)
 			error("Invalid Chunk for imuse_channel");
 		size -= 8;
@@ -109,14 +109,14 @@ bool ImuseChannel::appendData(Chunk &b, int32 size) {
 bool ImuseChannel::handleFormat(Chunk &src) {
 	if (src.getSize() != 20) error("invalid size for FRMT Chunk");
 	uint32 imuse_start = src.getDword();
-	imuse_start = SWAP_BYTES(imuse_start);
+	imuse_start = SWAP_BYTES_32(imuse_start);
 	src.seek(4);
 	_bitsize = src.getDword();
-	_bitsize = SWAP_BYTES(_bitsize);
+	_bitsize = SWAP_BYTES_32(_bitsize);
 	_rate = src.getDword();
-	_rate = SWAP_BYTES(_rate);
+	_rate = SWAP_BYTES_32(_rate);
 	_channels = src.getDword();
-	_channels = SWAP_BYTES(_channels);
+	_channels = SWAP_BYTES_32(_channels);
 	assert(_channels == 1 || _channels == 2);
 	return true;
 }

@@ -973,7 +973,7 @@ void Scumm::addObjectToInventory(uint obj, uint room) {
 	if (whereIsObject(obj) == WIO_FLOBJECT) {
 		i = getObjectIndex(obj);
 		ptr = getResourceAddress(rtFlObject, _objs[i].fl_object_index) + 8;
-		size = READ_BE_UINT32_UNALIGNED(ptr + 4);
+		size = READ_BE_UINT32(ptr + 4);
 	} else {
 		findObjectInRoom(&foir, foCodeHeader, obj, room);
 		if (_features & GF_OLD_BUNDLE)
@@ -981,7 +981,7 @@ void Scumm::addObjectToInventory(uint obj, uint room) {
 		else if (_features & GF_SMALL_HEADER)
 			size = READ_LE_UINT32(foir.obcd);
 		else
-			size = READ_BE_UINT32_UNALIGNED(foir.obcd + 4);
+			size = READ_BE_UINT32(foir.obcd + 4);
 		ptr = foir.obcd;
 	}
 
@@ -1352,7 +1352,7 @@ void Scumm::setCursorImg(uint img, uint room, uint imgindex) {
 		if (dataptr == NULL)
 			error("setCursorImg: No such image");
 	
-		size = READ_BE_UINT32_UNALIGNED(dataptr + 4);
+		size = READ_BE_UINT32(dataptr + 4);
 		if (size > sizeof(_grabbedCursor))
 			error("setCursorImg: Cursor image too large");
 		
@@ -1628,10 +1628,10 @@ void Scumm::loadFlObject(uint object, uint room) {
 	}
 
 	// Setup sizes
-	obcd_size = READ_BE_UINT32_UNALIGNED(foir.obcd + 4);
+	obcd_size = READ_BE_UINT32(foir.obcd + 4);
 	od->OBCDoffset = 8;
 	od->OBIMoffset = obcd_size + 8;
-	obim_size = READ_BE_UINT32_UNALIGNED(foir.obim + 4);
+	obim_size = READ_BE_UINT32(foir.obim + 4);
 	flob_size = obcd_size + obim_size + 8;
 
 	// Lock room/roomScripts for the given room. They contains the OBCD/OBIM

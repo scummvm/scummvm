@@ -99,7 +99,7 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	// In older versions of ScummVM, the header version was not endian safe.
 	// We account for that by retrying once with swapped byte order.
 	if (hdr.ver > CURRENT_VER)
-		hdr.ver = SWAP_BYTES(hdr.ver);
+		hdr.ver = SWAP_BYTES_32(hdr.ver);
 	if (hdr.ver < VER_V7 || hdr.ver > CURRENT_VER)
 	{
 		warning("Invalid version of '%s'", filename);

@@ -2619,9 +2619,9 @@ void Scumm::initCycl(const byte *ptr) {
 
 		ptr += 2;
 		cycl->counter = 0;
-		cycl->delay = 16384 / READ_BE_UINT16_UNALIGNED(ptr);
+		cycl->delay = 16384 / READ_BE_UINT16(ptr);
 		ptr += 2;
-		cycl->flags = READ_BE_UINT16_UNALIGNED(ptr);
+		cycl->flags = READ_BE_UINT16(ptr);
 		ptr += 2;
 		cycl->start = *ptr++;
 		cycl->end = *ptr++;

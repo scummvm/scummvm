@@ -1951,17 +1951,17 @@ void Scumm_v5::o5_setObjectName() {
 		assert(searchin);
 	
 		searchin += 4;
-		totalsize = READ_BE_UINT32_UNALIGNED(searchin);
+		totalsize = READ_BE_UINT32(searchin);
 		curpos = 8;
 		searchin += 4;
 	
 		while (curpos < totalsize) {
-			if (READ_UINT32_UNALIGNED(searchin) == tag) {
+			if (READ_UINT32(searchin) == tag) {
 				name = searchin + _resourceHeaderSize;
 				break;
 			}
 	
-			size = READ_BE_UINT32_UNALIGNED(searchin + 4);
+			size = READ_BE_UINT32(searchin + 4);
 			if ((int32)size <= 0) {
 				error("(%c%c%c%c) Not found in %d... illegal block len %d",
 							tag & 0xFF, (tag >> 8) & 0xFF, (tag >> 16) & 0xFF, (tag >> 24) & 0xFF, 0, size);

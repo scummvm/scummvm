@@ -1780,7 +1780,7 @@ void Scumm::dumpResource(const char *tag, int idx, const byte *ptr, int length) 
 	else if (_features & GF_SMALL_HEADER)
 		size = READ_LE_UINT32(ptr);
 	else
-		size = READ_BE_UINT32_UNALIGNED(ptr + 4);
+		size = READ_BE_UINT32(ptr + 4);
 
 #if defined(MACOS_CARBON)
 	sprintf(buf, ":dumps:%s%d.dmp", tag, idx);

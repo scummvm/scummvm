@@ -100,7 +100,7 @@ byte *IMuseInternal::findStartOfSound (int sound) {
 	}
 
 	ptr += 8;
-	size = READ_BE_UINT32_UNALIGNED(ptr);
+	size = READ_BE_UINT32(ptr);
 	ptr += 4;
 
 	// Okay, we're looking for one of those things: either

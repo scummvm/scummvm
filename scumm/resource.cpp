@@ -1366,7 +1366,7 @@ int Scumm::getResourceDataSize(const byte *ptr) const {
 	else if (_features & GF_SMALL_HEADER)
 		return READ_LE_UINT32(ptr) - 6;
 	else
-		return READ_BE_UINT32_UNALIGNED(ptr - 4) - 8;
+		return READ_BE_UINT32(ptr - 4) - 8;
 }
 
 struct FindResourceState {
@@ -1381,14 +1381,14 @@ const byte *findResource(uint32 tag, const byte *searchin) {
 	FindResourceState *f = &frs;	/* easier to make it thread safe like this */
 
 	if (searchin) {
-		f->size = READ_BE_UINT32_UNALIGNED(searchin + 4);
+		f->size = READ_BE_UINT32(searchin + 4);
 		f->pos = 8;
 		f->ptr = searchin + 8;
 		goto StartScan;
 	}
 
 	do {
-		size = READ_BE_UINT32_UNALIGNED(f->ptr + 4);
+		size = READ_BE_UINT32(f->ptr + 4);
 		if ((int32)size <= 0)
 			return NULL;
 
@@ -1398,7 +1398,7 @@ const byte *findResource(uint32 tag, const byte *searchin) {
 	StartScan:
 		if (f->pos >= f->size)
 			return NULL;
-	} while (READ_UINT32_UNALIGNED(f->ptr) != tag);
+	} while (READ_UINT32(f->ptr) != tag);
 
 	return f->ptr;
 }
@@ -1440,15 +1440,15 @@ const byte *findResource(uint32 tag, const byte *searchin, int idx) {
 	assert(searchin);
 
 	searchin += 4;
-	totalsize = READ_BE_UINT32_UNALIGNED(searchin);
+	totalsize = READ_BE_UINT32(searchin);
 	curpos = 8;
 	searchin += 4;
 
 	while (curpos < totalsize) {
-		if (READ_UINT32_UNALIGNED(searchin) == tag && !idx--)
+		if (READ_UINT32(searchin) == tag && !idx--)
 			return searchin;
 
-		size = READ_BE_UINT32_UNALIGNED(searchin + 4);
+		size = READ_BE_UINT32(searchin + 4);
 		if ((int32)size <= 0) {
 			error("(%c%c%c%c) Not found in %d... illegal block len %d",
 						tag & 0xFF, (tag >> 8) & 0xFF, (tag >> 16) & 0xFF, (tag >> 24) & 0xFF, 0, size);

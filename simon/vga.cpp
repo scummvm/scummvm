@@ -120,7 +120,7 @@ void SimonEngine::run_vga_script() {
 		}
 
 		if (!(_game & GF_SIMON2)) {
-			opcode = READ_BE_UINT16_UNALIGNED(_vc_ptr);
+			opcode = READ_BE_UINT16(_vc_ptr);
 			_vc_ptr += 2;
 		} else {
 			opcode = *_vc_ptr++;
@@ -144,7 +144,7 @@ int SimonEngine::vc_read_var_or_word() {
 }
 
 uint SimonEngine::vc_read_next_word() {
-	uint a = READ_BE_UINT16_UNALIGNED(_vc_ptr);
+	uint a = READ_BE_UINT16(_vc_ptr);
 	_vc_ptr += 2;
 	return a;
 }
@@ -245,15 +245,15 @@ void SimonEngine::vc_2_call() {
 
 
 	bb = _cur_vga_file_1;
-	b = bb + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header *) bb)->hdr2_start);
-	b = bb + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header2 *) b)->unk2_offs);
+	b = bb + READ_BE_UINT16(&((VgaFile1Header *) bb)->hdr2_start);
+	b = bb + READ_BE_UINT16(&((VgaFile1Header2 *) b)->unk2_offs);
 
-	while (READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x8 *) b)->id) != num)
+	while (READ_BE_UINT16(&((VgaFile1Struct0x8 *) b)->id) != num)
 		b += sizeof(VgaFile1Struct0x8);
 
 	vc_ptr_org = _vc_ptr;
 
-	_vc_ptr = _cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x8 *) b)->script_offs);
+	_vc_ptr = _cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x8 *) b)->script_offs);
 
 	//dump_vga_script(_vc_ptr, res, num);
 	run_vga_script();
@@ -317,10 +317,10 @@ void SimonEngine::vc_3_new_sprite() {
 	}
 
 	pp = _cur_vga_file_1;
-	p = pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header *) pp)->hdr2_start);
-	p = pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header2 *) p)->id_table);
+	p = pp + READ_BE_UINT16(&((VgaFile1Header *) pp)->hdr2_start);
+	p = pp + READ_BE_UINT16(&((VgaFile1Header2 *) p)->id_table);
 
-	while (READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6 *) p)->id) != b)
+	while (READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->id) != b)
 		p += sizeof(VgaFile1Struct0x6);
 
 #ifdef DUMP_FILE_NR
@@ -343,9 +343,9 @@ void SimonEngine::vc_3_new_sprite() {
 	}
 #endif
 
-	//dump_vga_script(_cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6*)p)->script_offs), res, b);
+	//dump_vga_script(_cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), res, b);
 
-	add_vga_timer(gss->VGA_DELAY_BASE, _cur_vga_file_1 + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6 *) p)->script_offs), b, res);
+	add_vga_timer(gss->VGA_DELAY_BASE, _cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), b, res);
 }
 
 void SimonEngine::vc_4_dummy_op() {
@@ -599,9 +599,9 @@ void SimonEngine::vc_10_draw() {
 		state.image = vc_read_var(-state.image);
 
 	p2 = _cur_vga_file_2 + state.image * 8;
-	state.depack_src = _cur_vga_file_2 + READ_BE_UINT32_UNALIGNED(&*(uint32 *)p2);
+	state.depack_src = _cur_vga_file_2 + READ_BE_UINT32(p2);
 
-	width = READ_BE_UINT16_UNALIGNED(p2 + 6) >> 4;
+	width = READ_BE_UINT16(p2 + 6) >> 4;
 	height = p2[5];
 	flags = p2[4];
 
@@ -640,7 +640,7 @@ void SimonEngine::vc_10_draw() {
 		src = state.depack_src + _x_scroll * 4;
 
 		for (w = 0; w < 40; w++) {
-			decodeStripA(dst, src + READ_BE_UINT32_UNALIGNED(&*(uint32 *)src), height);
+			decodeStripA(dst, src + READ_BE_UINT32(src), height);
 			dst += 8;
 			src += 4;
 		}
@@ -1031,7 +1031,7 @@ void SimonEngine::vc_16_sleep_on_id() {
 void SimonEngine::vc_17_set_pathfind_item() {
 	uint a = vc_read_next_word();
 	_pathfind_array[a - 1] = (uint16 *)_vc_ptr;
-	while (READ_BE_UINT16_UNALIGNED(_vc_ptr) != 999)
+	while (READ_BE_UINT16(_vc_ptr) != 999)
 		_vc_ptr += 4;
 	_vc_ptr += 2;
 }
@@ -1483,9 +1483,9 @@ void SimonEngine::vc_48() {
 	vp = &_variableArray[20];
 
 	do {
-		y2 = READ_BE_UINT16_UNALIGNED(p);
+		y2 = READ_BE_UINT16(p);
 		p += step;
-		y1 = READ_BE_UINT16_UNALIGNED(p) - y2;
+		y1 = READ_BE_UINT16(p) - y2;
 
 		vp[0] = y1 >> 1;
 		vp[1] = y1 - (y1 >> 1);
@@ -1738,11 +1738,11 @@ void SimonEngine::vc_62_palette_thing() {
 					_cur_vga_file_2 = vpe->vgaFile2;
 					_video_palette_mode = vsp->unk6;
 
-					params[0] = READ_BE_UINT16_UNALIGNED(&vsp->image);
-					params[1] = READ_BE_UINT16_UNALIGNED(&vsp->base_color);
-					params[2] = READ_BE_UINT16_UNALIGNED(&vsp->x);
-					params[3] = READ_BE_UINT16_UNALIGNED(&vsp->y);
-					params[4] = READ_BE_UINT16_UNALIGNED(&vsp->unk4);
+					params[0] = READ_BE_UINT16(&vsp->image);
+					params[1] = READ_BE_UINT16(&vsp->base_color);
+					params[2] = READ_BE_UINT16(&vsp->x);
+					params[3] = READ_BE_UINT16(&vsp->y);
+					params[4] = READ_BE_UINT16(&vsp->unk4);
 					_vc_ptr = (byte *)params;
 					vc_10_draw();
 

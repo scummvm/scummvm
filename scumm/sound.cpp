@@ -180,17 +180,17 @@ void Sound::playSound(int soundID) {
 	debug(3,"playSound #%d (room %d)", soundID, _scumm->getResourceRoomNr(rtSound, soundID));
 	ptr = _scumm->getResourceAddress(rtSound, soundID);
 	if (ptr) {
-		if (READ_UINT32_UNALIGNED(ptr) == MKID('iMUS')){
+		if (READ_UINT32(ptr) == MKID('iMUS')){
 			assert(_scumm->_imuseDigital);
 			_scumm->_imuseDigital->startSound(soundID);
 			return;
 		}
-		else if (READ_UINT32_UNALIGNED(ptr) == MKID('Crea')) {
+		else if (READ_UINT32(ptr) == MKID('Crea')) {
 			assert(_scumm->_imuseDigital);
 			_scumm->_imuseDigital->startSound(soundID);
 			return;
 		}
-		else if (READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
+		else if (READ_UINT32(ptr) == MKID('SOUN')) {
 			ptr += 8;
 			_scumm->VAR(_scumm->VAR_MUSIC_TIMER) = 0;
 			playCDTrack(ptr[16], ptr[17] == 0xff ? -1 : ptr[17],
@@ -202,11 +202,11 @@ void Sound::playSound(int soundID) {
 		// Support for SFX in Monkey Island 1, Mac version
 		// This is rather hackish right now, but works OK. SFX are not sounding
 		// 100% correct, though, not sure right now what is causing this.
-		else if (READ_UINT32_UNALIGNED(ptr) == MKID('Mac1')) {
+		else if (READ_UINT32(ptr) == MKID('Mac1')) {
 
 			// Read info from the header
-			size = READ_BE_UINT32_UNALIGNED(ptr+0x60);
-			rate = READ_BE_UINT32_UNALIGNED(ptr+0x64) >> 16;
+			size = READ_BE_UINT32(ptr+0x60);
+			rate = READ_BE_UINT32(ptr+0x64) >> 16;
 
 			// Skip over the header (fixed size)
 			ptr += 0x72;
@@ -218,14 +218,14 @@ void Sound::playSound(int soundID) {
 			return;
 		}
 		// Support for Putt-Putt sounds - very hackish, too 8-)
-		else if (READ_UINT32_UNALIGNED(ptr) == MKID('DIGI')) {
+		else if (READ_UINT32(ptr) == MKID('DIGI')) {
 			// TODO - discover what data the first chunk, HSHD, contains
 			// it might be useful here.
-			ptr += 8 + READ_BE_UINT32_UNALIGNED(ptr+12);
-			if (READ_UINT32_UNALIGNED(ptr) != MKID('SDAT'))
+			ptr += 8 + READ_BE_UINT32(ptr+12);
+			if (READ_UINT32(ptr) != MKID('SDAT'))
 				return;	// abort
 
-			size = READ_BE_UINT32_UNALIGNED(ptr+4) - 8;
+			size = READ_BE_UINT32(ptr+4) - 8;
 			// FIXME - what value here ?!? 11025 is just a guess based on strings in w32 bin, prev guess 8000
 			rate = 11025;
 
@@ -236,16 +236,16 @@ void Sound::playSound(int soundID) {
 			return;
 		}
 		// XMIDI 
-		else if ((READ_UINT32_UNALIGNED(ptr) == MKID('MIDI')) && (_scumm->_features & GF_HUMONGOUS)) {
+		else if ((READ_UINT32(ptr) == MKID('MIDI')) && (_scumm->_features & GF_HUMONGOUS)) {
 			// Pass XMIDI on to IMuse unprocessed.
 			// IMuse can handle XMIDI resources now.
 		}
-		else if (READ_UINT32_UNALIGNED(ptr) == MKID('ADL ')) {
+		else if (READ_UINT32(ptr) == MKID('ADL ')) {
 			// played as MIDI, just to make perhaps the later use
 			// of WA possible (see "else if" with GF_OLD256 below)
 		}
 		// Support for sampled sound effects in Monkey1 and Monkey2
-		else if (READ_UINT32_UNALIGNED(ptr) == MKID('SBL ')) {
+		else if (READ_UINT32(ptr) == MKID('SBL ')) {
 			debug(2, "Using SBL sound effect");
 
 			// TODO - Figuring out how the SBL chunk works. Here's
@@ -283,12 +283,12 @@ void Sound::playSound(int soundID) {
 			// I'm going to assume that the sample frequency is
 			// the only important difference between the two.
 
-			if (READ_UINT32_UNALIGNED(ptr + 8) == MKID('WVhd'))
+			if (READ_UINT32(ptr + 8) == MKID('WVhd'))
 				rate = 11025;
 			else
 				rate = 8000;
 
-			size = READ_BE_UINT32_UNALIGNED(ptr + 4) - 27;
+			size = READ_BE_UINT32(ptr + 4) - 27;
 
 			// Allocate a sound buffer, copy the data into it, and play
 			sound = (char *)malloc(size);

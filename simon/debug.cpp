@@ -175,7 +175,7 @@ void SimonEngine::dump_video_script(byte *src, bool one_opcode_only) {
 
 	do {
 		if (!(_game & GF_SIMON2)) {
-			opcode = READ_BE_UINT16_UNALIGNED(src);
+			opcode = READ_BE_UINT16(src);
 			src += 2;
 		} else {
 			opcode = *src++;
@@ -205,21 +205,21 @@ void SimonEngine::dump_video_script(byte *src, bool one_opcode_only) {
 				fprintf(_dump_file, "%d ", *src++);
 				break;
 			case 'd':
-				fprintf(_dump_file, "%d ", READ_BE_UINT16_UNALIGNED(src));
+				fprintf(_dump_file, "%d ", READ_BE_UINT16(src));
 				src += 2;
 				break;
 			case 'v':
-				fprintf(_dump_file, "[%d] ", READ_BE_UINT16_UNALIGNED(src));
+				fprintf(_dump_file, "[%d] ", READ_BE_UINT16(src));
 				src += 2;
 				break;
 			case 'i':
-				fprintf(_dump_file, "%d ", (int16)READ_BE_UINT16_UNALIGNED(src));
+				fprintf(_dump_file, "%d ", (int16)READ_BE_UINT16(src));
 				src += 2;
 				break;
 			case 'q':
-				while (READ_BE_UINT16_UNALIGNED(src) != 999) {
-					fprintf(_dump_file, "(%d,%d) ", READ_BE_UINT16_UNALIGNED(src),
-									READ_BE_UINT16_UNALIGNED(src + 2));
+				while (READ_BE_UINT16(src) != 999) {
+					fprintf(_dump_file, "(%d,%d) ", READ_BE_UINT16(src),
+									READ_BE_UINT16(src + 2));
 					src += 4;
 				}
 				src++;
@@ -240,13 +240,13 @@ void SimonEngine::dump_vga_file(byte *vga) {
 		int count;
 
 		pp = vga;
-		p = pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header *) pp)->hdr2_start);
-		count = READ_BE_UINT16_UNALIGNED(&((VgaFile1Header2 *) p)->id_count);
-		p = pp + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header2 *) p)->id_table);
+		p = pp + READ_BE_UINT16(&((VgaFile1Header *) pp)->hdr2_start);
+		count = READ_BE_UINT16(&((VgaFile1Header2 *) p)->id_count);
+		p = pp + READ_BE_UINT16(&((VgaFile1Header2 *) p)->id_table);
 		while (--count >= 0) {
-			int id = READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6 *) p)->id);
+			int id = READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->id);
 
-			dump_vga_script_always(vga + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x6 *) p)->script_offs), id / 100, id);
+			dump_vga_script_always(vga + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), id / 100, id);
 			p += sizeof(VgaFile1Struct0x6);
 		}
 	}
@@ -256,14 +256,14 @@ void SimonEngine::dump_vga_file(byte *vga) {
 		int c;
 
 		bb = vga;
-		b = bb + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header *) bb)->hdr2_start);
-		c = READ_BE_UINT16_UNALIGNED(&((VgaFile1Header2 *) b)->unk1);
-		b = bb + READ_BE_UINT16_UNALIGNED(&((VgaFile1Header2 *) b)->unk2_offs);
+		b = bb + READ_BE_UINT16(&((VgaFile1Header *) bb)->hdr2_start);
+		c = READ_BE_UINT16(&((VgaFile1Header2 *) b)->unk1);
+		b = bb + READ_BE_UINT16(&((VgaFile1Header2 *) b)->unk2_offs);
 
 		while (--c >= 0) {
-			int id = READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x8 *) b)->id);
+			int id = READ_BE_UINT16(&((VgaFile1Struct0x8 *) b)->id);
 
-			dump_vga_script_always(vga + READ_BE_UINT16_UNALIGNED(&((VgaFile1Struct0x8 *) b)->script_offs), id / 100, id);
+			dump_vga_script_always(vga + READ_BE_UINT16(&((VgaFile1Struct0x8 *) b)->script_offs), id / 100, id);
 			b += sizeof(VgaFile1Struct0x8);
 		}
 	}

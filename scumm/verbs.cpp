@@ -558,7 +558,7 @@ void Scumm::setVerbObject(uint room, uint object, uint verb) {
 		}
 	} else {
 		findObjectInRoom(&foir, foImageHeader, object, room);
-		size = READ_BE_UINT32_UNALIGNED(foir.obim + 4);
+		size = READ_BE_UINT32(foir.obim + 4);
 		createResource(rtVerb, verb, size);
 		obimptr = getResourceAddress(rtRoom, room) - foir.roomptr + foir.obim;
 		memcpy(getResourceAddress(rtVerb, verb), obimptr, size);

@@ -232,8 +232,8 @@ bool SaudChannel::checkParameters(int32 index, int32 nb, int32 flags, int32 volu
 bool SaudChannel::appendData(Chunk &b, int32 size) {
 	if (_dataSize == -1) {
 		assert(size > 8);
-		Chunk::type saud_type = b.getDword(); saud_type = SWAP_BYTES(saud_type);
-		uint32 saud_size = b.getDword(); saud_size = SWAP_BYTES(saud_size);
+		Chunk::type saud_type = b.getDword(); saud_type = SWAP_BYTES_32(saud_type);
+		uint32 saud_size = b.getDword(); saud_size = SWAP_BYTES_32(saud_size);
 		if (saud_type != TYPE_SAUD) error("Invalid Chunk for SaudChannel : %X", saud_type);
 		size -= 8;
 		_dataSize = -2;

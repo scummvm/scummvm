@@ -255,7 +255,7 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 	if (code != AKC_ComplexChan) {
 		off = akof + (code & 0xFFF);
 
-		assert((code & 0xFFF) * 6 < READ_BE_UINT32_UNALIGNED((const byte *)akof - 4) - 8);
+		assert((code & 0xFFF) * 6 < READ_BE_UINT32((const byte *)akof - 4) - 8);
 		assert((code & 0x7000) == 0);
 
 		_srcptr = akcd + READ_LE_UINT32(&off->akcd);

@@ -803,7 +803,7 @@ void IMuseDigital::startSound(int sound) {
 
 			uint32 tag, size = 0, r, t;
 
-			if (READ_UINT32_UNALIGNED(ptr) == MKID('Crea')) {
+			if (READ_UINT32(ptr) == MKID('Crea')) {
 				_channel[l]._bits = 8;
 				_channel[l]._channels = 2;
 				_channel[l]._mixerSize = (22050 / 5) * 2;
@@ -827,19 +827,19 @@ void IMuseDigital::startSound(int sound) {
 				}
 				free(t_ptr);
 				_channel[l]._size = size;
-			} else if (READ_UINT32_UNALIGNED(ptr) == MKID('iMUS')) {
+			} else if (READ_UINT32(ptr) == MKID('iMUS')) {
 				ptr += 16;
 				for (;;) {
-					tag = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
+					tag = READ_BE_UINT32(ptr); ptr += 4;
 					switch(tag) {
 						case MKID_BE('FRMT'):
 							ptr += 12;
-							_channel[l]._bits = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
-							_channel[l]._freq = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
-							_channel[l]._channels = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
+							_channel[l]._bits = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._freq = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._channels = READ_BE_UINT32(ptr); ptr += 4;
 						break;
 						case MKID_BE('TEXT'):
-							size = READ_BE_UINT32_UNALIGNED(ptr); ptr += size + 4;
+							size = READ_BE_UINT32(ptr); ptr += size + 4;
 						break;
 						case MKID_BE('REGN'):
 							ptr += 4;
@@ -848,13 +848,13 @@ void IMuseDigital::startSound(int sound) {
 								ptr += 8;
 								break;
 							}
-							_channel[l]._region[_channel[l]._numRegions]._offset = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
-							_channel[l]._region[_channel[l]._numRegions]._length = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
+							_channel[l]._region[_channel[l]._numRegions]._offset = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._region[_channel[l]._numRegions]._length = READ_BE_UINT32(ptr); ptr += 4;
 							_channel[l]._numRegions++;
 						break;
 						case MKID_BE('STOP'):
 							ptr += 4;
-							_channel[l]._offsetStop = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
+							_channel[l]._offsetStop = READ_BE_UINT32(ptr); ptr += 4;
 						break;
 						case MKID_BE('JUMP'):
 							ptr += 4;
@@ -863,15 +863,15 @@ void IMuseDigital::startSound(int sound) {
 								ptr += 16;
 								break;
 							}
-							_channel[l]._jump[_channel[l]._numJumps]._offset = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
-							_channel[l]._jump[_channel[l]._numJumps]._dest = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
-							_channel[l]._jump[_channel[l]._numJumps]._id = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
-							_channel[l]._jump[_channel[l]._numJumps]._numLoops = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
+							_channel[l]._jump[_channel[l]._numJumps]._offset = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._jump[_channel[l]._numJumps]._dest = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._jump[_channel[l]._numJumps]._id = READ_BE_UINT32(ptr); ptr += 4;
+							_channel[l]._jump[_channel[l]._numJumps]._numLoops = READ_BE_UINT32(ptr); ptr += 4;
 							_channel[l]._isJump = true;
 							_channel[l]._numJumps++;
 						break;
 						case MKID_BE('DATA'):
-							size = READ_BE_UINT32_UNALIGNED(ptr); ptr += 4;
+							size = READ_BE_UINT32(ptr); ptr += 4;
 						break;
 						default:
 							error("IMuseDigital::startSound(%d) Unknown sfx header %c%c%c%c", sound, (byte)(tag >> 24), (byte)(tag >> 16), (byte)(tag >> 8), (byte)tag);

@@ -301,12 +301,21 @@
 	#error No system type defined
 #endif
 
-#define SWAP_BYTES(a) ((((a) >> 24) & 0xFF) | (((a) >> 8) & 0xFF00) | \
-									(((a) << 8) & 0xFF0000) | (((a) << 24) & 0xFF000000))
+FORCEINLINE uint32 SWAP_BYTES_32(uint32 a) {
+	return ((a >> 24) & 0x000000FF) |
+		   ((a >>  8) & 0x0000FF00) |
+		   ((a <<  8) & 0x00FF0000) |
+		   ((a << 24) & 0xFF000000);
+}
+
+FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
+	return ((a >> 8) & 0x00FF) + ((a << 8) & 0xFF00);
+}
+
 
 #if defined(SCUMM_LITTLE_ENDIAN)
 
-	#define PROTO_MKID(a) SWAP_BYTES(a)
+	#define PROTO_MKID(a) SWAP_BYTES_32(a)
 	#define PROTO_MKID_BE(a) (a & 0xffffffff)
 
 	#if defined(INVERSE_MKID)
@@ -317,97 +326,30 @@
 	#  define MKID_BE(a) PROTO_MKID_BE(a)
 	#endif
 
-	#if defined(SCUMM_NEED_ALIGNMENT)
-		FORCEINLINE uint READ_LE_UINT16(const void *ptr) {
-			return (((const byte *)ptr)[1] << 8)|((const byte *)ptr)[0];
-		}
-	#else
-		FORCEINLINE uint READ_LE_UINT16(const void *ptr) {
-			return *(const uint16 *)(ptr);
-		}
-	#endif
+	#define READ_UINT32(a) READ_LE_UINT32(a)
 
-	FORCEINLINE uint READ_BE_UINT16(const void *ptr) {
-		return (((const byte *)ptr)[0] << 8)|((const byte *)ptr)[1];
-	}
+	#define FROM_LE_32(a) (a)
+	#define FROM_LE_16(a) (a)
 
-	#if defined(SCUMM_NEED_ALIGNMENT)
-		FORCEINLINE uint32 READ_LE_UINT32(const void *ptr) {
-			const byte *b = (const byte *)ptr;
-			return (b[3] << 24) + (b[2] <<16) + (b[1] << 8) + (b[0]);
-		}
-	#else
-		FORCEINLINE uint32 READ_LE_UINT32(const void *ptr) {
-			return *(const uint32 *)(ptr);
-		}
-	#endif
-	
-	FORCEINLINE uint32 READ_BE_UINT32(const void *ptr) {
-		const byte *b = (const byte *)ptr;
-		return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + (b[3]);
-	}
+	#define TO_LE_32(a) (a)
+	#define TO_LE_16(a) (a)
 
-	#define READ_BE_UINT32_UNALIGNED READ_BE_UINT32
-	#define READ_BE_UINT16_UNALIGNED READ_BE_UINT16
-
-	#define READ_UINT32_UNALIGNED(a) READ_LE_UINT32(a)
-
-	#define FROM_LE_32(__a__) __a__
-	#define FROM_LE_16(__a__) __a__
-
-	#define TO_LE_32(__a__) __a__
-	#define TO_LE_16(__a__) __a__
-
-	#define TO_BE_32(a) SWAP_BYTES(a)
-
-	FORCEINLINE uint16 TO_BE_16(uint16 a) { return (a >> 8) | (a << 8); }
+	#define TO_BE_32(a) SWAP_BYTES_32(a)
+	#define TO_BE_16(a) SWAP_BYTES_16(a)
 
 #elif defined(SCUMM_BIG_ENDIAN)
 
 	#define MKID(a) (a)
 	#define MKID_BE(a) (a)
-	//#define MKID_BE(a) SWAP_BYTES(a)
+	//#define MKID_BE(a) SWAP_BYTES_32(a)
 
-	FORCEINLINE uint32 FROM_LE_32(uint32 a) {
-		return ((a >> 24) & 0xFF) + ((a >> 8) & 0xFF00) + (( a<< 8) & 0xFF0000) \
-						+ ((a<<24)&0xFF000000);
-	}
+	#define READ_UINT32(a) READ_BE_UINT32(a)
 
-	FORCEINLINE uint16 FROM_LE_16(uint16 a) {
-		return ((a >> 8) & 0xFF) + ((a << 8) & 0xFF00);
-	}
+	#define FROM_LE_32(a) SWAP_BYTES_32(a)
+	#define FROM_LE_16(a) SWAP_BYTES_16(a)
 
-	#define TO_LE_32 FROM_LE_32
-	#define TO_LE_16 FROM_LE_16
-
-	FORCEINLINE uint32 READ_LE_UINT32(const void *ptr) {
-		const byte *b = (const byte *)ptr;
-		return (b[3] << 24) + (b[2] << 16) + (b[1] << 8) + (b[0]);
-	}
-
-	FORCEINLINE uint32 READ_BE_UINT32(const void *ptr) {
-		return *(const uint32 *)(ptr);
-	}
-
-	FORCEINLINE uint READ_LE_UINT16(const void *ptr) {
-		const byte *b = (const byte *)ptr;
-		return (b[1] << 8) + b[0];
-	}
-
-	FORCEINLINE uint READ_BE_UINT16(const void *ptr) {
-		return *(const uint16 *)(ptr);
-	}
-
-	FORCEINLINE uint READ_BE_UINT16_UNALIGNED(const void *ptr) {
-		return (((const byte *)ptr)[0] << 8)|((const byte *)ptr)[1];
-	}
-
-	FORCEINLINE uint32 READ_BE_UINT32_UNALIGNED(const void *ptr) {
-		const byte *b = (const byte*)ptr;
-		return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + (b[3]);
-	}
-
-	#define READ_UINT32_UNALIGNED READ_BE_UINT32_UNALIGNED
+	#define TO_LE_32(a) SWAP_BYTES_32(a)
+	#define TO_LE_16(a) SWAP_BYTES_16(a)
 
 	#define TO_BE_32(a) (a)
 	#define TO_BE_16(a) (a)
@@ -417,6 +359,44 @@
 	#error No endianness defined
 
 #endif
+
+
+#if defined(SCUMM_NEED_ALIGNMENT) || defined(SCUMM_BIG_ENDIAN)
+	FORCEINLINE uint16 READ_LE_UINT16(const void *ptr) {
+		const byte *b = (const byte *)ptr;
+		return (b[1] << 8) + b[0];
+	}
+	FORCEINLINE uint32 READ_LE_UINT32(const void *ptr) {
+		const byte *b = (const byte *)ptr;
+		return (b[3] << 24) + (b[2] << 16) + (b[1] << 8) + (b[0]);
+	}
+#else
+	FORCEINLINE uint16 READ_LE_UINT16(const void *ptr) {
+		return *(const uint16 *)(ptr);
+	}
+	FORCEINLINE uint32 READ_LE_UINT32(const void *ptr) {
+		return *(const uint32 *)(ptr);
+	}
+#endif
+
+
+#if defined(SCUMM_NEED_ALIGNMENT) || defined(SCUMM_LITTLE_ENDIAN)
+	FORCEINLINE uint16 READ_BE_UINT16(const void *ptr) {
+		return (((const byte *)ptr)[0] << 8)|((const byte *)ptr)[1];
+	}
+	FORCEINLINE uint32 READ_BE_UINT32(const void *ptr) {
+		const byte *b = (const byte*)ptr;
+		return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + (b[3]);
+	}
+#else
+	FORCEINLINE uint16 READ_BE_UINT16(const void *ptr) {
+		return *(const uint16 *)(ptr);
+	}
+	FORCEINLINE uint32 READ_BE_UINT32(const void *ptr) {
+		return *(const uint32 *)(ptr);
+	}
+#endif
+
 
 	
 #if defined(NEWGUI_256)

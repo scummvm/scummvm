@@ -34,7 +34,7 @@ struct ResHdr {
 #endif
 
 #define RES_DATA(x) (((const byte*)x) + sizeof(ResHdr))
-#define RES_SIZE(x) (READ_BE_UINT32_UNALIGNED(&((const ResHdr* )x)->size))
+#define RES_SIZE(x) (READ_BE_UINT32(&((const ResHdr* )x)->size))
 
 enum {
 	OF_OWNER_MASK = 0x0F,

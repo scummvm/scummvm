@@ -79,7 +79,7 @@ void SimonEngine::render_string(uint num_1, uint color, uint width, uint height,
 
 	*(uint16 *)(p + 4) = TO_BE_16(height);
 	*(uint16 *)(p + 6) = TO_BE_16(width);
-	dst += READ_BE_UINT32_UNALIGNED(p);
+	dst += READ_BE_UINT32(p);
 
 	memset(dst, 0, count);
 
