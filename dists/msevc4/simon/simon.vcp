@@ -597,6 +597,7 @@ SOURCE=..\..\..\simon\cursor.cpp
 !IF  "$(CFG)" == "simon - Win32 (WCE emulator) Release"
 
 NODEP_CPP_CURSO=\
+	"..\..\..\simon\scumm_globals.h"\
 	"..\..\..\simon\simon\intern.h"\
 	"..\..\..\simon\simon\simon.h"\
 	"..\..\..\simon\stdafx.h"\
@@ -605,6 +606,7 @@ NODEP_CPP_CURSO=\
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE emulator) Debug"
 
 NODEP_CPP_CURSO=\
+	"..\..\..\simon\scumm_globals.h"\
 	"..\..\..\simon\simon\intern.h"\
 	"..\..\..\simon\simon\simon.h"\
 	"..\..\..\simon\stdafx.h"\
@@ -641,6 +643,7 @@ NODEP_CPP_CURSO=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\simon\scumm_globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARMV4) Debug"
@@ -674,6 +677,7 @@ NODEP_CPP_CURSO=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\simon\scumm_globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "simon - Win32 (WCE ARM) Debug"
