@@ -135,6 +135,7 @@ public:
 	void bobDrawAll(); // drawbobs()
 	void bobClearAll(); // clearallbobs()
 	BobSlot *bob(int index);
+	void bobCustomParallax(uint16 roomNum);
 
 	void textCurrentColor(uint8 color); // ink()
 	void textSet(uint16 x, uint16 y, const char *text, bool outlined = true); // text()
@@ -152,6 +153,8 @@ public:
 	void useJournal();
 	void journalBobSetup(uint32 bobnum, uint16 x, uint16 y, uint16 frame);
 	void journalBobPreDraw();
+
+	void setCameraBob(int bobNum);
 
 	void update();
 
@@ -187,7 +190,9 @@ private:
 	TextSlot _texts[GAME_SCREEN_HEIGHT];
 	uint8 _curTextColor;
 
-	uint16 _cameraBob; // cambob
+	int _cameraBob; // cambob
+
+	uint16 _lastRoom; // TEMP
 
 	Display *_display;
 	Resource *_resource;

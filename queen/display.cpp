@@ -724,6 +724,21 @@ uint16 Display::textWidth(const char *text) const {
 }
 
 
+void Display::horizontalScrollUpdate(uint16 xCamera) {
+
+	debug(9, "Display::horizontalScrollUpdate(%d)", xCamera);
+	_horizontalScroll = 0;
+	if (_bdWidth > 320) {
+		if (xCamera > 160 && xCamera < 480) {
+			_horizontalScroll = xCamera - 160;
+		}
+		else if (xCamera >= 480) {
+			_horizontalScroll = 320;
+		}
+	}
+}
+
+
 void Display::horizontalScroll(uint16 scroll) {
 
 	_horizontalScroll = scroll;

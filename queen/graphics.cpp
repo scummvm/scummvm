@@ -530,6 +530,75 @@ BobSlot *Graphics::bob(int index) {
 }
 
 
+void Graphics::bobCustomParallax(uint16 roomNum) {
+	
+	int i;
+	uint16 screenScroll = _display->horizontalScroll();
+	switch (roomNum) {
+	case 17:
+		_bobs[8].x = 250 - screenScroll + screenScroll / 2;
+		break;
+	case 100:
+		_bobs[5].x = 410 - screenScroll + screenScroll / 2;
+		_bobs[6].x = 790 - screenScroll + screenScroll / 2;
+		break;
+	case 43:
+		_bobs[5].x = 320 - screenScroll + screenScroll / 2;
+		break;
+	case 51:
+		_bobs[5].x = 280 - screenScroll + screenScroll / 2;
+		break;
+	case 67:
+		_bobs[5].x = 600 - screenScroll + screenScroll / 2;
+		break;
+	case 73 :
+		if(_display->fullscreen()) {
+			for(i = 1; i <= 3; ++i) {
+				_bobs[i].box.y2 = 199;
+			}
+			_bobs[24].box.y2 = 199;
+		}
+		break;
+	case 90 :
+		_bobs[5].x = 340 - screenScroll + screenScroll / 2;
+		_bobs[6].x = 50 - screenScroll + screenScroll / 2;
+		_bobs[7].x = 79 - screenScroll + screenScroll / 2;
+		for(i = 1; i <= 8; ++i) {
+			_bobs[i].box.y2 = 199;
+		}
+		_bobs[20].box.y2 = 199;
+		break;
+	case 94 :
+		for(i = 0; i < 3; ++i) {
+			_bobs[i].box.y2=199;
+		}
+		break;
+	case 74 : // Carbam
+		warning("Graphics::bobCustomParallax() - room 74 not handled");
+		break;
+	case 69 : // Fight1
+		warning("Graphics::bobCustomParallax() - room 69 not handled");
+		break;
+	case 116: // CR 2 - CD-Rom pan right while Rita talks...
+		_cameraBob = -1;
+		if (screenScroll < 80) {
+			_display->horizontalScroll(screenScroll + 4);
+			// Joe's body and head
+			_bobs[ 1].x += 4;
+			_bobs[20].x += 4;
+			// Rita's body and head
+			_bobs[ 2].x -= 2;
+			_bobs[21].x -= 2;
+		}
+		break;
+	case 123: // CR 2 - CD-Rom the guys move off screen
+		_bobs[21].x += 2;
+		_bobs[21].y += 2;
+		break;
+	}
+}
+
+
 void Graphics::textCurrentColor(uint8 color) {
 	_curTextColor = color;
 }
@@ -617,6 +686,7 @@ void Graphics::loadBackdrop(const char* name, uint16 room) {
 	if (room >= 90) {
 		_cameraBob = 0;
 	}
+	_lastRoom = room; // TEMP
 }
 
 
@@ -690,9 +760,23 @@ void Graphics::journalBobPreDraw() { // GameSettings* pgs
 }
 
 
+void Graphics::setCameraBob(int bobNum) {
+	_cameraBob = bobNum;
+}
+
+
 void Graphics::update() {
 	// FIXME: temporary code, move to Logic::update()
 	bobSortAll();
+	if (_cameraBob >= 0) {
+		_display->horizontalScrollUpdate(_bobs[_cameraBob].x);
+	}
+	// FIXME: currently, we use the _lastRoom variable only
+	// to know in which current room we are. This is necessary
+	// for the parallax stuff as it relies on the room number.
+	// When we switch to the Logic::update() method, we will be
+	// able to get rid of this variable...
+	bobCustomParallax(_lastRoom);
 	_display->prepareUpdate();
 	bobDrawAll();
 	textDrawAll();
