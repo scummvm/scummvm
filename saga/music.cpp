@@ -518,7 +518,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 	parser->setTimerRate(_player->getBaseTempo());
 
 	_player->_parser = parser;
-	_player->setVolume(ConfMan.getInt("music_volume") * ConfMan.getInt("master_volume") / 255);
+	_player->setVolume(ConfMan.getInt("music_volume"));
 	if (flags & MUSIC_LOOP)
 		_player->setLoop(true);
 	else

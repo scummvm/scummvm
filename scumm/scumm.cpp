@@ -1380,20 +1380,19 @@ void ScummEngine::setupMusic(int midi) {
 void ScummEngine::setupVolumes() {
 
 	// Sync the engine with the config manager
-	int soundVolumeMaster = ConfMan.getInt("master_volume");
 	int soundVolumeMusic = ConfMan.getInt("music_volume");
 	int soundVolumeSfx = ConfMan.getInt("sfx_volume");
 	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
 
 	if (_musicEngine) {
-		_musicEngine->setMusicVolume(soundVolumeMusic * soundVolumeMaster / 255);
+		_musicEngine->setMusicVolume(soundVolumeMusic);
 	}
 
-	_mixer->setVolume(soundVolumeSfx * soundVolumeMaster / 255);
+	_mixer->setVolume(soundVolumeSfx);
 	_mixer->setMusicVolume(soundVolumeMusic);
 
 	if (_imuseDigital) {
-		_mixer->setVolume(soundVolumeMaster);
+		_mixer->setVolume(255);
 		_imuseDigital->setGroupMusicVolume(soundVolumeMusic / 2);
 		_imuseDigital->setGroupSfxVolume(soundVolumeSfx / 2);
 		_imuseDigital->setGroupVoiceVolume(soundVolumeSpeech / 2);

@@ -316,7 +316,6 @@ arguments - see the next section.
   -e, --music-driver=MODE  Select music driver (see also section 7.0)
   -q, --language=LANG      Select language (see also section 5.2)
   -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)
-  -o, --master-volume=NUM  Set the master volume, 0-255 (default: 192)
   -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)
   -r, --speech-volume=NUM   Set the voice volume, 0-255 (default: 192)
   -n, --subtitles          Enable subtitles (use with games that have voice)
@@ -990,7 +989,6 @@ An example config file looks as follows:
         [tentacle]
         path=C:\tentacle\
         subtitles=true
-        master_volume=98
         music_volume=40
         sfx_volume=255
 
@@ -1037,7 +1035,6 @@ The following keywords are recognized:
         cdrom           number   Number of CD-ROM unit to use for audio. If
                                  negative, don't even try to access the CD-ROM.
         joystick_num    number   Number of joystick device to use for input
-        master_volume   number   The master volume setting (0-255)
         music_driver    string   The music engine to use.
         output_rate     number   The output sample rate to use, in Hz. Sensible
                                  values are 11025, 22050 and 44100.

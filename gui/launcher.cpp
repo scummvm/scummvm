@@ -252,8 +252,7 @@ void EditGameDialog::open() {
 		ConfMan.hasKey("native_mt32", _domain);
 	_globalAudioOverride->setState(e);
 
-	e = ConfMan.hasKey("master_volume", _domain) ||
-		ConfMan.hasKey("music_volume", _domain) ||
+	e = ConfMan.hasKey("music_volume", _domain) ||
 		ConfMan.hasKey("sfx_volume", _domain) ||
 		ConfMan.hasKey("speech_volume", _domain);
 	_globalVolumeOverride->setState(e);

@@ -70,7 +70,6 @@ static const char USAGE_STRING[] =
 	"  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,\n"
 	"                           hb,ru,cz)\n"
 	"  -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)\n"
-	"  -o, --master-volume=NUM  Set the master volume, 0-255 (default: 192)\n"
 	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)\n"
 	"  -r, --speech-volume=NUM  Set the speech volume, 0-255 (default: 192)\n"
 	"  -n, --subtitles          Enable subtitles (use with games that have voice)\n"
@@ -118,7 +117,6 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("gfx_mode", "normal");
 
 	// Sound & Music
-	ConfMan.registerDefault("master_volume", 192);
 	ConfMan.registerDefault("music_volume", 192);
 	ConfMan.registerDefault("sfx_volume", 192);
 	ConfMan.registerDefault("speech_volume", 192);
@@ -392,10 +390,6 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 
 			DO_OPTION_BOOL('n', "subtitles")
 				ConfMan.set("subtitles", cmdValue, kTransientDomain);
-			END_OPTION
-
-			DO_OPTION('o', "master-volume")
-				ConfMan.set("master_volume", (int)strtol(option, 0, 10), kTransientDomain);
 			END_OPTION
 
 			DO_OPTION('p', "path")

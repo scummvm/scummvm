@@ -82,9 +82,6 @@ private:
 	//
 	bool _enableVolumeSettings;
 
-	SliderWidget *_masterVolumeSlider;
-	StaticTextWidget *_masterVolumeLabel;
-
 	SliderWidget *_musicVolumeSlider;
 	StaticTextWidget *_musicVolumeLabel;
 

@@ -51,14 +51,13 @@ namespace GUI {
 // - the save path (use _browser!)
 // - music & graphics driver (but see also the comments on EditGameDialog
 //   for some techincal difficulties with this)
-// - default volumes (sfx/master/music)
+// - default volumes (sfx/speech/music)
 // - aspect ratio, language, platform, subtitles, debug mode/level, cd drive, joystick, multi midi, native mt32
 
 enum {
-	kMasterVolumeChanged	= 'mavc',
 	kMusicVolumeChanged		= 'muvc',
 	kSfxVolumeChanged		= 'sfvc',
-	kSpeechVolumeChanged		= 'vcvc',
+	kSpeechVolumeChanged	= 'vcvc',
 	kChooseSaveDirCmd		= 'chos',
 	kChooseExtraDirCmd		= 'chex'
 };
@@ -71,7 +70,6 @@ OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
 	_enableAudioSettings(false),
 	_multiMidiCheckbox(0), _mt32Checkbox(0), _subCheckbox(0),
 	_enableVolumeSettings(false),
-	_masterVolumeSlider(0), _masterVolumeLabel(0),
 	_musicVolumeSlider(0), _musicVolumeLabel(0),
 	_sfxVolumeSlider(0), _sfxVolumeLabel(0),
 	_speechVolumeSlider(0), _speechVolumeLabel(0) {
@@ -134,12 +132,8 @@ void OptionsDialog::open() {
 		_subCheckbox->setState(ConfMan.getBool("subtitles", _domain));
 	}
 
-	if (_masterVolumeSlider) {
+	if (_musicVolumeSlider) {
 		int vol;
-
-		vol = ConfMan.getInt("master_volume", _domain);
-		_masterVolumeSlider->setValue(vol);
-		_masterVolumeLabel->setValue(vol);
 
 		vol = ConfMan.getInt("music_volume", _domain);
 		_musicVolumeSlider->setValue(vol);
@@ -171,14 +165,12 @@ void OptionsDialog::close() {
 			}
 		}
 
-		if (_masterVolumeSlider) {
+		if (_musicVolumeSlider) {
 			if (_enableVolumeSettings) {
-				ConfMan.set("master_volume", _masterVolumeSlider->getValue(), _domain);
 				ConfMan.set("music_volume", _musicVolumeSlider->getValue(), _domain);
 				ConfMan.set("sfx_volume", _sfxVolumeSlider->getValue(), _domain);
 				ConfMan.set("speech_volume", _speechVolumeSlider->getValue(), _domain);
 			} else {
-				ConfMan.removeKey("master_volume", _domain);
 				ConfMan.removeKey("music_volume", _domain);
 				ConfMan.removeKey("sfx_volume", _domain);
 				ConfMan.removeKey("speech_volume", _domain);
@@ -214,10 +206,6 @@ void OptionsDialog::close() {
 
 void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-	case kMasterVolumeChanged:
-		_masterVolumeLabel->setValue(_masterVolumeSlider->getValue());
-		_masterVolumeLabel->draw();
-		break;
 	case kMusicVolumeChanged:
 		_musicVolumeLabel->setValue(_musicVolumeSlider->getValue());
 		_musicVolumeLabel->draw();
@@ -261,8 +249,6 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_enableVolumeSettings = enabled;
 
-	_masterVolumeSlider->setEnabled(enabled);
-	_masterVolumeLabel->setEnabled(enabled);
 	_musicVolumeSlider->setEnabled(enabled);
 	_musicVolumeLabel->setEnabled(enabled);
 	_sfxVolumeSlider->setEnabled(enabled);
@@ -340,12 +326,6 @@ int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset) {
 
 int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset) {
 	// Volume controllers
-	_masterVolumeSlider = new SliderWidget(boss, 5, yoffset, 185, 12,  "Master volume: ", 100, kMasterVolumeChanged);
-	_masterVolumeLabel = new StaticTextWidget(boss, 200, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft);
-	_masterVolumeSlider->setMinValue(0); _masterVolumeSlider->setMaxValue(255);
-	_masterVolumeLabel->setFlags(WIDGET_CLEARBG);
-	yoffset += 16;
-
 	_musicVolumeSlider = new SliderWidget(boss, 5, yoffset, 185, 12, "Music volume: ", 100, kMusicVolumeChanged);
 	_musicVolumeLabel = new StaticTextWidget(boss, 200, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft);
 	_musicVolumeSlider->setMinValue(0); _musicVolumeSlider->setMaxValue(255);
