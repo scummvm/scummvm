@@ -1357,7 +1357,7 @@ void resMan::GetCd(int cd)
 {
 	bool		 done = false;
 	char		 sCDName[_MAX_PATH];
-	DWORD		 dwMaxCompLength, dwFSFlags;
+	uint32		 dwMaxCompLength, dwFSFlags;
 	mem			 *text_spr;
 	_frameHeader *frame;
 	_spriteInfo  spriteInfo;

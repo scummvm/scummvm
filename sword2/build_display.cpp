@@ -429,7 +429,7 @@ void DisplayMsg( uint8 *text, int time )	// Chris 15May97
 	}
 	while(GetFadeStatus()==RDFADE_UP);
 
-	DWORD targetTime = SVM_timeGetTime() + (time*1000);
+	uint32 targetTime = SVM_timeGetTime() + (time*1000);
 
 	while(SVM_timeGetTime() < targetTime)
 	{

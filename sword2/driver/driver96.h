@@ -1256,11 +1256,9 @@ typedef int BOOL;
 #define FALSE 0
 
 #ifdef WIN32
-#undef DWORD
 #undef LARGE_INTEGER
 #endif
 
-typedef uint32 DWORD;
 typedef long int LARGE_INTEGER;
 
 //
@@ -1438,14 +1436,14 @@ typedef struct
 
 // should probably remove this struct as it just replaces a windows struct...
 typedef struct {
-    DWORD dwLength;
-    DWORD dwMemoryLoad;
-    DWORD dwTotalPhys;
-    DWORD dwAvailPhys;
-    DWORD dwTotalPageFile;
-    DWORD dwAvailPageFile;
-    DWORD dwTotalVirtual;
-    DWORD dwAvailVirtual;
+    uint32 dwLength;
+    uint32 dwMemoryLoad;
+    uint32 dwTotalPhys;
+    uint32 dwAvailPhys;
+    uint32 dwTotalPageFile;
+    uint32 dwAvailPageFile;
+    uint32 dwTotalVirtual;
+    uint32 dwAvailVirtual;
 } GCC_PACK SVM_MEMORYSTATUS;
 
 //
@@ -1619,7 +1617,7 @@ extern void SVM_GlobalMemoryStatus(SVM_MEMORYSTATUS *memo);
 extern void SVM_SetFileAttributes(char *file, uint32 atrib);
 extern void SVM_DeleteFile(char *file);
 extern void SVM_GetCurrentDirectory(uint32 max, char* path);
-extern int32 SVM_GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint8 *, DWORD *dwMaxCompLength, DWORD *dwFSFlags, uint8 *, uint32 a);
+extern int32 SVM_GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint8 *, uint32 *dwMaxCompLength, uint32 *dwFSFlags, uint8 *, uint32 a);
 extern void scumm_mkdir(const char *pathname);
 extern void SVM_GetModuleFileName(void *module, char *destStr, uint32 maxLen);
 
