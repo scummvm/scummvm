@@ -74,7 +74,7 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
     uint32 eax, ecx;
     int32 bytes_read;
     uint8 *file_ptr, *esiptr, *ediptr;
-    s file_header;
+    dataFileHeader file_header;
 
     #ifdef file_order_chk
 	warning("File order checking not implemented yet!\n");

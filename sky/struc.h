@@ -19,7 +19,7 @@
  *
  */
 
-typedef struct dataFileHeader
+struct dataFileHeader
 {
     uint16 flag; // bit 0: set for colour data, clear for not
 		 // bit 1: set for compressed, clear for uncompressed
@@ -34,5 +34,5 @@ typedef struct dataFileHeader
     uint16 s_offset_x;
     uint16 s_offset_y;
     uint16 s_compressed_size;
-}s;
+};
 
