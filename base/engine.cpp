@@ -158,7 +158,7 @@ void CDECL warning(const char *s, ...) {
 #endif
 }
 
-static void debugHelper(const char *buf) {
+static void debugHelper(char *buf) {
 #ifndef _WIN32_WCE
 	printf("%s\n", buf);
 #endif
