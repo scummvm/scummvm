@@ -1349,10 +1349,8 @@ void Scumm_v8::o8_kernelSetFunctions()
 	case 15:	// setVideoFrameRate
 		// not used anymore (was smush frame rate)
 		break;
-	case 20:	// setBoxSlot
-		warning("o8_kernelSetFunctions: setBoxSlot(%d, %d)", args[1], args[2]);
-		// FIXME - really setBoxScale ?!?
-//		setBoxScale(args[1], args[2]);
+	case 20:	// setBoxScale
+		setBoxScale(args[1], args[2]);
 		break;
 	case 21:	// setScaleSlot
 		warning("o8_kernelSetFunctions: setScaleSlot(%d, %d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
