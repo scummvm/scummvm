@@ -119,7 +119,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	else
 	if (is_queen) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
-		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(282); // F1 key
+		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(286); // F1 key for FOTAQ
 	}
 	else
 	if (is_sky) {
@@ -153,6 +153,10 @@ bool CEActionsSmartphone::perform(ActionType action, bool pushed) {
 			case SMARTPHONE_ACTION_LEFTCLICK:
 				_mainSystem->add_left_click(false);
 				return true;
+			case SMARTPHONE_ACTION_SAVE:
+			case SMARTPHONE_ACTION_SKIP:
+				EventsBuffer::simulateKey(&_key_action[action], false);
+				return true;
 		}
 		return false;
 	}
@@ -160,7 +164,7 @@ bool CEActionsSmartphone::perform(ActionType action, bool pushed) {
 	switch (action) {
 		case SMARTPHONE_ACTION_SAVE:
 		case SMARTPHONE_ACTION_SKIP:
-			EventsBuffer::simulateKey(&_key_action[action]);
+			EventsBuffer::simulateKey(&_key_action[action], true);
 			return true;
 		case SMARTPHONE_ACTION_RIGHTCLICK:
 			_mainSystem->add_right_click(true);

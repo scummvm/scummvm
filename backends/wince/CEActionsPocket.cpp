@@ -116,7 +116,7 @@ void CEActionsPocket::initInstanceGame() {
 	else
 	if (is_queen) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
-		_key_action[POCKET_ACTION_SAVE].setAscii(282); // F1 key
+		_key_action[POCKET_ACTION_SAVE].setAscii(286); // F5 key for FOTAQ
 	}
 	else
 	if (is_sky) {
@@ -165,6 +165,12 @@ bool CEActionsPocket::perform(ActionType action, bool pushed) {
 			case POCKET_ACTION_RIGHTCLICK:
 				_mainSystem->add_right_click(false);
 				return true;
+		case POCKET_ACTION_PAUSE:
+		case POCKET_ACTION_SAVE:
+		case POCKET_ACTION_SKIP:
+			EventsBuffer::simulateKey(&_key_action[action], false);
+			return true;
+
 		}
 		return false;
 	}
@@ -173,7 +179,7 @@ bool CEActionsPocket::perform(ActionType action, bool pushed) {
 		case POCKET_ACTION_PAUSE:
 		case POCKET_ACTION_SAVE:
 		case POCKET_ACTION_SKIP:
-			EventsBuffer::simulateKey(&_key_action[action]);
+			EventsBuffer::simulateKey(&_key_action[action], true);
 			return true;
 		case POCKET_ACTION_KEYBOARD:
 			_mainSystem->swap_panel();
@@ -190,9 +196,9 @@ bool CEActionsPocket::perform(ActionType action, bool pushed) {
 		case POCKET_ACTION_CURSOR:
 			_mainSystem->swap_mouse_visibility();
 			return true;
-                case ACTION_FREELOOK:
-                        _mainSystem->swap_freeLook();
-                        return true;
+        case POCKET_ACTION_FREELOOK:
+             _mainSystem->swap_freeLook();
+             return true;
 		case POCKET_ACTION_ZOOM_UP:
 			_mainSystem->swap_zoom_up();
 			return true;

@@ -510,6 +510,14 @@ bool OSystem_WINCE3::checkOggHighSampleRate() {
 #endif
 
 void OSystem_WINCE3::get_sample_rate() {
+	// Force at least medium quality FM synthesis for FOTAQ
+	if (_gameDetector._targetName == "queen") {
+		if (!((ConfMan.hasKey("FM_high_quality") && ConfMan.getBool("FM_high_quality")) ||
+			(ConfMan.hasKey("FM_medium_quality") && ConfMan.getBool("FM_medium_quality")))) {
+			ConfMan.set("FM_medium_quality", true);
+			ConfMan.flushToDisk();
+		}
+	}
 	// See if the output frequency is forced by the game
 	if ((_gameDetector._game.features & Scumm::GF_DIGI_IMUSE) ||
 		_gameDetector._targetName == "queen" ||
@@ -855,7 +863,7 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 		_scaleFactorXm = -1;
 	
 	if (CEDevice::hasPocketPCResolution() && !CEDevice::hasWideResolution() && _orientationLandscape)
-		_mode = GFX_NORMAL;
+		_mode = GFX_NORMAL; 
 	else
 		_mode = mode;
 
@@ -1487,21 +1495,24 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 
 	CEDevice::wakeUp();
 
-	if (isSmartphone)
+	if (_isSmartphone)
 		currentTime = GetTickCount();
 
 	while(SDL_PollEvent(&ev)) {
 		switch(ev.type) {
 		case SDL_KEYDOWN:
-			if (_isSmartphone) {
-				keyEvent = true;			
-				_lastKeyPressed = ev.key.keysym.sym;
-				_keyRepeatTime = currentTime;
-				_keyRepeat = 0;
-			}
+			// KMOD_RESERVED is used if the key has been injected by an external buffer
+			if (ev.key.keysym.mod != KMOD_RESERVED) {
+				if (_isSmartphone) {
+					keyEvent = true;			
+					_lastKeyPressed = ev.key.keysym.sym;
+					_keyRepeatTime = currentTime;
+					_keyRepeat = 0;
+				}
 
-			if (CEActions::Instance()->performMapped(ev.key.keysym.sym, true))
-				return true;
+				if (CEActions::Instance()->performMapped(ev.key.keysym.sym, true))
+					return true;
+			}
 
 			event.type = EVENT_KEYDOWN;
 			event.kbd.keycode = ev.key.keysym.sym;
@@ -1513,13 +1524,16 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			return true;
 	
 		case SDL_KEYUP:			
-			if (_isSmartphone) {
-				keyEvent = true;
-				_lastKeyPressed = 0;
-			}
+			// KMOD_RESERVED is used if the key has been injected by an external buffer
+			if (ev.key.keysym.mod != KMOD_RESERVED) { 
+				if (_isSmartphone) {
+					keyEvent = true;
+					_lastKeyPressed = 0;
+				}
 
-			if (CEActions::Instance()->performMapped(ev.key.keysym.sym, false))
-				return true;
+				if (CEActions::Instance()->performMapped(ev.key.keysym.sym, false))
+					return true;
+			}
 			
 			event.type = EVENT_KEYUP;
 			event.kbd.keycode = ev.key.keysym.sym;
