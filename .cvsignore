@@ -4,5 +4,6 @@
 ChangeLog
 build.rules
 config.h
+config.mak
 scummvm
 ScummVM.app
