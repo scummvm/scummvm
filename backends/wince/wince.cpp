@@ -1445,6 +1445,26 @@ void OSystem_WINCE3::copy_rect(const byte *buf, int pitch, int x, int y, int w, 
 	if (!hide_cursor && _mouse_drawn)
 		undraw_mouse();
 
+	/* Clip */
+	if (x < 0) {
+		w += x;
+		buf -= x;
+		x = 0;
+	}
+	if (y < 0) {
+		h += y;
+		buf -= y * pitch;
+		y = 0;
+	}
+	if (w > _screenWidth - x)
+		w = _screenWidth - x;
+
+	if (h > _screenHeight - y)
+		h = _screenHeight - y;
+
+	if (w <= 0 || h <= 0)
+		return;
+
 	AddDirtyRect(x, y, w, h);
 
 	if (x == 0 && y == 0 && w == _screenWidth && h == _screenHeight) {
