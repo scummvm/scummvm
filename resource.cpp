@@ -48,7 +48,10 @@ void Scumm::openRoom(int room) {
 #if REAL_CODE
 		room_offs = _roomFileOffsets[room];
 #else
-		room_offs = room ? _roomFileOffsets[room] : 0;
+                if(_features & GF_EXTERNAL_CHARSET && room>=900)
+                        room_offs = 0;
+                else
+                        room_offs = room ? _roomFileOffsets[room] : 0;
 #endif
 		
 		if (room_offs == 0xFFFFFFFF)
@@ -61,11 +64,34 @@ void Scumm::openRoom(int room) {
 #if defined(FULL_THROTTLE)
 		sprintf(buf, "%s.la%d", _exe_name, 
 			room==0 ? 0 : res.roomno[rtRoom][room]);
+                _encbyte = (_features & GF_USE_KEY) ? 0x69 : 0;
 #else
-		sprintf(buf, "%s.%.3d", _exe_name, 
-			room==0 ? 0 : res.roomno[rtRoom][room]);
+		if( !(_features & GF_SMALL_NAMES))
+		{
+			if(room==0 || room>=900) {
+				sprintf(buf, "%s\\%.3d.lfl",_exe_name,room);	
+				_encbyte = 0;
+				if (openResourceFile(buf)) {
+					return;
+				}
+				askForDisk(buf);
+
+			} else {
+				sprintf(buf, "%s\\disk%.2d.lec",_exe_name,res.roomno[rtRoom][room]);
+				_encbyte = 0x69;
+			}
+		} else {
+				sprintf(buf, "%s\\%.2d.lfl",_exe_name,room);	
+				if(_features & GF_OLD_BUNDLE)
+					_encbyte = 0xFF;
+				else
+					_encbyte = 0;
+		}
+
+//                sprintf(buf, "%s.%.3d", _exe_name,  room==0 ? 0 : res.roomno[rtRoom][room]);
+//                _encbyte = (_features & GF_USE_KEY) ? 0x69 : 0;
 #endif
-		_encbyte = (_features & GF_USE_KEY) ? 0x69 : 0;
+
 		if (openResourceFile(buf)) {
 			if (room==0)
 				return;
@@ -110,11 +136,18 @@ void Scumm::readRoomsOffsets() {
 
 	debug(9, "readRoomOffsets()");
 
-	deleteRoomOffsets();
-	if (!_dynamicRoomOffsets)
-		return;
+        deleteRoomOffsets();
+        if(_features & GF_SMALL_NAMES)
+ 		return;
 
-	fileSeek(_fileHandle, 16, SEEK_SET);
+        if (!(_features & GF_SMALL_HEADER)) {
+                if (!_dynamicRoomOffsets)
+                        return;
+
+                fileSeek(_fileHandle, 16, SEEK_SET);
+        } else {
+                fileSeek(_fileHandle, 12, SEEK_SET); // Directlry searching for the room offset block would be more generic...
+        }
 	
 	num = fileReadByte();
 	while (num) {
@@ -439,9 +472,16 @@ void Scumm::readResTypeList(int id, uint32 tag, const char *name) {
 		}
 		allocResTypeData(id, tag, num, name, 1);
 	}
-	
-	fileRead(_fileHandle, res.roomno[id], num*sizeof(uint8));
-	fileRead(_fileHandle, res.roomoffs[id], num*sizeof(uint32));
+
+        if (_features & GF_SMALL_HEADER) {
+                for (i=0; i<num; i++) {
+                        res.roomno[id][i] = fileReadByte();
+                        res.roomoffs[id][i]= fileReadDwordLE();
+                }
+        } else {
+                fileRead(_fileHandle, res.roomno[id], num*sizeof(uint8));
+                fileRead(_fileHandle, res.roomoffs[id], num*sizeof(uint32));
+        }
 
 #if defined(SCUMM_BIG_ENDIAN)
 	for (i=0; i<num; i++)
@@ -476,8 +516,20 @@ void Scumm::loadCharset(int no) {
 	byte *ptr;
 
 	debug(9, "loadCharset(%d)",no);
-
-	checkRange(_maxCharsets-1, 1, no, "Loading illegal charset %d");
+        if(_features & GF_EXTERNAL_CHARSET) {
+                uint32 size;
+                checkRange(4 ,0 ,no , "Loading illegal charset %d");
+                openRoom(-1);
+                if( _features & GF_SMALL_NAMES)
+                        openRoom(98+no);
+                else
+                        openRoom(900+no);
+                size = fileReadDword();
+                fileRead(_fileHandle, createResource(6, no, size), size);
+                openRoom(-1);
+        } else {
+                checkRange(_maxCharsets-1, 1, no, "Loading illegal charset %d");
+        }
 //	ensureResourceLoaded(6, no);
 	ptr = getResourceAddress(6, no);
 
@@ -522,6 +574,11 @@ int Scumm::loadResource(int type, int index) {
 	
 //	debug(1, "loadResource(%d,%d)", type,index);
 
+        if(type == rtCharset && (_features & GF_SMALL_HEADER)){
+                loadCharset(index);
+                return(1);
+        }
+
 	roomNr = getResourceRoomNr(type, index);
 	if (roomNr == 0 || index >= res.num[type]) {
 		error("%s %d undefined", 
@@ -541,25 +598,33 @@ int Scumm::loadResource(int type, int index) {
 			openRoom(roomNr);
 
 			fileSeek(_fileHandle, fileOffs + _fileOffset, SEEK_SET);
-			if (type==rtSound) {
-				fileReadDwordLE();
-				fileReadDwordLE();
-				return readSoundResource(type, index);
-			}
+
+                        if (_features & GF_SMALL_HEADER) {
+                                if(!(_features & GF_SMALL_NAMES))
+                                        fileSeek(_fileHandle, 8, SEEK_CUR);
+                                size = fileReadDwordLE();
+                                tag = fileReadWordLE();
+                                fileSeek(_fileHandle, -6, SEEK_CUR);
+                        } else {
+                                if (type==rtSound) {
+                                        fileReadDwordLE();
+                                        fileReadDwordLE();
+                                        return readSoundResource(type, index);
+                                }
 			
-			tag = fileReadDword();
+                                tag = fileReadDword();
 
-			if (tag != res.tags[type]) {
-				error("%s %d not in room %d at %d+%d", 
-					res.name[type], type, roomNr, _fileOffset, fileOffs);
-			}
+                                if (tag != res.tags[type]) {
+                                        error("%s %d not in room %d at %d+%d", 
+                                                res.name[type], type, roomNr, _fileOffset, fileOffs);
+                                }
 
-			size = fileReadDwordBE();
-			fileSeek(_fileHandle, -8, SEEK_CUR);
-
+                                size = fileReadDwordBE();
+                                fileSeek(_fileHandle, -8, SEEK_CUR);
+                        }
 			fileRead(_fileHandle, createResource(type, index, size), size);
 
-			/* dump the resource */
+                 /* dump the resource */
 #ifdef DUMP_SCRIPTS
 			if(type==rtScript) {
 				dumpResource("script-", index, getResourceAddress(rtScript, index));
@@ -733,6 +798,13 @@ void Scumm::nukeResource(int type, int index) {
 }
 
 byte *Scumm::findResourceData(uint32 tag, byte *ptr) {
+        if(_features & GF_SMALL_HEADER) {
+                ptr = findResourceSmall(tag,ptr,0);
+                if (ptr==NULL)
+                        return NULL;
+                return ptr + 6;
+        }
+
 	ptr = findResource(tag,ptr,0);
 	if (ptr==NULL)
 		return NULL;
@@ -742,7 +814,11 @@ byte *Scumm::findResourceData(uint32 tag, byte *ptr) {
 int Scumm::getResourceDataSize(byte *ptr) {
 	if (ptr==NULL)
 		return 0;
-	return READ_BE_UINT32(ptr-4)-8;
+
+        if (_features & GF_SMALL_HEADER)
+                return READ_LE_UINT32(ptr)-6;
+        else
+                return READ_BE_UINT32(ptr-4)-8;
 }
 
 struct FindResourceState {
@@ -838,6 +914,38 @@ byte *findResource(uint32 tag, byte *searchin, int index) {
 	} 
 
 	return NULL;
+}
+
+byte *findResourceSmall(uint32 tag, byte *searchin, int index) {
+        uint32 maxsize,curpos,totalsize,size;
+        uint16 smallTag;
+
+        smallTag=newTag2Old(tag);
+
+        assert(searchin);
+
+        totalsize = READ_LE_UINT32(searchin);
+        searchin += 6;
+        curpos = 6;
+ 
+        while (curpos<totalsize) {
+                size = READ_LE_UINT32(searchin);
+
+                if (READ_LE_UINT16(searchin+4)==smallTag && !index--)
+                       return searchin;
+
+                if ((int32)size <= 0) {
+                       error("(%c%c%c%c) Not found in %d... illegal block len %d",
+                               tag&0xFF,(tag>>8)&0xFF,(tag>>16)&0xFF,(tag>>24)&0xFF,
+                               0, size);
+                       return NULL;
+                }
+
+                curpos += size;
+                searchin += size;
+        } 
+
+        return NULL;
 }
 
 void Scumm::lock(int type, int i) {

@@ -921,6 +921,7 @@ enum GameFeatures {
 	GF_DEFAULT = GF_USE_KEY,
 
 	GF_SMALL_HEADER = 32,
+        GF_EXTERNAL_CHARSET = GF_SMALL_HEADER,
         GF_SMALL_NAMES = 64,
         GF_OLD_BUNDLE = 128,
 	GF_16COLOR = 256,
@@ -1500,6 +1501,7 @@ struct Scumm {
 	void o5_walkActorTo();
 	void o5_walkActorToActor();
 	void o5_walkActorToObject();
+        void o5_oldRoomEffect();
 
 	void o6_pushByte();
 	void o6_pushWord();
@@ -2243,6 +2245,7 @@ void drawMouse(Scumm *s, int x, int y, int color, byte *mask, bool visible);
 void drawMouse(Scumm *s, int x, int y, int w, int h, byte *buf, bool visible);
 void blit(byte *dst, byte *src, int w, int h);
 byte *findResource(uint32 tag, byte *searchin, int index);
+byte *findResourceSmall(uint32 tag, byte *searchin, int index);
 byte *findResource(uint32 tag, byte *searchin);
 byte *findResourceSmall(uint32 tag, byte *searchin);
 void playSfxSound(void *sound, uint32 size, uint rate);

@@ -675,24 +675,38 @@ void Scumm::initRoomSubBlocks() {
 		dumpResource("entry-", _roomResource, ptr - 8);
 #endif
 	}
-	
-	ptr = findResourceData(MKID('BOXD'), roomptr);
-	if (ptr) {
-		int size = getResourceDataSize(ptr);
-			createResource(rtMatrix, 2, size);
-		roomptr = getResourceAddress(rtRoom, _roomResource);
-		ptr = findResourceData(MKID('BOXD'), roomptr);
-		memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
-	}
 
-	ptr = findResourceData(MKID('BOXM'), roomptr);
-	if (ptr) {
-		int size = getResourceDataSize(ptr);
-		createResource(rtMatrix, 1, size);
-		roomptr = getResourceAddress(rtRoom, _roomResource);
-		ptr = findResourceData(MKID('BOXM'), roomptr);
-		memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
-	}
+	if(_features & GF_SMALL_HEADER) {
+		ptr = findResourceData(MKID('BOXD'), roomptr);
+		if (ptr) {
+			byte numOfBoxes=*(ptr);
+			int size = numOfBoxes * SIZEOF_BOX+1;
+			createResource(rtMatrix, 2, size);
+			memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
+			ptr += size;
+			size = getResourceDataSize(ptr-size-6) - size;
+			createResource(rtMatrix, 1, size);
+			memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
+		}
+	} else {	
+                ptr = findResourceData(MKID('BOXD'), roomptr);
+                if (ptr) {
+                        int size = getResourceDataSize(ptr);
+			createResource(rtMatrix, 2, size);
+                        roomptr = getResourceAddress(rtRoom, _roomResource);
+                        ptr = findResourceData(MKID('BOXD'), roomptr);
+                        memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
+                }
+
+                ptr = findResourceData(MKID('BOXM'), roomptr);
+                if (ptr) {
+                        int size = getResourceDataSize(ptr);
+                        createResource(rtMatrix, 1, size);
+                        roomptr = getResourceAddress(rtRoom, _roomResource);
+                        ptr = findResourceData(MKID('BOXM'), roomptr);
+                        memcpy(getResourceAddress(rtMatrix, 1), ptr, size);
+                }
+        }
 
 	ptr = findResourceData(MKID('SCAL'), roomptr);
 	if (ptr) {
@@ -711,34 +725,58 @@ void Scumm::initRoomSubBlocks() {
 	memset(_localScriptList, 0, sizeof(_localScriptList));
 
 	searchptr = roomptr = getResourceAddress(rtRoom, _roomResource);
-	while( (ptr = findResource(MKID('LSCR'), searchptr)) != NULL ) {
-		int id;
+	if(_features & GF_SMALL_HEADER) {
+		while( (ptr = findResourceSmall(MKID('LSCR'), searchptr)) != NULL ) {
+			int id;
+			ptr += _resourceHeaderSize; /* skip tag & size */
+	#ifdef DUMP_SCRIPTS
+			do {
+				char buf[32];
+				sprintf(buf,"room-%d-",_roomResource);
+				dumpResource(buf, id, ptr - 6);
+			} while (0);
+	#endif
+			id = ptr[0];
+			_localScriptList[id - _numGlobalScripts] = ptr + 1 - roomptr;
+			searchptr = NULL;
+		}
+	} else {
+                while( (ptr = findResource(MKID('LSCR'), searchptr)) != NULL ) {
+                        int id;
 
-		ptr += _resourceHeaderSize; /* skip tag & size */
+                        ptr += _resourceHeaderSize; /* skip tag & size */
 #ifdef FULL_THROTTLE
-		id = READ_LE_UINT16(ptr);
-		checkRange(2050, 2000, id, "Invalid local script %d");
-		_localScriptList[id - _numGlobalScripts] = ptr + 2 - roomptr;
+                        id = READ_LE_UINT16(ptr);
+                        checkRange(2050, 2000, id, "Invalid local script %d");
+                        _localScriptList[id - _numGlobalScripts] = ptr + 2 - roomptr;
 #else
-		id = ptr[0];
-		_localScriptList[id - _numGlobalScripts] = ptr + 1 - roomptr;
+                        id = ptr[0];
+                        _localScriptList[id - _numGlobalScripts] = ptr + 1 - roomptr;
 #endif
 #ifdef DUMP_SCRIPTS
-		do {
-			char buf[32];
-			sprintf(buf,"room-%d-",_roomResource);
-			dumpResource(buf, id, ptr - 8);
-		} while (0);
+                        do {
+                                char buf[32];
+                                sprintf(buf,"room-%d-",_roomResource);
+                                dumpResource(buf, id, ptr - 8);
+                        } while (0);
 #endif
-		searchptr = NULL;
-	}
-	
+                        searchptr = NULL;
+                }
+        } 
 
-	ptr = findResource(MKID('EPAL'), roomptr);
+	if( _features & GF_SMALL_HEADER)
+		ptr = findResourceSmall(MKID('EPAL'), roomptr);
+        else
+                ptr = findResource(MKID('EPAL'), roomptr);
+
 	if (ptr)
 		_EPAL_offs = ptr - roomptr;
-	
-	ptr = findResourceData(MKID('CLUT'), roomptr);
+
+	if( _features & GF_SMALL_HEADER)
+		ptr = findResourceSmall(MKID('CLUT'), roomptr);
+	else
+                ptr = findResourceData(MKID('CLUT'), roomptr);
+
 	if (ptr) {
 		_CLUT_offs = ptr - roomptr;
 		setPaletteFromRes();

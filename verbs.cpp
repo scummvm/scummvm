@@ -184,15 +184,27 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 	ydiff = y - vs->topline;
 
 	obim = getResourceAddress(rtVerb, vrb);
-
-	imhd = (ImageHeader*)findResourceData(MKID('IMHD'), obim);
-	imgw = READ_LE_UINT16(&imhd->width) >> 3;
-	imgh = READ_LE_UINT16(&imhd->height) >> 3;
+        if (_features & GF_SMALL_HEADER) {
+                ObjectData *od;
+                int index, obj;
+                obj = READ_LE_UINT16(obim+6);
+                index = getObjectIndex(obj);
+                 if(index==-1)
+                       return;
+                od = &_objs[index];
+ 
+                imgw = od->width>>3;
+                imgh = od->height>>3;
+                imptr = obim+8;
+        } else {
+                imhd = (ImageHeader*)findResourceData(MKID('IMHD'), obim);
+                imgw = READ_LE_UINT16(&imhd->width) >> 3;
+                imgh = READ_LE_UINT16(&imhd->height) >> 3;
 	
-	imptr = findResource(MKID('IM01'), obim);
-	if (!imptr)
-		error("No image for verb %d", vrb);
-
+                imptr = findResource(MKID('IM01'), obim);
+                if (!imptr)
+                        error("No image for verb %d", vrb);
+        }
 	for (i=0; i<imgw; i++) {
 		tmp = xstrip + i;
 		if ((uint)tmp < 40)
@@ -250,7 +262,10 @@ void Scumm::setVerbObject(uint room, uint object, uint verb) {
 		error("Can't grab verb image from flobject");
 
 	findObjectInRoom(&foir, foImageHeader, object, room);
-	size = READ_BE_UINT32_UNALIGNED(foir.obim+4);
+        if(_features & GF_SMALL_HEADER)
+                size = READ_LE_UINT32(foir.obim);
+        else
+                size = READ_BE_UINT32_UNALIGNED(foir.obim+4);
 	createResource(rtVerb, verb, size);
 	obimptr = getResourceAddress(rtRoom, room) - foir.roomptr + foir.obim;
 	memcpy(getResourceAddress(rtVerb, verb), obimptr, size);

@@ -29,6 +29,8 @@ int CharsetRenderer::getStringWidth(int arg, byte *text, int pos) {
 
 	width = 1;
 	ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
+        if(_vm->_features & GF_SMALL_HEADER)
+                ptr-=12;
 
 	while ( (chr = text[pos++]) != 0) {
 		if (chr==0xD)
@@ -57,6 +59,8 @@ int CharsetRenderer::getStringWidth(int arg, byte *text, int pos) {
 				int set = text[pos] | (text[pos+1]<<8);
 				pos+=2;
 				ptr = _vm->getResourceAddress(rtCharset, set) + 29;
+                                if(_vm->_features & GF_SMALL_HEADER)
+                                        ptr-=12;
 				continue;
 			}
 		}
@@ -82,6 +86,8 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	byte chr;
 
 	ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
+        if(_vm->_features & GF_SMALL_HEADER)
+              ptr-=12;
 
 	while ( (chr=str[pos++]) != 0) {
 		if (chr=='@')
@@ -114,6 +120,8 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 				int set = str[pos] | (str[pos+1]<<8);
 				pos+=2;
 				ptr = _vm->getResourceAddress(rtCharset, set) + 29;
+                                if(_vm->_features & GF_SMALL_HEADER)
+                                        ptr-=12;
 				continue;
 			}
 		}
@@ -235,8 +243,11 @@ void Scumm::CHARSET_1() {
 	_bkColor = 0;
 
 	for (i=0; i<4; i++)
-		charset._colorMap[i] = _charsetData[charset._curId][i];
-	
+                if(_features & GF_SMALL_HEADER)
+                        charset._colorMap[i] = _charsetData[charset._curId][i-12];
+                else
+                        charset._colorMap[i] = _charsetData[charset._curId][i];
+
 	if (_keepText) {
 		charset._strLeft = gdi._mask_left;
 		charset._strRight = gdi._mask_right;
@@ -311,9 +322,9 @@ newLine:;
 			charset._top = charset._ypos2;
 			
 			if (!(_features&GF_AFTER_V6)) {
-				if (!_vars[VAR_V5_CHARFLAG]) {
+//                                if (!_vars[VAR_V5_CHARFLAG]) { /* FIXME */
 					charset.printChar(c);
-				}
+//                                }
 			} else {
 				charset.printChar(c);
 			}
@@ -354,7 +365,10 @@ newLine:;
 			charset._curId = *buffer++;
 			buffer += 2;
 			for (i=0; i<4; i++)
-				charset._colorMap[i] = _charsetData[charset._curId][i];
+                                if(_features & GF_SMALL_HEADER)
+                                        charset._colorMap[i] = _charsetData[charset._curId][i-12];
+                                else
+                                        charset._colorMap[i] = _charsetData[charset._curId][i];
 			charset._ypos2 -= getResourceAddress(rtCharset,charset._curId)[30] - oldy;
 		} else if (c==12) {
 			int color;
@@ -402,9 +416,14 @@ void Scumm::drawString(int a) {
 	charsetptr = getResourceAddress(rtCharset, charset._curId);
 	assert(charsetptr);
 	charsetptr += 29;
+        if(_features & GF_SMALL_HEADER)
+                charsetptr-=12;
 
 	for(i=0; i<4; i++)
-		charset._colorMap[i] = _charsetData[charset._curId][i];
+                if(_features & GF_SMALL_HEADER)
+                        charset._colorMap[i] = _charsetData[charset._curId][i-12];
+                else
+                        charset._colorMap[i] = _charsetData[charset._curId][i];
 
 	byte1 = charsetptr[1];
 	
@@ -484,6 +503,9 @@ byte *Scumm::addMessageToStack(byte *msg) {
 
 	if (ptr==NULL)
 		error("Message stack not allocated");
+
+        if (msg==NULL)
+                error("Bad message in addMessageToStack");
 
 	while ( (chr=*msg++) != 0) {
 		if (num > 500)
@@ -623,14 +645,20 @@ void Scumm::unkAddMsgToStack5(int var) {
 void Scumm::initCharset(int charsetno) {
 	int i;
 
-	if (!getResourceAddress(rtCharset, charsetno))
-		loadCharset(charsetno);
+        if (_features & GF_SMALL_HEADER)
+                loadCharset(charsetno);
+        else
+                if (!getResourceAddress(rtCharset, charsetno))
+                        loadCharset(charsetno);
 
 	string[0].t_charset = charsetno;
 	string[1].t_charset = charsetno;
 
 	for (i=0; i<0x10; i++)
-		charset._colorMap[i] = _charsetData[charsetno][i];
+                if(_features & GF_SMALL_HEADER)
+                        charset._colorMap[i] = _charsetData[charset._curId][i-12];
+                else
+                        charset._colorMap[i] = _charsetData[charset._curId][i];
 }
 
 void CharsetRenderer::printChar(int chr) {
@@ -643,6 +671,9 @@ void CharsetRenderer::printChar(int chr) {
 
 	if (chr=='@')
 		return;
+
+        if (_vm->_features & GF_SMALL_HEADER)
+               _ptr -= 12;
 
 	_ptr = _vm->getResourceAddress(rtCharset, _curId) + 29;
 

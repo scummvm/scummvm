@@ -141,7 +141,7 @@ void Scumm::setupOpcodes() {
 	&Scumm::o5_add,
 	&Scumm::o5_divide,
 	/* 5C */
-	&Scumm::o5_badOpcode,
+        &Scumm::o5_oldRoomEffect,
 	&Scumm::o5_actorSetClass,
 	&Scumm::o5_walkActorTo,
 	&Scumm::o5_isActorInBox,
@@ -363,11 +363,15 @@ void Scumm::o5_actorFromPos() {
 }
 
 void Scumm::o5_actorSet() {
+    byte convertTable[20] = {1,0,0,2,0,4,5,6,7,8,9,10,11,12,13,14,15,16,17,20};
 	int act = getVarOrDirectByte(0x80);
 	Actor *a = derefActorSafe(act, "actorSet");
 	int i,j;
 
 	while ( (_opcode = fetchScriptByte()) != 0xFF) {
+               if(_features & GF_SMALL_HEADER)
+                       _opcode = (_opcode&0xE0) | convertTable[(_opcode&0x1F)-1];
+
 		switch(_opcode&0x1F) {
 		case 1: /* costume */
 			setActorCostume(a, getVarOrDirectByte(0x80));
@@ -464,7 +468,7 @@ FixRoom:
 			a->shadow_mode = getVarOrDirectByte(0x80); /* shadow mode */
 			break;
 		default:
-			error("o5_actorSet: default case");
+			warning("o5_actorSet: default case");
 		}
 	}
 }
@@ -578,7 +582,8 @@ void Scumm::o5_cursorCommand() {
 	case 10: /* set cursor img */
 		i = getVarOrDirectByte(0x80);
 		j = getVarOrDirectByte(0x40);
-		setCursorImg(i, j, 1);
+        if (!(_gameId==GID_LOOM256)) 
+           setCursorImg(i, j, 1);
 		break;
 	case 11: /* set cursor hotspot */
 		i = getVarOrDirectByte(0x80);
@@ -697,6 +702,38 @@ void Scumm::o5_drawObject() {
 	state = 1;
 	xpos = ypos = 255;
 	obj = getVarOrDirectWord(0x80);
+
+        if (_features & GF_SMALL_HEADER) {
+                int temp = getVarOrDirectWord(0x40);
+                int room = getVarOrDirectWord(0x20);
+ 
+                index = getObjectIndex(obj);
+                if(index==-1)
+                        return;
+                od = &_objs[index];
+                xpos = ypos = 255;
+                if (temp!=0xFF) {
+                        od->walk_x += (xpos<<3) - od->x_pos;
+                        od->x_pos = xpos<<3;
+                        od->walk_y += (ypos<<3) - od->y_pos;
+                        od->y_pos = ypos<<3;
+                }
+                addObjectToDrawQue(index);
+ 
+                x = od->x_pos;
+                y = od->y_pos;
+                w = od->width;
+                h = od->height;
+ 
+                i = _numObjectsInRoom;
+                do {
+                        if (_objs[i].x_pos == x && _objs[i].y_pos == y && _objs[i].width == w && _objs[i].height==h) 
+                                putState(_objs[i].obj_nr, 0);
+                } while (--i);
+ 
+                putState(obj, state);    
+                return;
+        }
 
 	switch((_opcode = fetchScriptByte())&0x1F) {
 	case 1: /* draw at */
@@ -1318,6 +1355,9 @@ void Scumm::o5_resourceRoutines() {
 	case 20:/* load fl object */
 		loadFlObject(getVarOrDirectWord(0x40), res);
 		break;
+        default:
+                warning("Unknown o5_resourcesroutine: %d", _opcode&0x1F);
+                break;
 	}
 }
 
@@ -1338,7 +1378,15 @@ void Scumm::o5_roomOps() {
 		_vars[VAR_CAMERA_MAX_X] = b;
 		break;
 	case 2: /* room color */
-		error("room-color is no longer a valid command");
+                if(_features & GF_SMALL_HEADER) {
+                        a = getVarOrDirectWord(0x80);
+                        b = getVarOrDirectWord(0x40);
+                        checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
+                        _currentPalette[a]=b;
+                        _fullRedraw = 1;
+                } else {
+                        error("room-color is no longer a valid command");
+                }
 		break;
 
 	case 3: /* set screen */
@@ -1347,13 +1395,22 @@ void Scumm::o5_roomOps() {
 		initScreens(0,a,320,b);
 		break;
 	case 4: /* set palette color */
-		a = getVarOrDirectWord(0x80);
-		b = getVarOrDirectWord(0x40);
-		c = getVarOrDirectWord(0x20);
-		_opcode = fetchScriptByte();
-		d = getVarOrDirectByte(0x80);
-		setPalColor(d, a, b, c); /* index, r, g, b */
-		break;
+               if(_features & GF_SMALL_HEADER) {
+                        a = getVarOrDirectWord(0x80);
+                        b = getVarOrDirectWord(0x40);
+                       checkRange(256, 0, a, "o5_roomOps: 2: Illegal room color slot (%d)");
+                       _currentPalette[a]=b;
+                        _fullRedraw = 1;
+                        setDirtyColors(a,a);
+               } else {
+                        a = getVarOrDirectWord(0x80);
+                        b = getVarOrDirectWord(0x40);
+                        c = getVarOrDirectWord(0x20);
+                        _opcode = fetchScriptByte();
+                        d = getVarOrDirectByte(0x80);
+                        setPalColor(d, a, b, c); /* index, r, g, b */
+               }
+               break;
 	case 5: /* shake on */
 		setShake(1);
 		break;
@@ -1428,6 +1485,7 @@ void Scumm::o5_roomOps() {
 	case 16: /* ? */
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
+		if (a < 1) a = 1; /* FIXME: ZAK256 */
 		checkRange(16, 1, a, "o5_roomOps: 16: color cycle out of range (%d)");
 		_colorCycle[a-1].delay = (b!=0) ? 0x4000 / (b*0x4C) : 0;
 		break;
@@ -1650,9 +1708,13 @@ void Scumm::o5_stringOps() {
 		a = getVarOrDirectByte(0x80);
 		b = getVarOrDirectByte(0x40);
 		ptr = getResourceAddress(rtString, a);
-		if (ptr==NULL) error("String %d does not exist", a);
-		c = getVarOrDirectByte(0x20);
-		ptr[b] = c;
+		if (!(_gameId == GID_LOOM256)) { /* FIXME - LOOM256 */
+			if (ptr==NULL) error("String %d does not exist", a);
+			c = getVarOrDirectByte(0x20);
+			ptr[b] = c;
+		} else
+			getVarOrDirectByte(0x20);
+
 		break;
 
 	case 4: /* get string char */
@@ -2000,4 +2062,13 @@ void Scumm::decodeParseString() {
 	string[textSlot].t_charset = string[textSlot].charset;
 }
 
+void Scumm::o5_oldRoomEffect() {
+	int a;
 
+	_opcode=fetchScriptByte();
+	if((_opcode & 0x1F) == 3)
+	{
+		a = getVarOrDirectWord(0x80);
+	}
+	warning("Unsupported oldRoomEffect");
+}

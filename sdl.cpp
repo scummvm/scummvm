@@ -543,9 +543,10 @@ int main(int argc, char* argv[]) {
 	sound.initialize(&scumm, &snd_driv);
 
 	scumm._gui = &gui;
-	scumm.scummMain(argc, argv);
+        scumm.scummMain(argc, argv);
 
-	gui.init(&scumm);
+        if (!(scumm._features & GF_SMALL_HEADER))
+                gui.init(&scumm);
 
 	last_time = SDL_GetTicks();
 	delta = 0;
