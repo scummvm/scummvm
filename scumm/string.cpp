@@ -639,7 +639,7 @@ void Scumm::addNameToStack(int var)
 void Scumm::addStringToStack(int var) {
 	byte *ptr;
 
-	if (_version >= 6 || _gameId == GID_INDY3_256)
+	if (_version == 3 || _version >= 6)
 		var = readVar(var);
 
 	if (var) {
