@@ -72,7 +72,7 @@ enum {
 	ssRunning = 2
 };
 
-extern const uint16 many_direction_tab[18];
+extern const int16 many_direction_tab[18];
 extern const int16 many_direction_tab_2[16];
 extern const int bit_table[16];
 

@@ -1063,8 +1063,7 @@ int Scumm::numSimpleDirDirections(int dirType)
 	return dirType ? 8 : 4;
 }
 
-// FIXME - is the value "530" in many_direction_tab really correct? Maybe it should be "289" ?
-const uint16 many_direction_tab[18] = {4, 8, 90-19, 90+19, 270-19, 530, 0, 0, 0, 0, 0+22, 90-18, 90+17, 180-23, 180+22, 270-18, 270+17, 360-23};
+const int16 many_direction_tab[18] = {4, 8, 71, 109, 251, 289, -1, -1, -1, -1, 22, 72, 107, 157, 202, 252, 287, 337};
 const int16 many_direction_tab_2[16] = {0, 90, 180, 270, -1, -1, -1, -1, 0, 45, 90, 135, 180, 225, 270, 315};
 const int bit_table[16] = {1,2,4,8,0x10,0x20,0x40,0x80,0x100,0x200,0x400,0x800,0x1000,0x2000,0x4000,0x8000};
 
@@ -1073,7 +1072,7 @@ const int bit_table[16] = {1,2,4,8,0x10,0x20,0x40,0x80,0x100,0x200,0x400,0x800,0
 int Scumm::toSimpleDir(int dirType, int dir)
 {
 	int num = dirType ? 8 : 4, i;
-	const uint16 *dirtab = &many_direction_tab[dirType * 8 + 2];
+	const int16 *dirtab = &many_direction_tab[dirType * 8 + 2];
 	for (i = 1; i < num; i++, dirtab++) {
 		if (dir >= dirtab[0] && dir <= dirtab[1])
 			return i;
@@ -1087,6 +1086,7 @@ int Scumm::fromSimpleDir(int dirType, int dir)
 {
 	if (!dirType)
 		dir += dir;
+
 	return dir * 45;
 }
 

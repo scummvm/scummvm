@@ -1176,7 +1176,7 @@ void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int object
 	eo->areaY = _enqueue_c;
 	eo->areaWidth = _enqueue_d;
 	eo->areaHeight = _enqueue_e;
-	eo->posX = objectX;
+	eo->posX = objectX + (camera._cur.x & 7);
 	eo->posY = objectY;
 	if (objectWidth == 0) {
 		od = &_objs[getObjectIndex(objectNumber)];

@@ -624,6 +624,10 @@ void Actor::adjustActorPos()
 	moving = 0;
 	cost.animCounter2 = 0;
 
+	if (_scumm->_features & GF_AFTER_V7) {
+		stopActorMoving();
+	}
+	
 	flags = _scumm->getBoxFlags(walkbox);
 	if (flags & 7) {
 		turnToDirection(facing);
@@ -759,12 +763,12 @@ void Actor::startWalkAnim(int cmd, int angle)
 	if (angle == -1)
 		angle = facing;
 
-	if (walk_script != 0) {
+/*	if (walk_script != 0) {
 		args[2] = angle;
 		args[0] = number;
 		args[1] = cmd;
 		_scumm->runScript(walk_script, 1, 0, args);
-	} else {
+	} else*/ {
 		switch (cmd) {
 		case 1:										/* start walk */
 			setActorDirection(angle);

@@ -276,7 +276,7 @@ void Scumm::executeScript()
 		_opcode = fetchScriptByte();
 		_scriptPointerStart = _scriptPointer;
 		vm.slot[_currentScript].didexec = 1;
-		debug(9, "Script %d: [%X] %s()", vm.slot[_currentScript].number, _opcode, _opcodes_lookup[_opcode]);
+		debug(8, "Script %d: [%X] %s()", vm.slot[_currentScript].number, _opcode, _opcodes_lookup[_opcode]);
 		op = getOpcode(_opcode);
 		(this->*op) ();
 	}
@@ -900,9 +900,6 @@ void Scumm::animateActor(int act, int anim)
 
 		cmd = anim / 1000;
 		dir = anim % 1000;
-
-		/* temporary code */
-//    dir = newDirToOldDir(dir);
 
 		switch (cmd) {
 		case 2:
