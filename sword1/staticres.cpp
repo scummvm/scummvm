@@ -20,15 +20,15 @@
  */
 
 #include "stdafx.h"
-#include "sworddefs.h"
-#include "swordres.h"
-#include "screen.h"
-#include "resman.h"
-#include "objectman.h"
-#include "menu.h"
-#include "music.h"
-#include "sound.h"
-#include "sword1.h"
+#include "sword1/sworddefs.h"
+#include "sword1/swordres.h"
+#include "sword1/screen.h"
+#include "sword1/resman.h"
+#include "sword1/objectman.h"
+#include "sword1/menu.h"
+#include "sword1/music.h"
+#include "sword1/sound.h"
+#include "sword1/sword1.h"
 
 namespace Sword1 {
 
@@ -2889,6 +2889,9 @@ const char Music::_tuneList[TOTAL_TUNES][8] = {
 	"rm3d",		// DONE 269 ONe the scene change after the Grand Master says, "George, we have watched you..." This one might need a bit of fiddling to get it to match to the fisticuffs.
 };
 
+#ifdef __PALM_OS__
+const FxDef *Sound::_fxList;
+#else
 const FxDef Sound::_fxList[312] = {
 		// 0
 	{
@@ -6437,6 +6440,7 @@ const FxDef Sound::_fxList[312] = {
 	}, 
 	//------------------------
 };
+#endif
 //--------------------------------------------------------------------------------------
 // Continuous & random background sound effects for each location
 
@@ -6565,3 +6569,16 @@ const uint16 Sound::_roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM] =
 };
 
 } // End of namespace Sword1
+
+#ifdef __PALM_OS__
+#include "scumm_globals.h"
+
+_GINIT(Sword1_fxList)
+_GSETPTR(Sword1::Sound::_fxList, GBVARS_FXLIST_INDEX, Sword1::FxDef, GBVARS_SWORD1)
+_GEND
+
+_GRELEASE(Sword1_fxList)
+_GRELEASEPTR(GBVARS_FXLIST_INDEX, GBVARS_SWORD1)
+_GEND
+
+#endif

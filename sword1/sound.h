@@ -22,7 +22,7 @@
 #ifndef BSSOUND_H
 #define BSSOUND_H
 
-#include "object.h"
+#include "sword1/object.h"
 #include "sworddefs.h"
 #include "common/file.h"
 #include "sound/mixer.h"
@@ -111,7 +111,12 @@ private:
 	char _filePath[100];
 	static const char _musicList[270];
 	static const uint16 _roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM];
+#ifdef __PALM_OS__
+public:
+	static const FxDef *_fxList;
+#else
 	static const FxDef _fxList[312];
+#endif
 };
 
 } // End of namespace Sword1 
