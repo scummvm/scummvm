@@ -1343,11 +1343,13 @@ void CharsetRendererClassic::printChar(int chr) {
 		}
 		
 		// Blit the image data
-		do {
-			memcpy(back, dst, w);
-			back += backSurface.pitch;
-			dst += dstSurface.pitch;
-		} while (--h);
+		if (w > 0) {
+			while (h-- > 0) {
+				memcpy(back, dst, w);
+				back += backSurface.pitch;
+				dst += dstSurface.pitch;
+			}
+		}
 	}
 	
 	_left += origWidth;
