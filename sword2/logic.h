@@ -170,8 +170,8 @@ public:
 		  _speechScriptWaiting(0), _speechTextBlocNo(0),
 		  _choosing(false), _unpauseZone(0) {
 		memset(_subjectList, 0, sizeof(_subjectList));
-		initStartMenu();
 		setupOpcodes();
+		initStartMenu();
 	}
 
 	// "TEXT" - current official text line number - will match the wav
