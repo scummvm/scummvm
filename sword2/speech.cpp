@@ -821,7 +821,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			ob_speech->ins4 = INS4;
 			ob_speech->ins5 = INS5;
 
-			// the current send has been received - i.e. seperate
+			// the current send has been received - i.e. separate
 			// multiple they-do's
 
 			INS_COMMAND = 0;
