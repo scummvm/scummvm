@@ -1226,7 +1226,7 @@ void ScummEngine_v6::o6_getActorRoom() {
 		//   if (((VAR_TALK_ACTOR != 0) && (VAR_HAVE_MSG == 1)) &&
 		//        (getActorRoom(VAR_TALK_ACTOR) == VAR_ROOM))
 		// Due to the way this is represented in bytecode, the engine cannot
-		// short circuit. Hence, even thought this would be perfectly fine code
+		// short circuit. Hence, even though this would be perfectly fine code
 		// in C/C++, here it can (and does) lead to getActorRoom(0) being
 		// invoked. We silently ignore this.
 		push(0);

@@ -242,7 +242,7 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 		} else {
 			error("ImuseDigiSndMgr::openSound() Don't know how load sound: %d", soundId);
 		}
-	} else if (soundName != NULL) {
+	} else {
 		if (soundType == IMUSE_BUNDLE) {
 			bool header_outside = ((_vm->_gameId == GID_CMI) && !(_vm->_features & GF_DEMO));
 			if (soundGroup == IMUSE_VOICE)
