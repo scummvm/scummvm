@@ -40,7 +40,8 @@ protected:
 		int8 *transpose;
 	} _presets;
 	bool _loop;
-	byte _presend; // Tracks which startup implied events have been sent.
+	byte _presend;     // Tracks which startup implied events have been sent.
+	uint32 _base_tick; // Events times are relative to this base.
 
 protected:
 	void parseNextEvent (EventInfo &info);
@@ -87,37 +88,37 @@ void MidiParser_EUP::parseNextEvent (EventInfo &info) {
 			byte channel = _presets.channel[preset];
 			if (channel >= 16)
 				channel = cmd & 0x0F;
-			uint16 tick = pos[2] | ((uint16) pos[3] << 7);
+			uint16 tick = (pos[2] | ((uint16) pos[3] << 7)) + _base_tick;
 			int note = (int) pos[4] + _presets.transpose[preset];
 			int volume = (int) pos[5] + _presets.volume[preset];
 			pos += 6;
-			if ((*pos & 0xF0) == 0x80) {
-				if (_presets.enable[preset]) {
-					uint16 duration = pos[1] | (pos[2] << 4) | (pos[3] << 8) | (pos[4] << 12);
-					info.start = pos;
-					uint32 last = _position._last_event_tick;
-					info.delta = (tick < last) ? 0 : (tick - last);
-					info.event = 0x90 | channel;
-					info.length = duration;
-					info.basic.param1 = note;
-					info.basic.param2 = volume;
-					pos += 6;
-					break;
-				}
+			if (_presets.enable[preset]) {
+				// If the second half of the command pair is 8x,
+				// use four nibbles for the note duration. Otherwise
+				// assume it is 00 and only use two nibbles. This is
+				// a GUESS solution; however, it's clear from looking
+				// at Indy3-Towns dumps that 00 note off events use
+				// the third and fourth nibbles to report a "countdown"
+				// to the end of the song, for whatever weird reason.
+				uint16 duration = pos[1] | (pos[2] << 4) |
+					(((*pos & 0xF0) == 0x80) ? ((pos[3] << 8) | (pos[4] << 12)) : 0);
+				info.start = pos;
+				uint32 last = _position._last_event_tick;
+				info.delta = (tick < last) ? 0 : (tick - last);
+				info.event = 0x90 | channel;
+				info.length = duration;
+				info.basic.param1 = note;
+				info.basic.param2 = volume;
 				pos += 6;
+				break;
 			}
-		} else if (cmd == 0xF2) {
-			// This is basically a "rest".
-			uint16 tick = pos[2] | (pos[3] << 7);
-			uint32 last = _position._last_event_tick;
-			info.start = pos;
-			info.delta = (tick < last) ? 0 : (tick - last);
-			info.event = 0xFF;
-			info.length = 0;
-			info.ext.type = 0x7F; // Bogus META event
-			info.ext.data = pos;
 			pos += 6;
-			break;
+		} else if (cmd == 0xF2) {
+			// This is a "measure marker" of sorts.
+			// It advances the "base time", to which
+			// all event times are relative.
+			_base_tick += (pos[3] << 7) | pos[2];
+			pos += 6;
 		} else if (cmd == 0xF8) {
 			// TODO: Implement this.
 			pos += 6;
@@ -127,12 +128,13 @@ void MidiParser_EUP::parseNextEvent (EventInfo &info) {
 				// TODO: Implement this.
 			} else {
 				info.start = pos;
-				info.delta = 0;
+				uint32 last = _position._last_event_tick;
+				info.delta = (_base_tick < last) ? 0 : (_base_tick - last);
 				info.event = 0xFF;
 				info.length = 0;
 				info.ext.type = 0x2F;
 				info.ext.data = pos;
-				pos = 0;
+				pos += 6;
 				break;
 			}
 		} else {
@@ -191,6 +193,7 @@ bool MidiParser_EUP::loadMusic (byte *data, uint32 size) {
 void MidiParser_EUP::resetTracking() {
 	MidiParser::resetTracking();
 	_presend = 1;
+	_base_tick = 0;
 }
 
 MidiParser *MidiParser_createEUP() { return new MidiParser_EUP; }
