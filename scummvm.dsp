@@ -376,6 +376,10 @@ SOURCE=.\scummvm.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\scummvm.rc
+# End Source File
+# Begin Source File
+
 SOURCE=.\sdl.cpp
 # End Source File
 # Begin Source File
@@ -526,6 +530,10 @@ SOURCE=.\system.h
 # Begin Source File
 
 SOURCE=.\ReadMe.txt
+# End Source File
+# Begin Source File
+
+SOURCE=.\scummvm.ico
 # End Source File
 # End Target
 # End Project
