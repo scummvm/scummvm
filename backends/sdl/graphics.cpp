@@ -1074,12 +1074,32 @@ void OSystem_SDL::undraw_mouse() {
 	if (SDL_LockSurface(_overlayVisible ? _tmpscreen : _screen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
-	const int old_mouse_x = _mouseCurState.x;
-	const int old_mouse_y = _mouseCurState.y;
-	const int old_mouse_w = _mouseCurState.w;
-	const int old_mouse_h = _mouseCurState.h;
-	int x, y;
+	int old_mouse_x = _mouseCurState.x - _mouseHotspotX;
+	int old_mouse_y = _mouseCurState.y - _mouseHotspotY;
+	int old_mouse_w = _mouseCurState.w;
+	int old_mouse_h = _mouseCurState.h;
 
+	// clip the mouse rect, and addjust the src pointer accordingly
+	if (old_mouse_x < 0) {
+		old_mouse_w += old_mouse_x;
+		old_mouse_x = 0;
+	}
+	if (old_mouse_y < 0) {
+		old_mouse_h += old_mouse_y;
+		old_mouse_y = 0;
+	}
+
+	if (old_mouse_w > _screenWidth - old_mouse_x)
+		old_mouse_w = _screenWidth - old_mouse_x;
+	if (old_mouse_h > _screenHeight - old_mouse_y)
+		old_mouse_h = _screenHeight - old_mouse_y;
+
+	// Quick check to see if anything has to be drawn at all
+	if (old_mouse_w <= 0 || old_mouse_h <= 0)
+		return;
+
+
+	int x, y;
 	if (!_overlayVisible) {
 		byte *dst, *bak = _mouseBackup;
 
