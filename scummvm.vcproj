@@ -377,6 +377,9 @@
 					RelativePath="sound\rate.h">
 				</File>
 				<File
+					RelativePath="sound\voc.cpp">
+				</File>
+				<File
 					RelativePath="sound\voc.h">
 				</File>
 			</Filter>

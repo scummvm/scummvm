@@ -368,6 +368,9 @@
 				RelativePath=".\scumm\script.cpp">
 			</File>
 			<File
+				RelativePath="scumm\script.h">
+			</File>
+			<File
 				RelativePath=".\scumm\script_v2.cpp">
 			</File>
 			<File
