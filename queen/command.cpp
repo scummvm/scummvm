@@ -391,7 +391,7 @@ int16 Command::executeCommand(uint16 comId, int16 condResult) {
 		setItems(comId);
 	}
 
-	if (com->imageOrder != 0) {
+	if (com->imageOrder != 0 && _state.subject[0] > 0) {
 		ObjectData *od = _vm->logic()->objectData(_state.subject[0]);
 		// we must update the graphic image of the object
 		if (com->imageOrder < 0) {
