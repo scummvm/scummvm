@@ -2413,8 +2413,8 @@ void Scumm_v5::o5_walkActorToActor() {
 	if (_version <= 2)
 		dist *= 8;
 	else if (dist == 0xFF) {
-		dist = a2->scalex * a2->width / 0xFF;
-		dist += dist / 2;
+		dist = a->scalex * a->width / 0xFF;
+		dist += (a2->scalex * a2->width / 0xFF) / 2;
 	}
 	x = a2->x;
 	y = a2->y;
