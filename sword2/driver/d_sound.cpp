@@ -52,14 +52,6 @@ static File fpMus;
 #define GetCompressedSign(n)       (((n) >> 3) & 1)
 #define GetCompressedAmplitude(n)  ((n) & 7)
 
-static int32 panTable[33] = {
-	-127, -119, -111, -103,  -95,  -87,  -79,  -71,
-	 -63,  -55,  -47,  -39,  -31,  -23,  -15,   -7,
-	   0,
-	   7,   15,   23,   31,   39,   47,   55,   63,
-          71,   79,   87,   95,  103,  111,  119,  127
-};
-
 static int32 musicVolTable[17] = {
 	  0,  15,  31,  47,  63,  79,  95, 111, 127,
 	143, 159, 175, 191, 207, 223, 239, 255
@@ -165,12 +157,23 @@ Sound::~Sound() {
 // FIXME: We could probably use the FLAG_REVERSE_STEREO mixer flag here.
 
 /**
- * This function reverses the pan table, thus reversing the stereo.
+ * This function creates the pan table.
  */
 
-void Sound::reverseStereo(void) {
-	for (int i = 0; i < 16; i++)
-		SWAP(panTable[i], panTable[32 - i]);
+void Sound::buildPanTable(bool reverse) {
+	int i;
+
+	for (i = 0; i < 16; i++) {
+		_panTable[i] = -127 + i * 8;
+		_panTable[i + 17] = (i + 1) * 8 - 1;
+	}
+
+	_panTable[16] = 0;
+
+	if (reverse) {
+		for (i = 0; i < 33; i++)
+			_panTable[i] = -_panTable[i];
+	}
 }
 
 // Save/Restore information about current music so that we can restore it
@@ -407,7 +410,7 @@ int32 Sound::playCompSpeech(const char *filename, uint32 speechid, uint8 vol, in
 		// Modify the volume according to the master volume
 
 		byte volume = _speechMuted ? 0 : vol * _speechVol;
-		int8 p = panTable[pan + 16];
+		int8 p = _panTable[pan + 16];
 
 		// Start the speech playing
 
@@ -659,7 +662,7 @@ int32 Sound::playFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type) {
 			// Start the sound effect playing
 
 			byte volume = _fxMuted ? 0 : vol * _fxVol;
-			int8 p = panTable[pan + 16];
+			int8 p = _panTable[pan + 16];
 
 			g_engine->_mixer->playRaw(&_fx[i]._handle, _fx[i]._buf, _fx[i]._bufSize, _fx[i]._rate, _fx[i]._flags, -1, volume, p);
 		} else {
@@ -703,7 +706,7 @@ int32 Sound::playFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type) {
 				// Start the sound effect playing
 
 				byte volume = _fxMuted ? 0 : vol * _fxVol;
-				int8 p = panTable[pan + 16];
+				int8 p = _panTable[pan + 16];
 
 				g_engine->_mixer->playRaw(&_fx[i]._handle, _fx[i]._buf, _fx[i]._bufSize, _fx[i]._rate, _fx[i]._flags, -1, volume, p);
 			}
@@ -733,7 +736,7 @@ int32 Sound::setFxIdVolumePan(int32 id, uint8 vol, int8 pan) {
 
 	if (!_fxMuted) {
 		g_engine->_mixer->setChannelVolume(_fx[i]._handle, _fx[i]._volume * _fxVol);
-		g_engine->_mixer->setChannelPan(_fx[i]._handle, panTable[pan + 16]);
+		g_engine->_mixer->setChannelPan(_fx[i]._handle, _panTable[pan + 16]);
 	}
 
 	return RD_OK;

@@ -76,6 +76,8 @@ private:
 	OSystem::MutexRef _mutex;
 	RateConverter *_converter;
 
+	uint32 _panTable[33];
+
 	FxHandle _fx[MAXFX];
 	MusicHandle _music[MAXMUS + 1];
 
@@ -122,7 +124,7 @@ public:
 	void restoreMusicState();
 	void playLeadOut(uint8 *leadOut);
 	int32 musicTimeRemaining();
-	void reverseStereo(void);
+	void buildPanTable(bool reverse);
 	uint8 getFxVolume(void);
 	uint8 getSpeechVolume(void);
 	uint8 getMusicVolume(void);

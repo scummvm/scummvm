@@ -777,9 +777,9 @@ public:
 
 		gui->readOptionSettings();
 
-		_objectLabelsSwitch->setValue(gui->_pointerTextSelected != 0);
-		_subtitlesSwitch->setValue(gui->_subtitles != 0);
-		_reverseStereoSwitch->setValue(gui->_stereoReversed != 0);
+		_objectLabelsSwitch->setValue(gui->_pointerTextSelected);
+		_subtitlesSwitch->setValue(gui->_subtitles);
+		_reverseStereoSwitch->setValue(gui->_stereoReversed);
 		_musicSwitch->setValue(!g_sound->isMusicMute());
 		_speechSwitch->setValue(!g_sound->isSpeechMute());
 		_fxSwitch->setValue(!g_sound->isFxMute());
@@ -839,14 +839,9 @@ public:
 
 	virtual void onAction(Widget *widget, int result = 0) {
 		// Since there is music playing while the dialog is displayed
-		// we need to update music volume immediately. Everything else
-		// is handled when the dialog is terminated.
+		// we need to update music volume immediately.
 
-		if (widget == _reverseStereoSwitch) {
-			if (result != gui->_stereoReversed)
-				g_sound->reverseStereo();
-			gui->_stereoReversed = result;
-		} else if (widget == _musicSwitch) {
+		if (widget == _musicSwitch) {
 			g_sound->muteMusic(result);
 		} else if (widget == _musicSlider) {
 			g_sound->setMusicVolume(result);
@@ -860,6 +855,10 @@ public:
 			_gfxPreview->setState(result);
 			gui->updateGraphicsLevel(result);
 		} else if (widget == _okButton) {
+			gui->_subtitles = _subtitlesSwitch->getValue();
+			gui->_pointerTextSelected = _objectLabelsSwitch->getValue();
+			gui->_stereoReversed = _reverseStereoSwitch->getValue();
+
 			// Apply the changes
 			g_sound->muteMusic(!_musicSwitch->getValue());
 			g_sound->muteSpeech(!_speechSwitch->getValue());
@@ -867,12 +866,9 @@ public:
 			g_sound->setMusicVolume(_musicSlider->getValue());
 			g_sound->setSpeechVolume(_speechSlider->getValue());
 			g_sound->setFxVolume(_fxSlider->getValue());
+			g_sound->buildPanTable(gui->_stereoReversed);
 
 			gui->updateGraphicsLevel(_gfxSlider->getValue());
-
-			gui->_subtitles = _subtitlesSwitch->getValue();
-			gui->_pointerTextSelected = _objectLabelsSwitch->getValue();
-			gui->_stereoReversed = _reverseStereoSwitch->getValue();
 
 			gui->writeOptionSettings();
 			setResult(1);
@@ -1365,7 +1361,11 @@ Gui::Gui() : _baseSlot(0) {
 }
 
 void Gui::readOptionSettings(void) {
-	bool newStereoReversed;
+	_subtitles = !ConfMan.getBool("nosubtitles");
+	_pointerTextSelected = ConfMan.getBool("object_labels");
+	_stereoReversed = ConfMan.getBool("reverse_stereo");
+
+	updateGraphicsLevel((uint8) ConfMan.getInt("gfx_details"));
 
 	g_sound->setMusicVolume((16 * ConfMan.getInt("music_volume")) / 255);
 	g_sound->setSpeechVolume((14 * ConfMan.getInt("speech_volume")) / 255);
@@ -1373,15 +1373,7 @@ void Gui::readOptionSettings(void) {
 	g_sound->muteMusic(ConfMan.getBool("music_mute"));
 	g_sound->muteSpeech(ConfMan.getBool("speech_mute"));
 	g_sound->muteFx(ConfMan.getBool("sfx_mute"));
-	updateGraphicsLevel((uint8) ConfMan.getInt("gfx_details"));
-	_subtitles = !ConfMan.getBool("nosubtitles");
-	_pointerTextSelected = ConfMan.getBool("object_labels");
-	newStereoReversed = ConfMan.getBool("reverse_stereo");
-
-	if (_stereoReversed != newStereoReversed)
-		g_sound->reverseStereo();
-
-	_stereoReversed = newStereoReversed;
+	g_sound->buildPanTable(_stereoReversed);
 }
 
 void Gui::writeOptionSettings(void) {
