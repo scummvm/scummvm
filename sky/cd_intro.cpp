@@ -190,12 +190,22 @@
 #define cd_104	60097
 #define cd_105	60098
 
+#define START_VOICE	( delay(200), _sound->playVoice(vocBuffer, loadedVocSize) )
+#define START_BG	( _sound->playBgSound(bgVocBuffer, bgVocSize) )
+#define LOAD_NEW_VOICE(num)	( free (vocBuffer), vocBuffer = (byte *)loadFile(num, NULL), loadedVocSize = _lastLoadedFileSize ) 
+#define LOAD_NEW_BG(num)	( free (bgVocBuffer), bgVocBuffer = (byte *)loadFile(num, NULL), bgVocSize = _lastLoadedFileSize )
+#define WAIT_VOICE	while (_sound->_voiceHandle != 0) { delay(50); }
+#define WAIT_SEQUENCE	while (_tseqFrames != 0) { delay(50); }
+#define WAIT_RELATIVE(x)	( delay(20 * (x)) )
+#define COPY_SCREEN	( memcpy(_workScreen, workScreen2, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT) )
 
 void SkyState::doCDIntro() {
 
 	uint32 loadedVocSize, bgVocSize;
-	byte *vocBuffer, *bgVocBuffer, *cd2_seq_data_1;
+	byte *vocBuffer, *bgVocBuffer, *cd2_seq_data_1, *cd2_seq_data_2;
 
+	assert(_isCDVersion);
+	
 	vocBuffer = (byte *)loadFile(cdv_00, NULL);
 	loadedVocSize = _lastLoadedFileSize;
 
@@ -209,22 +219,623 @@ void SkyState::doCDIntro() {
 	delay(2000); //keep gibbons screen up for 2 seconds
 	fn_fade_down(0); //and fade out
 
-	_sound->playVoice(vocBuffer, loadedVocSize);
-	_sound->playVoice(bgVocBuffer, bgVocSize);
+	START_VOICE;
+	START_BG; 
 	free (vocBuffer);
 
 	vocBuffer = (byte *)loadFile(cdv_01, NULL);
 	loadedVocSize = _lastLoadedFileSize;
 	
-	//waitForVoc(0);
-	delay(5500); //hack!
-
-	_sound->playVoice(vocBuffer, loadedVocSize);
-	_sound->playVoice(bgVocBuffer, bgVocSize);
-	free (vocBuffer);	
-	
+	WAIT_VOICE; //wait for the voice to finish
+	START_VOICE;
+	START_BG; 
 	showScreen();
 	paletteFadeUp(_tempPal);
-}
+	startTimerSequence(cd2_seq_data_1);
+	LOAD_NEW_VOICE(cdv_02);
+	WAIT_VOICE;
+	START_VOICE;
+	START_BG; 
+	cd2_seq_data_2 = (byte *)loadFile(cd_2, NULL); //load seq 2 while 1 is playing
+	LOAD_NEW_VOICE(cdv_03);
+	//WAIT_SEQUENCE;
+	WAIT_VOICE;
+	startTimerSequence(cd2_seq_data_2); //start second sequence
+	START_VOICE; //03
+	START_BG;
+	
+	LOAD_NEW_VOICE(cdv_04);
+	
+	WAIT_VOICE; //03
+	START_VOICE; //04
+	START_BG;
 
+	free(cd2_seq_data_1);
+	cd2_seq_data_1 = (byte *)loadFile(cd_3, NULL);
+	LOAD_NEW_VOICE(cdv_05);
+	
+	WAIT_SEQUENCE; //2
+	WAIT_VOICE; //4
+
+	START_VOICE; //5
+	START_BG;
+	
+	WAIT_RELATIVE(100); 
+
+	startTimerSequence(cd2_seq_data_1);
+	LOAD_NEW_VOICE(cdv_06);
+	WAIT_VOICE; //5
+	START_VOICE; //6
+	START_BG;
+
+	free (cd2_seq_data_2);
+	cd2_seq_data_2 = (byte *)loadFile(cd_5, NULL);
+	LOAD_NEW_VOICE(cdv_07);
+
+	WAIT_SEQUENCE; //3
+	WAIT_VOICE; //6
+
+	START_VOICE; //7
+	startTimerSequence(cd2_seq_data_2); //5
+	START_BG;
+
+	LOAD_NEW_VOICE(cdv_08);
+	WAIT_VOICE; //7
+	START_VOICE; //8
+	START_BG;
+	LOAD_NEW_VOICE(cdv_09);
+	WAIT_VOICE; //8
+	START_VOICE; //9
+	START_BG;
+
+	free (cd2_seq_data_1);
+	cd2_seq_data_1 = (byte *)loadFile(cd_7, NULL);
+	LOAD_NEW_VOICE(cdv_10);
+
+	WAIT_SEQUENCE; //5
+	WAIT_VOICE; //9
+
+	START_VOICE; //10
+	startTimerSequence(cd2_seq_data_1); //7
+	START_BG;
+	
+	loadFile(cd_11_pal, _tempPal);
+	byte *workScreen2 = (byte *)loadFile(cd_11_log, NULL); //need an extra screen or else the sequence will get messed up
+	free (cd2_seq_data_2);
+	cd2_seq_data_2 = (byte *)loadFile(cd_11, NULL);
+	LOAD_NEW_VOICE(cdv_11);
+
+	WAIT_VOICE; //10
+	START_VOICE; //11
+	START_BG;
+
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+
+	LOAD_NEW_VOICE(cdv_12);
+	WAIT_SEQUENCE; //7
+	WAIT_VOICE; //11
+	START_VOICE; //12
+	START_BG;
+
+	WAIT_RELATIVE(80);
+	startTimerSequence(cd2_seq_data_2); //11
+
+	LOAD_NEW_VOICE(cdv_13);
+	WAIT_VOICE; //12
+	START_VOICE; //13
+	START_BG;
+
+	free(cd2_seq_data_1);
+	cd2_seq_data_1 = (byte *)loadFile(cd_13, NULL);
+	LOAD_NEW_VOICE(cdv_14);
+
+	LOAD_NEW_BG(59498);
+
+	WAIT_SEQUENCE; //11
+	WAIT_VOICE; //13
+
+	START_VOICE; //14
+	startTimerSequence(cd2_seq_data_1); //13
+	START_BG;
+
+	LOAD_NEW_VOICE(cdv_15);
+	loadFile(cd_15_pal, _tempPal);
+	loadFile(cd_15_log, workScreen2);
+
+	WAIT_SEQUENCE; //13
+	WAIT_VOICE; //14
+
+	START_VOICE; //15
+	START_BG;
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+
+	LOAD_NEW_VOICE(cdv_16);
+	WAIT_VOICE; //15
+	START_VOICE; //16
+	START_BG;
+
+	loadFile(cd_17_log, workScreen2);
+	free (cd2_seq_data_2);
+	cd2_seq_data_2 = (byte *)loadFile(cd_17, NULL);
+	LOAD_NEW_VOICE(cdv_17);
+
+	WAIT_VOICE; //16
+	START_VOICE; //17
+
+	WAIT_RELATIVE(40);
+	COPY_SCREEN;
+	showScreen();
+
+	LOAD_NEW_VOICE(cdv_18);
+	LOAD_NEW_BG(59497); //Loud heli
+	
+	WAIT_VOICE; //17
+	startTimerSequence(cd2_seq_data_2); //17
+	START_VOICE; //18
+	START_BG;
+
+	LOAD_NEW_VOICE(cdv_19);
+	loadFile(cd_19_pal, _tempPal);
+	loadFile(cd_19_log, workScreen2);
+	START_BG;
+	LOAD_NEW_BG(59496); //loud heli to quiet
+
+	WAIT_SEQUENCE; //17
+	WAIT_VOICE; //18
+
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+
+	START_VOICE; //19
+	START_BG;
+	LOAD_NEW_VOICE(cdv_20);
+	loadFile(cd_20_log, workScreen2);
+	LOAD_NEW_BG(59496); //quiet heli
+
+	WAIT_VOICE; //19
+	START_VOICE; //20
+	START_BG;
+
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+
+	LOAD_NEW_VOICE(cdv_21);
+	loadFile(cd_21_log, workScreen2);
+
+	START_BG;
+	WAIT_SEQUENCE; //19
+	WAIT_VOICE; //20
+	START_VOICE; //21
+	START_BG;
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+
+	LOAD_NEW_VOICE(cdv_22);
+	LOAD_NEW_BG(59494); //heli whine
+
+	WAIT_SEQUENCE; //20
+	WAIT_VOICE; //21
+
+	START_VOICE; //22
+	START_BG;
+	LOAD_NEW_VOICE(cdv_23);
+	WAIT_VOICE; //22
+	START_VOICE; //23
+	fn_fade_down(0);
+
+	loadFile(cd_23_pal, _tempPal);
+	loadFile(cd_24_log, workScreen2);
+	LOAD_NEW_VOICE(cdv_24);
+	WAIT_VOICE; //23
+
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+	START_VOICE; //24
+	showScreen();
+	LOAD_NEW_VOICE(cdv_25);
+	WAIT_VOICE; //24
+	START_VOICE; //25
+	LOAD_NEW_VOICE(cdv_26);
+	WAIT_VOICE; //25
+	START_VOICE; //26
+
+	free (cd2_seq_data_1);
+	cd2_seq_data_1 = (byte *)loadFile(cd_27, NULL);
+	LOAD_NEW_VOICE(cdv_27);
+	loadFile(cd_27_pal, _tempPal);
+	loadFile(cd_27_log, workScreen2);
+	WAIT_VOICE; //26
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();	
+	paletteFadeUp(_tempPal);
+	START_VOICE; //27
+	LOAD_NEW_VOICE(cdv_29);
+	WAIT_VOICE; //27
+	START_VOICE; //29
+	LOAD_NEW_VOICE(cdv_30);
+	WAIT_VOICE; //29
+	START_VOICE; //30
+	LOAD_NEW_VOICE(cdv_31);
+	WAIT_VOICE; //30
+	startTimerSequence(cd2_seq_data_1);
+	START_VOICE; //31
+	LOAD_NEW_VOICE(cdv_32);
+	WAIT_VOICE; //31
+	START_VOICE; //32
+	LOAD_NEW_VOICE(cdv_33);
+	WAIT_VOICE; //32
+	START_VOICE; //33
+	LOAD_NEW_VOICE(cdv_34);
+	WAIT_VOICE; //33
+	START_VOICE; //34
+	LOAD_NEW_VOICE(cdv_35);
+	WAIT_SEQUENCE; //27
+	WAIT_VOICE; //34
+	START_VOICE; //35
+
+	free (cd2_seq_data_2);
+	cd2_seq_data_2 = (byte *)loadFile(cd_35, NULL);
+	LOAD_NEW_VOICE(cdv_36);
+	loadFile(cd_35_pal, _tempPal);
+	loadFile(cd_35_log, workScreen2);
+	WAIT_VOICE; //35
+	START_VOICE; //36
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+	
+	LOAD_NEW_VOICE(cdv_37);
+	WAIT_VOICE; //36
+	startTimerSequence(cd2_seq_data_2);
+	START_VOICE; //37
+
+	free (cd2_seq_data_1);
+	cd2_seq_data_1 = (byte *)loadFile(cd_37, NULL);
+	LOAD_NEW_VOICE(cdv_38);
+
+	WAIT_SEQUENCE; //35
+	WAIT_VOICE; //37
+	START_VOICE; //38
+	startTimerSequence(cd2_seq_data_1);
+	LOAD_NEW_VOICE(cdv_39);
+	WAIT_SEQUENCE; //37
+	WAIT_VOICE; //38
+	START_VOICE; //39
+
+	LOAD_NEW_VOICE(cdv_40);
+	loadFile(cd_40_pal, _tempPal);
+	loadFile(cd_40_log, workScreen2);
+	WAIT_VOICE; //39
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+
+	START_VOICE; //40
+	LOAD_NEW_VOICE(cdv_41);
+	WAIT_VOICE; //40
+	START_VOICE; //41
+	LOAD_NEW_VOICE(cdv_42);
+	WAIT_VOICE; //41
+	START_VOICE; //42
+	LOAD_NEW_VOICE(cdv_43);
+
+	loadFile(cd_43_pal, _tempPal);
+	loadFile(cd_43_log, workScreen2);
+	WAIT_VOICE; //42
+
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+
+	START_VOICE; //43
+	free (cd2_seq_data_2);
+	cd2_seq_data_2 = (byte *)loadFile(cd_43, NULL);
+	WAIT_VOICE; //43
+	startTimerSequence(cd2_seq_data_2);
+	LOAD_NEW_VOICE(cdv_45);
+	loadFile(cd_45_pal, _tempPal);
+	loadFile(cd_45_log, workScreen2);
+	WAIT_SEQUENCE; //43
+	START_VOICE; //45
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+	free (cd2_seq_data_1);
+	cd2_seq_data_1 = (byte *)loadFile(cd_45, NULL);
+	LOAD_NEW_VOICE(cdv_46);
+	WAIT_VOICE; //45
+	startTimerSequence(cd2_seq_data_1);
+	START_VOICE; //46
+	LOAD_NEW_VOICE(cdv_47);
+
+	loadFile(cd_47_pal, _tempPal);
+	loadFile(cd_47_log, workScreen2);
+
+	WAIT_SEQUENCE; //45
+	WAIT_VOICE; //46
+
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+	START_VOICE; //47
+	LOAD_NEW_VOICE(cdv_48);
+	loadFile(cd_48_pal, _tempPal);
+	loadFile(cd_48_log, workScreen2);
+	WAIT_VOICE; //47
+	START_VOICE; //48
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+
+	free (cd2_seq_data_2);
+	cd2_seq_data_2 = (byte *)loadFile(cd_48, NULL);
+	LOAD_NEW_VOICE(cdv_49);
+	WAIT_VOICE; //48
+	startTimerSequence(cd2_seq_data_2);
+	START_VOICE; //49
+	LOAD_NEW_VOICE(cdv_50);
+	WAIT_VOICE; //49
+	START_VOICE; //50
+	free (cd2_seq_data_1);
+	cd2_seq_data_1 = (byte *)loadFile(cd_49, NULL);
+	LOAD_NEW_VOICE(cdv_51);
+	WAIT_SEQUENCE; //48
+	WAIT_VOICE; //50
+	START_VOICE; //51
+	startTimerSequence(cd2_seq_data_1);
+	LOAD_NEW_VOICE(cdv_52);
+	WAIT_VOICE; //51
+	START_VOICE; //52
+	LOAD_NEW_VOICE(cdv_53);
+	WAIT_VOICE; //52
+	START_VOICE; //53
+	LOAD_NEW_VOICE(cdv_54);
+	free (cd2_seq_data_2);
+	cd2_seq_data_2 = (byte *)loadFile(cd_50, NULL);
+	WAIT_VOICE; //53
+	WAIT_SEQUENCE; //49
+
+	START_VOICE; //54
+	startTimerSequence(cd2_seq_data_2);
+	LOAD_NEW_VOICE(cdv_55);
+	WAIT_SEQUENCE; //50
+	WAIT_VOICE; //54
+	START_VOICE; //55
+
+	loadFile(cd_55_pal, _tempPal);
+	loadFile(cd_55_log, workScreen2);
+	LOAD_NEW_VOICE(cdv_56);
+	WAIT_VOICE; //55
+	START_VOICE; //56
+
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+
+	LOAD_NEW_VOICE(cdv_57);
+	WAIT_VOICE; //56
+	START_VOICE; //57
+
+	LOAD_NEW_VOICE(cdv_58);
+	loadFile(cd_58_pal, _tempPal);
+	loadFile(cd_58_log, workScreen2);
+
+	WAIT_VOICE; //57
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+	START_VOICE; //58
+	LOAD_NEW_VOICE(cdv_59);
+	WAIT_VOICE; //48
+	START_VOICE; //59
+	free (cd2_seq_data_1);
+	cd2_seq_data_1 = (byte *)loadFile(cd_58, NULL);
+	WAIT_VOICE; //59
+	LOAD_NEW_VOICE(cdv_60);
+	START_VOICE; //60
+	LOAD_NEW_VOICE(cdv_61);
+	WAIT_VOICE; //60
+	START_VOICE; //61
+	LOAD_NEW_VOICE(cdv_62);
+	WAIT_VOICE; //61
+	START_VOICE; //62
+	startTimerSequence(cd2_seq_data_1); //58
+	LOAD_NEW_VOICE(cdv_63);
+	WAIT_VOICE; //62
+	START_VOICE; //63
+	LOAD_NEW_VOICE(cdv_64);
+	WAIT_VOICE; //63
+	START_VOICE; //64
+	LOAD_NEW_VOICE(cdv_65);
+	WAIT_SEQUENCE; //58
+	WAIT_VOICE; //64
+	START_VOICE; //65
+	fn_fade_down(0);
+	LOAD_NEW_VOICE(cdv_66);
+	loadFile(cd_66_pal, _tempPal);
+	loadFile(cd_66_log, _workScreen);
+	WAIT_VOICE; //65
+	showScreen();
+	paletteFadeUp(_tempPal);
+	START_VOICE; //66
+	LOAD_NEW_VOICE(cdv_67);
+	WAIT_VOICE; //66
+	START_VOICE; //67
+	loadFile(cd_67_pal, _tempPal);
+	loadFile(cd_67_log, workScreen2);
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+	LOAD_NEW_VOICE(cdv_68);
+	WAIT_VOICE; //67
+	START_VOICE; //68
+	free (cd2_seq_data_2);
+	cd2_seq_data_2 = (byte *)loadFile(cd_69, NULL);
+	LOAD_NEW_VOICE(cdv_69);
+	loadFile(cd_69_pal, _tempPal);
+	loadFile(cd_69_log, workScreen2);
+	WAIT_VOICE; //68
+	START_VOICE; //69
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+	LOAD_NEW_VOICE(cdv_70);
+	WAIT_VOICE; //69
+	startTimerSequence(cd2_seq_data_2);
+	START_VOICE; //70
+	LOAD_NEW_VOICE(cdv_71);
+	WAIT_VOICE; //70
+	fn_fade_down(0);
+	START_VOICE; //71
+	loadFile(cd_72_pal, _tempPal);
+	loadFile(cd_72_log, _workScreen);
+	WAIT_VOICE; //71
+	showScreen();
+	paletteFadeUp(_tempPal);
+	LOAD_NEW_VOICE(cdv_72);
+	START_VOICE; //72
+
+	loadFile(cd_73_pal, _tempPal);
+	loadFile(cd_73_log, _workScreen);
+	LOAD_NEW_VOICE(cdv_73);
+	WAIT_VOICE; //72
+	fn_fade_down(0);
+	showScreen();
+	paletteFadeUp(_tempPal);
+	START_VOICE; //73
+	LOAD_NEW_VOICE(cdv_74);
+	WAIT_VOICE; //73
+	START_VOICE; //74
+	LOAD_NEW_VOICE(cdv_75);
+	WAIT_VOICE; //74
+	START_VOICE; //75
+	loadFile(cd_76_pal, _tempPal);
+	free (workScreen2);
+	workScreen2 = (byte *)loadFile(cd_76_log, NULL);
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+
+	LOAD_NEW_VOICE(cdv_76);
+	WAIT_VOICE; //75
+	START_VOICE; //76
+	LOAD_NEW_VOICE(cdv_77);
+	WAIT_VOICE; //76
+	START_VOICE; //77
+
+	free (cd2_seq_data_1);
+	cd2_seq_data_1 = (byte *)loadFile(cd_100, NULL);
+	loadFile(cd_78_pal, _tempPal);
+	free (workScreen2);
+	workScreen2 = (byte *)loadFile(cd_78_log, NULL);
+	LOAD_NEW_VOICE(cdv_78);
+	WAIT_VOICE; //77
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();	
+	paletteFadeUp(_tempPal);
+	START_VOICE; //78
+	LOAD_NEW_VOICE(cdv_79);
+	WAIT_VOICE; //78
+	START_VOICE; //79
+	LOAD_NEW_VOICE(cdv_80);
+	WAIT_VOICE; //79
+	START_VOICE; //80
+	startTimerSequence(cd2_seq_data_1);
+	LOAD_NEW_VOICE(cdv_81);
+	WAIT_VOICE; //80
+	START_VOICE; //81
+	LOAD_NEW_VOICE(cdv_82);
+	WAIT_VOICE; //81
+	START_VOICE; //82
+	LOAD_NEW_VOICE(cdv_83);
+	WAIT_VOICE; //82
+	loadFile(cd_101_log, workScreen2);
+	free (cd2_seq_data_2);
+	cd2_seq_data_2 = (byte *)loadFile(cd_101, NULL);
+	WAIT_SEQUENCE; //100
+	COPY_SCREEN;
+	showScreen();
+	startTimerSequence(cd2_seq_data_2);
+	START_VOICE; //83
+	LOAD_NEW_VOICE(cdv_84);
+	WAIT_VOICE; //83
+	START_VOICE; //84
+	LOAD_NEW_VOICE(cdv_85);
+	WAIT_VOICE; //84
+	START_VOICE; //85
+	LOAD_NEW_VOICE(cdv_86);
+	WAIT_VOICE; //85
+
+	free (workScreen2);
+	workScreen2 = (byte *)loadFile(cd_102_log, NULL);
+	free (cd2_seq_data_1);
+	cd2_seq_data_1 = (byte *)loadFile(cd_102, NULL);
+	WAIT_SEQUENCE; //101
+	COPY_SCREEN;
+	showScreen();
+	startTimerSequence(cd2_seq_data_1);
+	START_VOICE; //86
+	LOAD_NEW_VOICE(cdv_87);
+	loadFile(cd_103_pal, _tempPal);
+	free (workScreen2);
+	workScreen2 = (byte *)loadFile(cd_103_log, NULL);
+	free (cd2_seq_data_2);
+	cd2_seq_data_2 = (byte *)loadFile(cd_103, NULL);
+	WAIT_SEQUENCE; //102
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+	startTimerSequence(cd2_seq_data_2);
+	WAIT_VOICE; //86
+	START_VOICE; //87
+	loadFile(cd_104_pal, _tempPal);
+	free (workScreen2);
+	workScreen2 = (byte *)loadFile(cd_104_log, NULL);
+	free (cd2_seq_data_1);
+	cd2_seq_data_1 = (byte *)loadFile(cd_104, NULL);
+	WAIT_SEQUENCE; //103
+
+	//fn_start_music(2);
+	fn_fade_down(0);
+	COPY_SCREEN;
+	showScreen();
+	paletteFadeUp(_tempPal);
+	startTimerSequence(cd2_seq_data_1);
+	free (cd2_seq_data_2);
+	cd2_seq_data_2 = (byte *)loadFile(cd_105, NULL);
+	WAIT_SEQUENCE; //104
+	startTimerSequence(cd2_seq_data_2);
+	WAIT_SEQUENCE; //105
+	
+	free (cd2_seq_data_1);
+	free (cd2_seq_data_2);
+	free (workScreen2);
+}
 

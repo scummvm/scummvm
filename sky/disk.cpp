@@ -87,7 +87,7 @@ uint16 *SkyState::loadFile(uint16 fileNr, uint8 *dest) {
 	#endif
 
 	compFile = fileNr;
-	debug(1, "load file %d,%d (%d)", (fileNr >> 11), (fileNr & 2047), fileNr); 
+	debug(2, "load file %d,%d (%d)", (fileNr >> 11), (fileNr & 2047), fileNr); 
 
 	filePtr = (uint8 *)getFileInfo(fileNr);
 	if (filePtr == NULL) {
@@ -131,11 +131,11 @@ uint16 *SkyState::loadFile(uint16 fileNr, uint8 *dest) {
 	//if cflag == 0 then file is compressed, 1 == uncompressed
 
 	if (!cflag) {
-		debug(1, "File is compressed...");
+		debug(2, "File is compressed...");
 
 		memcpy(&fileHeader, fileDest, sizeof(struct dataFileHeader));
 		if ( (uint8)((FROM_LE_16(fileHeader.flag) >> 7) & 0x1)	 ) {
-			debug(1, "with RNC!");
+			debug(2, "with RNC!");
 
 			decompSize = (FROM_LE_16(fileHeader.flag) & 0xFFFFFF00) << 8;
 			decompSize |= FROM_LE_16((uint16)fileHeader.s_tot_size);
@@ -157,7 +157,7 @@ uint16 *SkyState::loadFile(uint16 fileNr, uint8 *dest) {
 			RncDecoder rncDecoder;
 			int32 unPackLen = rncDecoder.unpackM1(inputPtr, outputPtr, 0);
 
-			debug(2, "UnpackM1 returned: %d", unPackLen);
+			debug(3, "UnpackM1 returned: %d", unPackLen);
 
 			if (unPackLen == 0) { //Unpack returned 0: file was probably not packed.
 				if (fixedDest == NULL)
@@ -180,7 +180,7 @@ uint16 *SkyState::loadFile(uint16 fileNr, uint8 *dest) {
 				free(fileDest);
 
 		} else
-			debug(1, "but not with RNC! (?!)");
+			debug(2, "but not with RNC! (?!)");
 	} else
 		return (uint16 *)fileDest;
 
@@ -194,7 +194,7 @@ uint16 *SkyState::getFileInfo(uint16 fileNr) {
 
 	for (i = 0; i < dinnerTableEntries; i++) {
 		if (READ_LE_UINT16(dnrTbl16Ptr + (i * 4)) == fileNr) {
-			debug(1, "file %d found!", fileNr);
+			debug(2, "file %d found!", fileNr);
 			return (dnrTbl16Ptr + (i * 4));
 		}
 	}

@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include "common/engine.h"
 #include "common/util.h"
+#include "common/timer.h"
 #include "sound/mixer.h"
 #include "sky/sound.h"
 
@@ -36,6 +37,10 @@ protected:
 	bool _isDemo;
 	byte _key_pressed;
 
+	uint32 _tseqFrames;
+	byte *_tseqData;
+	uint32 _tseqCounter;
+	
 	uint16 _debugMode;
 	uint16 _debugLevel;
 	uint16 _language;
@@ -50,7 +55,8 @@ protected:
 
 	uint32 _lastLoadedFileSize;
 	
-//	int _timer_id;
+	Timer *_timer;
+	//int _timer_id;
 
 	FILE *_dump_file;
 
@@ -81,6 +87,7 @@ protected:
 	void convertPalette(uint8 *inpal, uint8* outpal);
 
 	void initialise();
+	void initTimer();
 	void initialiseDisk();
 	void initialiseScreen();
 	void initialiseGrids();
@@ -96,7 +103,10 @@ protected:
 	void intro();
 	void doCDIntro();
 	void showScreen();
-
+	void startTimerSequence(byte *sequence);
+	static void timerHandler(void *ptr);
+	void doTimerSequence();
+	
 	static int CDECL game_thread_proc(void *param);
 
 	void shutdown();

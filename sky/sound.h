@@ -25,19 +25,21 @@
 class SkySound {
 protected:
 
-	bool _voiceIsPlaying;
-
 public:
 
 	SoundMixer *_mixer;
-
+	PlayingSoundHandle _voiceHandle;
+	PlayingSoundHandle _effectHandle;
+	PlayingSoundHandle _bgSoundHandle;
 
 protected:
 
+	int playSound(byte *sound, uint32 size, PlayingSoundHandle *handle);
 
 public:
 	SkySound(SoundMixer *mixer);
 	int playVoice(byte *sound, uint32 size);
+	int playBgSound(byte *sound, uint32 size);
 
 };
 

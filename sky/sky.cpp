@@ -94,7 +94,7 @@ void SkyState::go() {
 void SkyState::initialise(void) {
 
 	//initialise_memory();
-	//init_timer();
+	initTimer();
 	//init_music(); 
 
 	_sound = new SkySound(_mixer);

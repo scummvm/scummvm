@@ -27,9 +27,24 @@
 
 SkySound::SkySound(SoundMixer *mixer) {
 	_mixer = mixer;
+	_voiceHandle = 0;
+	_effectHandle = 0;
+	_bgSoundHandle = 0;
 }
 
 int SkySound::playVoice(byte *sound, uint32 size) {
+
+	return playSound(sound, size, &_voiceHandle);
+}
+
+
+int SkySound::playBgSound(byte *sound, uint32 size) {
+
+	size -= 512; //Hack to get rid of the annoying pop at the end of some bg sounds 
+	return playSound(sound, size, &_bgSoundHandle);
+}
+
+int SkySound::playSound(byte *sound, uint32 size, PlayingSoundHandle *handle) {
 
 	byte flags = 0;
 	flags |= SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE;
@@ -37,7 +52,5 @@ int SkySound::playVoice(byte *sound, uint32 size) {
 	byte *buffer = (byte *)malloc(size); 
 	memcpy(buffer, sound+sizeof(struct dataFileHeader), size);	
 	
-	return _mixer->playRaw(NULL, buffer, size, 11025, flags);
-
+	return _mixer->playRaw(handle, buffer, size, 11025, flags);
 }
-
