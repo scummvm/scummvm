@@ -109,7 +109,7 @@ static ResString string_map_table_v6[] = {
 };
 
 static ResString string_map_table_v5[] = {
-	{0, "How may I serve you?"}, 
+	{28, "How may I serve you?"}, 
 	{20, "Select a game to LOAD"},
 	{19, "Name your SAVE game"},
 	{7, "Save"},

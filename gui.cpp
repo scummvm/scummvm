@@ -112,6 +112,128 @@ static uint32 down_arrow[IMG_SIZE] = {
 };
 
 
+const GuiWidget launcher_dialog[] = {
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 0, 0, 320, 200, 0, 0},
+	{GUI_CUSTOMTEXT, 0x01, GWF_CLEARBG, 5, 180, 45, 15, 20, 12},
+	{GUI_CUSTOMTEXT, 0x01, GWF_CLEARBG, 130, 180, 65, 15, 21, 17},
+	{GUI_CUSTOMTEXT, 0x01, GWF_CLEARBG, 265, 180, 50, 15, 22, 7},
+	{0, 0, 0, 0, 0, 0, 0, 0, 0}
+};
+
+const GuiWidget keys_dialog[] = {
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 10, 260, 130, 0, 0 },
+
+	// First action
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10, 15, 15, 10, 3}, // CUSTOMTEXT_PLUS
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10, 15, 15, 11, 4}, // CUSTOMTEXT_MINUS
+	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 11 + 33 + 10, 10 + 10, 100, 15, 100, 1},
+	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 3, 100, 15, 1, 1},
+
+	//Second action
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5, 15, 15, 20, 3}, // CUSTOMTEXT_PLUS
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5, 15, 15, 21, 4}, // CUSTOMTEXT_MINUS
+	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5, 100, 15, 101, 2},
+	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 3, 100, 15, 2,  2},
+	
+	//Third action
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5, 15, 15, 30, 3},// CUSTOMTEXT_PLUS
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5, 15, 15, 31, 4}, // CUSTOMTEXT_MINUS
+	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5 + 15 + 5, 100, 15, 102, 3},
+	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 15 + 5 + 3, 100, 15, 3, 3},
+
+	//Fourth action
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 40, 3},
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 41, 4},
+	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 100, 15, 103, 4},
+	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 3, 100, 15, 4, 4},
+
+	//Fifth action
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 50, 3},
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 51, 4},
+	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 100, 15, 104, 5},
+	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5 + 3, 100, 15, 5, 5},
+
+	//OK
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 60, 10 + 106, 54, 16, 60, 9 },
+	//Previous-Next
+	{GUI_NEXTTEXT, 0x01, GWF_BUTTON, 30 + 120, 10 + 106, 54, 16, 61, 0 }, 
+	{0,0,0,0,0,0,0,0,0}
+};
+
+const GuiWidget about_dialog[] = {
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 20, 260, 120, 0, 0},
+	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 68, 20 + 10 + 15 + 5, 160, 15, 0, 9},	// Build
+	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 10, 20 + 10 + 15 + 5 + 15, 230, 15, 0, 10},	// ScummVM Url
+	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 75, 20 + 10 + 15 + 5 + 15 + 15 + 15, 150, 15, 0, 11},	// Lucasarts
+	{GUI_SCROLLTEXT, 0x01, 0, 30 + 95, 20 + 10, 100, 15, 0},
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 113, 20 + 96, 54, 16, 40, 9},
+	{0, 0, 0, 0, 0, 0, 0, 0, 0}
+};
+
+const GuiWidget options_dialog[] = {
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 50, 80, 210, 35, 0, 0},
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10, 80 + 10, 40, 15, 1, 5},	// Sound
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30, 80 + 10, 40, 15, 2, 6},	// Keys
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30 + 40 + 30, 80 + 10, 40, 15, 3, 7},	// About
+	{0, 0, 0, 0, 0, 0, 0, 0, 0}
+};
+
+const GuiWidget sound_dialog[] = {
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 20, 260, 120, 0, 0},
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 20 + 11, 15, 15, 1, 3},	// Plus
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 20 + 11, 15, 15, 2, 4},	// Minus
+	{GUI_VARTEXT, 0x01, GWF_DEFAULT, 30 + 73, 20 + 11, 128, 15, 3, 0},	// Master
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 20 + 25 + 11, 15, 15, 11, 3},	// Plus
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 20 + 25 + 11, 15, 15, 12, 4},	// Minus
+	{GUI_VARTEXT, 0x01, GWF_BUTTON, 30 + 73, 20 + 25 + 11, 128, 15, 13, 1},	// Music
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 20 + 25 + 25 + 11, 15, 15, 21, 3},	// Plus
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 20 + 25 + 25 + 11, 15, 15, 22, 4},	// Minus
+	{GUI_VARTEXT, 0x01, GWF_BUTTON, 30 + 73, 20 + 25 + 25 + 11, 128, 15, 23, 2},	// SFX
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + (260 / 2) - 80, 20 + 25 + 25 + 11 + 25, 54, 16, 40, 9},	/* OK */
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + (260 / 2), 20 + 25 + 25 + 11 + 25, 54, 16, 50, 7},	/* Cancel */
+	{0, 0, 0, 0, 0, 0, 0, 0, 0}
+};
+
+const GuiWidget save_load_dialog[] = {
+	{GUI_STAT, 0xFF, GWF_DEFAULT | GWF_PARENT, 30, 20, 260, 124, 0, 0},
+	{GUI_RESTEXT, 0x01, 0, 10, 7, 240, 16, 0, 1},	/* How may I serve you? */
+	{GUI_RESTEXT, 0x02, 0, 10, 7, 240, 16, 0, 2},	/* Select a game to LOAD */
+	{GUI_RESTEXT, 0x04, 0, 10, 7, 240, 16, 0, 3},	/* Name your SAVE game */
+
+	{GUI_STAT, 0xFF, GWF_DEFAULT, 6, 20, 170, 96, 0, 0},
+	{GUI_UPDOWNARROW, 0x01, GWF_BUTTON, 180, 24, 16, 40, 0, 0}, /* Up (dummy) */
+	{GUI_UPDOWNARROW, 0x01, GWF_BUTTON, 180, 72, 16, 40, 0, 1}, /* Down (dummy) */
+	{GUI_UPDOWNARROW, 0xFE, GWF_BUTTON, 180, 24, 16, 40, 1, 0}, /* Up */
+	{GUI_UPDOWNARROW, 0xFE, GWF_BUTTON, 180, 72, 16, 40, 2, 1}, /* Down */
+
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 24, 160, 10, 20, 0},
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 34, 160, 10, 21, 0},
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 44, 160, 10, 22, 0},
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 54, 160, 10, 23, 0},
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 64, 160, 10, 24, 0},
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 74, 160, 10, 25, 0},
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 84, 160, 10, 26, 0},
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 94, 160, 10, 27, 0},
+	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 104, 160, 10, 28, 0},
+
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 20, 54, 16, 3, 4},	/* Save */
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 40, 54, 16, 4, 5},	/* Load */
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 60, 54, 16, 5, 6},	/* Play */
+	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 200, 80, 54, 16, 9, 17},	/* Options */
+	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 100, 54, 16, 6, 8},	/* Quit */
+
+	{GUI_RESTEXT, 0x02, GWF_BUTTON, 200, 60, 54, 16, 7, 7},	/* Cancel */
+
+	{GUI_RESTEXT, 0x04, GWF_BUTTON, 200, 40, 54, 16, 8, 9},	/* Ok */
+	{GUI_RESTEXT, 0x04, GWF_BUTTON, 200, 60, 54, 16, 7, 7},	/* Cancel */
+	{0, 0, 0, 0, 0, 0, 0, 0, 0}
+};
+
+const GuiWidget pause_dialog[] = {
+	{GUI_RESTEXT, 0x01, GWF_DEFAULT, 50, 80, 220, 16, 0, 10},
+	{0, 0, 0, 0, 0, 0, 0, 0, 0}
+};
+
 
 void Gui::draw(int start, int end)
 {
@@ -185,7 +307,6 @@ void Gui::drawChar(const char str, int xx, int yy)
 			color = ((buffer & mask) != 0);
 			if (color)
 				ptr[x] = _color;
-//				vline(xx + x, yy + y, yy + y);
 		}
 		ptr += 320;
 	}
@@ -460,127 +581,6 @@ void Gui::leftMouseClick(int x, int y)
 	if (_dialog == PAUSE_DIALOG)
 		close();
 }
-const GuiWidget launcher_dialog[] = {
-	{GUI_STAT, 0xFF, GWF_DEFAULT, 0, 0, 320, 200, 0, 0},
-	{GUI_CUSTOMTEXT, 0x01, GWF_CLEARBG, 5, 180, 45, 15, 20, 12},
-	{GUI_CUSTOMTEXT, 0x01, GWF_CLEARBG, 130, 180, 65, 15, 21, 17},
-	{GUI_CUSTOMTEXT, 0x01, GWF_CLEARBG, 265, 180, 50, 15, 22, 7},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0}
-};
-const GuiWidget keys_dialog[] = {
-	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 10, 260, 130, 0, 0 },
-
-	// First action
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10, 15, 15, 10, 3}, // CUSTOMTEXT_PLUS
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10, 15, 15, 11, 4}, // CUSTOMTEXT_MINUS
-	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 11 + 33 + 10, 10 + 10, 100, 15, 100, 1},
-	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 3, 100, 15, 1, 1},
-
-	//Second action
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5, 15, 15, 20, 3}, // CUSTOMTEXT_PLUS
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5, 15, 15, 21, 4}, // CUSTOMTEXT_MINUS
-	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5, 100, 15, 101, 2},
-	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 3, 100, 15, 2,  2},
-	
-	//Third action
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5, 15, 15, 30, 3},// CUSTOMTEXT_PLUS
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5, 15, 15, 31, 4}, // CUSTOMTEXT_MINUS
-	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5 + 15 + 5, 100, 15, 102, 3},
-	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 15 + 5 + 3, 100, 15, 3, 3},
-
-	//Fourth action
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 40, 3},
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 41, 4},
-	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5, 100, 15, 103, 4},
-	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 3, 100, 15, 4, 4},
-
-	//Fifth action
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 50, 3},
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 15, 15, 51, 4},
-	{GUI_ACTIONTEXT, 0x01, GWF_BUTTON, 30 + 10 + 33 + 10, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5, 100, 15, 104, 5},
-	{GUI_KEYTEXT, 0x01, 0, 30 + 11 + 33 + 120, 10 + 10 + 15 + 5 + 15 + 5 + 15 + 5 + 15 + 5 + 3, 100, 15, 5, 5},
-
-	//OK
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 60, 10 + 106, 54, 16, 60, 9 },
-	//Previous-Next
-	{GUI_NEXTTEXT, 0x01, GWF_BUTTON, 30 + 120, 10 + 106, 54, 16, 61, 0 }, 
-	{0,0,0,0,0,0,0,0,0}
-};
-
-
-const GuiWidget about_dialog[] = {
-	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 20, 260, 120, 0, 0},
-	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 68, 20 + 10 + 15 + 5, 160, 15, 0, 9},	// Build
-	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 10, 20 + 10 + 15 + 5 + 15, 230, 15, 0, 10},	// ScummVM Url
-	{GUI_CUSTOMTEXT, 0x01, 0, 30 + 75, 20 + 10 + 15 + 5 + 15 + 15 + 15, 150, 15, 0, 11},	// Lucasarts
-	{GUI_SCROLLTEXT, 0x01, 0, 30 + 95, 20 + 10, 100, 15, 0},
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + 113, 20 + 96, 54, 16, 40, 9},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0}
-};
-
-const GuiWidget options_dialog[] = {
-	{GUI_STAT, 0xFF, GWF_DEFAULT, 50, 80, 210, 35, 0, 0},
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10, 80 + 10, 40, 15, 1, 5},	// Sound
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30, 80 + 10, 40, 15, 2, 6},	// Keys
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 50 + 10 + 40 + 30 + 40 + 30, 80 + 10, 40, 15, 3, 7},	// About
-	{0, 0, 0, 0, 0, 0, 0, 0, 0}
-};
-
-const GuiWidget sound_dialog[] = {
-	{GUI_STAT, 0xFF, GWF_DEFAULT, 30, 20, 260, 120, 0, 0},
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 20 + 11, 15, 15, 1, 3},	// Plus
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 20 + 11, 15, 15, 2, 4},	// Minus
-	{GUI_VARTEXT, 0x01, GWF_DEFAULT, 30 + 73, 20 + 11, 128, 15, 3, 0},	// Master
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 20 + 25 + 11, 15, 15, 11, 3},	// Plus
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 20 + 25 + 11, 15, 15, 12, 4},	// Minus
-	{GUI_VARTEXT, 0x01, GWF_BUTTON, 30 + 73, 20 + 25 + 11, 128, 15, 13, 1},	// Music
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 11, 20 + 25 + 25 + 11, 15, 15, 21, 3},	// Plus
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 30 + 33, 20 + 25 + 25 + 11, 15, 15, 22, 4},	// Minus
-	{GUI_VARTEXT, 0x01, GWF_BUTTON, 30 + 73, 20 + 25 + 25 + 11, 128, 15, 23, 2},	// SFX
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + (260 / 2) - 80, 20 + 25 + 25 + 11 + 25, 54, 16, 40, 9},	/* OK */
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 30 + (260 / 2), 20 + 25 + 25 + 11 + 25, 54, 16, 50, 7},	/* Cancel */
-	{0, 0, 0, 0, 0, 0, 0, 0, 0}
-};
-
-const GuiWidget save_load_dialog[] = {
-	{GUI_STAT, 0xFF, GWF_DEFAULT | GWF_PARENT, 30, 20, 260, 124, 0, 0},
-	{GUI_RESTEXT, 0x01, 0, 40, 7, 128, 16, 0, 1},	/* How may I serve you? */
-	{GUI_RESTEXT, 0x02, 0, 40, 7, 128, 16, 0, 2},	/* Select a game to LOAD */
-	{GUI_RESTEXT, 0x04, 0, 40, 7, 128, 16, 0, 3},	/* Name your SAVE game */
-
-	{GUI_STAT, 0xFF, GWF_DEFAULT, 6, 20, 170, 96, 0, 0},
-	{GUI_UPDOWNARROW, 0x01, GWF_BUTTON, 180, 24, 16, 40, 0, 0}, /* Up (dummy) */
-	{GUI_UPDOWNARROW, 0x01, GWF_BUTTON, 180, 72, 16, 40, 0, 1}, /* Down (dummy) */
-	{GUI_UPDOWNARROW, 0xFE, GWF_BUTTON, 180, 24, 16, 40, 1, 0}, /* Up */
-	{GUI_UPDOWNARROW, 0xFE, GWF_BUTTON, 180, 72, 16, 40, 2, 1}, /* Down */
-
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 24, 160, 10, 20, 0},
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 34, 160, 10, 21, 0},
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 44, 160, 10, 22, 0},
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 54, 160, 10, 23, 0},
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 64, 160, 10, 24, 0},
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 74, 160, 10, 25, 0},
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 84, 160, 10, 26, 0},
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 94, 160, 10, 27, 0},
-	{GUI_RESTEXT, 0x06, GWF_CLEARBG, 10, 104, 160, 10, 28, 0},
-
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 20, 54, 16, 3, 4},	/* Save */
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 40, 54, 16, 4, 5},	/* Load */
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 60, 54, 16, 5, 6},	/* Play */
-	{GUI_CUSTOMTEXT, 0x01, GWF_BUTTON, 200, 80, 54, 16, 9, 17},	/* Options */
-	{GUI_RESTEXT, 0x01, GWF_BUTTON, 200, 100, 54, 16, 6, 8},	/* Quit */
-
-	{GUI_RESTEXT, 0x02, GWF_BUTTON, 200, 60, 54, 16, 7, 7},	/* Cancel */
-
-	{GUI_RESTEXT, 0x04, GWF_BUTTON, 200, 40, 54, 16, 8, 9},	/* Ok */
-	{GUI_RESTEXT, 0x04, GWF_BUTTON, 200, 60, 54, 16, 7, 7},	/* Cancel */
-	{0, 0, 0, 0, 0, 0, 0, 0, 0}
-};
-
-const GuiWidget pause_dialog[] = {
-	{GUI_RESTEXT, 0x01, GWF_DEFAULT, 50, 80, 220, 16, 0, 10},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0}
-};
 
 void Gui::handleSoundDialogCommand(int cmd)
 {
@@ -782,8 +782,6 @@ void Gui::handleCommand(int cmd)
 	case 8:
 		if (lastEdit == -1 || game_names[lastEdit][0] == 0)
 			return;
-//		if (_cur_page == 2)
-//			_slotIndex++;
 
 		_s->_saveLoadSlot = lastEdit + _slotIndex;
 		_s->_saveLoadCompatible = false;
@@ -819,8 +817,6 @@ void Gui::getSavegameNames(int start)
 {
 	int i;
 	_slotIndex = start;
-//	if (_cur_page == 2)
-//		start++;
 
 	for (i = 0; i < 9; i++, start++) {
 		valid_games[i] = _s->getSavegameName(start, game_names[i]);
@@ -832,7 +828,9 @@ const char *Gui::queryString(int stringno, int id)
 	static char namebuf[64];
 	char *result;
 	int string;
+	
 	if (id >= 20 && id <= 28) {
+		// Save game names
 		sprintf(namebuf, "%2d. %s", id - 20 + _slotIndex, game_names[id - 20]);
 		return namebuf;
 	}
