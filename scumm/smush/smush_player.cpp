@@ -38,6 +38,7 @@
 #include "scumm/smush/smush_font.h"
 #include "scumm/smush/smush_mixer.h"
 #include "scumm/smush/smush_player.h"
+#include "scumm/smush/insane.h"
 
 #include "sound/mixer.h"
 
@@ -243,6 +244,7 @@ SmushPlayer::SmushPlayer(ScummEngine *scumm, int speed, bool subtitles) {
 	_soundFrequency = 22050;
 	_speed = speed;
 	_smushProcessFrame = false;
+	_insanity = false;
 }
 
 SmushPlayer::~SmushPlayer() {
@@ -754,6 +756,13 @@ void SmushPlayer::handleFrame(Chunk &b) {
 	uint32 start_time, end_time;
 	start_time = _scumm->_system->get_msecs();
 
+#ifdef INSANE
+	// FIXME: Check either it is proper place for the call
+	if (_insanity) {
+		_scumm->_insane->procPreRendering();
+	}
+#endif
+
 	while (!b.eof()) {
 		Chunk *sub = b.subBlock();
 		if (sub->getSize() & 1) b.seek(1);
@@ -794,6 +803,14 @@ void SmushPlayer::handleFrame(Chunk &b) {
 		delete sub;
 	}
 
+#ifdef INSANE
+	// FIXME: Check either it is proper place for the call
+	//        Check either parameters are valid
+	if (_insanity) {
+		_scumm->_insane->procPostRendering(_dst, 0, 0, 0, _frame, _nbframes-1);
+	}
+#endif
+
 	end_time = _scumm->_system->get_msecs();
 
 	updateScreen();
@@ -825,7 +842,10 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 	checkBlock(*sub, TYPE_AHDR);
 	handleAnimHeader(*sub);
 
-	readString(file, directory);
+	if (_insanity)
+		readString("mineroad.trs", directory);
+	else
+		readString(file, directory);
 
 	if (_scumm->_gameId == GID_FT) {
 		if (!(_scumm->_features & GF_DEMO)) {
@@ -945,6 +965,10 @@ void SmushPlayer::updateScreen() {
 	_updateNeeded = true;
 	end_time = _scumm->_system->get_msecs();
 	debug(4, "Smush stats: updateScreen( %03d )", end_time - start_time);
+}
+
+void SmushPlayer::insanity(bool flag) {
+	_insanity = flag;
 }
 
 void SmushPlayer::play(const char *filename, const char *directory) {

@@ -52,6 +52,8 @@
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
 
+#include "scumm/smush/insane.h"
+
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
@@ -803,6 +805,12 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_costumeRenderer = new AkosRenderer(this);
 	else
 		_costumeRenderer = new CostumeRenderer(this);
+
+#ifdef INSANE
+	// Create FT INSANE object
+	if (_gameId == GID_FT)
+		_insane = new Insane(this);
+#endif
 }
 
 ScummEngine::~ScummEngine() {
@@ -1822,7 +1830,11 @@ void ScummEngine::processKbd() {
 		// normally use F4 for this, we add in a hack that makes escape work,
 		// too (just for convenience).
 		if (_insaneState) {
+#ifdef INSANE
+			_insane->escapeKeyHandler();
+#else
 			_videoFinished = true;
+#endif
 		} else
 			abortCutscene();
 		if (_version <= 2) {

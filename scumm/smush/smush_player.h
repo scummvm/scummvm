@@ -35,6 +35,7 @@ class SmushMixer;
 class StringResource;
 
 class SmushPlayer {
+	friend class Insane;
 private:
 	ScummEngine *_scumm;
 	int _version;
@@ -66,6 +67,7 @@ private:
 	int _width, _height;
 	byte *_dst;
 	bool _updateNeeded;
+	bool _insanity;
 
 	volatile bool _smushProcessFrame;
 
@@ -75,6 +77,10 @@ public:
 
 	void play(const char *filename, const char *directory);
 
+protected:
+	void insanity(bool);
+	void setPalette(const byte *palette);
+
 private:
 	void updatePalette(void);
 	void parseNextFrame();
@@ -82,7 +88,6 @@ private:
 	void deinit();
 	void setupAnim(const char *file, const char *directory);
 	void updateScreen();
-	void setPalette(const byte *palette);
 
 	bool readString(const char *file, const char *directory);
 	void checkBlock(const Chunk &, Chunk::type, uint32 = 0);

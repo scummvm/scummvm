@@ -37,6 +37,7 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
+#include "scumm/smush/insane.h"
 #include "scumm/dialogs.h"		// FIXME: This is just for the FT-INSANE warning. 
 				// Remove when INSANE is implemented
 
@@ -2404,7 +2405,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 					speed = 1000000 / _smushFrameRate;
 				}
 
-				debug(1, "INSANE Arg: %d", args[1]);
+				debug(1, "INSANE Arg: %d %d", args[1], args[2]);
 
 				SmushPlayer *sp = new SmushPlayer(this, speed, !_noSubtitles);
 
@@ -2412,6 +2413,13 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 				if (args[1] == 0) {
 					sp->play((char *)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
 				} else if (_gameId == GID_FT) {
+#ifdef INSANE
+					const int insaneVarNum = (_features & GF_DEMO) ? 232 : 233;
+
+					_insane->setSmushParams(speed, !_noSubtitles);
+					_insane->runScene(insaneVarNum);
+				    
+#else
 					const int insaneVarNum = (_features & GF_DEMO) ? 232 : 233;
 					const int insaneMode = readArray(insaneVarNum,0,0);
 
@@ -2468,6 +2476,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 					// Other INSANE modes
 					warning("Unknown insane mode for %d", args[1]);
 					sp->play((char *)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
+#endif
 				}
 				delete sp;
 			}
@@ -2733,7 +2742,6 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 			return;
 		}
 
-
 		if ((args[1] == 27) && (_lastKeyHit == 27)) {
 			push(1); // abort
 			return;
@@ -2883,7 +2891,6 @@ int ScummEngine::getKeyState(int key) {
 
 	return (_keyDownMap[key]) ? 1 : 0;
 }
-
 
 void ScummEngine_v6::o6_delayFrames() {
 	ScriptSlot *ss = &vm.slot[_currentScript];

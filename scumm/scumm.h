@@ -45,6 +45,7 @@ class BaseCostumeRenderer;
 class CharsetRenderer;
 class IMuse;
 class IMuseDigital;
+class Insane;
 class MusicEngine;
 class ScummEngine;
 class ScummDebugger;
@@ -257,6 +258,7 @@ struct LangIndexNode {
 class ScummEngine : public Engine {
 	friend class ScummDebugger;
 	friend class SmushPlayer;
+	friend class Insane;
 	void errorString(const char *buf_input, char *buf_output);
 public:
 	/* Put often used variables at the top.
@@ -969,6 +971,11 @@ protected:
 	bool _confirmExit;
 public:
 	bool _silentDigitalImuse, _noDigitalSamples;
+
+#ifdef INSANE
+public:
+	Insane *_insane;
+#endif
 
 public:
 	uint16 _extraBoxFlags[65];
