@@ -1378,7 +1378,13 @@ load_game:
 		gdi.clearCharsetMask();
 		_charset->_hasMask = false;
 
-		if (_version > 3) {
+		if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {
+			int args = 2;
+			uint value = (_gameId == GID_LOOM256) ? 150 : 100;
+			redrawVerbs();
+			if (VAR(value) == 2)
+				runScript(18, 0, 0, &args);
+		} else if (_version > 3) {
 			for (int i = 0; i < _maxVerbs; i++)
 				drawVerb(i, 0);
 		} else {
