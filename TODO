@@ -75,7 +75,7 @@ SCUMM
 * Fix C64 costume code
 * Make it possible to restart games properly
 * Add support for handling Kanji in FM Towns games (foreground is rendered on a
-  second plane at 640x480)
+  second plane at 640x480), text uses Shift_JIS encoding
 * Figure out how to extract resources from Apple II and Commodore 64 versions
 * Document and fix AKOS differences in Humongous Entertainment games
 * Support various newer Humongous Entertainment games
