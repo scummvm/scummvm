@@ -786,7 +786,7 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	int anim;
 	LoadedCostume lc;
 
-	if(_features & GF_OLD256) /*FIXME*/
+	if(_gameId == GID_INDY3_256) /*FIXME*/
 		return;
 	
 	loadCostume(&lc, a->costume);
@@ -802,16 +802,24 @@ void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
 	if (r==p) {
 		return;
 	}
-
-	dataptr = p + READ_LE_UINT16(p + lc._numColors + 8);
+	
+	if(_features & GF_OLD256)
+		dataptr = p + *(p + lc._numColors + 8);
+	else
+		dataptr = p + READ_LE_UINT16(p + lc._numColors + 8);
 
 	mask = READ_LE_UINT16(r);
 	r+=2;
 	i = 0;
 	do {
 		if (mask&0x8000) {
-			j = READ_LE_UINT16(r);
-			r+=2;
+			if(_features & GF_OLD256) {
+				j = *(r);
+				r++;
+			} else {
+				j = READ_LE_UINT16(r);
+				r+=2;
+			}
 			if (usemask&0x8000) {
 				if (j==0xFFFF) {
 					a->cost.curpos[i] = 0xFFFF;
