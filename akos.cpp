@@ -583,7 +583,15 @@ void Scumm::akos_codec1(AkosRenderer * ar)
 	int step;
 
 	/* implement custom scale table */
-	ar->v1.scaletable = default_scale_table;
+
+	if(isGlobInMemory(rtString,_vars[VAR_CUSTOMSCALETABLE]))
+	{
+		ar->v1.scaletable = getStringAddressVar(VAR_CUSTOMSCALETABLE);
+	}
+	else
+	{
+		ar->v1.scaletable = default_scale_table;
+	}
 
 	/* Setup color decoding variables */
 	num_colors = getResourceDataSize(ar->akpl);

@@ -813,6 +813,7 @@ public:
 	void nukeResource(int type, int i);	
 	byte *getResourceAddress(int type, int i);
 	byte *getStringAddress(int i);
+	byte *getStringAddressVar(int i);
 	void ensureResourceLoaded(int type, int i);
 	int loadResource(int type, int i);
 	int getResourceRoomNr(int type, int index);
@@ -827,6 +828,7 @@ public:
     void loadRoomObjectsSmall();
 	void readArrayFromIndexFile();
 	void readMAXS();
+	uint32 isGlobInMemory(int type, int index);
 	virtual void readIndexFile();
 	virtual void loadCharset(int i);
 	void nukeCharset(int i);
@@ -1695,6 +1697,9 @@ public:
 
 	byte VAR_DEFAULT_TALK_DELAY;
 	byte VAR_CHARSET_MASK;
+
+	byte VAR_CUSTOMSCALETABLE;
+	byte VAR_VIDEONAME;
 
 	void launch();
 

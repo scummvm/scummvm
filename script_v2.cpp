@@ -2682,7 +2682,7 @@ void Scumm::o6_miscOps()
 		case 6:
 			SmushPlayer localSp;
 			localSp.sm = this;
-			localSp.startVideo(args[1], getStringAddress(_vars[0xf6 / 2]));
+			localSp.startVideo(args[1], getStringAddressVar(VAR_VIDEONAME));
 			break;
 		case 7:
 			warning("o6_miscOps: stub7()");
