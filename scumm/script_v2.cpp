@@ -1184,7 +1184,7 @@ void Scumm_v2::o2_cursorCommand() {
 	int cmd = getVarOrDirectWord(0x80);
 	int a2 = cmd >> 8;
 
-	if (a2 & 4) {Warning("TODO: o2_cursorCommand(userface);} // Toggle verbs on/off, etc
+	if (a2 & 4) {warning("TODO: o2_cursorCommand(userface)");} // Toggle verbs on/off, etc
 
 	if (a2 & 1) {						// Freeze
 		if (a2 & 8)
