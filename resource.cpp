@@ -1319,37 +1319,37 @@ uint16 newTag2Old(uint32 oldTag)
 {
 	switch (oldTag) {
 	case (MKID('RMHD')):
-		return (0x4448);
+		return (0x4448);	// HD
 		break;
 	case (MKID('IM00')):
-		return (0x4D42);
+		return (0x4D42);	// BM
 		break;
 	case (MKID('EXCD')):
-		return (0x5845);
+		return (0x5845);	// EX
 		break;
 	case (MKID('ENCD')):
-		return (0x4E45);
+		return (0x4E45);	// EN
 		break;
 	case (MKID('SCAL')):
-		return (0x4153);
+		return (0x4153);	// SA
 		break;
 	case (MKID('LSCR')):
-		return (0x534C);
+		return (0x534C);	// LS
 		break;
 	case (MKID('OBCD')):
-		return (0x434F);
+		return (0x434F);	// OC
 		break;
 	case (MKID('OBIM')):
-		return (0x494F);
+		return (0x494F);	// OI
 		break;
 	case (MKID('SMAP')):
-		return (0x4D42);
+		return (0x4D42);	// BM
 		break;
 	case (MKID('CLUT')):
-		return (0x4150);
+		return (0x4150);	// PA
 		break;
 	case (MKID('BOXD')):
-		return (0x5842);
+		return (0x5842);	// BX
 		break;
 	default:
 		return (0);
