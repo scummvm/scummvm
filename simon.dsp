@@ -168,6 +168,14 @@ SOURCE=.\simon\simon.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\simon\sound.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\simon\sound.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\simon\verb.cpp
 # End Source File
 # Begin Source File
