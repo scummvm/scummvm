@@ -765,7 +765,7 @@ bool OSystem_SDL::poll_event(Event *event) {
 				}
 
 				if (b == (KBD_CTRL|KBD_ALT) && 
-						ev.key.keysym.sym>='1' && ev.key.keysym.sym<='6') {
+						ev.key.keysym.sym>='1' && ev.key.keysym.sym<='7') {
 					property(PROP_SET_GFX_MODE, ev.key.keysym.sym - '1');
 					break;
 				}
@@ -936,7 +936,7 @@ uint32 OSystem_SDL::property(int param, uint32 value) {
 		break;
 
 	case PROP_SET_GFX_MODE:
-		if (value >= 6)
+		if (value >= 7)
 			return 0;
 
 		_mode = value;
