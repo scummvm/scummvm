@@ -228,7 +228,7 @@ your own), you will need to have the 'queen.tbl' file (available from the
 Compatibility page on our website) in either the directory containing the
 'queen.1' datafile or in the directory where your ScummVM executable resides.
                   
-Alternatively, you can use the 'queenrebuild' tool from the Tools module to
+Alternatively, you can use the 'compress_queen' tool from the Tools module to
 'rebuild' your FOTAQ datafile to include the table for that specific version,
 and thus removing the run-time dependency on the 'queen.tbl' file. 
 This tool also allows you to compress the speech and sound effects with MP3,
