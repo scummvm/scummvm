@@ -27,6 +27,7 @@
 #include "sword2/resman.h"
 #include "sword2/driver/d_draw.h"
 #include "sword2/driver/d_sound.h"
+#include "sword2/driver/render.h"
 
 namespace Sword2 {
 
@@ -480,55 +481,31 @@ int32 Logic::fnPlayCredits(int32 *params) {
 	bool hasCenterMark = false;
 
 	while (1) {
-		char buffer[80];
-		char *line = buffer;
-		char *center_mark = NULL;
-
 		if (lineCount >= ARRAYSIZE(creditsLines)) {
 			warning("Too many credits lines");
 			break;
 		}
 
-		int pos = 0;
+		char buffer[80];
+		char *line = f.gets(buffer, sizeof(buffer));
 
-		while (1) {
-			byte b = f.readByte();
-
-			if (f.ioFailed()) {
-				if (pos != 0)
-					line[pos] = 0;
-				else
-					line = NULL;
-				break;
-			}
-
-			if (b == 0x0d) {
-				f.readByte();
-				line[pos] = 0;
-				pos = 0;
-				break;
-			}
-
-			if (pos < ARRAYSIZE(buffer)) {
-				if (b == '^')
-					center_mark = line + pos;
-				line[pos++] = b;
-			}
-		}
-
-		if (!line || strlen(line) == 0) {
+		if (!line || *line == 0) {
 			if (!hasCenterMark) {
 				for (i = paragraphStart; i < lineCount; i++)
 					creditsLines[i].type = LINE_CENTER;
 			}
 			paragraphStart = lineCount;
 			hasCenterMark = false;
-			if (!line)
-				break;
 			if (paragraphStart == lineCount)
 				lineTop += CREDITS_LINE_SPACING;
+
+			if (!line)
+				break;
+
 			continue;
 		}
+
+		char *center_mark = strchr(line, '^');
 
 		if (center_mark) {
 			// The current paragraph has at least one center mark.
@@ -544,15 +521,17 @@ int32 Logic::fnPlayCredits(int32 *params) {
 				creditsLines[lineCount].type = LINE_LEFT;
 				creditsLines[lineCount].str = strdup(line);
 
-				*center_mark = '^';
-				line = center_mark;
 				lineCount++;
 
 				if (lineCount >= ARRAYSIZE(creditsLines)) {
 					warning("Too many credits lines");
 					break;
 				}
+
+				*center_mark = '^';
 			}
+
+			line = center_mark;
 		}
 
 		creditsLines[lineCount].top = lineTop;
@@ -653,19 +632,19 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 				switch (creditsLines[i].type) {
 				case LINE_LEFT:
-					spriteInfo.x = 640 / 2 - 5 - frame->width;
+					spriteInfo.x = RENDERWIDE / 2 - 5 - frame->width;
 					break;
 				case LINE_RIGHT:
-					spriteInfo.x = 640 / 2 + 5;
+					spriteInfo.x = RENDERWIDE / 2 + 5;
 					break;
 				case LINE_CENTER:
 					if (strcmp(creditsLines[i].str, "@") == 0) {
 						spriteInfo.data = logoData;
-						spriteInfo.x = (640 - logoWidth) / 2;
+						spriteInfo.x = (RENDERWIDE - logoWidth) / 2;
 						spriteInfo.w = logoWidth;
 						spriteInfo.h = logoHeight;
 					} else
-						spriteInfo.x = (640 - frame->width) / 2;
+						spriteInfo.x = (RENDERWIDE - frame->width) / 2;
 					break;
 				}
 
