@@ -144,7 +144,7 @@ public:
 	bool isMusicChannel() { return false; }
 };
 
-#ifdef BUGGY_NEW_MP3_PLAYER
+#ifdef SOX_HACK
 class ChannelMP3CDMusic : public Channel {
 	RateConverter *_converter;
 	MP3InputStream *_input;
@@ -980,7 +980,7 @@ void ChannelMP3::mix(int16 *data, uint len) {
 
 #define MP3CD_BUFFERING_SIZE 131072
 
-#ifdef BUGGY_NEW_MP3_PLAYER
+#ifdef SOX_HACK
 ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration) 
 	: Channel(mixer, handle) {
 	// Create the input stream
@@ -1001,14 +1001,14 @@ ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *hand
 #endif
 
 ChannelMP3CDMusic::~ChannelMP3CDMusic() {
-#ifdef BUGGY_NEW_MP3_PLAYER
+#ifdef SOX_HACK
 	delete _converter;
 	delete _input;
 #endif
 }
 
 void ChannelMP3CDMusic::mix(int16 *data, uint len) {
-#ifdef BUGGY_NEW_MP3_PLAYER
+#ifdef SOX_HACK
 	assert(_input);
 	assert(_converter);
 
