@@ -1384,12 +1384,12 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width)
 	// TODO: The following few lines more or less duplicate decompressBitmap(), only
 	// for an area spanning multiple strips. In particular, the codecs 13 & 14
 	// in decompressBitmap call drawStripHE(), which use the same algorithm as
-	// decompressBMAPbg() does...
+	// drawStripHE() does...
 	if ((code >= 134 && code <= 138) || (code >= 144 && code <= 148)) {
 		_decomp_shr = code % 10;
 		_decomp_mask = 0xFF >> (8 - _decomp_shr);
 
-		decompressBMAPbg((byte *)vs->backBuf, width, vs->w, vs->h, bmap_ptr);
+		drawStripHE((byte *)vs->backBuf, width, bmap_ptr, vs->w, vs->h, false);
 	}
 	copyVirtScreenBuffers(Common::Rect(0, 0, vs->w - 1, vs->h - 1));
 
@@ -2080,12 +2080,12 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 			break;
 	
 		case 13:
-			drawStripHE(dst, dstPitch, src, numLinesToProcess, false);
+			drawStripHE(dst, dstPitch, src, 8, numLinesToProcess, false);
 			break;
 	
 		case 14:
 			useOrDecompress = true;
-			drawStripHE(dst, dstPitch, src, numLinesToProcess, true);
+			drawStripHE(dst, dstPitch, src, 8, numLinesToProcess, true);
 			break;
 	
 		default:
@@ -2155,51 +2155,10 @@ void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) const {
 		}                             \
 	} while (0)
 
-
-// NOTE: decompressBMAPbg is actually very similar to drawStripComplex
-void Gdi::decompressBMAPbg(byte *dst, int dstPitch, int w, int height, const byte *src) const {
+void Gdi::drawStripHE(byte *dst, int dstPitch, const byte *src, int w, int height, const bool transpCheck) const {
 	uint32 dataBit, data, shift;
 	byte color;
 	int32 iteration;
-
-	color = *src;
-	src++;
-	data = READ_LE_UINT24(src);
-	src += 3;
-	shift = 24;
-
-	while (height) {
-		for (iteration = 0; iteration < w; iteration++) {
-			*dst++ = color;
-			FILL_BITS;
-			
-			if (READ_BIT) {
-				if (!READ_BIT) {
-					color = data & _decomp_mask;
-					shift -= _decomp_shr;
-					data >>= _decomp_shr;
-				} else {
-					dataBit = data & 7;
-					shift -= 3;
-					data >>= 3;
-					// map (0, 1, 2, 3, 4, 5, 6, 7) to (-4, -3, -2, -1, 1, 2, 3, 4)
-					if (dataBit >= 4)
-						color += dataBit - 3;
-					else
-						color += dataBit - 4;
-				}
-			}
-		}
-		dst += dstPitch - w;
-		height--;
-	}
-}
-
-// FIXME/TODO: drawStripHE and decompressBMAPbg are essentially identical!
-void Gdi::drawStripHE(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const {
-	uint32 dataBit, data, shift, iteration;
-	byte color;
-	const uint w = 8;
 
 	color = *src;
 	src++;

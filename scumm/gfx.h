@@ -250,7 +250,8 @@ protected:
 	void unkDecode10(byte *dst, int dstPitch, const byte *src, int height) const;
 	void unkDecode11(byte *dst, int dstPitch, const byte *src, int height) const;
 	void drawStrip3DO(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
-	void drawStripHE(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
+
+	void drawStripHE(byte *dst, int dstPitch, const byte *src, int w, int height, const bool transpCheck) const;
 
 	/* Mask decompressors */
 	void drawStripC64Mask(byte *dst, int stripnr, int width, int height) const;
@@ -264,8 +265,6 @@ protected:
 	byte *getMaskBuffer(int x, int y, int z);
 	
 	int getZPlanes(const byte *smap_ptr, const byte *zplane_list[9]) const;
-
-	void decompressBMAPbg(byte *dst, int dstPitch, int w, int h, const byte *ptr) const;
 
 	void drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height, 
 	                int stripnr, int numstrip, StripTable *table);
