@@ -521,12 +521,12 @@ void Codec47Decoder::makeTables47(int32 width) {
 	int16 * tmp_ptr = smush_table;
 	int16 * ptr_table = &codec47_table[1];
 	do {
-		int16 tmp_word = READ_LE_UINT16(ptr_table);
-		ptr_table += 2;
+		int16 tmp_word = *ptr_table;
 		tmp_word *= (int16)width;
-		tmp_word += READ_LE_UINT16(ptr_table - 3);
+		tmp_word += *(ptr_table - 1);
+		*tmp_ptr = tmp_word;
+		ptr_table += 2;
 		tmp_ptr++;
-		*(tmp_ptr - 1) = TO_LE_16(tmp_word);
 	} while (tmp_ptr < &smush_table[255]);
 	a = 0;
 	c = 0;
