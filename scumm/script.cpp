@@ -281,7 +281,11 @@ void Scumm::executeScript()
 		_opcode = fetchScriptByte();
 		_scriptPointerStart = _scriptPointer;
 		vm.slot[_currentScript].didexec = 1;
-		debug(8, "Script %d: [%X] %s()", vm.slot[_currentScript].number, _opcode, getOpcodeDesc(_opcode));
+		debug(0, "Script %d, offset 0x%x: [%X] %s()",
+				vm.slot[_currentScript].number,
+				_scriptPointer - _scriptOrgPointer,
+				_opcode,
+				getOpcodeDesc(_opcode));
 		executeOpcode(_opcode);
 	}
 	CHECK_HEAP;

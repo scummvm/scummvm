@@ -408,7 +408,6 @@ protected:
 
 	/* Version 8 script opcodes */
 	void o8_unknown();
-	void o8_invalid();
 
 	void o8_mod();
 	void o8_wait();
