@@ -112,7 +112,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_findAllObjectsWithClassOf),
 		OPCODE(o90_unknown35),
 		OPCODE(o90_unknown36),
-		OPCODE(o90_unknown37),
+		OPCODE(o90_dim2dim2Array),
 		/* 38 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -995,7 +995,7 @@ void ScummEngine_v90he::o90_unknown2F() {
 	case 201:
 		break;
 	default:
-		error("o90_unknown28: Unknown case %d", subOp);
+		error("o90_unknown2F: Unknown case %d", subOp);
 	}
 	debug(1,"o90_unknown2F stub (%d)", subOp);
 }
@@ -1087,7 +1087,7 @@ void ScummEngine_v90he::o90_unknown36() {
 	push(b);
 }
 
-void ScummEngine_v90he::o90_unknown37() {
+void ScummEngine_v90he::o90_dim2dim2Array() {
 	int data, dim1start, dim1end, dim2start, dim2end;
 	int type = fetchScriptByte();
 
@@ -1111,7 +1111,7 @@ void ScummEngine_v90he::o90_unknown37() {
 		data = kStringArray;
 		break;
 	default:
-		error("o90_unknown37: default case %d", type);
+		error("o90_dim2dim2Array: default case %d", type);
 	}
 
 	if (pop() == 2) {

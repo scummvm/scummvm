@@ -884,7 +884,7 @@ protected:
 	void o90_findAllObjectsWithClassOf();
 	void o90_unknown35();
 	void o90_unknown36();
-	void o90_unknown37();
+	void o90_dim2dim2Array();
 	void o90_unknown3A();
 	void o90_unknown44();
 	void o90_unknown94();

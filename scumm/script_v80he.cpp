@@ -612,8 +612,6 @@ void ScummEngine_v80he::o80_setState() {
 }
 
 void ScummEngine_v80he::o80_drawWizPolygon() {
-	error("o80_drawWizPolygon");
-
 	WizImage wi;
 	wi.x1 = wi.y1 = pop();
 	wi.resNum = pop();
