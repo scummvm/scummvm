@@ -45,6 +45,14 @@ Sceneres.h
  HZONEF_AUTOWALK           ACTION_AUTOWALK
  HZONEF_TERMINUS           ACTION_TERMINUS
 
+ FrameRange.startFrame     ACTORACTIONITEM.frame_index
+ FrameRange.frameCount     ACTORACTIONITEM.frame_count
+
+ FrameSequence.right       ACTORACTION.dir[0]
+ FrameSequence.left        ACTORACTION.dir[1]
+ FrameSequence.back        ACTORACTION.dir[2]
+ FrameSequence.forward     ACTORACTION.dir[3]
+
 Scene.c
 =======
  ResToImage()              _vm->decodeBGImage()
