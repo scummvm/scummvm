@@ -1548,127 +1548,101 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 	assert(numLinesToProcess);
 
 	byte code = *src++;
-
 	bool useOrDecompress = false;
-	_decomp_shr = code % 10;
-	_decomp_mask = 0xFF >> (8 - _decomp_shr);
 	
-	switch (code) {
-	case 1:
-		unkDecode7(bgbak_ptr, src, numLinesToProcess);
-		break;
+	if (code <= 10) {
+		switch (code) {
+		case 1:
+			unkDecode7(bgbak_ptr, src, numLinesToProcess);
+			break;
+	
+		case 2:
+			unkDecode8(bgbak_ptr, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
+			break;
+	
+		case 3:
+			unkDecode9(bgbak_ptr, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
+			break;
+	
+		case 4:
+			unkDecode10(bgbak_ptr, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
+			break;
+	
+		case 7:
+			unkDecode11(bgbak_ptr, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
+			break;
+	
+		// 8/9 used in 3do version of puttputt joins the parade maybe others
+		case 8:
+			useOrDecompress = true;
+			decodeStrip3DO(bgbak_ptr, src, numLinesToProcess, true);
+			break;
+	
+		case 9:
+			decodeStrip3DO(bgbak_ptr, src, numLinesToProcess, false);
+			break;
+	
+		// used in amiga version of Monkey Island
+		case 10:
+			decodeStripEGA(bgbak_ptr, src, numLinesToProcess);
+			break;
 
-	case 2:
-		unkDecode8(bgbak_ptr, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
-		break;
-
-	case 3:
-		unkDecode9(bgbak_ptr, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
-		break;
-
-	case 4:
-		unkDecode10(bgbak_ptr, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
-		break;
-
-	case 7:
-		unkDecode11(bgbak_ptr, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
-		break;
-
-	// 8/9 used in 3do version of puttputt joins the parade maybe others
-	case 8:
-		useOrDecompress = true;
-		decodeStrip3DO(bgbak_ptr, src, numLinesToProcess, true);
-		break;
-
-	case 9:
-		decodeStrip3DO(bgbak_ptr, src, numLinesToProcess, false);
-		break;
-
-	// used in amiga version of Monkey Island
-	case 10:
-		decodeStripEGA(bgbak_ptr, src, numLinesToProcess);
-		break;
-
-	case 14:
-	case 15:
-	case 16:
-	case 17:
-	case 18:
-		unkDecodeC(bgbak_ptr, src, numLinesToProcess);
-		break;
-
-	case 24:
-	case 25:
-	case 26:
-	case 27:
-	case 28:
-		unkDecodeB(bgbak_ptr, src, numLinesToProcess);
-		break;
-
-	case 34:
-	case 35:
-	case 36:
-	case 37:
-	case 38:
-		useOrDecompress = true;
-		unkDecodeC_trans(bgbak_ptr, src, numLinesToProcess);
-		break;
-
-	case 44:
-	case 45:
-	case 46:
-	case 47:
-	case 48:
-		useOrDecompress = true;
-		unkDecodeB_trans(bgbak_ptr, src, numLinesToProcess);
-		break;
-
-	case 64:
-	case 65:
-	case 66:
-	case 67:
-	case 68:
-	case 104:
-	case 105:
-	case 106:
-	case 107:
-	case 108:
-		unkDecodeA(bgbak_ptr, src, numLinesToProcess);
-		break;
-
-	case 84:
-	case 85:
-	case 86:
-	case 87:
-	case 88:
-	case 124:
-	case 125:
-	case 126:
-	case 127:
-	case 128:
-		useOrDecompress = true;
-		unkDecodeA_trans(bgbak_ptr, src, numLinesToProcess);
-		break;
-
-	case 134:
-	case 135:
-	case 136:
-	case 137:
-	case 138:
-		decodeStripHE(bgbak_ptr, src, numLinesToProcess, false);
-		break;
-
-	case 144:
-	case 145:
-	case 146:
-	case 147:
-	case 148:
-		useOrDecompress = true;
-		decodeStripHE(bgbak_ptr, src, numLinesToProcess, true);
-		break;
-
-	default:
-		error("Gdi::decompressBitmap: default case %d", code);
+		default:
+			error("Gdi::decompressBitmap: default case %d", code);
+		}
+	} else {
+		_decomp_shr = code % 10;
+		_decomp_mask = 0xFF >> (8 - _decomp_shr);
+		code /= 10;
+		
+		switch (code) {
+		case 1:
+			// FIXME: Ugly workaround for bug #901462
+			if (_vm->_version == 8)
+				useOrDecompress = true;
+			unkDecodeC(bgbak_ptr, src, numLinesToProcess);
+			break;
+	
+		case 2:
+			unkDecodeB(bgbak_ptr, src, numLinesToProcess);
+			break;
+	
+		case 3:
+			useOrDecompress = true;
+			unkDecodeC_trans(bgbak_ptr, src, numLinesToProcess);
+			break;
+	
+		case 4:
+			useOrDecompress = true;
+			unkDecodeB_trans(bgbak_ptr, src, numLinesToProcess);
+			break;
+	
+		case 6:
+		case 10:
+			// FIXME: Ugly workaround for bug #901462
+			if (_vm->_version == 8 && code == 10)
+				useOrDecompress = true;
+			unkDecodeA(bgbak_ptr, src, numLinesToProcess);
+			break;
+	
+		case 8:
+		case 12:
+			useOrDecompress = true;
+			unkDecodeA_trans(bgbak_ptr, src, numLinesToProcess);
+			break;
+	
+		case 13:
+			decodeStripHE(bgbak_ptr, src, numLinesToProcess, false);
+			break;
+	
+		case 14:
+			useOrDecompress = true;
+			decodeStripHE(bgbak_ptr, src, numLinesToProcess, true);
+			break;
+	
+		default:
+			error("Gdi::decompressBitmap: default case %d", code);
+		}
 	}
 	
 	return useOrDecompress;
