@@ -553,8 +553,8 @@ Ctrl-f is not supported by the Broken Sword games.
 
 5.5) Using data files from Macintosh game versions:
 ---- ----------------------------------------------
-All LucasArts SCUMM based adventures except CMI also exist in versions for the
-Macintosh. ScummVM can use most (all?) of them, however, in some case some
+All LucasArts SCUMM based adventures except COMI also exist in versions for the
+Macintosh. ScummVM can use most (all?) of them, however, in some cases some
 additional work is required. First off, if you are not using a Macintosh for
 this, accessing the CD/floppy data might be tricky, since the mac uses a 
 special disk format called HFS which other systems usually do not support.
@@ -663,17 +663,19 @@ emulation. MIDI may not be available on all operating systems or may need
 manual configuration. If you ARE using MIDI, you have several different
 choices of output, depending on your operating system and configuration.
         
-        adlib     - Internal Adlib emulation (default)
-        alsa      - Output using ALSA sequencer device. See below.
-        amidi     - Use the MorphOS MIDI system, for MorphOS users
-        core      - CoreAudio sound, for MacOS X users.
-        mt32      - Internal MT-32 emulation
         null      - Null output. Don't play any music.
+
+        adlib     - Internal Adlib emulation (default)
+        mt32      - Internal MT-32 emulation
         pcjr      - Internal PCjr emulation 
         pcspk     - Internal PC Speaker emulation
+        towns     - Internal FM-TOWNS YM2612 emulation
+
+        alsa      - Output using ALSA sequencer device. See below.
+        amidi     - Use the MorphOS MIDI system, for MorphOS users
+        core      - CoreAudio sound, for Mac OS X users.
         qt        - Quicktime sound, for Macintosh users.
         seq       - Use /dev/sequencer for MIDI, *nix users. See below.
-        towns     - FM-TOWNS YM2612 emulation
         windows   - Windows MIDI. Uses built-in sequencer, for Windows users
 
 To select a sound driver, pass its name via the '-e' option to scummvm,
@@ -926,7 +928,6 @@ work with the speech files from Broken Sword 1.
 
 7.7) Output sample rate:
 ---- -------------------
-
 The output sample rate tells ScummVM how many sound samples to play per channel
 per second. There is much that could be said on this subject, but most of it
 would be irrelevant here. The short version is that for most games 22050 Hz is
@@ -1176,6 +1177,7 @@ X.X) Credits:
         Lionel Ulmer         - Port: X11
         Jamieson Christian   - iMUSE, MIDI, all things musical.
         Jochen Hoenicke      - Speaker & PCjr sound support, Adlib work
+        Jerome Fisher        - MT-32 emulator
         Jeremy Newman        - Webmaster
 
  Retired Team Members:
@@ -1207,12 +1209,12 @@ X.X) Credits:
 
  Special thanks to:
         Sander Buskens  - For his work on the initial reversing of Monkey2
-        Canadacow       - For his MT-32 emulator
+        Canadacow       - For the original MT-32 emulator
         Kevin Carnes    - For Scumm16, the basis of ScummVM older gfx codec
         Jezar           - For his freeverb filter implementation
         Jim Leiterman   - Various info on his FM-TOWNS/Marty SCUMM ports
         Jimmi Thogersen - For ScummRev, and much obscure code/documentation
-        Tristan         - For his Linux port of MT-32 emulator
+        Tristan         - For additional work on the original MT-32 emulator
 
         Tony Warriner and everyone at Revolution Software Ltd. for sharing
         with us the source of some of their brilliant games, allowing us to
