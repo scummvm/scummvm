@@ -133,307 +133,75 @@ void HitZone::draw(SURFACE *ds, int color) {
 }
 
 
-// Initializes the object map module, creates module allocation context
-ObjectMap::ObjectMap(SagaEngine *vm) : _vm(vm) {
-	_objectsLoaded = false;
-	_namesLoaded = false;
-	_nNames = 0;
-}
-
-// Shuts down the object map module, destroys module allocation context
-ObjectMap::~ObjectMap() {
-	freeMem();
-	freeNames();
-}
-
 // Loads an object map resource ( objects ( clickareas ( points ) ) ) 
-int ObjectMap::load(const byte *om_res, size_t om_res_len) {
-	OBJECTMAP_ENTRY *object_map;
-	CLICKAREA *clickarea;
-	Point *point;
-
-	int i, k, m;
-
-	MemoryReadStreamEndian readS(om_res, om_res_len, IS_BIG_ENDIAN);
-
-	if (_objectsLoaded) {
-		freeMem();
-	}
-
-	// Obtain object count N and allocate space for N objects
-	_nObjects = readS.readUint16();
-
-	_objectMaps = (OBJECTMAP_ENTRY *)malloc(_nObjects * sizeof(*_objectMaps));
-
-	if (_objectMaps == NULL) {
-		warning("Error: Memory allocation failed");
-		return MEM;
-	}
-
-	// Load all N objects
-	for (i = 0; i < _nObjects; i++) {
-		object_map = &_objectMaps[i];
-		object_map->flags = readS.readByte();
-		object_map->nClickareas = readS.readByte();
-		object_map->defaultVerb = readS.readByte();
-		readS.readByte();
-		object_map->objectNum = readS.readUint16();
-		object_map->scriptNum = readS.readUint16();
-		object_map->clickareas = (CLICKAREA *)malloc(object_map->nClickareas * sizeof(*(object_map->clickareas)));
-
-		if (object_map->clickareas == NULL) {
-			warning("Error: Memory allocation failed");
-			return MEM;
-		}
-
-		// Load all clickareas for this object
-		for (k = 0; k < object_map->nClickareas; k++) {
-			clickarea = &object_map->clickareas[k];
-			clickarea->n_points = readS.readUint16LE();
-			assert(clickarea->n_points != 0);
-
-			clickarea->points = (Point *)malloc(clickarea->n_points * sizeof(*(clickarea->points)));
-			if (clickarea->points == NULL) {
-				warning("Error: Memory allocation failed");
-				return MEM;
-			}
-
-			// Load all points for this clickarea
-			for (m = 0; m < clickarea->n_points; m++) {
-				point = &clickarea->points[m];
-				point->x = readS.readSint16();
-				point->y = readS.readSint16();
-			}
-			debug(2, "ObjectMap::load(): Read %d points for clickarea %d in object %d.",
-					clickarea->n_points, k, object_map->objectNum);
-		}
-	}
-
-	_objectsLoaded = true;
-
-	return SUCCESS;
-}
-
-// Frees all storage allocated for the current object map data
-int ObjectMap::freeMem() {
-	OBJECTMAP_ENTRY *object_map;
-	CLICKAREA *clickarea;
-
-	int i, k;
-
-	if (!_objectsLoaded) {
-		return FAILURE;
-	}
-
-	for (i = 0; i < _nObjects; i++) {
-		object_map = &_objectMaps[i];
-		for (k = 0; k < object_map->nClickareas; k++) {
-			clickarea = &object_map->clickareas[k];
-			free(clickarea->points);
-		}
-		free(object_map->clickareas);
-	}
-
-	if (_nObjects) {
-		free(_objectMaps);
-	}
-
-	_objectsLoaded = false;
-
-	return SUCCESS;
-}
-
-// Loads an object name list resource
-int ObjectMap::loadNames(const unsigned char *onl_res, size_t onl_res_len) {
-	int table_len;
-	int n_names;
-	size_t name_offset;
-
+void ObjectMap::load(const byte *resourcePointer, size_t resourceLength) {
 	int i;
 
-	MemoryReadStreamEndian readS(onl_res, onl_res_len, IS_BIG_ENDIAN);
-
-	if (_namesLoaded) {
-		freeNames();
+	if (resourceLength < 4) {
+		error("ObjectMap::load wrong resourceLength");
 	}
 
-	table_len = readS.readUint16();
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
 
-	n_names = table_len / 2 - 2;
-	_nNames = n_names;
-
-	debug(2, "ObjectMap::loadNames: Loading %d object names.", n_names);
-	_names = (const char **)malloc(n_names * sizeof(*_names));
-
-	if (_names == NULL) {
-		warning("Error: Memory allocation failed");
-		return MEM;
+	_hitZoneListCount = readS.readSint16();
+	if (_hitZoneListCount < 0) {
+		error("ObjectMap::load _hitZoneListCount < 0");
 	}
 
-	for (i = 0; i < n_names; i++) {
-		name_offset = readS.readUint16();
-		_names[i] = (const char *)(onl_res + name_offset);
+	if (_hitZoneList)
+		error("ObjectMap::load _hitZoneList != NULL");
 
-		debug(3, "Loaded object name string: %s", _names[i]);
+	_hitZoneList = (HitZone **) malloc(_hitZoneListCount * sizeof(HitZone *));
+	if (_hitZoneList == NULL) {
+		error("ObjectMap::load Memory allocation failure");
 	}
 
-	_namesLoaded = true;
-
-	return SUCCESS;
+	for (i = 0; i < _hitZoneListCount; i++) {
+		_hitZoneList[i] = new HitZone(&readS);
+	}
 }
 
-// Frees all storage allocated for the current object name list data
-int ObjectMap::freeNames() {
-	if (!_namesLoaded) {
-		return FAILURE;
-	}
-
-	if (_nNames) {
-		free(_names);
-	}
-
-	_namesLoaded = false;
-	return SUCCESS;
-}
-
-// If 'object' is a valid object number in the currently loaded object 
-// name list resource, the funciton sets '*name' to the descriptive string
-// corresponding to 'object' and returns SUCCESS. Otherwise it returns
-// FAILURE.
-const char *ObjectMap::getName(int object) {
-	assert(_namesLoaded);
-	assert((object > 0) && (object <= _nNames));
-
-	return _names[object - 1];
-}
-
-const uint16 ObjectMap::getFlags(int object) {
+void ObjectMap::freeMem() {
 	int i;
 
-	assert(_namesLoaded);
-	assert((object > 0) && (object <= _nNames));
-
-	for (i = 0; i < _nObjects; i++) {
-		if (_objectMaps[i].objectNum == object) {
-			return _objectMaps[i].flags;
+	if (_hitZoneList) {
+		for (i = 0; i < _hitZoneListCount; i++) {
+			delete _hitZoneList[i];
 		}
-	}
 
-	return 0;
+		free(_hitZoneList);
+		_hitZoneList = NULL;
+	}
 }
 
 
-// If 'object' is a valid object number in the currently loaded object 
-// name list resource, the funciton sets '*ep_num' to the entrypoint number
-// corresponding to 'object' and returns SUCCESS. Otherwise, it returns
-// FAILURE.
-const int ObjectMap::getEPNum(int object) {
+
+void ObjectMap::draw(SURFACE *ds, const Point& testPoint, int color, int color2) {
 	int i;
+	int hitZoneIndex;
+	char txtBuf[32];
 
-	assert(_namesLoaded);
+	hitZoneIndex = hitTest(testPoint);
 
-	if ((object < 0) || (object > (_nObjects + 1)))
-		return -1;
+	for (i = 0; i < _hitZoneListCount; i++) {		
+		_hitZoneList[i]->draw(ds, (hitZoneIndex == i) ? color2 : color);
+	}
 
-	for (i = 0; i < _nObjects; i++)
-		if (_objectMaps[i].objectNum == object)
-			return _objectMaps[i].scriptNum;
+	if (hitZoneIndex != -1) {		
+		snprintf(txtBuf, sizeof(txtBuf), "hitZone %d", hitZoneIndex);
+		_vm->_font->draw(SMALL_FONT_ID, ds, txtBuf, 0, 2, 2,
+			_vm->_gfx->getWhite(), _vm->_gfx->getBlack(), FONT_OUTLINE);
 
-	return -1;
+	}
 }
 
-// Uses Gfx::drawLine to display all clickareas for each object in the 
-// currently loaded object map resource.
-int ObjectMap::draw(SURFACE *ds, const Point& imousePt, int color, int color2) {
-	OBJECTMAP_ENTRY *object_map;
-	CLICKAREA *clickarea;
-
-	char txt_buf[32];
-
-	int draw_color = color;
-	int draw_txt = 0;
-
-	bool hitObject = false;
-	int objectNum = 0;
-
-	int i, k;
-
-	if (!_objectsLoaded) {
-		return FAILURE;
-	}
-
-	if ((objectNum = hitTest(imousePt)) != -1) {
-		hitObject = true;
-	}
-
-	for (i = 0; i < _nObjects; i++) {
-		draw_color = color;
-		if (hitObject && (objectNum == _objectMaps[i].objectNum)) {
-			snprintf(txt_buf, sizeof(txt_buf), "obj %d: v %d, f %X",
-					_objectMaps[i].objectNum,
-					_objectMaps[i].defaultVerb,
-					_objectMaps[i].flags);
-			draw_txt = 1;
-			draw_color = color2;
-		}
-
-		object_map = &_objectMaps[i];
-
-		for (k = 0; k < object_map->nClickareas; k++) {
-			clickarea = &object_map->clickareas[k];
-			if (clickarea->n_points == 2) {
-				// 2 points represent a box
-				drawFrame(ds, &clickarea->points[0], &clickarea->points[1], draw_color);
-			} else if (clickarea->n_points > 2) {
-				// Otherwise draw a polyline
-				drawPolyLine(ds, clickarea->points, clickarea->n_points, draw_color);
-			}
-		}
-	}
-
-	if (draw_txt) {
-		_vm->_font->draw(SMALL_FONT_ID, ds, txt_buf, 0, 2, 2,
-				_vm->_gfx->getWhite(), _vm->_gfx->getBlack(), FONT_OUTLINE);
-	}
-
-	return SUCCESS;
-}
-
-int ObjectMap::hitTest(const Point& imousePt) {
-	Point imouse;
-	OBJECTMAP_ENTRY *object_map;
-	CLICKAREA *clickarea;
-	Point *points;
-	int n_points;
-
-	int i, k;
-
-	imouse.x = imousePt.x;
-	imouse.y = imousePt.y;
+int ObjectMap::hitTest(const Point& testPoint) {
+	int i;
 
 	// Loop through all scene objects
-	for (i = 0; i < _nObjects; i++) {
-		object_map = &_objectMaps[i];
-
-		// Hit-test all clickareas for this object
-		for (k = 0; k < object_map->nClickareas; k++) {
-			clickarea = &object_map->clickareas[k];
-			n_points = clickarea->n_points;
-			points = clickarea->points;
-
-			if (n_points == 2) {
-				// Hit-test a box region
-				if ((imouse.x > points[0].x) && (imouse.x <= points[1].x) &&
-					(imouse.y > points[0].y) &&
-					(imouse.y <= points[1].y)) {
-						return object_map->objectNum;
-				}
-			} else if (n_points > 2) {
-				// Hit-test a polygon
-				if (hitTestPoly(points, n_points, imouse)) {
-					return object_map->objectNum;
-				}
-			}
+	for (i = 0; i < _hitZoneListCount; i++) {
+		if (_hitZoneList[i]->hitTest(testPoint)) {
+			return i;
 		}
 	}
 
@@ -441,21 +209,7 @@ int ObjectMap::hitTest(const Point& imousePt) {
 }
 
 void ObjectMap::cmdInfo(void) {
-	int i;
-
-	_vm->_console->DebugPrintf("%d objects loaded.\n", _nObjects);
-
-	for (i = 0; i < _nObjects; i++) {
-		_vm->_console->DebugPrintf("%s:\n", _names[i]);
-		_vm->_console->DebugPrintf("%d. verb: %d, flags: %X, name_i: %d, scr_n: %d, ca_ct: %d\n", i, 
-					_objectMaps[i].defaultVerb,
-					_objectMaps[i].flags,
-					_objectMaps[i].objectNum,
-					_objectMaps[i].scriptNum,
-					_objectMaps[i].nClickareas);
-	}
-
-	return;
+	_vm->_console->DebugPrintf("%d zone(s) loaded.\n\n", _hitZoneListCount);
 }
 
 } // End of namespace Saga

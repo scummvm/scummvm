@@ -497,7 +497,7 @@ int Interface::handlePlayfieldClick(SURFACE *ds, const Point& imousePt) {
 		return SUCCESS;
 	}
 
-	object_flags = _vm->_scene->_objectMap->getFlags(objectNum);
+//	object_flags = _vm->_scene->_objectMap->getFlags(objectNum);
 
 	if (object_flags & kHitZoneExit) { // FIXME. This is wrong
 /*		if ((script_num = _vm->_scene->_objectMap->getEPNum(objectNum)) != -1) {
@@ -746,6 +746,7 @@ void Interface::converseInit(void) {
 		_converseText[i].text = NULL;
 	converseClear();
 }
+
 void Interface::converseClear(void) {
 	for (int i = 0; i < CONVERSE_MAX_TEXTS; i++) {
 		if (_converseText[i].text)

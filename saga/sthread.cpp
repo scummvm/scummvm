@@ -509,7 +509,7 @@ void Script::runThread(ScriptThread *thread, int instr_limit) {
 			// (NEG) Negate stack by 2's complement
 		case 0x25:
 			data = thread->pop();
-			thread->push(-data);
+			thread->push(-(int)data);
 			break;
 			// (TSTZ) Test for zero
 		case 0x26:

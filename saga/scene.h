@@ -76,7 +76,7 @@ enum SCENE_PROC_PARAMS {
 enum SAGA_RESOURCE_TYPES {
 	SAGA_BG_IMAGE = 2,
 	SAGA_BG_MASK = 3,
-	SAGA_OBJECT_NAME_LIST = 5,
+	SAGA_SCENE_NAME_LIST = 5,
 	SAGA_OBJECT_MAP = 6,
 	SAGA_ACTION_MAP = 7,
 	SAGA_ISO_TILESET = 8,
@@ -123,29 +123,22 @@ struct SceneEntry {
 	int facing;
 };
 
-class SceneEntryList {
-private:
-	SagaEngine *_vm;
-	SceneEntry *_entryList;
-	int _entryListCount;
-public:
-	int getEntryListCount() const { return _entryListCount; }
+struct SceneEntryList {
+	SceneEntry *entryList;
+	int entryListCount;
+
 	const SceneEntry * getEntry(int index) {
-		if ((index < 0) || (index >= _entryListCount)) {
+		if ((index < 0) || (index >= entryListCount)) {
 			error("SceneEntryList::getEntry wrong index");
 		}
-		return &_entryList[index];
+		return &entryList[index];
 	}
-	void load(const byte* resourcePointer, size_t resourceLength);
-
 	void freeMem() {
-		free(_entryList);
-		_entryList = NULL;
-		_entryListCount = 0;
+		free(entryList);
+		memset(this, 0, sizeof(*this));
 	}
-	SceneEntryList(SagaEngine *vm): _vm(vm) {
-		_entryList = NULL;
-		_entryListCount = 0;
+	SceneEntryList() {
+		memset(this, 0, sizeof(*this));
 	}
 	~SceneEntryList() {
 		freeMem();
@@ -272,6 +265,7 @@ class Scene {
 	int loadScene(int scene, int load_flag, SCENE_PROC scene_proc, SceneDescription *, int fadeIn, int actorsEntrance);
 	int loadSceneDescriptor(uint32 res_number);
 	int loadSceneResourceList(uint32 res_number);
+	void loadSceneEntryList(const byte* resourcePointer, size_t resourceLength);
 	int processSceneResources();
 
  private:
@@ -298,15 +292,17 @@ class Scene {
 	TEXTLIST *_textList;
 	SCENE_IMAGE _bg;
 	SCENE_IMAGE _bgMask;
+	
+	StringsTable _sceneStrings;
 	int _sceneDoors[SCENE_DOORS_MAX];
 
 	static int SC_defaultScene(int param, SCENE_INFO *scene_info, void *refCon);
 	int defaultScene(int param, SCENE_INFO *scene_info);
 
  public:
-	ActionMap *_actionMap;
+	ObjectMap *_actionMap;
 	ObjectMap *_objectMap;
-	SceneEntryList *_entryList;
+	SceneEntryList _entryList;
 
  private:
 	int IHNMStartProc();

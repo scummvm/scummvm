@@ -73,42 +73,35 @@ private:
 };
 
 
-struct OBJECTMAP_ENTRY {
-	byte flags;
-	byte defaultVerb;
-
-	int objectNum;
-	int scriptNum;
-
-	int nClickareas;
-	CLICKAREA *clickareas;
-};
-
-class ObjectMap{
+class ObjectMap {
 public:
-	ObjectMap(SagaEngine *vm);
-	~ObjectMap(void);
-	int load(const byte *om_res, size_t om_res_len);
-	int freeMem(void);
-	int loadNames(const byte *onl_res, size_t onl_res_len);
-	int freeNames();
-	const char *getName(int object);
-	const uint16 getFlags(int object);
-	const int getEPNum(int object);
-	int draw(SURFACE *draw_surface, const Point& imousePt, int color, int color2);
-	int hitTest(const Point& imousePt);
+	ObjectMap(SagaEngine *vm) : _vm(vm) {
+		_hitZoneList = NULL;
+		_hitZoneListCount = 0;
+
+	}
+	~ObjectMap(void) {
+		freeMem();
+	}
+	void load(const byte *resourcePointer, size_t resourceLength);
+	void freeMem(void);
+
+	void draw(SURFACE *drawSurface, const Point& testPoint, int color, int color2);
+	int hitTest(const Point& testPoint);
+	const HitZone * getHitZone(int index) const {
+		if ((index < 0) || (index >= _hitZoneListCount)) {
+			error("ObjectMap::getHitZone wrong index 0x%X", index);
+		}
+		return _hitZoneList[index];
+	}
+
 	void cmdInfo(void);
 
 private:
-
-	bool _objectsLoaded;
-	int _nObjects;
-	OBJECTMAP_ENTRY *_objectMaps;
-
-	bool _namesLoaded;
-	int _nNames;
-	const char **_names;
 	SagaEngine *_vm;
+
+	int _hitZoneListCount;
+	HitZone **_hitZoneList;
 };
 
 } // End of namespace Saga

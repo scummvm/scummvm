@@ -31,7 +31,6 @@
 #include "saga/scene.h"
 #include "saga/text.h"
 
-#include "saga/actionmap.h"
 #include "saga/objectmap.h"
 
 #include "saga/render.h"
@@ -129,7 +128,7 @@ int Render::drawScene() {
 				if (_vm->_scene->_objectMap)
 					_vm->_scene->_objectMap->draw(backbuf_surface, mouse_pt, _vm->_gfx->getWhite(), _vm->_gfx->getBlack());
 				if (_vm->_scene->_actionMap)
-					_vm->_scene->_actionMap->draw(backbuf_surface, _vm->_gfx->matchColor(RGB_RED));
+					_vm->_scene->_actionMap->draw(backbuf_surface, mouse_pt, _vm->_gfx->matchColor(RGB_RED), _vm->_gfx->getBlack());
 			}
 
 			// Draw queued actors

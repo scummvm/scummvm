@@ -209,6 +209,9 @@ struct StringsTable {
 	StringsTable() {
 		memset(this, 0, sizeof(*this));
 	}
+	~StringsTable() {
+		freeMem();
+	}
 };
 
 struct CLICKAREA {

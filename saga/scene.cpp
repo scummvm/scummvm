@@ -29,7 +29,6 @@
 #include "saga/console.h"
 #include "saga/interface.h"
 #include "saga/events.h"
-#include "saga/actionmap.h"
 #include "saga/isomap.h"
 #include "saga/objectmap.h"
 #include "saga/palanim.h"
@@ -115,9 +114,8 @@ Scene::Scene(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	_resList = NULL;
 	_animEntries = 0;
 	_sceneProc = NULL;
-	_objectMap = NULL;
-	_actionMap = new ActionMap(_vm);
-	_entryList = new SceneEntryList(_vm);
+	_objectMap = new ObjectMap(_vm);
+	_actionMap = new ObjectMap(_vm);
 	memset(&_bg, 0, sizeof(_bg));
 	memset(&_bgMask, 0, sizeof(_bgMask));
 
@@ -128,7 +126,6 @@ Scene::~Scene() {
 	if (_initialized) {
 		endScene();
 		delete _actionMap;
-		delete _entryList;
 		free(_sceneLUT);
 	}
 }
@@ -752,8 +749,6 @@ int Scene::processSceneResources() {
 	const byte *pal_p;
 	int i;
 
-	_objectMap = new ObjectMap(_vm);
-
 	// Process the scene resource list
 	for (i = 0; i < _resListEntries; i++) {
 		res_data = _resList[i].res_data;
@@ -795,17 +790,13 @@ int Scene::processSceneResources() {
 							&_bgMask.buf_len, &_bgMask.w, &_bgMask.h);
 			debug(0, "BACKGROUND MASK width=%d height=%d length=%d", _bgMask.w, _bgMask.h, _bgMask.buf_len);
 			break;
-		case SAGA_OBJECT_NAME_LIST:
-			debug(0, "Loading object name list resource...");
-			_objectMap->loadNames(_resList[i].res_data, _resList[i].res_data_len);
+		case SAGA_SCENE_NAME_LIST:
+			debug(0, "Loading scene name list resource...");
+			_vm->loadStrings(_sceneStrings, _resList[i].res_data, _resList[i].res_data_len);
 			break;
 		case SAGA_OBJECT_MAP:
 			debug(0, "Loading object map resource...");
-			if (_objectMap->load(res_data,
-				res_data_len) != SUCCESS) {
-				warning("Scene::ProcessSceneResources(): Error loading object map resource");
-				return FAILURE;
-			}
+			_objectMap->load(res_data, res_data_len);			
 			break;
 		case SAGA_ACTION_MAP:
 			debug(0, "Loading action map resource...");
@@ -881,7 +872,7 @@ int Scene::processSceneResources() {
 			break;
 		case SAGA_ENTRY:
 			debug(0, "Loading entry list resource...");
-			_entryList->load(res_data, res_data_len);
+			loadSceneEntryList(res_data, res_data_len);
 			break;
 		case SAGA_FACES:
 			_vm->_interface->loadScenePortraits(_resList[i].res_number);
@@ -957,11 +948,11 @@ int Scene::endScene() {
 	_vm->_anim->reset();
 
 	_vm->_palanim->freePalAnim();
-	delete _objectMap;
-
-	_objectMap = NULL;
+	
+	_objectMap->freeMem();
 	_actionMap->freeMem();
-	_entryList->freeMem();
+	_entryList.freeMem();
+	_sceneStrings.freeMem();
 
 	_animList.clear();
 
@@ -1112,27 +1103,27 @@ int Scene::defaultScene(int param, SCENE_INFO *scene_info) {
 	return 0;
 }
 
-void SceneEntryList::load(const byte* resourcePointer, size_t resourceLength) {
+void Scene::loadSceneEntryList(const byte* resourcePointer, size_t resourceLength) {	
 	int i;
-
-	_entryListCount = resourceLength / 8;
+	
+	_entryList.entryListCount = resourceLength / 8;
 
 	MemoryReadStreamEndian readS(resourcePointer, resourceLength, IS_BIG_ENDIAN);
 
 
-	if (_entryList)
-		error("SceneEntryList::load _entryList != NULL");
+	if (_entryList.entryList)
+		error("Scene::loadSceneEntryList entryList != NULL");
 
-	_entryList = (SceneEntry *) malloc(_entryListCount * sizeof(*_entryList));
-	if (_entryList == NULL) {
-		error("SceneEntryList::load Memory allocation failure");
+	_entryList.entryList = (SceneEntry *) malloc(_entryList.entryListCount * sizeof(*_entryList.entryList));
+	if (_entryList.entryList == NULL) {
+		error("Scene::loadSceneEntryList Memory allocation failure");
 	}
 
-	for (i = 0; i < _entryListCount; i++) {
-		_entryList[i].location.x = readS.readSint16();
-		_entryList[i].location.y = readS.readSint16();
-		_entryList[i].location.z = readS.readSint16();
-		_entryList[i].facing = readS.readUint16();
+	for (i = 0; i < _entryList.entryListCount; i++) {
+		_entryList.entryList[i].location.x = readS.readSint16();
+		_entryList.entryList[i].location.y = readS.readSint16();
+		_entryList.entryList[i].location.z = readS.readSint16();
+		_entryList.entryList[i].facing = readS.readUint16();
 	}
 }
 

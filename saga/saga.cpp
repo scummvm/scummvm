@@ -330,7 +330,7 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 		error("Invalid string offset");
 	}
 
-	stringsCount = offset / 2;
+	stringsCount = offset / 2 - 2;
 	stringsTable.stringsCount = stringsCount;
 
 	stringsTable.strings = (const char **)malloc(stringsCount * sizeof(const char *));
@@ -345,6 +345,7 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 			error("invalid string offset");
 		}
 		stringsTable.strings[i] = (const char *)stringsTable.stringsPointer + offset;
+		debug(9, "string[%i]=%s", i, stringsTable.strings[i]);
 	}
 }
 

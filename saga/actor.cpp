@@ -33,13 +33,13 @@
 #include "saga/text.h"
 #include "saga/sound.h"
 #include "saga/scene.h"
-#include "saga/actionmap.h"
 
 #include "saga/actor.h"
 #include "saga/actordata.h"
 #include "saga/stream.h"
 #include "saga/interface.h"
 #include "saga/events.h"
+#include "saga/objectmap.h"
 #include "common/config-manager.h"
 
 namespace Saga {
@@ -505,7 +505,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	assert(_protagonist);
 	
 	if (actorsEntrance >= 0) {
-		sceneEntry = _vm->_scene->_entryList->getEntry(actorsEntrance);
+		sceneEntry = _vm->_scene->_entryList.getEntry(actorsEntrance);
 		// tiled stuff
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
 			//todo: it
