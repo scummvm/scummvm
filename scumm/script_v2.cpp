@@ -3033,7 +3033,7 @@ void Scumm::o6_kernelFunction()
 	Actor *a;
 
 	getStackList(args, sizeof(args) / sizeof(args[0]));
-
+	printf("kernel(%d)\n", args[0]);
 	switch (args[0]) {
 	case 113:
 		// This is used for the Sam & Max paint-by-numbers mini-game
@@ -3057,19 +3057,19 @@ void Scumm::o6_kernelFunction()
 		push(remapPaletteColor(args[1], args[2], args[3], (uint) - 1));
 		break;
 	case 207:
-		i = getObjectIndex(pop());
+		i = getObjectIndex(args[1]);
 		push(_objs[i].x_pos);
 		break;
 	case 208:
-		i = getObjectIndex(pop());
+		i = getObjectIndex(args[1]);
 		push(_objs[i].y_pos);
 		break;
 	case 209:
-		i = getObjectIndex(pop());
+		i = getObjectIndex(args[1]);
 		push(_objs[i].width);
 		break;
 	case 210:
-		i = getObjectIndex(pop());
+		i = getObjectIndex(args[1]);
 		push(_objs[i].height);
 		break;
 	case 211:
@@ -3091,7 +3091,7 @@ void Scumm::o6_kernelFunction()
 			break;
 		}
 
-		warning("o6_kernelFunction: getInput(%d)", args[1]);
+		warning("o6_kernelFunction: getInput(%d) against %d", args[1], _lastKeyHit);
 		push(0);
 		break;
 	case 212:
