@@ -1543,6 +1543,8 @@ void Script::SF_playVoice(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::finishDialog(int replyID, int flags, int bitOffset) {
+	byte *addr;
+
 	if (_conversingThread) {
 		_vm->_interface->setMode(kPanelNull);
 
@@ -1551,7 +1553,8 @@ void Script::finishDialog(int replyID, int flags, int bitOffset) {
 		_conversingThread->push(replyID);
 
 		if (flags & kReplyOnce) {
-			// TODO:
+			addr = _conversingThread->_staticBase + (bitOffset >> 3);
+			*addr |=  (1 << (bitOffset & 7));
 		}
 	}
 
