@@ -24,6 +24,28 @@
 
 #include "queen/queen.h"
 
+
+struct GraphicData {
+	uint16 x, y;
+	int16 firstFrame, lastFrame;
+	uint16 speed;
+};
+
+struct ObjectData {
+	uint16 name;
+	uint16 x;
+	uint16 y;
+	uint16 description;
+	int16 entryObj;
+	uint16 room;
+	int16 state;
+	int16 image;
+};
+
+enum {
+	FRAME_XTRA = 2
+};
+
 class QueenLogic {
 
 public:
@@ -32,12 +54,20 @@ public:
 
 	uint16 currentRoom();
 	void currentRoom(uint16 room);
-
 	void oldRoom(uint16 room);
-
+#ifdef USE_STRUCTS_JAS
+	ObjectData* objectData(int index);
+#else 
 	int16 *objectData(int index);
+#endif
 	uint16 roomData(int room);
 	uint16 objMax(int room);
+	GraphicData* findGraphic(int index);
+
+#ifdef USE_STRUCTS_JAS
+	uint16 findBob(uint16 obj); // FIXME: move that to QueenDisplay ?
+	uint16 findFrame(uint16 obj); // FIXME: move that to QueenDisplay ?
+#endif
 
 	int16 *area(int index, int subIndex);
 	uint16 walkOffCount();
@@ -65,13 +95,16 @@ protected:
 	uint16 *_areaMax;
 	uint16 (*_objectBox)[4];
 	uint16 (*_itemData)[5];
-	uint16 (*_graphicData)[5];
+	GraphicData *_graphicData;
+#ifdef USE_STRUCTS_JAS
+	ObjectData *_objectData;
+#else
 	int16 (*_objectData)[8];
+#endif
 	uint16 (*_actorData)[12];
-
 	int16 (*_area)[11][8];
-
 	uint16 (*_walkOffData)[3];
+	uint16 _maxAnimatedFrame, _maxStaticFrame, _maxAnimatedFrameLen; // FMAXA, FMAX, FMAXALEN
 
 	QueenResource *_resource;
 
