@@ -221,7 +221,7 @@ void ScummEngine_v7he::setupScummVars() {
 	VAR_TALK_ACTOR = 49;
 	VAR_LAST_SOUND = 50;
 	VAR_SOUNDPARAM = 51;
-	VAR_SOUNDPARAM2 = 52;
+	VAR_MUSIC_TIMER = 52;
 
 	VAR_NEW_ROOM = 59;
 	VAR_TMR_1 = 60;
