@@ -1,7 +1,8 @@
 Residual TODO list (in rough order of priority):
 ------------------------------------------------
 Assigned tasks:
- * Add LAF font and text drawing support (aquadran)
+ * Add LAF font and text drawing support (ender)
+ * Cross platform GUI for debug input dialogs and path selection (ender)
  * Improved walk box code (frob)
  * Implement FadeInChore and FadeOutChore (frob)
 
@@ -11,6 +12,6 @@ Unassigned (help wanted):
  * Save/Load support
  * Implement 2D primitives 
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (MSVC, etc)
- * Cross platform GUI for debug input dialogs (ctrl+e ctrl+g etc) - original used MFC
  * Fix the screenblocks zBuffer code
  * Lip syncing
+ * Abstract rendering code and implement software renderer

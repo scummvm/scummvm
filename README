@@ -1,5 +1,5 @@
-Residual: A LucasArts 3D game interpreter           Version:      0.02-CVS
-(C) 2003-2004 The ScummVM-Residual team             Last Updated: 20th Mar 2004
+Residual: A LucasArts 3D game interpreter           Version:      0.03-CVS
+(C) 2003-2004 The ScummVM-Residual team             Last Updated: 26th Mar 2004
 -------------------------------------------------------------------------------
 
 What is Residual?
@@ -55,12 +55,9 @@ currently will thrash memory and crash.
 What is the state of Residual? 
 ------------------------------- 
 Many features are not yet supported. Cutscenes work, you can interact with
-objects (even if they are invisible, like the mail tube!) and play at least a
-portion of the game.
+objects and play at least some of the game.
 
-HOWEVER: It may crash. There is no lighting, text, some actor animations are 
-missing, and 2D objects are not drawn. Walking is pretty broken and you can get
-stuck frequently.
+HOWEVER: It may crash. There is no lighting, menus, save/load, etc.
 
 What are the default keys?
 --------------------------
