@@ -591,13 +591,12 @@ void Scumm_v5::o5_chainScript() {
 
 	cur = _currentScript;
 
-	// FIXME: Work around a bug in script 33 in Indy3 VGA. That script is
-	// used for the fist fights in the Zeppeling. It uses Local[5], even
-	// though that is never set to any value. But script 33 is called
-	// via chainScript by script 32, and in there Local[5] is defined to
-	// the actor ID of the opposing soldier. So, we copy that value
-	// over to the Local[5] variable of script 33.
-	// See also bug #743314.
+	// WORKAROUND bug #743314: Work around a bug in script 33 in Indy3 VGA.
+	// That script is used for the fist fights in the Zeppeling. It uses
+	// Local[5], even though that is never set to any value. But script 33 is
+	// called via chainScript by script 32, and in there Local[5] is defined
+	// to the  actor ID of the opposing soldier. So, we copy that value over
+	// to the Local[5] variable of script 33.
 	if ((_gameId == GID_INDY3_TOWNS || _gameId == GID_INDY3_256 || _gameId == GID_INDY3)
 		  && vm.slot[cur].number == 32 && script == 33) {
 		vars[5] = vm.localvar[cur][5];
@@ -954,10 +953,9 @@ void Scumm_v5::o5_getActorMoving() {
 void Scumm_v5::o5_getActorRoom() {
 	getResultPos();
 	int act = getVarOrDirectByte(0x80);
-	// FIXME: Workaround for bug #746349. This is a really odd bu
-	//in either the script or in our script engine. Might be a good
-	// idea to investigate this further by e.g. looking at the FOA
-	// engine a bit closer.
+	// WORKAROUND bug #746349. This is a really odd bug in either the script
+	// or in our script engine. Might be a good idea to investigate this
+	// further by e.g. looking at the FOA engine a bit closer.
 	if (_gameId == GID_INDY4 && _roomResource == 94 && vm.slot[_currentScript].number == 206 && act > _numActors) {
 		setResult(0);
 		return;
@@ -1024,7 +1022,7 @@ void Scumm_v5::o5_getActorY() {
 	if (_gameId == GID_INDY3_TOWNS || _gameId == GID_INDY3_256 || _gameId == GID_INDY3) {
 		a = getVarOrDirectByte(0x80);
 
-		// FIXME - bug 636433 workaround (can't get into Zeppelin) 
+		// WORKAROUND bug #636433 (can't get into Zeppelin) 
 		if (_roomResource == 36) {
 			setResult(getObjY(a) - 1);
 			return;
@@ -1304,12 +1302,12 @@ void Scumm_v5::o5_loadRoom() {
 	if (!(_features & GF_SMALL_HEADER) || room != _currentRoom)
 		startScene(room, 0, 0);
 
-        // FIXME: Incredibly nasty evil hack to fix bug #770699 (During meeting
-        // with Guru, script 42 changes between room 0 and room 19 to create
-        // 'some time later' effects. On switching back to room 19, the camera
-        // reverts to 0,0 - Added for 0.5.0, should be fixed properly
-        if (_gameId == GID_ZAK && (vm.slot[_currentScript].number == 42) && (room == 19))
-                setCameraAt(480, 0);
+	// FIXME: Incredibly nasty evil hack to fix bug #770699 (During meeting
+	// with Guru, script 42 changes between room 0 and room 19 to create
+	// 'some time later' effects. On switching back to room 19, the camera
+	// reverts to 0,0 - Added for 0.5.0, should be fixed properly
+	if (_gameId == GID_ZAK && (vm.slot[_currentScript].number == 42) && (room == 19))
+		setCameraAt(480, 0);
 
 	_fullRedraw = 1;
 }
@@ -1908,7 +1906,7 @@ void Scumm_v5::o5_setObjectName() {
 	byte *objptr;
 	objptr = getOBCDFromObject(obj);
 	if (objptr == NULL) {
-		// FIXME: Bug 587553. This is an odd one and looks more like
+		// WORKAROUND bug #587553: This is an odd one and looks more like
 		// an actual bug in the original script. Usually we would error
 		warning("Can't find OBCD to rename object %d to %s", obj, work);
 		return;
@@ -2139,14 +2137,13 @@ void Scumm_v5::o5_stopScript() {
 
 	script = getVarOrDirectByte(0x80);
 
-        if ((_gameId == GID_ZAK) && (_roomResource == 7) && (vm.slot[_currentScript].number == 10001)) {
-                // FIXME: Nasty hack for bug #771499
-                // Don't let the exit script for room 7 stop the buy script (24),
-                // switching to the number selection keypad (script 15)
-                if ((script == 24) && isScriptRunning(15))
-                        return;
-        }
-
+	if ((_gameId == GID_ZAK) && (_roomResource == 7) && (vm.slot[_currentScript].number == 10001)) {
+		// FIXME: Nasty hack for bug #771499
+		// Don't let the exit script for room 7 stop the buy script (24),
+		// switching to the number selection keypad (script 15)
+		if ((script == 24) && isScriptRunning(15))
+			return;
+	}
 
 	if (!script)
 		stopObjectCode();
@@ -2421,20 +2418,21 @@ void Scumm_v5::o5_walkActorToActor() {
 	
 	if (_gameId == GID_LOOM256 && nr == 1 && nr2 == 0 &&
 		dist == 255 && vm.slot[_currentScript].number == 98) {
-		// FIXME: Work around bug #743615. LoomCD script 98
-		// contains this: walkActorToActor(1,0,255)
-		// Once more this is either a script bug, or there is
-		// some hidden meaning in this odd walk request?
+		// WORKAROUND bug #743615: LoomCD script 98 contains this:
+		//   walkActorToActor(1,0,255)
+		// Once again this is either a script bug, or there is some hidden
+		// or unknown meaning to this odd walk request...
 		return;
 	}
 
 	if (_gameId == GID_INDY4 && nr == 1 && nr2 == 106 &&
 		dist == 255 && vm.slot[_currentScript].number == 210) {
-		// FIXME: Work around an invalid actor bug when using the
-		// camel in Fate of Atlantis, the "wits" path. The room-65-210
-		// script contains this: walkActorToActor(1,106,255)
-		// Once more this is either a script bug, or there is
-		// some hidden meaning in this odd walk request?
+		// WORKAROUND bug: Work around an invalid actor bug when using the
+		// camel in Fate of Atlantis, the "wits" path. The room-65-210 script
+		// contains this:
+		//   walkActorToActor(1,106,255)
+		// Once again this is either a script bug, or there is some hidden
+		// or unknown meaning to this odd walk request...
 		return;
 	}
 

@@ -373,7 +373,7 @@ int Scumm_v2::getVar() {
 }
 
 void Scumm_v2::decodeParseString() {
-	byte buffer[256];	// FIXME
+	byte buffer[256];
 	byte *ptr = buffer;
 	byte c;
 	bool insertSpace = false;
@@ -1252,8 +1252,7 @@ void Scumm_v2::o2_setBoxFlags() {
 }
 
 void Scumm_v2::o2_setCameraAt() {
-	setCameraAtEx(getVarOrDirectByte(0x80) * 8);	// FIXME: I'm pretty sure we actually pan
-							// by strip, not X/Y, here. Hence *8
+	setCameraAtEx(getVarOrDirectByte(0x80) * 8);
 }
 
 void Scumm_v2::o2_roomOps() {
