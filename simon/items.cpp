@@ -1306,8 +1306,7 @@ void SimonState::o_quit_if_user_presses_y() {
 		delay(1);
 		if (_key_pressed == 'f' && _language == 20) // Hebrew
 			_system->quit();
-		// FIXME Exact key press for Spanish verison unknown 
-		if (_key_pressed == 'y' && _language == 5) // Spanish
+		if (_key_pressed == 's' && _language == 5) // Spanish
 			_system->quit();
 		if (_key_pressed == 's' && _language == 3) // Italian
 			_system->quit();
