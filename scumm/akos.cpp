@@ -443,7 +443,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 			xmoveCur = _xmove + (int16)READ_LE_UINT16(p + 0);
 			ymoveCur = _ymove + (int16)READ_LE_UINT16(p + 2);
 
-			if (i >= extra - 1) {
+			if (i == extra - 1) {
 				dxCur = lastDx;
 				dyCur = lastDy;
 			} else {
@@ -451,8 +451,8 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 				dyCur = 0;
 			}
 
-			xmoveCur += dxCur;
-			ymoveCur -= dyCur;
+			_xmove += dxCur;
+			_ymove -= dyCur;
 
 			if (!hasSeq3Idx || !akct) {
 				decflag = 1;
