@@ -573,15 +573,6 @@ khalek
 147be86929b5969224c72edac30896fd  Pajama Sam (4)
 2546d42491fa61ac8e2d20d68d264fce  Pajama Sam (7)
 
-(puttzoo cd hfs)
-khalek
-1996-11-17 13:28 Pajama Sam Demo
-3b032e02ccbc5d65c7397cfb32f65f1d  Pajama Sam Demo
-f237bf8a5ef9af78b2a6a4f3901da341  Pajama Sam Demo (0)
-5c12305ff68ed053daba74a700a56ad2  Pajama Sam Demo (1)
-4ccd03ca710a9053c42292cae09a6471  Pajama Sam Demo (2)
-6e0fdfcf13e37b659b7155cf5969965f  Pajama Sam Demo (4)
-
 (spyfox cd/puttzoo cd/he classics cd/pj2 cd/freddi2 cd)
 khalek, sev
 1996-10-31 22:34 pjs-demo.w32
@@ -592,7 +583,7 @@ f237bf8a5ef9af78b2a6a4f3901da341  pjs-demo.he0
 4ccd03ca710a9053c42292cae09a6471  pjs-demo.he2
 6e0fdfcf13e37b659b7155cf5969965f  pjs-demo.he4
 
-(freddi cd hfs/he classics hfs)
+(freddi cd hfs/he classics hfs/puttzoo cd hfs)
 khalek
 1997-10-28 17:16 Pajama Sam Demo
 3b032e02ccbc5d65c7397cfb32f65f1d  Pajama Sam Demo
@@ -959,7 +950,7 @@ a0cd041eb6c1a289a23549ef8740ff17 zoodemo.he2
 47539950e6e6f656db4c1cc963bf9a8f zoodemo.he3
 86dc7e6f520dbabe79b324ae64456686 zoodemo.he4
 
-(he classics hfs/pjs cd hfs)
+(he classics hfs/pjs cd hfs/farm cd hfs)
 khalek
 1996-11-17 13:28 Puttzoo Demo
 34727db5bde5a2f78a1ec84f75d0810c  Puttzoo Demo
@@ -1054,22 +1045,3 @@ a76f985eb0fe5b9600dd8563cd5ac7d8 spyozon.w32
 eec7f697ba008211d12be2108f9e6b56 SPYOZON.HE2
 2f238b51cfad1b8b5c179468a19aa29b SPYOZON.HE3
 6654406759193503d618405b075322e4 SPYOZON.HE4
-
-7.0.0 (Jul  5 1995 14:45:19)
-khalek
-d30c3ce43992a116be1a28a4edccf597  zoodemo.w32
-f3d55aea441e260e9e9c7d2a187097e0  zoodemo.he0
-92722a557c952ff5178eb32964a12061  zoodemo.he1
-a0cd041eb6c1a289a23549ef8740ff17  zoodemo.he2
-47539950e6e6f656db4c1cc963bf9a8f  zoodemo.he3
-86dc7e6f520dbabe79b324ae64456686  zoodemo.he4
-
-(farm cd hfs)
-khalek
-1995-09-14 17:43 Zoo Demo
-34727db5bde5a2f78a1ec84f75d0810c  Zoo Demo
-3486ede0f904789267d4bcc5537a46d4  Zoo Demo (0)
-e0cde64b0c37a188c97a0bc93225cce9  Zoo Demo (1)
-a0cd041eb6c1a289a23549ef8740ff17  Zoo Demo (2)
-86dc7e6f520dbabe79b324ae64456686  Zoo Demo (4)
-
