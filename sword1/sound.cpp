@@ -239,6 +239,6 @@ void SwordSound::closeCowSystem(void) {
 	if (_cowHeader)
 		free(_cowHeader);
 	_cowHeader = NULL;
-	_currentCowFile = NULL;
+	_currentCowFile = 0;
 }
 
