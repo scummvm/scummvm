@@ -21,20 +21,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-
-#if defined(USE_IMUSE)
 #include "sound.h"
-#else
-struct SoundEngine {
-	byte **_base_sounds;
-	int start_sound(int sound) { return -1; }
-	int stop_sound(int sound) { return -1; }
-	int stop_all_sounds() { return -1; }
-	int32 do_command(int a, int b, int c, int d, int e, int f, int g, int h) { return -1; }
-	int get_sound_status(int sound) { return -1; }
-	int clear_queue() { return -1; }
-};
-#endif
 
 void Scumm::addSoundToQueue(int sound) {
 	_vars[VAR_LAST_SOUND] = sound;
@@ -170,6 +157,13 @@ void Scumm::startTalkSound(uint32 offset, uint32 b, int mode) {
 	startSfxSound(_sfxFile);
 }
 
+void Scumm::stopTalkSound() {
+	if (_sfxMode==2) {
+		stopSfxSound();
+		_sfxMode = 0;
+	}
+}
+
 bool Scumm::isMouthSyncOff(uint pos) {
 	uint j;
 	bool val = true;
@@ -203,7 +197,6 @@ int Scumm::isSoundRunning(int sound) {
 
 	if (!isResourceLoaded(rtSound, sound))
 		return 0;
-
 	
 	se = (SoundEngine*)_soundDriver;
 	if (!se)
@@ -251,6 +244,7 @@ void Scumm::stopAllSounds() {
 		se->clear_queue();
 	}
 	clearSoundQue();
+	stopSfxSound();
 }
 
 void Scumm::clearSoundQue() {
@@ -283,18 +277,32 @@ void Scumm::talkSound(uint32 a, uint32 b, int mode) {
 	_talk_sound_mode = mode;
 }
 
+/* The sound code currently only supports General Midi.
+ * General Midi is used in Day Of The Tentacle.
+ * Roland music is also playable, but doesn't sound well.
+ * A mapping between roland instruments and GM instruments
+ * is needed.
+ */
+   
 static const uint32 sound_tags[] = {
-	MKID('ADL ')
+	MKID('GMD ')
 };
 
 void Scumm::setupSound() {
 	SoundEngine *se = (SoundEngine*)_soundDriver;
-	if (se) {
+	if (se)
 		se->_base_sounds = res.address[rtSound];
-	}
+
 	_soundTagTable = (byte*)sound_tags;
 	_numSoundTags = 1;
 	_sfxFile = openSfxFile();
+}
+
+void Scumm::pauseSounds(bool pause) {
+	SoundEngine *se = (SoundEngine*)_soundDriver;
+	if (se)
+		se->pause(pause);
+	_soundsPaused = pause;
 }
 
 struct VOCHeader {
@@ -303,7 +311,7 @@ struct VOCHeader {
 };
 
 static const char VALID_VOC_ID[] = "Creative Voice File";
-static const char VALID_VOC_VERSION[] = "";
+
 void Scumm::startSfxSound(void *file) {
 	VOCHeader hdr;
 	int block_type;
@@ -355,3 +363,97 @@ void Scumm::startSfxSound(void *file) {
 void *Scumm::openSfxFile() {
 	return fopen("monster.sou", "rb");
 }
+
+#define NUM_MIXER 4
+
+MixerChannel *Scumm::allocateMixer() {
+	int i;
+	MixerChannel *mc = _mixer_channel;
+	for(i=0; i<NUM_MIXER; i++,mc++) {
+		if (!mc->_sfx_sound)
+			return mc;
+	}
+	return NULL;
+}
+
+void Scumm::stopSfxSound() {
+	MixerChannel *mc = _mixer_channel;
+	int i;
+	for(i=0; i<NUM_MIXER; i++,mc++) {
+		if (mc->_sfx_sound)
+			mc->clear();
+	}
+}
+
+
+bool Scumm::isSfxFinished() {
+	int i;
+	for(i=0; i<NUM_MIXER; i++)
+		if (_mixer_channel[i]._sfx_sound)
+			return false;
+	return true;
+}
+
+void Scumm::playSfxSound(void *sound, uint32 size, uint rate) {
+	MixerChannel *mc = allocateMixer();
+
+	if (!mc) {
+		warning("No mixer channel available");
+		return;
+	}
+
+	mc->_sfx_sound = sound;
+	mc->_sfx_pos = 0;
+	mc->_sfx_fp_speed = (1<<16) * rate / 22050;
+	mc->_sfx_fp_pos = 0;
+
+	while (size&0xFFFF0000) size>>=1, rate>>=1;
+	mc->_sfx_size = size * 22050 / rate;
+}
+
+void MixerChannel::mix(int16 *data, uint32 len) {
+	int8 *s;
+	int i;
+	uint32 fp_pos, fp_speed;
+
+	if (!_sfx_sound)
+		return;
+	if (len > _sfx_size)
+		len = _sfx_size;
+	_sfx_size -= len;
+
+	s = (int8*)_sfx_sound + _sfx_pos;
+	fp_pos = _sfx_fp_pos;
+	fp_speed = _sfx_fp_speed;
+
+	do {
+		fp_pos += fp_speed;
+		*data++ += (*s<<6);
+		s += fp_pos >> 16;
+		fp_pos &= 0x0000FFFF;
+	} while (--len);
+
+	_sfx_pos = s - (int8*)_sfx_sound;
+	_sfx_fp_speed = fp_speed;
+	_sfx_fp_pos = fp_pos;
+
+	if (!_sfx_size)
+		clear();
+}
+
+void MixerChannel::clear() {
+	free(_sfx_sound);
+	_sfx_sound = NULL;
+}
+
+void Scumm::mixWaves(int16 *sounds, int len) {
+	int i;
+
+	if (_soundsPaused)
+		return;
+
+	for(i=NUM_MIXER-1; i>=0;i--) {
+		_mixer_channel[i].mix(sounds, len);
+	}
+}
+

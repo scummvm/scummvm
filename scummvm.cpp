@@ -196,8 +196,8 @@ void Scumm::scummMain(int argc, char **argv) {
 	
 	_debugMode = 1;
 
-	_maxHeapThreshold = 500000;
-	_minHeapThreshold = 450000;
+	_maxHeapThreshold = 450000;
+	_minHeapThreshold = 400000;
 	
 	parseCommandLine(argc, argv);
 
@@ -212,6 +212,11 @@ void Scumm::scummMain(int argc, char **argv) {
 	if (_gameId==GID_INDY4 && _bootParam==0) {
 		_bootParam = -7873;
 	}
+
+	if (_gameId==GID_MONKEY2 && _bootParam==0) {
+		_bootParam = 10001;
+	}
+
 
 	initGraphics(this, _fullScreen);
 
@@ -752,9 +757,8 @@ void Scumm::unkRoomFunc4(int a, int b, int c, int d, int e) {
 	warning("unkRoomFunc4: not implemented");
 }
 
-void Scumm::pauseGame(int i) {
-	/* TODO: implement this */
-	warning("pauseGame: not implemented");
+void Scumm::pauseGame(bool user) {
+	((Gui*)_gui)->pause();
 }
 
 void Scumm::shutDown(int i) {
@@ -777,12 +781,12 @@ void Scumm::processKbd() {
 
 	if (_lastKeyHit==_vars[VAR_RESTART_KEY]) {
 		warning("Restart not implemented");
-		pauseGame(1);
+//		pauseGame(true);
 		return;
 	}
 
 	if (_lastKeyHit==_vars[VAR_PAUSE_KEY]) {
-		warning("Pause not implemented");
+		pauseGame(true);
 		/* pause */
 		return;
 	}
@@ -793,6 +797,8 @@ void Scumm::processKbd() {
 		((Gui*)_gui)->saveLoadDialog();
 	} else if (_lastKeyHit==_vars[VAR_TALKSTOP_KEY]) {
 		_talkDelay = 0;
+		if (_sfxMode==2)
+			stopTalk();
 		return;
 	}
 

@@ -43,6 +43,7 @@ struct Gui {
 	byte _active;
 	byte _clickTimer;
 	byte _cur_page;
+	byte _dialog;
 	int _clickWidget;
 	char *_queryMess;
 
@@ -77,6 +78,7 @@ struct Gui {
 	void saveLoadDialog();
 	void queryMessage(const char *msg, const char *alts);
 	byte getDefaultColor(int color);
+	void pause();
 };
 
 #endif

@@ -1396,7 +1396,7 @@ void Scumm::unkScreenEffect7(int a) {
 			tab_2[i] += tab_1[i];
 		
 		updateScreen(this);
-		waitForTimer(this,3);
+		waitForTimer(this,30);
 	}
 }
 

@@ -276,6 +276,8 @@ void Scumm::CHARSET_1() {
 	_lastXstart = virtscr[0].xstart;
 	if (charset._center) {
 		charset._xpos2 -= charset.getStringWidth(0, buffer,0) >> 1;
+		if (charset._xpos2<0)
+			charset._xpos2 = 0;
 	}
 
 	charset._disableOffsX = charset._unk12 = !_keepText;

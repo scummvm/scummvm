@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "sound.h"
 
 struct SaveGameHeader {
 	uint32 type;
@@ -29,7 +30,7 @@ struct SaveGameHeader {
 	char name[32];
 };
 
-#define CURRENT_VER 4
+#define CURRENT_VER 5
 
 bool Scumm::saveState(int slot, bool compat) {
 	char filename[256];
@@ -67,6 +68,7 @@ bool Scumm::loadState(int slot, bool compat) {
 	SaveGameHeader hdr;
 	Serializer ser;
 	int sb,sh;
+	SoundEngine *se;
 
 	makeSavegameName(filename, slot, compat);
 	out = fopen(filename,"rb");
@@ -88,7 +90,9 @@ bool Scumm::loadState(int slot, bool compat) {
 	}
 
 	memcpy(_saveLoadName, hdr.name, sizeof(hdr.name));
-	
+
+	pauseSounds(true);
+
 	CHECK_HEAP
 
 	openRoom(-1);
@@ -133,6 +137,8 @@ bool Scumm::loadState(int slot, bool compat) {
 	CHECK_HEAP
 
 	debug(1,"State loaded from '%s'", filename);
+
+	pauseSounds(false);
 
 	return true;
 }
@@ -413,20 +419,22 @@ void Scumm::saveOrLoad(Serializer *s) {
 	};
 
 	const SaveLoadEntry stringTabEntries[] = {
-		MKLINE(StringTab,t_xpos,sleInt16),
-		MKLINE(StringTab,t_ypos,sleInt16),
-		MKLINE(StringTab,t_center,sleByte),
-		MKLINE(StringTab,t_overhead,sleByte),
-		MKLINE(StringTab,t_no_talk_anim,sleByte),
-		MKLINE(StringTab,t_right,sleInt16),
-		MKLINE(StringTab,t_color,sleInt16),
-		MKLINE(StringTab,t_charset,sleInt16),
 		MKLINE(StringTab,xpos,sleInt16),
+		MKLINE(StringTab,t_xpos,sleInt16),
 		MKLINE(StringTab,ypos,sleInt16),
-		MKLINE(StringTab,center,sleInt16),
-		MKLINE(StringTab,overhead,sleInt16),
-		MKLINE(StringTab,no_talk_anim,sleInt16),
+		MKLINE(StringTab,t_ypos,sleInt16),
 		MKLINE(StringTab,right,sleInt16),
+		MKLINE(StringTab,t_right,sleInt16),
+		MKLINE(StringTab,color,sleInt8),
+		MKLINE(StringTab,t_color,sleInt8),
+		MKLINE(StringTab,charset,sleInt8),
+		MKLINE(StringTab,t_charset,sleInt8),
+		MKLINE(StringTab,center,sleByte),
+		MKLINE(StringTab,t_center,sleByte),
+		MKLINE(StringTab,overhead,sleByte),
+		MKLINE(StringTab,t_overhead,sleByte),
+		MKLINE(StringTab,no_talk_anim,sleByte),
+		MKLINE(StringTab,t_no_talk_anim,sleByte),
 		MKEND()
 	};
 
@@ -478,6 +486,9 @@ void Scumm::saveOrLoad(Serializer *s) {
 			res.flags[r][s->loadWord()] |= 0x80;
 		}
 	}
+
+	if (_soundDriver)
+		((SoundEngine*)_soundDriver)->save_or_load(s);
 }
 
 void Scumm::saveLoadResource(Serializer *ser, int type, int index) {
@@ -630,9 +641,10 @@ void Serializer::saveLoadEntries(void *d, const SaveLoadEntry *sle) {
 	int replen;
 	byte type;
 	byte *at;
-
 	int size;
 	int value;
+	int num;
+	void *ptr;
 	
 	while(sle->offs != 0xFFFF) {
 		at = (byte*)d + sle->offs;
@@ -642,10 +654,12 @@ void Serializer::saveLoadEntries(void *d, const SaveLoadEntry *sle) {
 		if (size==0xFF) {
 			if (_saveOrLoad) {
 				/* save reference */
-				saveWord((*_save_ref)(_ref_me, type, *((void**)at)));
+				ptr = *((void**)at);
+				saveWord(ptr ? ((*_save_ref)(_ref_me, type, ptr ) + 1) : 0);
 			} else {
 				/* load reference */
-				*((void**)at) = (*_load_ref)(_ref_me, type, loadWord());
+				num = loadWord();
+				*((void**)at) = num ? (*_load_ref)(_ref_me, type, num-1) : NULL;
 			}
 		} else {
 			replen = 1;
@@ -655,8 +669,8 @@ void Serializer::saveLoadEntries(void *d, const SaveLoadEntry *sle) {
 				type&=~128;
 			}
 			saveLoadArrayOf(at, replen, size, type);
-			sle++;
 		}
+		sle++;
 	}
 }
 

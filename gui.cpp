@@ -2,6 +2,11 @@
 #include "scumm.h"
 #include "gui.h"
 
+enum {
+	SAVELOAD_DIALOG,
+	PAUSE_DIALOG
+};
+
 void Gui::draw(int start,int end) {
 	int i;
 
@@ -249,6 +254,12 @@ const GuiWidget save_load_dialog[] = {
 	{0}
 };
 
+const GuiWidget pause_dialog[] = {
+	{GUI_TEXT,0x01,GWF_DEFAULT,50,80,220,16,0,10},
+	{0},
+};
+
+
 void Gui::handleCommand(int cmd) {
 	int lastEdit = _editString;
 	showCaret(false);
@@ -332,18 +343,20 @@ const byte string_map_table_v6[] = {
 	99,  /* Cancel */
 	100, /* Quit */
 	101, /* Ok */
+	93,  /* Game paused */
 };
 
 const byte string_map_table_v5[] = {
 	0, /* How may I serve you? */
 	20, /* Select a game to LOAD */
-	21, /* Name your SAVE game */
+	19, /* Name your SAVE game */
   7,  /* Save */
 	8,  /* Load */
 	9,  /* Play */
 	10,  /* Cancel */
 	11, /* Quit */
 	12, /* Ok */
+	4,  /* Game paused */
 };
 
 const char *Gui::queryString(int string, int id) {
@@ -399,27 +412,28 @@ void Gui::editString(int i) {
 }
 
 void Gui::addLetter(byte letter) {
-	if (_editString==-1)
-		return;
+	switch(_dialog) {
+	case SAVELOAD_DIALOG:
+		if (_editString==-1)
+			return;
 
-	if (letter==13) {
-		handleCommand(8);
-		return;
+		if (letter==13) {
+			handleCommand(8);
+			return;
+		}
+
+		if (letter>=32 && letter<128 && _editLen < SAVEGAME_NAME_LEN-1) {
+			game_names[_editString][_editLen++] = letter;	
+		} else if (letter==8 && _editLen>0) {
+			_editLen--;
+		}
+		showCaret(true);
+		break;
+	case PAUSE_DIALOG:
+		if (letter==32)
+			close();
+		break;
 	}
-
-	if (letter>=32 && letter<128 && _editLen < SAVEGAME_NAME_LEN-1) {
-		game_names[_editString][_editLen++] = letter;	
-	} else if (letter==8 && _editLen>0) {
-		_editLen--;
-	}
-	showCaret(true);
-}
-
-void Gui::saveLoadDialog() {
-	_widgets[0] = save_load_dialog;
-	_editString = -1;
-	_cur_page = 0;
-	_active = 1;
 }
 
 byte Gui::getDefaultColor(int color) {
@@ -430,7 +444,6 @@ byte Gui::getDefaultColor(int color) {
 		return _s->getStringAddress(21)[color];
 	}
 }
-
 
 void Gui::init(Scumm *s) {
 	_s = s;
@@ -447,6 +460,7 @@ void Gui::loop() {
 		draw(0,100);
 		_s->_cursorAnimate++;
 		_s->gdi._cursorActive = 1;
+		_s->pauseSounds(true);
 	}
 	
 	_s->getKeyInput(0);
@@ -471,5 +485,20 @@ void Gui::close() {
 	_s->_fullRedraw = true;
 	_s->_completeScreenRedraw = true;
 	_s->_cursorAnimate--;
+	_s->pauseSounds(false);
 	_active = false;
+}
+
+void Gui::saveLoadDialog() {
+	_widgets[0] = save_load_dialog;
+	_editString = -1;
+	_cur_page = 0;
+	_active = true;
+	_dialog = SAVELOAD_DIALOG;
+}
+
+void Gui::pause() {
+	_widgets[0] = pause_dialog;
+	_active = true;
+	_dialog = PAUSE_DIALOG;
 }

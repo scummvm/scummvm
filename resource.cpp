@@ -551,11 +551,11 @@ byte *Scumm::getResourceAddress(int type, int index) {
 		ensureResourceLoaded(type, index);
 	}	
 
-	setResourceCounter(type, index, 1);
-
 	ptr=(byte*)res.address[type][index];
 	if (!ptr)
 		return NULL;
+
+	setResourceCounter(type, index, 1);
 
 	return ptr + sizeof(ResHeader);
 }

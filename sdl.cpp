@@ -24,10 +24,9 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "gui.h"
-
-#if defined(USE_IMUSE)
 #include "sound.h"
-#endif
+
+#include "SDL_thread.h"
 
 #define SCALEUP_2x2
 
@@ -35,9 +34,7 @@ Scumm scumm;
 ScummDebugger debugger;
 Gui gui;
 
-#if defined(USE_IMUSE)
 SoundEngine sound;
-#endif
 
 static SDL_Surface *screen;
 
@@ -74,78 +71,90 @@ int mapKey(int key, byte mod) {
 	return key;
 }
 
-void waitForTimer(Scumm *s, int delay) {
+void waitForTimer(Scumm *s, int msec_delay) {
 	SDL_Event event;
-	
-	while (SDL_PollEvent(&event)) {
-		switch(event.type) {
-		case SDL_KEYDOWN:
-			s->_keyPressed = mapKey(event.key.keysym.sym, event.key.keysym.mod);
-			if (event.key.keysym.sym >= '0' && event.key.keysym.sym<='9') {
-				s->_saveLoadSlot = event.key.keysym.sym - '0';
-				if (event.key.keysym.mod&KMOD_SHIFT) {
-					sprintf(s->_saveLoadName, "Quicksave %d", s->_saveLoadSlot);
-					s->_saveLoadFlag = 1;
-				} else if (event.key.keysym.mod&KMOD_CTRL)
-					s->_saveLoadFlag = 2;
-				s->_saveLoadCompatible = false;
-			}
-			if (event.key.keysym.sym=='z' && event.key.keysym.mod&KMOD_CTRL) {
-				exit(1);
-			} 
-			if (event.key.keysym.sym=='f' && event.key.keysym.mod&KMOD_CTRL) {
-				s->_fastMode ^= 1;
-			}
-			if (event.key.keysym.sym=='g' && event.key.keysym.mod&KMOD_CTRL) {
-				s->_fastMode ^= 2;
-			}
+	uint32 start_time;
 
-			if (event.key.keysym.sym=='d' && event.key.keysym.mod&KMOD_CTRL) {
-				debugger.attach(s);
-			}
-			if (event.key.keysym.sym=='s' && event.key.keysym.mod&KMOD_CTRL) {
-				s->resourceStats();
-			}
+	if (msec_delay<0)
+		return;
 
-#if defined(__APPLE__)
-			if (event.key.keysym.sym=='q' && event.key.keysym.mod&KMOD_LMETA) {
+	if (s->_fastMode&2)
+		msec_delay = 0;
+	else if (s->_fastMode&1)
+		msec_delay = 10;
+
+	start_time = SDL_GetTicks();
+
+	do {
+		while (SDL_PollEvent(&event)) {
+			switch(event.type) {
+			case SDL_KEYDOWN:
+				s->_keyPressed = mapKey(event.key.keysym.sym, event.key.keysym.mod);
+				if (event.key.keysym.sym >= '0' && event.key.keysym.sym<='9') {
+					s->_saveLoadSlot = event.key.keysym.sym - '0';
+					if (event.key.keysym.mod&KMOD_SHIFT) {
+						sprintf(s->_saveLoadName, "Quicksave %d", s->_saveLoadSlot);
+						s->_saveLoadFlag = 1;
+					} else if (event.key.keysym.mod&KMOD_CTRL)
+						s->_saveLoadFlag = 2;
+					s->_saveLoadCompatible = false;
+				}
+				if (event.key.keysym.sym=='z' && event.key.keysym.mod&KMOD_CTRL) {
+					exit(1);
+				} 
+				if (event.key.keysym.sym=='f' && event.key.keysym.mod&KMOD_CTRL) {
+					s->_fastMode ^= 1;
+				}
+				if (event.key.keysym.sym=='g' && event.key.keysym.mod&KMOD_CTRL) {
+					s->_fastMode ^= 2;
+				}
+
+				if (event.key.keysym.sym=='d' && event.key.keysym.mod&KMOD_CTRL) {
+					debugger.attach(s);
+				}
+				if (event.key.keysym.sym=='s' && event.key.keysym.mod&KMOD_CTRL) {
+					s->resourceStats();
+				}
+
+	#if defined(__APPLE__)
+				if (event.key.keysym.sym=='q' && event.key.keysym.mod&KMOD_LMETA) {
+					exit(1);
+				} 
+	#endif
+				break;
+			case SDL_MOUSEMOTION: {
+				int newx,newy;
+	#if !defined(SCALEUP_2x2)
+				newx = event.motion.x;
+				newy = event.motion.y;
+	#else
+				newx = event.motion.x>>1;
+				newy = event.motion.y>>1;
+	#endif
+				if (newx != s->mouse.x || newy != s->mouse.y) {
+					s->mouse.x = newx;
+					s->mouse.y = newy;
+					s->drawMouse();
+					updateScreen(s);
+				}
+				break;
+				}
+			case SDL_MOUSEBUTTONDOWN:
+				if (event.button.button==SDL_BUTTON_LEFT)
+					s->_leftBtnPressed |= 1;
+				else if (event.button.button==SDL_BUTTON_RIGHT)
+					s->_rightBtnPressed |= 1;
+				break;
+			case SDL_QUIT:
 				exit(1);
-			} 
-#endif
-			break;
-		case SDL_MOUSEMOTION: {
-			int newx,newy;
-#if !defined(SCALEUP_2x2)
-			newx = event.motion.x;
-			newy = event.motion.y;
-#else
-			newx = event.motion.x>>1;
-			newy = event.motion.y>>1;
-#endif
-			if (newx != s->mouse.x || newy != s->mouse.y) {
-				s->mouse.x = newx;
-				s->mouse.y = newy;
-				s->drawMouse();
-				updateScreen(s);
+				break;
 			}
-			break;
-			}
-		case SDL_MOUSEBUTTONDOWN:
-			if (event.button.button==SDL_BUTTON_LEFT)
-				s->_leftBtnPressed |= 1;
-			else if (event.button.button==SDL_BUTTON_RIGHT)
-				s->_rightBtnPressed |= 1;
-			break;
-		case SDL_QUIT:
-			exit(1);
-			break;
 		}
-	}
-	
-	if (!(s->_fastMode&2)) {
-		assert(delay<500);
-		SDL_Delay(delay*10);
-	}
+
+		if (SDL_GetTicks() >= start_time + msec_delay)
+			break;
+		SDL_Delay(10);
+	} while (1);
 }
 
 #define MAX_DIRTY_RECTS 40
@@ -468,111 +477,31 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int color, byte *mask, bool visib
 		old_mouse_x = xdraw;
 		old_mouse_y = ydraw;
 	}
-
 }
 
-#define SAMPLES_PER_SEC 22050
-#define BUFFER_SIZE (8192)
-#define BITS_PER_SAMPLE 16
-
-struct MixerChannel {
-	void *_sfx_sound;
-	uint32 _sfx_pos;
-	uint32 _sfx_size;
-	uint32 _sfx_fp_speed;
-	uint32 _sfx_fp_pos;
-
-	void mix(int16 *data, uint32 len);
-	void clear();
-};
-
-#define NUM_MIXER 4
-
-static MixerChannel mixer_channel[NUM_MIXER];
-
-MixerChannel *find_channel() {
-	int i;
-	MixerChannel *mc = mixer_channel;
-	for(i=0; i<NUM_MIXER; i++,mc++) {
-		if (!mc->_sfx_sound)
-			return mc;
-	}
-	return NULL;
-}
-
-
-bool isSfxFinished() {
-	int i;
-	for(i=0; i<NUM_MIXER; i++)
-		if (mixer_channel[i]._sfx_sound)
-			return false;
-	return true;
-}
-
-void playSfxSound(void *sound, uint32 size, uint rate) {
-	MixerChannel *mc = find_channel();
-
-	if (!mc) {
-		warning("No mixer channel available");
-		return;
-	}
-
-	mc->_sfx_sound = sound;
-	mc->_sfx_pos = 0;
-	mc->_sfx_fp_speed = (1<<16) * rate / 22050;
-	mc->_sfx_fp_pos = 0;
-
-	while (size&0xFFFF0000) size>>=1, rate>>=1;
-	mc->_sfx_size = size * 22050 / rate;
-}
-
-void MixerChannel::mix(int16 *data, uint32 len) {
-	int8 *s;
-	int i;
-	uint32 fp_pos, fp_speed;
-
-	if (!_sfx_sound)
-		return;
-	if (len > _sfx_size)
-		len = _sfx_size;
-	_sfx_size -= len;
-
-	s = (int8*)_sfx_sound + _sfx_pos;
-	fp_pos = _sfx_fp_pos;
-	fp_speed = _sfx_fp_speed;
-
-	do {
-		fp_pos += fp_speed;
-		*data++ += (*s<<6);
-		s += fp_pos >> 16;
-		fp_pos &= 0x0000FFFF;
-	} while (--len);
-
-	_sfx_pos = s - (int8*)_sfx_sound;
-	_sfx_fp_speed = fp_speed;
-	_sfx_fp_pos = fp_pos;
-
-	if (!_sfx_size)
-		clear();
-}
-
-void MixerChannel::clear() {
-	free(_sfx_sound);
-	_sfx_sound = NULL;
-}
+static uint32 midi_counter;
 
 void fill_sound(void *userdata, Uint8 *stream, int len) {
-	int i;
-
-#if defined(USE_IMUSE)
-	sound.generate_samples((int16*)stream, len>>1);
-#else
 	memset(stream, 0, len);
-#endif
+	scumm.mixWaves((int16*)stream, len>>1);
+}
+
+int music_thread(Scumm *s) {
+	int old_time, cur_time;
+
+	old_time = SDL_GetTicks();
+
+	do {
+		SDL_Delay(10);
+		
+		cur_time = SDL_GetTicks();
+		while (old_time < cur_time) {
+			old_time += 10;
+			sound.on_timer();	
+		}
+	} while (1);
 	
-	for(i=NUM_MIXER-1; i>=0;i--) {
-		mixer_channel[i].mix((int16*)stream, len>>1);
-	}
+	return 0;
 }
 
 void initGraphics(Scumm *s, bool fullScreen) {
@@ -599,9 +528,11 @@ void initGraphics(Scumm *s, bool fullScreen) {
 	SDL_OpenAudio(&desired, NULL);
 	SDL_PauseAudio(0);
 
-
 	SDL_WM_SetCaption(buf,buf);
 	SDL_ShowCursor(SDL_DISABLE);
+
+	/* Create Music Thread */
+	SDL_CreateThread((int (*)(void *))&music_thread, &scumm);
 
 #if !defined(SCALEUP_2x2)
 	screen = SDL_SetVideoMode(320, 200, 8, fullScreen ? (SDL_SWSURFACE | SDL_FULLSCREEN) : SDL_SWSURFACE);
@@ -627,33 +558,31 @@ void initGraphics(Scumm *s, bool fullScreen) {
 
 int main(int argc, char* argv[]) {
 	int delta,tmp;
+	int last_time, new_time;
 
-#if defined(USE_IMUSE)
-	sound.initialize(NULL);
+	sound.initialize(&scumm);
 	scumm._soundDriver = &sound;
-#endif
 
 	scumm._gui = &gui;
 	scumm.scummMain(argc, argv);
 
 	gui.init(&scumm);
 
+	last_time = SDL_GetTicks();
 	delta = 0;
 	do {
 		updateScreen(&scumm);
 
+		new_time = SDL_GetTicks();
+		waitForTimer(&scumm, delta * 15 + last_time - new_time);
+		last_time = SDL_GetTicks();
+
 		if (gui._active) {
 			gui.loop();
-			tmp = 5;
+			delta = 5;
 		} else {
-			tmp = delta = scumm.scummLoop(delta);
-			tmp += tmp>>1;
-			
-			if (scumm._fastMode)
-				tmp=1;
+			delta = scumm.scummLoop(delta);
 		}
-
-		waitForTimer(&scumm, tmp);
 	} while(1);
 
 	return 0;

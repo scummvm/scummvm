@@ -28,8 +28,14 @@ struct Actor;
 
 typedef void (Scumm::*OpcodeProc)();
 
-#define NUM_SCRIPT_SLOT 25
-#define NUM_ACTORS 13
+/* System Wide Constants */
+enum {
+	SAMPLES_PER_SEC =  22050,
+	BITS_PER_SAMPLE = 16,
+	NUM_MIXER = 4,
+	NUM_SCRIPT_SLOT = 25,
+	NUM_ACTORS = 13
+};
 
 #pragma START_PACK_STRUCTS
 	
@@ -596,6 +602,16 @@ struct Gdi {
 	void updateDirtyScreen(VirtScreen *vs);
 };
 
+struct MixerChannel {
+	void *_sfx_sound;
+	uint32 _sfx_pos;
+	uint32 _sfx_size;
+	uint32 _sfx_fp_speed;
+	uint32 _sfx_fp_pos;
+
+	void mix(int16 *data, uint32 len);
+	void clear();
+};
 
 enum GameId {
 	GID_TENTACLE = 1,
@@ -639,6 +655,8 @@ struct Scumm {
 
 	bool _dynamicRoomOffsets;
 	byte _resFilePathId;
+
+	bool _soundsPaused;
 
 	bool _useTalkAnims;
 	
@@ -918,6 +936,8 @@ struct Scumm {
 
 	char _saveLoadName[32];
 
+	MixerChannel _mixer_channel[NUM_MIXER];
+
 	OpcodeProc getOpcode(int i) { return _opcodes[i]; }
 
 	void openRoom(int room);
@@ -925,7 +945,6 @@ struct Scumm {
 	void readRoomsOffsets();
 	void askForDisk(const char *filename);
 
-	
 	bool openResourceFile(const char *filename);
 	
 	void fileClose(void *file);
@@ -1449,7 +1468,7 @@ struct Scumm {
 	void addObjectToInventory(uint obj, uint room);
 	void removeObjectFromRoom(int obj);
 	void decodeParseString();
-	void pauseGame(int i);
+	void pauseGame(bool user);
 	void shutDown(int i);
 	void lock(int type, int i);
 	void unlock(int type, int i);
@@ -1590,6 +1609,7 @@ struct Scumm {
 	void talkSound(uint32 a, uint32 b, int mode);
 	void processSfxQueues();
 	void startTalkSound(uint32 a, uint32 b, int mode);
+	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);
 	void startSfxSound(void *file);
 	void *openSfxFile();
@@ -1631,6 +1651,17 @@ struct Scumm {
 	void drawEnqueuedObject(EnqueuedObject *eo);
 	void removeEnqueuedObjects();
 	void removeEnqueuedObject(EnqueuedObject *eo);
+
+	void pauseSounds(bool pause);
+
+	MixerChannel *allocateMixer();
+	bool isSfxFinished();
+	void playSfxSound(void *sound, uint32 size, uint rate);
+	void stopSfxSound();
+
+	void mixWaves(int16 *sounds, int len);
+	
+
 };
 
 struct ScummDebugger {
@@ -1671,6 +1702,7 @@ struct Serializer {
 	union {
 		SerializerSaveReference *_save_ref;
 		SerializerLoadReference *_load_ref;
+		void *_saveload_ref;
 	};
 	void *_ref_me;
 
@@ -1690,6 +1722,7 @@ struct Serializer {
 	uint32 loadUint32();
 
 	bool isSaving() { return _saveOrLoad; }
+
 };
 
 
@@ -1714,4 +1747,4 @@ void blit(byte *dst, byte *src, int w, int h);
 byte *findResource(uint32 id, byte *searchin, int index);
 void playSfxSound(void *sound, uint32 size, uint rate);
 bool isSfxFinished();
-void waitForTimer(Scumm *s, int delay);
+void waitForTimer(Scumm *s, int msec_delay);

@@ -1794,7 +1794,7 @@ void Scumm::o6_isAnyOf() {
 void Scumm::o6_quitPauseRestart() {
 	switch(fetchScriptByte()) {
 	case 158:
-		pauseGame(0);
+		pauseGame(false);
 		break;
 	case 160:
 		shutDown(0);

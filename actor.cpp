@@ -585,6 +585,8 @@ void Scumm::showActors() {
 void Scumm::stopTalk() {
 	int act;
 
+	stopTalkSound();
+
 	_haveMsg = 0;
 	_talkDelay = 0;
 

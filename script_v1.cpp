@@ -1227,7 +1227,7 @@ void Scumm::o5_putActorInRoom() {
 void Scumm::o5_quitPauseRestart() {
 	switch(fetchScriptByte()) {
 	case 1:
-		pauseGame(0);
+		pauseGame(false);
 		break;
 	case 3:
 		shutDown(0);

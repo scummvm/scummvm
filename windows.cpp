@@ -31,11 +31,7 @@
 #endif
 
 #include "scumm.h"
-
-#if defined(USE_IMUSE)
 #include "sound.h"
-#endif
-
 #include "gui.h"
 
 #if !defined(ALLOW_GDI)
@@ -135,10 +131,7 @@ int sel;
 Scumm scumm;
 ScummDebugger debugger;
 Gui gui;
-
-#if defined(USE_IMUSE)
 SoundEngine sound;
-#endif
 
 WndMan wm[1];
 byte veryFastMode;
@@ -819,95 +812,6 @@ void blitToScreen(Scumm *s, byte *src,int x, int y, int w, int h) {
 
 }
 
-#define SAMPLES_PER_SEC 22050
-#define BUFFER_SIZE (8192)
-#define BITS_PER_SAMPLE 16
-
-struct MixerChannel {
-	void *_sfx_sound;
-	uint32 _sfx_pos;
-	uint32 _sfx_size;
-	uint32 _sfx_fp_speed;
-	uint32 _sfx_fp_pos;
-
-	void mix(int16 *data, uint32 len);
-	void clear();
-};
-
-#define NUM_MIXER 4
-
-static MixerChannel mixer_channel[NUM_MIXER];
-
-MixerChannel *find_channel() {
-	int i;
-	MixerChannel *mc = mixer_channel;
-	for(i=0; i<NUM_MIXER; i++,mc++) {
-		if (!mc->_sfx_sound)
-			return mc;
-	}
-	return NULL;
-}
-
-
-bool isSfxFinished() {
-	int i;
-	for(i=0; i<NUM_MIXER; i++)
-		if (mixer_channel[i]._sfx_sound)
-			return false;
-	return true;
-}
-
-void playSfxSound(void *sound, uint32 size, uint rate) {
-	MixerChannel *mc = find_channel();
-
-	if (!mc) {
-		warning("No mixer channel available");
-		return;
-	}
-
-	mc->_sfx_sound = sound;
-	mc->_sfx_pos = 0;
-	mc->_sfx_fp_speed = (1<<16) * rate / 22050;
-	mc->_sfx_fp_pos = 0;
-
-	while (size&0xFFFF0000) size>>=1, rate>>=1;
-	mc->_sfx_size = size * 22050 / rate;
-}
-
-void MixerChannel::mix(int16 *data, uint32 len) {
-	int8 *s;
-	int i;
-	uint32 fp_pos, fp_speed;
-
-	if (!_sfx_sound)
-		return;
-	if (len > _sfx_size)
-		len = _sfx_size;
-	_sfx_size -= len;
-
-	s = (int8*)_sfx_sound + _sfx_pos;
-	fp_pos = _sfx_fp_pos;
-	fp_speed = _sfx_fp_speed;
-
-	do {
-		fp_pos += fp_speed;
-		*data++ += (*s<<6);
-		s += fp_pos >> 16;
-		fp_pos &= 0x0000FFFF;
-	} while (--len);
-
-	_sfx_pos = s - (int8*)_sfx_sound;
-	_sfx_fp_speed = fp_speed;
-	_sfx_fp_pos = fp_pos;
-
-	if (!_sfx_size)
-		clear();
-}
-
-void MixerChannel::clear() {
-	free(_sfx_sound);
-	_sfx_sound = NULL;
-}
 
 int clock;
 
@@ -923,8 +827,8 @@ void updateScreen(Scumm *s) {
 void waitForTimer(Scumm *s, int delay) {
 	wm->handleMessage();
 	if (!veryFastMode) {
-		assert(delay<500);
-		Sleep(delay*10);
+		assert(delay<5000);
+		Sleep(delay);
 	} 
 }
 
@@ -940,16 +844,8 @@ void drawMouse(Scumm *s, int x, int y, int w, int h, byte *buf, bool visible) {
 }
 
 void fill_buffer(int16 *buf, int len) {
-	int i;
-#if defined(USE_IMUSE)
-	sound.generate_samples(buf,len);
-#else
 	memset(buf, 0, len*2);
-#endif
-	for(i=NUM_MIXER-1; i>=0;i--) {
-		mixer_channel[i].mix((int16*)buf, len);
-	}
-
+	scumm.mixWaves(buf, len);
 }
 
 void WndMan::prepare_header(WAVEHDR *wh, int i) {
@@ -975,6 +871,7 @@ void WndMan::sound_init() {
 	wfx.nBlockAlign = BITS_PER_SAMPLE * 1 / 8;
 
 	CreateThread(NULL, 0, (unsigned long (__stdcall *)(void *))&sound_thread, this, 0, &_threadId);
+	SetThreadPriority((void*)_threadId, THREAD_PRIORITY_HIGHEST);
 
 	_event = CreateEvent(NULL, false, false, NULL);
 
@@ -988,13 +885,25 @@ void WndMan::sound_init() {
 
 DWORD _stdcall WndMan::sound_thread(WndMan *wm) {
 	int i;
+	bool signaled;
+	int time = GetTickCount(), cur;
+
 	while (1) {
-		WaitForSingleObject(wm->_event, INFINITE);
-		for(i=0; i<2; i++) {
-			WAVEHDR *hdr = &wm->_hdr[i];
-			if (hdr->dwFlags & WHDR_DONE) {
-				fill_buffer((int16*)hdr->lpData, hdr->dwBufferLength>>1);
-				waveOutWrite(wm->_handle, hdr, sizeof(WAVEHDR));
+		cur = GetTickCount();
+		while (time < cur) {
+			sound.on_timer();
+			time += 10;
+		}
+
+		signaled = WaitForSingleObject(wm->_event, time - cur) == WAIT_OBJECT_0;
+
+		if (signaled) {
+			for(i=0; i<2; i++) {
+				WAVEHDR *hdr = &wm->_hdr[i];
+				if (hdr->dwFlags & WHDR_DONE) {
+					fill_buffer((int16*)hdr->lpData, hdr->dwBufferLength>>1);
+					waveOutWrite(wm->_handle, hdr, sizeof(WAVEHDR));
+				}
 			}
 		}
 	}
@@ -1011,10 +920,8 @@ int main(int argc, char* argv[]) {
 	wm->_vgabuf = (byte*)calloc(320,200);
 	wm->_scumm = &scumm;
 	
-#if defined(USE_IMUSE)
-	sound.initialize(NULL);
+	sound.initialize(&scumm);
 	scumm._soundDriver = &sound;
-#endif
 
 	scumm._gui = &gui;
 	scumm.scummMain(argc, argv);
@@ -1023,6 +930,8 @@ int main(int argc, char* argv[]) {
 	delta = 0;
 	do {
 		updateScreen(&scumm);
+
+		waitForTimer(&scumm, tmp*10);
 
 		if (gui._active) {
 			gui.loop();
@@ -1035,8 +944,6 @@ int main(int argc, char* argv[]) {
 			if (scumm._fastMode)
 				tmp=1;
 		}
-		
-		waitForTimer(&scumm, tmp);
 	} while(1);
 
 	return 0;
