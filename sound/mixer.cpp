@@ -155,12 +155,24 @@ public:
 
 
 SoundMixer::SoundMixer() {
-	memset(this,0,sizeof(SoundMixer)); // palmos
+	_syst = 0;
+	_mutex = 0;
+
+	_premixParam = 0;
+	_premixProc = 0;
+
+	for (int i = 0; i != NUM_CHANNELS; i++)
+		_handles[i] = NULL;
+	
+	_outputRate = 0;
 
 	_volumeTable = (int16 *)calloc(256 * sizeof(int16), 1);
-	for (int i = 0; i != NUM_CHANNELS; i++) {
+	_musicVolume = 0;
+
+	_paused = false;
+
+	for (int i = 0; i != NUM_CHANNELS; i++)
 		_channels[i] = NULL;
-	}
 }
 
 SoundMixer::~SoundMixer() {
