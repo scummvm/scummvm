@@ -166,7 +166,7 @@ void Bitmap::draw() const {
 	glLoadIdentity();
 	// A lot more may need to be put there : disabling Alpha test, blending, ...
 	// For now, just keep this here :-)
-	if (hasTransparency_) {
+	if (format_ == 1 && hasTransparency_) {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}

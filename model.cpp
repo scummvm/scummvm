@@ -243,6 +243,13 @@ void Model::HierNode::loadBinary(const char *&data,
 		pitch_ = get_float(data + 124);
 		yaw_ = get_float(data + 128);
 		roll_ = get_float(data + 132);
+		animPos_ = pos_;
+		animPitch_ = pitch_;
+		animYaw_ = yaw_;
+		animRoll_ = roll_;
+		priority_ = -1;
+		totalWeight_ = 1;
+
 		data += 184;
 
 		if (parentPtr != 0) {
