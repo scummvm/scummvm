@@ -825,7 +825,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	if (_gameId == GID_TENTACLE)	// Maybe misplaced, but that's the main idea
 		_scummVars[120] = var120Backup;
 	if (_gameId == GID_INDY4)
-		_scummVars[98] = var98Backup;;
+		_scummVars[98] = var98Backup;
 
 	s->saveLoadArrayOf(_bitVars, _numBitVariables >> 3, 1, sleByte);
 
