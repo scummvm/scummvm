@@ -524,6 +524,7 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 				ymoveCur = _ymove + _srcptr[3];
 				_xmove += _srcptr[4];
 				_ymove -= _srcptr[5];
+				_srcptr += 6;
 			} else {
 				// FIXME: those are here just in case... you never now...
 				assert(_srcptr[1] == 0);
