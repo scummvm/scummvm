@@ -52,6 +52,108 @@ static File fpMus;
 #define GetCompressedSign(n)       (((n) >> 3) & 1)
 #define GetCompressedAmplitude(n)  ((n) & 7)
 
+#define BUFFER_SIZE 4096U
+
+class CLUInputStream : public AudioStream {
+	File *_file;
+	uint _end_pos;
+	int16 _outbuf[BUFFER_SIZE];
+	byte _inbuf[BUFFER_SIZE];
+	const int16 *_bufferEnd;
+	const int16 *_pos;
+
+	uint16 _prev;
+
+	void refill();
+	inline bool eosIntern() const;
+public:
+	CLUInputStream(File *file, int duration);
+	~CLUInputStream();
+
+	int readBuffer(int16 *buffer, const int numSamples);
+
+	int16 read();
+	bool endOfData() const	{ return eosIntern(); }
+	bool isStereo() const	{ return false; }
+	int getRate() const	{ return 22050; }
+};
+
+CLUInputStream::CLUInputStream(File *file, int size)
+	: _file(file), _bufferEnd(_outbuf + BUFFER_SIZE) {
+
+	_file->incRef();
+
+	// Determine the end position.
+	_end_pos = file->pos() + size;
+
+	_prev = _file->readUint16LE();
+
+	// Read in initial data
+	refill();
+}
+
+CLUInputStream::~CLUInputStream() {
+	_file->decRef();
+}
+
+inline int16 CLUInputStream::read() {
+	assert(!eosIntern());
+
+	int16 sample = *_pos++;
+	if (_pos >= _bufferEnd) {
+		refill();
+	}
+	return sample;
+}
+
+inline bool CLUInputStream::eosIntern() const {
+	return _pos >= _bufferEnd;
+}
+
+int CLUInputStream::readBuffer(int16 *buffer, const int numSamples) {
+	int samples = 0;
+	while (samples < numSamples && !eosIntern()) {
+		const int len = MIN(numSamples - samples, (int) (_bufferEnd - _pos));
+		memcpy(buffer, _pos, len * 2);
+		buffer += len;
+		_pos += len;
+		samples += len;
+		if (_pos >= _bufferEnd) {
+			refill();
+		}
+	}
+	return samples;
+}
+
+void CLUInputStream::refill() {
+	byte *in = _inbuf;
+	int16 *out = _outbuf;
+	uint len_left = _file->read(in, MIN(BUFFER_SIZE, _end_pos - _file->pos()));
+
+	while (len_left > 0) {
+		uint16 delta = GetCompressedAmplitude(*in) << GetCompressedShift(*in);
+		uint16 sample;
+
+		if (GetCompressedSign(*in))
+			sample = _prev - delta;
+		else
+			sample = _prev + delta;
+
+		_prev = sample;
+		*out++ = sample;
+		*in++;
+		len_left--;
+	}
+
+	_pos = _outbuf;
+	_bufferEnd = out;
+}
+
+AudioStream *makeCLUStream(File *file, int size) {
+	assert(size >= 2);
+	return new CLUInputStream(file, size);
+}
+
 static void premix_proc(void *param, int16 *data, uint len) {
 	((Sound *) param)->streamMusic(data, len);
 }
@@ -97,6 +199,9 @@ Sound::~Sound() {
 		_vm->_system->deleteMutex(_mutex);
 }
 
+// FIXME: Merge openSoundFile() and getAudioStream() once compressed music has
+// been implemented?
+
 int Sound::openSoundFile(File *fp, const char *base) {
 	struct {
 		const char *ext;
@@ -111,7 +216,7 @@ int Sound::openSoundFile(File *fp, const char *base) {
 #ifdef USE_FLAC
 		{ "clf", kFlacMode },
 #endif
-		{ "clu", kWAVMode }
+		{ "clu", kCLUMode }
 	};
 
 	char filename[20];
@@ -131,6 +236,53 @@ int Sound::openSoundFile(File *fp, const char *base) {
 	}
 
 	return 0;
+}
+
+AudioStream *Sound::getAudioStream(File *fp, const char *base, uint32 id, uint32 *numSamples) {
+	int soundMode = openSoundFile(fp, base);
+
+	if (!soundMode)
+		return NULL;
+
+	fp->seek((id + 1) * ((soundMode == kCLUMode) ? 8 : 12), SEEK_SET);
+
+	uint32 pos = fp->readUint32LE();
+	uint32 len = fp->readUint32LE();
+	uint32 enc_len;
+
+	if (numSamples)
+		*numSamples = len;
+
+	if (soundMode != kCLUMode)
+		enc_len = fp->readUint32LE();
+	else
+		enc_len = len + 1;
+
+	if (!pos || !len) {
+		fp->close();
+		return NULL;
+	}
+
+	fp->seek(pos, SEEK_SET);
+
+	switch (soundMode) {
+	case kCLUMode:
+		return makeCLUStream(fp, enc_len);
+#ifdef USE_MAD
+	case kMP3Mode:
+		return makeMP3Stream(fp, enc_len);
+#endif
+#ifdef USE_VORBIS
+	case kVorbisMode:
+		return makeVorbisStream(fp, enc_len);
+#endif
+#ifdef USE_FLAC
+	case kFlacMode:
+		return makeFlacStream(fp, enc_len);
+#endif
+	default:
+		return NULL;
+	}
 }
 
 void Sound::streamMusic(int16 *data, uint len) {
@@ -784,68 +936,24 @@ int32 Sound::amISpeaking(void) {
 
 /**
  * This function loads and decompresses a list of speech from a cluster, but
- * does not play it. This is primarily used by playCompSpeech(), but also to
- * store the voice-overs for the animated cutscenes until they are played.
+ * does not play it. This is used for cutscene voice-overs, presumably to
+ * avoid having to read from more than one file on the CD during playback.
  * @param filename the file name of the speech cluster file
  * @param speechid the text line id used to reference the speech
  * @param buf a pointer to the buffer that will be allocated for the sound
  */
 
 uint32 Sound::preFetchCompSpeech(uint32 speechid, uint16 **buf) {
-	AudioStream *input = NULL;
 	File fp;
-	int soundMode = kWAVMode;
+	uint32 numSamples;
+
+	AudioStream *input = getAudioStream(&fp, "speech", speechid, &numSamples);
 
 	*buf = NULL;
 
-	// Open the speech cluster and find the data offset & size
-
-	soundMode = openSoundFile(&fp, "speech");
-	if (!soundMode)
-		return 0;
-
-	if (soundMode == kWAVMode)
-		fp.seek((speechid + 1) * 8, SEEK_SET);
-	else
-		fp.seek((speechid + 1) * 12, SEEK_SET);
-
-	uint32 speechPos = fp.readUint32LE();
-	uint32 speechLength = fp.readUint32LE();
-	uint32 encLength = 0;
-
-	if (soundMode != kWAVMode)
-		encLength = fp.readUint32LE();
-
-	if (!speechPos || !speechLength) {
-		fp.close();
-		return 0;
-	}
-
-	fp.seek(speechPos, SEEK_SET);
-
-	switch (soundMode) {
-#ifdef USE_MAD
-	case kMP3Mode:
-		input = makeMP3Stream(&fp, encLength);
-		break;
-#endif
-#ifdef USE_VORBIS
-	case kVorbisMode:
-		input = makeVorbisStream(&fp, encLength);
-		break;
-#endif
-#ifdef USE_FLAC
-	case kFlacMode:
-		input = makeFlacStream(&fp, encLength);
-		break;
-#endif
-	default:
-		break;
-	}
-
 	// Decompress data into speech buffer.
 
-	uint32 bufferSize = speechLength * 2;
+	uint32 bufferSize = 2 * numSamples;
 
 	*buf = (uint16 *) malloc(bufferSize);
 	if (!*buf) {
@@ -854,47 +962,12 @@ uint32 Sound::preFetchCompSpeech(uint32 speechid, uint16 **buf) {
 		return 0;
 	}
 
-	if (input) {
-		int numSamples = input->readBuffer((int16 *) *buf, speechLength);
-		fp.close();
-		delete input;
-		return numSamples * 2;
-	}
-
-	uint16 *data16 = *buf;
-
-	// Create a temporary buffer for compressed speech
-	byte *data8 = (byte *) malloc(speechLength);
-	if (!data8) {
-		free(data16);
-		fp.close();
-		return 0;
-	}
-
-	// FIXME: Create an AudioStream-based class for this. This could then
-	// also be used by the music code.
-
-	if (fp.read(data8, speechLength) != speechLength) {
-		fp.close();
-		free(data16);
-		free(data8);
-		return 0;
-	}
+	uint32 readSamples = input->readBuffer((int16 *) *buf, numSamples);
 
 	fp.close();
+	delete input;
 
-	// Starting Value
-	data16[0] = READ_LE_UINT16(data8);
-
-	for (uint32 i = 1; i < speechLength; i++) {
-		if (GetCompressedSign(data8[i + 1]))
-			data16[i] = data16[i - 1] - (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
-		else
-			data16[i] = data16[i - 1] + (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
-	}
-
-	free(data8);
-	return bufferSize;
+	return 2 * readSamples;
 }
 
 /**
@@ -910,17 +983,18 @@ int32 Sound::playCompSpeech(uint32 speechid, uint8 vol, int8 pan) {
 	if (_speechMuted)
 		return RD_OK;
 
-	uint16 *data16;
-	uint32 bufferSize;
-	
 	if (getSpeechStatus() == RDERR_SPEECHPLAYING)
 		return RDERR_SPEECHPLAYING;
 
-	bufferSize = preFetchCompSpeech(speechid, &data16);
+	File *fp = new File;
+	AudioStream *input = getAudioStream(fp, "speech", speechid, NULL);
 
-	// We don't know exactly what went wrong here.
-	if (bufferSize == 0)
-		return RDERR_OUTOFMEMORY;
+	// Make the AudioStream object the sole owner of the file so that it
+	// will die along with the AudioStream when the speech has finished.
+	fp->decRef();
+
+	if (!input)
+		return RDERR_INVALIDID;
 
 	// Modify the volume according to the master volume
 
@@ -928,17 +1002,9 @@ int32 Sound::playCompSpeech(uint32 speechid, uint8 vol, int8 pan) {
 	int8 p = _panTable[pan + 16];
 
 	// Start the speech playing
-
 	_speechPaused = true;
-			
-	uint32 flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
 
-#ifndef SCUMM_BIG_ENDIAN
-	flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
-#endif
-
-	_vm->_mixer->playRaw(&_soundHandleSpeech, data16, bufferSize, 22050, flags, -1, volume, p);
-
+	_vm->_mixer->playInputStream(&_soundHandleSpeech, input, false, volume, p);
 	_speechStatus = true;
 
 	// DipMusic();

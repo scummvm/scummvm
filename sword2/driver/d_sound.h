@@ -20,6 +20,7 @@
 #ifndef D_SOUND_H
 #define D_SOUND_H
 
+#include "common/file.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
@@ -32,7 +33,7 @@ namespace Sword2 {
 #define MAXMUS 2
 
 enum {
-	kWAVMode = 1,
+	kCLUMode = 1,
 	kMP3Mode,
 	kVorbisMode,
 	kFlacMode
@@ -116,6 +117,7 @@ private:
 	void stopFxHandle(int i);
 
 	int openSoundFile(File *fp, const char *base);
+	AudioStream *getAudioStream(File *fp, const char *base, uint32 id, uint32 *numSamples);
 
 public:
 	Sound(Sword2Engine *vm);
