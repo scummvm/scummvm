@@ -29,6 +29,21 @@
 #include <cstdio>
 #include <map>
 
+class BitmapComponent : public Costume::Component {
+public:
+  BitmapComponent(Costume::Component *parent, int parentID,
+		 const char *filename);
+  BitmapComponent *copy(Costume::Component *newParent);
+  void update();
+  void draw();
+
+private:
+  std::string filename_;
+  std::string zbuf_filename_;
+  Bitmap *bitmap_;
+  Bitmap *zbuffer_;
+};
+
 class ModelComponent : public Costume::Component {
 public:
   ModelComponent(Costume::Component *parent, int parentID,
@@ -82,6 +97,29 @@ private:
   int num_;
   Model::HierNode *node_;
 };
+
+BitmapComponent::BitmapComponent(Costume::Component *parent, int parentID,
+			       const char *filename) :
+  Costume::Component(parent, parentID), filename_(filename), bitmap_(NULL),
+  zbuffer_(NULL) {
+
+  bitmap_ = ResourceLoader::instance()->loadBitmap(filename);
+  warning("Instanced BitmapComponenet from Costume renderer: NOT IMPLEMENTED YET");
+}
+
+BitmapComponent *BitmapComponent::copy(Costume::Component *newParent) {
+  BitmapComponent *result = new BitmapComponent(*this);
+  result->setParent(newParent);
+  return result;
+}
+
+void BitmapComponent::draw() {
+ ;
+}
+
+void BitmapComponent::update() {
+ ;
+}
 
 ModelComponent::ModelComponent(Costume::Component *parent, int parentID,
 			       const char *filename) :
@@ -211,6 +249,7 @@ ColormapComponent::ColormapComponent(Costume::Component *parent,
   Costume::Component(parent, parentID)
 {
   cmap_ = ResourceLoader::instance()->loadColormap(filename);
+
   ModelComponent *mc = dynamic_cast<ModelComponent *>(parent);
   if (mc != NULL)
     mc->setColormap(cmap_);
@@ -473,6 +512,7 @@ Costume::Costume(const char *filename, const char *data, int len) :
     chores_[id].length_ = length;
     chores_[id].numTracks_ = tracks;
     std::memcpy(chores_[id].name_, name, 32);
+    printf("Loaded chore: %s\n", name);
   }
 
   ts.expectString("section keys");
@@ -603,6 +643,9 @@ Costume::Component *Costume::loadComponent
     return new LuaVarComponent(parent, parentID, name);
   else if (std::memcmp(tag, "imls", 4) == 0)
     return new SoundComponent(parent, parentID, name);
+  else if (std::memcmp(tag, "bknd", 4) == 0)
+    return new BitmapComponent(parent, parentID, name);
+  
   warning("Unknown tag '%.4s', name '%s'\n", tag, name);
   return NULL;
 }
@@ -661,6 +704,13 @@ int Costume::isChoring(bool excludeLooping) {
       return i;
   }
   return -1;
+}
+
+void Costume::setTalkChore(int index, int chore) {
+ if (index > MAX_TALK_CHORES)
+  return;
+
+ talkChores_[index-1] = chore;
 }
 
 void Costume::draw() {

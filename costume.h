@@ -20,6 +20,7 @@
 
 #include "resource.h"
 
+#define MAX_TALK_CHORES 6	// Ender: Pulled this number from thin air. Check.
 class TextSplitter;
 class Actor;
 
@@ -41,6 +42,7 @@ public:
   int isChoring(int num, bool excludeLooping);
   int isChoring(bool excludeLooping);
 
+  void setTalkChore(int index, int chore);
   void update();
   void draw();
 
@@ -110,6 +112,7 @@ private:
 
   int numChores_;
   Chore *chores_;
+  int talkChores_[MAX_TALK_CHORES];
 };
 
 #endif

@@ -234,6 +234,24 @@ static void GetActorTalkColor() {
   lua_pushusertag(c, color_tag);
 }
 
+static void SetActorTalkChore() {
+  Actor *act = check_actor(1);
+  int index = check_int(2);
+  int chore = check_int(3);
+  Costume *costume;
+
+  if (lua_isnil(lua_getparam(4))) {
+    costume = act->currentCostume();
+    if (costume == NULL)
+      error("Actor %s has no costume\n", act->name());
+  } else {
+    costume = act->findCostume(luaL_check_string(4));
+    if (costume == NULL)
+      error("Actor %s has no costume %s\n", act->name(), lua_getstring(lua_getparam(4)));
+  }
+
+  costume->setTalkChore(index, chore);
+}
 static void SetActorVisibility() {
   Actor *act = check_actor(1);
   bool val = getbool(2);
@@ -785,7 +803,6 @@ static char *stubFuncs[] = {
   "GetActorYawToPoint",
   "GetActorPuckVector",
   "GetActorRect",
-  "SetActorTalkChore",
   "SetActorMumblechore",
   "SetActorRestChore",
   "SetActorTurnChores",
@@ -1012,6 +1029,7 @@ struct luaL_reg builtins[] = {
   { "WalkActorTo", WalkActorTo },
   { "TurnActor", TurnActor },
   { "PushActorCostume", PushActorCostume },
+  { "SetActorTalkChore", SetActorTalkChore },
   { "SetActorCostume", SetActorCostume },
   { "GetActorCostume", GetActorCostume },
   { "PopActorCostume", PopActorCostume },
