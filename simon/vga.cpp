@@ -67,7 +67,7 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_34_force_lock,
 	&SimonState::vc_35,
 	&SimonState::vc_36_saveload_thing,
-	&SimonState::vc_37_sprite_unk3_add,
+	&SimonState::vc_37_offset_y_f,
 	&SimonState::vc_38_skip_if_var_zero,
 	&SimonState::vc_39_set_var,
 	&SimonState::vc_40_var_add,
@@ -96,15 +96,15 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_63_palette_thing_2,
 	&SimonState::vc_64,
 	&SimonState::vc_65,
-	&SimonState::vc_66,
-	&SimonState::vc_67,
-	&SimonState::vc_68,
+	&SimonState::vc_66_nz,
+	&SimonState::vc_67_ge,
+	&SimonState::vc_68_le,
 	&SimonState::vc_69,
 	&SimonState::vc_70,
 	&SimonState::vc_71,
 	&SimonState::vc_72,
-	&SimonState::vc_73,
-	&SimonState::vc_74,
+	&SimonState::vc_73_set_op189_flag,
+	&SimonState::vc_74_clear_op189_flag,
 };
 
 // Script parser
@@ -1406,7 +1406,7 @@ void SimonState::vc_36_saveload_thing()
 	}
 }
 
-void SimonState::vc_37_sprite_unk3_add()
+void SimonState::vc_37_offset_y_f()				//vc_37_sprite_unk3_add
 {
 	VgaSprite *vsp = find_cur_sprite();
 	vsp->y += vc_read_var(vc_read_next_word());
@@ -1865,7 +1865,7 @@ void SimonState::vc_65()
 	_video_var_3 = false;
 }
 
-void SimonState::vc_66()
+void SimonState::vc_66_nz()
 {																// Simon2
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
@@ -1874,7 +1874,7 @@ void SimonState::vc_66()
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_67()
+void SimonState::vc_67_ge()
 {																// Simon2
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
@@ -1883,7 +1883,7 @@ void SimonState::vc_67()
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_68()
+void SimonState::vc_68_le()
 {																// Simon2
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
@@ -1926,13 +1926,13 @@ void SimonState::vc_72()
 	}
 }
 
-void SimonState::vc_73()
+void SimonState::vc_73_set_op189_flag()
 {																// Simon2
 	vc_read_next_byte();
 	_op_189_flags |= 1 << vc_read_next_byte();
 }
 
-void SimonState::vc_74()
+void SimonState::vc_74_clear_op189_flag()
 {																// Simon2
 	vc_read_next_byte();
 	_op_189_flags &= ~(1 << vc_read_next_byte());

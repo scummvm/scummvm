@@ -616,7 +616,7 @@ public:
 	void vc_34_force_lock();
 	void vc_35();
 	void vc_36_saveload_thing();
-	void vc_37_sprite_unk3_add();
+	void vc_37_offset_y_f();
 	void vc_38_skip_if_var_zero();
 	void vc_39_set_var();
 	void vc_40_var_add();
@@ -646,15 +646,15 @@ public:
 	// Simon2 specific Video Script Opcodes
 	void vc_64();
 	void vc_65();
-	void vc_66();
-	void vc_67();
-	void vc_68();
+	void vc_66_nz();
+	void vc_67_ge();
+	void vc_68_le();
 	void vc_69();
 	void vc_70();
 	void vc_71();
 	void vc_72();
-	void vc_73();
-	void vc_74();
+	void vc_73_set_op189_flag();
+	void vc_74_clear_op189_flag();
 
 	void delete_vga_timer(VgaTimerEntry * vte);
 	void vc_resume_thread(byte *code_ptr, uint16 cur_file, uint16 cur_sprite);
