@@ -145,6 +145,25 @@ void OSystem_SDL::handleKbdMouse() {
 	}
 }
 
+static byte SDLModToOSystemKeyFlags(SDLMod mod) {
+	byte b = 0;
+#ifdef LINUPY
+	// Yopy has no ALT key, steal the SHIFT key 
+	// (which isn't used much anyway)
+	if (mod & KMOD_SHIFT)
+		b |= OSystem::KBD_ALT;
+#else
+	if (mod & KMOD_SHIFT)
+		b |= OSystem::KBD_SHIFT;
+	if (mod & KMOD_ALT)
+		b |= OSystem::KBD_ALT;
+#endif
+	if (mod & KMOD_CTRL)
+		b |= OSystem::KBD_CTRL;
+
+	return b;
+}
+
 bool OSystem_SDL::pollEvent(Event &event) {
 	SDL_Event ev;
 	int axis;
@@ -162,21 +181,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 	while(SDL_PollEvent(&ev)) {
 		switch(ev.type) {
 		case SDL_KEYDOWN:
-#ifdef LINUPY
-			// Yopy has no ALT key, steal the SHIFT key 
-			// (which isn't used much anyway)
-			if (ev.key.keysym.mod & KMOD_SHIFT)
-				b |= KBD_ALT;
-			if (ev.key.keysym.mod & KMOD_CTRL)
-				b |= KBD_CTRL;
-#else
-			if (ev.key.keysym.mod & KMOD_SHIFT)
-				b |= KBD_SHIFT;
-			if (ev.key.keysym.mod & KMOD_CTRL)
-				b |= KBD_CTRL;
-			if (ev.key.keysym.mod & KMOD_ALT)
-				b |= KBD_ALT;
-#endif
+			b = SDLModToOSystemKeyFlags(SDL_GetModState());
 			event.kbd.flags = b;
 
 			// Alt-Return and Alt-Enter toggle full screen mode				
@@ -418,6 +423,7 @@ bool OSystem_SDL::pollEvent(Event &event) {
 			event.type = EVENT_KEYUP;
 			event.kbd.keycode = ev.key.keysym.sym;
 			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+			event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());;
 
 /*
 			switch(ev.key.keysym.sym) {
