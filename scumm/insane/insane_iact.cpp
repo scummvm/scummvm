@@ -86,7 +86,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		}
 
 		if (_approachAnim == -1) {
-			proc62(); //PATCH
+			chooseEnemy(); //PATCH
 			_approachAnim = _enemy[_currEnemy].apprAnim;
 		}
 
@@ -183,26 +183,25 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		}
 }
 
-void Insane::proc62(void) {
-	debug(1, "Insane::proc62");
+void Insane::chooseEnemy(void) {
 	if (readArray(58) != 0)
-		_enemy[EN_TORQUE].field_10 = 1;
+		_enemy[EN_TORQUE].isEmpty = 1;
 
 	if (_enemy[EN_TORQUE].occurences == 0) {
 		_currEnemy = EN_TORQUE;
-		_val215d++;
-		_val216d[_val215d] = EN_TORQUE;
+		_metEnemiesListTail++;
+		_metEnemiesList[_metEnemiesListTail] = EN_TORQUE;
 		return;
 	}
 
-	proc63();
+	removeEmptyEnemies();
 
 	int32 count, i, j, en, en2;
 	bool notfound;
 
 	en = 0;
 	for (i = 0; i < 9; i++)
-		if (_enemy[i].field_10 == 0)
+		if (_enemy[i].isEmpty == 0)
 			++en;
 
 	en -= 4;
@@ -220,16 +219,16 @@ void Insane::proc62(void) {
 
 			notfound = true;
 
-			if (_enemy[en2].field_10 != 0)
+			if (_enemy[en2].isEmpty != 0)
 				continue;
 
-			if (0 < _val215d) {
+			if (0 < _metEnemiesListTail) {
 				i = 0;
 				do {
-					if (en2 == _val216d[i + 1])
+					if (en2 == _metEnemiesList[i + 1])
 						notfound = false;
 					i++;
-				} while (i < _val215d && notfound);
+				} while (i < _metEnemiesListTail && notfound);
 			}
 			if (!notfound) {
 				continue;
@@ -239,29 +238,29 @@ void Insane::proc62(void) {
 			do {
 				notfound = true;
 				en2 = j;
-				if (0 < _val215d) {
+				if (0 < _metEnemiesListTail) {
 					i = 0;
 					do {
-						if (en2 == _val216d[i + 1])
+						if (en2 == _metEnemiesList[i + 1])
 							notfound = false;
 						i++;
-					} while (i < _val215d && notfound);
+					} while (i < _metEnemiesListTail && notfound);
 				}
 				j++;
 			} while (j < 9 && !notfound);
 			if (!notfound) {
-				_val215d = 0;
+				_metEnemiesListTail = 0;
 				count = 0;				
 				continue;
 			}
 		}
 	
-		++_val215d;
-		assert(_val215d < ARRAYSIZE(_val216d));
-		_val216d[_val215d] = en2;
+		++_metEnemiesListTail;
+		assert(_metEnemiesListTail < ARRAYSIZE(_metEnemiesList));
+		_metEnemiesList[_metEnemiesListTail] = en2;
 
-		if (_val215d >= en) {
-			proc64(0);
+		if (_metEnemiesListTail >= en) {
+			removeEnemyFromMetList(0);
 		}
 
 		if (notfound)
@@ -271,25 +270,25 @@ void Insane::proc62(void) {
 	_currEnemy = en2;
 }
 
-void Insane::proc63(void) {
-	if (_val215d > 0) {
-		for (int i = 0; i < _val215d; i++)
-			if (_enemy[i].field_10 == 1)
-				proc64(i);
+void Insane::removeEmptyEnemies(void) {
+	if (_metEnemiesListTail > 0) {
+		for (int i = 0; i < _metEnemiesListTail; i++)
+			if (_enemy[i].isEmpty == 1)
+				removeEnemyFromMetList(i);
 	}
 }
 
-void Insane::proc64(int32 enemy1) {
-	if (enemy1 >= _val215d)
+void Insane::removeEnemyFromMetList(int32 enemy1) {
+	if (enemy1 >= _metEnemiesListTail)
 		return;
 
 	int en = enemy1;
 	do {
 		++en;
-		assert(en + 1 < ARRAYSIZE(_val216d));
-		_val216d[en] = _val216d[en + 1];
-	} while (en < _val215d);
-	_val215d--;
+		assert(en + 1 < ARRAYSIZE(_metEnemiesList));
+		_metEnemiesList[en] = _metEnemiesList[en + 1];
+	} while (en < _metEnemiesListTail);
+	_metEnemiesListTail--;
 }
 
 void Insane::iactScene3(byte *renderBitmap, int32 codecparam, int32 setupsan12,

@@ -2410,7 +2410,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].lost = true;
 		if (_actor[1].act[2].frame >= 18) {
 			writeArray(7, 1);
-			_enemy[EN_VULTM2].field_10 = 1;
+			_enemy[EN_VULTM2].isEmpty = 1;
 			queueSceneSwitch(12, 0, "getnitro.san", 0, 0, 0, 0);
 		}
 		break;
@@ -2467,7 +2467,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		
 		if (_actor[1].act[2].frame >= 18 || ((_actor[1].x < 50 || _actor[1].x > 270) &&
 											 _actor[1].act[2].frame >= 9)) {
-			_enemy[EN_CAVEFISH].field_10 = 1;
+			_enemy[EN_CAVEFISH].isEmpty = 1;
 			queueSceneSwitch(20, 0, "wr2_cvko.san", 64, 0, 0, 0);
 			_actor[1].act[2].state = 38;
 		}
@@ -2535,7 +2535,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].act[0].room = 0;
 		_actor[1].cursorX = 0;
 		_actor[1].act[2].state = 114;
-		_enemy[EN_VULTF2].field_10 = 1;
+		_enemy[EN_VULTF2].isEmpty = 1;
 		smlayer_startVoice(275);
 		break;
 	case 114:

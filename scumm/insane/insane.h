@@ -105,7 +105,6 @@ class Insane {
 	int16 _keyboardDisable;
 	bool _needSceneSwitch;
 	int32 _idx2Exceeded;
-	bool _memoryAllocatedNotOK;
 	int32 _lastKey;
 	bool _beenCheated;
 	bool _tiresRustle;
@@ -175,15 +174,15 @@ class Insane {
 	bool _val115_;
 	int32 _val211d;
 	int32 _val213d;
-	int32 _val215d;
-	int32 _val216d[12];
+	int32 _metEnemiesListTail;
+	int32 _metEnemiesList[12];
 
 	struct enemy {
 		int32 handler;
 		int32 initializer;
 		int16 occurences;
 		int32 maxdamage;
-		int32 field_10;
+		int32 isEmpty;
 		int32 weapon;
 		int32 sound;
 		char  filename[20];
@@ -288,7 +287,6 @@ class Insane {
 	int32 readArray(int item);
 	void writeArray(int item, int value);
 
-	void mainLoop(void);
 	bool idx1Compare(void);
 	bool idx2Compare(void);
 	int32 idx1Tweak(void);
@@ -335,7 +333,7 @@ class Insane {
 	void init_actStruct(int actornum, int actnum, int32 actorval, byte state, 
 						  int32 room, int32 animtilt, int32 tilt, int32 frame);
 	void init_enemyStruct(int n, int32 handler, int32 initializer,
-							   int16 occurences, int32 maxdamage, int32 field_10,
+							   int16 occurences, int32 maxdamage, int32 isEmpty,
 							   int32 field_14, int32 sound, const char *filename,
 							   int32 costume4, int32 costume6, int32 costume5,
 							   int16 field_2C, int32 field_30, int32 field_34);
@@ -448,9 +446,9 @@ class Insane {
 	bool isBitSet(int n);
 	void setBit(int n);
 	void clearBit(int n);
-	void proc62(void);
-	void proc63(void);
-	void proc64(int32);
+	void chooseEnemy(void);
+	void removeEmptyEnemies(void);
+	void removeEnemyFromMetList(int32);
 };
 } // End of namespace Insane
 

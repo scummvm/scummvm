@@ -122,7 +122,6 @@ void Insane::initvars(void) {
 	_keyboardDisable = 0;
 	_needSceneSwitch = false;
 	_idx2Exceeded = 0;
-	_memoryAllocatedNotOK = 0;
 	_lastKey = 0;
 	_tiresRustle = false;
 	_keybOldDx = 0;
@@ -156,7 +155,7 @@ void Insane::initvars(void) {
 	_roadBumps = false;
 	_val211d = 0;
 	_val213d = 0;
-	_val215d = 0;
+	_metEnemiesListTail = 0;
 	_smlayer_room = 0;
 	_smlayer_room2 = 0;
 	_isBenCut = 0;
@@ -165,6 +164,9 @@ void Insane::initvars(void) {
 	_counter1 = 0;
 	_iactSceneId = 0;
 	_iactSceneId2 = 0;
+
+	for (i = 0; i < 12; i++)
+		_metEnemiesList[i] = 0;
 
 	for (i = 0; i < 9; i++)
 		for (j = 0; j < 9; j++)
@@ -451,7 +453,7 @@ void Insane::init_actStruct(int actornum, int actnum, int32 actorval, byte state
 }
 
 void Insane::init_enemyStruct(int n, int32 handler, int32 initializer,
-								   int16 occurences, int32 maxdamage, int32 field_10,
+								   int16 occurences, int32 maxdamage, int32 isEmpty,
 								   int32 weapon, int32 sound, const char *filename,
 								   int32 costume4, int32 costume6, int32 costume5,
 								   int16 costumevar, int32 maxframe, int32 apprAnim) {
@@ -461,7 +463,7 @@ void Insane::init_enemyStruct(int n, int32 handler, int32 initializer,
 	_enemy[n].initializer = initializer;
 	_enemy[n].occurences = occurences;
 	_enemy[n].maxdamage = maxdamage;
-	_enemy[n].field_10 = field_10;
+	_enemy[n].isEmpty = isEmpty;
 	_enemy[n].weapon = weapon;
 	_enemy[n].sound = sound;
 	strncpy(_enemy[n].filename, filename, 20);
@@ -648,7 +650,6 @@ void Insane::readState(void) { // PATCH
 		_actor[0].inventory[INV_DUST] = readArray(55) != 0;
 		_actor[0].inventory[INV_HAND] = 1;
 		_actor[0].inventory[INV_BOOT] = 1;
-		_enemy[EN_CAVEFISH].field_10 = readArray(56);
 		_smlayer_room = readArray(320);
 		_smlayer_room2 = readArray(321);
 		_posBrokenTruck = readArray(322);
@@ -667,8 +668,22 @@ void Insane::readState(void) { // PATCH
 		_enemy[EN_VULTF2].occurences = readArray(334);
 		_enemy[EN_VULTM2].occurences = readArray(335);
 		_enemy[EN_CAVEFISH].occurences = readArray(336);
-		_enemy[EN_VULTM2].field_10 = readArray(340);
-		_enemy[EN_VULTF2].field_10 = readArray(339);
+		_enemy[EN_VULTM2].isEmpty = readArray(340);
+		_enemy[EN_VULTF2].isEmpty = readArray(339);
+		_enemy[EN_CAVEFISH].isEmpty = readArray(56);
+
+		// Some sanity checks. There were submitted savefiles where these values were wrong
+		if (_enemy[EN_VULTM2].isEmpty != readArray(7))
+			error("Wrong INSANE parameters for EN_VULTM2 (%d %d). Please, report this", 
+				  _enemy[EN_VULTM2].isEmpty, readArray(7));
+
+		if (_enemy[EN_VULTF2].isEmpty != _actor[0].inventory[INV_CHAINSAW])
+			error("Wrong INSANE parameters for EN_VULTF2 (%d %d). Please, report this", 
+				  _enemy[EN_VULTF2].isEmpty, _actor[0].inventory[INV_CHAINSAW]);
+
+		if (_enemy[EN_CAVEFISH].isEmpty != readArray(8))
+			error("Wrong INSANE parameters for EN_CAVEFISH (%d %d). Please, report this", 
+				  _enemy[EN_CAVEFISH].isEmpty, readArray(8));
 	}
 }
 
@@ -689,47 +704,6 @@ void Insane::setupValues(void) {
 	_currEnemy = -1;
 	_approachAnim = -1;
 	smush_warpMouse(160, 100, -1);
-}
-
-// FIXME: it seems that in ScummVM it may be unused
-void Insane::mainLoop(void) {
-	int32 resid;
-
-	while (!idx2Compare()) {
-		if(!(resid = idx2Tweak()))
-			continue;
-	  
-		_vm->ensureResourceLoaded(rtSound, resid);
-		_vm->setResourceCounter(rtSound, resid, 1);
-	}
-	_vm->increaseResourceCounter();
-	
-	while (!idx1Compare()) {
-		resid = idx1Tweak();
-		_vm->ensureResourceLoaded(rtCostume, resid);
-		_vm->setResourceCounter(rtCostume, resid, 1);
-		// smlayer_lock (rtCostume, resid);
-	}
-	
-	if (loadSceneData(_currSceneId, 0, 2)) {
-		_sceneData1Loaded = 0;
-		_objArray2[0] = 0;
-		return;
-	}
-	_sceneData1Loaded = 1;
-	if (idx1Compare() || idx2Compare()) {
-		_objArray2[0] = 0;
-		return;
-	}
-	_objArray2[0]++;
-	if (_objArray2[0] <= 5) {
-		_objArray2[0] = 0;
-		return;
-	}
-	
-	smush_setToFinish();
-	loadSceneData(_currSceneId, 1, 2);
-	_memoryAllocatedNotOK = 1;
 }
 
 bool Insane::idx1Compare(void) {
