@@ -98,18 +98,20 @@ void SkyLogic::logicScript() {
 	for (;;) {
 		uint16 mode = _compact->mode; // get pointer to current script
 		printf("compact mode: %d\n", mode);
-		// FIXME: not endian safe
-		uint32 *p = (uint32 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + mode);
-		uint32 scr = *p; // get script number and offset
+		uint16 *p1= (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + mode);
+		uint16 *p2= (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + mode + 2);
+		uint32 scr = (*p2 << 16) | *p1; // get script number and offset
 
 		// FIXME: HACK ALERT!!!!
 		if (scr == 0x27)
 			scr = 0x9fa0027;
 
 		printf("script: 0x%X\n", scr);
-		*p = script(_compact, scr);
+		scr = script(_compact, scr);
+		*p1 = (uint16)(scr & 0xffff);
+		*p2 = (uint16)(scr >> 16);
 
-		if (!(*p & 0xffff0000)) // script finished
+		if (!(scr & 0xffff0000)) // script finished
 			_compact->mode -= 4;
 		else if (_compact->mode == mode)
 			return;
@@ -157,9 +159,11 @@ void SkyLogic::alt() {
 	// change the current script
 
 	_compact->logic = L_SCRIPT;
-	// FIXME: not endian safe
-	uint32 *p = (uint32 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode);
-	*p = _compact->extCompact->alt;
+	uint16 *p1= (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode);
+	uint16 *p2= (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2);
+
+	*p1 = _compact->extCompact->alt;
+	*p2 = 0;
 
 	logicScript();
 }
@@ -686,9 +690,10 @@ uint32 SkyLogic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
 	while (*getToTable != targetPlaceId)
 		getToTable += 2;
 
-	// FIXME: not endian safe
-	uint32 *p = (uint32 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode);
-	*p = *(getToTable + 1); // get new script
+	uint16 *p1= (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode);
+	uint16 *p2= (uint16 *)SkyCompact::getCompactElem(_compact, C_BASE_SUB + _compact->mode + 2);
+	*p1 = *(getToTable + 1); // get new script
+	*p2 = 0;
 
 	return 0; // drop out of script
 }
