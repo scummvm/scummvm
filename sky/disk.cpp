@@ -238,7 +238,7 @@ void SkyState::determineGameVersion(uint32 dnrEntries) {
 	
 	default:
 		//unknown version
-		warning("Unknown game version!");
+		error("Unknown game version!");
 		break;
 	}
 	

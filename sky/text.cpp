@@ -72,9 +72,7 @@ void SkyState::setupVersionSpecifics(uint32 version) {
 		break;
 
 	default:
-		warning("Unknown game version!");
-		//try the v0.0288 text decoder
-		getTextChar = &SkyState::getTextChar_v00288;
+		error("Unknown game version!");
 		break;
 	}
 
