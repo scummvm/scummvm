@@ -862,6 +862,8 @@ bool Command::executeIfDialog(const char *description) {
 			scumm_stricmp(description + strlen(description) - 4, ".dog") == 0) {
 		char cutaway[20];
 
+		_graphics->textClear(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
+
 		_logic->dialogue(description, _curCmd.noun, cutaway);
 
 		while (cutaway[0] != '\0') {
