@@ -127,7 +127,7 @@ void QueenEngine::roomChanged() {
 
 	if (_logic->currentRoom() == 7) {
 		warning("Room 7 not yet handled!");
-		// _logic->handlePinnacleRoom();
+		_logic->handlePinnacleRoom();
 		// XXX fadeout(0,223);
 	}
 	else if (_logic->currentRoom() == FOTAQ_LOGO && _logic->gameState(VAR_INTRO_PLAYED) == 0) {
