@@ -43,20 +43,23 @@
 extern "C" WBStartup *_WBenchMsg;
 
 // For command line parsing
-static STRPTR usageTemplate = "STORY,DATAPATH/K,WINDOW/S,SCALER/K,AMIGA/S,MIDIUNIT/K/N,MUSIC/K,MUSICVOL/K/N,SFXVOL/K/N,TEMPO/K/N,TALKSPEED/K/N,NOSUBTITLES=NST/S";
-typedef enum { USG_STORY = 0,	 USG_DATAPATH,  USG_WINDOW,  USG_SCALER, 	  USG_AMIGA,  USG_MIDIUNIT,  USG_MUSIC,   USG_MUSICVOL, USG_SFXVOL,    USG_TEMPO,   USG_TALKSPEED, USG_NOSUBTITLES } usageFields;
-static LONG	args[13] =  { (ULONG) NULL, (ULONG) NULL, FALSE, (ULONG) NULL, false, (ULONG) NULL, (ULONG) NULL, (ULONG) NULL, (ULONG) NULL,	(ULONG) NULL, (ULONG) NULL, false };
+static STRPTR usageTemplate = "STORY,DATAPATH/K,WINDOW/S,SCALER/K,AMIGA/S,MIDIUNIT/K/N,MUSIC/K,MASTERVOL/K/N,MUSICVOL/K/N,SFXVOL/K/N,TEMPO/K/N,TALKSPEED/K/N,LANGUAGE/K,NOSUBTITLES=NST/S, DEBUGLEVEL=DBGLVL/K/N, DUMPSCRIPTS/S";
+typedef enum { USG_STORY = 0, USG_DATAPATH, USG_WINDOW, USG_SCALER, USG_AMIGA, USG_MIDIUNIT, USG_MUSIC, USG_MASTERVOL, USG_MUSICVOL, USG_SFXVOL, USG_TEMPO, USG_TALKSPEED, USG_LANGUAGE, USG_NOSUBTITLES, USG_DEBUGLEVEL, USG_DUMPSCRIPTS, USG_MAX } usageFields;
+static LONG	args[USG_MAX];
 static RDArgs *ScummArgs = NULL;
 
 static char*ScummStory = NULL;
 static char*ScummPath = NULL;
+static char*ScummLang = NULL;
 	  STRPTR ScummMusicDriver = NULL;
 MidiDriver* EtudeMidiDriver = NULL;
 		 LONG ScummMidiUnit = 0;
+static LONG ScummMasterVolume = 0;
 static LONG ScummMidiVolume = 0;
 static LONG ScummMidiTempo = 0;
 static LONG ScummSfxVolume = 0;
 static LONG ScummTalkSpeed = 0;
+static LONG ScummDebugLevel = 0;
 static SCALERTYPE ScummGfxScaler = ST_INVALID;
 
 static BPTR OrigDirLock = 0;
@@ -194,6 +197,17 @@ static void ReadToolTypes(WBArg *OfFile)
 	if (ToolValue)
 		ScummMidiUnit = atoi(ToolValue);
 
+	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "MASTERVOL");
+	if (ToolValue)
+	{
+		int vol = atoi(ToolValue);
+		if (vol >= 0 && vol <= 100)
+		{
+			ScummMasterVolume = vol;
+			args[USG_MASTERVOL] = (ULONG) &ScummMasterVolume;
+		}
+	}
+
 	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "MUSICVOL");
 	if (ToolValue)
 	{
@@ -230,6 +244,16 @@ static void ReadToolTypes(WBArg *OfFile)
 		args[USG_TALKSPEED] = (ULONG) &ScummMidiTempo;
 	}
 
+	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "LANGUAGE");
+	if (ToolValue)
+	{
+		if (ScummLang)
+			FreeVec(ScummLang);
+		ScummLang = (char *) AllocVec(strlen(ToolValue)+4, MEMF_PUBLIC);
+		strcpy(ScummLang, "-q");
+		strcat(ScummLang, ToolValue);
+	}
+
 	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "SUBTITLES");
 	if (ToolValue)
 	{
@@ -248,6 +272,19 @@ static void ReadToolTypes(WBArg *OfFile)
 			args[USG_AMIGA] = TRUE;
 	}
 
+	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "DEBUGLEVEL");
+	if (ToolValue)
+		ScummDebugLevel = atoi(ToolValue);
+
+	ToolValue = (char *) FindToolType(dobj->do_ToolTypes, "DUMPSCRIPTS");
+	if (ToolValue)
+	{
+		if (MatchToolValue(ToolValue, "YES"))
+			args[USG_DUMPSCRIPTS] = TRUE;
+		else if (MatchToolValue(ToolValue, "NO"))
+			args[USG_DUMPSCRIPTS] = FALSE;
+	}
+
 	FreeDiskObject(dobj);
 }
 
@@ -255,8 +292,9 @@ static void ReadToolTypes(WBArg *OfFile)
 
 int main()
 {
-	char *argv[20];
-	char musicvol[6], sfxvol[6], talkspeed[12], tempo[12], scaler[14];
+	char *argv[30];
+	char mastervol[6], musicvol[6], sfxvol[6], talkspeed[12], tempo[12], scaler[14];
+	char dbglvl[6];
 	int argc = 0;
 
 	InitSemaphore(&ScummSoundThreadRunning);
@@ -265,6 +303,7 @@ int main()
 	g_scumm = NULL;
 	atexit(&close_resources);
 
+	memset(args, '\0', sizeof (args));
 	if (_WBenchMsg == NULL)
 	{
 		/* Parse the command line here */
@@ -306,6 +345,9 @@ int main()
 		if (args[USG_TEMPO])
 			ScummMidiTempo = *((LONG *) args[USG_TEMPO]);
 
+		if (args[USG_MASTERVOL])
+			ScummMasterVolume = *((LONG *) args[USG_MASTERVOL]);
+
 		if (args[USG_MUSICVOL])
 			ScummMidiVolume = *((LONG *) args[USG_MUSICVOL]);
 
@@ -314,6 +356,16 @@ int main()
 
 		if (args[USG_TALKSPEED])
 			ScummTalkSpeed = *((LONG *) args[USG_TALKSPEED]);
+
+		if (args[USG_LANGUAGE])
+		{
+			ScummLang = (char *) AllocVec(strlen((char *) args[USG_LANGUAGE])+4, MEMF_PUBLIC);
+			strcpy(ScummLang, "-q");
+			strcat(ScummLang, (char *) args[USG_LANGUAGE]);
+		}
+
+		if (args[USG_DEBUGLEVEL])
+			ScummDebugLevel = *((LONG *) args[USG_DEBUGLEVEL]);
 	}
 	else
 	{
@@ -346,7 +398,12 @@ int main()
 	}
 	else
 		argv[argc++] = "-gsuper2xsai";
-	if (args[USG_MUSICVOL] && ScummMidiVolume >= 0 && ScummMidiVolume <= 100)
+	if (args[USG_MASTERVOL] && ScummMasterVolume >= 0 && ScummMasterVolume <= 255)
+	{
+		sprintf(mastervol, "-o%ld", ScummMasterVolume);
+		argv[argc++] = mastervol;
+	}
+	if (args[USG_MUSICVOL] && ScummMidiVolume >= 0 && ScummMidiVolume <= 255)
 	{
 		sprintf(musicvol, "-m%ld", ScummMidiVolume);
 		argv[argc++] = musicvol;
@@ -365,6 +422,13 @@ int main()
 	{
 		sprintf(talkspeed, "-y%ld", ScummTalkSpeed);
 		argv[argc++] = talkspeed;
+	}
+	if (ScummLang) 				argv[argc++] = ScummLang;
+	if (args[USG_DUMPSCRIPTS]) argv[argc++] = "-u";
+	if (args[USG_DEBUGLEVEL])
+	{
+		sprintf(dbglvl, "-d%ld", ScummDebugLevel);
+		argv[argc++] = dbglvl;
 	}
 	if (ScummStory)
 		argv[argc++] = ScummStory;
