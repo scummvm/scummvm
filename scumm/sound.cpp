@@ -461,6 +461,19 @@ int Sound::startTalkSound(uint32 offset, uint32 b, int mode) {
 		return -1;
 	}
 
+	// Some games frequently assume that starting one sound effect will
+	// automatically stop any other that may be playing at that time. So
+	// that is what we do here, but we make an exception for speech.
+	// 
+	// Do any other games than these need this hack?
+
+	if (mode == 1 && (_scumm->_gameId == GID_TENTACLE || _scumm->_gameId == GID_SAMNMAX)) {
+		for (int i = 0; i < _scumm->_mixer->NUM_CHANNELS; i++) {
+			if (i != _talkChannel)
+				_scumm->_mixer->stop(i);
+		}
+	}
+
 	if (b > 8) {
 		num = (b - 8) >> 1;
 	}
@@ -711,17 +724,6 @@ int Sound::startSfxSound(File *file, int file_size) {
 	uint size = 0;
 	int rate, comp;
 	byte *data;
-
-	// FIXME: Some games frequently assume that starting one sound effect
-	// will automatically stop any other that may be playing at that time.
-	// Do any other games need this?
-
-	if (_scumm->_gameId == GID_TENTACLE || _scumm->_gameId == GID_SAMNMAX) {
-		for (int i = 0; i < _scumm->_mixer->NUM_CHANNELS; i++) {
-			if (i != _talkChannel)
-				_scumm->_mixer->stop(i);
-		}
-	}
 
 #ifdef COMPRESSED_SOUND_FILE
 	if (file_size > 0) {
