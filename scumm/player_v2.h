@@ -84,6 +84,18 @@ public:
 	virtual int  getMusicTimer() const;
 	virtual int  getSoundStatus(int sound) const;
 
+#ifdef __PALM_OS__
+private:
+	const uint8 *note_lengths;
+	const uint16 *hull_offsets;
+	const int16 *hulls;
+	const uint16 *freqmod_lengths;
+	const uint16 *freqmod_offsets;
+	const int8 *freqmod_table;
+	const uint16 *spk_freq_table;
+	const uint16 *pcjr_freq_table;
+#endif
+
 protected:
 	bool _isV3Game;
 	SoundMixer *_mixer;

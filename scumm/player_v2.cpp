@@ -42,14 +42,14 @@ namespace Scumm {
 #define FB_PNOISE 0x08000       /* feedback for periodic noise */
 
 #ifdef __PALM_OS__
-const uint8 *note_lengths;
-static const uint16 *hull_offsets;
-static const int16 *hulls;
-static const uint16 *freqmod_lengths;
-static const uint16 *freqmod_offsets;
-static const int8 *freqmod_table;
-static const uint16 *spk_freq_table;
-static const uint16 *pcjr_freq_table;
+const uint8 *g_note_lengths;
+static const uint16 *g_hull_offsets;
+static const int16 *g_hulls;
+static const uint16 *g_freqmod_lengths;
+static const uint16 *g_freqmod_offsets;
+static const int8 *g_freqmod_table;
+static const uint16 *g_spk_freq_table;
+static const uint16 *g_pcjr_freq_table;
 #else
 const uint8 note_lengths[] = {
 	0,  
@@ -343,7 +343,18 @@ static const uint16 pcjr_freq_table[12] = {
 
 Player_V2::Player_V2(ScummEngine *scumm, bool pcjr) {
 	int i;
-	
+
+#ifdef __PALM_OS__
+	note_lengths = g_note_lengths;
+	hull_offsets = g_hull_offsets;
+	hulls = g_hulls;
+	freqmod_lengths = g_freqmod_lengths;
+	freqmod_offsets = g_freqmod_offsets;
+	freqmod_table = g_freqmod_table;
+	spk_freq_table = g_spk_freq_table;
+	pcjr_freq_table = g_pcjr_freq_table;
+#endif
+
 	_isV3Game = (scumm->_version >= 3);
 	_scumm = scumm;
 	_system = scumm->_system;
@@ -588,15 +599,19 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 		if (opcode >= 0xf8) {
 			switch (opcode) {
 			case 0xf8: // set hull curve
+#ifndef __PALM_OS__
 				debug(7, "channels[%d]: hull curve %2d", 
 				channel - _channels, *script_ptr);
+#endif
 				channel->d.hull_curve = hull_offsets[*script_ptr / 2];
 				script_ptr++;
 				break;
 
 			case 0xf9: // set freqmod curve
+#ifndef __PALM_OS__
 				debug(7, "channels[%d]: freqmod curve %2d", 
 				channel - _channels, *script_ptr);
+#endif
 				channel->d.freqmod_table = freqmod_offsets[*script_ptr / 4];
 				channel->d.freqmod_modulo = freqmod_lengths[*script_ptr / 4];
 				script_ptr++;
@@ -604,7 +619,9 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 
 			case 0xfd: // clear other channel
 				value = READ_LE_UINT16 (script_ptr) / sizeof (ChannelInfo);
+#ifndef __PALM_OS__
 				debug(7, "clear channel %d", value);
+#endif
 				script_ptr += 2;
 				// In Indy3, when traveling to Venice a command is
 				// issued to clear channel 4. So we introduce a 4th
@@ -620,8 +637,10 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				// fall through
 
 			case 0xfa: // clear current channel
+#ifndef __PALM_OS__
 				if (opcode == 0xfa)
 					debug(9, "clear channel");
+#endif
 				channel->d.next_cmd   = 0;
 				channel->d.base_freq  = 0;
 				channel->d.freq_delta = 0;
@@ -647,7 +666,9 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 
 			case 0xfc: // call subroutine
 				offset = READ_LE_UINT16 (script_ptr);
+#ifndef __PALM_OS__
 				debug(7, "subroutine %d", offset);
+#endif
 				script_ptr += 2;
 				_retaddr = script_ptr;
 				script_ptr = _current_data + offset;
@@ -657,7 +678,9 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				opcode = *script_ptr++;
 				offset = READ_LE_UINT16 (script_ptr);
 				script_ptr += 2;
+#ifndef __PALM_OS__
 				debug(7, "loop if %d to %d", opcode, offset);
+#endif
 				if (!channel->array[opcode / 2] || --channel->array[opcode/2])
 					script_ptr += offset;
 				break;
@@ -666,8 +689,10 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				opcode = *script_ptr++;
 				value = READ_LE_UINT16 (script_ptr);
 				channel->array[opcode / 2] = value;
+#ifndef __PALM_OS__
 				debug(7, "channels[%d]: set param %2d = %5d", 
 						channel - &_channels[0], opcode, value);
+#endif
 				script_ptr += 2;
 				if (opcode == 14) {
 				    /* tempo var */
@@ -706,14 +731,14 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 					note = (*script_ptr++) & 0x7f;
 				}
 
-
+#ifndef __PALM_OS__
 				debug(8, "channels[%d]: @%04x note: %3d+%d len: %2d hull: %d mod: %d/%d/%d %s", 
 						dest_channel - channel, script_ptr ? script_ptr - _current_data - 2 : 0,
 						note, (signed short) dest_channel->d.transpose, channel->d.time_left,
 						dest_channel->d.hull_curve, dest_channel->d.freqmod_table,
 						dest_channel->d.freqmod_incr,dest_channel->d.freqmod_multiplier,
 						is_last_note ? "last":"");
-
+#endif
 
 				uint16 myfreq;
 				dest_channel->d.time_left = channel->d.time_left;
@@ -774,11 +799,13 @@ void Player_V2::next_freqs(ChannelInfo *channel) {
 		* (int) channel->d.freqmod_multiplier / 256
 		+ channel->d.base_freq;
 
+#ifndef __PALM_OS__
 	debug(9, "Freq: %d/%d, %d/%d/%d*%d %d",
 			channel->d.base_freq, (int16)channel->d.freq_delta,
 			channel->d.freqmod_table, channel->d.freqmod_offset,
 			channel->d.freqmod_incr, channel->d.freqmod_multiplier,
 			channel->d.freq);
+#endif
 
 	if (channel->d.note_length && !--channel->d.note_length) {
 		channel->d.hull_offset  = 16;
@@ -992,14 +1019,14 @@ void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 #include "scumm_globals.h"
 
 _GINIT(PlayerV2)
-_GSETPTR(Scumm::note_lengths, GBVARS_NOTELENGTHS_INDEX, uint8, GBVARS_SCUMM)
-_GSETPTR(Scumm::hull_offsets, GBVARS_HULLOFFSETS_INDEX, uint16, GBVARS_SCUMM)
-_GSETPTR(Scumm::hulls, GBVARS_HULLS_INDEX, int16, GBVARS_SCUMM)
-_GSETPTR(Scumm::freqmod_lengths, GBVARS_FREQMODLENGTHS_INDEX, uint16, GBVARS_SCUMM)
-_GSETPTR(Scumm::freqmod_offsets, GBVARS_FREQMODOFFSETS_INDEX, uint16, GBVARS_SCUMM)
-_GSETPTR(Scumm::freqmod_table, GBVARS_FREQMODTABLE_INDEX, int8, GBVARS_SCUMM)
-_GSETPTR(Scumm::spk_freq_table, GBVARS_SPKFREQTABLE_INDEX, uint16, GBVARS_SCUMM)
-_GSETPTR(Scumm::pcjr_freq_table, GBVARS_PCJRFREQTABLE_INDEX, uint16, GBVARS_SCUMM)
+_GSETPTR(Scumm::g_note_lengths, GBVARS_NOTELENGTHS_INDEX, uint8, GBVARS_SCUMM)
+_GSETPTR(Scumm::g_hull_offsets, GBVARS_HULLOFFSETS_INDEX, uint16, GBVARS_SCUMM)
+_GSETPTR(Scumm::g_hulls, GBVARS_HULLS_INDEX, int16, GBVARS_SCUMM)
+_GSETPTR(Scumm::g_freqmod_lengths, GBVARS_FREQMODLENGTHS_INDEX, uint16, GBVARS_SCUMM)
+_GSETPTR(Scumm::g_freqmod_offsets, GBVARS_FREQMODOFFSETS_INDEX, uint16, GBVARS_SCUMM)
+_GSETPTR(Scumm::g_freqmod_table, GBVARS_FREQMODTABLE_INDEX, int8, GBVARS_SCUMM)
+_GSETPTR(Scumm::g_spk_freq_table, GBVARS_SPKFREQTABLE_INDEX, uint16, GBVARS_SCUMM)
+_GSETPTR(Scumm::g_pcjr_freq_table, GBVARS_PCJRFREQTABLE_INDEX, uint16, GBVARS_SCUMM)
 _GEND
 
 _GRELEASE(PlayerV2)
@@ -1014,4 +1041,3 @@ _GRELEASEPTR(GBVARS_PCJRFREQTABLE_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
-
