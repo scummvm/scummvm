@@ -104,18 +104,25 @@ public:
 	R_VOICE_LUT *loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, R_SCRIPTDATA *script);
 	int disassemble(R_SCRIPT_BYTECODE *script_list, R_DIALOGUE_LIST *diag_list);
 
-
-//protected:
-//these are temporarily public, eventually get/set methods should be created for them
-	int _initialized;
-	R_RSCFILE_CONTEXT *_script_ctxt;
-	int _voice_lut_present;
-	R_SCRIPT_LUT_ENTRY *_script_lut;
-	int _script_lut_max;
-	uint16 _script_lut_entrylen;
-	R_SCRIPTDATA *_current_script;
-	YS_DL_LIST *_thread_list;
-	R_SCRIPT_DATABUF *_data_buf[R_SCRIPT_DATABUF_NUM];
+	bool isInitialized() const { return _initialized;  }
+	bool isVoiceLUTPresent() const { return _voiceLUTPresent; }
+	R_SCRIPTDATA *currentScript() { return _currentScript; }
+	void setBuffer(int idx, R_SCRIPT_DATABUF *ptr) { _dataBuf[idx] = ptr; }
+	R_SCRIPT_DATABUF *dataBuffer(int idx) { return _dataBuf[idx]; }
+	YS_DL_LIST *threadList() { return _threadList; }
+	
+protected:
+	bool _initialized;
+	bool _voiceLUTPresent;
+	R_RSCFILE_CONTEXT *_scriptContext;
+	R_SCRIPT_LUT_ENTRY *_scriptLUT;
+	int _scriptLUTMax;
+	uint16 _scriptLUTEntryLen;
+	R_SCRIPTDATA *_currentScript;
+	R_SCRIPT_DATABUF *_dataBuf[R_SCRIPT_DATABUF_NUM];
+	YS_DL_LIST *_threadList;
+	
+public:
 	int _dbg_singlestep;
 	int _dbg_dostep;
 	R_SCRIPT_THREAD *_dbg_thread;

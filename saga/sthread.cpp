@@ -47,7 +47,7 @@ R_SCRIPT_THREAD *STHREAD_Create() {
 
 	int result;
 
-	if (!_vm->_script->_initialized) {
+	if (!_vm->_script->isInitialized()) {
 		return NULL;
 	}
 
@@ -62,7 +62,7 @@ R_SCRIPT_THREAD *STHREAD_Create() {
 		return NULL;
 	}
 
-	new_node = ys_dll_add_head(_vm->_script->_thread_list, new_thread, sizeof *new_thread);
+	new_node = ys_dll_add_head(_vm->_script->threadList(), new_thread, sizeof *new_thread);
 
 	free(new_thread);
 
@@ -83,11 +83,11 @@ int STHREAD_ExecThreads(int msec) {
 	YS_DL_NODE *walk_p;
 	R_SCRIPT_THREAD *thread;
 
-	if (!_vm->_script->_initialized) {
+	if (!_vm->_script->isInitialized()) {
 		return R_FAILURE;
 	}
 
-	for (walk_p = ys_dll_head(_vm->_script->_thread_list); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
+	for (walk_p = ys_dll_head(_vm->_script->threadList()); walk_p != NULL; walk_p = ys_dll_next(walk_p)) {
 		thread = (R_SCRIPT_THREAD *)ys_dll_get_data(walk_p);
 		if (thread->executing) {
 			STHREAD_Run(thread, STHREAD_DEF_INSTR_COUNT, msec);
@@ -101,9 +101,9 @@ int STHREAD_SetEntrypoint(R_SCRIPT_THREAD *thread, int ep_num) {
 	R_SCRIPT_BYTECODE *bytecode;
 	int max_entrypoint;
 
-	assert(_vm->_script->_initialized);
+	assert(_vm->_script->isInitialized());
 
-	bytecode = _vm->_script->_current_script->bytecode;
+	bytecode = _vm->_script->currentScript()->bytecode;
 	max_entrypoint = bytecode->n_entrypoints;
 
 	if ((ep_num < 0) || (ep_num >= max_entrypoint)) {
@@ -117,9 +117,9 @@ int STHREAD_SetEntrypoint(R_SCRIPT_THREAD *thread, int ep_num) {
 }
 
 int STHREAD_Execute(R_SCRIPT_THREAD *thread, int ep_num) {
-	assert(_vm->_script->_initialized);
+	assert(_vm->_script->isInitialized());
 
-	if ((_vm->_script->_current_script == NULL) || (!_vm->_script->_current_script->loaded)) {
+	if ((_vm->_script->currentScript() == NULL) || (!_vm->_script->currentScript()->loaded)) {
 		return R_FAILURE;
 	}
 
@@ -132,15 +132,15 @@ int STHREAD_Execute(R_SCRIPT_THREAD *thread, int ep_num) {
 }
 
 unsigned char *GetReadPtr(R_SCRIPT_THREAD *thread) {
-	return _vm->_script->_current_script->bytecode->bytecode_p + thread->i_offset;
+	return _vm->_script->currentScript()->bytecode->bytecode_p + thread->i_offset;
 }
 
 unsigned long GetReadOffset(const byte *read_p) {
-	return (unsigned long)(read_p - (unsigned char *)_vm->_script->_current_script->bytecode->bytecode_p);
+	return (unsigned long)(read_p - (unsigned char *)_vm->_script->currentScript()->bytecode->bytecode_p);
 }
 
 size_t GetReadLen(R_SCRIPT_THREAD *thread) {
-	return _vm->_script->_current_script->bytecode->bytecode_len - thread->i_offset;
+	return _vm->_script->currentScript()->bytecode->bytecode_len - thread->i_offset;
 }
 
 
@@ -730,12 +730,12 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 					SSTACK_Pop(thread->stack, &data);
 					if (a_index < 0)
 						continue;
-					if (!_vm->_script->_voice_lut_present) {
+					if (!_vm->_script->isVoiceLUTPresent()) {
 						voice_rn = -1;
 					} else {
-						voice_rn = _vm->_script->_current_script->voice->voices[data];
+						voice_rn = _vm->_script->currentScript()->voice->voices[data];
 					}
-					ACTOR_Speak(a_index, _vm->_script->_current_script->diag-> str[data], voice_rn, &thread->sem);
+					ACTOR_Speak(a_index, _vm->_script->currentScript()->diag-> str[data], voice_rn, &thread->sem);
 				}
 			}
 			break;

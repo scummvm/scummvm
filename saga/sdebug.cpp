@@ -67,10 +67,9 @@ int SDEBUG_PrintInstr(R_SCRIPT_THREAD *thread) {
 	tl_e.string = disp_buf;
 	tl_e.display = 1;
 
-	// XXX
-	MemoryReadStream readS(_vm->_script->_current_script->bytecode->bytecode_p 
+	MemoryReadStream readS(_vm->_script->currentScript()->bytecode->bytecode_p 
 							 + thread->i_offset, 
-							 _vm->_script->_current_script->bytecode->bytecode_len 
+							 _vm->_script->currentScript()->bytecode->bytecode_len 
 							 - thread->i_offset);
 	in_char = readS.readByte();
 	sprintf(tmp_buf, "%04lX | %02X | ", thread->i_offset, in_char);

@@ -62,19 +62,16 @@ Script::Script() {
 	int i, j;
 
 	//initialize member variables
-	_initialized = 0;
-	_script_ctxt = 0;
-	_voice_lut_present = 0;
-	_script_lut = 0;
-	_script_lut_max = 0;
-	_script_lut_entrylen = 0;
-	_current_script = 0;
-	_thread_list = 0;
-	memset(_data_buf, 0, sizeof(_data_buf));
+	_scriptContext = 0;
+	_voiceLUTPresent = false;
+	_scriptLUTEntryLen = 0;
+	_currentScript = 0;
+	_threadList = 0;
+	memset(_dataBuf, 0, sizeof(_dataBuf));
 	
 	debug(0, "Initializing scripting subsystem");
 	// Load script resource file context
-	result = GAME_GetFileContext(&_script_ctxt, R_GAME_SCRIPTFILE, 0);
+	result = GAME_GetFileContext(&_scriptContext, R_GAME_SCRIPTFILE, 0);
 	if (result != R_SUCCESS) {
 		error("Couldn't get script file context");
 	}
@@ -92,48 +89,49 @@ Script::Script() {
 
 	// Create logical script LUT from resource
 	if (rsc_len % R_S_LUT_ENTRYLEN_ITECD == 0) {
-		_script_lut_entrylen = R_S_LUT_ENTRYLEN_ITECD;
+		_scriptLUTEntryLen = R_S_LUT_ENTRYLEN_ITECD;
 	} else if (rsc_len % R_S_LUT_ENTRYLEN_ITEDISK == 0) {
-		_script_lut_entrylen = R_S_LUT_ENTRYLEN_ITEDISK;
+		_scriptLUTEntryLen = R_S_LUT_ENTRYLEN_ITEDISK;
 	} else {
 		error("Error: Invalid script lookup table length");
 	}
 
 	// Calculate number of entries
-	_script_lut_max = rsc_len / _script_lut_entrylen;
+	_scriptLUTMax = rsc_len / _scriptLUTEntryLen;
 
 	// Allocate space for logical LUT
-	_script_lut = (R_SCRIPT_LUT_ENTRY *)malloc(_script_lut_max * sizeof(R_SCRIPT_LUT_ENTRY));
-	if (_script_lut == NULL) {
+	_scriptLUT = (R_SCRIPT_LUT_ENTRY *)malloc(_scriptLUTMax * sizeof(R_SCRIPT_LUT_ENTRY));
+	if (_scriptLUT == NULL) {
 		error("Error: Couldn't allocate memory for script resource look-up table");
 	}
 
 	// Convert LUT resource to logical LUT
 	MemoryReadStream readS(rsc_ptr, rsc_len);
-	for (i = 0; i < _script_lut_max; i++) {
+	for (i = 0; i < _scriptLUTMax; i++) {
 		prevTell = readS.pos();
-		_script_lut[i].script_rn = readS.readUint16LE();
-		_script_lut[i].diag_list_rn = readS.readUint16LE();
-		_script_lut[i].voice_lut_rn = readS.readUint16LE();
+		_scriptLUT[i].script_rn = readS.readUint16LE();
+		_scriptLUT[i].diag_list_rn = readS.readUint16LE();
+		_scriptLUT[i].voice_lut_rn = readS.readUint16LE();
+		
 		// Skip the unused portion of the structure
-		for (j = readS.pos(); j < prevTell + _script_lut_entrylen; j++)
+		for (j = readS.pos(); j < prevTell + _scriptLUTEntryLen; j++)
 			readS.readByte();
 	}
 
 	RSC_FreeResource(rsc_ptr);
 
 	// Any voice lookup table resources present?
-	for (i = 0; i < _script_lut_max; i++) {
-		if (_script_lut[i].voice_lut_rn) {
-			_voice_lut_present = 1;
+	for (i = 0; i < _scriptLUTMax; i++) {
+		if (_scriptLUT[i].voice_lut_rn) {
+			_voiceLUTPresent = true;
 			break;
 		}
 	}
 
 	// Initialize script submodules
-	_thread_list = ys_dll_create();
+	_threadList = ys_dll_create();
 
-	_initialized = 1;
+	_initialized = true;
 }
 
 // Shut down script module gracefully; free all allocated module resources
@@ -148,17 +146,17 @@ Script::~Script() {
 	debug(0, "Shutting down scripting subsystem.");
 
 	// Free script lookup table
-	free(_script_lut);
+	free(_scriptLUT);
 
 	// Stop all threads and destroy them
 
-	for (thread_node = ys_dll_head(_thread_list); thread_node != NULL;
+	for (thread_node = ys_dll_head(_threadList); thread_node != NULL;
 				thread_node = ys_dll_next(thread_node)) {
 		thread = (R_SCRIPT_THREAD *)ys_dll_get_data(thread_node);
 		STHREAD_Destroy(thread);
 	}
 
-	_initialized = 0;
+	_initialized = false;
 }
 
 // Loads a script; including script bytecode and dialogue list 
@@ -180,7 +178,7 @@ int Script::loadScript(int script_num) {
 	}
 
 	// Validate script number
-	if ((script_num < 0) || (script_num > _script_lut_max)) {
+	if ((script_num < 0) || (script_num > _scriptLUTMax)) {
 		warning("Script::loadScript(): Invalid script number");
 		return R_FAILURE;
 	}
@@ -205,9 +203,9 @@ int Script::loadScript(int script_num) {
 	script_data->voice = NULL;
 
 	// Load script bytecode
-	scriptl_rn = _script_lut[script_num].script_rn;
+	scriptl_rn = _scriptLUT[script_num].script_rn;
 
-	result = RSC_LoadResource(_script_ctxt, scriptl_rn, &bytecode_p, &bytecode_len);
+	result = RSC_LoadResource(_scriptContext, scriptl_rn, &bytecode_p, &bytecode_len);
 	if (result != R_SUCCESS) {
 		warning("Error loading script bytecode resource");
 		free(script_data);
@@ -224,10 +222,10 @@ int Script::loadScript(int script_num) {
 	}
 
 	// Load script dialogue list
-	diagl_rn = _script_lut[script_num].diag_list_rn;
+	diagl_rn = _scriptLUT[script_num].diag_list_rn;
 
 	// Load dialogue list resource
-	result = RSC_LoadResource(_script_ctxt, diagl_rn, &diagl_p, &diagl_len);
+	result = RSC_LoadResource(_scriptContext, diagl_rn, &diagl_p, &diagl_len);
 	if (result != R_SUCCESS) {
 		warning("Error loading dialogue list resource");
 		free(script_data);
@@ -246,11 +244,11 @@ int Script::loadScript(int script_num) {
 	}
 
 	// Load voice resource lookup table
-	if (_voice_lut_present) {
-		voicelut_rn = _script_lut[script_num].voice_lut_rn;
+	if (_voiceLUTPresent) {
+		voicelut_rn = _scriptLUT[script_num].voice_lut_rn;
 
 		// Load voice LUT resource
-		result = RSC_LoadResource(_script_ctxt, voicelut_rn, &voicelut_p, &voicelut_len);
+		result = RSC_LoadResource(_scriptContext, voicelut_rn, &voicelut_p, &voicelut_len);
 		if (result != R_SUCCESS) {
 			warning("Error loading voice LUT resource");
 			free(script_data);
@@ -273,45 +271,45 @@ int Script::loadScript(int script_num) {
 
 	// Finish initialization
 	script_data->loaded = 1;
-	_current_script = script_data;
+	_currentScript = script_data;
 
 	return R_SUCCESS;
 }
 
 // Frees all resources associated with current script.
 int Script::freeScript() {
-	if (_current_script == NULL) {
+	if (_currentScript == NULL) {
 		return R_FAILURE;
 	}
 
-	if (!_current_script->loaded) {
+	if (!_currentScript->loaded) {
 		return R_FAILURE;
 	}
 
 	debug(0, "Releasing script data.");
 
 	// Finish initialization
-	if (_current_script->diag != NULL) {
-		free(_current_script->diag->str);
-		free(_current_script->diag->str_off);
+	if (_currentScript->diag != NULL) {
+		free(_currentScript->diag->str);
+		free(_currentScript->diag->str_off);
 	}
-	free(_current_script->diag);
+	free(_currentScript->diag);
 
-	if (_current_script->bytecode != NULL) {
-		free(_current_script->bytecode->entrypoints);
-		RSC_FreeResource(_current_script->bytecode->bytecode_p);
-	}
-
-	free(_current_script->bytecode);
-
-	if (_voice_lut_present) {
-		free(_current_script->voice->voices);
-		free(_current_script->voice);
+	if (_currentScript->bytecode != NULL) {
+		free(_currentScript->bytecode->entrypoints);
+		RSC_FreeResource(_currentScript->bytecode->bytecode_p);
 	}
 
-	free(_current_script);
+	free(_currentScript->bytecode);
 
-	_current_script = NULL;
+	if (_voiceLUTPresent) {
+		free(_currentScript->voice->voices);
+		free(_currentScript->voice);
+	}
+
+	free(_currentScript);
+
+	_currentScript = NULL;
 
 	return R_SUCCESS;
 }
@@ -494,21 +492,21 @@ void CF_script_info(int argc, char *argv[], void *refCon) {
 	uint32 i;
 	char *name_ptr;
 
-	if (((Script *)refCon)->_current_script == NULL) {
+	if (((Script *)refCon)->currentScript() == NULL) {
 		return;
 	}
 
-	if (!((Script *)refCon)->_current_script->loaded) {
+	if (!((Script *)refCon)->currentScript()->loaded) {
 		return;
 	}
 
-	n_entrypoints = ((Script *)refCon)->_current_script->bytecode->n_entrypoints;
+	n_entrypoints = ((Script *)refCon)->currentScript()->bytecode->n_entrypoints;
 
 	CON_Print("Current script contains %d entrypoints:", n_entrypoints);
 
 	for (i = 0; i < n_entrypoints; i++) {
-		name_ptr = (char *)((Script *)refCon)->_current_script->bytecode->bytecode_p +
-							((Script *)refCon)->_current_script->bytecode->entrypoints[i].name_offset;
+		name_ptr = (char *)((Script *)refCon)->currentScript()->bytecode->bytecode_p +
+							((Script *)refCon)->currentScript()->bytecode->entrypoints[i].name_offset;
 		CON_Print("%lu: %s", i, name_ptr);
 	}
 }
@@ -531,7 +529,7 @@ void CF_script_exec(int argc, char *argv[], void *refCon) {
 		}
 	}
 
-	if (ep_num >= ((Script *)refCon)->_current_script->bytecode->n_entrypoints) {
+	if (ep_num >= ((Script *)refCon)->currentScript()->bytecode->n_entrypoints) {
 		CON_Print("Invalid entrypoint.");
 		return;
 	}

@@ -37,20 +37,20 @@ SData::SData() {
 
 	debug(0, "Initializing script data buffers");
 	for (i = 0; i < R_SCRIPT_DATABUF_NUM; i++) {
-		alloc_ptr = malloc(sizeof *_vm->_script->_data_buf[0]);
+		alloc_ptr = malloc(sizeof *_vm->_script->dataBuffer(0));
 		if (alloc_ptr == NULL) {
 			error("Couldn't allocate memory for script data buffer %d", i);
 		}
 
-		_vm->_script->_data_buf[i] = (R_SCRIPT_DATABUF *)alloc_ptr;
+		_vm->_script->setBuffer(i, (R_SCRIPT_DATABUF *)alloc_ptr);
 		alloc_ptr = calloc(R_SCRIPT_DATABUF_LEN, sizeof(SDataWord_T));
 
 		if (alloc_ptr == NULL) {
 			error("Couldn't allocate memory for script data buffer %d", i);
 		}
 
-		_vm->_script->_data_buf[i]->len = R_SCRIPT_DATABUF_LEN;
-		_vm->_script->_data_buf[i]->data = (SDataWord_T *)alloc_ptr;
+		_vm->_script->dataBuffer(i)->len = R_SCRIPT_DATABUF_LEN;
+		_vm->_script->dataBuffer(i)->data = (SDataWord_T *)alloc_ptr;
 	}
 }
 
@@ -62,7 +62,7 @@ int SData::getWord(int n_buf, int n_word, SDataWord_T *data) {
 		return R_FAILURE;
 	}
 
-	if ((n_word < 0) || (n_word >= _vm->_script->_data_buf[n_buf]->len)) {
+	if ((n_word < 0) || (n_word >= _vm->_script->dataBuffer(n_buf)->len)) {
 		return R_FAILURE;
 	}
 
@@ -70,7 +70,7 @@ int SData::getWord(int n_buf, int n_word, SDataWord_T *data) {
 		return R_FAILURE;
 	}
 
-	*data = _vm->_script->_data_buf[n_buf]->data[n_word];
+	*data = _vm->_script->dataBuffer(n_buf)->data[n_word];
 
 	return R_SUCCESS;
 }
@@ -80,11 +80,11 @@ int SData::putWord(int n_buf, int n_word, SDataWord_T data) {
 		return R_FAILURE;
 	}
 
-	if ((n_word < 0) || (n_word >= _vm->_script->_data_buf[n_buf]->len)) {
+	if ((n_word < 0) || (n_word >= _vm->_script->dataBuffer(n_buf)->len)) {
 		return R_FAILURE;
 	}
 
-	_vm->_script->_data_buf[n_buf]->data[n_word] = data;
+	_vm->_script->dataBuffer(n_buf)->data[n_word] = data;
 
 	return R_SUCCESS;
 }
@@ -99,7 +99,7 @@ int SData::setBit(int n_buf, SDataWord_T n_bit, int bitstate) {
 		return R_FAILURE;
 	}
 
-	if (n_bit >= (unsigned long)_vm->_script->_data_buf[n_buf]->len * (sizeof(SDataWord_T) * CHAR_BIT)) {
+	if (n_bit >= (unsigned long)_vm->_script->dataBuffer(n_buf)->len * (sizeof(SDataWord_T) * CHAR_BIT)) {
 		return R_FAILURE;
 	}
 
@@ -109,9 +109,9 @@ int SData::setBit(int n_buf, SDataWord_T n_bit, int bitstate) {
 	bit_pattern <<= ((sizeof(SDataWord_T) * CHAR_BIT) - (n_bitpos + 1));
 
 	if (bitstate) {
-		_vm->_script->_data_buf[n_buf]->data[n_word] |= bit_pattern;
+		_vm->_script->dataBuffer(n_buf)->data[n_word] |= bit_pattern;
 	} else {
-		_vm->_script->_data_buf[n_buf]->data[n_word] &= ~bit_pattern;
+		_vm->_script->dataBuffer(n_buf)->data[n_word] &= ~bit_pattern;
 	}
 
 	return R_SUCCESS;
@@ -127,7 +127,7 @@ int SData::getBit(int n_buf, SDataWord_T n_bit, int *bitstate) {
 		return R_FAILURE;
 	}
 
-	if (n_bit >= (SDataWord_T) _vm->_script->_data_buf[n_buf]->len * (sizeof(SDataWord_T) * CHAR_BIT)) {
+	if (n_bit >= (SDataWord_T) _vm->_script->dataBuffer(n_buf)->len * (sizeof(SDataWord_T) * CHAR_BIT)) {
 		return R_FAILURE;
 	}
 
@@ -136,7 +136,7 @@ int SData::getBit(int n_buf, SDataWord_T n_bit, int *bitstate) {
 
 	bit_pattern <<= ((sizeof(SDataWord_T) * CHAR_BIT) - (n_bitpos + 1));
 
-	*bitstate = (_vm->_script->_data_buf[n_buf]->data[n_word] & bit_pattern) ? 1 : 0;
+	*bitstate = (_vm->_script->dataBuffer(n_buf)->data[n_word] & bit_pattern) ? 1 : 0;
 
 	return R_SUCCESS;
 }
