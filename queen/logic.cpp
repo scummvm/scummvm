@@ -19,12 +19,13 @@
  *
  */
 
+#include "stdafx.h"
 #include "queen/logic.h"
 #include "queen/defs.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
 #include "queen/walk.h"
-#include "common/str.h"
+
 
 namespace Queen {
 
@@ -1112,10 +1113,14 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 
 void Logic::roomSetup(const char* room, int comPanel, bool inCutaway) {
 
+	char filename[20];
+
 	// loads background image
-	Common::String bdFile(room);
-	bdFile += ".PCX";
-	_graphics->loadBackdrop(bdFile.c_str(), _currentRoom);
+	sprintf(filename, "%s.PCX", room);
+	_graphics->loadBackdrop(filename, _currentRoom);
+
+	// custom colors
+	_display->palCustomColors(_currentRoom);
 
 	// setup graphics to enter fullscreen/panel mode
 	_display->screenMode(comPanel, inCutaway);
@@ -1123,12 +1128,10 @@ void Logic::roomSetup(const char* room, int comPanel, bool inCutaway) {
 	// reset sprites table (bounding box...)
 	_graphics->bobClearAll();
 
-	_display->palCustomColors(_currentRoom);
-
 	// load/setup objects associated to this room
-	Common::String bkFile(room);
-	bkFile += ".BBK";
-	_graphics->bankLoad(bkFile.c_str(), 15);
+	sprintf(filename, "%s.BBK", room);
+	_graphics->bankLoad(filename, 15);
+
 	_numFrames = 37 + FRAMES_JOE_XTRA;
 	roomSetupFurniture();
 	roomSetupObjects();

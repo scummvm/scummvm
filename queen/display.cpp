@@ -53,7 +53,7 @@ void TextRenderer::init() {
 
 void TextRenderer::drawString(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, uint8 color, const char *text, bool outlined) {
 
-    const uint8 *str = (const uint8*)text;
+	const uint8 *str = (const uint8*)text;
 	while (*str && x < dstPitch) {
 		const uint8 *pchr = FONT + (*str) * 8;
 
@@ -122,6 +122,7 @@ Display::Display(OSystem *system)
 	_pals.dirtyMin = 0;
 	_pals.dirtyMax = 255;
 	_pals.scrollable = true;
+	_pals.customScrollSeed = 0;
 	
 	_horizontalScroll = 0;
 }
@@ -203,23 +204,42 @@ void Display::palConvert(uint8 *outPal, const uint8 *inPal, int start, int end) 
 }
 
 
-void Display::palSet(const uint8 *pal, int start, int end) {
+void Display::palSet(const uint8 *pal, int start, int end, bool updateScreen) {
 
 	debug(9, "Display::palSet(%d, %d)", start, end);
 	uint8 tempPal[256 * 4];
-	palConvert(tempPal, _pals.screen, start, end);
+	palConvert(tempPal, pal, start, end);
 	_system->set_palette(tempPal + start * 4, start, end - start + 1);
+	if (updateScreen) {
+		_system->update_screen();
+		_system->delay_msecs(20);
+	}
 }
 
 
 void Display::palFadeIn(int start, int end, uint16 roomNum) {
 
 	debug(9, "Display::palFadeIn(%d, %d)", start, end);
-	// FIXME: unfinished
-	memcpy(_pals.screen + start * 3, _pals.room + start * 3, (end - start + 1) * 3);
-	palSet(_pals.screen, start, end);
-	_pals.dirtyMin = start;
-	_pals.dirtyMax = end;
+	memcpy(_pals.screen, _pals.room, 256 * 3);
+	if (roomNum < 90 || (roomNum > 94 && roomNum < 114)) {
+		// XXX dynalum();
+		int n = end - start + 1;
+		uint8 tempPal[256 * 3];
+		int i;
+		for (i = 0; i <= FADE_SPEED; ++i) {
+			int j = n * 3;
+			uint8 *outPal = tempPal + start * 3;
+			const uint8 *inPal = _pals.screen + start * 3;
+			while (j--) {
+				*outPal = *inPal * i / FADE_SPEED;
+				++outPal;
+				++inPal;
+			}
+			palSet(tempPal, start, end, true);
+		}
+	}
+	_pals.dirtyMin = 0;
+	_pals.dirtyMax = (roomNum >= 114) ? 255 : 223;
 	_pals.scrollable = true;
 }
 
@@ -227,25 +247,312 @@ void Display::palFadeIn(int start, int end, uint16 roomNum) {
 void Display::palFadeOut(int start, int end, uint16 roomNum) {
 
 	debug(9, "Display::palFadeOut(%d, %d)", start, end);
-	// FIXME: unfinished
-	memset(_pals.screen + start * 3, 0, (end - start + 1) * 3);
-	palSet(_pals.screen, start, end);
 	_pals.scrollable = false;
+	int n = end - start + 1;
+	if (!(roomNum < 90 || (roomNum > 94 && roomNum < 114))) {
+		memset(_pals.screen + start * 3, 0, n * 3);
+		palSet(_pals.screen, start, end);
+	}
+	else {
+		uint8 tempPal[256 * 3];
+		memcpy(tempPal + start * 3, _pals.screen + start * 3, n * 3);
+		int i;
+		for (i = FADE_SPEED; i >= 0; --i) {
+			int j = n * 3;
+			uint8 *outPal = _pals.screen + start * 3;
+			const uint8 *inPal = tempPal + start * 3;
+			while (j--) {
+				*outPal = *inPal * i / FADE_SPEED;
+				++outPal;
+				++inPal;
+			}
+			palSet(_pals.screen, start, end, true);
+		}
+
+	}
 }
 
 
 void Display::palFadePanel() {
-	warning("Display::palFadePanel() unimplemented");
+
+	int i;
+	uint8 tempPal[256 * 3];
+	for (i = 224 * 3; i <= 255 * 3; ++i) {
+		tempPal[i] = _pals.screen[i] * 2 / 3;
+	}
+	palSet(tempPal, 224, 255, true);
+}
+
+
+void Display::palScroll(int start, int end) {
+
+	debug(9, "Display::palScroll(%d, %d)", start, end);
+
+	uint8 *palEnd = _pals.screen + end * 3;
+	uint8 *palStart = _pals.screen + start * 3;
+
+	uint8 r = *palEnd++;
+	uint8 g = *palEnd++;
+	uint8 b = *palEnd;
+
+	// scroll palette entries to the right
+	int n = (end - start) * 3;
+	while (n--) {
+		*palEnd = *(palEnd - 3);
+		--palEnd;
+	}
+
+	*palStart++ = r;
+	*palStart++ = g;
+	*palStart   = b;
 }
 
 
 void Display::palCustomColors(uint16 roomNum) {
-	warning("Display::palCustomColors() unimplemented");
+
+	debug(9, "Display::palCustomColors(%d)", roomNum);
+	int i;
+    switch (roomNum) {
+	case 31:
+		for(i = 72; i < 84; i++) {
+			_pals.room[i * 3 + 1] = _pals.room[i * 3 + 1] * 90 / 100;
+			_pals.room[i * 3 + 2] = _pals.room[i * 3 + 2] * 70 / 100;
+		}
+		break;
+	case 29:
+		for(i = 72; i < 84; i++) {
+			_pals.room[i * 3 + 1] = _pals.room[i * 3 + 1] * 60 / 100;
+			_pals.room[i * 3 + 2] = _pals.room[i * 3 + 2] * 60 / 100;
+		}
+		break;
+	case 30:
+		for(i = 72; i < 84; i++) {
+			_pals.room[i * 3 + 0] = _pals.room[i * 3 + 0] * 60 / 100;
+			_pals.room[i * 3 + 1] = _pals.room[i * 3 + 1] * 80 / 100;
+		}
+        break;
+	case 28:
+		for(i = 72; i < 84; i++) {
+			_pals.room[i * 3 + 0] = _pals.room[i * 3 + 0] * 80 / 100;
+			_pals.room[i * 3 + 2] = _pals.room[i * 3 + 1] * 60 / 100;
+		}
+		break;
+	}
 }
 
 
 void Display::palCustomScroll(uint16 roomNum) {
-	warning("Display::palCustomScroll() unimplemented");
+	
+	debug(9, "Display::palCustomScroll(%d)", roomNum);
+
+	if (!_pals.scrollable) {
+		return;
+	}
+
+	int hiPal = 0;
+	int loPal = 255;
+	int i;
+
+	++_pals.customScrollSeed;
+	switch (roomNum) {
+	case 123: {
+			static int16 j = 0,jdir = 2;
+			for(i = 96; i < 111; ++i) {
+				_pals.screen[i * 3 + 0] = MIN(255, _pals.room[i * 3 + 0] + j * 8);
+				_pals.screen[i * 3 + 1] = MIN(255, _pals.room[i * 3 + 1] + j * 4);
+			}
+			j += jdir;
+			if(j <= 0 || j >= 18) {
+				jdir = -jdir;
+			}
+			loPal = 96; 
+			hiPal = 111;
+		}
+		break;
+	case 124: {
+			static int16 j = 0,jdir = 2;
+			for(i = 80; i < 144; ++i) {
+				_pals.screen[i * 3 + 0] = MIN(255, _pals.room[i * 3 + 0] + j * 8);
+				_pals.screen[i * 3 + 1] = MIN(255, _pals.room[i * 3 + 1] + j * 4);
+			}
+			j += jdir;
+			if(j <= 0 || j >= 14) {
+				jdir = -jdir;
+				if (_randomizer.getRandomNumber(1)) {
+					if (ABS(jdir) == 1) {
+						jdir *= 2;
+					}
+					else {
+						jdir /= 2;
+					}
+				}
+			}
+			loPal = 80;
+			hiPal = 143;
+		}
+		break;
+	case 125:
+		palScroll(32, 63);
+		palScroll(64, 95);
+		loPal = 32;
+		hiPal = 95;
+		break;
+	case 100:
+		if(_pals.customScrollSeed & 1) {
+			palScroll(128, 132);
+			palScroll(133, 137);
+			palScroll(138, 143);
+			loPal = 128;
+			hiPal = 143;
+		}
+		break;
+	case 102:
+		if(_pals.customScrollSeed & 1) {
+			palScroll(112, 127);
+			loPal = 112;
+			hiPal = 127;
+		}
+		break;
+	case 62:
+		if(_pals.customScrollSeed & 1) {
+			palScroll(0x6c, 0x77);
+            loPal = 0x6c;
+			hiPal = 0x77;
+		}
+		break;
+	case 25:
+		palScroll(116, 123);
+		loPal = 116;
+		hiPal = 123;
+		break;
+	case 59:
+		if(_pals.customScrollSeed & 1) {
+			palScroll(56, 63);
+			loPal = 56;
+			hiPal = 63;
+		}
+		break;
+	case 39:
+		palScroll(112, 143);
+		loPal = 112;
+		hiPal = 143;
+		break;
+	case 74:
+		palScroll(28, 31);
+		palScroll(88, 91);
+		palScroll(92, 95);
+		palScroll(128, 135);
+		if(_pals.customScrollSeed & 1) {
+			palScroll(136, 143);
+		}
+		loPal = 28;
+		hiPal = 143;
+		break;
+	case 40:
+		if(_pals.customScrollSeed & 1) {
+			palScroll(96, 103);
+		}
+		if(_pals.customScrollSeed & 3) {
+			palScroll(104, 107);
+		}
+		loPal = 96;
+		hiPal = 107;
+		break;
+	case 97:
+		if(_pals.customScrollSeed & 1) {
+			palScroll(96, 107);
+		}
+		if(_pals.customScrollSeed & 3) {
+			palScroll(108, 122);
+		}
+		loPal = 96;
+		hiPal = 122;
+		break;
+	case 55:
+		palScroll(128, 143);
+		loPal = 128;
+		hiPal = 143;
+		break;
+	case 57:
+		palScroll(128, 143);
+		if(_pals.customScrollSeed & 1) {
+			palScroll(96, 103);
+		}
+		loPal = 96;
+		hiPal = 143;
+		break;
+	case 76:
+		palScroll(88, 95);
+		loPal = 88;
+		hiPal = 95;
+		break;
+	case 2:
+		if(_pals.customScrollSeed & 1) {
+			palScroll(120, 127);
+		}
+		loPal = 120;
+		hiPal = 127;
+		break;
+	case 3:
+	case 5:
+		if(_pals.customScrollSeed & 1) {
+			palScroll(128, 135);
+			palScroll(136, 143);
+			loPal = 128;
+			hiPal = 143;
+		}
+		break;
+	case 7:
+		if(_pals.customScrollSeed & 1) {
+			palScroll(119, 127);
+			loPal = 119;
+			hiPal = 127;
+		}
+		break;
+	case 42:
+		if(_pals.customScrollSeed & 1) {
+			palScroll(118, 127);
+			palScroll(136, 143);
+			loPal = 118;
+			hiPal = 143;
+		}
+		break;
+	case 4:
+		if(_pals.customScrollSeed & 1) {
+			palScroll(32,47);
+		}
+		palScroll(64, 70);
+		palScroll(71, 79);
+		loPal = 32;
+		hiPal = 79;
+		break;
+	case 8:
+		if(_pals.customScrollSeed & 1) {
+			palScroll(120, 127);
+		}
+		loPal = 120;
+		hiPal = 127;
+		break;
+	case 12:
+	case 64:
+		if(_pals.customScrollSeed & 1) {
+			palScroll(112, 119);
+		}
+		if(_pals.customScrollSeed & 3) {
+			palScroll(120, 127);
+		}
+		loPal = 112;
+		hiPal = 127;
+		break;
+	case 49:
+		palScroll(101, 127);
+		loPal = 101;
+		hiPal = 127;
+		break;
+    }
+	_pals.dirtyMin = MIN(_pals.dirtyMin, loPal);
+	_pals.dirtyMax = MAX(_pals.dirtyMax, hiPal);
+    // XXX dynalum();
 }
 
 

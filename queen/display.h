@@ -63,10 +63,11 @@ public:
 	void dynalumUpdate(int x, int y);
 
 	void palConvert(uint8 *outPal, const uint8 *inPal, int start, int end);
-	void palSet(const uint8 *pal, int start, int end);
+	void palSet(const uint8 *pal, int start, int end, bool updateScreen = false);
 	void palFadeIn(int start, int end, uint16 roomNum);
 	void palFadeOut(int start, int end, uint16 roomNum);
 	void palFadePanel();
+	void palScroll(int start, int end);
 	void palCustomColors(uint16 roomNum); // check_colors
 	void palCustomScroll(uint16 roomNum); // check_pal_scroll
 
@@ -112,6 +113,7 @@ private:
 		uint8 *screen;
 		int dirtyMin, dirtyMax;
 		bool scrollable;
+		uint16 customScrollSeed;
 	} _pals;
 
 	uint8 *_buffers[3];
@@ -122,6 +124,8 @@ private:
 
 	uint16 _horizontalScroll;
 	uint16 _bdWidth, _bdHeight;
+
+	Common::RandomSource _randomizer;
 
 	Dynalum _dynalum;
 	OSystem *_system;
