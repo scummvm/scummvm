@@ -143,15 +143,8 @@
 //
 //=============================================================================
 
-
-#define WIN32_LEAN_AND_MEAN
-
 #include "stdafx.h"
-//#include <windows.h>
-//#include <windowsx.h>
 #include <stdio.h>
-//#include <mmsystem.h>
-
 
 #include "common/util.h"
 #include "common/engine.h"
@@ -159,61 +152,36 @@
 #include "driver96.h"
 #include "../sword2.h"
 
-#define PALTABLESIZE 64*64*64
-
+#define PALTABLESIZE 64 * 64 * 64
 
 uint8 palCopy[256][4];
 uint8 fadePalette[256][4];
 
 uint8 paletteMatch[PALTABLESIZE];
 
-uint8 fadeStatus=0;
+uint8 fadeStatus = RDFADE_NONE;
 
 static int32 fadeStartTime;
 static int32 fadeTotalTime;
 
-
-//	--------------------------------------------------------------------------
-//	int32 RestorePalette(void)
+// --------------------------------------------------------------------------
+// int32 RestorePalette(void)
 //
-//	This function restores the palette, and should be called whenever the
-//	screen mode changes, or something like that.
-//	--------------------------------------------------------------------------
-int32 RestorePalette(void)
+// This function restores the palette, and should be called whenever the
+// screen mode changes, or something like that.
+// --------------------------------------------------------------------------
 
-{
-	warning("stub RestorePalette");
-/*
-	int32 hr;
-
-	
-	if (bFullScreen)
-		hr = IDirectDrawPalette_SetEntries(lpPalette, 0, 0, 256, (LPPALETTEENTRY) &palCopy[0][0]);
-	else
-		hr = IDirectDrawPalette_SetEntries(lpPalette, 0, 10, 236, (LPPALETTEENTRY) &palCopy[10][0]);
-
-	if (hr != DD_OK)
-	{
-		DirectDrawError("Unable to restore palette", hr);
-		return(hr);
-	}
-
-*/
-	return(RD_OK);
-
+int32 RestorePalette(void) {
+	g_system->set_palette((const byte *) palCopy, 0, 256);
+	return RD_OK;
 }
 
-
-uint8 GetMatch(uint8 r, uint8 g, uint8 b)
-
-{
-
+uint8 GetMatch(uint8 r, uint8 g, uint8 b) {
 	int32 diff;
 	int32 min;
 	int16 diffred, diffgreen, diffblue;
 	int16 i;
 	uint8 minIndex;
-
 
 	diffred = palCopy[0][0] - r;
 	diffgreen = palCopy[0][1] - g;
@@ -222,53 +190,41 @@ uint8 GetMatch(uint8 r, uint8 g, uint8 b)
 	diff = diffred * diffred + diffgreen * diffgreen + diffblue * diffblue;
 	min = diff;
 	minIndex = 0;
-	if (diff > 0)
-	{
+	if (diff > 0) {
 		i = 1;
-		while (i < 256)
-		{
+		while (i < 256)	{
 			diffred = palCopy[i][0] - r;
 			diffgreen = palCopy[i][1] - g;
 			diffblue = palCopy[i][2] - b;
 
 			diff = diffred * diffred + diffgreen * diffgreen + diffblue * diffblue;
-			if (diff < min)
-			{
+			if (diff < min) {
 				min = diff;
 				minIndex = (uint8) i;
 				if (min == 0)
 					break;
 			}
-			i += 1;
+			i++;
 		}
 	}
 
 	// Here, minIndex is the index of the matchpalette which is closest.
 	return(minIndex);
-
 }
 
+// FIXME: Does this function really need to write to file?
 
-
-int32 UpdatePaletteMatchTable(uint8 *data)
-
-{
-
-	if (data == NULL)
-
-	// Create palette match table
-	{
+int32 UpdatePaletteMatchTable(uint8 *data) {
+	if (!data) {
 		FILE *fp;
 		int16 red, green, blue;
 		uint8 *p;
 
+		// Create palette match table
 		p = &paletteMatch[0];
-		for (red = 0; red < 256; red += 4)
-		{
-			for (green = 0; green < 256; green += 4)
-			{
-				for (blue = 0; blue < 256; blue += 4)
-				{
+		for (red = 0; red < 256; red += 4) {
+			for (green = 0; green < 256; green += 4) {
+				for (blue = 0; blue < 256; blue += 4) {
 					*p++ = GetMatch((uint8) red, (uint8) green, (uint8) blue);
 				}
 			}
@@ -281,11 +237,8 @@ int32 UpdatePaletteMatchTable(uint8 *data)
 		if (fwrite(paletteMatch, 1, 64*64*64, fp) != 64*64*64)
 			return(RDERR_WRITEERROR);
 		fclose(fp);
-	}
-	else
-	// Read table from file
-	{
-
+	} else {
+		// Read table from file
 		memcpy(paletteMatch, data, PALTABLESIZE);
 	
 /*
@@ -300,10 +253,8 @@ int32 UpdatePaletteMatchTable(uint8 *data)
 		return(RD_OK);
 */		
 	}
-	return(RD_OK);
-
+	return RD_OK;
 }
-
 
 // FIXME: This used to be inlined - probably a good idea - but the
 // linker complained when I tried to use it in sprite.cpp.
@@ -312,14 +263,7 @@ uint8 QuickMatch(uint8 r, uint8 g, uint8 b) {
 	return paletteMatch[((int32) (r >> 2) << 12) + ((int32) (g >> 2) << 6) + (b >> 2)];
 }
 
-
-
-
-int32 BS2_SetPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, uint8 fadeNow)
-
-{
-	debug(0, "BS2_SetPalette(%d, %d, %d)", startEntry, noEntries, fadeNow);
-
+int32 BS2_SetPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, uint8 fadeNow) {
 	if (noEntries == 0) {
 		RestorePalette();
 		return RD_OK;
@@ -327,95 +271,45 @@ int32 BS2_SetPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, uint
 
 	memcpy(&palCopy[startEntry][0], colourTable, noEntries * 4);
 	if (fadeNow == RDPAL_INSTANT)
-		g_sword2->_system->set_palette((byte *) palCopy, startEntry, noEntries);
+		g_system->set_palette((byte *) palCopy, startEntry, noEntries);
 
-/*
-
-	int32 hr;
-
-	if (noEntries == 0)
-	{
-		RestorePalette();
-		return(RD_OK);
-	}
-
-
-	memcpy(&palCopy[startEntry][0], colourTable, noEntries * 4);
-
-	if ((lpPalette) && (fadeNow == RDPAL_INSTANT))
-	{
-		if (bFullScreen)
-			hr = IDirectDrawPalette_SetEntries(lpPalette, 0, startEntry, noEntries, (LPPALETTEENTRY) &palCopy[startEntry][0]);
-		else
-			hr = IDirectDrawPalette_SetEntries(lpPalette, 0, 10, 236, (LPPALETTEENTRY) &palCopy[10][0]);
-		if (hr != DD_OK)
-		{
-			DirectDrawError("Unable to set palette entries", hr);
-			return(hr);
-		}
-	}
-*/
-	return(RD_OK);
-
+	return RD_OK;
 }
 
-
-int32 DimPalette(void)
-{
-	warning("stub DimPalette");
-/*
-	uint8 *p;
+int32 DimPalette(void) {
+	byte *p = (byte *) palCopy;
 	uint32 i;
 
-	p = (uint8*) &palCopy[0][0];
-	for (i=0; i<256*4; i++)
-	{
-		*p++ /= 2;
-	}
-	if (lpPalette)
-		IDirectDrawPalette_SetEntries(lpPalette, 0, 0, 256, (LPPALETTEENTRY) &palCopy[0][0]);
-*/
+	for (i = 0; i < 256 * 4; i++)
+		p[i] /= 2;
+	g_system->set_palette(p, 0, 256);
 	return RD_OK;
-
 }
 
-
-
-int32 FadeUp(float time)
-
-{
-
-	if ((fadeStatus != RDFADE_BLACK) && (fadeStatus != RDFADE_NONE))
-		return(RDERR_FADEINCOMPLETE);
+int32 FadeUp(float time) {
+	if (fadeStatus != RDFADE_BLACK && fadeStatus != RDFADE_NONE)
+		return RDERR_FADEINCOMPLETE;
 
 	fadeTotalTime = (int32) (time * 1000);
 	fadeStatus = RDFADE_UP;
 	fadeStartTime = SVM_timeGetTime();
 
 	return RD_OK;
-
 }
 
-
-int32 FadeDown(float time)
-
-{
-
-	if ((fadeStatus != RDFADE_BLACK) && (fadeStatus != RDFADE_NONE))
-		return(RDERR_FADEINCOMPLETE);
+int32 FadeDown(float time) {
+	if (fadeStatus != RDFADE_BLACK && fadeStatus != RDFADE_NONE)
+		return RDERR_FADEINCOMPLETE;
 
 	fadeTotalTime = (int32) (time * 1000);
 	fadeStatus = RDFADE_DOWN;
 	fadeStartTime = SVM_timeGetTime();
 
 	return RD_OK;
-
 }
 
-
-uint8 GetFadeStatus(void)
-{
-	return(fadeStatus);
+uint8 GetFadeStatus(void) {
+	return fadeStatus;
 }
 
 void FadeServer() {
@@ -469,4 +363,3 @@ void FadeServer() {
 
 	g_system->set_palette(newPalette, 0, 256);
 }
-
