@@ -79,7 +79,6 @@ find_sdlconfig()
 {
 printf "Looking for sdl-config... "
 sdlconfigs="$_sdlconfig sdl-config sdl11-config sdl12-config"
-CXX=
 for sdlconfig in $sdlconfigs; do
   if test "-e $sdlconfig" ; then
     _sdlconfig=$sdlconfig
