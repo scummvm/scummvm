@@ -18,6 +18,7 @@
  * $Header$
  */
 
+#include "stdafx.h"
 #include "engine.h"
 #include "sound/mixer.h"
 #include "gameDetector.h"
