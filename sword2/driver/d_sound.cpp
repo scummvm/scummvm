@@ -1296,15 +1296,18 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 				StreamCompMusicFromLock(musFilename[i], musId[i], musLooping[i]);
 		}
 	}
-	DipMusic();
+
+	// FIXME: We need to implement DipMusic()'s functionality, but since
+	// our sound buffer is much shorter than the original's it should be
+	// enough to simply modify the channel volume in this function instead
+	// of using a separate function to modify part of the sound buffer.
+
+	// DipMusic();
 }
 
 int32 Sword2Sound::DipMusic() {
-	// TODO: implement this func
 	// disable this func for now
 	return RD_OK;
-
-	StackLock lock(_mutex);
 
 /*
 	int32				 len;
