@@ -1155,7 +1155,8 @@ void Scumm_v6::o6_loadRoomWithEgo() {
 void Scumm_v6::o6_getRandomNumber() {
 	int rnd;
 	rnd = _rnd.getRandomNumber(pop());
-	VAR(VAR_V6_RANDOM_NR) = rnd;
+	if (VAR_V6_RANDOM_NR != 0xFF)
+		VAR(VAR_V6_RANDOM_NR) = rnd;
 	push(rnd);
 }
 
@@ -1163,7 +1164,8 @@ void Scumm_v6::o6_getRandomNumberRange() {
 	int max = pop();
 	int min = pop();
 	int rnd = _rnd.getRandomNumberRng(min, max);
-	VAR(VAR_V6_RANDOM_NR) = rnd;
+	if (VAR_V6_RANDOM_NR != 0xFF)
+		VAR(VAR_V6_RANDOM_NR) = rnd;
 	push(rnd);
 }
 

@@ -2724,8 +2724,9 @@ void Scumm::cyclePalette() {
 	byte *start, *end;
 	byte tmp[3];
 
-	if (_features & GF_AFTER_V2) {
+	if (VAR_TIMER == 0xFF) {
 		// FIXME - no idea if this is right :-/
+		// Needed for both V2 and V8 at this time
 		valueToAdd = VAR(VAR_TIMER_NEXT);
 	} else {
 		valueToAdd = VAR(VAR_TIMER);

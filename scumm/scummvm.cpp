@@ -856,8 +856,9 @@ int Scumm::scummLoop(int delta) {
 		VAR(VAR_TMR_1) += delta;
 		VAR(VAR_TMR_2) += delta;
 		VAR(VAR_TMR_3) += delta;
-		VAR(VAR_TMR_4) += delta;
 	}
+	if (VAR_TMR_4 != 0xFF)
+		VAR(VAR_TMR_4) += delta;
 
 	if (delta > 15)
 		delta = 15;
@@ -1066,7 +1067,7 @@ load_game:
 	/* show or hide mouse */
 	_system->show_mouse(_cursor.state > 0);
 
-	if (!(_features & GF_AFTER_V2))
+	if (VAR_TIMER != 0xFF)
 		VAR(VAR_TIMER) = 0;
 	return VAR(VAR_TIMER_NEXT);
 
