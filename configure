@@ -104,8 +104,12 @@ for x in $@; do
 		echo "#define USE_ALSA" >> config.h
 		LIBS="$LIBS -lasound"
 		;;
+      x--with-vorbis)
+      		echo "#define USE_VORBIS" >> config.h
+		LIBS="$LIBS -lvorbisfile -lvorbis"
+		;;
       x--with-mad)
-		echo "#define COMPRESSED_SOUND_FILE" >> config.h
+		echo "#define USE_MAD" >> config.h
 		LIBS="$LIBS -lmad"
 		;;
       x--enable-dump-scripts)
