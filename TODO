@@ -259,11 +259,8 @@ SCUMM
   - Add save/load code
   - Add code for MP3 and Ogg Vorbis compressed datafiles
 * SMUSH:
-  - Add support for compressed gfx frames by zlib
   - Add support for codec 37 opcode 1, for PC version of FT demo
-  - Get rid smush mixer add code for imuse to handle smush tracks and cleanup channel code
-  - Add code for MP3 encoded sound tracks (distant future)
-  - Make code more clear in some places (subtiles code for ex.)
+  - Add code for MP3 encoded sound tracks
 * Humongous Entertainment Games
   - Add proper handling of sound and speech in Humongous games
   - Add support for returning the correct music status for the digital music
