@@ -93,7 +93,7 @@ CPPFLAGS:= $(DEFINES) $(INCLUDES)
 # Make main.o depend on all other object files. This way if anything is
 # changed, it causes main.cpp to be recompiled. This in turn ensures that
 # the build date in gScummVMBuildDate is correct.
-base/main.o: $(OBJS)
+base/main.o: $(filter-out base/libbase.a,$(OBJS))
 
 # The build rule for the ScummVM executable
 scummvm$(EXEEXT):  $(OBJS)
