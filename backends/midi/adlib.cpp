@@ -632,6 +632,8 @@ void AdlibPart::controlChange (byte control, byte value)
 	case 64:  sustain (value > 0); break;
 	case 91:  break; // Effects level. Not supported.
 	case 93:  break; // Chorus level. Not supported.
+	case 119: break; // Unknown, used in Simon the Sorcerer 2
+	case 121: break; // Unknown, used in Simon the Sorcerer 1
 	case 123: allNotesOff(); break;
 	default:
 		warning ("Adlib: Unknown control change message %d", (int) control);
