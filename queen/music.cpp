@@ -29,6 +29,7 @@
 namespace Queen {
 
 	MusicPlayer::MusicPlayer(MidiDriver *driver, byte *data, uint32 size) : _driver(driver), _isPlaying(false), _looping(false), _volume(255), _queuePos(0), _musicData(data), _musicDataSize(size) {
+		memset(_channel, 0, sizeof(_channel));
 		queueClear();
 		_lastSong = 0;
 		_parser = MidiParser::createParser_SMF();
