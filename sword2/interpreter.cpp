@@ -254,8 +254,8 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		debug(4, "Resume script %d with offset %d", scriptNumber, ip);
 	}
 
-	// WORKAROUND: The dreaded pyramid makes the torch untakeable when you
-	// speak to Titipoco. This is because one of the conditions for the
+	// WORKAROUND: The dreaded pyramid bug makes the torch untakeable when
+	// you speak to Titipoco. This is because one of the conditions for the
 	// torch to be takeable is that Titipoco isn't doing anything out of
 	// the ordinary. Global variable 913 has to be 0 to signify that he is
 	// in his "idle" state.
