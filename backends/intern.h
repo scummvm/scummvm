@@ -39,6 +39,7 @@ extern OSystem *OSystem_PALMOS_create(int gfx_mode);
 
 
 #ifdef _WIN32_WCE
+#define SAMPLES_PER_SEC 22050
 #define SAMPLES_PER_SEC_OLD 11025
 #define SAMPLES_PER_SEC_NEW 22050
 #else
