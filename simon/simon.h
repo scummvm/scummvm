@@ -103,7 +103,7 @@ public:
 	File *_mus_file;
 	uint16 *_mus_offsets;
 
-	void SimonState::readSting(uint a);
+	bool SimonState::readSting(uint a);
 	void SimonState::playSting(uint a);
 	
 	byte *_vc_ptr;								/* video code ptr */
@@ -363,7 +363,7 @@ public:
 	void readGamePcText(File *in);
 	void readItemChildren(File *in, Item *item, uint tmp);
 	void readItemFromGamePc(File *in, Item *item);
-	bool loadGamePcFile(const char *filename);
+	void loadGamePcFile(const char *filename);
 
 	byte *allocateItem(uint size);
 	byte *allocateTable(uint size);

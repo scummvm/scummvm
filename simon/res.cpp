@@ -94,7 +94,7 @@ static const char *const opcode_arg_table_simon2dos[256] = {
 	" ", " ", "BT ", " ", "B "
 };
 
-bool SimonState::loadGamePcFile(const char *filename)
+void SimonState::loadGamePcFile(const char *filename)
 {
 	File * in = new File();
 	int num_inited_objects;
@@ -159,8 +159,6 @@ bool SimonState::loadGamePcFile(const char *filename)
 		error("Out of memory for strip text list");
 	in->read(_stripped_txt_mem, file_size);
 	in->close();
-
-	return true;
 }
 
 void SimonState::readGamePcText(File *in)

@@ -828,7 +828,7 @@ void SimonState::loadTablesIntoMem(uint subr_id)
 		warning("loadTablesIntoMem: didn't find %d", subr_id);
 }
 
-void SimonState::readSting(uint a)
+bool SimonState::readSting(uint a)
 {
 	char filename[11];
 	uint16 size;
@@ -839,8 +839,10 @@ void SimonState::readSting(uint a)
 
 	_mus_file->open(filename, _gameDataPath);
 
-	if (!_mus_file->isOpen())
-		return;
+	if (!_mus_file->isOpen()) {
+		warning("Can't load sound effect from '%s'", filename);
+		return false;
+	}
 
 	size = _mus_file->readUint16LE();
 
@@ -850,6 +852,8 @@ void SimonState::readSting(uint a)
 
 	if (_mus_file->read(_mus_offsets, size) != size)
 		error("Cannot read offsets");
+
+	return true;
 }
 
 void SimonState::playSting(uint a)
@@ -857,7 +861,8 @@ void SimonState::playSting(uint a)
 	if (!midi._midi_sfx_toggle)
 		return;
 
-	readSting(_midi_sfx);
+	if (!readSting(_midi_sfx))
+		return;
 	
 	midi.shutdown();
 	_mus_file->seek(_mus_offsets[a], SEEK_SET);
