@@ -394,7 +394,7 @@ void Scumm_v2::decodeParseString() {
 	}
 	*ptr = 0;
 
-	printf("TODO: Scumm_v2::decodeParseString(\"%s\")\n", buffer);
+	printf("TODO: Scumm_v2::decodeParseString(\"%s\") from %d\n", buffer, vm.slot[_currentScript].number);
 }
 
 int Scumm_v2::readVar(uint var) {
@@ -874,7 +874,8 @@ void Scumm_v2::o2_startScript() {
 }
 
 void Scumm_v2::o2_panCameraTo() {
-	panCameraTo(getVarOrDirectByte(0x80), 0);
+	panCameraTo(getVarOrDirectByte(0x80) * 8, 0);	// FIXME: I'm pretty sure we actually pan
+							// by strip, not X/Y, here. Hence *8
 }
 
 void Scumm_v2::o2_walkActorToObject() {
@@ -1018,7 +1019,8 @@ void Scumm_v2::o2_matrixOps() {
 }
 
 void Scumm_v2::o2_setCameraAt() {
-	setCameraAtEx(getVarOrDirectByte(0x80));
+	setCameraAtEx(getVarOrDirectByte(0x80) * 8);	// FIXME: I'm pretty sure we actually pan
+							// by strip, not X/Y, here. Hence *8
 }
 
 void Scumm_v2::o2_roomOps() {
