@@ -19,6 +19,7 @@
  *
  */
 
+#include "stdafx.h"
 #include "queen/sound.h"
 
 namespace Queen {
