@@ -262,7 +262,7 @@ void Sound::playSound(int soundID) {
 			// played as MIDI, just to make perhaps the later use
 			// of WA possible (see "else if" with GF_OLD256 below)
 		}
-		// Support for sampled sound effects in Monkey Island 1
+		// Support for sampled sound effects in Monkey Island 1 and 2
 		else if (READ_UINT32(ptr) == MKID('SBL ')) {
 			debug(2, "Using SBL sound effect");
 
