@@ -591,8 +591,6 @@ void Scumm::fadeToBlackEffect(int a)
 		// Just blit screen 0 to the display (i.e. display will be black)
 		setDirtyRange(0, 0, vs->height);
 		updateDirtyScreen(0);
-		/* XXX: EGA_proc4(0); */
-//		warning("EGA_proc4");				/* FIXME */
 		break;
 	case 134:
 		unkScreenEffect5(0);
@@ -2365,41 +2363,41 @@ byte *Scumm::getPalettePtr()
 	return cptr;
 }
 
-void Scumm::darkenPalette(int a, int b, int c, int d, int e)
+void Scumm::darkenPalette(int startColor, int endColor, int redScale, int greenScale, int blueScale)
 {
-	byte *cptr, *cur;
-	int num;
-	int color;
-
-	cptr = getPalettePtr() + a * 3;
-	cur = _currentPalette + a * 3;
-	if (a <= b) {
-		num = b - a + 1;
+	if (startColor <= endColor) {
+		byte *cptr, *cur;
+		int num;
+		int color;
+	
+		cptr = getPalettePtr() + startColor * 3;
+		cur = _currentPalette + startColor * 3;
+		num = endColor - startColor + 1;
 
 		do {
 			color = *cptr++;
-			if (c != 0xFF)
-				color = color * c / 0xFF;
+			if (redScale != 0xFF)
+				color = color * redScale / 0xFF;
 			if (color > 255)
 				color = 255;
 			*cur++ = color;
 
 			color = *cptr++;
-			if (d != 0xFF)
-				color = color * d / 0xFF;
+			if (greenScale != 0xFF)
+				color = color * greenScale / 0xFF;
 			if (color > 255)
 				color = 255;
 			*cur++ = color;
 
 			color = *cptr++;
-			if (e != 0xFF)
-				color = color * e / 0xFF;
+			if (blueScale != 0xFF)
+				color = color * blueScale / 0xFF;
 			if (color > 255)
 				color = 255;
 			*cur++ = color;
 		} while (--num);
+		setDirtyColors(startColor, endColor);
 	}
-	setDirtyColors(a, b);
 }
 
 void Scumm::grabCursor(int x, int y, int w, int h)
