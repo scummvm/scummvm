@@ -572,6 +572,11 @@ void ScummEngine::readIndexFile() {
 			debug(9, "found DIRM block, skipping");
 			break;
 			
+		case MKID('DISK'):
+			_fileHandle.seek(itemsize - 8, SEEK_CUR);
+			warning("DISK index block not yet handled, skipping");
+			break;
+
 		case MKID('DIRI'): // Images?
 //			readResTypeList(rtImage, MKID('AWIZ'), "images");
 			num = _fileHandle.readUint16LE();
