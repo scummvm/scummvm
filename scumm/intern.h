@@ -717,6 +717,7 @@ protected:
 #endif
 
 	const OpcodeEntryV72he *_opcodesV72he;
+	WizParameters _wizParams;
 
 public:
 	ScummEngine_v72he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16]) : ScummEngine_v70he(detector, syst, gs, md5sum) {}
@@ -740,8 +741,9 @@ protected:
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
 
+	void displayWizComplexImage(const WizParameters *params);
+	void drawWizComplexPolygon(int resnum, int state, int po_x, int po_y, int arg14, int angle, int zoom, const Common::Rect *r);
 	void captureWizImage(int restype, int resnum, const Common::Rect& r, bool frontBuffer, int compType);
-	void displayWizImage(const WizImage *pwi);
 	void getWizImageDim(int resnum, int state,  int32 &w, int32 &h);
 	uint8 *drawWizImage(int restype, const WizImage *pwi);
 	void drawWizPolygon(int resnum, int state, int id, int flags);
@@ -867,7 +869,6 @@ protected:
 	
 	const OpcodeEntryV90he *_opcodesV90he;
 	FloodStateParameters _floodStateParams;
-	WizParameters _wizParams;
 
 	int _curMaxSpriteId;
 	int _curSpriteId;
@@ -891,8 +892,6 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 	
-	void drawWizComplexPolygon(int resnum, int state, int po_x, int po_y, int arg14, int angle, int zoom, const Common::Rect *r);
-	void displayWizComplexImage(const WizParameters *params);
 	void createWizEmptyImage(const WizParameters *params);
 	void fillWizRect(const WizParameters *params);
 	void processWizImage(const WizParameters *params);

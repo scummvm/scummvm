@@ -1610,13 +1610,13 @@ void ScummEngine_v72he::o72_kernelGetFunctions() {
 }
 
 void ScummEngine_v72he::o72_drawWizImage() {
-	WizImage wi;
-	wi.flags = pop();
-	wi.y1 = pop();
-	wi.x1 = pop();
-	wi.resNum = pop();
-	wi.state = 0;
-	displayWizImage(&wi);
+	_wizParams.processFlags |= kWPFSetPos | kWPFNewFlags;
+	_wizParams.img.flags = pop();
+	_wizParams.img.state = 0;
+	_wizParams.img.y1 = pop();
+	_wizParams.img.x1 = pop();
+	_wizParams.img.resNum = pop();
+	displayWizComplexImage(&_wizParams);
 }
 
 void ScummEngine_v72he::o72_unknownCF() {

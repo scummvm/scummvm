@@ -759,12 +759,14 @@ void ScummEngine_v70he::o70_kernelSetFunctions() {
 		a->_clipOverride.bottom = args[2];
 		break;
 	case 42:
-		// drawWizImage related
-		warning("o70_kernelSetFunctions: unhandled case 42");
+		_wiz._rectOverrideEnabled = true;
+		_wiz._rectOverride.left = args[1];
+		_wiz._rectOverride.top = args[2];
+		_wiz._rectOverride.right = args[3];
+		_wiz._rectOverride.bottom = args[4];
 		break;
 	case 43:
-		// drawWizImage related
-		warning("o70_kernelSetFunctions: unhandled case 43");
+		_wiz._rectOverrideEnabled = false;
 		break;
 	default:
 		error("o70_kernelSetFunctions: default case %d (param count %d)", args[0], num);

@@ -33,6 +33,7 @@ Wiz::Wiz() {
 	_imagesNum = 0;
 	memset(&_images, 0, sizeof(_images));
 	memset(&_polygons, 0, sizeof(_polygons));
+	_rectOverrideEnabled = false;
 }
 
 void Wiz::imageNumClear() {
@@ -828,18 +829,6 @@ void ScummEngine_v72he::captureWizImage(int resType, int resNum, const Common::R
 	}
 }
 
-void ScummEngine_v72he::displayWizImage(const WizImage *pwi) {
-	if (_fullRedraw) {
-		assert(_wiz._imagesNum < ARRAYSIZE(_wiz._images));
-		memcpy(&_wiz._images[_wiz._imagesNum], pwi, sizeof(WizImage));
-		++_wiz._imagesNum;
-	} else if (pwi->flags & kWIFIsPolygon) {
-		drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags);
-	} else {
-		drawWizImage(rtImage, pwi);
-	}
-}
-
 void ScummEngine_v72he::getWizImageDim(int resnum, int state, int32 &w, int32 &h) {
 	uint8 *dataPtr = getResourceAddress(rtImage, resnum);
 	assert(dataPtr);
@@ -884,6 +873,16 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 			warning("WizImage printing is unimplemented");
 			return NULL;
 		}
+
+		Common::Rect rImage(pwi->x1, pwi->y1, pwi->x1 + width, pwi->y1 + height);
+		if (_wiz._rectOverrideEnabled == true) {
+			if (rImage.intersects(_wiz._rectOverride)) {
+				rImage.clip(_wiz._rectOverride);
+			} else {
+				return 0;
+			}
+		}
+
 		uint32 cw, ch;
 		if (pwi->flags & kWIFBlitToMemBuffer) {
 			dst = (uint8 *)malloc(width * height);
@@ -902,6 +901,8 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 			ch = pvs->h;
 		}
 		Common::Rect rScreen(cw, ch);
+
+
 		// XXX handle 'XMAP' / 'RMAP' data
 		if (comp == 1) {
 			if (pwi->flags & 0x80) {
@@ -924,7 +925,6 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 		}
 
 		if (!(pwi->flags & kWIFBlitToMemBuffer)) {
-			Common::Rect rImage(pwi->x1, pwi->y1, pwi->x1 + width, pwi->y1 + height);
 			if (rImage.intersects(rScreen)) {
 				rImage.clip(rScreen);
 				if (!(pwi->flags & kWIFBlitToFrontVideoBuffer) && (pwi->flags & (kWIFBlitToFrontVideoBuffer | kWIFMarkBufferDirty))) {
@@ -1156,7 +1156,7 @@ void ScummEngine_v80he::loadWizCursor(int resId, int resType, bool state) {
 	free(cursor);
 }
 
-void ScummEngine_v90he::drawWizComplexPolygon(int resnum, int state, int po_x, int po_y, int arg14, int angle, int zoom, const Common::Rect *r) {
+void ScummEngine_v72he::drawWizComplexPolygon(int resnum, int state, int po_x, int po_y, int arg14, int angle, int zoom, const Common::Rect *r) {
 	Common::Point pts[4];
 	int32 w, h;
 	getWizImageDim(resnum, state, w, h);
@@ -1184,8 +1184,7 @@ void ScummEngine_v90he::drawWizComplexPolygon(int resnum, int state, int po_x, i
 	warning("drawWizComplexPolygon() partially implemented");
 }
 
-void ScummEngine_v90he::displayWizComplexImage(const WizParameters *params) {
-	// XXX merge with displayWizImage
+void ScummEngine_v72he::displayWizComplexImage(const WizParameters *params) {
 	if (params->processFlags & 0x80000) {
 		warning("displayWizComplexImage() unhandled flags = 0x80000");
 	}

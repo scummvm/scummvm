@@ -116,6 +116,8 @@ struct Wiz {
 	
 	Wiz();
 	void imageNumClear();
+	Common::Rect _rectOverride;
+	bool _rectOverrideEnabled;
 
 	void polygonClear();
 	void polygonLoad(const uint8 *polData);

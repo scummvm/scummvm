@@ -570,12 +570,13 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.img.flags = pop();
 		break;
 	case 10:
+		_wizParams.processFlags |= kWPFSetPos | kWPFNewState | kWPFNewFlags;
 		_wizParams.img.flags = pop();
 		_wizParams.img.state = pop();
 		_wizParams.img.y1 = pop();
 		_wizParams.img.x1 = pop();
 		_wizParams.img.resNum = pop();
-		displayWizImage(&_wizParams.img);
+		displayWizComplexImage(&_wizParams);
 		break;
 	case 11:
 		_wizParams.img.resNum = pop();
@@ -2231,12 +2232,14 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		_fullRedraw = 1;
 		break;
 	case 42:
-		// drawWizImage related
-		warning("o90_kernelSetFunctions: unhandled case 42");
+		_wiz._rectOverrideEnabled = true;
+		_wiz._rectOverride.left = args[1];
+		_wiz._rectOverride.top = args[2];
+		_wiz._rectOverride.right = args[3];
+		_wiz._rectOverride.bottom = args[4];
 		break;
 	case 43:
-		// drawWizImage related
-		warning("o90_kernelSetFunctions: unhandled case 43");
+		_wiz._rectOverrideEnabled = false;
 		break;
 	case 714:
 		break;

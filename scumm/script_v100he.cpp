@@ -854,17 +854,15 @@ void ScummEngine_v100he::o100_unknownE0() {
 		type = 1;
 		break;
 	case 40:
-		{
-		WizImage wi;
-		wi.flags = 0;
-		wi.y1 = y1;
-		wi.x1 = x1;
-		wi.resNum = num;
-		wi.state = 0;
-		displayWizImage(&wi);
+		_wizParams.processFlags |= kWPFSetPos;
+		_wizParams.img.flags = 0;
+		_wizParams.img.state = 0;
+		_wizParams.img.y1 = y1;
+		_wizParams.img.x1 = x1;
+		_wizParams.img.resNum = num;
+		displayWizComplexImage(&_wizParams);
 
 		type = 3;
-		}
 		break;
 	default:
 		error("o100_unknownE0: default case %d", subOp);
@@ -1255,12 +1253,13 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		pop();
 		break;
 	case 55:
+		_wizParams.processFlags |= kWPFSetPos | kWPFNewState | kWPFNewFlags;
 		_wizParams.img.flags = pop();
 		_wizParams.img.state = pop();
 		_wizParams.img.y1 = pop();
 		_wizParams.img.x1 = pop();
 		_wizParams.img.resNum = pop();
-		displayWizImage(&_wizParams.img);
+		displayWizComplexImage(&_wizParams);
 		break;
 	case 57:
 		_wizParams.processFlags |= 0x8000;

@@ -587,12 +587,12 @@ void ScummEngine_v80he::o80_drawBox() {
 }
 
 void ScummEngine_v80he::o80_drawWizPolygon() {
-	WizImage wi;
-	wi.x1 = wi.y1 = pop();
-	wi.resNum = pop();
-	wi.state = 0;
-	wi.flags = kWIFIsPolygon;
-	displayWizImage(&wi);	
+	_wizParams.processFlags |= kWPFSetPos | kWPFNewFlags;
+	_wizParams.img.flags = kWIFIsPolygon;
+	_wizParams.img.state = 0;
+	_wizParams.img.y1 = _wizParams.img.x1 = pop();
+	_wizParams.img.resNum = pop();
+	displayWizComplexImage(&_wizParams);
 }
 
 void ScummEngine_v80he::o80_unknownE0() {
@@ -631,17 +631,15 @@ void ScummEngine_v80he::o80_unknownE0() {
 		}
 		break;
 	case 63:
-		{
-		WizImage wi;
-		wi.flags = 0;
-		wi.y1 = y1;
-		wi.x1 = x1;
-		wi.resNum = num;
-		wi.state = 0;
-		displayWizImage(&wi);
+		_wizParams.processFlags |= kWPFSetPos;
+		_wizParams.img.flags = 0;
+		_wizParams.img.state = 0;
+		_wizParams.img.y1 = y1;
+		_wizParams.img.x1 = x1;
+		_wizParams.img.resNum = num;
+		displayWizComplexImage(&_wizParams);
 
 		type = 3;
-		}
 		break;
 	case 66:
 		type = 1;
