@@ -183,7 +183,6 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	if (_screenTop < 0)
 		_screenTop = 0;
 	
-/*
 	if (hdr.ver < VER(32) && _heversion == 70) {
 		roomptr = getResourceAddress(rtRoom, _roomResource);
 		const byte *ptr = findResourceData(MKID('REMP'), roomptr);
@@ -195,8 +194,6 @@ bool ScummEngine::loadState(int slot, bool compat) {
 				_HEV7ActorPalette[i] = i;
 		}
 	}
-
-*/
 
 	if (hdr.ver < VER(30)) {
 		// For a long time, we used incorrect location, causing it to default to zero.
@@ -737,10 +734,8 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 			s->saveLoadArrayOf(_roomPalette, sizeof(_roomPalette), 1, sleByte);
 	}
 
-/*
 	if (savegameVersion >= VER(32) && _heversion == 70)
 			s->saveLoadArrayOf(_HEV7ActorPalette, sizeof(_HEV7ActorPalette), 1, sleByte);
-*/
 
 	// PalManip data was not saved before V10 save games
 	if (savegameVersion < VER(10))

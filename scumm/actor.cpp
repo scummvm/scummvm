@@ -1746,6 +1746,8 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 	static const SaveLoadEntry actorEntries[] = {
 		MKLINE(Actor, _pos.x, sleInt16, VER(8)),
 		MKLINE(Actor, _pos.y, sleInt16, VER(8)),
+		MKLINE(Actor, offs_x, sleInt16, VER(32)),
+		MKLINE(Actor, offs_y, sleInt16, VER(32)),
 		MKLINE(Actor, top, sleInt16, VER(8)),
 		MKLINE(Actor, bottom, sleInt16, VER(8)),
 		MKLINE(Actor, elevation, sleInt16, VER(8)),
@@ -1775,11 +1777,9 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, speedy, sleUint16, VER(8)),
 		MKLINE(Actor, cost.animCounter, sleUint16, VER(8)),
 		MKLINE(Actor, cost.soundCounter, sleByte, VER(8)),
-/*
 		MKLINE(Actor, actorDrawVirScr, sleByte, VER(32)),
 		MKLINE(Actor, flip, sleByte, VER(32)),
 		MKLINE(Actor, skipLimb, sleByte, VER(32)),
-*/
 
 		// Actor palette grew from 64 to 256 bytes
 		MKARRAY_OLD(Actor, palette[0], sleByte, 64, VER(8), VER(9)),
