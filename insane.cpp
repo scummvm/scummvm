@@ -170,12 +170,11 @@ uint32 SmushPlayer::getFontHeight(uint8 c_font)
 		offset += 8;
 		if (READ_BE_UINT32(font + offset) == 'FOBJ') {
 				t_offset = offset + 8;
-				offset += READ_BE_UINT32(font + offset + 4) + 8;
 		}
 		else
 			return 0;
 	}
-	return *(uint16*)(font + t_offset + 8);
+	return READ_LE_UINT16(font + t_offset + 8);
 }
 
 uint32 SmushPlayer::getCharWidth(uint8 c_font, byte txt)
@@ -203,7 +202,7 @@ uint32 SmushPlayer::getCharWidth(uint8 c_font, byte txt)
 		else
 			return 0;
 	}
-	return *(uint16*)(font + t_offset + 6);
+	return READ_LE_UINT16(font + t_offset + 6);
 }
 
 void SmushPlayer::drawStringTRES(uint32 x, uint32 y, byte * txt)
@@ -254,7 +253,6 @@ void SmushPlayer::drawStringTRES(uint32 x, uint32 y, byte * txt)
 				else
 				{
 					y = 0;
-					printf ("out of screen y\n");
 				}
 				continue;
 			}
@@ -282,7 +280,6 @@ void SmushPlayer::drawStringTRES(uint32 x, uint32 y, byte * txt)
 				}
 				else {
 					y = 0;
-					printf ("out of screen y\n");
 				}
 			}
 		}
