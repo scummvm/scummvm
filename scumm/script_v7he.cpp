@@ -790,6 +790,10 @@ void ScummEngine_v70he::o70_kernelSetFunctions() {
 		break;
 	case 714:
 		break;
+	case 2001:
+		// Used in SoccerMLS
+		warning("o70_kernelSetFunctions: unhandled case 2001");
+		break;
 	default:
 		error("o70_kernelSetFunctions: default case %d (param count %d)", args[0], num);
 	}

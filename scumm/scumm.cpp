@@ -366,6 +366,13 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 	{"footdemo", "Backyard Football 2002 (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"SoccerMLS", "Backyard Soccer MLS Edition", GID_HEGAME, 6, 99, 61, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+
+	{"artdemo", "Blue's Art Time Activities (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"readdemo", "Blue's Reading Time Activities (Demo)", GID_HEGAME, 6, 99, 61, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 	// Humongous Entertainment Scumm Version ?
 	{"Football2002", "Backyard Football 2002 (Demo)", GID_HEGAME, 6, 100, 61, MDT_NONE,
@@ -381,6 +388,11 @@ static const ScummGameSettings scumm_settings[] = {
 	{"PuttTTT", "Putt-Putt Travels Through Time *updated)", GID_HEGAME, 6, 100, 31, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
+	// Uses bink in external files for logos
+	{"baseball2003", "Backyard Baseball 2003", GID_HEGAME, 6, 100, 61, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
+	{"Soccer2004", "Backyard Soccer 2004", GID_HEGAME, 6, 100, 61, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0, 0},
 
 #endif
 	{NULL, NULL, 0, 0, 0, 0, MDT_NONE, 0, 0, 0}

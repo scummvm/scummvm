@@ -1405,7 +1405,8 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip) {
 		fill((byte *)vs->backBuf, vs->pitch, *bmap_ptr, vs->w, vs->h);
 		break;
 	default:
-		error("Gdi::drawBMAPBg: default case %d", code);
+		// Alternayive russian freddi3 uses badly formatted bitmaps
+		warning("Gdi::drawBMAPBg: default case %d", code);
 	}
 
 	copyVirtScreenBuffers(Common::Rect(vs->w, vs->h));
