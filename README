@@ -844,7 +844,7 @@ The following keywords are recognized:
                                  a Steel Sky (CD version)
 
         boot_param      number   Pass this number to the boot script
-        debug_level     number   Enable debug output. The higher number, the
+        debuglevel      number   Enable debug output. The higher number, the
                                  more verbose output.
 
 Broken Sword II adds the following non-standard keywords:
