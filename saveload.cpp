@@ -386,7 +386,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 		MKLINE(ScriptSlot,number,sleUint16),
 		MKLINE(ScriptSlot,newfield,sleUint16),
 		MKLINE(ScriptSlot,status,sleByte),
-		MKLINE(ScriptSlot,type,sleByte),
+		MKLINE(ScriptSlot,where,sleByte),
 		MKLINE(ScriptSlot,unk1,sleByte),
 		MKLINE(ScriptSlot,unk2,sleByte),
 		MKLINE(ScriptSlot,freezeCount,sleByte),
@@ -398,7 +398,7 @@ void Scumm::saveOrLoad(Serializer *s) {
 
 	const SaveLoadEntry nestedScriptEntries[] = {
 		MKLINE(NestedScript,number,sleUint16),
-		MKLINE(NestedScript,type,sleByte),
+		MKLINE(NestedScript,where,sleByte),
 		MKLINE(NestedScript,slot,sleByte),
 		MKEND()
 	};

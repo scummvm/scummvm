@@ -852,7 +852,7 @@ void Scumm::o6_walkActorToObj() {
 	a = derefActorSafe(pop(), "o6_walkActorToObj");
 
 	if (obj >= 17) {
-		if (whereIsObject(obj)==-1)
+		if (whereIsObject(obj)==WIO_NOT_FOUND)
 			return;
 		getObjectXYPos(obj);
 		startWalkActor(a, _xPos, _yPos, _dir);
@@ -909,7 +909,7 @@ void Scumm::o6_putActorAtObject() {
 	obj = pop();
 
 	a = derefActorSafe(pop(), "o6_putActorAtObject");
-	if (whereIsObject(obj)!=-1) {
+	if (whereIsObject(obj)!=WIO_NOT_FOUND) {
 		getObjectXYPos(obj);
 		x = _xPos;
 		y = _yPos;

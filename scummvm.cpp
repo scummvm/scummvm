@@ -169,7 +169,7 @@ void Scumm::initScummVars() {
 	_vars[VAR_FIXEDDISK] = checkFixedDisk();
 	_vars[VAR_SOUNDCARD] = _soundCardType;
 	_vars[VAR_VIDEOMODE] = 0x13;
-	_vars[VAR_HEAPSPACE] = 600;
+	_vars[VAR_HEAPSPACE] = 630;
 	_vars[VAR_MOUSEPRESENT] = _mousePresent;
 	_vars[VAR_SOUNDPARAM] = _soundParam;
 	_vars[VAR_SOUNDPARAM2] = _soundParam2;
@@ -417,8 +417,8 @@ static const VersionSettings version_settings[] = {
 	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, 2, 2},
 	{"atlantis", "Indiana Jones 4 and the Fate of Atlantis", GID_INDY4, 5, 5, 0},
 	{"playfate", "Indiana Jones 4 and the Fate of Atlantis (Demo)", GID_INDY4, 5, 5, 0},
-	{"tentacle", "Day Of The Tenctacle", GID_TENTACLE, 6, 4, 2},
-	{"dottdemo", "Day Of The Tenctacle (Demo)", GID_TENTACLE, 6, 3, 2},
+	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, 4, 2},
+	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, 3, 2},
 	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 4, 2},
 	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0},
 	{NULL,NULL}
@@ -457,7 +457,7 @@ char *Scumm::getGameName() {
 }
 
 void Scumm::startScene(int room, Actor *a, int objectNr) {
-	int i;
+	int i,where;
 	Actor *at;
 
 	CHECK_HEAP
@@ -470,11 +470,12 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	_newEffect = _switchRoomEffect;
 
 	if (_currentScript!=0xFF) {
-		if (vm.slot[_currentScript].type==1 || vm.slot[_currentScript].type==4) {
+		if (vm.slot[_currentScript].where==WIO_ROOM || 
+			vm.slot[_currentScript].where==WIO_FLOBJECT) {
 			if(vm.slot[_currentScript].cutsceneOverride!=0)
 				error("Object %d stopped with active cutscene/override in exit", vm.slot[_currentScript].number);
 			_currentScript = 0xFF;
-		} else if (vm.slot[_currentScript].type==3) {
+		} else if (vm.slot[_currentScript].where==WIO_LOCAL) {
 			if (vm.slot[_currentScript].cutsceneOverride!=0)
 				error("Script %d stopped with active cutscene/override in exit", vm.slot[_currentScript].number);	
 			_currentScript = 0xFF;
@@ -543,9 +544,9 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	memset(actorDrawBits, 0, sizeof(actorDrawBits));
 
 	if (a) {
-		if (whereIsObject(objectNr)!=1 &&
-			whereIsObject(objectNr)!=4)
-				error("startScene: Object %d is not in room %d", objectNr, _currentRoom);
+		where = whereIsObject(objectNr);
+		if (where != WIO_ROOM && where!=WIO_FLOBJECT)
+			error("startScene: Object %d is not in room %d", objectNr, _currentRoom);
 		getObjectXYPos(objectNr);
 		putActor(a, _xPos, _yPos, _currentRoom);
 		startAnimActor(a, 0x3E, _dir^1);

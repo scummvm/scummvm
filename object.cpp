@@ -45,13 +45,13 @@ void Scumm::putClass(int obj, int cls, bool set) {
 
 int Scumm::getOwner(int obj) {
 	checkRange(_numGlobalObjects-1, 0, obj, "Object %d out of range in getOwner");
-	return _objectFlagTable[obj]&0xF;
+	return _objectFlagTable[obj]&OF_OWNER_MASK;
 }
 
 void Scumm::putOwner(int act, int owner) {
 	checkRange(_numGlobalObjects-1, 0, act, "Object %d out of range in putOwner");
 	checkRange(15, 0, owner, "Owner %d out of range in putOwner");
-	_objectFlagTable[act] = (_objectFlagTable[act]&0xF0) | owner;
+	_objectFlagTable[act] = (_objectFlagTable[act]&~OF_OWNER_MASK) | owner;
 }
 
 int Scumm::getState(int act) {
@@ -62,13 +62,14 @@ int Scumm::getState(int act) {
 void Scumm::putState(int act, int state) {
 	checkRange(_numGlobalObjects-1, 0, act, "Object %d out of range in putState");
 	checkRange(15, 0, state, "State %d out of range in putState");
-	_objectFlagTable[act] = (_objectFlagTable[act]&0x0F) | (state<<4);
+	_objectFlagTable[act] = (_objectFlagTable[act]&~OF_STATE_MASK) |
+		(state<<OF_STATE_SHL);
 }
 
 int Scumm::getObjectIndex(int object) {
 	int i;
 
-	if ((_objectFlagTable[object]&0xF)!=0xF) {
+	if ((_objectFlagTable[object]&OF_OWNER_MASK)!=OF_OWNER_ROOM) {
 		for (i=0; i<_maxInventoryItems; i++)
 			if (_inventory[i] == object)
 				return i;
@@ -86,22 +87,22 @@ int Scumm::whereIsObject(int object) {
 	int i;
 
 	if (object >= _numGlobalObjects)
-		return -1;
+		return WIO_NOT_FOUND;
 
-	if ((_objectFlagTable[object]&0xF)!=0xF) {
+	if ((_objectFlagTable[object]&OF_OWNER_MASK)!=OF_OWNER_ROOM) {
 		for (i=0; i<_maxInventoryItems; i++)
 			if (_inventory[i] == object)
-				return 0;
-		return -1;
+				return WIO_INVENTORY;
+		return WIO_NOT_FOUND;
 	}
 
 	for (i=_numObjectsInRoom; i>0; i--)
 		if (_objs[i].obj_nr == object) {
 			if (_objs[i].fl_object_index)
-				return 4;
-			return 1;
+				return WIO_FLOBJECT;
+			return WIO_ROOM;
 		}
-	return -1;
+	return WIO_NOT_FOUND;
 }
 
 int Scumm::getObjectOrActorXY(int object) {
@@ -109,10 +110,10 @@ int Scumm::getObjectOrActorXY(int object) {
 		return getActorXYPos(derefActorSafe(object, "getObjectOrActorXY"));
 	}
 	switch(whereIsObject(object)) {
-	case -1:
+	case WIO_NOT_FOUND:
 		return -1;
-	case 0:
-		return getActorXYPos(derefActorSafe(_objectFlagTable[object]&0xF,"getObjectOrActorXY(2)"));
+	case WIO_INVENTORY:
+		return getActorXYPos(derefActorSafe(_objectFlagTable[object]&OF_OWNER_MASK,"getObjectOrActorXY(2)"));
 	}
 	getObjectXYPos(object);
 	return 0;
@@ -208,7 +209,7 @@ int Scumm::findObject(int x, int y) {
 						return _objs[i].obj_nr;
 				break;
 			}
-		} while ( (_objs[b].ownerstate&0xF0) == a);
+		} while ( (_objs[b].ownerstate&OF_STATE_MASK) == a);
 	}
 	return 0;
 }
@@ -223,7 +224,7 @@ void Scumm::drawRoomObjects(int arg) {
 
 	do {
 		od = &_objs[num];
-		if (!od->obj_nr || !(od->ownerstate&0xF0))
+		if (!od->obj_nr || !(od->ownerstate&OF_STATE_MASK))
 			continue;
 		
 		do {
@@ -233,7 +234,7 @@ void Scumm::drawRoomObjects(int arg) {
 				break;
 			}
 			od = &_objs[od->parent];
-		} while ((od->ownerstate & 0xF0)==a);
+		} while ((od->ownerstate & OF_STATE_MASK)==a);
 
 	} while (--num);
 }
@@ -387,7 +388,7 @@ void Scumm::loadRoomObjects() {
 			if (cdhd->v6.flags == 0x80) {
 				od->parentstate = 1<<4;
 			} else {
-				od->parentstate = (cdhd->v6.flags&0xF)<<4;
+				od->parentstate = (cdhd->v6.flags&0xF)<<OF_STATE_SHL;
 			}
 			od->parent = cdhd->v6.parent;
 			od->actordir = cdhd->v6.actordir;
@@ -399,7 +400,7 @@ void Scumm::loadRoomObjects() {
 			if (cdhd->v5.flags == 0x80) {
 				od->parentstate = 1<<4;
 			} else {
-				od->parentstate = (cdhd->v5.flags&0xF)<<4;
+				od->parentstate = (cdhd->v5.flags&0xF)<<OF_STATE_SHL;
 			}
 			od->parent = cdhd->v5.parent;
 			od->walk_x = READ_LE_UINT16(&cdhd->v5.walk_x);
@@ -437,7 +438,7 @@ void Scumm::clearOwnerOf(int obj) {
 
 	stopObjectScript(obj);
 	
-	if (getOwner(obj)==0xF) {
+	if (getOwner(obj)==OF_OWNER_ROOM) {
 		i = 0;
 		do {
 			if (_objs[i].obj_nr==obj) {
@@ -453,7 +454,7 @@ void Scumm::clearOwnerOf(int obj) {
 	for (i=1; i<_maxInventoryItems; i++) {
 		if (_inventory[i] == obj) {
 			j = whereIsObject(obj);
-			if (j==0) {
+			if (j==WIO_INVENTORY) {
 				nukeResource(rtInventory, i);
 				_inventory[i] = 0;
 			}
@@ -518,7 +519,7 @@ byte *Scumm::getObjOrActorName(int obj) {
 uint32 Scumm::getOBCDOffs(int object) {
 	int i;
 
-	if ((_objectFlagTable[object]&0xF)!=0xF)
+	if ((_objectFlagTable[object]&OF_OWNER_MASK)!=OF_OWNER_ROOM)
 		return 0;
 	for (i=_numObjectsInRoom; i>0; i--) {
 		if (_objs[i].obj_nr == object) {
@@ -533,7 +534,7 @@ uint32 Scumm::getOBCDOffs(int object) {
 byte *Scumm::getObjectAddress(int obj) {
 	int i;
 
-	if ((_objectFlagTable[obj]&0xF)!=0xF) {
+	if ((_objectFlagTable[obj]&OF_OWNER_MASK)!=OF_OWNER_ROOM) {
 		for(i=0; i<_maxInventoryItems; i++) {
 			if (_inventory[i] == obj)
 				return getResourceAddress(rtInventory, i);
@@ -563,7 +564,7 @@ void Scumm::addObjectToInventory(uint obj, uint room) {
 
 	CHECK_HEAP
 
-	if (whereIsObject(obj)==4) {
+	if (whereIsObject(obj)==WIO_FLOBJECT) {
 		i = getObjectIndex(obj);
 		ptr = getResourceAddress(rtFlObject, _objs[i].fl_object_index) + 64;
 		size = READ_BE_UINT32_UNALIGNED(ptr+4);
@@ -619,7 +620,7 @@ void Scumm::setOwnerOf(int obj, int owner) {
 	if (owner==0) {
 		clearOwnerOf(obj);
 		ss = &vm.slot[_currentScript];
-		if (ss->type==0 && _inventory[ss->number]==obj) {
+		if (ss->where==WIO_INVENTORY && _inventory[ss->number]==obj) {
 			putOwner(obj, 0);
 			runHook(0);
 			stopObjectCode();
@@ -634,7 +635,7 @@ int Scumm::getObjX(int obj) {
 	if (obj <= _vars[VAR_NUM_ACTOR]) {
 		return derefActorSafe(obj,"getObjX")->x;
 	} else {
-		if (whereIsObject(obj)==-1)
+		if (whereIsObject(obj)==WIO_NOT_FOUND)
 			return -1;
 		getObjectOrActorXY(obj);
 		return _xPos;
@@ -645,7 +646,7 @@ int Scumm::getObjY(int obj) {
 	if (obj <= _vars[VAR_NUM_ACTOR]) {
 		return derefActorSafe(obj,"getObjY")->y;
 	} else {
-		if (whereIsObject(obj)==-1)
+		if (whereIsObject(obj)==WIO_NOT_FOUND)
 			return -1;
 		getObjectOrActorXY(obj);
 		return _yPos;

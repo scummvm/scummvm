@@ -203,7 +203,7 @@ struct ScriptSlot {
 	uint16 number;
 	uint16 newfield;
 	byte status;
-	byte type;
+	byte where;
 	byte unk1,unk2,freezeCount,didexec;
 	byte cutsceneOverride;
 	byte unk5;
@@ -211,7 +211,7 @@ struct ScriptSlot {
 
 struct NestedScript {
 	uint16 number;
-	uint8 type;
+	uint8 where;
 	uint8 slot;
 };
  
@@ -320,9 +320,14 @@ enum ResTypes {
 	rtBox = 15,
 	rtObjectName = 16,
 	rtLast = 16,
-
 	rtNumTypes = 17,
+};
 
+enum {
+	OF_OWNER_MASK = 0x0F,
+	OF_STATE_MASK = 0xF0,
+	OF_OWNER_ROOM = 0x0F,
+	OF_STATE_SHL = 4
 };
 
 #define _maxRooms res.num[rtRoom]
@@ -602,6 +607,15 @@ enum GameId {
 
 struct ScummDebugger;
 struct Serializer;
+
+enum WhereIsObject {
+	WIO_NOT_FOUND = -1,
+	WIO_INVENTORY = 0,
+	WIO_ROOM = 1,
+	WIO_GLOBAL = 2,
+	WIO_LOCAL = 3,
+	WIO_FLOBJECT = 4,
+};
 
 struct Scumm {
 	const char *_gameText;

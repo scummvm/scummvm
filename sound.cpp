@@ -38,7 +38,7 @@ struct SoundEngine {
 
 void Scumm::addSoundToQueue(int sound) {
 	_vars[VAR_LAST_SOUND] = sound;
-	ensureResourceLoaded(4, sound);
+	ensureResourceLoaded(rtSound, sound);
 	addSoundToQueue2(sound);
 }
 
@@ -201,7 +201,7 @@ int Scumm::isSoundRunning(int sound) {
 	if (isSoundInQueue(sound))
 		return 1;
 
-	if (!isResourceLoaded(4, sound))
+	if (!isResourceLoaded(rtSound, sound))
 		return 0;
 
 	
@@ -290,7 +290,7 @@ static const uint32 sound_tags[] = {
 void Scumm::setupSound() {
 	SoundEngine *se = (SoundEngine*)_soundDriver;
 	if (se) {
-		se->_base_sounds = res.address[4];
+		se->_base_sounds = res.address[rtSound];
 	}
 	_soundTagTable = (byte*)sound_tags;
 	_numSoundTags = 1;

@@ -187,7 +187,7 @@ void ScummDebugger::printScripts() {
 		ss = &_s->vm.slot[i];
 		if (ss->number) {
 			printf("|%2d|%3d|%3d|%3d|%3d|%3d|%2d|%3d|%3d|\n",
-				i, ss->number, ss->status, ss->type, ss->unk1, ss->unk2, ss->freezeCount, ss->cutsceneOverride, ss->unk5);
+				i, ss->number, ss->status, ss->where, ss->unk1, ss->unk2, ss->freezeCount, ss->cutsceneOverride, ss->unk5);
 		}
 	}
 	printf("+---------------------------------+\n");

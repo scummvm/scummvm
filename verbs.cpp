@@ -250,7 +250,7 @@ void Scumm::setVerbObject(uint room, uint object, uint verb) {
 	ImageHeader *imhd;
 	RoomHeader *roomhdr;
 
-	if (whereIsObject(object) == 4)
+	if (whereIsObject(object) == WIO_FLOBJECT)
 		error("Can't grab verb image from flobject");
 
 	ensureResourceLoaded(rtRoom,room);

@@ -1201,7 +1201,7 @@ void Scumm::o5_putActorAtObject() {
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_putActorAtObject");
 	obj = getVarOrDirectWord(0x40);
-	if (whereIsObject(obj)!=-1)
+	if (whereIsObject(obj)!=WIO_NOT_FOUND)
 		getObjectXYPos(obj);
 	else {
 		_xPos = 240;
@@ -1884,7 +1884,7 @@ void Scumm::o5_walkActorToObject() {
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_walkActorToObject");
 	obj = getVarOrDirectWord(0x40);
-	if (whereIsObject(obj)!=-1) {
+	if (whereIsObject(obj)!=WIO_NOT_FOUND) {
 		getObjectXYPos(obj);
 		startWalkActor(a, _xPos, _yPos, _dir);
 	}

@@ -45,13 +45,13 @@ void Scumm::runScript(int script, int a, int b, int16 *lvarptr) {
 	if (script < _numGlobalScripts) {
 		scriptPtr = getResourceAddress(rtScript, script);
 		scriptOffs = 8;
-		scriptType = 2;
+		scriptType = WIO_GLOBAL;
 	} else {
 		scriptOffs = _localScriptList[script - _numGlobalScripts];
 		if (scriptOffs == 0)
 			error("Local script %d is not in room %d", script, _roomResource);
 		scriptOffs += 9;
-		scriptType = 3;
+		scriptType = WIO_LOCAL;
 	}
 
 	slot = getScriptSlot();
@@ -60,7 +60,7 @@ void Scumm::runScript(int script, int a, int b, int16 *lvarptr) {
 	s->number = script;
 	s->offs = scriptOffs;
 	s->status = 2;
-	s->type = scriptType;
+	s->where = scriptType;
 	s->unk1 = a;
 	s->unk2 = b;
 	s->freezeCount = 0;
@@ -81,7 +81,8 @@ void Scumm::stopScriptNr(int script) {
 	ss = &vm.slot[1];
 	
 	for (i=1; i<NUM_SCRIPT_SLOT; i++,ss++) {
-		if (script!=ss->number || ss->type!=2 && ss->type!=3 || ss->status==0)
+		if (script!=ss->number || 
+				ss->where!=WIO_GLOBAL && ss->where!=WIO_LOCAL || ss->status==0)
 			continue;
 
 		if (ss->cutsceneOverride)
@@ -99,10 +100,10 @@ void Scumm::stopScriptNr(int script) {
 	num = _numNestedScripts;
 
 	do {
-		if (nest->number == script && (nest->type==2 || nest->type==3)) {
+		if (nest->number == script && (nest->where==WIO_GLOBAL || nest->where==WIO_LOCAL)) {
 			nest->number = 0xFF;
 			nest->slot = 0xFF;
-			nest->type = 0xFF;
+			nest->where = 0xFF;
 		}
 	} while(nest++,--num);
 }
@@ -118,7 +119,8 @@ void Scumm::stopObjectScript(int script) {
 	ss = &vm.slot[1];
 	
 	for (i=1; i<NUM_SCRIPT_SLOT; i++,ss++) {
-		if (script==ss->number && (ss->type==1 || ss->type==0 || ss->type==4) && ss->status!=0) {
+		if (script==ss->number && (ss->where==WIO_ROOM || 
+			ss->where==WIO_INVENTORY || ss->where==WIO_FLOBJECT) && ss->status!=0) {
 			if (ss->cutsceneOverride)
 				error("Object %d stopped with active cutscene/override", script);
 			ss->number = 0;
@@ -135,10 +137,12 @@ void Scumm::stopObjectScript(int script) {
 	num = _numNestedScripts;
 
 	do {
-		if (nest->number == script && (nest->type==1 || nest->type==4 || nest->type==0)) {
+		if (nest->number == script && 
+			 (nest->where==WIO_ROOM || nest->where==WIO_FLOBJECT || 
+			 nest->where==WIO_INVENTORY)) {
 			nest->number = 0xFF;
 			nest->slot = 0xFF;
-			nest->type = 0xFF;
+			nest->where = 0xFF;
 		}
 	} while(nest++,--num);
 }
@@ -165,11 +169,11 @@ void Scumm::runScriptNested(int script) {
 
 	if (_currentScript==0xFF) {
 		nest->number = 0xFF;
-		nest->type = 0xFF;
+		nest->where = 0xFF;
 	} else {
 		slot = &vm.slot[_currentScript];
 		nest->number = slot->number;
-		nest->type = slot->type;
+		nest->where = slot->where;
 		nest->slot = _currentScript;
 	}
 
@@ -188,7 +192,7 @@ void Scumm::runScriptNested(int script) {
 	
 	if (nest->number != 0xFF) {
 		slot = &vm.slot[nest->slot];
-		if (slot->number == nest->number && slot->type==nest->type &&
+		if (slot->number == nest->number && slot->where==nest->where &&
 			slot->status != 0 && slot->freezeCount==0) {
 			_currentScript = nest->slot;
 			getScriptBaseAddress();
@@ -214,25 +218,25 @@ void Scumm::getScriptBaseAddress() {
 		return;
 
 	ss = &vm.slot[_currentScript];
-	switch(ss->type) {
-	case 0: /* inventory script **/
+	switch(ss->where) {
+	case WIO_INVENTORY: /* inventory script **/
 		index = getObjectIndex(ss->number);
 		_scriptOrgPointer = getResourceAddress(rtInventory, index);
 		_lastCodePtr = &_baseInventoryItems[index];
 		break;
 
 	case 3:
-	case 1: /* room script */
+	case WIO_ROOM: /* room script */
 		_scriptOrgPointer = getResourceAddress(rtRoom, _roomResource);
 		_lastCodePtr = &_baseRooms[_roomResource];
 		break;
 
-	case 2: /* global script */
+	case WIO_GLOBAL: /* global script */
 		_scriptOrgPointer = getResourceAddress(rtScript, ss->number);
 		_lastCodePtr = &_baseScripts[ss->number];
 		break;
 
-	case 4: /* flobject script */
+	case WIO_FLOBJECT: /* flobject script */
 		index = getObjectIndex(ss->number);
 		_scriptOrgPointer = getResourceAddress(rtFlObject,_objs[index].fl_object_index);
 		_lastCodePtr = &_baseFLObject[ss->number];
@@ -419,7 +423,7 @@ void Scumm::stopObjectCode() {
 
 	ss = &vm.slot[_currentScript];
 
-	if (ss->type!=2 && ss->type!=3) {
+	if (ss->where!=WIO_GLOBAL && ss->where!=WIO_LOCAL) {
 		if (ss->cutsceneOverride)
 			error("Object %d ending with active cutscene/override", ss->number);
 		
@@ -515,7 +519,7 @@ void Scumm::runExitScript() {
 		int slot = getScriptSlot();
 		vm.slot[slot].status = 2;
 		vm.slot[slot].number = 10001;
-		vm.slot[slot].type = 1;
+		vm.slot[slot].where = WIO_ROOM;
 		vm.slot[slot].offs = _EXCD_offs + 8;
 		vm.slot[slot].unk1 = 0;
 		vm.slot[slot].unk2 = 0;
@@ -533,7 +537,7 @@ void Scumm::runEntryScript() {
 		int slot = getScriptSlot();
 		vm.slot[slot].status = 2;
 		vm.slot[slot].number = 10002;
-		vm.slot[slot].type = 1;
+		vm.slot[slot].where = WIO_ROOM;
 		vm.slot[slot].offs = _ENCD_offs + 8;
 		vm.slot[slot].unk1 = 0;
 		vm.slot[slot].unk2 = 0;
@@ -551,11 +555,11 @@ void Scumm::killScriptsAndResources() {
 	ss = &vm.slot[1];
 	
 	for (i=1; i<NUM_SCRIPT_SLOT; i++,ss++) {
-		if (ss->type==1 || ss->type==4) {
+		if (ss->where==WIO_ROOM || ss->where==WIO_FLOBJECT) {
 			if(ss->cutsceneOverride)
 				error("Object %d stopped with active cutscene/override in exit", ss->number);
 			ss->status = 0;
-		} else if (ss->type==3) {
+		} else if (ss->where==WIO_LOCAL) {
 			if(ss->cutsceneOverride)
 				error("Script %d stopped with active cutscene/override in exit", ss->number);
 			ss->status = 0;
@@ -573,7 +577,7 @@ void Scumm::killScriptsAndResources() {
 	if (_newNames) {
 		for (i=0; i<50; i++) {
 			int j = _newNames[i];
-			if (j && (getOwner(j)&0xF) == 0) {
+			if (j && (getOwner(j)&OF_OWNER_MASK) == 0) {
 				_newNames[i] = 0;
 				nukeResource(rtObjectName, i);
 			}
@@ -645,7 +649,7 @@ void Scumm::runVerbCode(int object, int entry, int a, int b, int16 *vars) {
 
 	where = whereIsObject(object);
 
-	if (where == -1) {
+	if (where == WIO_NOT_FOUND) {
 		error("Code for object %d not in room %d", object, _roomResource);
 	}
 
@@ -659,7 +663,7 @@ void Scumm::runVerbCode(int object, int entry, int a, int b, int16 *vars) {
 	vm.slot[slot].number = object;
 	vm.slot[slot].offs = obcd + offs;
 	vm.slot[slot].status = 2;
-	vm.slot[slot].type = where;
+	vm.slot[slot].where = where;
 	vm.slot[slot].unk1 = a;
 	vm.slot[slot].unk2 = b;
 	vm.slot[slot].freezeCount = 0;
@@ -685,7 +689,7 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 	byte *objptr, *verbptr;
 	int verboffs;
 
-	if (whereIsObject(obj)==-1)
+	if (whereIsObject(obj)==WIO_NOT_FOUND)
 		return 0;
 
 	objptr = getObjectAddress(obj);
@@ -822,7 +826,8 @@ int Scumm::getScriptRunning(int script) {
 	int i;
 	ScriptSlot *ss = vm.slot;
 	for (i=0; i<NUM_SCRIPT_SLOT; i++,ss++)
-		if (ss->number==script && (ss->type==2 || ss->type==3) && ss->status)
+		if (ss->number==script && (ss->where==WIO_GLOBAL || 
+			  ss->where==WIO_LOCAL) && ss->status)
 			return 1;
 	return 0;
 }
