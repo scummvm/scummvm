@@ -21,8 +21,13 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#ifndef macintosh
 #include "sound/mididrv.h"
 #include "sound/imuse.h"
+#else
+#include "mididrv.h"
+#include "imuse.h"
+#endif
 #include "gui.h"
 #include "guimaps.h"
 

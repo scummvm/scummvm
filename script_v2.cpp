@@ -24,9 +24,13 @@
 #include "stdafx.h"
 #include "scumm.h"
 
+#ifndef macintosh
 #include "sound/mididrv.h"
-
 #include "sound/imuse.h"
+#else
+#include "mididrv.h"
+#include "imuse.h"
+#endif
 
 void Scumm::setupOpcodes2()
 {
@@ -2709,6 +2713,7 @@ void Scumm::o6_miscOps()
 			break;
 		case 13:
 			remapActor(derefActorSafe(args[1], "o6_miscOps:14"), args[2], args[3],
+
 								 args[4], -1);
 			break;
 		case 14:
@@ -2914,16 +2919,27 @@ void Scumm::o6_kernelFunction()
 		break;
 	case 211:
 		warning("o6_kernelFunction: getInput(%d)", args[1]);
+
 		/*
+
 		13 = thrust
+
 		336 = thrust
+
 		328 = thrust
+
 		27 = abord
+
 		97 = left
+
 		331 = left
+
 		115 = right
+
 		333 = tight
+
 		*/
+
 		push(0);
 		break;
 	case 212:

@@ -23,8 +23,13 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#ifndef macintosh
 #include "sound/mididrv.h"
 #include "sound/imuse.h"
+#else
+#include "mididrv.h"
+#include "imuse.h"
+#endif
 #include "gameDetector.h"
 
 
@@ -118,7 +123,7 @@ void GameDetector::updateconfig()
 
 void GameDetector::parseCommandLine(int argc, char **argv)
 {
-#if !defined(__APPLE__CW)
+#if !defined(MACOS_CARBON)
 	int i;
 	char *s;
 	char *current_option = NULL;
@@ -556,7 +561,7 @@ MidiDriver *GameDetector::createMidi() {
 #if defined (WIN32) && !defined(_WIN32_WCE)
 	/* MD_WINDOWS is default MidiDriver on windows targets */
 	if (drv == MD_AUTO) drv = MD_WINDOWS;
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) || defined(macintosh)
 	/* MD_QTMUSIC is default MidiDriver on MacOS targets */
 	if (drv == MD_AUTO) drv = MD_QTMUSIC;
 #endif
@@ -573,8 +578,10 @@ MidiDriver *GameDetector::createMidi() {
 #if defined(UNIX) && !defined(__BEOS__)
     case MD_SEQ:        return MidiDriver_SEQ_create();
 #endif
-#if defined(__APPLE__)
+#if defined(__APPLE__) || defined(macintosh)
 	case MD_QTMUSIC:		return MidiDriver_QT_create();
+#endif
+#if defined(__APPLE__)
 	case MD_COREAUDIO:		return MidiDriver_CORE_create();
 #endif
 	}

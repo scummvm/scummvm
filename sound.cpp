@@ -22,9 +22,15 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#ifndef macintosh
 #include "sound/mididrv.h"
 #include "sound/imuse.h"
 #include <sys/stat.h>
+#else
+#include "mididrv.h"
+#include "imuse.h"
+#include <stat.h>
+#endif
 
 #ifdef _WIN32_WCE
 extern void *bsearch(const void *, const void *, size_t,

@@ -19,7 +19,7 @@
  *
  */
 
-#if !defined(__APPLE__CW) && !defined(__MORPHOS__)
+#if !defined(macintosh) && !defined(__MORPHOS__)
 #define NEED_SDL_HEADERS
 #endif
 

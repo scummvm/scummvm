@@ -21,7 +21,11 @@
 
 #include "scummsys.h"
 #include "system.h"
+#ifndef macintosh
 #include "sound/mixer.h"
+#else
+#include "mixer.h"
+#endif
 #include "config-file.h"
 
 #define SCUMMVM_VERSION "0.2.0 devel"

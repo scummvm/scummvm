@@ -25,7 +25,11 @@
 #include "mididrv.h"
 #include "gameDetector.h"
 #include "gui.h"
+#ifndef macintosh
 #include "simon/simon.h"
+#else
+#include "simon.h"
+#endif
 #include "config-file.h"
 
 GameDetector detector;
@@ -94,8 +98,8 @@ static void do_memory_test(void) {
 
 int main(int argc, char *argv[])
 {
-#if defined(MACOS)
-	// support for config file on macos
+#if defined(MACOS_SDL)
+	/* support for config file for macos SDL port */
 
 	char *argitem;
 	char *argstr;

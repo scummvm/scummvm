@@ -2,6 +2,9 @@
  * $Id$
  *
  * $Log$
+ * Revision 1.15  2002/05/05 19:06:51  drigo
+ * Fixed some things for Macintosh ports
+ *
  * Revision 1.14  2002/04/18 21:40:23  tomjoad
  * Reenable MorphOS Midi driver, small updates to CD open code (only when CD audio is requested) and start options
  *
@@ -99,7 +102,7 @@
 #include <devices/timer.h>
 #undef CMD_INVALID
 #endif
-#if !defined(__APPLE__CW) && !(defined(__MWERKS__) && defined(macintosh))
+#if !defined(macintosh)
 #include <sys/types.h>
 #include <sys/uio.h>
 #endif
@@ -129,8 +132,8 @@
 #define SCUMMVM_PLATFORM_VERSION  "X11 version"
 
 #else
-#ifdef __APPLE__CW
-#define SCUMMVM_PLATFORM_VERSION "Carbon Mac version"
+#ifdef macintosh
+#define SCUMMVM_PLATFORM_VERSION "Macintosh version"
 #else
 
 #ifdef SDL_COMPILEDVERSION

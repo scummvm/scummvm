@@ -131,9 +131,11 @@ typedef signed long int32;
 #define NORETURN
 #endif
 
-#elif defined(__APPLE__CW)
+#elif defined(macintosh)
 #include <stdlib.h>
 #include <stdio.h>
+
+#include "macos.h"
 
 #define scumm_stricmp strcmp
 inline char* strdup(char *buf) {return (char*)buf;};
@@ -214,37 +216,6 @@ typedef signed long int32;
 
 #define START_PACK_STRUCTS pack (push,1)
 #define END_PACK_STRUCTS   pack(pop)
-
-#elif (defined(__MWERKS__) && defined(macintosh) && !defined(__APPLE__CW))
-	
-	#define scumm_stricmp strcmp
-	
-	#define MACOS
-	#define NEED_STRDUP
-	
-	#define CHECK_HEAP
-
-	#define SCUMM_BIG_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
-	
-	#define FORCEINLINE inline
-	
-	#define NORETURN
-	
-	#define CDECL
-	
-	typedef unsigned char byte;
-	typedef unsigned char uint8;
-	typedef unsigned short uint16;
-	typedef unsigned long uint32;
-	typedef unsigned int uint;
-	typedef signed char int8;
-	typedef signed short int16;
-	typedef signed long int32;
-
-	#define START_PACK_STRUCTS options align=packed
-	#define END_PACK_STRUCTS options align=reset
-	#define GCC_PACK
 
 #else
 #error No system type defined
