@@ -155,7 +155,7 @@ uint16 SwordText::copyChar(uint8 ch, uint8 *sprPtr, uint16 sprWidth, uint8 pen) 
 		}
 		dest += sprWidth;
 	}
-	return chFrame->width;
+	return FROM_LE_16(chFrame->width);
 }
 
 FrameHeader *SwordText::giveSpriteData(uint32 textTarget) {
