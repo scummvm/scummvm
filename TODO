@@ -286,7 +286,6 @@ SIMON
 
 SAGA
 ====
-* Remove use of yslib
 * Remove any traces of the additional level of abstraction reinherit used
 * Remove homerolled high level data structures like stacks that should
   be provided by ScummVM if they aren't already.
@@ -295,10 +294,11 @@ SAGA
 * Remove use of floating point, especially doubles.
 * Change SData so that its buffers point to the appropriate data.
   (eriktorbjorn - mostly done; the script "static" buffer is still wrong)
-* Rewrite path finder
-* Eliminate script semaphores and use flags instead (sev)
+* Rewrite path finder (h00ligan)
+* Eliminate script semaphores and use flags instead
 * Add sound/voices compression. Should _considerably_ save space.
 * Add support for Mac versions. All data is in BE mode and structures are aligned.
+  (h00ligan, partly done)
 * Fix the usage of Rect so that it's more consistent with the rest of ScummVM,
   e.g. a rectangle covering the entire ITE screen should have right=320 and
   bottom=200. (eriktorbjorn, partly - mostly? - done)
