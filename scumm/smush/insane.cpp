@@ -49,11 +49,9 @@
 // TODO (in no particular order):
 // o After third crash Ben disappears
 // o Check why ftmacdemo doesn't finish insane scene
-// o Proper SAN seeking/switching. Now it just crashes
 // o TRS file support. Everything is in place, I just need to figure out function parameters
 // o FLU files support
 // o IACT
-// o Kill bugs
 // o Code review/cleanup
 // o DOS demo INSANE
 
@@ -669,27 +667,27 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 			if (_val130b == 1) {
 				if (weaponMaxRange(actor1) < dist) {
 					if (act2x < act1x)
-						_actor[1].field_14 = -101;
+						_actor[actor1].field_14 = -101;
 					else
-						_actor[1].field_14 = 101;
+						_actor[actor1].field_14 = 101;
 				} else {
 					if (weaponMinRange(actor1) > dist) {
 						if (act2x < act1x)
-							_actor[1].field_14 = 101;
+							_actor[actor1].field_14 = 101;
 						else
-							_actor[1].field_14 = -101;
+							_actor[actor1].field_14 = -101;
 					} else {
-						_actor[1].field_14 = 0;
+						_actor[actor1].field_14 = 0;
 					}
 				}
 			} else {
 				if (weaponMaxRange(actor2) >= dist) {
 					if (act2x < act1x)
-						_actor[1].field_14 = 101;
+						_actor[actor1].field_14 = 101;
 					else
-						_actor[1].field_14 = -101;
+						_actor[actor1].field_14 = -101;
 				} else {
-					_actor[1].field_14 = 0;
+					_actor[actor1].field_14 = 0;
 				}
 			}
 			_val133w = 0;
@@ -701,7 +699,7 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 				if (rand() % probability == 1)
 					retval = 1;
 			}
-			if (_actor[actor1].kicking) {
+			if (_actor[actor2].kicking) {
 				if (weaponMaxRange(actor2) <= dist)
 					if (rand() % (probability * 2) <= 1)
 						retval = 1;
@@ -714,9 +712,9 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 			retval = 2;
 
 		if ((_actor[actor1].field_54 == 0) &&
-			(_actor[actor1].lost == 0) &&
-			(_actor[actor2].lost == 0)) {
-			if (_actor[actor2].act[3].state == 54) {
+			(_actor[actor2].lost == 0) &&
+			(_actor[actor1].lost == 0)) {
+			if (_actor[actor1].act[3].state == 54) {
 				switch (rand() % 10) {
 				case 3:
 					if (!_enemyState[EN_ROTT1][6]) {
@@ -775,11 +773,11 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 	}
 
 	if (act1x > 310)
-		_actor[1].field_14 = -320;
+		_actor[actor1].field_14 = -320;
 	else if (act1x < 10)
-		_actor[1].field_14 = 320;
+		_actor[actor1].field_14 = 320;
 	else if (act1x > 280)
-		_actor[1].field_14 = -160;
+		_actor[actor1].field_14 = -160;
 
 	// Shift+V cheat to win the battle
 	if (_scumm->getKeyState(0x56) && !_beenCheated &&
@@ -810,9 +808,134 @@ int32 Insane::enemy0initializer(int32 actor1, int32 actor2, int32 probability) {
 }
 
 int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
-	// FIXME: implement
-	warning("stub Insane::enemy1handler(%d, %d, %d)", actor1, actor2, probability);
-	return 0;
+	int32 act1damage, act2damage, act1x, act2x, retval;
+	int32 dist;
+
+	retval = 0;
+	act1damage = _actor[actor1].damage; // ebx
+	act2damage = _actor[actor2].damage; // ebp
+	act1x = _actor[actor1].x; // esi
+	act2x = _actor[actor2].x; // edi
+	
+	if (!_actor[actor1].field_4C) {
+		if (_val141w > _val142w) {
+			if (act1damage - act2damage >= 30) {
+				if (rand() % probability != 1)
+					_val140b = 0;
+				else
+					_val140b = 1;
+			}
+			_val141w = 0;
+			_val142w = rand() % (probability * 2);
+		}
+
+		dist = ABS(act1x - act2x);
+
+		if (_val143w > _val144w) {
+			if (_val140b == 1) {
+				if (weaponMaxRange(actor1) < dist) {
+					if (act2x < act1x)
+						_actor[actor1].field_14 = -101;
+					else
+						_actor[actor1].field_14 = 101;
+				} else {
+					if (weaponMinRange(actor1) > dist) {
+						if (act2x < act1x)
+							_actor[actor1].field_14 = 101;
+						else
+							_actor[actor1].field_14 = -101;
+					} else {
+						_actor[actor1].field_14 = 0;
+					}
+				}
+			} else {
+				if (weaponMaxRange(actor2) >= dist) {
+					if (act2x < act1x)
+						_actor[actor1].field_14 = 101;
+					else
+						_actor[actor1].field_14 = -101;
+				} else {
+					_actor[actor1].field_14 = 0;
+				}
+			}
+			_val143w = 0;
+			_val144w = rand() % probability;
+		}
+
+		if (_val145w > _val146w) {
+			if (weaponMaxRange(actor2) + 40 >= dist) {
+				if (rand() % probability == 1)
+					retval = 1;
+			}
+			if (_actor[actor2].kicking) {
+				if (weaponMaxRange(actor2) <= dist)
+					if (rand() % (probability * 2) <= 1)
+						retval = 1;
+			}
+			_val135w = 0;
+			_val136w = ABS(rand() % probability) * 2;
+		}
+
+		if (_actor[actor1].weapon == -1)
+			retval = 2;
+
+		if ((_actor[actor1].field_54 == 0) &&
+			(_actor[actor2].lost == 0) &&
+			(_actor[actor1].lost == 0)) {
+			if (_actor[actor1].act[3].state == 54) {
+				switch (rand() % 10) {
+				case 3:
+					if (!_enemyState[EN_ROTT2][6]) {
+						_enemyState[EN_ROTT2][6] = 1;
+						prepareScenePropScene(scenePropIdx[38], 0, 0);
+					}
+					break;
+				case 8:
+					if (!_enemyState[EN_ROTT2][5]) {
+						_enemyState[EN_ROTT2][5] = 1;
+						prepareScenePropScene(scenePropIdx[37], 0, 0);
+					}
+					break;
+				}
+			} else {
+				switch(rand() % 15) {
+				case 2:
+					if (!_enemyState[EN_ROTT2][2]) {
+						_enemyState[EN_ROTT2][2] = 1;
+						prepareScenePropScene(scenePropIdx[34], 0, 0);
+					}
+					break;
+				case 11:
+					if (!_enemyState[EN_ROTT1][7]) {
+						_enemyState[EN_ROTT1][7] = 1;
+						prepareScenePropScene(scenePropIdx[39], 0, 0);
+					}
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		_val141w++;
+		_val143w++;
+		_val145w++;
+	}
+
+	if (act1x > 310)
+		_actor[actor1].field_14 = -320;
+	else if (act1x < 10)
+		_actor[actor1].field_14 = 320;
+	else if (act1x > 280)
+		_actor[actor1].field_14 = -160;
+
+	// Shift+V cheat to win the battle
+	if (_scumm->getKeyState(0x56) && !_beenCheated &&
+		!_actor[0].lost && !_actor[1].lost) {
+		_beenCheated = 1;
+		_actor[1].damage = _actor[1].maxdamage + 10;
+	}
+
+	return retval;
 }
 
 int32 Insane::enemy1initializer(int32 actor1, int32 actor2, int32 probability) {
@@ -861,27 +984,27 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 			if (_val150b == 1) {
 				if (weaponMaxRange(actor1) < dist) {
 					if (act2x < act1x)
-						_actor[1].field_14 = -101;
+						_actor[actor1].field_14 = -101;
 					else
-						_actor[1].field_14 = 101;
+						_actor[actor1].field_14 = 101;
 				} else {
 					if (weaponMinRange(actor1) > dist) {
 						if (act2x < act1x)
-							_actor[1].field_14 = 101;
+							_actor[actor1].field_14 = 101;
 						else
-							_actor[1].field_14 = -101;
+							_actor[actor1].field_14 = -101;
 					} else {
-						_actor[1].field_14 = 0;
+						_actor[actor1].field_14 = 0;
 					}
 				}
 			} else {
 				if (weaponMaxRange(actor2) >= dist) {
 					if (act2x < act1x)
-						_actor[1].field_14 = 101;
+						_actor[actor1].field_14 = 101;
 					else
-						_actor[1].field_14 = -101;
+						_actor[actor1].field_14 = -101;
 				} else {
-					_actor[1].field_14 = 0;
+					_actor[actor1].field_14 = 0;
 				}
 			}
 			_val153w = 0;
@@ -892,7 +1015,7 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 				if (rand() % probability == 1)
 					retval = 1;
 			}
-			if (_actor[actor1].kicking) {
+			if (_actor[actor2].kicking) {
 				if (weaponMaxRange(actor2) <= dist)
 					if (rand() % (probability * 2) <= 1)
 						retval = 1;
@@ -905,9 +1028,9 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 			retval = 2;
 
 		if ((_actor[actor1].field_54 == 0) &&
-			(_actor[actor1].lost == 0) &&
-			(_actor[actor2].lost == 0)) {
-			if (_actor[actor2].act[3].state == 54) {
+			(_actor[actor2].lost == 0) &&
+			(_actor[actor1].lost == 0)) {
+			if (_actor[actor1].act[3].state == 54) {
 				switch (rand() % 10) {
 				case 3:
 					if (!_enemyState[EN_ROTT3][1]) {
@@ -929,7 +1052,7 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 					break;
 				}
 			} else {
-				if (_actor[1].kicking) {
+				if (_actor[actor1].kicking) {
 					if (rand() % 10 == 9) {
 						if (!_enemyState[EN_ROTT3][6]) {
 							_enemyState[EN_ROTT3][6] = 1;
@@ -952,11 +1075,11 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 	}
 
 	if (act1x > 310)
-		_actor[1].field_14 = -320;
+		_actor[actor1].field_14 = -320;
 	else if (act1x < 10)
-		_actor[1].field_14 = 320;
+		_actor[actor1].field_14 = 320;
 	else if (act1x > 280)
-		_actor[1].field_14 = -160;
+		_actor[actor1].field_14 = -160;
 
 	// Shift+V cheat to win the battle
 	if (_scumm->getKeyState(0x56) && !_beenCheated &&
@@ -987,9 +1110,147 @@ int32 Insane::enemy2initializer(int32 actor1, int32 actor2, int32 probability) {
 }
 
 int32 Insane::enemy3handler(int32 actor1, int32 actor2, int32 probability) {
-	// FIXME: implement
-	warning("stub Insane::enemy3handler(%d, %d, %d)", actor1, actor2, probability);
-	return 0;
+	int32 act1damage, act2damage, act1x, act2x, retval;
+	int32 dist;
+
+	retval = 0;
+	act1damage = _actor[actor1].damage; // ebx
+	act2damage = _actor[actor2].damage; // ebp
+	act1x = _actor[actor1].x; // esi
+	act2x = _actor[actor2].x; // edi
+	
+	if (!_actor[actor1].field_4C) {
+		if (_val161w > _val162w) {
+			if (act1damage - act2damage >= 30) {
+				if (rand() % probability != 1)
+					_val160b = 0;
+				else
+					_val160b = 1;
+			}
+			_val161w = 0;
+			_val162w = rand() % (probability * 2);
+		}
+
+		dist = ABS(act1x - act2x);
+
+		if (_val163w > _val164w) {
+			if (_val160b == 1) {
+				if (weaponMaxRange(actor1) < dist) {
+					if (act2x < act1x)
+						_actor[actor1].field_14 = -101;
+					else
+						_actor[actor1].field_14 = 101;
+				} else {
+					if (weaponMinRange(actor1) > dist) {
+						if (act2x < act1x)
+							_actor[actor1].field_14 = 101;
+						else
+							_actor[actor1].field_14 = -101;
+					} else {
+						_actor[actor1].field_14 = 0;
+					}
+				}
+			} else {
+				if (weaponMaxRange(actor2) >= dist) {
+					if (act2x < act1x)
+						_actor[actor1].field_14 = 101;
+					else
+						_actor[actor1].field_14 = -101;
+				} else {
+					_actor[actor1].field_14 = 0;
+				}
+			}
+			_val163w = 0;
+			_val164w = rand() % probability;
+		}
+
+		if (_val165w > _val166w) {
+			if (_val160b == 1) {
+				if (weaponMaxRange(actor2) + 40 >= dist)
+					if (rand() % probability == 1)
+						retval = 1;
+			} else {
+				if (_actor[actor1].kicking)
+					if (weaponMaxRange(actor2) <= dist)
+						if (rand() % probability <= 1)
+							retval = 1;
+			}
+			_val165w = 0;
+			_val166w = ABS(rand() % probability) * 2;
+		}
+
+		if (_actor[actor1].weapon == -1)
+			retval = 2;
+
+		if ((_actor[actor1].field_54 == 0) &&
+			(_actor[actor2].lost == 0) &&
+			(_actor[actor1].lost == 0)) {
+			_val168w = rand() % 26;
+			if (_val168w != _val167w) {
+				switch (_val168w) {
+				case 0:
+					if (!_enemyState[EN_VULTF1][4]) {
+						_enemyState[EN_VULTF1][4] = 1;
+						prepareScenePropScene(scenePropIdx[3], 0, 0);
+					}
+					break;
+				case 1:
+					if (!_enemyState[EN_VULTF1][1]) {
+						_enemyState[EN_VULTF1][1] = 1;
+						prepareScenePropScene(scenePropIdx[4], 0, 0);
+					}
+					break;
+				case 2:
+					if (!_enemyState[EN_VULTF1][2]) {
+						_enemyState[EN_VULTF1][2] = 1;
+						prepareScenePropScene(scenePropIdx[5], 0, 0);
+					}
+					break;
+				case 3:
+					if (!_enemyState[EN_VULTF1][3]) {
+						_enemyState[EN_VULTF1][3] = 1;
+						prepareScenePropScene(scenePropIdx[6], 0, 0);
+					}
+					break;
+				case 4:
+					if (!_enemyState[EN_VULTF1][4]) {
+						_enemyState[EN_VULTF1][4] = 1;
+						prepareScenePropScene(scenePropIdx[7], 0, 0);
+					}
+					break;
+				case 5:
+					if (!_enemyState[EN_VULTF1][5]) {
+						_enemyState[EN_VULTF1][5] = 1;
+						prepareScenePropScene(scenePropIdx[8], 0, 0);
+					}
+					break;
+				}
+				_val167w = _val168w;
+			}
+			
+		}
+		_val161w++;
+		_val163w++;
+		_val165w++;
+	} else {
+		_actor[actor1].field_14 = 0;
+	}
+
+	if (act1x > 310)
+		_actor[actor1].field_14 = -320;
+	else if (act1x < 10)
+		_actor[actor1].field_14 = 320;
+	else if (act1x > 280)
+		_actor[actor1].field_14 = -160;
+
+	// Shift+V cheat to win the battle
+	if (_scumm->getKeyState(0x56) && !_beenCheated &&
+		!_actor[0].lost && !_actor[1].lost) {
+		_beenCheated = 1;
+		_actor[1].damage = _actor[1].maxdamage + 10;
+	}
+
+	return retval;
 }
 
 int32 Insane::enemy3initializer(int32 actor1, int32 actor2, int32 probability) {
@@ -1013,9 +1274,159 @@ int32 Insane::enemy3initializer(int32 actor1, int32 actor2, int32 probability) {
 }
 
 int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
-	// FIXME: implement
-	warning("stub Insane::enemy4handler(%d, %d, %d)", actor1, actor2, probability);
-	return 0;
+	int32 act1damage, act2damage, act1x, act2x, retval;
+	int32 dist;
+
+	retval = 0;
+	act1damage = _actor[actor1].damage; // ebx
+	act2damage = _actor[actor2].damage; // ebp
+	act1x = _actor[actor1].x; // esi
+	act2x = _actor[actor2].x; // edi
+
+	if (!_actor[actor1].field_4C) {
+		if (_val171w > _val172w) {
+			if (act1damage - act2damage >= 30) {
+				if (rand() % probability != 1)
+					_val170b = 0;
+				else
+					_val170b = 1;
+			}
+			_val171w = 0;
+			_val172w = rand() % (probability * 2);
+		}
+
+		dist = abs(act1x - act2x);
+
+		if (_val173w > _val174w) {
+			if (_val170b == 1) {
+				if (weaponMaxRange(actor1) < dist) {
+					if (act2x < act1x)
+						_actor[actor1].field_14 = -101;
+					else
+						_actor[actor1].field_14 = 101;
+				} else {
+					if (weaponMinRange(actor1) > dist) {
+						if (act2x < act1x)
+							_actor[actor1].field_14 = 101;
+						else
+							_actor[actor1].field_14 = -101;
+					} else {
+						_actor[actor1].field_14 = 0;
+					}
+				}
+			} else {
+				if (weaponMaxRange(actor2) >= dist) {
+					if (act2x < act1x)
+						_actor[actor1].field_14 = 101;
+					else
+						_actor[actor1].field_14 = -101;
+				} else {
+					_actor[actor1].field_14 = 0;
+				}
+			}
+			_val173w = 0;
+			_val174w = rand() % probability;
+		}
+		if (_val175w > _val176w) {
+			if (weaponMaxRange(actor2) + 40 >= dist) {
+				if (rand() % probability == 1)
+					retval = 1;
+			}
+			if (_actor[actor2].kicking) {
+				if (weaponMaxRange(actor2) >= dist) // that's weird but original is >=
+					if (rand() % (probability * 2) <= 1)
+						retval = 1;
+			}
+			_val175w = 0;
+			_val176w = ABS(rand() % probability) * 2;
+		}
+
+		if (_actor[actor1].weapon == -1)
+			retval = 2;
+
+		if ((_actor[actor1].field_54 == 0) &&
+			(_actor[actor2].lost == 0) &&
+			(_actor[actor1].lost == 0)) {
+			if (_actor[actor1].act[3].state == 54) {
+				switch (rand() % 10) {
+				case 4:
+					if (!_enemyState[EN_VULTM1][7]) {
+						_enemyState[EN_VULTM1][7] = 1;
+						prepareScenePropScene(scenePropIdx[46], 0, 0);
+					}
+					break;
+				case 8:
+					if (!_enemyState[EN_VULTM1][8]) {
+						_enemyState[EN_VULTM1][8] = 1;
+						prepareScenePropScene(scenePropIdx[47], 0, 0);
+					}
+					break;
+				}
+			} else {
+				if (_actor[actor1].kicking) {
+					switch (rand() % 10) {
+					case 3:
+						prepareScenePropScene(scenePropIdx[44], 0, 0);
+						break;
+					case 9:
+						prepareScenePropScene(scenePropIdx[45], 0, 0);
+						break;
+					}
+				} else {
+					if (weaponMaxRange(actor2) <= dist) {
+						switch (rand() % 10) {
+						case 3:
+							if (!_enemyState[EN_VULTM1][3]) {
+								_enemyState[EN_VULTM1][3] = 1;
+								prepareScenePropScene(scenePropIdx[42], 0, 0);
+							}
+							break;
+						case 9:
+							if (!_enemyState[EN_VULTM1][4]) {
+								_enemyState[EN_VULTM1][4] = 1;
+								prepareScenePropScene(scenePropIdx[43], 0, 0);
+							}
+							break;
+						}
+					} else {
+						switch (rand() % 15) {
+						case 7:
+							if (!_enemyState[EN_VULTM1][9]) {
+								_enemyState[EN_VULTM1][9] = 1;
+								prepareScenePropScene(scenePropIdx[48], 0, 0);
+							}
+							break;
+						case 11:
+							if (!_enemyState[EN_VULTM1][1]) {
+								_enemyState[EN_VULTM1][1] = 1;
+								prepareScenePropScene(scenePropIdx[40], 0, 0);
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
+		_val171w++;
+		_val173w++;
+		_val175w++;
+	}
+
+	if (act1x > 310)
+		_actor[actor1].field_14 = -320;
+	else if (act1x < 10)
+		_actor[actor1].field_14 = 320;
+	else if (act1x > 280)
+		_actor[actor1].field_14 = -160;
+
+	// Shift+V cheat to win the battle
+	if (_scumm->getKeyState(0x56) && !_beenCheated &&
+		!_actor[0].lost && !_actor[1].lost) {
+		_beenCheated = 1;
+		_actor[1].damage = _actor[1].maxdamage + 10;
+	}
+
+	return retval;
 }
 
 int32 Insane::enemy4initializer(int32 actor1, int32 actor2, int32 probability) {
@@ -1037,16 +1448,141 @@ int32 Insane::enemy4initializer(int32 actor1, int32 actor2, int32 probability) {
 }
 
 int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
-	// FIXME: implement
-	warning("stub Insane::enemy5handler(%d, %d, %d)", actor1, actor2, probability);
-	return 0;
+	int32 act1damage, act1x, act2x, retval;
+	int32 dist;
+
+	retval = 0;
+	act1damage = _actor[actor1].damage; // ebx
+	act1x = _actor[actor1].x; // esi
+	act2x = _actor[actor2].x; // ebp
+	
+	dist = ABS(act1x - act2x);
+
+	if (weaponMaxRange(actor1) >= dist) {
+		if (!_val182b)
+			_val183d++;
+		_val181b = 1;
+	} else {
+		_val181b = 0;
+	}
+
+	if (!_actor[actor1].field_4C) {
+		if (_val183d >= 2 || act1damage) {
+			_actor[actor1].damage = 10;
+
+			if (weaponMaxRange(actor2) >= dist) {
+				if (act2x < act1x)
+					_actor[actor1].field_14 = -101;
+				else
+					_actor[actor1].field_14 = 101;
+			} else {
+				_actor[actor1].field_14 = 0;
+			}
+
+			if (weaponMaxRange(actor1) + 20 <= dist)
+				if (rand() % probability == 1)
+					retval = 1;
+		} else {
+			if (weaponMaxRange(actor2) <= dist && _actor[actor2].weapon == 1)
+				if (_actor[actor2].kicking) {
+					if (rand() % probability <= 1)
+						retval = 1;
+				} else {
+					retval = 1;
+				}
+			_actor[actor1].field_14 = 0;
+			if (_val180d >= 100)
+				_val183d = 3;
+		}
+
+		if ((_actor[actor1].field_54 == 0) &&
+			(_actor[actor2].lost == 0) &&
+			(_actor[actor1].lost == 0)) {
+			if (_actor[actor1].act[3].state == 54)
+				switch (rand() % 10) {
+				case 4:
+					if (!_enemyState[EN_VULTF2][6]) {
+						_enemyState[EN_VULTF2][6] = 1;
+						prepareScenePropScene(scenePropIdx[15], 0, 0);
+					}
+					break;
+				case 8:
+					if (!_enemyState[EN_VULTF2][3]) {
+						_enemyState[EN_VULTF2][3] = 1;
+						prepareScenePropScene(scenePropIdx[12], 0, 0);
+					}
+					break;
+				}
+			else {
+				if (_actor[actor1].kicking) {
+					switch (rand() % 10) {
+					case 2:
+						if (!_enemyState[EN_VULTF2][8]) {
+							_enemyState[EN_VULTF2][8] = 1;
+							prepareScenePropScene(scenePropIdx[17], 0, 0);
+						}
+						break;
+					case 5:
+						prepareScenePropScene(scenePropIdx[11], 0, 0);
+						_enemyState[EN_VULTF2][2] = 1;
+						break;
+					case 9:
+						_enemyState[EN_VULTF2][1] = 1;
+						prepareScenePropScene(scenePropIdx[10], 0, 0);
+						break;
+					}
+				} else {
+					switch (rand() % 15) {
+					case 3:
+						if (!_enemyState[EN_VULTF2][4]) {
+							_enemyState[EN_VULTF2][4] = 1;
+							prepareScenePropScene(scenePropIdx[13], 0, 0);
+						}
+						break;
+					case 11:
+						if (!_enemyState[EN_VULTF2][5]) {
+							_enemyState[EN_VULTF2][5] = 1;
+							prepareScenePropScene(scenePropIdx[14], 0, 0);
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	if (_actor[actor1].field_4C)
+		_actor[actor1].field_4C = 0;
+
+	if (_actor[actor1].weapon == -1)
+		retval = 2;
+
+	if (act1x > 310)
+		_actor[actor1].field_14 = -320;
+	else if (act1x < 10)
+		_actor[actor1].field_14 = 320;
+	else if (act1x > 280)
+		_actor[actor1].field_14 = -160;
+
+	_val182b = _val181b;
+	_val180d++;
+
+	// Shift+V cheat to win the battle
+	if (_scumm->getKeyState(0x56) && !_beenCheated &&
+		!_actor[0].lost && !_actor[1].lost) {
+		_beenCheated = 1;
+		_actor[1].damage = _actor[1].maxdamage + 10;
+		_actor[1].act[2].state = 113;
+	}
+
+	return retval;
 }
 
 int32 Insane::enemy5initializer(int32 actor1, int32 actor2, int32 probability) {
 	int i;
 
 	for (i = 0; i < 9; i++)
-		_enemyState[EN_VULTF2][i] = 0;
+  		_enemyState[EN_VULTF2][i] = 0;
 
 	_val181b = 0;
 	_val182b = 0;
@@ -1058,9 +1594,129 @@ int32 Insane::enemy5initializer(int32 actor1, int32 actor2, int32 probability) {
 }
 
 int32 Insane::enemy6handler(int32 actor1, int32 actor2, int32 probability) {
-	// FIXME: implement
-	warning("stub Insane::enemy6handler(%d, %d, %d)", actor1, actor2, probability);
-	return 0;
+	int32 act1damage, act2damage, act1x, act2x, retval;
+	int32 dist;
+
+	retval = 0;
+	act1damage = _actor[actor1].damage; // ebx //ebx
+	act2damage = _actor[actor2].damage; // ebp // edi
+	act1x = _actor[actor1].x; // esi
+	act2x = _actor[actor2].x; // edi
+
+	if (_actor[actor2].weapon == 1)
+		retval = 1;
+
+	dist = ABS(act1x - act2x);
+
+	if (!_actor[actor1].field_4C) {
+		if (_currScenePropIdx == scenePropIdx[18] && _currScenePropSubIdx == 3)
+			retval = 1;
+	} else {
+		if (act1damage > 0 || _val190d > 20) {
+			_actor[actor1].damage = 10;
+			if (!_val191w && !_actor[actor1].lost) {
+				if (!_actor[actor1].field_54) {
+					switch (rand() % 4) {
+					case 0:
+						if (!_enemyState[EN_VULTM2][1]) {
+							_enemyState[EN_VULTM2][1] = 1;
+							prepareScenePropScene(scenePropIdx[19], 0, 0);
+						}
+						break;
+					case 1:
+						if (!_enemyState[EN_VULTM2][2]) {
+							_enemyState[EN_VULTM2][2] = 1;
+							prepareScenePropScene(scenePropIdx[20], 0, 0);
+						}
+						break;
+					case 2:
+						if (!_enemyState[EN_VULTM2][3]) {
+							_enemyState[EN_VULTM2][3] = 1;
+							prepareScenePropScene(scenePropIdx[21], 0, 0);
+						}
+						break;
+					case 3:
+						if (!_enemyState[EN_VULTM2][4]) {
+							_enemyState[EN_VULTM2][4] = 1;
+							prepareScenePropScene(scenePropIdx[22], 0, 0);
+						}
+						break;
+					}
+					_val191w = 1;
+					goto _label1;
+				}
+			} else {
+				if (_actor[actor1].field_54 == 0 &&
+					_actor[actor1].lost == 0) {
+					retval = 1;
+					_val190d = 0;
+				}
+			}
+		} else {
+			if (weaponMaxRange(actor1) <= dist) {
+				if (act2x < act1x)
+					_actor[actor1].field_14 = 101;
+				else
+					_actor[actor1].field_14 = -101;
+			} else {
+				_actor[actor1].field_14 = 0;
+			}
+		}
+
+		if (_actor[actor1].weapon == -1)
+			retval = 2;
+
+		if ((_val191w == 0) &&
+			( _actor[actor1].field_54 == 0) &&
+			(_actor[actor2].lost == 0) &&
+			(_actor[actor1].lost == 0)) {
+			switch (rand() % 15) {
+			case 2:
+				if (!_enemyState[EN_VULTM2][5]) {
+					_enemyState[EN_VULTM2][5] = 1;
+					prepareScenePropScene(scenePropIdx[23], 0, 0);
+				}
+				break;
+			case 7:
+				if (!_enemyState[EN_VULTF1][6]) {
+					_enemyState[EN_VULTF1][6] = 1;
+					prepareScenePropScene(scenePropIdx[24], 0, 0);
+				}
+				break;
+			}
+		}
+	}
+
+	_label1:
+	if (act1x > 310)
+		_actor[actor1].field_14 = -320;
+	else if (act1x < 219)
+		_actor[actor1].field_14 = 320;
+	else if (act1x > 280)
+		_actor[actor1].field_14 = -160;
+
+	// Shift+V cheat to win the battle
+	if (_scumm->getKeyState(0x56) && !_beenCheated &&
+		!_actor[0].lost && !_actor[1].lost) {
+		_beenCheated = 1;
+		_actor[0].act[2].state = 97;
+		smlayer_setActorFacing(0, 2, 20, 180);
+		_actor[0].act[2].room = 0;
+		_actor[0].act[1].room = 0;
+		_actor[0].act[0].room = 0;
+		smlayer_setActorLayer(1, 2, 25);
+		smlayer_setActorCostume(1, 2, readArray(_numberArray, 45));
+		smlayer_setActorFacing(1, 2, 6, 180);
+		_actor[1].act[2].state = 97;
+		_actor[1].act[2].room = 1;
+		_actor[1].act[1].room = 0;
+		_actor[1].act[0].room = 0;
+	}
+
+	if (_actor[actor1].lost)
+		retval = 0;
+
+	return retval;
 }
 
 int32 Insane::enemy6initializer(int32 actor1, int32 actor2, int32 probability) {
@@ -1077,9 +1733,64 @@ int32 Insane::enemy6initializer(int32 actor1, int32 actor2, int32 probability) {
 }
 
 int32 Insane::enemy7handler(int32 actor1, int32 actor2, int32 probability) {
-	// FIXME: implement
-	warning("stub Insane::enemy7handler(%d, %d, %d)", actor1, actor2, probability);
-	return 0;
+	int32 act1damage, act2damage, act1x, act2x, retval;
+	int32 dist;
+
+	retval = 0;
+	act1damage = _actor[actor1].damage; // ebx
+	act1x = _actor[actor1].x; // ebp
+	act2x = _actor[actor2].x; // edi
+
+	dist = ABS(act1x - act2x);
+
+	if (_val201d >= 600) {
+		_val202b = 1;
+		_val201d = 0;
+	} else {
+		if (!_val202b) {
+			if (weaponMaxRange(actor2) - 30 <= dist) {
+				if (act2x < act1x)
+					_actor[actor1].field_14 = 101;
+				else
+					_actor[actor1].field_14 = -101;
+				} else {
+				_actor[actor1].field_14 = 0;
+			}
+		}
+	}
+	
+	if (weaponMaxRange(actor1) > dist) {
+		if (act2x < act1x)
+			_actor[actor1].field_14 = 101;
+		else
+			_actor[actor1].field_14 = -101;
+	} else {
+		_actor[actor1].field_14 = 0;
+	}
+
+	if (act1x > 310)
+		_actor[actor1].field_14 = -320;
+	else if (act1x < 10)
+		_actor[actor1].field_14 = 320;
+
+	if (dist <= 95)
+		retval = 1;
+
+	if (_actor[actor1].weapon == -1)
+		retval = 2;
+
+	_val201d++;
+	_val200d = act1damage;
+
+	// Shift+V cheat to win the battle
+	if (_scumm->getKeyState(0x56) && !_beenCheated &&
+		!_actor[0].lost && !_actor[1].lost) {
+		_beenCheated = 1;
+		_actor[1].damage = _actor[1].maxdamage + 10;
+		_actor[1].act[2].state = 102;
+	}
+
+	return retval;
 }
 
 int32 Insane::enemy7initializer(int32 actor1, int32 actor2, int32 probability) {
@@ -1963,7 +2674,7 @@ void Insane::setSceneCostumes(int sceneId) {
 		return;
 		break;
 	case 21:
-		_currEnemy = EN_ROTT3;
+		_currEnemy = EN_ROTT3; // PATCH
 		setEnemyCostumes();
 		_actor[1].y = 200;
 		smlayer_setFluPalette(_smush_roadrashRip, 0);
@@ -5227,7 +5938,6 @@ void Insane::smlayer_soundSetPan(int32 soundid, int32 pan) {
 
 void Insane::smlayer_soundSetPriority(int32 sound, int32 priority) {
 	// FIXME: waits for complete iMUSE digital
-	warning("stub Insane::smlayer_soundSetPriority(%d, %d)", sound, priority);
 }
 
 void Insane::smlayer_drawSomething(byte *renderBitmap, int32 codecparam, 
@@ -5751,7 +6461,7 @@ void Insane::actor12Reaction(int32 buttons) {
 			if (tmp == 1000)
 				smlayer_startSound1(62);
 			smlayer_setActorFacing(1, 2, 20, 180);
-			_actor[1].act[2].state = 4; // xxx
+			_actor[1].act[2].state = 4;
 		}
 		_actor[1].kicking = 1;
 		_actor[1].act[2].tilt = calcTilt(_actor[1].speed);
@@ -6513,7 +7223,7 @@ int32 Insane::calcEnemyDamage(bool arg_0, bool arg_4) {
 
 	if (arg_0) {
 		ouchSoundBen();
-		_actor[0].damage += weaponDamage(1);
+		_actor[0].damage += weaponDamage(1); // PATCH
 	}
 
 	return 1;

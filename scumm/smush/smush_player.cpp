@@ -975,6 +975,8 @@ void SmushPlayer::insanity(bool flag) {
 // FIXME: now it will work with offsets = 8. No Flu files are supported
 void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos) {
 	Chunk *sub;
+	
+	debug(0, "seekSan(%s, %s, %d)", file, directory, pos);
 
 	if (file) {
 		if (_base)
@@ -983,8 +985,6 @@ void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos) {
 		_base = new FileChunk(file, directory);
 	} else {
 		_base->reinit();
-		// FIXME: this doesn't work as expected
-		//		_base->seek(pos, FileChunk::seek_start);
 	}
 
 	sub = _base->subBlock();
