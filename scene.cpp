@@ -225,7 +225,7 @@ void Scene::setSoundPosition(const char *soundName, Vector3d pos) {
 	float distance = vector.magnitude();
 	float maxDistance = 8.0f;
 	int diffVolume = _maxVolume - _minVolume;
-	int newVolume = (diffVolume * distance) / maxDistance;
+	int newVolume = diffVolume * (1.0 - (distance / maxDistance));
 	newVolume += _minVolume;
 	g_imuse->setVolume(soundName, newVolume);
 

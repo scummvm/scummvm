@@ -18,6 +18,7 @@
 #include "stdafx.h"
 #include "debug.h"
 #include "costume.h"
+#include "actor.h"
 #include "textsplit.h"
 #include "engine.h"
 #include "colormap.h"
@@ -504,10 +505,9 @@ void SoundComponent::setKey(int val) {
 //			g_imuse->stopSound(_soundName.c_str());
 //		} else {
 			g_imuse->startSfx(_soundName.c_str());
-			if (g_engine->currScene()) {
-				Vector3d pos;
-				// TODO: how to get position of actor using that costume component
-//				g_engine->currScene()->setSoundPosition(_soundName.c_str(), pos);
+			if (g_engine->currScene() && g_currentUpdatedActor) {
+				Vector3d pos = g_currentUpdatedActor->pos();
+				g_engine->currScene()->setSoundPosition(_soundName.c_str(), pos);
 			}
 		}
 		break;

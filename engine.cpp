@@ -36,6 +36,9 @@ Engine *g_engine = NULL;
 extern Imuse *g_imuse;
 int g_imuseState = -1;
 
+// hack for access current upated actor to allow access position of actor to sound costume component
+Actor *g_currentUpdatedActor = NULL;
+
 Engine::Engine() :
 		_currScene(NULL), _selectedActor(NULL) {
 	for (int i = 0; i < SDLK_EXTRA_LAST; i++)
@@ -135,9 +138,11 @@ void Engine::mainLoop() {
 			// Update actor costumes
 			for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
 				Actor *a = *i;
+				g_currentUpdatedActor = *i;
 				if (_currScene != NULL && a->inSet(_currScene->name()) && a->visible())
 					a->update();
 			}
+			g_currentUpdatedActor = NULL;
 
 			if (_currScene != NULL) {
 				_currScene->drawBackground();
