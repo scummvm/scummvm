@@ -52,8 +52,10 @@ Insane::Insane(ScummEngine_v6 *scumm) {
 	_vm = scumm;
 	
 #ifndef FTDOSDEMO
-	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC))
+	if ((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)) {
+		_insaneIsRunning = false;
 		return;
+	}
 #endif
 
 	initvars();
