@@ -154,12 +154,6 @@ static const VersionSettings scumm_settings[] = {
 
 	{"test", "Test demo game", GID_SAMNMAX, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE, GF_NEW_OPCODES, 0},
 
-	/* Humongous Entertainment Scumm Version 7 */
-	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-
-	{"pjs-demo", "Pajama Sam (Demo)", GID_PJSDEMO, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	/* Scumm Version 7 */
 	{"ft", "Full Throttle", GID_FT, 7, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
@@ -172,7 +166,62 @@ static const VersionSettings scumm_settings[] = {
 	/* Scumm Version 8 */
 	{"comi", "The Curse of Monkey Island", GID_CMI, 8, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER, 0},
+	 
+	/* Humongous Entertainment Scumm Version 7 */
+	{"farm", "Let's Explore the Farm with Buzzy", GID_PUTTPUTT, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"airdemo", "Let's Explore the Airport with Buzzy (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"puttzoo", "Putt-Putt Saves the Zoo", GID_PUTTPUTT, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"zoodemo", "Putt-Putt Saves the Zoo (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"freddi", "Freddi Fish 1: Missing Kelp Seeds", GID_PUTTPUTT, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"freddemo", "Freddi Fish 1: Missing Kelp Seeds (Demo)", GID_PUTTPUTT, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 
+	/* Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80 */
+	{"pajama", "Pajama Sam 1: No Need to Hide", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"pjs-demo", "Pajama Sam 1: No Need to Hide (Demo)", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"ffhsdemo", "Freddi Fish 2: Haunted Schoolbus (Demo)", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+
+	/* Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90 */
+	{"timedemo", "Putt-Putt Travels Through Time (Demo)", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"f3-mdemo", "Freddi Fish 3: Stolen Conch Shell (Demo)", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"spyfox", "Spyfox 1: Dry Cereal", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"spydemo", "Spyfox 1: Dry Cereal (Demo)", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"kinddemo", "Big Thinkers Kindergarten (Demo)", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"1grademo", "Big Thinkers First Grade (Demo)", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+
+	/* Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95 */
+	{"pj2demo", "Pajama Sam 2: Thunder and Lightning (Demo)", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	 
+	/* Humongous Entertainment Scumm Version 9.8 ?  Scummsys.98 */
+	{"racedemo", "Putt-Putt Enters the Race (Demo)", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"f4-demo", "Freddi Fish 4: Hogfish Rustlers of Briny Gulch (Demo)", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"bluesabctimedemo", "Blue's ABC Time Activities (Demo)", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+
+	/* Humongous Entertainment Scumm Version ?  engine moved to c++ */
+	{"pj3-demo", "Pajama Sam 3: You Are What You Eat (Demo)", GID_PJSDEMO, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	// bunch of backyard sports games...
+	 
 	{NULL, NULL, 0, 0, MDT_NONE, 0, NULL}
 };
 
