@@ -110,8 +110,9 @@ void ScummEngine::CHARSET_1() {
 			s = a->scaley * a->talkPosY / 0xFF;
 			_string[0].ypos = ((a->talkPosY - s) / 2) + s - a->getElevation() + a->_pos.y;
 
-			if (_string[0].ypos < _screenTop)
+			if (_string[0].ypos < _screenTop) {
 				_string[0].ypos = _screenTop;
+			}
 
 			s = a->scalex * a->talkPosX / 0xFF;
 			_string[0].xpos = ((a->talkPosX - s) / 2) + s + a->_pos.x - camera._cur.x + (_screenWidth / 2);
@@ -128,15 +129,14 @@ void ScummEngine::CHARSET_1() {
 
 	_charset->_top = _string[0].ypos + _screenTop;
 	_charset->_startLeft = _charset->_left = _string[0].xpos;
+	_charset->_right = _string[0].right;
+	_charset->_center = _string[0].center;
+	_charset->setColor(_charsetColor);
 
 	if (a && a->charset)
 		_charset->setCurID(a->charset);
 	else
 		_charset->setCurID(_string[0].charset);
-
-	_charset->_center = _string[0].center;
-	_charset->_right = _string[0].right;
-	_charset->setColor(_charsetColor);
 
 	if (_version >= 5)
 		for (i = 0; i < 4; i++)

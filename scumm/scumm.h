@@ -986,7 +986,7 @@ protected:
 
 public:
 	int _screenStartStrip, _screenEndStrip;
-	int 	_screenTop;
+	int _screenTop;
 
 protected:
 	int _blastObjectQueuePos; 
