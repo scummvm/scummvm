@@ -240,4 +240,13 @@ void *operator new(size_t size) {
 void operator delete(void *ptr) {
 	free(ptr);
 }
+
+#undef free(x)
+void free_check(void *ptr) {
+	if ((uint)ptr == 0xE7E7E7E7UL) {
+		printf("ERROR: freeing 0xE7E7E7E7\n");
+		exit(1);
+	}
+	free(ptr);
+}
 #endif
