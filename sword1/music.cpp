@@ -45,7 +45,7 @@ void MusicHandle::fadeUp() {
 	if (_fading > 0)
 		_fading = -_fading;
 	else if (_fading == 0)
-		_fading = -(FADE_LENGTH * getRate());
+		_fading = -1;
 	_fadeSamples = FADE_LENGTH * getRate();
 }
 
@@ -74,8 +74,10 @@ int MusicHandle::readBuffer(int16 *buffer, const int numSamples) {
 			}
 			sample = (sample * _fading) / _fadeSamples;
 		} else if (_fading < 0) {
-			_fading++;
-			sample = (sample * (_fadeSamples + _fading)) / _fadeSamples;
+			_fading--;
+			sample = -(sample * _fading) / _fadeSamples;
+			if (_fading == -_fadeSamples)
+				_fading = 0;
 		}
 		*buffer++ = sample;
 	}
