@@ -298,8 +298,13 @@ void Scumm::readIndexFile()
 			break;
 
 		case MKID('RNAM'):
-		case MKID('ANAM'):
 			_fileHandle.seek(itemsize - 8, SEEK_CUR);
+			break;
+
+		case MKID('ANAM'):
+			_numAudioNames = _fileHandle.readWordLE();
+			_audioNames = (char*)malloc(_numAudioNames * 9);
+			_fileHandle.read(_audioNames, _numAudioNames * 9);
 			break;
 
 		case MKID('DROO'):

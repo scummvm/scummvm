@@ -163,6 +163,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 		_saveLoadCompatible = false;
 	}
 	loadLanguageBundle();
+	_audioNames = NULL;
 }
 
 Scumm::~Scumm ()
@@ -186,6 +187,8 @@ Scumm::~Scumm ()
 		delete _imuseDigital;
 	if (_existLanguageFile)
 		delete _languageBuffer;
+	if (_audioNames)
+		delete _audioNames;
 }
 
 void Scumm::scummInit()

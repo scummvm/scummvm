@@ -5555,7 +5555,7 @@ void IMuseDigital::stopAll() {
 int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) {
 	byte cmd = a & 0xFF;
 	byte param = a >> 8;
-	int32 sample = b;
+	int32 sample = b, r;
 	byte sub_cmd = c >> 8;
 	int8 channel = -1, l;
 	int8 tmp;
@@ -5652,13 +5652,12 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 		switch (cmd) {
 		case 0: // play music (state)
 			debug(1, "IMuseDigital::doCommand 0x1000 (%d)", b);
-			return 0;
 			if (_scumm->_gameId == GID_DIG) {
 				for(l = 0;; l++) {
 					if (_digStateMusicMap[l].room == -1) {
 						return 1;
 					}
-					if ((_digStateMusicMap[l].room == b)) {
+					if (_digStateMusicMap[l].room == b) {
 						int16 music = _digStateMusicMap[l].table_index;
 						debug(1, "Play imuse music: %s, %s, %s", _digStateMusicTable[music].name, _digStateMusicTable[music].title, _digStateMusicTable[music].filename);
 						if (_digStateMusicTable[music].filename[0] != 0) {
@@ -5668,6 +5667,22 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					}
 				}
 			} else if (_scumm->_gameId == GID_FT) {
+				for(l = 0;; l++) {
+					if (_ftStateMusicTable[l].index == -1) {
+						return 1;
+					}
+					if (_ftStateMusicTable[l].index == b) {
+						debug(1, "Play imuse music: %s, %s", _ftStateMusicTable[l].name, _ftStateMusicTable[l].audioname);
+						if (_ftStateMusicTable[l].audioname[0] != 0) {
+							for(r = 0; r < _scumm->_numAudioNames; r++) {
+								if (strcmp(_ftStateMusicTable[l].audioname, &_scumm->_audioNames[r * 9]) == 0) {
+									startSound(r);
+									doCommand(12, r, 1536, _ftStateMusicTable[l].volume, 0, 0, 0, 0);
+								}
+							}
+						}
+					}
+				}
 			}
 			return 0;
 		case 1: // play music (seq)
@@ -5686,6 +5701,22 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					}
 				}
 			} else if (_scumm->_gameId == GID_FT) {
+				for(l = 0;; l++) {
+					if (_ftSeqMusicTable[l].index == -1) {
+						return 1;
+					}
+					if (_ftSeqMusicTable[l].index == b) {
+						debug(1, "Play imuse music: %s, %s", _ftSeqMusicTable[l].name, _ftSeqMusicTable[l].audioname);
+						if (_ftSeqMusicTable[l].audioname[0] != 0) {
+							for(r = 0; r < _scumm->_numAudioNames; r++) {
+								if (strcmp(_ftSeqMusicTable[l].audioname, &_scumm->_audioNames[r * 9]) == 0) {
+									startSound(r);
+									doCommand(12, r, 1536, _ftSeqMusicTable[l].volume, 0, 0, 0, 0);
+								}
+							}
+						}
+					}
+				}
 			}
 			return 0;
 		case 2: // dummy in DIG and CMI

@@ -447,6 +447,9 @@ public:
 	int _numCharsets, _numCostumes, _numNewNames, _numGlobalScripts;
 	int NUM_ACTORS;
 
+	char *_audioNames;
+	int32 _numAudioNames;
+
 	/* Current objects - can go in their respective classes */
 	byte _curActor;
 	int _curVerb;
