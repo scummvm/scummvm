@@ -135,6 +135,27 @@ void Sound::waitSfxFinished() {
 		_vm->input()->delay(10);
 }
 
+void Sound::playSfx(uint16 sfx) {
+	if (sfx != 0) {
+		char name[13];
+		strcpy(name, _sfxName[sfx - 1]);
+		strcat(name, ".SB");
+		sfxPlay(name);
+	}
+}
+
+void Sound::playSfx(const char *base) {
+	char name[13];
+	strcpy(name, base);
+	// alter filename to add zeros and append ".SB"
+	for (int i = 0; i < 8; i++) {
+		if (name[i] == ' ')
+			name[i] = '0';
+	}
+	strcat(name, ".SB");
+	sfxPlay(name);
+}
+
 void Sound::playSong(int16 songNum) {
 	if (songNum == STOP_MUSIC) {
 		_vm->music()->stopSong();
@@ -145,7 +166,7 @@ void Sound::playSong(int16 songNum) {
 
 	if (_tune[newTune - 1].sfx[0]) {
 		if (sfxOn())
-			sfxPlay(_sfxName[_tune[newTune - 1].sfx[0] - 1]);
+			playSfx(_tune[newTune - 1].sfx[0]);
 		return;
 	}
 
@@ -174,57 +195,27 @@ void Sound::playSong(int16 songNum) {
 
 
 int SBSound::playSound(byte *sound, uint32 size) {
-	byte flags = 0 | SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
+	byte flags = SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
 	return _mixer->playRaw(&_sfxHandle, sound, size, 11025, flags);
 }
 
-void SBSound::sfxPlay(const char *base) {
-	char name[13];
-	strcpy(name, base);
-	//alter filename to add zeros and append ".SB"
-	for (int i = 0; i < 8; i++) {
-		if (name[i] == ' ')
-			name[i] = '0';
-	}
-	strcat(name, ".SB");
-
-	waitSfxFinished();
-	
+void SBSound::sfxPlay(const char *name) {
+	waitSfxFinished();	
 	if (_vm->resource()->exists(name)) 
 		playSound(_vm->resource()->loadFileMalloc(name, SB_HEADER_SIZE), _vm->resource()->fileSize(name) - SB_HEADER_SIZE);
 }
 
 #ifdef USE_MAD
-void MP3Sound::sfxPlay(const char *base) {
-	char name[13];
-	strcpy(name, base);
-	//alter filename to add zeros and append ".SB"
-	for (int i = 0; i < 8; i++) {
-		if (name[i] == ' ')
-			name[i] = '0';
-	}
-	strcat(name, ".SB");
-	
+void MP3Sound::sfxPlay(const char *name) {
 	waitSfxFinished();
-
 	if (_vm->resource()->exists(name)) 
 		_mixer->playMP3(&_sfxHandle, _vm->resource()->giveCompressedSound(name), _vm->resource()->fileSize(name));
 }
 #endif
 
 #ifdef USE_VORBIS
-void OGGSound::sfxPlay(const char *base) {
-	char name[13];
-	strcpy(name, base);
-	//alter filename to add zeros and append ".SB"
-	for (int i = 0; i < 8; i++) {
-		if (name[i] == ' ')
-			name[i] = '0';
-	}
-	strcat(name, ".SB");
-
-	waitSfxFinished();
-	
+void OGGSound::sfxPlay(const char *name) {
+	waitSfxFinished();	
 	if (_vm->resource()->exists(name)) {
 		OggVorbis_File *oggFile = new OggVorbis_File;
 		file_info *f = new file_info;

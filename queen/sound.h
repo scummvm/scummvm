@@ -53,9 +53,11 @@ class Sound {
 public:
 	Sound(SoundMixer *mixer, QueenEngine *vm);
 	virtual ~Sound(); 
-	virtual void sfxPlay(const char *base) = 0;
+	virtual void sfxPlay(const char *name) = 0;
 	static Sound *giveSound(SoundMixer *mixer, QueenEngine *vm, uint8 compression);
 	void waitSfxFinished();
+	void playSfx(uint16 sfx);
+	void playSfx(const char *base);
 	void playSong(int16 songNum);
 
 	bool sfxOn()			{ return _sfxToggle; }
@@ -94,13 +96,13 @@ protected:
 class SilentSound : public Sound {
 public:
 	SilentSound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	void sfxPlay(const char *base) { }
+	void sfxPlay(const char *name) { }
 };
 
 class SBSound : public Sound {
 public:
 	SBSound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	void sfxPlay(const char *base);
+	void sfxPlay(const char *name);
 protected:
 	int playSound(byte *sound, uint32 size);
 };
@@ -109,7 +111,7 @@ protected:
 class MP3Sound : public Sound {
 public:
 	MP3Sound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	void sfxPlay(const char *base);
+	void sfxPlay(const char *name);
 };
 #endif
 
@@ -117,7 +119,7 @@ public:
 class OGGSound : public Sound {
 public:
 	OGGSound(SoundMixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	void sfxPlay(const char *base);
+	void sfxPlay(const char *name);
 };
 #endif
 } // End of namespace Queen

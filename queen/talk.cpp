@@ -748,10 +748,7 @@ void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, i
 
 		if (frame > 500) {
 			frame -= 500;
-			// XXX #ifdef __DOS__
-			// XXX 					if(SFXTOGGLE)
-			// XXX 						sfxplay(NULLstr);
-			// XXX #endif
+			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
 		}
 
 		if (torso) {
@@ -905,7 +902,7 @@ void Talk::speakSegment(
 	// debug(0, "Sentence segment '%*s' is said by person '%s' and voice file '%s' is played",
 	//		length, segment, person->name, voiceFileName);
 
-	_vm->sound()->sfxPlay(voiceFileName);
+	_vm->sound()->playSfx(voiceFileName);
 	//debug(0, "Playing voice file '%s'", voiceFileName);
 
 	int faceDirectionCommand = 0;

@@ -131,12 +131,6 @@ void BobSlot::animOneStep() {
 				frameNum = nextFrame;
 			}
 			anim.speed = anim.string.curPos->speed / 4;
-
-			// play memory sfx and move on to next frame
-			if(frameNum > 500) {
-				frameNum -= 500;
-				// XXX _sound->sfxplay(NULLstr);
-			}
 		}
 	}
 	else {
@@ -469,6 +463,10 @@ void Graphics::bobSortAll() {
 
 			if (pbs->animating) {
 				pbs->animOneStep();
+				if (pbs->frameNum > 500) {
+					pbs->frameNum -= 500;
+					_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
+				}
 			}
 			if (pbs->moving) {
 				int16 j;
@@ -765,8 +763,10 @@ void BamScene::updateCarAnimation() {
 		else {
 			++_index;
 		}
-		// Play BKG SFX
-		// XXX if(bamsfx==2 && SFXTOGGLE) sfxplay(NULLstr);
+
+		if (bdb->sfx == 2) {
+			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
+		}
 	}
 }
 
@@ -808,10 +808,10 @@ void BamScene::updateFightAnimation() {
 			_screenShaked = true;
 			break;
 		case 2: // play background sfx
-			// XXX if(SFXTOGGLE) sfxplay(NULLstr);
+			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
 			break;
 		case 3: // play background sfx and shake screen
-			// XXX if(SFXTOGGLE) sfxplay(NULLstr);
+			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
 			OSystem::instance()->set_shake_pos(3);
 			_screenShaked = true;
 			break;

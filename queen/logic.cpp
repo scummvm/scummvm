@@ -2958,7 +2958,7 @@ void Logic::asmMakeLightningHitPlane() {
 	lightningBob->y = 0;
 
 	// 23/2/95 - Play lightning SFX
-	// XXX sfxplay(NULLstr);
+	_vm->sound()->playSfx(_vm->logic()->currentRoomSfx());
 
 	_vm->graphics()->bankUnpack(18, lightningBob->frameNum, 15);
 	_vm->graphics()->bankUnpack(4,  planeBob    ->frameNum, 15);

@@ -333,7 +333,7 @@ SOUND
 alter_current_volume()
 playsong()					Sound::playSong()
 sfxbusy()					Sound::waitSfxFinished()
-sfxplay()					Sound::sfxPlay()
+sfxplay()					Sound::playSfx()
 -
 song[]						Sound::_song[]
 tunelist[]					Sound::_tune[]

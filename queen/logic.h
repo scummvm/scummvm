@@ -107,6 +107,7 @@ public:
 	uint16 currentRoomData() const { return _roomData[_currentRoom]; }
 	ObjectDescription *objectDescription(uint16 objNum) const { return &_objectDescription[objNum]; }
 	uint16 objectDescriptionCount() const { return _numObjDesc; }
+	uint16 currentRoomSfx() const { return _sfxName[_currentRoom]; }
 
 	uint16 joeFacing() const { return _joe.facing; }
 	uint16 joeX() const { return _joe.x; }

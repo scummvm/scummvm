@@ -1366,7 +1366,7 @@ void Cutaway::handleText(
 		char voiceFileName[MAX_STRING_SIZE];
 		findCdCut(_basename, index, voiceFileName);
 		strcat(voiceFileName, "1");
-		_vm->sound()->sfxPlay(voiceFileName);
+		_vm->sound()->playSfx(voiceFileName);
 	}
 
 	int i;
