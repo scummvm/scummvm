@@ -270,8 +270,7 @@ SCUMM
   - Add insane support
 * Humongous Entertainment Games
   - Add proper handling of sound and speech in Humongous games
-  - Add sound pitch support and fix missing sound effects for piano mini game
-    in fbear
+  - Add sound pitch support for piano keys in piano mini game of fbear (DOS)
   - Add rename/delete file support, to make file opcodes function correctly
   - Fix akos asserts in puttmoon, caused by butterfly at start, robot near
     garage and rock animations near rocket.
