@@ -91,6 +91,8 @@ public:
 	virtual byte getNumber() = 0;
 	virtual void release() = 0;
 
+	virtual void send (uint32 b) = 0; // 4-bit channel portion is ignored
+
 	// Regular messages
 	virtual void noteOff (byte note) = 0;
 	virtual void noteOn (byte note, byte velocity) = 0;

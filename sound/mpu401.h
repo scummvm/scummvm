@@ -49,6 +49,8 @@ public:
 	byte getNumber() { return _channel; }
 	void release() { _allocated = false; }
 
+	void send (uint32 b);
+
 	// Regular messages
 	void noteOff (byte note);
 	void noteOn (byte note, byte velocity);

@@ -124,7 +124,7 @@ void MidiPlayer::send (uint32 b) {
 	if (!_current->channel [channel])
 		_current->channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
 	if (_current->channel [channel])
-		_driver->send ((b & 0xFFFFFFF0) | _current->channel[channel]->getNumber());
+		_current->channel[channel]->send (b);
 }
 
 void MidiPlayer::metaEvent (byte type, byte *data, uint16 length) {

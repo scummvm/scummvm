@@ -102,6 +102,8 @@ public:
 	byte getNumber() { return _channel; }
 	void release() { _allocated = false; }
 
+	void send (uint32 b);
+
 	// Regular messages
 	void noteOff(byte note);
 	void noteOn(byte note, byte velocity);
@@ -559,6 +561,7 @@ public:
 	int open();
 	void close();
 	void send(uint32 b);
+	void send (byte channel, uint32 b); // Supports higher than channel 15
 	uint32 property(int prop, uint32 param);
 
 	void setPitchBendRange(byte channel, uint range); 
@@ -644,6 +647,10 @@ void AdlibPart::init(MidiDriver_ADLIB *owner, byte channel) {
 
 MidiDriver *AdlibPart::device() {
 	return _owner;
+}
+
+void AdlibPart::send (uint32 b) {
+	_owner->send (_channel, b);
 }
 
 void AdlibPart::noteOff(byte note) {
@@ -830,9 +837,9 @@ MidiDriver_ADLIB::MidiDriver_ADLIB(SoundMixer *mixer)
 	}
 
 	for (i = 0; i < ARRAYSIZE(_parts); ++i) {
-		_parts[i].init(this, i);
+		_parts[i].init(this, i + ((i >= 9) ? 1 : 0));
 	}
-	_percussion.init(this, 0);
+	_percussion.init(this, 9);
 }
 
 int MidiDriver_ADLIB::open() {
@@ -888,12 +895,15 @@ void MidiDriver_ADLIB::close() {
 	_isOpen = false;
 }
 
-void MidiDriver_ADLIB::send(uint32 b) {
+void MidiDriver_ADLIB::send (uint32 b) {
+	send (b & 0xF, b & 0xFFFFFFF0);
+}
+
+void MidiDriver_ADLIB::send (byte chan, uint32 b) {
 	//byte param3 = (byte) ((b >> 24) & 0xFF);
 	byte param2 = (byte) ((b >> 16) & 0xFF);
 	byte param1 = (byte) ((b >>  8) & 0xFF);
 	byte cmd    = (byte) (b & 0xF0);
-	byte chan   = (byte) (b & 0x0F);
 
 	AdlibPart *part;
 	if (chan == 9)
