@@ -2421,7 +2421,7 @@ void ScummEngine::initRoomSubBlocks() {
 				// FIXME. This is an evil HACK!!!
 				size = (READ_LE_UINT16(roomptr + 0x0A) - READ_LE_UINT16(roomptr + 0x15)) - size;
 			else
-				size = getResourceDataSize(ptr - size - 6) - size;
+				size = getResourceDataSize(ptr - size - _resourceHeaderSize) - size;
 
 			if (size > 0) {					// do this :)
 				createResource(rtMatrix, 1, size);
@@ -2611,10 +2611,9 @@ void ScummEngine::initRoomSubBlocks() {
 		}
 	}
 
+	// Locate the EGA palette (currently unused).
 	if (_features & GF_OLD_BUNDLE)
 		ptr = 0;
-	else if (_features & GF_SMALL_HEADER)
-		ptr = findResourceSmall(MKID('EPAL'), roomptr);
 	else
 		ptr = findResourceData(MKID('EPAL'), roomptr);
 
@@ -2622,17 +2621,26 @@ void ScummEngine::initRoomSubBlocks() {
 		_EPAL_offs = ptr - roomptr;
 	}
 
+	// Locate the standard room palette (for V3-V5 games).
+	// Note: We used to use findResourceSmall instead of findResourceData;
+	// in the small header case. That means we have to do some ugly trickery
+	// in order to emulate the old behaviour. It would be very nice to get
+	// rid of that. That would require some changes to the palette code.
+	//
+	// And of course this would break savegame compatibility unless extra code
+	// were added to the save/load system to cope with this.
 	if (_features & GF_OLD_BUNDLE)
 		ptr = 0;
-	else if (_features & GF_SMALL_HEADER)
-		ptr = findResourceSmall(MKID('CLUT'), roomptr);
 	else
 		ptr = findResourceData(MKID('CLUT'), roomptr);
 
 	if (ptr) {
+		if ((_features & GF_SMALL_HEADER) && ptr)
+			ptr -= _resourceHeaderSize;
 		_CLUT_offs = ptr - roomptr;
 	}
 
+	// Locate the standard room palettes (for V6+ games).
 	if (_version >= 6) {
 		ptr = findResource(MKID('PALS'), roomptr);
 		if (ptr) {

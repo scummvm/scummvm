@@ -37,8 +37,6 @@ enum {
 };
 
 
-const byte *findResourceSmall(uint32 tag, const byte *searchin);
-
 class ResourceIterator {
 	uint32 _size;
 	uint32 _pos;

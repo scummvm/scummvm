@@ -36,6 +36,7 @@ namespace Scumm {
 
 static uint16 newTag2Old(uint32 newTag);
 static const char *resTypeFromId(int id);
+static const byte *findResourceSmall(uint32 tag, const byte *searchin);
 
 
 /* Open a room */
@@ -909,11 +910,11 @@ int ScummEngine::getResourceDataSize(const byte *ptr) const {
 		return 0;
 
 	if (_features & GF_OLD_BUNDLE)
-		return READ_LE_UINT16(ptr) - 4;
+		return READ_LE_UINT16(ptr) - _resourceHeaderSize;
 	else if (_features & GF_SMALL_HEADER)
-		return READ_LE_UINT32(ptr) - 6;
+		return READ_LE_UINT32(ptr) - _resourceHeaderSize;
 	else
-		return READ_BE_UINT32(ptr - 4) - 8;
+		return READ_BE_UINT32(ptr - 4) - _resourceHeaderSize;
 }
 
 void ResourceManager::lock(int type, int i) {
