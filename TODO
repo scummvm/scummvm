@@ -267,8 +267,6 @@ SCUMM
   - Add arrayOps case 127 (For chase/lost/smaller/bb2demo/footdemo).
   - Add support for array sorting (Used in lost/smaller).
   - Fix actor glitches in pajama2
-  - Fix array issues in Buzzy games (Kirben)
-  - Fix name check failing in mustard, when comparing strings via o70_compareString()
   - Fix loadImgSpot asserts, due to spritesProcessWiz loading WizImages with sprite res_id of 0
   - Fix cursor transparency in puzzle of pajama2
   - Fix sprites graphical glitches
