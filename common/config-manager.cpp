@@ -245,7 +245,7 @@ void ConfigManager::removeKey(const String &key, const String &dom) {
 	else if (_globalDomains.contains(dom))
 		_globalDomains[dom].remove(key);
 	else
-		error("Removing key '%s' from non-existant domain '%s'", key.c_str(), dom.c_str());
+		error("Removing key '%s' from non-existent domain '%s'", key.c_str(), dom.c_str());
 }
 
 

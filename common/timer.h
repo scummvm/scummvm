@@ -54,7 +54,7 @@ public:
 
 	/**
 	 * Install a new timer callback. It will from now be called every interval microseconds.
-	 * The timer may be invoked from a seperate thread. Hence any timer code should be
+	 * The timer may be invoked from a separate thread. Hence any timer code should be
 	 * written following the same safety guidelines as any other threaded code.
 	 *
 	 * @note Although the interval is specified in microseconds, the actual timer resolution
