@@ -21,6 +21,7 @@
 
 #include <string.h>
 #include "common/scummsys.h"
+#include "sky/rnc_deco.h"
 
 #define ROL(x, n) (((x) << (n)) | ((x) >> (16 - (n))))
 #define ROR(x, n) (((x) << (16 - (n))) | ((x) >> (n)))
@@ -40,21 +41,19 @@
 #define MIN_LENGTH	  2
 #define HEADER_LEN	  18
 
-uint16 raw_table[TABLE_SIZE / 2];
-uint16 pos_table[TABLE_SIZE / 2];
-uint16 len_table[TABLE_SIZE / 2];
+RncDecoder::RncDecoder()
+{
+	_bitBuffl = 0;
+	_bitBuffh = 0;
+	_bitCount = 0;
+}
 
-#ifdef CHECKSUMS
-uint16 crc_table[0x100];
-#endif
+RncDecoder::~RncDecoder()
+{
 
-uint16 bit_buffl = 0;
-uint16 bit_buffh = 0;
-uint8 bit_count = 0;
+}
 
-uint8 *srcPtr, *dstPtr; //these need to be global because input_bits() uses them
-
-void init_crc()
+void RncDecoder::initCrc()
 {
 	uint16 cnt = 0;
 	uint16 tmp1 = 0;
@@ -69,15 +68,15 @@ void init_crc()
 			} else
 				tmp1 /= 2;
 		}
-		crc_table[tmp2] = tmp1;
+		_crcTable[tmp2] = tmp1;
 	}
 }
 
 //calculate 16 bit crc of a block of memory
-uint16 crc_block(uint8 *block, uint32 size)
+uint16 RncDecoder::crcBlock(uint8 *block, uint32 size)
 {
 	uint16 crc = 0;
-	uint8 *crcTable8 = (uint8 *)crc_table; //make a uint8* to crc_table
+	uint8 *crcTable8 = (uint8 *)_crcTable; //make a uint8* to crc_table
 	uint8 tmp;
 	uint32 i;
 
@@ -94,11 +93,11 @@ uint16 crc_block(uint8 *block, uint32 size)
 	return crc;
 }
 
-uint16 input_bits(uint8 amount)
+uint16 RncDecoder::inputBits(uint8 amount)
 {
-	uint16 newBitBuffh = bit_buffh;
-	uint16 newBitBuffl = bit_buffl;
-	int16 newBitCount = bit_count;
+	uint16 newBitBuffh = _bitBuffh;
+	uint16 newBitBuffl = _bitBuffl;
+	int16 newBitCount = _bitCount;
 	uint16 remBits, returnVal;
 
 	returnVal = ((1 << amount) - 1) & newBitBuffl;	
@@ -111,31 +110,31 @@ uint16 input_bits(uint8 amount)
 		newBitBuffh >>= amount;
 		newBitBuffl >>= amount;
 		newBitBuffl |= remBits;	
-		srcPtr += 2;
-		newBitBuffh = READ_LE_UINT16(srcPtr);
+		_srcPtr += 2;
+		newBitBuffh = READ_LE_UINT16(_srcPtr);
 		XCHG(newBitCount, amount);
 		amount -= newBitCount;
 		newBitCount = 16 - amount;
 	}
 	remBits = ROR((uint16)(((1 << amount) - 1) & newBitBuffh), amount);
-	bit_buffh = newBitBuffh >> amount;
-	bit_buffl = (newBitBuffl >> amount) | remBits;
-	bit_count = (uint8)newBitCount;
+	_bitBuffh = newBitBuffh >> amount;
+	_bitBuffl = (newBitBuffl >> amount) | remBits;
+	_bitCount = (uint8)newBitCount;
 
 	return returnVal;
 }
 
-void make_huftable(uint16 *table) 
+void RncDecoder::makeHufftable(uint16 *table) 
 {
 	uint16 bitLength, i, j;
-	uint16 numCodes = input_bits(5);
+	uint16 numCodes = inputBits(5);
 
 	if (!numCodes)
 		return;
 
 	uint8 huffLength[16];
 	for (i = 0; i < numCodes; i++)
-		huffLength[i] = (uint8)(input_bits(4) & 0x00FF);
+		huffLength[i] = (uint8)(inputBits(4) & 0x00FF);
 
 	uint16 huffCode = 0;
 
@@ -158,9 +157,9 @@ void make_huftable(uint16 *table)
 	}
 }
 
-uint16 input_value(uint16 *table)
+uint16 RncDecoder::inputValue(uint16 *table)
 {
-	uint16 valOne, valTwo, value = bit_buffl;
+	uint16 valOne, valTwo, value = _bitBuffl;
 
 	do {
 		valTwo = (*table++) & value;
@@ -169,12 +168,12 @@ uint16 input_value(uint16 *table)
 	} while (valOne != valTwo);
 
 	value = *(table + 0x1e);
-	input_bits((uint8)((value>>8) & 0x00FF));
+	inputBits((uint8)((value>>8) & 0x00FF));
 	value &= 0x00FF;
 
 	if (value >= 2) {
 		value--;
-		valOne = input_bits((uint8)value & 0x00FF);
+		valOne = inputBits((uint8)value & 0x00FF);
 		valOne |= (1 << value);
 		value = valOne;
 	}
@@ -182,22 +181,22 @@ uint16 input_value(uint16 *table)
 	return value;
 }
 
-int32 UnpackM1(void *input, void *output, uint16 key)
+int32 RncDecoder::unpackM1(void *input, void *output, uint16 key)
 {
 	uint8 *inputHigh, *outputLow, *outputHigh;
 	uint8 *inputptr = (uint8 *)input;
 
-	uint32 unpack_len = 0;
-	uint32 pack_len = 0;
+	uint32 unpackLen = 0;
+	uint32 packLen = 0;
 	uint16 counts = 0;
 
 #ifdef CHECKSUMS
-	uint16 crc_u = 0;
-	uint16 crc_p = 0;
+	uint16 crcUnpacked = 0;
+	uint16 crcPacked = 0;
 #endif
 	
 	if (CHECKSUMS)
-		init_crc();
+		initCrc();
 
 	//Check for "RNC "
 	if (READ_BE_UINT32(inputptr) != 0x524e4301)
@@ -206,83 +205,82 @@ int32 UnpackM1(void *input, void *output, uint16 key)
 	inputptr += 4;
 
 	// read unpacked/packed file length
-	unpack_len = READ_BE_UINT32(inputptr); inputptr += 4;
-	pack_len = READ_BE_UINT32(inputptr); inputptr += 4;
+	unpackLen = READ_BE_UINT32(inputptr); inputptr += 4;
+	packLen = READ_BE_UINT32(inputptr); inputptr += 4;
 
 	uint8 blocks = *(inputptr + 5);
 
 	if (CHECKSUMS) {
 		//read CRC's
-		crc_u = READ_BE_UINT16(inputptr); inputptr += 2;
-		crc_p = READ_BE_UINT16(inputptr); inputptr += 2;
+		crcUnpacked = READ_BE_UINT16(inputptr); inputptr += 2;
+		crcPacked = READ_BE_UINT16(inputptr); inputptr += 2;
 		inputptr = (inputptr + HEADER_LEN - 16);
 
-		if (crc_block(inputptr, pack_len) != crc_p)
+		if (crcBlock(inputptr, packLen) != crcPacked)
 			return PACKED_CRC;
 
 		inputptr = (((uint8 *)input) + HEADER_LEN); 
-		srcPtr = inputptr;
+		_srcPtr = inputptr;
 	}
 
 	// inputLow = *input
-	inputHigh = ((uint8 *)input) + pack_len + HEADER_LEN;;
+	inputHigh = ((uint8 *)input) + packLen + HEADER_LEN;;
 	outputLow = (uint8 *)output;
-	outputHigh = *(((uint8 *)input) + 16) + unpack_len + outputLow;
+	outputHigh = *(((uint8 *)input) + 16) + unpackLen + outputLow;
 
 	if (! ((inputHigh <= outputLow) || (outputHigh <= inputHigh)) ) {
-		srcPtr = inputHigh;
-		dstPtr = outputHigh;
-		memcpy((dstPtr-pack_len), (srcPtr-pack_len), pack_len);
-		srcPtr = (dstPtr-pack_len);
+		_srcPtr = inputHigh;
+		_dstPtr = outputHigh;
+		memcpy((_dstPtr-packLen), (_srcPtr-packLen), packLen);
+		_srcPtr = (_dstPtr-packLen);
 	}
 
-	//unpack3:
-	dstPtr = (uint8 *)output;
-	bit_count = 0;
+	_dstPtr = (uint8 *)output;
+	_bitCount = 0;
 
-	bit_buffl = READ_LE_UINT16(srcPtr);
-	input_bits(2);
+	_bitBuffl = READ_LE_UINT16(_srcPtr);
+	inputBits(2);
 	
 	do {
-		make_huftable(raw_table);
-		make_huftable(pos_table);
-		make_huftable(len_table);
+		makeHufftable(_rawTable);
+		makeHufftable(_posTable);
+		makeHufftable(_lenTable);
 
-		counts = input_bits(16);
+		counts = inputBits(16);
 
 		for (;;) {
-			uint32 input_bits = input_value(raw_table);
+			uint32 inputBits = inputValue(_rawTable);
 
-			if (input_bits) {
-				memcpy(dstPtr, srcPtr, input_bits); //memcpy is allowed here
-				dstPtr += input_bits;
-				srcPtr += input_bits;
-				uint16 b = READ_LE_UINT16(srcPtr);
-				uint16 a = ROL(b, bit_count);
-				uint16 d = ((1 << bit_count) - 1);
-				bit_buffl &= d;
+			if (inputBits) {
+				memcpy(_dstPtr, _srcPtr, inputBits); //memcpy is allowed here
+				_dstPtr += inputBits;
+				_srcPtr += inputBits;
+				uint16 b = READ_LE_UINT16(_srcPtr);
+				uint16 a = ROL(b, _bitCount);
+				uint16 d = ((1 << _bitCount) - 1);
+				_bitBuffl &= d;
 				d &= a;
 
-				a = READ_LE_UINT16((srcPtr + 2));
-				b = (b << bit_count);
-				a = (a << bit_count);
+				a = READ_LE_UINT16((_srcPtr + 2));
+				b = (b << _bitCount);
+				a = (a << _bitCount);
 				a |= d;
-				bit_buffl |= b;
-				bit_buffh = a;
+				_bitBuffl |= b;
+				_bitBuffh = a;
 			}
 
 			if (--counts) {
-				uint32 input_offset = input_value(pos_table) + 1;
-				uint32 input_length = input_value(len_table) + MIN_LENGTH;
+				uint32 inputOffset = inputValue(_posTable) + 1;
+				uint32 inputLength = inputValue(_lenTable) + MIN_LENGTH;
 
-				inputHigh = srcPtr;
-				srcPtr = (dstPtr-input_offset);
+				inputHigh = _srcPtr;
+				_srcPtr = (_dstPtr-inputOffset);
 
 				//Don't use memcpy here! because input and output overlap	
-				while (input_length--)
-					*dstPtr++ = *srcPtr++;
+				while (inputLength--)
+					*_dstPtr++ = *_srcPtr++;
 
-				srcPtr = inputHigh;
+				_srcPtr = inputHigh;
 			} else
 				break;
 
@@ -290,11 +288,11 @@ int32 UnpackM1(void *input, void *output, uint16 key)
 	} while (--blocks);
 
 	if (CHECKSUMS) {
-		if (crc_block((uint8 *)output, unpack_len) != crc_u)
+		if (crcBlock((uint8 *)output, unpackLen) != crcUnpacked)
 			return UNPACKED_CRC;
 	}
 
 	// all is done..return the amount of unpacked bytes
-	return unpack_len;
+	return unpackLen;
 }
 

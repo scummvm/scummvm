@@ -25,12 +25,11 @@
 #include "common/file.h"
 #include "sky/skydefs.h"
 #include "sky/sky.h"
+#include "sky/rnc_deco.h"
 
 #define no_of_files_hd	1600
 #define no_of_files_cd	5200
 #define max_files_in_list		60
-
-int32 UnpackM1(void *, void *, uint16);
 
 const char *data_file_name = "sky.dsk";
 const char *dinner_file_name = "sky.dnr";
@@ -151,7 +150,8 @@ uint16 *SkyState::load_file(uint16 file_nr, uint8 *dest)
 				outputPtr += sizeof(struct dataFileHeader);
 			}
 
-			int32 unPackLen = UnpackM1(inputPtr, outputPtr, 0);
+			RncDecoder rncDecoder;
+			int32 unPackLen = rncDecoder.unpackM1(inputPtr, outputPtr, 0);
 
 			debug(2, "UnpackM1 returned: %d", unPackLen);
 
