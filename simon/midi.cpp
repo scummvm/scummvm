@@ -37,10 +37,16 @@ MidiPlayer::MidiPlayer (OSystem *system) {
 	_parser = 0;
 	
 	_data = 0;
+	memset(_volumeTable, 0, sizeof(_volumeTable));
 	_masterVolume = 255;
 	_paused = false;
 	_currentTrack = 255;
+
 	_num_songs = 0;
+	memset(_songs, 0, sizeof(_songs));
+	memset(_song_sizes, 0, sizeof(_song_sizes));
+	
+	_midi_sfx_toggle = false
 }
 
 MidiPlayer::~MidiPlayer() {
