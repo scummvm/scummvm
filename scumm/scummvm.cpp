@@ -658,10 +658,10 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	loadLanguageBundle();
 
 	// Load CJK font
+	_CJKMode = false;
 	if((_gameId == GID_DIG || _gameId == GID_CMI) && (_language == KO_KOR || _language == JA_JPN || _language == ZH_TWN)) {
 		File fp;
 		const char *fontFile = NULL;
-		_CJKMode = false;
 		switch(_language) {
 		case KO_KOR:
 			_CJKMode = true;
