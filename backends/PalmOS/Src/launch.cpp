@@ -3,14 +3,16 @@
 #include "StarterRsc.h"
 
 #include "stdio.h"
-#include "unistd.h"
+#include "unistd.h"	
+#include "stdlib.h"
 
 #include "games.h"
 #include "start.h"
-#include "vibrate.h"
+#include "rumble.h"
 #include "pa1lib.h"
 #include "extend.h"
 #include "globals.h"
+#include "features.h"
 
 
 // need to move this on a .h file
@@ -30,8 +32,22 @@ typedef void (*sndStateOffType)(UInt8 /* kind */);
 ////////////////////////////////////////////////////////////
 #define MAX_ARG	25
 
+static void initARM() {
+	// init global ARM only
+	MemSet(gVars->arm, sizeof(gVars->arm), 0);
+	ARM(PNO_COPYRECT	).pnoPtr = _PnoInit(RSC_COPYRECT, &ARM(PNO_COPYRECT).pnoDesc);
+	ARM(PNO_COSTUMEPROC3).pnoPtr = _PceInit(RSC_COSTUMEPROC3);
+	ARM(PNO_DRAWSTRIP	).pnoPtr = _PceInit(RSC_DRAWSTRIP);
+}
+
+static void releaseARM() {
+	_PceFree(ARM(PNO_DRAWSTRIP		).pnoPtr);
+	_PceFree(ARM(PNO_COSTUMEPROC3	).pnoPtr);
+	_PnoFree(&ARM(PNO_COPYRECT		).pnoDesc, ARM(PNO_COPYRECT).pnoPtr);
+}
+
 static Boolean checkPath(const Char *pathP) {
-	FileRef *tmpRef;
+	FILE *tmpRef;
 
 	if (!(tmpRef = fopen(pathP, "r"))) {
 		return false;
@@ -79,7 +95,7 @@ Boolean StartScummVM() {
 
 	if (index != dmMaxRecordIndex) {
 		Char pathP[256];
-		Char num[4];
+		Char num[6];
 		MemHandle recordH;
 		GameInfoType *gameInfoP;
 
@@ -113,11 +129,11 @@ Boolean StartScummVM() {
 		}
 
 		// fullscreen ?
-		if (gPrefs->fullscreen)
+		if (gameInfoP->fullscreen)
 			AddArg(&argvP[argc], "-f", NULL, &argc);
 
 		// aspect-ratio ?
-		AddArg(&argvP[argc], (gPrefs->aspectRatio ? "--aspect-ratio" : "--no-aspect-ratio"), NULL, &argc);
+		AddArg(&argvP[argc], (gameInfoP->aspectRatio ? "--aspect-ratio" : "--no-aspect-ratio"), NULL, &argc);
 
 		// copy protection ?
 		if (gPrefs->copyProtection)
@@ -126,7 +142,8 @@ Boolean StartScummVM() {
 		// gfx mode
 		gVars->flipping.pageAddr1 = (UInt8 *)(BmpGetBits(WinGetBitmap(WinGetDisplayWindow())));
 		gVars->flipping.pageAddr2 = gVars->flipping.pageAddr1; // default if not flipping mode
-		
+		gVars->filter = gameInfoP->filter;
+
 		switch (gameInfoP->gfxMode)	{
 			case 1:
 				AddArg(&argvP[argc], "-g", "flipping", &argc);
@@ -174,6 +191,9 @@ Boolean StartScummVM() {
 				case 4:
 					AddArg(&argvP[argc], "--platform=", "fmtowns", &argc);
 					break;
+				case 5:
+					AddArg(&argvP[argc], "--platform=", "windows", &argc);
+					break;
 			}		
 		}
 
@@ -195,29 +215,37 @@ Boolean StartScummVM() {
 		if (gPrefs->demoMode)
 			AddArg(&argvP[argc], "--demo-mode", NULL, &argc);
 
+		// alternative intro ?
+		if (gPrefs->altIntro)
+			AddArg(&argvP[argc], "--alt-intro", NULL, &argc);
+
 		// multi midi ?
-		if (gPrefs->sound.multiMidi)
+		if (gameInfoP->musicInfo.sound.multiMidi)
 			AddArg(&argvP[argc], "--multi-midi", NULL, &argc);
 
 		// music driver
-		musicDriver = gPrefs->sound.music;
+		musicDriver =gameInfoP->musicInfo.sound.music;
 		if (musicDriver) {
-			switch (gPrefs->sound.drvMusic) {
+			switch (gameInfoP->musicInfo.sound.drvMusic) {
 				case 0:	// NULL
 					AddArg(&argvP[argc], "-e", "null", &argc);
 					break;
-				case 1:	// yamaha Pa1
-					AddArg(&argvP[argc], "-e", "ypa1", &argc);
+
+				case 1:	// built-in MIDI
+					if (OPTIONS_TST(kOptDeviceZodiac))
+						AddArg(&argvP[argc], "-e", "zodiac", &argc);	// Tapwave Zodiac
+					else if (OPTIONS_TST(kOptSonyPa1LibAPI))
+						AddArg(&argvP[argc], "-e", "ypa1", &argc);		// Pa1Lib devices
+					else
+						AddArg(&argvP[argc], "-e", "null", &argc);		// error, no music driver
 					break;
-				case 2:	// Tapwave Zodiac
-					AddArg(&argvP[argc], "-e", "zodiac", &argc);
-					break;
-				case 3: // PC Speaker
+
+				case 2: // PC Speaker
 					AddArg(&argvP[argc], "-e", "pcspk", &argc);
 					break;
-				case 4: // IBM PCjr
+				case 3: // IBM PCjr
 					AddArg(&argvP[argc], "-e", "pcjr", &argc);
-				case 5: // FM Towns
+				case 4: // FM Towns
 					AddArg(&argvP[argc], "-e", "towns", &argc);
 			}		
 		}
@@ -225,21 +253,42 @@ Boolean StartScummVM() {
 			AddArg(&argvP[argc], "-e", "null", &argc);
 
 		// music tempo
-		StrIToA(num, gPrefs->sound.tempo);
+		StrIToA(num, gameInfoP->musicInfo.sound.tempo);
 		AddArg(&argvP[argc], "--tempo=", num, &argc);
 
 		// volume control
-		StrIToA(num, gPrefs->volume.master);
+		StrIToA(num, gameInfoP->musicInfo.volume.master);
 		AddArg(&argvP[argc], "-o", num, &argc);
-		StrIToA(num, gPrefs->volume.sfx);
+		StrIToA(num, gameInfoP->musicInfo.volume.sfx);
 		AddArg(&argvP[argc], "-s", num, &argc);
-		StrIToA(num, gPrefs->volume.music);
+		StrIToA(num, gameInfoP->musicInfo.volume.music);
 		AddArg(&argvP[argc], "-m", num, &argc);
-		StrIToA(num, gPrefs->volume.speech);
+		StrIToA(num, gameInfoP->musicInfo.volume.speech);
 		AddArg(&argvP[argc], "-r", num, &argc);
+
+		// output rate
+		if (gameInfoP->musicInfo.sound.sfx) {
+			UInt32 rates[] = {8000, 11025, 22050};
+			StrIToA(num, rates[gameInfoP->musicInfo.sound.rate]);
+			AddArg(&argvP[argc], "--output-rate=", num, &argc);
+		}
 
 		// game name
 		AddArg(&argvP[argc], gameInfoP->gameP, NULL, &argc);
+
+		// use sound
+		if (!gameInfoP->musicInfo.sound.sfx) {
+			OPTIONS_RST(kOptSonyPa1LibAPI);
+			OPTIONS_RST(kOptPalmSoundAPI);
+		}
+
+		// others globals data
+		gVars->CD.enable = gameInfoP->musicInfo.sound.CD;
+		gVars->CD.driver = gameInfoP->musicInfo.sound.drvCD;
+		gVars->CD.format = gameInfoP->musicInfo.sound.frtCD;
+		gVars->CD.volume = gameInfoP->musicInfo.volume.audiocd;
+		gVars->CD.defaultTrackLength = gameInfoP->musicInfo.sound.defaultTrackLength;
+		gVars->CD.firstTrack = gameInfoP->musicInfo.sound.firstTrack;
 
 		MemHandleUnlock(recordH);
 	}
@@ -265,43 +314,16 @@ Boolean StartScummVM() {
 	gVars->vibrator = gPrefs->vibrator;
 	gVars->stdPalette = gPrefs->stdPalette;
 	gVars->autoReset = gPrefs->autoReset;
-	gVars->CD.enable = gPrefs->sound.CD;
-	gVars->CD.driver = gPrefs->sound.drvCD;
-	gVars->CD.setDefaultTrackLength = gPrefs->sound.setDefaultTrackLength;
-	gVars->CD.defaultTrackLength = gPrefs->sound.defaultTrackLength;
-	gVars->CD.firstTrack = gPrefs->sound.firstTrack;
 	
-	// use sound
-	if (!gPrefs->sound.sfx) {
-		OPTIONS_RST(kOptSonyPa1LibAPI);
-		OPTIONS_RST(kOptPalmSoundAPI);
-	}
-
 	// user params
 	if (!gPrefs->arm) {
 		OPTIONS_RST(kOptDeviceARM);
 		OPTIONS_RST(kOptDeviceProcX86);
 	}
 
-	// TODO : support tapwave rumble
 	if (gVars->vibrator)
-	{
-		if (CheckVibratorExists()) {
-			UInt16 cycle	= (SysTicksPerSecond())/2;
-			UInt32 pattern	= 0xFF000000;
-			UInt16 delay	= 1;
-			UInt16 repeat	= 1;
-
-			HwrVibrateAttributes(1, kHwrVibrateRate, &cycle);
-			HwrVibrateAttributes(1, kHwrVibratePattern, &pattern);
-			HwrVibrateAttributes(1, kHwrVibrateDelay, &delay);
-			HwrVibrateAttributes(1, kHwrVibrateRepeatCount, &repeat);
-
-		} else {
-			gVars->vibrator = false;
-		}
-	}
-	
+		gVars->vibrator = RumbleInit();
+		
 	// create file for printf, warnings, etc...
 	void DrawStatus(Boolean show);
 	StdioInit(gVars->volRefNum, "PALM/Programs/ScummVM/scumm.log", DrawStatus);
@@ -331,7 +353,22 @@ Boolean StartScummVM() {
 
 	SavePrefs();	// free globals pref memory
 	GlbOpen();
-	main(argc, argvP);
+	initARM();
+	
+	// reset screen depth
+	{
+		UInt32 depth = 8;		
+		WinScreenMode(winScreenModeSet, NULL, NULL, &depth, NULL);
+	}
+
+	DO_EXIT( main(argc, argvP); )
+	
+	// be sure to release feature memory
+	FREE_FTR(ftrBufferOverlay)
+	FREE_FTR(ftrBufferBackup)
+	FREE_FTR(ftrBufferHotSwap)
+
+	releaseARM();
 	GlbClose();
 
 	// TODO : move this to ypa1.cpp (?)
@@ -352,15 +389,13 @@ Boolean StartScummVM() {
 		if (argvP[count])
 			MemPtrFree(argvP[count]);
 	
-	if (gVars->vibrator) {
-		Boolean active = false;
-		HwrVibrateAttributes(1, kHwrVibrateActive, &active);
-	}
+	if (gVars->vibrator)
+		RumbleRelease();
 
 	if (!autoOff) {
 		SysSetAutoOffTime(autoOffDelay);SystemPreferencesChoice
 		EvtResetAutoOffTimer();
 	}
-	
+
 	return false;
 }
