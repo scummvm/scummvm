@@ -23,6 +23,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "gui/font.h"
 #include "gui/object.h"
 
 namespace GUI {
@@ -127,15 +128,15 @@ class StaticTextWidget : public Widget {
 protected:
 	typedef Common::String String;
 
-	String _label;
-	int		_align;
+	String			_label;
+	TextAlignment	_align;
 public:
-	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, int align);
+	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align);
 	void setValue(int value);
 	void setLabel(const String &label)	{ _label = label; }
 	const String &getLabel() const		{ return _label; }
-	void setAlign(int align)			{ _align = align; }
-	int getAlign() const				{ return _align; }
+	void setAlign(TextAlignment align)	{ _align = align; }
+	TextAlignment getAlign() const		{ return _align; }
 
 protected:
 	void drawWidget(bool hilite);

@@ -7,7 +7,6 @@ MODULE_OBJS := \
 	gui/console.o \
 	gui/dialog.o \
 	gui/EditTextWidget.o \
-	gui/font.o \
 	gui/launcher.o \
 	gui/ListWidget.o \
 	gui/message.o \
@@ -16,7 +15,15 @@ MODULE_OBJS := \
 	gui/PopUpWidget.o \
 	gui/ScrollBarWidget.o \
 	gui/TabWidget.o \
-	gui/widget.o \
+	gui/widget.o
+
+# TODO: Move the fonts to a separate dir?
+MODULE_OBJS += \
+	gui/font.o \
+	gui/scummfont.o \
+	gui/newfont.o
+
+
 
 MODULE_DIRS += \
 	gui

@@ -21,13 +21,62 @@
 #ifndef FONT_H
 #define FONT_H
 
+#include "common/str.h"
+
 namespace GUI {
+
+// Text alignment modes for drawString()
+enum TextAlignment {
+	kTextAlignLeft,
+	kTextAlignCenter,
+	kTextAlignRight
+};
+
+/**
+ * An arbitrary graphics surface, which can be the target (or source) of blit
+ * operations, font rendering, etc.
+ * @todo This shouldn't be in font.h, but rather in e.g. graphics/surface.h
+ */
+struct Surface {
+	void *pixels;
+	uint16 w;
+	uint16 h;
+	uint16 pitch;
+	uint8 bytesPerPixel;
+};
+
+class Font {
+public:
+	virtual int getFontHeight() const = 0;
+	virtual int getMaxCharWidth() const = 0;
+
+	virtual int getCharWidth(byte chr) const = 0;
+	virtual void drawChar(const Surface *dst, byte chr, int x, int y, uint32 color) const = 0;
+
+	void drawString(const Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlignment align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
+	int getStringWidth(const Common::String &str) const;
+};
+
+
+class ScummFont : public Font {
+public:
+	virtual int getFontHeight() const { return 8; }
+	virtual int getMaxCharWidth() const { return 8; };
+
+	virtual int getCharWidth(byte chr) const;
+	virtual void drawChar(const Surface *dst, byte chr, int x, int y, uint32 color) const;
+};
+
+extern const ScummFont g_scummfont;
+
+
 
 typedef unsigned short bitmap_t; /* bitmap image unit size*/
 
 /* builtin C-based proportional/fixed font structure */
 /* based on The Microwindows Project http://microwindows.org */
-struct Font {
+class NewFont : public Font {
+protected:
 	const char *	name;		/* font name*/
 	int		maxwidth;	/* max width in pixels*/
 	int 	height;		/* height in pixels*/
@@ -39,9 +88,18 @@ struct Font {
 	const unsigned char* width;	/* character widths or NULL if fixed*/
 	int		defaultchar;	/* default char (not glyph index)*/
 	long	bits_size;	/* # words of bitmap_t bits*/
+
+public:
+	NewFont();
+	
+	virtual int getFontHeight() const { return height; }
+	virtual int getMaxCharWidth() const { return maxwidth; };
+
+	virtual int getCharWidth(byte chr) const;
+	virtual void drawChar(const Surface *dst, byte chr, int x, int y, uint32 color) const;
 };
 
-extern const Font g_sysfont;
+extern const NewFont g_sysfont;
 
 } // End of namespace GUI
 

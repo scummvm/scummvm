@@ -25,20 +25,10 @@
 #include "common/singleton.h"
 #include "common/str.h"
 #include "common/system.h"	// For events
+#include "gui/font.h"
 
 // Uncomment the following to enable the new font code:
 //#define NEW_FONT_CODE
-
-
-// Height of a single text line
-#ifdef NEW_FONT_CODE
-#include "gui/font.h"
-#define kLineHeight	(g_sysfont.height + 2)
-#else
-enum {
-	kLineHeight			= 10
-};
-#endif
 
 
 namespace GUI {
@@ -51,12 +41,14 @@ class Dialog;
 #define g_gui	(GUI::NewGui::instance())
 
 
-// Text alignment modes for drawString()
-enum {
-	kTextAlignLeft,
-	kTextAlignCenter,
-	kTextAlignRight
-};
+// Height of a single text line
+#ifdef NEW_FONT_CODE
+#define		g_guifont		g_sysfont
+#else
+#define		g_guifont		g_scummfont
+#endif
+#define kLineHeight	(g_guifont.getFontHeight() + 2)
+
 
 // Extremly simple stack class, doesn't even do any error checking (for now)
 class DialogStack {
@@ -150,7 +142,7 @@ public:
 	void drawChar(byte c, int x, int y, OverlayColor color);
 	int getStringWidth(const String &str);
 	int getCharWidth(byte c);
-	void drawString(const String &str, int x, int y, int w, OverlayColor color, int align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
+	void drawString(const String &str, int x, int y, int w, OverlayColor color, TextAlignment align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
 
 	void blitFromBuffer(int x, int y, int w, int h, const byte *buf, int pitch);
 	void blitToBuffer(int x, int y, int w, int h, byte *buf, int pitch);

@@ -74,6 +74,7 @@ protected:
 	virtual void handleKeyUp(uint16 ascii, int keycode, int modifiers);
 	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleScreenChanged() {}
 	
 	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 

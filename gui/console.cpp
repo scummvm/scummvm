@@ -25,14 +25,8 @@
 #include "base/engine.h"
 #include "base/version.h"
 
-#ifdef NEW_FONT_CODE
 #include "gui/font.h"
-#define kCharWidth	g_sysfont.maxwidth
-#else
-enum {
-	kCharWidth = 8
-};
-#endif
+#define kCharWidth	g_guifont.getMaxCharWidth()
 
 
 namespace GUI {
@@ -85,7 +79,7 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 }
 
 void ConsoleDialog::reflowLayout() {
-	// Calculate the real width/height (rounded to char/line multiples
+	// Calculate the real width/height (rounded to char/line multiples)
 	_w = (uint16)(_widthPercent * g_system->get_overlay_width());
 //	_w = (_widthPercent * g_system->get_overlay_width() - kScrollBarWidth - 2) / kCharWidth;
 //	_w = _w * kCharWidth + kScrollBarWidth + 2;

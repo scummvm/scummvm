@@ -20,12 +20,8 @@
 
 #include "stdafx.h"
 #include "common/util.h"
-#include "newgui.h"
-#include "dialog.h"
-
-#ifdef NEW_FONT_CODE
-#include "gui/font.h"
-#endif
+#include "gui/newgui.h"
+#include "gui/dialog.h"
 
 
 namespace GUI {
@@ -48,49 +44,6 @@ enum {
 	kKeyRepeatInitialDelay = 400,
 	kKeyRepeatSustainDelay = 100
 };
-
-#ifdef NEW_FONT_CODE
-/*
- * TODO: 
- *  - replace kLineHeight by global variable or query method
- *  - ....
- */
-#else
-#ifdef __PALM_OS__
-static const byte *guifont;
-#else
-// Built-in font
-static const byte guifont[] = {
-0,0,99,1,226,8,4,8,6,8,6,0,0,0,0,0,0,0,0,0,0,0,8,2,1,8,0,0,0,0,0,0,0,0,0,0,0,0,4,3,7,8,7,7,8,4,5,5,8,7,4,7,3,8,7,7,7,7,8,7,7,7,7,7,3,4,7,5,7,7,8,7,7,7,7,7,7,7,7,5,7,7,
-7,8,7,7,7,7,7,7,7,7,7,8,7,7,7,5,8,5,8,8,7,7,7,6,7,7,7,7,7,5,6,7,5,8,7,7,7,7,7,7,7,7,7,8,7,7,7,5,3,5,7,8,7,7,7,7,7,7,0,6,7,7,7,5,5,5,7,0,6,8,8,7,7,7,7,7,0,7,7,0,0,
-0,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,0,0,1,3,6,12,
-24,62,3,0,128,192,96,48,24,124,192,0,0,3,62,24,12,6,3,1,0,192,124,24,48,96,192,128,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,237,74,72,0,0,0,0,0,128,128,128,0,0,0,0,0,0,0,0,0,0,0,0,0,60,66,153,161,161,153,66,60,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,96,96,96,96,0,0,96,0,102,102,102,0,0,0,0,0,102,102,255,102,255,102,102,0,24,62,96,60,6,124,24,0,98,102,12,24,48,102,70,0,60,102,60,56,103,102,63,0,96,48,16,0,0,0,0,0,24,48,96,96,96,48,24,0,96,48,24,24,24,48,96,0,
-0,102,60,255,60,102,0,0,0,24,24,126,24,24,0,0,0,0,0,0,0,48,48,96,0,0,0,126,0,0,0,0,0,0,0,0,0,96,96,0,0,3,6,12,24,48,96,0,60,102,102,102,102,102,60,0,24,24,56,24,24,24,126,0,60,102,6,12,48,96,126,0,60,102,6,28,6,102,60,0,6,
-14,30,102,127,6,6,0,126,96,124,6,6,102,60,0,60,102,96,124,102,102,60,0,126,102,12,24,24,24,24,0,60,102,102,60,102,102,60,0,60,102,102,62,6,102,60,0,0,0,96,0,0,96,0,0,0,0,48,0,0,48,48,96,14,24,48,96,48,24,14,0,0,0,120,0,120,0,0,0,112,24,
-12,6,12,24,112,0,60,102,6,12,24,0,24,0,0,0,0,255,255,0,0,0,24,60,102,126,102,102,102,0,124,102,102,124,102,102,124,0,60,102,96,96,96,102,60,0,120,108,102,102,102,108,120,0,126,96,96,120,96,96,126,0,126,96,96,120,96,96,96,0,60,102,96,110,102,102,60,0,102,102,102,
-126,102,102,102,0,120,48,48,48,48,48,120,0,30,12,12,12,12,108,56,0,102,108,120,112,120,108,102,0,96,96,96,96,96,96,126,0,99,119,127,107,99,99,99,0,102,118,126,126,110,102,102,0,60,102,102,102,102,102,60,0,124,102,102,124,96,96,96,0,60,102,102,102,102,60,14,0,124,102,102,124,
-120,108,102,0,60,102,96,60,6,102,60,0,126,24,24,24,24,24,24,0,102,102,102,102,102,102,60,0,102,102,102,102,102,60,24,0,99,99,99,107,127,119,99,0,102,102,60,24,60,102,102,0,102,102,102,60,24,24,24,0,126,6,12,24,48,96,126,0,120,96,96,96,96,96,120,0,3,6,12,24,48,
-96,192,0,120,24,24,24,24,24,120,0,0,0,0,0,0,219,219,0,0,0,0,0,0,0,0,255,102,102,102,0,0,0,0,0,0,0,60,6,62,102,62,0,0,96,96,124,102,102,124,0,0,0,60,96,96,96,60,0,0,6,6,62,102,102,62,0,0,0,60,102,126,96,60,0,0,14,24,62,24,24,
-24,0,0,0,62,102,102,62,6,124,0,96,96,124,102,102,102,0,0,48,0,112,48,48,120,0,0,12,0,12,12,12,12,120,0,96,96,108,120,108,102,0,0,112,48,48,48,48,120,0,0,0,102,127,127,107,99,0,0,0,124,102,102,102,102,0,0,0,60,102,102,102,60,0,0,0,124,102,102,124,96,
-96,0,0,62,102,102,62,6,6,0,0,124,102,96,96,96,0,0,0,62,96,60,6,124,0,0,24,126,24,24,24,14,0,0,0,102,102,102,102,62,0,0,0,102,102,102,60,24,0,0,0,99,107,127,62,54,0,0,0,102,60,24,60,102,0,0,0,102,102,102,62,12,120,0,0,126,12,24,48,126,0,
-24,48,48,96,48,48,24,0,96,96,96,0,96,96,96,0,96,48,48,24,48,48,96,0,0,0,97,153,134,0,0,0,8,12,14,255,255,14,12,8,60,102,96,96,102,60,24,56,102,0,102,102,102,102,62,0,12,24,60,102,126,96,60,0,24,36,60,6,62,102,62,0,102,0,60,6,62,102,62,0,48,
-24,60,6,62,102,62,0,0,0,0,0,0,0,0,0,0,60,96,96,96,60,24,56,24,36,60,102,126,96,60,0,102,0,60,102,126,96,60,0,48,24,60,102,126,96,60,0,0,216,0,112,48,48,120,0,48,72,0,112,48,48,120,0,96,48,0,112,48,48,120,0,102,24,60,102,126,102,102,0,0,0,
-0,0,0,0,0,0,24,48,124,96,120,96,124,0,0,0,108,26,126,216,110,0,30,40,40,126,72,136,142,0,24,36,60,102,102,102,60,0,102,0,60,102,102,102,60,0,48,24,60,102,102,102,60,0,24,36,0,102,102,102,62,0,48,24,102,102,102,102,62,0,0,0,0,0,0,0,0,0,102,60,102,
-102,102,102,60,0,102,0,102,102,102,102,60,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,24,60,6,62,102,62,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,28,54,54,124,102,102,124,64,0,0,0
-};
-#endif
-
-#endif // NEW_FONT_CODE
 
 
 // Constructor
@@ -204,6 +157,7 @@ void NewGui::runLoop() {
 				return;
 			case OSystem::EVENT_SCREEN_CHANGED:
 				updateColors();
+				activeDialog->handleScreenChanged();
 				break;
 			}
 		}
@@ -402,57 +356,16 @@ void NewGui::addDirtyRect(int x, int y, int w, int h) {
 }
 
 void NewGui::drawChar(byte chr, int xx, int yy, OverlayColor color) {
-	OverlayColor *ptr = getBasePtr(xx, yy);
-	uint x, y;
-
-#ifdef NEW_FONT_CODE
-	assert(g_sysfont.bits != 0 && g_sysfont.maxwidth <= 16);
-
-	// If this character is not included in the font, use the default char.
-	if (chr < g_sysfont.firstchar || chr >= g_sysfont.firstchar + g_sysfont.size) {
-		if (chr == ' ')
-			return;
-		chr = g_sysfont.defaultchar;
-	}
-
-	const uint w = getCharWidth(chr);
-	const uint h = g_sysfont.height;
-	chr -= g_sysfont.firstchar;
-	const bitmap_t *tmp = g_sysfont.bits + (g_sysfont.offset ? g_sysfont.offset[chr] : (chr * h));
-//printf("Char '%c', width %d\n", chr, w);
-
-	for (y = 0; y < h; y++) {
-		const bitmap_t buffer = *tmp++;
-		bitmap_t mask = 0x8000;
-		for (x = 0; x < w; x++) {
-			if ((buffer & mask) != 0)
-				ptr[x] = color;
-			mask >>= 1;
-		}
-		ptr += _screenPitch;
-	}
-#else
-	const uint w = 8;
-	const uint h = 8;
-	const byte *tmp = guifont + 6 + guifont[4] + chr * 8;
-	uint buffer = 0;
-	uint mask = 0;
-
-	for (y = 0; y < h; y++) {
-		for (x = 0; x < w; x++) {
-			unsigned char c;
-			mask >>= 1;
-			if (mask == 0) {
-				buffer = *tmp++;
-				mask = 0x80;
-			}
-			c = ((buffer & mask) != 0);
-			if (c)
-				ptr[x] = color;
-		}
-		ptr += _screenPitch;
-	}
-#endif
+	const int sys_height = _system->get_overlay_height();
+	const int sys_width = _system->get_overlay_width();
+	Surface dst = {
+			_screen,
+			sys_width,
+			sys_height,
+			sizeof(OverlayColor) * _screenPitch,
+			sizeof(OverlayColor)
+		};
+	g_guifont.drawChar(&dst, chr, xx, yy, color);
 }
 
 int NewGui::getStringWidth(const String &str) {
@@ -464,89 +377,20 @@ int NewGui::getStringWidth(const String &str) {
 }
 
 int NewGui::getCharWidth(byte c) {
-#ifdef NEW_FONT_CODE
-	// If no width table is specified, return the maximum width
-	if (!g_sysfont.width)
-		return g_sysfont.maxwidth;
-	// If this character is not included in the font, use the default char.
-	if (c < g_sysfont.firstchar || g_sysfont.firstchar + g_sysfont.size < c) {
-		if (c == ' ')
-			return g_sysfont.maxwidth / 2;
-		c = g_sysfont.defaultchar;
-	}
-	return g_sysfont.width[c - g_sysfont.firstchar];
-#else
-	return guifont[c+6];
-#endif
+	return g_guifont.getCharWidth(c);
 }
 
-void NewGui::drawString(const String &s, int x, int y, int w, OverlayColor color, int align, int deltax, bool useEllipsis) {
-	const int leftX = x, rightX = x + w;
-	uint i;
-	int width = getStringWidth(s);
-	String str;
-	
-	if (useEllipsis && width > w) {
-		// String is too wide. So we shorten it "intellegently", by replacing
-		// parts of it by an ellipsis ("..."). There are three possibilities
-		// for this: replace the start, the end, or the middle of the string.
-		// What is best really depends on the context; but unless we want to
-		// make this configurable, replacing the middle probably is a good
-		// compromise.
-		const int ellipsisWidth = getStringWidth("...");
-		
-		// SLOW algorithm to remove enough of the middle. But it is good enough
-		// for now.
-		const int halfWidth = (w - ellipsisWidth) / 2;
-		int w2 = 0;
-		
-		for (i = 0; i < s.size(); ++i) {
-			int charWidth = getCharWidth(s[i]);
-			if (w2 + charWidth > halfWidth)
-				break;
-			w2 += charWidth;
-			str += s[i];
-		}
-		// At this point we know that the first 'i' chars are together 'w2'
-		// pixels wide. We took the first i-1, and add "..." to them.
-		str += "...";
-		
-		// The original string is width wide. Of those we already skipped past
-		// w2 pixels, which means (width - w2) remain.
-		// The new str is (w2+ellipsisWidth) wide, so we can accomodate about
-		// (w - (w2+ellipsisWidth)) more pixels.
-		// Thus we skip ((width - w2) - (w - (w2+ellipsisWidth))) =
-		// (width + ellipsisWidth - w)
-		int skip = width + ellipsisWidth - w;
-		for (; i < s.size() && skip > 0; ++i) {
-			skip -= getCharWidth(s[i]);
-		}
-
-		// Append the remaining chars, if any
-		for (; i < s.size(); ++i) {
-			str += s[i];
-		}
-
-		width = getStringWidth(str);
-
-	} else {
-		str = s;
-	}
-
-	if (align == kTextAlignCenter)
-		x = x + (w - width - 1)/2;
-	else if (align == kTextAlignRight)
-		x = x + w - width;
-	x += deltax;
-
-	for (i = 0; i < str.size(); ++i) {
-		w = getCharWidth(str[i]);
-		if (x+w > rightX)
-			break;
-		if (x >= leftX)
-			drawChar(str[i], x, y, color);
-		x += w;
-	}
+void NewGui::drawString(const String &s, int x, int y, int w, OverlayColor color, TextAlignment align, int deltax, bool useEllipsis) {
+	const int sys_height = _system->get_overlay_height();
+	const int sys_width = _system->get_overlay_width();
+	Surface dst = {
+			_screen,
+			sys_width,
+			sys_height,
+			sizeof(OverlayColor) * _screenPitch,
+			sizeof(OverlayColor)
+		};
+	g_guifont.drawString(&dst, s, x, y, w, color, align, deltax, useEllipsis);
 }
 
 //
@@ -620,20 +464,3 @@ void NewGui::animateCursor() {
 }
 
 } // End of namespace GUI
-
-#ifdef __PALM_OS__
-#include "scumm_globals.h"
-
-_GINIT(NewGui)
-#ifndef NEW_FONT_CODE
-_GSETPTR(GUI::guifont, GBVARS_GUIFONT_INDEX, byte, GBVARS_SCUMM)
-#endif
-_GEND
-
-_GRELEASE(NewGui)
-#ifndef NEW_FONT_CODE
-_GRELEASEPTR(GBVARS_GUIFONT_INDEX, GBVARS_SCUMM)
-#endif
-_GEND
-
-#endif

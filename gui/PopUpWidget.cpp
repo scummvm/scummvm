@@ -345,7 +345,7 @@ void PopUpWidget::drawWidget(bool hilite) {
 
 	// Draw the selected entry, if any
 	if (_selectedItem >= 0) {
-		int align = (gui->getStringWidth(_entries[_selectedItem].name) > w-6) ? kTextAlignRight : kTextAlignLeft;
+		TextAlignment align = (gui->getStringWidth(_entries[_selectedItem].name) > w-6) ? kTextAlignRight : kTextAlignLeft;
 		gui->drawString(_entries[_selectedItem].name, x+2, _y+3, w-6, !isEnabled() ? gui->_color : gui->_textcolor, align);
 	}
 }

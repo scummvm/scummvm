@@ -107,7 +107,7 @@ Widget *Widget::findWidgetInChain(Widget *w, int x, int y) {
 
 #pragma mark -
 
-StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, int align)
+StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align)
 	: Widget(boss, x, y, w, h), _align(align) {
 	_flags = WIDGET_ENABLED;
 	_type = kStaticTextWidget;
