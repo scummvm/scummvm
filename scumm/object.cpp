@@ -1282,22 +1282,24 @@ void Scumm::drawBlastObject(BlastObject *eo)
 {
 	VirtScreen *vs;
 	byte *bomp, *ptr;
-	int idx;
+	int idx, objnum;
 	BompDrawData bdd;
 
 	vs = &virtscr[0];
 
 	checkRange(_numGlobalObjects - 1, 30, eo->number, "Illegal Blast object %d");
 
-	idx = _objs[getObjectIndex(eo->number)].fl_object_index;
+	objnum = getObjectIndex(eo->number);
+	if (objnum == -1)
+		error("drawBlastObject: getObjectIndex on BlastObject %d failed", eo->number);
 
+	idx = _objs[objnum].fl_object_index;
 	if (idx) {
 		ptr = getResourceAddress(rtFlObject, idx);
 		ptr = findResource(MKID('OBIM'), ptr);
 	} else {
-		idx = getObjectIndex(eo->number);
-		assert(idx != -1);
-		ptr = getResourceAddress(rtRoom, _roomResource) + _objs[idx].OBIMoffset;
+		idx = objnum;
+		ptr = getResourceAddress(rtRoom, _roomResource) + _objs[objnum].OBIMoffset;
 	}
 	if (!ptr)
 		error("BlastObject object %d (%d) image not found", eo->number, idx);
