@@ -210,8 +210,8 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 					s = GET_VALUE();
 					if (*s == '\0')
 						goto ShowHelpAndExit;
-					_gameTempo = strtol(s + 1, 0, 0);
-					scummcfg->set("tempo", s + 1);
+					_gameTempo = strtol(s, 0, 0);
+					scummcfg->set("tempo", s);
 					goto NextArg;
 				case 'v':
 					printf("ScummVM " SCUMMVM_VERSION "\nBuilt on " __DATE__ " "
