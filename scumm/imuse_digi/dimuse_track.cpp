@@ -58,9 +58,14 @@ void IMuseDigital::allocSlot(int priority) {
 				}
 			}
 			assert(track_id != -1);
+#ifndef ENABLE_PULLMETHOD
 			_track[track_id]->stream->finish();
 			_track[track_id]->stream = NULL;
 			_vm->_mixer->stopHandle(_track[track_id]->handle);
+#else
+			_vm->_mixer->stopHandle(_track[track_id]->handle);
+			_track[track_id]->stream = NULL;
+#endif
 			_sound->closeSound(_track[track_id]->soundHandle);
 			_track[track_id]->used = false;
 			assert(!_track[track_id]->handle.isActive());
@@ -98,6 +103,8 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			_track[l]->trackOffset = 0;
 			_track[l]->mod = 0;
 			_track[l]->mixerFlags = 0;
+			_track[l]->mixerPan = 0;
+			_track[l]->mixerVol = volume;
 			_track[l]->toBeRemoved = false;
 
 			int bits = 0, freq = 0, channels = 0;
@@ -136,29 +143,42 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				// subclass).
 				freq -= (freq % 25);
 
-				_track[l]->iteration = _track[l]->pullSize = freq * channels;
-
+				_track[l]->iteration = freq * channels;
+#ifndef ENABLE_PULLMETHOD
+				_track[l]->pullSize = _track[l]->iteration;
+#endif
 				if (channels == 2)
 					_track[l]->mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
 
 				if ((bits == 12) || (bits == 16)) {
 					_track[l]->mixerFlags |= SoundMixer::FLAG_16BITS;
-					_track[l]->iteration = _track[l]->pullSize *= 2;
+					_track[l]->iteration *= 2;
+#ifndef ENABLE_PULLMETHOD
+					_track[l]->pullSize = _track[l]->iteration;
+#endif
 				} else if (bits == 8) {
 					_track[l]->mixerFlags |= SoundMixer::FLAG_UNSIGNED;
 				} else
 					error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
 
+#ifndef ENABLE_PULLMETHOD
 				_track[l]->pullSize /= 25;	// We want a "frame rate" of 25 audio blocks per second
+#endif
 			}
 
 			if (input) {
 				_track[l]->stream2 = input;
 				_track[l]->stream = NULL;
+				_track[l]->started = false;
 			} else {
 				_track[l]->stream2 = NULL;
+#ifndef ENABLE_PULLMETHOD
 				_track[l]->stream = makeAppendableAudioStream(freq, _track[l]->mixerFlags, 100000);
+#else
+				_track[l]->stream = new CustomProcInputStream(freq, _track[l]->mixerFlags, (CustomProcInputStream::CustomInputProc)pullProcCallback, this);
+#endif
 				_vm->_mixer->playInputStream(&_track[l]->handle, _track[l]->stream, false, _track[l]->vol / 1000, _track[l]->pan, -1);
+				_track[l]->started = true;
 			}
 
 			_track[l]->used = true;
@@ -276,8 +296,12 @@ int IMuseDigital::cloneToFadeOutTrack(int track, int fadeDelay, int killNormalTr
 	_track[track]->curHookId = _track[fadeTrack]->curHookId;
 	_track[track]->iteration = _track[fadeTrack]->iteration;
 	_track[track]->mixerFlags = _track[fadeTrack]->mixerFlags;
+	_track[track]->mixerVol = _track[fadeTrack]->mixerVol;
+	_track[track]->mixerPan = _track[fadeTrack]->mixerPan;
 	_track[track]->mod = _track[fadeTrack]->mod;
+#ifndef ENABLE_PULLMETHOD
 	_track[track]->pullSize = _track[fadeTrack]->pullSize;
+#endif
 	_track[track]->used = _track[fadeTrack]->used;
 	_track[track]->toBeRemoved = _track[fadeTrack]->toBeRemoved;
 	_track[track]->started = _track[fadeTrack]->started;
@@ -295,8 +319,13 @@ int IMuseDigital::cloneToFadeOutTrack(int track, int fadeDelay, int killNormalTr
 		_track[track]->used = false;
 	} else {
 		_track[track]->soundHandle = _sound->cloneSound(_track[fadeTrack]->soundHandle);
+#ifndef ENABLE_PULLMETHOD
 		_track[track]->stream = makeAppendableAudioStream(_sound->getFreq(_track[track]->soundHandle), _track[track]->mixerFlags, 100000);
+#else
+		_track[track]->stream = new CustomProcInputStream(_sound->getFreq(_track[track]->soundHandle), _track[track]->mixerFlags, (CustomProcInputStream::CustomInputProc)pullProcCallback, this);
+#endif
 		_vm->_mixer->playInputStream(&_track[track]->handle, _track[track]->stream, false, _track[track]->vol / 1000, _track[track]->pan, -1);
+		_track[track]->started = true;
 	}
 
 	return fadeTrack;
