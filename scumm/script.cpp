@@ -771,9 +771,11 @@ void Scumm::runInputScript(int a, int cmd, int mode) {
 	int args[16];
 	int verbScript;
 
-	if (_features & GF_AFTER_V2)
-		verbScript = 2;
-	else
+	if (_features & GF_AFTER_V2) {
+		verbScript = 4;
+		if (a == 1)	// Verb clicked
+			_scummVars[33] = cmd;
+	} else
 		verbScript = VAR(VAR_VERB_SCRIPT);
 
 	memset(args, 0, sizeof(args));
