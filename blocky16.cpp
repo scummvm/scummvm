@@ -314,9 +314,9 @@ void Blocky16::level3(byte *d_dst) {
 			d_dst += _d_pitch;
 		}
 	} else if ((code == 0xFF) || (code == 0xF8)) {
-		*(uint32 *)(d_dst) = *(uint32 *)(_d_src);
+		*(uint32 *)(d_dst) = READ_LE_UINT32(_d_src);
 		d_dst += _d_pitch;
-		*(uint32 *)(d_dst) = *(uint32 *)(_d_src + 4);
+		*(uint32 *)(d_dst) = READ_LE_UINT32(_d_src + 4);
 		_d_src += 8;
 	} else if (code == 0xFD) {
 		t = *_d_src++;
