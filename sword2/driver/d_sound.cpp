@@ -175,64 +175,58 @@ void MusicHandle::stop(void) {
 }
 
 int MusicHandle::readBuffer(int16 *buffer, const int numSamples) {
+	assert(numSamples > 0);
 	int samples;
-	for (samples = 0; samples < numSamples && !endOfData(); samples++)
-		*buffer++ = read();
-	return samples;
-}
-
-int16 MusicHandle::read(void) {
-	uint8 in;
-	uint16 delta;
-	int16 out;
-
-	if (!_streaming)
-		return 0;
-
-	if (_firstTime) {
-		_lastSample = fpMus.readUint16LE();
-		_filePos += 2;
-		_firstTime = false;
-		return _lastSample;
-	}
 
 	// Assume the file handle has been correctly positioned already.
 
-	in = fpMus.readByte();
-	delta = GetCompressedAmplitude(in) << GetCompressedShift(in);
-
-	if (GetCompressedSign(in))
-		out = _lastSample - delta;
-	else
-		out = _lastSample + delta;
-
-	_filePos++;
-	_lastSample = out;
-
-	if (_looping) {
-		if (_filePos >= _fileEnd) {
-			_firstTime = true;
-			_filePos = _fileStart;
-			fpMus.seek(_filePos, SEEK_SET);
+	for (samples = 0; samples < numSamples && !endOfData(); samples++) {
+		int16 out;
+		if (_firstTime) {
+			_lastSample = fpMus.readUint16LE();
+			_filePos += 2;
+			_firstTime = false;
+			out = _lastSample;
+		} else {
+			uint8 in = fpMus.readByte();
+			uint16 delta = GetCompressedAmplitude(in) << GetCompressedShift(in);
+		
+			if (GetCompressedSign(in))
+				out = _lastSample - delta;
+			else
+				out = _lastSample + delta;
+		
+			_filePos++;
+			_lastSample = out;
+		
+			if (_looping) {
+				if (_filePos >= _fileEnd) {
+					_firstTime = true;
+					_filePos = _fileStart;
+					fpMus.seek(_filePos, SEEK_SET);
+				}
+			} else {
+				// Fade out at the end of the music, unless it already is.
+				if (_fileEnd - _filePos <= FADE_SAMPLES && _fading <= 0)
+					fadeDown();
+			}
+		
+			if (_fading > 0) {
+				if (--_fading == 0) {
+					_streaming = false;
+					_looping = false;
+				}
+				out = (out * _fading) / FADE_SAMPLES;
+			} else if (_fading < 0) {
+				_fading++;
+				out = (out * (FADE_SAMPLES + _fading)) / FADE_SAMPLES;
+			}
 		}
-	} else {
-		// Fade out at the end of the music, unless it already is.
-		if (_fileEnd - _filePos <= FADE_SAMPLES && _fading <= 0)
-			fadeDown();
+
+		*buffer++ = out;
 	}
 
-	if (_fading > 0) {
-		if (--_fading == 0) {
-			_streaming = false;
-			_looping = false;
-		}
-		out = (out * _fading) / FADE_SAMPLES;
-	} else if (_fading < 0) {
-		_fading++;
-		out = (out * (FADE_SAMPLES + _fading)) / FADE_SAMPLES;
-	}
-
-	return out;
+	return samples;
 }
 
 bool MusicHandle::endOfData(void) const {

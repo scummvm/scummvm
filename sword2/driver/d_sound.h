@@ -63,8 +63,7 @@ public:
 	void fadeUp(void);
 	int32 play(const char *filename, uint32 musicId, bool looping);
 	void stop(void);
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	int16 read(void);
+	int readBuffer(int16 *buffer, const int numSamples);
 	bool endOfData(void) const;
 	// This stream never 'ends'
 	bool endOfStream(void) const { return false; }
