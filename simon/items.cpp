@@ -1313,16 +1313,21 @@ void SimonState::o_quit_if_user_presses_y()
 {
 	for (;;) {
 		delay(1);
-		switch (_key_pressed) {
-			case 'y':
-			case 'o': // french
-			case 'j': // german
-				_system->quit();
-				break;
-
-			case 'n':
-				goto get_out;
-		}
+		if (_key_pressed == 'f' && _language == 20) // Hebrew
+			_system->quit();
+		// FIXME Exact key press for Spanish verison unknown 
+		if (_key_pressed == 'y' && _language == 5) // Spanish
+			_system->quit();
+		if (_key_pressed == 's' && _language == 3) // Italian
+			_system->quit();
+		if (_key_pressed == 'o' && _language == 2) // French
+			_system->quit();
+		if (_key_pressed == 'j' && _language == 1) // German
+			_system->quit();
+		if (_key_pressed == 'y' && _language == 0) // English
+			_system->quit();
+		if (_key_pressed == 'n')
+			goto get_out;
 	}
 get_out:;
 }

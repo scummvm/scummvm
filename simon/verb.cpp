@@ -41,6 +41,18 @@ static const char *const verb_names[] = {
 	"Give"
 };
 
+static const char *const hebrew_verb_prep_names[] = {
+	"", "", "", "",
+	"", "", "", "RM ND ?",
+	"", "", "", "LNI ?"
+};
+
+static const char *const spanish_verb_prep_names[] = {
+	"", "", "", "",
+	"", "", "", "con qu/ ?",
+	"", "", "", "qui/n ?"
+};
+
 static const char *const italian_verb_prep_names[] = {
 	"", "", "", "",
 	"", "", "", "con che cosa ?",
@@ -98,7 +110,11 @@ void SimonState::focusVerb(uint hitarea_id)
 
 	hitarea_id -= 101;
 
-	if (_language == 3) {
+	if (_language == 20) {
+		CHECK_BOUNDS(hitarea_id, hebrew_verb_prep_names);
+	} else if (_language == 5) {
+		CHECK_BOUNDS(hitarea_id, spanish_verb_prep_names);
+	} else if (_language == 3) {
 		CHECK_BOUNDS(hitarea_id, italian_verb_prep_names);
 	} else if (_language == 2) {
 		CHECK_BOUNDS(hitarea_id, french_verb_prep_names);
@@ -109,7 +125,11 @@ void SimonState::focusVerb(uint hitarea_id)
 	}
 
 	if (_show_preposition) {
-		if (_language == 3) {
+		if (_language == 20) {
+		CHECK_BOUNDS(hitarea_id, hebrew_verb_prep_names);
+		} else if (_language == 5) {
+			txt = spanish_verb_prep_names[hitarea_id];
+		} else if (_language == 3) {
 			txt = italian_verb_prep_names[hitarea_id];
 		} else if (_language == 2) {
 			txt = french_verb_prep_names[hitarea_id];
