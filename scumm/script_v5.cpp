@@ -971,7 +971,7 @@ void Scumm_v5::o5_getActorWalkBox() {
 	Actor *a;
 	getResultPos();
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorWalkbox");
-	if (a)												// FIXME - bug 572977 workaround
+	if (a) // FIXME - bug 572977 workaround
 		setResult(a->walkbox);
 	else
 		setResult(0);
@@ -1008,7 +1008,7 @@ void Scumm_v5::o5_getActorY() {
 			return;
 		}
 
-		// Hack to fix bug 636433 (can't get into Zeppelin) 
+		// FIXME - bug 636433 workaround (can't get into Zeppelin) 
 		if (_roomResource == 36) {
 			setResult(getObjY(a) - 1);
 			return;
@@ -1025,7 +1025,7 @@ void Scumm_v5::o5_getAnimCounter() {
 
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorAnimCounter");
 
-	if (a)												// FIXME
+	if (a) // FIXME
 		setResult(a->cost.animCounter1);
 	else
 		setResult(0);
@@ -1061,7 +1061,7 @@ void Scumm_v5::o5_getDist() {
 	o2 = getVarOrDirectWord(0x40);
 	r = getObjActToObjActDist(o1, o2);
 
-	/* FIXME: MI2 race workaround, see bug 597022 */
+	// FIXME: MI2 race workaround, see bug 597022
 	if (_gameId == GID_MONKEY2 && vm.slot[_currentScript].number == 40 && r < 60) 
 		r = 60; 
 
@@ -1136,7 +1136,7 @@ void Scumm_v5::o5_ifClassOfIs() {
 		cls = getVarOrDirectWord(0x80);
 
 		if (!cls) // FIXME: Ender can't remember why this is here,
-			b=false;  // but it fixes an oddball zak256 crash
+			b = false;  // but it fixes an oddball zak256 crash
 		else
 			b = getClass(act, cls);
 
