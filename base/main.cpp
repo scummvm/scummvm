@@ -228,7 +228,7 @@ int main(int argc, char *argv[]) {
 		}
 #endif
 	}
-	setvbuf(stdout, NULL, _IOLBF, BUFSIZ);	/* Line buffered */
+	setlinebuf(stdout);	/* Line buffered */
 	setbuf(stderr, NULL);			/* No buffering */
 
 #endif //defined(WIN32) && defined(USE_CONSOLE)
@@ -289,11 +289,9 @@ int main(int argc, char *argv[]) {
 			system->property(OSystem::PROP_SET_GFX_MODE, &prop);
 		}
 	
-		// Override global fullscreen setting with any game-specific define
-		if (ConfMan.getBool("fullscreen")) {
-			if (!system->property(OSystem::PROP_GET_FULLSCREEN, 0))
-				system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
-		}
+		// (De)activate fullscreen mode as determined by the config settings 
+		if (ConfMan.getBool("fullscreen") != system->property(OSystem::PROP_GET_FULLSCREEN, 0))
+			system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
 	
 		// Create the game engine
 		Engine *engine = detector.createEngine(system);
