@@ -2864,7 +2864,7 @@ void Scumm_v6::o6_pickVarRandom() {
 		var_C = READ_LE_UINT16(ptr + 4);
 	}
 
-	if ((var_A - 1) < num) {
+	if (var_A <= num) {
 		int16 var_2 = readArray(value, 0, num - 1);
 		shuffleArray(value, 1, var_A - 1);
 		if (readArray(value, 0, 1) == var_2) {
