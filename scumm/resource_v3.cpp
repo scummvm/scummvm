@@ -104,27 +104,21 @@ void ScummEngine_v3::loadCharset(int no) {
 	uint32 size;
 	memset(_charsetData, 0, sizeof(_charsetData));
 
-	if (_gameId == GID_ZAK256)
-		checkRange(2, 0, no, "Loading illegal charset %d");
-	else
-		checkRange(4, 0, no, "Loading illegal charset %d");
+	checkRange(2, 0, no, "Loading illegal charset %d");
 	closeRoom();
 
 	File file;
 	char buf[20];
 
 	sprintf(buf, "%02d.LFL", 99 - no);
-	
 	file.open(buf);
-		
+
 	if (file.isOpen() == false) {
 		error("loadCharset(%d): Missing file charset: %s", no, buf);
 	}
-		
+
 	size = file.readUint16LE();
 	file.read(createResource(rtCharset, no, size), size);
-		
-	file.close();
 }
 
 } // End of namespace Scumm

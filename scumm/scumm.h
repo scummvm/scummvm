@@ -132,8 +132,6 @@ enum GameFeatures {
 	GF_PC                  = 1 << 22,
 	GF_WINDOWS             = 1 << 23,
 	GF_DEMO                = 1 << 24,
-	
-	GF_EXTERNAL_CHARSET    = GF_SMALL_HEADER
 };
 
 /* SCUMM Debug Channels */

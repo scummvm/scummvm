@@ -42,7 +42,7 @@ static const byte *findResourceSmall(uint32 tag, const byte *searchin);
 
 /* Open a room */
 void ScummEngine::openRoom(int room) {
-	int room_offs, roomlimit;
+	int room_offs;
 	bool result;
 	char buf[128];
 	char buf2[128] = "";
@@ -65,14 +65,7 @@ void ScummEngine::openRoom(int room) {
 
 	/* Either xxx.lfl or monkey.xxx file name */
 	while (1) {
-		if (_features & GF_SMALL_NAMES)
-			roomlimit = 98;
-		else
-			roomlimit = 900;
-		if (_features & GF_EXTERNAL_CHARSET && room >= roomlimit)
-			room_offs = 0;
-		else
-			room_offs = room ? res.roomoffs[rtRoom][room] : 0;
+		room_offs = room ? res.roomoffs[rtRoom][room] : 0;
 
 		if (room_offs == -1)
 			break;
@@ -81,7 +74,26 @@ void ScummEngine::openRoom(int room) {
 			_fileOffset = res.roomoffs[rtRoom][room];
 			return;
 		}
-		if (!(_features & GF_SMALL_HEADER)) {
+		if (_version <= 3) {
+			sprintf(buf, "%.2d.lfl", room);
+			// Maniac Mansion demo has .man instead of .lfl
+			if (_gameId == GID_MANIAC)
+				sprintf(buf2, "%.2d.man", room);
+			encByte = (_features & GF_USE_KEY) ? 0xFF : 0;
+		} else if (_features & GF_SMALL_HEADER) {
+			if (room == 0 || room >= 900) {
+				sprintf(buf, "%.3d.lfl", room);
+				encByte = 0;
+				if (openResourceFile(buf, encByte)) {
+					return;
+				}
+				askForDisk(buf, room == 0 ? 0 : res.roomno[rtRoom][room]);
+
+			} else {
+				sprintf(buf, "disk%.2d.lec", room == 0 ? 0 : res.roomno[rtRoom][room]);
+				encByte = 0x69;
+			}
+		} else {
 
 			if (_heversion >= 70) { // Windows titles
 				if (_heversion >= 98) {
@@ -107,34 +119,15 @@ void ScummEngine::openRoom(int room) {
 				sprintf(buf, "%s.la%d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
 
 				sprintf(buf2, "%s.%.3d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
-			} else if (_features & GF_HUMONGOUS)
+			} else if (_features & GF_HUMONGOUS) {
 				sprintf(buf, "%s.he%.1d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
-			else {
+			} else {
 				sprintf(buf, "%s.%.3d",  _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
 				if (_gameId == GID_SAMNMAX)
 					sprintf(buf2, "%s.sm%.1d",  _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
 			}
 
 			encByte = (_features & GF_USE_KEY) ? 0x69 : 0;
-		} else if (!(_features & GF_SMALL_NAMES)) {
-			if (room == 0 || room >= 900) {
-				sprintf(buf, "%.3d.lfl", room);
-				encByte = 0;
-				if (openResourceFile(buf, encByte)) {
-					return;
-				}
-				askForDisk(buf, room == 0 ? 0 : res.roomno[rtRoom][room]);
-
-			} else {
-				sprintf(buf, "disk%.2d.lec", room == 0 ? 0 : res.roomno[rtRoom][room]);
-				encByte = 0x69;
-			}
-		} else {
-			sprintf(buf, "%.2d.lfl", room);
-			// Maniac Mansion demo has .man instead of .lfl
-			if (_gameId == GID_MANIAC)
-				sprintf(buf2, "%.2d.man", room);
-			encByte = (_features & GF_USE_KEY) ? 0xFF : 0;
 		}
 
 		// If we have substitute
@@ -157,8 +150,6 @@ void ScummEngine::openRoom(int room) {
 			
 		if (result) {
 			if (room == 0)
-				return;
-			if (_features & GF_EXTERNAL_CHARSET && room >= roomlimit)
 				return;
 			deleteRoomOffsets();
 			readRoomsOffsets();
@@ -633,7 +624,7 @@ int ScummEngine::loadResource(int type, int idx) {
 			_fileHandle->seek(-2, SEEK_CUR);
 		}
 	} else if (_features & GF_SMALL_HEADER) {
-		if (!(_features & GF_SMALL_NAMES))
+		if (_version == 4)
 			_fileHandle->seek(8, SEEK_CUR);
 		size = _fileHandle->readUint32LE();
 		tag = _fileHandle->readUint16LE();
