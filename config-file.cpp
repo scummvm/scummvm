@@ -33,7 +33,8 @@
 
 static char *ltrim(char *t)
 {
-	for (; *t && (*t == ' '); t++);
+	for (; *t && (*t == ' '); t++)
+		;
 	return t;
 }
 

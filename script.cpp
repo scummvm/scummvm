@@ -162,6 +162,7 @@ int Scumm::getScriptSlot()
 			return i;
 	}
 	error("Too many scripts running, %d max", NUM_SCRIPT_SLOT);
+	return -1;
 }
 
 /* Run script 'script' nested - eg, within the parent script.*/
@@ -350,6 +351,7 @@ int Scumm::readVar(uint var)
 	}
 
 	error("Illegal varbits (r)");
+	return -1;
 }
 
 void Scumm::writeVar(uint var, int value)
@@ -1055,6 +1057,7 @@ int Scumm::getArrayId()
 			return i;
 	}
 	error("Out of array pointers, %d max", _numArray);
+	return -1;
 }
 
 void Scumm::arrayop_1(int a, byte *ptr)

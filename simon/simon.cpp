@@ -6529,8 +6529,8 @@ void SimonState::o_pathfind(int x,int y,uint var_1,uint var_2) {
 		if (!p)
 			continue;
 		for(j=0; READ_BE_UINT16_UNALIGNED(&p[0]) != 999; j++,p+=2) { /* 0xE703 = byteswapped 999 */
-			x_diff = abs(READ_BE_UINT16_UNALIGNED(&p[0]) - x);
-			y_diff = abs(READ_BE_UINT16_UNALIGNED(&p[1]) - 12 - y);
+			x_diff = abs((int)(READ_BE_UINT16_UNALIGNED(&p[0]) - x));
+			y_diff = abs((int)(READ_BE_UINT16_UNALIGNED(&p[1]) - 12 - y));
 
 			if (x_diff < y_diff) {
 				x_diff >>= 2;

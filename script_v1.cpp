@@ -2056,7 +2056,8 @@ void Scumm::o5_roomOps()
 			char buf[256], *s;
 			a = getVarOrDirectByte(0x80);
 			s = buf;
-			while ((*s++ = fetchScriptByte()));
+			while ((*s++ = fetchScriptByte()))
+				;
 			warning("roomops:13 save-string(%d,\"%s\") not implemented", a, buf);
 			break;
 		}
@@ -2064,7 +2065,8 @@ void Scumm::o5_roomOps()
 		char buf[256], *s;
 		a = getVarOrDirectByte(0x80);
 		s = buf;
-		while ((*s++ = fetchScriptByte()));
+		while ((*s++ = fetchScriptByte()))
+			;
 		warning("roomops:14 load-string(%d,\"%s\") not implemented", a, buf);
 		break;
 	case 15:											/* palmanip? */

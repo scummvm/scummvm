@@ -920,6 +920,7 @@ int Scumm::getInventorySlot()
 			return i;
 	}
 	error("Inventory full, %d max items", _maxInventoryItems);
+	return -1;
 }
 
 void Scumm::SamInventoryHack(int obj)
@@ -1281,6 +1282,7 @@ int Scumm::findFlObjectSlot()
 			return i;
 	}
 	error("findFlObjectSlot: Out of FLObject slots");
+	return -1;
 }
 
 void Scumm::loadFlObject(uint object, uint room)
