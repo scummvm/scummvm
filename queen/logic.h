@@ -103,6 +103,7 @@ public:
 	uint16 zoneInArea(uint16 screen, uint16 x, uint16 y);
 	void zoneClearAll(uint16 screen);
 	void zoneSetup();
+	void zoneSetupPanel();
 
 	void roomErase();
 	void roomSetupFurniture(); // SETUP_FURNITURE()

@@ -218,6 +218,10 @@ void Logic::initialise() {
 	//Command List Data
 
 
+	_graphics->panelLoad();
+	_graphics->bobSetupControl();
+	_walk->joeSetup();
+
 	memset(_zones, 0, sizeof(_zones));
 	_oldRoom = 0;
 	_entryObj = 0;
@@ -602,6 +606,28 @@ void Logic::zoneSetup() {
 }
 
 
+void Logic::zoneSetupPanel() {
+
+	int i;
+
+	// verbs 
+	for (i = 0; i <= 7; ++i) {
+		int x = i * 20;
+		zoneSet(ZONE_PANEL, i + 1, x, 10, x + 19, 49);
+	}
+
+	// inventory scrolls
+	zoneSet(ZONE_PANEL, PANEL_AREA_INV_UP,   160, 10, 179, 29);
+	zoneSet(ZONE_PANEL, PANEL_AREA_INV_DOWN, 160, 30, 179, 49);
+
+	// inventory items
+	zoneSet(ZONE_PANEL, PANEL_AREA_INV_1, 180, 10, 213, 49);
+	zoneSet(ZONE_PANEL, PANEL_AREA_INV_2, 214, 10, 249, 49);
+	zoneSet(ZONE_PANEL, PANEL_AREA_INV_3, 250, 10, 284, 49);
+	zoneSet(ZONE_PANEL, PANEL_AREA_INV_4, 285, 10, 320, 49);
+}
+
+
 void Logic::roomErase() {
 
 	_graphics->frameEraseAll(false);
@@ -770,7 +796,7 @@ void Logic::roomSetupObjects() {
 		}
 		else if(obj > 0 && obj < 5000) {
 			// FIXME: need GRAPHIC_ANIM stuff
-			warning("Logic::roomSetupObjects() - Object number %d no handled", obj);
+			warning("Logic::roomSetupObjects() - Object number %d not handled", obj);
 		}
 
 	}
@@ -789,7 +815,7 @@ void Logic::roomSetupObjects() {
 //			else {
 //				curImage = personAllocate(noun, curImage);
 //			}
-			warning("Logic::roomSetupObjects() - Person object number %d no handled", noun);
+			warning("Logic::roomSetupObjects() - Person object number %d not handled", noun);
 		}
 	}
 
