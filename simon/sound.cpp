@@ -32,6 +32,7 @@ protected:
 	File *_file;
 	uint32 *_offsets;
 	SoundMixer *_mixer;
+	bool _freeOffsets;
 
 public:
 	BaseSound(SoundMixer *mixer, File *file, uint32 base = 0, bool bigendian = false);
@@ -74,6 +75,7 @@ BaseSound::BaseSound(SoundMixer *mixer, File *file, uint32 base, bool bigendian)
 	res = size / sizeof(uint32);
 
 	_offsets = (uint32 *)malloc(size + sizeof(uint32));
+	_freeOffsets = true;
 
 	_file->seek(base, SEEK_SET);
 
@@ -99,10 +101,12 @@ BaseSound::BaseSound(SoundMixer *mixer, File *file, uint32 *offsets, bool bigend
 	_mixer = mixer;
 	_file = file;
 	_offsets = offsets;
+	_freeOffsets = false;
 }
 
 BaseSound::~BaseSound() {
-	free(_offsets);
+	if (_freeOffsets)
+		free(_offsets);
 	delete _file;
 }
 
@@ -231,7 +235,7 @@ void VorbisSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 	while (_offsets[sound + i] == _offsets[sound])
 			i++;
 
-	uint32 size = _offsets[sound + i] - _offsets[sound];
+	uint32 size = _offsets[sound+1] - _offsets[sound];
 
 	_mixer->playVorbis(handle, _file, size);
 }
@@ -430,10 +434,7 @@ void Sound::playVoice(uint sound) {
 				warning("playVoice: Can't load voice file %s", filename);
 				return;
 			} 
-			// FIXME freeing voice at this point causes frequent game crashes
-			// Maybe related to sound effects and speech using same sound format ?
-			// In any case, this means we currently leak.
-			// delete _voice;
+			delete _voice;
 			_voice = new WavSound(_mixer, file, _offsets);
 		}
 	}
