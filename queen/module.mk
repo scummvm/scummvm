@@ -1,6 +1,7 @@
 MODULE := queen
 
 MODULE_OBJS = \
+	queen/command.o \
 	queen/cutaway.o \
 	queen/display.o \
 	queen/graphics.o \
