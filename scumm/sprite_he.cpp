@@ -502,10 +502,30 @@ void ScummEngine_v90he::spriteInfoSet_resetClassFlags(int spriteId) {
 	_spriteTable[spriteId].class_flags = 0;
 }
 
-void ScummEngine_v90he::spriteInfoSet_case183(int spriteId) {
+void ScummEngine_v90he::spriteInfoSet_resetSprite(int spriteId) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
-	// TODO
+	_spriteTable[spriteId].rot_angle = 0;
+	_spriteTable[spriteId].zoom = 0;
+
+	spriteInfoSet_addImageToList(spriteId, 1, &spriteId);
+
+	_spriteTable[spriteId].field_54 = 0;
+	_spriteTable[spriteId].tx = 0;
+	_spriteTable[spriteId].ty = 0;
+
+	_spriteTable[spriteId].flags &= ~(kSF07 | kSFRotated);
+	_spriteTable[spriteId].flags |= kSF01 | kSFNeedRedraw;
+	_spriteTable[spriteId].dx = 0;
+	_spriteTable[spriteId].dy = 0;
+	_spriteTable[spriteId].field_44 = 0;
+	_spriteTable[spriteId].group_num = 0;
+	_spriteTable[spriteId].field_78 = 0;
+	_spriteTable[spriteId].field_64 = 0;
+	_spriteTable[spriteId].class_flags = 0;
+	_spriteTable[spriteId].field_14 = 0;
+	_spriteTable[spriteId].field_7C = 0;
+	_spriteTable[spriteId].field_80 = 0;
 }
 
 void ScummEngine_v90he::spriteInfoSet_addImageToList(int spriteId, int imageNum, int *spriteIdptr) {

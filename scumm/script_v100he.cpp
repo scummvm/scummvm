@@ -1723,7 +1723,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_case183(spriteId);
+			spriteInfoSet_resetSprite(spriteId);
 		break;
 	case 54:
 		pop();

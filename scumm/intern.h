@@ -916,7 +916,7 @@ protected:
 	void spriteInfoSet_field_14(int spriteId, int value);
 	void spriteInfoSet_field_7C(int spriteId, int value);
 	void spriteInfoSet_field_80(int spriteId, int value);
-	void spriteInfoSet_case183(int spriteId);
+	void spriteInfoSet_resetSprite(int spriteId);
 	void spriteInfoSet_resState(int spriteId, int value);
 	void spriteInfoSet_tx_ty(int spriteId, int value1, int value2);
 	void spriteInfoSet_groupNum(int spriteId, int value);

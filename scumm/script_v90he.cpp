@@ -1271,7 +1271,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_case183(spriteId);
+			spriteInfoSet_resetSprite(spriteId);
 		break;
 	default:
 		error("o90_setSpriteInfo: Unknown case %d", subOp);
