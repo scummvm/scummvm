@@ -568,7 +568,7 @@ void Scumm_v8::decodeParseString(int m, int n)
 void Scumm::enqueueText(byte *text, int x, int y, byte color, byte charset, bool center)
 {
 	BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
-	assert(_blastTextQueuePos <= 8);
+	assert(_blastTextQueuePos <= 32);
 	
 	strcpy((char *)bt.text, (const char *)text);
 	bt.xpos = x;
