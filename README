@@ -514,7 +514,19 @@ be done with the following LAME command line:
   lame -t -q 0 -b 96 --resample 22.05 track1.wav track1.mp3
 
 
-Compressing MONSTER.SOU with MP3:.
+Using Ogg Vorbis files for CD audio:
+------------------------------------
+Use oggenc or some other vorbis encoder to encode the audio tracks to files.
+Name the files track1.ogg track2.ogg etc. ScummVM must be compiled with vorbis
+support to use this option. You'll need to rip the files from the CD as a WAV
+file, then encode the vorbis files to be sampled at 22 kHz. This can be done
+with the following oggenc command line with the value after q specifying 
+the desired quality from 0 to 10:
+
+  oggenc -q 5 --resample 22050 track1.wav
+
+
+Compressing MONSTER.SOU with MP3:
 ---------------------------------
 You need LAME, and our extract util from the scummvm-tools package to perform
 this task, and ScummVM must be compiled with MAD support.
@@ -525,6 +537,15 @@ MONSTER.SOU file to a temporary folder. Then run:
 
 In about 30 minutes or so, you will have a much smaller monster.so3 file,
 copy this file to your game dir. You can safely remove the monster.sou file.
+
+
+Compressing MONSTER.SOU with Ogg Vorbis:
+----------------------------------------
+As above but run:
+  extract --vorbis monster.sou
+
+This should produce a smaller monster.sog file, which you should copy to your
+game dir.
 
 
 Using data files from Macintosh game versions
