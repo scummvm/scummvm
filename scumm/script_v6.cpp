@@ -2502,6 +2502,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 		case 20:
 			// Occurs in The Dig, at the alien pyramid. See bug #742979.
 			// Also occurs in the first scene of The Dig.
+			// Maybe this corresponds to setBoxScaleSlot from V8 ?!
 			warning("o6_kernelSetFunctions: stub20(%d, %d)", args[1], args[2]);
 			break;
 		case 107:

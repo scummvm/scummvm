@@ -1581,22 +1581,23 @@ void Scumm::initRoomSubBlocks() {
 		ptr = findResourceData(MKID('SCAL'), roomptr);
 	if (ptr) {
 		offs = ptr - roomptr;
+		int s1, s2, y1, y2;
 		if (_version == 8) {
 			for (i = 1; i < _maxScaleTable; i++, offs += 16) {
-				int scale1 = READ_LE_UINT32(roomptr + offs);
-				int y1 = READ_LE_UINT32(roomptr + offs + 4);
-				int scale2 = READ_LE_UINT32(roomptr + offs + 8);
-				int y2 = READ_LE_UINT32(roomptr + offs + 12);
-				setScaleSlot(i, 0, y1, scale1, 0, y2, scale2);
+				s1 = READ_LE_UINT32(roomptr + offs);
+				y1 = READ_LE_UINT32(roomptr + offs + 4);
+				s2 = READ_LE_UINT32(roomptr + offs + 8);
+				y2 = READ_LE_UINT32(roomptr + offs + 12);
+				setScaleSlot(i, 0, y1, s1, 0, y2, s2);
 			}
 		} else {
 			for (i = 1; i < _maxScaleTable; i++, offs += 8) {
-				int a = READ_LE_UINT16(roomptr + offs);
-				int b = READ_LE_UINT16(roomptr + offs + 2);
-				int c = READ_LE_UINT16(roomptr + offs + 4);
-				int d = READ_LE_UINT16(roomptr + offs + 6);
-				if (a || b || c || d) {
-					setScaleItem(i, b, a, d, c);
+				s1 = READ_LE_UINT16(roomptr + offs);
+				y1 = READ_LE_UINT16(roomptr + offs + 2);
+				s2 = READ_LE_UINT16(roomptr + offs + 4);
+				y2 = READ_LE_UINT16(roomptr + offs + 6);
+				if (s1 || y1 || s2 || y2) {
+					setScaleItem(i, y1, s1, y2, s2);
 					roomptr = getResourceAddress(rtRoom, _roomResource);
 				}
 			}
@@ -1739,26 +1740,37 @@ void Scumm::initRoomSubBlocks() {
 	initBGBuffers(_roomHeight);
 }
 
-void Scumm::setScaleItem(int slot, int a, int b, int c, int d) {
+/*
+ FIXME: It seems that scale items and scale slots are the same thing after
+ all - they only differ in some details (scale item is used to precompute
+ a scale table, while for the scale slots the computations are done on the
+ fly; also for scale slots, the scale along the x axis can vary, too).
+ 
+ Now, there are various known scale glitches in FT (and apparently also
+ in The Dig, see FIXME comments in Actor::setupActorScale). In this context
+ it is very interesting that for V5, there is an opcode which invokes
+ setScaleItem, and for V8 one that invokes setScaleSlot. But there is no
+ such opcode to be found for V6/V7 games.
+ 
+ Hypothesis: we simple are missing this opcode, and implementing it might
+ fix some or all of the Dig/FT scaling issues.
+*/
+void Scumm::setScaleItem(int slot, int y1, int scale1, int y2, int scale2) {
 	byte *ptr;
-	int cur, amounttoadd, i, tmp;
+	int y, tmp;
+
+	if (y1 == y2)
+		return;
 
 	ptr = createResource(rtScaleTable, slot, 200);
 
-	if (a == c)
-		return;
-
-	cur = (b - d) * a;
-	amounttoadd = d - b;
-
-	for (i = 200; i > 0; i--) {
-		tmp = cur / (c - a) + b;
+	for (y = 0; y < 200; y++) {
+		tmp = ((scale2 - scale1) * (y - y1)) / (y2 - y1) + scale1;
 		if (tmp < 1)
 			tmp = 1;
 		if (tmp > 255)
 			tmp = 255;
 		*ptr++ = tmp;
-		cur += amounttoadd;
 	}
 }
 
