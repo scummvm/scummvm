@@ -163,12 +163,12 @@ bool SkyText::getTBit() {
 	return (bool)(((_inputValue) >> (_shiftBits)) & 1);
 }
 
-void SkyText::displayText(uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
+displayText_t SkyText::displayText(uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
 	//Render text in _textBuffer in buffer *dest
-	displayText(this->_textBuffer, dest, centre, pixelWidth, color);
+	return displayText(this->_textBuffer, dest, centre, pixelWidth, color);
 }
 
-void SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
+displayText_t SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
 	
 	//Render text pointed to by *textPtr in buffer *dest
 
@@ -272,7 +272,11 @@ void SkyText::displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelW
 		prevDest = curDest;
 
 	} while (textChar >= 10);
-			
+	
+	struct displayText_t ret;
+	ret.textData = _dtData;
+	ret.textWidth = _dtLastWidth;	
+	return ret;
 }
 
 void SkyText::makeGameCharacter(char textChar, uint8 *charSetPtr, uint8 *&dest, uint8 color) {
