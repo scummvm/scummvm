@@ -64,17 +64,29 @@ SkyDisk::SkyDisk(char *gameDataPath) {
 
 SkyDisk::~SkyDisk(void) {
 
-	PrefFile **fEntry = &_prefRoot;
-	while (*fEntry) {
-		free((*fEntry)->data);
-		PrefFile *fTemp = *fEntry;
-		fEntry = &((*fEntry)->next);
+	PrefFile *fEntry = _prefRoot;
+	while (fEntry) {
+		free(fEntry->data);
+		PrefFile *fTemp = fEntry;
+		fEntry = fEntry->next;
 		delete fTemp;
 	}
 	if (_dnrHandle->isOpen()) _dnrHandle->close();
 	if (_dataDiskHandle->isOpen()) _dataDiskHandle->close();
 	delete _dnrHandle;
 	delete _dataDiskHandle;
+}
+
+void SkyDisk::flushPrefetched(void) {
+
+	PrefFile *fEntry = _prefRoot;
+	while (fEntry) {
+		free(fEntry->data);
+		PrefFile *fTemp = fEntry;
+		fEntry = fEntry->next;
+		delete fTemp;
+	}
+	_prefRoot = NULL;
 }
 
 //load in file file_nr to address dest

@@ -35,7 +35,7 @@ public:
 	PlayingSoundHandle _voiceHandle;
 	PlayingSoundHandle _effectHandle;
 	PlayingSoundHandle _bgSoundHandle;
-	PlayingSoundHandle _ingameSound;
+	PlayingSoundHandle _ingameSound, _ingameSpeech;
 
 protected:
 
@@ -50,6 +50,7 @@ public:
 	void loadSection(uint8 pSection);
 	void playSound(uint16 sound, uint16 volume);
 	bool fnStartFx(uint32 sound);
+	void fnStartSpeech(uint16 textNum);
 
 private:
 	SkyDisk *_skyDisk;
@@ -57,6 +58,8 @@ private:
 	uint16 _sfxBaseOfs;
 	uint8 *_soundData;
 	uint8 *_sampleRates, *_sfxInfo;
+
+	static uint16 _speechConvertTable[8];
 };
 
 #endif

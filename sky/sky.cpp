@@ -140,10 +140,12 @@ void SkyState::go() {
 	if (!isDemo(_gameVersion) || isCDVersion(_gameVersion))
 		intro();
 
+	_skyDisk->flushPrefetched();
+
 	loadBase0();
 
 	while (1) {
-		delay(100);
+		delay(50);
 		_skyLogic->engine();
 		_skyScreen->recreate();
 		_skyScreen->spriteEngine();

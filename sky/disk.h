@@ -40,6 +40,7 @@ public:
 
 	uint8 *loadFile(uint16 fileNr, uint8 *dest);
 	void prefetchFile(uint16 fileNr);
+	void flushPrefetched(void);
 
 	uint32 determineGameVersion();
 
@@ -51,7 +52,6 @@ public:
 	void fnFlushBuffers(void);
 
 protected:
-
 
 	PrefFile *_prefRoot;
 	uint8 *givePrefetched(uint16 fileNr, uint32 *fSize);

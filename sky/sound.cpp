@@ -49,6 +49,17 @@ struct Sfx {
 #pragma END_PACK_STRUCTS
 #endif
 
+uint16 SkySound::_speechConvertTable[8] = {
+	0,									//;Text numbers to file numbers
+	600,								//; 553 lines in section 0
+	600+500,							//; 488 lines in section 1
+	600+500+1330,						//;1303 lines in section 2
+	600+500+1330+950,					//; 922 lines in section 3
+	600+500+1330+950+1150,				//;1140 lines in section 4
+	600+500+1330+950+1150+550,			//; 531 lines in section 5
+	600+500+1330+950+1150+550+150,		//; 150 lines in section 6
+};
+
 
 static Sfx fx_null = {
 	0,
@@ -1076,7 +1087,8 @@ void SkySound::playSound(uint16 sound, uint16 volume) {
 	if (dataSize == dataLoop)
 		flags |= SoundMixer::FLAG_LOOP;
 	
-	_mixer->stopAll();
+	//_mixer->stopAll();
+	if (_ingameSound > 0) _mixer->stop(_ingameSound - 1);
 	_mixer->setVolume(volume);
 	_mixer->playRaw(&_ingameSound, _soundData + dataOfs, dataSize, sampleRate, flags);
 }
@@ -1123,3 +1135,24 @@ bool SkySound::fnStartFx(uint32 sound) {
 	return true;
 }
 
+void SkySound::fnStartSpeech(uint16 textNum) {
+    
+	uint16 speechFileNum = _speechConvertTable[textNum >> 12] + (textNum & 0xFFF);
+	
+	uint8 *speechData = _skyDisk->loadFile(speechFileNum + 50000, NULL);
+	if (!speechData) {
+		error("File %d (speechFile %d from section %d) wasn't found!\n", speechFileNum + 50000, textNum & 0xFFF, textNum >> 12);
+	}
+
+	uint32 speechSize = ((dataFileHeader*)speechData)->s_tot_size;
+	uint8 *playBuffer = (uint8*)malloc(speechSize);
+	memcpy(playBuffer, speechData + sizeof(dataFileHeader), speechSize);
+
+	free(speechData);
+	_skyDisk->flushPrefetched();
+
+    // TODO: implement pre_after_table_area to find and prefetch file for next speech
+	
+	_mixer->playRaw(&_ingameSpeech, playBuffer, speechSize - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+    
+}
