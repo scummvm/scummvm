@@ -78,17 +78,12 @@ extern bool draw_keyboard;
 
 #undef WITH_DEBUG_CHEATS
 
-static const GameSettings sky_settings[] = {
-	/* Beneath a Steel Sky */
-	{"sky", "Beneath a Steel Sky", MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE, 0, "sky.dsk" },
-	{NULL, NULL, MDT_NONE, 0, NULL}
-};
+static const GameSettings skySetting =
+	{"sky", "Beneath a Steel Sky", MDT_ADLIB | MDT_NATIVE | MDT_PREFER_NATIVE, 0, "sky.dsk" };
 
 GameList Engine_SKY_gameList() {
-	const GameSettings *g = sky_settings;
 	GameList games;
-	while (g->gameName)
-		games.push_back(*g++);
+	games.push_back(skySetting);
 	return games;
 }
 
@@ -100,7 +95,7 @@ GameList Engine_SKY_detectGames(const FSList &fslist) {
 
 		if (0 == scumm_stricmp("sky.dsk", fileName)) {
 			// Match found, add to list of candidates, then abort inner loop.
-			detectedGames.push_back(sky_settings[0]);
+			detectedGames.push_back(skySetting);
 			break;
 		}
 	}

@@ -74,20 +74,17 @@ GameList Engine_SWORD2_gameList() {
 GameList Engine_SWORD2_detectGames(const FSList &fslist) {
 	GameList detectedGames;
 	const GameSettings *g;
-	char detectName[128];
-	char detectName2[128];
+	
+	// TODO: It would be nice if we had code here which distinguishes between
+	// the 'sword2' and Ôsword2demoÔ targets. The current code can't do that
+	// since they use the same detectname.
 
 	for (g = sword2_settings; g->gameName; ++g) {
-		strcpy(detectName, g->detectname);
-		strcpy(detectName2, g->detectname);
-		strcat(detectName2, ".");
-
 		// Iterate over all files in the given directory
 		for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
 			const char *gameName = file->displayName().c_str();
 
-			if ((0 == scumm_stricmp(detectName, gameName))  || 
-				(0 == scumm_stricmp(detectName2, gameName))) {
+			if (0 == scumm_stricmp(g->detectname, gameName)) {
 				// Match found, add to list of candidates, then abort inner loop.
 				detectedGames.push_back(*g);
 				break;
