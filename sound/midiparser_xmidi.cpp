@@ -70,6 +70,8 @@ protected:
 	void playToTime (uint32 psec, bool transmit);
 
 public:
+	~MidiParser_XMIDI() { }
+
 	bool loadMusic (byte *data, uint32 size);
 	void unloadMusic();
 
@@ -458,7 +460,7 @@ void MidiParser_XMIDI::jumpToTick (uint32 tick) {
 	_play_time = 0;
 	_last_event_time = 0;
 	if (tick > 0) {
-		printf ("jumpToTick (%ld) not completely implemented!\n", tick);
+		printf ("jumpToTick (%ld) not completely implemented!\n", (long) tick);
 		playToTime (tick * MICROSECONDS_PER_TICK - 1, false);
 	}
 }

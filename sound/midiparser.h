@@ -34,6 +34,8 @@ protected:
 	uint32 _timer_rate;
 
 public:
+	virtual ~MidiParser() { }
+
 	virtual bool loadMusic (byte *data, uint32 size) = 0;
 	virtual void unloadMusic() = 0;
 

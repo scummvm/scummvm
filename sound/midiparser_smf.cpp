@@ -68,6 +68,8 @@ protected:
 	void allNotesOff();
 
 public:
+	~MidiParser_SMF();
+
 	bool loadMusic (byte *data, uint32 size);
 	void unloadMusic();
 
@@ -89,6 +91,11 @@ public:
 // implementation from the exult project.
 //
 //////////////////////////////////////////////////
+
+MidiParser_SMF::~MidiParser_SMF() {
+	if (_buffer)
+		free (_buffer);
+}
 
 // This is the conventional (i.e. SMF) variable length quantity
 uint32 MidiParser_SMF::readVLQ (byte * &data) {
@@ -481,7 +488,7 @@ void MidiParser_SMF::jumpToTick (uint32 tick) {
 	_play_time = 0;
 	_last_event_time = 0;
 	if (tick > 0) {
-		printf ("jumpToTick (%ld) not completely implemented!\n", tick);
+		printf ("jumpToTick (%ld) not completely implemented!\n", (long) tick);
 		playToTime (tick * _psec_per_tick - 1, false);
 	}
 	allNotesOff();
