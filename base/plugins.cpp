@@ -20,12 +20,13 @@
  *
  */
 
+#include "backends/fs/fs.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
 #include "base/engine.h"
 #include "common/util.h"
 
-
+/** Type of factory functions which make new Engine objects. */
 typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
 
 
@@ -74,46 +75,94 @@ extern Engine *Engine_QUEEN_create(GameDetector *detector, OSystem *syst);
 #pragma mark -
 
 
-int Plugin::countSupportedGames() const {
-	const GameSettings *target = getSupportedGames();
-	int count;
-	for (count = 0; target->gameName; target++, count++)
-		;
-	return count;
-}
-
-const GameSettings *Plugin::findGame(const char *gameName) const {
-	// Find the GameSettings for this target
-	const GameSettings *target = getSupportedGames();
+GameSettings Plugin::findGame(const char *gameName) const {
+	// Find the GameSettings for this game
 	assert(gameName);
-	while (target->gameName) {
-		if (!scumm_stricmp(target->gameName, gameName)) {
-			return target;
+	GameList games = getSupportedGames();
+	GameSettings result = {NULL, NULL, 0, 0, MDT_NONE, 0, NULL};
+	for (GameList::Iterator g = games.begin(); g != games.end(); ++g) {
+		if (!scumm_stricmp(g->gameName, gameName)) {
+			result = *g;
+			break;
 		}
-		target++;
 	}
-	return 0;
+	return result;
 }
 
+/**
+ * Auxillary class to simplify transition from old plugin interface to the
+ * new one (which provides an API for game detection). To be removed once
+ * the transition is complete.
+ */
+class GameSettingsPlugin : public Plugin {
+	const GameSettings *_games;
+public:
+	GameSettingsPlugin(const GameSettings *games) : _games(games) { }
+	GameList getSupportedGames() const {
+		GameList games;
+		const GameSettings *g;
+		for (g = _games; g->gameName; ++g) {
+			games.push_back(*g);
+		}
+		return games;
+	}
+	GameList detectGames(const FSList &fslist) const {
+		GameList games;
+		const GameSettings *g;
+		char detectName[128];
+		char detectName2[128];
+		char detectName3[128];
+	
+		for (g = _games; g->gameName; ++g) {
+			// Determine the 'detectname' for this game, that is, the name of a 
+			// file that *must* be presented if the directory contains the data
+			// for this game. For example, FOA requires atlantis.000
+			if (g->detectname) {
+				strcpy(detectName, g->detectname);
+				strcpy(detectName2, g->detectname);
+				strcat(detectName2, ".");
+				detectName3[0] = '\0';
+			} else {
+				strcpy(detectName, g->gameName);
+				strcpy(detectName2, g->gameName);
+				strcpy(detectName3, g->gameName);
+				strcat(detectName, ".000");
+				if (g->version >= 7) {
+					strcat(detectName2, ".la0");
+				} else
+					strcat(detectName2, ".sm0");
+				strcat(detectName3, ".he0");
+			}
+	
+			// Iterate over all files in the given directory
+			for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
+				const char *gameName = file->displayName().c_str();
+	
+				if ((0 == scumm_stricmp(detectName, gameName))  || 
+					(0 == scumm_stricmp(detectName2, gameName)) ||
+					(0 == scumm_stricmp(detectName3, gameName))) {
+					// Match found, add to list of candidates, then abort inner loop.
+					games.push_back(*g);
+					break;
+				}
+			}
+		}
+		return games;
+	}
+};
 
 #pragma mark -
 
 
-class StaticPlugin : public Plugin {
+class StaticPlugin : public GameSettingsPlugin {
 	const char *_name;
-	const GameSettings *_targets;
-	int _targetCount;
 	EngineFactory _ef;
 public:
-	StaticPlugin(const char *name, const GameSettings *targets, EngineFactory ef)
-		: _name(name), _targets(targets), _ef(ef) {
-		_targetCount = Plugin::countSupportedGames();
+	StaticPlugin(const char *name, const GameSettings *games, EngineFactory ef)
+		: GameSettingsPlugin(games), _name(name), _ef(ef) {
 	}
 
 	const char *getName() const					{ return _name; }
-
-	int countSupportedGames() const					{ return _targetCount; }
-	const GameSettings *getSupportedGames() const	{ return _targets; }
 
 	Engine *createInstance(GameDetector *detector, OSystem *syst) const {
 		return (*_ef)(detector, syst);
@@ -126,25 +175,20 @@ public:
 
 #ifdef DYNAMIC_MODULES
 
-class DynamicPlugin : public Plugin {
+class DynamicPlugin : public GameSettingsPlugin {
 	void *_dlHandle;
 	Common::String _filename;
 
 	Common::String _name;
-	const GameSettings *_targets;
-	int _targetCount;
 	EngineFactory _ef;
 	
 	void *findSymbol(const char *symbol);
 
 public:
 	DynamicPlugin(const char *filename)
-		: _dlHandle(0), _filename(filename), _targets(0), _targetCount(0), _ef(0) {}
+		: GameSettingsPlugin(0), _dlHandle(0), _filename(filename), _ef(0) {}
 	
 	const char *getName() const					{ return _name.c_str(); }
-
-	int countSupportedGames() const					{ return _targetCount; }
-	const GameSettings *getSupportedGames() const	{ return _targets; }
 
 	Engine *createInstance(GameDetector *detector, OSystem *syst) const {
 		assert(_ef);
@@ -199,7 +243,7 @@ bool DynamicPlugin::loadPlugin() {
 		unloadPlugin();
 		return false;
 	}
-	_targets = targetListFunc();
+	_games = targetListFunc();
 	
 	// Finally, retrieve the factory function
 	_ef = (EngineFactory)findSymbol("PLUGIN_createEngine");

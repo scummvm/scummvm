@@ -23,6 +23,7 @@
 #ifndef GAMEDETECTOR_H
 #define GAMEDETECTOR_H
 
+#include "base/plugins.h"
 #include "common/str.h"
 
 class Engine;
@@ -117,7 +118,7 @@ public:
 	static Language parseLanguage(const String &s);
 	static Platform parsePlatform(const String &s);
 	
-	const GameSettings *findGame(const String &gameName, const Plugin **plugin = NULL) const;
+	static GameSettings findGame(const String &gameName, const Plugin **plugin = NULL);
 
 protected:
 	bool detectGame(void);

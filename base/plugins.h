@@ -27,16 +27,19 @@
 #include "common/singleton.h"
 
 class Engine;
+class FSList;
 class GameDetector;
 class OSystem;
 struct GameSettings;
+
+/** List of GameSettings- */
+typedef Common::List<GameSettings> GameList;
 
 /**
  * Abstract base class for the plugin system.
  * Subclasses for this can be used to wrap both static and dynamic
  * plugins.
  */
-//typedef Common::List<GameSettings> GameList;
 class Plugin {
 public:
 	virtual ~Plugin()				{}
@@ -47,10 +50,9 @@ public:
 	virtual const char *getName() const = 0;
 	virtual int getVersion() const	{ return 0; }	// TODO!
 	
-	virtual int countSupportedGames() const;
-	virtual const GameSettings *getSupportedGames() const = 0;
-	virtual const GameSettings *findGame(const char *gameName) const;
-	//virtual GameList detectGames(const FSList &fslist) const;
+	virtual GameList getSupportedGames() const = 0;
+	virtual GameSettings findGame(const char *gameName) const;
+	virtual GameList detectGames(const FSList &fslist) const = 0;
 
 	virtual Engine *createInstance(GameDetector *detector, OSystem *syst) const = 0;
 };

@@ -50,8 +50,6 @@ enum {
 	kQuitCmd = 'QUIT'
 };
 
-typedef Common::List<const GameSettings *> GameList;
-
 /*
  * A dialog that allows the user to edit a config game entry.
  * TODO: add widgets for some/all of the following
@@ -80,7 +78,7 @@ class EditGameDialog : public Dialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 public:
-	EditGameDialog(NewGui *gui, const String &domain, const GameSettings *target);
+	EditGameDialog(NewGui *gui, const String &domain, GameSettings target);
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
@@ -92,19 +90,19 @@ protected:
 	CheckboxWidget *_amigaCheckbox;
 };
 
-EditGameDialog::EditGameDialog(NewGui *gui, const String &domain, const GameSettings *target)
+EditGameDialog::EditGameDialog(NewGui *gui, const String &domain, GameSettings target)
 	: Dialog(gui, 8, 50, 320 - 2 * 8, 200 - 2 * 40),
 	  _domain(domain) {
 
 	// Determine the description string
 	String description(ConfMan.get("description", domain));
-	if (description.isEmpty() && target) {
-		description = target->description;
+	if (description.isEmpty() && target.description) {
+		description = target.description;
 	}
 
 	// Determine whether this is a SCUMM game
 	// FIXME: This check is evil, as it requires us to hard code GIDs.
-	bool isScumm = target && (GID_SCUMM_FIRST <= target->id && target->id <= GID_SCUMM_LAST);
+	bool isScumm = (GID_SCUMM_FIRST <= target.id && target.id <= GID_SCUMM_LAST);
 
 	
 	// Label & edit widget for the game ID
@@ -247,9 +245,9 @@ void LauncherDialog::updateListing() {
 		if (name.isEmpty())
 			name = iter->_key;
 		if (description.isEmpty()) {
-			const GameSettings *v = _detector.findGame(name);
-			if (v && v->description)
-				description = v->description;
+			GameSettings g = _detector.findGame(name);
+			if (g.description)
+				description = g.description;
 		} 
 
 		if (!name.isEmpty() && !description.isEmpty()) {
@@ -270,61 +268,20 @@ void LauncherDialog::updateListing() {
 /*
  * Return a list of all games which might be the game in the specified directory.
  */
-GameList findGame(FilesystemNode *dir) {
-	GameList list;
+GameList detectGames(FilesystemNode *dir) {
+	GameList detectedGames;
 
 	FSList *files = dir->listDir(FilesystemNode::kListFilesOnly);
-	const int size = files->size();
-	char detectName[128];
-	char detectName2[128];
-	char detectName3[128];
 
 	// Iterate over all known games and for each check if it might be
 	// the game in the presented directory.
 	const PluginList &plugins = PluginManager::instance().getPlugins();
-	int p;
-	for (p = 0; p < plugins.size(); p++) {
-		const GameSettings *v = plugins[p]->getSupportedGames();
-		while (v->gameName && v->description) {
-	
-			// Determine the 'detectname' for this game, that is, the name of a 
-			// file that *must* be presented if the directory contains the data
-			// for this game. For example, FOA requires atlantis.000
-			if (v->detectname) {
-				strcpy(detectName, v->detectname);
-				strcpy(detectName2, v->detectname);
-				strcat(detectName2, ".");
-				detectName3[0] = '\0';
-			} else {
-				strcpy(detectName, v->gameName);
-				strcpy(detectName2, v->gameName);
-				strcpy(detectName3, v->gameName);
-				strcat(detectName, ".000");
-				if (v->version >= 7) {
-					strcat(detectName2, ".la0");
-				} else
-					strcat(detectName2, ".sm0");
-				strcat(detectName3, ".he0");
-			}
-	
-			// Iterate over all files in the given directory
-			for (int i = 0; i < size; i++) {
-				const char *gameName = (*files)[i].displayName().c_str();
-	
-				if ((0 == scumm_stricmp(detectName, gameName))  || 
-					(0 == scumm_stricmp(detectName2, gameName)) ||
-					(0 == scumm_stricmp(detectName3, gameName))) {
-					// Match found, add to list of candidates, then abort inner loop.
-					list.push_back(v);
-					break;
-				}
-			}
-	
-			v++;
-		}
+	PluginList::ConstIterator iter = plugins.begin();
+	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		detectedGames.push_back((*iter)->detectGames(*files));
 	}
 
-	return list;
+	return detectedGames;
 }
 
 void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -349,8 +306,8 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 			// ...so let's determine a list of candidates, games that
 			// could be contained in the specified directory.
-			GameList candidates = findGame(dir);
-			const GameSettings *v = 0;
+			GameList candidates = detectGames(dir);
+			GameSettings result = {NULL, NULL, 0, 0, MDT_NONE, 0, NULL};
 
 			if (candidates.isEmpty()) {
 				// No game was found in the specified directory
@@ -358,25 +315,25 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 				alert.runModal();
 			} else if (candidates.size() == 1) {
 				// Exact match
-				v = candidates[0];
+				result = candidates[0];
 			} else {
 				// Display the candidates to the user and let her/him pick one
 				StringList list;
 				int i;
 				for (i = 0; i < candidates.size(); i++)
-					list.push_back(candidates[i]->description);
+					list.push_back(candidates[i].description);
 				
 				ChooserDialog dialog(_gui, "Pick the game:", list);
 				i = dialog.runModal();
 				if (0 <= i && i < candidates.size())
-					v = candidates[i];
+					result = candidates[i];
 			}
 
-			if (v != 0) {
+			if (result.gameName != 0) {
 				// The auto detector or the user made a choice.
 				// Pick a domain name which does not yet exist (after all, we
 				// are *adding* a game to the config, not replacing).
-				String domain(v->gameName);
+				String domain(result.gameName);
 				if (ConfMan.hasGameDomain(domain)) {
 					char suffix = 'a';
 					domain += suffix;
@@ -385,13 +342,13 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 						suffix++;
 						domain += suffix;
 					}
-					ConfMan.set("gameid", v->gameName, domain);
-					ConfMan.set("description", v->description, domain);
+					ConfMan.set("gameid", result.gameName, domain);
+					ConfMan.set("description", result.description, domain);
 				}
 				ConfMan.set("path", dir->path(), domain);
 				
 				// Display edit dialog for the new entry
-				EditGameDialog editDialog(_gui, domain, v);
+				EditGameDialog editDialog(_gui, domain, result);
 				if (editDialog.runModal()) {
 					// User pressed OK, so make changes permanent
 

@@ -21,7 +21,7 @@
 #ifndef LAUNCHER_DIALOG_H
 #define LAUNCHER_DIALOG_H
 
-#include "dialog.h"
+#include "gui/dialog.h"
 #include "common/str.h"
 #include "common/list.h"
 
