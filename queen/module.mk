@@ -9,6 +9,9 @@ MODULE_OBJS = \
 	queen/restables.o \
 	queen/talk.o
 
+MODULE_DIRS += \
+	queen
+
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS
 PLUGIN := 1
