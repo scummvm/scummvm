@@ -1162,7 +1162,8 @@ void Sound::bundleMusicHandler(Scumm *scumm) {
 }
 
 int Sound::playBundleSound(char *sound) {
-	byte *ptr, *orig_ptr;
+	byte *ptr = 0, *orig_ptr;
+	byte *final;
 	bool result;
 
 	if (_scumm->_noDigitalSamples)
@@ -1197,24 +1198,19 @@ int Sound::playBundleSound(char *sound) {
 		if (_scumm->_maxRooms != 6) // CMI demo does not have .IMX for voice but does for music...
 			strcat(name, ".IMX");
 		output_size = _scumm->_bundle->decompressVoiceSampleByName(name, &ptr);
-		if (output_size == 0) {
-			free(ptr);
-			return -1;
-		}
 	} else {
 		output_size = _scumm->_bundle->decompressVoiceSampleByName(sound, &ptr);
-		if (output_size == 0) {
-			free(ptr);
-			return -1;
-		}
 	}
+
 	orig_ptr = ptr;
+	if (output_size == 0 || orig_ptr == 0) {
+		goto bail;
+	}
 
 	tag = READ_BE_UINT32(ptr); ptr += 4;
 	if (tag != MKID_BE('iMUS')) {
 		warning("Decompression of bundle sound failed");
-		free(orig_ptr);
-		return -1;
+		goto bail;
 	}
 
 	ptr += 12;
@@ -1246,11 +1242,10 @@ int Sound::playBundleSound(char *sound) {
 
 	if (size < 0) {
 		warning("Decompression sound failed (no size field)");
-		free(orig_ptr);
-		return -1;
+		goto bail;
 	}
 
-	byte *final = (byte *)malloc(size);
+	final = (byte *)malloc(size);
 	memcpy(final, ptr, size);
 	free(orig_ptr);
 
@@ -1268,6 +1263,11 @@ int Sound::playBundleSound(char *sound) {
 		warning("Sound::playBundleSound() to do more options to playRaw...");
 		return -1;
 	}
+	
+bail:
+	if (orig_ptr)
+		free(orig_ptr);
+	return -1;
 }
 
 int Sound::playSfxSound(void *sound, uint32 size, uint rate, bool isUnsigned) {
