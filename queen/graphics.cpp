@@ -1017,7 +1017,7 @@ void Graphics::update() {
 	bobDrawAll();
 	textDrawAll();
 	displayScreen();
-	g_engine->_system->delay_msecs(100);
+	g_system->delay_msecs(100);
 }
 
 
@@ -1122,10 +1122,9 @@ void Graphics::displaySetPal(uint8 *pal, int start, int end) {
 
 void Graphics::displayScreen() {
 	// FIXME: temporary code ; cleanup/move to Display class.
-	OSystem *psys =	g_engine->_system;
-	psys->set_palette(_palette, 0, 256);
-	psys->copy_rect(_screen, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
-	psys->update_screen();
+	g_system->set_palette(_palette, 0, 256);
+	g_system->copy_rect(_screen, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
+	g_system->update_screen();
 }
 
 

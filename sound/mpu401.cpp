@@ -20,7 +20,6 @@
 
 #include "stdafx.h"
 #include "mpu401.h"
-#include "base/engine.h"	// for g_engine
 #include "common/timer.h"
 #include "common/util.h"	// for ARRAYSIZE
 
