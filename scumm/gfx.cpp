@@ -528,21 +528,16 @@ void Scumm::initBGBuffers(int height) {
 		int off;
 		ptr = findResourceData(MKID('SMAP'), room);
 		gdi._numZBuffer = 0;
-		if (_gameId == GID_MONKEY_EGA) {
-			for (i = 0; i < 4; i++) {
-				off = READ_LE_UINT16(ptr);
-				if (off) {
-					gdi._numZBuffer++;
-					ptr += off;
-				}
-			}
-		} else {
+
+		if (_gameId == GID_MONKEY_EGA)
+			off = READ_LE_UINT16(ptr);
+		else
 			off = READ_LE_UINT32(ptr);
-			for (i = 0; off && (i < 4); i++) {
-				gdi._numZBuffer++;
-				ptr += off;
-				off = READ_LE_UINT16(ptr);
-			}
+
+		while (off && gdi._numZBuffer < 4) {
+			gdi._numZBuffer++;
+			ptr += off;
+			off = READ_LE_UINT16(ptr);
 		}
 	} else if (_features & GF_AFTER_V8) {
 		// in V8 there is no RMIH and num z buffers is in RMHD
@@ -853,66 +848,55 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 
 	assert(smap_ptr);
 
-	numzbuf = _disable_zbuffer ? 0 : _numZBuffer;
-	if (_vm->_features & GF_OLD_BUNDLE) { // FIXME make masks decompress properly
+	zplane_list[0] = smap_ptr;
+
+	if (_disable_zbuffer)
 		numzbuf = 0;
-	}
-	assert(numzbuf <= (int)ARRAYSIZE(zplane_list));
-
-	if (_vm->_features & GF_OLD_BUNDLE) {
-		zplane_list[1] = smap_ptr + READ_LE_UINT16(smap_ptr);
-	} else if (_vm->_gameId == GID_MONKEY_EGA) {
-		byte *ptr_z = smap_ptr;
-		for (i = 0; i < numzbuf; i++) {
-			int off = READ_LE_UINT16(ptr_z);
-			if (off) {
-				zplane_list[i] = ptr_z;
-				ptr_z += off;
+	else if (_numZBuffer <= 1)
+		numzbuf = _numZBuffer;
+	else {
+		numzbuf = _numZBuffer;
+		assert(numzbuf <= (int)ARRAYSIZE(zplane_list));
+	
+		if (_vm->_features & GF_SMALL_HEADER) {
+			if ((_vm->_features & GF_16COLOR) || (_vm->_features & GF_OLD256))
+				zplane_list[1] = smap_ptr + READ_LE_UINT16(smap_ptr);
+			else
+				zplane_list[1] = smap_ptr + READ_LE_UINT32(smap_ptr);
+			for (i = 2; i < numzbuf; i++) {
+				zplane_list[i] = zplane_list[i-1] + READ_LE_UINT16(zplane_list[i-1]);
 			}
-		}
-	} else if (_vm->_features & GF_SMALL_HEADER) {
-		/* this is really ugly, FIXME */
-		if ((ptr[-2] == 'B' && ptr[-1] == 'M' && READ_LE_UINT32(ptr - 6) > (READ_LE_UINT32(ptr) + 10)) ||
-		    (ptr[-4] == 'O' && ptr[-3] == 'I' && READ_LE_UINT32(ptr - 8) > READ_LE_UINT32(ptr) + 12)) {
-			zplane_list[1] = smap_ptr + READ_LE_UINT32(ptr);
-			// FIXME - how does GF_OLD256 encode the multiple zplanes?
-			if (!(_vm->_features & GF_OLD256))
-				for (i = 2; i < numzbuf; i++) {
-					zplane_list[i] = zplane_list[i-1] + READ_LE_UINT16(zplane_list[i-1]);
+		} else if (_vm->_features & GF_AFTER_V8) {
+			// Find the OFFS chunk of the ZPLN chunk
+			byte *zplnOffsChunkStart = smap_ptr + READ_BE_UINT32(smap_ptr + 12) + 24;
+			
+			// Each ZPLN contains a WRAP chunk, which has (as always) an OFFS subchunk pointing
+			// at ZSTR chunks. These once more contain a WRAP chunk which contains nothing but
+			// an OFFS chunk. The content of this OFFS chunk contains the offsets to the
+			// Z-planes.
+			// We do not directly make use of this, but rather hard code offsets (like we do
+			// for all other Scumm-versions, too). Clearly this is a bit hackish, but works
+			// well enough, and there is no reason to assume that there are any cases where it
+			// might fail. Still, doing this properly would have the advantage of catching
+			// invalid/damaged data files, and allow us to exit gracefully instead of segfaulting.
+			for (i = 1; i < numzbuf; i++) {
+				zplane_list[i] = zplnOffsChunkStart + READ_LE_UINT32(zplnOffsChunkStart + 4 + i*4) + 16;
 			}
+	
+			// A small hack to skip to the BSTR->WRAP->OFFS chunk
+			smap_ptr += 24;
 		} else {
-			zplane_list[1] = 0;
-		}
-	} else if (_vm->_features & GF_AFTER_V8) {
-		// Find the OFFS chunk of the ZPLN chunk
-		byte *zplnOffsChunkStart = smap_ptr + READ_BE_UINT32(smap_ptr + 12) + 24;
-		
-		// Each ZPLN contains a WRAP chunk, which has (as always) an OFFS subchunk pointing
-		// at ZSTR chunks. These once more contain a WRAP chunk which contains nothing but
-		// and OFFS chunk. The content of this OFFS chunk contains the offsets to the
-		// Z-planes.
-		// We do not directly make use of this, but rather hard code offsets (like we do
-		// for all other Scumm-versions, too). Clearly this is a bit hackish, but works
-		// well enough, and there is no reason to assume that there are any cases where it
-		// might fail. Still, doing this properly would have the advantage of catching
-		// invalid/damaged data files, and allow us to exit gracefully instead of segfaulting.
-		for (i = 1; i < numzbuf; i++) {
-			zplane_list[i] = zplnOffsChunkStart + READ_LE_UINT32(zplnOffsChunkStart + 4 + i*4) + 16;
-		}
-
-		// A small hack to skip to the BSTR->WRAP->OFFS chunk
-		smap_ptr += 24;
-	} else {
-		const uint32 zplane_tags[] = {
-			MKID('ZP00'),
-			MKID('ZP01'),
-			MKID('ZP02'),
-			MKID('ZP03'),
-			MKID('ZP04')
-		};
-		
-		for (i = 1; i < numzbuf; i++) {
-			zplane_list[i] = findResource(zplane_tags[i], ptr);
+			const uint32 zplane_tags[] = {
+				MKID('ZP00'),
+				MKID('ZP01'),
+				MKID('ZP02'),
+				MKID('ZP03'),
+				MKID('ZP04')
+			};
+			
+			for (i = 1; i < numzbuf; i++) {
+				zplane_list[i] = findResource(zplane_tags[i], ptr);
+			}
 		}
 	}
 
@@ -1011,7 +995,9 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 				if (!zplane_list[i])
 					continue;
 
-				if (_vm->_features & GF_OLD256)
+				if (_vm->_features & GF_OLD_BUNDLE)
+					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2);
+				else if (_vm->_features & GF_OLD256)
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 4);
 				else if (_vm->_features & GF_SMALL_HEADER)
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 2);
