@@ -92,6 +92,7 @@ int Timer::handler(int t) {
 		if ((_timerSlots[l].procedure) && (_timerSlots[l].interval > 0)) {
 			_timerSlots[l].counter -= interval;
 			while (_timerSlots[l].counter <= 0) {
+				assert(_timerSlots[l].interval > 0);
 				_timerSlots[l].counter += _timerSlots[l].interval;
 				_timerSlots[l].procedure(_timerSlots[l].refCon);
 			}
@@ -102,32 +103,27 @@ int Timer::handler(int t) {
 }
 
 bool Timer::installProcedure(TimerProc procedure, int32 interval, void *refCon) {
+	assert(interval > 0);
 	Common::StackLock lock(_mutex);
-	int32 l;
-	bool found = false;
 
-	for (l = 0; l < MAX_TIMERS; l++) {
+	for (int l = 0; l < MAX_TIMERS; l++) {
 		if (!_timerSlots[l].procedure) {
-			_timerSlots[l].procedure = procedure;
 			_timerSlots[l].interval = interval;
 			_timerSlots[l].counter = interval;
 			_timerSlots[l].refCon = refCon;
-			found = true;
-			break;
+			_timerSlots[l].procedure = procedure;
+			return true;
 		}
 	}
 
-	if (!found)
-		warning("Couldn't find free timer slot!");
-
-	return found;
+	warning("Couldn't find free timer slot!");
+	return false;
 }
 
 void Timer::releaseProcedure(TimerProc procedure) {
 	Common::StackLock lock(_mutex);
-	int32 l;
 
-	for (l = 0; l < MAX_TIMERS; l++) {
+	for (int l = 0; l < MAX_TIMERS; l++) {
 		if (_timerSlots[l].procedure == procedure) {
 			_timerSlots[l].procedure = 0;
 			_timerSlots[l].interval = 0;
