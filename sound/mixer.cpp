@@ -367,10 +367,10 @@ bool SoundMixer::isSoundIDActive(int id) {
 	return false;
 }
 
-int SoundMixer::getActiveChannelSoundID(SoundHandle handle) {
+int SoundMixer::getSoundID(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 	const int index = handle._val % NUM_CHANNELS;
-	if (_channels[index])
+	if (_channels[index] && _channels[index]->_handle._val == handle._val)
 		return _channels[index]->getId();
 	return 0;
 }

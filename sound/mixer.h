@@ -210,7 +210,7 @@ public:
 	 * @param handle sound to query
 	 * @return sound ID if active
 	 */
-	int getActiveChannelSoundID(SoundHandle handle);
+	int getSoundID(SoundHandle handle);
 
 	/**
 	 * Check if a sound with the given hANDLE is active.

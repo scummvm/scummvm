@@ -849,11 +849,7 @@ int Sound::isSoundRunning(int sound) const {
 			else if (_vm->_imuse)
 				return (_vm->_imuse->getSoundStatus(sound));
 		} else if (sound >= 10000) {
-			int channel = sound - 10000;
-			if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[channel]))
-				return _vm->_mixer->getActiveChannelSoundID(_heSoundChannels[channel]);
-			else
-				return 0;
+			return _vm->_mixer->getSoundID(_heSoundChannels[sound - 10000]);
 		}
 	}
 
