@@ -16,9 +16,9 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 #include "stdafx.h"
+#include "debug.h"
 #include "lua.h"
 #include "resource.h"
-#include "debug.h"
 #include "actor.h"
 #include "registry.h"
 #include "localize.h"
@@ -28,11 +28,13 @@
 #include "smush.h"
 #include "textobject.h"
 #include "objectstate.h"
+
 #include "imuse/imuse.h"
-#include <SDL_keysym.h>
-#include <SDL_keyboard.h>
+
 #include <cstdio>
 #include <cmath>
+#include <SDL_keysym.h>
+#include <SDL_keyboard.h>
 
 static int actor_tag, color_tag, sound_tag, text_tag, vbuffer_tag, object_tag;
 

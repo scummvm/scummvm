@@ -15,17 +15,17 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-#include "../stdafx.h"
-#include "../bits.h"
-#include "../debug.h"
-#include "../timer.h"
-#include "../resource.h"
+#include "stdafx.h"
+#include "bits.h"
+#include "debug.h"
+#include "timer.h"
+#include "resource.h"
 
-#include "../mixer/mixer.h"
-#include "../mixer/audiostream.h"
+#include "mixer/mixer.h"
+#include "mixer/audiostream.h"
 
-#include "imuse_sndmgr.h"
-#include "imuse_mcmp_mgr.h"
+#include "imuse/imuse_sndmgr.h"
+#include "imuse/imuse_mcmp_mgr.h"
 
 ImuseSndMgr::ImuseSndMgr() {
 	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {

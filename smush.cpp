@@ -18,15 +18,16 @@
 #include "stdafx.h"
 #include "bits.h"
 #include "debug.h"
-#include <cstring>
-#include <zlib.h>
 #include "smush.h"
 #include "timer.h"
-#include "mixer/mixer.h"
 #include "resource.h"
 #include "engine.h"
-
 #include "driver_gl.h"
+
+#include "mixer/mixer.h"
+
+#include <cstring>
+#include <zlib.h>
 
 Smush *g_smush;
 static uint16 smushDestTable[5786];

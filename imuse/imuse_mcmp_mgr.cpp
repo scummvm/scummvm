@@ -15,13 +15,13 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-#include "../stdafx.h"
-#include "../bits.h"
-#include "../debug.h"
-#include "../resource.h"
-#include "../engine.h"
+#include "stdafx.h"
+#include "bits.h"
+#include "debug.h"
+#include "resource.h"
+#include "engine.h"
 
-#include "imuse_mcmp_mgr.h"
+#include "imuse/imuse_mcmp_mgr.h"
 
 uint16 imuseDestTable[5786];
 

@@ -23,10 +23,11 @@
  * improvments over the original code were made.
  */
 
-#include "../stdafx.h"
-#include "rate.h"
-#include "audiostream.h"
-#include "../debug.h"
+#include "stdafx.h"
+#include "debug.h"
+
+#include "mixer/rate.h"
+#include "mixer/audiostream.h"
 
 /**
  * The precision of the fractional computations used by the rate converter.

@@ -18,15 +18,15 @@
 #ifndef IMUSE_H
 #define IMUSE_H
 
-#include "../stdafx.h"
-#include "../bits.h"
-#include "../debug.h"
+#include "stdafx.h"
+#include "bits.h"
+#include "debug.h"
 
-#include "../mixer/mixer.h"
-#include "../mixer/audiostream.h"
+#include "mixer/mixer.h"
+#include "mixer/audiostream.h"
 
-#include "imuse_sndmgr.h"
-#include "imuse_mcmp_mgr.h"
+#include "imuse/imuse_sndmgr.h"
+#include "imuse/imuse_mcmp_mgr.h"
 
 #define MAX_IMUSE_TRACKS 8
 #define MAX_IMUSE_FADETRACKS 8

@@ -17,8 +17,9 @@
 
 #include "stdafx.h"
 #include "bits.h"
-#include "timer.h"
 #include "debug.h"
+#include "timer.h"
+
 #include <SDL.h>
 
 Timer *g_timer = NULL;

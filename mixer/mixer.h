@@ -18,8 +18,9 @@
 #ifndef SOUND_MIXER_H
 #define SOUND_MIXER_H
 
-#include "../stdafx.h"
-#include "../bits.h"
+#include "stdafx.h"
+#include "bits.h"
+
 #include <SDL.h>
 
 class AudioStream;

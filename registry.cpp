@@ -18,6 +18,7 @@
 #include "stdafx.h"
 #include "registry.h"
 #include "debug.h"
+
 #include <cstdlib>
 
 Registry *g_registry = NULL;

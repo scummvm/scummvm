@@ -21,6 +21,7 @@
 #include "color.h"
 #include "vector3d.h"
 #include "resource.h"
+
 #include <string>
 #include <list>
 

@@ -20,6 +20,7 @@
 
 #include "debug.h"
 #include "resource.h"
+
 #include <cstring>
 
 class CMap : public Resource {

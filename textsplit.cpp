@@ -16,13 +16,13 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 #include "stdafx.h"
-#include "textsplit.h"
 #include "debug.h"
+#include "textsplit.h"
+
 #include <cstdio>
 #include <cstring>
 #include <cctype>
 #include <cstdarg>
-
 
 // FIXME: Replace this with a proper parser (this is just too dodgy :)
 int residual_vsscanf(const char *str, int field_count, const char *format, va_list ap) {

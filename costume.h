@@ -18,8 +18,9 @@
 #ifndef COSTUME_H
 #define COSTUME_H
 
-#include <string>
 #include "matrix4.h"
+
+#include <string>
 
 class TextSplitter;
 class Actor;

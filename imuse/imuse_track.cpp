@@ -15,15 +15,15 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-#include "../stdafx.h"
-#include "../bits.h"
-#include "../debug.h"
+#include "stdafx.h"
+#include "bits.h"
+#include "debug.h"
 
-#include "../mixer/mixer.h"
-#include "../mixer/audiostream.h"
+#include "mixer/mixer.h"
+#include "mixer/audiostream.h"
 
-#include "imuse.h"
-#include "imuse_sndmgr.h"
+#include "imuse/imuse.h"
+#include "imuse/imuse_sndmgr.h"
 
 int Imuse::allocSlot(int priority) {
 	int l, lowest_priority = 127;

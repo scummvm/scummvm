@@ -16,25 +16,23 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 #include "stdafx.h"
-#include <SDL.h>
-#include <SDL_video.h>
+#include "debug.h"
 #include "bitmap.h"
 #include "resource.h"
-#include "debug.h"
 #include "lua.h"
 #include "registry.h"
 #include "localize.h"
 #include "engine.h"
 #include "timer.h"
 #include "smush.h"
-#include "mixer/mixer.h"
-#include "imuse/imuse.h"
-
 #include "driver_gl.h"
 
-#ifndef _MSC_VER
-#include <unistd.h>
-#endif
+#include "mixer/mixer.h"
+
+#include "imuse/imuse.h"
+
+#include <SDL.h>
+#include <SDL_video.h>
 
 // Hacky global toggles for experimental/debug code
 bool ZBUFFER_GLOBAL, SCREENBLOCKS_GLOBAL, SHOWFPS_GLOBAL;

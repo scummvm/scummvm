@@ -18,9 +18,11 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include "bits.h"
 #include "scene.h"
 #include "textobject.h"
 #include "lua.h"
+
 #include <cstdlib>
 #include <list>
 #include <SDL_keysym.h>

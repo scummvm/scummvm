@@ -18,11 +18,12 @@
 #ifndef WALKPLANE_H
 #define WALKPLANE_H
 
-#include "vector3d.h"
 #include "debug.h"
+#include "vector3d.h"
+
+#include <string>
 #include <SDL.h>
 #include <SDL_opengl.h>
-#include <string>
 
 class TextSplitter;
 

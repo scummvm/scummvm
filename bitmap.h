@@ -19,6 +19,7 @@
 #define BITMAP_H
 
 #include "resource.h"
+
 #include <cstring>
 #include <SDL_opengl.h>
 

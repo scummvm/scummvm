@@ -18,7 +18,7 @@
 #ifndef SOUND_RATE_H
 #define SOUND_RATE_H
 
-#include "../bits.h"
+#include "bits.h"
 
 class AudioStream;
 

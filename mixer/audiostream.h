@@ -18,8 +18,8 @@
 #ifndef AUDIOSTREAM_H
 #define AUDIOSTREAM_H
 
-#include "../stdafx.h"
-#include "../bits.h"
+#include "stdafx.h"
+#include "bits.h"
 
 
 /**

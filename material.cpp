@@ -16,10 +16,10 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 #include "stdafx.h"
-#include "material.h"
-#include "colormap.h"
 #include "bits.h"
 #include "debug.h"
+#include "material.h"
+#include "colormap.h"
 #include "driver_gl.h"
 
 Material::Material(const char *filename, const char *data, int len, const CMap &cmap) :

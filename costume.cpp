@@ -16,15 +16,16 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 #include "stdafx.h"
+#include "debug.h"
 #include "costume.h"
 #include "textsplit.h"
-#include "debug.h"
 #include "engine.h"
 #include "colormap.h"
 #include "keyframe.h"
 #include "material.h"
 #include "model.h"
 #include "lua.h"
+
 #include <string>
 #include <cstdio>
 #include <map>

@@ -16,14 +16,14 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 #include "stdafx.h"
+#include "bits.h"
+#include "debug.h"
+#include "bitmap.h"
+#include "smush.h"
+#include "driver_gl.h"
+
 #include <cstdlib>
 #include <cstring>
-#include "bitmap.h"
-#include "bits.h"
-#include "smush.h"
-#include "debug.h"
-
-#include "driver_gl.h"
 
 #define BITMAP_TEXTURE_SIZE 256
 

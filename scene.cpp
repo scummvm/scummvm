@@ -23,10 +23,11 @@
 #include "bitmap.h"
 #include "colormap.h"
 #include "vector3d.h"
-#include <SDL.h>
-#include <cmath>
 #include "screen.h"
 #include "driver_gl.h"
+
+#include <SDL.h>
+#include <cmath>
 
 Scene::Scene(const char *name, const char *buf, int len) :
 		_name(name) {

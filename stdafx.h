@@ -33,6 +33,10 @@ void lockMutex(MutexRef mutex);
 void unlockMutex(MutexRef mutex);
 void deleteMutex(MutexRef mutex);
 
+#ifndef _MSC_VER
+#include <unistd.h>
+#endif
+
 #if defined(WIN32)
 
 #ifdef _MSC_VER

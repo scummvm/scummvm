@@ -15,10 +15,11 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-#include "../stdafx.h"
-#include "../debug.h"
-#include "mixer.h"
-#include "audiostream.h"
+#include "stdafx.h"
+#include "debug.h"
+
+#include "mixer/mixer.h"
+#include "mixer/audiostream.h"
 
 #define READSAMPLE(is16Bit, isUnsigned, ptr) \
 	((is16Bit ? READ_BE_UINT16(ptr) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))

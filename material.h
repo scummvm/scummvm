@@ -19,9 +19,10 @@
 #define MATERIAL_H
 
 #include "resource.h"
+
+#include <cstring>
 #include <SDL.h>
 #include <SDL_opengl.h>
-#include <cstring>
 
 class CMap;
 

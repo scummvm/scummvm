@@ -17,6 +17,7 @@
 
 #include "stdafx.h"
 #include "debug.h"
+
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>

@@ -16,6 +16,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 #include "stdafx.h"
+#include "debug.h"
 #include "resource.h"
 #include "registry.h"
 #include "bitmap.h"
@@ -25,7 +26,7 @@
 #include "material.h"
 #include "model.h"
 #include "lipsynch.h"
-#include "debug.h"
+
 #include <cstring>
 #include <cctype>
 #include <string>

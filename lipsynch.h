@@ -20,6 +20,7 @@
 
 #include "bits.h"
 #include "resource.h"
+
 #include <list>
 
 class LipSynch : public Resource {

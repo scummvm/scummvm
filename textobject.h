@@ -18,11 +18,12 @@
 #ifndef TEXTOBJECT_H
 #define TEXTOBJECT_H
 
-#include "color.h"
 #include "debug.h"
+#include "color.h"
+
+#include <string>
 #include <SDL.h>
 #include <SDL_opengl.h>
-#include <string>
 
 class TextObject {
 public:

@@ -15,12 +15,12 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-#include "driver_gl.h"		// Driver interface
-#include "debug.h"		// error(), warning(), etc
-#include "font.h"		// builtin emergency font
+#include "debug.h"
 #include "screen.h"
 #include "colormap.h"
 #include "material.h"
+#include "driver_gl.h"
+#include "font.h"
 
 Driver *g_driver;
 

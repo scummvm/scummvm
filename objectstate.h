@@ -21,9 +21,9 @@
 #include "vector3d.h"
 #include "resource.h"
 #include "bitmap.h"
+
 #include <string>
 #include <list>
-
 
 class ObjectState {
 	public:

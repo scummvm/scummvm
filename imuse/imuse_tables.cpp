@@ -15,11 +15,11 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-#include "../stdafx.h"
-#include "../bits.h"
-#include "../debug.h"
+#include "stdafx.h"
+#include "bits.h"
+#include "debug.h"
 
-#include "imuse.h"
+#include "imuse/imuse.h"
 
 ImuseTable grimStateMusicTable[] = {
 	{0, 1000,   0, 0, 60, 127,   0, ""},

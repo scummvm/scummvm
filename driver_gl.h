@@ -15,17 +15,15 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-// Driver:
-#include <SDL.h>
-#include <SDL_opengl.h>
-
-// Residual:
 #include "bits.h"
 #include "vector3d.h"
 #include "color.h"
 #include "model.h"
 #include "colormap.h"
 #include "bitmap.h"
+
+#include <SDL.h>
+#include <SDL_opengl.h>
 
 #define BITMAP_TEXTURE_SIZE 256
 

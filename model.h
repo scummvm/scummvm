@@ -21,6 +21,7 @@
 #include "vector3d.h"
 #include "matrix4.h"
 #include "resource.h"
+
 #include <cstring>
 
 class CMap;

@@ -16,16 +16,17 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 #include "stdafx.h"
-#include "model.h"
 #include "bits.h"
-#include "resource.h"
-#include "material.h"
 #include "debug.h"
+#include "model.h"
+#include "resource.h"
+#include "screen.h"
+#include "material.h"
 #include "textsplit.h"
+#include "driver_gl.h"
+
 #include <cstring>
 #include <SDL.h>
-#include "screen.h"
-#include "driver_gl.h"
 
 Model::Model(const char *filename, const char *data, int len, const CMap &cmap) : Resource(filename) {
 	if (len >= 4 && std::memcmp(data, "LDOM", 4) == 0)

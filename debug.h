@@ -19,6 +19,7 @@
 
 #ifndef DEBUG_H
 #define DEBUG_H
+
 // Hacky toggles for experimental / debug code (defined/set in main.cpp)
 extern bool ZBUFFER_GLOBAL, SCREENBLOCKS_GLOBAL, SHOWFPS_GLOBAL;
 
@@ -27,4 +28,5 @@ void error(const char *fmt, ...);
 
 const char *tag2str(uint32 tag);
 void hexdump(const byte * data, int len, int bytesPerLine);
+
 #endif

@@ -18,14 +18,16 @@
 #ifndef SMUSH_PLAYER_H
 #define SMUSH_PLAYER_H
 
+#include "stdafx.h"
 #include "bits.h"
 #include "debug.h"
-#include <cstring>
-#include <zlib.h>
-
 #include "blocky16.h"
+
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"
+
+#include <zlib.h>
+#include <cstring>
 
 class zlibFile {
 private:

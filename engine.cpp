@@ -22,14 +22,15 @@
 #include "colormap.h"
 #include "actor.h"
 #include "textobject.h"
+#include "screen.h"
+#include "smush.h"
+#include "driver_gl.h"
+
+#include "imuse/imuse.h"
+
 #include <SDL.h>
 #include <SDL_timer.h>
 #include <assert.h>
-#include "screen.h"
-#include "smush.h"
-#include "imuse/imuse.h"
-
-#include "driver_gl.h"
 
 Engine *g_engine = NULL;
 

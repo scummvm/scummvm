@@ -24,6 +24,7 @@
 #include "debug.h"
 #include "walkplane.h"
 #include "objectstate.h"
+
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <string>

@@ -6,10 +6,9 @@ SDL_CFLAGS=`sdl-config --cflags`
 SDL_LIBS=`sdl-config --libs`
 
 CXX = g++
-CXXFLAGS = -g -W -Wall -Wno-multichar -Ilua $(SDL_CFLAGS) # -O2 
+CXXFLAGS = -g -W -Wall -Wno-multichar -I. $(SDL_CFLAGS) # -O2
 LDFLAGS = -g -W -Wall # -O2
-LIBS = -lmingw32 -lopengl32 -lglu32 -lgdi32 \
-	$(SDL_LIBS) -lz
+LIBS = -lmingw32 -lopengl32 -lglu32 -lgdi32 $(SDL_LIBS) -lz
 EXEEXT =.exe
 
 include Makefile.common

@@ -21,10 +21,12 @@
 #include "costume.h"
 #include "lipsynch.h"
 #include "localize.h"
+#include "driver_gl.h"
+
+#include "mixer/mixer.h"
+
 #include <cmath>
 #include <cstring>
-#include "driver_gl.h"
-#include "mixer/mixer.h"
 
 Actor::Actor(const char *name) :
 		_name(name), _talkColor(255, 255, 255), _pos(0, 0, 0),

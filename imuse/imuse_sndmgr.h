@@ -18,13 +18,13 @@
 #ifndef IMUSE_SNDMGR_H
 #define IMUSE_SNDMGR_H
 
-#include "../stdafx.h"
-#include "../bits.h"
-#include "../debug.h"
-#include "../timer.h"
+#include "stdafx.h"
+#include "bits.h"
+#include "debug.h"
+#include "timer.h"
 
-#include "../mixer/mixer.h"
-#include "../mixer/audiostream.h"
+#include "mixer/mixer.h"
+#include "mixer/audiostream.h"
 
 class McmpMgr;
 

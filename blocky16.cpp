@@ -17,8 +17,8 @@
 
 #include "stdafx.h"
 #include "bits.h"
-#include "blocky16.h"
 #include "debug.h"
+#include "blocky16.h"
 
 #if defined(SYSTEM_NEED_ALIGNMENT)
 
