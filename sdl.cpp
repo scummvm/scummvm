@@ -17,6 +17,9 @@
  *
  * Change Log:
  * $Log$
+ * Revision 1.15  2001/11/06 07:47:01  strigeus
+ * fixed integer overflow for large sounds
+ *
  * Revision 1.14  2001/11/05 20:45:07  strigeus
  * fixed playSfxSound types
  *
@@ -423,7 +426,9 @@ void playSfxSound(void *sound, uint32 size, uint rate) {
 	_sfx_pos = 0;
 	_sfx_fp_speed = (1<<16) * rate / 22050;
 	_sfx_fp_pos = 0;
-	debug(1, "size=%d, rate=%d", size, rate);
+//	debug(1, "size=%d, rate=%d", size, rate);
+	
+	while (size&0xFFFF0000) size>>=1, rate>>=1;
 	_sfx_size = size * 22050 / rate;
 }
 
