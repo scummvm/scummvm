@@ -133,12 +133,6 @@ void AdlibSoundDriver::adlib_write(byte port, byte value) {
 		return;
 	_adlib_reg_cache[port] = value;
 
-	static FILE *myout;
-	if (!myout)
-		myout = fopen("d:\\old.ims", "w");
-	fprintf(myout, "[%x]=%x\n", port, value);
-
-
 	OPLWriteReg(_opl, port, value);
 }
 
