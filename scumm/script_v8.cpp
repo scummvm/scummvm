@@ -422,7 +422,10 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 	if (!(var & 0xF0000000)) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");
 
-		_scummVars[var] = value;
+		if (var == VAR_CHARINC) {
+			VAR(VAR_CHARINC) = _defaultTalkDelay / 20;
+		} else
+			_scummVars[var] = value;
 
 		if ((_varwatch == (int)var) || (_varwatch == 0)) {
 			if (vm.slot[_currentScript].number < 100)

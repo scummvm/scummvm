@@ -340,7 +340,8 @@ void ScummEngine_v8::setupScummVars() {
 	VAR_KEYPRESS = 132;
 	VAR_SYNC = 134;
 
-	VAR_CHARINC = 221;
+	VAR_DEFAULT_TALK_DELAY = 128;
+	VAR_CHARINC = 129;
 }
 
 } // End of namespace Scumm
