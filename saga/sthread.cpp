@@ -486,26 +486,22 @@ void Script::runThread(SCRIPT_THREAD *thread, int instr_limit) {
 			// (RJMP): Random branch
 		case 0x24:
 			{
-				int n_branch;
-				unsigned int branch_wt;
-				unsigned int branch_jmp;
-				int rand_sel = 0;
-				int branch_found = 0;
-
-				// Ignored?
+				// Supposedly the number of possible branches.
+				// The original interpreter ignores it.
 				scriptS.readUint16LE();
-				n_branch = scriptS.readUint16LE();
-				for (i = 0; i < n_branch; i++) {
-					branch_wt = scriptS.readUint16LE();
-					branch_jmp = scriptS.readUint16LE();
-					if (rand_sel == i) {
-						thread->i_offset = branch_jmp;
-						branch_found = 1;
+
+				uint16 probability = _vm->_rnd.getRandomNumber(scriptS.readUint16LE() - 1);
+
+				while (1) {
+					uint16 branch_probability = scriptS.readUint16LE();
+					uint16 offset = scriptS.readUint16LE();
+
+					if (branch_probability > probability) {
+						thread->i_offset = offset;
 						break;
 					}
-				}
-				if (!branch_found) {
-					_vm->_console->DebugPrintf(S_ERROR_PREFIX "%X: Random jump target out of bounds.\n", thread->i_offset);
+
+					probability -= branch_probability;
 				}
 			}
 			break;
