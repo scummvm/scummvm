@@ -7,7 +7,7 @@ Standards-Version: 3.5.2
 
 Package: scummvm
 Architecture: any
-Depends: ${shlibs:Depends}, libsdl1.2
+Depends: ${shlibs:Depends}
 Description: SCUMM graphic adventure game interpreter
  ScummVM is an interpreter that will play graphic adventure games written for
  LucasArts' SCUMM virtual machine. It uses the SDL library for outputting
