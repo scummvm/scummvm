@@ -27,12 +27,12 @@
 namespace Queen {
 
 const char* Input::_commandKeys[LANGUAGE_COUNT] = {
-	{ "ocmglptu" }, // English
-	{ "osbgpnre" }, // German
-	{ "ofdnepau" }, // French
-	{ "acsdgpqu" }, // Italian
-	{ "ocmglptu" }, // Hebrew
-	{ "acodmthu" }  // Spanish
+	"ocmglptu", // English
+	"osbgpnre", // German
+	"ofdnepau", // French
+	"acsdgpqu", // Italian
+	"ocmglptu", // Hebrew
+	"acodmthu"  // Spanish
 };  
 
 Input::Input(Language language, OSystem *system) : 
