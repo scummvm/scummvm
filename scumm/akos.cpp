@@ -284,10 +284,9 @@ byte AkosRenderer::drawLimb(const CostumeData &cost, int limb) {
 	if (code == AKC_Return || code == AKC_EndSeq)
 		return 0;
 
-	if (code == 0xC025) 
-		error("akos_drawLimb: unsupported case %x", code);
+	// Code 0xC025 reads 4 bytes of extra information
 
-	if (code != AKC_ComplexChan) {
+	if (code != AKC_ComplexChan && code != 0xC025) {
 		off = akof + (code & 0xFFF);
 
 		assert((code & 0xFFF) * 6 < READ_BE_UINT32((const byte *)akof - 4) - 8);
@@ -1171,6 +1170,9 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			case AKC_Unk4:
 				curpos += 4;
 				break;
+			case AKC_Unk2:
+				curpos += 4;
+				// Fall through
 			case AKC_ComplexChan:
 				curpos += 3;
 				tmp = aksq[curpos - 1];
