@@ -24,10 +24,10 @@
 #define PLAYER_V2A_H
 
 #include "common/scummsys.h"
-#include "common/system.h"
 #include "scumm/music.h"
 #include "scumm/player_mod.h"
 
+class OSystem;
 class SoundMixer;
 
 namespace Scumm {

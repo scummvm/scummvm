@@ -24,7 +24,6 @@
 #define SCUMM_MUSIC_H
 
 #include "common/scummsys.h"
-#include "common/system.h"
 
 namespace Scumm {
 
