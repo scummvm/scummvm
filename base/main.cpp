@@ -375,10 +375,10 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 	if (detector._targetName.isEmpty())
 		launcherDialog(detector, system);
 
-	// Uncomment the while loop, and the launcherDialog call, to allow
-	// returning to the Launcher after an engine quit. Disabled currently
-	// as it probably leaks memory like a sieve.
-	//while(1) {
+	// FIXME: We're now looping the launcher. This, of course, doesn't
+	// work as well as it should. In theory everything should be destroyed
+	// cleanly, so this is now enabled to encourage people to fix bits :)
+	while(1) {
 		// Verify the given game name is a valid supported game
 		if (detector.detectMain()) {
 			// Unload all plugins not needed for this game,
@@ -389,9 +389,9 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 
 			// PluginManager::instance().unloadPlugins();
 			// PluginManager::instance().loadPlugins();
-                	 // launcherDialog(detector, system);
+                	launcherDialog(detector, system);
 		}
-	//}
+	}
 
 	// ...and quit (the return 0 should never be reached)
 	delete g_timer;
