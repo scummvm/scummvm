@@ -436,7 +436,7 @@ void Scumm::initBGBuffers(int height)
 
 void Scumm::setPaletteFromPtr(byte *ptr)
 {
-	int i, r, g, b;
+	int i;
 	byte *dest;
 	int numcolor;
 
@@ -454,17 +454,8 @@ void Scumm::setPaletteFromPtr(byte *ptr)
 
 	dest = _currentPalette;
 
-	for (i = 0; i < numcolor; i++) {
-		r = *ptr++;
-		g = *ptr++;
-		b = *ptr++;
-		if (i <= 15 || r < 252 || g < 252 || b < 252) {
-			*dest++ = r;
-			*dest++ = g;
-			*dest++ = b;
-		} else {
-			dest += 3;
-		}
+	for (i = 0; i < numcolor * 3; i++) {
+		*dest++ = *ptr++;
 	}
 
 	setDirtyColors(0, numcolor - 1);
