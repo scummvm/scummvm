@@ -1449,7 +1449,7 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 			// Sam & Max: Unconditional Jump?
 			for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
 				if (player->_active && player->_id == (uint16)b) {
-					player->jump(player->_track_index + 1, 0, 0);
+					player->_hook._jump = d;
 					return 0;
 				}
 			}
