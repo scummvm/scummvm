@@ -347,7 +347,8 @@ void SimonEngine::vc_3_new_sprite() {
 	}
 #endif
 
-	//dump_vga_script(_cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), res, vga_sprite_id);
+	if (_start_vgascript)
+		dump_vga_script(_cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), res, vga_sprite_id);
 
 	add_vga_timer(VGA_DELAY_BASE, _cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), vga_sprite_id, res);
 	_cur_vga_file_1 = old_file_1;

@@ -333,6 +333,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_pause = 0;
 	_start_mainscript = 0;
 	_continous_mainscript = 0;
+	_start_vgascript = 0;
 	_continous_vgascript = 0;
 	_draw_images_debug = 0;
 	_dump_images = 0;
@@ -3526,6 +3527,10 @@ void SimonEngine::processSpecialKeys() {
 		if (_debugMode)
 			_continous_mainscript ^= 1;
 		break;
+	case 'a':
+		if (_debugMode)
+			_start_vgascript ^= 1;
+		break;
 	case 'g':
 		if (_debugMode)
 			_continous_vgascript ^= 1;
@@ -4766,6 +4771,7 @@ void SimonEngine::go() {
 	
 	_start_mainscript = false;
 	_continous_mainscript = false;
+	_start_vgascript = false;
 	_continous_vgascript = false;
 	_draw_images_debug=false;
 
@@ -4775,6 +4781,8 @@ void SimonEngine::go() {
 		_continous_vgascript = true;
 	if (_debugLevel == 4)
 		_start_mainscript = true;
+	if (_debugLevel == 5)
+		_start_vgascript = true;
 
 	if (_game & GF_TALKIE) {
 		// English and German versions of Simon the Sorcerer 1 don't have full subtitles

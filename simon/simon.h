@@ -195,6 +195,7 @@ protected:
 	bool _pause;
 	bool _start_mainscript;
 	bool _continous_mainscript;
+	bool _start_vgascript;
 	bool _continous_vgascript;
 	bool _draw_images_debug;
 	bool _dump_images;
