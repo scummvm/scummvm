@@ -29,6 +29,7 @@
 #include "config-file.h"
 #include "resource.h"
 #include "saveload.h"
+#include "verbs.h"
 
 struct SaveGameHeader {
 	uint32 type;

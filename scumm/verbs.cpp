@@ -24,6 +24,7 @@
 #include "scumm.h"
 #include "object.h"
 #include "resource.h"
+#include "verbs.h"
 
 void Scumm::redrawVerbs()
 {
@@ -80,6 +81,8 @@ void Scumm::verbMouseOver(int verb)
 {
 	if (_verbMouseOver == verb)
 		return;
+
+printf("verbMouseOver: verb = %d, type = %d\n", verb, _verbs[verb].type);
 
 	if (_verbs[_verbMouseOver].type != 1) {
 		drawVerb(_verbMouseOver, 0);
@@ -179,8 +182,7 @@ void Scumm::restoreVerbBG(int verb)
 	vs = &_verbs[verb];
 
 	if (vs->oldleft != -1) {
-		_bkColor = vs->bkcolor;
-		restoreBG(vs->oldleft, vs->oldtop, vs->oldright, vs->oldbottom);
+		restoreBG(vs->oldleft, vs->oldtop, vs->oldright, vs->oldbottom, vs->bkcolor);
 		vs->oldleft = -1;
 	}
 }

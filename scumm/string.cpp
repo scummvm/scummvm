@@ -24,6 +24,7 @@
 #include "scumm.h"
 #include "actor.h"
 #include "dialogs.h"
+#include "verbs.h"
 #include "scumm/sound.h"
 
 int CharsetRenderer::getStringWidth(int arg, byte *text, int pos)
@@ -42,9 +43,7 @@ int CharsetRenderer::getStringWidth(int arg, byte *text, int pos)
 			break;
 		if (chr == '@')
 			continue;
-		if (chr == 254)
-			chr = 255;
-		if (chr == 255) {
+		if (chr == 254 || chr == 255) {
 			chr = text[pos++];
 			if (chr == 3)	// 'WAIT'
 				break;
@@ -252,7 +251,6 @@ void Scumm::CHARSET_1()
 	charset._center = _string[0].center;
 	charset._right = _string[0].right;
 	charset._color = _charsetColor;
-	_bkColor = 0;
 
 	if (!(_features & GF_OLD256))	// FIXME
 		for (i = 0; i < 4; i++)
@@ -485,7 +483,6 @@ void Scumm::description()
 	charset._curId = 3;
 	charset._center = false;
 	charset._color = 15;
-	_bkColor = 0;
 	// FIXME: _talkdelay = 1 - display description, not correct ego actor talking,
 	// 0 - no display, correct ego actor talking
 	_talkDelay = 0;
@@ -540,7 +537,6 @@ void Scumm::drawDescString(byte *msg)
 		charset._xpos2 = 0;
 
 	charset._disableOffsX = charset._firstChar = true;
-	_bkColor = 0;
 	_talkDelay = 1;
 
 	restoreCharsetBg();
@@ -584,7 +580,6 @@ void Scumm::drawString(int a)
 	charset._center = _string[a].center;
 	charset._right = _string[a].right;
 	charset._color = _string[a].color;
-	_bkColor = 0;
 	charset._disableOffsX = charset._firstChar = true;
 
 	if (!(_features & GF_OLD256)) {

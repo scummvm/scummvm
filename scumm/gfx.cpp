@@ -1756,8 +1756,6 @@ void Gdi::unkDecode11()
 
 void Scumm::restoreCharsetBg()
 {
-	_bkColor = 0;
-
 	if (gdi._mask_left != -1) {
 		restoreBG(gdi._mask_left, gdi._mask_top, gdi._mask_right, gdi._mask_bottom);
 		charset._hasMask = false;
@@ -1770,7 +1768,7 @@ void Scumm::restoreCharsetBg()
 	charset._ypos2 = _string[0].ypos;
 }
 
-void Scumm::restoreBG(int left, int top, int right, int bottom)
+void Scumm::restoreBG(int left, int top, int right, int bottom, byte backColor)
 {
 	VirtScreen *vs;
 	int topline, height, width;
@@ -1832,7 +1830,7 @@ void Scumm::restoreBG(int left, int top, int right, int bottom)
 		}
 	} else {
 		while (height--) {
-			memset(backbuff, _bkColor, width);
+			memset(backbuff, backColor, width);
 			backbuff += _realWidth;
 		}
 	}

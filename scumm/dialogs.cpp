@@ -24,6 +24,7 @@
 #include "sound/mididrv.h"
 #include "scumm.h"
 #include "imuse.h"
+#include "verbs.h"
 
 #include "gui/newgui.h"
 #include "gui/ListWidget.h"

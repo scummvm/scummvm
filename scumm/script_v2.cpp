@@ -24,6 +24,7 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "actor.h"
+#include "verbs.h"
 #include "smush/player.h"
 #include "smush/scumm_renderer.h"
 
