@@ -109,7 +109,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_unknown32),
 		OPCODE(o6_invalid),
 		/* 34 */
-		OPCODE(o90_unknown34),
+		OPCODE(o90_findAllObjectsWithClassOf),
 		OPCODE(o90_unknown35),
 		OPCODE(o90_unknown36),
 		OPCODE(o90_unknown37),
@@ -1065,24 +1065,36 @@ void ScummEngine_v90he::o90_mod() {
 	push(pop() % a);
 }
 
-void ScummEngine_v90he::o90_unknown34() {
-	// Incomplete
+void ScummEngine_v90he::o90_findAllObjectsWithClassOf() {
 	int args[16];
+	int num, cls, tmp;
+	bool b;
+	int cond = 1;
 
-	getStackList(args, ARRAYSIZE(args));
+	num = getStackList(args, ARRAYSIZE(args));
 	int room = pop();
 	int i = 1;
 
 	if (room != _currentRoom)
-		warning("o72_findAllObjects: current room is not %d", room);
+		warning("o90_findAllObjectsWithClassOf: current room is not %d", room);
 	writeVar(0, 0);
 	defineArray(0, kDwordArray, 0, 0, 0, _numLocalObjects + 1);
-	writeArray(0, 0, 0, _numLocalObjects);
-	
+
 	while (i < _numLocalObjects) {
-		writeArray(0, 0, i, _objs[i].obj_nr);
+		cond = 1;
+		tmp = num;
+		while (--tmp >= 0) {
+			cls = args[tmp];
+			b = getClass(i, cls);
+			if ((cls & 0x80 && !b) || (!(cls & 0x80) && b))
+				cond = 0;
+		}
+
+		if (cond)
+			writeArray(0, 0, i, _objs[i].obj_nr);
 		i++;
 	}
+	writeArray(0, 0, 0, i);
 	
 	push(readVar(0));
 }

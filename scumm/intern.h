@@ -879,7 +879,7 @@ protected:
 	void o90_mod();
 	void o90_unknown31();
 	void o90_unknown32();
-	void o90_unknown34();
+	void o90_findAllObjectsWithClassOf();
 	void o90_unknown35();
 	void o90_unknown36();
 	void o90_unknown37();
