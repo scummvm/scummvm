@@ -40,7 +40,8 @@ enum {
 	kOptDisableOnScrDisp	=	1 <<	0x09,
 	kOpt5WayNavigator		=	1 <<	0x0A,
 	kOptPalmSoundAPI		=	1 <<	0x0B,
-	
+	kOptSonyPa1LibAPI		=	1 <<	0x0C,
+		
 	kOptDeviceProcX86		=	1 <<	0x1F	// DEBUG only
 };
 
@@ -87,11 +88,13 @@ typedef struct {
 	} flipping;
 	
 	struct {
-		Boolean MP3;
+		Boolean enable;
+		UInt8 driver;
 		Boolean setDefaultTrackLength;
 		UInt16 defaultTrackLength;
 		UInt16 firstTrack;
-	} music;
+		
+	} CD;
 
 } GlobalsDataType, *GlobalsDataPtr;
 
