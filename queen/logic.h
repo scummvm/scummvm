@@ -184,6 +184,8 @@ public:
 	int16 gameState(int index);
 	void gameState(int index, int16 newValue);
 
+	TalkSelected *talkSelected(int index) { return _talkSelected + index; }
+
 	const char *roomName(uint16 roomNum) const { 
 		if (roomNum >= 1 && roomNum <= _numRooms)
 			return _roomName[roomNum];
@@ -299,7 +301,8 @@ public:
 		MAX_AREAS_NUMBER   = 11,
 		JOE_RESPONSE_MAX   = 40,
 		DEFAULT_TALK_SPEED = 7,
-		GAME_STATE_COUNT   = 211
+		GAME_STATE_COUNT   = 211,
+		TALK_SELECTED_COUNT = 86
 	};
 
 	static Common::RandomSource randomizer;
@@ -400,6 +403,8 @@ protected:
 	} _joe;
 	
 	int16 _gameState[GAME_STATE_COUNT];
+
+	TalkSelected _talkSelected[TALK_SELECTED_COUNT];
 	
 	//! Number of animated furniture in current room (FMAXA)
 	uint16 _numFurnitureAnimated;

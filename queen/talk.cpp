@@ -77,9 +77,6 @@ Talk::Talk(
 	_graphics(graphics), _input(input), _logic(logic), _resource(resource), 
 	_sound(sound), _fileData(NULL) {
 
-	//! TODO Move this to the Logic class later!
-	memset(_talkSelected, 0, sizeof(_talkSelected));
-
 	_input->talkQuitReset();
 }
 
@@ -1167,8 +1164,8 @@ byte *Talk::getString(byte *ptr, char *str, int maxLength, int align) {
 	return ptr;
 }
 
-Talk::TalkSelected *Talk::talkSelected() {
-	return _talkSelected + _uniqueKey;
+TalkSelected *Talk::talkSelected() {
+	return _logic->talkSelected(_uniqueKey);
 }
 
 int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {

@@ -509,6 +509,11 @@ struct Person {
 };
 
 
+struct TalkSelected {
+	int16 hasTalkedTo;
+	int16 values[4];
+};
+
 
 } // End of namespace Queen
 

@@ -68,7 +68,6 @@ private:
 	  MAX_STRING_SIZE = (MAX_STRING_LENGTH + 1),
 	  MAX_TEXT_WIDTH = (320-18),
 	  PUSHUP = 4,
-	  TALK_SELECTED_COUNT = 86,
 	  ARROW_BOB_UP = 62,
 	  ARROW_BOB_DOWN = 63,
 	  ARROW_ZONE_UP   = 5,
@@ -87,12 +86,6 @@ private:
 		SPEAK_AMAL_ON      = -7,
 		SPEAK_PAUSE        = -8,
 		SPEAK_NONE         = -9
-	};
-
-	//! TODO Move this to struct.h later!
-	struct TalkSelected {
-		int16 hasTalkedTo;
-		int16 values[4];
 	};
 
 	struct DialogueNode {
@@ -157,9 +150,6 @@ private:
 
 	//! IDs for sentences
 	DialogueNode _dialogueTree[18][6];
-
-	//! TODO Move this to the Logic class later!
-	TalkSelected _talkSelected[TALK_SELECTED_COUNT];
 
 	//! Greeting from person Joe has talked to before
 	char _person2String[MAX_STRING_SIZE];

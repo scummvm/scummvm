@@ -184,6 +184,7 @@ Logic::Logic(Resource *resource, Graphics *graphics, Display *theDisplay, Input 
 	_walk = new Walk(this, _graphics);
 	_cmd = new Command(this, _graphics, _input, _walk);
 	memset(_gameState, 0, sizeof(_gameState));
+	memset(_talkSelected, 0, sizeof(_talkSelected));
 	initialise();
 }
 
