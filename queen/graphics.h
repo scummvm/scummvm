@@ -101,7 +101,6 @@ public:
 	void drawInventoryItem(uint32 frameNum, uint16 x, uint16 y);
 	void pasteBob(uint16 objNum, uint16 image);
 	void shrinkFrame(const BobFrame *bf, uint16 percentage);
-	void clearBob(uint32 bobNum);
 	void sortBobs();
 	void drawBobs();
 	void clearBobs();

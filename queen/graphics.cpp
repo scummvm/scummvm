@@ -314,11 +314,6 @@ void Graphics::shrinkFrame(const BobFrame *bf, uint16 percentage) {
 	}
 }
 
-void Graphics::clearBob(uint32 bobNum) {
-	BobSlot *pbs = bob(bobNum);
-	pbs->clear();
-}
-
 void Graphics::sortBobs() {
 	_sortedBobsCount = 0;
 
@@ -393,7 +388,7 @@ void Graphics::drawBobs() {
 
 void Graphics::clearBobs() {
 	for(int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
-		clearBob(i);
+		_bobs[i].clear();
 	}
 }
 
@@ -782,7 +777,7 @@ uint16 Graphics::refreshObject(uint16 obj) {
 	if (pod->image == -3 || pod->image == -4) {
 		// a person object
 		if (pod->name <= 0) {
-			clearBob(curBob);
+			pbs->clear();
 		} else {
 			// find person number
 			uint16 pNum = _vm->logic()->findPersonNumber(obj);
@@ -800,7 +795,7 @@ uint16 Graphics::refreshObject(uint16 obj) {
 
 	if (pod->name < 0 || pod->image < 0) {
 		// object is hidden or disabled
-		clearBob(curBob);
+		pbs->clear();
 		return curImage;
 	}
 
@@ -982,7 +977,7 @@ void Graphics::setupRoomObjects() {
 				// static objects
 				curBob = 20 + _numFurnitureStatic + numObjectStatic;
 				++curImage;
-				clearBob(curBob);
+				bob(curBob)->clear();
 
 				_vm->bankMan()->unpack(pgd->firstFrame, curImage, 15);
 				++_numFrames;
