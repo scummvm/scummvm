@@ -391,7 +391,7 @@ void IMuseDigital::setFtMusicCuePoint(int cueId) {
 	if (cueId == 0)
 		playFtMusic(NULL, 0, 0);
 	else {
-		int seq = ((_curMusicSeq - 1) + cueId) * 4;
+		int seq = ((_curMusicSeq - 1) * 4) + cueId;
 		playFtMusic(_ftSeqMusicTable[seq].audioName, _ftSeqMusicTable[seq].opcode, _ftSeqMusicTable[seq].volume);
 	}
 
