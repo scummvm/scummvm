@@ -1873,14 +1873,9 @@ VorbisTrackInfo::VorbisTrackInfo(File *file) {
 		_error_flag = true;
 		delete f;
 		delete file;
-	}
-	else {
+	} else {
 		_error_flag = false;
 		_file = file;
-
-		// Check the file format
-		if (ov_info(&_ov_file, -1)->rate != 22050)
-			warning("Vorbis code currently only supports files encoded at 22050 Hz");
 	}
 }
 
