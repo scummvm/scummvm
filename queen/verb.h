@@ -126,13 +126,20 @@ public:
 		return _verb == VERB_NONE;
 	}
 
+	int inventoryItem() const {
+		if (isInventory()) {
+			return _verb - VERB_INV_FIRST;
+		}
+		return -1;
+	}
+
 	VerbEnum value() const {
 		return _verb;
 	}
 
 	const char* name() const {
 		if (_verb > 0 && _verb < 13) {
-			_verbName[_verb];
+			return _verbName[_verb];
 		}
 		return NULL;
 	}
