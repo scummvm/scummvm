@@ -794,10 +794,6 @@ public:
 	void fadeIn(int effect);
 	void fadeOut(int effect);
 
-	void unkScreenEffect1();
-	void unkScreenEffect2();
-	void unkScreenEffect3();
-	void unkScreenEffect4();
 	void unkScreenEffect5(int a);
 	void unkScreenEffect6();
 	void transitionEffect(int a);
@@ -846,7 +842,14 @@ public:
 	uint16 _palManipCounter;
 	byte *_palManipPalette;
 	byte *_palManipIntermediatePal;
+	
+	/* For each screen strip, gfxUsageBits contains a bitmask.
+	 * The lower 30 bits each correspond to one actor and signify if any part
+	 * of that actor is currently contained in that strip.
+	 * If the left most bit is set, the strip (background) is dirty needs to be redrawn.
+	 */
 	uint32 gfxUsageBits[410];
+	
 	byte *_shadowPalette;
 	int _shadowPaletteSize;
 	byte _currentPalette[3 * 256];

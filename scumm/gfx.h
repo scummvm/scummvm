@@ -114,12 +114,10 @@ class Gdi {
 public:
 	Scumm *_vm;
 
-public:
 	int _numZBuffer;
 	int _imgBufOffs[5];
 	byte _disable_zbuffer;
 	int32 _numStrips;
-public:
 	int16 _mask_top, _mask_bottom, _mask_right, _mask_left;
 
 protected:
@@ -174,6 +172,9 @@ protected:
 	void decompressMaskImgOr(byte *dst, byte *src, int height);
 	void decompressMaskImg(byte *dst, byte *src, int height);
 
+	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
+	void updateDirtyScreen(VirtScreen *vs);
+
 public:
 	void drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, int h, int stripnr, int numstrip, byte flag);
 	void clearUpperMask();
@@ -182,8 +183,6 @@ public:
 	void enableZBuffer() { _disable_zbuffer--; }
 
 	void resetBackground(int top, int bottom, int strip);
-	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
-	void updateDirtyScreen(VirtScreen *vs);
 
 	enum DrawBitmapFlags {
 		dbAllowMaskOr = 1,
