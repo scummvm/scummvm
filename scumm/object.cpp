@@ -420,7 +420,7 @@ void Scumm::loadRoomObjects()
 
 	od = &_objs[1];
 
-	if (_features & GF_AFTER_V7)
+	if (_features & GF_AFTER_V8)
 		searchptr = getResourceAddress(rtRoomScripts, _roomResource);
 	else
 		searchptr = room;
@@ -430,7 +430,7 @@ void Scumm::loadRoomObjects()
 		if (ptr == NULL)
 			error("Room %d missing object code block(s)", _roomResource);
 
-		od->offs_obcd_to_room = ptr - room;
+		od->offs_obcd_to_room = ptr - searchptr;
 		cdhd = (CodeHeader *)findResourceData(MKID('CDHD'), ptr);
 
 		if (_features & GF_AFTER_V7)
@@ -474,6 +474,7 @@ void Scumm::loadRoomObjects()
 	}
 
 	od = &_objs[1];
+
 	for (i = 1; i <= _numObjectsInRoom; i++, od++) {
 		setupRoomObject(od, room);
 	}
@@ -544,8 +545,9 @@ CHECK_HEAP}
 
 void Scumm::setupRoomObject(ObjectData *od, byte *room)
 {
-	CodeHeader *cdhd;
-	ImageHeader *imhd;
+	CodeHeader *cdhd = NULL;
+	ImageHeader *imhd = NULL;
+	byte *searchptr = NULL;
 
 	if (_features & GF_SMALL_HEADER) {
 
@@ -577,7 +579,14 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room)
 		return;
 	}
 
-	cdhd = (CodeHeader *)findResourceData(MKID('CDHD'), room + od->offs_obcd_to_room);
+        if (_features & GF_AFTER_V8)
+                searchptr = getResourceAddress(rtRoomScripts, _roomResource);
+        else
+                searchptr = room;
+
+	cdhd = (CodeHeader *)findResourceData(MKID('CDHD'), searchptr + od->offs_obcd_to_room);
+	if (cdhd == NULL)
+		error("Room %d missing CDHD blocks(s)", _roomResource);
 
 	if (_features & GF_AFTER_V8) {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
