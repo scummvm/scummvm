@@ -128,6 +128,7 @@ protected:
 	struct mad_synth _synth;
 	uint32 _posInFrame;
 	uint32 _size;
+	bool _initialized;
 
 public:
 	ChannelMP3Common(SoundMixer *mixer, PlayingSoundHandle *handle);
@@ -149,7 +150,6 @@ class ChannelMP3CDMusic : public ChannelMP3Common {
 	uint32 _bufferSize;
 	mad_timer_t _duration;
 	File *_file;
-	bool _initialized;
 
 public:
 	ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *handle, File *file, mad_timer_t duration);
@@ -920,6 +920,8 @@ ChannelMP3Common::ChannelMP3Common(SoundMixer *mixer, PlayingSoundHandle *handle
 #endif
 	mad_frame_init(&_frame);
 	mad_synth_init(&_synth);
+
+	_initialized = false;
 }
 
 ChannelMP3Common::~ChannelMP3Common() {
@@ -928,29 +930,6 @@ ChannelMP3Common::~ChannelMP3Common() {
 	mad_synth_finish(&_synth);
 	mad_frame_finish(&_frame);
 	mad_stream_finish(&_stream);
-}
-
-ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint size, byte flags)
-	: ChannelMP3Common(mixer, handle) {
-	_posInFrame = 0xFFFFFFFF;
-	_position = 0;
-	_size = size;
-	_ptr = (byte *)sound;
-	_releasePtr = (flags & SoundMixer::FLAG_AUTOFREE) != 0;
-
-	/* This variable is the number of samples to cut at the start of the MP3
-	   file. This is needed to have lip-sync as the MP3 file have some miliseconds
-	   of blank at the start (as, I suppose, the MP3 compression algorithm need to
-	   have some silence at the start to really be efficient and to not distort
-	   too much the start of the sample).
-
-	   This value was found by experimenting out. If you recompress differently your
-	   .SO3 file, you may have to change this value.
-
-	   When using Lame, it seems that the sound starts to have some volume about 50 ms
-	   from the start of the sound => we skip about 2 frames (at 22.05 khz).
-	 */
-	_silenceCut = 576 * 2;
 }
 
 static inline int scale_sample(mad_fixed_t sample) {
@@ -967,8 +946,36 @@ static inline int scale_sample(mad_fixed_t sample) {
 	return sample >> (MAD_F_FRACBITS + 1 - 16);
 }
 
+ChannelMP3::ChannelMP3(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint size, byte flags)
+	: ChannelMP3Common(mixer, handle) {
+	_posInFrame = 0xFFFFFFFF;
+	_position = 0;
+	_size = size;
+	_ptr = (byte *)sound;
+	_releasePtr = (flags & SoundMixer::FLAG_AUTOFREE) != 0;
+
+	/* This variable is the number of samples to cut at the start of the MP3
+	   file. This is needed to have lip-sync as the MP3 file have some miliseconds
+	   of blank at the start (as, I suppose, the MP3 compression algorithm needs to
+	   have some silence at the start to really be efficient and to not distort
+	   too much the start of the sample).
+
+	   This value was found by experimenting out. If you recompress differently your
+	   .SO3 file, you may have to change this value.
+
+	   When using Lame, it seems that the sound starts to have some volume about 50 ms
+	   from the start of the sound => we skip about 2 frames (at 22.05 khz).
+	 */
+	_silenceCut = 576 * 2;
+}
+
 void ChannelMP3::mix(int16 *data, uint len) {
 	const int volume = _mixer->getVolume();
+
+	if (!_initialized) {
+		// TODO: instead of using _silenceCut, skip first two frames like
+		// it is done in ChannelMP3CDMusic::mix()
+	}
 
 	while (1) {
 
@@ -1024,7 +1031,6 @@ ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *hand
 	: ChannelMP3Common(mixer, handle) {
 	_file = file;
 	_duration = duration;
-	_initialized = false;
 	_bufferSize = MP3CD_BUFFERING_SIZE;
 	_ptr = (byte *)malloc(MP3CD_BUFFERING_SIZE);
 	_releasePtr = true;
@@ -1032,10 +1038,9 @@ ChannelMP3CDMusic::ChannelMP3CDMusic(SoundMixer *mixer, PlayingSoundHandle *hand
 
 void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 	mad_timer_t frame_duration;
-	int volume = _mixer->getMusicVolume();
+	const int volume = _mixer->getMusicVolume();
 
 	if (!_initialized) {
-		int skip_loop;
 		// just skipped
 		memset(_ptr, 0, _bufferSize);
 		_size = _file->read(_ptr, _bufferSize);
@@ -1046,14 +1051,13 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 		}
 		// Resync
 		mad_stream_buffer(&_stream, _ptr, _size);
-		skip_loop = 2;
+		
+		// Skip the first two frames (see ChannelMP3::ChannelMP3 for an explanation)
+		int skip_loop = 2;
 		while (skip_loop != 0) {
 			if (mad_frame_decode(&_frame, &_stream) == 0) {
 				/* Do not decrease duration - see if it's a problem */
 				skip_loop--;
-				if (skip_loop == 0) {
-					mad_synth_frame(&_synth, &_frame);
-				}
 			} else {
 				if (!MAD_RECOVERABLE(_stream.error)) {
 					debug(1, "Unrecoverable error while skipping !");
@@ -1062,6 +1066,8 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 				}
 			}
 		}
+		mad_synth_frame(&_synth, &_frame);
+
 		// We are supposed to be in synch
 		mad_frame_mute(&_frame);
 		mad_synth_mute(&_synth);
@@ -1106,14 +1112,13 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 				int not_decoded;
 
 				if (!_stream.next_frame) {
-					memset(_ptr, 0, _bufferSize + MAD_BUFFER_GUARD);
-					_size = _file->read(_ptr, _bufferSize);
 					not_decoded = 0;
+					memset(_ptr, 0, _bufferSize + MAD_BUFFER_GUARD);
 				} else {
 					not_decoded = _stream.bufend - _stream.next_frame;
 					memcpy(_ptr, _stream.next_frame, not_decoded);
-					_size = _file->read(_ptr + not_decoded, _bufferSize - not_decoded);
 				}
+				_size = _file->read(_ptr + not_decoded, _bufferSize - not_decoded);
 				if (_size <= 0) {
 					return;
 				}
