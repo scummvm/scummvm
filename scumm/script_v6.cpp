@@ -2446,7 +2446,7 @@ void Scumm_v6::o6_miscOps()
 	 				speed = 71;
 				else {
 					if (_insaneFlag == 0) 
-						_insaneFlag = 13;
+						_insaneFlag = 14;
 					speed = 1000 / _insaneFlag;
 				}
 				
