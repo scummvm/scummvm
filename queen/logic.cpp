@@ -43,19 +43,22 @@
 
 namespace Queen {
 
-static char *trim(char *str) {
-	char *p = str + strlen(str) - 1;
-	while (p != str && *p == ' ') {
-		*p-- = '\0';
-	}
-	while (str != p && *str == ' ') {
-		++str;
-	}
-	return str;
+static Common::String trim(const Common::String &s) {
+	const char *p;
+	
+	p = s.c_str();
+	while (*p == ' ') ++p;
+	int start = p - s.c_str();
+	
+	p = s.c_str() + s.size() - 1;
+	while (p != s.c_str() && *p == ' ') --p;
+	int end = p - s.c_str();
+	
+	return Common::String(s.c_str() + start, end - start + 1);
 }
 
 Logic::Logic(QueenEngine *vm)
-	:  _queen2jas(NULL), _credits(NULL), _vm(vm) {
+	: _credits(NULL), _vm(vm) {
 	_joe.x = _joe.y = 0;
 	_joe.scale = 100;
 	_joe.walk = JWM_NORMAL;
@@ -69,7 +72,16 @@ Logic::Logic(QueenEngine *vm)
 Logic::~Logic() {
 	delete _journal;
 	delete _credits;
-	delete _queen2jas;
+	delete[] _objectData;
+	delete[] _roomData;
+	delete[] _sfxName;
+	delete[] _itemData;
+	delete[] _graphicData;
+	delete[] _walkOffData;
+	delete[] _objectDescription;
+	delete[] _furnitureData;
+	delete[] _actorData;
+	delete[] _graphicAnim;
 }
 
 void Logic::initialise() {	
@@ -182,37 +194,37 @@ void Logic::initialise() {
 
 	uint32 size;
 	char *buf = (char *)_vm->resource()->loadFile("QUEEN2.JAS", 0, &size);
-	_queen2jas = new LineReader(buf, size);
+	LineReader *queen2jas = new LineReader(buf, size);
 	
-	_objDescription = new char*[_numDescriptions + 1];
-	_objDescription[0] = 0;
-	for (i = 1; i <= _numDescriptions; i++)
-		_objDescription[i] = _queen2jas->nextLine();
+	_objDescription.push_back("");
+	for (i = 1; i <= _numDescriptions; i++) {
+		_objDescription.push_back(queen2jas->nextLine());
+	}
 
-	//Patch for German text bug
+	// Patch for German text bug
 	if (_vm->resource()->getLanguage() == GERMAN) {
-		char *txt = new char[48];
-		strcpy(txt, "Es bringt nicht viel, das festzubinden.");
-		_objDescription[296] = txt;
+		_objDescription[296] = "Es bringt nicht viel, das festzubinden.";
 	}
 	
-	_objName = new char*[_numNames + 1];
-	_objName[0] = 0;
-	for (i = 1; i <= _numNames; i++)
-		_objName[i] = _queen2jas->nextLine();
+	_objName.push_back("");
+	for (i = 1; i <= _numNames; i++) {
+		_objName.push_back(queen2jas->nextLine());
+	}
 
-	_roomName = new char*[_numRooms + 1];
-	_roomName[0] = 0;
-	for (i = 1; i <= _numRooms; i++)
-		_roomName[i] = _queen2jas->nextLine();
+	_roomName.push_back("");
+	for (i = 1; i <= _numRooms; i++) {
+		_roomName.push_back(queen2jas->nextLine());
+	}
 
-	_verbName[0] = 0;
-	for (i = 1; i <= 12; i++)
-		_verbName[i] = _queen2jas->nextLine();
+	_verbName.push_back("");
+	for (i = 1; i <= 12; i++) {
+		_verbName.push_back(queen2jas->nextLine());
+	}
 
-	_joeResponse[0] = 0;
-	for (i = 1; i <= JOE_RESPONSE_MAX; i++)
-		_joeResponse[i] = _queen2jas->nextLine();
+	_joeResponse.push_back("");
+	for (i = 1; i <= JOE_RESPONSE_MAX; i++) {
+		_joeResponse.push_back(queen2jas->nextLine());
+	}
 	
 	// FIXME - the spanish version adds some space characters (0x20) at the
 	// beginning and the end of the journal button captions. As we don't need
@@ -223,21 +235,22 @@ void Logic::initialise() {
 		}
 	}
 
-	_aAnim = new char*[_numAAnim + 1];
-	_aAnim[0] = 0;
-	for (i = 1; i <= _numAAnim; i++)
-		_aAnim[i] = _queen2jas->nextLine();
+	_aAnim.push_back("");
+	for (i = 1; i <= _numAAnim; i++) {
+		_aAnim.push_back(queen2jas->nextLine());
+	}
 
-	_aName = new char*[_numAName + 1];
-	_aName[0] = 0;
-	for (i = 1; i <= _numAName; i++)
-		_aName[i] = _queen2jas->nextLine();
+	_aName.push_back("");
+	for (i = 1; i <= _numAName; i++) {
+		_aName.push_back(queen2jas->nextLine());
+	}
 	
-	_aFile = new char*[_numAFile + 1];
-	_aFile[0] = 0;
-	for (i = 1; i <= _numAFile; i++)
-		_aFile[i] = _queen2jas->nextLine();
-
+	_aFile.push_back("");
+	for (i = 1; i <= _numAFile; i++) {
+		_aFile.push_back(queen2jas->nextLine());
+	}
+	
+	delete queen2jas;
 
 	_vm->command()->clear(false);
 	_scene = 0;
@@ -264,23 +277,23 @@ uint16 Logic::findBob(uint16 obj) const {
 
 	uint16 bobnum = 0;
 	int16 img = _objectData[obj].image;
-	if(img != 0) {
-		if(img == -3 || img == -4) {
+	if (img != 0) {
+		if (img == -3 || img == -4) {
 			// a person object
 			bobnum = findPersonNumber(obj, room);
 		} else {
 			uint16 bobtype = 0; // 1 for animated, 0 for static
 
-			if(img <= -10) {
+			if (img <= -10) {
 				// object has been turned off, but the image order hasn't been updated
 				if(_graphicData[-(img + 10)].lastFrame != 0) {
 					bobtype = 1;
 				}
-			} else if(img == -2) {
+			} else if (img == -2) {
 				// -1 static, -2 animated
 				bobtype = 1;
-			} else if(img > 0) {
-				if(_graphicData[img].lastFrame != 0) {
+			} else if (img > 0) {
+				if (_graphicData[img].lastFrame != 0) {
 					bobtype = 1;
 				}
 			}
@@ -335,16 +348,16 @@ uint16 Logic::findFrame(uint16 obj) const {
 	int16 img = _objectData[obj].image;
 	if (img == -3 || img == -4) {
 		uint16 bobnum = findPersonNumber(obj, room);
-		if(bobnum <= 3) {
+		if (bobnum <= 3) {
 			framenum = 31 + bobnum;
 		}
 	} else {
 		uint16 idx = 0;
-		for(uint16 i = _roomData[room] + 1; i < obj; ++i) {
+		for (uint16 i = _roomData[room] + 1; i < obj; ++i) {
 			img = _objectData[i].image;
 			if (img <= -10) {
 				const GraphicData* pgd = &_graphicData[-(img + 10)];
-				if(pgd->lastFrame != 0) {
+				if (pgd->lastFrame != 0) {
 					// skip all the frames of the animation
 					idx += ABS(pgd->lastFrame) - pgd->firstFrame + 1;
 				} else {
@@ -436,7 +449,23 @@ void Logic::gameState(int index, int16 newValue) {
 
 const char *Logic::roomName(uint16 roomNum) const { 
 	assert(roomNum >= 1 && roomNum <= _numRooms);
-	return _roomName[roomNum];
+	return _roomName[roomNum].c_str();
+}
+
+const char *Logic::objectName(uint16 objNum) const {
+	return _objName[objNum].c_str();
+}
+
+const char *Logic::objectTextualDescription(uint16 objNum) const {
+	return _objDescription[objNum].c_str();
+}
+
+const char *Logic::joeResponse(int i) const {
+	return _joeResponse[i].c_str();
+}
+	
+const char *Logic::verbName(Verb v) const {
+	return _verbName[v].c_str();
 }
 
 void Logic::eraseRoom() {
@@ -539,7 +568,7 @@ ActorData *Logic::findActor(uint16 noun, const char *name) const {
 		for (uint16 i = 1; i <= _numActors; ++i) {
 			ActorData *pad = &_actorData[i];
 			if (pad->room == _currentRoom && gameState(pad->gsSlot) == pad->gsValue) {
-				if (bobNum == pad->bobNum || (name && !strcmp(_aName[pad->name], name))) {
+				if (bobNum == pad->bobNum || (name && _aName[pad->name] == name)) {
 					return pad;
 				}
 			}
@@ -552,14 +581,14 @@ bool Logic::initPerson(uint16 noun, const char *actorName, bool loadBank, Person
 	const ActorData *pad = findActor(noun, actorName);
 	if (pad != NULL) {
 		pp->actor = pad;
-		pp->name = _aName[pad->name];
+		pp->name = _aName[pad->name].c_str();
 		if (pad->anim != 0) {
-			pp->anim = _aAnim[pad->anim];
+			pp->anim = _aAnim[pad->anim].c_str();
 		} else {
 			pp->anim = NULL;
 		}
 		if (loadBank && pad->file != 0) {
-			_vm->bankMan()->load(_aFile[pad->file], pad->bankNum);
+			_vm->bankMan()->load(_aFile[pad->file].c_str(), pad->bankNum);
 			// if there is no valid actor file (ie pad->file is 0), the person 
 			// data is already loaded as it is included in objects room bank (.bbk)
 		}
@@ -851,7 +880,7 @@ void Logic::playCutaway(const char *cutFile, char *next) {
 }
 
 void Logic::makeJoeSpeak(uint16 descNum, bool objectType) {
-	const char *text = objectType ? _objDescription[descNum] : _joeResponse[descNum];
+	const char *text = objectType ? _objDescription[descNum].c_str() : _joeResponse[descNum].c_str();
 	if (objectType) {
 		descNum += JOE_RESPONSE_MAX;
 	}

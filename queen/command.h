@@ -72,6 +72,7 @@ class Command {
 public:
 	
 	Command(QueenEngine *vm);
+	~Command();
 	
 	//! initialise command construction
 	void clear(bool clearTexts);

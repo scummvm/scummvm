@@ -33,6 +33,13 @@ Grid::Grid(QueenEngine *vm)
 	memset(_zones, 0, sizeof(_zones));
 }
 
+Grid::~Grid() {
+	delete[] _objMax;
+	delete[] _areaMax;
+	delete[] _area;
+	delete[] _objectBox;
+}
+
 void Grid::readDataFrom(uint16 numObjects, uint16 numRooms, byte *&ptr) {
 	uint16 i, j;
 

@@ -125,6 +125,14 @@ Command::Command(QueenEngine *vm)
 	: _cmdText((vm->resource()->getLanguage() == HEBREW), CmdText::COMMAND_Y_POS, vm), _vm(vm) {
 }
 
+Command::~Command() {
+	delete[] _cmdList;
+	delete[] _cmdArea;
+	delete[] _cmdObject;
+	delete[] _cmdInventory;
+	delete[] _cmdGameState;
+}
+
 void Command::clear(bool clearTexts) {
 	debug(6, "Command::clear(%d)", clearTexts);
 	_cmdText.clear();

@@ -39,6 +39,7 @@ class Grid {
 public:
 
 	Grid(QueenEngine *vm);
+	~Grid();
 
 	void readDataFrom(uint16 numObjects, uint16 numRooms, byte *&ptr);
 

@@ -22,6 +22,7 @@
 #ifndef QUEENLOGIC_H
 #define QUEENLOGIC_H
 
+#include "common/str.h"
 #include "common/util.h"
 #include "queen/defs.h"
 #include "queen/structs.h"
@@ -29,8 +30,8 @@
 namespace Queen {
 
 enum RoomDisplayMode {
-	RDM_FADE_NOJOE  = 0, // fade in, no Joe
-	RDM_FADE_JOE    = 1, // Joe is to be displayed
+	RDM_FADE_NOJOE  = 0, // fade in, hide Joe
+	RDM_FADE_JOE    = 1, // fade in, display Joe
 	RDM_NOFADE_JOE  = 2, // screen does not dissolve into view
 	RDM_FADE_JOE_XY = 3  // display Joe at the current X, Y coords
 };
@@ -108,9 +109,6 @@ public:
 	void joeScale(uint16 scale) { _joe.scale = scale; }
 	void joeCutFacing(uint16 dir) { _joe.cutFacing = dir; }
 	void joePrevFacing(uint16 dir) { _joe.prevFacing = dir; }
-	
-	const char *joeResponse(int i) const { return _joeResponse[i]; }
-	const char *verbName(Verb v) const { return _verbName[v]; }
 
 	int16 gameState(int index) const;
 	void gameState(int index, int16 newValue);
@@ -118,8 +116,10 @@ public:
 	TalkSelected *talkSelected(int index) { return &_talkSelected[index]; }
 
 	const char *roomName(uint16 roomNum) const;
-	const char *objectName(uint16 objNum) const { return _objName[objNum]; }
-	const char *objectTextualDescription(uint16 objNum) const { return _objDescription[objNum]; }
+	const char *objectName(uint16 objNum) const;
+	const char *objectTextualDescription(uint16 objNum) const;
+	const char *joeResponse(int i) const;
+	const char *verbName(Verb v) const;
 
 	void eraseRoom();
 	void setupRoom(const char *room, int comPanel, bool inCutaway);
@@ -250,9 +250,7 @@ protected:
 
 	virtual bool preChangeRoom() = 0;
 	virtual bool handleSpecialMove(uint16 sm) = 0;
-
-
-	LineReader *_queen2jas;
+	
 
 	uint16 _currentRoom;
 	uint16 _oldRoom;
@@ -300,29 +298,29 @@ protected:
 	int16 _entryObj;
 
 	//! Object description (Look At)
-	char **_objDescription;
+	Common::StringList _objDescription;
 	uint16 _numDescriptions;
 
-	char **_objName;
+	Common::StringList _objName;
 	uint16 _numNames;
 
 	//! Room name, prefix for data files (PCX, LUM...)
-	char **_roomName;
+	Common::StringList _roomName;
 
-	char *_verbName[13];
+	Common::StringList _verbName;
 
-	char *_joeResponse[JOE_RESPONSE_MAX + 1];
+	Common::StringList _joeResponse;
 
 	//! Actor animation string
-	char **_aAnim;
+	Common::StringList _aAnim;
 	uint16 _numAAnim;
 
 	//! Actor name
-	char **_aName;
+	Common::StringList _aName;
 	uint16 _numAName;
 
 	//! Actor filename
-	char **_aFile;
+	Common::StringList _aFile;
 	uint16 _numAFile;
 
 	struct {
@@ -339,9 +337,10 @@ protected:
 	//! Inventory items
 	int16 _inventoryItem[4];
 
+	//! Puzzle counter for room T7
 	uint8 _puzzleAttemptCount;
 
-	//! scene counter
+	//! Cutscene counter
 	int _scene;
 
 	Credits *_credits;
