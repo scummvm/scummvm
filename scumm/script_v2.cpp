@@ -2827,9 +2827,7 @@ void Scumm::o6_miscOps()
 				_string[0].color = (byte)args[2];
 				_string[0].xpos = args[3];
 				_string[0].ypos = args[4];
-
-				addMessageToStack(getStringAddressVar(VAR_STRING2DRAW));
-				drawDescString();
+				drawDescString(getStringAddressVar(VAR_STRING2DRAW));
 			}
 			break;
 		case 17:

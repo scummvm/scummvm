@@ -504,70 +504,50 @@ void Scumm::description()
 	gdi._mask_bottom = charset._strBottom;
 }
 
-void Scumm::drawDescString()
+void Scumm::drawDescString(byte *msg)
 {
-	byte byte1=0, chr, *buf, *charsetptr;
-	uint color, i;
+	byte c, *buf, buffer[256];
 
-	buf = charset._buffer;
+	buf = _msgPtrToAdd = buffer;
+	addMessageToStack(msg);
+
 	charset._bufPos = 0;
-
-	charset._left2 = charset._left = _string[0].xpos;
 	charset._top = _string[0].ypos;
-	charset._curId = _string[0].charset;
-	charset._center = _string[0].center;
-	charset._right = _string[0].right;
-	charset._color = _string[0].color;
-
+	charset._left = _string[0].xpos;
+	charset._left2 = _string[0].xpos;
+	charset._right = _realWidth - 1;
 	charset._xpos2 = _string[0].xpos;
 	charset._ypos2 = _string[0].ypos;
+	charset._curId = _string[0].charset;
+	charset._center = _string[0].center;
+	charset._color = _string[0].color;
+
+	// Center text
+	charset._xpos2 -= charset.getStringWidth(0, buffer, 0) >> 1;
+	if (charset._xpos2 < 0)
+		charset._xpos2 = 0;
+
 	charset._disableOffsX = charset._unk12 = 1;
 	_bkColor = 0;
 	_talkDelay = 1;
 
-	charset._left -= charset.getStringWidth(0, buf, 0) >> 1;
-
 	restoreCharsetBg();
 
-	// Read color mapping and height information
-	charsetptr = getResourceAddress(rtCharset, charset._curId);
-	assert(charsetptr);
-	charsetptr += 29;
-	for (i = 0; i < 4; i++)
-			charset._colorMap[i] = _charsetData[charset._curId][i];
-
-	byte1 = charsetptr[1]; // Character height
-
-	for (i = 0; (chr = buf[i++]) != 0;) {
-		if (chr == 254)
-			chr = 255;
-		if (chr == 255) {
-			chr = buf[i++];
-			switch (chr) {
-			case 9:
-			case 10:
-			case 13:
-			case 14:
-				i += 2;
-				break;
-			case 1:
-			case 8:
-				charset._left = charset._left2 - charset.getStringWidth(0, buf, i);
-				charset._top += byte1;
-				break;
-			case 12:
-				color = buf[i] + (buf[i + 1] << 8);
-				i += 2;
-				if (color == 0xFF)
-					charset._color = _string[0].color;
-				else
-					charset._color = color;
-				break;
-			}
-		} else {
-				charset.printChar(chr);
+	do {
+		c = *buf++;
+		if (c == 0) {
+			_haveMsg = 1;
+			break;
 		}
-	}
+		if (c != 0xFF) {
+			charset._left = charset._xpos2;
+			charset._top = charset._ypos2;
+			charset.printChar(c);
+			charset._xpos2 = charset._left;
+			charset._ypos2 = charset._top;
+			continue;
+		}
+	} while (1);
 
 	gdi._mask_left = charset._strLeft;
 	gdi._mask_right = charset._strRight;
