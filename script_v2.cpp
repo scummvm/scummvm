@@ -2278,7 +2278,7 @@ void Scumm::o6_miscOps() {
 			break;
 	
 		case 114: /* palette? */
-			error("stub o6_miscOps_114()");
+			warning("stub o6_miscOps_114()");
 			break;
 			
 		case 117:
