@@ -77,7 +77,7 @@ private:
 
 	byte *_textSurface;
 
-	PlayingSoundHandle _leadOutHandle;
+	SoundHandle _leadOutHandle;
 
 	static struct MovieInfo _movies[];
 

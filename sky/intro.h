@@ -56,7 +56,7 @@ private:
 	uint8 *_textBuf, *_saveBuf;
 	uint8 *_bgBuf;
 	uint32 _bgSize;
-	PlayingSoundHandle _voice, _bgSfx;
+	SoundHandle _voice, _bgSfx;
 
 	int32 _relDelay;
 

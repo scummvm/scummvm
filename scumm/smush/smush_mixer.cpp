@@ -69,7 +69,7 @@ void SmushMixer::addChannel(SmushChannel *c) {
 	}
 
 	for (i = 0; i < NUM_CHANNELS; i++) {
-		if ((_channels[i].chan == NULL || _channels[i].id == -1) && !_channels[i].handle.isActive()) {
+		if ((_channels[i].chan == NULL || _channels[i].id == -1) && !_mixer->isSoundHandleActive(_channels[i].handle)) {
 			_channels[i].chan = c;
 			_channels[i].id = track;
 			return;
@@ -120,7 +120,7 @@ bool SmushMixer::handleFrame() {
 				}
 
 				if (_mixer->isReady()) {
-					if (!_channels[i].handle.isActive()) {
+					if (!_mixer->isSoundHandleActive(_channels[i].handle)) {
 						_channels[i].stream = makeAppendableAudioStream(rate, flags, 500000);
 						_mixer->playInputStream(SoundMixer::kSFXSoundType, &_channels[i].handle, _channels[i].stream);
 					}

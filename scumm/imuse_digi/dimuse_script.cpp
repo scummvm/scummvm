@@ -279,7 +279,7 @@ int IMuseDigital::getSoundStatus(int sound) const {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->soundId == sound) {
-			if ((track->stream2 && track->handle.isActive()) ||
+			if ((track->stream2 && _vm->_mixer->isSoundHandleActive(track->handle)) ||
 				(track->stream && track->used && !track->readyToRemove)) {
 					return 1;
 			}

@@ -156,7 +156,7 @@ void Sound::processFxQueue() {
 			break;
 		case FX_SPOT2:
 			// Once the FX has finished remove it from the queue.
-			if (!_fxQueue[i].handle.isActive()) {
+			if (!_vm->_mixer->isSoundHandleActive(_fxQueue[i].handle)) {
 				_vm->_resman->closeResource(_fxQueue[i].resource);
 				_fxQueue[i].resource = 0;
 			}
@@ -250,11 +250,11 @@ int32 Sound::playFx(FxQueueEntry *fx) {
 	return playFx(&fx->handle, fx->data, fx->len, fx->volume, fx->pan, (fx->type == FX_LOOP), SoundMixer::kSFXSoundType);
 }
 
-int32 Sound::playFx(PlayingSoundHandle *handle, byte *data, uint32 len, uint8 vol, int8 pan, bool loop, SoundMixer::SoundType soundType) {
+int32 Sound::playFx(SoundHandle *handle, byte *data, uint32 len, uint8 vol, int8 pan, bool loop, SoundMixer::SoundType soundType) {
 	if (_fxMuted)
 		return RD_OK;
 
-	if (handle->isActive())
+	if (_vm->_mixer->isSoundHandleActive(*handle))
 		return RDERR_FXALREADYOPEN;
 
 	Common::MemoryReadStream stream(data, len);
@@ -287,8 +287,7 @@ int32 Sound::stopFx(int32 i) {
 	if (!_fxQueue[i].resource)
 		return RDERR_FXNOTOPEN;
 
-	if (_fxQueue[i].handle.isActive())
-		_vm->_mixer->stopHandle(_fxQueue[i].handle);
+	_vm->_mixer->stopHandle(_fxQueue[i].handle);
 
 	_vm->_resman->closeResource(_fxQueue[i].resource);
 	_fxQueue[i].resource = 0;

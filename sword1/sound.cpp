@@ -100,7 +100,7 @@ void Sound::engine(void) {
 			if (_fxQueue[cnt2].delay == 0)
 				playSample(&_fxQueue[cnt2]);
 		} else {
-			if (!_fxQueue[cnt2].handle.isActive()) { // sound finished
+			if (!_mixer->isSoundHandleActive(_fxQueue[cnt2].handle)) { // sound finished
 				_resMan->resClose(_fxList[_fxQueue[cnt2].id].sampleId);
 				if (cnt2 != _endOfQueue-1)
 					_fxQueue[cnt2] = _fxQueue[_endOfQueue - 1];
@@ -130,7 +130,7 @@ bool Sound::amISpeaking(void) {
 }
 
 bool Sound::speechFinished(void) {
-	return !_speechHandle.isActive();
+	return !_mixer->isSoundHandleActive(_speechHandle);
 }
 
 void Sound::newScreen(uint32 screen) {

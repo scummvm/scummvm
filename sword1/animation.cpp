@@ -70,7 +70,7 @@ OverlayColor *AnimationState::giveRgbBuffer(void) {
 }
 
 bool AnimationState::soundFinished(void) {
-	return !_bgSound.isActive();
+	return !_snd->isSoundHandleActive(_bgSound);
 }
 
 AudioStream *AnimationState::createAudioStream(const char *name, void *arg) {

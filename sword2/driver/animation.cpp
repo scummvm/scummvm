@@ -167,7 +167,7 @@ void MoviePlayer::drawTextObject(AnimationState *anim, MovieTextObject *obj) {
  */
 
 int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 leadInRes, int32 leadOutRes) {
-	PlayingSoundHandle leadInHandle;
+	SoundHandle leadInHandle;
 
 	// This happens if the user quits during the "eye" smacker
 	if (_vm->_quit)
@@ -205,10 +205,10 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 lea
 	playDummy(filename, text, leadOut, leadOutLen);
 #endif
 
-	_vm->_mixer->stopHandle(leadInHandle);
+	_snd->stopHandle(leadInHandle);
 
 	// Wait for the lead-out to stop, if there is any.
-	while (_leadOutHandle.isActive()) {
+	while (_vm->_mixer->isSoundHandleActive(_leadOutHandle)) {
 		_vm->_screen->updateDisplay();
 		_vm->_system->delayMillis(30);
 	}
@@ -224,7 +224,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 lea
 
 void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *leadOut, uint32 leadOutLen) {
 	uint frameCounter = 0, textCounter = 0;
-	PlayingSoundHandle handle;
+	SoundHandle handle;
 	bool skipCutscene = false, textVisible = false;
 	uint32 flags = SoundMixer::FLAG_16BITS;
 	bool startNextText = false;
@@ -282,7 +282,7 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 				}
 			}
 
-			if (startNextText && !handle.isActive()) {
+			if (startNextText && !_snd->isSoundHandleActive(handle)) {
 				_snd->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, flags);
 				startNextText = false;
 			}
@@ -339,7 +339,7 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 	// If the speech is still playing, redraw the subtitles. At least in
 	// the English version this is most noticeable in the "carib" cutscene.
 
-	if (textVisible && handle.isActive())
+	if (textVisible && _snd->isSoundHandleActive(handle))
 		drawTextObject(anim, text[textCounter]);
 
 	if (text)
@@ -354,7 +354,7 @@ void MoviePlayer::playMPEG(const char *filename, MovieTextObject *text[], byte *
 	if (skipCutscene)
 		_snd->stopHandle(handle);
 
-	while (handle.isActive()) {
+	while (_snd->isSoundHandleActive(handle)) {
 		_vm->_screen->updateDisplay(false);
 		_sys->delayMillis(100);
 	}
@@ -441,7 +441,7 @@ void MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte 
 	tmpPal[255 * 4 + 2] = 255;
 	_vm->_screen->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
 
-	PlayingSoundHandle handle;
+	SoundHandle handle;
 
 	bool skipCutscene = false;
 
@@ -493,7 +493,7 @@ void MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte 
 	// don't cut off the speech in mid-sentence, and - even more
 	// importantly - that we don't free the sound buffer while it's in use.
 
-	while (handle.isActive()) {
+	while (_snd->isSoundHandleActive(handle)) {
 		_vm->_screen->updateDisplay(false);
 		_sys->delayMillis(100);
 	}

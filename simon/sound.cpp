@@ -45,25 +45,25 @@ public:
 	BaseSound(SoundMixer *mixer, File *file, uint32 base = 0, bool bigendian = false);
 	BaseSound(SoundMixer *mixer, File *file, uint32 *offsets, bool bigendian = false);
 	virtual ~BaseSound();
-	virtual void playSound(uint sound, PlayingSoundHandle *handle, byte flags) = 0;
+	virtual void playSound(uint sound, SoundHandle *handle, byte flags) = 0;
 };
 
 class WavSound : public BaseSound {
 public:
 	WavSound(SoundMixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
 	WavSound(SoundMixer *mixer, File *file, uint32 *offsets) : BaseSound(mixer, file, offsets) {};
-	void playSound(uint sound, PlayingSoundHandle *handle, byte flags);
+	void playSound(uint sound, SoundHandle *handle, byte flags);
 };
 
 class VocSound : public BaseSound {
 public:
 	VocSound(SoundMixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
-	void playSound(uint sound, PlayingSoundHandle *handle, byte flags);
+	void playSound(uint sound, SoundHandle *handle, byte flags);
 };
 class RawSound : public BaseSound {
 public:
 	RawSound(SoundMixer *mixer, File *file, uint32 base = 0, bool bigendian = false) : BaseSound(mixer, file, base, bigendian) {};
-	void playSound(uint sound, PlayingSoundHandle *handle, byte flags);
+	void playSound(uint sound, SoundHandle *handle, byte flags);
 };
 
 BaseSound::BaseSound(SoundMixer *mixer, File *file, uint32 base, bool bigendian) {
@@ -117,7 +117,7 @@ BaseSound::~BaseSound() {
 	delete _file;
 }
 	
-void WavSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
+void WavSound::playSound(uint sound, SoundHandle *handle, byte flags) {
 	if (_offsets == NULL)
 		return;
 
@@ -132,7 +132,7 @@ void WavSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	_mixer->playInputStream(SoundMixer::kSFXSoundType, handle, stream);
 }
 
-void VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
+void VocSound::playSound(uint sound, SoundHandle *handle, byte flags) {
 	if (_offsets == NULL)
 		return;
 
@@ -144,7 +144,7 @@ void VocSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 	_mixer->playRaw(handle, buffer, size, samples_per_sec, flags | SoundMixer::FLAG_AUTOFREE);
 }
 
-void RawSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
+void RawSound::playSound(uint sound, SoundHandle *handle, byte flags) {
 	if (_offsets == NULL)
 		return;
 
@@ -161,10 +161,10 @@ void RawSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags) {
 class MP3Sound : public BaseSound {
 public:
 	MP3Sound(SoundMixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
-	void playSound(uint sound, PlayingSoundHandle *handle, byte flags);
+	void playSound(uint sound, SoundHandle *handle, byte flags);
 };
 
-void MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
+void MP3Sound::playSound(uint sound, SoundHandle *handle, byte flags)
 {
 	if (_offsets == NULL)
 		return;
@@ -185,10 +185,10 @@ void MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 class VorbisSound : public BaseSound {
 public:
 	VorbisSound(SoundMixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
-	void playSound(uint sound, PlayingSoundHandle *handle, byte flags);
+	void playSound(uint sound, SoundHandle *handle, byte flags);
 };
 
-void VorbisSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
+void VorbisSound::playSound(uint sound, SoundHandle *handle, byte flags)
 {
 	if (_offsets == NULL)
 		return;
@@ -209,10 +209,10 @@ void VorbisSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 class FlacSound : public BaseSound {
 public:
 	FlacSound(SoundMixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
-	void playSound(uint sound, PlayingSoundHandle *handle, byte flags);
+	void playSound(uint sound, SoundHandle *handle, byte flags);
 };
 
-void FlacSound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
+void FlacSound::playSound(uint sound, SoundHandle *handle, byte flags)
 {
 	if (_offsets == NULL)
 		return;

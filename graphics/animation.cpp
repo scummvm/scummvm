@@ -185,7 +185,7 @@ bool BaseAnimationState::decodeFrame() {
 				 */
 
 				/* Avoid deadlock is sound was too far ahead */
-				if (_bgSoundStream && !_bgSound.isActive())
+				if (_bgSoundStream && !_snd->isSoundHandleActive(_bgSound))
 					return false;
 
 				if (checkPaletteSwitch() || (_bgSoundStream == NULL) ||

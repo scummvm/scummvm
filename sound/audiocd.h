@@ -30,7 +30,7 @@
 class DigitalTrackInfo {
 public:
 	virtual bool error() = 0;
-	virtual void play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration) = 0;
+	virtual void play(SoundMixer *mixer, SoundHandle *handle, int startFrame, int duration) = 0;
 	virtual ~DigitalTrackInfo() { }
 };
 
@@ -62,7 +62,7 @@ private:
 private:
 	/* used for emulated CD music */
 	struct ExtStatus : Status {
-		PlayingSoundHandle handle;
+		SoundHandle handle;
 	};
 	ExtStatus _cd;
 

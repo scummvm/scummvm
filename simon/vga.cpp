@@ -1606,7 +1606,7 @@ void SimonEngine::vc_59() {
 			vc_kill_sprite(file, start);
 		} while (++start != end);
 	} else {
-		if (!_sound->_voice_handle.isActive())
+		if (!_mixer->isSoundHandleActive(_sound->_voice_handle))
 			vc_skip_next_instruction();
 	}
 }
@@ -1789,7 +1789,7 @@ void SimonEngine::vc_63_palette_thing_2() {
 
 void SimonEngine::vc_64_skip_if_no_speech() {
 	// Simon2
-	if (!_sound->_voice_handle.isActive() || (_subtitles && _language != 20))
+	if (!_mixer->isSoundHandleActive(_sound->_voice_handle) || (_subtitles && _language != 20))
 		vc_skip_next_instruction();
 }
 

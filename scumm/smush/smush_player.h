@@ -56,10 +56,10 @@ private:
 	bool _skips[37];
 	int32 _frame;
 
-	PlayingSoundHandle _IACTchannel;
+	SoundHandle _IACTchannel;
 	AppendableAudioStream *_IACTstream;
 
-	PlayingSoundHandle _compressedFileSoundHandle;
+	SoundHandle _compressedFileSoundHandle;
 	bool _compressedFileMode;
 	File _compressedFile;
 	byte _IACToutput[4096];

@@ -83,10 +83,10 @@ Sound *Sound::giveSound(SoundMixer *mixer, QueenEngine *vm, uint8 compression) {
 
 void Sound::waitFinished(bool isSpeech) {
 	if (isSpeech)
-		while (_speechHandle.isActive())
+		while (_mixer->isSoundHandleActive(_speechHandle))
 			_vm->input()->delay(10);
 	else
-		while (_sfxHandle.isActive())
+		while (_mixer->isSoundHandleActive(_sfxHandle))
 			_vm->input()->delay(10);
 }
 

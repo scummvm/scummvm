@@ -42,7 +42,7 @@ namespace Sword1 {
 
 struct QueueElement {
 	uint32 id, delay;
-	PlayingSoundHandle handle;
+	SoundHandle handle;
 };
 
 struct RoomVol {
@@ -101,7 +101,7 @@ private:
 	uint32		 _cowHeaderSize;
 	uint8		 _currentCowFile;
 	CowMode		 _cowMode;
-	PlayingSoundHandle _speechHandle, _fxHandle;
+	SoundHandle _speechHandle, _fxHandle;
 	Common::RandomSource _rnd;
 	
 	QueueElement _fxQueue[MAX_FXQ_LENGTH];

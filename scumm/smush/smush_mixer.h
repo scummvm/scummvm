@@ -39,7 +39,7 @@ private:
 	struct channels {
 		int id;
 		SmushChannel *chan;
-		PlayingSoundHandle handle;
+		SoundHandle handle;
 		AppendableAudioStream *stream;
 	} _channels[NUM_CHANNELS];
 

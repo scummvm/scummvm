@@ -105,7 +105,7 @@ bool AudioCDManager::isPlaying() const {
 void AudioCDManager::updateCD() {
 	if (_cd.playing) {
 		// If the sound handle is 0, then playback stopped.
-		if (!_cd.handle.isActive()) {
+		if (!g_engine->_mixer->isSoundHandleActive(_cd.handle)) {
 			// If playback just stopped, check if the current track is supposed
 			// to be repeated, and if that's the case, play it again. Else, stop
 			// the CD explicitly.

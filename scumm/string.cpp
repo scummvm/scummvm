@@ -370,7 +370,7 @@ loc_avoid_ks_fe:
 					// Special case for games using imuse digital.for sound
 				} else if ((_gameId == GID_LOOM256) && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
 					// Special case for loomcd, since it only uses CD audio.for sound
-				} else if (!ConfMan.getBool("subtitles") && (_haveMsg == 0xFE || _sound->_talkChannelHandle.isActive())) {
+				} else if (!ConfMan.getBool("subtitles") && (_haveMsg == 0xFE || _mixer->isSoundHandleActive(_sound->_talkChannelHandle))) {
 					// Subtitles are turned off, and there is a voice version
 					// of this message -> don't print it. 
 				} else

@@ -572,7 +572,7 @@ void Sound::processSfxQueues() {
 		if (_vm->_imuseDigital) {
 			finished = !isSoundRunning(kTalkSoundID);
 		} else {
-			finished = !_talkChannelHandle.isActive();
+			finished = !_vm->_mixer->isSoundHandleActive(_talkChannelHandle);
 		}
 
 		if ((uint) act < 0x80 && ((_vm->_version == 8) || (_vm->_version <= 7 && !_vm->_string[0].no_talk_anim))) {
@@ -609,7 +609,7 @@ static int compareMP3OffsetTable(const void *a, const void *b) {
 	return ((const MP3OffsetTable *)a)->org_offset - ((const MP3OffsetTable *)b)->org_offset;
 }
 
-void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle *handle) {
+void Sound::startTalkSound(uint32 offset, uint32 b, int mode, SoundHandle *handle) {
 	int num = 0, i;
 	int size = 0;
 	byte *sound;

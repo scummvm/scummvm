@@ -742,7 +742,7 @@ bool Intro::nextPart(uint16 *&data) {
 				SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED, SOUND_VOICE);
 		return true;
 	case WAITVOICE:
-		while (_voice.isActive())
+		while (_mixer->isSoundHandleActive(_voice))
 			if (!escDelay(50))
 				return false;
 		return true;

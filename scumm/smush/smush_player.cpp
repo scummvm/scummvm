@@ -507,7 +507,7 @@ void SmushPlayer::handleIACT(Chunk &b) {
 						}
 					} while (--count);
 
-					if (!_IACTchannel.isActive()) {
+					if (!_vm->_mixer->isSoundHandleActive(_IACTchannel)) {
 						_IACTstream = makeAppendableAudioStream(22050, SoundMixer::FLAG_STEREO | SoundMixer::FLAG_16BITS, 400000);
 						_vm->_mixer->playInputStream(SoundMixer::kSFXSoundType, &_IACTchannel, _IACTstream);
 					}

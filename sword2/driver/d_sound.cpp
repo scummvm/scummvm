@@ -642,7 +642,7 @@ int32 Sound::musicTimeRemaining(void) {
 void Sound::muteSpeech(bool mute) {
 	_speechMuted = mute;
 
-	if (_soundHandleSpeech.isActive()) {
+	if (_vm->_mixer->isSoundHandleActive(_soundHandleSpeech)) {
 		uint volume = mute ? 0 : SoundMixer::kMaxChannelVolume;
 
 		_vm->_mixer->setChannelVolume(_soundHandleSpeech, volume);
@@ -672,7 +672,7 @@ void Sound::unpauseSpeech(void) {
  */
 
 int32 Sound::stopSpeech() {
-	if (_soundHandleSpeech.isActive()) {
+	if (_vm->_mixer->isSoundHandleActive(_soundHandleSpeech)) {
 		_vm->_mixer->stopHandle(_soundHandleSpeech);
 		return RD_OK;
 	}
@@ -685,7 +685,7 @@ int32 Sound::stopSpeech() {
  */
 
 int32 Sound::getSpeechStatus() {
-	return _soundHandleSpeech.isActive() ? RDSE_SAMPLEPLAYING : RDSE_SAMPLEFINISHED;
+	return _vm->_mixer->isSoundHandleActive(_soundHandleSpeech) ? RDSE_SAMPLEPLAYING : RDSE_SAMPLEFINISHED;
 }
 
 /**
@@ -693,7 +693,7 @@ int32 Sound::getSpeechStatus() {
  */
 
 int32 Sound::amISpeaking() {
-	if (!_speechMuted && !_speechPaused && _soundHandleSpeech.isActive())
+	if (!_speechMuted && !_speechPaused && _vm->_mixer->isSoundHandleActive(_soundHandleSpeech))
 		return RDSE_SPEAKING;
 
 	return RDSE_QUIET;
@@ -818,7 +818,7 @@ int32 Sound::setFxIdVolumePan(int32 i, int vol, int pan) {
 		_fxQueue[i].pan = (pan * 127) / 16;
 	}
 
-	if (!_fxMuted && _fxQueue[i].handle.isActive()) {
+	if (!_fxMuted && _vm->_mixer->isSoundHandleActive(_fxQueue[i].handle)) {
 		_vm->_mixer->setChannelVolume(_fxQueue[i].handle, _fxQueue[i].volume);
 		if (pan != -1)
 			_vm->_mixer->setChannelBalance(_fxQueue[i].handle, _fxQueue[i].pan);

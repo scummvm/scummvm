@@ -64,7 +64,7 @@ public:
 
  private:
 
-	int playSoundBuffer(PlayingSoundHandle *handle, SOUNDBUFFER *buf, int volume, bool loop);
+	int playSoundBuffer(SoundHandle *handle, SOUNDBUFFER *buf, int volume, bool loop);
 
 	int _soundInitialized;
 	int _enabled;
@@ -72,8 +72,8 @@ public:
 	SagaEngine *_vm;
 	SoundMixer *_mixer;
 
-	PlayingSoundHandle _effectHandle;
-	PlayingSoundHandle _voiceHandle;
+	SoundHandle _effectHandle;
+	SoundHandle _voiceHandle;
 
 };
 

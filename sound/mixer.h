@@ -33,16 +33,16 @@ class Channel;
 class File;
 class OSystem;
 
-class PlayingSoundHandle {
+class SoundHandle {
 	friend class Channel;
 	friend class SoundMixer;
 	int val;
 	int getIndex() const { return val - 1; }
 	void setIndex(int i) { val = i + 1; }
 	void resetIndex() { val = 0; }
-public:
-	PlayingSoundHandle() { resetIndex(); }
 	bool isActive() const { return val > 0; }
+public:
+	SoundHandle() { resetIndex(); }
 };
 
 class SoundMixer {
@@ -136,7 +136,7 @@ public:
 	 * (using the makeLinearInputStream factory function), which is then
 	 * passed on to playInputStream.
 	 */
-	void playRaw(PlayingSoundHandle *handle,
+	void playRaw(SoundHandle *handle,
 				void *sound, uint32 size, uint rate, byte flags,
 				int id = -1, byte volume = 255, int8 balance = 0,
 				uint32 loopStart = 0, uint32 loopEnd = 0,
@@ -145,7 +145,7 @@ public:
 	/**
 	 * Start playing the given audio input stream.
 	 */
-	void playInputStream(SoundType type, PlayingSoundHandle *handle, AudioStream *input,
+	void playInputStream(SoundType type, SoundHandle *handle, AudioStream *input,
 				int id = -1, byte volume = 255, int8 balance = 0,
 				bool autofreeStream = true, bool permanent = false);
 
@@ -168,7 +168,7 @@ public:
 	 *
 	 * @param handle the sound to affect
 	 */
-	void stopHandle(PlayingSoundHandle handle);
+	void stopHandle(SoundHandle handle);
 
 
 
@@ -194,7 +194,7 @@ public:
 	 * @param handle the sound to affect
 	 * @param paused true to pause the sound, false to unpause it
 	 */
-	void pauseHandle(PlayingSoundHandle handle, bool paused);
+	void pauseHandle(SoundHandle handle, bool paused);
 
 
 
@@ -205,6 +205,16 @@ public:
 	 * @return true if the sound is active
 	 */
 	bool isSoundIDActive(int id);
+
+	/**
+	 * Check if a sound with the given hANDLE is active.
+	 *
+	 * @param handle the sound to query
+	 * @return true if the sound is active
+	 */
+	bool isSoundHandleActive(SoundHandle handle) {
+		return handle.isActive();
+	}
 
 	/**
 	 * Check if the mixer is paused (using pauseAll).
@@ -221,7 +231,7 @@ public:
 	 * @param handle the sound to affect
 	 * @param volume the new channel volume (0 - 255)
 	 */
-	void setChannelVolume(PlayingSoundHandle handle, byte volume);
+	void setChannelVolume(SoundHandle handle, byte volume);
 
 	/**
 	 * Set the channel balance for the given handle.
@@ -230,7 +240,7 @@ public:
 	 * @param balance the new channel balance:
 	 *        (-127 ... 0 ... 127) corresponds to (left ... center ... right)
 	 */
-	void setChannelBalance(PlayingSoundHandle handle, int8 balance);
+	void setChannelBalance(SoundHandle handle, int8 balance);
 
 	/**
 	 * Get approximation of for how long the Sound ID has been playing.
@@ -240,7 +250,7 @@ public:
 	/**
 	 * Get approximation of for how long the channel has been playing.
 	 */
-	uint32 getSoundElapsedTime(PlayingSoundHandle handle);
+	uint32 getSoundElapsedTime(SoundHandle handle);
 
 	/**
 	 * Check whether any channel of the given sound type is active.
@@ -275,7 +285,7 @@ public:
 	uint getOutputRate() const { return _outputRate; }
 
 private:
-	void insertChannel(PlayingSoundHandle *handle, Channel *chan);
+	void insertChannel(SoundHandle *handle, Channel *chan);
 
 	/**
 	 * Internal main method -- all the actual mixing work is done from here.

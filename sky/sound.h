@@ -50,16 +50,16 @@ protected:
 public:
 
 	SoundMixer *_mixer;
-	PlayingSoundHandle _voiceHandle;
-	PlayingSoundHandle _effectHandle;
-	PlayingSoundHandle _bgSoundHandle;
-	PlayingSoundHandle _ingameSound0, _ingameSound1, _ingameSpeech;
+	SoundHandle _voiceHandle;
+	SoundHandle _effectHandle;
+	SoundHandle _bgSoundHandle;
+	SoundHandle _ingameSound0, _ingameSound1, _ingameSpeech;
 
 	uint16 _saveSounds[2];
 
 protected:
 
-	void playSound(uint32 id, byte *sound, uint32 size, PlayingSoundHandle *handle);
+	void playSound(uint32 id, byte *sound, uint32 size, SoundHandle *handle);
 
 public:
 	Sound(SoundMixer *mixer, Disk *pDisk, uint8 pVolume);
@@ -69,7 +69,7 @@ public:
 	void playSound(uint16 sound, uint16 volume, uint8 channel);
 	void fnStartFx(uint32 sound, uint8 channel);
 	bool startSpeech(uint16 textNum);
-	bool speechFinished(void) { return !_ingameSpeech.isActive(); };
+	bool speechFinished(void) { return !_mixer->isSoundHandleActive(_ingameSpeech); };
 	void fnPauseFx(void);
 	void fnUnPauseFx(void);
 	void fnStopFx(void);

@@ -84,7 +84,7 @@ protected:
 
 	File *_mpegFile;
 
-	PlayingSoundHandle _bgSound;
+	SoundHandle _bgSound;
 	AudioStream *_bgSoundStream;
 
 #ifdef BACKEND_8BIT

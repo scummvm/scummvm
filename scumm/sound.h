@@ -84,7 +84,7 @@ protected:
 	int16 _currentCDSound;
 	int16 _currentMusic;
 public:
-	PlayingSoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
+	SoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
 
 	bool _soundsPaused;
 	byte _sfxMode;
@@ -97,7 +97,7 @@ public:
 	void processSoundQues();
 	void setOverrideFreq(int freq);
 	void playSound(int soundID, int heOffset, int heChannel, int heFlags);
-	void startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle *handle = NULL);
+	void startTalkSound(uint32 offset, uint32 b, int mode, SoundHandle *handle = NULL);
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);
 	int isSoundRunning(int sound) const;

@@ -350,7 +350,7 @@ Music::~Music() {
 }
 
 bool Music::isPlaying() {
-	return _musicHandle.isActive() || _player->isPlaying();
+	return _mixer->isSoundHandleActive(_musicHandle) || _player->isPlaying();
 }
 
 // The Wyrmkeep release of Inherit The Earth features external MIDI files, so
@@ -409,8 +409,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 
 	_player->stopMusic();
 
-	if (_musicHandle.isActive())
-		_mixer->stopHandle(_musicHandle);
+	_mixer->stopHandle(_musicHandle);
 
 	AudioStream *audioStream = NULL;
 	MidiParser *parser;

@@ -74,8 +74,8 @@ public:
 	void musicToggle(bool val)	{ _musicToggle = val; }
 	void toggleMusic()			{ _musicToggle ^= true; }
 
-	bool isSpeechActive() const	{ return _speechHandle.isActive(); }
-	bool isSfxActive() const 	{ return _sfxHandle.isActive(); }
+	bool isSpeechActive() const	{ return _mixer->isSoundHandleActive(_speechHandle); }
+	bool isSfxActive() const 	{ return _mixer->isSoundHandleActive(_sfxHandle); }
 	
 	bool speechSfxExists() const	{ return _speechSfxExists; }
 	
@@ -112,8 +112,8 @@ protected:
 	bool _speechSfxExists;
 	
 	int16 _lastOverride;
-	PlayingSoundHandle _sfxHandle;
-	PlayingSoundHandle _speechHandle;
+	SoundHandle _sfxHandle;
+	SoundHandle _speechHandle;
 };
 
 class SilentSound : public Sound {

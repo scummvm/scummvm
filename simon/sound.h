@@ -45,9 +45,9 @@ private:
 	uint16 _last_voice_file;
 
 public:
-	PlayingSoundHandle _voice_handle;
-	PlayingSoundHandle _effects_handle;
-	PlayingSoundHandle _ambient_handle;
+	SoundHandle _voice_handle;
+	SoundHandle _effects_handle;
+	SoundHandle _ambient_handle;
 
 	bool _voice_file;
 	uint _ambient_playing;

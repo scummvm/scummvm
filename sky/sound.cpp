@@ -1031,7 +1031,7 @@ Sound::~Sound(void) {
 	if (_soundData) free(_soundData);
 }
 
-void Sound::playSound(uint32 id, byte *sound, uint32 size, PlayingSoundHandle *handle) {
+void Sound::playSound(uint32 id, byte *sound, uint32 size, SoundHandle *handle) {
 
 	byte flags = 0;
 	flags |= SoundMixer::FLAG_UNSIGNED|SoundMixer::FLAG_AUTOFREE;
