@@ -53,7 +53,7 @@ R_GAME_FONTDESC ITEDEMO_GameFonts[] = {
 
 R_GAME_SOUNDINFO ITEDEMO_GameSound = {
 
-	R_GAME_SOUND_VOC
+	R_GAME_SOUND_VOC, 0, 0, 0
 };
 
 /*--------------------------------------------------------------------------*\
@@ -99,7 +99,7 @@ R_GAME_RESOURCEINFO ITE_Resources =
 
 R_GAME_SOUNDINFO ITE_GameSound = {
 
-	R_GAME_SOUND_VOC
+	R_GAME_SOUND_VOC, 0, 0, 0
 };
 
 /*--------------------------------------------------------------------------*\
@@ -198,7 +198,7 @@ R_GAME_RESOURCEINFO IHNM_Resources[] =
 
 R_GAME_SOUNDINFO IHNM_GameSound = {
 
-	R_GAME_SOUND_WAV
+	R_GAME_SOUND_WAV, 0, 0, 0
 };
 
 R_GAMEDESC GameDescs[] = {
@@ -338,8 +338,6 @@ void SagaGameDesc::setGameDirectory( const char *gamedir ) {
 int SagaGameDesc::detectGame() {
 
 	File test_file;
-
-	int game_index = 0;
 
 	bool disqualified = false;
 	bool found_game = false;
