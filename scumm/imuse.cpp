@@ -1438,10 +1438,12 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 			return get_sound_status(b);
 		case 14:
 			// Sam and Max: Volume Fader?
-			for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
-				if (player->_active && player->_id == (uint16)b) {
-					player->fade_vol(e, f);
-					return 0;
+			if (f != 0) {
+				for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
+					if (player->_active && player->_id == (uint16)b) {
+						player->fade_vol(e, f);
+						return 0;
+					}
 				}
 			}
 			return -1;
@@ -1491,7 +1493,6 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 			warning("IMuseInternal::do_command invalid command %d", cmd);
 		}
 	} else if (param == 1) {
-
 		if ((1 << cmd) & (0x783FFF)) {
 			player = get_player_byid(b);
 			if (!player)
@@ -1506,7 +1507,10 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 
 		switch (cmd) {
 		case 0:
-			return player->get_param(c, d);
+			if (g_scumm->_features & GID_SAMNMAX)
+				return player->_def_do_command_trigger;
+			else
+				return player->get_param(c, d);
 		case 1:
 			if (g_scumm->_features & GID_SAMNMAX) // Jamieson630: Nasty
 				player->jump (d - 1, (e - 1) * 4 + f, ((g * player->_ticks_per_beat) >> 2) + h);
@@ -2137,10 +2141,12 @@ void Player::parse_sysex(byte *p, uint len)
 			if (_def_do_command_trigger && *p == _def_do_command_trigger) {
 				_def_do_command_trigger = 0;
 				_se->do_command (_deferred_do_command [0],
-				            _deferred_do_command [1],
-				            _deferred_do_command [2],
-				            _deferred_do_command [3],
-				            0, 0, 0, 0);
+				                 _deferred_do_command [1],
+				                 _deferred_do_command [2],
+				                 _deferred_do_command [3],
+				                 0, 0, 0, 0);
+			} else {
+				_def_do_command_trigger = *p;
 			} // end if
 		} // end if
 		break;

@@ -45,9 +45,9 @@ int CharsetRenderer::getStringWidth(int arg, byte *text, int pos)
 			chr = 255;
 		if (chr == 255) {
 			chr = text[pos++];
-			if (chr == 3)
+			if (chr == 3)	// 'WAIT'
 				break;
-			if (chr == 8) {
+			if (chr == 8) { // 'Verb on next line'
 				if (arg == 1)
 					break;
 				while (text[pos] == ' ')
@@ -58,7 +58,7 @@ int CharsetRenderer::getStringWidth(int arg, byte *text, int pos)
 				pos += 2;
 				continue;
 			}
-			if (chr == 9 || chr == 1 || chr == 2)
+			if (chr == 9 || chr == 1 || chr == 2) // 'Newline'
 				break;
 			if (chr == 14) {
 				int set = text[pos] | (text[pos + 1] << 8);
@@ -93,9 +93,9 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth)
 			chr = 255;
 		if (chr == 255) {
 			chr = str[pos++];
-			if (chr == 3)
+			if (chr == 3) // 'Wait'
 				break;
-			if (chr == 8) {
+			if (chr == 8) { // 'Verb on next line'
 				if (a == 1) {
 					curw = 1;
 				} else {
@@ -108,11 +108,11 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth)
 				pos += 2;
 				continue;
 			}
-			if (chr == 1) {
+			if (chr == 1) { // 'Newline'
 				curw = 1;
 				continue;
 			}
-			if (chr == 2)
+			if (chr == 2) // 'Don't terminate with \n'
 				break;
 			if (chr == 14) {
 				int set = str[pos] | (str[pos + 1] << 8);
@@ -746,6 +746,7 @@ while ((ptr[num++] = chr = *msg++) != 0) {
 				addStringToStack(READ_LE_UINT16(ptr + num));
 				num += 2;
 				break;
+			case 3:
 			case 9:
 //#if defined(DOTT)
 			case 10:
