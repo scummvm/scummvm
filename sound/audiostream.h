@@ -82,11 +82,10 @@ public:
 	 * In case of an error, the file handle will be closed, but deleting
 	 * it is still the responsibilty of the caller.
 	 * @param filename	a filename without an extension
-	 * @param path		an (optional) file path which is passed to File::open()
 	 * @return	an Audiostream ready to use in case of success; 
 	 *			NULL in case of an error (e.g. invalid/nonexisting file)
 	 */
-	static AudioStream* openStreamFile(const char *filename, const char *path = NULL);
+	static AudioStream* openStreamFile(const char *filename);
 };
 
 class AppendableAudioStream : public AudioStream {
