@@ -142,8 +142,6 @@ bool ListWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 	bool dirty = false;
 	int oldSelectedItem = _selectedItem;
 
-printf("ListWidget::handleKeyDown(%d, %d, %d)\n", (int)ascii, (int)keycode, (int)modifiers);
-
 	if (_editMode) {
 
 		if (_caretVisible)
