@@ -94,9 +94,9 @@ public:
 	Music(MidiDriver *_driver, QueenEngine *vm);
 	~Music();
 	void playSong(uint16 songNum);
-	void queueTuneList(int16 tuneList)	{ return _player->queueTuneList(tuneList); }
-	void playMusic()					{ return _player->playMusic(); }
-	void stopSong()						{ return _player->stopMusic(); }
+	void queueTuneList(int16 tuneList)	{ _player->queueTuneList(tuneList); }
+	void playMusic()					{ _player->playMusic(); }
+	void stopSong()						{ _player->stopMusic(); }
 	
 protected:
 	byte *_musicData;
