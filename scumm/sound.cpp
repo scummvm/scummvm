@@ -95,14 +95,13 @@ Sound::Sound(Scumm *parent) {
 	_current_cache = 0;
 	_current_cd_sound = 0;
 
+	_sfxFile = 0;
+	
 	_bundle = new Bundle();
 }
 
 Sound::~Sound() {
-	if (_sfxFile) {
-		_sfxFile->close();
-		delete _sfxFile;
-	}
+	delete _sfxFile;
 	delete _bundle;
 }
 
@@ -771,9 +770,10 @@ void Sound::setupSound() {
 
 		_scumm->_imuse->set_master_volume(_sound_volume_master);
 		_scumm->_imuse->set_music_volume(_sound_volume_music);
-		_scumm->_mixer->setVolume(_sound_volume_sfx * _sound_volume_master / 255);
-		_scumm->_mixer->setMusicVolume(_sound_volume_music);
 	}
+	_scumm->_mixer->setVolume(_sound_volume_sfx * _sound_volume_master / 255);
+	_scumm->_mixer->setMusicVolume(_sound_volume_music);
+	delete _sfxFile;
 	_sfxFile = openSfxFile();
 }
 
@@ -1065,7 +1065,7 @@ void Sound::bundleMusicHandler(Scumm *scumm) {
 	if (_pauseBundleMusic)
 		return;
 
-	if (_musicBundleToBeRemoved == true) {
+	if (_musicBundleToBeRemoved) {
 		_scumm->_timer->releaseProcedure(&music_handler);
 		_nameBundleMusic = "";
 		if (_bundleMusicTrack != -1) {
@@ -1554,7 +1554,7 @@ int Sound::playMP3CDTrack(int track, int num_loops, int start, int delay) {
 }
 
 int Sound::stopMP3CD() {
-	if (_dig_cd_playing == true) {
+	if (_dig_cd_playing) {
 		_scumm->_mixer->stop(_dig_cd_index);
 		_dig_cd_playing = false;
 		_dig_cd_track = 0;
@@ -1566,8 +1566,8 @@ int Sound::stopMP3CD() {
 	return -1;
 }
 
-int Sound::pollMP3CD() const{
-	if (_dig_cd_playing == true)
+int Sound::pollMP3CD() const {
+	if (_dig_cd_playing)
 		return 1;
 	return 0;
 }

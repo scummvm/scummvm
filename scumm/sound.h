@@ -93,11 +93,11 @@ protected:
 	bool _dig_cd_playing;
 
 	DigitalTrackInfo *_track_info[CACHE_TRACKS];
+	int _current_cache;
 
 	Scumm *_scumm;
 
 public:
-	int _current_cache;
 	int32 _bundleMusicPosition;
 
 	int _talkChannel;	/* Mixer channel actor is talking on */
