@@ -373,6 +373,14 @@ void Actor::setupActorScale()
 		scale = resptr[theY];
 	}
 
+	// FIXME - Hack for The Dig 'Tomb' (room 88)
+	//	Otherwise walking to the far-left door causes the actor
+	//	to shrink to a one-pixel dot. (!?!?)
+	if (_vm->_gameId == GID_DIG && _vm->_currentRoom == 88) {
+		scale = 0xFF;
+	}
+
+
 	// FIXME - Quick fix to ft's fuel tower bug (by yazoo)
 	//
 	// Ben's Y position can be anything between 272 and 398 inclusive
