@@ -300,8 +300,8 @@ void EditGameDialog::close() {
 			ConfMan.set("extrapath", extraPath, _domain);
 
 		String savePath = _savePathWidget->getLabel();
-		if (!extraPath.isEmpty() && (extraPath != "Default"))
-			ConfMan.set("savepath", extraPath, _domain);
+		if (!savePath.isEmpty() && (savePath != "Default"))
+			ConfMan.set("savepath", savePath, _domain);
 
 		Common::Platform platform = (Common::Platform)_platformPopUp->getSelectedTag();
 		if (platform < 0)
