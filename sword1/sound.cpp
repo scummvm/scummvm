@@ -186,6 +186,12 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 		headerPos++;
 	if (headerPos < 100) {
 		uint32 resSize = READ_LE_UINT32(fBuf + headerPos + 4) >> 1;
+		// Demo uses slightly different headers
+		if (resSize > cSize) {
+			resSize = READ_LE_UINT32(fBuf + headerPos + 6) >> 1;
+			headerPos += 2;
+		}
+
 		int16 *srcData = (int16*)(fBuf + headerPos + 8);
 		int16 *dstData = (int16*)malloc(resSize * 2);
 		uint32 srcPos = 0;
@@ -254,9 +260,10 @@ void Sound::initCowSystem(void) {
 	*/
 	sprintf(cowName, "SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);
 	_cowFile.open(cowName);
-	if (!_cowFile.isOpen()) {
+	if (!_cowFile.isOpen())
 		_cowFile.open("speech.clu");
-	}
+	if (!_cowFile.isOpen())
+		_cowFile.open("cows.mad"); 
 	if (_cowFile.isOpen()) {
 		_cowHeaderSize = _cowFile.readUint32LE();
 		_cowHeader = (uint32*)malloc(_cowHeaderSize);

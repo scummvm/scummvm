@@ -1066,10 +1066,6 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 			_systemVars.playSpeech = true;
 			return ;
 		} else {
-			const char msg[] = "SPEECH2.CLU not found.\nPlease copy the SPEECH.CLU from CD2 and rename it to SPEECH2.CLU";
-                        GUI::MessageDialog dialog(msg);
-			dialog.runModal();
-			error(msg);
 		}
 	} else { // speech1.clu & speech2.clu not present. are we running from cd?
 		if (test.open("cd1.id")) {
