@@ -1,7 +1,9 @@
 # Common build rules, used by the sub modules and their module.mk files
 
+# Copy the list of objects to a new variable. The name of the new variable
+# contains the module name, a trick we use so we can keep multiple different
+# module object lists, one for each module.
 MODULE_OBJS-$(MODULE) := $(MODULE_OBJS)
-MODULE_LIB-$(MODULE) := $(MODULE)/lib$(notdir $(MODULE)).a
 
 ifdef PLUGIN
 # Plugin build rule
@@ -14,10 +16,25 @@ $(PLUGIN-$(MODULE)): $(MODULE_OBJS) $(EXECUTABLE)
 PLUGIN:=
 plugins: $(PLUGIN-$(MODULE))
 
+# Pseudo target for comfort, allows for "make common", "make gui" etc.
+$(MODULE): $(PLUGIN-$(MODULE))
+
 else
+
+MODULE_LIB-$(MODULE) := $(MODULE)/lib$(notdir $(MODULE)).a
 
 # If not building as a plugin, add the object files to the main OBJS list
 OBJS += $(MODULE_LIB-$(MODULE))
+
+# Convenience library target
+$(MODULE_LIB-$(MODULE)): $(MODULE_OBJS)
+	-$(RM) $@
+	$(AR) $@ $+
+	$(RANLIB) $@ 
+
+# Pseudo target for comfort, allows for "make common", "make gui" etc.
+$(MODULE): $(MODULE_LIB-$(MODULE))
+
 endif
 
 
@@ -27,15 +44,5 @@ endif
 clean: clean-$(MODULE)
 clean-$(MODULE): clean-% :
 	-$(RM) $(MODULE_OBJS-$*) $(MODULE_LIB-$*) $(PLUGIN-$*)
-
-# Convenience library target
-$(MODULE_LIB-$(MODULE)): $(MODULE_OBJS)
-	-$(RM) $@
-	$(AR) $@ $+
-	$(RANLIB) $@ 
-
-
-# Pseudo target for comfort, allows for "make common", "make gui" etc.
-$(MODULE): $(MODULE_LIB-$(MODULE))
 
 .PHONY: clean-$(MODULE) $(MODULE)
