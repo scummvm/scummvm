@@ -931,8 +931,11 @@ void Talk::speakSegment(
 	// debug(0, "Sentence segment '%*s' is said by person '%s' and voice file '%s' is played",
 	//		length, segment, person->name, voiceFileName);
 
-	_vm->sound()->playSfx(voiceFileName);
-	//debug(0, "Playing voice file '%s'", voiceFileName);
+	// FIXME - it seems the french talkie version has a useless voice file ; 
+	// the c30e_102 file is very similar to c30e_101, so there is no need to 
+	// play it. This voice was used in room 30 (N8) when talking to Klunk.
+	if (!(_vm->resource()->getLanguage() == FRENCH && !strcmp(voiceFileName, "c30e_102")))
+		_vm->sound()->playSfx(voiceFileName);
 
 	int faceDirectionCommand = 0;
 
