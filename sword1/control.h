@@ -83,8 +83,8 @@ private:
 	uint8 _saveFiles;
 	uint8 _saveScrollPos;
 	uint8 _selectedSavegame;
-	char _saveNames[64][32];
-	char _oldName[32];
+	uint8 _saveNames[64][32];
+	uint8 _oldName[32];
 
 	uint8 getClicks(uint8 mode, uint8 *retVal);
 	uint8 handleButtonClick(uint8 id, uint8 mode, uint8 *retVal);
@@ -101,16 +101,16 @@ private:
 	void handleSaveKey(uint8 key);
 
 	void renderVolumeBar(uint8 id);
-	uint16 getTextWidth(const char *str);
-	void renderText(const char *str, uint16 x, uint16 y, uint8 mode);
+	uint16 getTextWidth(const uint8 *str);
+	void renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode);
 	uint8 _numButtons;
 	uint8 _selectedButton;
 	void createButtons(const ButtonInfo *buttons, uint8 num);
 	void destroyButtons(void);
 	ControlButton *_buttons[MAX_BUTTONS];
 	static const ButtonInfo _deathButtons[3], _panelButtons[8], _saveButtons[16], _volumeButtons[1];
-	static const char _languageStrings[8 * 20][43];
-	const char (*_lStrings)[43];
+	static const uint8 _languageStrings[8 * 20][43];
+	const uint8 (*_lStrings)[43];
 	ObjectMan *_objMan;
 	ResMan *_resMan;
 	OSystem *_system;

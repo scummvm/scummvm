@@ -172,9 +172,10 @@ void SwordControl::askForCd(void) {
 	free(palOut);
 
 	File test;
-	char fName[10], textA[50];
+	char fName[10];
+	uint8 textA[50];
 	sprintf(fName, "cd%d.id", SwordEngine::_systemVars.currentCD);
-	sprintf(textA, "%s%d", _lStrings[STR_INSERT_CD_A], SwordEngine::_systemVars.currentCD);
+	sprintf((char*)textA, "%s%d", _lStrings[STR_INSERT_CD_A], SwordEngine::_systemVars.currentCD);
 	bool notAccepted = true;
 	bool refreshText = true;
 	do {
@@ -416,7 +417,7 @@ void SwordControl::setupVolumePanel(void) {
 	renderText(_lStrings[STR_SPEECH], 320, 39 + 40, TEXT_CENTER);
 	renderText(_lStrings[STR_FX], 438, 39 + 40, TEXT_LEFT_ALIGN);
 
-	renderText("NOT YET IMPLEMENTED", 320, 240, TEXT_CENTER);
+	renderText((uint8*)"NOT YET IMPLEMENTED", 320, 240, TEXT_CENTER);
 
 	createButtons(_volumeButtons, 1);
 	renderText(_lStrings[STR_DONE], _volumeButtons[0].x - 10, _volumeButtons[0].y, TEXT_RIGHT_ALIGN);
@@ -436,7 +437,7 @@ bool SwordControl::keyAccepted(uint8 key) {
 
 void SwordControl::handleSaveKey(uint8 key) {
 	if (_selectedSavegame < 255) {
-		uint8 len = strlen(_saveNames[_selectedSavegame]);
+		uint8 len = strlen((char*)_saveNames[_selectedSavegame]);
 		if ((key == 8) && len)  // backspace
 			_saveNames[_selectedSavegame][len - 1] = '\0';
 		else if (keyAccepted(key) && (len < 31)) {
@@ -448,7 +449,7 @@ void SwordControl::handleSaveKey(uint8 key) {
 }
 
 bool SwordControl::saveToFile(void) {
-	if ((_selectedSavegame == 255) || !strlen(_saveNames[_selectedSavegame]))
+	if ((_selectedSavegame == 255) || !strlen((char*)_saveNames[_selectedSavegame]))
 		return false; // no saveslot selected or no name entered
 	saveGameToFile(_selectedSavegame);
 	writeSavegameDescriptions();
@@ -499,10 +500,10 @@ void SwordControl::writeSavegameDescriptions(void) {
 	outf = mgr->open_savefile("SAVEGAME.INF", _savePath, SAVEFILE_WRITE);
 	// if the player accidently clicked the last slot and then deselected it again,
 	// we'd still have _saveFiles == 64, so get rid of the empty end.
-	while (strlen(_saveNames[_saveFiles - 1]) == 0)
+	while (strlen((char*)_saveNames[_saveFiles - 1]) == 0)
 		_saveFiles--;
 	for (uint8 cnt = 0; cnt < _saveFiles; cnt++) {
-		outf->write(_saveNames[cnt], strlen(_saveNames[cnt]));
+		outf->write(_saveNames[cnt], strlen((char*)_saveNames[cnt]));
 		if (cnt < _saveFiles - 1)
 			outf->writeByte(10);
 		else
@@ -542,10 +543,10 @@ void SwordControl::saveNameSelect(uint8 id, bool saving) {
 	_buttons[id - BUTTON_SAVE_SELECT1]->setSelected(1);
 	uint8 num = (id - BUTTON_SAVE_SELECT1) + _saveScrollPos;
 	if (saving && (_selectedSavegame != 255)) // the player may have entered something, clear it again
-		strcpy(_saveNames[_selectedSavegame], _oldName);
+		strcpy((char*)_saveNames[_selectedSavegame], (char*)_oldName);
 	if (num < _saveFiles) {
 		_selectedSavegame = num;
-		strcpy(_oldName, _saveNames[num]); // save for later
+		strcpy((char*)_oldName, (char*)_saveNames[num]); // save for later
 	} else {
 		if (!saving)
 			_buttons[id - BUTTON_SAVE_SELECT1]->setSelected(0); // no save in slot, deselect it
@@ -601,7 +602,7 @@ void SwordControl::destroyButtons(void) {
 	_numButtons = 0;
 }
 
-uint16 SwordControl::getTextWidth(const char *str) {
+uint16 SwordControl::getTextWidth(const uint8 *str) {
 	uint16 width = 0;
 	while (*str) {
 		width += FROM_LE_16(_resMan->fetchFrame(_font, *str - 32)->width) - 3;
@@ -610,7 +611,7 @@ uint16 SwordControl::getTextWidth(const char *str) {
 	return width;
 }
 
-void SwordControl::renderText(const char *str, uint16 x, uint16 y, uint8 mode) {
+void SwordControl::renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode) {
 	uint8 *font = _font;
 	if (mode & TEXT_RED_FONT)
 		font = _redFont;
@@ -625,7 +626,7 @@ void SwordControl::renderText(const char *str, uint16 x, uint16 y, uint8 mode) {
 	while (*str) {
 		uint8 *dst = _screenBuf + y * SCREEN_WIDTH + destX;
 
-		FrameHeader *chSpr = _resMan->fetchFrame(font, ((uint8)*str) - 32);
+		FrameHeader *chSpr = _resMan->fetchFrame(font, *str - 32);
 		uint8 *sprData = (uint8*)chSpr + sizeof(FrameHeader);
 		for (uint16 cnty = 0; cnty < FROM_LE_16(chSpr->height); cnty++) {
 			for (uint16 cntx = 0; cntx < FROM_LE_16(chSpr->width); cntx++) {
@@ -823,7 +824,7 @@ const ButtonInfo SwordControl::_volumeButtons[1] = {
 	{ 478, 338 + 40, SR_BUTTON, BUTTON_MAIN_PANEL } 
 };
 
-const char SwordControl::_languageStrings[8 * 20][43] = {
+const uint8 SwordControl::_languageStrings[8 * 20][43] = {
 	// BS1_ENGLISH:
 	"PAUSED",
 	"PLEASE INSERT CD-",
