@@ -155,11 +155,11 @@ void MidiDriver_QT::send(uint32 b) {
 			break;
 
 		case 0x07:									// Volume
-			NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerVolume, midiCmd[2] * 300);
+			NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerVolume, midiCmd[2] << 8);
 			break;
 
 		case 0x0A:									// Pan
-			NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerPan, (midiCmd[2] << 1) + 0xFF);
+			NASetController(qtNoteAllocator, qtNoteChannel[chanID], kControllerPan, (midiCmd[2] << 1) + 256);
 			break;
 
 		case 0x40:									// Sustain on/off
@@ -200,7 +200,8 @@ void MidiDriver_QT::send(uint32 b) {
 		break;
 
 	case 0xC0:										// Program change
-		NASetInstrumentNumber(qtNoteAllocator, qtNoteChannel[chanID], midiCmd[1] + 1);
+		// FIXME: For chanID 9 (drum channel), shouldn't we use kFirstDrumkit instead of kFirstGMInstrument ?
+		NASetInstrumentNumber(qtNoteAllocator, qtNoteChannel[chanID], midiCmd[1] + kFirstGMInstrument);
 		break;
 
 	case 0xE0:{									// Pitch bend
