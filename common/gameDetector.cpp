@@ -595,8 +595,7 @@ void GameDetector::setGame(const String &name) {
 	g_config->delete_domain("_COMMAND_LINE");
 	g_config->delete_domain("_USER_OVERRIDES");
 	g_config->set_domain(name);
-	if (_debugMode)
-		debug(1, "Debuglevel (from config): %d", _debugLevel);
+	debug(1, "Debuglevel (from config): %d", _debugLevel);
 }
 
 int GameDetector::parseGraphicsMode(const char *s) {
@@ -699,7 +698,7 @@ bool GameDetector::detectGame() {
 		}
 	} while ((++gnl)->filename);
 
-	debug(1, "Failed game detection");
+	printf("Failed game detection\n");
 
 	return false;
 }
