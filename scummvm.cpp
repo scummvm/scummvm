@@ -337,7 +337,7 @@ int Scumm::scummLoop(int delta)
 
 		if (!(_vars[VAR_CURRENT_LIGHTS] & LIGHTMODE_screen) &&
 		      _vars[VAR_CURRENT_LIGHTS] & LIGHTMODE_flashlight) {
-			error("Flashlight not implemented in this version");
+			warning("Flashlight not implemented in this version");
 		}
 
 		processActors();
