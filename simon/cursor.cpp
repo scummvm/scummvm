@@ -229,3 +229,16 @@ void SimonEngine::draw_mouse_pointer() {
 }
 
 } // End of namespace Simon
+
+#ifdef __PALM_OS__
+#include "scumm_globals.h"
+
+_GINIT(Simon_Cursor)
+_GSETPTR(Simon::_simon1_cursor, GBVARS_SIMON1CURSOR_INDEX, byte, GBVARS_SIMON)
+_GEND
+
+_GRELEASE(Simon_Cursor)
+_GRELEASEPTR(GBVARS_SIMON1CURSOR_INDEX, GBVARS_SIMON)
+_GEND
+
+#endif
