@@ -42,6 +42,11 @@ int ActionMap::reg(void) {
 
 ActionMap::ActionMap(void) {
 	debug(0, "ACTIONMAP Module: Initializing...");
+
+	_exits_loaded = 0;
+	_exits_tbl = NULL;
+	_n_exits = 0;
+
 	_initialized = true;
 }
 
@@ -120,16 +125,17 @@ int ActionMap::freeMap(void) {
 		return R_SUCCESS;
 	}
 
-	for (i = 0; i < _n_exits; i++) {
-		exmap_entry = &_exits_tbl[i];
+	if (_exits_tbl) {
+		for (i = 0; i < _n_exits; i++) {
+			exmap_entry = &_exits_tbl[i];
 
-		if (_exits_tbl[i])
-			if (exmap_entry->pt_tbl)
-				free(exmap_entry->pt_tbl);
-	}
+			if (exmap_entry != NULL)
+				if (exmap_entry->pt_tbl)
+					free(exmap_entry->pt_tbl);
+		}
 
-	if (_exits_tbl)
 		free(_exits_tbl);
+	}
 
 	_exits_loaded = 0;
 	_exits_tbl = NULL;
