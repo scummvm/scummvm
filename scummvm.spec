@@ -8,7 +8,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm
-Version		: 0.2.0
+Version		: 0.3.0
 Release		: @RELEASE@
 Summary		: SCUMM graphic adventure game interpreter
 Group		: Interpreters
@@ -56,6 +56,22 @@ rm -Rf %{buildroot}
 #   Change Log
 #------------------------------------------------------------------------------
 %changelog
+* 0.3.0 (2002-12-01)
+  - massive cleanup work for iMUSE. Sam and Max music now plays correctly
+  - many bugfixes for Zak256, + sound and music support
+  - music support for Simon the Sorcerer on any platform with real MIDI
+  - experimental support for Indy3 (VGA) - Indiana Jones + Last Crusade
+  - completed support for Monkey1 VGA Floppy, The Dig
+  - added akos16 implementation for The Dig and Full Throttle costumes
+  - added digital iMUSE implementation for The Dig and Full Throttle music.
+  - Loom CD speech+music syncronisation improved greatly
+  - added midi-emulation via adlib, for platforms without sequencer support
+  - code seperation of various engine parts into several libraries
+  - several fixes to prevent Simon the Sorcerer crashing and hanging
+  - hundreds of bugfixes for many other games
+  - new SMUSH video engine, for Full Throttle and The Dig
+  - new in-game GUI
+  - launcher dialog
 * 0.2.0 (2002-04-14)
   - core engine rewrite
   - enhanced ingame GUI, including options/volume settings.
