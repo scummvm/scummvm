@@ -126,8 +126,7 @@ EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain
 
 void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 {
-	switch (cmd) {
-	case kOKCmd: {
+	if (cmd == kOKCmd) {
 		// Write back changes made to config object
 		String newDomain(_domainWidget->getLabel());
 		if (newDomain != _domain) {
@@ -141,9 +140,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		_config.set("description", _descriptionWidget->getLabel(), newDomain);
 		setResult(1);
 		close();
-		}
-		break;
-	default:
+	} else {
 		Dialog::handleCommand(sender, cmd, data);
 	}
 }
