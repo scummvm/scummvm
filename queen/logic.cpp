@@ -1240,7 +1240,7 @@ uint16 Logic::findScale(uint16 x, uint16 y) {
 void Logic::personSetData(int16 noun, const char *actorName, bool loadBank, Person *pp) {
 	
 	if (noun <= 0) {
-		warning("Logic::personSetData() - Negative object number");
+		warning("Logic::personSetData() - Invalid object number: %i", noun);
 	}
 
 	uint16 i;

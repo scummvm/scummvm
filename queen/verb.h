@@ -23,6 +23,7 @@
 #ifndef QUEENVERB_H
 #define QUEENVERB_H
 
+namespace Queen {
 
 enum VerbEnum {
 	VERB_NONE = 0,
@@ -167,5 +168,6 @@ private:
 	static char* _verbName[13];
 };
 
+} // End of namespace Queen
 
 #endif

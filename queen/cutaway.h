@@ -185,6 +185,9 @@ class Cutaway {
 		//! Name of .dog file
 		char _talkFile[MAX_FILENAME_SIZE];
 
+		//! Person to talk to
+		int16 _talkTo;
+
 		//! Used by changeRooms
 		ObjectDataBackup _personData[MAX_PERSON_COUNT];
 

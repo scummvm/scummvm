@@ -202,9 +202,9 @@ void Cutaway::loadStrings(byte *ptr) {
 	ptr = Talk::getString(ptr, _talkFile, MAX_FILENAME_LENGTH);
 	debug(0, "Talk file = '%s'", _talkFile);
 
-	int TALKTO = READ_BE_UINT16(ptr);
+	_talkTo = (int16)READ_BE_UINT16(ptr);
 	ptr += 2;
-	debug(0, "TALKTO = %i", TALKTO);
+	debug(0, "_talkTo = %i", _talkTo);
 }
 
 byte *Cutaway::getCutawayObject(byte *ptr, CutawayObject &object)
@@ -999,7 +999,7 @@ void Cutaway::handlePersonRecord(
 	}
 	else {
 		_logic->personSetData(
-				object.objectNumber - _logic->roomData(object.room), 
+				object.objectNumber - _logic->roomData(_logic->currentRoom()), 
 				"", true, &p);
 
 		if (object.bobStartX || object.bobStartY) {
@@ -1060,7 +1060,7 @@ void Cutaway::run(char *nextFilename) {
 	int i;
 	nextFilename[0] = '\0';
 
-	byte *ptr = _objectData;
+	_currentImage = _logic->numFrames();
 
 	int initialJoeX = _logic->joeX();
 	int initialJoeY = _logic->joeY();
@@ -1071,6 +1071,8 @@ void Cutaway::run(char *nextFilename) {
 
 	// XXX if (_comPanel == 0 || _comPanel == 2)
 	// XXX	SCENE_START(0);
+
+	byte *ptr = _objectData;
 
 	for (i = 0; i < _cutawayObjectCount; i++) {
 		CutawayObject object;
@@ -1464,7 +1466,16 @@ void Cutaway::talk(char *nextFilename) {
 	if (0 == scumm_stricmp(right(_talkFile, 4), ".dog")) {
 		nextFilename[0] = '\0';
 
-		Talk::talk(_talkFile, 0 /* XXX */, nextFilename, _graphics, _input, _logic, _resource, _sound);
+		int personInRoom;
+
+		if (_talkTo > 0)
+			personInRoom = _talkTo - _logic->roomData(_logic->currentRoom());
+		else {
+			warning("_talkTo is 0!");
+			personInRoom = 0; 			// XXX is this correct?
+		}
+
+		Talk::talk(_talkFile, personInRoom, nextFilename, _graphics, _input, _logic, _resource, _sound);
 	}
 }
 

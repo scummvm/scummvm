@@ -22,10 +22,9 @@
 #ifndef QUEENSTRUCTS_H
 #define QUEENSTRUCTS_H
 
-namespace Queen {
-
 #include "queen/verb.h"
 
+namespace Queen {
 
 struct Box {
 	int16 x1, y1, x2, y2;

@@ -344,6 +344,10 @@ int16 Walk::joeMove(int direction, int16 endx, int16 endy, bool inCutaway) {
 
 int16 Walk::personMove(const Person *pp, int16 endx, int16 endy, uint16 curImage, int direction) {
 
+	if (curImage > MAX_FRAMES_NUMBER) {
+		error("[Walk::personMove] curImage is invalid: %i", curImage);
+	}
+
 	if (endx == 0 && endy == 0) {
 		warning("Walk::personMove() - endx == 0 && endy == 0");
 		return 0;
