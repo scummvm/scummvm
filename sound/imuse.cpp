@@ -560,7 +560,7 @@ public:
 #ifdef _WIN32_WCE
 		return 0x1F0000 * 2;	// Sampled down to 11 kHz
 #else //_WIN32_WCE
-		return 0x1924E0;
+		return 0x1F0000;			// Was: 0x1924E0;
 #endif //_WIN32_WCE
 	}
 
@@ -618,7 +618,7 @@ public:
 
 	static int midi_driver_thread(void *param);
 
-	uint32 get_base_tempo() { return 0x400000; }
+	uint32 get_base_tempo() { return 0x460000; }
 	byte get_hardware_type() { return 5; }
 };
 
@@ -1348,7 +1348,7 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 			return stop_all_sounds();
 		case 13:
 			return get_sound_status(b);
-		case 14:
+		case 14:		
 			return stop_sound(b); //FIXME  should be something like fade off
 		case 16:
 			return set_volchan(b, c);

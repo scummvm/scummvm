@@ -219,9 +219,21 @@ void MidiDriver_WIN::close() {
 }
 
 void MidiDriver_WIN::send(uint32 b) {
+    union { 
+        DWORD dwData; 
+        BYTE bData[4]; 
+    } u; 
+
 	if (_mode != MO_SIMPLE)
 		error("MidiDriver_WIN:send called but driver is not in simple mode");
-	check_error(midiOutShortMsg(_mo, b));
+	
+	u.bData[3] = (byte)((b & 0xFF000000) >> 24);
+	u.bData[2] = (byte)((b & 0x00FF0000) >> 16);
+	u.bData[1] = (byte)((b & 0x0000FF00) >> 8);
+	u.bData[0] = (byte)(b & 0x000000FF);
+
+	//printMidi(u.bData[0], u.bData[1], u.bData[2], u.bData[3]);
+	check_error(midiOutShortMsg(_mo, u.dwData));
 }
 
 void MidiDriver_WIN::pause(bool pause) {
