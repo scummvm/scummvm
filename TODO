@@ -19,10 +19,6 @@ General
 * Remove various parts from GameSettings struct: "id", "version", "detectname".
   Those are only needed internally by the plugins, and hence shouldn't be
   exported. On the long run, "midi" and "features" might be removed, too.
-* Make the debug class (i.e. the one that handles tab completion, command
-  registration, etc.) more easily available to the various game engines. At
-  the moment, the BS2 engine contains a stripped down copy of the SCUMM
-  debugger, which is a pretty lousy form of code reuse.
 
 GUI
 ===
