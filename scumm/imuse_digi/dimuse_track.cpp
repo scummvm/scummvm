@@ -206,6 +206,43 @@ void IMuseDigital::setVolume(int soundId, int volume) {
 	}
 }
 
+void IMuseDigital::setHookId(int soundId, int hookId) {
+	Common::StackLock lock(_mutex, "IMuseDigital::setHookId()");
+
+	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		Track *track = _track[l];
+		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
+			track->curHookId = hookId;
+		}
+	}
+}
+
+int IMuseDigital::getCurMusicSoundId() {
+	int soundId = -1;
+
+	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		Track *track = _track[l];
+		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
+			soundId = track->soundId;
+		}
+	}
+
+	return soundId;
+}
+
+char *IMuseDigital::getCurMusicSoundName() {
+	char *soundName = NULL;
+
+	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		Track *track = _track[l];
+		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
+			soundName = track->soundName;
+		}
+	}
+
+	return soundName;
+}
+
 void IMuseDigital::setPan(int soundId, int pan) {
 	debug(5, "IMuseDigital::setPan(%d, %d)", soundId, pan);
 
