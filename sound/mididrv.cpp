@@ -602,7 +602,7 @@ void MidiDriver_QT::send(uint32 b) {
 		break;
 
 	case 0xC0:										// Program change
-		NASetInstrumentNumber(qtNoteAllocator, qtNoteChannel[chanID], midiCmd[1]);
+		NASetInstrumentNumber(qtNoteAllocator, qtNoteChannel[chanID], midiCmd[1] + 1);
 		break;
 
 	case 0xE0:{									// Pitch bend
