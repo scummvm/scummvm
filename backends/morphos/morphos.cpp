@@ -131,7 +131,7 @@ OSystem_MorphOS::OSystem_MorphOS(int game_id, SCALERTYPE gfx_mode, bool full_scr
 	OvlBitMap = NULL;
 	OvlSavedBuffer = NULL;
 
-	TimerBase = TimerIORequest->tr_node.io_Device;
+	TimerBase = (Library*) TimerIORequest->tr_node.io_Device;
 	ScummNoCursor = (UWORD *) AllocVec(16, MEMF_CLEAR);
 	UpdateRegion = NewRegion();
 	NewUpdateRegion = NewRegion();

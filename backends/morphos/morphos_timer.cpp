@@ -106,7 +106,7 @@ bool Timer::SendMsg(ULONG msg_id, TimerProc procedure, LONG interval)
 	tmsg->tsm_MsgID = msg_id;
 	tmsg->tsm_Callback = procedure;
 	tmsg->tsm_Interval = interval;
-	PutMsg(&TimerServiceThread->pr_MsgPort, tmsg);
+	PutMsg(&TimerServiceThread->pr_MsgPort, (Message*) tmsg);
 	WaitPort(reply_port);
 	GetMsg(reply_port);
 	
@@ -167,7 +167,7 @@ void Timer::TimerService(Timer *this_ptr, Engine *engine)
 									req->tr_node.io_Command  = TR_ADDREQUEST;
 									req->tr_time.tv_secs  = interval/1000;
 									req->tr_time.tv_micro = (interval%1000)*1000;
-									SendIO(req);
+									SendIO((IORequest*) req);
 
 									timers++;
 								}
@@ -224,7 +224,7 @@ void Timer::TimerService(Timer *this_ptr, Engine *engine)
 					req->tr_node.io_Command  = TR_ADDREQUEST;
 					req->tr_time.tv_secs  = interval/1000;
 					req->tr_time.tv_micro = (interval%1000)*1000;
-					SendIO(req);
+					SendIO((IORequest*) req);
 				}
 			}
 		}

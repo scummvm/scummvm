@@ -42,6 +42,7 @@
 #include "morphos_sound.h"
 
 extern "C" WBStartup *_WBenchMsg;
+struct Library* CyberGfxBase;
 
 // For command line parsing
 static STRPTR usageTemplate = "STORY/A,DATAPATH/K,WINDOW/S,SCALER/K,AMIGA/S,MIDIUNIT/K/N,MUSIC/K,MUSICVOL/K/N,SFXVOL/K/N,TEMPO/K/N,TALKSPEED/K/N,NOSUBTITLES=NST/S";
@@ -63,7 +64,7 @@ static SCALERTYPE ScummGfxScaler = ST_INVALID;
 static BPTR OrigDirLock = 0;
 
 Library *CDDABase = NULL;
-Device *TimerBase = NULL;
+Library *TimerBase = NULL;
 
 OSystem_MorphOS *TheSystem = NULL;
 
@@ -137,7 +138,7 @@ static void ReadToolTypes(WBArg *OfFile)
 	char IconPath[256];
 
 	NameFromLock(OfFile->wa_Lock, IconPath, 256);
-	AddPart(IconPath, OfFile->wa_Name, 256);
+	AddPart(IconPath, (STRPTR) OfFile->wa_Name, 256);
 
 	dobj = GetDiskObject(IconPath);
 	if (dobj == NULL)
@@ -250,6 +251,7 @@ int main()
 	char *argv[20];
 	char musicvol[6], sfxvol[6], talkspeed[12], tempo[12], scaler[14];
 	int argc = 0;
+	CyberGfxBase = OpenLibrary("cybergraphics.library",50);
 
 	InitSemaphore(&ScummSoundThreadRunning);
 	InitSemaphore(&ScummMusicThreadRunning);
