@@ -46,12 +46,6 @@ typedef	struct {
 	uint8 mask_flag;		// Using shading mask
 } screen_info;
 
-extern screen_info this_screen;
-
-// called from control panel (as well as inside fnInitBackground)
-
-void SetUpBackgroundLayers(void);
-
 } // End of namespace Sword2
 
 #endif

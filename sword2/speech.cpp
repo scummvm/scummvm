@@ -41,24 +41,25 @@
 
 namespace Sword2 {
 
-#define	INS_talk		1
-#define	INS_anim		2
-#define	INS_reverse_anim	3
-#define	INS_walk		4
-#define	INS_turn		5
-#define	INS_face		6
-#define	INS_trace		7
-#define	INS_no_sprite		8
-#define	INS_sort		9
-#define	INS_foreground		10
-#define	INS_background		11
-#define	INS_table_anim		12
-#define	INS_reverse_table_anim	13
-#define	INS_walk_to_anim	14
-#define	INS_set_frame		15
-#define	INS_stand_after_anim	16
-
-#define	INS_quit		42
+enum {
+	INS_talk		= 1,
+	INS_anim		= 2,
+	INS_reverse_anim	= 3,
+	INS_walk		= 4,
+	INS_turn		= 5,
+	INS_face		= 6,
+	INS_trace		= 7,
+	INS_no_sprite		= 8,
+	INS_sort		= 9,
+	INS_foreground		= 10,
+	INS_background		= 11,
+	INS_table_anim		= 12,
+	INS_reverse_table_anim	= 13,
+	INS_walk_to_anim	= 14,
+	INS_set_frame		= 15,
+	INS_stand_after_anim	= 16,
+	INS_quit		= 42
+};
 
 // when not playing a wav we calculate the speech time based upon length of
 // ascii
@@ -1451,8 +1452,8 @@ void LocateTalker(int32	*params) {
 			
 		// adjust the text coords for RDSPR_DISPLAYALIGN
 
-		text_x -= this_screen.scroll_offset_x;
-		text_y -= this_screen.scroll_offset_y;
+		text_x -= g_sword2->_thisScreen.scroll_offset_x;
+		text_y -= g_sword2->_thisScreen.scroll_offset_y;
 
 		// release the anim resource
 		res_man.close(anim_id);

@@ -76,7 +76,7 @@ void Debugger::buildDebugText(void) {
 /*
 	// print mouse coords beside mouse-marker, if it's being displayed
 	if (displayMouseMarker) {
-		sprintf(buf, "%d,%d", mousex + this_screen.scroll_offset_x, mousey + this_screen.scroll_offset_y);
+		sprintf(buf, "%d,%d", mousex + _thisScreen.scroll_offset_x, mousey + _thisScreen.scroll_offset_y);
 		if (mousex>560)
 			makeDebugTextBlock(buf, mousex - 50, mousey - 15);
 		else
@@ -187,14 +187,14 @@ void Debugger::buildDebugText(void) {
 
 		if (mouse_touching)
 			sprintf(buf, "mouse %d,%d (id %d: %s)",
-				g_display->_mouseX + this_screen.scroll_offset_x,
-				g_display->_mouseY + this_screen.scroll_offset_y,
+				g_display->_mouseX + g_sword2->_thisScreen.scroll_offset_x,
+				g_display->_mouseY + g_sword2->_thisScreen.scroll_offset_y,
 				mouse_touching,
 				FetchObjectName(mouse_touching));
 		else
 			sprintf(buf, "mouse %d,%d (not touching)",
-				g_display->_mouseX + this_screen.scroll_offset_x,
-				g_display->_mouseY + this_screen.scroll_offset_y);
+				g_display->_mouseX + g_sword2->_thisScreen.scroll_offset_x,
+				g_display->_mouseY + g_sword2->_thisScreen.scroll_offset_y);
 
 		makeDebugTextBlock(buf, 0, 30);
 
@@ -203,16 +203,16 @@ void Debugger::buildDebugText(void) {
 
 		if (_playerGraphic.anim_resource)
 			sprintf(buf, "player %d,%d %s (%d) #%d/%d",
-				this_screen.player_feet_x,
-				this_screen.player_feet_y,
+				g_sword2->_thisScreen.player_feet_x,
+				g_sword2->_thisScreen.player_feet_y,
 				FetchObjectName(_playerGraphic.anim_resource),
 				_playerGraphic.anim_resource,
 				_playerGraphic.anim_pc,
 				_playerGraphicNoFrames);
 		else
 			sprintf(buf, "player %d,%d --- %d",
-				this_screen.player_feet_x,
-				this_screen.player_feet_y,
+				g_sword2->_thisScreen.player_feet_x,
+				g_sword2->_thisScreen.player_feet_y,
 				_playerGraphic.anim_pc);
 
 		makeDebugTextBlock(buf, 0, 45);
@@ -315,12 +315,12 @@ void Debugger::drawDebugGraphics(void) {
 	// player feet coord marker
 
 	if (_displayPlayerMarker)
-		plotCrossHair(this_screen.player_feet_x, this_screen.player_feet_y, 215);
+		plotCrossHair(g_sword2->_thisScreen.player_feet_x, g_sword2->_thisScreen.player_feet_y, 215);
 
 	// mouse marker & coords
 
 	if (_displayMouseMarker)
-		plotCrossHair(g_display->_mouseX + this_screen.scroll_offset_x, g_display->_mouseY + this_screen.scroll_offset_y, 215);
+		plotCrossHair(g_display->_mouseX + g_sword2->_thisScreen.scroll_offset_x, g_display->_mouseY + g_sword2->_thisScreen.scroll_offset_y, 215);
 
    	// mouse area rectangle / sprite box rectangle when testing anims
 
@@ -355,10 +355,10 @@ void Debugger::drawRect(int16 x1, int16 y1, int16 x2, int16 y2, uint8 pen) {
 void Debugger::printCurrentInfo(void) {
 	// prints general stuff about the screen, etc.
 
-	if (this_screen.background_layer_id) {
-		Debug_Printf("background layer id %d\n", this_screen.background_layer_id);
-		Debug_Printf("%d wide, %d high\n", this_screen.screen_wide, this_screen.screen_deep);
-		Debug_Printf("%d normal layers\n", this_screen.number_of_layers);
+	if (g_sword2->_thisScreen.background_layer_id) {
+		Debug_Printf("background layer id %d\n", g_sword2->_thisScreen.background_layer_id);
+		Debug_Printf("%d wide, %d high\n", g_sword2->_thisScreen.screen_wide, g_sword2->_thisScreen.screen_deep);
+		Debug_Printf("%d normal layers\n", g_sword2->_thisScreen.number_of_layers);
 
 		g_logic.examineRunList();
 	} else

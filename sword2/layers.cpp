@@ -38,11 +38,6 @@
 
 namespace Sword2 {
 
-// this_screen describes the current back buffer and its in-game scroll
-// positions, etc.
-
-screen_info this_screen;
-
 int32 Logic::fnInitBackground(int32 *params) {
 	// this screen defines the size of the back buffer
 
@@ -77,7 +72,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	g_display->waitForFade();
 
 	// if last screen was using a shading mask (see below)
-	if (this_screen.mask_flag) {
+	if (_thisScreen.mask_flag) {
 		rv = g_display->closeLightMask();
 		if (rv)
 			error("Driver Error %.8x", rv);
@@ -86,25 +81,25 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	// New stuff for faster screen drivers
 
 	// for drivers: close the previous screen if one is open
-	if (this_screen.background_layer_id)
+	if (_thisScreen.background_layer_id)
 		g_display->closeBackgroundLayer();
 
-	this_screen.background_layer_id = res;
-	this_screen.new_palette = new_palette;
+	_thisScreen.background_layer_id = res;
+	_thisScreen.new_palette = new_palette;
 
 	// ok, now read the resource and pull out all the normal sort layer
 	// info/and set them up at the beginning of the sort list - why do it
 	// each cycle
 
 	// file points to 1st byte in the layer file
-	file = res_man.open(this_screen.background_layer_id);
+	file = res_man.open(_thisScreen.background_layer_id);
 	
 	screen_head = FetchScreenHeader(file);
 
 	//set number of special sort layers
-	this_screen.number_of_layers = screen_head->noLayers;
-	this_screen.screen_wide = screen_head->width;
-	this_screen.screen_deep = screen_head->height;
+	_thisScreen.number_of_layers = screen_head->noLayers;
+	_thisScreen.screen_wide = screen_head->width;
+	_thisScreen.screen_deep = screen_head->height;
 
 	debug(5, "res test layers=%d width=%d depth=%d", screen_head->noLayers, screen_head->width, screen_head->height);
 
@@ -133,27 +128,27 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	// if layer is larger than physical screen
 	if (screen_head->width > g_display->_screenWide || screen_head->height > g_display->_screenDeep) {
 		// switch on scrolling (2 means first time on screen)
-		this_screen.scroll_flag = 2;
+		_thisScreen.scroll_flag = 2;
 
 		// note, if we've already set the player up then we could do
 		// the initial scroll set here
 
 		// reset scroll offsets
 
-		this_screen.scroll_offset_x = 0;
-		this_screen.scroll_offset_y = 0;
+		_thisScreen.scroll_offset_x = 0;
+		_thisScreen.scroll_offset_y = 0;
 
 		// calc max allowed offsets (to prevent scrolling off edge) -
 		// MOVE TO NEW_SCREEN in GTM_CORE.C !!
 		// NB. min scroll offsets are both zero
-		this_screen.max_scroll_offset_x = screen_head->width - g_display->_screenWide;
+		_thisScreen.max_scroll_offset_x = screen_head->width - g_display->_screenWide;
 		// 'screenDeep' includes the menu's, so take away 80 pixels
-		this_screen.max_scroll_offset_y = screen_head->height - (g_display->_screenDeep - (RDMENU_MENUDEEP * 2));
+		_thisScreen.max_scroll_offset_y = screen_head->height - (g_display->_screenDeep - (RDMENU_MENUDEEP * 2));
 	} else {
 		// layer fits on physical screen - scrolling not required
-		this_screen.scroll_flag = 0;		// switch off scrolling
-		this_screen.scroll_offset_x = 0;	// reset scroll offsets
-		this_screen.scroll_offset_y = 0;
+		_thisScreen.scroll_flag = 0;		// switch off scrolling
+		_thisScreen.scroll_offset_x = 0;	// reset scroll offsets
+		_thisScreen.scroll_offset_y = 0;
 	}
 
 	// no inter-cycle scroll between new screens (see setScrollTarget in
@@ -162,8 +157,8 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 
 	// these are the physical screen coords where the system
 	// will try to maintain George's actual feet coords
-	this_screen.feet_x = 320;
-	this_screen.feet_y = 340;
+	_thisScreen.feet_x = 320;
+	_thisScreen.feet_y = 340;
 
 	// shading mask
 
@@ -187,16 +182,16 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 			error("Driver Error %.8x", rv);
 
 		// so we know to close it later! (see above)
-		this_screen.mask_flag = 1;
+		_thisScreen.mask_flag = 1;
 	} else {
 		// no need to close a mask later
-		this_screen.mask_flag = 0;
+		_thisScreen.mask_flag = 0;
 	}
 
 	// close the screen file
-   	res_man.close(this_screen.background_layer_id);
+   	res_man.close(_thisScreen.background_layer_id);
 
-	SetUpBackgroundLayers();
+	setUpBackgroundLayers();
 
 	debug(5, "end init");
 	return 1;
@@ -204,7 +199,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 
 // called from fnInitBackground and also from control panel
 
-void SetUpBackgroundLayers(void) {
+void Sword2Engine::setUpBackgroundLayers(void) {
 	_multiScreenHeader *screenLayerTable;
 	_screenHeader *screen_head;
 	uint8 *file;
@@ -212,11 +207,11 @@ void SetUpBackgroundLayers(void) {
 
 	// if we actually have a screen to initialise (in case not called from
 	// control panel)
-	if (this_screen.background_layer_id) {
+	if (_thisScreen.background_layer_id) {
 		// open resource & set pointers to headers
 		// file points to 1st byte in the layer file
 
-		file = res_man.open(this_screen.background_layer_id);
+		file = res_man.open(_thisScreen.background_layer_id);
 
 		screen_head = FetchScreenHeader(file);
 
@@ -245,7 +240,7 @@ void SetUpBackgroundLayers(void) {
 		}
 
 		// close the screen file
-		res_man.close(this_screen.background_layer_id);
+		res_man.close(_thisScreen.background_layer_id);
 	}
 }
 

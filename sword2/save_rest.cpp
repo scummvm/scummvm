@@ -70,8 +70,8 @@ typedef	struct {
 	uint32 varLength;	// length of global variables resource
 	uint32 screenId;	// resource id of screen file
 	uint32 runListId;	// resource id of run list
-	uint32 feet_x;		// copy of this_screen.feet_x
-	uint32 feet_y;		// copy of this_screen.feet_y
+	uint32 feet_x;		// copy of _thisScreen.feet_x
+	uint32 feet_y;		// copy of _thisScreen.feet_y
 	uint32 music_id;	// copy of 'looping_music_id'
 	_object_hub player_hub;	// copy of player object's object_hub structure
 	Object_logic logic;	// copy of player character logic structure
@@ -180,14 +180,14 @@ void FillSaveBuffer(mem *buffer, uint32 size, uint8 *desc) {
 	g_header.varLength = res_man.fetchLen(1);
 
 	// resource id of current screen file
-	g_header.screenId = this_screen.background_layer_id;
+	g_header.screenId = g_sword2->_thisScreen.background_layer_id;
 
 	// resource id of current run-list
 	g_header.runListId = g_logic.getRunList();
 
 	// those scroll position control things
-	g_header.feet_x = this_screen.feet_x;
-	g_header.feet_y	= this_screen.feet_y;
+	g_header.feet_x = g_sword2->_thisScreen.feet_x;
+	g_header.feet_y	= g_sword2->_thisScreen.feet_y;
 
 	// id of currently looping music (or zero)
 	g_header.music_id = looping_music_id;
@@ -423,13 +423,13 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 
 	// So palette not restored immediately after control panel - we want to
 	// fade up instead!
-	this_screen.new_palette = 99;
+	g_sword2->_thisScreen.new_palette = 99;
 
 	// these need setting after the defaults get set in fnInitBackground
 	// remember that these can change through the game, so need saving &
 	// restoring too
-	this_screen.feet_x = g_header.feet_x;
-	this_screen.feet_y = g_header.feet_y;
+	g_sword2->_thisScreen.feet_x = g_header.feet_x;
+	g_sword2->_thisScreen.feet_y = g_header.feet_y;
 
 	// start the new run list
 	g_logic.expressChangeSession(g_header.runListId);
@@ -437,14 +437,14 @@ uint32 RestoreFromBuffer(mem *buffer, uint32 size) {
 	// Force in the new scroll position, so unsightly scroll-catch-up does
 	// not occur when screen first draws after returning from restore panel
 
-	// set 'this_screen's record of player position
+	// set '_thisScreen's record of player position
 	// - ready for Set_scrolling()
 
-	this_screen.player_feet_x = g_header.mega.feet_x;
-	this_screen.player_feet_y = g_header.mega.feet_y;
+	g_sword2->_thisScreen.player_feet_x = g_header.mega.feet_x;
+	g_sword2->_thisScreen.player_feet_y = g_header.mega.feet_y;
 
 	// if this screen is wide, recompute the scroll offsets now
-	if (this_screen.scroll_flag)
+	if (g_sword2->_thisScreen.scroll_flag)
 		Set_scrolling();
 
 	// Any music required will be started after we've returned from

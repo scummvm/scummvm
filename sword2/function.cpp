@@ -26,7 +26,7 @@
 #include "sword2/defs.h"
 #include "sword2/function.h"
 #include "sword2/interpreter.h"
-#include "sword2/layers.h"		// for 'this_screen' structure
+#include "sword2/layers.h"		// for '_thisScreen' structure
 #include "sword2/logic.h"
 #include "sword2/protocol.h"
 #include "sword2/resman.h"
@@ -372,7 +372,7 @@ int32 Logic::fnResetGlobals(int32 *params) {
 	// - this is taken from fnInitBackground
 
 	// switch on scrolling (2 means first time on screen)
-	this_screen.scroll_flag = 2;
+	g_sword2->_thisScreen.scroll_flag = 2;
 
 	return IR_CONT;
 }

@@ -1473,14 +1473,15 @@ void Gui::restartControl(void) {
 	// - this is taken from fnInitBackground
 	// switch on scrolling (2 means first time on screen)
 
-	this_screen.scroll_flag = 2;
+	g_sword2->_thisScreen.scroll_flag = 2;
 
 	if (g_logic.processSession())
 		error("restart 1st cycle failed??");
 
 	// So palette not restored immediately after control panel - we want
 	// to fade up instead!
- 	this_screen.new_palette = 99;
+
+	g_sword2->_thisScreen.new_palette = 99;
 }
 
 void Gui::optionControl(void) {

@@ -161,6 +161,8 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 
 	_totalMasters = 0;
 	memset(_masterMenuList, 0, sizeof(_masterMenuList));
+
+	memset(&_thisScreen, 0, sizeof(_thisScreen));
 }
 
 Sword2Engine::~Sword2Engine() {
@@ -284,7 +286,7 @@ int32 GameCycle(void) {
 	}
 
 	// if this screen is wide, recompute the scroll offsets every cycle
-	if (this_screen.scroll_flag)
+	if (g_sword2->_thisScreen.scroll_flag)
 		Set_scrolling();
 
 	Mouse_engine();

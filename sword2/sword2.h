@@ -29,6 +29,7 @@
 #include "sword2/console.h"
 #include "sword2/events.h"
 #include "sword2/icons.h"
+#include "sword2/layers.h"
 #include "sword2/object.h"
 #include "sword2/driver/d_sound.h"
 #include "sword2/driver/d_draw.h"
@@ -218,6 +219,13 @@ public:
 
 	void buildMenu(void);
 	void buildSystemMenu(void);
+
+	// _thisScreen describes the current back buffer and its in-game scroll
+	// positions, etc.
+
+	screen_info _thisScreen;
+
+	void setUpBackgroundLayers(void);
 
 	void errorString(const char *buf_input, char *buf_output);
 	void initialiseFontResourceFlags(void);

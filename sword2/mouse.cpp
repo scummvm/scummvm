@@ -40,23 +40,25 @@ namespace Sword2 {
 
 // pointer resource id's
 
-#define CROSHAIR	18
-#define EXIT0		788
-#define EXIT1		789
-#define EXIT2		790
-#define EXIT3		791
-#define EXIT4		792
-#define EXIT5		793
-#define EXIT6		794
-#define EXIT7		795
-#define EXITDOWN	796
-#define EXITUP		797
-#define MOUTH		787
-#define NORMAL		17
-#define PICKUP		3099
-#define SCROLL_L	1440
-#define SCROLL_R	1441
-#define USE		3100
+enum {
+	CROSHAIR	= 18,
+	EXIT0		= 788,
+	EXIT1		= 789,
+	EXIT2		= 790,
+	EXIT3		= 791,
+	EXIT4		= 792,
+	EXIT5		= 793,
+	EXIT6		= 794,
+	EXIT7		= 795,
+	EXITDOWN	= 796,
+	EXITUP		= 797,
+	MOUTH		= 787,
+	NORMAL		= 17,
+	PICKUP		= 3099,
+	SCROLL_L	= 1440,
+	SCROLL_R	= 1441,
+	USE		= 3100
+};
 
 //the mouse list stuff
 
@@ -278,7 +280,7 @@ void System_menu_mouse(void) {
 				// successful restore or restart!
 
 				// see RestoreFromBuffer() in save_rest.cpp
-				if (this_screen.new_palette != 99) {
+				if (g_sword2->_thisScreen.new_palette != 99) {
 					// '0' means put back game screen
 					// palette; see Build_display.cpp
 
@@ -287,9 +289,9 @@ void System_menu_mouse(void) {
 					// stop the engine fading in the
 					// restored screens palette
 
-					this_screen.new_palette = 0;
+					g_sword2->_thisScreen.new_palette = 0;
 				} else
-					this_screen.new_palette = 1;
+					g_sword2->_thisScreen.new_palette = 1;
 
 				g_sound->unpauseFx();
 
@@ -359,8 +361,8 @@ void Drag_mouse(void) {
 			// these might be required by the action script about
 			// to be run
 
-			MOUSE_X = (uint32) g_display->_mouseX + this_screen.scroll_offset_x;
-			MOUSE_Y = (uint32) g_display->_mouseY + this_screen.scroll_offset_y;
+			MOUSE_X = (uint32) g_display->_mouseX + g_sword2->_thisScreen.scroll_offset_x;
+			MOUSE_Y = (uint32) g_display->_mouseY + g_sword2->_thisScreen.scroll_offset_y;
 
 			// for scripts to know what's been clicked (21jan97).
 			// First used for 'room_13_turning_script' in object
@@ -578,8 +580,8 @@ void Normal_mouse(void) {
 
 			if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN))) {
 				// set both (x1,y1) and (x2,y2) to this point
-				g_sword2->_debugger->_rectX1 = g_sword2->_debugger->_rectX2 = (uint32) g_display->_mouseX + this_screen.scroll_offset_x;
-				g_sword2->_debugger->_rectY1 = g_sword2->_debugger->_rectY2 = (uint32) g_display->_mouseY + this_screen.scroll_offset_y;
+				g_sword2->_debugger->_rectX1 = g_sword2->_debugger->_rectX2 = (uint32) g_display->_mouseX + g_sword2->_thisScreen.scroll_offset_x;
+				g_sword2->_debugger->_rectY1 = g_sword2->_debugger->_rectY2 = (uint32) g_display->_mouseY + g_sword2->_thisScreen.scroll_offset_y;
 				g_sword2->_debugger->_draggingRectangle = 1;
 			}
 		} else if (g_sword2->_debugger->_draggingRectangle == 1) {
@@ -591,8 +593,8 @@ void Normal_mouse(void) {
 				g_sword2->_debugger->_draggingRectangle = 2;
 			} else {
 				// drag rectangle
-				g_sword2->_debugger->_rectX2 = (uint32) g_display->_mouseX + this_screen.scroll_offset_x;
-				g_sword2->_debugger->_rectY2 = (uint32) g_display->_mouseY + this_screen.scroll_offset_y;
+				g_sword2->_debugger->_rectX2 = (uint32) g_display->_mouseX + g_sword2->_thisScreen.scroll_offset_x;
+				g_sword2->_debugger->_rectY2 = (uint32) g_display->_mouseY + g_sword2->_thisScreen.scroll_offset_y;
 			}
 		} else {
 			// currently locked to avoid knocking out of place
@@ -642,8 +644,8 @@ void Normal_mouse(void) {
 
 			// these might be required by the action script about
 			// to be run
-			MOUSE_X = (uint32) g_display->_mouseX + this_screen.scroll_offset_x;
-			MOUSE_Y = (uint32) g_display->_mouseY + this_screen.scroll_offset_y;
+			MOUSE_X = (uint32) g_display->_mouseX + g_sword2->_thisScreen.scroll_offset_x;
+			MOUSE_Y = (uint32) g_display->_mouseY + g_sword2->_thisScreen.scroll_offset_y;
 
 			// only left button
 			if (mouse_touching == EXIT_CLICK_ID && (me->buttons & RD_LEFTBUTTONDOWN)) {
@@ -834,10 +836,10 @@ uint32 Check_mouse_list(void) {
 			// mouse-detection-box
 
 			if (mouse_list[j].priority == priority &&
-				g_display->_mouseX + this_screen.scroll_offset_x >= mouse_list[j].x1 &&
-				g_display->_mouseX + this_screen.scroll_offset_x <= mouse_list[j].x2 &&
-				g_display->_mouseY + this_screen.scroll_offset_y >= mouse_list[j].y1 &&
-				g_display->_mouseY + this_screen.scroll_offset_y <= mouse_list[j].y2) {
+				g_display->_mouseX + g_sword2->_thisScreen.scroll_offset_x >= mouse_list[j].x1 &&
+				g_display->_mouseX + g_sword2->_thisScreen.scroll_offset_x <= mouse_list[j].x2 &&
+				g_display->_mouseY + g_sword2->_thisScreen.scroll_offset_y >= mouse_list[j].y1 &&
+				g_display->_mouseY + g_sword2->_thisScreen.scroll_offset_y <= mouse_list[j].y2) {
 				// record id
 				mouse_touching = mouse_list[j].id;
 
@@ -1238,8 +1240,8 @@ int32 Logic::fnInitFloorMouse(int32 *params) {
 
 	ob_mouse->x1 = 0;
 	ob_mouse->y1 = 0;
-	ob_mouse->x2 = this_screen.screen_wide - 1;
-	ob_mouse->y2 = this_screen.screen_deep - 1;
+	ob_mouse->x2 = g_sword2->_thisScreen.screen_wide - 1;
+	ob_mouse->y2 = g_sword2->_thisScreen.screen_deep - 1;
 	ob_mouse->priority = 9;
 	ob_mouse->pointer = NORMAL_MOUSE_ID;
 
@@ -1257,11 +1259,11 @@ int32 Logic::fnSetScrollLeftMouse(int32 *params) {
 
 	ob_mouse->x1 = 0;
 	ob_mouse->y1 = 0;
-	ob_mouse->x2 = this_screen.scroll_offset_x + SCROLL_MOUSE_WIDTH;
-	ob_mouse->y2 = this_screen.screen_deep - 1;
+	ob_mouse->x2 = g_sword2->_thisScreen.scroll_offset_x + SCROLL_MOUSE_WIDTH;
+	ob_mouse->y2 = g_sword2->_thisScreen.screen_deep - 1;
 	ob_mouse->priority = 0;
 
-	if (this_screen.scroll_offset_x > 0) {
+	if (g_sword2->_thisScreen.scroll_offset_x > 0) {
 		// not fully scrolled to the left
 		ob_mouse->pointer = SCROLL_LEFT_MOUSE_ID;
 	} else {
@@ -1279,13 +1281,13 @@ int32 Logic::fnSetScrollRightMouse(int32 *params) {
 
 	// Highest priority
 
-	ob_mouse->x1 = this_screen.scroll_offset_x + g_display->_screenWide - SCROLL_MOUSE_WIDTH;
+	ob_mouse->x1 = g_sword2->_thisScreen.scroll_offset_x + g_display->_screenWide - SCROLL_MOUSE_WIDTH;
 	ob_mouse->y1 = 0;
-	ob_mouse->x2 = this_screen.screen_wide - 1;
-	ob_mouse->y2 = this_screen.screen_deep - 1;
+	ob_mouse->x2 = g_sword2->_thisScreen.screen_wide - 1;
+	ob_mouse->y2 = g_sword2->_thisScreen.screen_deep - 1;
 	ob_mouse->priority = 0;
 
-	if (this_screen.scroll_offset_x < this_screen.max_scroll_offset_x) {
+	if (g_sword2->_thisScreen.scroll_offset_x < g_sword2->_thisScreen.max_scroll_offset_x) {
 		// not fully scrolled to the right
 		ob_mouse->pointer = SCROLL_RIGHT_MOUSE_ID;
 	} else {
