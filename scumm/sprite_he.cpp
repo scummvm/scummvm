@@ -44,7 +44,7 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroupId, in
 
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
 		SpriteInfo *spi = _activeSpritesTable[i];
-		if (!spi->field_4C)
+		if (!spi->cur_res_id)
 			continue;
 
 		if (spriteGroupId && spi->group_num != spriteGroupId)
@@ -81,7 +81,7 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroupId, in
 			int resId, state, rot_angle, zoom;
 			int32 w, h;
 
-			resId = spi->field_4C;
+			resId = spi->cur_res_id;
 			if (spi->field_80) {
 				int16 x1, x2, y1, y2;
 
@@ -91,7 +91,7 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroupId, in
 				x -= spi->pos.x;
 				y -= spi->pos.y;
 
-				loadImgSpot(spi->field_4C, state, x1, y1);
+				loadImgSpot(spi->cur_res_id, state, x1, y1);
 				loadImgSpot(spi->field_80, state, x2, y2);
 
 				x += (x2 - x1);
@@ -115,8 +115,8 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroupId, in
 				state = spi->cur_img_state;
 			}
 
-			rot_angle = spi->field_68;
-			zoom = spi->field_6C;
+			rot_angle = spi->cur_rot_angle;
+			zoom = spi->cur_zoom;
 			if ((spi->flags & kSFZoomed) || (spi->flags & kSFRotated)) {
 				if (spi->flags & kSFZoomed && zoom) {
 					x = x * 256 / zoom;
@@ -757,7 +757,7 @@ void ScummEngine_v90he::spriteAddImageToList(int spriteId, int imageNum, int *sp
 			_spriteTable[spriteId].flags = 0;
 		else
 			_spriteTable[spriteId].flags = kSFChanged | kSFBlitDirectly;
-		_spriteTable[spriteId].field_4C = 0;
+		_spriteTable[spriteId].cur_res_id = 0;
 		_spriteTable[spriteId].cur_img_state = 0;
 		_spriteTable[spriteId].res_wiz_states = 0;
 	}
@@ -1242,10 +1242,10 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 		}
 
 		spi->cur_img_state = wiz.img.state = res_state;
-		spi->field_4C = wiz.img.resNum = res_id;
+		spi->cur_res_id = wiz.img.resNum = res_id;
 		wiz.processFlags = kWPFNewState | kWPFSetPos;
-		spi->field_68 = spi->rot_angle;
-		spi->field_6C = spi->zoom;
+		spi->cur_rot_angle = spi->rot_angle;
+		spi->cur_zoom = spi->zoom;
 		spi->pos.x = wiz.img.x1;
 		spi->pos.y = wiz.img.y1;
 		bboxPtr = &spi->bbox;

@@ -81,15 +81,15 @@ struct SpriteInfo {
 	int ty;
 	int field_44;
 	int cur_img_state;
-	int field_4C;
+	int cur_res_id;
 	int imglist_num;
 	int field_54;
 	int res_wiz_states;
 	int rot_angle;
 	int zoom;
 	int field_64;
-	int field_68;
-	int field_6C;
+	int cur_rot_angle;
+	int cur_zoom;
 	int imgFlags;
 	int field_74;
 	int field_78;
