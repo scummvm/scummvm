@@ -121,6 +121,7 @@ class Cutaway {
 		};
 
 		Logic 		*_logic;
+		Resource  *_resource;
 		Graphics 	*_graphics;
 
 		//! Raw .cut file data (without 20 byte header)
@@ -188,7 +189,7 @@ class Cutaway {
 		void run(char *nextFilename);
 
 		//! Load cutaway data from file 
-		void load(const char *filename, Resource *resource);
+		void load(const char *filename);
 
 		//! Used by load to read string data
 		void loadStrings(byte *ptr);
@@ -234,9 +235,6 @@ class Cutaway {
 
 		//! Get CutawayAnim data from ptr and return new ptr
 		byte *getCutawayAnim(byte *ptr, int header, CutawayAnim &anim);
-
-		//! Read a string from ptr and return new ptr
-		static byte *getString(byte *ptr, char *str, int maxLength);
 
 		//! Read a CutawayObject from ptr and return new ptr
 		static byte *getCutawayObject(byte *ptr, CutawayObject &object);

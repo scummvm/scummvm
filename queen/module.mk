@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	queen/queen.o \
 	queen/resource.o \
 	queen/restables.o \
+	queen/talk.o
 
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS

@@ -22,6 +22,7 @@
 #include "stdafx.h"
 #include "cutaway.h"
 #include "graphics.h"
+#include "talk.h"
 
 namespace Queen {
 
@@ -46,7 +47,6 @@ namespace Queen {
 	 Data needed:
 
 	 CURRSONG
-	 GAMESTATE
 	 JOEF					(Joe's face direction)
 	 JX,JY        (Joe's coordintes)
 	 PERSON_FACE
@@ -68,11 +68,11 @@ Cutaway::Cutaway(
 		const char *filename, 
 		Logic *logic,
 		Resource *resource) 
-: _logic(logic), _quit(false), _lastSong(0), _songBeforeComic(0) {
+: _logic(logic), _resource(resource), _quit(false), _lastSong(0), _songBeforeComic(0) {
 	// XXX should not create this object ourselves
 	_graphics = new Graphics(resource);
 	memset(&_bankNames, 0, sizeof(_bankNames));
-	load(filename, resource); 
+	load(filename); 
 }
 
 Cutaway::~Cutaway() {
@@ -81,14 +81,12 @@ Cutaway::~Cutaway() {
 	delete[] _fileData;
 }
 
-void Cutaway::load(const char *filename, Resource *resource) {
+void Cutaway::load(const char *filename) {
 	byte *ptr;
 
-	ptr = _fileData = resource->loadFile(filename, 20);
+	ptr = _fileData = _resource->loadFile(filename, 20);
 	if (!_fileData) {
 		error("Failed to load resource data file '%s'", filename);
-		_quit = true;
-		return;
 	}
 
 	if (0 == scumm_stricmp(filename, "comic.cut"))
@@ -149,7 +147,7 @@ void Cutaway::load(const char *filename, Resource *resource) {
 	}
 
 	char entryString[MAX_STRING_SIZE];
-	_nextSentence = getString(_nextSentence, entryString, MAX_STRING_LENGTH);
+	_nextSentence = Talk::getString(_nextSentence, entryString, MAX_STRING_LENGTH);
 	debug(0, "Entry string = '%s'", entryString);
 
 	if (entryString[0] == '*' &&
@@ -173,27 +171,6 @@ void Cutaway::load(const char *filename, Resource *resource) {
 
 }
 
-byte *Cutaway::getString(byte *ptr, char *str, int maxLength) {
-	int length = *ptr;
-	ptr++;
-
-	if (length > maxLength) {
-		error("String too long. Length = %i, maxLength = %i, str = '%*s'",
-				length, maxLength, length, (const char*)ptr);
-	}
-	else if (length) {
-		memcpy(str, (const char*)ptr, length);
-		ptr += length;
-
-		while ((int)ptr % 2)
-			ptr++;
-	}
-
-	str[length] = '\0';
-
-	return ptr;
-}
-
 void Cutaway::loadStrings(byte *ptr) {
 	int i,j;
 
@@ -208,7 +185,7 @@ void Cutaway::loadStrings(byte *ptr) {
 	 */
 
 	for (i = 0, j = 0; i < bankNameCount; i++) {
-		ptr = getString(ptr, _bankNames[j], MAX_FILENAME_LENGTH);
+		ptr = Talk::getString(ptr, _bankNames[j], MAX_FILENAME_LENGTH);
 
 		if (_bankNames[j][0]) {
 			debug(0, "Bank name %i = '%s'", _bankNames[j]);
@@ -217,7 +194,7 @@ void Cutaway::loadStrings(byte *ptr) {
 	}
 
 	debug(0, "Getting talk file");
-	ptr = getString(ptr, _talkFile, MAX_FILENAME_LENGTH);
+	ptr = Talk::getString(ptr, _talkFile, MAX_FILENAME_LENGTH);
 	debug(0, "Talk file = '%s'", _talkFile);
 
 	int TALKTO = READ_BE_UINT16(ptr);
@@ -268,6 +245,7 @@ void Cutaway::dumpCutawayObject(int index, CutawayObject &object)
 	switch (object.objectNumber) {
 		case -1:  objectNumberStr = "MESSAGE";  break;
 		case 0:   objectNumberStr = "Joe";      break;
+		case 196: objectNumberStr = "Chef";      break;
 		case 548: objectNumberStr = "Anderson"; break;
 		default:  objectNumberStr = "unknown";  break;
 	}
@@ -731,7 +709,7 @@ void Cutaway::run(char *nextFilename) {
 		limitBob(object);
 
 		char sentence[MAX_STRING_SIZE];
-		_nextSentence = getString(_nextSentence, sentence, MAX_STRING_LENGTH);
+		_nextSentence = Talk::getString(_nextSentence, sentence, MAX_STRING_LENGTH);
 		debug(0, "Sentence = '%s'", sentence);
 
 		if (OBJECT_ROOMFADE == object.objectNumber) {
@@ -1006,11 +984,11 @@ void Cutaway::updateGameState() {
 				// Turn area on or off
 
 				if (areaSubIndex > 0) {
-					int16* area = _logic->area(areaIndex, areaSubIndex);
+					int16 *area = _logic->area(areaIndex, areaSubIndex);
 					area[0] = abs(area[0]);
 				}
 				else {
-					int16* area = _logic->area(areaIndex, abs(areaSubIndex));
+					int16 *area = _logic->area(areaIndex, abs(areaSubIndex));
 					area[0] = -abs(area[0]);
 				}
 			}
@@ -1033,8 +1011,10 @@ void Cutaway::talk(char *nextFilename) {
 	// Lines 2119-2131 in cutaway.c
 	
 	if (0 == scumm_stricmp(right(_talkFile, 4), ".dog")) {
-		warning("Cutaway::talk() needed but not yet implemented");
+		warning("Cutaway::talk() used but not fully implemented");
 		nextFilename[0] = '\0';
+
+		Talk::run(_talkFile, nextFilename, _logic, _resource);
 	}
 }
 
