@@ -909,5 +909,10 @@ void Graphics::bobSetText(
 		textSet(lineX, y + 9 * i, lines[i]);
 	}
 }
+
+int Graphics::textCenterX(const char *text) const {
+	return 160 - textWidth(text) / 2;
+}
+
 } // End of namespace Queen
 

@@ -148,7 +148,8 @@ public:
 	void textSetCentered(uint16 y, const char *text, bool outlined = true);
 	void textDrawAll(); // drawtext()
 	void textClear(uint16 y1, uint16 y2); // blanktexts()
-	uint16 textWidth(const char* text) const; // textlen()
+	uint16 textWidth(const char *text) const; // textlen()
+	int textCenterX(const char *text) const; // MIDDLE()
 
 	void frameErase(uint32 fslot);
 	void frameEraseAll(bool joe); // freeframes, freeallframes

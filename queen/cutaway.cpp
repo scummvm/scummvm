@@ -632,6 +632,8 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 
 	if (object.animType == 1) {
 		// lines 1615-1636 in cutaway.c
+		
+		debug(0, "----- Not normal cutaway animation (animType = %i) -----", object.animType);
 
 		if (/*(P_BNUM==1) &&*/ (_logic->currentRoom() == 47 || _logic->currentRoom() == 63)) {
 			// The oracle
@@ -678,6 +680,9 @@ byte *Cutaway::handleAnimation(byte *ptr, CutawayObject &object) {
 
 	if (object.animType != 1) {
 		// lines 1657-1761 in cutaway.c
+
+		debug(0, "----- Normal cutaway animation (animType = %i) -----", object.animType);
+		
 		for (i = 0; i < frameCount; i++) {
 			BobSlot *bob = _graphics->bob(objAnim[i].object);
 			bob->active = true;
@@ -909,6 +914,12 @@ void Cutaway::run(char *nextFilename) {
 
 			case OBJECT_TYPE_NO_ANIMATION:
 				// Do nothing?
+				break;
+
+			case OBJECT_TYPE_TEXT_SPEAK:
+			case OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK:
+			case OBJECT_TYPE_TEXT_DISPLAY:
+				handleText(objectType, object, sentence);
 				break;
 
 			default:
@@ -1182,7 +1193,6 @@ void Cutaway::talk(char *nextFilename) {
 	// Lines 2119-2131 in cutaway.c
 	
 	if (0 == scumm_stricmp(right(_talkFile, 4), ".dog")) {
-		warning("Cutaway::talk() used but not fully implemented");
 		nextFilename[0] = '\0';
 
 		Talk::talk(_talkFile, 0 /* XXX */, nextFilename, _graphics, _logic, _resource);
@@ -1226,6 +1236,75 @@ int Cutaway::makeComplexAnimation(int16 currentImage, Cutaway::CutawayAnim *objA
 	_graphics->bobAnimString(bobNum, cutAnim[bobNum]);
 
 	return currentImage + 1;
+}
+
+void Cutaway::handleText(
+		ObjectType type, 
+		CutawayObject &object,
+		const char *sentence) {
+	// lines 1776-1863 in cutaway.c
+
+	debug(0, "----- Write '%s' ----", sentence);
+
+	int spaces = countSpaces(type, sentence);
+
+	int x;
+	int flags;
+
+	if (OBJECT_TYPE_TEXT_DISPLAY == type) {
+		x = _graphics->textCenterX(sentence);
+		flags = 2;
+	}
+	else {
+		x = object.moveToX;
+		flags = 1;
+	}
+
+	BobSlot *bob = 
+		_graphics->bob( _logic->findBob(abs(object.objectNumber)) );
+
+	_graphics->bobSetText(bob, sentence, x, object.moveToY, object.specialMove, flags);
+
+	if (OBJECT_TYPE_TEXT_SPEAK == type || OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK == type) {
+		// XXX: speak
+	}
+
+	int i;
+	for (i = 0; i < spaces; i++) {
+		_graphics->update();
+
+		if (OBJECT_TYPE_TEXT_SPEAK == type || OBJECT_TYPE_TEXT_DISPLAY_AND_SPEAK == type) {
+			// XXX: see if speaking is finished
+		}
+
+		if (_quit)
+			break;
+
+// XXX		if(KEYVERB==101) {
+// XXX			KEYVERB=0;
+// XXX			break;
+// XXX		}
+
+	}
+
+	_graphics->textClear(0,198);
+	_graphics->update();
+}
+		
+int Cutaway::countSpaces(ObjectType type, const char *segment) {
+	int tmp = 0;
+
+	while (*segment++)
+		tmp++;
+	
+	if (tmp < 10)
+		tmp = 10;
+
+	if (OBJECT_TYPE_TEXT_DISPLAY == type)
+		tmp *= 3;
+
+	return (tmp * 2) / _logic->talkSpeed();
+
 }
 
 } // End of namespace Queen

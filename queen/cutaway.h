@@ -242,6 +242,12 @@ class Cutaway {
 				int index, 
 				CutawayObject &object, 
 				const char *sentence);
+		
+		//! Perform text actions
+		void handleText(
+				ObjectType type, 
+				CutawayObject &object, 
+				const char *sentence);
 
 		//! Restore QueenLogic::_objectData from _personData
 		void restorePersonData();
@@ -269,6 +275,9 @@ class Cutaway {
 
 		//! Dump a CutawayObject with debug()
 		void dumpCutawayObject(int index, CutawayObject &object);
+
+		//! Used by handleText()
+		int countSpaces(ObjectType type, const char *segment);
 
 		//! Dump CutawayAnum data with debug()
 		static void dumpCutawayAnim(CutawayAnim &anim);
