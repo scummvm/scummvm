@@ -168,6 +168,8 @@ protected:
 
 	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
 	void updateDirtyScreen(VirtScreen *vs);
+	
+	byte *getMaskBuffer(int x, int y, int z = 0);
 
 public:
 	void drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,

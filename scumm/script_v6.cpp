@@ -3259,7 +3259,7 @@ void ScummEngine_v6::o6_unknownE1() {
 
 	int offset = (y - vs->topline) * vs->width + x + _screenLeft;
 
-	byte area = *(getResourceAddress(rtBuffer, vs->number + 1) + offset);
+	byte area = *(vs->screenPtr + offset);
 	push(area);
 }
 

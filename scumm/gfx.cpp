@@ -201,14 +201,9 @@ static const byte default_cursor_hotspots[10] = {
 
 
 #pragma mark -
-
-
-static inline uint colorWeight(int red, int green, int blue) {
-	return 3 * red * red + 6 * green * green + 2 * blue * blue;
-}
-
-
+#pragma mark --- Virtual Screens ---
 #pragma mark -
+
 
 
 Gdi::Gdi(ScummEngine *vm) {
@@ -290,7 +285,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int
 	memset(vs->screenPtr, 0, size);			// reset background
 
 	if (twobufs) {
-		createResource(rtBuffer, slot + 5, size);
+		vs->backBuf = createResource(rtBuffer, slot + 5, size);
 	}
 
 	if (slot != 3) {
@@ -487,7 +482,7 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 
 	offs = (top * _numStrips + _vm->_screenStartStrip + strip) * 8;
 	byte *mask_ptr = _vm->getMaskBuffer(strip * 8, top, 0);
-	bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + offs;
+	bgbak_ptr = vs->backBuf + offs;
 	backbuff_ptr = vs->screenPtr + offs;
 
 	numLinesToProcess = bottom - top;
@@ -499,87 +494,6 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 				draw8Col(backbuff_ptr, bgbak_ptr, numLinesToProcess);
 		} else {
 			clear8Col(backbuff_ptr, numLinesToProcess);
-		}
-	}
-}
-
-void ScummEngine::blit(byte *dst, const byte *src, int w, int h) {
-	assert(h > 0);
-	assert(src != NULL);
-	assert(dst != NULL);
-	
-	// TODO: This function currently always assumes that srcPitch == dstPitch
-	// and furthermore that both equal _screenWidth.
-
-	if (w==_screenWidth)
-		memcpy (dst, src, w*h);
-	else
-	{
-		do {
-			memcpy(dst, src, w);
-			dst += _screenWidth;
-			src += _screenWidth;
-		} while (--h);
-	}
-}
-
-void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
-	int width, height;
-	VirtScreen *vs;
-	byte *backbuff, *bgbuff;
-
-	if ((vs = findVirtScreen(y)) == NULL)
-		return;
-
-	if (x > x2)
-		SWAP(x, x2);
-
-	if (y > y2)
-		SWAP(y, y2);
-
-	x2++;
-	y2++;
-
-	// Adjust for the topline of the VirtScreen
-	y -= vs->topline;
-	y2 -= vs->topline;
-	
-	// Clip the coordinates
-	if (x < 0)
-		x = 0;
-	else if (x >= vs->width)
-		return;
-
-	if (x2 < 0)
-		return;
-	else if (x2 > vs->width)
-		x2 = vs->width;
-
-	if (y < 0)
-		y = 0;
-	else if (y > vs->height)
-		return;
-
-	if (y2 < 0)
-		return;
-	else if (y2 > vs->height)
-		y2 = vs->height;
-	
-	markRectAsDirty(vs->number, x, x2, y, y2, 0);
-
-	backbuff = vs->screenPtr + vs->xstart + y * vs->width + x;
-
-	width = x2 - x;
-	height = y2 - y;
-	if (color == -1) {
-		if (vs->number != kMainVirtScreen)
-			error("can only copy bg to main window");
-		bgbuff = getResourceAddress(rtBuffer, vs->number + 5) + vs->xstart + y * vs->width + x;
-		blit(backbuff, bgbuff, width, height);
-	} else {
-		while (height--) {
-			memset(backbuff, color, width);
-			backbuff += vs->width;
 		}
 	}
 }
@@ -634,91 +548,6 @@ void ScummEngine::initBGBuffers(int height) {
 		else
 			gdi._imgBufOffs[i] = (gdi._numZBuffer - 1) * itemsize;
 	}
-}
-
-void ScummEngine::drawFlashlight() {
-	int i, j, offset, x, y;
-	VirtScreen *vs = &virtscr[kMainVirtScreen];
-
-	// Remove the flash light first if it was previously drawn
-	if (_flashlight.isDrawn) {
-		markRectAsDirty(kMainVirtScreen, _flashlight.x, _flashlight.x + _flashlight.w,
-										_flashlight.y, _flashlight.y + _flashlight.h, USAGE_BIT_DIRTY);
-		
-		if (_flashlight.buffer) {
-			i = _flashlight.h;
-			do {
-				memset(_flashlight.buffer, 0, _flashlight.w);
-				_flashlight.buffer += vs->width;
-			} while (--i);
-		}
-		_flashlight.isDrawn = false;
-	}
-
-	if (_flashlight.xStrips == 0 || _flashlight.yStrips == 0)
-		return;
-
-	// Calculate the area of the flashlight
-	if (_gameId == GID_ZAK256 || _version <= 2) {
-		x = _mouse.x + vs->xstart;
-		y = _mouse.y - vs->topline;
-	} else {
-		Actor *a = derefActor(VAR(VAR_EGO), "drawFlashlight");
-		x = a->_pos.x;
-		y = a->_pos.y;
-	}
-	_flashlight.w = _flashlight.xStrips * 8;
-	_flashlight.h = _flashlight.yStrips * 8;
-	_flashlight.x = x - _flashlight.w / 2 - _screenStartStrip * 8;
-	_flashlight.y = y - _flashlight.h / 2;
-
-	if (_gameId == GID_LOOM || _gameId == GID_LOOM256)
-		_flashlight.y -= 12;
-
-	// Clip the flashlight at the borders
-	if (_flashlight.x < 0)
-		_flashlight.x = 0;
-	else if (_flashlight.x + _flashlight.w > gdi._numStrips * 8)
-		_flashlight.x = gdi._numStrips * 8 - _flashlight.w;
-	if (_flashlight.y < 0)
-		_flashlight.y = 0;
-	else if (_flashlight.y + _flashlight.h> vs->height)
-		_flashlight.y = vs->height - _flashlight.h;
-
-	// Redraw any actors "under" the flashlight
-	for (i = _flashlight.x / 8; i < (_flashlight.x + _flashlight.w) / 8; i++) {
-		assert(0 <= i && i < gdi._numStrips);
-		setGfxUsageBit(_screenStartStrip + i, USAGE_BIT_DIRTY);
-		vs->tdirty[i] = 0;
-		vs->bdirty[i] = vs->height;
-	}
-
-	byte *bgbak;
-	offset = _flashlight.y * vs->width + vs->xstart + _flashlight.x;
-	_flashlight.buffer = vs->screenPtr + offset;
-	bgbak = getResourceAddress(rtBuffer, 5) + offset;
-
-	blit(_flashlight.buffer, bgbak, _flashlight.w, _flashlight.h);
-
-	// Round the corners. To do so, we simply hard-code a set of nicely
-	// rounded corners.
-	int corner_data[] = { 8, 6, 4, 3, 2, 2, 1, 1 };
-	int minrow = 0;
-	int maxcol = _flashlight.w - 1;
-	int maxrow = (_flashlight.h - 1) * vs->width;
-
-	for (i = 0; i < 8; i++, minrow += vs->width, maxrow -= vs->width) {
-		int d = corner_data[i];
-
-		for (j = 0; j < d; j++) {
-			_flashlight.buffer[minrow + j] = 0;
-			_flashlight.buffer[minrow + maxcol - j] = 0;
-			_flashlight.buffer[maxrow + j] = 0;
-			_flashlight.buffer[maxrow + maxcol - j] = 0;
-		}
-	}
-	
-	_flashlight.isDrawn = true;
 }
 
 /**
@@ -836,7 +665,7 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 
 	int offset = (rect.top - topline) * vs->width + vs->xstart + rect.left;
 	backbuff = vs->screenPtr + offset;
-	bgbak = getResourceAddress(rtBuffer, vs->number + 5) + offset;
+	bgbak = vs->backBuf + offset;
 
 	height = rect.height();
 	width = rect.width();
@@ -891,6 +720,181 @@ byte *ScummEngine::getMaskBuffer(int x, int y, int z) {
 			+ _screenStartStrip + (x / 8) + y * gdi._numStrips + gdi._imgBufOffs[z];
 }
 
+byte *Gdi::getMaskBuffer(int x, int y, int z) {
+	return _vm->getResourceAddress(rtBuffer, 9)
+			+ x + y * _numStrips + _imgBufOffs[z];
+}
+
+
+#pragma mark -
+#pragma mark --- Misc ---
+#pragma mark -
+
+void ScummEngine::blit(byte *dst, const byte *src, int w, int h) {
+	assert(h > 0);
+	assert(src != NULL);
+	assert(dst != NULL);
+	
+	// TODO: This function currently always assumes that srcPitch == dstPitch
+	// and furthermore that both equal _screenWidth.
+
+	if (w==_screenWidth)
+		memcpy (dst, src, w*h);
+	else
+	{
+		do {
+			memcpy(dst, src, w);
+			dst += _screenWidth;
+			src += _screenWidth;
+		} while (--h);
+	}
+}
+
+void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
+	int width, height;
+	VirtScreen *vs;
+	byte *backbuff, *bgbuff;
+
+	if ((vs = findVirtScreen(y)) == NULL)
+		return;
+
+	if (x > x2)
+		SWAP(x, x2);
+
+	if (y > y2)
+		SWAP(y, y2);
+
+	x2++;
+	y2++;
+
+	// Adjust for the topline of the VirtScreen
+	y -= vs->topline;
+	y2 -= vs->topline;
+	
+	// Clip the coordinates
+	if (x < 0)
+		x = 0;
+	else if (x >= vs->width)
+		return;
+
+	if (x2 < 0)
+		return;
+	else if (x2 > vs->width)
+		x2 = vs->width;
+
+	if (y < 0)
+		y = 0;
+	else if (y > vs->height)
+		return;
+
+	if (y2 < 0)
+		return;
+	else if (y2 > vs->height)
+		y2 = vs->height;
+	
+	markRectAsDirty(vs->number, x, x2, y, y2, 0);
+
+	backbuff = vs->screenPtr + vs->xstart + y * vs->width + x;
+
+	width = x2 - x;
+	height = y2 - y;
+	if (color == -1) {
+		if (vs->number != kMainVirtScreen)
+			error("can only copy bg to main window");
+		bgbuff = vs->backBuf + vs->xstart + y * vs->width + x;
+		blit(backbuff, bgbuff, width, height);
+	} else {
+		while (height--) {
+			memset(backbuff, color, width);
+			backbuff += vs->width;
+		}
+	}
+}
+
+void ScummEngine::drawFlashlight() {
+	int i, j, offset, x, y;
+	VirtScreen *vs = &virtscr[kMainVirtScreen];
+
+	// Remove the flash light first if it was previously drawn
+	if (_flashlight.isDrawn) {
+		markRectAsDirty(kMainVirtScreen, _flashlight.x, _flashlight.x + _flashlight.w,
+										_flashlight.y, _flashlight.y + _flashlight.h, USAGE_BIT_DIRTY);
+		
+		if (_flashlight.buffer) {
+			i = _flashlight.h;
+			do {
+				memset(_flashlight.buffer, 0, _flashlight.w);
+				_flashlight.buffer += vs->width;
+			} while (--i);
+		}
+		_flashlight.isDrawn = false;
+	}
+
+	if (_flashlight.xStrips == 0 || _flashlight.yStrips == 0)
+		return;
+
+	// Calculate the area of the flashlight
+	if (_gameId == GID_ZAK256 || _version <= 2) {
+		x = _mouse.x + vs->xstart;
+		y = _mouse.y - vs->topline;
+	} else {
+		Actor *a = derefActor(VAR(VAR_EGO), "drawFlashlight");
+		x = a->_pos.x;
+		y = a->_pos.y;
+	}
+	_flashlight.w = _flashlight.xStrips * 8;
+	_flashlight.h = _flashlight.yStrips * 8;
+	_flashlight.x = x - _flashlight.w / 2 - _screenStartStrip * 8;
+	_flashlight.y = y - _flashlight.h / 2;
+
+	if (_gameId == GID_LOOM || _gameId == GID_LOOM256)
+		_flashlight.y -= 12;
+
+	// Clip the flashlight at the borders
+	if (_flashlight.x < 0)
+		_flashlight.x = 0;
+	else if (_flashlight.x + _flashlight.w > gdi._numStrips * 8)
+		_flashlight.x = gdi._numStrips * 8 - _flashlight.w;
+	if (_flashlight.y < 0)
+		_flashlight.y = 0;
+	else if (_flashlight.y + _flashlight.h> vs->height)
+		_flashlight.y = vs->height - _flashlight.h;
+
+	// Redraw any actors "under" the flashlight
+	for (i = _flashlight.x / 8; i < (_flashlight.x + _flashlight.w) / 8; i++) {
+		assert(0 <= i && i < gdi._numStrips);
+		setGfxUsageBit(_screenStartStrip + i, USAGE_BIT_DIRTY);
+		vs->tdirty[i] = 0;
+		vs->bdirty[i] = vs->height;
+	}
+
+	byte *bgbak;
+	offset = _flashlight.y * vs->width + vs->xstart + _flashlight.x;
+	_flashlight.buffer = vs->screenPtr + offset;
+	bgbak = vs->backBuf + offset;
+
+	blit(_flashlight.buffer, bgbak, _flashlight.w, _flashlight.h);
+
+	// Round the corners. To do so, we simply hard-code a set of nicely
+	// rounded corners.
+	int corner_data[] = { 8, 6, 4, 3, 2, 2, 1, 1 };
+	int minrow = 0;
+	int maxcol = _flashlight.w - 1;
+	int maxrow = (_flashlight.h - 1) * vs->width;
+
+	for (i = 0; i < 8; i++, minrow += vs->width, maxrow -= vs->width) {
+		int d = corner_data[i];
+
+		for (j = 0; j < d; j++) {
+			_flashlight.buffer[minrow + j] = 0;
+			_flashlight.buffer[minrow + maxcol - j] = 0;
+			_flashlight.buffer[maxrow + j] = 0;
+			_flashlight.buffer[maxrow + maxcol - j] = 0;
+		}
+	}
+	
+	_flashlight.isDrawn = true;
+}
 
 #pragma mark -
 #pragma mark --- Image drawing ---
@@ -1011,11 +1015,11 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	if (_vm->_version == 2) {
 		
 		if (vs->alloctwobuffers)
-			bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5) + (y * _numStrips + x) * 8;
+			bgbak_ptr = vs->backBuf + (y * _numStrips + x) * 8;
 		else
 			bgbak_ptr = vs->screenPtr + (y * _numStrips + x) * 8;
 
-		mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x) + _imgBufOffs[1];
+		mask_ptr = getMaskBuffer(x, y, 1);
 
 		const int left = (stripnr * 8);
 		const int right = left + (numstrip * 8);
@@ -1134,7 +1138,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 		backbuff_ptr = vs->screenPtr + (y * _numStrips + x) * 8;
 		if (vs->alloctwobuffers)
-			bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5) + (y * _numStrips + x) * 8;
+			bgbak_ptr = vs->backBuf + (y * _numStrips + x) * 8;
 		else
 			bgbak_ptr = backbuff_ptr;
 
@@ -1153,7 +1157,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			}
 		}
 
-		mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
+		mask_ptr = getMaskBuffer(x, y);
 
 		CHECK_HEAP;
 		if (vs->alloctwobuffers) {
@@ -1172,7 +1176,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		CHECK_HEAP;
 
 		if (_vm->_version == 1) {
-			mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[1];
+			mask_ptr = getMaskBuffer(x, y, 1);
 			drawStripC64Mask(mask_ptr, stripnr, width, height);
 		} else if (_vm->_version == 2) {
 			// Do nothing here for V2 games - zplane was handled already.
@@ -1198,7 +1202,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			else
 				z_plane_ptr = zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr * 2 + 8);
 			for (i = 0; i < numzbuf; i++) {
-				mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[i];
+				mask_ptr = getMaskBuffer(x, y, i);
 				if (useOrDecompress && (flag & dbAllowMaskOr))
 					decompressMaskImgOr(mask_ptr, z_plane_ptr, height);
 				else
@@ -1222,7 +1226,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 				else
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
 
-				mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + y * _numStrips + x + _imgBufOffs[i];
+				mask_ptr = getMaskBuffer(x, y, i);
 
 				if (offs) {
 					z_plane_ptr = zplane_list[i] + offs;
@@ -1245,7 +1249,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 #if 0
 		// HACK: blit mask(s) onto normal screen. Useful to debug masking 
 		for (i = 0; i < numzbuf; i++) {
-			mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + x + _imgBufOffs[i] + (y * _numStrips);
+			mask_ptr = getMaskBuffer(x, y, i);
 			byte *dst = backbuff_ptr;
 			byte *dst2 = bgbak_ptr;
 			for (int h = 0; h < height; h++) {
@@ -3004,6 +3008,11 @@ void ScummEngine::setupShadowPalette(int slot, int redScale, int greenScale, int
 	}
 }
 
+static inline uint colorWeight(int red, int green, int blue) {
+	return 3 * red * red + 6 * green * green + 2 * blue * blue;
+}
+
+
 void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
 	const byte *basepal = getPalettePtr(_curPalIndex);
 	const byte *pal = basepal;
@@ -3172,7 +3181,7 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 	}
 }
 
-static int value(int n1, int n2, int hue) {
+static int HSL2RGBHelper(int n1, int n2, int hue) {
 	if (hue > 360)
 		hue = hue - 360;
 	else if (hue < 0)
@@ -3248,9 +3257,9 @@ void ScummEngine::desaturatePalette(int hueScale, int satScale, int lightScale, 
 
 				m1 = L - m2;
 
-				R = value(m1, m2, H + 120);
-				G = value(m1, m2, H);
-				B = value(m1, m2, H - 120);
+				R = HSL2RGBHelper(m1, m2, H + 120);
+				G = HSL2RGBHelper(m1, m2, H);
+				B = HSL2RGBHelper(m1, m2, H - 120);
 			} else {
 				// Maximal color = minimal color -> R=G=B -> it's a grayscale.
 				R = G = B = (R * lightScale) / 255;

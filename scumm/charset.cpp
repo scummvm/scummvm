@@ -1095,8 +1095,7 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	byte *back = dst;
 	if (_blitAlso) {
-		dst = _vm->getResourceAddress(rtBuffer, vs->number + 5)
-			+ vs->xstart + drawTop * vs->width + _left;
+		dst = vs->backBuf + vs->xstart + drawTop * vs->width + _left;
 	}
 
 	if (is2byte) {
