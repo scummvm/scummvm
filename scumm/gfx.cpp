@@ -1168,7 +1168,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			if (_C64ObjectMode) {
 				// FIXME/TODO: V1 object masks are stored separately
 			} else {
-				//drawStripC64Mask(mask_ptr, stripnr, height);
+				drawStripC64Mask(mask_ptr, stripnr, height);
 			}
 		} else if (_vm->_version == 2) {
 			// Do nothing here for V2 games - zplane was handled already.
