@@ -45,6 +45,8 @@
 #define MILLISECSPERCYCLE 83
 
 
+// Surface *lpPrimarySurface;
+Surface *lpBackBuffer;
 
 /*
 LPDIRECTDRAW7        m_pDD;
@@ -234,6 +236,12 @@ int32 RestoreDisplay(void)
 
 int32 InitialiseDisplay(int16 width, int16 height, int16 colourDepth, int32 windowType)
 {
+	screenWide = width;
+	screenDeep = height;
+
+//	lpPrimarySurface = new Surface(width, height);
+	lpBackBuffer = new Surface(width, height);
+
 /*
 	DDSURFACEDESC       ddsd;
     DDSCAPS             ddscaps;
@@ -715,7 +723,11 @@ int32 GetRenderType(void)
 int32 FlipScreens(void)
 
 {
-	warning("stub FlipScreens");
+	// I think this function can be removed. We render to lpBackBuffer,
+	// and the backend acts as the primary buffer.
+
+	debug(0, "FlipScreens");
+
 /*
     HRESULT		hr;
 	BOOL		vbl;
@@ -825,7 +837,9 @@ int32 WaitForVbl(void)
 
 int32 EraseBackBuffer( void )
 {
-	warning("stub EraseBackBuffer");
+	debug(0, "EraseBackBuffer");
+	lpBackBuffer->clear();
+
 /*
     DDBLTFX     ddbltfx;
     HRESULT     hr;
@@ -1224,7 +1238,7 @@ void GetDrawStatus(_drvDrawStatus *s)
 //	s->lpDraw			= lpDraw;
 //	s->lpDD2			= lpDD2;
 //	s->lpPrimarySurface = lpPrimarySurface;
-//	s->lpBackBuffer		= lpBackBuffer;
+	s->lpBackBuffer		= lpBackBuffer;
 //	s->lpPalette		= lpPalette;
 	s->screenDeep		= screenDeep;
 	s->screenWide		= screenWide;

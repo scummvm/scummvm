@@ -281,9 +281,8 @@ void Sword2State::go()
 
 	
 	Zdebug("CALLING: InitialiseDisplay");
-	// rv = InitialiseDisplay(640, 480, 8, RD_FULLSCREEN);
 	_system->init_size(640, 480);
-	rv = RD_OK;
+	rv = InitialiseDisplay(640, 480, 8, RD_FULLSCREEN);
 		
 	Zdebug("RETURNED with rv = %.8x", rv);
 	if (rv != RD_OK)

@@ -318,7 +318,20 @@ __inline uint8 QuickMatch(uint8 r, uint8 g, uint8 b)
 int32 SetPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, uint8 fadeNow)
 
 {
-	warning("stub SetPalette( %d, %d, %d )", startEntry, noEntries, fadeNow);
+	debug(0, "SetPalette(%d, %d, %d)", startEntry, noEntries, fadeNow);
+
+	StackLock lock(g_sword2->_paletteMutex);
+
+	if (noEntries == 0) {
+		RestorePalette();
+		return RD_OK;
+	}
+
+	// FIXME: Handle the fadeNow parameter
+
+	memcpy(&palCopy[startEntry][0], colourTable, noEntries * 4);
+	g_sword2->_system->set_palette((byte *) palCopy, startEntry, noEntries);
+
 /*
 
 	int32 hr;

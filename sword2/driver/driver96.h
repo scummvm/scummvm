@@ -1053,6 +1053,7 @@
 #include "common/scummsys.h"
 #include "common/engine.h" // for warning()
 #include "common/system.h"
+#include "common/rect.h"
 //#include "ddraw.h"
 //#include "dsound.h"
 
@@ -1254,6 +1255,29 @@ typedef int BOOL;
 #define TRUE 1
 #define FALSE 0
 
+// FIXME: Temporary (?) surface class to replace LPDIRECTDRAWSURFACE for now.
+
+class Surface {
+public:
+	uint16 _width, _height;
+	uint16 _pitch;
+	byte *_pixels;
+
+	Surface(uint width, uint height) {
+		_width = width;
+		_height = height;
+		_pixels = (byte *) calloc(_width, _height);
+	};
+
+	~Surface() {
+		free(_pixels);
+	};
+
+	void clear();
+	void blit(Surface *s, ScummVM::Rect *r);
+	void blit(Surface *s, ScummVM::Rect *r, ScummVM::Rect *clip_rect);
+};
+
 //
 //	Structure definitions
 //	---------------------
@@ -1351,8 +1375,8 @@ typedef struct
 //	HWND				hwnd;
 //	LPDIRECTDRAW		lpDraw;
 //	LPDIRECTDRAW2		lpDD2;
-//	LPDIRECTDRAWSURFACE	lpPrimarySurface;
-//	LPDIRECTDRAWSURFACE	lpBackBuffer;
+//	Surface				*lpPrimarySurface;
+	Surface				*lpBackBuffer;
 //	LPDIRECTDRAWPALETTE	lpPalette;
 	int16				screenDeep;
 	int16				screenWide;

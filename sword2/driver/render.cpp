@@ -208,6 +208,7 @@
 #include "_mouse.h"
 #include "render.h"
 #include "menu.h"
+#include "../sword2.h"
 
 
 
@@ -248,7 +249,7 @@ static	int16	scrollxTarget;
 static	int16	scrollyTarget;
 static	int16	scrollxOld;
 static	int16	scrollyOld;
-//static	uint16	layer = 0;
+static	uint16	layer = 0;
 
 
 
@@ -275,14 +276,90 @@ int32 renderTooSlow;
 uint8 xblocks[MAXLAYERS];
 uint8 yblocks[MAXLAYERS];
 uint8 restoreLayer[MAXLAYERS];
-//LPDIRECTDRAWSURFACE *blockSurfaces[MAXLAYERS] = {0,0,0,0,0};
 
+// Each layer is composed by several sub-blocks
+
+Surface **blockSurfaces[MAXLAYERS] = { 0, 0, 0, 0, 0 };
+
+
+
+void Surface::clear() {
+	memset(_pixels, 0, _width * _height);
+	g_sword2->_system->copy_rect(_pixels, _width, 0, 0, _width, _height);
+}
+
+void Surface::blit(Surface *s, ScummVM::Rect *r) {
+	ScummVM::Rect clip_rect;
+
+	clip_rect.left = 0;
+	clip_rect.top = 0;
+	clip_rect.right = 640;
+	clip_rect.bottom = 480;
+
+	blit(s, r, &clip_rect);
+}
+
+void Surface::blit(Surface *s, ScummVM::Rect *r, ScummVM::Rect *clip_rect) {
+	if (r->top > clip_rect->bottom || r->left > clip_rect->right || r->bottom <= clip_rect->top || r->right <= clip_rect->left)
+		return;
+
+	byte *src = s->_pixels;
+
+	if (r->top < clip_rect->top) {
+		src -= s->_width * (r->top - clip_rect->top);
+		r->top = clip_rect->top;
+	}
+	if (r->left < clip_rect->left) {
+		src -= (r->left - clip_rect->left);
+		r->left = clip_rect->left;
+	}
+	if (r->bottom > clip_rect->bottom)
+		r->bottom = clip_rect->bottom;
+	if (r->right > clip_rect->right)
+		r->right = clip_rect->right;
+
+	byte *dst = _pixels + r->top * _width + r->left;
+	int i, j;
+
+	// FIXME: We first render the data to the back buffer, and then copy
+	// it to the backend. Since the same area will probably be copied
+	// several times, as each new parallax layer is rendered, this may be
+	// a bit inefficient.
+
+	for (i = 0; i < r->bottom - r->top; i++) {
+		for (j = 0; j < r->right - r->left; j++) {
+			if (src[j])
+				dst[j] = src[j];
+		}
+		src += s->_width;
+		dst += _width;
+	}
+
+	g_sword2->_system->copy_rect(_pixels + r->top * _width + r->left, _width, r->left, r->top, r->right - r->left, r->bottom - r->top);
+}
 
 
 
 int32 RestoreBackgroundLayer(_parallax *p, int16 l)
 {
-	warning("stub RestoreBackgroundLayer %d", l);
+	int16 oldLayer = layer;
+	int16 i;
+
+	debug(0, "RestoreBackgroundLayer %d", l);
+
+	layer = l;
+	if (blockSurfaces[l]) {
+		for (i = 0; i < xblocks[l] * yblocks[l]; i++)
+			if (blockSurfaces[l][i])
+				delete blockSurfaces[l][i];
+
+		free(blockSurfaces[l]);
+		blockSurfaces[l] = NULL;
+	}
+	RestoreSurfaces();
+	InitialiseBackgroundLayer(p);
+	layer = oldLayer;
+
 /*
 	int16 oldLayer = layer;
 	int16 i;
@@ -605,10 +682,47 @@ int32 SetLocationMetrics(uint16 w, uint16 h)
 
 
 
-int32 RenderParallax(_parallax *p, int16 layer)
+int32 RenderParallax(_parallax *p, int16 l) {
+	int16 x, y;
+	int16 i, j;
+	ScummVM::Rect r;
 
-{
-	warning("stub RenderParallax %d", layer);
+	debug(0, "RenderParallax %d", l);
+
+	if (locationWide == screenWide)
+		x = 0;
+	else
+		x = ((int32) ((p->w - screenWide) * scrollx) / (int32) (locationWide - screenWide));
+
+	if (locationDeep == (screenDeep - MENUDEEP * 2))
+		y = 0;
+	else
+		y = ((int32) ((p->h - (screenDeep - MENUDEEP * 2)) * scrolly) / (int32) (locationDeep - (screenDeep - MENUDEEP * 2)));
+
+	ScummVM::Rect clip_rect;
+
+	// Leave enough space for the top and bottom menues
+
+	clip_rect.left = 0;
+	clip_rect.right = 640;
+	clip_rect.top = 40;
+	clip_rect.bottom = 440;
+
+	for (j = 0; j < yblocks[l]; j++) {
+		for (i = 0; i < xblocks[l]; i++) {
+			if (blockSurfaces[l][i + j * xblocks[l]]) {
+				r.left = i * BLOCKWIDTH - x;
+				r.right = r.left + BLOCKWIDTH;
+				r.top = j * BLOCKHEIGHT - y + 40;
+				r.bottom = r.top + BLOCKHEIGHT;
+				lpBackBuffer->blit(blockSurfaces[l][i + j * xblocks[l]], &r, &clip_rect);
+			}
+		}
+	}
+
+	parallaxScrollx = scrollx - x;
+	parallaxScrolly = scrolly - y;
+
 /*
 
 #if PROFILING == 1
@@ -619,7 +733,7 @@ int32 RenderParallax(_parallax *p, int16 layer)
 
 #endif
 
-	if ((renderCaps & RDBLTFX_ALLHARDWARE) || ((renderCaps & RDBLTFX_FGPARALLAX) && (layer > 2)))
+	if ((renderCaps & RDBLTFX_ALLHARDWARE) || ((renderCaps & RDBLTFX_FGPARALLAX) && (l > 2)))
 	{
 
 		int16 x, y;
@@ -628,10 +742,10 @@ int32 RenderParallax(_parallax *p, int16 layer)
 		HRESULT hr = 0;
 		RECT r, rd;
 
-		if (restoreLayer[layer])
+		if (restoreLayer[l])
 		{
-			RestoreBackgroundLayer(p, layer);
-			restoreLayer[layer] = 0;
+			RestoreBackgroundLayer(p, l);
+			restoreLayer[l] = 0;
 		}
 
 		if (locationWide == screenWide)
@@ -648,12 +762,12 @@ int32 RenderParallax(_parallax *p, int16 layer)
 		while (TRUE)
 		{
 			j = 0;
-			while (j < yblocks[layer])
+			while (j < yblocks[l])
 			{
 				i = 0;
-				while (i < xblocks[layer])
+				while (i < xblocks[l])
 				{
- 					if (*(blockSurfaces[layer] + i + j * xblocks[layer]))
+ 					if (*(blockSurfaces[l] + i + j * xblocks[l]))
 					{
 						r.left = i * BLOCKWIDTH - x;
 						r.right = r.left + BLOCKWIDTH;
@@ -684,7 +798,7 @@ int32 RenderParallax(_parallax *p, int16 layer)
 							rd.bottom = BLOCKHEIGHT - (r.bottom - 440);
 							r.bottom = 440;
 						}
-						hr = IDirectDrawSurface2_Blt(lpBackBuffer, &r, *(blockSurfaces[layer] + i + j * xblocks[layer]), &rd, DDBLT_WAIT | DDBLT_KEYSRC, NULL);
+						hr = IDirectDrawSurface2_Blt(lpBackBuffer, &r, *(blockSurfaces[l] + i + j * xblocks[l]), &rd, DDBLT_WAIT | DDBLT_KEYSRC, NULL);
 						if (hr == DDERR_INVALIDRECT)
 							hr = 0;
 						if (hr)
@@ -707,7 +821,7 @@ int32 RenderParallax(_parallax *p, int16 layer)
 						if (++restoreSurfaces == 4)
 							return(RDERR_RESTORELAYERS);
 						else
-							RestoreBackgroundLayer(p, layer);
+							RestoreBackgroundLayer(p, l);
 					}
 					else
 						return(RD_OK);
@@ -996,7 +1110,14 @@ int32 SetScrollTarget(int16 sx, int16 sy)
 int32 CopyScreenBuffer(void)
 
 {
-	warning("stub CopyScreenBuffer");
+	debug(0, "CopyScreenBuffer");
+
+	// FIXME: The backend should keep track of dirty rects, but I have a
+	// feeling each one may be drawn several times, so we may have do add
+	// our own handling of them instead.
+
+	g_sword2->_system->update_screen();
+
 /*
 
 	uint8			*dst, *src;
@@ -1065,10 +1186,126 @@ int32 CopyScreenBuffer(void)
 
 
 
-int32 InitialiseBackgroundLayer(_parallax *p)
+int32 InitialiseBackgroundLayer(_parallax *p) {
+	uint8 *memchunk;
+	uint32 *quaddata;
+	uint8 zeros;
+	uint16 count;
+	uint16 i, j, k;
+	uint16 x;
+	uint8 *data;
+	uint8 *dst;
+	_parallaxLine *line;
 
-{
-	warning("stub InitialiseBackgroundLayer");
+	debug(0, "InitialiseBackgroundLayer");
+
+	// This function is called to re-initialise the layers if they have
+	// been lost. We know this if the layers have already been assigned.
+
+	// TODO: Can layers still be lost, or is that a DirectDraw-ism?
+
+	if (layer == MAXLAYERS)
+		CloseBackgroundLayer();
+
+	if (!p) {
+		layer++;
+		return RD_OK;
+	}
+
+	xblocks[layer] = (p->w + BLOCKWIDTH - 1) >> BLOCKWBITS;
+	yblocks[layer] = (p->h + BLOCKHEIGHT - 1) >> BLOCKHBITS;
+
+	blockSurfaces[layer] = (Surface **) calloc(xblocks[layer] * yblocks[layer], sizeof(Surface *));
+	if (!blockSurfaces[layer])
+		return RDERR_OUTOFMEMORY;
+
+	// Decode the parallax layer into a large chunk of memory
+
+	memchunk = (uint8 *) malloc(xblocks[layer] * BLOCKWIDTH * yblocks[layer] * BLOCKHEIGHT);
+	if (!memchunk)
+		return RDERR_OUTOFMEMORY;
+
+	// We clear not the entire memory chunk, but enough of it to store
+	// the entire parallax layer.
+
+	memset(memchunk, 0, p->w * p->h);
+
+	for (i = 0; i < p->h; i++) {
+		if (p->offset[i] == 0)
+			continue;
+
+		line = (_parallaxLine *) ((uint8 *) p + p->offset[i]);
+		data = (uint8 *) line + sizeof(_parallaxLine);
+		x = line->offset;
+
+		dst = memchunk + i * p->w + x;
+
+		zeros = 0;
+		if (line->packets == 0)	{
+			memcpy(dst, data, p->w);
+			continue;
+		}
+
+		for (j = 0; j < line->packets; j++) {
+			if (zeros) {
+				dst += *data;
+				x += *data;
+				data++;
+				zeros = 0;
+			} else if (*data == 0) {
+				data++;
+				zeros = 1;
+			} else {
+				count = *data++;
+				memcpy(dst, data, count);
+				data += count;
+				dst += count;
+				x += count;
+				zeros = 1;
+			}
+		}
+	}
+
+	// Now create the surfaces!
+
+	for (i = 0; i < xblocks[layer] * yblocks[layer]; i++) {
+		bool block_has_data = false;
+
+		data = memchunk + (p->w * BLOCKHEIGHT * (i / xblocks[layer])) + BLOCKWIDTH * (i % xblocks[layer]);
+
+		quaddata = (uint32 *) data;
+
+		for (j = 0; j < BLOCKHEIGHT; j++) {
+			for (k = 0; k < BLOCKWIDTH / 4; k++) {
+				if (*quaddata) {
+					block_has_data = true;
+					goto bailout;
+				}
+				quaddata++;
+			}
+			quaddata += ((p->w - BLOCKWIDTH) / 4);
+		}
+
+bailout:
+
+		//  Only assign a surface to the block if it contains data.
+
+		if (block_has_data) {
+			blockSurfaces[layer][i] = new Surface(BLOCKWIDTH, BLOCKHEIGHT);
+
+			//  Copy the data into the surfaces.
+			dst = blockSurfaces[layer][i]->_pixels;
+			for (j = 0; j < BLOCKHEIGHT; j++) {
+				memcpy(dst, data, BLOCKWIDTH);
+				data += p->w;
+				dst += BLOCKWIDTH;
+			}
+		} else
+			blockSurfaces[layer][i] = NULL;
+	}
+	free(memchunk);
+	layer++;
+
 /*
 	uint8			*memchunk;
 	uint32			*quaddata;
@@ -1252,7 +1489,20 @@ int32 InitialiseBackgroundLayer(_parallax *p)
 int32 CloseBackgroundLayer(void)
 
 {
-	warning("stub CloseBackgroundLayer");
+	debug(0, "CloseBackgroundLayer");
+
+	int16 i, j;
+
+	for (j = 0; j < MAXLAYERS; j++) {
+		if (blockSurfaces[j]) {
+			for (i = 0; i < xblocks[j] * yblocks[j]; i++)
+				if (blockSurfaces[j][i])
+					delete blockSurfaces[j][i];
+			free(blockSurfaces[j]);
+		}
+	}
+
+	layer = 0;
 /*
 	int16			i, j;
 
