@@ -2047,7 +2047,7 @@ void ScummEngine::readMAXS() {
 			_numGlobalScripts = 2000;
 
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
-	} else if (_features & GF_HE7_RESOURCES) {
+	} else if (_features & GF_AFTER_HEV7) {
 		_fileHandle.readUint16LE();
 		_numVariables = _fileHandle.readUint16LE();
 		_numBitVariables = _fileHandle.readUint16LE();
@@ -2072,7 +2072,7 @@ void ScummEngine::readMAXS() {
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects * 4, 1);
 		_numGlobalScripts = 200;
 		_shadowPaletteSize = 256;
-	} else if (_version == 6 && _gameId != GID_PJSDEMO) {
+	} else if (_version == 6) {
 		_numVariables = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE();                      // 16 in Sam/DOTT
 		_numBitVariables = _fileHandle.readUint16LE();
