@@ -196,7 +196,10 @@ void Scumm::getObjectXYPos(int object, int &x, int &y, int &dir)
 			}
 			assert(ptr);
 			imhd = (ImageHeader *)findResourceData(MKID('IMHD'), ptr);
-			if (_features & GF_AFTER_V7) {
+			if (_features & GF_AFTER_V8) {
+				x = od->x_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].x);
+				y = od->y_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].y);
+			} else if (_features & GF_AFTER_V7) {
 				x = od->x_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].x);
 				y = od->y_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].y);
 			} else {
@@ -402,7 +405,9 @@ void Scumm::loadRoomObjects()
 	CHECK_HEAP room = getResourceAddress(rtRoom, _roomResource);
 	roomhdr = (RoomHeader *)findResourceData(MKID('RMHD'), room);
 
-	if (_features & GF_AFTER_V7)
+	if (_features & GF_AFTER_V8)
+		_numObjectsInRoom = READ_LE_UINT32(&(roomhdr->v8.numObjects));
+	else if (_features & GF_AFTER_V7)
 		_numObjectsInRoom = READ_LE_UINT16(&(roomhdr->v7.numObjects));
 	else
 		_numObjectsInRoom = READ_LE_UINT16(&(roomhdr->old.numObjects));
@@ -447,7 +452,11 @@ void Scumm::loadRoomObjects()
 			error("Room %d missing image blocks(s)", _roomResource);
 
 		imhd = (ImageHeader *)findResourceData(MKID('IMHD'), ptr);
-		if (_features & GF_AFTER_V7)
+		if (_features & GF_AFTER_V8)
+			// FIXME - in v8, IMHD seems to contain no obj_id, but rather a name string
+			obim_id = 0;
+//			obim_id = READ_LE_UINT32(&imhd->v8.obj_id);
+		else if (_features & GF_AFTER_V7)
 			obim_id = READ_LE_UINT16(&imhd->v7.obj_id);
 		else
 			obim_id = READ_LE_UINT16(&imhd->old.obj_id);
@@ -564,42 +573,23 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room)
 	}
 
 	cdhd = (CodeHeader *)findResourceData(MKID('CDHD'), room + od->offs_obcd_to_room);
-	if (_features & GF_AFTER_V7)
-		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
-	else if (_features & GF_AFTER_V6)
-		od->obj_nr = READ_LE_UINT16(&(cdhd->v6.obj_id));
-	else
-		od->obj_nr = READ_LE_UINT16(&(cdhd->v5.obj_id));
 
-	if (!(_features & GF_AFTER_V7)) {
-		if (_features & GF_AFTER_V6) {
-			od->width = READ_LE_UINT16(&cdhd->v6.w);
-			od->height = READ_LE_UINT16(&cdhd->v6.h);
-			od->x_pos = ((int16)READ_LE_UINT16(&cdhd->v6.x));
-			od->y_pos = ((int16)READ_LE_UINT16(&cdhd->v6.y));
-			if (cdhd->v6.flags == 0x80) {
-				od->parentstate = 1;
-			} else {
-				od->parentstate = (cdhd->v6.flags & 0xF);
-			}
-			od->parent = cdhd->v6.parent;
-			od->actordir = cdhd->v6.actordir;
-		} else {
-			od->width = cdhd->v5.w << 3;
-			od->height = cdhd->v5.h << 3;
-			od->x_pos = cdhd->v5.x << 3;
-			od->y_pos = cdhd->v5.y << 3;
-			if (cdhd->v5.flags == 0x80) {
-				od->parentstate = 1;
-			} else {
-				od->parentstate = (cdhd->v5.flags & 0xF);
-			}
-			od->parent = cdhd->v5.parent;
-			od->walk_x = READ_LE_UINT16(&cdhd->v5.walk_x);
-			od->walk_y = READ_LE_UINT16(&cdhd->v5.walk_y);
-			od->actordir = cdhd->v5.actordir;
-		}
-	} else {
+	if (_features & GF_AFTER_V8) {
+		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
+
+		od->parent = cdhd->v7.parent;
+		od->parentstate = cdhd->v7.parentstate;
+
+		imhd = (ImageHeader *)findResourceData(MKID('IMHD'), room + od->offs_obim_to_room);
+		od->x_pos = READ_LE_UINT32(&imhd->v8.x_pos);
+		od->y_pos = READ_LE_UINT32(&imhd->v8.y_pos);
+		od->width = READ_LE_UINT32(&imhd->v8.width);
+		od->height = READ_LE_UINT32(&imhd->v8.height);
+		od->actordir = READ_LE_UINT32(&imhd->v8.actordir);
+
+	} else if (_features & GF_AFTER_V7) {
+		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
+
 		od->parent = cdhd->v7.parent;
 		od->parentstate = cdhd->v7.parentstate;
 
@@ -610,7 +600,38 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room)
 		od->height = READ_LE_UINT16(&imhd->v7.height);
 		od->actordir = READ_LE_UINT16(&imhd->v7.actordir);
 
+	} else if (_features & GF_AFTER_V6) {
+		od->obj_nr = READ_LE_UINT16(&(cdhd->v6.obj_id));
+
+		od->width = READ_LE_UINT16(&cdhd->v6.w);
+		od->height = READ_LE_UINT16(&cdhd->v6.h);
+		od->x_pos = ((int16)READ_LE_UINT16(&cdhd->v6.x));
+		od->y_pos = ((int16)READ_LE_UINT16(&cdhd->v6.y));
+		if (cdhd->v6.flags == 0x80) {
+			od->parentstate = 1;
+		} else {
+			od->parentstate = (cdhd->v6.flags & 0xF);
+		}
+		od->parent = cdhd->v6.parent;
+		od->actordir = cdhd->v6.actordir;
+	} else {
+		od->obj_nr = READ_LE_UINT16(&(cdhd->v5.obj_id));
+
+		od->width = cdhd->v5.w << 3;
+		od->height = cdhd->v5.h << 3;
+		od->x_pos = cdhd->v5.x << 3;
+		od->y_pos = cdhd->v5.y << 3;
+		if (cdhd->v5.flags == 0x80) {
+			od->parentstate = 1;
+		} else {
+			od->parentstate = (cdhd->v5.flags & 0xF);
+		}
+		od->parent = cdhd->v5.parent;
+		od->walk_x = READ_LE_UINT16(&cdhd->v5.walk_x);
+		od->walk_y = READ_LE_UINT16(&cdhd->v5.walk_y);
+		od->actordir = cdhd->v5.actordir;
 	}
+
 	od->fl_object_index = 0;
 }
 
@@ -810,7 +831,8 @@ void Scumm::addObjectToInventory(uint obj, uint room)
 		memcpy(getResourceAddress(rtInventory, slot), obcdptr, size);
 	}
 
-CHECK_HEAP}
+	CHECK_HEAP
+}
 
 void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint room)
 {
@@ -837,7 +859,9 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 
 	roomhdr = (RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
 
-	if (_features & GF_AFTER_V7)
+	if (_features & GF_AFTER_V8)
+		numobj = READ_LE_UINT32(&(roomhdr->v8.numObjects));
+	else if (_features & GF_AFTER_V7)
 		numobj = READ_LE_UINT16(&(roomhdr->v7.numObjects));
 	else
 		numobj = READ_LE_UINT16(&(roomhdr->old.numObjects));
@@ -864,7 +888,11 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 				}
 			} else {
 				cdhd = (CodeHeader *)findResourceData(MKID('CDHD'), obcdptr);
-				if (_features & GF_AFTER_V7)
+				if (_features & GF_AFTER_V8)
+					// FIXME - in v8, IMHD seems to contain no obj_id, but rather a name string
+					id2 = 0;
+//					id2 = READ_LE_UINT32(&(cdhd->v8.obj_id));
+				else if (_features & GF_AFTER_V7)
 					id2 = READ_LE_UINT16(&(cdhd->v7.obj_id));
 				else if (_features & GF_AFTER_V6)
 					id2 = READ_LE_UINT16(&(cdhd->v6.obj_id));
@@ -900,7 +928,11 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 					break;
 				}
 			} else {
-				if (_features & GF_AFTER_V7)
+				if (_features & GF_AFTER_V8)
+					// FIXME - in v8, IMHD seems to contain no obj_id, but rather a name string
+					id3 = 0;
+//					id3 = READ_LE_UINT32(&imhd->v8.obj_id);
+				else if (_features & GF_AFTER_V7)
 					id3 = READ_LE_UINT16(&imhd->v7.obj_id);
 				else
 					id3 = READ_LE_UINT16(&imhd->old.obj_id);
@@ -1111,20 +1143,21 @@ void Scumm::setCursorImg(uint img, uint room, uint imgindex)
 
 	findObjectInRoom(&foir, foCodeHeader | foImageHeader | foCheckAlreadyLoaded, img, room);
 
-	if (_features & GF_AFTER_V7)
+	if (_features & GF_AFTER_V8) {
+		setCursorHotspot2(READ_LE_UINT32(&foir.imhd->v8.hotspot[0].x),
+		                  READ_LE_UINT32(&foir.imhd->v8.hotspot[0].y));
+		w = READ_LE_UINT32(&foir.imhd->v8.width) >> 3;
+		h = READ_LE_UINT32(&foir.imhd->v8.height) >> 3;
+	} else if (_features & GF_AFTER_V7) {
 		setCursorHotspot2(READ_LE_UINT16(&foir.imhd->v7.hotspot[0].x),
-											READ_LE_UINT16(&foir.imhd->v7.hotspot[0].y));
-	else
-		setCursorHotspot2(READ_LE_UINT16(&foir.imhd->old.hotspot[0].x),
-											READ_LE_UINT16(&foir.imhd->old.hotspot[0].y));
-
-
-	if (!(_features & GF_AFTER_V7)) {
-		w = READ_LE_UINT16(&foir.cdhd->v6.w) >> 3;
-		h = READ_LE_UINT16(&foir.cdhd->v6.h) >> 3;
-	} else {
+		                  READ_LE_UINT16(&foir.imhd->v7.hotspot[0].y));
 		w = READ_LE_UINT16(&foir.imhd->v7.width) >> 3;
 		h = READ_LE_UINT16(&foir.imhd->v7.height) >> 3;
+	} else {
+		setCursorHotspot2(READ_LE_UINT16(&foir.imhd->old.hotspot[0].x),
+		                  READ_LE_UINT16(&foir.imhd->old.hotspot[0].y));
+		w = READ_LE_UINT16(&foir.cdhd->v6.w) >> 3;
+		h = READ_LE_UINT16(&foir.cdhd->v6.h) >> 3;
 	}
 
 	dataptr = findResource(IMxx_tags[imgindex], foir.obim);

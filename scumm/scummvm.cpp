@@ -727,7 +727,10 @@ void Scumm::initRoomSubBlocks()
 
 	rmhd = (RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
 
-	if (_features & GF_AFTER_V7) {
+	if (_features & GF_AFTER_V8) {
+		_scrWidth = READ_LE_UINT32(&(rmhd->v8.width));
+		_scrHeight = READ_LE_UINT32(&(rmhd->v8.height));
+	} else if (_features & GF_AFTER_V7) {
 		_scrWidth = READ_LE_UINT16(&(rmhd->v7.width));
 		_scrHeight = READ_LE_UINT16(&(rmhd->v7.height));
 	} else {
@@ -747,7 +750,7 @@ void Scumm::initRoomSubBlocks()
 	if (ptr) {
 		_EXCD_offs = ptr - roomptr;
 #ifdef DUMP_SCRIPTS
-	dumpResource("exit-", _roomResource, ptr - _resourceHeaderSize);
+		dumpResource("exit-", _roomResource, ptr - _resourceHeaderSize);
 #endif
 	}
 
@@ -755,7 +758,7 @@ void Scumm::initRoomSubBlocks()
 	if (ptr) {
 		_ENCD_offs = ptr - roomptr;
 #ifdef DUMP_SCRIPTS
-	dumpResource("entry-", _roomResource, ptr - _resourceHeaderSize);
+		dumpResource("entry-", _roomResource, ptr - _resourceHeaderSize);
 #endif
 	}
 
@@ -804,14 +807,27 @@ void Scumm::initRoomSubBlocks()
 	ptr = findResourceData(MKID('SCAL'), roomptr);
 	if (ptr) {
 		offs = ptr - roomptr;
-		for (i = 1; i < _maxScaleTable; i++, offs += 8) {
-			int a = READ_LE_UINT16(roomptr + offs);
-			int b = READ_LE_UINT16(roomptr + offs + 2);
-			int c = READ_LE_UINT16(roomptr + offs + 4);
-			int d = READ_LE_UINT16(roomptr + offs + 6);
-			if (a || b || c || d) {
-				setScaleItem(i, b, a, d, c);
-				roomptr = getResourceAddress(rtRoom, _roomResource);
+		if (_features & GF_AFTER_V7) {
+			for (i = 1; i < _maxScaleTable; i++, offs += 16) {
+				int a = READ_LE_UINT32(roomptr + offs);
+				int b = READ_LE_UINT32(roomptr + offs + 4);
+				int c = READ_LE_UINT32(roomptr + offs + 8);
+				int d = READ_LE_UINT32(roomptr + offs + 12);
+				if (a || b || c || d) {
+					setScaleItem(i, b, a, d, c);
+					roomptr = getResourceAddress(rtRoom, _roomResource);
+				}
+			}
+		} else {
+			for (i = 1; i < _maxScaleTable; i++, offs += 8) {
+				int a = READ_LE_UINT16(roomptr + offs);
+				int b = READ_LE_UINT16(roomptr + offs + 2);
+				int c = READ_LE_UINT16(roomptr + offs + 4);
+				int d = READ_LE_UINT16(roomptr + offs + 6);
+				if (a || b || c || d) {
+					setScaleItem(i, b, a, d, c);
+					roomptr = getResourceAddress(rtRoom, _roomResource);
+				}
 			}
 		}
 	}
@@ -839,7 +855,11 @@ void Scumm::initRoomSubBlocks()
 
 			ptr += _resourceHeaderSize;	/* skip tag & size */
 
-			if (_features & GF_AFTER_V7) {
+			if (_features & GF_AFTER_V8) {
+				id = READ_LE_UINT32(ptr);
+				checkRange(NUM_LOCALSCRIPT + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
+				_localScriptList[id - _numGlobalScripts] = ptr + 4 - roomptr;
+			} else if (_features & GF_AFTER_V7) {
 				id = READ_LE_UINT16(ptr);
 				checkRange(NUM_LOCALSCRIPT + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
 				_localScriptList[id - _numGlobalScripts] = ptr + 2 - roomptr;
