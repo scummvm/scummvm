@@ -128,6 +128,73 @@ Model::Mesh::~Mesh() {
   delete[] faces_;
 }
 
+void Model::Mesh::update() {
+  glPushMatrix();
+  glLoadIdentity();
+
+  GLdouble modelView[500];
+  GLdouble projection[500];
+  GLint viewPort[500];
+
+  glGetDoublev( GL_MODELVIEW_MATRIX, modelView );
+  glGetDoublev( GL_PROJECTION_MATRIX, projection );
+  glGetIntegerv( GL_VIEWPORT, viewPort);
+
+  GLdouble top = 1000;
+  GLdouble right = -1000;
+  GLdouble left = 1000;
+  GLdouble bottom = -1000;
+
+  for (int i = 0; i < numFaces_; i++)
+  {
+	  Vector3d v;
+	  Matrix4 tempMatrix = matrix_;
+	  float* pVertices;
+	  int j;
+      float bestDepth = 0;
+
+	  for( j =0; j< faces_[i].numVertices_; j++ )
+	  {
+			pVertices = vertices_ + 3 * faces_[i].vertices_[j];
+
+			v.set( *(pVertices), *(pVertices+1), *(pVertices+2) );
+
+			tempMatrix.rot_.transform( v );
+			v+= tempMatrix.pos_;
+
+			GLdouble winX;
+			GLdouble winY;
+			GLdouble winZ;
+			
+			gluProject( v.x(), v.y(), v.z(), modelView, projection, viewPort, &winX, &winY, &winZ);
+
+			if( winX > right )
+				right = winX;
+			if( winX < left )
+				left = winX;
+			if( winY < top )
+				top = winY;
+			if( winY > bottom )
+				bottom = winY;
+
+			if( winZ> bestDepth )
+				bestDepth = winZ;
+
+	  }
+
+	  screenBlocksAddRectangle( top, right, left, bottom, bestDepth );
+  }
+
+  glDisable(GL_DEPTH_TEST);
+  glPointSize( 3.f );
+  glColor4f( 1.f, 1.f, 0.f, 1.f );
+  glDisable(GL_TEXTURE_2D );
+
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_TEXTURE_2D );
+  glPopMatrix();
+}
+
 void Model::Face::loadBinary(const char *&data, ResPtr<Material> *materials) {
   type_ = get_LE_uint32(data + 4);
   geo_ = get_LE_uint32(data + 8);
@@ -473,6 +540,7 @@ void Model::HierNode::update() {
 	if( mesh_ != NULL )
 	{
 		mesh_->matrix_ = pivotMatrix;
+		mesh_->update();
 	}
 
 	if( child_ != NULL )
@@ -480,6 +548,8 @@ void Model::HierNode::update() {
 		child_->setMatrix( matrix_ );
 		child_->update();
 	}
+
+
 }
 
 
@@ -540,62 +610,9 @@ void Model::Mesh::draw() const {
   glEnable(GL_TEXTURE_2D );
 
 // Yaz: debug
-// this compute the dirty rect for the mesh
+// this compute the dirty rect for the mesh*/
 
-  glPushMatrix();
-  glLoadIdentity();
 
-  GLdouble modelView[500];
-  GLdouble projection[500];
-  GLint viewPort[500];
-
-  glGetDoublev( GL_MODELVIEW_MATRIX, modelView );
-  glGetDoublev( GL_PROJECTION_MATRIX, projection );
-  glGetIntegerv( GL_VIEWPORT, viewPort);
-
-  GLdouble top = 1000;
-  GLdouble right = -1000;
-  GLdouble left = 1000;
-  GLdouble bottom = -1000;
-
-  for (int i = 0; i < numFaces_; i++)
-  {
-	  Vector3d v;
-	  Matrix4 tempMatrix = matrix_;
-	  float* pVertices;
-	  int j;
-      float bestDepth = 0;
-
-	  for( j =0; j< faces_[i].numVertices_; j++ )
-	  {
-			pVertices = vertices_ + 3 * faces_[i].vertices_[j];
-
-			v.set( *(pVertices), *(pVertices+1), *(pVertices+2) );
-
-			tempMatrix.rot_.transform( v );
-			v+= tempMatrix.pos_;
-
-			GLdouble winX;
-			GLdouble winY;
-			GLdouble winZ;
-			
-			gluProject( v.x(), v.y(), v.z(), modelView, projection, viewPort, &winX, &winY, &winZ);
-
-			if( winX > right )
-				right = winX;
-			if( winX < left )
-				left = winX;
-			if( winY < top )
-				top = winY;
-			if( winY > bottom )
-				bottom = winY;
-
-			if( winZ> bestDepth )
-				bestDepth = winZ;
-
-	  }
-
-	  screenBlocksAddRectangle( top, right, left, bottom, bestDepth );
 /*
 	  if( faces_[i].numVertices_ == 3 ) // triangle
 	  {
@@ -628,14 +645,9 @@ void Model::Mesh::draw() const {
 	  {
 		  printf("Bad primitive !\n");
 	  } */
-/*  }
+//  }
 
-  glDisable(GL_DEPTH_TEST);
-  glPointSize( 3.f );
-  glColor4f( 1.f, 1.f, 0.f, 1.f );
-  glDisable(GL_TEXTURE_2D );
-
-  glBegin(GL_LINES);
+/*  glBegin(GL_LINES);
 
   GLdouble objx;
   GLdouble objy;
@@ -665,10 +677,8 @@ void Model::Mesh::draw() const {
   gluUnProject( right, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
   glVertex3f( objx, objy, objz );
 
-  glEnd();
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_TEXTURE_2D );
-  glPopMatrix();*/
+  glEnd();*/
+
 }
 
 void Model::Face::draw(float *vertices, float *vertNormals,

@@ -228,13 +228,21 @@ void screenBlocksBlitDirtyBlocks()
 	int i;
 	int j;
 
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, 640, 480, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glMatrixMode(GL_TEXTURE);
+	glLoadIdentity();
+
 	for(i=0;i<40;i++)
 	{
 		for(j=0;j<30;j++)
 		{
-//			if(screenBlockData[i][j].isDirty)
+			if(screenBlockData[i][j].isDirty)
 			{
-				glRasterPos2i(j*16, i*16);
+				glRasterPos2i(i*16, j*16);
 				glEnable(GL_DEPTH_TEST);
 				glDepthFunc(GL_ALWAYS);
 				glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); 
@@ -244,8 +252,8 @@ void screenBlocksBlitDirtyBlocks()
 				*/
 				for (int y = 0; y < 16; y++)
 				{
-					glRasterPos2i(j*16, i*16 + y + 1);
-					glDrawPixels(16, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, dataTemp+((i*16 +y +1) * 640)+(j*16));
+					glRasterPos2i(j*16, i*16 + y);
+					glDrawPixels(16, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, dataTemp+((j*16 +y) * 640)+(i*16));
 				}
 				glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); 
 				glDepthFunc(GL_LESS);

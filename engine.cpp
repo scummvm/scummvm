@@ -99,6 +99,8 @@ void Engine::mainLoop() {
     // Draw the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	screenBlocksDrawDebug();
+
 	screenBlocksBlitDirtyBlocks();
 
     Bitmap::prepareGL();
@@ -119,7 +121,6 @@ void Engine::mainLoop() {
     }
     glDisable(GL_TEXTURE_2D);
 
-//	screenBlocksDrawDebug();
 
     // Draw text
     for (text_list_type::iterator i = textObjects_.begin();

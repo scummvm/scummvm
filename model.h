@@ -85,6 +85,7 @@ private:
     void loadBinary(const char *&data, ResPtr<Material> *materials);
     void loadText(TextSplitter &ts, ResPtr<Material> *materials);
     void draw() const;
+	void update();
     ~Mesh();
 
     char name_[32];

@@ -167,7 +167,7 @@ void Bitmap::draw() const {
     */
     for (int row = 0; row < height_; row++) {
       glRasterPos2i(x_, y_ + row + 1);
-      glDrawPixels(width_, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, data_[curr_image_] + (2 * row * width_));
+    //  glDrawPixels(width_, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, data_[curr_image_] + (2 * row * width_));
     }
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); 
     glDepthFunc(GL_LESS);
