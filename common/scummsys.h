@@ -306,19 +306,19 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 
 	#define READ_UINT32(a) READ_LE_UINT32(a)
 
-	#define FROM_LE_32(a) (a)
-	#define FROM_LE_16(a) (a)
+	#define FROM_LE_32(a) ((uint32)(a))
+	#define FROM_LE_16(a) ((uint16)(a))
 
-	#define TO_LE_32(a) (a)
-	#define TO_LE_16(a) (a)
+	#define TO_LE_32(a) ((uint32)(a))
+	#define TO_LE_16(a) ((uint16)(a))
 
 	#define TO_BE_32(a) SWAP_BYTES_32(a)
 	#define TO_BE_16(a) SWAP_BYTES_16(a)
 
 #elif defined(SCUMM_BIG_ENDIAN)
 
-	#define MKID(a) (a)
-	#define MKID_BE(a) (a)
+	#define MKID(a) ((uint32)(a))
+	#define MKID_BE(a) ((uint32)(a))
 	//#define MKID_BE(a) SWAP_BYTES_32(a)
 
 	#define READ_UINT32(a) READ_BE_UINT32(a)
@@ -329,8 +329,8 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 	#define TO_LE_32(a) SWAP_BYTES_32(a)
 	#define TO_LE_16(a) SWAP_BYTES_16(a)
 
-	#define TO_BE_32(a) (a)
-	#define TO_BE_16(a) (a)
+	#define TO_BE_32(a) ((uint32)(a))
+	#define TO_BE_16(a) ((uint16)(a))
 
 #else
 
