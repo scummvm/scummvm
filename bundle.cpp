@@ -636,7 +636,7 @@ int32 Bundle::decompressCodec(int32 codec, byte * comp_input, byte * comp_output
 		break;
 
 		default:
-			printf("Bundle: Unknown codec %d!\n", codec);
+			printf("Bundle: Unknown codec %d!\n", (int)codec);
 			output_size = 0;
 		break;
 	}
