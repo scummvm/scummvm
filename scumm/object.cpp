@@ -482,9 +482,7 @@ void Scumm::loadRoomObjects() {
 		if (_dumpScripts) {
 			char buf[32];
 			sprintf(buf, "roomobj-%d-", _roomResource);
-			if (_features & GF_AFTER_V8)
-				// TODO - maybe V8 is not the only that needs this?
-				ptr = findResource(MKID('VERB'), ptr, 0);
+			ptr = findResource(MKID('VERB'), ptr, 0);
 			dumpResource(buf, od->obj_nr, ptr);
 		}
 
