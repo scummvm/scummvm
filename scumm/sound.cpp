@@ -283,22 +283,24 @@ void Sound::playSound(int soundID) {
 		_scumm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 	else if ((_scumm->_features & GF_FMTOWNS) || READ_UINT32(ptr) == MKID('SOUN') || READ_UINT32(ptr) == MKID('TOWS')) {
+
 		bool tows = READ_UINT32(ptr) == MKID('TOWS');
-		if (_scumm->_features & GF_FMTOWNS)
+		if (_scumm->_features & GF_FMTOWNS) {
 			size = READ_LE_UINT32(ptr);
-		else
-		{
+		} else {
 			size = READ_BE_UINT32(ptr + 4) - 2;
 			if (tows)
 				size += 8;
 			ptr += 2;
 		}
+
 		rate = 11025;
 		int type = *(ptr + 0x0D);
 		int numInstruments;
 
 		if (tows)
 			type = 0;
+
 		switch (type) {
 		case 0:	// Sound effect
 			numInstruments = *(ptr + 0x14);
@@ -306,12 +308,12 @@ void Sound::playSound(int soundID) {
 				numInstruments = 1;
 			ptr += 0x16;
 			size -= 0x16;
+
 			while (numInstruments--) {
 				int waveSize = READ_LE_UINT32(ptr + 0x0C);
-				int loopStart = READ_LE_UINT32(ptr + 0x10);
-				int loopEnd = READ_LE_UINT32(ptr + 0x14);
+				int loopStart = READ_LE_UINT32(ptr + 0x10) * 2;
+				int loopEnd = READ_LE_UINT32(ptr + 0x14) - 1;
 				rate = READ_LE_UINT32(ptr + 0x18) * 1000 / 0x62;
-
 				ptr += 0x20;
 				size -= 0x20;
 				if (size < waveSize) {
@@ -320,11 +322,11 @@ void Sound::playSound(int soundID) {
 				}
 				sound = (char *)malloc(waveSize);
 				for (int x = 0; x < waveSize; x++) {
-					int bit = *ptr++;
-					if (bit < 0x80)
-						sound[x] = 0x7F - bit;
+					int b = *ptr++;
+					if (b < 0x80)
+						sound[x] = 0x7F - b;
 					else
-						sound[x] = bit;
+						sound[x] = b;
 				}
 				size -= waveSize;
 
@@ -335,6 +337,7 @@ void Sound::playSound(int soundID) {
 			}
 			break;
 		case 1:
+		case 255:	// 255 is the type used in Indy3 FMTowns
 			// Music (Euphony format)
 			if (_scumm->_musicEngine)
 				_scumm->_musicEngine->startSound(soundID);
@@ -356,6 +359,9 @@ void Sound::playSound(int soundID) {
 			}
 
 			_currentCDSound = soundID;
+			break;
+		default: // Unsupported sound type
+			warning("Unsupported sound sub-type %d", type);
 			break;
 		}
 	}
