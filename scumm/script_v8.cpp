@@ -1402,20 +1402,7 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 	case 0xD9: {   // actorHit - used, for example, to detect ship collision
 	               // during ship-to-ship combat.
 		Actor *a = derefActor(args[1], "actorHit");
-		AkosRenderer *ar = (AkosRenderer *) _costumeRenderer;
-		bool old_need_redraw = a->needRedraw;
-
-		ar->_actorHitX = args[2];
-		ar->_actorHitY = args[3] + _screenTop;
-		ar->_actorHitMode = true;
-		ar->_actorHitResult = false;
-
-		a->needRedraw = true;
-		a->drawActorCostume();
-		a->needRedraw = old_need_redraw;
-
-		ar->_actorHitMode = false;
-		push(ar->_actorHitResult);
+		push(a->actorHitTest(args[2], args[3] + _screenTop));
 		break;
 	}
 	case 0xDA:		// lipSyncWidth

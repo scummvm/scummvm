@@ -986,11 +986,13 @@ void ScummEngine::processUpperActors() {
 	}
 }
 
-void Actor::drawActorCostume() {
-	if (!needRedraw)
-		return;
-
-	needRedraw = false;
+void Actor::drawActorCostume(bool hitTestMode) {
+	if (!hitTestMode) {
+		if (!needRedraw)
+			return;
+	
+		needRedraw = false;
+	}
 
 	setupActorScale();
 
@@ -1055,9 +1057,9 @@ void Actor::drawActorCostume() {
 
 	}
 
-	bcr->_draw_top = top = 0x7fffffff;
+	bcr->_draw_top = 0x7fffffff;
+	bcr->_draw_bottom = 0;
 
-	bcr->_draw_bottom = bottom = 0;
 	bcr->_skipLimb = (skipLimb != 0);
 	
 	// If the actor is partially hidden, redraw it next frame.
@@ -1066,9 +1068,26 @@ void Actor::drawActorCostume() {
 		needRedraw = (_vm->_version <= 6);
 	}
 
-	// Record the vertical extent of the drawn actor
-	top = bcr->_draw_top;
-	bottom = bcr->_draw_bottom;
+	if (!hitTestMode) {
+		// Record the vertical extent of the drawn actor
+		top = bcr->_draw_top;
+		bottom = bcr->_draw_bottom;
+	}
+}
+
+bool Actor::actorHitTest(int x, int y) {
+	AkosRenderer *ar = (AkosRenderer *)_vm->_costumeRenderer;
+
+	ar->_actorHitX = x;
+	ar->_actorHitY = y;
+	ar->_actorHitMode = true;
+	ar->_actorHitResult = false;
+
+	drawActorCostume(true);
+
+	ar->_actorHitMode = false;
+	
+	return ar->_actorHitResult;
 }
 
 void Actor::animateCostume() {

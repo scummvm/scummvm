@@ -156,11 +156,13 @@ public:
 	void turnToDirection(int newdir);
 	void walkActor();
 	void walkActorOld();
-	void drawActorCostume();
+	void drawActorCostume(bool hitTestMode = false);
 	void animateCostume();
 	void setActorCostume(int c);
 	
 	void animateLimb(int limb, int f);
+	
+	bool actorHitTest(int x, int y);
 	
 	byte *getActorName();
 	void startWalkActor(int x, int y, int dir);
