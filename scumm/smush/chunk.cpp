@@ -24,6 +24,7 @@
 
 #include "common/engine.h" // for debug, warning, error
 #include "common/file.h"
+#include "common/str.h"
 
 #include <stdio.h> // for FILE, fopen, fclose, fseek and ftell
 #include <string.h> // for memcpy
@@ -33,20 +34,18 @@
 	implements reference counting, so that ::file_Chunk does not leak memory !
 */
 class FilePtr {
-	char * _filename;
+	ScummVM::String _filename;
 	File _ifs;
 	int32 _refcount;
 	int32 _curPos;
 public:
-	FilePtr(const char * fname, const char * directory) : _refcount(1), _curPos(0) {
+	FilePtr(const char * fname, const char * directory) : _filename(fname), _refcount(1), _curPos(0) {
 		debug(9, "FilePtr created for %s", fname);
-		_filename = strdup(fname);
 		_ifs.open(fname, directory);
 		if(_ifs.isOpen() == false) error("FilePtr unable to read file %s", fname);
 	}
 	~FilePtr() {
-		debug(9, "FilePtr destroyed for %s", _filename);
-		free(_filename);
+		debug(9, "FilePtr destroyed for %s", _filename.c_str());
 		_ifs.close();
 	}
 	int32 tell() {
