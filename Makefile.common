@@ -171,4 +171,4 @@ endif
 
 # Include the dependency tracking files. We add /dev/null at the end
 # of the list to avoid a warning/error if no .d file exist
--include $(wildcard $(addprefix $(srcdir)/, $(addsuffix /*.d,$(DEPDIRS)))) /dev/null
+-include $(wildcard $(addsuffix /*.d,$(DEPDIRS))) /dev/null
