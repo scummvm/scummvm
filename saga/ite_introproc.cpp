@@ -173,6 +173,7 @@ int Scene::SC_ITEIntroAnimProc(int param, SCENE_INFO *scene_info, void *refCon) 
 // Handles the introductory Dreamer's Guild / NWC logo animation scene.
 int Scene::ITEIntroAnimProc(int param, SCENE_INFO *scene_info) {
 	EVENT event;
+	EVENT *q_event;
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -185,7 +186,7 @@ int Scene::ITEIntroAnimProc(int param, SCENE_INFO *scene_info) {
 		event.param = SET_PALETTE;
 		event.time = 0;
 
-		_vm->_events->queue(&event);
+		q_event = _vm->_events->queue(&event);
 
 		debug(0, "Intro animation procedure started.");
 		debug(0, "Linking animation resources...");
@@ -209,9 +210,14 @@ int Scene::ITEIntroAnimProc(int param, SCENE_INFO *scene_info) {
 			_vm->_anim->setFlag(6, ANIM_ENDSCENE);
 		}
 
-		debug(0, "Beginning animation playback.");
+		// Begin the animation
+		event.type = ONESHOT_EVENT;
+		event.code = ANIM_EVENT;
+		event.op = EVENT_PLAY;
+		event.param = 0;
+		event.time = 0;
 
-		_vm->_anim->play(0, 0);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue intro music playback
 		event.type = ONESHOT_EVENT;
@@ -221,7 +227,7 @@ int Scene::ITEIntroAnimProc(int param, SCENE_INFO *scene_info) {
 		event.op = EVENT_PLAY;
 		event.time = 0;
 
-		_vm->_events->queue(&event);
+		q_event = _vm->_events->chain(q_event, &event);
 		break;
 	case SCENE_END:
 		break;
@@ -659,11 +665,16 @@ int Scene::ITEIntroValleyProc(int param, SCENE_INFO *scene_info) {
 
 	switch (param) {
 	case SCENE_BEGIN:
-		debug(0, "Beginning animation playback.");
-
 		// Begin title screen background animation 
 		_vm->_anim->setCycles(0, -1);
-		_vm->_anim->play(0, kNormalFadeDuration);
+
+		event.type = ONESHOT_EVENT;
+		event.code = ANIM_EVENT;
+		event.op = EVENT_PLAY;
+		event.param = 0;
+		event.time = 0;
+
+		q_event = _vm->_events->queue(&event);
 
 		// Begin ITE title theme music
 		_vm->_music->stop();
@@ -674,9 +685,9 @@ int Scene::ITEIntroValleyProc(int param, SCENE_INFO *scene_info) {
 		event.param2 = 0;
 		event.op = EVENT_PLAY;
 		event.time = 0;
-
-		q_event = _vm->_events->queue(&event);
 		
+		q_event = _vm->_events->chain(q_event, &event);
+
 		// Pause animation before logo
 		event.type = ONESHOT_EVENT;
 		event.code = ANIM_EVENT;
@@ -821,7 +832,14 @@ int Scene::ITEIntroTreeHouseProc(int param, SCENE_INFO *scene_info) {
 
 		// Begin title screen background animation 
 		_vm->_anim->setFrameTime(0, 100);
-		_vm->_anim->play(0, event_delay);
+
+		event.type = ONESHOT_EVENT;
+		event.code = ANIM_EVENT;
+		event.op = EVENT_PLAY;
+		event.param = 0;
+		event.time = 0;
+
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue game credits list
 		text_entry.color = 255;
@@ -920,7 +938,6 @@ int Scene::ITEIntroFairePathProc(int param, SCENE_INFO *scene_info) {
 
 	switch (param) {
 	case SCENE_BEGIN:
-
 		// Start 'dissolve' transition to new scene background
 		event.type = CONTINUOUS_EVENT;
 		event.code = TRANSITION_EVENT;
@@ -934,7 +951,14 @@ int Scene::ITEIntroFairePathProc(int param, SCENE_INFO *scene_info) {
 
 		// Begin title screen background animation 
 		_vm->_anim->setCycles(0, -1);
-		_vm->_anim->play(0, event_delay);
+
+		event.type = ONESHOT_EVENT;
+		event.code = ANIM_EVENT;
+		event.op = EVENT_PLAY;
+		event.param = 0;
+		event.time = 0;
+
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue game credits list
 		text_entry.color = 255;
