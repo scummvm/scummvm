@@ -257,9 +257,11 @@ void SmushPlayer::init() {
 }
 
 void SmushPlayer::deinit() {
-	_scumm->_smushPlay = false;
-	while (_smushProcessFrame) {}
 	_scumm->_timer->releaseProcedure(&timerCallback);
+	_scumm->_smushPlay = false;
+	// In case the timerCallback is active right now, we loop till it finishes.
+	// Note: even this still leaves a window for race conditions to occur.
+	while (_smushProcessFrame) {}
 
 	for (int i = 0; i < 5; i++) {
 		if (_sf[i]) {
@@ -849,11 +851,11 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 }
 
 void SmushPlayer::parseNextFrame() {
-	Chunk *sub = _base->subBlock();
 	if (_base->eof()) {
 		_scumm->_videoFinished = true;
 		return;
 	}
+	Chunk *sub = _base->subBlock();
 
 	switch(sub->getType()) {
 		case TYPE_FRME:
