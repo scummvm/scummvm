@@ -54,9 +54,9 @@ int32 Logic::fnRefreshInventory(int32 *params) {
 
 	// so that the icon in 'object_held' is coloured while the rest are
 	// grey
-	examining_menu_icon = 1;
+	g_sword2->_examiningMenuIcon = true;
 	g_sword2->buildMenu();
- 	examining_menu_icon = 0;
+	g_sword2->_examiningMenuIcon = false;
 
 	// script continue
 	return IR_CONT;
@@ -68,7 +68,7 @@ void Sword2Engine::buildMenu(void) {
 
 	uint32 null_pc = 0;
 	uint32 j, k;
-	uint8 icon_coloured;
+	bool icon_coloured;
 	uint8 *icon;
 	uint8 *head;
 	uint32 res;
@@ -154,7 +154,7 @@ void Sword2Engine::buildMenu(void) {
 			// 'res' is now the resource id of the icon
 			res = _masterMenuList[j].icon_resource;
 
-			if (examining_menu_icon) {
+			if (_examiningMenuIcon) {
 				// WHEN AN ICON HAS BEEN RIGHT-CLICKED FOR
 				// 'EXAMINE' - SELECTION COLOURED, THE REST
 				// GREYED OUT
@@ -163,9 +163,9 @@ void Sword2Engine::buildMenu(void) {
 				// it coloured. If not, grey this one out.
 
 				if (res == OBJECT_HELD)
-					icon_coloured = 1;
+					icon_coloured = true;
 				else
-					icon_coloured = 0;
+					icon_coloured = false;
 			} else if (COMBINE_BASE) {
 				// WHEN ONE MENU OBJECT IS BEING USED WITH
 				// ANOTHER - BOTH TO BE COLOURED, THE REST
@@ -175,9 +175,9 @@ void Sword2Engine::buildMenu(void) {
 				// combined...
 
 				if (res == OBJECT_HELD || res == COMBINE_BASE)
-					icon_coloured = 1;
+					icon_coloured = true;
 				else
-					icon_coloured = 0;
+					icon_coloured = false;
 			} else {
 				// NORMAL ICON SELECTION - SELECTION GREYED
 				// OUT, THE REST COLOURED
@@ -186,9 +186,9 @@ void Sword2Engine::buildMenu(void) {
 				// not, make it coloured.
 
   				if (res == OBJECT_HELD)
-					icon_coloured = 0;
+					icon_coloured = false;
 				else
-					icon_coloured = 1;
+					icon_coloured = true;
 			}
 
 			icon = res_man.open(_masterMenuList[j].icon_resource) + sizeof(_standardHeader);

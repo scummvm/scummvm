@@ -22,20 +22,22 @@
 
 #include "sword2/object.h"
 
-namespace Sword2 {
-
 #define	TOTAL_mouse_list	50
 
-#define	MOUSE_normal		0
-#define	MOUSE_menu		1
-#define	MOUSE_drag		2
-#define	MOUSE_system_menu	3
-#define	MOUSE_holding		4
+namespace Sword2 {
+
+enum {
+	MOUSE_normal		= 0,	// normal in game
+	MOUSE_menu		= 1,	// menu chooser
+	MOUSE_drag		= 2,	// dragging luggage
+	MOUSE_system_menu	= 3,	// system menu chooser
+	MOUSE_holding		= 4	// speech chooser
+};
 
 // mouse unit - like Object_mouse, but with anim resource & pc (needed if
 // sprite is to act as mouse detection mask)
 
-typedef	struct {
+struct Mouse_unit {
 	// Top-left and bottom-right of mouse area. These coords are inclusive
 	int32 x1;
 	int32 y1;
@@ -62,39 +64,7 @@ typedef	struct {
 
 	// local id of text line to print when pointer highlights an object
 	int32 pointer_text;
-} Mouse_unit;
-
-extern uint32 cur_mouse;
-extern Mouse_unit mouse_list[TOTAL_mouse_list];
-extern uint32 mouse_touching;
-extern uint32 mouse_mode;
-extern uint8 examining_menu_icon;
-
-// human 0 on/1 off
-extern uint32 mouse_status;
-
-// 0 not !0 mode cannot be changed from normal mouse to top menu (i.e. when
-// carrying big objects)
-extern uint32 mouse_mode_locked;
-
-//last minute for pause mode
-extern uint32 real_luggage_item;
-
-void Reset_mouse_list(void);
-
-void Normal_mouse(void);
-void Menu_mouse(void);
-void Drag_mouse(void);
-void System_menu_mouse(void);
-
-void Mouse_on_off(void);
-uint32 Check_mouse_list(void);
-void Mouse_engine(void);
-
-void Set_mouse(uint32 res);
-void Set_luggage(uint32 res);
-
-void ClearPointerText(void);
+};
 
 } // End of namespace Sword2
 

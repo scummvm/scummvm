@@ -30,6 +30,7 @@
 #include "sword2/events.h"
 #include "sword2/icons.h"
 #include "sword2/layers.h"
+#include "sword2/mouse.h"
 #include "sword2/object.h"
 #include "sword2/driver/d_sound.h"
 #include "sword2/driver/d_draw.h"
@@ -170,9 +171,6 @@ public:
 	uint32 _curFgp0;
 	uint32 _curFgp1;
 
-	// So I know if the control panel can be activated
-	int32 _mouseStatus;
-
 	// Debugging stuff
 
 	uint32 _largestLayerArea;
@@ -226,6 +224,57 @@ public:
 	screen_info _thisScreen;
 
 	void setUpBackgroundLayers(void);
+
+	uint32 _curMouse;
+	Mouse_unit _mouseList[TOTAL_mouse_list];
+
+	// Set by checkMouseList()
+	uint32 _mouseTouching;
+	uint32 _oldMouseTouching;
+
+	uint32 _menuSelectedPos;
+
+	// If it's NORMAL_MOUSE_ID (ie. normal pointer) then it's over a floor
+	// area (or hidden hot-zone)
+
+	uint32 _mousePointerRes;
+
+	uint32 _mouseMode;
+	bool _examiningMenuIcon;
+
+	bool _mouseStatus;		// Human 0 on/1 off
+	bool _mouseModeLocked;		// 0 not !0 mode cannot be changed from
+					// normal mouse to top menu (i.e. when
+					// carrying big objects)
+	uint32 _realLuggageItem;	// Last minute for pause mode
+	uint32 _currentLuggageResource;
+	uint32 _oldButton;		// For the re-click stuff - must be
+					// the same button you see
+	uint32 _buttonClick;
+	uint32 _pointerTextBlocNo;
+	uint32 _playerActivityDelay;	// Player activity delay counter
+
+	void resetMouseList(void);
+
+	void normalMouse(void);
+	void menuMouse(void);
+	void dragMouse(void);
+	void systemMenuMouse(void);
+
+	void mouseOnOff(void);
+	uint32 checkMouseList(void);
+	void mouseEngine(void);
+
+	void setMouse(uint32 res);
+	void setLuggage(uint32 res);
+
+	void clearPointerText(void);
+
+	void createPointerText(uint32 text_id, uint32 pointer_res);
+	void monitorPlayerActivity(void);
+	void noHuman(void);
+
+	void registerMouse(Object_mouse *ob_mouse);
 
 	void errorString(const char *buf_input, char *buf_output);
 	void initialiseFontResourceFlags(void);

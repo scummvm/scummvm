@@ -1293,7 +1293,7 @@ public:
 
 				// Reset the mouse hot-spot list (see
 				// fnRegisterMouse and fnRegisterFrame)
-				Reset_mouse_list();
+				g_sword2->resetMouseList();
 
 				if (g_logic.processSession())
 					error("restore 1st cycle failed??");
@@ -1465,7 +1465,7 @@ void Gui::restartControl(void) {
 
 	// reset the mouse hot-spot list (see fnRegisterMouse and
 	// fnRegisterFrame)
-	Reset_mouse_list();
+	g_sword2->resetMouseList();
 
 	g_display->closeMenuImmediately();
 

@@ -30,7 +30,7 @@
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/memory.h"
-#include "sword2/mouse.h"	// for system Set_mouse & Set_luggage routines
+#include "sword2/mouse.h"	// for system setMouse & setLuggage routines
 #include "sword2/protocol.h"
 #include "sword2/resman.h"
 #include "sword2/sound.h"	// for Clear_fx_queue() called from cacheNewCluster()
@@ -998,7 +998,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 
 		if (file == NULL) {
 			error("init cannot *OPEN* cd.inf");
-		}
+		}	
 
 		_cd_inf cdInf;
 		
@@ -1027,8 +1027,8 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 
 	g_display->clearScene();
 
-	Set_mouse(0);
-	Set_luggage(0);
+	g_sword2->setMouse(0);
+	g_sword2->setLuggage(0);
 
 	uint8 *bgfile;
 	bgfile = res_man.open(2950);	// open the screen resource

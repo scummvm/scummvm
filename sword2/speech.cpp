@@ -231,7 +231,7 @@ int32 Logic::fnChoose(int32 *params) {
 		g_display->showMenu(RDMENU_BOTTOM);
 
 		// lets have the mouse pointer back
-		Set_mouse(NORMAL_MOUSE_ID);
+		g_sword2->setMouse(NORMAL_MOUSE_ID);
 
 		choosing = 1;
 
@@ -280,7 +280,7 @@ int32 Logic::fnChoose(int32 *params) {
 					IN_SUBJECT = 0;
 
 					// blank mouse again
-					Set_mouse(0);
+					g_sword2->setMouse(0);
 
 					debug(5, "hit %d - ref %d  ref*8 %d", hit, subject_list[hit].ref, subject_list[hit].ref * 8);
 
@@ -329,7 +329,7 @@ int32 Logic::fnEndConversation(int32 *params) {
 
 	if (g_display->_mouseY > 399) {
 		// will wait for cursor to move off the bottom menu
-		mouse_mode = MOUSE_holding;
+		g_sword2->_mouseMode = MOUSE_holding;
 		debug(5, "   holding");
 	}
 

@@ -380,7 +380,7 @@ bool Debugger::Cmd_SaveGame(int argc, const char **argv) {
 	}
 
 	// if mouse if off, or system menu is locked off
-	if (mouse_status || mouse_mode_locked) {
+	if (g_sword2->_mouseStatus || g_sword2->_mouseModeLocked) {
 		DebugPrintf("WARNING: Cannot save game while control menu unavailable!\n");
 		return true;
 	}
@@ -428,7 +428,7 @@ bool Debugger::Cmd_RestoreGame(int argc, const char **argv) {
 	}
 
 	// if mouse if off, or system menu is locked off
-	if (mouse_status || mouse_mode_locked) {
+	if (g_sword2->_mouseStatus || g_sword2->_mouseModeLocked) {
 		DebugPrintf("WARNING: Cannot restore game while control menu unavailable!\n");
 		return true;
 	}

@@ -185,12 +185,12 @@ void Debugger::buildDebugText(void) {
 
  		makeDebugTextBlock(buf, 0, 15);
 
-		if (mouse_touching)
+		if (g_sword2->_mouseTouching)
 			sprintf(buf, "mouse %d,%d (id %d: %s)",
 				g_display->_mouseX + g_sword2->_thisScreen.scroll_offset_x,
 				g_display->_mouseY + g_sword2->_thisScreen.scroll_offset_y,
-				mouse_touching,
-				FetchObjectName(mouse_touching));
+				g_sword2->_mouseTouching,
+				FetchObjectName(g_sword2->_mouseTouching));
 		else
 			sprintf(buf, "mouse %d,%d (not touching)",
 				g_display->_mouseX + g_sword2->_thisScreen.scroll_offset_x,

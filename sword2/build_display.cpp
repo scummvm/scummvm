@@ -212,8 +212,8 @@ void Sword2Engine::displayMsg(uint8 *text, int time) {
 		g_display->waitForFade();
 	}
 
-	Set_mouse(0);
-	Set_luggage(0);
+	setMouse(0);
+	setLuggage(0);
 
 	g_display->closeMenuImmediately();
 	g_display->clearScene();
@@ -654,20 +654,20 @@ void Sword2Engine::registerFrame(int32 *params, buildit *build_unit) {
 	build_unit->sort_y = build_unit->y + build_unit->scaled_height - 1;
 
 	if (params[0]) {
-		// passed a mouse structure, so add to the mouse_list
+		// passed a mouse structure, so add to the _mouseList
 		ob_mouse = (Object_mouse *) params[0];
 
 		// only if 'pointer' isn't NULL
 		if (ob_mouse->pointer) {
-			assert(cur_mouse < TOTAL_mouse_list);
+			assert(_curMouse < TOTAL_mouse_list);
 
-			mouse_list[cur_mouse].x1 = build_unit->x;
-			mouse_list[cur_mouse].y1 = build_unit->y;
-			mouse_list[cur_mouse].x2 = build_unit->x + build_unit->scaled_width;
-			mouse_list[cur_mouse].y2 = build_unit->y + build_unit->scaled_height;
+			_mouseList[_curMouse].x1 = build_unit->x;
+			_mouseList[_curMouse].y1 = build_unit->y;
+			_mouseList[_curMouse].x2 = build_unit->x + build_unit->scaled_width;
+			_mouseList[_curMouse].y2 = build_unit->y + build_unit->scaled_height;
 
- 			mouse_list[cur_mouse].priority = ob_mouse->priority;
-			mouse_list[cur_mouse].pointer = ob_mouse->pointer;
+ 			_mouseList[_curMouse].priority = ob_mouse->priority;
+			_mouseList[_curMouse].pointer = ob_mouse->pointer;
 
 			// check if pointer text field is set due to previous
 			// object using this slot (ie. not correct for this
@@ -677,15 +677,15 @@ void Sword2Engine::registerFrame(int32 *params, buildit *build_unit) {
 			// isn't same is current id
 			// then we don't want this "left over" pointer text
 
-			if (mouse_list[cur_mouse].pointer_text && mouse_list[cur_mouse].id != (int32) ID)
-				mouse_list[cur_mouse].pointer_text=0;
+			if (_mouseList[_curMouse].pointer_text && _mouseList[_curMouse].id != (int32) ID)
+				_mouseList[_curMouse].pointer_text=0;
 
-			mouse_list[cur_mouse].id = ID;
+			_mouseList[_curMouse].id = ID;
 			// not using sprite as detection mask
-			mouse_list[cur_mouse].anim_resource = 0;
-			mouse_list[cur_mouse].anim_pc = 0;
+			_mouseList[_curMouse].anim_resource = 0;
+			_mouseList[_curMouse].anim_pc = 0;
 
-			cur_mouse++;
+			_curMouse++;
 		}
 	}
 

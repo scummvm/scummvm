@@ -163,6 +163,23 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	memset(_masterMenuList, 0, sizeof(_masterMenuList));
 
 	memset(&_thisScreen, 0, sizeof(_thisScreen));
+
+	memset(_mouseList, 0, sizeof(_mouseList));
+
+	_mouseTouching = 0;
+	_oldMouseTouching = 0;
+	_menuSelectedPos = 0;
+	_examiningMenuIcon = false;
+	_mousePointerRes = 0;
+	_mouseMode = 0;
+	_mouseStatus = false;
+	_mouseModeLocked = false;
+	_currentLuggageResource = 0;
+	_oldButton = 0;
+	_buttonClick = 0;
+	_pointerTextBlocNo = 0;
+	_playerActivityDelay = 0;
+	_realLuggageItem = 0;
 }
 
 Sword2Engine::~Sword2Engine() {
@@ -275,7 +292,7 @@ int32 GameCycle(void) {
 
 			// reset the mouse hot-spot list (see fnRegisterMouse
 			// and fnRegisterFrame)
-			Reset_mouse_list();
+			g_sword2->resetMouseList();
 
 			// keep going as long as new lists keep getting put in
 			// - i.e. screen changes
@@ -289,7 +306,7 @@ int32 GameCycle(void) {
 	if (g_sword2->_thisScreen.scroll_flag)
 		Set_scrolling();
 
-	Mouse_engine();
+	g_sword2->mouseEngine();
 	Process_fx_queue();
 
 	// update age and calculate previous cycle memory usage
@@ -325,7 +342,7 @@ void Sword2Engine::go() {
 		if (SaveExists(_saveSlot))
 			RestoreGame(_saveSlot);
 		else { // show restore menu
-			Set_mouse(NORMAL_MOUSE_ID);
+			setMouse(NORMAL_MOUSE_ID);
 			if (!gui->restoreControl())
 				Start_game();
 		}
@@ -517,8 +534,8 @@ void PauseGame(void) {
 	
   	PauseAllSound();
 
-	//make a normal mouse
-	ClearPointerText();
+	// make a normal mouse
+	g_sword2->clearPointerText();
 
 	// mouse_mode=MOUSE_normal;
 
@@ -526,10 +543,10 @@ void PauseGame(void) {
 	g_display->setLuggageAnim(NULL, 0);
 
 	// blank cursor
-	Set_mouse(0);
+	g_sword2->setMouse(0);
 
 	// forces engine to choose a cursor
-	mouse_touching = 1;
+	g_sword2->_mouseTouching = 1;
 
 	// if level at max, turn down because palette-matching won't work
 	// when dimmed
@@ -552,8 +569,8 @@ void UnpauseGame(void) {
 	// removed "PAUSED" from screen
 	// Kill_text_bloc(pause_text_bloc_no);
 
-	if (OBJECT_HELD && real_luggage_item)
-		Set_luggage(real_luggage_item);
+	if (OBJECT_HELD && g_sword2->_realLuggageItem)
+		g_sword2->setLuggage(g_sword2->_realLuggageItem);
 
 	UnpauseAllSound();
 
@@ -570,8 +587,8 @@ void UnpauseGame(void) {
 	unpause_zone = 2;
 
 	// if mouse is about or we're in a chooser menu
-	if (!mouse_status || choosing)
-		Set_mouse(NORMAL_MOUSE_ID);
+	if (!g_sword2->_mouseStatus || choosing)
+		g_sword2->setMouse(NORMAL_MOUSE_ID);
 }
 
 } // End of namespace Sword2
