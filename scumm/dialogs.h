@@ -167,8 +167,6 @@ public:
 
 /**
  * A dialog used to display the music volume / text speed.
- * Given a label string, and a float value in the range of 0.0 to 1.0,
- * it will display a corresponding graphic.
  * Automatically closes after a brief time passed.
  */
 class ValueDisplayDialog : public GUI::Dialog {
