@@ -2822,7 +2822,7 @@ void Scumm_v6::shuffleArray(int num, int minIdx, int maxIdx) {
 		int val1 = readArray(num, 0, rand1);
 		int val2 = readArray(num, 0, rand2);
 		writeArray(num, 0, rand1, val2);
-		writeArray(num, 0, rand2, val1));
+		writeArray(num, 0, rand2, val1);
 	}
 }
 
