@@ -145,7 +145,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 			int	freq = _sound->getFreq(track->soundHandle);
 			track->stream2 = NULL;
 			track->stream = makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
-			_vm->_mixer->playInputStream(&track->handle, track->stream, false, track->vol / 1000, track->pan, -1);
+			_vm->_mixer->playInputStream(&track->handle, track->stream, false, track->mixerVol, track->mixerPan, -1);
 		}
 	}
 }
@@ -197,6 +197,9 @@ void IMuseDigital::callback() {
 				vol = (vol * _volSfx) / 128;
 			if (track->volGroupId == 3)
 				vol = (vol * _volMusic) / 128;
+
+			track->mixerVol = vol;
+			track->mixerPan = pan;
 
 			if (_vm->_mixer->isReady()) {
 				if (track->stream2) {

@@ -155,11 +155,24 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				track->stream = NULL;
 				track->started = false;
 			} else {
+				int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
+				int vol = track->vol / 1000;
+
+				if (track->volGroupId == 1)
+					vol = (vol * _volVoice) / 128;
+				if (track->volGroupId == 2)
+					vol = (vol * _volSfx) / 128;
+				if (track->volGroupId == 3)
+					vol = (vol * _volMusic) / 128;
+
+				track->mixerPan = pan;
+				track->mixerVol = vol;
+
 				// setup 1 second stream wrapped buffer
 				int32 streamBufferSize = track->iteration;
 				track->stream2 = NULL;
 				track->stream = makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
-				_vm->_mixer->playInputStream(&track->handle, track->stream, false, track->vol / 1000, track->pan, -1);
+				_vm->_mixer->playInputStream(&track->handle, track->stream, false, track->mixerVol, track->mixerPan, -1);
 				track->started = true;
 			}
 
