@@ -243,11 +243,9 @@ SCUMM
 * Humongous entertainment >= v7 titles:
   - Add support for local script offsets used in HE98+ games
   - Add support for additional drawWizImage flags
-  - Add support for new akos animation code used by cut scenes.
-  - Fix support for akos_drawLimb C021/C022/C025 (Talk animation are missing/glitches)
-    (Used in pjs-demo/racedemo/timedemo)
-  - Add support for akos codec 32 (Used in water/socks)
-  - Fix debug strings (Reports incorrect values/strings sometimes)
+  - Add support for new akos animation code used by cut scenes (cyx)
+  - Complete support for akos codec 32
+  - Fix debug strings (Reports incorrect values/strings sometimes) (Kirben)
   - Add support for various new opcodes
 
 Broken Sword 2
