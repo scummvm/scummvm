@@ -2713,7 +2713,12 @@ void Scumm::initCycl(const byte *ptr) {
 			ptr += 2;
 			byte start = *ptr++;
 			byte end = *ptr++;
-			if (!delay || start >= end)
+
+			// FIXME This value has another meaning
+			if (delay == 0x0aaa) 
+				continue;
+
+			if (!delay || delay == 0x0aaa || start >= end)
 				continue;
 
 			cycl->counter = 0;
