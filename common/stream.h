@@ -95,7 +95,7 @@ private:
 	byte _encbyte;
 	ReadStream *_realStream;
 public:
-	XORReadStream(ReadStream *in = 0, byte enc = 0) : _realStream(in), _encbyte(enc) {}
+	XORReadStream(ReadStream *in = 0, byte enc = 0) :  _encbyte(enc), _realStream(in) {}
 	void setStream(ReadStream *in) { _realStream = in; }
 	void setEnc(byte value) { _encbyte = value; }
 
