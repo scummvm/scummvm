@@ -295,6 +295,8 @@ private:
 	int _converseStartPos;
 	int _converseEndPos;
 	int _conversePos;
+
+	byte _converseLastColors[2][CONVERSE_TEXT_LINES];
 };
 
 } // End of namespace Saga

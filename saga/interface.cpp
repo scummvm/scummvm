@@ -808,6 +808,11 @@ void Interface::converseClear(void) {
 	_converseStartPos = 0;
 	_converseEndPos = 0;
 	_conversePos = -1;
+
+	for (int i = 0; i < CONVERSE_TEXT_LINES; i++) {
+		_converseLastColors[0][i] = 0;
+		_converseLastColors[1][i] = 0;
+	}
 }
 
 bool Interface::converseAddText(const char *text, int replyId, byte replyFlags, int replyBit) {
@@ -862,8 +867,8 @@ bool Interface::converseAddText(const char *text, int replyId, byte replyFlags, 
 
 enum converseColors {
 	kColorBrightWhite = 0x2,
-	kColorDarkGrey = 0xa,
-	kColorGrey = 0xb,
+	kColorGrey = 0xa,
+	kColorDarkGrey = 0xb,
 	kColorGreen = 0xba,
 	kColorBlack = 0xf,
 	kColorBlue = 0x93
@@ -899,6 +904,72 @@ void Interface::converseSetTextLines(int row, int textcolor, bool btnDown) {
 }
 
 void Interface::converseDisplayTextLine(int textcolor, bool btnDown, bool rebuild) {
+	int x = 52; // FIXME: remove hardcoded value
+	int y = 6; // FIXME: remove hardcoded value
+	int pos = _converseStartPos;
+	byte textcolors[2][CONVERSE_TEXT_LINES];
+	SURFACE *ds;
+
+	ds = _vm->_gfx->getBackBuffer(); // FIXME: probably best to move this out
+
+	for (int i = 0; i < CONVERSE_TEXT_LINES; i++) {
+		int relpos = pos + i;
+
+		if (_conversePos >= 0
+			&& _converseText[_conversePos].stringNum
+						== _converseText[relpos].stringNum) {
+			textcolors[0][i] = textcolor;
+			textcolors[1][i] = (!btnDown) ? kColorDarkGrey : kColorGrey;
+		} else {
+			textcolors[0][i] = kColorBlue;
+			textcolors[1][i] = kColorDarkGrey;
+		}
+	}
+		// if no colors have changed, exit
+	if (!rebuild && memcmp(textcolors, _converseLastColors, sizeof(textcolors)) == 0)
+		return;
+
+	memcpy(_converseLastColors, textcolors, sizeof(textcolors));
+
+	Rect rect(8, CONVERSE_TEXT_LINES * CONVERSE_TEXT_HEIGHT);
+	int scrx = _conversePanel.x + x;
+
+	rect.moveTo(_conversePanel.x + x, _conversePanel.y + y);
+
+	drawRect(ds, &rect, kColorDarkGrey);
+
+	rect.top = rect.left = 0;
+	rect.right = CONVERSE_MAX_TEXT_WIDTH;
+	rect.bottom = CONVERSE_TEXT_HEIGHT;
+
+	for (int i = 0; i < CONVERSE_TEXT_LINES; i++) {
+		byte foregnd = textcolors[0][i];
+		byte backgnd = textcolors[1][i];
+		int relpos = pos + i;
+
+		rect.moveTo(_conversePanel.x + x + 7 + 1, 
+					_conversePanel.y + y + i * CONVERSE_TEXT_HEIGHT);
+
+		drawRect(ds, &rect, backgnd);
+
+		if (_converseTextCount > i) {
+			const char *str = _converseText[relpos].text;
+			char bullet[] = { 0xb7, 0 };
+			int scry = i * CONVERSE_TEXT_HEIGHT + _conversePanel.y + y;
+			byte tcolor, bcolor;
+
+			if (_converseText[relpos].textNum == 0) { // first entry
+				tcolor = kColorGreen;
+				bcolor = kColorBlack;
+				_vm->_font->draw(SMALL_FONT_ID, ds, bullet, strlen(bullet),
+								 scrx + 2, scry, tcolor, bcolor, FONT_SHADOW | FONT_DONTMAP);
+			}
+			_vm->_font->draw(SMALL_FONT_ID, ds, str, strlen(str),
+							 scrx + 9, scry, foregnd, kColorBlack, FONT_SHADOW);
+		}
+	}
+
+	// FIXME: TODO: arrows
 }
 
 void Interface::converseChangePos(int chg) {

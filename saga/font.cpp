@@ -379,20 +379,20 @@ int Font::draw(int font_id, SURFACE *ds, const char *draw_str, size_t draw_str_c
 	font = _fonts[font_id];
 
 	if (flags & FONT_OUTLINE) { 
-		outFont(font->outline, ds, draw_str, draw_str_ct, text_x - 1, text_y - 1, effect_color);
-		outFont(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color);
+		outFont(font->outline, ds, draw_str, draw_str_ct, text_x - 1, text_y - 1, effect_color, flags);
+		outFont(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color, flags);
 	} else if (flags & FONT_SHADOW) {
-		outFont(font->normal, ds, draw_str, draw_str_ct, text_x - 1, text_y + 1, effect_color);
-		outFont(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color);
+		outFont(font->normal, ds, draw_str, draw_str_ct, text_x - 1, text_y + 1, effect_color, flags);
+		outFont(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color, flags);
 	} else { // FONT_NORMAL
-		outFont(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color);
+		outFont(font->normal, ds, draw_str, draw_str_ct, text_x, text_y, color, flags);
 	}
 
 	return SUCCESS;
 }
 
 int Font::outFont(FONT_STYLE * draw_font, SURFACE * ds, const char *draw_str, size_t draw_str_ct,
-				int text_x, int text_y, int color) {
+				  int text_x, int text_y, int color, int flags) {
 	const byte *draw_str_p;
 	byte *c_data_ptr;
 	int c_code;
@@ -424,7 +424,8 @@ int Font::outFont(FONT_STYLE * draw_font, SURFACE * ds, const char *draw_str, si
 		c_code = *draw_str_p & 0xFFU;
 
 		// Translate character
-		c_code = _charMap[c_code];
+		if (!(flags & FONT_DONTMAP))
+			c_code = _charMap[c_code];
 		assert(c_code < FONT_CHARCOUNT);
 
 		// Check if character is defined

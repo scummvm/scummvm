@@ -55,11 +55,12 @@ enum FONT_ID {
 };
 
 enum FONT_EFFECT_FLAGS {
-	FONT_NORMAL = 0x00,
-	FONT_OUTLINE = 0x01,
-	FONT_SHADOW = 0x02,
-	FONT_BOLD = 0x04,
-	FONT_CENTERED = 0x08
+	FONT_NORMAL   = 0,
+	FONT_OUTLINE  = 1 << 0,
+	FONT_SHADOW   = 1 << 1,
+	FONT_BOLD     = 1 << 2,
+	FONT_CENTERED = 1 << 3,
+	FONT_DONTMAP  = 1 << 4
 };
 
 struct FONT_HEADER {
@@ -110,7 +111,7 @@ class Font {
 	int loadFont(uint32 font_rn, int font_id);
 	FONT_STYLE *createOutline(FONT_STYLE * src_font);
 	int outFont(FONT_STYLE *font, SURFACE * ds, const char *draw_str, size_t draw_str_ct,
-				 int text_x, int text_y, int color);
+				int text_x, int text_y, int color, int flags);
 	int getByteLen(int num_bits);
 
 	static const int _charMap[256];
