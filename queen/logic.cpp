@@ -566,7 +566,7 @@ uint16 Logic::findFrame(uint16 obj) {
 			img = _objectData[i].image;
 			if(img <= -10) {
 				GraphicData* pgd = &_graphicData[-(img + 10)];
-				if(pgd->lastFrame > 0) {
+				if(pgd->lastFrame != 0) {
 					// skip all the frames of the animation
 					idx += ABS(pgd->lastFrame) - pgd->firstFrame + 1;
 				}
