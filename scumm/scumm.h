@@ -1012,7 +1012,7 @@ public:
 	byte _proc_special_palette[256];
 	byte _roomPalette[256];
 	byte *_shadowPalette;
-	int _heSndSoundFreq, _heSndVar2, _heSndVar3, _heSndSoundId, _heSndVar5;
+	int _heSndSoundFreq, _heSndOffset, _heSndTimer, _heSndSoundId, _heSndLoop;
 
 protected:
 	int _shadowPaletteSize;

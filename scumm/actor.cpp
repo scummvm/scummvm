@@ -981,6 +981,8 @@ void Actor::drawActorCostume() {
 	bcr->_shadow_mode = shadow_mode;
 	if (_vm->_features & GF_SMALL_HEADER)
 		bcr->_shadow_table = NULL;
+	else if (_vm->_heversion == 70)
+		bcr->_shadow_table = _vm->_he_actor_palette;
 	else
 		bcr->_shadow_table = _vm->_shadowPalette;
 
