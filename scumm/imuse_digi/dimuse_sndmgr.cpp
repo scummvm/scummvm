@@ -325,7 +325,10 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 				closeSound(sound);
 				return NULL;
 			}
-			sound->bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside);
+			if (sound->bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside) == 0) {
+				closeSound(sound);
+				return NULL;
+			}
 			sound->soundId = soundId;
 			sound->type = soundType;
 			sound->volGroupId = volGroupId;
@@ -345,7 +348,10 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 				closeSound(sound);
 				return NULL;
 			}
-			sound->bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside);
+			if (sound->bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside) == 0) {
+				closeSound(sound);
+				return NULL;
+			}
 			strcpy(sound->name, soundName);
 			sound->soundId = soundId;
 			sound->type = soundType;
