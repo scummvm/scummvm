@@ -2727,7 +2727,7 @@ void ScummEngine::initRoomSubBlocks() {
 
 			_localScriptList[id - _numGlobalScripts] = ptr + 1 - roomptr;
 		}
-	} else if (_heversion >= 99) {
+	} else if (_heversion >= 90) {
 		ResourceIterator localScriptIterator(searchptr, false);
 		while ((ptr = localScriptIterator.findNext(MKID('LSC2'))) != NULL) {
 			int id = 0;
@@ -2735,6 +2735,7 @@ void ScummEngine::initRoomSubBlocks() {
 			ptr += _resourceHeaderSize;	/* skip tag & size */
 
 			id = READ_LE_UINT32(ptr);
+
 			checkRange(NUM_LOCALSCRIPT + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
 			_localScriptList[id - _numGlobalScripts] = ptr + 4 - roomResPtr;
 
@@ -2744,6 +2745,22 @@ void ScummEngine::initRoomSubBlocks() {
 				dumpResource(buf, id, ptr - _resourceHeaderSize);
 			}
 		}
+
+		while ((ptr = localScriptIterator.findNext(MKID('LSCR'))) != NULL) {
+			int id = 0;
+
+			ptr += _resourceHeaderSize;	/* skip tag & size */
+
+			id = ptr[0];
+			_localScriptList[id - _numGlobalScripts] = ptr + 1 - roomResPtr;
+
+			if (_dumpScripts) {
+				char buf[32];
+				sprintf(buf, "room-%d-", _roomResource);
+				dumpResource(buf, id, ptr - _resourceHeaderSize);
+			}
+		}
+
 	} else {
 		ResourceIterator localScriptIterator(searchptr, false);
 		while ((ptr = localScriptIterator.findNext(MKID('LSCR'))) != NULL) {
