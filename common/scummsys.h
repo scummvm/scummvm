@@ -22,6 +22,10 @@
 #ifndef SCUMMSYS_H
 #define SCUMMSYS_H
 
+#ifndef _STDAFX_H
+#error Included scummsys.h without including stdafx.h first!
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 
