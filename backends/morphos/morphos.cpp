@@ -44,7 +44,9 @@
 #include <proto/intuition.h>
 #include <proto/keymap.h>
 #include <proto/timer.h>
+#define USE_INLINE_STDARG
 #include <proto/cdda.h>
+#undef USE_INLINE_STDARG
 #include <proto/cybergraphics.h>
 
 #include <time.h>
@@ -261,7 +263,7 @@ void OSystem_MorphOS::delay_msecs(uint msecs)
 	TimerIORequest->tr_time.tv_secs = 0;
 	TimerIORequest->tr_time.tv_micro = msecs*1000;
 	DoIO((IORequest *) TimerIORequest);*/
-	TimeDelay(UNIT_MICROHZ, 0, msecs*1000);
+   TimeDelay(UNIT_MICROHZ, 0, msecs*1000);
 }
 
 void OSystem_MorphOS::set_timer(int timer, int (*callback)(int))
@@ -273,7 +275,7 @@ void *OSystem_MorphOS::create_thread(ThreadProc *proc, void *param)
 {
 	ScummMusicThread = CreateNewProcTags(NP_Entry, (ULONG) proc, NP_CodeType, CODETYPE_PPC,
 													 NP_Name, (ULONG) "ScummVM Music Thread",
-													 NP_Priority, 80, NP_StackSize, 32000,
+													 NP_Priority, 60, NP_StackSize, 32000,
 													 NP_PPC_Arg1, (ULONG) param, TAG_DONE);
 	return ScummMusicThread;
 }
@@ -322,15 +324,15 @@ uint32 OSystem_MorphOS::property(int param, Property *value)
 			if (!CDDABase) CDDABase = OpenLibrary("cdda.library", 2);
 			if (CDDABase)
 			{
-				CDrive = CDDA_FindNextDrive(NULL, FindCDTags);
+				CDrive = CDDA_FindNextDriveA(NULL, FindCDTags);
 				if (!CDrive && GameID == GID_MONKEY)
 				{
 					FindCDTags[0].ti_Data = (ULONG) "Madness";
-					CDrive = CDDA_FindNextDrive(NULL, FindCDTags);
+					CDrive = CDDA_FindNextDriveA(NULL, FindCDTags);
 				}
 				if (CDrive)
 				{
-					if (!CDDA_ObtainDrive(CDrive, CDDA_SHARED_ACCESS, NULL))
+					if (!CDDA_ObtainDriveA(CDrive, CDDA_SHARED_ACCESS, NULL))
 					{
 						CDrive = NULL;
 						warning("Failed to obtain CD drive - music will not play");
@@ -378,7 +380,7 @@ void OSystem_MorphOS::play_cdrom(int track, int num_loops, int start_frame, int 
 		PlayTags[2].ti_Data = (length == 0) ? track+1 : track;
 		PlayTags[3].ti_Data = length ? start_frame+length : 0;
 		PlayTags[4].ti_Data = (num_loops == 0) ? 1 : num_loops;
-		CDDA_Play(CDrive, PlayTags);
+		CDDA_PlayA(CDrive, PlayTags);
 	}
 }
 
@@ -458,7 +460,7 @@ void OSystem_MorphOS::set_palette(const byte *colors, uint start, uint num)
 
 void OSystem_MorphOS::CreateScreen(CS_DSPTYPE dspType)
 {
-	ULONG mode = INVALID_ID;
+	LONG  mode = INVALID_ID;
 	int   depths[] = { 8, 32, 16, 15, 0 };
 	int   i;
 	Screen *wb = NULL;
@@ -521,7 +523,7 @@ void OSystem_MorphOS::CreateScreen(CS_DSPTYPE dspType)
 		if (ScummScreen == NULL)
 			error("Failed to open screen");
 
-		ULONG	RealDepth = GetBitMapAttr(&ScummScreen->BitMap, BMA_DEPTH);
+		LONG RealDepth = GetBitMapAttr(&ScummScreen->BitMap, BMA_DEPTH);
 		if (RealDepth != ScummDepth)
 		{
 			warning("Screen did not open in expected depth");
@@ -691,7 +693,8 @@ bool OSystem_MorphOS::poll_event(Event *event)
 {
 	IntuiMessage *ScummMsg;
 
-	if (ScummMsg = (IntuiMessage *) GetMsg(ScummWindow->UserPort))
+	ScummMsg = (IntuiMessage *) GetMsg(ScummWindow->UserPort);
+	if (ScummMsg)
 	{
 		switch (ScummMsg->Class)
 		{
@@ -788,8 +791,8 @@ bool OSystem_MorphOS::poll_event(Event *event)
 
 				if (!FullScreenMode && !ScummDefaultMouse)
 				{
-					if (newx < 0 || newx > ScummBufferWidth ||
-						 newy < 0 || newy > ScummBufferHeight
+					if (newx < 0 || newx > (LONG) ScummBufferWidth ||
+						 newy < 0 || newy > (LONG) ScummBufferHeight
 						)
 					{
 						if (!ScummOrigMouse)
@@ -1069,9 +1072,9 @@ void OSystem_MorphOS::update_screen()
 		InitRastPort(&rp);
 		rp.BitMap = ScummRenderTo;
 
-		uint32 src_x, src_y;
-		uint32 src_w, src_h;
-		uint32 reg_x, reg_y;
+		int32 src_x, src_y;
+		int32 src_w, src_h;
+		int32 reg_x, reg_y;
 		RegionRectangle *update_rect = UpdateRegion->RegionRectangle;
 
 		reg_x = UpdateRegion->bounds.MinX;
@@ -1104,9 +1107,9 @@ void OSystem_MorphOS::update_screen()
 	}
 	else
 	{
-		uint32 src_x, src_y;
-		uint32 src_w, src_h;
-		uint32 reg_x, reg_y;
+		int32 src_x, src_y;
+		int32 src_w, src_h;
+		int32 reg_x, reg_y;
 		RegionRectangle *update_rect = UpdateRegion->RegionRectangle;
 
 		reg_x = UpdateRegion->bounds.MinX;
@@ -1171,7 +1174,6 @@ void OSystem_MorphOS::update_screen()
 
 void OSystem_MorphOS::DrawMouse()
 {
-	APTR handle = NULL;
 	int x,y;
 	byte *dst,*bak;
 	byte color;
@@ -1198,11 +1200,11 @@ void OSystem_MorphOS::DrawMouse()
 
 	for (y = 0; y < h; y++, dst += ScummBufferWidth, bak += MAX_MOUSE_W, buf += w)
 	{
-		if ((uint)(ydraw+y) < ScummBufferHeight)
+		if (ydraw+y < ScummBufferHeight)
 		{
 			for (x = 0; x<w; x++)
 			{
-				if ((uint)(xdraw+x) < ScummBufferWidth)
+				if (xdraw+x < ScummBufferWidth)
 				{
 					bak[x] = dst[x];
 					if ((color=buf[x])!=0xFF)
@@ -1231,11 +1233,11 @@ void OSystem_MorphOS::UndrawMouse()
 
 	for (y = 0; y < MouseOldHeight; y++, bak += MAX_MOUSE_W, dst += ScummBufferWidth)
 	{
-		if ((uint)(MouseOldY + y) < ScummBufferHeight)
+		if (MouseOldY + y < ScummBufferHeight)
 		{
 			for (x = 0; x < MouseOldWidth; x++)
 			{
-				if ((uint)(MouseOldX + x) < ScummBufferWidth)
+				if (MouseOldX + x < ScummBufferWidth)
 					dst[x] = bak[x];
 			}
 		}
@@ -1455,13 +1457,11 @@ void OSystem_MorphOS::copy_rect_overlay(const int16 *ovl, int pitch, int x, int 
 		{
 			for (x1 = 0; x1 < w; x1++)
 			{
-				ULONG r, g, b;
+				uint8	r, g, b;
 				int16 col;
 
 				col = *ovl++;
-				r = RED_FROM_16(col);
-				g = GREEN_FROM_16(col);
-				b = BLUE_FROM_16(col);
+				colorToRBG(col, r, g, b);
 				*dest++ = r;
 				*dest++ = g;
 				*dest++ = b;

@@ -138,8 +138,8 @@ class OSystem_MorphOS : public OSystem
 		Window  	    *ScummWindow;
 		char 			  ScummWndTitle[125];
 		APTR          ScummBuffer;
-		int			  ScummBufferWidth;
-		int			  ScummBufferHeight;
+		LONG		     ScummBufferWidth;
+		LONG			  ScummBufferHeight;
 		ScreenBuffer *ScummScreenBuffer[2];
 		BitMap  	    *ScummRenderTo;
 		ULONG			  ScummPaintBuffer;

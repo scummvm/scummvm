@@ -140,7 +140,7 @@ void Timer::TimerService(Timer *this_ptr, Engine *engine)
 		{
 			TimerServiceMessage *tmsg;
 
-			while (tmsg = (TimerServiceMessage *) GetMsg(port))
+			while ((tmsg = (TimerServiceMessage *) GetMsg(port)))
 			{
 				if (tmsg->tsm_Message.mn_Length == sizeof (TimerServiceMessage))
 				{

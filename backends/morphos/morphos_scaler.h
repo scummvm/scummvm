@@ -72,8 +72,8 @@ class MorphOSScaler
 		bool ScummPCMode;
 
 		APTR Buffer;
-		int	BufferWidth;
-		int	BufferHeight;
+		ULONG	BufferWidth;
+		ULONG	BufferHeight;
 		ULONG *ScummColors;
 		USHORT *ScummColors16;
 };

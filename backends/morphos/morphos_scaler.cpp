@@ -671,9 +671,9 @@ void AdvMame2xScaler::Scale(uint32 src_x, uint32 src_y, uint32 dest_x, uint32 de
 	dst_line[0] = dest+dest_y*2*dest_pitch+dest_x*2*dest_bpp;
 	dst_line[1] = dst_line[0]+dest_pitch;
 
-	for (int y = 0; y < height; y++)
+	for (uint32 y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x++)
+		for (uint32 x = 0; x < width; x++)
 		{
 			uint32 B, D, E, F, H;
 
