@@ -60,7 +60,7 @@ class Resource {
 public:
 	Resource(const Common::String &datafilePath);
 	~Resource(void);
-	uint8 *loadFile(const char *filename, uint32 skipBytes = 0);
+	uint8 *loadFile(const char *filename, uint32 skipBytes = 0, byte *dstBuf = NULL);
 	char *getJAS2Line();
 	bool exists(const char *filename);
 	bool isDemo();

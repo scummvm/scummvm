@@ -280,7 +280,8 @@ Graphics::Graphics(Resource *resource)
 	_screen = new uint8[ SCREEN_W * SCREEN_H ];
 	_fullscreen = true;
 	_horizontalScroll = 0;
-	_palette = new uint8[ 256 * 4 ];
+	_paletteRoom = new uint8[ 256 * 3 ];
+	_paletteScreen = new uint8[ 256 * 4 ];
 }
 
 
@@ -294,7 +295,8 @@ Graphics::~Graphics() {
 	delete[] _backdrop;
 	delete[] _panel;
 	delete[] _screen;
-	delete[] _palette;
+	delete[] _paletteRoom;
+	delete[] _paletteScreen;
 }
 
 
@@ -711,7 +713,7 @@ void Graphics::bobSortAll() {
 	for (int32 index = 0; index < _sortedBobsCount - 1; ++index) {
 		int32 smallest = index;
 		for (int32 compare = index + 1; compare <= _sortedBobsCount - 1; ++compare) {
-			if (_sortedBobs[compare]->y < _sortedBobs[compare]->y) {
+			if (_sortedBobs[compare]->y < _sortedBobs[smallest]->y) {
 				smallest = compare;
 			}
 		}
@@ -853,7 +855,7 @@ void Graphics::backdropLoad(const char* name, uint16 room) {
 	char roomPrefix[20];
 	strcpy(roomPrefix, name);
 	roomPrefix[ strlen(roomPrefix) - 4 ] = '\0';
-//	_display->dynalumInit(_resource, roomPrefix, room);
+	dynalumInit(roomPrefix, room);
 
 	uint8 *pcxbuf = _resource->loadFile(name);
 	if (pcxbuf == NULL) {
@@ -861,7 +863,7 @@ void Graphics::backdropLoad(const char* name, uint16 room) {
 	}
 
 	uint32 size = _resource->fileSize(name);
-	displaySetPal(pcxbuf + size - 768, 0, (room <= 144) ? 144 : 256);
+	setRoomPal(pcxbuf + size - 768, 0, (room <= 144) ? 144 : 256);
 
 	_backdropWidth  = READ_LE_UINT16(pcxbuf +  12);
 	_backdropHeight = READ_LE_UINT16(pcxbuf +  14);
@@ -901,7 +903,7 @@ void Graphics::panelLoad() {
 		error("Unable to open panel file");
 	}
 	uint32 size = _resource->fileSize("panel.pcx");
-	displaySetPal(pcxbuf + size - 768, 144, 256);
+	setRoomPal(pcxbuf + size - 768, 144, 256);
 	readPCX(pcxbuf + 128, _panel + PANEL_W * 10, PANEL_W, PANEL_W, PANEL_H - 10);
 	delete[] pcxbuf;
 }
@@ -1022,6 +1024,9 @@ void Graphics::update() {
 	backdropDraw();
 	bobDrawAll();
 	textDrawAll();
+	if (_bobs[0].active) {
+		dynalumUpdate(_bobs[0].x, _bobs[0].y);
+	}
 	displayScreen();
 	g_system->delay_msecs(100); // TEMP: move to Logic::update()
 }
@@ -1114,21 +1119,9 @@ void Graphics::displayBlit(uint8 *dst_buf, uint16 dst_x, uint16 dst_y, uint16 ds
 }
 
 
-void Graphics::displaySetPal(uint8 *pal, int start, int end) {
-	int i;
-	pal += start * 3;
-	for (i = start; i < end; ++i, pal += 3) {
-		_palette[i << 2 | 0] = *(pal + 0);
-		_palette[i << 2 | 1] = *(pal + 1);
-		_palette[i << 2 | 2] = *(pal + 2);
-		_palette[i << 2 | 3] = 0;
-	}
-}
-
-
 void Graphics::displayScreen() {
 	// FIXME: temporary code ; cleanup/move to Display class.
-	g_system->set_palette(_palette, 0, 256);
+	g_system->set_palette(_paletteScreen, 0, 256);
 	g_system->copy_rect(_screen, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
 	g_system->update_screen();
 }
@@ -1151,6 +1144,62 @@ void Graphics::setScreenMode(int comPanel, bool inCutaway) {
 	}
 }
 
+
+void Graphics::setRoomPal(const uint8 *pal, int start, int end) {
+	int i;
+	pal += start * 3;
+	for (i = start; i < end; ++i, pal += 3) {
+		_paletteScreen[i << 2 | 0] = _paletteRoom[i * 3 + 0] = *(pal + 0);
+		_paletteScreen[i << 2 | 1] = _paletteRoom[i * 3 + 1] = *(pal + 1);
+		_paletteScreen[i << 2 | 2] = _paletteRoom[i * 3 + 2] = *(pal + 2);
+		_paletteScreen[i << 2 | 3] = 0;
+	}
+}
+
+
+void Graphics::dynalumInit(const char* roomPrefix, uint16 room) {
+	// io.c l.2063-2089
+	memset(_dynalum.msk, 0, sizeof(_dynalum.msk));
+	memset(_dynalum.lum, 0, sizeof(_dynalum.lum));
+	if (room < 90 || ((room > 94) && (room < 114))) {
+		char filename[80];
+		sprintf(filename, "%s.msk", roomPrefix);
+		_resource->loadFile(filename, 0, (uint8*)_dynalum.msk);
+		sprintf(filename, "%s.lum", roomPrefix);
+		_resource->loadFile(filename, 0, (uint8*)_dynalum.lum);
+	}
+}
+
+
+void Graphics::dynalumUpdate(uint16 x, uint16 y) {
+
+	if (x >= _backdropWidth) {
+		x = _backdropWidth;
+	}
+	if (y >= ROOM_ZONE_HEIGHT - 1) {
+		y = ROOM_ZONE_HEIGHT - 1;
+	}
+	uint16 colMask = _dynalum.msk[(y / 4) * 160 + (x / 4)];
+	debug(9, "Graphics::dynalumUpdate(%d, %d) - colMask = %d", x, y, colMask);
+	if (colMask != _dynalum.oldColMask) {
+		uint8 i;
+		for (i = 0; i < 16; ++i) {
+			uint8 j;
+			for (j = 0; j < 3; ++j) {
+				int16 c = (int16)(_paletteRoom[(144 + i) * 3 + j] + _dynalum.lum[colMask * 3 + j] * 4);
+				if (c < 0) {
+					c = 0;
+				}
+				else if (c > 255) {
+					c = 255;
+				}
+				_paletteScreen[(144 + i) * 4 + j] = (uint8)c;
+			}
+		}
+		_dynalum.oldColMask = colMask;
+		// TODO: handle dirty colors (lopal, hipal)
+	}
+}
 
 
 } // End of namespace Queen

@@ -139,13 +139,15 @@ uint32 Resource::fileOffset(const char *filename) {
 	return _resourceTable[resourceIndex(filename)].offset;
 }
 
-uint8 *Resource::loadFile(const char *filename, uint32 skipBytes) {
+uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, byte *dstBuf) {
 	uint32 size = fileSize(filename);
-	byte *mem = new byte[size];
+	if (dstBuf == NULL) {
+		dstBuf = new byte[size];
+	}
 	// skip 'skipBytes' bytes (useful for headers)
 	_resourceFile->seek(fileOffset(filename) + skipBytes, SEEK_SET);
-	_resourceFile->read(mem, size - skipBytes);
-	return mem;
+	_resourceFile->read(dstBuf, size - skipBytes);
+	return dstBuf;
 }
 
 bool Resource::exists(const char *filename) {
