@@ -69,7 +69,6 @@ private:
 		uint32 _buffer_size;
 		uint32 _rate;
 		byte _flags;
-		
 
 	public:
 		void append(void *sound, uint32 size);		
@@ -125,6 +124,9 @@ private:
 public:
 	typedef void PremixProc(void *param, int16 *data, uint len);
 
+	OSystem *_syst;
+	void *_mutex;
+	
 	uint _output_rate;
 
 	int16 *_volume_table;
@@ -140,7 +142,7 @@ public:
 
 	Channel *_channels[NUM_CHANNELS];
 	PlayingSoundHandle *_handles[NUM_CHANNELS];
-	
+
 	int insert(PlayingSoundHandle *handle, Channel *chan);
 	int insert_at(PlayingSoundHandle *handle, int index, Channel *chan);
 	void append(void *data, uint32 len);

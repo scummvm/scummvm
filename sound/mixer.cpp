@@ -39,14 +39,18 @@ void SoundMixer::uninsert(Channel *chan) {
 }
 
 int SoundMixer::append(int index, void *sound, uint32 size, uint rate, byte flags) {
+	_syst->lock_mutex(_mutex);
+
 	Channel *chan = _channels[index];
 	if (!chan) {
 		warning("Trying to stream to an unexistant streamer ");
 		play_stream(NULL, index, sound, size, rate, flags);
 		chan = _channels[index];
+	} else {
+		chan->append(sound, size);
 	}
 
-	chan->append(sound, size);
+	_syst->unlock_mutex(_mutex);
 	return 1;
 }
 
@@ -111,10 +115,12 @@ void SoundMixer::mix(int16 *buf, uint len) {
 		memset(buf, 0, 2 * len * sizeof(int16));
 	}
 
+	_syst->lock_mutex(_mutex);
 	/* now mix all channels */
 	for(int i=0; i!=NUM_CHANNELS; i++)
 		if (_channels[i])
 			_channels[i]->mix(buf, len);
+	_syst->unlock_mutex(_mutex);
 }
 
 void SoundMixer::on_generate_samples(void *s, byte *samples, int len) {
@@ -128,9 +134,12 @@ bool SoundMixer::bind_to_system(OSystem *syst) {
 
 	_output_rate = rate;
 	
+	_syst = syst;
+	_mutex = _syst->create_mutex();
+
 	if (rate == 0)
 		error("OSystem returned invalid sample rate");
-	
+
 	return syst->set_sound_proc(this, on_generate_samples, OSystem::SOUND_16BIT);
 }
 
@@ -408,14 +417,14 @@ SoundMixer::Channel_STREAM::Channel_STREAM(SoundMixer *mixer, void *sound, uint3
 void SoundMixer::Channel_STREAM::append(void *data, uint32 len) {   
 	byte *new_end = _end_of_data + len;
 	byte *cur_pos = _pos; /* This is just to prevent the variable to move during the tests :-) */
-
 	if (new_end > (_ptr + _buffer_size)) {
 		/* Wrap-around case */
 		if ((_end_of_data < cur_pos) ||
 		    (new_end >= cur_pos)) {
 			warning("Mixer full... Trying to not break too much ");
 			return;	
-		}		memcpy(_end_of_data, data, (_ptr + _buffer_size) - _end_of_data);
+		}
+		memcpy(_end_of_data, data, (_ptr + _buffer_size) - _end_of_data);
 		memcpy(_ptr, (byte *) data + ((_ptr + _buffer_size) - _end_of_data), len - ((_ptr + _buffer_size) - _end_of_data));
 	} else {
 		if ((_end_of_data < cur_pos) &&
