@@ -18,10 +18,10 @@
  * $Header$
  */
 
+#include "stdafx.h"
 #if defined(_MSC_VER)
 #include <malloc.h>
 #endif
-#include "stdafx.h"
 #include "common/config-file.h"
 #include "common/engine.h"
 #include "common/gameDetector.h"
