@@ -641,8 +641,9 @@ void ScummEngine_v80he::o80_pickVarRandom() {
 	if (dim1end < num) {
 		int16 var_2 = readArray(value, 0, num - 1);
 		shuffleArray(value, 1, dim1end);
-		if (readArray(value, 0, 1) == var_2 && var_2 >= 3) {
-			int tmp = readArray(value, 0, 2);
+		num = 1;
+		if (readArray(value, 0, 1) == var_2 && dim1end >= 3) {
+			int16 tmp = readArray(value, 0, 2);
 			writeArray(value, 0, num, tmp);
 			writeArray(value, 0, 2, var_2);
 		}

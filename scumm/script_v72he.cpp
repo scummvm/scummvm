@@ -1718,7 +1718,7 @@ void ScummEngine_v72he::o72_pickVarRandom() {
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(value));
 	dim1end = FROM_LE_32(ah->dim1end);
 
-	if (dim1end <= num) {
+	if (dim1end < num) {
 		int16 var_2 = readArray(value, 0, num - 1);
 		shuffleArray(value, 1, dim1end);
 		if (readArray(value, 0, 1) == var_2) {

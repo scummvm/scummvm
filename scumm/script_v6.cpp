@@ -3021,7 +3021,7 @@ void ScummEngine_v6::o6_pickVarRandom() {
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(value));
 	dim1 = FROM_LE_16(ah->dim1) - 1;
 
-	if (dim1 <= num) {
+	if (dim1 < num) {
 		int16 var_2 = readArray(value, 0, num - 1);
 		shuffleArray(value, 1, dim1);
 		if (readArray(value, 0, 1) == var_2) {

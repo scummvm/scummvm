@@ -328,7 +328,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_soundOps),
 		OPCODE(o72_getPixel),
 		OPCODE(o6_localizeArray),
-		OPCODE(o72_pickVarRandom),
+		OPCODE(o80_pickVarRandom),
 		/* E4 */
 		OPCODE(o6_setBoxSet),
 		OPCODE(o6_invalid),
