@@ -733,14 +733,6 @@ void Talk::defaultAnimation(
 		int bankNum) {
 	// lines 1730-1823 in talk.c
 
-	debug(6, "Talk::defaultAnimation(\"%s\", %s, {\"%s\", %i, ...}, %i, %i)",
-			segment, 
-			isJoe ? "true" : "false",
-			parameters->name,
-			parameters->state,
-			startFrame,
-			bankNum);
-
 	if (segment[0] != 0)  {
 
 		// Why on earth would someone name a variable qzx?
