@@ -730,7 +730,7 @@ void ScummEngine_v8::o8_cursorCommand() {
 			int idx = pop();
 			int room, obj;
 			obj = popRoomAndObj(&room);
-			setCursorImg(obj, room, idx);
+			setCursorFromImg(obj, room, idx);
 		}
 		break;
 	case 0xE5:		// SO_CURSOR_HOTSPOT Set cursor hotspot
@@ -738,7 +738,7 @@ void ScummEngine_v8::o8_cursorCommand() {
 		setCursorHotspot(pop(), a);
 		break;
 	case 0xE6:		// SO_CURSOR_TRANSPARENT Set cursor transparent color
-		makeCursorColorTransparent(pop());
+		setCursorTransparency(pop());
 		break;
 	case 0xE7: {	// SO_CHARSET_SET
 		int charset = pop();

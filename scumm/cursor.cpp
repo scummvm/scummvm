@@ -21,6 +21,8 @@
 
 #include "stdafx.h"
 #include "scumm/bomp.h"
+#include "scumm/intern.h"
+#include "scumm/object.h"
 #include "scumm/scumm.h"
 
 
@@ -66,14 +68,46 @@ static const byte default_cursor_hotspots[10] = {
 	8, 7, //zak256
 };
 
-
 void ScummEngine::setupCursor() {
 	_cursor.animate = 1;
-	if (_gameId == GID_TENTACLE && res.roomno[rtRoom][60]) {
-		// HACK: For DOTT we manually set the default cursor. See also bug #786994
-		setCursorImg(697, 60, 1);
-		makeCursorColorTransparent(1);
+}
+
+void ScummEngine::animateCursor() {
+	if (_cursor.animate) {
+		if (!(_cursor.animateIndex & 0x1)) {
+			setBuiltinCursor((_cursor.animateIndex >> 1) & 3);
+		}
+		_cursor.animateIndex++;
 	}
+}
+
+void ScummEngine::setCursor(int cursor) {
+	if (cursor >= 0 && cursor <= 3)
+		_currentCursor = cursor;
+	else
+		warning("setCursor(%d)", cursor);
+}
+
+void ScummEngine::setCursorHotspot(int x, int y) {
+	_cursor.hotspotX = x;
+	_cursor.hotspotY = y;
+}
+
+void ScummEngine::setCursorTransparency(int a) {
+	int i, size;
+
+	size = _cursor.width * _cursor.height;
+
+	for (i = 0; i < size; i++)
+		if (_grabbedCursor[i] == (byte)a)
+			_grabbedCursor[i] = 0xFF;
+
+	updateCursor();
+}
+
+void ScummEngine::updateCursor() {
+	_system->setMouseCursor(_grabbedCursor, _cursor.width, _cursor.height,
+							_cursor.hotspotX, _cursor.hotspotY);
 }
 
 void ScummEngine::grabCursor(int x, int y, int w, int h) {
@@ -84,11 +118,10 @@ void ScummEngine::grabCursor(int x, int y, int w, int h) {
 		return;
 	}
 
-	grabCursor((byte *)vs->pixels + (y - vs->topline) * vs->pitch + x, w, h);
-
+	setCursorFromBuffer((byte *)vs->pixels + (y - vs->topline) * vs->pitch + x, w, h, vs->pitch);
 }
 
-void ScummEngine::grabCursor(byte *ptr, int width, int height) {
+void ScummEngine::setCursorFromBuffer(byte *ptr, int width, int height, int pitch) {
 	uint size;
 	byte *dst;
 
@@ -110,7 +143,54 @@ void ScummEngine::grabCursor(byte *ptr, int width, int height) {
 	updateCursor();
 }
 
-void ScummEngine::useIm01Cursor(const byte *im, int w, int h) {
+void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
+	int w, h;
+	const byte *dataptr, *bomp;
+	uint32 size;
+	FindObjectInRoom foir;
+
+	if (room == (uint) - 1)
+		room = getObjectRoom(img);
+
+	findObjectInRoom(&foir, foCodeHeader | foImageHeader | foCheckAlreadyLoaded, img, room);
+
+	if (_version == 8) {
+		setCursorHotspot(READ_LE_UINT32(&foir.imhd->v8.hotspot[0].x),
+		                  READ_LE_UINT32(&foir.imhd->v8.hotspot[0].y));
+		w = READ_LE_UINT32(&foir.imhd->v8.width) / 8;
+		h = READ_LE_UINT32(&foir.imhd->v8.height) / 8;
+	} else if (_version == 7) {
+		setCursorHotspot(READ_LE_UINT16(&foir.imhd->v7.hotspot[0].x),
+		                  READ_LE_UINT16(&foir.imhd->v7.hotspot[0].y));
+		w = READ_LE_UINT16(&foir.imhd->v7.width) / 8;
+		h = READ_LE_UINT16(&foir.imhd->v7.height) / 8;
+	} else {
+		if (!(_features & GF_HUMONGOUS))
+			setCursorHotspot(READ_LE_UINT16(&foir.imhd->old.hotspot[0].x),
+		        	          READ_LE_UINT16(&foir.imhd->old.hotspot[0].y));
+		w = READ_LE_UINT16(&foir.cdhd->v6.w) / 8;
+		h = READ_LE_UINT16(&foir.cdhd->v6.h) / 8;
+	}
+
+	dataptr = getObjectImage(foir.obim, imgindex);
+	assert(dataptr);
+	if (_version == 8) {
+		bomp = dataptr;
+	} else {
+		size = READ_BE_UINT32(dataptr + 4);
+		if (size > sizeof(_grabbedCursor))
+			error("setCursorFromImg: Cursor image too large");
+		
+		bomp = findResource(MKID('BOMP'), dataptr);
+	}
+
+	if (bomp != NULL)
+		useBompCursor(bomp, w, h);
+	else
+		useIm01Cursor(dataptr, w, h);
+}
+
+void ScummEngine_v6::useIm01Cursor(const byte *im, int w, int h) {
 	VirtScreen *vs = &virtscr[0];
 	byte *buf, *dst;
 	const byte *src;
@@ -139,7 +219,7 @@ void ScummEngine::useIm01Cursor(const byte *im, int w, int h) {
 	gdi.enableZBuffer();
 
 	// Grab the data we just drew and setup the cursor with it
-	grabCursor(vs->getPixels(0, 0), w, h);
+	setCursorFromBuffer(vs->getPixels(0, 0), w, h, vs->pitch);
 
 	// Restore the screen content
 	src = buf;
@@ -154,33 +234,7 @@ void ScummEngine::useIm01Cursor(const byte *im, int w, int h) {
 	free(buf);
 }
 
-void ScummEngine::setCursor(int cursor) {
-	if (cursor >= 0 && cursor <= 3)
-		_currentCursor = cursor;
-	else
-		warning("setCursor(%d)", cursor);
-}
-
-void ScummEngine::setCursorHotspot(int x, int y) {
-	_cursor.hotspotX = x;
-	_cursor.hotspotY = y;
-}
-
-void ScummEngine::updateCursor() {
-	_system->setMouseCursor(_grabbedCursor, _cursor.width, _cursor.height,
-							_cursor.hotspotX, _cursor.hotspotY);
-}
-
-void ScummEngine::animateCursor() {
-	if (_cursor.animate) {
-		if (!(_cursor.animateIndex & 0x1)) {
-			decompressDefaultCursor((_cursor.animateIndex >> 1) & 3);
-		}
-		_cursor.animateIndex++;
-	}
-}
-
-void ScummEngine::useBompCursor(const byte *im, int width, int height) {
+void ScummEngine_v6::useBompCursor(const byte *im, int width, int height) {
 	uint size;
 
 	width *= 8;
@@ -205,7 +259,7 @@ void ScummEngine::useBompCursor(const byte *im, int width, int height) {
 	updateCursor();
 }
 
-void ScummEngine::decompressDefaultCursor(int idx) {
+void ScummEngine::setBuiltinCursor(int idx) {
 	int i, j;
 	byte color;
 
@@ -217,6 +271,9 @@ void ScummEngine::decompressDefaultCursor(int idx) {
 		color = default_cursor_colors[idx];
 
 	// FIXME: None of the stock cursors are right for Loom. Why is that?
+	// Fingolfing says: because it sets different cursor shapes --
+	// check the SO_CURSOR_IMAGE opcode in script_v5.cpp; if we implement
+	// that, this problem should be gone...
 
 	if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {
 		int w = 0;
@@ -296,34 +353,6 @@ void ScummEngine::decompressDefaultCursor(int idx) {
 			}
 		}
 	}
-
-	updateCursor();
-}
-
-void ScummEngine::makeCursorColorTransparent(int a) {
-	int i, size;
-
-	size = _cursor.width * _cursor.height;
-
-	for (i = 0; i < size; i++)
-		if (_grabbedCursor[i] == (byte)a)
-			_grabbedCursor[i] = 0xFF;
-
-	updateCursor();
-}
-
-void ScummEngine::grabCursorFromBuffer(byte *ptr, int width, int height) {
-	uint size;
-
-	size = width * height;
-	if (size > sizeof(_grabbedCursor))
-		error("grabCursor: grabbed cursor too big");
-
-	_cursor.width = width;
-	_cursor.height = height;
-	_cursor.animate = 0;
-
-	memcpy(_grabbedCursor, ptr, width * height);
 
 	updateCursor();
 }

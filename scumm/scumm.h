@@ -374,7 +374,7 @@ public:
 	virtual ~ScummEngine();
 
 	// Init functions
-	void scummInit();
+	virtual void scummInit();
 	void initScummVars();
 	virtual void setupScummVars();
 
@@ -937,17 +937,13 @@ protected:
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 
 	void setCursor(int cursor);
-	void setCursorImg(uint img, uint room, uint imgindex);
 	void setCursorHotspot(int x, int y);
-	void grabCursor(int x, int y, int w, int h);
-	void grabCursor(byte *ptr, int width, int height);
-	void grabCursorFromBuffer(byte *ptr, int width, int height);
-	void makeCursorColorTransparent(int a);
+	void setCursorTransparency(int a);
 	void setupCursor();
-	void decompressDefaultCursor(int index);
-	void useIm01Cursor(const byte *im, int w, int h);
-	void useBompCursor(const byte *im, int w, int h);
 
+	void setBuiltinCursor(int index);
+	void grabCursor(int x, int y, int w, int h);
+	void setCursorFromBuffer(byte *ptr, int width, int height, int pitch);
 
 public:
 	void markRectAsDirty(VirtScreenNumber virt, int left, int right, int top, int bottom, int dirtybit = 0);

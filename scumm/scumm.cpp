@@ -1245,7 +1245,7 @@ void ScummEngine::scummInit() {
 		_flashlight.buffer = NULL;
 	}
 
-	// HACK curcor hotspot is wrong
+	// HACK cursor hotspot is wrong
 	// Original games used 
 	// setCursorHotspot(8, 7);
 	if (_gameId == GID_FUNPACK)
@@ -1306,6 +1306,15 @@ void ScummEngine::scummInit() {
 	_lastSaveTime = _system->get_msecs();
 }
 
+void ScummEngine_v6::scummInit() {
+	ScummEngine::scummInit();
+
+	if (_gameId == GID_TENTACLE && res.roomno[rtRoom][60]) {
+		// HACK: For DOTT we manually set the default cursor. See also bug #786994
+		setCursorFromImg(697, 60, 1);
+		setCursorTransparency(1);
+	}
+}
 
 void ScummEngine::initScummVars() {
 

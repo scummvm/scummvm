@@ -976,7 +976,7 @@ void ScummEngine_v6::o6_cursorCommand() {
 	case 0x99: 		// SO_CURSOR_IMAGE Set cursor image
 		{
 			int room, obj = popRoomAndObj(&room);
-			setCursorImg(obj, room, 1);
+			setCursorFromImg(obj, room, 1);
 			break;
 		}
 	case 0x9A:		// SO_CURSOR_HOTSPOT Set cursor hotspot
@@ -992,7 +992,7 @@ void ScummEngine_v6::o6_cursorCommand() {
 			_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
 		break;
 	case 0xD6:		// SO_CURSOR_TRANSPARENT Set cursor transparent color
-		makeCursorColorTransparent(pop());
+		setCursorTransparency(pop());
 		break;
 	default:
 		error("o6_cursorCommand: default case %x", subOp);
@@ -2567,7 +2567,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			}
 			break;
 		case 12:
-			setCursorImg(args[1], (uint) - 1, args[2]);
+			setCursorFromImg(args[1], (uint) - 1, args[2]);
 			break;
 		case 13:
 			derefActor(args[1], "o6_kernelSetFunctions:13")->remapActorPalette(args[2], args[3], args[4], -1);

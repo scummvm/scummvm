@@ -749,7 +749,7 @@ void ScummEngine_v7he::o7_cursorCommand() {
 			_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
 		break;
 	case 0xD6:		// SO_CURSOR_TRANSPARENT Set cursor transparent color
-		makeCursorColorTransparent(pop());
+		setCursorTransparency(pop());
 		break;
 	default:
 		error("o6_cursorCommand: default case %x", subOp);

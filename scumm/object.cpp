@@ -1366,54 +1366,6 @@ int ScummEngine::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, 
 	return getDist(x, y, x2, y2) * 0xFF / ((i + j) / 2);
 }
 
-void ScummEngine::setCursorImg(uint img, uint room, uint imgindex) {
-	int w, h;
-	const byte *dataptr, *bomp;
-	uint32 size;
-	FindObjectInRoom foir;
-
-	if (room == (uint) - 1)
-		room = getObjectRoom(img);
-
-	findObjectInRoom(&foir, foCodeHeader | foImageHeader | foCheckAlreadyLoaded, img, room);
-
-	if (_version == 8) {
-		setCursorHotspot(READ_LE_UINT32(&foir.imhd->v8.hotspot[0].x),
-		                  READ_LE_UINT32(&foir.imhd->v8.hotspot[0].y));
-		w = READ_LE_UINT32(&foir.imhd->v8.width) / 8;
-		h = READ_LE_UINT32(&foir.imhd->v8.height) / 8;
-	} else if (_version == 7) {
-		setCursorHotspot(READ_LE_UINT16(&foir.imhd->v7.hotspot[0].x),
-		                  READ_LE_UINT16(&foir.imhd->v7.hotspot[0].y));
-		w = READ_LE_UINT16(&foir.imhd->v7.width) / 8;
-		h = READ_LE_UINT16(&foir.imhd->v7.height) / 8;
-	} else {
-		if (!(_features & GF_HUMONGOUS))
-			setCursorHotspot(READ_LE_UINT16(&foir.imhd->old.hotspot[0].x),
-		        	          READ_LE_UINT16(&foir.imhd->old.hotspot[0].y));
-		w = READ_LE_UINT16(&foir.cdhd->v6.w) / 8;
-		h = READ_LE_UINT16(&foir.cdhd->v6.h) / 8;
-	}
-
-	dataptr = getObjectImage(foir.obim, imgindex);
-	assert(dataptr);
-	if (_version == 8) {
-		bomp = dataptr;
-	} else {
-		size = READ_BE_UINT32(dataptr + 4);
-		if (size > sizeof(_grabbedCursor))
-			error("setCursorImg: Cursor image too large");
-		
-		bomp = findResource(MKID('BOMP'), dataptr);
-	}
-
-	if (bomp != NULL)
-		useBompCursor(bomp, w, h);
-	else
-		useIm01Cursor(dataptr, w, h);
-
-}
-
 void ScummEngine::nukeFlObjects(int min, int max) {
 	ObjectData *od;
 	int i;

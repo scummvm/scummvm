@@ -331,6 +331,8 @@ protected:
 public:
 	ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs);
 
+	virtual void scummInit();
+
 protected:
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
@@ -353,6 +355,10 @@ protected:
 	void writeArray(int array, int index, int base, int value);
 
 	void shuffleArray(int num, int minIdx, int maxIdx);
+
+	void setCursorFromImg(uint img, uint room, uint imgindex);
+	void useIm01Cursor(const byte *im, int w, int h);
+	void useBompCursor(const byte *im, int w, int h);
 
 	/* Version 6 script opcodes */
 	void o6_setBlastObjectWindow();

@@ -675,15 +675,14 @@ void ScummEngine_v5::o5_cursorCommand() {
 		_userPut--;
 		break;
 	case 10:		// SO_CURSOR_IMAGE
-		i = getVarOrDirectByte(PARAM_1);
-		j = getVarOrDirectByte(PARAM_2);
-		// cursor image in both Looms is based on image from charset
-		// omit for now.
-		// FIXME: Actually: is this opcode ever called by a non-Loom game?
-		// Which V3-V5 game besides Loom makes use of custom cursors, ever?
+		i = getVarOrDirectByte(PARAM_1);	// Cursor number
+		j = getVarOrDirectByte(PARAM_2);	// Charset letter to use
+		// Cursor image in both Looms are based on images from charset.
+		// For now we don't handle them.
 		if (_gameId != GID_LOOM && _gameId != GID_LOOM256) {
-			warning("setCursorImg called - tell Fingolfin where you saw this!");
-			setCursorImg(i, j, 1);
+			// FIXME: Actually: is this opcode ever called by a non-Loom game?
+			// Which V3-V5 game besides Loom makes use of custom cursors, ever?
+			warning("V3--V5 SO_CURSOR_IMAGE(%d,%d) called - tell Fingolfin where you saw this!", i, j);
 		}
 		break;
 	case 11:		// SO_CURSOR_HOTSPOT
