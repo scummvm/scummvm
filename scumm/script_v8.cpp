@@ -747,7 +747,6 @@ void Scumm_v8::o8_cursorCommand() {
 		int x = pop();
 
 		_system->warp_mouse(x, y);
-		_system->update_screen();
 		}
 		break;
 	default:
