@@ -124,6 +124,7 @@ int Scene::SC_IHNMIntroMovieProc1(int param, SCENE_INFO *scene_info, void *refCo
 
 int Scene::IHNMIntroMovieProc1(int param, SCENE_INFO *scene_info) {
 	EVENT event;
+	EVENT *q_event;
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -134,7 +135,9 @@ int Scene::IHNMIntroMovieProc1(int param, SCENE_INFO *scene_info) {
 		event.op = EVENT_DISPLAY;
 		event.param = SET_PALETTE;
 		event.time = 0;
-		_vm->_events->queue(&event);
+
+		q_event = _vm->_events->queue(&event);
+
 		_vm->_anim->setFrameTime(0, IHNM_INTRO_FRAMETIME);
 		_vm->_anim->setFlag(0, ANIM_ENDSCENE);
 		_vm->_anim->play(0, 0);
@@ -156,8 +159,8 @@ int Scene::IHNMIntroMovieProc2(int param, SCENE_INFO *scene_info) {
 	PALENTRY *pal;
 
 	static PALENTRY current_pal[PAL_ENTRIES];
-	switch (param) {
 
+	switch (param) {
 	case SCENE_BEGIN:
 		// Fade to black out of the intro CyberDreams logo anim
 		_vm->_gfx->getCurrentPal(current_pal);
@@ -181,6 +184,24 @@ int Scene::IHNMIntroMovieProc2(int param, SCENE_INFO *scene_info) {
 
 		q_event = _vm->_events->chain(q_event, &event);
 
+		_vm->_anim->setCycles(0, -1);
+
+		// The "Dreamer's Guild" animation has to be started by an
+		// event, or the first frame will be drawn before the palette
+		// fades down.
+		//
+		// Unlike the original, we keep the logo spinning during the
+		// palette fades. We don't have to, but I think it looks better
+		// that way.
+
+		event.type = ONESHOT_EVENT;
+		event.code = ANIM_EVENT;
+		event.op = EVENT_PLAY;
+		event.param = 0;
+		event.time = 0;
+
+		q_event = _vm->_events->chain(q_event, &event);
+
 		// Fade in from black to the scene background palette
 		_vm->_scene->getBGPal(&pal);
 
@@ -193,14 +214,21 @@ int Scene::IHNMIntroMovieProc2(int param, SCENE_INFO *scene_info) {
 
 		q_event = _vm->_events->chain(q_event, &event);
 
-		_vm->_anim->setCycles(0, -1);
-		_vm->_anim->play(0, IHNM_PALFADE_TIME * 2);
+		// Fade to black after looping animation for a while
+		event.type = CONTINUOUS_EVENT;
+		event.code = PAL_EVENT;
+		event.op = EVENT_PALTOBLACK;
+		event.time = IHNM_DGLOGO_TIME;
+		event.duration = IHNM_PALFADE_TIME;
+		event.data = pal;
 
-		// Queue end of scene after looping animation for a while
+		q_event = _vm->_events->chain(q_event, &event);
+
+		// Queue end of scene
 		event.type = ONESHOT_EVENT;
 		event.code = SCENE_EVENT;
 		event.op = EVENT_END;
-		event.time = IHNM_DGLOGO_TIME;
+		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
 		break;
@@ -302,7 +330,17 @@ int Scene::IHNMHateProc(int param, SCENE_INFO *scene_info) {
 	switch (param) {
 	case SCENE_BEGIN:
 		_vm->_anim->setCycles(0, -1);
-		_vm->_anim->play(0, 0);
+
+		// The "hate" animation also needs to be started from an event,
+		// or the first frame will be drawn too early.
+
+		event.type = ONESHOT_EVENT;
+		event.code = ANIM_EVENT;
+		event.op = EVENT_PLAY;
+		event.param = 0;
+		event.time = 0;
+
+		q_event = _vm->_events->queue(&event);
 
 		// More music
 		event.type = ONESHOT_EVENT;
@@ -312,7 +350,7 @@ int Scene::IHNMHateProc(int param, SCENE_INFO *scene_info) {
 		event.op = EVENT_PLAY;
 		event.time = 0;
 
-		q_event = _vm->_events->queue(&event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Background for intro scene is the first frame of the
 		// intro animation; display it and set the palette
@@ -322,7 +360,7 @@ int Scene::IHNMHateProc(int param, SCENE_INFO *scene_info) {
 		event.param = SET_PALETTE;
 		event.time = 0;
 
-		q_event = _vm->_events->queue(&event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Play voice
 		event.type = ONESHOT_EVENT;
@@ -331,7 +369,7 @@ int Scene::IHNMHateProc(int param, SCENE_INFO *scene_info) {
 		event.param = 0;
 		event.time = 0;
 
-		q_event = _vm->_events->queue(&event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// Background sound
 		event.type = ONESHOT_EVENT;
@@ -342,7 +380,7 @@ int Scene::IHNMHateProc(int param, SCENE_INFO *scene_info) {
 		event.param3 = SOUND_LOOP;
 		event.time = 0;
 
-		q_event = _vm->_events->queue(&event);
+		q_event = _vm->_events->chain(q_event, &event);
 
 		// End background sound after the voice has finished
 		event.type = ONESHOT_EVENT;

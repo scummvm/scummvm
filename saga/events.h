@@ -64,9 +64,10 @@ enum EVENT_OPS {
 	// BG events
 	EVENT_DISPLAY = 1,
 	// ANIM events
-	EVENT_FRAME = 1,
-	EVENT_SETFLAG = 2,
-	EVENT_CLEARFLAG = 3,
+	// EVENT_PLAY = 1, // reused
+	EVENT_FRAME = 2,
+	EVENT_SETFLAG = 3,
+	EVENT_CLEARFLAG = 4,
 	// MUISC & SOUND events
 	EVENT_PLAY = 1,
 	EVENT_STOP = 2,
