@@ -773,8 +773,7 @@ void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, i
 
 		if (frame > 500) {
 			frame -= 500;
-			if (_vm->sound()->sfxOn())
-				_vm->sound()->playSfx(_vm->logic()->currentRoomSfx(), false);
+			_vm->sound()->playSfx(_vm->logic()->currentRoomSfx(), false);
 		}
 
 		if (torso) {

@@ -77,6 +77,9 @@ void Sound::waitFinished(bool isSpeech) {
 }
 
 void Sound::playSfx(uint16 sfx, bool isSpeech) {
+	if (isSpeech && !speechOn()) return;
+        else if (!sfxOn()) return;
+
 	if (sfx != 0) {
 		char name[13];
 		strcpy(name, _sfxName[sfx - 1]);
@@ -87,6 +90,9 @@ void Sound::playSfx(uint16 sfx, bool isSpeech) {
 }
 
 void Sound::playSfx(const char *base, bool isSpeech) {
+	if (isSpeech && !speechOn()) return;
+	else if (!sfxOn()) return;
+	
 	char name[13];
 	strcpy(name, base);
 	// alter filename to add zeros and append ".SB"
