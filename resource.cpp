@@ -761,7 +761,7 @@ void Scumm::loadPtrToResource(int type, int resindex, byte *source) {
 
 	len = getStringLen(source);
 
-	if (len <= 1)
+	if (len <= 0)
 		return;
 
 	alloced = createResource(type, resindex, len);
