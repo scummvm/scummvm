@@ -1,0 +1,14 @@
+Source: scummvm
+Section: interpreters
+Priority: optional
+Maintainer: David Given <dg@hilfy>
+Build-Depends: debhelper (>> 3.0.0), libsdl1.2-dev
+Standards-Version: 3.5.2
+
+Package: scummvm
+Architecture: any
+Depends: ${shlibs:Depends}, libsdl1.2
+Description: SCUMM graphic adventure game interpreter
+ ScummVM is an interpreter that will play graphic adventure games written for
+ LucasArts' SCUMM virtual machine. It uses the SDL library for outputting
+ graphics.

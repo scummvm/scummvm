@@ -1,0 +1,29 @@
+This package was debianized by David Given <dg@cowlark.com> on
+Sun, 18 Nov 2001 16:22:12 +0000.
+
+It was downloaded from http://sourceforge.net/projects/scummvm
+
+Upstream Author(s): Ludvig Strigeus <strigeus@users.sourceforge.net>
+
+Copyright:
+
+This program is licensed under the GNU General Public License, version 2.  The
+full text of the license may be found in /usr/share/apps/LICENSES/GPL_V2. The
+brief version follows:
+
+Copyright (C) 2001  Ludvig Strigeus
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+

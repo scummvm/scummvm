@@ -1,0 +1,9 @@
+scummvm (0.0.3-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- David Given <dg@cowlark.com>  Sun, 18 Nov 2001 16:22:12 +0000
+
+Local variables:
+mode: debian-changelog
+End:

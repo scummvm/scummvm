@@ -1,0 +1,106 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH SCUMMVM 6 "November 18, 2001"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+scummvm \- SCUMM graphic adventure game interpreter
+.SH SYNOPSIS
+.B scummvm
+.RI [ options ] " game" ...
+.SH DESCRIPTION
+\fBscummvm\fP is an interpreter that will play graphic adventure games written
+for LucasArts' SCUMM virtual machine.
+.P
+The following games have been reported to work:
+.P
+\fBMonkey Island I\fP (CD version)
+.br
+\fBMonkey Island II\fP
+.br
+\fBIndiana Jones and the Fate of Atlantis\fP
+.br
+\fBDay of the Tentacle\fP
+.br
+\fBSam & Max Hit the Road\fP (partially)
+.P
+Please be aware that the engine contains bugs and non-implemented features that
+may make it impossible to finish the game.
+.SH OPTIONS
+The interpreter expects to find the game's data files in the current directory.
+For example, \fBmonkey2.000\fP and \fBmonkey2.001\fP. The name of the game is
+then supplied on the command line.
+.P
+.TP
+.B monkey
+Monkey Island I
+.TP
+.B monkey2
+Monkey Island II
+.TP
+.B atlantis
+Indiana Jones and the Fate of Atlantis
+.TP
+.B playfate
+Indiana Jones and the Fate of Atlantis (demo)
+.TP
+.B tentacle
+Day of the Tentacle
+.TP
+.B dottdemo
+Day of the Tentacle (demo)
+.TP
+.B samnmax
+Sam & Max Hit the Road
+.TP
+.B snmdemo
+Sam & Max Hit the Road (demo)
+.P
+Additionally, the following options are supported.
+.TP
+.BI \-b <room>
+Starts the game in the specified room. The default is 0.
+.TP
+.B \-f
+Runs in full-screen mode.
+.SH RUNNING THE PROGRAM
+While the game is running, the following keys can be used (in addition to any
+keys used by the game):
+.TP
+.B Ctrl+0..9
+Load a previously saved game state.
+.TP
+.B Shift+0..9
+Save a game state.
+.TP
+.B Ctrl+Z
+Quit the game.
+.TP
+.B Ctrl+F
+Run in fast mode (process frames as fast as possible).
+.TP
+.B Ctrl+D
+Starts the debugger.
+.TP
+.B Ctrl+S
+Shows memory consumption.
+.SH AUTHOR
+This manual page was written by David Given <dg@cowlark.com>,
+for the Debian GNU/Linux system (but may be used by others).
+.P
+\fBScummVM\fP was written by Ludvig Strigeus <strigeus@users.sourceforge.net>
+and the ScummVM team. See
+.B http://scummvm.sourceforge.net
+for more information.
