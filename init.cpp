@@ -107,6 +107,8 @@ Scumm::Scumm(void)
         _soundParam = 0;
         _soundParam2 = 0;
         _soundParam3 = 0;
+		_soundsPaused = 0;
+		_soundsPaused2 = 0;
         current_cd_sound = 0;
         num_sound_effects = 0;
         _noSubtitles = 0;
@@ -149,6 +151,24 @@ Scumm::Scumm(void)
         _charsetColor = 0;
 
         _insaneFlag = 12;
-
         _insaneState = 0;
+
+		for(i=0;i<NUM_MIXER;i++) {
+			 _mixer_channel[i]._sfx_sound = 0;
+			 _mixer_channel[i].sound_data.standard._sfx_fp_speed = 0;		
+			 _mixer_channel[i].sound_data.standard._sfx_fp_pos = 0;
+			 _mixer_channel[i].sound_data.standard._sfx_pos = 0;
+			 _mixer_channel[i].sound_data.standard._sfx_size = 0;
+		}
+
+		_haveMsg = 0;
+		_talkDelay = 0;
+		_defaultTalkDelay = 0;
+		_useTalkAnims = 0;
+		_endOfMouthSync = 0;
+		_mouthSyncMode = 0;
+
+
+		for (i=0; i<52; i++)
+			_mouthSyncTimes[i] = 0;
 }
