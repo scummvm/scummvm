@@ -46,23 +46,22 @@ typedef ScummVM::List<const VersionSettings *> GameList;
 
 /*
  * A dialog that allows the user to edit a config game entry.
- * That will eventually include
- * - the description (used for user feedback only)
- * - amiga/subtitles flag? Although those make only sense for Scumm games
- * - the music driver for that game (<Default> or custom)
+ * TODO: add widgets for some/all of the following
+ * - Amiga/subtitles flag? Although those only make sense for Scumm games, not Simon
+ * - The music driver for that game (<Default> or custom)
  *   Of course this means we need an API to query the available music drivers.
- * - maybe scaler. But there are two problems:
- *   1) different backends can have different scalers with different names,
+ * - Maybe scaler/graphics mode. But there are two problems:
+ *   1) Different backends can have different scalers with different names,
  *      so we first have to add a way to query those... no Ender, I don't
  *      think a bitmasked property() value is nice for this,  because we would
  *      have to add to the bitmask values whenever a backends adds a new scaler).
- *   2) at the time the launcher is running, the GFX backend is already setup.
- *      so when a game is run via the launcher, the custom scaler setting for it won't be
+ *   2) At the time the launcher is running, the GFX backend is already setup.
+ *      So when a game is run via the launcher, the custom scaler setting for it won't be
  *      used. So we'd also have to add an API to change the scaler during runtime
  *      (the SDL backend can already do that based on user input, but there is no API
  *      to achieve it)
  *   If the APIs for 1&2 are in place, we can think about adding this to the Edit&Option dialogs
- * - maybe volumes?
+ * - Maybe SFX/Master/Music volumes?
  */
 
 enum {
@@ -106,6 +105,7 @@ EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain
 	new StaticTextWidget(this, 10, 24, 40, kLineHeight, "Path: ", kTextAlignRight);
 	new StaticTextWidget(this, 50, 24, _w-50-10, kLineHeight, path, kTextAlignLeft);
 	
+	// TODO - insert more widgets here; see comments before the class
 
 	// Add OK & Cancel buttons
 	addButton(_w-2*(kButtonWidth+10), _h-24, "Cancel", kCloseCmd, 0);
