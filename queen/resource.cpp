@@ -37,9 +37,10 @@ const GameVersion Resource::_gameVersions[] = {
 	{ "PIM10", 0x000866B1,  22461366 },
 	{ "CIM10", 0x0008BEE2, 190795582 },
 	{ "CSM10", 0x000B343C, 190730602 },
-	{ "PE100", 0x000DA981,   3724538 },
-	{ "PE100", 0x000DB63A,   3732177 },
-	{ "PEint", 0x000DC2F3,   1915913 }
+	{ "CHM10", 0x000DA981, 190705558 },
+	{ "PE100", 0x00101EC6,   3724538 },
+	{ "PE100", 0x00102B7F,   3732177 },
+	{ "PEint", 0x00103838,   1915913 }
 };
 
 
@@ -187,6 +188,8 @@ Language Resource::getLanguage() const {
 		return ITALIAN;
 	case 'S':
 		return SPANISH;
+	case 'H':
+		return HEBREW;
 	default:
 		return ENGLISH;
 	}
@@ -198,6 +201,8 @@ bool Resource::readTableFile(const GameVersion *gameVersion) {
 	if (!tableFile.isOpen())	
 		tableFile.open(_tableFilename, ""); // try current directory
 	if (tableFile.isOpen() && tableFile.readUint32BE() == 'QTBL') {
+		if (tableFile.readUint32BE() != CURRENT_TBL_VERSION)
+			warning("Incorrect version of queen.tbl, please update it");
 		tableFile.seek(gameVersion->tableOffset);
 		readTableEntries(&tableFile);
 		return true;

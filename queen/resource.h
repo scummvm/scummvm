@@ -40,13 +40,15 @@ enum Version {
 	// VER_SPA_FLOPPY
 	VER_SPA_TALKIE   = 8,
 	// VER_HEB_FLOPPY
-	// VER_HEB_TALKIE
-	VER_DEMO_PCGAMES = 9,
-	VER_DEMO         = 10,
-	VER_INTERVIEW    = 11,
+	VER_HEB_TALKIE	 = 9,
+	VER_DEMO_PCGAMES = 10,
+	VER_DEMO         = 11,
+	VER_INTERVIEW    = 12,
 
-	VER_COUNT        = 12
+	VER_COUNT        = 13
 };
+
+enum { CURRENT_TBL_VERSION = 1 }; 
 
 struct ResourceEntry {
 	char filename[13];
@@ -96,8 +98,8 @@ public:
 
 	enum {
 		JAS_VERSION_OFFSET_DEMO = 0x119A8,
-		JAS_VERSION_OFFSET_INTV = 0xCF8,
-		JAS_VERSION_OFFSET	    = 0x12484
+		JAS_VERSION_OFFSET_INTV	= 0xCF8,
+		JAS_VERSION_OFFSET	= 0x12484
 	};
 
 protected:
