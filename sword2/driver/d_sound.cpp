@@ -689,7 +689,7 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 		if (!data32)
 			return(RDERR_INVALIDWAV);
 
-		bufferSizeFx[fxi] = *(data32 + 1);
+		bufferSizeFx[fxi] = READ_LE_UINT32(data32 + 1);
 
 		//	Fill the speech buffer with data
 		if (bufferFx[fxi] != NULL)
