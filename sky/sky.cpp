@@ -179,14 +179,15 @@ void SkyState::go() {
 
 	initialise();
 
-	bool introSkipped;
-	if (_systemVars.gameVersion != 267) // don't do intro for floppydemo
-		introSkipped = !intro();
-	else introSkipped = false;
+	bool introSkipped = false;
+	if (!_quickLaunch) {
+		if (_systemVars.gameVersion != 267) // don't do intro for floppydemo
+			introSkipped = !intro();
 
-	_skyDisk->flushPrefetched();
+		_skyDisk->flushPrefetched();
 
-	loadBase0();
+		loadBase0();
+	}
 
 	if (introSkipped)
 		_skyControl->restartGame();
@@ -266,6 +267,15 @@ void SkyState::initialise(void) {
 
 	if (_systemVars.gameVersion == 288)
 		SkyCompact::patchFor288();
+
+	uint16 result = 0;
+	if (_detector->_save_slot >= 0)
+		result = _skyControl->quickXRestore(_detector->_save_slot);
+
+	if (result == GAME_RESTORED)
+		_quickLaunch = true;
+	else
+		_quickLaunch = false;
 }
 
 void SkyState::initItemList() {

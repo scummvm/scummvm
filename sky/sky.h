@@ -62,6 +62,7 @@ protected:
 	byte _game;
 	byte _key_pressed;
 	static uint8 _languageTable[11];
+	bool _quickLaunch; // set when starting with -x
 
 	//intro related
 	

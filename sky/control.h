@@ -173,6 +173,7 @@ public:
 	void restartGame(void);
 	void showGameQuitMsg(bool useScreen = true);
 	void doAutoSave(void);
+	uint16 quickXRestore(uint16 slot);
     
 private:
 	void initPanel(void);

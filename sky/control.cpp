@@ -1461,7 +1461,7 @@ uint16 SkyControl::restoreGameFromFile(bool autoSave) {
 		else
 			sprintf(fName, "SKY-VM%03d.ASD", SkyState::_systemVars.gameVersion);
 	} else
-    	sprintf(fName,"SKY-VM.%03d", _selectedGame);
+		sprintf(fName,"SKY-VM.%03d", _selectedGame);
 
 	File inf;
 	if (!inf.open(fName, _savePath)) {
@@ -1489,6 +1489,41 @@ uint16 SkyControl::restoreGameFromFile(bool autoSave) {
 	inf.close();
 	free(saveData);
 	return res;
+}
+
+uint16 SkyControl::quickXRestore(uint16 slot) {
+	uint16 result;
+	initPanel();
+	_mouseClicked = false;
+
+	_savedCharSet = _skyText->giveCurrentCharSet();
+	_skyText->fnSetFont(0);
+
+	if (SkyState::_systemVars.gameVersion < 331)
+		_skyScreen->setPalette(60509);
+	else
+		_skyScreen->setPalette(60510);
+
+	_savedMouse = _skyMouse->giveCurrentMouseType();
+	_skyMouse->spriteMouse(MOUSE_NORMAL,0,0);
+
+	if (slot == 0)
+		result = restoreGameFromFile(true);
+	else {
+		_selectedGame = slot - 1;
+		result = restoreGameFromFile(false);
+	}
+	if (result == GAME_RESTORED) {
+		memset(_skyScreen->giveCurrent(), 0, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);
+		_skyScreen->showScreen(_skyScreen->giveCurrent());
+		_skyScreen->forceRefresh();
+	}
+	_skyScreen->setPaletteEndian((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
+	_skyMouse->spriteMouse(_savedMouse, 0, 0);
+	_skyText->fnSetFont(_savedCharSet);
+
+	removePanel();
+    return result;
 }
 
 uint16 *SkyControl::lz77decode(uint16 *data) {
