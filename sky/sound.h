@@ -57,13 +57,11 @@ public:
 
 protected:
 
-	int playSound(uint32 id, byte *sound, uint32 size, PlayingSoundHandle *handle);
+	void playSound(uint32 id, byte *sound, uint32 size, PlayingSoundHandle *handle);
 
 public:
 	SkySound(SoundMixer *mixer, SkyDisk *pDisk, uint8 pVolume);
 	~SkySound(void);
-	int playVoice(byte *sound, uint32 size);
-	int playBgSound(byte *sound, uint32 size);
 
 	void loadSection(uint8 pSection);
 	void playSound(uint16 sound, uint16 volume, uint8 channel);
