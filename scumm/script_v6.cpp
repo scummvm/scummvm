@@ -2920,10 +2920,11 @@ void ScummEngine_v6::o6_stampObject() {
 		Actor *a = derefActor(object, "o6_stampObject");
 		a->scalex = state;
 		a->scaley = state;
-		a->putActor(x, y, _currentRoom); // TODO
+		a->putActor(x, y, _currentRoom);
+		a->actor_draw_to_bg = true;
 		a->drawActorCostume();
-//		drawActor(object, maskBufferPtr, x_y, scale_x_y);
-//		drawActor(object, mainBufferPtr, x_y, scale_x_y);
+		a->actor_draw_to_bg = false;
+		a->drawActorCostume();
 		return;
 	}
 	
