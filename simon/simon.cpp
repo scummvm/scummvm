@@ -1075,23 +1075,23 @@ void SimonEngine::playSting(uint a) {
 	char filename[11];
 	uint16 size;
 
-	_mus_file = new File();
+	File _mus_file;
 	sprintf(filename, "STINGS%i.MUS", _midi_sfx);
-	_mus_file->open(filename, _gameDataPath);
-	if (!_mus_file->isOpen()) {
+	_mus_file.open(filename, _gameDataPath);
+	if (!_mus_file.isOpen()) {
 		warning("Can't load sound effect from '%s'", filename);
 		return;
 	}
 
-	size = _mus_file->readUint16LE();
+	size = _mus_file.readUint16LE();
 	_mus_offsets = (uint16 *)malloc(size);
 
-	_mus_file->seek(0, SEEK_SET);
-	if (_mus_file->read(_mus_offsets, size) != size)
+	_mus_file.seek(0, SEEK_SET);
+	if (_mus_file.read(_mus_offsets, size) != size)
 		error("Can't read offsets");
 
-	_mus_file->seek(_mus_offsets[a], SEEK_SET);
-	midi.loadSMF (_mus_file, a, true);
+	_mus_file.seek(_mus_offsets[a], SEEK_SET);
+	midi.loadSMF (&_mus_file, a, true);
 	midi.startTrack (0);
 }
 
