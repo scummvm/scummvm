@@ -357,13 +357,6 @@ int16 Walk::movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage
 		return 0;
 	}
 
-	// no longer walk characters in ending
-	if (_logic->currentRoom() == 69) {
-		if (strcmp(pp->name, "SPARKY") == 0 || strcmp(pp->name, "FAYE") == 0) {
-			return 0;
-		}
-	}
-
 	int16 can = 0;
 	initWalkData();
 
@@ -434,7 +427,6 @@ void Walk::stopJoe() {
 
 	_graphics->bob(0)->moving = false;
 	_joeInterrupted = true;
-
 }
 
 
