@@ -309,6 +309,8 @@ FORCEINLINE uint32 READ_BE_UINT32(void *ptr) {
 
 #define TO_BE_32(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
 
+uint16 FORCEINLINE TO_BE_16(uint16 a) { return (a>>8) | (a<<8); }
+
 #elif defined(SCUMM_BIG_ENDIAN)
 
 #define MKID(a) (a)
@@ -354,7 +356,7 @@ uint32 FORCEINLINE READ_BE_UINT32_UNALIGNED(void *ptr) {
 #define READ_UINT32_UNALIGNED READ_BE_UINT32_UNALIGNED
 
 #define TO_BE_32(a) (a)
-
+#define TO_BE_16(a) (a)
 #else
 
 #error No endianness defined
