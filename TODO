@@ -308,8 +308,6 @@ SAGA
   (eriktorbjorn - mostly done; the script "static" buffer is still wrong)
 * Rewrite path finder
 * Make all talk scripts skippable by ESC like in original
-* Fix graphics glitch when intro is skipped and faery script is run,
-  there should be fade out/in sequence. Now actors with wrong palette are drawn
 * Fix crashes in ISO rooms
 * Add sound/voices compression. Should _considerably_ save space.
 * Add support for Mac versions. At least in rerelease everything, including
