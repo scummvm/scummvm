@@ -10,7 +10,7 @@
 Name		: scummvm
 Version		: 0.5.0pre-cvs
 Release		: @RELEASE@
-Summary		: SCUMM graphic adventure game interpreter
+Summary		: Graphic adventure game interpreter
 Group		: Interpreters
 License		: GPL
 
@@ -24,8 +24,9 @@ BuildRoot	: %{_tmppath}/%{name}-%{version}-root
 #------------------------------------------------------------------------------
 %description
 ScummVM is an interpreter that will play graphic adventure games written for
-LucasArts' SCUMM virtual machine. It uses the SDL library for outputting
-graphics.
+LucasArts' SCUMM virtual machine, Adventure Soft's Simon the Sorcerer 1 and 2,
+and Revolution Software Ltd's Beneath a Steel Sky. It uses the SDL library for
+outputting graphics.
 
 #------------------------------------------------------------------------------
 #   install scripts
@@ -56,6 +57,20 @@ rm -Rf %{buildroot}
 #   Change Log
 #------------------------------------------------------------------------------
 %changelog
+* 0.5.0 (2003-08-02)
+  - Enhanced versions of Maniac Mansion and Zak McKracken are now supported and completable
+  - Beneath A Steel Sky is now supported and completable
+  - Added support for Amiga version of Monkey Island 1
+  - Initial unplayable support for V1 version of Maniac Mansion/Zak McKracken
+  - Curse of Monkey Island (COMI) support for playing from CD improved on Mac OS X
+  - Loading COMI savegames for disk 2 doesn't anymore require disk 1 first
+  - Rewritten iMUSE enginee, and many Music fixes (exp. Monkey Island 2)
+  - Support for music in Humongous games and simon2dos/simon2talkie (XMIDI format)
+  - Support for music in simon1demo (Proprietary format)
+  - Complete music support for Simon the Sorcerer 2
+  - Improved music and sound support in Zak256
+  - Added Aspect Ratio option
+  - Many other bug fixes, improvements and optimisations
 * 0.4.1 (2003-05-25)
   - Added AdvMame3x filter
   - Fixed crash Curse of Monkey Island (and possibly other games as well)
