@@ -298,7 +298,7 @@ void CostumeRenderer::c64_ignorePakCols(int num) {
 	//
 	
 	uint height = _height;
-	num >>= 3;
+	num /= 8;
 
 	while (num > 0) {
 		v1.replen = *_srcptr++;
@@ -335,14 +335,14 @@ static const int v1_mm_actor_palatte_2[25] = {
 };
 
 #define MASK_AT(xoff) \
-	(mask && (mask[((v1.x+xoff) >> 3) + v1.imgbufoffs] & revBitMask[(v1.x+xoff) & 7]))
+	(mask && (mask[((v1.x + xoff) / 8) + v1.imgbufoffs] & revBitMask[(v1.x + xoff) & 7]))
 #define LINE(c,p) \
 	pcolor = (color >> c) & 3; \
 	if (pcolor) { \
 		if (!MASK_AT(p)) \
 			dst[p] = palette[pcolor]; \
-		if (!MASK_AT(p+1)) \
-			dst[p+1] = palette[pcolor]; \
+		if (!MASK_AT(p + 1)) \
+			dst[p + 1] = palette[pcolor]; \
 	}
 
 void CostumeRenderer::procC64(int actor) {
@@ -360,7 +360,7 @@ void CostumeRenderer::procC64(int actor) {
 	color = v1.repcolor;
 	height = _height;
 
-	v1.skip_width >>= 3;
+	v1.skip_width /= 8;
 
 	// Set up the palette data
 	byte palette[4] = { 0, 0, 0, 0 };
@@ -436,7 +436,7 @@ void CostumeRenderer::proc3() {
 
 	scaleytab = &v1.scaletable[_scaleIndexY];
 	maskbit = revBitMask[v1.x & 7];
-	mask = v1.mask_ptr + (v1.x >> 3);
+	mask = v1.mask_ptr + v1.x / 8;
 
 	if (len)
 		goto StartPos;
@@ -486,7 +486,7 @@ void CostumeRenderer::proc3() {
 				}
 				_scaleIndexX += v1.scaleXstep;
 				dst = v1.destptr;
-				mask = v1.mask_ptr + (v1.x >> 3);
+				mask = v1.mask_ptr + v1.x / 8;
 			}
 		StartPos:;
 		} while (--len);
@@ -502,7 +502,7 @@ void CostumeRenderer::proc3_ami() {
 	bool masked;
 	int oldXpos, oldScaleIndexX;
 
-	mask = v1.mask_ptr + (v1.x >> 3);
+	mask = v1.mask_ptr + v1.x / 8;
 	dst = v1.destptr;
 	height = _height;
 	width = _width;
@@ -532,7 +532,7 @@ void CostumeRenderer::proc3_ami() {
 					maskbit = revBitMask[v1.x & 7];
 				}
 				_scaleIndexX += v1.scaleXstep;
-				mask = v1.mask_ptr + (v1.x >> 3);
+				mask = v1.mask_ptr + v1.x / 8;
 			}
 			if (!--width) {
 				if (!--height)

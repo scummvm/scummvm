@@ -408,10 +408,10 @@ void ScummEngine::drawObject(int obj, int arg) {
 
 	checkRange(_numGlobalObjects - 1, 0, od.obj_nr, "Object %d out of range in drawObject");
 
-	xpos = od.x_pos >> 3;
+	xpos = od.x_pos / 8;
 	ypos = od.y_pos;
 
-	width = od.width >> 3;
+	width = od.width / 8;
 	height = od.height &= 0xFFFFFFF8;	// Mask out last 3 bits
 
 	if (width == 0 || xpos > _screenEndStrip || xpos + width < _screenStartStrip)
@@ -447,13 +447,13 @@ void ScummEngine::drawObject(int obj, int arg) {
 		byte flags = Gdi::dbAllowMaskOr;
 		if (_version == 1) {
 			gdi._C64ObjectMode = true;
-			gdi.decodeC64Gfx(ptr, gdi._C64ObjectMap, width * (height >> 3) * 3);
+			gdi.decodeC64Gfx(ptr, gdi._C64ObjectMap, width * (height / 8) * 3);
 		}
 		// Sam & Max needs this to fix object-layering problems with
 		// the inventory and conversation icons.
 		if ((_version >= 7 || _gameId == GID_SAMNMAX) && getClass(od.obj_nr, kObjectClassIgnoreBoxes))
 			flags |= Gdi::dbDrawMaskOnAll;
-		gdi.drawBitmap(ptr, &virtscr[0], x, ypos, width << 3, height, x - xpos, numstrip, flags);
+		gdi.drawBitmap(ptr, &virtscr[0], x, ypos, width * 8, height, x - xpos, numstrip, flags);
 	}
 }
 
@@ -692,14 +692,14 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 
 		od->obj_nr = READ_LE_UINT16(ptr + 6);
 
-		od->x_pos = *(ptr + 9) << 3;
-		od->y_pos = ((*(ptr + 10)) & 0x7F) << 3;
+		od->x_pos = *(ptr + 9) * 8;
+		od->y_pos = ((*(ptr + 10)) & 0x7F) * 8;
 
 		od->parentstate = (*(ptr + 10) & 0x80) ? 1 : 0;
 		if (_version <= 2)
-			od->parentstate <<= 3;
+			od->parentstate *= 8;
 
-		od->width = *(ptr + 11) << 3;
+		od->width = *(ptr + 11) * 8;
 
 		od->parent = *(ptr + 12);
 
@@ -773,10 +773,10 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 	} else {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v5.obj_id));
 
-		od->width = cdhd->v5.w << 3;
-		od->height = cdhd->v5.h << 3;
-		od->x_pos = cdhd->v5.x << 3;
-		od->y_pos = cdhd->v5.y << 3;
+		od->width = cdhd->v5.w * 8;
+		od->height = cdhd->v5.h * 8;
+		od->x_pos = cdhd->v5.x * 8;
+		od->y_pos = cdhd->v5.y * 8;
 		if (cdhd->v5.flags == 0x80) {
 			od->parentstate = 1;
 		} else {
@@ -857,8 +857,8 @@ void ScummEngine::removeObjectFromRoom(int obj) {
 	for (i = 1; i < _numLocalObjects; i++) {
 		if (_objs[i].obj_nr == (uint16)obj) {
 			if (_objs[i].width != 0) {
-				for (j = 0; j < _objs[i].width >> 3; j++) {
-					strip = (_objs[i].x_pos >> 3) + j;
+				for (j = 0; j < _objs[i].width / 8; j++) {
+					strip = (_objs[i].x_pos / 8) + j;
 
 					// Clip value
 					if (strip < _screenStartStrip)
@@ -1299,8 +1299,8 @@ void ScummEngine::setObjectState(int obj, int state, int x, int y) {
 	}
 
 	if (x != -1) {
-		_objs[i].x_pos = x << 3;
-		_objs[i].y_pos = y << 3;
+		_objs[i].x_pos = x * 8;
+		_objs[i].y_pos = y * 8;
 	}
 
 	addObjectToDrawQue(i);
@@ -1334,7 +1334,7 @@ int ScummEngine::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, 
 		y2 = f;
 	}
 
-	return getDist(x, y, x2, y2) * 0xFF / ((i + j) >> 1);
+	return getDist(x, y, x2, y2) * 0xFF / ((i + j) / 2);
 }
 
 void ScummEngine::setCursorImg(uint img, uint room, uint imgindex) {
@@ -1351,18 +1351,18 @@ void ScummEngine::setCursorImg(uint img, uint room, uint imgindex) {
 	if (_version == 8) {
 		setCursorHotspot(READ_LE_UINT32(&foir.imhd->v8.hotspot[0].x),
 		                  READ_LE_UINT32(&foir.imhd->v8.hotspot[0].y));
-		w = READ_LE_UINT32(&foir.imhd->v8.width) >> 3;
-		h = READ_LE_UINT32(&foir.imhd->v8.height) >> 3;
+		w = READ_LE_UINT32(&foir.imhd->v8.width) / 8;
+		h = READ_LE_UINT32(&foir.imhd->v8.height) / 8;
 	} else if (_version == 7) {
 		setCursorHotspot(READ_LE_UINT16(&foir.imhd->v7.hotspot[0].x),
 		                  READ_LE_UINT16(&foir.imhd->v7.hotspot[0].y));
-		w = READ_LE_UINT16(&foir.imhd->v7.width) >> 3;
-		h = READ_LE_UINT16(&foir.imhd->v7.height) >> 3;
+		w = READ_LE_UINT16(&foir.imhd->v7.width) / 8;
+		h = READ_LE_UINT16(&foir.imhd->v7.height) / 8;
 	} else {
 		setCursorHotspot(READ_LE_UINT16(&foir.imhd->old.hotspot[0].x),
 		                  READ_LE_UINT16(&foir.imhd->old.hotspot[0].y));
-		w = READ_LE_UINT16(&foir.cdhd->v6.w) >> 3;
-		h = READ_LE_UINT16(&foir.cdhd->v6.h) >> 3;
+		w = READ_LE_UINT16(&foir.cdhd->v6.w) / 8;
+		h = READ_LE_UINT16(&foir.cdhd->v6.h) / 8;
 	}
 
 	dataptr = getObjectImage(foir.obim, imgindex);
@@ -1555,8 +1555,8 @@ void ScummEngine::removeBlastObject(BlastObject *eo) {
 	if (right > vs->width)
 		right = vs->width;
 
-	left_strip = left >> 3;
-	right_strip = (right - 1) >> 3;
+	left_strip = left / 8;
+	right_strip = (right - 1) / 8;
 
 	if (left_strip < 0)
 		left_strip = 0;

@@ -1550,7 +1550,7 @@ void ScummEngine_v6::o6_roomOps() {
 	case 181:		// SO_ROOM_FADE
 		a = pop();
 		if (a) {
-			_switchRoomEffect = (byte)(a&0xFF);
+			_switchRoomEffect = (byte)(a & 0xFF);
 			_switchRoomEffect2 = (byte)(a >> 8);
 		} else {
 			fadeIn(_newEffect);
@@ -2090,7 +2090,7 @@ void ScummEngine_v6::o6_wait() {
 			if (camera._dest != camera._cur)
 				break;
 		} else {
-			if (camera._cur.x >> 3 != camera._dest.x >> 3)
+			if (camera._cur.x / 8 != camera._dest.x / 8)
 				break;
 		}
 

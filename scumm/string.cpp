@@ -100,7 +100,7 @@ void ScummEngine::CHARSET_1() {
 		return;
 
 	if (!(_features & GF_NEW_CAMERA) && !(_gameId == GID_ZAK256 && VAR(VAR_TALK_ACTOR) == 0xff)) {
-		if ((camera._dest.x >> 3) != (camera._cur.x >> 3) || camera._cur.x != camera._last.x)
+		if ((camera._dest.x / 8) != (camera._cur.x / 8) || camera._cur.x != camera._last.x)
 			return;
 	}
 
@@ -114,20 +114,20 @@ void ScummEngine::CHARSET_1() {
 
 			if (VAR(VAR_V5_TALK_STRING_Y) < 0) {
 				s = (a->scaley * (int)VAR(VAR_V5_TALK_STRING_Y)) / 0xFF;
-				_string[0].ypos = (int)(((VAR(VAR_V5_TALK_STRING_Y) - s) >> 1) + s - a->elevation + a->_pos.y);
+				_string[0].ypos = (int)(((VAR(VAR_V5_TALK_STRING_Y) - s) / 2) + s - a->elevation + a->_pos.y);
 			} else {
 				_string[0].ypos = (int)VAR(VAR_V5_TALK_STRING_Y);
 			}
 
 		} else {
 			s = a->scaley * a->talkPosY / 0xFF;
-			_string[0].ypos = ((a->talkPosY - s) >> 1) + s - a->elevation + a->_pos.y;
+			_string[0].ypos = ((a->talkPosY - s) / 2) + s - a->elevation + a->_pos.y;
 
 			if (_string[0].ypos < _screenTop)
 				_string[0].ypos = _screenTop;
 
 			s = a->scalex * a->talkPosX / 0xFF;
-			_string[0].xpos = ((a->talkPosX - s) >> 1) + s + a->_pos.x - camera._cur.x + (_screenWidth / 2);
+			_string[0].xpos = ((a->talkPosX - s) / 2) + s + a->_pos.x - camera._cur.x + (_screenWidth / 2);
 		}
 
 		if (_string[0].ypos < 1)
@@ -207,7 +207,7 @@ void ScummEngine::CHARSET_1() {
 	if (_charset->_center) {
 		if (t > _charset->_nextLeft)
 			t = _charset->_nextLeft;
-		t <<= 1;
+		t /= 2;
 	}
 
 	buffer = _charsetBuffer + _charsetBufPos;
@@ -215,7 +215,7 @@ void ScummEngine::CHARSET_1() {
 		_charset->addLinebreaks(0, buffer, 0, t);
 
 	if (_charset->_center) {
-		_charset->_nextLeft -= _charset->getStringWidth(0, buffer) >> 1;
+		_charset->_nextLeft -= _charset->getStringWidth(0, buffer) / 2;
 		if (_charset->_nextLeft < 0)
 			_charset->_nextLeft = 0;
 	}
@@ -235,7 +235,7 @@ void ScummEngine::CHARSET_1() {
 		newLine:;
 			_charset->_nextLeft = _string[0].xpos;
 			if (_charset->_center) {
-				_charset->_nextLeft -= _charset->getStringWidth(0, buffer) >> 1;
+				_charset->_nextLeft -= _charset->getStringWidth(0, buffer) / 2;
 			}
 			_charset->_nextTop += _charset->getFontHeight();
 			if (_version > 3) {
@@ -390,7 +390,7 @@ void ScummEngine::drawString(int a) {
 	if (space)
 		*space = '\0';
 	if (_charset->_center) {
-		_charset->_left -= _charset->getStringWidth(a, buf) >> 1;
+		_charset->_left -= _charset->getStringWidth(a, buf) / 2;
 	}
 
 	if (_version < 7)
@@ -713,7 +713,7 @@ void ScummEngine::drawBlastTexts() {
 
 		// Center text if necessary
 		if (_charset->_center) {
-			_charset->_nextLeft -= _charset->getStringWidth(0, buf) >> 1;
+			_charset->_nextLeft -= _charset->getStringWidth(0, buf) / 2;
 			if (_charset->_nextLeft < 0)
 				_charset->_nextLeft = 0;
 		}

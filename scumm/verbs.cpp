@@ -451,29 +451,29 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 	twobufs = vs->alloctwobuffers;
 	vs->alloctwobuffers = 0;
 
-	xstrip = x >> 3;
+	xstrip = x / 8;
 	ydiff = y - vs->topline;
 
 	obim = getResourceAddress(rtVerb, verb);
 	assert(obim);
 	if (_features & GF_OLD_BUNDLE) {
 		imgw = obim[0];
-		imgh = obim[1] >> 3;
+		imgh = obim[1] / 8;
 		imptr = obim + 2;
 	} else if (_features & GF_SMALL_HEADER) {
 		size = READ_LE_UINT32(obim);
 
 		imgw = (*(obim + size + 11));
-		imgh = (*(obim + size + 17)) >> 3;
+		imgh = (*(obim + size + 17)) / 8;
 		imptr = getObjectImage(obim, 1);
 	} else {
 		imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
 		if (_version >= 7) {
-			imgw = READ_LE_UINT16(&imhd->v7.width) >> 3;
-			imgh = READ_LE_UINT16(&imhd->v7.height) >> 3;
+			imgw = READ_LE_UINT16(&imhd->v7.width) / 8;
+			imgh = READ_LE_UINT16(&imhd->v7.height) / 8;
 		} else {
-			imgw = READ_LE_UINT16(&imhd->old.width) >> 3;
-			imgh = READ_LE_UINT16(&imhd->old.height) >> 3;
+			imgw = READ_LE_UINT16(&imhd->old.width) / 8;
+			imgh = READ_LE_UINT16(&imhd->old.height) / 8;
 		}
 		imptr = getObjectImage(obim, 1);
 	}

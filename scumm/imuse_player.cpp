@@ -879,7 +879,7 @@ int Player::setVolume(byte vol) {
 		return -1;
 
 	_volume = vol;
-	_vol_eff = _se->get_channel_volume(_vol_chan) *(vol + 1) >> 7;
+	_vol_eff = _se->get_channel_volume(_vol_chan) * (vol + 1) >> 7;
 
 	for (part = _parts; part; part = part->_next) {
 		part->volume(part->_vol);

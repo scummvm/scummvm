@@ -837,10 +837,10 @@ void ScummEngine_v5::o5_drawObject() {
 
 	od = &_objs[idx];
 	if (xpos != 0xFF) {
-		od->walk_x += (xpos << 3) - od->x_pos;
-		od->x_pos = xpos << 3;
-		od->walk_y += (ypos << 3) - od->y_pos;
-		od->y_pos = ypos << 3;
+		od->walk_x += (xpos * 8) - od->x_pos;
+		od->x_pos = xpos * 8;
+		od->walk_y += (ypos * 8) - od->y_pos;
+		od->y_pos = ypos * 8;
 	}
 	addObjectToDrawQue(idx);
 
@@ -1967,9 +1967,9 @@ void ScummEngine_v5::o5_roomOps() {
 				int len = 256, cnt = 0;
 				ptr = (byte *)malloc(len);
 				while (ptr) {
-				  int r = file->read(ptr+cnt, len-cnt);
+				  int r = file->read(ptr + cnt, len - cnt);
 				  if ((cnt += r) < len) break;
-				  ptr = (byte *)realloc(ptr, len<<=1);
+				  ptr = (byte *)realloc(ptr, len *= 2);
 				}
 				ptr[cnt] = '\0';
 				loadPtrToResource(rtString, a, ptr);
@@ -2584,7 +2584,7 @@ void ScummEngine_v5::o5_wait() {
 			break;
 		return;
 	case 3:		// SO_WAIT_FOR_CAMERA
-		if (camera._cur.x >> 3 != camera._dest.x >> 3)
+		if (camera._cur.x / 8 != camera._dest.x / 8)
 			break;
 		return;
 	case 4:		// SO_WAIT_FOR_SENTENCE

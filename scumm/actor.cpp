@@ -1045,7 +1045,7 @@ void Actor::animateLimb(int limb, int f) {
 		aksq = _vm->findResourceData(MKID('AKSQ'), akos);
 		akfo = _vm->findResourceData(MKID('AKFO'), akos);
 	
-		size = _vm->getResourceDataSize(akfo) >> 1;
+		size = _vm->getResourceDataSize(akfo) / 2;
 	
 		while (f--) {
 			if (cost.active[limb] != 0)
@@ -1103,10 +1103,10 @@ void ScummEngine::resetActorBgs() {
 int ScummEngine::getActorFromPos(int x, int y) {
 	int i;
 
-	if (!testGfxAnyUsageBits(x >> 3))
+	if (!testGfxAnyUsageBits(x / 8))
 		return 0;
 	for (i = 1; i < _numActors; i++) {
-		if (testGfxUsageBit(x >> 3, i) && !getClass(i, kObjectClassUntouchable)
+		if (testGfxUsageBit(x / 8, i) && !getClass(i, kObjectClassUntouchable)
 			&& y >= _actors[i].top && y <= _actors[i].bottom) {
 			if (_version > 2 || i != VAR(VAR_EGO))
 				return i;

@@ -743,10 +743,10 @@ void ScummEngine_v2::o2_drawObject() {
 
 	od = &_objs[idx];
 	if (xpos != 0xFF) {
-		od->walk_x += (xpos << 3) - od->x_pos;
-		od->x_pos = xpos << 3;
-		od->walk_y += (ypos << 3) - od->y_pos;
-		od->y_pos = ypos << 3;
+		od->walk_x += (xpos * 8) - od->x_pos;
+		od->x_pos = xpos * 8;
+		od->walk_y += (ypos * 8) - od->y_pos;
+		od->y_pos = ypos * 8;
 	}
 	addObjectToDrawQue(idx);
 
@@ -819,8 +819,8 @@ void ScummEngine_v2::o2_verbOps() {
 		break;
 
 	default: {	// New Verb
-		int x = fetchScriptByte() << 3;
-		int y = fetchScriptByte() << 3;
+		int x = fetchScriptByte() * 8;
+		int y = fetchScriptByte() * 8;
 		slot = getVarOrDirectByte(PARAM_1) + 1;
 		int prep = fetchScriptByte(); // Only used in V1?
 		// V1 Maniac verbs are relative to the 'verb area' - under the sentence
@@ -1496,10 +1496,10 @@ void ScummEngine_v2::o2_setObjectName() {
 	}
 
 	while (i < size) {
-		work[i-1] = '@';
+		work[i - 1] = '@';
 		i++;
 	}
-	work[i-1] = 0;
+	work[i - 1] = 0;
 	
 	memcpy(name, work, i);
 	runInventoryScript(0);

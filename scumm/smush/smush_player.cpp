@@ -446,7 +446,7 @@ void SmushPlayer::handleImuseAction(Chunk &b) {
 					d_src2 += 2;
 					int32 count = 1024;
 					byte variable1 = *d_src2++;
-					byte variable2 = variable1 >> 4;
+					byte variable2 = variable1 / 16;
 					variable1 &= 0x0f;
 					do {
 						value = *(d_src2++);
@@ -464,7 +464,7 @@ void SmushPlayer::handleImuseAction(Chunk &b) {
 							*dst++ = *d_src2++;
 						} else {
 							int16 val = (int8)value << variable1;
-							*dst++ = val>> 8;
+							*dst++ = val >> 8;
 							*dst++ = (byte)(val);
 						}
 					} while (--count);
@@ -640,7 +640,7 @@ void SmushPlayer::readPalette(byte *out, Chunk &in) {
 }
 
 static byte delta_color(byte org_color, int16 delta_color) {
-	int t = ((org_color << 7) + org_color + delta_color) >> 7;
+	int t = (org_color * 129 + delta_color) / 128;
 	if (t > 255)
 		t = 255;
 	if (t < 0)

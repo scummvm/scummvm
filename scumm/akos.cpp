@@ -357,7 +357,7 @@ void AkosRenderer::codec1_genericDecode() {
 
 	scaleytab = &v1.scaletable[v1.scaleYindex];
 	maskbit = revBitMask[v1.x & 7];
-	mask = v1.mask_ptr + (v1.x >> 3);
+	mask = v1.mask_ptr + v1.x / 8;
 
 	if (len)
 		goto StartPos;
@@ -418,7 +418,7 @@ void AkosRenderer::codec1_genericDecode() {
 					skip_column = true;
 				v1.scaleXindex += v1.scaleXstep;
 				dst = v1.destptr;
-				mask = v1.mask_ptr + (v1.x >> 3);
+				mask = v1.mask_ptr + v1.x / 8;
 			}
 		StartPos:;
 		} while (--len);
@@ -1067,7 +1067,7 @@ bool ScummEngine::akos_increaseAnims(const byte *akos, Actor *a) {
 	aksq = findResourceData(MKID('AKSQ'), akos);
 	akfo = findResourceData(MKID('AKFO'), akos);
 
-	size = getResourceDataSize(akfo) >> 1;
+	size = getResourceDataSize(akfo) / 2;
 
 	result = false;
 	for (i = 0; i < 16; i++) {

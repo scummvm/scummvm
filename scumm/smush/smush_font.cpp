@@ -304,7 +304,7 @@ void SmushFont::drawStringWrapCentered(const char *str, byte *buffer, int dst_wi
 		y = dst_height - height;
 	}
 
-	max_width = (max_width + 1) >> 1;
+	max_width = (max_width + 1) / 2;
 	x = left + width / 2;
 
 	if (x < left + max_width)

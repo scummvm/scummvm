@@ -243,7 +243,7 @@ void Codec37Decoder::maketable(int pitch, int index) {
 	assert(index + 254 < (int32)(sizeof(maketable_bytes) / 2));
 
 	for (int32 i = 0; i < 255; i++) {
-		int32 j = (i + index) << 1;
+		int32 j = (i + index) * 2;
 		_offsetTable[i] = maketable_bytes[j + 1] * pitch + maketable_bytes[j];
 	}
 }
@@ -443,8 +443,8 @@ void Codec37Decoder::proc4WithoutFDFE(byte *dst, const byte *src, int32 next_off
 }
 
 void Codec37Decoder::decode(byte *dst, const byte *src) {
-	int32 bw = (_width + 3) >> 2, bh = (_height + 3) >> 2;
-	int32 pitch = bw << 2;
+	int32 bw = (_width + 3) / 4, bh = (_height + 3) / 4;
+	int32 pitch = bw * 4;
 
 	int16 seq_nb = READ_LE_UINT16(src + 2);
 	int32 decoded_size = READ_LE_UINT32(src + 4);

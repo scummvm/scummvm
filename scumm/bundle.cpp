@@ -125,10 +125,10 @@ void Bundle::initializeImcTables() {
 	int32 imcTable1Pos = 0;
 	do {
 		byte put = 1;
-		int32 tableValue = ((imcTable[imcTable1Pos] << 2) / 7) >> 1;
+		int32 tableValue = ((imcTable[imcTable1Pos] * 4) / 7) / 2;
 		if (tableValue != 0) {
 			do {
-				tableValue >>= 1;
+				tableValue /= 2;
 				put++;
 			} while (tableValue != 0);
 		}
@@ -155,8 +155,8 @@ void Bundle::initializeImcTables() {
 				if ((count & n) != 0) {
 					put += tableValue;
 				}
-				count >>= 1;
-				tableValue >>= 1;
+				count /= 2;
+				tableValue /= 2;
 			} while (count != 0);
 			_destImcTable2[destTablePos] = put;
 			destTablePos += 64;
@@ -526,13 +526,13 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 			s = 0;
 			j = 0;
 			do {
-				ptr = src + length + (k >> 1);
+				ptr = src + length + k / 2;
 				if (k & 1) {
-					r = c >> 3;
+					r = c / 8;
 					t_table[r + 2] = ((src[j] & 0x0f) << 4) | (ptr[1] >> 4);
 					t_table[r + 1] = (src[j] & 0xf0) | (t_table[r + 1]);
 				} else {
-					r = s >> 3;
+					r = s / 8;
 					t_table[r + 0] = ((src[j] & 0x0f) << 4) | (ptr[0] & 0x0f);
 					t_table[r + 1] = src[j] >> 4;
 				}
@@ -569,13 +569,13 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 		j = 1;
 		if (t > k) {
 			do {
-				ptr = src + length + (k >> 1);
+				ptr = src + length + k / 2;
 				if (k & 1) {
-					r = c >> 3;
+					r = c / 8;
 					t_table[r + 0] = (src[j - 1] & 0xf0) | t_table[r];
 					t_table[r + 1] = ((src[j - 1] & 0x0f) << 4) | (ptr[0] & 0x0f);
 				} else {
-					r = s >> 3;
+					r = s / 8;
 					t_table[r + 0] = src[j - 1] >> 4;
 					t_table[r - 1] = ((src[j - 1] & 0x0f) << 4) | (ptr[0] >> 4);
 				}
@@ -611,13 +611,13 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 		t = length - 1;
 		if (t > 0) {
 			do {
-				ptr = src + length + (k >> 1);
+				ptr = src + length + k / 2;
 				if (k & 1) {
-					r = s >> 3;
+					r = s / 8;
 					t_table[r + 2] = (src[j] & 0xf0) | *(t_table + r + 2);
 					t_table[r + 3] = ((src[j] & 0x0f) << 4) | (ptr[0] >> 4);
 				} else {
-					r = c >> 3;
+					r = c / 8;
 					t_table[r + 2] = src[j] >> 4;
 					t_table[r + 1] = ((src[j] & 0x0f) << 4) | (ptr[0] & 0x0f);
 				}
@@ -663,15 +663,15 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 			c = -12;
 			s = 0;
 			do {
-				j = length + (k >> 1);
+				j = length + k / 2;
 				if (k & 1) {
-					r = c >> 3;
+					r = c / 8;
 					t_tmp1 = t_table[k];
 					t_tmp2 = t_table[j + 1];
 					src[r + 2] = ((t_tmp1 & 0x0f) << 4) | (t_tmp2 >> 4);
 					src[r + 1] = (src[r + 1]) | (t_tmp1 & 0xf0);
 				} else {
-					r = s >> 3;
+					r = s / 8;
 					t_tmp1 = t_table[k];
 					t_tmp2 = t_table[j];
 					src[r + 0] = ((t_tmp1 & 0x0f) << 4) | (t_tmp2 & 0x0f);
@@ -722,15 +722,15 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 		t = length + k;
 		if (t > k) {
 			do {
-				j = length + (k / 2);
+				j = length + k / 2;
 				if (k & 1) {
-					r = c >> 3;
+					r = c / 8;
 					t_tmp1 = t_table[k - 1];
 					t_tmp2 = t_table[j];
 					src[r + 0] = (src[r]) | (t_tmp1 & 0xf0);
 					src[r + 1] = ((t_tmp1 & 0x0f) << 4) | (t_tmp2 & 0x0f);
 				} else {
-					r = s >> 3;
+					r = s / 8;
 					t_tmp1 = t_table[k - 1];
 					t_tmp2 = t_table[j];
 					src[r + 0] = t_tmp1 >> 4;
@@ -779,15 +779,15 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 		t = length - 1;
 		if (t > 0) {
 			do {
-				j = length + (k >> 1);
+				j = length + k / 2;
 				if (k & 1) {
-					r = s >> 3;
+					r = s / 8;
 					t_tmp1 = t_table[k];
 					t_tmp2 = t_table[j];
 					src[r + 2] = (src[r + 2]) | (t_tmp1 & 0xf0);
 					src[r + 3] = ((t_tmp1 & 0x0f) << 4) | (t_tmp2 >> 4);
 				} else {
-					r = c >> 3;
+					r = c / 8;
 					t_tmp1 = t_table[k];
 					t_tmp2 = t_table[j];
 					src[r + 2] = t_tmp1 >> 4;
@@ -842,8 +842,8 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 					left = 0x2000 - firstWord;
 					output_size = left;
 				} else {
-					left = 0x1000 - (firstWord >> 1);
-					output_size = left << 1;
+					left = 0x1000 - firstWord / 2;
+					output_size = left * 2;
 				}
 			} else {
 				startPos = 1;
@@ -875,14 +875,14 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 				if (channels == 2) {
 					if (l == 0)
 						left++;
-					left >>= 1;
+					left /= 2;
 				}
 
 				while (left--) {
 					curTableEntry = _destImcTable[curTablePos];
 					decompTable = (byte)(curTableEntry - 2);
 					bitMask = 2 << decompTable;
-					readPos = src + (tableEntrySum >> 3);
+					readPos = src + tableEntrySum / 8;
 					
 					// FIXME - it seems the decoder often reads exactly one byte too
 					// far - that is, it reads 2 bytes at once, and the second byte
@@ -897,7 +897,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 						if (readPos + 1 > comp_input + input_size ||
 						    curTableEntry + (tableEntrySum & 7) > 8) {
 							error("decompressCodec: input buffer overflow: %d bytes over (we need %d bits of data)",
-									(int)((readPos+1) - (comp_input+input_size))+1,
+									(int)((readPos + 1) - (comp_input + input_size)) + 1,
 									curTableEntry + (tableEntrySum & 7)
 								);
 						}
@@ -906,7 +906,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 					otherTablePos = (byte)(readWord >> (16 - curTableEntry));
 					tableEntrySum += curTableEntry;
 					esiReg = ((imxShortTable[curTableEntry] & otherTablePos)
-						<< (7 - curTableEntry)) + (curTablePos << 6);
+						<< (7 - curTableEntry)) + (curTablePos * 64);
 					imcTableEntry >>= (curTableEntry - 1);
 					adder = imcTableEntry + _destImcTable2[esiReg];
 					if ((otherTablePos & bitMask) != 0) {
@@ -931,7 +931,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 						curTablePos = 0;
 					imcTableEntry = imcTable[curTablePos];
 
-					destPos += channels << 1;
+					destPos += channels * 2;
 				}
 			}
 		}

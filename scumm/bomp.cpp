@@ -239,7 +239,7 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 
 	// Also mask against any additionally imposed mask
 	if (bd.maskPtr) {
-		mask = bd.maskPtr + (bd.y * gdi._numStrips) + ((bd.x + clip_left) >> 3);
+		mask = bd.maskPtr + (bd.y * gdi._numStrips) + ((bd.x + clip_left) / 8);
 	}
 
 	// Setup vertical scaling
@@ -287,7 +287,7 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 			tmp = skip_y_new & skip_y_bits;
 			
 			// Advance the scale-skip bit mask, if it's 0, get the next scale-skip byte
-			skip_y_bits >>= 1;
+			skip_y_bits /= 2;
 			if (skip_y_bits == 0) {
 				skip_y_bits = 0x80;
 				skip_y_new = *scalingYPtr++;
@@ -357,11 +357,11 @@ int32 setupBompScale(byte *scaling, int32 size, byte scale) {
 	byte ret_value = 0;
 	const int offsets[8] = { 3, 2, 1, 0, 7, 6, 5, 4 };
 
-	count = (256 - (size >> 1));
+	count = (256 - size / 2);
 	assert(0 <= count && count < 768);
 	tmp_ptr = defaultScaleTable + count;
 	
-	count = (size + 7) >> 3;
+	count = (size + 7) / 8;
 	while (count--) {
 		a = 0;
 		for (int i = 0; i < 8; i++) {
@@ -379,7 +379,7 @@ int32 setupBompScale(byte *scaling, int32 size, byte scale) {
 		*(tmp_scaling - 1) |= revBitMask[size & 7];
 	}
 
-	count = (size + 7) >> 3;
+	count = (size + 7) / 8;
 	while (count--) {
 		tmp = *scaling++;
 		ret_value += bitCount[tmp];

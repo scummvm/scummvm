@@ -309,7 +309,7 @@ void Codec47Decoder::makeTables47(int width) {
 	int16 tmp;
 
 	for (int l = 0; l < 512; l += 2) {
-		_table[l >> 1] = (int16)(codec47_table[l + 1] * width + codec47_table[l]);
+		_table[l / 2] = (int16)(codec47_table[l + 1] * width + codec47_table[l]);
 	}
 
 	a = 0;
@@ -496,8 +496,8 @@ void Codec47Decoder::level1(byte *d_dst) {
 void Codec47Decoder::decode2(byte *dst, const byte *src, int width, int height, const byte *param_ptr) {
 	_d_src = src;
 	_paramPtr = param_ptr - 0xf8;
-	int bw = (width + 7) >> 3;
-	int bh = (height + 7) >> 3;
+	int bw = (width + 7) / 8;
+	int bh = (height + 7) / 8;
 	int next_line = width * 7;
 	_d_pitch = width;
 

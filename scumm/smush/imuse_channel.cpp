@@ -58,8 +58,8 @@ bool ImuseChannel::setParameters(int32 nb, int32 size, int32 flags, int32 unk1) 
 	// 2 - Background music
 	// 0, 3-511 - SFX and volume
 	// FIXME: this should be better
-	if ((flags != 1) && (flags != 2) && ((flags >> 2) != 0)) {
-		_volume = 300 - ((flags >> 3) << 2);
+	if ((flags != 1) && (flags != 2) && ((flags / 4) != 0)) {
+		_volume = 300 - ((flags / 8) * 4);
 	}
 	else {
 		_volume = 127;

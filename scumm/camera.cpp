@@ -99,7 +99,7 @@ void ScummEngine::setCameraFollows(Actor *a) {
 		setCameraAt(camera._cur.x, 0);
 	}
 
-	t = (a->_pos.x >> 3);
+	t = a->_pos.x / 8;
 
 	if (t - _screenStartStrip < camera._leftTrigger || t - _screenStartStrip > camera._rightTrigger)
 		setCameraAt(a->_pos.x, 0);
@@ -178,7 +178,7 @@ void ScummEngine::moveCamera() {
 		a = derefActor(camera._follows, "moveCamera");
 
 		actorx = a->_pos.x;
-		t = (actorx >> 3) - _screenStartStrip;
+		t = actorx / 8 - _screenStartStrip;
 
 		if (t < camera._leftTrigger || t > camera._rightTrigger) {
 			if (VAR_CAMERA_FAST_X != 0xFF && VAR(VAR_CAMERA_FAST_X)) {
@@ -212,7 +212,7 @@ void ScummEngine::moveCamera() {
 	}
 
 	/* a is set a bit above */
-	if (camera._movingToActor && (camera._cur.x >> 3) == (a->_pos.x >> 3)) {
+	if (camera._movingToActor && (camera._cur.x / 8) == (a->_pos.x / 8)) {
 		camera._movingToActor = false;
 	}
 
@@ -330,13 +330,13 @@ void ScummEngine::cameraMoved() {
 	if (_features & GF_NEW_CAMERA) {
 		_screenLeft = camera._cur.x - (_screenWidth / 2);
 	} else {
-		_screenLeft = _screenStartStrip << 3;
+		_screenLeft = _screenStartStrip * 8;
 	}
 
 #ifdef V7_SMOOTH_SCROLLING_HACK
 	virtscr[0].xstart = _screenLeft;
 #else
-	virtscr[0].xstart = _screenStartStrip << 3;
+	virtscr[0].xstart = _screenStartStrip * 8;
 #endif
 
 	if (_charset->_hasMask && (_version >= 4 && _gameId != GID_LOOM256)) {

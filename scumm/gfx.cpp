@@ -330,19 +330,19 @@ void ScummEngine::updateDirtyRect(int virt, int left, int right, int top, int bo
 		bottom = vs->height;
 
 	if (virt == 0 && dirtybit) {
-		lp = (left >> 3) + _screenStartStrip;
+		lp = left / 8 + _screenStartStrip;
 		if (lp < 0)
 			lp = 0;
 		if (_version >= 7) {
 #ifdef V7_SMOOTH_SCROLLING_HACK
-			rp = (right + vs->xstart) >> 3;
+			rp = (right + vs->xstart) / 8;
 #else
-			rp = (right >> 3) + _screenStartStrip;
+			rp = right / 8 + _screenStartStrip;
 #endif
 			if (rp > 409)
 				rp = 409;
 		} else {
-			rp = (right >> 3) + _screenStartStrip;
+			rp = right / 8 + _screenStartStrip;
 			if (rp >= 200)
 				rp = 200;
 		}
@@ -351,8 +351,8 @@ void ScummEngine::updateDirtyRect(int virt, int left, int right, int top, int bo
 	}
 
 	// The following code used to be in the separate method setVirtscreenDirty
-	lp = left >> 3;
-	rp = right >> 3;
+	lp = left / 8;
+	rp = right / 8;
 
 	if ((lp >= gdi._numStrips) || (rp < 0))
 		return;
@@ -416,7 +416,7 @@ void Gdi::updateDirtyScreen(VirtScreen *vs) {
 		return;
 
 	if (_vm->_features & GF_NEW_CAMERA && (_vm->camera._cur.y != _vm->camera._last.y)) {
-		drawStripToScreen(vs, 0, _numStrips << 3, 0, vs->height);
+		drawStripToScreen(vs, 0, _numStrips * 8, 0, vs->height);
 	} else {
 		int i;
 		int start, w, top, bottom;
@@ -500,7 +500,7 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	if (bottom > vs->bdirty[strip])
 		vs->bdirty[strip] = bottom;
 
-	offs = (top * _numStrips + _vm->_screenStartStrip + strip) << 3;
+	offs = (top * _numStrips + _vm->_screenStartStrip + strip) * 8;
 	byte *mask_ptr = _vm->getMaskBuffer(strip * 8, top, 0);
 	bgbak_ptr = _vm->getResourceAddress(rtBuffer, 5) + offs;
 	backbuff_ptr = vs->screenPtr + offs;
@@ -508,7 +508,7 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	numLinesToProcess = bottom - top;
 	if (numLinesToProcess) {
 		if ((_vm->_features & GF_NEW_OPCODES) || (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_screen)) {
-			if (_vm->hasCharsetMask(strip << 3, top, (strip + 1) << 3, bottom))
+			if (_vm->hasCharsetMask(strip * 8, top, (strip + 1) * 8, bottom))
 				draw8ColWithMasking(backbuff_ptr, bgbak_ptr, numLinesToProcess, mask_ptr);
 			else
 				draw8Col(backbuff_ptr, bgbak_ptr, numLinesToProcess);
@@ -761,7 +761,7 @@ void ScummEngine::redrawBGAreas() {
 	}
 
 	if (_features & GF_NEW_CAMERA) {
-		diff = (camera._cur.x >> 3) - (camera._last.x >> 3);
+		diff = camera._cur.x / 8 - camera._last.x / 8;
 		if (_fullRedraw == 0 && diff == 1) {
 			val = 2;
 			redrawBGStrip(gdi._numStrips - 1, 1);
@@ -864,10 +864,10 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 		if (vs->number == 0 && _charset->_hasMask && height) {
 			byte *mask;
 			// Note: At first sight it may look as if this could
-			// be optimized to (rect.right - rect.left) >> 3 and
-			// thus to width >> 3, but that's not the case since
+			// be optimized to (rect.right - rect.left) / 8 and
+			// thus to width * 8, but that's not the case since
 			// we are dealing with integer math here.
-			int mask_width = (rect.right >> 3) - (rect.left >> 3);
+			int mask_width = (rect.right / 8) - (rect.left / 8);
 
 			if (rect.right & 0x07)
 				mask_width++;
@@ -1008,7 +1008,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 	sx = x;
 	if (vs->scrollable)
-		sx -= vs->xstart >> 3;
+		sx -= vs->xstart / 8;
 
 	//
 	// Since V3, all graphics data was encoded in strips, which is very efficient
@@ -1026,8 +1026,8 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 		mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x) + _imgBufOffs[1];
 
-		const int left = (stripnr << 3);
-		const int right = left + (numstrip << 3);
+		const int left = (stripnr * 8);
+		const int right = left + (numstrip * 8);
 		byte *dst = bgbak_ptr;
 		const byte *src;
 		byte color, data = 0;
@@ -1166,7 +1166,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 		CHECK_HEAP;
 		if (vs->alloctwobuffers) {
-			if (_vm->hasCharsetMask(sx << 3, y, (sx + 1) << 3, bottom)) {
+			if (_vm->hasCharsetMask(sx * 8, y, (sx + 1) * 8, bottom)) {
 				if (flag & dbClear || !lightsOn)
 					clear8ColWithMasking(backbuff_ptr, height, mask_ptr);
 				else
@@ -1360,7 +1360,7 @@ StripTable *Gdi::generateStripTable(const byte *src, int width, int height, Stri
 
 void Gdi::drawStripC64Background(byte *dst, int stripnr, int height) {
 	int charIdx;
-	height >>= 3;
+	height /= 8;
 	for (int y = 0; y < height; y++) {
 		_C64Colors[3] = (_C64ColorMap[y + stripnr * height] & 7);
 		// Check for room color change in V1 zak
@@ -1383,8 +1383,8 @@ void Gdi::drawStripC64Background(byte *dst, int stripnr, int height) {
 
 void Gdi::drawStripC64Object(byte *dst, int stripnr, int width, int height) {
 	int charIdx;
-	height >>= 3;
-	width >>= 3;
+	height /= 8;
+	width /= 8;
 	for (int y = 0; y < height; y++) {
 		_C64Colors[3] = (_C64ObjectMap[(y + height) * width + stripnr] & 7);
 		charIdx = _C64ObjectMap[y * width + stripnr] * 8;
@@ -1401,8 +1401,8 @@ void Gdi::drawStripC64Object(byte *dst, int stripnr, int width, int height) {
 
 void Gdi::drawStripC64Mask(byte *dst, int stripnr, int width, int height) {
 	int maskIdx;
-	height >>= 3;
-	width >>= 3;
+	height /= 8;
+	width /= 8;
 	for (int y = 0; y < height; y++) {
 		if (_C64ObjectMode)
 			maskIdx = _C64ObjectMap[(y + 2 * height) * width + stripnr] * 8;
@@ -1466,7 +1466,7 @@ void Gdi::decodeStripEGA(byte *dst, const byte *src, int height) {
 					run = *src++;
 				}
 				for (z = 0; z < run; z++) {
-					*(dst + y * _vm->_screenWidth + x) = (z&1) ? _roomPalette[color & 0xf] : _roomPalette[color >> 4];
+					*(dst + y * _vm->_screenWidth + x) = (z & 1) ? _roomPalette[color & 0xf] : _roomPalette[color >> 4];
 
 					y++;
 					if (y >= height) {
@@ -1794,7 +1794,7 @@ void Gdi::unkDecodeA(byte *dst, const byte *src, int height) {
 				cl -= 3;
 				bits >>= 3;
 				if (incm) {
-					color = (byte)((color+incm)&0xFF);
+					color = (byte)((color + incm) & 0xFF);
 				} else {
 					FILL_BITS;
 					reps = bits & 0xFF;
@@ -2297,11 +2297,11 @@ void ScummEngine::transitionEffect(int a) {
 		delta[i] = transitionEffects[a].deltaTable[i];
 		j = transitionEffects[a].stripTable[i];
 		if (j == 24)
-			j = (virtscr[0].height >> 3) - 1;
+			j = virtscr[0].height / 8 - 1;
 		tab_2[i] = j;
 	}
 
-	bottom = virtscr[0].height >> 3;
+	bottom = virtscr[0].height / 8;
 	for (j = 0; j < transitionEffects[a].numOfIterations; j++) {
 		for (i = 0; i < 4; i++) {
 			l = tab_2[i * 4];
@@ -2311,8 +2311,8 @@ void ScummEngine::transitionEffect(int a) {
 			if (t == b) {
 				while (l <= r) {
 					if (l >= 0 && l < gdi._numStrips && (uint) t < (uint) bottom) {
-						virtscr[0].tdirty[l] = t << 3;
-						virtscr[0].bdirty[l] = (t + 1) << 3;
+						virtscr[0].tdirty[l] = t * 8;
+						virtscr[0].bdirty[l] = (t + 1) * 8;
 					}
 					l++;
 				}
@@ -2323,8 +2323,8 @@ void ScummEngine::transitionEffect(int a) {
 					b = bottom;
 				if (t < 0)
 					t = 0;
- 				virtscr[0].tdirty[l] = t << 3;
-				virtscr[0].bdirty[l] = (b + 1) << 3;
+ 				virtscr[0].tdirty[l] = t * 8;
+				virtscr[0].bdirty[l] = (b + 1) * 8;
 			}
 			updateDirtyScreen(0);
 		}
@@ -3330,7 +3330,7 @@ const byte *ScummEngine::findPalInPals(const byte *pal, int idx) {
 	if (offs == NULL)
 		return NULL;
 
-	size = getResourceDataSize(offs) >> 2;
+	size = getResourceDataSize(offs) / 4;
 
 	if ((uint32)idx >= (uint32)size)
 		return NULL;
@@ -3456,8 +3456,8 @@ void ScummEngine::useIm01Cursor(const byte *im, int w, int h) {
 	const byte *src;
 	int i;
 
-	w <<= 3;
-	h <<= 3;
+	w *= 8;
+	h *= 8;
 
 	dst = buf = (byte *) malloc(w * h);
 	src = vs->screenPtr + vs->xstart;
@@ -3472,7 +3472,7 @@ void ScummEngine::useIm01Cursor(const byte *im, int w, int h) {
 
 	vs->alloctwobuffers = false;
 	gdi.disableZBuffer();
-	gdi.drawBitmap(im, vs, _screenStartStrip, 0, w, h, 0, w >> 3, 0);
+	gdi.drawBitmap(im, vs, _screenStartStrip, 0, w, h, 0, w / 8, 0);
 	vs->alloctwobuffers = true;
 	gdi.enableZBuffer();
 
@@ -3524,8 +3524,8 @@ void ScummEngine::animateCursor() {
 void ScummEngine::useBompCursor(const byte *im, int width, int height) {
 	uint size;
 
-	width <<= 3;
-	height <<= 3;
+	width *= 8;
+	height *= 8;
 
 	size = width * height;
 	if (size > sizeof(_grabbedCursor))

@@ -404,7 +404,7 @@ void IMuseInternal::handle_marker(uint id, byte data) {
 int IMuseInternal::get_channel_volume(uint a) {
 	if (a < 8)
 		return _channel_volume_eff[a];
-	return (_master_volume * _music_volume / 255) >> 1;
+	return (_master_volume * _music_volume / 255) / 2;
 }
 
 Part *IMuseInternal::allocate_part(byte pri, MidiDriver *midi) {
@@ -697,7 +697,7 @@ int32 IMuseInternal::doCommand (int numargs, int a[]) {
 			}
 		case 7:
 			warning ("IMuse doCommand(7) - getMasterVolume (%d)", a[1]);
-			return _master_volume >> 1; // Convert from 0-255 to 0-127
+			return _master_volume / 2; // Convert from 0-255 to 0-127
 		case 8:
 			return startSound(a[1]) ? 0 : -1;
 		case 9:
