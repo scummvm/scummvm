@@ -69,6 +69,8 @@ namespace Sword2 {
 class AnimationState {
 private:
 	Sword2Engine *_vm;
+	SoundMixer *_snd;
+	OSystem *_sys;
 
 	uint framenum;
 	uint frameskipped;
@@ -129,6 +131,7 @@ private:
 #ifdef BACKEND_8BIT
 	void buildLookup(int p, int lines);
 	bool checkPaletteSwitch();
+	void setPalette(byte *pal);
 #else
 	void buildLookup(void);
 	void plotYUV(OverlayColor *lut, int width, int height, byte *const *dat);
@@ -143,6 +146,9 @@ struct MovieInfo {
 class MoviePlayer {
 private:
 	Sword2Engine *_vm;
+	SoundMixer *_snd;
+	OSystem *_sys;
+
 	uint8 *_textSurface;
 
 	static struct MovieInfo _movies[];
@@ -154,7 +160,7 @@ private:
 	int32 playDummy(const char *filename, MovieTextObject *text[], uint8 *musicOut);
 
 public:
-	MoviePlayer(Sword2Engine *vm) : _vm(vm), _textSurface(NULL) {}
+	MoviePlayer(Sword2Engine *vm);
 	int32 play(const char *filename, MovieTextObject *text[], uint8 *musicOut);
 };
 

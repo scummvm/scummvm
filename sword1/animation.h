@@ -129,6 +129,7 @@ private:
 #ifdef BACKEND_8BIT
 	void buildLookup(int p, int lines);
 	bool checkPaletteSwitch();
+	void setPalette(byte *pal);
 #else
 	void buildLookup(void);
 	void plotYUV(OverlayColor *lut, int width, int height, byte *const *dat);
@@ -142,7 +143,7 @@ private:
 	OSystem *_sys;
 
 public:
-	MoviePlayer(Screen *scr, SoundMixer *snd, OSystem *sys) : _scr(scr), _snd(snd), _sys(sys) {}
+	MoviePlayer(Screen *scr, SoundMixer *snd, OSystem *sys);
 	void play(const char *filename);
 };
 

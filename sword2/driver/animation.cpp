@@ -38,18 +38,18 @@
 namespace Sword2 {
 
 AnimationState::AnimationState(Sword2Engine *vm)
-	: _vm(vm) {
+	: _vm(vm), _snd(_vm->_mixer), _sys(_vm->_system) {
 }
 
 AnimationState::~AnimationState() {
 #ifdef USE_MPEG2
-	_vm->_mixer->stopHandle(bgSound);
+	_snd->stopHandle(bgSound);
 	if (decoder)
 		mpeg2_close(decoder);
 	delete mpgfile;
 	delete sndfile;
 #ifndef BACKEND_8BIT
-	_vm->_system->hide_overlay();
+	_sys->hide_overlay();
 	free(overlay);
 #endif
 	if (bgSoundStream)
@@ -112,7 +112,7 @@ bool AnimationState::init(const char *name) {
 
 	palnum = 0;
 	maxPalnum = p;
-	_vm->_graphics->setPalette(0, 256, palettes[palnum].pal, RDPAL_INSTANT);
+	setPalette(palettes[palnum].pal);
 	lut = lut2 = lookup[0];
 	curpal = -1;
 	cr = 0;
@@ -122,7 +122,7 @@ bool AnimationState::init(const char *name) {
 #else
 	buildLookup();
 	overlay = (OverlayColor*)calloc(MOVIE_WIDTH * MOVIE_HEIGHT, sizeof(OverlayColor));
-	_vm->_system->show_overlay();
+	_sys->show_overlay();
 #endif
 
 	// Open MPEG2 stream
@@ -143,14 +143,14 @@ bool AnimationState::init(const char *name) {
 	info = mpeg2_info(decoder);
 	framenum = 0;
 	frameskipped = 0;
-	ticks = _vm->_system->get_msecs();
+	ticks = _sys->get_msecs();
 
 	// Play audio
 	sndfile = new File();
-	bgSoundStream = AudioStream::openStreamFile( name, sndfile );
+	bgSoundStream = AudioStream::openStreamFile(name, sndfile);
 
 	if (bgSoundStream != NULL) {
-		_vm->_mixer->playInputStream(&bgSound, bgSoundStream, false, 255, 0, -1, false);
+		_snd->playInputStream(&bgSound, bgSoundStream, false, 255, 0, -1, false);
 	} else {
 		warning("Cutscene: Could not open Audio Track for %s", name);
 	}
@@ -218,7 +218,7 @@ bool AnimationState::checkPaletteSwitch() {
 	if (framenum == palettes[palnum].end) {
 		unsigned char *l = lut2;
 		palnum++;
-		_vm->_graphics->setPalette(0, 256, palettes[palnum].pal, RDPAL_INSTANT);
+		setPalette(palettes[palnum].pal);
 		lutcalcnum = (BITDEPTH + palettes[palnum].end - (framenum + 1) + 2) / (palettes[palnum].end - (framenum + 1) + 2);
 		lut2 = lut;
 		lut = l;
@@ -226,6 +226,10 @@ bool AnimationState::checkPaletteSwitch() {
 	}
 
 	return false;
+}
+
+void AnimationState::setPalette(byte *pal) {
+	_vm->_graphics->setPalette(0, 256, pal, RDPAL_INSTANT);
 }
 
 #else
@@ -256,12 +260,11 @@ void AnimationState::buildLookup() {
 				if (b < 0) b = 0;
 				else if (b > 255) b = 255;
 
-				lookup[pos++] = _vm->_system->RGBToColor(r, g, b);
+				lookup[pos++] = _sys->RGBToColor(r, g, b);
 			}
 		}
 	}
 }
-
 
 void AnimationState::plotYUV(OverlayColor *lut, int width, int height, byte *const *dat) {
 
@@ -294,8 +297,8 @@ void AnimationState::drawTextObject(SpriteInfo *s, uint8 *src) {
 
 	// FIXME: These aren't the "right" colours, but look good to me.
 
-	OverlayColor pen = _vm->_system->RGBToColor(255, 255, 255);
-	OverlayColor border = _vm->_system->RGBToColor(0, 0, 0);
+	OverlayColor pen = _sys->RGBToColor(255, 255, 255);
+	OverlayColor border = _sys->RGBToColor(0, 0, 0);
 
 	for (int y = 0; y < s->h; y++) {
 		for (int x = 0; x < s->w; x++) {
@@ -316,14 +319,14 @@ void AnimationState::drawTextObject(SpriteInfo *s, uint8 *src) {
 }
 
 void AnimationState::clearDisplay(void) {
-	OverlayColor black = _vm->_system->RGBToColor(0, 0, 0);
+	OverlayColor black = _sys->RGBToColor(0, 0, 0);
 
 	for (int i = 0; i < MOVIE_WIDTH * MOVIE_HEIGHT; i++)
 		overlay[i] = black;
 }
 
 void AnimationState::updateDisplay(void) {
-	_vm->_system->copy_rect_overlay(overlay, MOVIE_WIDTH, 0, 0, MOVIE_WIDTH, MOVIE_HEIGHT);
+	_sys->copy_rect_overlay(overlay, MOVIE_WIDTH, 0, 0, MOVIE_WIDTH, MOVIE_HEIGHT);
 }
 
 #endif
@@ -359,7 +362,7 @@ bool AnimationState::decodeFrame() {
 
 #ifdef BACKEND_8BIT
 				if (checkPaletteSwitch() || (bgSoundStream == NULL) ||
-					((_vm->_mixer->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1) || frameskipped > 10) {
+					((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1) || frameskipped > 10) {
 					if (frameskipped > 10) {
 						warning("force frame %i redraw", framenum);
 						frameskipped = 0;
@@ -367,8 +370,8 @@ bool AnimationState::decodeFrame() {
 					_vm->_graphics->plotYUV(lut, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
 					if (bgSoundStream) {
-						while ((_vm->_mixer->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum)
-							_vm->_system->delay_msecs(10);
+						while ((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum)
+							_sys->delay_msecs(10);
 					} else {
 						ticks += 83;
 						_vm->sleepUntil(ticks);
@@ -386,7 +389,7 @@ bool AnimationState::decodeFrame() {
 #else
 
 				if ((bgSoundStream == NULL) ||
-					((_vm->_mixer->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1) || frameskipped > 10) {
+					((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1) || frameskipped > 10) {
 					if (frameskipped > 10) {
 						warning("force frame %i redraw", framenum);
 						frameskipped = 0;
@@ -394,8 +397,8 @@ bool AnimationState::decodeFrame() {
 					plotYUV(lookup, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
 					if (bgSoundStream) {
-						while ((_vm->_mixer->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum)
-							_vm->_system->delay_msecs(10);
+						while ((_snd->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum)
+							_sys->delay_msecs(10);
 					} else {
 						ticks += 83;
 						_vm->sleepUntil(ticks);
@@ -443,6 +446,10 @@ MovieInfo MoviePlayer::_movies[] = {
 	{ "demo",      60 },
 	{ "enddemo",  110 }
 };
+
+MoviePlayer::MoviePlayer(Sword2Engine *vm)
+	: _vm(vm), _snd(_vm->_mixer), _sys(_vm->_system), _textSurface(NULL) {
+}
 
 void MoviePlayer::openTextObject(MovieTextObject *obj) {
 	if (obj->textSprite)
@@ -530,7 +537,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 			}
 
 			if (startNextText && !handle.isActive()) {
-				_vm->_mixer->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, flags);
+				_snd->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, flags);
 				startNextText = false;
 			}
 
@@ -558,7 +565,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 		KeyboardEvent ke;
 
 		if ((_vm->_input->readKey(&ke) == RD_OK && ke.keycode == 27) || _vm->_quit) {
-			_vm->_mixer->stopHandle(handle);
+			_snd->stopHandle(handle);
 			skipCutscene = true;
 			break;
 		}
@@ -567,7 +574,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 
 	if (!skipCutscene) {
 		// Sleep for one frame so that the last frame is displayed.
-		_vm->_system->delay_msecs(1000 / 12);
+		_sys->delay_msecs(1000 / 12);
 	}
 
 #ifndef BACKEND_8BIT
@@ -603,7 +610,7 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], uint8 *mu
 
 	while (handle.isActive()) {
 		_vm->_graphics->updateDisplay(false);
-		_vm->_system->delay_msecs(100);
+		_sys->delay_msecs(100);
 	}
 
 	// Clear the screen again
@@ -711,7 +718,7 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], uint
 				openTextObject(text[textCounter]);
 				drawTextObject(NULL, text[textCounter]);
 				if (text[textCounter]->speech) {
-					_vm->_mixer->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, flags);
+					_snd->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, flags);
 				}
 			}
 			if (frameCounter == text[textCounter]->endFrame) {
@@ -728,7 +735,7 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], uint
 			KeyboardEvent ke;
 
 			if ((_vm->_input->readKey(&ke) == RD_OK && ke.keycode == 27) || _vm->_quit) {
-				_vm->_mixer->stopHandle(handle);
+				_snd->stopHandle(handle);
 				skipCutscene = true;
 				break;
 			}
@@ -737,7 +744,7 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], uint
 			// frame rate the original movies had, or even if it
 			// was constant, but this seems to work reasonably.
 
-			_vm->_system->delay_msecs(90);
+			_sys->delay_msecs(90);
 		}
 
 		// Wait for the voice to stop playing. This is to make sure
@@ -747,7 +754,7 @@ int32 MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], uint
 
 		while (handle.isActive()) {
 			_vm->_graphics->updateDisplay(false);
-			_vm->_system->delay_msecs(100);
+			_sys->delay_msecs(100);
 		}
 
 		closeTextObject(text[textCounter]);

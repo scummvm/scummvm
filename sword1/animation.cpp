@@ -104,7 +104,7 @@ bool AnimationState::init(const char *name) {
 
 	palnum = 0;
 	maxPalnum = p;
-	_sys->setPalette(palettes[palnum].pal, 0, 256);
+	setPalette(palettes[palnum].pal);
 	lut = lut2 = lookup[0];
 	curpal = -1;
 	cr = 0;
@@ -140,6 +140,7 @@ bool AnimationState::init(const char *name) {
 	/* Play audio - TODO: Sync with video?*/
 	sndfile = new File();
 	bgSoundStream = AudioStream::openStreamFile(name, sndfile);
+
 	if (bgSoundStream != NULL) {
 		_snd->playInputStream(&bgSound, bgSoundStream, false, 255, 0, -1, false);
 	} else {
@@ -209,7 +210,7 @@ bool AnimationState::checkPaletteSwitch() {
 	if (framenum == palettes[palnum].end) {
 		unsigned char *l = lut2;
 		palnum++;
-		_sys->setPalette(palettes[palnum].pal, 0, 256);
+		setPalette(palettes[palnum].pal);
 		lutcalcnum = (BITDEPTH + palettes[palnum].end - (framenum + 1) + 2) / (palettes[palnum].end - (framenum + 1) + 2);
 		lut2 = lut;
 		lut = l;
@@ -217,6 +218,10 @@ bool AnimationState::checkPaletteSwitch() {
 	}
 
 	return false;
+}
+
+void AnimationState::setPalette(byte *pal) {
+	_sys->setPalette(pal, 0, 256);
 }
 
 #else
@@ -268,9 +273,9 @@ void AnimationState::plotYUV(OverlayColor *lut, int width, int height, byte *con
 			int i = ((((dat[2][cpos] + ROUNDADD) >> SHIFT) * (BITDEPTH+1)) + ((dat[1][cpos] + ROUNDADD)>>SHIFT)) * 256;
 			cpos++;
 
-			ptr[linepos               ] = lut[i + dat[0][        ypos  ]];
+			ptr[linepos                ] = lut[i + dat[0][        ypos  ]];
 			ptr[MOVIE_WIDTH + linepos++] = lut[i + dat[0][width + ypos++]];
-			ptr[linepos               ] = lut[i + dat[0][        ypos  ]];
+			ptr[linepos                ] = lut[i + dat[0][        ypos  ]];
 			ptr[MOVIE_WIDTH + linepos++] = lut[i + dat[0][width + ypos++]];
 
 		}
@@ -374,6 +379,10 @@ bool AnimationState::decodeFrame() {
 	} while (size);
 #endif
 	return false;
+}
+
+MoviePlayer::MoviePlayer(Screen *scr, SoundMixer *snd, OSystem *sys)
+	: _scr(scr), _snd(snd), _sys(sys) {
 }
 
 /**
