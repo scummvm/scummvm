@@ -182,7 +182,7 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 void IMuseDigital::setComiMusicState(int stateId) {
 	int l, num = -1;
 
-	if ((stateId == 0) && (stateId == 4))
+	if ((stateId == 0) || (stateId == 4))
 		stateId = 1000;
 
 	for (l = 0; _comiStateMusicTable[l].soundId != -1; l++) {
