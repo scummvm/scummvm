@@ -2543,7 +2543,7 @@ char ScummEngine::displayError(bool showCancel, const char *message, ...) {
 	vsprintf(buf, message, va);
 	va_end(va);
 
-	GUI::MessageDialog dialog(buf, "OK", "Cancel");
+	GUI::MessageDialog dialog(buf, "OK");
 	return runDialog(dialog);
 }
 
