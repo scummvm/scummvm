@@ -63,7 +63,7 @@ install: all
 	$(INSTALL) -d "$(PREFIX)/share/pixmaps/"
 	$(INSTALL) -c -m 644 "$(srcdir)/scummvm.xpm" "$(PREFIX)/share/pixmaps/scummvm.xpm"
 	$(INSTALL) -d "$(PREFIX)/share/doc/scummvm/"
-	$(INSTALL) -c -m 644 "$(srcdir)/README" "$(srcdir)/NEWS" "$(srcdir)/COPYING" "$(PREFIX)/share/doc/scummvm/"
+	$(INSTALL) -c -m 644 "$(srcdir)/AUTHORS" "$(srcdir)/COPYING" "$(srcdir)/NEWS" "$(srcdir)/README" "$(PREFIX)/share/doc/scummvm/"
 
 uninstall:
 	rm -f "$(BINDIR)/scummvm$(EXEEXT)"
@@ -131,9 +131,10 @@ scummvm-static: $(OBJS)
 # Special target to create a snapshot disk image for Mac OS X
 osxsnap: bundle
 	mkdir ScummVM-snapshot
-	cp README ./ScummVM-snapshot/ScummVM\ ReadMe
-	cp NEWS ./ScummVM-snapshot/News
+	cp AUTHORS ./ScummVM-snapshot/ScummVM\ Authors
 	cp COPYING ./ScummVM-snapshot/License
+	cp NEWS ./ScummVM-snapshot/News
+	cp README ./ScummVM-snapshot/ScummVM\ ReadMe
 	/Developer/Tools/SetFile -t TEXT -c ttxt ./ScummVM-snapshot/*
 	/Developer/Tools/CpMac -r $(bundle_name) ./ScummVM-snapshot/
 	hdiutil create -ov -format UDZO -srcfolder ScummVM-snapshot ScummVM-snapshot.dmg
@@ -143,10 +144,10 @@ osxsnap: bundle
 win32dist: scummvm$(EXEEXT)
 	mkdir -p $(WIN32PATH)
 	strip scummvm.exe -o $(WIN32PATH)/scummvm$(EXEEXT)
-	cp COPYING $(WIN32PATH)/COPYING.txt
 	cp AUTHORS $(WIN32PATH)/AUTHORS.txt
-	cp README $(WIN32PATH)/README.txt
+	cp COPYING $(WIN32PATH)/COPYING.txt
 	cp NEWS $(WIN32PATH)/NEWS.txt
+	cp README $(WIN32PATH)/README.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
 	u2d $(WIN32PATH)/*.txt
