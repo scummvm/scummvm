@@ -5945,7 +5945,7 @@ bool Insane::smlayer_startSound2(int32 sound) {
 }
 
 void Insane::smlayer_soundSetPan(int32 soundid, int32 pan) {
-	_scumm->_imuseDigital->parseScriptQues(12, soundid, 0x700, pan, 0, 0, 0, 0);
+	_scumm->_imuseDigital->parseScriptCmds(12, soundid, 0x700, pan, 0, 0, 0, 0);
 }
 
 void Insane::smlayer_soundSetPriority(int32 sound, int32 priority) {

@@ -95,7 +95,7 @@ private:
 	bool _pause;
 
 	static void timer_handler(void *refConf);
-	void mixerCallback();
+	void callback();
 
 	//
 	// Bundle music
@@ -141,7 +141,7 @@ public:
 	void stopSound(int sound);
 	void stopAllSounds();
 	void pause(bool pause);
-	void parseScriptQues(int a, int b, int c, int d, int e, int f, int g, int h);
+	void parseScriptCmds(int a, int b, int c, int d, int e, int f, int g, int h);
 	int getSoundStatus(int sound) const;
 };
 

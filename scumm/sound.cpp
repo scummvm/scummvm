@@ -80,7 +80,10 @@ void Sound::processSoundQues() {
 	int i = 0, d, num;
 	int data[16];
 
-	processSfxQueues();
+//	processSfxQueues();
+
+	if (_scumm->_features & GF_DIGI_IMUSE)
+		return;
 
 	while (_soundQue2Pos) {
 		d = _soundQue2[--_soundQue2Pos];
@@ -104,11 +107,7 @@ void Sound::processSoundQues() {
 						data[0] >> 8, data[0] & 0xFF,
 						data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
 
-			if (_scumm->_features & GF_DIGI_IMUSE) {
-				if (_scumm->_imuseDigital)
-					_scumm->_imuseDigital->parseScriptQues(data[0], data[1], data[2], data[3], data[4],
-																	data[5], data[6], data[7]);
-			} else if (_scumm->_imuse) {
+			if (_scumm->_imuse) {
 				_scumm->VAR(_scumm->VAR_SOUNDRESULT) = (short)_scumm->_imuse->doCommand (num, data);
 			}
 		}
@@ -129,14 +128,11 @@ void Sound::playSound(int soundID) {
 		return;
 	}
 
-	if (READ_UINT32(ptr) == MKID('iMUS')){
-		assert(_scumm->_musicEngine);
+	if (_scumm->_features & GF_DIGI_IMUSE) {
 		_scumm->_musicEngine->startSound(soundID);
+		return;
 	}
-	else if (READ_UINT32(ptr) == MKID('Crea')) {
-		assert(_scumm->_musicEngine);
-		_scumm->_musicEngine->startSound(soundID);
-	}
+
 	// Support for SFX in Monkey Island 1, Mac version
 	// This is rather hackish right now, but works OK. SFX are not sounding
 	// 100% correct, though, not sure right now what is causing this.
@@ -594,6 +590,9 @@ bool Sound::isMouthSyncOff(uint pos) {
 
 int Sound::isSoundRunning(int sound) const {
 
+	if (_scumm->_imuseDigital)
+		return (_scumm->_imuseDigital->getSoundStatus(sound) != 0);
+
 	if (sound == _currentCDSound)
 		return pollCD();
 
@@ -636,14 +635,14 @@ bool Sound::isSoundInUse(int sound) const {
 	if (sound == _currentCDSound)
 		return pollCD() != 0;
 
+	if (_scumm->_imuseDigital)
+		return (_scumm->_imuseDigital->getSoundStatus(sound) != 0);
+
 	if (isSoundInQueue(sound))
 		return true;
 
 	if (!_scumm->isResourceLoaded(rtSound, sound))
 		return false;
-
-	if (_scumm->_imuseDigital)
-		return (_scumm->_imuseDigital->getSoundStatus(sound) != 0);
 
 	if (_scumm->_imuse)
 		return _scumm->_imuse->get_sound_active(sound);
@@ -687,7 +686,9 @@ void Sound::stopSound(int a) {
 		stopCDTimer();
 	}
 
-	_scumm->_mixer->stopID(a);
+	if (!(_scumm->_features & GF_DIGI_IMUSE))
+		_scumm->_mixer->stopID(a);
+
 	if (_scumm->_musicEngine)
 		_scumm->_musicEngine->stopSound(a);
 
@@ -725,19 +726,14 @@ void Sound::stopAllSounds() {
 void Sound::soundKludge(int *list, int num) {
 	int i;
 
-	if (list[0] == -1) {
-		processSoundQues();
+	if (_scumm->_imuseDigital) {
+		_scumm->_imuseDigital->parseScriptCmds(list[0], list[1], list[2], list[3], list[4],
+												list[5], list[6], list[7]);
 		return;
 	}
 
-	if ((_soundQuePos + num) > 0x100) {
-		// FIXME: temporarily changed this to an error to help track down what
-		// is causing the sound queue overflows(in particular, to figure out
-		// the room/script/offset where the bug occurs). Please report your
-		// findings to Fingolfin.
-		// Reverting to warning for now room 11, script 2016 offset 0x7Af9 was
-		// what it error'd on here
-		warning("Sound queue buffer overflow (%d + %d = %d)", _soundQuePos, num, _soundQuePos+num);
+	if (list[0] == -1) {
+		processSoundQues();
 		return;
 	}
 
