@@ -20,7 +20,6 @@
  * $Header$
  *
  */
-/*
 
 /* Action map module */
 

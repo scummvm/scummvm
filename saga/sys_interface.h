@@ -25,15 +25,10 @@
 
 namespace Saga {
 
-#define R_CFGFILE_NAME ".reinheritrc"
-
-#define R_DIRECTORY_SEP '/'
-
 #define R_STDOUT stdout
 #define R_STDERR stderr
 
 #define R_printf fprintf
-#define R_vprintf vfprintf
 
 } // End of namespace Saga
 
