@@ -48,7 +48,7 @@ const String smartphoneActionNames[] = {
 #ifdef SIMU_SMARTPHONE
 const int ACTIONS_SMARTPHONE_DEFAULT[] = { 0x111, 0x112, 0x114, 0x113, 0x11a, 0x11b, VK_LWIN, VK_ESCAPE, VK_F8 };
 #else
-const int ACTIONS_SMARTPHONE_DEFAULT[] = { '4', '6', '8', '2', 0x11a, 0x11b, '0', VK_ESCAPE, VK_F10 };
+const int ACTIONS_SMARTPHONE_DEFAULT[] = { '4', '6', '8', '2', 0x11a, 0x11b, '0', VK_ESCAPE, '9' };
 #endif
 
 void CEActionsSmartphone::init(GameDetector &detector) {
@@ -119,7 +119,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	else
 	if (is_queen) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
-		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(282); // F1 key
+		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(286); // F1 key for FOTAQ
 	}
 	else
 	if (is_sky) {
@@ -137,7 +137,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	else
 		_key_action[SMARTPHONE_ACTION_SKIP].setAscii(Scumm::KEY_ALL_SKIP);
 	// Zone
-	_key_action[SMARTPHONE_ACTION_ZONE] = true;
+	_action_enabled[SMARTPHONE_ACTION_ZONE] = true;
 }
 
 
@@ -153,6 +153,10 @@ bool CEActionsSmartphone::perform(ActionType action, bool pushed) {
 			case SMARTPHONE_ACTION_LEFTCLICK:
 				_mainSystem->add_left_click(false);
 				return true;
+			case SMARTPHONE_ACTION_SAVE:
+			case SMARTPHONE_ACTION_SKIP:
+				EventsBuffer::simulateKey(&_key_action[action], false);
+				return true;
 		}
 		return false;
 	}
@@ -160,7 +164,7 @@ bool CEActionsSmartphone::perform(ActionType action, bool pushed) {
 	switch (action) {
 		case SMARTPHONE_ACTION_SAVE:
 		case SMARTPHONE_ACTION_SKIP:
-			EventsBuffer::simulateKey(&_key_action[action]);
+			EventsBuffer::simulateKey(&_key_action[action], true);
 			return true;
 		case SMARTPHONE_ACTION_RIGHTCLICK:
 			_mainSystem->add_right_click(true);

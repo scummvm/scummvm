@@ -35,7 +35,7 @@ namespace CEKEYS {
 
 	class EventsBuffer {
 	public:
-		static bool simulateKey(Key *key);
+		static bool simulateKey(Key *key, bool pushed);
 		static bool simulateMouseMove(int x, int y);
 		static bool simulateMouseLeftClick(int x, int y, bool pushed);
 		static bool simulateMouseRightClick(int x, int y, bool pushed);

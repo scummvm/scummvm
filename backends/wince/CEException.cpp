@@ -43,6 +43,7 @@ void CEException::dumpContext(HANDLE file, HANDLE hProcess, CONTEXT *context) {
 	DWORD size;
 	unsigned int i;
 
+#ifdef ARM
 	writeBreak(file);
 	writeString(file, "Context dump");
 	sprintf(tempo, "R0=%.8x R1=%.8x R2=%.8x R3=%.8x R4=%.8x", context->R0, context->R1,
@@ -77,13 +78,17 @@ void CEException::dumpContext(HANDLE file, HANDLE hProcess, CONTEXT *context) {
 			writeString(file, tempo);
 		}
 	}
+#else
+	writeBreak(file);
+	writeString(file, "Context dump only available on ARM devices");
+#endif
 }
 
 void CEException::dumpException(HANDLE file, EXCEPTION_RECORD *exceptionRecord) {
 	char tempo[200];
 	char exceptionName[50];
 	unsigned int i;
-	
+#if (_WIN32_WCE >= 300)
 	writeBreak(file);
 	switch(exceptionRecord->ExceptionCode) {
 		case EXCEPTION_ACCESS_VIOLATION :
@@ -122,6 +127,10 @@ void CEException::dumpException(HANDLE file, EXCEPTION_RECORD *exceptionRecord) 
 	}
 	if (exceptionRecord->ExceptionRecord)
 		dumpException(file, exceptionRecord->ExceptionRecord);
+#else
+	writeBreak(file);
+	writeString(file, "Cannot get exception information on this CE version");
+#endif
 }
 
 bool CEException::writeException(TCHAR *path, EXCEPTION_POINTERS *exceptionPointers) {

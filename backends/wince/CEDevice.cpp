@@ -171,3 +171,4 @@ Common::String CEDevice::getKeyName(unsigned int keyCode) {
 	sprintf(key_name, "Key %.4x", keyCode);
 	return key_name;	
 }
+

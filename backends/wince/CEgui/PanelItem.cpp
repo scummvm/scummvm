@@ -41,3 +41,4 @@ namespace CEGUI {
 		_panel = panel;
 	}
 }
+

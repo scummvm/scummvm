@@ -72,10 +72,10 @@ namespace CEGUI {
 				keyCode = 10;
 			}
 
-			if (keyAscii != 0 && pushed) {
+			if (keyAscii != 0) {
 				_key.setAscii(keyAscii);
 				_key.setKeycode(tolower(keyAscii));
-				return EventsBuffer::simulateKey(&_key);
+				return EventsBuffer::simulateKey(&_key, pushed);
 			}
 			else
 				return false;
@@ -84,3 +84,4 @@ namespace CEGUI {
 			return false;
 	}
 }
+

@@ -80,3 +80,4 @@ namespace CEGUI {
 		_itemsMap.clear();
 	}
 }
+

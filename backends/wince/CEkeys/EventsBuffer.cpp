@@ -24,7 +24,7 @@
 
 namespace CEKEYS {	
 
-	bool EventsBuffer::simulateKey(Key *key) {
+	bool EventsBuffer::simulateKey(Key *key, bool pushed) {
 		SDL_Event ev = {0};
 
 		if (!key->keycode())
@@ -33,13 +33,11 @@ namespace CEKEYS {
 		if (!key->ascii())
 			key->setAscii(key->keycode());
 
-		ev.type = SDL_KEYDOWN;
+		ev.type = (pushed ? SDL_KEYDOWN : SDL_KEYUP);
 		ev.key.keysym.mod = (SDLMod)key->flags();
 		ev.key.keysym.sym = (SDLKey)key->keycode();
 		ev.key.keysym.unicode = key->keycode();
-		if (SDL_PushEvent(&ev))
-			return false;
-		ev.type = SDL_KEYUP;
+		ev.key.keysym.mod = KMOD_RESERVED;
 		return (SDL_PushEvent(&ev) == 0);
 	}
 
