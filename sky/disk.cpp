@@ -127,11 +127,15 @@ uint8 *SkyDisk::loadFile(uint16 fileNr, uint8 *dest) {
 	
 	_fileOffset = READ_LE_UINT32((filePtr + 2)) & 0x0ffffff;
 
-	cflag = (uint8)((_fileOffset >> (23)) & 0x1);
-	_fileOffset = (((1 << (23)) ^ 0xFFFFFFFF) & _fileOffset);
+	cflag = (uint8)((_fileOffset >> 23) & 0x1);
+	_fileOffset &= 0x7FFFFF;
 
-	if (cflag)
-		_fileOffset <<= 4;
+	if (cflag) {
+		if (SkyState::_systemVars.gameVersion == 331)
+			_fileOffset <<= 3;
+		else
+			_fileOffset <<= 4;
+	}
 
 	_fixedDest = dest;
 	_fileDest = dest;
