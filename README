@@ -107,6 +107,29 @@ ScummVM and wish to commit it into the main CVS, feel free to contact us!
         UNIX            - SDL           (Linux, Solaris, IRIX, *BSD)
 
 
+Copy Protection:
+----------------
+The ScummVM team does not condone piracy. However, there are cases when
+LucasArts themselves bundled cracked interpreters with their own games --
+the data files still contain the copy protection scripts, but the interpreter
+bypasses them. There is no way for us to tell the difference between legitimate
+and pirated data files, so for the games where we know the original interpreter
+may have been cracked ScummVM will always have to bypass the copy protection.
+
+At the time of writing, that includes the following games:
+
+Indiana Jones & the Last Crusade (EGA)
+Loom (16 color floppy version)
+Maniac Mansion
+Monkey Island 1 (EGA version)
+Monkey Island 1 (VGA version)
+Monkey Island 2
+Zak McKracken (256 color FM Towns version)
+
+In most cases ScummVM will still show the copy protection screen. Try entering
+any answer. Chances are that it will work.
+
+
 Known Problems in ScummVM 0.4.0:
 --------------------------------
 This release has the following known problems. There is no need to report them,
