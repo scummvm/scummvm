@@ -1572,6 +1572,10 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 	}
 
 	if (costume < 1 || costume >= _vm->_numCostumes - 1) {
+		// in FT costume 0 is a normal situation
+		if (_vm->_gameId == GID_FT && !costume)
+			return;
+
 		warning("Remap actor %d invalid costume %d", number, costume);
 		return;
 	}
