@@ -2,6 +2,9 @@
  * $Id$
  *
  * $Log$
+ * Revision 1.16  2002/05/05 20:04:25  fingolfin
+ * cleaning up the mess drigo left... <sigh>
+ *
  * Revision 1.15  2002/05/05 19:06:51  drigo
  * Fixed some things for Macintosh ports
  *
@@ -132,7 +135,8 @@
 #define SCUMMVM_PLATFORM_VERSION  "X11 version"
 
 #else
-#ifdef macintosh
+
+#ifdef MACOS_CARBON
 #define SCUMMVM_PLATFORM_VERSION "Macintosh version"
 #else
 

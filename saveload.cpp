@@ -22,13 +22,8 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#ifndef macintosh
 #include "sound/mididrv.h"
 #include "sound/imuse.h"
-#else
-#include "mididrv.h"
-#include "imuse.h"
-#endif
 
 struct SaveGameHeader {
 	uint32 type;
@@ -163,7 +158,7 @@ void Scumm::makeSavegameName(char *out, int slot, bool compatible)
 
 #ifndef _WIN32_WCE
 
-#if !defined(macintosh)
+#if !defined(MACOS_CARBON)
 	const char *dir = getenv("SCUMMVM_SAVEPATH");
 	if (dir == NULL)
 		dir = "";

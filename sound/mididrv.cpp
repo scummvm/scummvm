@@ -454,12 +454,14 @@ MidiDriver *MidiDriver_SEQ_create() {
 // to check for these *cleanly* without a configure script, though..
 
 
-//#include <QuickTime/QuickTimeComponents.h>
-//#include <QuickTime/QuickTimeMusic.h>
-
-#include <QuickTimeComponents.h>
-#include <QuickTimeMusic.h>
-
+#if defined(MACOSX)
+ // On MacOSX, these are in a frameworks!
+ #include <QuickTime/QuickTimeComponents.h>
+ #include <QuickTime/QuickTimeMusic.h>
+#else
+ #include <QuickTimeComponents.h>
+ #include <QuickTimeMusic.h>
+#endif
 
 
 /* QuickTime MIDI driver */

@@ -22,13 +22,8 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#ifndef macintosh
 #include "sound/mididrv.h"
 #include "sound/imuse.h"
-#else
-#include "mididrv.h"
-#include "imuse.h"
-#endif
 #include "gui.h"
 #include "string.h"
 #include "gameDetector.h"
@@ -742,7 +737,7 @@ void Scumm::dumpResource(char *tag, int idx, byte *ptr)
 	else
 		size = READ_BE_UINT32_UNALIGNED(ptr + 4);
 
-#if defined(macintosh)
+#if defined(MACOS_CARBON)
 	sprintf(buf, ":dumps:%s%d.dmp", tag, idx);
 #else
 	sprintf(buf, "dumps/%s%d.dmp", tag, idx);

@@ -4,4 +4,4 @@
 	#include <MacHeadersCarbon>
 #endif
 
-#define __APPLE__CW
+#define MACOS_CARBON

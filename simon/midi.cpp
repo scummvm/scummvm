@@ -23,13 +23,8 @@
 #include "stdafx.h"
 #include "scummsys.h"
 #include "system.h"
-#ifndef macintosh
 #include "../sound/mididrv.h"
 #include "../sound/mixer.h"
-#else
-#include "mididrv.h"
-#include "mixer.h"
-#endif
 #include "simon.h"
 
 void MidiPlayer::read_from_file(void *dst, uint size) {

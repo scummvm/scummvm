@@ -25,11 +25,7 @@
 #include "mididrv.h"
 #include "gameDetector.h"
 #include "gui.h"
-#ifndef macintosh
 #include "simon/simon.h"
-#else
-#include "simon.h"
-#endif
 #include "config-file.h"
 
 GameDetector detector;
@@ -98,8 +94,13 @@ static void do_memory_test(void) {
 
 int main(int argc, char *argv[])
 {
+/*
+Disabled this for now. What good does it do, anyway, we now have real config
+files, and a proper port to MacOS classic should offer a dialog or so for any
+game settings!
+
 #if defined(MACOS_SDL)
-	/* support for config file for macos SDL port */
+	// support for config file for macos SDL port
 
 	char *argitem;
 	char *argstr;
@@ -131,6 +132,7 @@ int main(int argc, char *argv[])
 	fclose(argf);
 
 #endif
+*/
 
 #if defined(UNIX) || defined(UNIX_X11)
 	char scummhome[MAXPATHLEN];

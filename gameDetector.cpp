@@ -23,13 +23,8 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#ifndef macintosh
 #include "sound/mididrv.h"
 #include "sound/imuse.h"
-#else
-#include "mididrv.h"
-#include "imuse.h"
-#endif
 #include "gameDetector.h"
 
 
@@ -473,6 +468,8 @@ int GameDetector::detectMain(int argc, char **argv)
 	_gfx_driver = GD_MORPHOS;
 #elif defined(_WIN32_WCE)
 	_gfx_driver = GD_WINCE;
+#elif defined(MACOS_CARBON)
+	_gfx_driver = GD_MAC;
 #else
 	/* SDL is the default driver for now */
 	_gfx_driver = GD_SDL;
@@ -542,6 +539,9 @@ OSystem *GameDetector::createSystem() {
 #elif defined(__MORPHOS__)
 	case GD_MORPHOS:
 		return OSystem_MorphOS_create(_gameId, _gfx_mode, _fullScreen);
+#elif defined(MACOS_CARBON)
+	case GD_MAC:
+		return OSystem_MAC_create(_gfx_mode, _fullScreen);
 #elif defined(USE_NULL_DRIVER)
 	case GD_NULL:
 		return OSystem_NULL_create();

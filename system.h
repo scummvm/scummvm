@@ -145,12 +145,13 @@ public:
  */
 
 /* OSystem_SDL */
-OSystem *OSystem_SDL_create(int gfx_driver, bool full_screen);
-OSystem *OSystem_NULL_create();
-OSystem *OSystem_MorphOS_create(int game_id, int gfx_driver, bool full_screen);
-OSystem *OSystem_Dreamcast_create();
-OSystem *OSystem_WINCE3_create();
-OSystem *OSystem_X11_create();
+extern OSystem *OSystem_SDL_create(int gfx_driver, bool full_screen);
+extern OSystem *OSystem_NULL_create();
+extern OSystem *OSystem_MorphOS_create(int game_id, int gfx_driver, bool full_screen);
+extern OSystem *OSystem_Dreamcast_create();
+extern OSystem *OSystem_WINCE3_create();
+extern OSystem *OSystem_X11_create();
+extern OSystem *OSystem_MAC_create(int gfx_mode, bool full_screen);
 
 enum {
 	GFX_NORMAL = 0,
@@ -170,5 +171,6 @@ enum {
 	GD_X,
 	GD_MORPHOS,
 	GD_WINCE,
+	GD_MAC,
 	GD_DC
 };
