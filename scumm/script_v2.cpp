@@ -853,9 +853,9 @@ void Scumm_v2::o2_doSentence() {
 		warning("TODO o2_doSentence(%d, %d, %d): execute", st->verb, st->objectA, st->objectB);
 
 		// FIXME / TODO: The following is hackish, and probably incomplete, but it works somewhat.
-		_scummVars[8] = st->verb;
-		_scummVars[9] = st->objectA;
-		_scummVars[10] = st->objectB;
+		_scummVars[VAR_ACTIVE_VERB] = st->verb;
+		_scummVars[VAR_ACTIVE_OBJECT1] = st->objectA;
+		_scummVars[VAR_ACTIVE_OBJECT2] = st->objectB;
 		runVerbCode(st->objectA, st->verb, 0, 0, NULL);
 
 		break;
@@ -867,6 +867,7 @@ void Scumm_v2::o2_doSentence() {
 		_scummVars[VAR_SENTENCE_VERB] = st->verb;
 		_scummVars[VAR_SENTENCE_OBJECT1] = st->objectA;
 		_scummVars[VAR_SENTENCE_OBJECT2] = st->objectB;
+
 		o2_drawSentence();
 		break;
 	}
