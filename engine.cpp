@@ -121,8 +121,6 @@ void Engine::mainLoop() {
 
 			if (currScene_ != NULL) {
 				currScene_->drawBackground();
-				currScene_->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
-				currScene_->drawBitmaps(ObjectState::OBJSTATE_STATE);
 			}
 
 			if (g_smush->isPlaying()) {
@@ -133,6 +131,11 @@ void Engine::mainLoop() {
 				}
 				if (g_smush->getFrame() > 0)
 					g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
+			}
+
+			if (currScene_ != NULL) {
+				currScene_->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
+				currScene_->drawBitmaps(ObjectState::OBJSTATE_STATE);
 			}
 
 			g_driver->set3DMode();
