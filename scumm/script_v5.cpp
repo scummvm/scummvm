@@ -1899,7 +1899,10 @@ void Scumm_v5::o5_setObjectName() {
 		byte offset = 0;
 
 		objptr = getOBCDFromObject(obj);
-		offset = READ_LE_UINT16(objptr + 18);
+		if (_features & GF_OLD_BUNDLE)
+			offset = READ_LE_UINT16(objptr + 20);
+		else
+			offset = READ_LE_UINT16(objptr + 18);
 		size = READ_LE_UINT16(objptr) - offset;
 	} else {
 		size = getResourceDataSize(name);

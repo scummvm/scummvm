@@ -874,7 +874,9 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 	objptr = getOBCDFromObject(obj);
 	assert(objptr);
 
-	if (_features & GF_SMALL_HEADER)
+	if (_features & GF_OLD_BUNDLE)
+		verbptr = objptr + 21;
+	else if (_features & GF_SMALL_HEADER)
 		verbptr = objptr + 19;
 	else
 		verbptr = findResource(MKID('VERB'), objptr);
