@@ -2294,8 +2294,8 @@ void ScummEngine::readMAXS(int blockSize) {
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
 	} else if (_heversion >= 70 && (blockSize == 44 + 8)) { // C++ based engine
 		_numVariables = _fileHandle.readUint16LE();
-		_fileHandle.readUint16LE(); // not used in spydemo
-		_fileHandle.readUint16LE(); // _numLocalVariables ?
+		_fileHandle.readUint16LE();
+		_fileHandle.readUint16LE();
 		_numLocalObjects = _fileHandle.readUint16LE();
 		_numArray = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE(); // unknown
@@ -2315,23 +2315,18 @@ void ScummEngine::readMAXS(int blockSize) {
 		_fileHandle.readUint16LE(); // _numPalettes?
 		_fileHandle.readUint16LE(); // _numSmacker?
 		_numTalkies = _fileHandle.readUint16LE();
-
-		/* TODO check these values */
+		_numNewNames = 10;
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
-
-		_numNewNames = 10;
 		_numRoomVariables = 64;
-
-		_objectRoomTable = (byte *)calloc(_numGlobalObjects * 4, 1);
-
 		_numGlobalScripts = 200;
+
 		_shadowPaletteSize = 256;
 
 	} else if (_heversion >= 70 && (blockSize == 38 + 8)) { // Scummsys.9x
 		_numVariables = _fileHandle.readUint16LE();
-		_fileHandle.readUint16LE(); // not used in spydemo
-		_fileHandle.readUint16LE(); // _numLocalVariables ?
+		_fileHandle.readUint16LE();
+		_fileHandle.readUint16LE();
 		_numLocalObjects = _fileHandle.readUint16LE();
 		_numArray = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE(); // unknown
@@ -2348,17 +2343,12 @@ void ScummEngine::readMAXS(int blockSize) {
 		_numSprites = _fileHandle.readUint16LE();
 		_numLocalScriptOffsets = _fileHandle.readUint16LE();
 		_fileHandle.readUint16LE(); // heap releated
-
-		/* TODO check these values */
+		_numNewNames = 10;
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
-
-		_numNewNames = 10;
 		_numRoomVariables = 64;
-
-		_objectRoomTable = (byte *)calloc(_numGlobalObjects * 4, 1);
-
 		_numGlobalScripts = 200;
+
 		_shadowPaletteSize = 256;
 	} else if (_heversion >= 70 && blockSize > 38) { // sputm7.2
 		if (blockSize != 32 + 8)
@@ -2379,14 +2369,11 @@ void ScummEngine::readMAXS(int blockSize) {
 		_numCostumes = _fileHandle.readUint16LE();
 		_numGlobalObjects = _fileHandle.readUint16LE();
 		_numImages = _fileHandle.readUint16LE();
-
-		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
-
 		_numNewNames = 10;
 
-		_objectRoomTable = (byte *)calloc(_numGlobalObjects * 4, 1);
-
+		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 		_numGlobalScripts = 200;
+
 		_shadowPaletteSize = 256;
 	} else if (_version == 6) {
 		if (blockSize != 30 + 8)
