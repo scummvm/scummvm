@@ -48,17 +48,6 @@
                             current_option = NULL
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
-// FIXME: Reconsider and reevaluate our command line options. I propose some changes:
-// * add long alternatives for (almost?) all options. There should be some generic way
-//   to specify this, in order to avoid code duplication and to simplify the code
-// * some more obscure options which currently have a single-letter options assigned
-//   really don't need it. E.g. the "-t<NUM>" option probably is rarely used, and anybody
-//   who needs it should still be happy with "--tempo=NUM"
-//   This will make room in the ranks of single-letter options for other more useful options
-//   (for example, "-t" could stand for "List (T)argets")
-// * -y, -t, -c, -j all are candidates for this, IMHO: their settings are rather obscure,
-//   and anybody who needs them always should put them into the config file anyway
-//
 #ifdef __PALM_OS__
 static const char USAGE_STRING[] = "NoUsageString"; // save more data segment space
 #else
@@ -200,8 +189,6 @@ GameDetector::GameDetector() {
 
 	_dumpScripts = false;
 	_midi_driver = MD_AUTO;
-
-	_saveconfig = false;
 
 	_game.features = 0;
 	_plugin = 0;

@@ -38,11 +38,10 @@ class Sound {
 protected:
 	int16 _soundQuePos, _soundQue[0x100];
 	int16 _soundQue2Pos, _soundQue2[10];
-	bool _soundsPaused2;
-	bool _soundVolumePreset;
 
 public:
 	const char *_nameBundleMusic;
+	int32 _bundleMusicPosition;
 
 protected:
 	const char *_newNameBundleMusic;
@@ -98,8 +97,6 @@ protected:
 	ScummEngine *_scumm;
 
 public:
-	int32 _bundleMusicPosition;
-
 	PlayingSoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
 	bool _soundsPaused;
 	byte _sfxMode;

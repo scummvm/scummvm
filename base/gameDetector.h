@@ -70,7 +70,6 @@ public:
 	const Plugin *_plugin;
 	
 	bool _dumpScripts;
-	bool _saveconfig;
 
 	int _midi_driver;
 

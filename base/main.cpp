@@ -241,7 +241,6 @@ int main(int argc, char *argv[]) {
 
 	// Parse the command line information
 	GameDetector detector;
-	detector._saveconfig = false;
 	detector.parseCommandLine(argc, argv);	
 
 	// Create the system object
