@@ -1,4 +1,4 @@
-#include "ARMNative.h"
+#include "native.h"
 #include "stdlib.h"
 #include "globals.h"
 
@@ -25,7 +25,7 @@ static int limit(int val,int min,int max) {
 
 void pcm2adpcm(Int16 *src, UInt8 *dst, UInt32 length) {
 #ifndef COMPILE_PA1SND
-
+/*
 	if (OPTIONS_TST(kOptDeviceARM)) {
 		PnoDescriptor pno;
 		ARMPa1SndType userData = {src, dst, length};
@@ -36,7 +36,7 @@ void pcm2adpcm(Int16 *src, UInt8 *dst, UInt32 length) {
 		
 		return;
 	}
-
+*/
 	int data,val,diff;
 	int signal,step;
 #else
