@@ -21,6 +21,10 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
      information, for example in the SCUMM debugger.
    - Added support for setting output sample rate at run-time, although there
      is currently no GUI for it.
+   - The save directory now has a default rather than the current directory on
+     most platforms:
+         MacOS X:      $HOME/Documents/ScummVM Savegames/
+         Other unices: $HOME/.scummvm/
 
  SCUMM:
    - Removed the old zak256 target, use zakTowns instead
