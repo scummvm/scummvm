@@ -1017,6 +1017,7 @@ void Graphics::update() {
 	bobDrawAll();
 	textDrawAll();
 	displayScreen();
+	g_engine->_system->delay_msecs(100);
 }
 
 

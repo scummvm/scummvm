@@ -31,25 +31,24 @@ namespace Queen {
 #define MAX_AREAS 11
 
 
-struct WalkData {
-//	int16 sign; // never used
-	int16 dx, dy;
-	int16 area;
-};
-
 struct MovePersonAnim {
-	int16 wx;
-	int16 wy;
-	uint16 firstFrame;
-	uint16 lastFrame;
+	int16 firstFrame;
+	int16 lastFrame;
 	uint16 facing;
-	const Area *walkingArea;
 
-	void setFrames(uint16 ff, uint16 lf, uint16 face) {
+	void set(int16 ff, int16 lf, uint16 face) {
 		firstFrame = ff;
 		lastFrame = lf;
 		facing = face;
 	}
+};
+
+
+struct WalkData {
+//	int16 sign; // never used
+	int16 dx, dy;
+	const Area *area;
+	MovePersonAnim anim;
 };
 
 
@@ -66,6 +65,15 @@ struct MovePersonData {
 };
 
 
+struct Person {
+	const char* name;
+	uint16 bobNum; // P_BOB
+	uint16 bankNum; // P_BANK
+	uint16 image; // MOVE_OTHER, CI arg
+	int direction; // MOVE_OTHER, dir arg
+};
+
+
 class Logic;
 class Graphics;
 
@@ -74,25 +82,31 @@ public:
 
 	Walk(Logic* logic, Graphics* graphics);
 
+	//! SETUP_JOE(), loads the various bobs needed to animate Joe
 	void joeSetup();
+
+	//! SETUP_HERO(), places Joe at the right place when entering a room
+	void joeSetupInRoom(int state, uint16 scale, uint16 entryObj);
 	
 	//! MOVE_JOE()
-	void joeMove(int dir, uint16 oldx, uint16 oldy, uint16 newx, uint16 newy, bool inCutaway);
+	void joeMove(int direction, uint16 endx, uint16 endy, bool inCutaway);
 	
 	//! FACE_JOE()
-	uint16 joeFace(uint16 prevFacing);
+	uint16 joeFace();
 
 	//! MOVE_OTHER
-	void personMove(const char* name, uint16 endx, uint16 endy, uint16 image, int dir);
+	void personMove(Person* name, uint16 endx, uint16 endy);
 
 
 private:
 
-	void joeMoveBlock();
+	void joeMoveBlock(int facing);
 
-	void animatePersonPrepare();
+	void animateJoePrepare();
+	void animateJoe();
 
-	void animatePerson();
+	void animatePersonPrepare(const MovePersonData *mpd, const Person* pp);
+	void animatePerson(const MovePersonData *mpd, const Person* pp);
 
 	//! CALC_X, CALC_Y
 	static uint16 calcC(uint16 c1, uint16 c2, uint16 c3, uint16 c4, uint16 lastc);
@@ -118,9 +132,9 @@ private:
 	//! equivalent to l.2432,2469 MOVE_OTHER() and l.2696,2744 MOVE_JOE()
     void calc(uint16 oldPos, uint16 newPos, uint16 oldx, uint16 oldy, uint16 x, uint16 y);
 
+	static const MovePersonData _moveData[];
 
-	MovePersonAnim _moveAnim[15];
-	static MovePersonData _moveData[];
+	uint16 _joePrevFacing;
 
 	uint16 _walkDataCount;
 	WalkData _walkData[16];	

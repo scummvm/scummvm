@@ -37,6 +37,7 @@ enum Language {
 	ITALIAN  = 'I'
 };
 
+
 struct ZoneSlot {
 	bool valid;
 	Box box;
@@ -61,6 +62,8 @@ public:
 
 	uint16 findBob(uint16 obj); // FIXME: move that to QueenDisplay ?
 	uint16 findFrame(uint16 obj); // FIXME: move that to QueenDisplay ?
+	uint16 objectForPerson(uint16 bobnum);
+	WalkOffData *walkOffPointForObject(uint16 obj);
 
 	Area *area(int room, int num);
 	Area *currentRoomArea(int num);

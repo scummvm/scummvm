@@ -173,7 +173,7 @@ private:
 		uint32 indexes[MAX_BANK_SIZE];
 		uint8 *data;
 	};
-
+public:
 	//! unbanked bob frames
 	BobFrame _frames[MAX_FRAMES_NUMBER];
 

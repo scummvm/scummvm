@@ -27,7 +27,7 @@ namespace Queen {
 Logic::Logic(Resource *resource) 
 	: _maxAnimatedFrame(0), _maxStaticFrame(0), _resource(resource) {
 	_jas = _resource->loadFile("QUEEN.JAS", 20);
-	
+	_joe.x = _joe.y = 0;
 	initialise();
 }
 
@@ -439,6 +439,40 @@ uint16 Logic::findFrame(uint16 obj) {
 	}
 	return framenum;
 }
+
+
+uint16 Logic::objectForPerson(uint16 bobNum) {
+
+	uint16 bobcur = 0;
+	// first object number in the room
+	uint16 cur = _roomData[_currentRoom] + 1;
+	// last object number in the room
+	uint16 last = _roomData[_currentRoom + 1];
+	while (cur <= last) {
+		int16 image = _objectData[cur].image;
+		if (image == -3 || image == -4) {
+			// the object is a bob
+			++bobcur;
+		}
+		if (bobcur == bobNum) {
+			return cur;
+		}
+	}
+	return 0;
+}
+
+
+WalkOffData *Logic::walkOffPointForObject(uint16 obj) {
+	
+	uint16 i;
+	for (i = 1; i <= _numWalkOffs; ++i) {
+		if (_walkOffData[i].entryObj == obj) {
+			return &_walkOffData[i];
+		}
+	}
+	return NULL;
+}
+
 
 void Logic::joeFacing(uint16 dir) {
 	_joe.facing = dir;
