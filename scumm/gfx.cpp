@@ -2611,7 +2611,7 @@ void Scumm::setupV1ZakPalette() {
 	setPalColor(15, 168, 168, 168);
 }
 
-/* Old palette used in Commodre 64 versions
+/* Old palette used in Commodore 64 versions
 
 void Scumm::setupC64Palette() {
 	setPalColor( 0,   0,   0,   0);
