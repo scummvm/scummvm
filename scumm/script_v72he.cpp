@@ -342,7 +342,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_readFilePos),
 		/* EC */
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownED),
 		OPCODE(o7_stringLen),
 		OPCODE(o72_unknownEF),
 		/* F0 */
@@ -353,7 +353,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* F4 */
 		OPCODE(o72_unknownF4),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o72_unknownF6),
 		OPCODE(o6_invalid),
 		/* F8 */
 		OPCODE(o72_unknownF8),
@@ -1213,6 +1213,31 @@ void ScummEngine_v72he::redimArray(int arrayId, int newDim2start, int newDim2end
 }
 
 
+void ScummEngine_v72he::o72_unknownED() {
+	int array, pos, len;
+	int letter = 0, result = 0;
+
+	len = pop();
+	pos = pop();
+	array = pop();
+
+	if (len == -1) {
+		pos = 0;
+		len = resStrLen(getStringAddress(array));
+	}
+
+	writeVar(0, array);
+	while (len >= pos) {
+		letter = readArray(0, 0, pos);
+		if (letter)
+			result += getCharsetOffset(letter);
+		pos++;
+	}
+
+	push(result);
+	debug(1,"stub o72_unknownED");
+}
+
 void ScummEngine_v72he::o72_unknownEF() {
 	int value;
 	int array, array2, len, len2, len3, offset;
@@ -1303,6 +1328,47 @@ void ScummEngine_v72he::o72_unknownF4() {
 		warning("o72_unknownF4 stub (%s, %s)", name, name2);
 		break;
 	}
+}
+
+void ScummEngine_v72he::o72_unknownF6() {
+	int len, len2, pos, value, array;
+	value = pop();
+	len = pop();
+	pos = pop();
+	array = pop();
+
+	if (len >= 0) {
+		len2 = resStrLen(getStringAddress(array));
+		if (len2 < len)
+			len = len2;
+	} else {
+		len = 12;
+	}
+
+	if (pos < 0)
+		pos = 0;
+
+	writeVar(0, array);
+	if (pos > len) {
+		while (pos > len) {
+			if (readArray(0, 0, pos) == value) {
+				push(pos);
+				return;
+			}
+			pos--;
+		}
+	} else {
+		while (pos < len) {
+			if (readArray(0, 0, pos) == value) {
+				push(pos);
+				return;
+			}
+			pos++;
+		}
+	}
+
+	push(-1);
+	debug(1,"stub o72_unknownF6");
 }
 
 void ScummEngine_v72he::o72_unknownF8() {

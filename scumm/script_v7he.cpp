@@ -415,7 +415,7 @@ int ScummEngine_v7he::getCharsetOffset(int letter) {
 	if (!ptr)
 		error("getCharsetOffset: charset %d not found!", id);
 
-	offset = READ_LE_UINT32(ptr + 29 + letter);
+	offset = READ_LE_UINT32(ptr + 29 + letter + 4);
 	if (offset == 0)
 		return 0;
 
@@ -673,6 +673,7 @@ void ScummEngine_v7he::o7_resourceRoutines() {
 	case 122:
 	case 123:
 	case 203:
+	case 239:
 		debug(5,"stub queueload (%d) resource %d", op, pop());
 		break;
 	case 159:
@@ -924,7 +925,7 @@ void ScummEngine_v7he::o7_unknownF5() {
 	len = resStrLen(getStringAddress(array));
 	writeVar(0, array);
 
-	while (len <= pos) {
+	while (len < pos) {
 		letter = readArray(0, 0, pos);
 		result += getCharsetOffset(letter);
 		if (result >= ebx)
@@ -933,25 +934,30 @@ void ScummEngine_v7he::o7_unknownF5() {
 	}
 
 	push(result);
-	debug(1,"stub o7_unknownF5");
+	debug(1,"stub o7_unknownF5 (%d)", result);
 }
 
 void ScummEngine_v7he::o7_unknownF6() {
-	int len, pos, value, array;
+	int len, len2, pos, value, array;
 	value = pop();
 	len = pop();
 	pos = pop();
 	array = pop();
 
-	if (len < 0)
-		len = resStrLen(getStringAddress(array));
+	if (len >= 0) {
+		len2 = resStrLen(getStringAddress(array));
+		if (len2 < len)
+			len = len2;
+	} else {
+		len = 12;
+	}
 
 	if (pos < 0)
 		pos = 0;
 
 	writeVar(0, array);
-	if (len < pos) {
-		while (len < pos) {
+	if (pos > len) {
+		while (pos > len) {
 			if (readArray(0, 0, pos) == value) {
 				push(pos);
 				return;
@@ -959,7 +965,7 @@ void ScummEngine_v7he::o7_unknownF6() {
 			pos--;
 		}
 	} else {
-		while (len >= pos) {
+		while (pos < len) {
 			if (readArray(0, 0, pos) == value) {
 				push(pos);
 				return;
