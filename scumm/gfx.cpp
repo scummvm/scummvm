@@ -995,20 +995,22 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		byte dither_table[128];
 		byte *ptr_dither_table;
 		memset(dither_table, 0, sizeof(dither_table));
-		int theX, theY;
+		int theX, theY, maxX;
 		
 		if (table) {
 			src = smap_ptr + table->offsets[stripnr];
 			theX = left;
+			maxX = right;
 		} else {
 			src = smap_ptr;
 			theX = 0;
+			maxX = width;
 		}
 		
 		// Draw image data. To do this, we decode the full RLE graphics data,
 		// but only draw those parts we actually want to display.
 		assert(height <= 128);
-		for (; theX < width; theX++) {
+		for (; theX < maxX; theX++) {
 			ptr_dither_table = dither_table;
 			for (theY = 0; theY < height; theY++) {
 				if (--run == 0) {
@@ -1050,23 +1052,23 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			run = *src++;
 			theX = 0;
 		}
-		while (theX < width) {
+		while (theX < right) {
 			if (run & 0x80) {
 				run &= 0x7f;
 				data = *src++;
 				do {
-					if (left <= theX && theX < right) {
+					if (left <= theX) {
 						*mask_ptr = data;
 						mask_ptr += _numStrips;
 					}
 					theY++;
 					if (theY >= height) {
-						if (left <= theX && theX < right) {
+						if (left <= theX) {
 							mask_ptr -= height * _numStrips - 1;
 						}
 						theY = 0;
 						theX += 8;
-						if (theX >= width)
+						if (theX >= right)
 							break;
 					}
 				} while (--run);
@@ -1074,18 +1076,18 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 				do {
 					data = *src++;
 					
-					if (left <= theX && theX < right) {
+					if (left <= theX) {
 						*mask_ptr = data;
 						mask_ptr += _numStrips;
 					}
 					theY++;
 					if (theY >= height) {
-						if (left <= theX && theX < right) {
+						if (left <= theX) {
 							mask_ptr -= _numStrips * height - 1;
 						}
 						theY = 0;
 						theX += 8;
-						if (theX >= width)
+						if (theX >= right)
 							break;
 					}
 				} while (--run);
