@@ -30,11 +30,9 @@
 #include <devices/timer.h>
 #endif
 
-
 #include "stdafx.h"
 #include "scumm.h"
-#include "gmidi.h"
-
+#include "mididrv.h"
 
 #ifdef WIN32
 
@@ -324,9 +322,6 @@ const char *MidiDriver::get_error_name(int error_code) {
 
 
 #if 0
-
-
-
 
 
 void MidiDriver::midiInit()
@@ -686,4 +681,51 @@ void MidiDriver::midiInitNull()
 	warning
 		("Music not enabled - MIDI support selected with no MIDI driver available. Try Adlib");
 }
+
+
+
+/* old header stuff.. */
+/* General Midi header file */
+#define SEQ_MIDIPUTC    5
+#define SPECIAL_CHANNEL 9
+#define DEVICE_NUM 0
+
+
+
+#ifdef __APPLE__CW
+	#include <QuickTimeComponents.h>
+	#include "QuickTimeMusic.h"
+
+	NoteAllocator qtNoteAllocator;
+	NoteChannel qtNoteChannel[16];
+	NoteRequest simpleNoteRequest;
 #endif
+
+#ifdef WIN32
+	#include <winsock.h>
+#elif defined(UNIX)
+	#include <sys/time.h>
+	#include <unistd.h>
+	#include <sys/types.h>
+	#include <sys/socket.h>
+	#include <netinet/in.h>
+	#include <netdb.h>
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <string.h>
+#endif
+
+#ifdef __MORPHOS__
+	#include <exec/types.h>
+	#include <devices/amidi.h>
+
+	#define NO_PPCINLINE_STDARG
+	#define NO_PPCINLINE_VARARGS
+	#include <clib/alib_protos.h>
+	#include <proto/exec.h>
+	#undef CMD_INVALID
+
+	extern struct IOMidiRequest *ScummMidiRequest;
+#endif
+
+#endif /* 0 */

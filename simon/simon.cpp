@@ -23,7 +23,9 @@
 #include "stdafx.h"
 #include "scummsys.h"
 #include "system.h"
+#include "mixer.h"
 #include "simon.h"
+
 
 #include <errno.h>
 #include <time.h>
@@ -5034,8 +5036,7 @@ void SimonState::vc_29_stop_all_sounds() {
 	/* XXX: implement */
 //	warning("vc_29_stop_all_sounds unimplemented");
 	
-	_voice_size = 0;
-	_sound_size = 0;
+	_mixer->stop_all();
 }
 
 void SimonState::vc_30_set_base_delay() {
@@ -6518,7 +6519,7 @@ bool SimonState::vc_59_helper() {
 #else
 	if (_voice_file==NULL)
 		return false;
-	return _voice_size == 0;
+	return _voice_sound == 0;
 #endif
 }
 
@@ -6574,9 +6575,8 @@ void SimonState::readSfxFile(const char *filename) {
 
 		rewind(in);
 		
-		/* if a sound is playing, stop it */
-		_sound_size = 0;
-
+		/* stop all sounds */
+		_mixer->stop_all();
 
 		if (_sfx_heap) free(_sfx_heap);
 
@@ -6594,10 +6594,6 @@ void SimonState::readSfxFile(const char *filename) {
 		int size;
 
 		vc_29_stop_all_sounds();
-
-		/* if a sound is playing, stop it */
-		_sound_size = 0;
-
 
 		if (_sfx_heap) free(_sfx_heap);
 
@@ -7386,7 +7382,7 @@ void SimonState::openGameFile() {
 
 	loadIconFile();
 	
-	_system->init_size(320,200,OSystem::SOUND_8BIT);
+	_system->init_size(320,200);
 	
 	startUp(1);
 }
@@ -7411,6 +7407,7 @@ void SimonState::runSubroutine101() {
 	startUp_helper_2();
 }
 
+#if 0
 void SimonState::generateSound(byte *ptr, int len) {
 	uint cur;
 
@@ -7438,10 +7435,11 @@ void SimonState::generateSound(byte *ptr, int len) {
 		_sound_ptr += cur;
 	}
 }
+#endif
 
-static void fill_sound(void *userdata, int16 *stream, int len) {
-	((SimonState*)userdata)->generateSound((byte*)stream, len*2);
-}
+//static void fill_sound(void *userdata, int16 *stream, int len) {
+//	((SimonState*)userdata)->generateSound((byte*)stream, len*2);
+//}
 
 void SimonState::dx_copy_rgn_from_3_to_2(uint b, uint r, uint y, uint x) {
 	byte *dst, *src;
@@ -7579,8 +7577,10 @@ void SimonState::go(OSystem *syst, MidiDriver *driver) {
 	_vga_base_delay = 1;
 	_vk_t_toggle = true;
 
-	_system->set_param(OSystem::PARAM_SHOW_DEFAULT_CURSOR, 1);
-	_system->set_sound_proc(this, fill_sound);
+	_system->property(OSystem::PROP_SHOW_DEFAULT_CURSOR, 1);
+	
+	_mixer->bind_to_system(_system);
+	_mixer->set_volume(256);
 
 	while(1) {
 		hitarea_stuff();
@@ -7915,10 +7915,10 @@ void SimonState::playVoice(uint voice) {
 
 //	assert(voice < 14496/4);
 
-	_voice_size = 0;
-
 	if (_voice_offsets == NULL)
 		return;
+
+	_mixer->stop(_voice_sound);
 
 	fseek(_voice_file, _voice_offsets[voice], SEEK_SET);
 
@@ -7937,7 +7937,8 @@ void SimonState::playVoice(uint voice) {
 			return;
 		}
 
-	_voice_size = data[1];
+	_mixer->play_raw(&_voice_sound, _voice_file, data[1], wave_hdr.samples_per_sec, 
+		SoundMixer::FLAG_FILE|SoundMixer::FLAG_UNSIGNED);
 }
 
 
@@ -7945,8 +7946,7 @@ void SimonState::playSound(uint sound) {
 	if (_game & GAME_WIN) {
 		byte *p;
 		
-		/* stop any currently playing sound */
-		_sound_size = 0;
+		_mixer->stop(_playing_sound);
 
 		/* Check if _sfx_heap is NULL */
 		if (_sfx_heap == NULL) {
@@ -7968,8 +7968,7 @@ void SimonState::playSound(uint sound) {
 			p++;
 		}
 
-		_sound_ptr = p + 8;
-		_sound_size = ((uint32*)p)[1];
+		_mixer->play_raw(&_playing_sound, p+8,*(uint32*)(p+4),22050,SoundMixer::FLAG_UNSIGNED);
 	} else {
 		warning("playSound(%d)", sound);
 	}

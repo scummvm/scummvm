@@ -34,6 +34,9 @@ public:
 
 	bool _use_adlib;
 
+	byte _music_volume;
+	bool _mt32emulate;
+
 	uint16 _debugMode;
 	uint16 _noSubtitles;
 	uint16 _bootParam;
@@ -41,7 +44,6 @@ public:
 
 	char *_gameDataPath;
 	int _gameTempo;
-	void *_soundEngine;
 	int _midi_driver;
 	char *_exe_name;
 	const char *_gameText;

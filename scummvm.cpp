@@ -22,6 +22,8 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "mididrv.h"
+#include "imuse.h"
 #include "gui.h"
 #include "string.h"
 #include "gameDetector.h"
@@ -1259,10 +1261,6 @@ void Scumm::launch()
 //  _scummTimer = 0;
 }
 
-void Scumm::on_generate_samples(void *s, int16 *samples, int len) {
-	((Scumm*)s)->mixWaves(samples, len);
-}
-
 Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 {
 	Scumm *scumm;
@@ -1281,17 +1279,18 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 	scumm->_system = syst;
 
 	/* This initializes SDL */
-	syst->init_size(320,200, OSystem::SOUND_16BIT);
-	syst->set_param(OSystem::PARAM_OPEN_CD, detector->_cdrom);
+	syst->init_size(320,200);
+	syst->property(OSystem::PROP_OPEN_CD, detector->_cdrom);
 
-	syst->set_sound_proc(scumm, on_generate_samples);
+	/* bind the mixer to the system => mixer will be invoked
+	 * automatically when samples need to be generated */
+	scumm->_mixer->bind_to_system(syst);
+	scumm->_mixer->set_volume(128);
 
 	scumm->_fullScreen = detector->_fullScreen;
 	scumm->_debugMode = detector->_debugMode;
 	scumm->_bootParam = detector->_bootParam;
 	scumm->_gameDataPath = detector->_gameDataPath;
-	scumm->_gameTempo = detector->_gameTempo;
-	scumm->_soundEngine = detector->_soundEngine;
 	scumm->_exe_name = detector->_exe_name;
 	scumm->_gameId = detector->_gameId;
 	scumm->_gameText = detector->_gameText;
@@ -1301,20 +1300,21 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 	scumm->_cdrom = detector->_cdrom;
 
 	{
-		SoundDriver *sdriv;
-		SoundEngine *seng;
+		IMuse *imuse;
 
 		scumm->_use_adlib = detector->_use_adlib;
-		
-		if (!detector->_use_adlib) {
-			MidiDriver *midi = detector->createMidi();
-			sdriv = new MidiSoundDriver;
-			((MidiSoundDriver*)sdriv)->midiSetDriver(midi);
+
+		if (detector->_use_adlib) {
+			imuse = IMuse::create_adlib(syst, scumm->_mixer);
 		} else {
-			sdriv = new AdlibSoundDriver;
+			imuse = IMuse::create_midi(syst, detector->createMidi());
 		}
-		seng = new SoundEngine;
-		seng->initialize(scumm, sdriv);
+		
+		imuse->property(IMuse::PROP_MT32_EMULATE, detector->_mt32emulate);
+		if (detector->_gameTempo != 0)
+			imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);
+					
+		scumm->_imuse = imuse;
 	}
 
 	scumm->delta = 6;

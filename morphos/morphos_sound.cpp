@@ -40,7 +40,7 @@
 
 extern int GetTicks();
 extern Scumm scumm;
-extern SoundEngine sound;
+extern IMuse sound;
 extern SOUND_DRIVER_TYPE snd_driv;
 
 #define AHI_BUF_SIZE	 (8*1024)

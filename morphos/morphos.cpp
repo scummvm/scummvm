@@ -64,7 +64,7 @@ Gui gui;
 OSystem _system;
 GameDetector detector;
 
-SoundEngine sound;
+IMuse sound;
 SOUND_DRIVER_TYPE snd_driv;
 
 typedef void (*ScalerFunc)( uint32 src_x, uint32 src_y, uint32 dest_x, uint32 dest_y, uint32 width, uint32 height );
@@ -1879,7 +1879,6 @@ int main( int argc, char *argv[] )
 	scumm->_scale = detector._scale;
 	scumm->_gameDataPath = detector._gameDataPath;
 	scumm->_gameTempo = detector._gameTempo;
-	scumm->_soundEngine = detector._soundEngine;
 	scumm->_videoMode = detector._videoMode;
 	scumm->_exe_name = detector._exe_name;
 	scumm->_gameId = detector._gameId;

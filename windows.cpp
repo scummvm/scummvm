@@ -22,7 +22,6 @@
 #include <assert.h>
 
 #include "scumm.h"
-#include "sound.h"
 #include "cdmusic.h"
 #include "gui.h"
 
@@ -108,7 +107,7 @@ int sel;
 Scumm scumm;
 ScummDebugger debugger;
 Gui gui;
-SoundEngine sound;
+IMuse sound;
 SOUND_DRIVER_TYPE snd_driv;
 
 WndMan wm[1];

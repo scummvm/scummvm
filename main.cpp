@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "scumm.h"
+#include "mididrv.h"
 #include "gameDetector.h"
 #include "gui.h"
 #include "simon/simon.h"
@@ -57,7 +58,7 @@ int main(int argc, char *argv[])
 
 	{
 		char *s = detector.getGameName();
-		system->set_param(OSystem::PARAM_WINDOW_CAPTION, (long)s);
+		system->property(OSystem::PROP_SET_WINDOW_CAPTION, (long)s);
 		free(s);
 	}
 

@@ -23,7 +23,8 @@
 #include "stdafx.h"
 #include "scummsys.h"
 #include "system.h"
-#include "gmidi.h"
+#include "mididrv.h"
+#include "mixer.h"
 #include "simon.h"
 
 void MidiPlayer::read_from_file(void *dst, uint size) {

@@ -155,7 +155,7 @@ Scumm scumm;
 ScummDebugger debugger;
 Gui gui;
 
-SoundEngine sound;
+IMuse sound;
 SOUND_DRIVER_TYPE snd_driv;
 
 
@@ -953,7 +953,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	int argc = 3;
 	char* argv[3];
 	char argdir[MAX_PATH];
-	SoundEngine *se;
+	IMuse *se;
 
 	sound_activated = true;
 	hide_toolbar = false;
@@ -984,7 +984,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	keypad_init();
 	registry_init();
 
-	se = (SoundEngine*)scumm._soundEngine;
+	se = scumm._imuse;
 	se->set_music_volume(scumm._sound_volume_music);
 	se->set_master_volume(scumm._sound_volume_master);
 

@@ -22,6 +22,8 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "mididrv.h"
+#include "imuse.h"
 
 #ifdef _WIN32_WCE
 #define _MANAGE_OLD_SAVE
@@ -742,9 +744,8 @@ void Scumm::saveOrLoad(Serializer * s)
 		}
 	}
 
-	if (_soundEngine)
-		((SoundEngine *)_soundEngine)->save_or_load(s);
-
+	if (_imuse)
+		_imuse->save_or_load(s, this);
 }
 
 void Scumm::saveLoadResource(Serializer * ser, int type, int idx)

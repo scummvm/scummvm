@@ -21,6 +21,7 @@
 
 #include "scummsys.h"
 #include "system.h"
+#include "mixer.h"
 
 #ifdef COMPRESSED_SOUND_FILE
 #include <mad.h>
@@ -35,6 +36,7 @@
 class GameDetector;
 class Gui;
 class Scumm;
+class IMuse;
 struct Actor;
 struct ScummDebugger;
 struct Serializer;
@@ -549,7 +551,6 @@ enum MouseButtonStatus {
 
 #include "gfx.h"
 #include "boxes.h"
-#include "sound.h"
 #include "akos.h"
 #include "smush.h"
 
@@ -559,7 +560,7 @@ public:
 	 * That results in a shorter form of the opcode
 	 * on some architectures. */
 	OSystem *_system;
-	void *_soundEngine;
+	IMuse *_imuse;
 	Gui *_gui;
 	uint32 _features;
 	VerbSlot *_verbs;
@@ -939,10 +940,10 @@ public:
 	void runVerbCode(int script, int entry, int a, int b, int16 *vars);
 	void setVerbObject(uint room, uint object, uint verb);
 
-
 	/* Should be in Sound class */
-	MixerChannel _mixer_channel[NUM_MIXER];
-	int _gameTempo;	
+	SoundMixer _mixer[1];
+
+//	MixerChannel _mixer_channel[NUM_MIXER];
 	byte _sfxMode;
 	bool _use_adlib;
 	int16 _sound_volume_master, _sound_volume_music, _sound_volume_sfx;
@@ -982,13 +983,11 @@ public:
 	int num_sound_effects;		// SO3 MP3 compressed audio
 
 	void pauseSounds(bool pause);
-	MixerChannel *allocateMixer();
 	bool isSfxFinished();
 	void playBundleSound(char *sound);
 	void playSfxSound(void *sound, uint32 size, uint rate);
-  	void playSfxSound_MP3(void *sound, uint32 size);
+ 	void playSfxSound_MP3(void *sound, uint32 size);
 	void stopSfxSound();
-	void mixWaves(int16 *sounds, int len);
 
 	bool _useTalkAnims;
 	uint16 _defaultTalkDelay;
@@ -1682,7 +1681,6 @@ public:
 	void updateCursor();
 	void animateCursor();
 	void updatePalette();
-	static void on_generate_samples(void *s, int16 *samples, int len);
 };
 
 class Scumm_v3 : public Scumm
@@ -1797,6 +1795,7 @@ struct Serializer {
 	bool checkEOFLoadStream();
 
 };
+
 
 extern const uint32 IMxx_tags[];
 extern const byte default_scale_table[768];

@@ -23,8 +23,9 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "mididrv.h"
 #include "gameDetector.h"
-
+#include "imuse.h"
 
 
 static const char USAGE_STRING[] = 
@@ -104,17 +105,11 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				case 'm':{
 						if (*(s + 1) == '\0')
 							goto ShowHelpAndExit;
-						SoundEngine *se = (SoundEngine *)_soundEngine;
-
-						if (se)
-							se->set_music_volume(atoi(s + 1));
+						_music_volume = atoi(s + 1);
 						goto NextArg;
 					}
 				case 'r':{
-						SoundEngine *se = (SoundEngine *)_soundEngine;
-
-						if (se)
-							se->_mt32emulate = true;
+						_mt32emulate = true;
 						break;
 					}
 				case 'e':
@@ -208,8 +203,8 @@ bool GameDetector::parseMusicDriver(const char *s) {
 	for(i=0; i!=ARRAYSIZE(music_drivers); i++,md++) {
 		if (!scumm_stricmp(md->name, s)) {
 			/* FIXME: when adlib driver is in use, propagate that to
-			 * the Scumm class, and let it create an AdlibSoundDriver
-			 * instead of MidiSoundDriver */
+			 * the IMuse class, and let it create an IMuseAdlib driver
+			 * instead of IMuseGM driver */
 			if (md->id == -1) {
 				_use_adlib = true;
 			}

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "scumm.h"
+#include "mididrv.h"
 #include "SDL_thread.h"
 #include "gameDetector.h"
 
@@ -16,7 +17,7 @@ public:
 
 	// Set the size of the video bitmap.
 	// Typically, 320x200
-	void init_size(uint w, uint h, byte sound);
+	void init_size(uint w, uint h);
 
 	// Draw a bitmap to screen.
 	// The screen will not be updated to reflect the new bitmap
@@ -51,13 +52,13 @@ public:
 	bool poll_event(Event *event);
 	
 	// Set function that generates samples 
-	void set_sound_proc(void *param, SoundProc *proc);
+	void set_sound_proc(void *param, SoundProc *proc, byte sound);
 		
 	// Quit
 	void quit();
 
 	// Set a parameter
-	uint32 set_param(int param, uint32 value);
+	uint32 property(int param, uint32 value);
 
 	static OSystem *create(int gfx_mode, bool full_screen);
 
@@ -107,9 +108,6 @@ private:
 	uint32 *dirty_checksums;
 
 	int scaling;
-
-	SoundProc *_sound_proc;
-	void *_sound_param;
 
 	struct MousePos {
 		int16 x,y,w,h;
@@ -195,14 +193,6 @@ void OSystem_SDL::set_palette(const byte *colors, uint start, uint num) {
 	if (_mode_flags & DF_FORCE_FULL_ON_PALETTE)
 		force_full = true;
 	SDL_SetColors(sdl_screen, base, start, num);
-}
-
-void OSystem_SDL::fill_sound(void *userdata, Uint8 * stream, int len) {
-	OSystem_SDL *os = (OSystem_SDL*)userdata;
-	if (os->_sound_proc)
-		os->_sound_proc(os->_sound_param, (int16*)stream, len>>1);
-	else
-		memset(stream, 0x0, len);
 }
 
 void OSystem_SDL::load_gfx_mode() {
@@ -307,23 +297,9 @@ void OSystem_SDL::unload_gfx_mode() {
 	}
 }
 
-void OSystem_SDL::init_size(uint w, uint h, byte sound) {
-	SDL_AudioSpec desired;
-
+void OSystem_SDL::init_size(uint w, uint h) {
 	if (w != SCREEN_WIDTH && h != SCREEN_HEIGHT)
 		error("320x200 is the only game resolution supported");
-
-	/* init sound */
-	if (sound != SOUND_NONE) {
-		desired.freq = SAMPLES_PER_SEC;
-		desired.format = sound==SOUND_8BIT ? AUDIO_U8 : AUDIO_S16SYS;
-		desired.channels = 1;
-		desired.samples = 2048;
-		desired.callback = fill_sound;
-		desired.userdata = this;
-		SDL_OpenAudio(&desired, NULL);
-		SDL_PauseAudio(0);
-	}
 
 	/* allocate palette, it needs to be persistent across
 	 * driver changes, so i'll alloc it here */
@@ -668,7 +644,7 @@ bool OSystem_SDL::poll_event(Event *event) {
 
 				/* internal keypress? */				
 				if (b == KBD_ALT && ev.key.keysym.sym==SDLK_RETURN) {
-					set_param(PARAM_TOGGLE_FULLSCREEN, 0);
+					property(PROP_TOGGLE_FULLSCREEN, 0);
 					break;
 				}
 
@@ -679,7 +655,7 @@ bool OSystem_SDL::poll_event(Event *event) {
 
 				if (b == (KBD_CTRL|KBD_ALT) && 
 						ev.key.keysym.sym>='1' && ev.key.keysym.sym<='6') {
-					set_param(PARAM_HOTSWAP_GFX_MODE, ev.key.keysym.sym - '1');
+					property(PROP_SET_GFX_MODE, ev.key.keysym.sym - '1');
 					break;
 				}
 
@@ -733,9 +709,19 @@ bool OSystem_SDL::poll_event(Event *event) {
 	}
 }
 	
-void OSystem_SDL::set_sound_proc(void *param, SoundProc *proc) {
-	_sound_proc = proc;	
-	_sound_param = param;
+void OSystem_SDL::set_sound_proc(void *param, SoundProc *proc, byte format) {
+	SDL_AudioSpec desired;
+
+	/* only one format supported at the moment */
+
+	desired.freq = SAMPLES_PER_SEC;
+	desired.format = AUDIO_S16SYS;
+	desired.channels = 1;
+	desired.samples = 2048;
+	desired.callback = proc;
+	desired.userdata = param;
+	SDL_OpenAudio(&desired, NULL);
+	SDL_PauseAudio(0);
 }
 
 
@@ -806,10 +792,10 @@ void OSystem_SDL::hotswap_gfx_mode() {
 	OSystem_SDL::update_screen();
 }
 
-uint32 OSystem_SDL::set_param(int param, uint32 value) {
+uint32 OSystem_SDL::property(int param, uint32 value) {
 	switch(param) {
 
-	case PARAM_TOGGLE_FULLSCREEN:
+	case PROP_TOGGLE_FULLSCREEN:
 		_full_screen ^= true;
 		
 		if (!SDL_WM_ToggleFullScreen(sdl_hwscreen)) {
@@ -818,11 +804,11 @@ uint32 OSystem_SDL::set_param(int param, uint32 value) {
 		}
 		return 1;
 
-	case PARAM_WINDOW_CAPTION:
+	case PROP_SET_WINDOW_CAPTION:
 		SDL_WM_SetCaption((char*)value, (char*)value);
 		return 1;
 
-	case PARAM_OPEN_CD:
+	case PROP_OPEN_CD:
 		if (SDL_InitSubSystem(SDL_INIT_CDROM) == -1)
 			cdrom = NULL;
 		else {
@@ -834,7 +820,7 @@ uint32 OSystem_SDL::set_param(int param, uint32 value) {
 		}
 		break;
 
-	case PARAM_HOTSWAP_GFX_MODE:
+	case PROP_SET_GFX_MODE:
 		if (value >= 6)
 			return 0;
 
@@ -843,9 +829,12 @@ uint32 OSystem_SDL::set_param(int param, uint32 value) {
 
 		return 1;
 
-	case PARAM_SHOW_DEFAULT_CURSOR:
+	case PROP_SHOW_DEFAULT_CURSOR:
 		SDL_ShowCursor(value ? SDL_ENABLE : SDL_DISABLE);		
 		break;
+
+	case PROP_GET_SAMPLE_RATE:
+		return SAMPLES_PER_SEC;
 	}
 
 	return 0;
@@ -1027,7 +1016,7 @@ void OSystem_SDL::undraw_mouse() {
 class OSystem_NULL : public OSystem {
 public:
 	void set_palette(const byte *colors, uint start, uint num) {}
-	void init_size(uint w, uint h, byte sound);
+	void init_size(uint w, uint h);
 	void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {}
 	void update_screen() {}
 	bool show_mouse(bool visible) { return false; }
@@ -1038,9 +1027,9 @@ public:
 	void delay_msecs(uint msecs);
 	void *create_thread(ThreadProc *proc, void *param) { return NULL; }
 	bool poll_event(Event *event) { return false; }
-	void set_sound_proc(void *param, SoundProc *proc) {}
+	void set_sound_proc(void *param, SoundProc *proc, byte sound) {}
 	void quit() { exit(1); }
-	uint32 set_param(int param, uint32 value) { return 0; }
+	uint32 property(int param, uint32 value) { return 0; }
 	static OSystem *create(int gfx_mode, bool full_screen);
 private:
 

@@ -20,8 +20,9 @@
  */
 
 #include "stdafx.h"
-
 #include "scumm.h"
+#include "fmopl.h"
+#include "mididrv.h"
 
 int num_mix;
 
@@ -36,7 +37,603 @@ int num_mix;
 #define MDPG_TAG "MDpg"
 #define MDHD_TAG "MDhd"
 
-int clamp(int val, int min, int max)
+/* Roland to General Midi patch table. Still needs much work. */
+static const byte mt32_to_gmidi[128] = {
+  0,   1,   2,   4,   4,   5,   5,   3,  16,  17,  18,  18,  19,
+  19,  20,  21,   6,   6,   6,   7,   7,   7,   8,   8,  62,  63,
+  62,  63,  38,  39,  38,  39,  88,  89,  52, 113,  97,  96,  91,
+  85,  14, 101,  68,  95,  86, 103,  88,  80,  48,  49,  51,  45,
+  40,  40,  42,  42,  43,  46,  46,  24,  25,  26,  27, 104,  32,
+  33,  34,  39,  36,  37,  38,  35,  79,  73,  72,  72,  74,  75,
+  64,  65,  66,  67,  71,  71,  68,  69,  70,  22,  56,  59,  57,
+  63,  60,  60,  58,  61,  61,  11,  11,  12,  88,   9,  14,  13,
+  12, 107, 111,  77,  78,  78,  76, 121,  47, 117, 127, 115, 118,
+ 116, 118,  94, 115,   9,  55, 124, 123, 125, 126, 127
+};
+
+
+
+/* Put IMUSE specific classes here, instead of in a .h file
+ * they will only be used from this file, so it will reduce
+ * compile time */
+
+class IMuse;
+class IMuseDriver;
+
+struct Part;
+struct MidiChannelAdl;
+struct MidiChannelGM;
+struct Instrument;
+
+
+struct HookDatas {
+	byte _jump,_transpose;
+	byte _part_onoff[16];
+	byte _part_volume[16];
+	byte _part_program[16];
+	byte _part_transpose[16];
+
+	int query_param(int param, byte chan);
+	int set(byte cls, byte value, byte chan);
+};
+
+
+struct Player {
+	IMuse *_se;
+
+	Part *_parts;
+	bool _active;
+	bool _scanning;
+	int _id;
+	byte _priority;
+	byte _volume;
+	int8 _pan;
+	int8 _transpose;
+	int8 _detune;
+	uint _vol_chan;
+	byte _vol_eff;
+	
+	uint _song_index;
+	uint _track_index;
+	uint _timer_counter;
+	uint _loop_to_beat;
+	uint _loop_from_beat;
+	uint _loop_counter;
+	uint _loop_to_tick;
+	uint _loop_from_tick;
+	uint32 _tempo;
+	uint32 _tempo_eff; /* NoSave */
+	uint32 _cur_pos;
+	uint32 _next_pos;
+	uint32 _song_offset;
+	uint32 _timer_speed; /* NoSave */
+	uint _tick_index;
+	uint _beat_index;
+	uint _ticks_per_beat;
+	byte _speed; /* NoSave */
+	bool _abort;
+
+	HookDatas _hook;
+
+	/* Player part */
+	void hook_clear();
+	void clear();
+	bool start_sound(int sound);
+	void uninit_parts();
+	byte *parse_midi(byte *s);
+	void key_off(uint8 chan, byte data);
+	void key_on(uint8 chan, byte data, byte velocity);
+	void part_set_transpose(uint8 chan, byte relative, int8 b);
+	void parse_sysex(byte *p, uint len);
+	void maybe_jump(byte *data);
+	void maybe_set_transpose(byte *data);
+	void maybe_part_onoff(byte *data);
+	void maybe_set_volume(byte *data);
+	void maybe_set_program(byte *data);
+	void maybe_set_transpose_part(byte *data);
+	uint update_actives();
+	Part *get_part(uint8 part);
+	void turn_off_pedals();
+	int set_vol(byte vol);
+	int get_param(int param, byte chan);
+	int query_part_param(int param, byte chan);
+	int set_transpose(byte relative, int b);
+	void set_priority(int pri);
+	void set_pan(int pan);
+	void set_detune(int detune);
+	void turn_off_parts();
+	void play_active_notes();
+	void cancel_volume_fade();
+
+	static void decode_sysex_bytes(byte *src, byte *dst, int len);
+
+	void clear_active_note(int chan, byte note);
+	void set_active_note(int chan, byte note);
+	void clear_active_notes();
+
+	/* Sequencer part */
+	bool set_loop(uint count, uint tobeat, uint totick, uint frombeat, uint fromtick);
+	void clear_loop();
+	void set_speed(byte speed);
+	bool jump(uint track, uint beat, uint tick);
+	void uninit_seq();
+	void set_tempo(uint32 data);
+	int start_seq_sound(int sound);
+	void find_sustaining_notes(byte *a, byte *b, uint32 l);
+	int scan(uint totrack, uint tobeat, uint totick);
+	int query_param(int param);
+
+	int fade_vol(byte vol, int time);
+	void sequencer_timer();
+};
+
+struct VolumeFader {
+	Player *player;
+	bool active;
+	byte curvol;
+	uint16 speed_lo_max,num_steps;
+	int8 speed_hi;
+	int8 direction;
+	int8 speed_lo;
+	uint16 speed_lo_counter;
+	
+	void initialize() { active = false; }
+	void on_timer();
+};
+
+struct SustainingNotes {
+	SustainingNotes *next;
+	SustainingNotes *prev;
+	Player *player;
+	byte note,chan;
+	uint32 off_pos;
+	uint32 pos;
+	uint16 counter;
+};
+
+struct CommandQueue {
+	uint16 array[8];
+};
+
+
+struct IsNoteCmdData {
+	byte chan;
+	byte note;
+	byte vel;
+};
+
+
+
+struct MidiChannel {
+	Part *_part;
+	MidiChannelAdl *adl() { return (MidiChannelAdl*)this; }
+	MidiChannelGM *gm() { return (MidiChannelGM*)this; }
+};
+
+
+struct MidiChannelGM : MidiChannel {
+	byte _chan;
+	uint16 _actives[8];
+};
+
+
+struct Part {
+	int _slot;
+	IMuseDriver *_drv;
+	Part *_next, *_prev;
+	MidiChannel *_mc;
+	Player *_player;
+	int16 _pitchbend;
+	byte _pitchbend_factor;
+	int8 _transpose,_transpose_eff;
+	byte _vol,_vol_eff;
+	int8 _detune,_detune_eff;
+	int8 _pan,_pan_eff;
+	bool _on;
+	byte _modwheel;
+	bool _pedal;
+	byte _program;
+	int8 _pri;
+	byte _pri_eff;
+	byte _chan;
+	byte _effect_level;
+	byte _chorus;
+	byte _percussion;
+	byte _bank;
+
+	void key_on(byte note, byte velocity);
+	void key_off(byte note);
+	void set_param(byte param, int value);
+	void init(IMuseDriver *_driver);
+	void setup(Player *player);
+	void uninit();
+	void off();
+	void silence();
+	void set_instrument(uint b);
+	void set_instrument(Instrument *data);
+
+	void set_transpose(int8 transpose);
+	void set_vol(uint8 volume);
+	void set_detune(int8 detune);
+	void set_pri(int8 pri);
+	void set_pan(int8 pan);
+	void set_modwheel(uint value);
+	void set_pedal(bool value);
+	void set_pitchbend(int value);
+	void release_pedal();
+	void set_program(byte program);
+	void set_chorus(uint chorus);
+	void set_effect_level(uint level);
+	
+	int update_actives(uint16 *active);
+	void set_pitchbend_factor(uint8 value);
+	void set_onoff(bool on);
+	void fix_after_load();
+
+	void update_pris();
+
+	void changed(byte what);
+};
+
+/* Abstract IMuse driver class */
+class IMuseDriver {
+public:
+	enum {
+		pcMod = 1,
+		pcVolume = 2,
+		pcPedal = 4,
+		pcModwheel = 8,
+		pcPan = 16,
+		pcEffectLevel = 32,
+		pcProgram = 64,
+		pcChorus = 128,
+		pcAll = 255,
+	};
+
+	virtual void on_timer() = 0;
+	virtual uint32 get_base_tempo() = 0;
+	virtual byte get_hardware_type() = 0;
+	virtual void init(IMuse *eng, OSystem *syst) = 0;
+	virtual void update_pris() = 0;
+	virtual void set_instrument(uint slot, byte *instr) = 0;
+	virtual void part_set_instrument(Part *part, Instrument *instr) = 0;
+	virtual void part_key_on(Part *part, byte note, byte velocity) = 0;
+	virtual void part_key_off(Part *part, byte note) = 0;
+	virtual void part_off(Part *part) = 0;
+	virtual void part_changed(Part *part,byte what) = 0;
+	virtual void part_set_param(Part *part, byte param, int value) = 0;
+	virtual int part_update_active(Part *part,uint16 *active) = 0;
+};
+
+
+// WARNING: This is the internal variant of the IMUSE class.
+// imuse.h contains a public version of the same class.
+// the public version, only contains a set of methods.
+class IMuse {
+friend struct Player;
+private:
+	IMuseDriver *_driver;
+
+	byte **_base_sounds;
+
+	byte _locked;
+	byte _hardware_type;
+
+public:
+	bool _mt32emulate;
+private:
+	
+
+	bool _paused;
+	bool _active_volume_faders;
+	bool _initialized;	
+	byte _volume_fader_counter;
+
+	int _game_tempo;
+
+	uint _queue_end, _queue_pos, _queue_sound;
+	byte _queue_adding;
+
+	SustainingNotes *_sustain_notes_used;
+	SustainingNotes *_sustain_notes_free;
+	SustainingNotes *_sustain_notes_head;
+
+	byte _queue_marker;
+	byte _queue_cleared;
+	byte _master_volume;
+	byte _music_volume;	/* Global music volume. Percantage */
+
+	uint16 _trigger_count;
+	
+	uint16 _channel_volume[8];
+	uint16 _channel_volume_eff[8]; /* NoSave */
+	uint16 _volchan_table[8];
+	
+	Player _players[8];
+	SustainingNotes _sustaining_notes[24];
+	VolumeFader _volume_fader[8];
+	Part _parts[32];
+	
+	uint16 _active_notes[128];
+	CommandQueue _cmd_queue[64];
+
+	byte *findTag(int sound, char *tag, int index);
+	int get_queue_sound_status(int sound);
+	Player *allocate_player(byte priority);
+	void handle_marker(uint id, byte data);
+	int get_channel_volume(uint a);
+	void init_players();
+	void init_parts();
+	void init_volume_fader();
+	void init_sustaining_notes();
+	void init_queue();
+
+	void sequencer_timers();
+	void expire_sustain_notes();
+	void expire_volume_faders();
+
+	Part *allocate_part(byte pri);
+
+	int enqueue_command(int a, int b, int c, int d, int e, int f, int g);
+	int enqueue_trigger(int sound, int marker);
+	int query_queue(int param);
+	Player *get_player_byid(int id);
+	
+	int get_volchan_entry(uint a);
+	int set_volchan_entry(uint a, uint b);
+	int set_channel_volume(uint chan, uint vol);
+	void update_volumes();
+	void reset_tick();
+	VolumeFader *allocate_volume_fader();
+
+	int set_volchan(int sound, int volchan);
+
+	void fix_parts_after_load();
+	void fix_players_after_load(Scumm *scumm);
+
+	static int saveReference(IMuse *me, byte type, void *ref);
+	static void *loadReference(IMuse *me, byte type, int ref);
+
+	void lock();
+	void unlock();
+
+public:
+	Part *parts_ptr() { return _parts; }
+	IMuseDriver *driver() { return _driver; }
+
+	int initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
+
+	/* Public interface */
+	
+	enum {
+		PROP_TEMPO_BASE = 1,
+		PROP_MT32_EMULATE = 2,
+	};
+	
+	void on_timer();
+	void pause(bool paused);
+	int terminate();
+	int save_or_load(Serializer *ser, Scumm *scumm);
+	int set_music_volume(uint vol);
+	int get_music_volume();
+	int set_master_volume(uint vol);
+	int get_master_volume();
+	bool start_sound(int sound);
+	int stop_sound(int sound);
+	int stop_all_sounds();
+	int get_sound_status(int sound);
+	int32 do_command(int a, int b, int c, int d, int e, int f, int g, int h);
+	int clear_queue();
+	void setBase(byte **base);
+
+	uint32 property(int prop, uint32 value);
+	
+	static IMuse *create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer);
+};
+
+
+/* IMuseAdlib classes */
+
+struct Struct10 {
+	byte active;
+	int16 cur_val;
+	int16 count;
+	uint16 param;
+	int16 start_value;
+	byte loop;
+	byte table_a[4];
+	byte table_b[4];
+	int8 unk3;
+	int8 modwheel;
+	int8 modwheel_last;
+	uint16 speed_lo_max;
+	uint16 num_steps;
+	int16 speed_hi;
+	int8 direction;
+	uint16 speed_lo;
+	uint16 speed_lo_counter;
+};
+
+struct Struct11 {
+	int16 modify_val;
+	byte param,flag0x40,flag0x10;
+	Struct10 *s10;
+};
+
+struct InstrumentExtra {
+	byte a,b,c,d,e,f,g,h;
+};
+
+struct Instrument {
+	byte flags_1;
+	byte oplvl_1;
+	byte atdec_1;
+	byte sustrel_1;
+	byte waveform_1;
+	byte flags_2;
+	byte oplvl_2;
+	byte atdec_2;
+	byte sustrel_2;
+	byte waveform_2;
+	byte feedback;
+	byte flags_a;
+	InstrumentExtra extra_a;
+	byte flags_b;
+	InstrumentExtra extra_b;
+	byte duration;
+};
+
+struct MidiChannelAdl : MidiChannel {
+	MidiChannelAdl *_next,*_prev;
+	byte _waitforpedal;
+	byte _note;
+	byte _channel;
+	byte _twochan;
+	byte _vol_1,_vol_2;
+	int16 _duration;
+
+	Struct10 _s10a;
+	Struct11 _s11a;
+	Struct10 _s10b;
+	Struct11 _s11b;
+};
+
+struct IMuseAdlib : public IMuseDriver {
+private:
+	FM_OPL *_opl;
+	byte *_adlib_reg_cache;
+	IMuse *_se;
+	SoundMixer *_mixer;
+
+	int _adlib_timer_counter;
+
+	uint16 channel_table_2[9];
+	int _midichan_index;
+	int _next_tick;
+	uint16 curnote_table[9];
+	MidiChannelAdl _midi_channels[9];
+
+	Instrument _part_instr[32];
+	Instrument _glob_instr[32];
+
+	void adlib_key_off(int chan);
+	void adlib_note_on(int chan, byte note, int mod);
+	void adlib_note_on_ex(int chan, byte note, int mod);
+	int adlib_read_param(int chan, byte data);
+	void adlib_setup_channel(int chan, Instrument *instr, byte vol_1, byte vol_2);
+	byte adlib_read(byte port) { return _adlib_reg_cache[port]; }	
+	void adlib_set_param(int channel, byte param, int value);
+	void adlib_key_onoff(int channel);
+	void adlib_write(byte port, byte value);
+	void adlib_playnote(int channel, int note);
+
+	MidiChannelAdl *allocate_midichan(byte pri);
+
+	void reset_tick();
+	void mc_off(MidiChannel *mc);	
+
+	static void link_mc(Part *part, MidiChannelAdl *mc);
+	static void mc_inc_stuff(MidiChannelAdl *mc, Struct10 *s10, Struct11 *s11);
+	static void mc_init_stuff(MidiChannelAdl *mc, Struct10 *s10, Struct11 *s11, byte flags, InstrumentExtra *ie);
+	static void struct10_init(Struct10 *s10, InstrumentExtra *ie);
+	static byte struct10_ontimer(Struct10 *s10, Struct11 *s11);
+	static void struct10_setup(Struct10 *s10);
+	static int random_nr(int a);
+	void mc_key_on(MidiChannel *mc, byte note, byte velocity);
+
+	static void premix_proc(void *param, int16 *buf, uint len);
+
+public:
+	IMuseAdlib(SoundMixer *mixer) { _mixer = mixer; }
+	void uninit();
+	void init(IMuse *eng, OSystem *syst);
+	void update_pris() { }
+	void generate_samples(int16 *buf, int len);	
+	void on_timer();	
+	void set_instrument(uint slot, byte *instr);
+	void part_set_instrument(Part *part, Instrument *instr);
+	void part_key_on(Part *part, byte note, byte velocity);
+	void part_key_off(Part *part, byte note);
+	void part_set_param(Part *part, byte param, int value);
+	void part_changed(Part *part,byte what);
+	void part_off(Part *part);
+	int part_update_active(Part *part,uint16 *active);
+	void adjust_priorities() {}
+
+	uint32 get_base_tempo() { 
+#ifdef _WIN32_WCE
+		return 0x1F0000 * 2;	// Sampled down to 11 kHz
+#else //_WIN32_WCE
+		return 0x1924E0;
+#endif //_WIN32_WCE
+	}
+
+	byte get_hardware_type() { return 1; }
+};
+
+
+/* IMuseGM classes */
+
+class IMuseGM : public IMuseDriver {	
+	IMuse *_se;
+	OSystem *_system;
+	MidiDriver *_md;
+	MidiChannelGM _midi_channels[9];
+
+	int16 _midi_pitchbend_last[16];
+	uint8 _midi_volume_last[16];
+	bool _midi_pedal_last[16];
+	byte _midi_modwheel_last[16];
+	byte _midi_effectlevel_last[16];
+	byte _midi_chorus_last[16];
+	int8 _midi_pan_last[16];
+
+
+	void midiPitchBend(byte chan, int16 pitchbend);
+	void midiVolume(byte chan, byte volume);
+	void midiPedal(byte chan, bool pedal);
+	void midiModWheel(byte chan, byte modwheel);
+	void midiEffectLevel(byte chan, byte level);
+	void midiChorus(byte chan, byte chorus);
+	void midiControl0(byte chan, byte value);
+	void midiProgram(byte chan, byte program);
+	void midiPan(byte chan, int8 pan);
+	void midiNoteOn(byte chan, byte note, byte velocity);
+	void midiNoteOff(byte chan, byte note);
+	void midiSilence(byte chan);
+	void midiInit();
+
+public:
+	IMuseGM(MidiDriver *midi) { _md = midi; }
+
+	void uninit();
+	void init(IMuse *eng, OSystem *os);
+	void update_pris();
+	void part_off(Part *part);
+	int part_update_active(Part *part,uint16 *active);
+
+	void on_timer() {}
+	void set_instrument(uint slot, byte *instr) {}
+	void part_set_instrument(Part *part, Instrument *instr) {}
+	void part_set_param(Part *part, byte param, int value) {}
+	void part_key_on(Part *part, byte note, byte velocity);
+	void part_key_off(Part *part, byte note);
+	void part_changed(Part *part,byte what);
+
+	static int midi_driver_thread(void *param);
+
+	uint32 get_base_tempo() { return 0x400000; }
+	byte get_hardware_type() { return 5; }
+};
+
+
+
+//*********************************
+//**** IMUSE helper functions ****
+//*********************************
+
+
+static int clamp(int val, int min, int max)
 {
 	if (val < min)
 		return min;
@@ -45,7 +642,7 @@ int clamp(int val, int min, int max)
 	return val;
 }
 
-int transpose_clamp(int a, int b, int c)
+static int transpose_clamp(int a, int b, int c)
 {
 	if (b > a)
 		a += (b - a + 11) / 12 * 12;
@@ -54,7 +651,7 @@ int transpose_clamp(int a, int b, int c)
 	return a;
 }
 
-uint32 get_delta_time(byte **s)
+static uint32 get_delta_time(byte **s)
 {
 	byte *d = *s, b;
 	uint32 time = 0;
@@ -66,12 +663,12 @@ uint32 get_delta_time(byte **s)
 	return time;
 }
 
-uint read_word(byte *a)
+static uint read_word(byte *a)
 {
 	return (a[0] << 8) + a[1];
 }
 
-void skip_midi_cmd(byte **song_ptr)
+static void skip_midi_cmd(byte **song_ptr)
 {
 	byte *s, code;
 
@@ -97,7 +694,7 @@ void skip_midi_cmd(byte **song_ptr)
 	*song_ptr = s;
 }
 
-int is_note_cmd(byte **a, IsNoteCmdData * isnote)
+static int is_note_cmd(byte **a, IsNoteCmdData * isnote)
 {
 	byte *s = *a;
 	byte code;
@@ -142,17 +739,17 @@ int is_note_cmd(byte **a, IsNoteCmdData * isnote)
 
 /**********************************************************************/
 
-void SoundEngine::lock()
+void IMuse::lock()
 {
 	_locked++;
 }
 
-void SoundEngine::unlock()
+void IMuse::unlock()
 {
 	_locked--;
 }
 
-byte *SoundEngine::findTag(int sound, char *tag, int index)
+byte *IMuse::findTag(int sound, char *tag, int index)
 {
 	byte *ptr = NULL;
 	int32 size, pos;
@@ -161,7 +758,7 @@ byte *SoundEngine::findTag(int sound, char *tag, int index)
 		ptr = _base_sounds[sound];
 
 	if (ptr == NULL) {
-		debug(1, "SoundEngine::findTag completely failed finding sound %d",
+		debug(1, "IMuse::findTag completely failed finding sound %d",
 					sound);
 		return 0;
 	}
@@ -176,12 +773,12 @@ byte *SoundEngine::findTag(int sound, char *tag, int index)
 			return ptr + pos + 8;
 		pos += READ_BE_UINT32_UNALIGNED(ptr + pos + 4) + 8;
 	}
-	debug(1, "SoundEngine::findTag failed finding sound %d", sound);
+	debug(1, "IMuse::findTag failed finding sound %d", sound);
 	return NULL;
 
 }
 
-bool SoundEngine::start_sound(int sound)
+bool IMuse::start_sound(int sound)
 {
 	Player *player;
 	void *mdhd;
@@ -203,7 +800,7 @@ bool SoundEngine::start_sound(int sound)
 }
 
 
-Player *SoundEngine::allocate_player(byte priority)
+Player *IMuse::allocate_player(byte priority)
 {
 	Player *player = _players, *best = NULL;
 	int i;
@@ -225,7 +822,7 @@ Player *SoundEngine::allocate_player(byte priority)
 	return NULL;
 }
 
-void SoundEngine::init_players()
+void IMuse::init_players()
 {
 	Player *player = _players;
 	int i;
@@ -236,7 +833,7 @@ void SoundEngine::init_players()
 	}
 }
 
-void SoundEngine::init_sustaining_notes()
+void IMuse::init_sustaining_notes()
 {
 	SustainingNotes *next = NULL, *sn = _sustaining_notes;
 	int i;
@@ -251,7 +848,7 @@ void SoundEngine::init_sustaining_notes()
 	_sustain_notes_free = next;
 }
 
-void SoundEngine::init_volume_fader()
+void IMuse::init_volume_fader()
 {
 	VolumeFader *vf = _volume_fader;
 	int i;
@@ -262,7 +859,7 @@ void SoundEngine::init_volume_fader()
 	_active_volume_faders = false;
 }
 
-void SoundEngine::init_parts()
+void IMuse::init_parts()
 {
 	Part *part;
 	int i;
@@ -273,7 +870,7 @@ void SoundEngine::init_parts()
 	}
 }
 
-int SoundEngine::stop_sound(int sound)
+int IMuse::stop_sound(int sound)
 {
 	Player *player = _players;
 	int i;
@@ -288,7 +885,7 @@ int SoundEngine::stop_sound(int sound)
 	return r;
 }
 
-int SoundEngine::stop_all_sounds()
+int IMuse::stop_all_sounds()
 {
 	Player *player = _players;
 	int i;
@@ -300,7 +897,7 @@ int SoundEngine::stop_all_sounds()
 	return 0;
 }
 
-void SoundEngine::on_timer()
+void IMuse::on_timer()
 {
 	if (_locked || _paused)
 		return;
@@ -315,7 +912,7 @@ void SoundEngine::on_timer()
 	unlock();
 }
 
-void SoundEngine::sequencer_timers()
+void IMuse::sequencer_timers()
 {
 	Player *player = _players;
 	int i;
@@ -366,7 +963,7 @@ void Player::sequencer_timer()
 	}
 }
 
-void SoundEngine::handle_marker(uint id, byte data)
+void IMuse::handle_marker(uint id, byte data)
 {
 	uint16 *p;
 	uint pos;
@@ -404,14 +1001,14 @@ void SoundEngine::handle_marker(uint id, byte data)
 	_queue_end = pos;
 }
 
-int SoundEngine::get_channel_volume(uint a)
+int IMuse::get_channel_volume(uint a)
 {
 	if (a < 8)
 		return _channel_volume_eff[a];
 	return _master_volume;
 }
 
-Part *SoundEngine::allocate_part(byte pri)
+Part *IMuse::allocate_part(byte pri)
 {
 	Part *part, *best = NULL;
 	int i;
@@ -432,7 +1029,7 @@ Part *SoundEngine::allocate_part(byte pri)
 	return best;
 }
 
-void SoundEngine::expire_sustain_notes()
+void IMuse::expire_sustain_notes()
 {
 	SustainingNotes *sn, *next;
 	Player *player;
@@ -464,7 +1061,7 @@ void SoundEngine::expire_sustain_notes()
 	}
 }
 
-void SoundEngine::expire_volume_faders()
+void IMuse::expire_volume_faders()
 {
 	VolumeFader *vf;
 	int i;
@@ -512,7 +1109,7 @@ void VolumeFader::on_timer()
 	}
 }
 
-int SoundEngine::get_sound_status(int sound)
+int IMuse::get_sound_status(int sound)
 {
 	int i;
 	Player *player;
@@ -524,7 +1121,7 @@ int SoundEngine::get_sound_status(int sound)
 	return get_queue_sound_status(sound);
 }
 
-int SoundEngine::get_queue_sound_status(int sound)
+int IMuse::get_queue_sound_status(int sound)
 {
 	uint16 *a;
 	int i, j;
@@ -541,7 +1138,7 @@ int SoundEngine::get_queue_sound_status(int sound)
 	return 0;
 }
 
-int SoundEngine::set_volchan(int sound, int volchan)
+int IMuse::set_volchan(int sound, int volchan)
 {
 	int r;
 	int i;
@@ -587,7 +1184,7 @@ int SoundEngine::set_volchan(int sound, int volchan)
 	}
 }
 
-int SoundEngine::clear_queue()
+int IMuse::clear_queue()
 {
 	_queue_adding = false;
 	_queue_cleared = true;
@@ -597,7 +1194,7 @@ int SoundEngine::clear_queue()
 	return 0;
 }
 
-int SoundEngine::enqueue_command(int a, int b, int c, int d, int e, int f,
+int IMuse::enqueue_command(int a, int b, int c, int d, int e, int f,
 																 int g)
 {
 	uint16 *p;
@@ -635,7 +1232,7 @@ int SoundEngine::enqueue_command(int a, int b, int c, int d, int e, int f,
 	}
 }
 
-int SoundEngine::query_queue(int param)
+int IMuse::query_queue(int param)
 {
 	switch (param) {
 	case 0:											/* get trigger count */
@@ -653,12 +1250,12 @@ int SoundEngine::query_queue(int param)
 	}
 }
 
-int SoundEngine::get_music_volume()
+int IMuse::get_music_volume()
 {
 	return _music_volume;
 }
 
-int SoundEngine::set_music_volume(uint vol)
+int IMuse::set_music_volume(uint vol)
 {
 	if (vol > 100)
 		vol = 100;
@@ -670,7 +1267,7 @@ int SoundEngine::set_music_volume(uint vol)
 	return 0;
 }
 
-int SoundEngine::set_master_volume(uint vol)
+int IMuse::set_master_volume(uint vol)
 {
 	int i;
 	if (vol > 127)
@@ -680,26 +1277,26 @@ int SoundEngine::set_master_volume(uint vol)
 		vol = vol / (100 / _music_volume);
 
 	_master_volume = vol;
-	_s->_sound_volume_master = vol;
+//	_s->_sound_volume_master = vol;
 	for (i = 0; i != 8; i++)
 		_channel_volume_eff[i] = (_channel_volume[i] + 1) * vol >> 7;
 	update_volumes();
 	return 0;
 }
 
-int SoundEngine::get_master_volume()
+int IMuse::get_master_volume()
 {
 	return _master_volume;
 }
 
-int SoundEngine::terminate()
+int IMuse::terminate()
 {
 	return 0;
 	/* not implemented */
 }
 
 
-int SoundEngine::enqueue_trigger(int sound, int marker)
+int IMuse::enqueue_trigger(int sound, int marker)
 {
 	uint16 *p;
 	uint pos;
@@ -724,7 +1321,7 @@ int SoundEngine::enqueue_trigger(int sound, int marker)
 	return 0;
 }
 
-int32 SoundEngine::do_command(int a, int b, int c, int d, int e, int f, int g,
+int32 IMuse::do_command(int a, int b, int c, int d, int e, int f, int g,
 															int h)
 {
 	byte cmd = a & 0xFF;
@@ -754,8 +1351,12 @@ int32 SoundEngine::do_command(int a, int b, int c, int d, int e, int f, int g,
 			return set_channel_volume(b, c);
 		case 18:
 			return set_volchan_entry(b, c);
+
+		case 2:
+		case 3:
+			return 0;
 		default:
-			warning("SoundEngine::do_command invalid command %d", cmd);
+			warning("IMuse::do_command invalid command %d", cmd);
 		}
 	} else if (param == 1) {
 
@@ -826,7 +1427,7 @@ int32 SoundEngine::do_command(int a, int b, int c, int d, int e, int f, int g,
 		case 24:
 			return 0;
 		default:
-			warning("SoundEngine::do_command default midi command %d", cmd);
+			warning("IMuse::do_command default midi command %d", cmd);
 			return -1;
 		}
 	}
@@ -834,7 +1435,7 @@ int32 SoundEngine::do_command(int a, int b, int c, int d, int e, int f, int g,
 	return -1;
 }
 
-int SoundEngine::set_channel_volume(uint chan, uint vol)
+int IMuse::set_channel_volume(uint chan, uint vol)
 {
 	if (chan >= 8 || vol > 127)
 		return -1;
@@ -845,7 +1446,7 @@ int SoundEngine::set_channel_volume(uint chan, uint vol)
 	return 0;
 }
 
-void SoundEngine::update_volumes()
+void IMuse::update_volumes()
 {
 	Player *player;
 	int i;
@@ -856,7 +1457,7 @@ void SoundEngine::update_volumes()
 	}
 }
 
-int SoundEngine::set_volchan_entry(uint a, uint b)
+int IMuse::set_volchan_entry(uint a, uint b)
 {
 	if (a >= 8)
 		return -1;
@@ -924,7 +1525,7 @@ int HookDatas::set(byte cls, byte value, byte chan)
 }
 
 
-VolumeFader *SoundEngine::allocate_volume_fader()
+VolumeFader *IMuse::allocate_volume_fader()
 {
 	VolumeFader *vf;
 	int i;
@@ -941,7 +1542,7 @@ VolumeFader *SoundEngine::allocate_volume_fader()
 	return vf;
 }
 
-Player *SoundEngine::get_player_byid(int id)
+Player *IMuse::get_player_byid(int id)
 {
 	int i;
 	Player *player, *found = NULL;
@@ -956,25 +1557,55 @@ Player *SoundEngine::get_player_byid(int id)
 	return found;
 }
 
-int SoundEngine::get_volchan_entry(uint a)
+int IMuse::get_volchan_entry(uint a)
 {
 	if (a < 8)
 		return _volchan_table[a];
 	return -1;
 }
 
-int SoundEngine::initialize(Scumm *scumm, SoundDriver * driver)
+uint32 IMuse::property(int prop, uint32 value) {
+	switch(prop) {
+	case PROP_TEMPO_BASE:
+		_game_tempo = value;
+		break;
+
+	case PROP_MT32_EMULATE:
+		_mt32emulate = !!value;
+		break;
+	}
+	return 0;
+}
+
+void IMuse::setBase(byte **base) {
+	_base_sounds = base;
+}
+
+
+IMuse *IMuse::create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer) {
+	IMuse *i = new IMuse;
+	i->initialize(syst, midi, mixer);
+	return i;
+}
+
+
+int IMuse::initialize(OSystem *syst, MidiDriver *midi, SoundMixer *mixer)
 {
 	int i;
-	if (_initialized)
-		return -1;
+	
+	IMuseDriver *driv;
 
-	scumm->_soundEngine = this;
-	_s = scumm;
+	if (midi == NULL) {
+		driv = new IMuseAdlib(mixer);
+	} else {
+		driv = new IMuseGM(midi);
+	}
 
-	_driver = driver;
+	_driver = driv;
+	_hardware_type = driv->get_hardware_type();
+	_game_tempo = driv->get_base_tempo();
 
-	_hardware_type = driver->get_hardware_type();
+	driv->init(this,syst);
 
 	_master_volume = 127;
 	if (_music_volume < 1)
@@ -989,14 +1620,12 @@ int SoundEngine::initialize(Scumm *scumm, SoundDriver * driver)
 	init_queue();
 	init_parts();
 
-	_driver->init(this, scumm->_system);
-
 	_initialized = true;
 
 	return 0;
 }
 
-void SoundEngine::init_queue()
+void IMuse::init_queue()
 {
 	_queue_adding = false;
 	_queue_pos = 0;
@@ -1004,14 +1633,12 @@ void SoundEngine::init_queue()
 	_trigger_count = 0;
 }
 
-void SoundEngine::pause(bool paused)
+void IMuse::pause(bool paused)
 {
 	lock();
 
-#if 0
 	int i;
 	Part *part;
-	MidiChannel *mc;
 
 	for (i = ARRAYSIZE(_parts), part = _parts; i != 0; i--, part++) {
 		if (part->_player) {
@@ -1020,10 +1647,9 @@ void SoundEngine::pause(bool paused)
 			} else {
 				part->set_vol(part->_vol);
 			}
-			part->vol_changed();
+			part->changed(IMuseDriver::pcVolume);
 		}
 	}
-#endif
 
 	_paused = paused;
 
@@ -1149,11 +1775,8 @@ void Player::set_tempo(uint32 b)
 {
 	uint32 i, j;
 
-	if (_se->_s->_gameTempo < 1000)
-		i = _se->_driver->get_base_tempo();
-	else
-		i = _se->_s->_gameTempo;
-
+	i = _se->_game_tempo;
+	
 	j = _tempo = b;
 
 	while (i & 0xFFFF0000 || j & 0xFFFF0000) {
@@ -2112,7 +2735,7 @@ enum {
 	TYPE_PLAYER = 2,
 };
 
-int SoundEngine::saveReference(SoundEngine *me, byte type, void *ref)
+int IMuse::saveReference(IMuse *me, byte type, void *ref)
 {
 	switch (type) {
 	case TYPE_PART:
@@ -2124,7 +2747,7 @@ int SoundEngine::saveReference(SoundEngine *me, byte type, void *ref)
 	}
 }
 
-void *SoundEngine::loadReference(SoundEngine *me, byte type, int ref)
+void *IMuse::loadReference(IMuse *me, byte type, int ref)
 {
 	switch (type) {
 	case TYPE_PART:
@@ -2136,19 +2759,19 @@ void *SoundEngine::loadReference(SoundEngine *me, byte type, int ref)
 	}
 }
 
-int SoundEngine::save_or_load(Serializer * ser)
+int IMuse::save_or_load(Serializer * ser, Scumm *scumm)
 {
 	const SaveLoadEntry mainEntries[] = {
-		MKLINE(SoundEngine, _queue_end, sleUint8),
-		MKLINE(SoundEngine, _queue_pos, sleUint8),
-		MKLINE(SoundEngine, _queue_sound, sleUint16),
-		MKLINE(SoundEngine, _queue_adding, sleByte),
-		MKLINE(SoundEngine, _queue_marker, sleByte),
-		MKLINE(SoundEngine, _queue_cleared, sleByte),
-		MKLINE(SoundEngine, _master_volume, sleByte),
-		MKLINE(SoundEngine, _trigger_count, sleUint16),
-		MKARRAY(SoundEngine, _channel_volume[0], sleUint16, 8),
-		MKARRAY(SoundEngine, _volchan_table[0], sleUint16, 8),
+		MKLINE(IMuse, _queue_end, sleUint8),
+		MKLINE(IMuse, _queue_pos, sleUint8),
+		MKLINE(IMuse, _queue_sound, sleUint16),
+		MKLINE(IMuse, _queue_adding, sleByte),
+		MKLINE(IMuse, _queue_marker, sleByte),
+		MKLINE(IMuse, _queue_cleared, sleByte),
+		MKLINE(IMuse, _master_volume, sleByte),
+		MKLINE(IMuse, _trigger_count, sleUint16),
+		MKARRAY(IMuse, _channel_volume[0], sleUint16, 8),
+		MKARRAY(IMuse, _volchan_table[0], sleUint16, 8),
 		MKEND()
 	};
 
@@ -2246,7 +2869,7 @@ int SoundEngine::save_or_load(Serializer * ser)
 
 	if (!ser->isSaving()) {
 		/* Load all sounds that we need */
-		fix_players_after_load();
+		fix_players_after_load(scumm);
 		init_sustaining_notes();
 		_active_volume_faders = true;
 		fix_parts_after_load();
@@ -2259,7 +2882,7 @@ int SoundEngine::save_or_load(Serializer * ser)
 #undef MKLINE
 #undef MKEND
 
-void SoundEngine::fix_parts_after_load()
+void IMuse::fix_parts_after_load()
 {
 	Part *part;
 	int i;
@@ -2272,7 +2895,7 @@ void SoundEngine::fix_parts_after_load()
 
 /* Only call this routine from the main thread,
  * since it uses getResourceAddress */
-void SoundEngine::fix_players_after_load()
+void IMuse::fix_players_after_load(Scumm *scumm)
 {
 	Player *player = _players;
 	int i;
@@ -2280,7 +2903,7 @@ void SoundEngine::fix_players_after_load()
 	for (i = ARRAYSIZE(_players); i != 0; i--, player++) {
 		if (player->_active) {
 			player->set_tempo(player->_tempo);
-			_s->getResourceAddress(rtSound, player->_id);
+			scumm->getResourceAddress(rtSound, player->_id);
 		}
 	}
 }
@@ -2288,19 +2911,19 @@ void SoundEngine::fix_players_after_load()
 void Part::set_detune(int8 detune)
 {
 	_detune_eff = clamp((_detune = detune) + _player->_detune, -128, 127);
-	changed(SoundDriver::pcMod);
+	changed(IMuseDriver::pcMod);
 }
 
 void Part::set_pitchbend(int value)
 {
 	_pitchbend = value * _pitchbend_factor >> 6;
-	changed(SoundDriver::pcMod);
+	changed(IMuseDriver::pcMod);
 }
 
 void Part::set_vol(uint8 vol)
 {
 	_vol_eff = ((_vol = vol) + 1) * _player->_vol_eff >> 7;
-	changed(SoundDriver::pcVolume);
+	changed(IMuseDriver::pcVolume);
 }
 
 void Part::set_pri(int8 pri)
@@ -2311,38 +2934,38 @@ void Part::set_pri(int8 pri)
 void Part::set_pan(int8 pan)
 {
 	_pan_eff = clamp((_pan = pan) + _player->_pan, -64, 63);
-	changed(SoundDriver::pcPan);
+	changed(IMuseDriver::pcPan);
 }
 
 void Part::set_transpose(int8 transpose)
 {
 	_transpose_eff = transpose_clamp((_transpose = transpose) +
 																	 _player->_transpose, -12, 12);
-	changed(SoundDriver::pcMod);
+	changed(IMuseDriver::pcMod);
 }
 
 void Part::set_pedal(bool value)
 {
 	_pedal = value;
-	changed(SoundDriver::pcPedal);
+	changed(IMuseDriver::pcPedal);
 }
 
 void Part::set_modwheel(uint value)
 {
 	_modwheel = value;
-	changed(SoundDriver::pcModwheel);
+	changed(IMuseDriver::pcModwheel);
 }
 
 void Part::set_chorus(uint chorus)
 {
 	_chorus = chorus;
-	changed(SoundDriver::pcChorus);
+	changed(IMuseDriver::pcChorus);
 }
 
 void Part::set_effect_level(uint level)
 {
 	_effect_level = level;
-	changed(SoundDriver::pcEffectLevel);
+	changed(IMuseDriver::pcEffectLevel);
 }
 
 void Part::fix_after_load()
@@ -2388,7 +3011,7 @@ void Part::key_off(byte note)
 	_drv->part_key_off(this, note);
 }
 
-void Part::init(SoundDriver * driver)
+void Part::init(IMuseDriver * driver)
 {
 	_drv = driver;
 	_player = NULL;
@@ -2478,7 +3101,7 @@ void Part::set_program(byte program)
 	if (_program != program || _bank != 0) {
 		_program = program;
 		_bank = 0;
-		changed(SoundDriver::pcProgram);
+		changed(IMuseDriver::pcProgram);
 	}
 }
 
@@ -2486,5 +3109,1269 @@ void Part::set_instrument(uint b)
 {
 	_bank = (byte)(b >> 8);
 	_program = (byte)b;
-	changed(SoundDriver::pcProgram);
+	changed(IMuseDriver::pcProgram);
 }
+
+
+//********************************************
+//***** ADLIB PART OF IMUSE STARTS HERE ******
+//********************************************
+
+
+static byte lookup_table[64][32];
+const byte volume_table[] = {
+	0, 4, 7, 11,
+	13, 16, 18, 20,
+	22, 24, 26, 27,
+	29, 30, 31, 33,
+	34, 35, 36, 37,
+	38, 39, 40, 41,
+	42, 43, 44, 44,
+	45, 46, 47, 47,
+	48, 49, 49, 50,
+	51, 51, 52, 53,
+	53, 54, 54, 55,
+	55, 56, 56, 57,
+	57, 58, 58, 59,
+	59, 60, 60, 60,
+	61, 61, 62, 62,
+	62, 63, 63, 63
+};
+
+int lookup_volume(int a, int b)
+{
+	if (b == 0)
+		return 0;
+
+	if (b == 31)
+		return a;
+
+	if (a < -63 || a > 63) {
+		return b * (a + 1) >> 5;
+	}
+
+	if (b < 0) {
+		if (a < 0) {
+			return lookup_table[-a][-b];
+		} else {
+			return -lookup_table[a][-b];
+		}
+	} else {
+		if (a < 0) {
+			return -lookup_table[-a][b];
+		} else {
+			return lookup_table[a][b];
+		}
+	}
+}
+
+void create_lookup_table()
+{
+	int i, j;
+	int sum;
+
+	for (i = 0; i < 64; i++) {
+		sum = i;
+		for (j = 0; j < 32; j++) {
+			lookup_table[i][j] = sum >> 5;
+			sum += i;
+		}
+	}
+	for (i = 0; i < 64; i++)
+		lookup_table[i][0] = 0;
+}
+
+MidiChannelAdl *IMuseAdlib::allocate_midichan(byte pri)
+{
+	MidiChannelAdl *ac, *best = NULL;
+	int i;
+
+	for (i = 0; i < 9; i++) {
+		if (++_midichan_index >= 9)
+			_midichan_index = 0;
+		ac = &_midi_channels[_midichan_index];
+		if (!ac->_part)
+			return ac;
+		if (!ac->_next) {
+			if (ac->_part->_pri_eff <= pri) {
+				pri = ac->_part->_pri_eff;
+				best = ac;
+			}
+		}
+	}
+
+	if (best)
+		mc_off(best);
+	else;													//debug(1, "Denying adlib channel request");
+	return best;
+}
+
+void IMuseAdlib::premix_proc(void *param, int16 *buf, uint len) {
+	((IMuseAdlib*)param)->generate_samples(buf, len);
+}
+
+void IMuseAdlib::init(IMuse *eng, OSystem *syst)
+{
+	int i;
+	MidiChannelAdl *mc;
+
+	_se = eng;
+
+	for (i = 0, mc = _midi_channels; i != ARRAYSIZE(_midi_channels); i++, mc++) {
+		mc->_channel = i;
+		mc->_s11a.s10 = &mc->_s10b;
+		mc->_s11b.s10 = &mc->_s10a;
+	}
+
+	_adlib_reg_cache = (byte *)calloc(256, 1);
+
+	_opl = OPLCreate(OPL_TYPE_YM3812, 3579545, syst->property(OSystem::PROP_GET_SAMPLE_RATE,0));
+
+	adlib_write(1, 0x20);
+	adlib_write(8, 0x40);
+	adlib_write(0xBD, 0x00);
+	create_lookup_table();
+
+	_mixer->setup_premix(this, premix_proc);
+}
+
+void IMuseAdlib::adlib_write(byte port, byte value)
+{
+	if (_adlib_reg_cache[port] == value)
+		return;
+	_adlib_reg_cache[port] = value;
+
+	OPLWriteReg(_opl, port, value);
+}
+
+void IMuseAdlib::adlib_key_off(int chan)
+{
+	byte port = chan + 0xB0;
+	adlib_write(port, adlib_read(port) & ~0x20);
+}
+
+struct AdlibSetParams {
+	byte a, b, c, d;
+};
+
+static const byte channel_mappings[9] = {
+	0, 1, 2, 8,
+	9, 10, 16, 17,
+	18
+};
+
+static const byte channel_mappings_2[9] = {
+	3, 4, 5, 11,
+	12, 13, 19, 20,
+	21
+};
+
+static const AdlibSetParams adlib_setparam_table[] = {
+	{0x40, 0, 63, 63},						/* level */
+	{0xE0, 2, 0, 0},							/* unused */
+	{0x40, 6, 192, 0},						/* level key scaling */
+	{0x20, 0, 15, 0},							/* modulator frequency multiple */
+	{0x60, 4, 240, 15},						/* attack rate */
+	{0x60, 0, 15, 15},						/* decay rate */
+	{0x80, 4, 240, 15},						/* sustain level */
+	{0x80, 0, 15, 15},						/* release rate */
+	{0xE0, 0, 3, 0},							/* waveform select */
+	{0x20, 7, 128, 0},						/* amp mod */
+	{0x20, 6, 64, 0},							/* vib */
+	{0x20, 5, 32, 0},							/* eg typ */
+	{0x20, 4, 16, 0},							/* ksr */
+	{0xC0, 0, 1, 0},							/* decay alg */
+	{0xC0, 1, 14, 0}							/* feedback */
+};
+
+void IMuseAdlib::adlib_set_param(int channel, byte param, int value)
+{
+	const AdlibSetParams *as;
+	byte port;
+
+	assert(channel >= 0 && channel < 9);
+
+	if (param <= 12) {
+		port = channel_mappings_2[channel];
+	} else if (param <= 25) {
+		param -= 13;
+		port = channel_mappings[channel];
+	} else if (param <= 27) {
+		param -= 13;
+		port = channel;
+	} else if (param == 28 || param == 29) {
+		if (param == 28)
+			value -= 15;
+		else
+			value -= 383;
+		value <<= 4;
+		channel_table_2[channel] = value;
+		adlib_playnote(channel, curnote_table[channel] + value);
+		return;
+	} else {
+		return;
+	}
+
+	as = &adlib_setparam_table[param];
+	if (as->d)
+		value = as->d - value;
+	port += as->a;
+	adlib_write(port, (adlib_read(port) & ~as->c) | (((byte)value) << as->b));
+}
+
+static const byte octave_numbers[] = {
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1,
+	2, 2, 2, 2, 2, 2, 2, 2,
+	2, 2, 2, 2, 3, 3, 3, 3,
+	3, 3, 3, 3, 3, 3, 3, 3,
+	4, 4, 4, 4, 4, 4, 4, 4,
+	4, 4, 4, 4, 5, 5, 5, 5,
+	5, 5, 5, 5, 5, 5, 5, 5,
+	6, 6, 6, 6, 6, 6, 6, 6,
+	6, 6, 6, 6, 7, 7, 7, 7,
+	7, 7, 7, 7, 7, 7, 7, 7,
+	7, 7, 7, 7, 7, 7, 7, 7,
+	7, 7, 7, 7, 7, 7, 7, 7,
+	7, 7, 7, 7, 7, 7, 7, 7,
+	7, 7, 7, 7, 7, 7, 7, 7
+};
+
+static const byte note_numbers[] = {
+	3, 4, 5, 6, 7, 8, 9, 10,
+	11, 12, 13, 14, 3, 4, 5, 6,
+	7, 8, 9, 10, 11, 12, 13, 14,
+	3, 4, 5, 6, 7, 8, 9, 10,
+	11, 12, 13, 14, 3, 4, 5, 6,
+	7, 8, 9, 10, 11, 12, 13, 14,
+	3, 4, 5, 6, 7, 8, 9, 10,
+	11, 12, 13, 14, 3, 4, 5, 6,
+	7, 8, 9, 10, 11, 12, 13, 14,
+	3, 4, 5, 6, 7, 8, 9, 10,
+	11, 12, 13, 14, 3, 4, 5, 6,
+	7, 8, 9, 10, 11, 12, 13, 14,
+	3, 4, 5, 6, 7, 8, 9, 10,
+	11, 12, 13, 14, 3, 4, 5, 6,
+	7, 8, 9, 10, 11, 12, 13, 14,
+	3, 4, 5, 6, 7, 8, 9, 10
+};
+
+static const byte note_to_f_num[] = {
+	90, 91, 92, 92, 93, 94, 94, 95,
+	96, 96, 97, 98, 98, 99, 100, 101,
+	101, 102, 103, 104, 104, 105, 106, 107,
+	107, 108, 109, 110, 111, 111, 112, 113,
+	114, 115, 115, 116, 117, 118, 119, 120,
+	121, 121, 122, 123, 124, 125, 126, 127,
+	128, 129, 130, 131, 132, 132, 133, 134,
+	135, 136, 137, 138, 139, 140, 141, 142,
+	143, 145, 146, 147, 148, 149, 150, 151,
+	152, 153, 154, 155, 157, 158, 159, 160,
+	161, 162, 163, 165, 166, 167, 168, 169,
+	171, 172, 173, 174, 176, 177, 178, 180,
+	181, 182, 184, 185, 186, 188, 189, 190,
+	192, 193, 194, 196, 197, 199, 200, 202,
+	203, 205, 206, 208, 209, 211, 212, 214,
+	215, 217, 218, 220, 222, 223, 225, 226,
+	228, 230, 231, 233, 235, 236, 238, 240,
+	242, 243, 245, 247, 249, 251, 252, 254,
+};
+
+void IMuseAdlib::adlib_playnote(int channel, int note)
+{
+	byte old, oct, notex;
+	int note2;
+	int i;
+
+	note2 = (note >> 7) - 4;
+
+	oct = octave_numbers[note2] << 2;
+	notex = note_numbers[note2];
+
+	old = adlib_read(channel + 0xB0);
+	if (old & 0x20) {
+		old &= ~0x20;
+		if (oct > old) {
+			if (notex < 6) {
+				notex += 12;
+				oct -= 4;
+			}
+		} else if (oct < old) {
+			if (notex > 11) {
+				notex -= 12;
+				oct += 4;
+			}
+		}
+	}
+
+	i = (notex << 3) + ((note >> 4) & 0x7);
+	adlib_write(channel + 0xA0, note_to_f_num[i]);
+	adlib_write(channel + 0xB0, oct | 0x20);
+}
+
+void IMuseAdlib::adlib_note_on(int chan, byte note, int mod)
+{
+	int code;
+	assert(chan >= 0 && chan < 9);
+	code = (note << 7) + mod;
+	curnote_table[chan] = code;
+	adlib_playnote(chan, channel_table_2[chan] + code);
+}
+
+void IMuseAdlib::adlib_note_on_ex(int chan, byte note, int mod)
+{
+	int code;
+	assert(chan >= 0 && chan < 9);
+	code = (note << 7) + mod;
+	curnote_table[chan] = code;
+	channel_table_2[chan] = 0;
+	adlib_playnote(chan, code);
+}
+
+void IMuseAdlib::adlib_key_onoff(int channel)
+{
+	byte val;
+	byte port = channel + 0xB0;
+	assert(channel >= 0 && channel < 9);
+
+	val = adlib_read(port);
+	adlib_write(port, val & ~0x20);
+	adlib_write(port, val | 0x20);
+}
+
+void IMuseAdlib::adlib_setup_channel(int chan, Instrument * instr,
+																					 byte vol_1, byte vol_2)
+{
+	byte port;
+
+	assert(chan >= 0 && chan < 9);
+
+	port = channel_mappings[chan];
+	adlib_write(port + 0x20, instr->flags_1);
+	adlib_write(port + 0x40, (instr->oplvl_1 | 0x3F) - vol_1);
+	adlib_write(port + 0x60, ~instr->atdec_1);
+	adlib_write(port + 0x80, ~instr->sustrel_1);
+	adlib_write(port + 0xE0, instr->waveform_1);
+
+	port = channel_mappings_2[chan];
+	adlib_write(port + 0x20, instr->flags_2);
+	adlib_write(port + 0x40, (instr->oplvl_2 | 0x3F) - vol_2);
+	adlib_write(port + 0x60, ~instr->atdec_2);
+	adlib_write(port + 0x80, ~instr->sustrel_2);
+	adlib_write(port + 0xE0, instr->waveform_2);
+
+	adlib_write((byte)chan + 0xC0, instr->feedback);
+}
+
+int IMuseAdlib::adlib_read_param(int chan, byte param)
+{
+	const AdlibSetParams *as;
+	byte val;
+	byte port;
+
+	assert(chan >= 0 && chan < 9);
+
+	if (param <= 12) {
+		port = channel_mappings_2[chan];
+	} else if (param <= 25) {
+		param -= 13;
+		port = channel_mappings[chan];
+	} else if (param <= 27) {
+		param -= 13;
+		port = chan;
+	} else if (param == 28) {
+		return 0xF;
+	} else if (param == 29) {
+		return 0x17F;
+	} else {
+		return 0;
+	}
+
+	as = &adlib_setparam_table[param];
+	val = adlib_read(port + as->a);
+	val &= as->c;
+	val >>= as->b;
+	if (as->d)
+		val = as->d - val;
+
+	return val;
+}
+
+void IMuseAdlib::generate_samples(int16 * data, int len)
+{
+	int step;
+
+	if (!_opl) {
+		memset(data, 0, len * sizeof(int16));
+		return;
+	}
+
+	do {
+		step = len;
+		if (step > _next_tick)
+			step = _next_tick;
+		YM3812UpdateOne(_opl, data, step);
+
+		if (!(_next_tick -= step)) {
+			_se->on_timer();
+			reset_tick();
+		}
+		data += step;
+	} while (len -= step);
+}
+
+
+void IMuseAdlib::reset_tick()
+{
+	_next_tick = 88;
+}
+
+void IMuseAdlib::on_timer()
+{
+	MidiChannelAdl *mc;
+	int i;
+
+	_adlib_timer_counter += 0xD69;
+	while (_adlib_timer_counter >= 0x411B) {
+		_adlib_timer_counter -= 0x411B;
+		mc = _midi_channels;
+		for (i = 0; i != ARRAYSIZE(_midi_channels); i++, mc++) {
+			if (!mc->_part)
+				continue;
+			if (mc->_duration && (mc->_duration -= 0x11) <= 0) {
+				mc_off(mc);
+				return;
+			}
+			if (mc->_s10a.active) {
+				mc_inc_stuff(mc, &mc->_s10a, &mc->_s11a);
+			}
+			if (mc->_s10b.active) {
+				mc_inc_stuff(mc, &mc->_s10b, &mc->_s11b);
+			}
+		}
+	}
+}
+
+const byte param_table_1[16] = {
+	29, 28, 27, 0,
+	3, 4, 7, 8,
+	13, 16, 17, 20,
+	21, 30, 31, 0
+};
+
+const uint16 param_table_2[16] = {
+	0x2FF, 0x1F, 0x7, 0x3F,
+	0x0F, 0x0F, 0x0F, 0x3,
+	0x3F, 0x0F, 0x0F, 0x0F,
+	0x3, 0x3E, 0x1F, 0
+};
+
+static const uint16 num_steps_table[] = {
+	1, 2, 4, 5,
+	6, 7, 8, 9,
+	10, 12, 14, 16,
+	18, 21, 24, 30,
+	36, 50, 64, 82,
+	100, 136, 160, 192,
+	240, 276, 340, 460,
+	600, 860, 1200, 1600
+};
+
+int IMuseAdlib::random_nr(int a)
+{
+	static byte _rand_seed = 1;
+	if (_rand_seed & 1) {
+		_rand_seed >>= 1;
+		_rand_seed ^= 0xB8;
+	} else {
+		_rand_seed >>= 1;
+	}
+	return _rand_seed * a >> 8;
+}
+
+void IMuseAdlib::struct10_setup(Struct10 * s10)
+{
+	int b, c, d, e, f, g, h;
+	byte t;
+
+	b = s10->unk3;
+	f = s10->active - 1;
+
+	t = s10->table_a[f];
+	e = num_steps_table[lookup_table[t & 0x7F][b]];
+	if (t & 0x80) {
+		e = random_nr(e);
+	}
+	if (e == 0)
+		e++;
+
+	s10->num_steps = s10->speed_lo_max = e;
+
+	if (f != 2) {
+		c = s10->param;
+		g = s10->start_value;
+		t = s10->table_b[f];
+		d = lookup_volume(c, (t & 0x7F) - 31);
+		if (t & 0x80) {
+			d = random_nr(d);
+		}
+		if (d + g > c) {
+			h = c - g;
+		} else {
+			h = d;
+			if (d + g < 0)
+				h = -g;
+		}
+		h -= s10->cur_val;
+	} else {
+		h = 0;
+	}
+
+	s10->speed_hi = h / e;
+	if (h < 0) {
+		h = -h;
+		s10->direction = -1;
+	} else {
+		s10->direction = 1;
+	}
+
+	s10->speed_lo = h % e;
+	s10->speed_lo_counter = 0;
+}
+
+byte IMuseAdlib::struct10_ontimer(Struct10 * s10, Struct11 * s11)
+{
+	byte result = 0;
+	int i;
+
+	if (s10->count && (s10->count -= 17) <= 0) {
+		s10->active = 0;
+		return 0;
+	}
+
+	i = s10->cur_val + s10->speed_hi;
+	s10->speed_lo_counter += s10->speed_lo;
+	if (s10->speed_lo_counter >= s10->speed_lo_max) {
+		s10->speed_lo_counter -= s10->speed_lo_max;
+		i += s10->direction;
+	}
+	if (s10->cur_val != i || s10->modwheel != s10->modwheel_last) {
+		s10->cur_val = i;
+		s10->modwheel_last = s10->modwheel;
+		i = lookup_volume(i, s10->modwheel_last);
+		if (i != s11->modify_val) {
+			s11->modify_val = i;
+			result = 1;
+		}
+	}
+
+	if (!--s10->num_steps) {
+		s10->active++;
+		if (s10->active > 4) {
+			if (s10->loop) {
+				s10->active = 1;
+				result |= 2;
+				struct10_setup(s10);
+			} else {
+				s10->active = 0;
+			}
+		} else {
+			struct10_setup(s10);
+		}
+	}
+
+	return result;
+}
+
+void IMuseAdlib::struct10_init(Struct10 * s10, InstrumentExtra * ie)
+{
+	s10->active = 1;
+	s10->cur_val = 0;
+	s10->modwheel_last = 31;
+	s10->count = ie->a;
+	if (s10->count)
+		s10->count *= 63;
+	s10->table_a[0] = ie->b;
+	s10->table_a[1] = ie->d;
+	s10->table_a[2] = ie->f;
+	s10->table_a[3] = ie->g;
+
+	s10->table_b[0] = ie->c;
+	s10->table_b[1] = ie->e;
+	s10->table_b[2] = 0;
+	s10->table_b[3] = ie->h;
+
+	struct10_setup(s10);
+}
+
+void IMuseAdlib::mc_init_stuff(MidiChannelAdl *mc, Struct10 * s10,
+																		 Struct11 * s11, byte flags,
+																		 InstrumentExtra * ie)
+{
+	Part *part = mc->_part;
+
+	s11->modify_val = 0;
+	s11->flag0x40 = flags & 0x40;
+	s10->loop = flags & 0x20;
+	s11->flag0x10 = flags & 0x10;
+	s11->param = param_table_1[flags & 0xF];
+	s10->param = param_table_2[flags & 0xF];
+	s10->unk3 = 31;
+	if (s11->flag0x40) {
+		s10->modwheel = part->_modwheel >> 2;
+	} else {
+		s10->modwheel = 31;
+	}
+
+	switch (s11->param) {
+	case 0:
+		s10->start_value = mc->_vol_2;
+		break;
+	case 13:
+		s10->start_value = mc->_vol_1;
+		break;
+	case 30:
+		s10->start_value = 31;
+		s11->s10->modwheel = 0;
+		break;
+	case 31:
+		s10->start_value = 0;
+		s11->s10->unk3 = 0;
+		break;
+	default:
+		s10->start_value = ((IMuseAdlib*)part->_drv)->adlib_read_param(mc->_channel, s11->param);
+	}
+
+	struct10_init(s10, ie);
+}
+
+void IMuseAdlib::mc_inc_stuff(MidiChannelAdl *mc, Struct10 * s10,
+																		Struct11 * s11)
+{
+	byte code;
+	Part *part = mc->_part;
+
+	code = struct10_ontimer(s10, s11);
+
+	if (code & 1) {
+		switch (s11->param) {
+		case 0:
+			mc->_vol_2 = s10->start_value + s11->modify_val;
+			((IMuseAdlib*)part->_drv)->adlib_set_param(mc->_channel, 0,
+																	volume_table[lookup_table[mc->_vol_2]
+																							 [part->_vol_eff >> 2]]);
+			break;
+		case 13:
+			mc->_vol_1 = s10->start_value + s11->modify_val;
+			if (mc->_twochan) {
+				((IMuseAdlib*)part->_drv)->adlib_set_param(mc->_channel, 13,
+																		volume_table[lookup_table[mc->_vol_1]
+																								 [part->_vol_eff >> 2]]);
+			} else {
+				((IMuseAdlib*)part->_drv)->adlib_set_param(mc->_channel, 13, mc->_vol_1);
+			}
+			break;
+		case 30:
+			s11->s10->modwheel = (char)s11->modify_val;
+			break;
+		case 31:
+			s11->s10->unk3 = (char)s11->modify_val;
+			break;
+		default:
+			((IMuseAdlib*)part->_drv)->adlib_set_param(mc->_channel, s11->param,
+																	s10->start_value + s11->modify_val);
+			break;
+		}
+	}
+
+	if (code & 2 && s11->flag0x10)
+		((IMuseAdlib*)part->_drv)->adlib_key_onoff(mc->_channel);
+}
+
+void IMuseAdlib::part_changed(Part *part, byte what)
+{
+	MidiChannelAdl *mc;
+
+	if (what & pcProgram) {
+		if (part->_program < 32) {
+			part_set_instrument(part, &_glob_instr[part->_program]);
+		}
+	}
+
+	if (what & pcMod) {
+		for (mc = part->_mc->adl(); mc; mc = mc->_next) {
+			adlib_note_on(mc->_channel, mc->_note + part->_transpose_eff,
+										part->_pitchbend + part->_detune_eff);
+		}
+	}
+
+	if (what & pcVolume) {
+		for (mc = part->_mc->adl(); mc; mc = mc->_next) {
+			adlib_set_param(mc->_channel, 0, volume_table[lookup_table[mc->_vol_2]
+																										[part->_vol_eff >> 2]]);
+			if (mc->_twochan) {
+				adlib_set_param(mc->_channel, 13,
+												volume_table[lookup_table[mc->_vol_1]
+																		 [part->_vol_eff >> 2]]);
+			}
+		}
+	}
+
+	if (what & pcPedal) {
+		if (!part->_pedal) {
+			for (mc = (MidiChannelAdl *)part->_mc; mc; mc = mc->_next) {
+				if (mc->_waitforpedal)
+					mc_off(mc);
+			}
+		}
+	}
+
+	if (what & pcModwheel) {
+		for (mc = (MidiChannelAdl *)part->_mc; mc; mc = mc->_next) {
+			if (mc->_s10a.active && mc->_s11a.flag0x40)
+				mc->_s10a.modwheel = part->_modwheel >> 2;
+			if (mc->_s10b.active && mc->_s11b.flag0x40)
+				mc->_s10b.modwheel = part->_modwheel >> 2;
+		}
+	}
+}
+
+void IMuseAdlib::mc_key_on(MidiChannel * mc2, byte note, byte velocity)
+{
+	MidiChannelAdl *mc = (MidiChannelAdl *)mc2;
+	Part *part = mc->_part;
+	Instrument *instr = &_part_instr[part->_slot];
+	int c;
+	byte vol_1, vol_2;
+
+	mc->_twochan = instr->feedback & 1;
+	mc->_note = note;
+	mc->_waitforpedal = false;
+	mc->_duration = instr->duration;
+	if (mc->_duration != 0)
+		mc->_duration *= 63;
+
+	vol_1 =
+		(instr->oplvl_1 & 0x3F) +
+		lookup_table[velocity >> 1][instr->waveform_1 >> 2];
+	if (vol_1 > 0x3F)
+		vol_1 = 0x3F;
+	mc->_vol_1 = vol_1;
+
+	vol_2 =
+		(instr->oplvl_2 & 0x3F) +
+		lookup_table[velocity >> 1][instr->waveform_2 >> 2];
+	if (vol_2 > 0x3F)
+		vol_2 = 0x3F;
+	mc->_vol_2 = vol_2;
+
+	c = part->_vol_eff >> 2;
+
+	vol_2 = volume_table[lookup_table[vol_2][c]];
+	if (mc->_twochan)
+		vol_1 = volume_table[lookup_table[vol_1][c]];
+
+	adlib_setup_channel(mc->_channel, instr, vol_1, vol_2);
+	adlib_note_on_ex(mc->_channel, part->_transpose_eff + note,
+									 part->_detune_eff + part->_pitchbend);
+
+	if (instr->flags_a & 0x80) {
+		mc_init_stuff(mc, &mc->_s10a, &mc->_s11a, instr->flags_a,
+									&instr->extra_a);
+	} else {
+		mc->_s10a.active = 0;
+	}
+
+	if (instr->flags_b & 0x80) {
+		mc_init_stuff(mc, &mc->_s10b, &mc->_s11b, instr->flags_b,
+									&instr->extra_b);
+	} else {
+		mc->_s10b.active = 0;
+	}
+}
+
+void IMuseAdlib::set_instrument(uint slot, byte *data)
+{
+	if (slot < 32) {
+		memcpy(&_glob_instr[slot], data, sizeof(Instrument));
+	}
+}
+
+
+void IMuseAdlib::link_mc(Part *part, MidiChannelAdl *mc)
+{
+	mc->_part = part;
+	mc->_next = (MidiChannelAdl *)part->_mc;
+	part->_mc = mc;
+	mc->_prev = NULL;
+
+	if (mc->_next)
+		mc->_next->_prev = mc;
+}
+
+void IMuseAdlib::part_key_on(Part *part, byte note, byte velocity)
+{
+	MidiChannelAdl *mc;
+
+	mc = allocate_midichan(part->_pri_eff);
+	if (!mc)
+		return;
+
+	link_mc(part, mc);
+	mc_key_on(mc, note, velocity);
+}
+
+void IMuseAdlib::part_key_off(Part *part, byte note)
+{
+	MidiChannelAdl *mc;
+
+	for (mc = (MidiChannelAdl *)part->_mc; mc; mc = mc->_next) {
+		if (mc->_note == note) {
+			if (part->_pedal)
+				mc->_waitforpedal = true;
+			else
+				mc_off(mc);
+		}
+	}
+}
+
+struct AdlibInstrSetParams {
+	byte param;
+	byte shl;
+	byte mask;
+};
+
+#define MKLINE(_a_,_b_,_c_) { (int)&((Instrument*)0)->_a_, _b_, ((1<<(_c_))-1)<<(_b_) }
+static const AdlibInstrSetParams adlib_instr_params[69] = {
+	MKLINE(oplvl_2, 0, 6),
+	MKLINE(waveform_2, 2, 5),
+	MKLINE(oplvl_2, 6, 2),
+	MKLINE(flags_2, 0, 4),
+	MKLINE(atdec_2, 4, 4),
+	MKLINE(atdec_2, 0, 4),
+	MKLINE(sustrel_2, 4, 4),
+	MKLINE(sustrel_2, 0, 4),
+	MKLINE(waveform_2, 0, 2),
+	MKLINE(flags_2, 7, 1),
+	MKLINE(flags_2, 6, 1),
+	MKLINE(flags_2, 5, 1),
+	MKLINE(flags_2, 4, 1),
+
+	MKLINE(oplvl_1, 0, 6),
+	MKLINE(waveform_1, 2, 5),
+	MKLINE(oplvl_1, 6, 2),
+	MKLINE(flags_1, 0, 4),
+	MKLINE(atdec_1, 4, 4),
+	MKLINE(atdec_1, 0, 4),
+	MKLINE(sustrel_1, 4, 4),
+	MKLINE(sustrel_1, 0, 4),
+	MKLINE(waveform_1, 0, 2),
+	MKLINE(flags_1, 7, 1),
+	MKLINE(flags_1, 6, 1),
+	MKLINE(flags_1, 5, 1),
+	MKLINE(flags_1, 4, 1),
+
+	MKLINE(feedback, 0, 1),
+	MKLINE(feedback, 1, 3),
+
+	MKLINE(flags_a, 7, 1),
+	MKLINE(flags_a, 6, 1),
+	MKLINE(flags_a, 5, 1),
+	MKLINE(flags_a, 4, 1),
+	MKLINE(flags_a, 0, 4),
+	MKLINE(extra_a.a, 0, 8),
+	MKLINE(extra_a.b, 0, 7),
+	MKLINE(extra_a.c, 0, 7),
+	MKLINE(extra_a.d, 0, 7),
+	MKLINE(extra_a.e, 0, 7),
+	MKLINE(extra_a.f, 0, 7),
+	MKLINE(extra_a.g, 0, 7),
+	MKLINE(extra_a.h, 0, 7),
+	MKLINE(extra_a.b, 7, 1),
+	MKLINE(extra_a.c, 7, 1),
+	MKLINE(extra_a.d, 7, 1),
+	MKLINE(extra_a.e, 7, 1),
+	MKLINE(extra_a.f, 7, 1),
+	MKLINE(extra_a.g, 7, 1),
+	MKLINE(extra_a.h, 7, 1),
+
+	MKLINE(flags_b, 7, 1),
+	MKLINE(flags_b, 6, 1),
+	MKLINE(flags_b, 5, 1),
+	MKLINE(flags_b, 4, 1),
+	MKLINE(flags_b, 0, 4),
+	MKLINE(extra_b.a, 0, 8),
+	MKLINE(extra_b.b, 0, 7),
+	MKLINE(extra_b.c, 0, 7),
+	MKLINE(extra_b.d, 0, 7),
+	MKLINE(extra_b.e, 0, 7),
+	MKLINE(extra_b.f, 0, 7),
+	MKLINE(extra_b.g, 0, 7),
+	MKLINE(extra_b.h, 0, 7),
+	MKLINE(extra_b.b, 7, 1),
+	MKLINE(extra_b.c, 7, 1),
+	MKLINE(extra_b.d, 7, 1),
+	MKLINE(extra_b.e, 7, 1),
+	MKLINE(extra_b.f, 7, 1),
+	MKLINE(extra_b.g, 7, 1),
+	MKLINE(extra_b.h, 7, 1),
+
+	MKLINE(duration, 0, 8),
+};
+#undef MKLINE
+
+void IMuseAdlib::part_set_param(Part *part, byte param, int value)
+{
+	const AdlibInstrSetParams *sp = &adlib_instr_params[param];
+	byte *p = (byte *)&_part_instr[part->_slot] + sp->param;
+	*p = (*p & ~sp->mask) | (value << sp->shl);
+
+	if (param < 28) {
+		MidiChannelAdl *mc;
+
+		for (mc = (MidiChannelAdl *)part->_mc; mc; mc = mc->_next) {
+			adlib_set_param(mc->_channel, param, value);
+		}
+	}
+}
+
+void IMuseAdlib::part_off(Part *part)
+{
+	MidiChannelAdl *mc = (MidiChannelAdl *)part->_mc;
+	part->_mc = NULL;
+	for (; mc; mc = mc->_next) {
+		mc_off(mc);
+	}
+}
+
+void IMuseAdlib::mc_off(MidiChannel * mc2)
+{
+	MidiChannelAdl *mc = (MidiChannelAdl *)mc2, *tmp;
+
+	adlib_key_off(mc->_channel);
+
+	tmp = mc->_prev;
+
+	if (mc->_next)
+		mc->_next->_prev = tmp;
+	if (tmp)
+		tmp->_next = mc->_next;
+	else
+		mc->_part->_mc = mc->_next;
+	mc->_part = NULL;
+}
+
+void IMuseAdlib::part_set_instrument(Part *part, Instrument * instr)
+{
+	Instrument *i = &_part_instr[part->_slot];
+	memcpy(i, instr, sizeof(Instrument));
+}
+
+int IMuseAdlib::part_update_active(Part *part, uint16 *active)
+{
+	uint16 bits;
+	int count = 0;
+	MidiChannelAdl *mc;
+
+	bits = 1 << part->_chan;
+
+	for (mc = part->_mc->adl(); mc; mc = mc->_next) {
+		if (!(active[mc->_note] & bits)) {
+			active[mc->_note] |= bits;
+			count++;
+		}
+	}
+	return count;
+}
+
+//********************************************
+//** GENERAL MIDI PART OF IMUSE STARTS HERE **
+//********************************************
+
+void IMuseGM::midiPitchBend(byte chan, int16 pitchbend)
+{
+	uint16 tmp;
+
+	if (_midi_pitchbend_last[chan] != pitchbend) {
+		_midi_pitchbend_last[chan] = pitchbend;
+		tmp = (pitchbend << 2) + 0x2000;
+		_md->send(((tmp >> 7) & 0x7F) << 16 | (tmp & 0x7F) << 8 | 0xE0 | chan);
+	}
+}
+
+void IMuseGM::midiVolume(byte chan, byte volume)
+{
+	if (_midi_volume_last[chan] != volume) {
+		_midi_volume_last[chan] = volume;
+		_md->send(volume << 16 | 7 << 8 | 0xB0 | chan);
+	}
+}
+void IMuseGM::midiPedal(byte chan, bool pedal)
+{
+	if (_midi_pedal_last[chan] != pedal) {
+		_midi_pedal_last[chan] = pedal;
+		_md->send(pedal << 16 | 64 << 8 | 0xB0 | chan);
+	}
+}
+
+void IMuseGM::midiModWheel(byte chan, byte modwheel)
+{
+	if (_midi_modwheel_last[chan] != modwheel) {
+		_midi_modwheel_last[chan] = modwheel;
+		_md->send(modwheel << 16 | 1 << 8 | 0xB0 | chan);
+	}
+}
+
+void IMuseGM::midiEffectLevel(byte chan, byte level)
+{
+	if (_midi_effectlevel_last[chan] != level) {
+		_midi_effectlevel_last[chan] = level;
+		_md->send(level << 16 | 91 << 8 | 0xB0 | chan);
+	}
+}
+
+void IMuseGM::midiChorus(byte chan, byte chorus)
+{
+	if (_midi_chorus_last[chan] != chorus) {
+		_midi_chorus_last[chan] = chorus;
+		_md->send(chorus << 16 | 93 << 8 | 0xB0 | chan);
+	}
+}
+
+void IMuseGM::midiControl0(byte chan, byte value)
+{
+	_md->send(value << 16 | 0 << 8 | 0xB0 | chan);
+}
+
+
+void IMuseGM::midiProgram(byte chan, byte program)
+{
+	if ((chan + 1) != 10) {				/* Ignore percussion prededed by patch change */
+		if (_se->_mt32emulate)
+			program = mt32_to_gmidi[program];
+
+		_md->send(program << 8 | 0xC0 | chan);
+	}
+}
+
+void IMuseGM::midiPan(byte chan, int8 pan)
+{
+	if (_midi_pan_last[chan] != pan) {
+		_midi_pan_last[chan] = pan;
+		_md->send(((pan - 64) & 0x7F) << 16 | 10 << 8 | 0xB0 | chan);
+	}
+}
+
+void IMuseGM::midiNoteOn(byte chan, byte note, byte velocity)
+{
+	_md->send(velocity << 16 | note << 8 | 0x90 | chan);
+}
+
+void IMuseGM::midiNoteOff(byte chan, byte note)
+{
+	_md->send(note << 8 | 0x80 | chan);
+}
+
+void IMuseGM::midiSilence(byte chan)
+{
+	_md->send((64 << 8) | 0xB0 | chan);
+	_md->send((123 << 8) | 0xB0 | chan);
+}
+
+
+void IMuseGM::part_key_on(Part *part, byte note, byte velocity)
+{
+	MidiChannelGM *mc = part->_mc->gm();
+
+	if (mc) {
+		mc->_actives[note >> 4] |= (1 << (note & 0xF));
+		midiNoteOn(mc->_chan, note, velocity);
+	} else if (part->_percussion) {
+		midiVolume(SPECIAL_CHANNEL, part->_vol_eff);
+		midiProgram(SPECIAL_CHANNEL, part->_bank);
+		midiNoteOn(SPECIAL_CHANNEL, note, velocity);
+	}
+}
+
+void IMuseGM::part_key_off(Part *part, byte note)
+{
+	MidiChannelGM *mc = part->_mc->gm();
+
+	if (mc) {
+		mc->_actives[note >> 4] &= ~(1 << (note & 0xF));
+		midiNoteOff(mc->_chan, note);
+	} else if (part->_percussion) {
+		midiNoteOff(SPECIAL_CHANNEL, note);
+	}
+}
+
+int IMuseGM::midi_driver_thread(void *param) {
+	IMuseGM *mid = (IMuseGM*) param;
+	int old_time, cur_time;
+
+	old_time = mid->_system->get_msecs();
+
+	for(;;) {
+		mid->_system->delay_msecs(10);
+
+		cur_time = mid->_system->get_msecs();
+		while (old_time < cur_time) {
+			old_time += 10;
+			mid->_se->on_timer();
+		}
+	}
+}
+
+void IMuseGM::init(IMuse *eng, OSystem *syst)
+{
+	int i;
+	MidiChannelGM *mc;
+
+	_system = syst;
+
+	/* open midi driver */
+	int result = _md->open(MidiDriver::MO_SIMPLE);
+	if (result)
+		error("IMuseGM::error = %s", MidiDriver::get_error_name(result));
+
+	/* Install the on_timer thread */
+	syst->create_thread(midi_driver_thread, this);
+	_se = eng;
+
+	for (i = 0, mc = _midi_channels; i != ARRAYSIZE(_midi_channels); i++, mc++)
+		mc->_chan = i;
+}
+
+void IMuseGM::update_pris()
+{
+	Part *part, *hipart;
+	int i;
+	byte hipri, lopri;
+	MidiChannelGM *mc, *lomc;
+
+	while (true) {
+		hipri = 0;
+		hipart = NULL;
+		for (i = 32, part = _se->parts_ptr(); i; i--, part++) {
+			if (part->_player && !part->_percussion && part->_on && !part->_mc
+					&& part->_pri_eff >= hipri) {
+				hipri = part->_pri_eff;
+				hipart = part;
+			}
+		}
+
+		if (!hipart)
+			return;
+
+		lopri = 255;
+		lomc = NULL;
+		for (i = ARRAYSIZE(_midi_channels), mc = _midi_channels;; mc++) {
+			if (!mc->_part) {
+				lomc = mc;
+				break;
+			}
+			if (mc->_part->_pri_eff <= lopri) {
+				lopri = mc->_part->_pri_eff;
+				lomc = mc;
+			}
+
+			if (!--i) {
+				if (lopri >= hipri)
+					return;
+				lomc->_part->off();
+				break;
+			}
+		}
+
+		hipart->_mc = lomc;
+		lomc->_part = hipart;
+		hipart->changed(pcAll);
+	}
+}
+
+int IMuseGM::part_update_active(Part *part, uint16 *active)
+{
+	int i, j;
+	uint16 *act, mask, bits;
+	int count = 0;
+
+	bits = 1 << part->_chan;
+
+	act = part->_mc->gm()->_actives;
+
+	for (i = 8; i; i--) {
+		mask = *act++;
+		if (mask) {
+			for (j = 16; j; j--, mask >>= 1, active++) {
+				if (mask & 1 && !(*active & bits)) {
+					*active |= bits;
+					count++;
+				}
+			}
+		} else {
+			active += 16;
+		}
+	}
+	return count;
+}
+
+void IMuseGM::part_changed(Part *part, byte what)
+{
+	MidiChannelGM *mc;
+
+	/* Mark for re-schedule if program changed when in pre-state */
+	if (what & pcProgram && part->_percussion) {
+		part->_percussion = false;
+		update_pris();
+	}
+
+	if (!(mc = part->_mc->gm()))
+		return;
+
+	if (what & pcMod)
+		midiPitchBend(mc->_chan,
+									clamp(part->_pitchbend + part->_detune_eff +
+												(part->_transpose_eff << 7), -2048, 2047));
+
+	if (what & pcVolume)
+		midiVolume(mc->_chan, part->_vol_eff);
+
+	if (what & pcPedal)
+		midiPedal(mc->_chan, part->_pedal);
+
+	if (what & pcModwheel)
+		midiModWheel(mc->_chan, part->_modwheel);
+
+	if (what & pcPan)
+		midiPan(mc->_chan, part->_pan_eff);
+
+	if (what & pcEffectLevel)
+		midiEffectLevel(mc->_chan, part->_effect_level);
+
+	if (what & pcProgram) {
+		if (part->_bank) {
+			midiControl0(mc->_chan, part->_bank);
+			midiProgram(mc->_chan, part->_program);
+			midiControl0(mc->_chan, 0);
+		} else {
+			midiProgram(mc->_chan, part->_program);
+		}
+	}
+
+	if (what & pcChorus)
+		midiChorus(mc->_chan, part->_effect_level);
+}
+
+
+void IMuseGM::part_off(Part *part)
+{
+	MidiChannelGM *mc = part->_mc->gm();
+	if (mc) {
+		part->_mc = NULL;
+		mc->_part = NULL;
+		memset(mc->_actives, 0, sizeof(mc->_actives));
+		midiSilence(mc->_chan);
+	}
+}
+

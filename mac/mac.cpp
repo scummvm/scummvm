@@ -31,7 +31,6 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "gui.h"
-#include "sound.h"
 #include "cdmusic.h"
 #include "mp3_cd.h"
 #include "gameDetector.h"
@@ -138,7 +137,7 @@ int sel;
 Scumm *scumm;
 ScummDebugger debugger;
 Gui gui;
-SoundEngine sound;
+IMuse sound;
 SOUND_DRIVER_TYPE snd_driv;
 OSystem _system;
 GameDetector detector;
@@ -1025,7 +1024,6 @@ void InitScummStuff()
 	scumm->_scale = detector._scale;
 	scumm->_gameDataPath = detector._gameDataPath;
 	scumm->_gameTempo = detector._gameTempo;
-	scumm->_soundEngine = detector._soundEngine;
 	scumm->_videoMode = detector._videoMode;
 	scumm->_exe_name = detector._exe_name;
 	scumm->_gameId = detector._gameId;

@@ -24,7 +24,6 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "gui.h"
-#include "sound.h"
 #include "cdmusic.h"
 #include "mp3_cd.h"
 
@@ -50,7 +49,7 @@
 Scumm scumm;
 ScummDebugger debugger;
 Gui gui;
-SoundEngine sound;
+IMuse sound;
 SOUND_DRIVER_TYPE snd_driv;
 static unsigned char *local_fb;
 

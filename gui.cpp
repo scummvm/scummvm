@@ -21,8 +21,10 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "mididrv.h"
 #include "gui.h"
 #include "guimaps.h"
+#include "imuse.h"
 
 #ifdef _WIN32_WCE
 // Additional variables for Win32 specific GUI
@@ -484,12 +486,13 @@ void Gui::handleSoundDialogCommand(int cmd)
 {
 	if (cmd == 40 || cmd == 50) {
 		if (cmd == 40) {
-			SoundEngine *se = (SoundEngine *)_s->_soundEngine;
 			_s->_sound_volume_master = _gui_variables[0];	// Master
 			_s->_sound_volume_music = _gui_variables[1];	// Music
 			_s->_sound_volume_sfx = _gui_variables[2];	// SFX
-			se->set_music_volume(_s->_sound_volume_music);
-			se->set_master_volume(_s->_sound_volume_master);
+			
+			IMuse *imuse = _s->_imuse;
+			imuse->set_music_volume(_s->_sound_volume_music);
+			imuse->set_master_volume(_s->_sound_volume_master);
 			registry_save();
 		}
 

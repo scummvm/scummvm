@@ -22,6 +22,8 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "mididrv.h"
+#include "imuse.h"
 #include "cdmusic.h"
 
 #ifdef _WIN32_WCE
@@ -54,7 +56,7 @@ void Scumm::processSoundQues()
 	int i, j;
 	int num;
 	int16 data[16];
-	SoundEngine *se;
+	IMuse *se;
 
 	processSfxQueues();
 
@@ -77,7 +79,7 @@ void Scumm::processSoundQues()
 				data[j] = _soundQue[i + j];
 			i += num;
 
-			se = (SoundEngine *)_soundEngine;
+			se = _imuse;
 #if 0
 			debug(1, "processSoundQues(%d,%d,%d,%d,%d,%d,%d,%d,%d)",
 						data[0] >> 8,
@@ -100,7 +102,7 @@ void Scumm::processSoundQues()
 void Scumm::playSound(int sound)
 {
 	byte *ptr;
-	SoundEngine *se = (SoundEngine *)_soundEngine;
+	IMuse *se = _imuse;
 
 	ptr = getResourceAddress(rtSound, sound);
 	if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('SOUN')) {
@@ -253,7 +255,7 @@ bool Scumm::isMouthSyncOff(uint pos)
 
 int Scumm::isSoundRunning(int sound)
 {
-	SoundEngine *se;
+	IMuse *se;
 	int i;
 
 	if (sound == current_cd_sound)
@@ -271,7 +273,7 @@ int Scumm::isSoundRunning(int sound)
 	if (!isResourceLoaded(rtSound, sound))
 		return 0;
 
-	se = (SoundEngine *)_soundEngine;
+	se = _imuse;
 	if (!se)
 		return 0;
 	return se->get_sound_status(sound);
@@ -300,7 +302,7 @@ bool Scumm::isSoundInQueue(int sound)
 
 void Scumm::stopSound(int a)
 {
-	SoundEngine *se;
+	IMuse *se;
 	int i;
 
 	if (a == current_cd_sound) {
@@ -308,7 +310,7 @@ void Scumm::stopSound(int a)
 		cd_stop();
 	}
 
-	se = (SoundEngine *)_soundEngine;
+	se = _imuse;
 	if (se)
 		se->stop_sound(a);
 
@@ -319,7 +321,7 @@ void Scumm::stopSound(int a)
 
 void Scumm::stopAllSounds()
 {
-	SoundEngine *se = (SoundEngine *)_soundEngine;
+	IMuse *se = _imuse;
 
 	if (current_cd_sound != 0) {
 		current_cd_sound = 0;
@@ -376,7 +378,7 @@ void Scumm::talkSound(uint32 a, uint32 b, int mode)
 
 void Scumm::setupSound()
 {
-	SoundEngine *se = (SoundEngine *)_soundEngine;
+	IMuse *se = _imuse;
 	if (se) {
 		se->setBase(res.address[rtSound]);
 		if (se->get_music_volume() == 0)
@@ -392,7 +394,7 @@ void Scumm::setupSound()
 
 void Scumm::pauseSounds(bool pause)
 {
-	SoundEngine *se = (SoundEngine *)_soundEngine;
+	IMuse *se = _imuse;
 	if (se)
 		se->pause(pause);
 	_soundsPaused = pause;
@@ -562,84 +564,16 @@ void *Scumm::openSfxFile()
 	return file;
 }
 
-MixerChannel *Scumm::allocateMixer()
-{
-	int i;
-	MixerChannel *mc = _mixer_channel;
-	for (i = 0; i < NUM_MIXER; i++, mc++) {
-		if (!mc->_sfx_sound)
-			return mc;
-	}
-	return NULL;
-}
-
 void Scumm::stopSfxSound()
 {
-	MixerChannel *mc = _mixer_channel;
-	int i;
-	for (i = 0; i < NUM_MIXER; i++, mc++) {
-		if (mc->_sfx_sound)
-			mc->clear();
-	}
+	_mixer->stop_all();
 }
 
 
 bool Scumm::isSfxFinished()
 {
-	int i;
-	for (i = 0; i < NUM_MIXER; i++)
-		if (_mixer_channel[i]._sfx_sound)
-			return false;
-	return true;
+	return !_mixer->has_active_channel();
 }
-
-#ifdef COMPRESSED_SOUND_FILE
-void Scumm::playSfxSound_MP3(void *sound, uint32 size)
-{
-	MixerChannel *mc = allocateMixer();
-
-	if (!mc) {
-		warning("No mixer channel available");
-		return;
-	}
-
-	mc->type = MIXER_MP3;
-	mc->_sfx_sound = sound;
-
-	mad_stream_init(&mc->sound_data.mp3.stream);
-
-
-
-#ifdef _WIN32_WCE
-
-	// 11 kHz on WinCE
-
-	mad_stream_options((mad_stream *) & mc->sound_data.mp3.stream,
-										 MAD_OPTION_HALFSAMPLERATE);
-
-#endif
-
-
-	mad_frame_init(&mc->sound_data.mp3.frame);
-	mad_synth_init(&mc->sound_data.mp3.synth);
-	mc->sound_data.mp3.position = 0;
-	mc->sound_data.mp3.pos_in_frame = 0xFFFFFFFF;
-	mc->sound_data.mp3.size = size;
-	/* This variable is the number of samples to cut at the start of the MP3
-	   file. This is needed to have lip-sync as the MP3 file have some miliseconds
-	   of blank at the start (as, I suppose, the MP3 compression algorithm need to
-	   have some silence at the start to really be efficient and to not distort
-	   too much the start of the sample).
-
-	   This value was found by experimenting out. If you recompress differently your
-	   .SO3 file, you may have to change this value.
-
-	   When using Lame, it seems that the sound starts to have some volume about 50 ms
-	   from the start of the sound => we skip about 1024 samples.
-	 */
-	mc->sound_data.mp3.silence_cut = 1024;
-}
-#endif
 
 void Scumm::playBundleSound(char *sound)
 {
@@ -648,304 +582,8 @@ void Scumm::playBundleSound(char *sound)
 
 void Scumm::playSfxSound(void *sound, uint32 size, uint rate)
 {
-	MixerChannel *mc = allocateMixer();
-
-	if (!mc) {
-		warning("No mixer channel available");
-		return;
-	}
-
-	mc->type = MIXER_STANDARD;
-	mc->_sfx_sound = sound;
-	mc->sound_data.standard._sfx_pos = 0;
-	mc->sound_data.standard._sfx_fp_pos = 0;
-
-#ifdef _WIN32_WCE
-	mc->sound_data.standard._sfx_fp_speed = (1 << 16) * rate / 11025;
-#else
-	mc->sound_data.standard._sfx_fp_speed = (1 << 16) * rate / 22050;
-#endif
-	while (size & 0xFFFF0000)
-		size >>= 1, rate >>= 1;
-
-
-#ifdef _WIN32_WCE
-	mc->sound_data.standard._sfx_size = size * 11025 / rate;
-#else
-	mc->sound_data.standard._sfx_size = size * 22050 / rate;
-#endif
+	_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE);
 }
 
-#ifdef COMPRESSED_SOUND_FILE
-static inline int scale_sample(mad_fixed_t sample)
-{
-	/* round */
-	sample += (1L << (MAD_F_FRACBITS - 16));
 
-	/* clip */
-	if (sample >= MAD_F_ONE)
-		sample = MAD_F_ONE - 1;
-	else if (sample < -MAD_F_ONE)
-		sample = -MAD_F_ONE;
 
-	/* quantize and scale to not saturate when mixing a lot of channels */
-	return sample >> (MAD_F_FRACBITS + 2 - 16);
-}
-#endif
-
-void MixerChannel::mix(int16 * data, uint32 len)
-{
-	if (!_sfx_sound)
-		return;
-
-#ifdef COMPRESSED_SOUND_FILE
-	if (type == MIXER_STANDARD) {
-#endif
-		int8 *s;
-		uint32 fp_pos, fp_speed;
-
-		if (len > sound_data.standard._sfx_size)
-			len = sound_data.standard._sfx_size;
-		sound_data.standard._sfx_size -= len;
-
-		s = (int8 *) _sfx_sound + sound_data.standard._sfx_pos;
-		fp_pos = sound_data.standard._sfx_fp_pos;
-		fp_speed = sound_data.standard._sfx_fp_speed;
-
-		do {
-			fp_pos += fp_speed;
-			*data++ += (*s << 6);
-			s += fp_pos >> 16;
-			fp_pos &= 0x0000FFFF;
-		} while (--len);
-
-		sound_data.standard._sfx_pos = s - (int8 *) _sfx_sound;
-		sound_data.standard._sfx_fp_speed = fp_speed;
-		sound_data.standard._sfx_fp_pos = fp_pos;
-
-		if (!sound_data.standard._sfx_size)
-			clear();
-#ifdef COMPRESSED_SOUND_FILE
-	} else {
-		if (type == MIXER_MP3) {
-			mad_fixed_t const *ch;
-			while (1) {
-				ch =
-					sound_data.mp3.synth.pcm.samples[0] + sound_data.mp3.pos_in_frame;
-				while ((sound_data.mp3.pos_in_frame < sound_data.mp3.synth.pcm.length)
-							 && (len > 0)) {
-					if (sound_data.mp3.silence_cut > 0) {
-						sound_data.mp3.silence_cut--;
-					} else {
-						*data++ += scale_sample(*ch++);
-						len--;
-					}
-					sound_data.mp3.pos_in_frame++;
-				}
-				if (len == 0)
-					return;
-
-				if (sound_data.mp3.position >= sound_data.mp3.size) {
-					clear();
-					return;
-				}
-
-				mad_stream_buffer(&sound_data.mp3.stream,
-													((unsigned char *)_sfx_sound) +
-													sound_data.mp3.position,
-													sound_data.mp3.size + MAD_BUFFER_GUARD -
-													sound_data.mp3.position);
-
-				if (mad_frame_decode(&sound_data.mp3.frame, &sound_data.mp3.stream) ==
-						-1) {
-					/* End of audio... */
-					if (sound_data.mp3.stream.error == MAD_ERROR_BUFLEN) {
-						clear();
-						return;
-					} else if (!MAD_RECOVERABLE(sound_data.mp3.stream.error)) {
-						error("MAD frame decode error !");
-					}
-				}
-				mad_synth_frame(&sound_data.mp3.synth, &sound_data.mp3.frame);
-				sound_data.mp3.pos_in_frame = 0;
-				sound_data.mp3.position =
-					(unsigned char *)sound_data.mp3.stream.next_frame -
-					(unsigned char *)_sfx_sound;
-			}
-		} else if (type == MIXER_MP3_CDMUSIC) {
-			mad_fixed_t const *ch;
-			mad_timer_t frame_duration;
-			static long last_pos = 0;
-
-			if (!sound_data.mp3_cdmusic.playing)
-				return;
-
-			while (1) {
-
-				// See if we just skipped
-				if (ftell(sound_data.mp3_cdmusic.file) != last_pos) {
-					int skip_loop;
-
-					// Read the new data
-					memset(_sfx_sound, 0,
-								 sound_data.mp3_cdmusic.buffer_size + MAD_BUFFER_GUARD);
-					sound_data.mp3_cdmusic.size =
-						fread(_sfx_sound, 1, sound_data.mp3_cdmusic.buffer_size,
-									sound_data.mp3_cdmusic.file);
-					if (!sound_data.mp3_cdmusic.size) {
-						sound_data.mp3_cdmusic.playing = false;
-						return;
-					}
-					last_pos = ftell(sound_data.mp3_cdmusic.file);
-					// Resync
-					mad_stream_buffer(&sound_data.mp3_cdmusic.stream,
-														(unsigned char *)_sfx_sound,
-														sound_data.mp3_cdmusic.size);
-					skip_loop = 2;
-					while (skip_loop != 0) {
-						if (mad_frame_decode(&sound_data.mp3_cdmusic.frame,
-																 &sound_data.mp3_cdmusic.stream) == 0) {
-							/* Do not decrease duration - see if it's a problem */
-							skip_loop--;
-							if (skip_loop == 0) {
-								mad_synth_frame(&sound_data.mp3_cdmusic.synth,
-																&sound_data.mp3_cdmusic.frame);
-							}
-						} else {
-							if (!MAD_RECOVERABLE(sound_data.mp3_cdmusic.stream.error)) {
-								debug(1, "Unrecoverable error while skipping !");
-								sound_data.mp3_cdmusic.playing = false;
-								return;
-							}
-						}
-					}
-					// We are supposed to be in synch
-					mad_frame_mute(&sound_data.mp3_cdmusic.frame);
-					mad_synth_mute(&sound_data.mp3_cdmusic.synth);
-					// Resume decoding
-					if (mad_frame_decode(&sound_data.mp3_cdmusic.frame,
-															 &sound_data.mp3_cdmusic.stream) == 0) {
-						sound_data.mp3_cdmusic.position =
-							(unsigned char *)sound_data.mp3_cdmusic.stream.next_frame -
-							(unsigned char *)_sfx_sound;
-						sound_data.mp3_cdmusic.pos_in_frame = 0;
-					} else {
-						sound_data.mp3_cdmusic.playing = false;
-						return;
-					}
-				}
-				// Get samples, play samples ... 
-
-				ch = sound_data.mp3_cdmusic.synth.pcm.samples[0] +
-					sound_data.mp3_cdmusic.pos_in_frame;
-				while ((sound_data.mp3_cdmusic.pos_in_frame <
-								sound_data.mp3_cdmusic.synth.pcm.length) && (len > 0)) {
-					*data++ += scale_sample(*ch++);
-					len--;
-					sound_data.mp3_cdmusic.pos_in_frame++;
-				}
-				if (len == 0) {
-					return;
-				}
-				// See if we have finished
-				// May be incorrect to check the size at the end of a frame but I suppose
-				// they are short enough :)   
-
-				frame_duration = sound_data.mp3_cdmusic.frame.header.duration;
-
-				mad_timer_negate(&frame_duration);
-				mad_timer_add(&sound_data.mp3_cdmusic.duration, frame_duration);
-				if (mad_timer_compare(sound_data.mp3_cdmusic.duration, mad_timer_zero)
-						< 0) {
-					sound_data.mp3_cdmusic.playing = false;
-				}
-
-				if (mad_frame_decode(&sound_data.mp3_cdmusic.frame,
-														 &sound_data.mp3_cdmusic.stream) == -1) {
-
-					if (sound_data.mp3_cdmusic.stream.error == MAD_ERROR_BUFLEN) {
-						int not_decoded;
-
-						if (!sound_data.mp3_cdmusic.stream.next_frame) {
-							memset(_sfx_sound, 0,
-										 sound_data.mp3_cdmusic.buffer_size + MAD_BUFFER_GUARD);
-							sound_data.mp3_cdmusic.size =
-								fread(_sfx_sound, 1, sound_data.mp3_cdmusic.buffer_size,
-											sound_data.mp3_cdmusic.file);
-							sound_data.mp3_cdmusic.position = 0;
-							not_decoded = 0;
-						} else {
-							not_decoded = sound_data.mp3_cdmusic.stream.bufend -
-								sound_data.mp3_cdmusic.stream.next_frame;
-							memcpy(_sfx_sound, sound_data.mp3_cdmusic.stream.next_frame,
-										 not_decoded);
-
-							sound_data.mp3_cdmusic.size =
-								fread((unsigned char *)_sfx_sound + not_decoded, 1,
-											sound_data.mp3_cdmusic.buffer_size - not_decoded,
-											sound_data.mp3_cdmusic.file);
-						}
-						last_pos = ftell(sound_data.mp3_cdmusic.file);
-						sound_data.mp3_cdmusic.stream.error = MAD_ERROR_NONE;
-						// Restream
-						mad_stream_buffer(&sound_data.mp3_cdmusic.stream,
-															(unsigned char *)_sfx_sound,
-															sound_data.mp3_cdmusic.size + not_decoded);
-						if (mad_frame_decode
-								(&sound_data.mp3_cdmusic.frame,
-								 &sound_data.mp3_cdmusic.stream) == -1) {
-							debug(1, "Error decoding after restream %d !",
-										sound_data.mp3.stream.error);
-						}
-					} else if (!MAD_RECOVERABLE(sound_data.mp3.stream.error)) {
-						error("MAD frame decode error in MP3 CDMUSIC !");
-					}
-				}
-
-				mad_synth_frame(&sound_data.mp3_cdmusic.synth,
-												&sound_data.mp3_cdmusic.frame);
-				sound_data.mp3_cdmusic.pos_in_frame = 0;
-				sound_data.mp3_cdmusic.position =
-					(unsigned char *)sound_data.mp3_cdmusic.stream.next_frame -
-					(unsigned char *)_sfx_sound;
-			}
-		}
-	}
-#endif
-}
-
-void MixerChannel::clear()
-{
-	free(_sfx_sound);
-	_sfx_sound = NULL;
-
-#ifdef COMPRESSED_SOUND_FILE
-	if (type == MIXER_MP3) {
-		mad_synth_finish(&sound_data.mp3.synth);
-		mad_frame_finish(&sound_data.mp3.frame);
-		mad_stream_finish(&sound_data.mp3.stream);
-	}
-#endif
-}
-
-void Scumm::mixWaves(int16 * sounds, int len)
-{
-	int i;
-
-	memset(sounds, 0, len * sizeof(int16));
-
-	if (_soundsPaused)
-		return;
-
-	SoundEngine *se = (SoundEngine *)_soundEngine;
-	if (se) {
-		se->driver()->generate_samples(sounds, len);
-	}
-
-	for (i = NUM_MIXER - 1; i >= 0; i--) {
-		_mixer_channel[i].mix(sounds, len);
-	}
-
-	if (_soundsPaused2)
-		memset(sounds, 0x0, len * sizeof(int16));
-}

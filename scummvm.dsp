@@ -121,19 +121,7 @@ LINK32=link.exe
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\sound\adlib.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\sound\fmopl.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\sound\gmidi.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\sound\gmidi.h
 # End Source File
 # Begin Source File
 
@@ -141,7 +129,23 @@ SOURCE=.\sound\imuse.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\sound\imuse.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\sound\mididrv.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sound\mididrv.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sound\mixer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sound\mixer.h
 # End Source File
 # End Group
 # Begin Group "v3"
@@ -509,10 +513,6 @@ SOURCE=.\scummsys.h
 # Begin Source File
 
 SOURCE=.\smush.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\sound.h
 # End Source File
 # Begin Source File
 

@@ -3,7 +3,7 @@
 class OSystem {
 public:
 	typedef int ThreadProc(void *param);
-	typedef void SoundProc(void *param, int16 *buf, int len);
+	typedef void SoundProc(void *param, byte *buf, int len);
 
 	struct Event {
 		int event_code;
@@ -34,17 +34,17 @@ public:
 	};
 
 	enum {
-		PARAM_TOGGLE_FULLSCREEN = 1,
-		PARAM_WINDOW_CAPTION = 2,
-		PARAM_OPEN_CD = 3,
-		PARAM_HOTSWAP_GFX_MODE = 4,
-		PARAM_SHOW_DEFAULT_CURSOR = 5,
+		PROP_TOGGLE_FULLSCREEN = 1,
+		PROP_SET_WINDOW_CAPTION = 2,
+		PROP_OPEN_CD = 3,
+		PROP_SET_GFX_MODE = 4,
+		PROP_SHOW_DEFAULT_CURSOR = 5,
+		PROP_GET_SAMPLE_RATE = 6,
 	};
 
 	enum {
-		SOUND_NONE = 0,
-		SOUND_8BIT = 1,
-		SOUND_16BIT = 2,
+		SOUND_8BIT = 0,
+		SOUND_16BIT = 1,
 	};
 	
 	// Set colors of the palette
@@ -52,7 +52,7 @@ public:
 
 	// Set the size of the video bitmap.
 	// Typically, 320x200
-	virtual void init_size(uint w, uint h, byte sound) = 0;
+	virtual void init_size(uint w, uint h) = 0;
 
 	// Draw a bitmap to screen.
 	// The screen will not be updated to reflect the new bitmap
@@ -87,9 +87,12 @@ public:
 	virtual bool poll_event(Event *event) = 0;
 
 	// Set the function to be invoked whenever samples need to be generated
-	virtual void set_sound_proc(void *param, SoundProc *proc) = 0;
+	// Format is the sample type format.
+	// Only 16-bit signed mode is needed for simon & scumm
+	virtual void set_sound_proc(void *param, SoundProc *proc, byte format) = 0;
 	
-	virtual uint32 set_param(int param, uint32 value) = 0;
+	// Get or set a property
+	virtual uint32 property(int param, uint32 value) = 0;
 		
 	// Quit
 	virtual void quit() = 0;

@@ -1,12 +1,22 @@
-/* Copyright ©2002, The ScummVM Team.
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2001/2002 The ScummVM project
  *
- * Current status:
- * Save/Load dialog doesn't work. You can still save, but only to ONE slot.
- * There is possibly one or two problems that makes it impossible to finish SIMON1WIN.
- * Sound & Music only works with SIMON1WIN.
- * SIMON1DOS works, but without sound & music.
- * Simon 2 works a little.
- * The code only compiles in win32. It's currently not alignment safe and not endian safe.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * $Header$
+ *
  */
 
 /* GFX Settings. Sound & Music only works properly with SIMON1WIN */
@@ -504,10 +514,10 @@ public:
 
 	uint _invoke_timer_callback;
 
-	uint32 _voice_size;
+//	uint32 _voice_size;
 	
-	uint32 _sound_size;
-	byte *_sound_ptr;
+//	uint32 _sound_size;
+//	byte *_sound_ptr;
 
 	uint _vga_sprite_changed;
 	
@@ -542,6 +552,8 @@ public:
 	byte _fcs_data_1[8];
 	bool _fcs_data_2[8];
 
+	SoundMixer _mixer[1];
+
 	ThreeValues _threevalues_1, _threevalues_2, _threevalues_3, _threevalues_4;
 
 	int _free_string_slot;
@@ -573,6 +585,9 @@ public:
 
 	int _num_screen_updates;
 	int _vga_tick_counter;
+
+	PlayingSoundHandle _playing_sound;
+	PlayingSoundHandle _voice_sound;
 
 	int _timer_id;
 
@@ -994,7 +1009,8 @@ public:
 	void playVoice(uint voice);
 	void playSound(uint sound);
 
-	void generateSound(byte *ptr, int len);
+
+//	void generateSound(byte *ptr, int len);
 
 	void playMusic(uint music);
 

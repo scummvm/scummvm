@@ -23,7 +23,6 @@
 #include "stdafx.h"
 #include "scumm.h"
 #include "gui.h"
-#include "sound.h"
 #include "dc.h"
 #include "icon.h"
 
@@ -33,7 +32,7 @@ ScummDebugger debugger;
 Gui gui;
 Icon icon;
 
-SoundEngine sound;
+IMuse sound;
 SOUND_DRIVER_TYPE snd_driv;
 
 /* CD Audio stubs */
