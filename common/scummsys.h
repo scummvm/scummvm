@@ -88,11 +88,11 @@ const bool true(1), false(0);
   typedef unsigned char byte;
   typedef unsigned char uint8;
   typedef unsigned short uint16;
-  typedef unsigned int uint32;
+  typedef unsigned long uint32;
   typedef unsigned int uint;
   typedef signed char int8;
   typedef signed short int16;
-  typedef signed int int32;
+  typedef signed long int32;
   
   #define START_PACK_STRUCTS pack (push,1)
   #define END_PACK_STRUCTS   pack(pop)
@@ -241,10 +241,34 @@ const bool true(1), false(0);
   #define START_PACK_STRUCTS pack (push,1)
   #define END_PACK_STRUCTS   pack(pop)
   
+#elif defined __GP32__ //ph0x
+	#define CDECL	
+	#define SCUMM_NEED_ALIGNMENT
+	#define SCUMM_LITTLE_ENDIAN	
+	#define NONSTANDARD_SAVE	
+
+  #define scumm_stricmp stricmp
+  #define CHECK_HEAP
+  
+  #define FORCEINLINE inline
+  #define NORETURN __attribute__((__noreturn__))
+  #define GCC_PACK __attribute__((packed))
+  #define _HEAPOK 0
+  
+  typedef unsigned char byte;
+  typedef unsigned char uint8;
+  typedef unsigned short uint16;
+  typedef unsigned long uint32;
+  typedef unsigned int uint;
+  typedef signed char int8;
+  typedef signed short int16;
+  typedef signed long int32;
+  
+  #define START_PACK_STRUCTS pack (push,1)
+  #define END_PACK_STRUCTS   pack(pop)
 #else
   #error No system type defined
 #endif
-
 
 #define SWAP_BYTES(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
 

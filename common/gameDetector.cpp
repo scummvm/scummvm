@@ -120,6 +120,8 @@ GameDetector::GameDetector()
 	_gfx_driver = GD_WINCE;
 #elif defined(MACOS_CARBON)
 	_gfx_driver = GD_MAC;
+#elif defined(__GP32__)	// ph0x
+	_gfx_driver = GD_GP32;
 #else
 	/* SDL is the default driver for now */
 	_gfx_driver = GD_SDL;
@@ -621,6 +623,9 @@ OSystem *GameDetector::createSystem() {
 #elif defined(USE_NULL_DRIVER)
 	case GD_NULL:
 		return OSystem_NULL_create();
+#elif defined(__GP32__) //ph0x
+	case GD_GP32:
+		return OSystem_GP32_create(GFX_NORMAL, true);
 #else
 	case GD_SDL:
 		return OSystem_SDL_create(_gfx_mode, _fullScreen);

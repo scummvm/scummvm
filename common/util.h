@@ -45,6 +45,13 @@ static inline void SWAP(int &a, int &b) { int tmp=a; a=b; b=tmp; }
 #define GREEN_FROM_16(x)	((((x)>>5)&0x1F) << 3)
 #define BLUE_FROM_16(x)		(((x)&0x1F) << 3)
 
+#elif defined(__GP32__) //ph0x
+// GP32 format 5-5-5-1 (first bit means intensity)
+#define RGB_TO_16(r,g,b)	(((((r)>>3)&0x1F) << 11) | ((((g)>>3)&0x1F) << 6) | (((b)>>3)&0x1F)<<1)
+#define RED_FROM_16(x)		((((x)>>11)&0x1F) << 3)
+#define GREEN_FROM_16(x)	((((x)>>6) &0x1F) << 3)
+#define BLUE_FROM_16(x)		((((x)>>1) &0x1F) << 3)
+
 #else
 // Assume the 16 bit graphics data is in 5-6-5 format
 #define RGB_TO_16(r,g,b)	(((((r)>>3)&0x1F) << 11) | ((((g)>>2)&0x3F) << 5) | (((b)>>3)&0x1F))

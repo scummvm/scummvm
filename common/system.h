@@ -183,6 +183,7 @@ extern OSystem *OSystem_Dreamcast_create();
 extern OSystem *OSystem_WINCE3_create();
 extern OSystem *OSystem_X11_create();
 extern OSystem *OSystem_MAC_create(int gfx_mode, bool full_screen);
+extern OSystem *OSystem_GP32_create(int gfx_mode, bool full_screen); //ph0x 
 
 enum {
 	GFX_NORMAL = 0,
@@ -203,7 +204,8 @@ enum {
 	GD_MORPHOS,
 	GD_WINCE,
 	GD_MAC,
-	GD_DC
+	GD_DC,
+	GD_GP32 //ph0x
 };
 
 enum {

@@ -102,7 +102,11 @@ void CDECL warning(const char *s, ...)
 	vsprintf(buf, s, va);
 	va_end(va);
 
+#ifdef __GP32__ //ph0x FIXME: implement fprint?
+	printf("WARNING: %s\n", buf);
+#else
 	fprintf(stderr, "WARNING: %s!\n", buf);
+#endif
 #if defined( USE_WINDBG )
 	strcat(buf, "\n");
 	OutputDebugString(buf);

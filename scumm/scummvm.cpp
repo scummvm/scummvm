@@ -22,22 +22,21 @@
 
 #include "stdafx.h"
 #include "scumm.h"
-#include "actor.h"
-#include "bundle.h"
-#include "debug.h"
-#include "dialogs.h"
-#include "imuse.h"
-#include "object.h"
-#include "resource.h"
-#include "sound.h"
-#include "string.h"
-#include "verbs.h"
-#include "common/gameDetector.h"
-#include "common/config-file.h"
-#include "gui/newgui.h"
-#include "gui/message.h"
 #include "sound/mixer.h"
 #include "sound/mididrv.h"
+#include "scumm/sound.h"
+#include "scumm/imuse.h"
+#include "scumm/bundle.h"
+#include "actor.h"
+#include "debug.h"
+#include "dialogs.h"
+#include "gameDetector.h"
+#include "gui/newgui.h"
+#include "gui/message.h"
+#include "object.h"
+#include "resource.h"
+#include "string.h"
+#include "common/config-file.h"
 
 #ifdef _WIN32_WCE
 extern void drawError(char*);
@@ -150,7 +149,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
  		if (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0))
         		_system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
  	}
-
+#ifndef __GP32__ //ph0x FIXME, "quick dirty hack"
 	/* Bind the mixer to the system => mixer will be invoked
 	 * automatically when samples need to be generated */	
 	_silentDigitalImuse = false;
@@ -188,7 +187,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 			_imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);
 		_imuse->set_music_volume(_sound->_sound_volume_music);
 	}
-
+#endif // ph0x-hack
 
 	// Load game from specified slot, if any
 	if (detector->_save_slot != -1) {
@@ -1362,6 +1361,10 @@ void NORETURN CDECL error(const char *s, ...)
 	vsprintf(buf, s, va);
 	va_end(va);
 
+#ifdef __GP32__ //ph0x FIXME?
+	printf("ERROR: %s\n", buf);
+#endif
+
 	if (g_scumm && g_scumm->_currentScript != 0xFF) {
 		ScriptSlot *ss = &g_scumm->vm.slot[g_scumm->_currentScript];
 		fprintf(stderr, "Error(%d:%d:0x%X): %s!\n",
@@ -1419,11 +1422,11 @@ void Scumm::waitForTimer(int msec_delay) {
 			switch(event.event_code) {
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= '0' && event.kbd.keycode<='9'
-					&& (event.kbd.flags == OSystem::KBD_ALT ||
+					&& (event.kbd.flags == OSystem::KBD_SHIFT ||
 						event.kbd.flags == OSystem::KBD_CTRL)) {
 					_saveLoadSlot = event.kbd.keycode - '0';
 					sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
-					_saveLoadFlag = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
+					_saveLoadFlag = (event.kbd.flags == OSystem::KBD_SHIFT) ? 1 : 2;
 					_saveLoadCompatible = false;
 				} else if (event.kbd.flags==OSystem::KBD_CTRL) {
 					if (event.kbd.keycode=='f')
