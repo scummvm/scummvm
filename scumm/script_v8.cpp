@@ -201,7 +201,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_stopScript),
 		OPCODE(o6_jumpToScript),		// FIXME - is this right? "O_CHAIN_SCRIPT"
 		OPCODE(o6_dummy),				// FIXME - O_RETURN ? WTF is this, why don't they use the stack?
-		OPCODE(o6_startObject),
+		OPCODE(o6_startObjectEx),
 		/* 80 */
 		OPCODE(o6_stopObjectScript),	// FIXME - is this right?
 		OPCODE(o6_cutscene),
@@ -294,7 +294,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_invalid),
 		/* C8 */
 		OPCODE(o6_startScript),	// FIXME - this function returns something in V8 !
-		OPCODE(o6_startObject),
+		OPCODE(o6_startObjectEx),
 		OPCODE(o6_pickOneOf),
 		OPCODE(o6_pickOneOfDefault),
 		/* CC */

@@ -257,7 +257,7 @@ protected:
 	void o6_jump();
 	void o6_startScriptEx();
 	void o6_startScript();
-	void o6_startObject();
+	void o6_startObjectEx();
 	void o6_setObjectState();
 	void o6_setObjectXY();
 	void o6_stopObjectCode();

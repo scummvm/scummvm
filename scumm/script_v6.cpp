@@ -163,7 +163,7 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_startScriptEx),
 		OPCODE(o6_startScript),
 		/* 60 */
-		OPCODE(o6_startObject),
+		OPCODE(o6_startObjectEx),
 		OPCODE(o6_setObjectState),
 		OPCODE(o6_setObjectXY),
 		OPCODE(o6_drawBlastObject),
@@ -737,7 +737,7 @@ void Scumm_v6::o6_jumpToScript()
 	getStackList(args, sizeof(args) / sizeof(args[0]));
 	script = pop();
 	flags = pop();
-	o6_stopObjectCode();
+	stopObjectCode();
 	runScript(script, flags & 1, flags & 2, args);
 }
 
@@ -750,7 +750,16 @@ void Scumm_v6::o6_startScript()
 	runScript(script, 0, 0, args);
 }
 
-void Scumm_v6::o6_startObject()
+void Scumm_v6::o6_startScriptQuick()
+{
+	int args[16];
+	int script;
+	getStackList(args, sizeof(args) / sizeof(args[0]));
+	script = pop();
+	runScript(script, 0, 1, args);
+}
+
+void Scumm_v6::o6_startObjectEx()
 {
 	int args[16];
 	int script, entryp;
@@ -760,6 +769,16 @@ void Scumm_v6::o6_startObject()
 	script = pop();
 	flags = pop();
 	runVerbCode(script, entryp, flags & 1, flags & 2, args);
+}
+
+void Scumm_v6::o6_startObjectQuick()
+{
+	int args[16];
+	int script, entryp;
+	getStackList(args, sizeof(args) / sizeof(args[0]));
+	entryp = pop();
+	script = pop();
+	runVerbCode(script, entryp, 0, 1, args);
 }
 
 void Scumm_v6::o6_setObjectState()
@@ -2326,25 +2345,6 @@ void Scumm_v6::o6_dim()
 void Scumm_v6::o6_dummy()
 {
 	/* nothing */
-}
-
-void Scumm_v6::o6_startObjectQuick()
-{
-	int args[16];
-	int script, entryp;
-	getStackList(args, sizeof(args) / sizeof(args[0]));
-	entryp = pop();
-	script = pop();
-	runVerbCode(script, entryp, 0, 1, args);
-}
-
-void Scumm_v6::o6_startScriptQuick()
-{
-	int args[16];
-	int script;
-	getStackList(args, sizeof(args) / sizeof(args[0]));
-	script = pop();
-	runScript(script, 0, 1, args);
 }
 
 void Scumm_v6::o6_dim2()
