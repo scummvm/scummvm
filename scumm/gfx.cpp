@@ -231,6 +231,16 @@ void Gdi::init() {
 	_textSurface.bytesPerPixel = 1;
 
 	_numStrips = _vm->_screenWidth / 8;
+#ifdef V7_SMOOTH_SCROLLING_HACK
+	if (_vm->_version >= 7)
+		_numStrips += 1;
+	// TODO: Just increasing _numStrips isn't sufficient, and will cause
+	// problems in some cases. For example in In rooms which are *exactly* of
+	// width equal to _screenWidth, we now may cause an out-of-bounds access.
+	// One possible soution might be to replace _numStrips by a method
+	// Gdi::getNumStrips() which then returns the proper value, computed
+	// dynamically.
+#endif
 }
 
 
@@ -256,6 +266,10 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int
 	vs->backBuf = NULL;
 	vs->bytesPerPixel = 1;
 	vs->pitch = width;
+#ifdef V7_SMOOTH_SCROLLING_HACK
+	if (_version >= 7)
+		vs->pitch += 8;
+#endif
 
 	size = vs->pitch * vs->h;
 	if (scrollable) {
@@ -438,7 +452,7 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 		return;
 
 	assert(top >= 0 && bottom <= vs->h);	// Paranoia checks
-	assert(x >= 0 && width <= vs->w);
+	assert(x >= 0 && width <= vs->pitch);
 	assert(_textSurface.pixels);
 	assert(_compositeBuf);
 
@@ -577,7 +591,7 @@ void ScummEngine::redrawBGAreas() {
 		if (findResource(MKID('BMAP'), room) != NULL) {
 			if (_fullRedraw) {
 				_bgNeedsRedraw = false;
-				gdi.drawBMAPBg(room, &virtscr[0], _screenStartStrip, _screenWidth);
+				gdi.drawBMAPBg(room, &virtscr[0], _screenStartStrip, virtscr[0].w);
 			}
 			cont = false;
 		} else if (findResource(MKID('SMAP'), room) == NULL) {

@@ -34,7 +34,7 @@ byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, const Actor *a, bool
 	else
 		_outptr = vs.getPixels(0, 0);
 
-	_outwidth = vs.w;
+	_outwidth = vs.pitch;
 	_outheight = vs.h;
 	_numStrips = _outwidth / 8;
 
