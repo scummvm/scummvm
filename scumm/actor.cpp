@@ -754,8 +754,10 @@ void Actor::showActor() {
 
 	if (costumeNeedsInit) {
 		startAnimActor(initFrame);
-		if (_vm->_features & GF_AFTER_V2)
+		if (_vm->_features & GF_AFTER_V2) {
 			startAnimActor(standFrame);
+			startAnimActor(talkFrame2);
+		}
 		costumeNeedsInit = false;
 	}
 	moving = 0;
