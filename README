@@ -39,6 +39,7 @@ be playable to the end:
 
 SCUMM Games:
         Maniac Mansion (Enhanced Version)          [Game: maniac]
+        Zak McKracken (Enhanced Version)          [Game: zak]
         Indiana Jones & the Last Crusade (EGA)     [Game: indy3ega]
         Indiana Jones & the Last Crusade (256)     [Game: indy3]
         Loom (16 color floppy version)             [Game: loom]
@@ -130,6 +131,8 @@ Monkey Island 1 (VGA version)
 Monkey Island 2
 Zak McKracken (256 color FM Towns version)
 
+Beneath a Steel Sky (bypassed with permission from Revolution)
+
 In most cases ScummVM will still show the copy protection screen. Try entering
 any answer. Chances are that it will work.
 
@@ -141,6 +144,10 @@ although patches to fix them are welcome. If you discover a bug that is not
 listed here, nor in the compatibility table on the web site, please see
 the section on Reporting Bugs.
 
+       Beneath a Steel Sky:
+                - Only version 0.0368 has been tested
+                - Restarting is not supported yet
+                - Wrong SFX are played often
 
        Indiana Jones & the Last Crusade (EGA):
                 - In some rooms Indy may be able to walk to odd places
