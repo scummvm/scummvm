@@ -149,7 +149,9 @@ const VersionSettings version_settings[] = {
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_DRAWOBJ_OTHER_ORDER, 0},
 	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT, 0},
-	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 3, 0,
+	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 5, 0,
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT, 0},
+	{"snmidemo", "Sam & Max (Interactive WIP Demo)", GID_SAMNMAX, 6, 5, 0,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY  | GF_DRAWOBJ_OTHER_ORDER | GF_ADLIB_DEFAULT, 0},
 
 	{"test", "Test demo game", GID_SAMNMAX, 6, 6, 6, GF_NEW_OPCODES | GF_AFTER_V6, 0},
