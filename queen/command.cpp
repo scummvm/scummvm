@@ -1216,6 +1216,8 @@ int16 Command::setConditions(uint16 command, bool lastCmd) {
 		if (cmdGs->id == command) {
 			if (cmdGs->gameStateSlot > 0) {
 				if (_logic->gameState(cmdGs->gameStateSlot) != cmdGs->gameStateValue) {
+					debug(0, "Command::setConditions() - Failed test %X", ret);
+					debug(0, "Command::setConditions() - GS[%d] == %d (should be %d)", cmdGs->gameStateSlot, _logic->gameState(cmdGs->gameStateSlot), cmdGs->gameStateValue);
 					// failed test
 					ret = i;
 					break;
@@ -1229,7 +1231,6 @@ int16 Command::setConditions(uint16 command, bool lastCmd) {
 	}
 
 	if (ret > 0) {
-		debug(0, "Command::setConditions() - Failed test %X", ret);
 		// we've failed, so see if we need to make Joe speak
 		cmdGs = &_cmdGameState[ret];
 		if (cmdGs->speakValue > 0 && lastCmd) {

@@ -679,8 +679,10 @@ int16 Logic::gameState(int index) {
 }
 
 void Logic::gameState(int index, int16 newValue) {
-	if (index >= 0 && index < GAME_STATE_COUNT)
-		 _gameState[index] = newValue;
+	if (index >= 0 && index < GAME_STATE_COUNT) {
+		debug(0, "Logic::gameState() - GAMESTATE[%d] = %d", index, newValue);
+		_gameState[index] = newValue;
+	}
 	else
 		error("[QueenLogic::gameState] invalid index: %i", index);
 }
@@ -847,6 +849,8 @@ void Logic::roomErase() {
 
 
 void Logic::roomSetupFurniture() {
+
+	int16 gstate[9];
 	_numFurnitureStatic = 0;
 	_numFurnitureAnimated = 0;
 	_numFurnitureAnimatedLen = 0;
@@ -858,7 +862,7 @@ void Logic::roomSetupFurniture() {
 	for (i = 1; i <= _numFurniture; ++i) {
 		if (_furnitureData[i].room == _currentRoom) {
 			++furnitureTotal;
-			_gameState[furnitureTotal] = _furnitureData[i].gameStateValue;
+			gstate[furnitureTotal] = _furnitureData[i].gameStateValue;
 		}
 	}
 	if (furnitureTotal == 0) {
@@ -873,7 +877,7 @@ void Logic::roomSetupFurniture() {
 
 	// unpack the static bobs
 	for	(i = 1; i <= furnitureTotal; ++i) {
-		int16 obj = _gameState[i];
+		int16 obj = gstate[i];
 		if (obj > 0 && obj <= 5000) {
 			GraphicData *pgd = &_graphicData[obj];
 			if (pgd->lastFrame == 0) {
@@ -893,7 +897,7 @@ void Logic::roomSetupFurniture() {
 	// unpack the animated bobs
 	uint16 curBob = 0;
 	for  (i = 1; i <= furnitureTotal; ++i) {
-		int16 obj = _gameState[i];
+		int16 obj = gstate[i];
 		if (obj > 0 && obj <= 5000) {
 			GraphicData *pgd = &_graphicData[obj];
 
@@ -926,7 +930,7 @@ void Logic::roomSetupFurniture() {
 	// unpack the paste downs
 	++curImage;
 	for  (i = 1; i <= furnitureTotal; ++i) {
-		int16 obj = _gameState[i];
+		int16 obj = gstate[i];
 		if (obj > 5000) {
 			obj -= 5000;
 			GraphicData *pgd = &_graphicData[obj];
