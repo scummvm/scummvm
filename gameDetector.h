@@ -35,6 +35,7 @@ public:
 	bool _use_adlib;
 
 	byte _music_volume;
+	byte _sfx_volume;
 	bool _mt32emulate;
 
 	uint16 _debugMode;

@@ -41,6 +41,7 @@ static const char USAGE_STRING[] =
 	"\tt<num>  - set music tempo. Suggested: 1F0000\n"
 	"\tp<path> - look for game in <path>\n"
 	"\tm<num>  - set music volume to <num> (0-100)\n"
+	"\ts<num>  - set sfx volume to <num> (0-255)\n"
 	"\te<mode> - set music engine. see readme.txt for details\n"
 	"\tr       - emulate roland mt32 instruments\n"
 	"\tf       - fullscreen mode\n"
@@ -106,6 +107,12 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 						if (*(s + 1) == '\0')
 							goto ShowHelpAndExit;
 						_music_volume = atoi(s + 1);
+						goto NextArg;
+					}
+				case 's':{
+						if (*(s + 1) == '\0')
+							goto ShowHelpAndExit;
+						_sfx_volume = atoi(s + 1);
 						goto NextArg;
 					}
 				case 'r':{
@@ -202,9 +209,6 @@ bool GameDetector::parseMusicDriver(const char *s) {
 
 	for(i=0; i!=ARRAYSIZE(music_drivers); i++,md++) {
 		if (!scumm_stricmp(md->name, s)) {
-			/* FIXME: when adlib driver is in use, propagate that to
-			 * the IMuse class, and let it create an IMuseAdlib driver
-			 * instead of IMuseGM driver */
 			if (md->id == -1) {
 				_use_adlib = true;
 			}
@@ -335,8 +339,9 @@ int GameDetector::detectMain(int argc, char **argv)
 	_noSubtitles = 0;							// use by default - should this depend on soundtrack?        
 
 	_gfx_mode = GFX_DOUBLESIZE;
-
 	_gfx_driver = GD_AUTO;
+
+	_sfx_volume = 100;
 
 #ifdef USE_NULL_DRIVER
 	_gfx_driver = GD_NULL;
@@ -345,6 +350,8 @@ int GameDetector::detectMain(int argc, char **argv)
 	_gameDataPath = NULL;
 	_gameTempo = 0;
 	_soundCardType = 3;
+
+	
 
 	_midi_driver = MD_AUTO;
 

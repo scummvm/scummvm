@@ -961,7 +961,7 @@ public:
 
 	void resfile_read(void *dst, uint32 offs, uint32 size);
 
-	void go(OSystem *syst, MidiDriver *driver);
+	void go();
 	void openGameFile();
 
 	static int CDECL game_thread_proc(void *param);
@@ -1031,9 +1031,11 @@ public:
 
 	void vc_kill_thread(uint file, uint sprite);
 
-	static SimonState *create();
+	static SimonState *create(OSystem *syst, MidiDriver *driver);
 
 	void set_dummy_cursor();
+
+	void set_volume(byte volume);
 };
 
 	

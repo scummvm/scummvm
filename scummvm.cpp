@@ -1301,6 +1301,8 @@ Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 	scumm->_noSubtitles = detector->_noSubtitles;
 	scumm->_cdrom = detector->_cdrom;
 
+	scumm->_sound_volume_sfx = detector->_sfx_volume;
+
 	{
 		IMuse *imuse;
 

@@ -385,7 +385,6 @@ void Scumm::setupSound()
 			se->set_music_volume(60);
 		se->set_master_volume(125);
 
-		_sound_volume_sfx = 100;
 		_sound_volume_music = se->get_music_volume();
 		_sound_volume_master = (se->get_master_volume() / 127);
 	}

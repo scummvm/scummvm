@@ -67,9 +67,10 @@ int main(int argc, char *argv[])
 		/* Simon the Sorcerer. Completely different initialization */
 		MidiDriver *midi = detector.createMidi();
 		
-		SimonState *simon = SimonState::create();
+		SimonState *simon = SimonState::create(system, midi);
 		simon->_game = detector._gameId - GID_SIMON_FIRST;
-		simon->go(system, midi);
+		simon->set_volume(detector._sfx_volume);
+		simon->go();
 
 	} else {
 		Scumm *scumm = Scumm::createFromDetector(&detector, system);

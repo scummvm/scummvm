@@ -7555,14 +7555,9 @@ void SimonState::realizePalette() {
 }
 
 
-void SimonState::go(OSystem *syst, MidiDriver *driver) {
-	_system = syst;
-
+void SimonState::go() {
 	if (!_dump_file)
 		_dump_file = stdout;
-
-	/* Setup midi driver */
-	midi.set_driver(driver);
 
 	/* allocate buffers */
 	sdl_buf_3 = (byte*)calloc(320*200,1);
@@ -7593,9 +7588,6 @@ void SimonState::go(OSystem *syst, MidiDriver *driver) {
 	_vk_t_toggle = true;
 
 	_system->property(OSystem::PROP_SHOW_DEFAULT_CURSOR, 1);
-	
-	_mixer->bind_to_system(_system);
-	_mixer->set_volume(256);
 
 	while(1) {
 		hitarea_stuff();
@@ -8784,7 +8776,22 @@ void SimonState::dump_single_bitmap(int file, int image, byte *offs, int w, int 
 #endif
 }
 
-SimonState *SimonState::create() {
-	return new SimonState;
+SimonState *SimonState::create(OSystem *syst, MidiDriver *driver) {
+	SimonState *s =  new SimonState;
+
+	s->_system = syst;
+
+	/* Setup midi driver */
+	s->midi.set_driver(driver);
+	
+	/* Setup mixer */
+	s->_mixer->bind_to_system(syst);
+
+	return s;
+
+}
+
+void SimonState::set_volume(byte volume) {
+	_mixer->set_volume(volume * 256 / 100);
 }
 
