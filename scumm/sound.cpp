@@ -705,8 +705,7 @@ void Sound::stopSound(int a) {
 		stopCDTimer();
 	}
 
-	if (_scumm->_features & GF_FMTOWNS)
-		_scumm->_mixer->stopID(a);
+	_scumm->_mixer->stopID(a);
 	if (_scumm->_musicEngine)
 		_scumm->_musicEngine->stopSound(a);
 
