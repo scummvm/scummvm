@@ -233,13 +233,17 @@ static void runGame(GameDetector &detector, OSystem *system) {
 	if (!caption.isEmpty())	{
 		system->setWindowCaption(caption.c_str());
 	}
+	
+	const bool useDefaultGraphicsMode =
+		!ConfMan.hasKey("gfx_mode", detector._targetName) ||
+		!scumm_stricmp(ConfMan.get("gfx_mode", detector._targetName).c_str(), "normal") ||
+		!scumm_stricmp(ConfMan.get("gfx_mode", detector._targetName).c_str(), "default");
 
 	// See if the game should default to 1x scaler
-	if (!ConfMan.hasKey("gfx_mode", detector._targetName) && 
-		(detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
+	if (useDefaultGraphicsMode && (detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
 		system->setGraphicsMode(GFX_NORMAL);
 	} else {
-	// Override global scaler with any game-specific define
+		// Override global scaler with any game-specific define
 		if (ConfMan.hasKey("gfx_mode")) {
 			system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 		}
