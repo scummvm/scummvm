@@ -207,7 +207,6 @@ class MP3InputStream : public MusicStream {
 	int _curChannel;
 	File *_file;
 	byte *_ptr;
-	int _rate;
 
 	bool init();
 	void refill(bool first = false);
@@ -222,7 +221,7 @@ public:
 	bool eos() const			{ return eosIntern(); }
 	bool isStereo() const		{ return _isStereo; }
 	
-	int getRate() const			{ return _rate; }
+	int getRate() const			{ return _frame.header.samplerate; }
 };
 
 
@@ -251,7 +250,6 @@ MP3InputStream::MP3InputStream(File *file, mad_timer_t duration, uint size) {
 	_curChannel = 0;
 	_file = file;
 	_ptr = (byte *)malloc(_bufferSize + MAD_BUFFER_GUARD);
-	_rate = 0;
 
 	init();
 
@@ -303,9 +301,6 @@ bool MP3InputStream::init() {
 			return false;
 	}
 	
-	// Determine the sample rate
-	_rate = _frame.header.samplerate;
-
 	return true;
 }
 

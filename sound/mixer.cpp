@@ -67,12 +67,7 @@ public:
 		const int volume = isMusicChannel() ? _mixer->getMusicVolume() : _mixer->getVolume();
 		_converter->flow(*_input, data, len, volume);
 	}
-	void destroy() {
-		for (int i = 0; i != SoundMixer::NUM_CHANNELS; i++)
-			if (_mixer->_channels[i] == this)
-				_mixer->_channels[i] = 0;
-		delete this;
-	}
+	void destroy();
 	virtual bool isMusicChannel() const	= 0;
 };
 
@@ -140,12 +135,7 @@ public:
 	   16 bits, for a total of 40 bytes.
 	 */
 	virtual void mix(int16 *data, uint len) = 0;
-	void destroy() {
-		for (int i = 0; i != SoundMixer::NUM_CHANNELS; i++)
-			if (_mixer->_channels[i] == this)
-				_mixer->_channels[i] = 0;
-		delete this;
-	}
+	void destroy();
 	virtual bool isMusicChannel() const	= 0;
 };
 
@@ -243,6 +233,13 @@ public:
 
 #endif
 
+
+void Channel::destroy() {
+	for (int i = 0; i != SoundMixer::NUM_CHANNELS; i++)
+		if (_mixer->_channels[i] == this)
+			_mixer->_channels[i] = 0;
+	delete this;
+}
 
 SoundMixer::SoundMixer() {
 	_syst = 0;
@@ -365,6 +362,7 @@ void SoundMixer::mix(int16 *buf, uint len) {
 	if (_premixProc && !_paused) {
 		int i;
 		_premixProc(_premixParam, buf, len);
+		// Convert mono data from the premix proc to stereo
 		for (i = (len - 1); i >= 0; i--) {
 			buf[2 * i] = buf[2 * i + 1] = buf[i];
 		}
