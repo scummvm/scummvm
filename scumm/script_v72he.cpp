@@ -1361,7 +1361,7 @@ void ScummEngine_v72he::drawWizImage(int restype, int resnum, int state, int x1,
 			setPaletteFromPtr(pal, 256);
 		}
 		if (flags & 2) {
-			warning("unhandled Wiz image w/ rmap");
+			warning("unhandled Wiz image w/ rmap palette");
 		}
 		if (flags & 4) {
 			warning("printing Wiz image is unimplemented");
@@ -1392,11 +1392,7 @@ void ScummEngine_v72he::drawWizImage(int restype, int resnum, int state, int x1,
 			dst = pvs->getBackPixels(0, pvs->topline);
 		}
 		Common::Rect rScreen(0, 0, pvs->w, pvs->h);
-		if (flags & 2) {			
-			warning("unhandled Wiz image w/ rmap");
-		} else {
-			gdi.copyWizImage(dst, wizd, pvs->w, pvs->h, x1, y1, width, height, &rScreen);
-		}
+		gdi.copyWizImage(dst, wizd, pvs->w, pvs->h, x1, y1, width, height, &rScreen);
 
 		Common::Rect rImage(x1, y1, x1 + width, y1 + height);
 		if (rImage.intersects(rScreen)) {

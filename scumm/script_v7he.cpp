@@ -761,6 +761,7 @@ void ScummEngine_v7he::o7_kernelSetFunctions() {
 
 	num = getStackList(args, ARRAYSIZE(args));
 
+	debug(1, "o7_kernelSetFunctions: case %d (param count %d)", args[0], num);
 	switch (args[0]) {
 	case 1:
 		// Used to restore images when decorating cake in
