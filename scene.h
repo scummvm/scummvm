@@ -54,9 +54,21 @@ public:
 
   // Sector access functions
   int getSectorCount() { return numSectors_; }
-  const char *getSectorName(int id) const { return sectors_[id].name_.c_str(); }
-  int getSectorType(int id) { return sectors_[id].type_; }
-  int getSectorID(int id) { return sectors_[id].id_; }
+  const char *getSectorName(int id) const {
+   // FIXME: Will someone explain to me why my machine thinks 0 > 11?!?
+   if (id > numSectors_) {
+    return sectors_[id].name_.c_str();
+   } else {
+     printf("Sector %d > %d\n", id, numSectors_);
+     return NULL;
+   }
+  }
+  int getSectorType(int id) {
+    if (id > numSectors_) return sectors_[id].type_; else return -1; 
+  }
+  int getSectorID(int id) { 
+    if (id > numSectors_) return sectors_[id].id_; else return -1;
+  }
   bool isPointInSector(int id, Vector3d point) { return false; } // FIXME: Need pointInPoly func
 
 private:

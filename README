@@ -20,12 +20,12 @@ Running:
 Exit with 'q', and don't press f1 or the inventory... as things go a bit weird.
 
 Notes -
-  Won't compile in MSVC (see TODO), but will on MingW32. However under
-  Windows you must put .exe in the DataDir and set it to '.' in residual.ini
-  Windows-style path slashing isn't parsed yet.
-
-  Seems to run in Software GL for several people - need to debug opengl 
-  setup/usage and figure out why. See TODO for other stuff.
+  * Will run extremely slow on anything but fairly recent cards (due to use of
+    glDrawPixels). Requires OpenGL in all cases.
+  * Won't compile in MSVC (see TODO), but will on MingW32.
+  * Windows you must put .exe in the DataDir and set it to '.' in residual.ini,
+    Windows-style path slashing isn't parsed yet.
+  * See TODO for other stuff
 
 ScummVM-Residual Team Credits:
  Daniel Schepler         Initial engine codebase & LUA upgrades

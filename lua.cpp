@@ -461,9 +461,10 @@ static void IsActorInSector(void) {
   int i, numSectors = Engine::instance()->currScene()->getSectorCount();
 
   warning("IsActorInSector(%s, %s): STUB", act->name(), name);
-
+  printf("Looping over %d sectors\n", numSectors);
   for (i=0; i<numSectors; i++) {
-   if (strstr(Engine::instance()->currScene()->getSectorName(i), name)) {
+   const char *sector_name = Engine::instance()->currScene()->getSectorName(i);
+   if (sector_name && strstr(sector_name, name)) {
     warning("found sector!");
     if (Engine::instance()->currScene()->isPointInSector(i, act->pos())) {
       lua_pushnumber(Engine::instance()->currScene()->getSectorID(i));

@@ -54,6 +54,7 @@ Scene::Scene(const char *name, const char *buf, int len) :
     lights_[i].load(ts);
 
   // Calculate the number of sectors
+  numSectors_ = -1;
   ts.expectString("section: sectors");
   if (ts.eof()) 	// Sometimes there ARE no sectors (eg, inv room)
 	return;
@@ -71,7 +72,8 @@ Scene::~Scene() {
   delete [] cmaps_;
   delete [] setups_;
   delete [] lights_;
-  delete [] sectors_; // Endy<-yaz: if I remember well, sometime sectors aren't allocated... (inventory room)
+  if (sectors_)
+   delete [] sectors_; 
 }
 
 void Scene::Sector::load(TextSplitter &ts) {
