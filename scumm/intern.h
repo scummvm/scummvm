@@ -716,7 +716,9 @@ protected:
 	void writeFileFromArray(int slot, int resID);
 	void arrrays_unk2(int dst, int src, int len2, int len);
 
-	void drawWizImage(int restype, int resnum, int state, int x1, int y1, int flags);
+	void getWizImageDim(int resnum, int state,  uint32 &w, uint32 &h);
+	uint8 *drawWizImage(int restype, int resnum, int state, int x1, int y1, int flags);
+	void drawWizPolygon(int resnum, int state, int id, int flags);
 	void flushWizBuffer();
 
 	int findObject(int x, int y, int *args);
