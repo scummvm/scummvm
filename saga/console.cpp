@@ -47,8 +47,6 @@ Console::Console(SagaEngine *vm) : Common::Debugger<Console>() {
 	// CVAR_Register_I(&_musicEnabled, "music", NULL, CVAR_CFG, 0, 1);
 
 	// Actor commands
-	DCmd_Register("actor_add", &Console::Cmd_ActorAdd);
-	DCmd_Register("actor_del", &Console::Cmd_ActorDel);
 	DCmd_Register("actor_move", &Console::Cmd_ActorMove);
 	DCmd_Register("actor_moverel", &Console::Cmd_ActorMoveRel);
 	DCmd_Register("actor_seto", &Console::Cmd_ActorSetO);
@@ -134,22 +132,6 @@ bool Console::Cmd_Help(int argc, const char **argv) {
 
 	DebugPrintf("\n");
 
-	return true;
-}
-
-bool Console::Cmd_ActorAdd(int argc, const char **argv) {
-	if (argc != 4)
-		DebugPrintf("Usage: %s <Actor id> <lx> <ly>\n", argv[0]);
-	else
-		_vm->_actor->CF_actor_add(argc, argv);
-	return true;
-}
-
-bool Console::Cmd_ActorDel(int argc, const char **argv) {
-	if (argc != 2)
-		DebugPrintf("Usage: %s <Actor id>\n", argv[0]);
-	else
-		_vm->_actor->CF_actor_del(argc, argv);
 	return true;
 }
 

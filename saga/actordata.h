@@ -41,17 +41,16 @@ enum {
 // sure if I got it right.
 
 struct ACTORTABLE {
-	byte type;		// Always 1 (remove this?)
 	byte flags;
-	byte name_index;
-	int32 scene_index;
+	byte nameIndex;
+	int32 sceneIndex;
 	int16 x;
 	int16 y;
 	int16 z;
-	int32 spritelist_rn;
-	int32 spriteindex_rn;
-	byte script_rn;
-	byte color;
+	int32 spriteListResourceId;
+	int32 frameListResourceId;
+	byte scriptResourceId;
+	byte speechColor;
 	byte action;
 	byte facing_dir;
 	byte action_dir;

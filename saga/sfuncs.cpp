@@ -254,9 +254,6 @@ int Script::SF_setFacing(SCRIPTFUNC_PARAMS) {
 	actorId = _vm->_sdata->readWordS(actor_parm);
 	orientation = _vm->_sdata->readWordS(orient_parm);
 
-	if (!_vm->_actor->actorExists(actorId)) {
-		_vm->_actor->create(actorId, 0, 0);
-	}
 	_vm->_actor->setOrientation(actorId, orientation);
 	return SUCCESS;
 }
@@ -531,11 +528,7 @@ int Script::SF_moveTo(SCRIPTFUNC_PARAMS) {
 	pt.x = _vm->_sdata->readWordS(x_parm);
 	pt.y = _vm->_sdata->readWordS(y_parm);
 
-	if (!_vm->_actor->actorExists(actorId)) {
-		_vm->_actor->create(actorId, pt.x, pt.y);
-	} else {
-		_vm->_actor->move(actorId, &pt);
-	}
+	_vm->_actor->move(actorId, pt);
 
 	return SUCCESS;
 }
@@ -672,19 +665,19 @@ int Script::SF_cycleActorFrames(SCRIPTFUNC_PARAMS) {
 int Script::SF_setFrame(SCRIPTFUNC_PARAMS) {
 	// INCOMPLETE
 
-	SDataWord_T actor_parm;
-	SDataWord_T frame_parm;
-	SDataWord_T action_parm;
+	SDataWord_T actorParam;
+	SDataWord_T actionParam;
+	SDataWord_T frameParam;
 
 	uint16 actorId;
 	int action;
 
-	actor_parm = thread->pop();
-	action_parm = thread->pop();
-	frame_parm = thread->pop();
+	actorParam = thread->pop();
+	actionParam = thread->pop();
+	frameParam = thread->pop();
 
-	actorId = _vm->_sdata->readWordS(actor_parm);
-	action = _vm->_sdata->readWordS(action_parm);
+	actorId = _vm->_sdata->readWordS(actorParam);
+	action = _vm->_sdata->readWordS(actionParam);
 
 	_vm->_actor->setAction(actorId, action, ACTION_NONE);
 
@@ -783,11 +776,8 @@ int Script::SF_placeActor(SCRIPTFUNC_PARAMS) {
 	pt.y = _vm->_sdata->readWordS(y_parm);
 	action_state = _vm->_sdata->readWordS(action_parm);
 
-	if (!_vm->_actor->actorExists(actorId)) {
-		_vm->_actor->create(actorId, pt.x, pt.y);
-	} else {
-		_vm->_actor->move(actorId, &pt);
-	}
+	_vm->_actor->move(actorId, pt);
+
 	if (action_state < 0)
 		action_state = ACTION_IDLE;
  	_vm->_actor->setDefaultAction(actorId, action_state, ACTION_NONE);

@@ -36,7 +36,6 @@ namespace Saga {
 #define ACTOR_BASE_ZMOD 0.5
 
 #define ACTOR_DEFAULT_ORIENT 2
-#define ACTOR_ORIENTMAX 7
 
 #define ACTOR_ACTIONTIME 80
 
@@ -45,8 +44,12 @@ namespace Saga {
 
 #define ACTOR_LMULT 4
 
+#define ACTOR_ORIENTATION_COUNT 4
+
 #define IS_VALID_ACTOR_INDEX(index) ((index >= 0) && (index < ACTORCOUNT))
+#define IS_VALID_ACTOR_ID(id) ((id == 1) || (id >= 0x2000) && (id < (0x2000 | ACTORCOUNT)))
 #define ACTOR_ID_TO_INDEX(id) ((((uint16)id) == 1 ) ? 0 : (int)(((uint16)id) & ~0x2000))
+#define ACTOR_INDEX_TO_ID(index) ((((int)index) == 0 ) ? 1 : (uint16)(((int)index) | 0x2000))
 
 enum ACTOR_INTENTS {
 	INTENT_NONE = 0,
@@ -82,13 +85,13 @@ enum ACTOR_ACTIONFLAGS {
 	ACTION_LOOP = 0x01
 };
 
-struct ACTORACTIONITEM {
-	int frame_index;
-	int frame_count;
+struct ActorOrientation {
+	int frameIndex;
+	int frameCount;
 };
 
-struct ACTORACTION {
-	ACTORACTIONITEM dir[4];
+struct ActorFrame {
+	ActorOrientation dir[ACTOR_ORIENTATION_COUNT];
 };
 
 struct WALKNODE {
@@ -173,7 +176,7 @@ struct ACTORINTENT {
 
 typedef Common::List<ACTORINTENT> ActorIntentList;
 
-struct ACTOR {
+struct ActorData {
 	int index;		// Actor index
 	uint16 actorId;	// Actor id
 
@@ -183,16 +186,20 @@ struct ACTOR {
 	Point a_pt;		// Actor's logical coordinates
 	Point s_pt;		// Actor's screen coordinates
 
-	int sl_rn;		// Actor's sprite list res #
-	int si_rn;		// Actor's sprite index res #
-	SPRITELIST *sl_p;	// Actor's sprite list data
+	SPRITELIST *spriteList;			// Actor's sprite list data
+	int spriteListResourceId;		// Actor's sprite list resource id
+
+	ActorFrame *frames;				// Actor's frames
+	int frameCount;					// Actor's frames count
+	int frameListResourceId;		// Actor's frame list resource id
+
+	byte speechColor;		// Actor dialogue color
 
 	int idle_time;
 	int orient;
 	int speaking;
 
-	int a_dcolor;		// Actor dialogue color
-
+	
 	// The actor intent list describes what the actor intends to do;
 	// multiple intents can be queued. The actor must complete an 
 	// intent before moving on to the next; thus actor movements, esp
@@ -210,32 +217,32 @@ struct ACTOR {
 	int action_frame;
 	int action_time;
 
-	ACTORACTION *act_tbl;	// Action lookup table
-	int action_ct;		// Number of actions in the action LUT
-	ACTOR() {
+
+	ActorData() {
 		index = 0;
 		actorId = 0;
 		name_i = 0;
 		flags = 0;
-		sl_rn = 0;
-		si_rn = 0;
-		sl_p = 0;
+		frames = NULL;
+		frameCount = 0;
+		frameListResourceId = 0;
+		spriteList = NULL;
+		spriteListResourceId = 0;
 		idle_time = 0;
 		orient = 0;
 		speaking = 0;
-		a_dcolor = 0;
+		speechColor = 0;
 		def_action = 0;
 		def_action_flags = 0;
 		action = 0;
 		action_flags = 0;
 		action_frame = 0;
 		action_time = 0;
-		act_tbl = NULL;
-		action_ct = 0;
 	}
 };
 
-typedef SortedList<ACTOR> ActorList;
+typedef ActorData* ActorDataPointer;
+typedef SortedList<ActorDataPointer> ActorOrderList;
 
 
 struct ACTIONTIMES {
@@ -248,8 +255,6 @@ public:
 	Actor(SagaEngine *vm);
 	~Actor();
 
-	void CF_actor_add(int argc, const char **argv);
-	void CF_actor_del(int argc, const char **argv);
 	void CF_actor_move(int argc, const char **argv);
 	void CF_actor_moverel(int argc, const char **argv);
 	void CF_actor_seto(int argc, const char **argv);
@@ -257,15 +262,12 @@ public:
 
 	int direct(int msec);
 
-	void create(uint16 actorId, int x, int y);
-	bool actorExists(uint16 actorId);
-
 	int drawList();
-	int AtoS(Point *logical, const Point *actor);
-	int StoA(Point *actor, const Point screen);
+	void AtoS(Point &screenPoint, const Point &actorPoint);
+	void StoA(Point &actorPoint, const Point &screenPoint);
 
-	void move(uint16 actorId, const Point *move_pt);
-	void moveRelative(uint16 actorId, const Point *move_pt);
+	void move(uint16 actorId, const Point &movePoint);
+	void moveRelative(uint16 actorId, const Point &movePoint);
 
 	void walkTo(uint16 actorId, const Point *walk_pt, uint16 flags, SEMAPHORE *sem);
 		
@@ -278,30 +280,25 @@ public:
 	void setAction(uint16 actorId, int action_n, uint16 action_flags);
 	void setDefaultAction(uint16 actorId, int action_n, uint16 action_flags);
 
-	void deleteActor(uint16 actorId);
 
 private:
-	int handleWalkIntent(ACTOR *actor, WALKINTENT *a_walk_int, int *complete_p, int msec);
-	int handleSpeakIntent(ACTOR *actor, SPEAKINTENT *a_speakint, int *complete_p, int msec);
+	int handleWalkIntent(ActorData *actor, WALKINTENT *a_walk_int, int *complete_p, int msec);
+	int handleSpeakIntent(ActorData *actor, SPEAKINTENT *a_speakint, int *complete_p, int msec);
 	int setPathNode(WALKINTENT *walk_int, Point *src_pt, Point *dst_pt, SEMAPHORE *sem);
-	int loadActorSpriteIndex(ACTOR *actor, int si_rn, int *last_frame_p);
 
-	ActorList::iterator getActorIterator(int index);
-	int getActorIndex(uint16 actorId);
+	ActorData *getActor(uint16 actorId);
 
-	void reorderActorUp(int index);
-	void reorderActorDown(int index);
-	bool isValidActor(int index);
+	int loadActorResources(ActorData * actor);
+	
+	ActorOrderList::iterator getActorOrderIterator(const ActorData *actor);
+	void reorderActorUp(ActorData *actor);
+	void reorderActorDown(ActorData *actor);
 
-	//ACTOR *lookupActor(int index);
-	void addActor(ACTOR * actor);
 
 	SagaEngine *_vm;
 	RSCFILE_CONTEXT *_actorContext;
-	uint16 _count;
-	int _aliasTbl[ACTORCOUNT];
-	ActorList::iterator _tbl[ACTORCOUNT];
-	ActorList _list;
+	ActorOrderList _orderList;
+	ActorData _actors[ACTORCOUNT];
 };
 
 } // End of namespace Saga

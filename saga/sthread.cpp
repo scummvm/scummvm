@@ -355,7 +355,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				if (func_num >= SFUNC_NUM) {
 					_vm->_console->DebugPrintf(S_ERROR_PREFIX "Invalid script function number: (%X)\n", func_num);
 					thread->flags |= kTFlagAborted;
-					debug(9, "Invalid script function number: (%X)\n", func_num);
+					debug( 9, "Invalid script function number: (%X)\n", func_num);
 					break;
 				}
 
@@ -363,7 +363,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				sfuncRetVal = (this->*sfunc)(thread, n_args);
 				if (sfuncRetVal != SUCCESS) {
 					_vm->_console->DebugPrintf(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->i_offset, func_num);
-					debug(9, "%X: Script function %d failed.\n", thread->i_offset, func_num);
+					debug( 9, "%X: Script function %d failed.\n", thread->i_offset, func_num);
 				}
 
 				if (func_num == 16) { // SF_gotoScene
@@ -393,7 +393,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			if (thread->stackSize() == 0) {
 				_vm->_console->DebugPrintf("Script execution complete.\n");
 				thread->flags |= kTFlagFinished;
-				debug(9, "Script execution complete.\n");
+				debug( 9, "Script execution complete.\n");
 			} else {
 				thread->i_offset = thread->pop();
 				/* int n_args = */ thread->pop();
