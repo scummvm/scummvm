@@ -40,6 +40,9 @@ protected:
 	byte _masterVolume;    // 0-255
 	bool _paused;
 	byte _currentTrack;
+	bool _loopTrack;
+	byte _queuedTrack;
+	bool _loopQueuedTrack;
 
 	byte _num_songs;
 	byte *_songs[16];
@@ -57,6 +60,11 @@ public:
 	void playSMF (File *in, int song);
 	void playMultipleSMF (File *in);
 	void playXMIDI (File *in);
+
+	void setLoop (bool loop);
+	void queueTrack (byte track, bool loop);
+	bool isPlaying (bool check_queued = false) { return (_currentTrack != 255 && (_queuedTrack != 255 || !check_queued)); }
+
 	void jump (uint16 track, uint16 tick);
 	void stop();
 	void pause (bool b);

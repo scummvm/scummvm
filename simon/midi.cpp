@@ -37,10 +37,14 @@ MidiPlayer::MidiPlayer (OSystem *system) {
 	_parser = 0;
 	
 	_data = 0;
-	memset(_volumeTable, 0, sizeof(_volumeTable));
+	memset(_volumeTable, 127, sizeof(_volumeTable));
 	_masterVolume = 255;
 	_paused = false;
 	_currentTrack = 255;
+	_loopTrack = 0;
+
+	_queuedTrack = 255;
+	_loopQueuedTrack = 0;
 
 	_num_songs = 0;
 	memset(_songs, 0, sizeof(_songs));
@@ -99,7 +103,26 @@ void MidiPlayer::metaEvent (byte type, byte *data, uint16 length) {
 	if (type != 0x2F)
 		return;
 
-	_parser->jumpToTick (0);
+	if (_loopTrack) {
+		_parser->jumpToTick (0);
+	} else if (_queuedTrack != 255) {
+		_currentTrack = 255;
+		byte destination = _queuedTrack;
+		_queuedTrack = 255;
+		_loopTrack = _loopQueuedTrack;
+		_loopQueuedTrack = false;
+
+		// Remember, we're still inside the locked mutex.
+		// Have to unlock it before calling jump()
+		// (which locks it itself), and then relock it
+		// upon returning.
+		debug (0, "  Switching to queued track");
+		_system->unlock_mutex (_mutex);
+		jump (destination, 0);
+		_system->lock_mutex (_mutex);
+	} else {
+		stop();
+	}
 }
 
 void MidiPlayer::onTimer (void *data) {
@@ -149,9 +172,8 @@ void MidiPlayer::jump (uint16 track, uint16 tick) {
 }
 
 void MidiPlayer::stop() {
+	pause (true);
 	_system->lock_mutex (_mutex);
-	if (_parser)
-		_parser->unloadMusic();
 	_currentTrack = 255;
 	_system->unlock_mutex (_mutex);
 }
@@ -193,6 +215,25 @@ void MidiPlayer::set_driver(MidiDriver *md) {
 	if (_driver)
 		return;
 	_driver = md;
+}
+
+void MidiPlayer::setLoop (bool loop) {
+	_system->lock_mutex (_mutex);
+	_loopTrack = loop;
+	_system->unlock_mutex (_mutex);
+}
+
+void MidiPlayer::queueTrack (byte track, bool loop) {
+	_system->lock_mutex (_mutex);
+	if (_currentTrack == 255) {
+		_system->unlock_mutex (_mutex);
+		setLoop (loop);
+		jump (track, 0);
+	} else {
+		_queuedTrack = track;
+		_loopQueuedTrack = loop;
+		_system->unlock_mutex (_mutex);
+	}
 }
 
 void MidiPlayer::clearConstructs() {

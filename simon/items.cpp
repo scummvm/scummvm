@@ -1444,10 +1444,12 @@ void SimonState::o_unk_127() {
 	// effectively preloaded so there's no latency when
 	// starting playback).
 	if (_game & GF_SIMON2) {
-		int play = getVarOrByte();
+		int loop = getVarOrByte();
 
 		if (_debugMode)
-			debug (0, "o_unk_127 (%d, %d, %d);", music, track, play);
+			debug (0, "o_unk_127 (%d, %d, %d): Load/play music resource", music, track, loop);
+
+		midi.setLoop (loop != 0);
 
 		if (_last_music_played != music) {
 			playMusic (music);
@@ -1460,19 +1462,11 @@ void SimonState::o_unk_127() {
 			return;
 
 		_vc72_var1 = track;
+		_vc70_var1 = -1;
 		_vc70_var2 = -1;
+		_vc72_var2 = -1;
 		_vc72_var3 = -1;
 		midi_play (track);
-
-		// FIXME: This doesn't seem to actually be a pause
-		// indicator. If it's interpreted as such, it spoils
-		// the music when Simon is exiting Calypso's shop
-		// during the opening cutscene. Let's see if it
-		// ever goes to anything besides 0 or 1.
-//		if (play == 0)
-//			midi.pause (true);
-		if (play != 0 && play != 1)
-			warning ("o_unk_127: play mode %d encountered!", play);
 	} else {
 		if (music != _last_music_played) {
 			_last_music_played = music;
