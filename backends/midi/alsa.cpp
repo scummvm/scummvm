@@ -172,6 +172,10 @@ void MidiDriver_ALSA::send(uint32 b) {
 		snd_seq_ev_set_pgmchange(&ev, chanID, midiCmd[1]);
 		send_event(0);
 		break;
+	case 0xD0:
+		snd_seq_ev_set_chanpress(&ev, chanID, midiCmd[1]);
+		send_event(0);
+		break;
 	case 0xE0:{
 			// long theBend = ((((long)midiCmd[1] + (long)(midiCmd[2] << 7))) - 0x2000) / 4;
 			// snd_seq_ev_set_pitchbend(&ev, chanID, theBend);
