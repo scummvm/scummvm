@@ -65,9 +65,9 @@ sub convert_html_entities {
 	$text =~ s/&eacute;/e/g;
 	$text =~ s/&oslash;/o/g;
 
-	# HACK: Torbj*o*rn but G*oe*ffringmann
+	# HACK: Torbj*o*rn but G*oe*ffringmann and R*oe*ver
 	$text =~ s/&ouml;r/or/g;
-	$text =~ s/&ouml;f/oef/g;
+	$text =~ s/&ouml;/oe/g;
 
 	$text =~ s/&amp;/&/g;
 	
@@ -265,7 +265,7 @@ begin_credits("Credits");
 	add_person("Nicolas Noble", "pixels", "Config file and ALSA support");
 	add_person("Willem Jan Palenstijn", "wjp", "Packaging for Fedora/RedHat");
 	add_person("", "Quietust", "Sound support for Amiga SCUMM V2/V3 games");
-	add_person("Andreas Roever", "", "Broken Sword 1/2 MPEG2 cutscene support");
+	add_person("Andreas R&ouml;ver", "", "Broken Sword 1/2 MPEG2 cutscene support");
 	add_person("Edward Rudd", "", "Fixes for playing MP3 versions of MI1/Loom audio");
 	add_person("Daniel Schepler", "", "Final MI1 CD music support, initial Ogg Vorbis support");
 	add_person("Andr&eacute; Souza", "", "SDL-based OpenGL renderer");
