@@ -2032,21 +2032,48 @@ void Scumm::o5_roomOps()
 
 	case 13:{										/* save-string */
 			char buf[256], *s;
+			FILE *out;
+			
 			a = getVarOrDirectByte(0x80);
 			s = buf;
 			while ((*s++ = fetchScriptByte()))
 				;
-			warning("roomops:13 save-string(%d,\"%s\") not implemented", a, buf);
+
+			// Use buf as filename
+			out = fopen(buf, "wb");
+			if (out) {
+				byte *ptr;
+				ptr = getResourceAddress(rtString, a);
+				fwrite(ptr, getStringLen(ptr)+1, 1, out);
+				fclose(out);
+			}
 			break;
 		}
-	case 14:											/* load-string */
-		char buf[256], *s;
-		a = getVarOrDirectByte(0x80);
-		s = buf;
-		while ((*s++ = fetchScriptByte()))
-			;
-		warning("roomops:14 load-string(%d,\"%s\") not implemented", a, buf);
-		break;
+	case 14:{											/* load-string */
+			char buf[256], *s;
+			FILE *in;
+			
+			a = getVarOrDirectByte(0x80);
+			s = buf;
+			while ((*s++ = fetchScriptByte()))
+				;
+
+			// Use buf as filename
+			in = fopen(buf, "rb");
+			if (in) {
+				byte *ptr;
+				int len;
+				fseek(in, 0, SEEK_END);
+				len = ftell(in);				// Determine file size
+				ptr = (byte *)calloc(len+1, 1);	// Create a zero terminated buffer
+				fseek(in, 0, SEEK_SET);
+				fread(ptr, len, 1, in);			// Read in the data
+				fclose(in);
+				loadPtrToResource(rtString, a, ptr);
+				free(ptr);
+			}
+			break;
+		}
 	case 15:											/* palmanip */
 		a = getVarOrDirectByte(0x80);
 		_opcode = fetchScriptByte();
