@@ -124,9 +124,6 @@ public:
 	static OSystem *create(int gfx_mode, bool full_screen);
 
 protected:
-	typedef void ScalerProc(uint8 *srcPtr, uint32 srcPitch,
-								uint8 *dstPtr, uint32 dstPitch, int width, int height);
-
 	OSystem_SDL_Common();
 	virtual ~OSystem_SDL_Common();
 

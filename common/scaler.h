@@ -23,8 +23,11 @@
 
 extern int Init_2xSaI (uint32 BitFormat);
 
+typedef void ScalerProc(const uint8 *srcPtr, uint32 srcPitch,
+							uint8 *dstPtr, uint32 dstPitch, int width, int height);
+
 #define DECLARE_SCALER(x)	\
-	extern void x(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, \
+	extern void x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, \
 					uint32 dstPitch, int width, int height)
 
 DECLARE_SCALER(_2xSaI);
