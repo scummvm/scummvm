@@ -392,7 +392,7 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 	// FIXME: We're now looping the launcher. This, of course, doesn't
 	// work as well as it should. In theory everything should be destroyed
 	// cleanly, so this is now enabled to encourage people to fix bits :)
-	while(running) {
+	while (running) {
 		// Verify the given game name is a valid supported game
 		if (detector.detectMain()) {
 			// Unload all plugins not needed for this game,
@@ -411,7 +411,7 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 			PluginManager::instance().loadPlugins();
 		}
 
-               	launcherDialog(detector, system);
+		launcherDialog(detector, system);
 	}
 
 	// ...and quit (the return 0 should never be reached)
