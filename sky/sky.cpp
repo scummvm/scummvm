@@ -92,9 +92,6 @@ SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	_detector = detector;
 
 	_floppyIntro = detector->_floppyIntro;
-
-	_introTextSpace = 0;
-	_introTextSave = 0;
 }
 
 SkyState::~SkyState() {
@@ -109,6 +106,12 @@ SkyState::~SkyState() {
 
 void SkyState::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
+}
+
+void SkyState::initVirgin() {
+	
+	_skyScreen->setPalette(60111);
+	_skyScreen->showScreen(60110);
 }
 
 uint8 SkyState::_languageTable[11] = {
@@ -179,11 +182,15 @@ void SkyState::go() {
 
 	bool introSkipped = false;
 	if (!_quickLaunch) {
-		if (_systemVars.gameVersion > 267) // don't do intro for floppydemos
-			introSkipped = !intro();
-
-		_skyDisk->flushPrefetched();
-
+		if (_systemVars.gameVersion > 267) {// don't do intro for floppydemos
+			_skyIntro = new SkyIntro(_skyDisk, _skyScreen, _skyMusic, _skySound, _skyText, _mixer, _system);
+			introSkipped = !_skyIntro->doIntro(_floppyIntro);
+			if (_skyIntro->_quitProg) {
+				delete _skyIntro;
+				_skyControl->showGameQuitMsg();
+			}
+			delete _skyIntro;
+		}
 		loadBase0();
 	}
 

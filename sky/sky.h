@@ -38,6 +38,7 @@
 #include "sky/music/mt32music.h"
 #include "sky/mouse.h"
 #include "sky/control.h"
+#include "sky/intro.h"
 #include "common/config-file.h"
 
 struct SystemVars {
@@ -55,6 +56,7 @@ struct SystemVars {
 class SkyLogic;
 class SkyScreen;
 class SkyControl;
+class SkyIntro;
 
 class SkyState : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
@@ -63,12 +65,6 @@ protected:
 	byte _key_pressed;
 	static uint8 _languageTable[11];
 	bool _quickLaunch; // set when starting with -x
-
-	//intro related
-	
-	byte *_introTextSpace;
-	byte *_introTextSave;
-
 	bool _floppyIntro;
 
 	uint16 _debugMode;
@@ -92,6 +88,7 @@ protected:
 	SkyControl *_skyControl;
 
 	SkyMusicBase *_skyMusic;
+	SkyIntro *_skyIntro;
 	GameDetector *_detector; // necessary for music
 	
 public:
@@ -108,13 +105,6 @@ public:
 
 	static SystemVars _systemVars;
 
-	//intro related
-	void prepareText(uint32 *&cmdPtr);
-	void showIntroText(uint32 *&cmdPtr);
-	void removeText(uint32 *&cmdPtr);
-	void introFx(uint32 *&cmdPtr);
-	void introVol(uint32 *&cmdPtr); 
-
 protected:
 	void logic_engine();
 	void delay(uint amount);
@@ -122,12 +112,8 @@ protected:
 	void doCheat(uint8 num);
 	void handleKey(void);
 
-	//intro related
 	static uint8 fosterImg[297 * 143];
 	static uint8 fosterPal[256 * 3];
-	void checkCommands(uint32 *&cmdPtr);
-	void introFrame(uint8 **diffPtr, uint8 **vgaPtr, uint8 *screenData);
-	void escDelay(uint32 pDelay);
 	uint32 _lastSaveTime;
 
 	SkyText *getSkyText();
@@ -135,17 +121,12 @@ protected:
 	void initItemList();
 
 	void initVirgin();
-	bool intro();
-	bool doCDIntro();
-	void startTimerSequence(byte *sequence);
 	static void timerHandler(void *ptr);
 	void gotTimerTick();
 	void loadFixedItems();
 	void loadBase0();
 	
 	static int CDECL game_thread_proc(void *param);
-
-	void shutdown();
 };
 
 #endif

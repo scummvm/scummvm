@@ -2,7 +2,6 @@ MODULE := sky
 
 MODULE_OBJS = \
 	sky/autoroute.o \
-	sky/cd_intro.o \
 	sky/compact.o \
 	sky/debug.o \
 	sky/disk.o \
