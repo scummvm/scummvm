@@ -133,9 +133,333 @@ LIB32=link.exe -lib
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# Begin Group "compacts"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\sky\compacts\0compact.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\101comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\102comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\10comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\11comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\12comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\13comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\14comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\15comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\16comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\17comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\18comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\19comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\1compact.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\20comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\21comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\22comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\23comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\24comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\25comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\26comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\27comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\28comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\29comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\2compact.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\30comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\31comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\32comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\33comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\34comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\36comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\37comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\38comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\39comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\3compact.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\40comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\41comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\42comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\44comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\45comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\46comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\47comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\48comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\4compact.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\5compact.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\65comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\66comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\67comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\68comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\69comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\70comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\71comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\72comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\73comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\74comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\75comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\76comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\77comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\78comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\79comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\80comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\81comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\82comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\85comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\90comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\91comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\92comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\93comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\94comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\95comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\96comp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\9compact.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\linc_gen.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\lincmenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\objects.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compacts\z_compac.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\sky\cd_intro.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compact.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\compact.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\debug.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\debug.h
 # End Source File
 # Begin Source File
 
@@ -152,6 +476,14 @@ SOURCE=.\sky\grid.cpp
 # Begin Source File
 
 SOURCE=.\sky\intro.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\logic.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\sky\logic.h
 # End Source File
 # Begin Source File
 
