@@ -1274,7 +1274,8 @@ void Scumm::o6_resourceRoutines() {
 		nukeCharset(res);
 		break;
 	case 119:/* load fl object */
-		loadFlObject(pop(), (_features & GF_HAS_ROOMTABLE) ? -1 : pop());
+		res = (_features & GF_HAS_ROOMTABLE) ? -1 : pop();
+		loadFlObject(pop(), res);
 		break;
 	default:
 		error("o6_resourceRoutines: default case");
