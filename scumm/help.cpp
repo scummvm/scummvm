@@ -126,8 +126,8 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page,
 			ADD_BIND("d", "Pick up");
 			ADD_BIND("c", "What is");
 			if (gameId == GID_MANIAC) {
-				ADD_BIND("r", "New kid");
-				ADD_BIND("f", "Unlock");
+				ADD_BIND("r", "Unlock");
+				ADD_BIND("f", "New kid");
 			} else {
 				ADD_BIND("r", "Put on");
 				ADD_BIND("f", "Take off");
