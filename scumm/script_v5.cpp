@@ -834,12 +834,15 @@ void Scumm_v5::o5_drawObject() {
 
 void Scumm_v5::o5_getStringWidth() {
 	// TODO - not sure if this is correct... needs testing
-	int a = getVarOrDirectByte(0x80);
-	byte *ptr = getResourceAddress(rtString, a);
-	int width = 0;
+	int string, width = 0;
+	byte *ptr;
 	
-	if (ptr)
-		width = _charset->getStringWidth(0, ptr);
+	getResultPos();
+	string = getVarOrDirectByte(0x80);
+	ptr = getResourceAddress(rtString, string);
+	assert(ptr);
+
+	width = _charset->getStringWidth(0, ptr);
 	
 	setResult(width);
 	warning("o5_getStringWidth, result %d", width);
