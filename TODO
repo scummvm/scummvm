@@ -69,6 +69,9 @@ SCUMM
 * Add support for FM Euphony sounds used in FM Towns games
 * Implement the needed INSANE bits for Full Throttle action sequences
 * iMUSE Digital enhancements/fixes for Full Throttle and COMI
+* Try to remove all use of MAD/Ogg code from scumm/sound.cpp:
+  Ideally, only code in sound/ should access these libs. This will
+  become important for loadable module support
 
 Broken Sword 2
 ==============
