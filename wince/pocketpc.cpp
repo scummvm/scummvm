@@ -28,7 +28,7 @@
 
 #define MAX(a,b) (((a)<(b)) ? (b) : (a))
 #define MIN(a,b) (((a)>(b)) ? (b) : (a))
-#define POCKETSCUMM_BUILD "051502"
+#define POCKETSCUMM_BUILD "051902"
 
 #define VERSION "Build " POCKETSCUMM_BUILD " (VM " SCUMMVM_CVS ")"
 
@@ -37,10 +37,12 @@ typedef int (*tTimeCallback)(int);
 GameDetector detector;
 Gui gui;
 Scumm *g_scumm;
+extern SimonState *g_simon;
+OSystem *g_system;
+SoundMixer *g_mixer;
 Config *scummcfg;
 tTimeCallback timer_callback;
 int timer_interval;
-
 
 extern void Cls();
 
@@ -391,16 +393,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 	if (detector._gameId >= GID_SIMON_FIRST && detector._gameId <= GID_SIMON_LAST) {
 		/* Simon the Sorcerer. Completely different initialization */
 		MidiDriver *midi = detector.createMidi();
+
+		keypad_init();
+		load_key_mapping();
+		hide_cursor = TRUE;
 		
-		SimonState *simon = SimonState::create(system, midi);
-		simon->_game = detector._gameId - GID_SIMON_FIRST;
-		simon->set_volume(detector._sfx_volume);
-		simon->_game_path = detector._gameDataPath;
-		simon->go();
+		g_simon = SimonState::create(system, midi);
+		g_system = g_simon->_system;
+		g_mixer = &g_simon->_mixer[0];
+		g_simon->_game = detector._gameId - GID_SIMON_FIRST;
+		g_simon->set_volume(detector._sfx_volume);
+		g_simon->_game_path = detector._gameDataPath;
+		g_simon->go();
 
 	} else {
 		Scumm *scumm = Scumm::createFromDetector(&detector, system);
 		g_scumm = scumm;
+		g_system = scumm->_system;
+		g_mixer = &scumm->_mixer[0];
 
 		g_scumm->_sound_volume_master = 0;
 		g_scumm->_sound_volume_music = detector._music_volume;
@@ -531,12 +541,21 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			do_quit();			
 			break;
 		case IDC_SKIP:
+			if (detector._gameId >= GID_SIMON_FIRST &&
+				detector._gameId <= GID_SIMON_LAST) {
+				g_simon->_exit_cutscene = true;
+				break;
+			}
 			if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer])
 				wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY];
 			else
 				wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_TALKSTOP_KEY];						
 			break;
 		case IDC_LOADSAVE:
+			if (detector._gameId >= GID_SIMON_FIRST &&
+				detector._gameId <= GID_SIMON_LAST) {
+				break;
+			}
 			if (GetScreenMode()) {
 				draw_keyboard = true;
 				if (!hide_toolbar)
@@ -552,7 +571,13 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				SHMenuBar_GetMenu (hWnd_MainMenu, IDM_POCKETSCUMM),
 				IDC_SOUND, 
 				MF_BYCOMMAND | (sound_activated ? MF_CHECKED : MF_UNCHECKED));	
-			g_scumm->pauseSounds(!sound_activated);
+			if (detector._gameId >= GID_SIMON_FIRST &&
+				detector._gameId <= GID_SIMON_LAST) {
+				g_mixer->pause(!sound_activated);
+			}
+			else
+				g_scumm->pauseSounds(!sound_activated);
+
 			break;     
 		
       break;
@@ -651,6 +676,13 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 				  wm->_event.kbd.ascii = mapKey(VK_BACK);
 				  break;
 				}
+				else
+				if (x>=302 && x<= 316 && y >= 220) { 
+				  // Enter
+				  wm->_event.event_code = EVENT_KEYDOWN;
+				  wm->_event.kbd.ascii = mapKey(VK_RETURN);
+				  break;
+				}
 
 				wm->_event.event_code = EVENT_LBUTTONDOWN;
 				wm->_event.mouse.x = x;
@@ -696,6 +728,10 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 			else {
 				switch(toolbar_selection) {
 					case ToolbarSaveLoad:
+						if (detector._gameId >= GID_SIMON_FIRST &&
+							detector._gameId <= GID_SIMON_LAST) {							
+							break;
+						}
 						if (GetScreenMode()) {
 							draw_keyboard = true;
 							if (!hide_toolbar)
@@ -709,6 +745,10 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 						wm->_event.kbd.ascii = KEY_SET_OPTIONS;
 						break;
 					case ToolbarSkip:
+						if (detector._gameId >= GID_SIMON_FIRST) {
+							g_simon->_exit_cutscene = true;
+							break;
+						}
 						wm->_event.event_code = EVENT_KEYDOWN;
 						if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer])
 							wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY];
@@ -717,7 +757,12 @@ LRESULT CALLBACK OSystem_WINCE3::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 						break;
 					case ToolbarSound:
 						sound_activated = !sound_activated;
-						g_scumm->pauseSounds(!sound_activated);
+						if (detector._gameId >= GID_SIMON_FIRST &&
+							detector._gameId <= GID_SIMON_LAST) {
+							g_mixer->pause(!sound_activated);
+						}
+						else
+							g_scumm->pauseSounds(!sound_activated);
 						redrawSoundItem();
 						break;
 					default:
@@ -1234,7 +1279,7 @@ bool OSystem_WINCE3::set_sound_proc(void *param, SoundProc *proc, byte format) {
 
 	desired.freq = SAMPLES_PER_SEC;
 	desired.format = AUDIO_S16SYS;
-	desired.channels = 1;
+	desired.channels = 2;
 	desired.samples = 128;
 	desired.callback = proc;
 	desired.userdata = param;
