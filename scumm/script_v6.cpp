@@ -2962,9 +2962,7 @@ void ScummEngine_v6::o6_writeFile() {
 }
 
 void ScummEngine_v6::o6_findAllObjects() {
-	// FIXME is this even remotely correct?
-	// see http://users.bigpond.net.au/tgray2/findallobjects.txt
-	// for asm
+	// FIXME verifty correctness of this opcode
 	int a = pop();
 	int i = 1;
 
