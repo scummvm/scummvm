@@ -549,7 +549,7 @@ void ScummEngine_v80he::o80_setState() {
 	int state = pop();
 	int obj = pop();
 
-	state = state & 0x7F00;
+	state &= 0x7FFF;
 	putState(obj, state);
 	removeObjectFromDrawQue(obj);
 }
