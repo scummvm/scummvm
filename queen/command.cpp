@@ -127,7 +127,7 @@ void SelectedCmdState::init() {
 
 
 Command::Command(Logic *l, Graphics *g, Input *i, Walk *w, Sound *s)
-	: _logic(l), _graphics(g), _input(i), _walk(w), _sound(s) {
+	: _logic(l), _graphics(g), _input(i), _sound(s), _walk(w) {
 	_cmdText._graphics = _graphics;
 	_cmdText._logic = _logic;
 }
