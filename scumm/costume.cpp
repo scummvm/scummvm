@@ -318,29 +318,33 @@ void CostumeRenderer::procC64() {
 		if (color & 0x80) {
 			len = color & 0x7f;
 			color = *src++;
-			for (int z = 0; z < len; z++) {
-				dst[0] = dst[1] = _vm->gdi._C64Colors[(color >> 6) & 3];
-				dst[2] = dst[3] = _vm->gdi._C64Colors[(color >> 4) & 3];
-				dst[4] = dst[5] = _vm->gdi._C64Colors[(color >> 2) & 3];
-				dst[6] = dst[7] = _vm->gdi._C64Colors[(color >> 0) & 3];
-				dst += _outwidth;
-				y++;
-				if (y >= (_height >> 3)) {
+			while (len--) {
+				for (int i = 0; i < 8; i++) {
+					dst[0] = dst[1] = _vm->gdi._C64Colors[(color >> 6) & 3];
+					dst[2] = dst[3] = _vm->gdi._C64Colors[(color >> 4) & 3];
+					dst[4] = dst[5] = _vm->gdi._C64Colors[(color >> 2) & 3];
+					dst[6] = dst[7] = _vm->gdi._C64Colors[(color >> 0) & 3];
+					dst += _outwidth;
+				}
+				y+=8;
+				if (y >= _height) {
 					y = 0;
 					dst = v1.destptr + (x << 3);
 				}
 			}
 		} else {
 			len = color;
-			for (int z = 0; z < len; z++) {
+			while (len--) {
 				color = *src++;
-				dst[0] = dst[1] = _vm->gdi._C64Colors[(color >> 6) & 3];
-				dst[2] = dst[3] = _vm->gdi._C64Colors[(color >> 4) & 3];
-				dst[4] = dst[5] = _vm->gdi._C64Colors[(color >> 2) & 3];
-				dst[6] = dst[7] = _vm->gdi._C64Colors[(color >> 0) & 3];
-				dst += _outwidth;
-				y++;
-				if (y >= (_height >> 3)) {
+				for (int i = 0; i < 8; i++) {
+					dst[0] = dst[1] = _vm->gdi._C64Colors[(color >> 6) & 3];
+					dst[2] = dst[3] = _vm->gdi._C64Colors[(color >> 4) & 3];
+					dst[4] = dst[5] = _vm->gdi._C64Colors[(color >> 2) & 3];
+					dst[6] = dst[7] = _vm->gdi._C64Colors[(color >> 0) & 3];
+					dst += _outwidth;
+				}
+				y+=8;
+				if (y >= _height) {
 					y = 0;
 					dst = v1.destptr + (x << 3);
 				}
