@@ -152,8 +152,8 @@ static const ScummGameSettings scumm_settings[] = {
 	/* Scumm Version 6 */
 	{"puttputt", "Putt-Putt Joins The Parade (DOS)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
-	{"puttdemo", "Putt-Putt Joins The Parade (DOS Demo)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
-	 GF_DEMO | GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS},
+	{"puttdemo", "Putt-Putt Joins The Parade (DOS Demo)", GID_PUTTDEMO, 6, MDT_ADLIB | MDT_NATIVE,
+	  GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS},
 	{"moondemo", "Putt-Putt Goes To The Moon (DOS Demo)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES},
 	{"puttmoon", "Putt-Putt Goes To The Moon (DOS)", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,

@@ -927,7 +927,7 @@ void ScummEngine_v6::o6_getOwner() {
 }
 
 void ScummEngine_v6::o6_startSound() {
-	if ((_features & GF_HUMONGOUS) && (_gameId != GID_PUTTPUTT) && (!(_features & GF_DEMO)))
+	if ((_features & GF_HUMONGOUS) && (_gameId != GID_PUTTDEMO))
 		pop(); // offset which seems to always be zero
 	_sound->addSoundToQueue(pop());
 }
