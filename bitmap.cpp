@@ -96,7 +96,9 @@ Bitmap::Bitmap(const char *filename, const char *data, int len) :
     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
   } else {
     for (int i = 0; i < (width_ * height_); i++) {
-      ((unsigned short int *) (data_[curr_image_]))[i] = 0xFFFF - (((unsigned short int *) (data_[curr_image_]))[i]) / 64;
+      uint16_t val = get_LE_uint16(data_[curr_image_] + 2 * i);
+      ((uint16_t *) data_[curr_image_])[i] =
+	0xffff - ((uint32_t) val) * 0x10000 / 100 / (0x10000 - val);
     }
     tex_ids_ = NULL;
   }
