@@ -566,7 +566,7 @@ uint16 Logic::findFrame(uint16 obj) {
 			img = _objectData[i].image;
 			if(img <= -10) {
 				GraphicData* pgd = &_graphicData[-(img + 10)];
-				if(pgd->lastFrame != 0) {
+				if(pgd->lastFrame > 0) {
 					// skip all the frames of the animation
 					idx += ABS(pgd->lastFrame) - pgd->firstFrame + 1;
 				}
@@ -1131,14 +1131,14 @@ uint16 Logic::roomRefreshObject(uint16 obj) {
 		return curImage;
 	}
 
+	// find frame used for object
+	curImage = findFrame(obj);
+
 	if (pod->name < 0 || pod->image < 0) {
 		// object is hidden or disabled
 		_graphics->bobClear(curBob);
 		return curImage;
 	}
-
-	// find frame used for object
-	curImage = findFrame(obj);
 
 	int image = pod->image;
 	if (image > 5000) {

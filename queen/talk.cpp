@@ -352,7 +352,6 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		pbs->y = person.actor->y;
 		
 		// Better kick start the persons anim sequence
-		pbs->animating = true;
 		pbs->animReset();
 	}
 

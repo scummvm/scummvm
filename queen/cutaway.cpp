@@ -1374,7 +1374,6 @@ void Cutaway::run(char *nextFilename) {
 				k++;
 				if (object->name > 0) {
 					BobSlot *bs = _graphics->bob(k);
-					bs->animating = true;
 					bs->animReset();
 				}
 			}

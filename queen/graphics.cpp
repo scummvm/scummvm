@@ -323,29 +323,31 @@ void BobSlot::animNormal(uint16 firstFrame, uint16 lastFrame, uint16 spd, bool r
 
 void BobSlot::animReset() {
 
-	if(active && animating) {
+	if(active) {
 		const AnimFrame *af = anim.string.buffer;
 		if (af != NULL) {
+			animating = true;
 			anim.string.curPos = af;
 			frameNum = af->frame;
 			anim.speed = af->speed / 4;
 		}
 		else {
-			anim.speed = anim.speedBak;
-			frameNum = anim.normal.firstFrame;
-			frameDir = 1;
+			animating = false;
+//			anim.speed = anim.speedBak;
+//			frameNum = anim.normal.firstFrame;
+//			frameDir = 1;
 		}
 	}
 }
 
 
-void Graphics::bobDraw(uint32 bobnum, int16 x, int16 y, uint16 scale, bool xflip, const Box& box) {
+void Graphics::bobDraw(uint32 frameNum, int16 x, int16 y, uint16 scale, bool xflip, const Box& box) {
 
 	uint16 w, h;
 
-	debug(9, "Graphics::bobDraw(%d, %d, %d, %d)", bobnum, x, y, scale);
+	debug(9, "Graphics::bobDraw(%d, %d, %d, %d)", frameNum, x, y, scale);
 
-	BobFrame *pbf = &_frames[bobnum];
+	BobFrame *pbf = &_frames[frameNum];
 	if (scale < 100) {
 		bobShrink(pbf, scale);
 		pbf = &_shrinkBuffer;
@@ -531,6 +533,7 @@ void Graphics::bobDrawAll() {
 	for (i = 0; i < _sortedBobsCount; ++i) {
 		BobSlot *pbs = _sortedBobs[i];
 		if (pbs->active) {
+
 			BobFrame *pbf = &_frames[ pbs->frameNum ];
 			uint16 xh, yh, x, y;
 
