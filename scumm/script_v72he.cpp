@@ -53,12 +53,12 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 04 */
 		OPCODE(o72_getString),
 		OPCODE(o6_invalid),
-		OPCODE(o6_byteArrayRead),
+		OPCODE(o6_invalid),
 		OPCODE(o6_wordArrayRead),
 		/* 08 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_byteArrayIndexedRead),
+		OPCODE(o6_invalid),
 		OPCODE(o6_wordArrayIndexedRead),
 		/* 0C */
 		OPCODE(o6_dup),
@@ -128,27 +128,27 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 40 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_writeByteVar),
+		OPCODE(o6_invalid),
 		OPCODE(o6_writeWordVar),
 		/* 44 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_byteArrayWrite),
+		OPCODE(o6_invalid),
 		OPCODE(o6_wordArrayWrite),
 		/* 48 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_byteArrayIndexedWrite),
+		OPCODE(o6_invalid),
 		OPCODE(o6_wordArrayIndexedWrite),
 		/* 4C */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_byteVarInc),
+		OPCODE(o6_invalid),
 		OPCODE(o6_wordVarInc),
 		/* 50 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_byteArrayInc),
+		OPCODE(o6_invalid),
 		OPCODE(o6_wordArrayInc),
 		/* 54 */
 		OPCODE(o72_objectX),
@@ -158,7 +158,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 58 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_byteArrayDec),
+		OPCODE(o6_invalid),
 		OPCODE(o6_wordArrayDec),
 		/* 5C */
 		OPCODE(o6_if),
