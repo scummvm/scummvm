@@ -695,12 +695,10 @@ void Sound::waitForLeadOut(void) {
 
 /**
  * Streams music from a cluster file.
- * @param filename the file name of the music cluster file
  * @param musicId the id of the music to stream
  * @param looping true if the music is to loop back to the start
  * @return RD_OK or an error code
  */
-
 int32 Sound::streamCompMusic(uint32 musicId, bool looping) {
 	Common::StackLock lock(_mutex);
 
