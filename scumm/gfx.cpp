@@ -1714,13 +1714,11 @@ dec_sub3:			rw -= code;
 				}
 			}
 			src += var_8 + 2;
-			dst1 += dstPitch;
-			dst2 += dstPitch;
 		} else {
 			src += 2;
-			dst1 += dstPitch;
-			dst2 += dstPitch;
 		}
+		dst1 += dstPitch;
+		dst2 += dstPitch;
 	}
 }
 
