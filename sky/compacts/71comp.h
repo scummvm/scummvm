@@ -506,8 +506,8 @@ Compact medi = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	MEGA_CLICK,	// mouseClick
-	65529,	// mouseRel_x
-	65504,	// mouseRel_y
+	(int16) 65529,	// mouseRel_x
+	(int16) 65504,	// mouseRel_y
 	12,	// mouseSize_x
 	29,	// mouseSize_y
 	MEDI_ACTION,	// actionScript
@@ -730,8 +730,8 @@ Compact sc71_controls = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65534,	// mouseRel_x
-	65533,	// mouseRel_y
+	(int16) 65534,	// mouseRel_x
+	(int16) 65533,	// mouseRel_y
 	380-370,	// mouseSize_x
 	283-267,	// mouseSize_y
 	SC71_CONTROLS_ACTION,	// actionScript
@@ -1512,7 +1512,7 @@ Compact sc71_monitor = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	380-370,	// mouseSize_x
 	266-248,	// mouseSize_y
@@ -1617,8 +1617,8 @@ Compact sc71_recharger = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65532,	// mouseRel_x
-	65534,	// mouseRel_y
+	(int16) 65532,	// mouseRel_x
+	(int16) 65534,	// mouseRel_y
 	300-268,	// mouseSize_x
 	231-224,	// mouseSize_y
 	SC71_RECHARGER_ACTION,	// actionScript

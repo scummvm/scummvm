@@ -987,7 +987,7 @@ Compact door_l95 = {
 	STD_EXIT_LEFT_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65531,	// mouseRel_x
+	(int16) 65531,	// mouseRel_x
 	26,	// mouseRel_y
 	9,	// mouseSize_x
 	108,	// mouseSize_y
@@ -1019,7 +1019,7 @@ Compact door_l95f = {
 	0,	// mouseOn
 	0,	// mouseOff
 	0,	// mouseClick
-	65526,	// mouseRel_x
+	(int16) 65526,	// mouseRel_x
 	263-136,	// mouseRel_y
 	15,	// mouseSize_x
 	10,	// mouseSize_y

@@ -259,8 +259,8 @@ Compact sc67_door = {
 	SC67_DOOR_MOUSE_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65531,	// mouseRel_x
-	65530,	// mouseRel_y
+	(int16) 65531,	// mouseRel_x
+	(int16) 65530,	// mouseRel_y
 	25,	// mouseSize_x
 	86,	// mouseSize_y
 	SC67_DOOR_ACTION,	// actionScript
@@ -492,8 +492,8 @@ Compact sc67_crowbar = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
-	65534,	// mouseRel_y
+	(int16) 65535,	// mouseRel_x
+	(int16) 65534,	// mouseRel_y
 	12,	// mouseSize_x
 	2,	// mouseSize_y
 	SC67_CROWBAR_ACTION,	// actionScript
@@ -2071,8 +2071,8 @@ Compact sc67_clot = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65534,	// mouseRel_x
-	65530,	// mouseRel_y
+	(int16) 65534,	// mouseRel_x
+	(int16) 65530,	// mouseRel_y
 	332-323,	// mouseSize_x
 	248-241,	// mouseSize_y
 	SC67_CLOT_ACTION,	// actionScript

@@ -518,7 +518,7 @@ Compact gallagher = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
+	(int16) 65535,	// mouseRel_x
 	1,	// mouseRel_y
 	32,	// mouseSize_x
 	16,	// mouseSize_y
@@ -1301,8 +1301,8 @@ Compact sc73_sensor = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65532,	// mouseRel_x
-	65532,	// mouseRel_y
+	(int16) 65532,	// mouseRel_x
+	(int16) 65532,	// mouseRel_y
 	410-401,	// mouseSize_x
 	271-247,	// mouseSize_y
 	SC73_SENSOR_ACTION,	// actionScript
@@ -1755,8 +1755,8 @@ Compact sc73_chamber4 = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65534,	// mouseRel_x
-	65533,	// mouseRel_y
+	(int16) 65534,	// mouseRel_x
+	(int16) 65533,	// mouseRel_y
 	253-224,	// mouseSize_x
 	238-188,	// mouseSize_y
 	SC73_CHAMBER4_ACTION,	// actionScript
@@ -2206,8 +2206,8 @@ Compact sc73_chamber5 = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65534,	// mouseRel_x
-	65533,	// mouseRel_y
+	(int16) 65534,	// mouseRel_x
+	(int16) 65533,	// mouseRel_y
 	307-278,	// mouseSize_x
 	238-188,	// mouseSize_y
 	SC73_CHAMBER5_ACTION,	// actionScript
@@ -2494,8 +2494,8 @@ Compact sc73_big_door = {
 	SC73_BIG_DOOR_MOUSE_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65532,	// mouseRel_x
-	65528,	// mouseRel_y
+	(int16) 65532,	// mouseRel_x
+	(int16) 65528,	// mouseRel_y
 	398-380,	// mouseSize_x
 	298-205,	// mouseSize_y
 	SC73_BIG_DOOR_ACTION,	// actionScript

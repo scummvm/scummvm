@@ -1375,8 +1375,8 @@ Compact sc36_babs = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	MEGA_CLICK,	// mouseClick
-	65526,	// mouseRel_x
-	65491,	// mouseRel_y
+	(int16) 65526,	// mouseRel_x
+	(int16) 65491,	// mouseRel_y
 	17,	// mouseSize_x
 	50,	// mouseSize_y
 	MEGA_ACTION,	// actionScript
@@ -1876,8 +1876,8 @@ Compact sc36_door = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
-	65535,	// mouseRel_y
+	(int16) 65535,	// mouseRel_x
+	(int16) 65535,	// mouseRel_y
 	378-374,	// mouseSize_x
 	214-182,	// mouseSize_y
 	SC36_DOOR_ACTION,	// actionScript
@@ -2035,8 +2035,8 @@ Compact sc36_jukebox = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65532,	// mouseRel_x
-	65521,	// mouseRel_y
+	(int16) 65532,	// mouseRel_x
+	(int16) 65521,	// mouseRel_y
 	241-229,	// mouseSize_x
 	236-207,	// mouseSize_y
 	SC36_JUKEBOX_ACTION,	// actionScript
@@ -2880,8 +2880,8 @@ Compact sc36_glass = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
-	65535,	// mouseRel_y
+	(int16) 65535,	// mouseRel_x
+	(int16) 65535,	// mouseRel_y
 	246-241,	// mouseSize_x
 	253-246,	// mouseSize_y
 	SC36_GLASS_ACTION,	// actionScript
@@ -3634,7 +3634,7 @@ Compact sc36_gallagher = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
+	(int16) 65535,	// mouseRel_x
 	0,	// mouseRel_y
 	217-201,	// mouseSize_x
 	268-238,	// mouseSize_y

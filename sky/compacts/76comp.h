@@ -572,8 +572,8 @@ Compact ken = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	MEGA_CLICK,	// mouseClick
-	65528,	// mouseRel_x
-	65493,	// mouseRel_y
+	(int16) 65528,	// mouseRel_x
+	(int16) 65493,	// mouseRel_y
 	14,	// mouseSize_x
 	50,	// mouseSize_y
 	SHOUT_ACTION,	// actionScript
@@ -860,8 +860,8 @@ Compact sc76_board_3 = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
-	65534,	// mouseRel_y
+	(int16) 65535,	// mouseRel_x
+	(int16) 65534,	// mouseRel_y
 	365-355,	// mouseSize_x
 	254-251,	// mouseSize_y
 	SC76_BOARD_3_ACTION,	// actionScript
@@ -1147,8 +1147,8 @@ Compact sc76_board_1 = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
-	65534,	// mouseRel_y
+	(int16) 65535,	// mouseRel_x
+	(int16) 65534,	// mouseRel_y
 	257-247,	// mouseSize_x
 	254-251,	// mouseSize_y
 	SC76_BOARD_1_ACTION,	// actionScript
@@ -1211,7 +1211,7 @@ Compact sc76_android_1 = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65528,	// mouseRel_x
+	(int16) 65528,	// mouseRel_x
 	0,	// mouseRel_y
 	238-216,	// mouseSize_x
 	243-204,	// mouseSize_y
@@ -1619,7 +1619,7 @@ Compact sc76_board_2 = {
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
 	0,	// mouseRel_x
-	65534,	// mouseRel_y
+	(int16) 65534,	// mouseRel_y
 	312-302,	// mouseSize_x
 	254-251,	// mouseSize_y
 	SC76_BOARD_2_ACTION,	// actionScript
@@ -1989,8 +1989,8 @@ Compact sc76_cabinet_1 = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
-	65535,	// mouseRel_y
+	(int16) 65535,	// mouseRel_x
+	(int16) 65535,	// mouseRel_y
 	261-244,	// mouseSize_x
 	265-245,	// mouseSize_y
 	SC76_CABINET_1_ACTION,	// actionScript
@@ -2145,7 +2145,7 @@ Compact sc76_cabinet_3 = {
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
 	1,	// mouseRel_x
-	65535,	// mouseRel_y
+	(int16) 65535,	// mouseRel_y
 	370-356,	// mouseSize_x
 	265-245,	// mouseSize_y
 	SC76_CABINET_3_ACTION,	// actionScript

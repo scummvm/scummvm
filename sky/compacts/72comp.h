@@ -185,8 +185,8 @@ Compact sc72_chamber2 = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65532,	// mouseRel_x
-	65535,	// mouseRel_y
+	(int16) 65532,	// mouseRel_x
+	(int16) 65535,	// mouseRel_y
 	309-280,	// mouseSize_x
 	242-189,	// mouseSize_y
 	SC72_CHAMBERS_ACTION,	// actionScript
@@ -305,8 +305,8 @@ Compact sc72_tank = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
-	65535,	// mouseRel_y
+	(int16) 65535,	// mouseRel_x
+	(int16) 65535,	// mouseRel_y
 	331-277,	// mouseSize_x
 	283-254,	// mouseSize_y
 	SC72_TANK_ACTION,	// actionScript
@@ -1832,8 +1832,8 @@ Compact sc72_computer = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65532,	// mouseRel_x
-	65530,	// mouseRel_y
+	(int16) 65532,	// mouseRel_x
+	(int16) 65530,	// mouseRel_y
 	183-165,	// mouseSize_x
 	236-221,	// mouseSize_y
 	SC72_COMPUTER_ACTION,	// actionScript
@@ -2272,8 +2272,8 @@ Compact witness = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	MEGA_CLICK,	// mouseClick
-	65528,	// mouseRel_x
-	65493,	// mouseRel_y
+	(int16) 65528,	// mouseRel_x
+	(int16) 65493,	// mouseRel_y
 	14,	// mouseSize_x
 	50,	// mouseSize_y
 	MEGA_ACTION,	// actionScript
@@ -2365,7 +2365,7 @@ Compact sc72_grill = {
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
 	1,	// mouseRel_x
-	65535,	// mouseRel_y
+	(int16) 65535,	// mouseRel_y
 	242-215,	// mouseSize_x
 	287-281,	// mouseSize_y
 	SC72_GRILL_ACTION,	// actionScript
@@ -2396,8 +2396,8 @@ Compact sc72_chamber1 = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65533,	// mouseRel_x
-	65534,	// mouseRel_y
+	(int16) 65533,	// mouseRel_x
+	(int16) 65534,	// mouseRel_y
 	249-220,	// mouseSize_x
 	242-189,	// mouseSize_y
 	SC72_CHAMBERS_ACTION,	// actionScript

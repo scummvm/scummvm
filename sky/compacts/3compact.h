@@ -784,8 +784,8 @@ Compact smoulder = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65512,	// mouseRel_x
-	65532,	// mouseRel_y
+	(int16) 65512,	// mouseRel_x
+	(int16) 65532,	// mouseRel_y
 	60,	// mouseSize_x
 	10,	// mouseSize_y
 	SMOULDER_ACTION,	// actionScript

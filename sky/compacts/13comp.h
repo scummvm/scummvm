@@ -2534,8 +2534,8 @@ Compact foreman = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	MEGA_CLICK,	// mouseClick
-	65520,	// mouseRel_x
-	65488,	// mouseRel_y
+	(int16) 65520,	// mouseRel_x
+	(int16) 65488,	// mouseRel_y
 	24,	// mouseSize_x
 	48,	// mouseSize_y
 	MEGA_ACTION,	// actionScript

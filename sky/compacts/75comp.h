@@ -97,8 +97,8 @@ Compact sc75_console = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65533,	// mouseRel_x
-	65532,	// mouseRel_y
+	(int16) 65533,	// mouseRel_x
+	(int16) 65532,	// mouseRel_y
 	313-286,	// mouseSize_x
 	244-211,	// mouseSize_y
 	SC75_CONSOLE_ACTION,	// actionScript
@@ -655,8 +655,8 @@ Compact sc75_live_tank = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65527,	// mouseRel_x
-	65533,	// mouseRel_y
+	(int16) 65527,	// mouseRel_x
+	(int16) 65533,	// mouseRel_y
 	380-322,	// mouseSize_x
 	251-227,	// mouseSize_y
 	SC75_LIVE_TANK_ACTION,	// actionScript
@@ -794,7 +794,7 @@ Compact sc75_tongs = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
+	(int16) 65535,	// mouseRel_x
 	0,	// mouseRel_y
 	3,	// mouseSize_x
 	13,	// mouseSize_y
@@ -1188,7 +1188,7 @@ Compact sc75_nitro_tank = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65533,	// mouseRel_x
+	(int16) 65533,	// mouseRel_x
 	2,	// mouseRel_y
 	283-207,	// mouseSize_x
 	307-257,	// mouseSize_y

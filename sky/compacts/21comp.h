@@ -508,7 +508,7 @@ Compact video = {
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
 	0,	// mouseRel_x
-	65529,	// mouseRel_y
+	(int16) 65529,	// mouseRel_y
 	25,	// mouseSize_x
 	19,	// mouseSize_y
 	VIDEO_ACTION,	// actionScript
@@ -1505,7 +1505,7 @@ Compact inner_lamb_door = {
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
 	0,	// mouseRel_x
-	65534,	// mouseRel_y
+	(int16) 65534,	// mouseRel_y
 	181-173,	// mouseSize_x
 	308-242,	// mouseSize_y
 	0,	// actionScript

@@ -1864,7 +1864,7 @@ Compact sc74_int_slot = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65529,	// mouseRel_x
+	(int16) 65529,	// mouseRel_x
 	1,	// mouseRel_y
 	378-370,	// mouseSize_x
 	270-267,	// mouseSize_y
@@ -2995,8 +2995,8 @@ Compact sc74_left_tv = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65534,	// mouseRel_x
-	65533,	// mouseRel_y
+	(int16) 65534,	// mouseRel_x
+	(int16) 65533,	// mouseRel_y
 	263-241,	// mouseSize_x
 	230-209,	// mouseSize_y
 	SC74_MONITORS_ACTION,	// actionScript
@@ -4160,8 +4160,8 @@ Compact sc74_monitor1 = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65534,	// mouseRel_x
-	65533,	// mouseRel_y
+	(int16) 65534,	// mouseRel_x
+	(int16) 65533,	// mouseRel_y
 	346-211,	// mouseSize_x
 	206-186,	// mouseSize_y
 	SC74_MONITORS_ACTION,	// actionScript
@@ -5625,8 +5625,8 @@ Compact sc74_right_tv = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65532,	// mouseRel_x
-	65533,	// mouseRel_y
+	(int16) 65532,	// mouseRel_x
+	(int16) 65533,	// mouseRel_y
 	319-294,	// mouseSize_x
 	229-209,	// mouseSize_y
 	SC74_MONITORS_ACTION,	// actionScript

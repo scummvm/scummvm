@@ -553,7 +553,7 @@ Compact sc79_rope = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65531,	// mouseRel_x
+	(int16) 65531,	// mouseRel_x
 	0,	// mouseRel_y
 	332-325,	// mouseSize_x
 	327-305,	// mouseSize_y
@@ -586,7 +586,7 @@ Compact sc79_support = {
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
 	0,	// mouseRel_x
-	65533,	// mouseRel_y
+	(int16) 65533,	// mouseRel_y
 	296-275,	// mouseSize_x
 	315-264,	// mouseSize_y
 	SC79_SUPPORT_ACTION,	// actionScript

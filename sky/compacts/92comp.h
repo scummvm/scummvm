@@ -73,7 +73,7 @@ Compact door_l92 = {
 	STD_EXIT_LEFT_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65531,	// mouseRel_x
+	(int16) 65531,	// mouseRel_x
 	26,	// mouseRel_y
 	9,	// mouseSize_x
 	153,	// mouseSize_y
@@ -796,7 +796,7 @@ Compact red_circle = {
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
 	0,	// mouseRel_x
-	65535,	// mouseRel_y
+	(int16) 65535,	// mouseRel_y
 	28,	// mouseSize_x
 	6,	// mouseSize_y
 	RED_CIRCLE_ACTION,	// actionScript

@@ -894,7 +894,7 @@ Compact sc37_lid = {
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
 	1,	// mouseRel_x
-	65535,	// mouseRel_y
+	(int16) 65535,	// mouseRel_y
 	267-231,	// mouseSize_x
 	244-233,	// mouseSize_y
 	SC37_LID_ACTION,	// actionScript
@@ -1403,8 +1403,8 @@ Compact sc37_grill = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
-	65535,	// mouseRel_y
+	(int16) 65535,	// mouseRel_x
+	(int16) 65535,	// mouseRel_y
 	335-306,	// mouseSize_x
 	208-191,	// mouseSize_y
 	SC37_GRILL_ACTION,	// actionScript
@@ -1557,8 +1557,8 @@ Compact sc37_door = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65532,	// mouseRel_x
-	65531,	// mouseRel_y
+	(int16) 65532,	// mouseRel_x
+	(int16) 65531,	// mouseRel_y
 	207-192,	// mouseSize_x
 	279-216,	// mouseSize_y
 	SC37_DOOR_ACTION,	// actionScript
@@ -1744,8 +1744,8 @@ Compact sc37_flimsy_box = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65518,	// mouseRel_x
-	65529,	// mouseRel_y
+	(int16) 65518,	// mouseRel_x
+	(int16) 65529,	// mouseRel_y
 	333-300,	// mouseSize_x
 	264-238,	// mouseSize_y
 	SC37_FLIMSY_BOX_ACTION,	// actionScript

@@ -41,8 +41,8 @@ Compact decomp_obj = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
-	65535,	// mouseRel_y
+	(int16) 65535,	// mouseRel_x
+	(int16) 65535,	// mouseRel_y
 	20,	// mouseSize_x
 	15,	// mouseSize_y
 	DECOMP_OBJ_ACTION,	// actionScript
@@ -344,7 +344,7 @@ Compact door_l91f = {
 	0,	// mouseOn
 	0,	// mouseOff
 	0,	// mouseClick
-	65522,	// mouseRel_x
+	(int16) 65522,	// mouseRel_x
 	263-136,	// mouseRel_y
 	15,	// mouseSize_x
 	10,	// mouseSize_y
@@ -411,7 +411,7 @@ Compact report_book = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
+	(int16) 65535,	// mouseRel_x
 	0,	// mouseRel_y
 	16,	// mouseSize_x
 	15,	// mouseSize_y
@@ -1110,7 +1110,7 @@ Compact door_l91 = {
 	STD_EXIT_LEFT_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65531,	// mouseRel_x
+	(int16) 65531,	// mouseRel_x
 	26,	// mouseRel_y
 	9,	// mouseSize_x
 	109,	// mouseSize_y
@@ -1257,8 +1257,8 @@ Compact eyeball_91 = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
-	65535,	// mouseRel_y
+	(int16) 65535,	// mouseRel_x
+	(int16) 65535,	// mouseRel_y
 	31,	// mouseSize_x
 	29,	// mouseSize_y
 	EYEBALL_91_ACTION,	// actionScript
@@ -1378,8 +1378,8 @@ Compact decrypt_obj = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
-	65535,	// mouseRel_y
+	(int16) 65535,	// mouseRel_x
+	(int16) 65535,	// mouseRel_y
 	25,	// mouseSize_x
 	12,	// mouseSize_y
 	DECRYPT_OBJ_ACTION,	// actionScript

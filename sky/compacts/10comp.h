@@ -1740,7 +1740,7 @@ Compact lift_10 = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65532,	// mouseRel_x
+	(int16) 65532,	// mouseRel_x
 	0,	// mouseRel_y
 	6,	// mouseSize_x
 	62,	// mouseSize_y

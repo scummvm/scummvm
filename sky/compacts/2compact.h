@@ -888,8 +888,8 @@ Compact dead_loader = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65532,	// mouseRel_x
-	65488,	// mouseRel_y
+	(int16) 65532,	// mouseRel_x
+	(int16) 65488,	// mouseRel_y
 	20,	// mouseSize_x
 	48,	// mouseSize_y
 	TRANSPORTER_ACTION,	// actionScript
@@ -1573,8 +1573,8 @@ Compact loader = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	MEGA_CLICK,	// mouseClick
-	65532,	// mouseRel_x
-	65488,	// mouseRel_y
+	(int16) 65532,	// mouseRel_x
+	(int16) 65488,	// mouseRel_y
 	20,	// mouseSize_x
 	48,	// mouseSize_y
 	TRANS_ALIVE_ACTION,	// actionScript

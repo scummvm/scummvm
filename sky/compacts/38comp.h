@@ -1977,7 +1977,7 @@ Compact sc38_video = {
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
 	0,	// mouseRel_x
-	65532,	// mouseRel_y
+	(int16) 65532,	// mouseRel_y
 	401-376,	// mouseSize_x
 	264-248,	// mouseSize_y
 	SC38_VIDEO_ACTION,	// actionScript
@@ -2157,7 +2157,7 @@ Compact sc38_monitor = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
+	(int16) 65535,	// mouseRel_x
 	0,	// mouseRel_y
 	406-378,	// mouseSize_x
 	242-209,	// mouseSize_y
@@ -2383,7 +2383,7 @@ Compact sc38_lift = {
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
 	8,	// mouseRel_x
-	65528,	// mouseRel_y
+	(int16) 65528,	// mouseRel_y
 	201-190,	// mouseSize_x
 	300-234,	// mouseSize_y
 	SC38_LIFT_ACTION,	// actionScript
@@ -3408,8 +3408,8 @@ Compact danielle = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	MEGA_CLICK,	// mouseClick
-	65528,	// mouseRel_x
-	65493,	// mouseRel_y
+	(int16) 65528,	// mouseRel_x
+	(int16) 65493,	// mouseRel_y
 	14,	// mouseSize_x
 	50,	// mouseSize_y
 	MEGA_ACTION,	// actionScript
@@ -3576,8 +3576,8 @@ Compact spunky = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	MEGA_CLICK,	// mouseClick
-	65528,	// mouseRel_x
-	65493,	// mouseRel_y
+	(int16) 65528,	// mouseRel_x
+	(int16) 65493,	// mouseRel_y
 	14,	// mouseSize_x
 	50,	// mouseSize_y
 	MEGA_ACTION,	// actionScript

@@ -497,8 +497,8 @@ Compact sc33_shed_door = {
 	SC33_SHED_DOOR_MOUSE_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65521,	// mouseRel_x
-	65526,	// mouseRel_y
+	(int16) 65521,	// mouseRel_x
+	(int16) 65526,	// mouseRel_y
 	366-343,	// mouseSize_x
 	275-212,	// mouseSize_y
 	SC33_SHED_DOOR_ACTION,	// actionScript

@@ -241,7 +241,7 @@ Compact sc78_support = {
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
 	0,	// mouseRel_x
-	65530,	// mouseRel_y
+	(int16) 65530,	// mouseRel_y
 	405-386,	// mouseSize_x
 	308-262,	// mouseSize_y
 	SC78_SUPPORT_ACTION,	// actionScript

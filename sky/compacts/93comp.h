@@ -61,7 +61,7 @@ Compact door_l93 = {
 	STD_EXIT_LEFT_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65531,	// mouseRel_x
+	(int16) 65531,	// mouseRel_x
 	26,	// mouseRel_y
 	9,	// mouseSize_x
 	109,	// mouseSize_y
@@ -158,7 +158,7 @@ Compact door_l93f = {
 	0,	// mouseOn
 	0,	// mouseOff
 	0,	// mouseClick
-	65517,	// mouseRel_x
+	(int16) 65517,	// mouseRel_x
 	263-136,	// mouseRel_y
 	20,	// mouseSize_x
 	10,	// mouseSize_y
@@ -429,8 +429,8 @@ Compact persona = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
-	65535,	// mouseRel_y
+	(int16) 65535,	// mouseRel_x
+	(int16) 65535,	// mouseRel_y
 	16,	// mouseSize_x
 	22,	// mouseSize_y
 	PERSONA_ACTION,	// actionScript

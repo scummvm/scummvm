@@ -41,7 +41,7 @@ Compact blank5 = {
 	TOUCH_ARROW,	// mouseOn
 	UNTOUCH_ARROW,	// mouseOff
 	0,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -73,7 +73,7 @@ Compact tape_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -105,7 +105,7 @@ Compact right_arrow = {
 	TOUCH_ARROW,	// mouseOn
 	UNTOUCH_ARROW,	// mouseOff
 	CLICK_RIGHT_ARROW,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	29,	// mouseSize_x
 	24,	// mouseSize_y
@@ -142,7 +142,7 @@ Compact glass_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -174,7 +174,7 @@ Compact lightbulb_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -206,7 +206,7 @@ Compact blank3 = {
 	TOUCH_ARROW,	// mouseOn
 	UNTOUCH_ARROW,	// mouseOff
 	0,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -238,7 +238,7 @@ Compact wd40_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -270,7 +270,7 @@ Compact plaster_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -302,7 +302,7 @@ Compact new_cable_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -334,7 +334,7 @@ Compact blank8 = {
 	TOUCH_ARROW,	// mouseOn
 	UNTOUCH_ARROW,	// mouseOff
 	0,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -366,7 +366,7 @@ Compact joeyb_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -408,7 +408,7 @@ Compact blank6 = {
 	TOUCH_ARROW,	// mouseOn
 	UNTOUCH_ARROW,	// mouseOff
 	0,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -440,7 +440,7 @@ Compact shades_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -472,7 +472,7 @@ Compact citycard_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -504,7 +504,7 @@ Compact blank9 = {
 	TOUCH_ARROW,	// mouseOn
 	UNTOUCH_ARROW,	// mouseOff
 	0,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -536,7 +536,7 @@ Compact rope_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -568,7 +568,7 @@ Compact left_arrow = {
 	TOUCH_ARROW,	// mouseOn
 	UNTOUCH_ARROW,	// mouseOff
 	CLICK_LEFT_ARROW,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	28,	// mouseSize_x
 	24,	// mouseSize_y
@@ -600,7 +600,7 @@ Compact magazine_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -632,7 +632,7 @@ Compact gallcard_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -664,7 +664,7 @@ Compact dog_food_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -696,7 +696,7 @@ Compact blank7 = {
 	TOUCH_ARROW,	// mouseOn
 	UNTOUCH_ARROW,	// mouseOff
 	0,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -728,7 +728,7 @@ Compact blank2 = {
 	TOUCH_ARROW,	// mouseOn
 	UNTOUCH_ARROW,	// mouseOff
 	0,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -760,7 +760,7 @@ Compact blank11 = {
 	TOUCH_ARROW,	// mouseOn
 	UNTOUCH_ARROW,	// mouseOff
 	0,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -792,7 +792,7 @@ Compact anchor_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -824,7 +824,7 @@ Compact anita_card_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -856,7 +856,7 @@ Compact tongs_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -888,7 +888,7 @@ Compact blank4 = {
 	TOUCH_ARROW,	// mouseOn
 	UNTOUCH_ARROW,	// mouseOff
 	0,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -920,7 +920,7 @@ Compact crow_bar_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -952,7 +952,7 @@ Compact secateurs_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -984,7 +984,7 @@ Compact sarnie_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -1016,7 +1016,7 @@ Compact spanner_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -1048,7 +1048,7 @@ Compact blank10 = {
 	TOUCH_ARROW,	// mouseOn
 	UNTOUCH_ARROW,	// mouseOff
 	0,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -1080,7 +1080,7 @@ Compact skey_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -1112,7 +1112,7 @@ Compact blank1 = {
 	TOUCH_ARROW,	// mouseOn
 	UNTOUCH_ARROW,	// mouseOff
 	0,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -1144,7 +1144,7 @@ Compact ticket_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -1176,7 +1176,7 @@ Compact brick_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -1208,7 +1208,7 @@ Compact putty_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y

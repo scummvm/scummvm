@@ -932,8 +932,8 @@ Compact sc68_sensor = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65534,	// mouseRel_x
-	65534,	// mouseRel_y
+	(int16) 65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_y
 	6,	// mouseSize_x
 	11,	// mouseSize_y
 	SC68_SENSOR_ACTION,	// actionScript

@@ -785,7 +785,7 @@ Compact fish_tank = {
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
 	0,	// mouseRel_x
-	65533,	// mouseRel_y
+	(int16) 65533,	// mouseRel_y
 	264-242,	// mouseSize_x
 	258-235,	// mouseSize_y
 	FISH_TANK_ACTION,	// actionScript

@@ -897,7 +897,7 @@ Compact pulse = {
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
 	5,	// mouseRel_x
-	65510,	// mouseRel_y
+	(int16) 65510,	// mouseRel_y
 	45,	// mouseSize_x
 	30,	// mouseSize_y
 	RODS_ACTION,	// actionScript

@@ -448,7 +448,7 @@ Compact sc77_big_door = {
 	SC77_BIG_DOOR_MOUSE_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65531,	// mouseRel_x
+	(int16) 65531,	// mouseRel_x
 	0,	// mouseRel_y
 	392-375,	// mouseSize_x
 	268-197,	// mouseSize_y

@@ -1827,8 +1827,8 @@ Compact wreck_guard = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65532,	// mouseRel_x
-	65516,	// mouseRel_y
+	(int16) 65532,	// mouseRel_x
+	(int16) 65516,	// mouseRel_y
 	8,	// mouseSize_x
 	28,	// mouseSize_y
 	WRECK_ACTION,	// actionScript
@@ -4172,8 +4172,8 @@ Compact skorl_guard = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65520,	// mouseRel_x
-	65488,	// mouseRel_y
+	(int16) 65520,	// mouseRel_x
+	(int16) 65488,	// mouseRel_y
 	32,	// mouseSize_x
 	48,	// mouseSize_y
 	SKORL_ACTION,	// actionScript

@@ -1986,7 +1986,7 @@ Compact sc31_end_of_rope = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	3,	// mouseRel_y
 	228-225,	// mouseSize_x
 	270-229,	// mouseSize_y

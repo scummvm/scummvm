@@ -772,8 +772,8 @@ Compact sc32_buzzer = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65534,	// mouseRel_x
-	65534,	// mouseRel_y
+	(int16) 65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_y
 	365-357,	// mouseSize_x
 	187-173,	// mouseSize_y
 	SC32_BUZZER_ACTION,	// actionScript
@@ -1786,8 +1786,8 @@ Compact sc32_lift = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65534,	// mouseRel_x
-	65534,	// mouseRel_y
+	(int16) 65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_y
 	398-376,	// mouseSize_x
 	232-173,	// mouseSize_y
 	SC32_LIFT_ACTION,	// actionScript

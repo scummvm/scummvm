@@ -41,7 +41,7 @@ Compact playbak_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	LINC_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -73,7 +73,7 @@ Compact persona_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	LINC_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -105,7 +105,7 @@ Compact info_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	INFO_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -137,7 +137,7 @@ Compact decrypt_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	DECRYPT_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -219,7 +219,7 @@ Compact kill_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	LINC_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -251,7 +251,7 @@ Compact read_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	DIS_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -283,7 +283,7 @@ Compact orders_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	DOC_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -315,7 +315,7 @@ Compact report_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	DOC_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -347,7 +347,7 @@ Compact virus_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	LINC_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -379,7 +379,7 @@ Compact adjust_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	DOC_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -411,7 +411,7 @@ Compact charon_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	LINC_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -443,7 +443,7 @@ Compact orders2_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	LINC_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -475,7 +475,7 @@ Compact report2_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	LINC_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -507,7 +507,7 @@ Compact oscill_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	LINC_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -539,7 +539,7 @@ Compact join_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	JOIN_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -571,7 +571,7 @@ Compact green_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	LINC_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -652,7 +652,7 @@ Compact adjust2_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	LINC_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -684,7 +684,7 @@ Compact red_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	LINC_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -716,7 +716,7 @@ Compact open_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	LINC_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -748,7 +748,7 @@ Compact decomp_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	DECOMP_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y
@@ -780,7 +780,7 @@ Compact blind_menu = {
 	TOUCH_MENU,	// mouseOn
 	UNTOUCH_MENU,	// mouseOff
 	LINC_MENU_SELECT,	// mouseClick
-	65534,	// mouseRel_x
+	(int16) 65534,	// mouseRel_x
 	0,	// mouseRel_y
 	24,	// mouseSize_x
 	24,	// mouseSize_y

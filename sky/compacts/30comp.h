@@ -1583,8 +1583,8 @@ Compact sc30_court_door = {
 	SC30_COURT_DOOR_MOUSE_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65535,	// mouseRel_x
-	65532,	// mouseRel_y
+	(int16) 65535,	// mouseRel_x
+	(int16) 65532,	// mouseRel_y
 	179-166,	// mouseSize_x
 	265-206,	// mouseSize_y
 	SC30_COURT_DOOR_ACTION,	// actionScript

@@ -2788,7 +2788,7 @@ Compact sc80_rope = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	MEGA_CLICK,	// mouseClick
-	65531,	// mouseRel_x
+	(int16) 65531,	// mouseRel_x
 	25,	// mouseRel_y
 	239-231,	// mouseSize_x
 	235-162,	// mouseSize_y

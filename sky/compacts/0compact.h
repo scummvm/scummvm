@@ -4173,8 +4173,8 @@ Compact mini_so = {
 	STD_ON,	// mouseOn
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
-	65532,	// mouseRel_x
-	65516,	// mouseRel_y
+	(int16) 65532,	// mouseRel_x
+	(int16) 65516,	// mouseRel_y
 	8,	// mouseSize_x
 	28,	// mouseSize_y
 	MEGA_ACTION,	// actionScript
@@ -4701,7 +4701,7 @@ Compact full_so = {
 	STD_OFF,	// mouseOff
 	ADVISOR_188,	// mouseClick
 	0,	// mouseRel_x
-	65488,	// mouseRel_y
+	(int16) 65488,	// mouseRel_y
 	32,	// mouseSize_x
 	48,	// mouseSize_y
 	0,	// actionScript
