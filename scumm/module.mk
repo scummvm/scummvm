@@ -78,6 +78,8 @@ MODULE_DIRS += \
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS
 PLUGIN := 1
+# HACK HACK evil HACK HACK
+PLUGIN_LDFLAGS += -lz
 endif
 
 # Include common rules 
