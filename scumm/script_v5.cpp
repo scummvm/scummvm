@@ -830,10 +830,6 @@ void Scumm_v5::o5_saveLoadVars() {
 	error("o5_saveLoadVars not yet implemented");
 }
 
-void Scumm_v5::o5_dummy() {
-	warning("o5_dummy invoked (opcode %d)", _opcode);
-}
-
 void Scumm_v5::o5_expression() {
 	int dst, i;
 

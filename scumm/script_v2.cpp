@@ -148,7 +148,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_add),
 		OPCODE(o2_setBitVar),
 		/* 5C */
-		OPCODE(o5_dummy),
+		OPCODE(o2_dummy),
 		OPCODE(o2_ifClassOfIs),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState02),
@@ -166,11 +166,11 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_isScriptRunning),
 		OPCODE(o2_setOwnerOf),
 		OPCODE(o2_subDirect),
-		OPCODE(o5_dummy),
+		OPCODE(o2_dummy),
 		/* 6C */
 		OPCODE(o2_getObjY),
 		OPCODE(o5_putActorInRoom),
-		OPCODE(o5_dummy),
+		OPCODE(o2_dummy),
 		OPCODE(o2_ifState04),
 		/* 70 */
 		OPCODE(o5_lights),
@@ -246,7 +246,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_notEqualZero),
 		OPCODE(o2_setOwnerOf),
 		OPCODE(o2_addDirect),
-		OPCODE(o5_dummy),
+		OPCODE(o2_dummy),
 		/* AC */
 		OPCODE(o2_drawSentence),
 		OPCODE(o5_putActorInRoom),
@@ -308,7 +308,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_add),
 		OPCODE(o2_setBitVar),
 		/* DC */
-		OPCODE(o5_dummy),
+		OPCODE(o2_dummy),
 		OPCODE(o2_ifClassOfIs),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState02),
@@ -326,11 +326,11 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_isScriptRunning),
 		OPCODE(o2_setOwnerOf),
 		OPCODE(o2_subDirect),
-		OPCODE(o5_dummy),
+		OPCODE(o2_dummy),
 		/* EC */
 		OPCODE(o2_getObjY),
 		OPCODE(o5_putActorInRoom),
-		OPCODE(o5_dummy),
+		OPCODE(o2_dummy),
 		OPCODE(o2_ifState04),
 		/* F0 */
 		OPCODE(o5_lights),
@@ -1184,5 +1184,9 @@ void Scumm_v2::o2_delay() {
 	o5_breakHere();
 
 	warning("TODO: o2_delay(%d)", delay);
+}
+
+void Scumm_v2::o2_dummy() {
+	warning("o2_dummy invoked (opcode %d)", _opcode);
 }
 

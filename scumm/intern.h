@@ -67,7 +67,6 @@ protected:
 	void o5_doSentence();
 	void o5_drawBox();
 	void o5_drawObject();
-	void o5_dummy();
 	void o5_endCutscene();
 	void o5_equalZero();
 	void o5_expression();
@@ -271,6 +270,7 @@ protected:
 	void o2_endCutscene();
 	void o2_drawSentence();
 	void o2_delay();
+	void o2_dummy();
 };
 
 class Scumm_v4 : public Scumm_v3 {
