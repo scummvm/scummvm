@@ -24,6 +24,7 @@
 #include "simon/intern.h"
 #include "simon/vga.h"
 #include "sound/mididrv.h"
+#include "common/config-file.h"
 #include "common/file.h"
 #include "common/gameDetector.h"
 #include <errno.h>
@@ -173,6 +174,8 @@ Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
 
 SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst), midi (syst) {
+	OSystem::Property prop;
+
 	MidiDriver *driver = detector->createMidi();
 	
 	_vc_ptr = 0;
@@ -454,6 +457,18 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_debugLevel = detector->_debugLevel;
 	_language = detector->_language;
 	_noSubtitles = detector->_noSubtitles;
+
+	// Override global scaler with any game-specific define
+	if (g_config->get("gfx_mode")) {
+		prop.gfx_mode = detector->parseGraphicsMode(g_config->get("gfx_mode"));
+		_system->property(OSystem::PROP_SET_GFX_MODE, &prop);
+	}
+
+	// Override global scaler with any game-specific define
+	if (g_config->getBool("fullscreen", false)) {
+		if (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0))
+			_system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
+	}
 }
 
 SimonEngine::~SimonEngine() {
