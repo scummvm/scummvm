@@ -780,7 +780,7 @@ void Scumm::scummInit() {
 	tempMusic = 0;
 	debug(9, "scummInit");
 
-	if (_version == 1) {
+	if ((_gameId == GID_MANIAC) && (_version == 1)) {
 		initScreens(0, 16, _screenWidth, 152);
 	} else if (_version >= 7) {
 		initScreens(0, 0, _screenWidth, _screenHeight);
@@ -2525,7 +2525,9 @@ void Scumm::launch() {
 		_numActors = 30;
 	else if (_gameId == GID_MANIAC)
 		_numActors = 25;
-	else
+	else if ((_gameId == GID_ZAK) && (_version == 1))
+		_numActors = 14;		// FIXME: Verify this
+	else 
 		_numActors = 13;
 
 	if (_version >= 7)

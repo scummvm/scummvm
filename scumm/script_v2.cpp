@@ -689,6 +689,12 @@ void Scumm_v2::o2_actorSet() {
 			i = fetchScriptByte();
 			a->palette[i] = arg;
 			a->needRedraw = true;
+
+			// FIXME: Hack for V1 Zak
+			if ((_gameId == GID_ZAK) && (_version == 1)) {
+				fetchScriptByte();
+				fetchScriptByte();
+			}
 			break;
 
 		case 3:		// Actor Name
@@ -815,8 +821,9 @@ void Scumm_v2::o2_verbOps() {
 		int y = fetchScriptByte() << 3;
 		slot = getVarOrDirectByte(0x80) + 1;
 		/* int unk = */ fetchScriptByte(); // ?
-		
-		if (_version == 1)	// V1 Verbs are positioned relative to the 'verb area' - under the sentence
+
+		// V1 Maniac verbs are relative to the 'verb area' - under the sentence
+		if ((_gameId == GID_MANIAC) && (_version == 1))
 			y+=9;
 
 		//printf("o2_verbOps: verb = %d, slot = %d, x = %d, y = %d, unk = %d, name = %s\n",
