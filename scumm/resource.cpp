@@ -621,9 +621,7 @@ void ScummEngine::readIndexFile() {
 			break;
 
 		case MKID('AARY'):
-			debug(3, "Going to call readArrayFromIndexFile (pos = 0x%08x)", _fileHandle.pos());
 			readArrayFromIndexFile();
-			debug(3, "After readArrayFromIndexFile (pos = 0x%08x)", _fileHandle.pos());
 			break;
 
 		default:
