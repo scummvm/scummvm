@@ -270,11 +270,11 @@ static const GameSettings scumm_settings[] = {
 
 ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst),
-	  _targetName(detector->_targetName),
 	  _gameId(detector->_game.id),
 	  _version(detector->_game.version),
 	  _features(detector->_game.features),
-	  gdi(this), _pauseDialog(0), _optionsDialog(0), _saveLoadDialog(0) {
+	  gdi(this), _pauseDialog(0), _optionsDialog(0), _saveLoadDialog(0),
+	  _targetName(detector->_targetName) {
 	OSystem::Property prop;
 
 	// Init all vars - maybe now we can get rid of our custom new/delete operators?
