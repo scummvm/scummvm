@@ -18,7 +18,7 @@
  * $Header$
  */
 
-#if defined(UNIX) || defined(__DC__) || defined (__GP32__) //ph0x
+#if defined(UNIX) || defined(__DC__)
 
 #include "stdafx.h"
 
@@ -34,12 +34,6 @@
 #endif
 #include <stdio.h>
 #include <unistd.h>
-
-#ifdef __GP32__ //ph0x FIXME: implement and move to portdefs.h
-#define opendir(x) (0)
-#define readdir(x) (0)
-#define closedir(x) (0)
-#endif
 
 /*
  * Implementation of the ScummVM file system API based on POSIX.

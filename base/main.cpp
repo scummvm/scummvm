@@ -135,7 +135,7 @@ extern "C" int main(int argc, char *argv[]);
 
 #if defined(MACOSX) || defined(QTOPIA)
 #include <SDL.h>
-#elif !defined(__MORPHOS__) && !defined(__DC__)
+#elif !defined(__MORPHOS__) && !defined(__DC__) && !defined(__GP32__)
 #undef main
 #endif
 
