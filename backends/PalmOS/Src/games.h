@@ -46,7 +46,6 @@ typedef struct {
 
 } GameInfoTypeV0;
 
-// Current config
 typedef struct {
 	UInt32	version;
 	UInt16	icnID;			// icon to display on the list
@@ -55,6 +54,31 @@ typedef struct {
 	Char 	nameP[50];		// game name to display in list
 	Char 	pathP[150];		// path to the game files
 	Char 	gameP[10];		// scumm name of the game
+	UInt16	gfxMode;
+
+	Boolean autoLoad;
+	Boolean bootParam;
+	Boolean setPlatform;
+	Boolean subtitles;
+	Boolean talkSpeed;
+
+	UInt16 loadSlot;
+	UInt16 bootValue;
+	UInt16 talkValue;
+	UInt8 platform;
+	UInt8 language;
+
+} GameInfoTypeV2;
+
+// Current config
+typedef struct {
+	UInt32	version;
+	UInt16	icnID;			// icon to display on the list
+	Boolean	selected;
+
+	Char 	nameP[50];		// game name to display in list
+	Char 	pathP[150];		// path to the game files
+	Char 	gameP[15];		// scumm name of the game
 	UInt16	gfxMode;
 
 	Boolean autoLoad;

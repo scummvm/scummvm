@@ -51,7 +51,6 @@ static Err GamUpdateList() {
 			if (version != curItemVersion && size != sizeof(GameInfoType)) {
 				UInt16 index;
 				GameInfoType gitCur;
-				GameInfoTypeV0 git0;
 				void *tmpP;
 				FormPtr ofmP, frmP;
 				
@@ -62,40 +61,82 @@ static Err GamUpdateList() {
 				FrmDrawForm(frmP);
 				SysTaskDelay(200);
 
-				// need conversion from V0 -> V2
-				for (index = 0; index < numRecs; index++) {
-					
-					// get old data
-					tmpH = DmQueryRecord(gameDB, index);
-					tmpP = MemHandleLock(tmpH);
-					MemMove(&git0, tmpP, sizeof(GameInfoTypeV0));
-					MemHandleUnlock(tmpH);
+				if (version == itemVersion_2) {
+					// need conversion from V2 -> V2.5
+					GameInfoTypeV2 git0;
 
-					// convert to new format
-					gitCur.version = curItemVersion;
-					gitCur.icnID = 0xFFFF;
-					gitCur.selected = git0.selected;
-					StrCopy(gitCur.nameP, git0.nameP);
-					StrCopy(gitCur.pathP, git0.pathP);
-					StrCopy(gitCur.gameP, git0.gameP);
-					gitCur.gfxMode = git0.gfxMode;
-					
-					gitCur.autoLoad = git0.autoLoad;
-					gitCur.bootParam = git0.bootParam;
-					gitCur.setPlatform = git0.amiga;	// amiga become platform amiga/atari-st/machintosh
-					gitCur.subtitles = git0.subtitles;
-					gitCur.talkSpeed = git0.talkSpeed;
+					for (index = 0; index < numRecs; index++) {
+						
+						// get old data
+						tmpH = DmQueryRecord(gameDB, index);
+						tmpP = MemHandleLock(tmpH);
+						MemMove(&git0, tmpP, sizeof(GameInfoTypeV2));
+						MemHandleUnlock(tmpH);
 
-					gitCur.loadSlot = git0.loadSlot;
-					gitCur.bootValue = git0.bootValue;
-					gitCur.talkValue = git0.talkValue;
-					gitCur.platform = 0;	// default to amiga
-					gitCur.language = git0.language;
-					
-					tmpH = DmResizeRecord(gameDB, index, sizeof(GameInfoType));	// TODO : check error on resize tmpH==NULL
-					tmpP = MemHandleLock(tmpH);
-					DmWrite(tmpP, 0, &gitCur, sizeof(GameInfoType));
-					MemPtrUnlock(tmpP);
+						// convert to new format
+						gitCur.version = curItemVersion;
+						gitCur.icnID = 0xFFFF;
+						gitCur.selected = git0.selected;
+						StrCopy(gitCur.nameP, git0.nameP);
+						StrCopy(gitCur.pathP, git0.pathP);
+						StrCopy(gitCur.gameP, git0.gameP);
+						gitCur.gfxMode = git0.gfxMode;
+						
+						gitCur.autoLoad = git0.autoLoad;
+						gitCur.bootParam = git0.bootParam;
+						gitCur.setPlatform = git0.setPlatform;
+						gitCur.subtitles = git0.subtitles;
+						gitCur.talkSpeed = git0.talkSpeed;
+
+						gitCur.loadSlot = git0.loadSlot;
+						gitCur.bootValue = git0.bootValue;
+						gitCur.talkValue = git0.talkValue;
+						gitCur.platform = git0.platform;
+						gitCur.language = git0.language;
+						
+						tmpH = DmResizeRecord(gameDB, index, sizeof(GameInfoType));	// TODO : check error on resize tmpH==NULL
+						tmpP = MemHandleLock(tmpH);
+						DmWrite(tmpP, 0, &gitCur, sizeof(GameInfoType));
+						MemPtrUnlock(tmpP);
+					}
+				} else {
+					// need conversion from V0 -> V2.5
+					GameInfoTypeV0 git0;
+
+					for (index = 0; index < numRecs; index++) {
+						
+						// get old data
+						tmpH = DmQueryRecord(gameDB, index);
+						tmpP = MemHandleLock(tmpH);
+						MemMove(&git0, tmpP, sizeof(GameInfoTypeV0));
+						MemHandleUnlock(tmpH);
+
+						// convert to new format
+						gitCur.version = curItemVersion;
+						gitCur.icnID = 0xFFFF;
+						gitCur.selected = git0.selected;
+						StrCopy(gitCur.nameP, git0.nameP);
+						StrCopy(gitCur.pathP, git0.pathP);
+						StrCopy(gitCur.gameP, git0.gameP);
+						gitCur.gfxMode = git0.gfxMode;
+						
+						gitCur.autoLoad = git0.autoLoad;
+						gitCur.bootParam = git0.bootParam;
+						gitCur.setPlatform = git0.amiga;	// amiga become platform amiga/atari-st/machintosh
+						gitCur.subtitles = git0.subtitles;
+						gitCur.talkSpeed = git0.talkSpeed;
+
+						gitCur.loadSlot = git0.loadSlot;
+						gitCur.bootValue = git0.bootValue;
+						gitCur.talkValue = git0.talkValue;
+						gitCur.platform = 0;	// default to amiga
+						gitCur.language = git0.language;
+						
+						tmpH = DmResizeRecord(gameDB, index, sizeof(GameInfoType));	// TODO : check error on resize tmpH==NULL
+						tmpP = MemHandleLock(tmpH);
+						DmWrite(tmpP, 0, &gitCur, sizeof(GameInfoType));
+						MemPtrUnlock(tmpP);
+					}
 				}
 
 				FrmEraseForm(frmP);
