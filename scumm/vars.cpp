@@ -223,6 +223,8 @@ void ScummEngine_v7he::setupScummVars() {
 	VAR_SOUNDPARAM = 51;
 	VAR_MUSIC_TIMER = 52;
 
+	VAR_PERFORMANCE_1 = 57;
+	VAR_PERFORMANCE_2 = 58;
 	VAR_NEW_ROOM = 59;
 	VAR_TMR_1 = 60;
 	VAR_TMR_2 = 61;
