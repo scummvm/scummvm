@@ -80,7 +80,7 @@ struct Rect {
 
 	/*!	@brief check if given rectangle is inside this rectangle
 		
-		@param p the point to check
+		@param r the rectangle to check
 		
 		@return true if the given rectangle is inside the rectangle, false otherwise
 	*/
