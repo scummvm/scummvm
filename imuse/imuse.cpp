@@ -136,7 +136,7 @@ void Imuse::restoreState(SaveRestoreFunc) {
 		track->stream = makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
 		g_mixer->playInputStream(&track->handle, track->stream, false, -1, track->mixerVol, track->mixerPan, false);
 	}
-	printf("Imuse::restoreState() finished\n.");
+	printf("Imuse::restoreState() finished.\n");
 }
 
 void Imuse::saveState(SaveRestoreFunc) {
