@@ -388,6 +388,11 @@ loc_avoid_ks_fe:
 				VAR(VAR_CHARCOUNT)++;
 			} else
 				_talkDelay += (int)VAR(VAR_CHARINC);
+			
+			// Handle line breaks for V1-V3
+			if (_version <= 3 && _charset->_nextLeft >= _screenWidth) {
+				goto newLine;
+			}
 		}
 	} while (c != 2 && c != 3);
 
