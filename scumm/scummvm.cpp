@@ -1129,9 +1129,28 @@ void Scumm::initScummVars() {
 		case MD_PCSPK:
 		case MD_PCJR:  VAR(VAR_SOUNDCARD) = 1; break;
 		default:       
-			if (_features & GF_SMALL_HEADER && !(_features & GF_AMIGA))
+			if ((_gameId == GID_MONKEY_EGA) || ((_gameId == GID_MONKEY_VGA) && !(_features & GF_AMIGA))
+			   || (_gameId == GID_LOOM)) {
+				if (_gameId == GID_LOOM) {
+					char buf[50];
+					uint i = 82;
+					File f;
+					while (i < 86) {
+						sprintf(buf, "%d.LFL", i);
+						f.open(buf, _gameDataPath);
+						if (f.isOpen() == false)
+							error("Native MIDI support requires Roland patch from LucasArts");
+						f.close();
+						i++;
+					}
+				} else if (_gameId == GID_MONKEY_EGA) {
+						File f;
+						f.open("DISK09.LEC", _gameDataPath);
+						if (f.isOpen() == false)
+							error("Native MIDI support requires Roland patch from LucasArts");
+				}
 				VAR(VAR_SOUNDCARD) = 4;
-			else
+			} else
 				VAR(VAR_SOUNDCARD) = 3;
 		}
 		VAR(VAR_VIDEOMODE) = 0x13;
