@@ -2459,12 +2459,10 @@ void SimonEngine::o_set_video_mode(uint mode, uint vga_res) {
 	if (mode == 4)
 		vc_29_stop_all_sounds();
 
-	if (_lock_word & 0x10) {
+	if (_lock_word & 0x10)
 		error("o_set_video_mode_ex: _lock_word & 0x10");
-//    _unk21_word_array[a] = b; 
-	} else {
-		set_video_mode(mode, vga_res);
-	}
+
+	set_video_mode_internal(mode, vga_res);
 }
 
 void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
@@ -2566,28 +2564,6 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 			}
 		}
 	}
-}
-
-void SimonEngine::set_video_mode(uint mode, uint vga_res_id) {
-	if (_lock_counter == 0) {
-		lock();
-		if (_lock_word == 0) {
-			_sync_flag_1 = true;
-			while (_sync_flag_1) {
-				delay(10);
-			}
-		}
-	}
-
-	_lock_word |= 0x20;
-
-	while (_lock_word & 2) {
-		delay(10);
-	}
-
-	unlock();
-
-	set_video_mode_internal(mode, vga_res_id);
 }
 
 void SimonEngine::o_fade_to_black() {

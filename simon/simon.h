@@ -585,7 +585,6 @@ protected:
 	void handle_verb_clicked(uint verb);
 
 	void o_set_video_mode(uint mode, uint vga_res);
-	void set_video_mode(uint mode, uint vga_res_id);
 	void set_video_mode_internal(uint mode, uint vga_res_id);
 
 	void ensureVgaResLoadedC(uint vga_res);
