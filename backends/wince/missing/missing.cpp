@@ -245,6 +245,13 @@ void rewind(FILE *stream)
 
 
 #if _WIN32_WCE < 300
+
+int isalnum(int c) {
+	return ((c >= 'A' && c <= 'Z') ||
+			(c >= 'a' && c <= 'z') ||
+			(c >= '0' && c <= '9'));
+}
+
 char *_strdup(const char *strSource)
 #else
 char *strdup(const char *strSource)
