@@ -204,6 +204,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 	_save_slot = -1;
 
 	/* Parse the arguments */
+	// FIXME: Add more lemons
 	for (i = argc - 1; i >= 1; i--) {
 		s = argv[i];
 
