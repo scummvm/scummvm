@@ -909,7 +909,7 @@ void ScummEngine::launch() {
 	// if (_gameId==GID_MONKEY2 && _bootParam == 0)
 	//	_bootParam = 10001;
 
-	if (_gameId == GID_INDY4 && _bootParam == 0) {
+	if (!_copyProtection && _gameId == GID_INDY4 && _bootParam == 0) {
 		_bootParam = -7873;
 	}
 
@@ -1212,8 +1212,11 @@ void ScummEngine::initScummVars() {
 		VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
 	}
 	
+	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
+		_scummVars[74] = 1225;
+	
 	VAR(VAR_CHARINC) = 4;
-	talkingActor(0);
+	setTalkingActor(0);
 }
 
 #pragma mark -
@@ -1327,8 +1330,8 @@ int ScummEngine::scummLoop(int delta) {
 		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y;
 		VAR(VAR_MOUSE_X) = _mouse.x;
 		VAR(VAR_MOUSE_Y) = _mouse.y;
-		if ((_features & GF_MACINTOSH) && (_version == 3))  {
-			// This is for the Mac version of Indy3/Loom
+		if (!((_features & GF_MACINTOSH) && (_version == 3))) {
+			// This is NOT for the Mac version of Indy3/Loom
 			VAR(VAR_DEBUGMODE) = _debugMode;
 		}
 	}
@@ -1627,7 +1630,7 @@ void ScummEngine::parseEvents() {
 			}
 
 			if (_keyPressed >= 512)
-				warning("_keyPressed > 512 (%d)", _keyPressed);
+				debugC(DEBUG_GENERAL, "_keyPressed > 512 (%d)", _keyPressed);
 			else
 				_keyDownMap[_keyPressed] = true;
 			break;
@@ -1636,7 +1639,7 @@ void ScummEngine::parseEvents() {
 			// FIXME: for some reason OSystem::KBD_ALT is set sometimes
 			// possible to a bug in sdl-common.cpp
 			if (event.kbd.ascii >= 512)
-				warning("keyPressed > 512 (%d)", event.kbd.ascii);
+				debugC(DEBUG_GENERAL, "keyPressed > 512 (%d)", event.kbd.ascii);
 			else
 				_keyDownMap[event.kbd.ascii] = false;
 			break;
@@ -2075,7 +2078,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 			a->moving = 0;
 		}
 	} else if (_version >= 7) {
-		if (a) {
+		if ((_gameId == GID_DIG) && a) {
 			// FIXME: This hack mostly is there to fix the tomb/statue room
 			// in The Dig. What happens there is that when you enter, you are
 			// placed at object 399, coords (307,141), which is in box 25.
@@ -2489,14 +2492,11 @@ void ScummEngine::restart() {
 	}
 	_sound->setupSound();               // Reinit sound engine
 
-	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
-		_scummVars[74] = 1225;
-
 	// Re-run bootscript
 	int args[16];
 	memset(args, 0, sizeof(args));
 	args[0] = _bootParam;	
-	if (_gameId == GID_MANIAC && _version == 1 && _demoMode)
+	if (_gameId == GID_MANIAC && _demoMode)
 		runScript(9, 0, 0, args);
 	else
 		runScript(1, 0, 0, args);
@@ -2504,7 +2504,7 @@ void ScummEngine::restart() {
 
 void ScummEngine::startManiac() {
 	warning("stub startManiac()");
-	displayError("Alright", "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' directory inside the Tentacle game directory.");
+	displayError(0, "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' directory inside the Tentacle game directory.");
 }
 
 #pragma mark -
