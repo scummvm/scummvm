@@ -622,7 +622,8 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 			best = (uint) 0xFFFF;
 			b = 0;
 
-			if (!(_vm->_features & GF_OLD256) || box)
+// FIXME - why was that check here? It apparently causes bug #643001
+//			if (!(_vm->_features & GF_OLD256) || box)
 			for (j = box; j >= firstValidBox; j--) {
 				flags = _vm->getBoxFlags(j);
 
