@@ -544,6 +544,7 @@ int GAME_GetGameType() {
 }
 
 int Verify_ITEDEMO(const char *game_dir) {
+	debug(3, "Verify_ITEDEMO()");
 	YS_IGNORE_PARAM(game_dir);
 
 	return R_SUCCESS;
@@ -552,6 +553,7 @@ int Verify_ITEDEMO(const char *game_dir) {
 int Verify_ITEDISK(const char *game_dir) {
 	R_RSCFILE_CONTEXT *test_ctx;
 
+	debug(3, "Verify_ITEDISK()");
 	uint32 script_lut_len;
 	uint32 script_lut_rn;
 	int verified = 0;
@@ -560,7 +562,7 @@ int Verify_ITEDISK(const char *game_dir) {
 	if (RSC_OpenContext(test_ctx, "ITE.RSC") != R_SUCCESS) {
 		return R_FAILURE;
 	}
-
+	
 	script_lut_rn = GameDescs[R_GAME_ITE_DISK].gd_resource_desc->script_lut_rn;
 	if (RSC_GetResourceSize(test_ctx,
 		script_lut_rn, &script_lut_len) != R_SUCCESS) {
@@ -582,18 +584,21 @@ int Verify_ITEDISK(const char *game_dir) {
 }
 
 int Verify_ITECD(const char *game_dir) {
+	debug(3, "Verify_ITECD()");
 	YS_IGNORE_PARAM(game_dir);
 
 	return R_SUCCESS;
 }
 
 int Verify_IHNMDEMO(const char *game_dir) {
+	debug(3, "Verify_IHNMDEMO()");
 	YS_IGNORE_PARAM(game_dir);
 
 	return R_SUCCESS;
 }
 
 int Verify_IHNMCD(const char *game_dir) {
+	debug(3, "Verify_IHNMCD()");
 	YS_IGNORE_PARAM(game_dir);
 
 	return R_SUCCESS;
