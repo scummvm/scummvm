@@ -77,18 +77,23 @@ public:
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
-	Config &_config;
+	Config			&_config;
+	const String	&_domain;
+	EditTextWidget	*_descriptionWidget;
 };
 
 EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain)
-	: Dialog(gui, 10, 30, 320-2*10, 200-2*30), _config(config)
+	: Dialog(gui, 10, 40, 320-2*10, 200-2*40), _config(config), _domain(domain)
 {
 	// Determine the description string
-	String description(_config.get("description", domain));
+	String name(_config.get("gameid", _domain));
+	String description(_config.get("description", _domain));
+	if (name.isEmpty())
+		name = _domain;
 	if (description.isEmpty()) {
 		const VersionSettings *v = version_settings;
 		while (v->filename) {
-			if (!scumm_stricmp(v->filename, domain.c_str())) {
+			if (!scumm_stricmp(v->filename, name.c_str())) {
 				description = v->gamename;
 				break;
 			}
@@ -98,10 +103,11 @@ EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain
 	
 	// Label & edit widget for the description
 	new StaticTextWidget(this, 10, 10, 40, kLineHeight, "Name: ", kTextAlignRight);
-	new EditTextWidget(this, 50, 10, _w-50-10, kLineHeight, description);
+	_descriptionWidget =
+		new EditTextWidget(this, 50, 10, _w-50-10, kLineHeight, description);
 
 	// Path to game data (view only)
-	String path(_config.get("path", domain));
+	String path(_config.get("path", _domain));
 	new StaticTextWidget(this, 10, 24, 40, kLineHeight, "Path: ", kTextAlignRight);
 	new StaticTextWidget(this, 50, 24, _w-50-10, kLineHeight, path, kTextAlignLeft);
 	
@@ -116,7 +122,8 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 {
 	switch (cmd) {
 	case kOKCmd:
-		// TODO - write back changes made to config object
+		// Write back changes made to config object
+		_config.set("description", _descriptionWidget->getLabel(), _domain);
 		setResult(1);
 		close();
 		break;
@@ -206,11 +213,12 @@ void LauncherDialog::updateListing()
 		String name(g_config->get("gameid", domains[i]));
 		String description(g_config->get("description", domains[i]));
 		
-		if (name.isEmpty() || description.isEmpty()) {
+		if (name.isEmpty())
+			name = domains[i];
+		if (description.isEmpty()) {
 			v = version_settings;
-			while (v->filename && v->gamename) {
-				if (!scumm_stricmp(v->filename, domains[i].c_str())) {
-					name = domains[i];
+			while (v->filename) {
+				if (!scumm_stricmp(v->filename, name.c_str())) {
 					description = v->gamename;
 					break;
 				}
@@ -333,7 +341,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 				// are *adding* a game to the config, not replacing).
 				String domain(v->filename);
 				if (g_config->has_domain(domain)) {
-					char suffix = 'A';
+					char suffix = 'a';
 					domain += suffix;
 					while (g_config->has_domain(domain)) {
 						domain.deleteLastChar();
@@ -397,9 +405,12 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		}
 		break;
 	case kOptionsCmd: {
-		// TODO - show up a generic options dialog, loosely based upon the one 
-		// we have in scumm/dialogs.cpp. So we will be modifying the settings
-		// in _detector, like which music engine to use, volumes, etc.
+		// TODO - show up a generic options dialog with global options, including:
+		// - the save path (use _browser!)
+		// - music & graphics driver (but see also the comments on EditGameDialog
+		//   for some techincal difficulties with this)
+		// - default volumes (sfx/master/music)
+		// - 
 		//
 		// We also allow the global save game path to be set here.
 		MessageDialog alert(_gui, "Global game options dialog not yet implemented!");
