@@ -1759,7 +1759,7 @@ void SimonState::vc_63_palette_thing_2() {
 	_video_var_3 = false;
 }
 
-void SimonState::vc_64_skip_if_text() {
+void SimonState::vc_64_skip_if_voice() {
 	// Simon2
 	if (_sound->_voice_handle == 0)
 		vc_skip_next_instruction();

@@ -1052,7 +1052,7 @@ const char *const simon1_video_opcode_name_table[] = {
 	"|DUMMY_56",
 	"|DUMMY_57",
 	"|UNK_58",
-	"|SKIP_IF_TEXT",
+	"|SKIP_IF_VOICE",
 	/* 60 */
 	"d|KILL_SPRITE",
 	"ddd|INIT_SPRITE",
@@ -1142,7 +1142,7 @@ const char *const simon2_video_opcode_name_table[] = {
 	"|PALETTE_THING",
 	"|PALETTE_THING_2",
 	/* 64 */
-	"|SKIP_IF_TEXT",
+	"|SKIP_IF_VOICE",
 	"|PALETTE_THING_3",
 	"|SKIP_IF_NZ",
 	"|SKIP_IF_GE",
