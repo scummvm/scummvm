@@ -295,11 +295,11 @@ Broken Sword 2
 * Enforce ScummVM code formatting guidelines. (Mostly done?)
 * Encapsulate the code into sensible objects. (Partly done.)
 * Enable the CD swapping code. (Partly done.)
-* Support cutscenes in some kind of open video format. (Partly done.)
 * Fix the credits so they look more like the original. (Did we ever get the
   source code for that?)
-* Find out what the proper "copyright" statement in our source files
-  should be [joostp will contact Revolution regarding that].
+* Eventually I would like to get rid of the "driver" sub-directory. We already
+  have a cross-platform infrastructure for ScummVM, so this separation is not
+  necessary.
 
 SIMON
 =====
