@@ -160,11 +160,9 @@
 #include "sound/mixer.h"
 
 // Decompression macros
-#define MakeCompressedByte(shift, sign, amplitude) (((shift) << 4) + ((sign) << 3) + (amplitude))
-#define GetCompressedShift(byte)                   ((byte) >> 4)
-#define GetCompressedSign(byte)                    (((byte) >> 3) & 1)
-#define GetCompressedAmplitude(byte)               ((byte) & 7)
-#define GetdAPower(dA, power)                      for (power = 15; power > 0 && !((dA) & (1 << power)); power--)
+#define GetCompressedShift(byte)      ((byte) >> 4)
+#define GetCompressedSign(byte)       (((byte) >> 3) & 1)
+#define GetCompressedAmplitude(byte)  ((byte) & 7)
 
 int32 panTable[33] = {
 	-127, -119, -111, -103, -95, -87, -79, -71, -63, -55, -47, -39, -31, -23, -15, -7,
@@ -203,6 +201,7 @@ int32 musicVolTable[17] = {
   -200, -100, -50, 0
 };
 */
+
 void sword2_sound_handler(void *refCon) {
 	Sword2Sound *sound = (Sword2Sound *)refCon;
 	sound->FxServer();
@@ -260,8 +259,10 @@ Sword2Sound::~Sword2Sound() {
 // This function reverse the pan table, thus reversing the stereo.
 // --------------------------------------------------------------------------
 
+// FIXME: We could probably use the FLAG_REVERSE_STEREO mixer flag here.
+
 int32 Sword2Sound::ReverseStereo(void) {
-	int i,j;
+	int i, j;
 
 	for (i = 0; i < 16; i++) {
 		j = panTable[i];
@@ -269,12 +270,13 @@ int32 Sword2Sound::ReverseStereo(void) {
 		panTable[32 - i] = j;
 	}
 
-	return (RD_OK);
+	return RD_OK;
 }
 
-//	--------------------------------------------------------------------------
-//	This function returns the index of the sound effect with the ID passed in.
-//	--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// This function returns the index of the sound effect with the ID passed in.
+// --------------------------------------------------------------------------
+
 int32 Sword2Sound::GetFxIndex(int32 id) {
 	int32 i = 0;
 
@@ -284,7 +286,7 @@ int32 Sword2Sound::GetFxIndex(int32 id) {
 		i++;
 	}
 
-	return(i);
+	return i;
 }
 
 int32 Sword2Sound::IsFxOpen(int32 id) {
@@ -302,11 +304,12 @@ int32 Sword2Sound::IsFxOpen(int32 id) {
 		return 0;
 }
 
-//	--------------------------------------------------------------------------
-//	This function checks the status of all current sound effects, and clears
-//	out the ones which are no longer required in a buffer.  It is called on
-//	a slow timer from rdwin.c
-//	--------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// This function checks the status of all current sound effects, and clears
+// out the ones which are no longer required in a buffer.  It is called by
+// a separate thread.
+// --------------------------------------------------------------------------
+
 void Sword2Sound::FxServer(void) {
 	StackLock lock(_mutex);
 
@@ -365,64 +368,61 @@ void Sword2Sound::FxServer(void) {
 }
 
 int32 Sword2Sound::AmISpeaking() {
-	if ((!speechMuted) && (!speechPaused) && (soundHandleSpeech != 0)) {
-		return (RDSE_SPEAKING);
-	}
-	return (RDSE_QUIET);
+	if (!speechMuted && !speechPaused && soundHandleSpeech != 0)
+		return RDSE_SPEAKING;
+
+	return RDSE_QUIET;
 }
 
 int32 Sword2Sound::GetCompSpeechSize(const char *filename, uint32 speechid) {
- 	int32 			i;
-	uint32			speechIndex[2];
-	File		    fp;
+	uint32 speechIndex[2];
+	File fp;
 	
-  //  Open the speech cluster and find the data offset & size
+	// Open the speech cluster and find the data offset & size
 	fp.open(filename, g_engine->getGameDataPath());
 	if (fp.isOpen() == false)
-		return(0);
+		return 0;
 
 	fp.seek((++speechid) * 8, SEEK_SET);
 
 	if (fp.read(speechIndex, sizeof(uint32) * 2) != (sizeof(uint32) * 2)) {
 		fp.close();
-		return (0);
-	}
-#ifdef SCUMM_BIG_ENDIAN
-	speechIndex[0] = SWAP_BYTES_32(speechIndex[0]);
-	speechIndex[1] = SWAP_BYTES_32(speechIndex[1]);
-#endif
-
-	if (!speechIndex[0] || !speechIndex[1]) {
-		fp.close();
-		return (0);
+		return 0;
 	}
 
 	fp.close();
 
-	i = (speechIndex[1] - 1) * 2 + sizeof(_wavHeader) + 8;
-	
-	return(i);
+#ifdef SCUMM_BIG_ENDIAN
+	speechIndex[0] = SWAP_BYTES_32(speechIndex[0]);
+	speechIndex[1] = SWAP_BYTES_32(speechIndex[1]);
+#endif
+
+	if (!speechIndex[0] || !speechIndex[1])
+		return 0;
+
+	return (speechIndex[1] - 1) * 2 + sizeof(_wavHeader) + 8;
 }
 
 int32 Sword2Sound::PreFetchCompSpeech(const char *filename, uint32 speechid, uint8 *waveMem) {
- 	uint32 			i;
-	uint16			*data16;
-	uint8			*data8;
-	uint32			speechIndex[2];
-	_wavHeader		*pwf = (_wavHeader *) waveMem;
-	File		   fp;
+	uint32 i;
+	uint16 *data16;
+	uint8 *data8;
+	uint32 speechIndex[2];
+	_wavHeader *pwf = (_wavHeader *) waveMem;
+	File fp;
 
-	//  Open the speech cluster and find the data offset & size
+	// Open the speech cluster and find the data offset & size
 	fp.open(filename, g_engine->getGameDataPath());
 	if (fp.isOpen() == false)
-		return(RDERR_INVALIDFILENAME);
+		return RDERR_INVALIDFILENAME;
 
 	fp.seek((++speechid) * 8, SEEK_SET);
 
 	if (fp.read(speechIndex, sizeof(uint32) * 2) != (sizeof(uint32) * 2)) {
 		fp.close();
-		return (RDERR_READERROR);
+		return RDERR_READERROR;
 	}
+
 #ifdef SCUMM_BIG_ENDIAN
 	speechIndex[0] = SWAP_BYTES_32(speechIndex[0]);
 	speechIndex[1] = SWAP_BYTES_32(speechIndex[1]);
@@ -430,10 +430,10 @@ int32 Sword2Sound::PreFetchCompSpeech(const char *filename, uint32 speechid, uin
 
 	if (!speechIndex[0] || !speechIndex[1]) {
 		fp.close();
-		return (RDERR_INVALIDID);
+		return RDERR_INVALIDID;
 	}
 
-	data16 = (uint16*)(waveMem + sizeof(_wavHeader));
+	data16 = (uint16 *) (waveMem + sizeof(_wavHeader));
 
 	memset(pwf, 0, sizeof(_wavHeader));
 
@@ -441,39 +441,40 @@ int32 Sword2Sound::PreFetchCompSpeech(const char *filename, uint32 speechid, uin
 	pwf->wavID = MKID('WAVE');
 	pwf->format = MKID('fmt ');
 
-	pwf->formatLen		= TO_LE_32(0x00000010);
-	pwf->formatTag		= TO_LE_16(0x0001);
-	pwf->channels		= TO_LE_16(0x0001);
-	pwf->samplesPerSec	= TO_LE_16(0x5622);
+	pwf->formatLen = TO_LE_32(0x00000010);
+	pwf->formatTag = TO_LE_16(0x0001);
+	pwf->channels = TO_LE_16(0x0001);
+	pwf->samplesPerSec = TO_LE_16(0x5622);
 	pwf->avgBytesPerSec = TO_LE_16(0x0000);
-	pwf->blockAlign		= TO_LE_16(0xAC44);
-	pwf->unknown1		= TO_LE_16(0x0000);
-	pwf->unknown2		= TO_LE_16(0x0002);
-	pwf->bitsPerSample	= TO_LE_16(0x0010);
+	pwf->blockAlign = TO_LE_16(0xAC44);
+	pwf->unknown1 = TO_LE_16(0x0000);
+	pwf->unknown2 = TO_LE_16(0x0002);
+	pwf->bitsPerSample = TO_LE_16(0x0010);
 
-	*((uint32*)data16) = MKID('data');
+	*((uint32 *) data16) = MKID('data');
 
 	data16 += 2;
 
-	*((uint32*)data16) = TO_LE_32((speechIndex[1] - 1) * 2);
+	*((uint32 *) data16) = TO_LE_32((speechIndex[1] - 1) * 2);
 
 	data16 += 2;
 
 	pwf->fileLength = (speechIndex[1] - 1) * 2 + sizeof(_wavHeader) + 8;
 
 	// Calculate position in buffer to load compressed sound into
-	data8 = (uint8*)data16 + (speechIndex[1]-1);
+	data8 = (uint8 *) data16 + (speechIndex[1] - 1);
 	
 	fp.seek(speechIndex[0], SEEK_SET);
 
 	if (fp.read(data8, speechIndex[1]) != speechIndex[1]) {
 		fp.close();
-		return (RDERR_INVALIDID);
+		return RDERR_INVALIDID;
 	}
 
 	fp.close();
 
-	data16[0] = READ_LE_UINT16(data8);	// Starting Value
+	// Starting Value
+	data16[0] = READ_LE_UINT16(data8);
 
 	for (i = 1; i < (speechIndex[1] - 1); i++) {
 		if (GetCompressedSign(data8[i + 1]))
@@ -482,16 +483,16 @@ int32 Sword2Sound::PreFetchCompSpeech(const char *filename, uint32 speechid, uin
 			data16[i] = data16[i - 1] + (GetCompressedAmplitude(data8[i + 1]) << GetCompressedShift(data8[i + 1]));
 	}
 
-	return(RD_OK);
+	return RD_OK;
 }
 
 int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 vol, int8 pan) {
- 	uint32	i;
-	uint16	*data16;
-	uint8	*data8;
-	uint32	speechIndex[2];
-	File	fp;
-	uint32	bufferSize;
+	uint32 i;
+	uint16 *data16;
+	uint8 *data8;
+	uint32 speechIndex[2];
+	File fp;
+	uint32 bufferSize;
 	
 	if (!speechMuted) {
 		if (GetSpeechStatus() == RDERR_SPEECHPLAYING)
@@ -500,14 +501,15 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 		//  Open the speech cluster and find the data offset & size
 		fp.open(filename, g_engine->getGameDataPath());
 		if (fp.isOpen() == false) 
-			return(RDERR_INVALIDFILENAME);
+			return RDERR_INVALIDFILENAME;
 		
 		fp.seek((++speechid) * 8, SEEK_SET);
 
 		if (fp.read(speechIndex, sizeof(uint32) * 2) != (sizeof(uint32) * 2)) {
 			fp.close();
-			return (RDERR_READERROR);
+			return RDERR_READERROR;
 		}
+
 #ifdef SCUMM_BIG_ENDIAN
 		speechIndex[0] = SWAP_BYTES_32(speechIndex[0]);
 		speechIndex[1] = SWAP_BYTES_32(speechIndex[1]);
@@ -515,13 +517,13 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 
 		if (speechIndex[0] == 0 || speechIndex[1] == 0) {
 			fp.close();
-			return (RDERR_INVALIDID);
+			return RDERR_INVALIDID;
 		}
 
 		bufferSize = (speechIndex[1] - 1) * 2;
 
 		// Create tempory buffer for compressed speech
-		if ((data8 = (uint8 *)malloc(speechIndex[1])) == NULL) {
+		if ((data8 = (uint8 *) malloc(speechIndex[1])) == NULL) {
 			fp.close();
 			return(RDERR_OUTOFMEMORY);
 		}
@@ -531,15 +533,16 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 		if (fp.read(data8, speechIndex[1]) != speechIndex[1]) {
 			fp.close();
 			free(data8);
-			return (RDERR_INVALIDID);
+			return RDERR_INVALIDID;
 		}
 
 		fp.close();
 
 		// Decompress data into speech buffer.
-		data16 = (uint16*)malloc(bufferSize);
+		data16 = (uint16 *) malloc(bufferSize);
 
-		data16[0] = READ_LE_UINT16(data8);	// Starting Value
+		// Starting Value
+		data16[0] = READ_LE_UINT16(data8);
 
 		for (i = 1; i < bufferSize / 2; i++) {
 			if (GetCompressedSign(data8[i + 1]))
@@ -563,11 +566,11 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 		// Start the speech playing
 		speechPaused = 1;
 			
-		uint32 flags = SoundMixer::FLAG_16BITS;
-		flags |= SoundMixer::FLAG_AUTOFREE;
+		uint32 flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
 
 #ifndef SCUMM_BIG_ENDIAN
-		// Until the mixer supports LE samples natively, we need to convert our LE ones to BE
+		// Until the mixer supports LE samples natively, we need to
+		// convert our LE ones to BE
 		for (uint j = 0; j < (bufferSize / 2); j++)
 			data16[j] = SWAP_BYTES_16(data16[j]);
 #endif
@@ -578,38 +581,38 @@ int32 Sword2Sound::PlayCompSpeech(const char *filename, uint32 speechid, uint8 v
 	}
 
 	DipMusic();
-	return (RD_OK);
+	return RD_OK;
 }
 
 int32 Sword2Sound::StopSpeechSword2(void) {
 	if (!soundOn)
-		return(RD_OK);
+		return RD_OK;
   
 	if (speechStatus) {
 		g_engine->_mixer->stopHandle(soundHandleSpeech);
 		speechStatus = 0;
-		return(RD_OK);
+		return RD_OK;
 	}
-	return(RDERR_SPEECHNOTPLAYING);
+	return RDERR_SPEECHNOTPLAYING;
 }
 
 int32 Sword2Sound::GetSpeechStatus(void) {
-	if ((!soundOn) || (!speechStatus))
-		return(RDSE_SAMPLEFINISHED);
+	if (!soundOn || !speechStatus)
+		return RDSE_SAMPLEFINISHED;
 
 	if (speechPaused)
-		return(RDSE_SAMPLEPLAYING);
+		return RDSE_SAMPLEPLAYING;
 
 	if (!soundHandleSpeech) {
 		speechStatus = 0;
-		return(RDSE_SAMPLEFINISHED);
+		return RDSE_SAMPLEFINISHED;
 	}
-	return(RDSE_SAMPLEPLAYING);
+	return RDSE_SAMPLEPLAYING;
 }
 
 void Sword2Sound::SetSpeechVolume(uint8 volume) {
 	speechVol = volume;
-	if ((soundHandleSpeech != 0) && !speechMuted && GetSpeechStatus() == RDSE_SAMPLEPLAYING) {
+	if (soundHandleSpeech != 0 && !speechMuted && GetSpeechStatus() == RDSE_SAMPLEPLAYING) {
 		g_engine->_mixer->setChannelVolume(soundHandleSpeech, 16 * speechVol);
 	}
 }
@@ -639,7 +642,7 @@ int32 Sword2Sound::PauseSpeech(void) {
 		speechPaused = 1;
 		g_engine->_mixer->pauseHandle(soundHandleSpeech, true);
 	}
-	return(RD_OK);
+	return RD_OK;
 }
 
 int32 Sword2Sound::UnpauseSpeech(void) {
@@ -647,25 +650,25 @@ int32 Sword2Sound::UnpauseSpeech(void) {
 		speechPaused = 0;
 		g_engine->_mixer->pauseHandle(soundHandleSpeech, false);
 	}
-	return(RD_OK);
+	return RD_OK;
 }
 
 int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
- 	int32 	i, fxi;
-	uint32	*data32 = NULL;
-	_wavHeader	*wav;
+ 	int32 i, fxi;
+	uint32 *data32 = NULL;
+	_wavHeader *wav;
 
 	wav = (_wavHeader *) data;
 
 	if (soundOn) {
 		// Check for a valid id.
 		if (id == 0)
-			return(RDERR_INVALIDID);
+			return RDERR_INVALIDID;
 
 		// Check that the fx is not already open
 		for (i = 0; i < MAXFX; i++) {
 			if (fxId[i] == id)
-				return(RDERR_FXALREADYOPEN);
+				return RDERR_FXALREADYOPEN;
 		}
 
 		// Now choose a free slot for the fx
@@ -697,10 +700,10 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 			// Still no dice? I give up!
 
 			if (fxi == MAXFX)
-				return(RDERR_NOFREEBUFFERS);
+				return RDERR_NOFREEBUFFERS;
 		}
 
-    //  Set the sample size - search for the size of the data.
+		// Set the sample size - search for the size of the data.
 		i = 0;
 		while (i < 100) {
 			if (*data == 'd') {
@@ -712,28 +715,29 @@ int32 Sword2Sound::OpenFx(int32 id, uint8 *data) {
 			data++;
 		}
 		if (!data32)
-			return(RDERR_INVALIDWAV);
+			return RDERR_INVALIDWAV;
 
 		bufferSizeFx[fxi] = READ_LE_UINT32(data32 + 1);
 
-		//	Fill the speech buffer with data
+		// Fill the speech buffer with data
 		if (bufferFx[fxi] != NULL)
 			free(bufferFx[fxi]);
-		bufferFx[fxi] = (uint16*)malloc(bufferSizeFx[fxi]);
-		memcpy(bufferFx[fxi], (uint8 *)(data32 + 2), bufferSizeFx[fxi]);
+		bufferFx[fxi] = (uint16 *) malloc(bufferSizeFx[fxi]);
+		memcpy(bufferFx[fxi], (uint8 *) (data32 + 2), bufferSizeFx[fxi]);
 		flagsFx[fxi] = SoundMixer::FLAG_16BITS;
 		if (FROM_LE_16(wav->channels) == 2)
 			flagsFx[fxi] |= SoundMixer::FLAG_STEREO;
 
 		fxRate[fxi] = FROM_LE_16(wav->samplesPerSec);
 
-		// Until the mixer supports LE samples natively, we need to convert our LE ones to BE
+		// Until the mixer supports LE samples natively, we need to
+		// convert our LE ones to BE
 		for (int32 j = 0; j < (bufferSizeFx[fxi] / 2); j++)
 			bufferFx[fxi][j] = SWAP_BYTES_16(bufferFx[fxi][j]);
 
 		fxId[fxi] = id;
 	}
-	return(RD_OK);
+	return RD_OK;
 }
 
 int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type) {
@@ -752,12 +756,12 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 				i = GetFxIndex(id);
 				if (i == MAXFX) {
 					warning("PlayFx(%d, %d, %d, %d) - Not open", id, vol, pan, type);
-					return(RDERR_FXNOTOPEN);
+					return RDERR_FXNOTOPEN;
 				}
 				flagsFx[i] &= ~SoundMixer::FLAG_LOOP;
 
 				byte volume;
-				//	Start the sound effect playing
+				// Start the sound effect playing
 				if (musicMuted) {
 					volume = 0;
 				} else {
@@ -768,7 +772,7 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 				i = GetFxIndex(id);
 				if (i == MAXFX) {
 					warning("PlayFx(%d, %d, %d, %d) - Not open", id, vol, pan, type);
-					return(RDERR_FXNOTOPEN);
+					return RDERR_FXNOTOPEN;
 				}
 				if (loop == 1)
 					flagsFx[i] |= SoundMixer::FLAG_LOOP;
@@ -779,7 +783,7 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 
 				byte volume;
 				int8 p;
-				//	Start the sound effect playing
+				// Start the sound effect playing
 				if (fxMuted) {
 					volume = 0;
 				} else {
@@ -813,13 +817,13 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 			} else {
 				hr = OpenFx(id, data);
 				if (hr != RD_OK) {
-					return(hr);
+					return hr;
 				}
 
 				i = GetFxIndex(id);
 				if (i == MAXFX) {
 					warning("PlayFx(%d, %d, %d, %d) - Not found", id, vol, pan, type);
-					return(RDERR_FXFUCKED);
+					return RDERR_FXFUCKED;
 				}
 				if (loop == 1)
 					flagsFx[i] |= SoundMixer::FLAG_LOOP;
@@ -829,7 +833,7 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 
 				byte volume;
 				int8 p;
-				//	Start the sound effect playing
+				// Start the sound effect playing
 				if (fxMuted) {
 					volume = 0;
 				} else {
@@ -840,7 +844,7 @@ int32 Sword2Sound::PlayFx(int32 id, uint8 *data, uint8 vol, int8 pan, uint8 type
 			}
 		}
 	}
-	return(RD_OK);
+	return RD_OK;
 }
 
 int32 Sword2Sound::SetFxVolumePan(int32 id, uint8 vol, int8 pan) {
@@ -876,7 +880,7 @@ int32 Sword2Sound::ClearAllFx(void) {
 
 	i = 0;
 	while (i < MAXFX) {
-		if ((fxId[i]) && (fxId[i] != (int32) 0xfffffffe) && (fxId[i] != (int32) 0xffffffff)) {
+		if (fxId[i] && fxId[i] != (int32) 0xfffffffe && fxId[i] != (int32) 0xffffffff) {
 			g_engine->_mixer->stopHandle(soundHandleFx[i]);
 			fxId[i] = 0;
 			fxiPaused[i] = 0;
@@ -889,14 +893,14 @@ int32 Sword2Sound::ClearAllFx(void) {
 		}
 		i++;
 	}
-	return(RD_OK);
+	return RD_OK;
 }
 
 int32 Sword2Sound::CloseFx(int32 id) {
 	int i;
 
 	if (!soundOn)
-		return(RD_OK);
+		return RD_OK;
 
 	i = GetFxIndex(id);
 	if (i < MAXFX) {
@@ -910,7 +914,7 @@ int32 Sword2Sound::CloseFx(int32 id) {
 		bufferSizeFx[i] = 0;
 		flagsFx[i] = 0;
 	}
-	return(RD_OK);
+	return RD_OK;
 }
 
 int32 Sword2Sound::PauseFx(void) {
@@ -927,7 +931,7 @@ int32 Sword2Sound::PauseFx(void) {
 		}
 		fxPaused = 1;
 	}
-	return (RD_OK);
+	return RD_OK;
 }
 
 int32 Sword2Sound::PauseFxForSequence(void) {
@@ -935,7 +939,7 @@ int32 Sword2Sound::PauseFxForSequence(void) {
 
 	if (!fxPaused) {
 		for (i = 0; i<MAXFX; i++) {
-			if ((fxId[i]) && (fxId[i] != (int32) 0xfffffffe)) {
+			if (fxId[i] && fxId[i] != (int32) 0xfffffffe) {
 				g_engine->_mixer->pauseHandle(soundHandleFx[i], true);
 				fxiPaused[i] = 1;
 			} else {
@@ -944,7 +948,7 @@ int32 Sword2Sound::PauseFxForSequence(void) {
 		}
 		fxPaused = 1;
 	}
-	return (RD_OK);
+	return RD_OK;
 }
 
 int32 Sword2Sound::UnpauseFx(void) {
@@ -958,7 +962,7 @@ int32 Sword2Sound::UnpauseFx(void) {
 		}
 		fxPaused = 0;
 	}
-	return (RD_OK);
+	return RD_OK;
 }
 
 uint8 Sword2Sound::GetFxVolume() {
@@ -995,7 +999,7 @@ void Sword2Sound::MuteFx(uint8 mute) {
 }
 
 uint8 Sword2Sound::IsFxMute(void) {
-	return (fxMuted);
+	return fxMuted;
 }
 
 int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 looping) {
@@ -1075,7 +1079,7 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 	musEnd[primaryStream] += musFilePos[primaryStream];
 
 	// Create a temporary buffer
-	data8 = (uint8*) malloc(bufferSizeMusic / 2);
+	data8 = (uint8 *) malloc(bufferSizeMusic / 2);
 	if (!data8) {
 		return RDERR_OUTOFMEMORY;
 	}
@@ -1222,7 +1226,7 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 			fade = 0;
 
 		if (len > 0) {
-			data8 = (uint8*) malloc(len / 2);
+			data8 = (uint8 *) malloc(len / 2);
 			// Allocate a compressed data buffer
 			if (data8 == NULL) {
 				g_engine->_mixer->stopHandle(soundHandleMusic[i]);
@@ -1237,7 +1241,7 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 				fpMus.seek(musFilePos[i], SEEK_SET);
 
 			// Read the compressed data in to the buffer
-			if ((int32) fpMus.read(data8, len / 2) != (len / 2)) {
+			if ((int32) fpMus.read(data8, len / 2) != len / 2) {
 				g_engine->_mixer->stopHandle(soundHandleMusic[i]);
 				free(data8);
 				musStreaming[i] = 0;
@@ -1251,7 +1255,7 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 			musFilePos[i] = fpMus.pos();
 
 			// decompress the music into the music buffer.
-			data16 = (uint16*) malloc(len);
+			data16 = (uint16 *) malloc(len);
 
 			// Decompress the first byte using the last
 			// decompressed sample
@@ -1262,7 +1266,7 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 
 			j = 1;
 
-			while (j < (uint32)len / 2) {
+			while (j < (uint32) len / 2) {
 				if (GetCompressedSign(data8[j]))
 					data16[j] = data16[j - 1] - (GetCompressedAmplitude(data8[j]) << GetCompressedShift(data8[j]));
 				else
@@ -1275,7 +1279,7 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 #ifndef SCUMM_BIG_ENDIAN
 			// Until the mixer supports LE samples natively, we
 			// need to convert our LE ones to BE
-			for (int32 y = 0; y < (len / 2); y++)
+			for (int32 y = 0; y < len / 2; y++)
 				data16[y] = SWAP_BYTES_16(data16[y]);
 #endif
 
@@ -1433,7 +1437,7 @@ int32 Sword2Sound::PauseMusic(void) {
 			}
 		}
 	}
-	return(RD_OK);
+	return RD_OK;
 }
 
 int32 Sword2Sound::UnpauseMusic(void) {
@@ -1449,7 +1453,7 @@ int32 Sword2Sound::UnpauseMusic(void) {
 			}
 		}
 	}
-	return(RD_OK);
+	return RD_OK;
 }
 
 void Sword2Sound::SetMusicVolume(uint8 volume) {
@@ -1493,5 +1497,5 @@ void Sword2Sound::MuteMusic(uint8 mute) {
 }
 
 uint8 Sword2Sound::IsMusicMute(void) {
-	return (musicMuted);
+	return musicMuted;
 }
