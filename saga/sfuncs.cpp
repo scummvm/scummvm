@@ -410,12 +410,15 @@ void Script::sfSetFollower(SCRIPTFUNC_PARAMS) {
 	}
 }
 
-static struct SceneSubstitutes {
+struct SceneSubstitutes {
     int sceneId;
     const char *message;
     const char *name;
     const char *image;
-} sceneSubstitutes[] = {
+};
+
+/*
+static SceneSubstitutes sceneSubstitutes[] = {
     { 
 		7,
 		"Tycho says he knows much about the northern lands. Can Rif convince "
@@ -463,6 +466,7 @@ static struct SceneSubstitutes {
 		"boarhall.bbm"
 	}
 };
+*/
 
 // Script function #16 (0x10)
 void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
