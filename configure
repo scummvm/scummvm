@@ -82,17 +82,28 @@ eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_c
 find_sdlconfig()
 {
 printf "Looking for sdl-config... "
-sdlconfigs="$_sdlconfig sdl-config sdl11-config sdl12-config"
-for sdlconfig in $sdlconfigs; do
-  if test "-e $sdlconfig" ; then
-    _sdlconfig=$sdlconfig
-    echo $_sdlconfig
-    break
-  else
-    echo "none found!"
-    exit 1
-  fi
+sdlconfigs="$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
+_sdlconfig=
+
+IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS=":"
+
+for path_dir in $PATH; do
+  for sdlconfig in $sdlconfigs; do
+    if test -e "$path_dir/$sdlconfig" ; then
+      _sdlconfig=$sdlconfig
+      echo $_sdlconfig
+      break
+    fi
+  done
 done
+
+IFS="$ac_save_ifs"
+
+if test -z "$_sdlconfig"; then
+  echo "none found!"
+  exit 1
+fi
+
 }
 
 #
