@@ -151,6 +151,14 @@ SOURCE=..\..\simon\debug.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\simon\debugger.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\simon\debugger.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\simon\intern.h
 # End Source File
 # Begin Source File
