@@ -1897,7 +1897,6 @@ void ScummEngine_v6::o6_actorOps() {
 		a->setAnimVar(pop(), i);
 		break;
 	case 215:		// SO_ACTOR_IGNORE_TURNS_ON
-		warning("ignoreTurns partially implemented");
 		a->ignoreTurns = true;
 		break;
 	case 216:		// SO_ACTOR_IGNORE_TURNS_OFF

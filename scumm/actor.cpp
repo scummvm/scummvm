@@ -1292,7 +1292,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 	if (!isInCurrentRoom()) {
 		_pos.x = abr.x;
 		_pos.y = abr.y;
-		if (dir != -1)
+		if (!(_vm->_version == 6 && ignoreTurns) && dir != -1)
 			setDirection(dir);
 		return;
 	}
