@@ -187,7 +187,7 @@ const ScummVM::String ScummDialog::queryResString(int stringno)
 		strcpy(result, (char*)tmp);
 	}
 
-	if (!result) {								// Gracelessly degrade to english :)
+	if (!result || *result == '\0') {								// Gracelessly degrade to english :)
 		if (_scumm->_features & GF_AFTER_V6)
 			result = string_map_table_v6[stringno - 1].string;
 		else
