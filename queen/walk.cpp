@@ -23,13 +23,13 @@
 #include "queen/walk.h"
 
 #include "queen/bankman.h"
+#include "queen/input.h"
 #include "queen/logic.h"
 #include "queen/graphics.h"
 #include "queen/grid.h"
 #include "queen/queen.h"
 
 namespace Queen {
-
 
 const MovePersonData Walk::_moveData[] = {
 	{"COMPY",       -1,  -6,  1,  6,  0,  0,  0,  0, 12, 12, 1, 14},
@@ -55,12 +55,9 @@ const MovePersonData Walk::_moveData[] = {
 	{"*",            0,   0,  0,  0,  0,  0,  0,  0,  0,  0, 0,  0}
 };
 
-
-
 Walk::Walk(QueenEngine *vm)
 	: _vm(vm) {
 }
-
 
 void Walk::animateJoePrepare() {
 	// queen.c l.2748-2788
@@ -98,7 +95,6 @@ void Walk::animateJoePrepare() {
 		}	
 	}
 }
-
 
 void Walk::animateJoe() {
 	// queen.c l.2789-2835
@@ -139,19 +135,15 @@ void Walk::animateJoe() {
 				pbs->speed = 1;
 			}
 			_vm->update(true);
-			// FIXME it would nice to be able to get rid of these 3 lines
-			// as stopJoe() should be do the same...
-			if (_vm->logic()->joeWalk() == JWM_EXECUTE) { // XXX || cutQuit 
-				// we are about to do something else, so stop walking
-				_joeInterrupted = true;
-				pbs->moving = false;
+			if (_vm->input()->cutawayQuit() || _vm->logic()->joeWalk() == JWM_EXECUTE) {
+				stopJoe();
+				break;
 			}
 		}
 		lastDirection = pwd->anim.facing;
 	}
 	_vm->logic()->joeFacing(lastDirection);
 }
-
 
 void Walk::animatePersonPrepare(const MovePersonData *mpd, int direction) {
 	// queen.c l.2469-2572
@@ -218,7 +210,6 @@ void Walk::animatePersonPrepare(const MovePersonData *mpd, int direction) {
 	}
 }
 
-
 void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum, uint16 bankNum, int direction) {
 	// queen.c l.2572-2651
 	BobSlot *pbs = _vm->graphics()->bob(bobNum);
@@ -271,11 +262,13 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 			if (pbs->speed == 0) {
 				pbs->speed = 1;
 			}
-			// XXX if (cutQuit)
+			if (_vm->input()->cutawayQuit()) {
+				stopPerson(bobNum);
+				break;
+			}
 		}
 	}
 }
-
 
 int16 Walk::moveJoe(int direction, int16 endx, int16 endy, bool inCutaway) {
 	_joeInterrupted = false;
@@ -326,7 +319,6 @@ int16 Walk::moveJoe(int direction, int16 endx, int16 endy, bool inCutaway) {
 	_vm->logic()->joeFace();
 	return can;
 }
-
 
 int16 Walk::movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage, int direction) {
 	if (endx == 0 && endy == 0) {
@@ -391,12 +383,18 @@ int16 Walk::movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage
 	return can;
 }
 
-
 void Walk::stopJoe() {
-	_vm->graphics()->bob(0)->moving = false;
+	BobSlot *pbs = _vm->graphics()->bob(0);
+	pbs->moving = false;
 	_joeInterrupted = true;
 }
 
+void Walk::stopPerson(uint16 bobNum) {
+	BobSlot *pbs = _vm->graphics()->bob(bobNum);
+	pbs->x = pbs->endx;
+	pbs->y = pbs->endy;
+	pbs->moving = false;
+}
 
 bool Walk::calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, int16 y) {
 	// if newPos is outside of an AREA then traverse Y axis until an AREA is found
@@ -434,7 +432,6 @@ bool Walk::calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, i
 	return false;
 }
 
-
 int16 Walk::calcC(int16 c1, int16 c2, int16 c3, int16 c4, int16 lastc) {
 	int16 s1 = MAX(c1, c3);
 	int16 s2 = MIN(c2, c4);
@@ -446,7 +443,6 @@ int16 Walk::calcC(int16 c1, int16 c2, int16 c3, int16 c4, int16 lastc) {
 	}
 	return c;
 }
-
 
 int16 Walk::findAreaPosition(int16 *x, int16 *y, bool recalibrate) {
 	// FIXME - in order to locate the nearest available area, the original 
@@ -500,7 +496,6 @@ int16 Walk::findAreaPosition(int16 *x, int16 *y, bool recalibrate) {
 	return pos;
 }
 
-
 uint16 Walk::findFreeArea(uint16 area) const {
 	uint16 testArea;
 	uint16 freeArea = 0;
@@ -519,7 +514,6 @@ uint16 Walk::findFreeArea(uint16 area) const {
 	return freeArea;
 }
 
-
 bool Walk::isAreaStruck(uint16 area) const {
 	uint16 i;
 	bool found = false;
@@ -531,7 +525,6 @@ bool Walk::isAreaStruck(uint16 area) const {
 	}
 	return found;
 }
-
 
 bool Walk::calcPath(uint16 oldArea, uint16 newArea) {
 	debug(9, "Walk::calcPath(%d, %d)", oldArea, newArea);
@@ -557,7 +550,6 @@ bool Walk::calcPath(uint16 oldArea, uint16 newArea) {
 	return _areaList[1] != 0;
 }
 
-
 void Walk::initWalkData() {
 	uint16 curRoom = _vm->logic()->currentRoom();
 	_roomArea = _vm->grid()->area(curRoom, 0);
@@ -571,7 +563,6 @@ void Walk::initWalkData() {
 	memset(_areaList, 0, sizeof(_areaList));
 }
 
-
 void Walk::incWalkData(int16 px, int16 py, int16 x, int16 y, uint16 areaNum) {
 	debug(9, "Walk::incWalkData(%d, %d, %d)", (x - px), (y - py), areaNum);
 	if (px != x || py != y) {
@@ -583,6 +574,5 @@ void Walk::incWalkData(int16 px, int16 py, int16 x, int16 y, uint16 areaNum) {
 		pwd->areaNum = areaNum;
 	}
 }
-
 
 } // End of namespace Queen

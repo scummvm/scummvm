@@ -455,8 +455,7 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, Verb v, bool mustWa
 	if (mustWalk) {
 		// determine which way for Joe to face Object
 		uint16 facing = State::findDirection(objData->state);
-
-		BobSlot *bobJoe  = _vm->graphics()->bob(0);
+		BobSlot *bobJoe = _vm->graphics()->bob(0);
 		if (x == bobJoe->x && y == bobJoe->y) {
 			_vm->logic()->joeFacing(facing);
 			_vm->logic()->joeFace();

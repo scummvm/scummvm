@@ -407,12 +407,8 @@ void Graphics::stopBobs() {
 }
 
 BobSlot *Graphics::bob(int index) {
-	if (index < MAX_BOBS_NUMBER)
-		return _bobs + index;
-	else {
-		error("QueenGraphics::bob called with index = %i but MAX_BOBS_NUMBER = %i", 
-				index, MAX_BOBS_NUMBER);
-	}
+	assert(index < MAX_BOBS_NUMBER);
+	return _bobs + index;
 }
 
 void Graphics::setBobText(
@@ -846,7 +842,6 @@ uint16 Graphics::refreshObject(uint16 obj) {
 		curImage += pgd->lastFrame - 1;
 	} else if (lastFrame != 0) {
 		// turn on an animated bob
-		_vm->bankMan()->unpack(pgd->firstFrame, 2, 15);
 		pbs->animating = false;
 		uint16 firstImage = curImage;
 		--curImage;
@@ -861,8 +856,6 @@ uint16 Graphics::refreshObject(uint16 obj) {
 			pbs->animNormal(firstImage, curImage, pgd->speed / 4, rebound, false);
 		}
 	} else {
-		// frame 2 is used as a buffer frame to prevent BOB flickering
-		_vm->bankMan()->unpack(pgd->firstFrame, 2, 15);
 		_vm->bankMan()->unpack(pgd->firstFrame, curImage, 15);
 		pbs->curPos(pgd->x, pgd->y);
 		pbs->frameNum = curImage;

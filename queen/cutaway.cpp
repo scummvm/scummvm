@@ -77,9 +77,6 @@ void Cutaway::load(const char *filename) {
 	debug(6, "----- Cutaway::load(\"%s\") -----", filename);
 
 	ptr = _fileData = _vm->resource()->loadFile(filename, 20);
-	if (!_fileData) {
-		error("Failed to load resource data file '%s'", filename);
-	}
 
 	if (0 == scumm_stricmp(filename, "comic.cut"))
 		/* XXX _songBeforeComic = CURRSONG */; 
@@ -956,7 +953,7 @@ void Cutaway::run(char *nextFilename) {
 		if (_roomFade) {
 			_vm->update();
 			int end = 223;
-			if (_vm->logic()->isIntroRoom(_vm->logic()->currentRoom())) {
+			if (Logic::isIntroRoom(_vm->logic()->currentRoom())) {
 				end = 255;
 			}
 			BobSlot *j = _vm->graphics()->bob(0);

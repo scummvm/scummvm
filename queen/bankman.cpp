@@ -103,14 +103,15 @@ void BankManager::close(uint32 bankslot) {
 
 BobFrame *BankManager::fetchFrame(uint32 index) {
 	debug(9, "BankManager::fetchFrame(%d)", index);
-	if (index >= MAX_FRAMES_NUMBER) {
-		error("BankManager::fetchFrame() invalid frame index = %d", index);
-	}
-	return &_frames[index];
+	assert(index < MAX_FRAMES_NUMBER);
+	BobFrame *pbf = &_frames[index];
+	assert(pbf->data != 0);
+	return pbf;
 }
 
 void BankManager::eraseFrame(uint32 index) {
 	debug(9, "BankManager::eraseFrame(%d)", index);
+	assert(index < MAX_FRAMES_NUMBER);
 	BobFrame *pbf = &_frames[index];
 	delete[] pbf->data;
 	memset(pbf, 0, sizeof(BobFrame));

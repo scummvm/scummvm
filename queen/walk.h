@@ -27,7 +27,6 @@
 
 namespace Queen {
 
-
 struct MovePersonAnim {
 	int16 firstFrame;
 	int16 lastFrame;
@@ -40,14 +39,12 @@ struct MovePersonAnim {
 	}
 };
 
-
 struct WalkData {
 	int16 dx, dy;
 	const Area *area;
 	uint16 areaNum;
 	MovePersonAnim anim;
 };
-
 
 struct MovePersonData {
 	const char *name;
@@ -61,7 +58,6 @@ struct MovePersonData {
 	uint16 moveSpeed;
 };
 
-
 class QueenEngine;
 
 class Walk {
@@ -73,12 +69,11 @@ public:
 	int16 movePerson(const Person *pp, int16 endx, int16 endy, uint16 curImage, int direction);
 
 	void stopJoe();
-
+	void stopPerson(uint16 bobNum);
 
 	enum {
 		MAX_WALK_DATA = 16
 	};
-
 
 private:
 
@@ -133,10 +128,8 @@ private:
 
 	QueenEngine *_vm;
 
-
 	static const MovePersonData _moveData[];
 };
-
 
 } // End of namespace Queen
 

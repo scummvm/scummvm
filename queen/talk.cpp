@@ -413,9 +413,6 @@ void Talk::load(const char *filename) {
 	int i;
 	
 	byte *ptr = _fileData = loadDialogFile(filename);
-	if (!_fileData) {
-		error("Failed to load resource data file '%s'", filename);
-	}
 
 	bool canQuit;
 

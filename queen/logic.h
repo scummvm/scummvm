@@ -55,35 +55,24 @@ public:
 
 	uint16 currentRoom() const { return _currentRoom; }
 	void currentRoom(uint16 room) { 
-		if (room >= 1 && room <= _numRooms)
-			_currentRoom = room; 
-		else
-			error("Invalid room number: %i", room);
+		assert(room >= 1 && room <= _numRooms);
+		_currentRoom = room; 
 	}
 
 	uint16 oldRoom() const { return _oldRoom; }
 	void oldRoom(uint16 room) { 
-		if (room <= _numRooms)
-			_oldRoom = room; 
-		else
-			error("Invalid room number: %i", room);
+		assert(room <= _numRooms);
+		_oldRoom = room; 
 	}
 
 	uint16 newRoom() const { return _newRoom; }
 	void newRoom(uint16 room) { 
-		if (room <= _numRooms)
-			_newRoom = room; 
-		else
-			error("Invalid room number: %i", room);
+		assert(room <= _numRooms);
+		_newRoom = room; 
 	}
 
-	bool isAltIntroRoom(uint16 room) const {
-		return room >= 90 && room <= 94;
-	}
-
-	bool isIntroRoom(uint16 room) const {
-		return room >= 115 && room <= 125;
-	}
+	static bool isAltIntroRoom(uint16 room) { return room >= 90 && room <= 94; }
+	static bool isIntroRoom(uint16 room) { return room >= 115 && room <= 125; }
 
 	ObjectData *objectData(int index) const;
 	uint16 roomData(int room) const { return _roomData[room]; }
@@ -128,13 +117,7 @@ public:
 
 	TalkSelected *talkSelected(int index) { return _talkSelected + index; }
 
-	const char *roomName(uint16 roomNum) const { 
-		if (roomNum >= 1 && roomNum <= _numRooms)
-			return _roomName[roomNum];
-		else
-			error("Invalid room number: %i", roomNum);
-	}
-
+	const char *roomName(uint16 roomNum) const;
 	const char *objectName(uint16 objNum) const { return _objName[objNum]; }
 	const char *objectTextualDescription(uint16 objNum) const { return _objDescription[objNum]; }
 
