@@ -120,7 +120,28 @@ void Imuse::callback() {
 				}
 			}
 
-			int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
+			if (track->panFadeUsed) {
+				if (track->panFadeStep < 0) {
+					if (track->pan > track->panFadeDest) {
+						track->pan += track->panFadeStep;
+						if (track->pan < track->panFadeDest) {
+							track->pan = track->panFadeDest;
+							track->panFadeUsed = false;
+						}
+					}
+				} else if (track->panFadeStep > 0) {
+					if (track->pan < track->panFadeDest) {
+						track->pan += track->panFadeStep;
+						if (track->pan > track->panFadeDest) {
+							track->pan = track->panFadeDest;
+							track->panFadeUsed = false;
+						}
+					}
+				}
+			}
+
+			int pan = track->pan / 1000;
+			pan = (pan != 64) ? 2 * pan - 127 : 0;
 			int vol = track->vol / 1000;
 
 			if (track->volGroupId == 1)

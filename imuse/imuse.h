@@ -50,7 +50,11 @@ private:
 	struct Track {
 		int trackId;
 
-		int8 pan;
+		int32 pan;
+		int32 panFadeDest;
+		int32 panFadeStep;
+		int32 panFadeDelay;
+		bool panFadeUsed;
 		int32 vol;
 		int32 volFadeDest;
 		int32 volFadeStep;
@@ -132,7 +136,8 @@ public:
 	void setVolume(const char *soundName, int volume);
 	int getVolume(const char *soundName);
 	void setPan(const char *soundName, int pan);
-	void setFade(const char *soundName, int destVolume, int delay60HzTicks);
+	void setFadePan(const char *soundName, int destPan, int duration);
+	void setFadeVolume(const char *soundName, int destVolume, int duration);
 	void setHookId(const char *soundName, int hookId);
 	int getCountPlayedTracks();
 	void stopSound(const char *soundName);
@@ -143,6 +148,7 @@ public:
 	void refreshScripts();
 	void flushTracks();
 	bool isVoicePlaying();
+	char *getCurMusicSoundName();
 	bool getSoundStatus(const char *soundName) const;
 	int32 getPosIn60HzTicks(const char *soundName);
 };

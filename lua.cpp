@@ -983,22 +983,21 @@ static void ImFadeParam() {
 	char *soundName = luaL_check_string(1);
 	int opcode = check_int(2);
 	int value = check_int(3);
-	int fadeDelay = check_int(4);
+	int duration = check_int(4);
 
 	switch (opcode) {
 	case IM_SOUND_PAN:
-		// it should be fade panning really
-		g_imuse->setPan(soundName, value);
+		g_imuse->setFadePan(soundName, value, duration);
 		break;
 	default:
-		error("ImFadeParam(%s, %h, %d, %d)", soundName, opcode, value, fadeDelay);
+		error("ImFadeParam(%s, %h, %d, %d)", soundName, opcode, value, duration);
 		break;
 	}
 }
 
 static void ImSetState() {
 	int state = check_int(1);
-	g_imuse->setMusicState(state);
+	g_imuseState = state;
 }
 
 static void ImSetSequence() {

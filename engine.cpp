@@ -35,6 +35,7 @@
 Engine *g_engine = NULL;
 
 extern Imuse *g_imuse;
+int g_imuseState = -1;
 
 Engine::Engine() :
 		_currScene(NULL), _selectedActor(NULL) {
@@ -224,6 +225,11 @@ void Engine::mainLoop() {
 
 		// Run asynchronous tasks
 		lua_runtasks();
+
+		if (g_imuseState != -1) {
+			g_imuse->setMusicState(g_imuseState);
+			g_imuseState = -1;
+		}
 	}
 }
 

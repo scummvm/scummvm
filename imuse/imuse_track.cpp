@@ -74,7 +74,11 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 		flushTracks();
 	}
 
-	track->pan = pan;
+	track->pan = pan * 1000;
+	track->panFadeDest = 0;
+	track->panFadeStep = 0;
+	track->panFadeDelay = 0;
+	track->panFadeUsed = false;
 	track->vol = volume * 1000;
 	track->volFadeDest = 0;
 	track->volFadeStep = 0;
@@ -123,7 +127,8 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 	if (channels == 2)
 		track->mixerFlags |= SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
 
-	pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
+	pan = track->pan / 1000;
+	pan = (pan != 64) ? 2 * pan - 127 : 0;
 	volume = track->vol / 1000;
 
 	if (track->volGroupId == 1)
@@ -223,25 +228,50 @@ void Imuse::selectVolumeGroup(const char *soundName, int volGroupId) {
 	}
 }
 
-void Imuse::setFade(const char *soundName, int destVolume, int delay60HzTicks) {
+void Imuse::setFadeVolume(const char *soundName, int destVolume, int duration) {
 	StackLock lock(_mutex);
 
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
-			track->volFadeDelay = delay60HzTicks;
+			track->volFadeDelay = duration;
 			track->volFadeDest = destVolume * 1000;
-			track->volFadeStep = (track->volFadeDest - track->vol) * 60 * (1000 / _callbackFps) / (1000 * delay60HzTicks);
+			track->volFadeStep = (track->volFadeDest - track->vol) * 60 * (1000 / _callbackFps) / (1000 * duration);
 			track->volFadeUsed = true;
 		}
 	}
 }
 
-void Imuse::fadeOutMusic(int fadeDelay) {
+void Imuse::setFadePan(const char *soundName, int destPan, int duration) {
+	StackLock lock(_mutex);
+
+	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
+		Track *track = _track[l];
+		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
+			track->panFadeDelay = duration;
+			track->panFadeDest = destPan * 1000;
+			track->panFadeStep = (track->panFadeDest - track->pan) * 60 * (1000 / _callbackFps) / (1000 * duration);
+			track->panFadeUsed = true;
+		}
+	}
+}
+
+char *Imuse::getCurMusicSoundName() {
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
-			cloneToFadeOutTrack(track, fadeDelay);
+			return track->soundName;
+		}
+	}
+
+	return "";
+}
+
+void Imuse::fadeOutMusic(int duration) {
+	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
+		Track *track = _track[l];
+		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
+			cloneToFadeOutTrack(track, duration);
 			track->toBeRemoved = true;
 		}
 	}
@@ -284,6 +314,10 @@ Imuse::Track *Imuse::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 		fadeTrack->volFadeDest = 0;
 		fadeTrack->volFadeStep = (fadeTrack->volFadeDest - fadeTrack->vol) * 60 * (1000 / _callbackFps) / (1000 * fadeDelay);
 		fadeTrack->volFadeUsed = true;
+		fadeTrack->panFadeDelay = 0;
+		fadeTrack->panFadeDest = 0;
+		fadeTrack->panFadeStep = 0;
+		fadeTrack->panFadeUsed = false;
 	}
 
 	// setup 1 second stream wrapped buffer
