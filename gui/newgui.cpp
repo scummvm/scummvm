@@ -151,10 +151,7 @@ void NewGui::runLoop() {
 		while (_system->poll_event(&event)) {
 			switch(event.event_code) {
 				case OSystem::EVENT_KEYDOWN:
-					activeDialog->handleKeyDown(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
-
-#ifndef _WIN32_WCE
-#ifndef __PALM_OS__
+#if !defined(_WIN32_WCE) && !defined(__PALM_OS__)
 					// init continuous event stream
 					// not done on WinCE because keyboard is emulated and
 					// keyup is not generated
@@ -163,7 +160,7 @@ void NewGui::runLoop() {
 					_currentKeyDown.flags = event.kbd.flags;
 					_keyRepeatTime = time + kKeyRepeatInitialDelay;
 #endif
-#endif
+					activeDialog->handleKeyDown(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
 					break;
 				case OSystem::EVENT_KEYUP:
 					activeDialog->handleKeyUp(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
@@ -235,11 +232,7 @@ void NewGui::saveState() {
 
 	_system->show_overlay();
 	// TODO - add getHeight & getWidth methods to OSystem.
-#ifndef __PALM_OS__
-	_screen = new NewGuiColor[sys_width * sys_height];
-#else
 	_screen = (NewGuiColor*)calloc(sys_width*sys_height,sizeof(NewGuiColor));
-#endif
 	_screenPitch = sys_width;
 	_system->grab_overlay(_screen, _screenPitch);
 
@@ -256,11 +249,7 @@ void NewGui::restoreState() {
 
 	_system->hide_overlay();
 	if (_screen) {
-#ifndef __PALM_OS__
-		delete [] _screen;
-#else
 		free(_screen);
-#endif
 		_screen = 0;
 	}
 
