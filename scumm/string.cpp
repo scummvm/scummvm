@@ -310,7 +310,7 @@ void Scumm::CHARSET_1() {
 			if (_version <= 3) {
 				_charset->printChar(c);
 			} else {
-				if (_noSubtitles && (_haveMsg == 0xFE || _sound->_talkChannelHandle >= 0)) {
+				if (_noSubtitles && (_haveMsg == 0xFE || _sound->_talkChannelHandle)) {
 					// Subtitles are turned off, and there is a voice version
 					// of this message -> don't print it. 
 				} else
