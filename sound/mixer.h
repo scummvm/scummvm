@@ -33,7 +33,14 @@ class Channel;
 class File;
 class OSystem;
 
-typedef uint32 SoundHandle;
+class SoundHandle {
+	friend class Channel;
+	friend class SoundMixer;
+	uint32 _val;
+public:
+	inline SoundHandle() : _val(0xFFFFFFFF) {}
+};
+
 
 class SoundMixer {
 public:

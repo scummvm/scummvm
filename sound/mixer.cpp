@@ -166,7 +166,7 @@ void SoundMixer::insertChannel(SoundHandle *handle, Channel *chan) {
 	}
 
 	_channels[index] = chan;
-	 chan->_handle = index + (_handleSeed * NUM_CHANNELS);
+	 chan->_handle._val = index + (_handleSeed * NUM_CHANNELS);
 	_handleSeed++;
 	if (handle) {
 		*handle = chan->_handle;
@@ -288,8 +288,8 @@ void SoundMixer::stopHandle(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 
 	// Simply ignore stop requests for handles of sounds that already terminated
-	const int index = handle % NUM_CHANNELS;
-	if (!_channels[index] || _channels[index]->_handle != handle)
+	const int index = handle._val % NUM_CHANNELS;
+	if (!_channels[index] || _channels[index]->_handle._val != handle._val)
 		return;
 
 	delete _channels[index];
@@ -299,8 +299,8 @@ void SoundMixer::stopHandle(SoundHandle handle) {
 void SoundMixer::setChannelVolume(SoundHandle handle, byte volume) {
 	Common::StackLock lock(_mutex);
 
-	const int index = handle % NUM_CHANNELS;
-	if (!_channels[index] || _channels[index]->_handle != handle)
+	const int index = handle._val % NUM_CHANNELS;
+	if (!_channels[index] || _channels[index]->_handle._val != handle._val)
 		return;
 
 	_channels[index]->setVolume(volume);
@@ -309,8 +309,8 @@ void SoundMixer::setChannelVolume(SoundHandle handle, byte volume) {
 void SoundMixer::setChannelBalance(SoundHandle handle, int8 balance) {
 	Common::StackLock lock(_mutex);
 
-	const int index = handle % NUM_CHANNELS;
-	if (!_channels[index] || _channels[index]->_handle != handle)
+	const int index = handle._val % NUM_CHANNELS;
+	if (!_channels[index] || _channels[index]->_handle._val != handle._val)
 		return;
 
 	_channels[index]->setBalance(balance);
@@ -327,8 +327,8 @@ uint32 SoundMixer::getSoundElapsedTimeOfSoundID(int id) {
 uint32 SoundMixer::getSoundElapsedTime(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 
-	const int index = handle % NUM_CHANNELS;
-	if (!_channels[index] || _channels[index]->_handle != handle)
+	const int index = handle._val % NUM_CHANNELS;
+	if (!_channels[index] || _channels[index]->_handle._val != handle._val)
 		return 0;
 
 	return _channels[index]->getElapsedTime();
@@ -352,8 +352,8 @@ void SoundMixer::pauseHandle(SoundHandle handle, bool paused) {
 	Common::StackLock lock(_mutex);
 
 	// Simply ignore pause/unpause requests for handles of sound that alreayd terminated
-	const int index = handle % NUM_CHANNELS;
-	if (!_channels[index] || _channels[index]->_handle != handle)
+	const int index = handle._val % NUM_CHANNELS;
+	if (!_channels[index] || _channels[index]->_handle._val != handle._val)
 		return;
 
 	_channels[index]->pause(paused);
@@ -368,8 +368,8 @@ bool SoundMixer::isSoundIDActive(int id) {
 }
 
 bool SoundMixer::isSoundHandleActive(SoundHandle handle) {
-	const int index = handle % NUM_CHANNELS;
-	return _channels[index] && _channels[index]->_handle == handle;
+	const int index = handle._val % NUM_CHANNELS;
+	return _channels[index] && _channels[index]->_handle._val == handle._val;
 }
 
 bool SoundMixer::hasActiveChannelOfType(SoundType type) {
