@@ -56,7 +56,7 @@ int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
 
 	MemoryReadStream readS(resdata, resdata_len);
 
-	if (GAME_GetGameType() == R_GAMETYPE_IHNM) {
+	if (GAME_GetGameType() == GID_IHNM) {
 		return R_SUCCESS;
 	}
 

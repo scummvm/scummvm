@@ -71,7 +71,7 @@ int SndRes::playVoice(uint32 voice_rn) {
 
 	File f;
 
-	if (GAME_GetGameType() == R_GAMETYPE_ITE && voice_rn == 4 && f.open("sound/p2_a.voc")) {
+	if (GAME_GetGameType() == GID_ITE && voice_rn == 4 && f.open("sound/p2_a.voc")) {
 		uint32 size = f.size();
 		byte *snd_res = (byte *)malloc(size);
 		f.read(snd_res, size);
@@ -228,7 +228,7 @@ int SndRes::getVoiceLength(uint32 voice_rn) {
 	// file, sound/p2_a.voc, to correct voice 4 in the intro. Use that, if
 	// available.
 
-	if (GAME_GetGameType() == R_GAMETYPE_ITE && voice_rn == 4 && f.open("sound/p2_a.voc")) {
+	if (GAME_GetGameType() == GID_ITE && voice_rn == 4 && f.open("sound/p2_a.voc")) {
 		length = f.size();
 		res_type = R_GAME_SOUND_VOC;
 		f.close();

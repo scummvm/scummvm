@@ -96,7 +96,7 @@ int Anim::load(const byte *anim_resdata, size_t anim_resdata_len, uint16 *anim_i
 	new_anim->resdata = anim_resdata;
 	new_anim->resdata_len = anim_resdata_len;
 
-	if (GAME_GetGameType() == R_GAMETYPE_ITE) {
+	if (GAME_GetGameType() == GID_ITE) {
 		if (getNumFrames(anim_resdata, anim_resdata_len, &new_anim->n_frames) != R_SUCCESS) {
 			warning("Anim::load Couldn't get animation frame count");
 			return R_FAILURE;
@@ -198,7 +198,7 @@ int Anim::play(uint16 anim_id, int vector_time) {
 
 	if (anim->play_flag) {
 		frame = anim->current_frame;
-		if (GAME_GetGameType() == R_GAMETYPE_ITE) {
+		if (GAME_GetGameType() == GID_ITE) {
 			result = ITE_DecodeFrame(anim->resdata, anim->resdata_len, anim->frame_offsets[frame - 1], display_buf,
 									disp_info.logical_w * disp_info.logical_h);
 			if (result != R_SUCCESS) {
@@ -353,7 +353,7 @@ int Anim::freeId(uint16 anim_id) {
 		return R_FAILURE;
 	}
 
-	if (GAME_GetGameType() == R_GAMETYPE_ITE) {
+	if (GAME_GetGameType() == GID_ITE) {
 		free(anim->frame_offsets);
 		anim->frame_offsets = NULL;
 	}
@@ -391,7 +391,7 @@ int Anim::getNumFrames(const byte *anim_resource, size_t anim_resource_len, uint
 	ah.unknown07 = readS.readByte();
 	ah.nframes = readS.readByte();
 
-	if (GAME_GetGameType() == R_GAMETYPE_IHNM) {
+	if (GAME_GetGameType() == GID_IHNM) {
 		*n_frames = ah.nframes;
 	}
 

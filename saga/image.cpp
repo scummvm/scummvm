@@ -92,7 +92,7 @@ int SagaEngine::decodeBGImage(const byte *image_data, size_t image_size,
 	unbankBGImage(out_buf, decode_buf, hdr.width, hdr.height);
 
 	// For some reason bg images in IHNM are upside down
-	if (GAME_GetGameType() == R_GAMETYPE_IHNM) {
+	if (GAME_GetGameType() == GID_IHNM) {
 		flipImage(out_buf, hdr.width, hdr.height);
 	}
 

@@ -173,7 +173,7 @@ int Script::loadScript(int script_num) {
 	uint32 voicelut_rn;
 	int result;
 
-	if (GAME_GetGameType() == R_GAMETYPE_IHNM) {
+	if (GAME_GetGameType() == GID_IHNM) {
 		return R_SUCCESS;
 	}
 

@@ -179,10 +179,10 @@ int Scene::startScene() {
 	}
 
 	switch (GAME_GetGameType()) {
-	case R_GAMETYPE_ITE:
+	case GID_ITE:
 		ITEStartProc();
 		break;
-	case R_GAMETYPE_IHNM:
+	case GID_IHNM:
 		IHNMStartProc();
 		break;
 	default:

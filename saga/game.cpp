@@ -159,7 +159,7 @@ R_GAMEDESC GameDescs[] = {
 	// Inherit the earth - DOS Demo version
 	{
 		"ite-demo",
-		R_GAMETYPE_ITE,
+		GID_ITE,
 		R_GAME_ITE_DEMO, // Game id
 		"Inherit the Earth (DOS Demo)", // Game title
 		320, 200, // Logical resolution
@@ -171,14 +171,13 @@ R_GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITEDEMO_GameFonts),
 		ITEDEMO_GameFonts,
 		&ITEDEMO_GameSound,
-		0,
-		0 // Game supported flag
+		0 // features
 	},
 
 	// Inherit the earth - win32 Wyrmkeep Demo version
 	{
 		"ite-demo-win",
-		R_GAMETYPE_ITE,
+		GID_ITE,
 		R_GAME_ITE_WINDEMO,
 		"Inherit the Earth (Win32 Demo)",
 		320, 200,
@@ -190,7 +189,6 @@ R_GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
-		0,
 		0
 	},
 	
@@ -198,7 +196,7 @@ R_GAMEDESC GameDescs[] = {
 	// NOTE: it should be before floppy version
 	{
 		"itecd",
-		R_GAMETYPE_ITE,
+		GID_ITE,
 		R_GAME_ITE_CD,
 		"Inherit the Earth (DOS CD Version)",
 		320, 200,
@@ -210,14 +208,13 @@ R_GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
-		0,
-		1
+		0
 	},
 
 	// Inherit the earth - Disk version
 	{
 		"ite",
-		R_GAMETYPE_ITE,
+		GID_ITE,
 		R_GAME_ITE_DISK,
 		"Inherit the Earth (DOS)",
 		320, 200,
@@ -229,14 +226,13 @@ R_GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITEDISK_GameFonts),
 		ITEDISK_GameFonts,
 		&ITE_GameSound,
-		0,
-		1
+		0
 	},
 
 	// I Have No Mouth And I Must Scream - Demo version
 	{
 		"ihnm-demo",
-		R_GAMETYPE_IHNM,
+		GID_IHNM,
 		R_GAME_IHNM_DEMO,
 		"I Have No Mouth and I Must Scream (DOS Demo)",
 		640, 480,
@@ -248,14 +244,13 @@ R_GAMEDESC GameDescs[] = {
 		0,
 		NULL,
 		&IHNM_GameSound,
-		GF_DEFAULT_TO_1X_SCALER,
-		0
+		GF_DEFAULT_TO_1X_SCALER
 	},
 
 	// I Have No Mouth And I Must Scream - CD version
 	{
 		"ihnm",
-		R_GAMETYPE_IHNM,
+		GID_IHNM,
 		R_GAME_IHNM_CD,
 		"I Have No Mouth and I Must Scream (DOS)",
 		640, 480,
@@ -267,8 +262,7 @@ R_GAMEDESC GameDescs[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
-		GF_DEFAULT_TO_1X_SCALER,
-		1
+		GF_DEFAULT_TO_1X_SCALER
 	}
 };
 
@@ -316,22 +310,12 @@ int GAME_Init() {
 	game_dir = GameModule.game_dir;
 
 	if (DetectGame(game_dir, &game_n) != R_SUCCESS) {
-		GameModule.err_str = "No valid games were found in the specified directory.";
-		return R_FAILURE;
-	}
-
-	if (!GameDescs[game_n].gd_supported) {
-		GameModule.err_str = "This game is not currently supported.";
-		return R_FAILURE;
-	}
-
-	if (!GameDescs[game_n].gd_supported) {
-		GameModule.err_str = "This game is not currently supported.";
+		warning("No valid games were found in the specified directory.");
 		return R_FAILURE;
 	}
 
 	if (LoadGame(game_dir, game_n) != R_SUCCESS) {
-		GameModule.err_str = "Error loading game resource files.";
+		warning("Error loading game resource files.");
 		return R_FAILURE;
 	}
 
@@ -343,14 +327,13 @@ int GAME_Init() {
 
 int LoadLanguage() {
 	char lang_file[R_MAXPATH];
-//	char lang_path[R_MAXPATH];
 	uint16 game_n;
 
 	File test_file;
 
 	game_n = GameModule.game_number;
 
-	if (GameDescs[game_n].gd_game_type == R_GAMETYPE_ITE) {
+	if (GameDescs[game_n].gd_game_type == GID_ITE) {
 		snprintf(lang_file, R_MAXPATH, "%s%s.%s", R_GAME_ITE_LANG_PREFIX, GameModule.game_language, R_GAME_LANG_EXT);
 		if (!test_file.open(lang_file)) {
 			debug(0, "Couldn't open language file %s. Using default (US English)", lang_file);
@@ -377,14 +360,6 @@ int LoadLanguage() {
 	}
 
 	return R_SUCCESS;
-}
-
-int GAME_GetErrN() {
-	return 0;
-}
-
-const char *GAME_GetErrS() {
-	return GameModule.err_str == NULL ? "No error description." : GameModule.err_str;
 }
 
 int GAME_GetFileContext(R_RSCFILE_CONTEXT ** ctxt_p, uint16 r_type, int param) {

@@ -30,11 +30,6 @@
 
 namespace Saga {
 
-enum R_GAME_BASETYPES {
-	R_GAMETYPE_ITE,
-	R_GAMETYPE_IHNM
-};
-
 enum R_GAME_IDS {
 	R_GAME_ITE_DEMO = 0,
 	R_GAME_ITE_DISK = 1,
@@ -109,9 +104,7 @@ int GAME_GetDisplayInfo(R_GAME_DISPLAYINFO *);
 int GAME_GetSceneInfo(R_GAME_SCENEDESC *);
 int GAME_GetGame();
 int GAME_GetGameType();
-int GAME_GetErrN();
 void GAME_setGameDirectory(const char *gamedir);
-const char *GAME_GetErrS();
 GameList GAME_GameList();
 DetectedGameList GAME_ProbeGame(const FSList &fslist);
 

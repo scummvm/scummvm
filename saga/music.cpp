@@ -210,7 +210,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 	File f_midi;
 	MidiParser *parser;
 
-	if (GAME_GetGameType() == R_GAMETYPE_ITE) {
+	if (GAME_GetGameType() == GID_ITE) {
 		if (music_rn >= 9 && music_rn <= 34) {
 			char file_name[20];
 			sprintf(file_name, "music/%s.mid", _midiTableITECD[music_rn - 9].filename);

@@ -130,7 +130,6 @@ void SagaEngine::go() {
 
 	// Detect game and open resource files
 	if (GAME_Init() != R_SUCCESS) {
-		warning("Couldn't start the game: %s", GAME_GetErrS());
 		return;
 	}
 

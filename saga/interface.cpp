@@ -156,13 +156,13 @@ Interface::Interface(SagaEngine *vm) : _vm(vm), _initialized(false) {
 
 	// Initialize interface data by game type
 	game_type = GAME_GetGameType();
-	if (game_type == R_GAMETYPE_ITE) {
+	if (game_type == GID_ITE) {
 		// Load Inherit the Earth interface desc
 		_cPanel.buttons = ITE_c_buttons;
 		_cPanel.nbuttons = ARRAYSIZE(ITE_c_buttons);
 
 		_iDesc = ITE_interface;
-	} else if (game_type == R_GAMETYPE_IHNM) {
+	} else if (game_type == GID_IHNM) {
 		// Load I Have No Mouth interface desc
 		_cPanel.buttons = IHNM_c_buttons;
 		_cPanel.nbuttons = ARRAYSIZE(IHNM_c_buttons);
