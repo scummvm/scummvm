@@ -214,10 +214,6 @@ SOURCE=.\common\scummsys.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\common\stdafx.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\common\stdafx.h
 # End Source File
 # Begin Source File
