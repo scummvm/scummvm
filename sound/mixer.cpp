@@ -291,6 +291,7 @@ static inline int scale_sample(mad_fixed_t sample)
 void SoundMixer::Channel_MP3::mix(int16 *data, uint len) {
 	mad_fixed_t const *ch;
 	const int16 *vol_tab = _mixer->_volume_table;
+	unsigned char volume = ((int) vol_tab[1]) * 32 / 255;
 
 	if (_to_be_destroyed) {
 		real_destroy();
@@ -303,7 +304,7 @@ void SoundMixer::Channel_MP3::mix(int16 *data, uint len) {
 			if (_silence_cut > 0) {
 				_silence_cut--;
 			} else {
-				*data++ += (int16)((float)scale_sample(*ch++) * ((float)vol_tab[1] / (float)128));
+				*data++ += (int16) ((scale_sample(*ch++) * volume) / 32);
 				len--;
 			}
 			_pos_in_frame++;
@@ -369,6 +370,7 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 	mad_fixed_t const *ch;
 	mad_timer_t frame_duration;
 	const int16 *vol_tab = _mixer->_volume_table;
+	unsigned char volume = ((int) vol_tab[1]) * 32 / 255;
 
 	if (_to_be_destroyed) {
 		real_destroy();
@@ -420,7 +422,7 @@ void SoundMixer::Channel_MP3_CDMUSIC::mix(int16 *data, uint len) {
 		// Get samples, play samples ... 
 		ch = _synth.pcm.samples[0] + _pos_in_frame;
 		while ((_pos_in_frame < _synth.pcm.length) && (len > 0)) {
-			*data++ += (int16)((float)scale_sample(*ch++) * ((float)vol_tab[1] / (float)128));
+			*data++ += (int16) ((scale_sample(*ch++) * volume) / 32);
 			len--;
 			_pos_in_frame++;
 		}
