@@ -1206,6 +1206,8 @@ void IMuseDigital::music_handler(void *refCon) {
 	((IMuseDigital *)refCon)->bundleMusicHandler();
 }
 
+#define BUNDLE_MUSIC_ITER_PER_SEC	10
+
 void IMuseDigital::playBundleMusic(const char *song) {
 	if (!_scumm->_mixer->isReady()) {
 		return;
@@ -1253,7 +1255,8 @@ void IMuseDigital::playBundleMusic(const char *song) {
 		_musicBundleToBeChanged = false;
 		_numberSamplesBundleMusic = _bundle->getNumberOfMusicSamplesByName(song);
 		_nameBundleMusic = song;
-		_scumm->_timer->installTimerProc(&music_handler, 1000000, this);
+		_outputMixerSize /= BUNDLE_MUSIC_ITER_PER_SEC;
+		_scumm->_timer->installTimerProc(&music_handler, 1000000 / BUNDLE_MUSIC_ITER_PER_SEC, this);
 	} else if (strcmp(_nameBundleMusic, song) != 0) {
 		_newNameBundleMusic = song;
 		_musicBundleToBeChanged = true;
@@ -1381,7 +1384,7 @@ void IMuseDigital::bundleMusicHandler() {
 	// gives the number of bytes used for one second, so if we compute the value of
 	// (_bundleMusicPosition / _outputMixerSize), that is an offset in seconds;
 	// multiplying that by 1000 gives milliseconds).
-	_bundleSongPosInMs = 1000 * _bundleMusicPosition / _outputMixerSize;
+	_bundleSongPosInMs = 1000 * _bundleMusicPosition / (_outputMixerSize * BUNDLE_MUSIC_ITER_PER_SEC);
 	_bundleMusicPosition += final_size;
 	if (!_bundleMusicTrack.isActive())
 		_scumm->_mixer->newStream(&_bundleMusicTrack, rate, SoundMixer::FLAG_16BITS | SoundMixer::FLAG_STEREO, 300000);
