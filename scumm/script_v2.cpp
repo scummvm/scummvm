@@ -391,8 +391,8 @@ void Scumm_v2::decodeParseString() {
 			*ptr++ = 0xFF;
 			*ptr++ = c;
 			if (c > 3) {
-				*ptr++ = 0;
 				*ptr++ = fetchScriptByte();
+				*ptr++ = 0;
 			}
 		} else
 			*ptr++ = c;
