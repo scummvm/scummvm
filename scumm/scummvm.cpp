@@ -2242,15 +2242,15 @@ void Scumm::initRoomSubBlocks() {
 	}
 
 	// Color cycling
-	ptr = 0;
-	if (_features & GF_SMALL_HEADER) {
-		if (_gameId == GID_MONKEY_VGA)
+	if (_version >= 4) {
+		if (_features & GF_SMALL_HEADER)
 			ptr = findResourceSmall (MKID('CYCL'), roomptr);
-	} else if (!(_features & GF_OLD_BUNDLE)) {
-		ptr = findResourceData(MKID('CYCL'), roomptr);
+		else 
+			ptr = findResourceData(MKID('CYCL'), roomptr);
+		if (ptr) {
+			initCycl(ptr);
+		}
 	}
-	if (ptr)
-		initCycl(ptr);
 
 	// Transparent color
 	if (_features & GF_OLD_BUNDLE)
