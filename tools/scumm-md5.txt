@@ -291,7 +291,7 @@ Freddie Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	Demo	All	en	7c2e76087027eeee9c8f8985f93a1cc5	f4-demo	khalek
 	Demo	Windows	en	c25755b08a8d0d47695e05f1e2111bfc	f4-demo	sev
 	Demo	All	en	ebd324dcf06a4c49e1ba5c231eee1060	f4-demo	sev
-	Demo	Windows	nl	16effd200aa6b8abe9c569c3e578814d	ff4demo	joostp
+	Demo	Windows	nl	16effd200aa6b8abe9c569c3e578814d	f4-demo	joostp
 
 Freddi Fish 5: The Case of the Creature of Coral Cave
 	-	All	en	590e6546aacd0d374b7f3a4f53013ab1	freddicove	cyx
@@ -341,8 +341,7 @@ Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	Demo	Windows	en	a654fb60c3b67d6317a7894ffd9f25c5	pj3-demo	sev
 	Demo	All	en	a9f2f04b1ecaab9495b59befffe9bf88	pj3-demo	sev
 	Demo	Windows	en	cf90b4db5486ef798db78fe6fbf897e5	pj3-demo	khalek
-	Demo	Windows	en	d7ab7cd6105546016e6a0d46fb36b964	PjSamDemo	khalek, sev
-	Demo	All	nl	f08145577e4f13584cc90b3d6e9caa55	pj3demo	joostp
+	Demo	All	nl	f08145577e4f13584cc90b3d6e9caa55	pj3-demo	joostp
 
 Pajama Sam's Lost & Found
 	-	All	en	a561d2e2413cc1c71d5a1bf87bf493ea	lost	Kirben
@@ -401,12 +400,12 @@ Putt-Putt Travels Through Time
 	-	Windows	en	a525c1753c1db5011c00417da37887ef	PuttTime	Kirben
 	-	All?	en	2108d83dcf09f8adb4bc524669c8cf51	PuttTime
 	Demo	All	en	4e5867848ee61bc30d157e2c94eee9b4	timedemo	khalek, sev
-	Demo	All	en	0ab19be9e2a3f6938226638b2a3744fe	putttime-demo	khalek
+	Demo	All	en	0ab19be9e2a3f6938226638b2a3744fe	timedemo	khalek
 
 Putt-Putt and Pep's Balloon-O-Rama
 	-	All	en	08cc5c3eedaf72ebe12734eee94f7fa2	balloon	Kirben
 	-	All	en	8e3241ddd6c8dadf64305e8740d45e13	balloon	Kirben
-	-	Windows	ru	145bd3373574feb668cc2eea2ec6cf86	balloon sev
+	-	Windows	ru	145bd3373574feb668cc2eea2ec6cf86	balloon	sev
 
 Putt-Putt and Pep's Dog on a Stick
 	-	Windows	en	d4b8ee426b1afd3e53bc0cf020418cf6	dog	sev
@@ -423,14 +422,14 @@ Spy Fox 1: Dry Cereal
 	-	All	en	3de99ef0523f8ca7958faa3afccd035a	spyfox	Kirben
 	-	Windows	en	6bf70eee5de3d24d2403e0dd3d267e8a	spyfox	khalek
 	-	Windows	nl	9bda5fee51d2fda5253d02c642016bf4	spyfox	joostp
-	Demo	All	en	53e94115b55dd51d4b8ff0871aa1df1e	foxdemo	khalek, sev
+	Demo	All	en	53e94115b55dd51d4b8ff0871aa1df1e	spydemo	khalek, sev
 	Demo	All	en	fbdd947d21e8f5bac6d6f7a316af1c5a	spydemo	sev
 	Demo	Windows	en	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	spydemo	khalek
 
 Spy Fox 2: Some Assembly Required
 	-	All	en	f79e60c17cca601e411f1f75e8ee9b5a	spyfox2	Kirben
 	Demo	All	en	7222f260253f325c21fcfa68b5bfab67	sf2-demo	Kirben
-	Demo	All	nl	1c792d28376d45e145cb916bca0400a2	sf2demo	joostp
+	Demo	All	nl	1c792d28376d45e145cb916bca0400a2	sf2-demo	joostp
 
 Spy Fox 3: Operation Ozone
 	-	All	en	600abd3e9f47e63e670188b7e4e86ac7	spyozon	Kirben
