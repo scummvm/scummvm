@@ -159,6 +159,13 @@ String& String::operator +=(char c)
 	return *this;
 }
 
+void String::clear()
+{
+	_len = 0;
+	if (_str)
+		_str[0] = 0;
+}
+
 void String::ensureCapacity(int new_len, bool keep_old)
 {
 	if (new_len <= _capacity)
@@ -188,8 +195,12 @@ StringList::StringList(const StringList& list)
 
 StringList::~StringList()
 {
-	if (_data)
+	if (_data) {
+		for (int i = 0; i < _capacity; i++)
+			if (_data[_size])
+				delete _data[_size];
 		free(_data);
+	}
 }
 
 
@@ -217,7 +228,6 @@ void StringList::push_back(const String& str)
 	_size++;
 }
 
-
 String& StringList::operator [](int idx)
 {
 	assert(idx >= 0 && idx < _size);
@@ -228,6 +238,11 @@ const String& StringList::operator [](int idx) const
 {
 	assert(idx >= 0 && idx < _size);
 	return *_data[idx];
+}
+
+void String::clear()
+{
+	_len = 0;
 }
 
 void StringList::ensureCapacity(int new_len)

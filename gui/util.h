@@ -50,6 +50,8 @@ public:
 	operator const char *()	const	{ return _str; }
 	const char *c_str() const		{ return _str; }
 	int size() const				{ return _len; }
+	
+	void clear();
 
 protected:
 	void ensureCapacity(int new_len, bool keep_old);
@@ -74,6 +76,8 @@ public:
 	const String& operator [](int idx) const;
 
 	int size() const	{ return _size; }
+
+	void clear();
 
 protected:
 	void ensureCapacity(int new_len);
