@@ -905,6 +905,118 @@ bool ScummEngine::isLightOn() const {
 #pragma mark --- Image drawing ---
 #pragma mark -
 
+
+void Gdi::drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height, int stripnr, int numstrip, StripTable *table) {
+	
+	const int left = (stripnr * 8);
+	const int right = left + (numstrip * 8);
+	byte *dst;
+	byte *mask_ptr;
+	const byte *src;
+	byte color, data = 0;
+	int run;
+	bool dither = false;
+	byte dither_table[128];
+	byte *ptr_dither_table;
+	int theX, theY, maxX;
+
+	memset(dither_table, 0, sizeof(dither_table));
+
+	if (vs->hasTwoBuffers)
+		dst = vs->backBuf + (y * _numStrips + x) * 8;
+	else
+		dst = vs->screenPtr + (y * _numStrips + x) * 8;
+
+	mask_ptr = getMaskBuffer(x, y, 1);
+
+
+	if (table) {
+		run = table->run[stripnr];
+		color = table->color[stripnr];
+		src = ptr + table->offsets[stripnr];
+		theX = left;
+		maxX = right;
+	} else {
+		run = 1;
+		color = 0;
+		src = ptr;
+		theX = 0;
+		maxX = width;
+	}
+	
+	// Decode and draw the image data.
+	assert(height <= 128);
+	for (; theX < maxX; theX++) {
+		ptr_dither_table = dither_table;
+		for (theY = 0; theY < height; theY++) {
+			if (--run == 0) {
+				data = *src++;
+				if (data & 0x80) {
+					run = data & 0x7f;
+					dither = true;
+				} else {
+					run = data >> 4;
+					dither = false;
+				}
+				color = _roomPalette[data & 0x0f];
+				if (run == 0) {
+					run = *src++;
+				}
+			}
+			if (!dither) {
+				*ptr_dither_table = color;
+			}
+			if (left <= theX && theX < right) {
+				*dst = *ptr_dither_table++;
+				dst += vs->width;
+			}
+		}
+		if (left <= theX && theX < right) {
+			dst -= _vertStripNextInc;
+		}
+	}
+
+
+	// Draw mask (zplane) data
+	theY = 0;
+
+	if (table) {
+		src = ptr + table->zoffsets[stripnr];
+		run = table->zrun[stripnr];
+		theX = left;
+	} else {
+		run = *src++;
+		theX = 0;
+	}
+	while (theX < right) {
+		const byte runFlag = run & 0x80;
+		if (runFlag) {
+			run &= 0x7f;
+			data = *src++;
+		}
+		do {
+			if (!runFlag)
+				data = *src++;
+			
+			if (left <= theX) {
+				*mask_ptr = data;
+				mask_ptr += _numStrips;
+			}
+			theY++;
+			if (theY >= height) {
+				if (left <= theX) {
+					mask_ptr -= _numStrips * height - 1;
+				}
+				theY = 0;
+				theX += 8;
+				if (theX >= right)
+					break;
+			}
+		} while (--run);
+		run = *src++;
+	}
+}
+
 /**
  * Draw a bitmap onto a virtual screen. This is main drawing method for room backgrounds
  * and objects, used throughout all SCUMM versions.
@@ -1019,114 +1131,8 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	// dificult to draw only parts of a room/object. We handle the V2 graphics
 	// differently from all other (newer) graphic formats for this reason.
 	//
-	if (_vm->_version == 2) {
-		
-		if (vs->hasTwoBuffers)
-			bgbak_ptr = vs->backBuf + (y * _numStrips + x) * 8;
-		else
-			bgbak_ptr = vs->screenPtr + (y * _numStrips + x) * 8;
-
-		mask_ptr = getMaskBuffer(x, y, 1);
-
-		const int left = (stripnr * 8);
-		const int right = left + (numstrip * 8);
-		byte *dst = bgbak_ptr;
-		const byte *src;
-		byte color, data = 0;
-		int run;
-		bool dither = false;
-		byte dither_table[128];
-		byte *ptr_dither_table;
-		memset(dither_table, 0, sizeof(dither_table));
-		int theX, theY, maxX;
-		
-		if (table) {
-			run = table->run[stripnr];
-			color = table->color[stripnr];
-			src = smap_ptr + table->offsets[stripnr];
-			theX = left;
-			maxX = right;
-		} else {
-			run = 1;
-			color = 0;
-			src = smap_ptr;
-			theX = 0;
-			maxX = width;
-		}
-		
-		// Draw image data. To do this, we decode the full RLE graphics data,
-		// but only draw those parts we actually want to display.
-		assert(height <= 128);
-		for (; theX < maxX; theX++) {
-			ptr_dither_table = dither_table;
-			for (theY = 0; theY < height; theY++) {
-				if (--run == 0) {
-					data = *src++;
-					if (data & 0x80) {
-						run = data & 0x7f;
-						dither = true;
-					} else {
-						run = data >> 4;
-						dither = false;
-					}
-					color = _roomPalette[data & 0x0f];
-					if (run == 0) {
-						run = *src++;
-					}
-				}
-				if (!dither) {
-					*ptr_dither_table = color;
-				}
-				if (left <= theX && theX < right) {
-					*dst = *ptr_dither_table++;
-					dst += vs->width;
-				}
-			}
-			if (left <= theX && theX < right) {
-				dst -= _vertStripNextInc;
-			}
-		}
-
-
-		// Draw mask (zplane) data
-		theY = 0;
-
-		if (table) {
-			src = smap_ptr + table->zoffsets[stripnr];
-			run = table->zrun[stripnr];
-			theX = left;
-		} else {
-			run = *src++;
-			theX = 0;
-		}
-		while (theX < right) {
-			const byte runFlag = run & 0x80;
-			if (runFlag) {
-				run &= 0x7f;
-				data = *src++;
-			}
-			do {
-				if (!runFlag)
-					data = *src++;
-				
-				if (left <= theX) {
-					*mask_ptr = data;
-					mask_ptr += _numStrips;
-				}
-				theY++;
-				if (theY >= height) {
-					if (left <= theX) {
-						mask_ptr -= _numStrips * height - 1;
-					}
-					theY = 0;
-					theX += 8;
-					if (theX >= right)
-						break;
-				}
-			} while (--run);
-			run = *src++;
-		}
-	}
+	if (_vm->_version == 2) 
+		drawBitmapV2Helper(ptr, vs, x, y, width, height, stripnr, numstrip, table);
 
 	while (numstrip--) {
 		CHECK_HEAP;

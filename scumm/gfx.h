@@ -266,6 +266,8 @@ protected:
 public:
 	void drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
 	                int stripnr, int numstrip, byte flag, StripTable *table = 0);
+	void drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height, 
+	                int stripnr, int numstrip, StripTable *table);
 	StripTable *generateStripTable(const byte *src, int width, int height, StripTable *table);
 
 	void disableZBuffer() { _zbufferDisabled = true; }
