@@ -194,6 +194,8 @@ const ScummVM::String ScummDialog::queryResString(int stringno) {
 	if (result && *result == '/') {
 		byte tmp[256];
 		_scumm->translateText(result, tmp);
+		
+		// FIXME: AARGH! We shouldn't just strcpy into the data we got from getStringAddress
 		strcpy((char *)result, (char *)tmp);
 	}
 

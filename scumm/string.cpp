@@ -582,26 +582,9 @@ void Scumm::addVerbToStack(int var)
 	if (num) {
 		for (k = 1; k < _maxVerbs; k++) {
 			if (num == _verbs[k].verbid && !_verbs[k].type && !_verbs[k].saveid) {
-				byte *ptr = getResourceAddress(rtVerb, k);
-				if ((_version == 8) && (ptr[0] == '/')) {
-					char pointer[20];
-					int i, j;
-
-					translateText(ptr, _transText);
-
-					for (i = 0, j = 0; (ptr[i] != '/' || j == 0) && j < 19; i++) {
-							if (ptr[i] != '/')
-							pointer[j++] = ptr[i];
-					}
-					pointer[j] = 0;
-
-					// Play speech
-					_sound->playBundleSound(pointer, &_sound->_talkChannelHandle);
-
-					addMessageToStack(_transText);
-				} else {
-					addMessageToStack(ptr);
-				}
+				const byte *ptr = getResourceAddress(rtVerb, k);
+				ptr = translateTextAndPlaySpeech(ptr);
+				addMessageToStack(ptr);
 				break;
 			}
 		}
@@ -620,16 +603,7 @@ void Scumm::addNameToStack(int var)
 		ptr = getObjOrActorName(num);
 	if (ptr) {
 		if ((_version == 8) && (ptr[0] == '/')) {
-			char pointer[20];
-			int i, j;
-
 			translateText(ptr, _transText);
-			for (i = 0, j = 0; (ptr[i] != '/' || j == 0) && j < 19; i++) {
-				if (ptr[i] != '/')
-					pointer[j++] = ptr[i];
-			}
-			pointer[j] = 0;
-
 			addMessageToStack(_transText);
 		} else {
 			addMessageToStack(ptr);
@@ -640,7 +614,7 @@ void Scumm::addNameToStack(int var)
 }
 
 void Scumm::addStringToStack(int var) {
-	byte *ptr;
+	const byte *ptr;
 
 	if (_version == 3 || _version >= 6)
 		var = readVar(var);
@@ -649,17 +623,7 @@ void Scumm::addStringToStack(int var) {
 		ptr = getStringAddress(var);
 		if (ptr) {
 			if ((_version == 8) && (ptr[0] == '/')) {
-				char pointer[20];
-				int i, j;
-
 				translateText(ptr, _transText);
-
-				for (i = 0, j = 0; (ptr[i] != '/' || j == 0) && j < 19; i++) {
-						if (ptr[i] != '/')
-								pointer[j++] = ptr[i];
-				}
-				pointer[j] = 0;
-
 				addMessageToStack(_transText);
 			} else {
 				addMessageToStack(ptr);
@@ -906,6 +870,26 @@ void Scumm::loadLanguageBundle() {
 	// Sort the index nodes. We'll later use bsearch on it, which is just as efficient
 	// as using a binary tree, speed wise.
 	qsort(_languageIndex, _languageIndexSize, sizeof(LangIndexNode), indexCompare);
+}
+
+const byte *Scumm::translateTextAndPlaySpeech(const byte *ptr) {
+	if ((_gameId == GID_DIG || _gameId == GID_CMI) && (ptr[0] == '/')) {
+		char pointer[20];
+		int i, j;
+
+		translateText(ptr, _transText);
+		for (i = 0, j = 0; (ptr[i] != '/' || j == 0) && j < 19; i++) {
+			if (ptr[i] != '/')
+				pointer[j++] = ptr[i];
+		}
+		pointer[j] = 0;
+
+		// Play speech
+		_sound->playBundleSound(pointer, &_sound->_talkChannelHandle);
+
+		ptr = _transText;
+	}
+	return ptr;
 }
 
 void Scumm::translateText(const byte *text, byte *trans_buff) {

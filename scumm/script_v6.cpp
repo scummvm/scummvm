@@ -2237,25 +2237,8 @@ void Scumm_v6::o6_printEgo() {
 void Scumm_v6::o6_talkActor() {
 	_actorToPrintStrFor = pop();
 
-	_messagePtr = _scriptPointer;
+	_messagePtr = translateTextAndPlaySpeech(_scriptPointer);
 	_scriptPointer += resStrLen(_scriptPointer) + 1;
-
-	if ((_gameId == GID_DIG || _gameId == GID_CMI) && (_messagePtr[0] == '/')) {
-		char pointer[20];
-		int i, j;
-
-		translateText(_messagePtr, _transText);
-		for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
-			if (_messagePtr[i] != '/')
-				pointer[j++] = _messagePtr[i];
-		}
-		pointer[j] = 0;
-
-		// Play speech
-		_sound->playBundleSound(pointer, &_sound->_talkChannelHandle);
-
-		_messagePtr = _transText;
-	}
 
 	setStringVars(0);
 	actorTalk();
@@ -3092,25 +3075,8 @@ void Scumm_v6::decodeParseString(int m, int n) {
 		_string[m].no_talk_anim = true;
 		break;
 	case 75:
-		_messagePtr = _scriptPointer;
+		_messagePtr = translateTextAndPlaySpeech(_scriptPointer);
 		_scriptPointer += resStrLen(_scriptPointer)+ 1;
-
-		if ((_messagePtr[0] == '/') && (_gameId == GID_DIG)) {
-			char pointer[20];
-			int i, j;
-
-			translateText(_messagePtr, _transText);
-			for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
-				if (_messagePtr[i] != '/')
-					pointer[j++] = _messagePtr[i];
-			}
-			pointer[j] = 0;
-
-			// Play speech
-			_sound->playBundleSound(pointer, &_sound->_talkChannelHandle);
-
-			_messagePtr = _transText;
-		}
 
 		switch (m) {
 		case 0:

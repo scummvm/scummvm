@@ -499,26 +499,9 @@ void Scumm_v8::decodeParseString(int m, int n) {
 		_string[m].no_talk_anim = true;
 		break;
 	case 0xD1:
-		_messagePtr = _scriptPointer;
+		_messagePtr = translateTextAndPlaySpeech(_scriptPointer);
 		_scriptPointer += resStrLen(_scriptPointer)+ 1;
 
-		if (_messagePtr[0] == '/') {
-			char pointer[20];
-			int i, j;
-
-			translateText(_messagePtr, _transText);
-			for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
-				if (_messagePtr[i] != '/')
-					pointer[j++] = _messagePtr[i];
-			}
-			pointer[j] = 0;
-
-			// Play speech
-			_sound->playBundleSound(pointer, &_sound->_talkChannelHandle);
-
-			_messagePtr = _transText;
-		}
-		
 		switch (m) {
 		case 0:
 			actorTalk();

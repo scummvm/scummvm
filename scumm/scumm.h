@@ -1096,6 +1096,7 @@ protected:
 	byte _transText[500];
 
 	void loadLanguageBundle();
+	const byte *translateTextAndPlaySpeech(const byte *ptr);
 public:
 	void translateText(const byte *text, byte *trans_buff);	// Used by class ScummDialog
 
