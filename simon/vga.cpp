@@ -82,7 +82,7 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_49_set_bit,
 	&SimonState::vc_50_clear_bit,
 	&SimonState::vc_51_clear_hitarea_bit_0x40,
-	&SimonState::vc_52,
+	&SimonState::vc_52_play_sound,
 	&SimonState::vc_53_no_op,
 	&SimonState::vc_54_no_op,
 	&SimonState::vc_55_offset_hit_area,
@@ -94,11 +94,11 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonState::vc_61_sprite_change,
 	&SimonState::vc_62_palette_thing,
 	&SimonState::vc_63_palette_thing_2,
-	&SimonState::vc_64,
-	&SimonState::vc_65,
-	&SimonState::vc_66_nz,
-	&SimonState::vc_67_ge,
-	&SimonState::vc_68_le,
+	&SimonState::vc_64_skip_if_speech,
+	&SimonState::vc_65_palette_thing_3,
+	&SimonState::vc_66_skip_if_nz,
+	&SimonState::vc_67_skip_if_ge,
+	&SimonState::vc_68_skip_if_le,
 	&SimonState::vc_69,
 	&SimonState::vc_70,
 	&SimonState::vc_71,
@@ -1596,7 +1596,7 @@ void SimonState::vc_51_clear_hitarea_bit_0x40()
 	clear_hitarea_bit_0x40(vc_read_next_word());
 }
 
-void SimonState::vc_52()
+void SimonState::vc_52_play_sound()
 {
 	uint16 a = vc_read_next_word();
 
@@ -1851,13 +1851,13 @@ void SimonState::vc_63_palette_thing_2()
 	_video_var_3 = false;
 }
 
-void SimonState::vc_64()
+void SimonState::vc_64_skip_if_speech()
 {																// Simon2
 	if (vc_59_helper())
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_65()
+void SimonState::vc_65_palette_thing_3()
 {																// Simon2
 	_palette_color_count = 0x270;
 	_video_num_pal_colors = 0x0D0;
@@ -1869,7 +1869,7 @@ void SimonState::vc_65()
 	_video_var_3 = false;
 }
 
-void SimonState::vc_66_nz()
+void SimonState::vc_66_skip_if_nz()
 {																// Simon2
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
@@ -1878,7 +1878,7 @@ void SimonState::vc_66_nz()
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_67_ge()
+void SimonState::vc_67_skip_if_ge()
 {																// Simon2
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
@@ -1887,7 +1887,7 @@ void SimonState::vc_67_ge()
 		vc_skip_next_instruction();
 }
 
-void SimonState::vc_68_le()
+void SimonState::vc_68_skip_if_le()
 {																// Simon2
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();

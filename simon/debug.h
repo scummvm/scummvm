@@ -980,11 +980,11 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 const char *const simon1_video_opcode_name_table[] = {
 	/* 0 */
 	"x|RET",
-	"ddd|DUMMY",
+	"ddd|DUMMY1",
 	"d|CALL",
 	"ddddd|NEW_THREAD",
 	/* 4 */
-	"ddd|DUMMY_2",
+	"ddd|DUMMY4",
 	"vd|SKIP_IF_NEQ",
 	"d|SKIP_IFN_SIB_WITH_A",
 	"d|SKIP_IF_SIB_WITH_A",
@@ -1022,7 +1022,7 @@ const char *const simon1_video_opcode_name_table[] = {
 	"vv|COPY_VAR",
 	"|FORCE_UNLOCK",
 	"|FORCE_LOCK",
-	"dd|DUMMY_4",
+	"dd|VC35",
 	/* 36 */
 	"dd|SAVELOAD_THING",
 	"v|OFFSET_Y_F",
@@ -1044,15 +1044,15 @@ const char *const simon1_video_opcode_name_table[] = {
 	"d|CLEAR_BIT",
 	"d|CLEAR_HITAREA_BIT_0x40",
 	/* 52 */
-	"d|VC_52",
-	"dd|DUMMY_5",
-	"ddd|DUMMY_6",
+	"d|PLAY_SOUND",
+	"dd|DUMMY53",
+	"ddd|DUMMY54",
 	"ddd|OFFSET_HIT_AREA",
 	/* 56 */
-	"|DUMMY_7",
-	"|DUMMY_8",
+	"|DUMMY57",
+	"|UNK58",
 	"|DUMMY_9",
-	"|SKIP_IF_SOUND??",
+	"|SKIP_IF_SPEECH",
 	/* 60 */
 	"d|KILL_THREAD",
 	"ddd|INIT_SPRITE",
@@ -1064,11 +1064,11 @@ const char *const simon1_video_opcode_name_table[] = {
 const char *const simon2_video_opcode_name_table[] = {
 	/* 0 */
 	"x|RET",
-	"ddd|DUMMY",
+	"ddd|DUMMY1",
 	"d|CALL",
 	"ddddd|NEW_THREAD",
 	/* 4 */
-	"ddd|DUMMY_2",
+	"ddd|DUMMY4",
 	"vd|SKIP_IF_NEQ",
 	"d|SKIP_IFN_SIB_WITH_A",
 	"d|SKIP_IF_SIB_WITH_A",
@@ -1106,7 +1106,7 @@ const char *const simon2_video_opcode_name_table[] = {
 	"vv|COPY_VAR",
 	"|FORCE_UNLOCK",
 	"|FORCE_LOCK",
-	"dd|DUMMY_4",
+	"dd|VC35",
 	/* 36 */
 	"dd|SAVELOAD_THING",
 	"v|OFFSET_Y_F",
@@ -1128,14 +1128,14 @@ const char *const simon2_video_opcode_name_table[] = {
 	"d|CLEAR_BIT",
 	"d|CLEAR_HITAREA_BIT_0x40",
 	/* 52 */
-	"d|VC_52",
-	"dd|DUMMY_5",
-	"ddd|DUMMY_6",
+	"d|PLAY_SOUND",
+	"dd|DUMMY53",
+	"ddd|DUMMY54",
 	"ddd|OFFSET_HIT_AREA",
 	/* 56 */
 	"i|SLEEP_EX",
-	"|DUMMY_8",
-	"|DUMMY_9",
+	"|DUMMY_57",
+	"|UNK58",
 	"ddd|KILL_MULTI_THREAD",
 	/* 60 */
 	"dd|KILL_THREAD",
@@ -1143,18 +1143,18 @@ const char *const simon2_video_opcode_name_table[] = {
 	"|PALETTE_THING",
 	"|PALETTE_THING_2",
 	/* 64 */
-	"|UNK64",
-	"|UNK65",
-	"|UNK66",
-	"|UNK67",
+	"|SKIP_IF_SPEECH",
+	"|PALETTE_THING_3",
+	"|SKIP_IF_NZ",
+	"|SKIP_IF_GE",
 	/* 68 */
-	"|UNK68",
+	"|SKIP_IF_LE",
 	"dd|UNK69",
 	"dd|UNK70",
 	"|UNK71",
 	/* 72 */
 	"dd|UNK72",
-	"bb|UNK73",
-	"bb|UNK74",
+	"bb|SET_OP189_FLAG",
+	"bb|CLEAR_OP189_FLAG",
 };
 

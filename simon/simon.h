@@ -640,7 +640,7 @@ public:
 	void vc_49_set_bit();
 	void vc_50_clear_bit();
 	void vc_51_clear_hitarea_bit_0x40();
-	void vc_52();
+	void vc_52_play_sound();
 	void vc_53_no_op();
 	void vc_54_no_op();
 	void vc_55_offset_hit_area();
@@ -653,11 +653,11 @@ public:
 	void vc_63_palette_thing_2();
 
 	// Simon2 specific Video Script Opcodes
-	void vc_64();
-	void vc_65();
-	void vc_66_nz();
-	void vc_67_ge();
-	void vc_68_le();
+	void vc_64_skip_if_speech();
+	void vc_65_palette_thing_3();
+	void vc_66_skip_if_nz();
+	void vc_67_skip_if_ge();
+	void vc_68_skip_if_le();
 	void vc_69();
 	void vc_70();
 	void vc_71();
