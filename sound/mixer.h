@@ -80,11 +80,12 @@ private:
 		uint32 _fpPos;
 		uint32 _bufferSize;
 		uint32 _rate;
-		uint32 _timeOut;
+		int32 _timeOut;
+		int32 _setTimeOut;
 		byte _flags;
 
 	public:
-		ChannelStream(SoundMixer * mixer, void * sound, uint32 size, uint rate, byte flags);
+		ChannelStream(SoundMixer * mixer, void * sound, uint32 size, uint rate, byte flags, int32 timout);
 
 		void append(void * sound, uint32 size);
 		void mix(int16 * data, uint len);
@@ -182,7 +183,8 @@ public:
 	int playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags);
 	int playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, uint rate, byte flags, int id);
 	int playStream(PlayingSoundHandle * handle, int index, void * sound, uint32 size, uint rate,
-									byte flags);
+									byte flags, int32 timeout = 3);
+	void stopChannel(int index);
 #ifdef COMPRESSED_SOUND_FILE
 	int playMP3(PlayingSoundHandle * handle, void * sound, uint32 size, byte flags);
 	int playMP3CDTrack(PlayingSoundHandle * handle, File * file, mad_timer_t duration);

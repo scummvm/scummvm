@@ -107,8 +107,14 @@ int SoundMixer::playRaw(PlayingSoundHandle * handle, void * sound, uint32 size, 
 }
 
 int SoundMixer::playStream(PlayingSoundHandle * handle, int idx, void * sound, uint32 size,
-														uint rate, byte flags) {
-	return insertAt(handle, idx, new ChannelStream(this, sound, size, rate, flags));
+														uint rate, byte flags, int32 timeout) {
+	return insertAt(handle, idx, new ChannelStream(this, sound, size, rate, flags, timeout));
+}
+
+void SoundMixer::stopChannel(int index) {
+	if (_channels[index] == NULL) {
+		_channels[index]->_toBeDestroyed = true;
+	}
 }
 
 #ifdef COMPRESSED_SOUND_FILE
@@ -613,7 +619,7 @@ void SoundMixer::ChannelRaw::realDestroy() {
 }
 
 SoundMixer::ChannelStream::ChannelStream(SoundMixer * mixer, void * sound, uint32 size, uint rate,
-										 byte flags) {
+										 byte flags, int32 timeout) {
 	_mixer = mixer;
 	_flags = flags;
 	_bufferSize = 2000000;
@@ -627,6 +633,7 @@ SoundMixer::ChannelStream::ChannelStream(SoundMixer * mixer, void * sound, uint3
 	_fpPos = 0;
 	_fpSpeed = (1 << 16) * rate / mixer->_outputRate;
 	_toBeDestroyed = false;
+	_setTimeOut = timeout;
 
 	/* adjust the magnitute to prevent division error */
 	while (size & 0xFFFF0000)
@@ -671,6 +678,9 @@ void SoundMixer::ChannelStream::mix(int16 * data, uint len) {
 	}
 
 	if (_pos == end_of_data) {
+		if (_timeOut == -1) {
+			return;
+		}
 		if (--_timeOut == 0) {
 			realDestroy();
 		}
@@ -690,7 +700,7 @@ void SoundMixer::ChannelStream::mix(int16 * data, uint len) {
 			mixer_helper_table[_flags & 0x07] (data, &len, &_pos, &fp_pos, fp_speed, vol_tab, end_of_data, (_flags & FLAG_REVERSE_STEREO) ? true : false);
 		}
 	}
-	_timeOut = 3;
+	_timeOut = _setTimeOut;
 	_fpPos = fp_pos;
 }
 
