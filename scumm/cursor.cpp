@@ -287,7 +287,7 @@ void ScummEngine::redefineBuiltinCursorFromChar(int index, int chr) {
 	for (int h = 0; h < s.h; h++) {
 		for (int w = 0; w < s.w; w++) {
 			if (buf[s.pitch * h + w] != 123)
-				*ptr |= 1 << (16 - w);
+				*ptr |= 1 << (15 - w);
 		}
 		ptr++;
 	}
