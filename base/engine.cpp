@@ -103,7 +103,9 @@ void NORETURN CDECL error(const char *s, ...) {
 #ifdef __GP32__ //ph0x FIXME?
 	printf("ERROR: %s\n", buf_output);
 #else
+#ifndef _WIN32_WCE
 	fprintf(stderr, "%s!\n", buf_output);
+#endif
 #endif
 
 #if defined( USE_WINDBG )
@@ -146,7 +148,9 @@ void CDECL warning(const char *s, ...) {
 #ifdef __GP32__ //ph0x FIXME: implement fprint?
 	printf("WARNING: %s\n", buf);
 #else
+#ifndef _WIN32_WCE
 	fprintf(stderr, "WARNING: %s!\n", buf);
+#endif
 #endif
 #if defined( USE_WINDBG )
 	strcat(buf, "\n");
@@ -174,7 +178,9 @@ void CDECL debug(int level, const char *s, ...) {
 	va_start(va, s);
 	vsprintf(buf, s, va);
 	va_end(va);
+#ifndef _WIN32_WCE
 	printf("%s\n", buf);
+#endif
 
 #if defined( USE_WINDBG )
 	strcat(buf, "\n");
