@@ -78,8 +78,8 @@ void IMuseDigital::resetState() {
 	_nextSeqToPlay = 0;
 }
 
-void IMuseDigital::poolDataForMixer(int32 pullSize, byte *mixerBuffer, AudioStream *stream) {
-	Common::StackLock lock(_mutex, "IMuseDigital::poolDataForMixer()");
+void IMuseDigital::pullDataForMixer(int32 pullSize, byte *mixerBuffer, AudioStream *stream) {
+	Common::StackLock lock(_mutex, "IMuseDigital::pullDataForMixer()");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		if (_track[l]->stream == stream) {
 			int32 mixer_size = pullSize;

@@ -93,7 +93,7 @@ private:
 	int _curMusicCue;
 
 	static void timer_handler(void *refConf);
-	void poolDataForMixer(int32 pullSize, byte *mixerBuffer, AudioStream *stream);
+	void pullDataForMixer(int32 pullSize, byte *mixerBuffer, AudioStream *stream);
 	void callback();
 	void switchToNextRegion(int track);
 	void allocSlot(int priority);
