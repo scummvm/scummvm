@@ -194,7 +194,7 @@ void Sword2Engine::errorString(const char *buf1, char *buf2) {
 	}
 }
 
-int32 Sword2Engine::InitialiseGame(void) {
+int32 Sword2Engine::initialiseGame(void) {
 	// init engine drivers
 
 	uint8 *file;
@@ -276,7 +276,7 @@ void Sword2Engine::go() {
 	_keyboardEvent ke;
 
 	// Call the application "Revolution" until the resource manager is
-	// ready to dig the name out of a text file. See InitialiseGame()
+	// ready to dig the name out of a text file. See initialiseGame()
 	// which calls InitialiseFontResourceFlags() in maketext.cpp
 	//
 	// Have to do it like this since we cannot really fire up the resource
@@ -286,8 +286,8 @@ void Sword2Engine::go() {
 	debug(5, "CALLING: readOptionSettings");
 	_gui->readOptionSettings();
 
-	debug(5, "CALLING: InitialiseGame");
-	if (InitialiseGame()) {
+	debug(5, "CALLING: initialiseGame");
+	if (initialiseGame()) {
 		closeGame();
 		return;
 	}

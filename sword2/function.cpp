@@ -184,16 +184,15 @@ int32 Logic::fnRandomPause(int32 *params) {
 }
 
 int32 Logic::fnPassGraph(int32 *params) {
-	// makes an engine local copy of passed graphic_structure and
-	// mega_structure - run script 4 of an object to request this
-	// used by fnTurnTo(id) etc
+	// makes an engine local copy of passed Object_graphic - run script 4
+	// of an object to request this used by fnTurnTo(id) etc
 	//
 	// remember, we cannot simply read a compact any longer but instead
 	// must request it from the object itself
 
-	// params:	0 pointer to a graphic structure (might not need this?)
+	// params:	0 pointer to an Object_graphic structure
 
-	memcpy(&_vm->_engineGraph, _vm->_memory->intToPtr(params[0]), sizeof(Object_graphic));
+	warning("fnPassGraph() is a no-op now");
 
 	// makes no odds
 	return IR_CONT;

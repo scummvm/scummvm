@@ -129,8 +129,7 @@ public:
 	Sword2Engine(GameDetector *detector, OSystem *syst);
 	~Sword2Engine();
 	void go(void);
-	void parseEvents(void);
-	int32 InitialiseGame(void);
+	int32 initialiseGame(void);
 	uint32 _features;
 	char *_targetName; // target name for saves
 
@@ -191,10 +190,7 @@ public:
 
 	int32 initBackground(int32 res, int32 new_palette);
 
-	// These two are set by fnPassGraph() and fnPassMega().
-	// FIXME: _engineGraph isn't used at all, is it?
-
-	Object_graphic _engineGraph;
+	// Set by fnPassMega()
 	Object_mega _engineMega;
 
 	menu_object _tempList[TOTAL_engine_pockets];
