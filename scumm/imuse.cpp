@@ -4954,7 +4954,7 @@ void IMuseDigital::handler() {
 			if ((new_size != mixer_size) && (_channel[l]._isLoop == true)) {
 				_channel[l]._offset = _channel[l]._jump[0]._dest + (mixer_size - new_size);
 			} else {
-				_channel[l]._offset += _channel[l]._mixerSize;
+				_channel[l]._offset += mixer_size;
 			}
 		}
 	}
