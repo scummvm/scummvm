@@ -80,6 +80,13 @@ static const byte mt32_to_gm[128] = {
 	}
 	
 	bool MusicPlayer::queueSong(uint16 songNum) {
+		if (songNum >= _numSongs) {
+			// this happens at the end of the car chase, where we try to play song 176,
+			// see Sound::_tune[], entry 39
+			warning("Trying to queue an invalid song number %d, max %d", songNum, _numSongs);
+			return false;
+		}
+
 		uint8 emptySlots = 0;
 		for (int i = 0; i < MUSIC_QUEUE_SIZE; i++)
 			if (!_songQueue[i])
@@ -257,7 +264,7 @@ static const byte mt32_to_gm[128] = {
 		if (!songNum) {
 			stopMusic();
 			return;
-		}	
+		}
 
 		byte *musicPtr = _musicData + songOffset(songNum);
 		uint32 size = songLength(songNum);
