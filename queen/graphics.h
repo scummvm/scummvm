@@ -30,13 +30,6 @@
 namespace Queen {
 
 
-#define MAX_BANK_SIZE      110
-#define MAX_FRAMES_NUMBER  256
-#define MAX_BANKS_NUMBER    18
-#define MAX_BOBS_NUMBER     64
-
-
-
 struct BobFrame {
 	uint16 width, height;
 	uint16 xhotspot, yhotspot;
@@ -193,14 +186,18 @@ public:
 
 	void update(uint16 room);
 
-
-private:
-
 	enum {
-		MAX_STRING_LENGTH = 255,
-		MAX_STRING_SIZE = (MAX_STRING_LENGTH + 1),
+		MAX_BANK_SIZE       = 110,
+		MAX_FRAMES_NUMBER   = 256,
+		MAX_BANKS_NUMBER    =  18,
+		MAX_BOBS_NUMBER     =  64,
+		MAX_STRING_LENGTH   = 255,
+		MAX_STRING_SIZE     = (MAX_STRING_LENGTH + 1),
 		BOB_SHRINK_BUF_SIZE = 60000
 	};
+
+
+private:
 
 	struct PackedBank {
 		uint32 indexes[MAX_BANK_SIZE];
