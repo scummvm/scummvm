@@ -597,16 +597,19 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 			return;
 		}
 
-		// FIXME hack until more is known
-		// the size of the data after the sample isn't known
-		// 64 is just a guess
 		if (_vm->_features & GF_HUMONGOUS) {
-			// SKIP TLKB (8) TALK (8) HSHD (24) and SDAT (8)
 			_sfxMode |= mode;
-			_sfxFile->seek(offset + 48, SEEK_SET);
-			sound = (byte *)malloc(b - 64);
-			_sfxFile->read(sound, b - 64);
-			_vm->_mixer->playRaw(handle, sound, b - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+
+			// SKIP TALK (8) HSHD (14)
+			_sfxFile->seek(offset + 22, SEEK_SET);
+			int rate = _sfxFile->readUint16LE();
+			// SKIP HSHD (8) and SDAT (8)
+			_sfxFile->seek(+16, SEEK_CUR);
+
+			size = b - 40;
+			sound = (byte *)malloc(size);
+			_sfxFile->read(sound, size);
+			_vm->_mixer->playRaw(handle, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 			return;
 		}
 
@@ -711,7 +714,6 @@ int Sound::isSoundRunning(int sound) const {
 		} else if (sound == -1 || sound == 10000 || sound == _currentMusic) {
 			// getSoundStatus(), with a -1, will return the
 			// ID number of the first active music it finds.
-			// TODO handle MRAW (pcm music) in humongous games
 			if (_currentMusic)
 				return (_musicChannelHandle.isActive()) ? _currentMusic : 0;
 			else
