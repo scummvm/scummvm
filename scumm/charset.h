@@ -113,6 +113,9 @@ public:
 };
 
 class CharsetRendererV2 : public CharsetRendererV3 {
+protected:
+	int getCharWidth(byte chr) { return 8; }
+
 public:
 	CharsetRendererV2(Scumm *vm) : CharsetRendererV3(vm) {}
 	
