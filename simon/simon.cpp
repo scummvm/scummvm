@@ -2065,7 +2065,7 @@ void SimonEngine::o_print_str() {
 	case GAME_SIMON1CD32:
 		if (speech_id != 0)
 			talk_with_speech(speech_id, num_1);
-		if (string_ptr != NULL && (_subtitles || speech_id == 0))
+		if (string_ptr != NULL && (speech_id == 0 || _subtitles))
 			talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
 		break;
 
@@ -2085,7 +2085,7 @@ void SimonEngine::o_print_str() {
 		if ((_game & GF_TALKIE) && (speech_id == 0))
 			o_kill_sprite_simon2(2, num_1 + 2);
 
-		if (_subtitles || speech_id == 0)
+		if (string_ptr != NULL && (speech_id == 0 || _subtitles))
 			talk_with_text(num_1, num_2, (const char *)string_ptr, tv->a, tv->b, tv->c);
 		break;
 	}
