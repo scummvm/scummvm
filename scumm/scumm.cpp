@@ -3255,17 +3255,20 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		engine = new ScummEngine_v5(detector, syst, game);
 		break;
 	case 6:
-		if (game.heversion >= 60) {
-			// TODO: probably use another variable with version number
+		switch (game.heversion) {
 #ifndef __PALM_OS__
-			if (game.heversion >= 72)
-				engine = new ScummEngine_v72he(detector, syst, game);
-			else if (game.heversion >= 70)
-				engine = new ScummEngine_v7he(detector, syst, game);
-			else
+		case 72:
+			engine = new ScummEngine_v72he(detector, syst, game);
+			break;
+		case 71:
+		case 70:
+			engine = new ScummEngine_v7he(detector, syst, game);
+			break;
 #endif
-				engine = new ScummEngine_v6he(detector, syst, game);
-		} else {
+		case 60:
+			engine = new ScummEngine_v6he(detector, syst, game);
+			break;
+		default:
 			engine = new ScummEngine_v6(detector, syst, game);
 		}
 		break;

@@ -654,8 +654,6 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
-	byte stringLen(byte *);
-
 	/* Version 7 script opcodes */
 	void o7_getString();
 	void o7_objectX();
