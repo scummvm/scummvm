@@ -556,29 +556,17 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 	// bit 1 - not used     2
 	// bit 2 - ???          4
 	// bit 3 - wrap around  8
-	switch (flags) {
+	switch (flags & 9) {
 		case 0: 
 			sf->drawStringAbsolute(str, _data, _width, pos_x, pos_y);
 			break;
 		case 1:
 			sf->drawStringCentered(str, _data, _width, _height, MAX(pos_y, top), left, width, pos_x);
 			break;
-		case 4:
-			sf->drawStringAbsolute(str, _data, _width, pos_x, pos_y);
-			break;
-		case 5:
-			sf->drawStringCentered(str, _data, _width, _height, MAX(pos_y, top), left, width, pos_x);
-			break;
 		case 8:
 			sf->drawStringWrap(str, _data, _width, _height, pos_x, MAX(pos_y, top), width);
 			break;
 		case 9:
-			sf->drawStringCentered(str, _data, _width, _height, MAX(pos_y, top), left, width, pos_x);
-			break;
-		case 12:
-			sf->drawStringWrap(str, _data, _width, _height, pos_x, MAX(pos_y, top), width);
-			break;
-		case 13:
 			sf->drawStringWrapCentered(str, _data, _width, _height, pos_x, MAX(pos_y, top), width);
 			break;
 		default:
