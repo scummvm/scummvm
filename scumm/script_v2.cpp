@@ -2549,6 +2549,10 @@ void Scumm::o6_talkActor()
 		}
 		pointer[j] = 0;
 
+		// Stop any talking that's still going on
+		if (_sound->_talkChannel > -1)
+			_mixer->stop(_sound->_talkChannel);		
+
 		_sound->_talkChannel = _sound->playBundleSound(pointer);
 		_messagePtr = (byte*)&transText;
 		setStringVars(0);
@@ -2576,6 +2580,10 @@ void Scumm::o6_talkEgo()
 				pointer[j++] = _messagePtr[i];
 		}
 		pointer[j] = 0;
+
+		// Stop any talking that's still going on
+		if (_sound->_talkChannel > -1)
+			_mixer->stop(_sound->_talkChannel);
 
 		_sound->_talkChannel = _sound->playBundleSound(pointer);
 		_messagePtr = (byte*)&transText;
@@ -3191,7 +3199,12 @@ void Scumm::decodeParseString2(int m, int n)
 				}
 				pointer[j] = 0;
 
+				// Stop any talking that's still going on
+				if (_sound->_talkChannel > -1)
+					_mixer->stop(_sound->_talkChannel);
+
 				_sound->_talkChannel = _sound->playBundleSound(pointer);
+				printf("Talkchannel for %s is %d\n", transText, _sound->_talkChannel);
 				_messagePtr = (byte*)&transText;
 
 				switch (m) {
