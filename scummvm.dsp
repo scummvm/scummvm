@@ -20,6 +20,7 @@ CFG=scummvm - Win32 MP3 Enabled Debug
 !MESSAGE "scummvm - Win32 Release" (based on "Win32 (x86) Console Application")
 !MESSAGE "scummvm - Win32 Debug" (based on "Win32 (x86) Console Application")
 !MESSAGE "scummvm - Win32 MP3 Enabled Debug" (based on "Win32 (x86) Console Application")
+!MESSAGE "scummvm - Win32 MP3 Enabled Release" (based on "Win32 (x86) Console Application")
 !MESSAGE 
 
 # Begin Project
@@ -38,12 +39,12 @@ RSC=rc.exe
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "Release"
-# PROP Intermediate_Dir "Release"
+# PROP Output_Dir "scummvm___Release"
+# PROP Intermediate_Dir "scummvm___Release"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /I "sound" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "COMPRESSED_SOUND_FILE" /FD /c
+# ADD CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /I "sound" /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /FD /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x41d /d "NDEBUG"
 # ADD RSC /l 0x41d /d "NDEBUG"
@@ -52,8 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib /nologo /subsystem:console /machine:I386
-# SUBTRACT LINK32 /nodefaultlib
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib simon___Release\simon.lib scumm___Release\scumm.lib sdl.lib /nologo /subsystem:console /machine:I386 /nodefaultlib
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
 
@@ -64,8 +64,8 @@ LINK32=link.exe
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "Debug"
-# PROP Intermediate_Dir "Debug"
+# PROP Output_Dir "scummvm___Debug"
+# PROP Intermediate_Dir "scummvm___Debug"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /GZ /c
@@ -78,7 +78,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib simon___Debug\simon.lib scumm___Debug\scumm.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
 
 !ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
 
@@ -96,7 +96,7 @@ LINK32=link.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /I "./sound" /I "./" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "BYPASS_COPY_PROT" /D "USE_ADLIB" /D "DUMP_SCRIPTS" /D "COMPRESSED_SOUND_FILE" /Yu"stdafx.h" /FD /GZ /c
 # SUBTRACT BASE CPP /Fr
-# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /I "./sound" /I "./" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "BYPASS_COPY_PROT" /D "USE_ADLIB" /D "DUMP_SCRIPTS" /D "COMPRESSED_SOUND_FILE" /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /I "." /I "common" /I "scumm" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "ALLOW_GDI" /D "BYPASS_COPY_PROT" /D "USE_ADLIB" /D "DUMP_SCRIPTS" /D "COMPRESSED_SOUND_FILE" /Yu"stdafx.h" /FD /GZ /c
 # SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x41d /d "_DEBUG"
 # ADD RSC /l 0x41d /d "_DEBUG"
@@ -107,6 +107,33 @@ LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib libmad.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib libmad.lib wsock32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
 
+!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Release"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "scummvm___Win32_MP3_Enabled_Release"
+# PROP BASE Intermediate_Dir "scummvm___Win32_MP3_Enabled_Release"
+# PROP BASE Ignore_Export_Lib 0
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "scummvm___Win32_MP3_Enabled_Release"
+# PROP Intermediate_Dir "scummvm___Win32_MP3_Enabled_Release"
+# PROP Ignore_Export_Lib 0
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /I "sound" /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "COMPRESSED_SOUND_FILE" /FD /c
+# SUBTRACT BASE CPP /YX /Yc /Yu
+# ADD CPP /nologo /G6 /MD /W3 /O2 /Ob2 /I "." /I "sound" /I "common" /I "scumm" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "USE_ADLIB" /D "COMPRESSED_SOUND_FILE" /FD /c
+# SUBTRACT CPP /YX /Yc /Yu
+# ADD BASE RSC /l 0x41d /d "NDEBUG"
+# ADD RSC /l 0x41d /d "NDEBUG"
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LINK32=link.exe
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib simon___Release\simon.lib scumm___Release\scumm.lib sdl.lib /nologo /subsystem:console /machine:I386 /nodefaultlib
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib sdl.lib winmm.lib wsock32.lib libmad.lib simon___Release\simon.lib scumm___Release\scumm.lib sdl.lib /nologo /subsystem:console /machine:I386 /nodefaultlib
+
 !ENDIF 
 
 # Begin Target
@@ -114,9 +141,82 @@ LINK32=link.exe
 # Name "scummvm - Win32 Release"
 # Name "scummvm - Win32 Debug"
 # Name "scummvm - Win32 MP3 Enabled Debug"
+# Name "scummvm - Win32 MP3 Enabled Release"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# Begin Group "common"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=".\common\config-file.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\common\config-file.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\engine.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\engine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\gameDetector.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\gameDetector.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\main.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\scaler.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\scaler.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\scummsys.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\stdafx.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\stdafx.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\system.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\timer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\timer.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\util.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\util.h
+# End Source File
+# End Group
 # Begin Group "sound"
 
 # PROP Default_Filter ""
@@ -126,11 +226,7 @@ SOURCE=.\sound\fmopl.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\sound\imuse.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\sound\imuse.h
+SOURCE=.\sound\fmopl.h
 # End Source File
 # Begin Source File
 
@@ -148,61 +244,13 @@ SOURCE=.\sound\mixer.cpp
 
 SOURCE=.\sound\mixer.h
 # End Source File
-# End Group
-# Begin Group "v3"
-
-# PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\v3\resource_v3.cpp
-# End Source File
-# End Group
-# Begin Group "v4"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\v4\resource_v4.cpp
-# End Source File
-# End Group
-# Begin Group "simon"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\simon\midi.cpp
+SOURCE=.\sound\sound.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\simon\simon.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\simon\simon.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\simon\simondebug.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\simon\simonitems.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\simon\simonres.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\simon\simonsys.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\simon\simonverb.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\simon\simonvga.cpp
+SOURCE=.\sound\sound.h
 # End Source File
 # End Group
 # Begin Group "gui"
@@ -218,6 +266,18 @@ SOURCE=.\gui\dialog.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\gui\gui.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\gui.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\gui\guimaps.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\gui\ListWidget.cpp
 # End Source File
 # Begin Source File
@@ -226,11 +286,11 @@ SOURCE=.\gui\ListWidget.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\newgui.cpp
+SOURCE=.\gui\newgui.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\newgui.h
+SOURCE=.\gui\newgui.h
 # End Source File
 # Begin Source File
 
@@ -242,14 +302,6 @@ SOURCE=.\gui\ScrollBarWidget.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\util.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\util.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\gui\widget.cpp
 # End Source File
 # Begin Source File
@@ -257,372 +309,26 @@ SOURCE=.\gui\widget.cpp
 SOURCE=.\gui\widget.h
 # End Source File
 # End Group
+# Begin Group "backends"
+
+# PROP Default_Filter ""
+# Begin Group "sdl"
+
+# PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\actor.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
+SOURCE=".\backends\sdl\sdl-common.cpp"
 # End Source File
 # Begin Source File
 
-SOURCE=.\akos.cpp
+SOURCE=".\backends\sdl\sdl-common.h"
 # End Source File
-# Begin Source File
-
-SOURCE=.\boxes.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\bundle.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=".\config-file.cpp"
-# End Source File
-# Begin Source File
-
-SOURCE=.\costume.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\debug.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=".\engine.cpp"
-# End Source File
-# Begin Source File
-
-SOURCE=.\gameDetector.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\gfx.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\gui.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\insane.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\main.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\object.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\resource.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\saveload.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\scaler.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\script.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\script_v1.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\script_v2.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\scummvm.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\scummvm.rc
-# End Source File
-# Begin Source File
-
-SOURCE=.\sdl.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\sound.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\StdAfx.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd /Yc"stdafx.h"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-# ADD CPP /Yc"stdafx.h"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-# ADD BASE CPP /Yc"stdafx.h"
-# ADD CPP /Yc"stdafx.h"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\string.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\sys.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\timer.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\vars.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\verbs.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
-# End Source File
+# End Group
+# End Group
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
-# Begin Source File
-
-SOURCE=.\actor.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\akos.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\boxes.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\bundle.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\cdmusic.h
-# End Source File
-# Begin Source File
-
-SOURCE=".\config-file.h"
-# End Source File
-# Begin Source File
-
-SOURCE=.\sound\fmopl.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\gameDetector.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\gfx.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\gui.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\guimaps.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\scummsys.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\smush.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\sound.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\StdAfx.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\system.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\timer.h
-# End Source File
 # End Group
 # Begin Source File
 
