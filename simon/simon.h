@@ -337,10 +337,13 @@ struct GameSpecificSettings {
 	uint VGA_MEM_SIZE;
 	uint TABLES_MEM_SIZE;
 	uint NUM_VOICE_RESOURCES;
+	uint NUM_EFFECTS_RESOURCES;
 	uint MUSIC_INDEX_BASE;
 	uint SOUND_INDEX_BASE;
 	const char *gme_filename;
 	const char *wav_filename;
+	const char *wav_filename2;
+	const char *effects_filename;
 	const char *gamepc_filename;
 };
 
@@ -374,6 +377,8 @@ public:
 	FILE *_game_file;
 	FILE *_voice_file;
 	uint32 *_voice_offsets;
+	FILE *_effects_file;
+	uint32 *_effects_offsets;
 
 	byte *_stripped_txt_mem;
 	uint _text_size;
@@ -590,6 +595,7 @@ public:
 	int _vga_tick_counter;
 
 	PlayingSoundHandle _playing_sound;
+	PlayingSoundHandle _effects_sound;
 	PlayingSoundHandle _voice_sound;
 
 	int _timer_id;
