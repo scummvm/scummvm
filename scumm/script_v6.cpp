@@ -3117,9 +3117,10 @@ void ScummEngine_v6::o6_setBoxSet() {
 	const byte *room = getResourceAddress(rtRoom, _roomResource);
 	const byte *boxd = NULL, *boxm = NULL;
 	int32 dboxSize, mboxSize;
+	int i;
 
 	ResourceIterator boxds(room, false);
-	for (int i = 0; i < arg; i++)
+	for (i = 0; i < arg; i++)
 		boxd = boxds.findNext(MKID('BOXD'));
 
 	if (!boxd)
@@ -3132,7 +3133,7 @@ void ScummEngine_v6::o6_setBoxSet() {
 	memcpy(matrix, boxd, dboxSize);
 
 	ResourceIterator boxms(room, false);
-	for (int i = 0; i < arg; i++)
+	for (i = 0; i < arg; i++)
 		boxm = boxms.findNext(MKID('BOXM'));
 
 	if (!boxm)
