@@ -997,9 +997,7 @@ static void ImSetState() {
 
 static void ImSetSequence() {
 	int state = check_int(1);
-	if (state != -1)
-		g_imuse->setMusicSequence(state);
-	lua_pushnumber(g_imuse->getCurMusicSeqId());
+	lua_pushnumber(g_imuse->setMusicSequence(state));
 }
 
 static void SaveIMuse() {

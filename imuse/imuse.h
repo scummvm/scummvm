@@ -146,14 +146,13 @@ public:
 	void stopAllSounds();
 	void pause(bool pause);
 	void setMusicState(int stateId);
-	void setMusicSequence(int seqId);
+	int setMusicSequence(int seqId);
 	void refreshScripts();
 	void flushTracks();
 	bool isVoicePlaying();
 	char *getCurMusicSoundName();
 	bool getSoundStatus(const char *soundName) const;
 	int32 getPosIn60HzTicks(const char *soundName);
-	int getCurMusicSeqId() { return _curMusicSeq; }
 };
 
 extern Imuse *g_imuse;

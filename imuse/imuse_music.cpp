@@ -45,8 +45,11 @@ void Imuse::setMusicState(int stateId) {
 	_curMusicState = num;
 }
 
-void Imuse::setMusicSequence(int seqId) {
+int Imuse::setMusicSequence(int seqId) {
 	int l, num = -1;
+
+	if (seqId == -1)
+		return _seqMusicTable[_curMusicSeq].soundId;
 
 	if (seqId == 0)
 		seqId = 2000;
@@ -61,7 +64,7 @@ void Imuse::setMusicSequence(int seqId) {
 	assert(num != -1);
 
 	if (_curMusicSeq == num)
-		return;
+		return _seqMusicTable[_curMusicSeq].soundId;
 
 	if (num != 0) {
 		playMusic(&_seqMusicTable[num], 0, true);
@@ -71,6 +74,7 @@ void Imuse::setMusicSequence(int seqId) {
 	}
 
 	_curMusicSeq = num;
+	return _seqMusicTable[_curMusicSeq].soundId;
 }
 
 void Imuse::playMusic(const ImuseTable *table, int atribPos, bool sequence) {
