@@ -750,7 +750,8 @@ void Scumm::unkAddMsgToStack5(int var)
 {
 	byte *ptr;
 
-	var = readVar(var);
+	if (_features & GF_AFTER_V6 || _gameId == GID_INDY3_256)
+		var = readVar(var);
 
 	if (var) {
 		ptr = getStringAddress(var);
