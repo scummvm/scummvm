@@ -276,7 +276,7 @@ void VorbisInputStream::refill() {
 			warning("Corrupted data in Vorbis file");
 		} else if (result <= 0) {
 			if (result < 0)
-				debug(1, "Decode error %d in Vorbis file", result);
+				debug(1, "Decode error %ld in Vorbis file", result);
 			// Don't delete it yet, that causes problems in
 			// the CD player emulation code.
 			memset(read_pos, 0, len_left);
