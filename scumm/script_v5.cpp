@@ -642,9 +642,18 @@ void Scumm_v5::o5_cursorCommand() {
 		initCharset(getVarOrDirectByte(0x80));
 		break;
 	case 14:											/* unk */
-		getWordVararg(table);
-		for (i = 0; i < 16; i++)
-			_charsetColorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)table[i];
+		if (_gameId == GID_INDY3 || _gameId == GID_INDY3_256) {
+			// FIXME: What is this supposed to do? From comparing
+			// Indy3's script 118 to the Passport Demo's script 58
+			// my guess is that it's some sort of "init charset",
+			// but why does it need two parameters?
+			getVarOrDirectByte(0x80);
+			getVarOrDirectByte(0x40);
+		} else {
+			getWordVararg(table);
+			for (i = 0; i < 16; i++)
+				_charsetColorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)table[i];
+		}
 		break;
 	}
 
@@ -1303,11 +1312,6 @@ void Scumm_v5::o5_loadRoom() {
 	int room;
 
 	room = getVarOrDirectByte(0x80);
-
-	// FIXME nasty hack to make indy have right costume
-	if ( ((_gameId == GID_INDY3_256) || (_gameId == GID_INDY3)) &&
-			(_currentRoom == 6) && (_currentScript == 1))
-		_actors[1].setActorCostume(10);
 	
 	// For small header games, we only call startScene if the room
 	// actually changed. This avoid unwanted (wrong) fades in Zak256
