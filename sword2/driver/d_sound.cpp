@@ -1209,7 +1209,7 @@ uint8 Sword2Sound::IsFxMute(void) {
 }
 
 void Sword2Sound::StartMusicFadeDown(int i) {
-	g_engine->_mixer->endStream(soundHandleMusic[i]);
+	g_engine->_mixer->stop(soundHandleMusic[i]);
 	musFading[i] = -16;
 	musStreaming[i] = 0;
 	fpMus.close();
@@ -1903,9 +1903,10 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 					
 					if (soundHandleMusic[i] == 0) {
 						warning("play music appendStream(): this shouldn't happen");
-						int volume = musicVolTable[volMusic[i]];
-						soundHandleMusic[i] = g_engine->_mixer->newStream(data16, bufferSizeMusic, 22050,
-										SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE, 100000, volume, 0);
+						assert(soundHandleMusic[i]);
+//						int volume = musicVolTable[volMusic[i]];
+//						soundHandleMusic[i] = g_engine->_mixer->newStream(data16, bufferSizeMusic, 22050,
+//										SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE, 100000, volume, 0);
 					} else {
 						g_engine->_mixer->appendStream(soundHandleMusic[i], data16, len);
 					}
@@ -1917,6 +1918,7 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 
 					// End of the music so we need to start fading and start the music again
 					if (fade) {
+						g_engine->_mixer->stop(soundHandleMusic[i]);
 						soundHandleMusic[i] = 0;
 						musFading[i] = -16;		// Fade the old music
 
@@ -1930,8 +1932,6 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 							StreamCompMusic(musFilename[i], musId[i], musLooping[i]);
 						}
 					}
-				} else {
-						soundHandleMusic[i] = 0;
 				}
 			}
 		}
