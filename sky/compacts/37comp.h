@@ -1541,7 +1541,7 @@ uint16 sc37_doorshut[] = {
 	0
 };
 
-uint32 *sc37_walk_grid = 0;
+uint32 *sc37_walk_grid = (uint32*)sc37_fast_list;
 
 Compact sc37_door = {
 	L_SCRIPT,	// logic

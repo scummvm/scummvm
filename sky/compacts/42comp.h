@@ -541,8 +541,6 @@ uint16 sc42_logic_list[] = {
 	ID_STD_MENU_LOGIC
 };
 
-uint32 *sc42_walk_grid = 0;
-
 uint16 sc42_jdg_turn[] = {
 	167*64,
 	1,
@@ -565,6 +563,8 @@ uint16 sc42_fast_list[] = {
 	170+DISK_14+0X8000,
 	0
 };
+
+uint32 *sc42_walk_grid = (uint32*)sc42_fast_list;
 
 ExtCompact sc42_prosecution_ext = {
 	0,	// actionSub

@@ -168,7 +168,7 @@ Compact sc40_cabinet = {
 	0
 };
 
-uint32 *sc40_walk_grid = 0;
+uint32 *sc40_walk_grid = (uint32*)sc40_fast_list;
 
 uint16 sc40_palette[] = {
 	0,

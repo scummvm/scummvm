@@ -3268,7 +3268,7 @@ uint16 sc36_col_blink1[] = {
 	0
 };
 
-uint32 *babs = 0;
+uint32 *babs = (uint32*)&sc36_babs;
 
 uint16 bar_wipe[] = {
 	32*64,
@@ -3846,7 +3846,7 @@ Compact sc36_floor = {
 	0
 };
 
-uint32 *sc36_walk_grid = 0;
+uint32 *sc36_walk_grid = (uint32*)sc36_fast_list;
 
 uint16 sc36_dooropen[] = {
 	144*64,

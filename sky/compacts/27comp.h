@@ -1291,7 +1291,7 @@ uint16 helmet_down[] = {
 	0
 };
 
-uint32 *heart_seq = 0;
+uint32 *heart_seq = (uint32*)lung_seq;
 
 uint16 squirm_seq[] = {
 	164*64,

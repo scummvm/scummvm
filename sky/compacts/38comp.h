@@ -1209,7 +1209,7 @@ uint16 sex_d_to_r[] = {
 	0
 };
 
-uint32 *spu = 0;
+uint32 *spu = (uint32*)&spunky;
 
 uint16 sc38_floor_table[] = {
 	ID_SC38_FLOOR,
@@ -2833,9 +2833,9 @@ uint16 sc38_ringer_anim[] = {
 	0
 };
 
-uint32 *sc38_walk_grid = 0;
+uint32 *sc38_walk_grid = (uint32*)sc38_fast_list;
 
-uint32 *dna = 0;
+uint32 *dna = (uint32*)&danielle;
 
 uint16 spu_st_right[] = {
 	71*64,

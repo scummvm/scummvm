@@ -478,7 +478,7 @@ Compact sc47_exit_48 = {
 	0
 };
 
-uint32 *sc47_walk_grid = 0;
+uint32 *sc47_walk_grid = (uint32*)sc47_fast_list;
 
 uint16 sc47_fast_list[] = {
 	12+DISK_13,

@@ -151,7 +151,7 @@ uint16 s4_talk_table[] = {
 	65535
 };
 
-uint32 *l_talk_s4 = 0;
+uint32 *l_talk_s4 = (uint32*)&r_talk_s4;
 
 uint16 chip_list_sc4[] = {
 	56,
@@ -1192,7 +1192,7 @@ uint16 joey_list_s4[] = {
 	0
 };
 
-uint32 *c43 = 0;
+uint32 *c43 = (uint32*)&jobsworth;
 
 Compact chuck_s4 = {
 	L_SCRIPT,	// logic

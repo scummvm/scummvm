@@ -574,7 +574,7 @@ Compact eye_ball = {
 	&eye_ball_ext
 };
 
-uint32 *sh = 0;
+uint32 *sh = (uint32*)&shades;
 
 uint16 liftc3_up[] = {
 	204*64,

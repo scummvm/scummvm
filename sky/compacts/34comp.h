@@ -81,7 +81,7 @@ Compact sc34_secateurs = {
 	0
 };
 
-uint32 *sc34_walk_grid = 0;
+uint32 *sc34_walk_grid = (uint32*)sc34_fast_list;
 
 uint16 sc34_logic_list[] = {
 	ID_FOSTER,

@@ -457,7 +457,7 @@ uint16 f_ss_st_right[] = {
 	0
 };
 
-uint32 *c74 = 0;
+uint32 *c74 = (uint32*)(&mini_so);
 
 uint16 f_ss_left[] = {
 	4,
@@ -1131,7 +1131,7 @@ uint16 rs_foster_to_1[] = {
 	65535
 };
 
-uint32 *rs_jobs_4_2 = 0;
+uint32 *rs_jobs_4_2 = (uint32*)rs_foster_4_2;
 
 uint16 monitor_seq[] = {
 	151*64,
@@ -6869,7 +6869,7 @@ uint16 guard_lean_out[] = {
 	0
 };
 
-uint32 *c101 = 0;
+uint32 *c101 = (uint32*)(&full_so);
 
 uint16 put_bar_away[] = {
 	88*64,

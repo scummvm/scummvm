@@ -443,7 +443,7 @@ uint16 wit_u_to_d[] = {
 	0
 };
 
-uint32 *wit = 0;
+uint32 *wit = (uint32*)&witness;
 
 Compact sc72_cham2_light = {
 	L_SCRIPT,	// logic

@@ -3497,7 +3497,7 @@ uint16 s5_pal[] = {
 	16191
 };
 
-uint32 *z2 = 0;
+uint32 *z2 = (uint32*)data_2;
 
 uint32 *grid6 = 0;
 
@@ -4921,7 +4921,7 @@ void *data_2[] = {
 	&foreman
 };
 
-uint32 *table2 = 0;
+uint32 *table2 = (uint32*)data_2;
 
 }; // namespace SkyCompact
 

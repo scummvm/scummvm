@@ -743,7 +743,7 @@ uint16 sc31_rope_pulled[] = {
 	0
 };
 
-uint32 *sc31_walk_grid = 0;
+uint32 *sc31_walk_grid = (uint32*)sc31_joey_list;
 
 Compact sc31_rope = {
 	L_SCRIPT,	// logic

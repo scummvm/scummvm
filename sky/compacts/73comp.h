@@ -2512,7 +2512,7 @@ Compact sc73_big_door = {
 	0
 };
 
-uint32 *gal = 0;
+uint32 *gal = (uint32*)&gal;
 
 Compact sc73_cham4_light = {
 	L_SCRIPT,	// logic

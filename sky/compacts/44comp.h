@@ -33,7 +33,7 @@ uint16 sc44_chip_list[] = {
 	0
 };
 
-uint32 *sc44_walk_grid = 0;
+uint32 *sc44_walk_grid = (uint32*)sc44_fast_list;
 
 Compact sc44_rubble = {
 	0,	// logic

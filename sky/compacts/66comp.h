@@ -4001,7 +4001,7 @@ uint16 fost_conv_left[] = {
 	0
 };
 
-uint32 *sec5_compacts = 0;
+uint32 *sec5_compacts = (uint32*)data_5;
 
 uint16 sc81_fos_sat_tlk[] = {
 	205*64,

@@ -327,7 +327,7 @@ Compact sc39_exit_41 = {
 	0
 };
 
-uint32 *sc39_walk_grid = 0;
+uint32 *sc39_walk_grid = (uint32*)sc39_fast_list;
 
 uint16 sc39_descend[] = {
 	23*64,

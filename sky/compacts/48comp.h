@@ -741,7 +741,7 @@ Compact sc48_exit_65 = {
 	0
 };
 
-uint32 *sc48_walk_grid = 0;
+uint32 *sc48_walk_grid = (uint32*)sc48_fast_list;
 
 Compact sc48_floor = {
 	0,	// logic
