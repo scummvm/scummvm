@@ -1023,7 +1023,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].act[2].state = 27;
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
 		if (!((_vm->_features & GF_DEMO) && (_vm->_features & GF_PC)))
-			//smlayer_startSfx(72);
+			smlayer_startSfx(72);
 		break;
 	case 27:
 		smlayer_setActorLayer(0, 2, 4);
