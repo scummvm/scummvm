@@ -45,7 +45,7 @@ public:
 	// Update the dirty areas of the screen
 	void internUpdateScreen();
 
-	void initSize(uint w, uint h);
+	void initSize(uint w, uint h, int overlaySize);
 
 	// Overloaded from SDL_Common (toolbar handling)
 	bool pollEvent(Event &event);

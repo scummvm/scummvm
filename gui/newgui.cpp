@@ -85,7 +85,7 @@ void NewGui::updateScaleFactor() {
 		kDefaultGUIHeight = 200
 	};
 
-	_scaleFactor = MIN(_system->getWidth() / kDefaultGUIWidth, _system->getHeight() / kDefaultGUIHeight);
+	_scaleFactor = MIN(_system->getOverlayWidth() / kDefaultGUIWidth, _system->getOverlayHeight() / kDefaultGUIHeight);
 
 	// Pick the font depending on the scale factor.
 	if (_scaleFactor == 1)

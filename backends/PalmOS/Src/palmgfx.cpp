@@ -78,7 +78,7 @@ bool OSystem_PALMOS::setGraphicsMode(int mode) {
 	return true;
 }
 
-void OSystem_PALMOS::initSize(uint w, uint h) {
+void OSystem_PALMOS::initSize(uint w, uint h, int overlayScale) {
 	_screenWidth	= w;
 	_screenHeight	= h;
 	_offScreenPitch	= gVars->screenPitch;	// direct screen / flipping use this, reset later if buffered

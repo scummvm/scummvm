@@ -67,7 +67,7 @@ class OSystem_Dreamcast : public OSystem {
 
   // Set the size of the video bitmap.
   // Typically, 320x200
-  void initSize(uint w, uint h);
+  void initSize(uint w, uint h, int overlayScale);
   int16 getHeight() { return _screen_h; }
   int16 getWidth() { return _screen_w; }
 

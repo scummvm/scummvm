@@ -1162,19 +1162,21 @@ int ScummEngine::init(GameDetector &detector) {
 	_system->beginGFXTransaction();
 		initCommonGFX(detector);
 		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-			_system->initSize(Common::kHercW, Common::kHercH);
+			_system->initSize(Common::kHercW, Common::kHercH, 1);
 			_features |= GF_DEFAULT_TO_1X_SCALER;
 			_system->setGraphicsMode("1x");
 		} else {
-			_system->initSize(_screenWidth, _screenHeight);
+			_system->initSize(_screenWidth, _screenHeight, 2);
+			if (_features & GF_DEFAULT_TO_1X_SCALER)
+				_system->setGraphicsMode("1x");
 		}
 
 		// FIXME: All this seems a dirty hack to me. We already
 		// have this check in constructor
 		if (_heversion >= 71) {
 			_features |= GF_DEFAULT_TO_1X_SCALER;
-			_system->setGraphicsMode("1x");
 		}
+
 	_system->endGFXTransaction();
 
 	int cd_num = ConfMan.getInt("cdrom");

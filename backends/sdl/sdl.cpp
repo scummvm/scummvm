@@ -97,7 +97,8 @@ OSystem_SDL::OSystem_SDL()
 	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
 #endif
 	_hwscreen(0), _screen(0), _screenWidth(0), _screenHeight(0),
-	_tmpscreen(0), _overlayVisible(false),
+	_tmpscreen(0), _overlayVisible(false), _overlayScale(1),
+	_overlayscreen(0), _tmpscreen2(0),
 	_samplesPerSec(0),
 	_cdrom(0), _scalerProc(0), _modeChanged(false), _dirtyChecksums(0),
 	_mouseVisible(false), _mouseDrawn(false), _mouseData(0), _mouseSurface(0),

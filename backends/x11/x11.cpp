@@ -84,7 +84,7 @@ public:
 
 	// Set the size of the video bitmap.
 	// Typically, 320x200
-	void initSize(uint w, uint h);
+	void initSize(uint w, uint h, int overlaySize);
 
 	// Draw a bitmap to screen.
 	// The screen will not be updated to reflect the new bitmap
@@ -469,7 +469,7 @@ uint32 OSystem_X11::getMillis() {
 	                ((current_time.tv_usec - start_time.tv_usec) / 1000));
 }
 
-void OSystem_X11::initSize(uint w, uint h) {
+void OSystem_X11::initSize(uint w, uint h, int overlaySize) {
 	static XShmSegmentInfo shminfo;
 
 	fb_width = w;

@@ -733,7 +733,7 @@ void OSystem_WINCE3::update_game_settings() {
 	get_sample_rate();
 }
 
-void OSystem_WINCE3::initSize(uint w, uint h) {
+void OSystem_WINCE3::initSize(uint w, uint h, int overlaySize) {
 
 		if (_isSmartphone && h == 240)
 			h = 200;  // mainly for the launcher
@@ -765,7 +765,7 @@ void OSystem_WINCE3::initSize(uint w, uint h) {
 	if (w != _screenWidth || h != _screenHeight)
 		_scalersChanged = false;
 
-	OSystem_SDL::initSize(w, h);
+	OSystem_SDL::initSize(w, h, overlayScale);
 	
 	if (_scalersChanged) {
 		unloadGFXMode();

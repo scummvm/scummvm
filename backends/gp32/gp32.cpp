@@ -229,7 +229,7 @@ const char shortkey3[] = "wlptuo";	// samnmax
 const char *shortkey;
 int skindex = 0;
 
-void OSystem_GP32::initSize(uint w, uint h) {
+void OSystem_GP32::initSize(uint w, uint h, int overlayScale) {
 	/*switch (menu[MENU_SCREENPOS].index) {
 	 * case 0 : scrofsy = 239 - (240 - h)/2; break;
 	 * case 1 : scrofsy = 239; break;

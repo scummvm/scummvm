@@ -47,7 +47,7 @@ class OSystem_MorphOS : public OSystem
 
 		// Set the size of the video bitmap.
 		// Typically, 320x200
-		virtual void initSize(uint w, uint h);
+		virtual void initSize(uint w, uint h, int overlayScale);
 
 		// Draw a bitmap to screen.
 		// The screen will not be updated to reflect the new bitmap

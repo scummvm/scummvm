@@ -157,7 +157,7 @@ void OSystem_Dreamcast::setScaling()
   }
 }
 
-void OSystem_Dreamcast::initSize(uint w, uint h)
+void OSystem_Dreamcast::initSize(uint w, uint h, int overlayScale)
 {
   assert(w <= SCREEN_W && h <= SCREEN_H);
 

@@ -66,8 +66,7 @@ void OSystem_SDL::beginGFXTransaction(void) {
 	_transactionMode = kTransactionActive;
 
 	_transactionDetails.modeChanged = false;
-	_transactionDetails.wChanged = false;
-	_transactionDetails.hChanged = false;
+	_transactionDetails.sizeChanged = false;
 	_transactionDetails.arChanged = false;
 	_transactionDetails.fsChanged = false;
 
@@ -83,8 +82,9 @@ void OSystem_SDL::endGFXTransaction(void) {
 	if (_transactionDetails.modeChanged)
 		setGraphicsMode(_transactionDetails.mode);
 
-	if (_transactionDetails.wChanged || _transactionDetails.hChanged)
-		initSize(_transactionDetails.w, _transactionDetails.h);
+	if (_transactionDetails.sizeChanged)
+		initSize(_transactionDetails.w, _transactionDetails.h, 
+				 _transactionDetails.overlayScale);
 
 	if (_transactionDetails.arChanged)
 		setAspectRatioCorrection(_transactionDetails.ar);
@@ -92,6 +92,7 @@ void OSystem_SDL::endGFXTransaction(void) {
 	if (_transactionDetails.needUnload) {
 		unloadGFXMode();
 		loadGFXMode();
+		clearOverlay();
 	} else {
 		if (!_transactionDetails.fsChanged)
 			if (_transactionDetails.needHotswap)
@@ -168,6 +169,16 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		return false;
 	}
 
+	// Do not let switch to lesser than overlay size resolutions
+	if (_screenWidth * newScaleFactor < _overlayWidth) {
+		if (_scaleFactor == 1) { // Force 2x mode
+			mode = GFX_DOUBLESIZE;
+			newScaleFactor = 2;
+			newScalerProc = Normal2x;
+		} else
+			return false;
+	}
+
 	_mode = mode;
 	_scalerProc = newScalerProc;
 
@@ -226,9 +237,10 @@ int OSystem_SDL::getGraphicsMode() const {
 	return _mode;
 }
 
-void OSystem_SDL::initSize(uint w, uint h) {
+void OSystem_SDL::initSize(uint w, uint h, int overlayScale) {
 	// Avoid redundant res changes
 	if ((int)w == _screenWidth && (int)h == _screenHeight &&
+		 (int)overlayScale == _overlayScale &&
 		_transactionMode != kTransactionCommit)
 		return;
 
@@ -238,13 +250,22 @@ void OSystem_SDL::initSize(uint w, uint h) {
 	if (h != 200)
 		_adjustAspectRatio = false;
 
+	if (overlayScale != -1) {
+		_overlayScale = overlayScale;
+		if (w != 320)
+			_overlayScale = 1;
+
+		_overlayWidth = w * _overlayScale;
+		_overlayHeight = h * _overlayScale;
+	}
+
 	_cksumNum = (_screenWidth * _screenHeight / (8 * 8));
 
 	if (_transactionMode == kTransactionActive) {
 		_transactionDetails.w = w;
-		_transactionDetails.wChanged = true;
 		_transactionDetails.h = h;
-		_transactionDetails.hChanged = true;
+		_transactionDetails.overlayScale = _overlayScale;
+		_transactionDetails.sizeChanged = true;
 
 		_transactionDetails.needUnload = true;
 
@@ -257,6 +278,9 @@ void OSystem_SDL::initSize(uint w, uint h) {
 	if (_transactionMode != kTransactionCommit) {
 		unloadGFXMode();
 		loadGFXMode();
+
+		// if initSize() gets called in the middle, overlay is not transparent
+		clearOverlay();
 	}
 }
 
@@ -264,8 +288,6 @@ void OSystem_SDL::loadGFXMode() {
 	_forceFull = true;
 	_modeFlags |= DF_UPDATE_EXPAND_1_PIXEL;
 
-	_tmpscreen = NULL;
-	
 	//
 	// Create the surface that contains the 8 bit game data
 	//
@@ -312,18 +334,21 @@ void OSystem_SDL::loadGFXMode() {
 		InitScalers(565);
 	
 	// Need some extra bytes around when using 2xSaI
-	_tmpscreen = SDL_CreateRGBSurface(SDL_SWSURFACE,
-						_screenWidth + 3,
-						_screenHeight + 3,
-						16,
-						_hwscreen->format->Rmask,
-						_hwscreen->format->Gmask,
-						_hwscreen->format->Bmask,
-						_hwscreen->format->Amask);
+	_tmpscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _screenWidth + 3, _screenHeight + 3, 16, 0, 0, 0, 0);
 
 	if (_tmpscreen == NULL)
 		error("allocating _tmpscreen failed");
-	
+
+	_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth, _overlayHeight, 16,	0, 0, 0, 0);
+
+	if (_overlayscreen == NULL)
+		error("allocating _overlayscreen failed");
+
+	_tmpscreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth + 3, _overlayHeight + 3, 16, 0, 0, 0, 0);
+
+	if (_tmpscreen2 == NULL)
+		error("allocating _tmpscreen2 failed");
+
 #ifdef USE_OSD
 	_osdSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
 						_hwscreen->w,
@@ -361,6 +386,16 @@ void OSystem_SDL::unloadGFXMode() {
 		_tmpscreen = NULL;
 	}
 
+	if (_tmpscreen2) {
+		SDL_FreeSurface(_tmpscreen2);
+		_tmpscreen2 = NULL;
+	}
+
+	if (_overlayscreen) {
+		SDL_FreeSurface(_overlayscreen);
+		_overlayscreen = NULL;
+	}
+
 #ifdef USE_OSD
 	if (_osdSurface) {
 		SDL_FreeSurface(_osdSurface);
@@ -373,13 +408,16 @@ void OSystem_SDL::hotswapGFXMode() {
 	if (!_screen)
 		return;
 
-	// Keep around the old _screen & _tmpscreen so we can restore the screen data
+	// Keep around the old _screen & _overlayscreen so we can restore the screen data
 	// after the mode switch.
 	SDL_Surface *old_screen = _screen;
-	SDL_Surface *old_tmpscreen = _tmpscreen;
+	SDL_Surface *old_overlayscreen = _overlayscreen;
 
 	// Release the HW screen surface
 	SDL_FreeSurface(_hwscreen); 
+
+	SDL_FreeSurface(_tmpscreen); 
+	SDL_FreeSurface(_tmpscreen2); 
 
 #ifdef USE_OSD
 	// Release the OSD surface
@@ -394,11 +432,11 @@ void OSystem_SDL::hotswapGFXMode() {
 
 	// Restore old screen content
 	SDL_BlitSurface(old_screen, NULL, _screen, NULL);
-	SDL_BlitSurface(old_tmpscreen, NULL, _tmpscreen, NULL);
-	
+	SDL_BlitSurface(old_overlayscreen, NULL, _overlayscreen, NULL);
+
 	// Free the old surfaces
 	SDL_FreeSurface(old_screen);
-	SDL_FreeSurface(old_tmpscreen);
+	SDL_FreeSurface(old_overlayscreen);
 
 	// Update cursor to new scale
 	blitCursor();
@@ -419,6 +457,11 @@ void OSystem_SDL::updateScreen() {
 }
 
 void OSystem_SDL::internUpdateScreen() {
+	SDL_Surface *srcSurf, *origSurf;
+	int height, width;
+	ScalerProc *scalerProc;
+	int scale1, scale2;
+
 	assert(_hwscreen != NULL);
 
 	// If the shake position changed, fill the dirty area with blackness
@@ -467,16 +510,34 @@ void OSystem_SDL::internUpdateScreen() {
 	}
 #endif
 
-	undrawMouse();
+	if (!_overlayVisible) {
+		origSurf = _screen;
+		srcSurf = _tmpscreen;
+		width = _screenWidth;
+		height = _screenHeight;
+		scalerProc = _scalerProc;
+		scale1 = _scaleFactor;
+		scale2 = 1;
+	} else {
+		origSurf = _overlayscreen;
+		srcSurf = _tmpscreen2;
+		width = _overlayWidth;
+		height = _overlayHeight;
+		scalerProc = scalersMagn[_overlayScale-1][_scaleFactor-1];
+
+		scale1 = _scaleFactor;
+		scale2 = _overlayScale;
+	}
 
 	// Force a full redraw if requested
 	if (_forceFull) {
 		_numDirtyRects = 1;
 		_dirtyRectList[0].x = 0;
 		_dirtyRectList[0].y = 0;
-		_dirtyRectList[0].w = _screenWidth;
-		_dirtyRectList[0].h = _screenHeight;
-	}
+		_dirtyRectList[0].w = width;
+		_dirtyRectList[0].h = height;
+	} else
+		undrawMouse();
 
 	// Only draw anything if necessary
 	if (_numDirtyRects > 0) {
@@ -486,67 +547,66 @@ void OSystem_SDL::internUpdateScreen() {
 		uint32 srcPitch, dstPitch;
 		SDL_Rect *lastRect = _dirtyRectList + _numDirtyRects;
 
-		if (_scalerProc == Normal1x && !_adjustAspectRatio) {
-			SDL_Surface *target = _overlayVisible ? _tmpscreen : _screen;
+		if (scalerProc == Normal1x && !_adjustAspectRatio && 0) {
 			for (r = _dirtyRectList; r != lastRect; ++r) {
 				dst = *r;
 				
-				if (_overlayVisible) {
-					// FIXME: I don't understand why this is necessary...
-					dst.x--;
-					dst.y--;
-				}
 				dst.y += _currentShakePos;
-				if (SDL_BlitSurface(target, r, _hwscreen, &dst) != 0)
+				if (SDL_BlitSurface(origSurf, r, _hwscreen, &dst) != 0)
 					error("SDL_BlitSurface failed: %s", SDL_GetError());
 			}
 		} else {
-			if (!_overlayVisible) {
-				for (r = _dirtyRectList; r != lastRect; ++r) {
-					dst = *r;
-					dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
-					dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
-					if (SDL_BlitSurface(_screen, r, _tmpscreen, &dst) != 0)
-						error("SDL_BlitSurface failed: %s", SDL_GetError());
-				}
+			for (r = _dirtyRectList; r != lastRect; ++r) {
+				dst = *r;
+				dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
+				dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
+
+				if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
+					error("SDL_BlitSurface failed: %s", SDL_GetError());
 			}
 
-			SDL_LockSurface(_tmpscreen);
+			SDL_LockSurface(srcSurf);
 			SDL_LockSurface(_hwscreen);
 
-			srcPitch = _tmpscreen->pitch;
+			srcPitch = srcSurf->pitch;
 			dstPitch = _hwscreen->pitch;
 
 			for (r = _dirtyRectList; r != lastRect; ++r) {
 				register int dst_y = r->y + _currentShakePos;
 				register int dst_h = 0;
 				register int orig_dst_y = 0;
+				register int rx1 = r->x * scale1 / scale2;
 
-				if (dst_y < _screenHeight) {
+				if (dst_y < height) {
 					dst_h = r->h;
-					if (dst_h > _screenHeight - dst_y)
-						dst_h = _screenHeight - dst_y;
+					if (dst_h > height - dst_y)
+						dst_h = height - dst_y;
 
-					dst_y *= _scaleFactor;
+					orig_dst_y = dst_y;
+					dst_y = dst_y * scale1 / scale2;
 
-					if (_adjustAspectRatio) {
-						orig_dst_y = dst_y;
+					if (_adjustAspectRatio)
 						dst_y = real2Aspect(dst_y);
+
+					if (scale1 == 3 && scale2 == 2 && _overlayVisible) {
+						if (r->y % 2)
+							r->y--;
+						dst_y -= dst_y % 3;
 					}
 
-					_scalerProc((byte *)_tmpscreen->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
-						(byte *)_hwscreen->pixels + r->x * 2 * _scaleFactor + dst_y * dstPitch, dstPitch, r->w, dst_h);
+					scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+							   (byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
 				}
-
-				r->x *= _scaleFactor;
+				
+				r->x = rx1;
 				r->y = dst_y;
-				r->w *= _scaleFactor;
-				r->h = dst_h * _scaleFactor;
+				r->w = r->w * scale1 / scale2;
+				r->h = dst_h * scale1 / scale2;
 
-				if (_adjustAspectRatio && orig_dst_y / _scaleFactor < _screenHeight)
-					r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y);
+				if (_adjustAspectRatio && orig_dst_y < height)
+					r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1 / scale2);
 			}
-			SDL_UnlockSurface(_tmpscreen);
+			SDL_UnlockSurface(srcSurf);
 			SDL_UnlockSurface(_hwscreen);
 		}
 
@@ -564,7 +624,6 @@ void OSystem_SDL::internUpdateScreen() {
 			SDL_BlitSurface(_osdSurface, 0, _hwscreen, 0);
 		}
 #endif
-		
 		// Finally, blit all our changes to the screen
 		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
 	} else {
@@ -730,14 +789,24 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 	if (_forceFull)
 		return;
 
- 	if (mouseRect) {
- 		SDL_Rect *r = &_dirtyRectList[_numDirtyRects++];
- 		r->x = x;
- 		r->y = y;
- 		r->w = w;
- 		r->h = h;
- 		return;
- 	}
+	if (mouseRect) {
+		SDL_Rect *r = &_dirtyRectList[_numDirtyRects++];
+		r->x = x;
+		r->y = y;
+		r->w = w;
+		r->h = h;
+		return;
+	}
+
+	int height, width;
+
+	if (!_overlayVisible) {
+		width = _screenWidth;
+		height = _screenHeight;
+	} else {
+		width = _overlayWidth;
+		height = _overlayHeight;
+	}
 
 	if (_numDirtyRects == NUM_DIRTY_RECT)
 		_forceFull = true;
@@ -762,16 +831,21 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 			y=0;
 		}
 
-		if (w > _screenWidth - x) {
-			w = _screenWidth - x;
+		if (w > width - x) {
+			w = width - x;
 		}
 
-		if (h > _screenHeight - y) {
-			h = _screenHeight - y;
+		if (h > height - y) {
+			h = height - y;
 		}
 
-		if (_adjustAspectRatio)
+		if (_adjustAspectRatio) {
 			makeRectStretchable(x, y, w, h);
+			if (_scaleFactor == 3 && _overlayScale == 2 && _overlayVisible) {
+				if (y % 2)
+					y++;
+			}
+		}
 	
 		r->x = x;
 		r->y = y;
@@ -931,17 +1005,18 @@ void OSystem_SDL::hideOverlay() {
 	assert (_transactionMode == kTransactionNone);
 
 	_overlayVisible = false;
+	clearOverlay();
 	_forceFull = true;
 }
 
 void OSystem_SDL::clearOverlay() {
-	assert (_transactionMode == kTransactionNone);
+	//assert (_transactionMode == kTransactionNone);
 
-	if (!_overlayVisible)
-		return;
-	
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 	
+	if (!_overlayVisible)
+		return;
+
 	// Clear the overlay by making the game screen "look through" everywhere.
 	SDL_Rect src, dst;
 	src.x = src.y = 0;
@@ -951,39 +1026,47 @@ void OSystem_SDL::clearOverlay() {
 	if (SDL_BlitSurface(_screen, &src, _tmpscreen, &dst) != 0)
 		error("SDL_BlitSurface failed: %s", SDL_GetError());
 
+	SDL_LockSurface(_tmpscreen);
+	SDL_LockSurface(_overlayscreen);
+	if (_overlayScale == _scaleFactor) {
+		_scalerProc((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, 
+					_tmpscreen->pitch, (byte *)_overlayscreen->pixels, _overlayscreen->pitch, _screenWidth, _screenHeight);
+	} else {
+		// Quality is degraded here. It is possible to run one-less scaler here, but is it
+		// really needed? Quality will anyway be degraded because of 1.5x scaler.
+		(scalersMagn[0][_overlayScale-1])((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, 
+					  _tmpscreen->pitch, (byte *)_overlayscreen->pixels, _overlayscreen->pitch, _screenWidth, _screenHeight);
+	}
+	SDL_UnlockSurface(_tmpscreen);
+	SDL_UnlockSurface(_overlayscreen);
+
 	_forceFull = true;
 }
 
 void OSystem_SDL::grabOverlay(OverlayColor *buf, int pitch) {
 	assert (_transactionMode == kTransactionNone);
 
-	if (!_overlayVisible)
+	if (_overlayscreen == NULL)
 		return;
 
-	if (_tmpscreen == NULL)
-		return;
-
-	if (SDL_LockSurface(_tmpscreen) == -1)
+	if (SDL_LockSurface(_overlayscreen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
-	byte *src = (byte *)_tmpscreen->pixels + _tmpscreen->pitch + 2;	// Offset by one row, one column
-	int h = _screenHeight;
+	byte *src = (byte *)_overlayscreen->pixels;
+	int h = _overlayHeight;
 	do {
-		memcpy(buf, src, _screenWidth*2);
-		src += _tmpscreen->pitch;
+		memcpy(buf, src, _overlayWidth*2);
+		src += _overlayscreen->pitch;
 		buf += pitch;
 	} while (--h);
 
-	SDL_UnlockSurface(_tmpscreen);
+	SDL_UnlockSurface(_overlayscreen);
 }
 
 void OSystem_SDL::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
 	assert (_transactionMode == kTransactionNone);
 
-	if (!_overlayVisible)
-		return;
-
-	if (_tmpscreen == NULL)
+	if (_overlayscreen == NULL)
 		return;
 
 	// Clip the coordinates
@@ -998,12 +1081,12 @@ void OSystem_SDL::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, i
 		y = 0;
 	}
 
-	if (w > _screenWidth - x) {
-		w = _screenWidth - x;
+	if (w > _overlayWidth - x) {
+		w = _overlayWidth - x;
 	}
 
-	if (h > _screenHeight-y) {
-		h = _screenHeight - y;
+	if (h > _overlayHeight - y) {
+		h = _overlayHeight - y;
 	}
 
 	if (w <= 0 || h <= 0)
@@ -1013,25 +1096,25 @@ void OSystem_SDL::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, i
 	_cksumValid = false;
 	addDirtyRect(x, y, w, h);
 
-	if (SDL_LockSurface(_tmpscreen) == -1)
+	if (SDL_LockSurface(_overlayscreen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
-	byte *dst = (byte *)_tmpscreen->pixels + (y + 1) * _tmpscreen->pitch + (x + 1) * 2;
+	byte *dst = (byte *)_overlayscreen->pixels + y * _overlayscreen->pitch + x * 2;
 	do {
 		memcpy(dst, buf, w * 2);
-		dst += _tmpscreen->pitch;
+		dst += _overlayscreen->pitch;
 		buf += pitch;
 	} while (--h);
 
-	SDL_UnlockSurface(_tmpscreen);
+	SDL_UnlockSurface(_overlayscreen);
 }
 
 OverlayColor OSystem_SDL::RGBToColor(uint8 r, uint8 g, uint8 b) {
-	return SDL_MapRGB(_tmpscreen->format, r, g, b);
+	return SDL_MapRGB(_overlayscreen->format, r, g, b);
 }
 
 void OSystem_SDL::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
-	SDL_GetRGB(color, _tmpscreen->format, &r, &g, &b);
+	SDL_GetRGB(color, _overlayscreen->format, &r, &g, &b);
 }
 
 
@@ -1061,7 +1144,10 @@ void OSystem_SDL::setMousePos(int x, int y) {
 
 void OSystem_SDL::warpMouse(int x, int y) {
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
-		SDL_WarpMouse(x * _scaleFactor, y * _scaleFactor);
+		if (_overlayVisible)
+			SDL_WarpMouse(x * _scaleFactor / _overlayScale, y * _scaleFactor / _overlayScale);
+		else
+			SDL_WarpMouse(x * _scaleFactor, y * _scaleFactor);
 
 		// SDL_WarpMouse() generates a mouse movement event, so
 		// setMousePos() would be called eventually. However, the
@@ -1235,13 +1321,24 @@ void OSystem_SDL::toggleMouseGrab() {
 }
 
 void OSystem_SDL::undrawMouse() {
+	// When we switch bigger overlay off mouse jumps. Argh!
+	// this intended to prevent undrawing offscreen mouse
+	if (!_overlayVisible)
+		if (_adjustAspectRatio) {
+			if (_mouseBackup.x > _screenWidth || aspect2Real(_mouseBackup.y) > _screenHeight)
+				return;
+		} else {
+			if (_mouseBackup.x > _screenWidth || _mouseBackup.y > _screenHeight)
+				return;
+		}
+
 	if (_mouseBackup.w) {
 		if (_adjustAspectRatio)
 			addDirtyRect(_mouseBackup.x, aspect2Real(_mouseBackup.y), _mouseBackup.w,
-						   _mouseBackup.h);
+						 _mouseBackup.h);
 		else
 			addDirtyRect(_mouseBackup.x, _mouseBackup.y, _mouseBackup.w,
-						   _mouseBackup.h);
+						 _mouseBackup.h);
 	}
 }
 
@@ -1250,9 +1347,23 @@ void OSystem_SDL::drawMouse() {
 		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
   		return;
 	}
-  
+
 	SDL_Rect src, dst;
 	bool scale;
+	int scale1, scale2;
+	int width, height;
+
+	if (!_overlayVisible) {
+		scale1 = _scaleFactor;
+		scale2 = 1;
+		width = _screenWidth;
+		height = _screenHeight;
+	} else {
+		scale1 = _scaleFactor;
+		scale2 = _overlayScale;
+		width = _overlayWidth;
+		height = _overlayHeight;
+	}
 
 	scale = (_scaleFactor > _cursorTargetScale);
 
@@ -1267,10 +1378,8 @@ void OSystem_SDL::drawMouse() {
 	int dx, dy;
   
 	dx = dst.x; dy = dst.y;
-	dx = scale ? dst.x * _scaleFactor / _cursorTargetScale : dst.x;
-	dy = scale ? dst.y * _scaleFactor / _cursorTargetScale : dst.y;
-	if (_adjustAspectRatio)
-		dy = real2Aspect(dy);
+	dx = scale ? dst.x * scale1 / scale2 / _cursorTargetScale : dst.x;
+	dy = scale ? dst.y * scale1 / scale2 / _cursorTargetScale : dst.y;
 
 	if (dst.x < 0) {
 		dst.w += dx;
@@ -1284,7 +1393,7 @@ void OSystem_SDL::drawMouse() {
 	}
 
   	// Quick check to see if anything has to be drawn at all
-	if (dst.w <= 0 || dst.h <= 0)
+	if (dst.w <= 0 || dst.h <= 0 || dst.x >= width || dst.y >= height)
   		return;
   
 	src.w = dst.w;
@@ -1292,18 +1401,26 @@ void OSystem_SDL::drawMouse() {
   
 	if (_adjustAspectRatio)
 		dst.y = real2Aspect(dst.y);
-  
+
+	// special case for 1o5x scaler to prevent backgound shaking
+	if (scale1 == 3 && scale2 == 2) {
+		if (dst.x % 2)
+			dst.x--;
+		if (dst.y % 2)
+			dst.y--;
+	}
+
 	_mouseBackup.x = dst.x;
 	_mouseBackup.y = dst.y;
 	_mouseBackup.w = dst.w;
 	_mouseBackup.h = dst.h;
-  
-	dst.x *= _scaleFactor;
-	dst.y *= _scaleFactor;
-  
+
+	dst.x = dst.x * scale1 / scale2;
+	dst.y = dst.y * scale1 / scale2;
+
 	if (SDL_BlitSurface(_mouseSurface, &src, _hwscreen, &dst) != 0)
 		error("SDL_BlitSurface failed: %s", SDL_GetError());
-  
+
 	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
 }
 

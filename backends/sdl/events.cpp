@@ -68,8 +68,13 @@ void OSystem_SDL::fillMouseEvent(Event &event, int x, int y) {
 	_km.y = y;
 
 	// Adjust for the screen scaling
-	event.mouse.x /= _scaleFactor;
-	event.mouse.y /= _scaleFactor;
+	if (!_overlayVisible) {
+		event.mouse.x /= _scaleFactor;
+		event.mouse.y /= _scaleFactor;
+	} else {
+		event.mouse.x = event.mouse.x / _scaleFactor * _overlayScale;
+		event.mouse.y = event.mouse.y / _scaleFactor * _overlayScale;
+	}
 
 	// Optionally perform aspect ratio adjusting
 	if (_adjustAspectRatio)

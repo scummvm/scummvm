@@ -216,7 +216,7 @@ public:
 	 * @param width		the new virtual screen width
 	 * @param height	the new virtual screen height
 	 */
-	virtual void initSize(uint width, uint height) = 0;
+	virtual void initSize(uint width, uint height, int overlayScale = -1) = 0;
 
 	/**
 	 * Begin a new GFX transaction, which is a sequence of GFX mode changes.
@@ -351,6 +351,10 @@ public:
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) = 0;
 	virtual int16 getOverlayHeight()  { return getHeight(); }
 	virtual int16 getOverlayWidth()   { return getWidth(); }
+	virtual int ScreenToOverlayX(int x) { return x; }
+	virtual int ScreenToOverlayY(int y) { return y; }
+	virtual int OverlayToScreenX(int x) { return x; }
+	virtual int OverlayToScreenY(int y) { return y; }
 
 	/**
 	* Convert the given RGB triplet into an OverlayColor. A OverlayColor can
@@ -517,7 +521,7 @@ public:
 		/**
 		 * The mouse coordinates, in virtual screen coordinates. Only valid
 		 * for mouse events.
-		 * Virtual screen coordinatest means: the coordinate system of the
+		 * Virtual screen coordinates means: the coordinate system of the
 		 * screen area as defined by the most recent call to initSize().
 		 */
 		Common::Point mouse;
