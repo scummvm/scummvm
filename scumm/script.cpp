@@ -822,7 +822,7 @@ void Scumm::doSentence(int verb, int objectA, int objectB) {
 	st->verb = verb;
 	st->objectA = objectA;
 	st->objectB = objectB;
-	st->preposition = (objectB & 0xFF00) != 0;
+	st->preposition = (objectB != 0);
 	st->freezeCount = 0;
 }
 
