@@ -384,7 +384,7 @@ void Sound::playSound(int soundID) {
 			WA probably again contains audio data?
 			*/
 #endif
-			rate = 11000;
+			rate = 11025;
 			int type = *(ptr + 0x0D);
 
 			switch(type) {
@@ -392,6 +392,7 @@ void Sound::playSound(int soundID) {
 					int waveSize = READ_LE_UINT32(ptr + 0x22);
 					int loopStart = READ_LE_UINT32(ptr + 0x26);
 					int loopEnd = READ_LE_UINT32(ptr + 0x2A);
+					rate = (READ_LE_UINT32(ptr + 0x32) == 60) ? 11025 : 22050;	// 48 means 22050
 
 					if (size - 0x36 < waveSize) {
 						warning("Wrong wave size in sound #%i: %i", soundID, waveSize);
@@ -415,7 +416,7 @@ void Sound::playSound(int soundID) {
 						}
 					}
 
-					_scumm->_mixer->playRaw(NULL, sound, waveSize, 11000, flags, soundID);
+					_scumm->_mixer->playRaw(NULL, sound, waveSize, rate, flags, soundID);
 					break;
 				}
 
