@@ -991,7 +991,7 @@ void Scumm_v2::o2_drawSentence() {
 	int n = 0;
 
 	// Maximum length: 40 printable characters
-	while (*ptr != 0) {
+	while (*ptr) {
 		if (*ptr != '@')
 			n++;
 		if (n > 40) {
