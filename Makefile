@@ -1,7 +1,8 @@
 CXX = g++
 CC = gcc
 AR = ar rcu
-CXXFLAGS = -g -W -Wall -Ilua/include `sdl-config --cflags` -DUNIX # -O2
+CXXFLAGS = -g -W -Wall -Ilua/include `sdl-config --cflags` -DUNIX \
+	   -Wno-multichar # -O2
 LDFLAGS = -g -W -Wall # -O2
 LIBS =  -Llua/lib -llua -llualib `sdl-config --libs` \
 	-lGL -lGLU -lz
