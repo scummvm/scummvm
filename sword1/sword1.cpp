@@ -1090,13 +1090,13 @@ uint8 SwordEngine::mainLoop(void) {
 			_screen->draw();
 			_mouse->animate();
 
-			uint32 newTime = _system->get_msecs();
-
 			_sound->engine();
 			_screen->updateScreen();
 
 			_menu->refresh(MENU_TOP);
 			_menu->refresh(MENU_BOT);
+
+			uint32 newTime = _system->get_msecs();
 
 			if (newTime - frameTime < 80)
 				delay(80 - (newTime - frameTime));

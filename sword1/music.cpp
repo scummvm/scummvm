@@ -82,7 +82,7 @@ void SwordMusic::mixTo(int16 *src, int16 *dst, uint32 len) {
 				((int16)READ_LE_UINT16(src + cnt) * _fadeVal) >> 15;
 				_fadeVal--;
 			}
-			if (!_fadeVal) {
+			if ((!_fadeVal) || (!_smpInBuf)) {
 				_fading = _playing = false;
 				free(_musicBuf);
 				_musicBuf = NULL;
@@ -108,7 +108,7 @@ void SwordMusic::mixer(int16 *buf, uint32 len) {
 	while (len) {
 		uint32 length = len;
 		length = MIN(length, BUFSIZE - _bufPos);
-		if (_fading) {
+		if (_fading && _fadeBuf) {
 			length = MIN(length, (uint32)_fadeVal);
 			length = MIN(length, _fadeSmpInBuf);
 			length = MIN(length, BUFSIZE - _fadeBufPos);

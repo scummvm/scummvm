@@ -348,7 +348,7 @@ int SwordLogic::fullAnimDriver(BsObject *compact) {
 		return 1;
 	}
 	uint8 *data = ((uint8*)_resMan->openFetchRes(compact->o_anim_resource)) + sizeof(Header);
-	uint16 numFrames = READ_LE_UINT32(data);
+	uint32 numFrames = READ_LE_UINT32(data);
 	data += 4;
 	AnimUnit *animPtr = (AnimUnit*)(data + compact->o_anim_pc * sizeof(AnimUnit));
 
@@ -370,7 +370,7 @@ int SwordLogic::animDriver(BsObject *compact) {
 		return 1;
 	}
 	uint8 *data = ((uint8*)_resMan->openFetchRes(compact->o_anim_resource)) + sizeof(Header);
-	uint16 numFrames = READ_LE_UINT32(data);
+	uint32 numFrames = READ_LE_UINT32(data);
 	AnimUnit *animPtr = (AnimUnit*)(data + 4 + compact->o_anim_pc * sizeof(AnimUnit));
 
 	if (!(compact->o_status & STAT_SHRINK)) {
@@ -869,7 +869,7 @@ int SwordLogic::fnFadeUp(BsObject *cpt, int32 id, int32 speed, int32 d, int32 e,
 
 int SwordLogic::fnCheckFade(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 
-	_scriptVars[RETURN_VALUE] = (uint8)(!_screen->stillFading());
+	_scriptVars[RETURN_VALUE] = (uint8)_screen->stillFading();
 	return SCRIPT_CONT;
 }
 
