@@ -653,14 +653,14 @@ void SoundMixer::ChannelStream::append(void *data, uint32 len) {
 		uint32 new_size = len - size_to_end_of_buffer; 
 		new_end = _ptr + new_size;
 		if ((_endOfData < cur_pos) || (new_end >= cur_pos)) {
-			warning("Mixer full... Trying to not break too much ");
+			debug(2, "Mixer full... Trying to not break too much ");
 			return;
 		}
 		memcpy(_endOfData, (byte*)data, size_to_end_of_buffer);
 		memcpy(_ptr, (byte *)data + size_to_end_of_buffer, new_size);
 	} else {
 		if ((_endOfData < cur_pos) && (new_end >= cur_pos)) {
-			warning("Mixer full... Trying to not break too much ");
+			debug(2, "Mixer full... Trying to not break too much ");
 			return;
 		}
 		memcpy(_endOfData, data, len);

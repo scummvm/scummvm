@@ -1031,7 +1031,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					tmp /= 2;
 				}
 				_channel[chan]._volumeFadeStep = tmp;
-				printf("volumeFade is %d, step is %d\n", d, tmp);
+				debug(2, "volumeFade is %d, step is %d\n", d, tmp);
 
 				return 0;
 			default:
