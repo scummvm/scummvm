@@ -32,6 +32,8 @@
 
 namespace Saga {
 
+//#define ACTOR_DEBUG
+
 #define ACTOR_BARRIERS_MAX 16
 
 #define ACTOR_MAX_STEPS_COUNT 32
@@ -385,6 +387,7 @@ private:
 		_pathNodeList[_pathNodeListIndex].point = point;
 	}
 public:
+#ifdef ACTOR_DEBUG
 //path debug - use with care
 	struct DebugPoint {
 		Point point;
@@ -401,6 +404,7 @@ public:
 		_debugPoints[_debugPointsCount].color = color;
 		_debugPoints[_debugPointsCount++].point = point;
 	}
+#endif
 };
 
 inline int16 quickDistance(const Point &point1, const Point &point2) {

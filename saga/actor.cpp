@@ -138,8 +138,10 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 		return;
 	}
 
+#ifdef ACTOR_DEBUG
 	_debugPoints = NULL;
 	_debugPointsAlloced = _debugPointsCount = 0;
+#endif
 
 	_pathNodeList = _newPathNodeList = NULL;
 	_pathList = NULL;
@@ -201,7 +203,11 @@ Actor::~Actor() {
 	ActorData *actor;
 
 	debug(9, "Actor::~Actor()");
+
+#ifdef ACTOR_DEBUG
 	free(_debugPoints);
+#endif
+
 	free(_pathNodeList);
 	free(_newPathNodeList);
 	free(_pathList);
@@ -1356,7 +1362,9 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 	int i;
 	Rect intersect;
 	
+#ifdef ACTOR_DEBUG
 	_debugPointsCount = 0;
+#endif
 
 	actor->walkStepsCount = 0;
 	if (fromPoint == toPoint) {
@@ -1385,8 +1393,7 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 		}
 	}
 	
-#if 1
-
+#ifdef ACTOR_DEBUG
 	for (iteratorPoint.y = 0; iteratorPoint.y < _yCellCount; iteratorPoint.y++) {
 		for (iteratorPoint.x = 0; iteratorPoint.x < _xCellCount; iteratorPoint.x++) {
 			if (getPathCell(iteratorPoint) == kPathCellBarrier) {
@@ -1499,7 +1506,9 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 	if (validPathCellPoint(fromPoint)) {
 		setPathCell(fromPoint, kDirUp);
 		
+#ifdef ACTOR_DEBUG
 		addDebugPoint(fromPoint, 24+36);
+#endif
 	}	
 	
 	pathDirectionIterator = pathDirectionList.begin();
@@ -1521,7 +1530,9 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 
 			setPathCell(nextPoint, samplePathDirection->direction);
 
+#ifdef ACTOR_DEBUG
 			addDebugPoint(nextPoint, samplePathDirection->direction + 96);
+#endif
 			newPathDirectionIterator = pathDirectionList.pushBack();
 			pathDirection = newPathDirectionIterator.operator->();
 			pathDirection->x = nextPoint.x;
@@ -1563,7 +1574,9 @@ void Actor::setActorPath(ActorData *actor, const Point &fromPoint, const Point &
 		nextPoint.y -= pathDirectionLUT2[direction][1];
 		addPathListPoint(nextPoint);
 
+#ifdef ACTOR_DEBUG
 		addDebugPoint(nextPoint, 0x8a);
+#endif
 	}
 
 	pathToNode();
@@ -1773,7 +1786,7 @@ void Actor::removePathPoints() {
 	int newPathNodeIndex;
 	int start;
 	int end;
-	Point point1, point2, point3, point4;
+	Point point1, point2;
 
 
 	if (_pathNodeListIndex < 2)
@@ -1795,23 +1808,14 @@ void Actor::removePathPoints() {
 				continue;
 			}
 
-			point1.x = _pathList[start].x;
-			if (point1.x == PATH_NODE_EMPTY) {
-				continue;
-			}
-			point2.x = _pathList[end].x;
-			if (point2.x == PATH_NODE_EMPTY) {
+			point1 = _pathList[start];
+			point2 = _pathList[end];
+			if ((point1.x == PATH_NODE_EMPTY) || (point2.x == PATH_NODE_EMPTY)) {
 				continue;
 			}
 
-			point1.y = _pathList[start].y;
-			point2.y = _pathList[end].y;
 			
-			point3.x = point1.x;
-			point3.y = point1.y;
-			point4.x = point2.x;
-			point4.y = point2.y;
-			if (scanPathLine( point3, point4)) {
+			if (scanPathLine(point1, point2)) {
 				for (l = 1; l <= newPathNodeIndex; l++) {
 					if (start <= _newPathNodeList[l].link) {
 						newPathNodeIndex = l;
@@ -1844,6 +1848,7 @@ void Actor::removePathPoints() {
 }
 
 void Actor::drawPathTest() {
+#ifdef ACTOR_DEBUG
 	int i;
 	SURFACE *surface;
 	surface = _vm->_gfx->getBackBuffer();
@@ -1851,10 +1856,10 @@ void Actor::drawPathTest() {
 		return;
 	}
 
-
 	for (i = 0; i < _debugPointsCount; i++) {
 		*((byte *)surface->pixels + (_debugPoints[i].point.y * surface->pitch) + _debugPoints[i].point.x) = _debugPoints[i].color;
 	}
+#endif
 }
 
 /*
