@@ -38,7 +38,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_startMusic),
 		OPCODE(o5_getActorRoom),
 		/* 04 */
-		OPCODE(o5_isGreaterEqual),
+		OPCODE(o2_isGreaterEqual),
 		OPCODE(o2_drawObject),
 		OPCODE(o5_getActorElevation),
 		OPCODE(o2_setState08),
@@ -48,7 +48,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_assignVarWordDirect),
 		OPCODE(o2_setObjY),
 		/* 0C */
-		OPCODE(o5_resourceRoutines),
+		OPCODE(o2_resourceRoutines),
 		OPCODE(o5_walkActorToActor),
 		OPCODE(o5_putActorAtObject),
 		OPCODE(o5_getObjectState),
@@ -83,7 +83,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_setVarRange),
 		OPCODE(o2_ifNotState04),
 		/* 28 */
-		OPCODE(o5_equalZero),
+		OPCODE(o2_equalZero),
 		OPCODE(o5_setOwnerOf),
 		OPCODE(o2_addDirect),
 		OPCODE(o5_delayVariable),
@@ -103,7 +103,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_walkActorToObject),
 		OPCODE(o2_setState01),
 		/* 38 */
-		OPCODE(o5_lessOrEqual),
+		OPCODE(o2_lessOrEqual),
 		OPCODE(o5_doSentence),
 		OPCODE(o5_subtract),
 		OPCODE(o2_waitForActor),
@@ -118,12 +118,12 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_startScript),
 		OPCODE(o5_getActorX),
 		/* 44 */
-		OPCODE(o5_isLess),
+		OPCODE(o2_isLess),
 		OPCODE(o2_drawObject),
 		OPCODE(o5_increment),
 		OPCODE(o2_setState08),
 		/* 48 */
-		OPCODE(o5_isEqual),
+		OPCODE(o2_isEqual),
 		OPCODE(o5_faceActor),
 		OPCODE(o5_chainScript),
 		OPCODE(o2_setObjY),
@@ -183,9 +183,9 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_walkActorToObject),
 		OPCODE(o2_clearState01),
 		/* 78 */
-		OPCODE(o5_isGreater),
+		OPCODE(o2_isGreater),
 		OPCODE(o5_doSentence),
-		OPCODE(o5_verbOps),
+		OPCODE(o2_verbOps),
 		OPCODE(o5_getActorWalkBox),
 		/* 7C */
 		OPCODE(o5_isSoundRunning),
@@ -198,17 +198,17 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_startMusic),
 		OPCODE(o5_getActorRoom),
 		/* 84 */
-		OPCODE(o5_isGreaterEqual),
+		OPCODE(o2_isGreaterEqual),
 		OPCODE(o2_drawObject),
 		OPCODE(o5_getActorElevation),
 		OPCODE(o2_setState08),
 		/* 88 */
-		OPCODE(o5_isNotEqual),
+		OPCODE(o2_isNotEqual),
 		OPCODE(o5_faceActor),
 		OPCODE(o2_assignVarWordDirect),
 		OPCODE(o2_setObjY),
 		/* 8C */
-		OPCODE(o5_resourceRoutines),
+		OPCODE(o2_resourceRoutines),
 		OPCODE(o5_walkActorToActor),
 		OPCODE(o5_putActorAtObject),
 		OPCODE(o2_ifNotState08),
@@ -243,7 +243,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_setVarRange),
 		OPCODE(o2_setState04),
 		/* A8 */
-		OPCODE(o5_notEqualZero),
+		OPCODE(o2_notEqualZero),
 		OPCODE(o5_setOwnerOf),
 		OPCODE(o2_addDirect),
 		OPCODE(o5_dummy),
@@ -263,7 +263,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_walkActorToObject),
 		OPCODE(o2_setState02),
 		/* B8 */
-		OPCODE(o5_lessOrEqual),
+		OPCODE(o2_lessOrEqual),
 		OPCODE(o5_doSentence),
 		OPCODE(o5_subtract),
 		OPCODE(o2_waitForActor),
@@ -278,12 +278,12 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_startScript),
 		OPCODE(o5_getActorX),
 		/* C4 */
-		OPCODE(o5_isLess),
+		OPCODE(o2_isLess),
 		OPCODE(o2_drawObject),
 		OPCODE(o5_decrement),
 		OPCODE(o2_clearState08),
 		/* C8 */
-		OPCODE(o5_isEqual),
+		OPCODE(o2_isEqual),
 		OPCODE(o5_faceActor),
 		OPCODE(o5_chainScript),
 		OPCODE(o2_setObjY),
@@ -343,9 +343,9 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_walkActorToObject),
 		OPCODE(o2_clearState01),
 		/* F8 */
-		OPCODE(o5_isGreater),
+		OPCODE(o2_isGreater),
 		OPCODE(o5_doSentence),
-		OPCODE(o5_verbOps),
+		OPCODE(o2_verbOps),
 		OPCODE(o5_getActorWalkBox),
 		/* FC */
 		OPCODE(o5_isSoundRunning),
@@ -663,4 +663,113 @@ void Scumm_v2::o2_drawObject() {
 	} while (--i);
 
 	putState(obj, getState(_objs[obj].obj_nr) | 0x08);
+}
+
+void Scumm_v2::o2_resourceRoutines() {
+ int arg1 = getVarOrDirectByte(0x80);
+ int arg2 = fetchScriptByte();
+
+ printf("o2_resourceRoutines(%d)\n", arg2);
+}
+
+void Scumm_v2::o2_verbOps() {
+ int opcode = fetchScriptByte(), slot, state;
+
+ switch (opcode) {
+	case 0:		// Delete Verb
+		slot = getVarOrDirectByte(0x80);
+	break;
+
+	case 0xFF:	// Verb On/Off
+		slot = fetchScriptByte();
+		state = fetchScriptByte();
+	break;
+
+	default: {	// New Verb
+		fetchScriptByte(); // X
+		fetchScriptByte(); // Y
+		getVarOrDirectByte(0x80); // Slot
+		fetchScriptByte(); // ?
+	}
+	break;
+ }
+}
+
+void Scumm_v2::o2_isEqual() {
+	int a = readVar(fetchScriptByte());
+	int b = getVarOrDirectWord(0x80);
+
+	if (b == a)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
+
+}
+
+void Scumm_v2::o2_isGreater() {
+	int16 a = readVar(fetchScriptByte());
+	int16 b = getVarOrDirectWord(0x80);
+
+	if (b > a)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
+}
+
+void Scumm_v2::o2_isGreaterEqual() {
+	int16 a = readVar(fetchScriptByte());
+	int16 b = getVarOrDirectWord(0x80);
+
+	if (b >= a)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
+}
+
+void Scumm_v2::o2_isLess() {
+	int16 a = readVar(fetchScriptByte());
+	int16 b = getVarOrDirectWord(0x80);
+
+	if (b < a)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
+}
+
+void Scumm_v2::o2_lessOrEqual() {
+	int16 a = readVar(fetchScriptByte());
+	int16 b = getVarOrDirectWord(0x80);
+
+	if (b <= a)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
+}
+
+void Scumm_v2::o2_isNotEqual() {
+	int16 a = readVar(fetchScriptByte());
+	int16 b = getVarOrDirectWord(0x80);
+
+	if (b != a)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
+}
+
+void Scumm_v2::o2_notEqualZero() {
+	int a = readVar(fetchScriptByte());
+
+	if (a != 0)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
+}
+
+void Scumm_v2::o2_equalZero() {
+	int a = readVar(fetchScriptByte());
+
+	if (a == 0)
+		ignoreScriptWord();
+	else
+		o5_jumpRelative();
 }

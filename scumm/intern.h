@@ -236,6 +236,17 @@ protected:
 	void o2_waitForSentence();
 	void o2_restart();
 	void o2_drawObject();
+	void o2_resourceRoutines();
+	void o2_verbOps();
+
+	void o2_isEqual();
+	void o2_isGreater();
+	void o2_isGreaterEqual();
+	void o2_lessOrEqual();
+	void o2_isLess();
+	void o2_isNotEqual();
+	void o2_equalZero();
+	void o2_notEqualZero();
 
 };
 
