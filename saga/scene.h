@@ -158,7 +158,7 @@ struct SCENE_QUEUE {
 #define IHNM_PALFADE_TIME    1000
 #define IHNM_INTRO_FRAMETIME 80
 #define IHNM_DGLOGO_TIME     8000
-#define IHNM_TITLE_TIME      16000
+#define IHNM_TITLE_TIME      28750
 
 ///// ITE-specific stuff
 #define INTRO_STRMAX 256

@@ -55,7 +55,8 @@ public:
 	void setVolume(int volume);
 	int getVolume() { return _masterVolume; }
 
-	void hasNativeMT32(bool b) { _nativeMT32 = b; }
+	void setNativeMT32(bool b) { _nativeMT32 = b; }
+	bool hasNativeMT32() { return _nativeMT32; }
 	void playMusic();
 	void stopMusic();
 	void setLoop(bool loop) { _looping = loop; }
@@ -105,8 +106,9 @@ public:
 
 	Music(SoundMixer *mixer, MidiDriver *driver, int enabled);
 	~Music(void);
-	void hasNativeMT32(bool b)		{ _player->hasNativeMT32(b); }
-	void setPassThrough(bool b)		{ _player->setPassThrough(b); }
+	void setNativeMT32(bool b)	{ _player->setNativeMT32(b); }
+	bool hasNativeMT32()		{ return _player->hasNativeMT32(); }
+	void setPassThrough(bool b)	{ _player->setPassThrough(b); }
 
 	int play(uint32 music_rn, uint16 flags = MUSIC_DEFAULT);
 	int pause(void);

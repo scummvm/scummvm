@@ -452,9 +452,24 @@ int Music::play(uint32 music_rn, uint16 flags) {
 		_player->setGM(true);
 		parser = MidiParser::createParser_SMF();
 	} else {
-		// Load XMI resource data
+		// Load MIDI/XMI resource data
 
-		rsc_ctxt = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
+		bool isGM = false;
+
+		if (GAME_GetGameType() == GID_ITE) {
+			rsc_ctxt = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
+		} else {
+			// TODO: Someone else will have to verify that the "FM"
+			// music is really the appropriate choice for MT-32. Is
+			// either of them the best choice for Adlib, or will
+			// they both sound equally wimpy?
+			if (!hasNativeMT32()) {
+				isGM = true;
+				rsc_ctxt = GAME_GetFileContext(GAME_MUSICFILE_GM, 0);
+			} else {
+				rsc_ctxt = GAME_GetFileContext(GAME_MUSICFILE_FM, 0);
+			}
+		}
 
 		if (RSC_LoadResource(rsc_ctxt, music_rn, &resource_data, 
 				&resource_size) != SUCCESS ) {
@@ -462,7 +477,7 @@ int Music::play(uint32 music_rn, uint16 flags) {
 			return FAILURE;
 		}
 
-		_player->setGM(false);
+		_player->setGM(isGM);
 		parser = MidiParser::createParser_XMIDI();
 	}
 

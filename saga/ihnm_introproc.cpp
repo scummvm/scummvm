@@ -217,6 +217,16 @@ int Scene::IHNMIntroMovieProc3(int param, SCENE_INFO *scene_info) {
 
 		q_event = _vm->_events->queue(&event);
 
+		// Music, maestro
+		event.type = ONESHOT_EVENT;
+		event.code = MUSIC_EVENT;
+		event.param = 1;
+		event.param2 = 0;
+		event.op = EVENT_PLAY;
+		event.time = 0;
+
+		q_event = _vm->_events->queue(&event);
+
 		// Background for intro scene is the first frame of the
 		// intro animation; display it but don't set palette
 		event.type = ONESHOT_EVENT;
@@ -242,6 +252,9 @@ int Scene::IHNMIntroMovieProc3(int param, SCENE_INFO *scene_info) {
 		_vm->_anim->play(0, 0);
 
 		// Queue end of scene after a while
+		// TODO: I've increased the delay so the speech won't start
+		// until the music has ended. Could someone verify if that's
+		// the correct behaviour?
 		event.type = ONESHOT_EVENT;
 		event.code = SCENE_EVENT;
 		event.op = EVENT_END;

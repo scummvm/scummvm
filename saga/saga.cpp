@@ -197,7 +197,7 @@ void SagaEngine::go() {
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
 	_music = new Music(_mixer, driver, _musicEnabled);
-	_music->hasNativeMT32(native_mt32);
+	_music->setNativeMT32(native_mt32);
 
 	if (midiDriver == MD_MT32)
 		_music->setPassThrough(true);
