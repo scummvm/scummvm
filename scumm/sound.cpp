@@ -344,7 +344,7 @@ void Sound::playSound(int soundID, int offset) {
 	else if ((_vm->_features & GF_FMTOWNS) || READ_UINT32(ptr) == MKID('SOUN') || READ_UINT32(ptr) == MKID('TOWS')) {
 
 		bool tows = READ_UINT32(ptr) == MKID('TOWS');
-		if (_vm->_features & GF_FMTOWNS) {
+		if (_vm->_version == 3) {
 			size = READ_LE_UINT32(ptr);
 		} else {
 			size = READ_BE_UINT32(ptr + 4) - 2;
