@@ -152,14 +152,18 @@ void MidiParser::resetTracking() {
 	_running_status = 0;
 }
 
-void MidiParser::setTrack (byte track) {
-	if (track >= _num_tracks || track == _active_track)
-		return;
+bool MidiParser::setTrack (int track) {
+	if (track >= _num_tracks)
+		return false;
+	else if (track == _active_track)
+		return true;
+
 	resetTracking();
 	allNotesOff();
 	_active_track = track;
 	_play_pos = _tracks[track];
 	parseNextEvent (_next_event);
+	return true;
 }
 
 void MidiParser::jumpToTick (uint32 tick) {

@@ -106,7 +106,7 @@ public:
 	void setTimerRate (uint32 rate) { _timer_rate = rate / 500; }
 	void onTimer();
 
-	void setTrack (byte track);
+	bool setTrack (int track);
 	void jumpToTick (uint32 tick);
 
 	static MidiParser *createParser_SMF();
