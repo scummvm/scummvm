@@ -59,9 +59,6 @@ enum {
 /*
  * A dialog that allows the user to edit a config game entry.
  * TODO: add widgets for some/all of the following
- * - Amiga/subtitles flag? Although those only make sense for Scumm games, not Simon
- * - The music driver for that game (<Default> or custom)
- *   Of course this means we need an API to query the available music drivers.
  * - Maybe scaler/graphics mode. But there are two problems:
  *   1) Different backends can have different scalers with different names,
  *      so we first have to add a way to query those... no Ender, I don't
@@ -73,7 +70,6 @@ enum {
  *      (the SDL backend can already do that based on user input, but there is no API
  *      to achieve it)
  *   If the APIs for 1&2 are in place, we can think about adding this to the Edit&Option dialogs
- * - Maybe SFX/Master/Music volumes?
  */
 
 class EditGameDialog : public OptionsDialog {

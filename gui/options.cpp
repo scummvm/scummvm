@@ -329,7 +329,8 @@ void GlobalOptionsDialog::open() {
 
 void GlobalOptionsDialog::close() {
 	if (getResult()) {
-		// TODO: Savepath
+		// Savepath
+		ConfMan.set("savepath", _savePath->getLabel(), _domain);
 	}
 	OptionsDialog::close();
 }
