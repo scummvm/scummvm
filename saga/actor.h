@@ -26,6 +26,9 @@
 #ifndef SAGA_ACTOR_H__
 #define SAGA_ACTOR_H__
 
+#include "yslib.h"
+#include "sprite_mod.h"
+
 namespace Saga {
 
 #define ACTOR_BASE_SPEED 0.25
@@ -45,6 +48,34 @@ enum R_ACTOR_INTENTS {
 	INTENT_NONE = 0,
 	INTENT_PATH = 1,
 	INTENT_SPEAK = 2
+};
+
+enum R_ACTOR_WALKFLAGS {
+	WALK_NONE = 0x00,
+	WALK_NOREORIENT = 0x01
+};
+
+enum R_ACTOR_ORIENTATIONS {
+	ORIENT_N = 0,
+	ORIENT_NE = 1,
+	ORIENT_E = 2,
+	ORIENT_SE = 3,
+	ORIENT_S = 4,
+	ORIENT_SW = 5,
+	ORIENT_W = 6,
+	ORIENT_NW = 7
+};
+
+enum R_ACTOR_ACTIONS {
+	ACTION_IDLE = 0,
+	ACTION_WALK = 1,
+	ACTION_SPEAK = 2,
+	ACTION_COUNT
+};
+
+enum R_ACTOR_ACTIONFLAGS {
+	ACTION_NONE = 0x00,
+	ACTION_LOOP = 0x01
 };
 
 struct R_ACTORACTIONITEM {
@@ -155,28 +186,58 @@ struct R_ACTIONTIMES {
 
 struct R_ACTOR_MODULE {
 	int init;
-	R_RSCFILE_CONTEXT *actor_ctxt;
-	uint16 count;
-	int *alias_tbl;
-	YS_DL_NODE **tbl;
-	YS_DL_LIST *list;
-	int err_n;
 	const char *err_str;
 };
 
-R_ACTOR *LookupActor(int index);
-int AddActor(R_ACTOR * actor);
-int Z_Compare(const void *elem1, const void *elem2);
-int HandleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walk_int, int *complete_p, int msec);
-int HandleSpeakIntent(R_ACTOR *actor, R_SPEAKINTENT *a_speakint, int *complete_p, int msec);
-int ACTOR_SetPathNode(R_WALKINTENT *walk_int, R_POINT *src_pt, R_POINT *dst_pt, R_SEMAPHORE *sem);
-int LoadActorSpriteIndex(R_ACTOR *actor, int si_rn, int *last_frame_p);
-static void CF_actor_add(int argc, char *argv[], void *refCon);
-static void CF_actor_del(int argc, char *argv[], void *refCon);
-static void CF_actor_move(int argc, char *argv[], void *refCon);
-static void CF_actor_moverel(int argc, char *argv[], void *refCon);
-static void CF_actor_seto(int argc, char *argv[], void *refCon);
-static void CF_actor_setact(int argc, char *argv[], void *refCon);
+class Actor {
+ public:
+	int reg();
+	Actor(SagaEngine *vm);
+	~Actor();
+
+	int direct(int msec);
+
+	int create(int actor_id, int x, int y);
+	int actorExists(uint16 actor_id);
+
+	int drawList();
+	int AtoS(R_POINT *logical, const R_POINT *actor);
+	int StoA(R_POINT *actor, const R_POINT *screen);
+
+	int move(int index, R_POINT *move_pt);
+	int moveRelative(int index, R_POINT *move_pt);
+
+	int walkTo(int index, R_POINT *walk_pt, uint16 flags, R_SEMAPHORE *sem);
+	
+	int getActorIndex(uint16 actor_id);
+	
+	int speak(int index, const char *d_string, uint16 d_voice_rn, R_SEMAPHORE *sem);
+	
+	int skipDialogue();
+	
+	int getSpeechTime(const char *d_string, uint16 d_voice_rn);
+	int setOrientation(int index, int orient);
+	int setAction(int index, int action_n, uint16 action_flags);
+	int setDefaultAction(int index, int action_n, uint16 action_flags);
+
+	int addActor(R_ACTOR * actor);
+	int deleteActor(int index);
+	R_ACTOR *lookupActor(int index);
+
+ private:
+	int handleWalkIntent(R_ACTOR *actor, R_WALKINTENT *a_walk_int, int *complete_p, int msec);
+	int handleSpeakIntent(R_ACTOR *actor, R_SPEAKINTENT *a_speakint, int *complete_p, int msec);
+	int setPathNode(R_WALKINTENT *walk_int, R_POINT *src_pt, R_POINT *dst_pt, R_SEMAPHORE *sem);
+	int loadActorSpriteIndex(R_ACTOR *actor, int si_rn, int *last_frame_p);
+
+	SagaEngine *_vm;
+	bool _initialized;
+	R_RSCFILE_CONTEXT *_actorContext;
+	uint16 _count;
+	int *_aliasTbl;
+	YS_DL_NODE **_tbl;
+	YS_DL_LIST *_list;
+};
 
 } // End of namespace Saga
 

@@ -26,7 +26,7 @@
 #include "saga.h"
 
 #include "gfx.h"
-#include "actor_mod.h"
+#include "actor.h"
 #include "animation.h"
 #include "console_mod.h"
 #include "interface_mod.h"
@@ -174,7 +174,7 @@ int SF_actorWalkTo(R_SCRIPTFUNC_PARAMS) {
 	SSTACK_Pop(thread->stack, &y_parm);
 
 	actor_id = _vm->_sdata->readWordS(actor_parm);
-	actor_idx = ACTOR_GetActorIndex(actor_id);
+	actor_idx = _vm->_actor->getActorIndex(actor_id);
 	if (actor_idx < 0) {
 		CON_Print(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.", actor_id);
 		return R_FAILURE;
@@ -183,7 +183,7 @@ int SF_actorWalkTo(R_SCRIPTFUNC_PARAMS) {
 	pt.x = _vm->_sdata->readWordS(x_parm);
 	pt.y = _vm->_sdata->readWordS(y_parm);
 
-	ACTOR_WalkTo(actor_idx, &pt, 0, &thread->sem);
+	_vm->_actor->walkTo(actor_idx, &pt, 0, &thread->sem);
 
 	return R_SUCCESS;
 }
@@ -209,13 +209,13 @@ int SF_setFacing(R_SCRIPTFUNC_PARAMS) {
 
 	actor_id = _vm->_sdata->readWordS(actor_parm);
 	orientation = _vm->_sdata->readWordS(orient_parm);
-	actor_idx = ACTOR_GetActorIndex(actor_id);
+	actor_idx = _vm->_actor->getActorIndex(actor_id);
 	if (actor_idx < 0) {
 		CON_Print(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.", actor_id);
 		return R_FAILURE;
 	}
 
-	ACTOR_SetOrientation(actor_idx, orientation);
+	_vm->_actor->setOrientation(actor_idx, orientation);
 	return R_SUCCESS;
 }
 
@@ -299,7 +299,7 @@ int SF_actorWalkToAsync(R_SCRIPTFUNC_PARAMS) {
 	SSTACK_Pop(thread->stack, &y_parm);
 
 	actor_id = _vm->_sdata->readWordS(actor_parm);
-	actor_idx = ACTOR_GetActorIndex(actor_id);
+	actor_idx = _vm->_actor->getActorIndex(actor_id);
 	if (actor_idx < 0) {
 		CON_Print(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.",
 		    actor_id);
@@ -308,7 +308,7 @@ int SF_actorWalkToAsync(R_SCRIPTFUNC_PARAMS) {
 
 	pt.x = _vm->_sdata->readWordS(x_parm);
 	pt.y = _vm->_sdata->readWordS(y_parm);
-	ACTOR_WalkTo(actor_idx, &pt, 0, NULL);
+	_vm->_actor->walkTo(actor_idx, &pt, 0, NULL);
 
 	return R_SUCCESS;
 }
@@ -341,15 +341,15 @@ int SF_moveTo(R_SCRIPTFUNC_PARAMS) {
 	pt.x = _vm->_sdata->readWordS(x_parm);
 	pt.y = _vm->_sdata->readWordS(y_parm);
 
-	if (!ACTOR_ActorExists(actor_id)) {
-		result = ACTOR_Create(actor_id, pt.x, pt.y);
+	if (!_vm->_actor->actorExists(actor_id)) {
+		result = _vm->_actor->create(actor_id, pt.x, pt.y);
 		if (result != R_SUCCESS) {
 			CON_Print(S_WARN_PREFIX "SF.30: Couldn't create actor 0x%X.", actor_id);
 			return R_FAILURE;
 		}
 	} else {
-		actor_idx = ACTOR_GetActorIndex(actor_id);
-		ACTOR_Move(actor_idx, &pt);
+		actor_idx = _vm->_actor->getActorIndex(actor_id);
+		_vm->_actor->move(actor_idx, &pt);
 	}
 
 	return R_SUCCESS;
@@ -380,7 +380,7 @@ int SF_actorWalk(R_SCRIPTFUNC_PARAMS) {
 	SSTACK_Pop(thread->stack, &y_parm);
 	SSTACK_Pop(thread->stack, &unk_parm);
 
-	actor_idx = ACTOR_GetActorIndex(_vm->_sdata->readWordS(actor_parm));
+	actor_idx = _vm->_actor->getActorIndex(_vm->_sdata->readWordS(actor_parm));
 	if (actor_idx < 0) {
 		CON_Print(S_WARN_PREFIX "SF.36: Actor id 0x%X not found.", (int)actor_parm);
 		return R_FAILURE;
@@ -390,9 +390,9 @@ int SF_actorWalk(R_SCRIPTFUNC_PARAMS) {
 	pt.y = _vm->_sdata->readWordS(y_parm);
 
 #if 1
-	ACTOR_WalkTo(actor_idx, &pt, 0, NULL);
+	_vm->_actor->walkTo(actor_idx, &pt, 0, NULL);
 #else
-	ACTOR_WalkTo(actor_idx, &pt, 0, &thread->sem);
+	_vm->_actor->walkTo(actor_idx, &pt, 0, &thread->sem);
 #endif
 
 	return R_SUCCESS;
@@ -421,10 +421,10 @@ int SF_cycleActorFrames(R_SCRIPTFUNC_PARAMS) {
 	SSTACK_Pop(thread->stack, &unk2_parm);
 	actor_id = _vm->_sdata->readWordS(actor_parm);
 	action = _vm->_sdata->readWordS(action_parm);
-	actor_idx = ACTOR_GetActorIndex(actor_id);
+	actor_idx = _vm->_actor->getActorIndex(actor_id);
 
-	if (ACTOR_SetAction(actor_idx, action, ACTION_NONE) != R_SUCCESS) {
-		CON_Print(S_WARN_PREFIX "SF.37: ACTOR_SetAction() failed.");
+	if (_vm->_actor->setAction(actor_idx, action, ACTION_NONE) != R_SUCCESS) {
+		CON_Print(S_WARN_PREFIX "SF.37: Actor::setAction() failed.");
 		return R_FAILURE;
 	}
 
@@ -454,10 +454,10 @@ int SF_setFrame(R_SCRIPTFUNC_PARAMS) {
 
 	actor_id = _vm->_sdata->readWordS(actor_parm);
 	action = _vm->_sdata->readWordS(action_parm);
-	actor_idx = ACTOR_GetActorIndex(actor_id);
+	actor_idx = _vm->_actor->getActorIndex(actor_id);
 
-	if (ACTOR_SetAction(actor_idx, action, ACTION_NONE) != R_SUCCESS) {
-		CON_Print(S_WARN_PREFIX "SF.38: ACTOR_SetAction() failed.");
+	if (_vm->_actor->setAction(actor_idx, action, ACTION_NONE) != R_SUCCESS) {
+		CON_Print(S_WARN_PREFIX "SF.38: Actor::setAction() failed.");
 		return R_FAILURE;
 	}
 
@@ -535,20 +535,20 @@ int SF_placeActor(R_SCRIPTFUNC_PARAMS) {
 	pt.y = _vm->_sdata->readWordS(y_parm);
 	action_state = _vm->_sdata->readWordU(action_parm);
 
-	if (!ACTOR_ActorExists(actor_id)) {
-		result = ACTOR_Create(actor_id, pt.x, pt.y);
+	if (!_vm->_actor->actorExists(actor_id)) {
+		result = _vm->_actor->create(actor_id, pt.x, pt.y);
 		if (result != R_SUCCESS) {
 			CON_Print(S_WARN_PREFIX "SF.43: Couldn't create actor 0x%X.", actor_id);
 			return R_FAILURE;
 		}
 	} else {
-		actor_idx = ACTOR_GetActorIndex(actor_id);
-		ACTOR_Move(actor_idx, &pt);
+		actor_idx = _vm->_actor->getActorIndex(actor_id);
+		_vm->_actor->move(actor_idx, &pt);
 	}
 
-	actor_idx = ACTOR_GetActorIndex(actor_id);
-	ACTOR_SetDefaultAction(actor_idx, action_state, ACTION_NONE);
-	ACTOR_SetAction(actor_idx, action_state, ACTION_NONE);
+	actor_idx = _vm->_actor->getActorIndex(actor_id);
+	_vm->_actor->setDefaultAction(actor_idx, action_state, ACTION_NONE);
+	_vm->_actor->setAction(actor_idx, action_state, ACTION_NONE);
 
 	return R_SUCCESS;
 }

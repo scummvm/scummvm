@@ -25,7 +25,7 @@
 #include "saga.h"
 
 #include "gfx.h"
-#include "actor_mod.h"
+#include "actor.h"
 #include "console_mod.h"
 #include "cvar_mod.h"
 #include "font_mod.h"
@@ -142,7 +142,7 @@ int Render::drawScene() {
 	}
 
 	// Draw queued actors
-	ACTOR_DrawList();
+	_vm->_actor->drawList();
 
 	// Draw queued text strings
 	SCENE_GetInfo(&scene_info);

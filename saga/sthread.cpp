@@ -27,7 +27,7 @@
 #include "yslib.h"
 
 #include "gfx.h"
-#include "actor_mod.h"
+#include "actor.h"
 #include "console_mod.h"
 #include "text_mod.h"
 
@@ -721,7 +721,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 				readS.readByte();
 				readS.readUint16LE();
 
-				a_index = ACTOR_GetActorIndex(param1);
+				a_index = _vm->_actor->getActorIndex(param1);
 				if (a_index < 0) {
 					CON_Print(S_WARN_PREFIX "%X: DLGP Actor id not found.", thread->i_offset);
 				}
@@ -735,7 +735,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 					} else {
 						voice_rn = _vm->_script->currentScript()->voice->voices[data];
 					}
-					ACTOR_Speak(a_index, _vm->_script->currentScript()->diag-> str[data], voice_rn, &thread->sem);
+					_vm->_actor->speak(a_index, _vm->_script->currentScript()->diag-> str[data], voice_rn, &thread->sem);
 				}
 			}
 			break;

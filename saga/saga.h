@@ -48,6 +48,7 @@ class ObjectMap;
 class Gfx;
 class SData;
 class Script;
+class Actor;
 
 using Common::MemoryReadStream;
 
@@ -101,6 +102,7 @@ public:
 	Gfx *_gfx;
 	SData *_sdata;
 	Script *_script;
+	Actor *_actor;
 	
 private:
 	int decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);

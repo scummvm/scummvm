@@ -27,7 +27,7 @@
 #include "gfx.h"
 #include "game_mod.h"
 #include "cvar_mod.h"
-#include "actor_mod.h"
+#include "actor.h"
 #include "console_mod.h"
 #include "font_mod.h"
 #include "objectmap.h"
@@ -484,8 +484,8 @@ int HandlePlayfieldClick(R_SURFACE *ds, R_POINT *imouse_pt) {
 
 	if (hit_object != R_SUCCESS) {
 		// Player clicked on empty spot - walk here regardless of verb
-		ACTOR_StoA(&iactor_pt, imouse_pt);
-		ACTOR_WalkTo(0, &iactor_pt, 0, NULL);
+		_vm->_actor->StoA(&iactor_pt, imouse_pt);
+		_vm->_actor->walkTo(0, &iactor_pt, 0, NULL);
 		return R_SUCCESS;
 	}
 
@@ -506,8 +506,8 @@ int HandlePlayfieldClick(R_SURFACE *ds, R_POINT *imouse_pt) {
 		}
 	} else {
 		// Not a normal scene object - walk to it as if it weren't there
-		ACTOR_StoA(&iactor_pt, imouse_pt);
-		ACTOR_WalkTo(0, &iactor_pt, 0, NULL);
+		_vm->_actor->StoA(&iactor_pt, imouse_pt);
+		_vm->_actor->walkTo(0, &iactor_pt, 0, NULL);
 	}
 
 	return R_SUCCESS;

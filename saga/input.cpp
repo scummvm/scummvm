@@ -23,7 +23,7 @@
 #include "saga/saga.h"
 
 #include "saga/gfx.h"
-#include "saga/actor_mod.h"
+#include "saga/actor.h"
 #include "saga/console_mod.h"
 #include "saga/interface_mod.h"
 #include "saga/render.h"
@@ -98,7 +98,7 @@ int SYSINPUT_ProcessInput() {
 
 			// Actual game keys
 			case 32: // space
-				ACTOR_SkipDialogue();
+				_vm->_actor->skipDialogue();
 				break;
 			case 19:  // pause
 			case 112: // p

@@ -35,7 +35,7 @@
 #include "gfx.h"
 #include "rscfile_mod.h"
 #include "render.h"
-#include "actor_mod.h"
+#include "actor.h"
 #include "animation.h"
 #include "console_mod.h"
 #include "cvar_mod.h"
@@ -117,7 +117,6 @@ void SagaEngine::go() {
 	CON_Register(); // Register console cvars first
 
 	GAME_Register();
-	ACTOR_Register();
 	SCENE_Register();
 
 	MainData.sound_enabled = 1;
@@ -156,7 +155,7 @@ void SagaEngine::go() {
 	_script = new Script();
 	_sdata = new SData();
 	INTERFACE_Init(); // requires script module
-	ACTOR_Init();
+	_actor = new Actor(this);
 
 	if (SCENE_Init() != R_SUCCESS) {
 		warning("Couldn't initialize scene module");
@@ -203,6 +202,7 @@ void SagaEngine::go() {
 		debug(0, "Sound disabled.");
 	}
 
+	_actor->reg();
 	_script->reg();
 	_render->reg();
 	_anim->reg();
@@ -232,7 +232,7 @@ void SagaEngine::go() {
 			if (msec > R_MAX_TIME_DELTA) {
 				msec = R_MAX_TIME_DELTA;
 			}
-			ACTOR_Direct(msec);
+			_actor->direct(msec);
 			EVENT_HandleEvents(msec);
 			STHREAD_ExecThreads(msec);
 		}
@@ -244,7 +244,7 @@ void SagaEngine::go() {
 
 void SagaEngine::shutdown() {
 	SCENE_Shutdown();
-	ACTOR_Shutdown();
+	delete _actor;
 	delete _script;
 	SPRITE_Shutdown();
 	FONT_Shutdown();
