@@ -373,12 +373,23 @@ void Actor::setupActorScale()
 		scale = resptr[theY];
 	}
 
+	// FIXME - Quick fix to ft's fuel tower bug (by yazoo)
+	//
+	// Ben's Y position can be anything between 272 and 398 inclusive
+	// (which by the way means that we're always looking at the same
+	// element in the scale table... hmmm...)
+	//
+	// When standing at the bottom of the ladder, Ben's Y position is
+	// 356, and by the looks of it he ought to be unscaled there.
+
+	if (scale == 1 && _vm->_currentRoom == 76) {
+		scale = 0xff;
+		if (y < 356)
+			scale -= 2 * (356 - y);
+	}
+
 	if (scale > 255)
 		warning("Actor %d at %d, scale %d out of range", number, y, scale);
-
-	// FIXME - Quick fix to ft's fuel tower bug (by yazoo)
-	if (scale == 1 && _vm->_currentRoom == 76)
-		scale = 0xFF;
 
 	scalex = (byte)scale;
 	scaley = (byte)scale;
