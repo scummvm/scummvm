@@ -1040,12 +1040,10 @@ bool ScummEngine::isRoomScriptRunning(int script) const {
 void ScummEngine::copyScriptString(byte *dst, bool override) {
 	int len, i = 0;
 	if (_heversion >= 72 && (pop() == -1 || override)) {
-		printf("part one\n");
 		len = resStrLen(_stringBuffer) + 1;
 		while (len--)
 			*dst++ = _stringBuffer[i++];
 	} else {
-		printf("part two\n");
 		len = resStrLen(_scriptPointer) + 1;
 		while (len--)
 			*dst++ = fetchScriptByte();
