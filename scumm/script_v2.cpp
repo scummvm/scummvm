@@ -495,11 +495,10 @@ void Scumm_v2::o2_getObjY() {
 }
 
 void Scumm_v2::o2_setBitVar() {
-	byte lo = fetchScriptByte();
-	byte hi = fetchScriptByte();
+	byte var = fetchScriptWord();
 	byte a = getVarOrDirectByte(0x80);
 
-	int bit_var = (hi << 8) + lo + a;
+	int bit_var = var + a;
 	int bit_offset = bit_var & 0x0f;
 	bit_var >>= 4;
 
@@ -511,11 +510,10 @@ void Scumm_v2::o2_setBitVar() {
 
 void Scumm_v2::o2_getBitVar() {
 	getResultPos();
-	byte lo = fetchScriptByte();
-	byte hi = fetchScriptByte();
+	byte var = fetchScriptWord();
 	byte a = getVarOrDirectByte(0x80);
 
-	int bit_var = (hi << 8) + lo + a;
+	int bit_var = var + a;
 	int bit_offset = bit_var & 0x0f;
 	bit_var >>= 4;
 
