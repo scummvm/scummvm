@@ -796,6 +796,16 @@ void Talk::defaultAnimation(
 		int bankNum) {
 	// lines 1730-1823 in talk.c
 
+#if 0
+	debug(0, "Talk::defaultAnimation(\"%s\", %s, {\"%s\", %i, ...}, %i, %i)",
+			segment, 
+			isJoe ? "true" : "false",
+			parameters->name,
+			parameters->state,
+			startFrame,
+			bankNum);
+#endif
+
 	if (segment[0] != 0)  {
 
 		int bf;
@@ -849,7 +859,7 @@ void Talk::defaultAnimation(
 					}
 				}
 				else {
-					debug(0, "Body action!");
+					debug(0, "[Talk::defaultAnimation] Body action!");
 					// Just do a body action
 					_graphics->bankOverpack(parameters->body, startFrame, bankNum);
 				}
@@ -983,6 +993,7 @@ void Talk::speakSegment(
 
 	if (_talkHead && isJoe) {
 		_graphics->bobSetText(bob, segment, textX, textY, color, (_talkHead == true));
+		// XXX  hey, parameters will be NULL here!
 		defaultAnimation(segment, isJoe, parameters, startFrame, bankNum);
 	}
 	else {
@@ -1272,7 +1283,7 @@ int16 Talk::selectSentence() {
 				int j;
 				for (j = 0; j < optionLines; j++) {
 					if (yOffset < 5) {
-						debug(0, "Draw text '%s'", optionText[j]);
+						//debug(0, "Draw text '%s'", optionText[j]);
 						_graphics->textSet(
 								(j == 0) ? 0 : 24, 
 								150 - PUSHUP + yOffset * LINE_HEIGHT, 
@@ -1318,8 +1329,8 @@ int16 Talk::selectSentence() {
 						// Changed zone, change text colors
 						int y;
 
-						debug(0, "Changed zone. oldZone = %i, zone = %i",
-								oldZone, zone);
+						/*debug(0, "Changed zone. oldZone = %i, zone = %i",
+								oldZone, zone);*/
 
 						if (zone > 0) {
 							for (y = _logic->zoneBox(ZONE_PANEL, zone).y1; y < _logic->zoneBox(ZONE_PANEL, zone).y2; y += 10)
