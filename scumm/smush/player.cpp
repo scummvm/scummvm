@@ -386,17 +386,19 @@ void SmushPlayer::handleImuseAction8(Chunk & b, int32 flags, int32 unknown, int3
 						*(byte*)(_IACToutput + 1) = *(byte*)d_src++;
 						_IACTrest = 2;
 						bsize--;
+						continue;
 					}
 					bsize = 0;
 					*(byte*)(_IACToutput + 0) = *(byte*)d_src;
 					_IACTrest = 1;
+					continue;
 				} else if (_IACTrest == 0) {
 					*(byte*)(_IACToutput + 0) = *(byte*)d_src++;
 					bsize--;
-					*(byte*)(_IACToutput + 1) = *(byte*)d_src++;
-					_IACTrest = 2;
-					bsize--;
 				}
+				*(byte*)(_IACToutput + 1) = *(byte*)d_src++;
+				_IACTrest = 2;
+				bsize--;
 			}	
 		} while (bsize != 0);
 	
