@@ -193,8 +193,16 @@ void IMuseDigital::callback() {
 void IMuseDigital::switchToNextRegion(int track) {
 	int num_regions = _sound->getNumRegions(_track[track].soundHandle);
 	int num_jumps = _sound->getNumJumps(_track[track].soundHandle);
-	if ((_vm->_gameId == GID_FT) && (num_jumps != 0)) {
-		_track[track].regionOffset = 0;
+	if (_vm->_gameId == GID_FT) {
+		if (_track[track].curRegion == -1) {
+			_track[track].curRegion = 0;
+			_track[track].regionOffset = 0;
+			return;
+		}
+		if (num_jumps != 0)
+			_track[track].regionOffset = 0;
+		else
+			_track[track].toBeRemoved = true;
 		return;
 	}
 
@@ -508,19 +516,15 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 				}
 			}
 		} else if (_vm->_gameId == GID_FT) {
-			for (l = 0;; l++) {
-				if (_ftStateMusicTable[l].index == -1) {
-					return;
-				}
-				if (_ftStateMusicTable[l].index == b) {
-					debug(5, "Play imuse music: %s, %s", _ftStateMusicTable[l].name, _ftStateMusicTable[l].audioname);
-					if (_ftStateMusicTable[l].audioname[0] != 0) {
-						for (r = 0; r < _vm->_numAudioNames; r++) {
-							if (strcmp(_ftStateMusicTable[l].audioname, &_vm->_audioNames[r * 9]) == 0) {
-								startMusic(r);
-								parseScriptCmds(12, r, 0x600, _ftStateMusicTable[l].volume, 0, 0, 0, 0);
-							}
-						}
+			if (b > 48)
+				return;
+			b--;
+			debug(5, "Play imuse music: %s, %s", _ftStateMusicTable[b].name, _ftStateMusicTable[b].audioname);
+			if (_ftStateMusicTable[b].audioname[0] != 0) {
+				for (r = 0; r < _vm->_numAudioNames; r++) {
+					if (strcmp(_ftStateMusicTable[b].audioname, &_vm->_audioNames[r * 9]) == 0) {
+						startMusic(r);
+						parseScriptCmds(12, r, 0x600, _ftStateMusicTable[b].volume, 0, 0, 0, 0);
 					}
 				}
 			}
@@ -549,16 +553,15 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 				}
 			}
 		} else if (_vm->_gameId == GID_FT) {
-			for (l = 0; _ftSeqMusicTable[l].index != -1; l++) {
-				if (_ftSeqMusicTable[l].index == b) {
-					debug(5, "Play imuse music: %s, %s", _ftSeqMusicTable[l].name, _ftSeqMusicTable[l].audioname);
-					if (_ftSeqMusicTable[l].audioname[0] != 0) {
-						for (r = 0; r < _vm->_numAudioNames; r++) {
-							if (strcmp(_ftSeqMusicTable[l].audioname, &_vm->_audioNames[r * 9]) == 0) {
-//								startMusic(r);
-//								parseScriptCmds(12, r, 0x600, _ftSeqMusicTable[l].volume, 0, 0, 0, 0);
-							}
-						}
+			if (b > 53)
+				return;
+			b--;
+			debug(5, "Play imuse sequence: %s, %s", _ftSeqMusicTable[b * 4].name, _ftSeqMusicTable[b * 4].audioname);
+			if (_ftSeqMusicTable[b * 4].audioname[0] != 0) {
+				for (r = 0; r < _vm->_numAudioNames; r++) {
+					if (strcmp(_ftStateMusicTable[b * 4].audioname, &_vm->_audioNames[r * 9]) == 0) {
+						startMusic(r);
+						parseScriptCmds(12, r, 0x600, _ftStateMusicTable[b * 4].volume, 0, 0, 0, 0);
 					}
 				}
 			}

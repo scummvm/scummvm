@@ -137,10 +137,9 @@ struct imuse_music_map {
 };
 
 struct imuse_ft_music_table {
-	int index;
 	char audioname[15];
-	int unk1;
-	int volume;
+	int8 opcode;
+	int8 volume;
 	char name[30];
 };
 
