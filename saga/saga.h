@@ -102,6 +102,7 @@ private:
 	int decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);
 	int flipImage(byte *img_buf, int columns, int scanlines);
 	int unbankBGImage(byte *dest_buf, const byte *src_buf, int columns, int scanlines);
+	uint32 _previousTicks;
 
 public:
 	int decodeBGImage(const byte *image_data, size_t image_size,

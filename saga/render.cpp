@@ -25,7 +25,6 @@
 #include "saga.h"
 
 #include "gfx.h"
-#include "timer.h"
 #include "actor_mod.h"
 #include "console_mod.h"
 #include "cvar_mod.h"
@@ -40,6 +39,7 @@
 #include "objectmap_mod.h"
 
 #include "render.h"
+#include <common/timer.h>
 
 namespace Saga {
 

@@ -36,7 +36,6 @@ MODULE_OBJS = \
 	saga/transitions.o \
 	saga/ys_dl_list.o \
 	saga/input.o \
-	saga/timer.o \
 	saga/music.o \
 	saga/sound.o
 

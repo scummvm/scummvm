@@ -32,7 +32,6 @@
 
 #include "saga.h"
 
-#include "timer.h"
 #include "gfx.h"
 #include "rscfile_mod.h"
 #include "render.h"
@@ -170,10 +169,7 @@ void SagaEngine::go() {
 
 	// System initialization
 
-	// Must initialize system timer module first
-	if (SYSTIMER_InitMSCounter() != R_SUCCESS) {
-		return;
-	}
+	_previousTicks = _system->get_msecs();
 
 	// On some platforms, graphics initialization also initializes sound
 	// ( Win32 DirectX )... Music must be initialized before sound for 
@@ -212,18 +208,26 @@ void SagaEngine::go() {
 	_anim->reg();
 	_actionMap->reg();
 
-	SYSTIMER_ResetMSCounter();
+	_previousTicks = _system->get_msecs();
 
 	// Begin Main Engine Loop
 
 	SCENE_Start();
+	uint32 currentTicks;
 
 	for (;;) {
 		if (_render->getFlags() & RF_RENDERPAUSE) {
 			// Freeze time while paused
-			SYSTIMER_ResetMSCounter();
+			_previousTicks = _system->get_msecs();
 		} else {
-			msec = SYSTIMER_ReadMSCounter();
+			currentTicks = _system->get_msecs();
+			// Timer has rolled over after 49 days
+			if (currentTicks < _previousTicks)
+				msec = 0;
+			else {
+				msec = currentTicks - _previousTicks;
+				_previousTicks = currentTicks;
+			}
 			if (msec > R_MAX_TIME_DELTA) {
 				msec = R_MAX_TIME_DELTA;
 			}
@@ -233,7 +237,7 @@ void SagaEngine::go() {
 		}
 		// Per frame processing
 		_render->drawScene();
-		SYSTIMER_Sleep(0);
+		_system->delay_msecs(0);
 	}
 }
 
