@@ -1643,8 +1643,6 @@ void Actor::remapActorPaletteColor(int color, int new_color) {
 			return;
 		}
 	}
-
-	warning("Color %d not found in actor %d", color, number);
 }
 
 void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold) {

@@ -1921,12 +1921,13 @@ void ScummEngine_v6::o6_actorOps() {
 			a->drawActorCostume();
 			a->needRedraw = false;
 
-			if (a->top < top_actor) {
-				a->bottom = top_actor;
-			}
-			if (a->bottom > bottom_actor) {
+			if (a->top > top_actor)
+				a->top = top_actor;
+			if (a->bottom < bottom_actor)
 				a->bottom = bottom_actor;
-			}
+
+			//FIXME Trigger redraw
+			a->bottom = top_actor;
 		}
 		break;
 	case 227:		// SO_ACTOR_DEPTH
@@ -3191,11 +3192,9 @@ void ScummEngine_v6::o6_writeFile() {
 
 // Humongous Entertainment games only
 void ScummEngine_v6::o6_findAllObjects() {
-	// FIXME verifty correctness of this opcode
 	int a = pop();
 	int i = 1;
 
-	warning("stub o6_findAllObjects(%d)", a);
 	if (a != _currentRoom)
 		warning("o6_findAllObjects: current room is not %d", a);
 	writeVar(0, 0);
