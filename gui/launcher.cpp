@@ -97,7 +97,8 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 		v++;
 	}
 
-	_list->setList(l);
+	if (l.size() > 0) 
+		_list->setList(l);
 	// TODO - make a default selection (maybe the game user played last?)
 	//_list->setSelected(0);
 
