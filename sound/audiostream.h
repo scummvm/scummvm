@@ -113,6 +113,31 @@ public:
 	int getRate() const { return -1; }
 };
 
+class CustomProcInputStream : public AudioStream {
+public:
+	typedef int (*CustomInputProc)(void *refCon, CustomProcInputStream *stream, byte *data, uint len);
+
+private:
+	bool _isStereo;
+	bool _is16Bit;
+	bool _isUnsigned;
+	int _rate;
+	CustomInputProc _proc;
+	CustomProcInputStream *_refStream;
+	void *_refCon;
+	bool _finished;
+
+public:
+
+	CustomProcInputStream(int rate, byte flags, CustomInputProc proc, void *refCon);
+
+	int readBuffer(int16 *buffer, const int numSamples);
+	bool isStereo() const { return _isStereo; }
+	bool endOfData() const { return _finished; }
+	void finish() { _finished = true; }
+	int getRate() const { return _rate; }
+};
+
 AudioStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen);
 AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags, uint32 len);
 

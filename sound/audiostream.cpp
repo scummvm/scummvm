@@ -336,6 +336,34 @@ public:
 };
 #endif
 
+CustomProcInputStream::CustomProcInputStream(int rate, byte flags, CustomInputProc proc, void *refCon) {
+	_refCon = refCon;
+	_refStream = this;
+	_rate = rate;
+	_proc = proc;
+	_finished = false;
+	_isStereo   = (flags & SoundMixer::FLAG_STEREO) != 0;
+	_is16Bit    = (flags & SoundMixer::FLAG_16BITS) != 0;
+	_isUnsigned = (flags & SoundMixer::FLAG_UNSIGNED) != 0;
+	assert(!(flags & SoundMixer::FLAG_LITTLE_ENDIAN));
+	assert(!(flags & SoundMixer::FLAG_AUTOFREE));
+}
+
+int CustomProcInputStream::readBuffer(int16 *buffer, const int numSamples) {
+	int numBytes = numSamples;
+	numBytes *= (_is16Bit ? 2 : 1);
+	byte *tmpBuffer = (byte *)malloc(numBytes);
+	int gotSamples = (_proc)(_refCon, _refStream, tmpBuffer, numBytes) / (_is16Bit ? 2 : 1);
+
+	const byte *ptr = tmpBuffer;
+	for (int samples = 0; samples < gotSamples; samples++) {
+		*buffer++ = READSAMPLE(_is16Bit, _isUnsigned, ptr);
+		ptr += (_is16Bit ? 2 : 1);
+	}
+
+	free(tmpBuffer);
+	return gotSamples;
+}
 
 #pragma mark -
 #pragma mark --- Input stream factories ---
