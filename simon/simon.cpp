@@ -2883,9 +2883,10 @@ void SimonState::o_pathfind(int x, int y, uint var_1, uint var_2)
 	uint x_diff, y_diff;
 	uint best_i = 0, best_j = 0, best_dist = 0xFFFFFFFF;
 
-	if (_game & GAME_SIMON2) {
-		x += _x_scroll * 8;
-	}
+/* Causes movement problems in Simon 2 games, often unable to move left */
+//	if (_game & GAME_SIMON2) {
+//		x += _x_scroll * 8;
+//	}
 
 	prev_i = 21 - _variableArray[12];
 	for (i = 20; i != 0; --i) {
@@ -4812,7 +4813,7 @@ void SimonState::playVoice(uint voice)
 
 		_mixer->playRaw(&_voice_sound, buffer, data[1], READ_LE_UINT32(&wave_hdr.samples_per_sec),
 										 SoundMixer::FLAG_UNSIGNED);
-	} else if (_voice_type == FORMAT_WAV) {      /* VOC audio */
+	} else if (_voice_type == FORMAT_VOC) {      /* VOC audio */
 		VocHeader voc_hdr;
 		VocBlockHeader voc_block_hdr;
 		uint32 size;
