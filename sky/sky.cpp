@@ -21,6 +21,8 @@
 
 #include "stdafx.h"
 
+#include "backends/fs/fs.h"
+
 #include "base/gameDetector.h"
 #include "base/plugins.h"
 
@@ -82,15 +84,36 @@ static const GameSettings sky_settings[] = {
 	{NULL, NULL, 0, 0, MDT_NONE, 0, NULL}
 };
 
-const GameSettings *Engine_SKY_targetList() {
-	return sky_settings;
+GameList Engine_SKY_gameList() {
+	const GameSettings *g = sky_settings;
+	GameList games;
+	while (g->gameName)
+		games.push_back(*g++);
+	return games;
+}
+
+GameList Engine_SKY_detectGames(const FSList &fslist) {
+	GameList detectedGames;
+	const GameSettings *g = &sky_settings[0];
+
+	// Iterate over all files in the given directory
+	for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
+		const char *gameName = file->displayName().c_str();
+
+		if (0 == scumm_stricmp(g->detectname, gameName)) {
+			// Match found, add to list of candidates, then abort inner loop.
+			detectedGames.push_back(*g);
+			break;
+		}
+	}
+	return detectedGames;
 }
 
 Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst) {
 	return new SkyEngine(detector, syst);
 }
 
-REGISTER_PLUGIN("Beneath a Steel Sky", Engine_SKY_targetList, Engine_SKY_create);
+REGISTER_PLUGIN("Beneath a Steel Sky", Engine_SKY_gameList, Engine_SKY_create, Engine_SKY_detectGames);
 
 void **SkyEngine::_itemList[300];
 

@@ -20,17 +20,17 @@
  */
 
 #include "stdafx.h"
-#include "queen/queen.h"
-#include "queen/cutaway.h"
-#include "queen/talk.h"
-#include "queen/walk.h"
-#include "queen/graphics.h"
-#include "common/config-manager.h"
-#include "common/file.h"
+#include "backends/fs/fs.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
+#include "common/config-manager.h"
+#include "common/file.h"
+#include "queen/cutaway.h"
 #include "queen/display.h"
 #include "queen/graphics.h"
+#include "queen/queen.h"
+#include "queen/talk.h"
+#include "queen/walk.h"
 
 extern uint16 _debugLevel;
 
@@ -47,15 +47,36 @@ static const GameSettings queen_settings[] = {
 	{ NULL, NULL, 0, 0, MDT_NONE, 0, NULL} 
 };
 
-const GameSettings *Engine_QUEEN_targetList() {
-	return queen_settings;
+GameList Engine_QUEEN_gameList() {
+	const GameSettings *g = queen_settings;
+	GameList games;
+	while (g->gameName)
+		games.push_back(*g++);
+	return games;
+}
+
+GameList Engine_QUEEN_detectGames(const FSList &fslist) {
+	GameList detectedGames;
+	const GameSettings *g = &queen_settings[0];
+
+	// Iterate over all files in the given directory
+	for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
+		const char *gameName = file->displayName().c_str();
+
+		if (0 == scumm_stricmp(g->detectname, gameName)) {
+			// Match found, add to list of candidates, then abort inner loop.
+			detectedGames.push_back(*g);
+			break;
+		}
+	}
+	return detectedGames;
 }
 
 Engine *Engine_QUEEN_create(GameDetector *detector, OSystem *syst) {
 	return new Queen::QueenEngine(detector, syst);
 }
 
-REGISTER_PLUGIN("Flight of the Amazon Queen", Engine_QUEEN_targetList, Engine_QUEEN_create);
+REGISTER_PLUGIN("Flight of the Amazon Queen", Engine_QUEEN_gameList, Engine_QUEEN_create, Engine_QUEEN_detectGames);
 
 namespace Queen {
 

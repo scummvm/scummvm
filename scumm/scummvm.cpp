@@ -22,6 +22,8 @@
 
 #include "stdafx.h"
 
+#include "backends/fs/fs.h"
+
 #include "base/gameDetector.h"
 #include "base/plugins.h"
 
@@ -2639,8 +2641,56 @@ const char *tag2str(uint32 tag) {
 
 using namespace Scumm;
 
-const GameSettings *Engine_SCUMM_targetList() {
-	return scumm_settings;
+GameList Engine_SCUMM_gameList() {
+	const GameSettings *g = scumm_settings;
+	GameList games;
+	while (g->gameName)
+		games.push_back(*g++);
+	return games;
+}
+
+GameList Engine_SCUMM_detectGames(const FSList &fslist) {
+	GameList detectedGames;
+	const GameSettings *g;
+	char detectName[128];
+	char detectName2[128];
+	char detectName3[128];
+
+	for (g = scumm_settings; g->gameName; ++g) {
+		// Determine the 'detectname' for this game, that is, the name of a 
+		// file that *must* be presented if the directory contains the data
+		// for this game. For example, FOA requires atlantis.000
+		if (g->detectname) {
+			strcpy(detectName, g->detectname);
+			strcpy(detectName2, g->detectname);
+			strcat(detectName2, ".");
+			detectName3[0] = '\0';
+		} else {
+			strcpy(detectName, g->gameName);
+			strcpy(detectName2, g->gameName);
+			strcpy(detectName3, g->gameName);
+			strcat(detectName, ".000");
+			if (g->version >= 7) {
+				strcat(detectName2, ".la0");
+			} else
+				strcat(detectName2, ".sm0");
+			strcat(detectName3, ".he0");
+		}
+
+		// Iterate over all files in the given directory
+		for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
+			const char *gameName = file->displayName().c_str();
+
+			if ((0 == scumm_stricmp(detectName, gameName))  || 
+				(0 == scumm_stricmp(detectName2, gameName)) ||
+				(0 == scumm_stricmp(detectName3, gameName))) {
+				// Match found, add to list of candidates, then abort inner loop.
+				detectedGames.push_back(*g);
+				break;
+			}
+		}
+	}
+	return detectedGames;
 }
 
 Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
@@ -2698,4 +2748,4 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	return engine;
 }
 
-REGISTER_PLUGIN("Scumm Engine", Engine_SCUMM_targetList, Engine_SCUMM_create);
+REGISTER_PLUGIN("Scumm Engine", Engine_SCUMM_gameList, Engine_SCUMM_create, Engine_SCUMM_detectGames);

@@ -68,13 +68,14 @@ public:
  * @todo	on Windows, we might need __declspec(dllexport) ?
  */
 #ifndef DYNAMIC_MODULES
-#define REGISTER_PLUGIN(name,targetListFactory,engineFactory)
+#define REGISTER_PLUGIN(name,gameListFactory,engineFactory,detectGames)
 #else
-#define REGISTER_PLUGIN(name,targetListFactory,engineFactory) \
+#define REGISTER_PLUGIN(name,gameListFactory,engineFactory,detectGames) \
 	extern "C" { \
 		const char *PLUGIN_name() { return name; } \
-		const GameSettings *PLUGIN_getTargetList() { return targetListFactory(); } \
+		GameList PLUGIN_getSupportedGames() { return gameListFactory(); } \
 		Engine *PLUGIN_createEngine(GameDetector *detector, OSystem *syst) { return engineFactory(detector, syst); } \
+		GameList PLUGIN_detectGames(const FSList &fslist) { return detectGames(fslist); }
 	}
 #endif
 
@@ -106,5 +107,39 @@ public:
 	
 	const PluginList &getPlugins()	{ return _plugins; }
 };
+
+
+#ifndef DYNAMIC_MODULES
+
+#define DECLARE_PLUGIN(name) \
+	extern GameList Engine_##name##_gameList(); \
+	extern Engine *Engine_##name##_create(GameDetector *detector, OSystem *syst); \
+	extern GameList Engine_##name##_detectGames(const FSList &fslist);
+
+// Factory functions => no need to include the specific classes
+// in this header. This serves two purposes:
+// 1) Clean seperation from the game modules (scumm, simon) and the generic code
+// 2) Faster (compiler doesn't have to parse lengthy header files)
+#ifndef DISABLE_SCUMM
+DECLARE_PLUGIN(SCUMM)
+#endif
+
+#ifndef DISABLE_SIMON
+DECLARE_PLUGIN(SIMON)
+#endif
+
+#ifndef DISABLE_SKY
+DECLARE_PLUGIN(SKY)
+#endif
+
+#ifndef DISABLE_SWORD2
+DECLARE_PLUGIN(SWORD2)
+#endif
+
+#ifndef DISABLE_QUEEN
+DECLARE_PLUGIN(QUEEN)
+#endif
+
+#endif
 
 #endif

@@ -18,6 +18,7 @@
  */
 
 #include "stdafx.h"
+#include "backends/fs/fs.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
 #include "common/config-manager.h"
@@ -56,15 +57,45 @@ static const GameSettings sword2_settings[] = {
 	{NULL, NULL, 0, 0, MDT_NONE, 0, NULL}
 };
 
-const GameSettings *Engine_SWORD2_targetList() {
-	return sword2_settings;
+GameList Engine_SWORD2_gameList() {
+	const GameSettings *g = sword2_settings;
+	GameList games;
+	while (g->gameName)
+		games.push_back(*g++);
+	return games;
+}
+
+GameList Engine_SWORD2_detectGames(const FSList &fslist) {
+	GameList detectedGames;
+	const GameSettings *g;
+	char detectName[128];
+	char detectName2[128];
+
+	for (g = sword2_settings; g->gameName; ++g) {
+		strcpy(detectName, g->detectname);
+		strcpy(detectName2, g->detectname);
+		strcat(detectName2, ".");
+
+		// Iterate over all files in the given directory
+		for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
+			const char *gameName = file->displayName().c_str();
+
+			if ((0 == scumm_stricmp(detectName, gameName))  || 
+				(0 == scumm_stricmp(detectName2, gameName))) {
+				// Match found, add to list of candidates, then abort inner loop.
+				detectedGames.push_back(*g);
+				break;
+			}
+		}
+	}
+	return detectedGames;
 }
 
 Engine *Engine_SWORD2_create(GameDetector *detector, OSystem *syst) {
 	return new Sword2::Sword2Engine(detector, syst);
 }
 
-REGISTER_PLUGIN("Broken Sword II", Engine_SWORD2_targetList, Engine_SWORD2_create);
+REGISTER_PLUGIN("Broken Sword II", Engine_SWORD2_gameList, Engine_SWORD2_create, Engine_SWORD2_detectGames);
 
 namespace Sword2 {
 

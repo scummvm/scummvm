@@ -29,6 +29,10 @@
 /** Type of factory functions which make new Engine objects. */
 typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
 
+typedef const char *(*NameFunc)();
+typedef GameList (*TargetListFunc)();
+typedef GameList (*DetectFunc)(const FSList &fslist);
+
 
 #ifdef DYNAMIC_MODULES
 
@@ -36,37 +40,6 @@ typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
 #include <dlfcn.h>
 #else
 #error No support for loading plugins on non-unix systems at this point!
-#endif
-
-#else
-
-// Factory functions => no need to include the specific classes
-// in this header. This serves two purposes:
-// 1) Clean seperation from the game modules (scumm, simon) and the generic code
-// 2) Faster (compiler doesn't have to parse lengthy header files)
-#ifndef DISABLE_SCUMM
-extern const GameSettings *Engine_SCUMM_targetList();
-extern Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst);
-#endif
-
-#ifndef DISABLE_SIMON
-extern Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst);
-extern const GameSettings *Engine_SIMON_targetList();
-#endif
-
-#ifndef DISABLE_SKY
-extern const GameSettings *Engine_SKY_targetList();
-extern Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst);
-#endif
-
-#ifndef DISABLE_SWORD2
-extern const GameSettings *Engine_SWORD2_targetList();
-extern Engine *Engine_SWORD2_create(GameDetector *detector, OSystem *syst);
-#endif
-
-#ifndef DISABLE_QUEEN
-extern const GameSettings *Engine_QUEEN_targetList();
-extern Engine *Engine_QUEEN_create(GameDetector *detector, OSystem *syst);
 #endif
 
 #endif
@@ -89,66 +62,21 @@ GameSettings Plugin::findGame(const char *gameName) const {
 	return result;
 }
 
+
+#pragma mark -
+
+
 /**
  * Auxillary class to simplify transition from old plugin interface to the
  * new one (which provides an API for game detection). To be removed once
  * the transition is complete.
  */
 class GameSettingsPlugin : public Plugin {
-	const GameSettings *_games;
+private:
+	GameList _games;
 public:
-	GameSettingsPlugin(const GameSettings *games) : _games(games) { }
-	GameList getSupportedGames() const {
-		GameList games;
-		const GameSettings *g;
-		for (g = _games; g->gameName; ++g) {
-			games.push_back(*g);
-		}
-		return games;
-	}
-	GameList detectGames(const FSList &fslist) const {
-		GameList games;
-		const GameSettings *g;
-		char detectName[128];
-		char detectName2[128];
-		char detectName3[128];
-	
-		for (g = _games; g->gameName; ++g) {
-			// Determine the 'detectname' for this game, that is, the name of a 
-			// file that *must* be presented if the directory contains the data
-			// for this game. For example, FOA requires atlantis.000
-			if (g->detectname) {
-				strcpy(detectName, g->detectname);
-				strcpy(detectName2, g->detectname);
-				strcat(detectName2, ".");
-				detectName3[0] = '\0';
-			} else {
-				strcpy(detectName, g->gameName);
-				strcpy(detectName2, g->gameName);
-				strcpy(detectName3, g->gameName);
-				strcat(detectName, ".000");
-				if (g->version >= 7) {
-					strcat(detectName2, ".la0");
-				} else
-					strcat(detectName2, ".sm0");
-				strcat(detectName3, ".he0");
-			}
-	
-			// Iterate over all files in the given directory
-			for (FSList::ConstIterator file = fslist.begin(); file != fslist.end(); ++file) {
-				const char *gameName = file->displayName().c_str();
-	
-				if ((0 == scumm_stricmp(detectName, gameName))  || 
-					(0 == scumm_stricmp(detectName2, gameName)) ||
-					(0 == scumm_stricmp(detectName3, gameName))) {
-					// Match found, add to list of candidates, then abort inner loop.
-					games.push_back(*g);
-					break;
-				}
-			}
-		}
-		return games;
-	}
+	GameSettingsPlugin(GameList games) : _games(games) { }
+	GameList getSupportedGames() const { return _games; }
 };
 
 #pragma mark -
@@ -157,15 +85,20 @@ public:
 class StaticPlugin : public GameSettingsPlugin {
 	const char *_name;
 	EngineFactory _ef;
+	DetectFunc _df;
 public:
-	StaticPlugin(const char *name, const GameSettings *games, EngineFactory ef)
-		: GameSettingsPlugin(games), _name(name), _ef(ef) {
+	StaticPlugin(const char *name, GameList games, EngineFactory ef, DetectFunc df)
+		: GameSettingsPlugin(games), _name(name), _ef(ef), _df(df) {
 	}
 
 	const char *getName() const					{ return _name; }
 
 	Engine *createInstance(GameDetector *detector, OSystem *syst) const {
 		return (*_ef)(detector, syst);
+	}
+
+	GameList detectGames(const FSList &fslist) const {
+		return (*_df)(fslist);
 	}
 };
 
@@ -181,18 +114,24 @@ class DynamicPlugin : public GameSettingsPlugin {
 
 	Common::String _name;
 	EngineFactory _ef;
+	DetectFunc _df;
 	
 	void *findSymbol(const char *symbol);
 
 public:
 	DynamicPlugin(const char *filename)
-		: GameSettingsPlugin(0), _dlHandle(0), _filename(filename), _ef(0) {}
+		: GameSettingsPlugin(0), _dlHandle(0), _filename(filename), _ef(0), _df(0) {}
 	
 	const char *getName() const					{ return _name.c_str(); }
 
 	Engine *createInstance(GameDetector *detector, OSystem *syst) const {
 		assert(_ef);
 		return (*_ef)(detector, syst);
+	}
+
+	GameList detectGames(const FSList &fslist) const {
+		assert(_df);
+		return (*_df)(fslist);
 	}
 
 	bool loadPlugin();
@@ -217,9 +156,6 @@ void *DynamicPlugin::findSymbol(const char *symbol) {
 #endif
 }
 
-typedef const char *(*NameFunc)();
-typedef const GameSettings *(*TargetListFunc)();
-
 bool DynamicPlugin::loadPlugin() {
 	assert(!_dlHandle);
 	_dlHandle = dlopen(_filename.c_str(), RTLD_LAZY);
@@ -238,20 +174,27 @@ bool DynamicPlugin::loadPlugin() {
 	_name = nameFunc();
 	
 	// Query the plugin for the targets it supports
-	TargetListFunc targetListFunc = (TargetListFunc)findSymbol("PLUGIN_getTargetList");
-	if (!targetListFunc) {
+	TargetListFunc gameListFunc = (TargetListFunc)findSymbol("PLUGIN_getSupportedGames");
+	if (!gameListFunc) {
 		unloadPlugin();
 		return false;
 	}
-	_games = targetListFunc();
+	_games = gameListFunc();
 	
-	// Finally, retrieve the factory function
+	// Retrieve the factory function
 	_ef = (EngineFactory)findSymbol("PLUGIN_createEngine");
 	if (!_ef) {
 		unloadPlugin();
 		return false;
 	}
 	
+	// Retrieve the detector function
+	_df = (DetectFunc)findSymbol("PLUGIN_detectGames");
+	if (!_df) {
+		unloadPlugin();
+		return false;
+	}
+
 	return true;
 }
 
@@ -276,29 +219,7 @@ PluginManager::~PluginManager() {
 }
 
 void PluginManager::loadPlugins() {
-#ifndef DYNAMIC_MODULES
-	// "Load" the static plugins
-	#ifndef DISABLE_SCUMM
-		tryLoadPlugin(new StaticPlugin("scumm", Engine_SCUMM_targetList(), Engine_SCUMM_create));
-	#endif
-	
-	#ifndef DISABLE_SIMON
-		tryLoadPlugin(new StaticPlugin("simon", Engine_SIMON_targetList(), Engine_SIMON_create));
-	#endif
-	
-	#ifndef DISABLE_SKY
-		tryLoadPlugin(new StaticPlugin("sky", Engine_SKY_targetList(), Engine_SKY_create));
-	#endif
-	
-	#ifndef DISABLE_SWORD2
-		tryLoadPlugin(new StaticPlugin("sword2", Engine_SWORD2_targetList(), Engine_SWORD2_create));
-	#endif
-	
-	#ifndef DISABLE_QUEEN
-		tryLoadPlugin(new StaticPlugin("queen", Engine_QUEEN_targetList(), Engine_QUEEN_create));
-	#endif
-		
-#else
+#ifdef DYNAMIC_MODULES
 	// Load dynamic plugins
 	// TODO... this is right now just a nasty hack. 
 	// This should search one or multiple directories for all plugins it can
@@ -313,26 +234,35 @@ void PluginManager::loadPlugins() {
 	// Hence one more symbol should be exported by plugins which returns
 	// the "ABI" version the plugin was built for, and we can compare that
 	// to the ABI version of the executable.
-	#ifndef DISABLE_SCUMM
-		tryLoadPlugin(new DynamicPlugin("scumm/libscumm.so"));
-	#endif
-	
-	#ifndef DISABLE_SIMON
-		tryLoadPlugin(new DynamicPlugin("simon/libsimon.so"));
-	#endif
-	
-	#ifndef DISABLE_SKY
-		tryLoadPlugin(new DynamicPlugin("sky/libsky.so"));
-	#endif
-	
-	#ifndef DISABLE_SWORD2
-		tryLoadPlugin(new DynamicPlugin("bs2/libbs2.so"));
-	#endif
+	#define LOAD_MODULE(name, NAME)
+		tryLoadPlugin(new DynamicPlugin("scumm/lib" name ".so"));
+#else
+	// "Loader" for the static plugins
+	#define LOAD_MODULE(name, NAME) \
+		tryLoadPlugin(new StaticPlugin(name, Engine_##NAME##_gameList(), Engine_##NAME##_create, Engine_##NAME##_detectGames));
+#endif
 
-	#ifndef DISABLE_QUEEN
-		tryLoadPlugin(new DynamicPlugin("queen/libqueen.so"));
-	#endif
-		
+	// Load all plugins.
+	// Right now the list is hardcoded. On the long run, of course it should
+	// automatically be determined.
+#ifndef DISABLE_SCUMM
+	LOAD_MODULE("scumm", SCUMM);
+#endif
+
+#ifndef DISABLE_SIMON
+	LOAD_MODULE("simon", SIMON);
+#endif
+
+#ifndef DISABLE_SKY
+	LOAD_MODULE("sky", SKY);
+#endif
+
+#ifndef DISABLE_SWORD2
+	LOAD_MODULE("sword2", SWORD2);
+#endif
+
+#ifndef DISABLE_QUEEN
+	LOAD_MODULE("queen", QUEEN);
 #endif
 }
 

@@ -8,12 +8,6 @@ General
   received). This is useful if multiple levels of event loops have to be ended
 * Fix the Map<> template, make it more robust; maybe use a red-black tree?
 * Allow for return-to-launcher instead of a normal "quit" ?
-* Improve the argv (command line args) parser
-* Extend the Plugin API to provide for "game detection": instead of the
-  GameSettings::detectname "hack" to detect files, provide a callback
-  in each Plugin which given a FSList returns a list of candidate targets.
-  This way, a plugin can implement tests more elaborate than filename
-  checking, e.g. it could actually peek into the files.
 * Make some generic "EventLoop" API/class which all backends and the GUI
   use. Initially this would just call the backend poll_event() etc. methods.
   But eventually the EventLoop object(s) could be made by the backend.
