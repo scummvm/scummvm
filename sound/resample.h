@@ -31,6 +31,7 @@
 // From resample's stddef.h
 typedef int16	HWORD;
 typedef uint16	UHWORD;
+typedef int32	WORD;
 typedef uint32	UWORD;
 
 #define MAX_HWORD (32767)
