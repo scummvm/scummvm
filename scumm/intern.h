@@ -342,6 +342,30 @@ protected:
 		const char *desc;
 	};
 	
+	enum ArrayType {
+		kBitArray = 1,
+		kNibbleArray = 2,
+		kByteArray = 3,
+		kStringArray = 4,
+		kIntArray = 5,
+		kDwordArray = 6
+	};
+	
+	#if !defined(__GNUC__)
+		#pragma START_PACK_STRUCTS
+	#endif	
+	
+	struct ArrayHeader {
+		int16 dim1;
+		int16 type;
+		int16 dim2;
+		byte data[1];
+	} GCC_PACK;
+	
+	#if !defined(__GNUC__)
+		#pragma END_PACK_STRUCTS
+	#endif
+
 	const OpcodeEntryV6 *_opcodesV6;
 
 	int _smushFrameRate;

@@ -397,7 +397,7 @@ int ScummEngine_v6::popRoomAndObj(int *room) {
 	return obj;
 }
 
-ArrayHeader *ScummEngine_v6::defineArray(int array, int type, int dim2, int dim1) {
+ScummEngine_v6::ArrayHeader *ScummEngine_v6::defineArray(int array, int type, int dim2, int dim1) {
 	if (_heversion >= 72)
 		error("Call to old defineArray");
 
@@ -487,7 +487,7 @@ int ScummEngine_v6::findFreeArrayId() {
 
 #define SWAP16(x)  x = SWAP_BYTES_16(x)
 
-ArrayHeader *ScummEngine_v6::getArray(int array) {
+ScummEngine_v6::ArrayHeader *ScummEngine_v6::getArray(int array) {
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 	if (!ah)
 		return 0;
