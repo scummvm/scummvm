@@ -118,12 +118,6 @@ public:
 	/** Check whether any SFX channel is active.*/
 	bool hasActiveSFXChannel();
 	
-	/** Check whether the specified channel is active. */
-	bool isChannelActive(int index);
-
-	/** Check whether the specified channel is in use. */
-	bool isChannelUsed(int index);
-
 	/** bind to the OSystem object => mixer will be
 	 * invoked automatically when samples need
 	 * to be generated */

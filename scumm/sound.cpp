@@ -46,7 +46,7 @@ enum {
 class DigitalTrackInfo {
 public:
 	virtual bool error() = 0;
-	virtual int play(SoundMixer *mixer, int startFrame, int duration) = 0;
+	virtual int play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration) = 0;
 	virtual ~DigitalTrackInfo() { }
 };
 
@@ -62,7 +62,7 @@ public:
 	MP3TrackInfo(File *file);
 	~MP3TrackInfo();
 	bool error() { return _error_flag; }
-	int play(SoundMixer *mixer, int startFrame, int duration);
+	int play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration);
 };
 #endif
 
@@ -77,7 +77,7 @@ public:
 	VorbisTrackInfo(File *file);
 	~VorbisTrackInfo();
 	bool error() { return _error_flag; }
-	int play(SoundMixer *mixer, int startFrame, int duration);
+	int play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration);
 };
 #endif
 
@@ -1653,12 +1653,11 @@ int Sound::playMP3CDTrack(int track, int numLoops, int startFrame, int duration)
 	if (index < 0)
 		return -1;
 
-	if (_dig_cd.playing)
-		_scumm->_mixer->stop(_dig_cd.index);
-	_dig_cd.index = _track_info[index]->play(_scumm->_mixer, startFrame, duration);
+	_scumm->_mixer->stopHandle(_dig_cd.handle);
+	_track_info[index]->play(_scumm->_mixer, &_dig_cd.handle, startFrame, duration);
 	_dig_cd.playing = true;
 	_dig_cd.track = track;
-	_dig_cd.num_loops = numLoops;
+	_dig_cd.numLoops = numLoops;
 	_dig_cd.start = startFrame;
 	_dig_cd.duration = duration;
 	return 0;
@@ -1666,10 +1665,10 @@ int Sound::playMP3CDTrack(int track, int numLoops, int startFrame, int duration)
 
 int Sound::stopMP3CD() {
 	if (_dig_cd.playing) {
-		_scumm->_mixer->stop(_dig_cd.index);
+		_scumm->_mixer->stopHandle(_dig_cd.handle);
 		_dig_cd.playing = false;
 		_dig_cd.track = 0;
-		_dig_cd.num_loops = 0;
+		_dig_cd.numLoops = 0;
 		_dig_cd.start = 0;
 		_dig_cd.duration = 0;
 		return 0;
@@ -1687,14 +1686,9 @@ int Sound::updateMP3CD() {
 	if (!_dig_cd.playing)
 		return -1;
 
-	if (!_scumm->_mixer->isChannelUsed(_dig_cd.index)) {
-		warning("Error in MP3 decoding");
-		return -1;
-	}
-
-	if (!_scumm->_mixer->isChannelActive(_dig_cd.index)) {
-		if (_dig_cd.num_loops == -1 || --_dig_cd.num_loops > 0)
-			playMP3CDTrack(_dig_cd.track, _dig_cd.num_loops, _dig_cd.start, _dig_cd.duration);
+	if (!_dig_cd.handle) {
+		if (_dig_cd.numLoops == -1 || --_dig_cd.numLoops > 0)
+			playMP3CDTrack(_dig_cd.track, _dig_cd.numLoops, _dig_cd.start, _dig_cd.duration);
 		else
 			stopMP3CD();
 	}
@@ -1774,7 +1768,7 @@ error:
 	delete file;
 }
 
-int MP3TrackInfo::play(SoundMixer *mixer, int startFrame, int duration) {
+int MP3TrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration) {
 	unsigned int offset;
 	mad_timer_t durationTime;
 
@@ -1793,7 +1787,7 @@ int MP3TrackInfo::play(SoundMixer *mixer, int startFrame, int duration) {
 	}
 
 	// Play it
-	return mixer->playMP3CDTrack(NULL, _file, durationTime);
+	return mixer->playMP3CDTrack(handle, _file, durationTime);
 }
 
 MP3TrackInfo::~MP3TrackInfo() {
@@ -1894,13 +1888,13 @@ VorbisTrackInfo::VorbisTrackInfo(File *file) {
 #define VORBIS_TREMOR
 #endif
 
-int VorbisTrackInfo::play(SoundMixer *mixer, int startFrame, int duration) {
+int VorbisTrackInfo::play(SoundMixer *mixer, PlayingSoundHandle *handle, int startFrame, int duration) {
 #ifdef VORBIS_TREMOR
 	ov_time_seek(&_ov_file, (ogg_int64_t)(startFrame / 75.0 * 1000));
 #else
 	ov_time_seek(&_ov_file, startFrame / 75.0);
 #endif
-	return mixer->playVorbis(NULL, &_ov_file,
+	return mixer->playVorbis(handle, &_ov_file,
 				 duration * ov_info(&_ov_file, -1)->rate / 75,
 				 true);
 }

@@ -59,7 +59,6 @@ public:
 				_mixer->_channels[i] = 0;
 		delete this;
 	}
-	virtual bool isActive();
 	virtual bool isMusicChannel() = 0;
 };
 
@@ -161,7 +160,6 @@ public:
 	~ChannelMP3CDMusic();
 
 	void mix(int16 *data, uint len);
-	bool isActive();
 	bool isMusicChannel() { return true; }
 };
 
@@ -175,7 +173,6 @@ class ChannelVorbis : public Channel {
 #else
 	OggVorbis_File *_ov_file;
 	int _end_pos;
-	bool _eof_flag;
 #endif
 	bool _is_cd_track;
 
@@ -184,7 +181,6 @@ public:
 	~ChannelVorbis();
 
 	void mix(int16 *data, uint len);
-	bool isActive();
 	bool isMusicChannel() {
 		return _is_cd_track;
 	}
@@ -409,18 +405,6 @@ bool SoundMixer::hasActiveSFXChannel() {
 		if (_channels[i] && !_channels[i]->isMusicChannel())
 			return true;
 	return false;
-}
-
-bool SoundMixer::isChannelActive(int index) {
-	StackLock lock(_mutex);
-	if (_channels[index])
-		return _channels[index]->isActive();
-	return false;
-}
-
-bool SoundMixer::isChannelUsed(int index) {
-	StackLock lock(_mutex);
-	return (_channels[index] != NULL);
 }
 
 void SoundMixer::setupPremix(void *param, PremixProc *proc) {
@@ -665,11 +649,6 @@ static int16 mixer_element_size[] = {
 	4, 4
 };
 #endif
-
-bool Channel::isActive() {
-	error("isActive should never be called on a non-MP3 mixer ");
-	return true;
-}
 
 /* RAW mixer */
 ChannelRaw::ChannelRaw(SoundMixer *mixer, PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id)
@@ -1035,11 +1014,6 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 
 	if (_input->eof()) {
 		// TODO: call drain method
-		
-		// TODO: we probably shouldn't call destroy() here, this interfers
-		// with the looping code in scumm/sound.cpp. But then that code
-		// should be rewritten anyway (which would probably allow us to 
-		// get rid of the isActive() method, too.
 		destroy();
 		return;
 	}
@@ -1121,6 +1095,11 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 		frame_duration = _frame.header.duration;
 		mad_timer_negate(&frame_duration);
 		mad_timer_add(&_duration, frame_duration);
+		
+		if (mad_timer_compare(_duration, mad_timer_zero) <= 0) {
+			destroy();
+			return;
+		}
 		if (mad_frame_decode(&_frame, &_stream) == -1) {
 			if (_stream.error == MAD_ERROR_BUFLEN) {
 				int not_decoded;
@@ -1152,14 +1131,6 @@ void ChannelMP3CDMusic::mix(int16 *data, uint len) {
 #endif
 }
 
-bool ChannelMP3CDMusic::isActive() {
-#ifdef BUGGY_NEW_MP3_PLAYER
-	return !_input->eof();
-#else
-	return mad_timer_compare(_duration, mad_timer_zero) > 0;
-#endif
-}
-
 #endif
 
 #ifdef USE_VORBIS
@@ -1182,8 +1153,6 @@ ChannelVorbis::ChannelVorbis(SoundMixer *mixer, PlayingSoundHandle *handle, OggV
 		_end_pos = ov_pcm_tell(ov_file) + duration;
 	else
 		_end_pos = 0;
-
-	_eof_flag = false;
 #endif
 	_is_cd_track = is_cd_track;
 }
@@ -1205,13 +1174,8 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 	assert(_input);
 	assert(_converter);
 
-	if (_input->eof() && !_is_cd_track) {
+	if (_input->eof()) {
 		// TODO: call drain method
-
-		// TODO: we probably shouldn't call destroy() here, this interfers
-		// with the looping code in scumm/sound.cpp. But then that code
-		// should be rewritten anyway (which would probably allow us to 
-		// get rid of the isActive() method, too.
 		destroy();
 		return;
 	}
@@ -1220,7 +1184,8 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 	uint tmpLen = len;
 	_converter->flow(*_input, data, &tmpLen, volume);
 #else
-	if (_eof_flag) {
+	if (_end_pos > 0 && ov_pcm_tell(_ov_file) >= _end_pos) {
+		destroy();
 		return;
 	}
 
@@ -1228,7 +1193,8 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 	uint len_left = len * channels * 2;
 	int16 *samples = new int16[len_left / 2];
 	char *read_pos = (char *) samples;
-	int volume = _is_cd_track ? _mixer->getMusicVolume() : _mixer->getVolume();
+	bool eof_flag = false;
+	int volume = isMusicChannel() ? _mixer->getMusicVolume() : _mixer->getVolume();
 
 	// Read the samples
 	while (len_left > 0) {
@@ -1243,19 +1209,17 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 #endif
 					  NULL);
 		if (result == 0) {
-			_eof_flag = true;
+			eof_flag = true;
 			memset(read_pos, 0, len_left);
-			len_left = 0;
+			break;
 		} else if (result == OV_HOLE) {
 			// Possibly recoverable, just warn about it
 			warning("Corrupted data in Vorbis file");
 		} else if (result < 0) {
 			debug(1, "Decode error %d in Vorbis file", result);
-			// Don't delete it yet, that causes problems in
-			// the CD player emulation code.
-			_eof_flag = true;
+			eof_flag = true;
 			memset(read_pos, 0, len_left);
-			len_left = 0;
+			break;
 		} else {
 			len_left -= result;
 			read_pos += result;
@@ -1264,25 +1228,17 @@ void ChannelVorbis::mix(int16 *data, uint len) {
 
 	// Mix the samples in
 	for (uint i = 0; i < len; i++) {
-		int16 sample = (int16) ((int32) samples[i * channels] * volume / 256);
+		int16 sample = (int16)(samples[i * channels] * volume / 256);
 		clamped_add_16(*data++, sample);
 		if (channels > 1)
-			sample = (int16) ((int32) samples[i * channels + 1] * volume / 256);
+			sample = (int16)(samples[i * channels + 1] * volume / 256);
 		clamped_add_16(*data++, sample);
 	}
 
 	delete [] samples;
 
-	if (_eof_flag && !_is_cd_track)
+	if (eof_flag)
 		destroy();
-#endif
-}
-
-bool ChannelVorbis::isActive() {
-#ifdef SOX_HACK
-	return !_input->eof();
-#else
-	return !_eof_flag && !(_end_pos > 0 && ov_pcm_tell(_ov_file) >= _end_pos);
 #endif
 }
 

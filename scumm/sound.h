@@ -87,11 +87,11 @@ protected:
 
 	int _cached_tracks[CACHE_TRACKS];
 	struct {
-		int index;
+		PlayingSoundHandle handle;
 		int track;
 		int start;
 		int duration;
-		int num_loops;
+		int numLoops;
 		bool playing;
 	} _dig_cd;
 
