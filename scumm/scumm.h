@@ -827,7 +827,7 @@ protected:
 	void clampCameraPos(Common::Point *pt);
 	void actorFollowCamera(int act);
 
-	const byte *getPalettePtr();
+	const byte *getPalettePtr(int palindex);
 	void setupAmigaPalette();
 	void setupEGAPalette();
 	void setupV1ManiacPalette();
@@ -842,7 +842,7 @@ protected:
 	void copyPalColor(int dst, int src);
 	void cyclePalette();
 	void stopCycle(int i);
-	void palManipulateInit(int start, int end, int string_id, int time);
+	virtual void palManipulateInit(int resID, int start, int end, int time);
 	void palManipulate();
 public:
 	int remapPaletteColor(int r, int g, int b, uint threshold);		// Used by Actor::remapActorPalette

@@ -1986,7 +1986,7 @@ void ScummEngine_v5::o5_roomOps() {
 		c = getVarOrDirectByte(PARAM_2);
 		_opcode = fetchScriptByte();
 		d = getVarOrDirectByte(PARAM_1);
-		palManipulateInit(b, c, a, d);
+		palManipulateInit(a, b, c, d);
 		break;
 
 	case 16:	// SO_CYCLE_SPEED

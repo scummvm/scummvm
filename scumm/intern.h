@@ -343,6 +343,8 @@ protected:
 
 	virtual void setupScummVars();
 
+	virtual void palManipulateInit(int resID, int start, int end, int time);
+
 	virtual void decodeParseString(int a, int b);
 
 	int getStackList(int *args, uint maxnum);

@@ -25,6 +25,7 @@
 #include "scumm/actor.h"
 #include "scumm/bomp.h"
 #include "scumm/charset.h"
+#include "scumm/intern.h"
 #include "scumm/resource.h"
 #include "scumm/usage_bits.h"
 
@@ -2870,23 +2871,23 @@ void ScummEngine::moveMemInPalRes(int start, int end, byte direction) {
 	doCyclePalette(_palManipIntermediatePal, start, end, 6, !direction);
 }
 
-void ScummEngine::palManipulateInit(int start, int end, int string_id, int time) {
+void ScummEngine::palManipulateInit(int resID, int start, int end, int time) {
 	byte *pal, *target, *between;
 	byte *string1, *string2, *string3;
 	int i;
 
-	string1 = getStringAddress(string_id);
-	string2 = getStringAddress(string_id + 1);
-	string3 = getStringAddress(string_id + 2);
+	string1 = getStringAddress(resID);
+	string2 = getStringAddress(resID + 1);
+	string3 = getStringAddress(resID + 2);
 	if (!string1 || !string2 || !string3) {
 		warning("palManipulateInit(%d,%d,%d,%d): Cannot obtain string resources %d, %d and %d",
-				start, end, string_id, time, string_id, string_id + 1, string_id + 2);
+				resID, start, end, time, resID, resID + 1, resID + 2);
 		return;
 	}
 
-	string1+=start;
-	string2+=start;
-	string3+=start;
+	string1 += start;
+	string2 += start;
+	string3 += start;
 
 	_palManipStart = start;
 	_palManipEnd = end;
@@ -2915,6 +2916,44 @@ void ScummEngine::palManipulateInit(int start, int end, int string_id, int time)
 
 	_palManipCounter = time;
 }
+
+void ScummEngine_v6::palManipulateInit(int resID, int start, int end, int time) {
+	byte *pal, *target, *between;
+	const byte *new_pal;
+	int i;
+
+	new_pal = getPalettePtr(resID);
+
+	new_pal += start*3;
+
+	_palManipStart = start;
+	_palManipEnd = end;
+	_palManipCounter = 0;
+
+	if (!_palManipPalette)
+		_palManipPalette = (byte *)calloc(0x300, 1);
+	if (!_palManipIntermediatePal)
+		_palManipIntermediatePal = (byte *)calloc(0x600, 1);
+
+	pal = _currentPalette + start * 3;
+	target = _palManipPalette + start * 3;
+	between = _palManipIntermediatePal + start * 6;
+
+	for (i = start; i < end; ++i) {
+		*target++ = *new_pal++;
+		*target++ = *new_pal++;
+		*target++ = *new_pal++;
+		*(uint16 *)between = ((uint16) *pal++) << 8;
+		between += 2;
+		*(uint16 *)between = ((uint16) *pal++) << 8;
+		between += 2;
+		*(uint16 *)between = ((uint16) *pal++) << 8;
+		between += 2;
+	}
+
+	_palManipCounter = time;
+}
+
 
 void ScummEngine::palManipulate() {
 	byte *target, *pal, *between;
@@ -2969,7 +3008,7 @@ void ScummEngine::setupShadowPalette(int slot, int redScale, int greenScale, int
 }
 
 void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
-	const byte *basepal = getPalettePtr();
+	const byte *basepal = getPalettePtr(_curPalIndex);
 	const byte *pal = basepal;
 	const byte *compareptr;
 	byte *table = _shadowPalette;
@@ -3054,7 +3093,7 @@ void ScummEngine::createSpecialPalette(int16 from, int16 to, int16 redScale, int
 
 	int i, j;
 
-	palPtr = getPalettePtr();
+	palPtr = getPalettePtr(_curPalIndex);
 
 	for (i = 0; i < 256; i++)
 		_proc_special_palette[i] = i;
@@ -3103,7 +3142,7 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 		int j;
 		int color;
 
-		cptr = getPalettePtr() + startColor * 3;
+		cptr = getPalettePtr(_curPalIndex) + startColor * 3;
 		cur = _currentPalette + startColor * 3;
 
 		for (j = startColor; j <= endColor; j++) {
@@ -3163,7 +3202,7 @@ void ScummEngine::desaturatePalette(int hueScale, int satScale, int lightScale, 
 		byte *cur;
 		int j;
 
-		cptr = getPalettePtr() + startColor * 3;
+		cptr = getPalettePtr(_curPalIndex) + startColor * 3;
 		cur = _currentPalette + startColor * 3;
 
 		for (j = startColor; j <= endColor; j++) {
@@ -3330,7 +3369,7 @@ void ScummEngine::setPalette(int palindex) {
 	const byte *pals;
 
 	_curPalIndex = palindex;
-	pals = getPalettePtr();
+	pals = getPalettePtr(_curPalIndex);
 	setPaletteFromPtr(pals);
 }
 
@@ -3354,7 +3393,7 @@ const byte *ScummEngine::findPalInPals(const byte *pal, int idx) {
 	return offs + READ_LE_UINT32(offs + idx * sizeof(uint32));
 }
 
-const byte *ScummEngine::getPalettePtr() {
+const byte *ScummEngine::getPalettePtr(int palindex) {
 	const byte *cptr;
 
 	cptr = getResourceAddress(rtRoom, _roomResource);
@@ -3362,7 +3401,7 @@ const byte *ScummEngine::getPalettePtr() {
 	if (_CLUT_offs) {
 		cptr += _CLUT_offs;
 	} else {
-		cptr = findPalInPals(cptr + _PALS_offs, _curPalIndex);
+		cptr = findPalInPals(cptr + _PALS_offs, palindex);
 	}
 	assert(cptr);
 	return cptr;
