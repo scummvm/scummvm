@@ -304,7 +304,6 @@ int32 Logic::fnDisplayMsg(int32 *params) {
 
 	_vm->displayMsg(_vm->fetchTextLine(_vm->_resman->openResource(text_res), local_text) + 2, 3);
 	_vm->_resman->closeResource(text_res);
-	_vm->removeMsg();
 
 	return IR_CONT;
 }

@@ -858,20 +858,6 @@ void ResourceManager::getCd(int cd) {
 	//
 	// CD1: "RBSII1" (or "PCF76" for the PCF76 version, whatever that is)
 	// CD2: "RBSII2"
-
-	while (1) {
-		MouseEvent *me = _vm->mouseEvent();
-		if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN)))
-			break;
-
-		if (_vm->keyboardEvent())
-			break;
-
-		_vm->_graphics->updateDisplay();
-		_vm->_system->delay_msecs(50);
-	}
-
-	_vm->removeMsg();
 }
 
 } // End of namespace Sword2

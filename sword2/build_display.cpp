@@ -115,7 +115,8 @@ void Sword2Engine::buildDisplay(void) {
 /**
  * Fades down and displays a message on the screen.
  * @param text The message
- * @param time The number of seconds to display the message
+ * @param time The number of seconds to display the message, or 0 to display it
+ *             until the user clicks the mouse or presses a key.
  */
 
 void Sword2Engine::displayMsg(byte *text, int time) {
@@ -171,27 +172,27 @@ void Sword2Engine::displayMsg(byte *text, int time) {
 	free(text_spr);
 	_graphics->waitForFade();
 
-	uint32 targetTime = _system->get_msecs() + (time * 1000);
+	if (time > 0) {
+		uint32 targetTime = _system->get_msecs() + (time * 1000);
+		sleepUntil(targetTime);
+	} else {
+		while (!_quit) {
+			MouseEvent *me = mouseEvent();
+			if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN)))
+				break;
 
-	sleepUntil(targetTime);
-	_graphics->setPalette(0, 256, oldPal, RDPAL_FADE);
-	_graphics->fadeUp();
-}
+			if (keyboardEvent())
+				break;
 
-/**
- * Fades message down and removes it, fading up again afterwards
- */
+			_graphics->updateDisplay();
+			_system->delay_msecs(50);
+		}
+	}
 
-void Sword2Engine::removeMsg(void) {
 	_graphics->fadeDown();
 	_graphics->waitForFade();
-	_graphics->clearScene();
-
-	// _graphics->fadeUp();	
-	// removed by JEL (08oct97) to prevent "eye" smacker corruption when
-	// restarting game from CD2 and also to prevent palette flicker when
-	// restoring game to a different CD since the "insert CD" message uses
-	// this routine to clean up!
+	_graphics->setPalette(0, 256, oldPal, RDPAL_FADE);
+	_graphics->fadeUp();
 }
 
 void Sword2Engine::drawBackPar0Frames(void) {

@@ -210,7 +210,6 @@ public:
 	void resetRenderLists(void);
 	void buildDisplay(void);
 	void displayMsg(byte *text, int time);
-	void removeMsg(void);
 	void setFullPalette(int32 palRes);
 
 	int32 registerFrame(int32 *params);

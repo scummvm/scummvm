@@ -1164,8 +1164,6 @@ private:
 	Button *_okButton;
 	Button *_cancelButton;
 
-	void saveLoadError(byte *text);
-
 public:
 	SaveLoadDialog(Gui *gui, int mode)
 		: Dialog(gui), _mode(mode), _selectedSlot(-1) {
@@ -1433,7 +1431,7 @@ public:
 					break;
 				}
 
-				saveLoadError(_gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff) + 2);
+				_gui->_vm->displayMsg(_gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff) + 2, 0);
 				result = 0;
 			}
 		} else {
@@ -1454,7 +1452,7 @@ public:
 					break;
 				}
 
-				saveLoadError(_gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff) + 2);
+				_gui->_vm->displayMsg(_gui->_vm->fetchTextLine(_gui->_vm->_resman->openResource(textId / SIZE), textId & 0xffff) + 2, 0);
 				result = 0;
 			} else {
 				// Prime system with a game cycle
@@ -1475,29 +1473,6 @@ public:
 		Dialog::setResult(result);
 	}
 };
-
-void SaveLoadDialog::saveLoadError(byte* text) {
-	// Print a message on screen. Second parameter is duration.
-	_gui->_vm->displayMsg((byte *) text, 0);
-
-	// Wait for ESC or mouse click
-	while (1) {
-		_gui->_vm->_graphics->updateDisplay();
-
-		KeyboardEvent *ke = _gui->_vm->keyboardEvent();
-		if (ke && ke->keycode == 27)
-			break;
-
-		MouseEvent *me = _gui->_vm->mouseEvent();
-		if (me && (me->buttons & RD_LEFTBUTTONDOWN))
-			break;
-
-		_gui->_vm->_system->delay_msecs(20);
-	}
-
-	// Remove the message.
-	_gui->_vm->removeMsg();
-}
 
 Gui::Gui(Sword2Engine *vm) : _vm(vm), _baseSlot(0) {
 	int i;
