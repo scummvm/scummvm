@@ -24,6 +24,17 @@
 
 #define FREQ_HZ 236 // Don't change!
 
+#define SPK_DECAY   0xfa00              /* Depends on sample rate */
+#define PCJR_DECAY  0xf600              /* Depends on sample rate */
+
+#define FIXP_SHIFT  16
+#define MAX_OUTPUT 0x7fff
+
+#define NG_PRESET 0x0f35        /* noise generator preset */
+#define FB_WNOISE 0x12000       /* feedback for white noise */
+#define FB_PNOISE 0x08000       /* feedback for periodic noise */
+
+
 const uint8 note_lengths[] = {
 	0,  
 	0,  0,  2,
@@ -316,65 +327,133 @@ static const uint16 pcjr_freq_table[12] = {
 
 Player_V2::Player_V2() {
 	int i;
-
+	
 	// This simulates the pc speaker sound, which is driven
 	// by the 8253 (square wave generator) and a low-band filter.
+	
+	_system = g_system;
+	_sample_rate = _system->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
+	_mutex = _system->create_mutex();
 
-	sample_rate = g_system->property(OSystem::PROP_GET_SAMPLE_RATE, 0);
-	ticks_per_sample = 1193000*1000 / sample_rate;
-	last_freq = freq = 0;
-	samples_left = 0;
-	level = 0;
-	decay = 0xF400; // 63455 // found by try and error
-//	for (i = 0; (sample_rate << i) < 30000; i++)
-//		decay = decay * decay / 65536;
+	// Initialize sound queue 
+	current_nr = next_nr = 0;
+	current_data = next_data = 0;
+	
+	// Initialize channel code
+	for (i = 0; i < 4; ++i)
+		clear_channel(i);
+
+	_next_tick = 0;
+	_tick_len = (_sample_rate << FIXP_SHIFT) / FREQ_HZ;
+
+	// Initialize square generator
+	_level = 0;
+
+	_RNG = NG_PRESET;
+
+	set_pcjr(true);
+	set_master_volume(255);
 
 	_mixer = g_mixer;
 	_mixer->setupPremix(this, premix_proc);
-	for (i = 0; i < 4; ++i) {
-		clear_channel(i);
-	}
-
-	pcjr = 0;
-	freqs_table = spk_freq_table;
-	current_nr = next_nr = 0;
-	current_data = next_data = 0;
-	_next_tick = 0;
 }
 
 Player_V2::~Player_V2() {
+	mutex_up();
 	// Detach the premix callback handler
 	_mixer->setupPremix (0, 0);
+	mutex_down();
+	_system->delete_mutex (_mutex);
+}
+
+void Player_V2::set_pcjr (bool pcjr) {
+	mutex_up();
+	_pcjr = pcjr;
+
+	if (_pcjr) {
+		_decay = PCJR_DECAY;
+		_update_step = (_sample_rate << FIXP_SHIFT) / (111860 * 2);
+		_freqs_table = pcjr_freq_table;
+	} else {
+		_decay = SPK_DECAY;
+		_update_step = (_sample_rate << FIXP_SHIFT) / (1193000 * 2);
+		_freqs_table = spk_freq_table;
+	}
+
+	/* adapt _decay to sample rate.  It must be squared when
+	 * sample rate doubles.
+	 */
+	int i;
+	for (i = 0; (_sample_rate << i) < 30000; i++)
+		_decay = _decay * _decay / 65536;
+
+
+	_timer_output = 0;
+	for (i = 0; i < 4; i++)
+		_timer_count[i] = 0;
+
+	if (current_data)
+		restartSound();
+	mutex_down();
+}
+
+void Player_V2::set_master_volume (int vol) {
+	if (vol > 255)
+		vol = 255;
+
+	/* scale to int16, FIXME: find best value */
+	double out = vol * 128 / 3;
+	
+    /* build volume table (2dB per step) */
+	for (int i = 0; i < 15; i++) {
+		/* limit volume to avoid clipping */
+		if (out > 0x7fff)
+			_volumetable[i] = 0x7fff;
+		else
+			_volumetable[i] = (int) out;
+
+		out /= 1.258925412;         /* = 10 ^ (2/20) = 2dB */
+	}
+	_volumetable[15] = 0;
+}
+
+void Player_V2::chainSound(int nr, byte *data) {
+	int offset = _pcjr ? 14 : 6;
+	current_nr = nr;
+	current_data = data;
+
+	for (int i = 0; i < 4; i++) {
+		clear_channel(i);
+
+		channels[i].d.music_script_nr = nr;
+		if (data) {
+			channels[i].d.next_cmd = READ_LE_UINT16(data+offset+2*i);
+			if (channels[i].d.next_cmd)
+				channels[i].d.time_left = 1;
+		}
+	}
 }
 
 void Player_V2::chainNextSound() {
-	int i;
-
 	if (next_nr) {
-		for (i = 0; i < 4; i++)
-			clear_channel(i);
-		current_nr = next_nr;
-		current_data = next_data;
-		for (i = 0; i < 4; i++) {
-			channels[i].d.next_cmd = READ_LE_UINT16(next_data+6+2*i);
-			if (channels[i].d.next_cmd)
-				channels[i].d.time_left = 1;
-			channels[i].d.music_script_nr = current_nr;
-		}
+		chainSound(next_nr, next_data);
 		next_nr = 0;
 		next_data = 0;
 	}
 }
 
 void Player_V2::stopAllSounds() {
+	mutex_up();
 	for (int i = 0; i < 4; i++) {
 		clear_channel(i);
 	}
 	next_nr = current_nr = 0;
 	next_data = current_data = 0;
+	mutex_down();
 }
 
 void Player_V2::stopSound(int nr) {
+	mutex_up();
 	if (next_nr == nr) {
 		next_nr = 0;
 		next_data = 0;
@@ -387,32 +466,28 @@ void Player_V2::stopSound(int nr) {
 		current_data = 0;
 		chainNextSound();
 	}
+	mutex_down();
 }
 
 void Player_V2::startSound(int nr, byte *data) {
-	int cprio = current_data ? READ_LE_UINT16(current_data+4) : 0;
-	int prio  = READ_LE_UINT16(data+4);
-	int nprio = next_data ? READ_LE_UINT16(next_data+4) : 0;
+	mutex_up();
 
-	if (!current_nr || (cprio & 0xff) <= (prio & 0xff)) {
+	int cprio = current_data ? *(current_data+4) : 0;
+	int prio  = *(data+4);
+	int nprio = next_data ? *(next_data+4) : 0;
+
+	int restartable = *(data+5);
+
+	if (!current_nr || cprio <= prio) {
 		int tnr = current_nr;
 		int tprio = cprio;
 		byte *tdata  = current_data;
-		int i;
-		for (i = 0; i < 4; i++)
-			clear_channel(i);
 
-		current_nr = nr;
-		current_data = data;
-		for (i = 0; i < 4; i++) {
-			channels[i].d.next_cmd = READ_LE_UINT16(data+6+2*i);
-			if (channels[i].d.next_cmd)
-				channels[i].d.time_left = 1;
-			channels[i].d.music_script_nr = current_nr;
-		}
+		chainSound(nr, data);
 		nr   = tnr;
 		prio = tprio;
 		data = tdata;
+		restartable = data ? *(data+5) : 0;
 	}
 	
 	if (!current_nr) {
@@ -422,12 +497,23 @@ void Player_V2::startSound(int nr, byte *data) {
 	}
 	
 	if (nr != current_nr
-	    && (prio & 0xff00)
+	    && restartable
 	    && (!next_nr
-		|| (nprio & 0xff) <= (prio & 0xff))) {
+		|| nprio <= prio)) {
 
 		next_nr = nr;
 		next_data = data;
+	}
+
+	mutex_down();
+}
+
+void Player_V2::restartSound() {
+	if (*(current_data + 5)) {
+		/* current sound is restartable */
+		chainSound(current_nr, current_data);
+	} else {
+		chainNextSound();
 	}
 }
 
@@ -604,11 +690,11 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				note = note % 12;
 				dest_channel->d.hull_offset = 0;
 				dest_channel->d.hull_counter = 1;
-				if (pcjr && dest_channel == &channels[3]) {
+				if (_pcjr && dest_channel == &channels[3]) {
 					dest_channel->d.hull_curve = 180 + note * 12;
 					myfreq = 384 - 64 * octave;
 				} else {
-					myfreq = freqs_table[note] >> octave;
+					myfreq = _freqs_table[note] >> octave;
 				}
 				dest_channel->d.freq = dest_channel->d.base_freq = myfreq;
 				if (is_last_note)
@@ -694,58 +780,137 @@ void Player_V2::next_freqs(ChannelInfo *channel) {
 }
 
 void Player_V2::do_mix (int16 *data, int len) {
+	mutex_up();
 	int step;
 
 	do {
 		step = len;
-		if (step > _next_tick)
-			step = _next_tick;
+		if (step > (_next_tick >> FIXP_SHIFT))
+			step = (_next_tick >> FIXP_SHIFT);
 
-		if (freq == 0 && level == 0)
-			memset (data, 0, sizeof(int16) * step);
+		if (_pcjr)
+			generatePCjrSamples(data, step);
 		else
-			generate_samples(data, step);
+			generateSpkSamples(data, step);
 		data += step;
+		_next_tick -= step << FIXP_SHIFT;
 
-		if (!(_next_tick -= step)) {
-//			if (_timer_proc)
-//				(*_timer_proc) (_timer_param);
-			int winning_channel = -1;
+		if (!(_next_tick >> FIXP_SHIFT)) {
 			for (int i = 0; i < 4; i++) {
 				if (!channels[i].d.time_left)
 					continue;
 				next_freqs(&channels[i]);
-
-				if (winning_channel == -1
-				    && channels[i].d.volume
-				    && channels[i].d.time_left) {
-					winning_channel = i;
-				}
 			}
-			if (winning_channel != -1) {
-				freq = channels[winning_channel].d.freq;
-			} else {
-				freq = 0;
-			}
-			_next_tick = 93;
+			_next_tick += _tick_len;
 		}
 	} while (len -= step);
+	mutex_down();
 }
 
-void Player_V2::generate_samples(int16 *data, int step) {
-	int j;
-	for (j = 0; j < step; j++) {
-		level = (level * decay) >> 16;
-		if (ticks_counted < freq*500)
-			level += 0xffff - decay;
+void Player_V2::lowPassFilter(int16 *sample, int len) {
+	for (int i = 0; i < len; i++) {
+		_level = ((int)_level * _decay
+			 + (int)sample[i] * (0x10000-_decay)) >> 16;
+		sample[i] = _level;
+	}
+}
 
-		data[j] = (level >> 1);
+void Player_V2::squareGenerator(int channel, int freq, int vol,
+                                int noiseFeedback, int16 *sample, int len) {
+	int period = _update_step * freq;
+	if (period == 0)
+		period = _update_step;
+
+	for (int i = 0; i < len; i++) {
+		unsigned int duration = 0;
 		
-		ticks_counted += ticks_per_sample;
-		if (ticks_counted >= last_freq*1000) {
-			ticks_counted -= last_freq*1000;
-			last_freq = freq;
+		if (_timer_output & (1 << channel))
+			duration += _timer_count[channel];
+		
+		_timer_count[channel] -= (1 << FIXP_SHIFT);
+		while (_timer_count[channel] <= 0) {
+
+			if (noiseFeedback) {
+				if (_RNG & 1) {
+					_RNG ^= noiseFeedback;
+					_timer_output ^= (1 << channel);
+				}
+				_RNG >>= 1;
+			} else {
+				_timer_output ^= (1 << channel);
+			}
+
+			if (_timer_output & (1 << channel))
+				duration += period;
+
+			_timer_count[channel] += period;
+		}
+		
+		if (_timer_output & (1 << channel))
+			duration -= _timer_count[channel];
+		
+		sample[i] += (duration * _volumetable[vol]) >> FIXP_SHIFT;
+		if (sample[i] < 0) {
+			/* overflow: clip value */
+			sample[i] = 0x7fff;
 		}
 	}
+}
+
+void Player_V2::generateSpkSamples(int16 *data, int len) {
+	int winning_channel = -1;
+	int freq;
+	for (int i = 0; i < 4; i++) {
+		if (winning_channel == -1
+		    && channels[i].d.volume
+		    && channels[i].d.time_left) {
+			winning_channel = i;
+		}
+	}
+
+	memset (data, 0, sizeof(int16) * len);
+	if (winning_channel != -1) {
+		squareGenerator(0, channels[winning_channel].d.freq, 0, 
+				0, data, len);
+	} else if (_level == 0)
+		/* shortcut: no sound is being played. */
+		return;
+	
+	lowPassFilter(data, len);
+}
+
+void Player_V2::generatePCjrSamples(int16 *data, int len) {
+	int i;
+	int freq, vol;
+
+	memset(data, 0, sizeof(int16) * len);
+	bool hasdata = false;
+
+	for (i = 0; i < 4; i++) {
+		freq = channels[i].d.freq >> 6;
+		vol  = (65535 - channels[i].d.volume) >> 12;
+		if (!channels[i].d.volume || !channels[i].d.time_left) {
+			_timer_count[i] -= len << FIXP_SHIFT;
+			if (_timer_count[i] < 0)
+				_timer_count[i] = 0;
+		} else if (i < 3) {
+			hasdata = true;
+			squareGenerator(i, freq, vol, 0, data, len);
+		} else {
+			int noiseFB = (freq & 4) ? FB_WNOISE : FB_PNOISE;
+			int n = (freq & 3);
+			
+			freq = (n == 3) ? 2 * (channels[2].d.freq>>6) : 1 << (5 + n);
+			hasdata = true;
+			squareGenerator(i, freq, vol, noiseFB, data, len);
+		}
+#if 0
+		debug(9, "channel[%d]: freq %d %.1f ; volume %d", 
+		      i, freq, 111860.0/freq,  vol);
+#endif
+	}
+
+	if (_level || hasdata)
+		lowPassFilter(data, len);
 }
 

@@ -62,6 +62,9 @@ public:
 	Player_V2();
 	~Player_V2();
 
+	void set_pcjr(bool pcjr);
+	void set_master_volume(int vol);
+
 	void startSound(int nr, byte *data);
 	void stopSound(int nr);
 	void stopAllSounds();
@@ -69,18 +72,23 @@ public:
 
 private:
 	SoundMixer *_mixer;
-	int _next_tick;
 
-	int sample_rate;
-	int ticks_per_sample;
-	int ticks_counted;
-	int samples_left;
-	int freq;
-	int last_freq;
-	int level;
-	int pcjr;
-	const uint16 *freqs_table;
-	unsigned int decay;
+
+	bool _pcjr;
+
+	int _sample_rate;
+	int _next_tick;
+	int _tick_len;
+	unsigned int _update_step;
+	unsigned int _decay;
+	unsigned int _level;
+	unsigned int _RNG;
+	unsigned int _volumetable[16];
+
+	int _timer_count[4];
+	int _timer_output;
+
+	const uint16 *_freqs_table;
 
 	ChannelInfo channels[4];
 
@@ -90,15 +98,27 @@ private:
 	byte *next_data;
 	byte *retaddr;
 
+	OSystem *_system;
+	void *_mutex;
+	void mutex_up() { _system->lock_mutex (_mutex); }
+	void mutex_down() { _system->unlock_mutex (_mutex); }
+
+	void restartSound();
 	void execute_cmd(ChannelInfo *channel);
 	void next_freqs(ChannelInfo *channel);
-	void generate_samples(int16 *buf, int len);
-	void on_timer();
 	void clear_channel(int i);
+	void chainSound(int nr, byte *data);
 	void chainNextSound();
 
 	static void premix_proc(void *param, int16 *buf, uint len);
 	void do_mix (int16 *buf, int len);
+
+	void lowPassFilter(int16 *data, int len);
+	void squareGenerator(int channel, int freq, int vol,
+	                     int noiseFeedback, int16 *sample, int len);
+	void generateSpkSamples(int16 *data, int len);
+	void generatePCjrSamples(int16 *data, int len);
+    
 };
 
 #endif
