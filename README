@@ -433,8 +433,10 @@ being ran faster than their normal speed, as scripts will loose synchronisation
 
 Language options:
 -----------------
-ScummVM includes a language option for the Curse of Money Island and the Simon
-the Sorcerer 1 & 2 games.
+ScummVM includes a language option for the Curse of Monkey Island, Simon
+the Sorcerer 1 & 2 and Beneath a Steel Sky.
+
+Curse of Monkey Island / Simon the Sorcerer:
 
         en  - English (default)
         de  - German
@@ -446,6 +448,17 @@ the Sorcerer 1 & 2 games.
         zh  - Chinese
         kr  - Korean
         hb  - Hebrew
+
+Beneath a Steel Sky:
+	en  - English USA (default)
+        de  - German
+        fr  - French
+        it  - Italian
+        pt  - Portuguese
+        es  - Spanish
+        se  - Swedish
+        gb  - English (Great Britain)
+
 
 Graphics filters:
 -----------------

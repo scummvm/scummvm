@@ -87,7 +87,10 @@ SkyState::SkyState(GameDetector *detector, OSystem *syst)
 	
 	_debugMode = detector->_debugMode;
 	_debugLevel = detector->_debugLevel;
-	_systemVars.language = detector->_language;
+	if (detector->_language > 10)
+		_systemVars.language = SKY_USA;
+	else
+		_systemVars.language = _languageTable[detector->_language];
 	_detector = detector;
 
 	_floppyIntro = detector->_floppyIntro;
@@ -109,6 +112,20 @@ SkyState::~SkyState() {
 void SkyState::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 }
+
+uint8 SkyState::_languageTable[11] = {
+	SKY_USA, // EN_USA
+	SKY_GERMAN, // DE_DEU
+	SKY_FRENCH, // FR_FRA
+	SKY_ITALIAN, // IT_ITA
+	SKY_PORTUGUESE, // PT_BRA
+	SKY_SPANISH, // ES_ESP
+	SKY_USA, // JA_JPN
+	SKY_USA, // ZH_TWN
+	SKY_USA, // KO_KOR
+	SKY_SWEDISH, // SE_SWE
+	SKY_ENGLISH  // EN_GRB
+};
 
 void SkyState::doCheat(uint8 num) {
 

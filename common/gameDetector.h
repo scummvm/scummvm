@@ -56,6 +56,8 @@ enum {
 	JA_JPN = 6,
 	ZH_TWN = 7,
 	KO_KOR = 8,
+	SE_SWE = 9,
+	EN_GRB = 10,
 	HB_HEB = 20
 };
 

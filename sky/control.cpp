@@ -818,7 +818,8 @@ uint16 SkyControl::saveRestorePanel(bool allowSave) {
 
 	uint8 *saveGameTexts = (uint8 *)malloc(MAX_SAVE_GAMES * MAX_TEXT_LEN);
 	dataFileHeader *textSprites[MAX_ON_SCREEN + 1];
-	textSprites[MAX_ON_SCREEN] = NULL;
+	for (cnt = 0; cnt < MAX_ON_SCREEN + 1; cnt++)
+		textSprites[cnt] = NULL;
 	_firstText = 0;
 	
 	loadDescriptions(saveGameTexts);
@@ -829,6 +830,7 @@ uint16 SkyControl::saveRestorePanel(bool allowSave) {
 	bool refreshAll = true;
 	uint16 clickRes = 0;
 	while (!quitPanel) {
+		clickRes = 0;
 		if (refreshNames || refreshAll) {
 			if (refreshAll) {
 				_text->flushForRedraw();
@@ -836,7 +838,11 @@ uint16 SkyControl::saveRestorePanel(bool allowSave) {
 				_quitButton->drawToScreen(NO_MASK);
 				if (withAutoSave)
 					_autoSaveButton->drawToScreen(NO_MASK);
+				refreshAll = false;
 			}
+			for (cnt = 0; cnt < MAX_ON_SCREEN; cnt++)
+				if (textSprites[cnt])
+					free(textSprites[cnt]);
 			setUpGameSprites(saveGameTexts, textSprites, _firstText, _selectedGame);
 			showSprites(textSprites, allowSave);
 			refreshNames = false;
@@ -1632,7 +1638,6 @@ void SkyControl::showGameQuitMsg(bool useScreen) {
 	_skyText->fnSetFont(0);
 	uint8 *textBuf1 = (uint8 *)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(dataFileHeader));
 	uint8 *textBuf2 = (uint8 *)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(dataFileHeader));
-	uint8 textNum;
 	uint8 *screenData;
 	if (useScreen) {
 		if (_skyScreen->sequenceRunning())
@@ -1641,15 +1646,8 @@ void SkyControl::showGameQuitMsg(bool useScreen) {
 		screenData = _skyScreen->giveCurrent();
 	} else
 		screenData = _screenBuf;
-	switch (SkyState::_systemVars.language) {
-		case DE_DEU: textNum = 1; break;
-		case FR_FRA: textNum = 2; break;
-		case IT_ITA: textNum = 4; break;
-		case PT_BRA: textNum = 5; break;
-		default: textNum = 0; break;
-	}
-	_skyText->displayText(_quitTexts[textNum * 2 + 0], textBuf1, true, 320, 255);
-	_skyText->displayText(_quitTexts[textNum * 2 + 1], textBuf2, true, 320, 255);
+	_skyText->displayText(_quitTexts[SkyState::_systemVars.language * 2 + 0], textBuf1, true, 320, 255);
+	_skyText->displayText(_quitTexts[SkyState::_systemVars.language * 2 + 1], textBuf2, true, 320, 255);
 	uint8 *curLine1 = textBuf1 + sizeof(dataFileHeader);
 	uint8 *curLine2 = textBuf2 + sizeof(dataFileHeader);
 	uint8 *targetLine = screenData + GAME_SCREEN_WIDTH * 80;
@@ -1671,19 +1669,23 @@ void SkyControl::showGameQuitMsg(bool useScreen) {
 	_system->quit();
 }
 
-char SkyControl::_quitTexts[12][30] = {
+char SkyControl::_quitTexts[16][35] = {
 	"Game over player one",
 	"BE VIGILANT",
 	"Das Spiel ist aus.",
 	"SEI WACHSAM",
 	"Game over joueur 1",
 	"SOYEZ VIGILANTS",
-	"Spelet r slut, Agent 1.",
+	"Game over player one",
+	"BE VIGILANT",
+	"SPELET \x8Er SLUT, Agent 1.",
 	"VAR VAKSAM",
 	"Game over giocatore 1",
 	"SIATE VIGILANTI",
 	"Fim de jogo para o jogador um",
 	"BE VIGILANT"
+	"Game over player one",
+	"BE VIGILANT",
 };
 
 uint8 SkyControl::_crossImg[594] = {

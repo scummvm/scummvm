@@ -26,6 +26,15 @@
 
 //This file is incomplete, several flags still missing.
 
+#define SKY_ENGLISH		0
+#define SKY_GERMAN		1
+#define SKY_FRENCH		2
+#define SKY_USA			3
+#define SKY_SWEDISH		4
+#define SKY_ITALIAN		5
+#define SKY_PORTUGUESE	6
+#define SKY_SPANISH		7
+
 #define ST_COLLISION_BIT	5
 
 #define S_COUNT	0

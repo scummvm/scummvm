@@ -56,7 +56,7 @@ static const char USAGE_STRING[] =
 	"\t-g<mode>       - graphics mode (normal,2x,3x,2xsai,super2xsai,supereagle,advmame2x,advmame3x,tv2x,dotmatrix)\n"
 	"\t-e<mode>       - set music engine (see README for details)\n"
 	"\t-a             - specify game is amiga version\n"
-	"\t-q<lang>       - specify language (en,de,fr,it,pt,es,jp,zh,kr,hb)\n"
+	"\t-q<lang>       - specify language (en,de,fr,it,pt,es,jp,zh,kr,hb) BASS also: (gb, se)\n"
 	"\n"
 	"\t-c<num>        - use cdrom <num> for cd audio\n"
 	"\t-m<num>        - set music volume to <num> (0-255)\n"
@@ -126,6 +126,8 @@ static const struct Language languages[] = {
 	{"jp", "Japanese", JA_JPN},
 	{"zh", "Chinese (Taiwan)", ZH_TWN},
 	{"kr", "Korean", KO_KOR},
+	{"gb", "English", EN_GRB},
+	{"se", "Swedish", SE_SWE},
 	{"hb", "Hebrew", HB_HEB},
 	{0, 0, 0}
 };

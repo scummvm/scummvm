@@ -61,6 +61,7 @@ class SkyState : public Engine {
 protected:
 	byte _game;
 	byte _key_pressed;
+	static uint8 _languageTable[11];
 
 	//intro related
 	

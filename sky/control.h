@@ -285,7 +285,7 @@ private:
 
 	SkyControlStatus *_statusBar;
 
-	static char _quitTexts[12][30];
+	static char _quitTexts[16][35];
 	static uint8 _crossImg[594];
 };
 

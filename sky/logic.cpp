@@ -2438,11 +2438,10 @@ void SkyLogic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 
 
 	// if sky is configured to speech-only return now - except if we're running another
 	// language than english
-	if (speechUsed && (!(SkyState::_systemVars.systemFlags & SF_ALLOW_TEXT)) &&
-		(SkyState::_systemVars.language == EN_USA)) {
-            target->extCompact->spTime = 10;
-			target->logic = L_TALK; 
-			return ;
+	if (speechUsed && (!(SkyState::_systemVars.systemFlags & SF_ALLOW_TEXT))) {
+		target->extCompact->spTime = 10;
+		target->logic = L_TALK; 
+		return ;
 	}
 
 	//now form the text sprite
