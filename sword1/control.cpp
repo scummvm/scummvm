@@ -148,7 +148,6 @@ uint8 SwordControl::runPanel(void) {
 	_keyPressed = _numButtons = 0;
 	_screenBuf = (uint8*)malloc(640 * 480);
 	_font = (uint8*)_resMan->openFetchRes(GAME_FONT); // todo: czech support
-	_resMan->resOpen(SR_BUTTON);
 	uint8 *pal = (uint8*)_resMan->openFetchRes(SR_PALETTE);
 	uint8 *palOut = (uint8*)malloc(256 * 4);
 	for (uint16 cnt = 1; cnt < 256; cnt++) {
@@ -197,7 +196,7 @@ uint8 SwordControl::runPanel(void) {
 		delay(1000 / 12);
 		newMode = getClicks(mode, &retVal);
 	} while ((newMode != 1) && (retVal == 0));
-	_resMan->resClose(SR_BUTTON);
+	destroyButtons();
 	memset(_screenBuf, 0, 640 * 480);
 	_system->copy_rect(_screenBuf, 640, 0, 0, 640, 480);
 	free(_screenBuf);
