@@ -739,6 +739,8 @@ void SkyControl::handleKeyPress(uint8 key, uint8 *textBuf) {
 			textBuf++;
 		textBuf[0] = 0;
 	} else {
+		if (_enteredTextWidth >= PAN_LINE_WIDTH - 10)
+			return;
         if (((key >= 'A') && (key <= 'Z')) || ((key >= 'a') && (key <= 'z')) ||
 			((key >= '0') && (key <= '9')) || checkKeyList(key)) {
 				uint8 strLen = 0;
@@ -771,9 +773,10 @@ void SkyControl::setUpGameSprites(uint8 *nameBuf, dataFileHeader **nameSprites, 
 		}
 		nameBuf += MAX_TEXT_LEN;
 		nameSprites[cnt] = (dataFileHeader*)textSpr.textData;
-		if (firstNum + cnt == selectedGame)
+		if (firstNum + cnt == selectedGame) {
 			nameSprites[cnt]->flag = 1;
-		else
+			_enteredTextWidth = (uint16)textSpr.textWidth;
+		} else
 			nameSprites[cnt]->flag = 0;
 	}
 }

@@ -229,6 +229,7 @@ private:
 	uint32 _curButtonText;
 	uint16 _firstText;
 	uint16 _savedMouse;
+	uint16 _enteredTextWidth;
     
 	SkyConResource *createResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, int16 pX, int16 pY, uint32 pText, uint8 pOnClick, uint8 panelType);
 
