@@ -5160,7 +5160,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 				_channel[channel]._volumeRight = d;
 				return 0;
 			case 7: // right volume control (0-127) i think
-				debug(1, "IMuseDigital::doCommand setting right volume sample(%d),volume(%d)", sample, e);
+				debug(1, "IMuseDigital::doCommand setting right volume sample(%d),volume(%d)", sample, d);
 				for (l = 0; l < MAX_DIGITAL_CHANNELS; l++) {
 					if ((_channel[l]._idSound == sample) && (_channel[l]._used == true)) {
 						channel = l;
@@ -5171,7 +5171,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					warning("IMuseDigital::doCommand 12,7 sample(%d) not exist in channels", sample);
 					return 1;
 				}
-				_channel[channel]._volumeRight = e;
+				_channel[channel]._volumeRight = d;
 				return 0;
 			default:
 				warning("IMuseDigital::doCommand 12 DEFAULT sub command %d", sub_cmd);
