@@ -18,6 +18,7 @@ General
 * add iterators to List<> template and make use of them
 * allow for return-to-launcher instead of a normal "quit" ?
 
+
 GUI
 ===
 * implement "tabs" for multi-pane prefs dialog
@@ -82,6 +83,12 @@ SCUMM
   become important for loadable module support
 * Add support for Mac0 music format used in Monkey Island Mac
   See https://sourceforge.net/tracker/index.php?func=detail&aid=781797&group_id=37116&atid=418823
+* Rename scummvm.cpp to scumm.cpp for consistency. [Fingolfin is working on
+  this, please don't do anything about this before talking to him].
+  1) Try to get scummvm.cpp fixed for ViewCVS [in progress!]
+  2a) If 1) succeeded, file SF.net CVS file rename request
+  2b) If 2) failed, do brute force file rename (cp && cvs add && cvs rm)
+  3) Adjust Makefile and project files to use the new name
 
 Broken Sword 2
 ==============
