@@ -1772,11 +1772,11 @@ void SimonState::o_print_str()
 	switch (_game) {
 	case GAME_SIMON1TALKIE:
 	case GAME_SIMON1WIN:
-		if (speech_id != 0 && !_vk_t_toggle) {
-			talk_with_speech(speech_id, num_1);
-		} else if (string_ptr != NULL) {
-			talk_with_text(num_1, num_2, (char *)string_ptr, tv->a, tv->b, tv->c);
-		}
+ 		if (speech_id != 0) {
+  			talk_with_speech(speech_id, num_1);
+  		} else if (string_ptr != NULL) {
+  			talk_with_text(num_1, num_2, (char *)string_ptr, tv->a, tv->b, tv->c);
+  		}
 		break;
 
 	case GAME_SIMON1DEMO:
@@ -3422,9 +3422,10 @@ void SimonState::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte 
 
 bool SimonState::vc_59_helper()
 {
-	if (_vk_t_toggle)
+	if (_voice_file == NULL)
 		return true;
 	return _voice_sound == 0;
+#endif
 }
 
 void SimonState::video_copy_if_flag_0x8_c(FillOrCopyStruct *fcs)
@@ -3792,7 +3793,6 @@ void SimonState::talk_with_speech(uint speech_id, uint num_1)
 			_skip_vga_wait = true;
 			return;
 		}
-
 		if (num_1 < 100) {
 			o_unk_99_simon1(num_1 + 201);
 		}
@@ -4555,12 +4555,7 @@ void SimonState::go()
 	
 	_mainscript_toggle = false;
 	_vgascript_toggle = false;
-
-	if (_voice_type != FORMAT_NONE) {
 	_vk_t_toggle = false;
-	} else {
-	_vk_t_toggle = true;
-	}
 
 	while (1) {
 		hitarea_stuff();
