@@ -1077,11 +1077,11 @@ bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
 		break;
 	case 2:
 //		if (((arg_7 & 16) != 0) && (param1 == 0))
-		if (chunk_buffer[3] == 0) {
-			_var100 = first_word;
-			free(chunk_buffer);
-			return false;
-		}
+//		if (chunk_buffer[3] == 0) {
+//			_var100 = first_word;
+//			free(chunk_buffer);
+//			return false;
+//		}
 		if ((first_word - _var100) == 1) {
 			decode2(tmp_curBuf, gfx_data, offset_table1, offset_table2, width,
 					codec47_temp_table, chunk_buffer + 8, height, width * 8,
@@ -1091,21 +1091,21 @@ bool Codec47Decoder::decode(Blitter & dst, Chunk & src) {
 		break;
 	case 3:
 //		if (((arg_7 & 16) != 0) && (param1 == 0))
-		if (chunk_buffer[3] == 0) {
-			_var100 = first_word;
-			free(chunk_buffer);
-			return false;
-		}
+//		if (chunk_buffer[3] == 0) {
+//			_var100 = first_word;
+//			free(chunk_buffer);
+//			return false;
+//		}
 		memcpy(_curBuf, _deltaBufs[1], width * height);
 		_var104 = _curBuf;
 		break;
 	case 4:
 //		if (((arg_7 & 16) != 0) && (param1 == 0))
-		if (chunk_buffer[3] == 0) {
-			_var100 = first_word;
-			free(chunk_buffer);
-			return false;
-		}
+//		if (chunk_buffer[3] == 0) {
+//			_var100 = first_word;
+//			free(chunk_buffer);
+//			return false;
+//		}
 		memcpy(_curBuf, _deltaBufs[0], width * height);
 		_var104 = _curBuf;
 		break;
