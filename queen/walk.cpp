@@ -285,7 +285,7 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 			else {
 				pbs->speed = scale * (mpd->moveSpeed / 2) / 100;
 			}
-			if (pbs->speed < 1) {
+			if (pbs->speed == 0) {
 				pbs->speed = 1;
 			}
 			// XXX if (cutQuit)
