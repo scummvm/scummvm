@@ -242,11 +242,11 @@ SOURCE=.\gui\ScrollBarWidget.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\gui\util.cpp
+SOURCE=.\util.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\gui\util.h
+SOURCE=.\util.h
 # End Source File
 # Begin Source File
 

@@ -12,7 +12,7 @@ ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
 
 INCS	= scumm.h scummsys.h stdafx.h
 
-GUIOBJS = widget.o dialog.o util.o newgui.o ListWidget.o ScrollBarWidget.o
+GUIOBJS = widget.o dialog.o newgui.o ListWidget.o ScrollBarWidget.o
 
 SIMONOBJS =	midi.o simon.o simondebug.o simonitems.o simonres.o simonsys.o simonverb.o simonvga.o
 
@@ -20,7 +20,7 @@ OBJS	= actor.o akos.o boxes.o config-file.o costume.o gfx.o object.o resource.o 
 	saveload.o script.o scummvm.o sound.o string.o sys.o verbs.o \
 	morphos.o morphos_sound.o morphos_start.o script_v1.o script_v2.o debug.o gui.o \
 	imuse.o fmopl.o mixer.o mididrv.o debugrl.o vars.o insane.o \
-	gameDetector.o init.o resource_v3.o resource_v4.o main.o \
+	gameDetector.o init.o resource_v3.o resource_v4.o util.o main.o \
 	$(GUIOBJS) $(SIMONOBJS)
 
 DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
