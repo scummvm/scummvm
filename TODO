@@ -79,7 +79,6 @@ Broken Sword 2
 ==============
 * Replace all uses of std C file I/O (fopen, fread, fwrite, fclose) by
   the File class (excluding that in SWORD2_DEBUG)
-* Fix endianess problems
 
 SIMON
 =====
