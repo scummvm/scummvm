@@ -503,6 +503,7 @@ void ScummEngine_v5::o5_actorOps() {
 				j = getVarOrDirectByte(PARAM_2);
 			}
 
+			a->boxscale = i;
 			a->setScale(i, j);
 			break;
 		case 18:		// SO_NEVER_ZCLIP
