@@ -992,6 +992,64 @@ private:
 	int _ticks;
 };
 
+// plays 4 looped waveforms, starting at specific frequencies and bending at different rates while fading volume to zero
+class V2A_Sound_Special_Zak71 : public V2A_Sound_Base<4> {
+public:
+	V2A_Sound_Special_Zak71(uint16 offset, uint16 size) :
+		_offset(offset), _size(size) { }
+	virtual void start(Player_MOD *mod, int id, const byte *data) {
+		_mod = mod;
+		_id = id;
+
+		_freq1 = 0x00C8;
+		_freq2 = 0x0190;
+		_freq3 = 0x0320;
+		_freq4 = 0x0640;
+		_vol = 0x78;
+
+		char *tmp_data1 = (char *)malloc(_size);
+		char *tmp_data2 = (char *)malloc(_size);
+		char *tmp_data3 = (char *)malloc(_size);
+		char *tmp_data4 = (char *)malloc(_size);
+		memcpy(tmp_data1, data + _offset, _size);
+		memcpy(tmp_data2, data + _offset, _size);
+		memcpy(tmp_data3, data + _offset, _size);
+		memcpy(tmp_data4, data + _offset, _size);
+		_mod->startChannel(_id | 0x000, tmp_data1, _size, BASE_FREQUENCY / _freq1, min((_vol >> 1) + 3,0x32), 0, _size, -127);
+		_mod->startChannel(_id | 0x100, tmp_data2, _size, BASE_FREQUENCY / _freq2, min((_vol >> 1) + 3,0x32), 0, _size, 127);
+		_mod->startChannel(_id | 0x200, tmp_data3, _size, BASE_FREQUENCY / _freq3, min((_vol >> 1) + 3,0x32), 0, _size, 127);
+		_mod->startChannel(_id | 0x300, tmp_data4, _size, BASE_FREQUENCY / _freq4, min((_vol >> 1) + 3,0x32), 0, _size, -127);
+	}
+	virtual bool update() {
+		assert(_id);
+		_freq1 += 0x14;
+		_freq2 += 0x1E;
+		_freq3 += 0x32;
+		_freq4 += 0x50;
+		_mod->setChannelFreq(_id | 0x000, BASE_FREQUENCY / _freq1);
+		_mod->setChannelFreq(_id | 0x100, BASE_FREQUENCY / _freq2);
+		_mod->setChannelFreq(_id | 0x200, BASE_FREQUENCY / _freq3);
+		_mod->setChannelFreq(_id | 0x300, BASE_FREQUENCY / _freq4);
+		_vol--;
+		if (_vol == 0)
+			return false;
+		_mod->setChannelVol(_id | 0x000, min((_vol >> 1) + 3,0x32));
+		_mod->setChannelVol(_id | 0x100, min((_vol >> 1) + 3,0x32));
+		_mod->setChannelVol(_id | 0x200, min((_vol >> 1) + 3,0x32));
+		_mod->setChannelVol(_id | 0x300, min((_vol >> 1) + 3,0x32));
+		return true;
+	}
+private:
+	const uint16 _offset;
+	const uint16 _size;
+
+	uint16 _freq1;
+	uint16 _freq2;
+	uint16 _freq3;
+	uint16 _freq4;
+	uint8 _vol;
+};
+
 class V2A_Sound_Special_SteppedPitchbendAndHold : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_SteppedPitchbendAndHold(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 vol) :
@@ -1036,6 +1094,52 @@ private:
 	uint16 _bendctr;
 	uint16 _holdctr;
 
+};
+
+// plays one waveform, then switches to a different looped waveform and slowly fades volume to zero
+class V2A_Sound_Special_Zak54 : public V2A_Sound_Base<1> {
+public:
+	V2A_Sound_Special_Zak54(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq) :
+		_offset1(offset1), _size1(size1), _offset2(offset2), _size2(size2), _freq(freq) { }
+	virtual void start(Player_MOD *mod, int id, const byte *data) {
+		_mod = mod;
+		_id = id;
+		_data = (char *)malloc(READ_LE_UINT16(data));
+		memcpy(_data, data, READ_LE_UINT16(data));
+		char *tmp_data = (char *)malloc(_size1);
+		memcpy(tmp_data, data + _offset1, _size1);
+		_vol = 0xFC;
+		_mod->startChannel(_id, tmp_data, _size1, BASE_FREQUENCY / _freq, _vol, 0, _size1);
+		_loop = _size1 * _freq * 60 / BASE_FREQUENCY;
+	}
+	virtual bool update() {
+		assert(_id);
+		if (!_loop)
+		{
+			_vol--;
+			if (_vol)
+				_mod->setChannelVol(_id, _vol);
+			else	return false;
+		}
+		else if (!--_loop)
+		{
+			_mod->stopChannel(_id);
+			char *tmp_data = (char *)malloc(_size2);
+			memcpy(tmp_data, _data + _offset2, _size2);
+			_mod->startChannel(_id, tmp_data, _size2, BASE_FREQUENCY / _freq, _vol, 0, _size2);
+		}
+		return true;
+	}
+
+private:
+	const uint16 _offset1;
+	const uint16 _offset2;
+	const uint16 _size1;
+	const uint16 _size2;
+	const uint16 _freq;
+
+	int _vol;
+	int _loop;
 };
 
 #define CRCToSound(CRC, SOUND)  \
@@ -1129,10 +1233,10 @@ static V2A_Sound *findSound (unsigned long crc) {
 	CRCToSound(0xB0F77006, V2A_Sound_Unsupported());	// Zak 52
 	CRCToSound(0x5AE9D6A7, V2A_Sound_Special_SlowPitchbendThenSlowFadeout(0x00CA,0x22A4,0x0113,0x0227));	// Zak 109
 	CRCToSound(0xABE0D3B0, V2A_Sound_Special_SlowPitchbendThenSlowFadeout(0x00CE,0x22A4,0x0227,0x0113));	// Zak 105
-	CRCToSound(0x788CC749, V2A_Sound_Unsupported());	// Zak 71
+	CRCToSound(0x788CC749, V2A_Sound_Special_Zak71(0x00C8,0x0B37));	// Zak 71
 	CRCToSound(0x2E2AB1FA, V2A_Sound_Special_SteppedPitchbendAndHold(0x00D4,0x04F0,0x0FE3,0x0080,0x3F));	// Zak 99
 	CRCToSound(0x1304CF20, V2A_Sound_Special_SingleDurationMultiDurations(0x00DC,0x0624,0x023C,0x3C,2,(const uint8 *)"\x14\x11",false));	// Zak 79
-	CRCToSound(0xAE68ED91, V2A_Sound_Unsupported());	// Zak 54
+	CRCToSound(0xAE68ED91, V2A_Sound_Special_Zak54(0x00D4,0x1A25,0x1E1E,0x0B80,0x01F4));	// Zak 54
 	CRCToSound(0xA4F40F97, V2A_Sound_Unsupported());	// Zak 61
 	CRCToSound(0x348F85CE, V2A_Sound_Unsupported());	// Zak 62
 	CRCToSound(0xD473AB86, V2A_Sound_Special_SingleDurationMultiDurations(0x0122,0x03E8,0x00BE,0x3F,7,(const uint8 *)"\x0F\x0B\x04\x0F\x1E\x0F\x66",false));	// Zak 46
