@@ -200,6 +200,9 @@
 				RelativePath="..\..\common\singleton.h">
 			</File>
 			<File
+				RelativePath="..\..\common\stack.h">
+			</File>
+			<File
 				RelativePath="..\..\common\stdafx.h">
 			</File>
 			<File
