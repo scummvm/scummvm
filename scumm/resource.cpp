@@ -111,7 +111,7 @@ bool ScummFile::openSubFile(const char *filename) {
 		file_name[0x20] = 0;
 
 		assert(file_name[0]);
-		//debug(0, "extracting \'%s\'", file_name);
+		//debug(7, "  extracting \'%s\'", file_name);
 		
 		// Consistency check. make sure the file data is in the file
 		if (file_off + file_len > data_file_len) {
@@ -120,7 +120,6 @@ bool ScummFile::openSubFile(const char *filename) {
 		
 		if (scumm_stricmp(file_name, filename) == 0) {
 			// We got a match!
-			_subFileName = file_name;
 			setSubfileRange(file_off, file_len);
 			return true;
 		}
@@ -376,26 +375,33 @@ void ScummEngine::readRoomsOffsets() {
 	}
 }
 
-bool ScummEngine::openResourceFile(const char *filename, byte encByte) {
-	debugC(DEBUG_GENERAL, "openResourceFile(%s)", filename);
+bool ScummEngine::openFile(ScummFile &file, const char *filename) {
 	bool result = false;
 
 	if (!_containerFile.isEmpty()) {
-		if (!_fileHandle.isOpen())
-			_fileHandle.open(_containerFile.c_str());
-		assert(_fileHandle.isOpen());
+		file.close();
+		file.open(_containerFile.c_str());
+		assert(file.isOpen());
 		
-		result = _fileHandle.openSubFile(filename);
+		result = file.openSubFile(filename);
 	}
 	
 	if (!result) {
-		_fileHandle.close();
-		result = _fileHandle.open(filename);
+		file.close();
+		result = file.open(filename);
 	}
-
-	_fileHandle.setEnc(encByte);
-
+	
 	return result;
+}
+
+bool ScummEngine::openResourceFile(const char *filename, byte encByte) {
+	debugC(DEBUG_GENERAL, "openResourceFile(%s)", filename);
+	
+	if (openFile(_fileHandle, filename)) {
+		_fileHandle.setEnc(encByte);
+		return true;
+	}
+	return false;
 }
 
 void ScummEngine::askForDisk(const char *filename, int disknum) {

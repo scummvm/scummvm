@@ -588,10 +588,10 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 
 		_sfxFile->close();
 		sprintf(filename, "audio/%s.%d/%d.voc", roomname, offset, b);
-		_sfxFile->open(filename);
+		_vm->openFile(*_sfxFile, filename);
 		if (!_sfxFile->isOpen()) {
 			sprintf(filename, "%d.%d.voc", offset, b);
-			_sfxFile->open(filename);
+			_vm->openFile(*_sfxFile, filename);
 		}
 		if (!_sfxFile->isOpen()) {
 			warning("startTalkSound: dig demo: voc file not found");
@@ -968,40 +968,29 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 	}
 }
 
-File *Sound::openSfxFile() {
+ScummFile *Sound::openSfxFile() {
 	struct SoundFileExtensions {
 		const char *ext;
 		SoundMode mode;
 	};
 	
 	static const SoundFileExtensions extensions[] = {
+		{ "sou", kVOCMode },
 	#ifdef USE_FLAC
 		{ "sof", kFlacMode },
-	#endif
-	#ifdef USE_MAD
-		{ "so3", kMP3Mode },
 	#endif
 	#ifdef USE_VORBIS
 		{ "sog", kVorbisMode },
 	#endif
-		{ "sou", kVOCMode },
+	#ifdef USE_MAD
+		{ "so3", kMP3Mode },
+	#endif
 		{ 0, kVOCMode }
 	};
-	
-	
 
 	char buf[256];
 	ScummFile *file = new ScummFile();
 	_offsetTable = NULL;
-	
-	
-	if (!_vm->_containerFile.isEmpty() && file->open(_vm->_containerFile.c_str())) {
-		if (file->openSubFile("monster.sou")) {
-			_soundMode = kVOCMode;
-		} else {
-			file->close();
-		}
-	}
 	
 	/* Try opening the file <_gameName>.sou first, e.g. tentacle.sou.
 	 * That way, you can keep .sou files for multiple games in the
@@ -1014,7 +1003,7 @@ File *Sound::openSfxFile() {
 	for (int j = 0; basename[j] && !file->isOpen(); ++j) {
 		for (int i = 0; extensions[i].ext; ++i) {
 			sprintf(buf, "%s.%s", basename[j], extensions[i].ext);
-			if (file->open(buf)) {
+			if (_vm->openFile(*file, buf)) {
 				_soundMode = extensions[i].mode;
 				break;
 			}

@@ -586,11 +586,11 @@ int32 Insane::processKeyboard(void) {
 }
 
 void Insane::readFileToMem(const char *name, byte **buf) {
-	File *in;
+	ScummFile *in;
 	uint32 len;
 
-	in = new File();
-	in->open(name);
+	in = new ScummFile();
+	_vm->openFile(*in, name);
 	len = in->size();
 	*buf = (byte *)malloc(len);
 	in->read(*buf, len);

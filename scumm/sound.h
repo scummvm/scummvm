@@ -29,6 +29,7 @@ class File;
 namespace Scumm {
 
 class ScummEngine;
+class ScummFile;
 
 struct MP3OffsetTable;
 
@@ -57,7 +58,7 @@ protected:
 	int16 _soundQuePos, _soundQue[0x100];
 	int16 _soundQue2Pos, _soundQue2Sound[10], _soundQue2Offset[10];
 
-	File *_sfxFile;
+	ScummFile *_sfxFile;
 	SoundMode _soundMode;	
 	MP3OffsetTable *_offsetTable;	// For compressed audio
 	int _numSoundEffects;		// For compressed audio
@@ -110,7 +111,7 @@ public:
 	int getCurrentCDSound() const { return _currentCDSound; }
 
 protected:
-	File *openSfxFile();
+	ScummFile *openSfxFile();
 	void startSfxSound(File *file, int file_size, PlayingSoundHandle *handle, int id = -1);
 	bool isSfxFinished() const;
 	void processSfxQueues();

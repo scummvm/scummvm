@@ -66,7 +66,6 @@ private:
 	byte _encbyte;
 	uint32	_subFileStart;
 	uint32	_subFileLen;
-	Common::String _subFileName;
 public:
 	ScummFile();
 	void setEnc(byte value);
@@ -629,6 +628,8 @@ protected:
 public:
 	/** The name of the (macintosh/rescumm style) container file, if any. */
 	Common::String _containerFile;
+	
+	bool openFile(ScummFile &file, const char *filename);
 
 protected:
 	int _resourceHeaderSize;

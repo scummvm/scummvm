@@ -119,8 +119,8 @@ bool NutRenderer::loadFont(const char *filename) {
 		warning("NutRenderer::loadFont() Font already loaded, ok, loading...");
 	}
 
-	File file;
-	file.open(filename);
+	ScummFile file;
+	_vm->openFile(file, filename);
 	if (file.isOpen() == false) {
 		warning("NutRenderer::loadFont() Can't open font file: %s", filename);
 		return false;

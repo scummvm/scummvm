@@ -24,9 +24,9 @@
 
 #include "common/scummsys.h"
 
-class File;
-
 namespace Scumm {
+
+class ScummFile;
 
 class Chunk {
 public:
@@ -67,7 +67,7 @@ public:
 
 class FileChunk : public BaseChunk {
 private:
-	File *_data;
+	ScummFile *_data;
 	uint32 _offset;
 
 protected:

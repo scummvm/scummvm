@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "scumm/smush/chunk.h"
+#include "scumm/scumm.h"
 
 #include "common/file.h"
 #include "common/str.h"
@@ -89,8 +90,8 @@ FileChunk::FileChunk() :
 }
 
 FileChunk::FileChunk(const char *fname) {
-	_data = new File();
-	if (!_data->open(fname))
+	_data = new ScummFile();
+	if (!g_scumm->openFile(*_data, fname))
 		error("FileChunk: Unable to open file %s", fname);
 
 	_type = _data->readUint32BE();

@@ -1116,8 +1116,8 @@ void SmushPlayer::seekSan(const char *file, int32 pos, int32 contFrame) {
 void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 
 	// Verify the specified file exists
-	File f;
-	f.open(filename);
+	ScummFile f;
+	_vm->openFile(f, filename);
 	if (!f.isOpen()) {
 		warning("SmushPlayer::play() File not found %s", filename);
 		return;

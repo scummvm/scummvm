@@ -691,13 +691,13 @@ int indexCompare(const void *p1, const void *p2) {
 
 // Create an index of the language file.
 void ScummEngine::loadLanguageBundle() {
-	File file;
+	ScummFile file;
 	int32 size;
 
 	if (_gameId == GID_DIG) {
-		file.open("language.bnd");
+		openFile(file, "language.bnd");
 	} else if (_gameId == GID_CMI) {
-		file.open("language.tab");
+		openFile(file, "language.tab");
 	} else {
 		return;
 	}
