@@ -1423,11 +1423,11 @@ void Scumm::waitForTimer(int msec_delay) {
 			switch(event.event_code) {
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= '0' && event.kbd.keycode<='9'
-					&& (event.kbd.flags == OSystem::KBD_SHIFT ||
+					&& (event.kbd.flags == OSystem::KBD_ALT ||
 						event.kbd.flags == OSystem::KBD_CTRL)) {
 					_saveLoadSlot = event.kbd.keycode - '0';
 					sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
-					_saveLoadFlag = (event.kbd.flags == OSystem::KBD_SHIFT) ? 1 : 2;
+					_saveLoadFlag = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
 					_saveLoadCompatible = false;
 				} else if (event.kbd.flags==OSystem::KBD_CTRL) {
 					if (event.kbd.keycode=='f')
