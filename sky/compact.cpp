@@ -76,8 +76,6 @@ uint16 *getGrafixPtr(Compact *cpt) {
 			return buf + cpt->grafixProg.pos;
 		case TALKTABLE:
 			buf = (uint16 *)SkyTalkAnims::animTalkTablePtr[cpt->grafixProg.ptrTarget];
-			if (buf == NULL)
-				warning("::getGrafixPtr: request for TT ptr %d -> NULL", cpt->grafixProg.ptrTarget);
 			return buf + cpt->grafixProg.pos;
 		default:
 			error("::getGrafixPtr: unknown grafixProg type for Compact cpt");
