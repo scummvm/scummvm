@@ -465,6 +465,9 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 
 		{
 			uint this_delay = 20; // 1?
+#ifdef _WIN32_WCE
+			this_delay = 10;
+#endif
 			if (this_delay > amount)
 				this_delay = amount;
 			_system->delay_msecs(this_delay);
