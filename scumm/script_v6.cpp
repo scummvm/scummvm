@@ -30,8 +30,7 @@
 #include "sound.h"
 #include "verbs.h"
 #include <time.h>
-#include "smush/player.h"
-#include "smush/scumm_renderer.h"
+#include "smush/smush_player.h"
 
 #include "sound/mididrv.h"
 
@@ -2337,11 +2336,8 @@ void Scumm_v6::o6_kernelSetFunctions() {
 
 				debug(1, "INSANE Arg: %d", args[1]);
 
-				ScummRenderer *sr = new ScummRenderer(this, speed);
-				SmushPlayer *sp = new SmushPlayer(sr);
-				
-				if (_noSubtitles)
-					sp->hide("subtitles");
+				SmushPlayer *sp = new SmushPlayer(this, speed, !_noSubtitles);
+
 				// INSANE mode 0: SMUSH movie playback
 				if (args[1] == 0) {
 					sp->play((char *)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
@@ -2378,7 +2374,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 									putState(235, 1);	   // Cheat and activate Ramp
 									writeVar(142 | 0x8000, 1); // Cheat and activate auto-booster (fan)
 								}
-//								sp->play("minefite.san", getGameDataPath());
+//								smush->play("minefite.san", getGameDataPath());
 							break;
 						}
 						case 4:
@@ -2403,7 +2399,6 @@ void Scumm_v6::o6_kernelSetFunctions() {
 					sp->play((char *)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
 				}
 				delete sp;
-				delete sr;
 			}
 			break;
 		case 7:

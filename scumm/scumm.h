@@ -257,7 +257,7 @@ struct langIndexNode {
 
 class Scumm : public Engine {
 	friend class ScummDebugger;
-	friend class ScummRenderer;	// FIXME - this is mostly for the destructor
+	friend class SmushPlayer;
 	void errorString(const char *buf_input, char *buf_output);
 public:
 	/* Put often used variables at the top.
@@ -321,6 +321,7 @@ public:
 	int scummLoop(int delta);
 
 	// Event handling
+	void parseEvents();
 	void waitForTimer(int msec_delay);
 	void processKbd();
 	int checkKeyHit();
@@ -341,6 +342,7 @@ public:
 	int _smushFrameRate;
 	bool _insaneState;
 	bool _videoFinished;
+	bool _smushPlay;
 	
 	void pauseGame(bool user);
 	void shutDown(int i);

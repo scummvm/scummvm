@@ -1147,11 +1147,17 @@ int Scumm::runDialog(Dialog *dialog) {
 	bool old_soundsPaused = _sound->_soundsPaused;
 	_sound->pauseSounds(true);
 
+	// Pause playing smush movie
+	_smushPlay = false;
+
 	// Open & run the dialog
 	int result = dialog->runModal();
 
 	// Restore old cursor
 	updateCursor();
+
+	// Restore playing smush movie
+	_smushPlay = true;
 
 	// Resume sound output
 	_sound->pauseSounds(old_soundsPaused);
@@ -1496,89 +1502,95 @@ void Scumm::errorString(const char *buf1, char *buf2) {
 }
 
 void Scumm::waitForTimer(int msec_delay) {
-	OSystem::Event event;
 	uint32 start_time;
 
-	if (_fastMode&2)
+	if (_fastMode & 2)
 		msec_delay = 0;
-	else if (_fastMode&1)
+	else if (_fastMode & 1)
 		msec_delay = 10;
 
 	start_time = _system->get_msecs();
 
-	for(;;) {
-		while (_system->poll_event(&event)) {
+	for (;;) {
+		parseEvents();
 
-			switch(event.event_code) {
-			case OSystem::EVENT_KEYDOWN:
-				if (event.kbd.keycode >= '0' && event.kbd.keycode<='9'
-					&& (event.kbd.flags == OSystem::KBD_ALT ||
-						event.kbd.flags == OSystem::KBD_CTRL)) {
-					_saveLoadSlot = event.kbd.keycode - '0';
-
-					//  don't overwrite autosave (slot 0)
-					if (_saveLoadSlot == 0)
-						_saveLoadSlot = 10;
-
-					sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
-					_saveLoadFlag = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
-					_saveLoadCompatible = false;
-				} else if (event.kbd.flags==OSystem::KBD_CTRL) {
-					if (event.kbd.keycode=='f')
-						_fastMode ^= 1;
-					else if (event.kbd.keycode=='g')
-						_fastMode ^= 2;
-					else if ((event.kbd.keycode=='d') && (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0)))
-						g_debugger.attach(this);
-					else if (event.kbd.keycode=='s')
-						resourceStats();
-					else
-						_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
-				} else if (event.kbd.flags & OSystem::KBD_ALT) {
-					// The result must be 273 for Alt-W
-					// because that's what MI2 looks for in
-					// its "instant win" cheat.
-					_keyPressed = event.kbd.keycode + 154;
-				} else 
-					_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
-				break;
-
-			case OSystem::EVENT_MOUSEMOVE:
-				mouse.x = event.mouse.x;
-				mouse.y = event.mouse.y;
-				_system->set_mouse_pos(event.mouse.x, event.mouse.y);
-				_system->update_screen();
-				break;
-
-			case OSystem::EVENT_LBUTTONDOWN:
-				_leftBtnPressed |= msClicked|msDown;
-#ifdef _WIN32_WCE
-				mouse.x = event.mouse.x;
-				mouse.y = event.mouse.y;
-#endif
-				break;
-
-			case OSystem::EVENT_RBUTTONDOWN:
-				_rightBtnPressed |= msClicked|msDown;
-#ifdef _WIN32_WCE
-				mouse.x = event.mouse.x;
-				mouse.y = event.mouse.y;
-#endif
-				break;
-
-			case OSystem::EVENT_LBUTTONUP:
-				_leftBtnPressed &= ~msDown;
-				break;
-
-			case OSystem::EVENT_RBUTTONUP:
-				_rightBtnPressed &= ~msDown;
-				break;
-			}
-		}
 		_sound->updateCD(); // Loop CD Audio if needed
 		if (_system->get_msecs() >= start_time + msec_delay)
 			break;
 		_system->delay_msecs(10);
+	}
+}
+
+void Scumm::parseEvents() {
+	OSystem::Event event;
+
+	while (_system->poll_event(&event)) {
+
+		switch(event.event_code) {
+		case OSystem::EVENT_KEYDOWN:
+			if (event.kbd.keycode >= '0' && event.kbd.keycode<='9'
+				&& (event.kbd.flags == OSystem::KBD_ALT ||
+					event.kbd.flags == OSystem::KBD_CTRL)) {
+				_saveLoadSlot = event.kbd.keycode - '0';
+
+				//  don't overwrite autosave (slot 0)
+				if (_saveLoadSlot == 0)
+					_saveLoadSlot = 10;
+
+				sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
+				_saveLoadFlag = (event.kbd.flags == OSystem::KBD_ALT) ? 1 : 2;
+				_saveLoadCompatible = false;
+			} else if (event.kbd.flags==OSystem::KBD_CTRL) {
+				if (event.kbd.keycode == 'f')
+					_fastMode ^= 1;
+				else if (event.kbd.keycode == 'g')
+					_fastMode ^= 2;
+				else if ((event.kbd.keycode == 'd') && (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0)))
+					g_debugger.attach(this);
+				else if (event.kbd.keycode == 's')
+					resourceStats();
+				else
+					_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
+			} else if (event.kbd.flags & OSystem::KBD_ALT) {
+				// The result must be 273 for Alt-W
+				// because that's what MI2 looks for in
+				// its "instant win" cheat.
+				_keyPressed = event.kbd.keycode + 154;
+			} else 
+				_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
+			break;
+
+		case OSystem::EVENT_MOUSEMOVE:
+			mouse.x = event.mouse.x;
+			mouse.y = event.mouse.y;
+			_system->set_mouse_pos(event.mouse.x, event.mouse.y);
+			_system->update_screen();
+			break;
+
+		case OSystem::EVENT_LBUTTONDOWN:
+			_leftBtnPressed |= msClicked|msDown;
+#ifdef _WIN32_WCE
+			mouse.x = event.mouse.x;
+			mouse.y = event.mouse.y;
+#endif
+			break;
+
+		case OSystem::EVENT_RBUTTONDOWN:
+			_rightBtnPressed |= msClicked|msDown;
+#ifdef _WIN32_WCE
+			mouse.x = event.mouse.x;
+			mouse.y = event.mouse.y;
+#endif
+			break;
+
+		case OSystem::EVENT_LBUTTONUP:
+			_leftBtnPressed &= ~msDown;
+			break;
+
+		case OSystem::EVENT_RBUTTONUP:
+			_rightBtnPressed &= ~msDown;
+			break;
+		}
 	}
 }
 

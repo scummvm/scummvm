@@ -27,8 +27,7 @@
 #include "sound.h"
 #include "verbs.h"
 
-#include "smush/player.h"
-#include "smush/scumm_renderer.h"
+#include "smush/smush_player.h"
 
 #include <time.h>
 
@@ -1334,16 +1333,9 @@ void Scumm_v8::o8_startVideo() {
 	
 	warning("o8_startVideo(%s/%s)", getGameDataPath(), (char*)_scriptPointer);
 	
-	ScummRenderer * sr = new ScummRenderer(this, 83333);
-	SmushPlayer * sp = new SmushPlayer(sr);
-
-	if (_noSubtitles)
-		sp->hide("subtitles");
-	
+	SmushPlayer *sp = new SmushPlayer(this, 83333, !_noSubtitles);
 	sp->play((char*)_scriptPointer, getGameDataPath());
-	
 	delete sp;
-	delete sr;
 
 	_scriptPointer += len + 1;
 }
