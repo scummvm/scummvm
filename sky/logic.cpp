@@ -225,9 +225,9 @@ static uint32 _stack[20];
 static byte _stackPtr = 0;
 #define f_module_0	60400
 
-void SkyLogic::checkModuleLoaded(uint32 moduleNo) {
+void SkyLogic::checkModuleLoaded(uint16 moduleNo) {
 	if (!_moduleList[moduleNo])
-		_moduleList[moduleNo] = (uint16 *)_skyDisk->loadFile((uint8)moduleNo + f_module_0, NULL);
+		_moduleList[moduleNo] = (uint16 *)_skyDisk->loadFile((uint16)moduleNo + f_module_0, NULL);
 }
 
 void SkyLogic::push(uint32 a) {
@@ -405,8 +405,8 @@ script:
 	// Bit 12-15 - Module number
 	// Bit 16-31 - Script offset (if any)
 
-	uint16 scriptNo = (uint8)(scr & 0xffff);
-	uint16 moduleNo = (uint8)((scr & 0xff00) >> 12);
+	uint16 scriptNo = (uint16)(scr & 0xffff);
+	uint16 moduleNo = (uint16)((scr & 0xff00) >> 12);
 	printf("scriptNo: %d, moduleNo: %d\n", scriptNo, moduleNo);
 	uint16 *scriptData = _moduleList[moduleNo]; // get module address
 
@@ -560,7 +560,7 @@ script:
 			// pop a value into a compact
 			s = *scriptData++;
 			tmp = (uint16 *)SkyCompact::getCompactElem(compact, s);
-			*tmp = (uint8)pop();
+			*tmp = (uint16)pop();
 			break;
 		case 17: // is_equal
 			a = pop();
@@ -604,8 +604,8 @@ uint32 SkyLogic::fnDrawScreen(uint32 a, uint32 b, uint32 c) {
 uint32 SkyLogic::fnAr(uint32 x, uint32 y, uint32 c) {
 	_compact->downFlag = 1; // assume failure in-case logic is interupted by speech (esp Joey)
 
-	_compact->extCompact->arTargetX = (uint8)x;
-	_compact->extCompact->arTargetY = (uint8)y;
+	_compact->extCompact->arTargetX = (uint16)x;
+	_compact->extCompact->arTargetY = (uint16)y;
 	_compact->logic = L_AR; // Set to AR mode
 
 	_compact->xcood &= 0xfff8;
@@ -678,7 +678,7 @@ uint32 SkyLogic::fnCloseHand(uint32 a, uint32 b, uint32 c) {
 }
 
 uint32 SkyLogic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
-	_compact->upFlag = (uint8)mode; // save mode for action script
+	_compact->upFlag = (uint16)mode; // save mode for action script
 	_compact->mode += 4; // next level up
 	Compact *compact2 = SkyState::fetchCompact(_compact->place);
 	uint16 *getToTable = compact2->getToTable;
