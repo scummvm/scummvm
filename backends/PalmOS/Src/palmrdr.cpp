@@ -34,7 +34,7 @@
 #include "arm/native.h"
 #include "arm/macros.h"
 
-void OSystem_PALMOS::rumblePack(Boolean active) {
+static void rumblePack(Boolean active) {
 	if (!gVars->vibrator)
 		return;
 
@@ -123,9 +123,10 @@ void OSystem_PALMOS::updateScreen_widePortrait() {
 	
 	// update screen
 	ARM_START(WideType)
+		ARM_INIT(COMMON_WPORTRAIT)
 		ARM_ADDM(dst)
 		ARM_ADDM(src)
-		PNO_CALL(PNO_WIDE, ARM_DATA())
+		ARM_CALL(ARM_COMMON, PNO_DATA())
 	ARM_CONTINUE()
 	{
 		Coord x, y;
@@ -185,9 +186,10 @@ void OSystem_PALMOS::updateScreen_wideLandscape() {
 	
 	// update screen
 	ARM_START(WideType)
+		ARM_INIT(COMMON_WLANDSCAPE)
 		ARM_ADDM(dst)
 		ARM_ADDM(src)
-		PNO_CALL(PNO_WIDE, ARM_DATA())
+		ARM_CALL(ARM_COMMON, PNO_DATA())
 	ARM_CONTINUE()
 	{
 		Coord x, y;

@@ -26,6 +26,21 @@
 #include <SonyClie.h>
 #include "common/system.h"
 #include "cdaudio.h"
+//#include "arm/native.h"
+
+typedef struct {
+	void *proc;
+	void *param;
+
+	void	*handle;	// sound handle
+	UInt32	size;		// buffer size
+	UInt32	slot;
+	UInt32 	active,		// is the sound handler active
+			set,		// is the buffer filled
+			wait;		// do we need to wait for sound completion
+	void	*dataP,		// main buffer
+			*tmpP;		// tmp buffer (convertion)
+} SoundDataType;
 
 // OSD resource id
 #define kDrawKeyState	3000
@@ -75,6 +90,8 @@ public:
 
 	// Update the dirty areas of the screen
 	void updateScreen();
+
+	void clearScreen();
 
 	// Either show or hide the mouse cursor
 	bool showMouse(bool visible);
@@ -180,8 +197,6 @@ private:
 	void updateScreen_widePortrait();
 	void updateScreen_wideLandscape();
 	void updateScreen_wideZodiac();
-
-	void rumblePack(Boolean active);
 
 	void *ptrP[5];	// various ptr
 
@@ -302,6 +317,5 @@ Err HwrDisplayPalette(UInt8 operation, Int16 startIndex,
 // Sound
 void pcm2adpcm(Int16 *src, UInt8 *dst, UInt32 length);
 Err sndCallback(void* UserDataP, SndStreamRef stream, void* bufferP, UInt32 *bufferSizeP);
-void ClearScreen();
 
 #endif
