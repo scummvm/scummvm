@@ -251,12 +251,6 @@
 			RelativePath="..\..\saga\scene.h">
 		</File>
 		<File
-			RelativePath="..\..\saga\sceneproc.cpp">
-		</File>
-		<File
-			RelativePath="..\..\saga\sceneproc.h">
-		</File>
-		<File
 			RelativePath="..\..\saga\script.cpp">
 		</File>
 		<File
