@@ -48,7 +48,7 @@ void IMuseDigital::setFtMusicState(int stateId) {
 }
 
 void IMuseDigital::setFtMusicSequence(int seqId) {
-	if (seqId > 53)
+	if (seqId > 52)
 		return;
 
 	debug(5, "Sequence music: %s, %s", _ftSeqNames[seqId].name);
