@@ -39,8 +39,9 @@ protected:
 	
 	Node *_root;
 	Node *_header;
-
+	public:
 	class Iterator {
+	protected:
 		Node *_node;
 		
 	public:
