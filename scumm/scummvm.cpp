@@ -207,6 +207,11 @@ void Scumm::scummInit()
 	else
 		_resourceHeaderSize = 8;
 
+	if (_features & GF_OLD256)
+		_charset = new CharsetRendererOld256(this);
+	else
+		_charset = new CharsetRendererClassic(this);
+
 	memset(_charsetData, 0, sizeof(_charsetData));
 	
 	if (!(_features & GF_SMALL_NAMES) && !(_features & GF_AFTER_V8))
@@ -1552,11 +1557,6 @@ void Scumm::mainRun()
 
 void Scumm::launch()
 {
-	if (_features & GF_OLD256)
-		_charset = new CharsetRendererOld256(this);
-	else
-		_charset = new CharsetRendererClassic(this);
-
 	gdi._vm = this;
 
 	_maxHeapThreshold = 450000;

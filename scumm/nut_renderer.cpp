@@ -223,14 +223,8 @@ void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
 		for (int32 tx = 0; tx < width; tx++) {
 			byte pixel = *(_tmpCodecBuffer + ty * width + tx);
 			if (pixel != 0) {
-				if (color == 0) {
-					if (pixel == 0x01)
-						pixel = 0xf;
-				}
-				else {
-					if (pixel == 0x01)
-						pixel = color;
-				}
+				if (pixel == 0x01)
+					pixel = (color == 0) ? 0xf : color;
 				if (pixel == 0xff)
 					pixel = 0x0;
 				*(_dstPtr + ((ty + y) * _dstPitch + x + tx)) = pixel;
@@ -238,4 +232,3 @@ void NutRenderer::drawChar(char c, int32 x, int32 y, byte color) {
 		}
 	}
 }
-
