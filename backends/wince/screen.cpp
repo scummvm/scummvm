@@ -21,7 +21,7 @@
 
 #ifdef _WIN32_WCE
 
-#define POCKETSCUMM_VERSION "PPC 0.4.0"
+#define POCKETSCUMM_VERSION "PPC 0.4.1"
 
 /* Original GFX code by Vasyl Tsvirkunov */
 

@@ -8,7 +8,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm
-Version		: 0.4.0
+Version		: 0.4.1
 Release		: @RELEASE@
 Summary		: SCUMM graphic adventure game interpreter
 Group		: Interpreters
@@ -56,6 +56,12 @@ rm -Rf %{buildroot}
 #   Change Log
 #------------------------------------------------------------------------------
 %changelog
+* 0.4.1 (2003-05-25)
+  - Added AdvMame3x filter
+  - Fixed crash Curse of Monkey Island (and possibly other games as well)
+  - Fixed airport doors in Zak256
+  - Fixed crash in SDL backend
+  - Fixed various iMuse bugs
 * 0.4.0 (2003-05-11)
   - Curse of Monkey Island (comi) support (experimental)
   - Added support for the EGA versions of Loom, Monkey Island and Indy3
