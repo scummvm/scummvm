@@ -84,18 +84,18 @@ static Boolean MainFormDoCommand(UInt16 command)
 			handled = true;
 			break;
 
-		case MainGamesViewMemory:
+		case MainOptionsViewMemory:
 			FrmPopupForm(SystemInfoForm);
 			handled = true;
 			break;
 
 		case MainGamesNewEdit:
 			gFormEditMode = edtModeParams;
-			FrmPopupForm(EditGameForm);
+			FrmPopupForm(GameEditForm);
 			handled = true;
 			break;
 
-		case MainGamesBeam:
+		case MainOptionsBeam:
 			BeamMe();
 			//if (BeamMe())
 				//FrmCustomAlert(FrmErrorAlert,"Unable to beam ScummVM for PalmOS.",0,0);
@@ -107,7 +107,7 @@ static Boolean MainFormDoCommand(UInt16 command)
  			handled = true;
 			break;
 		
-		case MainOptionsMusicSound:
+		case MainGamesMusicSound:
 			FrmPopupForm(MusicForm);
 			handled = true;
 			break;
@@ -192,18 +192,30 @@ Boolean MainFormHandleEvent(EventPtr eventP)
 	
 	switch (eventP->eType) {
 		case frmUpdateEvent:
-		frmP = FrmGetFormPtr(MainForm);
+		{
+			RectangleType r;
+			UInt16 idx;
+			IndexedColorType bgColor = UIColorGetTableEntryIndex(UIFormFill);
+			frmP = FrmGetFormPtr(MainForm);
+
 			if (gPrefs->card.volRefNum != sysInvalidRefNum)
-				FrmShowObject(frmP, FrmGetObjectIndex (frmP, MainMSBitMap));
+				idx = FrmGetObjectIndex (frmP, MainMSBitMap);
 			else
-				FrmShowObject(frmP, FrmGetObjectIndex (frmP, MainMSNoneBitMap));
+				idx = FrmGetObjectIndex (frmP, MainMSNoneBitMap);
+
+			WinSetDrawMode(winPaint);
+			WinSetBackColor(bgColor);
+			FrmGetObjectBounds(frmP, idx, &r);
+			WinEraseRectangle(&r, 0);
+			FrmShowObject(frmP, idx);
+
 			if (eventP->data.frmUpdate.updateCode == frmRedrawUpdateMSImport) {
 				GamImportDatabase();
 				SknUpdateList();
 			}
 			handled = true;
 			break;
-
+		}
 		case winDisplayChangedEvent:
 			if (gVars) {
 				if (gVars->skinSet)
@@ -256,14 +268,14 @@ Boolean MainFormHandleEvent(EventPtr eventP)
 					switch (sknLastOn) {
 						case skinButtonGameAdd:
 							gFormEditMode = edtModeAdd;
-							FrmPopupForm(EditGameForm);
+							FrmPopupForm(GameEditForm);
 							handled = true;
 							break;
 
 						case skinButtonGameEdit:
 						case skinButtonGameParams:
 							gFormEditMode = edtModeParams;
-							FrmPopupForm(EditGameForm);
+							FrmPopupForm(GameEditForm);
 							handled = true;
 							break;
 
