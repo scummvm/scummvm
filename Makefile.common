@@ -40,8 +40,8 @@ MODULES += \
 -include $(patsubst %,%/module.mk,$(MODULES))
 
 
-scummvm$(EXEEXT): $(OBJS)
-	$(CXX) $(LDFLAGS) -o $@ common/engine.o $+ $(LIBS)
+scummvm$(EXEEXT): common/engine.o $(OBJS)
+	$(CXX) $(LDFLAGS) -o $@ $+ $(LIBS)
 
 clean:
 	$(RM) $(OBJS) scummvm$(EXEEXT)
