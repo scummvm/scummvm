@@ -257,9 +257,11 @@ the section on Reporting Bugs.
 
        Simon the Sorcerer 2:
                 - Combined speech and subtitles will often cause speech to be
-                  cut off early, this is limitation of original game.
+                  cut off early, this is a limitation of the original game.
                 - Only default language (English) in data files is supported 
                   in simon2mac
+                - F10 key animation in simon2mac is different compared to
+                  original game
 
        FM-TOWNS versions:
                 - Most Kanji versions are unsupported at this time, and
@@ -375,7 +377,7 @@ manual.
   --demo-mode              Start demo mode of Maniac Mansion (Classic version)
   --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games
                            (default: 100)
-  --talkspeed=NUM          Set talk speed for SCUMM games (default: 60)
+  --talkspeed=NUM          Set talk speed for SCUMM games
 
 
 The meaning of most long options can be inverted by prefixing them with "no-",
@@ -906,7 +908,7 @@ An example config file looks as follows:
         [loomcd]
         cdrom=1
         path=C:\loom\
-        talkspeed=55
+        talkspeed=5
         savepath=C:\loom\saves\
         
         [monkey2]
@@ -935,7 +937,7 @@ The following keywords are recognized:
         language        string   Specify language (en, de, fr, it, pt, es, jp,
                                  zh, kr,se, gb, hb, cz, ru)
         subtitles       bool     Set to true to enable subtitles.
-        talkspeed       number   Text speed (default: 60)
+        talkspeed       number   Text speed
 
         fullscreen      bool     Fullscreen mode
         aspect_ratio    bool     Enable aspect ratio correction
