@@ -290,6 +290,7 @@ void SkyControl::initPanel(void) {
 	_upSlowButton   = createResource(_sprites.buttonDown, 1, 0, 212,  10,  0,   SHIFT_UP_SLOW, SAVEPANEL);
 	_quitButton     = createResource(    _sprites.button, 3, 0,  72, 129, 49,       SP_CANCEL, SAVEPANEL);
 	_restoreButton  = createResource(    _sprites.button, 3, 0,  29, 129, 51,  RESTORE_A_GAME, SAVEPANEL);
+	_autoSaveButton = createResource(    _sprites.button, 3, 0, 115, 129, 0x8FFF,    RESTORE_AUTO, SAVEPANEL);
 	
 	_savePanLookList[0] = _saveButton;
 	_restorePanLookList[0] = _restoreButton;
@@ -298,12 +299,14 @@ void SkyControl::initPanel(void) {
 	_restorePanLookList[3] = _savePanLookList[3] = _upFastButton;
 	_restorePanLookList[4] = _savePanLookList[4] = _upSlowButton;
 	_restorePanLookList[5] = _savePanLookList[5] = _quitButton;
+	_restorePanLookList[6] = _autoSaveButton;
 
 	_statusBar = new SkyControlStatus(_skyText, _system, _screenBuf);
 }
 
 void SkyControl::buttonControl(SkyConResource *pButton) {
 
+	char autoSave[] = "Restore Autosave";
 	if (pButton == NULL) {
 		if (_textSprite) free(_textSprite);
 		_textSprite = NULL;
@@ -316,9 +319,13 @@ void SkyControl::buttonControl(SkyConResource *pButton) {
 		_textSprite = NULL;
 		_curButtonText = pButton->_text;
 		if (pButton->_text) {
-			_skyText->getText(pButton->_text);
 			displayText_t textRes;
-			textRes = _skyText->displayText(NULL, false, PAN_LINE_WIDTH, 255);
+			if (pButton->_text == 0xFFFF) { // text for autosave button
+				textRes = _skyText->displayText(autoSave, NULL, false, PAN_LINE_WIDTH, 255);
+			} else {
+				_skyText->getText(pButton->_text);
+				textRes = _skyText->displayText(NULL, false, PAN_LINE_WIDTH, 255);
+			}
 			_textSprite = (dataFileHeader *)textRes.textData;
 			_text->setSprite(_textSprite);
 		} else _text->setSprite(NULL);
@@ -513,7 +520,11 @@ uint16 SkyControl::handleClick(SkyConResource *pButton) {
 
 		case RESTORE_A_GAME:
 			animClick(pButton);
-			return restoreGameFromFile();
+			return restoreGameFromFile(false);
+
+		case RESTORE_AUTO:
+			animClick(pButton);
+			return restoreGameFromFile(true);
 
 		case SP_CANCEL:
 			animClick(pButton);
@@ -772,6 +783,18 @@ uint16 SkyControl::shiftUp(uint8 speed) {
 	return SHIFTED;
 }
 
+bool SkyControl::autoSaveExists(void) {
+
+	File test;
+	char fName[20];
+	if (SkyState::isCDVersion())
+		strcpy(fName, "SKY-VM-CD.ASD");
+	else
+        sprintf(fName, "SKY-VM%03d.ASD", SkyState::_systemVars.gameVersion);
+	test.open(fName, _savePath);
+	return test.isOpen();
+}
+
 uint16 SkyControl::saveRestorePanel(bool allowSave) {
 
 	_keyPressed = 0;
@@ -780,8 +803,18 @@ uint16 SkyControl::saveRestorePanel(bool allowSave) {
 
 	SkyConResource **lookList;
 	uint16 cnt;
-	if (allowSave) lookList = _savePanLookList;
-	else lookList = _restorePanLookList;
+	uint8 lookListLen;
+	if (allowSave) {
+		lookList = _savePanLookList;
+		lookListLen = 6;
+	} else {
+		lookList = _restorePanLookList;
+		if (autoSaveExists())
+			lookListLen = 7;
+		else
+			lookListLen = 6;
+	}
+	bool withAutoSave = (lookListLen == 7);
 
 	uint8 *saveGameTexts = (uint8 *)malloc(MAX_SAVE_GAMES * MAX_TEXT_LEN);
 	dataFileHeader *textSprites[MAX_ON_SCREEN + 1];
@@ -801,6 +834,8 @@ uint16 SkyControl::saveRestorePanel(bool allowSave) {
 				_text->flushForRedraw();
 				_savePanel->drawToScreen(NO_MASK);
 				_quitButton->drawToScreen(NO_MASK);
+				if (withAutoSave)
+					_autoSaveButton->drawToScreen(NO_MASK);
 			}
 			setUpGameSprites(saveGameTexts, textSprites, _firstText, _selectedGame);
 			showSprites(textSprites, allowSave);
@@ -829,7 +864,7 @@ uint16 SkyControl::saveRestorePanel(bool allowSave) {
 		}
 
 		bool haveButton = false;
-		for (cnt = 0; cnt < 6; cnt++)
+		for (cnt = 0; cnt < lookListLen; cnt++)
 			if (lookList[cnt]->isMouseOver(_mouseX, _mouseY)) {
 				buttonControl(lookList[cnt]);
 				haveButton = true;
@@ -1010,6 +1045,26 @@ void SkyControl::saveDescriptions(uint8 *srcBuf) {
 	free(tmpBuf);	
 }
 
+void SkyControl::doAutoSave(void) {
+	char fName[20];
+	if (SkyState::isCDVersion())
+		strcpy(fName, "SKY-VM-CD.ASD");
+	else
+        sprintf(fName, "SKY-VM%03d.ASD", SkyState::_systemVars.gameVersion);
+	File outf;
+	if (!outf.open(fName, _savePath, File::kFileWriteMode)) {
+		warning("Can't create file %s for autosaving", fName);
+		return;
+	}
+	uint8 *saveData = (uint8 *)malloc(0x20000);
+	uint32 fSize = prepareSaveData(saveData);
+
+	if (outf.write(saveData, fSize) != fSize)
+		warning("Can't write file %s for autosaving. Disk full?", fName);
+	outf.close();
+	free(saveData);
+}
+
 uint16 SkyControl::saveGameToFile(void) {
 
 	char fName[20];
@@ -1019,7 +1074,7 @@ uint16 SkyControl::saveGameToFile(void) {
 		return NO_DISK_SPACE;
 	}
 
-	uint8 *saveData = (uint8 *)malloc(0x50000);
+	uint8 *saveData = (uint8 *)malloc(0x20000);
 	uint32 fSize = prepareSaveData(saveData);
 
 	if (outf.write(saveData, fSize) != fSize) {
@@ -1391,10 +1446,17 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 #undef LODSD
 #undef LODSW
 
-uint16 SkyControl::restoreGameFromFile(void) {
+uint16 SkyControl::restoreGameFromFile(bool autoSave) {
 	
 	char fName[20];
-	sprintf(fName,"SKY-VM.%03d", _selectedGame);
+	if (autoSave) {
+		if (SkyState::isCDVersion())
+			strcpy(fName, "SKY-VM-CD.ASD");
+		else
+			sprintf(fName, "SKY-VM%03d.ASD", SkyState::_systemVars.gameVersion);
+	} else
+    	sprintf(fName,"SKY-VM.%03d", _selectedGame);
+
 	File inf;
 	if (!inf.open(fName, _savePath)) {
 		return RESTORE_FAILED;

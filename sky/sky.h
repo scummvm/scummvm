@@ -127,6 +127,7 @@ protected:
 	void checkCommands(uint32 *&cmdPtr);
 	void introFrame(uint8 **diffPtr, uint8 **vgaPtr, uint8 *screenData);
 	void escDelay(uint32 pDelay);
+	uint32 _lastSaveTime;
 
 	SkyText *getSkyText();
 	void initialise();

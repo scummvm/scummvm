@@ -83,6 +83,7 @@ class SkyMouse;
 #define EXIT			15
 #define RESTART			16
 #define QUIT_TO_DOS		17
+#define RESTORE_AUTO	18
 
 // onClick return codes
 #define CANCEL_PRESSED	100
@@ -171,6 +172,7 @@ public:
 	void doLoadSavePanel(void);
 	void restartGame(void);
 	void showGameQuitMsg(bool useScreen = true);
+	void doAutoSave(void);
     
 private:
 	void initPanel(void);
@@ -209,7 +211,8 @@ private:
 	void stosStr(uint8 **destPos, uint16 *src, bool isGraph);
 	uint32 prepareSaveData(uint8 *destBuf);
 
-	uint16 restoreGameFromFile(void);
+	bool autoSaveExists(void);
+	uint16 restoreGameFromFile(bool autoSave);
 	void lodsMegaSet(uint8 **srcPos, MegaSet *mega);
 	void lodsCompact(uint8 **srcPos, Compact *cpt);
 	void lodsStr(uint8 **srcPos, uint16 *src);
@@ -276,8 +279,9 @@ private:
 	SkyConResource *_savePanel;
 	SkyConResource *_saveButton, *_downFastButton, *_downSlowButton;
 	SkyConResource *_upFastButton, *_upSlowButton, *_quitButton, *_restoreButton;
+	SkyConResource *_autoSaveButton;
 
-	SkyConResource *_savePanLookList[6], *_restorePanLookList[6];
+	SkyConResource *_savePanLookList[6], *_restorePanLookList[7];
 
 	SkyControlStatus *_statusBar;
 

@@ -155,8 +155,16 @@ void SkyState::go() {
 	if (introSkipped)
 		_skyControl->restartGame();
 
+	_lastSaveTime = _system->get_msecs();
+
 	while (1) {
 		delay(_systemVars.gameSpeed);
+
+		if (_system->get_msecs() - _lastSaveTime > 5 * 60 * 1000) {
+			_lastSaveTime = _system->get_msecs();
+			_skyControl->doAutoSave();
+		}
+
 		if (_key_pressed == 63) {
 			_key_pressed = 0;
 			_skyControl->doControlPanel();
