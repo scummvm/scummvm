@@ -4726,6 +4726,9 @@ void SimonState::realizePalette()
 
 void SimonState::realizePalette_unk()
 {
+// Function is disabled since it causes text display problems.
+// Only used in Simon the Sorcerer 2 when Simon rides lion to Goblin Camp
+#if 0
 	uint8 *src;
 	byte *dst;
 	uint8 palette_unk[768];
@@ -4750,6 +4753,7 @@ void SimonState::realizePalette_unk()
 		_system->set_palette(_video_buf_1, 0, _video_num_pal_colors);
 		delay(5);
  	}
+#endif
 	_palette_color_count = 0;
 }
 
