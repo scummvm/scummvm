@@ -1785,6 +1785,8 @@ const byte *findResourceSmall(uint32 tag, const byte *searchin) {
 	uint16 smallTag;
 
 	smallTag = newTag2Old(tag);
+	if (smallTag == 0)
+		return NULL;
 
 	assert(searchin);
 
