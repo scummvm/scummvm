@@ -886,40 +886,82 @@ void Scumm::o5_freezeScripts()
 
 void Scumm::o5_getActorCostume()
 {
+	int act;
+	Actor *a;
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorCostume")->costume);
+	act = getVarOrDirectByte(0x80);
+
+	a = derefActorSafe(act, "o5_getActorCostume");
+	if (!a) {
+		warning("Invalid actor %d in o5_getActorCostume", act);
+		return;
+	}
+
+	setResult(a->costume);
 }
 
 void Scumm::o5_getActorElevation()
 {
+	int act;
+	Actor *a;
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorElevation")->elevation);
+	act = getVarOrDirectByte(0x80);
+
+	a = derefActorSafe(act, "o5_getActorElevation");
+	if (!a) {
+		warning("Invalid actor %d in o5_getActorElevation", act);
+		return;
+	}
+
+	setResult(a->elevation);
 }
 
 void Scumm::o5_getActorFacing()
 {
+	int act;
+	Actor *a;
 	getResultPos();
-	setResult(newDirToOldDir(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorFacing")->facing));
+	act = getVarOrDirectByte(0x80);
+
+	a = derefActorSafe(act, "o5_getActorFacing");
+	if (!a) {
+		warning("Invalid actor %d in o5_getActorFacing", act);
+		return;
+	}
+
+	setResult(a->facing);
 }
 
 void Scumm::o5_getActorMoving()
 {
+	int act;
+	Actor *a;
 	getResultPos();
-	setResult(derefActorSafe(getVarOrDirectByte(0x80), "o5_getActorMoving")->moving);
+	act = getVarOrDirectByte(0x80);
+
+	a = derefActorSafe(act, "o5_getActorMoving");
+	if (!a) {
+		warning("Invalid actor %d in o5_getActorMoving", act);
+		return;
+	}
+
+	setResult(a->moving);
 }
 
 void Scumm::o5_getActorRoom()
 {
-	int temp;
-	Actor *act;
+	int act;
+	Actor *a;
 	getResultPos();
-	temp = getVarOrDirectByte(0x80);
+	act = getVarOrDirectByte(0x80);
 
-	act = derefActorSafe(temp, "o5_getActorRoom");
-	if (!act)
+	a = derefActorSafe(act, "o5_getActorRoom");
+	if (!a) {
+		warning("Invalid actor %d in o5_getActorRoom", act);
 		return;
+	}
 
-	setResult(act->room);
+	setResult(a->room);
 }
 
 void Scumm::o5_getActorScale()
