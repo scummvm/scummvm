@@ -27,10 +27,10 @@ CP  = cp
 #######################################################################
 
 CXXFLAGS:= -g -O -Wall -Wuninitialized -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
-DEFINES +=
+DEFINES += -DUSE_ZLIB
 LDFLAGS :=
 INCLUDES:= -I. -Icommon -Iscumm $(SDL_CFLAGS)
-LIBS	+= $(SDL_LIBS) -lmingw32 -lwinmm -lopengl32
+LIBS	+= $(SDL_LIBS) -lmingw32 -lwinmm -lopengl32 -lz
 OBJS	:= scummvmico.o backends/sdl/sdl-common.o backends/sdl/sdl_gl.o 
 EXEEXT	:=.exe
 
