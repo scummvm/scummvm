@@ -5,7 +5,6 @@ MODULE_OBJS = \
 	saga/actor.o \
 	saga/actordata.o \
 	saga/animation.o \
-	saga/cmdline.o \
 	saga/console.o \
 	saga/cvar.o \
 	saga/events.o \

@@ -173,22 +173,6 @@ enum R_ERRORCODE {
 
 
 /*
- * r_cmdline.c
-\*--------------------------------------------------------------------------*/
-typedef struct R_EXECINFO_tag {
-
-	int start_scene;
-	int no_verify;
-	int no_sound;
-	int no_music;
-	int windowed;
-	char *game_dir;
-
-} R_EXECINFO;
-
-int R_ReadCommandLine(int argc, char **argv, R_EXECINFO * execinfo);
-
-/*
  * r_main.c
 \*--------------------------------------------------------------------------*/
 int main(int argc, char *argv[]);
