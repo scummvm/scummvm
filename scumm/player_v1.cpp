@@ -22,8 +22,8 @@
 
 #include "stdafx.h"
 #include "base/engine.h"
-#include "scumm/scumm.h"
 #include "scumm/player_v1.h"
+#include "scumm/scumm.h"
 
 namespace Scumm {
 

@@ -25,7 +25,6 @@
 
 #include "common/scummsys.h"
 #include "common/mutex.h"
-#include "common/util.h"
 #include "common/rect.h"
 #include "common/singleton.h"
 

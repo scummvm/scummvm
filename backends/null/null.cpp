@@ -25,7 +25,6 @@
 
 #if defined(USE_NULL_DRIVER)
 
-#include "common/util.h"
 #include "common/rect.h"
 #include "common/savefile.h"
 

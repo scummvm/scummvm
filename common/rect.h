@@ -23,6 +23,7 @@
 #define COMMON_RECT_H
 
 #include "common/scummsys.h"
+#include "common/util.h"
 
 namespace Common {
 

@@ -23,7 +23,6 @@
 #ifndef GFX_H
 #define GFX_H
 
-#include "common/rect.h"
 #include "graphics/surface.h"
 
 namespace Scumm {

@@ -29,7 +29,6 @@
 #include "base/engine.h"
 #include "base/gameDetector.h"
 
-#include "common/util.h"
 #include "common/stream.h"
 #include "common/rect.h"
 
