@@ -897,6 +897,12 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_hexdumpScripts = false;
 	_showStack = false;
 
+	// FIXME: a dirty hack. Currently this is checked before engine
+	//  creation.
+	if (_heversion >= 71) {
+		_features |= GF_DEFAULT_TO_1X_SCALER;
+	}
+
 	if (_features & GF_FMTOWNS && _version == 3) {	// FM-TOWNS V3 games use 320x240
 		_screenWidth = 320;
 		_screenHeight = 240;
@@ -1000,6 +1006,13 @@ int ScummEngine::init(GameDetector &detector) {
 	_system->beginGFXTransaction();
 		initCommonGFX(detector);
 		_system->initSize(_screenWidth, _screenHeight);
+
+		// FIXME: All this seems a dirty hack to me. We already
+		// have this check in constructor
+		if (_heversion >= 71) {
+			_features |= GF_DEFAULT_TO_1X_SCALER;
+			_system->setGraphicsMode("1x");
+		}
 	_system->endGFXTransaction();
 
 	int cd_num = ConfMan.getInt("cdrom");
