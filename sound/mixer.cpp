@@ -251,7 +251,8 @@ void SoundMixer::Channel_MP3::mix(int16 *data, uint len) {
 			return;
 		
 		if (_position >= _size) {
-			return; /* TODO : add equivalent to 'clear' */
+			destroy();
+			return;
 		}
 
 		mad_stream_buffer(&_stream, ((unsigned char *)_ptr) + _position, _size + MAD_BUFFER_GUARD - _position);
@@ -259,7 +260,8 @@ void SoundMixer::Channel_MP3::mix(int16 *data, uint len) {
 		if (mad_frame_decode(&_frame, &_stream) == -1) {
 			/* End of audio... */
 			if (_stream.error == MAD_ERROR_BUFLEN) {
-				return; /* TODO : add equivalent to 'clear' */
+				destroy();
+				return;
 			} else if (!MAD_RECOVERABLE(_stream.error)) {
 				error("MAD frame decode error !");
 			}
