@@ -1279,54 +1279,54 @@ void *IMuseInternal::loadReference(void *me_ref, byte type, int ref) {
 
 int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 	const SaveLoadEntry mainEntries[] = {
-		MKLINE(IMuseInternal, _queue_end, sleUint8, VER_V8),
-		MKLINE(IMuseInternal, _queue_pos, sleUint8, VER_V8),
-		MKLINE(IMuseInternal, _queue_sound, sleUint16, VER_V8),
-		MKLINE(IMuseInternal, _queue_adding, sleByte, VER_V8),
-		MKLINE(IMuseInternal, _queue_marker, sleByte, VER_V8),
-		MKLINE(IMuseInternal, _queue_cleared, sleByte, VER_V8),
-		MKLINE(IMuseInternal, _master_volume, sleByte, VER_V8),
-		MKLINE(IMuseInternal, _trigger_count, sleUint16, VER_V8),
-		MKARRAY(IMuseInternal, _channel_volume[0], sleUint16, 8, VER_V8),
-		MKARRAY(IMuseInternal, _volchan_table[0], sleUint16, 8, VER_V8),
+		MKLINE(IMuseInternal, _queue_end, sleUint8, VER(8)),
+		MKLINE(IMuseInternal, _queue_pos, sleUint8, VER(8)),
+		MKLINE(IMuseInternal, _queue_sound, sleUint16, VER(8)),
+		MKLINE(IMuseInternal, _queue_adding, sleByte, VER(8)),
+		MKLINE(IMuseInternal, _queue_marker, sleByte, VER(8)),
+		MKLINE(IMuseInternal, _queue_cleared, sleByte, VER(8)),
+		MKLINE(IMuseInternal, _master_volume, sleByte, VER(8)),
+		MKLINE(IMuseInternal, _trigger_count, sleUint16, VER(8)),
+		MKARRAY(IMuseInternal, _channel_volume[0], sleUint16, 8, VER(8)),
+		MKARRAY(IMuseInternal, _volchan_table[0], sleUint16, 8, VER(8)),
 		// TODO: Add _cmd_queue in here
 		MKEND()
 	};
 
 	// VolumeFader is obsolete.
 	const SaveLoadEntry volumeFaderEntries[] = {
-		MK_OBSOLETE_REF(VolumeFader, player, TYPE_PLAYER, VER_V8, VER_V16),
-		MK_OBSOLETE(VolumeFader, active, sleUint8, VER_V8, VER_V16),
-		MK_OBSOLETE(VolumeFader, curvol, sleUint8, VER_V8, VER_V16),
-		MK_OBSOLETE(VolumeFader, speed_lo_max, sleUint16, VER_V8, VER_V16),
-		MK_OBSOLETE(VolumeFader, num_steps, sleUint16, VER_V8, VER_V16),
-		MK_OBSOLETE(VolumeFader, speed_hi, sleInt8, VER_V8, VER_V16),
-		MK_OBSOLETE(VolumeFader, direction, sleInt8, VER_V8, VER_V16),
-		MK_OBSOLETE(VolumeFader, speed_lo, sleInt8, VER_V8, VER_V16),
-		MK_OBSOLETE(VolumeFader, speed_lo_counter, sleUint16, VER_V8, VER_V16),
+		MK_OBSOLETE_REF(VolumeFader, player, TYPE_PLAYER, VER(8), VER(16)),
+		MK_OBSOLETE(VolumeFader, active, sleUint8, VER(8), VER(16)),
+		MK_OBSOLETE(VolumeFader, curvol, sleUint8, VER(8), VER(16)),
+		MK_OBSOLETE(VolumeFader, speed_lo_max, sleUint16, VER(8), VER(16)),
+		MK_OBSOLETE(VolumeFader, num_steps, sleUint16, VER(8), VER(16)),
+		MK_OBSOLETE(VolumeFader, speed_hi, sleInt8, VER(8), VER(16)),
+		MK_OBSOLETE(VolumeFader, direction, sleInt8, VER(8), VER(16)),
+		MK_OBSOLETE(VolumeFader, speed_lo, sleInt8, VER(8), VER(16)),
+		MK_OBSOLETE(VolumeFader, speed_lo_counter, sleUint16, VER(8), VER(16)),
 		MKEND()
 	};
 
 	const SaveLoadEntry partEntries[] = {
-		MKREF(Part, _next, TYPE_PART, VER_V8),
-		MKREF(Part, _prev, TYPE_PART, VER_V8),
-		MKREF(Part, _player, TYPE_PLAYER, VER_V8),
-		MKLINE(Part, _pitchbend, sleInt16, VER_V8),
-		MKLINE(Part, _pitchbend_factor, sleUint8, VER_V8),
-		MKLINE(Part, _transpose, sleInt8, VER_V8),
-		MKLINE(Part, _vol, sleUint8, VER_V8),
-		MKLINE(Part, _detune, sleInt8, VER_V8),
-		MKLINE(Part, _pan, sleInt8, VER_V8),
-		MKLINE(Part, _on, sleUint8, VER_V8),
-		MKLINE(Part, _modwheel, sleUint8, VER_V8),
-		MKLINE(Part, _pedal, sleUint8, VER_V8),
-		MK_OBSOLETE(Part, _program, sleUint8, VER_V8, VER_V16),
-		MKLINE(Part, _pri, sleUint8, VER_V8),
-		MKLINE(Part, _chan, sleUint8, VER_V8),
-		MKLINE(Part, _effect_level, sleUint8, VER_V8),
-		MKLINE(Part, _chorus, sleUint8, VER_V8),
-		MKLINE(Part, _percussion, sleUint8, VER_V8),
-		MKLINE(Part, _bank, sleUint8, VER_V8),
+		MKREF(Part, _next, TYPE_PART, VER(8)),
+		MKREF(Part, _prev, TYPE_PART, VER(8)),
+		MKREF(Part, _player, TYPE_PLAYER, VER(8)),
+		MKLINE(Part, _pitchbend, sleInt16, VER(8)),
+		MKLINE(Part, _pitchbend_factor, sleUint8, VER(8)),
+		MKLINE(Part, _transpose, sleInt8, VER(8)),
+		MKLINE(Part, _vol, sleUint8, VER(8)),
+		MKLINE(Part, _detune, sleInt8, VER(8)),
+		MKLINE(Part, _pan, sleInt8, VER(8)),
+		MKLINE(Part, _on, sleUint8, VER(8)),
+		MKLINE(Part, _modwheel, sleUint8, VER(8)),
+		MKLINE(Part, _pedal, sleUint8, VER(8)),
+		MK_OBSOLETE(Part, _program, sleUint8, VER(8), VER(16)),
+		MKLINE(Part, _pri, sleUint8, VER(8)),
+		MKLINE(Part, _chan, sleUint8, VER(8)),
+		MKLINE(Part, _effect_level, sleUint8, VER(8)),
+		MKLINE(Part, _chorus, sleUint8, VER(8)),
+		MKLINE(Part, _percussion, sleUint8, VER(8)),
+		MKLINE(Part, _bank, sleUint8, VER(8)),
 		MKEND()
 	};
 
@@ -1343,7 +1343,7 @@ int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
 
 	{ // Load/save the instrument definitions, which were revamped with V11.
 		Part *part = &_parts[0];
-		if (ser->getVersion() >= VER_V11) {
+		if (ser->getVersion() >= VER(11)) {
 			for (i = ARRAYSIZE(_parts); i; --i, ++part) {
 				part->_instrument.saveOrLoad(ser);
 			}

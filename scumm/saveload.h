@@ -27,26 +27,8 @@
 // Support for "old" savegames (made with 2501 CVS build)
 // Can be useful for other ports too :)
 
-enum {
-	VER_V7 = 7,
-	VER_V8,
-	VER_V9,
-	VER_V10,
-	VER_V11,
-	VER_V12,
-	VER_V13,
-	VER_V14,
-	VER_V15,
-	VER_V16,
-	VER_V17,
-	VER_V18,
-	VER_V19,
-	VER_V20,
-	VER_V21
-};
-
-#define CURRENT_VER VER_V21
-
+#define VER(x) x
+#define CURRENT_VER 21
 
 // To work around a warning in GCC 3.2 (and 3.1 ?) regarding non-POD types,
 // we use a small trick: instead of 0 we use 42. Why? Well, it seems newer GCC
