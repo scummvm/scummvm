@@ -157,15 +157,15 @@ void Scumm::getObjectXYPos(int object) {
 	                        y = od->y_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].y);
 			}
                 } else {
-                        x = (int16)READ_LE_UINT16(&od->walk_x);
-                        y = (int16)READ_LE_UINT16(&od->walk_y);
+                        x = od->walk_x;
+						y = od->walk_y;
                 }
 		_xPos = x;
 		_yPos = y;
 		_dir = oldDirToNewDir(od->actordir&3);
         } else {
-                x = (int16)READ_LE_UINT32(&od->walk_x);
-                y = (int16)READ_LE_UINT16(&od->walk_y);
+                x = od->walk_x;
+				y = od->walk_y;
                 _xPos = x;
                 _yPos = y;
 		_dir= oldDirToNewDir(od->actordir&3);
