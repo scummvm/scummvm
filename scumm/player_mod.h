@@ -36,7 +36,7 @@ public:
 	virtual ~Player_MOD();
 	virtual void setMasterVolume(int vol);
 
-	virtual void startChannel(int id, const char *data, int size, int rate, uint8 vol, int loopStart = 0, int loopEnd = 0, int8 pan = 0);
+	virtual void startChannel(int id, char *data, int size, int rate, uint8 vol, int loopStart = 0, int loopEnd = 0, int8 pan = 0);
 	virtual void stopChannel(int id);
 	virtual void setChannelVol(int id, uint8 vol);
 	virtual void setChannelPan(int id, int8 pan);

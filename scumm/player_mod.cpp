@@ -77,7 +77,7 @@ void Player_MOD::clearUpdateProc() {
 	_mixamt = 0;
 }
 
-void Player_MOD::startChannel (int id, const char *data, int size, int rate, uint8 vol, int loopStart, int loopEnd, int8 pan) {
+void Player_MOD::startChannel (int id, char *data, int size, int rate, uint8 vol, int loopStart, int loopEnd, int8 pan) {
 	int i;
 	if (id == 0)
 		error("player_mod - attempted to start channel id 0");
