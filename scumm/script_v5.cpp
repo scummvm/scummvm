@@ -2200,9 +2200,11 @@ void ScummEngine_v5::o5_startScript() {
 
 	getWordVararg(data);
 
-	// Method used by original Loom to skip copy protection scheme
+	// Method used by original games to skip copy protection scheme
 	//if (_gameId == GID_LOOM && _currentRoom == 69 && script == 201)
 	//	script = 205;
+	//else if ((_gameId == GID_MONKEY_VGA || _gameId == GID_MONKEY_EGA) && script == 152)
+	//	return;
 
 	runScript(script, (op & 0x20) != 0, (op & 0x40) != 0, data);
 }
