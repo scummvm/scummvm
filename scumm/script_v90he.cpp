@@ -800,7 +800,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 				push(spriteInfoGet_flags_14(spriteId));
 				break;
 			case 2:
-				push(spriteInfoGet_flags_16(spriteId));
+				push(spriteInfoGet_flagActive(spriteId));
 				break;
 			case 3:
 				push(spriteInfoGet_flags_13(spriteId));
@@ -1021,7 +1021,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 				spriteInfoSet_flag14(spriteId, args[0]);
 				break;
 			case 2:
-				spriteInfoSet_flag16(spriteId, args[0]);
+				spriteInfoSet_flagActive(spriteId, args[0]);
 				break;
 			case 3:
 				spriteInfoSet_flag13(spriteId, args[0]);
@@ -1110,7 +1110,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_addImageToList(spriteId, 1, &args[0]);
+			spriteAddImageToList(spriteId, 1, &args[0]);
 		break;
 	case 31:
 		args[1] = pop();

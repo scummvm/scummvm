@@ -881,7 +881,7 @@ protected:
 	int spriteInfoGet_flags_13(int spriteId);
 	int spriteInfoGet_flags_14(int spriteId);
 	int spriteInfoGet_flags_15(int spriteId);
-	int spriteInfoGet_flags_16(int spriteId);
+	int spriteInfoGet_flagActive(int spriteId);
 	int spriteInfoGet_flags_20(int spriteId);
 	int spriteInfoGet_flags_22(int spriteId);
 	int spriteInfoGet_flags_23(int spriteId);	
@@ -931,7 +931,7 @@ protected:
 	void spriteInfoSet_flag13(int spriteId, int value);
 	void spriteInfoSet_flag14(int spriteId, int value);
 	void spriteInfoSet_flag15(int spriteId, int value);
-	void spriteInfoSet_flag16(int spriteId, int value);
+	void spriteInfoSet_flagActive(int spriteId, int value);
 	void spriteInfoSet_flag20(int spriteId, int value);
 	void spriteInfoSet_flag22(int spriteId, int value);
 	void spriteInfoSet_flags23_26(int spriteId, int value);
@@ -967,7 +967,7 @@ protected:
 	void spritesResetTables(bool refreshScreen);
 	void spriteGroupCheck(int spriteGroupId);
 	void spriteMarkIfInGroup(int spriteGroupId, uint32 flags);
-	void spriteInfoSet_addImageToList(int spriteId, int imageNum, int *spriteIdptr);
+	void spriteAddImageToList(int spriteId, int imageNum, int *spriteIdptr);
 
 public:
 	void spritesBlitToScreen();
