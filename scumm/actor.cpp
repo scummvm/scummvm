@@ -873,12 +873,9 @@ void Actor::drawActorCostume() {
 
 	setupActorScale();
 
-	BaseCostumeRenderer *bcr;
+	BaseCostumeRenderer* bcr = _vm->_bcr;
 
-	if (_vm->_features & GF_NEW_COSTUMES)
-		bcr = new AkosRenderer(_vm);
-	else
-		bcr = new CostumeRenderer(_vm);
+	bcr->updateNbStrips ();
 
 	bcr->_actorX = x - _vm->virtscr[0].xstart;
 	bcr->_actorY = y - elevation;
@@ -937,12 +934,6 @@ void Actor::drawActorCostume() {
 	// Record the vertical extent of the drawn actor
 	top = bcr->_draw_top;
 	bottom = bcr->_draw_bottom;
-	
-	// Finally get rid of the costume renderer again.
-	// TODO: Instead of creating costume renderers on the fly and then
-	// disposing them again, we could once at the start create one,
-	// and then reuse it.
-	delete bcr;
 }
 
 void Actor::animateCostume() {
