@@ -273,8 +273,6 @@ SCUMM
     used in 3DO versions of Humongous games.
   - Add sound pitch support and fix missing sound effects for piano mini game
     in fbear
-  - Add support kernelSetFunctions/kernelGetFunctions, used for displaying 
-    images on birthday cake in fbear and images in painting game of fbpack.
   - Add rename/delete file support, to make file opcodes function correctly
   - Fix akos asserts in puttmoon, caused by butterfly at start, robot near
     garage and rock animations near rocket.
@@ -287,7 +285,6 @@ SCUMM
     when Putt-Putt gets off the chair in Cosmic Dust Diner of puttmoon
   - Fix missing sound effects in puttdemo
   - Fix 'costume x undefined x x' errors in veggie head mini game of fbear
-  - Fix tangrams game on fbpack, only centre item can selected at the moment
   - Document and fix AKOS differences in Humongous Entertainment games
   - Support various newer Humongous Entertainment games
 
