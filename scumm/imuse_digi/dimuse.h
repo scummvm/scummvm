@@ -46,7 +46,7 @@ private:
 		int32 volFadeDelay;	//
 		bool volFadeUsed;	//
 
-		int idSound;
+		int soundId;
 		bool used;
 		bool toBeRemoved;
 		bool started;
@@ -72,12 +72,28 @@ private:
 	ScummEngine *_vm;
 	ImuseDigiSndMgr *_sound;
 	bool _pause;
-	int _curMusicId;
+	int _curMusicState;
+	int _curMusicSeq;
+	int _curMusicCue;
+	
+	int _curMusicSoundId;
 
 	static void timer_handler(void *refConf);
 	void callback();
 	void switchToNextRegion(int track);
 	void startSound(int soundId, const char *soundName, int soundType, int soundGroup, AudioStream *input);
+
+	int32 getPosInMs(int soundId);
+	void getLipSync(int soundId, int syncId, int32 msPos, int32 &width, int32 &height);
+
+	void stopMusic();
+
+	int getSoundIdByName(const char *soundName);
+	void fadeOutMusic();
+	void setFtMusicState(int stateId);
+	void setFtMusicSequence(int seqId);
+	void setFtMusicCuePoint(int cueId);
+	void playFtMusic(const char *songName, int opcode, int volume);
 
 public:
 	IMuseDigital(ScummEngine *scumm);
@@ -99,15 +115,12 @@ public:
 		{ error("MusicEngine::startSound() Should be never called"); }
 
 	void setMasterVolume(int vol) {}
-	void stopMusic();
 	void stopSound(int soundId);
-	void stopAllSounds(bool waitForStop);
 	void stopAllSounds() { stopAllSounds(false); }
+	void stopAllSounds(bool waitForStop);
 	void pause(bool pause);
 	void parseScriptCmds(int a, int b, int c, int d, int e, int f, int g, int h);
 	int getSoundStatus(int sound) const;
-	int32 getPosInMs(int soundId);
-	void getLipSync(int soundId, int syncId, int32 msPos, int32 &width, int32 &height);
 	int32 getCurMusicPosInMs();
 	int32 getCurVoiceLipSyncWidth();
 	int32 getCurVoiceLipSyncHeight();
@@ -136,11 +149,21 @@ struct imuse_music_map {
 	int unk4;
 };
 
-struct imuse_ft_music_table {
-	char audioname[15];
+struct imuseFtNames {
+	char name[20];
+};
+
+struct imuseFtStateTable {
+	char audioName[9];
 	int8 opcode;
 	int8 volume;
-	char name[30];
+	char name[21];
+};
+
+struct imuseFtSeqTable {
+	char audioName[9];
+	int8 opcode;
+	int8 volume;
 };
 
 #ifdef __PALM_OS__
@@ -149,16 +172,18 @@ extern const imuse_music_table *_digStateMusicTable;
 extern const imuse_music_table *_comiStateMusicTable;
 extern const imuse_music_table *_comiSeqMusicTable;
 extern const imuse_music_table *_digSeqMusicTable;
-extern const imuse_ft_music_table *_ftStateMusicTable;
-extern const imuse_ft_music_table *_ftSeqMusicTable;
+extern const imuseFtStateTable *_ftStateMusicTable;
+extern const imuseFtSeqTable *_ftSeqMusicTable;
+extern const imuseFtNames *_ftSeqNames;
 #else
 extern imuse_music_map _digStateMusicMap[];
 extern const imuse_music_table _digStateMusicTable[];
 extern const imuse_music_table _digSeqMusicTable[];
 extern const imuse_music_table _comiStateMusicTable[];
 extern const imuse_music_table _comiSeqMusicTable[];
-extern const imuse_ft_music_table _ftStateMusicTable[];
-extern const imuse_ft_music_table _ftSeqMusicTable[];
+extern const imuseFtStateTable _ftStateMusicTable[];
+extern const imuseFtSeqTable _ftSeqMusicTable[];
+extern const imuseFtNames _ftSeqNames[];
 #endif
 
 } // End of namespace Scumm

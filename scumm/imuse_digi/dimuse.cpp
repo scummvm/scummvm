@@ -33,7 +33,7 @@
 namespace Scumm {
 
 IMuseDigital::Track::Track()
-	: idSound(-1), used(false), stream(NULL) {
+	: soundId(-1), used(false), stream(NULL) {
 }
 
 void IMuseDigital::timer_handler(void *refCon) {
@@ -46,12 +46,16 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm)
 	_pause = false;
 	_sound = new ImuseDigiSndMgr(_vm);
 	_vm->_timer->installTimerProc(timer_handler, 1000000 / 25, this);
-	_curMusicId = -1;
+	_curMusicState = 0;
+	_curMusicSeq = 0;
+	_curMusicCue = 0;
+
+	_curMusicSoundId = -1;
 }
 
 IMuseDigital::~IMuseDigital() {
 	_vm->_timer->removeTimerProc(timer_handler);
-	stopAllSounds();
+	stopAllSounds(true);
 	delete _sound;
 }
 
@@ -65,7 +69,7 @@ void IMuseDigital::callback() {
 		if (_track[l].used) {
 			if (_track[l].stream2) {
 				if (!_track[l].handle.isActive() && _track[l].started) {
-					debug(5, "IMuseDigital::callback(): stoped sound: %d", _track[l].idSound);
+					debug(5, "IMuseDigital::callback(): stoped sound: %d", _track[l].soundId);
 					delete _track[l].stream2;
 					_track[l].stream2 = NULL;
 					_track[l].used = false;
@@ -73,7 +77,7 @@ void IMuseDigital::callback() {
 				}
 			} else if (_track[l].stream) {
 				if ((!_track[l].locked) && (_track[l].toBeRemoved)) {
-					debug(5, "IMuseDigital::callback(): stoped sound: %d", _track[l].idSound);
+					debug(5, "IMuseDigital::callback(): stoped sound: %d", _track[l].soundId);
 					if (_track[l].stream)
 						_track[l].stream->finish();
 					_track[l].stream = NULL;
@@ -104,7 +108,7 @@ void IMuseDigital::callback() {
 						}
 					}
 				}
-				debug(5, "Fade: sound(%d), Vol(%d)", _track[l].idSound, _track[l].vol / 1000);
+				debug(5, "Fade: sound(%d), Vol(%d)", _track[l].soundId, _track[l].vol / 1000);
 			}
 
 			int pan = (_track[l].pan != 64) ? 2 * _track[l].pan - 127 : 0;
@@ -217,11 +221,11 @@ void IMuseDigital::switchToNextRegion(int track) {
 		if (region != -1) {
 			_track[track].curRegion = region;
 			_track[track].curHookId = 0;
-			debug(5, "switchToNextRegion-sound(%d) jump to %d region", _track[track].idSound, _track[track].curRegion);
+			debug(5, "switchToNextRegion-sound(%d) jump to %d region", _track[track].soundId, _track[track].curRegion);
 		}
 	}
 
-	debug(5, "switchToNextRegion-sound(%d) select %d region", _track[track].idSound, _track[track].curRegion);
+	debug(5, "switchToNextRegion-sound(%d) select %d region", _track[track].soundId, _track[track].curRegion);
 	_track[track].regionOffset = 0;
 }
 
@@ -237,7 +241,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			_track[l].volFadeStep = 0;
 			_track[l].volFadeDelay = 0;
 			_track[l].volFadeUsed = false;
-			_track[l].idSound = soundId;
+			_track[l].soundId = soundId;
 			_track[l].started = false;
 			_track[l].soundGroup = soundGroup;
 			_track[l].curHookId = 0;
@@ -292,10 +296,8 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				_vm->_mixer->playInputStream(&_track[l].handle, _track[l].stream, true, _track[l].vol / 1000, _track[l].pan, -1);
 			}
 
-			if (soundGroup == IMUSE_MUSIC) {
-				stopMusic();
-				_curMusicId = soundId;
-			}
+			if ((_track[l].soundGroup == IMUSE_MUSIC) && (_vm->_gameId != GID_FT))
+				_curMusicSoundId = soundId;
 
 			_track[l].locked = false;
 			_track[l].used = true;
@@ -309,21 +311,20 @@ void IMuseDigital::stopMusic() {
 	debug(5, "IMuseDigital::stopMusic()");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		_track[l].locked = true;
-		if ((_track[l].idSound == _curMusicId) && _track[l].used) {
+		if ((_track[l].soundId == _curMusicSoundId) && _track[l].used) {
 			if (_track[l].stream) {
 				_track[l].toBeRemoved = true;
 			}
 		}
 		_track[l].locked = false;
 	}
-	_curMusicId = -1;
 }
 
 void IMuseDigital::stopSound(int soundId) {
 	debug(5, "IMuseDigital::stopSound(%d)", soundId);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		_track[l].locked = true;
-		if ((_track[l].idSound == soundId) && _track[l].used) {
+		if ((_track[l].soundId == soundId) && _track[l].used) {
 			if (_track[l].stream) {
 				_track[l].toBeRemoved = true;
 			}
@@ -346,7 +347,8 @@ void IMuseDigital::stopAllSounds(bool waitForStop) {
 		}
 		_track[l].locked = false;
 	}
-	_curMusicId = -1;
+
+	_curMusicSoundId = -1;
 
 	if (waitForStop) {
 		bool used;
@@ -356,6 +358,7 @@ void IMuseDigital::stopAllSounds(bool waitForStop) {
 				if (_track[l].used)
 					used = true;
 			}
+			g_system->delay_msecs(10);
 		} while (used);
 	}
 }
@@ -376,7 +379,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 	int sample = b;
 	int sub_cmd = c;
 	int chan = -1;
-	int l, r;
+	int l;
 
 	if (!cmd)
 		return;
@@ -397,7 +400,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 			debug(5, "ImuseSetParam (0x600), sample(%d), volume(%d)", sample, d);
 			for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 				_track[l].locked = true;
-				if ((_track[l].idSound == sample) && _track[l].used) {
+				if ((_track[l].soundId == sample) && _track[l].used) {
 					_track[l].vol = d * 1000;
 //					if (_track[l].volFadeUsed)
 //						_track[l].volFadeStep = (_track[l].volFadeDest - _track[l].vol) * 60 * 40 / (1000 * _track[chan].volFadeDelay);
@@ -413,7 +416,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 			debug(5, "ImuseSetParam (0x700), sample(%d), pan(%d)", sample, d);
 			for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 				_track[l].locked = true;
-				if ((_track[l].idSound == sample) && _track[l].used) {
+				if ((_track[l].soundId == sample) && _track[l].used) {
 					_track[l].pan = d;
 				}
 				_track[l].locked = false;
@@ -438,7 +441,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 			}
 			for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 				_track[l].locked = true;
-				if ((_track[l].idSound == sample) && _track[l].used) {
+				if ((_track[l].soundId == sample) && _track[l].used) {
 					_track[l].volFadeDelay = e;
 					_track[l].volFadeDest = d * 1000;
 					_track[l].volFadeStep = (_track[l].volFadeDest - _track[l].vol) * 60 * 40 / (1000 * e);
@@ -516,18 +519,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 				}
 			}
 		} else if (_vm->_gameId == GID_FT) {
-			if (b > 48)
-				return;
-			b--;
-			debug(5, "Play imuse music: %s, %s", _ftStateMusicTable[b].name, _ftStateMusicTable[b].audioname);
-			if (_ftStateMusicTable[b].audioname[0] != 0) {
-				for (r = 0; r < _vm->_numAudioNames; r++) {
-					if (strcmp(_ftStateMusicTable[b].audioname, &_vm->_audioNames[r * 9]) == 0) {
-						startMusic(r);
-						parseScriptCmds(12, r, 0x600, _ftStateMusicTable[b].volume, 0, 0, 0, 0);
-					}
-				}
-			}
+			setFtMusicState(b);
 		}
 		break;
 	case 0x1001: // ImuseSetSequence
@@ -553,23 +545,14 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 				}
 			}
 		} else if (_vm->_gameId == GID_FT) {
-			if (b > 53)
-				return;
-			b--;
-			debug(5, "Play imuse sequence: %s, %s", _ftSeqMusicTable[b * 4].name, _ftSeqMusicTable[b * 4].audioname);
-			if (_ftSeqMusicTable[b * 4].audioname[0] != 0) {
-				for (r = 0; r < _vm->_numAudioNames; r++) {
-					if (strcmp(_ftStateMusicTable[b * 4].audioname, &_vm->_audioNames[r * 9]) == 0) {
-						startMusic(r);
-						parseScriptCmds(12, r, 0x600, _ftStateMusicTable[b * 4].volume, 0, 0, 0, 0);
-					}
-				}
-			}
+			setFtMusicSequence(b);
 		}
 		break;
 	case 0x1002: // ImuseSetCuePoint
 		debug(5, "ImuseSetCuePoint (%d)", b);
-		// TODO
+		if (_vm->_gameId == GID_FT) {
+			setFtMusicCuePoint(b);
+		}
 		break;
 	case 0x1003: // ImuseSetAttribute
 		debug(5, "ImuseSetAttribute (%d, %d)", b, c);
@@ -595,7 +578,7 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 int IMuseDigital::getSoundStatus(int sound) const {
 	debug(5, "IMuseDigital::getSoundStatus(%d)", sound);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
-		if ((_track[l].idSound == sound) && _track[l].used) {
+		if ((_track[l].soundId == sound) && _track[l].used) {
 			return 1;
 		}
 	}
@@ -611,7 +594,7 @@ void IMuseDigital::getLipSync(int soundId, int syncId, int32 msPos, int32 &width
 	if (msPos < 65536) {
 		for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 			_track[l].locked = true;
-			if ((_track[l].idSound == soundId) && _track[l].used) {
+			if ((_track[l].soundId == soundId) && _track[l].used) {
 				_sound->getSyncSizeAndPtrById(_track[l].soundHandle, syncId, sync_size, &sync_ptr);
 				if ((sync_size != 0) && (sync_ptr != NULL)) {
 					sync_size /= 4;
@@ -640,7 +623,7 @@ void IMuseDigital::getLipSync(int soundId, int syncId, int32 msPos, int32 &width
 int32 IMuseDigital::getPosInMs(int soundId) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		_track[l].locked = true;
-		if ((_track[l].idSound == soundId) && _track[l].used) {
+		if ((_track[l].soundId == soundId) && _track[l].used) {
 			int32 pos = 1000 * _track[l].trackOffset / _track[l].iteration;
 			_track[l].locked = false;
 			return pos;
@@ -652,8 +635,8 @@ int32 IMuseDigital::getPosInMs(int soundId) {
 }
 
 int32 IMuseDigital::getCurMusicPosInMs() {
-	debug(5, "IMuseDigital::getCurMusicPosInMs(%d)", _curMusicId);
-	return getPosInMs(_curMusicId);
+	debug(5, "IMuseDigital::getCurMusicPosInMs(%d)", _curMusicSoundId);
+	return getPosInMs(_curMusicSoundId);
 }
 
 int32 IMuseDigital::getCurVoiceLipSyncWidth() {
@@ -673,18 +656,18 @@ int32 IMuseDigital::getCurVoiceLipSyncHeight() {
 }
 
 int32 IMuseDigital::getCurMusicLipSyncWidth(int syncId) {
-	int32 msPos = getPosInMs(_curMusicId) + _vm->VAR(_vm->VAR_SYNC) + 50;
+	int32 msPos = getPosInMs(_curMusicSoundId) + _vm->VAR(_vm->VAR_SYNC) + 50;
 	int32 width = 0, height = 0;
 
-	getLipSync(_curMusicId, syncId, msPos, width, height);
+	getLipSync(_curMusicSoundId, syncId, msPos, width, height);
 	return width;
 }
 
 int32 IMuseDigital::getCurMusicLipSyncHeight(int syncId) {
-	int32 msPos = getPosInMs(_curMusicId) + _vm->VAR(_vm->VAR_SYNC) + 50;
+	int32 msPos = getPosInMs(_curMusicSoundId) + _vm->VAR(_vm->VAR_SYNC) + 50;
 	int32 width = 0, height = 0;
 
-	getLipSync(_curMusicId, syncId, msPos, width, height);
+	getLipSync(_curMusicSoundId, syncId, msPos, width, height);
 	return height;
 }
 
