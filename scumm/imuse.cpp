@@ -4855,7 +4855,7 @@ IMuseDigital::~IMuseDigital() {
 
 void IMuseDigital::handler() {
 	bool new_mixer;
-	uint32 l, i, idx = 0;
+	uint32 l = 0, i = 0;
 
 	for (l = 0; l < MAX_DIGITAL_CHANNELS;l ++) {
 		if (_channel[l]._used) {
@@ -4901,6 +4901,11 @@ void IMuseDigital::handler() {
 			}
 
 			byte *buf = (byte*)malloc(mixer_size);
+			if (!buf) {
+				warning("DigitalMixer exploded: Blame Aquadran :)");
+				continue;
+			}
+			
 			memcpy(buf, _channel[l]._data + _channel[l]._offset, new_size);
 			if ((new_size != _channel[l]._mixerSize) && (_channel[l]._isJump == true)) {
 				memcpy(buf + new_size, _channel[l]._data + _channel[l]._jump[0]._dest, mixer_size - new_size);

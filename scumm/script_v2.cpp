@@ -2535,9 +2535,16 @@ void Scumm::o6_talkActor()
 	_messagePtr = _scriptPointer;
 
 	if ((_gameId == GID_DIG) && (_messagePtr[0] == '/')) {
-		_scriptPointer += strlen((char*)_scriptPointer) + 1;
+		char pointer[20];
+		int i, j;
+
+		_scriptPointer += resStrLen((char*)_scriptPointer)+ 1;
 		translateText((char*)_messagePtr, (char*)&transText);
-		char *pointer = strtok((char *)_messagePtr, "/");
+		for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
+			if (_messagePtr[i] != '/')
+				pointer[j++] = _messagePtr[i];
+		}
+		pointer[j] = 0;
 		_sound->playBundleSound(pointer);
 		_messagePtr = (byte*)&transText;
 		setStringVars(0);
@@ -2555,9 +2562,16 @@ void Scumm::o6_talkEgo()
 	_messagePtr = _scriptPointer;
 
 	if ((_gameId == GID_DIG) && (_messagePtr[0] == '/')) {
-		_scriptPointer += strlen((char*)_scriptPointer) + 1;
+		char pointer[20];
+		int i, j;
+
+		_scriptPointer += resStrLen((char*)_scriptPointer) + 1;
 		translateText((char*)_messagePtr, (char*)&transText);
-		char *pointer = strtok((char *)_messagePtr, "/");
+		for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
+			if (_messagePtr[i] != '/')
+				pointer[j++] = _messagePtr[i];
+		}
+		pointer[j] = 0;
 		_sound->playBundleSound(pointer);
 		_messagePtr = (byte*)&transText;
 		setStringVars(0);
@@ -2722,6 +2736,8 @@ void Scumm::o6_miscOps()
 	 				speed = 71;
 				else
 					speed = 1000 / _insaneFlag;
+				if (args[1] == 1) printf("startSmush one is true\n");
+				if (args[2] == 1) printf("startSmush two is true\n");
 				ScummRenderer * sr = new ScummRenderer(this, speed);
  				SmushPlayer * sp = new SmushPlayer(sr);
  				sp->play((char*)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
@@ -2763,6 +2779,16 @@ void Scumm::o6_miscOps()
 					strcpy((char*)&charset._buffer, (char*)&buf + 13);
 					description();
 				}
+			} else { 
+				setStringVars(0);
+
+                		_string[0].charset = args[1];
+                		_string[0].color = args[2];
+                		_string[0].xpos = args[3];
+                		_string[0].ypos = args[4];
+
+				addMessageToStack(getStringAddressVar(VAR_STRING2DRAW));
+				drawDescString();
 			}
 			break;
 		case 17:
@@ -3104,7 +3130,7 @@ void Scumm::decodeParseString2(int m, int n)
 			if ((_messagePtr[0] == '/') && (_gameId == GID_DIG)) {
 				translateText((char*)_messagePtr, (char*)&transText);
 				_messagePtr = (byte*)&transText;
-				_scriptPointer += strlen((char*)_scriptPointer) + 1;
+				_scriptPointer += resStrLen((char*)_scriptPointer) + 1;
 				switch (m) {
 				case 0:
 					actorTalk();

@@ -860,60 +860,136 @@ void AkosRenderer::codec1_ignorePakCols(int num)
 void AkosRenderer::codec5()
 {
 	VirtScreen *vs;
-	BompDrawData bdd;
 
-	int moveX;
-	int moveY;
-	int left;
-	int var_20;
-	int max_width;
+	int left, right, top, bottom;
 
-	int right;
-	int top;
-	int bottom;
+	byte *src, *dest;
+	int src_x, src_y;
+	uint dst_x, dst_y;
 
+	bool masking;
+	byte maskbit;
+	const byte *mask = NULL;
+
+	// I don't know if this is complete. It used to simply call drawBomp()
+	// to draw an unscaled image, but I don't know if that was because it
+	// will never have to scale, or if it's because until quite recently
+	// drawBomp() didn't know how to scale images.
+	//
+	// What I do know is that drawBomp() doesn't care about masking and
+	// shadows, and these are both needed for Full Throttle.
+	
 	vs = &_vm->virtscr[0];
-	//setBlastObjectMode(shadow_mode); // not implemented yet
-	moveX = move_x_cur;
-	moveY = move_y_cur;
 
 	if (!mirror) {
-		left = (x - moveX - width) + 1;
+		left = (x - move_x_cur - width) + 1;
 	} else {
-		left = x + moveX - 1;
+		left = x + move_x_cur - 1;
 	}
 
-	var_20 = 0;
-	max_width = outwidth;
-
-	right = left + width - 1;
-	top = y + moveY;
-	bottom = top + height;
+	right = left + width;
+	top = y + move_y_cur;
+	bottom = top + height + 1;
 
 	if (left < 0)
 		left = 0;
-	if (left > max_width)
-		left -= left - max_width;
+	if (left > (int) outwidth)
+		left -= left - outwidth;
 
-	// Yazoo: this is not correct, but fix a lots of bugs for the momment
+	if (top < draw_top)
+		draw_top = top;
+	if (bottom > draw_bottom)
+		draw_bottom = bottom;
 
-	draw_top = 0;
-	draw_bottom = vs->height;
+	_vm->updateDirtyRect(0, left, right, top, bottom, 1 << dirty_id);
 
-	_vm->updateDirtyRect(0, left, right + 1, top, bottom + 1, 1 << dirty_id);
+	masking = false;
+	if (clipping) {
+		masking = _vm->isMaskActiveAt(left, top, right, bottom,
+			_vm->getResourceAddress(rtBuffer, 9) +
+			_vm->gdi._imgBufOffs[clipping] +
+			_vm->_screenStartStrip) != 0;
+	}
 
-	bdd.dataptr = srcptr;
-	bdd.out = outptr;
-	bdd.outheight = outheight;
-	bdd.outwidth = outwidth;
-	bdd.scale_x = 0xFF;
-	bdd.scale_y = 0xFF;
-	bdd.srcheight = height;
-	bdd.srcwidth = width;
-	bdd.x = left + 1;
-	bdd.y = top;
+	v1.mask_ptr = NULL;
 
-	_vm->drawBomp(&bdd, 0, bdd.dataptr, 0, 0);
+	if (masking || charsetmask || shadow_mode) {
+		v1.mask_ptr = _vm->getResourceAddress(rtBuffer, 9) +
+			top * 40 + _vm->_screenStartStrip;
+		v1.imgbufoffs = _vm->gdi._imgBufOffs[clipping];
+		if (!charsetmask && masking) {
+			v1.mask_ptr += v1.imgbufoffs;
+			v1.imgbufoffs = 0;
+		}
+	}
+
+	src = srcptr;
+	dest = outptr + top * outwidth + left + 1;
+
+	for (src_y = 0, dst_y = top; src_y < height; src_y++) {
+		byte code, color;
+		uint len, num, i;
+		byte *d = dest;
+
+		if (dst_y < 0 || dst_y >= outheight) {
+			src += READ_LE_UINT16(src) + 2;
+			mask += 40;
+			continue;
+		}
+
+		len = width;
+		src_x = 0;
+		dst_x = left + 1;
+		src += 2;
+
+		while (src_x <width) {
+			code = *src++;
+			num = (code >> 1) + 1;
+			if (num > len)
+				num = len;
+			len -= num;
+			if (code & 1) {
+				color = *src++;
+				for (i = 0; i < num; i++) {
+					if (dst_x >= 0 && dst_x < outwidth) {
+						if (color != 255) {
+							if (v1.mask_ptr)
+								mask = v1.mask_ptr + (dst_x >> 3);
+							maskbit = revBitMask[dst_x & 7];
+							if (shadow_mode && color == 13)
+								color = shadow_table[*d];
+							if (!mask || !((mask[0] | mask[v1.imgbufoffs]) & maskbit))
+								*d = color;
+						}
+					}
+					d++;
+					dst_x++;
+					src_x++;
+				}
+			} else {
+				for (i = 0; i < num; i++) {
+					color = src[i];
+					if (dst_x >= 0 && dst_x < outwidth) {
+						if (color != 255) {
+							if (v1.mask_ptr)
+								mask = v1.mask_ptr + (dst_x >> 3);
+							maskbit = revBitMask[dst_x & 7];
+							if (shadow_mode && color == 13)
+								color = shadow_table[*d];
+							if (!mask || !((mask[0] | mask[v1.imgbufoffs]) & maskbit))
+								*d = color;
+						}
+					}
+					d++;
+					dst_x++;
+					src_x++;
+				}
+				src += num;
+			}
+		}
+		dest += outwidth;
+		dst_y++;
+	}
 }
 
 void AkosRenderer::codec16()
