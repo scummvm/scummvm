@@ -1363,6 +1363,12 @@ void ScummEngine_v100he::o100_quitPauseRestart() {
 	case 67:
 		clearDrawObjectQueue();
 		break;
+	case 72:
+		shutDown();
+		break;
+	case 73:		// SO_RESTART
+		restart();
+		break;
 	case 75:
 		// Clear screen
 		// Update palette
