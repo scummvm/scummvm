@@ -164,16 +164,16 @@ void Scumm_v3::loadCharset(int no) {
 	uint32 size;
 	memset(_charsetData, 0, sizeof(_charsetData));
 
-	checkRange(4, 0, no, "Loading illegal charset %d");
+	if (_gameId == GID_ZAK256)
+		checkRange(2, 0, no, "Loading illegal charset %d");
+	else
+		checkRange(4, 0, no, "Loading illegal charset %d");
 	closeRoom();
 
 	File file;
 	char buf[20];
 
-	if (_gameId == GID_ZAK256)
-		sprintf(buf, "%02d.LFL", 98 + no);
-	else
-		sprintf(buf, "%02d.LFL", 99 - no);
+	sprintf(buf, "%02d.LFL", 99 - no);
 	
 	file.open(buf, _gameDataPath);
 		

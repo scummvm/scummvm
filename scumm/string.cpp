@@ -753,13 +753,7 @@ void Scumm::addStringToStack(int var) {
 void Scumm::initCharset(int charsetno) {
 	int i;
 
-	// FIXME why is this required? see also Scumm_v3::loadCharset
-	if (_gameId == GID_ZAK256)
-		charsetno = !charsetno;
-
-	if (_features & GF_SMALL_HEADER)
-		loadCharset(charsetno);
-	else if (!getResourceAddress(rtCharset, charsetno))
+	if (!getResourceAddress(rtCharset, charsetno))
 		loadCharset(charsetno);
 
 	_string[0].t_charset = charsetno;
