@@ -1188,7 +1188,8 @@ void ScummEngine::initScummVars() {
 		if (_version >= 6 && VAR_V6_EMSSPACE != 0xFF)
 			VAR(VAR_V6_EMSSPACE) = 10000;
 
-		VAR(59) = 3;	// FIXME: What is this good for?
+		// Sets screen effect delay
+		VAR(59) = 3;
 	}
 	
 	if ((_features & GF_MACINTOSH) && (_version == 3)) {
@@ -1201,6 +1202,9 @@ void ScummEngine::initScummVars() {
 		VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
 	}
 	
+	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
+		_scummVars[74] = 1225;
+
 	if (_version >= 7)
 		VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
 
@@ -2464,32 +2468,23 @@ void ScummEngine::restart() {
 	for (i = 0; i < _numGlobalObjects; i++)
 		clearOwnerOf(i);
 
-	// Reallocate and Reinitialize actors
-	Actor::initActorClass(this);
-	_actors = new Actor[_numActors];
-	for (i = 0; i < _numActors; i++) {
-		_actors[i].number = i;
-		_actors[i].initActor(1);
-	
-		// this is from IDB
-		if (_version == 1)
-			_actors[i].setActorCostume(i);
-	}
-
 	// Reinit things
 	allocateArrays();                   // Reallocate arrays
 	readIndexFile();                    // Reread index (reset objectstate etc)
-	initScummVars();                    // Reinit scumm variables
+	scummInit();                       // Reinit scumm variables
 	if (_imuse) {
 		_imuse->setBase(res.address[rtSound]);
 	}
 	_sound->setupSound();               // Reinit sound engine
 
-	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
-		_scummVars[74] = 1225;
-
 	// Re-run bootscript
-	runScript(1, 0, 0, &_bootParam);
+	int args[16];
+	memset(args, 0, sizeof(args));
+	args[0] = _bootParam;	
+	if (_gameId == GID_MANIAC && _version == 1 && _demoMode)
+		runScript(9, 0, 0, args);
+	else
+		runScript(1, 0, 0, args);
 }
 
 void ScummEngine::startManiac() {
