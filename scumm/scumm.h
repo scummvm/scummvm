@@ -615,6 +615,7 @@ public:
 	int _roomResource;  // FIXME - should be protected but Sound::pauseSounds accesses it
 	byte *findResourceData(uint32 tag, byte *ptr);
 	int getResourceDataSize(byte *ptr);
+	void dumpResource(char *tag, int index, byte *ptr, int length = -1);
 
 protected:
 	int getArrayId();
@@ -627,7 +628,6 @@ protected:
 	void expireResources(uint32 size);
 	void freeResources();
 	void destroy();
-	void dumpResource(char *tag, int index, byte *ptr, int length = -1);
 
 public:
 	/* Should be in Object class */
@@ -1111,8 +1111,6 @@ public:
 
 	byte VAR_V5_DRAWFLAGS;
 	byte VAR_MI1_TIMER;
-	byte VAR_V5_OBJECT_LO;
-	byte VAR_V5_OBJECT_HI;
 	byte VAR_V5_TALK_STRING_Y;
 	byte VAR_V5_CHARFLAG;
 

@@ -99,7 +99,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_roomOps),
 		/* 34 */
 		OPCODE(o5_getDist),
-		OPCODE(o2_findObject),
+		OPCODE(o5_findObject),
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_setState01),
 		/* 38 */
@@ -160,7 +160,7 @@ void Scumm_v2::setupOpcodes() {
 		/* 64 */
 		OPCODE(o2_loadRoomWithEgo),
 		OPCODE(o2_drawObject),
-		OPCODE(o2_getClosestObjActor),
+		OPCODE(o5_getClosestObjActor),
 		OPCODE(o2_clearState04),
 		/* 68 */
 		OPCODE(o5_isScriptRunning),
@@ -179,7 +179,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_roomOps),
 		/* 74 */
 		OPCODE(o5_getDist),
-		OPCODE(o2_findObject),
+		OPCODE(o5_findObject),
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_clearState01),
 		/* 78 */
@@ -259,7 +259,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_roomOps),
 		/* B4 */
 		OPCODE(o5_getDist),
-		OPCODE(o2_findObject),
+		OPCODE(o5_findObject),
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_setState02),
 		/* B8 */
@@ -320,7 +320,7 @@ void Scumm_v2::setupOpcodes() {
 		/* E4 */
 		OPCODE(o2_loadRoomWithEgo),
 		OPCODE(o2_drawObject),
-		OPCODE(o2_getClosestObjActor),
+		OPCODE(o5_getClosestObjActor),
 		OPCODE(o2_clearState04),
 		/* E8 */
 		OPCODE(o5_isScriptRunning),
@@ -339,7 +339,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o2_roomOps),
 		/* F4 */
 		OPCODE(o5_getDist),
-		OPCODE(o2_findObject),
+		OPCODE(o5_findObject),
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_clearState01),
 		/* F8 */
@@ -450,9 +450,9 @@ void Scumm_v2::o2_getObjY() {
 
 	if (whereIsObject(obj) != WIO_NOT_FOUND) {
 		ObjectData *od = &_objs[getObjectIndex(obj)];
-		_vars[_resultVarNumber] = od->walk_y >> 5;
+		setResult(od->walk_y >> 5);
 	} else {
-		_vars[_resultVarNumber] = 0xFF;
+		setResult(0xFF);
 	}
 }
 
@@ -481,7 +481,7 @@ void Scumm_v2::o2_getBitVar() {
 	int bit_offset = bit_var & 0x0f;
 	bit_var >>= 4;
 
-	_vars[_resultVarNumber] = (_vars[bit_var] & (1 << bit_offset)) ? 1 : 0;
+	setResult((_vars[bit_var] & (1 << bit_offset)) ? 1 : 0);
 }
 
 void Scumm_v2::ifStateCommon(byte type) {
@@ -944,7 +944,7 @@ void Scumm_v2::o2_actorFromPos() {
 	getResultPos();
 	x = getVarOrDirectByte(0x80);
 	y = getVarOrDirectByte(0x40);
-	_vars[_resultVarNumber] = getActorFromPos(x, y);
+	setResult(getActorFromPos(x, y));
 }
 
 void Scumm_v2::o2_saveLoadGame() {
@@ -952,7 +952,7 @@ void Scumm_v2::o2_saveLoadGame() {
 	byte a = getVarOrDirectByte(0x80);
 
 	error("TODO: o2_saveLoadGame(%d)", a);
-	_vars[_resultVarNumber] = 0;
+	setResult(0);
 }
 
 void Scumm_v2::o2_getActorX() {
@@ -960,7 +960,7 @@ void Scumm_v2::o2_getActorX() {
 	getResultPos();
 
 	a = getVarOrDirectByte(0x80);
-	_vars[_resultVarNumber] = getObjX(a);
+	setResult(getObjX(a));
 }
 
 void Scumm_v2::o2_getActorY() {
@@ -968,7 +968,7 @@ void Scumm_v2::o2_getActorY() {
 	getResultPos();
 
 	a = getVarOrDirectByte(0x80);
-	_vars[_resultVarNumber] = getObjY(a);
+	setResult(getObjY(a));
 }
 
 void Scumm_v2::o2_loadRoomWithEgo() {
@@ -1053,13 +1053,6 @@ void Scumm_v2::o2_roomOps() {
 	}
 }
 
-void Scumm_v2::o2_findObject() {
-	getResultPos();
-	int x = getVarOrDirectByte(0x80);
-	int y = getVarOrDirectByte(0x40);
-	_vars[_resultVarNumber] = findObject(x, y);
-}
-
 void Scumm_v2::o2_cutscene() {
 	warning("TODO o2_cutscene()");
 }
@@ -1142,36 +1135,14 @@ void Scumm_v2::o2_cursorCommand() {
 	warning("TODO: o2_cursorCommand()");
 }
 
-void Scumm_v2::o2_getClosestObjActor() {
-	int obj;
-	int act;
-	int closest_obj = 0xFF, closest_dist = 0xFF;
-	int dist;
-
-	getResultPos();
-
-	act = getVarOrDirectWord(0x80);
-	obj = _vars[VAR_ACTOR_RANGE_MAX];
-
-	do {
-		dist = getObjActToObjActDist(act, obj);
-		if (dist < closest_dist) {
-			closest_dist = dist;
-			closest_obj = obj;
-		}
-	} while (--obj >= _vars[VAR_ACTOR_RANGE_MIN]);
-
-	_vars[_resultVarNumber] = closest_dist;
-}
-
 void Scumm_v2::o2_getActorWalkBox() {
 	Actor *a;
 	getResultPos();
 	a = derefActorSafe(getVarOrDirectByte(0x80), "o2_getActorWalkbox");
 	if (a)
-		_vars[_resultVarNumber] = a->walkbox;
+		setResult(a->walkbox);
 	else
-		_vars[_resultVarNumber] = 0;
+		setResult(0);
 }
 
 void Scumm_v2::o2_drawSentence() {

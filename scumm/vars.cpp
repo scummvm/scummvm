@@ -97,9 +97,6 @@ void Scumm::setupScummVars() {
 	VAR_V5_DRAWFLAGS = 9;
 	VAR_MI1_TIMER = 14;
 
-	VAR_V5_OBJECT_LO = 15;
-	VAR_V5_OBJECT_HI = 16;
-
 	VAR_V5_TALK_STRING_Y = 54;
 	VAR_V5_CHARFLAG = 60;
 
@@ -204,8 +201,6 @@ void Scumm_v7::setupScummVars() {
 
 	//VAR_V5_DRAWFLAGS = 9;
 	VAR_MI1_TIMER = 14;
-	VAR_V5_OBJECT_LO = 15;
-	VAR_V5_OBJECT_HI = 16;
 	VAR_V5_TALK_STRING_Y = 54;
 	VAR_V5_CHARFLAG = 60;
 

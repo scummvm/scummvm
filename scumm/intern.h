@@ -262,13 +262,11 @@ protected:
 	void o2_matrixOps();
 	void o2_setCameraAt();
 	void o2_roomOps();
-	void o2_findObject();
 	void o2_cutscene();
 	void o2_chainScript();
 	void o2_pickupObject();
 	void o2_setObjectName();
 	void o2_cursorCommand();
-	void o2_getClosestObjActor();
 	void o2_getActorWalkBox();
 	void o2_endCutscene();
 	void o2_drawSentence();

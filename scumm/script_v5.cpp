@@ -889,17 +889,17 @@ void Scumm_v5::o5_faceActor() {
 }
 
 void Scumm_v5::o5_findInventory() {
-	int t;
 	getResultPos();
-	t = getVarOrDirectByte(0x80);
-	setResult(findInventory(t, getVarOrDirectByte(0x40)));
+	int x = getVarOrDirectByte(0x80);
+	int y = getVarOrDirectByte(0x40);
+	setResult(findInventory(x, y));
 }
 
 void Scumm_v5::o5_findObject() {
-	int t;
 	getResultPos();
-	t = getVarOrDirectWord(0x80);
-	setResult(findObject(t, getVarOrDirectWord(0x40)));
+	int x = getVarOrDirectByte(0x80);
+	int y = getVarOrDirectByte(0x40);
+	setResult(findObject(x, y));
 }
 
 void Scumm_v5::o5_freezeScripts() {
@@ -1078,7 +1078,7 @@ void Scumm_v5::o5_getClosestObjActor() {
 	getResultPos();
 
 	act = getVarOrDirectWord(0x80);
-	obj = _vars[VAR_V5_OBJECT_HI];
+	obj = _vars[VAR_ACTOR_RANGE_MAX];
 
 	do {
 		dist = getObjActToObjActDist(act, obj);
@@ -1086,7 +1086,7 @@ void Scumm_v5::o5_getClosestObjActor() {
 			closest_dist = dist;
 			closest_obj = obj;
 		}
-	} while (--obj >= _vars[VAR_V5_OBJECT_LO]);
+	} while (--obj >= _vars[VAR_ACTOR_RANGE_MIN]);
 
 	setResult(closest_dist);
 }
