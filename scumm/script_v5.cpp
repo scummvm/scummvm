@@ -683,7 +683,7 @@ void ScummEngine_v5::o5_cursorCommand() {
 		i = getVarOrDirectByte(PARAM_1);
 		j = getVarOrDirectByte(PARAM_2);
 		k = getVarOrDirectByte(PARAM_3);
-		setCursorHotspot(j, k);
+		redefineBuiltinCursorHotspot(i, j, k);
 		break;
 	case 12:		// SO_CURSOR_SET
 		i = getVarOrDirectByte(PARAM_1);

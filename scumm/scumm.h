@@ -943,6 +943,7 @@ protected:
 
 	void setBuiltinCursor(int index);
 	void redefineBuiltinCursorFromChar(int index, int chr);
+	void redefineBuiltinCursorHotspot(int index, int x, int y);
 	void grabCursor(int x, int y, int w, int h);
 	void setCursorFromBuffer(byte *ptr, int width, int height, int pitch);
 

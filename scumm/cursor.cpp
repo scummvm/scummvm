@@ -64,7 +64,7 @@ static uint16 default_cursor_images[5][16] = {
 	  0x1004, 0x2002, 0x0000, 0x0080, 0x01c0, 0x02a0, 0x0080, 0x0000 },
 };
 
-static const byte default_cursor_hotspots[10] = {
+static byte default_cursor_hotspots[10] = {
 	8, 7,   8, 7,   1, 1,   5, 0,
 	8, 7, //zak256
 };
@@ -255,12 +255,13 @@ void ScummEngine_v6::useBompCursor(const byte *im, int width, int height) {
 
 void ScummEngine::redefineBuiltinCursorFromChar(int index, int chr) {
 	// Cursor image in both Looms are based on images from charset.
-	// For now we don't handle them.
 	if (_gameId != GID_LOOM && _gameId != GID_LOOM256) {
 		// FIXME: Actually: is this opcode ever called by a non-Loom game?
 		// Which V3-V5 game besides Loom makes use of custom cursors, ever?
 		warning("V3--V5 SO_CURSOR_IMAGE(%d,%d) called - tell Fingolfin where you saw this!", index, chr);
 	}
+
+	assert(index >= 0 && index < 5);
 	
 //	const int oldID = _charset->getCurID(); 
 
@@ -293,6 +294,20 @@ void ScummEngine::redefineBuiltinCursorFromChar(int index, int chr) {
 	}
 	
 //	_charset->setCurID(oldID);
+}
+
+void ScummEngine::redefineBuiltinCursorHotspot(int index, int x, int y) {
+	// Cursor image in both Looms are based on images from charset.
+	if (_gameId != GID_LOOM && _gameId != GID_LOOM256) {
+		// FIXME: Actually: is this opcode ever called by a non-Loom game?
+		// Which V3-V5 game besides Loom makes use of custom cursors, ever?
+		warning("V3--V5 SO_CURSOR_HOTSPOT(%d,%d,%d) called - tell Fingolfin where you saw this!", index, x, y);
+	}
+
+	assert(index >= 0 && index < 5);
+
+	default_cursor_hotspots[index * 2] = x;
+	default_cursor_hotspots[index * 2 + 1] = y;
 }
 
 void ScummEngine::setBuiltinCursor(int idx) {
