@@ -199,7 +199,7 @@ namespace Kyra {
 		// works with the file
 		uint32 pos = 0, startoffset = 0, endoffset = 0;
 
-		startoffset = *(reinterpret_cast<uint32*>((_buffer + pos)));
+		startoffset = READ_LE_UINT32(_buffer + pos);
 		pos += 4;
 
 		while (pos < filesize) {
@@ -212,7 +212,7 @@ namespace Kyra {
 			if(!chunk->_name)
 				break;
 
-			endoffset = *(reinterpret_cast<uint32*>((_buffer + pos)));
+			endoffset = READ_LE_UINT32(_buffer + pos);
 			pos += 4;
 
 			chunk->_data = _buffer + startoffset;
