@@ -140,20 +140,84 @@ void SwordEngine::initialize(void) {
 	}
 	
 	_systemVars.playSpeech = 1;
-	//- start.c:
-	// todo: move these to somewhere else
-	SwordLogic::_scriptVars[GEORGE_CDT_FLAG] = GEO_TLK_TABLE;
-	SwordLogic::_scriptVars[CHANGE_X] = 481;
-	SwordLogic::_scriptVars[CHANGE_Y] = 413;
-	SwordLogic::_scriptVars[CHANGE_DIR] = DOWN;
-	SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_1;
-	
-	SwordLogic::_scriptVars[NEW_SCREEN] = 1;
-	_objectMan->fetchObject(PLAYER)->o_screen = 1;
-	_objectMan->megaEntering(1);
+	startPositions(ConfMan.getInt("boot_param"));
+	_mouseState = 0;
+}
+
+void SwordEngine::startPositions(int32 startNumber) {
+	// int32 sect;
+	BsObject *compact;
 
 	SwordLogic::_scriptVars[CHANGE_STANCE] = STAND;
-	_mouseState = 0;
+	SwordLogic::_scriptVars[GEORGE_CDT_FLAG] = GEO_TLK_TABLE;
+
+	//-------------------------------------------------------------------------------------------------------
+	// START 0==intro; 1==without
+
+	if ((startNumber==0)||(startNumber==1))
+	{
+		if (startNumber==0)
+		{
+			// Tdebug("Calling fn check cd");
+			// FN_check_CD(0,0,1,0,0,0,0,0);	// request CD for sc1 (which happens to be CD-1)
+			// Tdebug("Calling fn play sequence");
+			_logic->fnPlaySequence(0,0,4,0,0,0,0,0);	// intro
+			debug(1, "Setting start number to 1");
+			startNumber=1;
+		}
+	
+	
+		SwordLogic::_scriptVars[CHANGE_X] = 481;
+		SwordLogic::_scriptVars[CHANGE_Y] = 413;
+		SwordLogic::_scriptVars[CHANGE_DIR] = DOWN;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_1;
+	} 
+	//-------------------------------------------------------------------------------------------------------
+	else if (startNumber==2)	// blind_alley
+	{
+		SwordLogic::_scriptVars[CHANGE_X] = 480;
+		SwordLogic::_scriptVars[CHANGE_Y] = 388;
+		SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_LEFT;
+		SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_2;
+
+		_logic->fnAddObject(0,0,LIFTING_KEYS,0,0,0,0,0);
+		_logic->fnAddObject(0,0,ROSSO_CARD,0,0,0,0,0);
+
+		SwordLogic::_scriptVars[POCKET_1] = 1;
+		SwordLogic::_scriptVars[POCKET_2] = 1;
+		SwordLogic::_scriptVars[POCKET_3] = 1;
+		SwordLogic::_scriptVars[POCKET_4] = 1;
+		SwordLogic::_scriptVars[POCKET_5] = 1;
+		SwordLogic::_scriptVars[POCKET_6] = 1;
+		SwordLogic::_scriptVars[POCKET_7] = 1;
+		SwordLogic::_scriptVars[POCKET_8] = 1;
+		SwordLogic::_scriptVars[POCKET_9] = 1;
+
+		SwordLogic::_scriptVars[POCKET_10] = 1;
+		SwordLogic::_scriptVars[POCKET_11] = 1;
+		SwordLogic::_scriptVars[POCKET_12] = 1;
+		SwordLogic::_scriptVars[POCKET_13] = 1;
+		SwordLogic::_scriptVars[POCKET_14] = 1;
+		SwordLogic::_scriptVars[POCKET_15] = 1;
+		SwordLogic::_scriptVars[POCKET_16] = 1;
+		SwordLogic::_scriptVars[POCKET_17] = 1;
+		SwordLogic::_scriptVars[POCKET_18] = 1;
+		SwordLogic::_scriptVars[POCKET_19] = 1;
+
+		SwordLogic::_scriptVars[POCKET_20] = 1;
+		SwordLogic::_scriptVars[POCKET_21] = 1;
+		SwordLogic::_scriptVars[POCKET_22] = 1;
+		SwordLogic::_scriptVars[POCKET_23] = 1;
+		SwordLogic::_scriptVars[POCKET_24] = 1;
+		SwordLogic::_scriptVars[POCKET_25] = 1;
+		SwordLogic::_scriptVars[POCKET_26] = 1;
+		SwordLogic::_scriptVars[POCKET_27] = 1;
+		SwordLogic::_scriptVars[POCKET_28] = 1;
+		SwordLogic::_scriptVars[POCKET_29] = 1;
+	}
+
+	compact = (BsObject*)_objectMan->fetchObject(PLAYER);
+	_logic->fnEnterSection(compact, PLAYER, startNumber, 0, 0, 0, 0, 0);	// (automatically opens the compact resource for that section)
 }
 
 void SwordEngine::go(void) {

@@ -132,13 +132,28 @@ enum Language {
 #define PLAYER 8388608
 #define NICO 8454144
 #define GEORGE 8388608
+#define UP 0
+#define UP_RIGHT 1
+#define U_R 1
+#define RIGHT 2
+#define DOWN_RIGHT 3
+#define D_R 3
 #define DOWN 4
+#define DOWN_LEFT 5
+#define D_L 5
+#define LEFT 6
+#define UP_LEFT 7
+#define U_L 7
 #define FLOOR_1 65536
 #define BENOIR 8585216
 #define ROSSO 8716288
 #define MOUE 9502720
 #define ALBERT 9568256
 #define DUANE 8781824
+#define FLOOR_2 131072
+#define LIFTING_KEYS 18
+#define ROSSO_CARD 27
+
 
 #define menu_bible 69
 #define menu_newspaper 1

@@ -75,6 +75,7 @@ private:
 	void initialize(void);
 	void mainLoop(void);
 	void fnCheckCd(uint32 newScreen);
+	void startPositions(int32 startNumber);
 
 	uint16 _mouseX, _mouseY, _mouseState;
 

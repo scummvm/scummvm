@@ -52,6 +52,12 @@ public:
 	void runMouseScript(BsObject *cpt, int32 scriptId);
 
 	static uint32 _scriptVars[NUM_SCRIPT_VARS];
+// public for startPositions()
+	int fnAddObject		(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
+	int fnEnterSection	(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
+	int fnPlaySequence	(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
+
+
 private:
 	ObjectMan *_objMan;
 	ResMan *_resMan;
@@ -101,7 +107,6 @@ private:
 	int fnSetFadeTargetPalette(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnSetPaletteToFade(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnSetPaletteToCut(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
-	int fnPlaySequence	(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 
 	int fnIdle			(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnPause			(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
@@ -154,9 +159,7 @@ private:
 	int cfnReleaseMenu	(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	
 	int fnAddSubject	(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
-	int fnAddObject		(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnRemoveObject	(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
-	int fnEnterSection	(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnLeaveSection	(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnChangeFloor	(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnWalk			(BsObject *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
