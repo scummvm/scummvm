@@ -23,14 +23,6 @@
 
 namespace Scumm {
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
-#endif	
-
-struct ResHdr {
-	uint32 tag, size;
-} GCC_PACK;
-
 enum ArrayType {
 	kBitArray = 1,
 	kNibbleArray = 2,
@@ -39,6 +31,10 @@ enum ArrayType {
 	kIntArray = 5,
 	kDwordArray = 6
 };
+
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif	
 
 struct ArrayHeader {
 	int16 dim1;
@@ -50,9 +46,6 @@ struct ArrayHeader {
 #if !defined(__GNUC__)
 	#pragma END_PACK_STRUCTS
 #endif
-
-#define RES_DATA(x) (((const byte*)x) + sizeof(ResHdr))
-#define RES_SIZE(x) (READ_BE_UINT32(&((const ResHdr* )x)->size))
 
 enum {
 	OF_OWNER_MASK = 0x0F,

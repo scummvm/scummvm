@@ -1124,13 +1124,13 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 	if (findWhat & foCheckAlreadyLoaded && getObjectIndex(id) != -1) {
 		if (_features & GF_OLD_BUNDLE) {
 			// I am not sure if this is even needed for old games...
-			// but using RES_SIZE definitely won't work with OLD_BUNDLE, since it
-			// assumes the size is 32 bit but in old games it's 16 bit
+			// but using READ_BE_UINT32 below to determine the resource size
+			// definitely won't work with OLD_BUNDLE games
 			error("findObjectInRoom foCheckAlreadyLoaded NYI for GF_OLD_BUNDLE (id = %d, room = %d)", id, room);
 		}
 		fo->obcd = obcdptr = getOBCDFromObject(id);
 		assert(obcdptr);
-		fo->obim = obimptr = obcdptr + RES_SIZE(obcdptr);
+		fo->obim = obimptr = obcdptr + READ_BE_UINT32(obcdptr + 4);
 		fo->cdhd = (const CodeHeader *)findResourceData(MKID('CDHD'), obcdptr);
 		fo->imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obimptr);
 		return;
