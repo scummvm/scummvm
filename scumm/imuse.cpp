@@ -85,6 +85,10 @@ byte *IMuseInternal::findStartOfSound(int sound) {
 		return NULL;
 	}
 
+	// Check for old-style headers first, like 'RO'
+	if (ptr[4] == 'R' && ptr[5] == 'O')
+		return ptr + 4;
+
 	ptr += 8;
 	size = READ_BE_UINT32(ptr);
 	ptr += 4;
@@ -129,6 +133,10 @@ bool IMuseInternal::isMT32(int sound) {
 		return false;
 	}
 
+	// Check old style headers, like 'RO'
+	if (ptr[4] == 'R' && ptr[5] == 'O')
+		return true;
+
 	return false;
 }
 
@@ -160,6 +168,10 @@ bool IMuseInternal::isGM(int sound) {
 		return false;
 	}
 
+	// Check old style headers, like 'RO'
+	if (ptr[4] == 'R' && ptr[5] == 'O')
+		return true;
+
 	return false;
 }
 
@@ -189,7 +201,7 @@ MidiDriver *IMuseInternal::getBestMidiDriver(int sound) {
 
 bool IMuseInternal::startSound(int sound) {
 	Player *player;
-	void *mdhd;
+	void *ptr;
 
 	// Do not start a sound if it is already set to
 	// start on an ImTrigger event. This fixes carnival
@@ -204,24 +216,12 @@ bool IMuseInternal::startSound(int sound) {
 			return false;
 	}
 
-	// Not sure exactly what the old code was doing,
-	// but we'll go ahead and do a similar check.
-	mdhd = findStartOfSound(sound);
-	if (!mdhd) {
+	ptr = findStartOfSound(sound);
+	if (!ptr) {
 		debug(2, "IMuseInternal::startSound(): Couldn't find sound %d!", sound);
 		return false;
 	}
-/*
-	mdhd = findTag(sound, MDHD_TAG, 0);
-	if (!mdhd) {
-		mdhd = findTag(sound, MDPG_TAG, 0);
-		if (!mdhd) {
-			debug(2, "SE::startSound failed: Couldn't find sound %d", sound);
-			return false;
-		}
-	}
-*/
-
+	
 	// Check which MIDI driver this track should use.
 	// If it's NULL, it ain't something we can play.
 	MidiDriver *driver = getBestMidiDriver(sound);

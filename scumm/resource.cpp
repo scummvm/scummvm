@@ -1451,7 +1451,7 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		      (char) (tag & 0xff),
 		      (char) ((tag >> 8) & 0xff), size);
 		
-		if (tag == 0x5247) { // RO
+		if (tag == 0x4F52) { // RO
 			ro_size = size;
 			ro_offs = _fileHandle.pos();
 		} else {
@@ -1484,18 +1484,9 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		}
 	}
 
-	// AD resources have a header, instrument definitions and one MIDI track.
-	// We build an 'ADL ' resource from that:
-	//   8 bytes resource header
-	//  16 bytes MDhd header
-	//  14 bytes MThd header
-	//   8 bytes MTrk header
-	//   7 bytes MIDI tempo sysex
-	//     + some default instruments
-
 	if (ro_offs != 0) {
-		_fileHandle.seek(ro_offs - 6, SEEK_SET);
-		_fileHandle.read(createResource(type, idx, ro_size + 6), ro_size + 6);
+		_fileHandle.seek(ro_offs - 2, SEEK_SET);
+		_fileHandle.read(createResource(type, idx, ro_size + 2), ro_size + 2);
 		return 1;
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && wa_offs != 0) {
 		if (_features & GF_OLD_BUNDLE) {
@@ -1507,6 +1498,14 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx) {
 		}
 		return 1;
 	} else if (ad_offs != 0) {
+		// AD resources have a header, instrument definitions and one MIDI track.
+		// We build an 'ADL ' resource from that:
+		//   8 bytes resource header
+		//  16 bytes MDhd header
+		//  14 bytes MThd header
+		//   8 bytes MTrk header
+		//   7 bytes MIDI tempo sysex
+		//     + some default instruments
 		byte *ptr;
 		if (_features & GF_OLD_BUNDLE) {
 			ptr = (byte *) calloc(ad_size - 4, 1);

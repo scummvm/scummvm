@@ -92,7 +92,7 @@ static const VersionSettings scumm_settings[] = {
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, "000.LFL"},
 
 	/* Scumm version 5 */
-	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA,  4, VersionSettings::ADLIB_ALWAYS,
+	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA,  4, VersionSettings::ADLIB_PREFERRED,
 	 GF_SMALL_HEADER | GF_USE_KEY, "000.LFL"},
 	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 4, VersionSettings::ADLIB_ALWAYS,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, "000.LFL"},
@@ -1049,7 +1049,12 @@ void Scumm::initScummVars() {
 	} else {
 		VAR(VAR_CURRENTDRIVE) = 0;
 		VAR(VAR_FIXEDDISK) = true;
-		VAR(VAR_SOUNDCARD) = (_midiDriver == MD_PCSPK || _midiDriver == MD_PCJR) ? 0 : 3;
+		switch (_midiDriver) {
+		case MD_ADLIB: VAR(VAR_SOUNDCARD) = 3; break;
+		case MD_PCSPK:
+		case MD_PCJR:  VAR(VAR_SOUNDCARD) = 0; break;
+		default:       VAR(VAR_SOUNDCARD) = 4;
+		}
 		VAR(VAR_VIDEOMODE) = 0x13;
 		VAR(VAR_HEAPSPACE) = 1400;
 		VAR(VAR_MOUSEPRESENT) = true; // FIXME - used to be 0, but that seems odd?!?

@@ -38,6 +38,8 @@
 //
 ////////////////////////////////////////
 
+extern MidiParser *MidiParser_createRO();
+
 static uint read_word(byte *a) {
 	return (a[0] << 8) + a[1];
 }
@@ -84,13 +86,13 @@ Player::~Player() {
 }
 
 bool Player::startSound(int sound, MidiDriver *midi) {
-	void *mdhd;
+	void *ptr;
 	int i;
 
 	// Not sure what the old code was doing,
 	// but we'll go ahead and do a similar check.
-	mdhd = _se->findStartOfSound(sound);
-	if (!mdhd) {
+	ptr = _se->findStartOfSound(sound);
+	if (!ptr) {
 			warning("Player::startSound(): Couldn't find start of sound %d!", sound);
 			return false;
 	}
@@ -177,10 +179,17 @@ int Player::start_seq_sound(int sound, bool reset_vars) {
 	if (_parser)
 		delete _parser;
 
-	if (!memcmp(ptr, "FORM", 4))
+	if (!memcmp (ptr, "RO", 2)) {
+		// Old style 'RO' resource
+		_parser = MidiParser_createRO();
+	} else if (!memcmp(ptr, "FORM", 4)) {
+		// Humongous Games XMIDI resource
 		_parser = MidiParser::createParser_XMIDI();
-	else
+	} else {
+		// SCUMM SMF resource
 		_parser = MidiParser::createParser_SMF();
+	}
+
 	_parser->setMidiDriver(this);
 	_parser->property(MidiParser::mpSmartJump, 1);
 	_parser->loadMusic(ptr, 0);
