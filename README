@@ -582,7 +582,7 @@ Windows example:
 Because ScummVM is still a beta product, it -can- crash and/or hang
 occasionally. As such, every five minutes it will save a game in Slot 0. This
 game can be loaded via Ctrl-0, or the F5 menu. This autosaving does not, 
-however, occur with Simon the Sorcerer 1 and 2.
+however, occur with Simon the Sorcerer 1 and 2, nor with Broken Sword I and II.
 
 
 7.0) Music and Sound: 
