@@ -257,7 +257,7 @@ void ScummEngine_v90he::spriteInfoSet_field_14(int spriteId, int value) {
 
 	if (_spriteTable[spriteId].field_14 != value) {
 		_spriteTable[spriteId].field_14 = value;
-		_spriteTable[spriteId].flags |= kSF01 | kSF02;
+		_spriteTable[spriteId].flags |= kSF01 | kSFNeedRedraw;
 	}
 }
 
@@ -266,7 +266,7 @@ void ScummEngine_v90he::spriteInfoSet_field_7C(int spriteId, int value) {
 
 	if (_spriteTable[spriteId].field_7C != value) {
 		_spriteTable[spriteId].field_7C = value;
-		_spriteTable[spriteId].flags |= kSF01 | kSF02;
+		_spriteTable[spriteId].flags |= kSF01 | kSFNeedRedraw;
 	}
 }
 
@@ -288,7 +288,7 @@ void ScummEngine_v90he::spriteInfoSet_resState(int spriteId, int value) {
 	
 		if (_spriteTable[spriteId].res_state != state) {
 			_spriteTable[spriteId].res_state = state;
-			_spriteTable[spriteId].flags |= kSF01 | kSF02;
+			_spriteTable[spriteId].flags |= kSF01 | kSFNeedRedraw;
 		}
 	}
 }
@@ -299,7 +299,7 @@ void ScummEngine_v90he::spriteInfoSet_tx_ty(int spriteId, int value1, int value2
 	if (_spriteTable[spriteId].tx != value1 || _spriteTable[spriteId].ty != value2) {
 		_spriteTable[spriteId].tx = value1;
 		_spriteTable[spriteId].ty = value2;
-		_spriteTable[spriteId].flags |= kSF01 | kSF02;
+		_spriteTable[spriteId].flags |= kSF01 | kSFNeedRedraw;
 	}
 }
 
@@ -322,7 +322,7 @@ void ScummEngine_v90he::spriteInfoSet_field_54(int spriteId, int value) {
 
 	_spriteTable[spriteId].field_54 = value;
 	if (_spriteTable[spriteId].res_id)
-		_spriteTable[spriteId].flags |= kSF01 | kSF02;
+		_spriteTable[spriteId].flags |= kSF01 | kSFNeedRedraw;
 }
 
 void ScummEngine_v90he::spriteInfoSet_field_44(int spriteId, int value1, int value2) {
@@ -344,7 +344,7 @@ void ScummEngine_v90he::spriteInfoSet_Inc_tx_ty(int spriteId, int value1, int va
 	_spriteTable[spriteId].ty += value2;
 
 	if  (_spriteTable[spriteId].tx || _spriteTable[spriteId].ty)
-		_spriteTable[spriteId].flags |= kSF01 | kSF02;
+		_spriteTable[spriteId].flags |= kSF01 | kSFNeedRedraw;
 }
 
 void ScummEngine_v90he::spriteInfoSet_zoom(int spriteId, int value) {
@@ -356,7 +356,7 @@ void ScummEngine_v90he::spriteInfoSet_zoom(int spriteId, int value) {
 		_spriteTable[spriteId].zoom = value;
 
 		if (_spriteTable[spriteId].res_id)
-			_spriteTable[spriteId].flags |= kSF01 | kSF02;
+			_spriteTable[spriteId].flags |= kSF01 | kSFNeedRedraw;
 	}
 }
 
@@ -369,7 +369,7 @@ void ScummEngine_v90he::spriteInfoSet_rotAngle(int spriteId, int value) {
 		_spriteTable[spriteId].rot_angle = value;
 
 		if (_spriteTable[spriteId].res_id)
-			_spriteTable[spriteId].flags |= kSF01 | kSF02;
+			_spriteTable[spriteId].flags |= kSF01 | kSFNeedRedraw;
 	}
 }
 
@@ -391,7 +391,7 @@ void ScummEngine_v90he::spriteInfoSet_flag7(int spriteId, int value) {
 		_spriteTable[spriteId].flags &= ~(kSF01 | kSF07);
 
 	if (_spriteTable[spriteId].res_id)
-		_spriteTable[spriteId].flags |= kSF01 | kSF02;
+		_spriteTable[spriteId].flags |= kSF01 | kSFNeedRedraw;
 }
 
 void ScummEngine_v90he::spriteInfoSet_flagRotated(int spriteId, int value) {
@@ -403,7 +403,7 @@ void ScummEngine_v90he::spriteInfoSet_flagRotated(int spriteId, int value) {
 		_spriteTable[spriteId].flags &= ~(kSF01 | kSFRotated);
 
 	if (_spriteTable[spriteId].res_id)
-		_spriteTable[spriteId].flags |= kSF01 | kSF02;
+		_spriteTable[spriteId].flags |= kSF01 | kSFNeedRedraw;
 }
 
 void ScummEngine_v90he::spriteInfoSet_flag8(int spriteId, int value) {
@@ -424,7 +424,7 @@ void ScummEngine_v90he::spriteInfoSet_flagZoomed(int spriteId, int value) {
 		_spriteTable[spriteId].flags &= ~(kSF01 | kSFZoomed);
 
 	if (_spriteTable[spriteId].res_id)
-		_spriteTable[spriteId].flags |= kSF01 | kSF02;
+		_spriteTable[spriteId].flags |= kSF01 | kSFNeedRedraw;
 }
 
 void ScummEngine_v90he::spriteInfoSet_flag20(int spriteId, int value) {
@@ -436,16 +436,16 @@ void ScummEngine_v90he::spriteInfoSet_flag20(int spriteId, int value) {
 		_spriteTable[spriteId].flags &= ~(kSF01 | kSF20);
 
 	if (_spriteTable[spriteId].res_id)
-		_spriteTable[spriteId].flags |= kSF01 | kSF02;
+		_spriteTable[spriteId].flags |= kSF01 | kSFNeedRedraw;
 }
 
 void ScummEngine_v90he::spriteInfoSet_flags23_26(int spriteId, int value) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
 
 	if (value)
-		_spriteTable[spriteId].flags |= kSF23 | kSF26;
+		_spriteTable[spriteId].flags |= kSF23 | kSFBlitDirectly;
 	else
-		_spriteTable[spriteId].flags &= ~(kSF01 | kSF23 | kSF26);
+		_spriteTable[spriteId].flags &= ~(kSF01 | kSF23 | kSFBlitDirectly);
 }
 
 void ScummEngine_v90he::spriteInfoSet_flag31(int spriteId, int value) {
@@ -503,7 +503,7 @@ void ScummEngine_v90he::spritesResetTables(bool refreshScreen) {
 			for (i = 0; i < _numSpritesToProcess; ++i) {
 				SpriteInfo *spi = _activeSpritesTable[i];
 				if (spi->group_num == curGrp) {
-					spi->flags |= kSF01 | kSF02;
+					spi->flags |= kSF01 | kSFNeedRedraw;
 				}
 			}
 		}
@@ -513,18 +513,18 @@ void ScummEngine_v90he::spritesResetTables(bool refreshScreen) {
 			for (i = 0; i < _numSpritesToProcess; ++i) {
 				SpriteInfo *spi = _activeSpritesTable[i];
 				if (spi->group_num == curGrp) {
-					spi->flags |= kSF01 | kSF02;
+					spi->flags |= kSF01 | kSFNeedRedraw;
 				}
 			}
 		}
 		spg->flags &= ~kSGF01;
-		spriteMarkIfInGroup(curGrp, kSF01 | kSF02);
+		spriteMarkIfInGroup(curGrp, kSF01 | kSFNeedRedraw);
 		if (spg->field_20 != 0) {
 			spriteGroupCheck(curGrp);
 			for (i = 0; i < _numSpritesToProcess; ++i) {
 				SpriteInfo *spi = _activeSpritesTable[i];
 				if (spi->group_num == curGrp) {
-					spi->flags |= kSF01 | kSF02;
+					spi->flags |= kSF01 | kSFNeedRedraw;
 				}
 			}
 		}
@@ -568,7 +568,7 @@ void ScummEngine_v90he::spritesBlitToScreen() {
 		if (!(spi->flags & kSF31) && (spi->flags & kSF01)) {
 			spi->flags &= ~kSF01;
 			if (spi->bbox_xmin <= spi->bbox_xmax && spi->bbox_ymin <= spi->bbox_ymax) {
-				if (spi->flags & kSF26) {
+				if (spi->flags & kSFBlitDirectly) {
 					gdi.copyVirtScreenBuffers(Common::Rect(spi->bbox_xmin, spi->bbox_ymin, spi->bbox_ymin, spi->bbox_ymax)); // XXX 0, 0x40000000);
 				}
 			} else if (firstLoop) {
@@ -592,8 +592,8 @@ void ScummEngine_v90he::spritesBlitToScreen() {
 				}
 				refreshScreen = true;
 			}
-			if (!(spi->flags & (kSF02 | kSF30)) && (spi->res_id != 0)) {
-				spi->flags |= kSF02;
+			if (!(spi->flags & (kSFNeedRedraw | kSF30)) && (spi->res_id != 0)) {
+				spi->flags |= kSFNeedRedraw;
 			}			
 		}
 	}
