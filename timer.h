@@ -25,6 +25,8 @@
 
 #define MAX_TIMERS 3
 
+typedef int (*TimerProc)(int);
+
 #ifdef __MORPHOS__
 #include "morphos/morphos_timer.h"
 #else
@@ -33,34 +35,31 @@ class OSystem;
 
 class Timer {
 
-protected:
-
 private:
-	OSystem * _osystem;
-	Scumm * _scumm;
+	OSystem *_osystem;
+	Scumm *_scumm;
 	bool _initialized;
 	bool _timerRunning;
-	void * _timerHandler;
+	void *_timerHandler;
 	int32 _thisTime;
 	int32 _lastTime;
-	void * _mutex;
+	void *_mutex;
 
-struct TimerSlots
-{
-	int ((*procedure)(int));
-	int32 interval;
-	int32 counter;
-} _timerSlots [MAX_TIMERS];
+	struct TimerSlots {
+		int ((*procedure) (int));
+		int32 interval;
+		int32 counter;
+	} _timerSlots[MAX_TIMERS];
 
 public:
-	Timer(Scumm * system);
-	~Timer();
+	  Timer(Scumm *system);
+	 ~Timer();
 
-	int handler(int * t);
+	int handler(int *t);
 	bool init();
 	void release();
-	bool installProcedure (int ((*procedure)(int)), int32 interval);
-	void releaseProcedure (int ((*procedure)(int)));
+	bool installProcedure(TimerProc procedure, int32 interval);
+	void releaseProcedure(TimerProc procedure);
 };
 
 #endif
