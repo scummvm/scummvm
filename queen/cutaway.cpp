@@ -709,9 +709,7 @@ void Cutaway::run(char *nextFilename) {
 	for (int i = 0; i < _cutawayObjectCount; i++) {
 		CutawayObject object;
 		ptr = getCutawayObject(ptr, object);
-#if 1
-		dumpCutawayObject(i, object);
-#endif
+//		dumpCutawayObject(i, object);
 
 		if (!object.moveToX && 
 				!object.moveToY && 
