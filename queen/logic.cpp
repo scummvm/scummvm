@@ -1749,6 +1749,7 @@ int16 Logic::joeWalkTo(int16 x, int16 y, bool mustWalk) {
 	_newRoom = 0;
 
 	if (_entryObj != 0 && _cmd->selectedAction().value() != VERB_CLOSE) {
+		_newRoom = _objectData[_entryObj].room;
 		// because this is an exit object, see if there is
 		// a walk off point and set (x,y) accordingly
 		WalkOffData *wod = walkOffPointForObject(k + _cmd->selectedNoun());
