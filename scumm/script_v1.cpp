@@ -982,6 +982,10 @@ void Scumm::o5_getActorY()
 			setResult(94);
 			return;
 		}
+		setResult(getObjY(a) - 1);	// FIXME: Is this right, or can it be less specific?
+						// It's here to fix bug 636433 in specific, the actors
+						// are one pixel off what the script waits for.
+		return;
 	} else
 		a = getVarOrDirectWord(0x80);
 
