@@ -118,6 +118,9 @@ int Gfx::simpleBlit(R_SURFACE *dst_s, R_SURFACE *src_s) {
 	return R_SUCCESS;
 }
 
+// TODO: I've fixed at least one clipping bug here, but I have a feeling there
+//       are several more. 
+
 // * Copies a rectangle from a raw 8 bit pixel buffer to the specified surface.
 // The buffer is of width 'src_w' and height 'src_h'. The rectangle to be 
 // copied is defined by 'src_rect'.  
@@ -225,18 +228,18 @@ int Gfx::bufToSurface(R_SURFACE *ds, const byte *src, int src_w, int src_h,
 	}
 
 	if ((d_x + src_draw_w - 1) > clip.right) {
-		src_draw_w -= (clip.right - (d_x + src_draw_w - 1));
+		src_draw_w = clip.right - d_x + 1;
 	}
 
 	// Clip to bottom edge
 
-	if (d_x > clip.bottom) {
+	if (d_y > clip.bottom) {
 		// dst rect completely off bottom edge
 		return R_SUCCESS;
 	}
 
 	if ((d_y + src_draw_h - 1) > clip.bottom) {
-		src_draw_h -= (clip.bottom - (d_y + src_draw_h - 1));
+		src_draw_h = clip.bottom - d_y + 1;
 	}
 
 	// Transfer buffer data to surface
@@ -350,7 +353,7 @@ int Gfx::bufToBuffer(byte *dst_buf, int dst_w, int dst_h, const byte *src,
 
 	// Clip to bottom edge
 
-	if (d_x > clip.bottom) {
+	if (d_y > clip.bottom) {
 		// dst rect completely off bottom edge
 		return R_SUCCESS;
 	}
