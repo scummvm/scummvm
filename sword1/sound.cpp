@@ -218,36 +218,28 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 		headerPos++;
 	if (headerPos < 100) {
 		int32 resSize;
-		if (_cowMode == CowDemo) { // Demo uses slightly different headers
-			resSize = READ_LE_UINT32(fBuf + headerPos + 6) >> 1;
-			headerPos += 2;
-		} else
-			resSize = READ_LE_UINT32(fBuf + headerPos + 4) >> 1;
-		int16 *srcData = (int16*)(fBuf + headerPos + 8);
-		uint32 srcPos = 0;
-		uint32 dstPos = 0;
-		cSize = (cSize - (headerPos + 8)) / 2;
-		if (_cowMode == CowDemo) {
-			// FIXME: Until someone figures out how to really
-			//        calculate the uncompressed buffer size, use
-			//        brute force to avoid crashes.
-			debug(1, "old resSize = %d", resSize);
-			resSize = 0;
-			while (srcPos < cSize) {
-				int16 length = (int16)READ_LE_UINT16(srcData + srcPos);
-				srcPos++;
-				if (length < 0) {
-					length = -length;
-					srcPos++;
-				} else {
-					srcPos += length;
-				}
-				resSize += length;
-			}
-			debug(1, "new resSize = %d", resSize);
+		headerPos += 4; // skip 'data' tag
+		if (_cowMode != CowDemo) {
+			resSize = READ_LE_UINT32(fBuf + headerPos) >> 1;
+			headerPos += 4;
+		} else {
+			// the demo speech files have the uncompressed size embedded
+			// in the compressed stream *sigh*
+			if (READ_LE_UINT16(fBuf + headerPos) == 1) {				
+				resSize = READ_LE_UINT16(fBuf + headerPos + 2);
+				resSize |= READ_LE_UINT16(fBuf + headerPos + 6) << 16;
+				resSize >>= 1;
+			} else
+				resSize = READ_LE_UINT32(fBuf + headerPos + 2) >> 1;
 		}
-		int16 *dstData = (int16*)malloc(resSize * 2);
-		srcPos = 0;
+		assert(!(headerPos & 1));
+		int16 *srcData = (int16*)fBuf;
+		uint32 srcPos = headerPos >> 1;
+		cSize /= 2;
+		uint32 dstPos = 0;
+		/* alloc 200 additional bytes, as the demo sometimes has ASCII junk
+		   at the end of the wave data */
+		int16 *dstData = (int16*)malloc(resSize * 2 + 200);
 		while (srcPos < cSize) {
 			int16 length = (int16)READ_LE_UINT16(srcData + srcPos);
 			srcPos++;
@@ -262,6 +254,9 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 				srcPos += length;
 			}
 		}
+		assert(dstPos < (uint32)resSize + 100);
+		if (_cowMode == CowDemo) // demo has wave output size embedded in the compressed data
+			*(uint32*)dstData = 0;
 		free(fBuf);
 		*size = resSize * 2;
 		calcWaveVolume(dstData, resSize);

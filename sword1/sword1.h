@@ -63,6 +63,7 @@ struct SystemVars {
 	uint8	playSpeech;
 	uint8	showText;
 	uint8	language;
+	bool    isDemo;
 };
 
 class SwordEngine : public Engine {

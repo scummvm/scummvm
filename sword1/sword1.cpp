@@ -1095,6 +1095,7 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 	File test;
 
 	_systemVars.playSpeech = true;
+	_systemVars.isDemo = false;
 
 	for (int i = 1; i <= 2; i++) {
 		for (int j = 0; j < ARRAYSIZE(speechFiles); j++) {
@@ -1113,6 +1114,10 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 		_systemVars.runningFromCd = false;
 		_systemVars.playSpeech = true;
 	} else { // speech1 & speech2 not present. are we running from cd?
+		if (test.open("cows.mad")) {
+			_systemVars.isDemo = true;
+			test.close();
+		}
 		if (test.open("cd1.id")) {
 			_systemVars.runningFromCd = true;
 			_systemVars.currentCD = 1;

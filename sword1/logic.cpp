@@ -474,6 +474,7 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 	int32 a, b, c, d, e, f;
 	int mCodeReturn = 0;
 	int32 mCodeNumber = 0, mCodeArguments = 0;
+	uint32 varNum = 0;
 	while (1) {
 		assert((stackIdx >= 0) && (stackIdx <= MAX_STACK_SIZE));
 		switch (scriptCode[pc++]) {
@@ -504,7 +505,14 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 				break;
 			case IT_PUSHVARIABLE:
 				debug(9, "IT_PUSHVARIABLE: ScriptVar[%d] => %d", scriptCode[pc], _scriptVars[scriptCode[pc]]);
-				stack[stackIdx++] = _scriptVars[scriptCode[pc++]];
+				varNum = scriptCode[pc++];
+				if (SwordEngine::_systemVars.isDemo) {
+					if (varNum >= 397) // BS1 Demo has different number of script variables
+						varNum++;
+					if (varNum >= 699)
+						varNum++;
+				}
+				stack[stackIdx++] = _scriptVars[varNum];
 				break;
 			case IT_NOTEQUAL:
 				stackIdx--;
@@ -588,7 +596,14 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 				return 0;
 			case IT_POPVAR:         // pop a variable
 				debug(9, "IT_POPVAR: ScriptVars[%d] = %d", scriptCode[pc], stack[stackIdx-1]);
-				_scriptVars[scriptCode[pc++]] = stack[--stackIdx];
+				varNum = scriptCode[pc++];
+				if (SwordEngine::_systemVars.isDemo) {
+					if (varNum >= 397) // BS1 Demo has different number of script variables
+						varNum++;
+					if (varNum >= 699)
+						varNum++;
+				}
+				_scriptVars[varNum] = stack[--stackIdx];
 				break;
 			case IT_POPLONGOFFSET:
 				offset = scriptCode[pc++];
