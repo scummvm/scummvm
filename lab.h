@@ -19,6 +19,7 @@
 #define LAB_H
 
 #include <string>
+#include <cstring>
 #include <cstdio>
 #include <map>
 
@@ -61,6 +62,7 @@ private:
 	std::FILE *_f;
 	typedef std::map<std::string, LabEntry> FileMapType;
 	FileMapType _fileMap;
+	std::string _labFileName;
 
 	FileMapType::const_iterator findFilename(const char *filename) const;
 };

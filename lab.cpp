@@ -23,6 +23,8 @@
 #include <cctype>
 
 bool Lab::open(const char *filename) {
+	_labFileName = filename;
+
 	close();
 	_f = std::fopen(filename, "rb");
 	if (!isOpen())
@@ -90,9 +92,11 @@ std::FILE *Lab::openNewStream(const char *filename) const {
 	if (i == _fileMap.end())
 		return NULL;
 
-	std::fseek(_f, i->second.offset, SEEK_SET);
+	FILE *file = std::fopen(_labFileName.c_str(), "rb");
+	assert(file);
+	std::fseek(file, i->second.offset, SEEK_SET);
 
-	return _f;
+	return file;
 }
 
 int Lab::fileLength(const char *filename) const {

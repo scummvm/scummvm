@@ -37,8 +37,12 @@ McmpMgr::McmpMgr() {
 }
 
 McmpMgr::~McmpMgr() {
-	free(_compTable);
-	free(_compInput);
+	if (_file)
+		fclose(_file);
+	if (_compTable)
+		free(_compTable);
+	if (_compInput)
+		free(_compInput);
 }
 
 bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
