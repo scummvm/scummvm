@@ -159,7 +159,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 				// comply to the C++ standard, so we can't use a dynamic sized stack array.
 				char *str = new char[len + 1];
 	
-				// Copy the user intput to str
+				// Copy the user input to str
 				for (i = 0; i < len; i++)
 					str[i] = _buffer[(_promptStartPos + i) % kBufferSize];
 				str[len] = '\0';
@@ -197,6 +197,33 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 			scrollToCurrent();
 			draw();	// FIXME - not nice to redraw the full console just for one char!
 			break;
+		case 9: // tab
+		{
+			if (_completionCallbackProc) {
+				int len = _currentPos - _promptStartPos;
+				assert(len >= 0);
+				char *str = new char[len + 1];
+	
+				// Copy the user input to str
+				for (i = 0; i < len; i++)
+					str[i] = _buffer[(_promptStartPos + i) % kBufferSize];
+				str[len] = '\0';
+
+				char *completion = 0;
+				if ((*_completionCallbackProc)(this, str, completion,
+											   _callbackRefCon))
+				{
+					if (_caretVisible)
+						drawCaret(true);
+					insertIntoPrompt(completion);
+					scrollToCurrent();
+					draw();
+					delete[] completion;
+				}
+				delete[] str;
+			}
+			break;
+		}
 		case 127:
 			killChar();
 			draw();
@@ -252,6 +279,18 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 				putchar((char)ascii);
 				scrollToCurrent();
 			}
+	}
+}
+
+void ConsoleDialog::insertIntoPrompt(const char* str)
+{
+	unsigned int l = strlen(str);
+	for (int i = _promptEndPos-1; i >= _currentPos; i--)
+		_buffer[(i + l) % kBufferSize] = 
+			_buffer[i % kBufferSize];
+	for (unsigned int j = 0; j < l; ++j) {
+		_promptEndPos++;
+		putcharIntern(str[j]);
 	}
 }
 

@@ -107,8 +107,10 @@ void ScummDebugger::attach(Scumm *s, char *entry) {
 
 void ScummDebugger::detach() {
 #ifdef USE_CONSOLE
-	if (_s->_debuggerDialog)
+	if (_s->_debuggerDialog) {
 		_s->_debuggerDialog->setInputeCallback(0, 0);
+		_s->_debuggerDialog->setCompletionCallback(0, 0);
+	}
 #endif
 	
 	_s->_debugger = NULL;
@@ -144,6 +146,14 @@ bool ScummDebugger::debuggerInputCallback(ConsoleDialog *console, const char *in
 	
 	return debugger->RunCommand((char*)input);
 }
+
+
+bool ScummDebugger::debuggerCompletionCallback(ConsoleDialog *console, const char *input, char*& completion, void *refCon) {
+	ScummDebugger *debugger = (ScummDebugger *)refCon;
+
+	return debugger->TabComplete(input, completion);
+}
+
 #endif
 
 ///////////////////////////////////////////////////
@@ -184,6 +194,8 @@ void ScummDebugger::enter() {
 	}
 	
 	_s->_debuggerDialog->setInputeCallback(debuggerInputCallback, this);
+	_s->_debuggerDialog->setCompletionCallback(debuggerCompletionCallback,
+											   this);
 	_s->_debuggerDialog->runModal();
 #else
 	printf("Debugger entered, please switch to this console for input.\n");
@@ -783,3 +795,53 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 
 	return true;
 }
+
+// returns true if something has been completed
+// completion has to be delete[]-ed then
+bool ScummDebugger::TabComplete(const char *input, char*& completion) {
+	// very basic tab completion
+	// for now it just supports command completions
+
+	// adding completions of command parameters would be nice (but hard) :-)
+	// maybe also give a list of possible command completions?
+	//   (but this will require changes to console)
+
+	if (strchr(input, ' '))
+		return false; // already finished the first word
+
+	unsigned int inputlen = strlen(input);
+
+	unsigned int matchlen = 0;
+	char match[30]; // the max. command name is 30 chars
+
+	for(int i=0; i < _dcmd_count; i++) {
+		if (!strncmp(_dcmds[i].name, input, inputlen)) {
+			unsigned int commandlen = strlen(_dcmds[i].name);
+			if (commandlen == inputlen) { // perfect match
+				return false;
+			}
+			if (commandlen > inputlen) { // possible match
+				// no previous match
+				if (matchlen == 0) {
+					strcpy(match, _dcmds[i].name + inputlen);
+					matchlen = commandlen - inputlen;
+				} else {
+					// take common prefix of previous match and this command
+					unsigned int j;
+					for (j = 0; j < matchlen; j++) {
+						if (match[j] != _dcmds[i].name[inputlen + j]) break;
+					}
+					matchlen = j;
+				}
+			}
+		}
+	}
+	if (matchlen == 0)
+		return false;
+
+	completion = new char[matchlen+1];
+	memcpy(completion, match, matchlen);
+	completion[matchlen+1] = 0;
+	return true;
+}
+

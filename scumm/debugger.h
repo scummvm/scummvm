@@ -96,7 +96,11 @@ protected:
 
 #ifdef USE_CONSOLE
 	static bool debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon);
+	static bool debuggerCompletionCallback(ConsoleDialog *console, const char *input, char*& completion, void *refCon);
 #endif
+
+	bool TabComplete(const char *input, char*& completion);
+
 };
 
 #endif

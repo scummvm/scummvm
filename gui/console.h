@@ -39,6 +39,7 @@ class ScrollBarWidget;
 class ConsoleDialog : public Dialog {
 public:
 	typedef bool (*InputCallbackProc)(ConsoleDialog *console, const char *input, void *refCon);
+	typedef bool (*CompletionCallbackProc)(ConsoleDialog* console, const char *input, char*& completion, void *refCon);
 
 protected:
 	char	_buffer[kBufferSize];
@@ -62,6 +63,10 @@ protected:
 	// 
 	InputCallbackProc _callbackProc;
 	void *_callbackRefCon;
+
+	// _completionCallbackProc is called when tab is pressed
+	CompletionCallbackProc _completionCallbackProc;
+	void *_completionCallbackRefCon;
 
 	char _history[kHistorySize][kLineBufferSize];
 	int _historySize;
@@ -88,10 +93,15 @@ public:
 		_callbackProc = proc;
 		_callbackRefCon = refCon;
 	}
+	void setCompletionCallback(CompletionCallbackProc proc, void *refCon) {
+		_completionCallbackProc = proc;
+		_completionCallbackRefCon = refCon;
+	}
 
 protected:
 	void drawCaret(bool erase);
 	void putcharIntern(int c);
+	void insertIntoPrompt(const char *str);
 	void print(const char *str);
 	void nextLine();
 	void updateScrollBar();
