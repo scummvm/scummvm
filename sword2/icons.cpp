@@ -51,6 +51,8 @@ int32 FN_add_menu_object(int32 *params)	//Tony1Oct96
 
 //	copy the structure to our in-the-engine list
 	memcpy( &temp_list[total_temp], (uint8*) *params, sizeof(menu_object));	//
+	temp_list[total_temp].icon_resource = FROM_LE_32(temp_list[total_temp].icon_resource);
+	temp_list[total_temp].luggage_resource = FROM_LE_32(temp_list[total_temp].luggage_resource);
 	total_temp++;
 
 	return(IR_CONT);	// script continue
