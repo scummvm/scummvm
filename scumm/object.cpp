@@ -261,8 +261,18 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 		imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), ptr);
 		assert(imhd);
 		if (_version == 8) {
-			x = od.x_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].x);
-			y = od.y_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].y);
+			switch (FROM_LE_32(imhd->v8.version)) {
+			case 800:
+				x = od.x_pos + (int32)READ_LE_UINT32((const byte *)imhd + 8 * state + 0x44);
+				y = od.y_pos + (int32)READ_LE_UINT32((const byte *)imhd + 8 * state + 0x48); 
+				break;
+			case 801:
+				x = od.x_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].x);
+				y = od.y_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].y);
+				break;
+			default:
+				error("Unsupported image header version %d\n", FROM_LE_32(imhd->v8.version));
+			}
 		} else if (_version == 7) {
 			x = od.x_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].x);
 			y = od.y_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].y);
@@ -1473,10 +1483,11 @@ void ScummEngine::drawBlastObject(BlastObject *eo) {
 	bdd.out = vs->getPixels(0, 0);
 	bdd.outwidth = vs->w;
 	bdd.outheight = vs->h;
+	// Skip the bomp header
 	if (_version == 8) {
-		bdd.dataptr = bomp + 8;	// Why this? See also useBompCursor
+		bdd.dataptr = bomp + 8;
 	} else {
-		bdd.dataptr = bomp + 10;	// Why this? See also useBompCursor
+		bdd.dataptr = bomp + 10;
 	}
 	bdd.x = eo->rect.left;
 	bdd.y = eo->rect.top;

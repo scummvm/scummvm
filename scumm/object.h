@@ -41,7 +41,7 @@ struct ObjectData {
 
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
-#endif	
+#endif
 
 struct RoomHeader {
 	union {
@@ -94,7 +94,7 @@ struct CodeHeader {
 			byte parent;
 			byte parentstate;
 		} GCC_PACK v7;
-							
+
 	} GCC_PACK;
 } GCC_PACK;
 
@@ -126,22 +126,16 @@ struct ImageHeader { /* file format */
 		} GCC_PACK v7;
 
 		struct {
-			// Most of these seem to have length 0x58.
-			// But system-cursor-icon has length 0x60 ?!? --------+
-			char name[32];      //                                |
-			uint32 unk_1[2];	// always 0 ?                     v
-			uint32 version;		// 801; 801; 801; 801; 801; 801; 801
-			uint32 image_count;		//   0;   0;   0;   0;   0:   1;   2
-			uint32 x_pos;		//   0; 184; 264; 336; 450; 272;   0
-			uint32 y_pos;		//   0; 272; 248; 216; 168; 320;   0
-			uint32 width;		//  64; 128; 120; 128;  80;  48;  80
-			uint32 height;		// 270;  80;  80;  72;  56;  56;  56
-			uint32 actordir;	// 225;  45;  45;  45;  45;   0;   0
-			uint32 hotspot_num;	//   0;   0;   0;   0;   0;   0;   1
-								// -50; -84; -49; -19;  11; -16;  22
-								// 456; 118;  86;  76;  53: -64;  19
-								//                                22
-								//                                19
+			char name[32];
+			uint32 unk_1[2];
+			uint32 version;		// 801 in COMI, 800 in the COMI demo
+			uint32 image_count;
+			uint32 x_pos;
+			uint32 y_pos;
+			uint32 width;
+			uint32 height;
+			uint32 actordir;
+			uint32 hotspot_num;	// This field is missing in the COMI demo (version == 800) !
 			struct {
 				int32 x, y;
 			} GCC_PACK hotspot[15];
