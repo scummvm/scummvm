@@ -188,6 +188,8 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
 	{"ftdemo", "Full Throttle (Mac Demo)", GID_FT, 7, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
+	{"ftpcdemo", "Full Throttle (Demo)", GID_FTDEMO, 7, MDT_NONE,
+	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
 
 	{"dig", "The Dig", GID_DIG, 7, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
@@ -1482,7 +1484,7 @@ load_game:
 		// texts have to be drawn before the blast objects. Unless
 		// someone can think of a better way to achieve this effect.
 
-		if (_gameId == GID_FT) {
+		if (_gameId == GID_FT || _gameId == GID_FTDEMO) {
 			drawBlastTexts();
 			drawBlastObjects();
 		} else {
@@ -2769,6 +2771,10 @@ GameList Engine_SCUMM_detectGames(const FSList &fslist) {
 			strcpy(detectName2, g->gameName);
 			if (g->features & GF_HUMONGOUS) {
 				strcat(detectName2, ".he0");
+			} else if (g->id == GID_FTDEMO) {
+				// FIXME: Now it is not possible to have target file and
+				// main resource file named differently
+				strcpy(detectName, "ft.000");
 			} else if (g->version >= 7) {
 				strcat(detectName2, ".la0");
 			} else

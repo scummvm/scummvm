@@ -120,7 +120,7 @@ void Sound::addSoundToQueue(int sound) {
 		_scumm->ensureResourceLoaded(rtSound, sound);
 		addSoundToQueue2(sound);
 	} else {
-		// WARNING ! This may break something, maybe this sould be put inside if (_gameID == GID_FT) ? 
+		// WARNING ! This may break something, maybe this sould be put inside if (_gameID == GID_FT || _gameID == GID_FTDEMO) ? 
 		// But why addSoundToQueue should not queue sound ?
 		_scumm->ensureResourceLoaded(rtSound, sound);
 		addSoundToQueue2(sound);

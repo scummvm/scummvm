@@ -1814,7 +1814,7 @@ void ScummEngine_v6::o6_verbOps() {
 	// Full Throttle implements conversation by creating new verbs, one
 	// for each option, but it never tells when to actually draw them.
 
-	if (_gameId == GID_FT)
+	if (_gameId == GID_FT || _gameId == GID_FTDEMO)
 		_verbRedraw = true;
 
 	op = fetchScriptByte();
@@ -2411,8 +2411,18 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 				// INSANE mode 0: SMUSH movie playback
 				if (args[1] == 0) {
 					sp->play((char *)getStringAddressVar(VAR_VIDEONAME), getGameDataPath());
-				} else if (_gameId == GID_FT) {
-					int insaneMode = readArray(233,0,0);
+				} else if (_gameId == GID_FT || _gameId == GID_FTDEMO) {
+					int insaneVarNum;
+					int insaneMode;
+
+					if (_gameId == GID_FTDEMO)
+						insaneVarNum = 232;
+					else
+						insaneVarNum = 233;
+
+					insaneMode = readArray(insaneVarNum,0,0);
+
+					// FIXME: FT Demo has different Insane
 					debug(1, "FT_INSANE Mode: %d", insaneMode);
 						switch (insaneMode) {
 						case 0:
@@ -2425,19 +2435,19 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 							sp->play("tovista1.san", getGameDataPath());
 							break;
 						case 3:
-							if (readArray(233,0,50) == 0) {
+							if (readArray(insaneVarNum,0,50) == 0) {
 								InfoDialog info(this, "Set MineRoad - You can now jump the gorge.");
 								runDialog(info);
 
-								writeArray(233, 0, 50, 1); // INSANE callback: Chain
-								writeArray(233, 0, 51, 1); // INSANE callback: Chainsaw
-								writeArray(233, 0, 52, 1); // INSANE callback: Mace
-								writeArray(233, 0, 53, 1); // INSANE callback: 2x4
-								writeArray(233, 0, 54, 1); // INSANE callback: Wrench
-								writeArray(233, 0, 55, 1); // INSANE callback: Dust
+								writeArray(insaneVarNum, 0, 50, 1); // INSANE callback: Chain
+								writeArray(insaneVarNum, 0, 51, 1); // INSANE callback: Chainsaw
+								writeArray(insaneVarNum, 0, 52, 1); // INSANE callback: Mace
+								writeArray(insaneVarNum, 0, 53, 1); // INSANE callback: 2x4
+								writeArray(insaneVarNum, 0, 54, 1); // INSANE callback: Wrench
+								writeArray(insaneVarNum, 0, 55, 1); // INSANE callback: Dust
 
-								writeArray(233, 0, 8, 1);  // INSANE callback: Give Googles
-								writeArray(233, 0, 7, 1);  // INSANE callback: Give nitro fuel
+								writeArray(insaneVarNum, 0, 8, 1);  // INSANE callback: Give Googles
+								writeArray(insaneVarNum, 0, 7, 1);  // INSANE callback: Give nitro fuel
 
 								putState(235, 1);	   // Cheat and activate Ramp
 								writeVar(142 | 0x8000, 1); // Cheat and activate auto-booster (fan)

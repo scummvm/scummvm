@@ -401,7 +401,7 @@ void ScummEngine::drawString(int a) {
 	// and never time out. We can't do it blindly for all games, because
 	// it causes problem with the FOA intro.
 
-	if (_gameId == GID_FT && a == 4)
+	if ((_gameId == GID_FT || _gameId == GID_FTDEMO) && a == 4)
 		_talkDelay = -1;
 
 	if (!buf[0]) {

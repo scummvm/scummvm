@@ -47,6 +47,7 @@ int ScummHelp::numPages(byte gameId) {
 	case GID_DIG:
 	case GID_FT:
 	case GID_CMI:
+	case GID_FTDEMO:
 		return 3;
 		break;  
 /*	TODO - I don't know the controls for these games
@@ -215,6 +216,7 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page,
 			ADD_BIND("b", "Black and White / Color");
 			break;
 		case GID_FT:
+		case GID_FTDEMO:
 			ADD_BIND("e", "Eyes");
 			ADD_BIND("t", "Tongue");
 			ADD_BIND("i", "Inventory");

@@ -87,7 +87,13 @@ void ScummEngine::openRoom(int room) {
 				if (room > 0 && (_version == 8))
 					VAR(VAR_CURRENTDISK) = res.roomno[rtRoom][room];
 				sprintf(buf, "%s.la%d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
-				sprintf(buf2, "%s.%.3d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
+
+				// FIXME: Now it is not possible to have target file and
+				// main resource file named differently
+				if (_gameId == GID_FTDEMO)
+					sprintf(buf2, "ft.%.3d", room == 0 ? 0 : res.roomno[rtRoom][room]);
+				else
+					sprintf(buf2, "%s.%.3d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
 			} else if (_features & GF_HUMONGOUS)
 				sprintf(buf, "%s.he%.1d", _gameName.c_str(), room == 0 ? 0 : res.roomno[rtRoom][room]);
 			else {
@@ -2069,7 +2075,11 @@ void ScummEngine::readMAXS() {
 		_numCostumes = _fileHandle.readUint16LE();
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
-		_numGlobalScripts = 2000;
+
+		if (_gameId == GID_FTDEMO)
+			_numGlobalScripts = 300;
+		else
+			_numGlobalScripts = 2000;
 
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
 	// FIXME better check for the more recent windows based humongous games...

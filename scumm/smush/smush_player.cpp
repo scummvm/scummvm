@@ -839,6 +839,9 @@ void SmushPlayer::setupAnim(const char *file, const char *directory) {
 		_sf[2] = new SmushFont(true, false);
 		_sf[0]->loadFont("scummfnt.nut", directory);
 		_sf[2]->loadFont("titlfnt.nut", directory);
+	} else if (_scumm->_gameId == GID_FTDEMO) {
+		_sf[0] = new SmushFont(true, false);
+		_sf[0]->loadFont("scummfnt.nut", directory);
 	} else if (_scumm->_gameId == GID_DIG) {
 		for (i = 0; i < 4; i++) {
 			sprintf(file_font, "font%d.nut", i);

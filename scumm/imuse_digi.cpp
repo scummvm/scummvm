@@ -1066,7 +1066,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					return 0;
 				}
 			}
-		} else if (_scumm->_gameId == GID_FT) {
+		} else if (_scumm->_gameId == GID_FT || _scumm->_gameId == GID_FTDEMO) {
 			for (l = 0;; l++) {
 				if (_ftStateMusicTable[l].index == -1) {
 					return 1;
@@ -1113,7 +1113,7 @@ int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, i
 					return 0;
 				}
 			}
-		} else if (_scumm->_gameId == GID_FT) {
+		} else if (_scumm->_gameId == GID_FT || _scumm->_gameId == GID_FTDEMO) {
 			for (l = 0;; l++) {
 				if (_ftSeqMusicTable[l].index == -1) {
 					return 1;
