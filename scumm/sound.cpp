@@ -699,6 +699,14 @@ bool Sound::isSoundInQueue(int sound) const {
 void Sound::stopSound(int a) {
 	int i;
 
+	if (_vm->_features & GF_HUMONGOUS) {
+		if (a == -2) {
+			// Stop current sfx
+		} else if (a == -1) {
+			// Stop current music
+		}
+	}
+
 	if (a != 0 && a == _currentCDSound) {
 		_currentCDSound = 0;
 		stopCD();
