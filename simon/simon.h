@@ -194,9 +194,8 @@ protected:
 	int16 _script_unk_1;
 	bool _vga_var6;
 	int _x_scroll, _vga_var1, _vga_var2, _vga_var3, _vga_var5;
-	byte _vga_var8;
-
 	byte *_vga_var7;
+	byte _vga_var8;
 
 	int16 _script_cond_a, _script_cond_b, _script_cond_c;
 
@@ -204,7 +203,6 @@ protected:
 	FillOrCopyStruct *_fcs_ptr_1;
 
 	Item *_subject_item, *_object_item;
-	Item *_item_1_ptr;
 	Item *_item_1;
 
 	Item *_hitarea_object_item;

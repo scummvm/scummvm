@@ -277,9 +277,8 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_vga_var2 = 0;
 	_vga_var3 = 0;
 	_vga_var5 = 0;
-	_vga_var8 = 0;
-
 	_vga_var7 = 0;
+	_vga_var8 = 0;
 
 	_script_cond_a = 0;
 	_script_cond_b = 0;
@@ -394,6 +393,8 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	_free_string_slot = 0;
 	
+	memset(_stringReturnBuffer, 0, sizeof(_stringReturnBuffer));
+
 	memset(_pathfind_array, 0, sizeof(_pathfind_array));
 
 	memset(_palette_backup, 0, sizeof(_palette_backup));
