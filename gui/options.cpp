@@ -64,6 +64,13 @@ enum {
 	kChooseExtraDirCmd		= 'chex'
 };
 
+#ifdef _WIN32_WCE
+enum {
+	kChooseKeyMappingCmd    = 'chma'
+};
+#endif
+
+
 OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h),
 	_domain(domain),
