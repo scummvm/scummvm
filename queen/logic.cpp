@@ -267,7 +267,7 @@ uint16 Logic::findBob(uint16 obj) {
 	if(img != 0) {
 		if(img == -3 || img == -4) {
 			// a person object
-			bobnum = findPersonNumber(obj);
+			bobnum = findPersonNumber(obj, room);
 		} else {
 			uint16 bobtype = 0; // 1 for animated, 0 for static
 
@@ -337,7 +337,7 @@ uint16 Logic::findFrame(uint16 obj) {
 	uint16 room = _objectData[obj].room;
 	int16 img = _objectData[obj].image;
 	if(img == -3 || img == -4) {
-		uint16 bobnum = findPersonNumber(obj);
+		uint16 bobnum = findPersonNumber(obj, room);
 		if(bobnum <= 3) {
 			framenum = 29 + FRAMES_JOE_XTRA + bobnum;
 		}
@@ -538,7 +538,7 @@ ActorData *Logic::findActor(uint16 noun, const char *name) const {
 	}
 
 	// search Bob number for the person
-	uint16 bobNum = findPersonNumber(obj);
+	uint16 bobNum = findPersonNumber(obj, _currentRoom);
 
 	// search for a matching actor
 	if (bobNum > 0) {
@@ -575,10 +575,10 @@ bool Logic::initPerson(uint16 noun, const char *actorName, bool loadBank, Person
 	return pad != NULL;
 }
 
-uint16 Logic::findPersonNumber(uint16 obj) const {
+uint16 Logic::findPersonNumber(uint16 obj, uint16 room) const {
 	uint16 num = 0;
 	uint16 i;
-	for (i = currentRoomData() + 1; i <= obj; ++i) {
+	for (i = _roomData[room] + 1; i <= obj; ++i) {
 		int16 img = _objectData[i].image;
 		if (img == -3 || img == -4) {
 			++num;

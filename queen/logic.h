@@ -130,7 +130,7 @@ public:
 
 	ActorData *findActor(uint16 noun, const char *name = NULL) const;
 	bool initPerson(uint16 noun, const char *actorName, bool loadBank, Person *pp);
-	uint16 findPersonNumber(uint16 obj) const;
+	uint16 findPersonNumber(uint16 obj, uint16 room) const;
 
 	void loadJoeBanks(const char *animBank, const char *standBank);
 

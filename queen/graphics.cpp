@@ -783,7 +783,7 @@ uint16 Graphics::refreshObject(uint16 obj) {
 			pbs->clear();
 		} else {
 			// find person number
-			uint16 pNum = _vm->logic()->findPersonNumber(obj);
+			uint16 pNum = _vm->logic()->findPersonNumber(obj, _vm->logic()->currentRoom());
 			curImage = _personFrames[pNum] - 1;
 			if (_personFrames[pNum] == 0) {
 				_personFrames[pNum] = curImage = _numFrames;
