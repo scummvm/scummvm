@@ -349,6 +349,9 @@ void Scumm::setupActorScale(Actor * a)
 	if (scale > 255)
 		warning("Actor %d at %d, scale %d out of range", a->number, a->y, scale);
 
+	if(scale == 1 && _currentRoom == 76)
+		scale = 0xFF;
+
 	a->scalex = (byte)scale;
 	a->scaley = (byte)scale;
 }
