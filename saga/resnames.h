@@ -102,36 +102,12 @@ namespace Saga {
 #define CAVE_VOICE_12 12
 #define CAVE_VOICE_13 13
 
-// TODO: I have no idea why the music IDs start at 9 and the sound IDs at 14.
-//       We should probably just renumber them.
-
 // MUSIC
 #define MUSIC_1 9
 #define MUSIC_2 10
-#define MUSIC_3 11
-#define MUSIC_4 12
-#define MUSIC_5 13
-#define MUSIC_6 14
-#define MUSIC_7 15
-#define MUSIC_8 16
-#define MUSIC_9 17
-#define MUSIC_10 18
-#define MUSIC_11 19
-#define MUSIC_12 20
-#define MUSIC_13 21
-#define MUSIC_14 22
-#define MUSIC_15 23
-#define MUSIC_16 24
-#define MUSIC_17 25
-#define MUSIC_18 26
-#define MUSIC_19 27
-#define MUSIC_20 28
-#define MUSIC_21 29
-#define MUSIC_22 30
-#define MUSIC_23 31
-#define MUSIC_24 32
-#define MUSIC_25 33
-#define MUSIC_26 34
+
+// TODO: If the sound effects are numbered sequentially, we don't really need
+//       these constants. But for now they might be useful for debugging.
 
 // SOUND EFFECTS
 

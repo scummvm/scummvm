@@ -721,41 +721,12 @@ int Script::SF_getActorY(R_SCRIPTFUNC_PARAMS) {
 	return R_SUCCESS;
 }
 
-static int musicTable[] = {
-	MUSIC_1,
-	MUSIC_2,
-	MUSIC_3,
-	MUSIC_4,
-	MUSIC_5,
-	MUSIC_6,
-	MUSIC_7,
-	MUSIC_8,
-	MUSIC_9,
-	MUSIC_10,
-	MUSIC_11,
-	MUSIC_12,
-	MUSIC_13,
-	MUSIC_14,
-	MUSIC_15,
-	MUSIC_16,
-	MUSIC_17,
-	MUSIC_18,
-	MUSIC_19,
-	MUSIC_20,
-	MUSIC_21,
-	MUSIC_22,
-	MUSIC_23,
-	MUSIC_24,
-	MUSIC_25,
-	MUSIC_26
-};
-
 // Script function #63 (0x3F)
 int Script::SF_playMusic(R_SCRIPTFUNC_PARAMS) {
 	SDataWord_T param = thread->pop();
 
-	if (/* param >= 0 && */ param < ARRAYSIZE(musicTable))
-		_vm->_music->play(musicTable[param]);
+	if (param >= 9 && param <= 34)
+		_vm->_music->play(param);
 	else
 		_vm->_music->stop();
 
