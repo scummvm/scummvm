@@ -144,7 +144,14 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 			track->soundHandle = _sound->openSound(track->soundId,
 									track->soundName, track->soundType,
 									track->volGroupId, -1);
-			assert(track->soundHandle);
+			if (!track->soundHandle) {
+				warning("IMuseDigital::saveOrLoad: Can't open sound so will not be resumed, propably on diffrent CD");
+				track->stream2 = NULL;
+				track->stream = NULL;
+				track->used = false;
+				continue;
+			}
+
 			if (track->compressed) {
 				track->regionOffset = 0;
 			}
