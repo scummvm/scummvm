@@ -252,7 +252,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	CHECK_HEAP
 
-	if (_vm->_features & GF_AMIGA)
+	if (_vm->_features & GF_AMIGA && (_vm->_gameId == GID_INDY4 || _vm->_gameId == GID_MONKEY2))
 		proc3_ami();
 	else
 		proc3();
