@@ -720,7 +720,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 		case 0x53:
 			{
 				int n_voices;
-				int a_index;
+				uint16 actorId;
 				int voice_rn;
 
 				n_voices = scriptS.readByte();
@@ -729,22 +729,16 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				scriptS.readByte();
 				scriptS.readUint16LE();
 
-				a_index = _vm->_actor->getActorIndex(param1);
-				if (a_index < 0) {
-					_vm->_console->DebugPrintf(S_WARN_PREFIX "%X: DLGP Actor id not found.\n", thread->i_offset);
-					debug(9, "%X: DLGP Actor id not found.\n", thread->i_offset);
-				}
+				actorId = param1;
 
 				for (i = 0; i < n_voices; i++) {
 					data = thread->pop();
-					if (a_index < 0)
-						continue;
 					if (!isVoiceLUTPresent()) {
 						voice_rn = -1;
 					} else {
 						voice_rn = currentScript()->voice->voices[data];
 					}
-					_vm->_actor->speak(a_index, currentScript()->diag->str[data], voice_rn, &thread->sem);
+					_vm->_actor->speak(actorId, currentScript()->diag->str[data], voice_rn, &thread->sem);
 				}
 			}
 			break;

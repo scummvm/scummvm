@@ -45,6 +45,9 @@ namespace Saga {
 
 #define ACTOR_LMULT 4
 
+#define IS_VALID_ACTOR_INDEX(index) ((index >= 0) && (index < ACTORCOUNT))
+#define ACTOR_ID_TO_INDEX(id) ((((uint16)id) == 1 ) ? 0 : (int)(((uint16)id) & ~0x2000))
+
 enum ACTOR_INTENTS {
 	INTENT_NONE = 0,
 	INTENT_PATH = 1,
@@ -158,46 +161,22 @@ struct ACTORINTENT {
 	int a_itype;
 	uint16 a_iflags;
 	int a_idone;
-	void *a_data;
+	SPEAKINTENT speakIntent;
+	WALKINTENT walkIntent;
 
-	void createData() {
-		assert(a_data == NULL);
-		
-		if(INTENT_SPEAK == a_itype) {
-			a_data = new SPEAKINTENT;
-		}
-		else
-			if(INTENT_PATH == a_itype) {
-				a_data = new WALKINTENT;
-			}
+	ACTORINTENT() {
+		a_itype = 0;
+		a_iflags = 0;
+		a_idone = 0;
 	}
-	void deleteData() {
-
-		if(INTENT_SPEAK == a_itype) {
-			SPEAKINTENT *a_speakint;
-
-			assert(a_data);
-			a_speakint = (SPEAKINTENT *)a_data;
-			delete a_speakint;
-		}
-		else
-			if(INTENT_PATH == a_itype) {
-				WALKINTENT *a_walkint;
-
-				assert(a_data);
-				a_walkint = (WALKINTENT *)a_data;
-				delete a_walkint;
-			}
-		a_data = NULL;
-	}
-
-	ACTORINTENT() { memset(this, 0, sizeof(*this)); }
 };
 
 typedef Common::List<ACTORINTENT> ActorIntentList;
 
 struct ACTOR {
-	int id;			// Actor id
+	int index;		// Actor index
+	uint16 actorId;	// Actor id
+
 	int name_i;		// Actor's index in actor name string list
 	uint16 flags;
 
@@ -234,7 +213,8 @@ struct ACTOR {
 	ACTORACTION *act_tbl;	// Action lookup table
 	int action_ct;		// Number of actions in the action LUT
 	ACTOR() {
-		id = 0;
+		index = 0;
+		actorId = 0;
 		name_i = 0;
 		flags = 0;
 		sl_rn = 0;
@@ -277,32 +257,28 @@ public:
 
 	int direct(int msec);
 
-	int create(int actor_id, int x, int y);
-	int actorExists(uint16 actor_id);
+	void create(uint16 actorId, int x, int y);
+	bool actorExists(uint16 actorId);
 
 	int drawList();
 	int AtoS(Point *logical, const Point *actor);
 	int StoA(Point *actor, const Point screen);
 
-	int move(int index, const Point *move_pt);
-	int moveRelative(int index, const Point *move_pt);
+	void move(uint16 actorId, const Point *move_pt);
+	void moveRelative(uint16 actorId, const Point *move_pt);
 
-	int walkTo(int index, const Point *walk_pt, uint16 flags, SEMAPHORE *sem);
-	
-	int getActorIndex(uint16 actor_id);
-	
-	int speak(int index, const char *d_string, uint16 d_voice_rn, SEMAPHORE *sem);
+	void walkTo(uint16 actorId, const Point *walk_pt, uint16 flags, SEMAPHORE *sem);
+		
+	void speak(uint16 actorId, const char *d_string, uint16 d_voice_rn, SEMAPHORE *sem);
 	
 	int skipDialogue();
 	
 	int getSpeechTime(const char *d_string, uint16 d_voice_rn);
-	int setOrientation(int index, int orient);
-	int setAction(int index, int action_n, uint16 action_flags);
-	int setDefaultAction(int index, int action_n, uint16 action_flags);
+	void setOrientation(uint16 actorId, int orient);
+	void setAction(uint16 actorId, int action_n, uint16 action_flags);
+	void setDefaultAction(uint16 actorId, int action_n, uint16 action_flags);
 
-	int addActor(ACTOR * actor);
-	int deleteActor(int index);
-	ACTOR *lookupActor(int index);
+	void deleteActor(uint16 actorId);
 
 private:
 	int handleWalkIntent(ACTOR *actor, WALKINTENT *a_walk_int, int *complete_p, int msec);
@@ -310,8 +286,17 @@ private:
 	int setPathNode(WALKINTENT *walk_int, Point *src_pt, Point *dst_pt, SEMAPHORE *sem);
 	int loadActorSpriteIndex(ACTOR *actor, int si_rn, int *last_frame_p);
 
+	ActorList::iterator getActorIterator(int index);
+	int getActorIndex(uint16 actorId);
+
+	void reorderActorUp(int index);
+	void reorderActorDown(int index);
+	bool isValidActor(int index);
+
+	//ACTOR *lookupActor(int index);
+	void addActor(ACTOR * actor);
+
 	SagaEngine *_vm;
-	bool _initialized;
 	RSCFILE_CONTEXT *_actorContext;
 	uint16 _count;
 	int _aliasTbl[ACTORCOUNT];

@@ -139,7 +139,7 @@ void RAWInputStream::refill() {
 		if (len & 1)
 			len--;
 
-		if (GAME_GetFeatures() & GF_BIG_ENDIAN_DATA) {			
+		if (IS_BIG_ENDIAN) {			
 			uint16 *ptr16 = (uint16 *)ptr;
 			for (uint32 i = 0; i < (len / 2); i++)
 				ptr16[i] = TO_BE_16(ptr16[i]);

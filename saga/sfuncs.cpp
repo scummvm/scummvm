@@ -208,25 +208,19 @@ int Script::SF_actorWalkTo(SCRIPTFUNC_PARAMS) {
 	SDataWord_T actor_parm;
 	SDataWord_T x_parm;
 	SDataWord_T y_parm;
-	int actor_id;
-	int actor_idx;
+	uint16 actorId;
 	Point pt;
 
 	actor_parm = thread->pop();
 	x_parm = thread->pop();
 	y_parm = thread->pop();
 
-	actor_id = _vm->_sdata->readWordS(actor_parm);
-	actor_idx = _vm->_actor->getActorIndex(actor_id);
-	if (actor_idx < 0) {
-		_vm->_console->DebugPrintf(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.\n", actor_id);
-		return FAILURE;
-	}
+	actorId = _vm->_sdata->readWordS(actor_parm);
 
 	pt.x = _vm->_sdata->readWordS(x_parm);
 	pt.y = _vm->_sdata->readWordS(y_parm);
 
-	_vm->_actor->walkTo(actor_idx, &pt, 0, &thread->sem);
+	_vm->_actor->walkTo(actorId, &pt, 0, &thread->sem);
 
 	return SUCCESS;
 }
@@ -251,22 +245,19 @@ int Script::SF_doAction(SCRIPTFUNC_PARAMS) {
 int Script::SF_setFacing(SCRIPTFUNC_PARAMS) {
 	SDataWord_T actor_parm;
 	SDataWord_T orient_parm;
-	int actor_id;
-	int actor_idx;
+	uint16 actorId;
 	int orientation;
 
 	actor_parm = thread->pop();
 	orient_parm = thread->pop();
 
-	actor_id = _vm->_sdata->readWordS(actor_parm);
+	actorId = _vm->_sdata->readWordS(actor_parm);
 	orientation = _vm->_sdata->readWordS(orient_parm);
-	actor_idx = _vm->_actor->getActorIndex(actor_id);
-	if (actor_idx < 0) {
-		_vm->_console->DebugPrintf(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.\n", actor_id);
-		return FAILURE;
-	}
 
-	_vm->_actor->setOrientation(actor_idx, orientation);
+	if (!_vm->_actor->actorExists(actorId)) {
+		_vm->_actor->create(actorId, 0, 0);
+	}
+	_vm->_actor->setOrientation(actorId, orientation);
 	return SUCCESS;
 }
 
@@ -484,25 +475,19 @@ int Script::SF_actorWalkToAsync(SCRIPTFUNC_PARAMS) {
 	SDataWord_T actor_parm;
 	SDataWord_T x_parm;
 	SDataWord_T y_parm;
-	int actor_id;
-	int actor_idx;
+	uint16 actorId;
 	Point pt;
 
 	actor_parm = thread->pop();
+
 	x_parm = thread->pop();
 	y_parm = thread->pop();
 
-	actor_id = _vm->_sdata->readWordS(actor_parm);
-	actor_idx = _vm->_actor->getActorIndex(actor_id);
-	if (actor_idx < 0) {
-		_vm->_console->DebugPrintf(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.\n",
-		    actor_id);
-		return FAILURE;
-	}
+	actorId = _vm->_sdata->readWordS(actor_parm);
 
 	pt.x = _vm->_sdata->readWordS(x_parm);
 	pt.y = _vm->_sdata->readWordS(y_parm);
-	_vm->_actor->walkTo(actor_idx, &pt, 0, NULL);
+	_vm->_actor->walkTo(actorId, &pt, 0, NULL);
 
 	return SUCCESS;
 }
@@ -535,28 +520,21 @@ int Script::SF_moveTo(SCRIPTFUNC_PARAMS) {
 	SDataWord_T actor_parm;
 	SDataWord_T x_parm;
 	SDataWord_T y_parm;
-	int actor_id;
-	int actor_idx;
-	int result;
+	uint16 actorId;
 	Point pt;
 
 	actor_parm = thread->pop();
 	x_parm = thread->pop();
 	y_parm = thread->pop();
 
-	actor_id = _vm->_sdata->readWordS(actor_parm);
+	actorId = _vm->_sdata->readWordS(actor_parm);
 	pt.x = _vm->_sdata->readWordS(x_parm);
 	pt.y = _vm->_sdata->readWordS(y_parm);
 
-	if (!_vm->_actor->actorExists(actor_id)) {
-		result = _vm->_actor->create(actor_id, pt.x, pt.y);
-		if (result != SUCCESS) {
-			_vm->_console->DebugPrintf(S_WARN_PREFIX "SF.30: Couldn't create actor 0x%X.\n", actor_id);
-			return FAILURE;
-		}
+	if (!_vm->_actor->actorExists(actorId)) {
+		_vm->_actor->create(actorId, pt.x, pt.y);
 	} else {
-		actor_idx = _vm->_actor->getActorIndex(actor_id);
-		_vm->_actor->move(actor_idx, &pt);
+		_vm->_actor->move(actorId, &pt);
 	}
 
 	return SUCCESS;
@@ -636,7 +614,7 @@ int Script::SF_actorWalk(SCRIPTFUNC_PARAMS) {
 	SDataWord_T x_parm;
 	SDataWord_T y_parm;
 	SDataWord_T flags_parm;
-	int actor_idx;
+	uint16 actorId;
 	Point pt;
 
 	actor_parm = thread->pop();
@@ -644,19 +622,15 @@ int Script::SF_actorWalk(SCRIPTFUNC_PARAMS) {
 	y_parm = thread->pop();
 	flags_parm = thread->pop();
 
-	actor_idx = _vm->_actor->getActorIndex(_vm->_sdata->readWordS(actor_parm));
-	if (actor_idx < 0) {
-		_vm->_console->DebugPrintf(S_WARN_PREFIX "SF.36: Actor id 0x%X not found.\n", (int)actor_parm);
-		return FAILURE;
-	}
+	actorId = _vm->_sdata->readWordS(actor_parm);
 
 	pt.x = _vm->_sdata->readWordS(x_parm);
 	pt.y = _vm->_sdata->readWordS(y_parm);
 
 #if 1
-	_vm->_actor->walkTo(actor_idx, &pt, 0, NULL);
+	_vm->_actor->walkTo(actorId, &pt, 0, NULL);
 #else
-	_vm->_actor->walkTo(actor_idx, &pt, 0, &thread->sem);
+	_vm->_actor->walkTo(actorId, &pt, 0, &thread->sem);
 #endif
 
 	return SUCCESS;
@@ -674,8 +648,7 @@ int Script::SF_cycleActorFrames(SCRIPTFUNC_PARAMS) {
 	SDataWord_T flags_parm;
 	SDataWord_T delay_parm;
 	SDataWord_T action_parm;
-	int actor_id;
-	int actor_idx;
+	uint16 actorId;
 	int action;
 	//uint16 flags;
 
@@ -683,14 +656,10 @@ int Script::SF_cycleActorFrames(SCRIPTFUNC_PARAMS) {
 	flags_parm = thread->pop();
 	action_parm = thread->pop();
 	delay_parm = thread->pop();
-	actor_id = _vm->_sdata->readWordS(actor_parm);
+	actorId = _vm->_sdata->readWordS(actor_parm);
 	action = _vm->_sdata->readWordS(action_parm);
-	actor_idx = _vm->_actor->getActorIndex(actor_id);
 
-	if (_vm->_actor->setAction(actor_idx, action, ACTION_NONE) != SUCCESS) {
-		_vm->_console->DebugPrintf(S_WARN_PREFIX "SF.37: Actor::setAction() failed.\n");
-		return FAILURE;
-	}
+	_vm->_actor->setAction(actorId, action, ACTION_NONE);
 
 	return SUCCESS;
 }
@@ -707,22 +676,17 @@ int Script::SF_setFrame(SCRIPTFUNC_PARAMS) {
 	SDataWord_T frame_parm;
 	SDataWord_T action_parm;
 
-	int actor_id;
-	int actor_idx;
+	uint16 actorId;
 	int action;
 
 	actor_parm = thread->pop();
 	action_parm = thread->pop();
 	frame_parm = thread->pop();
 
-	actor_id = _vm->_sdata->readWordS(actor_parm);
+	actorId = _vm->_sdata->readWordS(actor_parm);
 	action = _vm->_sdata->readWordS(action_parm);
-	actor_idx = _vm->_actor->getActorIndex(actor_id);
 
-	if (_vm->_actor->setAction(actor_idx, action, ACTION_NONE) != SUCCESS) {
-		_vm->_console->DebugPrintf(S_WARN_PREFIX "SF.38: Actor::setAction() failed.\n");
-		return FAILURE;
-	}
+	_vm->_actor->setAction(actorId, action, ACTION_NONE);
 
 	return SUCCESS;
 }
@@ -803,10 +767,8 @@ int Script::SF_placeActor(SCRIPTFUNC_PARAMS) {
 	SDataWord_T orient_parm;
 	SDataWord_T action_parm;
 	SDataWord_T frame_parm;
-	int actor_id;
-	int actor_idx;
+	uint16 actorId;
 	int action_state;
-	int result;
 	Point pt;
 
 	actor_parm = thread->pop();
@@ -816,25 +778,20 @@ int Script::SF_placeActor(SCRIPTFUNC_PARAMS) {
 	action_parm = thread->pop();
 	frame_parm = thread->pop();
 
-	actor_id = _vm->_sdata->readWordS(actor_parm);
+	actorId = _vm->_sdata->readWordS(actor_parm);
 	pt.x = _vm->_sdata->readWordS(x_parm);
 	pt.y = _vm->_sdata->readWordS(y_parm);
-	action_state = _vm->_sdata->readWordU(action_parm);
+	action_state = _vm->_sdata->readWordS(action_parm);
 
-	if (!_vm->_actor->actorExists(actor_id)) {
-		result = _vm->_actor->create(actor_id, pt.x, pt.y);
-		if (result != SUCCESS) {
-			_vm->_console->DebugPrintf(S_WARN_PREFIX "SF.43: Couldn't create actor 0x%X.\n", actor_id);
-			return FAILURE;
-		}
+	if (!_vm->_actor->actorExists(actorId)) {
+		_vm->_actor->create(actorId, pt.x, pt.y);
 	} else {
-		actor_idx = _vm->_actor->getActorIndex(actor_id);
-		_vm->_actor->move(actor_idx, &pt);
+		_vm->_actor->move(actorId, &pt);
 	}
-
-	actor_idx = _vm->_actor->getActorIndex(actor_id);
-	_vm->_actor->setDefaultAction(actor_idx, action_state, ACTION_NONE);
-	_vm->_actor->setAction(actor_idx, action_state, ACTION_NONE);
+	if (action_state < 0)
+		action_state = ACTION_IDLE;
+ 	_vm->_actor->setDefaultAction(actorId, action_state, ACTION_NONE);
+	_vm->_actor->setAction(actorId, action_state, ACTION_NONE);
 
 	return SUCCESS;
 }

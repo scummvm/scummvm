@@ -59,7 +59,7 @@ ACTIONTIMES ActionTDeltas[] = {
 	{ ACTION_SPEAK, 200 }
 };
 
-Actor::Actor(SagaEngine *vm) : _vm(vm), _initialized(false) {
+Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	int i;
 
 	// Get actor resource file context
@@ -75,13 +75,42 @@ Actor::Actor(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	}
 
 	_count = 0;
-	_initialized = true;
 }
 
 Actor::~Actor() {
-	if (!_initialized) {
-		return;
-	}
+	debug(0, "Actor::~Actor()");
+}
+
+bool Actor::isValidActor(int index) {
+	
+	if (!IS_VALID_ACTOR_INDEX(index))
+		return false;
+
+	return (_tbl[index] != zeroActorIterator);
+}
+
+ActorList::iterator Actor::getActorIterator(int index) {
+
+	if(!isValidActor(index))
+		error("Actor::getActorIterator wrong actor 0x%x", index);
+
+	return _tbl[index];
+}
+
+void Actor::reorderActorUp(int index) {
+	ActorList::iterator actorIterator;
+
+	actorIterator = getActorIterator(index);
+	actorIterator = _list.reorderUp(actorIterator, actorCompare);
+	_tbl[index] = actorIterator;
+}
+
+void Actor::reorderActorDown(int index) {
+	ActorList::iterator actorIterator;
+
+	actorIterator = getActorIterator(index);
+	actorIterator = _list.reorderDown(actorIterator, actorCompare);
+	_tbl[index] = actorIterator;
 }
 
 int Actor::direct(int msec) {
@@ -109,17 +138,19 @@ int Actor::direct(int msec) {
 			case INTENT_PATH:
 				// Actor intends to go somewhere. Well good for him
 				{
-				 WALKINTENT *a_walkint;
-					a_walkint = (WALKINTENT *)a_intent->a_data;
-					handleWalkIntent(actor, a_walkint, &a_intent->a_idone, msec);
+					uint16 actorId = actor->actorId; //backup
+					handleWalkIntent(actor, &a_intent->walkIntent, &a_intent->a_idone, msec);
+
+					actorIterator = getActorIterator(ACTOR_ID_TO_INDEX(actorId));
+					actor = actorIterator.operator->();
+					actorIntentIterator = actor->a_intentlist.begin();
+					a_intent = actorIntentIterator.operator->();
 				}
 				break;
 			case INTENT_SPEAK:
 				// Actor wants to blab
 				{
-				 SPEAKINTENT *a_speakint;
-					a_speakint = (SPEAKINTENT *)a_intent->a_data;
-					handleSpeakIntent(actor, a_speakint, &a_intent->a_idone, msec);
+					handleSpeakIntent(actor, &a_intent->speakIntent, &a_intent->a_idone, msec);
 				}
 				break;
 
@@ -129,7 +160,6 @@ int Actor::direct(int msec) {
 
 			// If this actor intent was flagged as completed, remove it.
 			if (a_intent->a_idone) {
-				a_intent->deleteData();
 				actor->a_intentlist.erase(actorIntentIterator);
 				actor->action = actor->def_action;
 				actor->action_flags = actor->def_action_flags;
@@ -173,7 +203,6 @@ int Actor::drawList() {
 
 	ActorIntentList::iterator actorIntentIterator;
 	ACTORINTENT *a_intent;
-	SPEAKINTENT *a_speakint;
 
 	ActorDialogList::iterator actorDialogIterator;
 	ACTORDIALOGUE *a_dialogue;
@@ -200,9 +229,8 @@ int Actor::drawList() {
 		if (actorIntentIterator != actor->a_intentlist.end()) {
 			a_intent = actorIntentIterator.operator->();
 			if (a_intent->a_itype == INTENT_SPEAK) {
-				a_speakint = (SPEAKINTENT *)a_intent->a_data;
-				actorDialogIterator = a_speakint->si_diaglist.begin();
-				if (actorDialogIterator != a_speakint->si_diaglist.end()) {
+				actorDialogIterator = a_intent->speakIntent.si_diaglist.begin();
+				if (actorDialogIterator != a_intent->speakIntent.si_diaglist.end()) {
 					a_dialogue = actorDialogIterator.operator->();
 					diag_x = actor->s_pt.x;
 					diag_y = actor->s_pt.y;
@@ -227,14 +255,9 @@ int Actor::skipDialogue() {
 
 	ActorIntentList::iterator actorIntentIterator;
 	ACTORINTENT *a_intent;
-	SPEAKINTENT *a_speakint;
 
 	ActorDialogList::iterator actorDialogIterator;
 	ACTORDIALOGUE *a_dialogue;
-
-	if (!_initialized) {
-		return FAILURE;
-	}
 
 	for (actorIterator = _list.begin(); actorIterator != _list.end(); ++actorIterator) {
 		actor =  actorIterator.operator->();
@@ -245,14 +268,13 @@ int Actor::skipDialogue() {
 			if (a_intent->a_itype == INTENT_SPEAK) {
 				// Okay, found a speak intent. Remove one dialogue entry 
 				// from it, releasing any semaphore */
-				a_speakint = (SPEAKINTENT *)a_intent->a_data;
-				actorDialogIterator = a_speakint->si_diaglist.begin();
-				if (actorDialogIterator != a_speakint->si_diaglist.end()) {
+				actorDialogIterator = a_intent->speakIntent.si_diaglist.begin();
+				if (actorDialogIterator != a_intent->speakIntent.si_diaglist.end()) {
 					a_dialogue = actorDialogIterator.operator->();
 					if (a_dialogue->d_sem != NULL) {
 						_vm->_script->SThreadReleaseSem(a_dialogue->d_sem);
 					}
-					a_speakint->si_diaglist.erase(actorDialogIterator);
+					a_intent->speakIntent.si_diaglist.erase(actorDialogIterator);
 					// And stop any currently playing voices
 					_vm->_sound->stopVoice();
 				}
@@ -263,67 +285,52 @@ int Actor::skipDialogue() {
 	return SUCCESS;
 }
 
-int Actor::create(int actor_id, int x, int y) {
-	ACTOR actor;
+void Actor::create(uint16 actorId, int x, int y) {
+	ACTOR sampleActor;
+	sampleActor.actorId = actorId;
+	sampleActor.a_pt.x = x;
+	sampleActor.a_pt.y = y;
 
-	if (actor_id == 1) {
-		actor_id = 0;
-	} else {
-		actor_id = actor_id & ~0x2000;
-	}
-
-	actor.id = actor_id;
-	actor.a_pt.x = x;
-	actor.a_pt.y = y;
-
-	if (addActor(&actor) != SUCCESS) {
-
-		return FAILURE;
-	}
-
-	return SUCCESS;
+	addActor(&sampleActor);
 }
 
-int Actor::addActor(ACTOR * actor) {
+void Actor::addActor(ACTOR * actor) {
 	ActorList::iterator actorIterator;
 	int last_frame;
-	int i;
 
-	if (!_initialized) {
-		return FAILURE;
+	actor->index = ACTOR_ID_TO_INDEX(actor->actorId);
+
+	debug(0, "Actor::addActor actorId=0x%X index=0x%X", actor->actorId, actor->index);
+
+	if (!IS_VALID_ACTOR_INDEX(actor->index)) {
+		error("Wrong Actor actorId=0x%X index=0x%X", actor->actorId, actor->index);
 	}
-
-	if ((actor->id < 0) || (actor->id >= ACTORCOUNT)) {
-		return FAILURE;
-	}
-
-	if (_tbl[actor->id] != zeroActorIterator) {
-		return FAILURE;
+	
+	if (_tbl[actor->index] != zeroActorIterator) {
+		error("Actor::addActor actor already exist actorId=0x%X index=0x%X", actor->actorId, actor->index);
 	}
 
 	AtoS(&actor->s_pt, &actor->a_pt);
 
-	i = actor->id;
 
-	actor->sl_rn = ActorTable[i].spritelist_rn;
-	actor->si_rn = ActorTable[i].spriteindex_rn;
+	actor->sl_rn = ActorTable[actor->index].spritelist_rn;
+	actor->si_rn = ActorTable[actor->index].spriteindex_rn;
 
 	loadActorSpriteIndex(actor, actor->si_rn, &last_frame);
 
 	if (_vm->_sprite->loadList(actor->sl_rn, &actor->sl_p) != SUCCESS) {
-		return FAILURE;
+		error("Actor::addActor unable to load sprite list actorId=0x%X index=0x%X", actor->actorId, actor->index);
 	}
 
 	if (last_frame >= _vm->_sprite->getListLen(actor->sl_p)) {
 		debug(0, "Appending to sprite list %d.", actor->sl_rn);
-		if (_vm->_sprite->appendList(actor->sl_rn + 1,
-			actor->sl_p) != SUCCESS) {
-			return FAILURE;
+		if (_vm->_sprite->appendList(actor->sl_rn + 1, actor->sl_p) != SUCCESS) {
+			error("Actor::addActor unable append sprite list actorId=0x%X index=0x%X", actor->actorId, actor->index);
 		}
 	}
 
-	actor->flags = ActorTable[i].flags;
-	actor->a_dcolor = ActorTable[i].color;
+	actor->flags = ActorTable[actor->index].flags;
+	actor->a_dcolor = ActorTable[actor->index].color;
 	actor->orient = ACTOR_DEFAULT_ORIENT;
 	actor->def_action = 0;
 	actor->def_action_flags = 0;
@@ -336,54 +343,45 @@ int Actor::addActor(ACTOR * actor) {
 
 	actor = actorIterator.operator->();
 
-	_tbl[i] = actorIterator;
+    _tbl[actor->index] = actorIterator;
 	_count++;
-
-	return SUCCESS;
 }
 
-int Actor::getActorIndex(uint16 actor_id) {
-	uint16 actorIdx;
+int Actor::getActorIndex(uint16 actorId) {
+	int actorIdx = ACTOR_ID_TO_INDEX(actorId);
 
-	if (actor_id == 1) {
-		actorIdx = 0;
-	} else {
-		actorIdx = actor_id & ~0x2000;
-	}
-
-	if (actorIdx >= ACTORCOUNT) {
-		error("Wrong actorIdx=%i", actorIdx);
+	if (!IS_VALID_ACTOR_INDEX(actorIdx)) {
+		error("Wrong Actor actorId=0x%X actorIdx=0x%X", actorId, actorIdx);
 	}
 
 	if (_tbl[actorIdx] == zeroActorIterator) {
+		_vm->_console->DebugPrintf(S_WARN_PREFIX "Actor::getActorIndex Actor id 0x%X not found.\n", actorId);
+		warning("Actor::getActorIndex Actor not found actorId=0x%X actorIdx=0x%X", actorId, actorIdx);
 		return -1;
 	}
 
 	return actorIdx;
 }
 
-int Actor::actorExists(uint16 actor_id) {
-	uint16 actor_idx;
-
-	if (actor_id == 1) {
-		actor_idx = 0;
-	} else {
-		actor_idx = actor_id & ~0x2000;
+bool Actor::actorExists(uint16 actorId) {
+	int actorIdx = ACTOR_ID_TO_INDEX(actorId);
+	
+	if (!IS_VALID_ACTOR_INDEX(actorIdx)) {
+		error("Wrong Actor actorId=0x%X actorIdx=0x%X", actorId, actorIdx);
 	}
 
-	if (_tbl[actor_idx] == zeroActorIterator) {
-		return 0;
+	if (_tbl[actorIdx] == zeroActorIterator) {
+		return false;
 	}
 
-	return 1;
+	return true;
 }
 
-int Actor::speak(int index, const char *d_string, uint16 d_voice_rn, SEMAPHORE *sem) {
+void Actor::speak(uint16 actorId, const char *d_string, uint16 d_voice_rn, SEMAPHORE *sem) {
 	ActorList::iterator actorIterator;
 	ACTOR *actor;
 	ActorIntentList::iterator actorIntentIterator;
 	ACTORINTENT *a_intent_p = NULL;
-	SPEAKINTENT *a_speakint;
 	ACTORINTENT a_intent;
 	int use_existing_ai = 0;
 	ACTORDIALOGUE a_dialogue;
@@ -394,11 +392,7 @@ int Actor::speak(int index, const char *d_string, uint16 d_voice_rn, SEMAPHORE *
 	a_dialogue.d_sem_held = 1;
 	a_dialogue.d_sem = sem;
 
-	actorIterator = _tbl[index];
-	if (actorIterator == zeroActorIterator) { 
-		return FAILURE;
-	}
-
+	actorIterator = getActorIterator(ACTOR_ID_TO_INDEX(actorId));
 	actor = actorIterator.operator->();
 
 	// If actor's last registered intent is to speak, we can queue the
@@ -416,18 +410,15 @@ int Actor::speak(int index, const char *d_string, uint16 d_voice_rn, SEMAPHORE *
 
 	if (use_existing_ai) {
 		// Store the current dialogue off the existing actor intent
-		a_speakint = (SPEAKINTENT *)a_intent_p->a_data;
-		a_speakint->si_diaglist.push_back(a_dialogue);
+		a_intent_p->speakIntent.si_diaglist.push_back(a_dialogue);
 	} else {
 		// Create a new actor intent
 		a_intent.a_itype = INTENT_SPEAK;
 		a_intent.a_idone = 0;
 		a_intent.a_iflags = 0;
-		a_intent.createData();
 
-		a_speakint = (SPEAKINTENT *)a_intent.a_data;
-		a_speakint->si_last_action = actor->action;
-		a_speakint->si_diaglist.push_back(a_dialogue);
+		a_intent.speakIntent.si_last_action = actor->action;
+		a_intent.speakIntent.si_diaglist.push_back(a_dialogue);
 
 		actor->a_intentlist.push_back(a_intent);
 	}
@@ -435,8 +426,6 @@ int Actor::speak(int index, const char *d_string, uint16 d_voice_rn, SEMAPHORE *
 	if (sem != NULL) {
 		_vm->_script->SThreadHoldSem(sem);
 	}
-
-	return SUCCESS;
 }
 
 int Actor::handleSpeakIntent(ACTOR *actor, SPEAKINTENT *a_speakint, int *complete_p, int msec) {
@@ -518,33 +507,29 @@ int Actor::getSpeechTime(const char *d_string, uint16 d_voice_rn) {
 	return voice_len;
 }
 
-int Actor::setOrientation(int index, int orient) {
+void Actor::setOrientation(uint16 actorId, int orient) {
+	ActorList::iterator actorIterator;
 	ACTOR *actor;
-
-	actor = lookupActor(index);
-	if (actor == NULL) {
-		return FAILURE;
-	}
+	
+	actorIterator = getActorIterator(ACTOR_ID_TO_INDEX(actorId));
+	actor = actorIterator.operator->();
 
 	if ((orient < 0) || (orient > 7)) {
-		return FAILURE;
+		error("Actor::setOrientation wrong orientation 0x%X", orient);
 	}
 
 	actor->orient = orient;
-
-	return SUCCESS;
 }
 
-int Actor::setAction(int index, int action_n, uint16 action_flags) {
+void Actor::setAction(uint16 actorId, int action_n, uint16 action_flags) {
+	ActorList::iterator actorIterator;
 	ACTOR *actor;
 
-	actor = lookupActor(index);
-	if (actor == NULL) {
-		return FAILURE;
-	}
+	actorIterator = getActorIterator(ACTOR_ID_TO_INDEX(actorId));
+	actor = actorIterator.operator->();
 
 	if ((action_n < 0) || (action_n >= actor->action_ct)) {
-		return FAILURE;
+		error("Actor::setAction wrong action_n 0x%X", action_n);
 	}
 
 	actor->action = action_n;
@@ -552,48 +537,32 @@ int Actor::setAction(int index, int action_n, uint16 action_flags) {
 	actor->action_frame = 0;
 	actor->action_time = 0;
 
-	return SUCCESS;
 }
 
-int Actor::setDefaultAction(int index, int action_n, uint16 action_flags) {
+void Actor::setDefaultAction(uint16 actorId, int action_n, uint16 action_flags) {
+	ActorList::iterator actorIterator;
 	ACTOR *actor;
 
-	actor = lookupActor(index);
-	if (actor == NULL) {
-		return FAILURE;
-	}
+	actorIterator = getActorIterator(ACTOR_ID_TO_INDEX(actorId));
+	actor = actorIterator.operator->();
 
 	if ((action_n < 0) || (action_n >= actor->action_ct)) {
-		return FAILURE;
+		error("Actor::setDefaultAction wrong action_n 0x%X", action_n);
 	}
 
 	actor->def_action = action_n;
 	actor->def_action_flags = action_flags;
-
-	return SUCCESS;
 }
-
+/*
 ACTOR *Actor::lookupActor(int index) {
 	ActorList::iterator actorIterator;
 	ACTOR *actor;
 
-	if (!_initialized) {
-		return NULL;
-	}
-
-	if ((index < 0) || (index >= ACTORCOUNT)) {
-		return NULL;
-	}
-
-	if (_tbl[index] == zeroActorIterator) {
-		return NULL;
-	}
-
-	actorIterator = _tbl[index];
+	actorIterator = getActorIterator(index);
 	actor = actorIterator.operator->();
 
 	return actor;
-}
+}*/
 
 int Actor::loadActorSpriteIndex(ACTOR * actor, int si_rn, int *last_frame_p) {
 	byte *res_p;
@@ -647,68 +616,43 @@ int Actor::loadActorSpriteIndex(ACTOR * actor, int si_rn, int *last_frame_p) {
 	return SUCCESS;
 }
 
-int Actor::deleteActor(int index) {
+void Actor::deleteActor(uint16 actorId) {
 	ActorList::iterator actorIterator;
 	ACTOR *actor;
 
-	if (!_initialized) {
-		return FAILURE;
-	}
-
-	if ((index < 0) || (index >= ACTORCOUNT)) {
-		return FAILURE;
-	}
-
-	actorIterator = _tbl[index];
-
-	if (actorIterator == zeroActorIterator) {
-		return FAILURE;
-	}
-
+	debug(0, "Actor::deleteActor actorId=0x%X", actorId);
+	
+	actorIterator = getActorIterator(ACTOR_ID_TO_INDEX(actorId));
 	actor = actorIterator.operator->();
 
 	_vm->_sprite->freeSprite(actor->sl_p);
 
 	_list.erase(actorIterator);
 
-	_tbl[index] = zeroActorIterator;
-
-	return SUCCESS;
+	_tbl[ACTOR_ID_TO_INDEX(actorId)] = zeroActorIterator;
 }
 
-int Actor::walkTo(int id, const Point *walk_pt, uint16 flags, SEMAPHORE *sem) {
+void Actor::walkTo(uint16 actorId, const Point *walk_pt, uint16 flags, SEMAPHORE *sem) {
 	ACTORINTENT actor_intent;
-	WALKINTENT *walk_intent;
 	ActorList::iterator actorIterator;
 	ACTOR *actor;
 
-	assert(_initialized);
 	assert(walk_pt != NULL);
-
-	if ((id < 0) || (id >= ACTORCOUNT)) {
-		return FAILURE;
-	}
-
-	if (_tbl[id] == zeroActorIterator) {
-		return FAILURE;
-	}
-
-	actorIterator = _tbl[id];
+	
+	actorIterator = getActorIterator(ACTOR_ID_TO_INDEX(actorId));
 	actor = actorIterator.operator->();
-
+	
 	actor_intent.a_itype = INTENT_PATH;
 	actor_intent.a_iflags = 0;
-	actor_intent.createData();
 		
-	walk_intent = (WALKINTENT*)actor_intent.a_data;
 
-	walk_intent->wi_flags = flags;
-	walk_intent->sem_held = 1;
-	walk_intent->sem = sem;
+	actor_intent.walkIntent.wi_flags = flags;
+	actor_intent.walkIntent.sem_held = 1;
+	actor_intent.walkIntent.sem = sem;
 
 	// handleWalkIntent() will create path on initialization
-	walk_intent->wi_init = 0;
-	walk_intent->dst_pt = *walk_pt;
+	actor_intent.walkIntent.wi_init = 0;
+	actor_intent.walkIntent.dst_pt = *walk_pt;
 
 	actor->a_intentlist.push_back(actor_intent);
 
@@ -716,7 +660,6 @@ int Actor::walkTo(int id, const Point *walk_pt, uint16 flags, SEMAPHORE *sem) {
 		_vm->_script->SThreadHoldSem(sem);
 	}
 
-	return SUCCESS;
 }
 
 int Actor::setPathNode(WALKINTENT *walk_int, Point *src_pt, Point *dst_pt, SEMAPHORE *sem) {
@@ -762,7 +705,7 @@ int Actor::handleWalkIntent(ACTOR *actor, WALKINTENT *a_walkint, int *complete_p
 	// Initialize walk intent 
 	if (!a_walkint->wi_init) {
 		setPathNode(a_walkint, &actor->a_pt, &a_walkint->dst_pt, a_walkint->sem);
-		setDefaultAction(actor->id, ACTION_IDLE, ACTION_NONE);
+		setDefaultAction(actor->actorId, ACTION_IDLE, ACTION_NONE);
 		a_walkint->wi_init = 1;
 	}
 
@@ -883,31 +826,22 @@ int Actor::handleWalkIntent(ACTOR *actor, WALKINTENT *a_walkint, int *complete_p
 	actor->s_pt.x = actor->a_pt.x >> 2;
 	actor->s_pt.y = actor->a_pt.y >> 2;
 
-	ActorList::iterator actorIterator;
-	if (_list.locate(actor, actorIterator)) {
-		if (path_slope < 0) {
-			_list.reorderUp(actorIterator, actorCompare);
-		} else {
-			_list.reorderDown(actorIterator, actorCompare);
-		}
+	if (path_slope < 0) {
+		reorderActorUp(actor->index);
 	} else {
-		error("Actor::handleWalkIntent() actor not found list");		
+		reorderActorDown(actor->index);
 	}
-
+	// here "actor" pointer may be invalid 
 	return SUCCESS;
 }
 
-int Actor::move(int index, const Point *move_pt) {
+void Actor::move(uint16 actorId, const Point *move_pt) {
 	ActorList::iterator actorIterator;
 	ACTOR *actor;
 
 	int move_up = 0;
 
-	actorIterator = _tbl[index];
-	if (actorIterator == zeroActorIterator) {
-		return FAILURE;
-	}
-
+	actorIterator = getActorIterator(ACTOR_ID_TO_INDEX(actorId));
 	actor = actorIterator.operator->();
 
 	if (move_pt->y < actor->a_pt.y) {
@@ -919,24 +853,20 @@ int Actor::move(int index, const Point *move_pt) {
 
 	AtoS(&actor->s_pt, &actor->a_pt);
 
-	if (move_up) {
-		_list.reorderUp(actorIterator, actorCompare);
+ 	if (move_up) {
+		reorderActorUp(actor->index);
 	} else {
-		_list.reorderDown(actorIterator, actorCompare);
+		reorderActorDown(actor->index);
 	}
+	// here "actor" pointer may be invalid 
 
-	return SUCCESS;
 }
 
-int Actor::moveRelative(int index, const Point *move_pt) {
+void Actor::moveRelative(uint16 actorId, const Point *move_pt) {
 	ActorList::iterator actorIterator;
 	ACTOR *actor;
 
-	actorIterator = _tbl[index];
-	if (actorIterator == zeroActorIterator) {
-		return FAILURE;
-	}
-
+	actorIterator = getActorIterator(ACTOR_ID_TO_INDEX(actorId));
 	actor = actorIterator.operator->();
 
 	actor->a_pt.x += move_pt->x;
@@ -945,12 +875,11 @@ int Actor::moveRelative(int index, const Point *move_pt) {
 	AtoS(&actor->s_pt, &actor->a_pt);
 
 	if (actor->a_pt.y < 0) {
-		_list.reorderUp(actorIterator, actorCompare);
+		reorderActorUp(actor->index);
 	} else {
-		_list.reorderDown(actorIterator, actorCompare);
+		reorderActorDown(actor->index);
 	}
-
-	return SUCCESS;
+	// here "actor" pointer may be invalid 
 }
 
 
@@ -968,75 +897,95 @@ int Actor::StoA(Point *actor, const Point screen) {
 	return SUCCESS;
 }
 
+// Console wrappers - must be safe to run
+// TODO - checkup ALL arguments, cause wrong arguments may fall function with "error"
+
 void Actor::CF_actor_add(int argc, const char **argv) {
-	ACTOR actor;
-
-	actor.id = (uint16) atoi(argv[1]);
-
-	actor.a_pt.x = atoi(argv[2]);
-	actor.a_pt.y = atoi(argv[3]);
-
-	addActor(&actor);
-}
-
-void Actor::CF_actor_del(int argc, const char **argv) {
-	int id;
- 
-	id = atoi(argv[1]);
-
-	deleteActor(id);
-}
-
-void Actor::CF_actor_move(int argc, const char **argv) {
-	int id;
-	Point move_pt;
-
-	id = atoi(argv[1]);
-
-	move_pt.x = atoi(argv[2]);
-	move_pt.y = atoi(argv[3]);
-
-	move(id, &move_pt);
-}
-
-void Actor::CF_actor_moverel(int argc, const char **argv) {
-	int id;
-	Point move_pt;
-
-	id = atoi(argv[1]);
-
-	move_pt.x = atoi(argv[2]);
-	move_pt.y = atoi(argv[3]);
-
-	moveRelative(id, &move_pt);
-}
-
-void Actor::CF_actor_seto(int argc, const char **argv) {
-	int id;
-	int orient;
-
-	id = atoi(argv[1]);
-	orient = atoi(argv[2]);
-
-	setOrientation(id, orient);
-}
-
-void Actor::CF_actor_setact(int argc, const char **argv) {
-	int index = 0;
-	int action_n = 0;
-
-	ACTOR *actor;
-
-	index = atoi(argv[1]);
-	action_n = atoi(argv[2]);
-
-	actor = lookupActor(index);
-	if (actor == NULL) {
-		_vm->_console->DebugPrintf("Invalid actor index.\n");
+	uint16 actorId = (uint16) atoi(argv[1]);
+	int x = atoi(argv[2]);
+	int y = atoi(argv[3]);
+	int actorIdx = ACTOR_ID_TO_INDEX(actorId);
+	
+	if (!IS_VALID_ACTOR_INDEX(actorIdx)) {
+		_vm->_console->DebugPrintf("Actor::CF_actor_add Invalid actorId 0x%X.\n",actorId);
+		return;
+	}
+	
+	if (actorExists(actorId)) {
+		_vm->_console->DebugPrintf("Actor::CF_actor_add Actor already exist actorId 0x%X.\n",actorId);
 		return;
 	}
 
-	if ((action_n < 0) || (action_n >= actor->action_ct)) {
+	create(actorId, x, y);
+}
+
+void Actor::CF_actor_del(int argc, const char **argv) {
+	uint16 actorId = (uint16) atoi(argv[1]);
+	
+	if (!isValidActor(ACTOR_ID_TO_INDEX(actorId))) {
+		_vm->_console->DebugPrintf("Actor::CF_actor_del Invalid actorId 0x%X.\n",actorId);
+		return;
+	}
+	deleteActor(actorId);
+}
+
+void Actor::CF_actor_move(int argc, const char **argv) {
+	uint16 actorId = (uint16) atoi(argv[1]);
+	Point move_pt;
+
+	move_pt.x = atoi(argv[2]);
+	move_pt.y = atoi(argv[3]);
+
+	if (!isValidActor(ACTOR_ID_TO_INDEX(actorId))) {
+		_vm->_console->DebugPrintf("Actor::CF_actor_move Invalid actorId 0x%X.\n",actorId);
+		return;
+	}
+
+	move(actorId, &move_pt);
+}
+
+void Actor::CF_actor_moverel(int argc, const char **argv) {
+	uint16 actorId = (uint16) atoi(argv[1]);
+	Point move_pt;
+
+	move_pt.x = atoi(argv[2]);
+	move_pt.y = atoi(argv[3]);
+
+	if (!isValidActor(ACTOR_ID_TO_INDEX(actorId))) {
+		_vm->_console->DebugPrintf("Actor::CF_actor_moverel Invalid actorId 0x%X.\n",actorId);
+		return;
+	}
+
+	moveRelative(actorId, &move_pt);
+}
+
+void Actor::CF_actor_seto(int argc, const char **argv) {
+	uint16 actorId = (uint16) atoi(argv[1]);
+	int orient;
+
+	orient = atoi(argv[2]);
+//TODO orient check
+	if (!isValidActor(ACTOR_ID_TO_INDEX(actorId))) {
+		_vm->_console->DebugPrintf("Actor::CF_actor_seto Invalid actorId 0x%X.\n",actorId);
+		return;
+	}
+
+	setOrientation(actorId, orient);
+}
+
+void Actor::CF_actor_setact(int argc, const char **argv) {
+	uint16 actorId = (uint16) atoi(argv[1]);
+	int action_n = 0;
+
+	action_n = atoi(argv[2]);
+
+	if (!isValidActor(ACTOR_ID_TO_INDEX(actorId))) {
+		_vm->_console->DebugPrintf("Actor::CF_actor_setact Invalid actorId 0x%X.\n",actorId);
+		return;
+	}
+
+//TODO action_n check
+/*	if ((action_n < 0) || (action_n >= actor->action_ct)) {
 		_vm->_console->DebugPrintf("Invalid action number.\n");
 		return;
 	}
@@ -1046,8 +995,8 @@ void Actor::CF_actor_setact(int argc, const char **argv) {
 			actor->act_tbl[action_n].dir[1].frame_count,
 			actor->act_tbl[action_n].dir[2].frame_count,
 			actor->act_tbl[action_n].dir[3].frame_count);
-
-	setAction(index, action_n, ACTION_LOOP);
+*/
+	setAction(actorId, action_n, ACTION_LOOP);
 }
 
 } // End of namespace Saga
