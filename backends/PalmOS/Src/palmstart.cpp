@@ -31,6 +31,7 @@
 #include "scumm_globals.h"
 #include "extend.h"	// for disable state
 #include "stdio.h" // used in checkPath
+#include "engine.h" // scumm version strings
 
 #include "mathlib.h"
 #include "vibrate.h"
@@ -284,6 +285,7 @@ static void SknCloseSkin(DmOpenRef skinDBP) {
 }
 /*
 static void SknSetPalette() {
+
 	UInt16 palIndex;
 	ColorTableType *palTemp;
 	MemHandle palH;
@@ -293,7 +295,7 @@ static void SknSetPalette() {
 	if (skinDBP) {
 		palIndex = DmFindResource (skinDBP, colorTableRsc, skinPalette, NULL);
 
-		if (palIndex != (UInt16)-1) {
+		if (palIndex != 0xFFFF) {
 			palH = DmGetResourceIndex(skinDBP, palIndex);
 			
 			if (palH) {
@@ -306,6 +308,7 @@ static void SknSetPalette() {
 	}
 	
 	SknCloseSkin(skinDBP);
+
 }
 */
 static void SknGetListColors(DmOpenRef skinDBP, DmResID resID, UInt8 *text, UInt8 *selected, UInt8 *background) {
@@ -666,19 +669,6 @@ enum {
 	ArwFDwn = 2,
 	ArwDown = 3
 };
-/*
-//REMOVE
-static struct {
-	Boolean disabled;
-	Boolean selected;
-} iconState[6] = {0,0 ,0,0 ,0,0 ,1,0 ,0,0 ,0,0};
-//REMOVE
-static struct {
-	UInt16 position;
-	UInt8 last;
-	Boolean disabled[4];
-} ArrowManager = {0, ArwNone, 0,0,0,0};
-*/
 
 //#############################################################################
 //#############################################################################
@@ -2100,7 +2090,7 @@ static void SknApplySkin()
 	FormPtr frmP = FrmGetActiveForm();
 
 	WinScreenLock(winLockErase);
-//	SknSetPalette();
+	//SknSetPalette();
 	FrmDrawForm(frmP);
 
 	if (gPrefs->card.volRefNum != sysInvalidRefNum)
@@ -2415,10 +2405,20 @@ static Boolean SkinsFormHandleEvent(EventPtr eventP) {
 	return handled;
 }
 
+
+static void MainFormAbout() {
+	FormPtr frmP;
+	FormLabelType *versionP;
+
+	frmP = FrmInitForm(AboutForm);
+	versionP = FrmNewLabel(&frmP, 1111, gScummVMVersion, 4, 142, stdFont);
+	FrmDoDialog (frmP);					// Display the About Box.
+	FrmDeleteForm (frmP);
+}
+
 static Boolean MainFormDoCommand(UInt16 command)
 {
 	Boolean handled = false;
-	FormPtr frmP;
 
 	switch (command) {
 		case MainGamesCard:
@@ -2445,10 +2445,8 @@ static Boolean MainFormDoCommand(UInt16 command)
 			break;
 
 		case MainOptionsAbout:
-			frmP = FrmInitForm (AboutForm);
-			FrmDoDialog (frmP);					// Display the About Box.
-			FrmDeleteForm (frmP);
-			handled = true;
+ 			MainFormAbout();
+ 			handled = true;
 			break;
 		
 		case MainOptionsVolumeControl:
@@ -2864,6 +2862,7 @@ static Boolean penDownRepeat() {
 	return handled;
 }
 
+
 static Boolean MainFormHandleEvent(EventPtr eventP)
 {
 	Boolean handled = false;
@@ -2901,9 +2900,7 @@ static Boolean MainFormHandleEvent(EventPtr eventP)
 					break;
 			
 				case MainAboutButton:
-					frmP = FrmInitForm (AboutForm);
-					FrmDoDialog (frmP);					// Display the About Box.
-					FrmDeleteForm (frmP);
+					MainFormAbout();
 					break;
 				
 //				case MainListTypeSelTrigger:
