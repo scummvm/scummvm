@@ -200,7 +200,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 void Insane::proc62(void) {
-	if (readArray(58) == 0)
+	if (readArray(58) != 0)
 		_enemy[EN_TORQUE].field_10 = 1;
 
 	if (_enemy[EN_TORQUE].field_8 == 0) {
@@ -217,15 +217,22 @@ void Insane::proc62(void) {
 
 	int32 en, edi, ebp, edx, esi, eax, ebx, ecx;
 
-	for (en = 0; _enemy[en].field_10 == 0; en++);
-	en -= 4;
+	edx = eax = 0;
+
+	for (eax = 0; eax < 9; eax++)
+		if (_enemy[eax].field_10 == 0)
+			edx++;
+	  
+	edx -= 4;
+
+	en = edx;
 
 	ebp = 0;
 	edi = 0;
 
 	_loop1:
 	edi++;
-	if (edi > 14)
+	if (edi >= 14)
 		goto loc5;
 
 	edx = rand() / 11;
@@ -351,6 +358,9 @@ void Insane::proc63(void) {
 }
 
 void Insane::proc64(int32 enemy1) {
+	if (enemy1 >= _val215d)
+		return;
+
 	_val215d--;
 
 	for (int en = enemy1; en < _val215d; en++)

@@ -872,6 +872,9 @@ void SmushPlayer::parseNextFrame() {
 	case TYPE_FRME:
 		handleFrame(*sub);
 		break;
+	case TYPE_AHDR: // FT INSANE may seek file to the beginning
+		handleAnimHeader(*sub);
+		break;
 	default:
 		error("Unknown Chunk found at %x: %x, %d", _base->tell(), sub->getType(), sub->getSize());
 	}
@@ -964,27 +967,22 @@ void SmushPlayer::insanity(bool flag) {
 }
 
 void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos, int32 contFrame) {
-	Chunk *sub;
-
 	if (file) {
 		if (_base)
 			delete _base;
 
 		_base = new FileChunk(file, directory);
-		pos = 0;
+		if (pos >= 8)
+			pos -= 8;
 	} else {
 		_base->reinit(pos);
 	}
 
 	if (pos != 8 && pos) {
-		_base->seek(pos, FileChunk::seek_start);
 		_middleAudio = true;
-	} else {
-		_base->seek(pos, FileChunk::seek_start);
-		sub = _base->subBlock();
-		checkBlock(*sub, TYPE_AHDR);
-		handleAnimHeader(*sub);
 	}
+
+	_base->seek(pos, FileChunk::seek_start);
 
 	_frame = contFrame;
 }

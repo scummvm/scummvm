@@ -191,6 +191,7 @@ uint32 FileChunk::getDword() {
 
 void FileChunk::reinit(uint32 offset) {
 	_offset = 0;
+	_data->seek(0);
 	_type = _data->readUint32BE();
 	_size = _data->readUint32BE();
 	_curPos = 0;

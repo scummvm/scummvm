@@ -1052,7 +1052,7 @@ void Insane::postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 140, 168, 1, 2, 0, "%s", buf);
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 170, 43, 1, 2, 0, "%s", buf);
 
-	// FIXME: it should be transparent
+	// FIXME: it should be transparent, so now it is disabled
 	//smlayer_drawSomething(renderBitmap, codecparam, 0, 0, 1, _smush_bensgoggNut, 0, 0, 0);
 	
 	if (!_val124_)

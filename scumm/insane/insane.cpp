@@ -40,10 +40,7 @@
 
 // TODO (in no particular order):
 // o Ben's velocity don't get zeroed after crash
-// o Mine road used to have correct behaviour with ESC but now is not.
-//   Instead of skipping portions of road it just restarts
 // o Road signs are not aligned properly
-// o With goggles on there is a seek error
 // o SAUD complaining again
 // o Insane::postCase16() has workaround. Cockpit is not transparent so it is
 //   disabled now
