@@ -2423,8 +2423,6 @@ void ScummEngine::readMAXS(int blockSize) {
 		_numFlObject = 50;
 	}
 
-	printf("_numLocalScripts is %d\n", _numLocalScripts);
-
 	if (_shadowPaletteSize)
 		_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
 
