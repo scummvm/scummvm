@@ -18,21 +18,20 @@
 #ifndef COSTUME_H
 #define COSTUME_H
 
-#include "resource.h"
+#include <string>
 
 #define MAX_TALK_CHORES 10
 class TextSplitter;
 class Actor;
 
-class Costume : public Resource {
+class Costume {
 public:
-  Costume(const char *filename, const char *data, int len);
-
-  // Create a copy of orig, sharing the model data from prev if
-  // appropriate
-  Costume(Costume &orig, Costume *prev);
+  Costume(const char *filename, const char *data, int len,
+	  Costume *prevCost);
 
   ~Costume();
+
+  const char *filename() const { return fname_.c_str(); }
 
   void playChore(int num) { chores_[num].play(); }
   void playChoreLooping(int num) { chores_[num].playLooping(); }
@@ -52,28 +51,26 @@ public:
   class Component {
   public:
     Component(Component *parent, int parentID);
-    virtual Component *copy(Component *newParent) = 0;
+    virtual void init() { }
     virtual void setKey(int /* val */) { }
     virtual void update() { }
     virtual void draw() { }
     virtual void reset() { }
     virtual ~Component() { }
 
-    void setParent(Component *newParent);
-
   protected:
     int parentID_;
     Component *parent_, *child_, *sibling_;
+    void setParent(Component *newParent);
 
     friend class Costume;
   };
 
 private:
-  // Reference the original copy of the costume in the cache
-  ResPtr<Costume> orig_;
-
   Component *loadComponent(char tag[4], Component *parent, int parentID,
 			   const char *name);
+
+  std::string fname_;
 
   int numComponents_;
   Component **components_;

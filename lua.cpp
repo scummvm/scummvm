@@ -323,8 +323,7 @@ static void TurnActor() {
 static void PushActorCostume() {
   Actor *act = check_actor(1);
   const char *costumeName = luaL_check_string(2);
-  Costume *c = ResourceLoader::instance()->loadCostume(costumeName);
-  act->pushCostume(c);
+  act->pushCostume(costumeName);
 }
 
 static void SetActorCostume() {
@@ -333,8 +332,7 @@ static void SetActorCostume() {
     act->clearCostumes();
   else {
     const char *costumeName = luaL_check_string(2);
-    Costume *c = ResourceLoader::instance()->loadCostume(costumeName);
-    act->setCostume(c);
+    act->setCostume(costumeName);
   }
 }
 

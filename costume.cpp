@@ -29,11 +29,64 @@
 #include <cstdio>
 #include <map>
 
+// A costume in the Residual/GrimE engine consists of a set of
+// components, and a set of chores.  Each component represents an
+// on-screen object, or a keyframe animation, or a sound effect; each
+// chore gives a set of instructions for how to move and/or activate
+// or deactivate each component at certain times.
+//
+// Each actor contains a stack of costumes, on which a new costume can
+// be pushed or from which an old costume can be popped at any time.
+// For the most part, these costumes are independent.  The exception
+// is the main model component ('MMDL'), for which multiple costumes
+// share the same base 3D object (if they refer to the same file).
+//
+// This is complicated by the fact that multiple keyframe animations
+// can have an effect on the positions of the 3D objects.  Each
+// keyframe animation has certain nodes internally "tagged", and the
+// keyframe components specify precedences for the tagged nodes and
+// for the non-tagged nodes.  If the highest precedence for a given
+// node is given by multiple keyframe animations, their contributions
+// are averaged.
+//
+// Each component can implement several virtual methods which are
+// called by the costume:
+//
+// init() -- allows the component to initialize itself.  This is
+//           separate from the constructor since there are cases where
+//           information from child components may be needed before
+//           the object can be fully constructed.  This is particularly
+//           the case with colormaps, which are needed before even
+//           starting to load a 3D model.
+// setKey(val) -- notifies the component of a change in the "state"
+//                given by a playing chore
+// update() -- gives the component a chance to update its internal
+//             state once every frame
+// draw() -- actually draws the component onto the screen
+// reset() -- notifies the component that a chore controlling it
+//            has stopped
+//
+// For the 3D objects, a model's component first initializes internal
+// state for the model's nodes in its update() method.  Then the
+// keyframes' update() methods work with this data to implement the
+// precedence and add up all contributions for the highest precedence.
+// Then the model's draw() method does the averaging and draws the
+// polygons accordingly.  (Actually, this is a lie -- the top-level
+// 3D objects draw themselves and all their children.  This makes it
+// easier to move objects Manny is holding when his hands move, for
+// example.)
+//
+// For bitmaps, the actual drawing is handled by the Scene class.  The
+// bitmaps to be drawn are associated to the needed camera setups
+// using NewObjectState; bitmaps marked OBJSTATE_UNDERLAY and
+// OBJSTATE_STATE are drawn first, then the 3D objects, then bitmaps
+// marked OBJSTATE_OVERLAY.  So the BitmapComponent just needs to pass
+// along setKey requests to the actual bitmap object.
+
 class BitmapComponent : public Costume::Component {
 public:
   BitmapComponent(Costume::Component *parent, int parentID,
 		 const char *filename);
-  BitmapComponent *copy(Costume::Component *newParent);
 
   void update();
   void draw();
@@ -49,12 +102,11 @@ class ModelComponent : public Costume::Component {
 public:
   ModelComponent(Costume::Component *parent, int parentID,
 		 const char *filename);
-  ModelComponent *copy(Costume::Component *newParent);
+  void init();
   void setKey(int val);
   void update();
   void reset();
   void setColormap(Colormap *c);
-  void loadModel();
   ~ModelComponent();
 
   Model::HierNode *hierarchy() { return hier_; }
@@ -71,8 +123,9 @@ class MainModelComponent : public ModelComponent {
 public:
   MainModelComponent(Costume::Component *parent, int parentID,
 		     const char *filename);
-  MainModelComponent *copy(Costume::Component *newParent);
-  MainModelComponent *copy(Model *prevObj, Model::HierNode *prevHier);
+  MainModelComponent(const char *filename, Model *prevObj,
+		     Model::HierNode *prevHier);
+  void init();
   void update();
   void reset();
   ~MainModelComponent();
@@ -87,7 +140,7 @@ class MeshComponent : public Costume::Component {
 public:
   MeshComponent(Costume::Component *parent, int parentID,
 		const char *name);
-  MeshComponent *copy(Costume::Component *newParent);
+  void init();
   void setKey(int val);
   void reset();
   ~MeshComponent() { }
@@ -107,12 +160,6 @@ BitmapComponent::BitmapComponent(Costume::Component *parent, int parentID,
   warning("Instanced BitmapComponenet from Costume renderer: NOT IMPLEMENTED YET");
 }
 
-BitmapComponent *BitmapComponent::copy(Costume::Component *newParent) {
-  BitmapComponent *result = new BitmapComponent(*this);
-  result->setParent(newParent);
-  return result;
-}
-
 void BitmapComponent::draw() {
  ;
 }
@@ -127,20 +174,28 @@ ModelComponent::ModelComponent(Costume::Component *parent, int parentID,
   cmap_(NULL), hier_(NULL) {
 }
 
-ModelComponent *ModelComponent::copy(Costume::Component *newParent) {
-  loadModel();
-  ModelComponent *result = new ModelComponent(*this);
-  result->setParent(newParent);
-  result->hier_ = obj_->copyHierarchy();
-  result->hier_->hierVisible_ = false;
-  if (newParent != NULL) {
-    MeshComponent *mc = dynamic_cast<MeshComponent *>(newParent);
+void ModelComponent::init() {
+  if (obj_ == NULL) {		// Skip loading if it was initialized
+				// by the sharing MainModelComponent
+				// constructor before
+    if (cmap_ == NULL) {
+      warning("No colormap specified for %s\n", filename_.c_str());
+      cmap_ = ResourceLoader::instance()->loadColormap("item.cmp");
+    }
+    obj_ = ResourceLoader::instance()->loadModel(filename_.c_str(), *cmap_);
+    hier_ = obj_->copyHierarchy();
+    hier_->hierVisible_ = false;
+  }
+
+  // If we're the child of a mesh component, put our nodes in the
+  // parent object's tree.
+  if (parent_ != NULL) {
+    MeshComponent *mc = dynamic_cast<MeshComponent *>(parent_);
     if (mc != NULL)
-      mc->node()->addChild(result->hier_);
+      mc->node()->addChild(hier_);
     else
       warning("Parent of model %s wasn't a mesh\n", filename_.c_str());
   }
-  return result;
 }
 
 void ModelComponent::setKey(int val) {
@@ -166,15 +221,6 @@ void ModelComponent::reset() {
 
 void ModelComponent::setColormap(Colormap *c) {
   cmap_ = c;
-  obj_ = ResourceLoader::instance()->loadModel(filename_.c_str(), *c);
-  hier_ = obj_->copyHierarchy();
-}
-
-void ModelComponent::loadModel() {
-  if (obj_ == NULL) {
-    warning("No colormap specified for %s\n", filename_.c_str());
-    setColormap(ResourceLoader::instance()->loadColormap("item.cmp"));
-  }
 }
 
 ModelComponent::~ModelComponent() {
@@ -184,7 +230,6 @@ ModelComponent::~ModelComponent() {
 }
 
 void ModelComponent::draw() {
-  loadModel();
   if (parent_ == NULL)		// Otherwise it was already drawn by
 				// being included in the parent's hierarchy
     hier_->draw();
@@ -197,23 +242,18 @@ MainModelComponent::MainModelComponent(Costume::Component *parent,
 {
 }
 
-MainModelComponent *MainModelComponent::copy(Costume::Component *newParent) {
-  loadModel();
-  MainModelComponent *result = new MainModelComponent(*this);
-  result->setParent(newParent);
-  result->hier_ = obj_->copyHierarchy();
-  result->hierShared_ = false;
-  return result;
+// Constructor used if sharing the main model with the previous costume
+MainModelComponent::MainModelComponent(const char *filename, Model *prevObj,
+				       Model::HierNode *prevHier) :
+  ModelComponent(NULL, -1, filename), hierShared_(true)
+{
+  obj_ = prevObj;
+  hier_ = prevHier;
 }
 
-MainModelComponent *MainModelComponent::copy(Model *prevObj,
-					     Model::HierNode *prevHier) {
-  MainModelComponent *result = new MainModelComponent(*this);
-  result->setParent(NULL);
-  result->obj_ = prevObj;
-  result->hier_ = prevHier;
-  result->hierShared_ = true;
-  return result;
+void MainModelComponent::init() {
+  ModelComponent::init();
+  hier_->hierVisible_ = true;
 }
 
 void MainModelComponent::update() {
@@ -255,12 +295,6 @@ ColormapComponent::ColormapComponent(Costume::Component *parent,
     mc->setColormap(cmap_);
 }
 
-ColormapComponent *ColormapComponent::copy(Costume::Component *newParent) {
-  ColormapComponent *result = new ColormapComponent(*this);
-  result->setParent(newParent);
-  return result;
-}
-
 ColormapComponent::~ColormapComponent() {
 }
 
@@ -268,7 +302,7 @@ class KeyframeComponent : public Costume::Component {
 public:
   KeyframeComponent(Costume::Component *parent, int parentID,
 		    const char *filename);
-  KeyframeComponent *copy(Costume::Component *newParent);
+  void init();
   void setKey(int val);
   void update();
   void reset();
@@ -350,17 +384,14 @@ void KeyframeComponent::update() {
   keyf_->animate(hier_, currTime_ / 1000.0, priority1_, priority2_);
 }
 
-KeyframeComponent *KeyframeComponent::copy(Costume::Component *newParent) {
-  KeyframeComponent *result = new KeyframeComponent(*this);
-  result->setParent(newParent);
-  ModelComponent *mc = dynamic_cast<ModelComponent *>(newParent);
+void KeyframeComponent::init() {
+  ModelComponent *mc = dynamic_cast<ModelComponent *>(parent_);
   if (mc != NULL)
-    result->hier_ = mc->hierarchy();
+    hier_ = mc->hierarchy();
   else {
     warning("Parent of %s was not a model\n", keyf_->filename());
-    result->hier_ = NULL;
+    hier_ = NULL;
   }
-  return result;
 }
 
 MeshComponent::MeshComponent(Costume::Component *parent, int parentID,
@@ -370,17 +401,14 @@ MeshComponent::MeshComponent(Costume::Component *parent, int parentID,
     error("Couldn't parse mesh name %s\n", name);
 }
 
-MeshComponent *MeshComponent::copy(Costume::Component *newParent) {
-  MeshComponent *result = new MeshComponent(*this);
-  result->setParent(newParent);
-  ModelComponent *mc = dynamic_cast<ModelComponent *>(newParent);
+void MeshComponent::init() {
+  ModelComponent *mc = dynamic_cast<ModelComponent *>(parent_);
   if (mc != NULL)
-    result->node_ = mc->hierarchy() + num_;
+    node_ = mc->hierarchy() + num_;
   else {
     warning("Parent of mesh %d was not a model\n", num_);
-    result->node_ = NULL;
+    node_ = NULL;
   }
-  return result;
 }
 
 void MeshComponent::setKey(int val) {
@@ -395,7 +423,6 @@ class LuaVarComponent : public Costume::Component {
 public:
   LuaVarComponent(Costume::Component *parent, int parentID,
 		  const char *name);
-  LuaVarComponent *copy(Costume::Component *newParent);
   void setKey(int val);
   ~LuaVarComponent() { }
 
@@ -408,12 +435,6 @@ LuaVarComponent::LuaVarComponent(Costume::Component *parent, int parentID,
   Costume::Component(parent, parentID), name_(name) {
 }
 
-LuaVarComponent *LuaVarComponent::copy(Costume::Component *newParent) {
-  LuaVarComponent *result = new LuaVarComponent(*this);
-  result->setParent(newParent);
-  return result;
-}
-
 void LuaVarComponent::setKey(int val) {
   lua_pushnumber(val);
   lua_setglobal(const_cast<char *>(name_.c_str()));
@@ -423,7 +444,6 @@ class SoundComponent : public Costume::Component {
 public:
   SoundComponent(Costume::Component *parent, int parentID,
 		 const char *name);
-  SoundComponent *copy(Costume::Component *newParent);
   void setKey(int val);
   void reset();
   ~SoundComponent() { }
@@ -444,12 +464,6 @@ SoundComponent::SoundComponent(Costume::Component *parent, int parentID,
     sound_ = ResourceLoader::instance()->loadSound(filename);
 }
 
-SoundComponent *SoundComponent::copy(Costume::Component *newParent) {
-  SoundComponent *result = new SoundComponent(*this);
-  result->setParent(newParent);
-  return result;
-}
-
 void SoundComponent::setKey(int val) {
   switch (val) {
   case 0:
@@ -467,8 +481,9 @@ void SoundComponent::reset() {
   Mixer::instance()->stopSfx(sound_);
 }
 
-Costume::Costume(const char *filename, const char *data, int len) :
-  Resource(filename), orig_(NULL)
+Costume::Costume(const char *filename, const char *data, int len,
+		 Costume *prevCost) :
+  fname_(filename)
 {
   TextSplitter ts(data, len);
   ts.expectString("costume v0.1");
@@ -496,11 +511,31 @@ Costume::Costume(const char *filename, const char *data, int len) :
 		    &namePos) < 4)
       error("Bad component specification line: `%s'\n", line);
     ts.nextLine();
+
+    // Check for sharing a main model with the previous costume
+    if (id == 0 && prevCost != NULL &&
+	std::memcmp(tags[tagID], "mmdl", 4) == 0) {
+      MainModelComponent *mmc =
+	dynamic_cast<MainModelComponent *>(prevCost->components_[0]);
+      if (mmc != NULL && mmc->filename_ == std::string(line + namePos)) {
+	components_[id] = new MainModelComponent(line + namePos,
+						 mmc->obj_,
+						 mmc->hier_);
+	continue;
+      }
+    }
+
     components_[id] =
       loadComponent(tags[tagID],
 		    parentID == -1 ? NULL : components_[parentID], parentID,
 		    line + namePos);
   }
+
+  delete[] tags;
+
+  for (int i = 0; i < numComponents_; i++)
+    if (components_[i] != NULL)
+      components_[i]->init();
 
   ts.expectString("section chores");
   ts.scanString(" numchores %d", 1, &numChores_);
@@ -524,8 +559,6 @@ Costume::Costume(const char *filename, const char *data, int len) :
 
   for (int i=0; i < MAX_TALK_CHORES; i++)
     talkChores_[i] = -1;
-
-delete[] tags;
 }
 
 Costume::~Costume() {
@@ -651,42 +684,6 @@ Costume::Component *Costume::loadComponent
   
   warning("Unknown tag '%.4s', name '%s'\n", tag, name);
   return NULL;
-}
-
-Costume::Costume(Costume &orig, Costume *prev) : Resource(orig), orig_(&orig) {
-  numComponents_ = orig.numComponents_;
-  components_ = new Component*[numComponents_];
-  int start = 0;
-
-  MainModelComponent *mmc =
-    dynamic_cast<MainModelComponent *>(orig.components_[0]);
-  MainModelComponent *prev_mmc =
-    (prev == NULL ? NULL :
-     dynamic_cast<MainModelComponent *>(prev->components_[0]));
-  if (mmc != NULL && prev_mmc != NULL &&
-      mmc->filename_ == prev_mmc->filename_) {
-    prev_mmc->loadModel();
-    components_[0] = mmc->copy(prev_mmc->obj_, prev_mmc->hier_);
-    start = 1;
-  }
-
-  for (int i = start; i < numComponents_; i++) {
-    if (orig.components_[i] != NULL) {
-      Component *newParent;
-      if (orig.components_[i]->parentID_ >= 0)
-	newParent = components_[orig.components_[i]->parentID_];
-      else
-	newParent = NULL;
-      components_[i] = orig.components_[i]->copy(newParent);
-    }
-    else
-      components_[i] = NULL;
-  }
-  numChores_ = orig.numChores_;
-  chores_ = new Chore[numChores_];
-  std::memcpy(chores_, orig.chores_, numChores_ * sizeof(Chore));
-  for (int i = 0; i < numChores_; i++)
-    chores_[i].owner_ = this;
 }
 
 void Costume::stopChores() {

@@ -62,8 +62,8 @@ public:
   void sayLine(const char *msg);
   bool talking();
 
-  void pushCostume(Costume *c);
-  void setCostume(Costume *c);
+  void pushCostume(const char *name);
+  void setCostume(const char *name);
   void popCostume();
   void clearCostumes();
   Costume *currentCostume() {
@@ -89,7 +89,7 @@ private:
   float walkRate_, turnRate_;
   bool visible_;
   ResPtr<Sound> talkSound_;
-  std::list<ResPtr<Costume> > costumeStack_;
+  std::list<Costume *> costumeStack_;
 
   friend class Engine;
 };

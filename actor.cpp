@@ -91,29 +91,35 @@ bool Actor::talking() {
   return true;
 }
 
-void Actor::pushCostume(Costume *c) {
-  Costume *copy = new Costume(*c, currentCostume());
-  costumeStack_.push_back(copy);
+void Actor::pushCostume(const char *name) {
+  Costume *newCost = ResourceLoader::instance()->
+    loadCostume(name, currentCostume());
+  costumeStack_.push_back(newCost);
 }
 
-void Actor::setCostume(Costume *c) {
+void Actor::setCostume(const char *name) {
   if (! costumeStack_.empty())
     popCostume();
-  pushCostume(c);
+  pushCostume(name);
 }
 
 void Actor::popCostume() {
-  costumeStack_.pop_back();
+  if (! costumeStack_.empty()) {
+    delete costumeStack_.back();
+    costumeStack_.pop_back();
+  }
 }
 
 void Actor::clearCostumes() {
   // Make sure to destroy costume copies in reverse order
-  while (! costumeStack_.empty())
+  while (! costumeStack_.empty()) {
+    delete costumeStack_.back();
     costumeStack_.pop_back();
+  }
 }
 
 Costume *Actor::findCostume(const char *name) {
-  for (std::list<ResPtr<Costume> >::iterator i = costumeStack_.begin();
+  for (std::list<Costume *>::iterator i = costumeStack_.begin();
        i != costumeStack_.end(); i++)
     if (std::strcmp((*i)->filename(), name) == 0)
       return *i;
@@ -121,7 +127,7 @@ Costume *Actor::findCostume(const char *name) {
 }
 
 void Actor::update() {
-  for (std::list<ResPtr<Costume> >::iterator i = costumeStack_.begin();
+  for (std::list<Costume *>::iterator i = costumeStack_.begin();
        i != costumeStack_.end(); i++)
     (*i)->update();
 }

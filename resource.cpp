@@ -144,20 +144,14 @@ Colormap *ResourceLoader::loadColormap(const char *filename) {
   return result;
 }
 
-Costume *ResourceLoader::loadCostume(const char *filename) {
+Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
   std::string fname = filename;
   makeLower(fname);
-  cache_type::iterator i = cache_.find(fname);
-  if (i != cache_.end()) {
-    return dynamic_cast<Costume *>(i->second);
-  }
-
   Block *b = getFileBlock(filename);
   if (b == NULL)
-    error("Could not find colormap %s\n", filename);
-  Costume *result = new Costume(filename, b->data(), b->len());
+    error("Could not find costume %s\n", filename);
+  Costume *result = new Costume(filename, b->data(), b->len(), prevCost);
   delete b;
-  cache_[fname] = result;
   return result;
 }
 
