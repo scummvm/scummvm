@@ -283,6 +283,14 @@ enum StateUse {
 };
 
 
+enum JoeWalkMode {
+	JWM_NORMAL  = 0,
+	JWM_MOVE    = 1,
+	JWM_EXECUTE = 2,
+	JWM_SPEAK   = 3
+};
+
+
 } // End of namespace Queen
 
 #endif

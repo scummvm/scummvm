@@ -142,7 +142,7 @@ bool Walk::animateJoe() {
 				pbs->speed = 1;
 			}
 			_logic->checkPlayer();
-			if (_logic->joeWalk() == 2) { // XXX || cutQuit 
+			if (_logic->joeWalk() == JWM_EXECUTE) { // XXX || cutQuit 
 				// we are about to do something else, so stop walking
 				interrupted = true;
 				pbs->moving = false;
@@ -299,7 +299,7 @@ int16 Walk::joeMove(int direction, int16 endx, int16 endy, bool inCutaway) {
 	uint16 oldx = _graphics->bob(0)->x;
 	uint16 oldy = _graphics->bob(0)->y;
 
-	_logic->joeWalk(1);
+	_logic->joeWalk(JWM_MOVE);
 
 	uint16 oldPos = _logic->zoneInArea(ZONE_ROOM, oldx, oldy);
 	uint16 newPos = _logic->zoneInArea(ZONE_ROOM, endx, endy);

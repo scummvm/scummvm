@@ -355,7 +355,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	}
 
 	_talkHead = false;
-	_logic->joeWalk(0);
+	_logic->joeWalk(JWM_NORMAL);
 }
 		
 void Talk::disableSentence(int oldLevel, int selectedSentence) {
@@ -602,6 +602,8 @@ bool Talk::speak(const char *sentence, Person *person, const char *voiceFilePref
 
 	Person joe_person;
 	ActorData joe_actor;
+
+	_logic->joeWalk(JWM_SPEAK);
 
 	if (!person) {
 		// Fill in values for use by speakSegment() etc.
@@ -865,7 +867,7 @@ void Talk::defaultAnimation(
 			else
 				_logic->update();
 
-			if (_logic->joeWalk() == 3) {
+			if (_logic->joeWalk() == JWM_SPEAK) {
 				if (_input->talkQuit())
 					break;
 
@@ -876,8 +878,7 @@ void Talk::defaultAnimation(
 					break;
 
 				_logic->checkPlayer();
-
-				if (_logic->joeWalk() == 2)
+				if (_logic->joeWalk() == JWM_EXECUTE)
 					// Selected a command, so exit
 					break;
 			}

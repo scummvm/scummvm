@@ -256,12 +256,14 @@ void Display::palSetJoe(JoePalette pal) {
 }
 
 
-void Display::palFadeIn(int start, int end, uint16 roomNum) {
+void Display::palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 dynaX, int16 dynaY) {
 
 	debug(9, "Display::palFadeIn(%d, %d)", start, end);
 	memcpy(_pals.screen, _pals.room, 256 * 3);
 	if (roomNum < 90 || (roomNum > 94 && roomNum < 114)) {
-		// XXX dynalum();
+		if (dynalum) {
+			dynalumUpdate(dynaX, dynaY);
+		}
 		int n = end - start + 1;
 		uint8 tempPal[256 * 3];
 		int i;

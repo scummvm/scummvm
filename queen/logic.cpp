@@ -663,7 +663,7 @@ void Logic::joeY(uint16 y) {
 	_joe.y = y;
 }
 
-void Logic::joeWalk(uint16 walking) {
+void Logic::joeWalk(JoeWalkMode walking) {
 	_joe.walk = walking;
 }
 
@@ -1221,15 +1221,19 @@ void Logic::roomDisplay(const char* room, RoomDisplayMode mode, uint16 scale, in
 	if (mode != RDM_FADE_NOJOE) {
 		pod = joeSetupInRoom(mode != RDM_FADE_JOE_XY, scale);
 	}
-	// FIXME: commented for now, to avoid color glitches when
-	// switching rooms during cutaway
+	// FIXME: for now, always display room even if mode tells us
+	// to not do so. This is necessary as actual Cutaway code 
+	// doesn't do any of the needed palFadeIn() calls. The only
+	// noticeable problem is the initial display of the pinnacle 
+	// room which is faded 2 times.
 //	if (mode != RDM_NOFADE_JOE) {
 		update();
+		BobSlot *joe = _graphics->bob(0);
 		if (_currentRoom >= 114) {
-			_display->palFadeIn(0, 255, _currentRoom);
+			_display->palFadeIn(0, 255, _currentRoom, joe->active, joe->x, joe->y);
 		}
 		else {
-			_display->palFadeIn(0, 223, _currentRoom);
+			_display->palFadeIn(0, 223, _currentRoom, joe->active, joe->x, joe->y);
 		}
 //	}
 	if (pod != NULL) {
@@ -2261,7 +2265,7 @@ void Logic::handlePinnacleRoom() {
 	joe->animating = piton->animating = false;
 
 	update();
-	_display->palFadeIn(0, 223, ROOM_JUNGLE_PINNACLE);
+	_display->palFadeIn(0, 223, ROOM_JUNGLE_PINNACLE, joe->active, joe->x, joe->y);
 
 	_entryObj = 0;
 	uint16 prevObj = 0;
@@ -2536,6 +2540,24 @@ void Logic::sceneStop() {
 	_display->mouseCursorShow(true);
 	zoneSetupPanel();
 }
+
+
+void Logic::useJournal() {
+
+	warning("Journal unimplemented");
+	if (_resource->isDemo()) {
+		Talk::speak("This is a demo, so I can't load or save games*14", NULL, "", _graphics, _input, this, _resource, _sound);
+	}
+	else {
+		// FIXME: add Journal code, suggestion :
+		// (execute.c l.428-437 & queen.c l.350-365)
+		// save some vars
+		// Journal j(this, _graphics...);
+		// j.run();
+		// restore vars
+	}
+}
+
 
 } // End of namespace Queen
 

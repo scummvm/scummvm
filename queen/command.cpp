@@ -373,9 +373,7 @@ void Command::executeCurrentAction(bool walk) {
 	// l.419-452 execute.c
 	switch (com->specialSection) {
 	case 1:
-		// XXX l.428-438		
-		warning("Command::executeCurrentAction() - Journal unimplemented");
-		// XXX if(DEMO) SPEAK("This is a demo, so I can't load or save games*14", "JOE", "");
+		_logic->useJournal();
 		return;
 	case 2:
 		_logic->joeUseDress(true);
@@ -443,8 +441,7 @@ void Command::updatePlayer() {
 	if (!_input->keyVerb().isNone()) {
 
 		if (_input->keyVerb().isJournal()) {
-			// XXX queen.c l.348-365
-			warning("Command::updatePlayer() - Journal not yet implemented");
+			_logic->useJournal();
 		}
 		else if (!_input->keyVerb().isSkipText()) {
 			_curCmd.verb = _input->keyVerb();
@@ -597,7 +594,7 @@ void Command::grabCurrentSelection() {
 		// select without a command, do a WALK
 		_logic->newRoom(0); // cancel makeJoeWalkTo, that should be equivalent to cr10 fix
 		clear(true);
-		_logic->joeWalk(2);
+		_logic->joeWalk(JWM_EXECUTE);
 	}
 }
 
@@ -639,7 +636,7 @@ void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) 
 
 	if (_parse) {
 		_curCmd.verb = Verb(VERB_NONE);
-		_logic->joeWalk(2); // set JOEWALK flag to perform EXECUTE_ACTION procedure
+		_logic->joeWalk(JWM_EXECUTE);
 		_selCmd.action = _curCmd.action;
 		_curCmd.action = Verb(VERB_NONE);
 	}
@@ -686,10 +683,10 @@ void Command::grabSelectedItem() {
 		_curCmd.verb = Verb(VERB_NONE);
 	}
 	else {
-		if (_logic->joeWalk() == 1) {
+		if (_logic->joeWalk() == JWM_MOVE) {
 			_cmdText.clear();
 			_curCmd.commandLevel = 1;
-			_logic->joeWalk(0);
+			_logic->joeWalk(JWM_NORMAL);
 			_curCmd.action = Verb(VERB_NONE);
 			lookCurrentIcon();
 		}
@@ -713,12 +710,15 @@ void Command::grabSelectedItem() {
 			else {
 				_curCmd.verb = findDefault(item, true);
 			}
-			if (!_curCmd.verb.isNone()) {
+			if (_curCmd.verb.isNone()) {
 				// No match made, so command not yet completed. Redefine as LOOK AT
-				_curCmd.verb = Verb(VERB_LOOK_AT);
+				_curCmd.action = Verb(VERB_LOOK_AT);
 				_cmdText.setVerb(Verb(VERB_LOOK_AT));
 			}
-			_curCmd.action = _curCmd.verb;
+			else {
+				_curCmd.action = _curCmd.verb;
+			}
+			_curCmd.verb = Verb(VERB_NONE);
 		}
 	}
 
@@ -740,7 +740,7 @@ void Command::grabSelectedNoun() {
 		// selected a turned off object, so just walk
 		_curCmd.noun = 0;
 		clear(true);
-		_logic->joeWalk(2);
+		_logic->joeWalk(JWM_EXECUTE);
 		return;
 	}
 
@@ -787,8 +787,7 @@ void Command::grabSelectedNoun() {
 				else {
 					_curCmd.verb = findDefault(objNum, false);
 				}
-
-				if (_curCmd.verb.value() == VERB_NONE) {
+				if (_curCmd.verb.isNone()) {
 					_curCmd.action = Verb(VERB_WALK_TO);
 					_cmdText.setVerb(Verb(VERB_WALK_TO));
 				}
@@ -824,8 +823,8 @@ void Command::grabSelectedVerb() {
 		}
 		else {
 			_selCmd.defaultVerb = Verb(VERB_NONE);
-			if (_logic->joeWalk() == 1 && !_curCmd.verb.isNone()) {
-				_logic->joeWalk(0);
+			if (_logic->joeWalk() == JWM_MOVE && !_curCmd.verb.isNone()) {
+				_logic->joeWalk(JWM_NORMAL);
 			}
 			_curCmd.commandLevel = 1;
 			_curCmd.oldVerb = Verb(VERB_NONE);
@@ -1510,7 +1509,7 @@ void Command::lookCurrentRoom() {
 
 	_curCmd.noun = _logic->findObjectUnderCursor(_input->mousePosX(), _input->mousePosY());
 
-	if (_logic->joeWalk() == 1) {
+	if (_logic->joeWalk() == JWM_MOVE) {
 		return;
 	}
 
@@ -1589,7 +1588,7 @@ void Command::lookCurrentRoom() {
 void Command::lookCurrentIcon() {
 
 	_curCmd.verb = _logic->findVerbUnderCursor(_input->mousePosX(), _input->mousePosY());
-	if (_curCmd.verb != _curCmd.oldVerb && _logic->joeWalk() != 1) {
+	if (_curCmd.verb != _curCmd.oldVerb && _logic->joeWalk() != JWM_MOVE) {
 
 		if (_curCmd.action.isNone()) {
 			_cmdText.clear();

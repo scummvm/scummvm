@@ -183,10 +183,6 @@ public:
 	void loadBackdrop(const char *name, uint16 room);
 	void loadPanel();
 
-	void useJournal(GameConfig *cfg);
-	void journalBobSetup(uint32 bobnum, uint16 x, uint16 y, uint16 frame);
-	void journalBobPreDraw(GameConfig *cfg);
-
 	void cameraBob(int bobNum) { _cameraBob = bobNum; }
 	int cameraBob() const { return _cameraBob; }
 

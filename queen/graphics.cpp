@@ -765,65 +765,6 @@ void Graphics::loadPanel() {
 }
 
 
-void Graphics::useJournal(GameConfig *cfg) {
-
-	bobClearAll();
-	loadBackdrop("journal.pcx", 160);
-	_display->palFadeOut(0, 255, 160);
-
-	// load and unpack journal frames
-	frameEraseAll(false);
-	bankLoad("journal.BBK", 8);
-	int i;
-	for(i = 1; i <= 20; ++i) {
-		bankUnpack(i, FRAMES_JOURNAL + i, 8);
-		// set hot spots to zero
-		_frames[FRAMES_JOURNAL + i].xhotspot = 0;
-		_frames[FRAMES_JOURNAL + i].yhotspot = 0;
-	}
-	// adjust info box hot spot to put it on top always
-	_frames[FRAMES_JOURNAL + 20].yhotspot = 200;
-	bankErase(8);
-
-	// XXX setup zones
-
-	journalBobPreDraw(cfg);
-	_display->palFadeIn(0, 255, 160);
-
-	// XXX l.1191-1509
-}
-
-
-void Graphics::journalBobSetup(uint32 bobnum, uint16 x, uint16 y, uint16 frameNum) 
-{
-	BobSlot *pbs = &_bobs[bobnum];
-	pbs->active = true;
-	pbs->x = x;
-	pbs->y = y;
-	pbs->frameNum = FRAMES_JOURNAL + frameNum;
-	pbs->box.y2 = GAME_SCREEN_HEIGHT - 1;
-}
-
-
-void Graphics::journalBobPreDraw(GameConfig *cfg) {
-
-	journalBobSetup(1, 32, 8, 1); // Review entry
-	journalBobSetup(2, 32, 56, 2); // Make entry
-	journalBobSetup(3, 32, 104, 1); // Close book
-	journalBobSetup(4, 32, 152, 3); // Give up
-	journalBobSetup(5, 136 + cfg->talkSpeed * 4 - 4, 164, 18); // Text speed
-	journalBobSetup(6, 221, 155, 16); // SFX on/off
-	_bobs[6].active = cfg->sfxToggle;
-	journalBobSetup(7, 136 + cfg->musicVolume * 130 / 100 - 4, 177, 19); // Music volume
-	journalBobSetup(10, 158, 155, 16); // Voice on/off
-	_bobs[10].active = cfg->speechToggle;
-	journalBobSetup(11, 125, 167, 16); // Text on/off
-	_bobs[11].active = cfg->textToggle;
-	journalBobSetup(12, 125, 181, 16); // Music on/off
-	_bobs[12].active = cfg->musicToggle;
-}
-
-
 void Graphics::initCarBamScene() {
 
 	bobClear(5);

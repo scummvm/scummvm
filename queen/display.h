@@ -73,7 +73,7 @@ public:
 	void palConvert(uint8 *outPal, const uint8 *inPal, int start, int end);
 	void palSet(const uint8 *pal, int start, int end, bool updateScreen = false);
 	void palSetJoe(JoePalette pal); // changejoepal
-	void palFadeIn(int start, int end, uint16 roomNum);
+	void palFadeIn(int start, int end, uint16 roomNum, bool dynalum, int16 dynaX, int16 dynaY);
 	void palFadeOut(int start, int end, uint16 roomNum);
 	void palFadePanel();
 	void palScroll(int start, int end);

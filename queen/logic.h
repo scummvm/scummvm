@@ -172,14 +172,14 @@ public:
 	uint16 joeFacing()	{ return _joe.facing; }
 	uint16 joeX()		{ return _joe.x; }
 	uint16 joeY()		{ return _joe.y; }
-	uint16 joeWalk()	{ return _joe.walk; }
+	JoeWalkMode joeWalk()	{ return _joe.walk; }
 	uint16 joeScale()	{ return _joe.scale; }
 	uint16 joePrevFacing() { return _joe.prevFacing; }
 
 	void joeFacing(uint16 dir);
 	void joeX(uint16 x);
 	void joeY(uint16 y);
-	void joeWalk(uint16 walking);
+	void joeWalk(JoeWalkMode walking);
 	void joeScale(uint16 scale);
 	void joePrevFacing(uint16 dir);
 	
@@ -304,6 +304,8 @@ public:
 
 	void update();
 
+	void useJournal();
+
 	bool gameSave(uint16 slot, const char *desc);
 	bool gameLoad(uint16 slot);
 
@@ -409,7 +411,7 @@ protected:
 	struct {
 		uint16	x, y;
 		uint16	facing, prevFacing;
-		uint16  walk;
+		JoeWalkMode walk;
 		uint16  scale;
 	} _joe;
 	
