@@ -68,6 +68,7 @@ private:
 	byte *_dst;
 	bool _updateNeeded;
 	bool _insanity;
+	bool _midleAudio;
 
 public:
 	SmushPlayer(ScummEngine *, int, bool);

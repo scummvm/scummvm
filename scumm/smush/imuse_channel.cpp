@@ -51,7 +51,7 @@ bool ImuseChannel::isTerminated() const {
 	return (_dataSize <= 0 && _sbuffer == 0);
 }
 
-bool ImuseChannel::setParameters(int32 nb, int32 size, int32 flags, int32 unk1) {
+bool ImuseChannel::setParameters(int32 nb, int32 size, int32 flags, int32 unk1, int32) {
 	if ((flags == 1) || (flags == 2) || (flags == 3)) {
 		_volume = 127;
 	} else if ((flags >= 100) && (flags <= 163)) {

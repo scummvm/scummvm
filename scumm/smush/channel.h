@@ -34,7 +34,7 @@ public:
 
 	virtual ~SmushChannel() {};
 	virtual bool appendData(Chunk &b, int32 size) = 0;
-	virtual bool setParameters(int32, int32, int32, int32) = 0;
+	virtual bool setParameters(int32, int32, int32, int32, int32) = 0;
 	virtual bool checkParameters(int32, int32, int32, int32, int32) = 0;
 	virtual bool isTerminated() const = 0;
 	virtual int32 availableSoundData() const = 0;
@@ -62,6 +62,7 @@ private:
 	int32 _tbufferSize;
 	byte *_sbuffer;
 	int32 _sbufferSize;
+	bool _keepSize;
 
 protected:
 	void handleStrk(Chunk &c);
@@ -75,7 +76,7 @@ public:
 	SaudChannel(int32 track, int32 freq);
 	virtual ~SaudChannel();
 	bool isTerminated() const;
-	bool setParameters(int32 duration, int32 flags, int32 vol1, int32 vol2);
+	bool setParameters(int32 duration, int32 flags, int32 vol1, int32 vol2, int32 index);
 	bool checkParameters(int32 index, int32 duration, int32 flags, int32 vol1, int32 vol2);
 	bool appendData(Chunk &b, int32 size);
 	int32 availableSoundData() const;
@@ -123,7 +124,7 @@ public:
 	ImuseChannel(int32 track, int32 freq);
 	virtual ~ImuseChannel();
 	bool isTerminated() const;
-	bool setParameters(int32 nbframes, int32 size, int32 track_flags, int32 unk1);
+	bool setParameters(int32 nbframes, int32 size, int32 track_flags, int32 unk1, int32);
 	bool checkParameters(int32 index, int32 nbframes, int32 size, int32 track_flags, int32 unk1);
 	bool appendData(Chunk &b, int32 size);
 	int32 availableSoundData() const;
