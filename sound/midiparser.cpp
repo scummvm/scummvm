@@ -117,13 +117,22 @@ void MidiParser::hangingNote (byte channel, byte note, uint32 time_left) {
 			if (ptr->time_left && ptr->time_left < time_left)
 				return;
 			best = ptr;
-			if (ptr->time_left)
+			if (ptr->time_left) {
+				_driver->send (0x80 | channel | note << 8);
 				--_hanging_notes_count;
+			}
 			break;
 		} else if (!best && ptr->time_left == 0) {
 			best = ptr;
 		}
 	}
+
+	// Occassionally we might get a zero or negative note
+	// length, if the note should be turned on and off in
+	// the same iteration. For now just set it to 1 and
+	// we'll turn it off in the next cycle.
+	if (!time_left || time_left & 0x80000000)
+		time_left = 1;
 
 	if (best) {
 		best->channel = channel;
@@ -187,12 +196,12 @@ void MidiParser::onTimer() {
 			if (info.ext.type == 0x2F) {
 				// End of Track must be processed by us,
 				// as well as sending it to the output device.
-				allNotesOff();
 				if (_autoLoop) {
-					_position._play_pos = _tracks[_active_track];
+					jumpToTick (0);
 					parseNextEvent (_next_event);
 				} else {
-					_position._play_pos = 0;
+					allNotesOff();
+					resetTracking();
 					_driver->metaEvent (info.ext.type, info.ext.data, (uint16) info.length);
 				}
 				return;
