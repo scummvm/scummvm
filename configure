@@ -33,6 +33,7 @@ _zlib=auto
 _build_scumm=yes
 _build_simon=yes
 _build_sky=yes
+_build_bs1=yes
 _build_bs2=yes
 _build_queen=yes
 _need_memalign=no
@@ -173,6 +174,7 @@ Optional Features:
   --disable-scumm          don't build the SCUMM engine
   --disable-simon          don't build the simon engine
   --disable-sky            don't build the Beneath a Steel Sky engine
+  --disable-bs1            don't build the Broken Sword I engine
   --disable-bs2            don't build the Broken Sword II engine
   --disable-queen          don't build the Flight of the Amazon Queen engine
 
@@ -199,6 +201,7 @@ for ac_option in $@; do
       --disable-scumm)		_build_scumm=no ;;
       --disable-simon)		_build_simon=no ;;
       --disable-sky)		_build_sky=no ;;
+      --disable-bs1)		_build_bs1=no ;;
       --disable-bs2)		_build_bs2=no ;;
       --disable-queen)		_build_queen=no ;;
       --enable-alsa)		_alsa=yes	;;
@@ -341,6 +344,12 @@ if test "$_build_sky" = no ; then
 	_mak_sky='DISABLE_SKY = 1'
 else
 	_mak_sky='# DISABLE_SKY = 1'
+fi
+
+if test "$_build_bs1" = no ; then
+	_mak_bs1='DISABLE_SWORD1 = 1'
+else
+	_mak_bs1='# DISABLE_SWORD1 = 1'
 fi
 
 if test "$_build_bs2" = no ; then
@@ -563,6 +572,9 @@ fi
 if test "$_build_sky" = yes ; then
   echo "    Beneath a Steel Sky"
 fi
+if test "$_build_bs1" = yes ; then
+  echo "    Broken Sword I"
+fi
 if test "$_build_bs2" = yes ; then
   echo "    Broken Sword II"
 fi
@@ -656,6 +668,7 @@ $_make_def_HAVE_GCC3
 $_mak_scumm
 $_mak_simon
 $_mak_sky
+$_mak_bs1
 $_mak_bs2
 $_mak_queen
 
