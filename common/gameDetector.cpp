@@ -518,16 +518,16 @@ const VersionSettings version_settings[] = {
 bool GameDetector::detectGame()
 {
 	const VersionSettings *gnl = version_settings;
-	char *detectGame;
+	char *realGame;
 	_gameId = 0;
 	_gameText.clear();
 
-	if (!(detectGame = (char*)g_config->get("gameid")))
-		detectGame = (char*)_gameFileName.c_str();
-	printf("Looking for %s\n", detectGame);
+	if (!(realGame = (char*)g_config->get("gameid")))
+		realGame = (char*)_gameFileName.c_str();
+	printf("Looking for %s\n", realGame);
 
 	do {
-		if (!scumm_stricmp(detectGame, gnl->filename)) {
+		if (!scumm_stricmp(realGame, gnl->filename)) {
 			_gameId = gnl->id;
 			_gameRealName = gnl->filename;
 			_features = gnl->features;
