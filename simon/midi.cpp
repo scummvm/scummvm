@@ -31,7 +31,7 @@
 // FIXME: This is a horrible place to put this, but for now....
 #include "sound/midistreamer.cpp"
 
-void MidiPlayer::read_all_songs(File *in)
+void MidiPlayer::read_all_songs(File *in, uint music)
 {
 	uint i, num;
 
@@ -40,11 +40,11 @@ void MidiPlayer::read_all_songs(File *in)
 	num = in->readByte();
 
 	for (i = 0; i != num; i++) {
-		read_one_song(in, &_songs[i]);
+		read_one_song(in, &_songs[i], music);
 	}
 }
 
-void MidiPlayer::read_all_songs_old(File *in)
+void MidiPlayer::read_all_songs_old(File *in, uint music)
 {
 	uint i, num;
 
@@ -53,11 +53,11 @@ void MidiPlayer::read_all_songs_old(File *in)
 	num = 1;
 
 	for (i = 0; i != num; i++) {
-		read_one_song(in, &_songs[i]);
+		read_one_song(in, &_songs[i], music);
 	}
 }
 
-void MidiPlayer::read_mthd(File *in, Song *s, bool old)
+void MidiPlayer::read_mthd(File *in, Song *s, bool old, uint music)
 {
 	Track *t;
 	uint i;
@@ -88,11 +88,81 @@ void MidiPlayer::read_mthd(File *in, Song *s, bool old)
 
 			t->data_size = in->readUint32BE();
 		} else {
-			uint32 pos = in->pos();
-			in->seek(0, SEEK_END);
-			uint32 end = in->pos();
-			in->seek(pos, SEEK_SET);
-			t->data_size = end - pos;
+			//FIXME We currently don't know how to find out music track size for GMF midi format
+			// So we use music files sizes minues header for now to allow looping
+			if (music == 0)
+				t->data_size = 8900;
+			if (music == 1)
+				t->data_size = 12166;
+			if (music == 2)
+				t->data_size = 2848;
+			if (music == 3)
+				t->data_size = 3442;
+			if (music == 4) 
+				t->data_size = 4034;
+			if (music == 5)
+				t->data_size = 4508;
+			if (music == 6)
+				t->data_size = 7064;
+			if (music == 7)
+				t->data_size = 9730;
+			if (music == 8)
+				t->data_size = 6014;
+			if (music == 9)
+				t->data_size = 4742;
+			if (music == 10) 
+				t->data_size = 3138;
+			if (music == 11) 
+				t->data_size = 6570;
+			if (music == 12) 
+				t->data_size = 5384;
+			if (music == 13) 
+				t->data_size = 8909;
+			if (music == 14) 
+				t->data_size = 6457;
+			if (music == 15) 
+				t->data_size = 16321;
+			if (music == 16) 
+				t->data_size = 2742;
+			if (music == 17) 
+				t->data_size = 8968;
+			if (music == 18) 
+				t->data_size = 4804;
+			if (music == 19) 
+				t->data_size = 8442;
+			if (music == 20) 
+				t->data_size = 7717;
+			if (music == 21)
+				t->data_size =  9444;
+			if (music == 22)
+				t->data_size = 5800;
+			if (music == 23)
+				t->data_size = 1381;
+			if (music == 24)
+				t->data_size = 5660;
+			if (music == 25)
+				t->data_size = 6684;
+			if (music == 26)
+				t->data_size = 2456;
+			if (music == 27)
+				t->data_size = 4744;
+			if (music == 28)
+				t->data_size = 2455;
+			if (music == 29)
+				t->data_size = 1177;
+			if (music == 30)
+				t->data_size = 1232;
+			if (music == 31)
+				t->data_size = 17256;
+			if (music == 32)
+				t->data_size = 5103;
+			if (music == 33)
+				t->data_size = 8794;
+			if (music == 34)
+				t->data_size = 4884;
+			if (music == 35)
+				t->data_size = 16;
+			t->data_size = t->data_size - 8;
 		}
 
 		t->data_ptr = (byte *)calloc(t->data_size, 1);
@@ -117,7 +187,7 @@ void MidiPlayer::read_mthd(File *in, Song *s, bool old)
 	}
 }
 
-void MidiPlayer::read_one_song(File *in, Song *s)
+void MidiPlayer::read_one_song(File *in, Song *s, uint music)
 {
 	_lastDelay = 0;
 
@@ -130,12 +200,12 @@ void MidiPlayer::read_one_song(File *in, Song *s)
 
 	switch (id) {
 	case 'MThd':
-		read_mthd(in, s, false);
+		read_mthd(in, s, false, music);
 		break;
 
 	case 'GMF\x1':
 		warning("Old style songs not properly supported yet");
-		read_mthd(in, s, true);
+		read_mthd(in, s, true, music);
 		break;
 
 	default:

@@ -28,8 +28,8 @@ struct MidiEvent;
 
 class MidiPlayer {
 public:
-	void read_all_songs(File *in);
-	void read_all_songs_old(File *in);
+	void read_all_songs(File *in, uint music);
+	void read_all_songs_old(File *in, uint music);
 	void initialize();
 	void shutdown();
 	void play();
@@ -69,9 +69,9 @@ private:
 	uint32 _volumeTable[16];
 
 
-	void read_mthd(File *in, Song *s, bool old);
+	void read_mthd(File *in, Song *s, bool old, uint music);
 
-	void read_one_song(File *in, Song *s);
+	void read_one_song(File *in, Song *s, uint music);
 
 	static uint32 track_read_gamma(Track *t);
 	static byte track_read_byte(Track *t);

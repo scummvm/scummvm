@@ -4991,14 +4991,12 @@ void SimonState::playAmbient(uint sound)
 
 void SimonState::playMusic(uint music)
 {
-	/* FIXME: not properly implemented */
-	/* Simon 1 dos talkie music doesn't detect correct size of music data */
-	/* Simon 2 dos talkie music isn't supported */
-	/* Simon 2 dos music isn't supported */
+	/* TODO */
+	/* Simon 2 dos / talkie music requires xmi midi format support */
 	if (_game & GAME_WIN) {	
 		midi.shutdown();
 		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
-		midi.read_all_songs(_game_file);
+		midi.read_all_songs(_game_file, music);
 	
 		midi.initialize();
 		midi.play();
@@ -5007,7 +5005,7 @@ void SimonState::playMusic(uint music)
 
 		if (_game & GAME_TALKIE) {
 			_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
-			midi.read_all_songs_old(_game_file);
+			midi.read_all_songs_old(_game_file, music);
 		} else {
 			char buf[50];
 			File *f = new File();
@@ -5017,7 +5015,7 @@ void SimonState::playMusic(uint music)
 				warning("Cannot load music from '%s'", buf);
 				return;
 			}
-			midi.read_all_songs_old(f);
+			midi.read_all_songs_old(f, music);
 			delete f;
 		}
 
