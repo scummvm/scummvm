@@ -123,7 +123,7 @@ enum GAME_IDS {
 	GID_ITE_MAC_G,  // TODO
 
 	// Wyrmkeep
-	//GID_ITE_CD,    // data for Win rerelease is same as in old DOS
+	GID_ITE_CD,       // data for Win rerelease is same as in old DOS
 	GID_ITE_MACCD,
 	GID_ITE_LINCD,
 	GID_ITE_WINDEMO1, // older Wyrmkeep windows demo

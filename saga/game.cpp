@@ -207,13 +207,19 @@ static GAME_MD5 game_md5[] = {
 	{ GID_ITE_DISK_G,   "c46e4392fcd2e89bc91e5567db33b62d", "voices.rsc" },
 
 	{ GID_ITE_CD_G,     "8f4315a9bb10ec839253108a032c8b54", "ite.rsc" },
-	{ GID_ITE_CD_G,     "a891405405edefc69c9d6c420c868b84", "scripts.rsc" },
+	{ GID_ITE_CD_G,     "50a0d2d7003c926a3832d503c8534e90", "scripts.rsc" },
 	{ GID_ITE_CD_G,     "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc" },
 	{ GID_ITE_CD_G,     "41bb6b95d792dde5196bdb78740895a6", "voices.rsc" },
+
+	{ GID_ITE_CD,       "8f4315a9bb10ec839253108a032c8b54", "ite.rsc" },
+	{ GID_ITE_CD,       "a891405405edefc69c9d6c420c868b84", "scripts.rsc" },
+	{ GID_ITE_CD,       "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc" },
+	{ GID_ITE_CD,       "41bb6b95d792dde5196bdb78740895a6", "voices.rsc" },
 
 	{ GID_ITE_DEMO_G,   "986c79c4d2939dbe555576529fd37932", "ite.rsc" },
 	{ GID_ITE_DEMO_G,   "d5697dd3240a3ceaddaa986c47e1a2d7", "scripts.rsc" },
 	{ GID_ITE_DEMO_G,   "c58e67c506af4ffa03fd0aac2079deb0", "voices.rsc" },
+	{ GID_ITE_DEMO_G,   "0b9a70eb4e120b6f00579b46c8cae29e", "ite.dmo" },
 
 	{ GID_ITE_MACCD,    "4f7fa11c5175980ed593392838523060", "ite.rsc" },
 	{ GID_ITE_MACCD,    "adf1f46c1d0589083996a7060c798ad0", "scripts.rsc" },
@@ -411,11 +417,29 @@ static GAMEDESC GameDescs[] = {
 		0
 	},
 
-	// Inherit the earth - CD version
+	// Inherit the earth - DOS CD version
 	{
 		"ite",
 		GType_ITE,
 		GID_ITE_CD_G,
+		"Inherit the Earth (DOS CD Version)",
+		320, 200,
+		137,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITECD_GameFiles),
+		ITECD_GameFiles,
+		ARRAYSIZE(ITECD_GameFonts),
+		ITECD_GameFonts,
+		&ITECD_GameSound,
+		0
+	},
+
+	// Inherit the earth - CD version
+	{
+		"ite",
+		GType_ITE,
+		GID_ITE_CD,
 		"Inherit the Earth (DOS/Win32 CD Version)",
 		320, 200,
 		137,
@@ -606,7 +630,7 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist) {
 			tstr = file->displayName();
 			tstr.toLowercase();
 
-			if (filesList[tstr] == true) {
+			if (filesList.contains(tstr)) {
 				if (md5_file(file->path().c_str(), md5sum, NULL, FILE_MD5_BYTES)) {
 					for (int j = 0; j < 16; j++) {
 						sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
