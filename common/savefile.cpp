@@ -25,6 +25,10 @@
 
 
 // FIXME HACK
+// Enable this to activate transparent zlib compression of all savegames
+// Note that doing that makes ScummVM produce savegames which can't trivially
+// be read by non-zlib enabled versions. However, one can always decompress
+// such a savegame by using gzip, so this shouldn't be a bad problem.
 //#define USE_ZLIB
 
 
@@ -184,5 +188,9 @@ void SaveFileManager::join_paths(const char *filename, const char *directory,
 }
 
 SaveFile *SaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {
+#ifdef USE_ZLIB
+	return new GzipSaveFile(filename, saveOrLoad);
+#else
 	return new StdioSaveFile(filename, saveOrLoad);
+#endif
 }
