@@ -743,12 +743,13 @@ void IMuseDigital::callback() {
 				_channel[l].toBeRemoved = true;
 			}
 
+			int pan = (_channel[l].pan != 64) ? 2 * _channel[l].pan - 127 : 0;
 			if (_scumm->_mixer->isReady()) {
 				if (!_channel[l].handle.isActive())
 					_scumm->_mixer->newStream(&_channel[l].handle, _channel[l].freq,
 											_channel[l].mixerFlags, 100000);
 				_scumm->_mixer->setChannelVolume(_channel[l].handle, _channel[l].vol / 1000);
-				_scumm->_mixer->setChannelPan(_channel[l].handle, _channel[l].pan);
+				_scumm->_mixer->setChannelPan(_channel[l].handle, pan);
 				_scumm->_mixer->appendStream(_channel[l].handle, _channel[l].data + _channel[l].offset, mixer_size);
 			}
 			_channel[l].offset += mixer_size;
@@ -788,7 +789,7 @@ void IMuseDigital::startSound(int sound) {
 			} else {
 				error("IMuseDigital::startSound() unknown condition");
 			}
-			_channel[l].pan = 0;
+			_channel[l].pan = 64;
 			_channel[l].vol = 127 * 1000;
 			_channel[l].volFadeDest = 0;
 			_channel[l].volFadeStep = 0;
@@ -903,9 +904,7 @@ void IMuseDigital::startSound(int sound) {
 					if (_scumm->_actorToPrintStrFor != 0xFF && _scumm->_actorToPrintStrFor != 0) {
 						Actor *a = _scumm->derefActor(_scumm->_actorToPrintStrFor, "playBundleSound");
 						_channel[l].freq = (_channel[l].freq * a->talkFrequency) / 256;
-
-						// Adjust to fit the mixer's notion of panning.
-						_channel[l].pan = (a->talkPan != 64) ? 2 * a->talkPan - 127 : 0;
+						_channel[l].pan = a->talkPan;
 					}
 				}
 
