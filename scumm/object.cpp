@@ -1298,8 +1298,8 @@ void Scumm::removeBlastObject(BlastObject *eo)
 
 	if (left_strip < 0)
 		left_strip = 0;
-	if (right_strip >= 200)
-		right_strip = 200;
+	if (right_strip >= 240)
+		right_strip = 240;
 
 	for (i = left_strip; i <= right_strip; i++)
 		gdi.resetBackground(top, bottom, i);

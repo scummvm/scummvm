@@ -473,7 +473,7 @@ void Scumm::drawBox(int x, int y, int x2, int y2, int color)
 	x2++;
 	y2++;
 
-	if (x > 319)
+	if (x > _realWidth - 1)
 		return;
 	if (x < 0)
 		x = 0;
