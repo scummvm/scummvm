@@ -83,7 +83,7 @@ static const char USAGE_STRING[] =
 	"\t-d[<num>]      - Enable debug output (debug level [1])\n"
 	"\t-u             - Dump scripts\n"
 	"\n"
-	"\t--platform     - Specify version of game (amiga,atari-st,macintosh)\n"
+	"\t--platform=    - Specify version of game (amiga,atari-st,macintosh)\n"
 	"\t--multi-midi   - Enable combination Adlib and native MIDI\n"
 	"\t--native-mt32  - True Roland MT-32 (disable GM emulation)\n"
 	"\t--fullscreen   - Full-screen mode (same as -f)\n"
@@ -502,8 +502,8 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				exit(1);
 			case '-':
 				// Long options. Let the fun begin!
-				if (!strncmp(s, "platform", 8)) {
-					s += 8;
+				if (!strncmp(s, "platform=", 9)) {
+					s += 9;
 					if (!strcmp (s, "amiga"))
 						_platform = 1;
 					else if (!strcmp (s, "atari-st"))

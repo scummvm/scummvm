@@ -376,7 +376,6 @@ Command Line Options:
         -f             - Full-screen mode. (-F forces window mode.)
         -g<mode>       - Select graphics scaler. See below.
         -e<mode>       - Select sound engine. See below.
-        -a             - Specify game is Amiga version
         -q<lang>       - Select language. See below.
         -c<num>        - Drive to play cd audio from.  E.g., 0 is first drive.
         -m<num>        - Set the music volume, 0-255.  Default is '192'
@@ -393,8 +392,7 @@ Command Line Options:
         -d[<num>]      - Set debug verbosity to <num>
         -u             - Dump scripts if a directory called 'dumps' exists in
                          current directory
-        --atari-st     - Specify game is Atari ST version
-        --macintosh    - Specify game is Macintosh version
+        --platform=    - Specify version of game (amiga,atari-st,macintosh)
         --multi-midi   - Enable combination Adlib and native MIDI
         --native-mt32  - True Roland MT-32 (disable GM emulation)
         --fullscreen   - Full-screen mode (same as -f)
@@ -807,12 +805,6 @@ An example config file looks as follows:
 
 The following keywords are recognized:
 
-        amiga           bool     Tells ScummVM whether or not a game is the
-                                 Amiga version
-        atari_st        bool     Tells ScummVM whether or not a game is the
-                                 Atari ST version
-        macintosh       bool     Tells ScummVM whether or not a game is the
-                                 Macintosh version
         basename        string
         path            string   The path to where a game's data files are
         read_only       bool     If true, ScummVM will never try to overwrite
