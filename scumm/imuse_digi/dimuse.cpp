@@ -175,6 +175,7 @@ void IMuseDigital::callback() {
 							break;
 					}
 					mixer_size -= result;
+					assert(mixer_size >= 0);
 				} while (mixer_size != 0);
 			}
 		}
@@ -278,7 +279,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			} else {
 				_track[l].stream2 = NULL;
 				_track[l].stream = makeAppendableAudioStream(freq, mixerFlags, 100000);
-				_scumm->_mixer->playInputStream(&_track[l].handle, _track[l].stream, true, _track[l].vol / 1000, _track[l].pan, -1, false);
+				_scumm->_mixer->playInputStream(&_track[l].handle, _track[l].stream, true, _track[l].vol / 1000, _track[l].pan, -1);
 			}
 
 			_track[l].used = true;
