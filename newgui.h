@@ -24,6 +24,7 @@
 #include "scummsys.h"
 #include "system.h"	// For events
 #include "scumm.h"	// For events
+#include "gui/util.h"
 
 class Dialog;
 class Scumm;
@@ -45,25 +46,7 @@ public:
 	void	pop()				{ if (_size > 0) _stack[--_size] = 0; }
 };
 
-class EventList {
-protected:
-	OSystem::Event	_stack[100];
-	int		_size;
-public:
-	EventList() : _size(0) {}
-
-	void addEvent(const OSystem::Event &d) {
-		if (_size<(100-1))
-			_stack[_size++] = d;
-		else
-			error("EventList overflow.");
-	}
-
-	const OSystem::Event &getEvent(int i) const { return _stack[i]; }
-	int size() const		{ return _size; }
-	void clear()			{ _size = 0; }
-};
-
+typedef List<OSystem::Event> EventList;
 
 // This class hopefully will replace the old Gui class completly one day 
 class NewGui {
@@ -86,7 +69,7 @@ public:
 
 	NewGui(Scumm *s);
 
-	void handleEvent(const OSystem::Event &event) { _eventList.addEvent(event); }
+	void handleEvent(const OSystem::Event &event) { _eventList.push_back(event); }
 
 protected:
 	Scumm		*_s;

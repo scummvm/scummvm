@@ -110,7 +110,7 @@ void NewGui::loop()
 		
 		for (int i = 0; i < _eventList.size(); i++)
 		{
-			t = _eventList.getEvent(i);
+			t = _eventList[i];
 		
 			switch(t.event_code) {
 				case OSystem::EVENT_KEYDOWN:

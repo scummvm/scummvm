@@ -110,7 +110,8 @@ String& String::operator  =(const char* str)
 	ensureCapacity(len, false);
 	
 	_len = len;
-	memcpy(_str, str, _len + 1);
+	if (_str)
+		memcpy(_str, str, _len + 1);
 
 	return *this;
 }
@@ -121,7 +122,8 @@ String& String::operator  =(const String& str)
 	ensureCapacity(len, false);
 	
 	_len = len;
-	memcpy(_str, str._str, _len + 1);
+	if (_str)
+		memcpy(_str, str._str, _len + 1);
 
 	return *this;
 }
@@ -131,7 +133,8 @@ String& String::operator +=(const char* str)
 	int len = strlen(str);
 	ensureCapacity(_len + len, true);
 	
-	memcpy(_str + _len, str, len + 1);
+	if (_str)
+		memcpy(_str + _len, str, len + 1);
 	_len += len;
 
 	return *this;
@@ -142,7 +145,8 @@ String& String::operator +=(const String& str)
 	int len = str._len;
 	ensureCapacity(_len + len, true);
 	
-	memcpy(_str + _len, str._str, len + 1);
+	if (_str && str._str)
+		memcpy(_str + _len, str._str, len + 1);
 	_len += len;
 
 	return *this;
@@ -161,9 +165,11 @@ String& String::operator +=(char c)
 
 void String::clear()
 {
-	_len = 0;
 	if (_str)
-		_str[0] = 0;
+		free(_str);
+	_capacity = 0;
+	_len = 0;
+	_str = 0;
 }
 
 void String::ensureCapacity(int new_len, bool keep_old)
@@ -179,83 +185,5 @@ void String::ensureCapacity(int new_len, bool keep_old)
 		if (keep_old)
 			memcpy(_str, old_str, _len+1);
 		free(old_str);
-	}
-}
-
-
-#pragma mark -
-
-
-StringList::StringList(const StringList& list)
-	: _capacity(0), _size(0), _data(0)
-{
-	printf("EEEEK! StringList copy constructor called!\n");
-	assert(0);
-}
-
-StringList::~StringList()
-{
-	if (_data) {
-		for (int i = 0; i < _capacity; i++)
-			if (_data[_size])
-				delete _data[_size];
-		free(_data);
-	}
-}
-
-
-void StringList::push_back(const char* str)
-{
-	ensureCapacity(_size + 1);
-	
-	if (!_data[_size])
-		_data[_size] = new String(str);
-	else
-		*_data[_size] = str;
-
-	_size++;
-}
-
-void StringList::push_back(const String& str)
-{
-	ensureCapacity(_size + 1);
-	
-	if (!_data[_size])
-		_data[_size] = new String(str);
-	else
-		*_data[_size] = str;
-
-	_size++;
-}
-
-String& StringList::operator [](int idx)
-{
-	assert(idx >= 0 && idx < _size);
-	return *_data[idx];
-}
-
-const String& StringList::operator [](int idx) const
-{
-	assert(idx >= 0 && idx < _size);
-	return *_data[idx];
-}
-
-void StringList::clear()
-{
-	_size = 0;
-}
-
-void StringList::ensureCapacity(int new_len)
-{
-	if (new_len <= _capacity)
-		return;
-
-	String	**old_data = _data;
-	_capacity = new_len + 32;
-	_data = (String **)calloc(sizeof(String*), _capacity);
-
-	if (old_data) {
-		memcpy(_data, old_data, _size * sizeof(String*));
-		free(old_data);
 	}
 }
