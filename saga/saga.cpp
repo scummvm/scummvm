@@ -49,6 +49,7 @@
 #include "isomap_mod.h"
 #include "script_mod.h"
 #include "scene_mod.h"
+#include "sdata.h"
 #include "sndres.h"
 #include "sprite_mod.h"
 #include "text_mod.h"
@@ -159,6 +160,7 @@ void SagaEngine::go() {
 	OBJECTMAP_Init();
 	ISOMAP_Init();
 	SCRIPT_Init();
+	_sdata = new SData();
 	INTERFACE_Init(); // requires script module
 	ACTOR_Init();
 
@@ -249,6 +251,7 @@ void SagaEngine::shutdown() {
 	delete _render;
 	delete _actionMap;
 	delete _sndRes;
+	delete _sdata;
 	// Shutdown system modules */
 	delete _music;
 	delete _sound;

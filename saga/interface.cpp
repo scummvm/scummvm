@@ -37,6 +37,7 @@
 
 #include "interface_mod.h"
 #include "interface.h"
+#include "sdata.h"
 
 namespace Saga {
 
@@ -496,7 +497,7 @@ int HandlePlayfieldClick(R_SURFACE *ds, R_POINT *imouse_pt) {
 	if (object_flags & R_OBJECT_NORMAL) {
 		if (OBJECTMAP_GetEPNum(object_num, &script_num) == R_SUCCESS) {
 			// Set active verb in script module
-			SDATA_PutWord(4, 4, I_VerbData[IfModule.active_verb].s_verb);
+			_vm->_sdata->putWord(4, 4, I_VerbData[IfModule.active_verb].s_verb);
 
 			// Execute object script if present
 			if (script_num != 0) {

@@ -126,7 +126,7 @@ int SF_sleep(R_SCRIPTFUNC_PARAMS) {
 	int time;
 
 	SSTACK_Pop(thread->stack, &time_param);
-	time = SDATA_ReadWordU(time_param);
+	time = _vm->_sdata->readWordU(time_param);
 	thread->sleep_time = time * 10;
 	return R_SUCCESS;
 }
@@ -173,15 +173,15 @@ int SF_actorWalkTo(R_SCRIPTFUNC_PARAMS) {
 	SSTACK_Pop(thread->stack, &x_parm);
 	SSTACK_Pop(thread->stack, &y_parm);
 
-	actor_id = SDATA_ReadWordS(actor_parm);
+	actor_id = _vm->_sdata->readWordS(actor_parm);
 	actor_idx = ACTOR_GetActorIndex(actor_id);
 	if (actor_idx < 0) {
 		CON_Print(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.", actor_id);
 		return R_FAILURE;
 	}
 
-	pt.x = SDATA_ReadWordS(x_parm);
-	pt.y = SDATA_ReadWordS(y_parm);
+	pt.x = _vm->_sdata->readWordS(x_parm);
+	pt.y = _vm->_sdata->readWordS(y_parm);
 
 	ACTOR_WalkTo(actor_idx, &pt, 0, &thread->sem);
 
@@ -207,8 +207,8 @@ int SF_setFacing(R_SCRIPTFUNC_PARAMS) {
 	SSTACK_Pop(thread->stack, &actor_parm);
 	SSTACK_Pop(thread->stack, &orient_parm);
 
-	actor_id = SDATA_ReadWordS(actor_parm);
-	orientation = SDATA_ReadWordS(orient_parm);
+	actor_id = _vm->_sdata->readWordS(actor_parm);
+	orientation = _vm->_sdata->readWordS(orient_parm);
 	actor_idx = ACTOR_GetActorIndex(actor_id);
 	if (actor_idx < 0) {
 		CON_Print(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.", actor_id);
@@ -270,8 +270,8 @@ int SF_startAnim(R_SCRIPTFUNC_PARAMS) {
 	SSTACK_Pop(thread->stack, &frame_parm);
 	SSTACK_Pop(thread->stack, &unk_parm);
 
-	frame_count = SDATA_ReadWordS(frame_parm);
-	anim_id = SDATA_ReadWordS(anim_id_parm);
+	frame_count = _vm->_sdata->readWordS(frame_parm);
+	anim_id = _vm->_sdata->readWordS(anim_id_parm);
 
 	if (_vm->_anim->play(anim_id, 0) != R_SUCCESS) {
 		CON_Print(S_WARN_PREFIX "SF.26: Anim::play() failed. Anim id: %u\n", anim_id);
@@ -298,7 +298,7 @@ int SF_actorWalkToAsync(R_SCRIPTFUNC_PARAMS) {
 	SSTACK_Pop(thread->stack, &x_parm);
 	SSTACK_Pop(thread->stack, &y_parm);
 
-	actor_id = SDATA_ReadWordS(actor_parm);
+	actor_id = _vm->_sdata->readWordS(actor_parm);
 	actor_idx = ACTOR_GetActorIndex(actor_id);
 	if (actor_idx < 0) {
 		CON_Print(S_WARN_PREFIX "SF.08: Actor id 0x%X not found.",
@@ -306,8 +306,8 @@ int SF_actorWalkToAsync(R_SCRIPTFUNC_PARAMS) {
 		return R_FAILURE;
 	}
 
-	pt.x = SDATA_ReadWordS(x_parm);
-	pt.y = SDATA_ReadWordS(y_parm);
+	pt.x = _vm->_sdata->readWordS(x_parm);
+	pt.y = _vm->_sdata->readWordS(y_parm);
 	ACTOR_WalkTo(actor_idx, &pt, 0, NULL);
 
 	return R_SUCCESS;
@@ -337,9 +337,9 @@ int SF_moveTo(R_SCRIPTFUNC_PARAMS) {
 	SSTACK_Pop(thread->stack, &x_parm);
 	SSTACK_Pop(thread->stack, &y_parm);
 
-	actor_id = SDATA_ReadWordS(actor_parm);
-	pt.x = SDATA_ReadWordS(x_parm);
-	pt.y = SDATA_ReadWordS(y_parm);
+	actor_id = _vm->_sdata->readWordS(actor_parm);
+	pt.x = _vm->_sdata->readWordS(x_parm);
+	pt.y = _vm->_sdata->readWordS(y_parm);
 
 	if (!ACTOR_ActorExists(actor_id)) {
 		result = ACTOR_Create(actor_id, pt.x, pt.y);
@@ -380,14 +380,14 @@ int SF_actorWalk(R_SCRIPTFUNC_PARAMS) {
 	SSTACK_Pop(thread->stack, &y_parm);
 	SSTACK_Pop(thread->stack, &unk_parm);
 
-	actor_idx = ACTOR_GetActorIndex(SDATA_ReadWordS(actor_parm));
+	actor_idx = ACTOR_GetActorIndex(_vm->_sdata->readWordS(actor_parm));
 	if (actor_idx < 0) {
 		CON_Print(S_WARN_PREFIX "SF.36: Actor id 0x%X not found.", (int)actor_parm);
 		return R_FAILURE;
 	}
 
-	pt.x = SDATA_ReadWordS(x_parm);
-	pt.y = SDATA_ReadWordS(y_parm);
+	pt.x = _vm->_sdata->readWordS(x_parm);
+	pt.y = _vm->_sdata->readWordS(y_parm);
 
 #if 1
 	ACTOR_WalkTo(actor_idx, &pt, 0, NULL);
@@ -419,8 +419,8 @@ int SF_cycleActorFrames(R_SCRIPTFUNC_PARAMS) {
 	SSTACK_Pop(thread->stack, &unk1_parm);
 	SSTACK_Pop(thread->stack, &action_parm);
 	SSTACK_Pop(thread->stack, &unk2_parm);
-	actor_id = SDATA_ReadWordS(actor_parm);
-	action = SDATA_ReadWordS(action_parm);
+	actor_id = _vm->_sdata->readWordS(actor_parm);
+	action = _vm->_sdata->readWordS(action_parm);
 	actor_idx = ACTOR_GetActorIndex(actor_id);
 
 	if (ACTOR_SetAction(actor_idx, action, ACTION_NONE) != R_SUCCESS) {
@@ -452,8 +452,8 @@ int SF_setFrame(R_SCRIPTFUNC_PARAMS) {
 	SSTACK_Pop(thread->stack, &action_parm);
 	SSTACK_Pop(thread->stack, &unk1_parm);
 
-	actor_id = SDATA_ReadWordS(actor_parm);
-	action = SDATA_ReadWordS(action_parm);
+	actor_id = _vm->_sdata->readWordS(actor_parm);
+	action = _vm->_sdata->readWordS(action_parm);
 	actor_idx = ACTOR_GetActorIndex(actor_id);
 
 	if (ACTOR_SetAction(actor_idx, action, ACTION_NONE) != R_SUCCESS) {
@@ -484,9 +484,9 @@ int SF_linkAnim(R_SCRIPTFUNC_PARAMS) {
 	SSTACK_Pop(thread->stack, &anim2_parm);
 	SSTACK_Pop(thread->stack, &tframes_parm);
 	SSTACK_Pop(thread->stack, &unk_parm);
-	tframes = SDATA_ReadWordS(tframes_parm);
-	anim_id1 = SDATA_ReadWordU(anim1_parm);
-	anim_id2 = SDATA_ReadWordU(anim2_parm);
+	tframes = _vm->_sdata->readWordS(tframes_parm);
+	anim_id1 = _vm->_sdata->readWordU(anim1_parm);
+	anim_id2 = _vm->_sdata->readWordU(anim2_parm);
 
 	if (_vm->_anim->link(anim_id1, anim_id2) != R_SUCCESS) {
 		CON_Print(S_WARN_PREFIX "SF.41: Anim::link() failed. (%u->%u)\n", anim_id1, anim_id2);
@@ -530,10 +530,10 @@ int SF_placeActor(R_SCRIPTFUNC_PARAMS) {
 	SSTACK_Pop(thread->stack, &action_parm);
 	SSTACK_Pop(thread->stack, &unknown_parm);
 
-	actor_id = SDATA_ReadWordS(actor_parm);
-	pt.x = SDATA_ReadWordS(x_parm);
-	pt.y = SDATA_ReadWordS(y_parm);
-	action_state = SDATA_ReadWordU(action_parm);
+	actor_id = _vm->_sdata->readWordS(actor_parm);
+	pt.x = _vm->_sdata->readWordS(x_parm);
+	pt.y = _vm->_sdata->readWordS(y_parm);
+	action_state = _vm->_sdata->readWordU(action_parm);
 
 	if (!ACTOR_ActorExists(actor_id)) {
 		result = ACTOR_Create(actor_id, pt.x, pt.y);

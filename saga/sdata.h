@@ -31,7 +31,18 @@ namespace Saga {
 #define R_SCRIPT_DATABUF_NUM 5
 #define R_SCRIPT_DATABUF_LEN 1024
 
-int SDATA_Init();
+class SData {
+public:	
+	SData();
+	~SData();
+	
+	int getWord(int n_buf, int n_word, SDataWord_T *data);
+	int putWord(int n_buf, int n_word, SDataWord_T data);
+	int setBit(int n_buf, SDataWord_T n_bit, int bitstate);
+	int getBit(int n_buf, SDataWord_T n_bit, int *bitstate);
+	int readWordS(SDataWord_T word);
+	uint16 readWordU(SDataWord_T word);
+};
 
 } // End of namespace Saga
 

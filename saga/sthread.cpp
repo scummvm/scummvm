@@ -265,26 +265,26 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 		case 0x0B:
 			n_buf = readS->readByte();
 			param1 = (SDataWord_T)readS->readUint16LE();
-			SDATA_GetBit(n_buf, param1, &bitstate);
+			_vm->_sdata->getBit(n_buf, param1, &bitstate);
 			SSTACK_Push(thread->stack, bitstate);
 			break;
 			// Get word (GETW)
 		case 0x0C:
 			n_buf = readS->readByte();
 			param1 = readS->readUint16LE();
-			SDATA_GetWord(n_buf, param1, &data);
+			_vm->_sdata->getWord(n_buf, param1, &data);
 			SSTACK_Push(thread->stack, data);
 			break;
 			// Modify flag (MODF)
 		case 0x0F:
 			n_buf = readS->readByte();
 			param1 = (SDataWord_T)readS->readUint16LE();
-			bitstate = SDATA_ReadWordU(param1);
+			bitstate = _vm->_sdata->readWordU(param1);
 			SSTACK_Top(thread->stack, &data);
 			if (bitstate) {
-				SDATA_SetBit(n_buf, data, 1);
+				_vm->_sdata->setBit(n_buf, data, 1);
 			} else {
-				SDATA_SetBit(n_buf, data, 0);
+				_vm->_sdata->setBit(n_buf, data, 0);
 			}
 			break;
 			// Put word (PUTW)
@@ -292,18 +292,18 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			n_buf = readS->readByte();
 			param1 = (SDataWord_T)readS->readUint16LE();
 			SSTACK_Top(thread->stack, &data);
-			SDATA_PutWord(n_buf, param1, data);
+			_vm->_sdata->putWord(n_buf, param1, data);
 			break;
 			// Modify flag and pop (MDFP)
 		case 0x13:
 			n_buf = readS->readByte();
 			param1 = (SDataWord_T)readS->readUint16LE();
 			SSTACK_Pop(thread->stack, &param1);
-			bitstate = SDATA_ReadWordU(param1);
+			bitstate = _vm->_sdata->readWordU(param1);
 			if (bitstate) {
-				SDATA_SetBit(n_buf, param1, 1);
+				_vm->_sdata->setBit(n_buf, param1, 1);
 			} else {
-				SDATA_SetBit(n_buf, param1, 0);
+				_vm->_sdata->setBit(n_buf, param1, 0);
 			}
 			break;
 			// Put word and pop (PTWP)
@@ -311,7 +311,7 @@ int STHREAD_Run(R_SCRIPT_THREAD *thread, int instr_limit, int msec) {
 			n_buf = readS->readByte();
 			param1 = (SDataWord_T)readS->readUint16LE();
 			SSTACK_Top(thread->stack, &data);
-			SDATA_PutWord(n_buf, param1, data);
+			_vm->_sdata->putWord(n_buf, param1, data);
 			break;
 
 // CONTROL INSTRUCTIONS    

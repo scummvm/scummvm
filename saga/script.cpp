@@ -125,11 +125,6 @@ int SCRIPT_Init() {
 	// Initialize script submodules
 	ScriptModule.thread_list = ys_dll_create();
 
-	if (SDATA_Init() != R_SUCCESS) {
-		free(ScriptModule.script_lut);
-		return R_FAILURE;
-	}
-
 	ScriptModule.initialized = 1;
 	return R_SUCCESS;
 }

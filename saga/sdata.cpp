@@ -31,34 +31,33 @@
 
 namespace Saga {
 
-int SDATA_Init() {
+SData::SData() {
 	unsigned int i;
 	void *alloc_ptr;
 
-	debug(0, "Initializing script data buffers.");
+	debug(0, "Initializing script data buffers");
 	for (i = 0; i < R_SCRIPT_DATABUF_NUM; i++) {
 		alloc_ptr = malloc(sizeof *ScriptModule.data_buf[0]);
 		if (alloc_ptr == NULL) {
-			warning("Error allocating memory for script data buffer %d", i);
-			return R_MEM;
+			error("Couldn't allocate memory for script data buffer %d", i);
 		}
 
 		ScriptModule.data_buf[i] = (R_SCRIPT_DATABUF *)alloc_ptr;
 		alloc_ptr = calloc(R_SCRIPT_DATABUF_LEN, sizeof(SDataWord_T));
 
 		if (alloc_ptr == NULL) {
-			warning("Error allocating memory for script data buffer %d", i);
-			return R_MEM;
+			error("Couldn't allocate memory for script data buffer %d", i);
 		}
 
 		ScriptModule.data_buf[i]->len = R_SCRIPT_DATABUF_LEN;
 		ScriptModule.data_buf[i]->data = (SDataWord_T *)alloc_ptr;
 	}
-
-	return R_SUCCESS;
 }
 
-int SDATA_GetWord(int n_buf, int n_word, SDataWord_T * data) {
+SData::~SData() {
+}
+
+int SData::getWord(int n_buf, int n_word, SDataWord_T *data) {
 	if ((n_buf < 0) || (n_buf >= R_SCRIPT_DATABUF_NUM)) {
 		return R_FAILURE;
 	}
@@ -76,7 +75,7 @@ int SDATA_GetWord(int n_buf, int n_word, SDataWord_T * data) {
 	return R_SUCCESS;
 }
 
-int SDATA_PutWord(int n_buf, int n_word, SDataWord_T data) {
+int SData::putWord(int n_buf, int n_word, SDataWord_T data) {
 	if ((n_buf < 0) || (n_buf >= R_SCRIPT_DATABUF_NUM)) {
 		return R_FAILURE;
 	}
@@ -90,7 +89,7 @@ int SDATA_PutWord(int n_buf, int n_word, SDataWord_T data) {
 	return R_SUCCESS;
 }
 
-int SDATA_SetBit(int n_buf, SDataWord_T n_bit, int bitstate) {
+int SData::setBit(int n_buf, SDataWord_T n_bit, int bitstate) {
 	int n_word;
 	int n_bitpos;
 
@@ -118,7 +117,7 @@ int SDATA_SetBit(int n_buf, SDataWord_T n_bit, int bitstate) {
 	return R_SUCCESS;
 }
 
-int SDATA_GetBit(int n_buf, SDataWord_T n_bit, int *bitstate) {
+int SData::getBit(int n_buf, SDataWord_T n_bit, int *bitstate) {
 	int n_word;
 	int n_bitpos;
 
@@ -142,7 +141,7 @@ int SDATA_GetBit(int n_buf, SDataWord_T n_bit, int *bitstate) {
 	return R_SUCCESS;
 }
 
-int SDATA_ReadWordS(SDataWord_T word) {
+int SData::readWordS(SDataWord_T word) {
 	uint16 u_int = word;
 	int s_int;
 
@@ -155,7 +154,7 @@ int SDATA_ReadWordS(SDataWord_T word) {
 	return s_int;
 }
 
-uint16 SDATA_ReadWordU(SDataWord_T word) {
+uint16 SData::readWordU(SDataWord_T word) {
 	uint16 u_int = (uint16) word;
 
 	return u_int;

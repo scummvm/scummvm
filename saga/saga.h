@@ -44,6 +44,7 @@ class Anim;
 class Render;
 class ActionMap;
 class Gfx;
+class SData;
 
 using Common::MemoryReadStream;
 
@@ -93,7 +94,8 @@ public:
 	Render *_render;
 	ActionMap *_actionMap;
 	Gfx *_gfx;
-
+	SData *_sdata;
+	
 private:
 	int decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, byte *outbuf, size_t outbuf_len);
 	int flipImage(byte *img_buf, int columns, int scanlines);
