@@ -252,7 +252,7 @@ const Graphics::Font &NewGui::getFont() const {
 }
 
 OverlayColor *NewGui::getBasePtr(int x, int y) {
-	return (OverlayColor *)((byte *)_screen.pixels + x * _screen.bytesPerPixel + y * _screen.pitch);
+	return (OverlayColor *)_screen.getBasePtr(x, y);
 }
 
 void NewGui::box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB) {
@@ -268,30 +268,11 @@ void NewGui::box(int x, int y, int width, int height, OverlayColor colorA, Overl
 }
 
 void NewGui::hLine(int x, int y, int x2, OverlayColor color) {
-	OverlayColor *ptr;
-
-	if (x2 < x)
-		SWAP(x2, x);
-
-	ptr = getBasePtr(x, y);
-
-	while (x++ <= x2) {
-		*ptr++ = color;
-	}
+	_screen.hLine(x, y, x2, color);
 }
 
 void NewGui::vLine(int x, int y, int y2, OverlayColor color) {
-	OverlayColor *ptr;
-
-	if (y2 < y)
-		SWAP(y2, y);
-
-	ptr = getBasePtr(x, y);
-
-	while (y++ <= y2) {
-		*ptr = color;
-		ptr += _screenPitch;
-	}
+	_screen.vLine(x, y, y2, color);
 }
 
 void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level) {
@@ -320,48 +301,11 @@ void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level
 }
 
 void NewGui::fillRect(int x, int y, int w, int h, OverlayColor color) {
-	int i;
-	OverlayColor *ptr = getBasePtr(x, y);
-
-	while (h--) {
-		for (i = 0; i < w; i++) {
-			ptr[i] = color;
-		}
-		ptr += _screenPitch;
-	}
-}
-
-void NewGui::checkerRect(int x, int y, int w, int h, OverlayColor color) {
-	int i;
-	OverlayColor *ptr = getBasePtr(x, y);
-
-	while (h--) {
-		for (i = 0; i < w; i++) {
-			if ((h ^ i) & 1)
-				ptr[i] = color;
-		}
-		ptr += _screenPitch;
-	}
+	_screen.fillRect(Common::Rect(x, y, x+w, y+h), color);
 }
 
 void NewGui::frameRect(int x, int y, int w, int h, OverlayColor color) {
-	int i;
-	OverlayColor *ptr, *basePtr = getBasePtr(x, y);
-	if (basePtr == NULL)
-		return;
-
-	ptr = basePtr;
-	for (i = 0; i < w; i++, ptr++)
-		*ptr = color;
-	ptr--;
-	for (i = 0; i < h; i++, ptr += _screenPitch)
-		*ptr = color;
-	ptr = basePtr;
-	for (i = 0; i < h; i++, ptr += _screenPitch)
-		*ptr = color;
-	ptr -= _screenPitch;
-	for (i = 0; i < w; i++, ptr++)
-		*ptr = color;
+	_screen.frameRect(Common::Rect(x, y, x+w, y+h), color);
 }
 
 void NewGui::addDirtyRect(int x, int y, int w, int h) {

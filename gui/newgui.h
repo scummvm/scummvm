@@ -126,7 +126,6 @@ public:
 	void vLine(int x, int y, int y2, OverlayColor color);
 	void blendRect(int x, int y, int w, int h, OverlayColor color, int level = 3);
 	void fillRect(int x, int y, int w, int h, OverlayColor color);
-	void checkerRect(int x, int y, int w, int h, OverlayColor color);
 	void frameRect(int x, int y, int w, int h, OverlayColor color);
 
 	void drawChar(byte c, int x, int y, OverlayColor color, const Graphics::Font *font = 0);
