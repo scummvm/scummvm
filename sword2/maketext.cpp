@@ -502,8 +502,8 @@ void Sword2Engine::initialiseFontResourceFlags(void) {
 	// If language is Polish or Finnish it requires alternate fonts.
 	// Otherwise, use regular fonts
 
-	// "talenna"	Finnish for "save"
-	// "zapisz"	Polish for "save"
+	// "tallenna"   Finnish for "save"
+	// "zapisz"     Polish for "save"
 
 	// Get the text line (& skip the 2 chars containing the wavId)
 	char *textLine = (char *) fetchTextLine(textFile, SAVE_LINE_NO) + 2;
