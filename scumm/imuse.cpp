@@ -116,6 +116,8 @@ struct Player {
 	bool _abort;
 
 	HookDatas _hook;
+	byte _def_do_command_trigger;
+	byte _deferred_do_command [4];
 
 	bool _mt32emulate;
 	bool _isGM;
@@ -1410,6 +1412,7 @@ int IMuseInternal::enqueue_trigger(int sound, int marker)
 
 int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g, int h)
 {
+	int i;
 	byte cmd = a & 0xFF;
 	byte param = a >> 8;
 	Player *player = NULL;
@@ -1433,32 +1436,48 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 			return stop_all_sounds();
 		case 13:
 			return get_sound_status(b);
-		case 14:{ // Sam and Max: Volume Fader?
-				int i;
-				Player *player;
-
-				for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
-					if (player->_active && player->_id == (uint16)b) {
-						player->fade_vol(e, f);
-						return 0;
-					}
+		case 14:
+			// Sam and Max: Volume Fader?
+			for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
+				if (player->_active && player->_id == (uint16)b) {
+					player->fade_vol(e, f);
+					return 0;
 				}
 			}
-		case 15:{ // Sam and Max: Unconditional Jump?
-				int i;									//      Something to do with position?
-				Player *player;
-				for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
-					if (player->_active && player->_id == (uint16)b) {
-						player->jump(player->_track_index + 1, 0, 0);
-						return 0;
-					}
+			return -1;
+		case 15:
+			// Sam & Max: Unconditional Jump?
+			for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
+				if (player->_active && player->_id == (uint16)b) {
+					player->jump(player->_track_index + 1, 0, 0);
+					return 0;
 				}
 			}
-
+			return -1;
 		case 16:
 			return set_volchan(b, c);
 		case 17:
-			return set_channel_volume(b, c);
+			if (g_scumm->_features & GID_SAMNMAX) {
+				// Sam & Max: ImSetTrigger.
+				// Sets a trigger for a particular player and
+				// marker ID, along with do_command parameters
+				// to invoke at the marker. The marker is
+				// represented by MIDI SysEx block 00 xx (F7)
+				// where "xx" is the marker ID.
+				for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
+					if (player->_active && player->_id == (uint16)b) {
+						player->_def_do_command_trigger = d;
+						player->_deferred_do_command [0] = e;
+						player->_deferred_do_command [1] = f;
+						player->_deferred_do_command [2] = g;
+						player->_deferred_do_command [3] = h;
+						return 0;
+					}
+				}
+				return -1;
+			}
+			else
+				return set_channel_volume(b, c);
 		case 18:
 			return set_volchan_entry(b, c);
 		case 19:
@@ -1489,7 +1508,10 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 		case 0:
 			return player->get_param(c, d);
 		case 1:
-			player->set_priority(c);
+			if (g_scumm->_features & GID_SAMNMAX) // Jamieson630: Nasty
+				player->jump (d - 1, (e - 1) * 4 + f, ((g * player->_ticks_per_beat) >> 2) + h);
+			else
+				player->set_priority(c);
 			return 0;
 		case 2:
 			return player->set_vol(c);
@@ -2107,10 +2129,20 @@ void Player::parse_sysex(byte *p, uint len)
 				debug(2, "%d => turning %s part %d", p[1], (p[1] == 2) ? "OFF" : "ON", a);
 				part->set_onoff(p[1] != 2);
 			}
+		} else {
+			// Jamieson630: Sam & Max seems to use this as a marker for
+			// ImSetTrigger. When a marker is encountered whose sound
+			// ID and (presumably) marker ID match what was set by
+			// ImSetTrigger, something magical is supposed to happen....
+			if (_def_do_command_trigger && *p == _def_do_command_trigger) {
+				_def_do_command_trigger = 0;
+				_se->do_command (_deferred_do_command [0],
+				            _deferred_do_command [1],
+				            _deferred_do_command [2],
+				            _deferred_do_command [3],
+				            0, 0, 0, 0);
+			} // end if
 		} // end if
-
-		// Jamieson630: Sam & Max uses this for something entirely different.
-		// The data is much shorter, hence the len > 2 check above.
 		break;
 
 	case 1:
