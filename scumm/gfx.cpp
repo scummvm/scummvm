@@ -1100,7 +1100,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 		}
 		CHECK_HEAP;
 
-		if (!(_vm->_features & GF_AFTER_V2)) {
+		if (_vm->_features & GF_AFTER_V2) {
 			// Do nothing here for V2 games - zplane was handled already.
 		} else if (flag & dbDrawMaskOnAll) {
 			// Sam & Max uses dbDrawMaskOnAll for things like the inventory
