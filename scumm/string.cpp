@@ -136,7 +136,7 @@ void ScummEngine::CHARSET_1() {
 	_charset->_right = _string[0].right;
 	_charset->setColor(_charsetColor);
 
-	if (_version > 3)	// FIXME
+	if (_version >= 5)
 		for (i = 0; i < 4; i++)
 			_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
 
@@ -333,7 +333,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	_charset->_disableOffsX = _charset->_firstChar = true;
 	_charset->setCurID(_string[a].charset);
 
-	if (_version > 3) {
+	if (_version >= 5) {
 		for (i = 0; i < 4; i++)
 			_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
 	}
