@@ -648,7 +648,8 @@ void ScummEngine_v72he::o72_addMessageToStack() {
 	_stringLength = resStrLen(_scriptPointer) + 1;
 	addMessageToStack(_scriptPointer, _stringBuffer, _stringLength);
 
-	debug(0,"o72_addMessageToStack(\"%s\")", _scriptPointer);
+	if (strcmp((char *)_stringBuffer, "no trace"))
+		debug(0,"o72_addMessageToStack(\"%s\")", _scriptPointer);
 
 	_scriptPointer += _stringLength;
 }
@@ -1035,7 +1036,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 	case 98:		// SO_SHADOW
 		a->shadow_mode = pop();
-		debug(0, "Set actor XMAP idx to %d\n", a->shadow_mode);
+		debug(0, "Set actor XMAP idx to %d", a->shadow_mode);
 		break;
 	case 99:		// SO_TEXT_OFFSET
 		a->talkPosY = pop();
