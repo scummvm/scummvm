@@ -689,6 +689,15 @@ int Scumm::readSoundResource(int type, int idx)
 		total_size = fileReadDwordBE();
 		fileRead(_fileHandle, createResource(type, idx, total_size), total_size - 8);
 		return 1;
+	} else if (basetag == MKID('DIGI')) {
+		// Use in Putt-Putt Demo
+		debug(1, "Found base tag DIGI in sound %d, size %d", idx, total_size);
+		debug(1, "It was at position %d", filePos(_fileHandle));
+
+		fileSeek(_fileHandle, -12, SEEK_CUR);
+		total_size = fileReadDwordBE();
+		fileRead(_fileHandle, createResource(type, idx, total_size), total_size - 8);
+		return 1;
 	} else {
 		fprintf(stderr, "WARNING: Unrecognized base tag 0x%08lx in sound %d\n",
 					basetag, idx);

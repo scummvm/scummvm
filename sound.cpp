@@ -203,6 +203,23 @@ void Scumm::playSound(int sound)
 		_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 		return;
 	}
+	// Support for Putt-Putt sounds - very hackish, too 8-)
+	else if (ptr != NULL && READ_UINT32_UNALIGNED(ptr) == MKID('DIGI')) {
+		// TODO - discover what data the first chunk, HSHD, contains
+		// it might be useful here.
+		ptr += 8 + READ_UINT32_UNALIGNED(ptr+12);
+		if (READ_UINT32_UNALIGNED(ptr) != MKID('SDAT'))
+			return;	// abort
+
+		int size = READ_UINT32_UNALIGNED(ptr+4);
+		int rate = 8000;	// FIXME - what value here ?!? this is just a guess for now
+		
+		// Allocate a sound buffer, copy the data into it, and play
+		char *sound = (char*)malloc(size);
+		memcpy(sound, ptr+8, size);
+		_mixer->play_raw(NULL, sound, size, rate, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+		return;
+	}
 
 	if ((_features & GF_OLD256) || (_gameId == GID_MONKEY_VGA))
 		return;											/* FIXME */
