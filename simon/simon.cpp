@@ -1744,10 +1744,16 @@ void SimonEngine::f10_key() {
 	uint count;
 	uint y_, x_;
 	byte *dst;
-	uint b;
+	uint b, color;
 
 	_lock_word |= 0x8000;
 	
+	if (_game & GF_SIMON2)
+		color = 0xec;
+	else
+		color = 0xe1;
+
+
 	for (int i = 0; i < 5; i++) {
 		ha = _hit_areas;
 		count = ARRAYSIZE(_hit_areas);
@@ -1755,9 +1761,10 @@ void SimonEngine::f10_key() {
 		timer_vga_sprites();
 
 		do {
-			if (ha->id != 0 && ha->flags & 0x20 && !(ha->flags & 0x40)) {
-				if (ha->y >= 0xc8 || ha->y >= _vga_var8)
-					continue;
+			if (ha->id != 0 && ha->flags & 0x20 && !(ha->flags & 0x40) && ha->flags & 1) {
+				if (_game & GF_SIMON2)
+					if (ha->y >= 0xc8 || ha->y >= _vga_var8)
+						continue;
 
 				y_ = (ha->height >> 1) - 4 + ha->y;
 
@@ -1771,37 +1778,37 @@ void SimonEngine::f10_key() {
 				dst += (((_dx_surface_pitch >> 2) * y_) << 2) + x_;
 
 				b = _dx_surface_pitch;
-				dst[4] = 0xec;
-				dst[b+1] = 0xec;
-				dst[b+4] = 0xec;
-				dst[b+7] = 0xec;
+				dst[4] = color;
+				dst[b+1] = color;
+				dst[b+4] = color;
+				dst[b+7] = color;
 				b += _dx_surface_pitch;
-				dst[b+2] = 0xec;
-				dst[b+4] = 0xec;
-				dst[b+6] = 0xec;
+				dst[b+2] = color;
+				dst[b+4] = color;
+				dst[b+6] = color;
 				b += _dx_surface_pitch;
-				dst[b+3] = 0xec;
-				dst[b+5] = 0xec;
+				dst[b+3] = color;
+				dst[b+5] = color;
 				b += _dx_surface_pitch;
-				dst[b] = 0xec;
-				dst[b+1] = 0xec;
-				dst[b+2] = 0xec;
-				dst[b+6] = 0xec;
-				dst[b+7] = 0xec;
-				dst[b+8] = 0xec;
+				dst[b] = color;
+				dst[b+1] = color;
+				dst[b+2] = color;
+				dst[b+6] = color;
+				dst[b+7] = color;
+				dst[b+8] = color;
 				b += _dx_surface_pitch;
-				dst[b+3] = 0xec;
-				dst[b+5] = 0xec;
+				dst[b+3] = color;
+				dst[b+5] = color;
 				b += _dx_surface_pitch;
-				dst[b+2] = 0xec;
-				dst[b+4] = 0xec;
-				dst[b+6] = 0xec;
+				dst[b+2] = color;
+				dst[b+4] = color;
+				dst[b+6] = color;
 				b += _dx_surface_pitch;
-				dst[b+1] = 0xec;
-				dst[b+4] = 0xec;
-				dst[b+7] = 0xec;
+				dst[b+1] = color;
+				dst[b+4] = color;
+				dst[b+7] = color;
 				b += _dx_surface_pitch;
-				dst[b+4] = 0xec;
+				dst[b+4] = color;
 
 				dx_unlock_attached();
 			}
@@ -1834,7 +1841,7 @@ startOver:
 		_last_hitarea = NULL;
 		_last_hitarea_3 = NULL;
 		for (;;) {
-			if (_game & GF_SIMON2 && _key_pressed == 35)
+			if (_key_pressed == 35)
 				f10_key();
 			processSpecialKeys();
 			if (_last_hitarea_3 == (HitArea *) 0xFFFFFFFF)
@@ -3870,7 +3877,7 @@ void SimonEngine::talk_with_text(uint num_1, uint num_2, const char *string_ptr,
 			len_div_3 >>= 1;
 		if (_variableArray[86] == 2)
 			len_div_3 <<= 1;
-		_variableArray[85] = len_div_3 * 5;
+		_variableArray[85] = len_div_3 * 2;
 	}
 
 	num_of_rows = strlen(string_ptr) / letters_per_row;
