@@ -83,7 +83,7 @@ protected:
 	EditTextWidget	*_descriptionWidget;
 	EditTextWidget	*_domainWidget;
 	CheckboxWidget  *_fullscreenCheckbox;
-	CheckboxWidget  *_AmigaPalCheckbox;
+	CheckboxWidget  *_amigaPalCheckbox;
 };
 
 EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain)
@@ -122,7 +122,7 @@ EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain
 	
 	// TODO - insert more widgets here; see comments before the class
 	_fullscreenCheckbox = new CheckboxWidget(this, 15, 62, 200, 16, "Use Fullscreen Mode", 0, 'F');
-	_AmigaPalCheckbox = new CheckboxWidget(this, 15, 82, 200, 16, "Use Amiga Palette", 0, 'A');
+	_amigaPalCheckbox = new CheckboxWidget(this, 15, 82, 200, 16, "Use Amiga Palette", 0, 'A');
 
 	// Add OK & Cancel buttons
 	addButton(_w-2*(kButtonWidth+10), _h-24, "Cancel", kCloseCmd, 0);
@@ -130,7 +130,7 @@ EditGameDialog::EditGameDialog(NewGui *gui, Config &config, const String &domain
 
 	// Load in settings for the checkboxs
 	_fullscreenCheckbox->setState(_config.getBool("fullscreen", false, _domain));
-	_AmigaPalCheckbox->setState(_config.getBool("amiga", false, _domain));
+	_amigaPalCheckbox->setState(_config.getBool("amiga", false, _domain));	// TODO - only show this checkbox if this is a Scumm game?
 }
 
 void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
@@ -147,7 +147,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			_config.rename_domain(_domain, newDomain);
 		}
 		_config.set("description", _descriptionWidget->getLabel(), newDomain);
-		_config.setBool("amiga", _AmigaPalCheckbox->getState(), newDomain);
+		_config.setBool("amiga", _amigaPalCheckbox->getState(), newDomain);
 		_config.setBool("fullscreen", _fullscreenCheckbox->getState(), newDomain);
 		setResult(1);
 		close();
