@@ -34,7 +34,7 @@ TextObject::TextObject(const char *text, const int x, const int y, /*const*/ Fon
 	_bitmapHeight = _bitmapWidth = 0;
 
 	for (int i = 0; msg[i] != '\0'; ++i) {
-		_bitmapWidth += font->getCharWidth(msg[i]) + font->getCharStartingCol(msg[i]);
+		_bitmapWidth += font->getCharLogicalWidth(msg[i]) + font->getCharStartingCol(msg[i]);
 
 		int h = font->getCharHeight(msg[i]) + font->getCharStartingLine(msg[i]);
 		if (h > _bitmapHeight)
@@ -51,6 +51,7 @@ TextObject::TextObject(const char *text, const int x, const int y, /*const*/ Fon
 	for (int line = 0; line < _bitmapHeight; ++line) {
 		for (int c = 0; msg[c] != '\0'; ++c) {
 			uint32 charWidth = font->getCharWidth(msg[c]);
+			uint32 charLogicalWidth = font->getCharLogicalWidth(msg[c]);
 			uint8 startingCol = font->getCharStartingCol(msg[c]);
 			uint8 startingLine = font->getCharStartingLine(msg[c]);
 
@@ -59,7 +60,7 @@ TextObject::TextObject(const char *text, const int x, const int y, /*const*/ Fon
 					font->getCharData(msg[c]) + charWidth * (line - startingLine), charWidth);
 			}
 
-			offset += charWidth + startingCol;
+			offset += charLogicalWidth + startingCol;
 		}
 	}
 

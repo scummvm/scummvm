@@ -30,7 +30,7 @@ public:
 
 	uint32 getCharWidth(char c) { return _charHeaders[_charIndex[c]].width; }
 	uint32 getCharHeight(char c) { return _charHeaders[_charIndex[c]].height; }
-	uint32 getCharLogicalWidth(char c) { return _charHeaders[_charIndex[c]].startingCol; }
+	uint32 getCharLogicalWidth(char c) { return _charHeaders[_charIndex[c]].logicalWidth; }
 	uint32 getCharStartingCol(char c) { return _charHeaders[_charIndex[c]].startingCol; }
 	uint32 getCharStartingLine(char c) { return _charHeaders[_charIndex[c]].startingLine; }
 	const byte *getCharData(char c) { return _fontData + (_charHeaders[_charIndex[c]].offset); }
