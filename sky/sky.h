@@ -62,7 +62,7 @@ class SkyState : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 protected:
 	byte _game;
-	byte _key_pressed;
+	byte _keyPressed, _keyFlags;
 	static uint8 _languageTable[11];
 	bool _quickLaunch; // set when starting with -x
 	bool _floppyIntro;
@@ -111,10 +111,15 @@ protected:
 	void go();
 	void doCheat(uint8 num);
 	void handleKey(void);
+	void doSysMsg(void);
 
 	static uint8 fosterImg[297 * 143];
 	static uint8 fosterPal[256 * 3];
 	uint32 _lastSaveTime;
+
+	char _sysMessage[256];
+	dataFileHeader *_sysGraph;
+	int32 _sysShow;
 
 	SkyText *getSkyText();
 	void initialise();

@@ -51,6 +51,7 @@ class SkyScreen {
 public:
 	SkyScreen(OSystem *pSystem, SkyDisk *pDisk);
 	~SkyScreen(void);
+	void showOverlay(dataFileHeader *data);
 	void setPalette(uint8 *pal);
 	void setPaletteEndian(uint8 *pal);
 	void setPalette(uint16 fileNum);

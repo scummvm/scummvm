@@ -734,6 +734,22 @@ void SkyScreen::verticalMask(void) {
 	}
 }
 
+void SkyScreen::showOverlay(dataFileHeader *data) {
+
+	uint8 *ovlData = ((uint8*)data) + sizeof(dataFileHeader);
+	uint8 *scrBuf = _currentScreen + data->s_y * GAME_SCREEN_WIDTH + data->s_x;
+	for (uint16 cnty = 0; cnty < data->s_height; cnty++)
+		for (uint16 cntx = 0; cntx < data->s_width; cntx++) {
+			if (*ovlData)
+				*scrBuf = *ovlData;
+			scrBuf++;
+			ovlData++;
+		}
+	scrBuf = _currentScreen + data->s_y * GAME_SCREEN_WIDTH + data->s_x;
+	_system->copy_rect(scrBuf, GAME_SCREEN_WIDTH, data->s_x, data->s_y, data->s_width, data->s_height);
+	_system->update_screen();
+}
+
 void SkyScreen::paintBox(uint16 x, uint16 y) {
 
 	uint8 *screenPos = _currentScreen + y * GAME_SCREEN_WIDTH + x;

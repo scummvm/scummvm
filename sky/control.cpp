@@ -1076,30 +1076,17 @@ void SkyControl::saveDescriptions(uint8 *srcBuf) {
 	free(tmpBuf);	
 }
 
-void SkyControl::doAutoSave(void) {
-	char fName[20];
-	if (SkyState::isCDVersion())
-		strcpy(fName, "SKY-VM-CD.ASD");
-	else
-        sprintf(fName, "SKY-VM%03d.ASD", SkyState::_systemVars.gameVersion);
-	File outf;
-	if (!outf.open(fName, _savePath, File::kFileWriteMode)) {
-		warning("Can't create file %s for autosaving", fName);
-		return;
-	}
-	uint8 *saveData = (uint8 *)malloc(0x20000);
-	uint32 fSize = prepareSaveData(saveData);
-
-	if (outf.write(saveData, fSize) != fSize)
-		warning("Can't write file %s for autosaving. Disk full?", fName);
-	outf.close();
-	free(saveData);
-}
-
 uint16 SkyControl::saveGameToFile(void) {
 
 	char fName[20];
-	sprintf(fName,"SKY-VM.%03d", _selectedGame);
+	if (_selectedGame != 0xFFFF)
+		sprintf(fName,"SKY-VM.%03d", _selectedGame);
+	else {
+		if (SkyState::isCDVersion())
+			strcpy(fName, "SKY-VM-CD.ASD");
+		else
+			sprintf(fName, "SKY-VM%03d.ASD", SkyState::_systemVars.gameVersion);		
+	}
 	File outf;
 	if (!outf.open(fName, _savePath, File::kFileWriteMode)) {
 		return NO_DISK_SPACE;
@@ -1596,7 +1583,7 @@ uint16 SkyControl::restoreGameFromFile(bool autoSave) {
 	return res;
 }
 
-uint16 SkyControl::quickXRestore(uint16 slot) {
+uint16 SkyControl::quickSaveRestore(uint16 slot, bool save) {
 	uint16 result;
 	initPanel();
 	_mouseClicked = false;
@@ -1615,26 +1602,26 @@ uint16 SkyControl::quickXRestore(uint16 slot) {
 	_savedMouse = _skyMouse->giveCurrentMouseType();
 	_skyMouse->spriteMouse(MOUSE_NORMAL,0,0);
 
-	if (slot == 0)
-		result = restoreGameFromFile(true);
-	else {
-		_selectedGame = slot - 1;
-		result = restoreGameFromFile(false);
-	}
-	if (result == GAME_RESTORED) {
-		memset(_skyScreen->giveCurrent(), 0, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);
-		_skyScreen->showScreen(_skyScreen->giveCurrent());
-		_skyScreen->forceRefresh();
-		_skyScreen->setPaletteEndian((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
+	if (save) {
+		if (slot == 0)
+			_selectedGame = 0xFFFF;
+		else
+			_selectedGame = slot - 1;
+		result = saveGameToFile();
 	} else {
-		memset(_screenBuf, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
-		_system->copy_rect(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
-		_system->update_screen();
-		_skyScreen->showScreen(_skyScreen->giveCurrent());
-		_skyScreen->setPalette(60111);
+		if (slot == 0)
+			result = restoreGameFromFile(true);
+		else {
+			_selectedGame = slot - 1;
+			result = restoreGameFromFile(false);
+		}
 	}
 	_skyMouse->spriteMouse(_savedMouse, 0, 0);
 	_skyText->fnSetFont(_savedCharSet);
+	memset(_skyScreen->giveCurrent(), 0, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);
+	_skyScreen->showScreen(_skyScreen->giveCurrent());
+	_skyScreen->forceRefresh();
+	_skyScreen->setPaletteEndian((uint8 *)SkyState::fetchCompact(SkyState::_systemVars.currentPalette));
 
 	removePanel();
     return result;

@@ -173,8 +173,7 @@ public:
 	void doLoadSavePanel(void);
 	void restartGame(void);
 	void showGameQuitMsg(bool useScreen = true);
-	void doAutoSave(void);
-	uint16 quickXRestore(uint16 slot);
+	uint16 quickSaveRestore(uint16 slot, bool save);
 	bool loadSaveAllowed(void);
     
 private:

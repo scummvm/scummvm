@@ -156,23 +156,69 @@ void SkyState::doCheat(uint8 num) {
 
 void SkyState::handleKey(void) {
 
-	if (_key_pressed == 63)
+	if ((_keyFlags & (OSystem::KBD_ALT | OSystem::KBD_CTRL)) == (OSystem::KBD_ALT | OSystem::KBD_CTRL))
+		_keyFlags = 0;
+
+	uint16 saveRes;
+	uint8 slot = _keyPressed - '0';
+	if (slot == 0)
+		slot = 10;
+	if ((_keyFlags == OSystem::KBD_CTRL) && ((_keyPressed >= '0') && (_keyPressed <= '9'))) {
+		if (_skyControl->loadSaveAllowed())
+			if (_skyControl->quickSaveRestore(slot, false) == GAME_RESTORED) {
+				sprintf(_sysMessage, "Restored slot %d", slot);
+				_sysShow = 1000;
+			}
+	}
+	
+	if ((_keyFlags == OSystem::KBD_ALT) && ((_keyPressed >= '0') && (_keyPressed <= '9'))) {
+		if (_skyControl->loadSaveAllowed()) {
+			saveRes = _skyControl->quickSaveRestore(slot, true);
+			if (saveRes == GAME_SAVED) {
+				sprintf(_sysMessage, "Saved game to slot %d", slot);
+				_sysShow = 1000;
+			} else {
+				strcpy(_sysMessage, "Unable to save game.");
+				_sysShow = 2000;
+			}
+		}
+	}
+
+	if (_keyPressed == 63)
 		_skyControl->doControlPanel();
 
-	if ((_key_pressed == 27) && (!_systemVars.pastIntro))
+	if ((_keyPressed == 27) && (!_systemVars.pastIntro))
 		_skyControl->restartGame();
 #ifdef WITH_DEBUG_CHEATS
-	if ((_key_pressed >= '0') && (_key_pressed <= '9'))
-		doCheat(_key_pressed - '0');
+	if ((_keyPressed >= '0') && (_keyPressed <= '9'))
+		doCheat(_keyPressed - '0');
 
-	if (_key_pressed == 'r') {
+	if (_keyPressed == 'r') {
 		warning("loading grid");
 		_skyLogic->_skyGrid->loadGrids();
 	}
 #endif
-	if (_key_pressed == '.')
+	if (_keyPressed == '.')
 		_skyMouse->logicClick();
-	_key_pressed = 0;
+	_keyPressed = 0;
+}
+
+void SkyState::doSysMsg(void) {
+	if (_sysShow > 0) {
+		if (!_sysGraph) {
+			_sysGraph = (dataFileHeader*)malloc(14 * GAME_SCREEN_WIDTH + sizeof(dataFileHeader));
+			_skyText->displayText(_sysMessage, (uint8*)_sysGraph, true, GAME_SCREEN_WIDTH, 255);
+			_sysGraph->s_x = 0;
+			_sysGraph->s_y = GAME_SCREEN_HEIGHT / 2 - 6;
+		}
+		_sysShow -= _systemVars.gameSpeed;
+		_skyScreen->showOverlay(_sysGraph);
+		if (_sysShow <= 0) {
+			free(_sysGraph);
+			_sysGraph = NULL;
+			_skyScreen->forceRefresh();
+		}
+	}
 }
 
 void SkyState::go() {
@@ -207,19 +253,20 @@ void SkyState::go() {
 		if (_system->get_msecs() - _lastSaveTime > 5 * 60 * 1000) {
 			if (_skyControl->loadSaveAllowed()) {
 				_lastSaveTime = _system->get_msecs();
-				_skyControl->doAutoSave();
+				_skyControl->quickSaveRestore(0, true);
 			} else
 				_lastSaveTime += 30 * 1000; // try again in 30 secs
 		}
 		_skySound->checkFxQueue();
 		_skyMouse->mouseEngine((uint16)_sdl_mouse_x, (uint16)_sdl_mouse_y);
-		if (_key_pressed)
+		if (_keyPressed)
 			handleKey();
 		_skyLogic->engine();
 		if (!_skyLogic->checkProtection()) { // don't let copy prot. screen flash up
 			_skyScreen->recreate();
 			_skyScreen->spriteEngine();
 			_skyScreen->flip();
+			doSysMsg();
 		}
 	}
 }
@@ -304,9 +351,11 @@ void SkyState::initialise(void) {
 				}
 	}
 
+	_sysGraph = NULL;
 	uint16 result = 0;
 	if (_detector->_save_slot >= 0)
-		result = _skyControl->quickXRestore(_detector->_save_slot);
+		result = _skyControl->quickSaveRestore(_detector->_save_slot, false);
+		//result = _skyControl->quickXRestore(_detector->_save_slot);
 
 	if (result == GAME_RESTORED)
 		_quickLaunch = true;
@@ -398,17 +447,18 @@ void SkyState::delay(uint amount) { //copied and mutilated from Simon.cpp
 
 	uint32 start = _system->get_msecs();
 	uint32 cur = start;
-	_key_pressed = 0;	//reset
+	_keyPressed = 0;	//reset
 
 	do {
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
 				case OSystem::EVENT_KEYDOWN:
 					// Make sure backspace works right (this fixes a small issue on OS X)
+					_keyFlags = (byte)event.kbd.flags;
 					if (event.kbd.keycode == 8)
-						_key_pressed = 8;
+						_keyPressed = 8;
 					else
-						_key_pressed = (byte)event.kbd.ascii;
+						_keyPressed = (byte)event.kbd.ascii;
 					break;
 
 				case OSystem::EVENT_MOUSEMOVE:
