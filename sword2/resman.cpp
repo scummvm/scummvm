@@ -109,13 +109,15 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	do {
 		// item must have an #0d0a
 		while (temp[i] != 13) {
-			_resourceFiles[_totalClusters][j] = temp[i];
+			_resFiles[_totalClusters].fileName[j] = temp[i];
 			i++;
 			j++;
 		}
 
 		// NULL terminate our extracted string
-		_resourceFiles[_totalClusters][j] = 0;
+		_resFiles[_totalClusters].fileName[j] = '\0';
+		_resFiles[_totalClusters].numEntries = -1;
+		_resFiles[_totalClusters].entryTab = NULL;
 
 		// Reset position in current slot between entries, skip the
 		// 0x0a in the source and increase the number of clusters.
@@ -168,21 +170,21 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 
 	for (i = 0; i < _totalClusters; i++) {
 		for (j = 0; j < _totalClusters; j++) {
-			if (scumm_stricmp((char *) cdInf[j].clusterName, _resourceFiles[i]) == 0)
+			if (scumm_stricmp((char *) cdInf[j].clusterName, _resFiles[i].fileName) == 0)
 				break;
 		}
 
 		if (j == _totalClusters)
-			error("%s is not in cd.inf", _resourceFiles[i]);
+			error("%s is not in cd.inf", _resFiles[i].fileName);
 
-		_cdTab[i] = cdInf[j].cd;
+		_resFiles[i].cd = cdInf[j].cd;
 	}
 
 	delete [] cdInf;
 
 	debug(1, "%d resources in %d cluster files", _totalResFiles, _totalClusters);
 	for (i = 0; i < _totalClusters; i++)
-		debug(2, "filename of cluster %d: -%s", i, _resourceFiles[i]);
+		debug(2, "filename of cluster %d: -%s", i, _resFiles[i].fileName);
 
 	_resList = (Resource *) malloc(_totalResFiles * sizeof(Resource));
 
@@ -190,13 +192,18 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 		_resList[i].ptr = NULL;
 		_resList[i].size = 0;
 		_resList[i].refCount = 0;
-		_resList[i].refTime = 0;
+		_resList[i].prev = _resList[i].next = NULL;
 	}
-
-	_resTime = 0;
+	_cacheStart = _cacheEnd = NULL;
+	_usedMem = 0;
 }
 
 ResourceManager::~ResourceManager(void) {
+	Resource *res = _cacheStart;
+	while (res) {
+		_vm->_memory->memFree(res->ptr);
+		res = res->next;
+	}
 	free(_resList);
 	free(_resConvTable);
 }
@@ -398,54 +405,37 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 
 	if (!_resList[res].ptr) {
 		// Fetch the correct file and read in the correct portion.
-
-		// points to the number of the ascii filename
-		uint16 parent_res_file = _resConvTable[res * 2];
-
-		assert(parent_res_file != 0xffff);
+		uint16 cluFileNum = _resConvTable[res * 2]; // points to the number of the ascii filename
+		assert(cluFileNum != 0xffff);
 
 		// Relative resource within the file
-		uint16 actual_res = _resConvTable[(res * 2) + 1];
-
 		// First we have to find the file via the _resConvTable
-
-		debug(5, "openResource %s res %d", _resourceFiles[parent_res_file], res);
+		uint16 actual_res = _resConvTable[(res * 2) + 1];
+		
+		debug(5, "openResource %s res %d", _resFiles[cluFileNum].fileName, res);
 
 		// If we're loading a cluster that's only available from one
 		// of the CDs, remember which one so that we can play the
 		// correct music.
 
-		if (!(_cdTab[parent_res_file] & LOCAL_PERM))
-			_curCd = _cdTab[parent_res_file] & 3;
+		if ((_resFiles[cluFileNum].cd == CD1) || (_resFiles[cluFileNum].cd == CD2))
+			_curCd = _resFiles[cluFileNum].cd;
 
 		// Actually, as long as the file can be found we don't really
 		// care which CD it's on. But if we can't find it, keep asking
 		// for the CD until we do.
 
-		File file;
+		File *file = openCluFile(cluFileNum);
 
-		while (!file.open(_resourceFiles[parent_res_file])) {
-			// If the file is supposed to be on hard disk, or we're
-			// playing a demo, then we're in trouble if the file
-			// can't be found!
-
-			if ((_vm->_features & GF_DEMO) || (_cdTab[parent_res_file] & LOCAL_PERM))
-				error("Could not find '%s'", _resourceFiles[parent_res_file]);
-
-			getCd(_cdTab[parent_res_file] & 3);
+		if (_resFiles[cluFileNum].entryTab == NULL) {
+			// we didn't read from this file before, get its index table
+			readCluIndex(cluFileNum, file);
 		}
 
-		// 1st DWORD of a cluster is an offset to the look-up table
-		uint32 table_offset = file.readUint32LE();
+		uint32 pos = _resFiles[cluFileNum].entryTab[actual_res * 2 + 0];
+		uint32 len = _resFiles[cluFileNum].entryTab[actual_res * 2 + 1];
 
-		debug(6, "table offset = %d", table_offset);
-
-		file.seek(table_offset + actual_res * 8, SEEK_SET);
-
-		uint32 pos = file.readUint32LE();
-		uint32 len = file.readUint32LE();
-
-		file.seek(pos, SEEK_SET);
+		file->seek(pos, SEEK_SET);
 
 		debug(6, "res len %d", len);
 
@@ -454,7 +444,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 		_resList[res].size = len;
 		_resList[res].refCount = 0;
 
-		file.read(_resList[res].ptr, len);
+		file->read(_resList[res].ptr, len);
 
 		if (dump) {
 			StandardHeader *header = (StandardHeader *) _resList[res].ptr;
@@ -520,15 +510,19 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 		}
 
 		// close the cluster
-		file.close();
+		file->close();
+		delete file;
+
+		_usedMem += len;
+		checkMemUsage();
 
 #ifdef SCUMM_BIG_ENDIAN
 		convertEndian(_resList[res].ptr, len);
 #endif
-	}
+	} else if (_resList[res].refCount == 0)
+        removeFromCacheList(_resList + res);
 
 	_resList[res].refCount++;
-	_resList[res].refTime = _resTime;
 
 	return _resList[res].ptr;
 }
@@ -538,7 +532,8 @@ void ResourceManager::closeResource(uint32 res) {
 	assert(_resList[res].refCount > 0);
 
 	_resList[res].refCount--;
-	_resList[res].refTime = _resTime;
+	if (_resList[res].refCount == 0)
+		addToCacheList(_resList + res);
 
 	// It's tempting to free the resource immediately when refCount
 	// reaches zero, but that'd be a mistake. Closing a resource does not
@@ -549,6 +544,73 @@ void ResourceManager::closeResource(uint32 res) {
 	// Since the original memory manager had to deal with memory
 	// fragmentation, keeping a resource open - and thus locked down to a
 	// specific memory address - was considered a bad thing.
+}
+
+void ResourceManager::removeFromCacheList(Resource *res) {
+	if (_cacheStart == res)
+		_cacheStart = res->next;
+
+	if (_cacheEnd == res)
+		_cacheEnd = res->prev;
+
+	if (res->prev)
+		res->prev->next = res->next;
+	if (res->next)
+		res->next->prev = res->prev;
+	res->prev = res->next = NULL;
+}
+
+void ResourceManager::addToCacheList(Resource *res) {
+	res->prev = NULL;
+	res->next = _cacheStart;
+	if (_cacheStart)
+		_cacheStart->prev = res;
+	_cacheStart = res;
+	if (!_cacheEnd)
+		_cacheEnd = res;
+}
+
+File *ResourceManager::openCluFile(uint16 fileNum) {
+	File *file = new File;
+	while (!file->open(_resFiles[fileNum].fileName)) {
+		// If the file is supposed to be on hard disk, or we're
+		// playing a demo, then we're in trouble if the file
+		// can't be found!
+
+		if ((_vm->_features & GF_DEMO) || (_resFiles[fileNum].cd & LOCAL_PERM))
+			error("Could not find '%s'", _resFiles[fileNum].fileName);
+
+		getCd(_resFiles[fileNum].cd & 3);
+	}
+	return file;
+}
+
+void ResourceManager::readCluIndex(uint16 fileNum, File *file) {
+	if (_resFiles[fileNum].entryTab == NULL) {
+		// we didn't read from this file before, get its index table
+		if (file == NULL)
+			file = openCluFile(fileNum);
+		else
+			file->incRef();
+
+		// 1st DWORD of a cluster is an offset to the look-up table
+		uint32 table_offset = file->readUint32LE();
+		debug(6, "table offset = %d", table_offset);
+		uint32 tableSize = file->size() - table_offset; // the table is stored at the end of the file
+		file->seek(table_offset);
+
+		assert((tableSize % 8) == 0);
+		_resFiles[fileNum].entryTab = (uint32*)malloc(tableSize);
+		_resFiles[fileNum].numEntries = tableSize / 8;
+		file->read(_resFiles[fileNum].entryTab, tableSize);
+		if (file->ioFailed())
+			error("unable to read index table from file %s\n", _resFiles[fileNum].fileName);
+#ifdef SCUMM_BIG_ENDIAN
+		for (int tabCnt = 0; tabCnt < _resFiles[fileNum].numEntries * 2; tabCnt++)
+			_resFiles[fileNum].entryTab[tabCnt] = FROM_LE_UINT32(_resFiles[fileNum].entryTab[tabCnt]);
+#endif
+		file->decRef();
+	}
 }
 
 /**
@@ -568,21 +630,6 @@ bool ResourceManager::checkValid(uint32 res) {
 		return false;
 
 	return true;
-}
-
-void ResourceManager::passTime() {
-	// In the original game this was called every game cycle. This allowed
-	// for a more exact measure of when a loaded resouce was most recently
-	// used. When the memory pool got too fragmented, the oldest and
-	// largest of the closed resources would be expelled from the cache.
-
-	// With the new memory manager, there is no single memory block that
-	// can become fragmented. Therefore, it makes more sense to me to
-	// measure an object's age in how many rooms ago it was last used.
-
-	// Therefore, this function is now called when a new room is loaded.
-
-	_resTime++;
 }
 
 /**
@@ -606,67 +653,38 @@ uint32 ResourceManager::fetchLen(uint32 res) {
 	// first we have to find the file via the _resConvTable
 	// open the cluster file
 
-	File file;
-
-	if (!file.open(_resourceFiles[parent_res_file]))
-		error("Cannot open %s", _resourceFiles[parent_res_file]);
-
-	// 1st DWORD of a cluster is an offset to the look-up table
-	uint32 table_offset = file.readUint32LE();
-
-	// 2 dwords per resource + skip the position dword
-	file.seek(table_offset + (actual_res * 8) + 4, SEEK_SET);
-
-	return file.readUint32LE();
+	if (_resFiles[parent_res_file].entryTab == NULL) {
+		readCluIndex(parent_res_file);
+	}
+	return _resFiles[parent_res_file].entryTab[actual_res * 2 + 1];
 }
 
-// When a resource is opened, regardless of whether it was read from disk or
-// from the cache, its age is zeroed. They then age every time a new room is
-// entered. This function is responsible for cleaning out the resources that
-// have grown too old to live.
-//
-// It could use a bit more tuning, I guess. I picked a max age of three for
-// most resources, because so much of the game seems to consist of areas of
-// about three rooms. I made an exception for SCREEN_FILE resources because
-// they are so large, but maybe the exception ought to be the rule...?
+void ResourceManager::checkMemUsage(void) {
+	while (_usedMem > MAX_MEM_CACHE) {
+		// we're using up more memory than we wanted to. free some old stuff.
+		// Newly loaded objects are added to the start of the list,
+		// we start freeing from the end, to free the oldest items first
+		if (_cacheEnd) {
+			Resource *tmp = _cacheEnd;
+			assert((tmp->refCount == 0) && (tmp->ptr) && (tmp->next == NULL));
+			removeFromCacheList(tmp);
 
-void ResourceManager::expireOldResources() {
-	int nuked = 0;
-
-	for (uint i = 0; i < _totalResFiles; i++) {
-		if (!_resList[i].ptr || _resList[i].refCount > 0)
-			continue;
-
-		StandardHeader *head = (StandardHeader *) _resList[i].ptr;
-		uint maxCacheAge;
-
-		switch (head->fileType) {
-		case SCREEN_FILE:
-			// The resource will be read from disk once as soon as
-			// the player enters the room, and thrown away when
-			// the player enters a new room.
-			maxCacheAge = 0;
-			break;
-		default:
-			maxCacheAge = 3;
-			break;
-		}
-
-		if (_resTime - _resList[i].refTime >= maxCacheAge) {
-			remove(i);
-			nuked++;
+			_vm->_memory->memFree(tmp->ptr);
+			tmp->ptr = NULL;
+			_usedMem -= tmp->size;
+		} else {
+			warning("%d bytes of memory used, but cache list is empty!\n");
+			return;
 		}
 	}
-
-	debug(1, "%d resources died of old age", nuked);
 }
 
 void ResourceManager::printConsoleClusters(void) {
 	if (_totalClusters) {
 		for (uint i = 0; i < _totalClusters; i++) {
-			Debug_Printf("%-20s ", _resourceFiles[i]);
-			if (!(_cdTab[i] & LOCAL_PERM)) {
-				switch (_cdTab[i] & 3) {
+			Debug_Printf("%-20s ", _resFiles[i].fileName);
+			if (!(_resFiles[i].cd & LOCAL_PERM)) {			
+				switch (_resFiles[i].cd & 3) {
 				case BOTH:
 					Debug_Printf("CD 1 & 2\n");
 					break;
@@ -692,7 +710,7 @@ void ResourceManager::listResources(uint minCount) {
 	for (uint i = 0; i < _totalResFiles; i++) {
 		if (_resList[i].ptr && _resList[i].refCount >= minCount) {
 			StandardHeader *head = (StandardHeader *) _resList[i].ptr;
-			Debug_Printf("%-4d: %-35s refCount: %-3d age: %-2d\n", i, head->name, _resList[i].refCount, _resTime - _resList[i].refTime);
+			Debug_Printf("%-4d: %-35s refCount: %-3d\n", i, head->name, _resList[i].refCount);
 		}
 	}
 }
@@ -770,9 +788,12 @@ void ResourceManager::kill(int res) {
 
 void ResourceManager::remove(int res) {
 	if (_resList[res].ptr) {
+		removeFromCacheList(_resList + res);
+
 		_vm->_memory->memFree(_resList[res].ptr);
 		_resList[res].ptr = NULL;
 		_resList[res].refCount = 0;
+		_usedMem -= _resList[res].size;
 	}
 }
 
@@ -857,6 +878,10 @@ void ResourceManager::killAllObjects(bool wantInfo) {
 
 	if (wantInfo)
 		Debug_Printf("Expelled %d resources\n", nuked);
+}
+
+int ResourceManager::whichCd(void)  {
+	return _curCd;
 }
 
 void ResourceManager::getCd(int cd) {

@@ -46,10 +46,6 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 
 	assert(res);
 
-	// The resources age every time a new room is entered.
-	_vm->_resman->passTime();
-	_vm->_resman->expireOldResources();
-
 	_vm->_sound->clearFxQueue();
 	waitForFade();
 

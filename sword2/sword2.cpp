@@ -289,7 +289,7 @@ int Sword2Engine::init(GameDetector &detector) {
 
 		StartDialog dialog(this);
 
-		result = dialog.runModal();
+		result = (dialog.runModal() != 0);
 
 		// If the game is started from the beginning, the cutscene
 		// player will kill the music for us. Otherwise, the restore

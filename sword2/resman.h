@@ -21,8 +21,11 @@
 #ifndef	RESMAN_H
 #define	RESMAN_H
 
+class File;
+
 namespace Sword2 {
 
+#define MAX_MEM_CACHE (8 * 1024 * 1024) // we keep up to 8 megs of resource data files in memory
 #define	MAX_res_files	20
 
 class Sword2Engine;
@@ -31,7 +34,14 @@ struct Resource {
 	byte *ptr;
 	uint32 size;
 	uint32 refCount;
-	uint32 refTime;
+	Resource *next, *prev;
+};
+
+struct ResourceFile {
+	char fileName[20];
+	int32 numEntries;
+	uint32 *entryTab;
+	uint8 cd;
 };
 
 class ResourceManager {
@@ -45,16 +55,10 @@ public:
 	bool checkValid(uint32 res);
 	uint32 fetchLen(uint32 res);
 
-	void expireOldResources(void);
-
-	void passTime(void);
-
 	// Prompts the user for the specified CD.
 	void getCd(int cd);
 
-	int whichCd() {
-		return _curCd;
-	}
+	int whichCd();
 
 	void remove(int res);
 
@@ -67,25 +71,28 @@ public:
 	void killAll(bool wantInfo);
 	void killAllObjects(bool wantInfo);
 	void removeAll(void);
-
-	Resource *_resList;
-
 private:
+	File *openCluFile(uint16 fileNum);
+	void readCluIndex(uint16 fileNum, File *file = NULL);
+	void removeFromCacheList(Resource *res);
+	void addToCacheList(Resource *res);
+	void checkMemUsage(void);
+
 	Sword2Engine *_vm;
 
 	int _curCd;
 	uint32 _totalResFiles;
 	uint32 _totalClusters;
 
-	uint32 _resTime;
-
 	// Gode generated res-id to res number/rel number conversion table
 
 	uint16 *_resConvTable;
+	ResourceFile _resFiles[MAX_res_files];
+	Resource *_resList;
 
-	char _resourceFiles[MAX_res_files][20];
-	uint8 _cdTab[MAX_res_files];		// Location of each cluster.
-};							
+    Resource *_cacheStart, *_cacheEnd;
+	uint32 _usedMem; // amount of used memory in bytes
+};
 
 } // End of namespace Sword2
 
