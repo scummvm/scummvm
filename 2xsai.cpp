@@ -740,7 +740,7 @@ void AdvMame2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint3
 	unsigned nextlineDst = dstPitch / sizeof(short);
 	short* q = (short*)dstPtr;
 
-	for(int j = 0; j < height; ++j) {
+	while (height--) {
 		for(int i = 0; i < width; ++i) {
 			// short A = *(p + i - nextlineSrc - 1);
 			short B = *(p + i - nextlineSrc);
@@ -768,7 +768,7 @@ void Normal1x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32
 {
 	uint8* r;
 
-	for(int j = 0; j < height; ++j) {
+	while (height--) {
 		r = dstPtr;
 		for(int i = 0; i < width; ++i, ++r) {
 			uint8 color = *(srcPtr + i );
@@ -785,7 +785,7 @@ void Normal2x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32
 {
 	uint8* r;
 
-	for(int j = 0; j < height; ++j) {
+	while (height--) {
 		r = dstPtr;
 		for(int i = 0; i < width; ++i, r+=2) {
 			uint8 color = *(srcPtr + i );
@@ -806,7 +806,7 @@ void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *null, uint8 *dstPtr, uint32
 	uint8* r;
 	uint32 dstPitch2 = dstPitch << 1;
 
-	for(int j = 0; j < height; ++j) {
+	while (height--) {
 		r = dstPtr;
 		for(int i = 0; i < width; ++i, r+=3) {
 			uint8 color = *(srcPtr + i);
