@@ -90,15 +90,18 @@ uint16 imxShortTable[] = {
 	0x0000, 0x0000, 0x0001, 0x0003, 0x0007, 0x000F, 0x001F, 0x003F
 };
 
-Bundle::Bundle() {
+Bundle::Bundle()
+{
 	_lastSong = -1;
 	_initializedImcTables = false;
 }
 
-Bundle::~Bundle() {
+Bundle::~Bundle()
+{
 }
 
-void Bundle::initializeImcTables() {
+void Bundle::initializeImcTables()
+{
 	if (_initializedImcTables == true)
 		return;
 
@@ -149,7 +152,8 @@ void Bundle::initializeImcTables() {
 	_initializedImcTables = true;
 }
 
-bool Bundle::openVoiceFile(const char *filename, const char *directory) {
+bool Bundle::openVoiceFile(const char *filename, const char *directory)
+{
 	int32 tag, offset;
 
 	initializeImcTables();
@@ -191,7 +195,8 @@ bool Bundle::openVoiceFile(const char *filename, const char *directory) {
 	return true;
 }
 
-bool Bundle::openMusicFile(const char *filename, const char *directory) {
+bool Bundle::openMusicFile(const char *filename, const char *directory)
+{
 	int32 tag, offset;
 
 	initializeImcTables();
@@ -233,7 +238,8 @@ bool Bundle::openMusicFile(const char *filename, const char *directory) {
 	return true;
 }
 
-int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final, int32 & channels) {
+int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final, int32 & channels)
+{
 	int32 i, tag, num, final_size, output_size;
 	byte *comp_input, *comp_output;
 
@@ -283,8 +289,10 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte *comp_final, int32 
 	return final_size;
 }
 
-int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final, int32 & channels) {
-	int32 i, tag, num, final_size;
+int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final, int32 & channels)
+{
+	int32 i = 0;
+	int tag, num, final_size;
 	byte *comp_input;
 
 	if (_musicFile.isOpen() == false) {
@@ -318,6 +326,7 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 	_musicFile.seek(_bundleMusicTable[index].offset + _compMusicTable[number].offset, SEEK_SET);
 	_musicFile.read(comp_input, _compMusicTable[number].size);
 
+	// FIXME - if _lastSon == index then i will be 0 - is the right / the desired behaviour?!?
 	final_size =
 		decompressCodec(_compMusicTable[number].codec, comp_input, comp_final, _compMusicTable[number].size, i, channels);
 
@@ -328,7 +337,8 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 	return final_size;
 }
 
-int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final, int32 & channels) {
+int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final, int32 & channels)
+{
 	int32 final_size = 0, i;
 
 	if (_voiceFile.isOpen() == false) {
@@ -369,7 +379,8 @@ int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_f
 	return final_size;
 }
 
-int32 Bundle::getNumberOfMusicSamplesByIndex(int32 index) {
+int32 Bundle::getNumberOfMusicSamplesByIndex(int32 index)
+{
 	if (_musicFile.isOpen() == false) {
 		warning("Bundle: music file is not open!");
 		return 0;
@@ -380,7 +391,8 @@ int32 Bundle::getNumberOfMusicSamplesByIndex(int32 index) {
 	return _musicFile.readUint32BE();
 }
 
-int32 Bundle::getNumberOfMusicSamplesByName(char *name) {
+int32 Bundle::getNumberOfMusicSamplesByName(char *name)
+{
 	int32 number = 0, i;
 
 	if (_musicFile.isOpen() == false) {
@@ -400,7 +412,8 @@ int32 Bundle::getNumberOfMusicSamplesByName(char *name) {
 
 #define NextBit bit = mask & 1; mask >>= 1; if (!--bitsleft) {mask = READ_LE_UINT16(srcptr); srcptr += 2; bitsleft=16;}
 
-int32 Bundle::compDecode(byte *src, byte *dst) {
+int32 Bundle::compDecode(byte *src, byte *dst)
+{
 	byte *result, *srcptr = src, *dstptr = dst;
 	int data, size, bit, bitsleft = 16, mask = READ_LE_UINT16(srcptr);
 	srcptr += 2;
@@ -432,7 +445,8 @@ int32 Bundle::compDecode(byte *src, byte *dst) {
 }
 #undef NextBit
 
-int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 input_size, int32 index, int32 & channels) {
+int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 input_size, int32 index, int32 & channels)
+{
 	int32 output_size = input_size;
 	int32 offset1, offset2, offset3, length, k, c, s, j, r, t, z;
 	byte *src, *t_table, *p, *ptr;
@@ -762,7 +776,6 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 	case 15:
 		{
 			uint16 firstWord;
-			byte * src;
 			int32 startPos;
 			byte sByte[4];
 			uint32 sDWord[4];
@@ -770,7 +783,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 			int32 left;
 			int32 tableEntrySum;
 			int32 curTablePos;
-			int32 outputWord;
+			uint32 outputWord;
 			int32 imcTableEntry;
 			int32 destPos;
 			int32 curTableEntry;
@@ -793,7 +806,7 @@ int32 Bundle::decompressCodec(int32 codec, byte *comp_input, byte *comp_output, 
 					memcpy(comp_output, src, firstWord);
 					startPos = firstWord;
 					uint32 tag;
-					byte * ptr = src;
+					ptr = src;
 					do {
 						tag = READ_BE_UINT32(ptr); ptr += 4;
 					} while (tag != MKID_BE('FRMT'));
