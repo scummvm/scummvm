@@ -63,14 +63,14 @@ int32 FN_refresh_inventory(int32 *params) {
 	// so that the icon in 'object_held' is coloured while the rest are
 	// grey
 	examining_menu_icon = 1;
-	Build_top_menu();
+	Build_menu();
  	examining_menu_icon = 0;
 
 	// script continue
 	return IR_CONT;
 }
 
-void Build_top_menu(void) {
+void Build_menu(void) {
 	// create and start the inventory menu - NOW AT THE BOTTOM OF THE
 	// SCREEN!
 

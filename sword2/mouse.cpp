@@ -64,47 +64,42 @@ Mouse_unit mouse_list[TOTAL_mouse_list];
 
 // set by Check_mouse_list
 uint32 mouse_touching = 0;
-uint32 old_mouse_touching = 0;
+static uint32 old_mouse_touching = 0;
 
-uint32 menu_selected_pos;
+static uint32 menu_selected_pos;
 uint8 examining_menu_icon = 0;
 
 // if it's NORMAL_MOUSE_ID (ie. normal pointer) then it's over a floor area
 // (or hidden hot-zone)
 
-uint32 mouse_pointer_res = 0;
+static uint32 mouse_pointer_res = 0;
 
 // 0 normal in game
-// 1 top menu down (bottom!)
+// 1 menu chooser
 // 2 dragging luggage
-// 3 system menu chooser (top)
+// 3 system menu chooser
 // 4 speech chooser
 
 uint32 mouse_mode = 0;
 
-// copy structure from list when moving onto a mouse area
-// Object_mouse old_mouse_object;
-
-uint32 menu_status;			// 0 available - 1 unavailable
+static uint32 menu_status;		// 0 available - 1 unavailable
 uint32 mouse_status;			// human 0 on/1 off
 
-// 0 not !0 mode cannot be changed from normal mouse to top menu (i.e. when
+// 0 not !0 mode cannot be changed from normal mouse to menu (i.e. when
 // carrying big objects)
 
 uint32 mouse_mode_locked = 0;
-uint32 current_luggage_resource = 0;
-
-uint32 subject_status;			//0 off 1 on
+static uint32 current_luggage_resource = 0;
 
 // for the re-click stuff - must be same button you see
-uint32 old_button = 0;
-uint32 button_click = 0;
+static uint32 old_button = 0;
+static uint32 button_click = 0;
 
-uint32 pointer_text_bloc_no = 0;
+static uint32 pointer_text_bloc_no = 0;
 
-uint32 player_activity_delay = 0;	// player activity delay counter
+static uint32 player_activity_delay = 0; // player activity delay counter
 
-uint32 real_luggage_item = 0;		// last minute for pause mode
+uint32 real_luggage_item = 0;		 // last minute for pause mode
 
 void CreatePointerText(uint32 TextId, uint32 pointerRes);
 void Monitor_player_activity(void);
@@ -116,45 +111,50 @@ void Reset_mouse_list(void) {
 	cur_mouse = 1;
 }
 
+/**
+ * This function is called every game cycle.
+ */
+
 void Mouse_engine(void) {
 	Monitor_player_activity();
 	ClearPointerText();
 
-	if (DEAD) {	//George is dead ;)
+	// If George is dead, the system menu is visible all the time, and is
+	// the only thing that can be used.
+
+	if (DEAD) {
 		if (mouse_mode != MOUSE_system_menu) {
 			mouse_mode = MOUSE_system_menu;
-			if (mouse_touching) {
-				// we've moved off
-				old_mouse_touching = 0;
 
-				// we were on something but not anymore
+			if (mouse_touching) {
+				old_mouse_touching = 0;
 				mouse_touching = 0;
 			}
 
 			Set_mouse(NORMAL_MOUSE_ID);
 			Build_system_menu();
 		}
-		System_menu();
+		System_menu_mouse();
 		return;
 	}
 
-	if (mouse_status) {
-		// no human
+	// If the mouse is not visible, do nothing
+
+	if (mouse_status)
 		return;
-	}
 
 	switch (mouse_mode) {
 	case MOUSE_normal:
 		Normal_mouse();
 		break;
-	case MOUSE_top:
-		Top_menu_mouse();
+	case MOUSE_menu:
+		Menu_mouse();
 		break;
 	case MOUSE_drag:
 		Drag_mouse();
 		break;
 	case MOUSE_system_menu:
-		System_menu();
+		System_menu_mouse();
 		break;
 	case MOUSE_holding:
 		if (mousey < 400) {
@@ -167,7 +167,7 @@ void Mouse_engine(void) {
 	}
 }
 
-void System_menu(void) {
+void System_menu_mouse(void) {
 	uint32 safe_looping_music_id;
 	_mouseEvent *me;
 	int j, hit;
@@ -181,7 +181,7 @@ void System_menu(void) {
 		RESTART_ICON
 	};
 
-	//can't close when player is dead
+	// can't close when player is dead
 	if (mousey > 0 && !DEAD) {
 		// close menu
 		mouse_mode = MOUSE_normal;
@@ -202,7 +202,7 @@ void System_menu(void) {
 			if (icon_list[hit] == SAVE_ICON && DEAD)
 				return;
 
-			//there are 5 system menu icons
+			// there are 5 system menu icons
 			if (hit < ARRAYSIZE(icon_list)) {
 				// build them all high in full colour - when
 				// one is clicked on all the rest will grey out
@@ -318,7 +318,6 @@ void System_menu(void) {
 void Drag_mouse(void) {
 	_mouseEvent *me;
 	uint32 pos;
-//	uint32 null_pc = 1;	//script 1 is combine script
 
 	if (mousey < 400 && !menu_status) {
 		// close menu
@@ -340,8 +339,8 @@ void Drag_mouse(void) {
 	if (me && (me->buttons & RD_LEFTBUTTONDOWN)) {
 		// there's a mouse event to be processed
 
-		// could be clicking on an on screen object or on the top
-		// menu which is currently displayed
+		// could be clicking on an on screen object or on the menu
+		// which is currently displayed
 
 		if (mouse_touching) {
 			// mouse is over an on screen object - and we have
@@ -375,18 +374,18 @@ void Drag_mouse(void) {
 			// Hide menu - back to normal menu mode
 
 			HideMenu(RDMENU_BOTTOM);
-			mouse_mode=MOUSE_normal;
+			mouse_mode = MOUSE_normal;
 		} else {
 			// better check for combine/cancel
-			// cancel puts us back in Top_menu_mouse mode
+			// cancel puts us back in Menu_mouse mode
 			if (mousex >= 24 && mousex < 640 - 24) {
 				// which are we over?
 				pos = (mousex - 24) / 40;
 
 				//clicked on something - what button?
 				if (master_menu_list[pos].icon_resource) {
-					// always back into top menu mode
-					mouse_mode = MOUSE_top;
+					// always back into menu mode
+					mouse_mode = MOUSE_menu;
 
 					// remove luggage
 					Set_luggage(0);
@@ -419,16 +418,16 @@ void Drag_mouse(void) {
 					}
 
 					// refresh the menu
-					Build_top_menu();
-					debug(5, "switch to top mode");
+					Build_menu();
+					debug(5, "switch to menu mode");
 				}
 			}
 		}
 	}
 }
 
-void Top_menu_mouse(void) {
-	// top menu is down
+void Menu_mouse(void) {
+	// menu is down
 
 	_mouseEvent *me;
 	uint32 pos;
@@ -462,9 +461,8 @@ void Top_menu_mouse(void) {
 					// id the object via its graphic
 					OBJECT_HELD = master_menu_list[pos].icon_resource;
 
-					// (JEL09oct97) must clear this so
-					// next click on exit becomes 1st
-					// click again
+					// Must clear this so next click on
+					// exit becomes 1st click again
 
 					EXIT_CLICK_ID = 0;
 
@@ -473,14 +471,14 @@ void Top_menu_mouse(void) {
 					Set_player_action_event(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
 
 					// refresh the menu
-					Build_top_menu();
+					Build_menu();
 
 					// turn off mouse now, to prevent
 					// player trying to click elsewhere
 					// BUT leave the bottom menu open
 
 					No_human();
-				} else if (me->buttons&RD_LEFTBUTTONDOWN) {
+				} else if (me->buttons & RD_LEFTBUTTONDOWN) {
 					// left button - highlight the object
 					// and bung us into drag luggage mode
 
@@ -492,7 +490,7 @@ void Top_menu_mouse(void) {
 					current_luggage_resource = master_menu_list[pos].luggage_resource;
 
 					mouse_mode = MOUSE_drag;
-					debug(5, "setting OH in top menu");
+					debug(5, "setting OH in menu");
 
 					// id the object via its graphic
 					OBJECT_HELD = master_menu_list[pos].icon_resource;
@@ -503,7 +501,7 @@ void Top_menu_mouse(void) {
 					EXIT_CLICK_ID = 0;
 
 					// refresh the menu
-					Build_top_menu();
+					Build_menu();
 
 					Set_luggage(master_menu_list[pos].luggage_resource);
 					debug(5, "switch to drag mode");
@@ -515,11 +513,11 @@ void Top_menu_mouse(void) {
 
 void Normal_mouse(void) {
 	// The gane is playing and none of the menus are activated - but, we
-	// need to check if the top menu is to start. Note, wont have luggage
+	// need to check if a menu is to start. Note, won't have luggage
 
 	_mouseEvent *me;
 
-	//no save in big-object menu lock situation
+	// no save in big-object menu lock situation
 	if (mousey < 0 && !menu_status && !mouse_mode_locked && !OBJECT_HELD) {
 		mouse_mode = MOUSE_system_menu;
 
@@ -531,21 +529,26 @@ void Normal_mouse(void) {
 
 		// reset mouse cursor - in case we're between mice
 		Set_mouse(NORMAL_MOUSE_ID);
-
 		Build_system_menu();
+		return;
 	}
 
 	if (mousey > 399 && !menu_status && !mouse_mode_locked) {
-		// why are we testing for this?
-		if (!OBJECT_HELD) {
-			// bring down top menu
-			mouse_mode = MOUSE_top;
-		} else {
-			mouse_mode = MOUSE_drag;
-		}
+		// If an object is being held, i.e. if the mouse cursor has a
+		// luggage, we should be use dragging mode instead of inventory
+		// menu mode.
+		//
+		// That way, we can still use an object on another inventory
+		// object, even if the inventory menu was closed after the
+		// first object was selected.
 
-		// if mouse is moving off an object and onto the top menu
-		// then do a standard get-off
+		if (!OBJECT_HELD)
+			mouse_mode = MOUSE_menu;
+		else
+			mouse_mode = MOUSE_drag;
+
+		// If mouse is moving off an object and onto the menu then do a
+		// standard get-off
 
 		if (mouse_touching) {
 			// We were on something, but not anymore
@@ -556,14 +559,12 @@ void Normal_mouse(void) {
 
 		// reset mouse cursor
 		Set_mouse(NORMAL_MOUSE_ID);
-
-		// build menu and start the menu coming down
-		Build_top_menu();
-
+		Build_menu();
 		return;
 	}
 
-	// check also for bringing the bottom menu up
+	// check for moving the mouse on or off things
+
 	Mouse_on_off();
 
 	// now do the normal click stuff
@@ -633,11 +634,11 @@ void Normal_mouse(void) {
 		if (me->buttons & RD_LEFTBUTTONDOWN) {
 			LEFT_BUTTON  = 1;
 			RIGHT_BUTTON = 0;
-			button_click = 0;	//for re-click
+			button_click = 0;	// for re-click
 		} else {
 			LEFT_BUTTON  = 0;
 			RIGHT_BUTTON = 1;
-			button_click = 1;	//for re-click
+			button_click = 1;	// for re-click
 		}
 
 		// these might be required by the action script about to be run
@@ -645,21 +646,21 @@ void Normal_mouse(void) {
 		MOUSE_Y = (uint32) mousey + this_screen.scroll_offset_y;
 
 		// only left button
-		if (mouse_touching == EXIT_CLICK_ID && me->buttons & RD_LEFTBUTTONDOWN) {
+		if (mouse_touching == EXIT_CLICK_ID && (me->buttons & RD_LEFTBUTTONDOWN)) {
 			// its the exit double click situation
 			// let the existing interaction continue and start
 			// fading down - switch the human off too
 
 			FN_no_human(NULL);
 			FN_fade_down(NULL);
-			EXIT_FADING = 1;	//tell the walker
+			EXIT_FADING = 1;	// tell the walker
 		} else if (old_button == button_click && mouse_touching == CLICKED_ID && mouse_pointer_res != NORMAL_MOUSE_ID) {
-			//re-click - do nothing - except on floors
+			// re-click - do nothing - except on floors
 		} else {
 			// allow the click
-			old_button = button_click;	//for re-click
+			old_button = button_click;	// for re-click
 
-			// for scripts to know what's been clicked (21jan97).
+			// for scripts to know what's been clicked
 			// First used for 'room_13_turning_script' in object
 			// 'biscuits_13'
 
@@ -672,7 +673,7 @@ void Normal_mouse(void) {
 			EXIT_CLICK_ID = 0;
 			EXIT_FADING = 0;
 
-			Set_player_action_event(CUR_PLAYER_ID, mouse_touching);	//Tony4Dec96
+			Set_player_action_event(CUR_PLAYER_ID, mouse_touching);
 
 			if (OBJECT_HELD)
 				debug(5, "USED \"%s\" ICON ON %s", FetchObjectName(OBJECT_HELD), FetchObjectName(CLICKED_ID));
@@ -727,8 +728,6 @@ void Mouse_on_off(void) {
 		// we can only move onto something from being on nothing - we
 		// stop the system going from one to another when objects
 		// overlap
-
-		// memcpy(&old_mouse_object, &mouse_list[mouse_touching], sizeof(Object_mouse));
 
 		old_mouse_touching = mouse_touching;
 
@@ -789,7 +788,7 @@ void Set_mouse(uint32 res) {
 	uint8 *icon;
 	uint32 len;
 
-	//high level - whats the mouse - for the engine
+	// high level - whats the mouse - for the engine
 	mouse_pointer_res = res;
 
 	if (res) {
@@ -956,8 +955,8 @@ void CreatePointerText(uint32 textId, uint32 pointerRes) {
 				xOffset = +20;
 				break;
 			default:
-				// shouldn't happen if we cover all
-				// the different mouse pointers above
+				// shouldn't happen if we cover all the
+				// different mouse pointers above
 				yOffset = -10;
 				xOffset = +10;
 				break;
@@ -1036,7 +1035,7 @@ void ClearPointerText(void) {
 	}
 }
 
-int32 FN_no_human(int32 *params) {	// Tony30Sept96
+int32 FN_no_human(int32 *params) {
 	// param	none
 
 	// for logic scripts
@@ -1044,7 +1043,7 @@ int32 FN_no_human(int32 *params) {	// Tony30Sept96
 
 	ClearPointerText();
 
-	//human/mouse off
+	// human/mouse off
 	mouse_status = 1;
 
 	Set_mouse(0);
@@ -1053,7 +1052,7 @@ int32 FN_no_human(int32 *params) {	// Tony30Sept96
 	// must be normal mouse situation or a largely neutral situation -
 	// special menus use No_human
 
-	//dont hide menu in conversations
+	// dont hide menu in conversations
 	if (TALK_FLAG == 0)
 		HideMenu(RDMENU_BOTTOM);
 
@@ -1318,7 +1317,7 @@ int32 FN_set_object_held(int32 *params) {
 	OBJECT_HELD = params[0];
 	current_luggage_resource = params[0];
 
-	// mode locked - no top menu available
+	// mode locked - no menu available
 	mouse_mode_locked = 1;
 
 	return IR_CONT;
@@ -1333,7 +1332,7 @@ int32 FN_remove_chooser(int32 *params) {
 }
 
 int32 FN_disable_menu(int32 *params) {
-	// mode locked - no top menu available
+	// mode locked - no menu available
 	mouse_mode_locked = 1;
 	mouse_mode = MOUSE_normal;
 
@@ -1344,7 +1343,7 @@ int32 FN_disable_menu(int32 *params) {
 }
 
 int32 FN_enable_menu(int32 *params) {
-	//mode locked - no top menu available
+	// mode unlocked - menu available
 	mouse_mode_locked = 0;
 	return IR_CONT;
 }

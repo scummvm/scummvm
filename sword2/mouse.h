@@ -27,7 +27,7 @@ namespace Sword2 {
 #define	TOTAL_mouse_list	50
 
 #define	MOUSE_normal		0
-#define	MOUSE_top		1
+#define	MOUSE_menu		1
 #define	MOUSE_drag		2
 #define	MOUSE_system_menu	3
 #define	MOUSE_holding		4
@@ -83,9 +83,9 @@ extern uint32 real_luggage_item;
 void Reset_mouse_list(void);
 
 void Normal_mouse(void);
-void Top_menu_mouse(void);
+void Menu_mouse(void);
 void Drag_mouse(void);
-void System_menu(void);
+void System_menu_mouse(void);
 
 void Mouse_on_off(void);
 uint32 Check_mouse_list(void);

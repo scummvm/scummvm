@@ -38,7 +38,7 @@ typedef	struct {
 
 extern menu_object master_menu_list[TOTAL_engine_pockets];
 
-void Build_top_menu(void);
+void Build_menu(void);
 void Build_system_menu(void);
 
 } // End of namespace Sword2
