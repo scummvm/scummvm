@@ -151,14 +151,14 @@ void FB2GL::makeTextures() {
 
 
 void FB2GL::makeDisplayList(int xf, int yf) {
-	float xfix = xf / 128.0; // 128 = 256/2 (half texture => 0.0 to 1.0)
-	float yfix = yf / 128.0;
+	float xfix = xf / 128.0f; // 128 = 256/2 (half texture => 0.0 to 1.0)
+	float yfix = yf / 128.0f;
 	float texend;	// End of 256x256 (from -1.0 to 1.0)
 
 	if (flags & FB2GL_NO_320)
-		texend = 96.0 / 160.0; // 160=320/2 (== 0.0), 256-160=96.
+		texend = 96.0f / 160.0f; // 160=320/2 (== 0.0), 256-160=96.
 	else
-		texend = 1.0;
+		texend = 1.0f;
 	
 	if (glIsList(displayList)) 
 		glDeleteLists(displayList, 1);
@@ -172,13 +172,13 @@ void FB2GL::makeDisplayList(int xf, int yf) {
 
 	glBegin(GL_QUADS);
 	// upper left
-	glTexCoord2f(0.0, 1.0); glVertex2f(-1.0, -1.0 - yfix);
+	glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f, -1.0f - yfix);
 	// lower left
-	glTexCoord2f(0.0, 0.0); glVertex2f(-1.0, 1.0);
+	glTexCoord2f(0.0f, 0.0f); glVertex2f(-1.0f, 1.0f);
 	// lower right
-	glTexCoord2f(1.0, 0.0); glVertex2f(texend + xfix, 1.0);
+	glTexCoord2f(1.0f, 0.0f); glVertex2f(texend + xfix, 1.0f);
 	// upper right
-	glTexCoord2f(1.0, 1.0); glVertex2f(texend + xfix, -1.0 - yfix);
+	glTexCoord2f(1.0f, 1.0f); glVertex2f(texend + xfix, -1.0f - yfix);
 	glEnd();
 
 	if (flags & FB2GL_NO_320) {
@@ -187,13 +187,13 @@ void FB2GL::makeDisplayList(int xf, int yf) {
 
 		glBegin(GL_QUADS);
 		// upper left
-		glTexCoord2f(0.0, 1.0); glVertex2f(texend + xfix, -1.0 - yfix);
+		glTexCoord2f(0.0f, 1.0f); glVertex2f(texend + xfix, -1.0f - yfix);
 		// lower left	
-		glTexCoord2f(0.0, 0.0); glVertex2f(texend + xfix, 1.0);
+		glTexCoord2f(0.0f, 0.0f); glVertex2f(texend + xfix, 1.0f);
 		// lower right
-		glTexCoord2f(1.0, 0.0); glVertex2f(1.0 + xfix, 1.0);
+		glTexCoord2f(1.0f, 0.0f); glVertex2f(1.0f + xfix, 1.0f);
 		// upper right
-		glTexCoord2f(1.0, 1.0); glVertex2f(1.0 + xfix, -1.0 - yfix);
+		glTexCoord2f(1.0f, 1.0f); glVertex2f(1.0f + xfix, -1.0f - yfix);
 		glEnd();
 	}
 
