@@ -2557,62 +2557,82 @@ void Scumm::palManipulate()
 	}
 }
 
-void Scumm::unkRoomFunc3(int unk1, int unk2, int rfact, int gfact, int bfact)
+void Scumm::unkRoomFunc3(int palstart, int palend, int rfact, int gfact, int bfact)
 {
-	byte *pal = _currentPalette;
+	byte *basepal = getPalettePtr();
+	byte *pal = basepal;
+	byte *compareptr;
 	byte *table = _shadowPalette;
 	int i;
 
-	warning("unkRoomFunc3(%d,%d,%d,%d,%d): not fully implemented", unk1, unk2, rfact, gfact, bfact);
+	// This is a correction of the patch supplied for BUG #588501.
+	// It has been tested in all four known rooms where unkRoomFunc3 is used:
+	//
+	// 1) FOA Room 53: subway departing Knossos for Atlantis.
+	// 2) FOA Room 48: subway crashing into the Atlantis entrance area
+	// 3) FOA Room 82: boat/sub shadows while diving near Thera
+	// 4) FOA Room 23: the big machine room inside Atlantis
+	//
+	// The implementation behaves well in all tests.
+	// Pixel comparisons show that the resulting palette entries being
+	// derived from the shadow palette generated here occassionally differ
+	// slightly from the ones derived in the LEC executable.
+	// Not sure yet why, but the differences are VERY minor.
+	//
+	// There seems to be no explanation for why this function is called
+	// from within Room 23 (the big machine), as it has no shadow effects
+	// and thus doesn't result in any visual differences.
 
-	// TODO - correctly implement this function (see also patch #588501)
-	//
-	// Some "typical" examples of how this function is being invoked in real life:
-	//
-	// 1)
-	// unkRoomFunc3(16, 255, 200, 200, 200)
-	//
-	// FOA: Sets up the colors for the boat and submarine shadows in the
-	// diving scene. Are the shadows too light? Maybe unk1 is used to
-	// darken the colors?
-	//
-	// 2)
-	// unkRoomFunc3(0, 255, 700, 700, 700)
-	//
-	// FOA: Sets up the colors for the subway car headlight when it first
-	// goes on. This seems to work ok.
-	//
-	// 3)
-	// unkRoomFunc3(160, 191, 300, 300, 300)
-	// unkRoomFunc3(160, 191, 289, 289, 289)
-	//     ...
-	// unkRoomFunc3(160, 191, 14, 14, 14)
-	// unkRoomFunc3(160, 191, 3, 3, 3)
-	//
-	// 4)
-	// FOA: Sets up the colors for the subway car headlight for the later
-	// half of the trip, where it fades out. This currently doesn't work
-	// at all. The colors are too dark to be brightened. At first I thought
-	// unk1 and unk2 were used to tell which color interval to manipulate,
-	// but as far as I can tell the colors 160-191 aren't used at all to
-	// draw the light, that can't be it. Apparently unk1 and/or unk2 are
-	// used to brighten the colors.
-	//
-	// 5)
-	// unkRoomFunc3(16,255,500,500,500)
-	//
-	// FOA: Used in the Inner Sanctum after you activated the machine using the
-	// stone discs (briefly before the Nazis arrive). No idea at all if it is
-	// right here; also note that palManipulateInit() is called at the same time.
-	//
-	//
-	
 	for (i = 0; i <= 255; i++) {
 		int r = (int) (*pal++ * rfact) >> 8;
 		int g = (int) (*pal++ * gfact) >> 8;
 		int b = (int) (*pal++ * bfact) >> 8;
 
-		*table++ = remapPaletteColor(r, g, b, (uint) -1);
+		// The following functionality is similar to remapPaletteColor, except
+		// 1) we have to work off the original CLUT rather than the current palette, and
+		// 2) the target shadow palette entries must be bounded to the upper and lower
+		//    bounds provided by the opcode. (This becomes significant in Room 48, but
+		//    is not an issue in all other known case studies.)
+		int j;
+		int ar, ag, ab;
+		uint sum, diff, bestsum, bestitem = 0;
+		compareptr = basepal + palstart * 3;
+
+		if (r > 255)
+			r = 255;
+		if (g > 255)
+			g = 255;
+		if (b > 255)
+			b = 255;
+
+		bestsum = (uint) - 1;
+
+		r &= ~3;
+		g &= ~3;
+		b &= ~3;
+
+		for (j = palstart; j <= palend; j++, compareptr += 3) {
+			ar = compareptr[0] & ~3;
+			ag = compareptr[1] & ~3;
+			ab = compareptr[2] & ~3;
+			if (ar == r && ag == g && ab == b) {
+				bestitem = j;
+				break;
+			}
+
+			diff = ar - r;
+			sum = diff * diff * 3;
+			diff = ag - g;
+			sum += diff * diff * 6;
+			diff = ab - b;
+			sum += diff * diff * 2;
+
+			if (sum < bestsum) {
+				bestsum = sum;
+				bestitem = j;
+			}
+		}
+		*table++ = bestitem;
 	}
 }
 
