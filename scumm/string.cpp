@@ -825,7 +825,7 @@ void Scumm::loadLanguageBundle() {
 	}
 
 	size = file.size();
-	_languageBuffer = (char *)malloc(size);
+	_languageBuffer = (char *)calloc(1, size+1);
 	file.read(_languageBuffer, size);
 	file.close();
 
