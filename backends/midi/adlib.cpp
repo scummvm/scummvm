@@ -77,6 +77,7 @@ private:
 	void allocate() { _allocated = true; }
 
 public:
+	MidiDriver *device();
 	byte getNumber() { return _channel; }
 	void release() { _allocated = false; }
 
@@ -577,6 +578,11 @@ void AdlibPart::init (MidiDriver_ADLIB *owner, byte channel) {
 	_owner = owner;
 	_channel = channel;
 
+}
+
+MidiDriver *AdlibPart::device()
+{
+	return _owner;
 }
 
 void AdlibPart::noteOff (byte note)
