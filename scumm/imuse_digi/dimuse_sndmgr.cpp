@@ -341,22 +341,13 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 void ImuseDigiSndMgr::closeSound(soundStruct *soundHandle) {
 	assert(soundHandle && checkForProperHandle(soundHandle));
 
-	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
-		if (&_sounds[l] == soundHandle) {
-			if (_sounds[l].bundle)
-				delete _sounds[l].bundle;
-			for (int r = 0; r < _sounds[l].numSyncs; r++)
-				if (_sounds[l].sync[r].ptr)
-					free(_sounds[l].sync[r].ptr);
-			if (_sounds[l].region)
-					free(_sounds[l].region);
-			if (_sounds[l].jump)
-					free(_sounds[l].jump);
-			if (_sounds[l].sync)
-					free(_sounds[l].sync);
-			memset(&_sounds[l], 0, sizeof(soundStruct));
-		}
-	}
+	delete soundHandle->bundle;
+	for (int r = 0; r < soundHandle->numSyncs; r++)
+		free(soundHandle->sync[r].ptr);
+	free(soundHandle->region);
+	free(soundHandle->jump);
+	free(soundHandle->sync);
+	memset(soundHandle, 0, sizeof(soundStruct));
 }
 
 bool ImuseDigiSndMgr::checkForProperHandle(soundStruct *soundHandle) {

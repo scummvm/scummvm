@@ -165,8 +165,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 		}
 	}
 
-	warning("it should not happen");
-	assert(0);
+	error("IMuseDigital::startSound(): We should never get here");
 }
 
 void IMuseDigital::setPriority(int soundId, int priority) {

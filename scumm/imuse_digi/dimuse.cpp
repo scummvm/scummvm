@@ -82,7 +82,7 @@ void IMuseDigital::callback() {
 		if (_track[l].used) {
 			if (_track[l].stream2) {
 				if (!_track[l].handle.isActive() && _track[l].started) {
-					debug(5, "IMuseDigital::callback(): stoped sound: %d", _track[l].soundId);
+					debug(5, "IMuseDigital::callback() A: stopped sound: %d", _track[l].soundId);
 					delete _track[l].stream2;
 					_track[l].stream2 = NULL;
 					_track[l].used = false;
@@ -90,7 +90,7 @@ void IMuseDigital::callback() {
 				}
 			} else if (_track[l].stream) {
 				if (_track[l].toBeRemoved) {
-					debug(5, "IMuseDigital::callback(): stoped sound: %d", _track[l].soundId);
+					debug(5, "IMuseDigital::callback() B: stopped sound: %d", _track[l].soundId);
 					_track[l].stream->finish();
 					_track[l].stream = NULL;
 					_sound->closeSound(_track[l].soundHandle);
