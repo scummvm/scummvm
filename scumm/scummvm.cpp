@@ -1034,6 +1034,12 @@ int Scumm::scummLoop(int delta) {
 			_talkDelay = 0;
 	}
 
+	// Record the current ego actor before any scripts (including input scripts)
+	// get a chance to run.
+	int oldEgo = 0;
+	if (VAR_EGO != 0xFF)
+		oldEgo = VAR(VAR_EGO);
+
 	processKbd();
 
 	if (_features & GF_NEW_CAMERA) {
@@ -1135,11 +1141,6 @@ load_game:
 		_lastSaveTime = _system->get_msecs();
 	}
 
-	int oldEgo = 0;
-	
-	if (VAR_EGO != 0xFF)
-		oldEgo = VAR(VAR_EGO);
-
 	if (_completeScreenRedraw) {
 		_completeScreenRedraw = false;
 		gdi.clearCharsetMask();
@@ -1221,8 +1222,9 @@ load_game:
 
 		if (_version <= 2) {
 			if (oldEgo != VAR(VAR_EGO)) {
-				// FIXME: Reset and redraw the sentence line
+				// FIXME/TODO: Reset and redraw the sentence line
 				oldEgo = VAR(VAR_EGO);
+				_inventoryOffset = 0;	// TODO: Record the _inventoryOffset for each ego actor?
 				redrawV2Inventory();
 			}
 			checkV2MouseOver(_mouse);
