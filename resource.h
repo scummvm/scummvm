@@ -61,12 +61,14 @@ public:
   T& operator *() { return *ptr_; }
   T* operator ->() { return ptr_; }
   ResPtr& operator =(T* ptr) {
+    if (ptr_ == ptr) return *this;
     if (ptr_ != NULL) ptr_->deref();
     ptr_ = ptr;
     if (ptr_ != NULL) ptr_->ref();
     return *this;
   }
   ResPtr& operator =(const ResPtr& p) {
+    if (this == &p || ptr_ == p.ptr_) return *this;
     if (ptr_ != NULL) ptr_->deref();
     ptr_ = p.ptr_;
     if (ptr_ != NULL) ptr_->ref();
