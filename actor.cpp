@@ -411,7 +411,7 @@ void Actor::startAnimActor(int frame)
 			needRedraw = true;
 			needBgReset = true;
 			if (frame == initFrame)
-				_scumm->initActorCostumeData(this);
+				cost.reset();
 			_scumm->akos_decodeData(this, frame, (uint) - 1);
 		}
 
@@ -440,7 +440,7 @@ void Actor::startAnimActor(int frame)
 			needRedraw = true;
 
 			if (initFrame == frame)
-				_scumm->initActorCostumeData(this);
+				cost.reset();
 
 			if (frame != 0x3E) {
 				_scumm->cost_decodeData(this, frame, (uint) - 1);
@@ -652,6 +652,8 @@ void Actor::hideActor()
 	if (!visible)
 		return;
 
+	debug(1, "hideActor %d", (int)number);
+
 	if (moving) {
 		startAnimActor(standFrame);
 		moving = 0;
@@ -666,6 +668,8 @@ void Actor::showActor()
 {
 	if (_scumm->_currentRoom == 0 || visible)
 		return;
+
+	debug(1, "showActor %d", (int)number);
 
 	adjustActorPos();
 
@@ -937,136 +941,135 @@ void Scumm::processActors()
 		a = *ac;
 		if (a->costume) {
 			CHECK_HEAP getMaskFromBox(a->walkbox);
-			drawActorCostume(a);
-			CHECK_HEAP actorAnimate(a);
+			a->drawActorCostume();
+			CHECK_HEAP a->actorAnimate();
 		}
 	} while (ac++, --cnt);
 }
 
-void Scumm::drawActorCostume(Actor * a)
+void Actor::drawActorCostume()
 {
-	if (!(_features & GF_AFTER_V7)) {
+	if (!(_scumm->_features & GF_AFTER_V7)) {
 		CostumeRenderer cr;
 
-		if (a == NULL || !a->needRedraw)
+		if (!needRedraw)
 			return;
 		
-		if (getClass(a->number, 20))
-			a->mask = 0;
-		else if (getClass(a->number, 21))
-			a->forceClip = 1;
+		if (_scumm->getClass(number, 20))
+			mask = 0;
+		else if (_scumm->getClass(number, 21))
+			forceClip = 1;
 
-		if (_gameId==GID_SAMNMAX && getState(995)) // FIXME: ugly fix for samnmax inventory
+		// FIXME: ugly fix for samnmax inventory
+		if (_scumm->_gameId==GID_SAMNMAX && _scumm->getState(995))
 			return;
 
-		a->needRedraw = false;
+		needRedraw = false;
 
-		a->setupActorScale();
+		setupActorScale();
 
 		/* First, zero initialize all fields */
 		memset(&cr, 0, sizeof(cr));
 
-		cr._actorX = a->x - virtscr->xstart;
-		cr._actorY = a->y - a->elevation;
-		cr._scaleX = a->scalex;
-		cr._scaleY = a->scaley;
+		cr._actorX = x - _scumm->virtscr->xstart;
+		cr._actorY = y - elevation;
+		cr._scaleX = scalex;
+		cr._scaleY = scaley;
 
-		cr._outheight = virtscr->height;
-		cr._vm = this;
+		cr._outheight = _scumm->virtscr->height;
+		cr._vm = _scumm;
 
-		cr._zbuf = a->mask;
-		if (cr._zbuf > gdi._numZBuffer)
-			cr._zbuf = (byte)gdi._numZBuffer;
-		if (a->forceClip)
-			cr._zbuf = a->forceClip;
+		cr._zbuf = mask;
+		if (cr._zbuf > _scumm->gdi._numZBuffer)
+			cr._zbuf = (byte)_scumm->gdi._numZBuffer;
+		if (forceClip)
+			cr._zbuf = forceClip;
 
-		cr._shadow_table = _shadowPalette;
+		cr._shadow_table = _scumm->_shadowPalette;
 
-		cost_setCostume(&cr, a->costume);
-		cost_setPalette(&cr, a->palette);
-		cost_setFacing(&cr, a);
+		cr.setCostume(costume);
+		cr.setPalette(palette);
+		cr.setFacing(facing);
 
-		a->top = 0xFF;
+		top = 0xFF;
 
-		a->bottom = 0;
+		bottom = 0;
 
 		/* if the actor is partially hidden, redraw it next frame */
-		if (cr.drawCostume(a) & 1) {
-			a->needBgReset = true;
-			a->needRedraw = true;
+		if (cr.drawCostume(this) & 1) {
+			needBgReset = true;
+			needRedraw = true;
 		}
 	} else {
 		AkosRenderer ar;
 
-		if (a == NULL || !a->needRedraw)
+		if (!needRedraw)
 			return;
 
-		a->needRedraw = false;
+		needRedraw = false;
 
-		a->setupActorScale();
+		setupActorScale();
 
 		/* First, zero initialize all fields */
 		memset(&ar, 0, sizeof(ar));
 
-		ar.x = a->x - virtscr->xstart;
-		ar.y = a->y - a->elevation;
-		ar.scale_x = a->scalex;
-		ar.scale_y = a->scaley;
-		ar.clipping = a->forceClip;
+		ar.x = x - _scumm->virtscr->xstart;
+		ar.y = y - elevation;
+		ar.scale_x = scalex;
+		ar.scale_y = scaley;
+		ar.clipping = forceClip;
 		if (ar.clipping == 100) {
-			ar.clipping = a->mask;
-			if (ar.clipping > (byte)gdi._numZBuffer)
-				ar.clipping = gdi._numZBuffer;
+			ar.clipping = mask;
+			if (ar.clipping > (byte)_scumm->gdi._numZBuffer)
+				ar.clipping = _scumm->gdi._numZBuffer;
 		}
-		ar.charsetmask = _vars[VAR_CHARSET_MASK] != 0;
+		ar.charsetmask = _scumm->_vars[_scumm->VAR_CHARSET_MASK] != 0;
 
-		ar.outptr = virtscr->screenPtr + virtscr->xstart;
-		ar.outwidth = virtscr->width;
-		ar.outheight = virtscr->height;
+		ar.outptr = _scumm->virtscr->screenPtr + _scumm->virtscr->xstart;
+		ar.outwidth = _scumm->virtscr->width;
+		ar.outheight = _scumm->virtscr->height;
 
-		ar.shadow_mode = a->shadow_mode;
-		ar.shadow_table = _shadowPalette;
+		ar.shadow_mode = shadow_mode;
+		ar.shadow_table = _scumm->_shadowPalette;
 
-		akos_setCostume(&ar, a->costume);
-		akos_setPalette(&ar, a->palette);
-		akos_setFacing(&ar, a);
+		ar.setCostume(costume);
+		ar.setPalette(palette);
+		ar.setFacing(this);
 
-		ar.dirty_id = a->number;
+		ar.dirty_id = number;
 
-		ar.cd = &a->cost;
+		ar.cd = &cost;
 
-		ar.draw_top = a->top = 0x7fffffff;
-		ar.draw_bottom = a->bottom = 0;
-		akos_drawCostume(&ar);
-		a->top = ar.draw_top;
-		a->bottom = ar.draw_bottom;
+		ar.draw_top = top = 0x7fffffff;
+		ar.draw_bottom = bottom = 0;
+		ar.drawCostume();
+		top = ar.draw_top;
+		bottom = ar.draw_bottom;
 	}
 }
 
-void Scumm::actorAnimate(Actor * a)
+void Actor::actorAnimate()
 {
-	byte *akos;
-	LoadedCostume lc;
-
-	if (a == NULL || a->costume == 0)
+	if (costume == 0)
 		return;
 
-	a->animProgress++;
-	if (a->animProgress >= a->animSpeed) {
-		a->animProgress = 0;
+	animProgress++;
+	if (animProgress >= animSpeed) {
+		animProgress = 0;
 
-		if (_features & GF_AFTER_V7) {
-			akos = getResourceAddress(rtCostume, a->costume);
+		if (_scumm->_features & GF_AFTER_V7) {
+			byte *akos = _scumm->getResourceAddress(rtCostume, costume);
 			assert(akos);
-			if (akos_increaseAnims(akos, a)) {
-				a->needRedraw = true;
-				a->needBgReset = true;
+			if (_scumm->akos_increaseAnims(akos, this)) {
+				needRedraw = true;
+				needBgReset = true;
 			}
 		} else {
-			loadCostume(&lc, a->costume);
-			if (cost_increaseAnims(&lc, a)) {
-				a->needRedraw = true;
-				a->needBgReset = true;
+			LoadedCostume lc;
+			_scumm->loadCostume(&lc, costume);
+			if (_scumm->cost_increaseAnims(&lc, this)) {
+				needRedraw = true;
+				needBgReset = true;
 			}
 		}
 	}
@@ -1161,14 +1164,16 @@ void Actor::setActorCostume(int c)
 
 	costumeNeedsInit = true;
 
+	debug(1, "setActorCostume (actor=%d, costume=%d)", (int)number, (int)c);
+
 	if (visible) {
 		hideActor();
-		_scumm->initActorCostumeData(this);
+		cost.reset();
 		costume = c;
 		showActor();
 	} else {
 		costume = c;
-		_scumm->initActorCostumeData(this);
+		cost.reset();
 	}
 
 	for (i = 0; i < 32; i++)

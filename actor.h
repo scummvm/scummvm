@@ -50,6 +50,15 @@ struct CostumeData {
 	uint16 start[16];
 	uint16 end[16];
 	uint16 frame[16];
+	
+	void reset()
+	{
+		stopped = 0;
+		for (int i = 0; i < 16; i++) {
+			active[i] = 0;
+			curpos[i] = start[i] = end[i] = frame[i] = 0xFFFF;
+	}
+}
 };
 
 class Actor {
@@ -118,6 +127,8 @@ public:
 	void adjustActorPos();	
 	void turnToDirection(int newdir);
 	void walkActor();
+	void drawActorCostume();
+	void actorAnimate();
 	void setActorCostume(int c);
 	byte *getActorName();
 	void startWalkActor(int x, int y, int dir);
@@ -125,7 +136,11 @@ public:
 	void remapActor(int b, int c, int d, int e);
 	void walkActorOld();
 	
-	bool isInCurrentRoom()	{ return room == _scumm->_currentRoom; }
+	bool isInCurrentRoom()					{ return room == _scumm->_currentRoom; }
+
+	int getAnimVar(byte var)				{ return animVariable[var]; }
+	void setAnimVar(byte var, int value)	{ animVariable[var] = value; }
+
 };
 
 #endif

@@ -825,18 +825,6 @@ void CostumeRenderer::loadCostume(int id)
 }
 #endif
 
-void Scumm::initActorCostumeData(Actor * a)
-{
-	CostumeData *cd = &a->cost;
-	int i;
-
-	cd->stopped = 0;
-	for (i = 0; i < 16; i++) {
-		cd->active[i] = 0;
-		cd->curpos[i] = cd->start[i] = cd->end[i] = cd->frame[i] = 0xFFFF;
-	}
-}
-
 byte CostumeRenderer::drawOneSlot(Actor * a, int slot)
 {
 
@@ -988,28 +976,28 @@ void Scumm::cost_decodeData(Actor * a, int frame, uint usemask)
 	} while ((uint16)mask);
 }
 
-void Scumm::cost_setPalette(CostumeRenderer * cr, byte *palette)
+void CostumeRenderer::setPalette(byte *palette)
 {
 	int i;
 	byte color;
 
-	for (i = 0; i < cr->_loaded._numColors; i++) {
+	for (i = 0; i < _loaded._numColors; i++) {
 		color = palette[i];
 		if (color == 255)
-			color = cr->_loaded._ptr[8 + i];
-		cr->_palette[i] = color;
+			color = _loaded._ptr[8 + i];
+		_palette[i] = color;
 	}
 }
 
-void Scumm::cost_setFacing(CostumeRenderer * cr, Actor * a)
+void CostumeRenderer::setFacing(uint16 facing)
 {
-	cr->_mirror = newDirToOldDir(a->facing) != 0
-		|| (cr->_loaded._ptr[7] & 0x80);
+	_mirror = _vm->newDirToOldDir(facing) != 0
+		|| (_loaded._ptr[7] & 0x80);
 }
 
-void Scumm::cost_setCostume(CostumeRenderer * cr, int costume)
+void CostumeRenderer::setCostume(int costume)
 {
-	loadCostume(&cr->_loaded, costume);
+	_vm->loadCostume(&_loaded, costume);
 }
 
 byte Scumm::cost_increaseAnims(LoadedCostume * lc, Actor * a)

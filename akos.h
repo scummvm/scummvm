@@ -53,6 +53,7 @@ struct AkosCI {
 #endif	
 
 struct AkosRenderer {
+//protected:
 	CostumeData *cd;
 	int x,y; /* where to draw costume */
 	byte scale_x, scale_y; /* scaling */
@@ -103,7 +104,19 @@ struct AkosRenderer {
 	byte *akcd;
 
 	byte palette[256];
-
+	
+public:
+	bool drawCostume();
+	void setPalette(byte *palette);
+	void setCostume(int costume);
+	void setFacing(Actor *a);
+	bool drawCostumeChannel(int chan);
+	void codec1();
+	void codec5();
+	void codec16();
+	void codec1_ignorePakCols(int num);
+	void c1_spec2();
+	void c1_spec3();
 };
 
 enum AkosOpcodes{

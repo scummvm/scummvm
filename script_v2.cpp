@@ -2024,7 +2024,7 @@ void Scumm::o6_actorSet()
 		break;
 	case 198:										/* set anim variable */
 		i = pop();									/* value */
-		setAnimVar(a, pop(), i);
+		a->setAnimVar(pop(), i);
 		break;
 	case 215:
 		a->new_3 = 1;
@@ -2405,7 +2405,7 @@ void Scumm::o6_getActorAnimCounter1()
 void Scumm::o6_getAnimateVariable()
 {
 	int var = pop();
-	push(getAnimVar(derefActorSafe(pop(), "o6_getAnimateVariable"), var));
+	push(derefActorSafe(pop(), "o6_getAnimateVariable")->getAnimVar(var));
 }
 
 void Scumm::o6_soundKludge()

@@ -412,6 +412,9 @@ struct CostumeRenderer {
 	byte drawOneSlot(Actor *a, int slot);
 	byte drawCostume(Actor *a);
 
+	void setPalette(byte *palette);
+	void setFacing(uint16 facing);
+	void setCostume(int costume);
 };
 
 #define ARRAY_HDR_SIZE 6
@@ -868,9 +871,9 @@ public:
 
 	/* Should be in Costume class */
 	void loadCostume(LoadedCostume *lc, int costume);
-	void cost_setPalette(CostumeRenderer *cr, byte *palette);
-	void cost_setFacing(CostumeRenderer *cr, Actor *a);
-	void cost_setCostume(CostumeRenderer *cr, int costume);
+//	void cost_setPalette(CostumeRenderer *cr, byte *palette);
+//	void cost_setFacing(CostumeRenderer *cr, Actor *a);
+//	void cost_setCostume(CostumeRenderer *cr, int costume);
 	byte cost_increaseAnims(LoadedCostume *lc, Actor *a);
 	byte cost_increaseAnim(LoadedCostume *lc, Actor *a, int slot);
 	void cost_decodeData(Actor *a, int frame, uint usemask);
@@ -985,21 +988,9 @@ public:
 	Actor *derefActorSafe(int id, const char *errmsg);
 	Actor *getFirstActor() {return actor;} 
 	void putActor(Actor *a, int x, int y, byte room);
-//	void hideActor(Actor *a);
-//	void showActor(Actor *a);
 	void showActors();
 
-//	void initActor(Actor *a, int mode);
-//	void setActorWalkSpeed(Actor *a, uint speed1, uint speed2);
-//	int calcMovementFactor(Actor *a, int newx, int newy);
-//	int actorWalkStep(Actor *a);
-//	int remapDirection(Actor *a, int dir);
-//	void setupActorScale(Actor *a);
-//	void stopActorMoving(Actor *a);
 	uint32 *_classData;
-//	void startWalkAnim(Actor *a, int cmd, int angle);
-//	void startAnimActor(Actor *a, int frame);
-//	void setActorBox(Actor *a, int box);
 
 	int newDirToOldDir(int dir);
 	int oldDirToNewDir(int dir);
@@ -1009,34 +1000,21 @@ public:
 	static int fromSimpleDir(int dirtype, int dir);
 	static int toSimpleDir(int dirtype, int dir);
 	static int numSimpleDirDirections(int dirType);
-//	int updateActorDirection(Actor *a);
 	void startAnimActorEx(Actor *a, int frame, int direction);
 	int getProgrDirChange(Actor *a, int mode);
-	void initActorCostumeData(Actor *a);
-//	void setActorDirection(Actor *a, int direction);
 
 	int getActorXYPos(Actor *a);
-//	void adjustActorPos(Actor *a);	
-//	void turnToDirection(Actor *a, int newdir);
 	AdjustBoxResult adjustXYToBeInBox(Actor *a, int x, int y, int pathfrom);
 	void walkActors();
 	void playActorSounds();
-//	void walkActor(Actor *a);
 	void setActorRedrawFlags();
 	void resetActorBgs();
 	void processActors();
-	void drawActorCostume(Actor *a);
-	void actorAnimate(Actor *a);
 	int getActorFromPos(int x, int y);
-//	void setActorCostume(Actor *a, int c);
-//	byte *getActorName(Actor *a);
 	void faceActorToObj(int act, int obj);
 	void animateActor(int act, int anim);
 	void actorFollowCamera(int act);
-//	void startWalkActor(Actor *a, int x, int y, int dir);
 	
-//	void remapActor(Actor *a, int b, int c, int d, int e);
-//	void walkActorOld(Actor *a);
 	bool isCostumeInUse(int i);
 
 	/* Actor talking stuff */
@@ -1048,23 +1026,9 @@ public:
 	void stopTalk();	
 
 	/* Akos Class */
-	bool akos_drawCostume(AkosRenderer *ar);
-	void akos_setPalette(AkosRenderer *ar, byte *palette);
-	void akos_setCostume(AkosRenderer *ar, int costume);
-	void akos_setFacing(AkosRenderer *ar, Actor *a);
-	bool akos_drawCostumeChannel(AkosRenderer *ar, int chan);
-	void akos_codec1(AkosRenderer *ar);
-	void akos_codec5(AkosRenderer *ar);
-	void akos_codec16(AkosRenderer *ar);
-	void akos_codec1_ignorePakCols(AkosRenderer *ar, int num);
-	void akos_c1_spec2(AkosRenderer *ar);
-	void akos_c1_spec3(AkosRenderer *ar);
 
 	bool akos_increaseAnims(byte *akos, Actor *a);
 	bool akos_increaseAnim(Actor *a, int i, byte *aksq, uint16 *akfo, int numakfo);
-
-	int getAnimVar(Actor *a, byte var);
-	void setAnimVar(Actor *a, byte var, int value);
 
 	void akos_queCommand(byte cmd, Actor *a, int param_1, int param_2);
 	bool akos_compare(int a, int b, byte cmd);

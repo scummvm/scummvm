@@ -411,8 +411,7 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 	stopCycle(0);
 
 	for (i = 1, at = getFirstActor(); ++at, i < NUM_ACTORS; i++) {
-		if (at->visible)
-			at->hideActor();
+		at->hideActor();
 	}
 
 	if (!(_features & GF_AFTER_V7)) {
@@ -455,7 +454,6 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 	if (!(_features & GF_AFTER_V7)) {
 		camera._mode = CM_NORMAL;
 		camera._cur.x = camera._dest.x = 160;
-
 		camera._cur.y = camera._dest.y = 100;
 	}
 
@@ -1085,9 +1083,9 @@ int Scumm::toSimpleDir(int dirType, int dir)
 int Scumm::fromSimpleDir(int dirType, int dir)
 {
 	if (!dirType)
-		dir += dir;
-
-	return dir * 45;
+		return dir * 90;
+	else
+		return dir * 45;
 }
 
 
