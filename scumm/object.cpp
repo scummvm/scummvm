@@ -407,7 +407,7 @@ void Scumm::loadRoomObjects()
 	roomhdr = (RoomHeader *)findResourceData(MKID('RMHD'), room);
 
 	if (_features & GF_AFTER_V8)
-		_numObjectsInRoom = READ_LE_UINT32(&(roomhdr->v8.numObjects));
+		_numObjectsInRoom = (byte)READ_LE_UINT32(&(roomhdr->v8.numObjects));
 	else if (_features & GF_AFTER_V7)
 		_numObjectsInRoom = READ_LE_UINT16(&(roomhdr->v7.numObjects));
 	else
@@ -594,11 +594,11 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room)
 		od->parentstate = cdhd->v7.parentstate;
 
 		imhd = (ImageHeader *)findResourceData(MKID('IMHD'), room + od->offs_obim_to_room);
-		od->x_pos = READ_LE_UINT32(&imhd->v8.x_pos);
-		od->y_pos = READ_LE_UINT32(&imhd->v8.y_pos);
-		od->width = READ_LE_UINT32(&imhd->v8.width);
-		od->height = READ_LE_UINT32(&imhd->v8.height);
-		od->actordir = READ_LE_UINT32(&imhd->v8.actordir);
+		od->x_pos = (int)READ_LE_UINT32(&imhd->v8.x_pos);
+		od->y_pos = (int)READ_LE_UINT32(&imhd->v8.y_pos);
+		od->width = (uint)READ_LE_UINT32(&imhd->v8.width);
+		od->height = (uint)READ_LE_UINT32(&imhd->v8.height);
+		od->actordir = (byte)READ_LE_UINT32(&imhd->v8.actordir);
 
 	} else if (_features & GF_AFTER_V7) {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
