@@ -2238,13 +2238,13 @@ void Scumm::initRoomSubBlocks() {
 	}
 
 	// Color cycling
-	if (_features & GF_OLD_BUNDLE)
-		ptr = 0; // TODO / FIXME ???
-	else if (_features & GF_SMALL_HEADER)
-		//TODO loomcd/monkeyega use difference color cycle resource format.
-		ptr = 0;
-	else
+	ptr = 0;
+	if (_features & GF_SMALL_HEADER) {
+		if (_gameId == GID_MONKEY_VGA)
+			ptr = findResourceSmall (MKID('CYCL'), roomptr);
+	} else if (!(_features & GF_OLD_BUNDLE)) {
 		ptr = findResourceData(MKID('CYCL'), roomptr);
+	}
 	if (ptr)
 		initCycl(ptr);
 

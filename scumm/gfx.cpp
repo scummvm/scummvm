@@ -2704,20 +2704,39 @@ void Scumm::initCycl(const byte *ptr) {
 
 	memset(_colorCycle, 0, sizeof(_colorCycle));
 
-	while ((j = *ptr++) != 0) {
-		if (j < 1 || j > 16) {
-			error("Invalid color cycle index %d", j);
-		}
-		cycl = &_colorCycle[j - 1];
+	if (_features & GF_SMALL_HEADER) {
+		cycl = _colorCycle;
+		ptr += 6;
+		for (j = 0; j < 16; ++j, ++cycl) {
+			uint16 delay = READ_BE_UINT16(ptr);
+			ptr += 2;
+			byte start = *ptr++;
+			byte end = *ptr++;
+			if (!delay || start >= end)
+				continue;
 
-		ptr += 2;
-		cycl->counter = 0;
-		cycl->delay = 16384 / READ_BE_UINT16(ptr);
-		ptr += 2;
-		cycl->flags = READ_BE_UINT16(ptr);
-		ptr += 2;
-		cycl->start = *ptr++;
-		cycl->end = *ptr++;
+			cycl->counter = 0;
+			cycl->delay = 16384 / delay;
+			cycl->flags = 2;
+			cycl->start = start;
+			cycl->end = end;
+		}
+	} else {
+		while ((j = *ptr++) != 0) {
+			if (j < 1 || j > 16) {
+				error("Invalid color cycle index %d", j);
+			}
+			cycl = &_colorCycle[j - 1];
+
+			ptr += 2;
+			cycl->counter = 0;
+			cycl->delay = 16384 / READ_BE_UINT16(ptr);
+			ptr += 2;
+			cycl->flags = READ_BE_UINT16(ptr);
+			ptr += 2;
+			cycl->start = *ptr++;
+			cycl->end = *ptr++;
+		}
 	}
 }
 
@@ -2807,7 +2826,8 @@ void Scumm::cyclePalette() {
 			setDirtyColors(cycl->start, cycl->end);
 			moveMemInPalRes(cycl->start, cycl->end, cycl->flags & 2);
 
-			::cyclePalette(_currentPalette, cycl->start, cycl->end, 3, !(cycl->flags & 2));
+			if (!(_features & GF_SMALL_HEADER && _version > 2))
+				::cyclePalette(_currentPalette, cycl->start, cycl->end, 3, !(cycl->flags & 2));
 
 			// Also cycle the other, indirect palettes
 			if (_proc_special_palette) {
