@@ -1370,7 +1370,11 @@ load_game:
 		// HACK as in game save stuff isn't supported currently
 		if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {
 			int args = 2;
-			uint value = (_gameId == GID_LOOM256) ? 150 : 100;
+			uint value;
+			if (_features & GF_MACINTOSH)
+				value = 105;
+			else
+ 				value = (_gameId == GID_LOOM256) ? 150 : 100;
 			byte restoreScript = (_features & GF_FMTOWNS) ? 17 : 18;
 			// if verbs should be shown restore them
 			if (VAR(value) == 2)
