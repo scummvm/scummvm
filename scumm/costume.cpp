@@ -262,8 +262,8 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	if (_draw_top > rect.top)
 		_draw_top = rect.top;
-	if (_draw_bottom < rect.bottom - 1)
-		_draw_bottom = rect.bottom - 1;
+	if (_draw_bottom < rect.bottom)
+		_draw_bottom = rect.bottom;
 
 	if (_height + rect.top >= 256) {
 		CHECK_HEAP

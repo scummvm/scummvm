@@ -732,8 +732,8 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 	if (_draw_top > rect.top)
 		_draw_top = rect.top;
-	if (_draw_bottom < rect.bottom - 1)
-		_draw_bottom = rect.bottom - 1;
+	if (_draw_bottom < rect.bottom)
+		_draw_bottom = rect.bottom;
 
 	v1.destptr = _outptr + v1.y * _outwidth + v1.x;
 
@@ -776,8 +776,8 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 
 	if (_draw_top > clip.top)
 		_draw_top = clip.top;
-	if (_draw_bottom < clip.bottom - 1)
-		_draw_bottom = clip.bottom - 1;
+	if (_draw_bottom < clip.bottom)
+		_draw_bottom = clip.bottom;
 
 	BompDrawData bdd;
 
