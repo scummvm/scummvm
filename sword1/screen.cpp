@@ -133,7 +133,6 @@ void SwordScreen::updateScreen(void) {
 
 	uint16 scrlX = (uint16)SwordLogic::_scriptVars[SCROLL_OFFSET_X];
 	uint16 scrlY = (uint16)SwordLogic::_scriptVars[SCROLL_OFFSET_Y];
-	_fullRefresh = true;
 	if (_fullRefresh) {
 		_fullRefresh = false;
 		uint16 copyWidth = SCREEN_WIDTH;
@@ -155,59 +154,65 @@ void SwordScreen::updateScreen(void) {
 		uint16 gridW = SCREEN_WIDTH / SCRNGRID_X;
 		uint16 gridH = SCREEN_DEPTH / SCRNGRID_Y;
 		if (diffY) {
-			uint8 cpHeight = SCRNGRID_Y - diffY;
+			diffY = SCRNGRID_Y - diffY;
 			uint16 cpWidth = 0;
 			for (uint16 cntx = 0; cntx < gridW; cntx++) 
-				if (gridPos[cntx] & 1) {
-					gridPos[cntx] &= ~1;
+				if (gridPos[cntx]) {
+					gridPos[cntx] >>= 1;
 					cpWidth++;
 				} else if (cpWidth) {
 					int16 xPos = (cntx - cpWidth) * SCRNGRID_X - diffX;
 					if (xPos < 0)
 						xPos = 0;
-					_system->copy_rect(scrnBuf + xPos, _scrnSizeX, xPos, 40, cpWidth * SCRNGRID_X, cpHeight);
+					_system->copy_rect(scrnBuf + xPos, _scrnSizeX, xPos, 40, cpWidth * SCRNGRID_X, diffY);
 					cpWidth = 0;
 				}
 			if (cpWidth) {
 				int16 xPos = (gridW - cpWidth) * SCRNGRID_X - diffX;
 				if (xPos < 0)
 					xPos = 0;
-				_system->copy_rect(scrnBuf + xPos, _scrnSizeX, xPos, 40, SCREEN_WIDTH - xPos, cpHeight);
+				_system->copy_rect(scrnBuf + xPos, _scrnSizeX, xPos, 40, SCREEN_WIDTH - xPos, diffY);
 			}
-		} // okay, y scrolling is compensated. check x now.
-		gridPos += _gridSizeX;
-		scrnBuf = _screenBuf + scrlX + diffY * _scrnSizeX;
+			scrlY += diffY;
+		}
+		// okay, y scrolling is compensated. check x now.
+		gridPos = _screenGrid + (scrlX / SCRNGRID_X) + (scrlY / SCRNGRID_Y) * _gridSizeX;
+		scrnBuf = _screenBuf + scrlY * _scrnSizeX + scrlX;
 		if (diffX) {
-			uint8 cpWidth = SCRNGRID_X - diffX;
+			diffX = SCRNGRID_X - diffX;
 			uint16 cpHeight = 0;
-			for (uint16 cnty = 0; cnty < gridH; cnty++)
-				if (gridPos[cnty * SCRNGRID_X] & 1) {
-					gridPos[cnty * SCRNGRID_X] &= ~1;
+			for (uint16 cnty = 0; cnty < gridH; cnty++) {
+				if (*gridPos) {
+					*gridPos >>= 1;
 					cpHeight++;
 				} else if (cpHeight) {
 					uint16 yPos = (cnty - cpHeight) * SCRNGRID_Y;
-					_system->copy_rect(scrnBuf + yPos * _scrnSizeX, _scrnSizeX, 0, yPos + diffY + 40, cpWidth, cpHeight * SCRNGRID_Y);
+					_system->copy_rect(scrnBuf + yPos * _scrnSizeX, _scrnSizeX, 0, yPos + diffY + 40, diffX, cpHeight * SCRNGRID_Y);
+					cpHeight = 0;
 				}
+				gridPos += _gridSizeX;
+			}
 			if (cpHeight) {
 				uint16 yPos = (gridH - cpHeight) * SCRNGRID_Y;
-				_system->copy_rect(scrnBuf + yPos * _scrnSizeX, _scrnSizeX, 0, yPos + diffY + 40, cpWidth, SCREEN_DEPTH - (yPos + diffY));
-			}			
-		} // x scroll is compensated, too. check the rest of the screen, now.
-		scrlX = (scrlX + SCRNGRID_X - 1) &~ (SCRNGRID_X - 1);
-		scrlY = (scrlY + SCRNGRID_Y - 1) &~ (SCRNGRID_Y - 1);
+				_system->copy_rect(scrnBuf + yPos * _scrnSizeX, _scrnSizeX, 0, yPos + diffY + 40, diffX, SCREEN_DEPTH - (yPos + diffY));
+			}
+			scrlX += diffX;
+		}
+		// x scroll is compensated, too. check the rest of the screen, now.
 		scrnBuf = _screenBuf + scrlY * _scrnSizeX + scrlX;
-		gridPos++;
+		gridPos = _screenGrid + (scrlX / SCRNGRID_X) + (scrlY / SCRNGRID_Y) * _gridSizeX;
 		for (uint16 cnty = 0; cnty < gridH; cnty++) {
 			uint16 cpWidth = 0;
 			uint16 cpHeight = SCRNGRID_Y;
 			if (cnty == gridH - 1)
-				cpHeight = SCRNGRID_Y - diffY;
+				cpHeight = diffY;
 			for (uint16 cntx = 0; cntx < gridW; cntx++)
-				if (gridPos[cntx] & 1) {
-					gridPos[cntx] &= ~1;
+				if (gridPos[cntx]) {
+					gridPos[cntx] >>= 1;
 					cpWidth++;
 				} else if (cpWidth) {
 					_system->copy_rect(scrnBuf + (cntx - cpWidth) * SCRNGRID_X, _scrnSizeX, (cntx - cpWidth) * SCRNGRID_X + diffX, cnty * SCRNGRID_Y + diffY + 40, cpWidth * SCRNGRID_X, cpHeight);
+					cpWidth = 0;
 				}
 			if (cpWidth) {
 				uint16 xPos = (gridW - cpWidth) * SCRNGRID_X;
@@ -243,7 +248,7 @@ void SwordScreen::newScreen(uint32 screen) {
 	}
 	_screenBuf = (uint8*)malloc(_scrnSizeX * _scrnSizeY);
 	_screenGrid = (uint8*)malloc(_gridSizeX * _gridSizeY);
-	memset(_screenGrid, 0x80, _gridSizeX * _gridSizeY); // force refresh
+	memset(_screenGrid, 0, _gridSizeX * _gridSizeY);
 	for (cnt = 0; cnt < _roomDefTable[_currentScreen].totalLayers; cnt++) {
 		// open and lock all resources, will be closed in quitScreen()
 		_layerBlocks[cnt] = (uint8*)_resMan->openFetchRes(_roomDefTable[_currentScreen].layers[cnt]);
@@ -263,6 +268,7 @@ void SwordScreen::newScreen(uint32 screen) {
 
 	fnSetPalette(0, 184, _roomDefTable[_currentScreen].palettes[0], SwordEngine::_systemVars.wantFade);
 	fnSetPalette(184, 72, _roomDefTable[_currentScreen].palettes[1], SwordEngine::_systemVars.wantFade);
+	_fullRefresh = true;
 }
 
 void SwordScreen::quitScreen(void) {
@@ -349,7 +355,7 @@ void SwordScreen::processImage(uint32 id) {
 		decompressRLE7(sprData, FROM_LE_32(frameHead->compSize), _rleBuffer);
 		sprData = _rleBuffer;
 	} else if (frameHead->runTimeComp[3] == '0') { // RLE0 encoded?
-		decompressRLE0(sprData, FROM_LE_32(frameHead->compSize), _rleBuffer, FROM_LE_16(frameHead->width));
+		decompressRLE0(sprData, FROM_LE_32(frameHead->compSize), _rleBuffer);
 		sprData = _rleBuffer;
 	} else if (frameHead->runTimeComp[1] == 'I') { // new type
 		tonyBuf = (uint8*)malloc(FROM_LE_16(frameHead->width) * FROM_LE_16(frameHead->height));
@@ -629,28 +635,16 @@ void SwordScreen::decompressRLE7(uint8 *src, uint32 compSize, uint8 *dest) {
 	}
 }
 
-void SwordScreen::decompressRLE0(uint8 *src, uint32 compSize, uint8 *dest, uint16 width) {
+void SwordScreen::decompressRLE0(uint8 *src, uint32 compSize, uint8 *dest) {
 	uint8 *srcBufEnd = src + compSize;
-	uint16 destX = 0;
 	while (src < srcBufEnd) {
 		uint8 color = *src++;
 		if (color) {
-			dest[destX] = color;
-			if (destX == width-1) {
-				destX = 0;
-				dest += width;
-			} else
-				destX++;
+			*dest++ = color;
 		} else {
 			uint8 skip = *src++;
-			for (uint16 cnt = 0; cnt < skip; cnt++) {
-				dest[destX] = 0;
-				if (destX == width-1) {
-					destX = 0;
-					dest += width;
-				} else
-					destX++;
-			}
+			memset(dest, 0, skip);
+			dest += skip;
 		}
 	}
 }
@@ -710,10 +704,11 @@ void SwordScreen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWid
 	*pSprX = (uint16)sprX;
 	*pSprY = (uint16)sprY;
 
-	if (*pSprWidth && *pSprHeight) {
-		// sprite will be drawn, so mark it in the grid buffer
-		uint16 gridH = (*pSprHeight + SCRNGRID_Y - 1) / SCRNGRID_Y;
-		uint16 gridW = (*pSprWidth + SCRNGRID_X - 1) / SCRNGRID_X;
+	if (*pSprWidth && *pSprHeight && !_fullRefresh) {
+		// sprite will be drawn, so mark it in the grid buffer (we don't need to keep
+		// track of changed blocks if we're going to do a full refresh, anyways.
+		uint16 gridH = (*pSprHeight + (sprY & (SCRNGRID_Y - 1)) + (SCRNGRID_Y - 1)) / SCRNGRID_Y;
+		uint16 gridW = (*pSprWidth +  (sprX & (SCRNGRID_X - 1)) + (SCRNGRID_X - 1)) / SCRNGRID_X;
 		uint16 gridX = sprX / SCRNGRID_X;
 		uint16 gridY = sprY / SCRNGRID_Y;
 		uint8 *gridBuf = _screenGrid + gridX + gridY * _gridSizeX;
@@ -724,7 +719,7 @@ void SwordScreen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWid
 
 		for (uint16 cnty = 0; cnty < gridH; cnty++) {
 			for (uint16 cntx = 0; cntx < gridW; cntx++)
-				gridBuf[cntx] |= 0x80;
+				gridBuf[cntx] = 2;
 			gridBuf += _gridSizeX;
 		}
 	}

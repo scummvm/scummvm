@@ -105,7 +105,7 @@ private:
 	void spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *sprWidth, uint16 *sprHeight, uint16 *incr);
 	void drawSprite(uint8 *sprData, uint16 sprX, uint16 sprY, uint16 sprWidth, uint16 sprHeight, uint16 sprPitch);
 	void decompressRLE7(uint8 *src, uint32 compSize, uint8 *dest);
-	void decompressRLE0(uint8 *src, uint32 compSize, uint8 *dest, uint16 width);
+	void decompressRLE0(uint8 *src, uint32 compSize, uint8 *dest);
 	void decompressTony(uint8 *src, uint32 compSize, uint8 *dest);
 	void fastShrink(uint8 *src, uint32 width, uint32 height, uint32 scale, uint8 *dest);
 	int32 inRange(int32 a, int32 b, int32 c);
