@@ -756,8 +756,8 @@ int Sound::isSoundRunning(int sound) const {
 			// ID number of the first active music it finds.
 			if (_currentMusic)
 				return (_musicChannelHandle.isActive()) ? 1 : 0;
-			else
-				return _vm->_imuse->getSoundStatus(sound);
+			else if (_vm->_imuse)
+				return (_vm->_imuse->getSoundStatus(sound));
 		}
 	}
 

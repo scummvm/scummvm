@@ -884,7 +884,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_musicEngine = NULL;
 	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
 		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);
-	} else if (_version > 2) {
+	} else if (_version > 2 && _heversion <= 60) {
 		MidiDriver *driver = GameDetector::createMidi(_midiDriver);
 		if (driver && _native_mt32)
 			driver->property (MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
@@ -1104,7 +1104,7 @@ void ScummEngine::launch() {
 	else if (_gameId == GID_WATER)
 		_numActors = 61;
 	else 
-		_numActors = 13;
+		_numActors = 80;
 
 	if (_version >= 7)
 		OF_OWNER_ROOM = 0xFF;
