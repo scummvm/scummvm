@@ -49,6 +49,8 @@ struct AdlibInstrument {
 	byte flags_b;
 	InstrumentExtra extra_b;
 	byte duration;
+
+	AdlibInstrument() { memset(this, 0, sizeof(AdlibInstrument)); }
 };
 
 class AdlibPart : public MidiChannel {
@@ -77,6 +79,22 @@ protected:
 	void allocate() { _allocated = true; }
 
 public:
+	AdlibPart() {
+		_voice = 0;
+		_pitchbend = 0;
+		_transpose_eff = 0;
+		_vol_eff = 0;
+		_detune_eff = 0;
+		_modwheel = 0;
+		_pedal = 0;
+		_program = 0;
+		_pri_eff = 0;
+		
+		_owner = 0;
+		_allocated = false;
+		_channel = 0;
+	}
+
 	MidiDriver *device();
 	byte getNumber() { return _channel; }
 	void release() { _allocated = false; }
