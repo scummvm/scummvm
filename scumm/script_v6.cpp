@@ -1742,6 +1742,7 @@ void Scumm_v6::o6_actorOps() {
 		a->initActor(2);
 		break;
 	case 218:
+		// TODO: this opcode is used in the putt-putt fun pack, in 'checkers" mini game
 		warning("o6_actorOps(): unimplemented opcode 218");
 		break;
 	case 227:										/* actor_layer */
