@@ -736,16 +736,62 @@ void Logic::roomSetupObjects() {
 	warning("Logic::roomSetupObjects() not fully implemented");
 
 	uint16 i;
+	// furniture frames are reserved in ::roomSetupFurniture(), we append objects 
+	// frames after the furniture ones.
 	uint16 curImage = 36 + FRAMES_JOE_XTRA + _numFurnitureStatic + _numFurnitureAnimatedLen;
 	uint16 firstRoomObj = _roomData[_currentRoom] + 1;
 	uint16 lastRoomObj = _roomData[_currentRoom + 1];
+	uint16 numObjectStatic = 0;
+	uint16 numObjectAnimated = 0;
+	uint16 curBob;
 
+	// invalidates all Bobs for persons (except Joe's one)
 	for (i = 1; i <= 3; ++i) {
 		_graphics->bob(i)->active = false;
 	}
 
-	// TODO: bobs static/animated
-	// TODO: bobs persons
+	// static/animated Bobs
+	for (i = firstRoomObj; i <= lastRoomObj; ++i) {
+		int16 obj = _objectData[i].image;
+		// setup blanks bobs for turned off objects (in case 
+		// you turn them on again)
+		if (obj == -1) {
+			// static OFF Bob
+			curBob = 20 + _numFurnitureStatic + numObjectStatic;
+			++numObjectStatic;
+			// create a blank frame for the for the OFF object
+			++_numFrames;
+			++curImage;
+		}
+		else if(obj == -2) {
+			// animated OFF Bob
+			curBob = 5 + _numFurnitureAnimated + numObjectAnimated;
+			++numObjectAnimated;
+		}
+		else if(obj > 0 && obj < 5000) {
+			// FIXME: need GRAPHIC_ANIM stuff
+			warning("Logic::roomSetupObjects() - Object number %d no handled", obj);
+		}
+
+	}
+
+	// persons Bobs
+	uint16 bobNum = 0;
+	for (i = firstRoomObj; i <= lastRoomObj; ++i) {
+		ObjectData *pod = &_objectData[i];
+		if (pod->image == -3 || pod->image == -4) {
+			++bobNum;
+			uint16 noun = i - firstRoomObj;
+			// FIXME: need Person stuff
+//			if (pod->name > 0) {
+//				curImage = personSetup(noun, curImage);
+//			}
+//			else {
+//				curImage = personAllocate(noun, curImage);
+//			}
+			warning("Logic::roomSetupObjects() - Person object number %d no handled", noun);
+		}
+	}
 
 	// paste downs list
 	++curImage;

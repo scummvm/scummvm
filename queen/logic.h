@@ -167,7 +167,6 @@ protected:
 
 	Resource *_resource;
 	Graphics *_graphics;
-public:
 	Walk *_walk;
 
 	void initialise();
