@@ -34,7 +34,7 @@
 #include "actionmap.h"
 #include "isomap.h"
 #include "script_mod.h"
-#include "objectmap_mod.h"
+#include "objectmap.h"
 #include "palanim_mod.h"
 #include "render.h"
 #include "rscfile_mod.h"
@@ -611,11 +611,11 @@ int ProcessSceneResources() {
 			break;
 		case SAGA_OBJECT_NAME_LIST:
 			debug(0, "Loading object name list resource...");
-			OBJECTMAP_LoadNames(SceneModule.reslist[i].res_data, SceneModule.reslist[i].res_data_len);
+			_vm->_objectMap->loadNames(SceneModule.reslist[i].res_data, SceneModule.reslist[i].res_data_len);
 			break;
 		case SAGA_OBJECT_MAP:
 			debug(0, "Loading object map resource...");
-			if (OBJECTMAP_Load(res_data,
+			if (_vm->_objectMap->load(res_data,
 				res_data_len) != R_SUCCESS) {
 				warning("Error loading object map resource");
 				return R_FAILURE;
@@ -636,7 +636,7 @@ int ProcessSceneResources() {
 
 			debug(0, "Loading isometric tileset resource.");
 
-			if (_vm->_isomap->loadTileset(res_data, res_data_len) != R_SUCCESS) {
+			if (_vm->_isoMap->loadTileset(res_data, res_data_len) != R_SUCCESS) {
 				warning("ProcessSceneResources: Error loading isometric tileset resource");
 				return R_FAILURE;
 			}
@@ -651,7 +651,7 @@ int ProcessSceneResources() {
 
 			debug(0, "Loading isometric metamap resource.");
 
-			if (_vm->_isomap->loadMetamap(res_data, res_data_len) != R_SUCCESS) {
+			if (_vm->_isoMap->loadMetamap(res_data, res_data_len) != R_SUCCESS) {
 				warning("ProcessSceneResources: Error loading isometric metamap resource");
 				return R_FAILURE;
 			}
@@ -666,7 +666,7 @@ int ProcessSceneResources() {
 
 			debug(0, "Loading isometric metatileset resource.");
 
-			if (_vm->_isomap->loadMetaTileset(res_data, res_data_len) != R_SUCCESS) {
+			if (_vm->_isoMap->loadMetaTileset(res_data, res_data_len) != R_SUCCESS) {
 				warning("ProcessSceneResources: Error loading isometric tileset resource");
 				return R_FAILURE;
 			}
@@ -736,7 +736,7 @@ int SCENE_Draw(R_SURFACE *dst_s) {
 						MAX(disp_info.scene_h, SceneModule.bg.h), NULL, &bg_pt);
 		break;
 	case R_SCENE_MODE_ISO:
-		_vm->_isomap->draw(dst_s);
+		_vm->_isoMap->draw(dst_s);
 		break;
 	default:
 		// Unknown scene mode
@@ -789,7 +789,7 @@ int SCENE_End() {
 	_vm->_anim->reset();
 
 	PALANIM_Free();
-	OBJECTMAP_Free();
+	_vm->_objectMap->freeMem();
 	_vm->_actionMap->freeMap();
 
 	ys_dll_destroy(SceneModule.anim_list);

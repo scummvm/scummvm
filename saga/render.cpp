@@ -36,7 +36,7 @@
 #include "text_mod.h"
 
 #include "actionmap.h"
-#include "objectmap_mod.h"
+#include "objectmap.h"
 
 #include "render.h"
 #include <common/timer.h>
@@ -49,10 +49,11 @@ int Render::reg(void) {
 	return R_SUCCESS;
 }
 
-Render::Render(SagaEngine *vm, OSystem *system, Gfx *gfx) {
+Render::Render(SagaEngine *vm, OSystem *system, Gfx *gfx, ObjectMap *omap) {
 	_vm = vm;
 	_system = system;
 	_gfx = gfx;
+	_omap = omap;
 	_initialized = false;
 
 	R_GAME_DISPLAYINFO disp_info;
@@ -136,7 +137,7 @@ int Render::drawScene() {
 
 	// Display scene maps, if applicable
 	if (getFlags() & RF_OBJECTMAP_TEST) {
-		OBJECTMAP_Draw(backbuf_surface, &mouse_pt, _gfx->getWhite(), _gfx->getBlack());
+		_omap->draw(backbuf_surface, &mouse_pt, _gfx->getWhite(), _gfx->getBlack());
 		_vm->_actionMap->draw(backbuf_surface, _gfx->matchColor(R_RGB_RED));
 	}
 

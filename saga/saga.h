@@ -44,6 +44,7 @@ class Anim;
 class Render;
 class ActionMap;
 class IsoMap;
+class ObjectMap;
 class Gfx;
 class SData;
 class Script;
@@ -95,7 +96,8 @@ public:
 	Anim *_anim;
 	Render *_render;
 	ActionMap *_actionMap;
-	IsoMap *_isomap;
+	IsoMap *_isoMap;
+	ObjectMap *_objectMap;
 	Gfx *_gfx;
 	SData *_sdata;
 	Script *_script;

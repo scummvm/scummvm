@@ -30,7 +30,7 @@
 #include "actor_mod.h"
 #include "console_mod.h"
 #include "font_mod.h"
-#include "objectmap_mod.h"
+#include "objectmap.h"
 #include "rscfile_mod.h"
 #include "script_mod.h"
 #include "sprite_mod.h"
@@ -480,7 +480,7 @@ int HandlePlayfieldClick(R_SURFACE *ds, R_POINT *imouse_pt) {
 	int script_num;
 	R_POINT iactor_pt;
 
-	hit_object = OBJECTMAP_HitTest(imouse_pt, &object_num);
+	hit_object = _vm->_objectMap->hitTest(imouse_pt, &object_num);
 
 	if (hit_object != R_SUCCESS) {
 		// Player clicked on empty spot - walk here regardless of verb
@@ -489,13 +489,13 @@ int HandlePlayfieldClick(R_SURFACE *ds, R_POINT *imouse_pt) {
 		return R_SUCCESS;
 	}
 
-	if (OBJECTMAP_GetFlags(object_num, &object_flags) != R_SUCCESS) {
+	if (_vm->_objectMap->getFlags(object_num, &object_flags) != R_SUCCESS) {
 		CON_Print("Invalid object number: %d\n", object_num);
 		return R_FAILURE;
 	}
 
 	if (object_flags & R_OBJECT_NORMAL) {
-		if (OBJECTMAP_GetEPNum(object_num, &script_num) == R_SUCCESS) {
+		if (_vm->_objectMap->getEPNum(object_num, &script_num) == R_SUCCESS) {
 			// Set active verb in script module
 			_vm->_sdata->putWord(4, 4, I_VerbData[IfModule.active_verb].s_verb);
 
@@ -524,7 +524,7 @@ int HandlePlayfieldUpdate(R_SURFACE *ds, R_POINT *imouse_pt) {
 
 	new_status[0] = 0;
 
-	hit_object = OBJECTMAP_HitTest(imouse_pt, &object_num);
+	hit_object = _vm->_objectMap->hitTest(imouse_pt, &object_num);
 
 	if (hit_object != R_SUCCESS) {
 		// Cursor over nothing - just display current verb
@@ -532,12 +532,12 @@ int HandlePlayfieldUpdate(R_SURFACE *ds, R_POINT *imouse_pt) {
 		return R_SUCCESS;
 	}
 
-	if (OBJECTMAP_GetFlags(object_num, &object_flags) != R_SUCCESS) {
+	if (_vm->_objectMap->getFlags(object_num, &object_flags) != R_SUCCESS) {
 		CON_Print("Invalid object number: %d\n", object_num);
 		return R_FAILURE;
 	}
 
-	OBJECTMAP_GetName(object_num, &object_name);
+	_vm->_objectMap->getName(object_num, &object_name);
 
 	if (object_flags & R_OBJECT_NORMAL) {
 		// Normal scene object - display as subject of verb

@@ -53,7 +53,7 @@
 #include "sndres.h"
 #include "sprite_mod.h"
 #include "text_mod.h"
-#include "objectmap_mod.h"
+#include "objectmap.h"
 #include "sound.h"
 #include "music.h"
 #include "game_mod.h"
@@ -117,7 +117,6 @@ void SagaEngine::go() {
 	CON_Register(); // Register console cvars first
 
 	GAME_Register();
-	OBJECTMAP_Register();
 	ACTOR_Register();
 	SCENE_Register();
 
@@ -154,7 +153,6 @@ void SagaEngine::go() {
 	FONT_Init();
 	SPRITE_Init();
 	_anim = new Anim(this);
-	OBJECTMAP_Init();
 	_script = new Script();
 	_sdata = new SData();
 	INTERFACE_Init(); // requires script module
@@ -190,13 +188,14 @@ void SagaEngine::go() {
 	GAME_GetDisplayInfo(&disp_info);
 	_gfx = new Gfx(_system, disp_info.logical_w, disp_info.logical_h);
 
-	_render = new Render(this, _system, _gfx);
+	_isoMap = new IsoMap(_gfx);
+	_actionMap = new ActionMap(this);
+	_objectMap = new ObjectMap(_gfx);
+	
+	_render = new Render(this, _system, _gfx, _objectMap);
 	if (!_render->initialized()) {
 		return;
 	}
-
-	_isomap = new IsoMap(_gfx);
-	_actionMap = new ActionMap(this);
 
 	// Initialize system specific sound
 	_sound = new Sound(this, _mixer, MainData.sound_enabled);
@@ -208,6 +207,7 @@ void SagaEngine::go() {
 	_render->reg();
 	_anim->reg();
 	_actionMap->reg();
+	_objectMap->reg();
 
 	_previousTicks = _system->get_msecs();
 
@@ -247,7 +247,6 @@ void SagaEngine::shutdown() {
 	ACTOR_Shutdown();
 	delete _script;
 	SPRITE_Shutdown();
-	OBJECTMAP_Shutdown();
 	FONT_Shutdown();
 	CON_Shutdown();
 	CVAR_Shutdown();
@@ -255,6 +254,8 @@ void SagaEngine::shutdown() {
 
 	delete _render;
 	delete _actionMap;
+	delete _isoMap;
+	delete _objectMap;
 	delete _sndRes;
 	delete _sdata;
 	// Shutdown system modules */
