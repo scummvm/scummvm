@@ -353,8 +353,6 @@ General
 * Add API to query backend for a list of available music engines
   Useful for Options dialog
 * Sony PS2 Port
-* Update PalmOS port to run on PalmOS based Zodiac handheld 
-  [Chrilith is working on this via a Zodiac simulator]
 * EPOC32/Symbian port. Might be able to start based on existing P800 port,
   however that code seems to be old and would need extensive work to be
   usable in post-0.6.0 ScummVM. Note: NGage uses Symbian OS, too...
