@@ -39,7 +39,7 @@ extern bool draw_keyboard;
 static const VersionSettings simon_settings[] = {
 	/* Simon the Sorcerer 1 & 2 (not SCUMM games) */
 	{"simon1dos", "Simon the Sorcerer 1 for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1DOS, "GAMEPC"},
-	{"simon1amiga", "Simon the Sorcerer 1 for Amiga", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1AMIGA, "gameamiga"},
+//	{"simon1amiga", "Simon the Sorcerer 1 for Amiga", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1AMIGA, "gameamiga"},
 	{"simon2dos", "Simon the Sorcerer 2 for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2DOS, "GAME32"},
 	{"simon1talkie", "Simon the Sorcerer 1 Talkie for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON1TALKIE, "SIMON.GME"},
 	{"simon2talkie", "Simon the Sorcerer 2 Talkie for DOS", GID_SIMON_FIRST, 99, 99, 99, GAME_SIMON2TALKIE, "GSPTR30"},
