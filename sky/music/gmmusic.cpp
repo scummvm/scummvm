@@ -48,9 +48,11 @@ GmMusic::~GmMusic(void) {
 
 	_midiDrv->setTimerCallback(NULL, NULL);
 	if (_currentMusic) stopMusic();
-	// Send All Notes Off (for external synths)
-	for (int i = 0; i < 16; ++i)
+	// Send All Sound Off and All Notes Off (for external synths)
+	for (int i = 0; i < 16; ++i) {
+		_midiDrv->send ((120 << 8) | 0xB0 | i);
 		_midiDrv->send ((123 << 8) | 0xB0 | i);
+	}
 	_midiDrv->close();
 	delete _midiDrv;
 }
@@ -93,7 +95,9 @@ void GmMusic::setupChannels(uint8 *channelData) {
 }
 
 void GmMusic::startDriver(void) {
-
+	// Send GM System On to reset channel parameters on external and capa$
+	uint8 sysEx[] = "\xf0\x7e\x7f\x09\x01\xf7";
+	_midiDrv->sysEx(sysEx, 6);
 	//_midiDrv->send(0xFF);  //ALSA can't handle this.
 	// skip all sysEx as it can't be handled anyways.
 }
