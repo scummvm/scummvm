@@ -4743,6 +4743,7 @@ void SimonState::loadMusic (uint music) {
 		if (_game & GF_AMIGAS) {
 			if (_game != GAME_SIMON1CD32) {
 				// TODO Add support for decruncher
+				warning("playMusic - Decrunch %dtune attempt", music);
 			}
 			// TODO Add Protracker support for simon1amiga/cd32
 			warning("playMusic - Load %dtune attempt", music);
