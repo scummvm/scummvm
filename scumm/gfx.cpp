@@ -2076,7 +2076,7 @@ void Scumm::dissolveEffect(int width, int height) {
 		for (i = 1; i < w * h; i++) {
 			int j;
 
-			j = getRandomNumber(i - 1);
+			j = _rnd.getRandomNumber(i - 1);
 			offsets[i] = offsets[j];
 			offsets[j] = i;
 		}
@@ -2099,7 +2099,7 @@ void Scumm::dissolveEffect(int width, int height) {
 		for (i = 1; i < w * h; i++) {
 			int j;
 
-			j = getRandomNumber(i - 1);
+			j = _rnd.getRandomNumber(i - 1);
 			offsets[i] = offsets[j];
 			offsets[j] = offsets2[i];
 		}

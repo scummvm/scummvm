@@ -1419,7 +1419,7 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, byte *aksq, uint16 *akfo, int 
 			continue;
 
 		case AKC_Random:
-			a->setAnimVar(GB(6), getRandomNumberRng(GW(2), GW(4)));
+			a->setAnimVar(GB(6), _rnd.getRandomNumberRng(GW(2), GW(4)));
 			continue;
 		case AKC_SkipGE:
 		case AKC_SkipG:

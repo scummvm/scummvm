@@ -73,25 +73,6 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst)
 	return engine;
 }
 
-void Scumm::initRandSeeds()
-{
-	_randSeed1 = 0xA943DE33;
-	_randSeed2 = 0x37A9ED29;
-}
-
-uint Scumm::getRandomNumber(uint max)
-{
-	/* TODO: my own random number generator */
-	_randSeed1 = 0xDEADBF03 * (_randSeed1 + 1);
-	_randSeed1 = (_randSeed1 >> 13) | (_randSeed1 << 19);
-	return _randSeed1 % (max + 1);
-}
-
-uint Scumm::getRandomNumberRng(uint min, uint max)
-{
-	return getRandomNumber(max - min) + min;
-}
-
 Scumm::Scumm (GameDetector *detector, OSystem *syst) 
 	: Engine(detector, syst), _pauseDialog(0), _optionsDialog(0), _saveLoadDialog(0)
 {
@@ -117,6 +98,10 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_expire_counter = 0;
 	_dynamicRoomOffsets = 0;
 	_shakeEnabled = 0;
+
+	// FIXME: remove when new savegame system is implemented
+	_randSeed1 = 0xA943DE33;
+	_randSeed2 = 0x37A9ED29;
 
 	if (_gameId == GID_ZAK256) {	// FmTowns is 320x240
 		_realWidth = 320;
@@ -404,7 +389,7 @@ int Scumm::scummLoop(int delta)
 
 	// Randomize the PRNG by calling it at regular intervals. This ensures
 	// that it will be in a different state each time you run the program.
-	getRandomNumber(2);
+	_rnd.getRandomNumber(2);
 
 	_vars[VAR_TMR_1] += delta;
 	_vars[VAR_TMR_2] += delta;
@@ -1588,8 +1573,6 @@ void Scumm::launch()
 	}
 
 	readIndexFile();
-
-	initRandSeeds();
 
 	if (_features & GF_NEW_OPCODES)
 		setupOpcodes2();

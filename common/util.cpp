@@ -157,3 +157,27 @@ int resStrLen(const char *src)
 	}
 	return num;
 }
+
+RandomSource::RandomSource(uint32 seed)
+{
+	_randSeed = seed;
+}
+
+void RandomSource::setSeed(uint32 seed)
+{
+	_randSeed = seed;
+}
+
+uint RandomSource::getRandomNumber(uint max)
+{
+	/* TODO: my own random number generator */
+	_randSeed = 0xDEADBF03 * (_randSeed + 1);
+	_randSeed = (_randSeed >> 13) | (_randSeed << 19);
+	return _randSeed % (max + 1);
+}
+
+uint RandomSource::getRandomNumberRng(uint min, uint max)
+{
+	return getRandomNumber(max - min) + min;
+}
+

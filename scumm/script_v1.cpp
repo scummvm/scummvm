@@ -1134,7 +1134,7 @@ void Scumm::o5_ifNotState()
 void Scumm::o5_getRandomNr()
 {
 	getResultPos();
-	setResult(getRandomNumber(getVarOrDirectByte(0x80)));
+	setResult(_rnd.getRandomNumber(getVarOrDirectByte(0x80)));
 }
 
 void Scumm::o5_getScriptRunning()

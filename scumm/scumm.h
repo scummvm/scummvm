@@ -27,6 +27,7 @@
 #include "common/gameDetector.h"
 #include "common/timer.h"
 #include "common/file.h"
+#include "common/util.h"
 
 class GameDetector;
 class NewGui;
@@ -351,10 +352,8 @@ public:
 	void convertKeysToClicks();
 
 	/* Random number generation */
-	uint32 _randSeed1, _randSeed2;
-	void initRandSeeds();
-	uint getRandomNumber(uint max);
-	uint getRandomNumberRng(uint min, uint max);
+	uint32 _randSeed1, _randSeed2; // FIXME: can be removed when new savegame system is implemented
+	RandomSource _rnd;
 
 	/* Core variable definitions */
 	byte _gameId;

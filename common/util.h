@@ -72,4 +72,16 @@ void hexdump(const byte * data, int len);
 // Resource string length
 int resStrLen(const char *src);
 
+
+class RandomSource {
+private:
+	uint32 _randSeed;
+
+public:
+	RandomSource(uint32 seed = 0xA943DE33);
+	void setSeed(uint32 seed);
+	uint getRandomNumber(uint max);
+	uint getRandomNumberRng(uint min, uint max);
+};
+
 #endif

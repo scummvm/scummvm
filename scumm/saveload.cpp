@@ -431,6 +431,7 @@ void Scumm::saveOrLoad(Serializer *s)
 
 		MKLINE(Scumm, _screenEffectFlag, sleByte),
 
+		// FIXME: remove when new savegame system is implemented
 		MKLINE(Scumm, _randSeed1, sleUint32),
 		MKLINE(Scumm, _randSeed2, sleUint32),
 
@@ -545,6 +546,7 @@ void Scumm::saveOrLoad(Serializer *s)
 
 		MKLINE(Scumm, _screenEffectFlag, sleByte),
 
+		// FIXME: remove when new savegame system is implemented
 		MKLINE(Scumm, _randSeed1, sleUint32),
 		MKLINE(Scumm, _randSeed2, sleUint32),
 
