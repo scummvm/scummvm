@@ -711,14 +711,6 @@
 //	Plots 'count' dots at the position x,y.
 //
 //	--------------------------------------------------------------------------
-//
-//	int32 EraseSoftwareScreenBuffer(void)
-//
-//	Clears the memory used for the software screen buffer.  This should
-//	not be called every cycle because it takes time and is not necessary.
-//	However, it should be called between levels and such.
-//
-//	--------------------------------------------------------------------------
 //	---------------------------- menu.c --------------------------------------
 //	--------------------------------------------------------------------------
 //
@@ -1466,7 +1458,6 @@ extern int32 DrawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 colour);
 extern int32 InitialiseBackgroundLayer(_parallax *p);
 extern int32 CloseBackgroundLayer(void);
 extern int32 PlotDots(int16 x, int16 y, int16 count);
-extern int32 EraseSoftwareScreenBuffer(void);
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

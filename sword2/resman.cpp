@@ -1298,8 +1298,7 @@ void resMan::CacheNewCluster(uint32 newCluster) {
 	outFile.close();
 	Free_mem(text_spr);
 
-	EraseBackBuffer();		// for hardware rendering
-	EraseSoftwareScreenBuffer();	// for software rendering
+	EraseBackBuffer();
 
 	FadeDown((float) 0.75);
 	WaitForFade();
@@ -1469,8 +1468,7 @@ void resMan::GetCd(int cd) {
 
 		//--------------------------------------------------
 	
-		EraseBackBuffer();		// for hardware rendering
-		EraseSoftwareScreenBuffer();	// for software rendering
+		EraseBackBuffer();
 		DrawSprite(&spriteInfo);	// Keep the message there even when the user task swaps.
 		spriteInfo.y = oldY;		// Drivers change the y co-ordinate, don't know why...
 		spriteInfo.x = oldX;

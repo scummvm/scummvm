@@ -341,8 +341,7 @@ void DisplayMsg(uint8 *text, int time) { 	// Chris 15May97
 	Set_luggage(0);			//tw28Aug
 
 	CloseMenuImmediately();
-	EraseBackBuffer();		// for hardware rendering
-	EraseSoftwareScreenBuffer();	// for software rendering
+	EraseBackBuffer();
 
 	text_spr = MakeTextSprite(text, 640, 187, speech_font_id);
 
@@ -393,8 +392,7 @@ void DisplayMsg(uint8 *text, int time) { 	// Chris 15May97
 	while (SVM_timeGetTime() < targetTime) {
 		ServiceWindows();
 
-		EraseBackBuffer();		// for hardware rendering
-		EraseSoftwareScreenBuffer();	// for software rendering
+		EraseBackBuffer();
 
 		rv = DrawSprite(&spriteInfo);	// Keep the message there even when the user task swaps.
 		if (rv)
@@ -419,8 +417,7 @@ void RemoveMsg(void) {		// Chris 15May97
 
 	WaitForFade();
 
-	EraseBackBuffer();		// for hardware rendering
-	EraseSoftwareScreenBuffer();	// for software rendering
+	EraseBackBuffer();
 	CopyScreenBuffer();
 
 	// FadeUp((float) 0.75);	

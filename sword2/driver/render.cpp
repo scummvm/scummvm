@@ -219,12 +219,6 @@ int32 profileDecompression = 0;
 
 
 
-uint8 myScreenBuffer[RENDERWIDE * RENDERDEEP];
-
-
-
-
-
 // Scroll variables.  scrollx and scrolly hold the current scroll position, 
 //	and scrollxTarget and scrollyTarget are the target position for the end
 //	of the game cycle.
