@@ -59,7 +59,7 @@ struct Item {
 	uint16 xxx_1;									/* unused? */
 	Child *children;
 	
-	Item() { memset(this, 0, sizeof(Item)); }
+	Item() { memset(this, 0, sizeof(*this)); }
 };
 
 struct Subroutine {
@@ -91,6 +91,7 @@ struct FillOrCopyStruct {
 	uint8 textColumnOffset, textLength, textMaxLength;
     uint8 fill_color, text_color, unk5;
 	FillOrCopyData *fcs_data;
+	FillOrCopyStruct() { memset(this, 0, sizeof(*this)); }
 };
 // note on text offset: 
 // the actual x-coordinate is: textColumn * 8 + textColumnOffset
