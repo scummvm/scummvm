@@ -115,7 +115,11 @@ OSystem_SDL_Common::~OSystem_SDL_Common() {
 	SDL_DestroyMutex(_mutex);
 
 	SDL_ShowCursor(SDL_ENABLE);
+#ifdef MACOSX
+	// Work around segfault-on-exit with the OpenGL backend on Mac OS X.
+#else
 	SDL_Quit();
+#endif
 }
 
 void OSystem_SDL_Common::init_size(uint w, uint h) {
@@ -909,7 +913,11 @@ void OSystem_SDL_Common::quit() {
 	unload_gfx_mode();
 
 	SDL_ShowCursor(SDL_ENABLE);
+#ifdef MACOSX
+	// Work around segfault-on-exit with the OpenGL backend on Mac OS X.
+#else
 	SDL_Quit();
+#endif
 
 	exit(0);
 }
