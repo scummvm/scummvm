@@ -510,6 +510,14 @@ int Scumm::readVar(uint var) {
 		} else {
 			var &= 0xFFF;
 		}
+
+#if defined(BYPASS_COPY_PROT)
+		if (_gameId == GID_SAMNMAX && var == 8 && currentRoom == 71 && !copyprotbypassed) {
+			copyprotbypassed = true;
+			return vm.localvar[_currentScript][7] + 1;
+		}
+#endif
+
 		checkRange(20, 0, var, "Local variable %d out of range(r)");
 		return vm.localvar[_currentScript][var];
 	}
