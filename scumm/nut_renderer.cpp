@@ -263,7 +263,7 @@ void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask) 
 		y += offsetY[i];
 		color = cTable[i];
 		
-		if (y >= vs->height || x + vs->xstart >= vs->width) {
+		if (y >= vs->height || x >= vs->width) {
 			continue;
 		}
 		
