@@ -28,7 +28,7 @@
 #include "common/stream.h"
 
 class File : public Common::ReadStream, public Common::WriteStream {
-private:
+protected:
 	/** POSIX file handle to the actual file; 0 if no file is open. */
 	FILE *_handle;
 	

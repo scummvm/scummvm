@@ -126,7 +126,7 @@ void File::decRef() {
 
 bool File::open(const char *filename, AccessMode mode, const char *directory) {
 	if (_handle) {
-		debug(2, "File %s already opened", filename);
+		error("File %s already opened", filename);
 		return false;
 	}
 
@@ -135,7 +135,7 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 	}
 
 	if (mode != kFileReadMode && mode != kFileWriteMode) {
-		warning("Only read/write mode supported!");
+		error("Only read/write mode supported!");
 		return false;
 	}
 
