@@ -75,7 +75,7 @@ int LipSynch::getAnim(int pos) {
 	int frame1, frame2;
 
 	// tune a bit to prevent internal imuse drift
-	pos += 15;
+	pos += 5;
 
 	for (int i = 0; i < _numEntries; i++) {
 		frame1 = _entries[i].frame;

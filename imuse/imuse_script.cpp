@@ -76,7 +76,7 @@ void Imuse::startSfx(const char *soundName, int priority) {
 int32 Imuse::getPosIn60HzTicks(const char *soundName) {
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && !track->toBeRemoved && (strcmp(track->soundName, soundName) == 0)) {
+		if (track->handle.isActive() && (strcmp(track->soundName, soundName) == 0)) {
 			int32 pos = (5 * (track->dataOffset + track->regionOffset)) / (track->iteration / 12);
 			return pos;
 		}
@@ -89,7 +89,7 @@ bool Imuse::isVoicePlaying() {
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->volGroupId == IMUSE_VOLGRP_VOICE) {
-			if (track->handle.isActive() || (track->stream && track->used && !track->readyToRemove)) {
+			if (track->handle.isActive()) {
 				return true;
 			}
 		}
@@ -102,7 +102,7 @@ bool Imuse::getSoundStatus(const char *soundName) const {
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (strcmp(track->soundName, soundName) == 0) {
-			if (track->handle.isActive() || (track->stream && track->used && !track->readyToRemove)) {
+			if (track->handle.isActive()) {
 				return true;
 			}
 		}
