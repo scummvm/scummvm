@@ -512,6 +512,31 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 	}
 }
 
+void ScummEngine_v72he::arrrays_unk2(int dst, int src, int len2, int len) {
+	int edi, value;
+	int i = 0;
+
+	if (len == -1) {
+		len = resStrLen(getStringAddress(src));
+		len2 = 0;
+	}
+
+	edi = resStrLen(getStringAddress(dst));
+
+	len -= len2;
+	len++;
+
+	while (i < len) {
+		writeVar(0, src);
+		value = readArray(0, 0, len2 + i);
+		writeVar(0, dst);
+		writeArray(0, 0, edi + i, value);
+		i++;
+	}
+
+	writeArray(0, 0, edi + i, 0);
+}
+
 void ScummEngine_v72he::copyScriptString(byte *dst) {
 	int i = 0;
 	byte b;
@@ -539,7 +564,7 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 	memset(string, 0, sizeof(string));
 
 	getStackList(args, ARRAYSIZE(args));
-	pop();
+	int id = pop();
 
 	if (scriptString) {
 		addMessageToStack(_scriptPointer, string, sizeof(string));
@@ -552,13 +577,15 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 
 	while (len--) {
 		chr = string[num++];
-		if (chr == 0x25) {
+		if (chr == '%') {
 			chr = string[num++];
-			if (chr == 0x64)
+			if (chr == 'd') {
 				dst += snprintf((char *)dst, 10, "%d", args[val++]);
-			else if (chr == 0x73)
-				dst += addStringToStack(dst, 512, args[val++]);
-			continue;
+				continue;
+			} else if (chr == 's') {
+				dst += addStringToStack(dst, 512, id++);
+				continue;
+			}
 		}
 		*dst++ = chr;
 	}
@@ -1503,9 +1530,6 @@ void ScummEngine_v72he::o72_openFile() {
 	if (!strcmp((char *)filename,".he3")) {
 		memset(filename, 0, sizeof(filename));
 		sprintf((char *)filename, "%s.he3", _gameName.c_str());
-	} else if (!strcmp((char *)filename,".he7")) {
-		memset(filename, 0, sizeof(filename));
-		sprintf((char *)filename, "%s.he7", _gameName.c_str());
 	}
 
 	debug(1,"File %s", filename);
@@ -1761,31 +1785,6 @@ void ScummEngine_v72he::redimArray(int arrayId, int newDim2start, int newDim2end
 	ah->dim2end = TO_LE_32(newDim2end);
 }
 
-void ScummEngine_v72he::arrrays_unk2(int dst, int src, int len2, int len) {
-	int edi, value;
-	int i = 0;
-
-	if (len == -1) {
-		len = resStrLen(getStringAddress(src));
-		len2 = 0;
-	}
-
-	edi = resStrLen(getStringAddress(dst));
-
-	len -= len2;
-	len++;
-
-	while (i < len) {
-		writeVar(0, src);
-		value = readArray(0, 0, len2 + i);
-		writeVar(0, dst);
-		writeArray(0, 0, edi + i, value);
-		i++;
-	}
-
-	writeArray(0, 0, edi + i, 0);
-}
-
 void ScummEngine_v72he::o72_unknownEC() {
 	int dst, size;
 	int src = pop();
@@ -1819,7 +1818,8 @@ void ScummEngine_v72he::o72_unknownED() {
 	writeVar(0, array);
 	while (pos <= len) {
 		chr = readArray(0, 0, pos);
-		result += getCharsetOffsets(chr);
+		if (chr)
+			result += _charset->getCharWidth(chr);
 		pos++;
 	}
 
@@ -1871,7 +1871,6 @@ void ScummEngine_v72he::o72_unknownF0() {
 
 void ScummEngine_v72he::o72_unknownF1() {
 	byte *addr, *addr2;
-	byte chr, chr2;
 
 	int id = pop();
 	int id2 = pop();
@@ -1884,13 +1883,17 @@ void ScummEngine_v72he::o72_unknownF1() {
 	if (!addr)
 		error("o72_stringLen: Reference to zeroed array pointer (%d)", id);
 
-	chr = *addr++;
-	chr2 = *addr2++;
+	while (*addr == *addr2) {
+		if (addr == 0) {
+			push(0);
+			return;
+		}
+		addr++;
+		addr2++;
+	}
 
-
+	push (1);
 	debug(1,"o7_unknownF1 stub (%d, %d)", id, id2);
-
-	push(0);
 }
 
 void ScummEngine_v72he::o72_checkGlobQueue() {
@@ -1963,9 +1966,9 @@ void ScummEngine_v72he::o72_unknownF5() {
 	len = resStrLen(getStringAddress(array));
 
 	writeVar(0, array);
-	while (pos < len) {
+	while (pos <= len) {
 		chr = readArray(0, 0, pos);
-		result += getCharsetOffsets(chr);
+		result += _charset->getCharWidth(chr);
 		if (result >= max) {
 			push(pos);
 			return;

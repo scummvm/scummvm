@@ -616,8 +616,6 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
-	byte stringLen(byte *);
-	int getCharsetOffsets(int chr);
 	void arrrays_unk2(int dst, int src, int len2, int len);
 
 	void polygonErase(int fromId, int toId);

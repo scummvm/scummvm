@@ -379,52 +379,29 @@ const char *ScummEngine_v7he::getOpcodeDesc(byte i) {
 	return _opcodesV7he[i].desc;
 }
 
+void ScummEngine_v7he::arrrays_unk2(int dst, int src, int len2, int len) {
+	int edi, value;
+	int i = 0;
 
-byte ScummEngine_v7he::stringLen(byte *ptr) {
-	byte len;
-	byte c;
-	if (!ptr)
-		error("ScummEngine_v7he::stringLen(): zero ptr. Undimplemented behaviour");
+	if (len == -1) {
+		len = resStrLen(getStringAddress(src));
+		len2 = 0;
+	}
 
-	len = 0;
-	c = *ptr++;
+	edi = resStrLen(getStringAddress(dst));
 
-	if (len == c)
-		return 0;
+	len -= len2;
+	len++;
 
-	do {
-		len++;
-		if (c == 0xff) {
-			ptr += 3;
-			len += 3;
-		}
-		c = *ptr++;
-	} while (c);
+	while (i < len) {
+		writeVar(0, src);
+		value = readArray(0, 0, len2 + i);
+		writeVar(0, dst);
+		writeArray(0, 0, edi + i, value);
+		i++;
+	}
 
-	return len;
-}
-
-int ScummEngine_v7he::getCharsetOffsets(int chr) {
-	int width, offsX;
-	int result = 0;
-
-	byte *fontPtr = getResourceAddress(rtCharset, _string[0]._default.charset);
-	if (!fontPtr)
-		error("getCharsetOffsets: charset %d not found!", _string[0]._default.charset);
-
-	int offs = READ_LE_UINT32(fontPtr + 29 + chr * 4 + 4);
-	if (!offs)
-		return 0;
-
-	width = fontPtr[offs] + (signed char)fontPtr[offs + 0];
-	offsX = fontPtr[offs] + (signed char)fontPtr[offs + 2];
-	
-	if (offsX >= 0x80)
-		result = (offsX & 0xff) + width - 256;
-	else
-		result = (offsX & 0xff) + width;
-
-	return result;
+	writeArray(0, 0, edi + i, 0);
 }
 
 void ScummEngine_v7he::o7_cursorCommand() {
@@ -695,7 +672,7 @@ void ScummEngine_v7he::o7_resourceRoutines() {
 		debug(5,"stub o7_resourceRoutines unlock object %d", resid);
 		break;
 	default:
-		warning("o7_resourceRoutines: default case %d", op);
+		debug(1,"o7_resourceRoutines: default case %d", op);
 	}
 }
 
@@ -746,7 +723,7 @@ void ScummEngine_v7he::o7_unknownED() {
 	writeVar(0, array);
 	while (pos <= len) {
 		chr = readArray(0, 0, pos);
-		result += getCharsetOffsets(chr);
+		result += _charset->getCharWidth(chr);
 		pos++;
 	}
 
@@ -812,31 +789,6 @@ void ScummEngine_v7he::o7_stringLen() {
 
 	len = resStrLen(getStringAddress(id));
 	push(len);
-}
-
-void ScummEngine_v7he::arrrays_unk2(int dst, int src, int len2, int len) {
-	int edi, value;
-	int i = 0;
-
-	if (len == -1) {
-		len = resStrLen(getStringAddress(src));
-		len2 = 0;
-	}
-
-	edi = resStrLen(getStringAddress(dst));
-
-	len -= len2;
-	len++;
-
-	while (i < len) {
-		writeVar(0, src);
-		value = readArray(0, 0, len2 + i);
-		writeVar(0, dst);
-		writeArray(0, 0, edi + i, value);
-		i++;
-	}
-
-	writeArray(0, 0, edi + i, 0);
 }
 
 void ScummEngine_v7he::o7_unknownEF() {
@@ -929,9 +881,9 @@ void ScummEngine_v7he::o7_unknownF5() {
 	len = resStrLen(getStringAddress(array));
 
 	writeVar(0, array);
-	while (pos < len) {
+	while (pos <= len) {
 		chr = readArray(0, 0, pos);
-		result += getCharsetOffsets(chr);
+		result += _charset->getCharWidth(chr);
 		if (result >= max) {
 			push(pos);
 			return;
@@ -1040,9 +992,6 @@ void ScummEngine::polygonStore(int id, bool flag, int vert1x, int vert1y, int ve
 							int vert2y, int vert3x, int vert3y, int vert4x, int vert4y) {
 	int i;
 
-	debug(1, "polygonStore(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", id, flag, vert1x,
-		  vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
-
 	for (i = 0; i < _WizNumPolygons; i++)
 		if (_WizPolygons[i].id == 0)
 			break;
@@ -1090,14 +1039,10 @@ void ScummEngine_v7he::o7_polygonHit() {
 	int y = pop();
 	int x = pop();
 
-	debug(1, "o7_polygonHit(%d, %d)", x, y);
-
 	push(polygonHit(0, x, y));
 }
 
 int ScummEngine_v7he::polygonHit(int id, int x, int y) {
-	debug(1, "polygonHit(%d, %d, %d)", id, x, y);
-
 	for (int i = 0; i < _WizNumPolygons; i++) {
 		if ((!id || _WizPolygons[i].id == id) && _WizPolygons[i].bound.contains(x, y)) {
 			if (polygonContains(_WizPolygons[i], x, y)) {
