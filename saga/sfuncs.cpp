@@ -129,11 +129,11 @@ void Script::setupScriptFuncList(void) {
 }
 
 // Script function #0 (0x00)
+// Print a debugging message
 int Script::SF_putString(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
-	
-	debug(1, "stub: SF_putString(), %d args", nArgs);
+	SDataWord_T param = thread->pop();
+
+	debug(1, currentScript()->diag->str[param]);
 	return SUCCESS;
 }
 
