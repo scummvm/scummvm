@@ -401,7 +401,7 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 			if (missingTypes[TYPE_SPEECH1] && missingTypes[TYPE_SPEECH2])
 				warning("Unable to find the speech files. The game will work, but you won't hear any voice output.\n"
 						"Please copy the SPEECH.CLU files from both CDs and rename them to SPEECH1.CLU and SPEECH2.CLU,\n"
-						"corresponding to the CD number.\n",
+						"corresponding to the CD number.\n"
 						"Please read the ScummVM Readme file for more information");
 			else
 				warning("Unable to find the speech file from CD %d.\n"
