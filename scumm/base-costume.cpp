@@ -25,11 +25,11 @@
 
 namespace Scumm {
 
-byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, const CostumeData &cost) {
+byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, const CostumeData &cost, bool drawVirScr) {
 	int i;
 	byte result = 0;
 
-	if (_actorDrawVirScr)
+	if (drawVirScr)
 		_outptr = _vm->getResourceAddress(rtBuffer, 5) + vs.xstart;
 	else
 		_outptr = vs.screenPtr + vs.xstart;

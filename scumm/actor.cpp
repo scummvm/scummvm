@@ -1054,15 +1054,9 @@ void Actor::drawActorCostume() {
 	bcr->_draw_bottom = bottom = 0;
 	bcr->_skipLimb = (skipLimb != 0);
 	
-	// FIXME: Why do the _actorDrawVirScr and actorDrawVirScr variable exist, and even
-	// gets saved? I (Fingolfin) can't see any reason for this... looking how they are
-	//  used,it appears we could just get rid of _actorDrawVirScr and instead add params
-	// to drawActorCostume() and drawCostume() which do their job....
-	bcr->_actorDrawVirScr = (actorDrawVirScr != 0);
-
 	// If the actor is partially hidden, redraw it next frame.
 	// Only done for pre-AKOS, though.
-	if (bcr->drawCostume(_vm->virtscr[0], cost) & 1) {
+	if (bcr->drawCostume(_vm->virtscr[0], cost, actorDrawVirScr) & 1) {
 		needRedraw = (_vm->_version <= 6);
 	}
 

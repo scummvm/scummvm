@@ -116,8 +116,6 @@ public:
 		_mirror = false;
 		_width = _height = 0;
 		_skipLimb = 0;
-		_actorDrawVirScr = 0;
-
 		
 		_outptr = 0;
 		_outwidth = _outheight = 0;
@@ -128,7 +126,7 @@ public:
 	virtual void setCostume(int costume) = 0;
 
 
-	byte drawCostume(const VirtScreen &vs, const CostumeData &cost);
+	byte drawCostume(const VirtScreen &vs, const CostumeData &cost, bool actorDrawVirScr);
 
 protected:
 
