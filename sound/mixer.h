@@ -53,13 +53,26 @@ public:
 	};
 
 	enum {
-		FLAG_UNSIGNED = 1 << 0,         /** unsigned samples (default: signed) */
-		FLAG_16BITS = 1 << 1,           /** sound is 16 bits wide (default: 8bit) */
-		FLAG_LITTLE_ENDIAN = 1 << 2,    /** sample is little endian (default: big endian) */
-		FLAG_STEREO = 1 << 3,           /** sound is in stereo (default: mono) */
-		FLAG_REVERSE_STEREO = 1 << 4,   /** reverse the left and right stereo channel */
-		FLAG_AUTOFREE = 1 << 5,         /** sound buffer is freed automagically at the end of playing */
-		FLAG_LOOP = 1 << 6              /** loop the audio */
+		/** unsigned samples (default: signed) */
+		FLAG_UNSIGNED = 1 << 0,
+
+		/** sound is 16 bits wide (default: 8bit) */
+		FLAG_16BITS = 1 << 1,
+
+		/** sample is little endian (default: big endian) */
+		FLAG_LITTLE_ENDIAN = 1 << 2,
+
+		/** sound is in stereo (default: mono) */
+		FLAG_STEREO = 1 << 3,
+
+		/** reverse the left and right stereo channel */
+		FLAG_REVERSE_STEREO = 1 << 4,
+
+		/** sound buffer is freed automagically at the end of playing */
+		FLAG_AUTOFREE = 1 << 5,
+
+		/** loop the audio */
+		FLAG_LOOP = 1 << 6
 	};
 
 private:
@@ -96,20 +109,6 @@ public:
 	bool isReady() const { return _mixerReady; };
 
 
-
-	/**
-	 * Set the premix procedure. This is mainly used for the adlib music, but
-	 * is not limited to it. The premix proc is invoked by the mixer whenever
-	 * it needs to generate any data, before any other mixing takes place. The
-	 * premixer than has a chance to fill the mix buffer with data (usually
-	 * music samples). It should generate the specified number of 16bit stereo
-	 * samples (i.e. len * 4 bytes). The endianness of these samples shall be
-	 * the native endianness.
-	 *
-	 * @deprecated Instead of this, use the other setupPremix method which
-	 *             takes an AudioStream.
-	 */
-	void setupPremix(PremixProc *proc, void *param);
 
 	/**
 	 * Set the premix stream. This is mainly used for the adlib music, but

@@ -100,36 +100,6 @@ public:
 
 
 #pragma mark -
-#pragma mark --- Procedural stream ---
-#pragma mark -
-
-
-class ProcInputStream : public AudioStream {
-public:
-	typedef void (*InputProc)(void *refCon, int16 *data, uint len);
-
-private:
-	const int _rate;
-	const bool _isStereo;
-	InputProc _proc;
-	void *_refCon;
-
-public:
-	ProcInputStream(int rate, bool stereo, InputProc proc, void *refCon)
-		: _rate(rate), _isStereo(stereo), _proc(proc), _refCon(refCon) { }
-	int readBuffer(int16 *buffer, const int numSamples) {
-		memset(buffer, 0, 2 * numSamples);	// FIXME
-		(_proc)(_refCon, buffer, _isStereo ? (numSamples / 2) : numSamples);
-		return numSamples;
-	}
-	bool isStereo() const { return _isStereo; }
-	bool endOfData() const { return false; }
-	
-	int getRate() const { return _rate; }
-};
-
-
-#pragma mark -
 #pragma mark --- SoundMixer ---
 #pragma mark -
 
@@ -170,22 +140,6 @@ SoundMixer::~SoundMixer() {
 
 bool SoundMixer::isPaused() {
 	return _paused;
-}
-
-void SoundMixer::setupPremix(PremixProc *proc, void *param) {
-	Common::StackLock lock(_mutex);
-
-	delete _premixChannel;
-	_premixChannel = 0;
-	
-	if (proc == 0)
-		return;
-
-	// Create an input stream
-	AudioStream *input = new ProcInputStream(_outputRate, true, proc, param);
-
-	// Create the channel
-	_premixChannel = new Channel(this, 0, input, true, false);
 }
 
 void SoundMixer::setupPremix(AudioStream *stream) {
