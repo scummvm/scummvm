@@ -259,8 +259,10 @@ void ScummEngine_v72he::setupScummVars() {
 	VAR_NUM_GLOBAL_OBJS = 74;
 	VAR_POLYGONS_ONLY = 76;
 
-	if (_heversion >= 80)
+	if (_heversion >= 80) {
 		VAR_WINDOWS_VERSION = 79;
+		VAR_WIZ_TCOLOR = 117;
+	}
 	if (_heversion >= 90)
 		VAR_NUM_SPRITES = 106;
 }

@@ -1337,6 +1337,7 @@ public:
 	byte VAR_NUM_SPRITES;
 	byte VAR_POLYGONS_ONLY;
 	byte VAR_WINDOWS_VERSION;
+	byte VAR_WIZ_TCOLOR;
 };
 
 // This is a constant lookup table of reverse bit masks

@@ -1401,7 +1401,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, int resnum, int state, int x
 		drawWizPolygon(resnum, state, x1, flags);
 		return NULL;
 	}
-
+	uint8 *dst = NULL;
 	const uint8 *dataPtr = getResourceAddress(restype, resnum);
 	if (dataPtr) {
 		const uint8 *wizh = findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
@@ -1420,54 +1420,70 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, int resnum, int state, int x
 			setPaletteFromPtr(pal, 256);
 		}
 		if (flags & 2) {
-			warning("unhandled Wiz image w/ rmap palette");
+			const uint8 *rmap = findWrappedBlock(MKID('RMAP'), dataPtr, state, 0);
+			assert(rmap);
+			const uint8 *rgbs = findWrappedBlock(MKID('RGBS'), dataPtr, state, 0);
+			assert(rgbs);
+//			drawWizImageHelper1(rmap + 4, _currentPalette, rgbs);
+			warning("drawWizImage() unhandled flag 0x2");
 		}
-		if (flags & 4) {
-			warning("printing Wiz image is unimplemented");
-			return NULL;
-		}
-
-		uint8 *dst = NULL;
+		uint32 cw, ch;
 		if (flags & 0x24) { // printing (0x4) or rendering to memory (0x20)
 			dst = (uint8 *)malloc(width * height);
-			memset(dst, 255, width * height); // make transparent
-
 			if (flags & 0x20) {
-				// copy width * height bytes from VAR_117 to dst
+				int color = 255; // FIXME: should be (VAR_WIZ_TCOLOR != 0xFF) ? VAR(VAR_WIZ_TCOLOR) : 5;
+				memset(dst, color, width * height);
 
 				// FIXME: dirty hack until missing bits are implemented
 				Common::Rect rScreen(0, 0, width-1, height-1);
 				gdi.copyWizImage(dst, wizd, width, height, 0, 0, width, height, &rScreen);
 				setCursorFromBuffer(dst, width, height, width);
 				free(dst);
-				// FIXME: return a valid pointer for drawWizPolygon (0x20)
 				return NULL;
 			}
-		}
-
-		VirtScreen *pvs = &virtscr[kMainVirtScreen];
-		if (flags & 0x10) {
-			dst = pvs->getPixels(0, pvs->topline);
-		} else if (!(flags & 0x20)) {
-			dst = pvs->getBackPixels(0, pvs->topline);
-		}
-		Common::Rect rScreen(0, 0, pvs->w, pvs->h);
-		gdi.copyWizImage(dst, wizd, pvs->w, pvs->h, x1, y1, width, height, &rScreen);
-
-		Common::Rect rImage(x1, y1, x1 + width, y1 + height);
-		if (rImage.intersects(rScreen)) {
-			rImage.clip(rScreen);
-			if (flags & 0x18) {
-				++rImage.bottom;
-				markRectAsDirty(kMainVirtScreen, rImage);
+			cw = width;
+			ch = height;
+		} else {
+			VirtScreen *pvs = &virtscr[kMainVirtScreen];
+			if (flags & 0x10) {
+				dst = pvs->getPixels(0, pvs->topline);
 			} else {
-				--rImage.right;
-				--rImage.bottom;
-				gdi.copyVirtScreenBuffers(rImage);
+				dst = pvs->getBackPixels(0, pvs->topline);
+			}
+			cw = pvs->w;
+			ch = pvs->h;
+		}
+		Common::Rect rScreen(0, 0, cw, ch);
+		if (flags & 0x80) {    
+//  		drawWizImageHelper2(p, wizd, cw, ch, x1, y1, width, height, &rScreen, 0, 2);
+			warning("drawWizImage() unhandled flag 0x80");
+		} else if (flags & 0x100) {
+//  		drawWizImageHelper2(p, wizd, cw, ch, x1, y1, width, height, &rScreen, 0, 1);  			
+			warning("drawWizImage() unhandled flag 0x100");
+		} else if (flags & 2) {
+//  		drawWizImageHelper3(dst, wizd, cw, ch, x1, y1, width, height, rScreen, rmap + 4);
+		} else {
+			gdi.copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen);
+		}
+		if (flags & 4) {
+			warning("printing Wiz image is unimplemented");
+			dst = NULL;
+		} else {
+			Common::Rect rImage(x1, y1, x1 + width, y1 + height);
+			if (rImage.intersects(rScreen)) {
+				rImage.clip(rScreen);
+				if (flags & 0x18) {
+					++rImage.bottom;
+					markRectAsDirty(kMainVirtScreen, rImage);
+				} else {
+					--rImage.right;
+					--rImage.bottom;
+					gdi.copyVirtScreenBuffers(rImage);
+				}
 			}
 		}
 	}
-	return NULL;
+	return dst;
 }
 
 struct PolygonDrawData {
