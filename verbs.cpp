@@ -169,6 +169,7 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
 	int i,tmp;
 	byte *obim;
 	ImageHeader *imhd;
+	uint32 size;
 
 	if ((vs=findVirtScreen(y)) == NULL)
 		return;
@@ -188,14 +189,12 @@ void Scumm::drawVerbBitmap(int vrb, int x, int y) {
                 ObjectData *od;
                 int index, obj;
                 obj = READ_LE_UINT16(obim+6);
-                index = getObjectIndex(obj);
-                 if(index==-1)
-                       return;
-                od = &_objs[index];
- 
-                imgw = od->width>>3;
-                imgh = od->height>>3;
-                imptr = obim+8;
+		size = READ_LE_UINT32(obim);
+
+		imgw = (*(obim+size+11)) ;
+		imgh = (*(obim+size+17))>>3 ;
+		imptr = (obim+8);
+
         } else {
                 imhd = (ImageHeader*)findResourceData(MKID('IMHD'), obim);
                 imgw = READ_LE_UINT16(&imhd->width) >> 3;
@@ -255,7 +254,8 @@ void Scumm::killVerb(int slot) {
 
 void Scumm::setVerbObject(uint room, uint object, uint verb) {
 	byte  *obimptr;
-	uint32 size;
+	byte  *obcdptr;
+	uint32 size, size2;
 	FindObjectInRoom foir;
 	int i;
 
@@ -267,9 +267,15 @@ void Scumm::setVerbObject(uint room, uint object, uint verb) {
 			if(_objs[i].obj_nr == object) {
 				findObjectInRoom(&foir, foImageHeader, object, room);
 				size = READ_LE_UINT32(foir.obim);
-				createResource(rtVerb, verb, size);
+				printf("Size= %d",size);
+				obcdptr = getResourceAddress(rtRoom, room) + getOBCDOffs(object);
+				size2 = READ_LE_UINT32(obcdptr);
+				printf("Size2= %d",size2);
+				createResource(rtVerb, verb, size+size2);
 				obimptr = getResourceAddress(rtRoom, room) - foir.roomptr + foir.obim;
+				obcdptr = getResourceAddress(rtRoom, room) + getOBCDOffs(object);
 				memcpy(getResourceAddress(rtVerb, verb), obimptr, size);
+				memcpy(getResourceAddress(rtVerb, verb)+size, obcdptr, size2);
 			}
 		}
 	} else {
