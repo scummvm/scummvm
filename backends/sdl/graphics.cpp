@@ -1013,9 +1013,6 @@ void OSystem_SDL::undraw_mouse() {
 		return;
 	_mouseDrawn = false;
 
-	if (SDL_LockSurface(_overlayVisible ? _tmpscreen : _screen) == -1)
-		error("SDL_LockSurface failed: %s", SDL_GetError());
-
 	int old_mouse_x = _mouseCurState.x - _mouseHotspotX;
 	int old_mouse_y = _mouseCurState.y - _mouseHotspotY;
 	int old_mouse_w = _mouseCurState.w;
@@ -1040,6 +1037,8 @@ void OSystem_SDL::undraw_mouse() {
 	if (old_mouse_w <= 0 || old_mouse_h <= 0)
 		return;
 
+	if (SDL_LockSurface(_overlayVisible ? _tmpscreen : _screen) == -1)
+		error("SDL_LockSurface failed: %s", SDL_GetError());
 
 	int x, y;
 	if (!_overlayVisible) {
