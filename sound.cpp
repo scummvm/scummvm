@@ -88,8 +88,8 @@ void Scumm::processSoundQues()
 						data[1], data[2], data[3], data[4], data[5], data[6], data[7]
 				);
 #endif
-			if ((_gameId == GID_DIG) && (data[0] == 12)){
-				uint32 size, rate, tag, chan;
+			if ((_gameId == GID_DIG) && ((data[0] == 12) || (data[0] == 14))){
+				uint32 size, rate, tag, chan, bits;
 				uint8 * ptr = getResourceAddress(rtSound, data[1]);
 				if (ptr != NULL) {
 					ptr+=16;       /* Skip header */
@@ -97,13 +97,15 @@ void Scumm::processSoundQues()
 				    		tag = READ_BE_UINT32(ptr);  ptr+=4;
 						switch(tag) {
 							case MKID_BE('FRMT'):
-								size = READ_BE_UINT32(ptr); ptr+=16;					
+								size = READ_BE_UINT32(ptr); ptr+=12;
+								bits = READ_BE_UINT32(ptr); ptr+=4;
 								rate = READ_BE_UINT32(ptr); ptr+=4;
 								chan = READ_BE_UINT32(ptr); ptr+=4;
 							break;
 							case MKID_BE('TEXT'):
 							case MKID_BE('REGN'):
 							case MKID_BE('STOP'):
+							case MKID_BE('JUMP'):
 								size = READ_BE_UINT32(ptr); ptr+=size+4;
 							break;
 							case MKID_BE('DATA'):
@@ -116,25 +118,31 @@ void Scumm::processSoundQues()
 					}
 					if (chan == 1)
 					{
-						uint32 s_size = (size * 2) / 3;
-						byte * buffer = (byte*)malloc (s_size);
-						uint32 l = 0, r = 0, tmp;
-						memset (buffer, 0, s_size);
-						for (; l < size - 1; l += 3)
-						{
-							tmp = (ptr[l + 1] & 0x0f) << 8;
-							tmp = (tmp | ptr[l + 0]) << 4;
-							tmp -= 0x8000;
-//							buffer[r++] = (uint8)(tmp & 0xff);
-							buffer[r++] = (uint8)((tmp >> 8) & 0xff);
+						if (bits == 8) {
+							byte * buffer = (byte*)malloc (size);
+							memcpy(buffer, ptr, size);
+							_mixer->play_raw(NULL, buffer, size, rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED);
+						}
+						if (bits == 12) {
+							uint32 s_size = (size * 2) / 3;
+							byte * buffer = (byte*)malloc (s_size);
+							uint32 l = 0, r = 0, tmp;
+							for (; l < size; l += 3)
+							{
+								tmp = (ptr[l + 1] & 0x0f) << 8;
+								tmp = (tmp | ptr[l + 0]) << 4;
+								tmp -= 0x8000;
+//								buffer[r++] = (uint8)(tmp & 0xff);
+								buffer[r++] = (uint8)((tmp >> 8) & 0xff);
 
-							tmp = (ptr[l + 1] & 0xf0) << 4;
-							tmp = (tmp | ptr[l + 2]) << 4;
-							tmp -= 0x8000;
-//							buffer[r++] = (uint8)(tmp & 0xff);
-							buffer[r++] = (uint8)((tmp >> 8) & 0xff);
-						} 
-						_mixer->play_raw(NULL, buffer, s_size, rate, SoundMixer::FLAG_AUTOFREE);
+								tmp = (ptr[l + 1] & 0xf0) << 4;
+								tmp = (tmp | ptr[l + 2]) << 4;
+								tmp -= 0x8000;
+//								buffer[r++] = (uint8)(tmp & 0xff);
+								buffer[r++] = (uint8)((tmp >> 8) & 0xff);
+							} 
+							_mixer->play_raw(NULL, buffer, s_size, rate, SoundMixer::FLAG_AUTOFREE);
+						}
 					} else {
 						warning("DIG: ignoring stereo sample");
 					}

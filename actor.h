@@ -94,8 +94,8 @@ protected:
 public:
 
 	// Constructor
-	Actor(Scumm *scumm) : _scumm(scumm) {}
-
+	//Actor(Scumm *scumm) : _scumm(scumm) {}
+    void initActorClass(Scumm *scumm) {_scumm = scumm;}
 //protected:
 	void hideActor();
 	void showActor();

@@ -76,8 +76,11 @@ void Scumm::scummInit()
 	setShake(0);
 	setupCursor();
 
+	/* Allocate and initilise actors */
+	actor = new Actor[MAX_ACTORS];
 	for (i = 1, a = getFirstActor(); ++a, i < NUM_ACTORS; i++) {
 		a->number = i;
+		a->initActorClass(this);
 		a->initActor(1);
 	}
 	
