@@ -583,6 +583,9 @@ void Scumm::playSfxSound(void *sound, uint32 size, uint rate)
 
 void Scumm::playSfxSound_MP3(void *sound, uint32 size)
 {
-	/* BBrox: Fix this... There -is- no play_mp3 function :) */
-//	_mixer->play_mp3(NULL, sound, size, SoundMixer::FLAG_AUTOFREE);
+#ifdef COMPRESSED_SOUND_FILE
+	_mixer->play_mp3(NULL, sound, size, SoundMixer::FLAG_AUTOFREE);
+#else
+	error("Should never happen !!!");
+#endif
 }

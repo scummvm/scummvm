@@ -1,6 +1,10 @@
 #ifndef _mixer_h_included
 #define _mixer_h_included
 
+#ifdef COMPRESSED_SOUND_FILE
+#include <mad.h>
+#endif
+
 typedef uint32 PlayingSoundHandle;
 
 class SoundMixer {
@@ -30,14 +34,23 @@ private:
 
 #ifdef COMPRESSED_SOUND_FILE
 
-	class Channel_RAW : public Channel {
+	class Channel_MP3 : public Channel {
 		SoundMixer *_mixer;
+		void *_ptr;
+		struct mad_stream _stream;
+		struct mad_frame _frame;
+		struct mad_synth _synth;
+		uint32 _silence_cut;
+		uint32 _pos_in_frame;
+		uint32 _position;
+		uint32 _size;
+		byte _flags;
 
 	public:
 		void mix(int16 *data, uint len);
 		void destroy();
 
-		Channel_MP3(SoundMixer *mixer, void *sound, uint rate);
+		Channel_MP3(SoundMixer *mixer, void *sound, uint size, byte flags);
 	};
 
 #endif
@@ -71,6 +84,9 @@ public:
 		FLAG_FILE = 4,		 /* sound is a FILE * that's read from */
 	};
 	void play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags);
+#ifdef COMPRESSED_SOUND_FILE
+	void play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags);
+#endif
 
 	/* Premix procedure, useful when using fmopl adlib */
 	void setup_premix(void *param, PremixProc *proc);

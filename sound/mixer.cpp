@@ -36,6 +36,12 @@ void SoundMixer::play_raw(PlayingSoundHandle *handle, void *sound, uint32 size, 
 	insert(handle, new Channel_RAW(this, sound, size, rate, flags));
 }
 
+#ifdef COMPRESSED_SOUND_FILE
+void SoundMixer::play_mp3(PlayingSoundHandle *handle, void *sound, uint32 size, byte flags) {
+	insert(handle, new Channel_MP3(this, sound, size, flags));
+}
+#endif
+
 void SoundMixer::mix(int16 *buf, uint len) {
 	if (_premix_proc) {
 		_premix_proc(_premix_param, buf, len);
@@ -182,41 +188,22 @@ void SoundMixer::Channel_RAW::destroy() {
 
 
 /* MP3 mixer goes here */
-
-#if 0
-
 #ifdef COMPRESSED_SOUND_FILE
-void Scumm::playSfxSound_MP3(void *sound, uint32 size)
-{
-	MixerChannel *mc = allocateMixer();
-
-	if (!mc) {
-		warning("No mixer channel available");
-		return;
-	}
-
-	mc->type = MIXER_MP3;
-	mc->_sfx_sound = sound;
-
-	mad_stream_init(&mc->sound_data.mp3.stream);
-
-
-
+SoundMixer::Channel_MP3::Channel_MP3(SoundMixer *mixer, void *sound, uint size, byte flags) {
+	_mixer = mixer;
+	_flags = flags;
+	_pos_in_frame = 0xFFFFFFFF;
+	_position = 0;
+	_size = size;
+	_ptr = sound;
+	
+	mad_stream_init(&_stream);
 #ifdef _WIN32_WCE
-
 	// 11 kHz on WinCE
-
-	mad_stream_options((mad_stream *) & mc->sound_data.mp3.stream,
-										 MAD_OPTION_HALFSAMPLERATE);
-
+	mad_stream_options(&_stream, MAD_OPTION_HALFSAMPLERATE);
 #endif
-
-
-	mad_frame_init(&mc->sound_data.mp3.frame);
-	mad_synth_init(&mc->sound_data.mp3.synth);
-	mc->sound_data.mp3.position = 0;
-	mc->sound_data.mp3.pos_in_frame = 0xFFFFFFFF;
-	mc->sound_data.mp3.size = size;
+	mad_frame_init(&_frame);
+	mad_synth_init(&_synth);
 	/* This variable is the number of samples to cut at the start of the MP3
 	   file. This is needed to have lip-sync as the MP3 file have some miliseconds
 	   of blank at the start (as, I suppose, the MP3 compression algorithm need to
@@ -229,11 +216,9 @@ void Scumm::playSfxSound_MP3(void *sound, uint32 size)
 	   When using Lame, it seems that the sound starts to have some volume about 50 ms
 	   from the start of the sound => we skip about 1024 samples.
 	 */
-	mc->sound_data.mp3.silence_cut = 1024;
+	_silence_cut = 1024;
 }
-#endif
 
-#ifdef COMPRESSED_SOUND_FILE
 static inline int scale_sample(mad_fixed_t sample)
 {
 	/* round */
@@ -248,87 +233,59 @@ static inline int scale_sample(mad_fixed_t sample)
 	/* quantize and scale to not saturate when mixing a lot of channels */
 	return sample >> (MAD_F_FRACBITS + 2 - 16);
 }
+
+void SoundMixer::Channel_MP3::mix(int16 *data, uint len) {
+	mad_fixed_t const *ch;
+	while (1) {
+		ch = _synth.pcm.samples[0] + _pos_in_frame;
+		while ((_pos_in_frame < _synth.pcm.length) && (len > 0)) {
+			if (_silence_cut > 0) {
+				_silence_cut--;
+			} else {
+				*data++ += scale_sample(*ch++);
+				len--;
+			}
+			_pos_in_frame++;
+		}
+		if (len == 0)
+			return;
+		
+		if (_position >= _size) {
+			return; /* TODO : add equivalent to 'clear' */
+		}
+
+		mad_stream_buffer(&_stream, ((unsigned char *)_ptr) + _position, _size + MAD_BUFFER_GUARD - _position);
+
+		if (mad_frame_decode(&_frame, &_stream) == -1) {
+			/* End of audio... */
+			if (_stream.error == MAD_ERROR_BUFLEN) {
+				return; /* TODO : add equivalent to 'clear' */
+			} else if (!MAD_RECOVERABLE(_stream.error)) {
+				error("MAD frame decode error !");
+			}
+		}
+		mad_synth_frame(&_synth, &_frame);
+		_pos_in_frame = 0;
+		_position = (unsigned char *)_stream.next_frame - (unsigned char *)_ptr;
+	}
+}
+
+void SoundMixer::Channel_MP3::destroy() {
+	if (_flags & FLAG_AUTOFREE)
+		free(_ptr);
+	_mixer->uninsert(this);
+	mad_synth_finish(&_synth);
+	mad_frame_finish(&_frame);
+	mad_stream_finish(&_stream);
+
+	delete this;
+}
 #endif
+
+#if 0
 
 void MixerChannel::mix(int16 * data, uint32 len)
 {
-	if (!_sfx_sound)
-		return;
-
-#ifdef COMPRESSED_SOUND_FILE
-	if (type == MIXER_STANDARD) {
-#endif
-		int8 *s;
-		uint32 fp_pos, fp_speed;
-
-		if (len > sound_data.standard._sfx_size)
-			len = sound_data.standard._sfx_size;
-		sound_data.standard._sfx_size -= len;
-
-		s = (int8 *) _sfx_sound + sound_data.standard._sfx_pos;
-		fp_pos = sound_data.standard._sfx_fp_pos;
-		fp_speed = sound_data.standard._sfx_fp_speed;
-
-		do {
-			fp_pos += fp_speed;
-			*data++ += (*s << 6);
-			s += fp_pos >> 16;
-			fp_pos &= 0x0000FFFF;
-		} while (--len);
-
-		sound_data.standard._sfx_pos = s - (int8 *) _sfx_sound;
-		sound_data.standard._sfx_fp_speed = fp_speed;
-		sound_data.standard._sfx_fp_pos = fp_pos;
-
-		if (!sound_data.standard._sfx_size)
-			clear();
-#ifdef COMPRESSED_SOUND_FILE
-	} else {
-		if (type == MIXER_MP3) {
-			mad_fixed_t const *ch;
-			while (1) {
-				ch =
-					sound_data.mp3.synth.pcm.samples[0] + sound_data.mp3.pos_in_frame;
-				while ((sound_data.mp3.pos_in_frame < sound_data.mp3.synth.pcm.length)
-							 && (len > 0)) {
-					if (sound_data.mp3.silence_cut > 0) {
-						sound_data.mp3.silence_cut--;
-					} else {
-						*data++ += scale_sample(*ch++);
-						len--;
-					}
-					sound_data.mp3.pos_in_frame++;
-				}
-				if (len == 0)
-					return;
-
-				if (sound_data.mp3.position >= sound_data.mp3.size) {
-					clear();
-					return;
-				}
-
-				mad_stream_buffer(&sound_data.mp3.stream,
-													((unsigned char *)_sfx_sound) +
-													sound_data.mp3.position,
-													sound_data.mp3.size + MAD_BUFFER_GUARD -
-													sound_data.mp3.position);
-
-				if (mad_frame_decode(&sound_data.mp3.frame, &sound_data.mp3.stream) ==
-						-1) {
-					/* End of audio... */
-					if (sound_data.mp3.stream.error == MAD_ERROR_BUFLEN) {
-						clear();
-						return;
-					} else if (!MAD_RECOVERABLE(sound_data.mp3.stream.error)) {
-						error("MAD frame decode error !");
-					}
-				}
-				mad_synth_frame(&sound_data.mp3.synth, &sound_data.mp3.frame);
-				sound_data.mp3.pos_in_frame = 0;
-				sound_data.mp3.position =
-					(unsigned char *)sound_data.mp3.stream.next_frame -
-					(unsigned char *)_sfx_sound;
-			}
 		} else if (type == MIXER_MP3_CDMUSIC) {
 			mad_fixed_t const *ch;
 			mad_timer_t frame_duration;
@@ -468,21 +425,6 @@ void MixerChannel::mix(int16 * data, uint32 len)
 			}
 		}
 	}
-#endif
-}
-
-void MixerChannel::clear()
-{
-	free(_sfx_sound);
-	_sfx_sound = NULL;
-
-#ifdef COMPRESSED_SOUND_FILE
-	if (type == MIXER_MP3) {
-		mad_synth_finish(&sound_data.mp3.synth);
-		mad_frame_finish(&sound_data.mp3.frame);
-		mad_stream_finish(&sound_data.mp3.stream);
-	}
-#endif
 }
 
 #endif
