@@ -2364,7 +2364,7 @@ void Scumm::parseEvents() {
 					_fastMode ^= 1;
 				else if (event.kbd.keycode == 'g')
 					_fastMode ^= 2;
-				else if ((event.kbd.keycode == 'd') && (!_system->property(OSystem::PROP_GET_FULLSCREEN, 0)))
+				else if (event.kbd.keycode == 'd')
 					g_debugger->attach(this, NULL);
 				else if (event.kbd.keycode == 's')
 					resourceStats();
