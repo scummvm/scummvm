@@ -29,6 +29,7 @@
 #include "saga/render.h"
 #include "saga/scene.h"
 #include "saga/script.h"
+#include "saga/isomap.h"
 
 #include "common/system.h"
 
@@ -54,6 +55,19 @@ int SagaEngine::processInput() {
 				break;
 			case 'r':
 				_interface->draw();
+				break;
+
+			case 269:
+			case 270:
+			case 273:
+			case 274:
+			case 275:
+			case 276:
+				if (_vm->_scene->getFlags() & kSceneFlagISO) {
+					_vm->_isoMap->_viewDiff += (event.kbd.keycode == 270) - (event.kbd.keycode == 269);
+					_vm->_isoMap->_viewScroll.y += (_vm->_isoMap->_viewDiff * (event.kbd.keycode == 274) - _vm->_isoMap->_viewDiff * (event.kbd.keycode == 273));
+					_vm->_isoMap->_viewScroll.x += (_vm->_isoMap->_viewDiff * (event.kbd.keycode == 275) - _vm->_isoMap->_viewDiff * (event.kbd.keycode == 276));
+				}
 				break;
 			case 282: // F1
 				_render->toggleFlag(RF_SHOW_FPS);

@@ -108,19 +108,9 @@ public:
 	int draw(SURFACE *ds);
 private:
 	void drawTiles(SURFACE *ds);
-	void drawMetaTile(SURFACE *ds, uint16 metaTileIndex, int16 x, int16 y, int16 absU, int16 absV);
-	void drawPlatform(SURFACE *ds, uint16 platformIndex, int16 x, int16 y, int16 absU, int16 absV, int16 absH);
-	void setTileClip(int16 left, int16 right, int16 top, int16 bottom) {
-		_tileClipLeft = left;
-		_tileClipRight = right;
-		_tileClipTop = top;
-		_tileClipBottom = bottom;
-	}
-	
-	
+	void drawMetaTile(SURFACE *ds, uint16 metaTileIndex, const Point &point, int16 absU, int16 absV);
+	void drawPlatform(SURFACE *ds, uint16 platformIndex, const Point &point, int16 absU, int16 absV, int16 absH);	
 	void drawTile(SURFACE *ds, uint16 tileIndex, const Point &point);
-	//int drawMetaTile(SURFACE *ds, uint16 platformNumber, const Point &point);
-	//int drawMetamap(SURFACE *dst_s, int map_x, int map_y);
 	
 
 	byte *_tileData;
@@ -139,8 +129,10 @@ private:
 	TileMapData _tileMap;
 	
 	Point _tileScroll;
+public:
+	int _viewDiff;
 	Point _viewScroll;
-	int16 _tileClipLeft, _tileClipRight, _tileClipTop, _tileClipBottom;
+	Rect _tileClip;
 
 	SagaEngine *_vm;
 };
