@@ -587,24 +587,23 @@ protected:
 	void swapObjects(int object1, int object2);
 
 	/* HE version 60 script opcodes */
-	// TODO: Rename all these methods to use prefix "o6he_" instead of "o6_"
-	void o6_setState();
-	void o6_roomOps();
-	void o6_actorOps();
-	void o6_wait();
-	void o6_kernelSetFunctions();
-	void o6_kernelGetFunctions();
-	void o6_openFile();
-	void o6_closeFile();
-	void o6_deleteFile();
-	void o6_readFile();
-	void o6_rename();
-	void o6_writeFile();
-	void o6_soundOps();
-	void o6_seekFilePos();
-	void o6_localizeArray();
-	void o6_redimArray();
-	void o6_readFilePos();
+	void o6he_setState();
+	void o6he_roomOps();
+	void o6he_actorOps();
+	void o6he_wait();
+	void o6he_kernelSetFunctions();
+	void o6he_kernelGetFunctions();
+	void o6he_openFile();
+	void o6he_closeFile();
+	void o6he_deleteFile();
+	void o6he_readFile();
+	void o6he_rename();
+	void o6he_writeFile();
+	void o6he_soundOps();
+	void o6he_seekFilePos();
+	void o6he_localizeArray();
+	void o6he_redimArray();
+	void o6he_readFilePos();
 };
 
 class ScummEngine_v7he : public ScummEngine_v6he {
@@ -637,25 +636,24 @@ protected:
 	int polygonHit(int id, int x, int y);
 
 	/* HE version 70 script opcodes */
-	// TODO: Rename all these methods to use prefix "o70he_" instead of "o7_"
-	void o7_cursorCommand();
-	void o7_startSound();
-	void o7_pickupObject();
-	void o7_getActorRoom();
-	void o7_resourceRoutines();
-	void o7_quitPauseRestart();
-	void o7_kernelSetFunctions();
-	void o7_unknownED();
-	void o7_stringLen();
-	void o7_unknownEF();
-	void o7_readINI();
-	void o7_writeINI();
-	void o7_unknownF5();
-	void o7_unknownF6();
-	void o7_setFilePath();
-	void o7_unknownFA();
-	void o7_polygonOps();
-	void o7_polygonHit();
+	void o70he_cursorCommand();
+	void o70he_startSound();
+	void o70he_pickupObject();
+	void o70he_getActorRoom();
+	void o70he_resourceRoutines();
+	void o70he_quitPauseRestart();
+	void o70he_kernelSetFunctions();
+	void o70he_unknownED();
+	void o70he_stringLen();
+	void o70he_unknownEF();
+	void o70he_readINI();
+	void o70he_writeINI();
+	void o70he_unknownF5();
+	void o70he_unknownF6();
+	void o70he_setFilePath();
+	void o70he_unknownFA();
+	void o70he_polygonOps();
+	void o70he_polygonHit();
 };
 
 class ScummEngine_v72he : public ScummEngine_v7he {

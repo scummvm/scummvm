@@ -191,7 +191,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_setClass),
 		OPCODE(o6_getState),
 		/* 70 */
-		OPCODE(o6_setState),
+		OPCODE(o6he_setState),
 		OPCODE(o6_setOwner),
 		OPCODE(o6_getOwner),
 		OPCODE(o6_jump),
@@ -246,8 +246,8 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_resourceRoutines),
 		/* 9C */
-		OPCODE(o6_roomOps),
-		OPCODE(o6_actorOps),
+		OPCODE(o6he_roomOps),
+		OPCODE(o6he_actorOps),
 		OPCODE(o6_verbOps),
 		OPCODE(o6_getActorFromXY),
 		/* A0 */
@@ -262,7 +262,7 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_pop),
 		/* A8 */
 		OPCODE(o6_getActorWidth),
-		OPCODE(o6_wait),
+		OPCODE(o6he_wait),
 		OPCODE(o6_getActorScaleX),
 		OPCODE(o6_getActorAnimCounter1),
 		/* AC */
@@ -301,8 +301,8 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_distObjectPt),
 		OPCODE(o6_distPtPt),
 		/* C8 */
-		OPCODE(o6_kernelGetFunctions),
-		OPCODE(o6_kernelSetFunctions),
+		OPCODE(o6he_kernelGetFunctions),
+		OPCODE(o6he_kernelSetFunctions),
 		OPCODE(o6_delayFrames),
 		OPCODE(o6_pickOneOf),
 		/* CC */
@@ -322,18 +322,18 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_bor),
 		/* D8 */
 		OPCODE(o6_isRoomScriptRunning),
-		OPCODE(o6_closeFile),
-		OPCODE(o6_openFile),
-		OPCODE(o6_readFile),
+		OPCODE(o6he_closeFile),
+		OPCODE(o6he_openFile),
+		OPCODE(o6he_readFile),
 		/* DC */
-		OPCODE(o6_writeFile),
+		OPCODE(o6he_writeFile),
 		OPCODE(o6_findAllObjects),
-		OPCODE(o6_deleteFile),
-		OPCODE(o6_rename),
+		OPCODE(o6he_deleteFile),
+		OPCODE(o6he_rename),
 		/* E0 */
-		OPCODE(o6_soundOps),
+		OPCODE(o6he_soundOps),
 		OPCODE(o6_getPixel),
-		OPCODE(o6_localizeArray),
+		OPCODE(o6he_localizeArray),
 		OPCODE(o6_pickVarRandom),
 		/* E4 */
 		OPCODE(o6_setBoxSet),
@@ -342,9 +342,9 @@ void ScummEngine_v6he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* E8 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_seekFilePos),
-		OPCODE(o6_redimArray),
-		OPCODE(o6_readFilePos),
+		OPCODE(o6he_seekFilePos),
+		OPCODE(o6he_redimArray),
+		OPCODE(o6he_readFilePos),
 		/* EC */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -384,7 +384,7 @@ const char *ScummEngine_v6he::getOpcodeDesc(byte i) {
 	return _opcodesV6he[i].desc;
 }
 
-void ScummEngine_v6he::o6_setState() {
+void ScummEngine_v6he::o6he_setState() {
 	int state = pop();
 	int obj = pop();
 
@@ -402,7 +402,7 @@ void ScummEngine_v6he::o6_setState() {
 		clearDrawObjectQueue();
 }
 
-void ScummEngine_v6he::o6_roomOps() {
+void ScummEngine_v6he::o6he_roomOps() {
 	int a, b, c, d, e;
 	byte op;
 
@@ -512,7 +512,7 @@ void ScummEngine_v6he::o6_roomOps() {
 	case 187:		// SO_CYCLE_SPEED
 		b = pop();
 		a = pop();
-		checkRange(16, 1, a, "o6_roomOps: 187: color cycle out of range (%d)");
+		checkRange(16, 1, a, "o6he_roomOps: 187: color cycle out of range (%d)");
 		_colorCycle[a - 1].delay = (b != 0) ? 0x4000 / (b * 0x4C) : 0;
 		break;
 
@@ -541,10 +541,10 @@ void ScummEngine_v6he::o6_roomOps() {
 	case 236:		// HE 7.2
 		b = pop();
 		a = pop();
-		warning("o6_roomOps: case %d (%d, %d)", op, b, a);
+		warning("o6he_roomOps: case %d (%d, %d)", op, b, a);
 		break;
 	default:
-		error("o6_roomOps: default case %d", op);
+		error("o6he_roomOps: default case %d", op);
 	}
 }
 
@@ -574,7 +574,7 @@ void ScummEngine_v6he::swapObjects(int object1, int object2) {
 	memcpy(&_objs[idx2], &tmpOd, sizeof(tmpOd));
 }
 
-void ScummEngine_v6he::o6_actorOps() {
+void ScummEngine_v6he::o6he_actorOps() {
 	Actor *a;
 	int i, j, k;
 	int args[8];
@@ -586,7 +586,7 @@ void ScummEngine_v6he::o6_actorOps() {
 		return;
 	}
 
-	a = derefActorSafe(_curActor, "o6_actorOps");
+	a = derefActorSafe(_curActor, "o6he_actorOps");
 	if (!a)
 		return;
 
@@ -745,11 +745,11 @@ void ScummEngine_v6he::o6_actorOps() {
 		break;
 		}
 	default:
-		error("o6_actorOps: default case %d", b);
+		error("o6he_actorOps: default case %d", b);
 	}
 }
 
-void ScummEngine_v6he::o6_wait() {
+void ScummEngine_v6he::o6he_wait() {
 	int actnum;
 	int offs = -2;
 	Actor *a;
@@ -759,7 +759,7 @@ void ScummEngine_v6he::o6_wait() {
 	case 168:		// SO_WAIT_FOR_ACTOR Wait for actor
 		offs = fetchScriptWordSigned();
 		actnum = pop();
-		a = derefActor(actnum, "o6_wait:168");
+		a = derefActor(actnum, "o6he_wait:168");
 		if (a->moving)
 			break;
 		return;
@@ -781,14 +781,14 @@ void ScummEngine_v6he::o6_wait() {
 			return;
 		break;
 	default:
-		error("o6_wait: default case 0x%x", subOp);
+		error("o6he_wait: default case 0x%x", subOp);
 	}
 
 	_scriptPointer += offs;
 	o6_breakHere();
 }
 
-void ScummEngine_v6he::o6_kernelSetFunctions() {
+void ScummEngine_v6he::o6he_kernelSetFunctions() {
 	int args[29];
 	int num;
 
@@ -806,7 +806,7 @@ void ScummEngine_v6he::o6_kernelSetFunctions() {
 		//Used before mini games in 3DO versions, seems safe to ignore.
 		break;
 	default:
-		error("o6_kernelSetFunctions: default case %d (param count %d)", args[0], num);
+		error("o6he_kernelSetFunctions: default case %d (param count %d)", args[0], num);
 	}
 }
 
@@ -865,7 +865,7 @@ uint8 ScummEngine_v6he::virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data) {
 	return decByte;
 }
 
-void ScummEngine_v6he::o6_kernelGetFunctions() {
+void ScummEngine_v6he::o6he_kernelGetFunctions() {
 	int args[29];
 	int retval;
 	ArrayHeader *ah;
@@ -883,7 +883,7 @@ void ScummEngine_v6he::o6_kernelGetFunctions() {
 		push(retval);
 		break;
 	default:
-		error("o6_kernelGetFunctions: default case %d", args[0]);
+		error("o6he_kernelGetFunctions: default case %d", args[0]);
 	}
 }
 
@@ -990,7 +990,7 @@ void ScummEngine_v6he::virtScreenSavePackByte(vsPackCtx *ctx, uint8 *&dst, int l
 	++ctx->size;	
 }
 
-void ScummEngine_v6he::o6_openFile() {
+void ScummEngine_v6he::o6he_openFile() {
 	int mode, len, slot, l, r;
 	byte filename[100];
 
@@ -1019,7 +1019,7 @@ void ScummEngine_v6he::o6_openFile() {
 		else if (mode == 2)
 			_hFileTable[slot].open((char*)filename + r, File::kFileWriteMode);
 		else
-			error("o6_openFile(): wrong open file mode");
+			error("o6he_openFile(): wrong open file mode");
 
 		if (_hFileTable[slot].isOpen() == false)
 			slot = -1;
@@ -1028,14 +1028,14 @@ void ScummEngine_v6he::o6_openFile() {
 	push(slot);
 }
 
-void ScummEngine_v6he::o6_closeFile() {
+void ScummEngine_v6he::o6he_closeFile() {
 	int slot = pop();
 	if (slot != -1)
 		if (_hFileTable[slot].isOpen() == true)
 			_hFileTable[slot].close();
 }
 
-void ScummEngine_v6he::o6_deleteFile() {
+void ScummEngine_v6he::o6he_deleteFile() {
 	int len, r;
 	byte filename[100];
 
@@ -1049,10 +1049,10 @@ void ScummEngine_v6he::o6_deleteFile() {
 			break;
 	}
 
-	debug(1, "stub o6_deleteFile(\"%s\")", filename + r);
+	debug(1, "stub o6he_deleteFile(\"%s\")", filename + r);
 }
 
-void ScummEngine_v6he::o6_rename() {
+void ScummEngine_v6he::o6he_rename() {
 	int len, r1, r2;
 	byte filename[100],filename2[100];
 
@@ -1076,7 +1076,7 @@ void ScummEngine_v6he::o6_rename() {
 			break;
 	}
 
-	debug(1, "stub o6_rename(\"%s\" to \"%s\")", filename + r1, filename2 + r2);
+	debug(1, "stub o6he_rename(\"%s\" to \"%s\")", filename + r1, filename2 + r2);
 }
 
 int ScummEngine_v6he::readFileToArray(int slot, int32 size) {
@@ -1091,7 +1091,7 @@ int ScummEngine_v6he::readFileToArray(int slot, int32 size) {
 	return readVar(0);
 }
 
-void ScummEngine_v6he::o6_readFile() {
+void ScummEngine_v6he::o6he_readFile() {
 	int32 size = pop();
 	int slot = pop();
 	int val;
@@ -1119,7 +1119,7 @@ void ScummEngine_v6he::writeFileFromArray(int slot, int resID) {
 	_hFileTable[slot].write(ah->data, size);
 }
 
-void ScummEngine_v6he::o6_writeFile() {
+void ScummEngine_v6he::o6he_writeFile() {
 	int32 size = pop();
 	int16 resID = pop();
 	int slot = pop();
@@ -1137,7 +1137,7 @@ void ScummEngine_v6he::o6_writeFile() {
 	}
 }
 
-void ScummEngine_v6he::o6_soundOps() {
+void ScummEngine_v6he::o6he_soundOps() {
 	byte subOp = fetchScriptByte();
 	int arg = pop();
 	switch (subOp) {
@@ -1151,23 +1151,23 @@ void ScummEngine_v6he::o6_soundOps() {
 		_sound->setOverrideFreq(arg);
 		break;
 	default:
-		error("o6_soundOps: default case 0x%x", subOp);
+		error("o6he_soundOps: default case 0x%x", subOp);
 	}
 }
 
 void ScummEngine_v6he::localizeArray(int slot, int script) {
 	if (slot >= _numArray)
-		error("o6_localizeArray(%d): array slot out of range", slot);
+		error("o6he_localizeArray(%d): array slot out of range", slot);
 
 	_arraySlot[slot] = vm.slot[_currentScript].number;
 }
 
-void ScummEngine_v6he::o6_localizeArray() {
+void ScummEngine_v6he::o6he_localizeArray() {
 	int slot = pop();
 	localizeArray(slot, vm.slot[_currentScript].number);
 }
 
-void ScummEngine_v6he::o6_seekFilePos() {
+void ScummEngine_v6he::o6he_seekFilePos() {
 	int mode, offset, slot;
 	mode = pop();
 	offset = pop();
@@ -1195,7 +1195,7 @@ void ScummEngine_v6he::seekFilePos(int slot, int offset, int mode) {
 	}
 }
 
-void ScummEngine_v6he::o6_readFilePos() {
+void ScummEngine_v6he::o6he_readFilePos() {
 	int slot = pop();
 
 	if (slot == -1) {
@@ -1206,7 +1206,7 @@ void ScummEngine_v6he::o6_readFilePos() {
 	push(_hFileTable[slot].pos());
 }
 
-void ScummEngine_v6he::o6_redimArray() {
+void ScummEngine_v6he::o6he_redimArray() {
 	int subcode, newX, newY;
 	newY = pop();
 	newX = pop();
@@ -1223,7 +1223,7 @@ void ScummEngine_v6he::o6_redimArray() {
 		redimArray(fetchScriptWord(), newX, newY, kByteArray);
 		break;
 	default:
-		error("o6_redimArray: default type %d", subcode);
+		error("o6he_redimArray: default type %d", subcode);
 	}
 }
 

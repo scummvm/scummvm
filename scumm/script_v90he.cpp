@@ -190,7 +190,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_getOwner),
 		OPCODE(o6_jump),
 		/* 74 */
-		OPCODE(o7_startSound),
+		OPCODE(o70he_startSound),
 		OPCODE(o6_stopSound),
 		OPCODE(o6_startMusic),
 		OPCODE(o6_stopObjectScript),
@@ -210,7 +210,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_animateActor),
 		OPCODE(o6_doSentence),
 		/* 84 */
-		OPCODE(o7_pickupObject),
+		OPCODE(o70he_pickupObject),
 		OPCODE(o6_loadRoomWithEgo),
 		OPCODE(o6_invalid),
 		OPCODE(o6_getRandomNumber),
@@ -220,7 +220,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_getActorMoving),
 		OPCODE(o6_isScriptRunning),
 		/* 8C */
-		OPCODE(o7_getActorRoom),
+		OPCODE(o70he_getActorRoom),
 		OPCODE(o6_getObjectX),
 		OPCODE(o6_getObjectY),
 		OPCODE(o6_getObjectOldDir),
@@ -238,9 +238,9 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_isSoundRunning),
 		OPCODE(o6_setBoxFlags),
 		OPCODE(o6_invalid),
-		OPCODE(o7_resourceRoutines),
+		OPCODE(o70he_resourceRoutines),
 		/* 9C */
-		OPCODE(o6_roomOps),
+		OPCODE(o6he_roomOps),
 		OPCODE(o72_actorOps),
 		OPCODE(o90_unknown9E),
 		OPCODE(o6_getActorFromXY),
@@ -256,13 +256,13 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_pop),
 		/* A8 */
 		OPCODE(o6_getActorWidth),
-		OPCODE(o6_wait),
+		OPCODE(o6he_wait),
 		OPCODE(o6_getActorScaleX),
 		OPCODE(o6_getActorAnimCounter1),
 		/* AC */
 		OPCODE(o80_drawWizPolygon),
 		OPCODE(o6_isAnyOf),
-		OPCODE(o7_quitPauseRestart),
+		OPCODE(o70he_quitPauseRestart),
 		OPCODE(o6_isActorInBox),
 		/* B0 */
 		OPCODE(o6_delay),
@@ -295,8 +295,8 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_distObjectPt),
 		OPCODE(o6_distPtPt),
 		/* C8 */
-		OPCODE(o6_kernelGetFunctions),
-		OPCODE(o7_kernelSetFunctions),
+		OPCODE(o6he_kernelGetFunctions),
+		OPCODE(o70he_kernelSetFunctions),
 		OPCODE(o6_delayFrames),
 		OPCODE(o6_pickOneOf),
 		/* CC */
@@ -316,18 +316,18 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_bor),
 		/* D8 */
 		OPCODE(o6_isRoomScriptRunning),
-		OPCODE(o6_closeFile),
+		OPCODE(o6he_closeFile),
 		OPCODE(o72_openFile),
 		OPCODE(o72_readFile),
 		/* DC */
 		OPCODE(o72_writeFile),
 		OPCODE(o72_findAllObjects),
 		OPCODE(o72_deleteFile),
-		OPCODE(o6_rename),
+		OPCODE(o6he_rename),
 		/* E0 */
 		OPCODE(o6_invalid),
 		OPCODE(o72_getPixel),
-		OPCODE(o6_localizeArray),
+		OPCODE(o6he_localizeArray),
 		OPCODE(o80_pickVarRandom),
 		/* E4 */
 		OPCODE(o6_setBoxSet),
@@ -336,13 +336,13 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		/* E8 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_seekFilePos),
+		OPCODE(o6he_seekFilePos),
 		OPCODE(o72_redimArray),
-		OPCODE(o6_readFilePos),
+		OPCODE(o6he_readFilePos),
 		/* EC */
 		OPCODE(o72_unknownEC),
 		OPCODE(o72_unknownED),
-		OPCODE(o7_stringLen),
+		OPCODE(o70he_stringLen),
 		OPCODE(o72_unknownEF),
 		/* F0 */
 		OPCODE(o72_unknownF0),
@@ -358,9 +358,9 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o72_unknownF8),
 		OPCODE(o72_setFilePath),
 		OPCODE(o72_unknownFA),
-		OPCODE(o7_polygonOps),
+		OPCODE(o70he_polygonOps),
 		/* FC */
-		OPCODE(o7_polygonHit),
+		OPCODE(o70he_polygonHit),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
