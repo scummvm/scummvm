@@ -20,12 +20,10 @@
  */
 
 #include <string.h>
+#include <stdio.h>
+#include <assert.h>
 #include "common/scummsys.h"
 #include "sky/rnc_deco.h"
-
-#define ROL(x, n) (((x) << (n)) | ((x) >> (16 - (n))))
-#define ROR(x, n) (((x) << (16 - (n))) | ((x) >> (n)))
-#define XCHG(a, b) (a ^=b, b ^= a, a ^= b)
 
 //conditional flags
 #define CHECKSUMS	   1
@@ -105,18 +103,16 @@ uint16 RncDecoder::inputBits(uint8 amount)
 
 	if (newBitCount < 0) {
 		newBitCount += amount;
-		XCHG(newBitCount, amount);
-		remBits = ROR((uint16)(((1 << amount) - 1) & newBitBuffh), amount);
-		newBitBuffh >>= amount;
-		newBitBuffl >>= amount;
+		remBits = (newBitBuffh << (16-newBitCount));
+		newBitBuffh >>= newBitCount;
+		newBitBuffl >>= newBitCount;
 		newBitBuffl |= remBits;	
 		_srcPtr += 2;
 		newBitBuffh = READ_LE_UINT16(_srcPtr);
-		XCHG(newBitCount, amount);
 		amount -= newBitCount;
 		newBitCount = 16 - amount;
 	}
-	remBits = ROR((uint16)(((1 << amount) - 1) & newBitBuffh), amount);
+	remBits = (newBitBuffh << (16-amount));
 	_bitBuffh = newBitBuffh >> amount;
 	_bitBuffl = (newBitBuffl >> amount) | remBits;
 	_bitCount = (uint8)newBitCount;
@@ -256,18 +252,12 @@ int32 RncDecoder::unpackM1(void *input, void *output, uint16 key)
 				memcpy(_dstPtr, _srcPtr, inputLength); //memcpy is allowed here
 				_dstPtr += inputLength;
 				_srcPtr += inputLength;
-				uint16 b = READ_LE_UINT16(_srcPtr);
-				uint16 a = ROL(b, _bitCount);
-				uint16 d = ((1 << _bitCount) - 1);
-				_bitBuffl &= d;
-				d &= a;
+				uint16 a = READ_LE_UINT16(_srcPtr);
+				uint16 b = READ_LE_UINT16(_srcPtr + 2);
 
-				a = READ_LE_UINT16((_srcPtr + 2));
-				b = (b << _bitCount);
-				a = (a << _bitCount);
-				a |= d;
-				_bitBuffl |= b;
-				_bitBuffh = a;
+				_bitBuffl &= ((1 << _bitCount) - 1);
+				_bitBuffl |= (a << _bitCount);
+				_bitBuffh = (a >> (16 - _bitCount)) | (b << _bitCount);
 			}
 
 			if (counts > 1) {
