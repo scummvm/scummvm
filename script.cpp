@@ -436,6 +436,10 @@ void Scumm::stopObjectCode() {
 	ScriptSlot *ss;
 
 	ss = &vm.slot[_currentScript];
+	if (ss->cutsceneOverride == 255) {	/* FIXME: What does this? */
+		warning("Cutscene for script %d has overflown. Resetting.", ss->number);
+		ss->cutsceneOverride = 0;
+	}
 
 	if (ss->where!=WIO_GLOBAL && ss->where!=WIO_LOCAL) {
 		if (ss->cutsceneOverride)
