@@ -943,8 +943,11 @@ int32 Sword2Sound::StreamCompMusicFromLock(const char *filename, uint32 musicId,
 	// Calculate the file position of the end of the music
 	music[primaryStream]._fileEnd += music[primaryStream]._filePos;
 
-	music[primaryStream]._lastSample = fpMus.readUint16LE();
-	music[primaryStream]._filePos += 2;
+	// We used to read two bytes for _lastSample, but doing that breaks
+	// some of the music, so I guess that was a bug. Maybe.
+
+	music[primaryStream]._lastSample = fpMus.readByte();
+	music[primaryStream]._filePos++;
 	music[primaryStream]._streaming = true;
 
 	return RD_OK;
