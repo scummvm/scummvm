@@ -2146,8 +2146,34 @@ typedef int SerializerSaveReference(void *me, byte type, void *ref);
 typedef void *SerializerLoadReference(void *me, byte type, int ref);
 
 
+struct SerializerStream {
+#ifdef NONSTANDARD_SAVE
+	void *context;
+
+	bool fopen(const char *filename, const char *mode);
+	void fclose();
+	int fread(void *buf, int size, int cnt);
+	int fwrite(void *buf, int size, int cnt);
+#else
+	FILE *out;
+
+	FILE *fopen(const char *filename, const char *mode) {
+		return out = ::fopen(filename, mode);
+	}
+	void fclose() {
+		::fclose(out);
+	}
+	int fread(void *buf, int size, int cnt) {
+		return ::fread(buf, size, cnt, out);
+	}
+	int fwrite(void *buf, int size, int cnt) {
+		return ::fwrite(buf, size, cnt, out);
+	}
+#endif
+};
+
 struct Serializer {
-	FILE *_saveLoadStream;
+	SerializerStream _saveLoadStream;
 
 	union {
 		SerializerSaveReference *_save_ref;

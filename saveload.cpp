@@ -34,14 +34,13 @@ struct SaveGameHeader {
 
 bool Scumm::saveState(int slot, bool compat) {
 	char filename[256];
-	FILE *out;
+	SerializerStream out;
 	SaveGameHeader hdr;
 	Serializer ser;
 
 	makeSavegameName(filename, slot, compat);
 	
-	out = fopen(filename,"wb");
-	if (out==NULL)
+	if (!out.fopen(filename,"wb"))
 		return false;
 
 	memcpy(hdr.name, _saveLoadName, sizeof(hdr.name));
@@ -50,20 +49,20 @@ bool Scumm::saveState(int slot, bool compat) {
 	hdr.size = 0;
 	hdr.ver = CURRENT_VER;
 	
-	fwrite(&hdr, sizeof(hdr), 1, out);
+	out.fwrite(&hdr, sizeof(hdr), 1);
 
 	ser._saveLoadStream = out;
 	ser._saveOrLoad = true;
 	saveOrLoad(&ser);
 
-	fclose(out);
+	out.fclose();
 	debug(1,"State saved as '%s'", filename);
 	return true;
 }
 
 bool Scumm::loadState(int slot, bool compat) {
 	char filename[256];
- 	FILE *out;
+ 	SerializerStream out;
 	int i,j;
 	SaveGameHeader hdr;
 	Serializer ser;
@@ -71,21 +70,19 @@ bool Scumm::loadState(int slot, bool compat) {
 	SoundEngine *se;
 
 	makeSavegameName(filename, slot, compat);
-	out = fopen(filename,"rb");
-
-	if (out==NULL)
+	if (!out.fopen(filename,"rb"))
 		return false;
 
-	fread(&hdr, sizeof(hdr), 1, out);
+	out.fread(&hdr, sizeof(hdr), 1);
 	if (hdr.type != MKID('SCVM')) {
 		warning("Invalid savegame '%s'", filename);
-		fclose(out);
+		out.fclose();
 		return false;
 	}
 
 	if (hdr.ver != CURRENT_VER) {
 		warning("Invalid version of '%s'", filename);
-		fclose(out);
+		out.fclose();
 		return false;
 	}
 
@@ -111,7 +108,7 @@ bool Scumm::loadState(int slot, bool compat) {
 	ser._saveLoadStream = out;
 	ser._saveOrLoad = false;
 	saveOrLoad(&ser);
-	fclose(out);
+	out.fclose();
 
 	sb = _screenB;
 	sh = _screenH;
@@ -154,19 +151,18 @@ void Scumm::makeSavegameName(char *out, int slot, bool compatible) {
 
 bool Scumm::getSavegameName(int slot, char *desc) {
 	char filename[256];
-	FILE *out;
+	SerializerStream out;
 	SaveGameHeader hdr;
 	bool result;
 	int len;
 
 	makeSavegameName(filename, slot, false);
-	out = fopen(filename,"rb");	
-	if (out==NULL) {
+	if (!out.fopen(filename,"rb")) {
 		strcpy(desc,"");
 		return false;
 	}
-	len = fread(&hdr, sizeof(hdr), 1, out);
-	fclose(out);
+	len = out.fread(&hdr, sizeof(hdr), 1);
+	out.fclose();
 
 	if (len!=1 || hdr.type != MKID('SCVM')) {
 		strcpy(desc, "Invalid savegame");
@@ -561,9 +557,9 @@ void Scumm::saveLoadResource(Serializer *ser, int type, int index) {
 
 void Serializer::saveLoadBytes(void *b, int len) {
 	if (_saveOrLoad)
-		fwrite(b, 1, len, _saveLoadStream);
+		_saveLoadStream.fwrite(b, 1, len);
 	else
-		fread(b, 1, len, _saveLoadStream);
+		_saveLoadStream.fread(b, 1, len);
 }
 
 void Serializer::saveUint32(uint32 d) {
