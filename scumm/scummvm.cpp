@@ -186,8 +186,11 @@ static const ScummGameSettings scumm_settings[] = {
 	/* Scumm Version 7 */
 	{"ft", "Full Throttle", GID_FT, 7, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
-	{"ftdemo", "Full Throttle (PC Demo)", GID_FT, 7, MDT_NONE,
+	{"ftdemo", "Full Throttle (Mac. Demo)", GID_FT, 7, MDT_NONE,
+	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
+	{"ftpcdemo", "Full Throttle (PC Demo)", GID_FT, 7, MDT_NONE,
 	 GF_DEMO | GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
+
 
 	{"dig", "The Dig", GID_DIG, 7, MDT_NONE,
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE},
