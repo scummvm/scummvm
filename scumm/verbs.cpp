@@ -55,13 +55,13 @@ void Scumm::initV2MouseOver() {
 
 	v2_mouseover_boxes[kInventoryUpArrow].left = 144;
 	v2_mouseover_boxes[kInventoryUpArrow].right = 176;
-	v2_mouseover_boxes[kInventoryUpArrow].top = 32;
+	v2_mouseover_boxes[kInventoryUpArrow].top = 34;
 	v2_mouseover_boxes[kInventoryUpArrow].bottom = 40;
 
 	v2_mouseover_boxes[kInventoryDownArrow].left = 144;
 	v2_mouseover_boxes[kInventoryDownArrow].right = 176;
-	v2_mouseover_boxes[kInventoryDownArrow].top = 48;
-	v2_mouseover_boxes[kInventoryDownArrow].bottom = 56;
+	v2_mouseover_boxes[kInventoryDownArrow].top = 42;
+	v2_mouseover_boxes[kInventoryDownArrow].bottom = 50;
 
 	// Sentence line
 
@@ -211,10 +211,12 @@ void Scumm::redrawV2Inventory() {
 		drawString(1);
 	}
 
+
 	// If necessary, draw "up" arrow
 	if (_inventoryOffset > 0) {
 		_string[1].xpos = v2_mouseover_boxes[kInventoryUpArrow].left;
 		_string[1].ypos = v2_mouseover_boxes[kInventoryUpArrow].top + virtscr[2].topline;
+	        _string[1].color = 1;
 		_messagePtr = (const byte *)" \1\2";
 		drawString(1);
 	}
@@ -223,6 +225,7 @@ void Scumm::redrawV2Inventory() {
 	if (_inventoryOffset + 4 < getInventoryCount(_scummVars[VAR_EGO])) {
 		_string[1].xpos = v2_mouseover_boxes[kInventoryDownArrow].left;
 		_string[1].ypos = v2_mouseover_boxes[kInventoryDownArrow].top + virtscr[2].topline;
+	        _string[1].color = 1;
 		_messagePtr = (const byte *)" \3\4";
 		drawString(1);
 	}
