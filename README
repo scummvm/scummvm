@@ -765,6 +765,50 @@ An example config file looks as follows:
         music_driver=windows
         amiga=true
 
+The following keywords are recognized:
+
+        amiga           bool     Tells ScummVM whether or not a game is the
+                                 Amiga version
+        basename        string
+        path            string   The path to where a game's data files are
+        read_only       bool     If true, ScummVM will never try to overwrite
+                                 the configuration file.
+        save_slot
+        savepath                 The path to where a game will store its
+                                 savegames.
+        versioninfo     string   The version of the ScummVM that created the
+                                 configuration file.
+
+        gameid          string   The real id of a game. Useful if you have
+                                 several versions of the same game, and want
+                                 different aliases for them. See the example.
+        description     string   The description of the game as it will appear
+                                 in the launcher.
+
+        language        string   Specify language (en, de, fr, it, pt, es, jp,
+                                 zh, kr, hb)
+        nosubtitles     bool     Set to true to suppress subtitles.
+        talkspeed       number   Text speed (default: 60)
+
+        fullscreen      bool     Fullscreen mode
+        gfx_mode        string   Graphics mode (normal, 2x, 3x, 2xsai,
+                                 super2xsai, supereagle, advmame2x, advmame3x,
+                                 tv2x, dotmatrix)
+
+        cdrom           int      Number of CD-ROM unit to use for audio. If
+                                 negative, don't even try to access the CD-ROM.
+        master_volume   int      The master volume setting (0-255)
+        music_driver    string   The music engine to use.
+        music_volume    int      The music volume setting (0-255)
+        multi_midi      bool     If true, enable combination Adlib and native
+                                 MIDI.
+        native_mt32     bool     If true, disable GM emulation and assume that
+                                 there is a true Roland MT-32 available.
+        sfx_volume      int      The sfx volume setting (0-255)
+        tempo           int      The music tempo (50-200) (default: 100)
+
+        debuglevel      int      Enable debug output. The higher number, the
+                                 more verbose output.
 
 
 Credits:
