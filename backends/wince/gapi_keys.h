@@ -63,5 +63,6 @@ void setNextType(int);
 void setPreviousType(int);
 unsigned int GAPIKeysTranslate(unsigned int);
 void GAPIKeysHandleSelect(int);
+bool isRightClickSet(void);
 
 #endif
