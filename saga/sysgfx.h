@@ -34,10 +34,10 @@ namespace Saga {
 struct R_SYSGFX_MODULE {
 	int init;
 
-	SDL_Surface *sdl_screen;	/* Screen surface */
+	SDL_Surface *sdl_screen; // Screen surface
 	R_SURFACE r_screen;
 
-	SDL_Surface *sdl_back_buf;	/* Double buffer surface */
+	SDL_Surface *sdl_back_buf; // Double buffer surface
 	R_SURFACE r_back_buf;
 
 	int white_index;
@@ -46,4 +46,4 @@ struct R_SYSGFX_MODULE {
 
 } // End of namespace Saga
 
-#endif				/* SYSGFX_H_ */
+#endif

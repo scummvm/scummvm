@@ -20,14 +20,12 @@
  * $Header$
  *
  */
+
 #include "reinherit.h"
 
 #include <SDL.h>
 #include <limits.h>
 
-/*
- * Begin module component
-\*--------------------------------------------------------------------------*/
 #include "sysgfx.h"
 
 namespace Saga {
@@ -39,7 +37,6 @@ static SDL_Color cur_pal[R_PAL_ENTRIES];
 int SYSGFX_Init(R_SYSGFX_INIT *gfx_init) {
 	SDL_Surface *sdl_screen;
 	R_SURFACE r_screen;
-
 	SDL_Surface *sdl_back_buf;
 	R_SURFACE r_back_buf;
 
@@ -54,38 +51,27 @@ int SYSGFX_Init(R_SYSGFX_INIT *gfx_init) {
 		flags = SDL_HWPALETTE;
 	}
 
-	/* Test video mode availability */
-	result = SDL_VideoModeOK(gfx_init->screen_w,
-	    gfx_init->screen_h, gfx_init->screen_bpp, flags);
+	// Test video mode availability */
+	result = SDL_VideoModeOK(gfx_init->screen_w, gfx_init->screen_h, gfx_init->screen_bpp, flags);
 	if (result == 0) {
-		R_printf(R_STDERR,
-		    "Requested video mode (%d x %d @ %d bpp) "
-		    "is unavailable.\n",
-		    gfx_init->screen_w,
-		    gfx_init->screen_h, gfx_init->screen_bpp);
-
+		R_printf(R_STDERR, "Requested video mode (%d x %d @ %d bpp) is unavailable.\n", gfx_init->screen_w,
+				gfx_init->screen_h, gfx_init->screen_bpp);
 		return R_FAILURE;
 	}
 
-	/* Set the video mode */
-	sdl_screen = SDL_SetVideoMode(gfx_init->screen_w,
-	    gfx_init->screen_h, gfx_init->screen_bpp, flags);
+	// Set the video mode
+	sdl_screen = SDL_SetVideoMode(gfx_init->screen_w, gfx_init->screen_h, gfx_init->screen_bpp, flags);
 	if (sdl_screen == NULL) {
-		R_printf(R_STDERR,
-		    "Unable to set video mode (%d x %d @ %d bpp).\n",
-		    gfx_init->screen_w,
-		    gfx_init->screen_h, gfx_init->screen_bpp);
-
+		R_printf(R_STDERR, "Unable to set video mode (%d x %d @ %d bpp).\n", gfx_init->screen_w,
+				gfx_init->screen_h, gfx_init->screen_bpp);
 		R_printf(R_STDERR, "SDL reports: %s\n", SDL_GetError());
-
 		return R_FAILURE;
 	}
 
-	R_printf(R_STDOUT,
-	    "Set video mode: (%d x %d @ %d bpp)\n",
-	    sdl_screen->w, sdl_screen->h, sdl_screen->format->BitsPerPixel);
+	R_printf(R_STDOUT, "Set video mode: (%d x %d @ %d bpp)\n", sdl_screen->w, sdl_screen->h,
+			sdl_screen->format->BitsPerPixel);
 
-	/* Convert sdl surface data to R surface data */
+	// Convert sdl surface data to R surface data
 	r_screen.buf = (byte *)sdl_screen->pixels;
 	r_screen.buf_w = sdl_screen->w;
 	r_screen.buf_h = sdl_screen->h;
@@ -99,23 +85,17 @@ int SYSGFX_Init(R_SYSGFX_INIT *gfx_init) {
 
 	r_screen.impl_src = sdl_screen;
 
-	/* Create the back buffer */
-	sdl_back_buf = SDL_CreateRGBSurface(SDL_SWSURFACE,
-	    gfx_init->backbuf_w,
-	    gfx_init->backbuf_h, gfx_init->backbuf_bpp, 0, 0, 0, 0);
+	// Create the back buffer
+	sdl_back_buf = SDL_CreateRGBSurface(SDL_SWSURFACE, gfx_init->backbuf_w,
+										gfx_init->backbuf_h, gfx_init->backbuf_bpp, 0, 0, 0, 0);
 	if (sdl_back_buf == NULL) {
-
-		R_printf(R_STDERR,
-		    "Unable to create back buffer (%d x %d @ %d bpp).\n",
-		    gfx_init->backbuf_w,
-		    gfx_init->backbuf_h, gfx_init->backbuf_bpp);
-
+		R_printf(R_STDERR, "Unable to create back buffer (%d x %d @ %d bpp).\n", gfx_init->backbuf_w,
+				gfx_init->backbuf_h, gfx_init->backbuf_bpp);
 		R_printf(R_STDERR, "SDL reports: %s.\n", SDL_GetError());
-
 		return R_FAILURE;
 	}
 
-	/* Convert sdl surface data to R surface data */
+	// Convert sdl surface data to R surface data
 	r_back_buf.buf = (byte *)sdl_back_buf->pixels;
 	r_back_buf.buf_w = sdl_back_buf->w;
 	r_back_buf.buf_h = sdl_back_buf->h;
@@ -129,22 +109,21 @@ int SYSGFX_Init(R_SYSGFX_INIT *gfx_init) {
 
 	r_back_buf.impl_src = sdl_back_buf;
 
-	/* Set module data */
+	// Set module data
 	SGfxModule.sdl_screen = sdl_screen;
 	SGfxModule.r_screen = r_screen;
 	SGfxModule.sdl_back_buf = sdl_back_buf;
 	SGfxModule.r_back_buf = r_back_buf;
-
 	SGfxModule.init = 1;
 
 	return R_SUCCESS;
 }
 
-R_SURFACE *SYSGFX_GetScreenSurface(void) {
+R_SURFACE *SYSGFX_GetScreenSurface() {
 	return &SGfxModule.r_screen;
 }
 
-R_SURFACE *SYSGFX_GetBackBuffer(void) {
+R_SURFACE *SYSGFX_GetBackBuffer() {
 	return &SGfxModule.r_back_buf;
 }
 
@@ -201,7 +180,7 @@ R_SURFACE *SYSGFX_CreateSurface(int w, int h, int bpp) {
 	R_SURFACE *new_surface;
 	SDL_Surface *new_sdl_surface;
 
-	assert(bpp == 8);	/* 16bpp not supported, maybe not necessary? */
+	assert(bpp == 8);	// 16bpp not supported, maybe not necessary?
 	assert((w > 0) && (h > 0));
 
 	new_surface = (R_SURFACE *)malloc(sizeof *new_surface);
@@ -209,10 +188,8 @@ R_SURFACE *SYSGFX_CreateSurface(int w, int h, int bpp) {
 		return NULL;
 	}
 
-	new_sdl_surface =
-	    SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, bpp, 0, 0, 0, 0);
+	new_sdl_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, bpp, 0, 0, 0, 0);
 	if (new_sdl_surface == NULL) {
-
 		free(new_surface);
 		return NULL;
 	}
@@ -250,15 +227,12 @@ int SYSGFX_GetBlack(void) {
 
 int SYSGFX_MatchColor(unsigned long colormask) {
 	int i;
-
 	int red = (colormask & 0x0FF0000UL) >> 16;
 	int green = (colormask & 0x000FF00UL) >> 8;
 	int blue = colormask & 0x00000FFUL;
-
 	int dr;
 	int dg;
 	int db;
-
 	long color_delta;
 	long best_delta = LONG_MAX;
 	int best_index = 0;
@@ -266,19 +240,15 @@ int SYSGFX_MatchColor(unsigned long colormask) {
 	for (i = 0; i < R_PAL_ENTRIES; i++) {
 		dr = cur_pal[i].r - red;
 		dr = ABS(dr);
-
 		dg = cur_pal[i].g - green;
 		dg = ABS(dg);
-
 		db = cur_pal[i].b - blue;
 		db = ABS(db);
 
 #if R_COLORSEARCH_SQUARE
-		color_delta = (long)((dr * dr) * R_RED_WEIGHT +
-		    (dg * dg) * R_GREEN_WEIGHT + (db * db) * R_BLUE_WEIGHT);
+		color_delta = (long)((dr * dr) * R_RED_WEIGHT + (dg * dg) * R_GREEN_WEIGHT + (db * db) * R_BLUE_WEIGHT);
 #else
-		color_delta = (long)(dr * R_RED_WEIGHT +
-		    dg * R_GREEN_WEIGHT + db * R_BLUE_WEIGHT);
+		color_delta = (long)(dr * R_RED_WEIGHT + dg * R_GREEN_WEIGHT + db * R_BLUE_WEIGHT);
 #endif
 		if (color_delta == 0) {
 			return i;
@@ -294,33 +264,25 @@ int SYSGFX_MatchColor(unsigned long colormask) {
 }
 
 int SYSGFX_SetPalette(R_SURFACE *surface, PALENTRY *pal) {
-
 	byte red;
 	byte green;
 	byte blue;
-
 	int color_delta;
 	int best_wdelta = 0;
 	int best_windex = 0;
 	int best_bindex = 0;
 	int best_bdelta = 1000;
-
 	int i;
 
 	for (i = 0; i < R_PAL_ENTRIES; i++) {
 		red = pal[i].red;
 		cur_pal[i].r = red;
-
 		color_delta = red;
-
 		green = pal[i].green;
 		cur_pal[i].g = green;
-
 		color_delta += green;
-
 		blue = pal[i].blue;
 		cur_pal[i].b = blue;
-
 		color_delta += blue;
 
 		if (color_delta < best_bdelta) {
@@ -334,19 +296,17 @@ int SYSGFX_SetPalette(R_SURFACE *surface, PALENTRY *pal) {
 		}
 	}
 
-	/* Set whitest and blackest color indices */
+	// Set whitest and blackest color indices
 	SGfxModule.white_index = best_windex;
 	SGfxModule.black_index = best_bindex;
 
-	/* If the screen surface is palettized, set the screen palette.
-	 * If the screen surface is not palettized, set the palette of 
-	 * the surface parameter */
+	// If the screen surface is palettized, set the screen palette.
+	// If the screen surface is not palettized, set the palette of 
+	// the surface parameter
 	if (SGfxModule.r_screen.bpp < 16) {
-		SDL_SetColors(SGfxModule.sdl_screen, cur_pal, 0,
-		    R_PAL_ENTRIES);
+		SDL_SetColors(SGfxModule.sdl_screen, cur_pal, 0, R_PAL_ENTRIES);
 	} else {
-		SDL_SetColors((SDL_Surface *) surface->impl_src,
-		    cur_pal, 0, R_PAL_ENTRIES);
+		SDL_SetColors((SDL_Surface *) surface->impl_src, cur_pal, 0, R_PAL_ENTRIES);
 	}
 
 	return R_SUCCESS;
@@ -366,8 +326,7 @@ int SYSGFX_GetCurrentPal(PALENTRY *src_pal) {
 
 int SYSGFX_PalToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 	int i;
-
-	/*int fade_max = 255; */
+	//int fade_max = 255;
 	int new_entry;
 
 	double fpercent;
@@ -376,12 +335,12 @@ int SYSGFX_PalToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 		percent = 1.0;
 	}
 
-	/* Exponential fade */
+	// Exponential fade
 	fpercent = percent * percent;
 
 	fpercent = 1.0 - fpercent;
 
-	/* Use the correct percentage change per frame for each palette entry */
+	// Use the correct percentage change per frame for each palette entry 
 	for (i = 0; i < R_PAL_ENTRIES; i++) {
 		new_entry = (int)(src_pal[i].red * fpercent);
 
@@ -408,15 +367,13 @@ int SYSGFX_PalToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 		}
 	}
 
-	/* If the screen surface is palettized, set the screen palette.
-	 * If the screen surface is not palettized, set the palette of 
-	 * the surface parameter */
+	// If the screen surface is palettized, set the screen palette.
+	// If the screen surface is not palettized, set the palette of 
+	// the surface parameter
 	if (SGfxModule.r_screen.bpp < 16) {
-		SDL_SetColors(SGfxModule.sdl_screen, cur_pal, 0,
-		    R_PAL_ENTRIES);
+		SDL_SetColors(SGfxModule.sdl_screen, cur_pal, 0, R_PAL_ENTRIES);
 	} else {
-		SDL_SetColors((SDL_Surface *) surface->impl_src,
-		    cur_pal, 0, R_PAL_ENTRIES);
+		SDL_SetColors((SDL_Surface *) surface->impl_src, cur_pal, 0, R_PAL_ENTRIES);
 	}
 
 	return R_SUCCESS;
@@ -425,25 +382,23 @@ int SYSGFX_PalToBlack(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 int SYSGFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 	int new_entry;
 	double fpercent;
-
 	int color_delta;
 	int best_wdelta = 0;
 	int best_windex = 0;
 	int best_bindex = 0;
 	int best_bdelta = 1000;
-
 	int i;
 
 	if (percent > 1.0) {
 		percent = 1.0;
 	}
 
-	/* Exponential fade */
+	// Exponential fade
 	fpercent = percent * percent;
 
 	fpercent = 1.0 - fpercent;
 
-	/* Use the correct percentage change per frame for each palette entry */
+	// Use the correct percentage change per frame for each palette entry
 	for (i = 0; i < R_PAL_ENTRIES; i++) {
 		new_entry = (int)(src_pal[i].red - src_pal[i].red * fpercent);
 
@@ -453,8 +408,7 @@ int SYSGFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 			cur_pal[i].r = (byte) new_entry;
 		}
 
-		new_entry =
-		    (int)(src_pal[i].green - src_pal[i].green * fpercent);
+		new_entry = (int)(src_pal[i].green - src_pal[i].green * fpercent);
 
 		if (new_entry < 0) {
 			cur_pal[i].g = 0;
@@ -462,8 +416,7 @@ int SYSGFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 			cur_pal[i].g = (byte) new_entry;
 		}
 
-		new_entry =
-		    (int)(src_pal[i].blue - src_pal[i].blue * fpercent);
+		new_entry = (int)(src_pal[i].blue - src_pal[i].blue * fpercent);
 
 		if (new_entry < 0) {
 			cur_pal[i].b = 0;
@@ -472,7 +425,7 @@ int SYSGFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 		}
 	}
 
-	/* Find the best white and black color indices again */
+	// Find the best white and black color indices again
 	if (percent >= 1.0) {
 		for (i = 0; i < R_PAL_ENTRIES; i++) {
 			color_delta = cur_pal[i].r;
@@ -491,15 +444,13 @@ int SYSGFX_BlackToPal(R_SURFACE *surface, PALENTRY *src_pal, double percent) {
 		}
 	}
 
-	/* If the screen surface is palettized, set the screen palette.
-	 * If the screen surface is not palettized, set the palette of 
-	 * the surface parameter */
+	// If the screen surface is palettized, set the screen palette.
+	// If the screen surface is not palettized, set the palette of 
+	// the surface parameter
 	if (SGfxModule.r_screen.bpp < 16) {
-		SDL_SetColors(SGfxModule.sdl_screen, cur_pal, 0,
-		    R_PAL_ENTRIES);
+		SDL_SetColors(SGfxModule.sdl_screen, cur_pal, 0, R_PAL_ENTRIES);
 	} else {
-		SDL_SetColors((SDL_Surface *) surface->impl_src,
-		    cur_pal, 0, R_PAL_ENTRIES);
+		SDL_SetColors((SDL_Surface *) surface->impl_src, cur_pal, 0, R_PAL_ENTRIES);
 	}
 
 	return R_SUCCESS;
