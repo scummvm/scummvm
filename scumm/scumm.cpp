@@ -2136,13 +2136,13 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 			if (ss->cutsceneOverride && _version >= 5)
 				error("Object %d stopped with active cutscene/override in exit", ss->number);
 
-			nukeArrays(ss->number);
+			nukeArrays(_currentScript);
 			_currentScript = 0xFF;
 		} else if (ss->where == WIO_LOCAL) {
 			if (ss->cutsceneOverride && _version >= 5)
 				error("Script %d stopped with active cutscene/override in exit", ss->number);
 
-			nukeArrays(ss->number);
+			nukeArrays(_currentScript);
 			_currentScript = 0xFF;
 		}
 	}
@@ -2166,7 +2166,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	// For HE80+ games
 	for (i = 0; i < _numRoomVariables; i++)
 		_roomVars[i] = 0;
-	nukeArrays((byte)0xFFFFFFFF);
+	nukeArrays(0xFF);
 
 	for (i = 1; i < _numActors; i++) {
 		_actors[i].hideActor();

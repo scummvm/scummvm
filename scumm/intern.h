@@ -630,7 +630,7 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
-	void localizeArray(int slot, byte script);
+	void localizeArray(int slot, byte scriptSlot);
 	void redimArray(int arrayId, int newX, int newY, int d);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);

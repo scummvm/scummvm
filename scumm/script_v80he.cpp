@@ -444,7 +444,7 @@ void ScummEngine_v80he::o80_getSoundVar() {
 
 void ScummEngine_v80he::o80_localizeArrayToRoom() {
 	int slot = pop();
-	localizeArray(slot, (byte)0xFFFFFFFF);
+	localizeArray(slot, 0xFF);
 }
 
 void ScummEngine_v80he::o80_readConfigFile() {
@@ -661,9 +661,9 @@ void ScummEngine_v80he::o80_pickVarRandom() {
 	if (readVar(value) == 0) {
 		defineArray(value, kDwordArray, 0, 0, 0, num);
 		if (value & 0x8000)
-			localizeArray(readVar(value), (byte)0xFFFFFFFF);
+			localizeArray(readVar(value), 0xFF);
 		else if (value & 0x4000)
-			localizeArray(readVar(value), vm.slot[_currentScript].number);
+			localizeArray(readVar(value), _currentScript);
 
 		if (num > 0) {
 			int16 counter = 0;

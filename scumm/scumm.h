@@ -615,7 +615,7 @@ protected:
 public:
 	void runScript(int script, bool freezeResistant, bool recursive, int *lvarptr, int cycle = 0);
 	void stopScript(int script);
-	void nukeArrays(byte script);
+	void nukeArrays(byte scriptSlot);
 
 protected:
 	void runObjectScript(int script, int entry, bool freezeResistant, bool recursive, int *vars, int slot = -1, int cycle = 0);

@@ -224,7 +224,7 @@ void ScummEngine::stopScript(int script) {
 					error("Script %d stopped with active cutscene/override", script);
 			ss->number = 0;
 			ss->status = ssDead;
-			nukeArrays(script);
+			nukeArrays(i);
 			if (_currentScript == i)
 				_currentScript = 0xFF;
 		}
@@ -236,7 +236,7 @@ void ScummEngine::stopScript(int script) {
 	while (num > 0) {
 		if (nest->number == script &&
 				(nest->where == WIO_GLOBAL || nest->where == WIO_LOCAL)) {
-			nukeArrays(script);
+			nukeArrays(nest->slot);
 			nest->number = 0xFF;
 			nest->slot = 0xFF;
 			nest->where = 0xFF;
@@ -264,7 +264,7 @@ void ScummEngine::stopObjectScript(int script) {
 					error("Object %d stopped with active cutscene/override", script);
 			ss->number = 0;
 			ss->status = ssDead;
-			nukeArrays(script);
+			nukeArrays(i);
 			if (_currentScript == i)
 				_currentScript = 0xFF;
 		}
@@ -276,7 +276,7 @@ void ScummEngine::stopObjectScript(int script) {
 	while (num > 0) {
 		if (nest->number == script &&
 				(nest->where == WIO_ROOM || nest->where == WIO_INVENTORY || nest->where == WIO_FLOBJECT)) {
-			nukeArrays(script);
+			nukeArrays(nest->slot);
 			nest->number = 0xFF;
 			nest->slot = 0xFF;
 			nest->where = 0xFF;
@@ -288,12 +288,12 @@ void ScummEngine::stopObjectScript(int script) {
 
 /* Return a free script slot */
 int ScummEngine::getScriptSlot() {
-	ScriptSlot *ss;
+	ScriptSlot *s;
 	int i;
 
-	ss = vm.slot;
-	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
-		if (ss->status == ssDead)
+	for (i = 1; i < NUM_SCRIPT_SLOT; i++) {
+		s = &vm.slot[i];
+		if (s->status == ssDead)
 			return i;
 	}
 	error("Too many scripts running, %d max", NUM_SCRIPT_SLOT);
@@ -356,14 +356,14 @@ void ScummEngine::updateScriptPtr() {
 }
 
 /* Nuke arrays based on script */
-void ScummEngine::nukeArrays(byte script) {
+void ScummEngine::nukeArrays(byte scriptSlot) {
 	int i;
 
-	if (_heversion < 60 || script == 0)
+	if (_heversion < 60 || scriptSlot == 0)
 		return;
 
 	for (i = 1; i < _numArray; i++) {
-		if (_arraySlot[i] == script) {
+		if (_arraySlot[i] == scriptSlot) {
 			res.nukeResource(rtString, i);
 			_arraySlot[i] = 0;
 		}
@@ -703,7 +703,7 @@ void ScummEngine::stopObjectCode() {
 			ss->cutsceneOverride = 0;
 		}
 	}
-	nukeArrays(ss->number);
+	nukeArrays(_currentScript);
 	ss->number = 0;
 	ss->status = ssDead;
 	_currentScript = 0xFF;
