@@ -238,28 +238,28 @@ File *ResMan::openClusterFile(uint32 id) {
 }
 
 BsMemHandle *ResMan::resHandle(uint32 id) {
-	uint8 cluster = (uint8)((id >> 24) - 1);
-	uint8 group = (uint8)(id >> 16);
 	if ((id >> 16) == 0x0405)
 		id = _srIdList[id & 0xFFFF];
+	uint8 cluster = (uint8)((id >> 24) - 1);
+	uint8 group = (uint8)(id >> 16);
 
 	return &(_prj.clu[cluster]->grp[group]->resHandle[id & 0xFFFF]);
 }
 
 uint32 ResMan::resLength(uint32 id) {
-	uint8 cluster = (uint8)((id >> 24) - 1);
-	uint8 group = (uint8)(id >> 16);
 	if ((id >> 16) == 0x0405)
 		id = _srIdList[id & 0xFFFF];
+	uint8 cluster = (uint8)((id >> 24) - 1);
+	uint8 group = (uint8)(id >> 16);
 
 	return _prj.clu[cluster]->grp[group]->length[id & 0xFFFF];
 }
 
 uint32 ResMan::resOffset(uint32 id) {
-	uint8 cluster = (uint8)((id >> 24) - 1);
-	uint8 group = (uint8)(id >> 16);
 	if ((id >> 16) == 0x0405)
 		id = _srIdList[id & 0xFFFF];
+	uint8 cluster = (uint8)((id >> 24) - 1);
+	uint8 group = (uint8)(id >> 16);
 
 	return _prj.clu[cluster]->grp[group]->offset[id & 0xFFFF];
 }
