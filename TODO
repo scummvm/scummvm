@@ -132,8 +132,6 @@ General
   frequently gives the engine time to do these "other things".
 * Default to saving games in $HOME if in savepath is not defined maybe something
   like ~/Library/ScummVM/ for OS X and ~/.scummvm/ for everything else
-* Eye candy: make console sliding down and up when activated. Similiar to current
-  SAGA engine console.
 
 Build System
 ============

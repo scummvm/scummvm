@@ -58,6 +58,9 @@ protected:
 
 	bool	_caretVisible;
 	uint32	_caretTime;
+	
+	bool	_slideUpAndClose;
+	uint32	_slideTime;
 
 	ScrollBarWidget *_scrollBar;
 
@@ -78,6 +81,8 @@ protected:
 	float _widthPercent, _heightPercent;
 
 	void reflowLayout();
+	
+	void slideUpAndClose();
 
 public:
 	ConsoleDialog(float widthPercent, float heightPercent);

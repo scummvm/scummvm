@@ -34,6 +34,9 @@ extern const Graphics::NewFont g_consolefont;
 #define kConsoleCharWidth	(g_consolefont.getMaxCharWidth())
 #define kConsoleLineHeight	(g_consolefont.getFontHeight() + 2)
 
+enum {
+	kConsoleSlideDownDuration = 300	// Time in milliseconds
+};
 
 
 #define PROMPT	") "
@@ -61,6 +64,9 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 
 	_caretVisible = false;
 	_caretTime = 0;
+
+	_slideUpAndClose = false;
+	_slideTime = 0;
 
 	// Add scrollbar
 	_scrollBar = new ScrollBarWidget(this, _w - kScrollBarWidth - 1, 0, kScrollBarWidth, _h);
@@ -97,7 +103,21 @@ void ConsoleDialog::reflowLayout() {
 	_linesPerPage = (_h - 2) / kConsoleLineHeight;
 }
 
+void ConsoleDialog::slideUpAndClose() {
+	if (!_slideUpAndClose) {
+		_slideTime = g_system->getMillis();
+		_slideUpAndClose = true;
+	}
+}
+
 void ConsoleDialog::open() {
+	// Initiate sliding the console down. We do a very simple trick to achieve
+	// this effect: we simply move the console dialog just above (outside) the
+	// visible screen area, then shift it down in handleTickle() over a
+	// certain period of time. 
+	_y = -_h;
+	_slideTime = g_system->getMillis();
+
 	Dialog::open();
 	if (_promptStartPos == -1) {
 		print(PROMPT);
@@ -144,6 +164,23 @@ void ConsoleDialog::handleTickle() {
 		_caretTime = time + kCaretBlinkTime;
 		drawCaret(_caretVisible);
 	}
+	
+	// Perform the "slide animation".
+	if (_slideUpAndClose) {
+		_y = -(int)(_h * (float)(g_system->getMillis() - _slideTime) / kConsoleSlideDownDuration);
+		if (_y <= -_h) {
+			_slideUpAndClose = false;
+			close();
+		} else
+			draw();
+	} else
+	if (_y < 0) {
+		_y = -(int)(_h * (1.0 - (float)(g_system->getMillis() - _slideTime) / kConsoleSlideDownDuration));
+		if (_y > 0)
+			_y = 0;
+
+		draw();
+	}
 }
 
 void ConsoleDialog::handleMouseWheel(int x, int y, int direction) {
@@ -152,6 +189,9 @@ void ConsoleDialog::handleMouseWheel(int x, int y, int direction) {
 
 void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	int i;
+	
+	if (_slideUpAndClose)
+		return;
 
 	switch (keycode) {
 	case '\n':	// enter/return
@@ -193,11 +233,11 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 
 		draw();
 		if (!keepRunning)
-			close();
+			slideUpAndClose();
 		break;
 		}
 	case 27:	// escape
-		close();
+		slideUpAndClose();
 		break;
 	case 8:		// backspace
 		if (_caretVisible)
@@ -295,7 +335,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		break;
 	default:
 		if (ascii == '~' || ascii == '#') {
-			close();
+			slideUpAndClose();
 		} else if (modifiers == OSystem::KBD_CTRL) {
 			specialKeys(keycode);
 		} else if (isprint((char)ascii)) {
