@@ -87,7 +87,7 @@ bool EditTextWidget::handleKeyDown(char key, int modifiers)
 		case 23:	// end
 			break;
 		default:
-			if (isalnum(key)  || key == ' ') {
+			if (isalnum(key) || key == ' ' || key == '-' || key == '_') {
 				_label += key;
 				dirty = true;
 			} else {

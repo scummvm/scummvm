@@ -147,31 +147,32 @@ bool ListWidget::handleKeyDown(char key, int modifiers)
 		if (_caretVisible)
 			drawCaret(true);
 
-		if (key == '\n' || key == '\r') {
-			// enter, confirm edit and exit editmode
-			_editMode = false;
-			dirty = true;
-			sendCommand(kListItemActivatedCmd, _selectedItem);
-		} else if (key == 27) {
-			// ESC, abort edit and exit editmode
-			_editMode = false;
-			dirty = true;
-			_list[_selectedItem] = _backupString;
-		} else if (key == 8) {	// backspace
-			_list[_selectedItem].deleteLastChar();
-			dirty = true;
-		} else if (// filter keystrokes
-					( ( key >= 'a' && key <= 'z' )
-					|| ( key >= 'A' && key <= 'Z' )
-					|| ( key >= '0' && key <= '9' )
-					|| ( key == ' ')
-					) )
-			{
-
-			_list[_selectedItem] += key;
-			dirty = true;
-		} else
-			handled = false;
+		switch (key) {
+			case '\n':	// enter/return
+			case '\r':
+				// enter, confirm edit and exit editmode
+				_editMode = false;
+				dirty = true;
+				sendCommand(kListItemActivatedCmd, _selectedItem);
+				break;
+			case 27:	// escape
+				// ESC, abort edit and exit editmode
+				_editMode = false;
+				dirty = true;
+				_list[_selectedItem] = _backupString;
+				break;
+			case 8:		// backspace
+				_list[_selectedItem].deleteLastChar();
+				dirty = true;
+				break;
+			default:
+				if (isalnum(key) || key == ' ' || key == '-' || key == '_') {
+					_list[_selectedItem] += key;
+					dirty = true;
+				} else {
+					handled = false;
+				}
+		}
 
 	} else {
 		// not editmode
