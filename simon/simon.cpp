@@ -3237,9 +3237,8 @@ void SimonState::processSpecialKeys()
 			break;
 
 		case 't':
-			_vk_t_toggle ^= 1;
-			if (_game == GAME_SIMON1TALKIE || _game == GAME_SIMON1WIN && _vk_t_toggle)
-				warning("Many subtitles are missing in Simon 1 talkie/win data files");
+			if (_game & GAME_SIMON2)
+				_vk_t_toggle ^= 1;
 			break;
 
 		case '+':
