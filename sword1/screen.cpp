@@ -565,7 +565,7 @@ void SwordScreen::addToGraphicList(uint8 listId, uint32 objId) {
 		if (!(cpt->o_status & STAT_SHRINK)) {     // not a boxed mega using shrinking
 			Header *frameRaw = (Header*)_resMan->openFetchRes(cpt->o_resource);
 			FrameHeader *frameHead = _resMan->fetchFrame(frameRaw, cpt->o_frame);
-			_sortList[_sortLength].y += frameHead->height - 1; // now pointing to base of sprite
+			_sortList[_sortLength].y += FROM_LE_16(frameHead->height) - 1; // now pointing to base of sprite
 			_resMan->resClose(cpt->o_resource);
 		}
 		_sortLength++;
