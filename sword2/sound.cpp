@@ -76,6 +76,8 @@ Sound::Sound(Sword2Engine *vm) {
 	_musicMuted = false;
 	_fxMuted = false;
 
+	_reverseStereo = false;
+
 	_mixBuffer = NULL;
 	_mixBufferLen = 0;
 
