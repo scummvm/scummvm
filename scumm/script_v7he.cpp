@@ -1060,7 +1060,7 @@ bool ScummEngine_v70he::polygonDefined(int id) {
 }
 
 bool ScummEngine_v70he::polygonContains(const WizPolygon &pol, int x, int y) {
-	int pi = pol.numVerts;
+	int pi = pol.numVerts - 1;
 	bool diry = (y < pol.vert[pi].y);
 	bool curdir;
 	bool r = false;
