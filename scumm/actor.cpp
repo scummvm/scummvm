@@ -1457,7 +1457,7 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 	}
 
 	if (costume < 1 || costume >= _vm->_numCostumes - 1) {
-		warning("Remap actor %d invalid costume", number, costume);
+		warning("Remap actor %d invalid costume %d", number, costume);
 		return;
 	}
 
