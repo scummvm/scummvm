@@ -642,6 +642,11 @@ void SoundMixer::ChannelStream::mix(int16 * data, uint len) {
 	const int16 * vol_tab = _mixer->_volumeTable;
 	byte * end_of_data = _endOfData;
 
+	if (_toBeDestroyed) {
+		realDestroy();
+		return;
+	}
+
 	if (_pos == end_of_data) {
 		if (--_timeOut == 0) {
 			realDestroy();

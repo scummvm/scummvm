@@ -194,6 +194,7 @@ ScummRenderer::ScummRenderer(Scumm * scumm, uint32 speed) :
 	_scumm(scumm),
 	_smixer(0),
 	_insaneSpeed(speed) {
+	scumm->_mixer->stopAll();
 }
 
 static ScummRenderer * s_renderer;
