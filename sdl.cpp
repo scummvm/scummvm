@@ -938,8 +938,8 @@ void OSystem_SDL::draw_mouse() {
 	if (SDL_LockSurface(sdl_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	const int ydraw = _ms_cur.y + _current_shake_pos - _ms_hotspot_x;
-	const int xdraw = _ms_cur.x - _ms_hotspot_y;
+	const int ydraw = _ms_cur.y + _current_shake_pos - _ms_hotspot_y;
+	const int xdraw = _ms_cur.x - _ms_hotspot_x;
 	const int w = _ms_cur.w;
 	const int h = _ms_cur.h;
 	int x,y;
