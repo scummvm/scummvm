@@ -247,9 +247,18 @@ void checkHeap() {
 //
 EngineFactory _factories[] =
 	{
-		Engine_SKY_create,
+#ifndef DISABLE_SCUMM
 		Engine_SCUMM_create,
+#endif
+#ifndef DISABLE_SCUMM
 		Engine_SIMON_create,
-		Engine_SWORD2_create
+#endif
+#ifndef DISABLE_SCUMM
+		Engine_SKY_create,
+#endif
+#ifndef DISABLE_SCUMM
+		Engine_SWORD2_create,
+#endif
+		0
 	};
 
