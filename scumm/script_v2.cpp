@@ -875,21 +875,25 @@ void Scumm_v2::o2_doSentence() {
 void Scumm_v2::o2_drawSentence() {
 	ScummVM::Rect sentenceline;
 	static char sentence[80];
+	byte *temp;
 	int slot = getVerbSlot(_scummVars[VAR_SENTENCE_VERB],0);
 
 	if (!(_userState & 32))
 		return;
 
 	strcpy(sentence, (char*)getResourceAddress(rtVerb, slot));
-
-	if (_scummVars[27] > 0) {
-		strcat(sentence, " ");
-		strcat(sentence, (char*)getObjOrActorName(_scummVars[VAR_SENTENCE_OBJECT1]));
+	if (_scummVars[VAR_SENTENCE_OBJECT1] > 0) {
+		if (temp = getObjOrActorName(_scummVars[VAR_SENTENCE_OBJECT1])) {
+			strcat(sentence, " ");
+			strcat(sentence, (char*)temp);
+		}
 	}
 
-	if (_scummVars[28] > 0) {
-		strcat(sentence, " ");
-		strcat(sentence, (char*)getObjOrActorName(_scummVars[VAR_SENTENCE_OBJECT2]));
+	if (_scummVars[VAR_SENTENCE_OBJECT2] > 0) {
+		if (temp = getObjOrActorName(_scummVars[VAR_SENTENCE_OBJECT2])) {
+			strcat(sentence, " with ");
+			strcat(sentence, (char*)temp);
+		}
 	}
 
 	_string[2].charset = 1;

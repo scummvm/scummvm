@@ -713,6 +713,7 @@ protected:
 	void runObjectScript(int script, int entry, bool freezeResistant, bool recursive, int *vars);
 	void setVerbObject(uint room, uint object, uint verb);
 
+	void checkV2Inventory(int x, int y);
 	void redrawV2Inventory();
 
 public:

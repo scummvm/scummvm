@@ -1868,9 +1868,12 @@ int Scumm::getKeyInput() {
 
 			if (zone->number == 0)		// Clicked in scene
 				_scummVars[VAR_CLICK_AREA] = 2;
-			else if (zone->number == 2) 	// Clicked in verb/sentence
-				_scummVars[VAR_CLICK_AREA] = 1;
-
+			else if (zone->number == 2) {	// Clicked in verb/sentence
+				if (_mouse.y > zone->topline + 32)
+					_scummVars[VAR_CLICK_AREA] = 3; // Inventory
+				else
+					_scummVars[VAR_CLICK_AREA] = 1; // Verb
+			}
 		} else if (_lastKeyHit) 		// Key Input
 			_scummVars[VAR_CLICK_AREA] = 4;
 	}

@@ -27,35 +27,53 @@
 #include "scumm.h"
 #include "verbs.h"
 
+void Scumm::checkV2Inventory(int x, int y) {
+	int object = 0;
+
+	if ((y < virtscr[2].topline + 34) || !(_mouseButStat & MBS_LEFT_CLICK)) 
+		return;
+
+	object = ((y - virtscr[2].topline - 34) / 8) * 2;
+	if (x > 150)
+		object++;
+
+	object = findInventory(_scummVars[VAR_EGO], object+1);
+	if (object > 0) {
+		_scummVars[35] = object;
+		runScript(4, 0, 0, 0);
+	}
+}
+
 void Scumm::redrawV2Inventory() {
 	int i, items = 0, curInventoryCount = 0;
 	bool alternate = false;
+	int max_inv = getInventoryCount(_scummVars[VAR_EGO]);
 
 	if (!(_userState & 64))
 		return;
 
-	if (curInventoryCount > _maxInventoryItems)
-		curInventoryCount = _maxInventoryItems;
+	if (curInventoryCount > max_inv)
+		curInventoryCount = max_inv;
 
-	for (i = curInventoryCount + 1; i <= _maxInventoryItems; i++) {
-		if (_inventory[i] != 0) {
-			_string[1].charset = 1;
-			_string[1].ypos = virtscr[2].topline + 34 + (8*(items / 2));
-			_string[1].color = 5;
-			_messagePtr = getObjOrActorName(_inventory[i]);
+	_string[1].charset = 1;
+	_string[1].color = 5;
 
-			if (alternate)
-				_string[1].xpos = 200;
-			else
-				_string[1].xpos = 0;
+	items = 0;
+	for (i = curInventoryCount + 1; i <= max_inv; i++) {
+		int obj = findInventory(_scummVars[VAR_EGO], i);
+		if ((obj == 0) || (items == 4)) break;
+		
+		_string[1].ypos = virtscr[2].topline + 34 + (8*(items / 2));
+		if (alternate)
+			_string[1].xpos = 200;
+		else
+			_string[1].xpos = 0;
 
-			drawString(1);
+		_messagePtr = getObjOrActorName(obj);
+		drawString(1);
+		items++;
 
-			items++;
-			alternate = !alternate;
-		}
-		if (items == 4)
-			break;
+		alternate = !alternate;
 	}
 
 	if (curInventoryCount > 0) { // Draw Up Arrow
@@ -72,6 +90,7 @@ void Scumm::redrawV2Inventory() {
 		drawString(1);
 	}
 }
+
 void Scumm::redrawVerbs() {
 	int i;
 	int verb = (_cursor.state > 0 ? checkMouseOver(_mouse.x, _mouse.y) : 0);
@@ -158,6 +177,10 @@ int Scumm::checkMouseOver(int x, int y) {
 
 		return i;
 	} while (--vs, --i);
+
+	if (_features & GF_AFTER_V2)
+		checkV2Inventory(x, y);
+
 	return 0;
 }
 
