@@ -153,7 +153,7 @@ void NewGui::loop()
 				case OSystem::EVENT_LBUTTONDOWN:
 				case OSystem::EVENT_RBUTTONDOWN: {
 					uint32 time = _s->_system->get_msecs();
-					if (_lastClick.count && (time < _lastClick.time + 1000)
+					if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
 					      && ABS(_lastClick.x - t.mouse.x) < 3
 					      && ABS(_lastClick.y - t.mouse.y) < 3) {
 						_lastClick.count++;

@@ -37,6 +37,10 @@ enum {
 	kTextAlignRight,
 };
 
+enum {
+	kDoubleClickDelay = 500    // milliseconds
+};
+
 // Extremly simple stack class, doesn't even do any error checking (for now)
 class DialogStack {
 protected:
