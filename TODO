@@ -72,6 +72,8 @@ SCUMM
 * Try to remove all use of MAD/Ogg code from scumm/sound.cpp:
   Ideally, only code in sound/ should access these libs. This will
   become important for loadable module support
+* Add support for Mac0 music format used in Monkey Island Mac
+  See https://sourceforge.net/tracker/index.php?func=detail&aid=781797&group_id=37116&atid=418823
 
 Broken Sword 2
 ==============
