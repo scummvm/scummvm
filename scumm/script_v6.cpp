@@ -2950,26 +2950,27 @@ void Scumm_v6::o6_findAllObjects() {
 	push(readVar(0));
 }
 
-static void sub_FEE_78D2(int num, int16 *arg_1, int16 *arg_2) {
+static void sub_FEE_78D2(int num, int &arg1, int &arg2) {
 	byte *ptr = g_scumm->getResourceAddress(rtString, num);
-	*(arg_1) = READ_LE_UINT16(ptr + 4);
-	*(arg_2) = READ_LE_UINT16(ptr + 2);
+	arg1 = READ_LE_UINT16(ptr + 4);
+	arg2 = READ_LE_UINT16(ptr + 2);
 }
 
-static void sub_FEE_7822(int num, int16 arg_1, int16 arg_2) {
-	int16 dx = arg_2;
-	dx -= arg_1;
-	int16 var_C = dx;
-	int count = dx * 2;
+static void sub_FEE_7822(int num, int arg1, int arg2) {
+	int var_C = arg2 - arg1;
+	int count = var_C * 2;
 
-	while (--count) {
-		int16 cx = var_C + 1;
-		int16 rand1 = (rand() % cx) + arg_1;
-		int16 rand2 = (rand() % cx) + arg_1;
+	if (count-- == 0)
+		return;
+	
+	do {
+		int cx = var_C + 1;
+		int rand1 = (rand() % cx) + arg1;
+		int rand2 = (rand() % cx) + arg1;
 		g_scumm->_vars[g_scumm->VAR_V6_RANDOM_NR] = rand2;
 		g_scumm->writeArray(num, 0, rand1, g_scumm->readArray(num, 0, rand1));
 		g_scumm->writeArray(num, 0, rand2, g_scumm->readArray(num, 0, rand2));
-	};
+	} while (--count);
 }
 
 void Scumm_v6::o6_shuffle() {
@@ -2977,23 +2978,19 @@ void Scumm_v6::o6_shuffle() {
 }
 
 void Scumm_v6::o6_pickVarRandom() {
-	warning("void Scumm_v6::o6_pickVarRandom()");
-
 	int num;
 	int args[100];
-	int16 var_C, var_A;
+	int var_C, var_A;
 
 	num = getStackList(args, sizeof(args) / sizeof(args[0]));
-	int16 value = fetchScriptWord();
+	int value = fetchScriptWord();
 
 	if (readVar(value) == 0) {
 		defineArray(value, 5, 0, num);
 		if (num > 0) {
-			int *ptr = args;
 			int16 counter = 0;
 			do {
-				writeArray(value, 0, counter + 1, READ_LE_UINT16(ptr));
-				ptr++;
+				writeArray(value, 0, counter + 1, args[counter]);
 			} while (++counter < num);
 		}
 
@@ -3004,15 +3001,15 @@ void Scumm_v6::o6_pickVarRandom() {
 	}
 
 	num = readArray(value, 0, 0);
-	sub_FEE_78D2(readVar(value), &var_C, &var_A);
+	sub_FEE_78D2(readVar(value), var_C, var_A);
 
-	if (var_A - 1 < num) {
+	if ((var_A - 1) < num) {
 		int16 var_2 = readArray(value, 0, num - 1);
 		sub_FEE_7822(value, 1, var_A - 1);
-		num = 1;
-		int16 a = readArray(value, 0, num);
-		if (a == var_2) {
+		if (readArray(value, 0, 1) == var_2) {
 			num = 2;
+		} else {
+			num = 1;
 		}
 	}
 
