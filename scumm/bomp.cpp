@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "scumm.h"
+#include "akos.h"
 #include "bomp.h"
 
 
@@ -347,72 +348,40 @@ static byte _bompBitsTable[] = {
 	4, 3, 3, 2, 3, 2, 2, 1, 3, 2, 2, 1, 2, 1, 1, 0,
 };
 
-extern byte default_scale_table[768];
-
 int32 setupBompScale(byte *scaling, int32 size, byte scale) {
-	uint32 tmp = (256 - (size >> 1));
-	int32 count = (size + 7) >> 3;
-	assert(tmp < sizeof(default_scale_table));
-	byte *tmp_ptr = default_scale_table + tmp;
+	byte tmp;
+	int32 count;
+	const byte *tmp_ptr;
 	byte *tmp_scaling = scaling;
 	byte a = 0;
+	byte ret_value = 0;
+	const int offsets[8] = { 3, 2, 1, 0, 7, 6, 5, 4 };
 
-	while ((count--) != 0) {
-		tmp = *(tmp_ptr + 3);
-		a <<= 1;
-		if (scale < tmp) {
-			a |= 1;
+	count = (256 - (size >> 1));
+	assert(0 <= count && count < 768);
+	tmp_ptr = defaultScaleTable + count;
+	
+	count = (size + 7) >> 3;
+	while (count--) {
+		a = 0;
+		for (int i = 0; i < 8; i++) {
+			tmp = *(tmp_ptr + offsets[i]);
+			a <<= 1;
+			if (scale < tmp) {
+				a |= 1;
+			}
 		}
-		tmp = *(tmp_ptr + 2);
-		a <<= 1;
-		if (scale < tmp) {
-			a |= 1;
-		}
-		tmp = *(tmp_ptr + 1);
-		a <<= 1;
-		if (scale < tmp) {
-			a |= 1;
-		}
-		tmp = *(tmp_ptr + 0);
-		a <<= 1;
-		if (scale < tmp) {
-			a |= 1;
-		}
-		tmp_ptr += 4;
+		tmp_ptr += 8;
 
-		tmp = *(tmp_ptr + 3);
-		a <<= 1;
-		if (scale < tmp) {
-			a |= 1;
-		}
-		tmp = *(tmp_ptr + 2);
-		a <<= 1;
-		if (scale < tmp) {
-			a |= 1;
-		}
-		tmp = *(tmp_ptr + 1);
-		a <<= 1;
-		if (scale < tmp) {
-			a |= 1;
-		}
-		tmp = *(tmp_ptr + 0);
-		a <<= 1;
-		if (scale < tmp) {
-			a |= 1;
-		}
-		tmp_ptr += 4;
-
-		*(tmp_scaling++) = a;
+		*tmp_scaling++ = a;
 	}
 	if ((size & 7) != 0) {
 		*(tmp_scaling - 1) |= revBitMask[size & 7];
 	}
 
 	count = (size + 7) >> 3;
-	byte ret_value = 0;
 	while (count--) {
 		tmp = *scaling++;
-		assert(tmp < sizeof(_bompBitsTable));
 		ret_value += _bompBitsTable[tmp];
 	}
 

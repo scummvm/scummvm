@@ -408,9 +408,9 @@ void AkosRenderer::codec1_genericDecode() {
 }
 
 #ifdef __PALM_OS__
-byte *default_scale_table;
+const byte *defaultScaleTable;
 #else
-byte default_scale_table[768] = {
+const byte defaultScaleTable[768] = {
 	0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0,
 	0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0,
 	0x08, 0x88, 0x48, 0xC8, 0x28, 0xA8, 0x68, 0xE8,
@@ -524,7 +524,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 	/* implement custom scale table */
 
-	v1.scaletable = default_scale_table;
+	v1.scaletable = defaultScaleTable;
 
 	// FIXME - which value for VAR_CUSTOMSCALETABLE in V8 ?
 	if (_vm->VAR_CUSTOMSCALETABLE != 0xFF && _vm->isGlobInMemory(rtString, _vm->VAR(_vm->VAR_CUSTOMSCALETABLE))) {
@@ -1368,7 +1368,7 @@ bool Scumm::akos_compare(int a, int b, byte cmd) {
 #ifdef __PALM_OS__
 #include "scumm_globals.h" // init globals
 void Akos_initGlobals()		{	
-	GSETPTR(default_scale_table, GBVARS_DEFAULTSCALETABLE_INDEX, byte, GBVARS_SCUMM)
+	GSETPTR(defaultScaleTable, GBVARS_DEFAULTSCALETABLE_INDEX, byte, GBVARS_SCUMM)
 }
 void Akos_releaseGlobals()	{
 	GRELEASEPTR(GBVARS_DEFAULTSCALETABLE_INDEX, GBVARS_SCUMM)
