@@ -230,15 +230,6 @@ SCUMM
   details
 * V7-8 games: Implement smooth horizontal scrolling (instead of scrolling in
   increments of 8 pixels). See bug #629417.
-* COMI (maybe V7 games, too?): "Fix" CHARSET_1 behaviour when the room scrolls.
-  In particular, when text is drawn via CHARSET_1 and then scrolling takes
-  place, the text scrolls, too - but it really should stay fixed. There are
-  several ways to do this that I can think of. One would be to use an overlay
-  screen (i.e. use virtscreen 3, which isn't used at all currently) to draw
-  the text; then "compose" that screen over the main screen.
-  Or constantly (well, at least whenever the camera moves) redraw the text.
-  That would require buffering the text; maybe the blast text code could be
-  reused for this...
 * Add tool and support for compress *.la* file resources (ex. sounds) to fit
   on small devices 
 * Fix codec44 for nut fonts

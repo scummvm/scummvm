@@ -2,20 +2,26 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
 0.??
+ New Games:
+   - Added SAGA engine (for the games and "I Have No Mouth and I Must Scream"
+     and "Inherit the Earth")
+
  General:
    - Added support for FLAC (losless) encoded audio files
    - Added an 'On Screen Display' to the SDL backend
-   - Rewrote the backend API partially
+   - Partially rewrote the backend API
    - Comments in config files are preserved now
-   - Updated AdvMame scalers based on scale2x 2.0 - AdvMame3x looks nicer now
-   - Added MMX i386 assembler HQ2x and HQ3x scalers
-   - Alt-x and Ctrl-z quit keys disabled in favour of Ctrl-q on non
-     Mac OS X unices (including Linux)
+   - Updated AdvMame scalers based on scale2x 2.0 - AdvMame3x looks nicer now,
+     and AdvMame2x is MMX accelerated
+   - Added MMX i386 assembler versions of the HQ2x and HQ3x scalers
+   - Alt-x and Ctrl-z quit keys disabled in favour of Ctrl-q on unix like
+     operating systems, like Linux (exception: Mac OS X still uses Cmd-q)
 
  SCUMM:
    - Old zak256 target removed, use zakTowns instead
-   - Added support for the special container file format used in mac version
-     (thus you do not have to use rescumm anymore)
+   - Added support for the special container file format used in the macintosh
+     versions of some games (thus you do not have to use rescumm anymore)
+   - Partially rewrote the text engine, fixing various bugs
 
  Queen:
    - Various fixes [TODO: Somebody of the Queen team please fill this in]
@@ -43,7 +49,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
      same file handle, e.g. in the Sam & Max intro when using monster.sog.
 
  SCUMM:
-   - Many SCUMM game engine fixes.
+   - As usual: many SCUMM game engine fixes.
    - Added graphics decoders for 3DO Humongous Entertainment games
    - Numerous Humongous Entertainment games fixes
    - Fixed bug in Full Throttle, so battle difficulty matches original

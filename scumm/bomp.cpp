@@ -199,7 +199,6 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 	const byte *src;
 	byte *dst;
 	byte *mask = 0;
-	byte *charset_mask;
 	Common::Rect clip;
 	byte *scalingYPtr = bd.scalingYPtr;
 	byte skip_y_bits = 0x80;
@@ -234,10 +233,7 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 
 	const byte maskbit = revBitMask[(bd.x + clip.left) & 7];
 
-	// Always mask against the charset mask
-	charset_mask = getMaskBuffer(bd.x + clip.left, bd.y, 0);
-
-	// Also mask against any additionally imposed mask
+	// Mask against any additionally imposed mask
 	if (bd.maskPtr) {
 		mask = bd.maskPtr + (bd.y * gdi._numStrips) + ((bd.x + clip.left) / 8);
 	}
@@ -310,7 +306,6 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 			// Replace the parts of the line which are masked with the transparency color
 			if (bd.maskPtr)
 				bompApplyMask(line_ptr, mask, maskbit, width, 255);
-			bompApplyMask(line_ptr, charset_mask, maskbit, width, 255);
 	
 			// Apply custom color map, if available
 			if (_bompActorPalettePtr)
@@ -324,7 +319,6 @@ void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 		// Advance to the next line
 		pos_y++;
 		mask += gdi._numStrips;
-		charset_mask += gdi._numStrips;
 		dst += bd.outwidth;
 	}
 }

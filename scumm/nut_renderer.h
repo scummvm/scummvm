@@ -22,6 +22,7 @@
 #define NUT_RENDERER_H
 
 #include "common/file.h"
+#include "graphics/surface.h"
 
 namespace Scumm {
 
@@ -43,8 +44,8 @@ protected:
 
 	int32 decodeCodec44(byte *dst, const byte *src, uint32 length);
 
-	void drawChar(byte *dst, byte *mask, byte c, int x, int y, byte color);
-	void draw2byte(byte *dst, byte *mask, int c, int x, int y, byte color);
+	void drawChar(const Graphics::Surface &s, byte c, int x, int y, byte color);
+	void draw2byte(const Graphics::Surface &s, int c, int x, int y, byte color);
 
 public:
 	NutRenderer(ScummEngine *vm);
@@ -54,7 +55,7 @@ public:
 	bool loadFont(const char *filename);
 
 	void drawFrame(byte *dst, int c, int x, int y);
-	void drawShadowChar(int c, int x, int y, byte color, bool useMask, bool showShadow);
+	void drawShadowChar(const Graphics::Surface &s, int c, int x, int y, byte color, bool showShadow);
 
 	int getCharWidth(byte c);
 	int getCharHeight(byte c);

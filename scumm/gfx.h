@@ -24,6 +24,7 @@
 #define GFX_H
 
 #include "common/rect.h"
+#include "graphics/surface.h"
 
 namespace Scumm {
 
@@ -217,7 +218,11 @@ public:
 	
 	Gdi(ScummEngine *vm);
 
+	Graphics::Surface _textSurface;
+
 protected:
+	byte *_compositeBuf;
+
 	byte *_roomPalette;
 	byte _decomp_shr, _decomp_mask;
 	byte _transparentColor;
@@ -251,9 +256,7 @@ protected:
 	void decodeStrip3DO(byte *dst, const byte *src, int height, byte transpCheck);
 	void decodeStripHE(byte *dst, const byte *src, int height, byte transpCheck);
 
-	void draw8ColWithMasking(byte *dst, const byte *src, int height, byte *mask);
 	void draw8Col(byte *dst, const byte *src, int height);
-	void clear8ColWithMasking(byte *dst, int height, byte *mask);
 	void clear8Col(byte *dst, int height);
 	void decompressMaskImgOr(byte *dst, const byte *src, int height);
 	void decompressMaskImg(byte *dst, const byte *src, int height);
@@ -261,9 +264,11 @@ protected:
 	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
 	void updateDirtyScreen(VirtScreen *vs);
 	
-	byte *getMaskBuffer(int x, int y, int z = 0);
+	byte *getMaskBuffer(int x, int y, int z);
 
 public:
+	void init();
+
 	void drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
 	                int stripnr, int numstrip, byte flag, StripTable *table = 0);
 	void drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height, 

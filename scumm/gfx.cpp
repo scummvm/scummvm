@@ -156,49 +156,12 @@ static const TransitionEffect transitionEffects[5] = {
 };
 #endif
 
-static inline void copy8PixelsWithMasking(byte *dst, const byte *src, byte maskbits) {
-	if (!(maskbits & 0x80))
-		dst[0] = src[0];
-	if (!(maskbits & 0x40))
-		dst[1] = src[1];
-	if (!(maskbits & 0x20))
-		dst[2] = src[2];
-	if (!(maskbits & 0x10))
-		dst[3] = src[3];
-	if (!(maskbits & 0x08))
-		dst[4] = src[4];
-	if (!(maskbits & 0x04))
-		dst[5] = src[5];
-	if (!(maskbits & 0x02))
-		dst[6] = src[6];
-	if (!(maskbits & 0x01))
-		dst[7] = src[7];
-}
-
-static inline void clear8PixelsWithMasking(byte *dst, const byte color, byte maskbits) {
-	if (!(maskbits & 0x80))
-		dst[0] = color;
-	if (!(maskbits & 0x40))
-		dst[1] = color;
-	if (!(maskbits & 0x20))
-		dst[2] = color;
-	if (!(maskbits & 0x10))
-		dst[3] = color;
-	if (!(maskbits & 0x08))
-		dst[4] = color;
-	if (!(maskbits & 0x04))
-		dst[5] = color;
-	if (!(maskbits & 0x02))
-		dst[6] = color;
-	if (!(maskbits & 0x01))
-		dst[7] = color;
-}
-
 #pragma mark -
 #pragma mark --- Virtual Screens ---
 #pragma mark -
 
 
+#define CHARSET_MASK_TRANSPARENCY	254
 
 Gdi::Gdi(ScummEngine *vm) {
 	memset(this, 0, sizeof(*this));
@@ -206,6 +169,9 @@ Gdi::Gdi(ScummEngine *vm) {
 	_roomPalette = vm->_roomPalette;
 	if ((vm->_features & GF_AMIGA) && (vm->_version >= 4))
 		_roomPalette += 16;
+	
+	_compositeBuf = 0;
+	_textSurface.pixels = 0;
 }
 
 void ScummEngine::initScreens(int b, int h) {
@@ -235,7 +201,25 @@ void ScummEngine::initScreens(int b, int h) {
 
 	_screenB = b;
 	_screenH = h;
+	
+	gdi.init();
 }
+
+void Gdi::init() {
+	const int size = _vm->_screenWidth * _vm->_screenHeight;
+	free(_compositeBuf);
+	free(_textSurface.pixels);
+	_compositeBuf = (byte *)malloc(size);
+	_textSurface.pixels = malloc(size);
+	memset(_compositeBuf, CHARSET_MASK_TRANSPARENCY, size);
+	memset(_textSurface.pixels, CHARSET_MASK_TRANSPARENCY, size);
+
+	_textSurface.w = _vm->_screenWidth;
+	_textSurface.h = _vm->_screenHeight;
+	_textSurface.pitch = _vm->_screenWidth;
+	_textSurface.bytesPerPixel = 1;
+}
+
 
 void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int width, int height, bool twobufs,
 													 bool scrollable) {
@@ -246,7 +230,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int
 	assert(slot >= 0 && slot < 4);
 
 	if (_version >= 7) {
-		if (slot == 0 && (_roomHeight != 0))
+		if (slot == kMainVirtScreen && (_roomHeight != 0))
 			height = _roomHeight;
 	}
 
@@ -431,8 +415,7 @@ void Gdi::updateDirtyScreen(VirtScreen *vs) {
  * specified by top/bottom coordinate in the virtual screen.
  */
 void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int bottom) {
-	byte *ptr;
-	int height;
+	const int height = bottom - top;
 
 	if (bottom <= top)
 		return;
@@ -442,11 +425,33 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 
 	assert(top >= 0 && bottom <= vs->height);	// Paranoia checks
 
-	height = bottom - top;
 	// We don't clip height and width here, rather we rely on the backend to
 	// perform any needed clipping.
-	ptr = vs->screenPtr + (x + vs->xstart) + top * vs->width;
-	_vm->_system->copyRectToScreen(ptr, vs->width, x, vs->topline + top - _vm->_screenTop, width, height);
+	const int y = vs->topline + top - _vm->_screenTop;
+	const byte *src = vs->screenPtr + (x + vs->xstart) + top * vs->width;
+
+	assert(_textSurface.pixels);
+	assert(_compositeBuf);
+	Common::Rect r(x, y, x+width, y+height);
+	r.clip(Common::Rect(_textSurface.w, _textSurface.h));
+	// TODO: is this enough clipping?
+
+	byte *dst = _compositeBuf + x + y * _vm->_screenWidth;
+	const byte *text = (byte *)_textSurface.pixels + x + y * _textSurface.pitch;
+
+	for (int h = 0; h < r.height(); ++h) {
+		for (int w = 0; w < r.width(); ++w) {
+			if (text[w] == CHARSET_MASK_TRANSPARENCY) 
+				dst[w] = src[w];
+			else
+				dst[w] = text[w];
+		}
+		src += vs->width;
+		dst += _vm->_screenWidth;
+		text += _textSurface.pitch;
+	}
+	
+	_vm->_system->copyRectToScreen(_compositeBuf + x + y * _vm->_screenWidth, _vm->_screenWidth, x, y, width, height);
 }
 
 #pragma mark -
@@ -633,14 +638,12 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 			// be optimized to (rect.right - rect.left) / 8 and
 			// thus to width / 8, but that's not the case since
 			// we are dealing with integer math here.
-			const int mask_width = ((rect.right + 7) / 8) - (rect.left / 8);
-
-			byte *mask = getMaskBuffer(rect.left, rect.top, 0);
-
-			do {
-				memset(mask, 0, mask_width);
-				mask += gdi._numStrips;
-			} while (--height);
+			const int mask_width = rect.width();
+			byte *mask = (byte *)gdi._textSurface.pixels + gdi._textSurface.pitch * rect.top + rect.left;
+			while (height--) {
+				memset(mask, CHARSET_MASK_TRANSPARENCY, mask_width);
+				mask += gdi._textSurface.pitch;
+			}
 		}
 	} else {
 		while (height--) {
@@ -663,9 +666,7 @@ void CharsetRenderer::restoreCharsetBg() {
 		// restoreBG(), but was changed to only restore those parts which are
 		// currently covered by the charset mask.
 
-		// Loop over first three virtual screens
 		VirtScreen *vs = &_vm->virtscr[_textScreenID];
-		
 		if (!vs->height)
 			return;
 
@@ -677,27 +678,8 @@ void CharsetRenderer::restoreCharsetBg() {
 			const byte *backBuf = vs->backBuf + vs->xstart;
 
 			if (vs->number == kMainVirtScreen) {
-				// Restore from back buffer, but only those parts which are
-				// currently covered by the charset mask. In addition, we
-				// clean out the charset mask
-
-				const int mask_width = _vm->gdi._numStrips;
-				byte *mask = _vm->getMaskBuffer(0, 0, 0);
-				assert(vs->width == 8 * _vm->gdi._numStrips);
-				
-				int height = vs->height;
-				while (height--) {
-					for (int w = 0; w < mask_width; ++w) {
-						const byte maskbits = mask[w];
-						if (maskbits) {
-							copy8PixelsWithMasking(screenBuf + w*8, backBuf + w*8, ~maskbits);
-							mask[w] = 0;
-						}
-					}
-					screenBuf += vs->width;
-					backBuf += vs->width;
-					mask += _vm->gdi._numStrips;
-				}
+				// Clean out the charset mask
+				memset(_vm->gdi._textSurface.pixels, CHARSET_MASK_TRANSPARENCY, _vm->gdi._textSurface.pitch * _vm->gdi._textSurface.h);
 			} else {
 				// Restore from back buffer
 				_vm->blit(screenBuf, backBuf, vs->width, vs->height);
@@ -711,10 +693,6 @@ void CharsetRenderer::restoreCharsetBg() {
 
 void CharsetRenderer::clearCharsetMask() {
 	memset(_vm->getResourceAddress(rtBuffer, 9), 0, _vm->gdi._imgBufOffs[1]);
-}
-
-bool CharsetRenderer::hasCharsetMask(int left, int top, int right, int bottom) {
-	return _hasMask;
 }
 
 byte *ScummEngine::getMaskBuffer(int x, int y, int z) {
@@ -1170,21 +1148,12 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			}
 		}
 
-		mask_ptr = getMaskBuffer(x, y);
-
 		CHECK_HEAP;
 		if (vs->hasTwoBuffers) {
-			if (_vm->_charset->hasCharsetMask(sx * 8, y, (sx + 1) * 8, bottom)) {
-				if (flag & dbClear || !lightsOn)
-					clear8ColWithMasking(backbuff_ptr, height, mask_ptr);
-				else
-					draw8ColWithMasking(backbuff_ptr, bgbak_ptr, height, mask_ptr);
-			} else {
-				if (flag & dbClear || !lightsOn)
-					clear8Col(backbuff_ptr, height);
-				else
-					draw8Col(backbuff_ptr, bgbak_ptr, height);
-			}
+			if (flag & dbClear || !lightsOn)
+				clear8Col(backbuff_ptr, height);
+			else
+				draw8Col(backbuff_ptr, bgbak_ptr, height);
 		}
 		CHECK_HEAP;
 
@@ -1304,17 +1273,13 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 		vs->bdirty[strip] = bottom;
 
 	offs = top * vs->width + vs->xstart + strip * 8;
-	byte *mask_ptr = _vm->getMaskBuffer(strip * 8, top, 0);
 	bgbak_ptr = vs->backBuf + offs;
 	backbuff_ptr = vs->screenPtr + offs;
 
 	numLinesToProcess = bottom - top;
 	if (numLinesToProcess) {
 		if (_vm->isLightOn()) {
-			if (_vm->_charset->hasCharsetMask(strip * 8, top, (strip + 1) * 8, bottom))
-				draw8ColWithMasking(backbuff_ptr, bgbak_ptr, numLinesToProcess, mask_ptr);
-			else
-				draw8Col(backbuff_ptr, bgbak_ptr, numLinesToProcess);
+			draw8Col(backbuff_ptr, bgbak_ptr, numLinesToProcess);
 		} else {
 			clear8Col(backbuff_ptr, numLinesToProcess);
 		}
@@ -1652,47 +1617,6 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 	}
 	
 	return useOrDecompress;
-}
-
-void Gdi::draw8ColWithMasking(byte *dst, const byte *src, int height, byte *mask) {
-	byte maskbits;
-
-	do {
-		maskbits = *mask;
-		if (maskbits) {
-			copy8PixelsWithMasking(dst, src, maskbits);
-		} else {
-#if defined(SCUMM_NEED_ALIGNMENT)
-			memcpy(dst, src, 8);
-#else
-			((uint32 *)dst)[0] = ((const uint32 *)src)[0];
-			((uint32 *)dst)[1] = ((const uint32 *)src)[1];
-#endif
-		}
-		src += _vm->_screenWidth;
-		dst += _vm->_screenWidth;
-		mask += _numStrips;
-	} while (--height);
-}
-
-void Gdi::clear8ColWithMasking(byte *dst, int height, byte *mask) {
-	byte maskbits;
-
-	do {
-		maskbits = *mask;
-		if (maskbits) {
-			clear8PixelsWithMasking(dst, 0, maskbits);
-		} else {
-#if defined(SCUMM_NEED_ALIGNMENT)
-			memset(dst, 0, 8);
-#else
-			((uint32 *)dst)[0] = 0;
-			((uint32 *)dst)[1] = 0;
-#endif
-		}
-		dst += _vm->_screenWidth;
-		mask += _numStrips;
-	} while (--height);
 }
 
 void Gdi::draw8Col(byte *dst, const byte *src, int height) {

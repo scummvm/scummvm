@@ -97,7 +97,6 @@ protected:
 		int skip_width;
 		byte *destptr;
 		const byte *mask_ptr;
-		int imgbufoffs;
 	} v1;
 
 public:

@@ -284,8 +284,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	v1.destptr = _outptr + v1.y * _outwidth + v1.x;
 
-	v1.mask_ptr = _vm->getMaskBuffer(0, v1.y, 0);
-	v1.imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
+	v1.mask_ptr = _vm->getMaskBuffer(0, v1.y, _zbuf);
 
 	CHECK_HEAP
 
@@ -350,7 +349,7 @@ static const int v1MMActorPalatte2[25] = {
 };
 
 #define MASK_AT(xoff) \
-	(mask && (mask[((v1.x + xoff) / 8) + v1.imgbufoffs] & revBitMask[(v1.x + xoff) & 7]))
+	(mask && (mask[((v1.x + xoff) / 8)] & revBitMask[(v1.x + xoff) & 7]))
 #define LINE(c,p) \
 	pcolor = (color >> c) & 3; \
 	if (pcolor) { \
@@ -467,7 +466,7 @@ void CostumeRenderer::proc3() {
 
 		do {
 			if (_scaleY == 255 || *scaleytab++ < _scaleY) {
-				masked = (y < 0 || y >= _outheight) || (v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit));
+				masked = (y < 0 || y >= _outheight) || (v1.mask_ptr && (mask[0] & maskbit));
 				
 				if (color && !masked) {
 					// FIXME: Fully implement _shadow_mode.in Sam & Max
@@ -536,7 +535,7 @@ void CostumeRenderer::proc3_ami() {
 			len = *src++;
 		do {
 			if (_scaleY == 255 || cost_scaleTable[_scaleIndexY] < _scaleY) {
-				masked = (y < 0 || y >= _outheight) || (v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit));
+				masked = (y < 0 || y >= _outheight) || (v1.mask_ptr && (mask[0] & maskbit));
 				
 				if (color && v1.x >= 0 && v1.x < _outwidth && !masked) {
 					*dst = _palette[color];

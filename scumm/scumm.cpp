@@ -2652,13 +2652,13 @@ void ScummEngine::initRoomSubBlocks() {
 			
 	// Transparent color
 	if (_features & GF_OLD_BUNDLE)
-		gdi._transparentColor = 255;	// TODO - FIXME
+		gdi._transparentColor = 255;
 	else {
 		ptr = findResourceData(MKID('TRNS'), roomptr);
 		if (ptr)
 			gdi._transparentColor = ptr[0];
 		else if (_version == 8)
-			gdi._transparentColor = 5;	// FIXME
+			gdi._transparentColor = 5;
 		else
 			gdi._transparentColor = 255;
 	}

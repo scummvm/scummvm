@@ -385,7 +385,7 @@ void AkosRenderer::codec1_genericDecode() {
 						return;
 					}
 				} else {
-					masked = (y < 0 || y >= _outheight) || (v1.mask_ptr && ((mask[0] | mask[v1.imgbufoffs]) & maskbit));
+					masked = (y < 0 || y >= _outheight) || (v1.mask_ptr && (*mask & maskbit));
 
 					if (color && !masked && !skip_column) {
 						pcolor = palette[color];
@@ -781,8 +781,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 	v1.destptr = _outptr + v1.y * _outwidth + v1.x;
 
-	v1.mask_ptr = _vm->getMaskBuffer(0, v1.y, 0);
-	v1.imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
+	v1.mask_ptr = _vm->getMaskBuffer(0, v1.y, _zbuf);
 
 	codec1_genericDecode();
 	
@@ -847,9 +846,7 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	}
 	bdd.y = _actorY + ymoveCur;
 
-	if (_zbuf != 0) {
-		bdd.maskPtr = _vm->getMaskBuffer(0, 0, _zbuf);
-	}
+	bdd.maskPtr = _vm->getMaskBuffer(0, 0, _zbuf);
 	_vm->drawBomp(bdd, !_mirror);
 
 	_vm->_bompActorPalettePtr = NULL;
@@ -930,7 +927,7 @@ void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, in
 		int32 numskip_before, int32 numskip_after, byte transparency, int maskLeft, int maskTop, int zBuf) {
 	byte *tmp_buf = akos16.buffer;
 	int maskpitch;
-	byte *maskptr = 0, *charsetMask = 0;
+	byte *maskptr;
 	const byte maskbit = revBitMask[maskLeft & 7];
 
 	if (dir < 0) {
@@ -946,19 +943,13 @@ void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, in
 
 	maskpitch = _numStrips;
 	
-	charsetMask = _vm->getMaskBuffer(maskLeft, maskTop, 0);
-	if (zBuf != 0)
-		maskptr = _vm->getMaskBuffer(maskLeft, maskTop, zBuf);
+	maskptr = _vm->getMaskBuffer(maskLeft, maskTop, zBuf);
 
 	assert(t_height > 0);
 	assert(t_width > 0);
 	while (t_height--) {
 		akos16DecodeLine(tmp_buf, t_width, dir);
-		bompApplyMask(akos16.buffer, charsetMask, maskbit, t_width, transparency);
-		if (maskptr) {
-			bompApplyMask(akos16.buffer, maskptr, maskbit, t_width, transparency);
-			maskptr += maskpitch;
-		}
+		bompApplyMask(akos16.buffer, maskptr, maskbit, t_width, transparency);
 		bool HE7Check = (_vm->_heversion == 70);
 		bompApplyShadow(_shadow_mode, _shadow_table, akos16.buffer, dest, t_width, transparency, HE7Check);
 
@@ -966,7 +957,7 @@ void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, in
 			akos16SkipData(numskip_after);
 		}
 		dest += pitch;
-		charsetMask += maskpitch;
+		maskptr += maskpitch;
 	}
 }
 

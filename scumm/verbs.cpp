@@ -419,8 +419,6 @@ void ScummEngine::drawVerb(int verb, int mode) {
 }
 
 void ScummEngine::restoreVerbBG(int verb) {
-	if (_version >= 7)
-		return;
 
 	VerbSlot *vs;
 

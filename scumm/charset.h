@@ -69,7 +69,6 @@ public:
 
 	void restoreCharsetBg();
 	void clearCharsetMask();
-	bool hasCharsetMask(int left, int top, int right, int bottom);
 
 	virtual void printChar(int chr) = 0;
 
@@ -88,7 +87,7 @@ class CharsetRendererCommon : public CharsetRenderer {
 protected:
 	byte *_fontPtr;
 
-	void drawBits1(VirtScreen *vs, byte *dst, const byte *src, byte *mask, int drawTop, int width, int height);
+	void drawBits1(VirtScreen *vs, byte *dst, const byte *src, int drawTop, int width, int height);
 
 public:
 	CharsetRendererCommon(ScummEngine *vm) : CharsetRenderer(vm) {}
@@ -102,7 +101,7 @@ class CharsetRendererClassic : public CharsetRendererCommon {
 protected:
 	int getCharWidth(byte chr);
 
-	void drawBitsN(VirtScreen *vs, byte *dst, const byte *src, byte *mask, byte bpp, int drawTop, int width, int height);
+	void drawBitsN(VirtScreen *vs, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height);
 
 public:
 	CharsetRendererClassic(ScummEngine *vm) : CharsetRendererCommon(vm) {}

@@ -239,15 +239,12 @@ int NutRenderer::getCharHeight(byte c) {
 	return _chars[c].height;
 }
 
-void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask, bool showShadow) {
-	debug(8, "NutRenderer::drawShadowChar('%c', %d, %d, %d, %d, %d) called", c, x, y, (int)color, useMask, showShadow);
+void NutRenderer::drawShadowChar(const Graphics::Surface &s, int c, int x, int y, byte color, bool showShadow) {
+	debug(8, "NutRenderer::drawShadowChar('%c', %d, %d, %d, %d) called", c, x, y, (int)color, showShadow);
 	if (!_loaded) {
 		warning("NutRenderer::drawShadowChar() Font is not loaded");
 		return;
 	}
-
-	VirtScreen *vs = &_vm->virtscr[kMainVirtScreen];
-	byte *dst, *mask = NULL;
 
 	// HACK: we draw the character a total of 7 times: 6 times shifted
 	// and in black for the shadow, and once in the right color and position.
@@ -268,18 +265,10 @@ void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask, 
 		y += offsetY[i];
 		color = cTable[i];
 		
-		if (y >= vs->height || x >= vs->width) {
-			continue;
-		}
-		
-		dst = vs->screenPtr + y * vs->width + x + vs->xstart;
-		if (useMask)
-			mask = _vm->getMaskBuffer(x, y, 0);
-		
 		if (c >= 256 && _vm->_CJKMode)
-			draw2byte(dst, mask, c, x, y - _vm->_screenTop, color);
+			draw2byte(s, c, x, y, color);
 		else
-			drawChar(dst, mask, (byte)c, x, y - _vm->_screenTop, color);
+			drawChar(s, (byte)c, x, y, color);
 		
 		x -= offsetX[i];
 		y -= offsetY[i];
@@ -318,14 +307,12 @@ void NutRenderer::drawFrame(byte *dst, int c, int x, int y) {
 	}
 }
 
-void NutRenderer::drawChar(byte *dst, byte *mask, byte c, int x, int y, byte color) {
-	const int width = MIN(_chars[c].width, _vm->_screenWidth - x);
-	const int height = MIN(_chars[c].height, _vm->_screenHeight - y);
+void NutRenderer::drawChar(const Graphics::Surface &s, byte c, int x, int y, byte color) {
+	byte *dst = (byte *)s.pixels + y * s.pitch + x;
+	const int width = MIN(_chars[c].width, s.w - x);
+	const int height = MIN(_chars[c].height, s.h - y);
 	const byte *src = _chars[c].src;
 	const int srcPitch = _chars[c].width;
-
-	byte maskmask;
-	int maskpos;
 
 	const int minX = x < 0 ? -x : 0;
 	const int minY = y < 0 ? -y : 0;
@@ -336,75 +323,47 @@ void NutRenderer::drawChar(byte *dst, byte *mask, byte c, int x, int y, byte col
 
 	if (minY) {
 		src += minY * srcPitch;
-		dst += minY * _vm->_screenWidth;
-		if (mask)
-			mask += minY * _vm->gdi._numStrips;
+		dst += minY * s.pitch;
 	}
 
 	for (int ty = minY; ty < height; ty++) {
-		maskmask = revBitMask[(x + minX) & 7];
-		maskpos = (x%8 + minX) / 8;
 		for (int tx = minX; tx < width; tx++) {
 			if (src[tx] != 0) {
 				dst[tx] = color;
-				if (mask)
-					mask[maskpos] |= maskmask;
-			}
-			maskmask >>= 1;
-			if (maskmask == 0) {
-				maskmask = 0x80;
-				maskpos++;
 			}
 		}
 		src += srcPitch;
-		dst += _vm->_screenWidth;
-		if (mask)
-			mask += _vm->gdi._numStrips;
+		dst += s.pitch;
 	}
 }
 
-void NutRenderer::draw2byte(byte *dst, byte *mask, int c, int x, int y, byte color) {
+void NutRenderer::draw2byte(const Graphics::Surface &s, int c, int x, int y, byte color) {
 	if (!_loaded) {
 		debug(2, "NutRenderer::draw2byte() Font is not loaded");
 		return;
 	}
 
+	byte *dst = (byte *)s.pixels + y * s.pitch + x;
 	const int width = _vm->_2byteWidth;
-	const int height = MIN(_vm->_2byteHeight, _vm->_screenHeight - y);
+	const int height = MIN(_vm->_2byteHeight, s.h - y);
 	byte *src = _vm->get2byteCharPtr(c);
 	byte bits = 0;
-
-	byte maskmask;
-	int maskpos;
 
 	if (height <= 0 || width <= 0) {
 		return;
 	}
 
 	for (int ty = 0; ty < height; ty++) {
-		maskmask = revBitMask[x & 7];
-		maskpos = 0;
 		for (int tx = 0; tx < width; tx++) {
 			if ((tx & 7) == 0)
 				bits = *src++;
-			if (x + tx < 0 || x + tx >= _vm->_screenWidth || y + ty < 0)
+			if (x + tx < 0 || x + tx >= s.w || y + ty < 0)
 				continue;
 			if (bits & revBitMask[tx & 7]) {
 				dst[tx] = color;
-				if (mask) {
-					mask[maskpos] |= maskmask;
-				}
-			}
-
-			maskmask >>= 1;
-			if (maskmask == 0) {
-				maskmask = 0x80;
-				maskpos++;
 			}
 		}
-		dst += _vm->_screenWidth;
-		if (mask)
-			mask += _vm->gdi._numStrips;
+		dst += s.pitch;
 	}
 }
 
