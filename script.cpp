@@ -752,7 +752,9 @@ void Scumm::endCutscene() {
 	int16 args[16];
 
 	memset(args, 0, sizeof(args));	
-
+	if (ss->cutsceneOverride < 1)
+		return;
+	
 	ss->cutsceneOverride--;	
 	printf("Ending cs(%d) from %d\n", ss->cutsceneOverride, _currentScript);
 	args[0] = vm.cutSceneData[vm.cutSceneStackPointer];
