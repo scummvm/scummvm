@@ -249,7 +249,10 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 				v1.x = _outwidth - 1;
 			}
 		} else {
-			skip = -1 - rect.left;
+			if (_loaded._format == 0x57)
+				skip = -8 - rect.left;
+			else
+				skip = -1 - rect.left;
 			if (skip <= 0)
 				drawFlag = 2;
 			else
