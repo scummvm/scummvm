@@ -48,13 +48,13 @@ struct SAGAGameSettings {
 
 static const SAGAGameSettings saga_settings[] = {
 	/* Inherit the Earth - Original floppy version */
-	{ "ite", "Inherit the Earth (DOS)", GID_ITE,
+  	{ "ite", "Inherit the Earth (DOS)", Saga::GID_ITE,
 	 MDT_ADLIB, "ite.rsc" },
 	/* Inherit the Earth - CD version */
-	{ "itecd", "Inherit the Earth (DOS CD Version)", GID_ITECD,
+	{ "itecd", "Inherit the Earth (DOS CD Version)", Saga::GID_ITECD,
 	 MDT_ADLIB, "sounds.rsc" },
 	/* I Have No Mouth and I Must Scream */
-	{ "ihnm", "I Have No Mouth and I Must Scream (DOS)", GID_IHNM,
+	{ "ihnm", "I Have No Mouth and I Must Scream (DOS)", Saga::GID_IHNM,
 	 MDT_ADLIB, "scream.res" },
 
 	{ NULL, NULL, 0, 0, NULL }
@@ -90,7 +90,7 @@ DetectedGameList Engine_SAGA_detectGames(const FSList &fslist) {
 }
 
 Engine *Engine_SAGA_create(GameDetector *detector, OSystem *syst) {
-	return new SagaEngine(detector, syst);
+	return new Saga::SagaEngine(detector, syst);
 }
 
 REGISTER_PLUGIN("SAGA Engine", Engine_SAGA_gameList, Engine_SAGA_create, Engine_SAGA_detectGames)
@@ -100,8 +100,8 @@ namespace Saga {
 SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst) {
 
-	SagaGameDesc::setGameDirectory(getGameDataPath());
-	SagaGameDesc::openGame();
+	setGameDirectory(getGameDataPath());
+	openGame();
 
 	// Setup mixer
 	if (!_mixer->isReady()) {

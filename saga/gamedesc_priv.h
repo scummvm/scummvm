@@ -24,7 +24,7 @@
 
 #include "gamedesc.h"
 
-using namespace SagaGameDesc;
+namespace Saga {
 
 //-------------------------------------------------------------------
 // Private stuff 
@@ -43,32 +43,30 @@ using namespace SagaGameDesc;
 typedef bool (ResourceFile::*R_GAME_VERIFYFUNC)();
 
 typedef struct R_GAME_FILEDESC_tag {
-
-    const char * gf_fname;
-    unsigned int         gf_type;
+    const char *gf_fname;
+    unsigned int gf_type;
 
 } R_GAME_FILEDESC;
 
 typedef struct R_GAMEDESC_tag {
-    
     int gd_game_type;
     int gd_game_id;
 
-    const char * gd_title;
+    const char *gd_title;
 
-    R_GAME_DISPLAYINFO * gd_display_info;
+    R_GAME_DISPLAYINFO *gd_display_info;
 
     int   gd_startscene;
 
-    R_GAME_RESOURCEINFO * gd_resource_info;
+    R_GAME_RESOURCEINFO *gd_resource_info;
 
-    int               gd_filect;
-    R_GAME_FILEDESC * gd_filedescs;
+    int              gd_filect;
+    R_GAME_FILEDESC *gd_filedescs;
     
-    int               gd_fontct;
-    R_GAME_FONTDESC * gd_fontdescs;
+    int              gd_fontct;
+    R_GAME_FONTDESC *gd_fontdescs;
     
-    R_GAME_SOUNDINFO * gd_soundinfo;
+    R_GAME_SOUNDINFO *gd_soundinfo;
 
     int gd_supported;
 
@@ -76,7 +74,6 @@ typedef struct R_GAMEDESC_tag {
 
 
 typedef struct R_GAME_FILEDATA_tag {
-
     ResourceFile *file_ctxt;
 
     unsigned int  file_types;
@@ -86,26 +83,25 @@ typedef struct R_GAME_FILEDATA_tag {
 
 
 typedef struct R_GAMEMODULE_tag {
-
     int game_init;
     int game_index;
     
-    R_GAMEDESC * gamedesc;
+    R_GAMEDESC *gamedesc;
 
     int g_skipintro;
 
     const char *game_dir;
     
-    char game_language[ R_GAME_LANGSTR_LIMIT ];
+    char game_language[R_GAME_LANGSTR_LIMIT];
 
     unsigned int gfile_n;
-    R_GAME_FILEDATA * gfile_data;
+    R_GAME_FILEDATA *gfile_data;
 
     unsigned int gd_fontct;
-    R_GAME_FONTDESC * gd_fontdescs;
+    R_GAME_FONTDESC *gd_fontdescs;
 
-    int          err_n;
-    const char * err_str;
+    int         err_n;
+    const char *err_str;
 
 } R_GAMEMODULE;
 
@@ -114,6 +110,8 @@ bool verifyITEDISK();
 bool verifyITECD();
 bool verifyIHNMDEMO();
 bool verifyIHNMCD();
+
+}
 
 #endif // SAGA_GAMEDESC_PRIV_H
 

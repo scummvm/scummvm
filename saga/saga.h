@@ -29,6 +29,8 @@
 
 #include "gamedesc.h"
 
+namespace Saga {
+
 #define R_PBOUNDS(n,max) (((n)>=(0))&&((n)<(max)))
 
 enum SAGAGameId {
@@ -52,5 +54,6 @@ public:
 
 };
 
+}
 
 #endif

@@ -23,6 +23,8 @@
 
 #include "binread.h"
 
+namespace Saga {
+
 BinReader::BinReader() {
 	_buf    = NULL;
 	_bufPtr = NULL;
@@ -146,4 +148,4 @@ int32 BinReader::readSint32BE() {
 	return u32_be;
 }
 
-
+}

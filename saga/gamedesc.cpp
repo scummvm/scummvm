@@ -31,7 +31,7 @@
 #include "gamedesc.h"
 #include "gamedesc_priv.h"
 
-using namespace SagaGameDesc;
+namespace Saga {
 
 /*--------------------------------------------------------------------------*\
  * Inherit the Earth - Demo version
@@ -308,7 +308,7 @@ R_GAMEDESC GameDescs[] = {
 
 static R_GAMEMODULE GameModule;
 
-void SagaGameDesc::setGameDirectory(const char *gamedir) {
+void setGameDirectory(const char *gamedir) {
 	assert(gamedir != NULL);
 
 	debug(1, "Using game data path: %s", gamedir);
@@ -316,7 +316,7 @@ void SagaGameDesc::setGameDirectory(const char *gamedir) {
 	GameModule.game_dir = gamedir;
 }
 
-int SagaGameDesc::detectGame() {
+int detectGame() {
 	File test_file;
 
 	bool disqualified = false;
@@ -381,7 +381,7 @@ int SagaGameDesc::detectGame() {
 	return -1;
 }
 
-bool SagaGameDesc::openGame() {
+bool openGame() {
 	int game_filect;
 
 	if ((GameModule.game_index = detectGame()) < 0) { 
@@ -444,4 +444,6 @@ bool verifyIHNMDEMO() {
 
 bool verifyIHNMCD() {
 	return true;
+}
+
 }

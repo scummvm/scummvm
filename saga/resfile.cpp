@@ -26,6 +26,7 @@
 #include "resfile.h"
 #include "binread.h"
 
+namespace Saga {
 
 ResourceFile::ResourceFile() {
 	_resTblOffset = 0;
@@ -130,7 +131,7 @@ bool ResourceFile::loadResource(int32 rn, byte **res, int32 *res_len) {
 	*res = NULL;
 	*res_len = NULL;
 
-	if (!R_PBOUNDS( rn, _resTblCt)) {
+	if (!R_PBOUNDS(rn, _resTblCt)) {
 		return false;
 	}
 
@@ -158,13 +159,4 @@ void ResourceFile::freeResource(byte *res) {
 	delete[] res;
 }
 
-
-
-
-
-
-
-
-
-
-
+}

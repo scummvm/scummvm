@@ -26,7 +26,7 @@
 
 /* Public stuff */
 
-namespace SagaGameDesc {
+namespace Saga {
 
 enum R_GAME_BASETYPES {
 	R_GAMETYPE_ITE,
@@ -119,9 +119,6 @@ typedef struct R_GAME_RESOURCEINFO_tag {
 	bool openGame();
 
 } // end namespace 
-
-
-
 
 #endif
 
