@@ -505,9 +505,13 @@ int GameDetector::detectMain(int argc, char **argv)
 
 	_midi_driver = MD_AUTO;
 
-#ifdef __DC__
+#if defined(__DC__)
 	extern int dc_setup(GameDetector &detector);
 	dc_setup(*this);
+#elif defined(MACOS_CARBON)
+	extern char* SelectGame();
+	char *game_name = SelectGame();
+	printf(game_name);
 #else
 	_saveconfig = false;
 	updateconfig();
