@@ -1,3 +1,4 @@
+
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2004-2005 The ScummVM project
  *
@@ -1272,6 +1273,7 @@ void MacResExtractor::setCursor(int id) {
 	int cursorsize;
 	int w = 0, h = 0, hotspot_x = 0, hotspot_y = 0;
 	int keycolor;
+	File f;
 
 	if (!_fileName[0]) // We are running for the first time
 		if (_vm->_heMacFileNameIndex > 0) {
@@ -1279,6 +1281,21 @@ void MacResExtractor::setCursor(int id) {
 
 			snprintf(buf1, 128, "%s.he3", _vm->getGameName());
 			_vm->generateMacFileName(buf1, _fileName, 128, 0, _vm->_heMacFileNameIndex);
+
+			// Some programs write it as .bin. Try that too
+			if (!f.exists(_fileName)) {
+				strcpy(buf1, _fileName);
+				snprintf(_fileName, 128, "%s.bin", buf1);
+
+				if (!f.exists(_fileName)) {
+					// And finally check if we have dumped resource fork
+					snprintf(_fileName, 128, "%s.rsrc", buf1);
+					if (!f.exists(_fileName)) {
+						error("Cannot open file any of files '%s', '%s.bin', '%s.rsrc", 
+							  buf1, buf1, buf1);
+					}
+				}
+			}
 		}
 
 	cursorsize = extractResource(id, &cursorRes);
@@ -1331,28 +1348,26 @@ bool MacResExtractor::init(File in) {
 	filelen = in.size();
 	in.read(infoHeader, MBI_INFOHDR);
 
-	// Following should be 0 bytes
-	if(infoHeader[MBI_ZERO1] != 0) return false;
+	// Maybe we have MacBinary?
+	if (infoHeader[MBI_ZERO1] == 0 && infoHeader[MBI_ZERO2] == 0 &&
+		infoHeader[MBI_ZERO3] == 0 && infoHeader[MBI_NAMELEN] <= MAXNAMELEN) {
 
-	if(infoHeader[MBI_ZERO2] != 0) return false;
+		// Pull out fork lengths
+		data_size = READ_BE_UINT32(infoHeader + MBI_DFLEN);
+		rsrc_size = READ_BE_UINT32(infoHeader + MBI_RFLEN);
 
-	if(infoHeader[MBI_ZERO3] != 0) return false;
+		data_size_pad = (((data_size + 127) >> 7) << 7);
+		rsrc_size_pad = (((rsrc_size + 127) >> 7) << 7);
 
-	// Filename has a length range
-	if(infoHeader[MBI_NAMELEN] > MAXNAMELEN) return false;
+		// Length check
+		int sumlen =  MBI_INFOHDR + data_size_pad + rsrc_size_pad;
 
-	// Pull out fork lengths
-	data_size = READ_BE_UINT32(infoHeader + MBI_DFLEN);
-	rsrc_size = READ_BE_UINT32(infoHeader + MBI_RFLEN);
+		if(sumlen == filelen)
+			_resOffset = MBI_INFOHDR + data_size_pad;
+	}
 
-	data_size_pad = (((data_size + 127) >> 7) << 7);
-	rsrc_size_pad = (((rsrc_size + 127) >> 7) << 7);
-
-	// Length check
-	int sumlen =  MBI_INFOHDR + data_size_pad + rsrc_size_pad;
-	if(sumlen != filelen) return false;
-
-	_resOffset = MBI_INFOHDR + data_size_pad;
+	if (_resOffset == -1) // MacBinary check is failed
+		_resOffset = 0; // Maybe we have dumped fork?
 
 	in.seek(_resOffset);
 
@@ -1360,6 +1375,13 @@ bool MacResExtractor::init(File in) {
 	_mapOffset = in.readUint32BE() + _resOffset;
 	_dataLength = in.readUint32BE();
 	_mapLength = in.readUint32BE();
+
+	// do sanity check
+	if (_dataOffset >= filelen || _mapOffset >= filelen ||
+		_dataLength + _mapLength  > filelen) {
+		_resOffset = -1;
+		return false;
+	}
 
 	debug(7, "got header: data %d [%d] map %d [%d]", 
 		_dataOffset, _dataLength, _mapOffset, _mapLength);
