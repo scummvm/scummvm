@@ -33,7 +33,7 @@
 namespace Scumm {
 
 IMuseDigital::Track::Track()
-	: soundId(-1), used(false), stream(NULL) {
+	: soundId(-1), used(false), stream(NULL), stream2(NULL) {
 }
 
 void IMuseDigital::timer_handler(void *refCon) {
