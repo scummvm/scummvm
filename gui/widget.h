@@ -78,7 +78,7 @@ public:
 
 public:
 	Widget(GuiObject *boss, int x, int y, int w, int h);
-	virtual ~Widget() {}
+	virtual ~Widget();
 
 	virtual int16	getAbsX() const	{ return _x + _boss->getChildX(); }
 	virtual int16	getAbsY() const	{ return _y + _boss->getChildY(); }

@@ -33,6 +33,10 @@ Widget::Widget(GuiObject *boss, int x, int y, int w, int h)
 	_boss->_firstWidget = this;
 }
 
+Widget::~Widget() {
+	delete _next;
+}
+
 void Widget::draw() {
 	NewGui *gui = &g_gui;
 

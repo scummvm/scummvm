@@ -35,13 +35,7 @@
  */
 
 Dialog::~Dialog() {
-	Widget *w = _firstWidget, *next;
-	while (w) {
-		next = w->_next;
-		w->_next = 0;
-		delete w;
-		w = next;
-	}
+	delete _firstWidget;
 	_firstWidget = 0;
 }
 

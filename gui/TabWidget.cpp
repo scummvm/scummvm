@@ -42,6 +42,14 @@ TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h)
 	_tabWidth = 40;
 }
 
+TabWidget::~TabWidget() {
+	for (int i = 0; i < _tabs.size(); ++i) {
+		delete _tabs[i].firstWidget;
+		_tabs[i].firstWidget = 0;
+	}
+	_tabs.clear();
+}
+
 int16 TabWidget::getChildY() const {
 	return getAbsY() + kTabHeight;
 }
