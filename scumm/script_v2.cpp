@@ -742,26 +742,32 @@ void Scumm_v2::o2_resourceRoutines() {
 }
 
 void Scumm_v2::o2_verbOps() {
- int opcode = fetchScriptByte(), slot, state;
-
- switch (opcode) {
+	int opcode = fetchScriptByte();
+	int slot, state;
+	
+	switch (opcode) {
 	case 0:		// Delete Verb
 		slot = getVarOrDirectByte(0x80);
-	break;
-
+		break;
+	
 	case 0xFF:	// Verb On/Off
 		slot = fetchScriptByte();
 		state = fetchScriptByte();
-	break;
-
+		break;
+	
 	default: {	// New Verb
-		fetchScriptByte(); // X
-		fetchScriptByte(); // Y
-		getVarOrDirectByte(0x80); // Slot
-		fetchScriptByte(); // ?
+		int x = fetchScriptByte();
+		int y = fetchScriptByte();
+		slot = getVarOrDirectByte(0x80);
+		int unk = fetchScriptByte(); // ?
+		
+		// It follows the verb name
+		printf("o2_verbOps: opcode = %d, x = %d, y = %d, slot = %d, unk = %d, name = %s\n",
+				opcode, x, y, slot, unk, _scriptPointer);
+		_scriptPointer += strlen((char *)_scriptPointer) + 1; 
+		}
+		break;
 	}
-	break;
- }
 }
 
 void Scumm_v2::o2_isEqual() {
