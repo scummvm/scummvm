@@ -2975,15 +2975,6 @@ void SimonState::timer_callback() {
 	}
 }
 
-void SimonState::checkTimerCallback() {
-	if (_invoke_timer_callback && !_in_callback) {
-		_in_callback = true;
-		_invoke_timer_callback = 0;
-		timer_callback();
-		_in_callback = false;
-	}
-}
-
 void SimonState::fcs_setTextColor(FillOrCopyStruct *fcs, uint value) {
 	fcs->text_color = value;
 }
@@ -4447,7 +4438,14 @@ void SimonState::delay(uint amount) {
 
 	uint32 start = _system->get_msecs();
 	uint32 cur = start;
-	const uint vga_period = _fast_mode ? 10 : 50;
+	uint vga_period;
+
+	if (_fast_mode)
+	 	vga_period = 10;
+	else if (_game & GF_SIMON2)
+		vga_period = 40;
+	else
+		vga_period = 45;
 
 	_rnd.getRandomNumber(2);
 
