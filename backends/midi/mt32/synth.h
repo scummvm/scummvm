@@ -133,7 +133,6 @@ private:
 	float masterTune;
 	Bit16u masterVolume;
 
-	unsigned char initmode;
 	bool isOpen;
 
 	PartialManager *partialManager;

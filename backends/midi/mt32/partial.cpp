@@ -102,7 +102,6 @@ void Partial::initKeyFollow(int key) {
 #else
 	float newPitchInt;
 	float newPitchFract = modff(newPitch, &newPitchInt);
-	synth->printDebug("Really: newPitch=%f, newPitchInt=%f, newPitchFract=%f", newPitch, newPitchInt, newPitchFract);
 	if (newPitchFract > 0.5f) {
 		newPitchInt += 1.0f;
 		newPitchFract -= 1.0f;
@@ -239,7 +238,7 @@ Bit16s *Partial::generateSamples(long length) {
 		int delta;
 		// These two are only for PCM partials, obviously
 		PCMWaveEntry *pcmWave = NULL; // Initialise to please compiler
-		int pcmAddr = 0; // Initialise to please compiler
+		Bit32u pcmAddr = 0; // Initialise to please compiler
 
 		// Wrap positions or end if necessary
 		if (patchCache->PCMPartial) {
@@ -283,13 +282,22 @@ Bit16s *Partial::generateSamples(long length) {
 			if (patchCache->PCMPartial) {
 				// Render PCM sample
 				int ra, rb, dist;
-				int taddr;
+				Bit32u taddr;
 				if (delta < 0x10000) {
 					// Linear sound interpolation
 					taddr = pcmAddr + partialOff.pcmplace;
 					ra = synth->romfile[taddr];
-					//FIXME:KG: Deal with condition that taddr + 1 is past PCM length
-					rb = synth->romfile[taddr + 1];
+					taddr++;
+					if (taddr == pcmAddr + pcmWave->len) {
+						// Past end of PCM
+						if (pcmWave->loop) {
+							rb = synth->romfile[pcmAddr];
+						} else {
+							rb = 0;
+						}
+					} else {
+						rb = synth->romfile[taddr];
+					}
 					dist = rb - ra;
 					sample = (ra + ((dist * (Bit32s)(partialOff.pcmoffset >> 8)) >> 8));
 				} else {
@@ -298,9 +306,19 @@ Bit16s *Partial::generateSamples(long length) {
 					// a point.  This is too slow.  The following approximates this as fast as possible
 					int idelta = delta >> 16;
 					taddr = pcmAddr + partialOff.pcmplace;
-					ra = 0;
-					for (int ix = 0; ix < idelta; ix++)
+					ra = synth->romfile[taddr++];
+					for (int ix = 0; ix < idelta - 1; ix++) {
+						if (taddr == pcmAddr + pcmWave->len) {
+							// Past end of PCM
+							if (pcmWave->loop) {
+								taddr = pcmAddr;
+							} else {
+								// Behave as if all subsequent samples were 0
+								break;
+							}
+						}
 						ra += synth->romfile[taddr++];
+					}
 					sample = ra / idelta;
 				}
 			} else {

@@ -344,9 +344,17 @@ bool Synth::open(SynthProperties &useProp) {
 		return false;
 
 	myProp = useProp;
+	if (useProp.baseDir != NULL) {
+		myProp.baseDir = new char[strlen(useProp.baseDir) + 1];
+		strcpy(myProp.baseDir, useProp.baseDir);
+	}
 
 	// This is to help detect bugs
 	memset(&mt32ram, '?', sizeof(mt32ram));
+	for (int i = 128; i < 192; i++) {
+		// If something sets a patch to point to an uninitialised memory timbre, don't play anything
+		mt32ram.timbres[i].timbre.common.pmute = 0;
+	}
 
 	printDebug("Loading Control ROM");
 	if (!loadControlROM("MT32_CONTROL.ROM")) {
@@ -476,7 +484,10 @@ void Synth::close(void) {
 			parts[i] = NULL;
 		}
 	}
-
+	if (myProp.baseDir != NULL) {
+		delete myProp.baseDir;
+		myProp.baseDir = NULL;
+	}
 	isOpen = false;
 }
 
@@ -794,18 +805,7 @@ void Synth::playSysexWithoutHeader(unsigned char device, const Bit8u *sysex, Bit
 		}
 		unsigned int firstTimbre = off / sizeof (MemParams::PaddedTimbre);
 		off %= sizeof (MemParams::PaddedTimbre);
-		switch (initmode) {
-			case 0:
-				// Write into first built-in timbre group
-				break;
-			case 1:
-				// Write into second built-in timbre group
-				firstTimbre += 64;
-				break;
-			default:
-				firstTimbre += 128;
-				// Write into user timbre group
-		}
+		firstTimbre += 128;
 		for (unsigned int m = 0; m < len; m++)
 			((Bit8u *)&mt32ram.timbres[firstTimbre])[off + m] = sysex[m];
 		unsigned int lastTimbre = firstTimbre + NUMTOUCHED(len + off, MemParams::PaddedTimbre) - 1;
