@@ -1181,15 +1181,6 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	} else
 		smap_ptr = _vm->findResource(MKID('SMAP'), ptr);
 
-	if (!smap_ptr) {
-		// This will go away eventually. HE 7.2 titles used different function
-		// here which read BMAP. But it was replaced not in every place. So
-		// this is a placeholder which shows that not all such cases are
-		// processed yet.
-		warning("We shouldn't be here, no SMAP");
-		return;
-	}
-
 	assert(smap_ptr);
 
 	numzbuf = getZPlanes(ptr, zplane_list);
