@@ -28,6 +28,12 @@
 
 class Codec47Decoder : public Decoder {
 private:
+	int32 _deltaSize;
+	byte * _deltaBufs[2];
+	byte * _deltaBuf;
+	byte * _curBuf;
+	int32 _var100;
+	byte * _var104;
 
 public:
 	bool initSize(const Point &, const Rect &);

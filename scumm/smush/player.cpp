@@ -526,8 +526,9 @@ void SmushPlayer::handleFrameObject(Chunk & b) {
 		_codec37Called = true;
 		break;
 	case 47:
-		initSize(r, false, true);
+		initSize(r, true, false);
 		decodeCodec(b, r, _codec47);
+		_codec37Called = true;
 		break;
 	case 21:
 	case 44:
