@@ -416,8 +416,8 @@ void Sound::processSfxQueues() {
 
 	if (_scumm->_vars[_scumm->VAR_TALK_ACTOR]) { //_sfxMode & 2) {
 		act = _scumm->_vars[_scumm->VAR_TALK_ACTOR];
-		if (_talkChannel < 1)
-			finished = true;
+		if (_talkChannel < 0)
+			finished = false;
 		else if (_scumm->_mixer->_channels[_talkChannel] == NULL) {
 			finished = true;
 		} else
