@@ -2327,8 +2327,10 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		stopCycle(0);
 	_sound->processSoundQues();
 
-	for (i = 0; i < _WizNumPolygons; i++)
-		memset(&_WizPolygons[i], 0, sizeof(WizPolygon));
+	if (_heversion >= 70 && _WizPolygons) {
+		for (i = 0; i < _WizNumPolygons; i++)
+			memset(&_WizPolygons[i], 0, sizeof(WizPolygon));
+	}
 
 	for (i = 0; i < _numRoomVariables; i++)
 		_roomVars[i] = 0;
