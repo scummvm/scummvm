@@ -452,7 +452,9 @@ int Scumm::scummLoop(int delta)
 
 	if (_saveLoadFlag) {
 		bool success;
-		const char *errMsg = NULL;
+		const char *errMsg = "Succesfully saved game state to file:\n\n%s";
+		char filename[256];
+
 		if (_saveLoadFlag == 1) {
 			success = saveState(_saveLoadSlot, _saveLoadCompatible);
 			if (!success)
@@ -471,10 +473,17 @@ int Scumm::scummLoop(int delta)
 				_vars[VAR_GAME_LOADED] = 203;
 		}
 
+		makeSavegameName(filename, _saveLoadSlot, _saveLoadCompatible);
 		if (!success) {
-			char filename[256];
-			makeSavegameName(filename, _saveLoadSlot, _saveLoadCompatible);
 			displayError(errMsg, filename);
+		} else if (_saveLoadSlot != 0) {
+			// Display "Save succesful" message, except for auto saves
+			char buf[1024];
+			sprintf(buf, errMsg, filename);
+			
+			Dialog *dialog = new MessageDialog(_newgui, buf, 1500, false);
+			runDialog(dialog);
+			delete dialog;
 		}
 		_saveLoadFlag = 0;
 		_lastSaveTime = _system->get_msecs();
