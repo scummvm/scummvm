@@ -521,11 +521,8 @@ uint8 *ResourceManager::openResource(uint32 res, bool dump) {
 			sprintf(buf, "dumps/%s-%d.dmp", tag, res);
 #endif
 
-			out.open(buf, "");
-
-			if (!out.isOpen()) {
-				out.open(buf, "", File::kFileWriteMode);
-				if (out.isOpen())
+			if (!out.open(buf, "")) {
+				if (out.open(buf, "", File::kFileWriteMode))
 					out.write(_resList[res]->ad, len);
 			}
 

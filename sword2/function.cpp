@@ -446,14 +446,12 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 	// Read the "Smacker" logo
 
-	f.open("credits.bmp");
-
 	uint16 logoWidth = 0;
 	uint16 logoHeight = 0;
 	uint8 *logoData = NULL;
 	uint8 palette[1024];
 
-	if (f.isOpen()) {
+	if (f.open("credits.bmp")) {
 		logoWidth = f.readUint16LE();
 		logoHeight = f.readUint16LE();
 
@@ -491,8 +489,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 	char textLine[80];
 
-	f.open("credits.clu");
-	if (!f.isOpen()) {
+	if (!f.open("credits.clu")) {
 		warning("Can't find credits.clu");
 		return IR_CONT;
 	}

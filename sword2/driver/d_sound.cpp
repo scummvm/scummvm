@@ -699,8 +699,7 @@ uint32 Sound::preFetchCompSpeech(const char *filename, uint32 speechid, uint16 *
 	*buf = NULL;
 
 	// Open the speech cluster and find the data offset & size
-	fp.open(filename);
-	if (!fp.isOpen())
+	if (!fp.open(filename))
 		return 0;
 
 	fp.seek((speechid + 1) * 8, SEEK_SET);

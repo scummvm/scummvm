@@ -85,8 +85,7 @@ int MusicHandle::readBuffer(int16 *buffer, const int numSamples) {
 bool MusicHandle::play(const char *filename, bool loop) {
 	uint8 wavHeader[WAVEHEADERSIZE];
 	stop();
-	_file.open(filename);
-	if (!_file.isOpen()) {
+	if (!_file.open(filename)) {
 		warning("Music file %s could not be opened", filename);
 		return false;
 	}
