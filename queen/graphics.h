@@ -139,6 +139,7 @@ public:
 
 	void textCurrentColor(uint8 color); // ink()
 	void textSet(uint16 x, uint16 y, const char *text, bool outlined = true); // text()
+	void textSetCentered(uint16 y, const char *text, bool outlined = true);
 	void textDrawAll(); // drawtext()
 	void textClear(uint16 y1, uint16 y2); // blanktexts()
 	uint16 textWidth(const char* text) const; // textlen()

@@ -64,6 +64,8 @@ void Graphics::bankLoad(const char *bankname, uint32 bankslot) {
 	  error("Maximum bank size exceeded or negative bank size : %d", entries);
 	}
 	
+	debug(9, "Graphics::bankLoad(%s, %d) - entries = %d", bankname, bankslot, entries); 
+
 	uint32 offset = 2;
 	uint8 *p = _banks[bankslot].data;
 	for (i = 1; i <= entries; ++i) {
@@ -74,12 +76,13 @@ void Graphics::bankLoad(const char *bankname, uint32 bankslot) {
 		offset += w * h + 8; 
 	}
 	
-	debug(5, "Loaded bank '%s' in slot %d, %d entries", bankname, bankslot, entries); 
 }
 
 
 void Graphics::bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	
+	debug(9, "Graphics::bankUnpack(%d, %d, %d)", srcframe, dstframe, bankslot);
+
 	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
 
 	if (!_banks[bankslot].data)
@@ -98,12 +101,13 @@ void Graphics::bankUnpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	pbf->data = new uint8[ size ];
 	memcpy(pbf->data, p + 8, size);
 	
-	debug(5, "Unpacked frame %d from bank slot %d to frame slot %d", srcframe, bankslot, dstframe);
 }
 
 
 void Graphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 	
+	debug(9, "Graphics::bankOverpack(%d, %d, %d)", srcframe, dstframe, bankslot);
+
 	uint8 *p = _banks[bankslot].data + _banks[bankslot].indexes[srcframe];
 	uint16 src_w = READ_LE_UINT16(p + 0);
 	uint16 src_h = READ_LE_UINT16(p + 2);
@@ -116,17 +120,14 @@ void Graphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 		// copy data 'over' destination frame (without changing frame header)
 		memcpy(_frames[dstframe].data, p + 8, src_w * src_h);
 	}
-	
-	debug(5, "Overpacked frame %d from bank slot %d to frame slot %d", srcframe, bankslot, dstframe);
 }
 
 
 void Graphics::bankErase(uint32 bankslot) {
-	
+
+	debug(9, "Graphics::bankErase(%d)", bankslot);
 	delete[] _banks[bankslot].data;
-	_banks[bankslot].data = 0;
-	
-	debug(5, "Erased bank in slot %d", bankslot);
+	_banks[bankslot].data = 0;	
 }
 
 
@@ -171,7 +172,7 @@ void Graphics::bobAnimNormal(uint32 bobnum, uint16 firstFrame, uint16 lastFrame,
 
 void Graphics::bobMove(uint32 bobnum, uint16 endx, uint16 endy, int16 speed) {
 
-	debug(5, "Graphics::bobMove(%d, %d, %d, %d)", bobnum, endx, endy, speed);
+	debug(9, "Graphics::bobMove(%d, %d, %d, %d)", bobnum, endx, endy, speed);
 
 	BobSlot *pbs = &_bobs[bobnum];
 
@@ -299,7 +300,7 @@ void Graphics::bobDraw(uint32 bobnum, uint16 x, uint16 y, uint16 scale, bool xfl
 
 	uint16 w, h;
 
-	debug(5, "Preparing to draw frame %d, scale = %d, coords = (%d,%d)", bobnum, scale, x, y);
+	debug(9, "Graphics::bobDraw(%d, %d, %d, %d)", bobnum, x, y, scale);
 
 	BobFrame *pbf = &_frames[bobnum];
 	if (scale < 100) {
@@ -379,7 +380,7 @@ void Graphics::bobShrink(const BobFrame* pbf, uint16 percentage) {
 	uint16 new_w = (pbf->width  * percentage + 50) / 100;
 	uint16 new_h = (pbf->height * percentage + 50) / 100;
 
-	debug(5, "Shrinking bob, buffer size = %d", new_w * new_h);
+	debug(9, "Graphics::bobShrink() - scale = %d, bufsize = %d", percentage, new_w * new_h);
 
 	if (new_w != 0 && new_h != 0) {
 
@@ -502,7 +503,7 @@ void Graphics::bobDrawAll() {
 			}
 
 			// adjusts position to hot-spot and screen scroll
-			x = pbs->x - xh; // - _display->scrollx;
+			x = pbs->x - xh - _display->horizontalScroll();
 			y = pbs->y - yh;
 
 			bobDraw(pbs->frameNum, x, y, pbs->scale, pbs->xflip, pbs->box);
@@ -581,6 +582,7 @@ void Graphics::bobCustomParallax(uint16 roomNum) {
 		break;
 	case 116: // CR 2 - CD-Rom pan right while Rita talks...
 		_cameraBob = -1;
+		debug(9, "Graphics::bobCustomParallax() - %d", screenScroll);
 		if (screenScroll < 80) {
 			_display->horizontalScroll(screenScroll + 4);
 			// Joe's body and head
@@ -615,6 +617,13 @@ void Graphics::textSet(uint16 x, uint16 y, const char *text, bool outlined) {
 		pts->outlined = outlined;
 		pts->text = text;
 	}
+}
+
+
+void Graphics::textSetCentered(uint16 y, const char *text, bool outlined) {
+
+	uint16 x = (GAME_SCREEN_WIDTH - textWidth(text)) / 2;
+	textSet(x, y, text, outlined);
 }
 
 
