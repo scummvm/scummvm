@@ -149,15 +149,32 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 			assert(track->soundHandle);
 			if (track->compressed) {
 				track->regionOffset = 0;
-				track->dataOffset = _sound->getRegionOffset(track->soundHandle, track->curRegion);
 			}
 			track->compressed = _sound->isCompressed(track->soundHandle);
 			if (track->compressed) {
 				track->regionOffset = 0;
-				track->dataOffset = _sound->getRegionOffset(track->soundHandle, track->curRegion);
 			}
+			track->dataOffset = _sound->getRegionOffset(track->soundHandle, track->curRegion);
+			int bits = _sound->getBits(track->soundHandle);
+			int channels = _sound->getChannels(track->soundHandle);
+			int freq = _sound->getFreq(track->soundHandle);
+			track->iteration = freq * channels;
+			track->mixerFlags = 0;
+			if (channels == 2)
+				track->mixerFlags = SoundMixer::FLAG_STEREO | SoundMixer::FLAG_REVERSE_STEREO;
+
+			if ((bits == 12) || (bits == 16)) {
+				track->mixerFlags |= SoundMixer::FLAG_16BITS;
+				track->iteration *= 2;
+			} else if (bits == 8) {
+				track->mixerFlags |= SoundMixer::FLAG_UNSIGNED;
+			} else
+				error("IMuseDigital::saveOrLoad(): Can't handle %d bit samples", bits);
+
+			if (track->compressed)
+				track->mixerFlags |= SoundMixer::FLAG_LITTLE_ENDIAN;
+
 			int32 streamBufferSize = track->iteration;
-			int	freq = _sound->getFreq(track->soundHandle);
 			track->stream2 = NULL;
 			track->stream = makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
 
