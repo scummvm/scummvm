@@ -128,6 +128,66 @@ Model::Mesh::~Mesh() {
   delete[] faces_;
 }
 
+void Model::Mesh::update() {
+  GLdouble modelView[500];
+  GLdouble projection[500];
+  GLint viewPort[500];
+
+  glGetDoublev( GL_MODELVIEW_MATRIX, modelView );
+  glGetDoublev( GL_PROJECTION_MATRIX, projection );
+  glGetIntegerv( GL_VIEWPORT, viewPort);
+
+  GLdouble top = 1000;
+  GLdouble right = -1000;
+  GLdouble left = 1000;
+  GLdouble bottom = -1000;
+
+  for (int i = 0; i < numFaces_; i++)
+  {
+	  Vector3d v;
+	  Matrix4 tempMatrix = matrix_;
+	  float* pVertices;
+	  int j;
+      float bestDepth = 0;
+
+	  for( j =0; j< faces_[i].numVertices_; j++ )
+	  {
+			pVertices = vertices_ + 3 * faces_[i].vertices_[j];
+
+			v.set( *(pVertices), *(pVertices+1), *(pVertices+2) );
+
+			tempMatrix.rot_.transform( v );
+			v+= tempMatrix.pos_;
+
+			GLdouble winX;
+			GLdouble winY;
+			GLdouble winZ;
+			
+			gluProject( v.x(), v.y(), v.z(), modelView, projection, viewPort, &winX, &winY, &winZ);
+
+			if( winX > right )
+				right = winX;
+			if( winX < left )
+				left = winX;
+			if( winY < top )
+				top = winY;
+			if( winY > bottom )
+				bottom = winY;
+
+			if( winZ> bestDepth )
+				bestDepth = winZ;
+
+	  }
+
+	//  screenBlocksAddRectangle( top, right, left, bottom, bestDepth );
+  }
+
+  glDisable(GL_DEPTH_TEST);
+  glPointSize( 3.f );
+  glColor4f( 1.f, 1.f, 0.f, 1.f );
+  glDisable(GL_TEXTURE_2D );
+}
+
 void Model::Face::loadBinary(const char *&data, ResPtr<Material> *materials) {
   type_ = get_LE_uint32(data + 4);
   geo_ = get_LE_uint32(data + 8);
@@ -461,6 +521,17 @@ void Model::HierNode::setMatrix(Matrix4 matrix) {
 }
 
 void Model::HierNode::update() {
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+
+    glTranslatef(animPos_.x() / totalWeight_, animPos_.y() / totalWeight_,
+		 animPos_.z() / totalWeight_);
+    glRotatef(animYaw_ / totalWeight_, 0, 0, 1);
+    glRotatef(animPitch_ / totalWeight_, 1, 0, 0);
+    glRotatef(animRoll_ / totalWeight_, 0, 1, 0);
+
+
 	localMatrix_.pos_.set( animPos_.x() / totalWeight_, animPos_.y() / totalWeight_, animPos_.z() / totalWeight_ );
 	localMatrix_.rot_.buildFromPitchYawRoll( animPitch_ / totalWeight_, animYaw_ / totalWeight_, animRoll_ / totalWeight_);
 
@@ -472,26 +543,53 @@ void Model::HierNode::update() {
 
 	if( mesh_ != NULL )
 	{
-		mesh_->matrix_ = pivotMatrix;
+      glPushMatrix();
+      glTranslatef(pivot_.x(), pivot_.y(), pivot_.z());
+       mesh_->matrix_ = pivotMatrix;
+		mesh_->update();
+
+      glMatrixMode(GL_MODELVIEW);
+      glPopMatrix();
 	}
 
 	if( child_ != NULL )
 	{
 		child_->setMatrix( matrix_ );
 		child_->update();
+		glMatrixMode(GL_MODELVIEW);
 	}
+
+	glPopMatrix();
 }
 
 
 void Model::Mesh::draw() const {
   for (int i = 0; i < numFaces_; i++)
     faces_[i].draw(vertices_, vertNormals_, textureVerts_);
-/*
+
+  GLdouble modelView[500];
+  GLdouble projection[500];
+  GLint viewPort[500];
+
+  glGetDoublev( GL_MODELVIEW_MATRIX, modelView );
+  glGetDoublev( GL_PROJECTION_MATRIX, projection );
+  glGetIntegerv( GL_VIEWPORT, viewPort);
+
+
 // Yaz: debug
 // this draw the model node in red
-
-  glPushMatrix();
+ // glMatrixMode(GL_PROJECTION);
+ /* glPushMatrix();
   glLoadIdentity();
+
+  GLdouble modelView[500];
+  GLdouble projection[500];
+  GLint viewPort[500];
+
+  glGetDoublev( GL_MODELVIEW_MATRIX, modelView );
+  glGetDoublev( GL_PROJECTION_MATRIX, projection );
+  glGetIntegerv( GL_VIEWPORT, viewPort);
+
   glDisable(GL_DEPTH_TEST);
   glPointSize( 3.f );
   glColor4f( 1.f, 0.f, 0.f, 1.f );
@@ -501,16 +599,26 @@ void Model::Mesh::draw() const {
   glEnd();
   glEnable(GL_DEPTH_TEST);
   glPopMatrix();
-  glEnable(GL_TEXTURE_2D );
+  glEnable(GL_TEXTURE_2D );*/
 
 // Yaz: debug
 // this draw the poly points
 
-  glPushMatrix();
+/*  glPushMatrix();
   glLoadIdentity();
   glPointSize( 3.f );
   glColor4f( 0.f, 1.f, 0.f, 1.f );
   glDisable(GL_TEXTURE_2D );
+  {
+			GLdouble modelView[500];
+			GLdouble projection[500];
+			GLint viewPort[500];
+
+			glGetDoublev( GL_MODELVIEW_MATRIX, modelView );
+			glGetDoublev( GL_PROJECTION_MATRIX, projection );
+			glGetIntegerv( GL_VIEWPORT, viewPort);
+  }
+
   glBegin( GL_POINTS );
 
   for (int i = 0; i < numFaces_; i++)
@@ -537,21 +645,13 @@ void Model::Mesh::draw() const {
   glEnd();
   glEnable(GL_DEPTH_TEST);
   glPopMatrix();
-  glEnable(GL_TEXTURE_2D );
+  glEnable(GL_TEXTURE_2D ); */
 
 // Yaz: debug
-// this compute the dirty rect for the mesh*/
+// this compute the dirty rect for the mesh
 
   glPushMatrix();
   glLoadIdentity();
-
-  GLdouble modelView[500];
-  GLdouble projection[500];
-  GLint viewPort[500];
-
-  glGetDoublev( GL_MODELVIEW_MATRIX, modelView );
-  glGetDoublev( GL_PROJECTION_MATRIX, projection );
-  glGetIntegerv( GL_VIEWPORT, viewPort);
 
   GLdouble top = 1000;
   GLdouble right = -1000;
@@ -568,6 +668,14 @@ void Model::Mesh::draw() const {
 
 	  for( j =0; j< faces_[i].numVertices_; j++ )
 	  {
+			GLdouble modelView[500];
+			GLdouble projection[500];
+			GLint viewPort[500];
+
+			glGetDoublev( GL_MODELVIEW_MATRIX, modelView );
+			glGetDoublev( GL_PROJECTION_MATRIX, projection );
+			glGetIntegerv( GL_VIEWPORT, viewPort);
+
 			pVertices = vertices_ + 3 * faces_[i].vertices_[j];
 
 			v.set( *(pVertices), *(pVertices+1), *(pVertices+2) );
@@ -595,47 +703,15 @@ void Model::Mesh::draw() const {
 
 	  }
 
-	  screenBlocksAddRectangle( top, right, left, bottom, bestDepth );
-/*
-	  if( faces_[i].numVertices_ == 3 ) // triangle
-	  {
-		  float* pVertices0;
-		  float* pVertices1;
-		  float* pVertices2;
-
-		  pVertices0 = vertices_ + 3 * faces_[i].vertices_[0];
-		  pVertices1 = vertices_ + 3 * faces_[i].vertices_[1];
-		  pVertices2 = vertices_ + 3 * faces_[i].vertices_[2];
-
-		//  screenBlocksAddTriangle( pVertices0, pVertices1, pVertices2 );
-	  }
-	  else
-	  if( faces_[i].numVertices_ == 4 ) // quad
-	  {
-		  float* pVertices0;
-		  float* pVertices1;
-		  float* pVertices2;
-		  float* pVertices3;
-
-		  pVertices0 = vertices_ + 3 * faces_[i].vertices_[0];
-		  pVertices1 = vertices_ + 3 * faces_[i].vertices_[1];
-		  pVertices2 = vertices_ + 3 * faces_[i].vertices_[2];
-		  pVertices3 = vertices_ + 3 * faces_[i].vertices_[3];
-
-		//  screenBlocksAddTriangle( pVertices0, pVertices1, pVertices2, pVertices3 );
-	  }
-	  else
-	  {
-		  printf("Bad primitive !\n");
-	  } */
+	 screenBlocksAddRectangle( top, right, left, bottom, bestDepth );
   }
 
-  glDisable(GL_DEPTH_TEST);
+ /* glDisable(GL_DEPTH_TEST);
   glPointSize( 3.f );
   glColor4f( 1.f, 1.f, 0.f, 1.f );
   glDisable(GL_TEXTURE_2D );
 
-/*  glBegin(GL_LINES);
+  glBegin(GL_LINES);
 
   GLdouble objx;
   GLdouble objy;
@@ -665,9 +741,9 @@ void Model::Mesh::draw() const {
   gluUnProject( right, bottom, 1.f, modelView, projection, viewPort, &objx, &objy, &objz );
   glVertex3f( objx, objy, objz );
 
-  glEnd();*/
+  glEnd(); 
   glEnable(GL_DEPTH_TEST);
-  glEnable(GL_TEXTURE_2D );
+  glEnable(GL_TEXTURE_2D ); */
   glPopMatrix();
 }
 

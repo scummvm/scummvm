@@ -87,6 +87,10 @@ void screenBlocksAddRectangle( int top, int right, int left, int bottom, float d
 {
 	// clip the rectange to the screen size
 
+	int tempHeight = bottom-top;
+	top = 480-bottom;
+	bottom = top + tempHeight;
+
 	if(top<0)
 		top = 0;
 	if(top>=SCREEN_HEIGHT)
@@ -126,6 +130,10 @@ void screenBlocksAddRectangle( int top, int right, int left, int bottom, float d
 	height = (bottom - top) / 16;
 	if((bottom - top)%16)
 		height++;
+
+	// temp hack
+	width++;
+	height++;
 
 	int i;
 	int j;

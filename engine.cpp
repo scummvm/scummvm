@@ -140,7 +140,7 @@ void Engine::mainLoop() {
     }
     glDisable(GL_TEXTURE_2D);
 
-	screenBlocksDrawDebug();
+//	screenBlocksDrawDebug();
 
 
 	// Draw text
