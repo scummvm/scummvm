@@ -236,7 +236,10 @@ BOOL PPCWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, OSystem_W
 						if (g_scumm->vm.cutScenePtr[g_scumm->vm.cutSceneStackPointer] || g_scumm->_insaneState)
 							wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_CUTSCENEEXIT_KEY];
 						else
+						if (g_scumm->_talkDelay > 0)
 							wm->_event.kbd.ascii = g_scumm->_vars[g_scumm->VAR_TALKSTOP_KEY];						
+						else
+							wm->_event.kbd.ascii = mapKey(VK_ESCAPE);
 						break;
 					case ToolbarSound:
 						sound_activated = !sound_activated;
