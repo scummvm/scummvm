@@ -1141,7 +1141,8 @@ void ScummEngine::abortCutscene() {
 		// Proper fix might be to let SMUSH/INSANE run from outside the script
 		// engine but that would require lots of changes and may actually have
 		// negative effects, too. So we cheat here, to fix bug #751670.
-		getScriptEntryPoint();
+		if (_version == 7)
+			getScriptEntryPoint();
 
 	}
 }
