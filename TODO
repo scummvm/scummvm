@@ -9,8 +9,6 @@ Residual TODO list (in rough order of priority):
  * Bounds check the Screenblocks dirty rectangle stuff, so it stops trashing
    memory and making Residual unusable/unstable.
  * Implement 2D primitives 
- * Remove hash_map usage (not implemented on Visual Studio & other compilers)
- * Remove as much other STL stuff as possible (see above)
  * Add OpenGL lighting
  * Implement iMuse
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (many!)
@@ -18,6 +16,5 @@ Residual TODO list (in rough order of priority):
 
 MSVC notes:
  These things need doing (At least) for it to be compilable under MSVC..
- Get rid of hash_map usage (not supported in MSVC)
  round() function in lua.cpp's check_int does not exist in MSVC
  vsscanf function does not exist in MSVC (already worked around)
