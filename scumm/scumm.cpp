@@ -1310,16 +1310,16 @@ void ScummEngine_v6::scummInit() {
 		setCursorFromImg(697, 60, 1);
 		setCursorTransparency(1);
 	}
+}
+
+void ScummEngine_v60he::scummInit() {
+	ScummEngine::scummInit();
 
 	// HACK cursor hotspot is wrong
 	// Original games used 
 	// setCursorHotspot(8, 7);
 	if (_gameId == GID_FUNPACK)
 		setCursorHotspot(16, 16);
-}
-
-void ScummEngine_v60he::scummInit() {
-	ScummEngine::scummInit();
 
 	if (_heversion >= 70) {
 		free(_wizPolygons);
