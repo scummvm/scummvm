@@ -80,6 +80,17 @@ struct AkosRenderer {
 	byte *srcptr;
 	byte *shadow_table;
 
+	/* put less used stuff at the bottom to optimize opcodes */
+	int draw_top, draw_bottom;
+protected:
+	byte *akpl, *akci, *aksq;
+	AkosOffset *akof;
+	byte *akcd;
+
+	byte palette[256];
+
+	Scumm *_vm;
+
 	struct {
 		/* codec stuff */
 		const byte *scaletable;
@@ -97,17 +108,6 @@ struct AkosRenderer {
 		int imgbufoffs;
 	} v1;
 
-	/* put less used stuff at the bottom to optimize opcodes */
-	int draw_top, draw_bottom;
-	byte *akpl, *akci, *aksq;
-	AkosOffset *akof;
-	byte *akcd;
-
-	byte palette[256];
-
-protected:
-	Scumm *_vm;
-
 	struct {
 		byte unk5;
 		int unk6;
@@ -123,23 +123,27 @@ protected:
 public:
 
 	// Constructor, sets all data to 0
-	  AkosRenderer(Scumm *scumm) {
+	AkosRenderer(Scumm *scumm) {
 		memset(this, 0, sizeof(AkosRenderer));
 		_vm = scumm;
-	} bool drawCostume();
+	}
+	bool drawCostume();
 	void setPalette(byte *palette);
 	void setCostume(int costume);
 	void setFacing(Actor * a);
 
 protected:
-	void akos_generic_decode();
 	bool drawCostumeChannel(int chan);
 	void codec1();
-	void codec5();
-	void codec16();
+	void codec1_spec1();
+	void codec1_spec2();
+	void codec1_spec3();
+	void codec1_genericDecode();
 	void codec1_ignorePakCols(int num);
-	void c1_spec2();
-	void c1_spec3();
+
+	void codec5();
+
+	void codec16();
 	void akos16SetupBitReader(byte *src);
 	void akos16PutOnScreen(byte * dest, byte * src, byte transparency, int32 count);
 	void akos16SkipData(int32 numskip);

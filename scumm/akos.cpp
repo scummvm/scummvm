@@ -260,72 +260,71 @@ bool AkosRenderer::drawCostumeChannel(int chan)
 	return true;
 }
 
-void AkosRenderer::akos_generic_decode()
+void AkosRenderer::codec1_genericDecode()
 {
-	AkosRenderer * ar = this;
 	byte *src, *dst;
 	byte len, height, maskbit;
 	uint y, color;
 	const byte *scaleytab, *mask;
 
 
-	y = ar->v1.y;
+	y = v1.y;
 
-	len = ar->v1.replen;
-	src = ar->srcptr;
-	dst = ar->v1.destptr;
-	color = ar->v1.repcolor;
-	height = ar->_height;
+	len = v1.replen;
+	src = srcptr;
+	dst = v1.destptr;
+	color = v1.repcolor;
+	height = _height;
 
-	scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
-	maskbit = revBitMask[ar->v1.x & 7];
-	mask = ar->v1.mask_ptr + (ar->v1.x >> 3);
+	scaleytab = &v1.scaletable[v1.tmp_y];
+	maskbit = revBitMask[v1.x & 7];
+	mask = v1.mask_ptr + (v1.x >> 3);
 
 	if (len)
 		goto StartPos;
 
 	do {
 		len = *src++;
-		color = len >> ar->v1.shl;
-		len &= ar->v1.mask;
+		color = len >> v1.shl;
+		len &= v1.mask;
 		if (!len)
 			len = *src++;
 
 		do {
-			if (*scaleytab++ < ar->scale_y) {
-				if (color && y < ar->outheight
-						&& (!ar->v1.mask_ptr || !((mask[0] | mask[ar->v1.imgbufoffs]) & maskbit))) {
-					*dst = ar->palette[color];
+			if (*scaleytab++ < scale_y) {
+				if (color && y < outheight
+						&& (!v1.mask_ptr || !((mask[0] | mask[v1.imgbufoffs]) & maskbit))) {
+					*dst = palette[color];
 				}
 				mask += 40;
-				dst += ar->outwidth;
+				dst += outwidth;
 				y++;
 			}
 			if (!--height) {
-				if (!--ar->v1.skip_width)
+				if (!--v1.skip_width)
 					return;
-				height = ar->_height;
-				y = ar->v1.y;
+				height = _height;
+				y = v1.y;
 
-				scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
+				scaleytab = &v1.scaletable[v1.tmp_y];
 
-				if (ar->v1.scaletable[ar->v1.tmp_x] < ar->scale_x) {
-					ar->v1.x += ar->v1.scaleXstep;
-					if (ar->v1.x >= g_scumm->_realWidth)
+				if (v1.scaletable[v1.tmp_x] < scale_x) {
+					v1.x += v1.scaleXstep;
+					if (v1.x >= _vm->_realWidth)
 						return;
-					maskbit = revBitMask[ar->v1.x & 7];
-					ar->v1.destptr += ar->v1.scaleXstep;
+					maskbit = revBitMask[v1.x & 7];
+					v1.destptr += v1.scaleXstep;
 				}
-				mask = ar->v1.mask_ptr + (ar->v1.x >> 3);
-				ar->v1.tmp_x += ar->v1.scaleXstep;
-				dst = ar->v1.destptr;
+				mask = v1.mask_ptr + (v1.x >> 3);
+				v1.tmp_x += v1.scaleXstep;
+				dst = v1.destptr;
 			}
 		StartPos:;
 		} while (--len);
 	} while (1);
 }
 
-void akos_c1_spec1(AkosRenderer * ar)
+void AkosRenderer::codec1_spec1()
 {
 	byte *src, *dst;
 	byte len, height, maskbit;
@@ -334,66 +333,71 @@ void akos_c1_spec1(AkosRenderer * ar)
 	const byte *scaleytab, *mask;
 
 
-	y = ar->v1.y;
+	y = v1.y;
 
-	len = ar->v1.replen;
-	src = ar->srcptr;
-	dst = ar->v1.destptr;
-	color = ar->v1.repcolor;
-	height = ar->_height;
+	len = v1.replen;
+	src = srcptr;
+	dst = v1.destptr;
+	color = v1.repcolor;
+	height = _height;
 
-	scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
-	maskbit = revBitMask[ar->v1.x & 7];
-	mask = ar->v1.mask_ptr + (ar->v1.x >> 3);
+	scaleytab = &v1.scaletable[v1.tmp_y];
+	maskbit = revBitMask[v1.x & 7];
+	mask = v1.mask_ptr + (v1.x >> 3);
 
 	if (len)
 		goto StartPos;
 
 	do {
 		len = *src++;
-		color = len >> ar->v1.shl;
-		len &= ar->v1.mask;
+		color = len >> v1.shl;
+		len &= v1.mask;
 		if (!len)
 			len = *src++;
 
 		do {
-			if (*scaleytab++ < ar->scale_y) {
-				if (color && y < ar->outheight
-						&& (!ar->v1.mask_ptr || !((mask[0] | mask[ar->v1.imgbufoffs]) & maskbit))) {
-					pcolor = ar->palette[color];
+			if (*scaleytab++ < scale_y) {
+				if (color && y < outheight
+						&& (!v1.mask_ptr || !((mask[0] | mask[v1.imgbufoffs]) & maskbit))) {
+					pcolor = palette[color];
 					if (pcolor == 13)
-						pcolor = ar->shadow_table[*dst];
+						pcolor = shadow_table[*dst];
 					*dst = pcolor;
 				}
 				mask += 40;
-				dst += ar->outwidth;
+				dst += outwidth;
 				y++;
 			}
 			if (!--height) {
-				if (!--ar->v1.skip_width)
+				if (!--v1.skip_width)
 					return;
-				height = ar->_height;
-				y = ar->v1.y;
+				height = _height;
+				y = v1.y;
 
-				scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
+				scaleytab = &v1.scaletable[v1.tmp_y];
 
-				if (ar->v1.scaletable[ar->v1.tmp_x] < ar->scale_x) {
-					ar->v1.x += ar->v1.scaleXstep;
-					if (ar->v1.x >= g_scumm->_realWidth)
+				if (v1.scaletable[v1.tmp_x] < scale_x) {
+					v1.x += v1.scaleXstep;
+					if (v1.x >= _vm->_realWidth)
 						return;
-					maskbit = revBitMask[ar->v1.x & 7];
-					ar->v1.destptr += ar->v1.scaleXstep;
+					maskbit = revBitMask[v1.x & 7];
+					v1.destptr += v1.scaleXstep;
 				}
-				mask = ar->v1.mask_ptr + (ar->v1.x >> 3);
-				ar->v1.tmp_x += ar->v1.scaleXstep;
-				dst = ar->v1.destptr;
+				mask = v1.mask_ptr + (v1.x >> 3);
+				v1.tmp_x += v1.scaleXstep;
+				dst = v1.destptr;
 			}
 		StartPos:;
 		} while (--len);
 	} while (1);
 }
 
-void akos_c1_spec3(AkosRenderer * ar)
+void AkosRenderer::codec1_spec2()
+{
+	warning("codec1_spec2"); // TODO
+}
+
+void AkosRenderer::codec1_spec3()
 {
 	byte *src, *dst;
 	byte len, height, maskbit;
@@ -402,62 +406,62 @@ void akos_c1_spec3(AkosRenderer * ar)
 	const byte *scaleytab, *mask;
 
 
-	y = ar->v1.y;
+	y = v1.y;
 
-	len = ar->v1.replen;
-	src = ar->srcptr;
-	dst = ar->v1.destptr;
-	color = ar->v1.repcolor;
-	height = ar->_height;
+	len = v1.replen;
+	src = srcptr;
+	dst = v1.destptr;
+	color = v1.repcolor;
+	height = _height;
 
-	scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
-	maskbit = revBitMask[ar->v1.x & 7];
-	mask = ar->v1.mask_ptr + (ar->v1.x >> 3);
+	scaleytab = &v1.scaletable[v1.tmp_y];
+	maskbit = revBitMask[v1.x & 7];
+	mask = v1.mask_ptr + (v1.x >> 3);
 
 	if (len)
 		goto StartPos;
 
 	do {
 		len = *src++;
-		color = len >> ar->v1.shl;
-		len &= ar->v1.mask;
+		color = len >> v1.shl;
+		len &= v1.mask;
 		if (!len)
 			len = *src++;
 
 		do {
-			if (*scaleytab++ < ar->scale_y) {
-				if (color && y < ar->outheight
-						&& (!ar->v1.mask_ptr || !((mask[0] | mask[ar->v1.imgbufoffs]) & maskbit))) {
-					pcolor = ar->palette[color];
+			if (*scaleytab++ < scale_y) {
+				if (color && y < outheight
+						&& (!v1.mask_ptr || !((mask[0] | mask[v1.imgbufoffs]) & maskbit))) {
+					pcolor = palette[color];
 					if (pcolor < 8) {
 						pcolor = (pcolor << 8) + *dst;
-						*dst = ar->shadow_table[pcolor];
+						*dst = shadow_table[pcolor];
 					} else {
 						*dst = pcolor;
 					}
 				}
 				mask += 40;
-				dst += ar->outwidth;
+				dst += outwidth;
 				y++;
 			}
 			if (!--height) {
-				if (!--ar->v1.skip_width)
+				if (!--v1.skip_width)
 					return;
-				height = ar->_height;
-				y = ar->v1.y;
+				height = _height;
+				y = v1.y;
 
-				scaleytab = &ar->v1.scaletable[ar->v1.tmp_y];
+				scaleytab = &v1.scaletable[v1.tmp_y];
 
-				if (ar->v1.scaletable[ar->v1.tmp_x] < ar->scale_x) {
-					ar->v1.x += ar->v1.scaleXstep;
-					if (ar->v1.x >= g_scumm->_realWidth)
+				if (v1.scaletable[v1.tmp_x] < scale_x) {
+					v1.x += v1.scaleXstep;
+					if (v1.x >= _vm->_realWidth)
 						return;
-					maskbit = revBitMask[ar->v1.x & 7];
-					ar->v1.destptr += ar->v1.scaleXstep;
+					maskbit = revBitMask[v1.x & 7];
+					v1.destptr += v1.scaleXstep;
 				}
-				mask = ar->v1.mask_ptr + (ar->v1.x >> 3);
-				ar->v1.tmp_x += ar->v1.scaleXstep;
-				dst = ar->v1.destptr;
+				mask = v1.mask_ptr + (v1.x >> 3);
+				v1.tmp_x += v1.scaleXstep;
+				dst = v1.destptr;
 			}
 		StartPos:;
 		} while (--len);
@@ -795,18 +799,18 @@ void AkosRenderer::codec1()
 
 	switch (shadow_mode) {
 	case 1:
-		akos_c1_spec1(this);
-		return;
+		codec1_spec1();
+		break;
 	case 2:
-//    akos_c1_spec2(this);
-		warning("akos_c1_spec2");
-		return;
+		codec1_spec2();
+		break;
 	case 3:
-		akos_c1_spec3(this);
-		return;
+		codec1_spec3();
+		break;
+	default:
+		codec1_genericDecode();
+		break;
 	}
-
-	akos_generic_decode();
 }
 
 
@@ -1197,7 +1201,7 @@ void AkosRenderer::akos16DecompressMask(byte * dest, int32 pitch, byte * src, in
 		akos16SkipData(numskip_before);
 	}
 
-	maskpitch = ((uint)g_scumm->_realWidth / 8) + 1;
+	maskpitch = ((uint)_vm->_realWidth / 8) + 1;
 
 	while (t_height != 0) {
 		akos16DecodeLine(tmp_buf, t_width, dir);
