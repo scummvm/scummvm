@@ -275,6 +275,13 @@ static void SetActorRot() {
   act->setRot(pitch, yaw, roll);
 }
 
+static void GetActorRot() {
+  Actor *act = check_actor(1);
+  lua_pushnumber(act->pitch());
+  lua_pushnumber(act->roll());
+  lua_pushnumber(act->yaw());
+}
+
 static void GetAngleBetweenActors() {
   Actor *act1 = check_actor(1);
   Actor *act2 = check_actor(2);
@@ -911,7 +918,6 @@ static char *stubFuncs[] = {
   "IsActorTurning",
   "SetActorRoll",
   "SetActorPitch",
-  "GetActorRot",
   "GetPointSector",
   "IsPointInSector",
   "SetActorFrustrumCull",
@@ -1142,6 +1148,7 @@ struct luaL_reg builtins[] = {
   { "PutActorAt", PutActorAt },
   { "GetActorPos", GetActorPos },
   { "SetActorRot", SetActorRot },
+  { "GetActorRot", GetActorRot },
   { "GetAngleBetweenActors", GetAngleBetweenActors },
   { "PutActorInSet", PutActorInSet },
   { "SetActorWalkRate", SetActorWalkRate },
