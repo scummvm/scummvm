@@ -7,6 +7,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
      same file handle, e.g. in the Sam & Max intro when using monster.sog.
 
  SCUMM:
+   - Many SCUMM game engine fixes.
    - Added graphics decoders for 3DO Humongous Entertainment games
    - Numerous Humongous Entertainment games fixes
    - Fixed bug in Full Throttle, so battle difficulty matches original
