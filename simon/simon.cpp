@@ -4711,11 +4711,13 @@ void SimonState::initSound()
 
 		if (_voice_type != FORMAT_NONE) {
 #ifdef USE_MAD
-			if (_voice_type == FORMAT_MP3)
+			if (_voice_type == FORMAT_MP3) {
 				_voice_offsets = (uint32 *)malloc((gss->NUM_VOICE_RESOURCES + 1) * sizeof(uint32));
-			else
-#else
+			 } else {
+#endif
 				_voice_offsets = (uint32 *)malloc(gss->NUM_VOICE_RESOURCES * sizeof(uint32));
+#ifdef USE_MAD
+			}
 #endif
 			if (_voice_offsets == NULL)
 				error("Out of memory for voice offsets");
@@ -4754,11 +4756,13 @@ void SimonState::initSound()
 		if (_effects_file->isOpen() == true)
 		{
 #ifdef USE_MAD
-			if (_effects_type == FORMAT_MP3)
+			if (_effects_type == FORMAT_MP3) {
 				_effects_offsets = (uint32 *)malloc((gss->NUM_EFFECTS_RESOURCES + 1) * sizeof(uint32));
-			else
-#else
+			} else {
+#endif
 				_effects_offsets = (uint32 *)malloc(gss->NUM_EFFECTS_RESOURCES * sizeof(uint32));
+#ifdef USE_MAD
+			}
 #endif
 			if (_effects_offsets == NULL)
 				error("Out of memory for effects offsets");
