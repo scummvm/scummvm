@@ -2692,8 +2692,7 @@ void Scumm::decodeParseString()
 		textSlot = 0;
 	}
 
-	if (_gameId != GID_INDY3_256)	 // Indy3 seems to need to keep the string positions.
-		setStringVars(textSlot); // See, for example, the text positioning in the grail diary
+	setStringVars(textSlot);
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		switch (_opcode & 0xF) {
@@ -2757,6 +2756,12 @@ void Scumm::decodeParseString()
 				unkMessage2();
 				break;
 			}
+
+			// FIXME: Store positions, this is needed for Indy3 (Grail Diary)..
+			// I'm not sure whether having this as a generic case will break anything
+			_string[textSlot].t_xpos = _string[textSlot].xpos;
+			_string[textSlot].t_ypos = _string[textSlot].ypos;
+
 			_scriptPointer = _messagePtr;
 			return;
 		default:
