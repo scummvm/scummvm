@@ -238,7 +238,7 @@ SCUMM
   - Add proper handling of sound looping in Humongous games
   - Add sound pitch support for piano keys in piano mini game of fbear (DOS)
   - Add rename/delete file support, to make file opcodes function correctly
-  - Fix glitch causing bed covers to go green at end of fbear
+  - Fix glitch causing bed covers not to be drawn at end of fbear
   - Fix o6_setboxset, only used when leaving basement in fbear
   - Fix nukeArrays, it is nuking wrong array in some games (fbear)
   - Document and fix AKOS differences in Humongous Entertainment games
@@ -246,6 +246,7 @@ SCUMM
   - Add support for new animation code used by cut scenes.
   - Add support for akos_drawLimb C021 (Used in pajama/pjs-demo/timedemo)
   - Add support for akos codec 32 (Used in water/socks)
+  - Add support for actor clipping overrides used in costume code
   - Add support for debug strings (Replaces %d & %s with ints/strings from stack list)
   - Add support for various new opcodes
   - Add support for Scummsys.9x and C++ engine MAXS blocks
