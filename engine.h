@@ -93,6 +93,8 @@ public:
 	}
 
 	void setMode(int mode) { _mode = mode; }
+	void setSpeechMode(int mode) { _speechMode = mode; }
+	int getSpeechMode() { return _speechMode; }
 
 	void mainLoop();
 	unsigned frameStart() const { return frameStart_; }
@@ -146,6 +148,7 @@ private:
 
 	Scene *currScene_;
 	int _mode;
+	int _speechMode;
 
 	unsigned frameStart_, frameTime_, movieTime_;
 

@@ -35,6 +35,7 @@ Engine::Engine() :
 		currScene_(NULL), selectedActor_(NULL) {
 	for (int i = 0; i < SDLK_EXTRA_LAST; i++)
 		controlsEnabled_[i] = false;
+	_speechMode = 2;
 }
 
 void Engine::mainLoop() {
