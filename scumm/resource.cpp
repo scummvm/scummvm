@@ -527,12 +527,11 @@ void ScummEngine::readIndexFile() {
 				_fileHandle.read(_objectStateTable, num);
 				_fileHandle.read(_objectRoomTable, num);
 				memset(_objectOwnerTable, 0xFF, num);
-			} else if (_heversion >= 90) { // newer windows titles
-				error("DOBJ reading not yet supported for Scummsys >= 90");
-			} else if (_heversion >= 70) { // older Windows titles
+			} else if (_heversion >= 70) { // HE Windows titles
 				_fileHandle.read(_objectStateTable, num);
 				_fileHandle.read(_objectOwnerTable, num);
 				_fileHandle.read(_objectRoomTable, num);
+				// FIXME more DOBJ bits left to sort out here
 			} else {
 				_fileHandle.read(_objectOwnerTable, num);
 				for (i = 0; i < num; i++) {
@@ -2310,6 +2309,17 @@ void ScummEngine::readMAXS(int blockSize) {
 		_fileHandle.readUint16LE(); // unknown
 		_fileHandle.readUint16LE(); // _numLocalScripts?
 		_fileHandle.readUint16LE(); // unknown
+
+		/* TODO check these values */
+
+		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+
+		_numNewNames = 10;
+
+		_objectRoomTable = (byte *)calloc(_numGlobalObjects * 4, 1);
+
+		_numGlobalScripts = 200;
+		_shadowPaletteSize = 256;
 	} else if (_heversion >= 70 && (blockSize == 44 + 8)) { // C++ based engine
 		error("MAXS blocks from C++ based games not yet supported");
 	} else if (_heversion >= 70 && blockSize > 38) { // sputm7.2

@@ -3273,6 +3273,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		switch (game.heversion) {
 #ifndef __PALM_OS__
 		case 72:
+		case 90:
 			engine = new ScummEngine_v72he(detector, syst, game);
 			break;
 		case 71:
