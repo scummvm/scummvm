@@ -24,7 +24,7 @@
 #include "sound/mixer.h"
 
 #define SCUMMVM_VERSION "0.2.0 devel"
-#define SCUMMVM_CVS "031402"
+#define SCUMMVM_CVS "042002"
 
 #define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
@@ -958,6 +958,7 @@ public:
 	uint16 _mouthSyncTimes[52];
 	uint _curSoundPos;
 	int current_cd_sound;
+
 	int tempMusic;
 
 #ifdef COMPRESSED_SOUND_FILE

@@ -53,7 +53,9 @@ void Scumm::scummInit()
 	int i;
 	Actor *a;
 
+
 	tempMusic=0;
+
 
 	debug(9, "scummInit");
 
@@ -254,17 +256,28 @@ int Scumm::scummLoop(int delta)
 			}				
 		}
 	} else if (_features & GF_OLD256)
+
 	{
+
 		if(tempMusic == 3)
+
 		{
+
 			tempMusic = 0;
 			_vars[VAR_MUSIC_FLAG]++;
+
 		}
+
 		else
+
 		{
+
 			tempMusic ++;
+
 		}
+
 	}
+
 
 	if (_saveLoadFlag) {
 		if (_saveLoadFlag == 1) {

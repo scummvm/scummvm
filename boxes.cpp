@@ -29,6 +29,7 @@ byte Scumm::getMaskFromBox(int box)
 	Box *ptr = getBoxBaseAddr(box);
 	if (!ptr)
 		return 0;
+
 	return ptr->mask;
 }
 

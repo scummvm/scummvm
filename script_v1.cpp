@@ -836,8 +836,11 @@ void Scumm::o5_actorSetClass()
 			continue;
 		}
 
+
 		if(_gameId == GID_INDY3_256)
+
 			newClass--;
+
 
 		if (newClass & 0x80)
 			putClass(act, newClass, 1);
@@ -1305,32 +1308,46 @@ void Scumm::o5_getActorX()
 {
 	int actor;
 	getResultPos();
+
 	if(_gameId == GID_INDY3_256)
+
 		actor = getVarOrDirectByte(0x80);
+
 	else
 		actor = getVarOrDirectWord(0x80);
+
 	setResult(getObjX(actor));
 }
 
 void Scumm::o5_getActorY()
 {
+
 	int actor;
 	getResultPos();
+
 	if(_gameId == GID_INDY3_256)
+
 		actor = getVarOrDirectByte(0x80);
+
 	else
+
 		actor = getVarOrDirectWord(0x80);
 	setResult(getObjY(actor));
 }
 
 void Scumm::o5_getAnimCounter()
 {
+
 	Actor *a;
 	getResultPos();
+
 	a=derefActorSafe(getVarOrDirectByte(0x80),"o5_getActorAnimCounter");
+
 	if(a) // FIXME
 		setResult(a->cost.animCounter1);
+
 	else
+
 		setResult(0);
 }
 
@@ -2207,6 +2224,7 @@ void Scumm::o5_soundKludge()
 
 void Scumm::o5_startMusic()
 {
+
 	addSoundToQueue(getVarOrDirectByte(0x80));
 }
 
@@ -2244,7 +2262,9 @@ void Scumm::o5_startScript()
 
 void Scumm::o5_startSound()
 {
+
 	_vars[VAR_MUSIC_FLAG]=0;
+
 	addSoundToQueue(getVarOrDirectByte(0x80));
 }
 

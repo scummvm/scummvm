@@ -44,6 +44,7 @@ void Scumm::putClass(int obj, int cls, bool set)
 	cls &= 0x7F;
 	checkRange(32, 1, cls, "Class %d out of range in getClass");
 
+
 	if (_features & GF_SMALL_HEADER) {
 		if (cls == 32)							// CLASS_TOUCHABLE
 			cls = 24;

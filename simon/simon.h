@@ -47,10 +47,10 @@ void fileWriteBE16(FILE *in, uint16 value);
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
 #define CHECK_BOUNDS(x,y) assert((uint)(x)<ARRAYSIZE(y))
 
-#ifdef WIN32
-/* don't complain about zero sized arrays */
-#pragma warning (disable: 4200)
-#endif
+enum {
+       CHILD1_SIZE = 12,
+       CHILD2_SIZE = 16
+};
 
 struct Child {
 	Child *next;
@@ -62,7 +62,7 @@ struct Child2 {
 
 	uint16 string_id;
 	uint32 avail_props;
-	int16 array[0];
+	int16 array[1];
 };
 
 struct Child1 {
@@ -70,7 +70,7 @@ struct Child1 {
 
 	uint16 subroutine_id;
 	uint16 fr2;
-	uint16 array[0];
+	uint16 array[1];
 };
 
 struct Child9 {

@@ -19,6 +19,11 @@
  *
  */
 
+#if defined(HAVE_NO_BOOL)
+typedef int bool;
+const bool true(1), false(0);
+#endif  /*  HAVE_NO_BOOL  */
+
 #if defined(_MSC_VER)
 
 //#pragma warning (disable: 4244)

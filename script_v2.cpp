@@ -2798,6 +2798,7 @@ void Scumm::o6_miscOps()
 
 		case 108:									/* create proc_special_palette */
 		case 109:
+
 			createSpecialPalette(args[1], args[2],args[3], args[4], args[5], 0, 256);
 			break;
 

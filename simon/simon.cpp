@@ -302,7 +302,7 @@ void SimonState::readItemChildren(FILE *in, Item *item, uint tmp) {
 		uint j, k;
 		Child1 *child;
 
-		size = sizeof(Child1);
+		size = CHILD1_SIZE;
 		for(i=0,j=fr2; i!=6; i++, j>>=2)
 			if (j&3)
 				size += sizeof(child->array[0]);
@@ -319,7 +319,7 @@ void SimonState::readItemChildren(FILE *in, Item *item, uint tmp) {
 		uint i,k,size;
 		Child2 *child;
 
-		size = sizeof(Child2);
+		size = CHILD2_SIZE;
 		for(i=0; i!=16; i++)
 			if (fr & (1<<i))
 				size += sizeof(child->array[0]);

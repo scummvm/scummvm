@@ -467,6 +467,7 @@ void Scumm::saveOrLoad(Serializer * s)
 		MKLINE(Scumm, gdi._transparency, sleByte),
 		MKARRAY(Scumm, _currentPalette[0], sleByte, 768),
 
+
 		/* virtscr */
 
 		MKARRAY(Scumm, charset._buffer[0], sleByte, 256),
@@ -566,6 +567,7 @@ void Scumm::saveOrLoad(Serializer * s)
 		MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 200),
 		MKLINE(Scumm, gdi._transparency, sleByte),
 		MKARRAY(Scumm, _currentPalette[0], sleByte, 768),
+
 		MKARRAY(Scumm, _proc_special_palette[0], sleByte, 256),
 		/* virtscr */
 
