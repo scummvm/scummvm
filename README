@@ -1,6 +1,6 @@
 ScummVM README
-Last updated:    2003-06-12
-Release version: 0.4.2cvs
+Last updated:    2003-07-02
+Release version: 0.4.5cvs
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -37,6 +37,8 @@ Supported Games:
 At the moment the following games have been reported to work, and should
 be playable to the end:
 
+SCUMM Games:
+        Maniac Mansion (Enhanced Version)          [Game: maniac]
         Indiana Jones & the Last Crusade (EGA)     [Game: indy3ega]
         Indiana Jones & the Last Crusade (256)     [Game: indy3]
         Loom (16 color floppy version)             [Game: loom]
@@ -50,6 +52,9 @@ be playable to the end:
         Day of the Tentacle                        [Game: tentacle]
         Sam & Max                                  [Game: samnmax]
         The Dig                                    [Game: dig]
+
+Other Games:
+        Beneath a Steel Sky                        [Game: sky]
         Simon the Sorcerer 1                       [Game: simon1dos/
                                                      simon1talkie/simon1win]
         Simon the Sorcerer 2                       [Game: simon2dos/simon2talkie
@@ -67,13 +72,12 @@ your own risk, and please do not file bug reports about them. If you want
 the latest updates on game compatibility, visit our web site and view the
 compatibility chart.
 
-        Maniac Mansion                             [Game: maniac]
-        Zak McKracken (16 color floppy version)    [Game: zak]
+        Maniac Mansion (Original)                  [Game: maniac]
+        Zak McKracken (Original)                   [Game: zak]
         Putt-Putt Goes To The Moon                 [Game: puttmoon]
         Putt-Putt's Fun Pack                       [Game: funpack]
         Fatty Bear's Birthday Surprise             [Game: fbear]
         Fatty Bear's Fun Pack                      [Game: fbpack]
-        Beneath A Steel Sky                        [Game: sky]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
@@ -451,7 +455,7 @@ They are:
         advmame3x  - 960x600 scaling. Doesn't rely on blurring like 2xSAI.
         tv2x       - 640x400 scaling. Horizontal scanlines.
         dotmatrix  - 640x400 scaling. Dot matrix effect.
-        opengl     - OpenGL with bilinear filtering [OpenGL backend]
+        opengl     - OpenGL with bilinear filtering [Unsupported]
 
 To select a graphics filter, pass its name via the '-g' option to scummvm,
 for example:
@@ -468,13 +472,15 @@ using any form of anti-aliasing/linear filtering.
 Note #3: The FmTowns version of Zak (zak256 target) uses an original resolution
 of 320x240 - hence for this game scalers will scale to 640x480 or 960x720.
 
+Note #4: The OpenGL filter is included for 
 
 Autosaves:
 ----------
 Because ScummVM is still a beta product, it -can- crash and/or hang
 occasionally. As such, every five minutes it will save a game in Slot 0. This
-game can be loaded via Ctrl-0, or the F5 menu. This autosaving only applies to
-Scumm games, not other games (such as Simon the Sorcerer)
+game can be loaded via Ctrl-0, or the F5 menu. This autosaving currently only
+applies to SCUMM games, not other games (such as Simon the Sorcerer or
+Beneath a Steel Sky)
 
 
 Savegames:
@@ -485,7 +491,7 @@ file later in this readme.
 
 You can also use the environment variable SCUMMVM_SAVEPATH to specify where to
 put save games. Don't forget the trailing directory separator. Also be aware
-that saved games can, and probably WILL, break between ScummVM releases.
+that saved games may break between ScummVM releases.
 
 Bash (Unix) Example:
         export SCUMMVM_SAVEPATH=/tmp/scummvm_savegames/
