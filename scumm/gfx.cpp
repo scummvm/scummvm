@@ -457,8 +457,8 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b) {
 	_vm->_system->copy_rect(ptr, _vm->_screenWidth, x, vs->topline + t, w, height);
 }
 
-void Gdi::clearUpperMask() {
-	memset(_vm->getResourceAddress(rtBuffer, 9), 0, _imgBufOffs[1] - _imgBufOffs[0]);
+void Gdi::clearCharsetMask() {
+	memset(_vm->getResourceAddress(rtBuffer, 9), 0, _imgBufOffs[1]);
 }
 
 /**

@@ -136,7 +136,7 @@ protected:
 public:
 	void drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
 	                int stripnr, int numstrip, byte flag);
-	void clearUpperMask();
+	void clearCharsetMask();
 
 	void disableZBuffer() { _zbufferDisabled = true; }
 	void enableZBuffer() { _zbufferDisabled = false; }

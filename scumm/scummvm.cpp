@@ -994,7 +994,7 @@ load_game:
 
 	if (_completeScreenRedraw) {
 		_completeScreenRedraw = false;
-		gdi.clearUpperMask();
+		gdi.clearCharsetMask();
 		_charset->_hasMask = false;
 		for (int i = 0; i < _maxVerbs; i++)
 			drawVerb(i, 0);
