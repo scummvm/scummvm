@@ -333,7 +333,7 @@ void GameDetector::updateconfig() {
 	_sfx_volume = g_config->getInt("sfx_volume", _sfx_volume);
 
 	_debugLevel = g_config->getInt("debuglevel", _debugLevel);
-	if (_debugLevel > 0)
+	if (_debugLevel)
 		_debugMode = true;
 
 	// We use strtol for the tempo to allow it to be specified in hex.
@@ -392,11 +392,13 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				g_config->setInt("cdrom", _cdrom);
 				break;
 			case 'd':
-				_debugMode = true;
 				HANDLE_OPT_OPTION();
 				if (option != NULL)
 					_debugLevel = atoi(option);
-				debug(1,"Debuglevel (from command line): %d", _debugLevel);
+				if (_debugLevel) {
+					_debugMode = true;
+					printf("Debuglevel (from command line): %d\n", _debugLevel);
+				}
 				break;
 			case 'e':
 				HANDLE_OPTION();
@@ -595,7 +597,8 @@ void GameDetector::setGame(const String &name) {
 	g_config->delete_domain("_COMMAND_LINE");
 	g_config->delete_domain("_USER_OVERRIDES");
 	g_config->set_domain(name);
-	debug(1, "Debuglevel (from config): %d", _debugLevel);
+	if (_debugMode)
+		printf("Debuglevel (from config): %d\n", _debugLevel);
 }
 
 int GameDetector::parseGraphicsMode(const char *s) {
