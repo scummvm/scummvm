@@ -350,7 +350,7 @@ void Scumm_v8::setupOpcodes()
 		/* F4 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o8_getStringWidth),
 		OPCODE(o6_invalid),
 		/* F8 */
 		OPCODE(o6_invalid),
@@ -1207,6 +1207,7 @@ void Scumm_v8::o8_verbOps()
 	// TODO
 	byte subOp = fetchScriptByte();
 	VerbSlot *vs = NULL;
+	int slot, a, b;
 
 	if (0 <= _curVerbSlot && _curVerbSlot < _maxVerbs)
 		vs = &_verbs[_curVerbSlot];
@@ -1218,10 +1219,40 @@ void Scumm_v8::o8_verbOps()
 		checkRange(_maxVerbs - 1, 0, _curVerbSlot, "Illegal new verb slot %d");
 		break;
 	case 0x97:		// SO_VERB_NEW New verb
+		slot = getVerbSlot(_curVerb, 0);
+		if (slot == 0) {
+			for (slot = 1; slot < _maxVerbs; slot++) {
+				if (_verbs[slot].verbid == 0)
+					break;
+			}
+			if (slot == _maxVerbs)
+				error("Too many verbs");
+			_curVerbSlot = slot;
+		}
+		vs = &_verbs[slot];
+		vs->verbid = _curVerb;
+		vs->color = 2;
+		vs->hicolor = 0;
+		vs->dimcolor = 8;
+		vs->type = kTextVerbType;
+		vs->charset_nr = _string[0].t_charset;
+		vs->curmode = 0;
+		vs->saveid = 0;
+		vs->key = 0;
+		vs->center = 0;
+		vs->imgindex = 0;
+		break;
 	case 0x98:		// SO_VERB_DELETE Delete verb
+		killVerb(_curVerbSlot);
+		break;
 	case 0x99:		// SO_VERB_NAME Set verb name
+		loadPtrToResource(rtVerb, _curVerbSlot, NULL);
+		vs->type = kTextVerbType;
+		vs->imgindex = 0;
+		break;
 	case 0x9A:		// SO_VERB_AT Set verb (X,Y) placement
-		error("o8_verbops: default case %d", subOp);
+		vs->y = pop();
+		vs->x = pop();
 		break;
 	case 0x9B:		// SO_VERB_ON Turn verb on
 		vs->curmode = 1;
@@ -1245,8 +1276,23 @@ void Scumm_v8::o8_verbOps()
 		vs->key = pop();
 		break;
 	case 0xA3:		// SO_VERB_IMAGE Set verb image
+		b = pop();
+		a = pop();
+		if (_curVerbSlot && a != vs->imgindex) {
+			setVerbObject(b, a, _curVerbSlot);
+			vs->type = kImageVerbType;
+			vs->imgindex = a;
+		}
+		break;
 	case 0xA4:		// SO_VERB_NAME_STR Set verb name
-		error("o8_verbops: default case %d", subOp);
+		a = pop();
+		if (a == 0) {
+			loadPtrToResource(rtVerb, _curVerbSlot, (byte *)"");
+		} else {
+			loadPtrToResource(rtVerb, _curVerbSlot, getStringAddress(a));
+		}
+		vs->type = kTextVerbType;
+		vs->imgindex = 0;
 		break;
 	case 0xA5:		// SO_VERB_CENTER Center verb
 		vs->center = 1;
@@ -1468,6 +1514,15 @@ void Scumm_v8::o8_getObjectImageHeight()
 	int i = getObjectIndex(pop());
 	push(_objs[i].height);
 }
+
+void Scumm_v8::o8_getStringWidth()
+{
+	int len = resStrLen((char*)_scriptPointer);
+	int width = _charset->getStringWidth(0, _scriptPointer);
+	push(width);
+	_scriptPointer += len + 1;
+}
+
 
 /*
 

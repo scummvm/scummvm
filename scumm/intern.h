@@ -436,6 +436,8 @@ protected:
 	void o8_getObjectImageY();
 	void o8_getObjectImageWidth();
 	void o8_getObjectImageHeight();
+	
+	void o8_getStringWidth();
 };
 
 
