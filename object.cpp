@@ -621,7 +621,7 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 	if (findWhat&foCheckAlreadyLoaded && getObjectIndex(id) != -1) {
 		fo->obcd = obcdptr = getObjectAddress(id);
 		assert((byte*)obcdptr > (byte*)256);
-		fo->obim = obimptr = obcdptr + READ_BE_UINT32(&((ImageHeader*)obcdptr)->size);
+		fo->obim = obimptr = obcdptr + READ_BE_UINT32_UNALIGNED(&((ImageHeader*)obcdptr)->size);
 		fo->cdhd = (CodeHeader*)findResource(MKID('CDHD'), obcdptr);
 		fo->imhd = (ImageHeader*)findResource(MKID('IMHD'), obimptr);
 		return;
@@ -841,7 +841,7 @@ void Scumm::setCursorImg(uint img, uint room, uint imgindex) {
 	if (dataptr==NULL)
 		error("setCursorImg: No such image");
 
-	size = READ_BE_UINT32(dataptr+4);
+	size = READ_BE_UINT32_UNALIGNED(dataptr+4);
 	if (size > sizeof(_grabbedCursor))
 		error("setCursorImg: Cursor image too large");
 
@@ -1014,10 +1014,10 @@ void Scumm::loadFlObject(uint object, uint room) {
 	od = &_objs[_numObjectsInRoom];
 
 	/* Setup sizes */
-	obcd_size = READ_BE_UINT32(foir.obcd + 4);
+	obcd_size = READ_BE_UINT32_UNALIGNED(foir.obcd + 4);
 	od->offs_obcd_to_room = 8;
 	od->offs_obim_to_room = obcd_size + 8;
-	obim_size = READ_BE_UINT32(foir.obim + 4);
+	obim_size = READ_BE_UINT32_UNALIGNED(foir.obim + 4);
 	flob_size = obcd_size + obim_size + 8;
 
 	/* Allocate slot & memory for floating object */

@@ -122,7 +122,7 @@ void Scumm::akos_setPalette(AkosRenderer *ar, byte *palette) {
 	uint size, i;
 
 	akpl = findResource(MKID('AKPL'), ar->akos);
-	size = READ_BE_UINT32(akpl+4) - 8;
+	size = READ_BE_UINT32_UNALIGNED(akpl+4) - 8;
 	akpl += 8;
 
 	if (size > 256)
@@ -183,7 +183,7 @@ bool Scumm::akos_drawCostumeChannel(AkosRenderer *ar, int chan) {
 	if (code!=AKC_ComplexChan) {
 		off = ar->akof + (code & 0xFFF);
 
-		assert( (code & 0xFFF)*6 < READ_BE_UINT32((byte*)ar->akof - 4)-8 );
+		assert( (code & 0xFFF)*6 < READ_BE_UINT32_UNALIGNED((byte*)ar->akof - 4)-8 );
 
 		assert( (code&0x7000) == 0);
 
@@ -469,7 +469,7 @@ void Scumm::akos_codec1(AkosRenderer *ar) {
 	ar->v1.scaletable = default_scale_table;
 
 	/* Setup color decoding variables */
-	num_colors = READ_BE_UINT32(ar->akpl-4)-8;
+	num_colors = READ_BE_UINT32_UNALIGNED(ar->akpl-4)-8;
 	if (num_colors == 32) {
 		ar->v1.mask = (1<<3)-1;
 		ar->v1.shl = 3;
@@ -767,7 +767,7 @@ bool Scumm::akos_increaseAnims(byte *akos, Actor *a) {
 	
 	size = 0;
 	if (akfo) {
-		size = (READ_BE_UINT32(akfo)-8)>>1;
+		size = (READ_BE_UINT32_UNALIGNED(akfo)-8)>>1;
 		akfo += 8;
 	}	
 	
