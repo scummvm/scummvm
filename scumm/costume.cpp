@@ -409,6 +409,7 @@ void CostumeRenderer::procC64(Codec1 &v1, int actor) {
 void CostumeRenderer::proc3(Codec1 &v1) {
 #ifdef __PALM_OS__
 	ARM_START(CostumeProc3Type)
+		ARM_INIT(SCUMM_PROC3)
 		ARM_ADDP(v1)
 		ARM_ADDM(revBitMask)
 		ARM_ADDM(_srcptr)
@@ -424,7 +425,7 @@ void CostumeRenderer::proc3(Codec1 &v1) {
 		ARM_ADDV(_out_pitch,	_out.pitch)
 		ARM_ADDV(_out_w,		_out.w)
 		ARM_ADDV(_out_h,		_out.h)
-		PCE_CALL_RETURN(PNO_COSTUMEPROC3, ARM_DATA(), _scaleIndexX)
+		ARM_CALL_RETURN(ARM_ENGINE, PNO_DATA(), _scaleIndexX)
 	ARM_END()
 #endif
 

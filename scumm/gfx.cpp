@@ -482,6 +482,7 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 
 #ifdef __PALM_OS__
 	ARM_START(DrawStripType)
+		ARM_INIT(SCUMM_DRAWSTRIP)
 		ARM_ADDM(width)
 		ARM_ADDM(height)
 		ARM_ADDM(src)
@@ -490,7 +491,7 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 		ARM_ADDV(_vm_screenWidth, _vm->_screenWidth)
 		ARM_ADDV(vs_pitch, vs->pitch)
 		ARM_ADDV(_textSurface_pitch, _textSurface.pitch)
-		PCE_CALL(PNO_DRAWSTRIP, ARM_DATA())
+		ARM_CALL(ARM_ENGINE, PNO_DATA())
 	ARM_CONTINUE()
 #endif
 	// Compose the text over the game graphics

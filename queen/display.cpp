@@ -566,13 +566,14 @@ void Display::prepareUpdate() {
 
 #ifdef __PALM_OS__
 	ARM_START(CopyRectangleType)
+		ARM_INIT(COMMON_COPYRECT)
 		ARM_ADDM(dst)
 		ARM_ADDV(buf, src)
 		ARM_ADDV(pitch, BACKDROP_W)
 		ARM_ADDV(_offScreenPitch, SCREEN_W)
 		ARM_ADDV(w, SCREEN_W)
 		ARM_ADDM(h)
-		PNO_CALL(PNO_COPYRECT, ARM_DATA())
+		ARM_CALL(ARM_COMMON, PNO_DATA())
 	ARM_END()
 #endif
 
@@ -690,6 +691,7 @@ void Display::blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uin
 #ifdef __PALM_OS__
 	ARM_CHECK_EXEC(w > 8 && h > 8)
 		ARM_START(BlitType)
+			ARM_INIT(QUEEN_BLIT)
 			ARM_ADDM(dstBuf)
 			ARM_ADDM(dstPitch)
 			ARM_ADDM(srcBuf)
@@ -698,7 +700,7 @@ void Display::blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uin
 			ARM_ADDM(h)
 			ARM_ADDM(xflip)
 			ARM_ADDM(masked)
-			PNO_CALL(PNO_BLIT, ARM_DATA())
+			ARM_CALL(ARM_ENGINE, PNO_DATA())
 		ARM_END()
 	ARM_CHECK_END()
 #endif
@@ -711,9 +713,9 @@ void Display::blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uin
 		}
 	} else if (!xflip) { // Masked bitmap unflipped
 		while (h--) {
-			for (int i = 0; i < w; ++i) {
+			for(int i = 0; i < w; ++i) {
 				uint8 b = *(srcBuf + i);
-				if (b != 0) {
+				if(b != 0) {
 					*(dstBuf + i) = b;
 				}
 			}
@@ -722,9 +724,9 @@ void Display::blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uin
 		}
 	} else { // Masked bitmap flipped
 		while (h--) {
-			for (int i = 0; i < w; ++i) {
+			for(int i = 0; i < w; ++i) {
 				uint8 b = *(srcBuf + i);
-				if (b != 0) {
+				if(b != 0) {
 					*(dstBuf - i) = b;
 				}
 			}
