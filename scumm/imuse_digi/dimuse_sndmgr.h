@@ -88,11 +88,6 @@ private:
 	ScummEngine *_scumm;
 	OSystem::MutexRef _mutex;
 	byte _disk;
-	bool _accessFree;
-
-	void waitForFreeAccess();
-	void lock();
-	void unlock();
 
 	bool openMusicBundle(int slot);
 	bool openVoiceBundle(int slot);
