@@ -89,8 +89,8 @@ public:
 			idstring[id_end - id_start] = 0;
 			int32 id = atoi(idstring);
 			char * data_start = def_end;
-			
-			while(*data_start == '\n' || *data_start == '\r') 
+
+			while(*data_start == '\n' || *data_start == '\r')
 				data_start++;
 			char * data_end = data_start;
 
@@ -103,7 +103,7 @@ public:
 					break;
 				}
 			}
-	
+
 			data_end -= 2;
 			assert(data_end > data_start);
 			char * value = new char[data_end - data_start + 1];
@@ -351,7 +351,7 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 	if(!_strings) return;
 
 	// if subtitles disabled and bit 3 is set, then do not draw
-	if((!_subtitles) && ((flags & 8) == 8)) 
+	if((!_subtitles) && ((flags & 8) == 8))
 		return;
 	const char * str = _strings->get(string_id);
 

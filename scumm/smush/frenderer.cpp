@@ -28,9 +28,9 @@
 #include <assert.h>
 #include <string.h>
 
-FontRenderer::FontRenderer(bool use_original_colors) : 
-	_nbChars(0), 
-	_color(-1), 
+FontRenderer::FontRenderer(bool use_original_colors) :
+	_nbChars(0),
+	_color(-1),
 	_original(use_original_colors) {
 }
 

@@ -29,14 +29,14 @@
 #define DEBUG
 #endif
 
-//~ #define NO_DEBUG_MIXER
-//~ #define NO_DEBUG_CHANNEL
-//~ #define NO_DEBUG_CLIPPER
+#define NO_DEBUG_MIXER
+#define NO_DEBUG_CHANNEL
+#define NO_DEBUG_CLIPPER
 #define NO_DEBUG_CODEC1
-//#define NO_DEBUG_CODEC37
+#define NO_DEBUG_CODEC37
 #define NO_DEBUG_CODEC44
-//~ #define NO_DEBUG_WIN32
-//~ #define NO_DEBUG_FONT_RENDERER
+#define NO_DEBUG_WIN32
+#define NO_DEBUG_FONT_RENDERER
 
 
 #endif

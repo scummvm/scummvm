@@ -208,9 +208,9 @@ bool ImuseChannel::handleSubTags(int32 & offset) {
 				offset += 8;
 				{
 					int reqsize = 1;
-					if(_channels == 2) 
+					if(_channels == 2)
 						reqsize *= 2;
-					if(_bitsize == 16) 
+					if(_bitsize == 16)
 						reqsize *= 2;
 					else if(_bitsize == 12) {
 						if(reqsize > 1)

@@ -48,9 +48,9 @@ bool Codec1Decoder::decode(Blitter & dst, Chunk & src) {
 			if(code & 1) {
 				val = src.getByte();
 				size_line --;
-				if(val) 
+				if(val)
 					dst.put(val, length);
-				else 
+				else
 					dst.advance(length);
 #ifdef DEBUG_CODEC1
 			debug(7, "codec1 : blitting %d times %d", length, val);
@@ -62,7 +62,7 @@ bool Codec1Decoder::decode(Blitter & dst, Chunk & src) {
 #endif
 				while(length--) {
 					val = src.getByte();
-					if(val) 
+					if(val)
 						dst.put(val);
 					else dst.advance();
 				}
