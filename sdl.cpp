@@ -536,10 +536,17 @@ void OSystem_SDL::add_dirty_rgn_auto(const byte *buf) {
 }
 
 void OSystem_SDL::update_screen() {
+	
+	if (sdl_hwscreen == NULL)
+		return;	// Can this really happen?
+
 	/* First make sure the mouse is drawn, if it should be drawn. */
 	draw_mouse();
 	
-	// Palette update in case we are NOT in "real" 8 bit color mode
+	/* Palette update in case we are NOT in "real" 8 bit color mode.
+	 * Must take place before updating the screen, since the palette must
+	 * be set up for conversion from 8bit to 16bit.
+	 */ 
 	if (((_mode_flags & DF_REAL_8BIT) == 0) && _palette_changed_last != 0) {
 		SDL_SetColors(sdl_screen, _cur_pal + _palette_changed_first, 
 			_palette_changed_first,
@@ -550,8 +557,9 @@ void OSystem_SDL::update_screen() {
 		force_full = true;
 	}
 
+	
+	/* If the shake position changed, fill the dirty area with blackness */
 	if (_current_shake_pos != _new_shake_pos) {
-		/* Fill the dirty area with blackness or the scumm image */
 		SDL_Rect blackrect = {0, 0, SCREEN_WIDTH*scaling, _new_shake_pos*scaling};
 		SDL_FillRect(sdl_hwscreen, &blackrect, 0);
 
@@ -570,83 +578,87 @@ void OSystem_SDL::update_screen() {
 		dirty_rect_list[0].h = SCREEN_HEIGHT;
 	}
 
-	if (num_dirty_rects == 0 || sdl_hwscreen == NULL)
-		return;
-
-	SDL_Rect *r; 
-	uint32 srcPitch, dstPitch;
-	SDL_Rect *last_rect = dirty_rect_list + num_dirty_rects;
-
-
-	/* Convert appropriate parts of the image into 16bpp */
-	if ((_mode_flags & DF_REAL_8BIT) == 0) {
-		SDL_Rect dst;
-		for(r=dirty_rect_list; r!=last_rect; ++r) {
-			dst = *r;
-			dst.x++;
-			dst.y++;
-			if (SDL_BlitSurface(sdl_screen, r, sdl_tmpscreen, &dst) != 0)
-				error("SDL_BlitSurface failed: %s", SDL_GetError());
-		}
-	}
-
-	SDL_LockSurface(sdl_tmpscreen);
-	SDL_LockSurface(sdl_hwscreen);
-
-	srcPitch = sdl_tmpscreen->pitch;
-	dstPitch = sdl_hwscreen->pitch;
-
-	if ((_mode_flags & DF_REAL_8BIT) == 0) {
-		for(r=dirty_rect_list; r!=last_rect; ++r) {
-			register int dst_y = r->y + _current_shake_pos;
-			register int dst_h = 0;
-			if (dst_y < SCREEN_HEIGHT) {
-				dst_h = r->h;
-				if (dst_h > SCREEN_HEIGHT - dst_y)
-					dst_h = SCREEN_HEIGHT - dst_y;
-				
-				r->x <<= 1;
-				dst_y <<= 1;
-				
-				_sai_func((byte*)sdl_tmpscreen->pixels + (r->x+2) + (r->y+1)*srcPitch, srcPitch, NULL, 
-					(byte*)sdl_hwscreen->pixels + r->x*scaling + dst_y*dstPitch, dstPitch, r->w, dst_h);
+	/* Only draw anything if necessary */
+	if (num_dirty_rects > 0) {
+	
+		SDL_Rect *r; 
+		uint32 srcPitch, dstPitch;
+		SDL_Rect *last_rect = dirty_rect_list + num_dirty_rects;
+	
+		/* Convert appropriate parts of the image into 16bpp */
+		if ((_mode_flags & DF_REAL_8BIT) == 0) {
+			SDL_Rect dst;
+			for(r=dirty_rect_list; r!=last_rect; ++r) {
+				dst = *r;
+				dst.x++;
+				dst.y++;
+				if (SDL_BlitSurface(sdl_screen, r, sdl_tmpscreen, &dst) != 0)
+					error("SDL_BlitSurface failed: %s", SDL_GetError());
 			}
-			
-			r->y = dst_y;
-			r->w <<= 1;
-			r->h = dst_h << 1;
 		}
-	} else {
-		for(r=dirty_rect_list; r!=last_rect; ++r) {
-			register int dst_y = r->y + _current_shake_pos;
-			register int dst_h = 0;
-			if (dst_y < SCREEN_HEIGHT) {
-				dst_h = r->h;
-				if (dst_h > SCREEN_HEIGHT - dst_y)
-					dst_h = SCREEN_HEIGHT - dst_y;
+	
+		SDL_LockSurface(sdl_tmpscreen);
+		SDL_LockSurface(sdl_hwscreen);
+	
+		srcPitch = sdl_tmpscreen->pitch;
+		dstPitch = sdl_hwscreen->pitch;
+	
+		if ((_mode_flags & DF_REAL_8BIT) == 0) {
+			for(r=dirty_rect_list; r!=last_rect; ++r) {
+				register int dst_y = r->y + _current_shake_pos;
+				register int dst_h = 0;
+				if (dst_y < SCREEN_HEIGHT) {
+					dst_h = r->h;
+					if (dst_h > SCREEN_HEIGHT - dst_y)
+						dst_h = SCREEN_HEIGHT - dst_y;
+					
+					r->x <<= 1;
+					dst_y <<= 1;
+					
+					_sai_func((byte*)sdl_tmpscreen->pixels + (r->x+2) + (r->y+1)*srcPitch, srcPitch, NULL, 
+						(byte*)sdl_hwscreen->pixels + r->x*scaling + dst_y*dstPitch, dstPitch, r->w, dst_h);
+				}
 				
-				dst_y *= scaling;
-				
-				_sai_func((byte*)sdl_tmpscreen->pixels + r->x + r->y*srcPitch, srcPitch, NULL, 
-					(byte*)sdl_hwscreen->pixels + r->x*scaling + dst_y*dstPitch, dstPitch, r->w, dst_h);
+				r->y = dst_y;
+				r->w <<= 1;
+				r->h = dst_h << 1;
 			}
-			
-			r->x *= scaling;
-			r->y = dst_y;
-			r->w *= scaling;
-			r->h = dst_h * scaling;
+		} else {
+			for(r=dirty_rect_list; r!=last_rect; ++r) {
+				register int dst_y = r->y + _current_shake_pos;
+				register int dst_h = 0;
+				if (dst_y < SCREEN_HEIGHT) {
+					dst_h = r->h;
+					if (dst_h > SCREEN_HEIGHT - dst_y)
+						dst_h = SCREEN_HEIGHT - dst_y;
+					
+					dst_y *= scaling;
+					
+					_sai_func((byte*)sdl_tmpscreen->pixels + r->x + r->y*srcPitch, srcPitch, NULL, 
+						(byte*)sdl_hwscreen->pixels + r->x*scaling + dst_y*dstPitch, dstPitch, r->w, dst_h);
+				}
+				
+				r->x *= scaling;
+				r->y = dst_y;
+				r->w *= scaling;
+				r->h = dst_h * scaling;
+			}
 		}
-	}
-
-	if (force_full) {
-		dirty_rect_list[0].y = 0;
-		dirty_rect_list[0].h = SCREEN_HEIGHT * scaling;
+	
+		if (force_full) {
+			dirty_rect_list[0].y = 0;
+			dirty_rect_list[0].h = SCREEN_HEIGHT * scaling;
+		}
+		
+		SDL_UnlockSurface(sdl_tmpscreen);
+		SDL_UnlockSurface(sdl_hwscreen);
 	}
 	
-	SDL_UnlockSurface(sdl_tmpscreen);
-	SDL_UnlockSurface(sdl_hwscreen);
-
-	// Palette update in case we are in "real" 8 bit color mode
+	/* Palette update in case we are in "real" 8 bit color mode.
+	 * Must take place after the screen data was updated, since with
+	 * "real" 8bit mode, palatte changes may be visible immediatly,
+	 * and we want to avoid any ugly effects.
+	 */
 	if (_mode_flags & DF_REAL_8BIT && _palette_changed_last != 0) {
 		SDL_SetColors(sdl_hwscreen, _cur_pal + _palette_changed_first, 
 			_palette_changed_first,
@@ -655,8 +667,10 @@ void OSystem_SDL::update_screen() {
 		_palette_changed_last = 0;
 	}
 	
-	// Finally, blit all our changes to the screen
-	SDL_UpdateRects(sdl_hwscreen, num_dirty_rects, dirty_rect_list);
+	if (num_dirty_rects > 0) {
+		/* Finally, blit all our changes to the screen */
+		SDL_UpdateRects(sdl_hwscreen, num_dirty_rects, dirty_rect_list);
+	}
 
 	num_dirty_rects = 0;
 	force_full = false;
