@@ -23,6 +23,7 @@
 #include <cstdlib>
 #include <list>
 #include <SDL_keysym.h>
+#include <zlib.h>
 
 class Actor;
 
@@ -140,9 +141,16 @@ public:
 		}
 	}
 
+	void savegameSave();
+	void savegameRestore();
+	static void savegameGzread(void *data, int32 size);
+	static void savegameGzwrite(void *data, int32 size);
+	void savegameCallback(void *func);
+
 	bool _savegameLoadRequest;
 	bool _savegameSaveRequest;
 	char *_savegameFileName;
+	gzFile _savegameFileHandle;
 
 private:
 	static Engine *instance_;

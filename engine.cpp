@@ -90,6 +90,13 @@ void Engine::mainLoop() {
 			}
 		}
 
+		if (_savegameLoadRequest) {
+			savegameRestore();
+		}
+		if (_savegameSaveRequest) {
+			savegameSave();
+		}
+
 		if (_mode == ENGINE_MODE_SMUSH) {
 			if (g_smush->isPlaying()) {
 				movieTime_ = g_smush->getMovieTime();
@@ -196,6 +203,78 @@ void Engine::mainLoop() {
 		// Run asynchronous tasks
 		lua_runtasks();
 	}
+}
+
+void Engine::savegameGzread(void *data, int32 size) {
+	gzread(Engine::instance()->_savegameFileHandle, data, size);
+}
+
+void Engine::savegameGzwrite(void *data, int32 size) {
+	gzwrite(Engine::instance()->_savegameFileHandle, data, size);
+}
+
+void Engine::savegameRestore() {
+	_savegameLoadRequest = false;
+	char filename[200];
+	if (_savegameFileName == NULL) {
+		strcpy(filename, "grim.sav");
+	} else {
+		strcpy(filename, _savegameFileName);
+	}
+	_savegameFileHandle = gzopen(filename, "rb");
+	if (_savegameFileHandle == NULL) {
+		warning("savegameRestore() Error opening savegame file");
+		return;
+	}
+
+	//imuseStopAllSounds();
+	g_smush->stop();
+	//  free all resource
+	//  lock resources
+	//Chore_Restore(savegameGzread);
+	//Resource_Restore(savegameGzread);
+	//Text_Restore(savegameGzread);
+	//Room_Restore(savegameGzread);
+	//Actor_Restore(savegameGzread);
+	//Render_Restore(savegameGzread);
+	//Primitive_Restore(savegameGzread);
+	//Smush_Restore(savegameGzread);
+	//lua_Restore(savegameGzread);
+	//  unlock resources
+	gzclose(_savegameFileHandle);
+
+	lua_dofile("patch05.bin");
+}
+
+void Engine::savegameCallback(void *func) {
+}
+
+void Engine::savegameSave() {
+	_savegameSaveRequest = false;
+	char filename[200];
+	if (_savegameFileName == NULL) {
+		strcpy(filename, "grim.sav");
+	} else {
+		strcpy(filename, _savegameFileName);
+	}
+	_savegameFileHandle = gzopen(filename, "wb");
+	if (_savegameFileHandle == NULL) {
+		warning("savegameSave() Error creating savegame file");
+		return;
+	}
+
+	savegameCallback(savegameGzwrite);
+	//Chore_Save(savegameGzwrite);
+	//Resource_Save(savegameGzwrite);
+	//Text_Save(savegameGzwrite);
+	//Room_Save(savegameGzwrite);
+	//Actor_Save(savegameGzwrite);
+	//Render_Save(savegameGzwrite);
+	//Primitive_Save(savegameGzwrite);
+	//Smush_Save(savegameGzwrite);
+	//lua_Save(savegameGzwrite);
+
+	gzclose(_savegameFileHandle);
 }
 
 void Engine::setScene(const char *name) {
