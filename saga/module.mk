@@ -19,7 +19,6 @@ MODULE_OBJS = \
 	saga/isomap.o \
 	saga/ite_introproc.o \
 	saga/math.o \
-	saga/misc.o \
 	saga/objectmap.o \
 	saga/palanim.o \
 	saga/render.o \

@@ -45,6 +45,27 @@
 
 namespace Saga {
 
+static int granulate(int value, int granularity)
+{
+
+	int remainder;
+
+	if (value == 0)
+		return 0;
+
+	if (granularity == 0)
+		return 0;
+
+	remainder = value % granularity;
+
+	if (remainder == 0) {
+		return value;
+	} else {
+		return (granularity - remainder + value);
+	}
+
+}
+
 int
 IMG_DecodeBGImage(const uchar * image_data,
     size_t image_size,
@@ -78,7 +99,7 @@ IMG_DecodeBGImage(const uchar * image_data,
 	RLE_data_ptr = image_data + SAGA_IMAGE_DATA_OFFSET;
 	RLE_data_len = image_size - SAGA_IMAGE_DATA_OFFSET;
 
-	modex_height = Granulate(hdr.height, 4);
+	modex_height = granulate(hdr.height, 4);
 
 	decode_buf_len = hdr.width * modex_height;
 	decode_buf = (uchar *)malloc(decode_buf_len);

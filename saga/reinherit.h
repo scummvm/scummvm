@@ -161,11 +161,6 @@ enum R_ERRORCODE {
 void R_Shutdown(int param);
 
 /*
- * r_misc.c
-\*--------------------------------------------------------------------------*/
-int Granulate(int value, int granularity);
-
-/*
  * r_transitions.c
 \*--------------------------------------------------------------------------*/
 int TRANSITION_Dissolve(uchar * dst_img,
