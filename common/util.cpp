@@ -120,3 +120,23 @@ void hexdump(const byte * data, int len)
 		printf(" ");
 	printf("|\n");
 }
+
+// Resource string length, supports special chars starting with FF
+int resStrLen(const char *src)
+{
+	int num = 0;
+	byte chr;
+	while ((chr = *src++) != 0) {
+		num++;
+		if (chr == 255) {
+			chr = *src++;
+			num++;
+
+			if (chr != 1 && chr != 2 && chr != 3 && chr != 8) {
+				src += 2;
+				num += 2;
+			}
+		}
+	}
+	return num;
+}

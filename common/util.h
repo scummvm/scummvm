@@ -48,4 +48,7 @@ void ClearBlendCache(byte *palette, int weight);
  */
 void hexdump(const byte * data, int len);
 
+// Resource string length
+int resStrLen(const char *src);
+
 #endif

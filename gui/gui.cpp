@@ -287,7 +287,6 @@ const GuiWidget pause_dialog[] = {
 	{0, 0, 0, 0, 0, 0, 0, 0, 0}
 };
 
-
 void Gui::draw(int start, int end)
 {
 	int i;
@@ -419,8 +418,15 @@ void Gui::drawWidget(const GuiWidget *w)
 				break;
 			case GUI_RESTEXT:
 				s = queryString(w->_string_number, w->_id);
-				if (s)
-					strcpy(text, s);
+				if (s) {
+					int t = resStrLen(s);
+					if (t >= 500) { // probably won't happen, but just in case...
+						warning("Resource string is too long, truncating");
+						t = 498;
+						text[499] = '\0';
+					}
+					memcpy(text, s, t+1);					
+				}
 				break;
 			case GUI_VARTEXT:
 				sprintf(text, "%s %d", string_map_table_custom[w->_string_number],
@@ -907,8 +913,6 @@ void Gui::getSavegameNames(int start)
 
 const char *Gui::queryString(int stringno, int id)
 {
-	if ((stringno == 1) && (_s->_gameId == GID_MONKEY2)) return "How may I serve you?"; // FIXME (MI2 data file is wrong)
-
 	static char namebuf[64];
 	char *result;
 	int string;
