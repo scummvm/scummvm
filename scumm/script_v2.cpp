@@ -1122,12 +1122,10 @@ void ScummEngine_v2::o2_stopScript() {
 	if (script == 0)
 		script = vm.slot[_currentScript].number;
 
-	if (_currentScript != 0) {
-		if (vm.slot[_currentScript].number == script) 
-			stopObjectCode();
-	} else {
+	if (_currentScript != 0 && vm.slot[_currentScript].number == script)
+		stopObjectCode();
+	else
 		stopScript(script);
-	}
 }
 
 void ScummEngine_v2::o2_panCameraTo() {
