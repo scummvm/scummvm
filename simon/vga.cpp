@@ -1776,7 +1776,7 @@ void SimonEngine::vc_62_palette_thing() {
 
 		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
 		// in lower half of screen
-		if (!(_game & GF_SIMON2) && _subroutine == 2926)
+		if (!(_game & GF_SIMON2) && (_subroutine == 2923 || _subroutine == 2926))
 			dx_clear_surfaces(200);
 		else
 			dx_clear_surfaces(_video_palette_mode == 4 ? 134 : 200);

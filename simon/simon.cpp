@@ -2423,7 +2423,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	} else {
 		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
 		// in lower half of screen
-		if (_subroutine == 2926)
+		if (_subroutine == 2923 || _subroutine == 2926)
 			num_lines = 200;
 		else
 			num_lines = _video_palette_mode == 4 ? 134 : 200;
