@@ -59,6 +59,7 @@ enum Direction {
 enum {
 	INK_BG_PANEL      = 226,
 	INK_JOURNAL       = 248,
+	INK_MAP7          = 243,
 	INK_CMD_SELECT    = 255,
 	INK_CMD_NORMAL    = 225,
 	INK_CMD_LOCK      = 234,
@@ -75,6 +76,7 @@ enum {
 
 
 enum {
+	ROOM_JUNGLE_PINNACLE     =  7,
 	ROOM_JUNGLE_BUD_SKIP     =  9,
 	ROOM_JUNGLE_MISSIONARY   =  13,
 	
