@@ -84,8 +84,8 @@ namespace Kyra {
 	uint32 Font::getStringWidth(const char* string, char terminator) {
 		uint32 strsize;
 		
-		for (strsize = 0; string[strsize] != terminator; ++strsize)
-						;
+		for (strsize = 0; string[strsize] != terminator && string[strsize] != '\0'; ++strsize)
+			;
 		
 		uint32 stringwidth = 0;
 		
@@ -113,11 +113,11 @@ namespace Kyra {
 		
 		// gets start of the word
 		for (; string[startpos] == ' '; ++startpos)
-					;
+			;
 					
 		// not counting size
 		for (*size = 0; string[startpos + *size] != ' ' && string[startpos + *size] != '\0'; ++(*size))
-											;
+			;
 		
 		++(*size);
       				
