@@ -3230,7 +3230,7 @@ bool SimonState::vc_59_helper()
 	return true;
 #else
 	if (_voice_file == NULL)
-		return false;
+		return true;
 	return _voice_sound == 0;
 #endif
 }
