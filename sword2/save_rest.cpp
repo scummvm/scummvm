@@ -41,7 +41,7 @@ namespace Sword2 {
 
 // A savegame consists of a header and the global variables
 
-// Max length of a savegame filename, including full path
+// Max length of a savegame filename
 #define	MAX_FILENAME_LEN 128
 
 #ifdef SCUMM_BIG_ENDIAN
