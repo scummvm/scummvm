@@ -59,7 +59,7 @@ static int getNextWordLength(byte *src, int maxLength) {
 }
 
 bool WalkthroughDialog::loadWalkthroughText() {
-	char filename[MAX_PATH];
+	char filename[260];
 	File file;
 
 	sprintf(filename, "%s.wkt", _gameName);
