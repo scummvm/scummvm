@@ -2538,7 +2538,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			break;
 		case 16:
 		case 17:
-			enqueueText(getStringAddressVar(VAR_STRING2DRAW), args[3], args[4], args[2], args[1], true);
+			enqueueText(getStringAddressVar(VAR_STRING2DRAW), args[3], args[4], args[2], args[1], (args[0] == 16));
 			break;
 		case 20:
 			// it's used for turn on/off 'RadioChatter' effect for voice in the dig, but i's not needed
