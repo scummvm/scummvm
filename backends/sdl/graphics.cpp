@@ -175,6 +175,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 			mode = GFX_DOUBLESIZE;
 			newScaleFactor = 2;
 			newScalerProc = Normal2x;
+			_scaleFactor = 2;
 		} else
 			return false;
 	}
