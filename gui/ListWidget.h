@@ -27,7 +27,7 @@
 
 class ScrollBarWidget;
 
-enum {
+enum NumberingMode {
 	kListNumberingOff	= -1,
 	kListNumberingZero	= 0,
 	kListNumberingOne	= 1
@@ -48,7 +48,7 @@ protected:
 	StringList		_list;
 	bool			_editable;
 	bool			_editMode;
-	int				_numberingMode;
+	NumberingMode	_numberingMode;
 	int				_currentPos;
 	int				_entriesPerPage;
 	int				_selectedItem;
@@ -65,7 +65,7 @@ public:
 	const StringList& getList()	const			{ return _list; }
 	int getSelected() const						{ return _selectedItem; }
 	const String& getSelectedString() const		{ return _list[_selectedItem]; }
-	void setNumberingMode(int numberingMode)	{ _numberingMode = numberingMode; }
+	void setNumberingMode(NumberingMode numberingMode)	{ _numberingMode = numberingMode; }
 	bool isEditable() const						{ return _editable; }
 	void setEditable(bool editable)				{ _editable = editable; }
 	void scrollTo(int item);
