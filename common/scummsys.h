@@ -44,6 +44,10 @@
 	#define scumm_strnicmp strnicmp
 	#define snprintf _snprintf
 
+	#if defined(USE_ZLIB)
+	#define ZLIB_WINAPI
+	#endif
+
 	#if defined(CHECK_HEAP)
 	#undef CHECK_HEAP
 	#define CHECK_HEAP checkHeap();
