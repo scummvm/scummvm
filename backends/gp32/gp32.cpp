@@ -434,11 +434,11 @@ normal_mode:;
 /*
 	// Distinguish 555 and 565 mode
 	if (sdl_hwscreen->format->Rmask == 0x7C00)
-		Init_2xSaI(555);
+		InitScalers(555);
 	else
-		Init_2xSaI(565);
+		InitScalers(565);
 */
-	//Init_2xSaI(555); // ph0x fixme?
+	//InitScalers(555); // ph0x fixme?
 
  //ph0x fixme - tmpscreen needed?
 	// Need some extra bytes around when using 2xSaI

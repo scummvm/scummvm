@@ -90,6 +90,10 @@ void OSystem_SDL::load_gfx_mode() {
 		_scaleFactor = 2;
 		_scaler_proc = DotMatrix;
 		break;
+	case GFX_HQ3X:
+		_scaleFactor = 3;
+		_scaler_proc = HQ3x;
+		break;
 
 	case GFX_BILINEAR:
 	case GFX_DOUBLESIZE:
@@ -135,9 +139,9 @@ void OSystem_SDL::load_gfx_mode() {
 
 	// Distinguish 555 and 565 mode
 	if (_hwscreen->format->Rmask == 0x7C00)
-		Init_2xSaI(555);
+		InitScalers(555);
 	else
-		Init_2xSaI(565);
+		InitScalers(565);
 	
 	// Need some extra bytes around when using 2xSaI
 	uint16 *tmp_screen = (uint16 *)calloc(_tmpScreenWidth * (_screenHeight + 3), sizeof(uint16));

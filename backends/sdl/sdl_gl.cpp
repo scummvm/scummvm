@@ -147,6 +147,10 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 		_scaleFactor = 2;
 		_scaler_proc = DotMatrix;
 		break;
+	case GFX_HQ3X:
+		_scaleFactor = 3;
+		_scaler_proc = HQ3x;
+		break;
 
 	default:
 		error("unknown gfx mode %d", _mode);
@@ -200,9 +204,9 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 
 		// Distinguish 555 and 565 mode
 		if (_hwscreen->format->Rmask == 0x7C00)
-			Init_2xSaI(555);
+			InitScalers(555);
 		else
-			Init_2xSaI(565);
+			InitScalers(565);
 	}
 
 	//

@@ -21,7 +21,7 @@
 #ifndef COMMON_SCALER_H
 #define COMMON_SCALER_H
 
-extern int Init_2xSaI (uint32 BitFormat);
+extern void InitScalers(uint32 BitFormat);
 
 typedef void ScalerProc(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height);
@@ -40,6 +40,7 @@ DECLARE_SCALER(Normal2x);
 DECLARE_SCALER(Normal3x);
 DECLARE_SCALER(TV2x);
 DECLARE_SCALER(DotMatrix);
+DECLARE_SCALER(HQ3x);
 
 FORCEINLINE int real2Aspect(int y) {
 	return y + (y + 1) / 5;
@@ -64,6 +65,7 @@ enum {
 	GFX_ADVMAME3X = 7,
 	GFX_TV2X = 8,
 	GFX_DOTMATRIX = 9,
+	GFX_HQ3X = 10,
 
 	GFX_BILINEAR = 12,    // OpenGL backend
 	
