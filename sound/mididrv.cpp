@@ -340,7 +340,6 @@ MidiDriver *MidiDriver_AMIDI_create() {
 #if defined(UNIX) && !defined(__BEOS__)
 #define SEQ_MIDIPUTC    5
 #define SPECIAL_CHANNEL 9
-#define DEVICE_NUM 1
 
 class MidiDriver_SEQ : public MidiDriver {
 public:
@@ -355,12 +354,13 @@ private:
 	StreamCallback *_stream_proc;
 	void  *_stream_param;
 	int 	 _mode;
-	int device;
+	int device, _device_num;
 };
 
 MidiDriver_SEQ::MidiDriver_SEQ(){
   _mode=0;
   device=0;
+  _device_num=0;
 }
 
 int MidiDriver_SEQ::open(int mode) {
@@ -386,6 +386,7 @@ int MidiDriver_SEQ::open(int mode) {
 			error("Cannot open /dev/null to dump midi output");
 	}
 
+	_device_num = atoi(getenv("SCUMMVM_MIDIPORT"));
 	return 0;
 }
 
@@ -408,26 +409,26 @@ void MidiDriver_SEQ::send(uint32 b)
 	case 0xE0:
 		buf[position++] = SEQ_MIDIPUTC;
 		buf[position++] = (unsigned char)b;
-		buf[position++] = DEVICE_NUM;
+		buf[position++] = _device_num;
 		buf[position++] = 0;
 		buf[position++] = SEQ_MIDIPUTC;
 		buf[position++] = (unsigned char)((b >> 8) & 0x7F);
-		buf[position++] = DEVICE_NUM;
+		buf[position++] = _device_num;
 		buf[position++] = 0;
 		buf[position++] = SEQ_MIDIPUTC;
 		buf[position++] = (unsigned char)((b >> 16) & 0x7F);
-		buf[position++] = DEVICE_NUM;
+		buf[position++] = _device_num;
 		buf[position++] = 0;
 		break;
 	case 0xC0:
 	case 0xD0:
 		buf[position++] = SEQ_MIDIPUTC;
 		buf[position++] = (unsigned char)b;
-		buf[position++] = DEVICE_NUM;
+		buf[position++] = _device_num;
 		buf[position++] = 0;
 		buf[position++] = SEQ_MIDIPUTC;
 		buf[position++] = (unsigned char)((b >> 8) & 0x7F);
-		buf[position++] = DEVICE_NUM;
+		buf[position++] = _device_num;
 		buf[position++] = 0;
 		break;
 	default:

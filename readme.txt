@@ -338,10 +338,13 @@ Playing sound with Sequencer MIDI:              [UNIX ONLY]
 If your soundcard driver supports a sequencer, you may set the environment
 variable "SCUMMVM_MIDI" to your sequencer device - eg, /dev/sequencer
 
-Then start ScummVM with the parameter '-eseq'. This should work on several
-cards, and may offer better performance and quality than Adlib emulation.
-For those systems where Sequencer support does not work, there is always
-MIDI emulation and Adlib emulation available.
+If you have problems with not hearing audio in this configuration, it is
+possible you will need to set the "SCUMMVM_MIDIPORT" variable to 1 or 2. This
+selects the port on the selected sequencer to use. Then start scummvm with the
+-eseq parameter. This should work on several cards, and may offer better
+performance and quality than Adlib emulation. For those systems where
+Sequencer support does not work, there is always MIDI emulation and Adlib
+emulation available.
 
 Using MP3 files for CD audio:
 -----------------------------
