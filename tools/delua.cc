@@ -15,12 +15,10 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-extern "C" {
 #include "lua.h"
 #include "lundump.h"
 #include "lopcodes.h"
 #include "lzio.h"
-}
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -138,7 +136,7 @@ public:
     os << "\"";
     std::string str(text->str, text->u.s.len);
     if (translateStrings)
-      str = Localizer::instance()->localize(str.c_str());
+      str = g_localizer->localize(str.c_str());
     for (std::string::iterator i = str.begin(); i != str.end(); i++) {
       unsigned char c = *i;
       if (strchr(specials, c)) {
