@@ -608,7 +608,7 @@ MidiDriver *GameDetector::createMidi(int midiDriver) {
 	case MD_PCJR:      return NULL;
 #if defined(__PALM_OS__)
 	case MD_YPA1:      return MidiDriver_YamahaPa1_create();
-//	case MD_ZODIAC:    return MidiDriver_Zodiac_create();
+	case MD_ZODIAC:    return MidiDriver_Zodiac_create();
 #endif
 #if defined(WIN32) && !defined(_WIN32_WCE)
 	case MD_WINDOWS:   return MidiDriver_WIN_create();
