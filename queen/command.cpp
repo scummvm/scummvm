@@ -235,7 +235,6 @@ void Command::updatePlayer() {
 	}
 
 	if (_vm->input()->keyVerb() != VERB_NONE) {
-
 		if (_vm->input()->keyVerb() == VERB_USE_JOURNAL) {
 			_vm->logic()->useJournal();
 		} else if (_vm->input()->keyVerb() != VERB_SKIP_TEXT) {
@@ -252,8 +251,8 @@ void Command::updatePlayer() {
 			} else {
 				grabSelectedVerb();
 			}
-			_vm->input()->clearKeyVerb();
 		}
+		_vm->input()->clearKeyVerb();
 	}
 
 	_mouseKey = _vm->input()->mouseButton();
