@@ -1043,7 +1043,6 @@ void ScummEngine_v8::o8_actorOps() {
 		a->setAnimVar(pop(), i);
 		break;
 	case 0x7C:		// SO_ACTOR_IGNORE_TURNS_ON Make actor ignore turns
-		warning("ignoreTurns not yet implemented");
 		a->ignoreTurns = true;
 		break;
 	case 0x7D:		// SO_ACTOR_IGNORE_TURNS_OFF Make actor follow turns
