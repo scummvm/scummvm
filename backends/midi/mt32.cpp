@@ -1,10 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001-2004 The ScummVM project
  *
- * YM2612 tone generation code written by Tomoaki Hayasaka.
- * Used under the terms of the GNU General Public License.
- * Adpated to ScummVM by Jamieson Christian.
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -36,6 +32,9 @@
 #include "common/file.h"
 #include "common/config-manager.h"
 
+#include "graphics/font.h"
+#include "graphics/surface.h"
+
 class MidiChannel_MT32 : public MidiChannel_MPU401 {
 	void effectLevel(byte value) { }
 	void chorusLevel(byte value) { }
@@ -54,6 +53,8 @@ protected:
 	void generateSamples(int16 *buf, int len);
 
 public:
+	bool _initialising;
+
 	MidiDriver_MT32(SoundMixer *mixer);
 	virtual ~MidiDriver_MT32();
 
@@ -109,6 +110,54 @@ public:
 	}
 };
 
+static int eatSystemEvents() {
+	OSystem::Event event;
+	while (g_system->pollEvent(event)) {
+		switch (event.event_code) {
+		case OSystem::EVENT_QUIT:
+			return 1;
+		}
+	}
+	return 0;
+}
+
+static void drawProgress(float progress) {
+	Graphics::Surface surf;
+	uint32 borderColor = 0x2;
+	uint32 fillColor = 0x4;
+	surf.w = g_system->getWidth() / 7 * 5;
+	surf.h = Graphics::g_sysfont.getFontHeight();
+	int x = g_system->getWidth() / 7;
+	int y = g_system->getHeight() / 2 - surf.h / 2;
+	surf.pitch = surf.w;
+	surf.bytesPerPixel = 1;
+	surf.pixels = calloc(surf.w, surf.h);
+	Common::Rect r(surf.w, surf.h);
+	surf.frameRect(r, borderColor);
+	r.grow(-1);
+	r.right = r.left + (uint16)(r.width() * progress);
+	surf.fillRect(r, fillColor);
+	g_system->copyRectToScreen((byte *)surf.pixels, surf.pitch, x, y, surf.w, surf.h);
+	g_system->updateScreen();
+	free(surf.pixels);
+}
+
+static void drawMessage(int offset, const Common::String &text) {
+	const Graphics::Font &font(Graphics::g_sysfont);
+	Graphics::Surface surf;
+	uint32 color = 0x2;
+	surf.w = g_system->getWidth();
+	surf.h = font.getFontHeight();
+	surf.pitch = surf.w;
+	surf.bytesPerPixel = 1;
+	surf.pixels = calloc(surf.w, surf.h);
+	font.drawString(&surf, text, 0, 0, surf.w, color, Graphics::kTextAlignCenter);
+	int y = g_system->getHeight() / 2 - font.getFontHeight() / 2 + offset * (font.getFontHeight() + 1);
+	g_system->copyRectToScreen((byte *)surf.pixels, surf.pitch, 0, y, surf.w, surf.h);
+	g_system->updateScreen();
+	free(surf.pixels);
+}
+
 static MT32Emu::File *MT32_OpenFile(void *userData, const char *filename, MT32Emu::File::OpenMode mode) {
 	MT32File *file = new MT32File();
 	if (!file->open(filename, mode)) {
@@ -119,32 +168,36 @@ static MT32Emu::File *MT32_OpenFile(void *userData, const char *filename, MT32Em
 }
 
 static void MT32_PrintDebug(void *userData, const char *fmt, va_list list) {
+	char buf[512];
+	if (((MidiDriver_MT32 *)userData)->_initialising) {
+		vsprintf(buf, fmt, list);
+		buf[70] = 0; // Truncate to a reasonable length
+		drawMessage(1, buf);
+	}
 	//vdebug(0, fmt, list); // FIXME: Use a higher debug level
 }
 
-static void MT32_Report(void *userData, MT32Emu::ReportType type, const void *reportData) {
+static int MT32_Report(void *userData, MT32Emu::ReportType type, const void *reportData) {
 	switch(type) {
 	case MT32Emu::ReportType_lcdMessage:
 		g_system->displayMessageOnOSD((const char *)reportData);
 		break;
-	case MT32Emu::ReportType_errorPreset1:
-		error("Couldn't open Preset1.syx file");
+	case MT32Emu::ReportType_errorControlROM:
+		error("Failed to load MT32_CONTROL.ROM");
 		break;
-	case MT32Emu::ReportType_errorPreset2:
-		error("Couldn't open Preset2.syx file");
+	case MT32Emu::ReportType_errorPCMROM:
+		error("Failed to load MT32_PCM.ROM");
 		break;
-	case MT32Emu::ReportType_errorDrumpat:
-		error("Couldn't open drumpat.rom file");
-		break;
-	case MT32Emu::ReportType_errorPatchlog:
-		error("Couldn't open patchlog.cfg file");
-		break;
-	case MT32Emu::ReportType_errorMT32ROM:
-		error("Couldn't open MT32_PCM.ROM file");
+	case MT32Emu::ReportType_progressInit:
+		if (((MidiDriver_MT32 *)userData)->_initialising) {
+			drawProgress(*((float *)reportData));
+			return eatSystemEvents();
+		}
 		break;
 	default:
 		break;
 	}
+	return 0;
 }
 
 ////////////////////////////////////////
@@ -160,10 +213,15 @@ MidiDriver_MT32::MidiDriver_MT32(SoundMixer *mixer) : MidiDriver_Emulated(mixer)
 		_midiChannels[i].init(this, i);
 	}
 	_synth = NULL;
-
-	_baseFreq = 1000;
-
+	// A higher baseFreq reduces the length used in generateSamples(),
+	// and means that the timer callback will be called more often.
+	// That results in more accurate timing.
+	_baseFreq = 10000;
+	// Unfortunately bugs in the emulator cause inaccurate tuning
+	// at rates other than 32KHz, thus we produce data at 32KHz and
+	// rely on SoundMixer to convert.
 	_outputRate = 32000; //_mixer->getOutputRate();
+	_initialising = false;
 }
 
 MidiDriver_MT32::~MidiDriver_MT32() {
@@ -186,15 +244,19 @@ int MidiDriver_MT32::open() {
 	prop.reverbType = 0;
 	prop.reverbTime = 5;
 	prop.reverbLevel = 3;
+	prop.userData = this;
 	prop.printDebug = MT32_PrintDebug;
 	prop.report = MT32_Report;
 	prop.openFile = MT32_OpenFile;
 	_synth = new MT32Emu::Synth();
+	_initialising = true;
+	drawMessage(-1, "Initialising MT-32 Emulator");
 	if (!_synth->open(prop))
 		return MERR_DEVICE_NOT_AVAILABLE;
-
+	_initialising = false;
+	g_system->clearScreen();
+	g_system->updateScreen();
 	_mixer->playInputStream(&_handle, this, false, 255, 0, -1, false);
-
 	return 0;
 }
 
@@ -232,7 +294,9 @@ void MidiDriver_MT32::close() {
 		return;
 	_isOpen = false;
 
-	// Detach the premix callback handler
+	// Detach the player callback handler
+	setTimerCallback(NULL, NULL);
+	// Detach the mixer callback handler
 	_mixer->stopHandle(_handle);
 
 	_synth->close();
@@ -272,6 +336,128 @@ MidiChannel *MidiDriver_MT32::allocateChannel() {
 MidiChannel *MidiDriver_MT32::getPercussionChannel() {
 	return &_midiChannels[9];
 }
+
+// This code should be used when calling the timer callback from the mixer thread is undesirable.
+// Note that it results in less accurate timing.
+#if 0
+class MidiEvent_MT32 {
+public:
+	MidiEvent_MT32 *_next;
+	uint32 _msg; // 0xFFFFFFFF indicates a sysex message
+	byte *_data;
+	uint32 _len;
+
+	MidiEvent_MT32(uint32 msg, byte *data, uint32 len) {
+		_msg = msg;
+		if (len > 0) {
+			_data = new byte[len];
+			memcpy(_data, data, len);
+		}
+		_len = len;
+		_next = NULL;
+	}
+
+	MidiEvent_MT32() {
+		if (_len > 0)
+			delete _data;
+	}
+};
+
+class MidiDriver_ThreadedMT32 : public MidiDriver_MT32 {
+private:
+	OSystem::MutexRef _eventMutex;
+	MidiEvent_MT32 *_events;
+	Timer::TimerProc _timer_proc;
+
+	void pushMidiEvent(MidiEvent_MT32 *event);
+	MidiEvent_MT32 *popMidiEvent();
+
+protected:
+	void send(uint32 b);
+	void sysEx(byte *msg, uint16 length);
+
+public:
+	MidiDriver_ThreadedMT32(SoundMixer *mixer);
+	virtual ~MidiDriver_ThreadedMT32();
+
+	void onTimer();
+	void close();
+	void setTimerCallback(void *timer_param, Timer::TimerProc timer_proc);
+};
+
+
+MidiDriver_ThreadedMT32::MidiDriver_ThreadedMT32(SoundMixer *mixer) : MidiDriver_MT32(mixer) {
+	_eventMutex = g_system->createMutex();
+	_events = NULL;
+	_timer_proc = NULL;
+}
+
+MidiDriver_ThreadedMT32::~MidiDriver_ThreadedMT32() {
+	g_system->deleteMutex(_eventMutex);
+}
+
+void MidiDriver_ThreadedMT32::close() {
+	MidiDriver_MT32::close();
+	while ((popMidiEvent() != NULL)) {
+		// Just eat any leftover events
+	}
+}
+
+void MidiDriver_ThreadedMT32::setTimerCallback(void *timer_param, Timer::TimerProc timer_proc) {
+	if (!_timer_proc || !timer_proc) {
+		if (_timer_proc)
+			g_timer->removeTimerProc(_timer_proc);
+		_timer_proc = timer_proc;
+		if (timer_proc)
+			g_timer->installTimerProc(timer_proc, getBaseTempo(), timer_param);
+	}
+}
+
+void MidiDriver_ThreadedMT32::pushMidiEvent(MidiEvent_MT32 *event) {
+	g_system->lockMutex(_eventMutex);
+	if (_events == NULL) {
+		_events = event;
+	} else {
+		MidiEvent_MT32 *last = _events;
+		while (last->_next != NULL)
+			last = last->_next;
+		last->_next = event;
+	}
+	g_system->unlockMutex(_eventMutex);
+}
+
+MidiEvent_MT32 *MidiDriver_ThreadedMT32::popMidiEvent() {
+	MidiEvent_MT32 *event;
+	g_system->lockMutex(_eventMutex);
+	event = _events;
+	if (event != NULL)
+		_events = event->_next;
+	g_system->unlockMutex(_eventMutex);
+	return event;
+}
+
+void MidiDriver_ThreadedMT32::send(uint32 b) {
+	MidiEvent_MT32 *event = new MidiEvent_MT32(b, NULL, 0);
+	pushMidiEvent(event);
+}
+
+void MidiDriver_ThreadedMT32::sysEx(byte *msg, uint16 length) {
+	MidiEvent_MT32 *event = new MidiEvent_MT32(0xFFFFFFFF, msg, length);
+	pushMidiEvent(event);
+}
+
+void MidiDriver_ThreadedMT32::onTimer() {
+	MidiEvent_MT32 *event;
+	while ((event = popMidiEvent()) != NULL) {
+		if (event->_msg == 0xFFFFFFFF) {
+			MidiDriver_MT32::sysEx(event->_data, event->_len);
+		} else {
+			MidiDriver_MT32::send(event->_msg);
+		}
+		delete event;
+	}
+}
+#endif
 
 ////////////////////////////////////////
 //

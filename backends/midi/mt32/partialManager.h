@@ -31,22 +31,22 @@ private:
 	Synth *synth; // Only used for sending debug output
 
 	Partial *partialTable[MT32EMU_MAX_PARTIALS];
-	Bit32s PartialReserveTable[MT32EMU_MAX_PARTIALS];
+	Bit32s partialReserveTable[MT32EMU_MAX_PARTIALS];
 	Bit32s partialPart[9]; // The count of partials played per part
 
 public:
 	PartialManager(Synth *synth);
 	~PartialManager();
-	Partial *AllocPartial(int partNum);
-	unsigned int GetFreePartialCount(void);
-	bool FreePartials(unsigned int needed, int partNum);
-	unsigned int SetReserve(char *rset);
-	void DeactivateAll();
-	void AgeAll();
-	bool ProduceOutput(int i, Bit16s *buffer, Bit32u bufferLength);
+	Partial *allocPartial(int partNum);
+	unsigned int getFreePartialCount(void);
+	bool freePartials(unsigned int needed, int partNum);
+	unsigned int setReserve(Bit8u *rset);
+	void deactivateAll();
+	void ageAll();
+	bool produceOutput(int i, Bit16s *buffer, Bit32u bufferLength);
 	bool shouldReverb(int i);
-	void ClearAlreadyOutputed();
-	void GetPerPartPartialUsage(int usage[9]);
+	void clearAlreadyOutputed();
+	void getPerPartPartialUsage(int usage[9]);
 };
 
 }

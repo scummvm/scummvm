@@ -29,20 +29,12 @@ class Synth;
 
 class Part {
 private:
-	Synth *synth; // Only used for sending debug output
-
 	// Pointers to the areas of the MT-32's memory dedicated to this part (for parts 1-8)
 	MemParams::PatchTemp *patchTemp;
 	TimbreParam *timbreTemp;
-	//... and for rhythm
-	MemParams::RhythmTemp *rhythmTemp;
 
-	bool isRhythm;
-	bool init;
-	int partNum;
-
-	char name[8]; // "Part 1".."Part 8", "Rhythm"
-	char currentInstr[11];
+	// 0=Part 1, .. 7=Part 8, 8=Rhythm
+	unsigned int partNum;
 
 	bool holdpedal;
 
@@ -51,33 +43,61 @@ private:
 	PatchCache patchCache[4];
 
 	float bend; // -1.0 .. +1.0 
-	Bit32s volume;
 
 	dpoly polyTable[MT32EMU_MAX_POLY];
 
 	void abortPoly(dpoly *poly);
 
-	static int fixKeyfollow(int srckey, int *dir);
+	static int fixKeyfollow(int srckey);
 	static int fixBiaslevel(int srcpnt, int *dir);
 
+	void setPatch(const PatchParam *patch);
+
+protected:
+	Synth *synth;
+	char name[8]; // "Part 1".."Part 8", "Rhythm"
+	char currentInstr[11];
+	Bit32u volume;
+	void backupCacheToPartials(PatchCache cache[4]);
+	void cacheTimbre(PatchCache cache[4], const TimbreParam *timbre);
+	void playPoly(const PatchCache cache[4], unsigned int key, int freqNum, int vel);
+	const char *getName() const;
+
 public:
-	Part(Synth *synth, int usePartNum);
-	char *getName();
-	void playNote(PartialManager *partialManager, unsigned int key, int vel);
+	Part(Synth *synth, unsigned int usePartNum);
+	virtual void playNote(unsigned int key, int vel);
 	void stopNote(unsigned int key);
 	void allStop();
 	void setVolume(int vol);
-	void setPan(int vol);
-	void setBend(int vol);
-	void setModulation(int vol);
-	void setPatch(int patchnum);
+	virtual void setPan(unsigned int midiPan);
+	virtual void setBend(unsigned int midiBend);
+	virtual void setModulation(unsigned int midiModulation);
+	virtual void setProgram(unsigned int patchNum);
 	void setHoldPedal(bool pedalval);
 	void stopPedalHold();
-	void refreshPatch();
-	void refreshDrumCache();
-	void setPatch(PatchParam *patch);
+	virtual void refresh();
+	virtual void refreshTimbre(unsigned int absTimbreNum);
 	void setTimbre(TimbreParam *timbre);
-	unsigned int getAbsTimbreNum();
+	virtual unsigned int getAbsTimbreNum() const;
+};
+
+class RhythmPart: public Part {
+	// Pointer to the area of the MT-32's memory dedicated to rhythm
+	const MemParams::RhythmTemp *rhythmTemp;
+
+	// This caches the timbres/settings in use by the rhythm part
+	PatchCache drumCache[64][4];
+	StereoVolume drumPan[64];
+public:
+	RhythmPart(Synth *synth, unsigned int usePartNum);
+	void refreshTimbre(unsigned int timbreNum);
+	void refresh();
+	void playNote(unsigned int key, int vel);
+	unsigned int getAbsTimbreNum() const;
+	void setPan(unsigned int midiPan);
+	void setBend(unsigned int midiBend);
+	void setModulation(unsigned int midiModulation);
+	void setProgram(unsigned int patchNum);
 };
 
 }

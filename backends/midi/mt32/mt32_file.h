@@ -41,7 +41,7 @@ public:
 	virtual bool readBit32u(Bit32u *in);
 	virtual size_t write(const void *out, size_t size) = 0;
 	virtual bool writeBit8u(Bit8u out) = 0;
-	// Note: May write some a single byte to the file before failing
+	// Note: May write a single byte to the file before failing
 	virtual bool writeBit16u(Bit16u out);
 	// Note: May write some (<4) bytes to the file before failing
 	virtual bool writeBit32u(Bit32u out);

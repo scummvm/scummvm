@@ -33,7 +33,7 @@ enum EnvelopeType {
 	EnvelopeType_pitch = 2
 };
 
-struct envstatus {
+struct EnvelopeStatus {
 	Bit32s envpos;
 	Bit32s envstat;
 	Bit32s envbase;
@@ -51,7 +51,7 @@ struct envstatus {
 // Class definition of MT-32 partials.  32 in all.
 class Partial {
 private:
-	Synth *synth; // Only used for sending debug output
+	Synth *synth;
 
 	int ownerPart; // -1 if unassigned
 	int mixType;
@@ -63,25 +63,28 @@ private:
 	bool play;
 
 	// Keyfollowed note value
+#if MT32EMU_ACCURATENOTES == 1
+	NoteLookup noteLookupStorage;
+	float noteVal;
+#else
 	int noteVal;
-	NoteLookup *noteLookup; // Lookup stuff for this noteVal
-
-	int keyVal;
-	NoteLookup *keyLookup;
+	int fineShift;
+#endif
+	const NoteLookup *noteLookup; // LUTs for this noteVal
 
 	// Keyfollowed filter values
 	int realVal;
 	int filtVal;
 
-	envstatus envs[3];
+	EnvelopeStatus envs[3];
 
 	int pulsewidth;
 
 	Bit32u lfoPos;
 	soundaddr partialOff;
 
-	Bit32u ampEnvCache;
-	Bit32u pitchEnvCache;
+	Bit32u ampEnvVal;
+	Bit32u pitchEnvVal;
 
 	float history[32];
 
@@ -93,19 +96,19 @@ private:
 
 	int bendShift;
 
-	Bit16s *mixBuffers(Bit16s * buf1, Bit16s * buf2, int len);
-	Bit16s *mixBuffersRingMix(Bit16s * buf1, Bit16s * buf2, int len);
-	Bit16s *mixBuffersRing(Bit16s * buf1, Bit16s * buf2, int len);
-	void mixBuffersStereo(Bit16s * buf1, Bit16s * buf2, Bit16s * outBuf, int len);
+	Bit16s *mixBuffers(Bit16s *buf1, Bit16s *buf2, int len);
+	Bit16s *mixBuffersRingMix(Bit16s *buf1, Bit16s *buf2, int len);
+	Bit16s *mixBuffersRing(Bit16s *buf1, Bit16s *buf2, int len);
+	void mixBuffersStereo(Bit16s *buf1, Bit16s *buf2, Bit16s *outBuf, int len);
 
 	Bit32s getFiltEnvelope();
-	Bit32s getAmpEnvelope();
+	Bit32u getAmpEnvelope();
 	Bit32s getPitchEnvelope();
 
 	void initKeyFollow(int freqNum);
 
 public:
-	PatchCache *patchCache;
+	const PatchCache *patchCache;
 	PatchCache cachebackup;
 
 	Partial *pair;
@@ -119,7 +122,7 @@ public:
 	bool isActive();
 	void activate(int part);
 	void deactivate(void);
-	void startPartial(dpoly *usePoly, PatchCache *useCache, Partial *pairPartial);
+	void startPartial(dpoly *usePoly, const PatchCache *useCache, Partial *pairPartial);
 	void startDecay(EnvelopeType envnum, Bit32s startval);
 	void startDecayAll();
 	void setBend(float factor);

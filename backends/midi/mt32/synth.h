@@ -39,27 +39,27 @@ class PartialManager;
 class Part;
 
 enum ReportType {
-	// Files missing
-	ReportType_errorPreset1    = 1,
-	ReportType_errorPreset2    = 2,
-	ReportType_errorDrumpat    = 3,
-	ReportType_errorPatchlog   = 4,
-	ReportType_errorMT32ROM    = 5,
-	ReportType_errorSampleRate = 6,
+	// Errors
+	ReportType_errorControlROM = 1,
+	ReportType_errorPCMROM,
+	ReportType_errorSampleRate,
+
+	// Progress
+	ReportType_progressInit,
 
 	// HW spec
-	ReportType_availableSSE    = 7,
-	ReportType_available3DNow  = 8,
-	ReportType_usingSSE        = 9,
-	ReportType_using3DNow      = 10,
+	ReportType_availableSSE,
+	ReportType_available3DNow,
+	ReportType_usingSSE,
+	ReportType_using3DNow,
 
 	// General info
-	ReportType_lcdMessage      = 11,
-	ReportType_devReset        = 12,
-	ReportType_devReconfig     = 13,
-	ReportType_newReverbMode   = 14,
-	ReportType_newReverbTime   = 15,
-	ReportType_newReverbLevel  = 16
+	ReportType_lcdMessage,
+	ReportType_devReset,
+	ReportType_devReconfig,
+	ReportType_newReverbMode,
+	ReportType_newReverbTime,
+	ReportType_newReverbLevel
 };
 
 struct SynthProperties {
@@ -84,7 +84,7 @@ struct SynthProperties {
 	// This is used as the first argument to all callbacks
 	void *userData;
 	// Callback for reporting various errors and information. May be NULL
-	void (*report)(void *userData, ReportType type, const void *reportData);
+	int (*report)(void *userData, ReportType type, const void *reportData);
 	// Callback for debug messages, in vprintf() format
 	void (*printDebug)(void *userData, const char *fmt, va_list list);
 	// Callback for providing an implementation of File, opened and ready for use
@@ -105,19 +105,20 @@ typedef void (*recalcStatusCallback)(int percDone);
 bool RecalcWaveforms(char * baseDir, int sampRate, recalcStatusCallback callBack);
 
 typedef float (*iir_filter_type)(float input,float *hist1_ptr, float *coef_ptr, int revLevel);
-extern iir_filter_type usefilter;
 
 class Synth {
 friend class Part;
+friend class RhythmPart;
 friend class Partial;
 friend class TableInitialiser;
 private:
 	bool isEnabled;
 
-	PCMWave PCM[54];
-	PCMWaveEntry PCMList[128];
-	Bit32s PCMLoopTable[54];
+	iir_filter_type iirFilter;
 
+	PCMWaveEntry PCMList[128];
+
+	Bit8u controlROMData[64 * 1024];
 	Bit16s romfile[PCMSIZE + GRAN];
 	Bit8s chantable[32];
 
@@ -125,15 +126,12 @@ private:
 	static Bit32s samplepos = 0;
 	#endif
 
-	MT32RAMFormat mt32ram, mt32default;
+	MemParams mt32ram, mt32default;
 
 	revmodel *reverbModel;
 
-	Bit16s mastervolume;
-
-	char curRevMode;
-	char curRevTime;
-	Bit32u curRevLevel;
+	float masterTune;
+	Bit16u masterVolume;
 
 	unsigned char initmode;
 	bool isOpen;
@@ -150,25 +148,30 @@ private:
 	SynthProperties myProp;
 
 	bool loadPreset(const char *filename);
-	void initReverb(char newRevMode, char newRevTime);
+	void initReverb(Bit8u newRevMode, Bit8u newRevTime, Bit8u newRevLevel);
 	void doRender(Bit16s * stream, Bit32u len);
 	void playMsgOnPart(unsigned char part, unsigned char code, unsigned char note, unsigned char velocity);
-	void playSysexWithoutHeader(unsigned char channel, Bit8u *sysex, Bit32u len);
+	void playSysexWithoutHeader(unsigned char channel, const Bit8u *sysex, Bit32u len);
 
-	bool loadDrums(const char *filename);
-	bool loadPCMToROMMap(const char *filename);
-	bool loadROM(const char *filename);
-	void dumpDrums(const char *filename);
-	// Save the system state to a sysex file specified by filename
-	int dumpSysex(char *filename);
+	bool loadControlROM(const char *filename);
+	bool loadPCMROM(const char *filename);
+	bool dumpTimbre(File *file, const TimbreParam *timbre, Bit32u addr);
+	int dumpTimbres(const char *filename, int start, int len);
 
+	void initPCMList();
+	void initRhythmTimbres();
+	void initTimbres(Bit16u mapAddress, int startTimbre);
+	void initRhythmTimbre(int drumNum, const Bit8u *mem);
+	bool refreshSystem();
 protected:
-	void report(ReportType type, const void *reportData);
+	int report(ReportType type, const void *reportData);
 	File *openFile(const char *filename, File::OpenMode mode);
 	void closeFile(File *file);
 	void printDebug(const char *fmt, ...);
 
 public:
+	static Bit8u calcSysexChecksum(const Bit8u *data, Bit32u len, Bit8u checksum);
+
 	Synth();
 	~Synth();
 
@@ -182,11 +185,10 @@ public:
 	// Sends a 4-byte MIDI message to the MT-32 for immediate playback
 	void playMsg(Bit32u msg);
 
-	static Bit8u calcSysexChecksum(Bit8u *data, Bit32u len, Bit8u checksum);
 	// Sends a string of Sysex commands to the MT-32 for immediate interpretation
 	// The length is in bytes
-	void playSysex(Bit8u *sysex, Bit32u len);
-	void playSysexWithoutFraming(Bit8u *sysex, Bit32u len);
+	void playSysex(const Bit8u *sysex, Bit32u len);
+	void playSysexWithoutFraming(const Bit8u *sysex, Bit32u len);
 
 	// This callback routine is used to have the MT-32 generate samples to the specified
 	// output stream.  The length is in whole samples, not bytes. (I.E. in 16-bit stereo,

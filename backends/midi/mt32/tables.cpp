@@ -25,35 +25,13 @@
 
 #include "mt32emu.h"
 
+#define FIXEDPOINT_MAKE(x, point) ((Bit32u)((1 << point) * x))
+
 namespace MT32Emu {
 
 //Amplitude time velocity follow exponential coefficients
 const double tvcatconst[5] = {0.0, 0.002791309, 0.005942882, 0.012652792, 0.026938637};
 const double tvcatmult[5] = {1.0, 1.072662811, 1.169129367, 1.288579123, 1.229630539};
-
-const Bit8s LoopPatterns[9][10] = {
-	{ 2,  3, 4,   5,  6,  7, -1, -1, -1, -1},
-	{ 8,  9, 10, 11, 12, 13, 14, 15, 16, -1},
-	{17, 18, 19, 20, 21, -1, -1, -1, -1, -1},
-	{22, 23, 24, 25, 26, 27, 28, 29, -1, -1},
-	{30, 31, 32, 33, 34, 35, 36, 37, -1, -1},
-	{45, 46, 47, 48, 49, 50, 51, 52, 53, -1},
-	{15, 11, 12, 13, 14, 15, 16, -1, -1, -1},
-	{30, 35, 32, 33, 34, -1, -1, -1, -1, -1},
-	{ 2,  3, -1, -1, -1, -1, -1, -1, -1, -1},
-};
-
-static const Bit32s LoopPatternTuning[9][10] = {
-	{0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A,      -1,      -1,      -1,      -1},
-	{0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A,      -1},
-	{0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A,      -1,      -1,      -1,      -1,      -1},
-	{0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A,      -1,      -1},
-	{0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A,      -1,      -1},
-	{0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A,      -1},
-	{0x2590B, 0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A,      -1,      -1,      -1},
-	{0x1294A, 0x1294A, 0x1294A, 0x1294A, 0x1294A,      -1,      -1,      -1,      -1,      -1},
-	{0x1294A, 0x1294A,      -1,      -1,      -1,      -1,      -1,      -1,      -1,      -1},
-};
 
 // These are division constants for the TVF depth key follow
 static const Bit32u depexp[5] = {3000, 950, 485, 255, 138};
@@ -63,6 +41,7 @@ static const double tkcatconst[5] = {0.0, 0.005853144, 0.011148054, 0.019086143,
 static const double tkcatmult[5] = {1.0, 1.058245688, 1.048488989, 1.016049301, 1.097538067};
 
 static float initialisedSampleRate = 0.0f;
+static float initialisedMasterTune = 0.0f;
 
 Bit16s smallnoise[MAX_SAMPLE_OUTPUT];
 
@@ -215,7 +194,7 @@ static void initEnvelopes(float samplerate) {
 		//lasttimetable[lf] = (int)((exp(logtime)/(312.12*6)) * (float)samplerate);
 
 		float mv = (float)lf / 100.0f;
-		float pt = mv-0.5f;
+		float pt = mv - 0.5f;
 		if (pt < 0)
 			pt = 0;
 
@@ -319,7 +298,7 @@ void TableInitialiser::initMT32ConstantTables(Synth *synth) {
 
 	for (lf = 0; lf < 128; lf++) {
 		// Converts MIDI velocity to volume.
-		voltable[lf] = (int)(127.0f * powf((float)lf / 127.0f, FLOAT_LN));
+		voltable[lf] = FIXEDPOINT_MAKE(powf((float)lf / 127.0f, FLOAT_LN), 7);
 	}
 	for (unsigned int i = 0; i < MAX_SAMPLE_OUTPUT; i++) {
 		int myRand;
@@ -523,7 +502,7 @@ File *TableInitialiser::initWave(Synth *synth, NoteLookup *noteLookup, float amp
 
 #if 0
 			//FIXME:KG: Credit Timo Strunk (bastardo on #scummvm) for help with this!
-			float saw = 0.5f * FLOAT_PI - sa / 2;
+			double saw = 0.5 * DOUBLE_PI - sa / 2;
 #else
 			double saw = 0.0;
 			for (int sinus = 1; sinus < div; sinus++) {
@@ -581,11 +560,14 @@ static void initNFiltTable(NoteLookup *noteLookup, float freq, float rate) {
 	}
 }
 
-File *TableInitialiser::initNote(Synth *synth, NoteLookup *noteLookup, float note, float rate, float tuning, PCMWave pcmWaves[54], File *file) {
+File *TableInitialiser::initNote(Synth *synth, NoteLookup *noteLookup, float note, float rate, float masterTune, PCMWaveEntry pcmWaves[128], File *file) {
 	float ampsize = WGAMP;
-	float freq = (float)(tuning * pow(2.0, ((double)note - MIDDLEA) / 12.0));
+	float freq = (float)(masterTune * pow(2.0, ((double)note - MIDDLEA) / 12.0));
 	float div = rate / freq;
 	noteLookup->div = (int)div;
+
+	if (noteLookup->div == 0)
+		noteLookup->div = 1;
 
 	initSaw(noteLookup, noteLookup->div);
 	initDep(noteLookup, note);
@@ -595,18 +577,10 @@ File *TableInitialiser::initNote(Synth *synth, NoteLookup *noteLookup, float not
 
 	// Create the pitch tables
 
-	float rateMult = 32000.0f / rate;
-	float tuner = rateMult * freq * 65536.0f;
-	for (int pc = 0; pc < 54; pc++) {
-		noteLookup->wavTable[pc] = (int)(tuner / pcmWaves[pc].tune);
-	}
-	for (int lp = 0; lp < 9; lp++) {
-		for (int ln = 0; ln < 10; ln++) {
-			// FIXME:KG: Surely this needs to be adjusted for the rate?
-			// If not, remove rateMult * from below
-			// (Note: I'm assuming the LoopPatternTuning constants were intended for 32k rate)
-			noteLookup->loopTable[lp][ln] = (int)(rateMult * (float)LoopPatternTuning[lp][ln] * (freq / 220.0f));
-		}
+	double rateMult = 32000.0 / rate;
+	double tuner = freq * 65536.0f;
+	for (int pc = 0; pc < 128; pc++) {
+		noteLookup->wavTable[pc] = (int)(tuner / pcmWaves[pc].tune * rateMult);
 	}
 
 	initFiltTable(noteLookup, freq, rate);
@@ -614,11 +588,14 @@ File *TableInitialiser::initNote(Synth *synth, NoteLookup *noteLookup, float not
 	return file;
 }
 
-void TableInitialiser::initNotes(Synth *synth, PCMWave pcmWaves[54], float rate, float tuning) {
+bool TableInitialiser::initNotes(Synth *synth, PCMWaveEntry pcmWaves[128], float rate, float masterTune) {
+	const char *NoteNames[12] = {
+		"C ", "C#", "D ", "D#", "E ", "F ", "F#", "G ", "G#", "A ", "A#", "B "
+	};
 	char filename[64];
 	int intRate = (int)rate;
-	char version[4] = {0, 0, 0, 1};
-	sprintf(filename, "waveformcache-%d-%.1f.raw", intRate, tuning);
+	char version[4] = {0, 0, 0, 2};
+	sprintf(filename, "waveformcache-%d-%.2f.raw", intRate, masterTune);
 
 	File *file = NULL;
 	char header[20];
@@ -631,11 +608,11 @@ void TableInitialiser::initNotes(Synth *synth, PCMWave pcmWaves[54], float rate,
 	header[pos++] = (char)((intRate >> 16) & 0xFF);
 	header[pos++] = (char)((intRate >> 8) & 0xFF);
 	header[pos++] = (char)(intRate & 0xFF);
-	int intTuning = (int)tuning;
+	int intTuning = (int)masterTune;
 	header[pos++] = (char)((intTuning >> 8) & 0xFF);
 	header[pos++] = (char)(intTuning & 0xFF);
 	header[pos++] = 0;
-	header[pos] = (char)((tuning - intTuning) * 10);
+	header[pos] = (char)((masterTune - intTuning) * 10);
 #if MT32EMU_WAVECACHEMODE < 2
 	bool reading = false;
 	file = synth->openFile(filename, File::OpenMode_read);
@@ -648,33 +625,37 @@ void TableInitialiser::initNotes(Synth *synth, PCMWave pcmWaves[54], float rate,
 					if (endianCheck == 1) {
 						reading = true;
 					} else {
-						synth->printDebug("Endian check in %s does not match expected - will generate", filename);
+						synth->printDebug("Endian check in %s does not match expected", filename);
 					}
 				} else {
-					synth->printDebug("Unable to read endian check in %s - will generate", filename);
+					synth->printDebug("Unable to read endian check in %s", filename);
 				}
 			} else {
-				synth->printDebug("Header of %s does not match expected - will generate", filename);
+				synth->printDebug("Header of %s does not match expected", filename);
 			}
 		} else {
-			synth->printDebug("Error reading 16 bytes of %s - will generate", filename);
+			synth->printDebug("Error reading 16 bytes of %s", filename);
 		}
 		if (!reading) {
 			file->close();
 			file = NULL;
 		}
 	} else {
-		synth->printDebug("Unable to open %s for reading - will generate", filename);
+		synth->printDebug("Unable to open %s for reading", filename);
 	}
 #endif
 
-	//FIXME:KG: may only need to do 12 to 108
-	//12..108 is the range allowed by note on commands, but the key can be modified by pitch keyfollow
-	//and adjustment for timbre pitch, so the results can be outside that range. Do move it (by octave) into
-	// the 12..108 range, or keep it in 0..127 range, or something else altogether?
-	for (int f = 12; f < 109; f++) {
-		NoteLookup *noteLookup = &noteLookups[f];
-		file = initNote(synth, noteLookup, (float)f, rate, tuning, pcmWaves, file);
+	float progress = 0.0f;
+	bool abort = false;
+	synth->report(ReportType_progressInit, &progress);
+	for (int f = LOWEST_NOTE; f <= HIGHEST_NOTE; f++) {
+		synth->printDebug("Initialising note %s%d", NoteNames[f % 12], (f / 12) - 1);
+		NoteLookup *noteLookup = &noteLookups[f - LOWEST_NOTE];
+		file = initNote(synth, noteLookup, (float)f, rate, masterTune, pcmWaves, file);
+		progress = (f - LOWEST_NOTE + 1) / (float)NUM_NOTES;
+		abort = synth->report(ReportType_progressInit, &progress) != 0;
+		if (abort)
+			break;
 	}
 
 #if MT32EMU_WAVECACHEMODE == 0 || MT32EMU_WAVECACHEMODE == 2
@@ -682,7 +663,7 @@ void TableInitialiser::initNotes(Synth *synth, PCMWave pcmWaves[54], float rate,
 		file = synth->openFile(filename, File::OpenMode_write);
 		if (file != NULL) {
 			if (file->write(header, 16) == 16 && file->writeBit16u(1)) {
-				for (int f = 12; f < 109 && file != NULL; f++) {
+				for (int f = 0; f < NUM_NOTES; f++) {
 					for (int i = 0; i < 3 && file != NULL; i++) {
 						int len = noteLookups[f].waveformSize[i];
 						for (int j = 0; j < len; j++) {
@@ -706,21 +687,42 @@ void TableInitialiser::initNotes(Synth *synth, PCMWave pcmWaves[54], float rate,
 
 	if (file != NULL)
 		synth->closeFile(file);
+	return !abort;
 }
 
-bool TableInitialiser::initMT32Tables(Synth *synth, PCMWave pcms[54], float sampleRate) {
+void TableInitialiser::freeNotes() {
+	for (int t = 0; t < 3; t++) {
+		for (int m = 0; m < NUM_NOTES; m++) {
+			if (noteLookups[m].waveforms[t] != NULL) {
+				delete[] noteLookups[m].waveforms[t];
+				noteLookups[m].waveforms[t] = NULL;
+				noteLookups[m].waveformSize[t] = 0;
+			}
+		}
+	}
+	initialisedMasterTune = 0.0f;
+}
+
+bool TableInitialiser::initMT32Tables(Synth *synth, PCMWaveEntry pcmWaves[128], float sampleRate, float masterTune) {
 	if (sampleRate <= 0.0f) {
 		synth->printDebug("Bad sampleRate (%d <= 0.0f)", sampleRate);
 		return false;
 	}
 	if (initialisedSampleRate == 0.0f) {
 		initMT32ConstantTables(synth);
+	}
+	if (initialisedSampleRate != sampleRate) {
 		initFiltCoeff(sampleRate);
 		initEnvelopes(sampleRate);
-		initialisedSampleRate = sampleRate;
 	}
-	// This always needs to be done, to allocate the waveforms
-	initNotes(synth, pcms, sampleRate, TUNING);
+	if (initialisedSampleRate != sampleRate || initialisedMasterTune != masterTune) {
+		freeNotes();
+		if (!initNotes(synth, pcmWaves, sampleRate, masterTune)) {
+			return false;
+		}
+		initialisedSampleRate = sampleRate;
+		initialisedMasterTune = masterTune;
+	}
 	return true;
 }
 
