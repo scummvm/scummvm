@@ -379,12 +379,12 @@ int drawFrame(SURFACE *ds, const Point *p1, const Point *p2, int color) {
 	int min_y;
 	int max_y;
 
-	Point n_p1; /* 1 .. 2 */
-	Point n_p2; /* .    . */
-	Point n_p3; /* .    . */
-	Point n_p4; /* 4 .. 3 */
-
 	assert((ds != NULL) && (p1 != NULL) && (p2 != NULL));
+	
+	min_x = MIN(p1->x, p2->x);
+	max_x = MAX(p1->x, p2->x);
+	min_y = MIN(p1->y, p2->y);
+	max_y = MAX(p1->y, p2->y);
 
 	ds->frameRect(Common::Rect(min_x, min_y, max_x+1, max_y+1), color);
 
