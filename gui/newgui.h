@@ -23,6 +23,7 @@
 
 #include "common/scummsys.h"
 #include "common/singleton.h"
+#include "common/stack.h"
 #include "common/str.h"
 #include "common/system.h"	// For events
 #include "graphics/font.h"
@@ -53,21 +54,10 @@ using Graphics::kTextAlignLeft;
 using Graphics::kTextAlignRight;
 
 
-// Extremly simple stack class, doesn't even do any error checking (for now)
-class DialogStack {
-protected:
-	Dialog	*_stack[10];	// Anybody nesting dialogs deeper than 4 is mad anyway
-	int		_size;
-public:
-	DialogStack() : _size(0) {}
-	
-	bool	empty() const		{ return _size <= 0; }
-	void	push(Dialog *d)		{ _stack[_size++] = d; }
-	Dialog	*top() const		{ return _stack[_size - 1]; }
-	void	pop()				{ if (_size > 0) _stack[--_size] = 0; }
-	int		size() const		{ return _size; }
-	Dialog	*operator [](int i)	{ return _stack[i]; }
-};
+// Simple dialog stack class
+// Anybody nesting dialogs deeper than 4 is mad anyway
+typedef Common::Stack<Dialog *> DialogStack;
+
 
 /**
  * GUI manager singleton.
