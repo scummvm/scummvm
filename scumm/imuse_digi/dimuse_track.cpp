@@ -160,8 +160,10 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				_track[l]->stream = NULL;
 				_track[l]->started = false;
 			} else {
+				// setup 1 second mixer wrapped buffer
+				int32 mixerBufferSize = _track[l]->iteration;
 				_track[l]->stream2 = NULL;
-				_track[l]->stream = makeAppendableAudioStream(freq, _track[l]->mixerFlags, 100000);
+				_track[l]->stream = makeAppendableAudioStream(freq, _track[l]->mixerFlags, mixerBufferSize);
 				_vm->_mixer->playInputStream(&_track[l]->handle, _track[l]->stream, false, _track[l]->vol / 1000, _track[l]->pan, -1);
 				_track[l]->started = true;
 			}
