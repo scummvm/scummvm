@@ -58,7 +58,7 @@ Actor::Actor() {
 	memset(sound, 0, sizeof(sound));
 	memset(&cost, 0, sizeof(CostumeData));
 	memset(&walkdata, 0, sizeof(ActorWalkData));
-	walkdata.point3x = 32000;
+	walkdata.point3.x = 32000;
 
 	walkScript = 0;
 
@@ -137,7 +137,7 @@ void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY) {
 	speedy = newSpeedY;
 
 	if (moving) {
-		calcMovementFactor(walkdata.newx, walkdata.newy);
+		calcMovementFactor(walkdata.next);
 	}
 }
 
@@ -158,19 +158,16 @@ int Scumm::getAngleFromPos(int x, int y) const {
 	}
 }
 
-int Actor::calcMovementFactor(int newX, int newY) {
-	int actorX, actorY;
+int Actor::calcMovementFactor(ScummVM::Point next) {
+	ScummVM::Point actorPos(x, y);
 	int diffX, diffY;
 	int32 deltaXFactor, deltaYFactor;
 
-	actorX = x;
-	actorY = y;
-
-	if (actorX == newX && actorY == newY)
+	if (actorPos == next)
 		return 0;
 
-	diffX = newX - actorX;
-	diffY = newY - actorY;
+	diffX = next.x - actorPos.x;
+	diffY = next.y - actorPos.y;
 	deltaYFactor = speedy << 16;
 
 	if (diffY < 0)
@@ -196,10 +193,8 @@ int Actor::calcMovementFactor(int newX, int newY) {
 		}
 	}
 
-	walkdata.x = actorX;
-	walkdata.y = actorY;
-	walkdata.newx = newX;
-	walkdata.newy = newY;
+	walkdata.cur = actorPos;
+	walkdata.next = next;
 	walkdata.deltaXFactor = deltaXFactor;
 	walkdata.deltaYFactor = deltaYFactor;
 	walkdata.xfrac = 0;
@@ -367,10 +362,10 @@ int Actor::actorWalkStep() {
 		setBox(walkdata.curbox);
 	}
 
-	distX = abs(walkdata.newx - walkdata.x);
-	distY = abs(walkdata.newy - walkdata.y);
+	distX = abs(walkdata.next.x - walkdata.cur.x);
+	distY = abs(walkdata.next.y - walkdata.cur.y);
 
-	if (abs(actorX - walkdata.x) >= distX && abs(actorY - walkdata.y) >= distY) {
+	if (abs(actorX - walkdata.cur.x) >= distX && abs(actorY - walkdata.cur.y) >= distY) {
 		moving &= ~MF_IN_LEG;
 		return 0;
 	}
@@ -383,12 +378,12 @@ int Actor::actorWalkStep() {
 	walkdata.yfrac = (uint16)tmpY;
 	actorY = (tmpY >> 16);
 
-	if (abs(actorX - walkdata.x) > distX) {
-		actorX = walkdata.newx;
+	if (abs(actorX - walkdata.cur.x) > distX) {
+		actorX = walkdata.next.x;
 	}
 
-	if (abs(actorY - walkdata.y) > distY) {
-		actorY = walkdata.newy;
+	if (abs(actorY - walkdata.cur.y) > distY) {
+		actorY = walkdata.next.y;
 	}
 
 	x = actorX;
@@ -692,7 +687,7 @@ void Actor::adjustActorPos() {
 
 	setBox(abr.box);
 
-	walkdata.destx = -1;
+	walkdata.dest.x = -1;
 
 	moving = 0;
 	cost.soundCounter = 0;
@@ -1266,7 +1261,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 		} else {
 			abr = adjustXYToBeInBox(abr.x, abr.y);
 		}
-		if (moving && walkdata.destdir == dir && walkdata.destx == abr.x && walkdata.desty == abr.y)
+		if (moving && walkdata.destdir == dir && walkdata.dest.x == abr.x && walkdata.dest.y == abr.y)
 			return;
 	}
 
@@ -1275,12 +1270,12 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 		return;
 	}
 
-	walkdata.destx = abr.x;
-	walkdata.desty = abr.y;
+	walkdata.dest.x = abr.x;
+	walkdata.dest.y = abr.y;
 	walkdata.destbox = abr.box;
 	walkdata.destdir = dir;
 	moving = (moving & MF_IN_LEG) | MF_NEW_LEG;
-	walkdata.point3x = 32000;
+	walkdata.point3.x = 32000;
 
 	walkdata.curbox = walkbox;
 }
@@ -1323,7 +1318,7 @@ void Actor::startWalkAnim(int cmd, int angle) {
 
 void Actor::walkActor() {
 	int new_dir, next_box;
-	int16 foundPathX, foundPathY;
+	ScummVM::Point foundPath;
 
 	if (_vm->_version >= 7) {
 		// FIXME - this is kind of a hack right now but it fixes the
@@ -1388,17 +1383,17 @@ void Actor::walkActor() {
 
 		walkdata.curbox = next_box;
 		
-		if (findPathTowards(walkbox, next_box, walkdata.destbox, foundPathX, foundPathY))
+		if (findPathTowards(walkbox, next_box, walkdata.destbox, foundPath.x, foundPath.y))
 			break;
 
-		if (calcMovementFactor(foundPathX, foundPathY))
+		if (calcMovementFactor(foundPath))
 			return;
 
 		setBox(walkdata.curbox);
 	} while (1);
 
 	moving |= MF_LAST_LEG;
-	calcMovementFactor(walkdata.destx, walkdata.desty);
+	calcMovementFactor(walkdata.dest);
 }
 
 void Actor::walkActorOld() {
@@ -1427,12 +1422,12 @@ void Actor::walkActorOld() {
 			return;
 		}
 	
-		if (walkdata.point3x != 32000) {
-			if (calcMovementFactor(walkdata.point3x, walkdata.point3y)) {
-				walkdata.point3x = 32000;
+		if (walkdata.point3.x != 32000) {
+			if (calcMovementFactor(walkdata.point3)) {
+				walkdata.point3.x = 32000;
 				return;
 			}
-			walkdata.point3x = 32000;
+			walkdata.point3.x = 32000;
 		}
 	
 		setBox(walkdata.curbox);
@@ -1477,23 +1472,22 @@ void Actor::walkActorOld() {
 		}
 
 		if (p2.x != 32000) {
-			if (calcMovementFactor(p2.x, p2.y)) {
-				walkdata.point3x = p3.x; 
-				walkdata.point3y = p3.y;
+			if (calcMovementFactor(p2)) {
+				walkdata.point3 = p3;
 				return;
 			}
 		}
 /*
 		}
 */
-		if (calcMovementFactor(p3.x, p3.y))
+		if (calcMovementFactor(p3))
 			return;
 
 		setBox(walkdata.curbox);
 	} while (1);
 
 	moving |= MF_LAST_LEG;
-	calcMovementFactor(walkdata.destx, walkdata.desty);
+	calcMovementFactor(walkdata.dest);
 }
 
 byte *Actor::getActorName() {
@@ -1642,15 +1636,15 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, talkScript, sleUint16, VER(8)),
 		MKLINE(Actor, walkScript, sleUint16, VER(8)),
 	
-		MKLINE(Actor, walkdata.destx, sleInt16, VER(8)),
-		MKLINE(Actor, walkdata.desty, sleInt16, VER(8)),
+		MKLINE(Actor, walkdata.dest.x, sleInt16, VER(8)),
+		MKLINE(Actor, walkdata.dest.y, sleInt16, VER(8)),
 		MKLINE(Actor, walkdata.destbox, sleByte, VER(8)),
 		MKLINE(Actor, walkdata.destdir, sleUint16, VER(8)),
 		MKLINE(Actor, walkdata.curbox, sleByte, VER(8)),
-		MKLINE(Actor, walkdata.x, sleInt16, VER(8)),
-		MKLINE(Actor, walkdata.y, sleInt16, VER(8)),
-		MKLINE(Actor, walkdata.newx, sleInt16, VER(8)),
-		MKLINE(Actor, walkdata.newy, sleInt16, VER(8)),
+		MKLINE(Actor, walkdata.cur.x, sleInt16, VER(8)),
+		MKLINE(Actor, walkdata.cur.y, sleInt16, VER(8)),
+		MKLINE(Actor, walkdata.next.x, sleInt16, VER(8)),
+		MKLINE(Actor, walkdata.next.y, sleInt16, VER(8)),
 		MKLINE(Actor, walkdata.deltaXFactor, sleInt32, VER(8)),
 		MKLINE(Actor, walkdata.deltaYFactor, sleInt32, VER(8)),
 		MKLINE(Actor, walkdata.xfrac, sleUint16, VER(8)),

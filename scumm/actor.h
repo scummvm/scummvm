@@ -37,15 +37,15 @@ enum MoveFlags {
 };
 
 struct ActorWalkData {
-	int16 destx, desty;						// Final destination
+	ScummVM::Point dest;						// Final destination
 	byte destbox;
 	int16 destdir;
+	ScummVM::Point cur;										// Current position
 	byte curbox;
-	int16 x, y;										// Current position
-	int16 newx, newy;							// Next position on our way to the destination
+	ScummVM::Point next;							// Next position on our way to the destination
+	ScummVM::Point point3;
 	int32 deltaXFactor, deltaYFactor;
 	uint16 xfrac, yfrac;
-	int point3x, point3y;
 };
 
 struct CostumeData {
@@ -132,7 +132,7 @@ public:
 	void putActor(int x, int y, byte room);
 	void setActorWalkSpeed(uint newSpeedX, uint newSpeedY);
 protected:
-	int calcMovementFactor(int newx, int newy);
+	int calcMovementFactor(ScummVM::Point next);
 	int actorWalkStep();
 	int remapDirection(int dir, bool is_walking);
 	void setupActorScale();

@@ -804,8 +804,8 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, int16 &foundP
 				} else {
 					pos = y;
 					if (box2nr == box3nr) {
-						int diffX = walkdata.destx - x;
-						int diffY = walkdata.desty - y;
+						int diffX = walkdata.dest.x - x;
+						int diffY = walkdata.dest.y - y;
 						int boxDiffX = box1.ul.x - x;
 
 						if (diffX != 0) {
@@ -859,8 +859,8 @@ bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, int16 &foundP
 				} else {
 
 					if (box2nr == box3nr) {
-						int diffX = walkdata.destx - x;
-						int diffY = walkdata.desty - y;
+						int diffX = walkdata.dest.x - x;
+						int diffY = walkdata.dest.y - y;
 						int boxDiffY = box1.ul.y - y;
 
 						pos = x;
@@ -1155,10 +1155,10 @@ void Actor::findPathTowardsOld(byte trap1, byte trap2, byte final_trap, ScummVM:
 	// next box (trap2) = final box?
 	if (trap2 == final_trap) {
 		// Is the actor (x,y) between both gates?
-		if (compareSlope(x, y, walkdata.destx, walkdata.desty, gateA[0].x, gateA[0].y) !=
-				compareSlope(x, y, walkdata.destx, walkdata.desty, gateB[0].x, gateB[0].y) &&
-				compareSlope(x, y, walkdata.destx, walkdata.desty, gateA[1].x, gateA[1].y) !=
-				compareSlope(x, y, walkdata.destx, walkdata.desty, gateB[1].x, gateB[1].y)) {
+		if (compareSlope(x, y, walkdata.dest.x, walkdata.dest.y, gateA[0].x, gateA[0].y) !=
+				compareSlope(x, y, walkdata.dest.x, walkdata.dest.y, gateB[0].x, gateB[0].y) &&
+				compareSlope(x, y, walkdata.dest.x, walkdata.dest.y, gateA[1].x, gateA[1].y) !=
+				compareSlope(x, y, walkdata.dest.x, walkdata.dest.y, gateB[1].x, gateB[1].y)) {
 			return;
 		}
 	}
