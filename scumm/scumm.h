@@ -143,6 +143,7 @@ static const dbgChannelDesc debugChannels[] = {
 	{"RESOURCE", "Track resource loading/management", DEBUG_RESOURCE},
 	{"VARS", "Track variable changes", DEBUG_VARS},
 	{"ACTORS", "Actor-related debug", DEBUG_ACTORS},
+	{"SOUND", "Sound related debug", DEBUG_SOUND},
 	{"INSANE", "Track INSANE", DEBUG_INSANE}
 };
 

@@ -781,7 +781,6 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		// Used in 3DO version of puttputt joins the parade and probably others
 		// Specifies a separate file to be used for music from what I gather.
 		int tmpsize;
-		int i = 0;
 		File dmuFile;
 		char buffer[128];
 		debugC(DEBUG_SOUND, "Found base tag FMUS in sound %d, size %d", idx, total_size);
@@ -796,10 +795,10 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		tmpsize = _fileHandle.readUint32BE();
 		
 		// SDAT contains name of file we want
-		for (i = 0; (buffer[i] != ' ') && (i < tmpsize - 8) ; i++) {
-			buffer[i] = _fileHandle.readByte();
-		}
-		buffer[tmpsize - 11] = '\0';
+		_fileHandle.read(buffer, tmpsize - 8);
+		// files seem to be 11 chars (8.3) unused space is replaced by spaces
+		*(strstr(buffer, " ")) = '\0';
+		
 		debugC(DEBUG_SOUND, "FMUS file %s", buffer);
 		if (dmuFile.open(buffer, getGameDataPath()) == false) {
 			warning("Can't open music file %s*", buffer);
