@@ -779,6 +779,7 @@ protected:
 	
 	/* HE version 80 script opcodes */
 	void o80_unknown49();
+	void o80_unknown4D();
 	void o80_setState();
 };
 

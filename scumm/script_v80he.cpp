@@ -141,7 +141,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o72_wordArrayIndexedWrite),
 		/* 4C */
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o80_unknown4D),
 		OPCODE(o6_invalid),
 		OPCODE(o6_wordVarInc),
 		/* 50 */
@@ -384,6 +384,32 @@ void ScummEngine_v80he::o80_unknown49() {
 
 	push (0);
 	debug(1,"o80_unknown49 stub (%d, %d)", b, a);
+}
+
+void ScummEngine_v80he::o80_unknown4D() {
+	byte option[128], option2[128], option3[256];
+	int type, retval;
+
+	// we pretend that we don't have .ini file
+	copyScriptString(option);
+	copyScriptString(option2);
+	copyScriptString(option3);
+	type = fetchScriptByte();
+
+	switch (type) {
+	case 6: // number
+		push(0);
+		break;
+	case 7: // string
+		defineArray(0, kStringArray, 0, 0, 0, 0);
+		retval = readVar(0);
+		writeArray(0, 0, 0, 0);
+		push(retval); // var ID string
+		break;
+	default:
+		error("o80_unknown4D: default type %d", type);
+	}
+	debug(1, "o80_unknown4D (%d) %s %s %s", type, option, option2, option3);
 }
 
 void ScummEngine_v80he::o80_setState() {
