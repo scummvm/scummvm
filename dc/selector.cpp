@@ -353,7 +353,7 @@ int gameMenu(Game *games, int num_games)
   }
 }
 
-bool selectGame(Scumm *s, char *&ret)
+bool selectGame(Scumm *s, char *&ret, Icon &icon)
 {
   Game *games = new Game[MAX_GAMES];
   int selected, num_games;
@@ -393,6 +393,7 @@ bool selectGame(Scumm *s, char *&ret)
   if(selected>=0) {
     chdir(the_game.dir);
     ret = the_game.filename_base;
+    icon = the_game.icon;
     return true;
   } else
     return false;

@@ -25,10 +25,13 @@
 #include "gui.h"
 #include "sound.h"
 #include "dc.h"
+#include "icon.h"
+
 
 Scumm scumm;
 ScummDebugger debugger;
 Gui gui;
+Icon icon;
 
 SoundEngine sound;
 SOUND_DRIVER_TYPE snd_driv;
@@ -79,16 +82,14 @@ int main()
   dc_setup_ta();
   init_arm();
 
-  if(!selectGame(&scumm, argv[1]))
+  if(!selectGame(&scumm, argv[1], icon))
     exit(0);
 
   sound.initialize(&scumm, &snd_driv);
-  printf("Sound initalized.\n");
 
   scumm._gui = &gui;
   scumm.scummMain(argc, argv);
 
-  printf("scummMain called.\n");
   gui.init(&scumm);
 
   last_time = Timer();
@@ -108,6 +109,6 @@ int main()
     }
   } while(1);
   
-  printf("All done.  Returning to menu.\n");
+  /* NOTREACHED */
   exit(0);
 }
