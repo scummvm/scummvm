@@ -4,4 +4,5 @@ scumm
 simon
 sound
 common
-scummvm
+backends
+scummvm.elf
