@@ -88,8 +88,7 @@ void Logic::newScreen(uint32 screen) {
 			_scriptVars[GEORGE_WALKING] = 0;
 		}
 		SwordEngine::_systemVars.justRestoredGame = 0;
-		if (_scriptVars[CURRENT_MUSIC])
-			_music->startMusic(_scriptVars[CURRENT_MUSIC], 1);
+		_music->startMusic(_scriptVars[CURRENT_MUSIC], 1);
 	} else { // if we haven't just restored a game, set George to stand, etc
 		compact->o_screen = _scriptVars[NEW_SCREEN]; //move the mega/player at this point between screens
 		fnStandAt(compact, PLAYER, _scriptVars[CHANGE_X], _scriptVars[CHANGE_Y], _scriptVars[CHANGE_DIR], _scriptVars[CHANGE_STANCE], 0,0);
