@@ -1013,7 +1013,7 @@ void Actor::drawActorCostume() {
 	// If the actor is partially hidden, redraw it next frame.
 	// Only done for pre-AKOS, though.
 	if (bcr->drawCostume(_vm->virtscr[0], cost) & 1) {
-		needRedraw = !(_vm->_version >= 7);
+		needRedraw = (_vm->_version <= 6);
 	}
 
 	// Record the vertical extent of the drawn actor
@@ -1165,7 +1165,7 @@ void ScummEngine::actorTalk() {
 		}
 		
 		a = derefActor(_actorToPrintStrFor, "actorTalk");
-		if (!a->isInCurrentRoom() && !(_features & GF_NEW_COSTUMES)) {
+		if (!a->isInCurrentRoom() && (_version <= 6)) {
 			oldact = 0xFF;
 		} else {
 			if (!_keepText)
@@ -1211,10 +1211,10 @@ void ScummEngine::stopTalk() {
 			a->startAnimActor(a->talkStopFrame);
 			_useTalkAnims = false;
 		}
-		if (!(_features & GF_NEW_COSTUMES))
+		if (!(_features & GF_HUMONGOUS))
 			talkingActor(0xFF);
 	}
-	if (_features & GF_NEW_COSTUMES)
+	if (_features & GF_HUMONGOUS)
 		talkingActor(0);
 	_keepText = false;
 	_charset->restoreCharsetBg();
