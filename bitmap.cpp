@@ -57,9 +57,10 @@ Resource(filename) {
 		}
 
 	#ifdef SYSTEM_BIG_ENDIAN
-		for (int j = 0; j < width_ * height_; ++j) {
-			((uint16 *)data_[i])[j] = SWAP_BYTES_16(((uint16 *)data_[i])[j]);
-		}
+		if (format_ == 1)	
+			for (int j = 0; j < width_ * height_; ++j) {
+				((uint16 *)data_[i])[j] = SWAP_BYTES_16(((uint16 *)data_[i])[j]);
+			}
 	#endif
 	}	
 	
