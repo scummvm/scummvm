@@ -601,34 +601,9 @@ void Gui::handleSoundDialogCommand(int cmd)
 	if (cmd == 50) {
 		close();
 	} else if (cmd == 40) {
-		// FIXME - slider ranges are 0-100, yet the volumes use different ones.
-		// We want to fix this, ideally by simply converting the GUI value
-		// range 0-100 to the 'real' ranges and back (for maximal backward
-		// compatibility). However, this is not easy, in fact with the current
-		// system it is impossible. For a quick overview, read this:
-		//
-		// Music volume range: 1-100
-		// iMUSE master volume range: 0-128
-		// Mixer master volume range: 0-256
-		// SFX volume range: 0-256
-		//
-		// Correct, the master volume range of iMUSE and the mixer don't match!
-		// Since both are steered by _sound_volume_master, we are screwed.
-		// This is really a big mess and sadly is not the only case of similar
-		// issues. The almost complete lack of any documentation (and I am not
-		// very demanding, I even count comments as docs) are not helping us
-		// either.
-		//
-		// Somebody (me if I have the time) should fix this by rewriting all
-		// the functions to take a nice range like 0-255 or 0-256. And while
-		// (s)he is at it, HiFi equipment uses logarithmic volume controls
-		// (not linear ones as we do) since they match the human ear better.
-
-		// The * 256 / 100 is a quick recalibration hack, it will go
-		// away when we move to newgui
-		_s->_sound_volume_master = _gui_variables[0] * 255 / 100;	// Master
-		_s->_sound_volume_music = _gui_variables[1] * 255 / 100;	// Music
-		_s->_sound_volume_sfx = _gui_variables[2] * 255 / 100;		// SFX
+		_s->_sound_volume_master = _gui_variables[0];	// Master
+		_s->_sound_volume_music = _gui_variables[1];	// Music
+		_s->_sound_volume_sfx = _gui_variables[2];		// SFX
 
 		_s->_imuse->set_music_volume(_s->_sound_volume_music);
 		_s->_imuse->set_master_volume(_s->_sound_volume_master);
@@ -643,11 +618,13 @@ void Gui::handleSoundDialogCommand(int cmd)
 		close();
 	} else {
 		if ((cmd % 10) == 1) {
-			if (_gui_variables[cmd / 10] < 100)
-				_gui_variables[cmd / 10] += 5;
+			_gui_variables[cmd / 10] += 5;
+			if (_gui_variables[cmd / 10] > 256)
+				_gui_variables[cmd / 10] = 256;
 		} else {
-			if (_gui_variables[cmd / 10] > 0)
-				_gui_variables[cmd / 10] -= 5;
+			_gui_variables[cmd / 10] -= 5;
+			if (_gui_variables[cmd / 10] < 0)
+				_gui_variables[cmd / 10] = 0;
 		}
 
 		draw((cmd / 10) * 10 + 3, (cmd / 10) * 10 + 3);
