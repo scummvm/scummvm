@@ -76,6 +76,7 @@ protected:
 	bool _looping;
 	byte _volume;
 	uint8 _queuePos;
+	int16 _lastSong;	//first song from previous queue
 	int16 _songQueue[MUSIC_QUEUE_SIZE];
 	
 	uint16 _numSongs;
@@ -88,8 +89,11 @@ public:
 	Music(MidiDriver *_driver, QueenEngine *vm);
 	~Music();
 	void playSong(uint16 songNum);
+	void queueClear()		{ return _player->queueClear(); }
+	bool queueSong(uint16 songNum);	
+	void playMusic()		{ return _player->playMusic(); }
 	void stopSong();
-	void loop(bool val)	{ return _player->setLoop(val); }
+	void loop(bool val)		{ return _player->setLoop(val); }
 	
 protected:
 	byte *_musicData;

@@ -30,6 +30,7 @@ namespace Queen {
 
 	MusicPlayer::MusicPlayer(MidiDriver *driver, byte *data, uint32 size) : _driver(driver), _isPlaying(false), _looping(false), _volume(255), _queuePos(0), _musicData(data), _musicDataSize(size) {
 		queueClear();
+		_lastSong = 0;
 		_parser = MidiParser::createParser_SMF();
 		_parser->setMidiDriver(this);
 		_parser->setTimerRate(_driver->getBaseTempo());
@@ -59,6 +60,7 @@ namespace Queen {
 	}
 	
 	void MusicPlayer::queueClear() {
+		_lastSong = _songQueue[0];
 		_queuePos = 0;
 		memset(_songQueue, 0, sizeof(_songQueue));
 	}
@@ -130,6 +132,15 @@ namespace Queen {
 		}
 		
 		uint16 songNum = _songQueue[_queuePos];
+
+		//Special type
+		//2000: (songNum + 1) - repeat music from previous queue
+		if (songNum == 1999) {
+			songNum = _lastSong;
+			queueClear();
+			queueSong(songNum);
+		}
+		
 		_parser->loadMusic(_musicData + songOffset(songNum), songLength(songNum));
 		_parser->setTrack(0);	
 		//debug(0, "Playing song %d [queue position: %d]", songNum, _queuePos);
@@ -178,6 +189,15 @@ namespace Queen {
 		delete[] _musicData;	
 	}
 
+	bool Music::queueSong(uint16 songNum) {
+		// Work around bug in Roland music, note that these numbers are 'one-off'
+		// from the original code
+		if (/*isRoland && */ songNum == 88 || songNum == 89)
+			songNum = 62;
+			
+		return _player->queueSong(songNum);
+	}
+	
 	void Music::playSong(uint16 songNum) {
 		_player->queueClear();
 		_player->queueSong(songNum);

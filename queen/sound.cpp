@@ -138,16 +138,11 @@ void Sound::playSong(int16 songNum) {
 			break;
 	}
 
-	int16 song = _tune[newTune].tuneNum[0] - 1;
-
-	// Work around bug in Roland music, note that these numbers are 'one-off' from
-	// the original code.
-	if (/*isRoland && */ song == 88 || song == 89) {
-		warning("Working around Roland music bug");
-		song = 62;
-	}
-	
-	_vm->music()->playSong(song);
+	_vm->music()->queueClear();
+	int i = 0;
+	while(_tune[newTune].tuneNum[i])
+		_vm->music()->queueSong(_tune[newTune].tuneNum[i++] - 1);
+	_vm->music()->playMusic();	
 }
 
 void Sound::saveState(byte *&ptr) {
