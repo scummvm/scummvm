@@ -203,8 +203,8 @@ void Sound::playSound(int soundID) {
 		else if (READ_UINT32_UNALIGNED(ptr) == MKID('Mac1')) {
 	
 			// Read info from the header
-			size = READ_UINT32_UNALIGNED(ptr+0x60);
-			rate = READ_UINT32_UNALIGNED(ptr+0x64) >> 16;
+			size = READ_BE_UINT32_UNALIGNED(ptr+0x60);
+			rate = READ_BE_UINT32_UNALIGNED(ptr+0x64) >> 16;
 	
 			// Skip over the header (fixed size)
 			ptr += 0x72;
