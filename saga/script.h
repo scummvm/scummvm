@@ -61,7 +61,6 @@ enum AddressTypes {
 };
 
 enum VerbTypes {
-//todo: LUT for drawing
 	kVerbNone = 0,
 	kVerbPickUp = 1,
 	kVerbLookAt = 2,

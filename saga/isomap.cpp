@@ -218,6 +218,7 @@ void IsoMap::loadMetaTiles(const byte * resourcePointer, size_t resourceLength) 
 void IsoMap::loadMulti(const byte * resourcePointer, size_t resourceLength) {
 	MultiTileEntryData *multiTileEntryData;
 	uint16 i;
+	int16 offsetDiff;
 
 	if (resourceLength < 2) {
 		error("IsoMap::loadMetaTiles wrong resourceLength");
@@ -243,8 +244,11 @@ void IsoMap::loadMulti(const byte * resourcePointer, size_t resourceLength) {
 		multiTileEntryData->currentState = readS.readByte();
 		readS.readByte();//skip
 	}
+	
+	offsetDiff = (readS.pos() - 2);
+
 	for (i = 0; i < _multiCount; i++) {
-		_multiTable[i].offset -= readS.pos();
+		_multiTable[i].offset -= offsetDiff;
 	}
 
 	_multiDataCount = (readS.size() - readS.pos()) / 2;
@@ -367,8 +371,7 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 			return tileIndex;
 		}
 	}
-	
-	warning("something terrible happened");
+		
 	return 1;
 }
 
