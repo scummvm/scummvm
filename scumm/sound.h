@@ -39,7 +39,7 @@ enum {
 };
 
 	int16 _soundQuePos, _soundQue[0x100];
-	byte _soundQue2Pos, _soundQue2[10];
+	int16 _soundQue2Pos, _soundQue2[10];
 	bool _soundsPaused2;
 	bool _soundVolumePreset;
 

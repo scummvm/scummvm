@@ -68,7 +68,7 @@ void Sound::addSoundToQueue2(int sound) {
 }
 
 void Sound::processSoundQues() {
-	byte d;
+	int d;
 	int i, j;
 	int num;
 	int16 data[16];
@@ -597,7 +597,7 @@ void Sound::stopSound(int a) {
 	}
 
 	for (i = 0; i < 10; i++)
-		if (_soundQue2[i] == (byte)a)
+		if (_soundQue2[i] == a)
 			_soundQue2[i] = 0;
 }
 
