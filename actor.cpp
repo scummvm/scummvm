@@ -340,7 +340,7 @@ void Actor::setupActorScale()
 
 	// FIXME: Special 'no scaling' class for MI1 VGA Floppy
 	//        Not totally sure if this is correct.
-	if (_vm->_gameId == GID_MONKEY_VGA && isInClass(0x96))
+	if (_vm->_gameId == GID_MONKEY_VGA && isInClass(22))
 		return;
 
 	if (_vm->_features & GF_NO_SCALLING) {
@@ -601,8 +601,19 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 					if (flags & 0x80 && (!(flags & 0x20) || isInClass(0x1F)))
 						continue;
 
-					if (pathfrom >= firstValidBox && (_vm->getPathToDestBox(pathfrom, j) == -1))
-						continue;
+					if (pathfrom >= firstValidBox) {
+						int i = _vm->getPathToDestBox(pathfrom, j);
+						if (i == -1)
+							continue;
+						
+						// FIXME - we check here if the box suggested by getPathToDestBox
+						// is locked or not. This prevents us from walking thru
+						// closed doors in some cases in Zak256. However a better fix
+						// would be to recompute the box matrix whenever flags change.
+						flags = _vm->getBoxFlags(i);
+						if (flags & 0x80 && (!(flags & 0x20) || isInClass(0x1F)))
+							continue;
+					}
 
 					if (!_vm->inBoxQuickReject(j, dstX, dstY, threshold))
 						continue;

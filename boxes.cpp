@@ -133,10 +133,10 @@ bool Scumm::checkXYInBoxBounds(int b, int x, int y)
 	if (!compareSlope(box.ur.x, box.ur.y, box.ll.x, box.ll.y, x, y))
 		return 0;
 
-	if (!compareSlope(box.ll.x, box.ll.y, box.lr.x, box.lr.y, x, y))
+	if (!compareSlope(box.lr.x, box.lr.y, x, y, box.ll.x, box.ll.y))
 		return 0;
 
-	if (!compareSlope(box.lr.x, box.lr.y, box.ul.x, box.ul.y, x, y))
+	if (!compareSlope(box.ul.x, box.ul.y, x, y, box.lr.x, box.lr.y))
 		return 0;
 
 	return 1;
@@ -151,18 +151,10 @@ void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box)
 	box->ur.x = (int16)FROM_LE_16(bp->urx);
 	box->ur.y = (int16)FROM_LE_16(bp->ury);
 
-	if (_features & GF_OLD256) {
-		box->ll.x = (int16)FROM_LE_16(bp->lrx);
-		box->ll.y = (int16)FROM_LE_16(bp->lry);
-		box->lr.x = (int16)FROM_LE_16(bp->llx);
-		box->lr.y = (int16)FROM_LE_16(bp->lly);
-	} else {
-		box->ll.x = (int16)FROM_LE_16(bp->llx);
-		box->ll.y = (int16)FROM_LE_16(bp->lly);
-		box->lr.x = (int16)FROM_LE_16(bp->lrx);
-		box->lr.y = (int16)FROM_LE_16(bp->lry);
-	}
-
+	box->ll.x = (int16)FROM_LE_16(bp->llx);
+	box->ll.y = (int16)FROM_LE_16(bp->lly);
+	box->lr.x = (int16)FROM_LE_16(bp->lrx);
+	box->lr.y = (int16)FROM_LE_16(bp->lry);
 }
 
 uint Scumm::distanceFromPt(int x, int y, int ptx, int pty)
@@ -190,10 +182,10 @@ ScummPoint Scumm::closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int
 	int x2, y2;
 	ScummPoint pt;
 
-	if (llx == ulx) {
+	if (llx == ulx) {	// Vertical line?
 		x2 = ulx;
 		y2 = y;
-	} else if (lly == uly) {
+	} else if (lly == uly) {	// Horizontal line?
 		x2 = x;
 		y2 = uly;
 	} else {
