@@ -663,7 +663,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 {
 	byte *smap_ptr, *where_draw_ptr;
 	int i;
-	byte *zplane_list[4];
+	byte *zplane_list[6];
 
 	int bottom;
 	byte twobufs;
@@ -768,13 +768,13 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 			else
 				decompressMaskImg();
 		}
-
+		printf("numzbuf: %d\n", numzbuf);
 		for (i = 1; i < numzbuf; i++) {
 			uint16 offs;
 
 			if (!zplane_list[i])
 				continue;			
-
+			printf("zbuf %d\n", i);
 			if (_vm->_features & GF_SMALL_HEADER)
 				if (_vm->_features & GF_OLD256)
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 4);
