@@ -244,8 +244,9 @@ void MemoryManager::memFree(byte *ptr) {
 }
 
 void MemoryManager::memDisplay() {
-	for (int i = 0; i < _numBlocks; i++)
-		Debug_Printf("%d: %ld bytes allocated by resource %d\n", i, _memBlocks[i].size, _memBlocks[i].uid);
+	for (int i = 0; i < MAX_BLOCKS; i++)
+		if (_memBlocks[i].ptr)
+			Debug_Printf("%d: %ld bytes allocated by resource %d\n", i, _memBlocks[i].size, _memBlocks[i].uid);
 }
 
 void MemoryManager::memStatusStr(char *buf) {
