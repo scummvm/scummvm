@@ -241,7 +241,7 @@ void operator delete(void *ptr) {
 	free(ptr);
 }
 
-#undef free(x)
+#undef free
 void free_check(void *ptr) {
 	if ((uint)ptr == 0xE7E7E7E7UL) {
 		printf("ERROR: freeing 0xE7E7E7E7\n");
