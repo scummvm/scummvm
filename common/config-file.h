@@ -40,10 +40,11 @@ public:
 	void setInt(const String &key, int value, const String &dom = String());
 	void setBool(const String &key, bool value, const String &dom = String());
 
-	void set_domain(const String &);
+	void set_domain(const String &d);
 	void flush() const;
-	void rename_domain(const String &);
-	void delete_domain(const String &);
+	void rename_domain(const String &d);
+	void delete_domain(const String &d);
+	bool has_domain(const String &d) const;
 	void set_filename(const String &);
 	void merge_config(const Config &);
 	void set_writing(bool);

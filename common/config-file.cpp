@@ -166,6 +166,11 @@ void Config::set_domain(const String &d)
 	defaultDomain = d;
 }
 
+bool Config::has_domain(const String &d) const
+{
+	return domains.contains(d);
+}
+
 void Config::flush() const
 {
 	FILE *cfg_file;
