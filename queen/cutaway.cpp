@@ -1500,7 +1500,7 @@ void Cutaway::handleText(
 		if (_input->cutawayQuit())
 			return;
 
-		if (_input->verbSkipText()) {
+		if (_input->keyVerb().isSkipText()) {
 			_input->clearKeyVerb();
 			break;
 		}

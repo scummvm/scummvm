@@ -32,7 +32,7 @@
 
 namespace Queen {
 
-const Verb Logic::PANEL_VERBS[] = {
+const VerbEnum Logic::PANEL_VERBS[] = {
 	VERB_NONE,
 	VERB_OPEN,
 	VERB_CLOSE,
@@ -50,6 +50,8 @@ const Verb Logic::PANEL_VERBS[] = {
 	VERB_DIGIT_4, // inventory item 4
 };
 
+
+char* Verb::_verbName[13];
 
 Direction State::findDirection(uint16 state) {
 	// queen.c l.4014-4021
@@ -86,31 +88,31 @@ Verb State::findDefaultVerb(uint16 state) {
 	Verb v;
 	switch((state >> 4) & 0xF) {
 	case 1:
-		v = VERB_OPEN;
+		v = Verb(VERB_OPEN);
 		break;
 	case 3:
-		v = VERB_CLOSE;
+		v = Verb(VERB_CLOSE);
 		break;
 	case 7:
-		v = VERB_MOVE;
+		v = Verb(VERB_MOVE);
 		break;
 	case 8:
-		v = VERB_GIVE;
+		v = Verb(VERB_GIVE);
 		break;
     case 12:
-		v = VERB_USE;
+		v = Verb(VERB_USE);
 		break;
     case 14:
-		v = VERB_PICK_UP;
+		v = Verb(VERB_PICK_UP);
 		break;
     case 9:
-		v = VERB_TALK_TO;
+		v = Verb(VERB_TALK_TO);
 		break;
     case 6:
-		v = VERB_LOOK_AT;
+		v = Verb(VERB_LOOK_AT);
 		break;
 	default:
-		v = VERB_NONE;
+		v = Verb(VERB_NONE);
 		break;
 	}
 	return v;
@@ -135,7 +137,7 @@ void State::alterOn(uint16 *objState, StateOn state) {
 
 void State::alterDefaultVerb(uint16 *objState, Verb v) {
 	uint16 val;
-	switch (v) {
+	switch (v.value()) {
 	case VERB_OPEN:
 		val = 1;
 		break;
@@ -418,9 +420,9 @@ void Logic::initialise() {
 	for (i = 1; i <= _numRooms; i++)
 		_roomName[i] = _resource->getJAS2Line();
 
-	_verbName[0] = 0;
+	Verb::initName(0, NULL);
 	for (i = 1; i <= 12; i++)
-		_verbName[i] = _resource->getJAS2Line();
+		Verb::initName(i, _resource->getJAS2Line());
 
 	_joeResponse[0] = 0;
 	for (i = 1; i <= JOE_RESPONSE_MAX; i++)
@@ -1751,7 +1753,7 @@ int16 Logic::joeWalkTo(int16 x, int16 y, const Command_ *cmd, bool mustWalk) {
 		y = objData->y;
 	}
 
-	if (cmd->action2 == VERB_WALK_TO) {
+	if (cmd->action2.value() == VERB_WALK_TO) {
 		_entryObj = objData->entryObj;
 	}
 	else {
@@ -1760,7 +1762,7 @@ int16 Logic::joeWalkTo(int16 x, int16 y, const Command_ *cmd, bool mustWalk) {
 
 	_newRoom = 0;
 
-	if (_entryObj != 0 && cmd->action2 != VERB_CLOSE) {
+	if (_entryObj != 0 && cmd->action2.value() != VERB_CLOSE) {
 		// because this is an exit object, see if there is
 		// a walk off point and set (x,y) accordingly
 		WalkOffData *wod = walkOffPointForObject(k + cmd->noun2);
@@ -1954,7 +1956,7 @@ const char* Logic::objectOrItemName(int16 obj) const {
 
 Verb Logic::findVerbUnderCursor(int16 cursorx, int16 cursory) const {
 
-	return PANEL_VERBS[zoneIn(ZONE_PANEL, cursorx, cursory)];
+	return Verb(PANEL_VERBS[zoneIn(ZONE_PANEL, cursorx, cursory)]);
 }
 
 
@@ -1989,19 +1991,6 @@ uint16 Logic::findObjectRoomNumber(uint16 zoneNum) const {
 uint16 Logic::findObjectGlobalNumber(uint16 zoneNum) const {
 
 	return _roomData[_currentRoom] + findObjectRoomNumber(zoneNum);
-}
-
-
-const char *Logic::verbName(Verb v) const {
-
-	// FIXME: rewrite this test with future VerbCommand methods
-	if (v != VERB_NONE && v < 13) {
-		return _verbName[v];
-	}
-	else {
-		error("Logic::verbName() - Invalid verb %d", v);
-		return NULL;
-	}
 }
 
 

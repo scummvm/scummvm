@@ -810,7 +810,7 @@ void Talk::defaultAnimation(
 			}
 
 			// Skip through text more quickly
-			if (_input->verbSkipText()) {
+			if (_input->keyVerb().isSkipText()) {
 				_input->clearKeyVerb();
 				break;
 			}

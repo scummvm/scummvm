@@ -90,40 +90,6 @@ enum Language {
 };
 
 
-enum Verb {
-	VERB_NONE = 0,
-
-	VERB_PANEL_COMMAND_FIRST = 1,
-	VERB_OPEN        = 1,
-	VERB_CLOSE       = 2,
-	VERB_MOVE        = 3,
-	// no verb 4
-	VERB_GIVE        = 5,
-	VERB_USE         = 6,
-	VERB_PICK_UP     = 7,
-	VERB_LOOK_AT     = 9,
-	VERB_TALK_TO     = 8,
-	VERB_PANEL_COMMAND_LAST = 9,
-
-	VERB_WALK_TO     = 10,
-	VERB_SCROLL_UP   = 11,
-	VERB_SCROLL_DOWN = 12,
-
-	VERB_DIGIT_FIRST = 13,
-	VERB_DIGIT_1   = 13,
-	VERB_DIGIT_2   = 14,
-	VERB_DIGIT_3   = 15,
-	VERB_DIGIT_4   = 16,
-	VERB_DIGIT_LAST = 16,
-	
-	VERB_USE_JOURNAL = 20,
-	VERB_SKIP_TEXT   = 101,
-
-	VERB_PREP_WITH = 11,
-	VERB_PREP_TO   = 12
-};
-
-
 enum StateTalk {
 	STATE_TALK_TALK,
 	STATE_TALK_MUTE

@@ -256,7 +256,7 @@ OLDROOM,ROOM,NEW_ROOM  		Logic::_*oom
 ROOMTOT						Logic::_numRooms
 ROOM_DATA					Logic::_roomData
 ROOM_NAMEstr				Logic::_roomName
-VERB_NAMEstr				Logic::_verbName
+VERB_NAMEstr				Verb::_verbName
 WALK_OFF_DATA				Logic::_walkOffData
 WALK_OFF_MAX				Logic::_numWalkOffs
 

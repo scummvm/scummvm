@@ -23,6 +23,7 @@
 #define INPUT_H
 
 #include "queen/defs.h"
+#include "queen/verb.h"
 #include "common/scummsys.h"
 
 class OSystem;
@@ -56,32 +57,7 @@ class Input {
 		void checkKeys();
 
 		//! use instead of KEYVERB=0
-		void clearKeyVerb()  { _keyVerb = VERB_NONE; }
-
-		//! _keyVerb is open/close/move/give/look at/pick up/talk to
-		bool verbIsPanelCommand() {
-			return 
-				_keyVerb >= VERB_PANEL_COMMAND_FIRST &&
-				_keyVerb <= VERB_PANEL_COMMAND_LAST;
-		}
-
-		//! return _keyVerb if isPanelCommand() is true, otherwise VERB_NONE
-		Verb verbPanelCommand();
-
-		//! If _keyVerb is VERB_USE_JOURNAL
-		bool verbUseJournal() { return _keyVerb == VERB_USE_JOURNAL; }
-
-		//! If _keyVerb is VERB_KEY_1 to VERB_KEY_4
-		bool verbIsDigit() {
-			return 
-				_keyVerb >= VERB_DIGIT_FIRST &&
-				_keyVerb <= VERB_DIGIT_LAST;
-		}
-
-		//! Returns 1-4 if keyDigit() is true, otherwise -1
-		int verbDigit();
-
-		bool verbSkipText() { return _keyVerb == VERB_SKIP_TEXT; }
+		void clearKeyVerb()  { _keyVerb = Verb(VERB_NONE); }
 
 		void canQuit(bool cq)             { _canQuit = cq; }
 

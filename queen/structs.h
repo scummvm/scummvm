@@ -24,6 +24,8 @@
 
 namespace Queen {
 
+#include "queen/verb.h"
+
 
 struct Box {
 	int16 x1, y1, x2, y2;
@@ -365,7 +367,7 @@ struct CmdListData {
 	int16 specialSection;
 
 	void readFrom(byte *&ptr) {
-		verb = (Verb)READ_BE_UINT16(ptr); ptr += 2;
+		verb = Verb((VerbEnum)READ_BE_UINT16(ptr)); ptr += 2;
 		nounObj1 = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		nounObj2 = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		song = (int16)READ_BE_UINT16(ptr); ptr += 2;
@@ -377,7 +379,7 @@ struct CmdListData {
 		specialSection = (int16)READ_BE_UINT16(ptr); ptr += 2;
 	}
 
-	bool match(Verb v, int16 obj1, int16 obj2) const {
+	bool match(const Verb& v, int16 obj1, int16 obj2) const {
 		return verb == v && nounObj1 == obj1 && nounObj2 == obj2;
 	}
 };

@@ -25,6 +25,7 @@
 #include "queen/queen.h"
 #include "queen/defs.h"
 #include "queen/structs.h"
+#include "queen/verb.h"
 
 namespace Queen {
 
@@ -271,7 +272,6 @@ public:
 	uint16 findObjectRoomNumber(uint16 zoneNum) const;
 	uint16 findObjectGlobalNumber(uint16 zoneNum) const;
 
-	const char *verbName(Verb v) const;
 	const char *lockedVerbPrefix() const { return _joeResponse[39]; }
 
 	void update();
@@ -361,8 +361,6 @@ protected:
 	//! Room name, prefix for data files (PCX, LUM...)
 	char **_roomName;	//ROOM_NAMEstr	
 
-	char *_verbName[13];	//VERB_NAMEstr
-
 	char *_joeResponse[JOE_RESPONSE_MAX + 1];	//JOE_RESPstr
 
 	//! Actor animation string
@@ -414,7 +412,7 @@ protected:
 	Walk *_walk;
 
 	//! Verbs (in order) available in panel
-	static const Verb PANEL_VERBS[];
+	static const VerbEnum PANEL_VERBS[];
 };
 
 } // End of namespace Queen
