@@ -426,11 +426,12 @@ static inline void clampedAdd(int16& a, int b) {
         a = val;
 }
 
-void vimaInit();
-void decompressVima(const char *src, int16 *dest, int destLen);
+static uint16 destTable[5786];
+void vimaInit(uint16 *destTable);
+void decompressVima(const char *src, int16 *dest, int destLen, uint16 *destTable);
 
 void Sound::init() {
-	vimaInit();
+	vimaInit(destTable);
 }
 
 Sound::Sound(const char *filename, const char *data, int /* len */) :
@@ -484,7 +485,7 @@ Sound::Sound(const char *filename, const char *data, int /* len */) :
 		      "VIMA") != 0)
 	error("Unsupported codec %s\n",
 	      codecsStart + 5 * *(uint8 *)(data + 6 + i * 9));
-      decompressVima(srcPos, destPos, READ_BE_UINT32(data + 7 + i * 9));
+      decompressVima(srcPos, destPos, READ_BE_UINT32(data + 7 + i * 9), destTable);
       srcPos += READ_BE_UINT32(data + 11 + i * 9);
       destPos += READ_BE_UINT32(data + 7 + i * 9) / 2;
     }

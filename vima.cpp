@@ -94,9 +94,7 @@ static int8 *offsets[] = {
 	imcOtherTable4, imcOtherTable5, imcOtherTable6
 };
 
-static uint16 destTable[5786];
-
-void vimaInit() {
+void vimaInit(uint16 *destTable) {
 	int destTableStartPos, incer;
 	for (destTableStartPos = 0, incer = 0; destTableStartPos < 64; destTableStartPos++, incer++) {
 	unsigned int destTablePos, imcTable1Pos;
@@ -114,7 +112,7 @@ void vimaInit() {
 	}
 }
 
-void decompressVima(const char *src, int16 *dest, int destLen) {
+void decompressVima(const char *src, int16 *dest, int destLen, uint16 *destTable) {
 	int numChannels = 1;
 	uint8 sBytes[2];
 	int16 sWords[2];

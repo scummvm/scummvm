@@ -67,14 +67,15 @@ void Smush::handleBlocky16(byte *src) {
 	_blocky16.decode(_dst, src);
 }
 
-void decompressVima(const char *src, int16 *dest, int destLen);
-void vimaInit();
+static uint16 destTable[5786];
+void vimaInit(uint16 *destTable);
+void decompressVima(const char *src, int16 *dest, int destLen, uint16 *destTable);
 
 extern SoundMixer *g_mixer;
 
 void Smush::handleWave(const byte *src, uint32 size) {
 	int16 *dst = new int16[size * _channels];
-	decompressVima((char *)src, dst, size * _channels * 2);
+	decompressVima((char *)src, dst, size * _channels * 2, destTable);
 
 	for (uint32 j = 0; j < size * _channels; j++)
 		dst[j] = SWAP_BYTES_16(dst[j]);
@@ -150,7 +151,7 @@ void Smush::handleFramesHeader() {
 		} else if (READ_BE_UINT32(f_header + pos) == MKID_BE('Wave')) {
 			_freq = READ_LE_UINT32(f_header + pos + 8);
 			_channels = READ_LE_UINT32(f_header + pos + 12);
-			vimaInit();
+			vimaInit(destTable);
 			pos += 20;
 		} else {
 			error("unknown tag");
