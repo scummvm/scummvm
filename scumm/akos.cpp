@@ -938,7 +938,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	int32 skip_x, skip_y, cur_x, cur_y;
 	byte transparency;
 	//FIXME There should be better method to determine transparency in HE games
-	if (_vm->_features & GF_HUMONGOUS) 
+	if (_vm->_features & GF_HUMONGOUS && _vm->_heversion < 70) 
 		transparency = (_vm->_gameId == GID_FBEAR) ? 5 : 0;
 	else
 		transparency = 255;
