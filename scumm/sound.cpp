@@ -702,11 +702,10 @@ void Sound::stopSound(int a) {
 		stopCDTimer();
 	}
 
-	if (_scumm->_features & GF_FMTOWNS) {
+	if (_scumm->_features & GF_FMTOWNS)
 		_scumm->_mixer->stopID(a);
-	} else if (_scumm->_musicEngine) {
+	if (_scumm->_musicEngine)
 		_scumm->_musicEngine->stopSound(a);
-	}
 
 	for (i = 0; i < 10; i++)
 		if (_soundQue2[i] == a)
