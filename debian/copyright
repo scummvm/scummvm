@@ -3,7 +3,10 @@ Sun, 18 Nov 2001 16:22:12 +0000.
 
 It was downloaded from http://sourceforge.net/projects/scummvm
 
-Upstream Author(s): Ludvig Strigeus <strigeus@users.sourceforge.net>
+Upstream Author(s): 
+ James Brown     <ender@users.sourceforge.net>
+ Vincent Hamm	 <yazoo@users.sourceforge.net>
+ Ludvig Strigeus <strigeus@users.sourceforge.net> [No longer very active]
 
 Copyright:
 
@@ -12,6 +15,7 @@ full text of the license may be found in /usr/share/apps/LICENSES/GPL_V2. The
 brief version follows:
 
 Copyright (C) 2001  Ludvig Strigeus
+Copyright (C) 2002  The ScummVM Team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
