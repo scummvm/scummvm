@@ -4484,7 +4484,12 @@ void SimonState::go()
 	
 	_mainscript_toggle = false;
 	_vgascript_toggle = false;
-	_vk_t_toggle = false;
+
+	if (!_voice) {
+		_vk_t_toggle = true;
+	} else {
+		_vk_t_toggle = false;
+	}
 
 	while (1) {
 		hitarea_stuff();
