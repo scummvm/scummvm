@@ -71,9 +71,9 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 
 	//set the remaining colors
 	for (i = 0; i < (VGA_COLOURS-GAME_COLOURS); i++) {
-		tmpPal[4 * GAME_COLOURS + i * 4] = (_top16Colours[i * 3] << 2) + (_top16Colours[i * 3] & 3);
-		tmpPal[4 * GAME_COLOURS + i * 4 + 1] = (_top16Colours[i * 3 + 1] << 2) + (_top16Colours[i * 3 + 1] & 3);
-		tmpPal[4 * GAME_COLOURS + i * 4 + 2] = (_top16Colours[i * 3 + 2] << 2) + (_top16Colours[i * 3 + 2] & 3);
+		tmpPal[4 * GAME_COLOURS + i * 4] = (_top16Colours[i * 3] << 2) + (_top16Colours[i * 3] >> 4);
+		tmpPal[4 * GAME_COLOURS + i * 4 + 1] = (_top16Colours[i * 3 + 1] << 2) + (_top16Colours[i * 3 + 1] >> 4);
+		tmpPal[4 * GAME_COLOURS + i * 4 + 2] = (_top16Colours[i * 3 + 2] << 2) + (_top16Colours[i * 3 + 2] >> 4);
 		tmpPal[4 * GAME_COLOURS + i * 4 + 3] = 0x00; 
 	}
 
@@ -167,9 +167,9 @@ void Screen::convertPalette(uint8 *inPal, uint8* outPal) { //convert 3 byte 0..6
 	int i;
 
 	for (i = 0; i < VGA_COLOURS; i++) {
-		outPal[4 * i] = (inPal[3 * i] << 2) + (inPal[3 * i] & 3);
-		outPal[4 * i + 1] = (inPal[3 * i + 1] << 2) + (inPal[3 * i + 1] & 3);
-		outPal[4 * i + 2] = (inPal[3 * i + 2] << 2) + (inPal[3 * i + 2] & 3);
+		outPal[4 * i] = (inPal[3 * i] << 2) + (inPal[3 * i] >> 4);
+		outPal[4 * i + 1] = (inPal[3 * i + 1] << 2) + (inPal[3 * i + 1] >> 4);
+		outPal[4 * i + 2] = (inPal[3 * i + 2] << 2) + (inPal[3 * i + 2] >> 4);
 		outPal[4 * i + 3] = 0x00;
 	}
 }
