@@ -423,7 +423,7 @@ public:
 	/* Core class/array definitions */
 	Gdi gdi;
 
-	Actor *_actors;	// Has MAX_ACTORS elements, see init.cpp
+	Actor *_actors;	// Has MAX_ACTORS elements
 	
 	uint16 *_inventory;
 	byte *_arrays;

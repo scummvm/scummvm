@@ -8,15 +8,15 @@ INCS	= scumm.h scummsys.h stdafx.h
 
 OBJS	+= util.o newgui.o gui/widget.o gui/dialog.o \
 	gui/ListWidget.o gui/ScrollBarWidget.o \
-	actor.o boxes.o costume.o gfx.o object.o resource.o \
-	saveload.o script.o scummvm.o sound.o string.o \
-	sys.o verbs.o script_v1.o script_v2.o debug.o gui.o \
-	sound/imuse.o sound/fmopl.o sound/mixer.o debugrl.o \
-	akos.o vars.o insane.o gameDetector.o init.o \
-	v3/resource_v3.o v4/resource_v4.o scaler.o main.o \
-        simon/midi.o simon/simon.o simon/simonsys.o simon/simonvga.o \
-        simon/simondebug.o simon/simonres.o simon/simonitems.o simon/simonverb.o \
-        sound/mididrv.o config-file.o bundle.o timer.o
+	actor.o akos.o boxes.o bundle.o config-file.o costume.o debug.o \
+	debugrl.o gameDetector.o gfx.o gui.o insane.o main.o object.o \
+	resource.o saveload.o scaler.o script.o script_v1.o script_v2.o \
+	scummvm.o sound.o string.o sys.o timer.o vars.o verbs.o  \
+	sound/imuse.o sound/fmopl.o sound/mixer.o \
+	v3/resource_v3.o v4/resource_v4.o \
+	simon/midi.o simon/simon.o simon/simonsys.o simon/simonvga.o \
+	simon/simondebug.o simon/simonres.o simon/simonitems.o simon/simonverb.o \
+	sound/mididrv.o
 
 DISTFILES=$(OBJS:.o=.cpp) Makefile scumm.h scummsys.h stdafx.h stdafx.cpp \
 	debugrl.h whatsnew.txt readme.txt copying.txt \
@@ -33,19 +33,19 @@ clean:
 .PHONY: all clean dist
 
 # Default (dumb) compile & dependcy rules
-.cpp.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-$(OBJS): $(INCS)
+#.cpp.o:
+#	$(CC) $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+#$(OBJS): $(INCS)
 
 
 # If you use GCC, disable the above and enable this for intelligent
 # dependency tracking. 
-#DEPDIR := .deps
-#.cpp.o:
-#	mkdir -p $(DEPDIR)
-#	$(CC) -Wp,-MMD,"$(DEPDIR)/$(*F).d2" $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-#	echo -n "$(*D)/" > $(DEPDIR)/$(*F).d
-#	cat "$(DEPDIR)/$(*F).d2" >> "$(DEPDIR)/$(*F).d"
-#	rm -f "$(DEPDIR)/$(*F).d2"
-#
-#-include $(DEPDIR)/*.d
+DEPDIR := .deps
+.cpp.o:
+	mkdir -p $(DEPDIR)
+	$(CC) -Wp,-MMD,"$(DEPDIR)/$(*F).d2" $(CFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	echo -n "$(*D)/" > $(DEPDIR)/$(*F).d
+	cat "$(DEPDIR)/$(*F).d2" >> "$(DEPDIR)/$(*F).d"
+	rm -f "$(DEPDIR)/$(*F).d2"
+
+-include $(DEPDIR)/*.d

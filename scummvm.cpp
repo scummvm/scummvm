@@ -63,6 +63,19 @@ uint Scumm::getRandomNumberRng(uint min, uint max)
 }
 
 
+Scumm::Scumm (void) {
+	_newgui = new NewGui(this);
+	_bundle = new Bundle(this);
+	_timer = new Timer(this);
+}
+
+Scumm::~Scumm (void) {
+	delete [] _actors;
+	delete _newgui;
+	delete _bundle;
+	delete _timer;
+}
+
 void Scumm::scummInit()
 {
 	int i;

@@ -343,10 +343,6 @@ SOURCE=.\gui.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\init.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\insane.cpp
 # End Source File
 # Begin Source File
