@@ -26,7 +26,6 @@
 class MidiDriver_NULL : public MidiDriver_MPU401 {
 public:
 	int open();
-	void close() { }
 	void send(uint32 b) { }
 };
 

@@ -87,6 +87,7 @@ int MidiDriver_SEQ::open() {
 }
 
 void MidiDriver_SEQ::close() {
+	MidiDriver_MPU401::close();
 	::close(device);
 	_isOpen = false;
 }

@@ -68,6 +68,7 @@ int MidiDriver_ETUDE::open()
 
 void MidiDriver_ETUDE::close()
 {
+	MidiDriver_MPU401::close();
 	exit_morphos_music();
 	_isOpen = false;
 }

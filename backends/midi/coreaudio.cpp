@@ -90,6 +90,8 @@ int MidiDriver_CORE::open() {
 }
 
 void MidiDriver_CORE::close() {
+	MidiDriver_MPU401::close();
+
 	// Stop the output
 	AudioOutputUnitStop(au_output);
 

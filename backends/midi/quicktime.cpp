@@ -115,6 +115,8 @@ bail:
 
 void MidiDriver_QT::close()
 {
+	MidiDriver_MPU401::close();
+
 	for (int i = 0; i < 15; i++) {
 		if (qtNoteChannel[i] != NULL)
 			NADisposeNoteChannel(qtNoteAllocator, qtNoteChannel[i]);

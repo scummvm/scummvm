@@ -76,15 +76,26 @@ const char *MidiDriver::getErrorName(int error_code) {
 	return midi_errors[error_code];
 }
 
-MidiDriver_MPU401::MidiDriver_MPU401() : MidiDriver() {
+MidiDriver_MPU401::MidiDriver_MPU401() :
+	MidiDriver(),
+	_started_thread (false),
+	_timer_proc (0),
+	_timer_param (0),
+	_mutex (0)
+{
+	
 	uint i;
-	
-	_started_thread = false;	// palmos
-	_timer_proc = NULL;			// palmos
-	_timer_param = NULL;		// palmos
-	
 	for (i = 0; i < ARRAYSIZE(_midi_channels); ++i) {
 		_midi_channels [i].init (this, i);
+	}
+}
+
+void MidiDriver_MPU401::close() {
+	if (_mutex) {
+		_started_thread = false;
+		g_system->lock_mutex (_mutex); // Wait for the timer thread to shutdown.
+		g_system->unlock_mutex (_mutex);
+		g_system->delete_mutex (_mutex);
 	}
 }
 
@@ -106,40 +117,45 @@ MidiChannel *MidiDriver_MPU401::allocateChannel() {
 
 void MidiDriver_MPU401::setTimerCallback (void *timer_param, void (*timer_proc) (void *)) {
 	if (!_timer_proc || !timer_proc) {
-		_timer_proc = (TimerCallback *) timer_proc;
+		_timer_proc = timer_proc;
 		_timer_param = timer_param;
 		if (!_started_thread && timer_proc) {
 			// TODO: This is the only place in ScummVM where create_thread is
 			// being used. And it's used for a timer like thread. So if we
 			// could convert it to use the timer API instead, we could get
 			// rid of create_thread completely.
+			_mutex = g_system->create_mutex();
+			_started_thread = true;
 			g_system->create_thread(midi_driver_thread, this);
 		}
-		_started_thread = true;
 	}
 }
 
 #if !defined(__MORPHOS__) && !defined(__PALM_OS__)
+typedef void (*TimerCallback) (void*);
+
 int MidiDriver_MPU401::midi_driver_thread(void *param) {
-	volatile MidiDriver_MPU401 *mid = (MidiDriver_MPU401 *)param;
+	MidiDriver_MPU401 *mid = (MidiDriver_MPU401 *)param;
 	int old_time, cur_time;
 
-	old_time = g_system->get_msecs();
+	// Grab the MidiDriver's mutex. When the MidiDriver
+	// shuts down, it will wait on that mutex until we've
+	// detected the shutdown and quit looping.
+	g_system->lock_mutex (mid->_mutex);
 
-	for (;;) {
+	old_time = g_system->get_msecs();
+	while (mid->_started_thread) {
 		g_system->delay_msecs(10);
 
 		cur_time = g_system->get_msecs();
 		while (old_time < cur_time) {
 			old_time += 10;
-			// Don't use mid->_se_on_timer()
-			// We must come in through IMuseMonitor to protect
-			// against conflicts with script access to IMuse.
 			if (mid->_timer_proc)
-				(*(mid->_timer_proc)) (mid->_timer_param);
+				(*(TimerCallback)(mid->_timer_proc)) (mid->_timer_param);
 		}
 	}
 
+	g_system->unlock_mutex (mid->_mutex);
 	return 0;
 }
 #endif

@@ -68,6 +68,7 @@ void MidiDriver_WIN::close() {
 	if (!_isOpen)
 		return;
 	_isOpen = false;
+	MidiDriver_MPU401::close();
 	midiOutUnprepareHeader (_mo, &_streamHeader, sizeof (_streamHeader));
 	check_error(midiOutClose(_mo));
 	CloseHandle (_streamEvent);

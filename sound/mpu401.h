@@ -30,8 +30,6 @@
 //
 ////////////////////////////////////////
 
-typedef void TimerCallback (void *);
-
 class MidiDriver_MPU401;
 
 class MidiChannel_MPU401 : public MidiChannel {
@@ -78,8 +76,9 @@ public:
 class MidiDriver_MPU401 : public MidiDriver {
 private:
 	MidiChannel_MPU401 _midi_channels [16];
-	bool _started_thread;
-	TimerCallback *_timer_proc;
+	volatile bool _started_thread;
+	void *_mutex; // Concurrent shutdown barrier
+	volatile void *_timer_proc;
 	void *_timer_param;
 
 	static int midi_driver_thread (void *param);
@@ -87,8 +86,9 @@ private:
 public:
 	MidiDriver_MPU401();
 
+	virtual void close();
 	void setTimerCallback(void *timer_param, void (*timer_proc) (void *));
-	uint32 getBaseTempo(void) { return 10000; } // 0x4A0000; } // Now referenced in microseconds between callbacks
+	uint32 getBaseTempo(void) { return 10000; }
 
 	MidiChannel *allocateChannel();
 	MidiChannel *getPercussionChannel() { return &_midi_channels [9]; }
