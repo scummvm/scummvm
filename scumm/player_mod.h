@@ -52,7 +52,7 @@ public:
 
 private:
 	enum {
-		MOD_MAXCHANS = 16
+		MOD_MAXCHANS = 24
 	};
 
 	struct soundChan {
