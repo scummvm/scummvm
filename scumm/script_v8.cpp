@@ -200,7 +200,7 @@ void Scumm_v8::setupOpcodes()
 		/* 7C */
 		OPCODE(o6_stopScript),
 		OPCODE(o6_jumpToScript),		// FIXME - is this right? "O_CHAIN_SCRIPT"
-		OPCODE(o6_invalid),
+		OPCODE(o6_dummy),
 		OPCODE(o6_startObject),
 		/* 80 */
 		OPCODE(o6_stopObjectScript),	// FIXME - is this right?
@@ -221,10 +221,10 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_panCameraTo),
 		OPCODE(o6_actorFollowCamera),
 		OPCODE(o6_setCameraAt),
-		OPCODE(o6_invalid),
+		OPCODE(o8_talkActor),
 		/* 90 */
 		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o8_talkActorSimple),
 		OPCODE(o6_invalid),
 		OPCODE(o8_printLine),
 		/* 94 */
@@ -643,15 +643,57 @@ void Scumm_v8::o8_wait()
 	// TODO
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
-	case 0x1E:		// SO_WAIT_FOR_ACTOR Wait for actor (to finish current action?)
+	case 0x1E: {		// SO_WAIT_FOR_ACTOR Wait for actor (to finish current action?)
+		int offs = fetchScriptWordSigned();
+		if (derefActorSafe(pop(), "o8_wait:SO_WAIT_FOR_ACTOR")->moving) {
+			_scriptPointer += offs;
+			o6_breakHere();
+		}
+		return;
+	}
 	case 0x1F:		// SO_WAIT_FOR_MESSAGE Wait for message
+		if (_vars[VAR_HAVE_MSG])
+			break;
+		return;
 	case 0x20:		// SO_WAIT_FOR_CAMERA Wait for camera (to finish current action?)
+		if (camera._dest != camera._cur)
+			break;
 	case 0x21:		// SO_WAIT_FOR_SENTENCE
-	case 0x22:		// SO_WAIT_FOR_ANIMATION
-	case 0x23:		// SO_WAIT_FOR_TURN
+		if (_sentenceNum) {
+			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+				return;
+			break;
+		}
+		if (!isScriptInUse(_vars[VAR_SENTENCE_SCRIPT]))
+			return;
+		break;
+	case 0x22: {		// SO_WAIT_FOR_ANIMATION
+		int actnum = pop();
+		Actor *a = derefActorSafe(actnum, "o8_wait:SO_WAIT_FOR_ANIMATION");
+		int offs = fetchScriptWordSigned();
+		if (a && a->isInCurrentRoom() && a->needRedraw) {
+			_scriptPointer += offs;
+			o6_breakHere();
+		}
+		return;
+	}
+	case 0x23: {		// SO_WAIT_FOR_TURN
+		int actnum = pop();
+		Actor *a = derefActorSafe(actnum, "o8_wait:SO_WAIT_FOR_TURN");
+		int offs = fetchScriptWordSigned();
+		if (a && a->isInCurrentRoom() && a->moving & MF_TURN) {
+			_scriptPointer += offs;
+			o6_breakHere();
+		}
+		return;
+	}
+
 	default:
 		error("o8_wait: default case %d", subOp);
 	}
+
+        _scriptPointer -= 2;
+        o6_breakHere();
 }
 
 void Scumm_v8::o8_dim()
@@ -745,6 +787,62 @@ void Scumm_v8::o8_arrayOps()
 	default:
 		error("o8_arrayOps: default case %d (array %d)", subOp, array);
 	}
+}
+
+void Scumm_v8::o8_talkActor() {
+	int _actorToPrintStrFor = pop();
+
+	_messagePtr = _scriptPointer;
+	if (_messagePtr[0] == '/') {
+		char pointer[20];
+		int i, j;
+
+		_scriptPointer += resStrLen((char*)_scriptPointer)+ 1;
+		translateText(_messagePtr, _transText);
+		for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
+			if (_messagePtr[i] != '/')
+				pointer[j++] = _messagePtr[i];
+       		}
+		pointer[j] = 0;
+
+		_messagePtr = _transText;
+                //setStringVars(0);
+                //actorTalk(); // FIXME - This crashes
+        } else {
+                //setStringVars(0);
+                //actorTalk(); // FIXME - This crashes
+                _scriptPointer = _messagePtr;
+        }
+
+	printf("o8_talkActor(%d, %s)\n", _actorToPrintStrFor, _messagePtr);
+}
+
+void Scumm_v8::o8_talkActorSimple() {
+	int _actorToPrintStrFor = pop();
+
+	_messagePtr = _scriptPointer;
+	if (_messagePtr[0] == '/') {
+		char pointer[20];
+		int i, j;
+
+		_scriptPointer += resStrLen((char*)_scriptPointer)+ 1;
+		translateText(_messagePtr, _transText);
+		for (i = 0, j = 0; (_messagePtr[i] != '/' || j == 0) && j < 19; i++) {
+			if (_messagePtr[i] != '/')
+				pointer[j++] = _messagePtr[i];
+       		}
+		pointer[j] = 0;
+
+		_messagePtr = _transText;
+                //setStringVars(0);
+                //actorTalk(); // FIXME - This crashes
+        } else {
+                //setStringVars(0);
+                //actorTalk(); // FIXME - This crashes
+                _scriptPointer = _messagePtr;
+        }
+
+	printf("o8_talkActorSimple(%d, %s)\n", _actorToPrintStrFor, _messagePtr);
 }
 
 void Scumm_v8::o8_printLine()

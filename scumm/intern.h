@@ -419,6 +419,9 @@ protected:
 	void o8_printSystem();
 	void o8_blastText();
 
+	void o8_talkActor();
+	void o8_talkActorSimple();
+
 	void o8_cursorCommand();
 	void o8_resourceRoutines();
 	void o8_roomOps();
