@@ -37,5 +37,5 @@
 #undef Timer
 #endif
 #ifndef REAL_MAIN
-#define main scumm_main
+#define main scummvm_main
 #endif

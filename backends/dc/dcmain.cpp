@@ -198,10 +198,9 @@ void dc_init_hardware()
   init_arm();
 }
 
+extern "C" int scummvm_main(int argc, char *argv[]);
 int main()
 {
-  extern int scumm_main(int argc, char *argv[]);
-
   static char *argv[] = { "scummvm", NULL, NULL, NULL };
   static int argc = 3;
 
@@ -215,7 +214,7 @@ int main()
 
   PluginManager::instance().unloadPlugins();
 
-  scumm_main(argc, argv);
+  scummvm_main(argc, argv);
 
   exit(0);
 }
