@@ -208,7 +208,13 @@ void Normal3x(uint8 *srcPtr, uint32 srcPitch, uint8 *null,
 
 void atexit_proc() {
 	SDL_ShowCursor(SDL_ENABLE);
-	SDL_Quit();
+
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	SDL_QuitSubSystem(SDL_INIT_TIMER);
+	SDL_QuitSubSystem(SDL_INIT_CDROM);
+#ifndef WIN32	// FIXME: SDL bug - closing audio freezes w/ waveout
+	SDL_QuitSubSystem(SDL_INIT_AUDIO);
+#endif
 }
 
 OSystem *OSystem_SDL::create(int gfx_mode, bool full_screen) {

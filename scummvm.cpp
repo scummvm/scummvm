@@ -293,8 +293,6 @@ int Scumm::scummLoop(int delta)
 	}
 
 	if (_completeScreenRedraw) {
-		int i;
-		Actor *a;
 		_completeScreenRedraw = false;
 		gdi.clearUpperMask();
 		charset._hasMask = false;

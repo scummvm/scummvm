@@ -132,15 +132,15 @@ FILE *SimonState::fopen_maybe_lowercase(const char *filename) {
 	const char *s = _game_path;
 
 	strcpy(buf, s); strcat(buf, filename);	
-	strcpy(dotbuf, buf); strcat(dotbuf, "."); // '.' appended version
-										   	  // for dumb vfat drivers 
+	strcpy(dotbuf, buf); strcat(dotbuf, ".");	// '.' appended version
+												// for dumb vfat drivers 
 	
 	/* original filename */
 	in = fopen(buf, "rb");
 	if (in) return in;
 
 	/* lowercase original filename */
-	e = buf; do *e = tolower(*e); while(*e++);	
+	e = buf + strlen(s); do *e = tolower(*e); while(*e++);	
 	in = fopen(buf, "rb");	
 	if (in) return in;
 
@@ -152,9 +152,9 @@ FILE *SimonState::fopen_maybe_lowercase(const char *filename) {
 	if (in) return in;
 
 	/* lowercase dot appended */
-	e = dotbuf; do *e = tolower(*e); while(*e++);
+	e = dotbuf + strlen(s); do *e = tolower(*e); while(*e++);
 	in = fopen(dotbuf, "rb");
-	warning("loading %s\n", dotbuf);
+
 	return in;		
 }
 
