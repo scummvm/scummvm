@@ -78,7 +78,7 @@ const byte cost_scaleTable[256] = {
 };
 
 byte CostumeRenderer::mainRoutine() {
-	int xmove, ymove, i, s;
+	int xmove, ymove, i, skip;
 	byte drawFlag = 1;
 	uint scal;
 	bool use_scaling;
@@ -86,6 +86,7 @@ byte CostumeRenderer::mainRoutine() {
 	int ex1, ex2;
 	int y_top, y_bottom;
 	int x_left, x_right;
+	int step;
 	const CostumeInfo *costumeInfo;
 	
 	CHECK_HEAP
@@ -126,26 +127,26 @@ byte CostumeRenderer::mainRoutine() {
 
 	use_scaling = (_scaleX != 0xFF) || (_scaleY != 0xFF);
 
-	s = 0;
+	skip = 0;
 
 	if (use_scaling) {
-		_scaleIndexXStep = -1;
+		v1.scaleXstep = -1;
 		if (xmove < 0) {
 			xmove = -xmove;
-			_scaleIndexXStep = 1;
+			v1.scaleXstep = 1;
 		}
 
 		if (_mirror) {
 			startScaleIndexX = _scaleIndexX = 128 - xmove;
 			for (i = 0; i < xmove; i++) {
 				if (cost_scaleTable[_scaleIndexX++] < _scaleX)
-					v1.x -= _scaleIndexXStep;
+					v1.x -= v1.scaleXstep;
 			}
 			x_right = x_left = v1.x;
 			_scaleIndexX = startScaleIndexX;
 			for (i = 0; i < _width; i++) {
 				if (x_right < 0) {
-					s++;
+					skip++;
 					startScaleIndexX = _scaleIndexX;
 				}
 				scal = cost_scaleTable[_scaleIndexX++];
@@ -157,13 +158,13 @@ byte CostumeRenderer::mainRoutine() {
 			for (i = 0; i < xmove; i++) {
 				scal = cost_scaleTable[_scaleIndexX--];
 				if (scal < _scaleX)
-					v1.x += _scaleIndexXStep;
+					v1.x += v1.scaleXstep;
 			}
 			x_right = x_left = v1.x;
 			_scaleIndexX = startScaleIndexX;
 			for (i = 0; i < _width; i++) {
 				if (x_left > (_vm->_screenWidth - 1)) {
-					s++;
+					skip++;
 					startScaleIndexX = _scaleIndexX;
 				}
 				scal = cost_scaleTable[_scaleIndexX--];
@@ -172,18 +173,19 @@ byte CostumeRenderer::mainRoutine() {
 			}
 		}
 		_scaleIndexX = startScaleIndexX;
-		if (s)
-			s--;
-		_scaleIndexYStep = -1;
+		if (skip)
+			skip--;
+
+		step = -1;
 		if (ymove < 0) {
 			ymove = -ymove;
-			_scaleIndexYStep = 1;
+			step = 1;
 		}
 		_scaleIndexY = 128 - ymove;
 		for (i = 0; i < ymove; i++) {
 			scal = cost_scaleTable[_scaleIndexY++];
 			if (scal < _scaleY)
-				v1.y -= _scaleIndexYStep;
+				v1.y -= step;
 		}
 		y_top = y_bottom = v1.y;
 		_scaleIndexY = 128 - ymove;
@@ -209,10 +211,9 @@ byte CostumeRenderer::mainRoutine() {
 		y_bottom = y_top + _height;
 	}
 
-	_scaleIndexXStep = -1;
+	v1.scaleXstep = -1;
 	if (_mirror)
-		_scaleIndexXStep = 1;
-	_ypostop = v1.y;
+		v1.scaleXstep = 1;
 
 	_vm->updateDirtyRect(0, x_left, x_right + 1, y_top, y_bottom, _dirty_id);
 
@@ -225,34 +226,34 @@ byte CostumeRenderer::mainRoutine() {
 
 	if (_mirror) {
 		if (!use_scaling)
-			s = -v1.x;
-		if (s > 0) {
-			_width2 -= s;
-			ignorePakCols(s);
+			skip = -v1.x;
+		if (skip > 0) {
+			_width2 -= skip;
+			ignorePakCols(skip);
 			v1.x = 0;
 			_docontinue = 1;
 		} else {
-			s = x_right - _vm->_screenWidth;
-			if (s <= 0) {
+			skip = x_right - _vm->_screenWidth;
+			if (skip <= 0) {
 				drawFlag = 2;
 			} else {
-				_width2 -= s;
+				_width2 -= skip;
 			}
 		}
 	} else {
 		if (!use_scaling)
-			s = x_right - _vm->_screenWidth;
-		if (s > 0) {
-			_width2 -= s;
-			ignorePakCols(s);
+			skip = x_right - _vm->_screenWidth;
+		if (skip > 0) {
+			_width2 -= skip;
+			ignorePakCols(skip);
 			v1.x = _vm->_screenWidth - 1;
 			_docontinue = 1;
 		} else {
-			s = -1 - x_left;
-			if (s <= 0)
+			skip = -1 - x_left;
+			if (skip <= 0)
 				drawFlag = 2;
 			else
-				_width2 -= s;
+				_width2 -= skip;
 		}
 	}
 
@@ -310,7 +311,7 @@ void CostumeRenderer::proc3() {
 	const byte *mask, *src;
 	byte *dst;
 	byte maskbit, len, height, pcolor, width;
-	int color, t;
+	int color;
 	uint y;
 	bool masked;
 
@@ -359,17 +360,17 @@ void CostumeRenderer::proc3() {
 				if (!--width)
 					return;
 				height = _height;
-				y = _ypostop;
+				y = v1.y;
+
 				_scaleIndexY = _scaleIndexYTop;
-				t = _scaleIndexX;
-				_scaleIndexX += _scaleIndexXStep;
-				if (_scaleX == 255 || cost_scaleTable[t] < _scaleX) {
-					v1.x += _scaleIndexXStep;
+				if (_scaleX == 255 || cost_scaleTable[_scaleIndexX] < _scaleX) {
+					v1.x += v1.scaleXstep;
 					if (v1.x < 0 || v1.x >= _vm->_screenWidth)
 						return;
 					maskbit = revBitMask[v1.x & 7];
-					v1.destptr += _scaleIndexXStep;
+					v1.destptr += v1.scaleXstep;
 				}
+				_scaleIndexX += v1.scaleXstep;
 				dst = v1.destptr;
 				mask = v1.mask_ptr + (v1.x >> 3);
 			}
@@ -382,7 +383,7 @@ void CostumeRenderer::proc3_ami() {
 	const byte *mask, *src;
 	byte *dst;
 	byte maskbit, len, height, width;
-	int color, t;
+	int color;
 	uint y;
 	bool masked;
 	int oldXpos, oldScaleIndexX;
@@ -411,13 +412,12 @@ void CostumeRenderer::proc3_ami() {
 					*dst = _palette[color];
 				}
 
-				t = _scaleIndexX;
-				_scaleIndexX = t + _scaleIndexXStep;
-				if (_scaleX == 255 || cost_scaleTable[t] < _scaleX) {
-					v1.x += _scaleIndexXStep;
-					dst += _scaleIndexXStep;
+				if (_scaleX == 255 || cost_scaleTable[_scaleIndexX] < _scaleX) {
+					v1.x += v1.scaleXstep;
+					dst += v1.scaleXstep;
 					maskbit = revBitMask[v1.x & 7];
 				}
+				_scaleIndexX += v1.scaleXstep;
 				mask = v1.mask_ptr + (v1.x >> 3);
 			}
 			if (!--width) {
@@ -487,19 +487,24 @@ void LoadedCostume::loadCostume(int id) {
 byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 	int i;
 	int code;
+	const byte *frameptr;
 
+	// If the specified limb is stopped or not existing, do nothing.
 	if (cost.curpos[limb] == 0xFFFF || cost.stopped & (1 << limb))
 		return 0;
 
+	// Determine the position the limb is at
 	i = cost.curpos[limb] & 0x7FFF;
-
-	_frameptr = _loaded._baseptr + READ_LE_UINT16(_loaded._ptr + _loaded._numColors + limb * 2 + 10);
-
-	code = _loaded._dataptr[i] & 0x7F;
 	
-	_srcptr = _loaded._baseptr + READ_LE_UINT16(_frameptr + code * 2);
+	// Get the base pointer for that limb
+	frameptr = _loaded._baseptr + READ_LE_UINT16(_loaded._ptr + _loaded._numColors + limb * 2 + 10);
+	
+	// Determine the offset to the costume data for the limb at position i
+	code = _loaded._dataptr[i] & 0x7F;
 
+	// Code 0x7B indicates a limb for which there is nothing to draw
 	if (code != 0x7B) {
+		_srcptr = _loaded._baseptr + READ_LE_UINT16(frameptr + code * 2);
 		if (!(_vm->_features & GF_OLD256) || code < 0x79)
 			return mainRoutine();
 	}
@@ -513,11 +518,11 @@ int Scumm::cost_frameToAnim(Actor *a, int frame) {
 }
 
 void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
-	byte *r;
+	const byte *r;
 	uint mask, j;
 	int i;
 	byte extra, cmd;
-	byte *dataptr;
+	const byte *dataptr;
 	int anim;
 	LoadedCostume lc(this);
 

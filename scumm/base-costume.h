@@ -57,13 +57,16 @@ public:
 
 	int _draw_top, _draw_bottom;
 
-	// Destination params
+	// Destination
 	byte *_outptr;
 	uint _outwidth, _outheight;
 
 protected:
 	Scumm *_vm;
 	int32 _numStrips;
+
+	// Source pointer
+	const byte *_srcptr;
 
 	// current move offset
 	int _xmove, _ymove;
@@ -75,14 +78,14 @@ protected:
 	int _width, _height;
 
 	struct {
-		/* codec stuff */
+		// Parameters for the original ("V1") costume codec.
 		const byte *scaletable;
 		byte mask, shr;
 		byte repcolor;
 		byte replen;
 		int scaleXstep;
 		int x, y;
-		int tmp_x, tmp_y;
+		int scaleXindex, scaleYindex;
 		int skip_width;
 		byte *destptr;
 		const byte *mask_ptr;
@@ -101,6 +104,7 @@ public:
 		
 		_vm = scumm;
 		_numStrips = _vm->gdi._numStrips;
+		_srcptr = 0;
 		_xmove = _ymove = 0;
 		_mirror = false;
 		_width = _height = 0;

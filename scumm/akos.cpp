@@ -333,7 +333,7 @@ void AkosRenderer::codec1_genericDecode() {
 	color = v1.repcolor;
 	height = _height;
 
-	scaleytab = &v1.scaletable[v1.tmp_y];
+	scaleytab = &v1.scaletable[v1.scaleYindex];
 	maskbit = revBitMask[v1.x & 7];
 	mask = v1.mask_ptr + (v1.x >> 3);
 
@@ -363,9 +363,9 @@ void AkosRenderer::codec1_genericDecode() {
 				height = _height;
 				y = v1.y;
 
-				scaleytab = &v1.scaletable[v1.tmp_y];
+				scaleytab = &v1.scaletable[v1.scaleYindex];
 
-				if (v1.scaletable[v1.tmp_x] < _scaleX) {
+				if (v1.scaletable[v1.scaleXindex] < _scaleX) {
 					v1.x += v1.scaleXstep;
 					if (v1.x < 0 || v1.x >= _vm->_screenWidth)
 						return;
@@ -373,7 +373,7 @@ void AkosRenderer::codec1_genericDecode() {
 					v1.destptr += v1.scaleXstep;
 				}
 				mask = v1.mask_ptr + (v1.x >> 3);
-				v1.tmp_x += v1.scaleXstep;
+				v1.scaleXindex += v1.scaleXstep;
 				dst = v1.destptr;
 			}
 		StartPos:;
@@ -396,7 +396,7 @@ void AkosRenderer::codec1_spec1() {
 	color = v1.repcolor;
 	height = _height;
 
-	scaleytab = &v1.scaletable[v1.tmp_y];
+	scaleytab = &v1.scaletable[v1.scaleYindex];
 	maskbit = revBitMask[v1.x & 7];
 	mask = v1.mask_ptr + (v1.x >> 3);
 
@@ -429,9 +429,9 @@ void AkosRenderer::codec1_spec1() {
 				height = _height;
 				y = v1.y;
 
-				scaleytab = &v1.scaletable[v1.tmp_y];
+				scaleytab = &v1.scaletable[v1.scaleYindex];
 
-				if (v1.scaletable[v1.tmp_x] < _scaleX) {
+				if (v1.scaletable[v1.scaleXindex] < _scaleX) {
 					v1.x += v1.scaleXstep;
 					if (v1.x < 0 || v1.x >= _vm->_screenWidth)
 						return;
@@ -439,7 +439,7 @@ void AkosRenderer::codec1_spec1() {
 					v1.destptr += v1.scaleXstep;
 				}
 				mask = v1.mask_ptr + (v1.x >> 3);
-				v1.tmp_x += v1.scaleXstep;
+				v1.scaleXindex += v1.scaleXstep;
 				dst = v1.destptr;
 			}
 		StartPos:;
@@ -466,7 +466,7 @@ void AkosRenderer::codec1_spec3() {
 	color = v1.repcolor;
 	height = _height;
 
-	scaleytab = &v1.scaletable[v1.tmp_y];
+	scaleytab = &v1.scaletable[v1.scaleYindex];
 	maskbit = revBitMask[v1.x & 7];
 	mask = v1.mask_ptr + (v1.x >> 3);
 
@@ -502,9 +502,9 @@ void AkosRenderer::codec1_spec3() {
 				height = _height;
 				y = v1.y;
 
-				scaleytab = &v1.scaletable[v1.tmp_y];
+				scaleytab = &v1.scaletable[v1.scaleYindex];
 
-				if (v1.scaletable[v1.tmp_x] < _scaleX) {
+				if (v1.scaletable[v1.scaleXindex] < _scaleX) {
 					v1.x += v1.scaleXstep;
 					if (v1.x < 0 || v1.x >= _vm->_screenWidth)
 						return;
@@ -512,7 +512,7 @@ void AkosRenderer::codec1_spec3() {
 					v1.destptr += v1.scaleXstep;
 				}
 				mask = v1.mask_ptr + (v1.x >> 3);
-				v1.tmp_x += v1.scaleXstep;
+				v1.scaleXindex += v1.scaleXstep;
 				dst = v1.destptr;
 			}
 		StartPos:;
@@ -761,8 +761,8 @@ byte AkosRenderer::codec1() {
 		tmp_y = 0x180;
 	}
 
-	v1.tmp_x = startScaleIndexX;
-	v1.tmp_y = tmp_y;
+	v1.scaleXindex = startScaleIndexX;
+	v1.scaleYindex = tmp_y;
 	v1.skip_width = _width;
 
 	v1.scaleXstep = -1;

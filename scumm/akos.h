@@ -32,7 +32,6 @@ struct AkosOffset;
 class AkosRenderer : public BaseCostumeRenderer {
 protected:
 	uint16 codec;
-	const byte *_srcptr;
 
 	// movement of cel to decode
 	int _xmoveCur, _ymoveCur;
@@ -62,7 +61,6 @@ protected:
 
 public:
 	AkosRenderer(Scumm *scumm) : BaseCostumeRenderer(scumm) {
-		_srcptr = 0;
 		akos = 0;
 		akhd = 0;
 		akpl = 0;

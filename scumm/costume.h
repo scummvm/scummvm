@@ -28,9 +28,9 @@ protected:
 	Scumm *_vm;
 
 public:
-	byte *_ptr;
-	byte *_baseptr;
-	byte *_dataptr;
+	const byte *_ptr;
+	const byte *_baseptr;
+	const byte *_dataptr;
 	byte _numColors;
 
 	LoadedCostume(Scumm *vm) : _vm(vm), _ptr(0), _dataptr(0), _numColors(0) {}
@@ -47,16 +47,11 @@ class CostumeRenderer : public BaseCostumeRenderer {
 protected:
 	LoadedCostume _loaded;
 	
-	byte *_frameptr;
-	const byte *_srcptr;
 	bool _use_mask, _use_charset_mask;
 	byte _width2;
 
-	int _scaleIndexXStep;
-	int _scaleIndexYStep;
 	byte _scaleIndexX;						/* must wrap at 256 */
 	byte _scaleIndexY, _scaleIndexYTop;
-	int _ypostop;
 	byte _docontinue;
 	byte _palette[32];
 
