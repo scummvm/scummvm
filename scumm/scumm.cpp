@@ -212,29 +212,27 @@ static const ScummGameSettings scumm_settings[] = {
 
 	 /* Note that both full versions of Humongous games and demos were often released for
 	  * several interpreter versions... */
-	// Humongous Entertainment Scumm Version 6 (Windows versions are version 7 actually)
-	{"catalog", "Humongous Interactive Catalog", GID_HEGAME, 6, 70, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"catalog2", "Humongous Interactive Catalog 2", GID_HEGAME, 6, 70, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"farm", "Let's Explore the Farm with Buzzy", GID_HEGAME, 6, 70, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_HEGAME, 6, 70, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"airport", "Let's Explore the Airport with Buzzy", GID_HEGAME, 6, 70, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"airdemo", "Let's Explore the Airport with Buzzy (Demo)", GID_HEGAME, 6, 70, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"jungle", "Let's Explore the Jungle with Buzzy", GID_HEGAME, 6, 70, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-
 	// First 640x480 game, hence version 7.1
 	// There is also a Scummsys.90 version of freddi
 	{"freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds", GID_HEGAME, 6, 71, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"freddemo", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_FREDDEMO, 6, 71, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
-	/* needs the MAXS reading code for >= 72 but is still 320x200? */
+	{"catalog", "Humongous Interactive Catalog", GID_HEGAME, 6, 72, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"catalog2", "Humongous Interactive Catalog 2", GID_HEGAME, 6, 72, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"farm", "Let's Explore the Farm with Buzzy", GID_HEGAME, 6, 72, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"farmdemo", "Let's Explore the Farm with Buzzy (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"airport", "Let's Explore the Airport with Buzzy", GID_HEGAME, 6, 72, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"airdemo", "Let's Explore the Airport with Buzzy (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"jungle", "Let's Explore the Jungle with Buzzy", GID_HEGAME, 6, 72, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+
 	// There is also a Scummsys.90 version of puttzoo
 	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
