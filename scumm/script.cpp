@@ -330,6 +330,7 @@ int Scumm::readVar(uint var)
 			var = 518;
 		}
 #endif
+
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
 		return _vars[var];
 	}
@@ -362,7 +363,11 @@ int Scumm::readVar(uint var)
 	}
 
 	if (var & 0x4000) {
-		var &= 0xFFF;
+		if (_gameId == GID_INDY3_256) {
+			var &= 0xF;
+		} else {
+			var &= 0xFFF;
+		}
 		checkRange(0x10, 0, var, "Local variable %d out of range(r)");
 		return vm.localvar[_currentScript][var];
 	}
@@ -422,7 +427,12 @@ void Scumm::writeVar(uint var, int value)
 	}
 
 	if (var & 0x4000) {
-		var &= 0xFFF;
+		if (_gameId == GID_INDY3_256) {
+			var &= 0xF;
+		} else {
+			var &= 0xFFF;
+		}
+
 		checkRange(0x10, 0, var, "Local variable %d out of range(w)");
 		vm.localvar[_currentScript][var] = value;
 		return;
