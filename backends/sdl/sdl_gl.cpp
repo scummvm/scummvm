@@ -203,8 +203,10 @@ void OSystem_SDL_OpenGL::load_gfx_mode() {
 		_hwscreen = SDL_SetVideoMode(_screenWidth * _scaleFactor, (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor, 16, 
 		_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 		);
-		if (_hwscreen == NULL)
-			error("_hwscreen failed");
+		if (_hwscreen == NULL) {
+			warning("SDL_SetVideoMode says we can't switch to that mode");
+			quit();
+		}
 
 		// Distinguish 555 and 565 mode
 		if (_hwscreen->format->Rmask == 0x7C00)
