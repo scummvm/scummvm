@@ -240,9 +240,9 @@ const String& StringList::operator [](int idx) const
 	return *_data[idx];
 }
 
-void String::clear()
+void StringList::clear()
 {
-	_len = 0;
+	_size = 0;
 }
 
 void StringList::ensureCapacity(int new_len)
