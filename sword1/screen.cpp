@@ -257,11 +257,13 @@ void SwordScreen::newScreen(uint32 screen) {
 	for (uint8 cnt = 0; cnt < _roomDefTable[_currentScreen].totalLayers; cnt++) {
 		// open and lock all resources, will be closed in closeScreen()
 		_layerBlocks[cnt] = (uint8*)_resMan->openFetchRes(_roomDefTable[_currentScreen].layers[cnt]);
+		if (cnt > 0)
+			_layerBlocks[cnt] += sizeof(Header);
 	}
 	for (uint8 cnt = 0; cnt < _roomDefTable[_currentScreen].totalLayers - 1; cnt++) {
 		// there's no grid for the background layer, so it's totalLayers - 1
 		_layerGrid[cnt] = (uint16*)_resMan->openFetchRes(_roomDefTable[_currentScreen].grids[cnt]);
-		_layerGrid[cnt] += 0x12; // not sure about the 0x12
+ 		_layerGrid[cnt] += 14;
 	}
 	_parallax[0] = _parallax[1] = NULL;
 	if (_roomDefTable[_currentScreen].parallax[0])
@@ -430,15 +432,23 @@ void SwordScreen::verticalMask(uint16 x, uint16 y, uint16 bWidth, uint16 bHeight
 	if (y + bHeight > _gridSizeY)
 		bHeight = _gridSizeY - y;
 
+	uint16 gridY = y + SCREEN_TOP_EDGE / SCRNGRID_Y; // imaginary screen on top
+	uint16 gridX = x + SCREEN_LEFT_EDGE / SCRNGRID_X; // imaginary screen left
+	uint16 lGridSizeX = _gridSizeX + 2 * (SCREEN_LEFT_EDGE / SCRNGRID_X); // width of the grid for the imaginary screen
+
 	for (uint16 blkx = 0; blkx < bWidth; blkx++) {
-		for (uint8 z = 1; z < _roomDefTable[_currentScreen].totalLayers; z++) { // current layer
-			uint16 *grid = _layerGrid[z - 1] + x + blkx + y * _gridSizeX;
+		uint16 level = 0;
+		while ((level < _roomDefTable[_currentScreen].totalLayers - 1) && 
+			(!_layerGrid[level][gridX + blkx + (gridY + bHeight - 1)* lGridSizeX]))
+			level++;
+		if (level < _roomDefTable[_currentScreen].totalLayers - 1) {
+			uint16 *grid = _layerGrid[level] + gridX + blkx + gridY * lGridSizeX;
 			for (uint16 blky = 0; blky < bHeight; blky++) {
 				if (*grid) {
-					uint8 *blkData = _layerBlocks[z] + (READ_LE_UINT16(grid) - 1) * 128;
+					uint8 *blkData = _layerBlocks[level + 1] + (READ_LE_UINT16(grid) - 1) * 128;
 			        blitBlockClear(x + blkx, y + blky, blkData);
 				}
-				grid += _gridSizeX;
+				grid += lGridSizeX;
 			}
 		}
 	}
