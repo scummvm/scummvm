@@ -25,12 +25,13 @@
 #include "base/engine.h"
 #include "dc.h"
 
-EXTERN_C void *memcpy4(void *s1, const void *s2, unsigned int n);
+EXTERN_C void *memcpy4s(void *s1, const void *s2, unsigned int n);
 
 void initSound()
 {
   stop_sound();
-  do_sound_command(CMD_SET_FREQ_EXP(FREQ_44100_EXP));
+  do_sound_command(CMD_SET_FREQ_EXP(FREQ_22050_EXP));
+  do_sound_command(CMD_SET_STEREO(1));
   do_sound_command(CMD_SET_BUFFER(3));
 }
 
@@ -74,16 +75,16 @@ void OSystem_Dreamcast::checkSound()
     return;
 
   _sound_proc(_sound_proc_param, (byte*)temp_sound_buffer,
-	      SAMPLES_TO_BYTES(n));
+	      2*SAMPLES_TO_BYTES(n));
 
   if(fillpos+n > curr_ring_buffer_samples) {
     int r = curr_ring_buffer_samples - fillpos;
-    memcpy4(RING_BUF+fillpos, temp_sound_buffer, SAMPLES_TO_BYTES(r));
+    memcpy4s(RING_BUF+fillpos, temp_sound_buffer, SAMPLES_TO_BYTES(r));
     fillpos = 0;
     n -= r;
-    memcpy4(RING_BUF, temp_sound_buffer+r, SAMPLES_TO_BYTES(n));
+    memcpy4s(RING_BUF, temp_sound_buffer+(r<<1), SAMPLES_TO_BYTES(n));
   } else {
-    memcpy4(RING_BUF+fillpos, temp_sound_buffer, SAMPLES_TO_BYTES(n));
+    memcpy4s(RING_BUF+fillpos, temp_sound_buffer, SAMPLES_TO_BYTES(n));
   }
   if((fillpos += n) >= curr_ring_buffer_samples)
     fillpos = 0;
@@ -91,6 +92,6 @@ void OSystem_Dreamcast::checkSound()
 
 int OSystem_Dreamcast::getOutputSampleRate() const
 {
-  return 22050;
+  return read_sound_int(&SOUNDSTATUS->freq);
 }
 
