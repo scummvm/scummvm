@@ -266,8 +266,8 @@ Optional Features:
   --disable-sword1         don't build the Broken Sword I engine
   --disable-sword2         don't build the Broken Sword II engine
   --disable-queen          don't build the Flight of the Amazon Queen engine
+  --disable-saga           don't build the SAGA engine
   --enable-kyra            build the Legend of Kyrandia engine
-  --enable-saga            build the SAGA engine
   --enable-plugins         build engines as loadable modules instead of
                            static linking them
 
@@ -319,8 +319,8 @@ for ac_option in $@; do
       --disable-sword1)		_build_sword1=no ;;
       --disable-sword2)		_build_sword2=no ;;
       --disable-queen)		_build_queen=no ;;
+      --disable-saga)		_build_saga=no ;;
       --enable-kyra)		_build_kyra=yes ;;
-      --enable-saga)		_build_saga=yes ;;
       --enable-alsa)		_alsa=yes	;;
       --disable-alsa)		_alsa=no	;;
       --enable-vorbis)		_vorbis=yes	;;
