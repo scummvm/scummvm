@@ -358,8 +358,8 @@ lowTextManager_t SkyText::lowTextManager(uint32 textNum, uint16 width, uint16 lo
 
 	cpt->flag = (uint16)(compactNum - FIRST_TEXT_COMPACT) + FIRST_TEXT_BUFFER;
 
-	byte *oldText = (byte *)SkyState::_itemList[compactNum];
-	SkyState::_itemList[compactNum] = (void **)textData; 
+	byte *oldText = (byte *)SkyState::_itemList[cpt->flag];
+	SkyState::_itemList[cpt->flag] = (void **)textData; 
 
 	if (oldText != NULL)
 		free (oldText);
