@@ -40,8 +40,6 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
-	GameDetector 	&_detector;
-
 	BrowserDialog	*_browser;
 	StaticTextWidget*_savePath;
 

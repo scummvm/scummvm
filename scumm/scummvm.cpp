@@ -25,7 +25,7 @@
 #include "base/gameDetector.h"
 #include "base/plugins.h"
 
-#include "common/config-file.h"
+#include "common/config-manager.h"
 
 #include "gui/console.h"
 #include "gui/message.h"
@@ -595,22 +595,22 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	g_debugger = new ScummDebugger;
 
 	_debugMode = detector->_debugMode;
-	_debugLevel = detector->_debugLevel;
+	_debugLevel = ConfMan.getInt("debuglevel");
 	_dumpScripts = detector->_dumpScripts;
-	_bootParam = detector->_bootParam;
+	_bootParam = ConfMan.getInt("boot_param");
 	_exe_name = strdup(detector->_game.targetName);
 	_game_name = strdup(detector->_gameFileName.c_str());
 	_gameId = detector->_game.id;
 	_version = detector->_game.version;
 	setFeatures(detector->_game.features);
 
-	_demoMode = detector->_demo_mode;
-	_noSubtitles = detector->_noSubtitles;
-	_confirmExit = detector->_confirmExit;
-	_defaultTalkDelay = detector->_talkSpeed;
+	_demoMode = ConfMan.getBool("demo_mode");
+	_noSubtitles = ConfMan.getBool("nosubtitles");
+	_confirmExit = ConfMan.getBool("confirm_exit");
+	_defaultTalkDelay = ConfMan.getInt("talkspeed");
 	_midiDriver = detector->_midi_driver;
-	_native_mt32 = detector->_native_mt32;
-	_language = detector->_language;
+	_native_mt32 = ConfMan.getBool("native_mt32");
+	_language = GameDetector::parseLanguage(ConfMan.get("language"));
 	memset(&res, 0, sizeof(res));
 	_hexdumpScripts = false;
 	_showStack = false;
@@ -634,13 +634,13 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	_newgui = g_gui;
 	_sound = new Sound(this);
 
-	_sound->_sound_volume_master = detector->_master_volume;
-	_sound->_sound_volume_sfx = detector->_sfx_volume;
-	_sound->_sound_volume_music = detector->_music_volume;
+	_sound->_sound_volume_master = ConfMan.getInt("master_volume");
+	_sound->_sound_volume_sfx = ConfMan.getInt("music_volume");
+	_sound->_sound_volume_music = ConfMan.getInt("sfx_volume");
 
 	/* Initialize backend */
 	syst->init_size(_screenWidth, _screenHeight);
-	prop.cd_num = detector->_cdrom;
+	prop.cd_num = ConfMan.getInt("cdrom");
 	if (prop.cd_num >= 0 && (_features & GF_AUDIOTRACKS))
 		syst->property(OSystem::PROP_OPEN_CD, &prop);
 
@@ -681,16 +681,16 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);
 	} else if (_version > 2) {
 		MidiDriver *driver = detector->createMidi();
-		if (driver && detector->_native_mt32)
+		if (driver && _native_mt32)
 			driver->property (MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		_musicEngine = _imuse = IMuse::create(syst, _mixer, driver);
 		if (_imuse) {
-			if (detector->_gameTempo != 0)
-				_imuse->property(IMuse::PROP_TEMPO_BASE, detector->_gameTempo);
+			if (ConfMan.hasKey("tempo"))
+				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
 			_imuse->property(IMuse::PROP_OLD_ADLIB_INSTRUMENTS, (_features & GF_SMALL_HEADER) ? 1 : 0);
-			_imuse->property(IMuse::PROP_MULTI_MIDI, detector->_multi_midi &&
+			_imuse->property(IMuse::PROP_MULTI_MIDI, ConfMan.getBool("multi_midi") &&
 			                 _midiDriver != MD_NULL && (detector->_game.midi & MDT_ADLIB));
-			_imuse->property(IMuse::PROP_NATIVE_MT32, detector->_native_mt32);
+			_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
 			if (_features & GF_HUMONGOUS || _features & GF_FMTOWNS) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
 				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
@@ -703,8 +703,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 #endif // ph0x-hack
 
 	// Load game from specified slot, if any
-	if (detector->_save_slot != -1) {
-		_saveLoadSlot = detector->_save_slot;
+	if (ConfMan.hasKey("save_slot")) {
+		_saveLoadSlot = ConfMan.getInt("save_slot");
 		_saveLoadFlag = 2;
 		_saveLoadCompatible = false;
 	}
@@ -2647,19 +2647,23 @@ const TargetSettings *Engine_SCUMM_targetList() {
 Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	Engine *engine;
 
-	if (detector->_amiga)
-		detector->_game.features |= GF_AMIGA;
-
-	switch (detector->_platform) {
-	case 1:
-		if (!(detector->_game.features & GF_AMIGA))
+	if (ConfMan.hasKey("amiga")) {
+		warning("Configuration key 'amiga' is deprecated. Use 'platform=amiga' instead");
+		if (ConfMan.getBool("amiga"))
 			detector->_game.features |= GF_AMIGA;
+	}
+
+	switch (GameDetector::parsePlatform(ConfMan.get("platform"))) {
+	case kPlatformAmiga:
+		detector->_game.features |= GF_AMIGA;
 		break;
-	case 2:
+	case kPlatformAtariST:
 		detector->_game.features |= GF_ATARI_ST;
 		break;
-	case 3:
+	case kPlatformMacintosh:
 		detector->_game.features |= GF_MACINTOSH;
+		break;
+	default:
 		break;
 	}
 

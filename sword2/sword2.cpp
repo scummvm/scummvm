@@ -20,7 +20,7 @@
 #include "stdafx.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
-#include "common/config-file.h"
+#include "common/config-manager.h"
 #include "bs2/build_display.h"
 #include "bs2/console.h"
 #include "bs2/controls.h"
@@ -105,9 +105,9 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	_features = detector->_game.features;
 	_gameId = detector->_game.id;
 	_game_name = strdup(detector->_gameFileName.c_str());
-	_bootParam = detector->_bootParam;
-	_saveSlot = detector->_save_slot;
-	_debugLevel = detector->_debugLevel;
+	_bootParam = ConfMan.getInt("boot_param");
+	_saveSlot = ConfMan.getInt("save_slot");
+	_debugLevel = ConfMan.getInt("debuglevel");
 
 	// Setup mixer
 	if (!_mixer->bindToSystem(syst))

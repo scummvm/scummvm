@@ -22,7 +22,7 @@
 
 #include "stdafx.h"
 
-#include "common/config-file.h"
+#include "common/config-manager.h"
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"

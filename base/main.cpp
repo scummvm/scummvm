@@ -32,7 +32,7 @@
 #include "base/engine.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
-#include "common/config-file.h"
+#include "common/config-manager.h"
 #include "common/scaler.h"	// For GFX_NORMAL
 #include "common/timer.h"
 #include "gui/newgui.h"
@@ -83,7 +83,6 @@ const char *gScummVMBuildDate = __DATE__ " " __TIME__;
 const char *gScummVMFullVersion = "ScummVM 0.5.4cvs (" __DATE__ " " __TIME__ ")";
 
 
-Config	*g_config = 0;
 NewGui	*g_gui = 0;
 OSystem *g_system = 0;
 
@@ -106,20 +105,6 @@ extern "C" int main(int argc, char *argv[]);
 
 #if defined (ALLEGRO_BACKEND)
 #include "allegro.h"
-#endif
-
-#if defined(UNIX)
-#include <sys/param.h>
-#ifndef MAXPATHLEN
-#define MAXPATHLEN 256
-#endif
-#ifdef MACOSX
-#define DEFAULT_CONFIG_FILE "Library/Preferences/ScummVM Preferences"
-#else
-#define DEFAULT_CONFIG_FILE ".scummvmrc"
-#endif
-#else
-#define DEFAULT_CONFIG_FILE "scummvm.ini"
 #endif
 
 #if defined(UNIX)
@@ -211,23 +196,6 @@ int main(int argc, char *argv[]) {
 #if defined(UNIX)
 	/* On Unix, do a quick endian / alignement check before starting */
 	do_memory_test();
-
-	char scummhome[MAXPATHLEN];
-	if(getenv("HOME") != NULL)
-		sprintf(scummhome,"%s/%s", getenv("HOME"), DEFAULT_CONFIG_FILE);
-	else strcpy(scummhome,DEFAULT_CONFIG_FILE);
-#else
-	char scummhome[256];
-	#if defined (WIN32) && !defined(_WIN32_WCE)
-		GetWindowsDirectory(scummhome, 256);
-		strcat(scummhome, "\\");
-		strcat(scummhome, DEFAULT_CONFIG_FILE);
-	#elif defined(__PALM_OS__)
-		strcpy(scummhome,"/PALM/Programs/ScummVM/");
-		strcat(scummhome, DEFAULT_CONFIG_FILE);
-	#else
-		strcpy(scummhome, DEFAULT_CONFIG_FILE);
-	#endif
 #endif
 
 // Code copied from SDL_main
@@ -265,9 +233,8 @@ int main(int argc, char *argv[]) {
 
 #endif //defined(WIN32) && defined(USE_CONSOLE)
 
-	// Read the config file
-	g_config = new Config(scummhome, "scummvm");
-	g_config->set("versioninfo", gScummVMVersion);
+	// Update the config file
+	ConfMan.set("versioninfo", gScummVMVersion, "scummvm");
 	
 	// Load the plugins
 	g_pluginManager = new PluginManager();
@@ -276,7 +243,6 @@ int main(int argc, char *argv[]) {
 	// Parse the command line information
 	GameDetector detector;
 	detector._saveconfig = false;
-	detector.updateconfig();
 	detector.parseCommandLine(argc, argv);	
 
 	// Create the system object
@@ -301,30 +267,30 @@ int main(int argc, char *argv[]) {
 	if (detector.detectMain()) {
 
 		// Set the window caption to the game name
-		prop.caption = g_config->get("description", detector._gameFileName);
+		prop.caption = ConfMan.get("description", detector._gameFileName).c_str();
 		if (prop.caption == NULL)	
-			prop.caption = detector.getGameName().c_str();
-		system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
+			prop.caption = detector._gameFileName.c_str();
+		if (prop.caption != NULL)	
+			system->property(OSystem::PROP_SET_WINDOW_CAPTION, &prop);
 
 		// FIXME: It seem not logical that we first might set the gfx mode to
 		// 1x, and then immediately after might override it again. We probably
 		// should combine both checks into one.
 
 		// See if the game should default to 1x scaler
-		if ((detector._default_gfx_mode) && 
+		if (!ConfMan.hasKey("gfx_mode", detector._gameFileName) && 
 		   (detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
 			prop.gfx_mode = GFX_NORMAL;
 			system->property(OSystem::PROP_SET_GFX_MODE, &prop);
-		}
-	
+		} else	
 		// Override global scaler with any game-specific define
-		if (g_config->get("gfx_mode")) {
-			prop.gfx_mode = detector.parseGraphicsMode(g_config->get("gfx_mode"));
+		if (ConfMan.hasKey("gfx_mode")) {
+			prop.gfx_mode = detector.parseGraphicsMode(ConfMan.get("gfx_mode"));
 			system->property(OSystem::PROP_SET_GFX_MODE, &prop);
 		}
 	
 		// Override global fullscreen setting with any game-specific define
-		if (g_config->getBool("fullscreen", false)) {
+		if (ConfMan.getBool("fullscreen")) {
 			if (!system->property(OSystem::PROP_GET_FULLSCREEN, 0))
 				system->property(OSystem::PROP_TOGGLE_FULLSCREEN, 0);
 		}
@@ -344,7 +310,6 @@ int main(int argc, char *argv[]) {
 	}
 
 	delete g_gui;
-	delete g_config;
 
 	// ...and quit (the return 0 should never be reached)
 	system->quit();

@@ -51,7 +51,8 @@ enum {
  * @note The order and mappings of the values 0..8 are *required* to stay the
  * way they are now, as scripts in COMI rely on them. So don't touch them.
  */
-enum {
+enum Language {
+	UNK_LANG = -1,	// Use default language (i.e. none specified)
 	EN_USA = 0,
 	DE_DEU = 1,
 	FR_FRA = 2,
@@ -64,6 +65,14 @@ enum {
 	SE_SWE = 9,
 	EN_GRB = 10,
 	HB_HEB = 20
+};
+
+enum Platform {
+	kPlatformUnknown = -1,
+	kPlatformPC = 0,
+	kPlatformAmiga = 1,
+	kPlatformAtariST = 2,
+	kPlatformMacintosh = 3
 };
 
 enum MidiDriverType {
@@ -92,49 +101,16 @@ public:
 
 	void parseCommandLine(int argc, char **argv);
 	bool detectMain();
-	void setGame(const String &name);
-	const String& getGameName(void);
 
 	String _gameFileName;
 	TargetSettings _game;
 	const Plugin *_plugin;
 	
-	bool _fullScreen;
-	bool _aspectRatio;
-
-	int _master_volume;
-	int _music_volume;
-	int _sfx_volume;
-	bool _amiga;
-	int _platform;
-	int _language;
-
-	bool _demo_mode;
-	bool _floppyIntro;
-
-	uint16 _talkSpeed;
-	uint16 _debugMode;
-	uint16 _debugLevel;
+	bool _debugMode;
 	bool _dumpScripts;
-	bool _noSubtitles;
-	uint16 _bootParam;
-
-	char *_gameDataPath;
-	int _gameTempo;
-	int _midi_driver;
-
-	int _gfx_mode;
-	bool _default_gfx_mode;
-
-	bool _multi_midi;
-	bool _native_mt32;
-	
-	int _cdrom;
-	int _joystick_num;
-	int _save_slot;
-	
 	bool _saveconfig;
-	bool _confirmExit;
+
+	int _midi_driver;
 
 public:
 	OSystem *createSystem();
@@ -142,19 +118,19 @@ public:
 
 	SoundMixer *createMixer();
 	MidiDriver *createMidi();
-	int getMidiDriverType();
+	int getMidiDriverType();	// FIXME: Try to get rid of this, only Sky frontend uses it
 
-	int parseGraphicsMode(const char *s);
-	void updateconfig();
+	void setGame(const String &name);
+
+	static int parseGraphicsMode(const String &s);	// Used in main()
+	static int parseMusicDriver(const String &s);
+	static Language parseLanguage(const String &s);
+	static Platform parsePlatform(const String &s);
 	
-	const TargetSettings *findTarget(const char *targetName, const Plugin **plugin = NULL) const;
+	const TargetSettings *findTarget(const String &targetName, const Plugin **plugin = NULL) const;
 
 protected:
-	String _gameText;
-
 	bool detectGame(void);
-	bool parseMusicDriver(const char *s);
-	int parseLanguage(const char *s);
 	void list_games();
 };
 

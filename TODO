@@ -6,18 +6,16 @@ General
 * Revise the way "quit" is handled. Maybe add a global variable "g_quit" which
   we set when the application should be quit (e.g. when an EVENT_QUIT is
   received). This is useful if multiple levels of event loops have to be ended
-* gameDetector.cpp is quite messy. Also, it makes providing native GUI front
-  ends for ScummVM unnecessarily cumbersome (think of systems which don't
-  even have a command line, like classic MacOS). It would be nice to better
-  separate the command line parsing from any GUI and also from the storage
-  for the user settings (this ties into my proposed config system changes;
-  ideally, we should be able to drop almost all of the member variables
-  in the game detector, in favor of getting all these directly from the
-  config system).
 * fix the Map<> template, make it more robust; maybe use a red-black tree?
 * add iterators to List<> template and make use of them
 * allow for return-to-launcher instead of a normal "quit" ?
-
+* turn g_pluginManager into a proper singleton
+* improve the argv (command line args) parser
+* extend the Plugin API to provide for "game detection": instead of the
+  TargetSettings::detectname "hack" to detect files, provide a callback
+  in each Plugin which given a FSList returns a list of candidate targets.
+  This way, a plugin can implement tests more elaborate than filename
+  checking, e.g. it could actually peek into the files.
 
 GUI
 ===
@@ -41,18 +39,7 @@ Audio
 
 Config
 ======
-* The config system could stand an overhaul
 * Preserve comments in config file somehow
-* Add two virtual domains (for command line settings and user overrides);
-  while we currently do something like this already, our implementation is
-  a big ugly hack (no offense meant) and has some cumbersome problems. For
-  example, currently to query a config value, one would have to search up to
-  four domains manually (user override, command line, game specific, global
-  application domain, in that order). Ideally all this should be hidden
-  inside the config system. If you are interested in this, I can elaborate
-* Add a way to distinguish if a given key is present at all. That is, it
-  would be nice if one could distinguish between an explicit "fullscreen=false"
-  and the absence of any fullscreen config.
 * Add a 'notification' system. E.g. the SoundMixer could request to be notified
   whenever the value of the "volume" config option changes. In other words,
   instead of a "pull" approach (where each subsystem has to check whether any
@@ -61,6 +48,12 @@ Config
   setting is changed, the code doing so has to updated the SoundMixer etc.
   That's cumbersome, and error prone. Would be much nicer if updating the
   volume config value automatically notifies the SoundMixer, iMuse etc.
+* Change backends to directly access the config manager
+* During the config rewrite, some command line switches were disabled.
+  Gotta decide what to do about each of them: reimplement, remove, replace?
+  In particular: -w and -l (those were kind of oddball switches, IMHO);
+  also -z should be split into two seperate functions (see TODO comment in 
+  GameDetector::list_games())
 
 SCUMM
 =====
@@ -89,6 +82,8 @@ SCUMM
   2a) If 1) succeeded, file SF.net CVS file rename request
   2b) If 2) failed, do brute force file rename (cp && cvs add && cvs rm)
   3) Adjust Makefile and project files to use the new name
+* Possible implement a new resource manager, which then also could be shared
+  by ScummEX. [Jamieson has some ideas about this and might work on it|
 
 Broken Sword 2
 ==============

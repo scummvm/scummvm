@@ -29,7 +29,6 @@
 #include "sound/mixer.h"
 #include "queen/resource.h"
 #include "queen/logic.h"
-#include "common/config-file.h"
 
 namespace Queen {
 

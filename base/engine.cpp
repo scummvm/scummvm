@@ -24,7 +24,7 @@
 #endif
 #include "base/engine.h"
 #include "base/gameDetector.h"
-#include "common/config-file.h"
+#include "common/config-manager.h"
 #include "common/timer.h"
 #include "sound/mixer.h"
 
@@ -36,7 +36,7 @@ Engine::Engine(GameDetector *detector, OSystem *syst)
 	g_engine = this;
 	_mixer = detector->createMixer();
 
-	_gameDataPath = detector->_gameDataPath;
+	_gameDataPath = strdup(ConfMan.get("path").c_str());	// FIXME - leak. Just conver to a String?
 
 	_timer = g_timer;
 }
@@ -61,11 +61,7 @@ const char *Engine::getSavePath() const {
 
 	// If SCUMMVM_SAVEPATH was not specified, try to use game specific savepath from config
 	if (!dir || dir[0] == 0)
-		dir = g_config->get("savepath");
-
-	// If SCUMMVM_SAVEPATH was not specified, try to use general path from config
-	if (!dir || dir[0] == 0)
-		dir = g_config->get("savepath", "scummvm");
+		dir = ConfMan.get("savepath").c_str();
 
 	// If no save path was specified, use no directory prefix
 	if (dir == NULL)

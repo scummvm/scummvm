@@ -27,7 +27,7 @@
 #include "base/gameDetector.h"
 #include "base/plugins.h"
 
-#include "common/config-file.h"
+#include "common/config-manager.h"
 #include "common/scaler.h"	// Only for gfx_modes
 
 #include "sound/mididrv.h"
@@ -69,20 +69,26 @@ static const char USAGE_STRING[] =
 	"  -m<num>        - Set music volume to <num> (0-255)\n"
 	"  -o<num>        - Set master volume to <num> (0-255)\n"
 	"  -s<num>        - Set sfx volume to <num> (0-255)\n"
+#ifndef DISABLE_SCUMM
 	"  -t<num>        - Set music tempo (50-200, default 100%%)\n"
+#endif
 	"\n"
 	"  -n             - No subtitles for speech\n"
+#ifndef DISABLE_SCUMM
 	"  -y             - Set text speed (default: 60)\n"
+#endif
 	"\n"
+/* FIXME / TODO: config rewrite
 	"  -l<file>       - Load config file instead of default\n"
 #if defined(UNIX)
 	"  -w[file]       - Write to config file [~/.scummvmrc]\n"
 #else
 	"  -w[file]       - Write to config file [scummvm.ini]\n"
 #endif
+*/
 	"  -v             - Show version info and exit\n"
 	"  -h             - Display this text and exit\n"
-	"  -z             - Display list of games\n"
+	"  -z             - Display list of supported games\n"
 	"\n"
 	"  -b<num>        - Pass number to the boot script (boot param)\n"
 	"  -d[num]        - Enable debug output (debug level [0])\n"
@@ -143,13 +149,13 @@ static const struct GraphicsMode gfx_modes[] = {
 	{0, 0, 0}
 };
 
-struct Language {
+struct LanguageDescription {
 	const char *name;
 	const char *description;
-	int id;
+	Language id;
 };
 
-static const struct Language languages[] = {
+static const struct LanguageDescription languages[] = {
 	{"en", "English", EN_USA},
 	{"de", "German", DE_DEU},
 	{"fr", "French", FR_FRA},
@@ -162,162 +168,105 @@ static const struct Language languages[] = {
 	{"gb", "English", EN_GRB},
 	{"se", "Swedish", SE_SWE},
 	{"hb", "Hebrew", HB_HEB},
-	{0, 0, 0}
+	{0, 0, UNK_LANG}
 };
 
-
 GameDetector::GameDetector() {
-	_fullScreen = false;
-	_aspectRatio = false;
 
-	_master_volume = kDefaultMasterVolume;
-	_music_volume = kDefaultMusicVolume;
-	_sfx_volume = kDefaultSFXVolume;
-	_amiga = false;
-	_platform = 0;
-	_language = 0;
+	// Graphics
+	ConfMan.registerDefault("fullscreen", false);
+	ConfMan.registerDefault("aspect_ratio", false);
+#ifndef _WIN32_WCE
+	ConfMan.registerDefault("gfx_mode", "2x");
+#else
+	ConfMan.registerDefault("gfx_mode", "normal");
+#endif
+
+	// Sound & Music
+	ConfMan.registerDefault("master_volume", kDefaultMasterVolume);
+	ConfMan.registerDefault("music_volume", kDefaultMusicVolume);
+	ConfMan.registerDefault("sfx_volume", kDefaultSFXVolume);
+
+	ConfMan.registerDefault("multi_midi", false);
+	ConfMan.registerDefault("native_mt32", false);
+//	ConfMan.registerDefault("music_driver", ???);
+
+	ConfMan.registerDefault("cdrom", 0);
+
+	// Game specifc
+	ConfMan.registerDefault("path", "");
+
+	ConfMan.registerDefault("amiga", false);
+	ConfMan.registerDefault("platform", kPlatformPC);
+	ConfMan.registerDefault("language", "en");
+	ConfMan.registerDefault("nosubtitles", false);
+	ConfMan.registerDefault("boot_param", 0);
+	ConfMan.registerDefault("save_slot", -1);
 
 #ifndef DISABLE_SCUMM
-	_demo_mode = false;
+	ConfMan.registerDefault("demo_mode", false);
+	ConfMan.registerDefault("talkspeed", 60);
+	ConfMan.registerDefault("tempo", 0);
 #endif
 
 #ifndef DISABLE_SKY
-	_floppyIntro = false;
+	ConfMan.registerDefault("floppy_intro", false);
 #endif
 
-	_talkSpeed = 60;
-	_debugMode = 0;
-	_debugLevel = 0;
-	_dumpScripts = 0;
-	_noSubtitles = false;
-	_bootParam = 0;
+	// Miscellaneous
+	ConfMan.registerDefault("debuglevel", 0);
+	ConfMan.registerDefault("joystick_num", -1);
+	ConfMan.registerDefault("confirm_exit", false);
 
-	_gameDataPath = 0;
-	_gameTempo = 0;
+	_debugMode = false;
+	_dumpScripts = false;
 	_midi_driver = MD_AUTO;
+
+	_saveconfig = false;
+
 	_game.features = 0;
 	_plugin = 0;
-
-	_multi_midi = false;
-	_native_mt32 = false;
-
-	_cdrom = 0;
-	_joystick_num = 0;
-	_save_slot = 0;
-	
-	_saveconfig = false;
-	_confirmExit = false;
-	
-#ifndef _WIN32_WCE
-	_gfx_mode = GFX_DOUBLESIZE;
-#else
-	_gfx_mode = GFX_NORMAL;
-#endif
-	_default_gfx_mode = true;
-}
-
-void GameDetector::updateconfig() {
-	const char *val;
-
-	_amiga = g_config->getBool("amiga", _amiga);
-
-	_platform = g_config->getInt("platform", _platform);
-
-	_save_slot = g_config->getInt("save_slot", _save_slot);
-
-	_joystick_num = g_config->getInt("joystick_num", _joystick_num);
-
-	_cdrom = g_config->getInt("cdrom", _cdrom);
-
-	_bootParam = g_config->getInt("boot_param", _bootParam);
-	
-	if ((val = g_config->get("music_driver")))
-		if (!parseMusicDriver(val)) {
-			printf("Error in the config file: invalid music_driver.\n");
-			printf(USAGE_STRING);
-			exit(-1);
-		}
-
-	_fullScreen = g_config->getBool("fullscreen", _fullScreen);
-	_aspectRatio = g_config->getBool("aspect_ratio", _aspectRatio);
-
-	if ((val = g_config->get("gfx_mode")))
-		if ((_gfx_mode = parseGraphicsMode(val)) == -1) {
-			printf("Error in the config file: invalid gfx_mode.\n");
-			printf(USAGE_STRING);
-			exit(-1);
-		}
-
-#ifndef DISABLE_SKY
-	_floppyIntro = g_config->getBool("floppy_intro", _floppyIntro);
-#endif
-
-#ifndef DISABLE_SCUMM
-	_demo_mode = g_config->getBool("demo_mode", _demo_mode);
-#endif
-
-	if ((val = g_config->get("language")))
-		if ((_language = parseLanguage(val)) == -1) {
-			printf("Error in the config file: invalid language.\n");
-			printf(USAGE_STRING);
-			exit(-1);
-		}
-
-	_master_volume = g_config->getInt("master_volume", _master_volume);
-
-	_music_volume = g_config->getInt("music_volume", _music_volume);
-
-	_noSubtitles = g_config->getBool("nosubtitles", _noSubtitles ? true : false);
-
-	if ((val = g_config->get("path")))
-		_gameDataPath = strdup(val);
-
-	_sfx_volume = g_config->getInt("sfx_volume", _sfx_volume);
-
-	_debugLevel = g_config->getInt("debuglevel", _debugLevel);
-	if (_debugLevel)
-		_debugMode = true;
-
-	// We use strtol for the tempo to allow it to be specified in hex.
-	if ((val = g_config->get("tempo")))
-		_gameTempo = strtol(val, NULL, 0);
-
-	_talkSpeed = g_config->getInt("talkspeed", _talkSpeed);
-
-	_confirmExit = g_config->getBool("confirm_exit", _confirmExit ? true : false);
-
-	_multi_midi = g_config->getBool ("multi_midi", _multi_midi);
-	_native_mt32 = g_config->getBool ("native_mt32", _native_mt32);
 }
 
 void GameDetector::list_games() {
+	// FIXME / TODO: config rewrite
+	// Right now this lists all known built-in targets; and also for each of
+	// those it tells the user if the target is "configured".
+	// To me this seems like an ill mix of two different functionalities.
+	// IMHO we should split this into two seperate commands/options:
+	// 1) List all built-in gameids (e.g. monkey, atlantis, ...) similiar to 
+	//    what this code does, but without the "Config" column.
+	// 2) List all available (configured) targets, including those with custom
+	//    names, e.g. "monkey-mac", "skycd-demo", ...
 	const PluginList &plugins = g_pluginManager->getPlugins();
 	const TargetSettings *v;
-	const char *config;
 
-	printf("Game             Full Title                                             Config\n"
-	       "---------------- ------------------------------------------------------ -------\n");
+	printf("Game             Full Title                                            \n"
+	       "---------------- ------------------------------------------------------\n");
 
 	PluginList::ConstIterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		v = (*iter)->getTargets();
 		while (v->targetName && v->description) {
-			config = (g_config->has_domain(v->targetName)) ? "Yes" : "";
+#if 1
+			printf("%-17s%-56s\n", v->targetName, v->description);
+#else
+			const char *config = (g_config->has_domain(v->targetName)) ? "Yes" : "";
 			printf("%-17s%-56s%s\n", v->targetName, v->description, config);
+#endif
 			v++;
 		}
 	}
 }
 
-const TargetSettings *GameDetector::findTarget(const char *targetName, const Plugin **plugin) const {
+const TargetSettings *GameDetector::findTarget(const String &targetName, const Plugin **plugin) const {
 	// Find the TargetSettings for this target
-	assert(targetName);
 	const TargetSettings *target;
 	const PluginList &plugins = g_pluginManager->getPlugins();
 	
 	PluginList::ConstIterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		target = (*iter)->findTarget(targetName);
+		target = (*iter)->findTarget(targetName.c_str());
 		if (target) {
 			if (plugin)
 				*plugin = *iter;
@@ -334,12 +283,15 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 	char *option = NULL;
 	char c;
 	bool long_option_value;
-	_save_slot = -1;
-	_joystick_num = -1;
 
-	// Parse the arguments
-	// into a transient "_COMMAND_LINE" config comain.
-	g_config->set_domain ("_COMMAND_LINE");
+	// Iterate over all comman line arguments, backwards.
+	// FIXME: Looping backwards has a major problem: Consider this example
+	// invocation: "scummvm -g 1x". It should work exactly like "scummvm -g1x"
+	// but it doesn't! Instead of starting the launcher with the 1x sacler
+	// in effect, it will give an error about target 1x being unknown.
+	// This can be fixed by forward iterating the args. Of course doing that
+	// essentially means we have to rewrite the whole command line parser,
+	// but that seems like a good idea anyway.
 	for (i = argc - 1; i >= 1; i--) {
 		s = argv[i];
 
@@ -349,20 +301,19 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			switch (tolower(c)) {
 			case 'b':
 				HANDLE_OPTION();
-				_bootParam = atoi(option);
+				ConfMan.set("boot_param", (int)strtol(option, 0, 10));
 				break;
 			case 'c':
 				HANDLE_OPTION();
-				_cdrom = atoi(option);
-				g_config->setInt("cdrom", _cdrom);
+				ConfMan.set("cdrom", (int)strtol(option, 0, 10));
 				break;
 			case 'd':
 				_debugMode = true;
 				HANDLE_OPT_OPTION();
 				if (option != NULL)
-					_debugLevel = atoi(option);
-				if (_debugLevel) {
-					printf("Debuglevel (from command line): %d\n", _debugLevel);
+					ConfMan.set("debuglevel", (int)strtol(option, 0, 10));
+				if (ConfMan.getInt("debuglevel")) {
+					printf("Debuglevel (from command line): %d\n", ConfMan.getInt("debuglevel"));
 				} else {
 					printf("Debuglevel (from command line): 0 - Engine only\n");
 				}
@@ -373,37 +324,31 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				// maybe print a message like:
 				// "'option' is not a supported music driver on this machine.
 				//  Available driver: ..."
-				if (!parseMusicDriver(option))
+				if (parseMusicDriver(option) < 0)
 					goto ShowHelpAndExit;
-				g_config->set("music_driver", option);
+				ConfMan.set("music_driver", option);
 				break;
 			case 'f':
 				CHECK_OPTION();
-				_fullScreen = (c == 'f');
-				g_config->setBool("fullscreen", _fullScreen);
-				g_config->setBool("fullscreen", _fullScreen, "scummvm");
+				ConfMan.set("fullscreen", (c == 'f'));
 				break;
-			case 'g':
+			case 'g':{
 				HANDLE_OPTION();
-				_gfx_mode = parseGraphicsMode(option);
+				int _gfx_mode = parseGraphicsMode(option);
 				// TODO: Instead of just showing the generic help text,
 				// maybe print a message like:
 				// "'option' is not a supported graphic mode on this machine.
 				//  Available graphic modes: ..."
 				if (_gfx_mode == -1)
 					goto ShowHelpAndExit;
-				g_config->set("gfx_mode", option);
-				g_config->set("gfx_mode", option, "scummvm");
-				break;
+				ConfMan.set("gfx_mode", option);
+				break;}
 			// case 'h': reserved for help
 			case 'j':
-				_joystick_num = 0;
 				HANDLE_OPT_OPTION();
-				if (option != NULL) {
-					_joystick_num = atoi(option);
-					g_config->setInt("joystick_num", _joystick_num);
-				}
+				ConfMan.set("joystick_num", (option != NULL) ? (int)strtol(option, 0, 10) : 0);
 				break;
+/* FIXME / TODO: config rewrite
 			case 'l':
 				HANDLE_OPTION();
 				{
@@ -414,47 +359,43 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 					break;
 				}
 				break;
+*/
 			case 'm':
 				HANDLE_OPTION();
-				_music_volume = atoi(option);
-				g_config->setInt("music_volume", _music_volume);
+				ConfMan.set("music_volume", (int)strtol(option, 0, 10));
 				break;
 			case 'n':
 				CHECK_OPTION();
-				_noSubtitles = (c == 'n');
-				g_config->setBool("nosubtitles", _noSubtitles ? true : false);
+				ConfMan.set("nosubtitles", (c == 'n'));
 				break;
  			case 'o':
  				HANDLE_OPTION();
- 				_master_volume = atoi(option);
- 				g_config->setInt("master_volume", _master_volume);
+ 				ConfMan.set("master_volume", (int)strtol(option, 0, 10));
  				break;
 			case 'p':
 				HANDLE_OPTION();
-				_gameDataPath = option;
-				g_config->set("path", _gameDataPath);
+				// TODO: Verify path is valid
+				ConfMan.set("path", option);
 				break;
 			case 'q':
 				HANDLE_OPTION();
-				_language = parseLanguage(option);
-				if (_language == -1)
+				if (parseLanguage(option) == UNK_LANG)
 					goto ShowHelpAndExit;
-				g_config->set("language", option);
-				break;
-			case 'r':
-				HANDLE_OPTION();
-				// Ignore -r for now, to ensure backward compatibility.
+				ConfMan.set("language", option);
 				break;
 			case 's':
 				HANDLE_OPTION();
-				_sfx_volume = atoi(option);
-				g_config->setInt("sfx_volume", _sfx_volume);
+				ConfMan.set("sfx_volume", (int)strtol(option, 0, 10));
 				break;
+#ifndef DISABLE_SCUMM
 			case 't':
 				HANDLE_OPTION();
-				_gameTempo = strtol(option, 0, 0);
-				g_config->set("tempo", option);
+				// Use the special value '0' for the base in (int)strtol. 
+				// Doing that makes it possible to enter hex values
+				// as "0x1234", but also decimal values ("123").
+				ConfMan.set("tempo", (int)strtol(option, 0, 0));
 				break;
+#endif
 			case 'u':
 				CHECK_OPTION();
 				_dumpScripts = true;
@@ -462,7 +403,9 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			case 'v':
 				CHECK_OPTION();
 				printf("%s\n", gScummVMFullVersion);
-				exit(1);
+				exit(0);
+				break;
+/* FIXME / TODO: config rewrite
 			case 'w':
 				_saveconfig = true;
 				g_config->set_writing(true);
@@ -470,19 +413,17 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				if (option != NULL)
 					g_config->set_filename(option);
 				break;
+*/
 			case 'x':
-				_save_slot = 0;
 				HANDLE_OPT_OPTION();
-				if (option != NULL) {
-					_save_slot = atoi(option);
-					g_config->setInt("save_slot", _save_slot);
-				}
+				ConfMan.set("save_slot", (option != NULL) ? (int)strtol(option, 0, 10) : 0);
 				break;
+#ifndef DISABLE_SCUMM
 			case 'y':
 				HANDLE_OPTION();
-				_talkSpeed = atoi(option);
-				g_config->setInt("talkspeed", _talkSpeed);
+				ConfMan.set("talkspeed", (int)strtol(option, 0, 10));
 				break;
+#endif
 			case 'z':
 				CHECK_OPTION();
 				list_games();
@@ -491,16 +432,11 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				// Long options. Let the fun begin!
 				if (!strncmp(s, "platform=", 9)) {
 					s += 9;
-					if (!strcmp (s, "amiga"))
-						_platform = 1;
-					else if (!strcmp (s, "atari-st"))
-						_platform = 2;
-					else if (!strcmp (s, "macintosh"))
-						_platform = 3;
-					else
+					int platform = parsePlatform(s);
+					if (platform == kPlatformUnknown)
 						goto ShowHelpAndExit;
 
-					g_config->setInt ("platform", _platform);
+					ConfMan.set("platform", platform);
 					break;
 				} 
 
@@ -511,28 +447,21 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 					long_option_value = true;
 
 				if (!strcmp (s, "multi-midi")) {
-					_multi_midi = long_option_value;
-					g_config->setBool ("multi_midi", _multi_midi);
+					ConfMan.set("multi_midi", long_option_value);
 				} else if (!strcmp (s, "native-mt32")) {
-					_native_mt32 = long_option_value;
-					g_config->setBool ("native_mt32", _native_mt32);
+					ConfMan.set("native_mt32", long_option_value);
 				} else if (!strcmp (s, "aspect-ratio")) {
-					_aspectRatio = long_option_value;
-					g_config->setBool ("aspect_ratio", _aspectRatio);
+					ConfMan.set("aspect_ratio", long_option_value);
 				} else if (!strcmp (s, "fullscreen")) {
-					_fullScreen = long_option_value;
-					g_config->setBool("fullscreen", _fullScreen);
-					g_config->setBool("fullscreen", _fullScreen, "scummvm");
+					ConfMan.set("fullscreen", long_option_value);
 #ifndef DISABLE_SCUMM
 				} else if (!strcmp (s, "demo-mode")) {
-					_demo_mode = long_option_value;
-					g_config->setBool ("demo_mode", _demo_mode);
+					ConfMan.set("demo_mode", long_option_value);
 #endif
 
 #ifndef DISABLE_SKY
 				} else if (!strcmp (s, "floppy-intro")) {
-					_floppyIntro = long_option_value;
-					g_config->setBool ("floppy_intro", _floppyIntro);
+					ConfMan.set("floppy_intro", long_option_value);
 #endif
 				} else {
 					goto ShowHelpAndExit;
@@ -553,8 +482,10 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 		}
 	}
 	
+/* FIXME / TODO: config rewrite
 	if (!_gameFileName.isEmpty())
-		g_config->flush();
+		ConfMan.flushToDisk();
+*/
 
 	return;
 
@@ -565,29 +496,14 @@ ShowHelpAndExit:
 
 void GameDetector::setGame(const String &name) {
 	_gameFileName = name;
-	g_config->set_domain(name);
-	g_config->rename_domain(name, "game-specific");
-	g_config->rename_domain("game-specific", name);
-	updateconfig();
-
-	// The command line and launcher options
-	// override config file global and game-specific options.
-	g_config->set_domain("_COMMAND_LINE");
-	updateconfig();
-	g_config->set_domain("_USER_OVERRIDES");
-	updateconfig();
-	g_config->delete_domain("_COMMAND_LINE");
-	g_config->delete_domain("_USER_OVERRIDES");
-	g_config->set_domain(name);
-	if (_debugMode)
-		printf("Debuglevel (from config): %d\n", _debugLevel);
+	ConfMan.setActiveDomain(name);
 }
 
-int GameDetector::parseGraphicsMode(const char *s) {
+int GameDetector::parseGraphicsMode(const String &str) {
+	const char *s = str.c_str();
 	const GraphicsMode *gm = gfx_modes;
-	while(gm->name) {
+	while (gm->name) {
 		if (!scumm_stricmp(gm->name, s)) {
-			_default_gfx_mode = false;
 			return gm->id;
 		}
 		gm++;
@@ -596,65 +512,71 @@ int GameDetector::parseGraphicsMode(const char *s) {
 	return -1;
 }
 
-int GameDetector::parseLanguage(const char *s) {
-	const Language *l = languages;
-	while(l->name) {
+Language GameDetector::parseLanguage(const String &str) {
+	const char *s = str.c_str();
+	const LanguageDescription *l = languages;
+	while (l->name) {
 		if (!scumm_stricmp(l->name, s))
 			return l->id;
 		l++;
 	}
 
-	return -1;
+	return UNK_LANG;
 }
 
-bool GameDetector::parseMusicDriver(const char *s) {
+Platform GameDetector::parsePlatform(const String &str) {
+	const char *s = str.c_str();
+	if (!scumm_stricmp(s, "pc"))
+		return kPlatformPC;
+	else if (!scumm_stricmp(s, "amiga") || !scumm_stricmp(s, "1"))
+		return kPlatformAmiga;
+	else if (!scumm_stricmp(s, "atari-st") || !scumm_stricmp(s, "atari") || !scumm_stricmp(s, "2"))
+		return kPlatformAtariST;
+	else if (!scumm_stricmp(s, "macintosh") || !scumm_stricmp(s, "mac") || !scumm_stricmp(s, "3"))
+		return kPlatformMacintosh;
+	else
+		return kPlatformUnknown;
+}
+
+int GameDetector::parseMusicDriver(const String &str) {
+	const char *s = str.c_str();
 	const MidiDriverDescription *md = getAvailableMidiDrivers();
 
 	while (md->name) {
 		if (!scumm_stricmp(md->name, s)) {
-			_midi_driver = md->id;
-			return true;
+			return md->id;
 		}
 		md++;
 	}
 
-	return false;
+	return -1;
 }
 
 bool GameDetector::detectGame() {
 	const TargetSettings *target;
-	const char *realGame, *basename;
-	_gameText.clear();
+	String realGame;
 
-	realGame = g_config->get("gameid");
-	if (!realGame)
-		realGame = _gameFileName.c_str();
-	printf("Looking for %s\n", realGame);
+	if (ConfMan.hasKey("gameid"))
+		realGame = ConfMan.get("gameid");
+	else
+		realGame = _gameFileName;
+	printf("Looking for %s\n", realGame.c_str());
 	
 	target = findTarget(realGame, &_plugin);
 	
 	if (target) {
 		_game = *target;
-		if ((basename = g_config->get("basename")))	{
+		if (ConfMan.hasKey("basename")) {
 			// FIXME: What is this good for?
-			_game.targetName = basename;
+			// FIXME: This leaks now!
+			_game.targetName = strdup(ConfMan.get("basename").c_str());
 		}
-		_gameText = _game.description;
 		printf("Trying to start game '%s'\n", _game.description);
 		return true;
 	} else {
 		printf("Failed game detection\n");
 		return false;
 	}
-}
-
-const Common::String& GameDetector::getGameName() {
-	if (_gameText.isEmpty()) {
-		_gameText = "Unknown game: \"";
-		_gameText += _gameFileName;
-		_gameText += "\"";
-	}
-	return _gameText;
 }
 
 bool GameDetector::detectMain() {
@@ -672,7 +594,8 @@ bool GameDetector::detectMain() {
 	 * and the game is one of those that want adlib as
 	 * default, OR if the game is an older game that doesn't
 	 * support anything else anyway. */
-	if (_midi_driver == MD_AUTO) {
+	_midi_driver = parseMusicDriver(ConfMan.get("music_driver"));
+	if (_midi_driver == MD_AUTO || _midi_driver < 0) {
 		if (_game.midi & MDT_PREFER_NATIVE)
 			_midi_driver = getMidiDriverType();
 		else
@@ -691,21 +614,17 @@ bool GameDetector::detectMain() {
 	if ((_midi_driver == MD_PCSPK || _midi_driver == MD_PCJR) && !(_game.midi & MDT_PCSPK))
 		_midi_driver = MD_NULL;
 
-	if (!_gameDataPath) {
+	String gameDataPath(ConfMan.get("path"));
+	if (gameDataPath.isEmpty()) {
 		warning("No path was provided. Assuming the data files are in the current directory");
-		_gameDataPath = strdup("");
 #ifndef __PALM_OS__	// add last slash also in File::fopenNoCase, so this is not needed
-	} else if (_gameDataPath[strlen(_gameDataPath)-1] != '/'
+	} else if (gameDataPath.lastChar() != '/'
 #ifdef __MORPHOS__
-					&& _gameDataPath[strlen(_gameDataPath)-1] != ':'
+					&& gameDataPath.lastChar() != ':'
 #endif
-					&& _gameDataPath[strlen(_gameDataPath)-1] != '\\') {
-		char slashless[1024];	/* Append slash to path */
-		strcpy(slashless, _gameDataPath);
-		
-		// need to allocate 2 extra bytes, one for the "/" and one for the NULL terminator
-		_gameDataPath = (char *)malloc((strlen(slashless) + 2) * sizeof(char));
-		sprintf(_gameDataPath, "%s/", slashless);
+					&& gameDataPath.lastChar() != '\\') {
+		gameDataPath += '/';
+		ConfMan.set("path", gameDataPath);
 #endif
 	}
 
@@ -713,6 +632,8 @@ bool GameDetector::detectMain() {
 }
 
 OSystem *GameDetector::createSystem() {
+	int _gfx_mode = parseGraphicsMode(ConfMan.get("gfx_mode"));	// FIXME: Get rid of this again!
+	
 #if defined(USE_NULL_DRIVER)
 	return OSystem_NULL_create();
 #elif defined(__DC__)
@@ -720,18 +641,18 @@ OSystem *GameDetector::createSystem() {
 #elif defined(X11_BACKEND)
 	return OSystem_X11_create();
 #elif defined(__MORPHOS__)
-	return OSystem_MorphOS_create(_gfx_mode, _fullScreen);
+	return OSystem_MorphOS_create(_gfx_mode, ConfMan.getBool("fullscreen"));
 #elif defined(_WIN32_WCE)
 	return OSystem_WINCE3_create();
 #elif defined(MACOS_CARBON)
-	return OSystem_MAC_create(_gfx_mode, _fullScreen);
+	return OSystem_MAC_create(_gfx_mode, ConfMan.getBool("fullscreen"));
 #elif defined(__GP32__)	// ph0x
 	return OSystem_GP32_create(GFX_NORMAL, true);
 #elif defined(__PALM_OS__) //chrilith
-	return OSystem_PALMOS_create(_gfx_mode, _fullScreen);
+	return OSystem_PALMOS_create(_gfx_mode, ConfMan.getBool("fullscreen"));
 #else
 	/* SDL is the default driver for now */
-	return OSystem_SDL_create(_gfx_mode, _fullScreen, _aspectRatio, _joystick_num);
+	return OSystem_SDL_create(_gfx_mode, ConfMan.getBool("fullscreen"), ConfMan.getBool("aspect_ratio"), ConfMan.getBool("joystick_num"));
 #endif
 }
 

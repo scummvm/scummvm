@@ -28,7 +28,7 @@
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 
-#include "common/config-file.h"
+#include "common/config-manager.h"
 #include "common/timer.h"
 #include "common/util.h"
 

@@ -34,7 +34,7 @@
 
 #include "gui/newgui.h"
 #include "gui/ListWidget.h"
-#include "common/config-file.h"
+#include "common/config-manager.h"
 
 #ifdef _WIN32_WCE
 #include "gapi_keys.h"
@@ -546,13 +546,13 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_scumm->_mixer->setVolume(_soundVolumeSfx * _soundVolumeMaster / 255);
 		_scumm->_mixer->setMusicVolume(_soundVolumeMusic);
 		
-		g_config->setInt("master_volume", _soundVolumeMaster);
-		g_config->setInt("music_volume", _soundVolumeMusic);
-		g_config->setInt("sfx_volume", _soundVolumeSfx);
+		ConfMan.set("master_volume", _soundVolumeMaster);
+		ConfMan.set("music_volume", _soundVolumeMusic);
+		ConfMan.set("sfx_volume", _soundVolumeSfx);
 
 		// Subtitles?
 		_scumm->_noSubtitles = !subtitlesCheckbox->getState();
-		g_config->setBool("nosubtitles", _scumm->_noSubtitles);
+		ConfMan.set("nosubtitles", _scumm->_noSubtitles);
 		
 		// Amiga version?
 		if (amigaCheckbox->getState())
@@ -560,10 +560,10 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		else
 			_scumm->setFeatures (_scumm->_features & (~GF_AMIGA));
 
-		g_config->setBool("amiga", amigaCheckbox->getState());
+		ConfMan.set("amiga", amigaCheckbox->getState());
 		
 		// Finally flush the modified config
-		g_config->flush();
+		ConfMan.flushToDisk();
 		}
 	case kCancelCmd:
 		close();

@@ -32,11 +32,13 @@
 
 #include "backends/fs/fs.h"
 
+#include "base/engine.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
 
-#include "common/config-file.h"
-#include "base/engine.h"
+#include "common/config-manager.h"
+
+using Common::ConfigManager;
 
 enum {
 	kStartCmd = 'STRT',
@@ -83,7 +85,6 @@ public:
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
-	Config &_config;
 	const String &_domain;
 	EditTextWidget *_descriptionWidget;
 	EditTextWidget *_domainWidget;
@@ -92,10 +93,11 @@ protected:
 };
 
 EditGameDialog::EditGameDialog(NewGui *gui, const String &domain, const TargetSettings *target)
-	: Dialog(gui, 8, 50, 320 - 2 * 8, 200 - 2 * 40), _config(*g_config), _domain(domain) {
+	: Dialog(gui, 8, 50, 320 - 2 * 8, 200 - 2 * 40),
+	  _domain(domain) {
 
 	// Determine the description string
-	String description(_config.get("description", _domain));
+	String description(ConfMan.get("description", domain));
 	if (description.isEmpty()) {
 		description = target->description;
 	}
@@ -116,18 +118,18 @@ EditGameDialog::EditGameDialog(NewGui *gui, const String &domain, const TargetSe
 		new EditTextWidget(this, 50, 26, _w - 50 - 10, kLineHeight, description);
 
 	// Path to game data (view only)
-	String path(_config.get("path", _domain));
+	String path(ConfMan.get("path", _domain));
 	new StaticTextWidget(this, 10, 42, 40, kLineHeight, "Path: ", kTextAlignRight);
 	new StaticTextWidget(this, 50, 42, _w - 50 - 10, kLineHeight, path, kTextAlignLeft);
 
 	// Full screen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(this, 15, 62, 200, 16, "Use Fullscreen Mode", 0, 'F');
-	_fullscreenCheckbox->setState(_config.getBool("fullscreen", false, _domain));
+	_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 
 	// Display 'Amiga' checkbox, but only for Scumm games.
 	if (isScumm) {
 		_amigaCheckbox = new CheckboxWidget(this, 15, 82, 200, 16, "Amiga Version", 0, 'A');
-		_amigaCheckbox->setState(_config.getBool("amiga", false, _domain));
+		_amigaCheckbox->setState(ConfMan.getBool("amiga", _domain));
 	} else {
 		_amigaCheckbox = 0;
 	}
@@ -142,17 +144,17 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		// Write back changes made to config object
 		String newDomain(_domainWidget->getLabel());
 		if (newDomain != _domain) {
-			if (newDomain.isEmpty() || _config.has_domain(newDomain)) {
+			if (newDomain.isEmpty() || ConfMan.hasGameDomain(newDomain)) {
 				MessageDialog alert(_gui, "This game ID is already taken. Please choose another one.");
 				alert.runModal();
 				return;
 			}
-			_config.rename_domain(_domain, newDomain);
+			ConfMan.renameGameDomain(_domain, newDomain);
 		}
-		_config.set("description", _descriptionWidget->getLabel(), newDomain);
+		ConfMan.set("description", _descriptionWidget->getLabel(), newDomain);
 		if (_amigaCheckbox)
-			_config.setBool("amiga", _amigaCheckbox->getState(), newDomain);
-		_config.setBool("fullscreen", _fullscreenCheckbox->getState(), newDomain);
+			ConfMan.set("amiga", _amigaCheckbox->getState(), newDomain);
+		ConfMan.set("fullscreen", _fullscreenCheckbox->getState(), newDomain);
 		setResult(1);
 		close();
 	} else {
@@ -218,12 +220,16 @@ LauncherDialog::~LauncherDialog() {
 
 void LauncherDialog::open() {
 	Dialog::open();
+/* FIXME / TODO: config rewrite
 	g_config->set_writing(true);
+*/
 }
 
 void LauncherDialog::close() {
-	g_config->flush();
+	ConfMan.flushToDisk();
+/* FIXME / TODO: config rewrite
 	g_config->set_writing(false);
+*/
 	Dialog::close();
 }
 
@@ -232,16 +238,16 @@ void LauncherDialog::updateListing() {
 
 	// Retrieve a list of all games defined in the config file
 	_domains.clear();
-	StringList domains = g_config->get_domains();
-	StringList::ConstIterator iter = domains.begin();
+	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+	ConfigManager::DomainMap::ConstIterator iter = domains.begin();
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
-		String name(g_config->get("gameid", *iter));
-		String description(g_config->get("description", *iter));
+		String name(iter->_value.get("gameid"));
+		String description(iter->_value.get("description"));
 
 		if (name.isEmpty())
-			name = *iter;
+			name = iter->_key;
 		if (description.isEmpty()) {
-			const TargetSettings *v = _detector.findTarget(name.c_str());
+			const TargetSettings *v = _detector.findTarget(name);
 			if (v && v->description)
 				description = v->description;
 		} 
@@ -253,7 +259,7 @@ void LauncherDialog::updateListing() {
 			while (pos < size && (description > l[pos]))
 				pos++;
 			l.insert_at(pos, description);
-			_domains.insert_at(pos, *iter);
+			_domains.insert_at(pos, iter->_key);
 		}
 	}
 
@@ -372,18 +378,18 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 				// Pick a domain name which does not yet exist (after all, we
 				// are *adding* a game to the config, not replacing).
 				String domain(v->targetName);
-				if (g_config->has_domain(domain)) {
+				if (ConfMan.hasGameDomain(domain)) {
 					char suffix = 'a';
 					domain += suffix;
-					while (g_config->has_domain(domain)) {
+					while (ConfMan.hasGameDomain(domain)) {
 						domain.deleteLastChar();
 						suffix++;
 						domain += suffix;
 					}
-					g_config->set("gameid", v->targetName, domain);
-					g_config->set("description", v->description, domain);
+					ConfMan.set("gameid", v->targetName, domain);
+					ConfMan.set("description", v->description, domain);
 				}
-				g_config->set("path", dir->path(), domain);
+				ConfMan.set("path", dir->path(), domain);
 				
 				// Display edit dialog for the new entry
 				EditGameDialog editDialog(_gui, domain, v);
@@ -391,14 +397,14 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 					// User pressed OK, so make changes permanent
 
 					// Write config to disk
-					g_config->flush();
+					ConfMan.flushToDisk();
 					
 					// Update the ListWidget and force a redraw
 					updateListing();
 					draw();
 				} else {
 					// User aborted, remove the the new domain again
-					g_config->delete_domain(domain);
+					ConfMan.removeGameDomain(domain);
 				}
 			}
 		}
@@ -406,10 +412,10 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kRemoveGameCmd:
 		// Remove the currently selected game from the list
 		assert(item >= 0);
-		g_config->delete_domain(_domains[item]);
+		ConfMan.removeGameDomain(_domains[item]);
 
 		// Write config to disk
-		g_config->flush();
+		ConfMan.flushToDisk();
 		
 		// Update the ListWidget and force a redraw
 		updateListing();
@@ -423,15 +429,15 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		// This is useful because e.g. MonkeyVGA needs Adlib music to have decent
 		// music support etc.
 		assert(item >= 0);
-		const char *gameId = g_config->get("gameid", _domains[item]);
-		if (!gameId)
-			gameId = _domains[item].c_str();
+		String gameId(ConfMan.get("gameid", _domains[item]));
+		if (gameId.isEmpty())
+			gameId = _domains[item];
 		EditGameDialog editDialog(_gui, _domains[item], _detector.findTarget(gameId));
 		if (editDialog.runModal()) {
 			// User pressed OK, so make changes permanent
 
 			// Write config to disk
-			g_config->flush();
+			ConfMan.flushToDisk();
 			
 			// Update the ListWidget and force a redraw
 			updateListing();

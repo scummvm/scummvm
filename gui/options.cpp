@@ -27,7 +27,7 @@
 
 #include "backends/fs/fs.h"
 #include "base/gameDetector.h"
-#include "common/config-file.h"
+#include "common/config-manager.h"
 #include "sound/mididrv.h"
 
 #if (!( defined(__DC__) || defined(__GP32__)) && !defined(_MSC_VER))
@@ -61,7 +61,7 @@ enum {
 };
 
 GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui, GameDetector &detector)
-	: Dialog(gui, 10, 15, 320 - 2 * 10, 200 - 2 * 15), _detector(detector) {
+	: Dialog(gui, 10, 15, 320 - 2 * 10, 200 - 2 * 15) {
 	// The GFX mode popup & a label
 	// TODO - add an API to query the list of available GFX modes, and to get/set the mode
 	new StaticTextWidget(this, 5, 10+1, 100, kLineHeight, "Graphics mode: ", kTextAlignRight);
@@ -94,7 +94,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui, GameDetector &detector)
 	const MidiDriverDescription *md = getAvailableMidiDrivers();
 	while (md->name) {
 		_midiPopUp->appendEntry(md->description, md->id);
-		if (md->id == _detector._midi_driver)
+		if (md->id == detector._midi_driver)
 			midiSelected = i;
 		i++;
 		md++;
@@ -134,10 +134,9 @@ GlobalOptionsDialog::GlobalOptionsDialog(NewGui *gui, GameDetector &detector)
 	_savePath = new StaticTextWidget(this, 105, 106, 180, kLineHeight, "/foo/bar", kTextAlignLeft);
 	new ButtonWidget(this, 105, 120, 64, 16, "Choose...", kChooseSaveDirCmd, 0);
 	
-// TODO: set _savePath to the current save path, i.e. as obtained via
-	const char *dir = NULL;
-	dir = g_config->get("savepath", "scummvm");
-	if (dir) {
+// TODO: set _savePath to the current save path
+	Common::String dir(ConfMan.get("savepath"));
+	if (!dir.isEmpty()) {
 		_savePath->setLabel(dir);
 	} else {
 		// Default to the current directory...
@@ -164,9 +163,9 @@ GlobalOptionsDialog::~GlobalOptionsDialog() {
 void GlobalOptionsDialog::open() {
 	Dialog::open();
 
-	_soundVolumeMaster = _detector._master_volume;
-	_soundVolumeMusic = _detector._music_volume;
-	_soundVolumeSfx = _detector._sfx_volume;
+	_soundVolumeMaster = ConfMan.getInt("master_volume");
+	_soundVolumeMusic = ConfMan.getInt("music_volume");
+	_soundVolumeSfx = ConfMan.getInt("sfx_volume");
 
 	_masterVolumeSlider->setValue(_soundVolumeMaster);
 	_musicVolumeSlider->setValue(_soundVolumeMusic);
@@ -184,7 +183,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			// User made his choice...
 			FilesystemNode *dir = _browser->getResult();
 			_savePath->setLabel(dir->path());
-			// TODO - we should check if the director is writeable before accepting it
+			// TODO - we should check if the directory is writeable before accepting it
 		}
 		break;
 	case kMasterVolumeChanged:
@@ -207,18 +206,17 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			const MidiDriverDescription *md = getAvailableMidiDrivers();
 			for (; md->name; md++) {
 				if (md->id == (int) data) {
-					g_config->set ("music_driver", md->name, "_USER_OVERRIDES");
+					ConfMan.set("music_driver", md->name);
 					break;
 				}
 			}
 		}
 		break;
 	case kOKCmd:
-		// TODO Write back changes made to config object
 		setResult(1);
-		_detector._master_volume = _soundVolumeMaster;
-		_detector._music_volume = _soundVolumeMusic;
-		_detector._sfx_volume = _soundVolumeSfx;
+		ConfMan.set("master_volume", _soundVolumeMaster);
+		ConfMan.set("music_volume", _soundVolumeMusic);
+		ConfMan.set("sfx_volume", _soundVolumeSfx);
 		close();
 		break;
 	default:

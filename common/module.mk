@@ -1,7 +1,7 @@
 MODULE := common
 
 MODULE_OBJS := \
-	common/config-file.o \
+	common/config-manager.o \
 	common/file.o \
 	common/scaler.o \
 	common/str.o \

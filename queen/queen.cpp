@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "queen/queen.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
@@ -60,10 +61,10 @@ QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 	if (!_mixer->bindToSystem(syst))
 		warning("Sound initialisation failed.");
 
-	_mixer->setVolume(detector->_sfx_volume);
+	_mixer->setVolume(ConfMan.getInt("sfx_volume"));
 	
 	_debugMode = detector->_debugMode;
-	_debugLevel = detector->_debugLevel;
+	_debugLevel = ConfMan.getInt("debuglevel");
 	_detector = detector;
 
 	_fastMode = 0;

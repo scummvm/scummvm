@@ -24,7 +24,7 @@
 #include "base/gameDetector.h"
 #include "base/plugins.h"
 
-#include "common/config-file.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 
 #include "simon/simon.h"
@@ -471,26 +471,26 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	if (!_mixer->bindToSystem(syst))
 		warning("Sound initialization failed. "
 						"Features of the game that depend on sound synchronization will most likely break");
-	set_volume(detector->_sfx_volume);
+	set_volume(ConfMan.getInt("sfx_volume"));
 
 	// Setup midi driver
 	MidiDriver *driver = detector->createMidi();
 	if (!driver)
 		driver = MidiDriver_ADLIB_create(_mixer);
-	else if (detector->_native_mt32)
-		driver->property (MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+	else if (ConfMan.getBool("native_mt32"))
+		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	midi.mapMT32toGM (!(_game & GF_SIMON2) && !detector->_native_mt32);
+	midi.mapMT32toGM (!(_game & GF_SIMON2) && !ConfMan.getBool("native_mt32"));
 	midi.set_driver(driver);
 	int ret = midi.open();
 	if (ret)
 		warning ("MIDI Player init failed: \"%s\"", midi.getErrorName (ret));
-	midi.set_volume(detector->_music_volume);
+	midi.set_volume(ConfMan.getInt("music_volume"));
 
 	_debugMode = detector->_debugMode;
-	_debugLevel = detector->_debugLevel;
-	_language = detector->_language;
-	_noSubtitles = detector->_noSubtitles;
+	_debugLevel = ConfMan.getInt("debuglevel");
+	_language = GameDetector::parseLanguage(ConfMan.get("language"));
+	_noSubtitles = ConfMan.getBool("nosubtitles");
 
 	_system->init_size(320, 200);
 

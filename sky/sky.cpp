@@ -24,6 +24,7 @@
 #include "base/gameDetector.h"
 #include "base/plugins.h"
 
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/timer.h"
 
@@ -103,13 +104,13 @@ SkyEngine::SkyEngine(GameDetector *detector, OSystem *syst)
 	if (!_mixer->bindToSystem(syst))
 		warning("Sound initialisation failed.");
 
-	_mixer->setVolume(detector->_sfx_volume); //unnecessary?
+	_mixer->setVolume(ConfMan.getInt("sfx_volume")); //unnecessary?
 	
 	_debugMode = detector->_debugMode;
-	_debugLevel = detector->_debugLevel;
+	_debugLevel = ConfMan.getInt("debuglevel");
 	_detector = detector;
 
-	_floppyIntro = detector->_floppyIntro;
+	_floppyIntro = ConfMan.getBool("floppy_intro");
 
 	_fastMode = 0;
 
@@ -251,7 +252,7 @@ void SkyEngine::go() {
 
 void SkyEngine::initialise(void) {
 	_skyDisk = new SkyDisk(_gameDataPath);
-	_skySound = new SkySound(_mixer, _skyDisk, _detector->_sfx_volume);
+	_skySound = new SkySound(_mixer, _skyDisk, ConfMan.getInt("sfx_volume"));
 	
 	_systemVars.gameVersion = _skyDisk->determineGameVersion();
 
@@ -260,14 +261,14 @@ void SkyEngine::initialise(void) {
 		_skyMusic = new SkyAdlibMusic(_mixer, _skyDisk, _system);
 	} else {
 		_systemVars.systemFlags |= SF_ROLAND;
-		if (_detector->_native_mt32)
+		if (ConfMan.getBool("native_mt32"))
 			_skyMusic = new SkyMT32Music(_detector->createMidi(), _skyDisk, _system);
 		else
 			_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk, _system);
 	}
 
 	if (isCDVersion()) {
-		if (_detector->_noSubtitles)
+		if (ConfMan.getBool("nosubtitles"))
 			_systemVars.systemFlags |= SF_ALLOW_SPEECH;
 		else
 			_systemVars.systemFlags |= SF_ALLOW_SPEECH | SF_ALLOW_TEXT;
@@ -296,10 +297,11 @@ void SkyEngine::initialise(void) {
 	if (_systemVars.gameVersion == 288)
 		SkyCompact::patchFor288();
 
-	if (_detector->_language > 10)
+	int language = GameDetector::parseLanguage(ConfMan.get("language"));
+	if (language < 0 || language > 10)
 		_systemVars.language = SKY_USA;
 	else
-		_systemVars.language = _languageTable[_detector->_language];
+		_systemVars.language = _languageTable[language];
 
 	if (!_skyDisk->fileExists(60600 + SkyEngine::_systemVars.language * 8)) {
 		warning("The language you selected does not exist in your BASS version.");
@@ -316,15 +318,15 @@ void SkyEngine::initialise(void) {
 	}
 
 	uint16 result = 0;
-	if (_detector->_save_slot >= 0)
-		result = _skyControl->quickXRestore(_detector->_save_slot);
+	if (ConfMan.hasKey("save_slot") && ConfMan.getInt("save_slot") >= 0)
+		result = _skyControl->quickXRestore(ConfMan.getInt("save_slot"));
 
 	if (result == GAME_RESTORED)
 		_quickLaunch = true;
 	else
 		_quickLaunch = false;
 
-	_skyMusic->setVolume(_detector->_music_volume >> 1);
+	_skyMusic->setVolume(ConfMan.getInt("music_volume") >> 1);
 }
 
 void SkyEngine::initItemList() {
