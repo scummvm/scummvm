@@ -361,7 +361,15 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			debug(9, "CP_PUSH_GLOBAL_VAR32: scriptVars[%d] => %d", parameter, _scriptVars[parameter]);
 			break;
 		case CP_PUSH_LOCAL_ADDR:
-			// push the address of a local variable
+			// Push the address of a local variable
+
+			// From what I understand, some scripts store data
+			// (e.g. mouse pointers) in their local variable space
+			// from the very beginning, and use this mechanism to
+			// pass that data to the opcode function. I don't yet
+			// know the conceptual difference between this and the
+			// CP_PUSH_DEREFERENCED_STRUCTURE opcode.
+
 			Read16ip(parameter);
 			parameter /= 4;
 			ptr = (uint8 *) &localVars[parameter];
