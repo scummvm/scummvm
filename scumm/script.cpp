@@ -217,20 +217,19 @@ void Scumm::stopScript(int script) {
 		}
 	}
 
-	if (_numNestedScripts == 0)
-		return;
-
 	nest = vm.nest;
 	num = _numNestedScripts;
 
-	do {
+	while (num > 0) {
 		if (nest->number == script &&
 				(nest->where == WIO_GLOBAL || nest->where == WIO_LOCAL)) {
 			nest->number = 0xFF;
 			nest->slot = 0xFF;
 			nest->where = 0xFF;
 		}
-	} while (nest++, --num);
+		nest++;
+		num--;
+	}
 }
 
 /* Stop an object script 'script'*/
@@ -255,20 +254,19 @@ void Scumm::stopObjectScript(int script) {
 		}
 	}
 
-	if (_numNestedScripts == 0)
-		return;
-
 	nest = vm.nest;
 	num = _numNestedScripts;
 
-	do {
+	while (num > 0) {
 		if (nest->number == script &&
 				(nest->where == WIO_ROOM || nest->where == WIO_INVENTORY || nest->where == WIO_FLOBJECT)) {
 			nest->number = 0xFF;
 			nest->slot = 0xFF;
 			nest->where = 0xFF;
 		}
-	} while (nest++, --num);
+		nest++;
+		num--;
+	}
 }
 
 /* Return a free script slot */
