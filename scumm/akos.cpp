@@ -509,7 +509,6 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	int skip = 0, startScaleIndexX, startScaleIndexY;
 	int cur_x, x_right, x_left;
 	int cur_y, y_top, y_bottom;
-	bool charsetmask, masking;
 	int step;
 	byte drawFlag = 1;
 
@@ -690,10 +689,10 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	if (v1.skip_width <= 0 || _height <= 0)
 		return 0;
 
-	if ((uint) y_top > (uint) _outheight)
+	if ((uint) y_top > _outheight)
 		y_top = 0;
 
-	if ((uint) y_bottom > (uint) _outheight)
+	if ((uint) y_bottom > _outheight)
 		y_bottom = _outheight;
 
 	if (_draw_top > y_top)
@@ -703,25 +702,8 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 	v1.destptr = _outptr + v1.y * _outwidth + v1.x;
 
-	charsetmask =
-		_vm->hasCharsetMask(x_left, y_top + _vm->virtscr[0].topline, x_right,
-												_vm->virtscr[0].topline + y_bottom);
-	masking = false;
-	if (_zbuf != 0) {
-		masking = _vm->isMaskActiveAt(x_left, y_top, x_right, y_bottom,
-										_vm->getResourceAddress(rtBuffer, 9) +
-										_vm->gdi._imgBufOffs[_zbuf] + _vm->_screenStartStrip) != 0;
-	}
-
-	v1.mask_ptr = NULL;
-	if (masking || charsetmask || _shadow_mode) {
-		v1.mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + v1.y * _numStrips + _vm->_screenStartStrip;
-		v1.imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
-		if (!charsetmask && masking) {
-			v1.mask_ptr += v1.imgbufoffs;
-			v1.imgbufoffs = 0;
-		}
-	}
+	v1.mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + v1.y * _numStrips + _vm->_screenStartStrip;
+	v1.imgbufoffs = _vm->gdi._imgBufOffs[_zbuf];
 
 	codec1_genericDecode();
 	

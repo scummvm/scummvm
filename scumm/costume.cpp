@@ -229,7 +229,7 @@ byte CostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	if (x_left < 0)
 		x_left = 0;
 
-	if ((uint) y_top > (uint) _outheight)
+	if ((uint) y_top > _outheight)
 		y_top = 0;
 
 	if ((uint) y_bottom > _outheight)
