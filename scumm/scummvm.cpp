@@ -576,7 +576,8 @@ int Scumm::scummLoop(int delta) {
 		_saveLoadCompatible = false;
 	}
 
-	_vars[VAR_GAME_LOADED] = 0;
+	if (!(_features & GF_SMALL_HEADER) && !(_features && GF_AFTER_V8))
+		_vars[VAR_GAME_LOADED] = 0;
 	if (_saveLoadFlag) {
 load_game:
 		bool success;
