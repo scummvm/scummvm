@@ -47,7 +47,8 @@ enum {
 	MD_PCJR = 12,
 	MD_TOWNS = 13,
 	MD_YPA1 = 14, // PalmOS
-	MD_ZODIAC = 15 // PalmOS
+	MD_ZODIAC = 15, // PalmOS
+	MD_MT32 = 16
 };
 
 /** Convert a string containing a music driver name into MIDI Driver type. */
@@ -177,6 +178,7 @@ extern MidiDriver *MidiDriver_CORE_create();
 extern MidiDriver *MidiDriver_ETUDE_create();
 extern MidiDriver *MidiDriver_ALSA_create();
 extern MidiDriver *MidiDriver_YM2612_create(SoundMixer *mixer);
+extern MidiDriver *MidiDriver_MT32_create(SoundMixer *mixer, const char *path);
 extern MidiDriver *MidiDriver_YamahaPa1_create();
 extern MidiDriver *MidiDriver_Zodiac_create();
 

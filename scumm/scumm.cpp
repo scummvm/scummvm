@@ -1343,7 +1343,7 @@ void ScummEngine_v90he::scummInit() {
 
 void ScummEngine::setupMusic(int midi) {
 	_midiDriver = GameDetector::detectMusicDriver(midi);
-	_native_mt32 = ConfMan.getBool("native_mt32");
+	_native_mt32 = (ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32));
 
 #ifndef __GP32__ //ph0x FIXME, "quick dirty hack"
 	/* Bind the mixer to the system => mixer will be invoked
@@ -1393,6 +1393,9 @@ void ScummEngine::setupMusic(int midi) {
 			}
 			if (midi == MDT_TOWNS)
 				_imuse->property(IMuse::PROP_DIRECT_PASSTHROUGH, 1);
+			if (_midiDriver == MD_MT32) {
+				_imuse->property(IMuse::PROP_DIRECT_PASSTHROUGH, 1);
+			}
 			_imuse->set_music_volume(ConfMan.getInt("music_volume"));
 		}
 	}

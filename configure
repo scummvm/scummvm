@@ -51,6 +51,7 @@ _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
 _prefix=/usr/local
+_have_x86=""
 
 _srcdir=`dirname $0`
 
@@ -660,6 +661,26 @@ EOF
     rm -f tmp_endianness_check$EXEEXT tmp_endianness_check.cpp
 
     #
+    # Check whether we can use x86 asm routines
+    #
+    echo_n "Running on x86... "
+    case $_host_cpu in
+	i386|i486|i586|i686)
+	    _have_x86=yes
+	    ;;
+	*)
+	    _have_x86=no
+	    ;;
+    esac
+
+    if test "$_have_x86" = yes ; then
+	_def_x86='#define HAVE_X86'
+    else
+	_def_x86='#undef HAVE_X86'
+    fi
+    echo "$_have_x86"
+
+    #
     # Check whether memory alignment is required
     #
     echo_n "Alignment required... "
@@ -1019,6 +1040,7 @@ cat > config.h << EOF
 
 $_def_endianness
 $_def_align
+$_def_x86
 
 $_def_linupy
 
