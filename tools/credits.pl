@@ -61,9 +61,11 @@ sub convert_html_entities {
 	# &oslash;  -> o
 	# &ouml;    -> o / oe
 	# &amp;     -> &
+	# &#322;    -> l
 	$text =~ s/&aacute;/a/g;
 	$text =~ s/&eacute;/e/g;
 	$text =~ s/&oslash;/o/g;
+	$text =~ s/&#322;/l/g;
 
 	# HACK: Torbj*o*rn but G*oe*ffringmann and R*oe*ver
 	$text =~ s/&ouml;r/or/g;
@@ -227,7 +229,7 @@ begin_credits("Credits");
 	add_person("Jonathan Gray", "khalek", "Engine: SCUMM, HE, Broken Sword II");
 	add_person("Travis Howell", "Kirben", "Engine: SCUMM, HE, Simon the Sorcerer");
 	add_person("Oliver Kiehl", "olki", "Engine: Beneath a Steel Sky, Simon");
-	add_person("Pawel Kolodziejski", "aquadran", "Engine: SCUMM (Codecs, iMUSE, Smush, etc.)");
+	add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Engine: SCUMM (Codecs, iMUSE, Smush, etc.)");
 	add_person("Andrew Kurushin", "ajax16384", "Engine: SAGA");
 	add_person("Gregory Montoir", "cyx", "Engine: Flight of the Amazon Queen, HE");
 	add_person("Joost Peters", "joostp", "Engine: Beneath a Steel Sky, Flight of the Amazon Queen");
