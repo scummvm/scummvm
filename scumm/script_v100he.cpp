@@ -1359,38 +1359,64 @@ void ScummEngine_v100he::o100_redim2dimArray() {
 }
 
 void ScummEngine_v100he::o100_paletteOps() {
+	int a, b, c, d, e;
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
 	case 0:
 		_hePaletteNum = pop();
 		break;
 	case 20:
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
+		e = pop();
+		d = pop();
+		c = pop();
+		b = pop();
+		a = pop();
+		if (_hePaletteNum != 0) {
+			for (; a <= b; ++a) {
+				setHEPaletteColor(_hePaletteNum, a, c, d, e);
+			}
+		}
 		break;
 	case 25:
-		pop();
+		a = pop();
+		if (_hePaletteNum != 0) {
+			setHEPaletteFromCostume(_hePaletteNum, a);
+		}
 		break;
 	case 40:
-		pop();
-		pop();
+		b = pop();
+		a = pop();
+		if (_hePaletteNum != 0) {
+			setHEPaletteFromImage(_hePaletteNum, a, b);
+		}
 		break;
 	case 53:
+		if (_hePaletteNum != 0) {
+			restoreHEPalette(_hePaletteNum);
+		}
 		break;
 	case 57:
-		pop();
+		a = pop();
+		if (_hePaletteNum != 0) {
+			copyHEPalette(_hePaletteNum, a);
+		}
 		break;
 	case 63:
-		pop();
-		pop();
+		b = pop();
+		a = pop();
+		if (_hePaletteNum != 0) {
+			setHEPaletteFromRoom(_hePaletteNum, a, b);
+		}
 		break;
 	case 81:
-		pop();
-		pop();
-		pop();
+		c = pop();
+		b = pop();
+		a = pop();
+		if (_hePaletteNum) {
+			for (; a <= b; ++a) {
+				copyHEPaletteColor(_hePaletteNum, a, c);
+			}
+		}
 		break;
 	case 92:
 		_hePaletteNum = 0;
@@ -1398,7 +1424,7 @@ void ScummEngine_v100he::o100_paletteOps() {
 	default:
 		error("o100_paletteOps: Unknown case %d", subOp);
 	}
-	debug(1,"o100_paletteOps stub (%d)", subOp);
+	debug(1, "o100_paletteOps stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::o100_redimArray() {
@@ -2313,7 +2339,7 @@ void ScummEngine_v100he::o100_getPaletteData() {
 		error("o100_getPaletteData: Unknown case %d", subOp);
 	}
 	push(0);
-	debug(1,"o100_getPaletteData stub (%d)", subOp);
+	debug(0, "o100_getPaletteData stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::o100_readFile() {

@@ -860,6 +860,7 @@ protected:
 
 	int _heObject, _heObjectNum;
 	int _hePaletteNum;
+	uint8 *_hePalettes;
 	
 	const OpcodeEntryV90he *_opcodesV90he;
 	FloodStateParameters _floodStateParams;
@@ -900,6 +901,16 @@ protected:
 	uint8 getWizPixelColor(int restype, int resnum, int state, int x, int y, int flags);
 	int computeWizHistogram(int resnum, int state, int x, int y, int w, int h);
 	
+	uint8 *getHEPalette(int palSlot);
+	void setHEPaletteColor(int palSlot, uint8 color, uint8 r, uint8 g, uint8 b);
+	void setHEPaletteFromPtr(int palSlot, const uint8 *palData);
+	void setHEPaletteFromCostume(int palSlot, int resId);
+	void setHEPaletteFromImage(int palSlot, int resId, int state);
+	void setHEPaletteFromRoom(int palSlot, int resId, int state);
+	void restoreHEPalette(int palSlot);
+	void copyHEPalette(int dstPalSlot, int srcPalSlot);
+	void copyHEPaletteColor(int palSlot, uint8 dstColor, uint8 srcColor);
+
 	int findSpriteWithClassOf(int x, int y, int spriteGroupId, int d, int num, int *args);
 	int spriteInfoGet_classFlags(int spriteId, int num);
 	int spriteInfoGet_classFlagsAnd(int spriteId, int num, int *args);
