@@ -160,7 +160,8 @@ void MidiPlayer::metaEvent (byte type, byte *data, uint16 length) {
 
 void MidiPlayer::onTimer (void *data) {
 	MidiPlayer *p = (MidiPlayer *) data;
-	p->_system->lockMutex(p->_mutex);
+	Common::StackLock lock(p->_mutex);
+
 	if (!p->_paused) {
 		if (p->_music.parser && p->_currentTrack != 255) {
 			p->_current = &p->_music;
@@ -172,7 +173,6 @@ void MidiPlayer::onTimer (void *data) {
 		p->_sfx.parser->onTimer();
 	}
 	p->_current = 0;
-	p->_system->unlockMutex(p->_mutex);
 }
 
 void MidiPlayer::startTrack (int track) {
@@ -220,14 +220,14 @@ void MidiPlayer::startTrack (int track) {
 }
 
 void MidiPlayer::stop() {
-	_system->lockMutex(_mutex);
+	Common::StackLock lock(_mutex);
+
 	if (_music.parser) {
 		_current = &_music;
 		_music.parser->jumpToTick(0);
 	}
 	_current = 0;
 	_currentTrack = 255;
-	_system->unlockMutex(_mutex);
 }
 
 void MidiPlayer::pause (bool b) {
@@ -235,14 +235,13 @@ void MidiPlayer::pause (bool b) {
 		return;
 	_paused = b;
 
-	_system->lockMutex(_mutex);
+	Common::StackLock lock(_mutex);
 	for (int i = 0; i < 16; ++i) {
 		if (_music.channel[i])
 			_music.channel[i]->volume (_paused ? 0 : (_music.volume[i] * _masterVolume / 255));
 		if (_sfx.channel[i])
 			_sfx.channel[i]->volume (_paused ? 0 : (_sfx.volume[i] * _masterVolume / 255));
 	}
-	_system->unlockMutex(_mutex);
 }
 
 void MidiPlayer::set_volume (int volume) {
@@ -256,7 +255,7 @@ void MidiPlayer::set_volume (int volume) {
 	_masterVolume = volume;
 
 	// Now tell all the channels this.
-	_system->lockMutex (_mutex);
+	Common::StackLock lock(_mutex);
 	if (_driver && !_paused) {
 		for (int i = 0; i < 16; ++i) {
 			if (_music.channel[i])
@@ -265,7 +264,6 @@ void MidiPlayer::set_volume (int volume) {
 				_sfx.channel[i]->volume(_sfx.volume[i] * _masterVolume / 255);
 		}
 	}
-	_system->unlockMutex (_mutex);
 }
 
 void MidiPlayer::set_driver(MidiDriver *md) {
@@ -276,15 +274,15 @@ void MidiPlayer::set_driver(MidiDriver *md) {
 }
 
 void MidiPlayer::mapMT32toGM (bool map) {
-	_system->lockMutex(_mutex);
+	Common::StackLock lock(_mutex);
+
 	_map_mt32_to_gm = map;
-	_system->unlockMutex(_mutex);
 }
 
 void MidiPlayer::setLoop (bool loop) {
-	_system->lockMutex(_mutex);
+	Common::StackLock lock(_mutex);
+
 	_loopTrack = loop;
-	_system->unlockMutex(_mutex);
 }
 
 void MidiPlayer::queueTrack (int track, bool loop) {
@@ -351,7 +349,8 @@ static int simon1_gmf_size[] = {
 };
 
 void MidiPlayer::loadSMF (File *in, int song, bool sfx) {
-	_system->lockMutex(_mutex);
+	Common::StackLock lock(_mutex);
+
 	MusicInfo *p = sfx ? &_sfx : &_music;
 	clearConstructs (*p);
 
@@ -418,7 +417,6 @@ void MidiPlayer::loadSMF (File *in, int song, bool sfx) {
 		resetVolumeTable();
 	}
 	p->parser = parser; // That plugs the power cord into the wall
-	_system->unlockMutex(_mutex);
 }
 
 void MidiPlayer::loadMultipleSMF (File *in, bool sfx) {
@@ -431,14 +429,14 @@ void MidiPlayer::loadMultipleSMF (File *in, bool sfx) {
 	// We need to load ALL the songs and then
 	// treat them as separate tracks -- for the
 	// purpose of jumps, anyway.
-	_system->lockMutex(_mutex);
+	Common::StackLock lock(_mutex);
+
 	MusicInfo *p = sfx ? &_sfx : &_music;
 	clearConstructs(*p);
 
 	p->num_songs = in->readByte();
 	if (p->num_songs > 16) {
 		printf ("playMultipleSMF: %d is too many songs to keep track of!\n", (int) p->num_songs);
-		_system->unlockMutex(_mutex);
 		return;
 	}
 
@@ -451,7 +449,6 @@ void MidiPlayer::loadMultipleSMF (File *in, bool sfx) {
 		in->read(buf, 4);
 		if (memcmp (buf, "MThd", 4)) {
 			printf ("Expected MThd but found '%c%c%c%c' instead!\n", buf[0], buf[1], buf[2], buf[3]);
-			_system->unlockMutex (_mutex);
 			return;
 		}
 		in->seek(in->readUint32BE() + in->pos(), SEEK_SET);
@@ -476,11 +473,10 @@ void MidiPlayer::loadMultipleSMF (File *in, bool sfx) {
 		_currentTrack = 255;
 		resetVolumeTable();
 	}
-	_system->unlockMutex(_mutex);
 }
 
 void MidiPlayer::loadXMIDI(File *in, bool sfx) {
-	_system->lockMutex(_mutex);
+	Common::StackLock lock(_mutex);
 	MusicInfo *p = sfx ? &_sfx : &_music;
 	clearConstructs(*p);
 
@@ -499,7 +495,6 @@ void MidiPlayer::loadXMIDI(File *in, bool sfx) {
 		}
 		if (memcmp(buf, "CAT ", 4)) {
 			warning("Could not find 'CAT ' tag to determine resource size!");
-			_system->unlockMutex (_mutex);
 			return;
 		}
 		size += 4 + in->readUint32BE();
@@ -508,7 +503,6 @@ void MidiPlayer::loadXMIDI(File *in, bool sfx) {
 		in->read(p->data, size);
 	} else {
 		warning("Expected 'FORM' tag but found '%c%c%c%c' instead!", buf[0], buf[1], buf[2], buf[3]);
-		_system->unlockMutex(_mutex);
 		return;
 	}
 
@@ -526,18 +520,16 @@ void MidiPlayer::loadXMIDI(File *in, bool sfx) {
 		resetVolumeTable();
 	}
 	p->parser = parser; // That plugs the power cord into the wall
-	_system->unlockMutex(_mutex);
 }
 
 void MidiPlayer::loadS1D (File *in, bool sfx) {
-	_system->lockMutex(_mutex);
+	Common::StackLock lock(_mutex);
 	MusicInfo *p = sfx ? &_sfx : &_music;
 	clearConstructs(*p);
 
 	uint16 size = in->readUint16LE();
 	if (size != in->size() - 2) {
 		warning("Size mismatch in simon1demo MUS file (%ld versus reported %d)", (long) in->size() - 2, (int) size);
-		_system->unlockMutex(_mutex);
 		return;
 	}
 
@@ -558,7 +550,6 @@ void MidiPlayer::loadS1D (File *in, bool sfx) {
 		resetVolumeTable();
 	}
 	p->parser = parser; // That plugs the power cord into the wall
-	_system->unlockMutex(_mutex);
 }
 
 } // End of namespace Simon
