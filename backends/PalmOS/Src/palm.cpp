@@ -47,6 +47,13 @@
 //#define	SND_BLOCK			(8192)
 #define	SND_BLOCK			(3072)
 
+enum {
+	GFX_FLIPPING = 100,	// Palmos
+	GFX_BUFFERED = 101,	// Palmos
+	GFX_WIDE = 102 // palmos
+};
+
+
 OSystem *OSystem_PALMOS_create(int gfx_mode) {
 	return OSystem_PALMOS::create(gfx_mode);
 }

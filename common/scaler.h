@@ -70,11 +70,7 @@ enum {
 	GFX_HQ2X = 8,
 	GFX_HQ3X = 9,
 	GFX_TV2X = 10,
-	GFX_DOTMATRIX = 11,
-
-	GFX_FLIPPING = 100,	// Palmos
-	GFX_BUFFERED = 101,	// Palmos
-	GFX_WIDE = 102 // palmos
+	GFX_DOTMATRIX = 11
 };
 
 

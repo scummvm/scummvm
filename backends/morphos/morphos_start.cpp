@@ -71,28 +71,13 @@ Library *TimerBase = NULL;
 
 OSystem_MorphOS *TheSystem = NULL;
 
-OSystem *OSystem_MorphOS_create(int gfx_mode, bool full_screen)
+OSystem *OSystem_MorphOS_create()
 {
 	if (TheSystem)
 		delete TheSystem;
 
-	SCALERTYPE gfx_scaler = ST_NONE;
-	switch (gfx_mode)
-	{
-		case GFX_DOUBLESIZE:
-			gfx_scaler = ST_POINT;
-			break;
+	TheSystem = OSystem_MorphOS::create(ST_NONE, ConfMan.getBool("fullscreen"));
 
-		case GFX_SUPEREAGLE:
-			gfx_scaler = ST_SUPEREAGLE;
-			break;
-
-		case GFX_SUPER2XSAI:
-			gfx_scaler = ST_SUPER2XSAI;
-			break;
-	}
-
-	TheSystem = OSystem_MorphOS::create(gfx_scaler, full_screen);
 	return TheSystem;
 }
 

@@ -45,11 +45,11 @@ static OSystem *createSystem() {
 #elif defined(X11_BACKEND)
 	return OSystem_X11_create();
 #elif defined(__MORPHOS__)
-	return OSystem_MorphOS_create(gfx_mode, ConfMan.getBool("fullscreen"));
+	return OSystem_MorphOS_create();
 #elif defined(_WIN32_WCE)
 	return OSystem_WINCE3_create();
 #elif defined(__GP32__)	// ph0x
-	return OSystem_GP32_create(GFX_NORMAL, true);
+	return OSystem_GP32_create();
 #elif defined(__PALM_OS__) //chrilith
 	return OSystem_PALMOS_create();
 #else
