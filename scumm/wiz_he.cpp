@@ -323,9 +323,6 @@ void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int 
 }
 
 void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect, const uint8 *imagePal) {
-	printf("SRC left %d right %d top %d bottom %d\n", srcRect.left, srcRect.right, srcRect.top, srcRect.bottom);
-	printf("DST left %d right %d top %d bottom %d\n", dstRect.left, dstRect.right, dstRect.top, dstRect.bottom);
-
 	const uint8 *dataPtr, *dataPtrNext;
 	uint8 *dstPtr, *dstPtrNext;
 	uint32 code;
