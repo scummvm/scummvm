@@ -419,7 +419,12 @@ void Scumm::loadRoomObjects()
 		error("More than %d objects in room %d", _numLocalObjects, _roomResource);
 
 	od = &_objs[1];
-	searchptr = room;
+
+	if (_features & GF_AFTER_V7)
+		searchptr = getResourceAddress(rtRoomScripts, _roomResource);
+	else
+		searchptr = room;
+
 	for (i = 0; i < _numObjectsInRoom; i++, od++) {
 		ptr = findResource(MKID('OBCD'), searchptr);
 		if (ptr == NULL)
