@@ -273,7 +273,7 @@ void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h,
   ta_commit_list(&myvertex);
 }
 
-void initGraphics(Scumm *s, bool fullScreen)
+void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor)
 {
   ta_sync();
   if(!screen)
