@@ -411,7 +411,7 @@ void SmushPlayer::handleTextResource(Chunk & b) {
 		fr->drawStringWrap(str, _curBuffer, _frameSize, pos_x, MAX(pos_y, top), width);
 	}
 	else if(flags == 13) {
-		fr->drawStringCentered(str, _curBuffer, _frameSize, MAX(pos_y, top), left, width, pos_x);
+		fr->drawStringWrapCentered(str, _curBuffer, _frameSize, pos_x, MAX(pos_y, top), width);
 	}
 	else
 		warning("SmushPlayer::handleTextResource. Not handled flags: %d\n", flags);
