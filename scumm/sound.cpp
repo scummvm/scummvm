@@ -925,6 +925,10 @@ static void music_handler (void * engine) {
 #define OUTPUT_SIZE 66150 // ((22050 * 2 * 2) / 4) * 3
 
 void Sound::playBundleMusic(char * song) {
+	if (_scumm->_silentDigitalImuse == true) {
+		return;
+	}
+
 	if (_nameBundleMusic == NULL) {
 		if (_scumm->_bundle->openMusicFile("digmusic.bun", _scumm->getGameDataPath()) == false) {
 			return;

@@ -118,6 +118,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 
 	/* Bind the mixer to the system => mixer will be invoked
 	 * automatically when samples need to be generated */	
+	_silentDigitalImuse = false;
 	if (!_mixer->bindToSystem(syst)) {         
 		warning("Sound initialization failed");
 		if (detector->_use_adlib) {
@@ -126,6 +127,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 			detector->_midi_driver = MD_NULL;   
 			warning("Adlib music was selected, switching to midi null driver");   
 		}   
+		_silentDigitalImuse = true;
 	} 
 	_mixer->setVolume(kDefaultSFXVolume);
 	_mixer->setMusicVolume(kDefaultMusicVolume);

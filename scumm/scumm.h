@@ -884,6 +884,7 @@ public:
 	uint16 _defaultTalkDelay;
 	bool _use_adlib;
 	int tempMusic;
+	bool _silentDigitalImuse;
 	int _saveSound;
 	uint16 _soundParam, _soundParam2, _soundParam3;
 	int current_cd_sound, _cd_loops, _cd_frame, _cd_track, _cd_end;

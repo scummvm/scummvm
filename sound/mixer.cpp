@@ -28,6 +28,9 @@
 SoundMixer::SoundMixer() {
 	_volumeTable = (int16 *)calloc(256 * sizeof(int16), 1);
 	_beginSlots = 0;
+	for (int i = 0; i != NUM_CHANNELS; i++) {
+		_channels[i] = NULL;
+	}
 }
 
 SoundMixer::~SoundMixer() {

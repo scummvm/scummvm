@@ -49,6 +49,7 @@ public:
 	bool handleFrame();
 	bool stop();
 	bool update();
+	bool _silentMixer;
 };
 
 ScummMixer::ScummMixer(SoundMixer * m) : _mixer(m), _nextIndex(_mixer->_beginSlots) {
@@ -147,13 +148,15 @@ bool ScummMixer::handleFrame() {
 					if(_channels[i].chan->getRate() == 11025) size *= 2;
 					size *= stereo ? 4 : 2;
 
-					// append to _sound
-					if(_channels[i].first) {
-						_channels[i].mixer_index = _mixer->playStream(NULL, -1, data, size, rate, flags | SoundMixer::FLAG_16BITS);
-						debug(5, "channel %d bound to mixer_index %d", _channels[i].id, _channels[i].mixer_index);
-						_channels[i].first = false;
-					} else {
-						_mixer->append(_channels[i].mixer_index, data, size, rate, flags | SoundMixer::FLAG_16BITS);
+					if(_silentMixer == false) {
+						// append to _sound
+						if(_channels[i].first) {
+							_channels[i].mixer_index = _mixer->playStream(NULL, -1, data, size, rate, flags | SoundMixer::FLAG_16BITS);
+							debug(5, "channel %d bound to mixer_index %d", _channels[i].id, _channels[i].mixer_index);
+							_channels[i].first = false;
+						} else {
+							_mixer->append(_channels[i].mixer_index, data, size, rate, flags | SoundMixer::FLAG_16BITS);
+						}
 					}
 
 					delete []data;
@@ -163,12 +166,14 @@ bool ScummMixer::handleFrame() {
 					if(_channels[i].chan->getRate() == 11025) size *= 2;
 					size *= stereo ? 2 : 1;
 
-					// append to _sound
-					if(_channels[i].first) {
-						_channels[i].mixer_index = _mixer->playStream(NULL, -1, data, size, rate, flags | SoundMixer::FLAG_UNSIGNED);
-						_channels[i].first = false;
-					} else {
-						_mixer->append(_channels[i].mixer_index, data, size, rate, flags | SoundMixer::FLAG_UNSIGNED);
+					if(_silentMixer == false) {
+						// append to _sound
+						if(_channels[i].first) {
+							_channels[i].mixer_index = _mixer->playStream(NULL, -1, data, size, rate, flags | SoundMixer::FLAG_UNSIGNED);
+							_channels[i].first = false;
+						} else {
+							_mixer->append(_channels[i].mixer_index, data, size, rate, flags | SoundMixer::FLAG_UNSIGNED);
+						}
 					}
 
 					delete []data;
@@ -207,6 +212,7 @@ Mixer * ScummRenderer::getMixer() {
 	if(_smixer == 0) {
 		_smixer = new ScummMixer(_scumm->_mixer);
 		if(!_smixer) error("unable to allocate a smush mixer");
+		_smixer->_silentMixer = _scumm->_silentDigitalImuse;
 		s_renderer = this;
 		_scumm->_timer->installProcedure(&smush_handler, _insaneSpeed);
 	}
