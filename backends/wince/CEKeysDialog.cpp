@@ -56,7 +56,7 @@ CEKeysDialog::CEKeysDialog(const Common::String &title)
 	// Get actions names
 	Common::StringList l;
 
-	for (int i = 1; i < CEActions::Instance()->size(); i++) 
+	for (int i = 0; i < CEActions::Instance()->size(); i++) 
 		l.push_back(CEActions::Instance()->actionName((ActionType)i));
 
 	_actionsList->setList(l);
@@ -72,7 +72,7 @@ void CEKeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		if (_actionsList->getSelected() >= 0) {
 				char selection[100];
 
-				sprintf(selection, "Associated key : %s", CEDevice::getKeyName(CEActions::Instance()->getMapping((ActionType)(_actionsList->getSelected() + 1))).c_str());
+				sprintf(selection, "Associated key : %s", CEDevice::getKeyName(CEActions::Instance()->getMapping((ActionType)(_actionsList->getSelected()))).c_str());
 				_keyMapping->setLabel(selection);
 				_keyMapping->draw();
 		}
@@ -84,7 +84,7 @@ void CEKeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		else {
 				char selection[100];
 
-				_actionSelected = _actionsList->getSelected() + 1;
+				_actionSelected = _actionsList->getSelected();
 				sprintf(selection, "Associated key : %s", CEDevice::getKeyName(CEActions::Instance()->getMapping((ActionType)_actionSelected)).c_str());
 				_actionTitle->setLabel("Press the key to associate");
 				_keyMapping->setLabel(selection);

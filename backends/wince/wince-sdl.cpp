@@ -228,6 +228,7 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 		loadSmartphoneConfiguration();
 	}
 
+
 }
 
 void OSystem_WINCE3::swap_panel_visibility() {
@@ -345,8 +346,8 @@ void OSystem_WINCE3::initZones() {
 
 		_currentZone = 0;
         for (i=0; i<TOTAL_ZONES; i++) {
-                _mouseXZone[i] = _zones[i].x + (_zones[i].width / 2);
-                _mouseYZone[i] = _zones[i].y + (_zones[i].height / 2);
+                _mouseXZone[i] = (_zones[i].x + (_zones[i].width / 2)) * _scaleFactorXm / _scaleFactorXd;
+                _mouseYZone[i] = (_zones[i].y + (_zones[i].height / 2)) * _scaleFactorYm / _scaleFactorYd;
         }
 }
 
@@ -822,6 +823,7 @@ bool OSystem_WINCE3::update_scalers() {
 		_scaleFactorYd = 8;
 		_scalerProc = SmartphoneLandscape;
 		_modeFlags = 0;
+		initZones();
 		return true;
 	}
 //#endif
