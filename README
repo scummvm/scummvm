@@ -53,6 +53,7 @@ SCUMM Games:
         Day of the Tentacle                        [Game: tentacle]
         Sam & Max                                  [Game: samnmax]
         The Dig                                    [Game: dig]
+        Curse of Monkey Island                     [Game: comi]
 
 Other Games:
         Beneath a Steel Sky                        [Game: sky]
@@ -66,7 +67,6 @@ prevent them from being fully supported at this time. Please do not file bug
 reports about them.
         
         Full Throttle                              [Game: ft]
-        Curse of Monkey Island                     [Game: comi]
 
 The following games should load, but are not yet fully playable. Play these at
 your own risk, and please do not file bug reports about them. If you want
@@ -192,6 +192,9 @@ the section on Reporting Bugs.
                 - F10 key animation in simon2mac is different compared to
                   original game
 
+       Curse of Monkey Island
+                - The "Pirate Song" scene does not play correctly
+                - 
        All CD games:
                - If you are experiencing random crashes, and your game
                  plays music from CD, you have encountered a Windows bug.

@@ -150,11 +150,17 @@ void Scumm::checkV2MouseOver(ScummVM::Point pos) {
 
 void Scumm::checkV2Inventory(int x, int y) {
 	int object = 0;
+	static int egoVar;
 
 	y -= virtscr[2].topline;
 
 	if ((y < 34) || !(_mouseButStat & MBS_LEFT_CLICK)) 
 		return;
+
+	if (_scummVars[VAR_EGO] != egoVar) {
+		egoVar = _scummVars[VAR_EGO];
+		_inventoryOffset = 0;
+	}
 
 	if (v2_mouseover_boxes[kInventoryUpArrow].rect.contains(x, y)) {
 		_inventoryOffset -= 2;
