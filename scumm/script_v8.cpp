@@ -229,7 +229,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o6_printSystem),
 		OPCODE(o8_blastText),
 		/* 98 */
-		OPCODE(o6_invalid),
+		OPCODE(o6_isSoundRunning), // FIXME should be O_DRAW_OBJECT
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
