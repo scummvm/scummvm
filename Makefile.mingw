@@ -11,13 +11,16 @@ SDL_LIBS=-L$(SRC)/sdl/lib -lSDLmain -lSDL
 CC      = gcc
 CFLAGS  = -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar 
 DEFINES = -DCOMPRESSED_SOUND_FILE
-LDFLAGS :=-mwindows -mconsole
+LDFLAGS :=-mwindows
 INCLUDES:= $(SDL_CFLAGS) -I./ -I./sound
 CPPFLAGS= $(DEFINES) $(INCLUDES)
 LIBS	= -lmingw32 -lwinmm -lmad $(SDL_LIBS)
 EXEEXT	:=.exe
 
-OBJS	= sdl.o
+OBJS	= sdl.o scummvmico.o
+
+scummvmico.o: scummvm.ico
+	windres scummvm.rc scummvmico.o
 
 include Makefile.common
 
