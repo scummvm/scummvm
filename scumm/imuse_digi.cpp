@@ -325,7 +325,7 @@ static const imuse_music_table _comiStateMusicTable[] = {
 	{1415,	"stateLighthouse",		"1415-Lighthouse",				"1415-L~1.IMX",	0},
 	{1420,	"stateVillage",				"1420-Village",						"1420-V~1.IMX",	0},
 	{1423,	"stateVolcano",				"1423-Volcano",						"1423-V~1.IMX",	0},
-	{1425,	"stateAltar"					"1425-Altar",							"1425-A~1.IMX",	0},
+	{1425,	"stateAltar",					"1425-Altar",							"1425-A~1.IMX",	0},
 	{1430,	"stateHotelOut",			"1430-Hotel Out",					"1430-H~1.IMX",	0},
 	{1435,	"stateHotelBar",			"1435-Hotel Bar",					"1435-H~1.IMX",	0},
 	{1440,	"stateHotelIn",				"1440-Hotel In",					"1440-H~1.IMX",	0},
