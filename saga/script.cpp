@@ -22,7 +22,7 @@
  */
 
 // Scripting module: Script resource handling functions
-
+#include "saga.h"
 #include "reinherit.h"
 
 #include "yslib.h"

@@ -71,7 +71,6 @@ struct R_SURFACE {
 	int buf_w;
 	int buf_h;
 	int buf_pitch;
-	int bpp;
 	R_RECT clip_rect;
 	void *impl_src;
 };

@@ -22,7 +22,7 @@
  */
 
 // Palette animation module
-
+#include "saga.h"
 #include "reinherit.h"
 
 #include "yslib.h"

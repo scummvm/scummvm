@@ -27,6 +27,9 @@
 
 #include "yslib.h"
 #include "common/file.h"
+#include "base/gameDetector.h"
+#include "base/plugins.h"
+#include "backends/fs/fs.h"
 
 #include "rscfile_mod.h"
 #include "cvar_mod.h"
@@ -157,9 +160,10 @@ R_GAME_SOUNDINFO IHNM_GameSound = {
 R_GAMEDESC GameDescs[] = {
 	// Inherit the earth - DOS Demo version
 	{
+		"ite-demo",
 		R_GAMETYPE_ITE,
 		R_GAME_ITE_DEMO, // Game id
-		"Inherit the Earth - DOS Demo version", // Game title
+		"Inherit the Earth (DOS Demo)", // Game title
 		320, 200, // Logical resolution
 		137, // Scene viewport height
 		ITE_DEFAULT_SCENE, // Starting scene number
@@ -169,15 +173,15 @@ R_GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITEDEMO_GameFonts),
 		ITEDEMO_GameFonts,
 		&ITEDEMO_GameSound,
-		Verify_ITEDEMO, // Game verification func
 		0 // Game supported flag
 	},
 
 	// Inherit the earth - win32 Wyrmkeep Demo version
 	{
+		"ite-demo-win",
 		R_GAMETYPE_ITE,
 		R_GAME_ITE_WINDEMO,
-		"Inherit the Earth - Win32 Wyrmkeep Demo version",
+		"Inherit the Earth (Win32 Demo)",
 		320, 200,
 		137,
 		ITE_DEFAULT_SCENE,
@@ -187,33 +191,16 @@ R_GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
-		NULL,
 		0
 	},
 	
-	// Inherit the earth - Disk version
-	{
-		R_GAMETYPE_ITE,
-		R_GAME_ITE_DISK,
-		"Inherit the Earth - Disk version",
-		320, 200,
-		137,
-		ITE_DEFAULT_SCENE,
-		&ITE_Resources,
-		ARRAYSIZE(ITEDISK_GameFiles),
-		ITEDISK_GameFiles,
-		ARRAYSIZE(ITEDISK_GameFonts),
-		ITEDISK_GameFonts,
-		&ITE_GameSound,
-		Verify_ITEDISK,
-		1
-	},
-
 	// Inherit the earth - CD version
+	// NOTE: it should be before floppy version
 	{
+		"itecd",
 		R_GAMETYPE_ITE,
 		R_GAME_ITE_CD,
-		"Inherit the Earth - CD version",
+		"Inherit the Earth (DOS CD Version)",
 		320, 200,
 		137,
 		ITE_DEFAULT_SCENE,
@@ -223,14 +210,33 @@ R_GAMEDESC GameDescs[] = {
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
 		&ITECD_GameSound,
-		NULL,
-	1},
+		1
+	},
+
+	// Inherit the earth - Disk version
+	{
+		"ite",
+		R_GAMETYPE_ITE,
+		R_GAME_ITE_DISK,
+		"Inherit the Earth (DOS)",
+		320, 200,
+		137,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEDISK_GameFiles),
+		ITEDISK_GameFiles,
+		ARRAYSIZE(ITEDISK_GameFonts),
+		ITEDISK_GameFonts,
+		&ITE_GameSound,
+		1
+	},
 
 	// I Have No Mouth And I Must Scream - Demo version
 	{
+		"ihnm-demo",
 		R_GAMETYPE_IHNM,
 		R_GAME_IHNM_DEMO,
-		"I Have No Mouth - Demo version",
+		"I Have No Mouth and I Must Scream (DOS Demo)",
 		640, 480,
 		304,
 		0,
@@ -240,31 +246,32 @@ R_GAMEDESC GameDescs[] = {
 		0,
 		NULL,
 		&IHNM_GameSound,
-		NULL,
-	0} ,
+		0
+	},
 
 	// I Have No Mouth And I Must Scream - CD version
 	{
-			R_GAMETYPE_IHNM,
-			R_GAME_IHNM_CD,
-			"I Have No Mouth - CD version",
-			640, 480,
-			304,
+		"ihnm",
+		R_GAMETYPE_IHNM,
+		R_GAME_IHNM_CD,
+		"I Have No Mouth and I Must Scream (DOS)",
+		640, 480,
+		304,
 
-			1,
+		1,
 
-			&IHNM_Resources,
+		&IHNM_Resources,
 
-			ARRAYSIZE(IHNMCD_GameFiles),
-			IHNMCD_GameFiles,
+		ARRAYSIZE(IHNMCD_GameFiles),
+		IHNMCD_GameFiles,
 
-			ARRAYSIZE(IHNMCD_GameFonts),
-			IHNMCD_GameFonts,
+		ARRAYSIZE(IHNMCD_GameFonts),
+		IHNMCD_GameFonts,
 
-			&IHNM_GameSound,
+		&IHNM_GameSound,
 
-			NULL,
-		1}
+		1
+	}
 };
 
 static R_GAMEMODULE GameModule;
@@ -321,6 +328,11 @@ int GAME_Init() {
 
 	if (DetectGame(game_dir, &game_n) != R_SUCCESS) {
 		GameModule.err_str = "No valid games were found in the specified directory.";
+		return R_FAILURE;
+	}
+
+	if (!GameDescs[game_n].gd_supported) {
+		GameModule.err_str = "This game is not currently supported.";
 		return R_FAILURE;
 	}
 
@@ -411,6 +423,53 @@ int GAME_GetFileContext(R_RSCFILE_CONTEXT ** ctxt_p, uint16 r_type, int param) {
 	return R_SUCCESS;
 }
 
+DetectedGameList GAME_ProbeGame(const FSList &fslist) {
+	uint16 game_count = ARRAYSIZE(GameDescs);
+	uint16 game_n;
+	DetectedGameList detectedGames;
+
+	uint16 file_count;
+	uint16 file_n;
+	File test_file;
+
+	int file_missing = 0;
+	int found_game = 0;
+
+	for (game_n = 0; (game_n < game_count) && !found_game; game_n++) {
+		file_count = GameDescs[game_n].gd_filect;
+		file_missing = 0;
+
+		// Try to open all files for this game
+		for (file_n = 0; file_n < file_count; file_n++) {
+			file_missing = 1;
+			// Iterate over all files in the given directory
+			for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+				const char *gameName = file->displayName().c_str();
+
+				if (0 == scumm_stricmp(GameDescs[game_n].gd_filedescs[file_n].gf_fname, 
+									   gameName)) {
+					file_missing = 0;
+					break;
+				}
+			}
+
+			if (file_missing)
+				break;
+		}
+
+		// Try the next game, couldn't find all files for the current 
+		// game
+		if (file_missing) {
+			continue;
+		} else {
+			detectedGames.push_back(GameDescs[game_n].toGameSettings());
+			return detectedGames;
+		}
+	}
+
+	return detectedGames;
+}
+
 int DetectGame(const char *game_dir, uint16 *game_n_p) {
 	uint16 game_count = ARRAYSIZE(GameDescs);
 	uint16 game_n;
@@ -420,13 +479,12 @@ int DetectGame(const char *game_dir, uint16 *game_n_p) {
 	File test_file;
 
 	int file_missing = 0;
-	int found_game = 0;
 
 	if ((game_dir == NULL) || (game_n_p == NULL)) {
 		return R_FAILURE;
 	}
 
-	for (game_n = 0; (game_n < game_count) && !found_game; game_n++) {
+	for (game_n = 0; game_n < game_count; game_n++) {
 		file_count = GameDescs[game_n].gd_filect;
 		file_missing = 0;
 
@@ -445,19 +503,9 @@ int DetectGame(const char *game_dir, uint16 *game_n_p) {
 			continue;
 		}
 
-		// If there's a verification function for this game, use it, 
-		// otherwise assume we've found the game if all files are found.
-		found_game = 1;
-
-		if (GameDescs[game_n].gd_verifyf != NULL && GameDescs[game_n].gd_verifyf(game_dir) != R_SUCCESS) {
-			found_game = 0;
-		}
-
-		if (found_game) {
-			R_printf(R_STDOUT, "Found game: %s\n", GameDescs[game_n].gd_title);
-			*game_n_p = game_n;
-			return R_SUCCESS;
-		}
+		R_printf(R_STDOUT, "Found game: %s\n", GameDescs[game_n].gd_title);
+		*game_n_p = game_n;
+		return R_SUCCESS;
 	}
 
 	return R_FAILURE;
@@ -569,65 +617,15 @@ int GAME_GetGameType() {
 	return GameModule.gamedesc->gd_game_type;
 }
 
-int Verify_ITEDEMO(const char *game_dir) {
-	debug(3, "Verify_ITEDEMO()");
-	YS_IGNORE_PARAM(game_dir);
+GameList GAME_GameList() {
+	int gNum = ARRAYSIZE(GameDescs);
+	int i;
+	GameList games;
 
-	return R_SUCCESS;
-}
+	for (i = 0; i < gNum; i++)
+		games.push_back(GameDescs[i].toGameSettings());
 
-int Verify_ITEDISK(const char *game_dir) {
-	R_RSCFILE_CONTEXT *test_ctx;
-
-	debug(3, "Verify_ITEDISK()");
-	uint32 script_lut_len;
-	uint32 script_lut_rn;
-	int verified = 0;
-	test_ctx = RSC_CreateContext();
-
-	if (RSC_OpenContext(test_ctx, "ITE.RSC") != R_SUCCESS) {
-		return R_FAILURE;
-	}
-	
-	script_lut_rn = GameDescs[R_GAME_ITE_DISK].gd_resource_desc->script_lut_rn;
-	if (RSC_GetResourceSize(test_ctx,
-		script_lut_rn, &script_lut_len) != R_SUCCESS) {
-		RSC_DestroyContext(test_ctx);
-		return R_FAILURE;
-	}
-
-	RSC_DestroyContext(test_ctx);
-
-	if (script_lut_len % R_SCR_LUT_ENTRYLEN_ITEDISK == 0) {
-		verified = 1;
-	}
-
-	if (!verified) {
-		return R_FAILURE;
-	}
-
-	return R_SUCCESS;
-}
-
-int Verify_ITECD(const char *game_dir) {
-	debug(3, "Verify_ITECD()");
-	YS_IGNORE_PARAM(game_dir);
-
-	return R_SUCCESS;
-}
-
-int Verify_IHNMDEMO(const char *game_dir) {
-	debug(3, "Verify_IHNMDEMO()");
-	YS_IGNORE_PARAM(game_dir);
-
-	return R_SUCCESS;
-}
-
-int Verify_IHNMCD(const char *game_dir) {
-	debug(3, "Verify_IHNMCD()");
-	YS_IGNORE_PARAM(game_dir);
-
-	return R_SUCCESS;
+	return games;
 }
 
 } // End of namespace Saga

@@ -26,6 +26,8 @@
 #ifndef SAGA_GAME_H_
 #define SAGA_GAME_H_
 
+#include "base/plugins.h"
+
 namespace Saga {
 
 #define R_GAME_LANGSTR_LIMIT 3
@@ -38,16 +40,15 @@ namespace Saga {
 #define R_SCR_LUT_ENTRYLEN_ITECD 22
 #define R_SCR_LUT_ENTRYLEN_ITEDISK 16
 
-typedef int (*R_GAME_VERIFYFUNC) (const char *);
-
 struct R_GAME_FILEDESC {
 	const char *gf_fname;
 	uint16 gf_type;
 };
 
 struct R_GAMEDESC {
+	const char *name;
 	int gd_game_type;
-	int gd_game_id;
+	uint32 gd_game_id;
 	const char *gd_title;
 	int gd_logical_w;
 	int gd_logical_h;
@@ -59,8 +60,12 @@ struct R_GAMEDESC {
 	int gd_fontct;
 	R_GAME_FONTDESC *gd_fontdescs;
 	R_GAME_SOUNDINFO *gd_soundinfo;
-	R_GAME_VERIFYFUNC gd_verifyf;
 	int gd_supported;
+
+	GameSettings toGameSettings() const {
+		GameSettings dummy = { name, gd_title, gd_game_id };
+		return dummy;
+	}
 };
 
 struct R_GAME_FILEDATA {
@@ -86,13 +91,8 @@ struct R_GAMEMODULE {
 };
 
 int LoadLanguage();
-int DetectGame(const char *game_dir, uint16 * game_n_p);
 int LoadGame(const char *game_dir, uint16 game_n_p);
-int Verify_ITEDEMO(const char *game_dir);
-int Verify_ITEDISK(const char *game_dir);
-int Verify_ITECD(const char *game_dir);
-int Verify_IHNMDEMO(const char *game_dir);
-int Verify_IHNMCD(const char *game_dit);
+int DetectGame(const char *game_dir, uint16 *game_n_p);
 
 } // End of namespace Saga
 

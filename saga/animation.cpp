@@ -22,7 +22,7 @@
  */
 
 // Background animation management module
-
+#include "saga.h"
 #include "reinherit.h"
 #include "yslib.h"
 

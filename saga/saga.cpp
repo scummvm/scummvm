@@ -46,6 +46,7 @@
 #include "actionmap_mod.h"
 #include "font_mod.h"
 #include "game_mod.h"
+#include "game.h"
 #include "interface_mod.h"
 #include "isomap_mod.h"
 #include "script_mod.h"
@@ -56,60 +57,14 @@
 #include "objectmap_mod.h"
 #include "sound.h"
 #include "music.h"
-
-struct SAGAGameSettings {
-	const char *name;
-	const char *description;
-	byte id;
-	uint32 features;
-	const char *detectname;
-	GameSettings toGameSettings() const {
-		GameSettings dummy = { name, description, features };
-		return dummy;
-	}
-};
-
-static const SAGAGameSettings saga_settings[] = {
-	/* Inherit the Earth - Original floppy version */
-	{ "ite", "Inherit the Earth (DOS)", Saga::GID_ITE,
-	 MDT_ADLIB, "ite.rsc" },
-	/* Inherit the Earth - CD version */
-	{ "itecd", "Inherit the Earth (DOS CD Version)", Saga::GID_ITECD,
-	 MDT_ADLIB, "sounds.rsc" },
-	/* I Have No Mouth and I Must Scream */
-	{ "ihnm", "I Have No Mouth and I Must Scream (DOS)", Saga::GID_IHNM,
-	 MDT_ADLIB, "scream.res" },
-
-	{ NULL, NULL, 0, 0, NULL }
-};
+#include "game_mod.h"
 
 GameList Engine_SAGA_gameList() {
-	const SAGAGameSettings *g = saga_settings;
-	GameList games;
-	while (g->name) {
-		games.push_back(g->toGameSettings());
-		g++;
-	}
-	return games;
+	return Saga::GAME_GameList();
 }
 
 DetectedGameList Engine_SAGA_detectGames(const FSList &fslist) {
-	DetectedGameList detectedGames;
-	const SAGAGameSettings *g;
-
-	for (g = saga_settings; g->name; ++g) {
-		// Iterate over all files in the given directory
-		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-			const char *gameName = file->displayName().c_str();
-
-			if (0 == scumm_stricmp(g->detectname, gameName)) {
-				// Match found, add to list of candidates, then abort inner loop.
-				detectedGames.push_back(g->toGameSettings());
-				break;
-			}
-		}
-	}
-	return detectedGames;
+	return Saga::GAME_ProbeGame(fslist);
 }
 
 Engine *Engine_SAGA_create(GameDetector *detector, OSystem *syst) {

@@ -26,6 +26,8 @@
 #ifndef SAGA_GAME_MOD_H__
 #define SAGA_GAME_MOD_H__
 
+#include "base/plugins.h"
+
 namespace Saga {
 
 enum R_GAME_BASETYPES {
@@ -110,6 +112,8 @@ int GAME_GetGameType();
 int GAME_GetErrN();
 void GAME_setGameDirectory(const char *gamedir);
 const char *GAME_GetErrS();
+GameList GAME_GameList();
+DetectedGameList GAME_ProbeGame(const FSList &fslist);
 
 } // End of namespace Saga
 

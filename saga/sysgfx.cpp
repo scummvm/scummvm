@@ -44,7 +44,6 @@ int SYSGFX_Init(OSystem *system, int width, int height) {
 	r_back_buf.buf_w = width;
 	r_back_buf.buf_h = height;
 	r_back_buf.buf_pitch = width;
-	r_back_buf.bpp = 8;
 
 	r_back_buf.clip_rect.left = 0;
 	r_back_buf.clip_rect.top = 0;

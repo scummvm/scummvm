@@ -72,7 +72,7 @@ int GFX_SimpleBlit(R_SURFACE *dst_s, R_SURFACE *src_s) {
 	src_p = src_s->buf;
 	dst_p = dst_s->buf;
 
-	w = src_s->buf_w * (dst_s->bpp / 8);
+	w = src_s->buf_w;
 	p = src_s->buf_pitch;
 
 	for (y = 0; y < src_s->buf_h; y++) {
