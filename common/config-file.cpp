@@ -245,21 +245,16 @@ const int Config::count_domains() {
 	for (d = domains.begin(); d != end; ++d)
 		count++;
 
-	return 0;
+	return count;
 }
 
-int Config::get_domains(char (*ptr)[100]) {
-	  int index = 0;
-          DomainMap::Iterator d, end(domains.end());
-          for (d = domains.begin(); d != end; ++d) {
-		//printf("Key %d is %s\n", index, d->_key.c_str());
-		strcpy(ptr[index], d->_key.c_str());
-		index++;
-
-		if (index>99)
-			return 99;
-          }
-
-	return index;
+ScummVM::StringList Config::get_domains() {
+	StringList domainNames;
+	DomainMap::Iterator d, end(domains.end());
+	for (d = domains.begin(); d != end; ++d) {
+		domainNames.push_back(d->_key);
+	}
+	
+	return domainNames;
 }
 

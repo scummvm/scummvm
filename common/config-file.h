@@ -25,11 +25,13 @@
 
 #include "common/util.h"
 #include "common/map.h"
+#include "common/list.h"
 #include "common/str.h"
 
 class Config {
 public:
 	typedef ScummVM::String String;
+	typedef ScummVM::StringList StringList;
 	typedef ScummVM::StringMap StringMap;
 	typedef ScummVM::Map<String, StringMap> DomainMap;
 
@@ -52,7 +54,8 @@ public:
 	void set_writing(bool);
 
 	const int count_domains();
-	int Config::get_domains(char (*ptr)[100]);
+	StringList get_domains();
+
 protected:
 	DomainMap domains;
 	String filename;

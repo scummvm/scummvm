@@ -76,16 +76,15 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 
 
 	// Retrieve a list of all games defined in the config file
-	char domains[255][100];
-	int count = g_config->get_domains(domains);
-	for (i=0;i<count;i++) {
+	StringList domains = g_config->get_domains();
+	for (i = 0; i < domains.size();i++) {
 		String name = (char*)g_config->get("gameid", domains[i]);
 		String description = (char*)g_config->get("description", domains[i]);
 		
 		if (name.isEmpty() || description.isEmpty()) {
 			v = version_settings;
 			while (v->filename && v->gamename) {
-				if (!scumm_stricmp(v->filename, domains[i])) {
+				if (!scumm_stricmp(v->filename, domains[i].c_str())) {
 					name = domains[i];
 					description = v->gamename;
 					break;
@@ -98,7 +97,7 @@ LauncherDialog::LauncherDialog(NewGui *gui, GameDetector &detector)
 			// Insert the game into the launcher list
 			int pos = 0, size = l.size();
 
-			while (pos < size && (name > l[pos]))
+			while (pos < size && (description > l[pos]))
 				pos++;
 			l.insert_at(pos, description);
 			_filenames.insert_at(pos, domains[i]);
