@@ -58,6 +58,8 @@ private:
 	uint32 _bgSize;
 	PlayingSoundHandle _voice, _bgSfx;
 
+	int32 _relDelay;
+
 	bool escDelay(uint32 msecs);
 	bool nextPart(uint16 *&data);
 	bool floppyScrollFlirt(void);

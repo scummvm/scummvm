@@ -623,6 +623,7 @@ Intro::Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *t
 	_saveBuf = (uint8*)malloc(10000);
 	_bgBuf = NULL;
 	_quitProg = false;
+	_relDelay = 0;
 }
 
 Intro::~Intro(void) {
@@ -681,9 +682,12 @@ bool Intro::nextPart(uint16 *&data) {
 		return true;
 	case FADEUP:
 		_skyScreen->paletteFadeUp(*data++);
+		_relDelay += 32 * 20; // hack: the screen uses a seperate delay function for the
+							  // blocking fadeups. So add 32*20 msecs to out delay counter.
 		return true;
 	case FADEDOWN:
 		_skyScreen->fnFadeDown(0);
+		_relDelay += 32 * 20; // hack: see above.
 		return true;
 	case DELAY:
 		if (!escDelay(*data++))
@@ -794,11 +798,7 @@ bool Intro::floppyScrollFlirt(void) {
 		}
 		_system->copyRectToScreen(scrollPos, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 		_system->updateScreen();
-#ifndef _WIN32_WCE
-		if (!escDelay(40))
-#else
-		if (!escDelay(15))
-#endif
+		if (!escDelay(60))
 			doContinue = false;
 	}
 	memcpy(_skyScreen->giveCurrent(), scrollPos, FRAME_SIZE);
@@ -890,11 +890,13 @@ void Intro::restoreScreen(void) {
 bool Intro::escDelay(uint32 msecs) {
 
 	OSystem::Event event;
+	if (_relDelay == 0) // first call, init with system time
+		_relDelay = (int32)_system->getMillis();
+
+	_relDelay += msecs; // now wait until _system->getMillis() >= _relDelay
+
+	int32 nDelay = 0;
 	do {
-#ifdef _WIN32_WCE
-		uint32 startTimeLoop = _system->getMillis();
-		uint32 delta;
-#endif
 		while (_system->pollEvent(event)) {
 			if (event.event_code == OSystem::EVENT_KEYDOWN) {
 				if (event.kbd.keycode == 27)
@@ -904,22 +906,13 @@ bool Intro::escDelay(uint32 msecs) {
 				return false;
 			}
 		}
-#ifdef _WIN32_WCE
-		uint8 nDelay = (msecs > 15) ? (15) : ((uint8)msecs);
-#else
-		uint8 nDelay = (msecs > 50) ? (50) : ((uint8)msecs);
-#endif
+		nDelay = _relDelay - _system->getMillis();
+		if (nDelay < 0)
+			nDelay = 0;
+		else if (nDelay > 15)
+			nDelay = 15;
 		_system->delayMillis(nDelay);
-#ifdef _WIN32_WCE
-		delta = _system->getMillis() - startTimeLoop;
-		if (delta > msecs)
-			break;
-		else
-			msecs -= delta;
-#else
-		msecs -= nDelay;
-#endif
-	} while (msecs > 0);
+	} while (nDelay == 15);
 	return true;
 }
 

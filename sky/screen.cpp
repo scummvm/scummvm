@@ -245,11 +245,16 @@ void Screen::fnFadeDown(uint32 scroll) {
 		// will be scrolled into the visible screen by fnFadeUp
 		// fnFadeUp also frees the _scrollScreen
 	} else {
+		uint32 delayTime = _system->getMillis();
 		for (uint8 cnt = 0; cnt < 32; cnt++) {
+			delayTime += 20;
 			palette_fadedown_helper((uint32 *)_palette, GAME_COLOURS);
 			_system->setPalette(_palette, 0, GAME_COLOURS);
 			_system->updateScreen();
-			_system->delayMillis(20);
+			int32 waitTime = (int32)delayTime - _system->getMillis();
+			if (waitTime < 0)
+				waitTime = 0;
+			_system->delayMillis((uint)waitTime);
 		}
 	}
 }
@@ -289,7 +294,9 @@ void Screen::paletteFadeUp(uint8 *pal) {
 	
 	convertPalette(pal, tmpPal);
 
+	uint32 delayTime = _system->getMillis();
 	for (uint8 cnt = 1; cnt <= 32; cnt++) {
+		delayTime += 20;
 		for (uint8 colCnt = 0; colCnt < GAME_COLOURS; colCnt++) {
 			_palette[(colCnt << 2) | 0] = (tmpPal[(colCnt << 2) | 0] * cnt) >> 5;
 			_palette[(colCnt << 2) | 1] = (tmpPal[(colCnt << 2) | 1] * cnt) >> 5;
@@ -297,7 +304,10 @@ void Screen::paletteFadeUp(uint8 *pal) {
 		}
 		_system->setPalette(_palette, 0, GAME_COLOURS);
 		_system->updateScreen();
-		_system->delayMillis(20);
+		int32 waitTime = (int32)delayTime - _system->getMillis();
+		if (waitTime < 0)
+			waitTime = 0;
+		_system->delayMillis((uint)waitTime);
 	}	
 }
 
