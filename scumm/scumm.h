@@ -330,6 +330,8 @@ public:
 	int checkKeyHit();
 	void convertKeysToClicks();
 
+	int keyScriptKey, keyScriptNo;
+
 	/* Random number generation */
 	RandomSource _rnd;
 

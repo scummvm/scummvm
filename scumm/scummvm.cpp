@@ -1146,6 +1146,11 @@ void Scumm::processKbd()
 	if (!_lastKeyHit)
 		return;
 
+	if (keyScriptNo && (keyScriptKey = _lastKeyHit)) {
+		runScript(keyScriptNo, 0, 0, 0);
+		return;
+	}
+
 	if (_lastKeyHit == KEY_SET_OPTIONS) {
 		setOptions();
 		return;

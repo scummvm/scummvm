@@ -1466,7 +1466,8 @@ void Scumm_v8::o8_kernelSetFunctions()
 		warning("o8_kernelSetFunctions: saveGameStampScreenshot(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
 	case 29:	// setKeyScript
-		warning("o8_kernelSetFunctions: setKeyScript(%d, %d)", args[1], args[2]);
+		keyScriptKey = args[1];
+		keyScriptNo = args[2];
 		break;
 	case 30:	// killAllScriptsButMe
 		warning("o8_kernelSetFunctions: killAllScriptsButMe()");
@@ -1515,8 +1516,19 @@ void Scumm_v8::o8_kernelGetFunctions()
 	case 0x74:	// isPointInBox
 		push(checkXYInBoxBounds(args[3], args[1], args[2]));
 		break;
-	case 0xCE:		// getRGBSlot
 	case 0xD3:		// getKeyState
+		switch(args[1]) {
+			case 0x14B:	//	Left Arrow depressed?
+			case 0x14D:	//	Right Arrow depressed?
+				push(0);
+				break;
+			default:
+				warning("getKeyState(0x%X)\n", args[1]);
+				push(0);
+				break;
+		}
+		break;
+	case 0xCE:		// getRGBSlot
 	case 0xD7:		// getBox
 		push(0);
 		warning("o8_kernelGetFunctions: default case 0x%x (len = %d)", args[0], len);
@@ -1541,8 +1553,8 @@ void Scumm_v8::o8_kernelGetFunctions()
 		break;
 	}
 	case 0xD9:		// actorHit
+		warning("actorHit(%d,%d,%d)", args[3], args[2], args[1]);
 		push(0);
-		warning("o8_kernelGetFunctions: default case 0x%x (len = %d)", args[0], len);
 		break;
 	case 0xDA:		// lipSyncWidth
 	case 0xDB:		// lipSyncHeight
