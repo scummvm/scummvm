@@ -1300,9 +1300,11 @@ void NORETURN CDECL error(const char *s, ...)
 			g_scumm->_scriptPointer - g_scumm->_scriptOrgPointer,
 			buf);
 #if defined ( _WIN32_WCE )	
+/*
 			MultiByteToWideChar(CP_ACP, 0, buf2, strlen(buf2) + 1, buf2w, sizeof(buf2w));
 			GraphicsOff();
 			MessageBox(NULL, buf2w, TEXT("ScummVM error"), MB_OK);
+*/
 #else
 			OutputDebugString(buf2);
 #endif
@@ -1313,9 +1315,11 @@ void NORETURN CDECL error(const char *s, ...)
 #if defined( USE_WINDBG ) || defined( _WIN32_WCE )
 		sprintf(&buf[strlen(buf)], "\n");
 #if defined ( _WIN32_WCE )	
+/*
 			MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf2w, sizeof(buf2w));
 			GraphicsOff();
 			MessageBox(NULL, buf2w, TEXT("ScummVM error"), MB_OK);
+*/
 #else
 			OutputDebugString(buf);
 #endif
