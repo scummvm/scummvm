@@ -792,7 +792,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_hexdumpScripts = false;
 	_showStack = false;
 
-	if (_features & GF_FMTOWNS) {	// FMTowns V3 games use 320x240
+	if (_features & GF_FMTOWNS && _version == 3) {	// FMTowns V3 games use 320x240
 		_screenWidth = 320;
 		_screenHeight = 240;
 	} else if (_features & GF_DEFAULT_TO_1X_SCALER) {
@@ -1918,7 +1918,7 @@ void ScummEngine::processKbd(bool smushMode) {
 
 	_lastKeyHit = _keyPressed;
 	_keyPressed = 0;
-	if (((_version <= 2) || (_features & GF_FMTOWNS)) && 315 <= _lastKeyHit && _lastKeyHit < 315+12) {
+	if (((_version <= 2) || (_features & GF_FMTOWNS && _version == 3)) && 315 <= _lastKeyHit && _lastKeyHit < 315+12) {
 		// Convert F-Keys for V1/V2 games (they start at 1 instead of at 315)
 		_lastKeyHit -= 314;
 	}
@@ -2043,7 +2043,7 @@ void ScummEngine::processKbd(bool smushMode) {
 #endif
 
 	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY) ||
-	   (((_version <= 2) || (_features & GF_FMTOWNS)) && _lastKeyHit == 8)) {
+	   (((_version <= 2) || (_features & GF_FMTOWNS && _version == 3)) && _lastKeyHit == 8)) {
 		confirmrestartDialog();
 		return;
 	}
@@ -2061,7 +2061,7 @@ void ScummEngine::processKbd(bool smushMode) {
 		return;
 	}
 
-	if ((_version <= 2) || (_features & GF_FMTOWNS))
+	if ((_version <= 2) || (_features & GF_FMTOWNS && _version == 3))
 		saveloadkey = 5;	// F5
 	else if ((_version <= 3) || (_gameId == GID_SAMNMAX) || (_gameId == GID_CMI))
 		saveloadkey = 319;	// F5
@@ -3173,9 +3173,9 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		}
 		break;
 	case Common::kPlatformFMTowns:
+		game.features |= GF_FMTOWNS;
 		if (game.version == 3) {
 			// The V5 FM-TOWNS games are mostly identical to the PC versions, it seems?
-			game.features |= GF_FMTOWNS;
 			game.midi = MDT_TOWNS;
 		}
 		break;

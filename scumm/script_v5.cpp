@@ -2093,7 +2093,7 @@ void ScummEngine_v5::o5_setVarRange() {
 }
 
 void ScummEngine_v5::o5_startMusic() {
-	if (_features & GF_FMTOWNS) {
+	if (_features & GF_FMTOWNS && _version == 3) {
 		// In FM Towns games this is some kind of Audio CD status query function.
 		// See also bug #762589 (thanks to Hibernatus for providing the information).
 		getResultPos();
@@ -2742,7 +2742,7 @@ void ScummEngine_v5::o5_oldRoomEffect() {
 		a = getVarOrDirectWord(PARAM_1);
 
 #if 1
-		if (_features & GF_FMTOWNS) {
+		if (_features & GF_FMTOWNS && _version == 3) {
 			// FIXME / TODO: OK the first thing to note is: at least in Zak256,
 			// maybe also in other games, this opcode does a bit more. I added
 			// some stubs here, but somebody with a full IDA or more knowledge
