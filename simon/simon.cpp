@@ -4952,7 +4952,7 @@ void SimonState::go() {
 	addTimeEvent(0, 1);
 	openGameFile();
 
-	_last_music_played = (uint) - 1;
+	_last_music_played = -1;
 	_vga_base_delay = 1;
 	
 	_start_mainscript = false;
@@ -5277,24 +5277,25 @@ bool SimonState::load_game(uint slot) {
 	return true;
 }
 
-void SimonState::midi_play(uint a) {
-		if (a == 999)
-			return;
+void SimonState::midi_play (uint track) {
+	if (track == 999)
+		return;
 
-		if (_vc72_var1 == 999) {
-			//FIXME Original game started music at this point
-		}
+	if (_vc72_var1 == 999) {
+//		_midi_var11 = 0;
+		midi.jump (track, 0);
+//		_midi_var12 = 1;
+	}
 }
 
 
-void SimonState::playMusic(uint music) {
+void SimonState::playMusic (uint music) {
 	if (midi._midi_sfx_toggle)
 		return;
 
 	if (_game & GF_SIMON2) {        // Simon 2 music
 		midi.stop();
 		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
-		//FIXME The original game only loaded music file at this point
 		if (_game & GF_WIN) {	
 			midi.playMultipleSMF (_game_file);
 		} else {
@@ -5334,6 +5335,7 @@ void SimonState::playMusic(uint music) {
 				midi.playSMF (f, music);
 				delete f;
 			}
+			midi.jump (0, 0);
 		}
 	}
 }

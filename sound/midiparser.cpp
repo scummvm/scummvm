@@ -90,7 +90,7 @@ void MidiParser::onTimer() {
 		// Process the next info.
 		_last_event_tick += info.delta;
 		if (info.event < 0x80) {
-			printf ("ERROR! Bad command or running status %02X", info.event);
+			printf ("ERROR! Bad command or running status %02X\n", info.event);
 			_play_pos = 0;
 			return;
 		}

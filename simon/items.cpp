@@ -1434,12 +1434,37 @@ void SimonState::o_unk_132_helper_2(FillOrCopyStruct *fcs, int x) {
 void SimonState::o_unk_127() {
 	int a = getVarOrWord();
 	int b = getVarOrWord();
+
 	if (_game & GF_SIMON2) {
 		uint c = getVarOrByte();
 
 		if (_debugMode)
 			warning("o_unk_127(%d,%d,%d) not implemented properly", a, b, c);
 
+		if (_last_music_played != a) {
+			if (b == 999) {
+//				_next_music_to_play = a;
+				playMusic (a);
+				_last_music_played = a;
+				// midi_play (0);
+			}
+		}
+
+		if (b == _vc72_var1 || b == 999)
+			return;
+
+		if (_vc72_var1 == -1 || _vc72_var1 == 999) {
+			_vc70_var2 = c;
+			_vc70_var1 = -1;
+			_vc72_var3 = -1;
+			midi_play (b);
+			_vc72_var1 = b;
+		} else {
+			midi_play (b);
+//			_vc72_var3 = b;
+//			_vc72_var2 = c;
+		}
+/*
 		if (_last_music_played == a) {
 			if (b == _vc72_var1 || b == 999) 
 				return;
@@ -1459,12 +1484,16 @@ void SimonState::o_unk_127() {
 				midi.jump (b, c);
 			}
 		} else if (b == 999) {
-			_next_music_to_play = a;
+			// _next_music_to_play = a;
+			playMusic (a);
+			midi_play (b);
 		}
+*/
 	} else {
 		if (a != _last_music_played) {
 			_last_music_played = a;
 			playMusic(a);
+			midi_play (b);
 		}
 	}
 }
