@@ -56,7 +56,7 @@ protected:
 	virtual int getCharWidth(byte chr) = 0;
 
 public:
-	CharsetRenderer(Scumm *vm) : _vm(vm) { _dropShadow = false; }
+	CharsetRenderer(Scumm *vm);
 	virtual ~CharsetRenderer() {}
 
 	virtual void printChar(int chr) = 0;

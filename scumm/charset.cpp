@@ -23,6 +23,30 @@
 #include "scumm.h"
 #include "nut_renderer.h"
 
+CharsetRenderer::CharsetRenderer(Scumm *vm) {
+
+	_nextLeft = 0;
+	_nextTop = 0;
+
+	_top = 0;
+	_left = 0;
+	_startLeft = 0;
+	_right = 0;
+
+	_color = 0;
+
+	_dropShadow = false;
+	_center = false;
+	_hasMask = false;
+	_ignoreCharsetMask = false;
+	_blitAlso = false;
+	_firstChar = false;
+	_disableOffsX = false;
+
+	_vm = vm;
+	_curId = 0;
+}
+
 void CharsetRendererCommon::setCurID(byte id) {
 	_vm->checkRange(_vm->_maxCharsets - 1, 0, id, "Printing with bad charset %d");
 
