@@ -112,7 +112,7 @@ void ScummEngine::CHARSET_1() {
 	if (talkingActor() != 0xFF)
 		a = derefActorSafe(talkingActor(), "CHARSET_1");
 
-	if (a && _string[0].overhead != 0) {
+	if (a && a->isInCurrentRoom() && _string[0].overhead != 0) {
 		if (_version <= 5) {
 			_string[0].xpos = a->_pos.x - camera._cur.x + (_screenWidth / 2);
 
