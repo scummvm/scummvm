@@ -1361,8 +1361,8 @@ void Scumm_v2::o2_roomOps() {
 			_roomPalette[2] = b;
 		} else {
 			_roomPalette[b] = a;
-			_fullRedraw = true;
 		}
+		_fullRedraw = true;
 		break;
 	}
 }
