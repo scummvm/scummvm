@@ -253,7 +253,7 @@ int SoundMixer::playVorbis(PlayingSoundHandle *handle, OggVorbis_File *ov_file, 
 
 void SoundMixer::mix(int16 *buf, uint len) {
 	_syst->lock_mutex(_mutex);
-		
+	
 	if (_premixProc && !_paused) {
 		int i;
 		_premixProc(_premixParam, buf, len);

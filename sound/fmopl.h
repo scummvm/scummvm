@@ -28,9 +28,9 @@
 #define HAS_YM3812	1
 
 /* --- select emulation chips --- */
-#define BUILD_YM3812 (HAS_YM3812)
-#define BUILD_YM3526 (HAS_YM3526)
-#define BUILD_Y8950  (HAS_Y8950)
+#define BUILD_YM3812 defined(HAS_YM3812) && HAS_YM3812
+#define BUILD_YM3526 defined(HAS_YM3526) && HAS_YM3526
+#define BUILD_Y8950  defined(HAS_Y8950) && HAS_Y8950
 
 /* select output bits size of output : 8 or 16 */
 #define OPL_SAMPLE_BITS 16
