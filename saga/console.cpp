@@ -86,6 +86,21 @@ Console::Console(SagaEngine *vm) : Common::Debugger<Console>() {
 Console::~Console() {
 }
 
+int Console::DebugPrintf(const char *format, ...) {
+	int count;
+	va_list	argptr;
+
+	va_start(argptr, format);
+	
+	debug(1, format, argptr);
+	count = Common::Debugger<Console>::DebugPrintf(format);
+	
+	va_end (argptr);
+
+	return count;
+}
+
+
 void Console::preEnter() {
 }
 

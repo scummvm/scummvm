@@ -68,7 +68,7 @@ Scene.c
 
 Interp.c
 ========
- dispatchThreads()         SThreadExecThreads()
+ dispatchThreads()         executeThreads()
  runThread()               SThreadCompleteThread()
  moduleList                _scriptLUT
  ModuleEntry->codeID       _scriptLUT->script_rn
@@ -90,7 +90,7 @@ Actor.h
 
 Actor.c
 =======
- abortAllSpeeches()        SThreadAbortAll()
+ abortAllSpeeches()        abortAllSpeeches()
 
 Main.c
 ======

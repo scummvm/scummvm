@@ -133,7 +133,7 @@ void Script::setupScriptFuncList(void) {
 int Script::SF_putString(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param = thread->pop();
 
-	debug(1, currentScript()->diag->str[param]);
+	_vm->_console->DebugPrintf(getString(param));
 	return SUCCESS;
 }
 
@@ -146,9 +146,8 @@ int Script::SF_sleep(SCRIPTFUNC_PARAMS) {
 	if (!_skipSpeeches) {
 		time_param = thread->pop();
 		time = _vm->_sdata->readWordU(time_param);
-		time = time * 10;  // 72.8 ticks per second
-		thread->flags |= kTFlagWaiting;	// put thread to sleep
-		thread->waitType = kTWaitDelay;
+		thread->wait(kWaitTypeDelay); // put thread to sleep
+		thread->sleepTime = ticksToMSec(time);
 	}
 	return SUCCESS;
 }
@@ -191,7 +190,7 @@ int Script::SF_objectIsCarried(SCRIPTFUNC_PARAMS) {
 int Script::SF_setStatusText(SCRIPTFUNC_PARAMS) {
 	SDataWord_T param = thread->pop();
 
-	return _vm->_interface->setStatusText(currentScript()->diag->str[param]);
+	return _vm->_interface->setStatusText(getString(param));
 }
 
 // Script function #5 (0x05)

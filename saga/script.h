@@ -75,7 +75,7 @@ enum {
 	kVarActor
 };
 
-enum {
+enum ThreadFlags {
 	kTFlagNone = 0,
 	kTFlagWaiting = 1,	// wait for even denoted in waitType
 	kTFlagFinished = 2,
@@ -83,20 +83,24 @@ enum {
 	kTFlagAsleep = 7	// Combination of all flags which can halt a thread
 };
 
-enum {
-	kTWaitNone = 0,		// waiting for nothing
-	kTWaitDelay,		// waiting for a timer
-	kTWaitSpeech,		// waiting for speech to finish
-	kTWaitDialogEnd,	// waiting for my dialog to finish
-	kTWaitDialogBegin,	// waiting for other dialog to finish
-	kTWaitWalk,			// waiting to finish walking
-	kTWaitRequest,		// a request is up
-	kTWaitPause
+enum ThreadWaitTypes {
+	kWaitTypeNone = 0,			// waiting for nothing
+	kWaitTypeDelay = 1,			// waiting for a timer
+	kWaitTypeSpeech = 2,		// waiting for speech to finish
+	kWaitTypeDialogEnd = 3,		// waiting for my dialog to finish
+	kWaitTypeDialogBegin = 4,	// waiting for other dialog to finish
+	kWaitTypeWalk = 5,			// waiting to finish walking
+	kWaitTypeRequest = 6,		// a request is up
+	kWaitTypePause = 7
+};
+
+enum OpCodes {
+	opSpeak = 0x53
 };
 
 struct SCRIPT_THREAD {
-	int flags;
-	int waitType;
+	int flags;				// ThreadFlags
+	int waitType;			// ThreadWaitTypes
 
 	uint sleepTime;
 	int ep_num; // Entrypoint number
@@ -135,6 +139,11 @@ struct SCRIPT_THREAD {
 		assert(stackPtr < ARRAYSIZE(stackBuf));
 		return stackBuf[stackPtr++];
 	}
+	
+	void wait(int aWaitType) {
+		waitType = aWaitType;
+		flags |= kTFlagWaiting;
+	}
 
 	SCRIPT_THREAD() { memset(this, 0, sizeof(*this)); }
 };
@@ -154,10 +163,9 @@ struct SCRIPT_BYTECODE {
 	PROC_TBLENTRY *entrypoints;
 };
 
-struct DIALOGUE_LIST {
-	unsigned int n_dialogue;
-	const char **str;
-	size_t *str_off;
+struct StringsList {
+	int stringsCount;
+	const char **strings;
 };
 
 struct VOICE_LUT {
@@ -168,7 +176,7 @@ struct VOICE_LUT {
 struct SCRIPTDATA {
 	int loaded;
 	SCRIPT_BYTECODE *bytecode;
-	DIALOGUE_LIST *diag;
+	StringsList *strings;
 	VOICE_LUT *voice;
 };
 
@@ -195,16 +203,16 @@ public:
 	int loadScript(int scriptNum);
 	int freeScript();
 	SCRIPT_BYTECODE *loadBytecode(byte *bytecode_p, size_t bytecode_len);
-	DIALOGUE_LIST *loadDialogue(const byte *dialogue_p, size_t dialogue_len);
+	void loadStrings(const byte *stringsList, size_t stringsLength, StringsList *&strings);
 	VOICE_LUT *loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, SCRIPTDATA *script);
-	int disassemble(SCRIPT_BYTECODE *script_list, DIALOGUE_LIST *diag_list);
+	int disassemble(SCRIPT_BYTECODE *script_list, StringsList *strings);
 
 	bool isInitialized() const { return _initialized;  }
 	bool isVoiceLUTPresent() const { return _voiceLUTPresent; }
 	SCRIPTDATA *currentScript() { return _currentScript; }
 	void setBuffer(int idx, SCRIPT_DATABUF *ptr) { _dataBuf[idx] = ptr; }
 	SCRIPT_DATABUF *dataBuffer(int idx) { return _dataBuf[idx]; }
-//	YS_DL_LIST *threadList() { return _threadList; }
+	const char *getString(int index);
 
 	void scriptInfo();
 	void scriptExec(int argc, const char **argv);
@@ -220,10 +228,11 @@ protected:
 	SCRIPT_DATABUF *_dataBuf[SCRIPT_DATABUF_NUM];
 	ScriptThreadList _threadList;
 
+
+public:
 	bool _skipSpeeches;
 	bool _abortEnabled;
 
-public:
 	int _dbg_singlestep;
 	int _dbg_dostep;
 	SCRIPT_THREAD *_dbg_thread;
@@ -232,13 +241,15 @@ public:
 public:
 	SCRIPT_THREAD *SThreadCreate();
 	int SThreadExecute(SCRIPT_THREAD *thread, int ep_num);
-	int SThreadExecThreads(uint msec);
+	int executeThreads(uint msec);
 	int SThreadHoldSem(SEMAPHORE *sem);
 	int SThreadReleaseSem(SEMAPHORE *sem);
 	int SThreadDebugStep();
 	void SThreadCompleteThread(void);
 	int SThreadDestroy(SCRIPT_THREAD *thread);
-	void SThreadAbortAll(void);
+
+	void wakeUpThreads(int waitType);
+	void wakeUpThreadsDelayed(int waitType, int sleepTime);
 
 private:
 	void setFramePtr(SCRIPT_THREAD *thread, int newPtr);

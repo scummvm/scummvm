@@ -453,19 +453,19 @@ int Script::SDebugPrintInstr(SCRIPT_THREAD *thread) {
 	case 0x46:
 		SD_ADDTXT("LXOR |");
 		break;
-	case 0x53:
+	case opSpeak:
 		{
-			int n_voices;
-			int param1;
-			int param2;
+			int stringsCount;
+			uint16 actorId;
+			int speechFlags;
 
-			SD_ADDTXT("DLGP | ");
-			n_voices = readS.readByte();
-			param1 = readS.readUint16LE();
-			param2 = readS.readByte();
+			SD_ADDTXT("opSpeak | ");
+			stringsCount = readS.readByte();
+			actorId = readS.readUint16LE();
+			speechFlags = readS.readByte();
 			// ignored ?
 			readS.readUint16LE();
-			sprintf(tmp_buf, "%02X %04X %02X", n_voices, param1, param2);
+			sprintf(tmp_buf, "%02X %04X %02X", stringsCount, actorId, speechFlags);
 			SD_ADDTXT(tmp_buf);
 		}
 		break;

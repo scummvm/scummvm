@@ -248,7 +248,7 @@ int SagaEngine::go() {
 			}
 			_actor->direct(msec);
 			_events->handleEvents(msec);
-			_script->SThreadExecThreads(msec);
+			_script->executeThreads(msec);
 		}
 		// Per frame processing
 		_render->drawScene();

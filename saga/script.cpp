@@ -148,9 +148,9 @@ int Script::loadScript(int script_num) {
 	byte *bytecode_p;
 	size_t bytecode_len;
 	uint32 scriptl_rn;
-	byte *diagl_p;
-	size_t diagl_len;
-	uint32 diagl_rn;
+	byte *stringsPointer;
+	size_t stringsLength;
+	uint32 stringsResourceId;
 	byte *voicelut_p;
 	size_t voicelut_len;
 	uint32 voicelut_rn;
@@ -174,14 +174,13 @@ int Script::loadScript(int script_num) {
 
 	script_data = (SCRIPTDATA *)malloc(sizeof *script_data);
 	if (script_data == NULL) {
-		warning("Memory allocation failed");
-		return MEM;
+		error("Memory allocation failed");
 	}
 
 	script_data->loaded = 0;
 
 	// Initialize script pointers
-	script_data->diag = NULL;
+	script_data->strings = NULL;
 	script_data->bytecode = NULL;
 	script_data->voice = NULL;
 
@@ -198,34 +197,21 @@ int Script::loadScript(int script_num) {
 	script_data->bytecode = loadBytecode(bytecode_p, bytecode_len);
 
 	if (script_data->bytecode == NULL) {
-		warning("Error interpreting script bytecode resource");
-		free(script_data);
-		RSC_FreeResource(bytecode_p);
-		return FAILURE;
+		error("Error interpreting script bytecode resource");
 	}
 
-	// Load script dialogue list
-	diagl_rn = _scriptLUT[script_num].diag_list_rn;
+	// Load script strings list
+	stringsResourceId = _scriptLUT[script_num].diag_list_rn;
 
-	// Load dialogue list resource
-	result = RSC_LoadResource(_scriptContext, diagl_rn, &diagl_p, &diagl_len);
-	if (result != SUCCESS) {
-		warning("Error loading dialogue list resource");
-		free(script_data);
-		RSC_FreeResource(bytecode_p);
-		return FAILURE;
+	// Load strings list resource
+	result = RSC_LoadResource(_scriptContext, stringsResourceId, &stringsPointer, &stringsLength);
+	if ((result != SUCCESS) || (stringsLength == 0)) {
+		error("Error loading strings list resource");
 	}
-
-	// Convert dialogue list resource to logical dialogue list
-	script_data->diag = loadDialogue(diagl_p, diagl_len);
-	if (script_data->diag == NULL) {
-		warning("Error interpreting dialogue list resource");
-		free(script_data);
-		RSC_FreeResource(bytecode_p);
-		RSC_FreeResource(diagl_p);
-		return FAILURE;
-	}
-
+	
+	// Convert strings list resource to logical strings list
+	loadStrings(stringsPointer, stringsLength, script_data->strings);
+	
 	// Load voice resource lookup table
 	if (_voiceLUTPresent) {
 		voicelut_rn = _scriptLUT[script_num].voice_lut_rn;
@@ -233,22 +219,13 @@ int Script::loadScript(int script_num) {
 		// Load voice LUT resource
 		result = RSC_LoadResource(_scriptContext, voicelut_rn, &voicelut_p, &voicelut_len);
 		if (result != SUCCESS) {
-			warning("Error loading voice LUT resource");
-			free(script_data);
-			RSC_FreeResource(bytecode_p);
-			RSC_FreeResource(diagl_p);
-			return FAILURE;
+			error("Error loading voice LUT resource");
 		}
 
 		// Convert voice LUT resource to logical voice LUT
 		script_data->voice = loadVoiceLUT(voicelut_p, voicelut_len, script_data);
 		if (script_data->voice == NULL) {
-			warning("Error interpreting voice LUT resource");
-			free(script_data);
-			RSC_FreeResource(bytecode_p);
-			RSC_FreeResource(diagl_p);
-			RSC_FreeResource(voicelut_p);
-			return FAILURE;
+			error("Error interpreting voice LUT resource");
 		}
 	}
 
@@ -272,11 +249,10 @@ int Script::freeScript() {
 	debug(0, "Releasing script data.");
 
 	// Finish initialization
-	if (_currentScript->diag != NULL) {
-		free(_currentScript->diag->str);
-		free(_currentScript->diag->str_off);
+	if (_currentScript->strings != NULL) {
+		free(_currentScript->strings->strings);
 	}
-	free(_currentScript->diag);
+	free(_currentScript->strings);
 
 	if (_currentScript->bytecode != NULL) {
 		free(_currentScript->bytecode->entrypoints);
@@ -376,66 +352,54 @@ SCRIPT_BYTECODE *Script::loadBytecode(byte *bytecode_p, size_t bytecode_len) {
 	return bc_new_data;
 }
 
-// Reads a logical dialogue list from a dialogue list resource in memory.
+const char *Script::getString(int index) {
+	if (_currentScript->strings->stringsCount <= index)
+		error("Script::getString wrong index 0x%X", index);
+	return _currentScript->strings->strings[index];
+}
+
+// Reads a logical strings list from a strings list resource in memory.
 // Returns NULL on failure.
-DIALOGUE_LIST *Script::loadDialogue(const byte *dialogue_p, size_t dialogue_len) {
-	DIALOGUE_LIST *dialogue_list;
-	uint16 n_dialogue;
+void Script::loadStrings(const byte *stringsPointer, size_t stringsLength, StringsList *&strings) {
+	uint16 stringsCount;
 	uint16 i;
 	size_t offset;
 
-	debug(0, "Loading dialogue list...");
+	debug(9, "Loading strings list...");
 
 	// Allocate dialogue list structure
-	dialogue_list = (DIALOGUE_LIST *)malloc(sizeof *dialogue_list);
-	if (dialogue_list == NULL) {
-		return NULL;
+	strings = (StringsList *)malloc(sizeof *strings);
+	if (strings == NULL) {
+		error("No enough memory for strings list");
 	}
 
-	MemoryReadStreamEndian scriptS(dialogue_p, dialogue_len, IS_BIG_ENDIAN);
+	MemoryReadStreamEndian scriptS(stringsPointer, stringsLength, IS_BIG_ENDIAN);
 
 	// First uint16 is the offset of the first string
 	offset = scriptS.readUint16();
-	if (offset > dialogue_len) {
-		warning("Error, invalid string offset");
-		return NULL;
+	if (offset > stringsLength) {
+		error("Invalid string offset");
 	}
 
 	// Calculate table length
-	n_dialogue = offset / 2;
-	dialogue_list->n_dialogue = n_dialogue;
+	stringsCount = offset / 2;
+	strings->stringsCount = stringsCount;
 
 	// Allocate table of string pointers
-	dialogue_list->str = (const char **)malloc(n_dialogue * sizeof(const char *));
-	if (dialogue_list->str == NULL) {
-		free(dialogue_list);
-		return NULL;
+	strings->strings = (const char **)malloc(stringsCount * sizeof(const char *));
+	if (strings->strings == NULL) {
+		error("No enough memory for strings list");
 	}
-
-	// Allocate table of string offsets
-	dialogue_list->str_off = (size_t *)malloc(n_dialogue * sizeof(size_t));
-	if (dialogue_list->str_off == NULL) {
-		free(dialogue_list->str);
-		free(dialogue_list);
-		return NULL;
-	}
-
+	
 	// Read in tables from dialogue list resource
 	scriptS.seek(0);
-	for (i = 0; i < n_dialogue; i++) {
+	for (i = 0; i < stringsCount; i++) {
 		offset = scriptS.readUint16();
-		if (offset > dialogue_len) {
-			warning("Error, invalid string offset");
-			free(dialogue_list->str);
-			free(dialogue_list->str_off);
-			free(dialogue_list);
-			return NULL;
+		if (offset > stringsLength) {
+			error("invalid string offset");
 		}
-		dialogue_list->str[i] = (const char *)dialogue_p + offset;
-		dialogue_list->str_off[i] = offset;
+		strings->strings[i] = (const char *)stringsPointer + offset;
 	}
-
-	return dialogue_list;
 }
 
 // Reads a logical voice LUT from a voice LUT resource in memory.
@@ -452,7 +416,7 @@ VOICE_LUT *Script::loadVoiceLUT(const byte *voicelut_p, size_t voicelut_len, SCR
 	}
 
 	n_voices = voicelut_len / 2;
-	if (n_voices != script->diag->n_dialogue) {
+	if (n_voices != script->strings->stringsCount) {
 		warning("Error: Voice LUT entries do not match dialogue entries");
 		return NULL;
 	}

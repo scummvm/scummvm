@@ -74,14 +74,21 @@ enum ERRORCODE {
 
 enum SAGAGameId {
 	GID_ITE,
-	GID_ITECD,
 	GID_IHNM
+};
+
+enum scriptTimings {
+	kScriptTimeTicksPerSecond = (728L/10L),
 };
 
 struct CLICKAREA {
 	int n_points;
 	Point *points;
 };
+
+inline int ticksToMSec(int tick) {
+	return tick * 1000 / kScriptTimeTicksPerSecond;
+}
 
 class SagaEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);

@@ -71,7 +71,7 @@ int SagaEngine::processInput() {
 
 			// Actual game keys
 			case 32: // space
-				_actor->skipDialogue();
+				_actor->abortSpeech();
 				break;
 			case 19:  // pause
 			case 'p':
@@ -80,7 +80,7 @@ int SagaEngine::processInput() {
 			case 27: // Esc
 				// Skip to next scene skip target
 				if (!_interface->getMode() == kPanelNone) // FIXME: hack
-					_script->SThreadAbortAll();
+					_actor->abortAllSpeeches();
 				else
 					_scene->skipScene();
 				break;

@@ -104,6 +104,11 @@ namespace Saga {
 #define CAVE_VOICE_12 12
 #define CAVE_VOICE_13 13
 
+#define SCENE1_VOICE_009 57
+//TODO: fill it
+#define SCENE1_VOICE_138 186
+
+
 // MUSIC
 #define MUSIC_1 9
 #define MUSIC_2 10

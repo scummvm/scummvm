@@ -40,6 +40,7 @@
 #include "saga/actordata.h"
 #include "saga/stream.h"
 #include "saga/interface.h"
+#include "common/config-manager.h"
 
 namespace Saga {
 
@@ -62,6 +63,7 @@ ACTIONTIMES ActionTDeltas[] = {
 Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	int i;
 	ActorData *actor;
+	debug(9, "Actor::Actor()");
 
 	// Get actor resource file context
 	_actorContext = GAME_GetFileContext(GAME_RESOURCEFILE, 0);
@@ -73,7 +75,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 		actor = &_actors[i];
 		actor->actorId = ACTOR_INDEX_TO_ID(i);
 		actor->index = i;
-		debug(0, "init actorId=0x%X index=0x%X", actor->actorId, actor->index);
+		debug(9, "init actorId=0x%X index=0x%X", actor->actorId, actor->index);
 		actor->nameIndex = ActorTable[i].nameIndex;
 		actor->spriteListResourceId = ActorTable[i].spriteListResourceId;
 		actor->frameListResourceId = ActorTable[i].frameListResourceId;
@@ -100,7 +102,7 @@ Actor::~Actor() {
 	int i;
 	ActorData *actor;
 
-	debug(0, "Actor::~Actor()");
+	debug(9, "Actor::~Actor()");
 	//release resources
 	for (i = 0; i < ACTORCOUNT; i++) {
 		actor = &_actors[i];
@@ -118,7 +120,7 @@ bool Actor::loadActorResources(ActorData * actor) {
 	int i, orient;
 	int result;
 
-	debug(0, "Loading frame resource id 0x%X", actor->frameListResourceId);
+	debug(9, "Loading frame resource id 0x%X", actor->frameListResourceId);
 	result = RSC_LoadResource(_actorContext, actor->frameListResourceId, &resourcePointer, &resourceLength);
 	if (result != SUCCESS) {
 		warning("Couldn't load sprite action index resource");
@@ -126,7 +128,7 @@ bool Actor::loadActorResources(ActorData * actor) {
 	}
 
 	framesCount = resourceLength / 16;
-	debug(0, "Frame resource contains %d frames", framesCount);
+	debug(9, "Frame resource contains %d frames", framesCount);
 	
 	framesPointer = (ActorFrame *)malloc(sizeof(ActorFrame) * framesCount);
 	if (framesPointer == NULL) {
@@ -154,7 +156,7 @@ bool Actor::loadActorResources(ActorData * actor) {
 	actor->framesCount = framesCount;
 
 
-	debug(0, "Loading sprite resource id 0x%X", actor->spriteListResourceId);
+	debug(9, "Loading sprite resource id 0x%X", actor->spriteListResourceId);
 	if (_vm->_sprite->loadList(actor->spriteListResourceId, &actor->spriteList) != SUCCESS) {
 		warning("Unable to load sprite list");
 		return false;
@@ -163,7 +165,7 @@ bool Actor::loadActorResources(ActorData * actor) {
 	i = _vm->_sprite->getListLen(actor->spriteList);
 
 	if ( (lastFrame >= i)) {
-		debug(0, "Appending to sprite list 0x%X", actor->spriteListResourceId);
+		debug(9, "Appending to sprite list 0x%X", actor->spriteListResourceId);
 		if (_vm->_sprite->appendList(actor->spriteListResourceId + 1, actor->spriteList) != SUCCESS) {
 			warning("Unable append sprite list");
 			return false;
@@ -199,6 +201,87 @@ void Actor::updateActorsScene() {
 	}
 }
 
+void Actor::handleSpeech(int msec) {
+	int stringLength;
+	int sampleLength;
+	bool removeFirst;
+	int i;
+	int talkspeed;
+	ActorData *actor;
+
+	if (!isSpeaking()) return;
+
+	stringLength = strlen(_activeSpeech.strings[0]);
+
+	if (stringLength == 0)
+		error("Empty strings not allowed");
+
+	if (_vm->_script->_skipSpeeches) {
+		_activeSpeech.stringsCount = 0;
+		_vm->_sound->stopVoice();
+		_vm->_script->wakeUpThreads(kWaitTypeSpeech);
+		return;
+	}
+
+	if (!_activeSpeech.playing) {  // just added
+		talkspeed = ConfMan.getInt("talkspeed");
+		if (_activeSpeech.speechFlags & kSpeakSlow) {
+			if (_activeSpeech.slowModeCharIndex >= stringLength)
+				error("Wrong string index");
+
+			debug(0 , "Slow string!");
+			_activeSpeech.playingTime = 10 * talkspeed;
+			// 10 - fix it 
+
+		} else {
+			sampleLength = _vm->_sndRes->getVoiceLength(_activeSpeech.sampleResourceId); //fixme - too fast
+
+			if (sampleLength < 0) {
+				_activeSpeech.playingTime = stringLength * talkspeed;
+			} else {
+				_activeSpeech.playingTime = sampleLength;
+			}
+		}
+
+		if (_activeSpeech.sampleResourceId != -1)
+			_vm->_sndRes->playVoice(_activeSpeech.sampleResourceId);
+
+		if (_activeSpeech.actorIds[0] != 0) {
+			actor = getActor(_activeSpeech.actorIds[0]);
+			if (!(_activeSpeech.speechFlags & kSpeakNoAnimate)) {
+				actor->currentAction = kActionSpeak;
+				//a->actionCycle = rand() % 64; todo
+			}
+		}
+		_activeSpeech.playing = true;			
+		return;
+	}
+
+
+	_activeSpeech.playingTime -= msec;
+
+	removeFirst = false;
+	if (_activeSpeech.playingTime <= 0) {
+		if (_activeSpeech.speechFlags & kSpeakSlow) {
+			_activeSpeech.slowModeCharIndex++;
+			if (_activeSpeech.slowModeCharIndex >= stringLength)
+				removeFirst = true;
+		} else {
+			removeFirst = true;
+		}		
+	}
+
+	if (removeFirst) {
+		for (i = 1; i < _activeSpeech.stringsCount; i++) {
+			_activeSpeech.strings[i - 1] = _activeSpeech.strings[i];
+		}
+		_activeSpeech.stringsCount--;
+	}
+
+	if (!isSpeaking())
+		_vm->_script->wakeUpThreadsDelayed(kWaitTypeSpeech, ticksToMSec(kScriptTimeTicksPerSecond / 3));
+}
+
 int Actor::direct(int msec) {
 	int i;
 	ActorData *actor;
@@ -228,13 +311,6 @@ int Actor::direct(int msec) {
 					handleWalkIntent(actor, &a_intent->walkIntent, &a_intent->a_idone, msec);
 				}
 				break;
-			case INTENT_SPEAK:
-				// Actor wants to blab
-				{
-					handleSpeakIntent(actor, a_intent, &a_intent->a_idone, msec);
-				}
-				break;
-
 			default:
 				break;
 			}
@@ -275,6 +351,8 @@ int Actor::direct(int msec) {
 		}
 	}
 
+//process speech
+	handleSpeech(msec);
 	return SUCCESS;
 }
 
@@ -284,7 +362,7 @@ void Actor::createDrawOrderList() {
 	ActorData *actor;
 
 	_drawOrderList.clear();
-	for (i = 0;i < ACTORCOUNT;i++) {
+	for (i = 0; i < ACTORCOUNT; i++) {
 		actor = &_actors[i];
 		if (actor->disabled) continue;
 		if (actor->sceneNumber != _vm->_scene->currentSceneNumber()) continue;
@@ -318,16 +396,10 @@ int Actor::drawActors() {
 	ActorOrderList::iterator actorDrawOrderIterator;
 	ActorData *actor;
 
-	ActorIntentList::iterator actorIntentIterator;
-	ACTORINTENT *a_intent;
-
-	ActorDialogList::iterator actorDialogIterator;
-	ACTORDIALOGUE *a_dialogue;
 
 	int o_idx; //Orientation index
 	int sprite_num;
 
-	int diag_x, diag_y; // dialog coordinates
 
 	SURFACE *back_buf;
 
@@ -350,196 +422,52 @@ int Actor::drawActors() {
 			continue;
 		}
 		_vm->_sprite->drawOccluded(back_buf, actor->spriteList, sprite_num, actor->screenPosition, actor->screenScale, actor->screenDepth);
+	}
 
-		// If actor's current intent is to speak, oblige him by 
-		// displaying his dialogue 
-		actorIntentIterator = actor->a_intentlist.begin();
-		if (actorIntentIterator != actor->a_intentlist.end()) {
-			a_intent = actorIntentIterator.operator->();
-			if (a_intent->a_itype == INTENT_SPEAK) {
-				actorDialogIterator = a_intent->si_diaglist.begin();
-				if (actorDialogIterator != a_intent->si_diaglist.end()) {
-					a_dialogue = actorDialogIterator.operator->();
-					diag_x = actor->screenPosition.x;
-					diag_y = actor->screenPosition.y;
-					diag_y -= ACTOR_DIALOGUE_HEIGHT;
-					_vm->textDraw(MEDIUM_FONT_ID, back_buf, a_dialogue->d_string, diag_x, diag_y, actor->speechColor, 0,
-								FONT_OUTLINE | FONT_CENTERED);
-				}
-			}
+// draw speeches
+	if (isSpeaking() && !_vm->_script->_skipSpeeches) {
+		int i;
+		int textDrawFlags, speechColor;
+		Point speechCoord;
+		char oneChar[2];
+		oneChar[1] = 0;
+		const char *outputString;
+
+		if (_activeSpeech.speechFlags & kSpeakSlow) {
+			outputString = oneChar;
+			oneChar[0] = _activeSpeech.strings[0][_activeSpeech.slowModeCharIndex];
+		} else {
+			outputString = _activeSpeech.strings[0];
 		}
+
+		textDrawFlags = FONT_CENTERED;
+		if (_activeSpeech.outlineColor != 0) {
+			textDrawFlags |= FONT_OUTLINE;
+		}
+
+		if (_activeSpeech.actorIds[0] != 0) {
+			
+			for (i = 0; i < _activeSpeech.actorsCount; i++){
+				actor = getActor(_activeSpeech.actorIds[i]);
+				speechCoord.x = actor->screenPosition.x;
+				speechCoord.y = actor->screenPosition.y;
+				speechCoord.y -= ACTOR_DIALOGUE_HEIGHT;
+				if (_activeSpeech.actorsCount > 1)
+					speechColor = actor->speechColor;
+				else
+					speechColor = _activeSpeech.speechColor;
+
+				_vm->textDraw(MEDIUM_FONT_ID, back_buf, outputString, speechCoord.x, speechCoord.y, speechColor, _activeSpeech.outlineColor, textDrawFlags);
+			}
+
+		} else { // non actors speech
+			warning("non actors speech occures");
+			//todo: write it
+		}
+
 	}
 
 	return SUCCESS;
-}
-
-// Called if the user wishes to skip a line of dialogue (spacebar in the 
-// original game). Will find all actors currently talking and remove one
-// dialogue entry if there is a current speak intent present.
-
-int Actor::skipDialogue() {
-	int i;
-	ActorData *actor;
-
-	ActorIntentList::iterator actorIntentIterator;
-	ACTORINTENT *a_intent;
-
-	ActorDialogList::iterator actorDialogIterator;
-	ACTORDIALOGUE *a_dialogue;
-
-	for (i = 0; i < ACTORCOUNT; i++) {
-		actor = &_actors[i];
-		if (actor->disabled) continue;
-		// Check the actor's current intent for a speak intent
-		actorIntentIterator = actor->a_intentlist.begin();
-		if (actorIntentIterator != actor->a_intentlist.end()) {
-			a_intent = actorIntentIterator.operator->();
-			if (a_intent->a_itype == INTENT_SPEAK) {
-				// Okay, found a speak intent. Remove one dialogue entry 
-				// from it, releasing any semaphore */
-				actorDialogIterator = a_intent->si_diaglist.begin();
-				if (actorDialogIterator != a_intent->si_diaglist.end()) {
-					a_dialogue = actorDialogIterator.operator->();
-					if (a_dialogue->d_sem != NULL) {
-						_vm->_script->SThreadReleaseSem(a_dialogue->d_sem);
-					}
-					a_intent->si_diaglist.erase(actorDialogIterator);
-					// And stop any currently playing voices
-					_vm->_sound->stopVoice();
-				}
-			}
-		}
-	}
-
-	return SUCCESS;
-}
-
-void Actor::speak(uint16 actorId, const char *d_string, uint16 d_voice_rn, SEMAPHORE *sem) {
-	ActorData *actor;
-	ActorIntentList::iterator actorIntentIterator;
-	ACTORINTENT *a_intent_p = NULL;
-	ACTORINTENT a_intent;
-	int use_existing_ai = 0;
-	ACTORDIALOGUE a_dialogue;
-
-	a_dialogue.d_string = d_string;
-	a_dialogue.d_voice_rn = d_voice_rn;
-	a_dialogue.d_time = getSpeechTime(d_string, d_voice_rn);
-	a_dialogue.d_sem_held = 1;
-	a_dialogue.d_sem = sem;
-
-	actor = getActor(actorId);
-
-	// If actor's last registered intent is to speak, we can queue the
-	// requested dialogue on that intent context; so examine the last
-	// intent
-
-	actorIntentIterator = actor->a_intentlist.end();
-	--actorIntentIterator;
-	if (actorIntentIterator != actor->a_intentlist.end()) {
-		a_intent_p = actorIntentIterator.operator->();
-		if (a_intent_p->a_itype == INTENT_SPEAK) {
-			use_existing_ai = 1;
-		}
-	}
-
-	if (use_existing_ai) {
-		// Store the current dialogue off the existing actor intent
-		a_intent_p->si_diaglist.push_back(a_dialogue);
-	} else {
-		// Create a new actor intent
-		a_intent.a_itype = INTENT_SPEAK;
-		a_intent.a_idone = 0;
-		a_intent.a_iflags = 0;
-
-		a_intent.si_last_action = actor->action;
-		a_intent.si_diaglist.push_back(a_dialogue);
-
-		actor->a_intentlist.push_back(a_intent);
-	}
-
-	if (sem != NULL) {
-		_vm->_script->SThreadHoldSem(sem);
-	}
-}
-
-int Actor::handleSpeakIntent(ActorData *actor, ACTORINTENT *a_aintent, int *complete_p, int msec) {
-	ActorDialogList::iterator actorDialogIterator;
-	ActorDialogList::iterator nextActorDialogIterator;
-	ACTORDIALOGUE *a_dialogue;
-	ACTORDIALOGUE *a_dialogue2;
-	long carry_time;
-	int intent_complete = 0;
-
-	if (!a_aintent->si_init) {
-		// Initialize speak intent by setting up action
-		actor->action = ACTION_SPEAK;
-		actor->action_frame = 0;
-		actor->action_time = 0;
-		actor->action_flags = ACTION_LOOP;
-		a_aintent->si_init = 1;
-	}
-
-	// Process actor dialogue list
-	actorDialogIterator = a_aintent->si_diaglist.begin();
-	if (actorDialogIterator != a_aintent->si_diaglist.end()) {
-		a_dialogue = actorDialogIterator.operator->();
-		if (!a_dialogue->d_playing) {
-			// Dialogue voice hasn't played yet - play it now
-			_vm->_sndRes->playVoice(a_dialogue->d_voice_rn);
-			a_dialogue->d_playing = 1;
-		}
-
-		a_dialogue->d_time -= msec;
-		if (a_dialogue->d_time <= 0) {
-			// Dialogue time has expired; carry negative time to next
-			// dialogue entry if present, release any semaphores and
-			// delete the expired entry
-
-			//actor->action = ACTION_IDLE;
-
-			if (a_dialogue->d_sem != NULL) {
-				_vm->_script->SThreadReleaseSem(a_dialogue->d_sem);
-			}
-
-			carry_time = a_dialogue->d_time;
-
-			nextActorDialogIterator = actorDialogIterator;
-			++nextActorDialogIterator;
-			if (nextActorDialogIterator != a_aintent->si_diaglist.end()) {
-				a_dialogue2 = nextActorDialogIterator.operator->();
-				a_dialogue2->d_time -= carry_time;
-			}
-
-			// Check if there are any dialogue nodes left. If not, 
-			// flag this speech intent as complete
-
-			actorDialogIterator = a_aintent->si_diaglist.erase(actorDialogIterator);
-			if (actorDialogIterator == a_aintent->si_diaglist.end()) {
-				intent_complete = 1;
-			}
-		}
-	} else {
-		intent_complete = 1;
-	}
-
-	if (intent_complete) {
-		*complete_p = 1;
-	}
-
-	return SUCCESS;
-}
-
-int Actor::getSpeechTime(const char *d_string, uint16 d_voice_rn) {
-	int voice_len;
-
-	voice_len = _vm->_sndRes->getVoiceLength(d_voice_rn);
-
-	if (voice_len < 0) {
-		voice_len = strlen(d_string) * ACTOR_DIALOGUE_LETTERTIME;
-	}
-
-	return voice_len;
 }
 
 void Actor::setOrientation(uint16 actorId, int orient) {
@@ -605,7 +533,7 @@ void Actor::walkTo(uint16 actorId, const Point *walk_pt, uint16 flags, SEMAPHORE
 
 	actor->a_intentlist.push_back(actor_intent);
 	int is = actor->a_intentlist.size();
-	debug(0, "actor->a_intentlist.size() %i", is);
+	debug(9, "actor->a_intentlist.size() %i", is);
 
 	if (sem != NULL) {
 		_vm->_script->SThreadHoldSem(sem);
@@ -794,10 +722,78 @@ void Actor::moveRelative(uint16 actorId, const Point &movePoint) {
 	actor->actorY += movePoint.y;
 }
 
-
 void Actor::StoA(Point &actorPoint, const Point &screenPoint) {
 	actorPoint.x = (screenPoint.x * ACTOR_LMULT);
 	actorPoint.y = (screenPoint.y * ACTOR_LMULT);
+}
+
+void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, uint16 sampleResourceId, int speechFlags) {
+	ActorData *actor;
+	int i;
+
+	actor = getActor(actorId);
+	for (i = 0; i < stringsCount; i++) {		
+		_activeSpeech.strings[i] = strings[i];
+	}
+	_activeSpeech.stringsCount = stringsCount;
+	_activeSpeech.speechFlags = speechFlags;
+	_activeSpeech.actorsCount = 1;
+	_activeSpeech.actorIds[0] = actorId;
+	_activeSpeech.speechColor = actor->speechColor;
+	_activeSpeech.outlineColor = 15; // fixme - BLACK
+	_activeSpeech.sampleResourceId = sampleResourceId;
+	_activeSpeech.playing = false;
+	_activeSpeech.slowModeCharIndex = 0;
+}
+
+void Actor::nonActorSpeech(const char **strings, int stringsCount, int speechFlags) {
+	int i;
+	
+	_vm->_script->wakeUpThreads(kWaitTypeSpeech);
+
+	for (i = 0; i < stringsCount; i++) {		
+		_activeSpeech.strings[i] = strings[i];
+	}
+	_activeSpeech.stringsCount = stringsCount;
+	_activeSpeech.speechFlags = speechFlags;
+	_activeSpeech.actorsCount = 1;
+	_activeSpeech.actorIds[0] = 0;
+	//_activeSpeech.speechColor = ;
+	//_activeSpeech.outlineColor = ; 
+	_activeSpeech.sampleResourceId = -1;
+	_activeSpeech.playing = false;
+	_activeSpeech.slowModeCharIndex = 0;
+}
+
+void Actor::simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount, int speechFlags) {
+	int i;
+
+	for (i = 0; i < actorIdsCount; i++) {		
+		_activeSpeech.actorIds[i] = actorIds[i];
+	}
+	_activeSpeech.strings[0] = string;
+	_activeSpeech.stringsCount = 1;
+	_activeSpeech.speechFlags = speechFlags;
+	//_activeSpeech.speechColor = ; // get's from every actor 
+	_activeSpeech.outlineColor = 0; // disable outline 
+	_activeSpeech.sampleResourceId = -1;
+	_activeSpeech.playing = false;
+	_activeSpeech.slowModeCharIndex = 0;
+	
+	// caller should call thread->wait(kWaitTypeSpeech) by itself
+}
+
+void Actor::abortAllSpeeches() {
+	if (_vm->_script->_abortEnabled)
+		_vm->_script->_skipSpeeches = true;
+
+	for (int i = 0; i < 10; i++)
+		_vm->_script->executeThreads(0);
+}
+
+void Actor::abortSpeech() {
+	_vm->_sound->stopVoice();
+	_activeSpeech.playingTime = 0;
 }
 
 // Console wrappers - must be safe to run

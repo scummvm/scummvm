@@ -33,6 +33,8 @@
 #include "saga/sdata.h"
 #include "saga/game_mod.h"
 #include "saga/stream.h"
+#include "saga/scene.h"
+#include "saga/resnames.h"
 
 namespace Saga {
 
@@ -55,7 +57,7 @@ SCRIPT_THREAD *Script::SThreadCreate() {
 	setFramePtr(new_thread, new_thread->stackPtr);
 
 	new_thread->flags = kTFlagWaiting;
-	new_thread->waitType = kTWaitPause;
+	new_thread->waitType = kWaitTypePause;
 
 	dataBuffer(4)->len = ARRAYSIZE(new_thread->threadVars);
 	dataBuffer(4)->data = new_thread->threadVars;
@@ -63,46 +65,67 @@ SCRIPT_THREAD *Script::SThreadCreate() {
 	return new_thread;
 }
 
-
-int Script::SThreadExecThreads(uint msec) {
+void Script::wakeUpThreads(int waitType) {
 	SCRIPT_THREAD *thread;
+	ScriptThreadList::iterator threadIterator;
+	
+	for (threadIterator = _threadList.begin(); threadIterator != _threadList.end(); ++threadIterator) {
+		thread = threadIterator.operator->();
+		if ((thread->flags & kTFlagWaiting) && (thread->waitType == waitType)) {
+			thread->flags &= ~kTFlagWaiting;
+		}
+	}
+}
+
+void Script::wakeUpThreadsDelayed(int waitType, int sleepTime) {
+	SCRIPT_THREAD *thread;
+	ScriptThreadList::iterator threadIterator;
+
+	for (threadIterator = _threadList.begin(); threadIterator != _threadList.end(); ++threadIterator) {
+		thread = threadIterator.operator->();
+		if ((thread->flags & kTFlagWaiting) && (thread->waitType == waitType)) {
+			thread->waitType = kWaitTypeDelay;
+			thread->sleepTime = sleepTime;
+		}
+	}
+}
+
+int Script::executeThreads(uint msec) {
+	SCRIPT_THREAD *thread;
+	ScriptThreadList::iterator threadIterator;
 
 	if (!isInitialized()) {
 		return FAILURE;
 	}
 
-	ScriptThreadList::iterator threadi = _threadList.begin();
+	threadIterator = _threadList.begin();
 
-	while (threadi != _threadList.end()) {
-		thread = (SCRIPT_THREAD *)threadi.operator->();
+	while (threadIterator != _threadList.end()) {
+		thread = threadIterator.operator->();
 
 		if (thread->flags & (kTFlagFinished | kTFlagAborted)) {
 			//if (thread->flags & kTFlagFinished) // FIXME. Missing function
 
 			
-			threadi = _threadList.erase(threadi);
+			threadIterator = _threadList.erase(threadIterator);
 			continue;
 		}
 
-		if (thread->flags & kTFlagWaiting) {
-			switch(thread->waitType) {
-			case kTWaitDelay:
-				if (thread->sleepTime < msec) {
-					thread->sleepTime = 0;
-				} else {
-					thread->sleepTime -= msec;
-				}
-
-				if (thread->sleepTime == 0)
-					thread->flags &= ~kTFlagWaiting;
-				break;
+		if ((thread->flags & kTFlagWaiting) && (thread->waitType == kWaitTypeDelay)) {
+			if (thread->sleepTime < msec) {
+				thread->sleepTime = 0;
+			} else {
+				thread->sleepTime -= msec;
 			}
+
+			if (thread->sleepTime == 0)
+				thread->flags &= ~kTFlagWaiting;			
 		}
 
 		if (!(thread->flags & kTFlagWaiting))
 			SThreadRun(thread, STHREAD_TIMESLICE);
 
-		++threadi;
+		++threadIterator;
 	}
 
 	return SUCCESS;
@@ -110,7 +133,7 @@ int Script::SThreadExecThreads(uint msec) {
 
 void Script::SThreadCompleteThread(void) {
 	for (int i = 0; i < 40 &&  !_threadList.isEmpty() ; i++)
-		SThreadExecThreads(0);
+		executeThreads(0);
 }
 
 int Script::SThreadSetEntrypoint(SCRIPT_THREAD *thread, int ep_num) {
@@ -147,15 +170,7 @@ int Script::SThreadExecute(SCRIPT_THREAD *thread, int ep_num) {
 	return SUCCESS;
 }
 
-void Script::SThreadAbortAll(void) {
-	// TODO: stop current speech
 
-	if (_abortEnabled) 
-		_skipSpeeches = true;
-
-	for (int i = 0; i < 10; i++)
-		_vm->_script->SThreadExecThreads(0);
-}
 
 unsigned char *Script::SThreadGetReadPtr(SCRIPT_THREAD *thread) {
 	return currentScript()->bytecode->bytecode_p + thread->i_offset;
@@ -215,7 +230,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 	int debug_print = 0;
 	int n_buf;
 	int bitstate;
-	int in_char;
+	int operandChar;
 	int i;
 	int unhandled = 0;
 
@@ -239,14 +254,17 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 	scriptS.seek(thread->i_offset);
 
 	for (instr_count = 0; instr_count < instr_limit; instr_count++) {
-		if (thread->sem.hold_count)
+		if (thread->flags & kTFlagWaiting)
+			break;
+
+		if (thread->sem.hold_count)  //TODO: remove it
 			break;                                                  
 
 		saved_offset = thread->i_offset;
-		in_char = scriptS.readByte();
+		operandChar = scriptS.readByte();
 
-		debug(2, "Executing thread offset: %lu (%x) stack: %d", thread->i_offset, in_char, thread->stackSize());
-		switch (in_char) {
+		debug(2, "Executing thread offset: %lu (%x) stack: %d", thread->i_offset, operandChar, thread->stackSize());
+		switch (operandChar) {
 		case 0x01: // nextblock
 			// Some sort of "jump to the start of the next memory
 			// page" instruction, I think.
@@ -355,7 +373,6 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				if (func_num >= SFUNC_NUM) {
 					_vm->_console->DebugPrintf(S_ERROR_PREFIX "Invalid script function number: (%X)\n", func_num);
 					thread->flags |= kTFlagAborted;
-					debug( 9, "Invalid script function number: (%X)\n", func_num);
 					break;
 				}
 
@@ -363,7 +380,6 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				sfuncRetVal = (this->*sfunc)(thread, n_args);
 				if (sfuncRetVal != SUCCESS) {
 					_vm->_console->DebugPrintf(S_WARN_PREFIX "%X: Script function %d failed.\n", thread->i_offset, func_num);
-					debug( 9, "%X: Script function %d failed.\n", thread->i_offset, func_num);
 				}
 
 				if (func_num == 16) { // SF_gotoScene
@@ -371,7 +387,7 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 					break;
 				}
 
-				if (in_char == 0x18) // CALL function
+				if (operandChar == 0x18) // CALL function
 					thread->push(thread->retVal);
 
 				if (thread->flags & kTFlagAsleep)
@@ -393,11 +409,10 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			if (thread->stackSize() == 0) {
 				_vm->_console->DebugPrintf("Script execution complete.\n");
 				thread->flags |= kTFlagFinished;
-				debug( 9, "Script execution complete.\n");
 			} else {
 				thread->i_offset = thread->pop();
 				/* int n_args = */ thread->pop();
-				if (in_char == 0x1B)
+				if (operandChar == 0x1B)
 					thread->push(scriptRetVal);
 			}
 			break;
@@ -493,7 +508,6 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 				}
 				if (!branch_found) {
 					_vm->_console->DebugPrintf(S_ERROR_PREFIX "%X: Random jump target out of bounds.\n", thread->i_offset);
-					debug(9, "%X: Random jump target out of bounds.\n", thread->i_offset);
 				}
 			}
 			break;
@@ -716,29 +730,55 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 
 // GAME INSTRUCTIONS  
 
-			// (DLGP): Play Character Dialogue
-		case 0x53:
+			// (opSpeak): Play Character Speech
+		case opSpeak:
 			{
-				int n_voices;
+				int stringsCount;
 				uint16 actorId;
-				int voice_rn;
+				int speechFlags;
+				int sampleResourceId = -1;
+				int first;
+				const char *strings[ACTOR_SPEECH_STRING_MAX];
 
-				n_voices = scriptS.readByte();
-				param1 = (SDataWord_T) scriptS.readUint16LE();
-				// ignored ?
-				scriptS.readByte();
-				scriptS.readUint16LE();
+				if (_vm->_actor->isSpeaking()) {
+					thread->wait(kWaitTypeSpeech);
+					return SUCCESS;
+				}
 
-				actorId = param1;
+				stringsCount = scriptS.readByte();
+				actorId =  scriptS.readUint16LE();
+				speechFlags = scriptS.readByte();
+				scriptS.readUint16LE(); // x,y skip
+				
+				if (stringsCount == 0)
+					error("opSpeak stringsCount == 0");
 
-				for (i = 0; i < n_voices; i++) {
-					data = thread->pop();
-					if (!isVoiceLUTPresent()) {
-						voice_rn = -1;
-					} else {
-						voice_rn = currentScript()->voice->voices[data];
+				if (stringsCount >= ACTOR_SPEECH_STRING_MAX)
+					error("opSpeak stringsCount=0x%X exceed ACTOR_SPEECH_STRING_MAX", stringsCount);
+				
+				data = first = thread->stackTop();
+				for (i = 0; i < stringsCount; i++) {
+					 data = thread->pop();
+					 strings[i] = getString(data);
+				}
+				// now data contains last string index
+
+				if (GAME_GetGame() == GAME_ITE_DISK) { // special ITE dos
+					if ((_vm->_scene->currentSceneNumber() == ITE_DEFAULT_SCENE) && (data >= 288) && (data <= (SCENE1_VOICE_138 - SCENE1_VOICE_009 + 288))) {
+						sampleResourceId = SCENE1_VOICE_009 + data - 288;
 					}
-					_vm->_actor->speak(actorId, currentScript()->diag->str[data], voice_rn, &thread->sem);
+				} else {
+					if (isVoiceLUTPresent()) {
+						if (currentScript()->voice->n_voices > first) {
+							sampleResourceId = currentScript()->voice->voices[first];
+						}
+					}
+				}
+
+				_vm->_actor->actorSpeech(actorId, strings, stringsCount, sampleResourceId, speechFlags);				
+
+				if (!(speechFlags & kSpeakAsync)) {
+					thread->wait(kWaitTypeSpeech);
 				}
 			}
 			break;
@@ -772,10 +812,8 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 // End instruction list
 
 		default:
-
-			_vm->_console->DebugPrintf(S_ERROR_PREFIX "%X: Invalid opcode encountered: (%X).\n", thread->i_offset, in_char);
+			_vm->_console->DebugPrintf(S_ERROR_PREFIX "%X: Invalid opcode encountered: (%X).\n", thread->i_offset, operandChar);
 			thread->flags |= kTFlagAborted;
-			debug(9, "%X: Invalid opcode encountered: (%X).\n", thread->i_offset, in_char);
 			break;
 		}
 
@@ -786,7 +824,6 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 			if (thread->i_offset >= scriptS.size()) {
 				_vm->_console->DebugPrintf("Out of range script execution at %x size %x\n", thread->i_offset, scriptS.size());
 				thread->flags |= kTFlagFinished;
-				debug(9, "Out of range script execution at %x size %x\n", thread->i_offset, scriptS.size());
 			}
 			else
 				scriptS.seek(thread->i_offset);
@@ -794,7 +831,6 @@ int Script::SThreadRun(SCRIPT_THREAD *thread, int instr_limit) {
 		if (unhandled) {
 			_vm->_console->DebugPrintf(S_ERROR_PREFIX "%X: Unhandled opcode.\n", thread->i_offset);
 			thread->flags |= kTFlagAborted;
-			debug(9, "%X: Unhandled opcode.\n", thread->i_offset);
 		}
 		if ((thread->flags == kTFlagNone) && debug_print) {
 			SDebugPrintInstr(thread);

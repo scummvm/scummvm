@@ -39,22 +39,46 @@ namespace Saga {
 
 #define ACTOR_ACTIONTIME 80
 
-#define ACTOR_DIALOGUE_LETTERTIME 50
 #define ACTOR_DIALOGUE_HEIGHT 100
 
 #define ACTOR_LMULT 4
 
 #define ACTOR_ORIENTATION_COUNT 4
 
+#define ACTOR_SPEECH_STRING_MAX 16
+#define ACTOR_SPEECH_ACTORS_MAX 8
+
 #define IS_VALID_ACTOR_INDEX(index) ((index >= 0) && (index < ACTORCOUNT))
 #define IS_VALID_ACTOR_ID(id) ((id == 1) || (id >= 0x2000) && (id < (0x2000 | ACTORCOUNT)))
 #define ACTOR_ID_TO_INDEX(id) ((((uint16)id) == 1 ) ? 0 : (int)(((uint16)id) & ~0x2000))
 #define ACTOR_INDEX_TO_ID(index) ((((int)index) == 0 ) ? 1 : (uint16)(((int)index) | 0x2000))
 
+
+enum ActorActions {
+	kActionWait = 0,
+	kActionWalkToPoint = 1,
+	kActionWalkToLink = 2,
+	kActionWalkDir = 3,
+	kActionSpeak = 4,
+	kActionAccept = 5,
+	kActionStoop = 6,
+	kActionLook = 7,
+	kActionCycleFrames = 8,
+	kActionPongFrames = 9,
+	kActionFreeze = 10,
+	kActionFall = 11,
+	kActionClimb = 12
+};
+
+enum SpeechFlags {
+	kSpeakNoAnimate = 1,
+	kSpeakAsync = 2,
+	kSpeakSlow = 4
+};
+
 enum ACTOR_INTENTS {
 	INTENT_NONE = 0,
-	INTENT_PATH = 1,
-	INTENT_SPEAK = 2
+	INTENT_PATH = 1
 };
 
 enum ACTOR_WALKFLAGS {
@@ -136,17 +160,6 @@ struct WALKINTENT {
 };
 
 
-struct ACTORDIALOGUE {
-	int d_playing;
-	const char *d_string;
-	uint16 d_voice_rn;
-	long d_time;
-	int d_sem_held;
-	SEMAPHORE *d_sem;
-	ACTORDIALOGUE() { memset(this, 0, sizeof(*this)); }
-};
-
-typedef Common::List<ACTORDIALOGUE> ActorDialogList;
 
 
 struct ACTORINTENT {
@@ -154,25 +167,17 @@ struct ACTORINTENT {
 	uint16 a_iflags;
 	int a_idone;
 
-	int si_init;
-	uint16 si_flags;
-	int si_last_action;
-	ActorDialogList si_diaglist;	/* Actor dialogue list */
-
 	WALKINTENT walkIntent;
 
 	ACTORINTENT() {
 		a_itype = 0;
 		a_iflags = 0;
 		a_idone = 0;
-
-		si_init = 0;
-		si_flags = 0;
-		si_last_action = 0;
 	}
 };
 
 typedef Common::List<ACTORINTENT> ActorIntentList;
+
 
 struct ActorData {
 	bool disabled;				// Actor disabled in init section
@@ -180,8 +185,9 @@ struct ActorData {
 	uint16 actorId;				// Actor id
 	int nameIndex;				// Actor's index in actor name string list
 	byte speechColor;			// Actor dialogue color
-	uint16 flags;				// Actor flags
+	uint16 flags;				// Actor initial flags
 	
+
 	int sceneNumber;			// scene of actor
 	int actorX;					// Actor's logical coordinates
 	int actorY;					// 
@@ -191,9 +197,12 @@ struct ActorData {
 	int screenDepth;			//
 	int screenScale;			//
 
-	int currentAction;		
-	int facingDirection;
+	uint16 actorFlags;			// dynamic flags
+	int currentAction;			// ActorActions type
+	int facingDirection;		// orientation
 	int actionDirection;
+	int actionCycle;
+	int frameNumber;			// current actor frame number
 	
 	SPRITELIST *spriteList;		// Actor's sprite list data
 	int spriteListResourceId;	// Actor's sprite list resource id
@@ -233,9 +242,6 @@ struct ActorData {
 		index = 0;
 		actorId = 0;
 		nameIndex = 0;
-		currentAction = 0;
-		facingDirection = 0;
-		actionDirection = 0;
 		speechColor = 0;
 		frames = NULL;
 		framesCount = 0;
@@ -248,6 +254,11 @@ struct ActorData {
 		actorY = 0;
 		actorZ = 0;
 		screenDepth = 0;
+		
+		actorFlags = 0;
+		currentAction = 0;
+		facingDirection = 0;
+		actionDirection = 0;
 
 		idle_time = 0;
 		orient = 0;
@@ -270,6 +281,24 @@ struct ACTIONTIMES {
 	int time;
 };
 
+struct SpeechData {
+	int speechColor;
+	int outlineColor;
+	int speechFlags;
+	const char *strings[ACTOR_SPEECH_STRING_MAX];
+	int stringsCount;
+	int slowModeCharIndex;
+	uint16 actorIds[ACTOR_SPEECH_ACTORS_MAX];
+	int actorsCount;
+	int sampleResourceId;
+	bool playing;
+	int playingTime;
+
+	SpeechData() { 
+		memset(this, 0, sizeof(*this)); 
+	}
+};
+
 class Actor {
 public:
 	Actor(SagaEngine *vm);
@@ -284,7 +313,6 @@ public:
 	int drawActors();
 	void updateActorsScene();			// calls from scene loading to update Actors info
 
-	void AtoS(Point &screenPoint, const Point &actorPoint);
 	void StoA(Point &actorPoint, const Point &screenPoint);
 
 	void move(uint16 actorId, const Point &movePoint);
@@ -292,15 +320,25 @@ public:
 
 	void walkTo(uint16 actorId, const Point *walk_pt, uint16 flags, SEMAPHORE *sem);
 		
-	void speak(uint16 actorId, const char *d_string, uint16 d_voice_rn, SEMAPHORE *sem);
 	
-	int skipDialogue();
 	
-	int getSpeechTime(const char *d_string, uint16 d_voice_rn);
 	void setOrientation(uint16 actorId, int orient);
 	void setAction(uint16 actorId, int action_n, uint16 action_flags);
 	void setDefaultAction(uint16 actorId, int action_n, uint16 action_flags);
 
+//	speech 
+	void actorSpeech(uint16 actorId, const char **strings, int stringsCount, uint16 sampleResourceId, int speechFlags);
+	void nonActorSpeech(const char **strings, int stringsCount, int speechFlags);
+	void simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount, int speechFlags);
+	void setSpeechColor(int speechColor, int outlineColor) {
+		_activeSpeech.speechColor = speechColor;
+		_activeSpeech.outlineColor = outlineColor;
+	}
+	void abortAllSpeeches();
+	void abortSpeech();
+	bool isSpeaking() {
+		return _activeSpeech.stringsCount > 0;
+	}
 	
 private:
 	int handleWalkIntent(ActorData *actor, WALKINTENT *a_walk_int, int *complete_p, int msec);
@@ -308,15 +346,16 @@ private:
 	int setPathNode(WALKINTENT *walk_int, const Point &src_pt, Point *dst_pt, SEMAPHORE *sem);
 
 	ActorData *getActor(uint16 actorId);
-
 	bool loadActorResources(ActorData * actor);
 	
 	void createDrawOrderList();
+	void handleSpeech(int msec);
 
 	SagaEngine *_vm;
 	RSCFILE_CONTEXT *_actorContext;
 	ActorOrderList _drawOrderList;
 	ActorData _actors[ACTORCOUNT];
+	SpeechData _activeSpeech;
 };
 
 } // End of namespace Saga
