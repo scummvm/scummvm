@@ -118,14 +118,6 @@ static const GameSpecificSettings *simon2dos_settings;
 #else
 #define PTR(a) &a
 static const GameSpecificSettings simon1_settings = {
-	1,										// VGA_DELAY_BASE
-	1576 / 4,									// TABLE_INDEX_BASE
-	1460 / 4,									// TEXT_INDEX_BASE
-	64,										// NUM_VIDEO_OP_CODES
-	1000000,									// VGA_MEM_SIZE
-	50000,										// TABLES_MEM_SIZE
-	1316 / 4,									// MUSIC_INDEX_BASE
-	0,										// SOUND_INDEX_BASE
 	"SIMON.GME",									// gme_filename
 	"SIMON.WAV",									// wav_filename
 	"SIMON.VOC",									// voc_filename
@@ -136,14 +128,6 @@ static const GameSpecificSettings simon1_settings = {
 };
 
 static const GameSpecificSettings simon1acorn_settings = {
-	1,										// VGA_DELAY_BASE
-	1576 / 4,									// TABLE_INDEX_BASE
-	1460 / 4,									// TEXT_INDEX_BASE
-	64,										// NUM_VIDEO_OP_CODES
-	1000000,									// VGA_MEM_SIZE
-	50000,										// TABLES_MEM_SIZE
-	1316 / 4,									// MUSIC_INDEX_BASE
-	0,										// SOUND_INDEX_BASE
 	"DATA",										// gme_filename
 	"",										// wav_filename
 	"SIMON",									// voc_filename
@@ -154,14 +138,6 @@ static const GameSpecificSettings simon1acorn_settings = {
 };
 
 static const GameSpecificSettings simon1amiga_settings = {
-	1,										// VGA_DELAY_BASE
-	1576 / 4,									// TABLE_INDEX_BASE
-	1460 / 4,									// TEXT_INDEX_BASE
-	64,										// NUM_VIDEO_OP_CODES
-	1000000,									// VGA_MEM_SIZE
-	50000,										// TABLES_MEM_SIZE
-	1316 / 4,									// MUSIC_INDEX_BASE
-	0,										// SOUND_INDEX_BASE
 	"",										// gme_filename
 	"",										// wav_filename
 	"",										// voc_filename
@@ -172,14 +148,6 @@ static const GameSpecificSettings simon1amiga_settings = {
 };
 
 static const GameSpecificSettings simon1demo_settings = {
-	1,										// VGA_DELAY_BASE
-	1576 / 4,									// TABLE_INDEX_BASE
-	1460 / 4,									// TEXT_INDEX_BASE
-	64,										// NUM_VIDEO_OP_CODES
-	1000000,									// VGA_MEM_SIZE
-	50000,										// TABLES_MEM_SIZE
-	1316 / 4,									// MUSIC_INDEX_BASE
-	0,										// SOUND_INDEX_BASE
 	"",										// gme_filename
 	"",										// wav_filename
 	"",										// voc_filename
@@ -190,14 +158,6 @@ static const GameSpecificSettings simon1demo_settings = {
 };
 
 static const GameSpecificSettings simon2win_settings = {
-	5,										// VGA_DELAY_BASE
-	1580 / 4,									// TABLE_INDEX_BASE
-	1500 / 4,									// TEXT_INDEX_BASE
-	75,										// NUM_VIDEO_OP_CODES
-	2000000,									// VGA_MEM_SIZE
-	100000,										// TABLES_MEM_SIZE
-	1128 / 4,									// MUSIC_INDEX_BASE
-	1660 / 4,									// SOUND_INDEX_BASE
 	"SIMON2.GME",									// gme_filename
 	"SIMON2.WAV",									// wav_filename
 	"SIMON2.VOC",									// voc_filename
@@ -208,14 +168,6 @@ static const GameSpecificSettings simon2win_settings = {
 };
 
 static const GameSpecificSettings simon2mac_settings = {
-	5,										// VGA_DELAY_BASE
-	1580 / 4,									// TABLE_INDEX_BASE
-	1500 / 4,									// TEXT_INDEX_BASE
-	75,										// NUM_VIDEO_OP_CODES
-	2000000,									// VGA_MEM_SIZE
-	100000,										// TABLES_MEM_SIZE
-	1128 / 4,									// MUSIC_INDEX_BASE
-	1660 / 4,									// SOUND_INDEX_BASE
 	"Simon2.gme",									// gme_filename
 	"",										// wav_filename
 	"",										// voc_filename
@@ -226,14 +178,6 @@ static const GameSpecificSettings simon2mac_settings = {
 };
 
 static const GameSpecificSettings simon2dos_settings = {
-	5,										// VGA_DELAY_BASE
-	1580 / 4,									// TABLE_INDEX_BASE
-	1500 / 4,									// TEXT_INDEX_BASE
-	75,										// NUM_VIDEO_OP_CODES
-	2000000,									// VGA_MEM_SIZE
-	100000,										// TABLES_MEM_SIZE
-	1128 / 4,									// MUSIC_INDEX_BASE
-	1660 / 4,									// SOUND_INDEX_BASE
 	"SIMON2.GME",									// gme_filename
 	"",										// wav_filename
 	"",										// voc_filename
@@ -252,6 +196,26 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	
 	_game = (byte)detector->_game.features;
 
+	if (_game & GF_SIMON2) {
+		VGA_DELAY_BASE = 5;
+		TABLE_INDEX_BASE = 1580 / 4;
+		TEXT_INDEX_BASE = 1500 / 4;
+		NUM_VIDEO_OP_CODES = 75;
+		VGA_MEM_SIZE = 2000000;
+		TABLES_MEM_SIZE = 100000;
+		MUSIC_INDEX_BASE = 1128 / 4;
+		SOUND_INDEX_BASE = 1660 / 4;
+	} else {
+		VGA_DELAY_BASE = 1;
+		TABLE_INDEX_BASE = 1576 / 4;
+		TEXT_INDEX_BASE = 1460 / 4;
+		NUM_VIDEO_OP_CODES = 64;
+		VGA_MEM_SIZE = 1000000;
+		TABLES_MEM_SIZE = 50000;
+		MUSIC_INDEX_BASE = 1316 / 4;
+		SOUND_INDEX_BASE = 0;
+	}
+
 	if (_game & GF_MAC)
 		gss = PTR(simon2mac_settings);
 	else if ((_game & GF_SIMON2) && (_game & GF_TALKIE))
@@ -259,7 +223,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	else if (_game & GF_SIMON2)
 		gss = PTR(simon2dos_settings);
 	else if (_game & GF_ACORN)
-		gss =PTR(simon1acorn_settings);
+		gss = PTR(simon1acorn_settings);
 	else if (_game & GF_AMIGA)
 		gss = PTR(simon1amiga_settings);
 	else if (_game & GF_DEMO)
@@ -823,9 +787,9 @@ void SimonEngine::allocItemHeap() {
 }
 
 void SimonEngine::allocTablesHeap() {
-	_tablesheap_size = gss->TABLES_MEM_SIZE;
+	_tablesheap_size = TABLES_MEM_SIZE;
 	_tablesheap_curpos = 0;
-	_tablesheap_ptr = (byte *)calloc(gss->TABLES_MEM_SIZE, 1);
+	_tablesheap_ptr = (byte *)calloc(TABLES_MEM_SIZE, 1);
 }
 
 void SimonEngine::setItemUnk3(Item *item, int value) {
@@ -1148,7 +1112,7 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 					memcpy(filename, "SFXXXX", 6);
 					_sound->readSfxFile(filename, _gameDataPath);
 				} else if (_game & GF_SIMON2) {
-					_sound->loadSfxTable(_game_file, _game_offsets_ptr[atoi(filename + 6) - 1 + gss->SOUND_INDEX_BASE]);
+					_sound->loadSfxTable(_game_file, _game_offsets_ptr[atoi(filename + 6) - 1 + SOUND_INDEX_BASE]);
 				}
 
 				alignTableMem();
@@ -1216,7 +1180,7 @@ uint SimonEngine::loadTextFile_gme(const char *filename, byte *dst) {
 	uint32 offs;
 	uint32 size;
 
-	res = atoi(filename + 4) + gss->TEXT_INDEX_BASE - 1;
+	res = atoi(filename + 4) + TEXT_INDEX_BASE - 1;
 	offs = _game_offsets_ptr[res];
 	size = _game_offsets_ptr[res + 1] - offs;
 
@@ -1229,7 +1193,7 @@ File *SimonEngine::openTablesFile_gme(const char *filename) {
 	uint res;
 	uint32 offs;
 
-	res = atoi(filename + 6) + gss->TABLE_INDEX_BASE - 1;
+	res = atoi(filename + 6) + TABLE_INDEX_BASE - 1;
 	offs = _game_offsets_ptr[res];
 
 	_game_file->seek(offs, SEEK_SET);
@@ -2194,13 +2158,13 @@ byte *SimonEngine::setup_vga_destination(uint32 size) {
 void SimonEngine::setup_vga_file_buf_pointers() {
 	byte *alloced;
 
-	alloced = (byte *)malloc(gss->VGA_MEM_SIZE);
+	alloced = (byte *)malloc(VGA_MEM_SIZE);
 
 	_vga_buf_free_start = alloced;
 	_vga_buf_start = alloced;
 	_vga_file_buf_org = alloced;
 	_vga_file_buf_org_2 = alloced;
-	_vga_buf_end = alloced + gss->VGA_MEM_SIZE;
+	_vga_buf_end = alloced + VGA_MEM_SIZE;
 }
 
 void SimonEngine::vga_buf_unk_proc3(byte *end) {
@@ -3756,7 +3720,7 @@ void decompress_icon_amiga (byte *dst, byte *src, byte base, uint pitch) {
 	}
 }
 
-void decompress_icon(byte *dst, byte *src, uint w, uint h_org, byte base, uint pitch) {
+static void decompress_icon(byte *dst, byte *src, uint w, uint h_org, byte base, uint pitch) {
 	int8 reps;
 	byte color_1, color_2;
 	byte *dst_org = dst;
@@ -3948,7 +3912,7 @@ void SimonEngine::start_vga_code(uint b, uint vga_res, uint vga_sprite_id, uint 
 
 			//dump_vga_script(pp + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), vga_res, vga_sprite_id);
 
-			add_vga_timer(gss->VGA_DELAY_BASE, pp + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), vga_sprite_id, vga_res);
+			add_vga_timer(VGA_DELAY_BASE, pp + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), vga_sprite_id, vga_res);
 			break;
 		}
 		p += sizeof(VgaFile1Struct0x6);
@@ -4041,7 +4005,7 @@ void SimonEngine::talk_with_text(uint vga_sprite_id, uint color, const char *str
 		_variableArray[85] = _variableArray[141] * len_div_3;
 	} else {
 		if (_variableArray[86] == 0)
-			len_div_3 = len_div_3 / 2;
+			len_div_3 >>= 1;
 		if (_variableArray[86] == 2)
 			len_div_3 <<= 1;
 		_variableArray[85] = len_div_3 * 5;
@@ -5066,7 +5030,7 @@ bool SimonEngine::load_game(uint slot) {
 void SimonEngine::loadMusic (uint music) {
 	if (_game & GF_SIMON2) {        // Simon 2 music
 		midi.stop();
-		_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music - 1], SEEK_SET);
+		_game_file->seek(_game_offsets_ptr[MUSIC_INDEX_BASE + music - 1], SEEK_SET);
 		if (_game & GF_WIN) {	
 			midi.loadMultipleSMF (_game_file);
 		} else {
@@ -5096,10 +5060,10 @@ void SimonEngine::loadMusic (uint music) {
 				if (music == 35)
 					midi.setLoop (false);
 
-				_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
+				_game_file->seek(_game_offsets_ptr[MUSIC_INDEX_BASE + music], SEEK_SET);
 				midi.loadMultipleSMF (_game_file);
 			} else if (_game & GF_TALKIE) {	
-				_game_file->seek(_game_offsets_ptr[gss->MUSIC_INDEX_BASE + music], SEEK_SET);
+				_game_file->seek(_game_offsets_ptr[MUSIC_INDEX_BASE + music], SEEK_SET);
 				midi.loadSMF (_game_file, music);
 			} else {
 				char buf[50];

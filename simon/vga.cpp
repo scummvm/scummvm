@@ -128,7 +128,7 @@ void SimonEngine::run_vga_script() {
 			opcode = *_vc_ptr++;
 		}
 
-		if (opcode >= gss->NUM_VIDEO_OP_CODES)
+		if (opcode >= NUM_VIDEO_OP_CODES)
 			error("Invalid VGA opcode '%d' encountered", opcode);
 
 		if (opcode == 0)
@@ -349,7 +349,7 @@ void SimonEngine::vc_3_new_sprite() {
 
 	//dump_vga_script(_cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), res, vga_sprite_id);
 
-	add_vga_timer(gss->VGA_DELAY_BASE, _cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), vga_sprite_id, res);
+	add_vga_timer(VGA_DELAY_BASE, _cur_vga_file_1 + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), vga_sprite_id, res);
 	_cur_vga_file_1 = old_file_1;
 }
 
@@ -1011,9 +1011,9 @@ void SimonEngine::vc_12_delay() {
 	}
 
 	if (_continous_vgascript)
-		fprintf(_dump_file, "; sleep_ex = %d\n", num + gss->VGA_DELAY_BASE);
+		fprintf(_dump_file, "; sleep_ex = %d\n", num + VGA_DELAY_BASE);
 
-	add_vga_timer(num + gss->VGA_DELAY_BASE, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
+	add_vga_timer(num + VGA_DELAY_BASE, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
 	_vc_ptr = (byte *)&vc_get_out_of_code;
 }
 
@@ -1034,7 +1034,7 @@ void SimonEngine::vc_15_wakeup_id() {
 	uint16 id = vc_read_next_word();
 	while (vfs->ident != 0) {
 		if (vfs->ident == id) {
-			add_vga_timer(gss->VGA_DELAY_BASE, vfs->code_ptr, vfs->sprite_id, vfs->cur_vga_file);
+			add_vga_timer(VGA_DELAY_BASE, vfs->code_ptr, vfs->sprite_id, vfs->cur_vga_file);
 			vfs_tmp = vfs;
 			do {
 				memcpy(vfs_tmp, vfs_tmp + 1, sizeof(VgaSleepStruct));
@@ -1584,9 +1584,9 @@ void SimonEngine::vc_56_delay() {
 		uint num = vc_read_var_or_word() * _vga_base_delay;
 
 		if (_continous_vgascript)
-			fprintf(_dump_file, "; sleep_ex = %d\n", num + gss->VGA_DELAY_BASE);
+			fprintf(_dump_file, "; sleep_ex = %d\n", num + VGA_DELAY_BASE);
 
-		add_vga_timer(num + gss->VGA_DELAY_BASE, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
+		add_vga_timer(num + VGA_DELAY_BASE, _vc_ptr, _vga_cur_sprite_id, _vga_cur_file_id);
 		_vc_ptr = (byte *)&vc_get_out_of_code;
 	}
 }

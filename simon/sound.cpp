@@ -261,7 +261,7 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const C
 		_voice = new MP3Sound(_mixer, file);
 	}
 #endif
-	if (!file->isOpen()) {
+	if (!_voice) {
 		// for simon2 mac/amiga, only read index file
 		if (_game == GAME_SIMON2MAC) {
 			file->open("voices.idx", gameDataPath);
@@ -315,7 +315,7 @@ SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const C
 			_effects = new MP3Sound(_mixer, file);
 		}
 #endif
-		if (!file->isOpen()) {
+		if (!_effects) {
 			s = gss->voc_effects_filename;
 			file->open(s, gameDataPath);
 			if (file->isOpen() == false) {

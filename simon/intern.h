@@ -119,14 +119,6 @@ struct TimeEvent {
 };
 
 struct GameSpecificSettings {
-	uint VGA_DELAY_BASE;
-	uint TABLE_INDEX_BASE;
-	uint TEXT_INDEX_BASE;
-	uint NUM_VIDEO_OP_CODES;
-	uint VGA_MEM_SIZE;
-	uint TABLES_MEM_SIZE;
-	uint MUSIC_INDEX_BASE;
-	uint SOUND_INDEX_BASE;
 #ifndef __PALM_OS__
 	const char *gme_filename;
 	const char *wav_filename;
