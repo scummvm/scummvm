@@ -156,7 +156,6 @@ uint32 FileChunk::getDword() {
 }
 
 void FileChunk::reinit(uint32 offset) {
-	assert(offset == 0);	// FIXME: Fingolfin added this assert, because the old code used to ignore offset!!!
 	_data.seek(offset);
 	_type = _data.readUint32BE();
 	_size = _data.readUint32BE();
