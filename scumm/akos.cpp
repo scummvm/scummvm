@@ -1344,7 +1344,7 @@ void ScummEngine::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) 
 	case 9:
 		if (param_1 != 0) {
 			if (_imuseDigital) {
-//				_imuseDigital->setPriority(param_1, param_2);
+				_imuseDigital->setPriority(param_1, param_2);
 			}
 		}
 		break;
