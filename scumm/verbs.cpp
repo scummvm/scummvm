@@ -197,11 +197,19 @@ void Scumm::checkV2Inventory(int x, int y) {
 void Scumm::redrawV2Inventory() {
 	int i;
 	int max_inv;
+	ScummVM::Rect inventoryBox;
 
 	v2_mouseover_box = -1;
 
 	if (!(_userState & 64))	// Don't draw inventory unless active
 		return;
+
+	// Clear on all invocations
+	inventoryBox.top = virtscr[2].topline + 32;
+	inventoryBox.bottom = virtscr[2].topline + virtscr[2].height;
+	inventoryBox.left = 0;
+	inventoryBox.right = virtscr[2].width;
+	restoreBG(inventoryBox);
 
 	_string[1].charset = 1;
 
