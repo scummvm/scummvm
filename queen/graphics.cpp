@@ -1139,7 +1139,9 @@ uint16 Graphics::setupPerson(uint16 noun, uint16 curImage) {
 	}
 
 	Person p;
-	_vm->logic()->initPerson(noun, "", true, &p);
+	if (!_vm->logic()->initPerson(noun, "", true, &p)) {
+		return curImage;
+	}
 
 	const ActorData *pad = p.actor;
 	uint16 scale = 100;
@@ -1170,8 +1172,8 @@ uint16 Graphics::setupPerson(uint16 noun, uint16 curImage) {
 
 uint16 Graphics::allocPerson(uint16 noun, uint16 curImage) {
 	Person p;
-	_vm->logic()->initPerson(noun, "", false, &p);
-	if (p.anim != NULL) {
+	if (_vm->logic()->initPerson(noun, "", false, &p) && p.anim != NULL) {
+		debug(0, "allocPerson() : anim=%s", p.anim);
 		curImage += countAnimFrames(p.anim);
 		_personFrames[p.actor->bobNum] = curImage + 1;
 	}

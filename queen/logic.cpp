@@ -572,10 +572,10 @@ ActorData *Logic::findActor(uint16 noun, const char *name) {
 }
 
 
-void Logic::initPerson(int16 noun, const char *actorName, bool loadBank, Person *pp) {
+bool Logic::initPerson(int16 noun, const char *actorName, bool loadBank, Person *pp) {
 	if (noun <= 0) {
 		warning("Logic::initPerson() - Invalid object number: %i", noun);
-	}	
+	}
 	ActorData *pad = findActor(noun, actorName);
 	if (pad != NULL) {
 		pp->actor = pad;
@@ -591,7 +591,8 @@ void Logic::initPerson(int16 noun, const char *actorName, bool loadBank, Person 
 			// data is already loaded as it is contained in objects room bank (.bbk)
 		}
 		pp->bobFrame = 29 + FRAMES_JOE_XTRA + pp->actor->bobNum;
-	}
+	} 
+	return pad != NULL;
 }
 
 
