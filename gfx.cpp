@@ -338,10 +338,8 @@ void Scumm::initBGBuffers()
 	byte *room;
 
 	room = getResourceAddress(rtRoom, _roomResource);
-	if (_features & GF_OLD256) {
-		gdi._numZBuffer = 2;
-	} else if (_features & GF_SMALL_HEADER) {
-		gdi._numZBuffer = 1; // ENDER
+	if (_features & GF_SMALL_HEADER) {
+		gdi._numZBuffer = 2; // ENDER
 	} else {
 		ptr = findResource(MKID('RMIH'), findResource(MKID('RMIM'), room));
 		gdi._numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
@@ -653,7 +651,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 
 	numzbuf = _disable_zbuffer ? 0 : _numZBuffer;
 
-	if (_vm->_features & GF_OLD256) {
+	if (_vm->_features & GF_SMALL_HEADER) {
 		/* this is really ugly, FIXME */
 		if (ptr[-2] == 'B' && ptr[-1] == 'M' &&
 		    READ_LE_UINT32(ptr - 6) > (READ_LE_UINT32(ptr) + 10)) {
@@ -746,7 +744,10 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen * vs, int x, int y, int h,
 				continue;			
 
 			if (_vm->_features & GF_SMALL_HEADER)
-				offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 4);
+				if (_vm->_features & GF_OLD256)
+					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 4);
+				else
+					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 2);
 			else
 				offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
 
