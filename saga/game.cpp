@@ -180,6 +180,7 @@ R_GAMEDESC GameDescs[] = {
 		ITEDISK_GameFonts,
 		&ITE_GameSound,
 		Verify_ITEDISK,
+		0
 	},
 
 	// Inherit the earth - CD version
