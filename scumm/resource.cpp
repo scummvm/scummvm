@@ -1236,7 +1236,9 @@ void Scumm::nukeResource(int type, int idx) {
 }
 
 byte *Scumm::findResourceData(uint32 tag, byte *ptr) {
-	if (_features & GF_SMALL_HEADER)
+	if (_features & GF_OLD_BUNDLE)
+		error("findResourceData must not be used in GF_OLD_BUNDLE games");
+	else if (_features & GF_SMALL_HEADER)
 		ptr = findResourceSmall(tag, ptr, 0);
 	else
 		ptr = findResource(tag, ptr, 0);
