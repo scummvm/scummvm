@@ -1085,7 +1085,7 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height + offsY, 0);
 
-	if (vs->number != kMainVirtScreen)
+	if (!vs->hasTwoBuffers)
 		_blitAlso = false;
 	if (vs->number == kMainVirtScreen && !_ignoreCharsetMask)
 		_hasMask = true;

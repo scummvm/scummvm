@@ -217,12 +217,11 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int
 	vs->topline = top;
 	vs->height = height;
 	vs->hasTwoBuffers = twobufs;
-	vs->scrollable = scrollable;
 	vs->xstart = 0;
 	vs->backBuf = NULL;
 
 	size = vs->width * vs->height;
-	if (vs->scrollable) {
+	if (scrollable) {
 		// Allow enough spaces so that rooms can be up to 4 resp. 8 screens
 		// wide. To achieve (horizontal!) scrolling, we use a neat trick:
 		// only the offset into the screen buffer (xstart) is changed. That way
@@ -936,13 +935,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 	_vertStripNextInc = height * vs->width - 1;
 
-	sx = x;
-	// FIXME / TODO: This is the only place vs->scrollable is ever checked, and
-	// I think we can simply remove the condition and always use xstart - it
-	// should always be 0 for any non-scrolling virtual screen, after all.
-	assert(vs->scrollable || !vs->xstart);
-	if (vs->scrollable)
-		sx -= vs->xstart / 8;
+	sx = x - vs->xstart / 8;
 
 	//
 	// Since V3, all graphics data was encoded in strips, which is very efficient

@@ -75,8 +75,8 @@ enum VirtScreenNumber {
  * It seems that it is not used at all by ScummVM, so we probably could just
  * get rid of it and save a couple kilobytes of RAM.
  *
- * Each of these virtual screens has a fixed number or id (see also the
- * VirtScreenNumber enum).
+ * Each of these virtual screens has a fixed number or id (see also
+ * \ref VirtScreenNumber).
  */
 struct VirtScreen {
 	/**
@@ -102,17 +102,9 @@ struct VirtScreen {
 	uint16 height;
 
 	/**
-	 * Flag indicating that this virtual screen allows (horizontal) scrolling.
-	 * This is always only true for the main screen (stage)!  After all, verbs
-	 * and the conversation text box don't have to scroll.
-	 * @todo Get rid of this, there is only one place where it is used,
-	 *       and there it is trivial to remove the usage.
-	 */
-	bool scrollable;
-	
-	/**
 	 * Horizontal scroll offset, tells how far the screen is scrolled to the
-	 * right. Only used for the main screen.
+	 * right. Only used for the main screen. After all, verbs and the
+	 * conversation text box don't have to scroll.
 	 */
 	uint16 xstart;
 
