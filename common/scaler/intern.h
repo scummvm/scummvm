@@ -35,9 +35,6 @@
 //
 #define USE_ALTIVEC	0
 
-// MSVC6 chokes on all but the most simplistic template usage.
-#ifndef MSVC6_COMPAT
-
 template<int bitFormat>
 struct ColorMasks {
 };
@@ -170,20 +167,12 @@ extern int   RGBtoYUV[65536];
 #define MAKE_WRAPPER(FUNC) \
 	void FUNC(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) { \
 		if (gBitFormat == 565) \
-			FUNC<565>(srcPtr, srcPitch, dstPtr, dstPitch, width, height); \
+			FUNC ## Template<565>(srcPtr, srcPitch, dstPtr, dstPitch, width, height); \
 		else \
-			FUNC<555>(srcPtr, srcPitch, dstPtr, dstPitch, width, height); \
+			FUNC ## Template<555>(srcPtr, srcPitch, dstPtr, dstPitch, width, height); \
 	}
 
-#else // MSVC6_COMPAT is defined
-
-#define MAKE_WRAPPER(FUNC) \
-	void FUNC(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) { \
-		return; \
-	}
-
-#endif
-
+/** Specifies the currently active 16bit pixel format, 555 or 565. */
 extern int gBitFormat;
 
 #endif

@@ -233,7 +233,7 @@ void AdvMame3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
 }
 
 template<int bitFormat>
-void TV2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
+void TV2xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 					int width, int height) {
 	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
 	const uint16 *p = (const uint16 *)srcPtr;

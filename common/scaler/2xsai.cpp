@@ -47,7 +47,7 @@ static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) {
 #define Q_INTERPOLATE	Q_INTERPOLATE<bitFormat>
 
 template<int bitFormat>
-void Super2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+void Super2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	const uint16 *bP;
 	uint16 *dP;
 	const uint32 nextlineSrc = srcPitch >> 1;
@@ -156,7 +156,7 @@ void Super2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstP
 MAKE_WRAPPER(Super2xSaI)
 
 template<int bitFormat>
-void SuperEagle(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+void SuperEagleTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	const uint16 *bP;
 	uint16 *dP;
 	const uint32 nextlineSrc = srcPitch >> 1;
@@ -267,7 +267,7 @@ void SuperEagle(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstP
 MAKE_WRAPPER(SuperEagle)
 
 template<int bitFormat>
-void _2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	const uint16 *bP;
 	uint16 *dP;
 	const uint32 nextlineSrc = srcPitch >> 1;

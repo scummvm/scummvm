@@ -82,7 +82,7 @@
  * Adapted for ScummVM to 16 bit output and optimized by Max Horn.
  */
 template<int bitFormat>
-void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+void HQ2xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	register int  w1, w2, w3, w4, w5, w6, w7, w8, w9;
   
 	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
