@@ -123,18 +123,29 @@ void ConsoleDialog::handleMouseWheel(int x, int y, int direction)
 
 void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 {
+	int i;
+	
 	switch (keycode) {
 		case '\n':	// enter/return
-		case '\r':
+		case '\r': {
 			if (_caretVisible)
 				drawCaret(true);
-		
+			
 			nextLine();
+
+			int len = _promptEndPos - _promptStartPos;
+			char str[len + 1];
+			for (i = 0; i < len; i++)
+				str[i] = _buffer[(_promptStartPos + i) % kBufferSize];
+			str[len] = 0;
+			printf("You entered '%s'\n", str);
+
 			print(PROMPT);
 			_promptStartPos = _promptEndPos = _currentPos;
 			
 			draw();
 			break;
+			}
 		case 27:	// escape
 			close();
 			break;
@@ -144,7 +155,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 		
 			if (_currentPos > _promptStartPos) {
 				_currentPos--;
-				for (int i = _currentPos; i < _promptEndPos; i++)
+				for (i = _currentPos; i < _promptEndPos; i++)
 					_buffer[i % kBufferSize] = _buffer[(i+1) % kBufferSize];
 				_buffer[_promptEndPos % kBufferSize] = ' ';
 				_promptEndPos--;
@@ -191,7 +202,7 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 			} else if (modifiers == OSystem::KBD_CTRL) {
 				specialKeys(keycode);
 			} else if (isprint((char)ascii)) {
-				for (int i = _promptEndPos-1; i >= _currentPos; i--)
+				for (i = _promptEndPos-1; i >= _currentPos; i--)
 					_buffer[(i+1) % kBufferSize] = _buffer[i % kBufferSize];
 				_promptEndPos++;
 				putchar((char)ascii);
