@@ -240,7 +240,7 @@ int32 DrawMouse(void) {
 
 	if (mouseAnim) {
 		DecompressMouse(_mouseData, mouseSprite, mouseAnim->mousew * mouseAnim->mouseh);
-		g_sword2->_system->set_mouse_cursor(_mouseData, mouseAnim->mousew, mouseAnim->mouseh, mouseAnim->xHotSpot, mouseAnim->yHotSpot - MENUDEEP);
+		g_sword2->_system->set_mouse_cursor(_mouseData, mouseAnim->mousew, mouseAnim->mouseh, mouseAnim->xHotSpot, mouseAnim->yHotSpot);
 	}
 	return RD_OK;
 }

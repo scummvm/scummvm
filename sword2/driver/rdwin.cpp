@@ -167,7 +167,7 @@ void Sword2State::parseEvents() {
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
 			mousex = event.mouse.x;
-			mousey = event.mouse.y;
+			mousey = event.mouse.y - MENUDEEP;
 			break;
 		case OSystem::EVENT_LBUTTONDOWN:
 			LogMouseEvent(RD_LEFTBUTTONDOWN);
