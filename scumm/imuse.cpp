@@ -813,6 +813,19 @@ bool IMuseInternal::start_sound(int sound)
 	Player *player;
 	void *mdhd;
 
+	// Do not start a sound if it is already set to
+	// start on an ImTrigger event. This fixes carnival
+	// music problems where a sound has been set to trigger
+	// at the right time, but then is started up immediately
+	// anyway, only to be restarted later when the trigger
+	// occurs.
+	int i;
+	ImTrigger *trigger = _snm_triggers;
+	for (i = ARRAYSIZE (_snm_triggers); i; --i, ++trigger) {
+		if (trigger->sound && trigger->id && trigger->command[0] == 8 && trigger->command[1] == sound)
+			return false;
+	}
+
 	mdhd = findTag(sound, MDHD_TAG, 0);
 	if (!mdhd) {
 		mdhd = findTag(sound, MDPG_TAG, 0);
@@ -829,7 +842,6 @@ bool IMuseInternal::start_sound(int sound)
 	// race conditions that were observed in MI2. Reference
 	// Bug #590511 and Patch #607175 (which was reversed to fix
 	// an FOA regression: Bug #622606).
-	int i;
 	for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
 		if (player->_active && player->_id == sound)
 			break;
@@ -1452,7 +1464,7 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 			}
 			return -1;
 		case 15:
-			// Sam & Max: Unconditional Jump?
+			// Sam & Max: Set hook for a "maybe" jump
 			for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
 				if (player->_active && player->_id == (uint16)b) {
 					player->_hook._jump = d;
@@ -1604,11 +1616,11 @@ int32 IMuseInternal::ImSetTrigger (int sound, int id, int a, int b, int c, int d
 	// represented by MIDI SysEx block 00 xx (F7)
 	// where "xx" is the marker ID.
 	uint16 oldest_trigger = 0;
-	int oldest_index = -1;
+	ImTrigger *oldest_ptr = NULL;
 
 	int i;
-	for (i = 0; i < 16; ++i) {
-		ImTrigger *trig = &_snm_triggers [i];
+	ImTrigger *trig = _snm_triggers;
+	for (i = ARRAYSIZE (_snm_triggers); i; --i, ++trig) {
 		if (!trig->id)
 			break;
 		if (trig->id == id && trig->sound == sound)
@@ -1620,26 +1632,31 @@ int32 IMuseInternal::ImSetTrigger (int sound, int id, int a, int b, int c, int d
 		else
 			diff = 0x10000 - trig->expire + _snm_trigger_index;
 
-		if (oldest_index < 0 || oldest_trigger < diff) {
-			oldest_index = i;
+		if (!oldest_ptr || oldest_trigger < diff) {
+			oldest_ptr = trig;
 			oldest_trigger = diff;
 		}
 	}
 
 	// If we didn't find a trigger, see if we can expire one.
-	if (i >= 16) {
-		if (oldest_index < 0)
+	if (!i) {
+		if (!oldest_ptr)
 			return -1;
-		i = oldest_index;
+		trig = oldest_ptr;
 	}
 
-	_snm_triggers [i].id = id;
-	_snm_triggers [i].sound = sound;
-	_snm_triggers [i].expire = (++_snm_trigger_index & 0xFFFF);
-	_snm_triggers [i].command [0] = a;
-	_snm_triggers [i].command [1] = b;
-	_snm_triggers [i].command [2] = c;
-	_snm_triggers [i].command [3] = d;
+	trig->id = id;
+	trig->sound = sound;
+	trig->expire = (++_snm_trigger_index & 0xFFFF);
+	trig->command [0] = a;
+	trig->command [1] = b;
+	trig->command [2] = c;
+	trig->command [3] = d;
+
+	// If the command is to start a sound, stop that sound if it's already playing.
+	// This fixes some carnival music problems.
+	if (trig->command [0] == 8 && get_sound_status (trig->command [1]))
+		stop_sound (trig->command [1]);
 	return 0;
 }
 
