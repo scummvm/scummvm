@@ -2119,7 +2119,7 @@ void ScummEngine_v5::o5_setObjectName() {
 		// resource for changed names. That would be the cleanest solution, but
 		// might proof to be infeasible, as it might lead to unforseen regressions.
 		
-		uint32 tag = MKID('OBNA');
+		const uint32 tag = MKID('OBNA');
 		byte *searchin = objptr;
 		uint32 curpos, totalsize;
 	
@@ -2138,8 +2138,7 @@ void ScummEngine_v5::o5_setObjectName() {
 	
 			size = READ_BE_UINT32(searchin + 4);
 			if ((int32)size <= 0) {
-				error("(%c%c%c%c) Not found in %d... illegal block len %d",
-							tag & 0xFF, (tag >> 8) & 0xFF, (tag >> 16) & 0xFF, (tag >> 24) & 0xFF, 0, size);
+				error("(OBNA) Not found... illegal block len %d", size);
 			}
 	
 			curpos += size;

@@ -278,7 +278,7 @@ int32 Bundle::decompressVoiceSampleByIndex(int32 index, byte **comp_final) {
 	_voiceFile.readUint32BE();
 
 	if (tag != MKID_BE('COMP')) {
-		warning("Bundle: Compressed sound %d invalid (%c%c%c%c)", index, tag >> 24, tag >> 16, tag >> 8, tag);
+		warning("Bundle: Compressed sound %d invalid (%s)", index, tag2str(tag));
 		return 0;
 	}
 
@@ -335,7 +335,7 @@ int32 Bundle::decompressMusicSampleByIndex(int32 index, int32 number, byte *comp
 		_musicFile.readUint32BE();
 
 		if (tag != MKID_BE('COMP')) {
-			warning("Bundle: Compressed sound %d invalid (%c%c%c%c)", index, tag >> 24, tag >> 16, tag >> 8, tag);
+			warning("Bundle: Compressed sound %d invalid (%s)", index, tag2str(tag));
 			return 0;
 		}
 
