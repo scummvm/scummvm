@@ -5,7 +5,6 @@ Assigned tasks:
  * Cross platform GUI for debug input dialogs and path selection (ender)
  * Improved walk box code (frob)
  * Implement FadeInChore and FadeOutChore (frob)
- * Fix memory problems after Lua restore (aquadran)
 
 Unassigned (help wanted):
  * Add configure script (Custom ala main ScummVM, NOT autoconf)
