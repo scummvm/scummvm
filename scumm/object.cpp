@@ -240,9 +240,6 @@ void Scumm::getObjectXYPos(int object, int &x, int &y, int &dir) {
 			x = od->x_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].x);
 			y = od->y_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].y);
 		}
-	} else if (_features & GF_AFTER_V2){
-		x = od->walk_x * 8;
-		y = (od->walk_y & 0x1f) * 8;
 	} else {
 		x = od->walk_x;
 		y = od->walk_y;
@@ -696,11 +693,8 @@ void Scumm::setupRoomObject(ObjectData *od, byte *room, byte *searchptr) {
 		od->parent = *(ptr + 12);
 
 		if (_features & GF_AFTER_V2) {
-			od->walk_x = *(ptr + 13);
-			// V2 stores an as of now unknown value in the upper 3 bits of the Y coordinate.
-			// Maybe we shoudl add an entry for it to ObjectData. That would be cleaner,
-			// but requires us to inc the savegame format version.
-			od->walk_y = *(ptr + 14);
+			od->walk_x = *(ptr + 13) * 8;
+			od->walk_y = (*(ptr + 14) & 0x1f) * 8;
 			od->actordir = (*(ptr + 15)) & 7;
 			od->height = *(ptr + 15) & 0xf8;
 		} else {
