@@ -2386,6 +2386,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 //					_imuseDigital->stopAll();
 //				}
 				uint32 speed;
+				assert(getStringAddressVar(VAR_VIDEONAME));
 				if (strcmp((char *)getStringAddressVar(VAR_VIDEONAME), "sq3.san") == 0)
 					speed = 71000;
 				else {
