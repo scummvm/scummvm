@@ -58,7 +58,6 @@ void Imuse::setMusicSequence(int seqId) {
 		}
 	}
 
-	if (seqId == 4096)
 	assert(num != -1);
 
 	if (_curMusicSeq == num)
