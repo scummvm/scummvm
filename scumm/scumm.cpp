@@ -154,23 +154,6 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY, 0},
 
 	/* Scumm Version 6 */
-	{"puttputt", "Putt-Putt Joins The Parade", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"puttdemo", "Putt-Putt Joins The Parade (Demo)", GID_PUTTDEMO, 6, MDT_ADLIB | MDT_NATIVE,
-	  GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS, 0},
-	{"moondemo", "Putt-Putt Goes To The Moon (Demo)", GID_PUTTMOON, 6, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"puttmoon", "Putt-Putt Goes To The Moon", GID_PUTTMOON, 6, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"funpack", "Putt-Putt's Fun Pack", GID_PUTTMOON, 6, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"fbpack", "Fatty Bear's Fun Pack", GID_FBPACK, 6, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"fbear", "Fatty Bear's Birthday Surprise", GID_FBEAR, 6, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"fbdemo", "Fatty Bear's Birthday Surprise (Demo)", GID_FBEAR, 6, MDT_ADLIB | MDT_NATIVE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-
 	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_NEW_OPCODES | GF_USE_KEY, 0},
 	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
@@ -209,10 +192,28 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER | GF_DEMO, "comi"},
 #endif
 
+	// Humongous Entertainment Scumm Version 6
+	{"puttputt", "Putt-Putt Joins The Parade", GID_PUTTPUTT, 6, MDT_ADLIB | MDT_NATIVE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"puttdemo", "Putt-Putt Joins The Parade (Demo)", GID_PUTTDEMO, 6, MDT_ADLIB | MDT_NATIVE,
+	  GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS, 0},
+	{"moondemo", "Putt-Putt Goes To The Moon (Demo)", GID_PUTTMOON, 6, MDT_ADLIB | MDT_NATIVE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"puttmoon", "Putt-Putt Goes To The Moon", GID_PUTTMOON, 6, MDT_ADLIB | MDT_NATIVE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"funpack", "Putt-Putt's Fun Pack", GID_PUTTMOON, 6, MDT_ADLIB | MDT_NATIVE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"fbpack", "Fatty Bear's Fun Pack", GID_FBPACK, 6, MDT_ADLIB | MDT_NATIVE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"fbear", "Fatty Bear's Birthday Surprise", GID_FBEAR, 6, MDT_ADLIB | MDT_NATIVE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"fbdemo", "Fatty Bear's Birthday Surprise (Demo)", GID_FBEAR, 6, MDT_ADLIB | MDT_NATIVE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+
 #ifdef HEGAMES
 	 /* Note that both full versions of Humongous games and demos were often released for
 	  * several interpreter versions... */
-	// Humongous Entertainment Scumm Version 7 
+	// Humongous Entertainment Scumm Version 7
 	{"catalog", "Humongous Interactive Catalog", GID_PUTTPUTT, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"farm", "Let's Explore the Farm with Buzzy", GID_PUTTPUTT, 6, MDT_NONE,
@@ -227,6 +228,8 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"puttzoo", "Putt-Putt Saves the Zoo", GID_PUTTPUTT, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
+	{"freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds", GID_FREDDI, 6, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_DEFAULT_TO_1X_SCALER, 0},
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80 
 	{"zoodemo", "Putt-Putt Saves the Zoo (Demo)", GID_PJSDEMO, 6, MDT_NONE,
@@ -258,8 +261,6 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"1grademo", "Big Thinkers First Grade (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
-	{"freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds", GID_FREDDI, 6, MDT_NONE,
-	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_DEFAULT_TO_1X_SCALER, 0},
 	{"f3-mdemo", "Freddi Fish 3: The Case of the Stolen Conch Shell (Demo)", GID_PJSDEMO, 6, MDT_NONE,
 	 GF_NEW_OPCODES | GF_AFTER_HEV7 | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"timedemo", "Putt-Putt Travels Through Time (Demo)", GID_PJSDEMO, 6, MDT_NONE,
@@ -672,7 +673,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	if (_features & GF_FMTOWNS) {	// FMTowns V3 games use 320x240
 		_screenWidth = 320;
 		_screenHeight = 240;
-	} else if ((_gameId == GID_CMI) || (_features & GF_AFTER_HEV7)) {
+	} else if (_features & GF_DEFAULT_TO_1X_SCALER) {
 		_screenWidth = 640;
 		_screenHeight = 480;
 	} else if (_features & GF_NES) {
