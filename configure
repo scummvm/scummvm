@@ -17,8 +17,10 @@
 # * generate a config.mak file for use in makefiles
 # * ....
 
-TMPC=scummvm-conf.cpp
-TMPO=scummvm-conf
+# TODO: We should really use mktemp(1) to determine a random tmp file name.
+# However, that tool might not be available everywhere.
+TMPO=/tmp/scummvm-conf
+TMPC=${TMPO}.cpp
 TMPLOG=config.log
 CFLAGS=""
 
@@ -292,8 +294,7 @@ case $hosttype in
 		ranlib=ar -r
 		;;
 	Darwin)
-		DEFINES="$DEFINES -DUNIX"
-		_def_macosx='#define MACOSX'
+		DEFINES="$DEFINES -DUNIX -DMACOSX"
 		LIBS="$LIBS -framework QuickTime -framework AudioUnit"
 		;;
 esac
@@ -354,7 +355,7 @@ int main(int argc, char **argv)
 }
 EOF
 _need_memalign=yes
-cc_check && ./$TMPO && _need_memalign=no
+cc_check && $TMPO && _need_memalign=no
 if test "$_need_memalign" = yes ; then
   _def_align='#define SCUMM_NEED_ALIGNMENT'
 else
@@ -494,7 +495,6 @@ $_def_scumm
 $_def_simon
 $_def_sky
 
-$_def_macosx
 $_def_endianess
 $_def_align
 
