@@ -359,34 +359,30 @@ void _2xSaI(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch
 			colorP = *(bP + 2 * nextlineSrc + 2);
 
 			if ((colorA == colorD) && (colorB != colorC)) {
-				if (((colorA == colorE) && (colorB == colorL)) || ((colorA == colorC) && (colorA == colorF)
-																													 && (colorB != colorE)
-																													 && (colorB == colorJ))) {
+				if (((colorA == colorE) && (colorB == colorL)) ||
+					((colorA == colorC) && (colorA == colorF) && (colorB != colorE) && (colorB == colorJ))) {
 					product = colorA;
 				} else {
 					product = INTERPOLATE(colorA, colorB);
 				}
 
-				if (((colorA == colorG) && (colorC == colorO)) || ((colorA == colorB) && (colorA == colorH)
-																													 && (colorG != colorC)
-																													 && (colorC == colorM))) {
+				if (((colorA == colorG) && (colorC == colorO)) ||
+					((colorA == colorB) && (colorA == colorH) && (colorG != colorC)  && (colorC == colorM))) {
 					product1 = colorA;
 				} else {
 					product1 = INTERPOLATE(colorA, colorC);
 				}
 				product2 = colorA;
 			} else if ((colorB == colorC) && (colorA != colorD)) {
-				if (((colorB == colorF) && (colorA == colorH)) || ((colorB == colorE) && (colorB == colorD)
-																													 && (colorA != colorF)
-																													 && (colorA == colorI))) {
+				if (((colorB == colorF) && (colorA == colorH)) ||
+					((colorB == colorE) && (colorB == colorD) && (colorA != colorF) && (colorA == colorI))) {
 					product = colorB;
 				} else {
 					product = INTERPOLATE(colorA, colorB);
 				}
 
-				if (((colorC == colorH) && (colorA == colorF)) || ((colorC == colorG) && (colorC == colorD)
-																													 && (colorA != colorH)
-																													 && (colorA == colorI))) {
+				if (((colorC == colorH) && (colorA == colorF)) ||
+					((colorC == colorG) && (colorC == colorD) && (colorA != colorH) && (colorA == colorI))) {
 					product1 = colorC;
 				} else {
 					product1 = INTERPOLATE(colorA, colorC);
