@@ -472,19 +472,12 @@ void ScummEngine_v8::decodeParseString(int m, int n) {
 
 	switch (b) {
 	case 0xC8:		// SO_PRINT_BASEOP
-		setStringVars(m);
+		_string[m].restoreString();
 		if (n)
 			_actorToPrintStrFor = pop();
 		break;
 	case 0xC9:		// SO_PRINT_END
-		_string[m].t_xpos = _string[m].xpos;
-		_string[m].t_ypos = _string[m].ypos;
-		_string[m].t_center = _string[m].center;
-		_string[m].t_overhead = _string[m].overhead;
-		_string[m].t_no_talk_anim = _string[m].no_talk_anim;
-		_string[m].t_right = _string[m].right;
-		_string[m].t_color = _string[m].color;
-		_string[m].t_charset = _string[m].charset;
+		_string[m].backupString();
 		break;
 	case 0xCA:		// SO_PRINT_AT
 		_string[m].ypos = pop();
@@ -769,7 +762,7 @@ void ScummEngine_v8::o8_cursorCommand() {
 	case 0xE8:		// SO_CHARSET_COLOR
 		getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < 16; i++)
-			_charsetColorMap[i] = _charsetData[_string[1].t_charset][i] = (unsigned char)args[i];
+			_charsetColorMap[i] = _charsetData[_string[1].backup.charset][i] = (unsigned char)args[i];
 		break;
 	case 0xE9: 		// SO_CURSOR_PUT
 		{
@@ -1151,7 +1144,7 @@ void ScummEngine_v8::o8_verbOps() {
 		vs->hicolor = 0;
 		vs->dimcolor = 8;
 		vs->type = kTextVerbType;
-		vs->charset_nr = _string[0].t_charset;
+		vs->charset_nr = _string[0].backup.charset;
 		vs->curmode = 0;
 		vs->saveid = 0;
 		vs->key = 0;

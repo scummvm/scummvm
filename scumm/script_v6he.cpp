@@ -756,7 +756,7 @@ void ScummEngine_v6he::o6_verbOps() {
 		vs->hicolor = 0;
 		vs->dimcolor = 8;
 		vs->type = kTextVerbType;
-		vs->charset_nr = _string[0].t_charset;
+		vs->charset_nr = _string[0].backup.charset;
 		vs->curmode = 0;
 		vs->saveid = 0;
 		vs->key = 0;
@@ -1468,19 +1468,12 @@ void ScummEngine_v6he::decodeParseString(int m, int n) {
 		warning("decodeParseString case 0xF9 stub");
 		break;
 	case 0xFE:
-		setStringVars(m);
+		_string[m].restoreString();
 		if (n)
 			_actorToPrintStrFor = pop();
 		break;
 	case 0xFF:
-		_string[m].t_xpos = _string[m].xpos;
-		_string[m].t_ypos = _string[m].ypos;
-		_string[m].t_center = _string[m].center;
-		_string[m].t_overhead = _string[m].overhead;
-		_string[m].t_no_talk_anim = _string[m].no_talk_anim;
-		_string[m].t_right = _string[m].right;
-		_string[m].t_color = _string[m].color;
-		_string[m].t_charset = _string[m].charset;
+		_string[m].backupString();
 		break;
 	default:
 		error("decodeParseString: default case 0x%x", b);

@@ -34,18 +34,6 @@
 
 namespace Scumm {
 
-void ScummEngine::setStringVars(int slot) {
-	StringTab *st = &_string[slot];
-	st->xpos = st->t_xpos;
-	st->ypos = st->t_ypos;
-	st->center = st->t_center;
-	st->overhead = st->t_overhead;
-	st->no_talk_anim = st->t_no_talk_anim;
-	st->right = st->t_right;
-	st->color = st->t_color;
-	st->charset = st->t_charset;
-}
-
 void ScummEngine::unkMessage1(const byte *msg) {
 	byte buffer[100];
 	addMessageToStack(msg, buffer, sizeof(buffer));
@@ -616,8 +604,8 @@ void ScummEngine::initCharset(int charsetno) {
 	if (!getResourceAddress(rtCharset, charsetno))
 		loadCharset(charsetno);
 
-	_string[0].t_charset = charsetno;
-	_string[1].t_charset = charsetno;
+	_string[0].backup.charset = charsetno;
+	_string[1].backup.charset = charsetno;
 
 	for (i = 0; i < 16; i++)
 		_charsetColorMap[i] = _charsetData[charsetno][i];

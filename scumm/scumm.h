@@ -252,20 +252,32 @@ struct SentenceTab {
 	uint8 freezeCount;
 };
 
-// TODO / FIXME: next time save game format changes, Fingolfin would like to
-// revise StringTab. In particular, all t_* fields can be removed, making some
-// code a bit cleaner & easier to understand.
-struct StringTab {
-	int16 t_xpos, t_ypos;
-	int16 t_right;
-	int16 xpos, ypos;
+struct StringSlot {
+	int16 xpos;
+	int16 ypos;
 	int16 right;
-	byte color, t_color;
-	byte charset, t_charset;
-	bool center, t_center;
-	bool overhead, t_overhead;
-	bool no_talk_anim, t_no_talk_anim;
+	byte color;
+	byte charset;
+	bool center;
+	bool overhead;
+	bool no_talk_anim;
 };
+
+struct StringTab : StringSlot {
+	StringSlot backup;
+
+	void backupString() {
+		StringSlot &s = *this;
+		backup = s;
+	}
+
+	void restoreString() {
+		StringSlot &s = *this;
+		s = backup;
+	}
+};
+
+
 
 enum WhereIsObject {
 	WIO_NOT_FOUND = -1,
@@ -582,7 +594,6 @@ protected:
 	void copyScriptString(byte *dst);
 	int resStrLen(const byte *src) const;
 	void doSentence(int c, int b, int a);
-	void setStringVars(int i);
 
 	/* Should be in Resource class */
 	File _fileHandle;
