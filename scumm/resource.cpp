@@ -929,8 +929,13 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx)
 		}
 
 		/* copy the instrument data in another memory area */
-		instr = (byte *)calloc(8 * 16, 1);
-		memcpy(instr, ptr + 0x19, 8*16);
+		if (size >= 0x19 + 8*16) {
+			instr = (byte *)calloc(8 * 16, 1);
+			if (instr)
+				memcpy(instr, ptr + 0x19, 8*16);
+		} else {
+			instr = 0;
+		}
 
 		ptr  += skip;                     // size + instruments
 		size -= skip;		          // drop instruments for now
@@ -976,55 +981,58 @@ int Scumm::readSoundResourceSmallHeader(int type, int idx)
 		*ptr++ = (byte)(dw & 0xFF);
 		memcpy(ptr, OLD256_MIDI_HACK, sizeof(OLD256_MIDI_HACK) - 1);
 
-		/* now fill in the instruments */
-		for (int i = 0; i < 8; i++) {
+		if (instr) {
 
-			/* flags_1 */
-			ptr[95 * i + 30 + 0] = (instr[i * 16 + 3] >> 4) & 0xf;
-			ptr[95 * i + 30 + 1] = instr[i * 16 + 3] & 0xf;
+			/* now fill in the instruments */
+			for (int i = 0; i < 8; i++) {
 
-			/* oplvl_1 */
-			ptr[95 * i + 30 + 2] = (instr[i * 16 + 4] >> 4) & 0xf;
-			ptr[95 * i + 30 + 3] = instr[i * 16 + 4] & 0xf;
+				/* flags_1 */
+				ptr[95 * i + 30 + 0] = (instr[i * 16 + 3] >> 4) & 0xf;
+				ptr[95 * i + 30 + 1] = instr[i * 16 + 3] & 0xf;
 
-			/* atdec_1 */
-			ptr[95 * i + 30 + 4] = ((~instr[i * 16 + 5]) >> 4) & 0xf;
-			ptr[95 * i + 30 + 5] = (~instr[i * 16 + 5]) & 0xf;
+				/* oplvl_1 */
+				ptr[95 * i + 30 + 2] = (instr[i * 16 + 4] >> 4) & 0xf;
+				ptr[95 * i + 30 + 3] = instr[i * 16 + 4] & 0xf;
 
-			/* sustrel_1 */
-			ptr[95 * i + 30 + 6] = ((~instr[i * 16 + 6]) >> 4) & 0xf;
-			ptr[95 * i + 30 + 7] = (~instr[i * 16 + 6]) & 0xf;
+				/* atdec_1 */
+				ptr[95 * i + 30 + 4] = ((~instr[i * 16 + 5]) >> 4) & 0xf;
+				ptr[95 * i + 30 + 5] = (~instr[i * 16 + 5]) & 0xf;
 
-			/* waveform_1 */
-			ptr[95 * i + 30 + 8] = (instr[i * 16 + 7] >> 4) & 0xf;
-			ptr[95 * i + 30 + 9] = instr[i * 16 + 7] & 0xf;
+				/* sustrel_1 */
+				ptr[95 * i + 30 + 6] = ((~instr[i * 16 + 6]) >> 4) & 0xf;
+				ptr[95 * i + 30 + 7] = (~instr[i * 16 + 6]) & 0xf;
 
-			/* flags_2 */
-			ptr[95 * i + 30 + 10] = (instr[i * 16 + 8] >> 4) & 0xf;
-			ptr[95 * i + 30 + 11] = instr[i * 16 + 8] & 0xf;
+				/* waveform_1 */
+				ptr[95 * i + 30 + 8] = (instr[i * 16 + 7] >> 4) & 0xf;
+				ptr[95 * i + 30 + 9] = instr[i * 16 + 7] & 0xf;
 
-			/* oplvl_2 */
-			ptr[95 * i + 30 + 12] = 3;
-			ptr[95 * i + 30 + 13] = 0xF;
+				/* flags_2 */
+				ptr[95 * i + 30 + 10] = (instr[i * 16 + 8] >> 4) & 0xf;
+				ptr[95 * i + 30 + 11] = instr[i * 16 + 8] & 0xf;
 
-			/* atdec_2 */
-			ptr[95 * i + 30 + 14] = ((~instr[i * 16 + 10]) >> 4) & 0xf;
-			ptr[95 * i + 30 + 15] = (~instr[i * 16 + 10]) & 0xf;
+				/* oplvl_2 */
+				ptr[95 * i + 30 + 12] = 3;
+				ptr[95 * i + 30 + 13] = 0xF;
 
-			/* sustrel_2 */
-			ptr[95 * i + 30 + 16] = ((~instr[i * 16 + 11]) >> 4) & 0xf;
-			ptr[95 * i + 30 + 17] = (~instr[i * 16 + 11]) & 0xf;
+				/* atdec_2 */
+				ptr[95 * i + 30 + 14] = ((~instr[i * 16 + 10]) >> 4) & 0xf;
+				ptr[95 * i + 30 + 15] = (~instr[i * 16 + 10]) & 0xf;
 
-			/* waveform_2 */
-			ptr[95 * i + 30 + 18] = (instr[i * 16 + 12] >> 4) & 0xf;
-			ptr[95 * i + 30 + 19] = instr[i * 16 + 12] & 0xf;
+				/* sustrel_2 */
+				ptr[95 * i + 30 + 16] = ((~instr[i * 16 + 11]) >> 4) & 0xf;
+				ptr[95 * i + 30 + 17] = (~instr[i * 16 + 11]) & 0xf;
 
-			/* feedback */
-			ptr[95 * i + 30 + 20] = (instr[i * 16 + 2] >> 4) & 0xf;
-			ptr[95 * i + 30 + 21] = instr[i * 16 + 2] & 0xf;
+				/* waveform_2 */
+				ptr[95 * i + 30 + 18] = (instr[i * 16 + 12] >> 4) & 0xf;
+				ptr[95 * i + 30 + 19] = instr[i * 16 + 12] & 0xf;
+
+				/* feedback */
+				ptr[95 * i + 30 + 20] = (instr[i * 16 + 2] >> 4) & 0xf;
+				ptr[95 * i + 30 + 21] = instr[i * 16 + 2] & 0xf;
+			}
+
+			free(instr);
 		}
-
-		free(instr);
 
 		ptr += sizeof(OLD256_MIDI_HACK) - 1;
 		memcpy(ptr, track, size);
