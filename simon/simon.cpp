@@ -3312,6 +3312,10 @@ void SimonState::readSfxFile(const char *filename)
 		_effects_file->seek(0, SEEK_SET);
 		_effects_file->read(_effects_offsets, size);
 
+#if defined(SCUMM_BIG_ENDIAN)
+		for (uint r = 0; r < num; r++)
+			_effects_offsets[r] = FROM_LE_32(_effects_offsets[r]);
+#endif
 	} else if (_game & GAME_SIMON2) { 			/* simon 2 */
 		int num_per_set[] = {0, 188, 223, 217, 209, 179, 187, 189, 116, 174, 203,
 				173, 176, 38, 205, 134, 213, 212, 167, 141};
@@ -3338,16 +3342,12 @@ void SimonState::readSfxFile(const char *filename)
 		_game_file->read(_effects_offsets, num * sizeof(uint32));
 
 		for (i = 0; i < num; i++) {
+#if defined(SCUMM_BIG_ENDIAN)
+			_effects_offsets[i] = FROM_LE_32(_effects_offsets[i]);
+#endif
 			_effects_offsets[i] += offs;
 		}
 	}
-#if defined(SCUMM_BIG_ENDIAN)
-	uint r;
-	if (_effects_offsets) {
-		for (r = 0; r < num; r++)
-			_effects_offsets[r] = READ_LE_UINT32(&_effects_offsets[r]);
-	}
-#endif
 }
 
 void SimonState::video_putchar(FillOrCopyStruct *fcs, byte c)
@@ -4140,7 +4140,7 @@ void SimonState::openGameFile()
 		resfile_read(_game_offsets_ptr, 0, gss->NUM_GAME_OFFSETS * sizeof(uint32));
 #if defined(SCUMM_BIG_ENDIAN)
 		for (uint r = 0; r < gss->NUM_GAME_OFFSETS; r++)
-			_game_offsets_ptr[r] = READ_LE_UINT32(&_game_offsets_ptr[r]);
+			_game_offsets_ptr[r] = FROM_LE_32(_game_offsets_ptr[r]);
 #endif
 	}
 
@@ -4793,12 +4793,12 @@ void SimonState::initSound()
 		uint r;
 		if (_voice_offsets) {
 			for (r = 0; r < gss->NUM_VOICE_RESOURCES; r++)
-				_voice_offsets[r] = READ_LE_UINT32(&_voice_offsets[r]);
+				_voice_offsets[r] = FROM_LE_32(_voice_offsets[r]);
 		}
 
 		if (_effects_offsets) {
 			for (r = 0; r < gss->NUM_EFFECTS_RESOURCES; r++)
-				_effects_offsets[r] = READ_LE_UINT32(&_effects_offsets[r]);
+				_effects_offsets[r] = FROM_LE_32(_effects_offsets[r]);
 		}
 #endif
 	}
@@ -4910,7 +4910,7 @@ void SimonState::playWav(File *sound_file, uint32 *offsets, uint sound, PlayingS
 		return;
 	}
 
-	sound_file->seek(READ_LE_UINT32(&wave_hdr.size) - sizeof(wave_hdr) + 20, SEEK_CUR);
+	sound_file->seek(FROM_LE_32(wave_hdr.size) - sizeof(wave_hdr) + 20, SEEK_CUR);
 
 	data[0] = sound_file->readUint32LE();
 	data[1] = sound_file->readUint32LE();
@@ -4923,7 +4923,7 @@ void SimonState::playWav(File *sound_file, uint32 *offsets, uint sound, PlayingS
 	byte *buffer = (byte *)malloc(data[1]);
 	sound_file->read(buffer, data[1]);
 
-	_mixer->playRaw(sound_handle, buffer, data[1], READ_LE_UINT32(&wave_hdr.samples_per_sec), flags);
+	_mixer->playRaw(sound_handle, buffer, data[1], FROM_LE_32(wave_hdr.samples_per_sec), flags);
 }
 
 void SimonState::playVoice(uint voice)
