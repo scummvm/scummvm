@@ -335,6 +335,12 @@
 				RelativePath=".\scumm\player_v2.h">
 			</File>
 			<File
+				RelativePath="scumm\player_v3a.cpp">
+			</File>
+			<File
+				RelativePath="scumm\player_v3a.h">
+			</File>
+			<File
 				RelativePath=".\scumm\resource.cpp">
 			</File>
 			<File
