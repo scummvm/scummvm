@@ -265,6 +265,7 @@ void OSystem_SDL::update_screen() {
 					dst.x--;
 					dst.y--;
 				}
+				dst.y += _currentShakePos;
 				if (SDL_BlitSurface(target, r, _hwscreen, &dst) != 0)
 					error("SDL_BlitSurface failed: %s", SDL_GetError());
 			}
