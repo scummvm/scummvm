@@ -35,6 +35,9 @@ LIBS    += -lmad
 # DEFINES += -DUSE_ALSA
 # LIBS    += -lasound
 
+# Uncomment this to activate extended debugging support in Simon
+DEFINES += -DSIMONDEBUG
+
 # Concat DEFINES and INCLUDES to for the CPPFLAGS
 CPPFLAGS= $(DEFINES) $(INCLUDES)
 
