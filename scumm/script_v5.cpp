@@ -1089,7 +1089,19 @@ void Scumm_v5::o5_saveLoadGame() {
 	byte slot = (a & 0x1F) + 1;
 	byte result = 0;
 		
-	switch(a & 0xE0) {
+	if ((_gameId == GID_MANIAC) && (_version == 1)) {
+		// Convert older load/save screen
+		// 1 Load
+		// 2 Save
+		slot = 1;
+		if (a == 1)
+			_opcode = 0x40;
+		else if (a == 2)
+			_opcode = 0x80;
+	} else
+		_opcode = a & 0xE0;
+
+	switch (_opcode) {
 		case 0x00: // num slots available
 			result = 100;
 			break;
@@ -1110,10 +1122,11 @@ void Scumm_v5::o5_saveLoadGame() {
 			break;
 		case 0xC0: // test if save exists
 			bool avail_saves[100];
+			char filename[256];
 			SaveFileManager *mgr = _system->get_savefile_manager();
 			listSavegames(avail_saves, ARRAYSIZE(avail_saves), mgr);
-			delete mgr;
-			if (avail_saves[slot])
+			makeSavegameName(filename, slot, false);
+			if (avail_saves[slot] && (mgr->open_savefile(filename, getSavePath(), false)))
 				result = 6; // save file exists
 			else
 				result = 7; // save file does not exist
