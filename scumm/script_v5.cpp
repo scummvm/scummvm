@@ -1360,6 +1360,11 @@ void ScummEngine_v5::o5_isEqual() {
 	if (_gameId == GID_MONKEY2 && var == VAR_SOUNDCARD && b == 5)
 		b = a;
 
+	// HACK: To allow demo script of Maniac Mansion V2
+	// The camera x position is only 100, instead of 180, after game title name scrolls.
+	if (_gameId == GID_MANIAC && _version == 2 && _demoMode && isScriptRunning(173) && b == 180)
+		b = 100;
+
 	if (b == a)
 		ignoreScriptWord();
 	else
