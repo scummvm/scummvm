@@ -34,7 +34,8 @@ class Input {
 		//! Adjust here to change delays!
 		enum {
 			DELAY_SHORT  =  10,
-			DELAY_NORMAL = 100
+			DELAY_NORMAL = 100,
+			DELAY_SCREEN_BLANKER = 5 * 60 * 1000
 		};
 
 		enum {
@@ -86,6 +87,8 @@ class Input {
 
 		int mouseButton() const { return _mouseButton; }
 		void clearMouseButton() { _mouseButton = 0; }
+
+		uint32 idleTime() const { return _idleTime; }
 
 	private:
 
@@ -154,6 +157,8 @@ class Input {
 
 		//! Set by delay();
 		int _mouseButton;
+
+		uint32 _idleTime;
 
 		//! Command keys for current language
 		const char *_currentCommandKeys;

@@ -2258,6 +2258,9 @@ void Logic::update() {
 			_vm->input()->quickLoadReset();
 			gameLoad(0);
 		}
+		if (_vm->input()->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
+			_vm->display()->blankScreen();
+		}
 	}
 }
 

@@ -37,7 +37,7 @@ Input::Input(Language language, OSystem *system) :
 	_system(system), _fastMode(false), _keyVerb(VERB_NONE), 
 	_cutawayRunning(false), _cutawayQuit(false), _talkQuit(false),
 	_quickSave(false), _quickLoad(false), _debugger(false),
-	_inKey(0), _mouse_x(0), _mouse_y(0), _mouseButton(0) {
+	_inKey(0), _mouse_x(0), _mouse_y(0), _mouseButton(0), _idleTime(0) {
 
 	switch (language) {
 		case ENGLISH:
@@ -75,8 +75,13 @@ void Input::delay(uint amount) {
 	uint32 start = _system->get_msecs();
 	uint32 cur = start;
 
+	if (_idleTime < DELAY_SCREEN_BLANKER) {
+		_idleTime += amount;
+	}
+
 	do {
 		while (_system->poll_event(&event)) {
+			_idleTime = 0;
 			switch (event.event_code) {
 				case OSystem::EVENT_KEYDOWN:
 					debug(1, "event.kbd.keycode = %i (%c)", 

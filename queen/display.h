@@ -31,7 +31,8 @@ namespace Queen {
 enum RenderingBuffer {
 	RB_BACKDROP = 0,
 	RB_PANEL    = 1,
-	RB_SCREEN   = 2
+	RB_SCREEN   = 2,
+	RB_MINI     = 3
 };
 
 enum JoePalette {
@@ -112,6 +113,12 @@ public:
 	void showMouseCursor(bool show);
 
 	void drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col);
+	void drawScreen();
+
+	void blankScreen();
+	void blankScreenEffect1();
+	void blankScreenEffect2();
+	void blankScreenEffect3();
 
 private:
 
@@ -125,7 +132,9 @@ private:
 		SCREEN_W   = 320,
 		SCREEN_H   = 200,
 		PANEL_W    = 320,
-		PANEL_H    =  50
+		PANEL_H    =  50,
+		MINI_W     =  32,
+		MINI_H     =  32
 	};
 
 	TextRenderer _textRenderer;
@@ -137,8 +146,8 @@ private:
 		bool scrollable;
 	} _pal;
 
-	uint8 *_buffer[3];
-	uint16 _bufPitch[3];
+	uint8 *_buffer[4];
+	uint16 _bufPitch[4];
 
 	bool _fullscreen;
 
@@ -146,6 +155,7 @@ private:
 	uint16 _bdWidth, _bdHeight;
 
 	bool _gotTick;
+	int _curBlankingEffect;
 
 	Dynalum _dynalum;
 	OSystem *_system;

@@ -109,12 +109,15 @@ Display::Display(QueenEngine *vm, Language language, OSystem *system)
 	_buffer[RB_BACKDROP] = new uint8[BACKDROP_W * BACKDROP_H];
 	_buffer[RB_PANEL]    = new uint8[PANEL_W * PANEL_H];
 	_buffer[RB_SCREEN]   = new uint8[SCREEN_W * SCREEN_H];
+	_buffer[RB_MINI]     = new uint8[MINI_W * MINI_H];
 	memset(_buffer[RB_BACKDROP], 0, BACKDROP_W * BACKDROP_H);
 	memset(_buffer[RB_PANEL],    0, PANEL_W * PANEL_H);
 	memset(_buffer[RB_SCREEN],   0, SCREEN_W * SCREEN_H);
+	memset(_buffer[RB_MINI],     0, MINI_W * MINI_H);
 	_bufPitch[RB_BACKDROP] = BACKDROP_W;
 	_bufPitch[RB_PANEL]    = PANEL_W;
 	_bufPitch[RB_SCREEN]   = SCREEN_W;
+	_bufPitch[RB_MINI]     = MINI_H;
 
 	_pal.room   = new uint8[ 256 * 3 ];
 	_pal.screen = new uint8[ 256 * 3 ];
@@ -125,6 +128,7 @@ Display::Display(QueenEngine *vm, Language language, OSystem *system)
 	_pal.scrollable = true;
 	
 	_horizontalScroll = 0;
+	_curBlankingEffect = 0;
 }
 
 
@@ -133,6 +137,7 @@ Display::~Display() {
 	delete[] _buffer[RB_BACKDROP];
 	delete[] _buffer[RB_PANEL];
 	delete[] _buffer[RB_SCREEN];
+	delete[] _buffer[RB_MINI];
 
 	delete[] _pal.room;
 	delete[] _pal.screen;
@@ -691,9 +696,7 @@ void Display::update(bool dynalum, int16 dynaX, int16 dynaY) {
 		_pal.dirtyMin = 144;
 		_pal.dirtyMax = 144;
 	}
-	_system->copy_rect(_buffer[RB_SCREEN], _bufPitch[RB_SCREEN], 0, 0, SCREEN_W, SCREEN_H);
-	_system->update_screen();
-	waitForTimer();
+	drawScreen();
 }
 
 
@@ -879,6 +882,111 @@ void Display::drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 col) {
 	}
 }
 
+
+void Display::drawScreen() {
+
+	_system->copy_rect(_buffer[RB_SCREEN], _bufPitch[RB_SCREEN], 0, 0, SCREEN_W, SCREEN_H);
+	_system->update_screen();
+	waitForTimer();
+}
+
+
+
+void Display::blankScreen() {
+
+	typedef void (Display::*BlankerEffect)();
+	static const BlankerEffect effects[] = {
+		&Display::blankScreenEffect1,
+		&Display::blankScreenEffect2,
+		&Display::blankScreenEffect3
+	};
+	(this->*effects[_curBlankingEffect])();
+	_curBlankingEffect = (_curBlankingEffect + 1) % 3;
+}
+
+
+void Display::blankScreenEffect1() {
+
+	while (_vm->input()->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
+		for(int i = 0; i < 2; ++i) {    
+			uint16 x = _vm->randomizer.getRandomNumber(SCREEN_W - MINI_W - 2) + 1;
+			uint16 y = _vm->randomizer.getRandomNumber(SCREEN_H - MINI_H - 2) + 1;
+			uint8 *p = _buffer[RB_SCREEN] + _bufPitch[RB_SCREEN] * y + x;
+			blit(RB_MINI, 0, 0, p, MINI_W, MINI_H, _bufPitch[RB_SCREEN], false, false);
+			if (_vm->randomizer.getRandomNumber(1) & 1) {
+				--x;
+			} else {
+				++x;
+			}
+			if (_vm->randomizer.getRandomNumber(1) & 1) {
+				--y;
+			} else {
+				++y;
+			}
+			blit(RB_SCREEN, x, y, _buffer[RB_MINI], MINI_W, MINI_H, _bufPitch[RB_MINI], false, false);
+			drawScreen();
+		}
+	}
+}
+
+
+void Display::blankScreenEffect2() {
+
+	while (_vm->input()->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
+		uint16 x = _vm->randomizer.getRandomNumber(SCREEN_W - 2);
+		uint16 y = _vm->randomizer.getRandomNumber(SCREEN_H - 2);
+		uint8 c = 0;
+		switch (_vm->randomizer.getRandomNumber(3)) {
+		case 0:
+			c = *(_buffer[RB_SCREEN] + _bufPitch[RB_SCREEN] * y + x);
+			break;
+		case 1:
+			c = *(_buffer[RB_SCREEN] + _bufPitch[RB_SCREEN] * y + x + 1);
+			break;
+		case 2:
+			c = *(_buffer[RB_SCREEN] + _bufPitch[RB_SCREEN] * (y + 1) + x);
+			break;
+		case 3:
+			c = *(_buffer[RB_SCREEN] + _bufPitch[RB_SCREEN] * (y + 1) + x + 1);
+			break;
+		default:
+			break;
+		}
+		uint8 *p = _buffer[RB_SCREEN] + y * _bufPitch[RB_SCREEN] + x;
+		int j = 2;
+		while (j--) {
+			memset(p, c, 2);
+			p += _bufPitch[RB_SCREEN];
+		}
+		drawScreen();
+	}
+}
+
+
+void Display::blankScreenEffect3() {
+
+	uint32 i = 0;
+	while (_vm->input()->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
+		uint16 x = _vm->randomizer.getRandomNumber(SCREEN_W - 2);
+		uint16 y = _vm->randomizer.getRandomNumber(SCREEN_H - 2);
+		uint8 *p = _buffer[RB_SCREEN] + _bufPitch[RB_SCREEN] * y + x;
+		uint8 p0 = *p;
+		uint8 p1 = *(p + 1);
+		uint8 p2 = *(p + _bufPitch[RB_SCREEN]);
+		uint8 p3 = *(p + _bufPitch[RB_SCREEN] + 1);
+		uint8 c = (p0 + p1 + p2 + p3) / 4;
+		int j = 2;
+		while (j--) {
+			memset(p, c, 2);
+			p += _bufPitch[RB_SCREEN];
+		}
+		if (i > 4000000) {
+			memset(_buffer[RB_SCREEN], 0, SCREEN_W * SCREEN_H);
+		}
+		drawScreen();
+		++i;
+	}
+}
 
 
 const uint8 TextRenderer::_font[] = {
