@@ -535,9 +535,11 @@ void OSystem_X11::update_screen() {
 		else
 			XFillRectangle(display, window, black_gc, 0, window_height - current_shake_pos, 
 			               window_width, window_height - new_shake_pos);
+#ifndef USE_XV_SCALING
 		XShmPutImage(display, window, DefaultGC(display, screen), image,
 		             0, 0, scumm_x, scumm_y + new_shake_pos,
 		             320, 200, 0);
+#endif
 		current_shake_pos = new_shake_pos;
 	} else if (need_redraw == true) {
 #ifdef USE_XV_SCALING
