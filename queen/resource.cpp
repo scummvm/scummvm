@@ -122,16 +122,13 @@ int32 Resource::resourceIndex(const char *filename) {
 }
 
 char *Resource::getJAS2Line() {
-	char *startOfLine = _JAS2Ptr + _JAS2Pos;
-	char *pos = strstr(startOfLine, "\r\n");
-	if (pos) {
-		*pos = '\0';
-		pos += 2;
-	} else {
-		error("Couldn't find newline");
-	}
-	_JAS2Pos = (pos - _JAS2Ptr);	
-	return startOfLine;
+        char *startOfLine = _JAS2Ptr + _JAS2Pos;
+        char *curPos = startOfLine;
+        while (*curPos++ != 0xd) ;
+        *(curPos-1) = '\0';     // '\r'
+        *curPos = '\0';         // '\n'
+        _JAS2Pos = (curPos - _JAS2Ptr) + 1;
+        return startOfLine;
 }
 
 uint32 Resource::fileSize(const char *filename) {
