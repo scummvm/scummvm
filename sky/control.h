@@ -39,6 +39,7 @@ class SkyMouse;
 #define MAX_TEXT_LEN 80
 #define PAN_LINE_WIDTH 184
 #define PAN_CHAR_HEIGHT 12
+#define STATUS_WIDTH 146
 #define MPNL_X 60  // Main Panel
 #define MPNL_Y 10
 
@@ -148,6 +149,21 @@ private:
 	uint8 *_oldScreen;
 };
 
+class SkyControlStatus {
+public:
+	SkyControlStatus(SkyText *skyText, OSystem *system, uint8 *scrBuf);
+	~SkyControlStatus(void);
+	void setToText(const char *newText);
+	void setToText(uint16 textNum);
+	void drawToScreen(void);
+private:
+	SkyTextResource *_statusText;
+	dataFileHeader *_textData;
+	SkyText *_skyText;
+	OSystem *_system;
+	uint8 *_screenBuf;
+};
+
 class SkyControl {
 public:
 	SkyControl(SkyScreen *screen, SkyDisk *disk, SkyMouse *mouse, SkyText *text, SkyMusicBase *music, SkyLogic *logic, SkySound *sound, OSystem *system, const char *savePath);
@@ -254,6 +270,8 @@ private:
 	SkyConResource *_upFastButton, *_upSlowButton, *_quitButton, *_restoreButton;
 
 	SkyConResource *_savePanLookList[6], *_restorePanLookList[6];
+
+	SkyControlStatus *_statusBar;
 
 	static char _quitTexts[12][30];
 	static uint8 _crossImg[594];

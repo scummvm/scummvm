@@ -137,6 +137,48 @@ void SkyTextResource::drawToScreen(bool doMask) {
 	_system->copy_rect(_screen + _y * GAME_SCREEN_WIDTH + _x, GAME_SCREEN_WIDTH, _x, _y, cpWidth, cpHeight);
 }
 
+SkyControlStatus::SkyControlStatus(SkyText *skyText, OSystem *system, uint8 *scrBuf) {
+	_skyText = skyText;
+	_system = system;
+	_screenBuf = scrBuf;
+	_textData = NULL;
+	_statusText = new SkyTextResource(NULL, 2, 1, 64, 163, NULL, DO_NOTHING, _system, _screenBuf);
+}
+
+SkyControlStatus::~SkyControlStatus(void) {
+	if (_textData)
+		free(_textData);
+	delete _statusText;
+}
+
+void SkyControlStatus::setToText(const char *newText) {
+	char tmpLine[256];
+	strcpy(tmpLine, newText);
+	if (_textData) {
+		_statusText->flushForRedraw();
+		free(_textData);
+	}
+	displayText_t disText = _skyText->displayText(tmpLine, NULL, true, STATUS_WIDTH, 255);
+	_textData = (dataFileHeader*)disText.textData;
+	_statusText->setSprite(_textData);
+	_statusText->drawToScreen(WITH_MASK);	
+}
+
+void SkyControlStatus::setToText(uint16 textNum) {
+	_skyText->getText(textNum);
+	if (_textData)
+		free(_textData);
+	displayText_t disText = _skyText->displayText(NULL, true, STATUS_WIDTH, 255);
+	_textData = (dataFileHeader*)disText.textData;
+	_statusText->setSprite(_textData);
+	_statusText->drawToScreen(WITH_MASK);
+}
+
+void SkyControlStatus::drawToScreen(void) {
+	_statusText->flushForRedraw();
+	_statusText->drawToScreen(WITH_MASK);
+}
+
 SkyControl::SkyControl(SkyScreen *screen, SkyDisk *disk, SkyMouse *mouse, SkyText *text, SkyMusicBase *music, SkyLogic *logic, SkySound *sound, OSystem *system, const char *savePath) {
 
 	_skyScreen = screen;
@@ -179,6 +221,7 @@ void SkyControl::removePanel(void) {
 	delete _restartPanButton;		delete _fxPanButton;
 	delete _musicPanButton;			delete _bodge;
 	delete _yesNo;					delete _text;
+	delete _statusBar;
 }
 
 void SkyControl::initPanel(void) {
@@ -215,9 +258,9 @@ void SkyControl::initPanel(void) {
 	_dosPanButton     = createResource(      _sprites.button, 3, 0, 58,  59, 93,     QUIT_TO_DOS, MAINPANEL);
 	_restartPanButton = createResource(      _sprites.button, 3, 0, 58,  79, 94,         RESTART, MAINPANEL);
 	if (SkyState::_systemVars.systemFlags & SF_FX_OFF)
-		_fxPanButton  = createResource(      _sprites.button, 3, 0, 58,  99, 86,       TOGGLE_FX, MAINPANEL);
+		_fxPanButton  = createResource(      _sprites.button, 3, 0, 58,  99, 87,       TOGGLE_FX, MAINPANEL);
 	else
-		_fxPanButton  = createResource(      _sprites.button, 3, 2, 58,  99, 87,       TOGGLE_FX, MAINPANEL);
+		_fxPanButton  = createResource(      _sprites.button, 3, 2, 58,  99, 86,       TOGGLE_FX, MAINPANEL);
 
 	if (SkyState::isCDVersion()) { // CD Version: Toggle text/speech
 	  _musicPanButton = createResource(      _sprites.button, 3, 0, 58, 119, 52,     TOGGLE_TEXT, MAINPANEL);
@@ -255,6 +298,8 @@ void SkyControl::initPanel(void) {
 	_restorePanLookList[3] = _savePanLookList[3] = _upFastButton;
 	_restorePanLookList[4] = _savePanLookList[4] = _upSlowButton;
 	_restorePanLookList[5] = _savePanLookList[5] = _quitButton;
+
+	_statusBar = new SkyControlStatus(_skyText, _system, _screenBuf);
 }
 
 void SkyControl::buttonControl(SkyConResource *pButton) {
@@ -343,6 +388,7 @@ void SkyControl::drawMainPanel(void) {
 	_bodge->drawToScreen(WITH_MASK);
 	if (SkyState::isCDVersion())
 		drawTextCross(SkyState::_systemVars.systemFlags & TEXT_FLAG_MASK);
+	_statusBar->drawToScreen();
 }
 
 void SkyControl::restartGame(void) {
@@ -644,10 +690,12 @@ uint16 SkyControl::toggleFx(SkyConResource *pButton) {
 	SkyState::_systemVars.systemFlags ^= SF_FX_OFF;
 	if (SkyState::_systemVars.systemFlags & SF_FX_OFF) {
 		pButton->_curSprite = 0;
-		pButton->_text = 0x7000 + 86;
+		pButton->_text = 0x7000 + 87;
+		_statusBar->setToText(0x7000 + 87);
 	} else {
 		pButton->_curSprite = 2;
-		pButton->_text = 0x7000 + 87;
+		pButton->_text = 0x7000 + 86;
+		_statusBar->setToText(0x7000 + 86);
 	}
 	pButton->drawToScreen(WITH_MASK);
 	buttonControl(pButton);
@@ -661,12 +709,16 @@ uint16 SkyControl::toggleText(void) {
 	SkyState::_systemVars.systemFlags &= ~TEXT_FLAG_MASK;
 
 
-	if (flags == SF_ALLOW_TEXT)
+	if (flags == SF_ALLOW_TEXT) {
 		flags = SF_ALLOW_SPEECH;
-	else if (flags == SF_ALLOW_SPEECH)
+		_statusBar->setToText(0x7000 + 21); // speech only
+	} else if (flags == SF_ALLOW_SPEECH) {
 		flags = SF_ALLOW_SPEECH | SF_ALLOW_TEXT;
-	else
+		_statusBar->setToText(0x7000 + 52); // text and speech
+	} else {
 		flags = SF_ALLOW_TEXT;
+		_statusBar->setToText(0x7000 + 35); // text only
+	}
 
 	SkyState::_systemVars.systemFlags |= flags;
 
