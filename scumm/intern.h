@@ -962,12 +962,12 @@ protected:
 	void spriteInfoSet_zoom(int spriteId, int value);
 	void spriteInfoSet_rotAngle(int spriteId, int value);
 	void spriteInfoSet_flag13(int spriteId, int value);
-	void spriteInfoGet_flagYFlipped(int spriteId, int value);
-	void spriteInfoGet_flagXFlipped(int spriteId, int value);
-	void spriteInfoSet_flagActive(int spriteId, int value);
-	void spriteInfoSet_flag20(int spriteId, int value);
 	void spriteInfoSet_flagYFlipped(int spriteId, int value);
 	void spriteInfoSet_flagXFlipped(int spriteId, int value);
+	void spriteInfoSet_flagActive(int spriteId, int value);
+	void spriteInfoSet_flag20(int spriteId, int value);
+	void spriteInfoSet_flag22(int spriteId, int value);
+	void spriteInfoSet_flag23(int spriteId, int value);
 	void spriteInfoSet_flagHasImage(int spriteId, int value);
 	void spriteInfoSet_delay(int spriteId, int value);
 	void spriteInfoSet_setClassFlags(int spriteId, int value);

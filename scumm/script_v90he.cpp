@@ -1057,10 +1057,10 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
 			switch(args[1]) {
 			case 0:
-				spriteInfoGet_flagXFlipped(spriteId, args[0]);
+				spriteInfoSet_flagXFlipped(spriteId, args[0]);
 				break;
 			case 1:
-				spriteInfoGet_flagYFlipped(spriteId, args[0]);
+				spriteInfoSet_flagYFlipped(spriteId, args[0]);
 				break;
 			case 2:
 				spriteInfoSet_flagActive(spriteId, args[0]);
@@ -1198,7 +1198,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_flagYFlipped(spriteId, args[0]);
+			spriteInfoSet_flag22(spriteId, args[0]);
 		break;
 	case 52: // HE 98+
 		args[0] = pop();
@@ -1253,7 +1253,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			spriteId++;
 
 		for (; spriteId <= _curMaxSpriteId; spriteId++)
-			spriteInfoSet_flagXFlipped(spriteId, args[0]);
+			spriteInfoSet_flag23(spriteId, args[0]);
 		break;
 	case 91:
 		n = getStackList(args, ARRAYSIZE(args));
