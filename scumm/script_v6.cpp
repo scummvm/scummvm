@@ -1167,7 +1167,7 @@ void Scumm_v6::o6_loadRoomWithEgo() {
 
 	_fullRedraw = 1;
 
-	if (x != -1) {
+	if (x != -1 && x != 0x7FFFFFFF) {
 		a->startWalkActor(x, y, -1);
 	}
 }

@@ -157,7 +157,9 @@ public:
 	byte *getActorName();
 	void startWalkActor(int x, int y, int dir);
 	void stopActorMoving();
+protected:
 	void startWalkAnim(int cmd, int angle);
+public:
 	void startAnimActor(int frame);
 
 	void remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold);

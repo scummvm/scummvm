@@ -690,8 +690,6 @@ void Scumm::enqueueText(const byte *text, int x, int y, byte color, byte charset
 }
 
 void Scumm::drawBlastTexts() {
-	// FIXME
-
 	byte *buf;
 	int c;
 	int i;
