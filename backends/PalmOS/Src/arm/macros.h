@@ -18,17 +18,22 @@
 	#define ARM_GETM(member)		member = dataARM.member;
 	#define ARM_GETV(member, var)	var = dataARM.member;
 
-	#define PNO_DATA()		&pno
-	#define ARM_CONTINUE()	} else
-	#define ARM_END()		return; \
-						}
+	#define PNO_DATA()			&pno
+	#define ARM_CONTINUE()		} else
+	#define ARM_END()			return; \
+							}
+	#define ARM_END_RET(type)		return (type)dataARM.armRetVal; \
+								}
 
 	#define ARM_CALL(rsc, data)				ARM(rsc).alignedHeader->userDataP = (UInt32)data; \
 											PceNativeCall(ARM(rsc).pnoDesc.entry, ARM(rsc).alignedHeader);
 
-	#define ARM_CALL_RETURN(rsc, data, var)		ARM(rsc).alignedHeader->userDataP = (UInt32)data; \
-												var = PceNativeCall(ARM(rsc).pnoDesc.entry, ARM(rsc).alignedHeader);
+	#define ARM_CALL_RET(rsc, data)			ARM(rsc).alignedHeader->userDataP = (UInt32)data; \
+											dataARM.armRetVal = PceNativeCall(ARM(rsc).pnoDesc.entry, ARM(rsc).alignedHeader);
 
+	#define ARM_CALL_VALUE(rsc, data, var)			ARM(rsc).alignedHeader->userDataP = (UInt32)data; \
+												var = PceNativeCall(ARM(rsc).pnoDesc.entry, ARM(rsc).alignedHeader);
+	
 #else
 	// no ARM = empty definition
 	#define ARM_START(TYPE)
@@ -44,36 +49,38 @@
 	#define ARM_DATA()
 	#define ARM_CONTINUE()
 	#define ARM_END()
+	#define ARM_END_RET(type)
 
-	#define ARM_CALL(data)
-	#define ARM_CALL_RETURN(data, var)
+	#define ARM_CALL(rsc, data)
+	#define ARM_CALL_RET(rsc, data, var)
+	#define ARM_CALL_VALUE(rsc, data, var)
 
 #endif
+	// New data access
+	#define	GET_DATA(TYPE)		TYPE *dataARM	= (TYPE *)userData68KP;
+	#define	GET_PTR(TYPE, var)	TYPE *var		= (TYPE *)ReadUnaligned32(&dataARM->var);
+	#define GET_32(TYPE, var)	TYPE var		= ReadUnaligned32(&dataARM->var);
+	#define	GET_16(TYPE, var)	TYPE var		= ByteSwap16(dataARM->var);
+	#define	GET_8(TYPE, var)	TYPE var		= dataARM->var;
 
-	// Data access
-	#define  _GETPTR(ptr, base, member, type)	(type)ReadUnaligned32( (byte *)ptr + OffsetOf(base, member) )
-	#define  _SETPTR(base, member, type, var)	type var = _GETPTR(userData68KP, base, member, type);
+	#define	GET_PTRV(TYPE, member, var)	\
+								TYPE *var		= (TYPE *)ReadUnaligned32(&dataARM->member);
 
-	#define  _GET32	 _GETPTR
-	#define  _SET32	 _SETPTR
+	#define GET_XPTR(var, dst, src, TYPE) \
+								dst.var = (TYPE *)ReadUnaligned32(&src->var);
+	
+	#define GET_X32(var, dst, src) \
+								dst.var = ReadUnaligned32(&src->var);
 
-	#define	 _GET16(ptr, base, member, type)	(type)ByteSwap16( ((UInt16 *)((byte *)ptr + OffsetOf(base, member)))[0] )
-	#define  _SET16(base, member, type, var)	type var = _GET16(userData68KP, base, member, type);
+	#define GET_X16(var, dst, src) \
+								dst.var = ByteSwap16(src->var);
 
-	#define  _GET8(ptr, base, member, type)		(type)((byte *)ptr + OffsetOf(base, member))[0]
-	#define  _SET8(base, member, type, var)		type var = _GET8(userData68KP, base, member, type);
+	#define GET_X8(var, dst, src) \
+								dst.var = src->var;
+
+
+
 
 	#define  _MEMBER(base, member)		((byte *)userData68KP + OffsetOf(base, member))
-
-	// convenient macros to ease data access
-	#ifdef MAIN_TYPE 
-	#	define SETPTRV(type, member, var)	_SETPTR(MAIN_TYPE, member, type, var)
-	#	define SETPTR(type, member)			_SETPTR(MAIN_TYPE, member, type, member)
-	#	define SET32(type, member)			_SET32 (MAIN_TYPE, member, type, member)
-	#	define SET16(type, member)			_SET16 (MAIN_TYPE, member, type, member)
-	#	define SET8(type, member)			_SET8  (MAIN_TYPE, member, type, member)
-
 	#	define RETVAL(member)				WriteUnaligned32(_MEMBER(MAIN_TYPE, member), member)
-	#endif
-
 #endif
