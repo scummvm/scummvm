@@ -141,8 +141,8 @@ void Scumm::drawDirtyScreenParts()
 	} else {
 		vs = &virtscr[0];
 
-		blitToScreen(this, vs->screenPtr + _screenStartStrip * 8,
-								 0, vs->topline, 320, vs->height);
+		_system->copy_rect(vs->screenPtr + _screenStartStrip * 8, 320, 
+					0, vs->topline, 320, vs->height);
 
 		for (i = 0; i < 40; i++) {
 			vs->tdirty[i] = (byte)vs->height;
@@ -153,7 +153,7 @@ void Scumm::drawDirtyScreenParts()
 	/* Handle shaking */
 	if (_shakeEnabled) {
 		_shakeFrame = (_shakeFrame + 1) & (NUM_SHAKE_POSITIONS - 1);
-		setShakePos(this, shake_positions[_shakeFrame]);
+		_system->set_shake_pos(shake_positions[_shakeFrame]);
 	}
 }
 
@@ -234,7 +234,9 @@ void Gdi::drawStripToScreen(VirtScreen * vs, int x, int w, int t, int b)
 		b = vs->height;
 
 	ptr = vs->screenPtr + (t * 40 + x) * 8 + _readOffs;
-	blitToScreen(_vm, ptr, x * 8, vs->topline + t, w, b - t);
+	
+	_vm->_system->copy_rect(
+		ptr, 320, x * 8, vs->topline + t, w, b - t);
 }
 
 void blit(byte *dst, byte *src, int w, int h)
@@ -1755,8 +1757,9 @@ void Scumm::unkScreenEffect7(int a)
 		for (i = 0; i < 16; i++)
 			tab_2[i] += tab_1[i];
 
-		updateScreen(this);
-		waitForTimer(this, 30);
+		updatePalette();
+		_system->update_screen();
+		waitForTimer(30);
 	}
 }
 
@@ -1776,7 +1779,7 @@ void Scumm::setShake(int mode)
 {
 	_shakeEnabled = mode != 0;
 	_shakeFrame = 0;
-	setShakePos(this, 0);
+	_system->set_shake_pos(0);
 }
 
 void Gdi::clearUpperMask()
@@ -2204,24 +2207,6 @@ void Scumm::setPalColor(int idx, int r, int g, int b)
 	setDirtyColors(idx, idx);
 }
 
-void Scumm::drawMouse()
-{
-	/* TODO: handle shake here */
-
-	if (_cursorAnimate) {
-		if (!(_cursorAnimateIndex & 0x3))
-			decompressDefaultCursor((_cursorAnimateIndex >> 2) & 3);
-		_cursorAnimateIndex++;
-
-	}
-
-	::drawMouse(this,
-							mouse.x - _cursorHotspotX,
-							mouse.y - _cursorHotspotY,
-							_cursorWidth,
-							_cursorHeight, _grabbedCursor, gdi._cursorActive > 0);
-}
-
 void Scumm::setCursorHotspot2(int x, int y)
 {
 	_cursorHotspotX = x;
@@ -2402,7 +2387,8 @@ void Scumm::grabCursor(byte *ptr, int width, int height)
 		dst += width;
 		ptr += 320;
 	}
-
+	
+	updateCursor();
 }
 
 void Scumm::useIm01Cursor(byte *im, int w, int h)
@@ -2426,6 +2412,21 @@ void Scumm::useIm01Cursor(byte *im, int w, int h)
 			 getResourceAddress(rtBuffer, 5) + vs->xstart, w, h);
 }
 
+void Scumm::updateCursor() {
+	_system->set_mouse_cursor(_grabbedCursor, _cursorWidth, _cursorHeight,
+		_cursorHotspotX, _cursorHotspotY);
+}
+
+void Scumm::animateCursor() {
+	if (_cursorAnimate) {
+		if (!(_cursorAnimateIndex & 0x3))
+			decompressDefaultCursor((_cursorAnimateIndex >> 2) & 3);
+		_cursorAnimateIndex++;
+	}
+
+	updateCursor();
+}
+
 void Scumm::useBompCursor(byte *im, int width, int height)
 {
 	uint size;
@@ -2442,6 +2443,8 @@ void Scumm::useBompCursor(byte *im, int width, int height)
 	_cursorAnimate = 0;
 
 	decompressBomp(_grabbedCursor, im + 10, width, height);
+
+	updateCursor();
 }
 
 static const byte default_cursor_colors[4] = {
@@ -2465,6 +2468,8 @@ void Scumm::decompressDefaultCursor(int idx)
 		_grabbedCursor[16 * 8 + i] = color;
 		_grabbedCursor[16 * i + 8] = color;
 	}
+
+	updateCursor();
 }
 
 
@@ -2614,4 +2619,5 @@ void Scumm::drawBomp(BompDrawData * bd)
 		/* scaling of bomp images not supported yet */
 	}
 
-CHECK_HEAP}
+CHECK_HEAP;
+}

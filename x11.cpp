@@ -434,7 +434,7 @@ void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h)
 #define BAK_HEIGHT 40
 unsigned char old_backup[BAK_WIDTH * BAK_HEIGHT];
 
-void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf,
+void drawMouse(int xdraw, int ydraw, int w, int h, byte *buf,
 							 bool visible)
 {
 	unsigned char *dst, *bak;

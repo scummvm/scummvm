@@ -63,6 +63,7 @@ void ScummDebugger::attach(Scumm *s)
 }
 
 void BoxTest(int num);
+
 bool ScummDebugger::do_command()
 {
 	switch (get_command()) {
@@ -128,7 +129,8 @@ bool ScummDebugger::do_command()
 
 			printf("\nWalk boxes:\n");
 			for (i = 0; i < num; i++) {
-				BoxTest(i);
+				warning("BoxTest currently unimplemented in new graphics code\n");
+				/*BoxTest(i);*/
 				_s->getBoxCoordinates(i, &box);
 				printf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d]\n", i,
 							 box.ul.x, box.ul.y, box.ll.x, box.ll.y,

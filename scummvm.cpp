@@ -321,8 +321,6 @@ int Scumm::scummLoop(int delta)
 			verbMouseOver(checkMouseOver(mouse.x, mouse.y));
 		}
 
-		gdi._cursorActive = _cursorState > 0;
-
 		drawEnqueuedObjects();
 		drawDirtyScreenParts();
 		removeEnqueuedObjects();
@@ -337,6 +335,11 @@ int Scumm::scummLoop(int delta)
 	if (!(++_expire_counter)) {
 		increaseResourceCounter();
 	}
+
+	animateCursor();
+	
+	/* show or hide mouse */
+	_system->show_mouse(_cursorState > 0);
 
 	_vars[VAR_TIMER] = 0;
 	return _vars[VAR_TIMER_NEXT];
@@ -476,7 +479,8 @@ void Scumm::startScene(int room, Actor * a, int objectNr)
 
 	_doEffect = true;
 
-CHECK_HEAP}
+	CHECK_HEAP;
+}
 
 void Scumm::initRoomSubBlocks()
 {
@@ -912,6 +916,8 @@ void Scumm::makeCursorColorTransparent(int a)
 	for (i = 0; i < size; i++)
 		if (_grabbedCursor[i] == (byte)a)
 			_grabbedCursor[i] = 0xFF;
+
+	updateCursor();
 }
 
 void Scumm::setStringVars(int slot)
@@ -983,6 +989,11 @@ int Scumm::numSimpleDirDirections(int dirType)
 	return dirType ? 8 : 4;
 }
 
+const uint16 many_direction_tab[18] = {4, 8, 71, 109, 251, 530, 0, 0, 0, 0, 22, 72, 107, 157, 202, 252, 287, 337};
+const int16 many_direction_tab_2[16] = {0, 90, 180, 270, -1, -1, -1, -1, 0, 45, 90, 135, 180, 225, 270, 315};
+const int bit_table[16] = {1,2,4,8,0x10,0x20,0x40,0x80,0x100,0x200,0x400,0x800,0x1000,0x2000,0x4000,0x8000};
+
+
 /* Convert an angle to a simple direction */
 int Scumm::toSimpleDir(int dirType, int dir)
 {
@@ -1019,7 +1030,7 @@ void NORETURN CDECL error(const char *s, ...)
 	vsprintf(buf, s, va);
 	va_end(va);
 
-	if (g_scumm->_currentScript != 0xFF) {
+	if (g_scumm && g_scumm->_currentScript != 0xFF) {
 		ScriptSlot *ss = &g_scumm->vm.slot[g_scumm->_currentScript];
 		fprintf(stderr, "Error(%d:%d:0x%X): %s!\n",
 						g_scumm->_roomResource,
@@ -1068,15 +1079,134 @@ void checkHeap()
 #endif
 }
 
+ScummDebugger debugger;
+
+void Scumm::waitForTimer(int msec_delay) {
+	OSystem::Event event;
+	uint32 start_time;
+
+	if (_fastMode&2)
+		msec_delay = 0;
+	else if (_fastMode&1)
+		msec_delay = 10;
+
+	start_time = _system->get_msecs();
+
+	for(;;) {
+		while (_system->poll_event(&event)) {
+			switch(event.event_code) {
+			case OSystem::EVENT_KEYDOWN:
+				_keyPressed = event.kbd.ascii;
+
+				if (event.kbd.keycode >= '0' && event.kbd.keycode<='9') {
+					if (event.kbd.flags == OSystem::KBD_SHIFT ||
+							event.kbd.flags == OSystem::KBD_CTRL) {
+						_saveLoadSlot = event.kbd.keycode - '0';
+						sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
+						_saveLoadFlag = (event.kbd.flags == OSystem::KBD_SHIFT) ? 1 : 2;
+						_saveLoadCompatible = false;
+					} else if (event.kbd.flags == OSystem::KBD_ALT|OSystem::KBD_CTRL) {
+						if (!_system->set_param(OSystem::PARAM_HOTSWAP_GFX_MODE, event.kbd.keycode - '1'))
+							warning("Unable to hotswap graphics mode");
+						redrawLines(0, 200);
+						_palDirtyMin = 0;
+						_palDirtyMax = 255;
+						updatePalette();
+					}
+				} else if (event.kbd.flags&OSystem::KBD_CTRL) {
+					if (event.kbd.keycode=='z')
+						_system->quit();
+					else if (event.kbd.keycode=='f')
+						_fastMode ^= 1;
+					else if (event.kbd.keycode=='g')
+						_fastMode ^= 2;
+					else if (event.kbd.keycode=='d')
+						debugger.attach(this);
+					else if (event.kbd.keycode=='s')
+						resourceStats();
+				} else if (event.kbd.flags&OSystem::KBD_ALT) {
+					if (!_system->set_param(OSystem::PARAM_TOGGLE_FULLSCREEN, 0))
+						warning("Full screen failed");
+				}
+				break;
+
+			case OSystem::EVENT_MOUSEMOVE:
+				mouse.x = event.mouse.x;
+				mouse.y = event.mouse.y;
+				_system->set_mouse_pos(event.mouse.x, event.mouse.y);
+				_system->update_screen();
+				break;
+
+			case OSystem::EVENT_LBUTTONDOWN:
+				_leftBtnPressed |= msClicked|msDown;
+				break;
+
+			case OSystem::EVENT_RBUTTONDOWN:
+				_rightBtnPressed |= msClicked|msDown;
+				break;
+
+			case OSystem::EVENT_LBUTTONUP:
+				_leftBtnPressed &= ~msDown;
+				break;
+
+			case OSystem::EVENT_RBUTTONUP:
+				_rightBtnPressed &= ~msDown;
+				break;
+			}
+		}
+
+		if (_system->get_msecs() >= start_time + msec_delay)
+			break;
+		_system->delay_msecs(10);
+	}
+}
+
+
+void Scumm::updatePalette() {
+	if (_palDirtyMax == -1)
+		return;
+	
+	int first = _palDirtyMin;
+	int num = _palDirtyMax - first + 1;
+	int i;
+	byte *data = _currentPalette + first * 3;
+
+	byte palette_colors[1024],*p = palette_colors;
+	
+	for (i = 0; i != num; i++, data += 3, p+=4) {
+		p[0] = data[0];
+		p[1] = data[1];
+		p[2] = data[2];
+		p[3] = 0;
+	}
+	
+	_system->set_palette(palette_colors, first, num);
+
+	_palDirtyMax = -1;
+	_palDirtyMin = 256;
+}
+
 void Scumm::mainRun()
 {
+	int delta = 0;
+	int last_time = _system->get_msecs(); 
+	int new_time;
 
-	delta = 0;
-
-	do {
-		_system->waitTick(delta);
-		delta = scummLoop(delta);
-	} while (1);
+	for(;;) {
+		
+		updatePalette();
+		
+		_system->update_screen();		
+		new_time = _system->get_msecs();
+		waitForTimer(delta * 15 + last_time - new_time);
+		last_time = _system->get_msecs();
+		if (_gui->_active) {
+			_gui->loop(this);
+			delta = 5;
+		} else {
+			delta = scummLoop(delta);
+		}
+	}
 }
 
 void Scumm::launch()
@@ -1088,9 +1218,8 @@ void Scumm::launch()
 	_maxHeapThreshold = 450000;
 	_minHeapThreshold = 400000;
 
-	/* Init graphics and create a primary virtual screen */
+	/* Create a primary virtual screen */
 
-	initGraphics(this, _fullScreen, _scale);
 	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
 	initVirtScreen(0, 0, 200, false, false);
 
@@ -1140,11 +1269,13 @@ void Scumm::launch()
 	runScript(1, 0, 0, &_bootParam);
 
 //  _scummTimer = 0;
-
-
 }
 
-Scumm *Scumm::createFromDetector(GameDetector *detector)
+void Scumm::on_generate_samples(void *s, int16 *samples, int len) {
+	((Scumm*)s)->mixWaves(samples, len);
+}
+
+Scumm *Scumm::createFromDetector(GameDetector *detector, OSystem *syst)
 {
 	Scumm *scumm;
 
@@ -1159,14 +1290,20 @@ Scumm *Scumm::createFromDetector(GameDetector *detector)
 	else
 		scumm = new Scumm_v5;
 
+	scumm->_system = syst;
+
+	/* This initializes SDL */
+	syst->init_size(320,200, OSystem::SOUND_16BIT);
+	syst->set_param(OSystem::PARAM_OPEN_CD, detector->_cdrom);
+
+	syst->set_sound_proc(scumm, on_generate_samples);
+
 	scumm->_fullScreen = detector->_fullScreen;
 	scumm->_debugMode = detector->_debugMode;
 	scumm->_bootParam = detector->_bootParam;
-	scumm->_scale = detector->_scale;
 	scumm->_gameDataPath = detector->_gameDataPath;
 	scumm->_gameTempo = detector->_gameTempo;
 	scumm->_soundEngine = detector->_soundEngine;
-	scumm->_videoMode = detector->_videoMode;
 	scumm->_exe_name = detector->_exe_name;
 	scumm->_gameId = detector->_gameId;
 	scumm->_gameText = detector->_gameText;
@@ -1184,7 +1321,6 @@ Scumm *Scumm::createFromDetector(GameDetector *detector)
 	}
 
 	scumm->delta = 0;
-
 	return scumm;
 }
 

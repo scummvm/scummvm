@@ -941,7 +941,7 @@ void BoxTest(int num) {
 
 void setShakePos(Scumm *s, int shake_pos) {}
 
-void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool visible)
+void drawMouse(int xdraw, int ydraw, int w, int h, byte *buf, bool visible)
 {
 	int x, y;
 	byte *mask, *src, *dst;

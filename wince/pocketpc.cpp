@@ -784,7 +784,7 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor) {
 // Copy/Paste from X11
 // Dirty rects not managed now
 
-void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool visible) {
+void drawMouse(int xdraw, int ydraw, int w, int h, byte *buf, bool visible) {
   unsigned char *dst,*bak;
 
   if ((xdraw >= 320) || ((xdraw + w) <= 0) ||

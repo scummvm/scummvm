@@ -365,3 +365,7 @@ uint32 FORCEINLINE READ_BE_UINT32_UNALIGNED(void *ptr) {
 #ifdef NEED_STRDUP
 char *strdup(const char *s);
 #endif
+
+/* Initialized operator new */
+void * operator new(size_t size);
+

@@ -32,10 +32,8 @@
 #define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
 
-/* Initialized operator new */
-void * operator new(size_t size);
-	
 class GameDetector;
+class Gui;
 class Scumm;
 struct Actor;
 struct ScummDebugger;
@@ -65,9 +63,9 @@ enum {
 	ssRunning = 2
 };
 
-const uint16 many_direction_tab[18] = {4, 8, 71, 109, 251, 530, 0, 0, 0, 0, 22, 72, 107, 157, 202, 252, 287, 337};
-const int16 many_direction_tab_2[16] = {0, 90, 180, 270, -1, -1, -1, -1, 0, 45, 90, 135, 180, 225, 270, 315};
-const int bit_table[16] = {1,2,4,8,0x10,0x20,0x40,0x80,0x100,0x200,0x400,0x800,0x1000,0x2000,0x4000,0x8000};
+extern const uint16 many_direction_tab[18];
+extern const int16 many_direction_tab_2[16];
+extern const int bit_table[16];
 
 struct ScummPoint {
 	int x,y;
@@ -556,6 +554,16 @@ enum MouseButtonStatus {
 
 class Scumm {
 public:
+	/* Put often used variables at the top.
+	 * That results in a shorter form of the opcode
+	 * on some architectures. */
+	OSystem *_system;
+	void *_soundEngine;
+	Gui *_gui;
+	uint32 _features;
+	VerbSlot *_verbs;
+	ObjectData *_objs;
+	ScummDebugger *_debugger;
 
 	struct {
 		byte mode[rtNumTypes];
@@ -589,12 +597,9 @@ public:
 	Scumm(); // constructor
 
 	/* video buffer */
-
 	byte _videoBuffer[328*200]; // main video buffer
 
 	/* system call object */
-
-	OSystem *_system;
 
 	/* Scumm main loop */
 
@@ -634,20 +639,14 @@ public:
 	uint getRandomNumberRng(uint min, uint max);
 
 	/* Core variable definitions */
-	uint32 _features;
 	byte _gameId;
 	const char *_gameText;
 	char *_gameDataPath;
 
 	/* Core class/array definitions */
-	void *_soundEngine;
-	void *_gui;
 	Gdi gdi;
 
 	Actor actor[MAX_ACTORS];
-	VerbSlot *_verbs;
-	ObjectData *_objs;
-	ScummDebugger *_debugger;
 	
 	uint16 *_inventory;
 	byte *_arrays;
@@ -1120,7 +1119,6 @@ public:
 	void drawObject(int obj, int arg);	
 	void drawRoomObjects(int arg);
 	void drawRoomObject(int i, int arg);
-	void drawMouse();
 	void drawBox(int x, int y, int x2, int y2, int color);
 	void drawBomp(BompDrawData *bd);
 
@@ -1186,11 +1184,9 @@ public:
 	void unkScreenEffect7(int a);
 
 	void decompressBomp(byte *dst, byte *src, int w, int h);
-	int  _videoMode;
 	uint _shakeFrame;
 	int _screenStartStrip, _screenEndStrip;
 	int _screenLeft, _screenTop;
-	unsigned int _scale;	// Resolution multiplier (2 is default)	
 	uint16 _enqueue_b,_enqueue_c,_enqueue_d,_enqueue_e;
 	int _enqueuePos; 
 	EnqueuedObject _enqueuedObjects[32];
@@ -1674,11 +1670,17 @@ public:
 
 	void launch();
 
-	static Scumm *createFromDetector(GameDetector *detector);
+	static Scumm *createFromDetector(GameDetector *detector, OSystem *syst);
 	void go();
 
 	void setupGUIColors();
 	byte getDefaultGUIColor(int color);
+	void waitForTimer(int msec_delay);
+
+	void updateCursor();
+	void animateCursor();
+	void updatePalette();
+	static void on_generate_samples(void *s, int16 *samples, int len);
 };
 
 class Scumm_v3 : public Scumm
@@ -1790,8 +1792,6 @@ struct Serializer {
 
 	bool isSaving() { return _saveOrLoad; }
 
-
-
 	bool checkEOFLoadStream();
 
 };
@@ -1801,7 +1801,7 @@ extern const byte default_scale_table[768];
 
 void outputdisplay2(Scumm *s, int disp);
 extern const byte revBitMask[8];
-void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h);
+//void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h);
 
 #if defined(__GNUC__)
 void CDECL error(const char *s, ...) NORETURN;
@@ -1812,19 +1812,19 @@ void CDECL NORETURN error(const char *s, ...);
 void CDECL warning(const char *s, ...);
 void CDECL debug(int level, const char *s, ...);
 void checkHeap();
-void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor = 2);
-void updateScreen(Scumm *s);
-void drawMouse(Scumm *s, int x, int y, int color, byte *mask, bool visible);
-void drawMouse(Scumm *s, int x, int y, int w, int h, byte *buf, bool visible);
+//void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor = 2);
+//void updateScreen(Scumm *s);
+//void drawMouse(int x, int y, int color, byte *mask, bool visible);
+//void drawMouse(int x, int y, int w, int h, byte *buf, bool visible);
 void blit(byte *dst, byte *src, int w, int h);
 byte *findResource(uint32 tag, byte *searchin, int index);
 byte *findResourceSmall(uint32 tag, byte *searchin, int index);
 byte *findResource(uint32 tag, byte *searchin);
 byte *findResourceSmall(uint32 tag, byte *searchin);
-void playSfxSound(void *sound, uint32 size, uint rate);
-bool isSfxFinished();
-void waitForTimer(Scumm *s, int msec_delay);
-void setShakePos(Scumm *s, int shake_pos);
+//void playSfxSound(void *sound, uint32 size, uint rate);
+//bool isSfxFinished();
+//void waitForTimer(Scumm *s, int msec_delay);
+//void setShakePos(Scumm *s, int shake_pos);
 void setWindowName(Scumm *s);
 uint16 newTag2Old(uint32 oldTag);
-void cd_playtrack(int track, int offset, int delay);
+//void cd_playtrack(int track, int offset, int delay);

@@ -113,7 +113,7 @@ MidiChannelAdl *AdlibSoundDriver::allocate_midichan(byte pri)
 	return best;
 }
 
-void AdlibSoundDriver::init(SoundEngine *eng)
+void AdlibSoundDriver::init(SoundEngine *eng, OSystem *syst)
 {
 	int i;
 	MidiChannelAdl *mc;

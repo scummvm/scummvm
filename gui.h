@@ -133,7 +133,8 @@ struct GuiWidget {
 
 #define SAVEGAME_NAME_LEN 32
 
-struct Gui {
+class Gui {
+public:
 	Scumm *_s;
 	const GuiWidget *_widgets[4];
 	int _return_to;
@@ -143,6 +144,7 @@ struct Gui {
 	byte _bgcolor;
 	byte _textcolor;
 	byte _textcolorhi;
+	bool _old_cursor_mode;
 	int _parentX, _parentY;
 	byte _active;
 	byte _clickTimer;

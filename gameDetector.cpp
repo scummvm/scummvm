@@ -38,13 +38,12 @@ static const char USAGE_STRING[] =
 	"\tn       - no subtitles for speech\n"
 	"\tb<num>  - start in room <num>\n"
 	"\tt<num>  - set music tempo. Suggested: 1F0000\n"
-	"\ts<num>  - set scale factor to <num> (1, 2, or 3 - 2 by default)\n"
 	"\tp<path> - look for game in <path>\n"
 	"\tm<num>  - set music volume to <num> (0-100)\n"
 	"\te<num>  - set music engine. see readme.txt for details\n"
 	"\tr       - emulate roland mt32 instruments\n"
 	"\tf       - fullscreen mode\n"
-	"\tg       - graphics mode. 1 for 2xSai anti-aliasing\n"
+	"\tg<mode> - graphics mode. normal,2x,3x,2xsai,super2xsai,supereagle\n"
 	"\ta       - load autosave game (for recovering from crashes)\n"
 ;
 
@@ -85,16 +84,6 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 				case 'n':
 					_noSubtitles = true;
 					break;
-				case 's':
-					if (*(s + 1) == '\0')
-						goto ShowHelpAndExit;
-					_scale = atoi(s + 1);
-					if (_scale == 0 || _scale > 3) {
-						// bad scale - only 1, 2, 3 work for now
-						printf("Invalid scale '%s' - valid values are 1, 2, 3\n", s + 1);
-						exit(1);
-					}
-					goto NextArg;
 				case 'v':
 					printf("ScummVM " SCUMMVM_VERSION "\nBuilt on " __DATE__ " "
 								 __TIME__ "\n");
@@ -133,12 +122,13 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 						goto ShowHelpAndExit;
 					_midi_driver = atoi(s + 1);
 					goto NextArg;
-				case 'g':
-					if (*(s + 1) == '\0')
-						goto ShowHelpAndExit;
-					_videoMode = atoi(s + 1);
+				case 'g': {
+						int gfx_mode = parseGraphicsMode(s+1);
+						if (gfx_mode == -1)
+							goto ShowHelpAndExit;
+						_gfx_mode = gfx_mode;
+					}
 					goto NextArg;
-
 				case 'c':
 					if (*(s + 1) == '\0')
 						goto ShowHelpAndExit;
@@ -167,6 +157,31 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 	sprintf(_gameDataPath, ":%s:", _exe_name);
 #endif
 
+}
+
+int GameDetector::parseGraphicsMode(const char *s) {
+	struct GraphicsModes {
+		const char *name;
+		int id;
+	};
+
+	const struct GraphicsModes gfx_modes[] = {
+		{"normal",GFX_NORMAL},
+		{"2x",GFX_DOUBLESIZE},
+		{"3x",GFX_TRIPLESIZE},
+		{"2xsai",GFX_2XSAI},
+		{"super2xsai",GFX_SUPER2XSAI},
+		{"supereagle",GFX_SUPEREAGLE},
+	};
+
+	const GraphicsModes *gm = gfx_modes;
+	int i;
+	for(i=0; i!=ARRAYSIZE(gfx_modes); i++,gm++) {
+		if (!scumm_stricmp(gm->name, s))
+			return gm->id;
+	}
+
+	return -1;
 }
 
 struct VersionSettings {
@@ -237,7 +252,7 @@ static const VersionSettings version_settings[] = {
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_AFTER_V7},
 
 	/* Simon the Sorcerer 1 & 2 (not SCUMM games) */
-	{"simon1dos", "Simon the Sorcerer 1 for DOS", GID_SIMON_FIRST+1, 99, 99, 99, 0},
+	{"simon1dos", "Simon the Sorcerer 1 for DOS", GID_SIMON_FIRST+0, 99, 99, 99, 0},
 	{"simon1win", "Simon the Sorcerer 1 for Windows", GID_SIMON_FIRST+2, 99, 99, 99, 0},
 	{"simon2win", "Simon the Sorcerer 2 for Windows", GID_SIMON_FIRST+3, 99, 99, 99, 0},
 	
@@ -285,11 +300,11 @@ int GameDetector::detectMain(int argc, char **argv)
 	_debugMode = 0;								// off by default...
 
 	_noSubtitles = 0;							// use by default - should this depend on soundtrack?        
-	_scale = 2;										// double size by default
+
+	_gfx_mode = GFX_DOUBLESIZE;
 
 	_gameDataPath = NULL;
 	_gameTempo = 0;
-	_videoMode = 0;
 	_soundCardType = 3;
 
 #ifdef WIN32

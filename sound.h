@@ -15,53 +15,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * Change Log:
- * $Log$
- * Revision 1.13  2002/04/07 18:46:50  mutle
- * Changed the name of OffsetTable to MP3OffsetTable, as OffsetTable is already defined in the Apple Headers
- *
- * Revision 1.12  2002/04/05 04:35:41  ender
- * Fix mp3_cd support
- *
- * Revision 1.11  2002/04/05 04:24:39  ender
- * Fix last BOOL
- *
- * Revision 1.10  2002/04/04 22:47:03  arisme
- * MP3 cd music patch - still WIP, VBR doesn't work, compress the audio track X to MP3 CBR and name them trackX.mp3 in the game directory - only tested with Loom
- *
- * Revision 1.9  2002/03/21 16:12:02  ender
- * Move some box stuff from scumm.h to new boxes.h
- * Also move some sound-related items from scumm.h to sound.h
- *
- * Revision 1.8  2002/03/16 18:58:51  ender
- * MorphOS port (sdl version) + endian fixes for big endian machines.
- *
- * Revision 1.7  2002/03/14 08:20:38  ender
- * Fix compile error when using USE_ADLIB
- *
- * Revision 1.6  2002/03/14 08:04:21  ender
- * Rewire the MIDI subsystem to use drivers selecting from the commandline.
- * No -DTIMIDITY, etc! Yippie!. Also updated readme.
- *
- * Revision 1.5  2002/03/14 06:06:49  ender
- * Added some new midi drivers - QuickTime Music and RawMidi.
- * -DUSE_RAWMIDI and -DUSE_QTMUSIC respectivly.
- *
- * I assume these will compile - if not file a bug/patch. Also added a "-r" commandline parameter to turn on MT32 emulation... the patch conversion set isn't quite right, still..
- *
- * Revision 1.4  2002/03/05 23:37:31  ender
- * Adding music volume control.
- *
- * Revision 1.3  2001/12/01 17:25:36  strigeus
- * fixed to compile on unix
- *
- * Revision 1.2  2001/12/01 17:06:13  strigeus
- * adlib sound support, use USE_ADLIB
- *
- * Revision 1.1  2001/11/14 18:37:38  strigeus
- * music support,
- * fixed timing bugs
- *
  */
  
  #ifndef SOUND_H
@@ -471,7 +424,7 @@ private:
 
 public:
 	void uninit();
-	void init(SoundEngine *eng);
+	void init(SoundEngine *eng, OSystem *syst);
 	void update_pris() { }
 	void generate_samples(int16 *buf, int len);
 	void on_timer();
@@ -485,7 +438,6 @@ public:
 	int part_update_active(Part *part,uint16 *active);
 	void adjust_priorities() {}
 	void midiSetDriver(int devicetype) {;}
-	bool wave_based() { return true; }	
 };
 
 struct MidiDriver {
@@ -513,6 +465,8 @@ struct MidiDriver {
 
 struct MidiSoundDriver : SoundDriver {	
 	SoundEngine *_se;
+	OSystem *_system;
+
 	MidiChannelGM _midi_channels[9];
 
 	int16 _midi_pitchbend_last[16];
@@ -540,7 +494,7 @@ struct MidiSoundDriver : SoundDriver {
 
 public:
 	void uninit();
-	void init(SoundEngine *eng);
+	void init(SoundEngine *eng, OSystem *os);
 	void update_pris();
 	void part_off(Part *part);
 	int part_update_active(Part *part,uint16 *active);
@@ -554,7 +508,8 @@ public:
 	void part_key_off(Part *part, byte note);
 	void part_changed(Part *part,byte what);
 	void midiSetDriver(int devicetype);
-	bool wave_based() { return false; }
+
+	static int midi_driver_thread(void *param);
 };
 
 struct SoundEngine {

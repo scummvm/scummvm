@@ -152,6 +152,26 @@ SOURCE=.\v3\resource_v3.cpp
 SOURCE=.\v4\resource_v4.cpp
 # End Source File
 # End Group
+# Begin Group "simon"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\simon\midi.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\simon\simon.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\simon\simon.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\simon\simonsys.cpp
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\2xsai.cpp
@@ -239,6 +259,10 @@ SOURCE=.\init.cpp
 # Begin Source File
 
 SOURCE=.\insane.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\main.cpp
 # End Source File
 # Begin Source File
 
@@ -337,21 +361,10 @@ SOURCE=.\script_v2.cpp
 # Begin Source File
 
 SOURCE=.\scummvm.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-# ADD CPP /Gd
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
-SOURCE=.\sdl.cpp
+SOURCE=.\sdl_2.cpp
 # End Source File
 # Begin Source File
 

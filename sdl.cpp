@@ -1,25 +1,3 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001/2002 The ScummVM project
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- * $Header$
- *
- */
-
 #define NEED_SDL_HEADERS
 
 #include "stdafx.h"
@@ -30,28 +8,142 @@
 
 #include "cdmusic.h"
 #include "mp3_cd.h"
+#include <SDL.h>
 
-static unsigned int scale;
 
-/* FIXME: Global variable names should be prepended with g_
- * Only member variables should have a _ in front of the name. */
 
-Scumm *g_scumm;
-ScummDebugger debugger;
-Gui gui;
-OSystem _system;
-GameDetector detector;
+class OSystem_SDL : public OSystem {
+public:
+	// Set colors of the palette
+	void set_palette(const byte *colors, uint start, uint num);
 
-SoundEngine sound;
-SOUND_DRIVER_TYPE snd_driv;
+	// Set the size of the video bitmap.
+	// Typically, 320x200
+	void init_size(uint w, uint h, byte sound);
 
-static SDL_Surface *screen;
-static SDL_CD *cdrom;
+	// Draw a bitmap to screen.
+	// The screen will not be updated to reflect the new bitmap
+	void copy_rect(const byte *buf, int pitch, int x, int y, int w, int h);
 
-/* For 2xSAI */
-static SDL_Surface *sdl_hwscreen;
-static SDL_Surface *sdl_tmpscreen;
-int Init_2xSaI(uint32 BitFormat);
+	// Update the dirty areas of the screen
+	void update_screen();
+
+	// Either show or hide the mouse cursor
+	bool show_mouse(bool visible);
+	
+	// Set the position of the mouse cursor
+	void set_mouse_pos(int x, int y);
+	
+	// Set the bitmap that's used when drawing the cursor.
+	void set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y);
+	
+	// Shaking is used in SCUMM. Set current shake position.
+	void set_shake_pos(int shake_pos);
+		
+	// Get the number of milliseconds since the program was started.
+	uint32 get_msecs();
+	
+	// Delay for a specified amount of milliseconds
+	void delay_msecs(uint msecs);
+	
+	// Create a thread
+	void *create_thread(ThreadProc *proc, void *param);
+	
+	// Get the next event.
+	// Returns true if an event was retrieved.	
+	bool poll_event(Event *event);
+	
+	// Set function that generates samples 
+	void set_sound_proc(void *param, SoundProc *proc);
+		
+	// Quit
+	void quit();
+
+	// Set a parameter
+	uint32 set_param(int param, uint32 value);
+
+	static OSystem *create(int gfx_driver, bool full_screen);
+
+private:
+	typedef void TwoXSaiProc(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
+								uint8 *dstPtr, uint32 dstPitch, int width, int height);
+
+	SDL_Surface *sdl_screen;
+	SDL_Surface *sdl_hwscreen;
+	SDL_Surface *sdl_tmpscreen;
+	SDL_CD *cdrom;
+
+	enum {
+		DF_FORCE_FULL_ON_PALETTE = 1,
+		DF_WANT_RECT_OPTIM = 2,
+		DF_2xSAI = 4,
+		DF_SEPARATE_HWSCREEN = 8,
+
+	};
+
+	int _driver;
+	bool _full_screen;
+	bool _mouse_visible;
+	bool _mouse_drawn;
+	uint32 _driver_flags;
+
+	byte _internal_scaling;
+
+	bool force_full; //Force full redraw on next update_screen
+	bool cksum_valid;
+
+	enum {
+		NUM_DIRTY_RECT = 100,
+		SCREEN_WIDTH = 320,
+		SCREEN_HEIGHT = 200,
+		CKSUM_NUM = (SCREEN_WIDTH*SCREEN_HEIGHT/(8*8)),
+
+		MAX_MOUSE_W = 40,
+		MAX_MOUSE_H = 40,
+		MAX_SCALING = 3,
+
+		TMP_SCREEN_OFFS = 320*2 + 8,
+	};
+
+	SDL_Rect *dirty_rect_list;
+	int num_dirty_rects;
+	uint32 *dirty_checksums;
+
+	int scaling;
+
+	SoundProc *_sound_proc;
+	void *_sound_param;
+
+	struct MousePos {
+		int16 x,y,w,h;
+	};
+
+	byte *_ms_buf;
+	byte *_ms_backup;
+	MousePos _ms_cur;
+	MousePos _ms_old;
+	int16 _ms_hotspot_x;
+	int16 _ms_hotspot_y;
+
+	int _current_shake_pos;
+
+	TwoXSaiProc *_sai_func;
+
+	void copy_rect_fullscreen(const byte *buf);
+	void mk_checksums(const byte *buf);
+
+	static void fill_sound(void *userdata, Uint8 * stream, int len);
+	
+	void add_dirty_rect(int x, int y, int w, int h);
+
+	void draw_mouse();
+	void undraw_mouse();
+
+	void load_gfx_mode();
+	void unload_gfx_mode();
+};
+
+int Init_2xSaI (uint32 BitFormat);
 void _2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr, uint8 *dstPtr,
 						uint32 dstPitch, int width, int height);
 void Super2xSaI(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
@@ -60,35 +152,477 @@ void SuperEagle(uint8 *srcPtr, uint32 srcPitch, uint8 *deltaPtr,
 								uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
 
-static int current_shake_pos;
-
-void resetCursor(void)
-{
+void atexit_proc() {
 	SDL_ShowCursor(SDL_ENABLE);
+	SDL_Quit();
 }
 
-void updateScreen(Scumm *s);
+OSystem *OSystem_SDL::create(int gfx_driver, bool full_screen) {
+	OSystem_SDL *syst = new OSystem_SDL();
+	syst->_driver = gfx_driver;
+	syst->_full_screen = full_screen;
 
-void updatePalette(Scumm *s)
-{
-	SDL_Color colors[256];
-	int first = s->_palDirtyMin;
-	int num = s->_palDirtyMax - first + 1;
-	int i;
-	byte *data = s->_currentPalette;
-
-	data += first * 3;
-	for (i = 0; i < num; i++, data += 3) {
-		colors[i].r = data[0];
-		colors[i].g = data[1];
-		colors[i].b = data[2];
-		colors[i].unused = 0;
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) ==-1) {
+		error("Could not initialize SDL: %s.\n", SDL_GetError());
 	}
 
-	SDL_SetColors(screen, colors, first, num);
+	SDL_ShowCursor(SDL_DISABLE);
 
-	s->_palDirtyMax = -1;
-	s->_palDirtyMin = 0x3E8;
+	/* Clean up on exit */
+ 	atexit(atexit_proc);
+
+	return syst;
+}
+
+OSystem *OSystem_SDL_create(int gfx_driver, bool full_screen) {
+	return OSystem_SDL::create(gfx_driver, full_screen);
+}
+
+void OSystem_SDL::set_palette(const byte *colors, uint start, uint num) {
+	SDL_Color colbuf[256];
+	const byte *b = colors;
+	uint i;
+	for(i=0;i!=num;i++) {
+		colbuf[i].r = b[0];
+		colbuf[i].g = b[1];
+		colbuf[i].b = b[2];
+		b += 4;
+	}
+
+	if (_driver_flags & DF_FORCE_FULL_ON_PALETTE)
+		force_full = true;
+
+	SDL_SetColors(sdl_screen, colbuf, start, num);
+}
+
+void OSystem_SDL::fill_sound(void *userdata, Uint8 * stream, int len) {
+	OSystem_SDL *os = (OSystem_SDL*)userdata;
+	if (os->_sound_proc)
+		os->_sound_proc(os->_sound_param, (int16*)stream, len>>1);
+	else
+		memset(stream, 0x0, len);
+}
+
+void OSystem_SDL::load_gfx_mode() {
+	force_full = true;
+	scaling = 1;
+	_internal_scaling = 1;
+	_driver_flags = 0;
+
+	switch(_driver) {
+	case GFX_2XSAI:
+		_sai_func = _2xSaI;
+		goto def_2xsai_drv;
+	case GFX_SUPER2XSAI:
+		_sai_func = Super2xSaI;
+		goto def_2xsai_drv;
+	case GFX_SUPEREAGLE:
+		_sai_func = SuperEagle;
+		def_2xsai_drv:;
+
+		_driver_flags = DF_FORCE_FULL_ON_PALETTE | DF_WANT_RECT_OPTIM | DF_2xSAI | DF_SEPARATE_HWSCREEN;
+
+		Init_2xSaI(565);
+		sdl_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
+		if (sdl_screen == NULL)
+			error("SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0) failed");
+
+		sdl_hwscreen = SDL_SetVideoMode(640, 400, 16, SDL_SWSURFACE);
+		if (sdl_hwscreen == NULL)
+			error("sdl_hwscreen failed");
+
+		{
+			/* Need some extra bytes around when using 2XSAI */
+			uint16 *tmp_screen = (uint16*)calloc(320*204 + 16,sizeof(uint16));
+			sdl_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen + TMP_SCREEN_OFFS, 320, 200, 16,
+				320*2, 0,0,0,0);
+			if (sdl_tmpscreen == NULL)
+				error("sdl_tmpscreen failed");
+		}
+
+		dirty_checksums = (uint32*)calloc(CKSUM_NUM*2, sizeof(uint32));
+		scaling = 2;
+		break;
+
+	case GFX_DOUBLESIZE:
+		scaling = 2;
+		_internal_scaling = 2;
+		
+		sdl_hwscreen = sdl_screen = SDL_SetVideoMode(640, 400, 8, SDL_SWSURFACE);
+		if (sdl_screen == NULL)
+			error("sdl_screen failed");
+		break;
+
+	case GFX_TRIPLESIZE:
+		scaling = 3;
+		_internal_scaling = 3;
+		sdl_hwscreen = sdl_screen = SDL_SetVideoMode(960, 600, 8, SDL_SWSURFACE);
+		if (sdl_screen == NULL)
+			error("sdl_screen failed");
+		break;
+
+
+	case GFX_NORMAL:
+		sdl_hwscreen = sdl_screen = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE);
+		if (sdl_screen == NULL)
+			error("sdl_screen failed");
+		break;
+	}
+}
+
+void OSystem_SDL::unload_gfx_mode() {
+	SDL_Surface *surf;
+
+	surf=sdl_screen; sdl_screen=NULL; SDL_FreeSurface(surf);
+
+	if (_driver_flags & DF_SEPARATE_HWSCREEN) {
+		surf=sdl_hwscreen; sdl_hwscreen=NULL; SDL_FreeSurface(surf);
+	}
+
+	surf = sdl_tmpscreen; sdl_tmpscreen=NULL;
+	if(surf) { 
+		free((uint16*)surf->pixels - (int)TMP_SCREEN_OFFS);
+		SDL_FreeSurface(surf);
+	}
+}
+
+void OSystem_SDL::init_size(uint w, uint h, byte sound) {
+	SDL_AudioSpec desired;
+
+	if (w != SCREEN_WIDTH && h != SCREEN_HEIGHT)
+		error("320x200 is the only game resolution supported");
+
+	/* init sound */
+	if (sound != SOUND_NONE) {
+		desired.freq = SAMPLES_PER_SEC;
+		desired.format = sound==SOUND_8BIT ? AUDIO_U8 : AUDIO_S16SYS;
+		desired.channels = 1;
+		desired.samples = 2048;
+		desired.callback = fill_sound;
+		desired.userdata = this;
+		SDL_OpenAudio(&desired, NULL);
+		SDL_PauseAudio(0);
+	}
+
+	load_gfx_mode();
+
+	dirty_rect_list = (SDL_Rect*)calloc(NUM_DIRTY_RECT, sizeof(SDL_Rect));
+
+	_ms_backup = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING);
+}
+
+void OSystem_SDL::copy_rect(const byte *buf, int pitch, int x, int y, int w, int h) {
+	if (sdl_screen == NULL)
+		return;
+
+	if (pitch == SCREEN_WIDTH && x==0 && y==0 && w==SCREEN_WIDTH && h==SCREEN_HEIGHT && _driver_flags&DF_WANT_RECT_OPTIM) {
+		/* Special, optimized case for full screen updates.
+		 * It tries to determine what areas were actually changed,
+		 * and just updates those, on the actual display. */
+		if (buf)
+			copy_rect_fullscreen(buf);
+		return;
+	}
+
+	/* Clip the coordinates */
+	if (x < 0) { w+=x; buf-=x; x = 0; }
+	if (y < 0) { h+=y; buf-=y*pitch; y = 0; }
+	if (w >= SCREEN_WIDTH-x) { w = SCREEN_WIDTH - x; }
+	if (h >= SCREEN_HEIGHT-y) { h = SCREEN_HEIGHT - y; }
+		
+	if (w<=0 || h<=0)
+		return;
+
+	/* FIXME: undraw mouse only if the draw rect intersects with the mouse rect */
+	if (_mouse_drawn)
+		undraw_mouse();
+		
+	cksum_valid = false;
+
+	add_dirty_rect(x, y, w, h);
+
+	if (SDL_LockSurface(sdl_screen) == -1)
+		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
+
+	byte *dst;
+
+	switch(_internal_scaling) {
+	case 1:
+		dst = (byte *)sdl_screen->pixels + y * 320 + x;
+		do {
+			memcpy(dst, buf, w);
+			dst += 320;
+			buf += pitch;
+		} while (--h);
+		break;
+
+	case 2:
+		dst = (byte *)sdl_screen->pixels + y * 640 * 2 + x * 2;
+		do {
+			int i = 0;
+			do {
+				dst[i * 2] = dst[i * 2 + 1] = buf[i];
+			} while (++i != w);
+			memcpy(dst + 640, dst, w * 2);
+			dst += 640 * 2;
+			buf += pitch;
+		} while (--h);
+		break;
+
+	case 3:
+		dst = (byte *)sdl_screen->pixels + y * 960 * 3 + x * 3;
+		do {
+			int i = 0;
+			do {
+				dst[i * 3] = dst[i * 3 + 1] = dst[i * 3 + 2] = buf[i];
+			} while (++i != w);
+			memcpy(dst + 960, dst, w * 3);
+			memcpy(dst + 960 + 960, dst, w * 3);
+			dst += 960 * 3;
+			buf += pitch;
+		} while (--h);
+		break;
+	}	
+
+	SDL_UnlockSurface(sdl_screen);
+}
+
+
+void OSystem_SDL::add_dirty_rect(int x, int y, int w, int h) {
+	if (force_full)
+		return;
+
+	if (num_dirty_rects == NUM_DIRTY_RECT)
+		force_full = true;
+	else {
+		SDL_Rect *r = &dirty_rect_list[num_dirty_rects++];
+		
+		/* clip */
+		if (x<0) { w+=x; x=0; }
+		if (y<0) { h+=y; y=0; }
+		if (w>=SCREEN_WIDTH-x) { w=SCREEN_WIDTH-x; }
+		if (h>=SCREEN_HEIGHT-y) { h=SCREEN_HEIGHT-y; }
+	
+		if (_internal_scaling != 1) {
+			x *= _internal_scaling;
+			y *= _internal_scaling;
+			w *= _internal_scaling;
+			h *= _internal_scaling;
+		}
+
+		r->x = x;
+		r->y = y;
+		r->w = w;
+		r->h = h;
+	}
+}
+
+#define ROL(a,n) a = (a<<(n)) | (a>>(32-(n)))
+#define DOLINE(x) a ^= ((uint32*)buf)[0+(x)*(SCREEN_WIDTH/4)]; b ^= ((uint32*)buf)[1+(x)*(SCREEN_WIDTH/4)]
+void OSystem_SDL::mk_checksums(const byte *buf) {
+	uint32 *sums = dirty_checksums;
+	uint x,y;
+
+	/* the 8x8 blocks in buf are enumerated starting in the top left corner and
+	 * reading each line at a time from left to right */
+	for(y=0; y!=SCREEN_HEIGHT/8; y++,buf+=SCREEN_WIDTH*(8-1))
+		for(x=0; x!=SCREEN_WIDTH/8; x++,buf+=8) {
+			uint32 a = x;
+			uint32 b = y;
+
+			DOLINE(0); ROL(a,13); ROL(b,11);
+			DOLINE(2); ROL(a,13); ROL(b,11);
+			DOLINE(4); ROL(a,13); ROL(b,11);
+			DOLINE(6); ROL(a,13); ROL(b,11);
+
+			a*=0xDEADBEEF;
+			b*=0xBAADF00D;
+
+			DOLINE(1); ROL(a,13); ROL(b,11);
+			DOLINE(3); ROL(a,13); ROL(b,11);
+			DOLINE(5); ROL(a,13); ROL(b,11);
+			DOLINE(7); ROL(a,13); ROL(b,11);
+
+			/* output the checksum for this block */
+			*sums++=a+b;
+		}
+}
+#undef DOLINE
+#undef ROL
+
+
+void OSystem_SDL::copy_rect_fullscreen(const byte *buf) {
+	if (_mouse_drawn)
+		undraw_mouse();
+
+	/* generate a table of the checksums */
+	mk_checksums(buf);
+
+	if (!cksum_valid) {
+		force_full = true;
+		cksum_valid = true;
+	}
+
+	/* go through the checksum list, compare it with the previous checksums,
+		 and add all dirty rectangles to a list. try to combine small rectangles
+		 into bigger ones in a simple way */
+	if (!force_full) {
+		uint x,y,w;
+		uint32 *ck = dirty_checksums;
+		SDL_Rect *dr = dirty_rect_list;
+		
+		for(y=0; y!=SCREEN_HEIGHT/8; y++) {
+			for(x=0; x!=SCREEN_WIDTH/8; x++,ck++) {
+				if (ck[0] != ck[CKSUM_NUM]) {
+					/* found a dirty 8x8 block, now go as far to the right as possible,
+						 and at the same time, unmark the dirty status by setting old to new. */
+					w=0;
+					do {
+						ck[w+CKSUM_NUM] = ck[w];
+						w++;
+					} while (x+w != SCREEN_WIDTH/8 && ck[w] != ck[w+CKSUM_NUM]);
+
+					/* add this rect to the dirty list. */
+					if(dr==&dirty_rect_list[NUM_DIRTY_RECT-1]) {
+						force_full=true;
+						goto get_out;
+					}
+										
+					dr->x = x*8;
+					dr->y = y*8;
+					dr->w = w*8;
+					dr->h = 1*8;
+					dr++;
+				}
+			}
+		}
+		num_dirty_rects = dr - dirty_rect_list;
+	} else {
+		get_out:;
+		/* Copy old checksums to new */
+		memcpy(dirty_checksums + CKSUM_NUM, dirty_checksums, CKSUM_NUM * sizeof(uint32));
+	}
+
+	/* Copy screen */
+	if (SDL_LockSurface(sdl_screen)==-1)
+		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
+	memcpy(sdl_screen->pixels, buf, SCREEN_WIDTH * SCREEN_HEIGHT);
+	SDL_UnlockSurface(sdl_screen);
+}
+
+void OSystem_SDL::update_screen() {
+	/* First make sure the mouse is drawn, if it should be drawn. */
+	draw_mouse();
+	
+	/* force a full redraw, accomplish that by adding one big rect to the dirty
+	 * rect list */
+	if (force_full) {
+		SDL_Rect *dr = dirty_rect_list;
+		dr->x = 0;
+		dr->y = 0;
+		dr->w = SCREEN_WIDTH;
+		dr->h = SCREEN_HEIGHT;
+		num_dirty_rects = 1;
+		force_full = false;
+	}
+
+	if (num_dirty_rects == 0 || sdl_hwscreen == NULL)
+		return;
+		
+	if (_driver_flags & DF_2xSAI) {
+		SDL_Rect *r;
+		uint32 area = 0;
+
+		SDL_Rect *dr = dirty_rect_list + num_dirty_rects;
+
+		/* Convert appropriate parts of image into 16bpp */
+		for(r=dirty_rect_list; r!=dr; r++) {
+			if (SDL_BlitSurface(sdl_screen, r, sdl_tmpscreen, r) != 0)
+				error("SDL_BlitSurface failed: %s", SDL_GetError());
+		}
+
+		SDL_LockSurface(sdl_tmpscreen);
+		SDL_LockSurface(sdl_hwscreen);
+	
+		for(r=dirty_rect_list; r!=dr; r++) {
+			/* Apply the 2xsai algorithm */
+			_sai_func((byte*)sdl_tmpscreen->pixels + r->x*2 + r->y*640, 640, NULL, 
+				(byte*)sdl_hwscreen->pixels + r->x*4 + r->y*640*4, 640*2, r->w, r->h);
+
+			/* Calculate area */
+			area += r->w * r->h;
+			
+			/* scale the rect to fit in SDL_UpdateRects */
+			r->x <<= 1;
+			r->y <<= 1;
+			r->w <<= 1;
+			r->h <<= 1;
+		}
+
+		SDL_UnlockSurface(sdl_tmpscreen);
+		SDL_UnlockSurface(sdl_hwscreen);
+
+		/* Call SDL update on the affected regions */
+		SDL_UpdateRects(sdl_hwscreen, num_dirty_rects, dirty_rect_list);
+
+		if (GetAsyncKeyState(VK_SHIFT)<0)
+			printf("Update area %d pixels. %d%%\n", area, (area+(320*2)/2) / (320*2));
+	} else {
+		/* Call SDL update on the affected regions */
+		SDL_UpdateRects(sdl_hwscreen, num_dirty_rects, dirty_rect_list);
+	}
+	
+	num_dirty_rects = 0;
+}
+
+bool OSystem_SDL::show_mouse(bool visible) {
+	if (_mouse_visible == visible)
+		return visible;
+	
+	bool last = _mouse_visible;
+	_mouse_visible = visible;
+
+	if (visible)
+		draw_mouse();
+	else
+		undraw_mouse();
+
+	return last;
+}
+	
+void OSystem_SDL::set_mouse_pos(int x, int y) {
+	if (x != _ms_cur.x || y != _ms_cur.y) {
+		_ms_cur.x = x;
+		_ms_cur.y = y;
+		undraw_mouse();
+	}
+}
+	
+void OSystem_SDL::set_mouse_cursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y) {
+	_ms_cur.w = w;
+	_ms_cur.h = h;
+
+	_ms_hotspot_x = hotspot_x;
+	_ms_hotspot_y = hotspot_y;
+
+	_ms_buf = (byte*)buf;
+
+	undraw_mouse();
+}
+	
+void OSystem_SDL::set_shake_pos(int shake_pos) {
+}
+		
+uint32 OSystem_SDL::get_msecs() {
+	return SDL_GetTicks();	
+}
+	
+void OSystem_SDL::delay_msecs(uint msecs) {
+	SDL_Delay(msecs);
+}
+	
+void *OSystem_SDL::create_thread(ThreadProc *proc, void *param) {
+	return SDL_CreateThread(proc, param);
 }
 
 int mapKey(int key, byte mod)
@@ -101,1143 +635,294 @@ int mapKey(int key, byte mod)
 		return 0;
 	return key;
 }
+	
+bool OSystem_SDL::poll_event(Event *event) {
+	SDL_Event ev;
 
-void waitForTimer(Scumm *s, int msec_delay)
-{
-	SDL_Event event;
-	uint32 start_time;
+	for(;;) {
+		if (!SDL_PollEvent(&ev))
+			return false;
 
-	if (s->_fastMode & 2)
-		msec_delay = 0;
-	else if (s->_fastMode & 1)
-		msec_delay = 10;
+		switch(ev.type) {
+		case SDL_KEYDOWN: {
+				byte b = 0;
+				if (ev.key.keysym.mod & KMOD_SHIFT) b |= KBD_SHIFT;
+				if (ev.key.keysym.mod & KMOD_CTRL) b |= KBD_CTRL;
+				if (ev.key.keysym.mod & KMOD_ALT) b |= KBD_ALT;
 
-	start_time = SDL_GetTicks();
+				event->event_code = EVENT_KEYDOWN;
+				event->kbd.flags = b;
+				event->kbd.keycode = ev.key.keysym.sym;
+				event->kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod);
+				return true;
+			}
 
-	do {
-		while (SDL_PollEvent(&event)) {
-			switch (event.type) {
-			case SDL_KEYDOWN:
-				s->_keyPressed = mapKey(event.key.keysym.sym, event.key.keysym.mod);
-				if (event.key.keysym.sym >= '0' && event.key.keysym.sym <= '9') {
-					s->_saveLoadSlot = event.key.keysym.sym - '0';
-					if (event.key.keysym.mod & KMOD_SHIFT) {
-						sprintf(s->_saveLoadName, "Quicksave %d", s->_saveLoadSlot);
-						s->_saveLoadFlag = 1;
-					} else if (event.key.keysym.mod & KMOD_CTRL)
-						s->_saveLoadFlag = 2;
-					s->_saveLoadCompatible = false;
-				} else if (event.key.keysym.sym == 'z'
-									 && event.key.keysym.mod & KMOD_CTRL) {
-					exit(1);
-				} else if (event.key.keysym.sym == 'f'
-									 && event.key.keysym.mod & KMOD_CTRL) {
-					s->_fastMode ^= 1;
-				} else if (event.key.keysym.sym == 'g'
-									 && event.key.keysym.mod & KMOD_CTRL) {
-					s->_fastMode ^= 2;
-				} else if (event.key.keysym.sym == 'd'
-									 && event.key.keysym.mod & KMOD_CTRL) {
-					debugger.attach(s);
-				} else if (event.key.keysym.sym == 's'
-									 && event.key.keysym.mod & KMOD_CTRL) {
-					s->resourceStats();
-				} else if (event.key.keysym.sym == SDLK_RETURN
-									 && event.key.keysym.mod & KMOD_ALT) {
-					if (!SDL_WM_ToggleFullScreen(screen))
-						warning("Full screen failed");
-				}
-#if defined(__APPLE__) || defined(MACOS)
-				if (event.key.keysym.sym == 'q' && event.key.keysym.mod & KMOD_LMETA) {
-					exit(1);
-				}
-#endif
+		case SDL_MOUSEMOTION:
+			event->event_code = EVENT_MOUSEMOVE;
+			event->mouse.x = ev.motion.x;
+			event->mouse.y = ev.motion.y;
+
+			event->mouse.x /= scaling;
+			event->mouse.y /= scaling;
+
+			return true;
+
+		case SDL_MOUSEBUTTONDOWN:
+			if (ev.button.button == SDL_BUTTON_LEFT)
+				event->event_code = EVENT_LBUTTONDOWN;
+			else if (ev.button.button == SDL_BUTTON_RIGHT)
+				event->event_code = EVENT_RBUTTONDOWN;
+			else
 				break;
-			case SDL_MOUSEMOTION:{
-					int newx, newy;
-					if (scale == 3) {
-						newx = event.motion.x / 3;
-						newy = event.motion.y / 3;
-					} else if (scale == 2) {
-						newx = event.motion.x >> 1;
-						newy = event.motion.y >> 1;
-					} else {
-						newx = event.motion.x;
-						newy = event.motion.y;
-					}
+			event->mouse.x = ev.button.x;
+			event->mouse.y = ev.button.y;
+			event->mouse.x /= scaling;
+			event->mouse.y /= scaling;
 
-					if (newx != s->mouse.x || newy != s->mouse.y) {
-						s->mouse.x = newx;
-						s->mouse.y = newy;
-						s->drawMouse();
-						updateScreen(s);
-					}
-					break;
-				}
-			case SDL_MOUSEBUTTONDOWN:
-				if (event.button.button == SDL_BUTTON_LEFT)
-					s->_leftBtnPressed |= msClicked | msDown;
-				else if (event.button.button == SDL_BUTTON_RIGHT)
-					s->_rightBtnPressed |= msClicked | msDown;
-				break;
-			case SDL_MOUSEBUTTONUP:
-				if (event.button.button == SDL_BUTTON_LEFT)
-					s->_leftBtnPressed &= ~msDown;
-				else if (event.button.button == SDL_BUTTON_RIGHT)
-					s->_rightBtnPressed &= ~msDown;
-				break;
+			return true;
 
-			case SDL_QUIT:
-				exit(1);
+		case SDL_MOUSEBUTTONUP:
+			if (ev.button.button == SDL_BUTTON_LEFT)
+				event->event_code = EVENT_LBUTTONUP;
+			else if (ev.button.button == SDL_BUTTON_RIGHT)
+				event->event_code = EVENT_RBUTTONUP;
+			else
 				break;
+			event->mouse.x = ev.button.x;
+			event->mouse.y = ev.button.y;
+			event->mouse.x /= scaling;
+			event->mouse.y /= scaling;
+			return true;
+
+		case SDL_QUIT:
+			quit();
+		}
+	}
+}
+	
+void OSystem_SDL::set_sound_proc(void *param, SoundProc *proc) {
+	_sound_proc = proc;	
+	_sound_param = param;
+}
+
+uint32 OSystem_SDL::set_param(int param, uint32 value) {
+	switch(param) {
+
+	case PARAM_TOGGLE_FULLSCREEN:
+		return SDL_WM_ToggleFullScreen(sdl_hwscreen);
+
+	case PARAM_WINDOW_CAPTION:
+		SDL_WM_SetCaption((char*)value, (char*)value);
+		return 1;
+
+	case PARAM_OPEN_CD:
+		if (SDL_InitSubSystem(SDL_INIT_CDROM) == -1)
+			cdrom = NULL;
+		else {
+			cdrom = SDL_CDOpen(value);
+			/* Did if open? Check if cdrom is NULL */
+			if (!cdrom) {
+				warning("Couldn't open drive: %s\n", SDL_GetError());
 			}
 		}
+		break;
 
-		cd_music_loop();						// Loop CD Music if necessary
+	case PARAM_HOTSWAP_GFX_MODE:
+		if (value >= 6)
+			return 0;
 
-		if (SDL_GetTicks() >= start_time + msec_delay)
-			break;
-		SDL_Delay(10);
-	} while (1);
+		unload_gfx_mode();
+		_driver = value;
+		load_gfx_mode();
+		return 1;
+
+	case PARAM_SHOW_DEFAULT_CURSOR:
+		SDL_ShowCursor(value ? SDL_ENABLE : SDL_DISABLE);		
+		break;
+	}
+
+	return 0;
+}
+		
+void OSystem_SDL::quit() {
+	unload_gfx_mode();		
+	exit(1);
 }
 
-#define MAX_DIRTY_RECTS 40
-SDL_Rect dirtyRects[MAX_DIRTY_RECTS];
-int numDirtyRects;
-bool fullRedraw;
-
-int old_mouse_x, old_mouse_y;
-int old_mouse_h, old_mouse_w;
-bool has_mouse, hide_mouse;
-
-#define BAK_WIDTH 40
-#define BAK_HEIGHT 40
-byte old_backup[BAK_WIDTH * BAK_HEIGHT * 2];
-
-
-void addDirtyRect(int x, int y, int w, int h)
-{
-	SDL_Rect *r;
-	if (numDirtyRects == MAX_DIRTY_RECTS)
-		fullRedraw = true;
-	else if (!fullRedraw) {
-		r = &dirtyRects[numDirtyRects++];
-		if (scale == 3) {
-			r->x = x * 3;
-			r->y = y * 3;
-			r->w = w * 3;
-			r->h = h * 3;
-		} else if (scale == 2) {
-			r->x = x * 2;
-			r->y = y * 2;
-			r->w = w * 2;
-			r->h = h * 2;
-		} else {
-			r->x = x;
-			r->y = y;
-			r->w = w;
-			r->h = h;
-		}
-	}
-}
-
-void addDirtyRectClipped(int x, int y, int w, int h)
-{
-	if (x < 0) {
-		w += x;
-		x = 0;
-	}
-	if (y < 0) {
-		h += y;
-		y = 0;
-	}
-	if (w >= 320 - x)
-		w = 320 - x;
-	if (h >= 200 - y)
-		h = 200 - y;
-	if (w > 0 && h > 0)
-		addDirtyRect(x, y, w, h);
-}
-
-#define MAX(a,b) (((a)<(b)) ? (b) : (a))
-#define MIN(a,b) (((a)>(b)) ? (b) : (a))
-
-void setShakePos(Scumm *s, int shake_pos)
-{
-	int old_shake_pos = current_shake_pos;
-	int dirty_height, dirty_blackheight;
-	int dirty_top, dirty_blacktop;
-	
-	if (shake_pos != old_shake_pos) {
-		current_shake_pos = shake_pos;
-		fullRedraw = true;
-
-		/* Old shake pos was current_shake_pos, new is shake_pos.
-		 * Move the screen up or down to account for the change.
-		 */
-		SDL_Rect dstr = { 0, shake_pos*scale, 320*scale, 200*scale };
-		SDL_Rect srcr = { 0, old_shake_pos*scale, 320*scale, 200*scale };
-		SDL_BlitSurface(screen, &srcr, screen, &dstr);
-
-		/* Also adjust the mouse pointer backup Y coordinate.
-		 * There is a minor mouse glitch when the mouse is moved
-		 * at the blackness of the shake area, but it's hardly noticable */
-		old_mouse_y += shake_pos - old_shake_pos;
-
-		/* Refresh either the upper part of the screen,
-		 * or the lower part */
-		if (shake_pos > old_shake_pos) {
-			dirty_height = MIN(shake_pos, 0) - MIN(old_shake_pos, 0);
-			dirty_top = -MIN(shake_pos, 0);
-			dirty_blackheight = MAX(shake_pos, 0) - MAX(old_shake_pos, 0);
-			dirty_blacktop = MAX(old_shake_pos, 0);
-		} else {
-			dirty_height = MAX(old_shake_pos, 0) - MAX(shake_pos, 0);
-			dirty_top = 200 - MAX(old_shake_pos, 0);
-			dirty_blackheight = MIN(old_shake_pos, 0) - MIN(shake_pos, 0);
-			dirty_blacktop = 200 + MIN(shake_pos, 0);
-		}
-
-		/* Fill the dirty area with blackness or the scumm image */
-		SDL_Rect blackrect = {0, dirty_blacktop*scale, 320*scale, dirty_blackheight*scale};
-		SDL_FillRect(screen, &blackrect, 0);
-
-		s->redrawLines(dirty_top, dirty_top + dirty_height);
-	}
-}
-
-/* Copy part of bitmap */
-void blitToScreen(Scumm *s, byte *src, int x, int y, int w, int h)
-{
-	byte *dst;
-	int i;
-
-	hide_mouse = true;
-	if (has_mouse) {
-		s->drawMouse();
-	}
-
-	/* Account for the shaking and do Y clipping */
-	y += current_shake_pos;
-	if (y < 0) {
-		h += y;
-		src -= y * 320;
-		y = 0;
-	}
-	if (h > 200 - y) {
-		h = 200 - y;
-	}
-	if (h <= 0)
+void OSystem_SDL::draw_mouse() {
+	if (_mouse_drawn || !_mouse_visible)
 		return;
+	_mouse_drawn = true;
 
-	if (SDL_LockSurface(screen) == -1)
+	if (SDL_LockSurface(sdl_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	if (scale == 3) {
-		dst = (byte *)screen->pixels + y * 960 * 3 + x * 3;
-		addDirtyRect(x, y, w, h);
-#ifdef DEBUG_CODE
-		byte black = GetAsyncKeyState(VK_SHIFT) < 0 ? 0 : 0xFF;
-		do {
-			i = 0;
-			do {
-				dst[i * 3] = dst[i * 3 + 1] = dst[i * 3 + 2] = src[i] & black;
-			} while (++i != w);
-			memcpy(dst + 960, dst, w * 3);
-			memcpy(dst + 960 + 960, dst, w * 3);
-			dst += 960 * 3;
-			src += 320;
-		} while (--h);
-#else
-		do {
-			i = 0;
-			do {
-				dst[i * 3] = dst[i * 3 + 1] = dst[i * 3 + 2] = src[i];
-			} while (++i != w);
-			memcpy(dst + 960, dst, w * 3);
-			memcpy(dst + 960 + 960, dst, w * 3);
-			dst += 960 * 3;
-			src += 320;
-		} while (--h);
-#endif
-	} else if (scale == 2) {
-		dst = (byte *)screen->pixels + y * 640 * 2 + x * 2;
-		addDirtyRect(x, y, w, h);
-#ifdef DEBUG_CODE
-		byte black = GetAsyncKeyState(VK_SHIFT) < 0 ? 0 : 0xFF;
-		do {
-			i = 0;
-			do {
-				dst[i * 2] = dst[i * 2 + 1] = src[i] & black;
-			} while (++i != w);
-			memcpy(dst + 640, dst, w * 2);
-			dst += 640 * 2;
-			src += 320;
-		} while (--h);
-#else
-		do {
-			i = 0;
-			do {
-				dst[i * 2] = dst[i * 2 + 1] = src[i];
-			} while (++i != w);
-			memcpy(dst + 640, dst, w * 2);
-			dst += 640 * 2;
-			src += 320;
-		} while (--h);
-#endif
-	} else {
-		dst = (byte *)screen->pixels + y * 320 + x;
-		addDirtyRect(x, y, w, h);
-		do {
-			memcpy(dst, src, w);
-			dst += 320;
-			src += 320;
-		} while (--h);
-	}
-
-	SDL_UnlockSurface(screen);
-}
-
-void Draw2xSaI(SDL_Rect * r, int vidmode)
-{
-	if (SDL_BlitSurface(screen, r, sdl_tmpscreen, r) != 0)
-		error("SDL_BlitSurface failed");
-
-	SDL_LockSurface(sdl_tmpscreen);
-	SDL_LockSurface(sdl_hwscreen);
-
-	switch (vidmode) {
-	case VIDEO_2XSAI:
-		_2xSaI((byte *)sdl_tmpscreen->pixels + r->x * 2 + r->y * 640, 640, NULL,
-					 (byte *)sdl_hwscreen->pixels + r->x * 4 + r->y * 640 * 4, 640 * 2,
-					 r->w, r->h);
-		break;
-	case VIDEO_SUPERSAI:
-		Super2xSaI((byte *)sdl_tmpscreen->pixels + r->x * 2 + r->y * 640, 640,
-							 NULL, (byte *)sdl_hwscreen->pixels + r->x * 4 + r->y * 640 * 4,
-							 640 * 2, r->w, r->h);
-		break;
-	case VIDEO_SUPEREAGLE:
-		SuperEagle((byte *)sdl_tmpscreen->pixels + r->x * 2 + r->y * 640, 640,
-							 NULL, (byte *)sdl_hwscreen->pixels + r->x * 4 + r->y * 640 * 4,
-							 640 * 2, r->w, r->h);
-		break;
-	default:
-		error("Unknown graphics mode %d", vidmode);
-		break;
-	}
-
-	/* scale the rect to fit in SDL_UpdateRects */
-	r->x <<= 1;
-	r->y <<= 1;
-	r->w <<= 1;
-	r->h <<= 1;
-
-	SDL_UnlockSurface(sdl_tmpscreen);
-	SDL_UnlockSurface(sdl_hwscreen);
-	SDL_UpdateRect(sdl_hwscreen, r->x, r->y, r->w, r->h);
-}
-
-void updateScreen2xSaI(Scumm *s)
-{
-	SDL_Rect r;
-
-	if (s->_fastMode & 2)
-		return;
-
-	if (hide_mouse) {
-		hide_mouse = false;
-		s->drawMouse();
-	}
-
-	if (s->_palDirtyMax != -1)
-		updatePalette(s);
-
-	if (fullRedraw) {
-		r.x =  0;
-		r.y = 0;
-		r.w = 320;
-		r.h = 200;
-		Draw2xSaI(&r, s->_videoMode);
-		fullRedraw = false;
-
-		return;
-	} else if (numDirtyRects) {
-		SDL_Rect *dr;
-		int i;
-		for (i = 0; i < numDirtyRects; i++) {
-			dr = &dirtyRects[i];
-			Draw2xSaI(dr, s->_videoMode);
-		}
-	}
-
-	numDirtyRects = 0;
-}
-
-
-void updateScreenScale(Scumm *s)
-{
-	if (fullRedraw) {
-		SDL_UpdateRect(screen, 0, 0, 0, 0);
-		fullRedraw = false;
-	} else if (numDirtyRects) {
-		SDL_UpdateRects(screen, numDirtyRects, dirtyRects);
-	}
-
-	numDirtyRects = 0;
-}
-
-void updateScreen(Scumm *s)
-{
-	if (s->_fastMode & 2)
-		return;
-
-	if (hide_mouse) {
-		hide_mouse = false;
-		s->drawMouse();
-	}
-
-	if (s->_palDirtyMax != -1) {
-		updatePalette(s);
-	}
-
-	if (s->_videoMode == VIDEO_SCALE)
-		updateScreenScale(s);
-	else
-		updateScreen2xSaI(s);
-}
-
-void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf,
-							 bool visible)
-{
-	int x, y;
-	byte *dst, *bak;
+	const int ydraw = _ms_cur.y + _current_shake_pos - _ms_hotspot_x;
+	const int xdraw = _ms_cur.x - _ms_hotspot_y;
+	const int w = _ms_cur.w;
+	const int h = _ms_cur.h;
+	int x,y;
 	byte color;
+	byte *dst, *bak = _ms_backup;
+	byte *buf = _ms_buf;
 
-	if (hide_mouse)
-		visible = false;
+	_ms_old.w = w;
+	_ms_old.h = h;
+	_ms_old.x = xdraw;
+	_ms_old.y = ydraw;
 
-	assert(w <= BAK_WIDTH && h <= BAK_HEIGHT);
+	switch(_internal_scaling) {
+	case 1:
+		dst = (byte *)sdl_screen->pixels + ydraw * 320 + xdraw;
 
-	if (SDL_LockSurface(screen) == -1)
+		for (y = 0; y < h; y++, dst += 320, bak += MAX_MOUSE_W, buf += w) {
+			if ((uint) (ydraw + y) < 200) {
+				for (x = 0; x < w; x++) {
+					if ((uint) (xdraw + x) < 320) {
+						bak[x] = dst[x];
+						if ((color = buf[x]) != 0xFF) {
+							dst[x] = color;
+						}
+					}
+				}
+			}
+		}
+		break;
+
+	case 2:
+		dst = (byte *)sdl_screen->pixels + ydraw * 640 * 2 + xdraw * 2;
+
+		for (y = 0; y < h; y++, dst += 640 * 2, bak += MAX_MOUSE_W * 2, buf += w) {
+			if ((uint) (ydraw + y) < 200) {
+				for (x = 0; x < w; x++) {
+					if ((uint) (xdraw + x) < 320) {
+						bak[x * 2] = dst[x * 2];
+						bak[x * 2 + 1] = dst[x * 2 + 1];
+						if ((color = buf[x]) != 0xFF) {
+							dst[x * 2] = color;
+							dst[x * 2 + 1] = color;
+							dst[x * 2 + 640] = color;
+							dst[x * 2 + 1 + 640] = color;
+						}
+					}
+				}
+			}
+		}
+		break;
+
+	case 3:
+		dst = (byte *)sdl_screen->pixels + ydraw * 960 * 3 + xdraw * 3;
+
+		for (y = 0; y < h; y++, dst += 960 * 3, bak += MAX_MOUSE_W * 3, buf += w) {
+			if ((uint) (ydraw + y) < 200) {
+				for (x = 0; x < w; x++) {
+					if ((uint) (xdraw + x) < 320) {
+						bak[x * 3] = dst[x * 3];
+						bak[x * 3 + 1] = dst[x * 3 + 1];
+						bak[x * 3 + 2] = dst[x * 3 + 2];
+						if ((color = buf[x]) != 0xFF) {
+							dst[x * 3] = color;
+							dst[x * 3 + 1] = color;
+							dst[x * 3 + 2] = color;
+							dst[x * 3 + 960] = color;
+							dst[x * 3 + 1 + 960] = color;
+							dst[x * 3 + 2 + 960] = color;
+							dst[x * 3 + 960 + 960] = color;
+							dst[x * 3 + 1 + 960 + 960] = color;
+							dst[x * 3 + 2 + 960 + 960] = color;
+						}
+					}
+				}
+			}
+		}
+		break;
+	}
+
+	add_dirty_rect(xdraw,ydraw,w,h);
+
+	SDL_UnlockSurface(sdl_screen);
+}
+
+void OSystem_SDL::undraw_mouse() {
+	if (!_mouse_drawn)
+		return;
+	_mouse_drawn = false;
+
+	if (SDL_LockSurface(sdl_screen) == -1)
 		error("SDL_LockSurface failed: %s.\n", SDL_GetError());
 
-	if (scale == 3) {
-
-		if (has_mouse) {
-			dst = (byte *)screen->pixels + old_mouse_y * 960 * 3 + old_mouse_x * 3;
-			bak = old_backup;
-
-			for (y = 0; y < old_mouse_h; y++, bak += BAK_WIDTH * 3, dst += 960 * 3) {
-				if ((uint) (old_mouse_y + y) < 200) {
-					for (x = 0; x < old_mouse_w; x++) {
-						if ((uint) (old_mouse_x + x) < 320) {
-							dst[x * 3 + 960] = dst[x * 3 + 960 + 960] = dst[x * 3] =
-								bak[x * 3];
-							dst[x * 3 + 960 + 1] = dst[x * 3 + 960 + 960 + 1] =
-								dst[x * 3 + 1] = bak[x * 3 + 1];
-							dst[x * 3 + 960 + 2] = dst[x * 3 + 960 + 960 + 2] =
-								dst[x * 3 + 2] = bak[x * 3 + 2];
-						}
-					}
-				}
-			}
-		}
-
-		if (visible) {
-			ydraw += current_shake_pos;
-
-			dst = (byte *)screen->pixels + ydraw * 960 * 3 + xdraw * 3;
-			bak = old_backup;
-
-			for (y = 0; y < h; y++, dst += 960 * 3, bak += BAK_WIDTH * 3, buf += w) {
-				if ((uint) (ydraw + y) < 200) {
-					for (x = 0; x < w; x++) {
-						if ((uint) (xdraw + x) < 320) {
-							bak[x * 3] = dst[x * 3];
-							bak[x * 3 + 1] = dst[x * 3 + 1];
-							bak[x * 3 + 2] = dst[x * 3 + 2];
-							if ((color = buf[x]) != 0xFF) {
-								dst[x * 3] = color;
-								dst[x * 3 + 1] = color;
-								dst[x * 3 + 2] = color;
-								dst[x * 3 + 960] = color;
-								dst[x * 3 + 1 + 960] = color;
-								dst[x * 3 + 2 + 960] = color;
-								dst[x * 3 + 960 + 960] = color;
-								dst[x * 3 + 1 + 960 + 960] = color;
-								dst[x * 3 + 2 + 960 + 960] = color;
-							}
-						}
-					}
-				}
-			}
-		}
-	} else if (scale == 2) {
-
-		if (has_mouse) {
-			dst = (byte *)screen->pixels + old_mouse_y * 640 * 2 + old_mouse_x * 2;
-			bak = old_backup;
-
-			for (y = 0; y < old_mouse_h; y++, bak += BAK_WIDTH * 2, dst += 640 * 2) {
-				if ((uint) (old_mouse_y + y) < 200) {
-					for (x = 0; x < old_mouse_w; x++) {
-						if ((uint) (old_mouse_x + x) < 320) {
-							dst[x * 2 + 640] = dst[x * 2] = bak[x * 2];
-							dst[x * 2 + 640 + 1] = dst[x * 2 + 1] = bak[x * 2 + 1];
-						}
-					}
-				}
-			}
-		}
-
-		if (visible) {
-			ydraw += current_shake_pos;
-
-			dst = (byte *)screen->pixels + ydraw * 640 * 2 + xdraw * 2;
-			bak = old_backup;
-
-			for (y = 0; y < h; y++, dst += 640 * 2, bak += BAK_WIDTH * 2, buf += w) {
-				if ((uint) (ydraw + y) < 200) {
-					for (x = 0; x < w; x++) {
-						if ((uint) (xdraw + x) < 320) {
-							bak[x * 2] = dst[x * 2];
-							bak[x * 2 + 1] = dst[x * 2 + 1];
-							if ((color = buf[x]) != 0xFF) {
-								dst[x * 2] = color;
-								dst[x * 2 + 1] = color;
-								dst[x * 2 + 640] = color;
-								dst[x * 2 + 1 + 640] = color;
-							}
-						}
-					}
-				}
-			}
-		}
-	} else {
-		if (has_mouse) {
-			dst = (byte *)screen->pixels + old_mouse_y * 320 + old_mouse_x;
-			bak = old_backup;
-
-			for (y = 0; y < old_mouse_h; y++, bak += BAK_WIDTH, dst += 320) {
-				if ((uint) (old_mouse_y + y) < 200) {
-					for (x = 0; x < old_mouse_w; x++) {
-						if ((uint) (old_mouse_x + x) < 320) {
-							dst[x] = bak[x];
-						}
-					}
-				}
-			}
-		}
-		if (visible) {
-			ydraw += current_shake_pos;
-
-			dst = (byte *)screen->pixels + ydraw * 320 + xdraw;
-			bak = old_backup;
-
-			for (y = 0; y < h; y++, dst += 320, bak += BAK_WIDTH, buf += w) {
-				if ((uint) (ydraw + y) < 200) {
-					for (x = 0; x < w; x++) {
-						if ((uint) (xdraw + x) < 320) {
-							bak[x] = dst[x];
-							if ((color = buf[x]) != 0xFF) {
-								dst[x] = color;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	SDL_UnlockSurface(screen);
-
-	if (has_mouse) {
-		has_mouse = false;
-		addDirtyRectClipped(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
-	}
-
-	if (visible) {
-		has_mouse = true;
-		addDirtyRectClipped(xdraw, ydraw, w, h);
-		old_mouse_x = xdraw;
-		old_mouse_y = ydraw;
-		old_mouse_w = w;
-		old_mouse_h = h;
-	}
-}
-
-void fill_sound(void *userdata, Uint8 * stream, int len)
-{
-	g_scumm->mixWaves((int16 *) stream, len >> 1);
-}
-
-static int cd_track, cd_num_loops = 0, cd_start_frame, cd_end_frame;
-
-// On my system, calling SDL_CDStatus all the time slows things down a
-// lot and prevents music from playing at all :( So this saves the
-// time the track is expected to be finished.
-static Uint32 cd_end_time, cd_stop_time, cd_next_second;
-
-void cd_play(Scumm *s, int track, int num_loops, int start_frame,
-						 int end_frame)
-{
-
-	/* FIXME: what does this code do? */
-	g_scumm->_vars[14] = 0;
-
-	if (!num_loops && !start_frame)
-		return;
-
-#ifdef COMPRESSED_SOUND_FILE
-
-	if (mp3_cd_play(s, track, num_loops, start_frame, end_frame))
-		return;
-
-#endif
-
-	// warning("cd_play(%d,%d,%d,%d)", track, num_loops, start_frame, end_frame);
-	if (!cdrom)
-		return;
-
-	cd_track = track;
-	cd_num_loops = num_loops;
-	cd_start_frame = start_frame;
-
-	SDL_CDStatus(cdrom);
-	SDL_CDPlayTracks(cdrom, track, start_frame, 0, end_frame);
-	cd_end_frame = end_frame;
-	cd_stop_time = 0;
-	cd_end_time = SDL_GetTicks() + cdrom->track[track].length * 1000 / CD_FPS;
-}
-
-// Schedule the music to be stopped after 1/10 sec, unless another
-// track is started in the meantime.  (On my machine, stopping and
-// then restarting the CD takes a few seconds.)
-void cd_stop()
-{
-	cd_stop_time = SDL_GetTicks() + 100;
-	cd_num_loops = 0;
-}
-
-int cd_is_running()
-{
-	if (!cdrom)
-		return 0;
-
-	return (cd_num_loops != 0 && (SDL_GetTicks() < cd_end_time ||
-																SDL_CDStatus(cdrom) != CD_STOPPED));
-}
-
-static void cd_shutdown()
-{
-	if (!cdrom)
-		return;
-
-	if (cd_num_loops != 0)
-		SDL_CDStop(cdrom);
-}
-
-void cd_music_loop()
-{
-	if (!cdrom)
-		return;
-/*	if (SDL_GetTicks() >= cd_next_second) {
-	/	printf("%d started at %d, fps\n", scumm._vars[14], cd_start_frame, CD_FPS);
-		//scumm._vars[14]++; //varmusicflag		
-		cd_next_second = SDL_GetTicks() + 1;
-	} */
-
-	if (cd_stop_time != 0 && SDL_GetTicks() >= cd_stop_time) {
-		SDL_CDStop(cdrom);
-		cd_num_loops = 0;
-		cd_stop_time = 0;
-		return;
-	}
-
-	if (cd_num_loops == 0 || SDL_GetTicks() < cd_end_time)
-		return;
-
-	if (cd_num_loops != 1 && SDL_CDStatus(cdrom) != CD_STOPPED) {
-		// Wait another second for it to be done
-		cd_end_time += 1000;
-		return;
-	}
-
-	if (cd_num_loops > 0)
-		cd_num_loops--;
-
-	if (cd_num_loops != 0) {
-		SDL_CDPlayTracks(cdrom, cd_track, cd_start_frame, 0, cd_end_frame);
-		cd_end_time =
-			SDL_GetTicks() + cdrom->track[cd_track].length * 1000 / CD_FPS;
-	}
-}
-
-int music_thread(Scumm *s)
-{
-	int old_time, cur_time;
-
-	old_time = SDL_GetTicks();
-
-	do {
-		SDL_Delay(10);
-
-		cur_time = SDL_GetTicks();
-		while (old_time < cur_time) {
-			old_time += 10;
-			sound.on_timer();
-		}
-	} while (1);
-
-	return 0;
-}
-
-
-void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor)
-{
-	SDL_AudioSpec desired;
-
-	scale = scaleFactor;
-
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == -1) {
-		error("Could not initialize SDL: %s.\n", SDL_GetError());
-		exit(1);
-	}
-
-	if (SDL_InitSubSystem(SDL_INIT_CDROM) == -1)
-		cdrom = NULL;
-	else {
-		cdrom = SDL_CDOpen(s->_cdrom);
-		/* Did if open? Check if cdrom is NULL */
-		if (!cdrom) {
-			warning("Couldn't open drive: %s\n", SDL_GetError());
-		}
-	}
-	/* Clean up on exit */
-	atexit(SDL_Quit);
-	atexit(cd_shutdown);
-	atexit(resetCursor);
-
-	char buf[512], *gameName;
-
-	sprintf(buf, "ScummVM - %s", gameName = detector.getGameName());
-	free(gameName);
-
-	desired.freq = SAMPLES_PER_SEC;
-	desired.format = AUDIO_S16SYS;
-	desired.channels = 1;
-	desired.samples = 2048;
-	desired.callback = fill_sound;
-	SDL_OpenAudio(&desired, NULL);
-	SDL_PauseAudio(0);
-
-	SDL_WM_SetCaption(buf, buf);
-	SDL_ShowCursor(SDL_DISABLE);
-
-	if (!snd_driv.wave_based()) {
-		/* Create Music Thread */
-		SDL_CreateThread((int (*)(void *))&music_thread, s);
-	}
-
-	if (s->_videoMode == VIDEO_SCALE) {
-		screen =
-			SDL_SetVideoMode(320 * scale, 200 * scale, 8,
-											 fullScreen ? (SDL_SWSURFACE | SDL_FULLSCREEN)
-											 : (SDL_SWSURFACE | SDL_DOUBLEBUF));
-	} else {
-		uint16 *tmp_screen = (uint16 *)calloc(320 * 202 + 8, sizeof(uint16));
-		Init_2xSaI(565);
-
-		screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
-		sdl_hwscreen =
-			SDL_SetVideoMode(640, 400, 16,
-											 fullScreen ? (SDL_SWSURFACE | SDL_FULLSCREEN)
-											 : (SDL_SWSURFACE | SDL_DOUBLEBUF));
-		sdl_tmpscreen =
-			SDL_CreateRGBSurfaceFrom(tmp_screen + 320 + 4, 320, 200, 16, 320 * 2, 0,
-															 0, 0, 0);
-		if (sdl_tmpscreen == NULL)
-			error("sdl_tmpscreen failed");
-
-		scale = 1;
-	}
-
-// SDL_SWSURFACE  0x00000000  /* Surface is in system memory */
-// SDL_HWSURFACE  0x00000001  /* Surface is in video memory */
-// SDL_ASYNCBLIT  0x00000004  /* Use asynchronous blits if possible */
-// SDL_ANYFORMAT  0x10000000  /* Allow any video depth/pixel-format */
-// SDL_HWPALETTE  0x20000000  /* Surface has exclusive palette */
-// SDL_DOUBLEBUF  0x40000000  /* Set up double-buffered video mode */
-// SDL_FULLSCREEN 0x80000000  /* Surface is a full screen display */
-// SDL_OPENGL     0x00000002  /* Create an OpenGL rendering context */
-// SDL_OPENGLBLIT 0x0000000A  /* Create an OpenGL rendering context and use it for blitting */
-// SDL_RESIZABLE  0x00000010  /* This video mode may be resized */
-// SDL_NOFRAME    0x00000020  /* No window caption or edge frame */
-
-
-
-	printf("%d %d, %d %d, %d %d %d, %d %d %d %d %d\n",
-				 sizeof(int8), sizeof(uint8),
-				 sizeof(int16), sizeof(uint16),
-				 sizeof(int32), sizeof(uint32),
-				 sizeof(void *),
-				 sizeof(Box), sizeof(MouseCursor), sizeof(CodeHeader),
-				 sizeof(ImageHeader), sizeof(Scumm)
-		);
-}
-
-void setWindowName(Scumm *s)
-{
-	char buf[512], *gameName;
-
-	sprintf(buf, "ScummVM - %s", gameName = detector.getGameName());
-	free(gameName);
-	SDL_WM_SetCaption(buf, buf);
-}
-
-#if !defined(__APPLE__)
-#undef main
-#endif
-
-
-void launcherLoop()
-{
-	int last_time, new_time;
-	int delta = 0;
-	last_time = SDL_GetTicks();
-
-	gui.launcher(g_scumm);
-	do {
-		updateScreen(g_scumm);
-
-		new_time = SDL_GetTicks();
-		waitForTimer(g_scumm, delta * 15 + last_time - new_time);
-		last_time = SDL_GetTicks();
-
-		if (gui._active) {
-			gui.loop(g_scumm);
-			delta = 5;
-		} else
-			error("gui closed!");
-	} while (1);
-
-};
-
-int main(int argc, char *argv[])
-{
-#if defined(MACOS)
-	/* support for config file on macos */
-
-	char *argitem;
-	char *argstr;
-	FILE *argf;
-
-	if ((argf = fopen("configuration.macos", "r")) == NULL) {
-		error("Can't open configuration file.\n");
-		exit(1);
-	}
-
-	argc = 0;
-	argstr = (char *)malloc(64);
-	argstr = fgets(argstr, 64, argf);
-	if ((argitem = strchr(argstr, '\n')) != NULL)
-		*argitem = '\0';
-
-	argitem = strtok(argstr, " ");
-
-	while (argitem != NULL) {
-		argv = (char **)realloc(argv, (argc + 1) * 8);
-		argv[argc] = (char *)malloc(64);
-		strcpy(argv[argc], argitem);
-		argc++;
-
-		argitem = strtok(NULL, " ");
-	}
-
-	free(argstr);
-	fclose(argf);
-
-#endif
-
-	if (detector.detectMain(argc, argv))
-		return (-1);
-
-	/* Simon the Sorcerer? */
-	if (detector._gameId >= GID_SIMON_FIRST && detector._gameId <= GID_SIMON_LAST) {
-		/* Simon the Sorcerer. Completely different initialization */
-	} else {
-		Scumm *scumm = Scumm::createFromDetector(&detector);
-		g_scumm = scumm;
-
-		sound.initialize(scumm, &snd_driv);
-		
-		/* bind to Gui */
-		scumm->_gui = &gui;
-		gui.init(scumm);							/* Reinit GUI after loading a game */
-
-		/* Bind to OSystem */
-		scumm->_system = &_system;
-		_system.last_time = 0;
-		
-		scumm->go();
-	}
-	
-	return 0;
-}
-
-/************ ENDER: Temporary debug code for boxen **************/
-int hlineColor(SDL_Surface * dst, Sint16 x1, Sint16 x2, Sint16 y,
-							 Uint32 color)
-{
-	Sint16 left, right, top, bottom;
-	Uint8 *pixel, *pixellast;
-	int dx;
-	int pixx, pixy;
-	Sint16 w;
-	Sint16 xtmp;
-	int result = -1;
-	Uint8 *colorptr;
-
-	/* Get clipping boundary */
-	left = dst->clip_rect.x;
-	right = dst->clip_rect.x + dst->clip_rect.w - 1;
-	top = dst->clip_rect.y;
-	bottom = dst->clip_rect.y + dst->clip_rect.h - 1;
-
-	/* Swap x1, x2 if required */
-	if (x1 > x2) {
-		xtmp = x1;
-		x1 = x2;
-		x2 = xtmp;
-	}
-
-	/* Visible */
-	if ((x1 > right) || (x2 < left) || (y < top) || (y > bottom)) {
-		return (0);
-	}
-
-	/* Clip x */
-	if (x1 < left) {
-		x1 = left;
-	}
-	if (x2 > right) {
-		x2 = right;
-	}
-
-	/* Calculate width */
-	w = x2 - x1;
-
-	/* Sanity check on width */
-	if (w < 0) {
-		return (0);
-	}
-
-	/* Setup color */
-	colorptr = (Uint8 *) & color;
-	if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-		color =
-			SDL_MapRGBA(dst->format, colorptr[0], colorptr[1], colorptr[2],
-									colorptr[3]);
-	} else {
-		color =
-			SDL_MapRGBA(dst->format, colorptr[3], colorptr[2], colorptr[1],
-									colorptr[0]);
-	}
-
-	/* Lock surface */
-	SDL_LockSurface(dst);
-
-	/* More variable setup */
-	dx = w;
-	pixx = dst->format->BytesPerPixel;
-	pixy = dst->pitch;
-	pixel = ((Uint8 *) dst->pixels) + pixx * (int)x1 + pixy * (int)y;
-
-	/* Draw */
-	switch (dst->format->BytesPerPixel) {
+	byte *dst, *bak = _ms_backup;
+	const int old_mouse_x = _ms_old.x;
+	const int old_mouse_y = _ms_old.y;
+	const int old_mouse_w = _ms_old.w;
+	const int old_mouse_h = _ms_old.h;
+	int x,y;
+
+	switch(_internal_scaling) {
 	case 1:
-		memset(pixel, color, dx);
+		dst = (byte *)sdl_screen->pixels + old_mouse_y * 320 + old_mouse_x;
+
+		for (y = 0; y < old_mouse_h; y++, bak += MAX_MOUSE_W, dst += 320) {
+			if ((uint) (old_mouse_y + y) < 200) {
+				for (x = 0; x < old_mouse_w; x++) {
+					if ((uint) (old_mouse_x + x) < 320) {
+						dst[x] = bak[x];
+					}
+				}
+			}
+		}
 		break;
+
 	case 2:
-		pixellast = pixel + dx + dx;
-		for (; pixel <= pixellast; pixel += pixx) {
-			*(Uint16 *) pixel = color;
+		dst = (byte *)sdl_screen->pixels + old_mouse_y * 640 * 2 + old_mouse_x * 2;
+
+		for (y = 0; y < old_mouse_h; y++, bak += MAX_MOUSE_W * 2, dst += 640 * 2) {
+			if ((uint) (old_mouse_y + y) < 200) {
+				for (x = 0; x < old_mouse_w; x++) {
+					if ((uint) (old_mouse_x + x) < 320) {
+						dst[x * 2 + 640] = dst[x * 2] = bak[x * 2];
+						dst[x * 2 + 640 + 1] = dst[x * 2 + 1] = bak[x * 2 + 1];
+					}
+				}
+			}
 		}
 		break;
+
 	case 3:
-		pixellast = pixel + dx + dx + dx;
-		for (; pixel <= pixellast; pixel += pixx) {
-			if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-				pixel[0] = (color >> 16) & 0xff;
-				pixel[1] = (color >> 8) & 0xff;
-				pixel[2] = color & 0xff;
-			} else {
-				pixel[0] = color & 0xff;
-				pixel[1] = (color >> 8) & 0xff;
-				pixel[2] = (color >> 16) & 0xff;
+		dst = (byte *)sdl_screen->pixels + old_mouse_y * 960 * 3 + old_mouse_x * 3;
+
+		for (y = 0; y < old_mouse_h; y++, bak += MAX_MOUSE_W * 3, dst += 960 * 3) {
+			if ((uint) (old_mouse_y + y) < 200) {
+				for (x = 0; x < old_mouse_w; x++) {
+					if ((uint) (old_mouse_x + x) < 320) {
+						dst[x * 3 + 960] = dst[x * 3 + 960 + 960] = dst[x * 3] =
+							bak[x * 3];
+						dst[x * 3 + 960 + 1] = dst[x * 3 + 960 + 960 + 1] =
+							dst[x * 3 + 1] = bak[x * 3 + 1];
+						dst[x * 3 + 960 + 2] = dst[x * 3 + 960 + 960 + 2] =
+							dst[x * 3 + 2] = bak[x * 3 + 2];
+					}
+				}
 			}
 		}
 		break;
-	default:											/* case 4 */
-		dx = dx + dx;
-		pixellast = pixel + dx + dx;
-		for (; pixel <= pixellast; pixel += pixx) {
-			*(Uint32 *) pixel = color;
-		}
-		break;
 	}
 
-	/* Unlock surface */
-	SDL_UnlockSurface(dst);
+	add_dirty_rect(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
 
-	/* Set result code */
-	result = 0;
-
-	return (result);
+	SDL_UnlockSurface(sdl_screen);
 }
 
-int gfxPrimitivesCompareInt(const void *a, const void *b);
-
-static int *gfxPrimitivesPolyInts = NULL;
-static int gfxPrimitivesPolyAllocated = 0;
-
-int filledPolygonColor(SDL_Surface * dst, Sint16 * vx, Sint16 * vy, int n,
-											 int color)
-{
-	int result;
-	int i;
-	int y;
-	int miny, maxy;
-	int x1, y1;
-	int x2, y2;
-	int ind1, ind2;
-	int ints;
-
-	/* Sanity check */
-	if (n < 3) {
-		return -1;
-	}
-
-	/* Allocate temp array, only grow array */
-	if (!gfxPrimitivesPolyAllocated) {
-		gfxPrimitivesPolyInts = (int *)malloc(sizeof(int) * n);
-		gfxPrimitivesPolyAllocated = n;
-	} else {
-		if (gfxPrimitivesPolyAllocated < n) {
-			gfxPrimitivesPolyInts =
-				(int *)realloc(gfxPrimitivesPolyInts, sizeof(int) * n);
-			gfxPrimitivesPolyAllocated = n;
-		}
-	}
-
-	/* Determine Y maxima */
-	miny = vy[0];
-	maxy = vy[0];
-	for (i = 1; (i < n); i++) {
-		if (vy[i] < miny) {
-			miny = vy[i];
-		} else if (vy[i] > maxy) {
-			maxy = vy[i];
-		}
-	}
-
-	/* Draw, scanning y */
-	result = 0;
-	for (y = miny; (y <= maxy); y++) {
-		ints = 0;
-		for (i = 0; (i < n); i++) {
-			if (!i) {
-				ind1 = n - 1;
-				ind2 = 0;
-			} else {
-				ind1 = i - 1;
-				ind2 = i;
-			}
-			y1 = vy[ind1];
-			y2 = vy[ind2];
-			if (y1 < y2) {
-				x1 = vx[ind1];
-				x2 = vx[ind2];
-			} else if (y1 > y2) {
-				y2 = vy[ind1];
-				y1 = vy[ind2];
-				x2 = vx[ind1];
-				x1 = vx[ind2];
-			} else {
-				continue;
-			}
-			if ((y >= y1) && (y < y2)) {
-				gfxPrimitivesPolyInts[ints++] = (y - y1) * (x2 - x1) / (y2 - y1) + x1;
-			} else if ((y == maxy) && (y > y1) && (y <= y2)) {
-				gfxPrimitivesPolyInts[ints++] = (y - y1) * (x2 - x1) / (y2 - y1) + x1;
-			}
-		}
-		qsort(gfxPrimitivesPolyInts, ints, sizeof(int), gfxPrimitivesCompareInt);
-
-		for (i = 0; (i < ints); i += 2) {
-			result |=
-				hlineColor(dst, gfxPrimitivesPolyInts[i],
-									 gfxPrimitivesPolyInts[i + 1], y, color);
-		}
-	}
-
-	return (result);
+void cd_stop() {
 }
 
-int gfxPrimitivesCompareInt(const void *a, const void *b)
-{
-	return (*(const int *)a) - (*(const int *)b);
+void cd_play(Scumm *s, int track, int num_loops, int start_frame, int end_track) {
 }
 
-/* FIXME: What's the purpose of this function?
- * Functions should start with a small letter. 
- */
-void BoxTest(int num)
-{
-	BoxCoords box;
-	Sint16 rx1[4], ry1[4];
-
-	g_scumm->getBoxCoordinates(num, &box);
-	rx1[0] = box.ul.x * 2;
-	ry1[0] = box.ul.y * 2 + 32;
-	rx1[1] = box.ur.x * 2;
-	ry1[1] = box.ur.y * 2 + 32;
-	rx1[2] = box.ll.x * 2;
-	ry1[2] = box.ll.y * 2 + 32;
-	rx1[3] = box.lr.x * 2;
-	ry1[3] = box.lr.y * 2 + 32;
-
-	filledPolygonColor(screen, &rx1[0], &ry1[0], 4, 255);
-	SDL_UpdateRect(screen, 0, 0, 0, 0);
-
+int cd_is_running() {
+	return 0;
 }
 
-/* FIXME: 2xSAI Functions should be moved to a separate
- * source file
- */
-
-
-
-/********* ScummVM call back functions **********/
-
-int OSystem::waitTick(int delta)
-{
-	do {
-		updateScreen(g_scumm);
-		new_time = SDL_GetTicks();
-		waitForTimer(g_scumm, delta * 15 + last_time - new_time);
-		last_time = SDL_GetTicks();
-		if (gui._active) {
-			gui.loop(g_scumm);
-			delta = 5;
-		}
-	} while (gui._active);
-
-	return (delta);
+void cd_music_loop() {
 }
 
-OSystem::OSystem()
-{
-	last_time = SDL_GetTicks();
-}

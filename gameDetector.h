@@ -37,18 +37,20 @@ public:
 	uint16 _bootParam;
 	uint16 _soundCardType;
 
-	unsigned int _scale;
 	char *_gameDataPath;
 	int _gameTempo;
 	void *_soundEngine;
 	int _midi_driver;
-	int _videoMode;
 	char *_exe_name;
 	const char *_gameText;
 	uint32 _features;
+
+	int _gfx_mode;
 	
 	int _scummVersion;
 	int _cdrom;
+
+	int parseGraphicsMode(const char *s);
 	
 
 };

@@ -662,10 +662,13 @@ void SmushPlayer::startVideo(short int arg, byte *videoFile)
 		}
 
 		if (_frameChanged) {
-			blitToScreen(sm, sm->_videoBuffer, 0, 0, 320, 200);
-			updateScreen(sm);
+			/* FIXME: not properly implemented after switch to new gfx code */
 
-			sm->delta = sm->_system->waitTick(sm->delta);
+			sm->_system->copy_rect(sm->_videoBuffer, 320, 0, 0, 320, 200);
+			sm->_system->update_screen();
+			sm->waitForTimer(20);
+			
+			//sm->delta = sm->_system->waitTick(sm->delta);
 		}
 
 		sm->processKbd();

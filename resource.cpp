@@ -926,7 +926,7 @@ void Scumm::expireResources(uint32 size)
 	int best_type, best_res;
 	uint32 oldAllocatedSize;
 
-	return;
+//	return;
 
 	if (_expire_counter != 0xFF) {
 		_expire_counter = 0xFF;
@@ -1032,13 +1032,10 @@ void Scumm::resourceStats()
 
 void Scumm::heapClear(int mode)
 {
-	/* TODO: implement this */
-	warning("heapClear: not implemented");
 }
 
 void Scumm::unkHeapProc2(int a, int b)
 {
-	warning("unkHeapProc2: not implemented");
 }
 
 void Scumm::readMAXS()

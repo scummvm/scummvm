@@ -1479,7 +1479,7 @@ void updateScreen(Scumm *s)
 	}
 }
 
-void drawMouse( Scumm *s, int xdraw, int ydraw, int w, int h, byte *buf, bool visible )
+void drawMouse(int xdraw, int ydraw, int w, int h, byte *buf, bool visible )
 {
 	int x,y;
 	byte *dst,*bak;

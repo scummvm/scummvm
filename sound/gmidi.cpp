@@ -523,11 +523,32 @@ void MidiSoundDriver::part_key_off(Part *part, byte note)
 	}
 }
 
-void MidiSoundDriver::init(SoundEngine *eng)
+int MidiSoundDriver::midi_driver_thread(void *param) {
+	MidiSoundDriver *mid = (MidiSoundDriver*) param;
+	int old_time, cur_time;
+
+	old_time = mid->_system->get_msecs();
+
+	for(;;) {
+		mid->_system->delay_msecs(10);
+
+		cur_time = mid->_system->get_msecs();
+		while (old_time < cur_time) {
+			old_time += 10;
+			mid->_se->on_timer();
+		}
+	}
+}
+
+void MidiSoundDriver::init(SoundEngine *eng, OSystem *syst)
 {
 	int i;
 	MidiChannelGM *mc;
 
+	_system = syst;
+
+	/* Install the on_timer thread */
+	syst->create_thread(midi_driver_thread, this);
 	_se = eng;
 
 	for (i = 0, mc = _midi_channels; i != ARRAYSIZE(_midi_channels); i++, mc++)

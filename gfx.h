@@ -100,8 +100,6 @@ struct Gdi {
 	byte *_readPtr;
 	uint _readOffs;
 
-	int8 _cursorActive;
-
 	int _numZBuffer;
 	int _imgBufOffs[4];
 	byte _disable_zbuffer;
@@ -112,6 +110,8 @@ struct Gdi {
 	byte _currentX;
 	byte _hotspot_x;
 	byte _hotspot_y;
+	byte _cursorActive;
+
 	int16 _drawMouseX;
 	int16 _drawMouseY;
 	int16 _mask_top, _mask_bottom, _mask_right, _mask_left;

@@ -208,7 +208,7 @@ void updateScreen(Scumm *s)
   // *((volatile unsigned int *)(void*)0xa05f8040) = 0x0;
 }
 
-void drawMouse(Scumm *s, int xdraw, int ydraw, int w, int h,
+void drawMouse(int xdraw, int ydraw, int w, int h,
 	       unsigned char *buf, bool visible)
 {
   struct polygon_list mypoly;

@@ -824,9 +824,8 @@ void Gui::loop(Scumm *s)
 	if (_active == 1) {
 		_active++;
 		draw(0, 200);								// was 100
-		_s->_cursorAnimate++;
-		_s->gdi._cursorActive = 1;
-		_s->pauseSounds(true);
+		_old_cursor_mode = s->_system->show_mouse(true);
+		s->pauseSounds(true);
 	}
 
 	_s->getKeyInput(0);
@@ -857,7 +856,9 @@ void Gui::close()
 {
 	_s->_fullRedraw = true;
 	_s->_completeScreenRedraw = true;
-	_s->_cursorAnimate--;
+	
+	_s->_system->show_mouse(_old_cursor_mode);
+
 	_s->pauseSounds(false);
 	_active = false;
 

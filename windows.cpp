@@ -495,11 +495,11 @@ void initGraphics(Scumm *s, bool fullScreen, unsigned int scaleFactor)
 	scale = scaleFactor;					// not supported yet! ignored.
 }
 
-void drawMouse(Scumm *s, int, int, int, byte *, bool)
+void drawMouse(int, int, int, byte *, bool)
 {
 }
 
-void drawMouse(Scumm *s, int x, int y, int w, int h, byte *buf, bool visible)
+void drawMouse(int x, int y, int w, int h, byte *buf, bool visible)
 {
 }
 

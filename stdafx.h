@@ -2,6 +2,10 @@
  * $Id$
  *
  * $Log$
+ * Revision 1.13  2002/04/12 21:26:34  strigeus
+ * new video engine (expect broken non-sdl builds),
+ * simon the sorcerer 1 & 2 support (non SCUMM games)
+ *
  * Revision 1.12  2002/03/14 22:45:22  arisme
  * Minor changes to compile WinCE port
  *
@@ -39,7 +43,9 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+
 #if !defined(_WIN32_WCE)
+
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #define NOGDICAPMASKS
@@ -65,9 +71,10 @@
 #define NOSOUND
 #define NODRAWTEXT
 
+
 #endif
 
-#include <SDL.h>
+
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -81,12 +88,10 @@
 #include <mmsystem.h>
 #include <ctype.h>
 #include <Winuser.h>
+#include <direct.h>
 
 #else
 
-#if defined(NEED_SDL_HEADERS)
-#include <SDL.h>
-#endif
 #if !defined(__APPLE__CW) && !(defined(__MWERKS__) && defined(macintosh))
 #include <sys/types.h>
 #include <sys/uio.h>

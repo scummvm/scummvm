@@ -999,7 +999,7 @@ int SoundEngine::initialize(Scumm *scumm, SoundDriver * driver)
 	init_queue();
 	init_parts();
 
-	_driver->init(this);
+	_driver->init(this, scumm->_system);
 
 	_initialized = true;
 
