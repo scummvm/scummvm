@@ -134,10 +134,14 @@ void NewGui::runLoop()
 				case OSystem::EVENT_KEYDOWN:
 					activeDialog->handleKeyDown((byte)event.kbd.ascii, event.kbd.flags);
 
+#ifndef _WIN32_WCE
 					// init continuous event stream
+					// not done on WinCE because keyboard is emulated and
+					// keyup is not generated
 					_currentKeyDown = event.kbd.ascii;
 					_currentKeyDownFlags = event.kbd.flags;
 					_keyRepeatTime = time + kKeyRepeatInitialDelay;
+#endif
 					break;
 				case OSystem::EVENT_KEYUP:
 					activeDialog->handleKeyUp((byte)event.kbd.ascii, event.kbd.flags);
