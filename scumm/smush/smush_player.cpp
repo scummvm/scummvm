@@ -323,7 +323,7 @@ void SmushPlayer::checkBlock(const Chunk &b, Chunk::type type_expected, uint32 m
 }
 
 void SmushPlayer::handleSoundBuffer(int32 track_id, int32 index, int32 max_frames, int32 flags, int32 vol, int32 bal, Chunk &b, int32 size) {
-	debug(6, "SmushPlayer::handleSoundBuffer(%d)", track_id);
+	debug(6, "SmushPlayer::handleSoundBuffer(%d, %d)", track_id, index);
 //	if ((flags & 128) == 128) {
 //		return;
 //	}
@@ -389,6 +389,7 @@ void SmushPlayer::handleFetch(Chunk &b) {
 
 void SmushPlayer::handleImuseBuffer(int32 track_id, int32 index, int32 nbframes, int32 size, int32 unk1, int32 track_flags, Chunk &b, int32 bsize) {
 	int32 track = (track_flags << 16) | track_id;
+	debug(6, "SmushPlayer::handleImuseBuffer(%d, %d)", track_id, index);
 
 	SmushChannel *c = _smixer->findChannel(track);
 	if (c == 0) {
@@ -897,6 +898,7 @@ void SmushPlayer::parseNextFrame() {
 		_scumm->_videoFinished = true;
 		return;
 	}
+
 	Chunk *sub = _base->subBlock();
 
 	switch (sub->getType()) {
@@ -904,7 +906,7 @@ void SmushPlayer::parseNextFrame() {
 		handleFrame(*sub);
 		break;
 	default:
-		error("Unknown Chunk found : %d, %d", sub->getType(), sub->getSize());
+		error("Unknown Chunk found at %x: %d, %d", _base->tell(), sub->getType(), sub->getSize());
 	}
 	delete sub;
 }
@@ -1003,8 +1005,10 @@ void SmushPlayer::seekSan(const char *file, const char *directory, int32 pos) {
 	checkBlock(*sub, TYPE_AHDR);
 	handleAnimHeader(*sub);
 
-	if (pos != 8)
+	if (pos != 8) {
+		_base->reinit();
 		_base->seek(pos, FileChunk::seek_start);
+	}
 
 	// FIXME: is this really applicable for FLU files? HACK
 	_frame = 0;

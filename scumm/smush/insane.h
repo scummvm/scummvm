@@ -124,82 +124,7 @@ class Insane {
 	int32 _battleScene;
 	bool _kickEnemyProgress;
 	bool _weaponEnemyJustSwitched;
-	int32 _val8d;
-	byte _val10b;
-	int32 _val11d;
-	int32 _val32d;
-	int32 _val50d;
-	int32 _val51d;
-	int32 _val52d;
-	int32 _val53d;
-	int32 _val54d;
-	int32 _val55d;
-	int32 _val56d;
-	int32 _val57d;
-	int16 _val109w;
-	int16 _val110w;
-	int16 _val111w;
-	int16 _val112w;
-	int32 _val113d;
-	int32 _val114d16[16];
-	int16 _val115w;
-	int16 _val116w;
-	bool _val119_;
-	bool _val120_;
-	bool _val121_;
-	bool _val122_;
-	bool _val123_;
-	bool _val124_;
-	int32 _val128d;
-	byte _val130b;
-	int16 _val131w;
-	int16 _val132w;
-	int16 _val133w;
-	int16 _val134w;
-	int16 _val135w;
-	int16 _val136w;
-	byte _val140b;
-	int16 _val141w;
-	int16 _val142w;
-	int16 _val143w;
-	int16 _val144w;
-	int16 _val145w;
-	int16 _val146w;
-	byte _val150b;
-	int16 _val151w;
-	int16 _val152w;
-	int16 _val153w;
-	int16 _val154w;
-	int16 _val155w;
-	int16 _val156w;
-	byte _val160b;
-	int16 _val161w;
-	int16 _val162w;
-	int16 _val163w;
-	int16 _val164w;
-	int16 _val165w;
-	int16 _val166w;
-	int16 _val167w;
-	int16 _val168w;
-	byte _val170b;
-	int16 _val171w;
-	int16 _val172w;
-	int16 _val173w;
-	int16 _val174w;
-	int16 _val175w;
-	int16 _val176w;
-	int32 _val180d;
-	byte _val181b;
-	byte _val182b;
-	int32 _val183d;
-	int32 _val190d;
-	int16 _val191w;
-	int32 _val200d;
-	int32 _val201d;
-	byte _val202b;
-	int32 _val211d;
-	int32 _val212_;
-	int32 _val213d;
+	int32 _enHdlVar[9][9];
 	int32 _trsFilePtr; // FIXME: we don't need it
 	int32 _smlayer_room;
 	int32 _smlayer_room2;
@@ -236,6 +161,37 @@ class Insane {
 	int16 _smush_frameNum2;
 	byte _smush_earlyFluContents[0x31a];
 	int16 _enemyState[9][10];
+	byte _iactBits[0x80];
+	int32 _val8d;
+	byte _val10b;
+	int32 _val11d;
+	int32 _val32d;
+	int32 _val50d;
+	int32 _val51d;
+	int32 _val52d;
+	int32 _val53d;
+	int32 _val54d;
+	int32 _val55d;
+	int32 _val56d;
+	int32 _val57d;
+	int16 _val109w;
+	int16 _val110w;
+	int16 _val111w;
+	int16 _val112w;
+	int32 _val113d;
+	int32 _val114d16[16];
+	int16 _val115w;
+	int16 _val116w;
+	bool _val119_;
+	bool _val120_;
+	bool _val121_;
+	bool _val122_;
+	bool _val123_;
+	bool _val124_;
+	int32 _val128d;
+	int32 _val211d;
+	int32 _val212_;
+	int32 _val213d;
 
 
 	struct enemy {
@@ -259,7 +215,7 @@ class Insane {
   
 	struct fluConf {
 		int sceneId;
-		byte *fluPtr;
+		byte **fluPtr;
 		const char *filenamePtr;
 		int startFrame;
 		int numFrames;
@@ -444,10 +400,10 @@ class Insane {
 	void smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecparam, 
 							   int32 x, int32 y, int32 arg_14, int32 arg_18, 
 							   int32 arg_1C, const char *formatString, char *str);
-	void init_fluConfStruct(int n, int sceneId, byte *fluPtr, 
+	void init_fluConfStruct(int n, int sceneId, byte **fluPtr, 
 							const char *filenamePtr, int startFrame, int numFrames);
-	int32 func10(bool flag);
-	void func11(int32 arg_0);
+	int32 processBenOnRoad(bool flag);
+	void mineChooseRoad(int32 arg_0);
 	void actor02Reaction(int32 buttons);
 	void actor00Reaction(int32 buttons);
 	void actor01Reaction(int32 buttons);
@@ -515,6 +471,9 @@ class Insane {
 	void iactScene21(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				  int32 setupsan13, Chunk &b, int32 size, int32 flags);
 	bool isBitSet(int n);
+	void setBit(int n);
+	void clearBit(int n);
+	void proc62(void);
 };
 } // End of namespace Insane
 

@@ -166,6 +166,7 @@ void Insane::initvars(void) {
 	_weaponBenJustSwitched = false;
 	_kickEnemyProgress = false;
 	_weaponEnemyJustSwitched = false;
+	_beenCheated = 0;
 	_val11d = 0;
 	_val32d = -1;
 	_val51d = 0;
@@ -189,53 +190,6 @@ void Insane::initvars(void) {
 	_val122_ = false;
 	_val123_ = false;
 	_val124_ = false;
-	_val130b = 0;
-	_val131w = 0;
-	_val132w = 0;
-	_val133w = 0;
-	_val134w = 0;
-	_val135w = 0;
-	_val136w = 0;
-	_val140b = 0;
-	_val141w = 0;
-	_val142w = 0;
-	_val143w = 0;
-	_val144w = 0;
-	_val145w = 0;
-	_val146w = 0;
-	_val150b = 0;
-	_val151w = 0;
-	_val152w = 0;
-	_val153w = 0;
-	_val154w = 0;
-	_val155w = 0;
-	_val156w = 0;
-	_val160b = 0;
-	_val161w = 0;
-	_val162w = 0;
-	_val163w = 0;
-	_val164w = 0;
-	_val165w = 0;
-	_val166w = 0;
-	_val167w = 0;
-	_val168w = 0;
-	_val170b = 0;
-	_val171w = 0;
-	_val172w = 0;
-	_val173w = 0;
-	_val174w = 0;
-	_val175w = 0;
-	_val176w = 0;
-	_val180d = 0;
-	_val181b = 0;
-	_val182b = 0;
-	_val183d = 0;
-	_val190d = 0;
-	_val191w = 0;
-	_val200d = 0;
-	_val201d = 0;
-	_val202b = 0;
-	_beenCheated = 0;
 	_val211d = 0;
 	_val212_ = 0;
 	_val213d = 0;
@@ -248,6 +202,13 @@ void Insane::initvars(void) {
 	_counter1 = 0;
 	_iactSceneId = 0;
 	_iactSceneId2 = 0;
+
+	for (i = 0; i < 9; i++)
+		for (j = 0; j < 9; j++)
+			_enHdlVar[i][j] = 0;
+
+	for (i = 0; i < 0x80; i++)
+		_iactBits[i] = 0;
 
 	init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 160, 0, INV_MACE, 90, "wr2_rott.san", 
 					 26, 16, 17, 27, 11, 3);
@@ -268,22 +229,22 @@ void Insane::initvars(void) {
 	init_enemyStruct(EN_TORQUE, EN_TORQUE, 8, 0, 900, 0, INV_HAND, 93, "wr2_vltp.san", 
 					 57, 0, 0, 37, 12, 1);
 
-	init_fluConfStruct(1, 1, _smush_minedrivFlu, "minedriv.san", 235, 1300);
-	init_fluConfStruct(2, 1, _smush_minedrivFlu, "minedriv.san", 355, 1300);
-	init_fluConfStruct(3, 1, _smush_minedrivFlu, "minedriv.san", 1255, 1300);
-	init_fluConfStruct(4, 1, _smush_minedrivFlu, "minedriv.san", 565, 1300);
-	init_fluConfStruct(5, 1, _smush_minedrivFlu, "minedriv.san", 1040, 1300);
-	init_fluConfStruct(8, 1, _smush_minedrivFlu, "minedriv.san", 1040, 1300);
-	init_fluConfStruct(9, 1, _smush_minedrivFlu, "minedriv.san", 655, 1300);
-	init_fluConfStruct(10, 1, _smush_minedrivFlu, "minedriv.san", 115, 1300);
-	init_fluConfStruct(11, 1, _smush_minedrivFlu, "minedriv.san", 315, 1300);
-	init_fluConfStruct(12, 1, _smush_minedrivFlu, "minedriv.san", 235, 1300);
-	init_fluConfStruct(15, 6, _smush_toranchFlu, "toranch.san", 115, 530);
-	init_fluConfStruct(16, 5, _smush_tovista2Flu, "tovista2.san", 235, 290);
-	init_fluConfStruct(17, 4, _smush_tovista1Flu, "tovista1.san", 175, 230);
-	init_fluConfStruct(18, 4, _smush_tovista1Flu, "tovista1.san", 175, 230);
-	init_fluConfStruct(19, 6, _smush_toranchFlu, "toranch.san", 115, 530);
-	init_fluConfStruct(20, 6, _smush_toranchFlu, "toranch.san", 115, 530);
+	init_fluConfStruct(1, 1, &_smush_minedrivFlu, "minedriv.san", 235, 1300);
+	init_fluConfStruct(2, 1, &_smush_minedrivFlu, "minedriv.san", 355, 1300);
+	init_fluConfStruct(3, 1, &_smush_minedrivFlu, "minedriv.san", 1255, 1300);
+	init_fluConfStruct(4, 1, &_smush_minedrivFlu, "minedriv.san", 565, 1300);
+	init_fluConfStruct(5, 1, &_smush_minedrivFlu, "minedriv.san", 1040, 1300);
+	init_fluConfStruct(8, 1, &_smush_minedrivFlu, "minedriv.san", 1040, 1300);
+	init_fluConfStruct(9, 1, &_smush_minedrivFlu, "minedriv.san", 655, 1300);
+	init_fluConfStruct(10, 1, &_smush_minedrivFlu, "minedriv.san", 115, 1300);
+	init_fluConfStruct(11, 1, &_smush_minedrivFlu, "minedriv.san", 315, 1300);
+	init_fluConfStruct(12, 1, &_smush_minedrivFlu, "minedriv.san", 235, 1300);
+	init_fluConfStruct(15, 6, &_smush_toranchFlu, "toranch.san", 115, 530);
+	init_fluConfStruct(16, 5, &_smush_tovista2Flu, "tovista2.san", 235, 290);
+	init_fluConfStruct(17, 4, &_smush_tovista1Flu, "tovista1.san", 175, 230);
+	init_fluConfStruct(18, 4, &_smush_tovista1Flu, "tovista1.san", 175, 230);
+	init_fluConfStruct(19, 6, &_smush_toranchFlu, "toranch.san", 115, 530);
+	init_fluConfStruct(20, 6, &_smush_toranchFlu, "toranch.san", 115, 530);
   
 	init_scenePropStruct(  0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
 	init_scenePropStruct(  1,  0, 1, 128, 2001, 0, 0, 0, 0, 56, 2);
@@ -542,7 +503,7 @@ void Insane::init_enemyStruct(int n, int32 handler, int32 initializer,
 	_enemy[n].field_34 = field_34;
 }
 
-void Insane::init_fluConfStruct(int n, int sceneId, byte *fluPtr, 
+void Insane::init_fluConfStruct(int n, int sceneId, byte **fluPtr, 
 					const char *filenamePtr, int startFrame, int numFrames) {
 	_fluConf[n].sceneId = sceneId;
 	_fluConf[n].fluPtr = fluPtr;
@@ -653,21 +614,21 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 	act2x = _actor[actor2].x; // edi
 	
 	if (!_actor[actor1].defunct) {
-		if (_val131w > _val132w) {
+		if (_enHdlVar[EN_ROTT1][1] > _enHdlVar[EN_ROTT1][2]) {
 			if (act1damage - act2damage >= 30) {
 				if (rand() % probability != 1)
-					_val130b = 0;
+					_enHdlVar[EN_ROTT1][0] = 0;
 				else
-					_val130b = 1;
+					_enHdlVar[EN_ROTT1][0] = 1;
 			}
-			_val131w = 0;
-			_val132w = rand() % (probability * 2);
+			_enHdlVar[EN_ROTT1][1] = 0;
+			_enHdlVar[EN_ROTT1][2] = rand() % (probability * 2);
 		}
 
 		dist = ABS(act1x - act2x);
 
-		if (_val133w > _val134w) {
-			if (_val130b == 1) {
+		if (_enHdlVar[EN_ROTT1][3] > _enHdlVar[EN_ROTT1][4]) {
+			if (_enHdlVar[EN_ROTT1][0] == 1) {
 				if (weaponMaxRange(actor1) < dist) {
 					if (act2x < act1x)
 						_actor[actor1].cursorX = -101;
@@ -693,11 +654,11 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 					_actor[actor1].cursorX = 0;
 				}
 			}
-			_val133w = 0;
-			_val134w = rand() % probability;
+			_enHdlVar[EN_ROTT1][3] = 0;
+			_enHdlVar[EN_ROTT1][4] = rand() % probability;
 		}
 
-		if (_val135w > _val136w) {
+		if (_enHdlVar[EN_ROTT1][5] > _enHdlVar[EN_ROTT1][6]) {
 			if (weaponMaxRange(actor2) + 40 >= dist) {
 				if (rand() % probability == 1)
 					retval = 1;
@@ -707,8 +668,8 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 					if (rand() % (probability * 2) <= 1)
 						retval = 1;
 			}
-			_val135w = 0;
-			_val136w = ABS(rand() % probability) * 2;
+			_enHdlVar[EN_ROTT1][5] = 0;
+			_enHdlVar[EN_ROTT1][6] = ABS(rand() % probability) * 2;
 		}
 
 		if (_actor[actor1].weapon == -1)
@@ -770,9 +731,9 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 				}
 			}
 		}
-		_val131w++;
-		_val133w++;
-		_val135w++;
+		_enHdlVar[EN_ROTT1][1]++;
+		_enHdlVar[EN_ROTT1][3]++;
+		_enHdlVar[EN_ROTT1][5]++;
 	}
 
 	if (act1x > 310)
@@ -798,13 +759,9 @@ int32 Insane::enemy0initializer(int32 actor1, int32 actor2, int32 probability) {
 	for (i = 0; i < 9; i++)
 		_enemyState[EN_ROTT1][i] = 0;
 
-	_val130b = 0;
-	_val131w = 0;
-	_val132w = 0;
-	_val133w = 0;
-	_val134w = 0;
-	_val135w = 0;
-	_val136w = 0;
+	for (i = 0; i < 9; i++)
+		_enHdlVar[EN_ROTT1][i] = 0;
+
 	_beenCheated = 0;
 
 	return 1;
@@ -821,21 +778,21 @@ int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
 	act2x = _actor[actor2].x; // edi
 	
 	if (!_actor[actor1].defunct) {
-		if (_val141w > _val142w) {
+		if (_enHdlVar[EN_ROTT2][1] > _enHdlVar[EN_ROTT2][2]) {
 			if (act1damage - act2damage >= 30) {
 				if (rand() % probability != 1)
-					_val140b = 0;
+					_enHdlVar[EN_ROTT2][0] = 0;
 				else
-					_val140b = 1;
+					_enHdlVar[EN_ROTT2][0] = 1;
 			}
-			_val141w = 0;
-			_val142w = rand() % (probability * 2);
+			_enHdlVar[EN_ROTT2][1] = 0;
+			_enHdlVar[EN_ROTT2][2] = rand() % (probability * 2);
 		}
 
 		dist = ABS(act1x - act2x);
 
-		if (_val143w > _val144w) {
-			if (_val140b == 1) {
+		if (_enHdlVar[EN_ROTT2][3] > _enHdlVar[EN_ROTT2][4]) {
+			if (_enHdlVar[EN_ROTT2][0] == 1) {
 				if (weaponMaxRange(actor1) < dist) {
 					if (act2x < act1x)
 						_actor[actor1].cursorX = -101;
@@ -861,11 +818,11 @@ int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
 					_actor[actor1].cursorX = 0;
 				}
 			}
-			_val143w = 0;
-			_val144w = rand() % probability;
+			_enHdlVar[EN_ROTT2][3] = 0;
+			_enHdlVar[EN_ROTT2][4] = rand() % probability;
 		}
 
-		if (_val145w > _val146w) {
+		if (_enHdlVar[EN_ROTT2][5] > _enHdlVar[EN_ROTT2][6]) {
 			if (weaponMaxRange(actor2) + 40 >= dist) {
 				if (rand() % probability == 1)
 					retval = 1;
@@ -875,8 +832,8 @@ int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
 					if (rand() % (probability * 2) <= 1)
 						retval = 1;
 			}
-			_val135w = 0;
-			_val136w = ABS(rand() % probability) * 2;
+			_enHdlVar[EN_ROTT1][5] = 0;
+			_enHdlVar[EN_ROTT1][6] = ABS(rand() % probability) * 2;
 		}
 
 		if (_actor[actor1].weapon == -1)
@@ -919,9 +876,9 @@ int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
 				}
 			}
 		}
-		_val141w++;
-		_val143w++;
-		_val145w++;
+		_enHdlVar[EN_ROTT2][1]++;
+		_enHdlVar[EN_ROTT2][3]++;
+		_enHdlVar[EN_ROTT2][5]++;
 	}
 
 	if (act1x > 310)
@@ -947,13 +904,9 @@ int32 Insane::enemy1initializer(int32 actor1, int32 actor2, int32 probability) {
 	for (i = 0; i < 9; i++)
 		_enemyState[EN_ROTT2][i] = 0;
 
-	_val140b = 0;
-	_val141w = 0;
-	_val142w = 0;
-	_val143w = 0;
-	_val144w = 0;
-	_val145w = 0;
-	_val146w = 0;
+	for (i = 0; i < 9; i++)
+		_enHdlVar[EN_ROTT2][i] = 0;
+
 	_beenCheated = 0;
 
 	return 1;
@@ -970,21 +923,21 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 	act2x = _actor[actor2].x; // edi
 
 	if (!_actor[actor1].defunct) {
-		if (_val151w > _val152w) {
+		if (_enHdlVar[EN_ROTT3][1] > _enHdlVar[EN_ROTT3][2]) {
 			if (act1damage - act2damage >= 30) {
 				if (rand() % probability != 1)
-					_val150b = 0;
+					_enHdlVar[EN_ROTT3][0] = 0;
 				else
-					_val150b = 1;
+					_enHdlVar[EN_ROTT3][0] = 1;
 			}
-			_val151w = 0;
-			_val152w = rand() % (probability * 2);
+			_enHdlVar[EN_ROTT3][1] = 0;
+			_enHdlVar[EN_ROTT3][2] = rand() % (probability * 2);
 		}
 
 		dist = abs(act1x - act2x);
 
-		if (_val153w > _val154w) {
-			if (_val150b == 1) {
+		if (_enHdlVar[EN_ROTT3][3] > _enHdlVar[EN_ROTT3][4]) {
+			if (_enHdlVar[EN_ROTT3][0] == 1) {
 				if (weaponMaxRange(actor1) < dist) {
 					if (act2x < act1x)
 						_actor[actor1].cursorX = -101;
@@ -1010,10 +963,10 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 					_actor[actor1].cursorX = 0;
 				}
 			}
-			_val153w = 0;
-			_val154w = rand() % probability;
+			_enHdlVar[EN_ROTT3][3] = 0;
+			_enHdlVar[EN_ROTT3][4] = rand() % probability;
 		}
-		if (_val155w > _val156w) {
+		if (_enHdlVar[EN_ROTT3][5] > _enHdlVar[EN_ROTT3][6]) {
 			if (weaponMaxRange(actor2) + 40 >= dist) {
 				if (rand() % probability == 1)
 					retval = 1;
@@ -1023,8 +976,8 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 					if (rand() % (probability * 2) <= 1)
 						retval = 1;
 			}
-			_val155w = 0;
-			_val156w = ABS(rand() % probability) * 2;
+			_enHdlVar[EN_ROTT3][5] = 0;
+			_enHdlVar[EN_ROTT3][6] = ABS(rand() % probability) * 2;
 		}
 
 		if (_actor[actor1].weapon == -1)
@@ -1072,9 +1025,9 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 				}
 			}
 		}
-		_val151w++;
-		_val153w++;
-		_val155w++;
+		_enHdlVar[EN_ROTT3][1]++;
+		_enHdlVar[EN_ROTT3][3]++;
+		_enHdlVar[EN_ROTT3][5]++;
 	}
 
 	if (act1x > 310)
@@ -1100,13 +1053,9 @@ int32 Insane::enemy2initializer(int32 actor1, int32 actor2, int32 probability) {
 	for (i = 0; i < 7; i++)
 		_enemyState[EN_ROTT3][i] = 0;
 
-	_val150b = 0;
-	_val151w = 0;
-	_val152w = 0;
-	_val153w = 0;
-	_val154w = 0;
-	_val155w = 0;
-	_val156w = 0;
+	for (i = 0; i < 9; i++)
+		_enHdlVar[EN_ROTT3][i] = 0;
+
 	_beenCheated = 0;
 
 	return 1;
@@ -1123,21 +1072,21 @@ int32 Insane::enemy3handler(int32 actor1, int32 actor2, int32 probability) {
 	act2x = _actor[actor2].x; // edi
 	
 	if (!_actor[actor1].defunct) {
-		if (_val161w > _val162w) {
+		if (_enHdlVar[EN_VULTF1][1] > _enHdlVar[EN_VULTF1][2]) {
 			if (act1damage - act2damage >= 30) {
 				if (rand() % probability != 1)
-					_val160b = 0;
+					_enHdlVar[EN_VULTF1][0] = 0;
 				else
-					_val160b = 1;
+					_enHdlVar[EN_VULTF1][0] = 1;
 			}
-			_val161w = 0;
-			_val162w = rand() % (probability * 2);
+			_enHdlVar[EN_VULTF1][1] = 0;
+			_enHdlVar[EN_VULTF1][2] = rand() % (probability * 2);
 		}
 
 		dist = ABS(act1x - act2x);
 
-		if (_val163w > _val164w) {
-			if (_val160b == 1) {
+		if (_enHdlVar[EN_VULTF1][3] > _enHdlVar[EN_VULTF1][4]) {
+			if (_enHdlVar[EN_VULTF1][0] == 1) {
 				if (weaponMaxRange(actor1) < dist) {
 					if (act2x < act1x)
 						_actor[actor1].cursorX = -101;
@@ -1163,12 +1112,12 @@ int32 Insane::enemy3handler(int32 actor1, int32 actor2, int32 probability) {
 					_actor[actor1].cursorX = 0;
 				}
 			}
-			_val163w = 0;
-			_val164w = rand() % probability;
+			_enHdlVar[EN_VULTF1][3] = 0;
+			_enHdlVar[EN_VULTF1][4] = rand() % probability;
 		}
 
-		if (_val165w > _val166w) {
-			if (_val160b == 1) {
+		if (_enHdlVar[EN_VULTF1][5] > _enHdlVar[EN_VULTF1][6]) {
+			if (_enHdlVar[EN_VULTF1][0] == 1) {
 				if (weaponMaxRange(actor2) + 40 >= dist)
 					if (rand() % probability == 1)
 						retval = 1;
@@ -1178,8 +1127,8 @@ int32 Insane::enemy3handler(int32 actor1, int32 actor2, int32 probability) {
 						if (rand() % probability <= 1)
 							retval = 1;
 			}
-			_val165w = 0;
-			_val166w = ABS(rand() % probability) * 2;
+			_enHdlVar[EN_VULTF1][5] = 0;
+			_enHdlVar[EN_VULTF1][6] = ABS(rand() % probability) * 2;
 		}
 
 		if (_actor[actor1].weapon == -1)
@@ -1188,9 +1137,9 @@ int32 Insane::enemy3handler(int32 actor1, int32 actor2, int32 probability) {
 		if ((_actor[actor1].field_54 == 0) &&
 			(_actor[actor2].lost == 0) &&
 			(_actor[actor1].lost == 0)) {
-			_val168w = rand() % 26;
-			if (_val168w != _val167w) {
-				switch (_val168w) {
+			_enHdlVar[EN_VULTF1][8] = rand() % 26;
+			if (_enHdlVar[EN_VULTF1][8] != _enHdlVar[EN_VULTF1][7]) {
+				switch (_enHdlVar[EN_VULTF1][8]) {
 				case 0:
 					if (!_enemyState[EN_VULTF1][4]) {
 						_enemyState[EN_VULTF1][4] = 1;
@@ -1228,13 +1177,13 @@ int32 Insane::enemy3handler(int32 actor1, int32 actor2, int32 probability) {
 					}
 					break;
 				}
-				_val167w = _val168w;
+				_enHdlVar[EN_VULTF1][7] = _enHdlVar[EN_VULTF1][8];
 			}
 			
 		}
-		_val161w++;
-		_val163w++;
-		_val165w++;
+		_enHdlVar[EN_VULTF1][1]++;
+		_enHdlVar[EN_VULTF1][3]++;
+		_enHdlVar[EN_VULTF1][5]++;
 	} else {
 		_actor[actor1].cursorX = 0;
 	}
@@ -1262,15 +1211,9 @@ int32 Insane::enemy3initializer(int32 actor1, int32 actor2, int32 probability) {
 	for (i = 0; i < 6; i++)
 		_enemyState[EN_VULTF1][i] = 0;
 
-	_val160b = 0;
-	_val161w = 0;
-	_val162w = 0;
-	_val163w = 0;
-	_val164w = 0;
-	_val165w = 0;
-	_val166w = 0;
-	_val167w = 0;
-	_val168w = 0;
+	for (i = 0; i < 9; i++)
+		_enHdlVar[EN_VULTF1][i] = 0;
+
 	_beenCheated = 0;
 
 	return 1;
@@ -1287,21 +1230,21 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 	act2x = _actor[actor2].x; // edi
 
 	if (!_actor[actor1].defunct) {
-		if (_val171w > _val172w) {
+		if (_enHdlVar[EN_VULTM1][1] > _enHdlVar[EN_VULTM1][2]) {
 			if (act1damage - act2damage >= 30) {
 				if (rand() % probability != 1)
-					_val170b = 0;
+					_enHdlVar[EN_VULTM1][0] = 0;
 				else
-					_val170b = 1;
+					_enHdlVar[EN_VULTM1][0] = 1;
 			}
-			_val171w = 0;
-			_val172w = rand() % (probability * 2);
+			_enHdlVar[EN_VULTM1][1] = 0;
+			_enHdlVar[EN_VULTM1][2] = rand() % (probability * 2);
 		}
 
 		dist = ABS(act1x - act2x);
 
-		if (_val173w > _val174w) {
-			if (_val170b == 1) {
+		if (_enHdlVar[EN_VULTM1][3] > _enHdlVar[EN_VULTM1][4]) {
+			if (_enHdlVar[EN_VULTM1][0] == 1) {
 				if (weaponMaxRange(actor1) < dist) {
 					if (act2x < act1x)
 						_actor[actor1].cursorX = -101;
@@ -1327,10 +1270,10 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 					_actor[actor1].cursorX = 0;
 				}
 			}
-			_val173w = 0;
-			_val174w = rand() % probability;
+			_enHdlVar[EN_VULTM1][3] = 0;
+			_enHdlVar[EN_VULTM1][4] = rand() % probability;
 		}
-		if (_val175w > _val176w) {
+		if (_enHdlVar[EN_VULTM1][5] > _enHdlVar[EN_VULTM1][6]) {
 			if (weaponMaxRange(actor2) + 40 >= dist) {
 				if (rand() % probability == 1)
 					retval = 1;
@@ -1340,8 +1283,8 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 					if (rand() % (probability * 2) <= 1)
 						retval = 1;
 			}
-			_val175w = 0;
-			_val176w = ABS(rand() % probability) * 2;
+			_enHdlVar[EN_VULTM1][5] = 0;
+			_enHdlVar[EN_VULTM1][6] = ABS(rand() % probability) * 2;
 		}
 
 		if (_actor[actor1].weapon == -1)
@@ -1410,9 +1353,9 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 				}
 			}
 		}
-		_val171w++;
-		_val173w++;
-		_val175w++;
+		_enHdlVar[EN_VULTM1][1]++;
+		_enHdlVar[EN_VULTM1][3]++;
+		_enHdlVar[EN_VULTM1][5]++;
 	}
 
 	if (act1x > 310)
@@ -1438,13 +1381,9 @@ int32 Insane::enemy4initializer(int32 actor1, int32 actor2, int32 probability) {
 	for (i = 0; i < 10; i++)
 		_enemyState[EN_VULTM1][i] = 0;
 
-	_val170b = 0;
-	_val171w = 0;
-	_val172w = 0;
-	_val173w = 0;
-	_val174w = 0;
-	_val175w = 0;
-	_val176w = 0;
+	for (i = 0; i < 9; i++)
+		_enHdlVar[EN_VULTM1][i] = 0;
+
 	_beenCheated = 0;
 
 	return 1;
@@ -1462,15 +1401,15 @@ int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
 	dist = ABS(act1x - act2x);
 
 	if (weaponMaxRange(actor1) >= dist) {
-		if (!_val182b)
-			_val183d++;
-		_val181b = 1;
+		if (!_enHdlVar[EN_VULTF2][2])
+			_enHdlVar[EN_VULTF2][3]++;
+		_enHdlVar[EN_VULTF2][1] = 1;
 	} else {
-		_val181b = 0;
+		_enHdlVar[EN_VULTF2][1] = 0;
 	}
 
 	if (!_actor[actor1].defunct) {
-		if (_val183d >= 2 || act1damage) {
+		if (_enHdlVar[EN_VULTF2][3] >= 2 || act1damage) {
 			_actor[actor1].damage = 10;
 
 			if (weaponMaxRange(actor2) >= dist) {
@@ -1494,8 +1433,8 @@ int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
 					retval = 1;
 				}
 			_actor[actor1].cursorX = 0;
-			if (_val180d >= 100)
-				_val183d = 3;
+			if (_enHdlVar[EN_VULTF2][0] >= 100)
+				_enHdlVar[EN_VULTF2][3] = 3;
 		}
 
 		if ((_actor[actor1].field_54 == 0) &&
@@ -1567,8 +1506,8 @@ int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
 	else if (act1x > 280)
 		_actor[actor1].cursorX = -160;
 
-	_val182b = _val181b;
-	_val180d++;
+	_enHdlVar[EN_VULTF2][2] = _enHdlVar[EN_VULTF2][1];
+	_enHdlVar[EN_VULTF2][0]++;
 
 	// Shift+V cheat to win the battle
 	if (_scumm->getKeyState(0x56) && !_beenCheated &&
@@ -1587,10 +1526,9 @@ int32 Insane::enemy5initializer(int32 actor1, int32 actor2, int32 probability) {
 	for (i = 0; i < 9; i++)
   		_enemyState[EN_VULTF2][i] = 0;
 
-	_val181b = 0;
-	_val182b = 0;
-	_val183d = 0;
-	_val180d = 0;
+	for (i = 0; i < 9; i++)
+		_enHdlVar[EN_VULTF2][i] = 0;
+
 	_beenCheated = 0;
 
 	return 1;
@@ -1615,9 +1553,9 @@ int32 Insane::enemy6handler(int32 actor1, int32 actor2, int32 probability) {
 		if (_currScenePropIdx == scenePropIdx[18] && _currScenePropSubIdx == 3)
 			retval = 1;
 	} else {
-		if (act1damage > 0 || _val190d > 20) {
+		if (act1damage > 0 || _enHdlVar[EN_VULTM2][0] > 20) {
 			_actor[actor1].damage = 10;
-			if (!_val191w && !_actor[actor1].lost) {
+			if (!_enHdlVar[EN_VULTM2][1] && !_actor[actor1].lost) {
 				if (!_actor[actor1].field_54) {
 					switch (rand() % 4) {
 					case 0:
@@ -1645,14 +1583,14 @@ int32 Insane::enemy6handler(int32 actor1, int32 actor2, int32 probability) {
 						}
 						break;
 					}
-					_val191w = 1;
+					_enHdlVar[EN_VULTM2][1] = 1;
 					goto _label1;
 				}
 			} else {
 				if (_actor[actor1].field_54 == 0 &&
 					_actor[actor1].lost == 0) {
 					retval = 1;
-					_val190d = 0;
+					_enHdlVar[EN_VULTM2][0] = 0;
 				}
 			}
 		} else {
@@ -1669,7 +1607,7 @@ int32 Insane::enemy6handler(int32 actor1, int32 actor2, int32 probability) {
 		if (_actor[actor1].weapon == -1)
 			retval = 2;
 
-		if ((_val191w == 0) &&
+		if ((_enHdlVar[EN_VULTM2][1] == 0) &&
 			( _actor[actor1].field_54 == 0) &&
 			(_actor[actor2].lost == 0) &&
 			(_actor[actor1].lost == 0)) {
@@ -1728,8 +1666,9 @@ int32 Insane::enemy6initializer(int32 actor1, int32 actor2, int32 probability) {
 	for (i = 0; i < 7; i++)
 		_enemyState[EN_VULTM2][i] = 0;
 
-	_val190d = 0;
-	_val191w = 0;
+	for (i = 0; i < 9; i++)
+		_enHdlVar[EN_VULTM2][i] = 0;
+
 	_beenCheated = 0;
 
 	return 1;
@@ -1746,11 +1685,11 @@ int32 Insane::enemy7handler(int32 actor1, int32 actor2, int32 probability) {
 
 	dist = ABS(act1x - act2x);
 
-	if (_val201d >= 600) {
-		_val202b = 1;
-		_val201d = 0;
+	if (_enHdlVar[EN_CAVEFISH][1] >= 600) {
+		_enHdlVar[EN_CAVEFISH][2] = 1;
+		_enHdlVar[EN_CAVEFISH][1] = 0;
 	} else {
-		if (!_val202b) {
+		if (!_enHdlVar[EN_CAVEFISH][2]) {
 			if (weaponMaxRange(actor2) - 30 <= dist) {
 				if (act2x < act1x)
 					_actor[actor1].cursorX = 101;
@@ -1782,8 +1721,8 @@ int32 Insane::enemy7handler(int32 actor1, int32 actor2, int32 probability) {
 	if (_actor[actor1].weapon == -1)
 		retval = 2;
 
-	_val201d++;
-	_val200d = act1damage;
+	_enHdlVar[EN_CAVEFISH][1]++;
+	_enHdlVar[EN_CAVEFISH][0] = act1damage;
 
 	// Shift+V cheat to win the battle
 	if (_scumm->getKeyState(0x56) && !_beenCheated &&
@@ -1797,9 +1736,11 @@ int32 Insane::enemy7handler(int32 actor1, int32 actor2, int32 probability) {
 }
 
 int32 Insane::enemy7initializer(int32 actor1, int32 actor2, int32 probability) {
-	_val202b = 0;
-	_val200d = 0;
-	_val201d = 0;
+	int i;
+
+	for (i = 0; i < 9; i++)
+		_enHdlVar[EN_CAVEFISH][i] = 0;
+
 	_beenCheated = 0;
 
 	return 1;
@@ -1835,7 +1776,7 @@ int32 Insane::enemyBenHandler(int32 actor1, int32 actor2, int32 probability) {
 
 	smush_warpMouse(_enemyState[EN_BEN][0], _enemyState[EN_BEN][1], -1);
 	
-	return retval & 3;
+	return (retval & 3);
 }
 
 int32 Insane::processMouse(void) {
@@ -3229,7 +3170,7 @@ void Insane::postCase1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 	if ((curFrame >= maxFrame) && !_needSceneSwitch) {
 		flu = &_fluConf[14 + _iactSceneId2];
-		queueSceneSwitch(flu->sceneId, flu->fluPtr, flu->filenamePtr, 64, 0, 
+		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0, 
 						 flu->startFrame, flu->numFrames);
 	}
 	_val119_ = false;
@@ -3269,7 +3210,7 @@ void Insane::postCase20(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 void Insane::postCase3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
-	turnBen(1);
+	turnBen(true);
 	
 	if (_actor[0].x >= 158 && _actor[0].x <= 168) {
 		if (!smlayer_isSoundRunning(86))
@@ -3313,7 +3254,7 @@ void Insane::postCase3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 void Insane::postCase5(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
-	turnBen(1);
+	turnBen(true);
 
 	if (_actor[0].x >= 158 && _actor[0].x <= 168) {
 		if (!smlayer_isSoundRunning(86))
@@ -3352,7 +3293,8 @@ void Insane::postCase6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			flu = &_fluConf[7 + _iactSceneId2];
 		else
 			flu = &_fluConf[0 + _iactSceneId2];
-		queueSceneSwitch(flu->sceneId, flu->fluPtr, flu->filenamePtr, 64, 0, 
+
+		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0, 
 						 flu->startFrame, flu->numFrames);
 	}
 	_val119_ = false;
@@ -3597,7 +3539,7 @@ void Insane::postCaseAll(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				if (tsceneProp->actor != -1) {
 					_actor[tsceneProp->actor].field_54 = 1;
 					_actor[tsceneProp->actor].act[3].state = 117;
-					_actor[tsceneProp->actor].field_54 = _currScenePropSubIdx;
+					_actor[tsceneProp->actor].scenePropSubIdx = _currScenePropSubIdx;
 				}
 			} else {
 				_currScenePropIdx = 0;
@@ -3626,10 +3568,11 @@ void Insane::queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename,
 							  int32 arg_C, int32 arg_10, int32 startFrame, int32 numFrames) {
 	int32 tmp;
 	
+	debug(0, "queueSceneSwitch(%d, *, %s, %d, %d, %d, %d)", sceneId, filename, arg_C, arg_10,
+		  startFrame, numFrames);
 	if (_needSceneSwitch || _sceneData1Loaded)
 		return;
 	
-	debug(0, "Enqueued scene switch to %d", sceneId);
 	if (fluPtr) {
 		tmp = ((int)startFrame/30+1)*30;
 		if (tmp >= numFrames)
@@ -3643,7 +3586,7 @@ void Insane::queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename,
 	_temp2SceneId = sceneId;
 }
 
-void Insane::turnBen(bool battle) {
+void Insane::turnBen(bool controllable) {
 	int32 buttons;
 	
 	switch (_currSceneId) {
@@ -3667,7 +3610,7 @@ void Insane::turnBen(bool battle) {
 			}
 		}
 		buttons = 0;
-		if (!_actor[0].lost && battle) {
+		if (!_actor[0].lost && controllable) {
 			buttons = actionBen();
 			if (_currSceneId == 13)
 				buttons &= 2;
@@ -3682,7 +3625,7 @@ void Insane::turnBen(bool battle) {
 		actor00Reaction(buttons);
 		break;
 	case 17:
-		func11(func10(false));
+		mineChooseRoad(processBenOnRoad(false));
 		break;
 	default:
 		if (_actor[0].damage < _actor[0].maxdamage) {
@@ -3697,14 +3640,15 @@ void Insane::turnBen(bool battle) {
 				_actor[0].act[0].room = 0;
 				_actor[0].act[1].state = 36;
 				_actor[0].act[1].room = 0;
-				func11(0);
+				mineChooseRoad(0);
 				return;
 			}
 		}
-		if (!_actor[0].lost && !battle)
-			func11(func10(true));
+
+		if (!_actor[0].lost && controllable)
+			mineChooseRoad(processBenOnRoad(true));
 		else
-			func11(0);
+			mineChooseRoad(0);
 		break;
 	}
 }
@@ -3784,8 +3728,7 @@ int32 Insane::actionBen(void) {
 	return buttons;
 }
 
-// FIXME: give a proper name
-int32 Insane::func10(bool flag) {
+int32 Insane::processBenOnRoad(bool flag) {
 	int32 buttons;
 
 	if (_actor[0].enemyHandler != -1)
@@ -3823,8 +3766,7 @@ int32 Insane::func10(bool flag) {
 	return buttons;
 }
 
-// FIXME: give a proper name
-void Insane::func11(int32 arg_0) {
+void Insane::mineChooseRoad(int32 buttons) {
 	int16 tmp;
 
 	if (_actor[0].field_8 < 1)
@@ -3840,7 +3782,7 @@ void Insane::func11(int32 arg_0) {
 
 		switch (_currSceneId) {
 		case 17:
-			if (arg_0 != 1) {
+			if (buttons & 1) {
 				if (_val123_) {
 					setWordInString(_numberArray, 1, _val52d);
 					smush_setToFinish();
@@ -3852,7 +3794,7 @@ void Insane::func11(int32 arg_0) {
 				}
 			}
 			
-			if (arg_0 == 2 || _needSceneSwitch)
+			if ((buttons & 2) == 0 || _needSceneSwitch)
 				return;
 
 			queueSceneSwitch(19, 0, "fishgog2.san", 64, 0, 0, 0);
@@ -3865,14 +3807,14 @@ void Insane::func11(int32 arg_0) {
 			if (tmp > 7)
 				_actor[0].tilt = 7;
 
-			drawSpeedyActor(arg_0);
+			drawSpeedyActor(buttons);
 
-			if (arg_0 != 1 && _currSceneId == 1 && _val119_ && !_needSceneSwitch) {
+			if ((buttons & 1) && _currSceneId == 1 && _val119_ && !_needSceneSwitch) {
 				_iactSceneId2 = _iactSceneId;
 				queueSceneSwitch(2, 0, "mineexit.san", 64, 0, 0, 0);
 			}
 
-			if (arg_0 == 2 || !_val122_)
+			if ((buttons & 2) == 0 || !_val122_)
 				return;
 
 			_actor[0].frame = 0;
@@ -3887,8 +3829,11 @@ void Insane::func11(int32 arg_0) {
 			if (tmp > 7)
 				_actor[0].tilt = 7;
 			
-			drawSpeedyActor(arg_0);
+			drawSpeedyActor(buttons);
 			
+			if ((buttons & 1) == 0)
+				return;
+
 			if (_val119_ && !_needSceneSwitch) {
 				_iactSceneId2 = _iactSceneId;
 
@@ -3921,9 +3866,9 @@ void Insane::func11(int32 arg_0) {
 			if (tmp > 7)
 				_actor[0].tilt = 7;
 
-			drawSpeedyActor(arg_0);
+			drawSpeedyActor(buttons);
 			
-			if (arg_0 == 1)
+			if ((buttons & 1) == 0)
 				return;
 
 			if (_val119_ && !_needSceneSwitch) {
@@ -3956,7 +3901,7 @@ void Insane::func11(int32 arg_0) {
 	}
 }
 
-void Insane::drawSpeedyActor(int32 arg_0) {
+void Insane::drawSpeedyActor(int32 buttons) {
 	switch (_actor[0].tilt) {
 	case -7:
 		if (_actor[0].act[2].state != 47) {
@@ -5757,7 +5702,7 @@ void Insane::escapeKeyHandler(void) {
 		break;
 	case 2:
 		flu = &_fluConf[14 + _iactSceneId2];
-		queueSceneSwitch(flu->sceneId, flu->fluPtr, flu->filenamePtr, 64, 0, 
+		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0, 
 						 flu->startFrame, flu->numFrames);
 		break;
 	case 3:
@@ -5808,12 +5753,12 @@ void Insane::escapeKeyHandler(void) {
 		break;
 	case 8:
 		flu = &_fluConf[7 + _iactSceneId2];
-		queueSceneSwitch(flu->sceneId, flu->fluPtr, flu->filenamePtr, 64, 0, 
+		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0, 
 						 flu->startFrame, flu->numFrames);
 		break;
 	case 7:
 		flu = &_fluConf[0 + _iactSceneId2];
-		queueSceneSwitch(flu->sceneId, flu->fluPtr, flu->filenamePtr, 64, 0, 
+		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0, 
 						 flu->startFrame, flu->numFrames);
 		break;
 	case 23:
@@ -7413,8 +7358,6 @@ void Insane::actor13Reaction(int32 buttons) {
 		}
 		break;
 	case 54:
-		_actor[1].field_54 = 0;
-		break;
 	case 1:
 		_actor[1].field_54 = 0;
 		break;
@@ -7572,8 +7515,140 @@ void Insane::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					  int32 setupsan13, Chunk &b, int32 size, int32 flags) {
 	_player->checkBlock(b, TYPE_IACT, 8);
-	debug(0, "SmushPlayer::iactScene1()");
-	// FIXME: implement
+
+	int16 par1, par2, par3, par4, par5, par6, par7, par9, par11, par13, tmp;
+
+	par1 = b.getWord(); // cx
+	par2 = b.getWord(); // dx
+	par3 = b.getWord(); // si
+	par4 = b.getWord(); // bx
+
+	switch (par1) {
+	case 2:
+		if (par3 != 1)
+			break;
+
+		par5 = b.getWord(); // si
+		if (_actor[0].field_8 == 112) {
+			setBit(par5);
+			break;
+		}
+
+		if (_val32d == -1) {
+			proc62();
+			_val32d = _enemy[_currEnemy].field_34;
+		}
+		if (_val32d == par4)
+			clearBit(par5);
+		else
+			setBit(par5);
+		break;
+	case 3:
+		if (par3 == 1) {
+			setBit(b.getWord());
+			_val32d = -1;
+		}
+		break;
+	case 4:
+		if (par3 == 1 || _val32d < 0 || _val32d > 4)
+			setBit(b.getWord());
+		break;
+	case 5:
+		if (par2 != 13)
+			break;
+
+		tmp = b.getWord();   // +8
+		tmp = b.getWord();   // +10
+		par7 = b.getWord();  // +12 dx
+		tmp = b.getWord();   // +14
+		par9 = b.getWord();  // +16 bx
+		tmp = b.getWord();   // +18
+		par11 = b.getWord(); // +20 cx
+		tmp = b.getWord();   // +12
+		par13 = b.getWord(); // +24 ax
+		
+		if (par13 > _actor[0].x || par11 < _actor[0].x) {
+			_tiresRustle = true;
+			_actor[0].x1 = -_actor[0].x1;
+			_actor[0].damage++;
+		}
+
+		if (par9 < _actor[0].x || par7 > _actor[0].x) {
+			_tiresRustle = true;
+			_actor[0].damage += 4;
+		}
+		break;
+	case 6:
+		switch (par2) {
+		case 38:
+			smlayer_drawSomething(renderBitmap, codecparam, 50, 20, 3, 
+								  _smush_iconsNut, 7, 0, 0);
+			_val119_ = true;
+			_iactSceneId = par4;
+			break;
+		case 7:
+			if (readArray(_numberArray, 4) != 0)
+				return;
+
+			_val120_ = true;
+			smlayer_drawSomething(renderBitmap, codecparam, 160, 20, 3, 
+								  _smush_icons2Nut, 8, 0, 0);
+			break;
+		case 8:
+			if (readArray(_numberArray, 4) == 0 || readArray(_numberArray, 6) == 0)
+				return;
+
+			setWordInString(_numberArray, 1, _val55d);
+			setWordInString(_numberArray, 3, _val57d);
+			smush_setToFinish();
+
+			break;
+		case 25:				
+			_val121_ = true;
+			_actor[0].y1 = -_actor[0].y1;
+			break;
+		case 11:
+			if (_val32d >= 1 && _val32d <= 4 && !_needSceneSwitch)
+				queueSceneSwitch(13, _smush_minefiteFlu, "minefite.san", 64, 0,
+								 _continueFrame1, 1300);
+			break;
+		case 9:
+			par5 = b.getWord(); // si
+			par6 = b.getWord(); // bx
+			smlayer_setFluPalette(_smush_roadrsh3Rip, 0);
+			if (par5 != par6 - 1)
+				smlayer_setFluPalette(_smush_roadrashRip, 0);
+		}
+		break;
+	case 7:
+		switch (par4) {
+		case 1:
+			_actor[0].x -= (b.getWord() - 160) / 10;
+			break;
+		case 2:
+			par5 = b.getWord();
+
+			if (par5 - 8 > _actor[0].x || par5 + 8 < _actor[0].x) {
+				if (smlayer_isSoundRunning(86))
+					smlayer_stopSound(86);
+			} else {
+				if (!smlayer_isSoundRunning(86))
+					smlayer_startSound1(86);
+			}
+			break;
+		}
+		break;
+	}
+
+	if (_val32d < 0 || _val32d > 4)
+		if (readArray(_numberArray, 8)) {
+			smlayer_drawSomething(renderBitmap, codecparam, 270, 20, 3, 
+								  _smush_icons2Nut, 20, 0, 0);
+			_val122_ = true;
+		}
+}
+
+void Insane::proc62(void) {
 }
 
 void Insane::iactScene3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -7608,15 +7683,173 @@ void Insane::iactScene3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					  int32 setupsan13, Chunk &b, int32 size, int32 flags) {
 	_player->checkBlock(b, TYPE_IACT, 8);
-	debug(0, "SmushPlayer::iactScene4()");
-	// FIXME: implement
+
+	int16 par1, par2, par3, par4, par5;
+
+	par1 = b.getWord(); // edx
+	par2 = b.getWord(); // bx
+	par3 = b.getWord();
+	par4 = b.getWord(); // cx
+
+	switch (par1) {
+	case 2:
+	case 4:
+		par5 = b.getWord(); // si
+		switch (par3) {
+		case 1:
+			if (par4 == 1) {
+				if (readArray(_numberArray, 6))
+					setBit(par5);
+				else
+					clearBit(par5);
+			} else {
+				if (readArray(_numberArray, 6))
+					clearBit(par5);
+				else
+					setBit(par5);
+			}
+			break;
+		case 2:
+			if (readArray(_numberArray, 5))
+				clearBit(par5);
+			else
+				setBit(par5);
+			break;
+		}
+		break;
+	case 6:
+		switch (par2) {
+		case 38:
+			smlayer_drawSomething(renderBitmap, codecparam, 270, 20, 3, 
+								  _smush_icons2Nut, 10, 0, 0);
+			_val119_ = true;
+			_iactSceneId = par4;
+			break;
+		case 7:
+			if (readArray(_numberArray, 4) != 0)
+				return;
+
+			_val120_ = true;
+			smlayer_drawSomething(renderBitmap, codecparam, 160, 20, 3, 
+								  _smush_icons2Nut, 8, 0, 0);
+			break;
+		case 8:
+			if (readArray(_numberArray, 4) == 0 || readArray(_numberArray, 6) == 0)
+				return;
+
+			setWordInString(_numberArray, 1, _val55d);
+			setWordInString(_numberArray, 3, _val57d);
+			smush_setToFinish();
+
+			break;
+		case 25:				
+			if (readArray(_numberArray, 5) == 0)
+				return;
+			
+			_val212_ = true;
+			smlayer_drawSomething(renderBitmap, codecparam, 160, 20, 3, 
+								  _smush_icons2Nut, 8, 0, 0);
+			break;
+		case 11:
+			smlayer_drawSomething(renderBitmap, codecparam, 50, 20, 3, 
+								  _smush_icons2Nut, 9, 0, 0);
+			_val119_ = true;
+			_iactSceneId = par4;
+			break;
+		}
+		break;
+	case 7:
+		if (par4 == 3 && par5 <_actor[0].x) {
+			return; // nice noop here
+		}
+		break;
+	}
 }
 
 void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					  int32 setupsan13, Chunk &b, int32 size, int32 flags) {
 	_player->checkBlock(b, TYPE_IACT, 8);
-	debug(0, "SmushPlayer::iactScene6()");
-	// FIXME: implement
+
+	int16 par1, par2, par3, par4, par5;
+
+	par1 = b.getWord();
+	par2 = b.getWord(); // bx
+	par3 = b.getWord();
+	par4 = b.getWord();
+
+	switch (par1) {
+	case 2:
+	case 4:
+		par5 = b.getWord(); // si
+		switch (par3) {
+		case 1:
+			if (par4 == 1) {
+				if (readArray(_numberArray, 6))
+					setBit(par5);
+				else
+					clearBit(par5);
+			} else {
+				if (readArray(_numberArray, 6))
+					clearBit(par5);
+				else
+					setBit(par5);
+			}
+			break;
+		case 2:
+			if (readArray(_numberArray, 5))
+				clearBit(par5);
+			else
+				setBit(par5);
+			break;
+		}
+		break;
+	case 6:
+		switch (par2) {
+		case 38:
+			smlayer_drawSomething(renderBitmap, codecparam, 270, 20, 3, 
+								  _smush_icons2Nut, 10, 0, 0);
+			_val119_ = true;
+			_iactSceneId = par4;
+			break;
+		case 7:
+			if (readArray(_numberArray, 4) != 0)
+				return;
+
+			_val120_ = true;
+			smlayer_drawSomething(renderBitmap, codecparam, 160, 20, 3, 
+								  _smush_icons2Nut, 8, 0, 0);
+			break;
+		case 8:
+			if (readArray(_numberArray, 4) == 0 || readArray(_numberArray, 6) == 0)
+				return;
+
+			setWordInString(_numberArray, 1, _val55d);
+			setWordInString(_numberArray, 3, _val53d);
+			smush_setToFinish();
+
+			break;
+		case 25:				
+			if (readArray(_numberArray, 5) == 0)
+				return;
+			
+			_val212_ = true;
+			smlayer_drawSomething(renderBitmap, codecparam, 160, 20, 3, 
+								  _smush_icons2Nut, 8, 0, 0);
+			break;
+		case 11:
+			smlayer_drawSomething(renderBitmap, codecparam, 50, 20, 3, 
+								  _smush_icons2Nut, 9, 0, 0);
+			_val119_ = true;
+			_iactSceneId = par4;
+			break;
+		}
+		break;
+	case 7:
+		if (par4 == 3 && par5 <_actor[0].x) {
+			return; // nice noop here
+		}
+		break;
+	}
 }
 
 void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -7633,7 +7866,7 @@ void Insane::iactScene21(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 void Insane::procSKIP(Chunk &b) {
 	_player->checkBlock(b, TYPE_SKIP, 4);
-	int32 par1, par2;
+	int16 par1, par2;
 
 	par1 = b.getWord();
 	par2 = b.getWord();
@@ -7650,8 +7883,24 @@ void Insane::procSKIP(Chunk &b) {
 }
 
 bool Insane::isBitSet(int n) {
-	// FIXME: implement
-	return 0;
+	if (n >= 0x80)
+		return false;
+
+	return (_iactBits[n / 8] & (0x80 >> (n % 8))) != 0;
+}
+
+void Insane::setBit(int n) {
+	if (n >= 0x80)
+		return;
+
+	_iactBits[n / 8] |= 0x80 >> (n % 8);
+}
+
+void Insane::clearBit(int n) {
+	if (n >= 0x80)
+		return;
+
+	_iactBits[n / 8] &= !(0x80 >> (n % 8));
 }
 
 void Insane::smlayer_setActorFacing(int actornum, int actnum, int frame, int direction) {
@@ -7723,6 +7972,9 @@ void Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 
 	byte *tmp = fluPtr;
 	int32 offset;
 	
+	debug(0, "smush_setupSanWithFlu(%s, %d, %d, %d, %d, %lx, %d)", filename, setupsan2,
+		  step1, step2, setupsan1, fluPtr, numFrames);
+
 	_smush_setupsan1 = setupsan1;
 	
 	/* skip FLUP marker */
@@ -7771,7 +8023,7 @@ void Insane::smush_setFrameSteps(int32 step1, int32 step2) {
 }
 
 void Insane::smush_setupSanFile(const char *filename, int32 offset) {
-	debug(0, "smush_setupSanFile(%s, %d)", filename, offset);
+	debug(0, "smush_setupSanFile(%s, %x)", filename, offset);
 
 	_player->seekSan(filename, _scumm->getGameDataPath(), offset);
 
