@@ -4855,7 +4855,7 @@ IMuseDigital::~IMuseDigital() {
 
 void IMuseDigital::handler() {
 	bool new_mixer;
-	int32 l, idx;
+	int32 l, idx = 0;
 
 	for (l = 0; l < MAX_DIGITAL_CHANNELS;l ++) {
 		if (_channel[l]._used) {
@@ -4939,7 +4939,7 @@ void IMuseDigital::startSound(int sound) {
 			_channel[l]._numJumps = 0;
 			ptr += 16;
 
-			uint32 tag, size;
+			uint32 tag, size = 0;
 
 			for (;;) {
 		    tag = READ_BE_UINT32(ptr); ptr += 4;
