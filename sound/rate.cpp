@@ -87,8 +87,6 @@ int st_rate_start(eff_t effp, st_rate_t inrate, st_rate_t outrate)
 	rate->opos_inc_frac = incr & ((1UL << FRAC_BITS) - 1);
 	rate->opos_inc = incr >> FRAC_BITS;
 
-printf("opos_inc: (0x%lx << %d) + 0x%lx = 0x%lx\n", rate->opos_inc, FRAC_BITS, rate->opos_inc_frac, rate->opos_inc + rate->opos_inc_frac);
-
 	rate->ipos = 0;
 
 	rate->ilast[0] = rate->ilast[1] = 0;
