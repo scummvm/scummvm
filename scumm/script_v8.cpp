@@ -1412,7 +1412,8 @@ void Scumm_v8::o8_kernelSetFunctions() {
 		
 		break;
 	case 24:	// clearTextQueue
-		warning("o8_kernelSetFunctions: clearTextQueue()");
+		// TODO - clearTextQueue
+//		warning("o8_kernelSetFunctions: clearTextQueue()");
 		break;
 	case 25: {	// saveGameReadName
 		SaveFileManager *mgr = _system->get_savefile_manager();
@@ -1537,10 +1538,29 @@ void Scumm_v8::o8_kernelGetFunctions() {
 		push(0);
 		break;
 	}
-	case 0xD9:		// actorHit - used, for example, to detect ship collision
-				// during ship-to-ship combat.
-		push(1);
+	case 0xD9: {   // actorHit - used, for example, to detect ship collision
+	               // during ship-to-ship combat.
+#if 0
+		Actor *a = derefActorSafe(args[1], "actorHit");
+		assert(a);
+		int x = args[2];
+		int y = args[3];
+		
+		// TODO: this should perform a collision test, i.e. check if
+		// point (x,y) lies on the given actor or not.
+		// To achieve this, one needs to consider the current costume
+		// etc. What the original code seems to do is to draw the
+		// actor/costume (but maybe in a custom buffer?), and let the
+		// draw code perform the hit test.
+		// But I am not 100% clear on this. For example, it probably
+		// shouldn't touch the gfx usage bits, and some other things...
+		// So maybe we need dedicated code for this after all?
 
+		warning("actorHit(%d, %d, %d) NYI", args[1], x, y);
+
+#endif
+
+		push(1);	// FIXME - for now always return 1
 /*		
 		// Rough sketch, thanks to DanielFox and ludde
 		struct SomeStruct {
@@ -1568,7 +1588,7 @@ void Scumm_v8::o8_kernelGetFunctions() {
 		push(dword_4FC148);
 */
 		break;
-
+	}
 	case 0xDA:		// lipSyncWidth
 	case 0xDB:		// lipSyncHeight
 		// TODO - get lip sync data for the currently active voice
