@@ -253,9 +253,6 @@ static const ScummGameSettings scumm_settings[] = {
 	{"socks", "Pajama Sam's Sock Works", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 
-	//Not checked
-	{"ffhsdemo", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
-	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 	// Resource changed
 	{"pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
@@ -273,6 +270,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 	{"foxdemo", "Spyfox 1: Dry Cereal (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
+	/* there is also a C++ engine version of spydemo */
 	{"spydemo", "Spyfox 1: Dry Cereal (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 
@@ -311,6 +309,8 @@ static const ScummGameSettings scumm_settings[] = {
 	{"ff5demo", "Freddi Fish 5: The Case of the Creature of Coral Cave (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 	{"freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave", GID_HEGAME, 6, 72, MDT_NONE,
+	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
+	{"ffhsdemo", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},
 	{"pj3-demo", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet (Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_NEW_OPCODES | GF_USE_KEY | GF_HUMONGOUS | GF_NEW_COSTUMES | GF_WINDOWS, 0},

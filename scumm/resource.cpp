@@ -2091,8 +2091,14 @@ void ScummEngine::readMAXS(int blockSize) {
 
 		_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
 	} else if (_heversion >= 72) { // sputm7.2
-		if (blockSize != 32 + 8)
-			error("MAXS block of size %d not supported", blockSize);
+		if (blockSize != 32 + 8) {
+			if (blockSize == 44 + 8)
+				error("MAXS blocks from C++ based games not yet supported");
+			else if (blockSize == 38 + 8)
+				error("MAXS blocks from Scummsys.9x games not yet supported");
+			else
+				error("MAXS block of size %d not supported, please report", blockSize);
+		}
 		_fileHandle.readUint16LE();
 		_numVariables = _fileHandle.readUint16LE();
 		_numBitVariables = _fileHandle.readUint16LE();
