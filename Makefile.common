@@ -91,12 +91,6 @@ else
 MODULES += kyra
 endif
 
-ifdef DISABLE_AWE
-DEFINES += -DDISABLE_AWE
-else 
-MODULES += awe
-endif
-
 # After the game specific modules follow the shared modules
 MODULES += \
 	gui \

@@ -173,10 +173,6 @@ DECLARE_PLUGIN(KYRA)
 DECLARE_PLUGIN(SAGA)
 #endif
 
-#ifndef DISABLE_AWE
-DECLARE_PLUGIN(AWE)
-#endif
-
 #endif
 
 #endif
