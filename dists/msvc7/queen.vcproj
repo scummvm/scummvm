@@ -171,6 +171,12 @@
 			RelativePath="..\..\queen\sound.h">
 		</File>
 		<File
+			RelativePath="..\..\queen\state.cpp">
+		</File>
+		<File
+			RelativePath="..\..\queen\state.h">
+		</File>
+		<File
 			RelativePath="..\..\queen\structs.h">
 		</File>
 		<File
@@ -178,9 +184,6 @@
 		</File>
 		<File
 			RelativePath="..\..\queen\talk.h">
-		</File>
-		<File
-			RelativePath="..\..\queen\verb.h">
 		</File>
 		<File
 			RelativePath="..\..\queen\walk.cpp">
