@@ -3320,43 +3320,37 @@ void Scumm::bompApplyMask(byte *line_buffer, byte *mask_src, byte bits, int32 si
 	}
 }
 
-void Scumm::bompApplyShadow0(byte *line_buffer, byte *dst, int32 size) {
-	while(1) {
-		if (size-- == 0)
-			return;
-		byte tmp = *(line_buffer++);
-		if (tmp != 255) {
-			*(dst) = tmp;
+void Scumm::bompApplyShadow0(const byte *line_buffer, byte *dst, int32 size, byte transparency) {
+	while(size-- > 0) {
+		byte tmp = *line_buffer++;
+		if (tmp != transparency) {
+			*dst = tmp;
 		}
 		dst++;
 	}
 }
 
-void Scumm::bompApplyShadow1(byte *line_buffer, byte *dst, int32 size) {
-	while(1) {
-		if (size-- == 0)
-			return;
-		byte tmp = *(line_buffer++);
-		if (tmp != 255) {
+void Scumm::bompApplyShadow1(const byte *line_buffer, byte *dst, int32 size, byte transparency) {
+	while(size-- > 0) {
+		byte tmp = *line_buffer++;
+		if (tmp != transparency) {
 			if (tmp == 13) {
 				tmp = _shadowPalette[*(dst)];
 			}
-			*(dst) = tmp;
+			*dst = tmp;
 		}
 		dst++;
 	}
 }
 
-void Scumm::bompApplyShadow3(byte *line_buffer, byte *dst, int32 size) {
-	while(1) {
-		if (size-- == 0)
-			return;
-		byte tmp = *(line_buffer++);
-		if (tmp != 255) {
+void Scumm::bompApplyShadow3(const byte *line_buffer, byte *dst, int32 size, byte transparency) {
+	while(size-- > 0) {
+		byte tmp = *line_buffer++;
+		if (tmp != transparency) {
 			if (tmp < 8) {
-				tmp = _shadowPalette[*(dst) + (tmp << 8)];
+				tmp = _shadowPalette[*dst + (tmp << 8)];
 			}
-			*(dst) = tmp;
+			*dst = tmp;
 		}
 		dst++;
 	}

@@ -909,9 +909,11 @@ protected:
 	int32 bompDecodeLineMode1(const byte *src, byte *line_buffer, int32 size);
 	int32 bompDecodeLineMode3(const byte *src, byte *line_buffer, int32 size);
 	void bompApplyMask(byte *line_buffer, byte *mask_out, byte bits, int32 size);
-	void bompApplyShadow0(byte *line_buffer, byte *dst, int32 size);
-	void bompApplyShadow1(byte *line_buffer, byte *dst, int32 size);
-	void bompApplyShadow3(byte *line_buffer, byte *dst, int32 size);
+public:
+	void bompApplyShadow0(const byte *line_buffer, byte *dst, int32 size, byte transparency = 255);
+	void bompApplyShadow1(const byte *line_buffer, byte *dst, int32 size, byte transparency = 255);
+	void bompApplyShadow3(const byte *line_buffer, byte *dst, int32 size, byte transparency = 255);
+protected:
 	void bompApplyActorPalette(byte *line_buffer, int32 size);
 
 	bool _shakeEnabled;
