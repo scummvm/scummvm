@@ -55,8 +55,7 @@ public:
 		FLAG_16BITS = 1 << 2,           // sound is 16 bits wide (default: 8bit)
 		FLAG_AUTOFREE = 1 << 3,         // sound buffer is freed automagically at the end of playing
 		FLAG_REVERSE_STEREO = 1 << 4,   // reverse the left and right stereo channel
-		FLAG_LOOP = 1 << 5,             // loop the audio
-		FLAG_AUTODELETE = 1 << 6        // same as AUTOFREE, but uses delete instead of free()
+		FLAG_LOOP = 1 << 5              // loop the audio
 			
 	};
 

@@ -78,7 +78,7 @@ Talk::Talk(
 }
 
 Talk::~Talk() {
-	delete[] _fileData;
+	free(_fileData);
 }
 
 

@@ -79,7 +79,7 @@ Resource::~Resource() {
 	_resourceFile->close();
 	if(_resourceTable != _resourceTablePEM10) 
 		delete[] _resourceTable;
-	delete[] _JAS2Ptr;
+	free(_JAS2Ptr);
 }
 
 int32 Resource::resourceIndex(const char *filename) {
@@ -144,7 +144,7 @@ uint32 Resource::fileOffset(const char *filename) {
 uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, byte *dstBuf) {
 	uint32 size = fileSize(filename);
 	if (dstBuf == NULL) {
-		dstBuf = new byte[size];
+		dstBuf = (byte *)malloc(size);
 	}
 	// skip 'skipBytes' bytes (useful for headers)
 	_resourceFile->seek(fileOffset(filename) + skipBytes, SEEK_SET);

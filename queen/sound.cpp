@@ -62,7 +62,7 @@ bool Sound::isPlaying() {
 }
 
 int SBSound::playSound(byte *sound, uint32 size) {
-	byte flags = 0 | SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTODELETE;
+	byte flags = 0 | SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE;
 	return _mixer->playRaw(&_sfxHandle, sound, size, 11025, flags);
 }
 

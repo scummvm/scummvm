@@ -156,7 +156,7 @@ Logic::Logic(Resource *resource, Graphics *graphics, Display *theDisplay, Input 
 }
 
 Logic::~Logic() {
-	delete[] _jas;
+	free(_jas);
 	delete _walk;
 }
 

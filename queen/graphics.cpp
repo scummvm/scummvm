@@ -126,7 +126,7 @@ void Graphics::bankOverpack(uint32 srcframe, uint32 dstframe, uint32 bankslot) {
 void Graphics::bankErase(uint32 bankslot) {
 
 	debug(9, "Graphics::bankErase(%d)", bankslot);
-	delete[] _banks[bankslot].data;
+	free(_banks[bankslot].data);
 	_banks[bankslot].data = 0;	
 }
 
@@ -135,9 +135,9 @@ void Graphics::bobSetupControl() {
 
 	bankLoad("control.BBK",17);
 	bankUnpack(1, 1, 17); // Mouse pointer
-    bankUnpack(3, 3, 17); // Up arrow dialogue
-    bankUnpack(4, 4, 17); // Down arrow dialogue
-    bankErase(17);
+	bankUnpack(3, 3, 17); // Up arrow dialogue
+	bankUnpack(4, 4, 17); // Down arrow dialogue
+	bankErase(17);
 }
 
 
@@ -722,7 +722,7 @@ void Graphics::loadBackdrop(const char* name, uint16 room) {
 	}
 	uint32 size = _resource->fileSize(name);
 	_display->pcxReadBackdrop(pcxbuf, size, room > 114);
-	delete[] pcxbuf;
+	free(pcxbuf);
 
 	if (room >= 90) {
 		_cameraBob = 0;
@@ -738,7 +738,7 @@ void Graphics::loadPanel() {
 	}
 	uint32 size = _resource->fileSize("panel.pcx");
 	_display->pcxReadPanel(pcxbuf, size);
-	delete[] pcxbuf;
+	free(pcxbuf);
 }
 
 
@@ -752,7 +752,7 @@ void Graphics::useJournal() { // GameSettings* pgs
 
 	// load and unpack journal frames
 	frameEraseAll(false);
-    bankLoad("journal.BBK", 8);
+	bankLoad("journal.BBK", 8);
 	for(i = 1; i <= 20; ++i) {
 		bankUnpack(i, FRAMES_JOURNAL + i, 8);
 		// set hot spots to zero
@@ -761,7 +761,7 @@ void Graphics::useJournal() { // GameSettings* pgs
 	}
 	// adjust info box hot spot to put it on top always
 	_frames[FRAMES_JOURNAL + 20].yhotspot = 200;
-    bankErase(8);
+	bankErase(8);
 
 	// TODO: setup zones
 
