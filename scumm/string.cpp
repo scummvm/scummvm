@@ -280,6 +280,21 @@ void ScummEngine::CHARSET_1() {
 				break;
 			case 110:
 				goto newLine;
+			case 116:
+				i = 0;
+				memset(value, 0, 32);
+				c = *buffer++;
+				while(c != code) {
+					value[i] = c;
+					c = *buffer++;
+					i++;
+				}
+				value[i] = 0;
+				talk_sound_a = atoi(value);
+				talk_sound_b = 0;
+
+				_sound->talkSound(talk_sound_a, talk_sound_b, 2);
+				break;
 			case 119:
 				if (_haveMsg != 0xFE)
 					_haveMsg = 0xFF;
