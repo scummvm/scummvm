@@ -348,10 +348,18 @@ int Script::SF_gotoScene(SCRIPTFUNC_PARAMS) {
 
 // Script function #17 (0x11)
 int Script::SF_setObjImage(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+	SDataWord_T obj_param = thread->pop();
+	SDataWord_T sprite_param = thread->pop();
 
-	debug(1, "stub: SF_setObjImage(), %d args", nArgs);
+	int index = obj_param & 0x1FFF;
+
+	if (index >= ARRAYSIZE(ObjectTable)) {
+		return FAILURE;
+	}
+
+	ObjectTable[index].spritelistRn = sprite_param + 9;
+	_vm->_interface->draw();
+
 	return SUCCESS;
 }
 
