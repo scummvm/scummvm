@@ -332,6 +332,9 @@ void OSystem_WINCE3::update_game_settings() {
 			_monkeyKeyboard = true;
 			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
 		}
+
+		if (ConfMan.getBool("CE_landscape"))
+			load_gfx_mode();
 	}
 }
 
