@@ -166,7 +166,7 @@ void ScrollBarWidget::handleTickle() {
 /*
 	// FIXME/TODO - this code is supposed to allow for "click-repeat" (like key repeat),
 	// i.e. if you click on one of the arrows and keep clicked, it will scroll
-	// continously. However, just like key repeat, this requires two delays:
+	// continuously. However, just like key repeat, this requires two delays:
 	// First an "initial" delay that has to pass before repeating starts (otherwise
 	// it is near to impossible to achieve single clicks). Secondly, a repeat delay
 	// that determines how often per second a click is simulated.

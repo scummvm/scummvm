@@ -115,7 +115,7 @@ uint8 SkyGmChannel::process(uint16 aktTime) {
 					break;
 				default:
 					// these opcodes aren't implemented in original music driver
-					error("SkyChannel: Not existant routine 0x%02X was called",opcode);
+					error("SkyChannel: Not existent routine 0x%02X was called",opcode);
 					_channelData.channelActive = 0;
 					break;
 				}

@@ -268,7 +268,7 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 	assert(plugin);
 	// Try to load the plugin
 	if (plugin->loadPlugin()) {
-		// If succesful, add it to the list of known plugins and return.
+		// If successful, add it to the list of known plugins and return.
 		_plugins.push_back(plugin);
 		return true;
 	} else {

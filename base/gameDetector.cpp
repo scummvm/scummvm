@@ -36,7 +36,7 @@
 #include "config.h"
 #endif
 
-// DONT FIXME: DO NOT ORDER ALPHABETICALY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
+// DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
 #ifdef __PALM_OS__
 static const char USAGE_STRING[] = "NoUsageString"; // save more data segment space
 #else

@@ -687,7 +687,7 @@ bool SkyLogic::collide(Compact *cpt) {
 	uint16 x = cpt->xcood & 0xfff8;
 	uint16 y = cpt->ycood & 0xfff8;
 
-	// The collision is direction dependant
+	// The collision is direction dependent
 	switch (_compact->extCompact->dir) {
 	case 0: // looking up
 		x -= m1->colOffset; // compensate for inner x offsets

@@ -93,7 +93,7 @@ protected:
 	uint32	_dtLineSize;	//size of one line in bytes
 	uint8	*_dtData;	//address of textdata
 	char	*_dtText;	//pointer to text
-	uint32	_dtCharSpacing;	//character seperation adjustment
+	uint32	_dtCharSpacing;	//character separation adjustment
 	uint32	_dtWidth;	//width of chars in last line (for editing (?))
 	uint32	_dtLastWidth;
 	bool	_dtCentre;	//set for centre text

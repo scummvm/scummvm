@@ -118,7 +118,7 @@ public:
 
 // Factory functions => no need to include the specific classes
 // in this header. This serves two purposes:
-// 1) Clean seperation from the game modules (scumm, simon) and the generic code
+// 1) Clean separation from the game modules (scumm, simon) and the generic code
 // 2) Faster (compiler doesn't have to parse lengthy header files)
 #ifndef DISABLE_SCUMM
 DECLARE_PLUGIN(SCUMM)

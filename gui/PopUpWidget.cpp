@@ -251,7 +251,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 
 	g_gui.fillRect(x, y, w, kLineHeight, hilite ? g_gui._textcolorhi : g_gui._bgcolor);
 	if (name.size() == 0) {
-		// Draw a seperator
+		// Draw a separator
 		g_gui.hLine(x - 1, y + kLineHeight / 2, x + w, g_gui._shadowcolor);
 		g_gui.hLine(x, y + 1 + kLineHeight / 2, x + w, g_gui._color);
 	} else {

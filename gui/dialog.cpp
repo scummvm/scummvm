@@ -205,7 +205,7 @@ void Dialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 }
 
 void Dialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
-	// Focused widget recieves keyup events
+	// Focused widget receives keyup events
 	if (_focusedWidget)
 		_focusedWidget->handleKeyUp(ascii, keycode, modifiers);
 }
@@ -250,7 +250,7 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 }
 
 void Dialog::handleTickle() {
-	// Focused widget recieves tickle notifications
+	// Focused widget receives tickle notifications
 	if (_focusedWidget && _focusedWidget->getFlags() & WIDGET_WANT_TICKLE) {
 		_focusedWidget->handleTickle();
 	}
