@@ -1,13 +1,12 @@
 Residual in-progress items (in rough order of priority):
 -------------------------------------------------------0
- * Rewrite Bitmap class to use textures (major speed boost on older cards) - Assigned to Yaz
  * Add SMUSH (low-priority, but important) - Assigned to aquadran
+ * Rooms look crap on many Win32 cards. Reconfirm this now bitmaps are textured
+   http://www.enderboi.com/misc/Grim1.jpg - Assigned to Ender
+ * Implement limiting actor to walkplane boundries - Assigned to daniel (maybe? :)
 
 Residual TODO list (in rough order of priority):
 ------------------------------------------------ 
- * Rooms look crap on many Win32 cards, Bitmap rewrite may fix? 
-   http://www.enderboi.com/misc/Grim1.jpg
- * Implement limiting actor to walkplane boundries 
  * Implement 2D primitives 
  * Remove hash_map usage (not implemented on Visual Studio & other compilers)
  * Remove as much other STL stuff as possible (see above)
