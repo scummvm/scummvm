@@ -70,3 +70,8 @@ dist:
 # Until we add a nice configure tool, default to the SDL build rules
 build.rules:
 	$(CP) backends/sdl/build.rules build.rules
+
+deb:
+	ln -sf dists/debian;
+	debian/prepare
+	fakeroot debian/rules binary
