@@ -556,17 +556,12 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_debugLevel = detector->_debugLevel;
 	_dumpScripts = detector->_dumpScripts;
 	_bootParam = detector->_bootParam;
-#if 1
 	_exe_name = strdup(detector->_game.filename);
 	_game_name = strdup(detector->_gameFileName.c_str());
 	_gameId = detector->_game.id;
+	_version = detector->_game.version;
 	setFeatures(detector->_game.features);
-#else
-	_exe_name = strdup(detector->_gameRealName.c_str());	// FIXME: probably should use String class here
-	_game_name = strdup(detector->_gameFileName.c_str());
-	_gameId = detector->_gameId;
-	setFeatures (detector->_features);
-#endif
+
 	_noSubtitles = detector->_noSubtitles;
 	_defaultTalkDelay = detector->_talkSpeed;
 	_use_adlib = detector->_use_adlib;
