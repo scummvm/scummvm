@@ -22,7 +22,6 @@
 #include "sword2/defs.h"
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
-#include "sword2/resman.h"
 
 namespace Sword2 {
 
@@ -32,7 +31,7 @@ int32 Logic::fnSendSync(int32 *params) {
 
 	for (int i = 0; i < MAX_syncs; i++) {
 		if (_syncList[i].id == 0) {
-			debug(5, " %d sending sync %d to %d", _scriptVars[ID], params[1], params[0]);
+			debug(5, "%d sends sync %d to %d", _scriptVars[ID], params[1], params[0]);
 			_syncList[i].id = params[0];
 			_syncList[i].sync = params[1];
 			return IR_CONT;
@@ -46,12 +45,13 @@ int32 Logic::fnSendSync(int32 *params) {
 	return IR_CONT;
 }
 
-void Logic::clearSyncs(uint32 id) {
-	// clear any syncs registered for this id
-	// call this just after the id has been processed
-	// there could in theory be more than one sync waiting for us so
-	// clear the lot
+/**
+ * Clear any syncs registered for this id. Call this just after the id has been
+ * processed. Theoretically there could be more than one sync waiting for us,
+ * so clear the lot.
+ */
 
+void Logic::clearSyncs(uint32 id) {
 	for (int i = 0; i < MAX_syncs; i++) {
 		if (_syncList[i].id == id) {
 			debug(5, "removing sync %d for %d", i, id);
@@ -60,58 +60,52 @@ void Logic::clearSyncs(uint32 id) {
 	}
 }
 
-bool Logic::getSync(void) {
-	// check for a sync waiting for this character
-	// - called from system code eg. from inside fnAnim(), to see if
-	// animation to be quit
+/**
+ * Check for a sync waiting for this character. Called from fnAnim() to see if
+ * animation is to be finished. Returns an index into _syncList[], or -1.
+ */
 
+int Logic::getSync(void) {
 	for (int i = 0; i < MAX_syncs; i++) {
-		if (_syncList[i].id == _scriptVars[ID]) {
-			// means sync found
-			return true;
-		}
+		if (_syncList[i].id == _scriptVars[ID])
+			return i;
 	}
 
-	// no sync found
-	return false;
+	return -1;
 }
 
-int32 Logic::fnGetSync(int32 *params) {
-	// check for a sync waiting for this character
-	// - called from script
+/**
+ * Like getSync(), but called from scripts. Sets the RESULT variable to
+ * the sync value, or 0 if none is found.
+ */
 
+int32 Logic::fnGetSync(int32 *params) {
 	// params:	none
 
-	for (int i = 0; i < MAX_syncs; i++) {
-		if (_syncList[i].id == _scriptVars[ID]) {
-			// return sync value waiting
-			_scriptVars[RESULT] = _syncList[i].sync;
-			return IR_CONT;
-		}
-	}
+	int slot = getSync();
 
-	// no sync found
-	_scriptVars[RESULT] = 0;
+	_scriptVars[RESULT] = (slot != -1) ? _syncList[slot].sync : 0;
 	return IR_CONT;
 }
 
-int32 Logic::fnWaitSync(int32 *params) {
-	// keep calling until a sync received
+/**
+ * Wait for sync to happen. Sets the RESULT variable to the sync value, once
+ * it has been found.
+ */
 
+int32 Logic::fnWaitSync(int32 *params) {
 	// params:	none
 
-	debug(5, "fnWaitSync: %d waits", _scriptVars[ID]);
+	debug(6, "fnWaitSync: %d waits", _scriptVars[ID]);
 
-	for (int i = 0; i < MAX_syncs; i++) {
-		if (_syncList[i].id == _scriptVars[ID]) {
-			// return sync value waiting
-			debug(5, "fnWaitSync: go");
-			_scriptVars[RESULT] = _syncList[i].sync;
-			return IR_CONT;
-		}
-	}
+	int slot = getSync();
 
-	return IR_REPEAT;
+	if (slot == -1)
+		return IR_REPEAT;
+
+	debug(5, "fnWaitSync: %d got sync %d", _scriptVars[ID], _syncList[slot].sync);
+	_scriptVars[RESULT] = _syncList[slot].sync;
+	return IR_CONT;
 }
 
 } // End of namespace Sword2

@@ -147,7 +147,7 @@ int32 Logic::animate(int32 *params, bool reverse) {
 			ob_graphic->anim_pc = anim_head->noAnimFrames - 1;
 		else
 			ob_graphic->anim_pc = 0;
- 	} else if (getSync()) {
+ 	} else if (getSync() != -1) {
 		// We've received a sync - return to script immediately
 		debug(5, "**sync stopped %d**", _scriptVars[ID]);
 

@@ -221,7 +221,7 @@ public:
 	SyncUnit _syncList[MAX_syncs];
 
 	void clearSyncs(uint32 id);
-	bool getSync(void);
+	int getSync(void);
 
 	Router *_router;
 
