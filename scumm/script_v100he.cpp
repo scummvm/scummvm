@@ -2745,6 +2745,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 }
 
 void ScummEngine_v100he::decodeParseString(int m, int n) {
+	Actor *a;
 	int i, colors, size;
 	int args[31];
 	byte name[1024];
@@ -2809,8 +2810,11 @@ void ScummEngine_v100he::decodeParseString(int m, int n) {
 		break;
 	case 91:
 		_string[m].loadDefault();
-		if (n)
+		if (n) {
 			_actorToPrintStrFor = pop();
+			a = derefActorSafe(_actorToPrintStrFor, "decodeParseString");
+			_string[0].color = a->_talkColor;
+		}
 		break;
 	case 92:
 		_string[m].saveDefault();
