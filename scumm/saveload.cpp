@@ -941,7 +941,7 @@ void Serializer::saveEntries(void *d, const SaveLoadEntry *sle) {
 	while (sle->offs != 0xFFFF) {
 		at = (byte *)d + sle->offs;
 		size = sle->size;
-		type = sle->type;
+		type = (byte) sle->type;
 
 		if (sle->maxVersion != CURRENT_VER) {
 			// Skip obsolete entries
@@ -980,7 +980,7 @@ void Serializer::loadEntries(void *d, const SaveLoadEntry *sle) {
 	while (sle->offs != 0xFFFF) {
 		at = (byte *)d + sle->offs;
 		size = sle->size;
-		type = sle->type;
+		type = (byte) sle->type;
 
 		if (_savegameVersion < sle->minVersion || _savegameVersion > sle->maxVersion) {
 			// Skip entries which are not present in this save game version
