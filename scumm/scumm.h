@@ -32,13 +32,14 @@
 class GameDetector;
 class NewGui;
 class Dialog;
+class ConsoleDialog;
 class Scumm;
 class IMuse;
 class IMuseDigital;
 class Actor;
 class Sound;
 class Bundle;
-struct ScummDebugger;
+class ScummDebugger;
 class Serializer;
 struct FindObjectInRoom;
 
@@ -337,7 +338,7 @@ public:
 	Dialog *_pauseDialog;
 	Dialog *_optionsDialog;
 	Dialog *_saveLoadDialog;
-	Dialog *_debuggerDialog;
+	ConsoleDialog *_debuggerDialog;
 
 	int runDialog(Dialog *dialog);
 	void pauseDialog();

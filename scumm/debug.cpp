@@ -29,8 +29,13 @@
 #include "debug.h"
 #include "common/util.h"
 
+#ifdef USE_CONSOLE
+#include "gui/console.h"
+#define printf	_s->_debuggerDialog->printf
+#else
 #ifdef HAVE_READLINE
 #include "debugrl.h"
+#endif
 #endif
 
 enum {
@@ -50,7 +55,6 @@ enum {
 
 extern uint16 _debugLevel;
 
-
 void ScummDebugger::attach(Scumm *s)
 {
 	if (_s)
@@ -66,9 +70,9 @@ void ScummDebugger::attach(Scumm *s)
 #endif
 }
 
-bool ScummDebugger::do_command()
+bool ScummDebugger::do_command(int cmd)
 {
-	switch (get_command()) {
+	switch (cmd) {
 	case CMD_HELP:
 		printf("Debugger commands:\n"
 					 "(a)ctor [actornum] -> show actor information\n"
@@ -174,16 +178,48 @@ bool ScummDebugger::do_command()
 	}
 }
 
+#ifdef USE_CONSOLE
+bool ScummDebugger::debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon)
+{
+	ScummDebugger *debugger = (ScummDebugger *)refCon;
+	int cmd = debugger->parse_command((char *)input);
+	if (cmd >= 0) {
+		return debugger->do_command(cmd);
+	} else {
+		for (char *s = (char *)input; *s; s++) {
+			if (*s == ' ') {
+				*s = 0;
+				break;
+			}
+		}
+		debugger->printf("Invalid command '%s'. Type 'help' for a list of available commands.\n", input);
+		return true;
+	}
+}
+#endif
+
 void ScummDebugger::enter()
 {
+#ifdef USE_CONSOLE
+	if (!_s->_debuggerDialog)
+		_s->_debuggerDialog = new ConsoleDialog(_s->_newgui);
+	_s->_debuggerDialog->setInputeCallback(debuggerInputCallback, this);
+	if (_welcome) {
+		_welcome = false;
+		printf("Debugging Mode entered!\n"
+			   "Enter h to list all the debug commands\n");
+	}
+	_s->_debuggerDialog->runModal();
+#else
 	if (_welcome) {
 		_welcome = false;
 		printf
 			("Debugging Mode entered!, please switch to this console for input.\n"
 			 "Enter h to list all the debug commands\n");
 	}
-	while (do_command()) {
+	while (do_command(get_command())) {
 	}
+#endif
 }
 
 
@@ -191,7 +227,8 @@ void ScummDebugger::on_frame()
 {
 	if (_go_amount == 0)
 		return;
-	if (!--_go_amount)
+	--_go_amount;
+	if (!_go_amount)
 		enter();
 }
 
@@ -200,6 +237,9 @@ void ScummDebugger::detach()
 {
 	_s->_debugger = NULL;
 	_s = NULL;
+#ifdef USE_CONSOLE
+	_s->_debuggerDialog->setInputeCallback(0, 0);
+#endif
 }
 
 struct DebuggerCommands {
@@ -225,7 +265,6 @@ static const DebuggerCommands debugger_commands[] = {
 
 int ScummDebugger::get_command()
 {
-	const DebuggerCommands *dc;
 	char *s;
 	int i;
 	char *buf;
@@ -259,22 +298,12 @@ int ScummDebugger::get_command()
 		add_history(buf);
 #endif
 
-		dc = debugger_commands;
-		do {
-			if (!strncmp(buf, dc->text, dc->len)) {
-				for (s = buf; *s; s++) {
-					if (*s == 32) {
-						s++;
-						break;
-					}
-				}
-				_parameters = s;
-				return _command = dc->id;
-			}
-		} while ((++dc)->text[0]);
+		int cmd = parse_command(buf);
+		if (cmd >= 0)
+			return cmd;
 
 		for (s = buf; *s; s++)
-			if (*s == 32) {
+			if (*s == ' ') {
 				*s = 0;
 				break;
 			}
@@ -282,25 +311,46 @@ int ScummDebugger::get_command()
 	} while (1);
 }
 
+int ScummDebugger::parse_command(char *buf)
+{
+	const DebuggerCommands *dc;
+	char *s;
+	dc = debugger_commands;
+	do {
+		if (!strncmp(buf, dc->text, dc->len)) {
+			for (s = buf; *s; s++) {
+				if (*s == ' ') {
+					s++;
+					break;
+				}
+			}
+			_parameters = s;
+			return _command = dc->id;
+		}
+	} while ((++dc)->text[0]);
+
+	return -1;
+}
+
 void ScummDebugger::printActors(int act)
 {
 	int i;
 	Actor *a;
 
-	printf("+------------------------------------------------------------------+\n");
-	printf("|# |room|  x y   |elev|cos|width|box|mov|zp|frame|scale|spd|dir|cls|\n");
-	printf("+--+----+--------+----+---+-----+---+---+--+-----+-----+---+---+---+\n");
+	printf("+-----------------------------------------------------------------+\n");
+	printf("|# |room| x | y |elev|cos|width|box|mov|zp|frame|scale|spd|dir|cls|\n");
+	printf("+--+----+---+---+----+---+-----+---+---+--+-----+-----+---+---+---+\n");
 	for (i = 1; i < _s->NUM_ACTORS; i++) {
 		if (act == -1 || act == i) {
 			a = &_s->_actors[i];
 			if (a->visible)
-				printf("|%2d|%4d|%3d  %3d|%4d|%3d|%5d|%3d|%3d|%2d|%5d|%5d|%3d|%3d|$%02x|\n",
+				printf("|%2d|%4d|%3d|%3d|%4d|%3d|%5d|%3d|%3d|%2d|%5d|%5d|%3d|%3d|$%02x|\n",
 							 a->number, a->room, a->x, a->y, a->elevation, a->costume,
 							 a->width, a->walkbox, a->moving, a->forceClip, a->frame,
 							 a->scalex, a->speedx, a->facing, int(_s->_classData[a->number]&0xFF));
 		}
 	}
-	printf("+--------------------------------------------------------------+\n");
+	printf("+-----------------------------------------------------------------+\n");
 }
 
 void ScummDebugger::printScripts()
@@ -308,7 +358,7 @@ void ScummDebugger::printScripts()
 	int i;
 	ScriptSlot *ss;
 
-	printf("+------------------------------\n");
+	printf("+-----------------------------+\n");
 	printf("|# |num|sta|typ|un1|un2|fc|cut|\n");
 	printf("+--+---+---+---+---+---+--+---+\n");
 	for (i = 0; i < 25; i++) {
@@ -319,7 +369,7 @@ void ScummDebugger::printScripts()
 						 ss->freezeCount, ss->cutsceneOverride);
 		}
 	}
-	printf("+-------------------------------------+\n");
+	printf("+-----------------------------+\n");
 }
 
 
@@ -365,9 +415,6 @@ void ScummDebugger::printBox(int box)
 
 
 /************ ENDER: Temporary debug code for boxen **************/
-/*
-int hlineColor(SDL_Surface * dst, Sint16 x1, Sint16 x2, Sint16 y, Uint32 color)
-*/
 
 static int gfxPrimitivesCompareInt(const void *a, const void *b);
 
@@ -386,7 +433,7 @@ static byte *getBasePtr(Scumm *_s, int x, int y)
 		_s->_screenStartStrip * 8 + (_s->camera._cur.y - (_s->_realHeight / 2)) * _s->_realWidth;
 }
 
-static void hline(Scumm *scumm, int x1, int x2, int y, byte color)
+static void hlineColor(Scumm *scumm, int x1, int x2, int y, byte color)
 {
 	byte *ptr;
 
@@ -474,7 +521,7 @@ static void filledPolygonColor(Scumm *scumm, int16 *vx, int16 *vy, int n, int co
 		qsort(gfxPrimitivesPolyInts, ints, sizeof(int), gfxPrimitivesCompareInt);
 
 		for (i = 0; (i < ints); i += 2) {
-			hline(scumm, gfxPrimitivesPolyInts[i], gfxPrimitivesPolyInts[i + 1], y, color);
+			hlineColor(scumm, gfxPrimitivesPolyInts[i], gfxPrimitivesPolyInts[i + 1], y, color);
 		}
 	}
 

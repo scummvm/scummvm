@@ -23,7 +23,18 @@
 
 class Scumm;
 
-struct ScummDebugger {
+//
+// HACK FIXME TODO - enable this for the PURELY EXPERIMENTAL console debug mode
+//
+//#define USE_CONSOLE 1
+
+
+class ScummDebugger {
+public:
+	void on_frame();
+	void attach(Scumm *s);
+
+protected:
 	Scumm *_s;
 	byte _command;
 	char *_parameters;
@@ -34,11 +45,10 @@ struct ScummDebugger {
 	
 	char _cmd_buffer[256];
 	
-	void on_frame();
-	bool do_command();
+	bool do_command(int cmd);
 	void enter();
 	int get_command();
-	void attach(Scumm *s);
+	int parse_command(char *buf);
 	void detach();
 
 	void printActors(int act);
@@ -47,6 +57,10 @@ struct ScummDebugger {
 	void printBox(int box);
 	void printBoxes();
 	void boxTest(int box);
+	
+#ifdef USE_CONSOLE
+	static bool ScummDebugger::debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon);
+#endif
 };
 
 #endif
