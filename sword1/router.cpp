@@ -2435,15 +2435,31 @@ int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int
 	nTurnFrames = fMegaWalkData[1];
  	fMegaWalkData += 2;
 
- 	memmove(&_dx[0],fMegaWalkData,NO_DIRECTIONS*(nWalkFrames+1+nTurnFrames)*sizeof(int32));
+	for (int32 cnt = 0; cnt < NO_DIRECTIONS * (nWalkFrames + 1 + nTurnFrames); cnt++) {
+		_dx[cnt] = (int32)READ_LE_UINT32(fMegaWalkData);
+		fMegaWalkData += 4;
+	}
+	for (int32 cnt = 0; cnt < NO_DIRECTIONS * (nWalkFrames + 1 + nTurnFrames); cnt++) {
+		_dy[cnt] = (int32)READ_LE_UINT32(fMegaWalkData);
+		fMegaWalkData += 4;
+	}
+ 	/*memmove(&_dx[0],fMegaWalkData,NO_DIRECTIONS*(nWalkFrames+1+nTurnFrames)*sizeof(int32));
  	fMegaWalkData += NO_DIRECTIONS*(nWalkFrames+1+nTurnFrames)*sizeof(int32);
  	memmove(&_dy[0],fMegaWalkData,NO_DIRECTIONS*(nWalkFrames+1+nTurnFrames)*sizeof(int32));
- 	fMegaWalkData += NO_DIRECTIONS*(nWalkFrames+1+nTurnFrames)*sizeof(int32);
+ 	fMegaWalkData += NO_DIRECTIONS*(nWalkFrames+1+nTurnFrames)*sizeof(int32);*/
 
- 	memmove(&modX[0],fMegaWalkData,NO_DIRECTIONS*sizeof(int32));
+	for (uint32 cnt = 0; cnt < NO_DIRECTIONS; cnt++) {
+		modX[cnt] = (int32)READ_LE_UINT32(fMegaWalkData);
+		fMegaWalkData += 4;
+	}
+	for (uint32 cnt = 0; cnt < NO_DIRECTIONS; cnt++) {
+		modY[cnt] = (int32)READ_LE_UINT32(fMegaWalkData);
+		fMegaWalkData += 4;
+	}
+ 	/*memmove(&modX[0],fMegaWalkData,NO_DIRECTIONS*sizeof(int32));
  	fMegaWalkData += NO_DIRECTIONS*sizeof(int32);
  	memmove(&modY[0],fMegaWalkData,NO_DIRECTIONS*sizeof(int32));
- 	fMegaWalkData += NO_DIRECTIONS*sizeof(int32);
+ 	fMegaWalkData += NO_DIRECTIONS*sizeof(int32);*/
 
 	//ResUnlock(megaObject->o_mega_resource);			// mouse wiggle
 	//ResClose(megaObject->o_mega_resource);			// mouse wiggle
