@@ -1,8 +1,9 @@
 /* MISSING.C
    Implementation for standard and semi-standard C library calls missing in WinCE
    environment.
-   (C) 2001 Vasyl Tsvirkunov
+   by Vasyl Tsvirkunov
 */
+
 #include <windows.h>
 #include <tchar.h>
 #include <string.h>

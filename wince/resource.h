@@ -14,6 +14,7 @@
 #define IDB_KEYBOARD                    129
 #define IDL_POCKETSCUMM                 130
 #define IDB_MENUTITLE                   133
+#define IDD_DIALOG1                     134
 #define IDM_MENU                        1000
 #define IDC_ABOUT                       1000
 #define IDC_MONKEY                      1000
@@ -49,7 +50,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        134
+#define _APS_NEXT_RESOURCE_VALUE        135
 #define _APS_NEXT_COMMAND_VALUE         40014
 #define _APS_NEXT_CONTROL_VALUE         1016
 #define _APS_NEXT_SYMED_VALUE           101
