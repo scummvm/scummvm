@@ -236,7 +236,7 @@ void MidiDriver_SEQ::send(uint32 b)
 
 void MidiDriver_SEQ::sysEx (byte *msg, uint16 length)
 {
-	if (length > 256) {
+	if (length > 254) {
 		warning ("Cannot send SysEx block - data too large");
 		return;
 	}
@@ -247,12 +247,20 @@ void MidiDriver_SEQ::sysEx (byte *msg, uint16 length)
 
 	// Should be we using EV_SYSEX instead of SEQ_MIDIPUTC?
 	// I'm not sure how to send EV_SYSEX.
+	buf[position++] = SEQ_MIDIPUTC;
+	buf[position++] = 0xFF;
+	buf[position++] = _device_num;
+	buf[position++] = 0;
 	for (; length; --length) {
 		buf[position++] = SEQ_MIDIPUTC;
 		buf[position++] = (unsigned char) *chr;
 		buf[position++] = _device_num;
 		buf[position++] = 0;
 	}
+	buf[position++] = SEQ_MIDIPUTC;
+	buf[position++] = 0xF7;
+	buf[position++] = _device_num;
+	buf[position++] = 0;
 	write (device, buf, position);
 }
 

@@ -73,10 +73,11 @@ private:
 	bool _allocated;
 	byte _channel;
 
-	void init (MidiDriver_ADLIB *owner);
+	void init (MidiDriver_ADLIB *owner, byte channel);
 	void allocate() { _allocated = true; }
 
 public:
+	byte getNumber() { return _channel; }
 	void release() { _allocated = false; }
 
 	// Regular messages
@@ -572,8 +573,9 @@ private:
 
 // MidiChannel method implementations
 
-void AdlibPart::init (MidiDriver_ADLIB *owner) {
+void AdlibPart::init (MidiDriver_ADLIB *owner, byte channel) {
 	_owner = owner;
+	_channel = channel;
 
 }
 
@@ -715,7 +717,7 @@ MidiDriver_ADLIB::MidiDriver_ADLIB()
 {
 	uint i;
 	for (i = 0; i < ARRAYSIZE(_parts); ++i) {
-		_parts[i].init (this);
+		_parts[i].init (this, i);
 	}
 	_game_SmallHeader = false;
 	_isOpen = false;
