@@ -60,6 +60,8 @@ void ListWidget::setList(const StringList& list)
 	_list = list;
 	if (_currentPos >= size)
 		_currentPos = size - 1;
+	if (_currentPos < 0)
+		_currentPos = 0;
 	_selectedItem = -1;
 	_editMode = false;
 	scrollBarRecalc();
@@ -70,7 +72,7 @@ void ListWidget::scrollTo(int item)
 	int size = _list.size();
 	if (item >= size)
 		item = size - 1;
-	else if (item < 0)
+	if (item < 0)
 		item = 0;
 
 	if (_currentPos != item) {
