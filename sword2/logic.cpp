@@ -22,9 +22,11 @@
 #include "sword2/defs.h"
 #include "sword2/interpreter.h"
 
-namespace Sword2 {
-
 #define LEVEL (_curObjectHub->logic_level)
+
+#define Debug_Printf _vm->_debugger->DebugPrintf
+
+namespace Sword2 {
 
 /**
  * Do one cycle of the current session.

@@ -343,13 +343,13 @@ void Debugger::printCurrentInfo(void) {
 	// prints general stuff about the screen, etc.
 
 	if (_vm->_thisScreen.background_layer_id) {
-		Debug_Printf("background layer id %d\n", _vm->_thisScreen.background_layer_id);
-		Debug_Printf("%d wide, %d high\n", _vm->_thisScreen.screen_wide, _vm->_thisScreen.screen_deep);
-		Debug_Printf("%d normal layers\n", _vm->_thisScreen.number_of_layers);
+		DebugPrintf("background layer id %d\n", _vm->_thisScreen.background_layer_id);
+		DebugPrintf("%d wide, %d high\n", _vm->_thisScreen.screen_wide, _vm->_thisScreen.screen_deep);
+		DebugPrintf("%d normal layers\n", _vm->_thisScreen.number_of_layers);
 
 		_vm->_logic->examineRunList();
 	} else
-		Debug_Printf("No screen\n");
+		DebugPrintf("No screen\n");
 }
 
 } // End of namespace Sword2

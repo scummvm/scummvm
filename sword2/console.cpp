@@ -112,13 +112,13 @@ Debugger::Debugger(Sword2Engine *vm)
 }
 
 void Debugger::varGet(int var) {
-	Debug_Printf("%d\n", VAR(var));
+	DebugPrintf("%d\n", VAR(var));
 }
 
 void Debugger::varSet(int var, int val) {
-	Debug_Printf("was %d, ", VAR(var));
+	DebugPrintf("was %d, ", VAR(var));
 	VAR(var) = val;
-	Debug_Printf("now %d\n", VAR(var));
+	DebugPrintf("now %d\n", VAR(var));
 }
 
 void Debugger::preEnter() {

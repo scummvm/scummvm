@@ -20,6 +20,8 @@
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
 
+#define Debug_Printf _vm->_debugger->DebugPrintf
+
 namespace Sword2 {
 
 void MemoryManager::displayMemory(void) {

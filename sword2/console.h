@@ -24,8 +24,6 @@
 #include "sword2/debug.h"
 #include "sword2/object.h"
 
-#define Debug_Printf g_sword2->_debugger->DebugPrintf
-
 namespace Sword2 {
 
 class Debugger : public Common::Debugger<Debugger> {

@@ -71,7 +71,7 @@ mem* FontRenderer::makeTextSprite(uint8 *sentence, uint16 maxWidth, uint8 pen, u
 
 	// set the global layout variables
 
-	if (fontRes == g_sword2->_speechFontId) {
+	if (fontRes == _vm->_speechFontId) {
 		_lineSpacing = -6;  // overlap lines by 6 pixels
 		_charSpacing = -3;  // overlap characters by 3 pixels
 	} else if (fontRes == CONSOLE_FONT_ID) {
@@ -328,7 +328,7 @@ _frameHeader* FontRenderer::findChar(uint8 ch, uint8 *charSet) {
 	if (ch < FIRST_CHAR)
 		ch = DUD;
 
-	return g_sword2->fetchFrameHeader(charSet, ch - FIRST_CHAR);
+	return _vm->fetchFrameHeader(charSet, ch - FIRST_CHAR);
 }
 
 // Copies a character sprite from 'charPtr' to the sprite buffer at 'spritePtr'
