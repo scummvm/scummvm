@@ -1003,6 +1003,9 @@ uint32 OSystem_SDL_Common::property(int param, Property *value) {
 	case PROP_GET_FULLSCREEN:
 		return _full_screen;
 
+	case PROP_GET_GFX_MODE:
+		return _mode;
+
 	case PROP_SET_WINDOW_CAPTION:
 		SDL_WM_SetCaption(value->caption, value->caption);
 		return 1;
@@ -1012,7 +1015,7 @@ uint32 OSystem_SDL_Common::property(int param, Property *value) {
 			_cdrom = NULL;
 		else {
 			_cdrom = SDL_CDOpen(value->cd_num);
-			/* Did if open? Check if _cdrom is NULL */
+			// Did it open? Check if _cdrom is NULL
 			if (!_cdrom) {
 				warning("Couldn't open drive: %s", SDL_GetError());
 			} else {
@@ -1021,10 +1024,6 @@ uint32 OSystem_SDL_Common::property(int param, Property *value) {
 				cd_end_time = 0;
 			}
 		}
-		break;
-
-	case PROP_SHOW_DEFAULT_CURSOR:
-		SDL_ShowCursor(value->show_cursor ? SDL_ENABLE : SDL_DISABLE);		
 		break;
 
 	case PROP_GET_SAMPLE_RATE:

@@ -1047,10 +1047,6 @@ uint32 OSystem_GP32::property(int param, Property *value) {
 
 		return 1;
 
-	case PROP_SHOW_DEFAULT_CURSOR:
-		///SDL_ShowCursor(value->show_cursor ? SDL_ENABLE : SDL_DISABLE);	//fixme?
-		break;
-
 	case PROP_GET_SAMPLE_RATE:
 		///return SAMPLES_PER_SEC; //ph0x fixme
 		return 22050;

@@ -1789,9 +1789,6 @@ uint32 OSystem_WINCE3::property(int param, Property *value) {
 	case PROP_SET_GFX_MODE:
 		return 1;
 
-	case PROP_SHOW_DEFAULT_CURSOR:
-		break;
-
 	case PROP_GET_SAMPLE_RATE:
 		return (new_audio_rate ? SAMPLES_PER_SEC_NEW : SAMPLES_PER_SEC_OLD);
 

@@ -448,14 +448,6 @@ uint32 OSystem_MorphOS::property(int param, Property *value)
 			break;
 		}
 
-		case PROP_SHOW_DEFAULT_CURSOR:
-			if (value->show_cursor)
-				ClearPointer(ScummWindow);
-			else
-				SetPointer(ScummWindow, ScummNoCursor, 1, 1, 0, 0);
-			ScummOrigMouse = ScummDefaultMouse = value->show_cursor;
-			break;
-
 		case PROP_GET_SAMPLE_RATE:
 			return SAMPLES_PER_SEC;
 	}
