@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Dreamcast port
- * Copyright (C) 2002  Marcus Comstedt
+ * Copyright (C) 2002-2003  Marcus Comstedt
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
