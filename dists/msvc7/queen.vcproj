@@ -102,6 +102,12 @@
 			RelativePath="..\..\queen\command.h">
 		</File>
 		<File
+			RelativePath="..\..\queen\credits.cpp">
+		</File>
+		<File
+			RelativePath="..\..\queen\credits.h">
+		</File>
+		<File
 			RelativePath="..\..\queen\cutaway.cpp">
 		</File>
 		<File
