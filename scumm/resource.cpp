@@ -652,7 +652,7 @@ int Scumm::loadResource(int type, int idx) {
 		tag = _fileHandle.readUint16LE();
 		_fileHandle.seek(-6, SEEK_CUR);
 		/* FIXME */
-		if ((type == rtSound) && (_gameId != GID_ZAK256)) {
+		if ((type == rtSound) && !(_features & GF_AMIGA) && (_gameId != GID_ZAK256)) {
 			return readSoundResourceSmallHeader(type, idx);
 		}
 	} else {

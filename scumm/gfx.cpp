@@ -1512,9 +1512,10 @@ bool Gdi::decompressBitmap(byte *bgbak_ptr, const byte *src, int numLinesToProce
 	// 8/9 used in 3do version of puttputt joins the parade maybe others
 	case 8:
 	case 9:
+		error("decompressBitmap: Graphics codec %d not yet supported\n", code);
 	// used in amiga version of Monkey Island
 	case 10:
-		error("decompressBitmap: Graphics codec %d not yet supported\n", code);
+		decodeStripEGA(bgbak_ptr, src, numLinesToProcess);
 		break;
 
 	case 14:
