@@ -1029,7 +1029,7 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 		//_vm->_imuseDigital->stopSound(kTalkSoundID);
 		_vm->_imuseDigital->startVoice(kTalkSoundID, input);
 	} else {
-		_vm->_mixer->playInputStream(handle, input, false, 255, 0, id);
+		_vm->_mixer->playInputStream(handle, input, false, id);
 	}
 }
 

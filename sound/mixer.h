@@ -126,12 +126,15 @@ public:
 	 * passed on to playInputStream.
 	 */
 	void playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
-				int id = -1, byte volume = 255, int8 balance = 0, uint32 loopStart = 0, uint32 loopEnd = 0);
+				int id = -1, byte volume = 255, int8 balance = 0,
+				uint32 loopStart = 0, uint32 loopEnd = 0);
 
 	/**
 	 * Start playing the given audio input stream.
 	 */
-	void playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic, byte volume = 255, int8 balance = 0, int id = -1, bool autofreeStream = true, bool permanent = false);
+	void playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic,
+				int id = -1, byte volume = 255, int8 balance = 0,
+				bool autofreeStream = true, bool permanent = false);
 
 
 

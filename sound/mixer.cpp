@@ -171,7 +171,8 @@ void SoundMixer::insertChannel(PlayingSoundHandle *handle, Channel *chan) {
 		handle->setIndex(index);
 }
 
-void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags, int id, byte volume, int8 balance, uint32 loopStart, uint32 loopEnd) {
+void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, uint rate, byte flags,
+			int id, byte volume, int8 balance, uint32 loopStart, uint32 loopEnd) {
 	Common::StackLock lock(_mutex);
 
 	// Prevent duplicate sounds
@@ -204,7 +205,8 @@ void SoundMixer::playRaw(PlayingSoundHandle *handle, void *sound, uint32 size, u
 	insertChannel(handle, chan);
 }
 
-void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic, byte volume, int8 balance, int id, bool autofreeStream, bool permanent) {
+void SoundMixer::playInputStream(PlayingSoundHandle *handle, AudioStream *input, bool isMusic,
+			int id, byte volume, int8 balance, bool autofreeStream, bool permanent) {
 	Common::StackLock lock(_mutex);
 
 	if (input == 0) {
@@ -409,6 +411,9 @@ void SoundMixer::setVolume(int volume) {
 		volume = 256;
 	else if (volume < 0)
 		volume = 0;
+	
+	// TODO: Maybe we should do logarithmic (not linear) volume
+	// scaling? See also Player_V2::setMasterVolume
 
 	_globalVolume = volume;
 }

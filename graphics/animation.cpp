@@ -133,7 +133,7 @@ bool BaseAnimationState::init(const char *name) {
 	bgSoundStream = AudioStream::openStreamFile(name);
 
 	if (bgSoundStream != NULL) {
-		_snd->playInputStream(&bgSound, bgSoundStream, false, 255, 0, -1, false);
+		_snd->playInputStream(&bgSound, bgSoundStream, false, -1, 255, 0, false);
 	} else {
 		warning("Cutscene: Could not open Audio Track for %s", name);
 	}

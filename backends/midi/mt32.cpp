@@ -267,7 +267,7 @@ int MidiDriver_MT32::open() {
 	_initialising = false;
 	g_system->clearScreen();
 	g_system->updateScreen();
-	_mixer->playInputStream(&_handle, this, false, 255, 0, -1, false, true);
+	_mixer->playInputStream(&_handle, this, false, -1, 255, 0, false, true);
 	return 0;
 }
 

@@ -936,7 +936,7 @@ int32 Sound::playCompSpeech(uint32 speechid, uint8 vol, int8 pan) {
 	int8 p = _panTable[pan + 16];
 
 	// Start the speech playing
-	_vm->_mixer->playInputStream(&_soundHandleSpeech, input, false, volume, p);
+	_vm->_mixer->playInputStream(&_soundHandleSpeech, input, false, -1, volume, p);
 	return RD_OK;
 }
 

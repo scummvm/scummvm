@@ -149,7 +149,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 			int	freq = _sound->getFreq(track->soundHandle);
 			track->stream2 = NULL;
 			track->stream = makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
-			_vm->_mixer->playInputStream(&track->handle, track->stream, false, track->mixerVol, track->mixerPan, -1, false);
+			_vm->_mixer->playInputStream(&track->handle, track->stream, false, -1, track->mixerVol, track->mixerPan, false);
 		}
 	}
 }
@@ -289,7 +289,7 @@ void IMuseDigital::callback() {
 				if (_vm->_mixer->isReady()) {
 					if (!track->started) {
 						track->started = true;
-						_vm->_mixer->playInputStream(&track->handle, track->stream2, false, vol, pan, -1, false);
+						_vm->_mixer->playInputStream(&track->handle, track->stream2, false, -1, vol, pan, false);
 					} else {
 						_vm->_mixer->setChannelVolume(track->handle, vol);
 						_vm->_mixer->setChannelBalance(track->handle, pan);
