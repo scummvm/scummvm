@@ -787,21 +787,15 @@ void IMuseDigital::mixerCallback() {
 				debug(5, "Fade: sound(%d), Vol(%d)", _channel[l].idSound, _channel[l].vol / 1000);
 			}
 
-			int32 new_size = _channel[l].mixerSize;
-			int32 mixer_size = new_size;
+			int32 mixer_size = _channel[l].mixerSize;
 
 			if (_channel[l].offset + mixer_size > _channel[l].size) {
-				new_size = _channel[l].size - _channel[l].offset;
-			}
-
-			if (_channel[l].offset + mixer_size > _channel[l].size) {
-				new_size = _channel[l].size - _channel[l].offset;
+				mixer_size = _channel[l].size - _channel[l].offset;
 				_channel[l].toBeRemoved = true;
-				mixer_size = new_size;
 			}
 
 			byte *buf = (byte *)malloc(mixer_size);
-			memcpy(buf, _channel[l].data + _channel[l].offset, new_size);
+			memcpy(buf, _channel[l].data + _channel[l].offset, mixer_size);
 			_channel[l].offset += mixer_size;
 
 			if (_scumm->_silentDigitalImuse == false) {
