@@ -63,6 +63,7 @@ ScummDebugger *g_debugger;
 
 extern NewGui *g_gui;
 extern uint16 _debugLevel;
+extern uint16 _demo_mode;
 
 static const VersionSettings scumm_settings[] = {
 	/* Scumm Version 1 */

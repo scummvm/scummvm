@@ -657,6 +657,11 @@ void Scumm::stopObjectCode() {
 }
 
 void Scumm::runInventoryScript(int i) {
+	// FIXME demo mode in V1 Maniac Mansion shows quotes in this area
+	// during the introduction
+	if (_gameId == GID_MANIAC && _version == 1 && _demo_mode)
+		return;
+
 	if (_version <= 2) {
 		redrawV2Inventory();
 	} else {
