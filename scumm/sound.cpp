@@ -509,6 +509,43 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, PlayingSoundHandle
 	int size;
 	byte *sound;
 
+	if ((_scumm->_gameId == GID_DIG) && (_scumm->_features & GF_DEMO)) {
+		char filename[30];
+		char roomname[10];
+
+		if (offset == 1)
+			strcpy(roomname, "logo");
+		else if (offset == 15)
+			strcpy(roomname, "canyon");
+		else if (offset == 17)
+			strcpy(roomname, "pig");
+		else if (offset == 18)
+			strcpy(roomname, "derelict");
+		else if (offset == 19)
+			strcpy(roomname, "wreck");
+		else if (offset == 20)
+			strcpy(roomname, "grave");
+		else if (offset == 23)
+			strcpy(roomname, "nexus");
+		else if (offset == 79)
+			strcpy(roomname, "newton");
+		else {
+			warning("startTalkSound: dig demo: unknown room number: %d", offset);
+			return;
+		}
+
+		sprintf(filename, "audio/%s.%d/%d.voc", roomname, offset, b);
+		_sfxFile->close();
+		_sfxFile->open(filename);
+		if (!_sfxFile->isOpen()) {
+			warning("startTalkSound: dig demo: voc file not found: %s", filename);
+			return;
+		}
+
+		startSfxSound(_sfxFile, 0, handle);
+		return;
+	}
+
 	if (_sfxFile->isOpen() == false) {
 		warning("startTalkSound: SFX file is not open");
 		return;
