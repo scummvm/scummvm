@@ -170,7 +170,7 @@ protected:
 /* SliderWidget */
 class SliderWidget : public ButtonWidget {
 protected:
-	int		_value, _old_value;
+	int		_value, _oldValue;
 	int		_valueMin, _valueMax;
 	bool	_isDragging;
 public:
@@ -189,6 +189,9 @@ public:
 
 protected:
 	void drawWidget(bool hilite);
+	
+	int valueToPos(int value);
+	int posToValue(int pos);
 };
 
 

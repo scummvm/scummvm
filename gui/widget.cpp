@@ -190,7 +190,7 @@ void CheckboxWidget::drawWidget(bool hilite)
 
 SliderWidget::SliderWidget(Dialog *boss, int x, int y, int w, int h, const char *label, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey),
-	  _value(0), _old_value(1), _valueMin(0), _valueMax(100)
+	  _value(0), _oldValue(1), _valueMin(0), _valueMax(100)
 {
 	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG;
 	_type = kSliderWidget;
@@ -198,11 +198,12 @@ SliderWidget::SliderWidget(Dialog *boss, int x, int y, int w, int h, const char 
 
 void SliderWidget::handleMouseMoved(int x, int y, int button) { 
 	if (_isDragging) {
-		int newValue = x * 100 / _w;
-		if (newValue < 0)
-			newValue = 0;
-		else if (newValue > 100)
-			newValue = 100;
+		int newValue = posToValue(x);
+		
+		if (newValue < _valueMin)
+			newValue = _valueMin;
+		else if (newValue > _valueMax)
+			newValue = _valueMax;
 
 		if (newValue != _value) {
 			_value = newValue; 
@@ -211,27 +212,10 @@ void SliderWidget::handleMouseMoved(int x, int y, int button) {
 	}
 }
 
-void SliderWidget::drawWidget(bool hilite)
-{
-	NewGui *gui = _boss->getGui();
-	
-	// Draw the box
-	gui->box(_x, _y, _w, _h);
-	
-	// Remove old 'bar' if necessary
-	if (_value != _old_value) {
-		gui->fillRect(_x + 2 + ((_w - 5) * (_old_value - _valueMin) / (_valueMax - _valueMin)), _y + 2, 2, _h - 4, gui->_bgcolor);
-		_old_value = _value;
-	}
-
-	// Draw the 'bar'
-	gui->fillRect(_x + 2 + ((_w - 5) * (_value - _valueMin) / (_valueMax - _valueMin)), _y + 2, 2, _h - 4, hilite ? gui->_textcolorhi : gui->_textcolor);
-}
-
 void SliderWidget::handleMouseDown(int x, int y, int button) {
 	int barx;
-
-	barx = 2 + ((_w - 5) * (_value - _valueMin) / (_valueMax - _valueMin));
+	
+	barx = valueToPos(_value);
 	
 	// only start dragging if mouse is over bar
 	if (x > (barx - 3) && x < (barx + 3))
@@ -246,4 +230,31 @@ void SliderWidget::handleMouseUp(int x, int y, int button) {
 	}
 
 	_isDragging = false;
+}
+
+void SliderWidget::drawWidget(bool hilite)
+{
+	NewGui *gui = _boss->getGui();
+	
+	// Draw the box
+	gui->box(_x, _y, _w, _h);
+	
+	// Remove old 'bar' if necessary
+	if (_value != _oldValue) {
+		gui->fillRect(_x + valueToPos(_oldValue), _y + 2, 2, _h - 4, gui->_bgcolor);
+		_oldValue = _value;
+	}
+
+	// Draw the 'bar'
+	gui->fillRect(_x + valueToPos(_value), _y + 2, 2, _h - 4, hilite ? gui->_textcolorhi : gui->_textcolor);
+}
+
+int SliderWidget::valueToPos(int value)
+{
+	return 2 + ((_w - 6) * (value - _valueMin) / (_valueMax - _valueMin));
+}
+
+int SliderWidget::posToValue(int pos)
+{
+	return (pos - 2) * (_valueMax - _valueMin) / (_w - 6) + _valueMin;
 }
