@@ -347,7 +347,7 @@ MidiDriver *MidiDriver_AMIDI_create() {
 
 #endif // __MORPHOS__
 
-#if defined(UNIX) && !defined(BEOS)
+#if defined(UNIX) && !defined(__BEOS__)
 #define SEQ_MIDIPUTC    5
 #define SPECIAL_CHANNEL 9
 #define DEVICE_NUM 1
