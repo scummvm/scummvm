@@ -342,6 +342,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 			
 			if (objectData->image == -3 || objectData->image == -4) {
 
+				assert(_personDataCount < MAX_PERSON_COUNT);
 				//  The object is a person! So record the details...
 				_personData[_personDataCount].index = i;
 				_personData[_personDataCount].name  = objectData->name;
@@ -835,6 +836,7 @@ void Cutaway::handlePersonRecord(
 
 				if (!foundPerson) {
 					_personFaceCount++;
+					assert(_personFaceCount < MAX_PERSON_FACE_COUNT);
 					_personFace[_personFaceCount].index = object.objectNumber;
 					_personFace[_personFaceCount].image = _vm->logic()->objectData(object.objectNumber)->image;
 				}
