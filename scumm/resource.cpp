@@ -2201,7 +2201,7 @@ void ScummEngine::loadPtrToResource(int type, int resindex, const byte *source) 
 }
 
 bool ScummEngine::isResourceLoaded(int type, int idx) const {
-	if (!validateResource("isLoaded", type, idx))
+	if (!validateResource("isResourceLoaded", type, idx))
 		return false;
 	return res.address[type][idx] != NULL;
 }
@@ -2424,14 +2424,6 @@ void ScummEngine::allocateArrays() {
 	allocResTypeData(rtFlObject, MKID('NONE'), _numFlObject, "flobject", 0);
 	allocResTypeData(rtMatrix, MKID('NONE'), 10, "boxes", 0);
 	allocResTypeData(rtImage, MKID('AWIZ'), _numImages, "images", 1);
-}
-
-
-bool ScummEngine::isGlobInMemory(int type, int idx) const{
-	if (!validateResource("isGlobInMemory", type, idx))
-		return false;
-
-	return res.address[type][idx] != NULL;
 }
 
 void ScummEngine::dumpResource(const char *tag, int idx, const byte *ptr, int length) {

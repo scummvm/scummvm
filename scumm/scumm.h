@@ -661,7 +661,6 @@ protected:
 	int getResourceSize(int type, int idx);
 
 public:
-	bool isGlobInMemory(int type, int index) const;
 	bool isResourceLoaded(int type, int index) const;
 	byte *getResourceAddress(int type, int i);
 	byte *getStringAddress(int i);

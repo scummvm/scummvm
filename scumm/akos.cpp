@@ -588,7 +588,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 
 	/* implement custom scale table */
 	v1.scaletable = (_vm->_features & GF_HUMONGOUS) ? oldScaleTable : defaultScaleTable;
-	if (_vm->VAR_CUSTOMSCALETABLE != 0xFF && _vm->isGlobInMemory(rtString, _vm->VAR(_vm->VAR_CUSTOMSCALETABLE))) {
+	if (_vm->VAR_CUSTOMSCALETABLE != 0xFF && _vm->isResourceLoaded(rtString, _vm->VAR(_vm->VAR_CUSTOMSCALETABLE))) {
 		v1.scaletable = _vm->getStringAddressVar(_vm->VAR_CUSTOMSCALETABLE);
 	}
 
