@@ -293,7 +293,7 @@ bool Scumm::checkXYInBoxBounds(int b, int x, int y) {
 	if (box.ul.x == box.ur.x && box.ul.y == box.ur.y && box.lr.x == box.ll.x && box.lr.y == box.ll.y ||
 		box.ul.x == box.ll.x && box.ul.y == box.ll.y && box.ur.x == box.lr.x && box.ur.y == box.lr.y) {
 
-		ScummPoint pt;
+		ScummVM::Point pt;
 		pt = closestPtOnLine(box.ul.x, box.ul.y, box.lr.x, box.lr.y, x, y);
 		if (distanceFromPt(x, y, pt.x, pt.y) <= 4)
 			return true;
@@ -389,11 +389,11 @@ uint Scumm::distanceFromPt(int x, int y, int ptx, int pty) {
 	return diffx + diffy;
 }
 
-ScummPoint Scumm::closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y) {
+ScummVM::Point Scumm::closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y) {
 	int lydiff, lxdiff;
 	int32 dist, a, b, c;
 	int x2, y2;
-	ScummPoint pt;
+	ScummVM::Point pt;
 
 	if (llx == ulx) {	// Vertical line?
 		x2 = ulx;
@@ -497,7 +497,7 @@ bool Scumm::inBoxQuickReject(int b, int x, int y, int threshold) {
 }
 
 AdjustBoxResult Scumm::getClosestPtOnBox(int b, int x, int y) {
-	ScummPoint pt;
+	ScummVM::Point pt;
 	AdjustBoxResult best;
 	uint dist;
 	uint bestdist = (uint)0xFFFF;
@@ -587,7 +587,7 @@ int Scumm::getPathToDestBox(byte from, byte to) {
 bool Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr, int16 &foundPathX, int16 &foundPathY) {
 	BoxCoords box1;
 	BoxCoords box2;
-	ScummPoint tmp;
+	ScummVM::Point tmp;
 	int i, j;
 	int flag;
 	int q, pos;
@@ -1026,10 +1026,10 @@ PathVertex *Scumm::addPathVertex() {
 	return (PathVertex *)addToBoxVertexHeap(sizeof(PathVertex));
 }
 
-void Scumm::findPathTowardsOld(Actor *actor, byte trap1, byte trap2, byte final_trap, ScummPoint gateLoc[5]) {
-	ScummPoint pt;
-	ScummPoint gateA[2];
-	ScummPoint gateB[2];
+void Scumm::findPathTowardsOld(Actor *actor, byte trap1, byte trap2, byte final_trap, ScummVM::Point gateLoc[5]) {
+	ScummVM::Point pt;
+	ScummVM::Point gateA[2];
+	ScummVM::Point gateB[2];
 
 	getGates(trap1, trap2, gateA, gateB);
 
@@ -1067,15 +1067,15 @@ void Scumm::findPathTowardsOld(Actor *actor, byte trap1, byte trap2, byte final_
 	return;
 }
 
-void Scumm::getGates(int trap1, int trap2, ScummPoint gateA[2], ScummPoint gateB[2]) {
+void Scumm::getGates(int trap1, int trap2, ScummVM::Point gateA[2], ScummVM::Point gateB[2]) {
 	int i, j;
 	int dist[8];
 	int minDist[3];
 	int closest[3];
 	int box[3];
 	BoxCoords coords;
-	ScummPoint Clo[8];
-	ScummPoint poly[8];
+	ScummVM::Point Clo[8];
+	ScummVM::Point poly[8];
 	AdjustBoxResult abr;
 	int line1, line2;
 

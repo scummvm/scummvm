@@ -27,6 +27,7 @@
 #include "common/gameDetector.h"
 #include "common/file.h"
 #include "common/map.h"
+#include "common/rect.h"
 #include "common/str.h"
 #include "common/timer.h"
 #include "common/util.h"
@@ -57,18 +58,6 @@ enum {
 	NUM_LOCALSCRIPT = 60,
 	NUM_SHADOW_PALETTE = 8,
 	KEY_SET_OPTIONS = 3456 // WinCE
-};
-
-struct ScummPoint {
-	int x, y;
-	bool operator == (const ScummPoint &p) const
-	{
-		return p.x == x && p.y == y;
-	}
-	bool operator != (const ScummPoint &p) const
-	{
-		return p.x != x || p.y != y;
-	}
 };
 
 #include "gfx.h"
@@ -810,7 +799,7 @@ public:
 	void setCameraAt(int pos_x, int pos_y);
 	void panCameraTo(int x, int y);
 	void setCameraFollows(Actor *a);
-	void clampCameraPos(ScummPoint *pt);
+	void clampCameraPos(ScummVM::Point *pt);
 
 	byte *getPalettePtr();
 	void setupEGAPalette();
@@ -962,7 +951,7 @@ public:
 	PathVertex *addPathVertex();
 	bool checkXYInBoxBounds(int box, int x, int y);
 	uint distanceFromPt(int x, int y, int ptx, int pty);
-	ScummPoint closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
+	ScummVM::Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
 	void getBoxCoordinates(int boxnum, BoxCoords *bc);
 	byte getMaskFromBox(int box);
 	Box *getBoxBaseAddr(int box);
@@ -985,8 +974,8 @@ public:
 	byte *getBoxMatrixBaseAddr();
 	int getPathToDestBox(byte from, byte to);
 	bool findPathTowards(Actor *a, byte box, byte box2, byte box3, int16 &foundPathX, int16 &foundPathY);
-	void findPathTowardsOld(Actor *a, byte box, byte box2, byte box3, ScummPoint gateLoc[5]);
-	void getGates(int trap1, int trap2, ScummPoint gateA[2], ScummPoint gateB[2]);
+	void findPathTowardsOld(Actor *a, byte box, byte box2, byte box3, ScummVM::Point gateLoc[5]);
+	void getGates(int trap1, int trap2, ScummVM::Point gateA[2], ScummVM::Point gateB[2]);
 	bool inBoxQuickReject(int box, int x, int y, int threshold);
 	AdjustBoxResult getClosestPtOnBox(int box, int x, int y);
 	int getSpecialBox(int param1, int param2);

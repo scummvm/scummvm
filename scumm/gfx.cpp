@@ -1950,7 +1950,7 @@ void Scumm::setCameraAtEx(int at) {
 
 void Scumm::setCameraAt(int pos_x, int pos_y) {
 	if (_features & GF_AFTER_V7) {
-		ScummPoint old;
+		ScummVM::Point old;
 
 		old = camera._cur;
 
@@ -2042,7 +2042,7 @@ void Scumm::setCameraFollows(Actor *a) {
 	}
 }
 
-void Scumm::clampCameraPos(ScummPoint *pt) {
+void Scumm::clampCameraPos(ScummVM::Point *pt) {
 	if (pt->x < VAR(VAR_CAMERA_MIN_X))
 		pt->x = VAR(VAR_CAMERA_MIN_X);
 
@@ -2058,7 +2058,7 @@ void Scumm::clampCameraPos(ScummPoint *pt) {
 
 void Scumm::moveCamera() {
 	if (_features & GF_AFTER_V7) {
-		ScummPoint old = camera._cur;
+		ScummVM::Point old = camera._cur;
 		Actor *a = NULL;
 
 		if (camera._follows) {

@@ -1400,7 +1400,7 @@ void Actor::walkActor() {
 }
 
 void Actor::walkActorOld() {
-	ScummPoint gateLoc[5];	// Gate locations
+	ScummVM::Point gateLoc[5];	// Gate locations
 	int new_dir, next_box;
 
 	if (!moving)

@@ -23,6 +23,8 @@
 #ifndef GFX_H
 #define GFX_H
 
+#include "common/rect.h"
+
 enum {					/* Camera modes */
 	CM_NORMAL = 1,
 	CM_FOLLOW_ACTOR = 2,
@@ -30,10 +32,10 @@ enum {					/* Camera modes */
 };
 
 struct CameraData {		/* Camera state data */
-	ScummPoint _cur;
-	ScummPoint _dest;
-	ScummPoint _accel;
-	ScummPoint _last;
+	ScummVM::Point _cur;
+	ScummVM::Point _dest;
+	ScummVM::Point _accel;
+	ScummVM::Point _last;
 	int _leftTrigger, _rightTrigger;
 	byte _follows, _mode;
 	bool _movingToActor;

@@ -23,6 +23,8 @@
 #ifndef BOXES_H
 #define BOXES_H
 
+#include "common/rect.h"
+
 #define SIZEOF_BOX_V2 8
 #define SIZEOF_BOX_V3 18
 #define SIZEOF_BOX 20
@@ -42,10 +44,10 @@ struct AdjustBoxResult {	/* Result type of AdjustBox functions */
 };
 
 struct BoxCoords {			/* Box coordinates */
-	ScummPoint ul;
-	ScummPoint ur;
-	ScummPoint ll;
-	ScummPoint lr;
+	ScummVM::Point ul;
+	ScummVM::Point ur;
+	ScummVM::Point ll;
+	ScummVM::Point lr;
 };
 
 struct Box;
