@@ -1328,16 +1328,34 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 			return start_sound(b) ? 0 : -1;
 		case 9:
 			return stop_sound(b);
-
 		case 10:
-
-			return stop_all_sounds(); //FIXME
+			return stop_all_sounds(); //FIXME: Sam and Max unknown
 		case 11:
 			return stop_all_sounds();
 		case 13:
-			return get_sound_status(b);
-		case 14:		
-			return stop_sound(b); //FIXME  should be something like fade off
+			return get_sound_status(b);		
+		case 14: {  // FIXME: Sam and Max command - Total guess
+			int i;	//		  Seems to work as a volume fader
+			Player *player;
+
+			for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
+				if (player->_active && player->_id == (uint16)b) {
+					player->fade_vol(e, f);
+					return 0;
+				}
+			}			
+		}
+		case 15: {	// FIXME: Sam and Max command - Total guess
+			int i;	//		  Something to do with position?
+			Player *player;			
+			for (i = ARRAYSIZE(_players), player = _players; i != 0; i--, player++) {
+				if (player->_active && player->_id == (uint16)b) {								
+					player->jump(player->_track_index+1, 0, 0);
+					return 0;
+				}
+			}			
+		}
+
 		case 16:
 			return set_volchan(b, c);
 		case 17:
@@ -1345,9 +1363,9 @@ int32 IMuseInternal::do_command(int a, int b, int c, int d, int e, int f, int g,
 		case 18:
 			return set_volchan_entry(b, c);
 		case 19:
-			return stop_sound(b); //FIXME
+			return stop_sound(b); //FIXME: Sam and Max unknown
 		case 20:
-			return stop_sound(b); //FIXME
+			return stop_sound(b); //FIXME: Sam and Max unknown
 		case 2:
 		case 3:
 			return 0;
