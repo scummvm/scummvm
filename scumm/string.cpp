@@ -70,7 +70,7 @@ int CharsetRenderer::getStringWidth(int arg, byte *text, int pos)
 			}
 		}
 		if (_vm->_features & GF_OLD256) {
-			width += 8;
+			width += getSpacing(chr);
 		} else {
 			offs = READ_LE_UINT32(ptr + chr * 4 + 4);
 			if (offs) {
@@ -1018,11 +1018,12 @@ void CharsetRenderer::drawBits()
 	}
 }
 
+// do spacing for variable width old-style font
 int CharsetRenderer::getSpacing(char chr)
 {
 	int space;
 
-	if (_curId == 1) {						// do spacing for variable width old-style font 
+	if (_curId == 1) { 
 		switch (chr) {
 		case '.':
 			space = 1;
