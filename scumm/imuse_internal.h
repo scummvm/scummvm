@@ -346,8 +346,6 @@ class IMuseInternal {
 	friend class Player;
 
 protected:
-	bool _old_adlib_instruments;
-	bool _enable_multi_midi;
 	bool _native_mt32;
 	MidiDriver *_midi_adlib;
 	MidiDriver *_midi_native;

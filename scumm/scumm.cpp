@@ -1343,16 +1343,16 @@ void ScummEngine::setupMusic(int midi) {
 			nativeMidiDriver->property (MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		bool multi_midi = ConfMan.getBool("multi_midi") && _midiDriver != MD_NULL && (midi & MDT_ADLIB);
 		MidiDriver *adlibMidiDriver;
-		if (nativeMidiDriver == NULL || multi_midi)
+		if (nativeMidiDriver == NULL || multi_midi) {
 			adlibMidiDriver = MidiDriver_ADLIB_create(_mixer);
-		else
+			adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_features & GF_SMALL_HEADER) ? 1 : 0);
+		} else
 			adlibMidiDriver = NULL;
 
 		_musicEngine = _imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
 		if (_imuse) {
 			if (ConfMan.hasKey("tempo"))
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
-			_imuse->property(IMuse::PROP_OLD_ADLIB_INSTRUMENTS, (_features & GF_SMALL_HEADER) ? 1 : 0);
 			_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
 			if (_features & GF_HUMONGOUS || midi == MDT_TOWNS) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);

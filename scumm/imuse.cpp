@@ -44,8 +44,6 @@ namespace Scumm {
 ////////////////////////////////////////
 
 IMuseInternal::IMuseInternal() :
-_old_adlib_instruments(false),
-_enable_multi_midi(false),
 _native_mt32(false),
 _midi_adlib(0),
 _midi_native(0),
@@ -1077,10 +1075,6 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 			initMT32(_midi_native);
 		break;
 
-	case IMuse::PROP_OLD_ADLIB_INSTRUMENTS:
-		_old_adlib_instruments = (value > 0);
-		break;
-
 	case IMuse::PROP_LIMIT_PLAYERS:
 		if (value > 0 && value <= ARRAYSIZE(_players))
 			_player_limit = (int) value;
@@ -1135,8 +1129,6 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi, MidiDriver
 
 void IMuseInternal::initMidiDriver(MidiDriver *midi) {
 	// Open MIDI driver
-	midi->property(MidiDriver::PROP_OLD_ADLIB, _old_adlib_instruments ? 1 : 0);
-
 	int result = midi->open();
 	if (result)
 		error("IMuse initialization - %s", MidiDriver::getErrorName(result));
