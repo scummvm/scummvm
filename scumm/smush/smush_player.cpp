@@ -257,8 +257,7 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 }
 
 SmushPlayer::~SmushPlayer() {
-	if (_initDone)
-		release();
+	release();
 }
 
 void SmushPlayer::init() {
@@ -286,7 +285,9 @@ void SmushPlayer::init() {
 }
 
 void SmushPlayer::release() {
-	
+	if (!_initDone)
+		return;
+
 	_vm->_timer->removeTimerProc(&timerCallback);
 
 	_vm->_smushVideoShouldFinish = true;
@@ -334,6 +335,9 @@ void SmushPlayer::release() {
 	// some explanation.
 	_vm->virtscr[0].pitch = _origPitch;
 	_vm->gdi._numStrips = _origNumStrips;
+	
+	
+	_initDone = false;
 }
 
 void SmushPlayer::checkBlock(const Chunk &b, Chunk::type type_expected, uint32 min_size) {
