@@ -192,7 +192,7 @@ static int MT32_Report(void *userData, MT32Emu::ReportType type, const void *rep
 		break;
 	case MT32Emu::ReportType_progressInit:
 		if (((MidiDriver_MT32 *)userData)->_initialising) {
-			drawProgress(*((float *)reportData));
+			drawProgress(*((const float *)reportData));
 			return eatSystemEvents();
 		}
 		break;
