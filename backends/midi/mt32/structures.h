@@ -274,7 +274,7 @@ struct dpoly {
 	bool sustain;
 
 	bool isActive() const;
-	Bit64s getAge() const;
+	Bit32u getAge() const;
 };
 
 }

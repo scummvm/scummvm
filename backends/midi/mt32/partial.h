@@ -113,7 +113,7 @@ public:
 
 	Partial *pair;
 	bool alreadyOutputed;
-	Bit64s age;
+	Bit32u age;
 
 	Partial(Synth *synth);
 	~Partial();

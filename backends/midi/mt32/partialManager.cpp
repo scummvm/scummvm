@@ -219,7 +219,7 @@ bool PartialManager::freePartials(unsigned int needed, int partNum) {
 	}*/
 	// Then kill those with the lowest part priority -- oldest at the moment
 	while (needed > 0) {
-		Bit64s prior = -1;
+		Bit32u prior = 0;
 		int priornum = -1;
 
 		for (int i = 0; i < MT32EMU_MAX_PARTIALS; i++) {
@@ -229,7 +229,7 @@ bool PartialManager::freePartials(unsigned int needed, int partNum) {
 					prior = mt32ram.system.reserveSettings[partialTable[i]->ownerPart];
 					priornum = i;
 				}*/
-				if (partialTable[i]->age > prior) {
+				if (partialTable[i]->age >= prior) {
 					prior = partialTable[i]->age;
 					priornum = i;
 				}
@@ -245,11 +245,11 @@ bool PartialManager::freePartials(unsigned int needed, int partNum) {
 
 	// Kill off the oldest partials within this part
 	while (needed > 0) {
-		Bit64s oldest = -1;
-		Bit64s oldlist = -1;
+		Bit32u oldest = 0;
+		int oldlist = -1;
 		for (int i = 0; i < MT32EMU_MAX_PARTIALS; i++) {
 			if (partialTable[i]->getOwnerPart() == partNum && partialTable[i]->isActive()) {
-				if (partialTable[i]->age > oldest) {
+				if (partialTable[i]->age >= oldest) {
 					oldest = partialTable[i]->age;
 					oldlist = i;
 				}

@@ -46,7 +46,7 @@ bool dpoly::isActive() const {
 	return partials[0] != NULL || partials[1] != NULL || partials[2] != NULL || partials[3] != NULL;
 }
 
-Bit64s dpoly::getAge() const {
+Bit32u dpoly::getAge() const {
 	for (int i = 0; i < 4; i++) {
 		if (partials[i] != NULL) {
 			return partials[i]->age;
@@ -582,7 +582,7 @@ void Part::stopNote(unsigned int key) {
 	// Find oldest poly... yes, the MT-32 can be reconfigured to kill different poly first
 	// This is simplest
 	int oldest = -1;
-	Bit64s oldage = -1;
+	Bit32u oldage = 0;
 
 	for (int q = 0; q < MT32EMU_MAX_POLY; q++) {
 		dpoly *tpoly = &polyTable[q];
@@ -595,7 +595,7 @@ void Part::stopNote(unsigned int key) {
 		}
 	}
 
-	if (oldest!=-1) {
+	if (oldest != -1) {
 		startDecayPoly(&polyTable[oldest]);
 	}
 }

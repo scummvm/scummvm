@@ -278,7 +278,7 @@ bool Synth::loadPCMROM(const char *filename) {
 	return rc;
 }
 
-struct TempPCMStruct
+struct ControlROMPCMStruct
 {
 	Bit8u pos;
 	Bit8u len;
@@ -287,7 +287,7 @@ struct TempPCMStruct
 };
 
 void Synth::initPCMList() {
-	TempPCMStruct *tps = (TempPCMStruct *)&controlROMData[0x3000];
+	ControlROMPCMStruct *tps = (ControlROMPCMStruct *)&controlROMData[0x3000];
 	for (int i = 0; i < 128; i++) {
 		int rAddr = tps[i].pos * 0x800;
 		int rLenExp = (tps[i].len & 0x70) >> 4;
@@ -322,11 +322,10 @@ void Synth::initRhythmTimbre(int timbreNum, const Bit8u *mem) {
 }
 
 void Synth::initRhythmTimbres() {
-	//TempPCMStruct *tps = (TempPCMStruct *)&controlROMData[0x3000];
-	//const Bit8u *drumMap = &controlROMData[0x3200];
+	const Bit8u *drumMap = &controlROMData[0x3200];
 	int timbreNum = 192;
-	for (Bit16u i = 0x3200; i < 0x323C; i += 2) {
-		Bit16u address = (controlROMData[i + 1] << 8) | controlROMData[i];
+	for (Bit16u i = 0; i < 60; i += 2) {
+		Bit16u address = (drumMap[i + 1] << 8) | drumMap[i];
 		initRhythmTimbre(timbreNum++, &controlROMData[address]);
 	}
 }
