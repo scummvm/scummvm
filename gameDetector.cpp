@@ -449,7 +449,7 @@ MidiDriver *GameDetector::createMidi() {
 #if defined(__MORPHOS__)
 	case MD_AMIDI:		return MidiDriver_AMIDI_create();
 #endif
-#if defined(UNIX) && !defined(BEOS)
+#if defined(UNIX) && !defined(__BEOS__)
     case MD_SEQ:        return MidiDriver_SEQ_create();
 #endif
 	}
