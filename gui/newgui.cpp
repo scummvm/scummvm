@@ -155,10 +155,9 @@ void NewGui::runLoop() {
 		while (_system->poll_event(&event)) {
 			switch (event.event_code) {
 			case OSystem::EVENT_KEYDOWN:
-#if !defined(_WIN32_WCE) && !defined(__PALM_OS__)
+#if !defined(__PALM_OS__)
 				// init continuous event stream
-				// not done on WinCE because keyboard is emulated and
-				// keyup is not generated
+				// not done on PalmOS because keyboard is emulated and keyup is not generated
 				_currentKeyDown.ascii = event.kbd.ascii;
 				_currentKeyDown.keycode = event.kbd.keycode;
 				_currentKeyDown.flags = event.kbd.flags;
