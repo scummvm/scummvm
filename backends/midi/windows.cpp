@@ -31,35 +31,32 @@
 ////////////////////////////////////////
 
 class MidiDriver_WIN : public MidiDriver_MPU401 {
-public:
-	MidiDriver_WIN();
-	int open(int mode);
-	void close();
-	void send(uint32 b);
-
 private:
 	HMIDIOUT _mo;
+	bool _isOpen;
 
 	void check_error(MMRESULT result);
-	uint32 property(int prop, uint32 param);
-};
+	uint32 property(int prop, uint32 param) { return 0; }
 
-MidiDriver_WIN::MidiDriver_WIN()
-{
-	_isOpen = false;
-}
+public:
+	MidiDriver_WIN() : _isOpen (false) { }
+	int open();
+	void close();
+	void send(uint32 b);
+};
 
 int MidiDriver_WIN::open()
 {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
-	_isOpen = true;
-
 	MMRESULT res = midiOutOpen((HMIDIOUT *) &_mo, MIDI_MAPPER, 0, 0, 0);
-	if (res != MMSYSERR_NOERROR)
+	if (res != MMSYSERR_NOERROR) {
 		check_error(res);
+		return MERR_DEVICE_NOT_AVAILABLE;
+	}
 
+	_isOpen = true;
 	return 0;
 }
 
