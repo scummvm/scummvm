@@ -31,11 +31,8 @@
 static const char *dataFilename = "sky.dsk";
 static const char *dinnerFilename = "sky.dnr";
 
-SkyDisk::SkyDisk(const char *gameDataPath) {
+SkyDisk::SkyDisk(const Common::String &gameDataPath) {
 	_prefRoot = NULL;
-
-	// Set default file directory
-	File::setDefaultDirectory(gameDataPath);
 
 	_dataDiskHandle = new File();
 	_dnrHandle = new File();
@@ -44,7 +41,7 @@ SkyDisk::SkyDisk(const char *gameDataPath) {
 
 	_dnrHandle->open(dinnerFilename);
 	if (_dnrHandle->isOpen() == false)
-			error("Could not open %s%s", gameDataPath, dinnerFilename);
+			error("Could not open %s%s", gameDataPath.c_str(), dinnerFilename);
 
 	if (!(_dinnerTableEntries = _dnrHandle->readUint32LE()))
 		error("Error reading from sky.dnr"); //even though it was opened correctly?!
@@ -57,7 +54,7 @@ SkyDisk::SkyDisk(const char *gameDataPath) {
 
 	_dataDiskHandle->open(dataFilename);
 	if (_dataDiskHandle->isOpen() == false) 
-		error("Error opening %s%s", gameDataPath, dataFilename);
+		error("Error opening %s%s", gameDataPath.c_str(), dataFilename);
 
 	printf("Found BASS version v0.0%d (%d dnr entries)\n", determineGameVersion(), _dinnerTableEntries);
 

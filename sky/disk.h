@@ -24,6 +24,7 @@
 
 #include "stdafx.h"
 #include "common/scummsys.h"
+#include "common/str.h"
 
 class File;
 
@@ -38,7 +39,7 @@ struct PrefFile {
 
 class SkyDisk {
 public:
-	SkyDisk(const char *gameDataPath);
+	SkyDisk(const Common::String &gameDataPath);
 	~SkyDisk(void);
 
 	uint8 *loadFile(uint16 fileNr, uint8 *dest);

@@ -43,14 +43,13 @@ const GameVersion Resource::_gameVersions[] = {
 	{ "PE100", true,  true,  0x000B40F5 }
 };
 
-Resource::Resource(const char *datafilePath)
-	: _resourceEntries(0), _resourceTable(NULL) {
+Resource::Resource(const Common::String &datafilePath)
+	: _resourceEntries(0), _resourceTable(NULL), _datafilePath(datafilePath) {
 
-	_datafilePath = datafilePath;
 	_resourceFile = new File();
 	_resourceFile->open(dataFilename, _datafilePath);
 	if (_resourceFile->isOpen() == false)
-		error("Could not open resource file '%s%s'", _datafilePath, dataFilename);
+		error("Could not open resource file '%s%s'", _datafilePath.c_str(), dataFilename);
 
 	
 	_gameVersion = detectGameVersion(_resourceFile->size());
@@ -62,7 +61,7 @@ Resource::Resource(const char *datafilePath)
 			_resourceEntries = 1076;
 			_resourceTable = _resourceTablePEM10;
 		} else {
-			error("Couldn't find tablefile '%s%s'", _datafilePath, tableFilename);
+			error("Couldn't find tablefile '%s%s'",  _datafilePath.c_str(), tableFilename);
 		}
 	}
 

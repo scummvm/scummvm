@@ -235,11 +235,8 @@ int MP3Sound::playSound(uint sound, PlayingSoundHandle *handle, byte flags)
 /******************************************************************************/
 
 
-SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const char *gameDataPath, SoundMixer *mixer) {
-	_game = game;
-	_gameDataPath = gameDataPath;
-	_mixer = mixer;
-	
+SimonSound::SimonSound(const byte game, const GameSpecificSettings *gss, const Common::String &gameDataPath, SoundMixer *mixer)
+	: _game(game), _gameDataPath(gameDataPath), _mixer(mixer) {
 	_voice_index = 0;
 	_ambient_index = 0;
 
@@ -343,7 +340,7 @@ SimonSound::~SimonSound() {
 	free(_offsets);
 }
 
-void SimonSound::readSfxFile(const char *filename, const char *gameDataPath) {
+void SimonSound::readSfxFile(const char *filename, const Common::String &gameDataPath) {
 	stopAll();
 
 	File *file = new File();
@@ -379,7 +376,7 @@ void SimonSound::loadSfxTable(File *gameFile, uint32 base) {
 		_effects = new VocSound(_mixer, gameFile, base);
 }
 
-void SimonSound::readVoiceFile(const char *filename, const char *gameDataPath) {
+void SimonSound::readVoiceFile(const char *filename, const Common::String &gameDataPath) {
 	stopAll();
 
 	File *file = new File();

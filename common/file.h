@@ -24,6 +24,7 @@
 
 #include "stdafx.h"
 #include "common/scummsys.h"
+#include "common/str.h"
 
 class File {
 private:
@@ -35,7 +36,7 @@ private:
 
 	static FILE *fopenNoCase(const char *filename, const char *directory, const char *mode);
 	
-	static char *_defaultDirectory;
+	static Common::String _defaultDirectory;
 
 public:
 	enum {
@@ -43,10 +44,11 @@ public:
 		kFileWriteMode = 2
 	};
 	
-	static void setDefaultDirectory(const char *directory);
+	static void setDefaultDirectory(const Common::String &directory);
 	
 	File();
 	virtual ~File();
+	bool open(const char *filename, const Common::String &directory) { return open(filename, directory.c_str()); }
 	bool open(const char *filename, const char *directory = NULL, int mode = kFileReadMode, byte encbyte = 0);
 	void close();
 	bool isOpen();

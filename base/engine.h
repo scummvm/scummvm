@@ -22,6 +22,7 @@
 #define ENGINE_H
 
 #include "common/scummsys.h"
+#include "common/str.h"
 #include "common/system.h"
 
 extern const char *gScummVMVersion;		// e.g. "0.4.1"
@@ -67,7 +68,7 @@ public:
 	Timer * _timer;
 
 protected:
-	const char *_gameDataPath;
+	const Common::String _gameDataPath;
 
 public:
 	Engine(GameDetector *detector, OSystem *syst);

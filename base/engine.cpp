@@ -25,6 +25,7 @@
 #include "base/engine.h"
 #include "base/gameDetector.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "common/timer.h"
 #include "sound/mixer.h"
 
@@ -32,13 +33,14 @@
 Engine *g_engine = 0;
 
 Engine::Engine(GameDetector *detector, OSystem *syst)
-	: _system(syst) {
+	: _system(syst), _gameDataPath(ConfMan.get("path")) {
 	g_engine = this;
 	_mixer = detector->createMixer();
 
-	_gameDataPath = strdup(ConfMan.get("path").c_str());	// FIXME - leak. Just conver to a String?
-
 	_timer = g_timer;
+	
+	// Set default file directory
+	File::setDefaultDirectory(_gameDataPath);
 }
 
 Engine::~Engine() {

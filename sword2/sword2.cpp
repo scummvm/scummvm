@@ -120,8 +120,6 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	_mixer->setMusicVolume(256);
 
 	g_sound = _sound = new Sound(_mixer);
-	
-	File::setDefaultDirectory(_gameDataPath);
 }
 
 void Sword2Engine::errorString(const char *buf1, char *buf2) {

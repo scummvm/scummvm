@@ -57,7 +57,7 @@ struct GameVersion {
 class Resource {
 
 public:
-	Resource(const char *datafilePath);
+	Resource(const Common::String &datafilePath);
 	~Resource(void);
 	uint8 *loadFile(const char *filename, uint32 skipBytes = 0);
 	bool exists(const char *filename);
@@ -66,7 +66,7 @@ public:
 
 protected:
 	File *_resourceFile;
-	const char *_datafilePath;
+	const Common::String _datafilePath;
 	const GameVersion *_gameVersion;
 	uint32 _resourceEntries;
 	ResourceEntry *_resourceTable;

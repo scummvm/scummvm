@@ -22,6 +22,7 @@
 
 #include "sound/mixer.h"
 #include "simon/intern.h"
+#include "common/str.h"
 
 namespace Simon {
 
@@ -30,7 +31,7 @@ class BaseSound;
 class SimonSound {
 private:
 	byte _game;
-	const char *_gameDataPath;
+	const Common::String _gameDataPath;
 
 	SoundMixer *_mixer;
 
@@ -54,12 +55,12 @@ public:
 	bool _voice_file;
 	uint _ambient_playing;
 
-	SimonSound(const byte game, const GameSpecificSettings *gss, const char *gameDataPath, SoundMixer *mixer);
+	SimonSound(const byte game, const GameSpecificSettings *gss, const Common::String &gameDataPath, SoundMixer *mixer);
 	~SimonSound();
 	
-	void readSfxFile(const char *filename, const char *gameDataPath);
+	void readSfxFile(const char *filename, const Common::String &gameDataPath);
 	void loadSfxTable(File *gameFile, uint32 base);
-	void readVoiceFile(const char *filename, const char *gameDataPath);
+	void readVoiceFile(const char *filename, const Common::String &gameDataPath);
 
 	void playVoice(uint sound);
 	void playEffects(uint sound);
