@@ -32,4 +32,4 @@ void timer_enableTimer() {
 void timer_disableTimer() {
 	debug(0, "STUB: timer_disableTimer()");
 }
-};
+}
