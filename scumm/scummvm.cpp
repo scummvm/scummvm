@@ -1268,7 +1268,6 @@ void Scumm::initRoomSubBlocks() {
 	//
 	if (_features & GF_OLD_BUNDLE) {
 		_IM00_offs = READ_LE_UINT16(roomptr + 0x0A);
-		buildStripOffsets();
 	} else if (_features & GF_SMALL_HEADER)
 		_IM00_offs = findResourceData(MKID('IM00'), roomptr) - roomptr;
 	else if (_features & GF_AFTER_V8) {

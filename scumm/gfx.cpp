@@ -865,8 +865,6 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 
 	assert(smap_ptr);
 
-	byte *roomptr = _vm->getResourceAddress(rtRoom, _vm->_roomResource);
-
 	zplane_list[0] = smap_ptr;
 
 	if (_disable_zbuffer)
@@ -999,11 +997,9 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 		}
 
 		// Draw mask (zplane) data
-		// TODO - this code is right now completely bogus, will implement it correctly later
 		theY = 0;
 		theX = 0;
-	
-		for (;;) {
+		while (theX < width) {
 			run = *src++;
 			if (run & 0x80) {
 				run &= 0x7f;
@@ -1022,7 +1018,7 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 						theY = 0;
 						theX += 8;
 						if (theX >= width)
-							goto finish_v2;
+							break;
 					}
 				} while (--run);
 			} else {
@@ -1042,56 +1038,11 @@ void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int width, c
 						theY = 0;
 						theX += 8;
 						if (theX >= width)
-							goto finish_v2;
+							break;
 					}
 				} while (--run);
 			}
 		}
-
-finish_v2:
-		// Update tdirty / bdirty
-		while (numstrip--) {
-			if (sx < 0)
-				goto next_iter_v2;
-	
-			if (sx >= _numStrips) {
-				return;
-			}
-	
-			if (y < vs->tdirty[sx])
-				vs->tdirty[sx] = y;
-	
-			if (bottom > vs->bdirty[sx])
-				vs->bdirty[sx] = bottom;
-
-			CHECK_HEAP;
-			if (vs->alloctwobuffers) {
-				backbuff_ptr = vs->screenPtr + (y * _numStrips + x) * 8;
-				bgbak_ptr = _vm->getResourceAddress(rtBuffer, vs->number + 5) + (y * _numStrips + x) * 8;
-				_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
-	
-				if (_vm->hasCharsetMask(sx << 3, y, (sx + 1) << 3, bottom)) {
-					if (flag & dbClear || !lightsOn)
-						clear8ColWithMasking(backbuff_ptr, height, _mask_ptr);
-					else
-						draw8ColWithMasking(backbuff_ptr, bgbak_ptr, height, _mask_ptr);
-				} else {
-					if (flag & dbClear || !lightsOn)
-						clear8Col(backbuff_ptr, height);
-					else
-						draw8Col(backbuff_ptr, bgbak_ptr, height);
-				}
-			}
-next_iter_v2:
-			CHECK_HEAP;
-			x++;
-			sx++;
-			stripnr++;
-		}
-		
-
-		// Get outa here
-		return;
 	}
 
 	//////
@@ -1123,14 +1074,14 @@ next_iter_v2:
 
 		_mask_ptr = _vm->getResourceAddress(rtBuffer, 9) + (y * _numStrips + x);
 
-		if (_vm->_features & GF_AFTER_V2) {
-			decodeStripOldEGA(bgbak_ptr, roomptr + _vm->_egaStripOffsets[stripnr], height, stripnr);
-		} else if (_vm->_features & GF_16COLOR) {
-			decodeStripEGA(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), height);
-		} else if (_vm->_features & GF_SMALL_HEADER) {
-			useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), height);
-		} else {
-			useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 8), height);
+		if (!(_vm->_features & GF_AFTER_V2)) {
+			if (_vm->_features & GF_16COLOR) {
+				decodeStripEGA(bgbak_ptr, smap_ptr + READ_LE_UINT16(smap_ptr + stripnr * 2 + 2), height);
+			} else if (_vm->_features & GF_SMALL_HEADER) {
+				useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 4), height);
+			} else {
+				useOrDecompress = decompressBitmap(bgbak_ptr, smap_ptr + READ_LE_UINT32(smap_ptr + stripnr * 4 + 8), height);
+			}
 		}
 
 		CHECK_HEAP;
@@ -1149,23 +1100,25 @@ next_iter_v2:
 		}
 		CHECK_HEAP;
 
-		// Sam & Max uses dbDrawMaskOnAll for things like the inventory
-		// box and the speech icons. While these objects only have one
-		// mask, it should be applied to all the Z-planes in the room,
-		// i.e. they should mask every actor.
-		//
-		// This flag used to be called dbDrawMaskOnBoth, and all it
-		// would do was to mask Z-plane 0. (Z-plane 1 would also be
-		// masked, because what is now the else-clause used to be run
-		// always.) While this seems to be the only way there is to
-		// mask Z-plane 0, this wasn't good enough since actors in
-		// Z-planes >= 2 would not be masked.
-		//
-		// The flag is also used by The Dig and Full Throttle, but I
-		// don't know what for. At the time of writing, these games
-		// are still too unstable for me to investigate.
+		if (!(_vm->_features & GF_AFTER_V2)) {
+			// Do nothing here for V2 games - zplane was handled already.
+		} else if (flag & dbDrawMaskOnAll) {
+			// Sam & Max uses dbDrawMaskOnAll for things like the inventory
+			// box and the speech icons. While these objects only have one
+			// mask, it should be applied to all the Z-planes in the room,
+			// i.e. they should mask every actor.
+			//
+			// This flag used to be called dbDrawMaskOnBoth, and all it
+			// would do was to mask Z-plane 0. (Z-plane 1 would also be
+			// masked, because what is now the else-clause used to be run
+			// always.) While this seems to be the only way there is to
+			// mask Z-plane 0, this wasn't good enough since actors in
+			// Z-planes >= 2 would not be masked.
+			//
+			// The flag is also used by The Dig and Full Throttle, but I
+			// don't know what for. At the time of writing, these games
+			// are still too unstable for me to investigate.
 
-		if (flag & dbDrawMaskOnAll) {
 			byte *z_plane_ptr;
 			if (_vm->_features & GF_AFTER_V8)
 				z_plane_ptr = zplane_list[1] + READ_LE_UINT32(zplane_list[1] + stripnr * 4 + 8);
@@ -1203,9 +1156,7 @@ next_iter_v2:
 				if (offs) {
 					byte *z_plane_ptr = zplane_list[i] + offs;
 
-					if (_vm->_features & GF_AFTER_V2)
-						decompressMaskImgOld(_mask_ptr_dest, roomptr + _vm->_egaStripZOffsets[stripnr], stripnr);
-					else if (useOrDecompress && (flag & dbAllowMaskOr)) {
+					if (useOrDecompress && (flag & dbAllowMaskOr)) {
 						decompressMaskImgOr(_mask_ptr_dest, z_plane_ptr, height);
 					} else {
 						decompressMaskImg(_mask_ptr_dest, z_plane_ptr, height);
@@ -1286,159 +1237,6 @@ void Gdi::decodeStripEGA(byte *dst, byte *src, int height) {
 			}
 		}
 	}
-}
-
-void Scumm::buildStripOffsets() {
-	byte *roomptr = getResourceAddress(rtRoom, _roomResource);
-	byte *bitmap = roomptr + READ_LE_UINT16(roomptr + 10);
-	byte *zplane = roomptr + READ_LE_UINT16(roomptr + 12);
-	int room_width = READ_LE_UINT16(roomptr + 4) >> 3;
-	byte color = 0, data = 0;
-	int x, y, length = 0;
-	int run = 1;
-
-	for (x = 0 ; x < (room_width << 3); x++) {
-
-		if ((x % 8) == 0) {
-			_egaStripRun[x >> 3] = run;
-			_egaStripColor[x >> 3] = color;
-			_egaStripOffsets[x >> 3] = bitmap - roomptr;
-		}
-
-		for (y = 0; y < 128; y++) {
-			if (--run == 0) {
-				data = *bitmap++;
-				if (data & 0x80) {
-					run = data & 0x7f;
-				} else {
-					run = data >> 4;
-				}
-				if (run == 0) {
-					run = *bitmap++;
-				}
-				color = data & 0x0f;
-			}
-		}
-	}
-
-	// Note - at this point, "bitmap" will be equal to "zplane"
-	// This is true for any V2 bitmap data. We can make use of that fact to write
-	// a generic drawBitmapV2, which will work for objects, too, and not need this
-	// function and the tables it computes at all.
-	x = 0;
-	y = 128;
-	
-	for (;;) {
-		length = *zplane++;
-		if (length & 0x80) {
-			length &= 0x7f;
-			data = *zplane++;
-			do {
-				if (y == 128) {
-					_egaStripZOffsets[x] = zplane - roomptr - 1;
-					_egaStripZRun[x] = length | 0x80;
-				}
-				if (--y == 0) {
-					if (--room_width == 0)
-						return;
-					x++;
-					y = 128;
-				}
-			} while (--length);
-		} else {
-			do {
-				data = *zplane++;
-				if (y == 128) {
-					_egaStripZOffsets[x] = zplane - roomptr - 1;
-					_egaStripZRun[x] = length;
-				}
-				if (--y == 0) {
-					if (--room_width == 0)
-						return;
-					x++;
-					y = 128;
-				}
-			} while (--length);
-		}
-	}
-}
-
-void Gdi::decodeStripOldEGA(byte *dst, byte *src, int height, int stripnr) {
-	byte color = _vm->_egaStripColor[stripnr];
-	int run = _vm->_egaStripRun[stripnr];
-	bool dither = false;
-	byte dither_table[128];
-	byte *ptr_dither_table;
-	memset(dither_table, 0, sizeof(dither_table));	// FIXME - is that correct?
-
-// FIXME - for now only draw the full height stuff.
-// There are also cases where e.g. height = 48. We ignore those for a single
-// reason: in the intro screen, they overdraw the kids faces with a blue rect.
-// For the sake of making it look "more impressive" I put in this temporary hack.
-// The reason for the whole problem seems to be the _egaStripFOO hack (see also buildStripOffsets)
-// Apparently it currently only works for the room graphics, but not for objects.
-// I think instead of forcing all this into drawBitmap(), maybe we should just
-// provide an alternative drawBitmap implementation for V2 games. That might be
-// much easier than trying to coerce the old graphics data into behaving like the
-// newer formats.
-if (height != 128)
-	return;
-	
-	for (int x = 0; x < 8; x++) {
-		ptr_dither_table = dither_table;
-		for (int y = 0; y < 128; y++) {
-			if (--run == 0) {
-				byte data = *src++;
-				if (data & 0x80) {
-					run = data & 0x7f;
-					dither = true;
-				} else {
-					run = data >> 4;
-					dither = false;
-				}
-				if (run == 0) {
-					run = *src++;
-				}
-				color = data & 0x0f;
-			}
-			if (!dither) {
-				*ptr_dither_table = color;
-			}
-			if (y < height)
-				*dst = *ptr_dither_table++;
-			dst += _vm->_realWidth;
-		}
-		dst -= _vm->_realWidth * 128;
-		dst++;
-	}
-}
-
-void Gdi::decompressMaskImgOld(byte *dst, byte *src, int stripnr) {
-	int run = _vm->_egaStripRun[stripnr];
-	int y = 128;
-	byte data = 0;
-
-	for (;;) {
-		if (run & 0x80) {
-			run &= 0x7f;
-			data = *src++;
-			do {
-				*dst++ = data;
-				dst += _numStrips;
-				if (--y == 0)
-					return;
-			} while (--run);
-		} else {
-			do {
-				data = *src++;
-				*dst++ = data;
-				dst += _numStrips;
-				if (--y == 0)
-					return;
-			} while (--run);
-		}
-		run = *src++;
-	} 
 }
 
 bool Gdi::decompressBitmap(byte *bgbak_ptr, byte *smap_ptr, int numLinesToProcess) {
