@@ -17,7 +17,6 @@ CP      := cp
 # Default compilation parameters. Normally don't edit these           #
 #######################################################################
 
-CXXFLAGS:= -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
 DEFINES := -DHAVE_CONFIG_H
 LDFLAGS :=
 INCLUDES:= -I. -Icommon
@@ -30,7 +29,7 @@ include config.mak
 # Uncomment this for stricter compile time code verification
 # CXXFLAGS+= -Wshadow -Werror
 
-CXXFLAGS += $(OPTFLAGS)
+CXXFLAGS:= -g -O -Wall -Wstrict-prototypes -Wuninitialized -Wno-long-long -Wno-multichar -Wno-unknown-pragmas $(CXXFLAGS)
 
 #######################################################################
 # Misc stuff - you should normally never have to edit this            #
