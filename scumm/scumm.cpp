@@ -2735,7 +2735,7 @@ void ScummEngine::initRoomSubBlocks() {
 			ptr += _resourceHeaderSize;	/* skip tag & size */
 
 			id = READ_LE_UINT32(ptr);
-			//checkRange(NUM_LOCALSCRIPT + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
+			checkRange(NUM_LOCALSCRIPT + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
 			_localScriptList[id - _numGlobalScripts] = ptr + 4 - roomResPtr;
 
 			if (_dumpScripts) {

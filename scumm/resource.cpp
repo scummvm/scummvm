@@ -2318,7 +2318,7 @@ void ScummEngine::readMAXS(int blockSize) {
 
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 		_numRoomVariables = 64;
-		_numGlobalScripts = 200;
+		_numGlobalScripts = 2048;
 
 	} else if (_heversion >= 70 && (blockSize == 38 + 8)) { // Scummsys.9x
 		_numVariables = _fileHandle.readUint16LE();
