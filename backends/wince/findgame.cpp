@@ -42,7 +42,7 @@
 extern Config *g_config;
 
 #define MAX_GAMES 20
-#define MAX_DIRECTORY 40
+int MAX_DIRECTORY = 1;
 
 #define MAX_DISPLAYED_DIRECTORIES 7
 #define MAX_DISPLAYED_GAMES 7
@@ -72,85 +72,99 @@ struct GameReference {
 };
 
 static const ScummGame GameList[] = {
+
+	{	 "Simon 1 demo",
+		 "Playable",
+		 "0001.VGA", "GDEMO", "",
+		 "simon1demo",
+		 0
+	},
 	{	
-		 "Simon 1 (dos)",
+		 "Simon 1 dos",
 		 "Completable",
 		 "", "1631.VGA", "GAMEPC",
 		 "simon1dos",
 		 0
 	},
 	{	 
-		 "Simon 1 (win)",
+		 "Simon 1 win",
 		 "Completable",
 		 "", "SIMON.GME", "GAMEPC",
 		 "simon1win",
 		 0
 	},
 	{	 
-		 "Simon 2 (dos)",
+		 "Simon 2 dos",
 		 "To be tested",
 		 "", "SIMON2.GME", "GAME32",
 		 "simon2dos",
 		 0
 	},
 	{	 
-		 "Simon 2 (win)",
+		 "Simon 2 win",
 		 "To be tested",
 		 "", "SIMON2.GME", "GSPTR30",
 		 "simon2win",
 		 0
 	},
 	{ 
-		 "Indiana Jones 3 (new)", 
+		 "Indiana Jones 3 VGA", 
 	     "Buggy, playable a bit", 
 		 "indy3", "", "", 
 		 "indy3",
 	     0 
 	},
 	{	 
-		 "Zak Mc Kracken (new)",
+		 "Zak Mc Kracken VGA",
 		 "Completable",
 		 "zak256", "", "",
 		 "zak256",
 		 0
 	},
 	{
-		 "Loom (old)",
+		 "Loom old",
 		 "Not working",
 		 "loom", "", "",
 		 "loom",
 		 0
 	},
 	{
-		 "Monkey Island 1 (EGA)",
+		 "Monkey Island 1 EGA",
 		 "Not tested",
 		 "monkeyEGA", "", "",
 		 "monkeyEGA",
 		 0
 	},
 	{
-		 "Loom (VGA)",
+		 "Loom VGA",
 		 "Completable, MP3 audio",
 		 "loomcd", "", "",
 		 "loomcd",
 		 0
 	},
 	{
-		 "Monkey Island 1 (VGA)",
+		 "Monkey Island 1 VGA CD",
 		 "Completable, MP3 music",
 		 "", "MONKEY.000", "MONKEY.001",
 		 "monkey",
 		 0
 	},
 	{
-		 "Monkey Island 1 (VGA)",
+		 "Monkey Island 1 VGA CD",
 		 "Completable, MP3 music",
 		 "", "MONKEY1.000", "MONKEY1.001",
 		 "monkey1",
 		 0
 	},
 	{
-		 "Monkey Island 2 (VGA)",
+		 "Monkey Island 1 VGA dk",
+		 "Completable, no sound",
+		 "monkey1vga", "", "",
+		 "monkey1vga",
+		 0
+	},
+	{
+		 "Monkey Island 2 VGA",
 		 "Completable",
 		 "", "MONKEY2.000", "MONKEY2.001",
 		 "monkey2",
@@ -234,7 +248,7 @@ TCHAR basePath[MAX_PATH];
 TCHAR old_basePath[MAX_PATH];
 BOOL prescanning;
 
-DirectoryName directories[MAX_DIRECTORY];
+DirectoryName *directories = NULL;
 int _first_index;
 int _total_directories;
 int _first_index_games;
@@ -247,6 +261,13 @@ extern int _game_selection_X_offset;
 extern int _game_selection_Y_offset;
 
 int chooseGame(bool need_rescan) {
+
+	if (directories)
+		free(directories);
+
+	directories = (DirectoryName*)malloc(MAX_DIRECTORY * sizeof(DirectoryName));
+
+	setGameSelectionPalette();
 	drawBlankGameSelection();
 	
 	if (!need_rescan)
@@ -504,6 +525,10 @@ void doScan() {
 
 	if (wcslen(basePath) != 0) {
 		//SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), LB_ADDSTRING, 0, (LPARAM)TEXT(".."));
+		if (_total_directories == MAX_DIRECTORY) {
+			MAX_DIRECTORY += 1;
+			directories = (DirectoryName*)realloc(directories, MAX_DIRECTORY  * sizeof(DirectoryName));
+		}
 		wcscpy(directories[_total_directories++].name, TEXT(".."));
 	}
 
@@ -523,6 +548,10 @@ void doScan() {
 		SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), 
 			LB_ADDSTRING, 0, (LPARAM)(work ? work + 1 : desc.cFileName));
 		*/
+		if (_total_directories == MAX_DIRECTORY) {
+			MAX_DIRECTORY += 1;
+			directories = (DirectoryName*)realloc(directories, MAX_DIRECTORY  * sizeof(DirectoryName));
+		}
 		wcscpy(directories[_total_directories++].name, (work ? work + 1 : desc.cFileName));
 	}
 	while (FindNextFile(x, &desc))
@@ -534,6 +563,10 @@ void doScan() {
 		SendMessage(GetDlgItem(hwndDlg, IDC_LISTAVAILABLE), 
 			LB_ADDSTRING, 0, (LPARAM)(work ? work + 1 : desc.cFileName));
 		*/
+		if (_total_directories == MAX_DIRECTORY) {
+			MAX_DIRECTORY += 1;
+			directories = (DirectoryName*)realloc(directories, MAX_DIRECTORY  * sizeof(DirectoryName));
+		}
 		wcscpy(directories[_total_directories++].name, (work ? work + 1 : desc.cFileName));
 	}	
 
@@ -892,8 +925,10 @@ void handleSelectGame(int x, int y) {
 				startFindGame();
 		}
 		if (x>=175 && x<=208) {
-			if (!_scanning)
-				exit(1);
+			if (!_scanning) {
+				_game_selected = true;
+				_last_selected = -1;
+			}
 			else
 				abortScanPath();
 		}
