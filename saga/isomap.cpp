@@ -756,75 +756,75 @@ void IsoMap::drawTile(SURFACE *ds, uint16 tileIndex, const Point &point, const L
 				return;
 			} else {
 				switch (_tilesTable[tileIndex].GetMaskRule()) {
-			case kMaskRuleNever:
-				return;
-			case kMaskRuleAlways:
-				break;
-			case kMaskRuleUMIN:
-				if (location->u() < THRESH0) {
-					return; 
-				}
-				break;
-			case kMaskRuleUMID:	
-				if (location->u() < THRESH8) {
+				case kMaskRuleNever:
 					return;
-				}
-				break;
-			case kMaskRuleUMAX:
-				if (location->u() < THRESH16) {
-					return; 
-				}
-				break;
-			case kMaskRuleVMIN:
-				if (location->v() < THRESH0) {
-					return;
-				}
-				break;
-			case kMaskRuleVMID:
-				if (location->v() < THRESH8) {
-					return; 
-				}
-				break;
-			case kMaskRuleVMAX:
-				if (location->v() < THRESH16) {
-					return; 
-				}
-				break;
-			case kMaskRuleYMIN:
-				if (location->u() + location->v() < THRESH0 * 2) {
-					return;
-				}
-				break;
-			case kMaskRuleYMID:
-				if (location->u() + location->v() < THRESH8 * 2) {
-					return;
-				}
-				break;
-			case kMaskRuleYMAX:
-				if (location->u() + location->v() < THRESH16 * 2) {
-					return;
-				}
-				break;
-			case kMaskRuleUVMAX:
-				if (location->u() < THRESH16 && location->v() < THRESH16) {
-					return;
-				}
-				break;
-			case kMaskRuleUVMIN:
-				if (location->u() < THRESH0 || location->v() < THRESH0) {
-					return;
-				}
-				break;
-			case kMaskRuleUorV:
-				if (location->u() < THRESH8 && location->v() < THRESH8) {
-					return;
-				}
-				break;
-			case kMaskRuleUandV:
-				if (location->u() < THRESH8 || location->v() < THRESH8) {
-					return;
-				}
-				break;
+				case kMaskRuleAlways:
+					break;
+				case kMaskRuleUMIN:
+					if (location->u() < THRESH0) {
+						return; 
+					}
+					break;
+				case kMaskRuleUMID:	
+					if (location->u() < THRESH8) {
+						return;
+					}
+					break;
+				case kMaskRuleUMAX:
+					if (location->u() < THRESH16) {
+						return; 
+					}
+					break;
+				case kMaskRuleVMIN:
+					if (location->v() < THRESH0) {
+						return;
+					}
+					break;
+				case kMaskRuleVMID:
+					if (location->v() < THRESH8) {
+						return; 
+					}
+					break;
+				case kMaskRuleVMAX:
+					if (location->v() < THRESH16) {
+						return; 
+					}
+					break;
+				case kMaskRuleYMIN:
+					if (location->u() + location->v() < THRESH0 * 2) {
+						return;
+					}
+					break;
+				case kMaskRuleYMID:
+					if (location->u() + location->v() < THRESH8 * 2) {
+						return;
+					}
+					break;
+				case kMaskRuleYMAX:
+					if (location->u() + location->v() < THRESH16 * 2) {
+						return;
+					}
+					break;
+				case kMaskRuleUVMAX:
+					if (location->u() < THRESH16 && location->v() < THRESH16) {
+						return;
+					}
+					break;
+				case kMaskRuleUVMIN:
+					if (location->u() < THRESH0 || location->v() < THRESH0) {
+						return;
+					}
+					break;
+				case kMaskRuleUorV:
+					if (location->u() < THRESH8 && location->v() < THRESH8) {
+						return;
+					}
+					break;
+				case kMaskRuleUandV:
+					if (location->u() < THRESH8 || location->v() < THRESH8) {
+						return;
+					}
+					break;
 				}
 			}
 		}

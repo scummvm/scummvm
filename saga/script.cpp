@@ -648,29 +648,27 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 	}
 
 	switch (_pendingVerb) {
-		case kVerbWalkTo:
-		case kVerbPickUp:
-		case kVerbOpen:
-		case kVerbClose:
-		case kVerbUse:
+	case kVerbWalkTo:
+	case kVerbPickUp:
+	case kVerbOpen:
+	case kVerbClose:
+	case kVerbUse:
+		_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
+		break;
+
+	case kVerbLookAt:
+		if (objectTypeId(_pendingObject[0]) != kGameObjectActor ) {
 			_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
-			break;
-
-		case kVerbLookAt:
-			if (objectTypeId(_pendingObject[0]) != kGameObjectActor ) {
-				_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
-			} else {
-				doVerb();
-			}
-			break;
-
-		case kVerbTalkTo:
-		case kVerbGive:
+		} else {
 			doVerb();
-			break;
+		}
+		break;
+
+	case kVerbTalkTo:
+	case kVerbGive:
+		doVerb();
+		break;
 	}
-
-
 }
 
 void Script::whichObject(const Point& mousePoint) {
