@@ -1433,11 +1433,6 @@ void Scumm::o6_animateActor()
 	int anim = pop();
 	int act = pop();
 
-	if (_gameId == GID_TENTACLE && act == 593) {
-		warning("o6_animateActor(%d,%d): fixed tentacle bug", act, anim);
-		return;
-	}
-
 	animateActor(act, anim);
 }
 
@@ -1777,7 +1772,6 @@ void Scumm::o6_resourceRoutines()
 		loadCharset(resid);
 		break;
 	case 118:										/* nuke charset */
-		warning("popping extra argument in nukeCharset");
 		resid = pop();
 		nukeCharset(resid);
 		break;
