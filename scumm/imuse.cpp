@@ -4942,7 +4942,7 @@ void IMuseDigital::startSound(int sound) {
 			uint32 tag, size = 0;
 
 			for (;;) {
-		    tag = READ_BE_UINT32(ptr); ptr += 4;
+				tag = READ_BE_UINT32(ptr); ptr += 4;
 				switch(tag) {
 					case MKID_BE('FRMT'):
 						ptr += 12;
@@ -5063,8 +5063,57 @@ void IMuseDigital::stopAll() {
 }
 
 int32 IMuseDigital::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) {
-	debug(1, "stub IMuseDigital::doCommand(%d,%d,%d,%d,%d,%d,%d,%d,%d)",
-						a >> 8, a & 0xFF, b, c, d, e, f, g, h);
+	byte cmd = a & 0xFF;
+	byte param = a >> 8;
+	byte sample = b;
+	byte sub_cmd = c >> 8;
+
+	if (!(cmd || param))
+		return 1;
+
+	if (param == 0) {
+		switch (cmd) {
+		case 12:
+			switch (sub_cmd) {
+			case 5: // param seems always set 0 (maybe reset)
+				debug(1, "IMuseDigital::doCommand stub cmd=%d,param=%d,sample=%d,sub_cmd=%d,params=(%d,%d,%d)", param, cmd, sample, sub_cmd, d, e, f);
+				return 0;
+			case 6: // left pan control (0-127) i think
+				debug(1, "IMuseDigital::doCommand stub cmd=%d,param=%d,sample=%d,sub_cmd=%d,params=(%d,%d,%d)", param, cmd, sample, sub_cmd, d, e, f);
+				return 0;
+			case 7: // right pan control (0-127) i think
+				debug(1, "IMuseDigital::doCommand stub cmd=%d,param=%d,sample=%d,sub_cmd=%d,params=(%d,%d,%d)", param, cmd, sample, sub_cmd, d, e, f);
+				return 0;
+			default:
+				warning("IMuseDigital::doCommand (param=0, cmd=12) default sub command %d", sub_cmd);
+				return 1;
+			}
+
+			return 0;
+		case 14: // maybe volume fading
+			debug(1, "IMuseDigital::doCommand %d,%d(%d,%d,%d,%d,%d)", param, cmd, b, c, d, e, f);
+			return 0;
+		default:
+			warning("IMuseDigital::doCommand (param=0) default command %d", cmd);
+			return 1;
+		}
+	} else if (param == 16) { // unknown commands
+		switch (cmd) {
+		case 0:
+			debug(1, "IMuseDigital::doCommand %d,%d(%d,%d,%d,%d,%d)", param, cmd, b, c, d, e, f);
+			return 0;
+		case 1:
+			debug(1, "IMuseDigital::doCommand %d,%d(%d,%d,%d,%d,%d)", param, cmd, b, c, d, e, f);
+			return 0;
+		case 3:
+			debug(1, "IMuseDigital::doCommand %d,%d(%d,%d,%d,%d,%d)", param, cmd, b, c, d, e, f);
+			return 0;
+		default:
+			warning("IMuseDigital::doCommand (param=16) default command %d", cmd);
+			return 1;
+		}
+	}
+
 	return 1;
 }
 
