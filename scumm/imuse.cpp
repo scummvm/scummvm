@@ -2005,7 +2005,8 @@ void Player::parse_sysex(byte *p, uint len) {
 			part = get_part (p[0] & 0x0F);
 			if (part) {
 				part->_instrument.roland (p - 1);
-				if (part->clearToTransmit()) part->_instrument.send (part->_mc);
+				if (part->clearToTransmit())
+					part->_instrument.send (part->_mc);
 			}
 		} else {
 			warning ("Unknown SysEx manufacturer 0x%02X", (int) a);
@@ -3030,7 +3031,7 @@ void IMuseInternal::fix_players_after_load(Scumm *scumm) {
 
 void Part::set_detune(int8 detune) {
 	_detune_eff = clamp((_detune = detune) + _player->_detune, -128, 127);
-	if (clearToTransmit()) {
+	if (_mc) {
 		_mc->pitchBend (clamp(_pitchbend +
 						(_detune_eff * 64 / 12) +
 						(_transpose_eff * 8192 / 12), -8192, 8191));
@@ -3039,7 +3040,7 @@ void Part::set_detune(int8 detune) {
 
 void Part::set_pitchbend(int value) {
 	_pitchbend = value;
-	if (clearToTransmit()) {
+	if (_mc) {
 		_mc->pitchBend (clamp(_pitchbend +
 						(_detune_eff * 64 / 12) +
 						(_transpose_eff * 8192 / 12), -8192, 8191));
@@ -3048,22 +3049,25 @@ void Part::set_pitchbend(int value) {
 
 void Part::set_vol(uint8 vol) {
 	_vol_eff = ((_vol = vol) + 1) * _player->_vol_eff >> 7;
-	if (clearToTransmit()) _mc->volume (_vol_eff);
+	if (_mc)
+		_mc->volume (_vol_eff);
 }
 
 void Part::set_pri(int8 pri) {
 	_pri_eff = clamp((_pri = pri) + _player->_priority, 0, 255);
-	if (clearToTransmit()) _mc->priority (_pri_eff);
+	if (_mc)
+		_mc->priority (_pri_eff);
 }
 
 void Part::set_pan(int8 pan) {
 	_pan_eff = clamp((_pan = pan) + _player->_pan, -64, 63);
-	if (clearToTransmit()) _mc->panPosition (_pan_eff + 0x40);
+	if (_mc)
+		_mc->panPosition (_pan_eff + 0x40);
 }
 
 void Part::set_transpose(int8 transpose) {
 	_transpose_eff = transpose_clamp((_transpose = transpose) + _player->_transpose, -12, 12);
-	if (clearToTransmit()) {
+	if (_mc) {
 		_mc->pitchBend (clamp(_pitchbend +
 						(_detune_eff * 64 / 12) +
 						(_transpose_eff * 8192 / 12), -8192, 8191));
@@ -3072,23 +3076,27 @@ void Part::set_transpose(int8 transpose) {
 
 void Part::set_pedal(bool value) {
 	_pedal = value;
-	if (clearToTransmit()) _mc->sustain (_pedal);
+	if (_mc)
+		_mc->sustain (_pedal);
 }
 
 void Part::set_modwheel(uint value) {
 	_modwheel = value;
-	if (clearToTransmit()) _mc->modulationWheel (_modwheel);
+	if (_mc)
+		_mc->modulationWheel (_modwheel);
 }
 
 void Part::set_chorus(uint chorus) {
 	_chorus = chorus;
-	if (clearToTransmit()) _mc->chorusLevel (_effect_level);
+	if (_mc)
+		_mc->chorusLevel (_effect_level);
 }
 
 void Part::set_effect_level(uint level)
 {
 	_effect_level = level;
-	if (clearToTransmit()) _mc->effectLevel (_effect_level);
+	if (_mc)
+		_mc->effectLevel (_effect_level);
 }
 
 void Part::fix_after_load() {
@@ -3105,7 +3113,8 @@ void Part::set_pitchbend_factor(uint8 value) {
 		return;
 	set_pitchbend(0);
 	_pitchbend_factor = value;
-	if (clearToTransmit()) _mc->pitchBendFactor (_pitchbend_factor);
+	if (_mc)
+		_mc->pitchBendFactor (_pitchbend_factor);
 }
 
 void Part::set_onoff(bool on) {
@@ -3120,12 +3129,14 @@ void Part::set_onoff(bool on) {
 
 void Part::set_instrument(byte * data) {
 	_instrument.adlib (data);
-	if (clearToTransmit()) _instrument.send (_mc);
+	if (clearToTransmit())
+		_instrument.send (_mc);
 }
 
 void Part::load_global_instrument (byte slot) {
 	_player->_se->copyGlobalAdlibInstrument (slot, &_instrument);
-	if (clearToTransmit()) _instrument.send (_mc);
+	if (clearToTransmit())
+		_instrument.send (_mc);
 }
 
 void Part::key_on(byte note, byte velocity) {
@@ -3282,13 +3293,15 @@ int Part::update_actives(uint16 *active) {
 void Part::set_program(byte program) {
 	_bank = 0;
 	_instrument.program (program, _player->_mt32emulate);
-	if (clearToTransmit()) _instrument.send (_mc);
+	if (clearToTransmit())
+		_instrument.send (_mc);
 }
 
 void Part::set_instrument(uint b) {
 	_bank = (byte)(b >> 8);
 	_instrument.program ((byte) b, _player->_mt32emulate);
-	if (clearToTransmit()) _instrument.send (_mc);
+	if (clearToTransmit())
+		_instrument.send (_mc);
 }
 
 ////////////////////////////////////////
