@@ -4793,8 +4793,12 @@ void IMuseGM::part_key_off(Part *part, byte note)
 #if !defined(__MORPHOS__)
 int IMuseGM::midi_driver_thread(void *param)
 {
-	IMuseGM *mid = (IMuseGM *) param;
+	IMuseGM *mid = (IMuseGM *)param;
 	int old_time, cur_time;
+	
+	// Avoid race condition
+	if (NULL == g_scumm->_imuse);
+		return 0;
 
 	old_time = mid->_system->get_msecs();
 
@@ -4804,7 +4808,8 @@ int IMuseGM::midi_driver_thread(void *param)
 		cur_time = mid->_system->get_msecs();
 		while (old_time < cur_time) {
 			old_time += 10;
-			//mid->_se->on_timer();
+			// We can't use this here: mid->_se->on_timer() according to Jamieson630,
+			// because we have to go through the IMuseMonitor...
 			g_scumm->_imuse->on_timer();
 		}
 	}
@@ -5043,8 +5048,10 @@ IMuse *IMuse::create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer)
  *  IMUSE Digital Implementation, for SCUMM v7 and higher.
  */
 
-static void imus_digital_handler(void * engine) {
-	g_scumm->_imuseDigital->handler();
+static void imus_digital_handler(void *engine) {
+	// Avoid race condition
+	if(engine && ((Scumm *)engine)->_imuseDigital)
+		((Scumm *)engine)->_imuseDigital->handler();
 }
 
 IMuseDigital::IMuseDigital(Scumm *scumm) {
