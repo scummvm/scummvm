@@ -26,25 +26,48 @@
 
 namespace Common {
 
+/*
+TODO: Add a true list class, based on a linked list data structure
+
 template <class T>
 class List {
 protected:
-	int _capacity;
-	int _size;
-	T *_data;
+	template <class T>
+	class Node {
+		Node<T> *_prev;
+		Node<T> *_next;
+		T _data;
+	}
+
+	template <class T>
+	class Iterator {
+	friend class List<T>;
+	private:
+		Node<T> *_node;
+	
+	public:
+		Node<T> &operator++() {
+			_node = _node->_next;
+		}
+		
+		T& operator*() const {
+			return _node->_data;
+		}
+		T* operator->() const {
+			return &(_node->_data);
+		}
+	};
+
+	Iterator<T> *_anchor;
 
 public:
-	typedef T *iterator;
-	typedef const T *const_iterator;
+	typedef Node<T> *iterator;
+	typedef const Node<T> *const_iterator;
 
 public:
-	List<T>() : _capacity(0), _size(0), _data(0) {}
-	List<T>(const List<T>& list) : _capacity(0), _size(0), _data(0) {
-		_size = list._size;
-		_capacity = _size + 32;
-		_data = new T[_capacity];
-		for (int i = 0; i < _size; i++)
-			_data[i] = list._data[i];
+	List<T>() : _anchor(...) {}
+	List<T>(const List<T>& list) : _anchor(...) {
+		... copy list ...
 	}
 
 	~List<T>() {
@@ -53,117 +76,75 @@ public:
 	}
 
 	void push_back(const T& element) {
-		ensureCapacity(_size + 1);
-		_data[_size++] = element;
+		...
 	}
 
 	void push_back(const List<T>& list) {
-		ensureCapacity(_size + list._size);
-		for (int i = 0; i < list._size; i++)
-			_data[_size++] = list._data[i];
+		...
 	}
 
-	void insert_at(int idx, const T& element) {
-		assert(idx >= 0 && idx <= _size);
-		ensureCapacity(_size + 1);
-		// The following loop is not efficient if you can just memcpy things around.
-		// e.g. if you have a list of ints. But for real objects (String...), memcpy
-		// usually isn't correct (specifically, for any class which has a non-default
-		// copy behaviour. E.g. the String class uses a refCounter which has to be
-		// updated whenever a String is copied.
-		for (int i = _size; i > idx; i--) {
-			_data[i] = _data[i-1];
-		}
-		_data[idx] = element;
-		_size++;
+	void insert(iterator pos, const T& element) {
+		...
 	}
 
-	T& remove_at(int idx) {
-		T& tmp;
-
-		assert(idx >= 0 && idx < _size);
-		tmp = _data[idx];
-		for (int i = idx; i < _size - 1; i++)
-			_data[i] = _data[i+1];
-		_size--;
-		return tmp;
+	void insert(iterator pos, iterator beg, Iterator end) {
+		...
 	}
 
-	// TODO: insert, remove, ...
-
-	T& operator [](int idx) {
-		assert(idx >= 0 && idx < _size);
-		return _data[idx];
+	void erase(iterator beg, Iterator end) {
+		...
 	}
 
-	const T& operator [](int idx) const {
-		assert(idx >= 0 && idx < _size);
-		return _data[idx];
+	void remove(const T &val) {
 	}
+
 
 	List<T>& operator  =(const List<T>& list) {
-		if (_data)
-			delete [] _data;
-		_size = list._size;
-		_capacity = _size + 32;
-		_data = new T[_capacity];
-		for (int i = 0; i < _size; i++)
-			_data[i] = list._data[i];
-
-		return *this;
+		// Careful here: handle self-assignment properly! I.e. situations like
+		//    List x;
+		//    ...
+		//    x = x;
+		// In particular, we can't just do this:
+		//    clear();
+		//    insert(_first, list.begin(), list.end());
+		...
 	}
 
 	uint size() const {
-		return _size;
+		int size = 0;
+		for (const_iterator i = begin(); i != end(); ++i)
+			size++;
+		return size;
 	}
 
 	void clear() {
-		if (_data) {
-			delete [] _data;
-			_data = 0;
-		}
-		_size = 0;
-		_capacity = 0;
+		erase(begin(), end());
 	}
 	
 	bool isEmpty() const { 
-		return (_size == 0);
+		return (_anchor._node == _anchor._node._next);
 	}
 
 
 	iterator		begin() {
-		return _data;
+		Iterator iter = _anchor;
+		return ++iter;
 	}
 
 	iterator		end() {
-		return _data + _size;
+		return _anchor;
 	}
 
 	const_iterator	begin() const {
-		return _data;
+		Iterator iter = _anchor;
+		return ++iter;
 	}
 
 	const_iterator	end() const {
-		return _data + _size;
-	}
-
-protected:
-	void ensureCapacity(int new_len) {
-		if (new_len <= _capacity)
-			return;
-
-		T *old_data = _data;
-		_capacity = new_len + 32;
-		_data = new T[_capacity];
-
-		if (old_data) {
-			// Copy old data
-			for (int i = 0; i < _size; i++)
-				_data[i] = old_data[i];
-			delete [] old_data;
-		}
+		return _anchor;
 	}
 };
+*/
 
 } // End of namespace Common
 

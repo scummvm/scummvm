@@ -23,7 +23,7 @@
 #ifndef COMMON_PLUGINS_H
 #define COMMON_PLUGINS_H
 
-#include "common/list.h"
+#include "common/array.h"
 #include "common/singleton.h"
 #include "common/util.h"
 
@@ -34,7 +34,7 @@ class OSystem;
 struct GameSettings;
 
 /** List of games. */
-typedef Common::List<GameSettings> GameList;
+typedef Common::Array<GameSettings> GameList;
 
 /**
  * A detected game. Carries the GameSettings, but also (optionally)
@@ -51,7 +51,7 @@ struct DetectedGame : GameSettings {
 };
 
 /** List of detected games. */
-typedef Common::List<DetectedGame> DetectedGameList;
+typedef Common::Array<DetectedGame> DetectedGameList;
 
 
 /**
@@ -100,7 +100,7 @@ public:
 
 
 /** List of plugins. */
-typedef Common::List<Plugin *> PluginList;
+typedef Common::Array<Plugin *> PluginList;
 
 
 /**

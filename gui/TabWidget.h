@@ -23,7 +23,7 @@
 
 #include "widget.h"
 #include "common/str.h"
-#include "common/list.h"
+#include "common/array.h"
 
 namespace GUI {
 
@@ -33,7 +33,7 @@ class TabWidget : public Widget {
 		String title;
 		Widget *firstWidget;
 	};
-	typedef Common::List<Tab> TabList;
+	typedef Common::Array<Tab> TabList;
 protected:
 	int _activeTab;
 	TabList _tabs;

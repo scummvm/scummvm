@@ -23,7 +23,7 @@
 #ifndef COMMON_CONFIG_H
 #define COMMON_CONFIG_H
 
-#include "common/list.h"
+#include "common/array.h"
 #include "common/map.h"
 #include "common/singleton.h"
 #include "common/str.h"
@@ -127,7 +127,7 @@ private:
 	DomainMap		_globalDomains;
 	Domain			_defaultsDomain;
 	
-	List<Domain *>	_searchOrder;
+	Array<Domain *>	_searchOrder;
 
 	String			_activeDomain;
 	String			_filename;

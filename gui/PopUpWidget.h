@@ -23,7 +23,7 @@
 
 #include "gui/widget.h"
 #include "common/str.h"
-#include "common/list.h"
+#include "common/array.h"
 
 namespace GUI {
 
@@ -46,7 +46,7 @@ class PopUpWidget : public Widget, public CommandSender {
 		String	name;
 		uint32	tag;
 	};
-	typedef Common::List<Entry> EntryList;
+	typedef Common::Array<Entry> EntryList;
 protected:
 	EntryList		_entries;
 	int				_selectedItem;

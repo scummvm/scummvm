@@ -25,7 +25,6 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/list.h"
 
 #include "Key.h"
 

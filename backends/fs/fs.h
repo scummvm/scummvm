@@ -55,7 +55,7 @@
  * i.e. the root dir is usually not the best starting point for browsing.
  */
 
-#include "common/list.h"
+#include "common/array.h"
 #include "common/str.h"
 
 class FSList;
@@ -149,7 +149,7 @@ public:
 /**
  * Sorted list of multiple file system nodes. E.g. the contents of a given directory.
  */
-class FSList : private Common::List<FilesystemNode *> {
+class FSList : private Common::Array<FilesystemNode *> {
 public:
 	class const_iterator {
 		friend class FSList;

@@ -22,7 +22,7 @@
 #define COMMON_STRING_H
 
 #include "common/scummsys.h"
-#include "common/list.h"
+#include "common/array.h"
 
 #include <assert.h>
 #include <string.h>
@@ -126,7 +126,7 @@ protected:
 bool operator == (const char *x, const ConstString &y);
 bool operator != (const char *x, const ConstString &y);
 
-class StringList : public List<String> {
+class StringList : public Array<String> {
 public:
 	void push_back(const char *str) {
 		ensureCapacity(_size + 1);
