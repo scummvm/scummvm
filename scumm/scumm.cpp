@@ -545,6 +545,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "putttime", "PuttPuttTTT", kGenPC },
 	{ "puttzoo", "PuttZoo", kGenMac },
 	{ "racedemo", "RaceDemo", kGenMac },
+	{ "samnmax", "ramnmax", kGenPC }, // Used in some releases of Russian Sam'n'Max
 	{ "SamsFunShop", "Sam's FunShop", kGenMac },
 	{ "sf2-demo", "Spy Fox 2 - Demo", kGenMac },
 	{ "sf2-demo", "sf2demo", kGenPC }, // FIXME: check this with joostp. Used by NL version?
@@ -2846,12 +2847,11 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 		} else if (g->features & GF_HUMONGOUS) {
 			strcpy(detectName, base);
 			strcat(detectName, ".he0");
-			strcpy(tempName, base);
-			strcat(tempName, ".he0");
 		} else {
 			strcpy(detectName, base);
 			strcat(detectName, ".000");
 		}
+		strcpy(tempName, detectName);
 
 		substIsOver = false;
 		substLastIndex = 0;
@@ -3022,12 +3022,11 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	} else if (g->features & GF_HUMONGOUS) {
 		strcpy(detectName, name);
 		strcat(detectName, ".he0");
-		strcpy(tempName, name);
-		strcat(tempName, ".he0");
 	} else {
 		strcpy(detectName, name);
 		strcat(detectName, ".000");
 	}
+	strcpy(tempName, detectName);
 
 	bool substIsOver = false;
 	File f;
