@@ -246,7 +246,7 @@ void ScummEngine_v7he::setupOpcodes() {
 		OPCODE(o6_verbOps),
 		OPCODE(o6_getActorFromXY),
 		/* A0 */
-		OPCODE(o7_findObject),
+		OPCODE(o6_findObject),
 		OPCODE(o6_pseudoRoom),
 		OPCODE(o6_getActorElevation),
 		OPCODE(o6_getVerbEntrypoint),
@@ -699,43 +699,6 @@ void ScummEngine_v7he::o7_resourceRoutines() {
 	}
 }
 
-void ScummEngine_v7he::o7_findObject() {
-	int i, b;
-	byte a;
-	const int mask = 0xF;
-
-	int y = pop();
-	int x = pop();
-
-
-	for (i = 1; i < _numLocalObjects; i++) {
-		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, kObjectClassUntouchable))
-			continue;
-
-		if (polygonDefined(_objs[i].obj_nr)) {
-			if (polygonHit(_objs[i].obj_nr, x, y) != 0) {
-				push(_objs[i].obj_nr);
-				return;
-			}
-		}
-
-		b = i;
-		do {
-			a = _objs[b].parentstate;
-			b = _objs[b].parent;
-			if (b == 0) {
-				if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
-				    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y) {
-					push(_objs[i].obj_nr);
-					return;
-				}
-				break;
-			}
-		} while ((_objs[b].state & mask) == a);
-	}
-	push(0);;
-}
-
 void ScummEngine_v7he::o7_quitPauseRestart() {
 	byte subOp = fetchScriptByte();
 	int par1;
@@ -1098,8 +1061,8 @@ void ScummEngine::polygonStore(int id, bool flag, int vert1x, int vert1y, int ve
 	_WizPolygons[i].vert[3].y = vert4y;
 	_WizPolygons[i].vert[4].x = vert1x;
 	_WizPolygons[i].vert[4].y = vert1y;
-	_WizPolygons[i].numVerts = 5;
 	_WizPolygons[i].id = id;
+	_WizPolygons[i].numVerts = 5;
 	_WizPolygons[i].flag = flag;
 
 	_WizPolygons[i].bound.left = 10000;

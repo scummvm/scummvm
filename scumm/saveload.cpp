@@ -364,6 +364,27 @@ bool ScummEngine::getSavegameName(int slot, char *desc) {
 }
 
 void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
+	const SaveLoadEntry polygonEntries[] = {
+		MKLINE(WizPolygon, vert[0].x, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[0].y, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[1].x, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[1].y, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[2].x, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[2].y, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[3].x, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[3].y, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[4].x, sleInt16, VER(40)),
+		MKLINE(WizPolygon, vert[4].y, sleInt16, VER(40)),
+		MKLINE(WizPolygon, bound.left, sleInt16, VER(40)),
+		MKLINE(WizPolygon, bound.top, sleInt16, VER(40)),
+		MKLINE(WizPolygon, bound.right, sleInt16, VER(40)),
+		MKLINE(WizPolygon, bound.bottom, sleInt16, VER(40)),
+		MKLINE(WizPolygon, id, sleInt16, VER(40)),
+		MKLINE(WizPolygon, numVerts, sleInt16, VER(40)),
+		MKLINE(WizPolygon, flag, sleByte, VER(40)),
+		MKEND()
+	};
+
 	const SaveLoadEntry objectEntries[] = {
 		MKLINE(ObjectData, OBIMoffset, sleUint32, VER(8)),
 		MKLINE(ObjectData, OBCDoffset, sleUint32, VER(8)),
@@ -696,6 +717,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	else
 		s->saveLoadArrayOf(vm.slot, NUM_SCRIPT_SLOT, sizeof(vm.slot[0]), scriptSlotEntries);
 
+	s->saveLoadArrayOf(_WizPolygons, 200, sizeof(_WizPolygons[0]), polygonEntries);
 	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]), objectEntries);
 	if (s->isLoading() && savegameVersion < VER(13)) {
 		// Since roughly v13 of the save games, the objs storage has changed a bit

@@ -845,6 +845,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_NUM_CHARSETS = 0xFF;
 	VAR_NUM_GLOBAL_OBJS = 0xFF;
 	VAR_NUM_SPRITES = 0xFF;
+	VAR_POLYGONS_ONLY = 0xFF;
 	VAR_WINDOWS_VERSION = 0xFF;
 
 	// Use g_scumm from error() ONLY

@@ -147,7 +147,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		/* 50 */
 		OPCODE(o72_unknown50),
 		OPCODE(o6_invalid),
-		OPCODE(o72_findObject),
+		OPCODE(o72_findObjectWithClassOf),
 		OPCODE(o72_wordArrayInc),
 		/* 54 */
 		OPCODE(o72_objectX),
@@ -245,7 +245,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o72_verbOps),
 		OPCODE(o6_getActorFromXY),
 		/* A0 */
-		OPCODE(o7_findObject),
+		OPCODE(o72_findObject),
 		OPCODE(o6_pseudoRoom),
 		OPCODE(o6_getActorElevation),
 		OPCODE(o6_getVerbEntrypoint),

@@ -631,7 +631,6 @@ protected:
 	void o7_pickupObject();
 	void o7_getActorRoom();
 	void o7_resourceRoutines();
-	void o7_findObject();
 	void o7_quitPauseRestart();
 	void o7_kernelSetFunctions();
 	void o7_unknownED();
@@ -709,6 +708,7 @@ protected:
 	void drawWizImage(int restype, int resnum, int state, int x1, int y1, int flags);
 	void flushWizBuffer();
 
+	int findObject(int x, int y, int *args);
 	virtual void decodeParseString(int a, int b);
 	void decodeScriptString(byte *dst, bool scriptString = false);
 	void copyScriptString(byte *dst);
@@ -724,7 +724,7 @@ protected:
 	void o72_wordArrayIndexedWrite();
 	void o72_compareStackList();
 	void o72_unknown50();
-	void o72_findObject();
+	void o72_findObjectWithClassOf();
 	void o72_wordArrayInc();
 	void o72_objectX();
 	void o72_objectY();
@@ -740,6 +740,7 @@ protected:
 	void o72_getNumFreeArrays();
 	void o72_actorOps();
 	void o72_verbOps();
+	void o72_findObject();
 	void o72_arrayOps();
 	void o72_dimArray();
 	void o72_dim2dimArray();

@@ -147,7 +147,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 50 */
 		OPCODE(o72_unknown50),
 		OPCODE(o6_invalid),
-		OPCODE(o72_findObject),
+		OPCODE(o72_findObjectWithClassOf),
 		OPCODE(o72_wordArrayInc),
 		/* 54 */
 		OPCODE(o72_objectX),
@@ -245,7 +245,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_verbOps),
 		OPCODE(o6_getActorFromXY),
 		/* A0 */
-		OPCODE(o6_findObject),
+		OPCODE(o72_findObject),
 		OPCODE(o6_pseudoRoom),
 		OPCODE(o6_getActorElevation),
 		OPCODE(o6_getVerbEntrypoint),
@@ -565,6 +565,38 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 	*dst = 0;
 }
 
+int ScummEngine_v72he::findObject(int x, int y, int *args) {
+	int i, b;
+	byte a;
+	const int mask = 0xF;
+
+	for (i = 1; i < _numLocalObjects; i++) {
+		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, kObjectClassUntouchable))
+			continue;
+
+		if (polygonDefined(_objs[i].obj_nr))
+			if (polygonHit(_objs[i].obj_nr, x, y) != 0)
+				return _objs[i].obj_nr;
+
+		//if (VAR(VAR_POLYGONS_ONLY))
+		//	continue;
+
+		b = i;
+		do {
+			a = _objs[b].parentstate;
+			b = _objs[b].parent;
+			if (b == 0) {
+				if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
+				    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y)
+					return _objs[i].obj_nr;
+				break;
+			}
+		} while ((_objs[b].state & mask) == a);
+	}
+
+	return 0;
+}
+
 const byte *ScummEngine_v72he::findWrappedBlock(uint32 tag, const byte *ptr, int state, bool errorFlag) {
 	if (READ_UINT32(ptr) == MKID('MULT')) {
 		error("findWrappedBlock: multi blocks aren't implemented");
@@ -644,13 +676,13 @@ void ScummEngine_v72he::o72_unknown50() {
 	VAR(VAR_OVERRIDE) = 0;
 }
 
-void ScummEngine_v72he::o72_findObject() {
+void ScummEngine_v72he::o72_findObjectWithClassOf() {
 	int args[16];
 
 	getStackList(args, ARRAYSIZE(args));
 	int y = pop();
 	int x = pop();
-	int r = findObject(x, y);
+	int r = findObject(x, y, args);
 	push(r);
 }
 
@@ -1143,6 +1175,13 @@ void ScummEngine_v72he::o72_verbOps() {
 	default:
 		error("o72_verbops: default case %d", op);
 	}
+}
+
+void ScummEngine_v72he::o72_findObject() {
+	int y = pop();
+	int x = pop();
+	int r = findObject(x, y, 0);
+	push(r);
 }
 
 void ScummEngine_v72he::o72_arrayOps() {
