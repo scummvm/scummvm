@@ -35,6 +35,10 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/extensions/XShm.h>
+#ifdef USE_XV_SCALING
+#include <X11/extensions/Xv.h>
+#include <X11/extensions/Xvlib.h>
+#endif
 #include <linux/soundcard.h>
 
 #include <sched.h>
@@ -127,13 +131,21 @@ private:
 	int window_width, window_height;
 	int scumm_x, scumm_y;
 
+#ifdef USE_XV_SCALING
+	unsigned int palette[256];
+#else
 	unsigned short palette[256];
+#endif
 	bool _palette_changed;
 	Display *display;
 	int screen;
 	Window window;
 	GC black_gc;
+#ifdef USE_XV_SCALING
+	XvImage *image;
+#else
 	XImage *image;
+#endif
 	pthread_t sound_thread;
 
 	int fake_right_mouse;
@@ -304,8 +316,7 @@ OSystem_X11::OSystem_X11()
 	window_height = 200;
 	scumm_x = 0;
 	scumm_y = 0;
-	window = XCreateSimpleWindow(display, XRootWindow(display, screen), 0, 0,
-															 320, 200, 0, 0, 0);
+	window = XCreateSimpleWindow(display, XRootWindow(display, screen), 0, 0, 320, 200, 0, 0, 0);
 	wm_hints = XAllocWMHints();
 	if (wm_hints == NULL) {
 		error("Not enough memory to allocate Hints !\n");
@@ -316,17 +327,20 @@ OSystem_X11::OSystem_X11()
 	wm_hints->initial_state = NormalState;
 	XStringListToTextProperty(&name, 1, &window_name);
 	XSetWMProperties(display, window, &window_name, &window_name,
-									 NULL /* argv */ , 0 /* argc */ , NULL /* size hints */ ,
-									 wm_hints, NULL /* class hints */ );
+	                 NULL /* argv */ , 0 /* argc */ , NULL /* size hints */ ,
+	                 wm_hints, NULL /* class hints */ );
 
 	XSelectInput(display, window,
-							 ExposureMask | KeyPressMask | KeyReleaseMask |
-							 PointerMotionMask | ButtonPressMask | ButtonReleaseMask |
-							 StructureNotifyMask);
-	image =
-		XShmCreateImage(display, DefaultVisual(display, screen), 16, ZPixmap,
-										NULL, &shminfo, 320, 200);
+	             ExposureMask | KeyPressMask | KeyReleaseMask |
+	             PointerMotionMask | ButtonPressMask | ButtonReleaseMask |
+	             StructureNotifyMask);
+#ifdef USE_XV_SCALING
+	image = XvShmCreateImage(display, 65, 0x03, 0, 320, 200, &shminfo);
+	shminfo.shmid = shmget(IPC_PRIVATE, image->data_size, IPC_CREAT | 0700);
+#else
+	image =	XShmCreateImage(display, DefaultVisual(display, screen), 16, ZPixmap, NULL, &shminfo, 320, 200);
 	shminfo.shmid = shmget(IPC_PRIVATE, 320 * 200 * 2, IPC_CREAT | 0700);
+#endif
 	shminfo.shmaddr = (char *)shmat(shminfo.shmid, 0, 0);
 	image->data = shminfo.shmaddr;
 	shminfo.readOnly = False;
@@ -392,10 +406,18 @@ bool OSystem_X11::set_sound_proc(void *param, SoundProc *proc, byte format) {
 
 void OSystem_X11::set_palette(const byte *colors, uint start, uint num) {
 	const byte *data = colors;
+#ifdef USE_XV_SCALING
+	unsigned int *pal = &(palette[start]);
+#else
 	unsigned short *pal = &(palette[start]);
+#endif
 	
 	do {
+#ifdef USE_XV_SCALING
+		*pal++ = (data[0] << 16) | (data[1] << 8) | data[2];
+#else
 		*pal++ = ((data[0] & 0xF8) << 8) | ((data[1] & 0xFC) << 3) | (data[2] >> 3);
+#endif
 		data += 4;
 		num--;
 	} while (num > 0);
@@ -443,7 +465,11 @@ void OSystem_X11::copy_rect(const byte *buf, int pitch, int x, int y, int w, int
 void OSystem_X11::update_screen_helper(const dirty_square * d, dirty_square * dout) {
 	int x, y;
 	unsigned char *ptr_src = local_fb + (320 * d->y) + d->x;
+#ifdef USE_XV_SCALING
+	unsigned int *ptr_dst = ((unsigned int *)image->data) + (320 * d->y) + d->x;
+#else
 	unsigned short *ptr_dst = ((unsigned short *)image->data) + (320 * d->y) + d->x;
+#endif
 	for (y = 0; y < d->h; y++) {
 		for (x = 0; x < d->w; x++) {
 			*ptr_dst++ = palette[*ptr_src++];
@@ -490,9 +516,14 @@ void OSystem_X11::update_screen() {
 		}
 	}
 	if (need_redraw == true) {
+#ifdef USE_XV_SCALING
+		XvShmPutImage(display, 65, window, DefaultGC(display, screen), image,
+			      0, 0, 320, 200, 0, 0, window_width, window_height, 0);
+#else
 		XShmPutImage(display, window, DefaultGC(display, screen), image,
 		             dout.x, dout.y, scumm_x + dout.x, scumm_y + dout.y,
 		             dout.w - dout.x, dout.h - dout.y, 0);
+#endif
 		XFlush(display);
 	}
 }
