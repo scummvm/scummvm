@@ -164,6 +164,12 @@ void Scumm::CHARSET_1()
 		return;
 
 	if (_haveMsg != 0xFF && _haveMsg != 0xFE) {
+		// FIXME: DIG and CMI never set sfxMode or any actor talk data...
+		// This hack will force the backup cutoff system to be used instead,
+		// unless the talkChannel is null (eg, this string has no sound attached)
+		if ((_gameId == GID_CMI || _gameId == GID_DIG) && (_sound->_talkChannel > 0))
+				return;
+
 		if (_sound->_sfxMode == 0)
 			stopTalk();
 		return;
