@@ -434,18 +434,19 @@ int16 Command::makeJoeWalkTo(int16 x, int16 y, int16 objNum, Verb v, bool mustWa
 
 	if (v == VERB_WALK_TO) {
 		_vm->logic()->entryObj(objData->entryObj);
-		if (objData->entryObj != 0) {
-			_vm->logic()->newRoom(_vm->logic()->objectData(objData->entryObj)->room);
-			// because this is an exit object, see if there is
-			// a walk off point and set (x,y) accordingly
-			WalkOffData *wod = _vm->logic()->walkOffPointForObject(objNum);
-			if (wod != NULL) {
-				x = wod->x;
-				y = wod->y;
-			}
-		}
 	} else {
 		_vm->logic()->entryObj(0);
+	}
+	if (objData->entryObj > 0 && v != VERB_CLOSE) {
+		_vm->logic()->newRoom(_vm->logic()->objectData(objData->entryObj)->room);
+		// because this is an exit object, see if there is
+		// a walk off point and set (x,y) accordingly
+		WalkOffData *wod = _vm->logic()->walkOffPointForObject(objNum);
+		if (wod != NULL) {
+			x = wod->x;
+			y = wod->y;
+		}
+	} else {
 		_vm->logic()->newRoom(0);
 	}
 

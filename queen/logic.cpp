@@ -608,9 +608,6 @@ ObjectData *Logic::setupJoeInRoom(bool autoPosition, uint16 scale) {
 	debug(9, "Logic::setupJoeInRoom(%d, %d) joe.x=%d joe.y=%d", autoPosition, scale, _joe.x, _joe.y);
 	WalkOffData *pwo = NULL;
 	ObjectData *pod = objectData(_entryObj);
-	if (pod == NULL) {
-		error("Logic::setupJoeInRoom() - No object data for obj %d", _entryObj);
-	}
 
 	uint16 oldx, oldy;
 	if (!autoPosition || joeX() != 0 || joeY() != 0) {
