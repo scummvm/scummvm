@@ -1115,7 +1115,7 @@ byte *Cutaway::getCutawayAnim(byte *ptr, int header, CutawayAnim &anim) {
 		if (anim.bank != 13) {
 			/* XXX if (OLDBANK != T) */ {
 				//debug(0, "Loading bank '%s'", _bankNames[anim.bank-1]);
-				_graphics->bankLoad(_bankNames[anim.bank-1], 8);
+				_graphics->bankLoad(_bankNames[anim.bank-1], CUTAWAY_BANK);
 				// XXX OLDBANK=T;
 			}
 
@@ -1746,7 +1746,7 @@ void Cutaway::stop() {
 						bank = 15;
 					else if (bank != 13) {
 						// XXX if(bank != oldBank) {
-						_graphics->bankLoad(_bankNames[bank-1], 8);
+						_graphics->bankLoad(_bankNames[bank-1], CUTAWAY_BANK);
 						// XXX	oldBank = bank;
 						// XXX }
 						bank = 8;

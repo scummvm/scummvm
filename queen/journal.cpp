@@ -30,18 +30,6 @@
 
 namespace Queen {
 
-// TODO
-// - misc
-//   * better Journal integration in Logic
-//   * get rid of g_engine global
-// - save/load code related
-//   * new format (SCVM [ver]32 [flags]32) all BE
-//   * move code from Resource to Journal
-//     - Logic::prepareSaveData(uint8 *dstBuf);
-//     - Logic::parseSaveData(const uint8 *srcBuf);
-//     - Logic::readSaveDataDescription(char *desc);
-//     - tmpbamflag -> carbam, final fight
-
 
 Journal::Journal(Logic *l, Graphics *g, Display *d, Sound *s, GameConfig *c)
 	: _logic(l), _graphics(g), _display(d), _sound(s), _cfg(c) {
@@ -530,9 +518,13 @@ void Journal::showInformationBox() {
 		_graphics->textSetCentered(132, "PC CD-ROM", false);
 		break;
 	case 'a':
+		_graphics->textSetCentered(132, "Amiga A500/600", false);
+		break;
 	case 'A':
+		_graphics->textSetCentered(132, "Amiga A1200", false);
+		break;
 	case 'c':
-		_graphics->textSetCentered(132, "Amiga", false);
+		_graphics->textSetCentered(132, "Amiga CD-32", false);
 		break;
 	}
 	switch (ver[1]) {
@@ -628,10 +620,6 @@ void Journal::loadState(int slot) {
 
 	warning("Journal::loadState(%d)", slot);
 	_logic->gameLoad(slot);
-	// maybe allow loading others formats too :
-	// - loadState_DOS();   size = 24613, LE
-	// - loadState_Amiga(); size = 24607, BE
-	// - loadState_Joost(); size = 24622, BE
 }
 
 

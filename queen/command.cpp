@@ -968,24 +968,11 @@ void Command::executeStandardStuff(const Verb& action, int16 subj1, int16 subj2)
 				_logic->joeSpeak(20);
 			}
 			else {
-				switch(Logic::randomizer.getRandomNumber(3)) {
-				case 0:
-					// 'I can't pick that up'
-					_logic->joeSpeak(5);
-					break;
-				case 1:
-					// 'I don't think I need that'
-					_logic->joeSpeak(6);
-					break;
-				case 2:
-					// 'I'd rather leave it here'
-					_logic->joeSpeak(7);
-					break;
-				case 3:
-					// 'I don't think I'd have any use for that'
-					_logic->joeSpeak(8);
-					break;
-				}
+				// 5 : 'I can't pick that up'
+				// 6 : 'I don't think I need that'
+				// 7 : 'I'd rather leave it here'
+				// 8 : 'I don't think I'd have any use for that'
+				_logic->joeSpeak(5 + Logic::randomizer.getRandomNumber(3));
 			}
 		}
 		break;
