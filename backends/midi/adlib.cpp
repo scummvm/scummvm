@@ -1244,6 +1244,7 @@ void MidiDriver_ADLIB::adlib_playnote(int channel, int note) {
 	int i;
 
 	note2 = (note >> 7) - 4;
+	note2 = (note2 < 128) ? note2 : 0;
 
 	oct = (note2 / 12);
 	if (oct > 7)
