@@ -130,7 +130,7 @@ const VersionSettings version_settings[] = {
 	{"puttdemo", "Putt-Putt Joins The Parade (DOS Demo)", GID_SAMNMAX, 6, 1, 1,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS, 0},
 	{"moondemo", "Putt-Putt Goes To The Moon (DOS Demo)", GID_SAMNMAX, 6, 1, 1,
-	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS, 0},
+	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"puttmoon", "Putt-Putt Goes To The Moon (DOS)", GID_SAMNMAX, 6, 1, 1,
 	 GF_NEW_OPCODES | GF_AFTER_V6 | GF_USE_KEY | GF_ADLIB_DEFAULT | GF_HUMONGOUS | GF_NEW_COSTUMES, 0},
 	{"funpack", "Putt-Putt's Fun Pack", GID_SAMNMAX, 6, 1, 1,
