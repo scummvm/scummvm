@@ -31,6 +31,14 @@ namespace Scumm {
 class NutRenderer; // V8 Font Renderer
 struct ArrayHeader;
 
+// This is to help devices with small memory (PDA, smartphones, ...)
+// to save abit of memory used by opcode names in the Scumm engine.
+#ifndef REDUCE_MEMORY_USAGE
+#	define _OPCODE(ver, x)	{ &ver::x, #x }
+#else
+#	define _OPCODE(ver, x)	{ &ver::x, "" }
+#endif
+
 class ScummEngine_v5 : public ScummEngine {
 protected:
 	typedef void (ScummEngine_v5::*OpcodeProcV5)();

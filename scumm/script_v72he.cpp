@@ -40,7 +40,7 @@
 
 namespace Scumm {
 
-#define OPCODE(x)	{ &ScummEngine_v72he::x, #x }
+#define OPCODE(x)	_OPCODE(ScummEngine_v72he, x)
 
 void ScummEngine_v72he::setupOpcodes() {
 	static const OpcodeEntryV72he opcodes[256] = {

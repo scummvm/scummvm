@@ -63,7 +63,7 @@ static int virtScreenSavePack(byte *dst, byte *src, int len, int unk);
 //     transparency in akos.cpp
 //     negative size in file read/write
 
-#define OPCODE(x)	{ &ScummEngine_v60he::x, #x }
+#define OPCODE(x)	_OPCODE(ScummEngine_v60he, x)
 
 void ScummEngine_v60he::setupOpcodes() {
 	static const OpcodeEntryv60he opcodes[256] = {

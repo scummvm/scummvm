@@ -45,7 +45,7 @@
 
 namespace Scumm {
 
-#define OPCODE(x)	{ &ScummEngine_v6::x, #x }
+#define OPCODE(x)	_OPCODE(ScummEngine_v6, x)
 
 void ScummEngine_v6::setupOpcodes() {
 	static const OpcodeEntryV6 opcodes[256] = {
