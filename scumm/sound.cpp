@@ -961,10 +961,14 @@ void Sound::playBundleMusic(char * song) {
 
 	if (_nameBundleMusic == NULL) {
 		// FIXME: we have MUSDISK1.BUN and MUSDISK2.BUN in COMI.
-		if (_scumm->_bundle->openMusicFile("digmusic.bun", _scumm->getGameDataPath()) == false) {
-			return;
+		if (_scumm->_gameId == GID_CMI) {
+			printf("Opening bundle\n");
+			if (_scumm->_bundle->openMusicFile("musdisk1.bun", _scumm->getGameDataPath()) == false)
+				return;
+		} else {
+			if (_scumm->_bundle->openMusicFile("digmusic.bun", _scumm->getGameDataPath()) == false)
+				return;
 		}
-
 		_musicBundleBufFinal = (byte*)malloc(OUTPUT_SIZE);
 		_musicBundleBufOutput = (byte*)malloc(10 * 0x2000);
 		_currentSampleBundleMusic = 0;
@@ -974,7 +978,7 @@ void Sound::playBundleMusic(char * song) {
 		_musicBundleToBeRemoved = false;
 		_musicBundleToBeChanged = false;
 		_bundleMusicTrack = -1;
-		_numberSamplesBundleMusic = _scumm->_bundle->getNumberOfMusicSamplesByName(song);
+		_numberSamplesBundleMusic = _scumm->_bundle->getNumberOfMusicSamplesByName(song, (_scumm->_gameId == GID_CMI));
 		_nameBundleMusic = song;
 		_scumm->_timer->installProcedure(&music_handler, 1000);
 		return;
@@ -1023,7 +1027,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 
 	if (_musicBundleToBeChanged == true) {
 		_nameBundleMusic = _newNameBundleMusic;
-		_numberSamplesBundleMusic = _scumm->_bundle->getNumberOfMusicSamplesByName(_nameBundleMusic);
+		_numberSamplesBundleMusic = _scumm->_bundle->getNumberOfMusicSamplesByName(_nameBundleMusic, (_scumm->_gameId == GID_CMI));
 		_currentSampleBundleMusic = 0;
 		_offsetSampleBundleMusic = 0;
 		_offsetBufBundleMusic = 0;
@@ -1033,7 +1037,7 @@ void Sound::bundleMusicHandler(Scumm * scumm) {
 	ptr = _musicBundleBufOutput;
 
 	for (k = 0, l = _currentSampleBundleMusic; l < num; k++) {
-		length = _scumm->_bundle->decompressMusicSampleByName(_nameBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)));
+		length = _scumm->_bundle->decompressMusicSampleByName(_nameBundleMusic, l, (_musicBundleBufOutput + ((k * 0x2000) + _offsetBufBundleMusic)), (_scumm->_gameId == GID_CMI));
 		_offsetSampleBundleMusic += length;
 
 		if (l == 0) {

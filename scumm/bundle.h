@@ -60,10 +60,10 @@ public:
 	bool openMusicFile(const char *filename, const char *directory);
 	int32 decompressVoiceSampleByName(char *name, byte *comp_final);
 	int32 decompressVoiceSampleByIndex(int32 index, byte *comp_final);
-	int32 decompressMusicSampleByName(char *name, int32 number, byte *comp_final);
+	int32 decompressMusicSampleByName(char *name, int32 number, byte *comp_final, bool fuzzy=false);
 	int32 decompressMusicSampleByIndex(int32 index, int32 number, byte *comp_final);
 	int32 getNumberOfMusicSamplesByIndex(int32 index);
-	int32 getNumberOfMusicSamplesByName(char *name);
+	int32 getNumberOfMusicSamplesByName(char *name, bool fuzzy=false);
 };
 
 #endif

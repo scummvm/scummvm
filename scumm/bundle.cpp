@@ -221,7 +221,7 @@ int32 Bundle::decompressVoiceSampleByName(char *name, byte *comp_final) {
 	return final_size;
 }
 
-int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_final) {
+int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_final, bool fuzzy=false) {
 	int32 final_size = 0, i;
 
 	if (!name) {
@@ -235,11 +235,18 @@ int32 Bundle::decompressMusicSampleByName(char *name, int32 number, byte *comp_f
 	}
 
 	for (i = 0; i < _numMusicFiles; i++) {
-		if (!scumm_stricmp(name, _bundleMusicTable[i].filename)) {
-			final_size = decompressMusicSampleByIndex(i, number, comp_final);
-			return final_size;
-		}
+		if (fuzzy) // Fuzzy matching, only look at the first part of the song
+			if (strstr(_bundleMusicTable[i].filename, name) == _bundleMusicTable[i].filename) {
+				final_size = decompressMusicSampleByIndex(i, number, comp_final);
+				return final_size;
+			}
+		else
+			if (!scumm_stricmp(name, _bundleMusicTable[i].filename)) {
+				final_size = decompressMusicSampleByIndex(i, number, comp_final);
+				return final_size;
+			}
 	}
+	printf("Couldn't find sample %s\n", name);
 	return final_size;
 }
 
@@ -254,7 +261,7 @@ int32 Bundle::getNumberOfMusicSamplesByIndex(int32 index) {
 	return _musicFile.readUint32BE();
 }
 
-int32 Bundle::getNumberOfMusicSamplesByName(char *name) {
+int32 Bundle::getNumberOfMusicSamplesByName(char *name, bool fuzzy = false) {
 	int32 number = 0, i;
 
 	if (_musicFile.isOpen() == false) {
@@ -263,11 +270,19 @@ int32 Bundle::getNumberOfMusicSamplesByName(char *name) {
 	}
 
 	for (i = 0; i < _numMusicFiles; i++) {
-		if (!scumm_stricmp(name, _bundleMusicTable[i].filename)) {
-			number = getNumberOfMusicSamplesByIndex(i);
-			return number;
-		}
+		if (fuzzy) // Fuzzy matching, only look at the first part of the song
+			if (strstr(_bundleMusicTable[i].filename, name) == _bundleMusicTable[i].filename) {
+				number = getNumberOfMusicSamplesByIndex(i);
+				return number;
+			}
+		else
+			if (!scumm_stricmp(name, _bundleMusicTable[i].filename)) {
+				number = getNumberOfMusicSamplesByIndex(i);
+				return number;
+			}
+
 	}
+	printf("Couldn't find numsample %s\n", name);
 	return number;
 }
 
