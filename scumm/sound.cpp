@@ -459,10 +459,19 @@ void Sound::playSound(int soundID) {
 		// Some very basic sound effects support
 		if (READ_BE_UINT16(ptr + 14) == 0x0880) {
 			size = READ_BE_UINT16(ptr + 6);
+			// Not sure if this is correct start point
+			int start = READ_BE_UINT16(ptr + 8);
 			rate = 11000;
 			sound = (char *)malloc(size);
-			memcpy(sound,ptr + 100,size);
-			_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, 127, 0, soundID);
+			memcpy(sound,ptr + start,size);
+
+			// Experimental sound looping support
+			if (start == 98 | start == 96)
+				_scumm->_mixer->playRaw(NULL, sound, size, rate,
+						SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_LOOP, 127, 0, soundID,
+						start,size);
+			else
+				_scumm->_mixer->playRaw(NULL, sound, size, rate, SoundMixer::FLAG_AUTOFREE, 127, 0, soundID);
 			return;
 		}
 	}
@@ -758,7 +767,7 @@ void Sound::stopSound(int a) {
 		_scumm->_imuse->stopSound(a);
 	} else if (_scumm->_playerV2) {
 		_scumm->_playerV2->stopSound (a);
-	} else 	if ((_scumm->_features & GF_AMIGA) && (_scumm->_version == 3)) {
+	} else 	if ((_scumm->_features & GF_AMIGA) && (_scumm->_version <= 3)) {
 		// this handles stopping looped sounds for now
 		_scumm->_mixer->stopID(a);
 	}
