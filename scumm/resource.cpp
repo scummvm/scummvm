@@ -947,6 +947,8 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 			
 	track = src_ptr;
 			
+	// Now nuke the old resource, and replace it with a new one
+	nukeResource(type, idx);
 	int total_size = 8 + 16 + 14 + 8 + 7 + 8*sizeof(ADLIB_INSTR_MIDI_HACK) + size;
 	total_size += 24;	// Up to 24 additional bytes are needed for the jump sysex
 
@@ -1093,9 +1095,6 @@ int Scumm::convertADResource(int type, int idx, byte * src_ptr, int size) {
 	// Finally we reinsert the end of song sysex, just in case
 	memcpy(ptr, "\x00\xff\x2f\x00\x00", 5); ptr += 5;
 	
-	src_ptr+=size;
-	size  = 0;
-		
 	return 1;
 }
 
