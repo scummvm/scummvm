@@ -872,7 +872,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 		if (_actorHitX < rect.left || _actorHitX >= rect.right || _actorHitY < rect.top || _actorHitY >= rect.bottom)
 			return 0;
 	} else
-		_vm->markRectAsDirty(kMainVirtScreen, rect, _actorID);
+		markRectAsDirty(rect);
 
 	if (rect.top >= _out.h || rect.bottom <= 0)
 		return 0;
@@ -940,6 +940,11 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	return drawFlag;
 }
 
+void AkosRenderer::markRectAsDirty(Common::Rect rect) {
+	rect.left -= _vm->virtscr[0].xstart & 7;
+	rect.right -= _vm->virtscr[0].xstart & 7;
+	_vm->markRectAsDirty(kMainVirtScreen, rect, _actorID);
+}
 
 byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	Common::Rect clip;
@@ -962,7 +967,7 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	maxw = _out.w;
 	maxh = _out.h;
 
-	_vm->markRectAsDirty(kMainVirtScreen, clip, _actorID);
+	markRectAsDirty(clip);
 
 	clip.clip(maxw, maxh);
 
@@ -1133,7 +1138,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 		clip.clip(_clipOverride);
 	}
 
-	_vm->markRectAsDirty(kMainVirtScreen, clip, _actorID);
+	markRectAsDirty(clip);
 
 	skip_x = 0;
 	skip_y = 0;
@@ -1225,7 +1230,7 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 	src = dst;
 	src.moveTo(0, 0);
 
-	_vm->markRectAsDirty(kMainVirtScreen, dst, _actorID);
+	markRectAsDirty(dst);
 
 	if (_draw_top > dst.top)
 		_draw_top = dst.top;

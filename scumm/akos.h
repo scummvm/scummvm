@@ -99,6 +99,8 @@ protected:
 	void akos16SkipData(int32 numskip);
 	void akos16DecodeLine(byte *buf, int32 numbytes, int32 dir);
 	void akos16Decompress(byte *dest, int32 pitch, const byte *src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency, int maskLeft, int maskTop, int zBuf);
+	
+	void markRectAsDirty(Common::Rect rect);
 };
 
 } // End of namespace Scumm
