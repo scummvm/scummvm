@@ -35,7 +35,8 @@ MODULE_OBJS := \
 	sword2/driver/palette.o \
 	sword2/driver/rdwin.o \
 	sword2/driver/render.o \
-	sword2/driver/sprite.o
+	sword2/driver/sprite.o \
+	sword2/driver/animation.o
 
 MODULE_DIRS += \
 	sword2 \

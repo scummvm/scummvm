@@ -141,11 +141,125 @@ void MoviePlayer::drawTextObject(MovieTextObject *obj) {
  */
 
 int32 MoviePlayer::play(char *filename, MovieTextObject *text[], uint8 *musicOut) {
-	warning("semi-stub PlaySmacker %s", filename);
+#ifdef USE_MPEG2
+	int frameCounter = 0, textCounter = 0;
+	PlayingSoundHandle handle;
+	bool skipCutscene = false, textVisible = false;
+	uint32 flags = SoundMixer::FLAG_16BITS, ticks = _vm->_system->get_msecs() + 83;
 
-	// WORKAROUND: For now, we just do the voice-over parts of the
-	// movies, since they're separate from the actual smacker files.
+	uint8 oldPal[1024];
+	memcpy(oldPal, _vm->_graphics->_palCopy, 1024);
 
+	AnimationState * anim = initanimation(filename);
+	if (!anim) {
+		// Missing Files? Use the old 'Narration Only' hack
+		playDummy(filename, text, musicOut);
+		return RD_OK;
+	}
+
+	_vm->_graphics->clearScene();
+	memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
+
+
+#ifndef SCUMM_BIG_ENDIAN
+	flags |= SoundMixer::FLAG_LITTLE_ENDIAN;
+#endif
+
+	while (1) {
+		if (!pic(anim)) break;
+		_vm->_graphics->setNeedFullRedraw();
+
+		if (text && text[textCounter]) {                      
+			if (frameCounter == text[textCounter]->startFrame) {
+				openTextObject(text[textCounter]);
+				textVisible = true;
+				if (text[textCounter]->speech) {
+					_vm->_mixer->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, flags);
+				}
+			}
+
+			if (frameCounter == text[textCounter]->endFrame) {
+				closeTextObject(text[textCounter]);
+				textCounter++;
+				textVisible = false;
+			}
+			if (textVisible)
+				drawTextObject(text[textCounter]);
+		}
+
+		frameCounter++;
+
+		_vm->_graphics->updateDisplay(true);
+
+		KeyboardEvent ke;
+
+		if ((_vm->_input->readKey(&ke) == RD_OK && ke.keycode == 27) || _vm->_quit) {
+			_vm->_mixer->stopHandle(handle);
+			skipCutscene = true;
+			break;
+		}
+
+		// Simulate ~12 frames per second. I don't know what
+		// frame rate the original movies had, or even if it
+		// was constant, but this seems to work reasonably.
+
+		while (_vm->_system->get_msecs() < ticks);
+		ticks += 82;
+
+	}
+
+	// Wait for the voice to stop playing. This is to make sure
+	// that we don't cut off the speech in mid-sentence, and - even
+	// more importantly - that we don't free the sound buffer while
+	// it's in use.
+
+	while (handle.isActive()) {
+		_vm->_graphics->updateDisplay(false);
+		_vm->_system->delay_msecs(100);
+	}
+
+	if (text)
+		closeTextObject(text[textCounter]);
+
+	_vm->_graphics->clearScene();
+	_vm->_graphics->setNeedFullRedraw();
+
+	// HACK: Remove the instructions created above
+	Common::Rect r;
+
+	memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
+	r.left = r.top = 0;
+	r.right = _vm->_graphics->_screenWide;
+	r.bottom = MENUDEEP;
+	_vm->_graphics->updateRect(&r);
+
+	// FIXME: For now, only play the lead-out music for cutscenes
+	// that have subtitles.
+	if (!skipCutscene)
+		_vm->_sound->playLeadOut(musicOut);
+
+	_vm->_graphics->setPalette(0, 256, oldPal, RDPAL_INSTANT);
+
+	doneanimation(anim);
+
+	// Lead-in and lead-out music are, as far as I can tell, only used for
+	// the animated cut-scenes, so this seems like a good place to close
+	// both of them.
+
+	_vm->_sound->closeFx(-1);
+	_vm->_sound->closeFx(-2);
+
+	return RD_OK;
+#else
+	// No MPEG2? Use the old 'Narration Only' hack
+	playDummy(filename, text, musicOut);
+	return RD_OK;
+#endif
+}
+
+// This just plays the cutscene with voiceovers / subtitles, in case the files are missing
+int32 MoviePlayer::playDummy(char *filename, MovieTextObject *text[], uint8 *musicOut) {
+	int frameCounter = 0, textCounter = 0;
 	if (text) {
 		uint8 oldPal[1024];
 		uint8 tmpPal[1024];
@@ -159,7 +273,7 @@ int32 MoviePlayer::play(char *filename, MovieTextObject *text[], uint8 *musicOut
 
 		memset(_vm->_graphics->_buffer, 0, _vm->_graphics->_screenWide * MENUDEEP);
 
-		uint8 msg[] = "Cutscene - Press ESC to exit";
+		uint8 msg[] = "Cutscene - Narration Only: Press ESC to exit, or visit www.scummvm.org to download cutscene videos";
 		Memory *data = _vm->_fontRenderer->makeTextSprite(msg, 640, 255, _vm->_speechFontId);
 		FrameHeader *frame = (FrameHeader *) data->ad;
 		SpriteInfo msgSprite;
@@ -180,8 +294,7 @@ int32 MoviePlayer::play(char *filename, MovieTextObject *text[], uint8 *musicOut
 		// In case the cutscene has a long lead-in, start just before
 		// the first line of text.
 
-		int frameCounter = text[0]->startFrame - 12;
-		int textCounter = 0;
+		frameCounter = text[0]->startFrame - 12;
 
 		// Fake a palette that will hopefully make the text visible.
 		// In the opening cutscene it seems to use colours 1 (black?)
@@ -197,7 +310,7 @@ int32 MoviePlayer::play(char *filename, MovieTextObject *text[], uint8 *musicOut
 		tmpPal[255 * 4 + 2] = 255;
 		_vm->_graphics->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
 
-		PlayingSoundHandle handle;
+PlayingSoundHandle handle;
 
 		bool skipCutscene = false;
 
@@ -219,7 +332,6 @@ int32 MoviePlayer::play(char *filename, MovieTextObject *text[], uint8 *musicOut
 					_vm->_mixer->playRaw(&handle, text[textCounter]->speech, text[textCounter]->speechBufferSize, 22050, flags);
 				}
 			}
-
 			if (frameCounter == text[textCounter]->endFrame) {
 				closeTextObject(text[textCounter]);
 				_vm->_graphics->clearScene();

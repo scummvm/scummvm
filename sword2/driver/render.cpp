@@ -820,4 +820,31 @@ void Graphics::closeBackgroundLayer(void) {
 	_layer = 0;
 }
 
+
+void Graphics::plotYUV(unsigned char * lut, int width, int height, uint8_t * const * dat)
+{
+	uint8 *buf = _buffer + (40+(400-height)/2) * RENDERWIDE + (640-width)/2;
+
+	int x, y;
+
+	int ypos = 0;
+	int cpos = 0;
+	int linepos = 0;
+
+	for (y = 0; y < height; y+=2) {
+		for (x = 0; x < width; x+=2) {
+			int i = ((((dat[2][cpos]+ROUNDADD)>>SHIFT) * BITDEPTH) + ((dat[1][cpos]+ROUNDADD)>>SHIFT)) * BITDEPTH;
+			cpos++;
+
+			buf[linepos               ] = lut[i+((dat[0][      ypos  ]+ROUNDADD)>>SHIFT)];
+			buf[RENDERWIDE + linepos++] = lut[i+((dat[0][width+ypos++]+ROUNDADD)>>SHIFT)];
+			buf[linepos               ] = lut[i+((dat[0][      ypos  ]+ROUNDADD)>>SHIFT)];
+			buf[RENDERWIDE + linepos++] = lut[i+((dat[0][width+ypos++]+ROUNDADD)>>SHIFT)];
+		}
+		linepos += (2*RENDERWIDE-width);
+		ypos += width;
+	}
+}
+
+
 } // End of namespace Sword2

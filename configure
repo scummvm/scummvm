@@ -29,6 +29,7 @@ _vorbis=auto
 _mad=auto
 _alsa=auto
 _zlib=auto
+_mpeg2=no
 # default option behaviour yes/no
 _build_scumm=yes
 _build_simon=yes
@@ -186,8 +187,9 @@ Optional Libraries:
   --disable-vorbis         disable Ogg Vorbis support [autodetect]
   --with-mad-prefix=PFX    Prefix where libmad is installed (optional)
   --disable-mad            disable libmad (MP3) support [autodetect]
-  --with-zlib-prefix=PFX    Prefix where zlib is installed (optional)
-  --disable-zlib            disable zlib (compression) support [autodetect]
+  --with-zlib-prefix=PFX   Prefix where zlib is installed (optional)
+  --disable-zlib           disable zlib (compression) support [autodetect]
+  --enable-mpeg2           enable mpeg2 codec for cutscenes [disabled]
  
 EOF
     exit 0
@@ -211,7 +213,8 @@ for ac_option in $@; do
       --enable-mad)		_mad=yes	;;
       --disable-mad)		_mad=no		;;
       --enable-zlib)		_zlib=yes	;;
-      --disable-zlib)		_zlib=no		;;
+      --disable-zlib)		_zlib=no	;;
+      --enable-mpeg2)           _mpeg2=yes      ;;
       --with-alsa-prefix=*)
 	_prefix=`echo $ac_option | cut -d '=' -f 2`
 	ALSA_CFLAGS="-I$_prefix/include"
@@ -558,6 +561,12 @@ else
 fi
 echo "$_zlib"
 
+echocheck "mpeg2"
+if test "$_mpeg2" = yes ; then
+  _def_mpeg2='#define USE_MPEG2'
+  LIBS="$LIBS -lmpeg2"
+fi
+echo "$_mpeg2"
 rm -f $TMPC $TMPO
 
 
@@ -576,7 +585,12 @@ if test "$_build_bs1" = yes ; then
   echo "    Broken Sword I"
 fi
 if test "$_build_bs2" = yes ; then
-  echo "    Broken Sword II"
+  echo -n "    Broken Sword II"
+  if test "$_mpeg2" = yes ; then
+	echo " (w/ mpeg2 cutscenes)"
+  else
+	echo " (without mpeg2 cutscenes)"
+  fi
 fi
 if test "$_build_queen" = yes ; then
   echo "    Flight of the Amazon Queen"
@@ -648,6 +662,7 @@ $_def_vorbis
 $_def_mad
 $_def_alsa
 $_def_zlib
+$_def_mpeg2
 
 /* Subsystems */
 #define INSANE

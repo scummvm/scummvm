@@ -22,6 +22,8 @@
 
 #include "common/rect.h"
 
+#include "animation.h"
+
 namespace Sword2 {
 
 // This is the maximum mouse cursor size in the SDL backend
@@ -72,9 +74,17 @@ private:
 	void closeTextObject(MovieTextObject *obj);
 	void drawTextObject(MovieTextObject *obj);
 
+	void buildlookup(AnimationState * st, int p, int lines);
+	void checkPaletteSwitch(AnimationState * st);
+
+	AnimationState * initanimation(char *name);
+	void doneanimation(AnimationState * st);
+	bool pic(AnimationState * st);
+
 public:
 	MoviePlayer(Sword2Engine *vm) : _vm(vm), _textSurface(NULL) {}
 	int32 play(char *filename, MovieTextObject *text[], uint8 *musicOut);
+	int32 playDummy(char *filename, MovieTextObject *text[], uint8 *musicOut);
 };
 
 struct BlockSurface {
@@ -185,6 +195,7 @@ private:
 	void unwindRaw16(uint8 *dest, uint8 *source, uint8 blockSize, uint8 *colTable);
 	int32 decompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, uint8 *colTable);
 
+
 public:
 	Graphics(Sword2Engine *vm, int16 width, int16 height);
 	~Graphics();
@@ -238,6 +249,7 @@ public:
 
 	void plotPoint(uint16 x, uint16 y, uint8 colour);
 	void drawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 colour);
+	void plotYUV(unsigned char * lut, int width, int height, uint8_t * const * buf);
 
 	int32 createSurface(SpriteInfo *s, uint8 **surface);
 	void drawSurface(SpriteInfo *s, uint8 *surface, Common::Rect *clipRect = NULL);
