@@ -32,6 +32,7 @@ _alsa=auto
 _build_scumm=yes
 _build_simon=yes
 _build_sky=yes
+_build_bs2=yes
 _need_memalign=no
 # more defaults
 _backend=sdl
@@ -160,6 +161,7 @@ Optional Features:
   --disable-scumm        don't build the SCUMM engine
   --disable-simon        don't build the simon engine
   --disable-sky          don't build the Beneath a Steel Sky engine
+  --disable-bs2          don't build the Broken Sword II engine
 
 Optional Libraries:
   --disable-alsa         disable ALSA midi sound support [autodetect]
@@ -176,6 +178,7 @@ for ac_option in $@; do
       --disable-scumm)		_build_scumm=no ;;
       --disable-simon)		_build_simon=no ;;
       --disable-sky)		_build_sky=no ;;
+      --disable-bs2)		_build_bs2=no ;;
       --enable-alsa)		_alsa=yes	;;
       --disable-alsa)		_alsa=no	;;
       --enable-vorbis)		_vorbis=yes	;;
@@ -279,6 +282,11 @@ else
 	_def_sky='#undef DISABLE_SKY'
 fi
 
+if test "$_build_bs2" = no ; then
+	_def_bs2='#define DISABLE_BS2'
+else
+	_def_bs2='#undef DISABLE_BS2'
+fi
 
 #
 # Determine hosttype
@@ -448,6 +456,9 @@ fi
 if test "$_build_sky" = yes ; then
   echo "    Beneath a Steel Sky"
 fi
+if test "$_build_bs2" = yes ; then
+  echo "    Broken Sword II"
+fi
 echo
 
 echo -n "Backend... "
@@ -497,6 +508,7 @@ cat > config.h << EOF
 $_def_scumm
 $_def_simon
 $_def_sky
+$_def_bs2
 
 $_def_endianess
 $_def_align
