@@ -1220,10 +1220,9 @@ static void Save() {
 
 // Stub function for builtin functions not yet implemented
 
-static void stubWarning() {
-	char *name = lua_getstring(lua_getparam(1));
-	fprintf(stderr, "WARNING: Stub function %s(", name);
-	for (int i = 2; ; i++) {
+static void stubWarning(char *funcName) {
+	fprintf(stderr, "WARNING: Stub function %s(", funcName);
+	for (int i = 1; ; i++) {
 		if (lua_getparam(i) == LUA_NOOBJECT)
 			break;
 		if (lua_isnil(lua_getparam(i)))
@@ -1304,141 +1303,138 @@ static void BlastText() {
 			Localizer::instance()->localize(str).c_str(), x, y);
 }
 
-static void sputLua_dummy() {
-}
+#define STUB_FUNC(name) static void name() { stubWarning(__FUNCTION__); }
+STUB_FUNC(RestoreIMuse)
+STUB_FUNC(SaveIMuse)
+STUB_FUNC(SetActorInvClipNode)
+STUB_FUNC(NukeResources)
+STUB_FUNC(UnShrinkBoxes)
+STUB_FUNC(ShrinkBoxes)
+STUB_FUNC(ResetTextures)
+STUB_FUNC(JustLoaded)
+STUB_FUNC(AttachToResources)
+STUB_FUNC(DetachFromResources)
+STUB_FUNC(GetTextSpeed)
+STUB_FUNC(SetTextSpeed)
+STUB_FUNC(GetSaveGameData)
+STUB_FUNC(SubmitSaveGameData)
+STUB_FUNC(BlastRect)
+STUB_FUNC(BlastImage)
+STUB_FUNC(FreeImage)
+STUB_FUNC(GetImage)
+STUB_FUNC(GetSaveGameImage)
+STUB_FUNC(ScreenShot)
+STUB_FUNC(TextFileGetLine)
+STUB_FUNC(TextFileGetLineCount)
+STUB_FUNC(IrisUp)
+STUB_FUNC(IrisDown)
+STUB_FUNC(FadeInChore)
+STUB_FUNC(FadeOutChore)
+STUB_FUNC(SetActorClipPlane)
+STUB_FUNC(SetActorClipActive)
+STUB_FUNC(SetActorCollisionScale)
+STUB_FUNC(SetActorCollisionMode)
+STUB_FUNC(FlushControls)
+STUB_FUNC(ActorToClean)
+STUB_FUNC(SendObjectToFront)
+STUB_FUNC(SendObjectToBack)
+STUB_FUNC(SetObjectType)
+STUB_FUNC(SetActorShadowValid)
+STUB_FUNC(AddShadowPlane)
+STUB_FUNC(KillActorShadows)
+STUB_FUNC(SetActiveShadow)
+STUB_FUNC(SetActorShadowPoint)
+STUB_FUNC(SetActorShadowPlane)
+STUB_FUNC(ActivateActorShadow)
+STUB_FUNC(SetShadowColor)
+STUB_FUNC(Display)
+STUB_FUNC(CleanBuffer)
+STUB_FUNC(DimRegion)
+STUB_FUNC(DimScreen)
+STUB_FUNC(ForceRefresh)
+STUB_FUNC(RenderModeUser)
+STUB_FUNC(SetGamma)
+STUB_FUNC(ImSetVoiceEffect)
+STUB_FUNC(ImResume)
+STUB_FUNC(ImPause)
+STUB_FUNC(ImSetMusicVol)
+STUB_FUNC(ImGetMusicVol)
+STUB_FUNC(ImSetVoiceVol)
+STUB_FUNC(ImGetVoiceVol)
+STUB_FUNC(ImSetSfxVol)
+STUB_FUNC(ImGetSfxVol)
+STUB_FUNC(ImFadeParam)
+STUB_FUNC(ImSetParam)
+STUB_FUNC(ImStopAllSounds)
+STUB_FUNC(LightMgrSetChange)
+STUB_FUNC(LightMgrStartup)
+STUB_FUNC(SetLightIntensity)
+STUB_FUNC(SetLightPosition)
+STUB_FUNC(TurnLightOn)
+STUB_FUNC(SetAmbientLight)
+STUB_FUNC(GetAngleBetweenVectors)
+STUB_FUNC(TurnActorTo)
+STUB_FUNC(PointActorAt)
+STUB_FUNC(GetCameraLookVector)
+STUB_FUNC(SetCameraRoll)
+STUB_FUNC(SetCameraInterest)
+STUB_FUNC(GetCameraPosition)
+STUB_FUNC(RotateVector)
+STUB_FUNC(LoadCostume)
+STUB_FUNC(PrintActorCostumes)
+STUB_FUNC(SpewStartup)
+STUB_FUNC(PreRender)
+STUB_FUNC(GetSectorOppositeEdge)
+STUB_FUNC(FileFindDispose)
+STUB_FUNC(FileFindNext)
+STUB_FUNC(FileFindFirst)
+STUB_FUNC(SetSoundPosition)
+STUB_FUNC(IsSoundPlaying)
+STUB_FUNC(PlaySoundAt)
+STUB_FUNC(PreviousSetup)
+STUB_FUNC(NextSetup)
+STUB_FUNC(UnLockSet)
+STUB_FUNC(LockSet)
+STUB_FUNC(LockFont)
+STUB_FUNC(EnableDebugKeys)
+STUB_FUNC(WorldToScreen)
+STUB_FUNC(CompleteActorChore)
+STUB_FUNC(SetActorRoll)
+STUB_FUNC(SetActorPitch)
+STUB_FUNC(GetPointSector)
+STUB_FUNC(IsPointInSector)
+STUB_FUNC(SetActorFrustrumCull)
+STUB_FUNC(SetActorWalkDominate)
+STUB_FUNC(SetActorConstrain)
+STUB_FUNC(GetCameraActor)
+STUB_FUNC(DriveActorTo)
+STUB_FUNC(WalkActorVector)
+STUB_FUNC(PutActorAtInterest)
+STUB_FUNC(SetActorReflection)
+STUB_FUNC(GetActorRect)
+STUB_FUNC(GetActorNodeLocation)
+STUB_FUNC(SetActorTimeScale)
+STUB_FUNC(GetActorTimeScale)
+STUB_FUNC(SetActorScale)
+STUB_FUNC(SetActorColormap)
+STUB_FUNC(SearchForFileOrSwapCDs)
+STUB_FUNC(EngineDisplay)
+STUB_FUNC(SetOffscreenTextPos)
+STUB_FUNC(SetEmergencyFont)
+STUB_FUNC(GetTranslationMode)
+STUB_FUNC(SetTranslationMode)
+STUB_FUNC(ExpireText)
+STUB_FUNC(PrintLine)
+STUB_FUNC(SetSayLineDefaults)
+STUB_FUNC(PurgePrimitiveQueue)
+STUB_FUNC(KillPrimitive)
+STUB_FUNC(ChangePrimitive)
+STUB_FUNC(DrawRectangle)
+STUB_FUNC(DrawPolygon)
+STUB_FUNC(DrawLine)
 
-static char *stubFuncs[] = {
-	"RestoreIMuse",
-	"SaveIMuse",
-	"SetActorInvClipNode",
-	"NukeResources",
-	"UnShrinkBoxes",
-	"ShrinkBoxes",
-	"ResetTextures",
-	"JustLoaded",
-	"AttachToResources",
-	"DetachFromResources",
-	"GetTextSpeed",
-	"SetTextSpeed",
-	"GetSaveGameData",
-	"SubmitSaveGameData",
-	"BlastRect",
-	"BlastImage",
-	"FreeImage",
-	"GetImage",
-	"GetSaveGameImage",
-	"ScreenShot",
-	"TextFileGetLine",
-	"TextFileGetLineCount",
-	"IrisUp",
-	"IrisDown",
-	"FadeInChore",
-	"FadeOutChore",
-	"SetActorClipPlane",
-	"SetActorClipActive",
-	"SetActorCollisionScale",
-	"SetActorCollisionMode",
-	"FlushControls",
-	"ActorToClean",
-	"SendObjectToFront",
-	"SendObjectToBack",
-	"SetObjectType",
-	"SetActorShadowValid",
-	"AddShadowPlane",
-	"KillActorShadows",
-	"SetActiveShadow",
-	"SetActorShadowPoint",
-	"SetActorShadowPlane",
-	"ActivateActorShadow",
-	"SetShadowColor",
-	"Display",
-	"CleanBuffer",
-	"DimRegion",
-	"DimScreen",
-	"ForceRefresh",
-	"RenderModeUser",
-	"SetGamma",
-	"ImSetVoiceEffect",
-	"ImResume",
-	"ImPause",
-	"ImSetMusicVol",
-	"ImGetMusicVol",
-	"ImSetVoiceVol",
-	"ImGetVoiceVol",
-	"ImSetSfxVol",
-	"ImGetSfxVol",
-	"ImFadeParam",
-	"ImSetParam",
-	"ImStopAllSounds",
-	"LightMgrSetChange",
-	"LightMgrStartup",
-	"SetLightIntensity",
-	"SetLightPosition",
-	"TurnLightOn",
-	"SetAmbientLight",
-	"GetAngleBetweenVectors",
-	"TurnActorTo",
-	"PointActorAt",
-	"GetCameraLookVector",
-	"SetCameraRoll",
-	"SetCameraInterest",
-	"GetCameraPosition",
-	"RotateVector",
-	"LoadCostume",
-	"PrintActorCostumes",
-	"SpewStartup",
-	"PreRender",
-	"GetSectorOppositeEdge",
-	"FileFindDispose",
-	"FileFindNext",
-	"FileFindFirst",
-	"SetSoundPosition",
-	"IsSoundPlaying",
-	"PlaySoundAt",
-	"PreviousSetup",
-	"NextSetup",
-	"UnLockSet",
-	"LockSet",
-	"LockFont",
-	"EnableDebugKeys",
-	"WorldToScreen",
-	"CompleteActorChore",
-	"SetActorRoll",
-	"SetActorPitch",
-	"GetPointSector",
-	"IsPointInSector",
-	"SetActorFrustrumCull",
-	"SetActorWalkDominate",
-	"SetActorConstrain",
-	"GetCameraActor",
-	"DriveActorTo",
-	"WalkActorVector",
-	"PutActorAtInterest",
-	"SetActorReflection",
-	"GetActorRect",
-	"GetActorNodeLocation",
-	"SetActorTimeScale",
-	"GetActorTimeScale",
-	"SetActorScale",
-	"SetActorColormap",
-	"SearchForFileOrSwapCDs",
-	"EngineDisplay",
-	"SetOffscreenTextPos",
-	"SetEmergencyFont",
-	"GetTranslationMode",
-	"SetTranslationMode",
-	"ExpireText",
-	"PrintLine",
-	"SetSayLineDefaults",
-	"PurgePrimitiveQueue",
-	"KillPrimitive",
-	"ChangePrimitive",
-	"DrawRectangle",
-	"DrawPolygon",
-	"DrawLine",
-	"pause_scripts",
-	"unpause_scripts",
-};
+static void dummyHandler() {
+}
 
 // Entries in the system table
 static struct {
@@ -1706,7 +1702,135 @@ struct luaL_reg builtins[] = {
 	{ "Is3DHardwareEnabled", Is3DHardwareEnabled },
 	{ "GetCurrentScript", GetCurrentScript },
 	{ "Save", Save },
-	{ "Load", Load }
+	{ "Load", Load },
+	{ "RestoreIMuse", RestoreIMuse },
+	{ "SaveIMuse", SaveIMuse },
+	{ "SetActorInvClipNode", SetActorInvClipNode },
+	{ "NukeResources", NukeResources },
+	{ "UnShrinkBoxes", UnShrinkBoxes },
+	{ "ShrinkBoxes", ShrinkBoxes },
+	{ "ResetTextures", ResetTextures },
+	{ "JustLoaded", JustLoaded },
+	{ "AttachToResources", AttachToResources },
+	{ "DetachFromResources", DetachFromResources },
+	{ "GetTextSpeed", GetTextSpeed },
+	{ "SetTextSpeed", SetTextSpeed },
+	{ "GetSaveGameData", GetSaveGameData },
+	{ "SubmitSaveGameData", SubmitSaveGameData },
+	{ "BlastRect", BlastRect },
+	{ "BlastImage", BlastImage },
+	{ "FreeImage", FreeImage },
+	{ "GetImage", GetImage },
+	{ "GetSaveGameImage", GetSaveGameImage },
+	{ "ScreenShot", ScreenShot },
+	{ "TextFileGetLine", TextFileGetLine },
+	{ "TextFileGetLineCount", TextFileGetLineCount },
+	{ "IrisUp", IrisUp },
+	{ "IrisDown", IrisDown },
+	{ "FadeInChore", FadeInChore },
+	{ "FadeOutChore", FadeOutChore },
+	{ "SetActorClipPlane", SetActorClipPlane },
+	{ "SetActorClipActive", SetActorClipActive },
+	{ "SetActorCollisionScale", SetActorCollisionScale },
+	{ "SetActorCollisionMode", SetActorCollisionMode },
+	{ "FlushControls", FlushControls },
+	{ "ActorToClean", ActorToClean },
+	{ "SendObjectToFront", SendObjectToFront },
+	{ "SendObjectToBack", SendObjectToBack },
+	{ "SetObjectType", SetObjectType },
+	{ "SetActorShadowValid", SetActorShadowValid },
+	{ "AddShadowPlane", AddShadowPlane },
+	{ "KillActorShadows", KillActorShadows },
+	{ "SetActiveShadow", SetActiveShadow },
+	{ "SetActorShadowPoint", SetActorShadowPoint },
+	{ "SetActorShadowPlane", SetActorShadowPlane },
+	{ "ActivateActorShadow", ActivateActorShadow },
+	{ "SetShadowColor", SetShadowColor },
+	{ "Display", Display },
+	{ "CleanBuffer", CleanBuffer },
+	{ "DimRegion", DimRegion },
+	{ "DimScreen", DimScreen },
+	{ "ForceRefresh", ForceRefresh },
+	{ "RenderModeUser", RenderModeUser },
+	{ "SetGamma", SetGamma },
+	{ "ImSetVoiceEffect", ImSetVoiceEffect },
+	{ "ImResume", ImResume },
+	{ "ImPause", ImPause },
+	{ "ImSetMusicVol", ImSetMusicVol },
+	{ "ImGetMusicVol", ImGetMusicVol },
+	{ "ImSetVoiceVol", ImSetVoiceVol },
+	{ "ImGetVoiceVol", ImGetVoiceVol },
+	{ "ImSetSfxVol", ImSetSfxVol },
+	{ "ImGetSfxVol", ImGetSfxVol },
+	{ "ImFadeParam", ImFadeParam },
+	{ "ImSetParam", ImSetParam },
+	{ "ImStopAllSounds", ImStopAllSounds },
+	{ "LightMgrSetChange", LightMgrSetChange },
+	{ "LightMgrStartup", LightMgrStartup },
+	{ "SetLightIntensity", SetLightIntensity },
+	{ "SetLightPosition", SetLightPosition },
+	{ "TurnLightOn", TurnLightOn },
+	{ "SetAmbientLight", SetAmbientLight },
+	{ "GetAngleBetweenVectors", GetAngleBetweenVectors },
+	{ "TurnActorTo", TurnActorTo },
+	{ "PointActorAt", PointActorAt },
+	{ "GetCameraLookVector", GetCameraLookVector },
+	{ "SetCameraRoll", SetCameraRoll },
+	{ "SetCameraInterest", SetCameraInterest },
+	{ "GetCameraPosition", GetCameraPosition },
+	{ "RotateVector", RotateVector },
+	{ "LoadCostume", LoadCostume },
+	{ "PrintActorCostumes", PrintActorCostumes },
+	{ "SpewStartup", SpewStartup },
+	{ "PreRender", PreRender },
+	{ "GetSectorOppositeEdge", GetSectorOppositeEdge },
+	{ "FileFindDispose", FileFindDispose },
+	{ "FileFindNext", FileFindNext },
+	{ "FileFindFirst", FileFindFirst },
+	{ "SetSoundPosition", SetSoundPosition },
+	{ "IsSoundPlaying", IsSoundPlaying },
+	{ "PlaySoundAt", PlaySoundAt },
+	{ "PreviousSetup", PreviousSetup },
+	{ "NextSetup", NextSetup },
+	{ "UnLockSet", UnLockSet },
+	{ "LockSet", LockSet },
+	{ "LockFont", LockFont },
+	{ "EnableDebugKeys", EnableDebugKeys },
+	{ "WorldToScreen", WorldToScreen },
+	{ "CompleteActorChore", CompleteActorChore },
+	{ "SetActorRoll", SetActorRoll },
+	{ "SetActorPitch", SetActorPitch },
+	{ "GetPointSector", GetPointSector },
+	{ "IsPointInSector", IsPointInSector },
+	{ "SetActorFrustrumCull", SetActorFrustrumCull },
+	{ "SetActorWalkDominate", SetActorWalkDominate },
+	{ "SetActorConstrain", SetActorConstrain },
+	{ "GetCameraActor", GetCameraActor },
+	{ "DriveActorTo", DriveActorTo },
+	{ "WalkActorVector", WalkActorVector },
+	{ "PutActorAtInterest", PutActorAtInterest },
+	{ "SetActorReflection", SetActorReflection },
+	{ "GetActorRect", GetActorRect },
+	{ "GetActorNodeLocation", GetActorNodeLocation },
+	{ "SetActorTimeScale", SetActorTimeScale },
+	{ "GetActorTimeScale", GetActorTimeScale },
+	{ "SetActorScale", SetActorScale },
+	{ "SetActorColormap", SetActorColormap },
+	{ "SearchForFileOrSwapCDs", SearchForFileOrSwapCDs },
+	{ "EngineDisplay", EngineDisplay },
+	{ "SetOffscreenTextPos", SetOffscreenTextPos },
+	{ "SetEmergencyFont", SetEmergencyFont },
+	{ "GetTranslationMode", GetTranslationMode },
+	{ "SetTranslationMode", SetTranslationMode },
+	{ "ExpireText", ExpireText },
+	{ "PrintLine", PrintLine },
+	{ "SetSayLineDefaults", SetSayLineDefaults },
+	{ "PurgePrimitiveQueue", PurgePrimitiveQueue },
+	{ "KillPrimitive", KillPrimitive },
+	{ "ChangePrimitive", ChangePrimitive },
+	{ "DrawRectangle", DrawRectangle },
+	{ "DrawPolygon", DrawPolygon },
+	{ "DrawLine", DrawLine }
 };
 
 void register_lua() {
@@ -1720,13 +1844,6 @@ void register_lua() {
 
 	// Register new version of dofile, and other builtin functions
 	luaL_openlib(builtins, sizeof(builtins) / sizeof(builtins[0]));
-
-    // Register stubs
-	for (unsigned i = 0; i < sizeof(stubFuncs) / sizeof(char *); i++) {
-		lua_pushstring(stubFuncs[i]);
-		lua_pushcclosure(stubWarning, 1);
-		lua_setglobal(stubFuncs[i]);
-	}
 
 	// Register system table
 	lua_Object system_table = lua_createtable();
@@ -1756,12 +1873,12 @@ void register_lua() {
 
 	lua_pushobject(system_table);
 	lua_pushstring("camChangeHandler");
-	lua_pushcfunction(sputLua_dummy);
+	lua_pushcfunction(dummyHandler);
 	lua_settable();
 
 	lua_pushobject(system_table);
 	lua_pushstring("axisHandler");
-	lua_pushcfunction(sputLua_dummy);
+	lua_pushcfunction(dummyHandler);
 	lua_settable();
 
 	// Register constants for box types
