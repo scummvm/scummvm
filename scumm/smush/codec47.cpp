@@ -84,9 +84,9 @@ static int8 codec47_table_big2[] = {
 };
 
 #ifdef __PALM_OS__
-static int8 *codec47_table;
+static const int8 *codec47_table;
 #else
-static int8 codec47_table[] = {
+static const int8 codec47_table[] = {
 		0,   0,  -1, -43,   6, -43,  -9, -42,  13, -41,
 	-16, -40,  19, -39, -23, -36,  26, -34,  -2, -33,
 	  4, -33, -29, -32,  -9, -32,  11, -31, -16, -29,
