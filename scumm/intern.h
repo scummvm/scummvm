@@ -967,12 +967,16 @@ protected:
 	void spritesResetTables(bool refreshScreen);
 	void spriteGroupCheck(int spriteGroupId);
 	void spriteMarkIfInGroup(int spriteGroupId, uint32 flags);
+	void spriteInfoSet_addImageToList(int spriteId, int imageNum, int *spriteIdptr);
+	void spritesUpdateImages();
+
+public:
 	void spritesBlitToScreen();
 	void spritesMarkDirty(bool unkFlag);
-	void spritesUpdateImages();
-	void spriteInfoSet_addImageToList(int spriteId, int imageNum, int *spriteIdptr);
 	void spritesSortActiveSprites();
+	void spritesProcessWiz(bool arg);
 
+protected:
 	/* HE version 90 script opcodes */
 	void o90_dup();
 	void o90_min();

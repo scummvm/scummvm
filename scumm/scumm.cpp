@@ -1840,6 +1840,11 @@ load_game:
 		// Full Throttle always redraws verbs and draws verbs before actors
 		if (_version >= 7)
 			redrawVerbs();
+
+		if (_heversion >= 90) {
+			((ScummEngine_v90he *)this)->spritesBlitToScreen();
+			((ScummEngine_v90he *)this)->spritesSortActiveSprites();
+		}
 	
 		setActorRedrawFlags();
 		resetActorBgs();
@@ -1854,11 +1859,22 @@ load_game:
 			preProcessAuxQueue();
 			processActors();
 			postProcessAuxQueue();
+
+			if (_heversion >= 90) {
+				((ScummEngine_v90he *)this)->spritesMarkDirty(0);
+				((ScummEngine_v90he *)this)->spritesProcessWiz(true);
+			}
 		} else {
 			processActors();
 		}
 		
 		_fullRedraw = false;
+
+		if (_heversion >= 90) {
+			((ScummEngine_v90he *)this)->spritesMarkDirty(1);
+			((ScummEngine_v90he *)this)->spritesProcessWiz(false);
+		}
+
 		if (_version >= 4 && _heversion <= 60)
 			cyclePalette();
 		palManipulate();

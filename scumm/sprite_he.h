@@ -73,10 +73,7 @@ struct SpriteInfo {
 	int group_num;
 	int field_14;
 	int field_18;
-	int bbox_xmin;
-	int bbox_ymin;
-	int bbox_xmax;
-	int bbox_ymax;
+	Common::Rect bbox;
 	int dx;
 	int dy;
 	int field_34;
@@ -94,7 +91,7 @@ struct SpriteInfo {
 	int field_64;
 	int field_68;
 	int field_6C;
-	int field_70;
+	int imgFlags;
 	int field_74;
 	int field_78;
 	int field_7C;

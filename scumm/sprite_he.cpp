@@ -983,28 +983,28 @@ void ScummEngine_v90he::spritesBlitToScreen() {
 		SpriteInfo *spi = _activeSpritesTable[i];
 		if (!(spi->flags & kSF31) && (spi->flags & kSF01)) {
 			spi->flags &= ~kSF01;
-			if (spi->bbox_xmin <= spi->bbox_xmax && spi->bbox_ymin <= spi->bbox_ymax) {
+			if (spi->bbox.left <= spi->bbox.right && spi->bbox.top <= spi->bbox.bottom) {
 				if (spi->flags & kSFBlitDirectly) {
-					gdi.copyVirtScreenBuffers(Common::Rect(spi->bbox_xmin, spi->bbox_ymin, spi->bbox_ymin, spi->bbox_ymax)); // XXX 0, 0x40000000);
+					gdi.copyVirtScreenBuffers(spi->bbox); // XXX 0, 0x40000000);
 				}
 			} else if (firstLoop) {
-				xmin = spi->bbox_xmin;
-				ymin = spi->bbox_ymin;
-				xmax = spi->bbox_xmax;
-				ymax = spi->bbox_ymax;
+				xmin = spi->bbox.left;
+				ymin = spi->bbox.top;
+				xmax = spi->bbox.right;
+				ymax = spi->bbox.bottom;
 				firstLoop = false;
 			} else {
-				if (xmin < spi->bbox_xmin) {
-					xmin = spi->bbox_xmin;
+				if (xmin < spi->bbox.left) {
+					xmin = spi->bbox.left;
 				}
-				if (ymin < spi->bbox_ymin) {
-					ymin = spi->bbox_ymin;
+				if (ymin < spi->bbox.top) {
+					ymin = spi->bbox.top;
 				}
-				if (xmax > spi->bbox_xmax) {
-					xmax = spi->bbox_xmax;
+				if (xmax > spi->bbox.right) {
+					xmax = spi->bbox.right;
 				}
-				if (ymax > spi->bbox_ymax) {
-					ymax = spi->bbox_ymax;
+				if (ymax > spi->bbox.bottom) {
+					ymax = spi->bbox.bottom;
 				}
 				refreshScreen = true;
 			}
@@ -1025,10 +1025,10 @@ void ScummEngine_v90he::spritesMarkDirty(bool unkFlag) {
 		if (!(spi->flags & (kSFNeedRedraw | kSF30))) {
 			if ((!unkFlag || spi->field_18 >= 0) && (spi->flags & kSF23)) {
 				bool needRedraw = false;
-				int lp = MIN(79, spi->bbox_xmin / 8);
-				int rp = MIN(79, (spi->bbox_xmax + 7) / 8);
+				int lp = MIN(79, spi->bbox.left / 8);
+				int rp = MIN(79, (spi->bbox.right + 7) / 8);
 				for (; lp <= rp; ++lp) {
-					if (vs0->tdirty[lp] < vs0->h && spi->bbox_ymax >= vs0->bdirty[lp] && spi->bbox_ymin <= vs0->tdirty[lp]) {
+					if (vs0->tdirty[lp] < vs0->h && spi->bbox.bottom >= vs0->bdirty[lp] && spi->bbox.top <= vs0->tdirty[lp]) {
 						needRedraw = true;
 						break;
 					}
@@ -1138,6 +1138,144 @@ void ScummEngine_v90he::spritesSortActiveSprites() {
 		return;
 
 	qsort(_activeSpritesTable, _numSpritesToProcess, sizeof(SpriteInfo *), compareSprTable);
+}
+
+void ScummEngine_v90he::spritesProcessWiz(bool arg) {
+	int spr_flags, spr_flags_;
+	int16 spr_wiz_x, spr_wiz_y;
+	int res_id, res_state;
+	Common::Rect *bboxPtr;
+	int rot_angle, zoom;
+	int w, h;
+	int ebx;
+	WizParameters wiz;
+
+	if (!_numSpritesToProcess)
+		return;
+
+	for (int i = 0; i < _numSpritesToProcess; i++) {
+		SpriteInfo *spi = _activeSpritesTable[i];
+
+		if (!(spi->flags & kSFNeedRedraw))
+			continue;
+
+		spr_flags = spi->flags;
+
+		if (arg) {
+			if (spi->field_0)
+				return;
+		} else {
+			if (spi->field_0 < 0)
+				continue;
+		}
+		
+		spi->flags &= ~(kSF01 | kSFNeedRedraw);
+		res_id = spi->res_id;
+		res_state = spi->res_state;
+		loadImgSpot(spi->res_id, spi->res_state, spr_wiz_x, spr_wiz_y);
+
+		if (spi->group_num) {
+			SpriteGroup *spg = &_spriteGroups[spi->group_num];
+
+			if (spg->scaling) {
+				wiz.img.x1 = spi->tx * spg->scale_x - spr_wiz_x + spg->tx;
+				wiz.img.y1 = spi->ty * spg->scale_y - spr_wiz_y + spg->ty;
+			} else {
+				wiz.img.x1 = spi->tx - spr_wiz_x + spg->tx;
+				wiz.img.y1 = spi->ty - spr_wiz_y + spg->ty;
+			}
+		} else {
+			wiz.img.x1 = spi->tx - spr_wiz_x;
+			wiz.img.y1 = spi->ty - spr_wiz_y;
+		}
+		
+		spi->field_48 = wiz.img.state = res_state;
+		spi->field_4C = wiz.img.resNum = res_id;
+		wiz.processFlags = 0x401;
+		spi->field_68 = spi->rot_angle;
+		spi->field_6C = spi->zoom;
+		spi->field_34 = wiz.img.x1;
+		spi->field_38 = wiz.img.y1;
+		bboxPtr = &spi->bbox;
+		if (res_id) {
+			rot_angle = spi->rot_angle;
+			zoom = spi->zoom;
+			spr_flags_ = spi->flags & kSFRotated;
+			getWizImageDim(res_id, res_state, w, h);
+			if (!(spi->flags & (kSFZoomed | kSFRotated)) || 1) { // FIXME. remove '|| 1'
+				bboxPtr->bottom = wiz.img.y1 + h;
+				bboxPtr->left = wiz.img.x1;
+				bboxPtr->top = wiz.img.y1;
+				bboxPtr->right = w + wiz.img.x1;
+
+				ebx = -1234;
+			} else {
+				// TODO
+				// what is this?
+				//
+				// mov eax, something
+				// cdq
+				// sub eax, edx
+				// sar eax, 1
+				// mov ecx, eax
+				// neg ecx
+
+				ebx = -1234;
+			}
+		} else {
+			bboxPtr->left = 1234;
+			bboxPtr->top = 1234;
+			bboxPtr->right = -1234;
+			bboxPtr->bottom = -1234;
+			
+			ebx = -1234;
+		}
+
+		wiz.img.flags = 0x10;
+		if (spr_flags & kSF23)
+			wiz.img.flags = 0x410;
+		if (spr_flags & kSF22)
+			wiz.img.flags |= 0x800;
+		if (spr_flags & kSF21) {
+			wiz.img.flags &= ~(0x11);
+			wiz.img.flags |= 8;
+		}
+		if (spi->field_54) {
+			wiz.img.flags |= 0x200;
+			wiz.processFlags |= 4;
+			wiz.unk_15C = spi->field_54;
+		}
+		if (spr_flags & kSF20)
+			wiz.img.flags |= 2;
+		if (spi->field_7C) {
+			wiz.processFlags |= 0x80000;
+			//wiz.field_178 = spi->field_7C; // FIXME
+		}
+		wiz.processFlags |= 0x20;
+		
+		if (spr_flags & kSFRotated) {
+			wiz.processFlags |= 0x10;
+			wiz.angle = spi->rot_angle;
+		}
+		if (spr_flags & kSFZoomed) {
+			wiz.processFlags |= 0x08;
+			wiz.zoom = spi->zoom;
+		}
+		spi->imgFlags = wiz.img.flags;
+		
+		if (spi->group_num && _spriteGroups[spi->group_num].flags & kSGF01) {
+			// TODO: rectClipIfIntersects() is missing
+		}
+		if (spi->field_14) {
+			wiz.processFlags |= 0x8000;
+			//wiz.field_174 = spi->field_14; // FIXME
+		}
+		if (spi->res_id && spi->group_num && _spriteGroups[spi->group_num].field_20) {
+			wiz.processFlags |= 0x1000;
+			//wiz.field_380 = _spriteGroups[spi->group_num].field_20; // FIXME
+		}
+		displayWizComplexImage(&wiz);
+	}
 }
 
 } // End of namespace Scumm
