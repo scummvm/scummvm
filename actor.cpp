@@ -1360,9 +1360,8 @@ void Actor::walkActorOld()
 
 		if (_vm->gateLoc[2].x != 32000) {
 			if (calcMovementFactor(_vm->gateLoc[2].x, _vm->gateLoc[2].y)) {
-				// FIXME - why is the first actor used here?!? Somebody please add a comment
-				_vm->getFirstActor()->walkdata.point3x = _vm->gateLoc[3].x;
-				_vm->getFirstActor()->walkdata.point3y = _vm->gateLoc[3].y;
+				walkdata.point3x = _vm->gateLoc[3].x; 
+				walkdata.point3y = _vm->gateLoc[3].y;
 				return;
 			}
 		}
