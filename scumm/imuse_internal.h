@@ -129,7 +129,6 @@ struct ParameterFader {
 };
 
 struct DeferredCommand {
-	MidiDriver *midi;
 	uint32 time_left;
 	int a, b, c, d, e, f;
 	DeferredCommand() { memset (this, 0, sizeof (DeferredCommand)); }

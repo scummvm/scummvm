@@ -1161,8 +1161,7 @@ void IMuseInternal::addDeferredCommand (int time, int a, int b, int c, int d, in
 			break;
 	}
 
-	if (ptr) {
-		ptr->midi = _midi_native ? _midi_native : _midi_adlib;
+	if (i) {
 		ptr->time_left = time * 10000;
 		ptr->a = a;
 		ptr->b = b;
