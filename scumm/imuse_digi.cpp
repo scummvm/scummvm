@@ -796,18 +796,15 @@ void IMuseDigital::mixerCallback() {
 
 			mixer_size &= ~1;	// Size *must* be even, after all this is stereo data
 
-			byte *buf = (byte *)malloc(mixer_size);
-			memcpy(buf, _channel[l].data + _channel[l].offset, mixer_size);
-			_channel[l].offset += mixer_size;
-
 			if (_scumm->_mixer->isReady()) {
 				if (!_channel[l].handle.isActive())
 					_scumm->_mixer->newStream(&_channel[l].handle, _channel[l].freq, 
 											_channel[l].mixerFlags, 100000);
 				_scumm->_mixer->setChannelVolume(_channel[l].handle, _channel[l].vol / 1000);
 				_scumm->_mixer->setChannelPan(_channel[l].handle, _channel[l].pan);
-				_scumm->_mixer->appendStream(_channel[l].handle, buf, mixer_size);
+				_scumm->_mixer->appendStream(_channel[l].handle, _channel[l].data + _channel[l].offset, mixer_size);
 			}
+			_channel[l].offset += mixer_size;
 		}
 	}
 }
