@@ -82,6 +82,7 @@ protected:
 
 	// Line editing
 	void specialKeys(int keycode);
+	void killChar();
 	void killLine();
 	void killLastWord();
 };

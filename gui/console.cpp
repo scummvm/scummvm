@@ -163,6 +163,10 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers)
 			scrollToCurrent();
 			draw();	// FIXME - not nice to redraw the full console just for one char!
 			break;
+		case 127:
+			killChar();
+			draw();
+			break;
 /*
 		case 256+24:	// pageup
 			_selectedItem -= _entriesPerPage - 1;
@@ -231,6 +235,10 @@ void ConsoleDialog::specialKeys(int keycode)
 			_currentPos = _promptStartPos;
 			draw();
 			break;
+		case 'd':
+			killChar();
+			draw();
+			break;
 		case 'e':
 			_currentPos = _promptEndPos;
 			draw();
@@ -246,6 +254,14 @@ void ConsoleDialog::specialKeys(int keycode)
 	}
 }
 
+void ConsoleDialog::killChar()
+{
+	for (int i = _currentPos; i < _promptEndPos; i++)
+		_buffer[i % kBufferSize] = _buffer[(i+1) % kBufferSize];
+	_buffer[_promptEndPos % kBufferSize] = ' ';
+	_promptEndPos--;
+}
+
 void ConsoleDialog::killLine()
 {
 	for (int i = _currentPos; i < _promptEndPos; i++)
@@ -256,14 +272,20 @@ void ConsoleDialog::killLine()
 void ConsoleDialog::killLastWord()
 {
 	int pos;
+	int cnt = 0;
 	while (_currentPos > _promptStartPos) {
 		_currentPos--;
 		pos = getBufferPos();
 		if (_buffer[pos] != ' ')
-			_buffer[pos] = ' ';
+			cnt++;
 		else
 			break;
 	}
+
+	for (int i = _currentPos; i < _promptEndPos; i++)
+		_buffer[i % kBufferSize] = _buffer[(i+cnt+1) % kBufferSize];
+	_buffer[_promptEndPos % kBufferSize] = ' ';
+	_promptEndPos--;
 }
 
 void ConsoleDialog::nextLine()
