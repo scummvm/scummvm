@@ -92,7 +92,7 @@ private:
 	void init();
 	void deinit();
 	void setupAnim(const char *file, const char *directory);
-	void updateScreen();
+	void updateGLScreen();
 };
 
 #endif
