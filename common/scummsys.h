@@ -88,11 +88,11 @@ const bool true(1), false(0);
   typedef unsigned char byte;
   typedef unsigned char uint8;
   typedef unsigned short uint16;
-  typedef unsigned long uint32;
+  typedef unsigned int uint32;
   typedef unsigned int uint;
   typedef signed char int8;
   typedef signed short int16;
-  typedef signed long int32;
+  typedef signed int int32;
   
   #define START_PACK_STRUCTS pack (push,1)
   #define END_PACK_STRUCTS   pack(pop)
