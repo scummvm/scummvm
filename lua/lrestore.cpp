@@ -375,7 +375,7 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 			recreateObj(&tempTask->stack.stack[i]);
 		}
 
-		restoreFunc(&tempTask->Cstack.base,	sizeof(StkId));
+		restoreFunc(&tempTask->Cstack.base, sizeof(StkId));
 		restoreFunc(&tempTask->Cstack.lua2C, sizeof(StkId));
 		restoreFunc(&tempTask->Cstack.num, sizeof(int));
 
