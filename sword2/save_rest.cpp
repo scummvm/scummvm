@@ -89,48 +89,47 @@ static _savegameHeader g_header;		// global because easier to copy to/from playe
 
 #ifdef SCUMM_BIG_ENDIAN
 // Quick macro to make swapping in-place easier to write
-#define SWAP32_S(x)	x = (int32)SWAP_BYTES_32(x)
-#define SWAP32_U(x)	x = SWAP_BYTES_32(x)
+#define SWAP32(x)	x = SWAP_BYTES_32(x)
 static void convertHeaderEndian(_savegameHeader &header) {
 	int i;
 	
 	// _savegameHeader
-	SWAP32_U(header.checksum);
-	SWAP32_U(header.varLength);
-	SWAP32_U(header.screenId);
-	SWAP32_U(header.runListId);
-	SWAP32_U(header.feet_x);
-	SWAP32_U(header.feet_y);
-	SWAP32_U(header.music_id);
+	SWAP32(header.checksum);
+	SWAP32(header.varLength);
+	SWAP32(header.screenId);
+	SWAP32(header.runListId);
+	SWAP32(header.feet_x);
+	SWAP32(header.feet_y);
+	SWAP32(header.music_id);
 	
 	// _object_hub
-	SWAP32_S(header.player_hub.type);
-	SWAP32_U(header.player_hub.logic_level);
+	SWAP32(header.player_hub.type);
+	SWAP32(header.player_hub.logic_level);
 	for (i = 0; i < TREE_SIZE; i++) {
-		SWAP32_U(header.player_hub.logic[i]);
-		SWAP32_U(header.player_hub.script_id[i]);
-		SWAP32_U(header.player_hub.script_pc[i]);
+		SWAP32(header.player_hub.logic[i]);
+		SWAP32(header.player_hub.script_id[i]);
+		SWAP32(header.player_hub.script_pc[i]);
 	}
 
 	// Object_logic
-	SWAP32_S(header.logic.looping);
-	SWAP32_S(header.logic.pause);
+	SWAP32(header.logic.looping);
+	SWAP32(header.logic.pause);
 
 	// Object_graphic
-	SWAP32_S(header.graphic.type);
-	SWAP32_S(header.graphic.anim_resource);
-	SWAP32_S(header.graphic.anim_pc);
+	SWAP32(header.graphic.type);
+	SWAP32(header.graphic.anim_resource);
+	SWAP32(header.graphic.anim_pc);
 
 	// Object_mega
-	SWAP32_S(header.mega.currently_walking);
-	SWAP32_S(header.mega.walk_pc);
-	SWAP32_S(header.mega.scale_a);
-	SWAP32_S(header.mega.scale_b);
-	SWAP32_S(header.mega.feet_x);
-	SWAP32_S(header.mega.feet_y);
-	SWAP32_S(header.mega.current_dir);
-	SWAP32_S(header.mega.colliding);
-	SWAP32_S(header.mega.megaset_res);
+	SWAP32(header.mega.currently_walking);
+	SWAP32(header.mega.walk_pc);
+	SWAP32(header.mega.scale_a);
+	SWAP32(header.mega.scale_b);
+	SWAP32(header.mega.feet_x);
+	SWAP32(header.mega.feet_y);
+	SWAP32(header.mega.current_dir);
+	SWAP32(header.mega.colliding);
+	SWAP32(header.mega.megaset_res);
 }
 #endif
 

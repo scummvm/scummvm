@@ -258,9 +258,7 @@ void resMan::Close_ResMan(void) { //Tony29May96
 
 #ifdef SCUMM_BIG_ENDIAN
 // Quick macro to make swapping in-place easier to write
-#define SWAP16_S(x)	x = (int16)SWAP_BYTES_16(x)
 #define SWAP16(x)	x = SWAP_BYTES_16(x)
-#define SWAP32_S(x)	x = (int16)SWAP_BYTES_32(x)
 #define SWAP32(x)	x = SWAP_BYTES_32(x)
 static void convertEndian(uint8 *file, uint32 len) {
 	int i;
@@ -284,8 +282,8 @@ static void convertEndian(uint8 *file, uint32 len) {
 
 			_cdtEntry *cdtEntry = (_cdtEntry *) (file + sizeof(_animHeader));
 			for (i = 0; i < animHead->noAnimFrames; i++, cdtEntry++) {
-				SWAP16_S(cdtEntry->x);
-				SWAP16_S(cdtEntry->y);
+				SWAP16(cdtEntry->x);
+				SWAP16(cdtEntry->y);
 				SWAP32(cdtEntry->frameOffset);
 
 				_frameHeader *frameHeader = (_frameHeader *) (file + cdtEntry->frameOffset);
