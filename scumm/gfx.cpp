@@ -1456,20 +1456,20 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 }
 
 static bool calcClipRects(int dst_w, int dst_h, int src_x, int src_y, int src_w, int src_h, const Common::Rect *rect, Common::Rect &srcRect, Common::Rect &dstRect) {
-	srcRect = Common::Rect(0, 0, src_w - 1, src_h - 1);
-	dstRect = Common::Rect(src_x, src_y, src_x + src_w - 1, src_y + src_h - 1);
+	srcRect = Common::Rect(0, 0, src_w, src_h);
+	dstRect = Common::Rect(src_x, src_y, src_x + src_w, src_y + src_h);
 	Common::Rect r3;
 
 	if (rect) {
 		r3 = *rect;
-		Common::Rect r4(0, 0, dst_w - 1, dst_h - 1);
+		Common::Rect r4(0, 0, dst_w, dst_h);
 		if (r3.intersects(r4)) {
 			r3.clip(r4);
 		} else {
 			return false;
 		}
 	} else {
-		r3 = Common::Rect(0, 0, dst_w - 1, dst_h - 1);
+		r3 = Common::Rect(0, 0, dst_w, dst_h);
 	}
 	dstRect.clip(r3);
 	srcRect = dstRect;
@@ -1502,17 +1502,17 @@ void Gdi::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 	while (h--) {
 		dataPtr += READ_LE_UINT16(dataPtr) + 2;
 	}
-	h = srcRect.bottom - srcRect.top + 1;
+	h = srcRect.bottom - srcRect.top;
 	if (h <= 0)
 		return;
-	w = srcRect.right - srcRect.left + 1;
+	w = srcRect.right - srcRect.left;
 	if (w <= 0)
 		return;
 		
 	while (h--) {
 		xoff = srcRect.left;
 		off = READ_LE_UINT16(dataPtr);
-		w = srcRect.right - srcRect.left + 1;
+		w = srcRect.right - srcRect.left;
 		dstPtrNext = dstPitch + dstPtr;
 		dataPtrNext = off + 2 + dataPtr;
 		dataPtr += 2;
@@ -1614,17 +1614,17 @@ void Gdi::decompressAuxImage(uint8 *dst1, uint8 *dst2, int dstPitch, const Commo
 	while (h--) {
 		dataPtr += READ_LE_UINT16(dataPtr) + 2;
 	}
-	h = srcRect.bottom - srcRect.top + 1;
+	h = srcRect.bottom - srcRect.top;
 	if (h <= 0)
 		return;
-	w = srcRect.right - srcRect.left + 1;
+	w = srcRect.right - srcRect.left;
 	if (w <= 0)
 		return;
 
   	while (h--) {
 		xoff = srcRect.left;
  		off = READ_LE_UINT16(dataPtr);
-		w = srcRect.right - srcRect.left + 1;
+		w = srcRect.right - srcRect.left;
 		dst1PtrNext = dstPitch + dst1Ptr;
 		dst2PtrNext = dstPitch + dst2Ptr;
 		dataPtrNext = off + 2 + dataPtr;
