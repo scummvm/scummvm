@@ -30,25 +30,24 @@
 
 #define NOMANSLAND
 
-/* ************************** */
-/*   CSynth reporting codes   */
-/* ************************** */
+// **************************
+//   CSynth reporting codes
+// **************************
 
-/* files missing */
+// files missing
 #define ERR_PRESET1   1
 #define ERR_PRESET2   2
 #define ERR_DRUMPAT   3
 #define ERR_PATCHLOG  4
 #define ERR_MT32ROM   5
 
-/* HW spec */
+// HW spec
 #define PRESENT_SSE       6
 #define PRESENT_3DNOW     7
 #define USING_SSE         8
 #define USING_3DNOW       9
 
-
-/* General info */
+// General info
 #define LCD_MESSAGE       10
 #define DEV_RESET         11
 #define DEV_RECONFIG      12
@@ -73,40 +72,27 @@ static union mt32ramFormat {
 	#pragma END_PACK_STRUCTS
 #endif
 
+int axtoi(char *str) {
+	int result = 0;
 
-// Borrowed from Borland's site
-int axtoi(char *hexStg) {
-  unsigned int n = 0;         // position in string
-  unsigned int m = 0;         // position in digit[] to shift
-  unsigned int count;         // loop index
-  int intValue = 0;  // integer value of hex string
-  int digit[512];      // hold values to convert
-  while (n < strlen(hexStg)) {
-     if (hexStg[n]=='\0')
-        break;
-     if (hexStg[n] > 0x29 && hexStg[n] < 0x40 ) //if 0 to 9
-        digit[n] = hexStg[n] & 0x0f;            //convert to int
-     else if (hexStg[n] >='a' && hexStg[n] <= 'f') //if a to f
-        digit[n] = (hexStg[n] & 0x0f) + 9;      //convert to int
-     else if (hexStg[n] >='A' && hexStg[n] <= 'F') //if A to F
-        digit[n] = (hexStg[n] & 0x0f) + 9;      //convert to int
-     else break;
-    n++;
-  }
-  count = n;
-  m = n - 1;
-  n = 0;
-  while(n < count) {
-     // digit[n] is value of hex digit at position n
-     // (m << 2) is the number of positions to shift
-     // OR the bits into return value
-     intValue = intValue | (digit[n] << (m << 2));
-     m--;   // adjust the position to set
-     n++;   // next digit to process
-  }
-  return (intValue);
+	while (*str) {
+		char hex = *str++;
+		int digit;
+
+		if (hex >= '0' && hex <= '9')
+			digit = hex - '0';
+		else if (hex >= 'a' && hex <= 'f')
+			digit = 10 + hex - 'a';
+		else if (hex >= 'A' && hex <= 'F')
+			digit = 10 + hex - 'A';
+		else
+			break;
+
+		result = (result << 4) | digit;
+	}
+
+	return result;
 }
-
 
 typedef struct {
     unsigned int length;       /* size of filter */
