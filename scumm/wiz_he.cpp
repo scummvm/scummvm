@@ -256,13 +256,13 @@ void Wiz::copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int src
 void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor) {
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
-		if (flags & 0x400) {
+		if (flags & kWIFFlipX) {
 			int l = r1.left;
 			int r = r1.right;
 			r1.left = srcw - r;
 			r1.right = srcw - l;
 		}
-		if (flags & 0x800) {
+		if (flags & kWIFFlipY) {
 			int t = r1.top;
 			int b = r1.bottom;
 			r1.top = srch - b;
@@ -277,14 +277,22 @@ void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int 
 		}
 		int h = r1.height();
 		int w = r1.width();
+		if (srcx < 0) {
+			src -= srcx;
+		}
+		if (srcy < 0) {
+			src -= srcy * srcw;
+		}
 		dst += r2.left + r2.top * dstw;
 		while (h--) {
+			const uint8 *p = src;
 			for (int i = 0; i < w; ++i) {
-				uint8 col = *src++;
+				uint8 col = *p++;
 				if (transColor == -1 || transColor != col) {
 					dst[i] = palPtr[col];
 				}
 			}
+			src += srcw;
 			dst += dstw;
 		}
 	}
@@ -863,6 +871,7 @@ uint8 *ScummEngine_v72he::drawWizImage(int restype, const WizImage *pwi) {
 		uint32 comp   = READ_LE_UINT32(wizh + 0x0);
 		uint32 width  = READ_LE_UINT32(wizh + 0x4);
 		uint32 height = READ_LE_UINT32(wizh + 0x8);
+		debug(1, "wiz_header.comp = %d wiz_header.w = %d wiz_header.h = %d)", comp, width, height);
 		assert(comp == 0 || comp == 1 || comp == 2 || comp == 3 || comp == 10 || comp == 11);
 		
 		const uint8 *wizd = findWrappedBlock(MKID('WIZD'), dataPtr, pwi->state, 0);
