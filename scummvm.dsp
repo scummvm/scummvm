@@ -194,6 +194,10 @@ SOURCE=.\common\main.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\common\map.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\common\rect.h
 # End Source File
 # Begin Source File
@@ -349,10 +353,6 @@ SOURCE=.\backends\sdl\sdl.cpp
 # End Source File
 # End Group
 # End Group
-# End Group
-# Begin Group "Header Files"
-
-# PROP Default_Filter "h;hpp;hxx;hm;inl"
 # End Group
 # Begin Source File
 

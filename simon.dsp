@@ -179,9 +179,5 @@ SOURCE=.\simon\verb.cpp
 SOURCE=.\simon\vga.cpp
 # End Source File
 # End Group
-# Begin Group "Header Files"
-
-# PROP Default_Filter "h;hpp;hxx;hm;inl"
-# End Group
 # End Target
 # End Project

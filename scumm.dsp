@@ -423,9 +423,5 @@ SOURCE=.\scumm\vars.cpp
 SOURCE=.\scumm\verbs.cpp
 # End Source File
 # End Group
-# Begin Group "Header Files"
-
-# PROP Default_Filter "h;hpp;hxx;hm;inl"
-# End Group
 # End Target
 # End Project
