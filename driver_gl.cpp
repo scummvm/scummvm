@@ -52,7 +52,6 @@ void DriverGL::setupCamera(float fov, float nclip, float fclip, float roll) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	Vector3d up_vec(0, 0, 1);
 	glRotatef(roll, 0, 0, -1);
 }
 

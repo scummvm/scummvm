@@ -126,7 +126,6 @@ void DriverTinyGL::setupCamera(float fov, float nclip, float fclip, float roll) 
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 
-	Vector3d up_vec(0, 0, 1);
 	tglRotatef(roll, 0, 0, -1);
 }
 
