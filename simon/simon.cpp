@@ -1744,7 +1744,7 @@ void SimonState::o_177() {
 		uint a = getVarOrByte();
 		uint b = getVarOrByte();
 		Child2 *child = findChildOfType2(getNextItemPtr());
-		const char *s;
+		const char *s = NULL;
 		ThreeValues *tv = NULL;
 		char buf[256];
 
@@ -7894,6 +7894,12 @@ void SimonState::playSound(uint sound) {
 		
 		/* stop any currently playing sound */
 		_sound_size = 0;
+
+		/* Check if _sfx_heap is NULL */
+		if (_sfx_heap == NULL) {
+			warning("playSound(%d) cannot play. No voice file loaded", sound);
+			return;
+		}
 		
 		p = _sfx_heap + ((uint32*)_sfx_heap)[sound];
 
