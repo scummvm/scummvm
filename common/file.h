@@ -61,16 +61,16 @@ public:
 	void incRef();
 	void decRef();
 
-	bool open(const char *filename, AccessMode mode = kFileReadMode, const char *directory = NULL);
-	void close();
+	virtual bool open(const char *filename, AccessMode mode = kFileReadMode, const char *directory = NULL);
+	virtual void close();
 	bool isOpen() const;
 	bool ioFailed() const;
 	void clearIOFailed();
-	bool eof();
-	uint32 pos();
-	uint32 size();
+	virtual bool eof();
+	virtual uint32 pos();
+	virtual uint32 size();
 	const char *name() const { return _name; }
-	void seek(int32 offs, int whence = SEEK_SET);
+	virtual void seek(int32 offs, int whence = SEEK_SET);
 	uint32 read(void *ptr, uint32 size);
 	uint32 write(const void *ptr, uint32 size);
 };
