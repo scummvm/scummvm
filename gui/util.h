@@ -40,7 +40,11 @@ public:
 	List<T>() : _capacity(0), _size(0), _data(0) {}
 	List<T>(const List<T>& list) : _capacity(0), _size(0), _data(0)
 	{
-		error("EEEEK! List copy constructor called");
+		_size = list._size;
+		_capacity = _size + 32;
+		_data = new T[_capacity];
+		for (int i = 0; i < _size; i++)
+			_data[i] = list._data[i];
 	}
 	
 	~List<T>()
@@ -69,9 +73,30 @@ public:
 		return _data[idx];
 	}
 
+	List<T>& operator  =(const List<T>& list)
+	{
+		if (_data)
+			delete [] _data;
+		_size = list._size;
+		_capacity = _size + 32;
+		_data = new T[_capacity];
+		for (int i = 0; i < _size; i++)
+			_data[i] = list._data[i];
+
+		return *this;
+	}
+
 	int size() const	{ return _size; }
 
-	void clear()		{ _size = 0; }
+	void clear()
+	{
+		if (_data) {
+			delete [] _data;
+			_data = 0;
+		}
+		_size = 0;
+		_capacity = 0;
+	}
 
 protected:
 	void ensureCapacity(int new_len)
