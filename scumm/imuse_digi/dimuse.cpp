@@ -447,8 +447,13 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 		break;
 	case 14: // ImuseFadeParam
 		switch (sub_cmd) {
-		case 0x600: // set new volume with fading
-			setFade(soundId, d, e);
+		case 0x600: // set volume fading
+			if ((d != 0) && (e == 0))
+				setVolume(soundId, d);
+			else if ((d == 0) && (e == 0))
+				stopSound(soundId);
+			else
+				setFade(soundId, d, e);
 			break;
 		default:
 			warning("IMuseDigital::doCommand FadeParam DEFAULT sub command %d", sub_cmd);
@@ -465,11 +470,11 @@ void IMuseDigital::parseScriptCmds(int a, int b, int c, int d, int e, int f, int
 		debug(5, "ImuseSetState (%d)", b);
 		if ((_vm->_gameId == GID_DIG) && (_vm->_features & GF_DEMO)) {
 			if (b == 1) {
-				fadeOutMusic(120);
+				fadeOutMusic(200);
 				startMusic(1, false, 127, false);
 			} else {
 				if (getSoundStatus(2) == 0) {
-					fadeOutMusic(120);
+					fadeOutMusic(200);
 					startMusic(2, false, 127, false);
 				}
 			}
