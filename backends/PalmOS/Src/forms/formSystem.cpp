@@ -82,7 +82,7 @@ static void SystemInfoFormInit() {
 	frmP = FrmGetActiveForm();
 	FrmDrawForm(frmP);
 
-	WinSetTextColor(255);
+	WinSetTextColor(UIColorGetTableEntryIndex(UIObjectForeground));
 	FntSetFont(stdFont);
 	
 	StrIToA(num, dm);

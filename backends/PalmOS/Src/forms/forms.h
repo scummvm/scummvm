@@ -12,11 +12,10 @@
 
 HANDLER(Main)
 HANDLER(EditGame)
-HANDLER(Volume)
 HANDLER(SystemInfo)
-HANDLER(Sound)
-HANDLER(MiscOptions)
+HANDLER(Misc)
 HANDLER(CardSlot)
 HANDLER(Skins)
+HANDLER(Music)
 
 #endif

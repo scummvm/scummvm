@@ -5,6 +5,7 @@
 #include "skin.h"
 #include "games.h"
 #include "scumm_globals.h"
+#include "globals.h"
 
 #include "stdafx.h"
 #include "version.h"
@@ -106,13 +107,8 @@ static Boolean MainFormDoCommand(UInt16 command)
  			handled = true;
 			break;
 		
-		case MainOptionsVolumeControl:
-			FrmPopupForm(VolumeForm);
-			handled = true;
-			break;
-
-		case MainOptionsMusic:
-			FrmPopupForm(SoundForm);
+		case MainOptionsMusicSound:
+			FrmPopupForm(MusicForm);
 			handled = true;
 			break;
 
@@ -122,7 +118,7 @@ static Boolean MainFormDoCommand(UInt16 command)
 			break;
 
 		case MainOptionsMisc:
-			FrmPopupForm(MiscOptionsForm);
+			FrmPopupForm(MiscForm);
 			handled = true;
 			break;
 		}
