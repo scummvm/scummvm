@@ -836,7 +836,7 @@ int Scene::ITEIntroValleyProc(int param, SCENE_INFO *scene_info) {
 		event.type = CONTINUOUS_EVENT;
 		event.code = TRANSITION_EVENT;
 		event.op = EVENT_DISSOLVE;
-		event.time = 1000;
+		event.time = 3000;
 		event.duration = LOGO_DISSOLVE_DURATION;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -851,7 +851,7 @@ int Scene::ITEIntroValleyProc(int param, SCENE_INFO *scene_info) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue game credits list
-		q_event = ITEQueueCredits(scene_info, 12000, CREDIT_DURATION1, n_credits, credits);
+		q_event = ITEQueueCredits(scene_info, 9000, CREDIT_DURATION1, n_credits, credits);
 
 		// End scene after credit display
 		event.type = ONESHOT_EVENT;
