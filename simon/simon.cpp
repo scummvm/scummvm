@@ -371,6 +371,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		SOUND_INDEX_BASE = 0;
 	}
 
+	_language = Common::parseLanguage(ConfMan.get("language"));
 	if ((_game & GF_SIMON2) && (_game & GF_TALKIE)) {
 		gss = PTR(simon2win_settings);
 
@@ -483,7 +484,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_dx_use_3_or_4_for_lock = 0;
 
 	_debugMode = 0;
-	_language = 0;
 	_pause = 0;
 	_start_mainscript = 0;
 	_continous_mainscript = 0;
@@ -691,7 +691,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	midi.set_volume(ConfMan.getInt("music_volume"));
 
 	_debugMode = ConfMan.hasKey("debuglevel");
-	_language = Common::parseLanguage(ConfMan.get("language"));
 
 	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1)
 		midi.pause(_music_paused ^= 1);
