@@ -79,7 +79,7 @@ template<bool stereo, bool is16Bit, bool isUnsigned>
 int LinearMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, int numSamples) {
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
-		const int len = MIN(numSamples, (_end - _ptr) / (is16Bit ? 2 : 1));
+		const int len = MIN(numSamples, (int)(_end - _ptr) / (is16Bit ? 2 : 1));
 		while (samples < len) {
 			*buffer++ = readSample<is16Bit, isUnsigned>(_ptr);
 			_ptr += (is16Bit ? 2 : 1);
@@ -152,7 +152,7 @@ int WrappedMemoryStream<stereo, is16Bit, isUnsigned>::readBuffer(int16 *buffer, 
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
 		const byte *endMarker = (_pos > _end) ? _bufferEnd : _end;
-		const int len = MIN(numSamples, (endMarker - _pos) / (is16Bit ? 2 : 1));
+		const int len = MIN(numSamples, (int)(endMarker - _pos) / (is16Bit ? 2 : 1));
 		while (samples < len) {
 			*buffer++ = readSample<is16Bit, isUnsigned>(_pos);
 			_pos += (is16Bit ? 2 : 1);
