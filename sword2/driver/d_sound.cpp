@@ -1370,6 +1370,7 @@ int32 Sword2Sound::StreamCompMusic(const char *filename, uint32 musicId, int32 l
 		data16[i] = TO_BE_16(data16[i]);
 	}
 
+	assert(!soundHandleMusic[primaryStream]);
 	soundHandleMusic[primaryStream] = g_engine->_mixer->newStream(data16, bufferSizeMusic, 22050,
 					SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE, 100000, volume, 0);
 
@@ -1899,8 +1900,15 @@ void Sword2Sound::UpdateCompSampleStreaming(void) {
 					// be necessary.
 					if (len & 1)
 						len--;
-					assert(soundHandleMusic[i]);
-					g_engine->_mixer->appendStream(soundHandleMusic[i], data16, len);
+					
+					if (soundHandleMusic[i] == 0) {
+						warning("play music appendStream(): this shouldn't happen");
+						int volume = musicVolTable[volMusic[i]];
+						soundHandleMusic[i] = g_engine->_mixer->newStream(data16, bufferSizeMusic, 22050,
+										SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE, 100000, volume, 0);
+					} else {
+						g_engine->_mixer->appendStream(soundHandleMusic[i], data16, len);
+					}
 
 					free(data16);
 
