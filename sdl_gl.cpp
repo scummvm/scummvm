@@ -251,6 +251,7 @@ void OSystem_SDL::set_palette(const byte *colors, uint start, uint num) {
 }
 
 void OSystem_SDL::load_gfx_mode() {
+	int gl_flags =  FB2GL_320 | FB2GL_PITCH; 
 	force_full = true;
 	scaling = 1;
 	_mode_flags = 0;
@@ -269,11 +270,13 @@ void OSystem_SDL::load_gfx_mode() {
 
 	_mode_flags = DF_WANT_RECT_OPTIM | DF_REAL_8BIT;
 
+	if (_full_screen) gl_flags |= (FB2GL_FS);
+	
 	#ifdef OGL_1_1
-	  fb2gl_init(640,480,0,70, FB2GL_FS | FB2GL_320 | FB2GL_PITCH | FB2GL_RGBA | FB2GL_EXPAND);
-	#else
-	  fb2gl_init(640,480,0,70, FB2GL_FS | FB2GL_320 | FB2GL_PITCH);
+	gl_flags |= (FB2GL_RGBA | FB2GL_EXPAND);
 	#endif
+	
+	fb2gl_init(640,480,0,70,gl_flags);
 
 	SDL_SetGamma(1.25,1.25,1.25);
 	  
