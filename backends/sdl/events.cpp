@@ -75,8 +75,8 @@ void OSystem_SDL::fillMouseEvent(Event &event, int x, int y) {
 	event.mouse.y = y;
 	
 	// Update the "keyboard mouse" coords
-	km.x = event.mouse.x;
-	km.y = event.mouse.y;
+	km.x = x;
+	km.y = y;
 
 	// Adjust for the screen scaling
 	event.mouse.x /= _scaleFactor;
@@ -548,13 +548,8 @@ bool OSystem_SDL::poll_event(Event *event) {
 				}
 #endif
 			}
-			event->mouse.x = km.x;
-			event->mouse.y = km.y;
-			event->mouse.x /= _scaleFactor;
-			event->mouse.y /= _scaleFactor;
-
-			if (_adjustAspectRatio)
-				event->mouse.y = aspect2Real(event->mouse.y);
+			
+			fillMouseEvent(*event, km.x, km.y);
 
 			return true;
 
