@@ -830,6 +830,11 @@ void Sound::startSfxSound(File *file, int file_size, PlayingSoundHandle *handle,
 	} else {
 		input = makeVOCStream(_sfxFile);
 	}
+	
+	if (!input) {
+		warning("startSfxSound failed to load sound");
+		return 0;
+	}
 
 	if (_vm->_imuseDigital) {
 		//_vm->_imuseDigital->stopSound(kTalkSoundID);

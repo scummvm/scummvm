@@ -156,12 +156,18 @@ AudioStream *makeVOCStream(byte *ptr) {
 	int size, rate, loops;
 	byte *data = readVOCFromMemory(ptr, size, rate, loops);
 
+	if (!data)
+		return 0;
+
 	return makeLinearInputStream(rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED, data, size, 0, 0);
 }
 
 AudioStream *makeVOCStream(File *file) {
 	int size, rate;
 	byte *data = loadVOCFile(file, size, rate);
+
+	if (!data)
+		return 0;
 
 	return makeLinearInputStream(rate, SoundMixer::FLAG_AUTOFREE | SoundMixer::FLAG_UNSIGNED, data, size, 0, 0);
 }
