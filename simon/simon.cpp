@@ -68,7 +68,7 @@ static const GameSpecificSettings simon2win_settings = {
 	1660 / 4,											/* SOUND_INDEX_BASE */
 	"SIMON2.GME",									/* gme_filename */
 	"SIMON2.WAV",									/* wav_filename */
-	NULL,
+	"SIMON2.VOC",									/* wav_filename2 */
 	"",
 	"GSPTR30",										/* gamepc_filename */
 };
