@@ -34,12 +34,16 @@
 #include <SDL_thread.h>
 
 #ifdef WIN32
+int glColorTable(int, int, int, int, int, void *){ return 0; }
+int glGetColorTable(int, int, int, void *){ return 0; }
 /* Use OpenGL 1.1 */
-#define OGL_1_1 
+bool OGL_1_1=true;
+#else
+bool OGL_1_1=false;
 #endif
 
 #include "fb2opengl.h"
-
+FB2GL fb2gl;
 
 class OSystem_SDL : public OSystem {
 public:
@@ -238,7 +242,7 @@ void OSystem_SDL::set_palette(const byte *colors, uint start, uint num) {
 	uint i;
 
 	for(i=0;i!=num;i++) {
-	    fb2gl_palette(i+start,b[0],b[1],b[2]);
+	    fb2gl.palette(i+start,b[0],b[1],b[2]);
 	    b += 4;
 	}
 
@@ -271,11 +275,16 @@ void OSystem_SDL::load_gfx_mode() {
 
 	if (_full_screen) gl_flags |= (FB2GL_FS);
 	
-	#ifdef OGL_1_1
-	gl_flags |= (FB2GL_RGBA | FB2GL_EXPAND);
-	#endif
-	
-	fb2gl_init(640,480,0,70,gl_flags);
+	if (OGL_1_1) { // OpenGL 1.1
+	  gl_flags |= (FB2GL_RGBA | FB2GL_EXPAND);
+	  fb2gl.init(640,480,0,70,gl_flags );
+	}
+	else { // OpenGL 1.2
+	  if (!fb2gl.init(640,480,0,70,gl_flags)) { // Try to use 8bpp textures
+	    gl_flags |= (FB2GL_RGBA | FB2GL_EXPAND); // using RGBA textures
+	    fb2gl.init(640,480,0,70,gl_flags);	
+	  }
+	}
 
 	SDL_SetGamma(1.25,1.25,1.25);
 	  
@@ -480,13 +489,13 @@ void OSystem_SDL::update_screen() {
 	 * and we want to avoid any ugly effects.
 	 */
 	if (_palette_changed_last != 0) {
-                fb2gl_set_palette(_palette_changed_first, 
+                fb2gl.setPalette(_palette_changed_first, 
 		    _palette_changed_last - _palette_changed_first);
 		
 		_palette_changed_last = 0;
 	}
 
-	fb2gl_update(sdl_tmpscreen->pixels,320,200,320,0,_current_shake_pos);
+	fb2gl.update(sdl_tmpscreen->pixels,320,200,320,0,_current_shake_pos);
 
 }
 
@@ -688,8 +697,8 @@ void OSystem_SDL::hotswap_gfx_mode() {
 	unload_gfx_mode();
 	load_gfx_mode();
 
-	fb2gl_set_palette(0,256);
-	fb2gl_update(sdl_tmpscreen->pixels,320,200,320,0,_current_shake_pos);
+	fb2gl.setPalette(0,256);
+	fb2gl.update(sdl_tmpscreen->pixels,320,200,320,0,_current_shake_pos);
 
 	/* blit image */
 	OSystem_SDL::copy_rect(bak_mem, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -703,7 +712,7 @@ uint32 OSystem_SDL::property(int param, Property *value) {
 
 	case PROP_TOGGLE_FULLSCREEN:
 		_full_screen ^= true;
-		SDL_WM_ToggleFullScreen(screen);
+		SDL_WM_ToggleFullScreen(fb2gl.screen);
 		return 1;
 
 	case PROP_GET_FULLSCREEN:
