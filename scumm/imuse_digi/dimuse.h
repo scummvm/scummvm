@@ -97,7 +97,7 @@ private:
 
 public:
 	IMuseDigital(ScummEngine *scumm);
-	~IMuseDigital();
+	virtual ~IMuseDigital();
 
 	void startVoice(int soundId, AudioStream *input)
 		{ debug(5, "startVoiceStream(%d)", soundId); startSound(soundId, NULL, 0, IMUSE_VOICE, input); }

@@ -851,6 +851,11 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 }
 
 ScummEngine::~ScummEngine() {
+	if (_musicEngine) {
+		_musicEngine->terminate();
+		delete _musicEngine;
+	}
+
 	_mixer->stopAll();
 
 	delete [] _actors;
@@ -862,10 +867,6 @@ ScummEngine::~ScummEngine() {
 	delete _mainMenuDialog;
 
 	delete _sound;
-	if (_musicEngine) {
-		_musicEngine->terminate();
-		delete _musicEngine;
-	}
 	free(_languageBuffer);
 	free(_audioNames);
 
