@@ -3193,6 +3193,49 @@ void Scumm::decompressDefaultCursor(int idx) {
 			for (j = 0; j < w; j++)
 				_grabbedCursor[i * 8 + j] = color;
 		}
+	} else if (_features & GF_AFTER_V2) {
+		_cursor.width = 23;
+		_cursor.height = 21;
+		_cursor.hotspotX = 11;
+		_cursor.hotspotY = 10;
+
+		byte *hotspot = _grabbedCursor + _cursor.hotspotY * _cursor.width + _cursor.hotspotX;
+
+		// Crosshair, slightly assymetric
+
+		for (i = 0; i < 7; i++) {
+			*(hotspot - 5 - i) = color;
+			*(hotspot + 5 + i) = color;
+		}
+
+		for (i = 0; i < 8; i++) {
+			*(hotspot - _cursor.width * (3 + i)) = color;
+			*(hotspot + _cursor.width * (3 + i)) = color;
+		}
+
+		// Arrow heads, diagonal lines
+
+		for (i = 1; i <= 3; i++) {
+			*(hotspot - _cursor.width * i - 5 - i) = color;
+			*(hotspot + _cursor.width * i - 5 - i) = color;
+			*(hotspot - _cursor.width * i + 5 + i) = color;
+			*(hotspot + _cursor.width * i + 5 + i) = color;
+			*(hotspot - _cursor.width * (i + 3) - i) = color;
+			*(hotspot - _cursor.width * (i + 3) + i) = color;
+			*(hotspot + _cursor.width * (i + 3) - i) = color;
+			*(hotspot + _cursor.width * (i + 3) + i) = color;
+		}
+
+		// Final touches
+
+		*(hotspot - _cursor.width - 7) = color;
+		*(hotspot - _cursor.width + 7) = color;
+		*(hotspot + _cursor.width - 7) = color;
+		*(hotspot + _cursor.width + 7) = color;
+		*(hotspot - (_cursor.width * 5) - 1) = color;
+		*(hotspot - (_cursor.width * 5) + 1) = color;
+		*(hotspot + (_cursor.width * 5) - 1) = color;
+		*(hotspot + (_cursor.width * 5) + 1) = color;
 	} else {
 		byte currentCursor = _currentCursor;
 
