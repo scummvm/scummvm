@@ -62,7 +62,7 @@ rm -Rf %{buildroot}
 #   Change Log
 #------------------------------------------------------------------------------
 %changelog
-* Wed Aug 06 (0.5.1)
+* Wed Aug 06 2003 (0.5.1)
   - Rewrote Beneath a Steel Sky savegame code (see note in READMEs 'Known Bugs')
   - Fixed dialog skipping, music volume and several crashes/freezes in Steel Sky
   - Fixed dialog skipping in V7 games
