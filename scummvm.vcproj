@@ -370,6 +370,9 @@
 				<File
 					RelativePath="sound\rate.h">
 				</File>
+				<File
+					RelativePath="sound\voc.h">
+				</File>
 			</Filter>
 			<Filter
 				Name="gui"

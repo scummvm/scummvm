@@ -462,6 +462,9 @@
 				</File>
 			</Filter>
 		</Filter>
+		<File
+			RelativePath="scumm\music.h">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
