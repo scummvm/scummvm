@@ -616,7 +616,7 @@ void make_tables(int32 width) {
 			} while (tmp > d);
 		}
 		d = 0;
-		tmp = *((byte*)&smush_buf_small + 97 + c);
+		tmp = smush_buf_small[97 + c];
 		if (tmp != 0) {
 			do {
 				tmp = smush_buf_small[80 + c + d];
@@ -633,7 +633,7 @@ void make_tables(int32 width) {
 			} while (tmp > d);
 		}
 		d = 0;
-		tmp = *((byte*)&smush_buf_big + 384 + a);
+		tmp = smush_buf_big[384 + a];
 		if (tmp != 0) {
 			do {
 				tmp = smush_buf_big[256 + a + d];
