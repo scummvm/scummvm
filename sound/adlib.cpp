@@ -124,7 +124,12 @@ void AdlibSoundDriver::init(SoundEngine *eng) {
 	}
 
 	_adlib_reg_cache = (byte*)calloc(256,1);
-	_opl = OPLCreate(OPL_TYPE_YM3812,3579545,22050);
+
+	#ifdef _WIN32_WCE // Poor WIN32 won't handle 22050 well !
+		_opl = OPLCreate(OPL_TYPE_YM3812,3579545,11025);
+	#else
+		_opl = OPLCreate(OPL_TYPE_YM3812,3579545,22050);
+	#endif
 	adlib_write(1,0x20);
 	adlib_write(8,0x40);
 	adlib_write(0xBD, 0x00);

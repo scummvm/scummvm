@@ -28,12 +28,17 @@ int num_mix;
 #define TICKS_PER_BEAT 480
 
 #ifdef USE_ADLIB
-#define TEMPO_BASE 0x1924E0
-#define HARDWARE_TYPE 1
+	#ifdef _WIN32_WCE
+		#define TEMPO_BASE 0x1F0000 * 2 // Sampled down to 11 kHz
+	#else
+		#define TEMPO_BASE 0x1924E0
+	#endif
+	#define HARDWARE_TYPE 1
 #else
-#define TEMPO_BASE 0x400000
-#define HARDWARE_TYPE 5
+	#define TEMPO_BASE 0x400000
+	#define HARDWARE_TYPE 5
 #endif
+
 #define SYSEX_ID 0x7D
 #define SPECIAL_CHANNEL 9
 
@@ -2110,6 +2115,11 @@ int SoundEngine::save_or_load(Serializer *ser) {
 	if (!ser->isSaving()) {
 		stop_all_sounds();
 	}
+
+	#ifdef _WIN32_WCE	// Don't break savegames made with andys' build
+        if (!ser->isSaving() && ser->checkEOFLoadStream())
+                return 0;
+	#endif
 
 	ser->_ref_me = this;
 	ser->_saveload_ref = ser->isSaving() ? ((void*)&saveReference) : ((void*)&loadReference);

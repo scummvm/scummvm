@@ -1159,7 +1159,9 @@ void Scumm::drawEnqueuedObject(EnqueuedObject *eo) {
 	
 	assert(ptr);
 	ptr = findResource(IMxx_tags[eo->l], ptr);
-	assert(ptr);
+//        assert(ptr);
+        if (!ptr)               /* FIXME: Sam and Max highway subgame */
+                return;
 	bomp = findResourceData(MKID('BOMP'), ptr);
 
 	bdd.srcwidth = READ_LE_UINT16(&((BompHeader*)bomp)->width);

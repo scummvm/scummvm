@@ -28,8 +28,13 @@
 	#define Point SCUMM_Point
 #endif
 
-#define SCUMMVM_VERSION "0.1.0 devel"
+#define SCUMMVM_VERSION "0.2.0 devel"
+#ifdef _WIN32_WCE
+        // Additional build information for easier bug report
 
+        #define POCKETSCUMM_BUILD "031302"
+        #define SCUMMVM_CVS "031002"
+#endif
 #define SWAP(a,b) do{int tmp=a; a=b; b=tmp; } while(0)
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
 
@@ -48,7 +53,8 @@ enum {
 	NUM_SCRIPT_SLOT = 25,
 	NUM_LOCALSCRIPT = 60,
 	NUM_SHADOW_PALETTE = 8,
-	MAX_ACTORS = 30
+    MAX_ACTORS = 30,
+    KEY_SET_OPTIONS = 3456 // WinCE
 };
 
 enum {
@@ -890,7 +896,7 @@ struct Scumm {
 	void *_sfxFile;
 	char *_exe_name;
 	char *_gameDataPath;
-
+        char *_savegame_dir;
 	int akos_findManyDirection(int16 ManyDirection, uint16 facing);
 	
 	byte _saveLoadFlag;
@@ -901,7 +907,7 @@ struct Scumm {
 	byte _resFilePathId;
 
 	bool _soundsPaused;
-
+        bool _soundsPaused2;
 	bool _useTalkAnims;
 	
 	char *_resFilePrefix;
@@ -1071,7 +1077,11 @@ struct Scumm {
 
 	int16 _palManipStart;
 	int16 _palManipEnd;
-	int16 _palManipCounter;
+        int16 _palManipCounter;
+
+	int16 _sound_volume_master;
+	int16 _sound_volume_music;
+	int16 _sound_volume_sfx;
 
 	struct {
 		byte mode[rtNumTypes];
@@ -1746,6 +1756,7 @@ struct Scumm {
 	void removeObjectFromRoom(int obj);
 	void decodeParseString();
 	void pauseGame(bool user);
+// FIXME        void setOptions(void);
 	void shutDown(int i);
 	void lock(int type, int i);
 	void unlock(int type, int i);
