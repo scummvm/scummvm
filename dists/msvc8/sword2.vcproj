@@ -178,23 +178,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\sword2\driver\d_draw.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\sword2\driver\d_sound.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\sword2\driver\driver96.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\sword2\driver\menu.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\sword2\driver\menu.h"
 				>
 			</File>
 			<File
@@ -207,10 +195,6 @@
 			</File>
 			<File
 				RelativePath="..\..\sword2\driver\render.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\sword2\driver\render.h"
 				>
 			</File>
 			<File

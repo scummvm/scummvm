@@ -612,6 +612,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\scumm\sprite_he.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\scumm\sprite_he.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\scumm\string.cpp"
 			>
 		</File>
