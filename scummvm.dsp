@@ -170,15 +170,6 @@ SOURCE=.\actor.cpp
 # Begin Source File
 
 SOURCE=.\akos.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -198,15 +189,6 @@ SOURCE=.\boxes.cpp
 # Begin Source File
 
 SOURCE=.\costume.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -226,15 +208,6 @@ SOURCE=.\debug.cpp
 # Begin Source File
 
 SOURCE=.\gameDetector.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -254,41 +227,18 @@ SOURCE=.\gfx.cpp
 # Begin Source File
 
 SOURCE=.\gui.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\init.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\insane.cpp
+# End Source File
+# Begin Source File
 
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
+SOURCE=.\mp3_cd.cpp
 # End Source File
 # Begin Source File
 
@@ -398,15 +348,6 @@ SOURCE=.\scummvm.cpp
 # Begin Source File
 
 SOURCE=.\sdl.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -476,15 +417,6 @@ SOURCE=.\sys.cpp
 # Begin Source File
 
 SOURCE=.\vars.cpp
-
-!IF  "$(CFG)" == "scummvm - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "scummvm - Win32 MP3 Enabled Debug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
