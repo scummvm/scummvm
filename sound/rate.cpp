@@ -15,6 +15,7 @@
  * Sound Tools rate change effect file.
  */
 
+#include "stdafx.h"
 #include "rate.h"
 
 #include <math.h>
