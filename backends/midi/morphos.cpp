@@ -100,6 +100,11 @@ int MidiDriver_MPU401::midi_driver_thread(void *param)
 	MsgPort *music_timer_port = NULL;
 	timerequest *music_timer_request = NULL;
 
+	// Grab the MidiDriver's mutex. When the MidiDriver
+	// shuts down, it will wait on that mutex until we've
+	// detected the shutdown and quit looping.
+	g_system->lock_mutex(mid->_mutex);
+
 	ObtainSemaphore(&ScummMusicThreadRunning);
 
 	if (!OSystem_MorphOS::OpenATimer(&music_timer_port, (IORequest **) &music_timer_request, UNIT_MICROHZ, false)) {
@@ -109,26 +114,29 @@ int MidiDriver_MPU401::midi_driver_thread(void *param)
 	else {
 		old_time = g_system->get_msecs();
 
-		for (;;) {
+		while (mid->_started_thread) {
 			music_timer_request->tr_node.io_Command = TR_ADDREQUEST;
 			music_timer_request->tr_time.tv_secs = 0;
 			music_timer_request->tr_time.tv_micro = 10000;
 			DoIO((struct IORequest *)music_timer_request);
 
-			if (CheckSignal(SIGBREAKF_CTRL_C))
+			if	(!mid->_started_thread || CheckSignal(SIGBREAKF_CTRL_C))
 				break;
 
 			cur_time = g_system->get_msecs();
 			while (old_time < cur_time) {
 				old_time += 10;
 				if (mid->_timer_proc)
-					(*(mid->_timer_proc)) (mid->_timer_param);
+					(*(mid->_timer_proc))(mid->_timer_param);
 			}
 		}
+		CloseDevice((IORequest *) music_timer_request);
+		DeleteIORequest((IORequest *) music_timer_request);
+		DeleteMsgPort(music_timer_port);
 	}
 
 	ReleaseSemaphore(&ScummMusicThreadRunning);
-	RemTask(NULL);
+	g_system->unlock_mutex(mid->_mutex);
 	return 0;
 }
 
