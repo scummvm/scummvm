@@ -56,33 +56,36 @@ static struct MsgPort       *MusicTimerMsgPort = NULL;
 
 bool init_morphos_music( ULONG MidiUnit )
 {
-	MidiUnit = ScummMidiUnit;	// Ugly fix, but ...
-	ScummMidiPort = CreateMsgPort();
-	if( ScummMidiPort )
+	if( ScummMusicDriver && !stricmp( ScummMusicDriver, "-eamidi" ) )	  // just as ugly as the line below ...
 	{
-		ScummMidiRequest = (struct IOMidiRequest *)CreateIORequest( ScummMidiPort, sizeof( struct IOMidiRequest ) );
-		if( ScummMidiRequest )
+		MidiUnit = ScummMidiUnit;	// Ugly fix, but ...
+		ScummMidiPort = CreateMsgPort();
+		if( ScummMidiPort )
 		{
-			ScummMidiRequest->amr_Version = 2;
-			if( OpenDevice( "amidi.device", MidiUnit, (struct IORequest *)ScummMidiRequest, AMIDIF_MIDISERVER ) )
+			ScummMidiRequest = (struct IOMidiRequest *)CreateIORequest( ScummMidiPort, sizeof( struct IOMidiRequest ) );
+			if( ScummMidiRequest )
 			{
-				DeleteIORequest( (struct IORequest *)ScummMidiRequest );
+				ScummMidiRequest->amr_Version = 2;
+				if( OpenDevice( "amidi.device", MidiUnit, (struct IORequest *)ScummMidiRequest, AMIDIF_MIDISERVER ) )
+				{
+					DeleteIORequest( (struct IORequest *)ScummMidiRequest );
+					DeleteMsgPort( ScummMidiPort );
+					ScummMidiRequest = NULL;
+					ScummMidiPort = NULL;
+				}
+			}
+			else
+			{
 				DeleteMsgPort( ScummMidiPort );
-				ScummMidiRequest = NULL;
 				ScummMidiPort = NULL;
 			}
 		}
-		else
-		{
-			DeleteMsgPort( ScummMidiPort );
-			ScummMidiPort = NULL;
-		}
-	}
 
-	if( !ScummMidiRequest )
-	{
-		warning( "Could not open AMidi - music will not play" );
-		return false;
+		if( !ScummMidiRequest )
+		{
+			warning( "Could not open AMidi - music will not play" );
+			return false;
+		}
 	}
 
 	MusicTimerMsgPort = CreateMsgPort();

@@ -40,17 +40,19 @@
 extern "C" struct WBStartup *_WBenchMsg;
 
 // For command line parsing
-static STRPTR usageTemplate = "STORY/A,DATAPATH/K,WBWINDOW/S,SCALER/K,AMIGA/S,MIDIUNIT/K/N,MUSIC/K,VOLUME/K/N,TEMPO/K/N,NOSUBTITLES=NST/S";
-typedef enum 					{ USG_STORY = 0,	USG_DATAPATH, 	USG_WBWINDOW,	USG_SCALER, 	USG_AMIGA,	USG_MIDIUNIT,	USG_MUSIC,	 USG_VOLUME,	 USG_TEMPO,	  USG_NOSUBTITLES } usageFields;
-static LONG	  args[ 11 ] =  { (ULONG)NULL, 	 (ULONG)NULL,	 FALSE, 			 (ULONG)NULL,	false,      (ULONG)NULL,   (ULONG)NULL, (ULONG)NULL,	 (ULONG)NULL, false };
+static STRPTR usageTemplate = "STORY/A,DATAPATH/K,WBWINDOW/S,SCALER/K,AMIGA/S,MIDIUNIT/K/N,MUSIC/K,MUSICVOL/K/N,SFXVOL/K/N,TEMPO/K/N,TALKSPEED/K/N,NOSUBTITLES=NST/S";
+typedef enum 					{ USG_STORY = 0,	USG_DATAPATH, 	USG_WBWINDOW,	USG_SCALER, 	USG_AMIGA,	USG_MIDIUNIT,	USG_MUSIC,	 USG_MUSICVOL,	USG_SFXVOL,	   USG_TEMPO,   USG_TALKSPEED, USG_NOSUBTITLES } usageFields;
+static LONG	  args[ 13 ] =  { (ULONG)NULL, 	 (ULONG)NULL,	 FALSE, 			 (ULONG)NULL,	false,      (ULONG)NULL,   (ULONG)NULL, (ULONG)NULL, (ULONG)NULL,	  (ULONG)NULL,  (ULONG)NULL,   false };
 static struct RDArgs *ScummArgs = NULL;
 
 static char*ScummStory = NULL;
 static char*ScummPath = NULL;
-static STRPTR ScummMusicDriver = NULL;
+	  STRPTR ScummMusicDriver = NULL;
 		 LONG ScummMidiUnit = 0;
 static LONG ScummMidiVolume = 0;
 static LONG ScummMidiTempo = 0;
+static LONG ScummSfxVolume = 0;
+static LONG ScummTalkSpeed = 0;
 static OSystem_MorphOS::SCALERTYPE ScummGfxScaler = OSystem_MorphOS::ST_INVALID;
 
 static BPTR OrigDirLock = 0;
@@ -180,13 +182,23 @@ static void ReadToolTypes( struct WBArg *OfFile )
 	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "MIDIUNIT" ) )
 		ScummMidiUnit = atoi( ToolValue );
 
-	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "VOLUME" ) )
+	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "MUSICVOL" ) )
 	{
 		int vol = atoi( ToolValue );
 		if( vol >= 0 && vol <= 100 )
 		{
 			ScummMidiVolume = vol;
-			args[ USG_VOLUME ] = (ULONG)&ScummMidiVolume;
+			args[ USG_MUSICVOL ] = (ULONG)&ScummMidiVolume;
+		}
+	}
+
+	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "SFXVOL" ) )
+	{
+		int vol = atoi( ToolValue );
+		if( vol >= 0 && vol <= 255 )
+		{
+			ScummSfxVolume = vol;
+			args[ USG_SFXVOL ] = (ULONG)&ScummSfxVolume;
 		}
 	}
 
@@ -194,6 +206,12 @@ static void ReadToolTypes( struct WBArg *OfFile )
 	{
 		ScummMidiTempo = atoi( ToolValue );
 		args[ USG_TEMPO ] = (ULONG)&ScummMidiTempo;
+	}
+
+	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "TALKSPEED" ) )
+	{
+		ScummTalkSpeed = atoi( ToolValue );
+		args[ USG_TALKSPEED ] = (ULONG)&ScummMidiTempo;
 	}
 
 	if( ToolValue = (char *)FindToolType( dobj->do_ToolTypes, "SUBTITLES" ) )
@@ -221,8 +239,8 @@ int main()
 {
 	int delta;
 	int last_time, new_time;
-	char *argv[ 15 ];
-	char volume[ 6 ], tempo[ 12 ], scaler[ 14 ];
+	char *argv[ 20 ];
+	char musicvol[ 6 ], sfxvol[ 6 ], talkspeed[ 12 ], tempo[ 12 ], scaler[ 14 ];
 	char *SVMScalers[] = { "", "normal", "2x", "advmame2x", "supereagle", "super2xsai" };
 	int argc = 0;
 
@@ -279,8 +297,14 @@ int main()
 		if( args[ USG_TEMPO ] )
 			ScummMidiTempo = *((LONG *)args[ USG_TEMPO ]);
 
-		if( args[ USG_VOLUME ] )
-			ScummMidiVolume = *((LONG *)args[ USG_VOLUME ]);
+		if( args[ USG_MUSICVOL ] )
+			ScummMidiVolume = *((LONG *)args[ USG_MUSICVOL ]);
+
+		if( args[ USG_SFXVOL ] )
+			ScummSfxVolume = *((LONG *)args[ USG_SFXVOL ]);
+
+		if( args[ USG_TALKSPEED ] )
+			ScummTalkSpeed = *((LONG *)args[ USG_TALKSPEED ]);
 	}
 	else
 	{
@@ -313,15 +337,25 @@ int main()
 	}
 	else
 		argv[ argc++ ] = "-gsuper2xsai";
-	if( args[ USG_VOLUME ] && ScummMidiVolume >= 0 && ScummMidiVolume <= 100 )
+	if( args[ USG_MUSICVOL ] && ScummMidiVolume >= 0 && ScummMidiVolume <= 100 )
 	{
-		sprintf( volume, "-m%d", ScummMidiVolume );
-		argv[ argc++ ] = volume;
+		sprintf( musicvol, "-m%d", ScummMidiVolume );
+		argv[ argc++ ] = musicvol;
+	}
+	if( args[ USG_SFXVOL ] && ScummSfxVolume >= 0 && ScummSfxVolume <= 255 )
+	{
+		sprintf( sfxvol, "-s%d", ScummSfxVolume );
+		argv[ argc++ ] = sfxvol;
 	}
 	if( args[ USG_TEMPO ] && ScummMidiTempo > 0 )
 	{
 		sprintf( tempo, "-t%lx", ScummMidiTempo );
 		argv[ argc++ ] = tempo;
+	}
+	if( args[ USG_TALKSPEED ] && ScummTalkSpeed >= 0 && ScummTalkSpeed <= 255 )
+	{
+		sprintf( talkspeed, "-y%d", ScummTalkSpeed );
+		argv[ argc++ ] = talkspeed;
 	}
 	argv[ argc++ ] = ScummStory;
 

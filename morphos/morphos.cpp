@@ -125,28 +125,12 @@ OSystem_MorphOS::OSystem_MorphOS( int game_id, SCALERTYPE gfx_mode, bool full_sc
 	strcpy( ScummWndTitle, "ScummVM MorphOS" );
 	TimerMsgPort = NULL;
 	TimerIORequest = NULL;
+	SaveTimerMsgPort = NULL;
+	SaveTimerIORequest = NULL;
+	SaveTimerRun = false;
 
-	TimerMsgPort = CreateMsgPort();
-	if( TimerMsgPort == NULL )
-	{
-		puts( "Failed to create message port" );
-		exit( 1 );
-	}
-
-	TimerIORequest = (struct timerequest *)CreateIORequest( TimerMsgPort, sizeof( struct timerequest ) );
-	if( TimerIORequest == NULL )
-	{
-		puts( "Failed to create IO request" );
-		exit( 1 );
-	}
-
-	if( OpenDevice( "timer.device", UNIT_MICROHZ, (struct IORequest *)TimerIORequest, 0 ) )
-	{
-		DeleteIORequest( (struct IORequest *)TimerIORequest );
-		TimerIORequest = NULL;
-		puts( "Failed to open timer device" );
-		exit( 1 );
-	}
+	OpenATimer( &TimerMsgPort, (struct IORequest **)&TimerIORequest, UNIT_MICROHZ );
+	OpenATimer( &SaveTimerMsgPort, (struct IORequest **)&SaveTimerIORequest, UNIT_VBLANK );
 
 	ScummNoCursor = (UWORD *)AllocVec( 16, MEMF_CHIP | MEMF_CLEAR );
 }
@@ -167,6 +151,21 @@ OSystem_MorphOS::~OSystem_MorphOS()
 
 	if( TimerMsgPort )
 		DeleteMsgPort( TimerMsgPort );
+
+	if( SaveTimerRun )
+	{
+		AbortIO( (struct IORequest *)SaveTimerIORequest );
+		WaitIO( (struct IORequest *)SaveTimerIORequest );
+	}
+
+	if( SaveTimerIORequest )
+	{
+		CloseDevice( (struct IORequest *)SaveTimerIORequest );
+		DeleteIORequest( (struct IORequest *)SaveTimerIORequest );
+	}
+
+	if( SaveTimerMsgPort )
+		DeleteMsgPort( SaveTimerMsgPort );
 
 	if( ScummMusicThread )
 	{
@@ -204,6 +203,31 @@ OSystem_MorphOS::~OSystem_MorphOS()
 	}
 }
 
+void OSystem_MorphOS::OpenATimer( struct MsgPort **port, struct IORequest **req, ULONG unit )
+{
+	*port = CreateMsgPort();
+	if( *port == NULL )
+	{
+		puts( "Failed to create message port" );
+		exit( 1 );
+	}
+
+	*req = (struct IORequest *)CreateIORequest( *port, sizeof( struct timerequest ) );
+	if( *req == NULL )
+	{
+		puts( "Failed to create IO request" );
+		exit( 1 );
+	}
+
+	if( OpenDevice( "timer.device", unit, *req, 0 ) )
+	{
+		DeleteIORequest( *req );
+		*req = NULL;
+		puts( "Failed to open timer device" );
+		exit( 1 );
+	}
+}
+
 uint32 OSystem_MorphOS::get_msecs()
 {
 	int ticks = clock();
@@ -217,6 +241,26 @@ void OSystem_MorphOS::delay_msecs(uint msecs)
 	TimerIORequest->tr_time.tv_secs  = 0;
 	TimerIORequest->tr_time.tv_micro = msecs*1000;
 	DoIO( (struct IORequest *)TimerIORequest );
+}
+
+void OSystem_MorphOS::set_timer(int timer, int (*callback)(int))
+{
+	if( timer )
+	{
+		SaveTimerRun = true;
+		TimerCallback = callback;
+		TimerInterval = timer;
+
+		SaveTimerIORequest->tr_node.io_Command  = TR_ADDREQUEST;
+		SaveTimerIORequest->tr_time.tv_secs  = timer/1000;
+		SaveTimerIORequest->tr_time.tv_micro = timer%1000;
+		SendIO( (struct IORequest *)SaveTimerIORequest );
+	}
+	else
+	{
+		SaveTimerRun = false;
+		TimerInterval = 0;
+	}
 }
 
 void *OSystem_MorphOS::create_thread(ThreadProc *proc, void *param)
@@ -253,6 +297,11 @@ uint32 OSystem_MorphOS::property(int param, Property *value)
 			if( CDDABase )
 			{
 				CDrive = CDDA_FindNextDrive( NULL, FindCDTags );
+				if( !CDrive && GameID == GID_MONKEY )
+				{
+					FindCDTags[ 0 ].ti_Data = (ULONG)"Madness";
+					CDrive = CDDA_FindNextDrive( NULL, FindCDTags );
+				}
 				if( CDrive )
 				{
 					if( !CDDA_ObtainDrive( CDrive, CDDA_SHARED_ACCESS, NULL ) )
@@ -307,8 +356,6 @@ void OSystem_MorphOS::play_cdrom( int track, int num_loops, int start_frame, int
 	}
 }
 
-// Schedule the music to be stopped after 1/10 sec, unless another
-// track is started in the meantime.
 void OSystem_MorphOS::stop_cdrom()
 {
 	CDDA_Stop( CDrive );
@@ -661,6 +708,13 @@ void OSystem_MorphOS::SwitchScalerTo( SCALERTYPE newScaler )
 bool OSystem_MorphOS::poll_event( Event *event )
 {
 	struct IntuiMessage *ScummMsg;
+
+	if( SaveTimerRun && CheckIO( (struct IORequest *)SaveTimerIORequest ) )
+	{
+		WaitIO( (struct IORequest *)SaveTimerIORequest );
+		TimerInterval = (*TimerCallback)( TimerInterval );
+		set_timer( TimerInterval, TimerCallback );
+	}
 
 	if( ScummMsg = (struct IntuiMessage *)GetMsg( ScummWindow->UserPort ) )
 	{

@@ -64,6 +64,9 @@ class OSystem_MorphOS : public OSystem
 		// Delay for a specified amount of milliseconds
 		virtual void delay_msecs(uint msecs);
 
+		// Add a new callback timer
+		virtual void set_timer(int timer, int (*callback)(int));
+
 		// Create a thread
 		virtual void *create_thread(ThreadProc *proc, void *param);
 
@@ -120,6 +123,8 @@ class OSystem_MorphOS : public OSystem
 
 		void   draw_mouse();
 		void   undraw_mouse();
+
+		void   OpenATimer( struct MsgPort **port, struct IORequest **req, ULONG unit );
 
 		/* Display-related attributes */
 		struct Screen  	  *ScummScreen;
@@ -185,6 +190,11 @@ class OSystem_MorphOS : public OSystem
 		/* Timer-related attributes */
 		struct MsgPort 	 *TimerMsgPort;
 		struct timerequest *TimerIORequest;
+		struct MsgPort 	 *SaveTimerMsgPort;
+		struct timerequest *SaveTimerIORequest;
+		int 					(*TimerCallback)(int);
+		bool					  SaveTimerRun;
+		int					  TimerInterval;
 
 		/* Game-related attributes */
 		int   GameID;
@@ -200,7 +210,8 @@ extern OSystem_MorphOS *TheSystem;
 extern struct SignalSemaphore ScummMusicThreadRunning;
 extern struct SignalSemaphore ScummSoundThreadRunning;
 
-extern LONG ScummMidiUnit;
+extern STRPTR ScummMusicDriver;
+extern LONG   ScummMidiUnit;
 extern struct IOMidiRequest *ScummMidiRequest;
 extern struct timerequest   *MusicTimerIORequest;
 
