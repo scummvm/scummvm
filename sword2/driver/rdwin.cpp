@@ -156,8 +156,6 @@ void Sword2State::parseEvents() {
 		switch(event.event_code) {
 		
 		case OSystem::EVENT_KEYDOWN:
-			Zdebug("key %d", event.kbd.keycode);
-
 			if (event.kbd.flags==OSystem::KBD_CTRL) {
 				if (event.kbd.keycode == 'w')
 					GrabScreenShot();
