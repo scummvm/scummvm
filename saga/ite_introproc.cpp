@@ -680,9 +680,8 @@ int Scene::ITEIntroValleyProc(int param, SCENE_INFO *scene_info) {
 		// Pause animation before logo
 		event.type = ONESHOT_EVENT;
 		event.code = ANIM_EVENT;
-		event.op = EVENT_SETFLAG;
+		event.op = EVENT_STOP;
 		event.param = 0;
-		event.param2 = ANIM_PAUSE;
 		event.time = 3000;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -708,18 +707,9 @@ int Scene::ITEIntroValleyProc(int param, SCENE_INFO *scene_info) {
 		// Unpause animation before logo
 		event.type = ONESHOT_EVENT;
 		event.code = ANIM_EVENT;
-		event.op = EVENT_CLEARFLAG;
-		event.param = 0;
-		event.param2 = ANIM_PAUSE;
+		event.op = EVENT_PLAY;
 		event.time = 0;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		event.type = ONESHOT_EVENT;
-		event.code = ANIM_EVENT;
-		event.op = EVENT_FRAME;
 		event.param = 0;
-		event.time = LOGO_DISSOLVE_DURATION;
 
 		q_event = _vm->_events->chain(q_event, &event);
 

@@ -329,6 +329,9 @@ int Events::handleOneShot(EVENT *event) {
 		case EVENT_PLAY:
 			_vm->_anim->play(event->param, event->time, true);
 			break;
+		case EVENT_STOP:
+			_vm->_anim->stop(event->param);
+			break;
 		case EVENT_FRAME:
 			_vm->_anim->play(event->param, event->time, false);
 			break;
