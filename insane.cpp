@@ -152,7 +152,8 @@ void SmushPlayer::parseIACT() {
 
 	if (idx == 8) {
 		for (idx = 0; idx < 8; idx++) {
-			if (_imusTrk[idx] == 0) {
+			if (_imusTrk[idx] == 0 &&
+			    g_scumm->_mixer->_channels[idx] == NULL) {
 				_imusTrk[idx] = trk;
 				_imusSize[idx] = 0;
 				break;
@@ -266,10 +267,12 @@ void SmushPlayer::parseIACT() {
 		_imusSubSize[idx] -= sublen;
 		_imusSize[idx] -= sublen;				
 		pos += sublen;	
-	}
 
-	if (_imusSubSize[idx] == 0 && _imusSubTag[idx] == 'DATA')
-		_imusTrk[idx] = 0;
+		if (_imusSubSize[idx] == 0 && _imusSubTag[idx] == 'DATA') {
+			_imusTrk[idx] = 0;
+			return;
+		}
+	}
 }
 
 void SmushPlayer::parseNPAL()
@@ -791,10 +794,11 @@ void SmushPlayer::parsePSAD()	// FIXME: Needs to append to
 
 	if (idx == 8) {
 		for (idx = 0; idx < 8; idx++) {
-			if (_psadTrk[idx] == 0) {
-				_psadTrk[idx] = trk;
-				_saudSize[idx] = 0;
-				break;
+			if (_psadTrk[idx] == 0 &&
+			    g_scumm->_mixer->_channels[idx] == NULL) {
+					_psadTrk[idx] = trk;
+					_saudSize[idx] = 0;
+					break;
 			}
 		}
 	}
