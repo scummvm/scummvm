@@ -1293,7 +1293,7 @@ void ScummEngine::initScummVars() {
 		VAR(VAR_LANGUAGE) = _language;
 	} else if (_version >= 7) {
 		VAR(VAR_V6_EMSSPACE) = 10000;
-		VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects;
+		VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
 	} else if (_heversion >= 72) {
 		// TODO
 	} else {
