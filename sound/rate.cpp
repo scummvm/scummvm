@@ -118,7 +118,7 @@ int st_rate_flow(eff_t effp, AudioInputStream &input, st_sample_t *obuf, st_size
 		icur = input.peek();
 
 		/* interpolate */
-		out = ilast + (((icur - ilast) * rate->opos_frac) >> FRAC_BITS);
+		out = ilast + (((icur - ilast) * rate->opos_frac + (1UL << (FRAC_BITS-1))) >> FRAC_BITS);
 
 		/* output sample & increment position */
 		out = out * vol / 256;
