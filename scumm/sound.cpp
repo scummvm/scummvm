@@ -277,7 +277,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 		if (READ_UINT32(ptr) == MKID('SBNG')) {
 			ptr += READ_BE_UINT32(ptr + 4);
-			warning("playSound: Skipped SBNG block");
+			debug(2, "playSound: Skipped SBNG block");
 		}
 
 		if (READ_UINT32(ptr) != MKID('SDAT')) {

@@ -940,9 +940,11 @@ protected:
 	void o100_quitPauseRestart();
 	void o100_cursorCommand();
 	void o100_wait();
+	void o100_writeFile();
 	void o100_getResourceSize();
 	void o100_unknown27();
 	void o100_getPaletteData();
+	void o100_readFile();
 	void o100_unknown25();
 	void o100_unknown29();
 };

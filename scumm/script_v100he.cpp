@@ -221,7 +221,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_walkActorToObj),
 		OPCODE(o6_walkActorTo),
 		/* 90 */
-		OPCODE(o72_writeFile),
+		OPCODE(o100_writeFile),
 		OPCODE(o72_writeINI),
 		OPCODE(o80_writeConfigFile),
 		OPCODE(o6_abs),
@@ -304,7 +304,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_getRandomNumber),
 		OPCODE(o6_getRandomNumberRange),
 		OPCODE(o6_invalid),
-		OPCODE(o72_readFile),
+		OPCODE(o100_readFile),
 		/* D4 */
 		OPCODE(o72_readINI),
 		OPCODE(o80_readConfigFile),
@@ -1525,6 +1525,31 @@ void ScummEngine_v100he::o100_wait() {
 	o6_breakHere();
 }
 
+void ScummEngine_v100he::o100_writeFile() {
+	int16 resID = pop();
+	int slot = pop();
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 5:
+		fetchScriptByte();
+		writeFileFromArray(slot, resID);
+		break;
+	case 42:
+		_hFileTable[slot].writeUint16LE(resID);
+		break;
+	case 43:
+		_hFileTable[slot].writeUint32LE(resID);
+		break;
+	case 45:
+		_hFileTable[slot].writeByte(resID);
+		break;
+	default:
+		error("o100_writeFile: default case %d", subOp);
+	}
+	debug(1, "o100_writeFile: slot %d, subOp %d", slot, subOp);
+}
+
 void ScummEngine_v100he::o100_getResourceSize() {
 	int size = 0, type;
 
@@ -1712,6 +1737,40 @@ void ScummEngine_v100he::o100_getPaletteData() {
 	}
 	push(0);
 	debug(1,"o100_getPaletteData stub (%d)", subOp);
+}
+
+void ScummEngine_v100he::o100_readFile() {
+	int slot, val;
+	int32 size;
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 5:
+		fetchScriptByte();
+		size = pop();
+		slot = pop();
+		val = readFileToArray(slot, size);
+		push(val);
+		break;
+	case 42:
+		slot = pop();
+		val = _hFileTable[slot].readUint16LE();
+		push(val);
+		break;
+	case 43:
+		slot = pop();
+		val = _hFileTable[slot].readUint32LE();
+		push(val);
+		break;
+	case 45:
+		slot = pop();
+		val = _hFileTable[slot].readByte();
+		push(val);
+		break;
+	default:
+		error("o100_readFile: default case %d", subOp);
+	}
+	debug(1, "o100_readFile: slot %d, subOp %d val %d", slot, subOp, val);
 }
 
 void ScummEngine_v100he::o100_unknown25() {
