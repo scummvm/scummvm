@@ -1405,13 +1405,13 @@ void AkosRenderer::codec16() {
 
 	_vm->updateDirtyRect(0, clip_left, clip_right + 1, clip_top, clip_bottom + 1, 1 << dirty_id);
 
-//	if(clip_top < Actor.top) {
-//		Actor.top = clip_top;
-//	}
+	if(clip_top < draw_top) {
+		draw_top = clip_top;
+	}
 
-//	if(clip_bottom > Actor.bottom) 	{
-//		Actor.bottom = clip_bottom + 1;
-//	}
+	if(clip_bottom > draw_bottom) {
+		draw_bottom = clip_bottom + 1;
+	}
 
 	int32 width_unk, height_unk;
 
