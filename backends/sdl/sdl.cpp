@@ -134,8 +134,19 @@ void OSystem_SDL::load_gfx_mode() {
 	_hwscreen = SDL_SetVideoMode(_screenWidth * _scaleFactor, (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor, 16, 
 		_full_screen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 	);
-	if (_hwscreen == NULL)
-		error("_hwscreen failed");
+	if (_hwscreen == NULL) {
+		// DON'T use error(), as this tries to bring up the debug
+		// console, which WON'T WORK now that _hwscreen is hosed.
+
+		// FIXME: We should be able to continue the game without
+		// shutting down or bringing up the debug console, but at
+		// this point we've already screwed up all our member vars.
+		// We need to find a way to call SDL_VideoModeOK *before*
+		// that happens and revert to all the old settings if we
+		// can't pull off the switch to the new settings.
+		warning("SDL_SetVideoMode says we can't switch to that mode");
+		quit();
+	}
 
 	//
 	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
