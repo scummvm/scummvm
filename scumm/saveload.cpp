@@ -531,7 +531,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKARRAY(ScummEngine, _currentPalette[0], sleByte, 768, VER(8)),
 
 		// Sam & Max specific palette replaced by _shadowPalette now.
-		MK_OBSOLETE_ARRAY(ScummEngine, _proc_special_palette[0], sleByte, 256, VER(8), VER(34)),
+		MK_OBSOLETE_ARRAY(ScummEngine, _proc_special_palette[0], sleByte, 256, VER(8), VER(33)),
 
 		MKARRAY(ScummEngine, _charsetBuffer[0], sleByte, 256, VER(8)),
 
