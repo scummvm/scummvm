@@ -218,10 +218,14 @@ SmushPlayer::SmushPlayer(Scumm *scumm, int speed, bool subtitles) {
 	_speed = speed;
 	_subtitles = subtitles;
 	_smushProcessFrame = false;
+	
+	_mutex = _scumm->_system->create_mutex();
 }
 
 SmushPlayer::~SmushPlayer() {
 	deinit();
+	if (_mutex)
+		_scumm->_system->delete_mutex (_mutex);
 }
 
 void SmushPlayer::init() {
@@ -855,17 +859,15 @@ void SmushPlayer::setPalette(byte *palette) {
 }
 
 void SmushPlayer::updateScreen() {
-	if (_whileUpdate == false) {
-		_whileCopyRect = true;
+	_scumm->_system->lock_mutex(_mutex);
 
-		uint32 end_time, start_time = _scumm->_system->get_msecs();
-		_scumm->_system->copy_rect(_data, _width, 0, 0, _width, _height);
-		_updateNeeded = true;
-		end_time = _scumm->_system->get_msecs();
-		debug(4, "Smush stats: updateScreen( %03d )", end_time - start_time);
+	uint32 end_time, start_time = _scumm->_system->get_msecs();
+	_scumm->_system->copy_rect(_data, _width, 0, 0, _width, _height);
+	_updateNeeded = true;
+	end_time = _scumm->_system->get_msecs();
+	debug(4, "Smush stats: updateScreen( %03d )", end_time - start_time);
 
-		_whileCopyRect = false;
-	}
+	_scumm->_system->unlock_mutex(_mutex);
 }
 
 void SmushPlayer::play(const char *filename, const char *directory) {
@@ -876,8 +878,6 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 		return;
 	}
 
-	_whileUpdate = false;
-	_whileCopyRect = false;
 	_updateNeeded = false;
 
 	setupAnim(filename, directory);
@@ -887,17 +887,15 @@ void SmushPlayer::play(const char *filename, const char *directory) {
 		_scumm->processKbd();
 		_scumm->waitForTimer(1);
 		if(_updateNeeded == true) {
-			if(_whileCopyRect == false) {
-				_whileUpdate = true;
+			_scumm->_system->lock_mutex(_mutex);
+			
+			uint32 end_time, start_time = _scumm->_system->get_msecs();
+			_scumm->_system->update_screen();
+			_updateNeeded = false;
+			end_time = _scumm->_system->get_msecs();
+			debug(4, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
 
-				uint32 end_time, start_time = _scumm->_system->get_msecs();
-				_scumm->_system->update_screen();
-				_updateNeeded = false;
-				end_time = _scumm->_system->get_msecs();
-				debug(4, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
-
-				_whileUpdate = false;
-			}
+			_scumm->_system->unlock_mutex(_mutex);
 		}
 		if (_scumm->_videoFinished == true)
 			break;

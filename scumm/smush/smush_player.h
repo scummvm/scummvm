@@ -62,14 +62,14 @@ private:
 	bool _alreadyInit;
 	int _speed;
 	bool _outputSound;
+	
+	void *_mutex;
 
 public:
 
 	int _width, _height;
 	byte *_data;
 	bool _smushProcessFrame;
-	bool _whileUpdate;
-	bool _whileCopyRect;
 	bool _updateNeeded;
 
 	SmushPlayer(Scumm *, int, bool);
