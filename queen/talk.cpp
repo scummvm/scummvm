@@ -605,13 +605,18 @@ int Talk::countSpaces(const char *segment) {
 }
 
 void Talk::speakSegment(
-		const char *segment, 
+		const char *segmentStart, 
 		int length, 
 		Person *person,
 		int command,
 		const char *voiceFilePrefix,
 		int index) {
-	// Function SPEAK_SUB, lines 1406-1870 in talk.c
+	// Function SPEAK_SUB, lines 1406-1870 in talk.a
+
+	char segment[MAX_STRING_SIZE];
+	memcpy(segment, segmentStart, length);
+	segment[length] = '\0';
+	
 	char voiceFileName[MAX_STRING_SIZE];
 	snprintf(voiceFileName, sizeof(voiceFileName), "%s%1x", voiceFilePrefix, index);
 

@@ -186,7 +186,7 @@ class Talk {
 
 	//! Speak a part of a sentence
 	void speakSegment(
-			const char *segment, 
+			const char *segmentStart, 
 			int length,
 			Person *person, 
 			int command,
