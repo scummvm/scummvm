@@ -33,7 +33,7 @@ extern bool draw_keyboard;
 
 #endif
 
-#ifdef WIN32
+#if defined (WIN32) && defined (NDEBUG)
 
 extern "C" {
 	int errno;
