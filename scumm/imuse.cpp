@@ -285,8 +285,8 @@ void IMuseInternal::init_players() {
 	int i;
 
 	for (i = ARRAYSIZE(_players); i != 0; i--, player++) {
-		player->clear(); // Used to just set _active to false
 		player->_se = this;
+		player->clear(); // Used to just set _active to false
 	}
 }
 
@@ -348,25 +348,28 @@ void IMuseInternal::handle_marker(uint id, byte data) {
 	if (_queue_adding && _queue_sound == id && data == _queue_marker)
 		return;
 
-	// Fix for bug #733401: It would seem that sometimes the
-	// queue read position gets out of sync (possibly just
-	// reset to zero). Therefore, the read position should
-	// skip over any empty (i.e. all zeros) queue entries
-	// until it finds a legit entry to review.
+	// Fix for bug #733401, revised for bug #761637:
+	// It would seem that sometimes a marker is in the queue
+	// but not at the head position. In the case of our bug,
+	// this seems to be the result of commands in the queue
+	// for songs that are no longer playing. So we skip
+	// ahead to the appropriate marker, effectively chomping
+	// anything in the queue before it. This fixes the FOA
+	// end credits music, but needs to be tested for inappopriate
+	// behavior elsewhere.
 	pos = _queue_end;
 	while (pos != _queue_pos) {
 		p = _cmd_queue[pos].array;
-		if ((p[0] | p[1] | p[2] | p[3] | p[4] | p[5] | p[6] | p[7]) != 0)
+		if (p[0] == TRIGGER_ID && p[1] == id && p[2] == data)
 			break;
-		warning ("Skipping empty command queue entry at position %d", pos);
 		pos = (pos + 1) & (ARRAYSIZE(_cmd_queue) - 1);
 	}
 
 	if (pos == _queue_pos)
 		return;
 
-	if (p[0] != TRIGGER_ID || p[1] != id || p[2] != data)
-		return;
+	if (pos != _queue_end)
+		warning ("Skipping entries in iMuse command queue to reach marker");
 
 	_trigger_count--;
 	_queue_cleared = false;
