@@ -54,6 +54,8 @@ public:
 	virtual void open();
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void open();	
+	virtual void close();
 
 protected:
 	ListWidget       *_savegameList;
@@ -125,5 +127,23 @@ public:
 		}
 };
 
+#ifdef _WIN32_WCE
+
+class KeysDialog : public ScummDialog {
+public:
+	KeysDialog(NewGui *gui, Scumm *scumm);
+
+	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleKeyDown(char key, int modifiers);
+
+protected:
+
+	ListWidget		 *_actionsList;
+	StaticTextWidget *_actionTitle;
+	StaticTextWidget *_keyMapping;
+	int				 _actionSelected;
+};
+
+#endif
 
 #endif

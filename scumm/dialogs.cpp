@@ -29,6 +29,14 @@
 #include "gui/ListWidget.h"
 #include "common/config-file.h"
 
+#ifdef _WIN32_WCE
+#include "gapi_keys.h"
+extern bool _get_key_mapping;
+extern void force_keyboard(bool);
+extern void save_key_mapping();
+extern void load_key_mapping();
+#endif
+
 
 #ifdef _MSC_VER
 #	pragma warning( disable : 4068 )
@@ -64,7 +72,12 @@ static const char* string_map_table_custom[] = {
 	"Amiga palette conversion",	//20
 	"Except:",									//21
 	"Simon the Sorcerer (c) Adventuresoft", //22
-	"Close"											//23
+	"Close",										//23
+
+	"Map",												//24
+	"Choose an action to map",							//25
+	"Press the key to associate",						//26
+	"Please select an action"							//27
 };
 
 static ResString string_map_table_v7[] = {
@@ -378,6 +391,24 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
+void SaveLoadDialog::open() {
+
+	ScummDialog::open();
+
+#ifdef _WIN32_WCE
+	force_keyboard(true);
+#endif
+}
+
+void SaveLoadDialog::close() {
+
+	ScummDialog::close();	
+
+#ifdef _WIN32_WCE
+	force_keyboard(false);
+#endif
+}
+
 void SaveLoadDialog::fillList()
 {
 	// Get savegame names
@@ -504,13 +535,16 @@ OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
 	//
 	_aboutDialog = new AboutDialog(gui, scumm);
 #ifdef _WIN32_WCE
-	// TODO - create _keysDialog
+	_keysDialog = new KeysDialog(gui, scumm);
 #endif
 }
 
 OptionsDialog::~OptionsDialog()
 {
 	delete _aboutDialog;
+#ifdef _WIN32_WCE
+	delete _keysDialog;
+#endif
 }
 
 void OptionsDialog::open()
@@ -539,7 +573,9 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 {
 	switch (cmd) {
 	case kKeysCmd:
-		// TODO
+#ifdef _WIN32_WCE
+		_keysDialog->runModal();
+#endif
 		break;
 	case kAboutCmd:
 		_aboutDialog->runModal();
@@ -616,3 +652,102 @@ PauseDialog::PauseDialog(NewGui *gui, Scumm *scumm)
 {
 	addResText(4, 4, 250-8, 16, 10);
 }
+
+#ifdef _WIN32_WCE
+
+#pragma mark -
+
+enum {
+	kMapCmd					= 'map '
+};
+
+
+KeysDialog::KeysDialog(NewGui *gui, Scumm *scumm)
+	: ScummDialog(gui, scumm, 30, 20, 260, 160)
+{	
+	addButton(200, 20, queryCustomString(24), kMapCmd, 'M');	// Map
+	addButton(200, 40, "OK", kOKCmd, 'O');						// OK
+	addButton(200, 60, "Cancel", kCancelCmd, 'C');				// Cancel
+	
+	_actionsList = new ListWidget(this, 10, 20, 180, 90);
+	_actionsList->setNumberingMode(kListNumberingZero);
+
+	_actionTitle = new StaticTextWidget(this, 10, 120, 240, 16, queryCustomString(25), kTextAlignCenter);
+	_keyMapping = new StaticTextWidget(this, 10, 140, 240, 16, "", kTextAlignCenter);
+	
+	_actionTitle->setFlags(WIDGET_CLEARBG);
+	_keyMapping->setFlags(WIDGET_CLEARBG);
+
+	// Get actions names
+	ScummVM::StringList l;
+
+	for (int i = 1; i < TOTAL_ACTIONS; i++) 
+		l.push_back(getActionName(i));
+
+	_actionsList->setList(l);
+
+	_actionSelected = -1;
+	_get_key_mapping = false;
+}
+
+void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+
+	switch(cmd) {
+
+	case kListSelectionChangedCmd:
+		if (_actionsList->getSelected() >= 0) {
+				char selection[100];
+
+				sprintf(selection, "Associated key : %s", getGAPIKeyName((unsigned int)getAction(_actionsList->getSelected() + 1)->action_key));				
+				_keyMapping->setLabel(selection);
+				_keyMapping->draw();
+		}
+		break;
+	case kMapCmd:
+		if (_actionsList->getSelected() < 0) {
+				_actionTitle->setLabel(queryCustomString(27));
+		}
+		else {
+				char selection[100];
+
+				_actionSelected = _actionsList->getSelected() + 1;
+				sprintf(selection, "Associated key : %s", getGAPIKeyName((unsigned int)getAction(_actionSelected)->action_key));				
+				_actionTitle->setLabel(queryCustomString(26));
+				_keyMapping->setLabel(selection);
+				_keyMapping->draw();
+				_get_key_mapping = true;
+				_actionsList->setEnabled(false);
+		}
+		_actionTitle->draw();
+		break;
+	case kOKCmd:
+		save_key_mapping();
+		close();
+		break;
+	case kCancelCmd:
+		load_key_mapping();
+		close();
+		break;
+	default:
+		ScummDialog::handleCommand(sender, cmd, data);
+	}
+}
+
+void KeysDialog::handleKeyDown(char key, int modifiers) {
+	if (modifiers == 0xff  && _get_key_mapping) {
+		// GAPI key was selected
+		char selection[100];
+
+		clearActionKey(key & 0xff);
+		getAction(_actionSelected)->action_key = (key & 0xff);
+		sprintf(selection, "Associated key : %s", getGAPIKeyName((unsigned int)getAction(_actionSelected)->action_key));				
+		_actionTitle->setLabel(queryCustomString(25));
+		_keyMapping->setLabel(selection);
+		_keyMapping->draw();
+		_actionSelected = -1;
+		_actionsList->setEnabled(true);
+		_get_key_mapping = false;
+	}
+}
+
+#endif
