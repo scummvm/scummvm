@@ -99,12 +99,13 @@ class ObjectMan;
 class ResMan;
 class SwordScreen;
 
+extern int whatTarget(int32 startX, int32 startY, int32 destX, int32 destY);
+
 class SwordRouter {
 public:
 	SwordRouter(ObjectMan *pObjMan, ResMan *pResMan);
 	~SwordRouter(void);
 	int32 routeFinder(int32 id, BsObject *mega, int32 x, int32 y, int32 dir);
-	int whatTarget(int32 startX, int32 startY, int32 destX, int32 destY);
 	void setPlayerTarget(int32 x, int32 y, int32 dir, int32 stance);
 	void resetExtraData(void);
 
@@ -146,8 +147,8 @@ private:
 
 	int32		framesPerStep, framesPerChar;
 	uint8		nWalkFrames, nTurnFrames;
-	int32		dx[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
-	int32		dy[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
+	int32		_dx[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
+	int32		_dy[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
 	int32		modX[NO_DIRECTIONS];
 	int32		modY[NO_DIRECTIONS];
 	int32		diagonalx, diagonaly;

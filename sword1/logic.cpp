@@ -1414,13 +1414,13 @@ int SwordLogic::fnFace(BsObject *cpt, int32 id, int32 targetId, int32 b, int32 c
 		x = (target->o_mouse_x1 + target->o_mouse_x2) / 2;
 		y = (target->o_mouse_y1 + target->o_mouse_y2) / 2;
 	}
-	int32 megaTarDir = _router->whatTarget(cpt->o_xcoord, cpt->o_ycoord, x, y);
+	int32 megaTarDir = whatTarget(cpt->o_xcoord, cpt->o_ycoord, x, y);
 	fnTurn(cpt, id, megaTarDir, 0, 0, 0, 0, 0);
 	return SCRIPT_STOP;
 }
 
 int SwordLogic::fnFaceXy(BsObject *cpt, int32 id, int32 x, int32 y, int32 c, int32 d, int32 a, int32 b) {
-	int megaTarDir = _router->whatTarget(cpt->o_xcoord, cpt->o_ycoord, x, y);
+	int megaTarDir = whatTarget(cpt->o_xcoord, cpt->o_ycoord, x, y);
 	fnTurn(cpt, id, megaTarDir, 0, 0, 0, 0, 0);
 	return SCRIPT_STOP;
 }
@@ -1435,7 +1435,7 @@ int SwordLogic::fnIsFacing(BsObject *cpt, int32 id, int32 targetId, int32 b, int
 	} else
 		error("fnIsFacing:: Target isn't a mega!");
 
-	int32 lookDir = _router->whatTarget(x, y, cpt->o_xcoord, cpt->o_ycoord);
+	int32 lookDir = whatTarget(x, y, cpt->o_xcoord, cpt->o_ycoord);
 	lookDir -= dir;
 	lookDir = abs(lookDir);
 

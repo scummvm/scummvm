@@ -352,7 +352,7 @@ int32 SwordRouter::SmoothestPath()
   int32 turns[4];     
   int32 turntable[NO_DIRECTIONS] = {0,1,3,5,7,5,3,1};
 
-	targetDir;// no warnings
+//	targetDir;// no warnings
 
 	// route.X route.Y and route.Dir start at far end
 	smoothPath[0].x = startX;
@@ -903,8 +903,8 @@ int32 frame;
 			scale = (scaleA * moduleY + scaleB);
 			do
 			{
-				module16X += dx[module]*scale;
-				module16Y += dy[module]*scale;
+				module16X += _dx[module]*scale;
+				module16Y += _dy[module]*scale;
 				moduleX = module16X >> 16;
 				moduleY = module16Y >> 16;
 				walkAnim[stepCount].frame = module;
@@ -1425,8 +1425,8 @@ int32 frame;
 				scale = (scaleA * moduleY + scaleB);
 				do
 				{
-					module16X += dx[module]*scale;
-					module16Y += dy[module]*scale;
+					module16X += _dx[module]*scale;
+					module16Y += _dy[module]*scale;
 					moduleX = module16X >> 16;
 					moduleY = module16Y >> 16;
 					walkAnim[stepCount].frame = module;
@@ -2340,7 +2340,7 @@ int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int
 
 	if (nbars >= O_GRID_SIZE)
 	{
-		#if DEBUG == YES												//check for id > number in file,
+		#ifdef DEBUG												//check for id > number in file,
 		error("RouteFinder Error too many bars %d", nbars);
 		#endif
 		nbars = 0;
@@ -2350,7 +2350,7 @@ int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int
 
 	if (nnodes >= O_GRID_SIZE)
 	{
-		#if DEBUG == YES												//check for id > number in file,
+		#ifdef DEBUG												//check for id > number in file,
 			error("RouteFinder Error too many nodes %d", nnodes);
 		#endif
 		nnodes = 0;
@@ -2435,9 +2435,9 @@ int32 SwordRouter::LoadWalkResources(BsObject *megaObject, int32 x, int32 y, int
 	nTurnFrames = fMegaWalkData[1];
  	fMegaWalkData += 2;
 
- 	memmove(&dx[0],fMegaWalkData,NO_DIRECTIONS*(nWalkFrames+1+nTurnFrames)*sizeof(int32));
+ 	memmove(&_dx[0],fMegaWalkData,NO_DIRECTIONS*(nWalkFrames+1+nTurnFrames)*sizeof(int32));
  	fMegaWalkData += NO_DIRECTIONS*(nWalkFrames+1+nTurnFrames)*sizeof(int32);
- 	memmove(&dy[0],fMegaWalkData,NO_DIRECTIONS*(nWalkFrames+1+nTurnFrames)*sizeof(int32));
+ 	memmove(&_dy[0],fMegaWalkData,NO_DIRECTIONS*(nWalkFrames+1+nTurnFrames)*sizeof(int32));
  	fMegaWalkData += NO_DIRECTIONS*(nWalkFrames+1+nTurnFrames)*sizeof(int32);
 
  	memmove(&modX[0],fMegaWalkData,NO_DIRECTIONS*sizeof(int32));
@@ -2527,7 +2527,6 @@ void	SwordRouter::ExtractRoute()
 
 	// now shuffle route down in the buffer
 	routeLength = 0;
-	point;
 	do
 	{
 		route[routeLength].x = route[point].x;
@@ -2607,7 +2606,7 @@ void SwordRouter::BresenhamLine(int32 x1,int32 y1,int32 x2,int32 y2, uint8 *scre
 
 #define DIAGONALX 36
 #define DIAGONALY 8
-int SwordRouter::whatTarget(int32 startX, int32 startY, int32 destX, int32 destY) {
+int whatTarget(int32 startX, int32 startY, int32 destX, int32 destY) {
 	int tar_dir;
 //setting up
 	int deltaX = destX-startX;
