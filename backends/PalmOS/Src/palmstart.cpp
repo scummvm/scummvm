@@ -29,7 +29,8 @@
 #include "globals.h"
 #include "pa1lib.h"
 #include "scumm_globals.h"
-#include "extend.h"			// for disable state
+#include "extend.h"	// for disable state
+#include "stdio.h" // used in checkPath
 
 #include "mathlib.h"
 #include "vibrate.h"
@@ -2539,6 +2540,18 @@ typedef void (*sndStateOffType)(UInt8 /* kind */);
 #define aOutSndKindHp       (2) /* HeadPhone volume */
 ////////////////////////////////////////////////////////////
 #define MAX_ARG	20
+
+static Boolean checkPath(const Char *pathP) {
+	FileRef *tmpRef;
+
+	if (!(tmpRef = fopen(pathP, "r"))) {
+		return false;
+	} else {
+		fclose(tmpRef);
+		return true;
+	}
+}
+
 static void StartScummVM() {
 	Char *argvP[MAX_ARG];
 	UInt8 argc	= 0;
@@ -2564,24 +2577,20 @@ static void StartScummVM() {
 		recordH = DmQueryRecord(_dbP,index);
 		gameInfoP = (GameInfoType *)MemHandleLock(recordH);
 
-		// check path
+		// build path
 		StrCopy(pathP,"/Palm/Programs/ScummVM/Games/");
-		if (gameInfoP->pathP[0]=='/')
+		if (gameInfoP->pathP[0] == '/')
 			StrCopy(pathP,gameInfoP->pathP);
 		else
 			StrCat(pathP,gameInfoP->pathP);
-	/*	{
-			FileRef tmpRef;
-			// TODO : enable empty path -> /Palm/Programs/ScummVM/Games/ as default
-			if (VFSFileOpen(gPrefs->volRefNum, pathP, vfsModeRead, &tmpRef) != errNone) {
-				MemHandleUnlock(recordH);
-				FrmCustomAlert(FrmErrorAlert,"The specified path was not found !",0,0);
-				return;
-			} else {
-				VFSFileClose(tmpRef);
-			}
+		
+		// path exists ?
+		if (!checkPath(pathP)) {
+			MemHandleUnlock(recordH);
+			FrmCustomAlert(FrmErrorAlert,"The specified path was not found !",0,0);
+			return;
 		}
-	*/
+
 		AddArg(&argvP[argc], "ScummVM", NULL, &argc);
 
 		// save scummvm.ini ?
