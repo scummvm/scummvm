@@ -12,14 +12,27 @@
 #include "lstring.h"
 #include "lundump.h"
 
+#include <SDL_byteorder.h>
+
 #define	LoadBlock(b,size,Z)	ezread(Z,b,size)
 #define	LoadNative(t,Z)		LoadBlock(&t,sizeof(t),Z)
 
-#if ID_NUMBER=='F'
+#if (SDL_BYTEORDER == SDL_LIL_ENDIAN)
 	#define doLoadNumber(f,Z)	LoadNative(f,Z)
 #else
 	#define doLoadNumber(f,Z)	f=LoadNumber(Z)
 #endif
+
+
+static float conv_float(const char *data) {
+        const unsigned char *udata = (const unsigned char *)(data);
+        unsigned char fdata[4];
+        fdata[0] = udata[3];
+        fdata[1] = udata[2];
+        fdata[2] = udata[1];
+        fdata[3] = udata[0];
+        return *(const float *)(fdata);
+}
 
 static void unexpectedEOZ(ZIO* Z)
 {
@@ -59,9 +72,7 @@ static unsigned long LoadLong(ZIO* Z)
 static float LoadFloat(ZIO* Z)
 {
  unsigned long l=LoadLong(Z);
- float f;
- memcpy(&f,&l,sizeof(f));
- return f;
+ return conv_float((const char *)&l);
 }
 #endif
 
