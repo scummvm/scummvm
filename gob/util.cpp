@@ -329,8 +329,8 @@ void util_cutFromStr(char *str, int16 from, int16 cutlen) {
 
 int16 util_strstr(const char *str1, char *str2) {
 	char c;
-	int16 len1;
-	int16 i;
+	uint16 len1;
+	uint16 i;
 
 	log_write("util_strstr: str1 = %s, str2 = %s\n", str1, str2);
 
@@ -406,14 +406,14 @@ void util_deleteList(Util_List * list) {
 	free((char *)list);
 }
 
-char *util_str1 =
+char util_str1[] =
     "       '   + - :0123456789: <=>  abcdefghijklmnopqrstuvwxyz      abcdefghijklmnopqrstuvwxyz     ";
-char *util_str2 =
+char util_str2[] =
     " ueaaaaceeeiii     ooouu        aioun                                                           ";
-char *util_str3 = "                                ";
+char util_str3[] = "                                ";
 
 void util_prepareStr(char *str) {
-	int16 i;
+	uint16 i;
 	int16 j;
 	char buf[300];
 
