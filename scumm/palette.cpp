@@ -541,10 +541,6 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 
 		palptr = getPalettePtr(_curPalIndex);
 		for (j = startColor; j <= endColor; j++) {
-			// FIXME: Hack to fix Amiga palette adjustments
-			if ((_features & GF_AMIGA && _version == 5) && (j >= 16 && j < 81))
-				continue;
-
 			idx = (_heversion == 70) ? _HEV7ActorPalette[j] : j;
 			cptr = palptr + idx * 3;
 
