@@ -113,3 +113,30 @@ For Flac add --flac and optional parameters, i.e.
 %
 Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy this
 file to your game dir. You can safely remove the old file.
+
+
+\subsubsection{Compressing speech/music in Broken Sword 2}
+
+Use our sword2mp3 util rom the scummvm-tools package to perform this task.
+You can choose between multiple target formats, but note  that you can only use
+each if ScummVM was compiled with the respective decoder support enabled.
+
+\begin{verbatim}
+  sword2mp3 speech1.clu
+  sword2mp3 music1.clu
+\end{verbatim}
+%
+For Ogg Vorbis add --vorbis to the options, i.e.
+\begin{verbatim}
+  sword2mp3 --vorbis
+\end{verbatim}
+%
+Eventually you will have a much smaller *.cl3 or *.clg file, copy this file to
+your game dir. You can safely remove the old file.
+
+It is possible to use Flac compression by adding the --flac option. However,
+the resulting *.clf file will actually be larger than the original.
+
+Please note that sword2mp3 will only work with the four speech/music files in
+Broken Sword 2. It will not work with any of the other *.clu files, nor will it
+work with the speech files from Broken Sword 1.
