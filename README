@@ -668,8 +668,6 @@ Credits:
  The ScummVM team:
         James Brown          - Lead Developer
         Max Horn             - Lead Developer
-        Jeremy Newman        - Webmaster
-
         Robert Goeffringmann - Engine: Beneath a Steel Sky
         Jonathan Gray        - Engine: SCUMM
         Oliver Kiehl         - Engine: Beneath a Steel Sky, Simon
@@ -682,9 +680,10 @@ Credits:
         Travis Howell        - Port: Win32, Engine: Simon
         Peter Moraliyski     - Port: GP32
         Lionel Ulmer         - Port: X11
-
         Torbjorn Andersson   - Generic Bugfixer and Patch Submitter
         Jamieson Christian   - iMuse, MIDI, all things musical.
+        Jochen Hoenicke      - Speaker & PCjr sound support, Adlib work
+        Jeremy Newman        - Webmaster
 
  Retired Team Members:
         Ralph Brorsen        - Help with GUI Implementation
