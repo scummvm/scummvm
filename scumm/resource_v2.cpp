@@ -61,7 +61,12 @@ void Scumm_v2::readClassicIndexFile() {
 
 	for (i = 0; i < _numRooms; i++) {
 		res.roomno[rtRoom][i] = i;
-		_fileHandle.seek(_numRooms, SEEK_CUR);
+	}
+	_fileHandle.seek(_numRooms, SEEK_CUR);
+	for (i = 0; i < _numRooms; i++) {
+		res.roomoffs[rtRoom][i] = _fileHandle.readUint16LE();
+		if (res.roomoffs[rtRoom][i] == 0xFFFF)
+			res.roomoffs[rtRoom][i] = 0xFFFFFFFF;
 	}
 
 	for (i = 0; i < _numCostumes; i++) {
