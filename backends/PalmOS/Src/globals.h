@@ -25,7 +25,7 @@
 
 #include <VFSMgr.h>
 #include "scumm_globals.h"
-#include "arm/native.h"
+#include "arm/pnodefs.h"
 
 enum {
 	kOptNone				=	0,
@@ -63,6 +63,12 @@ enum {
 };
 
 typedef struct {
+	char headerBuffer[sizeof(PnoEntryHeader) + 2];
+	PnoEntryHeader *alignedHeader;
+	PnoDescriptor pnoDesc;
+} PNOInitType;
+
+typedef struct {
 	DmOpenRef globals[GBVARS_COUNT];
 	UInt32 memory[kMemGamesCount];
 
@@ -73,8 +79,6 @@ typedef struct {
 	UInt16 volRefNum;
 	UInt16 slkRefNum;
 	UInt32 slkVersion;
-	Boolean skinSet;
-	Boolean pinUpdate;
 
 	FileRef	logFile;
 
@@ -86,10 +90,7 @@ typedef struct {
 	Coord screenFullWidth, screenFullHeight;	// silkarea hidden
 	UInt32 screenPitch;
 
-	struct {
-		PnoDescriptor pnoDesc;
-		MemPtr pnoPtr;
-	} arm[PNO_COUNT];
+	PNOInitType arm[ARM_COUNT];
 
 	struct {
 		UInt8 on;

@@ -95,8 +95,8 @@ UInt32 CostumeRenderer_proc3(void *userData68KP) {
 			}
 			if (!--height) {
 				if (!--v1.skip_width)
-					return _scaleIndexX;
-					//goto end_jump;
+					//return _scaleIndexX;
+					goto end_jump;
 				height = _height;
 				y = v1.y;
 
@@ -106,8 +106,8 @@ UInt32 CostumeRenderer_proc3(void *userData68KP) {
 				if (_scaleX == 255 || v1.scaletable[_scaleIndexX] < _scaleX) {
 					v1.x += v1.scaleXstep;
 					if (v1.x < 0 || v1.x >= _out_w)
-						return _scaleIndexX;
-						//goto end_jump;
+						//return _scaleIndexX;
+						goto end_jump;
 					maskbit = revBitMask[v1.x & 7];
 					v1.destptr += v1.scaleXstep;
 				}
@@ -119,9 +119,9 @@ UInt32 CostumeRenderer_proc3(void *userData68KP) {
 		} while (--len);
 	} while (1);
 
-//end_jump:
+end_jump:
 //	v1comp->x		= ByteSwap32(v1.x);
 //	v1comp->destptr	= (byte *)ByteSwap32(v1.destptr);
 
-//	return _scaleIndexX;
+	return _scaleIndexX;
 }

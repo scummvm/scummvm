@@ -6,7 +6,7 @@
 
 #define memcpy MemMove
 
-void Display_blit(void *userData68KP) {
+UInt32 Display_blit(void *userData68KP) {
 // import variables
 	SETPTR	(uint8 *,		dstBuf		)
 	SETPTR	(const uint8 *,	srcBuf		)
@@ -47,4 +47,6 @@ void Display_blit(void *userData68KP) {
 			dstBuf += dstPitch;
 		}
 	}
+	
+	return 0;
 }
