@@ -598,9 +598,11 @@ MidiDriver *GameDetector::createMidi(int midiDriver) {
 	// if need be, and we only have to specify a native
 	// driver.
 	case MD_ADLIB:     return NULL;
+
 #ifdef USE_MT32EMU
 	case MD_MT32:      return MidiDriver_MT32_create(g_engine->_mixer);
 #endif
+
 	case MD_TOWNS:     return MidiDriver_YM2612_create(g_engine->_mixer);
 
 	// Right now PC Speaker and PCjr are handled
@@ -610,7 +612,9 @@ MidiDriver *GameDetector::createMidi(int midiDriver) {
 	case MD_PCJR:      return NULL;
 #if defined(__PALM_OS__)
 	case MD_YPA1:      return MidiDriver_YamahaPa1_create();
+#ifndef DISABLE_TAPWAVE
 	case MD_ZODIAC:    return MidiDriver_Zodiac_create();
+#endif
 #endif
 #if defined(WIN32) && !defined(_WIN32_WCE)
 	case MD_WINDOWS:   return MidiDriver_WIN_create();
