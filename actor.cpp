@@ -589,13 +589,13 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY, int pathfrom)
 			for (j = box; j >= firstValidBox; j--) {
 				flags = _vm->getBoxFlags(j);
 
-				if (flags & kBoxLocked && (!(flags & kBoxPlayerOnly)))
-					continue;
-
 				if (flags & kBoxInvisible && (!(flags & kBoxPlayerOnly) || isInClass(31)))
 					continue;
 				
 				if (pathfrom >= firstValidBox) {
+
+					if (flags & kBoxLocked && (!(flags & kBoxPlayerOnly)))
+						continue;
 
 					i = _vm->getPathToDestBox(pathfrom, j);
 					if (i == -1)
