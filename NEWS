@@ -20,6 +20,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Experimental third party VGA mode (SE-VGA) fix
    - Add Key Mapping option in the launcher (Options / Misc / Keys)
    - Remove AYGSHELL.DLL dependency to work on CE .Net platforms
+   - Fix key mapping issues introduced in 0.7.0
+   - Full Throttle interactive action sequences should be more playable.
 
  Sword2:
    - Fixed crash caused by attempting to play music from CD1 and CD2 at the
