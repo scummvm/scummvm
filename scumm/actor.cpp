@@ -1477,7 +1477,7 @@ void Actor::walkActorV12() {
 
 void Actor::walkActorOld() {
 	Common::Point p2, p3;	// Gate locations
-	int new_dir, next_box;
+	int new_dir, next_box, loopCtr = 0;
 
 	if (!moving)
 		return;
@@ -1515,6 +1515,7 @@ void Actor::walkActorOld() {
 
 	moving &= ~MF_NEW_LEG;
 	do {
+		loopCtr++;
 
 		if (walkbox == kInvalidBox) {
 			setBox(walkdata.destbox);
@@ -1572,6 +1573,13 @@ void Actor::walkActorOld() {
 			setBox(walkdata.destbox);
 		else
 			setBox(walkdata.curbox);
+
+		// FIXME: Ender added this recursion counter as a hack around
+		//        a infinite loop in Maniac V1 - see bug #862245
+		if (loopCtr > 10000) {
+			moving |= MF_LAST_LEG;
+			return;
+		}
 	} while (1);
 
 	moving |= MF_LAST_LEG;
