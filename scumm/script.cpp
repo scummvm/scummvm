@@ -789,13 +789,17 @@ void Scumm::killScriptsAndResources() {
 	ss = vm.slot;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 		if (ss->where == WIO_ROOM || ss->where == WIO_FLOBJECT) {
-			if (ss->cutsceneOverride != 0)
-				error("Object %d stopped with active cutscene/override in exit", ss->number);
+			if (ss->cutsceneOverride != 0) {
+				warning("Object %d stopped with active cutscene/override in exit", ss->number);
+				ss->cutsceneOverride = 0;
+			}
 			ss->status = ssDead;
 		} else if (ss->where == WIO_LOCAL) {
 			// HACK to make Indy3 Demo work
-			if (ss->cutsceneOverride != 0 && !(_gameId == GID_INDY3 && _roomResource == 3))
-				error("Script %d stopped with active cutscene/override in exit", ss->number);
+			if (ss->cutsceneOverride != 0 && !(_gameId == GID_INDY3 && _roomResource == 3)) {
+				warning("Script %d stopped with active cutscene/override in exit", ss->number);
+				ss->cutsceneOverride = 0;
+			}
 			ss->status = ssDead;
 		}
 	}

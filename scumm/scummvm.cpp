@@ -1751,25 +1751,35 @@ void Scumm::shutDown() {
 }
 
 void Scumm::restart() {
-	// TODO: implement restart
-	// To implement this, there are two approaches (at least):
-	// 1) Manually cleanup all vars, etc. and run the bootscript again
-	// 2) Use the savegame system
-	// For 2, we could modify the savegame system to allow us to "save" to a memory
-	// block. We then do that at the start of the game, just before invoking the 
-	// bootscript (or maybe just after launching it, whatever). Then to restart
-	// we simply load the state. Easy, hu? :-)
-	//
-	// For 1), we first have to clean up / restructure the current init code. Right now
-	// we have the code which inits the state spread over at least these functions:
-	// The constructor, launch, scummInit, readIndexFile
-	// Problem is, the init code is not very logically distributed over those.
-	// We should first clean this up... Code that sets up fixed state (e.g. gdi._vm = this)
-	// can be moved to either the constructor or maybe scummInit. Code that 
-	// might be useful for restart should be moved to a seperate function.
-	// Finally, all the init code in launch should go - launch should only contain
-	// a few function calls and not much else, iMHO.
-	error("Restart not implemented");
+// TODO: Check this function - we should probably be reinitting a lot more stuff, and I suspect
+//	 this leaks memory like a sieve
+
+	int i;
+
+	// Reset some stuff
+	_currentRoom = 0;
+	_currentScript = 0xFF;
+	killAllScriptsExceptCurrent();
+	setShake(0);
+	_sound->stopAllSounds();
+
+        // Empty variables
+	for (i=0;i<255;i++)
+		_scummVars[i] = 0;
+
+	// Empty inventory
+	for (i=0;i<_numGlobalObjects;i++)
+		clearOwnerOf(i);
+
+	// Reinit things
+	allocateArrays();                   // Reallocate arrays
+	readIndexFile();                    // Reread index (reset objectstate etc)
+	createResource(rtTemp, 6, 500);     // Create temp buffer
+	initScummVars();                    // Reinit scumm variables
+	_sound->setupSound();               // Reinit sound engine
+
+	// Re-run bootscript
+	runScript(1, 0, 0, &_bootParam);
 }
 
 void Scumm::processKbd() {
