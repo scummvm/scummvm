@@ -86,7 +86,9 @@ struct PathVertex {		/* Linked list of walkpath nodes */
 #define BOX_MATRIX_SIZE 2000
 
 
-PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node);
+static bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3);
+static ScummVM::Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
+static PathVertex *unkMatrixProc1(PathVertex *vtx, PathNode *node);
 
 
 byte Scumm::getMaskFromBox(int box) {
@@ -397,7 +399,12 @@ uint Scumm::distanceFromPt(int x, int y, int ptx, int pty) {
 	return diffx + diffy;
 }
 
-ScummVM::Point Scumm::closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y) {
+
+bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3) {
+	return (Y2 - Y1) * (X3 - X1) <= (Y3 - Y1) * (X2 - X1);
+}
+
+ScummVM::Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y) {
 	int lydiff, lxdiff;
 	int32 dist, a, b, c;
 	int x2, y2;
@@ -611,7 +618,7 @@ int Scumm::getPathToDestBox(byte from, byte to) {
  * Computes the next point actor a has to walk towards in a straight
  * line in order to get from box1 to box3 via box2.
  */
-bool Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr, int16 &foundPathX, int16 &foundPathY) {
+bool Actor::findPathTowards(byte box1nr, byte box2nr, byte box3nr, int16 &foundPathX, int16 &foundPathY) {
 	BoxCoords box1;
 	BoxCoords box2;
 	ScummVM::Point tmp;
@@ -619,8 +626,8 @@ bool Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr, int
 	int flag;
 	int q, pos;
 
-	getBoxCoordinates(box1nr, &box1);
-	getBoxCoordinates(box2nr, &box2);
+	_vm->getBoxCoordinates(box1nr, &box1);
+	_vm->getBoxCoordinates(box2nr, &box2);
 
 	for (i = 0; i < 4; i++) {
 		for (j = 0; j < 4; j++) {
@@ -644,11 +651,11 @@ bool Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr, int
 					if (flag & 2)
 						SWAP(box2.ul.y, box2.ur.y);
 				} else {
-					pos = a->y;
+					pos = y;
 					if (box2nr == box3nr) {
-						int diffX = a->walkdata.destx - a->x;
-						int diffY = a->walkdata.desty - a->y;
-						int boxDiffX = box1.ul.x - a->x;
+						int diffX = walkdata.destx - x;
+						int diffY = walkdata.desty - y;
+						int boxDiffX = box1.ul.x - x;
 
 						if (diffX != 0) {
 							int t;
@@ -658,7 +665,7 @@ bool Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr, int
 							if (t == 0 && (diffY <= 0 || diffX <= 0)
 									&& (diffY >= 0 || diffX >= 0))
 								t = -1;
-							pos = a->y + t;
+							pos = y + t;
 						}
 					}
 
@@ -701,16 +708,16 @@ bool Scumm::findPathTowards(Actor *a, byte box1nr, byte box2nr, byte box3nr, int
 				} else {
 
 					if (box2nr == box3nr) {
-						int diffX = a->walkdata.destx - a->x;
-						int diffY = a->walkdata.desty - a->y;
-						int boxDiffY = box1.ul.y - a->y;
+						int diffX = walkdata.destx - x;
+						int diffY = walkdata.desty - y;
+						int boxDiffY = box1.ul.y - y;
 
-						pos = a->x;
+						pos = x;
 						if (diffY != 0) {
 							pos += diffX * boxDiffY / diffY;
 						}
 					} else {
-						pos = a->x;
+						pos = x;
 					}
 
 					q = pos;
@@ -1053,24 +1060,24 @@ PathVertex *Scumm::addPathVertex() {
 	return (PathVertex *)addToBoxVertexHeap(sizeof(PathVertex));
 }
 
-void Scumm::findPathTowardsOld(Actor *actor, byte trap1, byte trap2, byte final_trap, ScummVM::Point gateLoc[5]) {
+void Actor::findPathTowardsOld(byte trap1, byte trap2, byte final_trap, ScummVM::Point gateLoc[5]) {
 	ScummVM::Point pt;
 	ScummVM::Point gateA[2];
 	ScummVM::Point gateB[2];
 
-	getGates(trap1, trap2, gateA, gateB);
+	_vm->getGates(trap1, trap2, gateA, gateB);
 
-	gateLoc[1].x = actor->x;
-	gateLoc[1].y = actor->y;
+	gateLoc[1].x = x;
+	gateLoc[1].y = y;
 	gateLoc[2].x = 32000;
 	gateLoc[3].x = 32000;
 	gateLoc[4].x = 32000;
 
 	if (trap2 == final_trap) {		/* next = final box? */
-		gateLoc[4].x = actor->walkdata.destx;
-		gateLoc[4].y = actor->walkdata.desty;
+		gateLoc[4].x = walkdata.destx;
+		gateLoc[4].y = walkdata.desty;
 
-		if (getMaskFromBox(trap1) == getMaskFromBox(trap2) || 1) {
+		if (_vm->getMaskFromBox(trap1) == _vm->getMaskFromBox(trap2) || 1) {
 			if (compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gateA[0].x, gateA[0].y) !=
 					compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gateB[0].x, gateB[0].y) &&
 					compareSlope(gateLoc[1].x, gateLoc[1].y, gateLoc[4].x, gateLoc[4].y, gateA[1].x, gateA[1].y) !=
@@ -1200,6 +1207,3 @@ void Scumm::getGates(int trap1, int trap2, ScummVM::Point gateA[2], ScummVM::Poi
 	}
 }
 
-bool Scumm::compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3) {
-	return (Y2 - Y1) * (X3 - X1) <= (Y3 - Y1) * (X2 - X1);
-}

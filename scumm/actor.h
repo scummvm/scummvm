@@ -67,6 +67,8 @@ struct CostumeData {
 	}
 };
 
+class SaveLoadEntry;
+
 class Actor {
 
 public:
@@ -102,12 +104,13 @@ public:
 	uint16 talk_script, walk_script;
 	bool ignoreTurns;	// TODO - we do not honor this flag at all currently!
 	int8 layer;
-	ActorWalkData walkdata;
-	int16 animVariable[16];
 	uint16 sound[8];
 	CostumeData cost;
 	byte palette[256];
 protected:
+	ActorWalkData walkdata;
+	int16 animVariable[16];
+
 	static Scumm *_vm;
 
 public:
@@ -173,17 +176,17 @@ public:
 
 	void animateActor(int anim);
 
-	bool isInCurrentRoom() {
+	bool isInCurrentRoom() const {
 		return room == _vm->_currentRoom;
 	}
 	
-	int getActorXYPos(int &x, int &y);
+	int getActorXYPos(int &x, int &y) const ;
 
-	int getRoom() {
+	int getRoom() const {
 		return room;
 	}
 
-	int getAnimVar(byte var) {
+	int getAnimVar(byte var) const {
 		return animVariable[var];
 	}
 	void setAnimVar(byte var, int value) {
@@ -192,10 +195,16 @@ public:
 	
 	void classChanged(int cls, bool value);
 	
+	// Used by the save/load syste:
+	static const SaveLoadEntry *getSaveLoadEntries();
+	
 protected:
 	bool isInClass(int cls);
 	
 	bool isPlayer();
+
+	bool findPathTowards(byte box, byte box2, byte box3, int16 &foundPathX, int16 &foundPathY);
+	void findPathTowardsOld(byte box, byte box2, byte box3, ScummVM::Point gateLoc[5]);
 };
 
 #endif

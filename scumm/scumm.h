@@ -993,8 +993,6 @@ public:
 	byte getNumBoxes();
 	byte *getBoxMatrixBaseAddr();
 	int getPathToDestBox(byte from, byte to);
-	bool findPathTowards(Actor *a, byte box, byte box2, byte box3, int16 &foundPathX, int16 &foundPathY);
-	void findPathTowardsOld(Actor *a, byte box, byte box2, byte box3, ScummVM::Point gateLoc[5]);
 	void getGates(int trap1, int trap2, ScummVM::Point gateA[2], ScummVM::Point gateB[2]);
 	bool inBoxQuickReject(int box, int x, int y, int threshold);
 	AdjustBoxResult getClosestPtOnBox(int box, int x, int y);
@@ -1005,7 +1003,6 @@ public:
 
 	bool checkXYInBoxBounds(int box, int x, int y);
 	uint distanceFromPt(int x, int y, int ptx, int pty);
-	ScummVM::Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
 	void getBoxCoordinates(int boxnum, BoxCoords *bc);
 	byte getMaskFromBox(int box);
 	Box *getBoxBaseAddr(int box);
@@ -1027,7 +1024,6 @@ protected:
 
 	void createBoxMatrix();
 	void addToBoxMatrix(byte b);
-	bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3);
 	PathNode *unkMatrixProc2(PathVertex *vtx, int i);
 	void *addToBoxVertexHeap(int size);
 	PathVertex *addPathVertex();
