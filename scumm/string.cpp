@@ -434,7 +434,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	}
 
 	for (i = 0; (c = buf[i++]) != 0;) {
-		if (c == code) {
+		if (_heversion >= 72 && c == code) {
 			c = buf[i++];
 			switch (c) {
 			case 110:
