@@ -482,7 +482,7 @@ void ScummEngine::initBGBuffers(int height) {
 	}
 
 	if (_heversion >= 70)
-		room = getResourceAddress(rtRoomStart, _roomResource);
+		room = getResourceAddress(rtRoomImage, _roomResource);
 	else
 		room = getResourceAddress(rtRoom, _roomResource);
 
@@ -550,7 +550,7 @@ void ScummEngine::redrawBGAreas() {
 	val = 0;
 
 	if (_heversion >= 70) {
-		byte *room = getResourceAddress(rtRoomStart, _roomResource) + _IM00_offs;
+		byte *room = getResourceAddress(rtRoomImage, _roomResource) + _IM00_offs;
 		if (findResource(MKID('BMAP'), room) != NULL) {
 			if (_fullRedraw) {
 				_BgNeedsRedraw = 0;
@@ -614,7 +614,7 @@ void ScummEngine::redrawBGStrip(int start, int num) {
 		gdi._C64ObjectMode = false;
 	}
 	if (_heversion >= 70)
-		room = getResourceAddress(rtRoomStart, _roomResource);
+		room = getResourceAddress(rtRoomImage, _roomResource);
 	else
 		room = getResourceAddress(rtRoom, _roomResource);
 

@@ -212,10 +212,9 @@ enum ResTypes {
 	rtBox = 15,
 	rtObjectName = 16,
 	rtRoomScripts = 17,
-	rtRoomStart = 17,
-	rtLast = 17,
 	rtRoomImage = 18,
 	rtImage = 19,
+	rtLast = 19,
 	rtNumTypes = 20
 };
 

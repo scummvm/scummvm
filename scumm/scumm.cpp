@@ -2377,7 +2377,7 @@ void ScummEngine::initRoomSubBlocks() {
 	// Determine the room and room script base address
 	roomResPtr = roomptr = getResourceAddress(rtRoom, _roomResource);
 	if (_heversion >= 70)
-		roomStartPtr = getResourceAddress(rtRoomStart, _roomResource);
+		roomStartPtr = getResourceAddress(rtRoomImage, _roomResource);
 	else if (_version == 8)
 		roomResPtr = getResourceAddress(rtRoomScripts, _roomResource);
 	if (!roomptr || !roomResPtr)
