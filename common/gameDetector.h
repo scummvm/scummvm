@@ -69,9 +69,6 @@ enum GameId {
 enum GameFeatures {
 	// SCUMM features
 	GF_NEW_OPCODES         = 1 << 0,
-	GF_AFTER_V6            = 1 << 1,
-	GF_AFTER_V7            = 1 << 2,
-	GF_AFTER_V8            = 1 << 3,
 	GF_USE_KEY             = 1 << 4,
 	GF_DRAWOBJ_OTHER_ORDER = 1 << 5,
 	GF_SMALL_HEADER        = 1 << 6,
@@ -86,11 +83,6 @@ enum GameFeatures {
 	GF_HUMONGOUS           = 1 << 15,
 	GF_NEW_COSTUMES        = 1 << 16,
 	GF_DEFAULT_TO_1X_SCALER = 1 << 17,
-	GF_AFTER_V1            = 1 << 18,
-	GF_AFTER_V2            = 1 << 19,
-	GF_AFTER_V3            = 1 << 20,
-	GF_AFTER_V4            = 1 << 21,
-	GF_AFTER_V5            = 1 << 22,
 	GF_AFTER_HEV7          = 1 << 23,
 
 	GF_NEW_CAMERA          = 1 << 24,
