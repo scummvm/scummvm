@@ -24,17 +24,15 @@
 #define SOUND_MIXER_H
 
 #include "stdafx.h"
-#if defined(HAVE_CONFIG_H)
-#include "config.h"
-#endif
+#include "common/scummsys.h"
+#include "common/system.h"
+
 #ifdef USE_MAD
 #include <mad.h>
 #endif
 #ifdef USE_VORBIS
 #include <vorbis/vorbisfile.h>
 #endif
-#include "common/scummsys.h"
-#include "common/system.h"
 
 
 typedef uint32 PlayingSoundHandle;
