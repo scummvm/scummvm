@@ -579,6 +579,7 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 		if (soundHandle->compressedStream->endOfData()) {
 			delete soundHandle->compressedStream;
 			soundHandle->compressedStream = NULL;
+			soundHandle->lastFileName[0] = 0;
 		}
 	}
 
