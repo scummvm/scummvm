@@ -2661,7 +2661,25 @@ void Scumm::swapPalColors(int a, int b)
 	ap[2] = bp[2];
 	bp[2] = t;
 
-	setDirtyColors(a, b);
+	setDirtyColors(a, a);
+	setDirtyColors(b, b);
+}
+
+void Scumm::copyPalColor(int dst, int src)
+{
+	byte *dp, *sp;
+
+	if ((uint) dst >= 256 || (uint) src >= 256)
+		error("copyPalColor: invalid values, %d, %d", dst, src);
+
+	dp = &_currentPalette[dst * 3];
+	sp = &_currentPalette[src * 3];
+
+	dp[0] = sp[0];
+	dp[1] = sp[1];
+	dp[2] = sp[2];
+
+	setDirtyColors(dst, dst);
 }
 
 void Gdi::resetBackground(int top, int bottom, int strip)

@@ -800,6 +800,7 @@ public:
 	void setDirtyColors(int min, int max);
 	byte *findPalInPals(byte *pal, int index);
 	void swapPalColors(int a, int b);
+	void copyPalColor(int dst, int src);
 	void cyclePalette();
 	void stopCycle(int i);
 	void palManipulateInit(int start, int end, int string_id, int time);

@@ -2908,7 +2908,7 @@ void Scumm::o6_miscOps()
 			break;
 
 		case 123:
-			swapPalColors(args[1], args[2]);
+			copyPalColor(args[2], args[1]);
 			break;
 
 		case 124:									/* samnmax */
@@ -2932,9 +2932,16 @@ void Scumm::o6_kernelFunction()
 
 	switch (args[0]) {
 	case 113:
-		// Do something to [1] x [2] (x/y)
-		warning("o6_kernelFunction: stub113(%d,%d)", args[1], args[2]);
-		push(0);
+		// This is used for the Sam & Max paint-by-numbers mini-game
+		// to find out what color to change. I think that what we have
+		// the virtual mouse coordinates, because that's what used
+		// everywhere else in the script.
+
+		if (args[1] != -1 && args[2] != -1) {
+			VirtScreen *vs = &virtscr[0];
+			push(vs->screenPtr[args[1] + args[2] * vs->width]);
+		} else
+			push(0);
 		break;
 	case 115:
 		push(getSpecialBox(args[1], args[2]));
