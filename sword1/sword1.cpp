@@ -563,6 +563,118 @@ void SwordEngine::startPositions(int32 startNumber) {
 
 		SwordLogic::_scriptVars[TAILOR_PHONE_FLAG] = 1;
 	}
+	//-------------------------------------------------------------------------------------------------------
+	// IRELAND
+	else if ((startNumber>=19)&&(startNumber<=26))
+	{
+		SwordLogic::_scriptVars[PARIS_FLAG] = 9;
+
+		// already carrying these objects by the time we reach Ireland...
+		_logic->fnAddObject(0,0,RED_NOSE,0,0,0,0,0);
+		_logic->fnAddObject(0,0,PHOTOGRAPH,0,0,0,0,0);
+		_logic->fnAddObject(0,0,LAB_PASS,0,0,0,0,0);
+		_logic->fnAddObject(0,0,LIFTING_KEYS,0,0,0,0,0);
+		_logic->fnAddObject(0,0,MATCHBOOK,0,0,0,0,0);
+		_logic->fnAddObject(0,0,BUZZER,0,0,0,0,0);
+		_logic->fnAddObject(0,0,TISSUE,0,0,0,0,0);
+
+		switch (startNumber)
+		{
+			//---------------------------
+			case 19:	// ireland_street
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 256;
+				SwordLogic::_scriptVars[CHANGE_Y] = 966;
+				SwordLogic::_scriptVars[CHANGE_DIR] = UP_RIGHT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_19;
+			}
+			break;
+			//---------------------------
+			case 20:	// macdevitts
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 194;
+				SwordLogic::_scriptVars[CHANGE_Y] = 417;
+				SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_RIGHT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_20;
+
+				SwordLogic::_scriptVars[FARMER_MOVED_FLAG] = 1;
+				SwordLogic::_scriptVars[FARMER_SEAN_FLAG] = 5;
+
+				SwordLogic::_scriptVars[PUB_FLAP_FLAG] = 1;
+				SwordLogic::_scriptVars[PUB_TRAP_DOOR] = 2;
+				SwordLogic::_scriptVars[KNOWS_PEAGRAM_FLAG] = 1;
+			}
+			break;
+			//---------------------------
+			case 21:	// pub_cellar
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 291;
+				SwordLogic::_scriptVars[CHANGE_Y] = 444;
+				SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_RIGHT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_21;
+
+				_logic->fnAddObject(0,0,BEER_TOWEL,0,0,0,0,0);
+				
+				SwordLogic::_scriptVars[FARMER_MOVED_FLAG] = 1;
+				SwordLogic::_scriptVars[FLEECY_STUCK] = 1;
+				SwordLogic::_scriptVars[LIFTING_KEYS_IN_HOLE_23] = 1;
+			}
+			break;
+			//---------------------------
+			case 22:	// castle_gate
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 547;
+				SwordLogic::_scriptVars[CHANGE_Y] = 500;
+				SwordLogic::_scriptVars[CHANGE_DIR] = UP_LEFT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_22;
+
+				SwordLogic::_scriptVars[IRELAND_FLAG] = 4;	// so we can get rid of farmer
+			}
+			break;
+			//---------------------------
+			case 23:	// castle_hay_top
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 535;
+				SwordLogic::_scriptVars[CHANGE_Y] = 510;
+				SwordLogic::_scriptVars[CHANGE_DIR] = UP;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_23;
+			}
+			break;
+			//---------------------------
+			case 24:	// castle_yard
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 815;
+				SwordLogic::_scriptVars[CHANGE_Y] = 446;
+				SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_LEFT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_24;
+			}
+			break;
+			//---------------------------
+			case 25:	// castle_dig
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 369;
+				SwordLogic::_scriptVars[CHANGE_Y] = 492;
+				SwordLogic::_scriptVars[CHANGE_DIR] = LEFT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_25;
+
+				_logic->fnAddObject(0,0,BEER_TOWEL,0,0,0,0,0);
+
+				SwordLogic::_scriptVars[BEER_TOWEL_BEEN_WET] = 1;
+				SwordLogic::_scriptVars[WET_BEER_TOWEL_TIMER] = 1000;
+			}
+			break;
+			//---------------------------
+			case 26:	// cellar_dark
+			{
+				SwordLogic::_scriptVars[CHANGE_X] = 291;
+				SwordLogic::_scriptVars[CHANGE_Y] = 444;
+				SwordLogic::_scriptVars[CHANGE_DIR] = DOWN_RIGHT;
+				SwordLogic::_scriptVars[CHANGE_PLACE] = FLOOR_26;
+			}
+			break;
+			//---------------------------
+		}
+	}
 	else
 	{
 		error("Can't start in location %d", startNumber);

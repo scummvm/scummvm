@@ -163,6 +163,9 @@ enum Language {
 #define PLASTER 23
 #define POLISHED_CHALICE 8
 #define CHALICE 31
+#define MATCHBOOK 20
+#define BUZZER 26
+#define BEER_TOWEL 3
 
 #define FLOOR_1 65536
 #define FLOOR_2 131072
