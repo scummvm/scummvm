@@ -166,13 +166,13 @@ static GameFileDescription IHNMCD_GameFiles[] = {
 	{"patch.re_", GAME_PATCHFILE},
 	{"scripts.res", GAME_SCRIPTFILE},
 	{"sfx.res", GAME_SOUNDFILE},
+	{"voicess.res", GAME_VOICEFILE},
 	{"voices1.res", GAME_VOICEFILE},
 	{"voices2.res", GAME_VOICEFILE},
 	{"voices3.res", GAME_VOICEFILE},
 	{"voices4.res", GAME_VOICEFILE},
 	{"voices5.res", GAME_VOICEFILE},
-	{"voices6.res", GAME_VOICEFILE},
-	{"voicess.res", GAME_VOICEFILE}
+	{"voices6.res", GAME_VOICEFILE}
 };
 
 // I Have No Mouth and I Must Scream - Retail German CD version
@@ -183,12 +183,12 @@ static GameFileDescription IHNMCDDE_GameFiles[] = {
 	{"scripts.res", GAME_SCRIPTFILE},
 	{"patch.re_", GAME_PATCHFILE},
 	{"sfx.res", GAME_SOUNDFILE},
+	{"voicess.res", GAME_VOICEFILE},
 	{"voices1.res", GAME_VOICEFILE},
 	{"voices2.res", GAME_VOICEFILE},
 	{"voices3.res", GAME_VOICEFILE},
 	{"voices5.res", GAME_VOICEFILE},
-	{"voices6.res", GAME_VOICEFILE},
-	{"voicess.res", GAME_VOICEFILE}
+	{"voices6.res", GAME_VOICEFILE}
 };
 
 static GameFontDescription IHNMCD_GameFonts[] = {
