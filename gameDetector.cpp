@@ -197,7 +197,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 			case 'm':
 				HANDLE_OPTION();
 				_music_volume = atoi(option);
-				scummcfg->set("music_volume", _music_volume, "scummvm");
+				scummcfg->set("music_volume", _music_volume);
 				break;
 			case 'n':
 				CHECK_OPTION();
@@ -217,7 +217,7 @@ void GameDetector::parseCommandLine(int argc, char **argv)
 			case 's':
 				HANDLE_OPTION();
 				_sfx_volume = atoi(option);
-				scummcfg->set("sfx_volume", _sfx_volume, "scummvm");
+				scummcfg->set("sfx_volume", _sfx_volume);
 				break;
 			case 't':
 				HANDLE_OPTION();
