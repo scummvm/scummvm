@@ -1227,12 +1227,12 @@ void Cutaway::run(char *nextFilename) {
 		// function CUTAWAY_SPECIAL(), lines 885-896 in cutaway.c
 		if (_logic->currentRoom() == 1 && _logic->gameState(3) == 0) {
 			// XXX hard-coded room and inventory items
-			_logic->inventoryDeleteItem(54, false);
-			_logic->inventoryDeleteItem(56, false);
-			_logic->inventoryDeleteItem(58, false);
-			_logic->inventoryDeleteItem(59, false);
-			_logic->inventoryDeleteItem(60, false);
-			_logic->inventoryDeleteItem(61, false);
+			_logic->inventoryDeleteItem(ITEM_CROWBAR, false);
+			_logic->inventoryDeleteItem(ITEM_DRESS, false);
+			_logic->inventoryDeleteItem(ITEM_CLOTHES, false);
+			_logic->inventoryDeleteItem(ITEM_HAY, false);
+			_logic->inventoryDeleteItem(ITEM_OIL, false);
+			_logic->inventoryDeleteItem(ITEM_CHICKEN, false);
 			_logic->gameState(3, 1);
 			_logic->inventoryRefresh();
 		}

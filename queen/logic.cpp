@@ -1768,7 +1768,7 @@ void Logic::joeUseDress(bool showCut) {
 		joeFace();
 		if (gameState(VAR_DRESSING_MODE) == 0) {
 			playCutaway("cdres.CUT");
-			inventoryInsertItem(58);
+			inventoryInsertItem(ITEM_CLOTHES);
 		}
 		else {
 			playCutaway("cudrs.CUT");
@@ -1776,7 +1776,7 @@ void Logic::joeUseDress(bool showCut) {
 	}
 	_display->palSetJoe(JP_DRESS);
 	joeSetupFromBanks("JoeD_A.BBK", "JoeD_B.BBK");
-	inventoryDeleteItem(56);
+	inventoryDeleteItem(ITEM_DRESS);
 	gameState(VAR_DRESSING_MODE, 2);
 }
 
@@ -1787,11 +1787,11 @@ void Logic::joeUseClothes(bool showCut) {
 		joeFacing(DIR_FRONT);
 		joeFace();
 		playCutaway("cdclo.CUT");
-		inventoryInsertItem(56);
+		inventoryInsertItem(ITEM_DRESS);
 	}
 	_display->palSetJoe(JP_CLOTHES);
 	joeSetupFromBanks("Joe_A.BBK", "Joe_B.BBK");
-	inventoryDeleteItem(58);
+	inventoryDeleteItem(ITEM_CLOTHES);
 	gameState(VAR_DRESSING_MODE, 0);
 }
 
@@ -1904,8 +1904,8 @@ uint16 Logic::findInventoryItem(int invSlot) const {
 void Logic::inventorySetup() {
 	
 	_graphics->bankLoad("objects.BBK", 14);
-	_inventoryItem[0] = 1; // Bat
-	_inventoryItem[1] = _resource->isDemo() ? 7 : 2; // Journal
+	_inventoryItem[0] = ITEM_BAT;
+	_inventoryItem[1] = _resource->isDemo() ? ITEM_JOURNAL_DEMO : ITEM_JOURNAL;
 	_inventoryItem[2] = 0;
 	_inventoryItem[3] = 0;
 }
