@@ -42,6 +42,7 @@ public:
 	int open();
 	void close();
 	void send(uint32 b);
+	void sysEx(byte *msg, uint16 length);
 
 private:
 	AudioUnit au_MusicDevice;
@@ -112,6 +113,11 @@ void MidiDriver_CORE::send(uint32 b)
 #endif
 
 	MusicDeviceMIDIEvent(au_MusicDevice, status_byte, first_byte, seccond_byte, 0);
+}
+
+void MidiDriver_CORE::sysEx(byte *msg, uint16 length)
+{
+	MusicDeviceSysEx(au_MusicDevice, msg, length);
 }
 
 MidiDriver *MidiDriver_CORE_create()
