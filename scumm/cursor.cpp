@@ -236,6 +236,8 @@ void ScummEngine::decompressDefaultCursor(int idx) {
 		byte *hotspot = _grabbedCursor + _cursor.hotspotY * _cursor.width + _cursor.hotspotX;
 
 		// Crosshair, slightly assymetric
+		// TODO: Instead of setting this up via code, we should simply extend
+		//       default_cursor_images to contain this shape.
 
 		for (i = 0; i < 7; i++) {
 			*(hotspot - 5 - i) = color;
