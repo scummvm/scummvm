@@ -1758,7 +1758,7 @@ void CharsetRendererNES::printChar(int chr) {
 	if (chr == '@')
 		return;
 
-	charPtr = _vm->_NESPatTable + _trTable[chr - 32] * 16;
+	charPtr = _vm->_NESPatTable[1] + _trTable[chr - 32] * 16;
 	width = getCharWidth(chr);
 	height = 8;
 
@@ -1766,6 +1766,7 @@ void CharsetRendererNES::printChar(int chr) {
 	origHeight = height;
 
 	if (_firstChar) {
+		_left += 16;
 		_str.left = _left;
 		_str.top = _top;
 		_str.right = _left;
@@ -1809,7 +1810,7 @@ void CharsetRendererNES::drawChar(int chr, const Graphics::Surface &s, int x, in
 	byte *charPtr, *dst;
 	int width, height;
 
-	charPtr = _vm->_NESPatTable + _trTable[chr - 32] * 16;
+	charPtr = _vm->_NESPatTable[1] + _trTable[chr - 32] * 16;
 	width = getCharWidth(chr);
 	height = 8;
 
@@ -1822,7 +1823,7 @@ void CharsetRendererNES::drawBits1(const Graphics::Surface &s, byte *dst, const 
 		byte c0 = src[i];
 		byte c1 = src[i + 8];
 		for (int j = 0; j < 8; j++)
-			dst[j] = _vm->_NESPalette[((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) |
+			dst[j] = _vm->_NESPalette[0][((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) |
 			(_color ? 12 : 8)];
 		dst += s.pitch;
 	}

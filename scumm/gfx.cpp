@@ -171,7 +171,7 @@ static const TransitionEffect transitionEffects[6] = {
 
 	// Horizontal wipe (a box expands from left to right side). For MM NES
 	{
-		14,		// Number of iterations
+		16,		// Number of iterations
 		{
 			  2,  0,  2,  0,
 			  2,  0,  2,  0,
@@ -326,7 +326,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int number, int top, int
 
 	createResource(rtBuffer, slot + 1, size);
 	vs->pixels = getResourceAddress(rtBuffer, slot + 1);
-	memset(vs->pixels, 0, size);			// reset background
+	memset(vs->pixels, 0, size);	// reset background
 
 	if (twobufs) {
 		vs->backBuf = createResource(rtBuffer, slot + 5, size);
@@ -544,7 +544,17 @@ void Gdi::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int botto
 			Common::kHercW, x + (Common::kHercW - _vm->_screenWidth * 2) / 2, y, width, height);
 	} else {
 		// Finally blit the whole thing to the screen
-		_vm->_system->copyRectToScreen(_compositeBuf + x + y * _vm->_screenWidth, _vm->_screenWidth, x, y, width, height);
+		int x1 = x;
+
+		// HACK: This is dirty hack which renders narrow NES rooms centered
+		// NES can address negative number sprites and that poses problem for
+		// our code. So instead adding zillions of fixes and potentially break
+		// other games we shift it right on rendering stage
+		if (_vm->_features & GF_NES && _vm->_NESStartStrip > 0 && vs->number == kMainVirtScreen) {
+			x += _vm->_NESStartStrip * 8;
+		}
+
+		_vm->_system->copyRectToScreen(_compositeBuf + x1 + y * _vm->_screenWidth, _vm->_screenWidth, x, y, width, height);
 	}
 }
 
@@ -878,16 +888,12 @@ void CharsetRenderer::restoreCharsetBg() {
 			}
 		} else {
 			// Clear area
-			if (_vm->_features & GF_NES)
-				memset(screenBuf, 0x1d, vs->h * vs->pitch);
-			else
-				memset(screenBuf, 0, vs->h * vs->pitch);
+			memset(screenBuf, 0, vs->h * vs->pitch);
 		}
 
 		if (vs->hasTwoBuffers) {
 			// Clean out the charset mask
-			memset(_vm->gdi._textSurface.pixels, (_vm->_features & GF_NES) ? 0x1d : 
-				   CHARSET_MASK_TRANSPARENCY, _vm->gdi._textSurface.pitch * _vm->gdi._textSurface.h);
+			memset(_vm->gdi._textSurface.pixels, CHARSET_MASK_TRANSPARENCY, _vm->gdi._textSurface.pitch * _vm->gdi._textSurface.h);
 		}
 	}
 }
@@ -1371,6 +1377,9 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		sx = 0;
 	}
 
+	//if (_vm->_NESStartStrip > 0)
+	//	stripnr -= _vm->_NESStartStrip;
+
 	// FIXME Still not been calculated correctly
 	while (numstrip > 0 && sx < _numStrips && x * 8 < MAX(_vm->_roomWidth, (int) vs->w)) {
 		CHECK_HEAP;
@@ -1833,7 +1842,7 @@ void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) const {
 void decodeNESTileData(const byte *src, byte *dest) {
 	int len = READ_LE_UINT16(src);	src += 2;
 	const byte *end = src + len;
-	/* int numtiles = */ *src++;
+	src++;	// skip number-of-tiles byte, assume it is correct
 	while (src < end) {
 		byte data = *src++;
 		for (int j = 0; j < (data & 0x7F); j++)
@@ -1846,7 +1855,33 @@ void decodeNESTileData(const byte *src, byte *dest) {
 void ScummEngine::decodeNESBaseTiles() {
 	byte *basetiles = getResourceAddress(rtCostume, 37);
 	_NESBaseTiles = basetiles[2];
-	decodeNESTileData(basetiles, _NESPatTable);
+	decodeNESTileData(basetiles, _NESPatTable[1]);
+}
+
+static const int v1MMNEScostTables[2][6] = {
+     /* desc lens offs data  gfx  pal */
+	{ 25,  27,  29,  31,  33,  35},
+	{ 26,  28,  30,  32,  34,  36}
+};
+void ScummEngine::NES_loadCostumeSet(int n) {
+	int i;
+	_NESCostumeSet = n;
+
+	_NEScostdesc = getResourceAddress(rtCostume, v1MMNEScostTables[n][0]) + 2;
+	_NEScostlens = getResourceAddress(rtCostume, v1MMNEScostTables[n][1]) + 2;
+	_NEScostoffs = getResourceAddress(rtCostume, v1MMNEScostTables[n][2]) + 2;
+	_NEScostdata = getResourceAddress(rtCostume, v1MMNEScostTables[n][3]) + 2;
+	decodeNESTileData(getResourceAddress(rtCostume, v1MMNEScostTables[n][4]), _NESPatTable[0]);
+	byte *palette = getResourceAddress(rtCostume, v1MMNEScostTables[n][5]) + 2;
+	for (i = 0; i < 16; i++) {
+		byte c = *palette++;
+		//if (c == 0x1D)	// HACK - switch around colors 0x00 and 0x1D
+		//	c = 0;		// so we don't need a zillion extra checks
+		//else if (c == 0)// for determining the proper background color
+		//	c = 0x1D;
+		_NESPalette[1][i] = c;
+	}
+
 }
 
 void Gdi::decodeNESGfx(const byte *room) {
@@ -1856,9 +1891,26 @@ void Gdi::decodeNESGfx(const byte *room) {
 	// int height = READ_LE_UINT16(room + 0x06);
 	int i, j, n;
 
-	decodeNESTileData(_vm->getResourceAddress(rtCostume, 37 + tileset), _vm->_NESPatTable + _vm->_NESBaseTiles * 16);
-	for (i = 0; i < 16; i++)
-		_vm->_NESPalette[i] = *gdata++;
+	// We have narrow room. so expand it
+	if (width < 32) {
+		_vm->_NESStartStrip = (32 - width) >> 1;
+	} else {
+		_vm->_NESStartStrip = 0;
+	}
+
+	decodeNESTileData(_vm->getResourceAddress(rtCostume, 37 + tileset), _vm->_NESPatTable[1] + _vm->_NESBaseTiles * 16);
+	for (i = 0; i < 16; i++) {
+		byte c = *gdata++;
+		if (c == 0x0D)
+			c = 0x1D;
+
+		if (c == 0x1D)	 // HACK - switch around colors 0x00 and 0x1D
+			c = 0;		 // so we don't need a zillion extra checks
+		else if (c == 0) // for determining the proper background color
+			c = 0x1D;
+
+		_vm->_NESPalette[0][i] = c;
+	}
 	for (i = 0; i < 16; i++) {
 		_NESNametable[i][0] = _NESNametable[i][1] = 0;
 		n = 0;
@@ -2001,10 +2053,10 @@ void Gdi::drawStripNES(byte *dst, int dstPitch, int stripnr, int top, int height
 		int tile = (isObject ? _NESNametableObj : _NESNametable)[y][x];
 
 		for (int i = 0; i < 8; i++) {
-			byte c0 = _vm->_NESPatTable[tile * 16 + i];
-			byte c1 = _vm->_NESPatTable[tile * 16 + i + 8];
+			byte c0 = _vm->_NESPatTable[1][tile * 16 + i];
+			byte c1 = _vm->_NESPatTable[1][tile * 16 + i + 8];
 			for (int j = 0; j < 8; j++)
-				dst[j] = _vm->_NESPalette[((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) | (palette << 2)];
+				dst[j] = _vm->_NESPalette[0][((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) | (palette << 2)];
 			dst += dstPitch;
 		}
 	}

@@ -857,6 +857,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_costumeRenderer = NULL;
 	_2byteFontPtr = 0;
 	_V1TalkingActor = 0;
+	_NESStartStrip = 0;
 
 	_actorClipOverride.top = 0;
 	_actorClipOverride.bottom = 480;
@@ -1109,7 +1110,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_screenWidth = 640;
 		_screenHeight = 480;
 	} else if (_features & GF_NES) {
-		_screenWidth = 224;
+		_screenWidth = 256; // 224
 		_screenHeight = 240;
 	} else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		_features |= GF_DEFAULT_TO_1X_SCALER;
@@ -1514,10 +1515,8 @@ void ScummEngine::scummInit() {
 
 	clearDrawObjectQueue();
 
-	if (_features & GF_NES) {
+	if (_features & GF_NES)
 		decodeNESBaseTiles();
-		cost_decodeNESCostumeGfx();
-	}
 
 	for (i = 0; i < 6; i++) {
 		if (_version == 3) { // FIXME - what is this?
@@ -1787,6 +1786,13 @@ int ScummEngine::scummLoop(int delta) {
 	if (_version <= 2) {
 		VAR(VAR_VIRT_MOUSE_X) = _virtualMouse.x / 8;
 		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y / 2;
+
+		// Adjust mouse coordinates as narrow rooms in NES are centered
+		if (_features & GF_NES && _virtualMouse.y >= 16 && _virtualMouse.y < 144) {
+			VAR(VAR_VIRT_MOUSE_X) -= _NESStartStrip;
+			if (VAR(VAR_VIRT_MOUSE_X) < 0)
+				VAR(VAR_VIRT_MOUSE_X) = 0;
+		}
 	} else {
 		VAR(VAR_VIRT_MOUSE_X) = _virtualMouse.x;
 		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y;
@@ -2266,6 +2272,12 @@ void ScummEngine::initRoomSubBlocks() {
 	if (_version == 1) {
 		if (_features & GF_NES) {
 			_roomWidth = READ_LE_UINT16(roomptr + 4) * 8;
+
+			// HACK: To let our code work normal with narrow rooms we
+			// adjust width. It will render garbage on right edge but we do
+			// not render it anyway
+			if (_roomWidth < 32 * 8)
+				_roomWidth = 32 * 8;
 			_roomHeight = READ_LE_UINT16(roomptr + 6) * 8;
 		} else {
 			_roomWidth = roomptr[4] * 8;

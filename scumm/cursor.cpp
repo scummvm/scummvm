@@ -343,8 +343,8 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 		_cursor.hotspotY = 0;
 
 		byte *dst = _grabbedCursor;
-		byte *src = &_NESCostumeGfx[0][0xfa * 16];
-		byte *palette = getResourceAddress(rtCostume, 35) + 2;
+		byte *src = &_NESPatTable[0][0xfa * 16];
+		byte *palette = _NESPalette[1];
 
 		for (i = 0; i < 8; i++) {
 			byte c0 = src[i];

@@ -473,12 +473,14 @@ public:
 	BaseCostumeRenderer* _costumeRenderer;
 
 	int _NESCostumeSet;
-	byte *_NESCostumeGfx[2];
-
-	byte _NESPatTable[4096];
-	byte _NESPalette[16];
+	void NES_loadCostumeSet(int n);
+	byte *_NEScostdesc, *_NEScostlens, *_NEScostoffs, *_NEScostdata;
+	byte _NESPatTable[2][4096];
+	byte _NESPalette[2][16];
 	byte _NESBaseTiles;
 	
+	int _NESStartStrip;
+
 	char *_audioNames;
 	int32 _numAudioNames;
 
@@ -928,7 +930,7 @@ protected:
 	void drawRoomObject(int i, int arg);
 	void drawBox(int x, int y, int x2, int y2, int color);
 
-	void restoreBG(Common::Rect rect, byte backColor = 0);
+	void restoreBG(Common::Rect rect, byte backcolor = 0);
 	void redrawBGStrip(int start, int num);	
 	virtual void redrawBGAreas();
 	
