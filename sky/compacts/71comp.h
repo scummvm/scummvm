@@ -394,8 +394,8 @@ uint16 medi_r_to_l[] = {
 	0,
 };
 
-uint16 *medi_turnTable[5][5] = {
-	{ // turnTableup
+uint16 *medi_turnTable0[5][5] = {
+	{ // turnTableUp
 		0,
 		medi_u_to_d,
 		medi_u_to_l,
@@ -432,6 +432,23 @@ uint16 *medi_turnTable[5][5] = {
 	},
 };
 
+MegaSet medi_megaSet0 = {
+	3,	// gridWidth
+	8,	// colOffset
+	16,	// colWidth
+	24,	// lastChr
+	medi_up,	// animUp
+	medi_down,	// animDown
+	medi_left,	// animLeft
+	medi_right,	// animRight
+	medi_st_up,	// standUp
+	medi_st_down,	// standDown
+	medi_st_left,	// standLeft
+	medi_st_right,	// standRight
+	0,	// standTalk
+	medi_turnTable0,
+};
+
 ExtCompact medi_ext = {
 	0,	// actionSub
 	0,	// actionSub_off
@@ -458,19 +475,7 @@ ExtCompact medi_ext = {
 	0,	// arTarget_y
 	medi_auto,	// animScratch
 	0,	// megaSet
-	3,	// gridWidth
-	8,	// colOffset
-	16,	// colWidth
-	24,	// lastChr
-	medi_up,	// animUp
-	medi_down,	// animDown
-	medi_left,	// animLeft
-	medi_right,	// animRight
-	medi_st_up,	// standUp
-	medi_st_down,	// standDown
-	medi_st_left,	// standLeft
-	medi_st_right,	// standRight
-	0,	// standTalk
+	&medi_megaSet0,
 };
 
 Compact medi = {
@@ -503,7 +508,6 @@ Compact medi = {
 	MEDI_LOGIC,	// baseSub
 	0,	// baseSub_off
 	&medi_ext,
-	&medi_turnTable,
 };
 
 uint16 sc71_mouse_list[] = {

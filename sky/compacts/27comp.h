@@ -2039,8 +2039,8 @@ uint16 burke_d_to_r[] = {
 	0,
 };
 
-uint16 *burke_turnTable[5][5] = {
-	{ // turnTableup
+uint16 *burke_turnTable0[5][5] = {
+	{ // turnTableUp
 		0,
 		burke_u_to_d,
 		burke_u_to_l,
@@ -2077,6 +2077,23 @@ uint16 *burke_turnTable[5][5] = {
 	},
 };
 
+MegaSet burke_megaSet0 = {
+	3,	// gridWidth
+	8,	// colOffset
+	16,	// colWidth
+	24,	// lastChr
+	burke_up,	// animUp
+	burke_down,	// animDown
+	burke_left,	// animLeft
+	burke_right,	// animRight
+	burke_st_up,	// standUp
+	burke_st_down,	// standDown
+	burke_st_left,	// standLeft
+	burke_st_right,	// standRight
+	burke_st_talk,	// standTalk
+	burke_turnTable0,
+};
+
 ExtCompact burke_ext = {
 	0,	// actionSub
 	0,	// actionSub_off
@@ -2103,19 +2120,7 @@ ExtCompact burke_ext = {
 	0,	// arTarget_y
 	burke_auto,	// animScratch
 	0,	// megaSet
-	3,	// gridWidth
-	8,	// colOffset
-	16,	// colWidth
-	24,	// lastChr
-	burke_up,	// animUp
-	burke_down,	// animDown
-	burke_left,	// animLeft
-	burke_right,	// animRight
-	burke_st_up,	// standUp
-	burke_st_down,	// standDown
-	burke_st_left,	// standLeft
-	burke_st_right,	// standRight
-	burke_st_talk,	// standTalk
+	&burke_megaSet0,
 };
 
 Compact burke = {
@@ -2148,7 +2153,6 @@ Compact burke = {
 	BURKE_LOGIC,	// baseSub
 	0,	// baseSub_off
 	&burke_ext,
-	&burke_turnTable,
 };
 
 uint16 shake_seq[] = {

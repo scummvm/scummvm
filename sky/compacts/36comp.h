@@ -1274,8 +1274,8 @@ uint16 babs_t_to_r[] = {
 	0,
 };
 
-uint16 *sc36_babs_turnTable[5][5] = {
-	{ // turnTableup
+uint16 *sc36_babs_turnTable0[5][5] = {
+	{ // turnTableUp
 		0,
 		babs_u_to_d,
 		babs_u_to_l,
@@ -1312,6 +1312,23 @@ uint16 *sc36_babs_turnTable[5][5] = {
 	},
 };
 
+MegaSet sc36_babs_megaSet0 = {
+	3,	// gridWidth
+	8,	// colOffset
+	16,	// colWidth
+	24,	// lastChr
+	babs_up,	// animUp
+	babs_down,	// animDown
+	babs_left,	// animLeft
+	babs_right,	// animRight
+	babs_st_up,	// standUp
+	babs_st_down,	// standDown
+	babs_st_left,	// standLeft
+	babs_st_right,	// standRight
+	babs_st_talk,	// standTalk
+	sc36_babs_turnTable0,
+};
+
 ExtCompact sc36_babs_ext = {
 	0,	// actionSub
 	0,	// actionSub_off
@@ -1338,19 +1355,7 @@ ExtCompact sc36_babs_ext = {
 	0,	// arTarget_y
 	babs_auto,	// animScratch
 	0,	// megaSet
-	3,	// gridWidth
-	8,	// colOffset
-	16,	// colWidth
-	24,	// lastChr
-	babs_up,	// animUp
-	babs_down,	// animDown
-	babs_left,	// animLeft
-	babs_right,	// animRight
-	babs_st_up,	// standUp
-	babs_st_down,	// standDown
-	babs_st_left,	// standLeft
-	babs_st_right,	// standRight
-	babs_st_talk,	// standTalk
+	&sc36_babs_megaSet0,
 };
 
 Compact sc36_babs = {
@@ -1383,7 +1388,6 @@ Compact sc36_babs = {
 	SC36_BABS_LOGIC,	// baseSub
 	0,	// baseSub_off
 	&sc36_babs_ext,
-	&sc36_babs_turnTable,
 };
 
 uint16 sc36_col_down4[] = {

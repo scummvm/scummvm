@@ -3172,53 +3172,8 @@ uint16 sex_u_to_l[] = {
 	0,
 };
 
-UnknownStuff danielle_unk = {
-	{ // unknownStuff_1_1
-		3,
-		8,
-		16,
-		24
-	},
-	{ // unknownStuff_1_2
-		sex_up,
-		sex_down,
-		sex_left,
-		sex_right,
-		sex_st_up,
-		sex_st_down,
-		sex_st_left,
-		sex_st_right,
-		sex_st_talk,
-		0,
-		sex_u_to_d,
-		sex_u_to_l,
-		sex_u_to_r,
-		sex_u_to_t,
-		sex_d_to_u,
-		0,
-		sex_d_to_l,
-		sex_d_to_r,
-		0,
-		sex_l_to_u,
-		sex_l_to_d,
-		0,
-		sex_l_to_r,
-		0,
-		sex_r_to_u,
-		sex_r_to_d,
-		sex_r_to_l,
-		0,
-		sex_r_to_t,
-		sex_t_to_u,
-		0,
-		0,
-		sex_t_to_r,
-		0
-	},
-};
-
-uint16 *danielle_turnTable[5][5] = {
-	{ // turnTableup
+uint16 *danielle_turnTable0[5][5] = {
+	{ // turnTableUp
 		0,
 		dan_u_to_d,
 		dan_u_to_l,
@@ -3255,6 +3210,78 @@ uint16 *danielle_turnTable[5][5] = {
 	},
 };
 
+uint16 *danielle_turnTable1[5][5] = {
+	{ // turnTableUp
+		0,
+		sex_u_to_d,
+		sex_u_to_l,
+		sex_u_to_r,
+		sex_u_to_t
+	},
+	{ // turnTableDown
+		sex_d_to_u,
+		0,
+		sex_d_to_l,
+		sex_d_to_r,
+		0
+	},
+	{ // turnTableLeft
+		sex_l_to_u,
+		sex_l_to_d,
+		0,
+		sex_l_to_r,
+		0
+	},
+	{ // turnTableRight
+		sex_r_to_u,
+		sex_r_to_d,
+		sex_r_to_l,
+		0,
+		sex_r_to_t
+	},
+	{ // turnTableTalk
+		sex_t_to_u,
+		0,
+		0,
+		sex_t_to_r,
+		0
+	},
+};
+
+MegaSet danielle_megaSet0 = {
+	3,	// gridWidth
+	8,	// colOffset
+	16,	// colWidth
+	24,	// lastChr
+	dan_up,	// animUp
+	dan_down,	// animDown
+	dan_left,	// animLeft
+	dan_right,	// animRight
+	dan_st_up,	// standUp
+	dan_st_down,	// standDown
+	dan_st_left,	// standLeft
+	dan_st_right,	// standRight
+	dan_st_talk,	// standTalk
+	danielle_turnTable0,
+};
+
+MegaSet danielle_megaSet1 = {
+	3,	// gridWidth
+	8,	// colOffset
+	16,	// colWidth
+	24,	// lastChr
+	sex_up,	// animUp
+	sex_down,	// animDown
+	sex_left,	// animLeft
+	sex_right,	// animRight
+	sex_st_up,	// standUp
+	sex_st_down,	// standDown
+	sex_st_left,	// standLeft
+	sex_st_right,	// standRight
+	sex_st_talk,	// standTalk
+	danielle_turnTable1,
+};
+
 ExtCompact danielle_ext = {
 	0,	// actionSub
 	0,	// actionSub_off
@@ -3281,19 +3308,8 @@ ExtCompact danielle_ext = {
 	0,	// arTarget_y
 	dan_auto,	// animScratch
 	0,	// megaSet
-	3,	// gridWidth
-	8,	// colOffset
-	16,	// colWidth
-	24,	// lastChr
-	dan_up,	// animUp
-	dan_down,	// animDown
-	dan_left,	// animLeft
-	dan_right,	// animRight
-	dan_st_up,	// standUp
-	dan_st_down,	// standDown
-	dan_st_left,	// standLeft
-	dan_st_right,	// standRight
-	dan_st_talk,	// standTalk
+	&danielle_megaSet0,
+	&danielle_megaSet1,
 };
 
 Compact danielle = {
@@ -3326,8 +3342,6 @@ Compact danielle = {
 	DANIELLE_LOGIC,	// baseSub
 	0,	// baseSub_off
 	&danielle_ext,
-	&danielle_turnTable,
-	&danielle_unk,
 };
 
 uint16 spu_d_to_r[] = {
@@ -3379,8 +3393,8 @@ uint16 spu_st_up[] = {
 	0,
 };
 
-uint16 *spunky_turnTable[5][5] = {
-	{ // turnTableup
+uint16 *spunky_turnTable0[5][5] = {
+	{ // turnTableUp
 		0,
 		spu_u_to_d,
 		spu_u_to_l,
@@ -3417,6 +3431,23 @@ uint16 *spunky_turnTable[5][5] = {
 	},
 };
 
+MegaSet spunky_megaSet0 = {
+	3,	// gridWidth
+	8,	// colOffset
+	16,	// colWidth
+	24,	// lastChr
+	spu_up,	// animUp
+	spu_down,	// animDown
+	spu_left,	// animLeft
+	spu_right,	// animRight
+	spu_st_up,	// standUp
+	spu_st_down,	// standDown
+	spu_st_left,	// standLeft
+	spu_st_right,	// standRight
+	spu_st_talk,	// standTalk
+	spunky_turnTable0,
+};
+
 ExtCompact spunky_ext = {
 	0,	// actionSub
 	0,	// actionSub_off
@@ -3443,19 +3474,7 @@ ExtCompact spunky_ext = {
 	0,	// arTarget_y
 	spu_auto,	// animScratch
 	0,	// megaSet
-	3,	// gridWidth
-	8,	// colOffset
-	16,	// colWidth
-	24,	// lastChr
-	spu_up,	// animUp
-	spu_down,	// animDown
-	spu_left,	// animLeft
-	spu_right,	// animRight
-	spu_st_up,	// standUp
-	spu_st_down,	// standDown
-	spu_st_left,	// standLeft
-	spu_st_right,	// standRight
-	spu_st_talk,	// standTalk
+	&spunky_megaSet0,
 };
 
 Compact spunky = {
@@ -3488,7 +3507,6 @@ Compact spunky = {
 	SPUNKY_LOGIC,	// baseSub
 	0,	// baseSub_off
 	&spunky_ext,
-	&spunky_turnTable,
 };
 
 uint16 sc38_video_anim[] = {

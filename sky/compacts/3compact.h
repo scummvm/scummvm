@@ -701,6 +701,10 @@ uint16 shades_d_to_u[] = {
 	0,
 };
 
+MegaSet smoulder_megaSet0 = {
+	7,	// gridWidth
+};
+
 ExtCompact smoulder_ext = {
 	0,	// actionSub
 	0,	// actionSub_off
@@ -727,7 +731,7 @@ ExtCompact smoulder_ext = {
 	0,	// arTarget_y
 	0,	// animScratch
 	0,	// megaSet
-	7,	// gridWidth
+	&smoulder_megaSet0,
 };
 
 Compact smoulder = {
@@ -1185,8 +1189,8 @@ uint16 shades_r_to_l[] = {
 	0,
 };
 
-uint16 *shades_turnTable[5][5] = {
-	{ // turnTableup
+uint16 *shades_turnTable0[5][5] = {
+	{ // turnTableUp
 		0,
 		shades_u_to_d,
 		shades_u_to_l,
@@ -1223,6 +1227,23 @@ uint16 *shades_turnTable[5][5] = {
 	},
 };
 
+MegaSet shades_megaSet0 = {
+	0,	// gridWidth
+	0,	// colOffset
+	8,	// colWidth
+	8,	// lastChr
+	shades_up,	// animUp
+	shades_down,	// animDown
+	shades_left,	// animLeft
+	shades_right,	// animRight
+	shades_st_up,	// standUp
+	shades_st_down,	// standDown
+	shades_st_left,	// standLeft
+	shades_st_right,	// standRight
+	shades_st_talk,	// standTalk
+	shades_turnTable0,
+};
+
 ExtCompact shades_ext = {
 	0,	// actionSub
 	0,	// actionSub_off
@@ -1249,19 +1270,7 @@ ExtCompact shades_ext = {
 	0,	// arTarget_y
 	shades_auto,	// animScratch
 	0,	// megaSet
-	0,	// gridWidth
-	0,	// colOffset
-	8,	// colWidth
-	8,	// lastChr
-	shades_up,	// animUp
-	shades_down,	// animDown
-	shades_left,	// animLeft
-	shades_right,	// animRight
-	shades_st_up,	// standUp
-	shades_st_down,	// standDown
-	shades_st_left,	// standLeft
-	shades_st_right,	// standRight
-	shades_st_talk,	// standTalk
+	&shades_megaSet0,
 };
 
 Compact shades = {
@@ -1294,7 +1303,6 @@ Compact shades = {
 	SHADES_LOGIC,	// baseSub
 	0,	// baseSub_off
 	&shades_ext,
-	&shades_turnTable,
 };
 
 uint16 liftc2_down[] = {

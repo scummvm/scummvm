@@ -2107,8 +2107,8 @@ uint16 wit_t_to_l[] = {
 	0,
 };
 
-uint16 *witness_turnTable[5][5] = {
-	{ // turnTableup
+uint16 *witness_turnTable0[5][5] = {
+	{ // turnTableUp
 		0,
 		wit_u_to_d,
 		wit_u_to_l,
@@ -2145,6 +2145,23 @@ uint16 *witness_turnTable[5][5] = {
 	},
 };
 
+MegaSet witness_megaSet0 = {
+	3,	// gridWidth
+	8,	// colOffset
+	16,	// colWidth
+	24,	// lastChr
+	wit_up,	// animUp
+	wit_down,	// animDown
+	wit_left,	// animLeft
+	wit_right,	// animRight
+	wit_st_up,	// standUp
+	wit_st_down,	// standDown
+	wit_st_left,	// standLeft
+	wit_st_right,	// standRight
+	wit_st_talk,	// standTalk
+	witness_turnTable0,
+};
+
 ExtCompact witness_ext = {
 	0,	// actionSub
 	0,	// actionSub_off
@@ -2171,19 +2188,7 @@ ExtCompact witness_ext = {
 	0,	// arTarget_y
 	wit_auto,	// animScratch
 	0,	// megaSet
-	3,	// gridWidth
-	8,	// colOffset
-	16,	// colWidth
-	24,	// lastChr
-	wit_up,	// animUp
-	wit_down,	// animDown
-	wit_left,	// animLeft
-	wit_right,	// animRight
-	wit_st_up,	// standUp
-	wit_st_down,	// standDown
-	wit_st_left,	// standLeft
-	wit_st_right,	// standRight
-	wit_st_talk,	// standTalk
+	&witness_megaSet0,
 };
 
 Compact witness = {
@@ -2216,7 +2221,6 @@ Compact witness = {
 	WITNESS_LOGIC,	// baseSub
 	0,	// baseSub_off
 	&witness_ext,
-	&witness_turnTable,
 };
 
 uint16 sc72_logic_list[] = {

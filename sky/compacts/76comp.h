@@ -471,8 +471,8 @@ uint16 ken_r_to_l[] = {
 	0,
 };
 
-uint16 *ken_turnTable[5][5] = {
-	{ // turnTableup
+uint16 *ken_turnTable0[5][5] = {
+	{ // turnTableUp
 		0,
 		ken_u_to_d,
 		ken_u_to_l,
@@ -509,6 +509,23 @@ uint16 *ken_turnTable[5][5] = {
 	},
 };
 
+MegaSet ken_megaSet0 = {
+	3,	// gridWidth
+	8,	// colOffset
+	16,	// colWidth
+	24,	// lastChr
+	ken_up,	// animUp
+	ken_down,	// animDown
+	ken_left,	// animLeft
+	ken_right,	// animRight
+	ken_st_up,	// standUp
+	ken_st_down,	// standDown
+	ken_st_left,	// standLeft
+	ken_st_right,	// standRight
+	0,	// standTalk
+	ken_turnTable0,
+};
+
 ExtCompact ken_ext = {
 	0,	// actionSub
 	0,	// actionSub_off
@@ -535,19 +552,7 @@ ExtCompact ken_ext = {
 	0,	// arTarget_y
 	ken_auto,	// animScratch
 	0,	// megaSet
-	3,	// gridWidth
-	8,	// colOffset
-	16,	// colWidth
-	24,	// lastChr
-	ken_up,	// animUp
-	ken_down,	// animDown
-	ken_left,	// animLeft
-	ken_right,	// animRight
-	ken_st_up,	// standUp
-	ken_st_down,	// standDown
-	ken_st_left,	// standLeft
-	ken_st_right,	// standRight
-	0,	// standTalk
+	&ken_megaSet0,
 };
 
 Compact ken = {
@@ -580,7 +585,6 @@ Compact ken = {
 	KEN_START_LOGIC,	// baseSub
 	0,	// baseSub_off
 	&ken_ext,
-	&ken_turnTable,
 };
 
 uint16 sc76_floor_table[] = {

@@ -1259,137 +1259,8 @@ uint16 sml_loaderb_l_to_d[] = {
 	0,
 };
 
-UnknownStuff loader_unk = {
-	{ // unknownStuff_1_1
-		3,
-		8,
-		16,
-		24
-	},
-	{ // unknownStuff_1_2
-		loaderb_up,
-		loaderb_down,
-		loaderb_left,
-		loaderb_right,
-		loaderb_st_up,
-		loaderb_st_down,
-		loaderb_st_left,
-		loaderb_st_right,
-		0,
-		0,
-		loaderb_u_to_d,
-		loaderb_u_to_l,
-		loaderb_u_to_r,
-		0,
-		loaderb_d_to_u,
-		0,
-		loaderb_d_to_l,
-		loaderb_d_to_r,
-		0,
-		loaderb_l_to_u,
-		loaderb_l_to_d,
-		0,
-		loaderb_l_to_r,
-		0,
-		loaderb_r_to_u,
-		loaderb_r_to_d,
-		loaderb_r_to_l,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0
-	},
-	{ // unknownStuff_2_1
-		0,
-		0,
-		8,
-		8
-	},
-	{ // unknownStuff_2_2
-		sml_loader_up,
-		sml_loader_down,
-		sml_loader_left,
-		sml_loader_right,
-		sml_loader_st_up,
-		sml_loader_st_down,
-		sml_loader_st_left,
-		sml_loader_st_right,
-		0,
-		0,
-		sml_loader_u_to_d,
-		sml_loader_u_to_l,
-		sml_loader_u_to_r,
-		0,
-		sml_loader_d_to_u,
-		0,
-		sml_loader_d_to_l,
-		sml_loader_d_to_r,
-		0,
-		sml_loader_l_to_u,
-		sml_loader_l_to_d,
-		0,
-		sml_loader_l_to_r,
-		0,
-		sml_loader_r_to_u,
-		sml_loader_r_to_d,
-		sml_loader_r_to_l,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0
-	},
-	{ // unknownStuff_3_1
-		0,
-		0,
-		8,
-		8
-	},
-	{ // unknownStuff_3_2
-		sml_loaderb_up,
-		sml_loaderb_down,
-		sml_loaderb_left,
-		sml_loaderb_right,
-		sml_loaderb_st_up,
-		sml_loaderb_st_down,
-		sml_loaderb_st_left,
-		sml_loaderb_st_right,
-		0,
-		0,
-		sml_loaderb_u_to_d,
-		sml_loaderb_u_to_l,
-		sml_loaderb_u_to_r,
-		0,
-		sml_loaderb_d_to_u,
-		0,
-		sml_loaderb_d_to_l,
-		sml_loaderb_d_to_r,
-		0,
-		sml_loaderb_l_to_u,
-		sml_loaderb_l_to_d,
-		0,
-		sml_loaderb_l_to_r,
-		0,
-		sml_loaderb_r_to_u,
-		sml_loaderb_r_to_d,
-		sml_loaderb_r_to_l,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0
-	},
-};
-
-uint16 *loader_turnTable[5][5] = {
-	{ // turnTableup
+uint16 *loader_turnTable0[5][5] = {
+	{ // turnTableUp
 		0,
 		loader_u_to_d,
 		loader_u_to_l,
@@ -1426,6 +1297,188 @@ uint16 *loader_turnTable[5][5] = {
 	},
 };
 
+uint16 *loader_turnTable1[5][5] = {
+	{ // turnTableUp
+		0,
+		loaderb_u_to_d,
+		loaderb_u_to_l,
+		loaderb_u_to_r,
+		0
+	},
+	{ // turnTableDown
+		loaderb_d_to_u,
+		0,
+		loaderb_d_to_l,
+		loaderb_d_to_r,
+		0
+	},
+	{ // turnTableLeft
+		loaderb_l_to_u,
+		loaderb_l_to_d,
+		0,
+		loaderb_l_to_r,
+		0
+	},
+	{ // turnTableRight
+		loaderb_r_to_u,
+		loaderb_r_to_d,
+		loaderb_r_to_l,
+		0,
+		0
+	},
+	{ // turnTableTalk
+		0,
+		0,
+		0,
+		0,
+		0
+	},
+};
+
+uint16 *loader_turnTable2[5][5] = {
+	{ // turnTableUp
+		0,
+		sml_loader_u_to_d,
+		sml_loader_u_to_l,
+		sml_loader_u_to_r,
+		0
+	},
+	{ // turnTableDown
+		sml_loader_d_to_u,
+		0,
+		sml_loader_d_to_l,
+		sml_loader_d_to_r,
+		0
+	},
+	{ // turnTableLeft
+		sml_loader_l_to_u,
+		sml_loader_l_to_d,
+		0,
+		sml_loader_l_to_r,
+		0
+	},
+	{ // turnTableRight
+		sml_loader_r_to_u,
+		sml_loader_r_to_d,
+		sml_loader_r_to_l,
+		0,
+		0
+	},
+	{ // turnTableTalk
+		0,
+		0,
+		0,
+		0,
+		0
+	},
+};
+
+uint16 *loader_turnTable3[5][5] = {
+	{ // turnTableUp
+		0,
+		sml_loaderb_u_to_d,
+		sml_loaderb_u_to_l,
+		sml_loaderb_u_to_r,
+		0
+	},
+	{ // turnTableDown
+		sml_loaderb_d_to_u,
+		0,
+		sml_loaderb_d_to_l,
+		sml_loaderb_d_to_r,
+		0
+	},
+	{ // turnTableLeft
+		sml_loaderb_l_to_u,
+		sml_loaderb_l_to_d,
+		0,
+		sml_loaderb_l_to_r,
+		0
+	},
+	{ // turnTableRight
+		sml_loaderb_r_to_u,
+		sml_loaderb_r_to_d,
+		sml_loaderb_r_to_l,
+		0,
+		0
+	},
+	{ // turnTableTalk
+		0,
+		0,
+		0,
+		0,
+		0
+	},
+};
+
+MegaSet loader_megaSet0 = {
+	3,	// gridWidth
+	8,	// colOffset
+	16,	// colWidth
+	24,	// lastChr
+	loader_up,	// animUp
+	loader_down,	// animDown
+	loader_left,	// animLeft
+	loader_right,	// animRight
+	loader_st_up,	// standUp
+	loader_st_down,	// standDown
+	loader_st_left,	// standLeft
+	loader_st_right,	// standRight
+	0,	// standTalk
+	loader_turnTable0,
+};
+
+MegaSet loader_megaSet1 = {
+	3,	// gridWidth
+	8,	// colOffset
+	16,	// colWidth
+	24,	// lastChr
+	loaderb_up,	// animUp
+	loaderb_down,	// animDown
+	loaderb_left,	// animLeft
+	loaderb_right,	// animRight
+	loaderb_st_up,	// standUp
+	loaderb_st_down,	// standDown
+	loaderb_st_left,	// standLeft
+	loaderb_st_right,	// standRight
+	0,	// standTalk
+	loader_turnTable1,
+};
+
+MegaSet loader_megaSet2 = {
+	0,	// gridWidth
+	0,	// colOffset
+	8,	// colWidth
+	8,	// lastChr
+	sml_loader_up,	// animUp
+	sml_loader_down,	// animDown
+	sml_loader_left,	// animLeft
+	sml_loader_right,	// animRight
+	sml_loader_st_up,	// standUp
+	sml_loader_st_down,	// standDown
+	sml_loader_st_left,	// standLeft
+	sml_loader_st_right,	// standRight
+	0,	// standTalk
+	loader_turnTable2,
+};
+
+MegaSet loader_megaSet3 = {
+	0,	// gridWidth
+	0,	// colOffset
+	8,	// colWidth
+	8,	// lastChr
+	sml_loaderb_up,	// animUp
+	sml_loaderb_down,	// animDown
+	sml_loaderb_left,	// animLeft
+	sml_loaderb_right,	// animRight
+	sml_loaderb_st_up,	// standUp
+	sml_loaderb_st_down,	// standDown
+	sml_loaderb_st_left,	// standLeft
+	sml_loaderb_st_right,	// standRight
+	0,	// standTalk
+	loader_turnTable3,
+};
+
 ExtCompact loader_ext = {
 	0,	// actionSub
 	0,	// actionSub_off
@@ -1452,19 +1505,10 @@ ExtCompact loader_ext = {
 	0,	// arTarget_y
 	loader_auto,	// animScratch
 	0*NEXT_MEGA_SET,	// megaSet
-	3,	// gridWidth
-	8,	// colOffset
-	16,	// colWidth
-	24,	// lastChr
-	loader_up,	// animUp
-	loader_down,	// animDown
-	loader_left,	// animLeft
-	loader_right,	// animRight
-	loader_st_up,	// standUp
-	loader_st_down,	// standDown
-	loader_st_left,	// standLeft
-	loader_st_right,	// standRight
-	0,	// standTalk
+	&loader_megaSet0,
+	&loader_megaSet1,
+	&loader_megaSet2,
+	&loader_megaSet3,
 };
 
 Compact loader = {
@@ -1497,8 +1541,6 @@ Compact loader = {
 	LOADER_START,	// baseSub
 	0,	// baseSub_off
 	&loader_ext,
-	&loader_turnTable,
-	&loader_unk,
 };
 
 Compact junk2 = {

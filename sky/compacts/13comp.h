@@ -2367,8 +2367,8 @@ uint16 foreman_r_to_d[] = {
 	0,
 };
 
-uint16 *foreman_turnTable[5][5] = {
-	{ // turnTableup
+uint16 *foreman_turnTable0[5][5] = {
+	{ // turnTableUp
 		0,
 		foreman_u_to_d,
 		foreman_u_to_l,
@@ -2405,6 +2405,23 @@ uint16 *foreman_turnTable[5][5] = {
 	},
 };
 
+MegaSet foreman_megaSet0 = {
+	3,	// gridWidth
+	8,	// colOffset
+	16,	// colWidth
+	24,	// lastChr
+	foreman_up,	// animUp
+	foreman_down,	// animDown
+	foreman_left,	// animLeft
+	foreman_right,	// animRight
+	foreman_st_up,	// standUp
+	foreman_st_down,	// standDown
+	foreman_st_left,	// standLeft
+	foreman_st_right,	// standRight
+	foreman_st_talk,	// standTalk
+	foreman_turnTable0,
+};
+
 ExtCompact foreman_ext = {
 	0,	// actionSub
 	0,	// actionSub_off
@@ -2431,19 +2448,7 @@ ExtCompact foreman_ext = {
 	0,	// arTarget_y
 	foreman_auto,	// animScratch
 	0,	// megaSet
-	3,	// gridWidth
-	8,	// colOffset
-	16,	// colWidth
-	24,	// lastChr
-	foreman_up,	// animUp
-	foreman_down,	// animDown
-	foreman_left,	// animLeft
-	foreman_right,	// animRight
-	foreman_st_up,	// standUp
-	foreman_st_down,	// standDown
-	foreman_st_left,	// standLeft
-	foreman_st_right,	// standRight
-	foreman_st_talk,	// standTalk
+	&foreman_megaSet0,
 };
 
 Compact foreman = {
@@ -2476,7 +2481,6 @@ Compact foreman = {
 	FOREMAN_LOGIC,	// baseSub
 	0,	// baseSub_off
 	&foreman_ext,
-	&foreman_turnTable,
 };
 
 uint16 lite1_seq[] = {

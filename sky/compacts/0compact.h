@@ -4066,8 +4066,8 @@ uint16 m_ss_r_to_l[] = {
 	0,
 };
 
-uint16 *mini_so_turnTable[5][5] = {
-	{ // turnTableup
+uint16 *mini_so_turnTable0[5][5] = {
+	{ // turnTableUp
 		0,
 		m_ss_u_to_d,
 		m_ss_u_to_l,
@@ -4104,6 +4104,23 @@ uint16 *mini_so_turnTable[5][5] = {
 	},
 };
 
+MegaSet mini_so_megaSet0 = {
+	0,	// gridWidth
+	0,	// colOffset
+	8,	// colWidth
+	8,	// lastChr
+	m_ss_up,	// animUp
+	m_ss_down,	// animDown
+	m_ss_left,	// animLeft
+	m_ss_right,	// animRight
+	m_ss_st_up,	// standUp
+	m_ss_st_down,	// standDown
+	m_ss_st_left,	// standLeft
+	m_ss_st_right,	// standRight
+	m_ss_st_talk,	// standTalk
+	mini_so_turnTable0,
+};
+
 ExtCompact mini_so_ext = {
 	0,	// actionSub
 	0,	// actionSub_off
@@ -4130,19 +4147,7 @@ ExtCompact mini_so_ext = {
 	0,	// arTarget_y
 	ss_auto,	// animScratch
 	0,	// megaSet
-	0,	// gridWidth
-	0,	// colOffset
-	8,	// colWidth
-	8,	// lastChr
-	m_ss_up,	// animUp
-	m_ss_down,	// animDown
-	m_ss_left,	// animLeft
-	m_ss_right,	// animRight
-	m_ss_st_up,	// standUp
-	m_ss_st_down,	// standDown
-	m_ss_st_left,	// standLeft
-	m_ss_st_right,	// standRight
-	m_ss_st_talk,	// standTalk
+	&mini_so_megaSet0,
 };
 
 Compact mini_so = {
@@ -4175,7 +4180,6 @@ Compact mini_so = {
 	START_MINI_SS,	// baseSub
 	0,	// baseSub_off
 	&mini_so_ext,
-	&mini_so_turnTable,
 };
 
 uint16 unload_seq1[] = {
@@ -4586,8 +4590,8 @@ uint16 f_ss_r_to_l[] = {
 	0,
 };
 
-uint16 *full_so_turnTable[5][5] = {
-	{ // turnTableup
+uint16 *full_so_turnTable0[5][5] = {
+	{ // turnTableUp
 		0,
 		f_ss_u_to_d,
 		f_ss_u_to_l,
@@ -4624,6 +4628,23 @@ uint16 *full_so_turnTable[5][5] = {
 	},
 };
 
+MegaSet full_so_megaSet0 = {
+	3,	// gridWidth
+	8,	// colOffset
+	16,	// colWidth
+	24,	// lastChr
+	f_ss_up,	// animUp
+	f_ss_down,	// animDown
+	f_ss_left,	// animLeft
+	f_ss_right,	// animRight
+	f_ss_st_up,	// standUp
+	f_ss_st_down,	// standDown
+	f_ss_st_left,	// standLeft
+	f_ss_st_right,	// standRight
+	0,	// standTalk
+	full_so_turnTable0,
+};
+
 ExtCompact full_so_ext = {
 	0,	// actionSub
 	0,	// actionSub_off
@@ -4650,19 +4671,7 @@ ExtCompact full_so_ext = {
 	0,	// arTarget_y
 	full_ss_auto,	// animScratch
 	0,	// megaSet
-	3,	// gridWidth
-	8,	// colOffset
-	16,	// colWidth
-	24,	// lastChr
-	f_ss_up,	// animUp
-	f_ss_down,	// animDown
-	f_ss_left,	// animLeft
-	f_ss_right,	// animRight
-	f_ss_st_up,	// standUp
-	f_ss_st_down,	// standDown
-	f_ss_st_left,	// standLeft
-	f_ss_st_right,	// standRight
-	0,	// standTalk
+	&full_so_megaSet0,
 };
 
 Compact full_so = {
@@ -4695,7 +4704,6 @@ Compact full_so = {
 	FULL_SS_CUT,	// baseSub
 	0,	// baseSub_off
 	&full_so_ext,
-	&full_so_turnTable,
 };
 
 uint16 panel_seq[] = {

@@ -337,8 +337,8 @@ uint16 radman_r_to_l[] = {
 	0,
 };
 
-uint16 *radman_turnTable[5][5] = {
-	{ // turnTableup
+uint16 *radman_turnTable0[5][5] = {
+	{ // turnTableUp
 		0,
 		radman_u_to_d,
 		radman_u_to_l,
@@ -375,6 +375,23 @@ uint16 *radman_turnTable[5][5] = {
 	},
 };
 
+MegaSet radman_megaSet0 = {
+	3,	// gridWidth
+	8,	// colOffset
+	16,	// colWidth
+	24,	// lastChr
+	radman_up,	// animUp
+	radman_down,	// animDown
+	radman_left,	// animLeft
+	radman_right,	// animRight
+	radman_st_up,	// standUp
+	radman_st_down,	// standDown
+	radman_st_left,	// standLeft
+	radman_st_right,	// standRight
+	radman_st_talk,	// standTalk
+	radman_turnTable0,
+};
+
 ExtCompact radman_ext = {
 	0,	// actionSub
 	0,	// actionSub_off
@@ -401,19 +418,7 @@ ExtCompact radman_ext = {
 	0,	// arTarget_y
 	radman_auto,	// animScratch
 	0,	// megaSet
-	3,	// gridWidth
-	8,	// colOffset
-	16,	// colWidth
-	24,	// lastChr
-	radman_up,	// animUp
-	radman_down,	// animDown
-	radman_left,	// animLeft
-	radman_right,	// animRight
-	radman_st_up,	// standUp
-	radman_st_down,	// standDown
-	radman_st_left,	// standLeft
-	radman_st_right,	// standRight
-	radman_st_talk,	// standTalk
+	&radman_megaSet0,
 };
 
 Compact radman = {
@@ -446,7 +451,6 @@ Compact radman = {
 	RADMAN_LOGIC,	// baseSub
 	0,	// baseSub_off
 	&radman_ext,
-	&radman_turnTable,
 };
 
 Compact locker2 = {

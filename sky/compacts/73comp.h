@@ -406,8 +406,8 @@ uint16 gal_r_to_l[] = {
 	0,
 };
 
-uint16 *gallagher_turnTable[5][5] = {
-	{ // turnTableup
+uint16 *gallagher_turnTable0[5][5] = {
+	{ // turnTableUp
 		0,
 		gal_u_to_d,
 		gal_u_to_l,
@@ -444,6 +444,23 @@ uint16 *gallagher_turnTable[5][5] = {
 	},
 };
 
+MegaSet gallagher_megaSet0 = {
+	3,	// gridWidth
+	8,	// colOffset
+	16,	// colWidth
+	24,	// lastChr
+	gal_up,	// animUp
+	gal_down,	// animDown
+	gal_left,	// animLeft
+	gal_right,	// animRight
+	gal_st_up,	// standUp
+	gal_st_down,	// standDown
+	gal_st_left,	// standLeft
+	gal_st_right,	// standRight
+	0,	// standTalk
+	gallagher_turnTable0,
+};
+
 ExtCompact gallagher_ext = {
 	0,	// actionSub
 	0,	// actionSub_off
@@ -470,19 +487,7 @@ ExtCompact gallagher_ext = {
 	0,	// arTarget_y
 	gal_auto,	// animScratch
 	0,	// megaSet
-	3,	// gridWidth
-	8,	// colOffset
-	16,	// colWidth
-	24,	// lastChr
-	gal_up,	// animUp
-	gal_down,	// animDown
-	gal_left,	// animLeft
-	gal_right,	// animRight
-	gal_st_up,	// standUp
-	gal_st_down,	// standDown
-	gal_st_left,	// standLeft
-	gal_st_right,	// standRight
-	0,	// standTalk
+	&gallagher_megaSet0,
 };
 
 Compact gallagher = {
@@ -515,7 +520,6 @@ Compact gallagher = {
 	GALLAGHER_LOGIC73,	// baseSub
 	0,	// baseSub_off
 	&gallagher_ext,
-	&gallagher_turnTable,
 };
 
 uint16 sc73_joey_fight1[] = {
