@@ -612,7 +612,7 @@ static int OPLOpenTable(void) {
 	}
 	/* make total level table */
 	for (t = 0; t < EG_ENT - 1 ; t++){
-		rate = ((1 << TL_BITS) - 1) / pow(10, EG_STEP * t / 20);	/* dB -> voltage */
+		rate = ((1 << TL_BITS) - 1) / pow(10.0, EG_STEP * t / 20);	/* dB -> voltage */
 		TL_TABLE[         t] =  (int)rate;
 		TL_TABLE[TL_MAX + t] = -TL_TABLE[t];
 	}
