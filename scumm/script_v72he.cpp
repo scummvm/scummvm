@@ -950,7 +950,7 @@ void ScummEngine_v72he::o72_openFile() {
 
 	mode = pop();
 	copyScriptString(filename, true);
-	debug(1,"File %s\n", filename);
+	debug(1,"File %s", filename);
 	
 	for (r = strlen((char*)filename); r != 0; r--) {
 		if (filename[r - 1] == '\\')
