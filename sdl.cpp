@@ -134,8 +134,6 @@ private:
 		MAX_MOUSE_W = 40,
 		MAX_MOUSE_H = 40,
 		MAX_SCALING = 3,
-
-		TMP_SCREEN_OFFS = 320*2 + 8,
 	};
 
 	SDL_Rect *dirty_rect_list;
@@ -306,10 +304,10 @@ normal_mode:;
 
 	sdl_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0);
 	if (sdl_screen == NULL)
-		error("SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 8, 0, 0, 0, 0) failed");
+		error("sdl_screen failed failed");
 
 	if (_sai_func) {
-		uint16 *tmp_screen = (uint16*)calloc(320*204 + 16,sizeof(uint16));
+		uint16 *tmp_screen = (uint16*)calloc((320+3)*(200+3),sizeof(uint16));
 		_mode_flags = DF_FORCE_FULL_ON_PALETTE | DF_WANT_RECT_OPTIM | DF_2xSAI | DF_SEPARATE_TEMPSCREEN | DF_UPDATE_EXPAND_1_PIXEL;
 
 		sdl_hwscreen = SDL_SetVideoMode(320 * scaling, 200 * scaling, 16, 
@@ -323,8 +321,8 @@ normal_mode:;
 			Init_2xSaI(555);
 		else
 			Init_2xSaI(565);
-		sdl_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen + TMP_SCREEN_OFFS,
-							320, 200, 16, 320*2,
+		sdl_tmpscreen = SDL_CreateRGBSurfaceFrom(tmp_screen,
+							320 + 3, 200 + 3, 16, (320 + 3)*2,
 							sdl_hwscreen->format->Rmask,
 							sdl_hwscreen->format->Gmask,
 							sdl_hwscreen->format->Bmask,
@@ -368,7 +366,7 @@ void OSystem_SDL::unload_gfx_mode() {
 	sdl_hwscreen = NULL;
 
 	if (_mode_flags & DF_SEPARATE_TEMPSCREEN) {
-		free((uint16*)sdl_tmpscreen->pixels - (int)TMP_SCREEN_OFFS);
+		free((uint16*)sdl_tmpscreen->pixels);
 		SDL_FreeSurface(sdl_tmpscreen);
 	}
 	sdl_tmpscreen = NULL;
@@ -583,9 +581,13 @@ void OSystem_SDL::update_screen() {
 
 
 	/* Convert appropriate parts of the image into 16bpp */
-	if (_mode_flags & DF_SEPARATE_TEMPSCREEN) {
+	if (_mode_flags & DF_2xSAI) {
+		SDL_Rect dst;
 		for(r=dirty_rect_list; r!=last_rect; ++r) {
-			if (SDL_BlitSurface(sdl_screen, r, sdl_tmpscreen, r) != 0)
+			dst = *r;
+			dst.x++;
+			dst.y++;
+			if (SDL_BlitSurface(sdl_screen, r, sdl_tmpscreen, &dst) != 0)
 				error("SDL_BlitSurface failed: %s", SDL_GetError());
 		}
 	}
@@ -608,10 +610,10 @@ void OSystem_SDL::update_screen() {
 				r->x <<= 1;
 				dst_y <<= 1;
 				
-				_sai_func((byte*)sdl_tmpscreen->pixels + r->x + r->y*srcPitch, srcPitch, NULL, 
+				_sai_func((byte*)sdl_tmpscreen->pixels + (r->x+2) + (r->y+1)*srcPitch, srcPitch, NULL, 
 					(byte*)sdl_hwscreen->pixels + r->x*scaling + dst_y*dstPitch, dstPitch, r->w, dst_h);
 			}
-	
+			
 			r->y = dst_y;
 			r->w <<= 1;
 			r->h = dst_h << 1;
@@ -624,13 +626,13 @@ void OSystem_SDL::update_screen() {
 				dst_h = r->h;
 				if (dst_h > SCREEN_HEIGHT - dst_y)
 					dst_h = SCREEN_HEIGHT - dst_y;
-	
+				
 				dst_y *= scaling;
-
+				
 				_sai_func((byte*)sdl_tmpscreen->pixels + r->x + r->y*srcPitch, srcPitch, NULL, 
 					(byte*)sdl_hwscreen->pixels + r->x*scaling + dst_y*dstPitch, dstPitch, r->w, dst_h);
 			}
-	
+			
 			r->x *= scaling;
 			r->y = dst_y;
 			r->w *= scaling;
