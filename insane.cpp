@@ -154,11 +154,64 @@ byte * SmushPlayer::getStringTRES(int32 number)
 	return txt;
 }
 
+uint32 SmushPlayer::getFontHeight(uint8 c_font)
+{
+	byte * font = _fonts[c_font];
+	uint32 offset = 0, t_offset = 0;
+	
+	if (font == NULL)
+		return 0;
+	
+	if (READ_BE_UINT32(font) != 'AHDR')
+		return 0;
+	
+	offset = READ_BE_UINT32(font + 4) + 8;
+	if (READ_BE_UINT32(font + offset) == 'FRME') {
+		offset += 8;
+		if (READ_BE_UINT32(font + offset) == 'FOBJ') {
+				t_offset = offset + 8;
+				offset += READ_BE_UINT32(font + offset + 4) + 8;
+		}
+		else
+			return 0;
+	}
+	return *(uint16*)(font + t_offset + 8);
+}
+
+uint32 SmushPlayer::getCharWidth(uint8 c_font, byte txt)
+{
+	byte * font = _fonts[c_font];
+	uint32 offset = 0, t_offset = 0, l;
+	
+	if (font == NULL)
+		return 0;
+	
+	if (READ_BE_UINT32(font) != 'AHDR')
+		return 0;
+	
+	offset = READ_BE_UINT32(font + 4) + 8;
+	for (l = 0; l <= txt; l++) {
+		if (READ_BE_UINT32(font + offset) == 'FRME') {
+			offset += 8;
+			if (READ_BE_UINT32(font + offset) == 'FOBJ') {
+				t_offset = offset + 8;
+				offset += READ_BE_UINT32(font + offset + 4) + 8;
+			}
+			else
+				return 0;
+		}
+		else
+			return 0;
+	}
+	return *(uint16*)(font + t_offset + 6);
+}
+
 void SmushPlayer::drawStringTRES(uint32 x, uint32 y, byte * txt)
 {
 	char buf[4];
-	uint32 c_line = 0, l = 0, i, tmp_x;
-	uint8 c_font = 0, c_color = 0;
+	uint32 c_line = 0, l = 0, i, tmp_x, x_pos, last_l, t_width, t_height;
+	uint8 c_font = 0, c_color = 0, last_j;
+	int j;
 
 	if ((txt[l] == '^') && (txt[l + 1] == 'f')) {
 		buf[0] = txt[l + 2];
@@ -177,6 +230,72 @@ void SmushPlayer::drawStringTRES(uint32 x, uint32 y, byte * txt)
 		l += 5;
 		c_color = atoi(buf);
 	}
+	
+	t_height = getFontHeight(c_font);
+	x_pos = x;
+	last_j = 0;
+	last_l = l;
+
+	for (j = 0;; j++) {
+		if (txt[l + j] == 0) {
+			break;
+		}
+		if (txt[l + j] == 0x0d) {
+			if (txt[l + j + 2] == 0x0d) break;
+			l += j + 2;
+			j = -1;
+			last_j = 0;
+			c_line++;
+			x_pos = x;
+			if (c_line * t_height + y >= 200) {
+				if (y > t_height) {
+					y -= t_height;
+				}
+				else
+				{
+					y = 0;
+					printf ("out of screen y\n");
+				}
+				continue;
+			}
+		}
+		t_width = getCharWidth (c_font, txt[l + j]);
+		if (x_pos + t_width >= 320) {
+			if ((x > t_width) && (c_line == 0)) {
+				x -= t_width;
+				x_pos += t_width;
+				if (txt[l + j] == ' ') {
+					last_j = j;
+				}
+				continue;
+			}
+			j = last_j;
+			txt[l + j] = 0x0d;
+			x_pos = x;
+			c_line++;
+			l++;
+			j = -1;
+			last_j = 0;
+			if (c_line * t_height + y >= 200) {
+				if (y > t_height) {
+					y -= t_height;
+				}
+				else {
+					y = 0;
+					printf ("out of screen y\n");
+				}
+			}
+		}
+		else {
+			x_pos += t_width;
+			if (txt[l + j] == ' ') {
+				last_j = j;
+			}
+		}
+	}
+
+	l = last_l;
+	c_line = 0;
 
 	for (;;) {
 		tmp_x = x;
@@ -184,18 +303,16 @@ void SmushPlayer::drawStringTRES(uint32 x, uint32 y, byte * txt)
 			if (txt[l + i] == 0)
 				goto exit_loop;
 			if (txt[l + i] == 0x0d) {
-				l += i + 2;
-				break;
+				if (txt[l + i + 1] == 0x0a) {
+					l += i + 2;
+					break;
+				}
+				else {
+					l += i + 1;
+					break;
+				}
 			}
 			drawCharTRES (&tmp_x, y, c_line, c_font, c_color, txt[l + i]);
-			
-			// this is hack
-			if (y + c_line * 0xe > 170) continue;
-			
-			if (tmp_x > 320) {
-				tmp_x = 0;
-				c_line++;
-			}
 		}
 		c_line++;
 	}

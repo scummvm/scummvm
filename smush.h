@@ -72,6 +72,8 @@ struct SmushPlayer {
 
 	byte * loadTres();
 	void loadFonts();
+	uint32 getCharWidth(uint8 c_font, byte txt);
+	uint32 getFontHeight(uint8 c_font);
 	byte * getStringTRES(int32 number);
 	void drawStringTRES(uint32 x, uint32 y, byte * txt);
 	void drawCharTRES(uint32 * x, uint32 y, uint32 c_line, uint8 c_font, uint8 color, uint8 txt);
