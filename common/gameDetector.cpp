@@ -83,6 +83,9 @@ static const char USAGE_STRING[] =
 	"\t--multi-midi   - enable combination Adlib and native MIDI\n"
 	"\t--native-mt32  - true Roland MT-32 (disable GM emulation)\n"
 	"\t--aspect-ratio - enable aspect ratio correction\n"
+	"\n"
+	"The meaning of long options can be inverted by prefixing them with \"no-\",\n"
+	"e.g. \"--no-aspect-ratio\".\n"
 ;
 #endif
 // This contains a pointer to a list of all supported games.
@@ -312,6 +315,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 	char *current_option = NULL;
 	char *option = NULL;
 	char c;
+	bool long_option_value;
 	_save_slot = -1;
 
 	// Parse the arguments
@@ -451,15 +455,20 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				exit(1);
 			case '-':
 				// Long options. Let the fun begin!
+				if (!strncmp(s, "no-", 3)) {
+					long_option_value = false;
+					s += 3;
+				} else
+					long_option_value = true;
 				if (!strcmp (s, "multi-midi")) {
-					_multi_midi = true;
-					g_config->setBool ("multi_midi", true);
+					_multi_midi = long_option_value;
+					g_config->setBool ("multi_midi", _multi_midi);
 				} else if (!strcmp (s, "native-mt32")) {
-					_native_mt32 = true;
-					g_config->setBool ("native_mt32", true);
+					_native_mt32 = long_option_value;
+					g_config->setBool ("native_mt32", _native_mt32);
 				} else if (!strcmp (s, "aspect-ratio")) {
-					_aspectRatio = true;
-					g_config->setBool ("aspect_ratio", true);
+					_aspectRatio = long_option_value;
+					g_config->setBool ("aspect_ratio", _aspectRatio);
 				} else {
 					goto ShowHelpAndExit;
 				}

@@ -380,6 +380,10 @@ Command Line Options:
         --native-mt32  - true Roland MT-32 (disable GM emulation)
         --aspect-ratio - enable aspect ratio correction
 
+The meaning of long options can be inversed by prefixing them with "no-", e.g.
+--no-aspect-ratio. This is useful if you want to override a setting in the
+configuration file.
+
 
 
 Hot Keys:
