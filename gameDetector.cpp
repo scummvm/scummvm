@@ -489,8 +489,8 @@ int GameDetector::detectMain(int argc, char **argv)
 #else
 	_gfx_mode = GFX_NORMAL;
 #endif
-	_sfx_volume = 100;
-	_music_volume = 60;
+	_sfx_volume = 192;
+	_music_volume = 192;
 
 #if defined(USE_NULL_DRIVER)
 	_gfx_driver = GD_NULL;

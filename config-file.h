@@ -29,9 +29,10 @@ class Config {
 public:
 	Config (const char * = "config.cfg", const char * = "default");
 	 ~Config ();
-	const char *get(const char *, const char * = 0) const;
-	const char *set(const char *, const char *, const char * = 0);
-	const char *set(const char *, int, const char * = 0);
+	const char *get(const char *key, const char *dom = 0) const;
+	const int getInt(const char *key, int def = 0, const char *dom = 0) const;
+	const char *set(const char *key, const char *value, const char *dom = 0);
+	const char *set(const char *key, int value, const char *dom = 0);
 	void set_domain(const char *);
 	void flush() const;
 	void rename_domain(const char *);

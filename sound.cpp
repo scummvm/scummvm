@@ -585,24 +585,15 @@ void Scumm::talkSound(uint32 a, uint32 b, int mode)
 
 void Scumm::setupSound()
 {
-	IMuse *se = _imuse;
-	if (se) {
-		se->setBase(res.address[rtSound]);
-		if (!scummcfg->get("music_volume"))
-			_sound_volume_music = 60;
-		else
-			_sound_volume_music = atoi(scummcfg->get("music_volume"));
-		if (!scummcfg->get("master_volume"))
-			_sound_volume_master = 125;
-		else
-			_sound_volume_master = atoi(scummcfg->get("master_volume"));
-		if (!scummcfg->get("sfx_volume"))
-			_sound_volume_sfx = 100;
-		else
-			_sound_volume_sfx = atoi(scummcfg->get("sfx_volume"));
+	if (_imuse) {
+		_imuse->setBase(res.address[rtSound]);
 
-		se->set_master_volume(_sound_volume_master);
-		se->set_music_volume(_sound_volume_music);
+		_sound_volume_music = scummcfg->getInt("music_volume", 192);
+		_sound_volume_master = scummcfg->getInt("master_volume", 192);
+		_sound_volume_sfx = scummcfg->getInt("sfx_volume", 192);
+
+		_imuse->set_master_volume(_sound_volume_master);
+		_imuse->set_music_volume(_sound_volume_music);
 		_mixer->set_volume(_sound_volume_sfx);
 		_mixer->set_music_volume(_sound_volume_music);
 	}

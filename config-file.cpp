@@ -232,6 +232,25 @@ const char *Config::get(const char *key, const char *d) const
 	return 0;
 }
 
+const int Config::getInt(const char *key, int def, const char *d) const
+{
+	int i;
+
+	if (!d)
+		d = domain;
+
+	for (i = 0; i < ndomains; i++) {
+		if (hash[i]->is_domain(d)) {
+			const char *val = hash[i]->get(key);
+			if (val)
+				return atoi(val);
+			break;
+		}
+	}
+
+	return def;
+}
+
 const char *Config::set(const char *key, const char *value, const char *d)
 {
 	int i;
