@@ -250,25 +250,6 @@ void LauncherDialog::updateListing() {
 	updateButtons();
 }
 
-/*
- * Return a list of all games which might be the game in the specified directory.
- */
-GameList detectGames(FilesystemNode *dir) {
-	GameList detectedGames;
-
-	FSList *files = dir->listDir(FilesystemNode::kListFilesOnly);
-
-	// Iterate over all known games and for each check if it might be
-	// the game in the presented directory.
-	const PluginList &plugins = PluginManager::instance().getPlugins();
-	PluginList::ConstIterator iter = plugins.begin();
-	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		detectedGames.push_back((*iter)->detectGames(*files));
-	}
-
-	return detectedGames;
-}
-
 void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	int item =  _list->getSelected();
 
@@ -288,33 +269,41 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		if (_browser->runModal()) {
 			// User made his choice...
 			FilesystemNode *dir = _browser->getResult();
+			FSList *files = dir->listDir(FilesystemNode::kListFilesOnly);
 
 			// ...so let's determine a list of candidates, games that
 			// could be contained in the specified directory.
-			GameList candidates = detectGames(dir);
-			GameSettings result = {NULL, NULL, MDT_NONE, 0, NULL};
+			GameList candidates;
+		
+			// Iterate over all known games and for each check if it might be
+			// the game in the presented directory.
+			const PluginList &plugins = PluginManager::instance().getPlugins();
+			PluginList::ConstIterator iter = plugins.begin();
+			for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+				candidates.push_back((*iter)->detectGames(*files));
+			}
 
+			int idx;
 			if (candidates.isEmpty()) {
 				// No game was found in the specified directory
 				MessageDialog alert(_gui, "ScummVM could not find any game in the specified directory!");
 				alert.runModal();
+				idx = -1;
 			} else if (candidates.size() == 1) {
 				// Exact match
-				result = candidates[0];
+				idx = 0;
 			} else {
 				// Display the candidates to the user and let her/him pick one
 				StringList list;
-				int i;
-				for (i = 0; i < candidates.size(); i++)
-					list.push_back(candidates[i].description);
+				for (idx = 0; idx < candidates.size(); idx++)
+					list.push_back(candidates[idx].description);
 				
 				ChooserDialog dialog(_gui, "Pick the game:", list);
-				i = dialog.runModal();
-				if (0 <= i && i < candidates.size())
-					result = candidates[i];
+				idx = dialog.runModal();
 			}
+			if (0 <= idx && idx < candidates.size()) {
+				GameSettings result = candidates[idx];
 
-			if (result.gameName != 0) {
 				// The auto detector or the user made a choice.
 				// Pick a domain name which does not yet exist (after all, we
 				// are *adding* a game to the config, not replacing).
@@ -323,6 +312,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 					char suffix = 'a';
 					domain += suffix;
 					while (ConfMan.hasGameDomain(domain)) {
+						assert(suffix < 'z');
 						domain.deleteLastChar();
 						suffix++;
 						domain += suffix;
