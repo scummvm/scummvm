@@ -227,7 +227,7 @@ bool Debugger<T>::RunCommand(const char *inputOrig) {
 					break;
 				// Integer array
 				case DVAR_INTARRAY: {
-					char *chr = strchr(param[0], '[');
+					char *chr = strchr((char *)param[0], '[');
 					if (!chr) {
 						DebugPrintf("You must access this array as %s[element]\n", param[0]);
 					} else {
