@@ -1536,16 +1536,13 @@ void ScummEngine_v72he::o72_openFile() {
 
 	// HACK Correct incorrect filenames
 	if (!strcmp((char *)filename,".he3")) {
+		// For freddicove (Unencrypted)
 		memset(filename, 0, sizeof(filename));
 		sprintf((char *)filename, "%s.he3", _gameName.c_str());
 		debug(0,"New filename %s", filename);
 
-	} else if (!strcmp((char *)filename,".he7")) {
-		memset(filename, 0, sizeof(filename));
-		sprintf((char *)filename, "%s.he7", _gameName.c_str());
-		debug(0,"New filename %s", filename);
-
 	} else if (!strcmp((char *)filename,".HE9")) {
+		// For bb2demo
 		memset(filename, 0, sizeof(filename));
 		sprintf((char *)filename, "%s.he9", _gameName.c_str());
 		debug(0,"New filename %s", filename);

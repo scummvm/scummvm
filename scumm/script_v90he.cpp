@@ -1439,7 +1439,7 @@ void ScummEngine_v90he::o90_paletteOps() {
 	default:
 		error("o90_paletteOps: Unknown case %d", subOp);
 	}
-	debug(0,"o90_paletteOps stub (%d)", subOp);
+	debug(1,"o90_paletteOps stub (%d)", subOp);
 }
 
 
