@@ -188,8 +188,7 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	_drawObjectQueNr = 0;
 	_verbMouseOver = 0;
 
-	if (_features & GF_NEW_CAMERA)
-		cameraMoved();
+	cameraMoved();
 
 	initBGBuffers(_roomHeight);
 
