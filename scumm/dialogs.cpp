@@ -602,8 +602,7 @@ HelpDialog::HelpDialog(NewGui *gui, Scumm *scumm)
 	: ScummDialog(gui, scumm, 15, 10, 290, 184) {
 
 	_page = 1;
-	_gameId = scumm->_gameId;
-	_numPages = ScummHelp::numPages(_gameId);
+	_numPages = ScummHelp::numPages(scumm->_gameId);
 
 	_prevButton = addPushButton(10, 160, "Previous", kPrevCmd, 'P');
 	_nextButton = addPushButton(90, 160, "Next", kNextCmd, 'N');
@@ -622,7 +621,7 @@ HelpDialog::HelpDialog(NewGui *gui, Scumm *scumm)
 void HelpDialog::displayKeyBindings() {
 	String titleStr, *keyStr, *dscStr;
 
-	ScummHelp::updateStrings(_gameId, _page, titleStr, keyStr, dscStr);
+	ScummHelp::updateStrings(_scumm->_gameId, _scumm->_version, _page, titleStr, keyStr, dscStr);
 
 	_title->setLabel(titleStr);
 	for (int i = 0; i < HELP_NUM_LINES; i++) {

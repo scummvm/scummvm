@@ -104,8 +104,6 @@ protected:
 	int _page;
 	int _numPages;
 
-	byte _gameId;
-
 	void displayKeyBindings();
 };
 

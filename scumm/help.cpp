@@ -55,11 +55,11 @@ int ScummHelp::numPages(byte gameId) {
 	}
 }
 
-#define ADD_BIND(k,d) key[i] = k; dsc[i] = d; i++;
+#define ADD_BIND(k,d) do { key[i] = k; dsc[i] = d; i++; } while(0)
 #define ADD_TEXT(d) ADD_BIND("",d)
 #define ADD_LINE ADD_BIND("","")
 
-void ScummHelp::updateStrings(byte gameId, int page, String &title,
+void ScummHelp::updateStrings(byte gameId, byte version, int page, String &title,
 			String *&key, String *&dsc) {
 	key = new String[HELP_NUM_LINES];
 	dsc = new String[HELP_NUM_LINES];
@@ -68,7 +68,8 @@ void ScummHelp::updateStrings(byte gameId, int page, String &title,
 	case 1:
 		title = "Common keyboard commands:";
 		ADD_BIND("F5", "Save / Load dialog");
-		ADD_BIND(".", "Skip line of text");
+		if (version >= 5)
+			ADD_BIND(".", "Skip line of text");
 		ADD_BIND("Esc", "Skip cutscene");
 		ADD_BIND("Space", "Pause game");
 		ADD_BIND("Ctrl 0-9", "Load game state 1-10");
