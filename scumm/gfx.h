@@ -262,8 +262,10 @@ protected:
 	void updateDirtyScreen(VirtScreen *vs);
 	
 	byte *getMaskBuffer(int x, int y, int z);
+	
+	int getZPlanes(const byte *smap_ptr, const byte *zplane_list[9]);
 
-	void decompressBMAPbg(byte *dst, int screenwidth, int w, int h, const byte *ptr, int shr, int mask);
+	void decompressBMAPbg(byte *dst, int screenwidth, int w, int h, const byte *ptr);
 
 public:
 	void init();

@@ -1034,51 +1034,16 @@ void Gdi::drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, cons
 	}
 }
 
-/**
- * Draw a bitmap onto a virtual screen. This is main drawing method for room backgrounds
- * and objects, used throughout all SCUMM versions.
- */
-void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
-					int stripnr, int numstrip, byte flag, StripTable *table) {
-	assert(ptr);
-	assert(height > 0);
-	byte *backbuff_ptr, *bgbak_ptr;
-	const byte *smap_ptr;
-	const byte *z_plane_ptr;
-	byte *mask_ptr;
-
-	int i;
-	const byte *zplane_list[9];
-
-	int bottom;
+int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9]) {
 	int numzbuf;
-	int sx;
-	bool lightsOn;
-	bool useOrDecompress = false;
+	int i;
 
-	// Check whether lights are turned on or not
-	lightsOn = _vm->isLightOn();
-
-	CHECK_HEAP;
 	if (_vm->_features & GF_SMALL_HEADER)
-		smap_ptr = ptr;
+		zplane_list[0] = ptr;
 	else if (_vm->_version == 8)
-		smap_ptr = ptr;
+		zplane_list[0] = ptr;
 	else
-		smap_ptr = _vm->findResource(MKID('SMAP'), ptr);
-
-	if (!smap_ptr) {
-		// This will go away eventually. HE 7.2 titles used different function
-		// here which read BMAP. But it was replaced not in every place. So
-		// this is a placeholder which shows that not all such cases are
-		// processed yet.
-		warning("We shouldn't be here, no SMAP");
-		return;
-	}
-
-	assert(smap_ptr);
-
-	zplane_list[0] = smap_ptr;
+		zplane_list[0] = _vm->findResource(MKID('SMAP'), ptr);
 
 	if (_zbufferDisabled)
 		numzbuf = 0;
@@ -1086,13 +1051,13 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		numzbuf = _numZBuffer;
 	else {
 		numzbuf = _numZBuffer;
-		assert(numzbuf <= ARRAYSIZE(zplane_list));
+		assert(numzbuf <= 9);
 		
 		if (_vm->_features & GF_SMALL_HEADER) {
 			if (_vm->_features & GF_16COLOR)
-				zplane_list[1] = smap_ptr + READ_LE_UINT16(smap_ptr);
+				zplane_list[1] = ptr + READ_LE_UINT16(ptr);
 			else
-				zplane_list[1] = smap_ptr + READ_LE_UINT32(smap_ptr);
+				zplane_list[1] = ptr + READ_LE_UINT32(ptr);
 			if (_vm->_features & GF_OLD256) {
 				if (0 == READ_LE_UINT32(zplane_list[1]))
 					zplane_list[1] = 0;
@@ -1102,7 +1067,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			}
 		} else if (_vm->_version == 8) {
 			// Find the OFFS chunk of the ZPLN chunk
-			const byte *zplnOffsChunkStart = smap_ptr + READ_BE_UINT32(smap_ptr + 12) + 24;
+			const byte *zplnOffsChunkStart = ptr + 24 + READ_BE_UINT32(ptr + 12);
 			
 			// Each ZPLN contains a WRAP chunk, which has (as always) an OFFS subchunk pointing
 			// at ZSTR chunks. These once more contain a WRAP chunk which contains nothing but
@@ -1131,12 +1096,55 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		}
 	}
 	
-	if (_vm->_version == 8) {	
-		// A small hack to skip to the BSTR->WRAP->OFFS chunk. Note: order matters, we do this
-		// *after* the Z buffer code because that assumes' the orginal value of smap_ptr. 
-		smap_ptr += 24;
+	return numzbuf;
+}
+
+/**
+ * Draw a bitmap onto a virtual screen. This is main drawing method for room backgrounds
+ * and objects, used throughout all SCUMM versions.
+ */
+void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
+					int stripnr, int numstrip, byte flag, StripTable *table) {
+	assert(ptr);
+	assert(height > 0);
+	byte *backbuff_ptr, *bgbak_ptr;
+	const byte *smap_ptr;
+	const byte *z_plane_ptr;
+	byte *mask_ptr;
+
+	int i;
+	const byte *zplane_list[9];
+
+	int bottom;
+	int numzbuf;
+	int sx;
+	bool useOrDecompress = false;
+
+	// Check whether lights are turned on or not
+	const bool lightsOn = _vm->isLightOn();
+
+	CHECK_HEAP;
+	if (_vm->_features & GF_SMALL_HEADER) {
+		smap_ptr = ptr;
+	} else if (_vm->_version == 8) {
+		// Skip to the skip to the BSTR->WRAP->OFFS chunk
+		smap_ptr = ptr + 24;
+	} else
+		smap_ptr = _vm->findResource(MKID('SMAP'), ptr);
+
+	if (!smap_ptr) {
+		// This will go away eventually. HE 7.2 titles used different function
+		// here which read BMAP. But it was replaced not in every place. So
+		// this is a placeholder which shows that not all such cases are
+		// processed yet.
+		warning("We shouldn't be here, no SMAP");
+		return;
 	}
 
+	assert(smap_ptr);
+
+	numzbuf = getZPlanes(ptr, zplane_list);
+	
 	bottom = y + height;
 	if (bottom > vs->h) {
 		warning("Gdi::drawBitmap, strip drawn to %d below window bottom %d", bottom, vs->h);
@@ -1329,41 +1337,31 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs, int startstrip, int width)
 	// in decompressBitmap call drawStripHE(), which use the same algorithm as
 	// decompressBMAPbg() does...
 	if ((code >= 134 && code <= 138) || (code >= 144 && code <= 148)) {
-		int decomp_shr = code % 10;
-		int decomp_mask = 0xFF >> (8 - decomp_shr);
+		_decomp_shr = code % 10;
+		_decomp_mask = 0xFF >> (8 - _decomp_shr);
 
-		decompressBMAPbg((byte *)vs->backBuf, width, vs->w, vs->h, bmap_ptr, decomp_shr, decomp_mask);
+		decompressBMAPbg((byte *)vs->backBuf, width, vs->w, vs->h, bmap_ptr);
 	}
 	copyVirtScreenBuffers(Common::Rect(0, 0, vs->w - 1, vs->h - 1));
 
 	if (_numZBuffer <= 1)
 		return;
+	
+	getZPlanes(ptr, zplane_list);
 
-	const uint32 zplane_tags[] = {
-		MKID('ZP00'),
-		MKID('ZP01'),
-		MKID('ZP02'),
-		MKID('ZP03'),
-		MKID('ZP04')
-	};
-			
-	for (int i = 1; i < _numZBuffer; i++) {
-		zplane_list[i] = _vm->findResource(zplane_tags[i], ptr);
-	}
-
-	for (int i = 0; i < _numStrips; i++)
-		for (int j = 1; j < _numZBuffer; j++) {
+	for (int stripnr = 0; stripnr < _numStrips; stripnr++)
+		for (int i = 1; i < _numZBuffer; i++) {
 			uint32 offs;
 
-			if (!zplane_list[j])
+			if (!zplane_list[i])
 				continue;
 
-			offs = READ_LE_UINT16(zplane_list[j] + i * 2 + 8);
+			offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
 
-			mask_ptr = getMaskBuffer(i, 0, j);
+			mask_ptr = getMaskBuffer(stripnr, 0, i);
 
 			if (offs) {
-				z_plane_ptr = zplane_list[j] + offs;
+				z_plane_ptr = zplane_list[i] + offs;
 
 				decompressMaskImg(mask_ptr, z_plane_ptr, vs->h);
 			}
@@ -1703,8 +1701,8 @@ void Gdi::copyVirtScreenBuffers(const Common::Rect &rect) {
 	
 	assert(rw <= _vm->_screenWidth && rw > 0);
 	assert(rh <= _vm->_screenHeight && rh > 0);
-	blit(dst, _vm->_screenWidth, src, _vm->_screenWidth, rw, rh);
-	_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right, rect.top, rect.bottom, 0);
+	blit(dst, _vm->virtscr[0].pitch, src, _vm->virtscr[0].pitch, rw, rh);
+	_vm->markRectAsDirty(kMainVirtScreen, rect);
 }
 
 /**
@@ -2156,7 +2154,7 @@ void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) {
 
 
 // NOTE: decompressBMAPbg is actually very similar to drawStripComplex
-void Gdi::decompressBMAPbg(byte *dst, int screenwidth, int w, int height, const byte *src, int shr, int mask) {
+void Gdi::decompressBMAPbg(byte *dst, int screenwidth, int w, int height, const byte *src) {
 	uint32 dataBit, data, shift;
 	byte color;
 	int32 iteration;
@@ -2174,9 +2172,9 @@ void Gdi::decompressBMAPbg(byte *dst, int screenwidth, int w, int height, const 
 			
 			if (READ_BIT) {
 				if (!READ_BIT) {
-					color = data & mask;
-					shift -= shr;
-					data >>= shr;
+					color = data & _decomp_mask;
+					shift -= _decomp_shr;
+					data >>= _decomp_shr;
 				} else {
 					dataBit = data & 7;
 					shift -= 3;
@@ -2199,8 +2197,6 @@ void Gdi::drawStripHE(byte *dst, const byte *src, int height, const bool transpC
 	uint32 dataBit, data, shift, iteration;
 	byte color;
 	const uint w = 8;
-	const int shr = _decomp_shr;
-	const int mask = _decomp_mask;
 
 	color = *src;
 	src++;
@@ -2217,9 +2213,9 @@ void Gdi::drawStripHE(byte *dst, const byte *src, int height, const bool transpC
 			
 			if (READ_BIT) {
 				if (!READ_BIT) {
-					color = data & mask;
-					shift -= shr;
-					data >>= shr;
+					color = data & _decomp_mask;
+					shift -= _decomp_shr;
+					data >>= _decomp_shr;
 				} else {
 					dataBit = data & 7;
 					shift -= 3;
