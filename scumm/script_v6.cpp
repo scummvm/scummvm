@@ -2510,7 +2510,7 @@ void Scumm_v6::o6_kernelSetFunctions() {
 				}
 				message = buf_output;
 			}
-			enqueueText(message, args[3], args[4] + camera._cur.y - (_screenHeight / 2), args[2], args[1], true);
+			enqueueText(message, args[3], args[4], args[2], args[1], true);
 			break;}
 		case 20:
 			// Occurs in The Dig, at the alien pyramid. See bug #742979.

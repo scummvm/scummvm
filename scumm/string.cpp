@@ -122,8 +122,8 @@ void Scumm::CHARSET_1() {
 			s = a->scaley * a->talkPosY / 0xFF;
 			_string[0].ypos = ((a->talkPosY - s) >> 1) + s - a->elevation + a->y;
 
-			if (_string[0].ypos < camera._cur.y - (_screenHeight / 2))
-				_string[0].ypos = camera._cur.y - (_screenHeight / 2);
+			if (_string[0].ypos < _screenTop)
+				_string[0].ypos = _screenTop;
 
 			s = a->scalex * a->talkPosX / 0xFF;
 			_string[0].xpos = ((a->talkPosX - s) >> 1) + s + a->x - camera._cur.x + (_screenWidth / 2);
@@ -138,7 +138,7 @@ void Scumm::CHARSET_1() {
 			_string[0].xpos = _screenWidth - 80;
 	}
 
-	_charset->_top = _string[0].ypos;
+	_charset->_top = _string[0].ypos + _screenTop;
 	_charset->_startLeft = _charset->_left = _string[0].xpos;
 
 	if (a && a->charset)
@@ -355,7 +355,7 @@ void Scumm::drawString(int a) {
 	_msgPtrToAdd = buf;
 	_messagePtr = addMessageToStack(_messagePtr);
 
-	_charset->_top = _string[a].ypos;
+	_charset->_top = _string[a].ypos + _screenTop;
 	_charset->_startLeft = _charset->_left = _string[a].xpos;
 	_charset->_right = _string[a].right;
 	_charset->_center = _string[a].center;
@@ -699,7 +699,7 @@ void Scumm::drawBlastTexts() {
 
 		buf = _blastTextQueue[i].text;
 
-		_charset->_top = _blastTextQueue[i].ypos;
+		_charset->_top = _blastTextQueue[i].ypos + _screenTop;
 		_charset->_startLeft = _charset->_left = _blastTextQueue[i].xpos;
 		_charset->_right = _screenWidth - 1;
 		_charset->_center = _blastTextQueue[i].center;
@@ -707,7 +707,7 @@ void Scumm::drawBlastTexts() {
 		_charset->_disableOffsX = _charset->_firstChar = true;
 		_charset->setCurID(_blastTextQueue[i].charset);
 		_charset->_nextLeft = _blastTextQueue[i].xpos;
-		_charset->_nextTop = _blastTextQueue[i].ypos;
+		_charset->_nextTop = _charset->_top;
 
 		// Center text if necessary
 		if (_charset->_center) {

@@ -1426,7 +1426,7 @@ void Scumm_v8::o8_kernelGetFunctions() {
 		break;
 	case 0xD8: {		// findBlastObject
 		int x = args[1] + (camera._cur.x & 7);
-		int y = args[2] + (camera._cur.y - (_screenHeight /2));;
+		int y = args[2] + _screenTop;
 		BlastObject *eo;
 
 		for (int i = _blastObjectQueuePos - 1; i >= 0; i--) {

@@ -238,9 +238,9 @@ void NutRenderer::drawShadowChar(int c, int x, int y, byte color, bool useMask) 
 		y += offsetY[i];
 		color = cTable[i];
 		
-		dst = _vm->virtscr[0].screenPtr + y * _vm->_screenWidth + x + _vm->virtscr[0].xstart;
+		dst = _vm->virtscr[0].screenPtr + (y + _vm->_screenTop) * _vm->_screenWidth + x + _vm->virtscr[0].xstart;
 		if (useMask)
-			mask = _vm->getMaskBuffer(x, y, 0);
+			mask = _vm->getMaskBuffer(x, y + _vm->_screenTop, 0);
 		
 		if (c >= 256 && _vm->_CJKMode)
 			draw2byte(dst, mask, c, x, y, color);

@@ -1618,7 +1618,7 @@ void Scumm::processKbd() {
 	_virtualMouse.x = _mouse.x + virtscr[0].xstart;
 	_virtualMouse.y = _mouse.y - virtscr[0].topline;
 	if (_features & GF_NEW_CAMERA)
-		_virtualMouse.y += camera._cur.y - (_screenHeight / 2);
+		_virtualMouse.y += _screenTop;
 
 	if (_virtualMouse.y < 0)
 		_virtualMouse.y = -1;

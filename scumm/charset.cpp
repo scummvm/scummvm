@@ -1288,7 +1288,7 @@ void CharsetRendererNut::printChar(int chr) {
 	shadow_bottom = _top + height + 2;
 
 	_hasMask = true;
-	_current->drawShadowChar(chr, _left, _top, _color, !_ignoreCharsetMask);
+	_current->drawShadowChar(chr, _left, _top - _vm->_screenTop, _color, !_ignoreCharsetMask);
 	_vm->updateDirtyRect(0, shadow_left, shadow_right, shadow_top, shadow_bottom, 0);
 
 	_left += width;
