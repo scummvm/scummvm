@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2004 The ScummVM project
+ * Copyright (C) 2004-2005 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -97,26 +97,11 @@ int GobEngine::init(GameDetector &detector) {
 	soundFlags = 0;
 	language = 5;
 
-	init_initGame(0);
-
 	return 0;
 }
 
 int GobEngine::go() {
-	for (;;) {
-		OSystem::Event event;
-		while (g_system->pollEvent(event)) {
-			switch (event.type) {
-				case OSystem::EVENT_QUIT:
-					g_system->quit();
-					break;
-				default:
-					break;
-			}
-		}
-		debug(0, "Main loop");
-		_system->delayMillis(10);
-	}
+	init_initGame(0);
 
 	return 0;
 }
