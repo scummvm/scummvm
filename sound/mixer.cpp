@@ -809,7 +809,7 @@ static inline int scale_sample(mad_fixed_t sample) {
 		sample = -MAD_F_ONE;
 
 	/* quantize and scale to not saturate when mixing a lot of channels */
-	return sample >> (MAD_F_FRACBITS + 2 - 16);
+	return sample >> (MAD_F_FRACBITS + 1 - 16);
 }
 
 void SoundMixer::ChannelMP3::mix(int16 * data, uint len) {
