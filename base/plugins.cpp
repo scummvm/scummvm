@@ -39,8 +39,14 @@ typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
 
 #ifdef UNIX
 #include <dlfcn.h>
+#define DYNAMIC_PLUGIN_PATH(name) (name "/lib" name ".so")
+#else
+#ifdef __DC__
+#include "dcloader.h"
+#define DYNAMIC_PLUGIN_PATH(name) (name ".plg")
 #else
 #error No support for loading plugins on non-unix systems at this point!
+#endif
 #endif
 
 #endif
@@ -123,7 +129,7 @@ public:
 };
 
 void *DynamicPlugin::findSymbol(const char *symbol) {
-#ifdef UNIX
+#if defined(UNIX)||defined(__DC__)
 	void *func = dlsym(_dlHandle, symbol);
 	if (!func)
 		warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.c_str(), dlerror());
@@ -172,6 +178,10 @@ bool DynamicPlugin::loadPlugin() {
 		return false;
 	}
 
+#ifdef __DC__
+	dlforgetsyms(_dlHandle);
+#endif
+
 	return true;
 }
 
@@ -211,7 +221,7 @@ void PluginManager::loadPlugins() {
 	// the "ABI" version the plugin was built for, and we can compare that
 	// to the ABI version of the executable.
 	#define LOAD_MODULE(name, NAME) \
-		tryLoadPlugin(new DynamicPlugin(name "/lib" name ".so"));
+		tryLoadPlugin(new DynamicPlugin(DYNAMIC_PLUGIN_PATH(name)));
 #else
 	// "Loader" for the static plugins
 	#define LOAD_MODULE(name, NAME) \
