@@ -1436,11 +1436,18 @@ static void LightMgrSetChange() {
 }
 
 static void SetAmbientLight() {
-	int type = check_int(1);
-	if (type != 0)
-		warning("SetAmbientLight() Set ambient light to %d", type);
-	else
-		;// 0 - seems turn off ambient light
+	int mode = check_int(1);
+	if (mode == 0) {
+		if (g_engine->currScene() != NULL) {
+			g_engine->currScene()->setLightEnableState(true);
+		}
+	} else if (mode == 1) {
+		if (g_engine->currScene() != NULL) {
+			g_engine->currScene()->setLightEnableState(false);
+		}
+	} else {
+		error("SetAmbientLight() Unknown param %d", mode);
+	}
 }
 
 static void EngineDisplay() {
