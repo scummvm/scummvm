@@ -356,7 +356,7 @@ void Scumm::drawObject(int obj, int arg)
 	ypos = od->y_pos;
 
 	width = od->width >> 3;
-	height = od->height &= 0xF8;	// Ender
+	height = od->height &= 0xFFFFFFF8;	// Mask out last 3 bits
 
 	if (width == 0 || xpos > _screenEndStrip || xpos + width < _screenStartStrip)
 		return;

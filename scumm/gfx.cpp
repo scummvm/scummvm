@@ -851,6 +851,7 @@ byte Scumm::isMaskActiveAt(int l, int t, int r, int b, byte *mem)
 void Gdi::drawBitmap(byte *ptr, VirtScreen *vs, int x, int y, const int h,
 										 int stripnr, int numstrip, byte flag)
 {
+	assert(h > 0);
 	byte *backbuff_ptr, *bgbak_ptr, *smap_ptr;
 	int i;
 	byte *zplane_list[9];
