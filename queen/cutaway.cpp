@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "cutaway.h"
+#include "display.h"
 #include "graphics.h"
 #include "talk.h"
 #include "walk.h"
@@ -284,11 +285,110 @@ void Cutaway::dumpCutawayObject(int index, CutawayObject &object)
 
 void Cutaway::actionSpecialMove(int index) {
 
-//	switch (index) {
-//		default:
+	switch (index) {
+
+		// cdint.cut
+		case 36:
+			break;
+		
+		// cdint.cut - flash white
+		case 37:
+			// XXX flashspecial();
+			break;
+
+		// cdint.cut - pan right
+		case 38:
+			{
+				Display *display = _logic->display();
+
+				BobSlot *bob_box   = _graphics->bob(20);
+				BobSlot *bob_beam  = _graphics->bob(21);
+				BobSlot *bob_crate = _graphics->bob(22);
+				BobSlot *bob_clock = _graphics->bob(23);
+				BobSlot *bob_hands = _graphics->bob(24);
+
+				// XXX _graphics->cameraBob(-1);
+				// XXX fastmode = 1;
+					
+				_graphics->update();
+
+				bob_box  ->x += 280 * 2;
+				bob_beam ->x += 30;
+				bob_crate->x += 180 * 3;
+
+				int horizontalScroll = display->horizontalScroll();
+
+				int i = 1;
+				while (horizontalScroll < 290) {
+
+					horizontalScroll = horizontalScroll + i;
+					if (horizontalScroll > 290)
+						horizontalScroll = 290;
+
+					//debug(0, "horizontalScroll = %i", horizontalScroll);
+
+					display->horizontalScroll(horizontalScroll);
+
+					bob_box  ->x -= i * 2;
+					bob_beam ->x -= i;
+					bob_crate->x -= i * 3;
+					bob_clock->x -= i * 2;
+					bob_hands->x -= i * 2;
+
+					_graphics->update();
+
+					if (_quit)
+						return;
+
+				}
+
+				// XXX fastmode = 0;
+			}
+			break;
+
+		// cdint.cut - pan left to bomb
+		case 39: 
+			{
+				Display *display = _logic->display();
+
+				BobSlot *bob21 = _graphics->bob(21);
+				BobSlot *bob22 = _graphics->bob(22);
+
+				// XXX _graphics->cameraBob(-1);
+				// XXX fastmode = 1;
+				
+				int horizontalScroll = display->horizontalScroll();
+
+				int i = 5;
+				while (horizontalScroll > 0 || bob21->x < 136) {
+
+					horizontalScroll -= i;
+					if (horizontalScroll < 0)
+						horizontalScroll = 0;
+
+					debug(0, "horizontalScroll = %i", horizontalScroll);
+					display->horizontalScroll(horizontalScroll);
+
+					if (horizontalScroll < 272 && bob21->x < 136)
+						bob21->x += (i/2);
+
+					bob22->x += i;
+
+					_graphics->update();
+
+					if (_quit)
+						return;
+
+				}
+
+				// XXX fastmode = 0;
+			}
+			break;
+
+		default:
 			warning("Unhandled special move: %i", index);
-//			break;
-//	}
+			break;
+	}
 }
 
 byte *Cutaway::turnOnPeople(byte *ptr, CutawayObject &object) {

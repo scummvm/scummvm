@@ -149,6 +149,8 @@ public:
 	//! FACE_JOE()
 	uint16 joeFace();
 
+	Display *display() { return _display; }
+
 protected:
 	bool _textToggle;
 	bool _speechToggle;

@@ -724,7 +724,7 @@ uint16 Display::textWidth(const char *text) const {
 }
 
 
-void Display::horizontalScrollUpdate(uint16 xCamera) {
+void Display::horizontalScrollUpdate(int16 xCamera) {
 
 	debug(9, "Display::horizontalScrollUpdate(%d)", xCamera);
 	_horizontalScroll = 0;
@@ -739,7 +739,7 @@ void Display::horizontalScrollUpdate(uint16 xCamera) {
 }
 
 
-void Display::horizontalScroll(uint16 scroll) {
+void Display::horizontalScroll(int16 scroll) {
 
 	_horizontalScroll = scroll;
 }

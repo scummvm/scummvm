@@ -29,8 +29,8 @@
 
 namespace Queen {
 
-Logic::Logic(Resource *resource, Graphics *graphics, Display *display)
-	: _resource(resource), _graphics(graphics), _display(display), _talkSpeed(DEFAULT_TALK_SPEED) {
+Logic::Logic(Resource *resource, Graphics *graphics, Display *theDisplay)
+	: _resource(resource), _graphics(graphics), _display(theDisplay), _talkSpeed(DEFAULT_TALK_SPEED) {
 	_jas = _resource->loadFile("QUEEN.JAS", 20);
 	_joe.x = _joe.y = 0;
 	_joe.scale = 100;

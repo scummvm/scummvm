@@ -86,9 +86,9 @@ public:
 	void textDraw(uint16 x, uint16 y, uint8 color, const char *text, bool outlined = true);
 	uint16 textWidth(const char *text) const;
 
-	void horizontalScrollUpdate(uint16 xCamera); // calc_screen_scroll
-	void horizontalScroll(uint16 scroll);
-	uint16 horizontalScroll() const { return _horizontalScroll; }
+	void horizontalScrollUpdate(int16 xCamera); // calc_screen_scroll
+	void horizontalScroll(int16 scroll);
+	int16 horizontalScroll() const { return _horizontalScroll; }
 
 	bool fullscreen() const { return _fullscreen; }
 
