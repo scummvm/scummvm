@@ -262,7 +262,7 @@ protected:
 	void o6_setObjectXY();
 	void o6_stopObjectCode();
 	void o6_endCutscene();
-	void o6_cutScene();
+	void o6_cutscene();
 	void o6_stopMusic();
 	void o6_freezeUnfreeze();
 	void o6_cursorCommand();
@@ -402,6 +402,8 @@ protected:
 
 	void o8_pushNumber();
 	void o8_pushVariable();
+	void o8_arrayRead();
+	void o8_arrayIndexedRead();
 	void o8_dup();
 	void o8_pop();
 	void o8_not();
@@ -422,6 +424,15 @@ protected:
 	void o8_mod();
 	void o8_jump();
 	void o8_breakHere();
+	void o8_wait();
+	void o8_cutscene();
+	void o8_endCutscene();
+	void o8_cursorCommand();
+	void o8_resourceRoutines();
+	void o8_roomOps();
+	void o8_actorSet();
+	void o8_cameraStuff();
+	void o8_verbOps();
 	void o8_startScript();
 	void o8_startObject();
 };

@@ -172,7 +172,7 @@ void Scumm_v6::setupOpcodes()
 		OPCODE(o6_stopObjectCode),
 		OPCODE(o6_endCutscene),
 		/* 68 */
-		OPCODE(o6_cutScene),
+		OPCODE(o6_cutscene),
 		OPCODE(o6_stopMusic),
 		OPCODE(o6_freezeUnfreeze),
 		OPCODE(o6_cursorCommand),
@@ -799,7 +799,7 @@ void Scumm_v6::o6_endCutscene()
 	endCutscene();
 }
 
-void Scumm_v6::o6_cutScene()
+void Scumm_v6::o6_cutscene()
 {
 	int16 args[16];
 	getStackList(args, sizeof(args) / sizeof(args[0]));

@@ -38,9 +38,9 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_unknown),
 		OPCODE(o8_pushNumber),
 		OPCODE(o8_pushVariable),
-		OPCODE(o8_unknown),
+		OPCODE(o8_arrayRead),
 		/* 04 */
-		OPCODE(o8_unknown),
+		OPCODE(o8_arrayIndexedRead),
 		OPCODE(o8_dup),
 		OPCODE(o8_pop),
 		OPCODE(o8_not),
@@ -166,7 +166,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_breakHere),
 		/* 68 */
 		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o8_wait),
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
 		/* 6C */
@@ -196,8 +196,8 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_unknown),
 		/* 80 */
 		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o8_cutscene),
+		OPCODE(o8_endCutscene),
 		OPCODE(o8_unknown),
 		/* 84 */
 		OPCODE(o8_unknown),
@@ -230,7 +230,7 @@ void Scumm_v8::setupOpcodes()
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
 		/* 9C */
-		OPCODE(o8_unknown),
+		OPCODE(o8_cursorCommand),
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
@@ -247,12 +247,12 @@ void Scumm_v8::setupOpcodes()
 		/* A8 */
 		OPCODE(o8_unknown),
 		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o8_resourceRoutines),
+		OPCODE(o8_roomOps),
 		/* AC */
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
-		OPCODE(o8_unknown),
+		OPCODE(o8_actorSet),
+		OPCODE(o8_cameraStuff),
+		OPCODE(o8_verbOps),
 		OPCODE(o8_unknown),
 		/* B0 */
 		OPCODE(o8_unknown),
@@ -380,6 +380,33 @@ void Scumm_v8::o8_invalid()
 	error("Invalid opcode '%x' at %x", _opcode, _scriptPointer - _scriptOrgPointer);
 }
 
+void Scumm_v8::o8_pushNumber()
+{
+	// TODO - is this correct?!?
+	push((int16)fetchScriptWord());
+}
+
+void Scumm_v8::o8_pushVariable()
+{
+	// TODO - is this correct?!?
+	push(readVar(fetchScriptWord()));
+}
+
+void Scumm_v8::o8_arrayRead()
+{
+	// TODO - is this correct?!?
+	int base = pop();
+	push(readArray(fetchScriptWord(), 0, base));
+}
+
+void Scumm_v8::o8_arrayIndexedRead()
+{
+	// TODO - is this correct?!?
+	int base = pop();
+	int idx = pop();
+	push(readArray(fetchScriptWord(), idx, base));
+}
+
 void Scumm_v8::o8_dup()
 {
 	int a = pop();
@@ -487,14 +514,211 @@ void Scumm_v8::o8_mod()
 	push(pop() % a);
 }
 
+void Scumm_v8::o8_jump()
+{
+	// TODO - is this correct?!?
+	_scriptPointer += (int16)fetchScriptWord();
+}
+
 void Scumm_v8::o8_breakHere()
 {
 	// TODO
 }
 
-void Scumm_v8::o8_pushNumber()
+void Scumm_v8::o8_wait()
 {
 	// TODO
+	byte subOp = fetchScriptByte();
+	switch (subOp) {
+	case 0x1E:		// SO_WAIT_FOR_ACTOR Wait for actor (to finish current action?)
+	case 0x1F:		// SO_WAIT_FOR_MESSAGE Wait for message
+	case 0x20:		// SO_WAIT_FOR_CAMERA Wait for camera (to finish current action?)
+	case 0x21:		// SO_WAIT_FOR_SENTENCE
+	case 0x22:		// SO_WAIT_FOR_ANIMATION
+	case 0x23:		// SO_WAIT_FOR_TURN
+	default:
+		error("o8_wait: default case %d", subOp);
+	}
+}
+
+void Scumm_v8::o8_cutscene()
+{
+	// TODO
+}
+
+void Scumm_v8::o8_endCutscene()
+{
+	// TODO
+}
+
+void Scumm_v8::o8_cursorCommand()
+{
+	// TODO
+	byte subOp = fetchScriptByte();
+	switch (subOp) {
+	case 0xDC:		// SO_CURSOR_ON Turn cursor on
+	case 0xDD:		// SO_CURSOR_OFF Turn cursor off
+	case 0xDE:		// SO_CURSOR_SOFT_ON Turn soft cursor on
+	case 0xDF:		// SO_CURSOR_SOFT_OFF Turn soft cursor off
+	case 0xE0:		// SO_USERPUT_ON
+	case 0xE1:		// SO_USERPUT_OFF
+	case 0xE2:		// SO_USERPUT_SOFT_ON
+	case 0xE3:		// SO_USERPUT_SOFT_OFF
+	case 0xE4:		// SO_CURSOR_IMAGE Set cursor image
+	case 0xE5:		// SO_CURSOR_HOTSPOT Set cursor hotspot
+	case 0xE6:		// SO_CURSOR_TRANSPARENT Set cursor transparent color
+	case 0xE7:		// SO_CHARSET_SET
+	case 0xE8:		// SO_CHARSET_COLOR
+	case 0xE9:		// SO_CURSOR_PUT
+	default:
+		error("o8_cursorCommand: default case %d", subOp);
+	}
+}
+
+void Scumm_v8::o8_resourceRoutines()
+{
+	// TODO
+	byte subOp = fetchScriptByte();
+	switch (subOp) {
+	case 0x3C:		// SO_HEAP_LOAD_CHARSET Load character set to heap
+	case 0x3D:		// SO_HEAP_LOAD_COSTUME Load costume to heap
+	case 0x3E:		// SO_HEAP_LOAD_OBJECT Load object to heap
+	case 0x3F:		// SO_HEAP_LOAD_ROOM Load room to heap
+	case 0x40:		// SO_HEAP_LOAD_SCRIPT Load script to heap
+	case 0x41:		// SO_HEAP_LOAD_SOUND Load sound to heap
+	case 0x42:		// SO_HEAP_LOCK_COSTUME Lock costume in heap
+	case 0x43:		// SO_HEAP_LOCK_ROOM Lock room in heap
+	case 0x44:		// SO_HEAP_LOCK_SCRIPT Lock script in heap
+	case 0x45:		// SO_HEAP_LOCK_SOUND Lock sound in heap
+	case 0x46:		// SO_HEAP_UNLOCK_COSTUME Unlock costume
+	case 0x47:		// SO_HEAP_UNLOCK_ROOM Unlock room
+	case 0x48:		// SO_HEAP_UNLOCK_SCRIPT Unlock script
+	case 0x49:		// SO_HEAP_UNLOCK_SOUND Unlock sound
+	case 0x4A:		// SO_HEAP_NUKE_COSTUME Remove costume from heap
+	case 0x4B:		// SO_HEAP_NUKE_ROOM Remove room from heap
+	case 0x4C:		// SO_HEAP_NUKE_SCRIPT Remove script from heap
+	case 0x4D:		// SO_HEAP_NUKE_SOUND Remove sound from heap
+	default:
+		error("o8_resourceRoutines: default case %d", subOp);
+	}
+}
+
+void Scumm_v8::o8_roomOps()
+{
+	// TODO
+	byte subOp = fetchScriptByte();
+	switch (subOp) {
+	case 0x52:		// SO_ROOM_PALETTE Set room palette
+//	case 0x53:		// SO_339
+//	case 0x54:		// SO_340
+	case 0x55:		// SO_ROOM_INTENSITY Set room intensity
+//	case 0x56:		// SO_342
+	case 0x57:		// SO_ROOM_FADE Fade room
+	case 0x58:		// SO_ROOM_RGB_INTENSITY Set room color intensity
+	case 0x59:		// SO_ROOM_TRANSFORM Transform room
+	case 0x5A:		// SO_ROOM_CYCLE_SPEED Set palette cycling speed
+	case 0x5B:		// SO_ROOM_COPY_PALETTE Copy palette
+	case 0x5C:		// SO_ROOM_NEW_PALETTE Create new palette
+	case 0x5D:		// SO_ROOM_SAVE_GAME Save game
+	case 0x5E:		// SO_ROOM_LOAD_GAME Load game
+	case 0x5F:		// SO_ROOM_SATURATION Set saturation of room colors
+	default:
+		error("o8_roomOps: default case %d", subOp);
+	}
+}
+
+void Scumm_v8::o8_actorSet()
+{
+	// TODO
+	byte subOp = fetchScriptByte();
+	Actor *a;
+
+	a = derefActorSafe(_curActor, "o8_actorSet");
+	if (!a)
+		return;
+
+	switch (subOp) {
+	case 0x64:		// SO_ACTOR_COSTUME Set actor costume
+	case 0x65:		// SO_ACTOR_STEP_DIST Set actor width of steps
+//	case 0x66:		// SO_358
+	case 0x67:		// SO_ACTOR_ANIMATION_DEFAULT Set actor animation to default
+	case 0x68:		// SO_ACTOR_ANIMATION_INIT Initialize animation
+	case 0x69:		// SO_ACTOR_ANIMATION_TALK Set actor animation to talk animation
+	case 0x6A:		// SO_ACTOR_ANIMATION_WALK Set actor animation to walk animation
+	case 0x6B:		// SO_ACTOR_ANIMATION_STAND Set actor animation to standing animation
+	case 0x6C:		// SO_ACTOR_ANIMATION_SPEED Set speed of animation
+	case 0x6D:		// SO_ACTOR_DEFAULT
+	case 0x6E:		// SO_ACTOR_ELEVATION
+	case 0x6F:		// SO_ACTOR_PALETTE Set actor palette
+	case 0x70:		// SO_ACTOR_TALK_COLOR Set actor talk color
+	case 0x71:		// SO_ACTOR_NAME Set name of actor
+	case 0x72:		// SO_ACTOR_WIDTH Set width of actor
+	case 0x73:		// SO_ACTOR_SCALE Set scaling of actor
+	case 0x74:		// SO_ACTOR_NEVER_ZCLIP ?
+	case 0x75:		// SO_ACTOR_ALWAYS_ZCLIP ?
+	case 0x76:		// SO_ACTOR_IGNORE_BOXES Make actor ignore boxes
+	case 0x77:		// SO_ACTOR_FOLLOW_BOXES Make actor follow boxes
+	case 0x78:		// SO_ACTOR_SPECIAL_DRAW
+	case 0x79:		// SO_ACTOR_TEXT_OFFSET Set text offset relative to actor
+	case 0x7A:		// SO_ACTOR_INIT Initialize actor
+	case 0x7B:		// SO_ACTOR_VARIABLE Set actor variable
+	case 0x7C:		// SO_ACTOR_IGNORE_TURNS_ON Make actor ignore turns
+	case 0x7D:		// SO_ACTOR_IGNORE_TURNS_OFF Make actor follow turns
+	case 0x7E:		// SO_ACTOR_NEW New actor
+	case 0x7F:		// SO_ACTOR_DEPTH Set actor Z position
+	case 0x80:		// SO_ACTOR_STOP
+	case 0x81:		// SO_ACTOR_FACE Make actor face angle
+	case 0x82:		// SO_ACTOR_TURN Turn actor
+	case 0x83:		// SO_ACTOR_WALK_SCRIPT Set walk script for actor?
+	case 0x84:		// SO_ACTOR_TALK_SCRIPT Set talk script for actor?
+	case 0x85:		// SO_ACTOR_WALK_PAUSE
+	case 0x86:		// SO_ACTOR_WALK_RESUME
+	case 0x87:		// SO_ACTOR_VOLUME Set volume of actor speech
+	case 0x88:		// SO_ACTOR_FREQUENCY Set frequency of actor speech
+	case 0x89:		// SO_ACTOR_PAN
+	default:
+		error("o8_actorset: default case %d", subOp);
+	}
+}
+
+void Scumm_v8::o8_cameraStuff()
+{
+	// TODO
+	byte subOp = fetchScriptByte();
+	switch (subOp) {
+	case 0x32:		// SO_CAMERA_PAUSE
+	case 0x33:		// SO_CAMERA_RESUME
+	default:
+		error("o8_cameraStuff: default case %d", subOp);
+	}
+}
+
+void Scumm_v8::o8_verbOps()
+{
+	// TODO
+	byte subOp = fetchScriptByte();
+	switch (subOp) {
+	case 0x96:		// SO_VERB_INIT Choose verb number for editing
+	case 0x97:		// SO_VERB_NEW New verb
+	case 0x98:		// SO_VERB_DELETE Delete verb
+	case 0x99:		// SO_VERB_NAME Set verb name
+	case 0x9A:		// SO_VERB_AT Set verb (X,Y) placement
+	case 0x9B:		// SO_VERB_ON Turn verb on
+	case 0x9C:		// SO_VERB_OFF Turn verb off
+	case 0x9D:		// SO_VERB_COLOR Set verb color
+	case 0x9E:		// SO_VERB_HICOLOR Set verb highlighted color
+//	case 0x9F:		// SO_415
+	case 0xA0:		// SO_VERB_DIMCOLOR Set verb dimmed (disabled) color
+	case 0xA1:		// SO_VERB_DIM
+	case 0xA2:		// SO_VERB_KEY Set keypress to associate with verb
+	case 0xA3:		// SO_VERB_IMAGE Set verb image
+	case 0xA4:		// SO_VERB_NAME_STR Set verb name
+	case 0xA5:		// SO_VERB_CENTER Center verb
+	case 0xA6:		// SO_VERB_CHARSET Choose charset for verb
+	case 0xA7:		// SO_VERB_LINE_SPACING Choose linespacing for verb
+	default:
+		error("o8_verbops: default case %d", subOp);
+	}
 }
 
 void Scumm_v8::o8_startObject()
@@ -507,15 +731,6 @@ void Scumm_v8::o8_startScript()
 	// TODO
 }
 
-void Scumm_v8::o8_pushVariable()
-{
-	// TODO
-}
-
-void Scumm_v8::o8_jump()
-{
-	// TODO
-}
 
 /*
 
