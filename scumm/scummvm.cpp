@@ -90,7 +90,7 @@ static const TargetSettings scumm_settings[] = {
 	/* Scumm Version 3 */
 	{"indy3EGA", "Indiana Jones and the Last Crusade", GID_INDY3, 3, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE, "00.LFL"},
-	{"indy3Towns", "Indiana Jones and the Last Crusade (FM Towns)", GID_INDY3, 3, MDT_NONE,
+	{"indy3Towns", "Indiana Jones and the Last Crusade (FM Towns)", GID_INDY3, 3, MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_FMTOWNS | GF_AUDIOTRACKS, "00.LFL"},
 	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3, 3, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_SMALL_NAMES | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, "00.LFL"},
