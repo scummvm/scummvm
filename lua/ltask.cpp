@@ -8,18 +8,27 @@
 #include "ldo.h"
 #include "lvm.h"
 
-int task_tag;
-
 void pause_scripts (void) {
+	struct lua_Task *t;
+
+	for (t = L->root_task->next; t != NULL; t = t->next) {
+		if (t->Tstate != DONE)
+			t->Tstate = PAUSE;
+	}
 }
 
 void unpause_scripts (void) {
+	struct lua_Task *t;
+
+	for (t = L->root_task->next; t != NULL; t = t->next) {
+		if (t->Tstate == PAUSE)
+			t->Tstate = YIELD;
+	}
 }
 
 void start_script (void) {
 	struct lua_Task *old_task = L->curr_task, *new_task;
-	TObject *f;
-	int i;
+	TObject *f = L->stack.stack + L->Cstack.lua2C;
 
 	f = L->stack.stack + L->Cstack.lua2C;
 	if (ttype(f) == LUA_T_CLOSURE)
@@ -31,7 +40,7 @@ void start_script (void) {
 	new_task = luaI_newtask();
 
 	/* Put the function and arguments onto the new task's stack */
-	for (i = 0; i < old_task->Cstack.num; i++) {
+	for (int i = 0; i < old_task->Cstack.num; i++) {
 		*(L->stack.top) = *(old_task->stack.stack + old_task->Cstack.lua2C + i);
 		incr_top;
 	}
@@ -50,7 +59,9 @@ void start_script (void) {
 	L->last_task = new_task;
 
 	/* Return task handle */
-	lua_pushusertag(new_task, task_tag);
+	ttype(L->stack.top) = LUA_T_TASK;
+	nvalue(L->stack.top) = new_task->id;
+	incr_top;
 }
 
 void stop_script (void) {
@@ -58,7 +69,7 @@ void stop_script (void) {
 	TObject *f = L->stack.stack + L->Cstack.lua2C;
 	int match;
 
-	if (ttype(f) != LUA_T_CLOSURE && ttype(f) != LUA_T_PROTO && !(ttype(f) == LUA_T_USERDATA && f->value.ts->u.d.tag == task_tag))
+	if ((f == LUA_NOOBJECT) || (ttype(f) != LUA_T_CLOSURE && ttype(f) != LUA_T_PROTO && ttype(f) != LUA_T_TASK))
 		lua_error("Bad argument to stop_script");
 
 	prev = L->root_task;
@@ -70,8 +81,8 @@ void stop_script (void) {
 		case LUA_T_PROTO:
 			match = (ttype(t->stack.stack) == LUA_T_PMARK && tfvalue(t->stack.stack) == tfvalue(f));
 			break;
-		case LUA_T_USERDATA:
-			match = (t == f->value.ts->u.d.v);
+		case LUA_T_TASK:
+			match = (t->id == (int)nvalue(f));
 			break;
 		default:  /* Shut up gcc */
 			break;
@@ -87,9 +98,6 @@ void stop_script (void) {
 				}
 			} else {
 				t->Tstate = DONE;
-				if (t->auto_delete) {
-					luaM_free(t);
-				}
 			}
 		} else {
 			prev = t;
@@ -98,76 +106,108 @@ void stop_script (void) {
 }
 
 void next_script (void) {
-	struct lua_Task *t;
+	struct lua_Task *t, *prev;
+	TObject *f = L->stack.stack + L->Cstack.lua2C;
 
-	if (lua_isnil(lua_getparam(1))) {
+	if (f == LUA_NOOBJECT)
+		lua_error("Bad argument to next_script: no obeject");
+
+	prev = L->root_task;
+	if (ttype(f) == LUA_T_NIL) {
 		t = L->root_task;
-	} else if (lua_isuserdata(lua_getparam(1)) && lua_tag(lua_getparam(1)) == task_tag) {
-		t = (struct lua_Task *) lua_getuserdata(lua_getparam(1));
+	} else if (ttype(f) == LUA_T_TASK) {
+		int taskId = (int)nvalue(f);
+		for (t = L->root_task->next; t != NULL; t = t->next) {
+			if (t->id == taskId)
+				break;
+		}
 	} else {
-		lua_error("Bad argument to next_script");
+		lua_error("Bad argument to next_script.");
 	}
-	t = t->next;
 	if (t == NULL) {
 		lua_pushnil();
 	} else {
-		t->auto_delete = 0;
-		lua_pushusertag(t, task_tag);
+		t = t->next;
+		if (t == NULL) {
+			lua_pushnil();
+		} else {
+			ttype(L->stack.top) = LUA_T_TASK;
+			nvalue(L->stack.top) = t->id;
+			incr_top;
+		}
 	}
 }
 
 void identify_script (void) {
 	struct lua_Task *t;
+	TObject *f = L->stack.stack + L->Cstack.lua2C;
 
-	if (! lua_isuserdata(lua_getparam(1)) || lua_tag(lua_getparam(1)) != task_tag) {
+	if ((f == LUA_NOOBJECT) || ttype(f) != LUA_T_TASK) {
 		lua_error("Bad argument to identify_script");
 	}
-	t = (struct lua_Task *) lua_getuserdata(lua_getparam(1));
-	if (t->Tstate == DONE) {
-		ttype(L->stack.top) = LUA_T_NIL;
-	} else {
-		*L->stack.top = *t->stack.stack;
-	}
-	incr_top;
+
+        int taskId = (int)nvalue(f);
+	for (t = L->root_task->next; t != NULL; t = t->next) {
+                if (t->id == taskId)
+                	break;
+        }
+
+        if ((t == NULL) || (t->Tstate == DONE)) {
+                ttype(L->stack.top) = LUA_T_NIL;
+        } else {
+                *L->stack.top = *t->stack.stack;
+        }
+        incr_top;
 }
 
 void find_script (void) {
-	struct lua_Task *t;
+	struct lua_Task *t, *foundTask = NULL;
 	TObject *f = L->stack.stack + L->Cstack.lua2C;
+	int countTasks = 0, taskId;
 
 	switch (ttype(f)) {
 	case LUA_T_CLOSURE:
 		for (t = L->root_task->next; t != NULL; t = t->next) {
-			if ((ttype(t->stack.stack) == LUA_T_CLOSURE || ttype(t->stack.stack) == LUA_T_CMARK) && clvalue(t->stack.stack) == clvalue(f))
-				break;
+			if ((ttype(t->stack.stack) == LUA_T_CLOSURE || ttype(t->stack.stack) == LUA_T_CMARK) && clvalue(t->stack.stack) == clvalue(f)) {
+				foundTask = t;
+				countTasks++;
+			}
 		}
+		t = foundTask;
 		break;
 	case LUA_T_PROTO:
 		for (t = L->root_task->next; t != NULL; t = t->next) {
-			if ((ttype(t->stack.stack) == LUA_T_PROTO || ttype(t->stack.stack) == LUA_T_PMARK) && tfvalue(t->stack.stack) == tfvalue(f))
-				break;
+			if ((ttype(t->stack.stack) == LUA_T_PROTO || ttype(t->stack.stack) == LUA_T_PMARK) && tfvalue(t->stack.stack) == tfvalue(f)) {
+				foundTask = t;
+				countTasks++;
+			}
 		}
-	break;
-	case LUA_T_USERDATA:
-		if (f->value.ts->u.d.tag != task_tag) {
-			lua_error("Bad argument to find_script");
+		t = foundTask;
+		break;
+	case LUA_T_TASK:
+		taskId = (int)nvalue(f);
+		for (t = L->root_task->next; t != NULL; t = t->next) {
+			if ((t->id == taskId) && (t->Tstate != DONE)) {
+				ttype(L->stack.top) = LUA_T_TASK;
+				nvalue(L->stack.top) = nvalue(f);
+				incr_top;
+				lua_pushnumber(1.0f);
+				return;
+			}
 		}
-		/* Shortcut: just see whether it's still running */
-		t = (lua_Task *)f->value.ts->u.d.v;
-		if (t->Tstate == DONE) {
-			lua_pushnil();
-		} else {
-			lua_pushusertag(t, task_tag);
-		}
-		return;
+		break;
 	default:
 		lua_error("Bad argument to find_script");
 	}
-	if (t == NULL) {
-		lua_pushnil();
+
+	if (t != NULL) {
+		ttype(L->stack.top) = LUA_T_TASK;
+		nvalue(L->stack.top) = t->id;
+		incr_top;
+		lua_pushnumber(countTasks);
 	} else {
-		t->auto_delete = 0;
-		lua_pushusertag(t, task_tag);
+		lua_pushnil();
+		lua_pushnumber(0.0f);
 	}
 }
 
@@ -189,8 +229,9 @@ void current_script (void) {
 	if (L->curr_task == L->root_task) {
 		lua_pushnil();
 	} else {
-		L->curr_task->auto_delete = 0;
-		lua_pushusertag(L->curr_task, task_tag);
+		ttype(L->stack.top) = LUA_T_TASK;
+		nvalue(L->stack.top) = L->curr_task->id;
+		incr_top;
 	}
 }
 
@@ -201,6 +242,8 @@ void lua_runtasks (void) {
 
 	prev = L->root_task;
 	while ((t = prev->next) != NULL) {
+		if (t->Tstate == PAUSE)
+			continue;
 		luaI_switchtask(t);
 		L->errorJmp = &myErrorJmp;
 		L->Tstate = RUN;
@@ -220,23 +263,12 @@ void lua_runtasks (void) {
 			if (prev->next == NULL) {
 				L->last_task = prev;
 			}
-			if (t->auto_delete) {
-				luaM_free(t);
-			}
+			luaM_free(t);
 		} else {
 			prev = t;
 		}
 	}
 	if (L->curr_task != old_task) {
 		luaI_switchtask(old_task);
-	}
-}
-
-void gc_task (void) {
-	struct lua_Task *t = (struct lua_Task *) lua_getuserdata(lua_getparam(1));
-
-	t->auto_delete = 1;
-	if (t != L->curr_task && t->Tstate == DONE) {
-		luaM_free(t);
 	}
 }

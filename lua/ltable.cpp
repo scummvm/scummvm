@@ -48,6 +48,9 @@ static long int hashindex (TObject *ref)
     case LUA_T_CLOSURE:
       h = (IntPoint)clvalue(ref);
       break;
+    case LUA_T_TASK:
+      h = (long int)nvalue(ref);
+      break;
     default:
       lua_error("unexpected type to index table");
       h = 0;  /* to avoid warnings */

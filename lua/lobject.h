@@ -67,16 +67,17 @@ typedef enum {
   LUA_T_ARRAY    = -3,  /* tag default for tables (or arrays) */
   LUA_T_PROTO    = -4,  /* fixed tag for functions */
   LUA_T_CPROTO   = -5,  /* fixed tag for Cfunctions */
-  LUA_T_NIL      = -6,  /* last "pre-defined" tag */
-  LUA_T_CLOSURE  = -7,
-  LUA_T_CLMARK   = -8,  /* mark for closures */
-  LUA_T_PMARK    = -9,  /* mark for Lua prototypes */
-  LUA_T_CMARK    = -10, /* mark for C prototypes */
-  LUA_T_LINE     = -11
+  LUA_T_TASK     = -6,  /* task tag */
+  LUA_T_NIL      = -7,  /* last "pre-defined" tag */
+  LUA_T_CLOSURE  = -8,
+  LUA_T_CLMARK   = -9,  /* mark for closures */
+  LUA_T_PMARK    = -10,  /* mark for Lua prototypes */
+  LUA_T_CMARK    = -11, /* mark for C prototypes */
+  LUA_T_LINE     = -12
 } lua_Type;
 
-#define NUM_TYPES 11
-#define NUM_TAGS  7
+#define NUM_TYPES 12
+#define NUM_TAGS  8
 
 
 typedef union {

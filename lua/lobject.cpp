@@ -11,7 +11,7 @@
 
 
 char *luaO_typenames[] = { /* ORDER LUA_T */
-    "userdata", "number", "string", "table", "function", "function",
+    "userdata", "number", "string", "table", "function", "function", "task",
     "nil", "function", "mark", "mark", "mark", "line", NULL
 };
 
@@ -50,6 +50,7 @@ int luaO_equalObj (TObject *t1, TObject *t2)
     case LUA_T_PROTO: return tfvalue(t1)  == tfvalue(t2);
     case LUA_T_CPROTO: return fvalue(t1)  == fvalue(t2);
     case LUA_T_CLOSURE: return t1->value.cl == t2->value.cl;
+    case LUA_T_TASK: return nvalue(t1) == nvalue(t2);
     default:
      LUA_INTERNALERROR("invalid type");
      return 0; /* UNREACHABLE */

@@ -76,7 +76,7 @@ struct lua_Task {
   int numCblocks;
   enum TaskState Tstate;
   struct lua_Task *next;
-  int auto_delete;  /* Set to 1 if no userdata references this task */
+  int id;
 };
 
 struct lua_State {
@@ -117,6 +117,7 @@ struct lua_State {
 
 extern lua_State *lua_state;
 
+extern int globalTaskSerialId;
 
 #define L	lua_state
 

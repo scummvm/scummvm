@@ -351,6 +351,8 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 	L->Mbuffbase = MbaseOffset + L->Mbuffer;
 	restoreFunc(&L->Mbuffnext, sizeof(int));
 
+	restoreFunc(&globalTaskSerialId, sizeof(int));
+
 	int countTasks;
 	lua_Task *tempTask = NULL;
 	restoreFunc(&countTasks, sizeof(int));
@@ -423,7 +425,7 @@ void lua_Restore(SaveRestoreFunc restoreFunc) {
 		restoreFunc(&tempTask->Mbuffnext, sizeof(int));
 
 		restoreFunc(&tempTask->Tstate, sizeof(TaskState));
-		restoreFunc(&tempTask->auto_delete, sizeof(int));
+		restoreFunc(&tempTask->id, sizeof(int));
 	}
 	L->last_task = tempTask;
 

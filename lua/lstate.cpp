@@ -22,6 +22,8 @@
 
 lua_State *lua_state = NULL;
 
+int globalTaskSerialId;
+
 void stderrorim (void);
 
 static luaL_reg stdErrorRimFunc[] = {
@@ -43,6 +45,7 @@ static void lua_openthr (void)
 }
 
 void lua_resetglobals(void) {
+  globalTaskSerialId = 1;
   lua_openthr();
   L->rootproto.next = NULL;
   L->rootproto.marked = 0;
@@ -155,8 +158,8 @@ struct lua_Task *luaI_newtask (void) {
   result = luaM_new(struct lua_Task);
   L->curr_task = result;
   result->next = NULL;
-  result->auto_delete = 0;
   lua_openthr();
   luaD_initthr();
+  result->id = globalTaskSerialId++;
   return result;
 }

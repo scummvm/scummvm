@@ -168,6 +168,10 @@ static void to_string (void) {
       sprintf(buff, "userdata: %p", o->value.ts->u.d.v);
       break;
     }
+    case LUA_T_TASK: {
+      sprintf(buff, "task: %d", (int)o->value.n);
+      break;
+    }
     case LUA_T_NIL:
       lua_pushstring("nil");
       return;
@@ -522,21 +526,11 @@ static struct luaL_reg int_funcs[] = {
 
 #define INTFUNCSIZE (sizeof(int_funcs)/sizeof(int_funcs[0]))
 
-void gc_task (void);
-
-static luaL_reg gcTaskFuncs[] = {
-  {"gc_task", gc_task}
-};
-
 void luaB_predefine (void)
 {
   /* pre-register mem error messages, to avoid loop when error arises */
   luaS_newfixedstring(tableEM);
   luaS_newfixedstring(memEM);
-  luaL_addlibtolist(gcTaskFuncs, (sizeof(gcTaskFuncs)/sizeof(gcTaskFuncs[0])));
-  task_tag = lua_newtag();
-  lua_pushcfunction(gc_task);
-  lua_settagmethod(task_tag, "gc");
   luaL_openlib(int_funcs, (sizeof(int_funcs)/sizeof(int_funcs[0])));
   lua_pushstring(LUA_VERSION);
   lua_setglobal("_VERSION");
