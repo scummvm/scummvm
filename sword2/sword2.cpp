@@ -98,8 +98,9 @@ REGISTER_PLUGIN("Broken Sword II", Engine_SWORD2_gameList, Engine_SWORD2_create,
 namespace Sword2 {
 
 Sword2Engine *g_sword2 = NULL;
+Input *g_input = NULL;
 Sound *g_sound = NULL;
-Display *g_display = NULL;
+Graphics *g_graphics = NULL;
 
 Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	: Engine(syst) {
@@ -130,8 +131,9 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 	g_logic = new Logic(this);
 	fontRenderer = new FontRenderer();
 	gui = new Gui(this);
+	g_input = _input = new Input();
 	g_sound = _sound = new Sound(_mixer);
-	g_display = _display = new Display(640, 480);
+	g_graphics = _graphics = new Graphics(640, 480);
 	_debugger = new Debugger(this);
 
 	_lastPaletteRes = 0;
@@ -187,8 +189,9 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst)
 Sword2Engine::~Sword2Engine() {
 	free(_targetName);
 	delete _debugger;
-	delete _display;
+	delete _graphics;
 	delete _sound;
+	delete _input;
 	delete gui;
 	delete fontRenderer;
 	delete g_logic;
@@ -323,7 +326,7 @@ void Sword2Engine::go() {
 		startGame();
 
 	debug(5, "CALLING: initialiseRenderCycle");
-	g_display->initialiseRenderCycle();
+	_graphics->initialiseRenderCycle();
 
 	_renderSkip = false;		// Toggled on 'S' key, to render only
 					// 1 in 4 frames, to speed up game
@@ -334,7 +337,7 @@ void Sword2Engine::go() {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
 
-		g_display->updateDisplay();
+		_graphics->updateDisplay();
 
 #ifdef _SWORD2_DEBUG
 // FIXME: If we want this, we should re-work it to use the backend's
@@ -356,8 +359,8 @@ void Sword2Engine::go() {
 		}
 #endif
 
-		if (KeyWaiting()) {
-			ReadKey(&ke);
+		if (g_input->keyWaiting()) {
+			g_input->readKey(&ke);
 
 			char c = toupper(ke.ascii);
 
@@ -476,13 +479,11 @@ void Sword2Engine::startGame(void) {
 
 void Sword2Engine::sleepUntil(int32 time) {
 	while ((int32) SVM_timeGetTime() < time) {
-		parseEvents();
-
 		// Make sure menu animations and fades don't suffer
-		g_display->processMenu();
-		g_display->updateDisplay();
+		_graphics->processMenu();
+		_graphics->updateDisplay();
 
-		g_system->delay_msecs(10);
+		_system->delay_msecs(10);
 	}
 }
 
@@ -496,7 +497,7 @@ void Sword2Engine::pauseGame(void) {
 	// res_man->closeResource(3258);
 
 	// don't allow Pause while screen fading or while black
-	if (g_display->getFadeStatus() != RDFADE_NONE)
+	if (_graphics->getFadeStatus() != RDFADE_NONE)
 		return;
 	
 	pauseAllSound();
@@ -507,7 +508,7 @@ void Sword2Engine::pauseGame(void) {
 	// mouse_mode=MOUSE_normal;
 
 	// this is the only place allowed to do it this way
-	g_display->setLuggageAnim(NULL, 0);
+	_graphics->setLuggageAnim(NULL, 0);
 
 	// blank cursor
 	setMouse(0);
@@ -527,7 +528,7 @@ void Sword2Engine::pauseGame(void) {
 	// dim the palette during the pause
 
 	if (!_stepOneCycle)
-		g_display->dimPalette();
+		_graphics->dimPalette();
 
 	_gamePaused = true;
 }

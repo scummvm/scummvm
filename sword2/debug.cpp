@@ -186,14 +186,14 @@ void Debugger::buildDebugText(void) {
 
 		if (_vm->_mouseTouching)
 			sprintf(buf, "mouse %d,%d (id %d: %s)",
-				g_display->_mouseX + _vm->_thisScreen.scroll_offset_x,
-				g_display->_mouseY + _vm->_thisScreen.scroll_offset_y,
+				g_input->_mouseX + _vm->_thisScreen.scroll_offset_x,
+				g_input->_mouseY + _vm->_thisScreen.scroll_offset_y,
 				_vm->_mouseTouching,
 				_vm->fetchObjectName(_vm->_mouseTouching));
 		else
 			sprintf(buf, "mouse %d,%d (not touching)",
-				g_display->_mouseX + _vm->_thisScreen.scroll_offset_x,
-				g_display->_mouseY + _vm->_thisScreen.scroll_offset_y);
+				g_input->_mouseX + _vm->_thisScreen.scroll_offset_x,
+				g_input->_mouseY + _vm->_thisScreen.scroll_offset_y);
 
 		makeDebugTextBlock(buf, 0, 30);
 
@@ -319,7 +319,7 @@ void Debugger::drawDebugGraphics(void) {
 	// mouse marker & coords
 
 	if (_displayMouseMarker)
-		plotCrossHair(g_display->_mouseX + _vm->_thisScreen.scroll_offset_x, g_display->_mouseY + _vm->_thisScreen.scroll_offset_y, 215);
+		plotCrossHair(g_input->_mouseX + _vm->_thisScreen.scroll_offset_x, g_input->_mouseY + _vm->_thisScreen.scroll_offset_y, 215);
 
    	// mouse area rectangle / sprite box rectangle when testing anims
 
@@ -335,20 +335,20 @@ void Debugger::drawDebugGraphics(void) {
 }
 
 void Debugger::plotCrossHair(int16 x, int16 y, uint8 pen) {
-	g_display->plotPoint(x, y, pen);		// driver function
+	g_graphics->plotPoint(x, y, pen);		// driver function
 
-	g_display->drawLine(x - 2, y, x - 5, y, pen);	// driver function
-	g_display->drawLine(x + 2, y, x + 5, y, pen);
+	g_graphics->drawLine(x - 2, y, x - 5, y, pen);	// driver function
+	g_graphics->drawLine(x + 2, y, x + 5, y, pen);
 
-	g_display->drawLine(x, y - 2, x, y - 5, pen);
-	g_display->drawLine(x, y + 2, x, y + 5, pen);
+	g_graphics->drawLine(x, y - 2, x, y - 5, pen);
+	g_graphics->drawLine(x, y + 2, x, y + 5, pen);
 }
 
 void Debugger::drawRect(int16 x1, int16 y1, int16 x2, int16 y2, uint8 pen) {
-	g_display->drawLine(x1, y1, x2, y1, pen);	// top edge
-	g_display->drawLine(x1, y2, x2, y2, pen);	// bottom edge
-	g_display->drawLine(x1, y1, x1, y2, pen);	// left edge
-	g_display->drawLine(x2, y1, x2, y2, pen);	// right edge
+	g_graphics->drawLine(x1, y1, x2, y1, pen);	// top edge
+	g_graphics->drawLine(x1, y2, x2, y2, pen);	// bottom edge
+	g_graphics->drawLine(x1, y1, x1, y2, pen);	// left edge
+	g_graphics->drawLine(x2, y1, x2, y2, pen);	// right edge
 }
 
 void Debugger::printCurrentInfo(void) {

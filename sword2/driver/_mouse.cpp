@@ -26,43 +26,59 @@
 
 namespace Sword2 {
 
-#define MAX_MOUSE_EVENTS 16
 #define MOUSEFLASHFRAME 6
 
-static uint8 mouseBacklog = 0;
-static uint8 mouseLogPos = 0;
-static _mouseEvent mouseLog[MAX_MOUSE_EVENTS];
+/**
+ * Logs the mouse button event passed in buttons.  The button events are 
+ * defined as RD_LEFTBUTTONDOWN, RD_LEFTBUTTONUP, RD_RIGHTBUTTONDOWN and
+ * RD_RIGHTBUTTONUP.
+ */
 
-void Display::resetRenderEngine(void) {
+void Input::logMouseEvent(uint16 buttons) {
+	// We need to leave the one, which is the current event, alone!
+	if (_mouseBacklog == MAX_MOUSE_EVENTS - 1)
+		return;
+
+	_mouseLog[(_mouseBacklog + _mouseLogPos) % MAX_MOUSE_EVENTS].buttons = buttons;
+	_mouseBacklog++;
+}
+
+bool Input::checkForMouseEvents(void) {
+	return _mouseBacklog != 0;
+}
+
+/**
+ * Get the next pending mouse event.
+ * @return a pointer to the mouse event, or NULL of there is none
+ */
+
+_mouseEvent *Input::mouseEvent(void) {
+	_mouseEvent *me;
+
+	if (_mouseBacklog) {
+		me = &_mouseLog[_mouseLogPos];
+		if (++_mouseLogPos == MAX_MOUSE_EVENTS)
+			_mouseLogPos = 0;
+
+		_mouseBacklog--;
+		return me;
+	}
+
+	return NULL;
+}
+
+void Graphics::resetRenderEngine(void) {
 	_parallaxScrollX = 0;
 	_parallaxScrollY = 0;
 	_scrollX = 0;
 	_scrollY = 0;
 }
 
-// --------------------------------------------------------------------------
-// Logs the mouse button event passed in buttons.  The button events are 
-// defined as RD_LEFTBUTTONDOWN, RD_LEFTBUTTONUP, RD_RIGHTBUTTONDOWN and
-// RD_RIGHTBUTTONUP.
-// --------------------------------------------------------------------------
-
-void LogMouseEvent(uint16 buttons) {
-	_mouseEvent *me;
-
-	// We need to leave the one, which is the current event, alone!
-	if (mouseBacklog == MAX_MOUSE_EVENTS - 1)
-		return;
-
-	me = &mouseLog[(mouseBacklog + mouseLogPos) % MAX_MOUSE_EVENTS];
-	me->buttons = buttons;
-	mouseBacklog++;
-}
-
 // FIXME: The original code used 0 for transparency, while our backend uses
 // 0xFF. That means that parts of the mouse cursor that weren't meant to be
 // transparent may be now.
 
-void Display::decompressMouse(uint8 *decomp, uint8 *comp, int width, int height, int pitch, int xOff, int yOff) {
+void Graphics::decompressMouse(uint8 *decomp, uint8 *comp, int width, int height, int pitch, int xOff, int yOff) {
 	int32 size = width * height;
 	int32 i = 0;
 	int x = 0;
@@ -87,7 +103,7 @@ void Display::decompressMouse(uint8 *decomp, uint8 *comp, int width, int height,
 	}
 }
 
-void Display::drawMouse(void) {
+void Graphics::drawMouse(void) {
 	if (!_mouseAnim && !_luggageAnim)
 		return;
 
@@ -159,34 +175,10 @@ void Display::drawMouse(void) {
 }
 
 /**
- * Get the next pending mouse event.
- * @return a pointer to the mouse event, or NULL of there is none
- */
-
-_mouseEvent *MouseEvent(void) {
-	_mouseEvent *me;
-
-	if (mouseBacklog) {
-		me = &mouseLog[mouseLogPos];
-		if (++mouseLogPos == MAX_MOUSE_EVENTS)
-			mouseLogPos = 0;
-
-		mouseBacklog--;
-		return me;
-	}
-
-	return NULL;
-}
-
-uint8 CheckForMouseEvents(void) {
-	return mouseBacklog;	// return the number of mouse events waiting
-}
-
-/**
  * Animates the current mouse pointer
  */
 
-int32 Display::animateMouse(void) {
+int32 Graphics::animateMouse(void) {
 	uint8 prevMouseFrame = _mouseFrame;
 
 	if (!_mouseAnim)
@@ -211,7 +203,7 @@ int32 Display::animateMouse(void) {
  * or not there is a lead-in animation
  */
 
-int32 Display::setMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
+int32 Graphics::setMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
 	if (_mouseAnim) {
 		free(_mouseAnim);
 		_mouseAnim = NULL;
@@ -251,7 +243,7 @@ int32 Display::setMouseAnim(uint8 *ma, int32 size, int32 mouseFlash) {
  * @param size the size of the animation data
  */
 
-int32 Display::setLuggageAnim(uint8 *ma, int32 size) {
+int32 Graphics::setLuggageAnim(uint8 *ma, int32 size) {
 	if (_luggageAnim) {
 		free(_luggageAnim);
 		_luggageAnim = NULL;

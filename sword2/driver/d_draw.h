@@ -76,7 +76,7 @@ typedef struct {
 	bool transparent;
 } BlockSurface;
 
-class Display {
+class Graphics {
 	friend class MoviePlayer;
 
 private:
@@ -174,14 +174,11 @@ private:
 	int32 decompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, uint8 *colTable);
 
 public:
-	Display(int16 width, int16 height);
+	Graphics(int16 width, int16 height);
 
 	// Game screen metrics
 	int16 _screenWide;
 	int16 _screenDeep;
-
-	int16 _mouseX;
-	int16 _mouseY;
 
 	uint8 _palCopy[256][4];
 

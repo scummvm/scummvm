@@ -172,17 +172,17 @@ int32 Logic::fnChoose(int32 *params) {
 			if (j < IN_SUBJECT) {
 				debug(5, " ICON res %d for %d", _subjectList[j].res, j);
 				icon = res_man->openResource(_subjectList[j].res) + sizeof(_standardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
-				g_display->setMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
+				g_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
 				res_man->closeResource(_subjectList[j].res);
 			} else {
 				//no icon here
 				debug(5, " NULL for %d", j);
-				g_display->setMenuIcon(RDMENU_BOTTOM, (uint8) j, NULL);
+				g_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) j, NULL);
 			}
 		}
 
 		// start menus appearing
-		g_display->showMenu(RDMENU_BOTTOM);
+		g_graphics->showMenu(RDMENU_BOTTOM);
 
 		// lets have the mouse pointer back
 		_vm->setMouse(NORMAL_MOUSE_ID);
@@ -195,7 +195,7 @@ int32 Logic::fnChoose(int32 *params) {
 		// menu is there - we're just waiting for a click
 		debug(5, "choosing");
 
-		me = MouseEvent();
+		me = g_input->mouseEvent();
 
 		// we only care about left clicks
 		// we ignore mouse releases
@@ -205,9 +205,9 @@ int32 Logic::fnChoose(int32 *params) {
 			// if so then end the choose, highlight only the
 			// chosen, blank the mouse and return the ref code * 8
 
-			if (g_display->_mouseY > 399 && g_display->_mouseX >= 24 && g_display->_mouseX < 640 - 24) {
+			if (g_input->_mouseY > 399 && g_input->_mouseX >= 24 && g_input->_mouseX < 640 - 24) {
 				//which are we over?
-				hit = (g_display->_mouseX - 24) / 40;
+				hit = (g_input->_mouseX - 24) / 40;
 
 				//clicked on something - what button?
 				if (hit < IN_SUBJECT) {
@@ -220,7 +220,7 @@ int32 Logic::fnChoose(int32 *params) {
 						// change all others to grey
 						if (j != hit) {
 							icon = res_man->openResource( _subjectList[j].res ) + sizeof(_standardHeader);
-							g_display->setMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
+							g_graphics->setMenuIcon(RDMENU_BOTTOM, (uint8) j, icon);
 							res_man->closeResource(_subjectList[j].res);
 						}
 					}
@@ -279,9 +279,9 @@ int32 Logic::fnEndConversation(int32 *params) {
 
 	// params:	none
 
-	g_display->hideMenu(RDMENU_BOTTOM);
+	g_graphics->hideMenu(RDMENU_BOTTOM);
 
-	if (g_display->_mouseY > 399) {
+	if (g_input->_mouseY > 399) {
 		// will wait for cursor to move off the bottom menu
 		_vm->_mouseMode = MOUSE_holding;
 		debug(5, "   holding");
@@ -1233,8 +1233,8 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	// so that we can go to the options panel while text & speech is
 	// being tested
-	if (SYSTEM_TESTING_TEXT == 0 || g_display->_mouseY > 0) {
-		me = MouseEvent();
+	if (SYSTEM_TESTING_TEXT == 0 || g_input->_mouseY > 0) {
+		me = g_input->mouseEvent();
 
 		// Note that we now have TWO click-delays - one for LEFT
 		// button, one for RIGHT BUTTON
@@ -1258,7 +1258,7 @@ int32 Logic::fnISpeak(int32 *params) {
 
 			do {
 				// trash anything thats buffered
-				me = MouseEvent();
+				me = g_input->mouseEvent();
 			} while (me);
 
 			speechFinished = 1;

@@ -29,7 +29,7 @@ namespace Sword2 {
 #define MENUDEEP 40
 #define MAXMENUANIMS 8
 
-void Display::clearIconArea(int menu, int pocket, Common::Rect *r) {
+void Graphics::clearIconArea(int menu, int pocket, Common::Rect *r) {
 	byte *dst;
 	int i;
 
@@ -52,7 +52,7 @@ void Display::clearIconArea(int menu, int pocket, Common::Rect *r) {
  * system is.
  */
 
-void Display::processMenu(void) {
+void Graphics::processMenu(void) {
 	byte *src, *dst;
 	uint8 menu;
 	uint8 i, j;
@@ -199,7 +199,7 @@ void Display::processMenu(void) {
  * @return RD_OK, or an error code
  */
 
-int32 Display::showMenu(uint8 menu) {
+int32 Graphics::showMenu(uint8 menu) {
 	// Check for invalid menu parameter
 	if (menu > RDMENU_BOTTOM)
 		return RDERR_INVALIDMENU;
@@ -219,7 +219,7 @@ int32 Display::showMenu(uint8 menu) {
  * @return RD_OK, or an error code
  */
 
-int32 Display::hideMenu(uint8 menu) {
+int32 Graphics::hideMenu(uint8 menu) {
 	// Check for invalid menu parameter
 	if (menu > RDMENU_BOTTOM)
 		return RDERR_INVALIDMENU;
@@ -237,7 +237,7 @@ int32 Display::hideMenu(uint8 menu) {
  * This function hides both menus immediately.
  */
 
-void Display::closeMenuImmediately(void) {
+void Graphics::closeMenuImmediately(void) {
 	Common::Rect r;
 	int i;
 
@@ -266,7 +266,7 @@ void Display::closeMenuImmediately(void) {
  * @return RD_OK, or an error code
  */
 
-int32 Display::setMenuIcon(uint8 menu, uint8 pocket, uint8 *icon) {
+int32 Graphics::setMenuIcon(uint8 menu, uint8 pocket, uint8 *icon) {
 	Common::Rect r;
 
 	// Check for invalid menu parameter.

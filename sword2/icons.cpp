@@ -199,16 +199,16 @@ void Sword2Engine::buildMenu(void) {
 			if (icon_coloured)
 				icon += (RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 
-			g_display->setMenuIcon(RDMENU_BOTTOM, j, icon);
+			g_graphics->setMenuIcon(RDMENU_BOTTOM, j, icon);
 			res_man->closeResource(res);
 		} else {
 			// no icon here
-			g_display->setMenuIcon(RDMENU_BOTTOM, j, NULL);
+			g_graphics->setMenuIcon(RDMENU_BOTTOM, j, NULL);
 			debug(5, " NULL for %d", j);
 		}
 	}
 
-	g_display->showMenu(RDMENU_BOTTOM);
+	g_graphics->showMenu(RDMENU_BOTTOM);
 }
 
 void Sword2Engine::buildSystemMenu(void) {
@@ -236,11 +236,11 @@ void Sword2Engine::buildSystemMenu(void) {
 		if (!DEAD || icon_list[i] != SAVE_ICON)
 			icon += (RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 
-		g_display->setMenuIcon(RDMENU_TOP, i, icon);
+		g_graphics->setMenuIcon(RDMENU_TOP, i, icon);
 		res_man->closeResource(icon_list[i]);
 	}
 
-	g_display->showMenu(RDMENU_TOP);
+	g_graphics->showMenu(RDMENU_TOP);
 }
 
 } // End of namespace Sword2

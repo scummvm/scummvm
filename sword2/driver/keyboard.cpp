@@ -22,22 +22,14 @@
 
 namespace Sword2 {
 
-// Key buffer size
-#define MAX_KEY_BUFFER 32
-
-uint8 keyBacklog = 0;	// The number of key presses waiting to be processed.
-uint8 keyPointer = 0;	// Index of the next key to read from the buffer.
-
-_keyboardEvent keyBuffer[MAX_KEY_BUFFER];		// The keyboard buffer
-
-void WriteKey(uint16 ascii, int keycode, int modifiers) {
-	if (keyBuffer && keyBacklog < MAX_KEY_BUFFER) {
-		_keyboardEvent *slot = &keyBuffer[(keyPointer + keyBacklog) % MAX_KEY_BUFFER];
+void Input::writeKey(uint16 ascii, int keycode, int modifiers) {
+	if (_keyBuffer && _keyBacklog < MAX_KEY_BUFFER) {
+		_keyboardEvent *slot = &_keyBuffer[(_keyLogPos + _keyBacklog) % MAX_KEY_BUFFER];
 
 		slot->ascii = ascii;
 		slot->keycode = keycode;
 		slot->modifiers = modifiers;
-		keyBacklog++;
+		_keyBacklog++;
 	}
 }
 
@@ -45,8 +37,8 @@ void WriteKey(uint16 ascii, int keycode, int modifiers) {
  * @return true if there is an unprocessed key waiting in the queue
  */
 
-bool KeyWaiting(void) {
-	return keyBacklog != 0;
+bool Input::keyWaiting(void) {
+	return _keyBacklog != 0;
 }
 
 /**
@@ -54,24 +46,23 @@ bool KeyWaiting(void) {
  * @return RD_OK, or an error code to indicate there is no key waiting.
  */
 
-int32 ReadKey(_keyboardEvent *ev) {
-	if (!keyBacklog)
+int32 Input::readKey(_keyboardEvent *ev) {
+	if (!_keyBacklog)
 		return RDERR_NOKEYWAITING;
 
 	if (ev == NULL)
 		return RDERR_INVALIDPOINTER;
 
-	ev->ascii = keyBuffer[keyPointer].ascii;
-	ev->keycode = keyBuffer[keyPointer].keycode;
-	ev->modifiers = keyBuffer[keyPointer].modifiers;
+	ev->ascii = _keyBuffer[_keyLogPos].ascii;
+	ev->keycode = _keyBuffer[_keyLogPos].keycode;
+	ev->modifiers = _keyBuffer[_keyLogPos].modifiers;
 
-	keyPointer++;
+	_keyLogPos++;
 
-	if (keyPointer == MAX_KEY_BUFFER)
-		keyPointer = 0;
+	if (_keyLogPos == MAX_KEY_BUFFER)
+		_keyLogPos = 0;
 
-	keyBacklog--;
-
+	_keyBacklog--;
 	return RD_OK;
 }
 

@@ -2530,7 +2530,7 @@ void Router::plotWalkGrid(void) {
 	// lines
 
 	for (i = 0; i < _nbars; i++)
-		g_display->drawLine(_bars[i].x1, _bars[i].y1, _bars[i].x2, _bars[i].y2, 254);
+		g_graphics->drawLine(_bars[i].x1, _bars[i].y1, _bars[i].x2, _bars[i].y2, 254);
 
 	// nodes
 
@@ -2540,8 +2540,8 @@ void Router::plotWalkGrid(void) {
 }
 
 void Router::plotCross(int16 x, int16 y, uint8 colour) {
-	g_display->drawLine(x - 1, y - 1, x + 1, y + 1, colour);
-	g_display->drawLine(x + 1, y - 1, x - 1, y + 1, colour);	
+	g_graphics->drawLine(x - 1, y - 1, x + 1, y + 1, colour);
+	g_graphics->drawLine(x + 1, y - 1, x - 1, y + 1, colour);	
 }
 
 void Router::loadWalkGrid(void) {

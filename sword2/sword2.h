@@ -146,8 +146,9 @@ public:
 	uint32 _features;
 	char *_targetName; // target name for saves
 
+	Input *_input;
 	Sound *_sound;
-	Display *_display;
+	Graphics *_graphics;
 
 	Debugger *_debugger;
 
@@ -373,8 +374,9 @@ public:
 };
 
 extern Sword2Engine *g_sword2;
+extern Input *g_input; 
 extern Sound *g_sound;
-extern Display *g_display; 
+extern Graphics *g_graphics; 
 
 } // End of namespace Sword2
 

@@ -110,7 +110,7 @@ void Sword2Engine::mouseEngine(void) {
 		systemMenuMouse();
 		break;
 	case MOUSE_holding:
-		if (g_display->_mouseY < 400) {
+		if (_input->_mouseY < 400) {
 			_mouseMode = MOUSE_normal;
 			debug(5, "   releasing");
 		}
@@ -135,21 +135,21 @@ void Sword2Engine::systemMenuMouse(void) {
 	};
 
 	// can't close when player is dead
-	if (g_display->_mouseY > 0 && !DEAD) {
+	if (_input->_mouseY > 0 && !DEAD) {
 		// close menu
 		_mouseMode = MOUSE_normal;
-		g_display->hideMenu(RDMENU_TOP);
+		g_graphics->hideMenu(RDMENU_TOP);
 		return;
 	}
 
-	me = MouseEvent();
+	me = g_input->mouseEvent();
 
 	if (me && (me->buttons & RD_LEFTBUTTONDOWN)) {
 		// clicked on a top mouse pointer?
 
-		if (g_display->_mouseX >= 24 && g_display->_mouseX < 640 - 24 && g_display->_mouseY < 0) {
+		if (_input->_mouseX >= 24 && _input->_mouseX < 640 - 24 && _input->_mouseY < 0) {
 			// which are we over?
-			hit = (g_display->_mouseX - 24) / 40;
+			hit = (_input->_mouseX - 24) / 40;
 
 			// no save when dead
 			if (icon_list[hit] == SAVE_ICON && DEAD)
@@ -163,7 +163,7 @@ void Sword2Engine::systemMenuMouse(void) {
 					// change all others to grey
 					if (j != hit) {
 						icon = res_man->openResource(icon_list[j]) + sizeof(_standardHeader);
-						g_display->setMenuIcon(RDMENU_TOP, j, icon);
+						g_graphics->setMenuIcon(RDMENU_TOP, j, icon);
 						res_man->closeResource(icon_list[j]);
 					}
 				}
@@ -188,9 +188,9 @@ void Sword2Engine::systemMenuMouse(void) {
 				// clear the screen & set up the new palette
 				// for the menus
 
-				g_display->clearScene();
-				g_display->processMenu();
-				g_display->resetRenderEngine();
+				g_graphics->clearScene();
+				g_graphics->processMenu();
+				g_graphics->resetRenderEngine();
 
 				// call the relevent screen
 				switch (hit) {
@@ -214,7 +214,7 @@ void Sword2Engine::systemMenuMouse(void) {
 				// Menu stays open on death screen
 				if (!DEAD) {
 					_mouseMode = MOUSE_normal;
-					g_display->hideMenu(RDMENU_TOP);
+					g_graphics->hideMenu(RDMENU_TOP);
 				} else {
 					setMouse(NORMAL_MOUSE_ID);
 					buildSystemMenu();
@@ -223,8 +223,8 @@ void Sword2Engine::systemMenuMouse(void) {
 				// clear the screen & restore the location
 				// palette
 
-				g_display->clearScene();
-				g_display->processMenu();
+				g_graphics->clearScene();
+				g_graphics->processMenu();
 
 				// reset game palette, but not after a
 				// successful restore or restart!
@@ -272,10 +272,10 @@ void Sword2Engine::dragMouse(void) {
 	_mouseEvent *me;
 	uint32 pos;
 
-	if (g_display->_mouseY < 400) {
+	if (_input->_mouseY < 400) {
 		// close menu
 		_mouseMode = MOUSE_normal;
-		g_display->hideMenu(RDMENU_BOTTOM);
+		g_graphics->hideMenu(RDMENU_BOTTOM);
 		return;
 	}
 
@@ -284,7 +284,7 @@ void Sword2Engine::dragMouse(void) {
 
 	// now do the normal click stuff
 
-	me = MouseEvent();
+	me = g_input->mouseEvent();
 
 	// we only care about left clicks when the mouse is over an object
 	// we ignore mouse releases
@@ -311,8 +311,8 @@ void Sword2Engine::dragMouse(void) {
 			// these might be required by the action script about
 			// to be run
 
-			MOUSE_X = (uint32) g_display->_mouseX + _thisScreen.scroll_offset_x;
-			MOUSE_Y = (uint32) g_display->_mouseY + _thisScreen.scroll_offset_y;
+			MOUSE_X = (uint32) _input->_mouseX + _thisScreen.scroll_offset_x;
+			MOUSE_Y = (uint32) _input->_mouseY + _thisScreen.scroll_offset_y;
 
 			// for scripts to know what's been clicked (21jan97).
 			// First used for 'room_13_turning_script' in object
@@ -326,14 +326,14 @@ void Sword2Engine::dragMouse(void) {
 
 			// Hide menu - back to normal menu mode
 
-			g_display->hideMenu(RDMENU_BOTTOM);
+			g_graphics->hideMenu(RDMENU_BOTTOM);
 			_mouseMode = MOUSE_normal;
 		} else {
 			// better check for combine/cancel
 			// cancel puts us back in Menu_mouse mode
-			if (g_display->_mouseX >= 24 && g_display->_mouseX < 640 - 24) {
+			if (_input->_mouseX >= 24 && _input->_mouseX < 640 - 24) {
 				// which are we over?
-				pos = (g_display->_mouseX - 24) / 40;
+				pos = (_input->_mouseX - 24) / 40;
 
 				//clicked on something - what button?
 				if (_masterMenuList[pos].icon_resource) {
@@ -385,14 +385,14 @@ void Sword2Engine::menuMouse(void) {
 	_mouseEvent *me;
 	uint32 pos;
 
-	if (g_display->_mouseY < 400) {
+	if (_input->_mouseY < 400) {
 		// close menu
 		_mouseMode = MOUSE_normal;
-		g_display->hideMenu(RDMENU_BOTTOM);
+		g_graphics->hideMenu(RDMENU_BOTTOM);
 		return;
 	}
 
-	me = MouseEvent();
+	me = g_input->mouseEvent();
 
 	// we only care about left clicks when the mouse is over an object
 	// we ignore mouse releases
@@ -401,9 +401,9 @@ void Sword2Engine::menuMouse(void) {
 		// there's a mouse event to be processed
 		// now check if we've clicked on an actual icon
 
-		if (g_display->_mouseX >= 24 && g_display->_mouseX < 640 - 24) {
+		if (_input->_mouseX >= 24 && _input->_mouseX < 640 - 24) {
 			// which are we over?
-			pos = (g_display->_mouseX - 24) / 40;
+			pos = (_input->_mouseX - 24) / 40;
 
 			// clicked on something - what button?
 			if (_masterMenuList[pos].icon_resource) {
@@ -471,7 +471,7 @@ void Sword2Engine::normalMouse(void) {
 	_mouseEvent *me;
 
 	// no save in big-object menu lock situation
-	if (g_display->_mouseY < 0 && !_mouseModeLocked && !OBJECT_HELD) {
+	if (_input->_mouseY < 0 && !_mouseModeLocked && !OBJECT_HELD) {
 		_mouseMode = MOUSE_system_menu;
 
 		if (_mouseTouching) {
@@ -486,7 +486,7 @@ void Sword2Engine::normalMouse(void) {
 		return;
 	}
 
-	if (g_display->_mouseY > 399 && !_mouseModeLocked) {
+	if (_input->_mouseY > 399 && !_mouseModeLocked) {
 		// If an object is being held, i.e. if the mouse cursor has a
 		// luggage, we should be use dragging mode instead of inventory
 		// menu mode.
@@ -522,7 +522,7 @@ void Sword2Engine::normalMouse(void) {
 
 	// now do the normal click stuff
 
-	me = MouseEvent();
+	me = g_input->mouseEvent();
 
 	if (_debugger->_definingRectangles) {
 		if (_debugger->_draggingRectangle == 0) {
@@ -530,8 +530,8 @@ void Sword2Engine::normalMouse(void) {
 
 			if (me && (me->buttons & (RD_LEFTBUTTONDOWN | RD_RIGHTBUTTONDOWN))) {
 				// set both (x1,y1) and (x2,y2) to this point
-				_debugger->_rectX1 = _debugger->_rectX2 = (uint32) g_display->_mouseX + _thisScreen.scroll_offset_x;
-				_debugger->_rectY1 = _debugger->_rectY2 = (uint32) g_display->_mouseY + _thisScreen.scroll_offset_y;
+				_debugger->_rectX1 = _debugger->_rectX2 = (uint32) _input->_mouseX + _thisScreen.scroll_offset_x;
+				_debugger->_rectY1 = _debugger->_rectY2 = (uint32) _input->_mouseY + _thisScreen.scroll_offset_y;
 				_debugger->_draggingRectangle = 1;
 			}
 		} else if (_debugger->_draggingRectangle == 1) {
@@ -543,8 +543,8 @@ void Sword2Engine::normalMouse(void) {
 				_debugger->_draggingRectangle = 2;
 			} else {
 				// drag rectangle
-				_debugger->_rectX2 = (uint32) g_display->_mouseX + _thisScreen.scroll_offset_x;
-				_debugger->_rectY2 = (uint32) g_display->_mouseY + _thisScreen.scroll_offset_y;
+				_debugger->_rectX2 = (uint32) _input->_mouseX + _thisScreen.scroll_offset_x;
+				_debugger->_rectY2 = (uint32) _input->_mouseY + _thisScreen.scroll_offset_y;
 			}
 		} else {
 			// currently locked to avoid knocking out of place
@@ -594,8 +594,8 @@ void Sword2Engine::normalMouse(void) {
 
 			// these might be required by the action script about
 			// to be run
-			MOUSE_X = (uint32) g_display->_mouseX + _thisScreen.scroll_offset_x;
-			MOUSE_Y = (uint32) g_display->_mouseY + _thisScreen.scroll_offset_y;
+			MOUSE_X = (uint32) _input->_mouseX + _thisScreen.scroll_offset_x;
+			MOUSE_Y = (uint32) _input->_mouseY + _thisScreen.scroll_offset_y;
 
 			// only left button
 			if (_mouseTouching == EXIT_CLICK_ID && (me->buttons & RD_LEFTBUTTONDOWN)) {
@@ -650,7 +650,7 @@ void Sword2Engine::mouseOnOff(void) {
 	// don't detect objects that are hidden behind the menu bars (ie. in
 	// the scrolled-off areas of the screen)
 
-	if (g_display->_mouseY < 0 || g_display->_mouseY > 399)	{	
+	if (_input->_mouseY < 0 || _input->_mouseY > 399) {
 		pointer_type = 0;
 		_mouseTouching = 0;
 	} else {
@@ -747,14 +747,14 @@ void Sword2Engine::setMouse(uint32 res) {
 		// loop
 
 		if (res == NORMAL_MOUSE_ID)
-			g_display->setMouseAnim(icon, len, RDMOUSE_NOFLASH);
+			g_graphics->setMouseAnim(icon, len, RDMOUSE_NOFLASH);
 		else
- 			g_display->setMouseAnim(icon, len, RDMOUSE_FLASH);
+ 			g_graphics->setMouseAnim(icon, len, RDMOUSE_FLASH);
 
 		res_man->closeResource(res);
 	} else {
 		// blank cursor
-		g_display->setMouseAnim(NULL, 0, 0);
+		g_graphics->setMouseAnim(NULL, 0, 0);
 	}
 }
 
@@ -768,11 +768,11 @@ void Sword2Engine::setLuggage(uint32 res) {
 		icon = res_man->openResource(res) + sizeof(_standardHeader);
 		len = res_man->_resList[res]->size - sizeof(_standardHeader);
 
-		g_display->setLuggageAnim(icon, len);
+		g_graphics->setLuggageAnim(icon, len);
 
 		res_man->closeResource(res);
 	} else
-		g_display->setLuggageAnim(NULL, 0);
+		g_graphics->setLuggageAnim(NULL, 0);
 }
 
 uint32 Sword2Engine::checkMouseList(void) {
@@ -786,10 +786,10 @@ uint32 Sword2Engine::checkMouseList(void) {
 			// mouse-detection-box
 
 			if (_mouseList[j].priority == priority &&
-				g_display->_mouseX + _thisScreen.scroll_offset_x >= _mouseList[j].x1 &&
-				g_display->_mouseX + _thisScreen.scroll_offset_x <= _mouseList[j].x2 &&
-				g_display->_mouseY + _thisScreen.scroll_offset_y >= _mouseList[j].y1 &&
-				g_display->_mouseY + _thisScreen.scroll_offset_y <= _mouseList[j].y2) {
+				_input->_mouseX + _thisScreen.scroll_offset_x >= _mouseList[j].x1 &&
+				_input->_mouseX + _thisScreen.scroll_offset_x <= _mouseList[j].x2 &&
+				_input->_mouseY + _thisScreen.scroll_offset_y >= _mouseList[j].y1 &&
+				_input->_mouseY + _thisScreen.scroll_offset_y <= _mouseList[j].y2) {
 				// record id
 				_mouseTouching = _mouseList[j].id;
 
@@ -965,8 +965,8 @@ void Sword2Engine::createPointerText(uint32 text_id, uint32 pointer_res) {
 			// line reference number
 
 			_pointerTextBlocNo = fontRenderer->buildNewBloc(
-				text + 2, g_display->_mouseX + xOffset,
-				g_display->_mouseY + yOffset,
+				text + 2, _input->_mouseX + xOffset,
+				_input->_mouseY + yOffset,
 				POINTER_TEXT_WIDTH, POINTER_TEXT_PEN,
 				RDSPR_TRANS | RDSPR_DISPLAYALIGN,
 				_speechFontId, justification);
@@ -1042,7 +1042,7 @@ void Sword2Engine::registerMouse(Object_mouse *ob_mouse) {
 
 void Sword2Engine::monitorPlayerActivity(void) {
 	// if there is at least one mouse event outstanding
-	if (CheckForMouseEvents()) {
+	if (g_input->checkForMouseEvents()) {
 		// reset activity delay counter
 		_playerActivityDelay = 0;
 	} else {
@@ -1062,12 +1062,12 @@ int32 Logic::fnNoHuman(int32 *params) {
 
 	// dont hide menu in conversations
 	if (TALK_FLAG == 0)
-		g_display->hideMenu(RDMENU_BOTTOM);
+		g_graphics->hideMenu(RDMENU_BOTTOM);
 
 	if (_vm->_mouseMode == MOUSE_system_menu) {
 		// close menu
 		_vm->_mouseMode = MOUSE_normal;
-		g_display->hideMenu(RDMENU_TOP);
+		g_graphics->hideMenu(RDMENU_TOP);
 	}
 
 	// script continue
@@ -1110,7 +1110,7 @@ int32 Logic::fnAddHuman(int32 *params) {
 	}
 
 	// if mouse is over menu area
-	if (g_display->_mouseY > 399) {
+	if (g_input->_mouseY > 399) {
 		if (_vm->_mouseMode != MOUSE_holding) {
 			// VITAL - reset things & rebuild the menu
 			_vm->_mouseMode = MOUSE_normal;
@@ -1129,7 +1129,7 @@ int32 Logic::fnAddHuman(int32 *params) {
 		// testing logic scripts by simulating an instant Save &
 		// Restore
 
-		g_display->setPalette(0, 1, white, RDPAL_INSTANT);
+		g_graphics->setPalette(0, 1, white, RDPAL_INSTANT);
 
 		// stops all fx & clears the queue - eg. when leaving a
 		// location
@@ -1141,7 +1141,7 @@ int32 Logic::fnAddHuman(int32 *params) {
 
 		res_man->killAllObjects(false);
 
-		g_display->setPalette(0, 1, black, RDPAL_INSTANT);
+		g_graphics->setPalette(0, 1, black, RDPAL_INSTANT);
 	}
 
 	return IR_CONT;
@@ -1228,7 +1228,7 @@ int32 Logic::fnSetScrollRightMouse(int32 *params) {
 
 	// Highest priority
 
-	ob_mouse->x1 = _vm->_thisScreen.scroll_offset_x + g_display->_screenWide - SCROLL_MOUSE_WIDTH;
+	ob_mouse->x1 = _vm->_thisScreen.scroll_offset_x + g_graphics->_screenWide - SCROLL_MOUSE_WIDTH;
 	ob_mouse->y1 = 0;
 	ob_mouse->x2 = _vm->_thisScreen.screen_wide - 1;
 	ob_mouse->y2 = _vm->_thisScreen.screen_deep - 1;
@@ -1265,7 +1265,7 @@ int32 Logic::fnSetObjectHeld(int32 *params) {
 int32 Logic::fnRemoveChooser(int32 *params) {
 	// params:	none
 
-	g_display->hideMenu(RDMENU_BOTTOM);
+	g_graphics->hideMenu(RDMENU_BOTTOM);
 	return IR_CONT;
 }
 

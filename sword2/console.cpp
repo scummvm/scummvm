@@ -144,7 +144,7 @@ void Debugger::postEnter() {
 	g_sound->unpauseMusic();
 
 	// Restore old mouse cursor
-	g_display->drawMouse();
+	g_graphics->drawMouse();
 
 }
 
@@ -209,7 +209,7 @@ bool Debugger::Cmd_Start(int argc, const char **argv) {
 	}
 
 	g_logic->conStart(atoi(argv[1]));
-	g_display->setPalette(187, 1, pal, RDPAL_INSTANT);
+	g_graphics->setPalette(187, 1, pal, RDPAL_INSTANT);
 	return true;
 }
 
@@ -451,14 +451,14 @@ bool Debugger::Cmd_RestoreGame(int argc, const char **argv) {
 // FIXME: Replace these with a command to modify the graphics detail setting
 
 bool Debugger::Cmd_BltFxOn(int argc, const char **argv) {
-	// g_display->setBltFx();
+	// g_graphics->setBltFx();
 	// DebugPrintf("Blit fx enabled\n");
 	DebugPrintf("FIXME: The setBltFx() function no longer exists\n");
 	return true;
 }
 
 bool Debugger::Cmd_BltFxOff(int argc, const char **argv) {
-	// g_display->clearBltFx();
+	// g_graphics->clearBltFx();
 	// DebugPrintf("Blit fx disabled\n");
 	DebugPrintf("FIXME: The clearBltFx() function no longer exists\n");
 	return true;

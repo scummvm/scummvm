@@ -43,7 +43,7 @@ namespace Sword2 {
 #define CHARACTER_OVERLAP	 2	// overlap characters by 3 pixels
 
 // our fonts start on SPACE character (32)
-#define SIZE_OF_CHAR_SET (256 - 32)
+#define SIZE_OF_CHAR_SET	(256 - 32)
 
 Gui *gui;
 
@@ -75,7 +75,7 @@ public:
 			sprite.data = (uint8 *) (head + 1);
 			sprite.w = head->width;
 			sprite.h = head->height;
-			g_display->createSurface(&sprite, &_glyph[i]._data);
+			g_graphics->createSurface(&sprite, &_glyph[i]._data);
 			_glyph[i]._width = head->width;
 			_glyph[i]._height = head->height;
 		}
@@ -85,7 +85,7 @@ public:
 
 	~FontRendererGui() {
 		for (int i = 0; i < SIZE_OF_CHAR_SET; i++)
-			g_display->deleteSurface(_glyph[i]._data);
+			g_graphics->deleteSurface(_glyph[i]._data);
 	}
 
 	void fetchText(int textId, char *buf) {
@@ -144,7 +144,7 @@ void FontRendererGui::drawText(char *text, int x, int y, int alignment) {
 		sprite.w = _glyph[text[i] - 32]._width;
 		sprite.h = _glyph[text[i] - 32]._height;
 
-		g_display->drawSurface(&sprite, _glyph[text[i] - 32]._data);
+		g_graphics->drawSurface(&sprite, _glyph[text[i] - 32]._data);
 
 		sprite.x += (_glyph[(int) text[i] - 32]._width - CHARACTER_OVERLAP);
 	}
@@ -187,7 +187,7 @@ public:
 	virtual ~Widget() {
 		for (int i = 0; i < _numStates; i++) {
 			if (_surfaces[i]._original)
-				g_display->deleteSurface(_surfaces[i]._surface);
+				g_graphics->deleteSurface(_surfaces[i]._surface);
 		}
 		free(_sprites);
 		free(_surfaces);
@@ -229,7 +229,7 @@ public:
 	}
 
 	virtual void paint(Common::Rect *clipRect = NULL) {
-		g_display->drawSurface(&_sprites[_state], _surfaces[_state]._surface, clipRect);
+		g_graphics->drawSurface(&_sprites[_state], _surfaces[_state]._surface, clipRect);
 	}
 
 	virtual void onMouseEnter() {}
@@ -292,7 +292,7 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 	// Points to just after frame header, ie. start of sprite data
 	_sprites[state].data = (uint8 *) (frame_head + 1);
 
-	g_display->createSurface(&_sprites[state], &_surfaces[state]._surface);
+	g_graphics->createSurface(&_sprites[state], &_surfaces[state]._surface);
 	_surfaces[state]._original = true;
 
 	// Release the anim resource
@@ -340,7 +340,7 @@ public:
 	virtual void onAction(Widget *widget, int result = 0) {}
 
 	virtual void paint() {
-		g_display->clearScene();
+		g_graphics->clearScene();
 		for (int i = 0; i < _numWidgets; i++)
 			_widgets[i]->paint();
 	}
@@ -363,15 +363,15 @@ int Dialog::run() {
 
 	while (!_finish) {
 		// So that the menu icons will reach their full size
-		g_display->processMenu();
-		g_display->updateDisplay();
+		g_graphics->processMenu();
+		g_graphics->updateDisplay();
 
-		int16 newMouseX = g_display->_mouseX;
-		int16 newMouseY = g_display->_mouseY + 40;
+		int16 newMouseX = g_input->_mouseX;
+		int16 newMouseY = g_input->_mouseY + 40;
 
-		_mouseEvent *me = MouseEvent();
+		_mouseEvent *me = g_input->mouseEvent();
 		_keyboardEvent ke;
-		int32 keyboardStatus = ReadKey(&ke);
+		int32 keyboardStatus = g_input->readKey(&ke);
 
 		if (keyboardStatus == RD_OK) {
 			if (ke.keycode == 27)
@@ -388,7 +388,7 @@ int Dialog::run() {
 				_widgets[i]->onMouseEnter();
 			if (oldHit && !newHit)
 				_widgets[i]->onMouseExit();
-			if (g_display->_mouseX != oldMouseX || g_display->_mouseY != oldMouseY)
+			if (g_input->_mouseX != oldMouseX || g_input->_mouseY != oldMouseY)
 				_widgets[i]->onMouseMove(newMouseX, newMouseY);
 
 			if (me) {
@@ -786,8 +786,8 @@ public:
 		_musicSlider->setValue(g_sound->getMusicVolume());
 		_speechSlider->setValue(g_sound->getSpeechVolume());
 		_fxSlider->setValue(g_sound->getFxVolume());
-		_gfxSlider->setValue(g_display->getRenderLevel());
-		_gfxPreview->setState(g_display->getRenderLevel());
+		_gfxSlider->setValue(g_graphics->getRenderLevel());
+		_gfxPreview->setState(g_graphics->getRenderLevel());
 	}
 
 	~OptionsDialog() {
@@ -1312,17 +1312,17 @@ void SaveLoadDialog::saveLoadError(char* text) {
 	while (1) {
 		_mouseEvent *me;
 
-		g_display->updateDisplay();
+		g_graphics->updateDisplay();
 
-		if (KeyWaiting()) {
+		if (g_input->keyWaiting()) {
 			_keyboardEvent ke;
 
-			ReadKey(&ke);
+			g_input->readKey(&ke);
 			if (ke.keycode == 27)
 				break;
 		}
 
-		me = MouseEvent();
+		me = g_input->mouseEvent();
 		if (me && (me->buttons & RD_LEFTBUTTONDOWN))
 			break;
 
@@ -1383,7 +1383,7 @@ void Gui::writeOptionSettings(void) {
 	ConfMan.set("music_mute", g_sound->isMusicMute());
 	ConfMan.set("speech_mute", g_sound->isSpeechMute());
 	ConfMan.set("sfx_mute", g_sound->isFxMute());
-	ConfMan.set("gfx_details", g_display->getRenderLevel());
+	ConfMan.set("gfx_details", g_graphics->getRenderLevel());
 	ConfMan.set("nosubtitles", !_subtitles);
 	ConfMan.set("object_labels", _pointerTextSelected);
 	ConfMan.set("reverse_stereo", _stereoReversed);
@@ -1432,7 +1432,7 @@ void Gui::restartControl(void) {
 	//in case we were dead - well we're not anymore!
 	DEAD = 0;
 
-	g_display->clearScene();
+	g_graphics->clearScene();
 
 	// restart the game
 	// clear all memory and reset the globals
@@ -1466,7 +1466,7 @@ void Gui::restartControl(void) {
 	// fnRegisterFrame)
 	_vm->resetMouseList();
 
-	g_display->closeMenuImmediately();
+	g_graphics->closeMenuImmediately();
 
 	// FOR THE DEMO - FORCE THE SCROLLING TO BE RESET!
 	// - this is taken from fnInitBackground
@@ -1496,7 +1496,7 @@ void Gui::updateGraphicsLevel(int newLevel) {
 	else if (newLevel > 3)
 		newLevel = 3;
 
-	g_display->setRenderLevel(newLevel);
+	g_graphics->setRenderLevel(newLevel);
 
 	// update our global variable - which needs to be checked when dimming
 	// the palette in PauseGame() in sword2.cpp (since palette-matching

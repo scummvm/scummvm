@@ -1019,28 +1019,28 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	char buf[1024];
 	sprintf(buf, "%sClusters\\%s", _cdPath, _resourceFiles[newCluster]);
 
-	g_display->waitForFade();
+	g_graphics->waitForFade();
 
-	if (g_display->getFadeStatus() != RDFADE_BLACK) {
-		g_display->fadeDown();
-		g_display->waitForFade();
+	if (g_graphics->getFadeStatus() != RDFADE_BLACK) {
+		g_graphics->fadeDown();
+		g_graphics->waitForFade();
 	}
 
-	g_display->clearScene();
+	g_graphics->clearScene();
 
 	_vm->setMouse(0);
 	_vm->setLuggage(0);
 
 	uint8 *bgfile;
 	bgfile = openResource(2950);	// open the screen resource
-	g_display->initialiseBackgroundLayer(NULL);
-	g_display->initialiseBackgroundLayer(NULL);
-	g_display->initialiseBackgroundLayer(_vm->fetchBackgroundLayer(bgfile));
-	g_display->initialiseBackgroundLayer(NULL);
-	g_display->initialiseBackgroundLayer(NULL);
-	g_display->setPalette(0, 256, _vm->fetchPalette(bgfile), RDPAL_FADE);
+	g_graphics->initialiseBackgroundLayer(NULL);
+	g_graphics->initialiseBackgroundLayer(NULL);
+	g_graphics->initialiseBackgroundLayer(_vm->fetchBackgroundLayer(bgfile));
+	g_graphics->initialiseBackgroundLayer(NULL);
+	g_graphics->initialiseBackgroundLayer(NULL);
+	g_graphics->setPalette(0, 256, _vm->fetchPalette(bgfile), RDPAL_FADE);
 
-	g_display->renderParallax(_vm->fetchBackgroundLayer(bgfile), 2);
+	g_graphics->renderParallax(_vm->fetchBackgroundLayer(bgfile), 2);
 	closeResource(2950);		// release the screen resource
 
 	// Git rid of read-only status, if it is set.
@@ -1066,8 +1066,8 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 
 	frame = (_frameHeader*) text_spr->ad;
 
-	textSprite.x = g_display->_screenWide /2 - frame->width / 2;
-	textSprite.y = g_display->_screenDeep /2 - frame->height / 2 - RDMENU_MENUDEEP;
+	textSprite.x = g_graphics->_screenWide /2 - frame->width / 2;
+	textSprite.y = g_graphics->_screenDeep /2 - frame->height / 2 - RDMENU_MENUDEEP;
 	textSprite.w = frame->width;
 	textSprite.h = frame->height;
 	textSprite.scale = 0;
@@ -1107,17 +1107,17 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	int16 textX = textSprite.x;
 	int16 textY = textSprite.y;
 
-	g_display->drawSprite(&barSprite);
+	g_graphics->drawSprite(&barSprite);
 	barSprite.x = barX;
 	barSprite.y = barY;
 
 	textSprite.data	= text_spr->ad + sizeof(_frameHeader);
-	g_display->drawSprite(&textSprite);
+	g_graphics->drawSprite(&textSprite);
 	textSprite.x = textX;
 	textSprite.y = textY;
 
-	g_display->fadeUp();
-	g_display->waitForFade();
+	g_graphics->fadeUp();
+	g_graphics->waitForFade();
 
 	uint32 size = inFile.size();
 
@@ -1139,19 +1139,19 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 			step = 0;
 			// open the screen resource
 			bgfile = openResource(2950);
-			g_display->renderParallax(_vm->fetchBackgroundLayer(bgfile), 2);
+			g_graphics->renderParallax(_vm->fetchBackgroundLayer(bgfile), 2);
 			// release the screen resource
 			closeResource(2950);
 			loadingBar = openResource(2951);
 			frame = _vm->fetchFrameHeader(loadingBar, fr);
 			barSprite.data = (uint8 *) (frame + 1);
 			closeResource(2951);
-			g_display->drawSprite(&barSprite);
+			g_graphics->drawSprite(&barSprite);
 			barSprite.x = barX;
 			barSprite.y = barY;
 
 			textSprite.data	= text_spr->ad + sizeof(_frameHeader);
-			g_display->drawSprite(&textSprite);
+			g_graphics->drawSprite(&textSprite);
 			textSprite.x = textX;
 			textSprite.y = textY;
 
@@ -1159,7 +1159,7 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 		} else
 			step++;
 
-		g_display->updateDisplay();
+		g_graphics->updateDisplay();
 	} while ((read % BUFFERSIZE) == 0);
 
 	if (read != size) {
@@ -1170,11 +1170,11 @@ void ResourceManager::cacheNewCluster(uint32 newCluster) {
 	outFile.close();
 	memory->freeMemory(text_spr);
 
-	g_display->clearScene();
+	g_graphics->clearScene();
 
-	g_display->fadeDown();
-	g_display->waitForFade();
-	g_display->fadeUp();
+	g_graphics->fadeDown();
+	g_graphics->waitForFade();
+	g_graphics->fadeUp();
 
 	// Git rid of read-only status.
 	SVM_SetFileAttributes(_resourceFiles[newCluster], FILE_ATTRIBUTE_NORMAL);
@@ -1291,8 +1291,8 @@ void ResourceManager::getCd(int cd) {
 
 	frame = (_frameHeader*) text_spr->ad;
 
-	spriteInfo.x = g_display->_screenWide / 2 - frame->width / 2;
-	spriteInfo.y = g_display->_screenDeep / 2 - frame->height / 2 - RDMENU_MENUDEEP;
+	spriteInfo.x = g_graphics->_screenWide / 2 - frame->width / 2;
+	spriteInfo.y = g_graphics->_screenDeep / 2 - frame->height / 2 - RDMENU_MENUDEEP;
 	spriteInfo.w = frame->width;
 	spriteInfo.h = frame->height;
 	spriteInfo.scale = 0;
@@ -1330,10 +1330,10 @@ void ResourceManager::getCd(int cd) {
 			}
 		}
 		
-		g_display->updateDisplay();
+		g_graphics->updateDisplay();
 
-		g_display->clearScene();
-		g_display->drawSprite(&spriteInfo);	// Keep the message there even when the user task swaps.
+		g_graphics->clearScene();
+		g_graphics->drawSprite(&spriteInfo);	// Keep the message there even when the user task swaps.
 		spriteInfo.y = oldY;		// Drivers change the y co-ordinate, don't know why...
 		spriteInfo.x = oldX;
 	} while (!done);

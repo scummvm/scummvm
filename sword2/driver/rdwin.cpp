@@ -20,8 +20,6 @@
 #include "common/stdafx.h"
 #include "sword2/sword2.h"
 #include "sword2/driver/driver96.h"
-#include "sword2/driver/_mouse.h"
-#include "sword2/driver/keyboard.h"
 #include "sword2/driver/d_draw.h"
 #include "sword2/driver/render.h"
 #include "sword2/driver/menu.h"
@@ -33,29 +31,29 @@ namespace Sword2 {
 // OSystem Event Handler. Full of cross platform goodness and 99% fat free!
 // ---------------------------------------------------------------------------
 
-void Sword2Engine::parseEvents() {
+void Input::parseEvents(void) {
 	OSystem::Event event;
 	
-	while (_system->poll_event(&event)) {
-		switch(event.event_code) {
+	while (g_system->poll_event(&event)) {
+		switch (event.event_code) {
 		case OSystem::EVENT_KEYDOWN:
-			WriteKey(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
+			writeKey(event.kbd.ascii, event.kbd.keycode, event.kbd.flags);
 			break;
 		case OSystem::EVENT_MOUSEMOVE:
-			g_display->_mouseX = event.mouse.x;
-			g_display->_mouseY = event.mouse.y - MENUDEEP;
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y - MENUDEEP;
 			break;
 		case OSystem::EVENT_LBUTTONDOWN:
-			LogMouseEvent(RD_LEFTBUTTONDOWN);
+			logMouseEvent(RD_LEFTBUTTONDOWN);
 			break;
 		case OSystem::EVENT_RBUTTONDOWN:
-			LogMouseEvent(RD_RIGHTBUTTONDOWN);
+			logMouseEvent(RD_RIGHTBUTTONDOWN);
 			break;
 		case OSystem::EVENT_LBUTTONUP:
-			LogMouseEvent(RD_LEFTBUTTONUP);
+			logMouseEvent(RD_LEFTBUTTONUP);
 			break;
 		case OSystem::EVENT_RBUTTONUP:
-			LogMouseEvent(RD_RIGHTBUTTONUP);
+			logMouseEvent(RD_RIGHTBUTTONUP);
 			break;
 		case OSystem::EVENT_QUIT:
 			g_sword2->closeGame();
@@ -66,7 +64,7 @@ void Sword2Engine::parseEvents() {
 	}
 }
 
-void Display::setNeedFullRedraw() {
+void Graphics::setNeedFullRedraw() {
 	_needFullRedraw = true;
 }
 
@@ -75,8 +73,8 @@ void Display::setNeedFullRedraw() {
  * windows and the interface it provides.
  */
 
-void Display::updateDisplay(void) {
-	g_sword2->parseEvents();
+void Graphics::updateDisplay(void) {
+	g_input->parseEvents();
 	fadeServer();
 
 	// FIXME: We re-render the entire picture area of the screen for each
@@ -95,7 +93,7 @@ void Display::updateDisplay(void) {
  * Set the window title
  */
 
-void Display::setWindowName(const char *windowName) {
+void Graphics::setWindowName(const char *windowName) {
 	OSystem::Property prop;
 
 	prop.caption = windowName;

@@ -20,7 +20,6 @@
 #include "stdafx.h"
 #include "sword2/driver/driver96.h"
 #include "sword2/driver/d_draw.h"
-#include "sword2/driver/_mouse.h"
 #include "sword2/driver/render.h"
 #include "sword2/driver/menu.h"
 #include "sword2/sword2.h"
@@ -32,13 +31,13 @@ namespace Sword2 {
 #define BLOCKWBITS		6
 #define BLOCKHBITS		6
 
-void Display::updateRect(Common::Rect *r) {
+void Graphics::updateRect(Common::Rect *r) {
 	g_system->copy_rect(_buffer + r->top * _screenWide + r->left,
 		_screenWide, r->left, r->top, r->right - r->left,
 		r->bottom - r->top);
 }
 
-void Display::blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *clip_rect) {
+void Graphics::blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *clip_rect) {
 	if (r->top > clip_rect->bottom || r->left > clip_rect->right || r->bottom <= clip_rect->top || r->right <= clip_rect->left)
 		return;
 
@@ -78,7 +77,7 @@ void Display::blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *c
 	}
 
 	// UploadRect(r);
-	g_display->setNeedFullRedraw();
+	setNeedFullRedraw();
 }
 
 // I've made the scaling two separate functions because there were cases from
@@ -94,7 +93,7 @@ void Display::blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *c
 // be drawn. This is only used at the highest graphics detail setting (and not
 // always even then) and is used to help anti-alias the image.
 
-void Display::squashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
+void Graphics::squashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
 	int32 ince, incne, d;
 	int16 x, y;
 
@@ -189,7 +188,7 @@ void Display::squashImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 ds
 	}
 }
 
-void Display::stretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
+void Graphics::stretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
 	byte *origDst = dst;
 	int32 ince, incne, d;
 	int16 x, y, i, j, k;
@@ -335,7 +334,7 @@ void Display::stretchImage(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 d
  * @param colour colour of the point
  */
 
-void Display::plotPoint(uint16 x, uint16 y, uint8 colour) {
+void Graphics::plotPoint(uint16 x, uint16 y, uint8 colour) {
 	uint8 *buf = _buffer + 40 * RENDERWIDE;
 	int16 newx, newy;
 	
@@ -356,7 +355,7 @@ void Display::plotPoint(uint16 x, uint16 y, uint8 colour) {
  */
 
 // Uses Bressnham's incremental algorithm!
-void Display::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
+void Graphics::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
 	uint8 *buf = _buffer + 40 * RENDERWIDE;
 	int dx, dy;
 	int dxmod, dymod;
@@ -519,7 +518,7 @@ void Display::drawLine(int16 x0, int16 y0, int16 x1, int16 y1, uint8 colour) {
  * @param h height of the current location
  */
 
-void Display::setLocationMetrics(uint16 w, uint16 h) {
+void Graphics::setLocationMetrics(uint16 w, uint16 h) {
 	_locationWide = w;
 	_locationDeep = h;
 }
@@ -529,7 +528,7 @@ void Display::setLocationMetrics(uint16 w, uint16 h) {
  * parallax can be either foreground, background or the main screen.
  */
 
-void Display::renderParallax(_parallax *p, int16 l) {
+void Graphics::renderParallax(_parallax *p, int16 l) {
 	int16 x, y;
 	Common::Rect r;
 
@@ -575,7 +574,7 @@ void Display::renderParallax(_parallax *p, int16 l) {
  * Initialises the timers before the render loop is entered.
  */
 
-void Display::initialiseRenderCycle(void) {
+void Graphics::initialiseRenderCycle(void) {
 	_initialTime = SVM_timeGetTime();
 	_totalTime = _initialTime + MILLISECSPERCYCLE;
 }
@@ -585,7 +584,7 @@ void Display::initialiseRenderCycle(void) {
  * render cycle.
  */
 
-void Display::startRenderCycle(void) {
+void Graphics::startRenderCycle(void) {
 	_scrollXOld = _scrollX;
 	_scrollYOld = _scrollY;
 
@@ -610,7 +609,7 @@ void Display::startRenderCycle(void) {
  * terminated, or false if it should continue
  */
 
-bool Display::endRenderCycle(void) {
+bool Graphics::endRenderCycle(void) {
 	static int32 renderTimeLog[4] = { 60, 60, 60, 60 };
 	static int32 renderCountIndex = 0;
 	int32 time;
@@ -668,7 +667,7 @@ bool Display::endRenderCycle(void) {
  * position in the allotted time.
  */
 
-void Display::setScrollTarget(int16 sx, int16 sy) {
+void Graphics::setScrollTarget(int16 sx, int16 sy) {
 	_scrollXTarget = sx;
 	_scrollYTarget = sy;
 }
@@ -678,7 +677,7 @@ void Display::setScrollTarget(int16 sx, int16 sy) {
  * or a NULL pointer in order of background parallax to foreground parallax.
  */
 
-int32 Display::initialiseBackgroundLayer(_parallax *p) {
+int32 Graphics::initialiseBackgroundLayer(_parallax *p) {
 	uint8 *memchunk;
 	uint8 zeros;
 	uint16 count;
@@ -804,7 +803,7 @@ int32 Display::initialiseBackgroundLayer(_parallax *p) {
  * Should be called once after leaving the room to free up memory.
  */
 
-void Display::closeBackgroundLayer(void) {
+void Graphics::closeBackgroundLayer(void) {
 	debug(2, "CloseBackgroundLayer");
 
 	for (int j = 0; j < MAXLAYERS; j++) {

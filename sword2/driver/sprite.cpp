@@ -32,7 +32,7 @@ namespace Sword2 {
  * @param h height of the sprite
  */
 
-void Display::mirrorSprite(uint8 *dst, uint8 *src, int16 w, int16 h) {
+void Graphics::mirrorSprite(uint8 *dst, uint8 *src, int16 w, int16 h) {
 	for (int y = 0; y < h; y++) {
 		for (int x = 0; x < w; x++) {
 			*dst++ = *(src + w - x - 1);
@@ -49,7 +49,7 @@ void Display::mirrorSprite(uint8 *dst, uint8 *src, int16 w, int16 h) {
  * @param decompSize the expected size of the decompressed sprite
  */
 
-int32 Display::decompressRLE256(uint8 *dest, uint8 *source, int32 decompSize) {
+int32 Graphics::decompressRLE256(uint8 *dest, uint8 *source, int32 decompSize) {
 	// PARAMETERS:
 	// source	points to the start of the sprite data for input
 	// decompSize	gives size of decompressed data in bytes
@@ -129,7 +129,7 @@ int32 Display::decompressRLE256(uint8 *dest, uint8 *source, int32 decompSize) {
  * Unwinds a run of 16-colour data into 256-colour palette data.
  */
 
-void Display::unwindRaw16(uint8 *dest, uint8 *source, uint8 blockSize, uint8 *colTable) {
+void Graphics::unwindRaw16(uint8 *dest, uint8 *source, uint8 blockSize, uint8 *colTable) {
 	// for each pair of pixels
 	while (blockSize > 1) {
 		// 1st colour = number in table at position given by upper
@@ -164,7 +164,7 @@ void Display::unwindRaw16(uint8 *dest, uint8 *source, uint8 blockSize, uint8 *co
  * @param colTable mapping from the 16 encoded colours to the current palette
  */
 
-int32 Display::decompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, uint8 *colTable) {
+int32 Graphics::decompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, uint8 *colTable) {
 	uint8 headerByte;			// block header byte
 	uint8 *endDest = dest + decompSize;	// pointer to byte after end of decomp buffer
 	int32 rv;
@@ -244,7 +244,7 @@ int32 Display::decompressRLE16(uint8 *dest, uint8 *source, int32 decompSize, uin
  * @return RD_OK, or an error code
  */
 
-int32 Display::createSurface(_spriteInfo *s, uint8 **sprite) {
+int32 Graphics::createSurface(_spriteInfo *s, uint8 **sprite) {
 	uint8 *newSprite;
 
 	*sprite = (uint8 *) malloc(s->w * s->h);
@@ -288,7 +288,7 @@ int32 Display::createSurface(_spriteInfo *s, uint8 **sprite) {
  * @param clipRect the clipping rectangle
  */
 
-void Display::drawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRect) {
+void Graphics::drawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRect) {
 	Common::Rect rd, rs;
 	uint16 x, y, srcPitch;
 	uint8 *src, *dst;
@@ -356,7 +356,7 @@ void Display::drawSurface(_spriteInfo *s, uint8 *surface, Common::Rect *clipRect
  * Destroys a surface.
  */
 
-void Display::deleteSurface(uint8 *surface) {
+void Graphics::deleteSurface(uint8 *surface) {
 	free(surface);
 }
 
@@ -381,7 +381,7 @@ void Display::deleteSurface(uint8 *surface) {
 // FIXME: I'm sure this could be optimized. There's plenty of data copying and
 // mallocing here.
 
-int32 Display::drawSprite(_spriteInfo *s) {
+int32 Graphics::drawSprite(_spriteInfo *s) {
 	uint8 *src, *dst;
 	uint8 *sprite, *newSprite;
 	uint8 *backbuf = NULL;
@@ -676,7 +676,7 @@ int32 Display::drawSprite(_spriteInfo *s) {
  * Opens the light masking sprite for a room.
  */
 
-int32 Display::openLightMask(_spriteInfo *s) {
+int32 Graphics::openLightMask(_spriteInfo *s) {
 	// FIXME: The light mask is only needed on higher graphics detail
 	// settings, so to save memory we could simply ignore it on lower
 	// settings. But then we need to figure out how to ensure that it
@@ -699,7 +699,7 @@ int32 Display::openLightMask(_spriteInfo *s) {
  * Closes the light masking sprite for a room.
  */
 
-int32 Display::closeLightMask(void) {
+int32 Graphics::closeLightMask(void) {
 	if (!_lightMask)
 		return RDERR_NOTOPEN;
 

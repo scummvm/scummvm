@@ -751,14 +751,14 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	// now clear the screen in case the Sequence was quitted (using ESC)
 	// rather than fading down to black
 
-	g_display->clearScene();
+	g_graphics->clearScene();
 
 	// zero the entire palette in case we're about to fade up!
 
 	_palEntry pal[256];
 
 	memset(pal, 0, 256 * sizeof(_palEntry));
-	g_display->setPalette(0, 256, (uint8 *) pal, RDPAL_INSTANT);
+	g_graphics->setPalette(0, 256, (uint8 *) pal, RDPAL_INSTANT);
 
 	debug(5, "fnPlaySequence FINISHED");
 

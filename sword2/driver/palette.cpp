@@ -26,7 +26,7 @@
 
 namespace Sword2 {
 
-uint8 Display::getMatch(uint8 r, uint8 g, uint8 b) {
+uint8 Graphics::getMatch(uint8 r, uint8 g, uint8 b) {
 	int32 diff;
 	int32 min;
 	int16 diffred, diffgreen, diffblue;
@@ -67,7 +67,7 @@ uint8 Display::getMatch(uint8 r, uint8 g, uint8 b) {
  * from the current palCopy
  */
 
-void Display::updatePaletteMatchTable(uint8 *data) {
+void Graphics::updatePaletteMatchTable(uint8 *data) {
 	if (!data) {
 		int16 red, green, blue;
 		uint8 *p;
@@ -101,7 +101,7 @@ void Display::updatePaletteMatchTable(uint8 *data) {
 // FIXME: This used to be inlined - probably a good idea - but the
 // linker complained when I tried to use it in sprite.cpp.
 
-uint8 Display::quickMatch(uint8 r, uint8 g, uint8 b) {
+uint8 Graphics::quickMatch(uint8 r, uint8 g, uint8 b) {
 	return _paletteMatch[((int32) (r >> 2) << 12) + ((int32) (g >> 2) << 6) + (b >> 2)];
 }
 
@@ -112,7 +112,7 @@ uint8 Display::quickMatch(uint8 r, uint8 g, uint8 b) {
  * @param colourTable the new colour entries
  */
 
-void Display::setPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, uint8 fadeNow) {
+void Graphics::setPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, uint8 fadeNow) {
 	if (noEntries) {
 		memcpy(&_palCopy[startEntry][0], colourTable, noEntries * 4);
 		if (fadeNow == RDPAL_INSTANT)
@@ -121,7 +121,7 @@ void Display::setPalette(int16 startEntry, int16 noEntries, uint8 *colourTable, 
 		g_system->set_palette((const byte *) _palCopy, 0, 256);
 }
 
-void Display::dimPalette(void) {
+void Graphics::dimPalette(void) {
 	byte *p = (byte *) _palCopy;
 
 	for (int i = 0; i < 256 * 4; i++)
@@ -135,7 +135,7 @@ void Display::dimPalette(void) {
  * @param time the time it will take the palette to fade up
  */
 
-int32 Display::fadeUp(float time) {
+int32 Graphics::fadeUp(float time) {
 	if (getFadeStatus() != RDFADE_BLACK && getFadeStatus() != RDFADE_NONE)
 		return RDERR_FADEINCOMPLETE;
 
@@ -151,7 +151,7 @@ int32 Display::fadeUp(float time) {
  * @param time the time it will take the palette to fade down
  */
 
-int32 Display::fadeDown(float time) {
+int32 Graphics::fadeDown(float time) {
 	if (getFadeStatus() != RDFADE_BLACK && getFadeStatus() != RDFADE_NONE)
 		return RDERR_FADEINCOMPLETE;
 
@@ -168,18 +168,18 @@ int32 Display::fadeDown(float time) {
  * (not faded), or RDFADE_BLACK (completely faded down)
  */
 
-uint8 Display::getFadeStatus(void) {
+uint8 Graphics::getFadeStatus(void) {
 	return _fadeStatus;
 }
 
-void Display::waitForFade(void) {
+void Graphics::waitForFade(void) {
 	while (getFadeStatus() != RDFADE_NONE && getFadeStatus() != RDFADE_BLACK) {
 		updateDisplay();
 		g_system->delay_msecs(20);
 	}
 }
 
-void Display::fadeServer(void) {
+void Graphics::fadeServer(void) {
 	static int32 previousTime = 0;
 	const byte *newPalette = (const byte *) _fadePalette;
 	int32 currentTime;

@@ -266,25 +266,25 @@ int32 Logic::fnFlash(int32 *params) {
 	// what colour?
 	switch (params[0]) {
 	case WHITE:
-		g_display->setPalette(0, 1, white, RDPAL_INSTANT);
+		g_graphics->setPalette(0, 1, white, RDPAL_INSTANT);
 		break;
 	case RED:
-		g_display->setPalette(0, 1, red, RDPAL_INSTANT);
+		g_graphics->setPalette(0, 1, red, RDPAL_INSTANT);
 		break;
 	case GREEN:
-		g_display->setPalette(0, 1, green, RDPAL_INSTANT);
+		g_graphics->setPalette(0, 1, green, RDPAL_INSTANT);
 		break;
 	case BLUE:
-		g_display->setPalette(0, 1, blue, RDPAL_INSTANT);
+		g_graphics->setPalette(0, 1, blue, RDPAL_INSTANT);
 		break;
 	}
 
 	// There used to be a busy-wait loop here, so I don't know how long
 	// the delay was meant to be. Probably doesn't matter much.
 
-	g_display->updateDisplay();
+	g_graphics->updateDisplay();
 	g_system->delay_msecs(250);
-	g_display->setPalette(0, 1, black, RDPAL_INSTANT);
+	g_graphics->setPalette(0, 1, black, RDPAL_INSTANT);
 #endif
 
 	return IR_CONT;
@@ -302,19 +302,19 @@ int32 Logic::fnColour(int32 *params) {
 	// what colour?
 	switch (params[0]) {
 	case BLACK:
-		g_display->setPalette(0, 1, black, RDPAL_INSTANT);
+		g_graphics->setPalette(0, 1, black, RDPAL_INSTANT);
 		break;
 	case WHITE:
-		g_display->setPalette(0, 1, white, RDPAL_INSTANT);
+		g_graphics->setPalette(0, 1, white, RDPAL_INSTANT);
 		break;
 	case RED:
-		g_display->setPalette(0, 1, red, RDPAL_INSTANT);
+		g_graphics->setPalette(0, 1, red, RDPAL_INSTANT);
 		break;
 	case GREEN:
-		g_display->setPalette(0, 1, green, RDPAL_INSTANT);
+		g_graphics->setPalette(0, 1, green, RDPAL_INSTANT);
 		break;
 	case BLUE:
-		g_display->setPalette(0, 1, blue, RDPAL_INSTANT);
+		g_graphics->setPalette(0, 1, blue, RDPAL_INSTANT);
 		break;
 	}
 #endif
@@ -393,17 +393,17 @@ int32 Logic::fnPlayCredits(int32 *params) {
 		g_sound->muteSpeech(true);
 		g_sound->stopMusic();
 
-		memcpy(oldPal, g_display->_palCopy, 1024);
+		memcpy(oldPal, g_graphics->_palCopy, 1024);
 		memset(tmpPal, 0, 1024);
 
-		g_display->waitForFade();
-		g_display->fadeDown();
-		g_display->waitForFade();
+		g_graphics->waitForFade();
+		g_graphics->fadeDown();
+		g_graphics->waitForFade();
 
 		tmpPal[4] = 255;
 		tmpPal[5] = 255;
 		tmpPal[6] = 255;
-		g_display->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
+		g_graphics->setPalette(0, 256, tmpPal, RDPAL_INSTANT);
 
 		// Play the credits music. Is it enough with just one
 		// repetition of it?
@@ -416,21 +416,21 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 		debug(0, "Credits music length: ~%d ms", music_length);
 
-		g_display->closeMenuImmediately();
+		g_graphics->closeMenuImmediately();
 
 		while (g_sound->musicTimeRemaining()) {
-			g_display->clearScene();
-			g_display->setNeedFullRedraw();
+			g_graphics->clearScene();
+			g_graphics->setNeedFullRedraw();
 
 			// FIXME: Draw the credits text. The actual text
 			// messages are stored in credits.clu, and I'm guessing
 			// that credits.bmp or font.clu may be the font.
 
-			g_display->updateDisplay();
+			g_graphics->updateDisplay();
 
 			_keyboardEvent ke;
 
-			if (ReadKey(&ke) == RD_OK && ke.keycode == 27)
+			if (g_input->readKey(&ke) == RD_OK && ke.keycode == 27)
 				break;
 
 			g_system->delay_msecs(30);
@@ -439,11 +439,11 @@ int32 Logic::fnPlayCredits(int32 *params) {
 		fnStopMusic(NULL);
 		g_sound->restoreMusicState();
 
-		g_display->setPalette(0, 256, oldPal, RDPAL_FADE);
-		g_display->fadeUp();
-		g_display->updateDisplay();
+		g_graphics->setPalette(0, 256, oldPal, RDPAL_FADE);
+		g_graphics->fadeUp();
+		g_graphics->updateDisplay();
 		_vm->buildDisplay();
-		g_display->waitForFade();
+		g_graphics->waitForFade();
 
 		g_sound->muteFx(false);
 		g_sound->muteSpeech(false);

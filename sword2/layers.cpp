@@ -69,11 +69,11 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 #endif
 
 	// if the screen is still fading down then wait for black
-	g_display->waitForFade();
+	g_graphics->waitForFade();
 
 	// if last screen was using a shading mask (see below)
 	if (_thisScreen.mask_flag) {
-		rv = g_display->closeLightMask();
+		rv = g_graphics->closeLightMask();
 		if (rv)
 			error("Driver Error %.8x", rv);
 	}
@@ -82,7 +82,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 
 	// for drivers: close the previous screen if one is open
 	if (_thisScreen.background_layer_id)
-		g_display->closeBackgroundLayer();
+		g_graphics->closeBackgroundLayer();
 
 	_thisScreen.background_layer_id = res;
 	_thisScreen.new_palette = new_palette;
@@ -104,7 +104,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	debug(5, "res test layers=%d width=%d depth=%d", screen_head->noLayers, screen_head->width, screen_head->height);
 
 	//initialise the driver back buffer
-	g_display->setLocationMetrics(screen_head->width, screen_head->height);
+	g_graphics->setLocationMetrics(screen_head->width, screen_head->height);
 
 	if (screen_head->noLayers) {
 		for (int i = 0; i < screen_head->noLayers; i++) {
@@ -126,7 +126,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 	// using the screen size setup the scrolling variables
 
 	// if layer is larger than physical screen
-	if (screen_head->width > g_display->_screenWide || screen_head->height > g_display->_screenDeep) {
+	if (screen_head->width > g_graphics->_screenWide || screen_head->height > g_graphics->_screenDeep) {
 		// switch on scrolling (2 means first time on screen)
 		_thisScreen.scroll_flag = 2;
 
@@ -141,9 +141,9 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 		// calc max allowed offsets (to prevent scrolling off edge) -
 		// MOVE TO NEW_SCREEN in GTM_CORE.C !!
 		// NB. min scroll offsets are both zero
-		_thisScreen.max_scroll_offset_x = screen_head->width - g_display->_screenWide;
+		_thisScreen.max_scroll_offset_x = screen_head->width - g_graphics->_screenWide;
 		// 'screenDeep' includes the menu's, so take away 80 pixels
-		_thisScreen.max_scroll_offset_y = screen_head->height - (g_display->_screenDeep - (RDMENU_MENUDEEP * 2));
+		_thisScreen.max_scroll_offset_y = screen_head->height - (g_graphics->_screenDeep - (RDMENU_MENUDEEP * 2));
 	} else {
 		// layer fits on physical screen - scrolling not required
 		_thisScreen.scroll_flag = 0;		// switch off scrolling
@@ -153,7 +153,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 
 	// no inter-cycle scroll between new screens (see setScrollTarget in
 	// build display)
-	g_display->resetRenderEngine();
+	g_graphics->resetRenderEngine();
 
 	// these are the physical screen coords where the system
 	// will try to maintain George's actual feet coords
@@ -177,7 +177,7 @@ int32 Sword2Engine::initBackground(int32 res, int32 new_palette) {
 		spriteInfo.data = fetchShadingMask(file);
 		spriteInfo.colourTable = 0;
 
-		rv = g_display->openLightMask(&spriteInfo);
+		rv = g_graphics->openLightMask(&spriteInfo);
 		if (rv)
 			error("Driver Error %.8x", rv);
 
@@ -221,22 +221,22 @@ void Sword2Engine::setUpBackgroundLayers(void) {
 
 		for (i = 0; i < 2; i++) {
 			if (screenLayerTable->bg_parallax[i])
-				g_display->initialiseBackgroundLayer(fetchBackgroundParallaxLayer(file, i));
+				g_graphics->initialiseBackgroundLayer(fetchBackgroundParallaxLayer(file, i));
 			else
-				g_display->initialiseBackgroundLayer(NULL);
+				g_graphics->initialiseBackgroundLayer(NULL);
 		}
 
 		// Normal backround layer
 
-		g_display->initialiseBackgroundLayer(fetchBackgroundLayer(file));
+		g_graphics->initialiseBackgroundLayer(fetchBackgroundLayer(file));
 
 		// Foreground parallax layers
 
 		for (i = 0; i < 2; i++) {
 			if (screenLayerTable->fg_parallax[i])
-				g_display->initialiseBackgroundLayer(fetchForegroundParallaxLayer(file, i));
+				g_graphics->initialiseBackgroundLayer(fetchForegroundParallaxLayer(file, i));
 			else
-				g_display->initialiseBackgroundLayer(NULL);
+				g_graphics->initialiseBackgroundLayer(NULL);
 		}
 
 		// close the screen file

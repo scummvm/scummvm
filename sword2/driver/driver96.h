@@ -274,20 +274,6 @@ extern int32 SetLanguageVersion(uint8 version);
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//	Mouse functions - from mouse.c
-//-----------------------------------------------------------------------------
-extern _mouseEvent *MouseEvent(void);
-uint8 CheckForMouseEvents(void);
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-//	Keyboard functions - from keyboard.c
-//-----------------------------------------------------------------------------
-extern bool KeyWaiting(void);
-extern int32 ReadKey(_keyboardEvent *ke);
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
 //	Misc functions - from misc.cpp
 //-----------------------------------------------------------------------------
 extern uint32 SVM_timeGetTime(void);
@@ -295,6 +281,46 @@ extern void SVM_SetFileAttributes(char *file, uint32 atrib);
 extern void SVM_DeleteFile(char *file);
 extern int32 SVM_GetVolumeInformation(char *cdPath, char *sCDName, uint32 maxPath, uint8 *, uint32 *dwMaxCompLength, uint32 *dwFSFlags, uint8 *, uint32 a);
 
+#define MAX_MOUSE_EVENTS 16
+
+// Key buffer size
+#define MAX_KEY_BUFFER 32
+
+class Input {
+	uint8 _mouseBacklog;
+	uint8 _mouseLogPos;
+	_mouseEvent _mouseLog[MAX_MOUSE_EVENTS];
+
+	void logMouseEvent(uint16 buttons);
+
+	// The number of key presses waiting to be processed.
+	uint8 _keyBacklog;
+
+	// Index of the next key to read from the buffer.
+	uint8 _keyLogPos;
+
+	// The keyboard buffer
+	_keyboardEvent _keyBuffer[MAX_KEY_BUFFER];
+
+	void writeKey(uint16 ascii, int keycode, int modifiers);
+
+public:
+	int16 _mouseX;
+	int16 _mouseY;
+
+	Input() :
+		_mouseBacklog(0), _mouseLogPos(0), _keyBacklog(0),
+		_keyLogPos(0) {};
+
+	void parseEvents(void);
+
+	_mouseEvent *mouseEvent(void);
+	bool checkForMouseEvents(void);
+
+	bool keyWaiting(void);
+	int32 readKey(_keyboardEvent *ev);
+};
+ 
 } // End of namespace Sword2
 
 #endif
