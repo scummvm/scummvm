@@ -618,29 +618,23 @@ MidiDriver *GameDetector::createMidi() {
 	int drv = _midi_driver;
 
 
-#if defined (WIN32) && !defined(_WIN32_WCE)
-	/* MD_WINDOWS is default MidiDriver on windows targets */
-	if (drv == MD_AUTO) drv = MD_WINDOWS;
-#elif defined(MACOSX)
-	if (drv == MD_AUTO) drv = MD_COREAUDIO;
-#elif defined(macintosh)
-	if (drv == MD_AUTO) drv = MD_QTMUSIC;
-#elif defined(__MORPHOS__)
-	if (drv == MD_AUTO) drv = MD_ETUDE;
-#elif defined (_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND)
-	/* Always use MIDI emulation via adlib driver on CE and UNIX devices */
-
-	/* FIXME: We should, for the Unix targets, attempt to detect */
-	/*        whether a sequencer is available, and use it in */
-	/*	  preference */	
-/*
 	if (drv == MD_AUTO) {
-		_use_adlib = true;
-		return NULL;
-	}
-*/
-	if (drv == MD_AUTO) drv = MD_ADLIB;
+#if defined (WIN32) && !defined(_WIN32_WCE)
+	drv = MD_WINDOWS;	// MD_WINDOWS is default MidiDriver on windows targets
+#elif defined(MACOSX)
+	drv = MD_COREAUDIO;
+#elif defined(macintosh)
+	drv = MD_QTMUSIC;
+#elif defined(__MORPHOS__)
+	drv = MD_ETUDE;
+#elif defined (_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND)
+	// Always use MIDI emulation via adlib driver on CE and UNIX device
+
+	// TODO: We should, for the Unix targets, attempt to detect
+	// whether a sequencer is available, and use it instead.
+	drv = MD_ADLIB;
 #endif
+	}
 
 	switch(drv) {
 	case MD_AUTO:
