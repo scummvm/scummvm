@@ -1015,10 +1015,6 @@ protected:
 	void setBoxScaleSlot(int box, int slot);
 
 	void createBoxMatrix();
-	void addToBoxMatrix(byte b);
-	PathNode *unkMatrixProc2(PathVertex *vtx, int i);
-	void *addToBoxVertexHeap(int size);
-	PathVertex *addPathVertex();
 	bool areBoxesNeighbours(int i, int j);
 
 	/* String class */
