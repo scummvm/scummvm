@@ -396,7 +396,6 @@ void Sound::processSfxQueues() {
 
 	if (_talk_sound_mode != 0) {
 		if (_talk_sound_mode & 1)
-
 			startTalkSound(_talk_sound_a1, _talk_sound_b1, 1);
 		if (_talk_sound_mode & 2)
 			_talkChannel = startTalkSound(_talk_sound_a2, _talk_sound_b2, 2);
@@ -704,12 +703,16 @@ int Sound::startSfxSound(File *file, int file_size) {
 	int rate, comp;
 	byte *data;
 
-	// FIXME: Day of the Tentacle frequently assumes that starting one sound
-	// effect will automatically stop any other that may be playing at that
-	// time. Do any other games need this?
+	// FIXME: Some games frequently assume that starting one sound effect
+	// will automatically stop any other that may be playing at that time.
+	// Do any other games need this?
 
-	if (_scumm->_gameId == GID_TENTACLE)
-		stopSfxSound();
+	if (_scumm->_gameId == GID_TENTACLE || _scumm->_gameId == GID_SAMNMAX) {
+		for (int i = 0; i < _scumm->_mixer->NUM_CHANNELS; i++) {
+			if (i != _talkChannel)
+				_scumm->_mixer->stop(i);
+		}
+	}
 
 #ifdef COMPRESSED_SOUND_FILE
 	if (file_size > 0) {
