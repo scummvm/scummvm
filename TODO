@@ -11,6 +11,9 @@ Residual TODO list (in rough order of priority):
    memory and making Residual unusable/unstable.	
  * Implement bitmap costume drawing
  * Implement 2D primitives 
+ * Save/Load support
+ * Implement rendering of odd-sized 'overlay'(?) SMUSH animations, such as mo_ts
+   at the beginning of the first scene
  * Add OpenGL lighting
  * Implement iMuse
  * Proper vsscanf implementation in textsplit.cpp for platforms without it (MSVC, etc)
