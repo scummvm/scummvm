@@ -537,7 +537,7 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 				opcode = *script_ptr++;
 				note = opcode & 0x7f;
 				if (note != 0x7f) {
-					uint16 freq;
+					uint16 myfreq;
 					dest_channel->d.time_left = channel->d.time_left;
 					dest_channel->d.note_length = 
 					channel->d.time_left - dest_channel->d.inter_note_pause;
@@ -550,11 +550,11 @@ void Player_V2::execute_cmd(ChannelInfo *channel) {
 					dest_channel->d.hull_counter = 1;
 					if (pcjr && dest_channel == &channels[3]) {
 						dest_channel->d.hull_curve = 180 + note * 12;
-						freq = 384 - 64 * octave;
+						myfreq = 384 - 64 * octave;
 					} else {
-						freq = freqs_table[note] >> octave;
+						myfreq = freqs_table[note] >> octave;
 					}
-					dest_channel->d.freq = dest_channel->d.base_freq = freq;
+					dest_channel->d.freq = dest_channel->d.base_freq = myfreq;
 				}
 				if ((opcode & 0x80) != 0)
 					goto end;
