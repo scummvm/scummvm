@@ -1914,7 +1914,7 @@ void Scumm::o5_saveRestoreVerbs() {
 
 	switch(_opcode) {
 	case 1: /* hide verbs */
-		if (_gameId & GID_ZAK256)	// FIXME?
+		if (_gameId == GID_ZAK256)	// FIXME?
 			return;
 
 		while (a<=b) {
