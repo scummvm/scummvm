@@ -784,12 +784,17 @@ void Scumm::doSentence(int c, int b, int a) {
 void Scumm::checkAndRunSentenceScript() {
 	int i;
 	ScriptSlot *ss;
+	int sentenceScript;
+	if (_features & GF_AFTER_V2)
+		sentenceScript = 2;
+	else
+		sentenceScript = VAR(VAR_SENTENCE_SCRIPT);
 
 	memset(_localParamList, 0, sizeof(_localParamList));
-	if (isScriptInUse(VAR(VAR_SENTENCE_SCRIPT))) {
+	if (isScriptInUse(sentenceScript)) {
 		ss = vm.slot;
 		for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++)
-			if (ss->number == VAR(VAR_SENTENCE_SCRIPT) && ss->status != ssDead && ss->freezeCount == 0)
+			if (ss->number == sentenceScript && ss->status != ssDead && ss->freezeCount == 0)
 				return;
 	}
 
@@ -806,8 +811,8 @@ void Scumm::checkAndRunSentenceScript() {
 	_localParamList[1] = _sentence[_sentenceNum].unk4;
 	_localParamList[2] = _sentence[_sentenceNum].unk3;
 	_currentScript = 0xFF;
-	if (VAR(VAR_SENTENCE_SCRIPT))
-		runScript(VAR(VAR_SENTENCE_SCRIPT), 0, 0, _localParamList);
+	if (sentenceScript)
+		runScript(sentenceScript, 0, 0, _localParamList);
 }
 
 void Scumm::runInputScript(int a, int cmd, int mode) {

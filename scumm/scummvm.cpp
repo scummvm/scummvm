@@ -845,10 +845,12 @@ int Scumm::scummLoop(int delta) {
 	// that it will be in a different state each time you run the program.
 	_rnd.getRandomNumber(2);
 
-	VAR(VAR_TMR_1) += delta;
-	VAR(VAR_TMR_2) += delta;
-	VAR(VAR_TMR_3) += delta;
-	VAR(VAR_TMR_4) += delta;
+	if (!(_features & GF_AFTER_V2)) {
+		VAR(VAR_TMR_1) += delta;
+		VAR(VAR_TMR_2) += delta;
+		VAR(VAR_TMR_3) += delta;
+		VAR(VAR_TMR_4) += delta;
+	}
 
 	if (delta > 15)
 		delta = 15;
@@ -1047,7 +1049,8 @@ load_game:
 	/* show or hide mouse */
 	_system->show_mouse(_cursor.state > 0);
 
-	VAR(VAR_TIMER) = 0;
+	if (!(_features & GF_AFTER_V2))
+		VAR(VAR_TIMER) = 0;
 	return VAR(VAR_TIMER_NEXT);
 
 }
