@@ -73,9 +73,10 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroup, int 
 				continue;
 			return i;
 		} else {
-			int state;
-			int resId = spi->field_4C;
+			int resId, state, rot_angle, zoom;
+			int32 w, h;
 
+			resId = spi->field_4C;
 			if (spi->field_80) {
 				int16 x1, x2, y1, y2;
 
@@ -109,9 +110,22 @@ int ScummEngine_v90he::findSpriteWithClassOf(int x, int y, int spriteGroup, int 
 				state = spi->field_48;
 			}
 
+			rot_angle = spi->field_68;
+			zoom = spi->field_6C;
 			if ((spi->flags & kSFZoomed) || (spi->flags & kSFRotated)) {
-				// TODO
+				if (spi->flags & kSFZoomed && zoom) {
+					x = x * 256 / zoom;
+					y = y * 256 / zoom;
+				}
+				if (spi->flags & kSFRotated && rot_angle) {
+					// TODO
+					Common::Point pts[1];
+					_wiz.polygonRotatePoints(pts, 1, rot_angle);
+				}
 
+				getWizImageDim(resId, state, w, h);
+				x += w / 2;
+				y += h / 2;
 			}
 
 			if(isWizPixelNonTransparent(rtImage, resId, state, x, y, spi->imgFlags));
@@ -1293,13 +1307,13 @@ void ScummEngine_v90he::spritesProcessWiz(bool arg) {
 				pts[0].x = pts[0].y = pts[1].y = pts[3].x = -w / 2;
 				pts[2].y = pts[3].y = h / 2 - 1;
 
-				if (spi->flags & kSFZoomed) {
+				if (spi->flags & kSFZoomed && zoom) {
 					for (int j = 0; j < 4; ++j) {
 						pts[j].x = pts[i].x * zoom / 256;
 						pts[j].y = pts[i].y * zoom / 256;
 					}
 				}
-				if (spi->flags & kSFRotated)
+				if (spi->flags & kSFRotated && rot_angle)
 					_wiz.polygonRotatePoints(pts, 4, rot_angle);
 
 				for (int j = 0; j < 4; ++j) {
