@@ -347,11 +347,7 @@ SOURCE=.\scumm\gfx.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\scumm\usage_bits.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\scumm\usage_bits.h
+SOURCE=.\scumm\imuse.cpp
 # End Source File
 # Begin Source File
 
@@ -456,6 +452,14 @@ SOURCE=.\scumm\sound.h
 # Begin Source File
 
 SOURCE=.\scumm\string.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\usage_bits.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\scumm\usage_bits.h
 # End Source File
 # Begin Source File
 
