@@ -128,9 +128,6 @@
 		<File
 			RelativePath="..\..\queen\restables.cpp">
 		</File>
-		<File
-			RelativePath="..\..\queen\version.cpp">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
