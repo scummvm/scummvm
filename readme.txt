@@ -223,7 +223,7 @@ Command Line Options:
         -c<num>    - Drive to play cd audio from.  E.g., 0 is first drive.
         -s<num>    - Set the sfx volume, 0-255.    Default is '100'
         -m<num>    - Set the music volume, 0-100.  Default is '60'
-        -t<num>    - Set music tempo.              Default is '2031616'
+        -t<num>    - Set music tempo. Defaults: Adlib: 0x1F0000, Midi: 0x460000
         -e<mode>   - Select sound engine. See below.
         -g<mode>   - Select graphics scaler. See below.
         -f         - Full-screen mode.

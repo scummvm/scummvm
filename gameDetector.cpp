@@ -48,7 +48,7 @@ static const char USAGE_STRING[] =
 	"\t-d[<num>]  - enable debug output (debug level [1])\n"
 	"\t-n         - no subtitles for speech\n"
 	"\t-b<num>    - start in room <num>\n"
-	"\t-t<num>    - set music tempo (suggested: 0x1F0000)\n"
+	"\t-t<num>    - set music tempo (default- adlib: 0x1F0000, midi: 0x460000)\n"
 	"\t-p<path>   - look for game in <path>\n"
 	"\t-m<num>    - set music volume to <num> (0-100)\n"
 	"\t-s<num>    - set sfx volume to <num> (0-255)\n"
