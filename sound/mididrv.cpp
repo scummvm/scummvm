@@ -815,7 +815,8 @@ void MidiDriver_QT::send(uint32 b)
 			break;
 
 		default:
-			error("Unknown MIDI effect: %08x\n", (int)b);
+			// Error: Unknown MIDI effect: 007f76b3
+			warning("Unknown MIDI effect: %08x", (int)b);
 			break;
 		}
 		break;
@@ -839,7 +840,7 @@ void MidiDriver_QT::send(uint32 b)
 		break;
 
 	default:
-		error("Unknown Command: %08x\n", (int)b);
+		error("Unknown Command: %08x", (int)b);
 		NASendMIDI(qtNoteAllocator, qtNoteChannel[chanID], &midPacket);
 		break;
 	}
@@ -875,47 +876,31 @@ public:
 	MidiDriver_CORE():au_MusicDevice(NULL), au_output(NULL) {
 	} int open(int mode);
 	void close();
-	void send(uint32 b) { MidiEvent e = {0, b}; send(e); }
+	void send(uint32 b);
 	void pause(bool p);
 	void set_stream_callback(void *param, StreamCallback *sc);
 	void setPitchBendRange (byte channel, uint range) { }
 
-	static OSStatus inputCallback(void *inRefCon, AudioUnitRenderActionFlags inActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, AudioBuffer *ioData);
 private:
 	AudioUnit au_MusicDevice;
 	AudioUnit au_output;
 
-	StreamCallback *_stream_proc;
-	void *_stream_param;
 	int _mode;
-
-	void send(MidiEvent e);
 };
 
 
 void MidiDriver_CORE::set_stream_callback(void *param, StreamCallback *sc)
 {
-	_stream_param = param;
-	_stream_proc = sc;
 }
 
-OSStatus MidiDriver_CORE::inputCallback(void *inRefCon, AudioUnitRenderActionFlags inActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, AudioBuffer *ioData)
-{
-	MidiDriver_CORE *md  = (MidiDriver_CORE *)inRefCon;
-	MidiEvent event[32];
-	
-	if (md && md->_stream_proc) {
-		int num = (md->_stream_proc)(md->_stream_param, event, 32);
-		for (int i = 0; i < num; i++)
-			md->send(event[i]);
-	}
-	return 0;
-}
 
 int MidiDriver_CORE::open(int mode)
 {
 	if (au_output != NULL)
 		return MERR_ALREADY_OPEN;
+
+	if (mode == MO_STREAMING)
+		return MERR_STREAMING_NOT_AVAILABLE;
 
 	_mode = mode;
 
@@ -944,16 +929,6 @@ int MidiDriver_CORE::open(int mode)
 		AudioUnitSetProperty(au_output, kAudioUnitProperty_MakeConnection, kAudioUnitScope_Input, 0,
 												 (void *)&auconnect, sizeof(AudioUnitConnection));
 
-	// set streaming callback
-	if (_mode == MO_STREAMING) {
-		AudioUnitInputCallback auCallback;
-		auCallback.inputProc = inputCallback;
-		auCallback.inputProcRefCon = this;
-		err = AudioUnitSetProperty(au_output, kAudioUnitProperty_SetInputCallback, kAudioUnitScope_Input, 0,
-													 (void *)&auCallback, sizeof(AudioUnitInputCallback));
-	
-	}
-
 	// initialize the units
 	AudioUnitInitialize(au_MusicDevice);
 	AudioUnitInitialize(au_output);
@@ -966,7 +941,6 @@ int MidiDriver_CORE::open(int mode)
 
 void MidiDriver_CORE::close()
 {
-
 	// Stop the output
 	AudioOutputUnitStop(au_output);
 
@@ -977,19 +951,19 @@ void MidiDriver_CORE::close()
 	_mode = 0;
 }
 
-void MidiDriver_CORE::send(MidiEvent e)
+void MidiDriver_CORE::send(uint32 b)
 {
 	unsigned char first_byte, seccond_byte, status_byte;
-	status_byte = (e.event & 0x000000FF);
-	first_byte = (e.event & 0x0000FF00) >> 8;
-	seccond_byte = (e.event & 0x00FF0000) >> 16;
+	status_byte = (b & 0x000000FF);
+	first_byte = (b & 0x0000FF00) >> 8;
+	seccond_byte = (b & 0x00FF0000) >> 16;
 
 #ifdef COREAUDIO_REVERB_HACK
 	if ((status_byte&0xF0) == 0xB0 && first_byte == 0x5b)
 		return;
 #endif
 
-	MusicDeviceMIDIEvent(au_MusicDevice, status_byte, first_byte, seccond_byte, e.delta);
+	MusicDeviceMIDIEvent(au_MusicDevice, status_byte, first_byte, seccond_byte, 0);
 }
 
 void MidiDriver_CORE::pause(bool)
