@@ -134,7 +134,8 @@ void Input::delay(uint amount) {
 				break;
 			}
 		}
-
+		
+#ifndef __PALM_OS__
 		if (amount == 0)
 			break;
 
@@ -142,6 +143,7 @@ void Input::delay(uint amount) {
 		if (this_delay > amount)
 			this_delay = amount;
 		_system->delayMillis(this_delay);
+#endif
 		cur = _system->getMillis();
 	} while (cur < start + amount);
 }

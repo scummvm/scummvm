@@ -21,7 +21,7 @@
 
 #include "stdafx.h"
 #include "sword1/credits.h"
-#include "screen.h"
+#include "sword1/screen.h"
 #include "common/file.h"
 #include "sound/mixer.h"
 #include "common/util.h"
@@ -281,8 +281,11 @@ void CreditsPlayer::delay(int msecs) {
 				break;
 			}
 		}
+
+#ifndef __PALM_OS__
 		if (msecs > 0)
 			_system->delayMillis(10);
+#endif
 	} while ((_system->getMillis() < start + msecs) && !SwordEngine::_systemVars.engineQuit);
 }
 
