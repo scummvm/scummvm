@@ -666,10 +666,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	// Init iMuse
 	if (_features & GF_DIGI_IMUSE) {
 		_musicEngine = _imuseDigital = new IMuseDigital(this);
-#ifndef __PALM_OS__
 	} else if ((_features & GF_AMIGA) && (_version == 2)) {
 		_musicEngine = new Player_V2A(this);
-#endif
 	} else if ((_features & GF_AMIGA) && (_version == 3)) {
 		_musicEngine = new Player_V3A(this);
 	} else if ((_features & GF_AMIGA) && (_version < 5)) {
