@@ -27,8 +27,8 @@
 #include "common/util.h"
 
 class SkyState : public Engine {
-public:
-	
+
+protected:
 	byte _game;
 	byte _key_pressed;
 
@@ -60,9 +60,11 @@ public:
 
 	byte *_game_grid;
 
+public:
 	SkyState(GameDetector *detector, OSystem *syst);
 	virtual ~SkyState();
 
+protected:
 	void delay(uint amount);
 	void pollMouseXY();
 	void go();
@@ -82,8 +84,6 @@ public:
 	void shutdown();
 	
 	RandomSource _rnd;
-
-
 };
 
 #endif
