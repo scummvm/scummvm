@@ -17,133 +17,42 @@
  * $Header$
  */
 
-//===================================================================================================================
-//
-// File - tony_gsdk.cpp
-//
-//===================================================================================================================
-
-
-//general odds and ends
-
-#include <sys/stat.h>
-//#include <fcntl.h>
-//#include <io.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
+// general odds and ends
 
 #include "stdafx.h"
-//#include "src\driver96.h"
+#include "driver/driver96.h"
 #include "debug.h"
-#include "header.h"
-#include "layers.h"
 #include "memory.h"
-#include "protocol.h"
-#include "resman.h"
 #include "tony_gsdk.h"
+#include "sword2.h"
+#include "common/file.h"
 
-// TODO replace with file class
+uint32 Read_file(const char *name, mem **membloc, uint32 uid) {	// Tony25Apr96
+	// read the file in and place into an allocated MEM_float block
 
-//-----------------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
-uint32	Read_file(const char	*name,	mem	**membloc, uint32	uid)	//Tony25Apr96
-{
-//read the file in and place into an allocated MEM_float block
-//used for non resources manager files - stuff like fonts, etc.
-//returns bytes read or 0 for error
+	// FIXME: As far as I can see, this function is only used in debug
+	// builds, so maybe it should be removed completely?
 
-	FILE	*fh=0;	//file pointer
-	uint32	end;
+	File fh;
+	uint32 size;
 
-
-
-	fh = fopen(name, "rb");	//open for binary reading
-
-	if	(fh==NULL)
-	{	Zdebug("Read_file cannot open %s", name);
-		return(0);
+	if (!fh.open(name, g_sword2->getGameDataPath())) {
+		Zdebug("Read_file cannot open %s", name);
+		return 0;
 	}
 
-//ok, find the length and read the file in
-	fseek(fh, 0, SEEK_END);	//get size of file
-   end = ftell(fh);	//finally got the end
+	size = fh.size();
 
-	*membloc= Twalloc(end, MEM_float, uid);	//reserve enough floating memory for the file
+	// reserve enough floating memory for the file
+	*membloc = Twalloc(size, MEM_float, uid);
 	
-	fseek( fh, 0, SEEK_SET );	//back to beginning of file
-
-	if	(fread( (*membloc)->ad, sizeof(char), end,fh) < end)
-	{	Zdebug("Read_file read fail %d", name);
-		return(0);
+	if (fh.read((*membloc)->ad, size) != size) {
+		Zdebug("Read_file read fail %d", name);
+		return 0;
 	}
 
-	fclose(fh);
+	fh.close();
 
-	return(end);	//ok, done it - return bytes read
+	//ok, done it - return bytes read
+	return size;
 }
-//-----------------------------------------------------------------------------------------------------------------------
-int32	Direct_read_file(const char	*name,	char	*ad)	//Tony1May96
-{
-//load the file directly into the memory location passed
-//memory must be pre-allocated
-
-	FILE	*fh=0;	//file pointer
-	uint32	end;
-
-
-	fh = fopen(name, "rb");	//open for binary reading
-
-	if	(fh==NULL)
-	{	Zdebug("Direct_read_file cannot open %s", name);
-		return(0);
-	}
-
-//ok, find the length and read the file in
-	fseek(fh, 0, SEEK_END);	//get size of file
-   end = ftell(fh);	//finally got the end
-	fseek( fh, 0, SEEK_SET );	//back to beginning of file
-
-	if	(fread( ad, sizeof(char), end,fh) < end)
-	{	Zdebug("Direct_read_file read fail %d", name);
-		return(0);
-	}
-
-	fclose(fh);
-
-
-	return(end);	//ok, done it - return bytes read
-}
-//-----------------------------------------------------------------------------------------------------------------------
-int32	Direct_write_file(const char	*name,	char	*ad, uint32 total_bytes)	//Tony1May96
-{
-//load the file directly into the memory location passed
-	FILE	*fh;
-
-	fh = fopen(name, "wb");	//open for writing
-
-	if	(fh==NULL)
-	{	Zdebug("Direct_write_file open fail %d", name);
-		return(-1);
-	}
-
-	if	(fwrite( ad, 1, total_bytes, fh)!=total_bytes)
-	{	Zdebug("Direct_write_file write fail %d", name);
-		return(-1);
-	}
-
-	fclose(fh);
-
-	return(0);	//ok, done it
-}
-
-//-----------------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------------
-

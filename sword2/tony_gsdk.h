@@ -20,14 +20,8 @@
 #ifndef	TONY_GSDK
 #define	TONY_GSDK
 
-//#include "src\driver96.h"
 #include "memory.h"
 
-
-
-uint32	Read_file(const char	*name,	mem	**membloc, uint32 uid);
-int32	Direct_read_file(const char	*name,	char	*ad);
-int32	Direct_write_file(const char	*name,	char	*ad, uint32 total_bytes);
-
+uint32 Read_file(const char *name, mem **membloc, uint32 uid);
 
 #endif
