@@ -466,6 +466,12 @@ void Scumm::writeVar(uint var, int value) {
 void Scumm::getResultPos() {
 	int a;
 
+	// FIXME: Subclass this properly
+	if (_features & GF_AFTER_V2) {
+		_resultVarNumber = fetchScriptByte();
+		return;
+	}
+
 	_resultVarNumber = fetchScriptWord();
 	if (_resultVarNumber & 0x2000) {
 		a = fetchScriptWord();
