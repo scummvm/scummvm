@@ -2672,21 +2672,36 @@ void Scumm_v6::o6_kernelGetFunctions() {
 		   13 = thrust
 		   336 = thrust
 		   328 = thrust
-		   27 = abord
+		   27 = abort
 		   97 = left
 		   331 = left
 		   115 = right
-		   333 = tight
+		   333 = right
 		 */
 
-		//FIXME: this is hack to allow turn on light bridge, 
-		//How to check is left button pressed ?
-		if ((_gameId == GID_DIG) && (args[1] == 13)) {
-			push(1);
-			break;
+
+		if((args[1] == 27) && (_lastKeyHit == 27)) {
+			push(1); // abort
+			return;
 		}
 
-		warning("o6_kernelGetFunctions: getInput(%d) against %d", args[1], _lastKeyHit);
+		if( ((args[1] == 328) || (args[1] == 336) || (args[1] == 13)) &&
+			((_vars[VAR_LEFTBTN_HOLD]) || (_lastKeyHit == 13) || (_lastKeyHit == 274) ||
+			(_lastKeyHit == 273)) ) {
+			push(1); // thrust
+			return;
+		}
+
+		if(((args[1] == 97) || (args[1] == 331)) && (_lastKeyHit == 276)) {
+			push(1); // left
+			return;
+		}
+		
+		if(((args[1] == 115) || (args[1] == 333)) && (_lastKeyHit == 275)) {
+			push(1); // right
+			return;
+		}
+
 		push(0);
 		break;
 	case 212:
