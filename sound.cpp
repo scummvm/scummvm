@@ -693,7 +693,7 @@ void Scumm::decompressBundleSound(int index) {
 	int num = fileReadDwordBE(_sfxFile);
 	fileReadDwordBE(_sfxFile);	 fileReadDwordBE(_sfxFile);
 	
-	if (tag != MKID('COMP')) {
+	if (tag != MKID_BE('COMP')) {
 		warning("Compressed sound %d invalid (%c%c%c%c)", index, tag>>24, tag>>16, tag>>8, tag);
 		return;
 	}
@@ -763,24 +763,24 @@ void Scumm::decompressBundleSound(int index) {
 		byte *ptr = CompFinal;
 		int tag, size;
 		tag = READ_BE_UINT32(ptr); ptr+=4;
-		if (tag != MKID('iMUS')) {
+		if (tag != MKID_BE('iMUS')) {
 			warning("Decompression of bundle sound failed");
 			free(CompFinal);
 			return;
 		}
 
 		ptr+=12;       /* Skip header */
-		while(tag != MKID('DATA')) {
+		while(tag != MKID_BE('DATA')) {
 			tag = READ_BE_UINT32(ptr);  ptr+=4;
 			switch(tag) {
-				case MKID('FRMT'):
-				case MKID('TEXT'):
-				case MKID('REGN'):
-				case MKID('STOP'):
+				case MKID_BE('FRMT'):
+				case MKID_BE('TEXT'):
+				case MKID_BE('REGN'):
+				case MKID_BE('STOP'):
 					size = READ_BE_UINT32(ptr); ptr+=size+4;
 				break;
 
-				case MKID('DATA'):
+				case MKID_BE('DATA'):
 					size = READ_BE_UINT32(ptr); ptr+=4;
 				break;
 

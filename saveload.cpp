@@ -25,10 +25,6 @@
 #include "sound/mididrv.h"
 #include "sound/imuse.h"
 
-#ifdef _WIN32_WCE
-#define _MANAGE_OLD_SAVE
-#endif
-
 struct SaveGameHeader {
 	uint32 type;
 	uint32 size;
@@ -36,23 +32,16 @@ struct SaveGameHeader {
 	char name[32];
 };
 
-#ifdef _MANAGE_OLD_SAVE
-
 // Support for "old" savegames (made with 2501 CVS build)
 // Can be useful for other ports too :)
 
+#define VER_V9 9
 #define VER_V8 8
 #define VER_V7 7
 
-#define CURRENT_VER VER_V8
+#define CURRENT_VER VER_V9
 
 static uint32 _current_version = CURRENT_VER;
-
-#else
-
-#define CURRENT_VER 7
-
-#endif
 
 bool Scumm::saveState(int slot, bool compat)
 {
@@ -70,16 +59,7 @@ bool Scumm::saveState(int slot, bool compat)
 
 	hdr.type = MKID('SCVM');
 	hdr.size = 0;
-
-#ifdef _MANAGE_OLD_SAVE
-
 	hdr.ver = _current_version;
-
-#else
-
-	hdr.ver = CURRENT_VER;
-
-#endif
 
 	out.fwrite(&hdr, sizeof(hdr), 1);
 
@@ -111,26 +91,14 @@ bool Scumm::loadState(int slot, bool compat)
 		out.fclose();
 		return false;
 	}
-#ifdef _MANAGE_OLD_SAVE
 
-	if (hdr.ver != VER_V8 && hdr.ver != VER_V7) {
-
-#else
-
-	if (hdr.ver != CURRENT_VER) {
-
-#endif
-
+	if (hdr.ver < VER_V7 || hdr.ver > _current_version) {
 		warning("Invalid version of '%s'", filename);
 		out.fclose();
 		return false;
 	}
-#ifdef _MANAGE_OLD_SAVE
 
 	_current_version = hdr.ver;
-
-#endif
-
 	memcpy(_saveLoadName, hdr.name, sizeof(hdr.name));
 
 	pauseSounds(true);
@@ -228,16 +196,8 @@ bool Scumm::getSavegameName(int slot, char *desc)
 		strcpy(desc, "Invalid savegame");
 		return false;
 	}
-#ifdef _MANAGE_OLD_SAVE
 
-	if (hdr.ver != VER_V8 && hdr.ver != VER_V7) {
-
-#else
-
-	if (hdr.ver != CURRENT_VER) {
-
-#endif
-
+	if (hdr.ver < VER_V8 || hdr.ver > _current_version) {
 		strcpy(desc, "Invalid version");
 		return false;
 	}
@@ -371,132 +331,7 @@ void Scumm::saveOrLoad(Serializer * s)
 		MKEND()
 	};
 
-#ifdef _MANAGE_OLD_SAVE
-
-	const SaveLoadEntry mainEntries1[] = {
-		MKLINE(Scumm, _scrWidth, sleUint16),
-		MKLINE(Scumm, _scrHeight, sleUint16),
-		MKLINE(Scumm, _ENCD_offs, sleUint32),
-		MKLINE(Scumm, _EXCD_offs, sleUint32),
-		MKLINE(Scumm, _IM00_offs, sleUint32),
-		MKLINE(Scumm, _CLUT_offs, sleUint32),
-		MKLINE(Scumm, _EPAL_offs, sleUint32),
-		MKLINE(Scumm, _PALS_offs, sleUint32),
-		MKLINE(Scumm, _curPalIndex, sleByte),
-		MKLINE(Scumm, _currentRoom, sleByte),
-		MKLINE(Scumm, _roomResource, sleByte),
-		MKLINE(Scumm, _numObjectsInRoom, sleByte),
-		MKLINE(Scumm, _currentScript, sleByte),
-		MKARRAY(Scumm, _localScriptList[0], sleUint32, NUM_LOCALSCRIPT),
-		MKARRAY(Scumm, vm.localvar[0][0], sleUint16, NUM_SCRIPT_SLOT * 17),
-		MKARRAY(Scumm, _resourceMapper[0], sleByte, 128),
-		MKARRAY(Scumm, charset._colorMap[0], sleByte, 16),
-		MKARRAY(Scumm, _charsetData[0][0], sleByte, 10 * 16),
-		MKLINE(Scumm, _curExecScript, sleUint16),
-		MKEND()
-	};
-
-	const SaveLoadEntry mainEntries2V8[] = {
-
-		MKLINE(Scumm, camera._dest.x, sleInt16),
-		MKLINE(Scumm, camera._dest.y, sleInt16),
-		MKLINE(Scumm, camera._cur.x, sleInt16),
-		MKLINE(Scumm, camera._cur.y, sleInt16),
-		MKLINE(Scumm, camera._last.x, sleInt16),
-		MKLINE(Scumm, camera._last.y, sleInt16),
-		MKLINE(Scumm, camera._accel.x, sleInt16),
-		MKLINE(Scumm, camera._accel.y, sleInt16),
-		MKLINE(Scumm, _screenStartStrip, sleInt16),
-		MKLINE(Scumm, _screenEndStrip, sleInt16),
-		MKLINE(Scumm, camera._mode, sleByte),
-		MKLINE(Scumm, camera._follows, sleByte),
-		MKLINE(Scumm, camera._leftTrigger, sleInt16),
-		MKLINE(Scumm, camera._rightTrigger, sleInt16),
-		MKLINE(Scumm, camera._movingToActor, sleUint16),
-		MKEND()
-	};
-
-	const SaveLoadEntry mainEntries2V7[] = {
-		MKLINE(Scumm, camera._dest.x, sleInt16),
-		MKLINE(Scumm, camera._cur.x, sleInt16),
-		MKLINE(Scumm, camera._last.x, sleInt16),
-		MKLINE(Scumm, _screenStartStrip, sleInt16),
-		MKLINE(Scumm, _screenEndStrip, sleInt16),
-		MKLINE(Scumm, camera._mode, sleByte),
-		MKLINE(Scumm, camera._follows, sleByte),
-		MKLINE(Scumm, camera._leftTrigger, sleInt16),
-		MKLINE(Scumm, camera._rightTrigger, sleInt16),
-		MKLINE(Scumm, camera._movingToActor, sleUint16),
-		MKEND()
-	};
-
-	const SaveLoadEntry mainEntries3[] = {
-
-		MKLINE(Scumm, _actorToPrintStrFor, sleByte),
-		MKLINE(Scumm, _charsetColor, sleByte),
-		/* XXX Convert into word next time format changes */
-		MKLINE(Scumm, charset._bufPos, sleByte),
-		MKLINE(Scumm, _haveMsg, sleByte),
-		MKLINE(Scumm, _useTalkAnims, sleByte),
-
-		MKLINE(Scumm, _talkDelay, sleInt16),
-		MKLINE(Scumm, _defaultTalkDelay, sleInt16),
-		MKLINE(Scumm, _numInMsgStack, sleInt16),
-		MKLINE(Scumm, _sentenceNum, sleByte),
-
-		MKLINE(Scumm, vm.cutSceneStackPointer, sleByte),
-		MKARRAY(Scumm, vm.cutScenePtr[0], sleUint32, 5),
-		MKARRAY(Scumm, vm.cutSceneScript[0], sleByte, 5),
-		MKARRAY(Scumm, vm.cutSceneData[0], sleInt16, 5),
-		MKLINE(Scumm, vm.cutSceneScriptIndex, sleInt16),
-
-		/* nest */
-		MKLINE(Scumm, _numNestedScripts, sleByte),
-		MKLINE(Scumm, _userPut, sleByte),
-		MKLINE(Scumm, _cursorState, sleByte),
-		MKLINE(Scumm, gdi._cursorActive, sleByte),
-		MKLINE(Scumm, gdi._currentCursor, sleByte),
-
-		MKLINE(Scumm, _doEffect, sleByte),
-		MKLINE(Scumm, _switchRoomEffect, sleByte),
-		MKLINE(Scumm, _newEffect, sleByte),
-		MKLINE(Scumm, _switchRoomEffect2, sleByte),
-		MKLINE(Scumm, _BgNeedsRedraw, sleByte),
-
-		MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 200),
-		MKLINE(Scumm, gdi._transparency, sleByte),
-		MKARRAY(Scumm, _currentPalette[0], sleByte, 768),
-
-
-		/* virtscr */
-
-		MKARRAY(Scumm, charset._buffer[0], sleByte, 256),
-
-		MKLINE(Scumm, _egoPositioned, sleByte),
-
-		MKARRAY(Scumm, gdi._imgBufOffs[0], sleUint16, 4),
-		MKLINE(Scumm, gdi._numZBuffer, sleByte),
-
-		MKLINE(Scumm, _screenEffectFlag, sleByte),
-
-		MKLINE(Scumm, _randSeed1, sleUint32),
-		MKLINE(Scumm, _randSeed2, sleUint32),
-
-		/* XXX: next time the save game format changes,
-		 * convert _shakeEnabled to boolean and add a _shakeFrame field */
-		MKLINE(Scumm, _shakeEnabled, sleInt16),
-
-		MKLINE(Scumm, _keepText, sleByte),
-
-		MKLINE(Scumm, _screenB, sleUint16),
-		MKLINE(Scumm, _screenH, sleUint16),
-
-		MKEND()
-	};
-
-#else
-
-	const SaveLoadEntry mainEntries[] = {
+	const SaveLoadEntry mainEntriesV9[] = {
 		MKLINE(Scumm, _scrWidth, sleUint16),
 		MKLINE(Scumm, _scrHeight, sleUint16),
 		MKLINE(Scumm, _ENCD_offs, sleUint32),
@@ -592,10 +427,112 @@ void Scumm::saveOrLoad(Serializer * s)
 		MKLINE(Scumm, _screenB, sleUint16),
 		MKLINE(Scumm, _screenH, sleUint16),
 
+		MKLINE(Scumm, _cd_track, sleInt16),
+		MKLINE(Scumm, _cd_loops, sleInt16),
+		MKLINE(Scumm, _cd_frame, sleInt16),		
+		MKLINE(Scumm, _cd_end, sleInt16),
+
 		MKEND()
 	};
 
-#endif
+	const SaveLoadEntry mainEntriesV8[] = {
+		MKLINE(Scumm, _scrWidth, sleUint16),
+		MKLINE(Scumm, _scrHeight, sleUint16),
+		MKLINE(Scumm, _ENCD_offs, sleUint32),
+		MKLINE(Scumm, _EXCD_offs, sleUint32),
+		MKLINE(Scumm, _IM00_offs, sleUint32),
+		MKLINE(Scumm, _CLUT_offs, sleUint32),
+		MKLINE(Scumm, _EPAL_offs, sleUint32),
+		MKLINE(Scumm, _PALS_offs, sleUint32),
+		MKLINE(Scumm, _curPalIndex, sleByte),
+		MKLINE(Scumm, _currentRoom, sleByte),
+		MKLINE(Scumm, _roomResource, sleByte),
+		MKLINE(Scumm, _numObjectsInRoom, sleByte),
+		MKLINE(Scumm, _currentScript, sleByte),
+		MKARRAY(Scumm, _localScriptList[0], sleUint32, NUM_LOCALSCRIPT),
+		MKARRAY(Scumm, vm.localvar[0][0], sleUint16, 25 * 17),
+		MKARRAY(Scumm, _resourceMapper[0], sleByte, 128),
+		MKARRAY(Scumm, charset._colorMap[0], sleByte, 16),
+		MKARRAY(Scumm, _charsetData[0][0], sleByte, 10 * 16),
+		MKLINE(Scumm, _curExecScript, sleUint16),
+
+		MKLINE(Scumm, camera._dest.x, sleInt16),
+		MKLINE(Scumm, camera._dest.y, sleInt16),
+		MKLINE(Scumm, camera._cur.x, sleInt16),
+		MKLINE(Scumm, camera._cur.y, sleInt16),
+		MKLINE(Scumm, camera._last.x, sleInt16),
+		MKLINE(Scumm, camera._last.y, sleInt16),
+		MKLINE(Scumm, camera._accel.x, sleInt16),
+		MKLINE(Scumm, camera._accel.y, sleInt16),
+		MKLINE(Scumm, _screenStartStrip, sleInt16),
+		MKLINE(Scumm, _screenEndStrip, sleInt16),
+		MKLINE(Scumm, camera._mode, sleByte),
+		MKLINE(Scumm, camera._follows, sleByte),
+		MKLINE(Scumm, camera._leftTrigger, sleInt16),
+		MKLINE(Scumm, camera._rightTrigger, sleInt16),
+		MKLINE(Scumm, camera._movingToActor, sleUint16),
+
+		MKLINE(Scumm, _actorToPrintStrFor, sleByte),
+		MKLINE(Scumm, _charsetColor, sleByte),
+		/* XXX Convert into word next time format changes */
+		MKLINE(Scumm, charset._bufPos, sleByte),
+		MKLINE(Scumm, _haveMsg, sleByte),
+		MKLINE(Scumm, _useTalkAnims, sleByte),
+
+		MKLINE(Scumm, _talkDelay, sleInt16),
+		MKLINE(Scumm, _defaultTalkDelay, sleInt16),
+		MKLINE(Scumm, _numInMsgStack, sleInt16),
+		MKLINE(Scumm, _sentenceNum, sleByte),
+
+		MKLINE(Scumm, vm.cutSceneStackPointer, sleByte),
+		MKARRAY(Scumm, vm.cutScenePtr[0], sleUint32, 5),
+		MKARRAY(Scumm, vm.cutSceneScript[0], sleByte, 5),
+		MKARRAY(Scumm, vm.cutSceneData[0], sleInt16, 5),
+		MKLINE(Scumm, vm.cutSceneScriptIndex, sleInt16),
+
+		/* nest */
+		MKLINE(Scumm, _numNestedScripts, sleByte),
+		MKLINE(Scumm, _userPut, sleByte),
+		MKLINE(Scumm, _cursorState, sleByte),
+		MKLINE(Scumm, gdi._cursorActive, sleByte),
+		MKLINE(Scumm, gdi._currentCursor, sleByte),
+
+		MKLINE(Scumm, _doEffect, sleByte),
+		MKLINE(Scumm, _switchRoomEffect, sleByte),
+		MKLINE(Scumm, _newEffect, sleByte),
+		MKLINE(Scumm, _switchRoomEffect2, sleByte),
+		MKLINE(Scumm, _BgNeedsRedraw, sleByte),
+
+		MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 200),
+		MKLINE(Scumm, gdi._transparency, sleByte),
+		MKARRAY(Scumm, _currentPalette[0], sleByte, 768),
+
+		MKARRAY(Scumm, _proc_special_palette[0], sleByte, 256),
+		/* virtscr */
+
+		MKARRAY(Scumm, charset._buffer[0], sleByte, 256),
+
+		MKLINE(Scumm, _egoPositioned, sleByte),
+
+		MKARRAY(Scumm, gdi._imgBufOffs[0], sleUint16, 4),
+		MKLINE(Scumm, gdi._numZBuffer, sleByte),
+
+		MKLINE(Scumm, _screenEffectFlag, sleByte),
+
+		MKLINE(Scumm, _randSeed1, sleUint32),
+		MKLINE(Scumm, _randSeed2, sleUint32),
+
+		/* XXX: next time the save game format changes,
+		 * convert _shakeEnabled to boolean and add a _shakeFrame field */
+		MKLINE(Scumm, _shakeEnabled, sleInt16),
+
+		MKLINE(Scumm, _keepText, sleByte),
+
+		MKLINE(Scumm, _screenB, sleUint16),
+		MKLINE(Scumm, _screenH, sleUint16),
+
+		MKEND()
+	};
 
 	const SaveLoadEntry scriptSlotEntries[] = {
 		MKLINE(ScriptSlot, offs, sleUint32),
@@ -662,35 +599,18 @@ void Scumm::saveOrLoad(Serializer * s)
 	int var120Backup;
 	int var98Backup;
 
-#ifdef _MANAGE_OLD_SAVE
-
-	s->saveLoadEntries(this, mainEntries1);
-	s->saveLoadEntries(this,
-										 (_current_version ==
-											VER_V8 ? mainEntries2V8 : mainEntries2V7));
-	s->saveLoadEntries(this, mainEntries3);
-
-#else
-
-	s->saveLoadEntries(this, mainEntries);
-
-#endif
-
-#ifdef _MANAGE_OLD_SAVE
-
-	// Probably not necessary anymore with latest NUM_ACTORS values
-
-	s->saveLoadArrayOf(actor, (_current_version == VER_V8 ? NUM_ACTORS : 13),
-										 sizeof(actor[0]), actorEntries);
-
-#else
+	if (_current_version == VER_V9) 
+		s->saveLoadEntries(this, mainEntriesV9);
+	else
+		s->saveLoadEntries(this, mainEntriesV8);
 
 	s->saveLoadArrayOf(actor, NUM_ACTORS, sizeof(actor[0]), actorEntries);
 
-#endif
-
-	s->saveLoadArrayOf(vm.slot, NUM_SCRIPT_SLOT, sizeof(vm.slot[0]),
-										 scriptSlotEntries);
+	if (_current_version < VER_V9) {
+		printf("Loading pre-v9\n");
+		s->saveLoadArrayOf(vm.slot, 25, sizeof(vm.slot[0]), scriptSlotEntries);
+	} else
+		s->saveLoadArrayOf(vm.slot, NUM_SCRIPT_SLOT, sizeof(vm.slot[0]), scriptSlotEntries);
 	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]),
 										 objectEntries);
 	s->saveLoadArrayOf(_verbs, _numVerbs, sizeof(_verbs[0]), verbEntries);

@@ -258,6 +258,7 @@ typedef signed long int32;
 //#endif
 
 #define MKID(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
+#define MKID_BE(a) (a)
 
 #if defined(SCUMM_NEED_ALIGNMENT)
 	FORCEINLINE uint READ_LE_UINT16(void *ptr) {
@@ -307,6 +308,7 @@ uint16 FORCEINLINE TO_BE_16(uint16 a) { return (a>>8) | (a<<8); }
 #elif defined(SCUMM_BIG_ENDIAN)
 
 #define MKID(a) (a)
+#define MKID_BE(a) ((((a)>>24)&0xFF) | (((a)>>8)&0xFF00) | (((a)<<8)&0xFF0000) | (((a)<<24)&0xFF000000))
 
 uint32 FORCEINLINE FROM_LE_32(uint32 a) {
 	return ((a>>24)&0xFF) + ((a>>8)&0xFF00) + ((a<<8)&0xFF0000) + ((a<<24)&0xFF000000);

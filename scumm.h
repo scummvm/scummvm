@@ -52,7 +52,7 @@ enum {
 #endif
 	BITS_PER_SAMPLE = 16,
 	NUM_MIXER = 4,
-	NUM_SCRIPT_SLOT = 25,
+	NUM_SCRIPT_SLOT = 40,
 	NUM_LOCALSCRIPT = 60,
 	NUM_SHADOW_PALETTE = 8,
     MAX_ACTORS = 30,
@@ -966,7 +966,7 @@ public:
 	bool _endOfMouthSync;
 	uint16 _mouthSyncTimes[52];
 	uint _curSoundPos;
-	int current_cd_sound;
+	int current_cd_sound, _cd_loops, _cd_frame, _cd_track, _cd_end;
 
 	int tempMusic;
 
