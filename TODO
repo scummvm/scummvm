@@ -328,12 +328,19 @@ SAGA
    bottom=200. (eriktorbjorn, partly - mostly? - done)
  * Walk bug. When announcer puts medallion on Rif he should go backwards instead
    of turning and walking faced to screen
+ * In many places RSC_LoadResource() is called but memory is not freed afterwards,
+   i.e. there is a huge leak
+ * Structure INTERFACE_DESC should be put into GAME_DISPLAYINFO, as there are
+   expected big differences between IHNM and ITE.
+ * Optimize screen output. Now we blit whole screen for each frame.
 
 - plans -
  * Implement unimplemented/proofread unchecked opcodes
  * Remove use of floating point, especially doubles.
+ * Write sprites cache. Now we load/decode them each time from game 
+   resources (h00ligan)
  * Implement Verbs (h00ligan)
- * Implement ShowSaveReminder(), that is that rotating diskette
+ * Implement ShowSaveReminder(), that is that diskette
  * Implement Save/Load
  * Finish inventory code
  * Implement ISO path finder
