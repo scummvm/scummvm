@@ -303,7 +303,7 @@ void DrawMouse(void) {
 	memset(_mouseData, 0xFF, mouse_width * mouse_height);
 
 	if (luggageAnim)
-		DecompressMouse(_mouseData, (uint8 *) luggageAnim + *luggageOffset, luggageAnim->mousew,
+		DecompressMouse(_mouseData, (uint8 *) luggageAnim + (int)READ_LE_UINT32(luggageOffset), luggageAnim->mousew,
 				luggageAnim->mouseh, mouse_width, deltaX, deltaY);
 
 	if (mouseAnim)
