@@ -33,30 +33,15 @@
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 
-#if USE_CONSOLE
-	#include "gui/console.h"
-	#define Debug_Printf  _debuggerDialog->printf
-#else
-	#define Debug_Printf printf
-#endif
-
-#ifdef _WIN32_WCE
-extern void force_keyboard(bool);
-#endif
+#include "common/debugger.cpp"
 
 extern uint16 _debugLevel;
 
 namespace Scumm {
 
-ScummDebugger::ScummDebugger(ScummEngine *s) {
+ScummDebugger::ScummDebugger(ScummEngine *s)
+	: Common::Debugger<ScummDebugger>(s->_newgui) {
 	_vm = s;
-	_frame_countdown = 0;
-	_dvar_count = 0;
-	_dcmd_count = 0;
-	_detach_now = false;
-	_isAttached = false;
-	_errStr = NULL;
-	_debuggerDialog = NULL;
 
 	// Register variables
 	DVar_Register("debug_countdown", &_frame_countdown, DVAR_INT, 0);
@@ -103,247 +88,19 @@ ScummDebugger::ScummDebugger(ScummEngine *s) {
 	DCmd_Register("imuse", &ScummDebugger::Cmd_IMuse);
 }
 
-// Initialisation Functions
-void ScummDebugger::attach(const char *entry) {
-
-#ifdef _WIN32_WCE
-	force_keyboard(true);
-#endif
-
-	if (entry) {
-		_errStr = strdup(entry);
-	}
-
-	_frame_countdown = 1;
-	_detach_now = false;
-	_isAttached = true;
+void ScummDebugger::preEnter() {
+	// Pause sound output
+	_old_soundsPaused = _vm->_sound->_soundsPaused;
+	_vm->_sound->pauseSounds(true);
 }
 
-void ScummDebugger::detach() {
-#if USE_CONSOLE
-	if (_debuggerDialog) {
-		_debuggerDialog->setInputCallback(0, 0);
-		_debuggerDialog->setCompletionCallback(0, 0);
-	}
-#endif
-
-#ifdef _WIN32_WCE
-	force_keyboard(false);
-#endif
-
-	_detach_now = false;
-	_isAttached = false;
+void ScummDebugger::postEnter() {
+	// Resume previous sound state
+	_vm->_sound->pauseSounds(_old_soundsPaused);
 }
-
-// Temporary execution handler
-void ScummDebugger::onFrame() {
-	if (_frame_countdown == 0)
-		return;
-	--_frame_countdown;
-
-	if (!_frame_countdown) {
-		// Pause sound output
-		bool old_soundsPaused = _vm->_sound->_soundsPaused;
-		_vm->_sound->pauseSounds(true);
-
-		// Enter debugger
-		enter();
-
-		_vm->_sound->pauseSounds(old_soundsPaused);	// Resume previous sound state
-
-		if (_detach_now)	// Detach if we're finished with the debugger
-			detach();
-	}
-}
-
-// Console handler
-#if USE_CONSOLE
-bool ScummDebugger::debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon) {
-	ScummDebugger *debugger = (ScummDebugger *)refCon;
-
-	return debugger->RunCommand(input);
-}
-
-
-bool ScummDebugger::debuggerCompletionCallback(ConsoleDialog *console, const char *input, char*& completion, void *refCon) {
-	ScummDebugger *debugger = (ScummDebugger *)refCon;
-
-	return debugger->TabComplete(input, completion);
-}
-
-#endif
 
 ///////////////////////////////////////////////////
 // Now the fun stuff:
-
-// Command/Variable registration functions
-void ScummDebugger::DVar_Register(const char *varname, void *pointer, int type, int optional) {
-	assert(_dvar_count < (int)sizeof(_dvars));
-	strcpy(_dvars[_dvar_count].name, varname);
-	_dvars[_dvar_count].type = type;
-	_dvars[_dvar_count].variable = pointer;
-	_dvars[_dvar_count].optional = optional;
-
-	_dvar_count++;
-}
-
-void ScummDebugger::DCmd_Register(const char *cmdname, DebugProc pointer) {
-	assert(_dcmd_count < (int)sizeof(_dcmds));
-	strcpy(_dcmds[_dcmd_count].name, cmdname);
-	_dcmds[_dcmd_count].function = pointer;
-
-	_dcmd_count++;
-}
-
-// Main Debugger Loop
-void ScummDebugger::enter() {
-#if USE_CONSOLE
-	if (!_debuggerDialog) {
-		_debuggerDialog = new ConsoleDialog(_vm->_newgui, 1.0, 0.67F);
-
-		Debug_Printf("Debugger started, type 'exit' to return to the game.\n");
-		Debug_Printf("Type 'help' to see a little list of commands and variables.\n");
-	}
-
-	if (_errStr) {
-		Debug_Printf("ERROR: %s\n\n", _errStr);
-		free(_errStr);
-		_errStr = NULL;
-	}
-
-	_debuggerDialog->setInputCallback(debuggerInputCallback, this);
-	_debuggerDialog->setCompletionCallback(debuggerCompletionCallback, this);
-	_debuggerDialog->runModal();
-#else
-	// TODO: compared to the console input, this here is very bare bone.
-	// For example, no support for tab completion and no history. At least
-	// we should re-add (optional) support for the readline library.
-	// Or maybe instead of choosing between a console dialog and stdio,
-	// we should move that choice into the ConsoleDialog class - that is,
-	// the console dialog code could be #ifdef'ed to not print to the dialog
-	// but rather to stdio. This way, we could also reuse the command history
-	// and tab completion of the console. It would still require a lot of
-	// work, but at least no dependency on a 3rd party library...
-
-	printf("Debugger entered, please switch to this console for input.\n");
-
-	int i;
-	char buf[256];
-
-	do {
-		printf("debug> ");
-		if (!fgets(buf, sizeof(buf), stdin))
-			return;
-
-		i = strlen(buf);
-		while (i > 0 && buf[i - 1] == '\n')
-			buf[--i] = 0;
-
-		if (i == 0)
-			continue;
-	} while (RunCommand(buf));
-
-#endif
-}
-
-// Command execution loop
-bool ScummDebugger::RunCommand(const char *inputOrig) {
-	int i = 0, num_params = 0;
-	const char *param[256];
-	char *input = strdup(inputOrig);	// One of the rare occasions using strdup is OK (although avoiding strtok might be more elegant here).
-
-	// Parse out any params
-	char *tok = strtok(input, " ");
-	if (tok) {
-		do {
-			param[num_params++] = tok;
-		} while ((tok = strtok(NULL, " ")) != NULL);
-	} else {
-		param[num_params++] = input;
-	}
-
-	for (i=0; i < _dcmd_count; i++) {
-		if (!strcmp(_dcmds[i].name, param[0])) {
-			bool result = (this->*_dcmds[i].function)(num_params, param);
-			free(input);
-			return result;
-		}
-	}
-
-	// It's not a command, so things get a little tricky for variables. Do fuzzy matching to ignore things like subscripts.
-	for (i = 0; i < _dvar_count; i++) {
-		if (!strncmp(_dvars[i].name, param[0], strlen(_dvars[i].name))) {
-			if (num_params > 1) {
-				// Alright, we need to check the TYPE of the variable to deref and stuff... the array stuff is a bit ugly :)
-				switch(_dvars[i].type) {
-				// Integer
-				case DVAR_INT:
-					*(int *)_dvars[i].variable = atoi(param[1]);
-					Debug_Printf("(int)%s = %d\n", param[0], *(int *)_dvars[i].variable);
-				break;
-				// Integer Array
-				case DVAR_INTARRAY: {
-					char *chr = strchr(param[0], '[');
-					if (!chr) {
-						Debug_Printf("You must access this array as %s[element]\n", param[0]);
-					} else {
-						int element = atoi(chr+1);
-						int32 *var = *(int32 **)_dvars[i].variable;
-						if (element > _dvars[i].optional) {
-							Debug_Printf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].optional);
-						} else {
-							var[element] = atoi(param[1]);
-							Debug_Printf("(int)%s = %d\n", param[0], var[element]);
-						}
-					}
-				}
-				break;
-				default:
-					Debug_Printf("Failed to set variable %s to %s - unknown type\n", _dvars[i].name, param[1]);
-					break;
-				}
-			} else {
-				// And again, type-dependent prints/defrefs. The array one is still ugly.
-				switch(_dvars[i].type) {
-				// Integer
-				case DVAR_INT:
-					Debug_Printf("(int)%s = %d\n", param[0], *(int *)_dvars[i].variable);
-				break;
-				// Integer array
-				case DVAR_INTARRAY: {
-					char *chr = strchr(param[0], '[');
-					if (!chr) {
-						Debug_Printf("You must access this array as %s[element]\n", param[0]);
-					} else {
-						int element = atoi(chr+1);
-						int16 *var = *(int16 **)_dvars[i].variable;
-						if (element > _dvars[i].optional) {
-							Debug_Printf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].optional);
-						} else {
-							Debug_Printf("(int)%s = %d\n", param[0], var[element]);
-						}
-					}
-				}
-				break;
-				// String
-				case DVAR_STRING:
-					Debug_Printf("(string)%s = %s\n", param[0], ((Common::String *)_dvars[i].variable)->c_str());
-					break;
-				default:
-					Debug_Printf("%s = (unknown type)\n", param[0]);
-					break;
-				}
-			}
-
-			free(input);
-			return true;
-		}
-	}
-
-	Debug_Printf("Unknown command or variable\n");
-	free(input);
-	return true;
-}
 
 // Commands
 bool ScummDebugger::Cmd_Exit(int argc, const char **argv) {
@@ -360,61 +117,61 @@ bool ScummDebugger::Cmd_Restart(int argc, const char **argv) {
 
 bool ScummDebugger::Cmd_IMuse(int argc, const char **argv) {
 	if (!_vm->_imuse && !_vm->_musicEngine) {
-		Debug_Printf("No iMuse engine is active.\n");
+		DebugPrintf("No iMuse engine is active.\n");
 		return true;
 	}
 
 	if (argc > 1) {
 		if (!strcmp(argv[1], "panic")) {
 			_vm->_musicEngine->stopAllSounds();
-			Debug_Printf("AAAIIIEEEEEE!\n");
-			Debug_Printf("Shutting down all music tracks\n");
+			DebugPrintf("AAAIIIEEEEEE!\n");
+			DebugPrintf("Shutting down all music tracks\n");
 			return true;
 		} else if (!strcmp (argv[1], "multimidi")) {
 			if (argc > 2 && (!strcmp(argv[2], "on") || !strcmp(argv[2], "off"))) {
 				if (_vm->_imuse)
 					_vm->_imuse->property(IMuse::PROP_MULTI_MIDI, !strcmp(argv[2], "on"));
-				Debug_Printf("MultiMidi mode switched %s.\n", argv[2]);
+				DebugPrintf("MultiMidi mode switched %s.\n", argv[2]);
 			} else {
-				Debug_Printf("Specify \"on\" or \"off\" to switch.\n");
+				DebugPrintf("Specify \"on\" or \"off\" to switch.\n");
 			}
 			return true;
 		} else if (!strcmp(argv[1], "play")) {
 			if (argc > 2 && (!strcmp(argv[2], "random") || atoi(argv[2]) != 0)) {
 				int sound = atoi(argv[2]);
 				if (!strcmp(argv[2], "random")) {
-					Debug_Printf("Selecting from %d songs...\n", _vm->getNumSounds());
+					DebugPrintf("Selecting from %d songs...\n", _vm->getNumSounds());
 					sound = _vm->_rnd.getRandomNumber(_vm->getNumSounds());
 				}
 				_vm->ensureResourceLoaded(rtSound, sound);
 				_vm->_musicEngine->startSound(sound);
 
-				Debug_Printf("Attempted to start music %d.\n", sound);
+				DebugPrintf("Attempted to start music %d.\n", sound);
 			} else {
-				Debug_Printf("Specify a music resource # from 1-255.\n");
+				DebugPrintf("Specify a music resource # from 1-255.\n");
 			}
 			return true;
 		} else if (!strcmp(argv[1], "stop")) {
 			if (argc > 2 && (!strcmp(argv[2], "all") || atoi(argv[2]) != 0)) {
 				if (!strcmp(argv[2], "all")) {
 					_vm->_musicEngine->stopAllSounds();
-					Debug_Printf("Shutting down all music tracks.\n");
+					DebugPrintf("Shutting down all music tracks.\n");
 				} else {
 					_vm->_musicEngine->stopSound(atoi(argv[2]));
-					Debug_Printf("Attempted to stop music %d.\n", atoi(argv[2]));
+					DebugPrintf("Attempted to stop music %d.\n", atoi(argv[2]));
 				}
 			} else {
-				Debug_Printf("Specify a music resource # or \"all\".\n");
+				DebugPrintf("Specify a music resource # or \"all\".\n");
 			}
 			return true;
 		}
 	}
 
-	Debug_Printf("Available iMuse commands:\n");
-	Debug_Printf("  panic - Stop all music tracks\n");
-	Debug_Printf("  multimidi on/off - Toggle dual MIDI drivers\n");
-	Debug_Printf("  play # - Play a music resource\n");
-	Debug_Printf("  stop # - Stop a music resource\n");
+	DebugPrintf("Available iMuse commands:\n");
+	DebugPrintf("  panic - Stop all music tracks\n");
+	DebugPrintf("  multimidi on/off - Toggle dual MIDI drivers\n");
+	DebugPrintf("  play # - Play a music resource\n");
+	DebugPrintf("  stop # - Stop a music resource\n");
 	return true;
 }
 
@@ -427,7 +184,7 @@ bool ScummDebugger::Cmd_Room(int argc, const char **argv) {
 		_vm->_fullRedraw = 1;
 		return false;
 	} else {
-		Debug_Printf("Current room: %d [%d] - use 'room <roomnum>' to switch\n", _vm->_currentRoom, _vm->_roomResource);
+		DebugPrintf("Current room: %d [%d] - use 'room <roomnum>' to switch\n", _vm->_currentRoom, _vm->_roomResource);
 		return true;
 	}
 }
@@ -444,7 +201,7 @@ bool ScummDebugger::Cmd_LoadGame(int argc, const char **argv) {
 		return false;
 	}
 
-	Debug_Printf("Syntax: loadgame <slotnum>\n");
+	DebugPrintf("Syntax: loadgame <slotnum>\n");
 	return true;
 }
 
@@ -457,7 +214,7 @@ bool ScummDebugger::Cmd_SaveGame(int argc, const char **argv) {
 		_vm->_saveLoadFlag = 1;
 		_vm->_saveLoadCompatible = false;
 	} else
-		Debug_Printf("Syntax: savegame <slotnum> <name>\n");
+		DebugPrintf("Syntax: savegame <slotnum> <name>\n");
 
 	return true;
 }
@@ -465,18 +222,18 @@ bool ScummDebugger::Cmd_SaveGame(int argc, const char **argv) {
 bool ScummDebugger::Cmd_Show(int argc, const char **argv) {
 
 	if (argc != 2) {
-		Debug_Printf("Syntax: show <parameter>\n");
+		DebugPrintf("Syntax: show <parameter>\n");
 		return true;
 	}
 
 	if (!strcmp(argv[1], "hex")) {
 		_vm->_hexdumpScripts = true;
-		Debug_Printf("Script hex dumping on\n");
+		DebugPrintf("Script hex dumping on\n");
 	} else if (!strncmp(argv[1], "sta", 3)) {
 		_vm->_showStack = 1;
-		Debug_Printf("Stack tracing on\n");
+		DebugPrintf("Stack tracing on\n");
 	} else {
-		Debug_Printf("Unknown show parameter '%s'\nParameters are 'hex' for hex dumping and 'sta' for stack tracing\n", argv[1]);
+		DebugPrintf("Unknown show parameter '%s'\nParameters are 'hex' for hex dumping and 'sta' for stack tracing\n", argv[1]);
 	}
 	return true;
 }
@@ -484,18 +241,18 @@ bool ScummDebugger::Cmd_Show(int argc, const char **argv) {
 bool ScummDebugger::Cmd_Hide(int argc, const char **argv) {
 
 	if (argc != 2) {
-		Debug_Printf("Syntax: hide <parameter>\n");
+		DebugPrintf("Syntax: hide <parameter>\n");
 		return true;
 	}
 
 	if (!strcmp(argv[1], "hex")) {
 		_vm->_hexdumpScripts = false;
-		Debug_Printf("Script hex dumping off\n");
+		DebugPrintf("Script hex dumping off\n");
 	} else if (!strncmp(argv[1], "sta", 3)) {
 		_vm->_showStack = 0;
-		Debug_Printf("Stack tracing off\n");
+		DebugPrintf("Stack tracing off\n");
 	} else {
-		Debug_Printf("Unknown hide parameter '%s'\nParameters are 'hex' to turn off hex dumping and 'sta' to turn off stack tracing\n", argv[1]);
+		DebugPrintf("Unknown hide parameter '%s'\nParameters are 'hex' to turn off hex dumping and 'sta' to turn off stack tracing\n", argv[1]);
 	}
 	return true;
 }
@@ -504,7 +261,7 @@ bool ScummDebugger::Cmd_Script(int argc, const char** argv) {
 	int scriptnum;
 
 	if (argc < 2) {
-		Debug_Printf("Syntax: script <scriptnum> <command>\n");
+		DebugPrintf("Syntax: script <scriptnum> <command>\n");
 		return true;
 	}
 
@@ -512,7 +269,7 @@ bool ScummDebugger::Cmd_Script(int argc, const char** argv) {
 
 	// FIXME: what is the max range on these?
 	// if (scriptnum >= _vm->_maxScripts) {
-	//	Debug_Printf("Script number %d is out of range (range: 1 - %d)\n", scriptnum, _vm->_maxScripts);
+	//	DebugPrintf("Script number %d is out of range (range: 1 - %d)\n", scriptnum, _vm->_maxScripts);
 	//	return true;
 	//}
 
@@ -522,7 +279,7 @@ bool ScummDebugger::Cmd_Script(int argc, const char** argv) {
 		_vm->runScript(scriptnum, 0, 0, 0);
 		return false;
 	} else {
-		Debug_Printf("Unknown script command '%s'\nUse <kill/stop | run/start> as command\n", argv[2]);
+		DebugPrintf("Unknown script command '%s'\nUse <kill/stop | run/start> as command\n", argv[2]);
 	}
 
 	return true;
@@ -534,7 +291,7 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 	int resnum;
 
 	if (argc != 4) {
-		Debug_Printf("Syntax: importres <restype> <filename> <resnum>\n");
+		DebugPrintf("Syntax: importres <restype> <filename> <resnum>\n");
 		return true;
 	}
 
@@ -544,7 +301,7 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 	if (!strncmp(argv[1], "scr", 3)) {
 		file.open(argv[2], "");
 		if (file.isOpen() == false) {
-			Debug_Printf("Could not open file %s\n", argv[2]);
+			DebugPrintf("Could not open file %s\n", argv[2]);
 			return true;
 		}
 		if (_vm->_features & GF_SMALL_HEADER) {
@@ -565,25 +322,25 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 		file.read(_vm->createResource(rtScript, resnum, size), size);
 
 	} else
-		Debug_Printf("Unknown importres type '%s'\n", argv[1]);
+		DebugPrintf("Unknown importres type '%s'\n", argv[1]);
 	return true;
 }
 
 bool ScummDebugger::Cmd_PrintScript(int argc, const char **argv) {
 	int i;
 	ScriptSlot *ss = _vm->vm.slot;
-	Debug_Printf("+--------------------------------------+\n");
-	Debug_Printf("|# | num|offst|sta|typ|fr|rec|fc|cut|\n");
-	Debug_Printf("+--+----+-----+---+---+--+---+--+---+\n");
+	DebugPrintf("+--------------------------------------+\n");
+	DebugPrintf("|# | num|offst|sta|typ|fr|rec|fc|cut|\n");
+	DebugPrintf("+--+----+-----+---+---+--+---+--+---+\n");
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 		if (ss->number) {
-			Debug_Printf("|%2d|%4d|%05x|%3d|%3d|%2d|%3d|%2d|%3d|\n",
+			DebugPrintf("|%2d|%4d|%05x|%3d|%3d|%2d|%3d|%2d|%3d|\n",
 					i, ss->number, ss->offs, ss->status, ss->where,
 					ss->freezeResistant, ss->recursive,
 					ss->freezeCount, ss->cutsceneOverride);
 		}
 	}
-	Debug_Printf("+--------------------------------------+\n");
+	DebugPrintf("+--------------------------------------+\n");
 
 	return true;
 }
@@ -594,13 +351,13 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 	int value;
 
 	if (argc < 3) {
-		Debug_Printf("Syntax: actor <actornum> <command> <parameter>\n");
+		DebugPrintf("Syntax: actor <actornum> <command> <parameter>\n");
 		return true;
 	}
 
 	actnum = atoi(argv[1]);
 	if (actnum >= _vm->_numActors) {
-		Debug_Printf("Actor %d is out of range (range: 1 - %d)\n", actnum, _vm->_numActors);
+		DebugPrintf("Actor %d is out of range (range: 1 - %d)\n", actnum, _vm->_numActors);
 		return true;
 	}
 
@@ -609,31 +366,31 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 
 	if (!strcmp(argv[2], "ignoreboxes")) {
 			a->ignoreBoxes = (value > 0);
-			Debug_Printf("Actor[%d].ignoreBoxes = %d\n", actnum, a->ignoreBoxes);
+			DebugPrintf("Actor[%d].ignoreBoxes = %d\n", actnum, a->ignoreBoxes);
 	} else if (!strcmp(argv[2], "x")) {
 			a->putActor(value, a->_pos.y, a->room);
-			Debug_Printf("Actor[%d].x = %d\n", actnum, a->_pos.x);
+			DebugPrintf("Actor[%d].x = %d\n", actnum, a->_pos.x);
 			_vm->_fullRedraw = 1;
 	} else if (!strcmp(argv[2], "y")) {
 			a->putActor(a->_pos.x, value, a->room);
-			Debug_Printf("Actor[%d].y = %d\n", actnum, a->_pos.y);
+			DebugPrintf("Actor[%d].y = %d\n", actnum, a->_pos.y);
 			_vm->_fullRedraw = 1;
 	} else if (!strcmp(argv[2], "elevation")) {
 			a->elevation = value;
-			Debug_Printf("Actor[%d].elevation = %d\n", actnum, a->elevation);
+			DebugPrintf("Actor[%d].elevation = %d\n", actnum, a->elevation);
 			_vm->_fullRedraw = 1;
 	} else if (!strcmp(argv[2], "costume")) {
 			if (value >= _vm->res.num[rtCostume])
-					Debug_Printf("Costume not changed as %d exceeds max of %d\n", value, _vm->res.num[rtCostume]);
+					DebugPrintf("Costume not changed as %d exceeds max of %d\n", value, _vm->res.num[rtCostume]);
 			else {
 				a->setActorCostume( value );
 				_vm->_fullRedraw = 1;
-				Debug_Printf("Actor[%d].costume = %d\n", actnum, a->costume);
+				DebugPrintf("Actor[%d].costume = %d\n", actnum, a->costume);
 			}
 	} else if (!strcmp(argv[2], "name")) {
-			Debug_Printf("Name of actor %d: %s\n", actnum, _vm->getObjOrActorName(actnum));
+			DebugPrintf("Name of actor %d: %s\n", actnum, _vm->getObjOrActorName(actnum));
 	} else {
-			Debug_Printf("Unknown actor command '%s'\nUse <ignoreboxes |costume> as command\n", argv[2]);
+			DebugPrintf("Unknown actor command '%s'\nUse <ignoreboxes |costume> as command\n", argv[2]);
 	}
 
 	return true;
@@ -643,35 +400,35 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 	int i;
 	Actor *a;
 
-	Debug_Printf("+----------------------------------------------------------------+\n");
-	Debug_Printf("|# |room|  x |  y |elev|cos|width|box|mov| zp|frame|scale|dir|cls|\n");
-	Debug_Printf("+--+----+----+----+----+---+-----+---+---+---+-----+-----+---+---+\n");
+	DebugPrintf("+----------------------------------------------------------------+\n");
+	DebugPrintf("|# |room|  x |  y |elev|cos|width|box|mov| zp|frame|scale|dir|cls|\n");
+	DebugPrintf("+--+----+----+----+----+---+-----+---+---+---+-----+-----+---+---+\n");
 	for (i = 1; i < _vm->_numActors; i++) {
 		a = &_vm->_actors[i];
 		if (a->visible)
-			Debug_Printf("|%2d|%4d|%4d|%4d|%4d|%3d|%5d|%3d|%3d|%3d|%5d|%5d|%3d|$%02x|\n",
+			DebugPrintf("|%2d|%4d|%4d|%4d|%4d|%3d|%5d|%3d|%3d|%3d|%5d|%5d|%3d|$%02x|\n",
 						 a->number, a->room, a->_pos.x, a->_pos.y, a->elevation, a->costume,
 						 a->width, a->walkbox, a->moving, a->forceClip, a->frame,
 						 a->scalex, a->getFacing(), int(_vm->_classData[a->number]&0xFF));
 	}
-	Debug_Printf("+----------------------------------------------------------------+\n");
+	DebugPrintf("+----------------------------------------------------------------+\n");
 	return true;
 }
 
 bool ScummDebugger::Cmd_PrintObjects(int argc, const char **argv) {
 	int i;
 	ObjectData *o;
-	Debug_Printf("Objects in current room\n");
-	Debug_Printf("+---------------------------------+--+\n");
-	Debug_Printf("|num |  x |  y |width|height|state|fl|\n");
-	Debug_Printf("+----+----+----+-----+------+-----+--+\n");
+	DebugPrintf("Objects in current room\n");
+	DebugPrintf("+---------------------------------+--+\n");
+	DebugPrintf("|num |  x |  y |width|height|state|fl|\n");
+	DebugPrintf("+----+----+----+-----+------+-----+--+\n");
 
 	for (i = 1; (i < _vm->_numLocalObjects) && (_vm->_objs[i].obj_nr != 0) ; i++) {
 		o = &(_vm->_objs[i]);
-		Debug_Printf("|%4d|%4d|%4d|%5d|%6d|%5d|%2d|\n",
+		DebugPrintf("|%4d|%4d|%4d|%5d|%6d|%5d|%2d|\n",
 				o->obj_nr, o->x_pos, o->y_pos, o->width, o->height, o->state, o->fl_object_index);
 	}
-	Debug_Printf("\n");
+	DebugPrintf("\n");
 	return true;
 }
 
@@ -680,13 +437,13 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 	int obj;
 
 	if (argc < 3) {
-		Debug_Printf("Syntax: object <objectnum> <command> <parameter>\n");
+		DebugPrintf("Syntax: object <objectnum> <command> <parameter>\n");
 		return true;
 	}
 
 	obj = atoi(argv[1]);
 	if (obj >= _vm->_numGlobalObjects) {
-		Debug_Printf("Object %d is out of range (range: 1 - %d)\n", obj, _vm->_numGlobalObjects);
+		DebugPrintf("Object %d is out of range (range: 1 - %d)\n", obj, _vm->_numGlobalObjects);
 		return true;
 	}
 
@@ -715,9 +472,9 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 		//is BgNeedsRedraw enough?
 		_vm->_BgNeedsRedraw = true;
 	} else if (!strcmp(argv[2], "name")) {
-		Debug_Printf("Name of object %d: %s\n", obj, _vm->getObjOrActorName(obj));
+		DebugPrintf("Name of object %d: %s\n", obj, _vm->getObjOrActorName(obj));
 	} else {
-		  Debug_Printf("Unknown object command '%s'\nUse <pickup | state> as command\n", argv[2]);
+		  DebugPrintf("Unknown object command '%s'\nUse <pickup | state> as command\n", argv[2]);
 	}
 
 	return true;
@@ -728,35 +485,35 @@ bool ScummDebugger::Cmd_Help(int argc, const char **argv) {
 	// wrap around nicely
 	int width = 0, size, i;
 
-	Debug_Printf("Commands are:\n");
+	DebugPrintf("Commands are:\n");
 	for (i = 0 ; i < _dcmd_count ; i++) {
 		size = strlen(_dcmds[i].name) + 1;
 
 		if ((width + size) >= 39) {
-			Debug_Printf("\n");
+			DebugPrintf("\n");
 			width = size;
 		} else
 			width += size;
 
-		Debug_Printf("%s ", _dcmds[i].name);
+		DebugPrintf("%s ", _dcmds[i].name);
 	}
 
 	width = 0;
 
-	Debug_Printf("\n\nVariables are:\n");
+	DebugPrintf("\n\nVariables are:\n");
 	for (i = 0 ; i < _dvar_count ; i++) {
 		size = strlen(_dvars[i].name) + 1;
 
 		if ((width + size) >= 39) {
-			Debug_Printf("\n");
+			DebugPrintf("\n");
 			width = size;
 		} else
 			width += size;
 
-		Debug_Printf("%s ", _dvars[i].name);
+		DebugPrintf("%s ", _dvars[i].name);
 	}
 
-	Debug_Printf("\n");
+	DebugPrintf("\n");
 
 	return true;
 }
@@ -764,20 +521,20 @@ bool ScummDebugger::Cmd_Help(int argc, const char **argv) {
 bool ScummDebugger::Cmd_DebugLevel(int argc, const char **argv) {
 	if (argc == 1) {
 		if (_vm->_debugMode == false)
-			Debug_Printf("Debugging is not enabled at this time\n");
+			DebugPrintf("Debugging is not enabled at this time\n");
 		else
-			Debug_Printf("Debugging is currently set at level %d\n", _debugLevel);
+			DebugPrintf("Debugging is currently set at level %d\n", _debugLevel);
 	} else { // set level
 		int level = atoi(argv[1]);
 		_debugLevel = level;
 		if (level > 0) {
 			_vm->_debugMode = true;
-			Debug_Printf("Debug level set to level %d\n", level);
+			DebugPrintf("Debug level set to level %d\n", level);
 		} else if (level == 0) {
 			_vm->_debugMode = false;
-			Debug_Printf("Debugging is now disabled\n");
+			DebugPrintf("Debugging is now disabled\n");
 		} else
-			Debug_Printf("Not a valid debug level\n");
+			DebugPrintf("Not a valid debug level\n");
 	}
 
 	return true;
@@ -791,7 +548,7 @@ bool ScummDebugger::Cmd_PrintBox(int argc, const char **argv) {
 			printBox(atoi(argv[i]));
 	} else {
 		num = _vm->getNumBoxes();
-		Debug_Printf("\nWalk boxes:\n");
+		DebugPrintf("\nWalk boxes:\n");
 		for (i = 0; i < num; i++)
 			printBox(i);
 	}
@@ -803,22 +560,22 @@ bool ScummDebugger::Cmd_PrintBoxMatrix(int argc, const char **argv) {
 	int num = _vm->getNumBoxes();
 	int i, j;
 
-	Debug_Printf("Walk matrix:\n");
+	DebugPrintf("Walk matrix:\n");
 	if (_vm->_version <= 2)
 		boxm += num;
 	for (i = 0; i < num; i++) {
-		Debug_Printf("%d: ", i);
+		DebugPrintf("%d: ", i);
 		if (_vm->_version <= 2) {
 			for (j = 0; j < num; j++)
-				Debug_Printf("[%d] ", *boxm++);
+				DebugPrintf("[%d] ", *boxm++);
 		} else {
 			while (*boxm != 0xFF) {
-				Debug_Printf("[%d-%d=>%d] ", boxm[0], boxm[1], boxm[2]);
+				DebugPrintf("[%d-%d=>%d] ", boxm[0], boxm[1], boxm[2]);
 				boxm += 3;
 			}
 			boxm++;
 		}
-		Debug_Printf("\n");
+		DebugPrintf("\n");
 	}
 	return true;
 }
@@ -833,7 +590,7 @@ void ScummDebugger::printBox(int box) {
 	_vm->getBoxCoordinates(box, &coords);
 
 	// Print out coords, flags, zbuffer mask
-	Debug_Printf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d], flags=0x%02x, mask=%d, scale=%d\n",
+	DebugPrintf("%d: [%d x %d] [%d x %d] [%d x %d] [%d x %d], flags=0x%02x, mask=%d, scale=%d\n",
 								box,
 								coords.ul.x, coords.ul.y, coords.ll.x, coords.ll.y,
 								coords.ur.x, coords.ur.y, coords.lr.x, coords.lr.y,
@@ -990,7 +747,7 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 	int i, base, draft;
 
 	if (_vm->_gameId != GID_LOOM && _vm->_gameId != GID_LOOM256) {
-		Debug_Printf("Command only works with Loom/LoomCD\n");
+		DebugPrintf("Command only works with Loom/LoomCD\n");
 		return true;
 	}
 
@@ -1032,7 +789,7 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 			// the distaff, but I don't know if that's a safe
 			// thing to do.
 
-			Debug_Printf("Learned all drafts and notes.\n");
+			DebugPrintf("Learned all drafts and notes.\n");
 			return true;
 		}
 
@@ -1044,7 +801,7 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 		if (strcmp(argv[1], "fix") == 0) {
 			for (i = 0; i < 16; i++)
 				_vm->_scummVars[base + 2 * i + 1] = odds[i];
-			Debug_Printf(
+			DebugPrintf(
 				"An attempt has been made to repair\n"
 				"the internal drafts data structure.\n"
 				"Continue on your own risk.\n");
@@ -1056,7 +813,7 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 
 	for (i = 0; i < 16; i++) {
 		draft = _vm->_scummVars[base + i * 2];
-		Debug_Printf("%d %-13s %c%c%c%c %c%c %5d %c\n",
+		DebugPrintf("%d %-13s %c%c%c%c %c%c %5d %c\n",
 			base + 2 * i,
 			names[i],
 			notes[draft & 0x0007],
@@ -1069,57 +826,6 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 			(_vm->_scummVars[base + 2 * i + 1] != odds[i]) ? '!' : ' ');
 	}
 
-	return true;
-}
-
-// returns true if something has been completed
-// completion has to be delete[]-ed then
-bool ScummDebugger::TabComplete(const char *input, char*& completion) {
-	// very basic tab completion
-	// for now it just supports command completions
-
-	// adding completions of command parameters would be nice (but hard) :-)
-	// maybe also give a list of possible command completions?
-	//   (but this will require changes to console)
-
-	if (strchr(input, ' '))
-		return false; // already finished the first word
-
-	unsigned int inputlen = strlen(input);
-
-	unsigned int matchlen = 0;
-	char match[30]; // the max. command name is 30 chars
-
-	for (int i=0; i < _dcmd_count; i++) {
-		if (!strncmp(_dcmds[i].name, input, inputlen)) {
-			unsigned int commandlen = strlen(_dcmds[i].name);
-			if (commandlen == inputlen) { // perfect match
-				return false;
-			}
-			if (commandlen > inputlen) { // possible match
-				// no previous match
-				if (matchlen == 0) {
-					strcpy(match, _dcmds[i].name + inputlen);
-					matchlen = commandlen - inputlen;
-				} else {
-					// take common prefix of previous match and this command
-					unsigned int j;
-					for (j = 0; j < matchlen; j++) {
-						if (match[j] != _dcmds[i].name[inputlen + j]) break;
-					}
-					matchlen = j;
-				}
-				if (matchlen == 0)
-					return false;
-			}
-		}
-	}
-	if (matchlen == 0)
-		return false;
-
-	completion = new char[matchlen+1];
-	memcpy(completion, match, matchlen);
-	completion[matchlen] = 0;
 	return true;
 }
 

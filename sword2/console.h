@@ -20,19 +20,10 @@
 #ifndef	C_ONSOLE_H
 #define	C_ONSOLE_H
 
+#include "common/debugger.h"
 #include "bs2/memory.h"
 
-// Choose between text console or graphical console
-#define USE_CONSOLE 1
-
-#if USE_CONSOLE
-	#include "gui/console.h"
-	#define Debug_Printf g_sword2->_debugger->_debuggerDialog->printf
-#else
-	#define Debug_Printf printf
-#endif
-
-class ConsoleDialog;
+#define Debug_Printf g_sword2->_debugger->DebugPrintf
 
 namespace Sword2 {
 
@@ -40,53 +31,16 @@ extern bool grabbingSequences;
 extern bool wantSfxDebug;	// sfx debug file enabled/disabled from console
 
 class Sword2Engine;
-class Debugger;
 
-typedef bool (Debugger::*DebugProc)(int argc, const char **argv);
-
-enum {
-	DVAR_INT,
-	DVAR_BOOL,
-	DVAR_INTARRAY,
-	DVAR_STRING
-};
-
-struct DVar {
-	char name[30];
-	void *variable;
-	int type, optional;
-};
-
-struct DCmd {
-	char name[30];
-	DebugProc function;
-};
-
-class Debugger {
+class Debugger : public Common::Debugger<Debugger> {
 public:
 	Debugger(Sword2Engine *s);
 
-	void onFrame();
-	void attach(const char *entry = 0);
-
-	bool isAttached() const { return _isAttached; }
-
 protected:
 	Sword2Engine *_vm;
-	int _frame_countdown, _dcmd_count;
-	DCmd _dcmds[256];
-	bool _detach_now;
-	bool _isAttached;
-	char *_errStr;
-public:
-	ConsoleDialog *_debuggerDialog;	// Should be protected, but is public now for Debug_Printf
 
-protected:
-	void enter();
-	void detach();
-
-	void DCmd_Register(const char *cmdname, DebugProc pointer);
-	bool RunCommand(const char *input);
+	virtual void preEnter();
+	virtual void postEnter();
 
 	// Commands
 	bool Cmd_Exit(int argc, const char **argv);
@@ -132,13 +86,6 @@ protected:
 	bool Cmd_English(int argc, const char **argv);
 	bool Cmd_Finnish(int argc, const char **argv);
 	bool Cmd_Polish(int argc, const char **argv);
-
-#if USE_CONSOLE
-	static bool debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon);
-	static bool debuggerCompletionCallback(ConsoleDialog *console, const char *input, char*& completion, void *refCon);
-#endif
-
-	bool TabComplete(const char *input, char*& completion);
 };
 
 } // End of namespace Sword2

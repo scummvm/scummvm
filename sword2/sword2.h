@@ -34,6 +34,8 @@ enum BSGameId {
 	GID_SWORD2_DEMO
 };
 
+class NewGui;
+
 namespace Sword2 {
 
 // Bodge for PCF76 version so that their demo CD can be labelled "PCF76"

@@ -18,64 +18,25 @@
  * $Header$
  */
 
-#ifndef DEBUG_H
-#define DEBUG_H
+#ifndef DEBUGGER_H
+#define DEBUGGER_H
 
-class ConsoleDialog;
+#include "common/debugger.h"
 
 namespace Scumm {
 
-// Choose between text console or ScummConsole
-#define USE_CONSOLE	1
-
 class ScummEngine;
-class ScummDebugger;
 
-typedef bool (ScummDebugger::*DebugProc)(int argc, const char **argv);
-
-enum {
-	DVAR_INT,
-	DVAR_BOOL,
-	DVAR_INTARRAY,
-	DVAR_STRING
-};
-
-struct DVar {
-	char name[30];
-	void *variable;
-	int type, optional;
-};
-
-struct DCmd {
-	char name[30];
-	DebugProc function;
-};
-
-class ScummDebugger {
+class ScummDebugger : public Common::Debugger<ScummDebugger> {
 public:
 	ScummDebugger(ScummEngine *s);
 	
-	void onFrame();
-	void attach(const char *entry = 0);
-	
-	bool isAttached() const { return _isAttached; }
-
 protected:
 	ScummEngine *_vm;
-	int _frame_countdown, _dvar_count, _dcmd_count;
-	DVar _dvars[256];
-	DCmd _dcmds[256];
-	bool _detach_now;
-	bool _isAttached;
-	char *_errStr;
-	ConsoleDialog *_debuggerDialog;
+	bool  _old_soundsPaused;
 
-	void enter();
-	void detach();
-
-	void DVar_Register(const char *varname, void *pointer, int type, int optional);
-	void DCmd_Register(const char *cmdname, DebugProc pointer);
-	bool RunCommand(const char *input);
+	virtual void preEnter();
+	virtual void postEnter();
 
 	// Commands
 	bool Cmd_Exit(int argc, const char **argv);
@@ -106,14 +67,6 @@ protected:
 	
 	void printBox(int box);
 	void drawBox(int box);
-
-#if USE_CONSOLE
-	static bool debuggerInputCallback(ConsoleDialog *console, const char *input, void *refCon);
-	static bool debuggerCompletionCallback(ConsoleDialog *console, const char *input, char*& completion, void *refCon);
-#endif
-
-	bool TabComplete(const char *input, char*& completion);
-
 };
 
 } // End of namespace Scumm
