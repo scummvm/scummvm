@@ -304,7 +304,7 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 {
 	switch (cmd) {
 	case kSaveCmd:
-		if (_savegameList->getSelectedString()[0] != 0) {
+		if (_savegameList->getSelected() > 0 && !_savegameList->getSelectedString().isEmpty()) {
 			Scumm *s = _gui->getScumm();
 			s->_saveLoadSlot = _savegameList->getSelected();
 			s->_saveLoadCompatible = false;
@@ -314,7 +314,7 @@ void SaveLoadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		}
 		break;
 	case kLoadCmd:
-		if (_savegameList->getSelectedString()[0] != 0) {
+		if (_savegameList->getSelected() > 0 && !_savegameList->getSelectedString().isEmpty()) {
 			Scumm *s = _gui->getScumm();
 			s->_saveLoadSlot = _savegameList->getSelected();
 			s->_saveLoadCompatible = false;

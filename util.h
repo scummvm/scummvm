@@ -103,6 +103,8 @@ public:
 		_size = 0;
 		_capacity = 0;
 	}
+	
+	bool isEmpty() const	{ return (_size == 0); }
 
 protected:
 	void ensureCapacity(int new_len)
@@ -149,6 +151,8 @@ public:
 	
 	void deleteLastChar();
 	void clear();
+
+	bool isEmpty() const	{ return (_len == 0); }
 
 protected:
 	void ensureCapacity(int new_len, bool keep_old);
