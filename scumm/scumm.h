@@ -25,8 +25,10 @@
 
 #include "common/engine.h"
 #include "common/gameDetector.h"
-#include "common/timer.h"
 #include "common/file.h"
+#include "common/map.h"
+#include "common/str.h"
+#include "common/timer.h"
 #include "common/util.h"
 
 class GameDetector;
@@ -42,6 +44,8 @@ class Bundle;
 class ScummDebugger;
 class Serializer;
 struct FindObjectInRoom;
+
+typedef ScummVM::Map<ScummVM::String, int> ObjectIDMap;
 
 // Use g_scumm from error() ONLY
 extern Scumm *g_scumm;
@@ -404,6 +408,7 @@ public:
 	void startScene(int room, Actor *a, int b);
 	virtual void setupScummVars();
 	byte *_objectOwnerTable, *_objectRoomTable, *_objectStateTable;
+	ObjectIDMap _objectIDMap;
 	byte _numObjectsInRoom;
 	int8 _userPut;
 	int _resourceHeaderSize;

@@ -25,6 +25,8 @@
 #include "resource.h"
 #include "verbs.h"
 #include "scumm/sound.h"
+#include "common/map.h"
+#include "common/str.h"
 
 #include <stdio.h>
 
@@ -274,8 +276,13 @@ void Scumm::readIndexFile()
 			assert(num == _numGlobalObjects);
 
 			if (_features & GF_AFTER_V8) {	/* FIXME: Not sure.. */
+				char buffer[40];
 				for (i = 0; i < num; i++) {
-					_fileHandle.seek(40, SEEK_CUR);
+					_fileHandle.read(buffer, 40);
+					if (buffer[0]) {
+						// Add to object name-to-id map
+						_objectIDMap[buffer] = i;
+					}
 					_objectStateTable[i] = _fileHandle.readByte();
 					_objectRoomTable[i] = _fileHandle.readByte();
 					_classData[i] = _fileHandle.readUint32LE();
@@ -292,7 +299,7 @@ void Scumm::readIndexFile()
 					_objectOwnerTable[i] &= OF_OWNER_MASK;
 				}
 			}
-
+			
 			if (!(_features & GF_AFTER_V8)) {
 				_fileHandle.read(_classData, num * sizeof(uint32));
 

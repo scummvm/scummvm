@@ -459,9 +459,9 @@ void Scumm::loadRoomObjects()
 
 		imhd = (ImageHeader *)findResourceData(MKID('IMHD'), ptr);
 		if (_features & GF_AFTER_V8)
-			// FIXME - in v8, IMHD seems to contain no obj_id, but rather a name string
-			// EVIL HACK to allow loading of the first COMI room
-			obim_id = 1373 + i;
+			// In V8, IMHD has no obj_id, but rather a name string. We map the name
+			// back to an object id using a table derived from the DOBJ resource.
+			obim_id = _objectIDMap[imhd->v8.name];
 		else if (_features & GF_AFTER_V7)
 			obim_id = READ_LE_UINT16(&imhd->v7.obj_id);
 		else
@@ -901,11 +901,7 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 				}
 			} else {
 				cdhd = (CodeHeader *)findResourceData(MKID('CDHD'), obcdptr);
-				if (_features & GF_AFTER_V8)
-					// FIXME - in v8, IMHD seems to contain no obj_id, but rather a name string
-					id2 = 0;
-//					id2 = READ_LE_UINT32(&(cdhd->v8.obj_id));
-				else if (_features & GF_AFTER_V7)
+				if (_features & GF_AFTER_V7)
 					id2 = READ_LE_UINT16(&(cdhd->v7.obj_id));
 				else if (_features & GF_AFTER_V6)
 					id2 = READ_LE_UINT16(&(cdhd->v6.obj_id));
@@ -942,9 +938,9 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 				}
 			} else {
 				if (_features & GF_AFTER_V8)
-					// FIXME - in v8, IMHD seems to contain no obj_id, but rather a name string
-					id3 = 0;
-//					id3 = READ_LE_UINT32(&imhd->v8.obj_id);
+					// In V8, IMHD has no obj_id, but rather a name string. We map the name
+					// back to an object id using a table derived from the DOBJ resource.
+					id3 = _objectIDMap[imhd->v8.name];
 				else if (_features & GF_AFTER_V7)
 					id3 = READ_LE_UINT16(&imhd->v7.obj_id);
 				else
