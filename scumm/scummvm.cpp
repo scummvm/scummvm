@@ -2066,7 +2066,7 @@ void Scumm::launch() {
 	if (_features & GF_NEW_COSTUMES)
 		_maxHeapThreshold = 1500000;
 	else
-		_maxHeapThreshold = 450000;
+		_maxHeapThreshold = 550000;
 #endif
 	_minHeapThreshold = 400000;
 
