@@ -467,6 +467,7 @@ void OSystem_SDL_Common::set_mouse_pos(int x, int y) {
 		_mouseCurState.x = x;
 		_mouseCurState.y = y;
 		undraw_mouse();
+		update_screen();
 	}
 }
 
@@ -713,6 +714,7 @@ bool OSystem_SDL_Common::poll_event(Event *event) {
 			return true;
 
 		case SDL_MOUSEBUTTONDOWN:
+printf("Mousedown at %d,%d, button %d\n", ev.button.x, ev.button.y, ev.button.button);
 			if (ev.button.button == SDL_BUTTON_LEFT)
 				event->event_code = EVENT_LBUTTONDOWN;
 			else if (ev.button.button == SDL_BUTTON_RIGHT)
