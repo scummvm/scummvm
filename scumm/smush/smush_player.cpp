@@ -196,7 +196,7 @@ static StringResource *getStrings(const char *file, const char *directory, bool 
 SmushPlayer *player;
 
 void SmushPlayer::timerCallback(void *refCon) {
-	Scumm *scumm = (Scumm *)refCon;
+	ScummEngine *scumm = (ScummEngine *)refCon;
 	if (!scumm->_smushPlay)
 		return;
 
@@ -205,7 +205,7 @@ void SmushPlayer::timerCallback(void *refCon) {
 	player->_smushProcessFrame = false;
 }
 
-SmushPlayer::SmushPlayer(Scumm *scumm, int speed, bool subtitles) {
+SmushPlayer::SmushPlayer(ScummEngine *scumm, int speed, bool subtitles) {
 	player = this;
 
 	_scumm = scumm;

@@ -79,7 +79,7 @@ class Actor {
 public:
 	static byte kInvalidBox;
 	
-	static void initActorClass(Scumm *scumm);
+	static void initActorClass(ScummEngine *scumm);
 
 public:
 	Common::Point _pos;
@@ -119,7 +119,7 @@ protected:
 	ActorWalkData walkdata;
 	int16 animVariable[16];
 
-	static Scumm *_vm;
+	static ScummEngine *_vm;
 
 public:
 

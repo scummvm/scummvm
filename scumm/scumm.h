@@ -45,7 +45,7 @@ class NewGui;
 class Player_V2;
 class Player_V2A;
 class Player_V3A;
-class Scumm;
+class ScummEngine;
 class ScummDebugger;
 class Serializer;
 class Sound;
@@ -57,7 +57,7 @@ struct FindObjectInRoom;
 typedef Common::Map<Common::String, int> ObjectIDMap;
 
 // Use g_scumm from error() ONLY
-extern Scumm *g_scumm;
+extern ScummEngine *g_scumm;
 
 /* System Wide Constants */
 enum {
@@ -250,7 +250,7 @@ struct LangIndexNode {
 	int32 offset;
 };
 
-class Scumm : public Engine {
+class ScummEngine : public Engine {
 	friend class ScummDebugger;
 	friend class SmushPlayer;
 	void errorString(const char *buf_input, char *buf_output);
@@ -291,8 +291,8 @@ protected:
 
 public:
 	// Constructor / Destructor
-	Scumm(GameDetector *detector, OSystem *syst);
-	virtual ~Scumm();
+	ScummEngine(GameDetector *detector, OSystem *syst);
+	virtual ~ScummEngine();
 
 	// Init functions
 	void scummInit();
@@ -715,7 +715,7 @@ protected:
 	void setVerbObject(uint room, uint object, uint verb);
 
 
-	// TODO: This should be moved into Scumm_v2 if possible
+	// TODO: This should be moved into ScummEngine_v2 if possible
 	V2MouseoverBox v2_mouseover_boxes[7];
 	int8 v2_mouseover_box;
 

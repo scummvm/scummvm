@@ -25,7 +25,7 @@
 #include "scumm.h"
 #include "intern.h"
 
-void Scumm::setupScummVars() {
+void ScummEngine::setupScummVars() {
 	VAR_KEYPRESS = 0;
 	VAR_EGO = 1;
 	VAR_CAMERA_POS_X = 2;
@@ -99,7 +99,7 @@ void Scumm::setupScummVars() {
 	VAR_VERSION = 75;
 }
 
-void Scumm_v2::setupScummVars() {
+void ScummEngine_v2::setupScummVars() {
 	VAR_EGO = 0;
 	VAR_CAMERA_POS_X = 2;
 	VAR_HAVE_MSG = 3;
@@ -136,9 +136,9 @@ void Scumm_v2::setupScummVars() {
 	VAR_TALK_ACTOR = 41;
 }
 
-void Scumm_v6::setupScummVars() {
+void ScummEngine_v6::setupScummVars() {
 	// Many vars are the same as in V5 games, so just call the inherited method first
-	Scumm::setupScummVars();
+	ScummEngine::setupScummVars();
 
 	VAR_V6_SCREEN_WIDTH = 41;
 	VAR_V6_SCREEN_HEIGHT = 54;
@@ -154,7 +154,7 @@ void Scumm_v6::setupScummVars() {
 	VAR_TIMEDATE_MINUTE = 126;
 }
 
-void Scumm_v7::setupScummVars() {
+void ScummEngine_v7::setupScummVars() {
 	VAR_MOUSE_X = 1;
 	VAR_MOUSE_Y = 2;
 	VAR_VIRT_MOUSE_X = 3;
@@ -238,7 +238,7 @@ void Scumm_v7::setupScummVars() {
 	VAR_STRING2DRAW = 130;
 }
 
-void Scumm_v8::setupScummVars() {
+void ScummEngine_v8::setupScummVars() {
 	// VAR_ROOM_HEIGHT = 1;
 	// VAR_ROOM_WIDTH = 2;
 

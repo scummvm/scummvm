@@ -50,7 +50,7 @@ struct BompHeader {			/* Bomp header */
 #endif
 
 
-bool Scumm::getClass(int obj, int cls) const {
+bool ScummEngine::getClass(int obj, int cls) const {
 	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in getClass");
 	cls &= 0x7F;
 	checkRange(32, 1, cls, "Class %d out of range in getClass");
@@ -77,7 +77,7 @@ bool Scumm::getClass(int obj, int cls) const {
 	return (_classData[obj] & (1 << (cls - 1))) != 0;
 }
 
-void Scumm::putClass(int obj, int cls, bool set) {
+void ScummEngine::putClass(int obj, int cls, bool set) {
 	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in putClass");
 	cls &= 0x7F;
 	checkRange(32, 1, cls, "Class %d out of range in putClass");
@@ -111,12 +111,12 @@ void Scumm::putClass(int obj, int cls, bool set) {
 	}
 }
 
-int Scumm::getOwner(int obj) const {
+int ScummEngine::getOwner(int obj) const {
 	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in getOwner");
 	return _objectOwnerTable[obj];
 }
 
-void Scumm::putOwner(int obj, int owner) {
+void ScummEngine::putOwner(int obj, int owner) {
 	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in putOwner");
 	checkRange(0xFF, 0, owner, "Owner %d out of range in putOwner");
 	_objectOwnerTable[obj] = owner;
@@ -126,7 +126,7 @@ void Scumm::putOwner(int obj, int owner) {
 #define BYPASS_COPY_PROT
 #endif
 
-int Scumm::getState(int obj) {
+int ScummEngine::getState(int obj) {
 	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in getState");
 
 #if defined(BYPASS_COPY_PROT)
@@ -146,18 +146,18 @@ int Scumm::getState(int obj) {
 	return _objectStateTable[obj];
 }
 
-void Scumm::putState(int obj, int state) {
+void ScummEngine::putState(int obj, int state) {
 	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in putState");
 	checkRange(0xFF, 0, state, "State %d out of range in putState");
 	_objectStateTable[obj] = state;
 }
 
-int Scumm::getObjectRoom(int obj) const {
+int ScummEngine::getObjectRoom(int obj) const {
 	checkRange(_numGlobalObjects - 1, 0, obj, "Object %d out of range in getObjectRoom");
 	return _objectRoomTable[obj];
 }
 
-int Scumm::getObjectIndex(int object) const {
+int ScummEngine::getObjectIndex(int object) const {
 	int i;
 
 	if (object < 1)
@@ -170,7 +170,7 @@ int Scumm::getObjectIndex(int object) const {
 	return -1;
 }
 
-int Scumm::whereIsObject(int object) const {
+int ScummEngine::whereIsObject(int object) const {
 	int i;
 
 	if (object >= _numGlobalObjects)
@@ -196,7 +196,7 @@ int Scumm::whereIsObject(int object) const {
 	return WIO_NOT_FOUND;
 }
 
-int Scumm::getObjectOrActorXY(int object, int &x, int &y) {
+int ScummEngine::getObjectOrActorXY(int object, int &x, int &y) {
 	if (object < _numActors) {
 		Actor *act = derefActorSafe(object, "getObjectOrActorXY");
 		if (act)
@@ -222,7 +222,7 @@ int Scumm::getObjectOrActorXY(int object, int &x, int &y) {
  * Return the position of an object.
  * Returns X, Y and direction in angles
  */
-void Scumm::getObjectXYPos(int object, int &x, int &y, int &dir) {
+void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 	int idx = getObjectIndex(object);
 	assert(idx >= 0);
 	ObjectData &od = _objs[idx];
@@ -271,7 +271,7 @@ static int getDist(int x, int y, int x2, int y2) {
 	return MAX(a, b);
 }
 
-int Scumm::getObjActToObjActDist(int a, int b) {
+int ScummEngine::getObjActToObjActDist(int a, int b) {
 	int x, y, x2, y2, dist;
 	Actor *acta = NULL;
 	Actor *actb = NULL;
@@ -312,7 +312,7 @@ int Scumm::getObjActToObjActDist(int a, int b) {
 	return dist;
 }
 
-int Scumm::findObject(int x, int y) {
+int ScummEngine::findObject(int x, int y) {
 	int i, b;
 	byte a;
 	const int mask = (_version <= 2) ? 0x8 : 0xF;
@@ -337,7 +337,7 @@ int Scumm::findObject(int x, int y) {
 	return 0;
 }
 
-void Scumm::drawRoomObject(int i, int arg) {
+void ScummEngine::drawRoomObject(int i, int arg) {
 	ObjectData *od;
 	byte a;
 	const int mask = (_version <= 2) ? 0x8 : 0xF;
@@ -356,7 +356,7 @@ void Scumm::drawRoomObject(int i, int arg) {
 	} while ((od->state & mask) == a);
 }
 
-void Scumm::drawRoomObjects(int arg) {
+void ScummEngine::drawRoomObjects(int arg) {
 	int i;
 	const int mask = (_version <= 2) ? 0x8 : 0xF;
 
@@ -391,7 +391,7 @@ static const uint32 IMxx_tags[] = {
 	MKID('IM0F')
 };
 
-void Scumm::drawObject(int obj, int arg) {
+void ScummEngine::drawObject(int obj, int arg) {
 	ObjectData &od = _objs[obj];
 	int xpos, ypos, height, width;
 	const byte *ptr;
@@ -455,7 +455,7 @@ void Scumm::drawObject(int obj, int arg) {
 	}
 }
 
-void Scumm::clearRoomObjects() {
+void ScummEngine::clearRoomObjects() {
 	int i;
 
 	if (_features & GF_SMALL_HEADER) {
@@ -483,7 +483,7 @@ void Scumm::clearRoomObjects() {
 	}
 }
 
-void Scumm::loadRoomObjects() {
+void ScummEngine::loadRoomObjects() {
 	int i, j;
 	ObjectData *od;
 	const byte *ptr;
@@ -575,7 +575,7 @@ void Scumm::loadRoomObjects() {
 	CHECK_HEAP
 }
 
-void Scumm::loadRoomObjectsOldBundle() {
+void ScummEngine::loadRoomObjectsOldBundle() {
 	int i;
 	ObjectData *od;
 	const byte *room, *ptr;
@@ -615,7 +615,7 @@ void Scumm::loadRoomObjectsOldBundle() {
 	CHECK_HEAP
 }
 
-void Scumm::loadRoomObjectsSmall() {
+void ScummEngine::loadRoomObjectsSmall() {
 	int i, j;
 	ObjectData *od;
 	const byte *ptr;
@@ -675,7 +675,7 @@ void Scumm::loadRoomObjectsSmall() {
 	CHECK_HEAP
 }
 
-void Scumm::setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr) {
+void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr) {
 	const CodeHeader *cdhd = NULL;
 	const ImageHeader *imhd = NULL;
 
@@ -789,7 +789,7 @@ void Scumm::setupRoomObject(ObjectData *od, const byte *room, const byte *search
 	od->fl_object_index = 0;
 }
 
-void Scumm::fixObjectFlags() {
+void ScummEngine::fixObjectFlags() {
 	int i;
 	ObjectData *od = &_objs[1];
 	for (i = 1; i < _numLocalObjects; i++, od++) {
@@ -798,7 +798,7 @@ void Scumm::fixObjectFlags() {
 	}
 }
 
-void Scumm::processDrawQue() {
+void ScummEngine::processDrawQue() {
 	int i, j;
 	for (i = 0; i < _drawObjectQueNr; i++) {
 		j = _drawObjectQue[i];
@@ -808,7 +808,7 @@ void Scumm::processDrawQue() {
 	_drawObjectQueNr = 0;
 }
 
-void Scumm::clearOwnerOf(int obj) {
+void ScummEngine::clearOwnerOf(int obj) {
 	int i, j;
 	uint16 *a;
 
@@ -849,7 +849,7 @@ void Scumm::clearOwnerOf(int obj) {
 	}
 }
 
-void Scumm::removeObjectFromRoom(int obj) {
+void ScummEngine::removeObjectFromRoom(int obj) {
 	int i, j, strip;
 
 	for (i = 1; i < _numLocalObjects; i++) {
@@ -873,17 +873,17 @@ void Scumm::removeObjectFromRoom(int obj) {
 	}
 }
 
-void Scumm::addObjectToDrawQue(int object) {
+void ScummEngine::addObjectToDrawQue(int object) {
 	_drawObjectQue[_drawObjectQueNr++] = object;
 	if ((unsigned int)_drawObjectQueNr > ARRAYSIZE(_drawObjectQue))
 		error("Draw Object Que overflow");
 }
 
-void Scumm::clearDrawObjectQueue() {
+void ScummEngine::clearDrawObjectQueue() {
 	_drawObjectQueNr = 0;
 }
 
-const byte *Scumm::getObjOrActorName(int obj) {
+const byte *ScummEngine::getObjOrActorName(int obj) {
 	byte *objptr;
 	int i;
 
@@ -920,7 +920,7 @@ const byte *Scumm::getObjOrActorName(int obj) {
 	return findResourceData(MKID('OBNA'), objptr);
 }
 
-uint32 Scumm::getOBCDOffs(int object) const {
+uint32 ScummEngine::getOBCDOffs(int object) const {
 	int i;
 
 	if (_objectOwnerTable[object] != OF_OWNER_ROOM)
@@ -935,7 +935,7 @@ uint32 Scumm::getOBCDOffs(int object) const {
 	return 0;
 }
 
-byte *Scumm::getOBCDFromObject(int obj) {
+byte *ScummEngine::getOBCDFromObject(int obj) {
 	int i;
 	byte *ptr;
 
@@ -962,7 +962,7 @@ byte *Scumm::getOBCDFromObject(int obj) {
 	return 0;
 }
 
-const byte *Scumm::getOBIMFromObject(const ObjectData &od) {
+const byte *ScummEngine::getOBIMFromObject(const ObjectData &od) {
 	const byte *ptr;
 
 	if (od.fl_object_index) {
@@ -976,7 +976,7 @@ const byte *Scumm::getOBIMFromObject(const ObjectData &od) {
 	return ptr;
 }
 
-const byte *Scumm::getObjectImage(const byte *ptr, int state) {
+const byte *ScummEngine::getObjectImage(const byte *ptr, int state) {
 	assert(ptr);
 	if (_features & GF_OLD_BUNDLE)
 		ptr += 0;
@@ -1007,7 +1007,7 @@ const byte *Scumm::getObjectImage(const byte *ptr, int state) {
 	return ptr;
 }
 
-void Scumm::addObjectToInventory(uint obj, uint room) {
+void ScummEngine::addObjectToInventory(uint obj, uint room) {
 	int idx, slot;
 	uint32 size;
 	const byte *ptr;
@@ -1042,7 +1042,7 @@ void Scumm::addObjectToInventory(uint obj, uint room) {
 	CHECK_HEAP
 }
 
-void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint room) {
+void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint room) {
 
 	const CodeHeader *cdhd;
 	int i, numobj;
@@ -1177,7 +1177,7 @@ void Scumm::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id, uint 
 	}
 }
 
-int Scumm::getInventorySlot() {
+int ScummEngine::getInventorySlot() {
 	int i;
 	for (i = 1; i <= _maxInventoryItems; i++) {
 		if (_inventory[i] == 0)
@@ -1187,7 +1187,7 @@ int Scumm::getInventorySlot() {
 	return -1;
 }
 
-void Scumm::SamInventoryHack(int obj) {
+void ScummEngine::SamInventoryHack(int obj) {
 	// FIXME: Sam and Max hack
 	int base = 6;
 
@@ -1204,7 +1204,7 @@ void Scumm::SamInventoryHack(int obj) {
 	}
 }
 
-void Scumm::setOwnerOf(int obj, int owner) {
+void ScummEngine::setOwnerOf(int obj, int owner) {
 	ScriptSlot *ss;
 	if (owner == 0) {
 		clearOwnerOf(obj);
@@ -1223,7 +1223,7 @@ void Scumm::setOwnerOf(int obj, int owner) {
 	runInventoryScript(0);
 }
 
-int Scumm::getObjX(int obj) {
+int ScummEngine::getObjX(int obj) {
 	if (obj < _numActors) {
 		if (obj < 1)
 			return 0;									/* fix for indy4's map */
@@ -1237,7 +1237,7 @@ int Scumm::getObjX(int obj) {
 	}
 }
 
-int Scumm::getObjY(int obj) {
+int ScummEngine::getObjY(int obj) {
 	if (obj < _numActors) {
 		if (obj < 1)
 			return 0;									/* fix for indy4's map */
@@ -1251,11 +1251,11 @@ int Scumm::getObjY(int obj) {
 	}
 }
 
-int Scumm::getObjOldDir(int obj) {
+int ScummEngine::getObjOldDir(int obj) {
 	return newDirToOldDir(getObjNewDir(obj));
 }
 
-int Scumm::getObjNewDir(int obj) {
+int ScummEngine::getObjNewDir(int obj) {
 	int dir;
 	if (obj < _numActors) {
 		dir = derefActor(obj, "getObjNewDir")->getFacing();
@@ -1266,7 +1266,7 @@ int Scumm::getObjNewDir(int obj) {
 	return dir;
 }
 
-int Scumm::findInventory(int owner, int idx) {
+int ScummEngine::findInventory(int owner, int idx) {
 	int count = 1, i, obj;
 	for (i = 0; i != _maxInventoryItems; i++) {
 		obj = _inventory[i];
@@ -1276,7 +1276,7 @@ int Scumm::findInventory(int owner, int idx) {
 	return 0;
 }
 
-int Scumm::getInventoryCount(int owner) {
+int ScummEngine::getInventoryCount(int owner) {
 	int i, obj;
 	int count = 0;
 	for (i = 0; i != _maxInventoryItems; i++) {
@@ -1287,7 +1287,7 @@ int Scumm::getInventoryCount(int owner) {
 	return count;
 }
 
-void Scumm::setObjectState(int obj, int state, int x, int y) {
+void ScummEngine::setObjectState(int obj, int state, int x, int y) {
 	int i;
 
 	i = getObjectIndex(obj);
@@ -1305,7 +1305,7 @@ void Scumm::setObjectState(int obj, int state, int x, int y) {
 	putState(obj, state);
 }
 
-int Scumm::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f) {
+int ScummEngine::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e, int f) {
 	int i, j;
 	int x, y;
 	int x2, y2;
@@ -1335,7 +1335,7 @@ int Scumm::getDistanceBetween(bool is_obj_1, int b, int c, bool is_obj_2, int e,
 	return getDist(x, y, x2, y2) * 0xFF / ((i + j) >> 1);
 }
 
-void Scumm::setCursorImg(uint img, uint room, uint imgindex) {
+void ScummEngine::setCursorImg(uint img, uint room, uint imgindex) {
 	int w, h;
 	const byte *dataptr, *bomp;
 	uint32 size;
@@ -1382,7 +1382,7 @@ void Scumm::setCursorImg(uint img, uint room, uint imgindex) {
 
 }
 
-void Scumm::nukeFlObjects(int min, int max) {
+void ScummEngine::nukeFlObjects(int min, int max) {
 	ObjectData *od;
 	int i;
 
@@ -1396,7 +1396,7 @@ void Scumm::nukeFlObjects(int min, int max) {
 		}
 }
 
-void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth,
+void ScummEngine::enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth,
                           int objectHeight, int scaleX, int scaleY, int image, int mode) {
 	BlastObject *eo;
 	ObjectData *od;
@@ -1433,7 +1433,7 @@ void Scumm::enqueueObject(int objectNumber, int objectX, int objectY, int object
 	eo->mode = mode;
 }
 
-void Scumm::drawBlastObjects() {
+void ScummEngine::drawBlastObjects() {
 	BlastObject *eo;
 	int i;
 
@@ -1443,7 +1443,7 @@ void Scumm::drawBlastObjects() {
 	}
 }
 
-void Scumm::drawBlastObject(BlastObject *eo) {
+void ScummEngine::drawBlastObject(BlastObject *eo) {
 	VirtScreen *vs;
 	const byte *bomp, *ptr;
 	int objnum;
@@ -1517,7 +1517,7 @@ void Scumm::drawBlastObject(BlastObject *eo) {
 	updateDirtyRect(vs->number, bdd.x, bdd.x + bdd.srcwidth, bdd.y, bdd.y + bdd.srcheight, 0);
 }
 
-void Scumm::removeBlastObjects() {
+void ScummEngine::removeBlastObjects() {
 	BlastObject *eo;
 	int i;
 
@@ -1529,7 +1529,7 @@ void Scumm::removeBlastObjects() {
 	clearEnqueue();
 }
 
-void Scumm::removeBlastObject(BlastObject *eo) {
+void ScummEngine::removeBlastObject(BlastObject *eo) {
 	VirtScreen *vs = &virtscr[0];
 
 	int top, bottom, left, right;
@@ -1571,7 +1571,7 @@ void Scumm::removeBlastObject(BlastObject *eo) {
 	updateDirtyRect(0, left, right, top, bottom, USAGE_BIT_RESTORED);
 }
 
-int Scumm::findLocalObjectSlot() {
+int ScummEngine::findLocalObjectSlot() {
 	int i;
 
 	for (i = 1; i < _numLocalObjects; i++) {
@@ -1582,7 +1582,7 @@ int Scumm::findLocalObjectSlot() {
 	return -1;
 }
 
-int Scumm::findFlObjectSlot() {
+int ScummEngine::findFlObjectSlot() {
 	int i;
 	for (i = 1; i < _maxFLObject; i++) {
 		if (_baseFLObject[i] == NULL)
@@ -1592,7 +1592,7 @@ int Scumm::findFlObjectSlot() {
 	return -1;
 }
 
-void Scumm::loadFlObject(uint object, uint room) {
+void ScummEngine::loadFlObject(uint object, uint room) {
 	FindObjectInRoom foir;
 	int slot, objslot;
 	ObjectData *od;

@@ -30,7 +30,7 @@
 #include "scumm/scumm.h"
 
 /* Start executing script 'script' with the given parameters */
-void Scumm::runScript(int script, bool freezeResistant, bool recursive, int *lvarptr) {
+void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, int *lvarptr) {
 	ScriptSlot *s;
 	byte *scriptPtr;
 	uint32 scriptOffs;
@@ -71,7 +71,7 @@ void Scumm::runScript(int script, bool freezeResistant, bool recursive, int *lva
 	runScriptNested(slot);
 }
 
-void Scumm::runObjectScript(int object, int entry, bool freezeResistant, bool recursive, int *vars, int slot) {
+void ScummEngine::runObjectScript(int object, int entry, bool freezeResistant, bool recursive, int *vars, int slot) {
 	ScriptSlot *s;
 	uint32 obcd;
 	int where, offs;
@@ -118,7 +118,7 @@ void Scumm::runObjectScript(int object, int entry, bool freezeResistant, bool re
 #define BYPASS_COPY_PROT
 #endif
 
-void Scumm::initializeLocals(int slot, int *vars) {
+void ScummEngine::initializeLocals(int slot, int *vars) {
 	int i;
 	if (!vars) {
 		for (i = 0; i < 16; i++)
@@ -129,7 +129,7 @@ void Scumm::initializeLocals(int slot, int *vars) {
 	}
 }
 
-int Scumm::getVerbEntrypoint(int obj, int entry) {
+int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 	const byte *objptr, *verbptr;
 	int verboffs;
 
@@ -194,7 +194,7 @@ int Scumm::getVerbEntrypoint(int obj, int entry) {
 }
 
 /* Stop script 'script' */
-void Scumm::stopScript(int script) {
+void ScummEngine::stopScript(int script) {
 	ScriptSlot *ss;
 	NestedScript *nest;
 	int i, num;
@@ -231,7 +231,7 @@ void Scumm::stopScript(int script) {
 }
 
 /* Stop an object script 'script'*/
-void Scumm::stopObjectScript(int script) {
+void ScummEngine::stopObjectScript(int script) {
 	ScriptSlot *ss;
 	NestedScript *nest;
 	int i, num;
@@ -268,7 +268,7 @@ void Scumm::stopObjectScript(int script) {
 }
 
 /* Return a free script slot */
-int Scumm::getScriptSlot() {
+int ScummEngine::getScriptSlot() {
 	ScriptSlot *ss;
 	int i;
 
@@ -282,7 +282,7 @@ int Scumm::getScriptSlot() {
 }
 
 /* Run script 'script' nested - eg, within the parent script.*/
-void Scumm::runScriptNested(int script) {
+void ScummEngine::runScriptNested(int script) {
 	NestedScript *nest;
 	ScriptSlot *slot;
 
@@ -329,7 +329,7 @@ void Scumm::runScriptNested(int script) {
 	_currentScript = 0xFF;
 }
 
-void Scumm::updateScriptPtr() {
+void ScummEngine::updateScriptPtr() {
 	if (_currentScript == 0xFF)
 		return;
 
@@ -337,7 +337,7 @@ void Scumm::updateScriptPtr() {
 }
 
 /* Get the code pointer to a script */
-void Scumm::getScriptBaseAddress() {
+void ScummEngine::getScriptBaseAddress() {
 	ScriptSlot *ss;
 	int idx;
 
@@ -386,14 +386,14 @@ void Scumm::getScriptBaseAddress() {
 }
 
 
-void Scumm::getScriptEntryPoint() {
+void ScummEngine::getScriptEntryPoint() {
 	if (_currentScript == 0xFF)
 		return;
 	_scriptPointer = _scriptOrgPointer + vm.slot[_currentScript].offs;
 }
 
 /* Execute a script - Read opcode, and execute it from the table */
-void Scumm::executeScript() {
+void ScummEngine::executeScript() {
 	int c;
 	while (_currentScript != 0xFF) {
 		
@@ -422,7 +422,7 @@ void Scumm::executeScript() {
 	CHECK_HEAP;
 }
 
-byte Scumm::fetchScriptByte() {
+byte ScummEngine::fetchScriptByte() {
 	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
 		uint32 oldoffs = _scriptPointer - _scriptOrgPointer;
 		getScriptBaseAddress();
@@ -431,7 +431,7 @@ byte Scumm::fetchScriptByte() {
 	return *_scriptPointer++;
 }
 
-uint Scumm::fetchScriptWord() {
+uint ScummEngine::fetchScriptWord() {
 	int a;
 	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
 		uint32 oldoffs = _scriptPointer - _scriptOrgPointer;
@@ -443,11 +443,11 @@ uint Scumm::fetchScriptWord() {
 	return a;
 }
 
-int Scumm::fetchScriptWordSigned() {
+int ScummEngine::fetchScriptWordSigned() {
 	return (int16)fetchScriptWord();
 }
 
-int Scumm::readVar(uint var) {
+int ScummEngine::readVar(uint var) {
 	int a;
 #if defined(BYPASS_COPY_PROT)
 	static byte copyprotbypassed = false;
@@ -529,7 +529,7 @@ int Scumm::readVar(uint var) {
 	return -1;
 }
 
-void Scumm::writeVar(uint var, int value) {
+void ScummEngine::writeVar(uint var, int value) {
 	if (!(var & 0xF000)) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");
 
@@ -592,7 +592,7 @@ void Scumm::writeVar(uint var, int value) {
 	error("Illegal varbits (w)");
 }
 
-void Scumm::getResultPos() {
+void ScummEngine::getResultPos() {
 	int a;
 
 	_resultVarNumber = fetchScriptWord();
@@ -607,16 +607,16 @@ void Scumm::getResultPos() {
 	}
 }
 
-void Scumm::setResult(int value) {
+void ScummEngine::setResult(int value) {
 	writeVar(_resultVarNumber, value);
 }
 
-void Scumm::push(int a) {
+void ScummEngine::push(int a) {
 	assert(_scummStackPos >= 0 && _scummStackPos < ARRAYSIZE(_scummStack));
 	_scummStack[_scummStackPos++] = a;
 }
 
-int Scumm::pop() {
+int ScummEngine::pop() {
 	if (_scummStackPos < 1 || _scummStackPos > ARRAYSIZE(_scummStack)) {
 		error("No items on stack to pop() for %s (0x%X) at [%d-%d]", getOpcodeDesc(_opcode), _opcode, _roomResource, vm.slot[_currentScript].number);
 	}
@@ -624,7 +624,7 @@ int Scumm::pop() {
 	return _scummStack[--_scummStackPos];
 }
 
-void Scumm::stopObjectCode() {
+void ScummEngine::stopObjectCode() {
 	ScriptSlot *ss;
 
 	ss = &vm.slot[_currentScript];
@@ -649,7 +649,7 @@ void Scumm::stopObjectCode() {
 	_currentScript = 0xFF;
 }
 
-void Scumm::runInventoryScript(int i) {
+void ScummEngine::runInventoryScript(int i) {
 	if (_version <= 2) {
 		redrawV2Inventory();
 	} else {
@@ -661,7 +661,7 @@ void Scumm::runInventoryScript(int i) {
 	}
 }
 
-void Scumm::freezeScripts(int flag) {
+void ScummEngine::freezeScripts(int flag) {
 	int i;
 
 	if (_version <= 2) {
@@ -690,7 +690,7 @@ void Scumm::freezeScripts(int flag) {
 	}
 }
 
-void Scumm::unfreezeScripts() {
+void ScummEngine::unfreezeScripts() {
 	int i;
 
 	if (_version <= 2) {
@@ -716,7 +716,7 @@ void Scumm::unfreezeScripts() {
 }
 
 
-void Scumm::runAllScripts() {
+void ScummEngine::runAllScripts() {
 	int i;
 
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++)
@@ -737,7 +737,7 @@ void Scumm::runAllScripts() {
 	}
 }
 
-void Scumm::runExitScript() {
+void ScummEngine::runExitScript() {
 	if (_version > 2 && VAR(VAR_EXIT_SCRIPT))
 		runScript(VAR(VAR_EXIT_SCRIPT), 0, 0, 0);
 	if (_EXCD_offs) {
@@ -770,7 +770,7 @@ void Scumm::runExitScript() {
 		runScript(VAR(VAR_EXIT_SCRIPT2), 0, 0, 0);
 }
 
-void Scumm::runEntryScript() {
+void ScummEngine::runEntryScript() {
 	if (_version > 2 && VAR(VAR_ENTRY_SCRIPT))
 		runScript(VAR(VAR_ENTRY_SCRIPT), 0, 0, 0);
 	if (_ENCD_offs) {
@@ -789,7 +789,7 @@ void Scumm::runEntryScript() {
 		runScript(VAR(VAR_ENTRY_SCRIPT2), 0, 0, 0);
 }
 
-void Scumm::killScriptsAndResources() {
+void ScummEngine::killScriptsAndResources() {
 	ScriptSlot *ss;
 	int i;
 
@@ -823,14 +823,14 @@ void Scumm::killScriptsAndResources() {
 	}
 }
 
-void Scumm::killAllScriptsExceptCurrent() {
+void ScummEngine::killAllScriptsExceptCurrent() {
 	for (int i = 0; i < NUM_SCRIPT_SLOT; i++) {
 		if (i != _currentScript)
 			vm.slot[i].status = ssDead;
 	}
 }
 
-void Scumm::doSentence(int verb, int objectA, int objectB) {
+void ScummEngine::doSentence(int verb, int objectA, int objectB) {
 	SentenceTab *st;
 
 	if (_version >= 7) {
@@ -858,7 +858,7 @@ void Scumm::doSentence(int verb, int objectA, int objectB) {
 	st->freezeCount = 0;
 }
 
-void Scumm::checkAndRunSentenceScript() {
+void ScummEngine::checkAndRunSentenceScript() {
 	int i;
 	int localParamList[16];
 	const ScriptSlot *ss;
@@ -900,7 +900,7 @@ void Scumm::checkAndRunSentenceScript() {
 		runScript(sentenceScript, 0, 0, localParamList);
 }
 
-void Scumm::runInputScript(int a, int cmd, int mode) {
+void ScummEngine::runInputScript(int a, int cmd, int mode) {
 	int args[16];
 	int verbScript;
 
@@ -927,7 +927,7 @@ void Scumm::runInputScript(int a, int cmd, int mode) {
 		runScript(verbScript, 0, 0, args);
 }
 
-void Scumm::decreaseScriptDelay(int amount) {
+void ScummEngine::decreaseScriptDelay(int amount) {
 	ScriptSlot *ss = vm.slot;
 	int i;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
@@ -941,7 +941,7 @@ void Scumm::decreaseScriptDelay(int amount) {
 	}
 }
 
-bool Scumm::isScriptInUse(int script) const {
+bool ScummEngine::isScriptInUse(int script) const {
 	int i;
 	const ScriptSlot *ss = vm.slot;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++)
@@ -950,7 +950,7 @@ bool Scumm::isScriptInUse(int script) const {
 	return false;
 }
 
-bool Scumm::isScriptRunning(int script) const {
+bool ScummEngine::isScriptRunning(int script) const {
 	int i;
 	const ScriptSlot *ss = vm.slot;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++)
@@ -959,7 +959,7 @@ bool Scumm::isScriptRunning(int script) const {
 	return false;
 }
 
-bool Scumm::isRoomScriptRunning(int script) const {
+bool ScummEngine::isRoomScriptRunning(int script) const {
 	int i;
 	const ScriptSlot *ss = vm.slot;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++)
@@ -968,7 +968,7 @@ bool Scumm::isRoomScriptRunning(int script) const {
 	return false;
 }
 
-int Scumm::defineArray(int array, int type, int dim2, int dim1) {
+int ScummEngine::defineArray(int array, int type, int dim2, int dim1) {
 	int id;
 	int size;
 	ArrayHeader *ah;
@@ -1015,7 +1015,7 @@ int Scumm::defineArray(int array, int type, int dim2, int dim1) {
 	return id;
 }
 
-void Scumm::nukeArray(int a) {
+void ScummEngine::nukeArray(int a) {
 	int data;
 
 	data = readVar(a);
@@ -1026,7 +1026,7 @@ void Scumm::nukeArray(int a) {
 	writeVar(a, 0);
 }
 
-int Scumm::getArrayId() {
+int ScummEngine::getArrayId() {
 	byte **addr = _baseArrays;
 	int i;
 
@@ -1038,7 +1038,7 @@ int Scumm::getArrayId() {
 	return -1;
 }
 
-void Scumm::copyScriptString(byte *dst) {
+void ScummEngine::copyScriptString(byte *dst) {
 	int len = resStrLen(_scriptPointer) + 1;
 	while (len--)
 		*dst++ = fetchScriptByte();
@@ -1050,7 +1050,7 @@ void Scumm::copyScriptString(byte *dst) {
 // special characters embedded into the string. The reason for this function is that
 // sometimes this embedded data contains zero bytes, thus we can't just use strlen.
 //
-int Scumm::resStrLen(const byte *src) const {
+int ScummEngine::resStrLen(const byte *src) const {
 	int num = 0;
 	byte chr;
 	if (src == NULL)
@@ -1075,7 +1075,7 @@ int Scumm::resStrLen(const byte *src) const {
 	return num;
 }
 
-void Scumm::beginCutscene(int *args) {
+void ScummEngine::beginCutscene(int *args) {
 	int scr = _currentScript;
 	vm.slot[scr].cutsceneOverride++;
 
@@ -1092,7 +1092,7 @@ void Scumm::beginCutscene(int *args) {
 	vm.cutSceneScriptIndex = 0xFF;
 }
 
-void Scumm::endCutscene() {
+void ScummEngine::endCutscene() {
 	ScriptSlot *ss = &vm.slot[_currentScript];
 	int args[16];
 
@@ -1115,7 +1115,7 @@ void Scumm::endCutscene() {
 		runScript(VAR(VAR_CUTSCENE_END_SCRIPT), 0, 0, args);
 }
 
-void Scumm::abortCutscene() {
+void ScummEngine::abortCutscene() {
 	uint32 offs = vm.cutScenePtr[vm.cutSceneStackPointer];
 	if (offs) {
 		ScriptSlot *ss = &vm.slot[vm.cutSceneScript[vm.cutSceneStackPointer]];
@@ -1131,7 +1131,7 @@ void Scumm::abortCutscene() {
 	}
 }
 
-void Scumm::beginOverride() {
+void ScummEngine::beginOverride() {
 	int idx;
 
 	idx = vm.cutSceneStackPointer;
@@ -1150,7 +1150,7 @@ void Scumm::beginOverride() {
 	VAR(VAR_OVERRIDE) = 0;
 }
 
-void Scumm::endOverride() {
+void ScummEngine::endOverride() {
 	int idx;
 
 	idx = vm.cutSceneStackPointer;

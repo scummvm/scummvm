@@ -28,7 +28,7 @@
 #include "verbs.h"
 #include "scumm/sound.h"
 
-void Scumm::setStringVars(int slot) {
+void ScummEngine::setStringVars(int slot) {
 	StringTab *st = &_string[slot];
 	st->xpos = st->t_xpos;
 	st->ypos = st->t_ypos;
@@ -40,7 +40,7 @@ void Scumm::setStringVars(int slot) {
 	st->charset = st->t_charset;
 }
 
-void Scumm::unkMessage1() {
+void ScummEngine::unkMessage1() {
 	byte buffer[100];
 	_msgPtrToAdd = buffer;
 	_messagePtr = addMessageToStack(_messagePtr);
@@ -66,7 +66,7 @@ void Scumm::unkMessage1() {
 	}
 }
 
-void Scumm::unkMessage2() {
+void ScummEngine::unkMessage2() {
 	byte buf[100];
 	const byte *tmp;
 
@@ -84,7 +84,7 @@ void Scumm::unkMessage2() {
 	_messagePtr = tmp;
 }
 
-void Scumm::CHARSET_1() {
+void ScummEngine::CHARSET_1() {
 	uint32 talk_sound_a = 0;
 	uint32 talk_sound_b = 0;
 	int s, i, t, c;
@@ -344,7 +344,7 @@ void Scumm::CHARSET_1() {
 	gdi._mask = _charset->_str;
 }
 
-void Scumm::drawString(int a) {
+void ScummEngine::drawString(int a) {
 	byte buf[256];
 	byte *space;
 	int i, c;
@@ -460,7 +460,7 @@ void Scumm::drawString(int a) {
 	}
 }
 
-const byte *Scumm::addMessageToStack(const byte *msg) {
+const byte *ScummEngine::addMessageToStack(const byte *msg) {
 	int num, numorg;
 	unsigned char *ptr, chr;
 
@@ -580,14 +580,14 @@ const byte *Scumm::addMessageToStack(const byte *msg) {
 	return msg;
 }
 
-void Scumm::addIntToStack(int var) {
+void ScummEngine::addIntToStack(int var) {
 	int num;
 
 	num = readVar(var);
 	_msgPtrToAdd += sprintf((char *)_msgPtrToAdd, "%d", num);
 }
 
-void Scumm::addVerbToStack(int var)
+void ScummEngine::addVerbToStack(int var)
 {
 	int num, k;
 
@@ -606,7 +606,7 @@ void Scumm::addVerbToStack(int var)
 	}
 }
 
-void Scumm::addNameToStack(int var)
+void ScummEngine::addNameToStack(int var)
 {
 	int num;
 	const byte *ptr = 0;
@@ -626,7 +626,7 @@ void Scumm::addNameToStack(int var)
 	}
 }
 
-void Scumm::addStringToStack(int var) {
+void ScummEngine::addStringToStack(int var) {
 	const byte *ptr;
 
 	if (_version == 3 || _version >= 6)
@@ -646,7 +646,7 @@ void Scumm::addStringToStack(int var) {
 		addMessageToStack((const byte *)"");
 }
 
-void Scumm::initCharset(int charsetno) {
+void ScummEngine::initCharset(int charsetno) {
 	int i;
 
 	if (!getResourceAddress(rtCharset, charsetno))
@@ -659,7 +659,7 @@ void Scumm::initCharset(int charsetno) {
 		_charsetColorMap[i] = _charsetData[charsetno][i];
 }
 
-void Scumm::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center) {
+void ScummEngine::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center) {
 	// The Dig will keep enqueueing texts long after they've scrolled off
 	// the screen, eventually overflowing the blast text queue if left
 	// unchecked.
@@ -688,7 +688,7 @@ void Scumm::enqueueText(const byte *text, int x, int y, byte color, byte charset
 	bt.center = center;
 }
 
-void Scumm::drawBlastTexts() {
+void ScummEngine::drawBlastTexts() {
 	byte *buf;
 	int c;
 	int i;
@@ -733,7 +733,7 @@ void Scumm::drawBlastTexts() {
 	_charset->_ignoreCharsetMask = false;
 }
 
-void Scumm::removeBlastTexts() {
+void ScummEngine::removeBlastTexts() {
 	int i;
 
 	for (i = 0; i < _blastTextQueuePos; i++) {
@@ -749,7 +749,7 @@ int indexCompare(const void *p1, const void *p2) {
 	return strcmp(i1->tag, i2->tag);
 }
 
-void Scumm::loadLanguageBundle() {
+void ScummEngine::loadLanguageBundle() {
 	File file;
 	int32 size;
 
@@ -883,7 +883,7 @@ void Scumm::loadLanguageBundle() {
 	qsort(_languageIndex, _languageIndexSize, sizeof(LangIndexNode), indexCompare);
 }
 
-const byte *Scumm::translateTextAndPlaySpeech(const byte *ptr) {
+const byte *ScummEngine::translateTextAndPlaySpeech(const byte *ptr) {
 	if ((_gameId == GID_DIG || _gameId == GID_CMI) && (ptr[0] == '/')) {
 		char pointer[20];
 		int i, j;
@@ -903,7 +903,7 @@ const byte *Scumm::translateTextAndPlaySpeech(const byte *ptr) {
 	return ptr;
 }
 
-void Scumm::translateText(const byte *text, byte *trans_buff) {
+void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 	int l;
 	
 	if ((text[0] == '/') && _existLanguageFile) {

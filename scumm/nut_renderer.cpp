@@ -24,7 +24,7 @@
 #include "bomp.h"
 
 
-NutRenderer::NutRenderer(Scumm *vm) :
+NutRenderer::NutRenderer(ScummEngine *vm) :
 	_vm(vm),
 	_initialized(false),
 	_loaded(false),

@@ -25,7 +25,7 @@
 
 #include "common/rect.h"
 
-class Scumm;
+class ScummEngine;
 
 enum {					/** Camera modes */
 	CM_NORMAL = 1,
@@ -81,7 +81,7 @@ struct BlastObject {		/** BlastObjects to draw */
 	uint16 mode;
 };
 
-/** Bomp graphics data, used as parameter to Scumm::drawBomp. */
+/** Bomp graphics data, used as parameter to ScummEngine::drawBomp. */
 struct BompDrawData {
 	byte *out;
 	int outwidth, outheight;
@@ -107,9 +107,9 @@ struct StripTable {
 };
 
 class Gdi {
-	friend class Scumm;	// Mostly for the code in saveload.cpp ...
+	friend class ScummEngine;	// Mostly for the code in saveload.cpp ...
 public:
-	Scumm *_vm;
+	ScummEngine *_vm;
 
 	int _numZBuffer;
 	int _imgBufOffs[8];

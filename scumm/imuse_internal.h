@@ -43,7 +43,7 @@ class  IMuseInternal;
 
 // Some entities also referenced
 class MidiParser;
-class Scumm;
+class ScummEngine;
 class OSystem;
 class SoundMixer;
 
@@ -429,7 +429,7 @@ protected:
 	int set_volchan(int sound, int volchan);
 
 	void fix_parts_after_load();
-	void fix_players_after_load(Scumm *scumm);
+	void fix_players_after_load(ScummEngine *scumm);
 
 	static int saveReference(void *me_ref, byte type, void *ref);
 	static void *loadReference(void *me_ref, byte type, int ref);
@@ -451,7 +451,7 @@ public:
 	void pause(bool paused);
 	int terminate1();
 	int terminate2();
-	int save_or_load(Serializer *ser, Scumm *scumm);
+	int save_or_load(Serializer *ser, ScummEngine *scumm);
 	int set_music_volume(uint vol);
 	int get_music_volume();
 	int setMasterVolume(uint vol);

@@ -28,7 +28,7 @@
 //
 ////////////////////////////////////////
 
-Player_MOD::Player_MOD(Scumm *scumm) {
+Player_MOD::Player_MOD(ScummEngine *scumm) {
 	int i;
 	_mixer = scumm->_mixer;
 	_samplerate = scumm->_system->property(OSystem::PROP_GET_SAMPLE_RATE, 0);

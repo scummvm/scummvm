@@ -31,7 +31,7 @@
 #define MAX_IMUSE_JUMPS 1
 #define MAX_IMUSE_REGIONS 3
 
-class Scumm;
+class ScummEngine;
 
 class IMuseDigital : public MusicEngine {
 private:
@@ -60,14 +60,14 @@ private:
 	
 	Channel _channel[MAX_DIGITAL_CHANNELS];
 
-	Scumm *_scumm;
+	ScummEngine *_scumm;
 	bool _pause;
 
 	static void timer_handler(void *engine);
 	void musicTimer();
 
 public:
-	IMuseDigital(Scumm *scumm);
+	IMuseDigital(ScummEngine *scumm);
 	~IMuseDigital();
 
 	void setMasterVolume(int vol) {}

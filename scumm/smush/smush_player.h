@@ -34,7 +34,7 @@ class StringResource;
 
 class SmushPlayer {
 private:
-	Scumm *_scumm;
+	ScummEngine *_scumm;
 	int _version;
 	int32 _nbframes;
 	SmushMixer *_smixer;
@@ -68,7 +68,7 @@ private:
 	volatile bool _smushProcessFrame;
 
 public:
-	SmushPlayer(Scumm *, int, bool);
+	SmushPlayer(ScummEngine *, int, bool);
 	~SmushPlayer();
 
 	void play(const char *filename, const char *directory);

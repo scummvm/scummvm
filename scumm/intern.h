@@ -26,9 +26,9 @@
 #include "scumm.h"
 class NutRenderer; // V8 Font Renderer
 
-class Scumm_v5 : public Scumm {
+class ScummEngine_v5 : public ScummEngine {
 protected:
-	typedef void (Scumm_v5::*OpcodeProcV5)();
+	typedef void (ScummEngine_v5::*OpcodeProcV5)();
 	struct OpcodeEntryV5 {
 		OpcodeProcV5 proc;
 		const char *desc;
@@ -37,7 +37,7 @@ protected:
 	const OpcodeEntryV5 *_opcodesV5;
 
 public:
-	Scumm_v5(GameDetector *detector, OSystem *syst) : Scumm(detector, syst) {}
+	ScummEngine_v5(GameDetector *detector, OSystem *syst) : ScummEngine(detector, syst) {}
 
 protected:
 	virtual void setupOpcodes();
@@ -165,9 +165,9 @@ protected:
 // FIXME - maybe we should move the opcodes from v5 to v3, and change the inheritance 
 // accordingly - that would be more logical I guess. However, if you do so, take care
 // of preserving the right readIndexFile / loadCharset !!!
-class Scumm_v3 : public Scumm_v5 {
+class ScummEngine_v3 : public ScummEngine_v5 {
 public:
-	Scumm_v3(GameDetector *detector, OSystem *syst) : Scumm_v5(detector, syst) {}
+	ScummEngine_v3(GameDetector *detector, OSystem *syst) : ScummEngine_v5(detector, syst) {}
 
 protected:
 	void readIndexFile();
@@ -177,7 +177,7 @@ protected:
 	void readGlobalObjects();
 };
 
-class Scumm_v2 : public Scumm_v3 {
+class ScummEngine_v2 : public ScummEngine_v3 {
 protected:
 	void readIndexFile();
 	void readClassicIndexFile();	// V1
@@ -185,7 +185,7 @@ protected:
 	void loadCharset(int no);
 	void readMAXS();
 
-	typedef void (Scumm_v2::*OpcodeProcV2)();
+	typedef void (ScummEngine_v2::*OpcodeProcV2)();
 	struct OpcodeEntryV2 {
 		OpcodeProcV2 proc;
 		const char *desc;
@@ -194,7 +194,7 @@ protected:
 	const OpcodeEntryV2 *_opcodesV2;
 
 public:
-	Scumm_v2(GameDetector *detector, OSystem *syst) : Scumm_v3(detector, syst) {}
+	ScummEngine_v2(GameDetector *detector, OSystem *syst) : ScummEngine_v3(detector, syst) {}
 
 protected:
 	virtual void setupOpcodes();
@@ -300,17 +300,17 @@ protected:
 	byte VAR_BACKUP_VERB;
 };
 
-class Scumm_v4 : public Scumm_v3 {
+class ScummEngine_v4 : public ScummEngine_v3 {
 public:
-	Scumm_v4(GameDetector *detector, OSystem *syst) : Scumm_v3(detector, syst) {}
+	ScummEngine_v4(GameDetector *detector, OSystem *syst) : ScummEngine_v3(detector, syst) {}
 
 protected:
 	void loadCharset(int no);
 };
 
-class Scumm_v6 : public Scumm {
+class ScummEngine_v6 : public ScummEngine {
 protected:
-	typedef void (Scumm_v6::*OpcodeProcV6)();
+	typedef void (ScummEngine_v6::*OpcodeProcV6)();
 	struct OpcodeEntryV6 {
 		OpcodeProcV6 proc;
 		const char *desc;
@@ -321,7 +321,7 @@ protected:
 	File _hFileTable[17];
 	
 public:
-	Scumm_v6(GameDetector *detector, OSystem *syst) : Scumm(detector, syst)
+	ScummEngine_v6(GameDetector *detector, OSystem *syst) : ScummEngine(detector, syst)
 	{
 		VAR_VIDEONAME = 0xFF;
 
@@ -530,9 +530,9 @@ protected:
 	byte VAR_TIMEDATE_SECOND;
 };
 
-class Scumm_v7 : public Scumm_v6 {
+class ScummEngine_v7 : public ScummEngine_v6 {
 public:
-	Scumm_v7(GameDetector *detector, OSystem *syst) : Scumm_v6(detector, syst) {}
+	ScummEngine_v7(GameDetector *detector, OSystem *syst) : ScummEngine_v6(detector, syst) {}
 
 protected:
 	virtual void setupScummVars();
@@ -543,9 +543,9 @@ protected:
 	virtual void panCameraTo(int x, int y);
 };
 
-class Scumm_v8 : public Scumm_v7 {
+class ScummEngine_v8 : public ScummEngine_v7 {
 protected:
-	typedef void (Scumm_v8::*OpcodeProcV8)();
+	typedef void (ScummEngine_v8::*OpcodeProcV8)();
 	struct OpcodeEntryV8 {
 		OpcodeProcV8 proc;
 		const char *desc;
@@ -554,7 +554,7 @@ protected:
 	const OpcodeEntryV8 *_opcodesV8;
 	
 public:
-	Scumm_v8(GameDetector *detector, OSystem *syst) : Scumm_v7(detector, syst) {}
+	ScummEngine_v8(GameDetector *detector, OSystem *syst) : ScummEngine_v7(detector, syst) {}
 
 protected:
 	virtual void setupOpcodes();

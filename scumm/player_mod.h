@@ -32,7 +32,7 @@
 
 class Player_MOD {
 public:
-	Player_MOD(Scumm *scumm);
+	Player_MOD(ScummEngine *scumm);
 	virtual ~Player_MOD();
 	virtual void setMasterVolume(int vol);
 

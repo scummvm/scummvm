@@ -27,7 +27,7 @@
 class Bundle;
 class DigitalTrackInfo;
 class File;
-class Scumm;
+class ScummEngine;
 
 struct MP3OffsetTable;
 
@@ -93,7 +93,7 @@ protected:
 	DigitalTrackInfo *_track_info[CACHE_TRACKS];
 	int _current_cache;
 
-	Scumm *_scumm;
+	ScummEngine *_scumm;
 
 public:
 	int32 _bundleMusicPosition;
@@ -106,10 +106,10 @@ public:
 	// update iMuse/iMuseDigi/Player_v2/SoundMIxer, too
 	int16 _sound_volume_master, _sound_volume_music, _sound_volume_sfx;
 
-	Bundle *_bundle;	// FIXME: should be protected but is used by Scumm::askForDisk
+	Bundle *_bundle;	// FIXME: should be protected but is used by ScummEngine::askForDisk
 
 public:
-	Sound(Scumm *parent);
+	Sound(ScummEngine *parent);
 	~Sound();
 	void addSoundToQueue(int sound);
 	void addSoundToQueue2(int sound);
@@ -131,7 +131,7 @@ public:
 
 	void playBundleMusic(const char *song);
 	void pauseBundleMusic(bool state);
-	void bundleMusicHandler(Scumm *scumm);
+	void bundleMusicHandler(ScummEngine *scumm);
 	void stopBundleMusic();
 	void playBundleSound(char *sound, PlayingSoundHandle *handle);
 

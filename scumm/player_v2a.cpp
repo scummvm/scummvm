@@ -1111,7 +1111,7 @@ static V2A_Sound *findSound (unsigned long crc) {
 	return NULL;
 }
 
-Player_V2A::Player_V2A(Scumm *scumm) {
+Player_V2A::Player_V2A(ScummEngine *scumm) {
 	int i;
 	_scumm = scumm;
 	_system = scumm->_system;

@@ -69,7 +69,7 @@ enum MouseButtonStatus {
 };
 
 // Use g_scumm from error() ONLY
-Scumm *g_scumm = 0;
+ScummEngine *g_scumm = 0;
 ScummDebugger *g_debugger;
 
 extern NewGui *g_gui;
@@ -292,25 +292,25 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	switch (detector->_game.version) {
 	case 1:
 	case 2:
-		engine = new Scumm_v2(detector, syst);
+		engine = new ScummEngine_v2(detector, syst);
 		break;
 	case 3:
-		engine = new Scumm_v3(detector, syst);
+		engine = new ScummEngine_v3(detector, syst);
 		break;
 	case 4:
-		engine = new Scumm_v4(detector, syst);
+		engine = new ScummEngine_v4(detector, syst);
 		break;
 	case 5:
-		engine = new Scumm_v5(detector, syst);
+		engine = new ScummEngine_v5(detector, syst);
 		break;
 	case 6:
-		engine = new Scumm_v6(detector, syst);
+		engine = new ScummEngine_v6(detector, syst);
 		break;
 	case 7:
-		engine = new Scumm_v7(detector, syst);
+		engine = new ScummEngine_v7(detector, syst);
 		break;
 	case 8:
-		engine = new Scumm_v8(detector, syst);
+		engine = new ScummEngine_v8(detector, syst);
 		break;
 	default:
 		error("Engine_SCUMM_create(): Unknown version of game engine");
@@ -321,7 +321,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 REGISTER_PLUGIN("Scumm Engine", Engine_SCUMM_targetList, Engine_SCUMM_create);
 
-Scumm::Scumm (GameDetector *detector, OSystem *syst)
+ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst)
 	: Engine(detector, syst), _pauseDialog(0), _optionsDialog(0), _saveLoadDialog(0) {
 	OSystem::Property prop;
 
@@ -824,7 +824,7 @@ Scumm::Scumm (GameDetector *detector, OSystem *syst)
 	_audioNames = NULL;
 }
 
-Scumm::~Scumm () {
+ScummEngine::~ScummEngine() {
 	delete [] _actors;
 	
 	delete _2byteFontPtr;
@@ -868,7 +868,7 @@ Scumm::~Scumm () {
 	delete g_debugger;
 }
 
-void Scumm::go() {
+void ScummEngine::go() {
 	launch();
 	mainRun();
 }
@@ -877,7 +877,7 @@ void Scumm::go() {
 #pragma mark --- Initialization ---
 #pragma mark -
 
-void Scumm::launch() {
+void ScummEngine::launch() {
 	gdi._vm = this;
 
 #ifdef __PALM_OS__
@@ -961,7 +961,7 @@ void Scumm::launch() {
 	_saveLoadFlag = 0;
 }
 
-void Scumm::setFeatures (uint32 newFeatures) {
+void ScummEngine::setFeatures (uint32 newFeatures) {
 	bool newCostumes = (_features & GF_NEW_COSTUMES) != 0;
 	bool newNewCostumes = (newFeatures & GF_NEW_COSTUMES) != 0;
 	bool amigaPalette = (_features & GF_AMIGA) != 0;
@@ -985,7 +985,7 @@ void Scumm::setFeatures (uint32 newFeatures) {
 	}
 }
 
-void Scumm::scummInit() {
+void ScummEngine::scummInit() {
 	int i;
 
 	tempMusic = 0;
@@ -1152,7 +1152,7 @@ void Scumm::scummInit() {
 }
 
 
-void Scumm::initScummVars() {
+void ScummEngine::initScummVars() {
 
 	// FIXME
 	if (_version <= 2) {
@@ -1237,7 +1237,7 @@ void Scumm::initScummVars() {
 #pragma mark --- Main loop ---
 #pragma mark -
 
-void Scumm::mainRun() {
+void ScummEngine::mainRun() {
 	int delta = 0;
 	int diff = _system->get_msecs();
 
@@ -1261,7 +1261,7 @@ void Scumm::mainRun() {
 	}
 }
 
-void Scumm::waitForTimer(int msec_delay) {
+void ScummEngine::waitForTimer(int msec_delay) {
 	uint32 start_time;
 
 	if (_fastMode & 2)
@@ -1281,7 +1281,7 @@ void Scumm::waitForTimer(int msec_delay) {
 	}
 }
 
-int Scumm::scummLoop(int delta) {
+int ScummEngine::scummLoop(int delta) {
 	if (_debugger)
 		_debugger->on_frame();
 
@@ -1571,7 +1571,7 @@ load_game:
 #pragma mark --- Events / Input ---
 #pragma mark -
 
-void Scumm::parseEvents() {
+void ScummEngine::parseEvents() {
 	OSystem::Event event;
 
 	while (_system->poll_event(&event)) {
@@ -1671,14 +1671,14 @@ void Scumm::parseEvents() {
 	}
 }
 
-void Scumm::clearClickedStatus() {
+void ScummEngine::clearClickedStatus() {
 	_keyPressed = 0;
 	_mouseButStat = 0;
 	_leftBtnPressed &= ~msClicked;
 	_rightBtnPressed &= ~msClicked;
 }
 
-void Scumm::processKbd() {
+void ScummEngine::processKbd() {
 	int saveloadkey;
 
 	_lastKeyHit = _keyPressed;
@@ -1907,7 +1907,7 @@ void Scumm::processKbd() {
  * Start a 'scene' by loading the specified room with the given main actor.
  * The actor is placed next to the object indicated by objectNr.
  */
-void Scumm::startScene(int room, Actor *a, int objectNr) {
+void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	int i, where;
 
 	CHECK_HEAP;
@@ -2082,7 +2082,7 @@ void Scumm::startScene(int room, Actor *a, int objectNr) {
 	CHECK_HEAP;
 }
 
-void Scumm::initRoomSubBlocks() {
+void ScummEngine::initRoomSubBlocks() {
 	int i;
 	const byte *ptr;
 	byte *roomptr, *searchptr, *roomResPtr;
@@ -2430,15 +2430,15 @@ void Scumm::initRoomSubBlocks() {
 	initBGBuffers(_roomHeight);
 }
 
-void Scumm::pauseGame() {
+void ScummEngine::pauseGame() {
 	pauseDialog();
 }
 
-void Scumm::shutDown() {
+void ScummEngine::shutDown() {
 	_quit = true;
 }
 
-void Scumm::restart() {
+void ScummEngine::restart() {
 // TODO: Check this function - we should probably be reinitting a lot more stuff, and I suspect
 //	 this leaks memory like a sieve
 
@@ -2470,7 +2470,7 @@ void Scumm::restart() {
 	runScript(1, 0, 0, &_bootParam);
 }
 
-void Scumm::startManiac() {
+void ScummEngine::startManiac() {
 	warning("stub startManiac()");
 }
 
@@ -2478,7 +2478,7 @@ void Scumm::startManiac() {
 #pragma mark --- GUI ---
 #pragma mark -
 
-int Scumm::runDialog(Dialog &dialog) {
+int ScummEngine::runDialog(Dialog &dialog) {
 	// Pause sound put
 	bool old_soundsPaused = _sound->_soundsPaused;
 	_sound->pauseSounds(true);
@@ -2503,25 +2503,25 @@ int Scumm::runDialog(Dialog &dialog) {
 	return result;
 }
 
-void Scumm::pauseDialog() {
+void ScummEngine::pauseDialog() {
 	if (!_pauseDialog)
 		_pauseDialog = new PauseDialog(_newgui, this);
 	runDialog(*_pauseDialog);
 }
 
-void Scumm::saveloadDialog() {
+void ScummEngine::saveloadDialog() {
 	if (!_saveLoadDialog)
 		_saveLoadDialog = new SaveLoadDialog(_newgui, this);
 	runDialog(*_saveLoadDialog);
 }
 
-void Scumm::optionsDialog() {
+void ScummEngine::optionsDialog() {
 	if (!_optionsDialog)
 		_optionsDialog = new OptionsDialog(_newgui, this);
 	runDialog(*_optionsDialog);
 }
 
-void Scumm::confirmexitDialog() {
+void ScummEngine::confirmexitDialog() {
 	if (!_confirmExitDialog)
 		_confirmExitDialog = new ConfirmExitDialog(_newgui, this);
 
@@ -2530,7 +2530,7 @@ void Scumm::confirmexitDialog() {
 	}
 }
 
-char Scumm::displayError(bool showCancel, const char *message, ...) {
+char ScummEngine::displayError(bool showCancel, const char *message, ...) {
 #ifdef __PALM_OS__
 	char buf[256]; // 1024 is too big overflow the stack
 #else
@@ -2550,7 +2550,7 @@ char Scumm::displayError(bool showCancel, const char *message, ...) {
 #pragma mark --- Miscellaneous ---
 #pragma mark -
 
-byte *Scumm::get2byteCharPtr(int idx) {
+byte *ScummEngine::get2byteCharPtr(int idx) {
 	/*
 		switch(language)
 		case korean:
@@ -2565,7 +2565,7 @@ byte *Scumm::get2byteCharPtr(int idx) {
 }
 
 
-const char *Scumm::getGameDataPath() const {
+const char *ScummEngine::getGameDataPath() const {
 #ifdef MACOSX
 	if (_version == 8 && !memcmp(_gameDataPath, "/Volumes/MONKEY3_", 17)) {
 		// Special case for COMI on Mac OS X. The mount points on OS X depend
@@ -2594,7 +2594,7 @@ const char *Scumm::getGameDataPath() const {
 	return _gameDataPath;
 }
 
-void Scumm::errorString(const char *buf1, char *buf2) {
+void ScummEngine::errorString(const char *buf1, char *buf2) {
 	if (_currentScript != 0xFF) {
 		ScriptSlot *ss = &vm.slot[_currentScript];
 		sprintf(buf2, "(%d:%d:0x%X): %s", _roomResource,

@@ -35,7 +35,7 @@
 ////////////////////////////////////////
 
 
-Player_V1::Player_V1(Scumm *scumm) : Player_V2(scumm) {	
+Player_V1::Player_V1(ScummEngine *scumm) : Player_V2(scumm) {	
 	// Initialize channel code
 	for (int i = 0; i < 4; ++i)
 		clear_channel(i);

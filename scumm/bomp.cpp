@@ -192,7 +192,7 @@ void bompScaleFuncX(byte *line_buffer, byte *scaling_x_ptr, byte skip, int32 siz
 	}
 }
 
-void Scumm::drawBomp(const BompDrawData &bd, bool mirror) {
+void ScummEngine::drawBomp(const BompDrawData &bd, bool mirror) {
 	const byte *src;
 	byte *dst;
 	byte maskbit;

@@ -24,7 +24,7 @@
 #include "common/rect.h"
 #include "common/scummsys.h"
 
-class Scumm;
+class ScummEngine;
 class NutRenderer;
 struct VirtScreen;
 
@@ -51,13 +51,13 @@ public:
 	bool _disableOffsX;
 
 protected:
-	Scumm *_vm;
+	ScummEngine *_vm;
 	byte _curId;
 
 	virtual int getCharWidth(byte chr) = 0;
 
 public:
-	CharsetRenderer(Scumm *vm);
+	CharsetRenderer(ScummEngine *vm);
 	virtual ~CharsetRenderer() {}
 
 	virtual void printChar(int chr) = 0;
@@ -80,7 +80,7 @@ protected:
 	void drawBits1(VirtScreen *vs, byte *dst, const byte *src, byte *mask, int drawTop, int width, int height);
 
 public:
-	CharsetRendererCommon(Scumm *vm) : CharsetRenderer(vm) {}
+	CharsetRendererCommon(ScummEngine *vm) : CharsetRenderer(vm) {}
 
 	void setCurID(byte id);
 	
@@ -94,7 +94,7 @@ protected:
 	void drawBitsN(VirtScreen *vs, byte *dst, const byte *src, byte *mask, byte bpp, int drawTop, int width, int height);
 
 public:
-	CharsetRendererClassic(Scumm *vm) : CharsetRendererCommon(vm) {}
+	CharsetRendererClassic(ScummEngine *vm) : CharsetRendererCommon(vm) {}
 	
 	void printChar(int chr);
 };
@@ -107,7 +107,7 @@ protected:
 	int getCharWidth(byte chr);
 
 public:
-	CharsetRendererV3(Scumm *vm) : CharsetRendererCommon(vm) {}
+	CharsetRendererV3(ScummEngine *vm) : CharsetRendererCommon(vm) {}
 	
 	void printChar(int chr);
 	void setCurID(byte id);
@@ -120,7 +120,7 @@ protected:
 	int getCharWidth(byte chr) { return 8; }
 
 public:
-	CharsetRendererV2(Scumm *vm) : CharsetRendererV3(vm) {}
+	CharsetRendererV2(ScummEngine *vm) : CharsetRendererV3(vm) {}
 	
 	void setCurID(byte id);
 };
@@ -133,7 +133,7 @@ protected:
 	NutRenderer *_current;
 
 public:
-	CharsetRendererNut(Scumm *vm);
+	CharsetRendererNut(ScummEngine *vm);
 	~CharsetRendererNut();
 	
 	void printChar(int chr);

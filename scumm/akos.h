@@ -63,7 +63,7 @@ protected:
 	} akos16;
 
 public:
-	AkosRenderer(Scumm *scumm) : BaseCostumeRenderer(scumm) {
+	AkosRenderer(ScummEngine *scumm) : BaseCostumeRenderer(scumm) {
 		akos = 0;
 		akhd = 0;
 		akpl = 0;

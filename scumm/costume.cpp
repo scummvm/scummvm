@@ -666,11 +666,11 @@ byte CostumeRenderer::drawLimb(const CostumeData &cost, int limb) {
 
 }
 
-int Scumm::cost_frameToAnim(Actor *a, int frame) {
+int ScummEngine::cost_frameToAnim(Actor *a, int frame) {
 	return newDirToOldDir(a->getFacing()) + frame * 4;
 }
 
-void Scumm::cost_decodeData(Actor *a, int frame, uint usemask) {
+void ScummEngine::cost_decodeData(Actor *a, int frame, uint usemask) {
 	const byte *r;
 	uint mask, j;
 	int i;
@@ -842,7 +842,7 @@ byte LoadedCostume::increaseAnim(Actor *a, int slot) {
 	} while (1);
 }
 
-bool Scumm::isCostumeInUse(int cost) const {
+bool ScummEngine::isCostumeInUse(int cost) const {
 	int i;
 	Actor *a;
 

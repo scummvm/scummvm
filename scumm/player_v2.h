@@ -67,13 +67,13 @@ union ChannelInfo {
 };
 
 
-class Scumm;
+class ScummEngine;
 class SoundMixer;
 
 
 class Player_V2 : public MusicEngine {
 public:
-	Player_V2(Scumm *scumm);
+	Player_V2(ScummEngine *scumm);
 	virtual ~Player_V2();
 
 	virtual void setMasterVolume(int vol);
@@ -88,7 +88,7 @@ protected:
 	bool _isV3Game;
 	SoundMixer *_mixer;
 	OSystem *_system;
-	Scumm *_scumm;
+	ScummEngine *_scumm;
 
 	bool _pcjr;
 	int _header_len;

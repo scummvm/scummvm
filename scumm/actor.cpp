@@ -33,9 +33,9 @@
 #include "usage_bits.h"
 
 byte Actor::kInvalidBox = 0;
-Scumm *Actor::_vm = 0;
+ScummEngine *Actor::_vm = 0;
 
-void Actor::initActorClass(Scumm *scumm) {
+void Actor::initActorClass(ScummEngine *scumm) {
 	_vm = scumm;
 	if (_vm->_features & GF_SMALL_HEADER) {
 		kInvalidBox = 255;
@@ -141,7 +141,7 @@ void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY) {
 	}
 }
 
-int Scumm::getAngleFromPos(int x, int y) const {
+int ScummEngine::getAngleFromPos(int x, int y) const {
 	if (_gameId == GID_DIG || _gameId == GID_CMI) {
 		double temp = atan2((double)x, (double)-y);
 		return normalizeAngle((int)(temp * 180 / 3.1415926535));
@@ -783,7 +783,7 @@ void Actor::showActor() {
 	needRedraw = true;
 }
 
-void Scumm::showActors() {
+void ScummEngine::showActors() {
 	int i;
 
 	for (i = 1; i < _numActors; i++) {
@@ -792,7 +792,7 @@ void Scumm::showActors() {
 	}
 }
 
-void Scumm::walkActors() {
+void ScummEngine::walkActors() {
 	int i;
 
 	for (i = 1; i < _numActors; i++) {
@@ -805,7 +805,7 @@ void Scumm::walkActors() {
 }
 
 /* Used in Scumm v5 only. Play sounds associated with actors */
-void Scumm::playActorSounds() {
+void ScummEngine::playActorSounds() {
 	int i;
 
 	for (i = 1; i < _numActors; i++) {
@@ -820,7 +820,7 @@ void Scumm::playActorSounds() {
 	}
 }
 
-Actor *Scumm::derefActor(int id, const char *errmsg) const {
+Actor *ScummEngine::derefActor(int id, const char *errmsg) const {
 	if (id == 0)
 		debug(3, "derefActor(0, \"%s\") in script %d, opcode 0x%x", errmsg, vm.slot[_curExecScript].number, _opcode);
 	if (id < 0 || id >= _numActors || _actors[id].number != id) {
@@ -832,7 +832,7 @@ Actor *Scumm::derefActor(int id, const char *errmsg) const {
 	return &_actors[id];
 }
 
-Actor *Scumm::derefActorSafe(int id, const char *errmsg) const {
+Actor *ScummEngine::derefActorSafe(int id, const char *errmsg) const {
 	if (id == 0)
 		debug(3, "derefActorSafe(0, \"%s\") in script %d, opcode 0x%x", errmsg, vm.slot[_curExecScript].number, _opcode);
 	if (id < 0 || id >= _numActors || _actors[id].number != id) {
@@ -871,7 +871,7 @@ static int compareDrawOrder(const void* a, const void* b)
 	return actor1->number - actor2->number;
 }
 
-void Scumm::processActors() {
+void ScummEngine::processActors() {
 	int numactors = 0;
 
 	// TODO : put this actors as a member array. It never has to grow or shrink
@@ -912,7 +912,7 @@ void Scumm::processActors() {
 
 // Used in Scumm v8, to allow the verb coin to be drawn over the inventory
 // chest. I'm assuming that draw order won't matter here.
-void Scumm::processUpperActors() {
+void ScummEngine::processUpperActors() {
 	int i;
 
 	for (i = 1; i < _numActors; i++) {
@@ -1069,7 +1069,7 @@ void Actor::animateLimb(int limb, int f) {
 	}
 }
 
-void Scumm::setActorRedrawFlags() {
+void ScummEngine::setActorRedrawFlags() {
 	int i, j;
 
 	if (_fullRedraw) {
@@ -1090,7 +1090,7 @@ void Scumm::setActorRedrawFlags() {
 	}
 }
 
-void Scumm::resetActorBgs() {
+void ScummEngine::resetActorBgs() {
 	int i, j;
 
 	for (i = 0; i < gdi._numStrips; i++) {
@@ -1112,7 +1112,7 @@ void Scumm::resetActorBgs() {
 	}
 }
 
-int Scumm::getActorFromPos(int x, int y) {
+int ScummEngine::getActorFromPos(int x, int y) {
 	int i;
 
 	if (!testGfxAnyUsageBits(x >> 3))
@@ -1127,7 +1127,7 @@ int Scumm::getActorFromPos(int x, int y) {
 	return 0;
 }
 
-void Scumm::actorTalk() {
+void ScummEngine::actorTalk() {
 	Actor *a;
 
 	_msgPtrToAdd = _charsetBuffer;
@@ -1179,7 +1179,7 @@ void Scumm::actorTalk() {
 	CHARSET_1();
 }
 
-void Scumm::stopTalk() {
+void ScummEngine::stopTalk() {
 	int act;
 
 	_sound->stopTalkSound();
@@ -1200,7 +1200,7 @@ void Scumm::stopTalk() {
 	restoreCharsetBg();
 }
 
-void Scumm::clearMsgQueue() {
+void ScummEngine::clearMsgQueue() {
 	_messagePtr = (const byte *)" ";
 	stopTalk();
 }

@@ -80,7 +80,7 @@ static bool compareSlope(int X1, int Y1, int X2, int Y2, int X3, int Y3);
 static Common::Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y);
 
 
-byte Scumm::getMaskFromBox(int box) {
+byte ScummEngine::getMaskFromBox(int box) {
 	// Fix for bug #740244 and #755863. This appears to have been a 
 	// long standing bug in the original engine?
 	if (_version <= 3 && box == 255)
@@ -98,7 +98,7 @@ byte Scumm::getMaskFromBox(int box) {
 		return ptr->old.mask;
 }
 
-void Scumm::setBoxFlags(int box, int val) {
+void ScummEngine::setBoxFlags(int box, int val) {
 	debug(2, "setBoxFlags(%d, 0x%02x)", box, val);
 
 	/* FULL_THROTTLE stuff */
@@ -117,7 +117,7 @@ void Scumm::setBoxFlags(int box, int val) {
 	}
 }
 
-byte Scumm::getBoxFlags(int box) {
+byte ScummEngine::getBoxFlags(int box) {
 	Box *ptr = getBoxBaseAddr(box);
 	if (!ptr)
 		return 0;
@@ -129,7 +129,7 @@ byte Scumm::getBoxFlags(int box) {
 		return ptr->old.flags;
 }
 
-void Scumm::setBoxScale(int box, int scale) {
+void ScummEngine::setBoxScale(int box, int scale) {
 	Box *ptr = getBoxBaseAddr(box);
 	assert(ptr);
 	if (_version == 8)
@@ -140,13 +140,13 @@ void Scumm::setBoxScale(int box, int scale) {
 		ptr->old.scale = TO_LE_16(scale);
 }
 
-void Scumm::setBoxScaleSlot(int box, int slot) {
+void ScummEngine::setBoxScaleSlot(int box, int slot) {
 	Box *ptr = getBoxBaseAddr(box);
 	assert(ptr);
 	ptr->v8.scaleSlot = TO_LE_32(slot);
 }
 
-int Scumm::getScale(int box, int x, int y) {
+int ScummEngine::getScale(int box, int x, int y) {
 	if (_features & GF_NO_SCALING)
 		return 255;
 
@@ -207,7 +207,7 @@ int Scumm::getScale(int box, int x, int y) {
 	return scale;
 }
 
-int Scumm::getBoxScale(int box) {
+int ScummEngine::getBoxScale(int box) {
 	if (_features & GF_NO_SCALING)
 		return 255;
 	Box *ptr = getBoxBaseAddr(box);
@@ -233,7 +233,7 @@ int Scumm::getBoxScale(int box) {
  * To accomodate old savegames, we attempt here to convert rtScaleTable
  * resources to scale slots.
  */
-void Scumm::convertScaleTableToScaleSlot(int slot) {
+void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 	assert(1 <= slot && slot <= ARRAYSIZE(_scaleSlots));
 
 	byte *resptr = getResourceAddress(rtScaleTable, slot);
@@ -333,7 +333,7 @@ void Scumm::convertScaleTableToScaleSlot(int slot) {
 		warning("scale item %d, variance %f exceeds 1 (room %d)\n", slot, variance, _currentRoom);
 }
 
-void Scumm::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2) {
+void ScummEngine::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2) {
 	assert(1 <= slot && slot <= ARRAYSIZE(_scaleSlots));
 	ScaleSlot &s = _scaleSlots[slot-1];
 	s.x2 = x2;
@@ -344,7 +344,7 @@ void Scumm::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, i
 	s.scale1 = scale1;
 }
 
-byte Scumm::getNumBoxes() {
+byte ScummEngine::getNumBoxes() {
 	byte *ptr = getResourceAddress(rtMatrix, 2);
 	if (!ptr)
 		return 0;
@@ -354,7 +354,7 @@ byte Scumm::getNumBoxes() {
 		return ptr[0];
 }
 
-Box *Scumm::getBoxBaseAddr(int box) {
+Box *ScummEngine::getBoxBaseAddr(int box) {
 	byte *ptr = getResourceAddress(rtMatrix, 2);
 	if (!ptr || box == 255)
 		return NULL;
@@ -391,7 +391,7 @@ Box *Scumm::getBoxBaseAddr(int box) {
 		return (Box *)(ptr + box * SIZEOF_BOX + 2);
 }
 
-int Scumm::getSpecialBox(int x, int y) {
+int ScummEngine::getSpecialBox(int x, int y) {
 	int i;
 	int numOfBoxes;
 	byte flag;
@@ -411,7 +411,7 @@ int Scumm::getSpecialBox(int x, int y) {
 	return (-1);
 }
 
-bool Scumm::checkXYInBoxBounds(int b, int x, int y) {
+bool ScummEngine::checkXYInBoxBounds(int b, int x, int y) {
 	BoxCoords box;
 
 	if (b < 0 || b == Actor::kInvalidBox)
@@ -455,7 +455,7 @@ bool Scumm::checkXYInBoxBounds(int b, int x, int y) {
 	return true;
 }
 
-void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box) {
+void ScummEngine::getBoxCoordinates(int boxnum, BoxCoords *box) {
 	Box *bp = getBoxBaseAddr(boxnum);
 	assert(bp);
 
@@ -514,7 +514,7 @@ void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box) {
 	}
 }
 
-uint Scumm::distanceFromPt(int x, int y, int ptx, int pty) {
+uint ScummEngine::distanceFromPt(int x, int y, int ptx, int pty) {
 	int diffx, diffy;
 
 	diffx = abs(ptx - x);
@@ -615,7 +615,7 @@ Common::Point closestPtOnLine(int ulx, int uly, int llx, int lly, int x, int y) 
 	return pt;
 }
 
-bool Scumm::inBoxQuickReject(int b, int x, int y, int threshold) {
+bool ScummEngine::inBoxQuickReject(int b, int x, int y, int threshold) {
 	int t;
 	BoxCoords box;
 
@@ -640,7 +640,7 @@ bool Scumm::inBoxQuickReject(int b, int x, int y, int threshold) {
 	return false;
 }
 
-int Scumm::getClosestPtOnBox(int b, int x, int y, int16& outX, int16& outY) {
+int ScummEngine::getClosestPtOnBox(int b, int x, int y, int16& outX, int16& outY) {
 	Common::Point pt;
 	uint dist;
 	uint bestdist = 0xFFFFFF;
@@ -683,7 +683,7 @@ int Scumm::getClosestPtOnBox(int b, int x, int y, int16& outX, int16& outY) {
 	return bestdist;
 }
 
-byte *Scumm::getBoxMatrixBaseAddr() {
+byte *ScummEngine::getBoxMatrixBaseAddr() {
 	byte *ptr = getResourceAddress(rtMatrix, 1);
 	assert(ptr);
 	if (*ptr == 0xFF)
@@ -697,7 +697,7 @@ byte *Scumm::getBoxMatrixBaseAddr() {
  * way to 'to' (this can be 'to' itself or a third box).
  * If there is no connection -1 is return.
  */
-int Scumm::getPathToDestBox(byte from, byte to) {
+int ScummEngine::getPathToDestBox(byte from, byte to) {
 	const byte *boxm;
 	byte i;
 	const int numOfBoxes = getNumBoxes();
@@ -936,7 +936,7 @@ static void printMatrix2(byte *matrix, int num) {
 }
 #endif
 
-void Scumm::createBoxMatrix() {
+void ScummEngine::createBoxMatrix() {
 	int num, i, j, k;
 	byte *adjacentMatrix, *itineraryMatrix;
 
@@ -1033,7 +1033,7 @@ void Scumm::createBoxMatrix() {
 }
 
 /** Check if two boxes are neighbours. */
-bool Scumm::areBoxesNeighbours(int box1nr, int box2nr) {
+bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 	int j, k, m, n;
 	int tmp_x, tmp_y;
 	bool result;
@@ -1183,7 +1183,7 @@ void Actor::findPathTowardsOld(byte trap1, byte trap2, byte final_trap, Common::
  * This way the lines bound a 'corridor' between the two boxes, through which
  * the actor has to walk to get from trap1 to trap2.
  */
-void Scumm::getGates(int trap1, int trap2, Common::Point gateA[2], Common::Point gateB[2]) {
+void ScummEngine::getGates(int trap1, int trap2, Common::Point gateA[2], Common::Point gateB[2]) {
 	int i, j;
 	int dist[8];
 	int minDist[3];

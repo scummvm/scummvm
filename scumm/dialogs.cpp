@@ -227,7 +227,7 @@ enum {
 	kQuitCmd = 'QUIT'
 };
 
-SaveLoadDialog::SaveLoadDialog(NewGui *gui, Scumm *scumm)
+SaveLoadDialog::SaveLoadDialog(NewGui *gui, ScummEngine *scumm)
 	: ScummDialog(gui, scumm, 20, 8, 280, 184) {
 	const int x = _w - kButtonWidth - 8;
 	int y = 20;
@@ -423,10 +423,10 @@ enum {
 };
 
 #ifndef _WIN32_WCE
-OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
+OptionsDialog::OptionsDialog(NewGui *gui, ScummEngine *scumm)
 	: ScummDialog(gui, scumm, 40, 30, 240, 124) {
 #else
-OptionsDialog::OptionsDialog(NewGui *gui, Scumm *scumm)
+OptionsDialog::OptionsDialog(NewGui *gui, ScummEngine *scumm)
 	: ScummDialog(gui, scumm, 40, 30, 240, 124 + kButtonHeight + 4) {
 #endif
 	//
@@ -580,7 +580,7 @@ enum {
 	kPrevCmd = 'PREV'
 };
 
-HelpDialog::HelpDialog(NewGui *gui, Scumm *scumm)
+HelpDialog::HelpDialog(NewGui *gui, ScummEngine *scumm)
 	: ScummDialog(gui, scumm, 5, 5, 310, 190) {
 
 	_page = 1;
@@ -650,12 +650,12 @@ void HelpDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 
 #pragma mark -
 
-InfoDialog::InfoDialog(NewGui *gui, Scumm *scumm, int res)
+InfoDialog::InfoDialog(NewGui *gui, ScummEngine *scumm, int res)
 : ScummDialog(gui, scumm, 0, 80, 0, 16) { // dummy x and w
 	setInfoText(queryResString (res));
 }
 
-InfoDialog::InfoDialog(NewGui *gui, Scumm *scumm, const String& message)
+InfoDialog::InfoDialog(NewGui *gui, ScummEngine *scumm, const String& message)
 : ScummDialog(gui, scumm, 0, 80, 0, 16) { // dummy x and w
 	setInfoText(message);
 }
@@ -671,11 +671,11 @@ void InfoDialog::setInfoText(const String& message) {
 
 #pragma mark -
 
-PauseDialog::PauseDialog(NewGui *gui, Scumm *scumm)
+PauseDialog::PauseDialog(NewGui *gui, ScummEngine *scumm)
 	: InfoDialog(gui, scumm, 10) {
 }
 
-ConfirmExitDialog::ConfirmExitDialog(NewGui *gui, Scumm *scumm)
+ConfirmExitDialog::ConfirmExitDialog(NewGui *gui, ScummEngine *scumm)
 	: InfoDialog(gui, scumm, "Do you really want to quit (y/n)?") {
 }
 
@@ -699,7 +699,7 @@ enum {
 };
 
 
-KeysDialog::KeysDialog(NewGui *gui, Scumm *scumm)
+KeysDialog::KeysDialog(NewGui *gui, ScummEngine *scumm)
 	: ScummDialog(gui, scumm, 30, 20, 260, 160) {
 	addButton(160, 20, queryCustomString(24), kMapCmd, 'M');	// Map
 	addButton(160, 40, "OK", kOKCmd, 'O');						// OK

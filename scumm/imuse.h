@@ -30,7 +30,7 @@
 class IMuseInternal;
 class MidiDriver;
 class OSystem;
-class Scumm;
+class ScummEngine;
 class Serializer;
 class SoundMixer;
 
@@ -58,7 +58,7 @@ public:
 
 	void on_timer(MidiDriver *midi);
 	void pause(bool paused);
-	int save_or_load(Serializer *ser, Scumm *scumm);
+	int save_or_load(Serializer *ser, ScummEngine *scumm);
 	int set_music_volume(uint vol);
 	int get_music_volume();
 	void setMasterVolume(int vol);

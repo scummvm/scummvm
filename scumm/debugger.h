@@ -24,7 +24,7 @@
 // Choose between text console or ScummConsole
 #define USE_CONSOLE	1
 
-class Scumm;
+class ScummEngine;
 class ScummDebugger;
 
 typedef bool (ScummDebugger::*DebugProc)(int argc, const char **argv);
@@ -52,10 +52,10 @@ public:
 	ScummDebugger();
 	
 	void on_frame();
-	void attach(Scumm *s, char *entry);
+	void attach(ScummEngine *s, char *entry);
 
 protected:
-	Scumm *_s;
+	ScummEngine *_s;
 	int _frame_countdown, _dvar_count, _dcmd_count;
 	DVar _dvars[256];
 	DCmd _dcmds[256];

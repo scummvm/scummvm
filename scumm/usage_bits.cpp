@@ -20,7 +20,7 @@
 #include "scumm.h"
 #include "usage_bits.h"
 
-void Scumm::upgradeGfxUsageBits() {
+void ScummEngine::upgradeGfxUsageBits() {
 	int i;
 
 	for (i = 409; i >= 0; i--) {
@@ -35,25 +35,25 @@ void Scumm::upgradeGfxUsageBits() {
 	}
 }
 
-void Scumm::setGfxUsageBit(int strip, int bit) {
+void ScummEngine::setGfxUsageBit(int strip, int bit) {
 	assert(1 <= bit && bit <= 96);
 	bit--;
 	gfxUsageBits[3 * strip + bit / 32] |= (1 << (bit % 32));
 }
 
-void Scumm::clearGfxUsageBit(int strip, int bit) {
+void ScummEngine::clearGfxUsageBit(int strip, int bit) {
 	assert(1 <= bit && bit <= 96);
 	bit--;
 	gfxUsageBits[3 * strip + bit / 32] &= ~(1 << (bit % 32));
 }
 
-bool Scumm::testGfxUsageBit(int strip, int bit) {
+bool ScummEngine::testGfxUsageBit(int strip, int bit) {
 	assert(1 <= bit && bit <= 96);
 	bit--;
 	return (gfxUsageBits[3 * strip + bit / 32] & (1 << (bit % 32))) != 0;
 }
 
-bool Scumm::testGfxAnyUsageBits(int strip) {
+bool ScummEngine::testGfxAnyUsageBits(int strip) {
 	// Exclude the DIRTY and RESTORED bits from the test
 	uint32 bitmask[3] = { 0xFFFFFFFF, 0xFFFFFFFF, 0x3FFFFFFF };
 	int i;
@@ -65,7 +65,7 @@ bool Scumm::testGfxAnyUsageBits(int strip) {
 	return false;
 }
 
-bool Scumm::testGfxOtherUsageBits(int strip, int bit) {
+bool ScummEngine::testGfxOtherUsageBits(int strip, int bit) {
 	// Don't exclude the DIRTY and RESTORED bits from the test
 	uint32 bitmask[3] = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF };
 	int i;

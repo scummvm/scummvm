@@ -26,7 +26,7 @@
 #include "resource.h"
 
 
-void Scumm_v3::readIndexFile() {
+void ScummEngine_v3::readIndexFile() {
 	if (_features & GF_OLD_BUNDLE) {
 		int magic = 0;
 		debug(9, "readIndexFile()");
@@ -163,7 +163,7 @@ void Scumm_v3::readIndexFile() {
 	}
 }
 
-void Scumm_v3::loadCharset(int no) {
+void ScummEngine_v3::loadCharset(int no) {
 	uint32 size;
 	memset(_charsetData, 0, sizeof(_charsetData));
 
@@ -190,7 +190,7 @@ void Scumm_v3::loadCharset(int no) {
 	file.close();
 }
 
-void Scumm_v3::readMAXS() {
+void ScummEngine_v3::readMAXS() {
 	// FIXME - I'm not sure for those values yet, they will have to be rechecked
 
 	_numVariables = 800;				// 800
@@ -212,7 +212,7 @@ void Scumm_v3::readMAXS() {
 	allocateArrays();
 }
 
-void Scumm_v3::readGlobalObjects() {
+void ScummEngine_v3::readGlobalObjects() {
 	int num = _fileHandle.readUint16LE();
 	assert(num == _numGlobalObjects);
 	for (int i = 0; i != num; i++) {

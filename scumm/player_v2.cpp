@@ -345,7 +345,7 @@ static const uint16 pcjr_freq_table[12] = {
 ////////////////////////////////////////
 
 
-Player_V2::Player_V2(Scumm *scumm) {
+Player_V2::Player_V2(ScummEngine *scumm) {
 	int i;
 	
 	// This simulates the pc speaker sound, which is driven

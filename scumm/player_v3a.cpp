@@ -38,7 +38,7 @@ static const uint16 note_freqs[4][12] = {
 //
 ////////////////////////////////////////
 
-Player_V3A::Player_V3A(Scumm *scumm) {
+Player_V3A::Player_V3A(ScummEngine *scumm) {
 	int i;
 	_scumm = scumm;
 	_system = scumm->_system;

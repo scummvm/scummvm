@@ -112,7 +112,7 @@ static bool akos_compare(int a, int b, byte cmd) {
 	}
 }
 
-bool Scumm::akos_hasManyDirections(Actor *a) {
+bool ScummEngine::akos_hasManyDirections(Actor *a) {
 	byte *akos;
 	const AkosHeader *akhd;
 
@@ -123,14 +123,14 @@ bool Scumm::akos_hasManyDirections(Actor *a) {
 	return (akhd->flags & 2) != 0;
 }
 
-int Scumm::akos_frameToAnim(Actor *a, int frame) {
+int ScummEngine::akos_frameToAnim(Actor *a, int frame) {
 	if (akos_hasManyDirections(a))
 		return toSimpleDir(1, a->getFacing()) + frame * 8;
 	else
 		return newDirToOldDir(a->getFacing()) + frame * 4;
 }
 
-void Scumm::akos_decodeData(Actor *a, int frame, uint usemask) {
+void ScummEngine::akos_decodeData(Actor *a, int frame, uint usemask) {
 	uint anim;
 	const byte *akos, *r;
 	const AkosHeader *akhd;
@@ -1057,7 +1057,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	return 0;
 }
 
-bool Scumm::akos_increaseAnims(const byte *akos, Actor *a) {
+bool ScummEngine::akos_increaseAnims(const byte *akos, Actor *a) {
 	const byte *aksq, *akfo;
 	int i;
 	uint size;
@@ -1080,7 +1080,7 @@ bool Scumm::akos_increaseAnims(const byte *akos, Actor *a) {
 #define GUW(o) READ_LE_UINT16(aksq+curpos+(o))
 #define GB(o) aksq[curpos+(o)]
 
-bool Scumm::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const uint16 *akfo, int numakfo) {
+bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const uint16 *akfo, int numakfo) {
 	byte active;
 	uint old_curpos, curpos, end;
 	uint code;
@@ -1313,7 +1313,7 @@ bool Scumm::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const uint16
 	return curpos != old_curpos;
 }
 
-void Scumm::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) {
+void ScummEngine::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) {
 	switch (cmd) {
 	case 1:
 		a->putActor(0, 0, 0);

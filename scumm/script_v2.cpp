@@ -29,9 +29,9 @@
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
 
-#define OPCODE(x)	{ &Scumm_v2::x, #x }
+#define OPCODE(x)	{ &ScummEngine_v2::x, #x }
 
-void Scumm_v2::setupOpcodes() {
+void ScummEngine_v2::setupOpcodes() {
 	static const OpcodeEntryV2 opcodes[256] = {
 		/* 00 */
 		OPCODE(o5_stopObjectCode),
@@ -360,22 +360,22 @@ void Scumm_v2::setupOpcodes() {
 
 #define SENTENCE_SCRIPT 2
 
-void Scumm_v2::executeOpcode(byte i) {
+void ScummEngine_v2::executeOpcode(byte i) {
 	OpcodeProcV2 op = _opcodesV2[i].proc;
 	(this->*op) ();
 }
 
-const char *Scumm_v2::getOpcodeDesc(byte i) {
+const char *ScummEngine_v2::getOpcodeDesc(byte i) {
 	return _opcodesV2[i].desc;
 }
 
-int Scumm_v2::getVar() {
+int ScummEngine_v2::getVar() {
 	return readVar(fetchScriptByte());
 }
 
 int v1_mm_actor_speech_color[] = {1, 7, 2, 14, 8, 1, 3, 7, 7, 12, 1, 13, 1, 4, 5, 5, 4, 3, 1, 5, 1, 1, 1, 7, 7, 0};
 
-void Scumm_v2::decodeParseString() {
+void ScummEngine_v2::decodeParseString() {
 	byte buffer[512];
 	byte *ptr = buffer;
 	byte c;
@@ -442,7 +442,7 @@ void Scumm_v2::decodeParseString() {
 	}
 }
 
-int Scumm_v2::readVar(uint var) {
+int ScummEngine_v2::readVar(uint var) {
 	if (var >= 14 && var <= 16)
 		var = _scummVars[var];
 
@@ -451,79 +451,79 @@ int Scumm_v2::readVar(uint var) {
 	return _scummVars[var];
 }
 
-void Scumm_v2::writeVar(uint var, int value) {
+void ScummEngine_v2::writeVar(uint var, int value) {
 	checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
 	debug(6, "writeVar(%d) = %d", var, value);
 	_scummVars[var] = value;
 }
 
-void Scumm_v2::getResultPosIndirect() {
+void ScummEngine_v2::getResultPosIndirect() {
 	_resultVarNumber = _scummVars[fetchScriptByte()];
 }
 
-void Scumm_v2::getResultPos() {
+void ScummEngine_v2::getResultPos() {
 	_resultVarNumber = fetchScriptByte();
 }
 
-void Scumm_v2::setStateCommon(byte type) {
+void ScummEngine_v2::setStateCommon(byte type) {
 	int obj = getVarOrDirectWord(0x80);
 	putState(obj, getState(obj) | type);
 }
 
-void Scumm_v2::clearStateCommon(byte type) {
+void ScummEngine_v2::clearStateCommon(byte type) {
 	int obj = getVarOrDirectWord(0x80);
 	putState(obj, getState(obj) & ~type);
 }
 
-void Scumm_v2::o2_setState08() {
+void ScummEngine_v2::o2_setState08() {
 	int obj = getVarOrDirectWord(0x80);
 	putState(obj, getState(obj) | 0x08);
 	removeObjectFromRoom(obj);
 	clearDrawObjectQueue();
 }
 
-void Scumm_v2::o2_clearState08() {
+void ScummEngine_v2::o2_clearState08() {
 	int obj = getVarOrDirectWord(0x80);
 	putState(obj, getState(obj) & ~0x08);
 	removeObjectFromRoom(obj);
 	clearDrawObjectQueue();
 }
 
-void Scumm_v2::o2_setState04() {
+void ScummEngine_v2::o2_setState04() {
 	setStateCommon(0x04);
 }
 
-void Scumm_v2::o2_clearState04() {
+void ScummEngine_v2::o2_clearState04() {
 	clearStateCommon(0x04);
 }
 
-void Scumm_v2::o2_setState02() {
+void ScummEngine_v2::o2_setState02() {
 	setStateCommon(0x02);
 }
 
-void Scumm_v2::o2_clearState02() {
+void ScummEngine_v2::o2_clearState02() {
 	clearStateCommon(0x02);
 }
 
-void Scumm_v2::o2_setState01() {
+void ScummEngine_v2::o2_setState01() {
 	setStateCommon(0x01);
 }
 
-void Scumm_v2::o2_clearState01() {
+void ScummEngine_v2::o2_clearState01() {
 	clearStateCommon(0x01);
 }
 
-void Scumm_v2::o2_assignVarWordIndirect() {
+void ScummEngine_v2::o2_assignVarWordIndirect() {
 	getResultPosIndirect();
 	setResult(getVarOrDirectWord(0x80));
 }
 
-void Scumm_v2::o2_assignVarByte() {
+void ScummEngine_v2::o2_assignVarByte() {
 	getResultPos();
 	setResult(fetchScriptByte());
 }
 
-void Scumm_v2::o2_setObjPreposition() {
+void ScummEngine_v2::o2_setObjPreposition() {
 	int obj = getVarOrDirectWord(0x80);
 	int unk = fetchScriptByte();
 
@@ -535,7 +535,7 @@ void Scumm_v2::o2_setObjPreposition() {
 	}
 }
 
-void Scumm_v2::o2_getObjPreposition() {
+void ScummEngine_v2::o2_getObjPreposition() {
 	getResultPos();
 	int obj = getVarOrDirectWord(0x80);
 
@@ -547,7 +547,7 @@ void Scumm_v2::o2_getObjPreposition() {
 	}
 }
 
-void Scumm_v2::o2_setBitVar() {
+void ScummEngine_v2::o2_setBitVar() {
 	int var = fetchScriptWord();
 	byte a = getVarOrDirectByte(0x80);
 
@@ -562,7 +562,7 @@ void Scumm_v2::o2_setBitVar() {
 
 }
 
-void Scumm_v2::o2_getBitVar() {
+void ScummEngine_v2::o2_getBitVar() {
 	getResultPos();
 	int var = fetchScriptWord();
 	byte a = getVarOrDirectByte(0x80);
@@ -574,7 +574,7 @@ void Scumm_v2::o2_getBitVar() {
 	setResult((_scummVars[bit_var] & (1 << bit_offset)) ? 1 : 0);
 }
 
-void Scumm_v2::ifStateCommon(byte type) {
+void ScummEngine_v2::ifStateCommon(byte type) {
 	int obj = getVarOrDirectWord(0x80);
 
 	if ((getState(obj) & type) == 0)
@@ -583,7 +583,7 @@ void Scumm_v2::ifStateCommon(byte type) {
 		ignoreScriptWord();
 }
 
-void Scumm_v2::ifNotStateCommon(byte type) {
+void ScummEngine_v2::ifNotStateCommon(byte type) {
 	int obj = getVarOrDirectWord(0x80);
 
 	if ((getState(obj) & type) != 0)
@@ -592,67 +592,67 @@ void Scumm_v2::ifNotStateCommon(byte type) {
 		ignoreScriptWord();
 }
 
-void Scumm_v2::o2_ifState08() {
+void ScummEngine_v2::o2_ifState08() {
 	ifStateCommon(0x08);
 }
 
-void Scumm_v2::o2_ifNotState08() {
+void ScummEngine_v2::o2_ifNotState08() {
 	ifNotStateCommon(0x08);
 }
 
-void Scumm_v2::o2_ifState04() {
+void ScummEngine_v2::o2_ifState04() {
 	ifStateCommon(0x04);
 }
 
-void Scumm_v2::o2_ifNotState04() {
+void ScummEngine_v2::o2_ifNotState04() {
 	ifNotStateCommon(0x04);
 }
 
-void Scumm_v2::o2_ifState02() {
+void ScummEngine_v2::o2_ifState02() {
 	ifStateCommon(0x02);
 }
 
-void Scumm_v2::o2_ifNotState02() {
+void ScummEngine_v2::o2_ifNotState02() {
 	ifNotStateCommon(0x02);
 }
 
-void Scumm_v2::o2_ifState01() {
+void ScummEngine_v2::o2_ifState01() {
 	ifStateCommon(0x01);
 }
 
-void Scumm_v2::o2_ifNotState01() {
+void ScummEngine_v2::o2_ifNotState01() {
 	ifNotStateCommon(0x01);
 }
 
-void Scumm_v2::o2_addIndirect() {
+void ScummEngine_v2::o2_addIndirect() {
 	int a;
 	getResultPosIndirect();
 	a = getVarOrDirectWord(0x80);
 	_scummVars[_resultVarNumber] += a;
 }
 
-void Scumm_v2::o2_subIndirect() {
+void ScummEngine_v2::o2_subIndirect() {
 	int a;
 	getResultPosIndirect();
 	a = getVarOrDirectWord(0x80);
 	_scummVars[_resultVarNumber] -= a;
 }
 
-void Scumm_v2::o2_add() {
+void ScummEngine_v2::o2_add() {
 	int a;
 	getResultPos();
 	a = getVarOrDirectWord(0x80);
 	_scummVars[_resultVarNumber] += a;
 }
 
-void Scumm_v2::o2_subtract() {
+void ScummEngine_v2::o2_subtract() {
 	int a;
 	getResultPos();
 	a = getVarOrDirectWord(0x80);
 	_scummVars[_resultVarNumber] -= a;
 }
 
-void Scumm_v2::o2_waitForActor() {
+void ScummEngine_v2::o2_waitForActor() {
 	Actor *a = derefActor(getVarOrDirectByte(0x80), "o2_waitForActor");
 	if (a->moving) {
 		_scriptPointer -= 2;
@@ -660,7 +660,7 @@ void Scumm_v2::o2_waitForActor() {
 	}
 }
 
-void Scumm_v2::o2_waitForMessage() {
+void ScummEngine_v2::o2_waitForMessage() {
 	
 	if (VAR(VAR_HAVE_MSG)) {
 		_scriptPointer--;
@@ -668,7 +668,7 @@ void Scumm_v2::o2_waitForMessage() {
 	}
 }
 
-void Scumm_v2::o2_waitForSentence() {
+void ScummEngine_v2::o2_waitForSentence() {
 	if (!_sentenceNum && !isScriptInUse(SENTENCE_SCRIPT))
 		return;
 
@@ -676,7 +676,7 @@ void Scumm_v2::o2_waitForSentence() {
 	o5_breakHere();
 }
 
-void Scumm_v2::o2_actorSet() {
+void ScummEngine_v2::o2_actorSet() {
 	int act = getVarOrDirectByte(0x80);
 	int arg = getVarOrDirectByte(0x40);
 	Actor *a;
@@ -721,11 +721,11 @@ void Scumm_v2::o2_actorSet() {
 	}
 }
 
-void Scumm_v2::o2_restart() {
+void ScummEngine_v2::o2_restart() {
 	restart();
 }
 
-void Scumm_v2::o2_drawObject() {
+void ScummEngine_v2::o2_drawObject() {
 	int obj, idx, i;
 	ObjectData *od;
 	uint16 x, y, w, h;
@@ -762,7 +762,7 @@ void Scumm_v2::o2_drawObject() {
 	putState(obj, getState(od->obj_nr) | 0x08);
 }
 
-void Scumm_v2::o2_resourceRoutines() {
+void ScummEngine_v2::o2_resourceRoutines() {
 	const ResTypes resTypes[] = {
 			rtNumTypes,	// Invalid
 			rtNumTypes,	// Invalid
@@ -792,7 +792,7 @@ void Scumm_v2::o2_resourceRoutines() {
 	}
 }
 
-void Scumm_v2::o2_verbOps() {
+void ScummEngine_v2::o2_verbOps() {
 	int verb = fetchScriptByte();
 	int slot, state;
 	
@@ -880,7 +880,7 @@ void Scumm_v2::o2_verbOps() {
 	verbMouseOver(0);
 }
 
-void Scumm_v2::o2_doSentence() {
+void ScummEngine_v2::o2_doSentence() {
 	int a;
 	SentenceTab *st;
 
@@ -914,7 +914,7 @@ void Scumm_v2::o2_doSentence() {
 		_sentenceNum--;
 		
 		if (st->verb == 254) {
-			Scumm::stopObjectScript(st->objectA);
+			ScummEngine::stopObjectScript(st->objectA);
 		} else {
 			bool isBackgroundScript;
 			bool isSpecialVerb;
@@ -970,7 +970,7 @@ void Scumm_v2::o2_doSentence() {
 	}
 }
 
-void Scumm_v2::o2_drawSentence() {
+void ScummEngine_v2::o2_drawSentence() {
 	Common::Rect sentenceline;
 	static char sentence[256];
 	const byte *temp;
@@ -1065,7 +1065,7 @@ void Scumm_v2::o2_drawSentence() {
 	drawString(2);
 }
 
-void Scumm_v2::o2_ifClassOfIs() {
+void ScummEngine_v2::o2_ifClassOfIs() {
 	int obj = getVarOrDirectWord(0x80);
 	int clsop = getVarOrDirectByte(0x40);
 	byte *obcd = getOBCDFromObject(obj);
@@ -1083,7 +1083,7 @@ void Scumm_v2::o2_ifClassOfIs() {
 	ignoreScriptWord();
 }
 
-void Scumm_v2::o2_walkActorTo() {
+void ScummEngine_v2::o2_walkActorTo() {
 	int x, y;
 	Actor *a;
 	a = derefActor(getVarOrDirectByte(0x80), "o2_walkActorTo");
@@ -1094,7 +1094,7 @@ void Scumm_v2::o2_walkActorTo() {
 	a->startWalkActor(x, y, -1);
 }
 
-void Scumm_v2::o2_putActor() {
+void ScummEngine_v2::o2_putActor() {
 	int act = getVarOrDirectByte(0x80);
 	int x, y;
 	Actor *a;
@@ -1107,16 +1107,16 @@ void Scumm_v2::o2_putActor() {
 	a->putActor(x, y, a->room);
 }
 
-void Scumm_v2::o2_startScript() {
+void ScummEngine_v2::o2_startScript() {
 	int script = getVarOrDirectByte(0x80);
 	runScript(script, 0, 0, 0);
 }
 
-void Scumm_v2::o2_panCameraTo() {
+void ScummEngine_v2::o2_panCameraTo() {
 	panCameraTo(getVarOrDirectByte(0x80) * 8, 0);
 }
 
-void Scumm_v2::o2_walkActorToObject() {
+void ScummEngine_v2::o2_walkActorToObject() {
 	int obj;
 	Actor *a;
 
@@ -1129,7 +1129,7 @@ void Scumm_v2::o2_walkActorToObject() {
 	}
 }
 
-void Scumm_v2::o2_putActorAtObject() {
+void ScummEngine_v2::o2_putActorAtObject() {
 	int obj, x, y;
 	Actor *a;
 
@@ -1146,14 +1146,14 @@ void Scumm_v2::o2_putActorAtObject() {
 	a->putActor(x, y, a->room);
 }
 
-void Scumm_v2::o2_getActorElevation() {
+void ScummEngine_v2::o2_getActorElevation() {
 	getResultPos();
 	int act = getVarOrDirectByte(0x80);
 	Actor *a = derefActor(act, "o2_getActorElevation");
 	setResult(a->elevation / 2);
 }
 
-void Scumm_v2::o2_setActorElevation() {
+void ScummEngine_v2::o2_setActorElevation() {
 	int act = getVarOrDirectByte(0x80);
 	int elevation = (int8)getVarOrDirectByte(0x40);
 
@@ -1161,7 +1161,7 @@ void Scumm_v2::o2_setActorElevation() {
 	a->elevation = elevation * 2;
 }
 
-void Scumm_v2::o2_animateActor() {
+void ScummEngine_v2::o2_animateActor() {
 	int act = getVarOrDirectByte(0x80);
 	int anim = getVarOrDirectByte(0x40);
 
@@ -1169,7 +1169,7 @@ void Scumm_v2::o2_animateActor() {
 	a->animateActor(anim);
 }
 
-void Scumm_v2::o2_actorFromPos() {
+void ScummEngine_v2::o2_actorFromPos() {
 	int x, y;
 	getResultPos();
 	x = getVarOrDirectByte(0x80) * 8;
@@ -1177,14 +1177,14 @@ void Scumm_v2::o2_actorFromPos() {
 	setResult(getActorFromPos(x, y));
 }
 
-void Scumm_v2::o2_findObject() {
+void ScummEngine_v2::o2_findObject() {
 	getResultPos();
 	int x = getVarOrDirectByte(0x80) * 8;
 	int y = getVarOrDirectByte(0x40) * 2;
 	setResult(findObject(x, y));
 }
 
-void Scumm_v2::o2_getActorX() {
+void ScummEngine_v2::o2_getActorX() {
 	int a;
 	getResultPos();
 
@@ -1192,7 +1192,7 @@ void Scumm_v2::o2_getActorX() {
 	setResult(getObjX(a) / 8);
 }
 
-void Scumm_v2::o2_getActorY() {
+void ScummEngine_v2::o2_getActorY() {
 	int a;
 	getResultPos();
 
@@ -1200,7 +1200,7 @@ void Scumm_v2::o2_getActorY() {
 	setResult(getObjY(a) / 2);
 }
 
-void Scumm_v2::o2_isGreater() {
+void ScummEngine_v2::o2_isGreater() {
 	uint16 a = getVar();
 	uint16 b = getVarOrDirectWord(0x80);
 	if (b > a)
@@ -1209,7 +1209,7 @@ void Scumm_v2::o2_isGreater() {
 		o5_jumpRelative();
 }
 
-void Scumm_v2::o2_isGreaterEqual() {
+void ScummEngine_v2::o2_isGreaterEqual() {
 	uint16 a = getVar();
 	uint16 b = getVarOrDirectWord(0x80);
 	if (b >= a)
@@ -1218,7 +1218,7 @@ void Scumm_v2::o2_isGreaterEqual() {
 		o5_jumpRelative();
 }
 
-void Scumm_v2::o2_isLess() {
+void ScummEngine_v2::o2_isLess() {
 	uint16 a = getVar();
 	uint16 b = getVarOrDirectWord(0x80);
 
@@ -1228,7 +1228,7 @@ void Scumm_v2::o2_isLess() {
 		o5_jumpRelative();
 }
 
-void Scumm_v2::o2_isLessEqual() {
+void ScummEngine_v2::o2_isLessEqual() {
 	uint16 a = getVar();
 	uint16 b = getVarOrDirectWord(0x80);
 	if (b <= a)
@@ -1237,7 +1237,7 @@ void Scumm_v2::o2_isLessEqual() {
 		o5_jumpRelative();
 }
 
-void Scumm_v2::o2_lights() {
+void ScummEngine_v2::o2_lights() {
 	int a, b, c;
 
 	a = getVarOrDirectByte(0x80);
@@ -1266,7 +1266,7 @@ void Scumm_v2::o2_lights() {
 	_fullRedraw = 1;
 }
 
-void Scumm_v2::o2_loadRoomWithEgo() {
+void ScummEngine_v2::o2_loadRoomWithEgo() {
 	Actor *a;
 	int obj, room, x, y, x2, y2, dir;
 
@@ -1301,7 +1301,7 @@ void Scumm_v2::o2_loadRoomWithEgo() {
 	runScript(5, 0, 0, 0);
 }
 
-void Scumm_v2::o2_setOwnerOf() {
+void ScummEngine_v2::o2_setOwnerOf() {
 	int obj, owner;
 
 	obj = getVarOrDirectWord(0x80);
@@ -1310,7 +1310,7 @@ void Scumm_v2::o2_setOwnerOf() {
 	setOwnerOf(obj, owner);
 }
 
-void Scumm_v2::o2_delay() {
+void ScummEngine_v2::o2_delay() {
 	int delay = fetchScriptByte();
 	delay |= fetchScriptByte() << 8;
 	delay |= fetchScriptByte() << 16;
@@ -1321,7 +1321,7 @@ void Scumm_v2::o2_delay() {
 	o5_breakHere();
 }
 
-void Scumm_v2::o2_setBoxFlags() {
+void ScummEngine_v2::o2_setBoxFlags() {
 	int a, b;
 
 	a = getVarOrDirectByte(0x80);
@@ -1329,11 +1329,11 @@ void Scumm_v2::o2_setBoxFlags() {
 	setBoxFlags(a, b);
 }
 
-void Scumm_v2::o2_setCameraAt() {
+void ScummEngine_v2::o2_setCameraAt() {
 	setCameraAtEx(getVarOrDirectByte(0x80) * 8);
 }
 
-void Scumm_v2::o2_roomOps() {
+void ScummEngine_v2::o2_roomOps() {
 	int a = getVarOrDirectByte(0x80);
 	int b = getVarOrDirectByte(0x40);
 
@@ -1367,7 +1367,7 @@ void Scumm_v2::o2_roomOps() {
 	}
 }
 
-void Scumm_v2::o2_cutscene() {
+void ScummEngine_v2::o2_cutscene() {
 	//warning("TODO o2_cutscene()");
 
 	vm.cutSceneData[0] = _userState | (_userPut ? 16 : 0);
@@ -1391,7 +1391,7 @@ void Scumm_v2::o2_cutscene() {
 	vm.cutScenePtr[0] = 0;
 }
 
-void Scumm_v2::o2_endCutscene() {
+void ScummEngine_v2::o2_endCutscene() {
 	//warning("TODO o2_endCutscene()");
 
 	vm.cutSceneStackPointer = 0;
@@ -1417,7 +1417,7 @@ void Scumm_v2::o2_endCutscene() {
 	}
 }
 
-void Scumm_v2::o2_beginOverride() {
+void ScummEngine_v2::o2_beginOverride() {
 	vm.cutScenePtr[0] = _scriptPointer - _scriptOrgPointer;
 	vm.cutSceneScript[0] = _currentScript;
 
@@ -1426,14 +1426,14 @@ void Scumm_v2::o2_beginOverride() {
 	fetchScriptWord();
 }
 
-void Scumm_v2::o2_chainScript() {
+void ScummEngine_v2::o2_chainScript() {
 	int data = getVarOrDirectByte(0x80);
 	stopScript(vm.slot[_currentScript].number);
 	_currentScript = 0xFF;
 	runScript(data, 0, 0, 0);
 }
 
-void Scumm_v2::o2_pickupObject() {
+void ScummEngine_v2::o2_pickupObject() {
 	int obj = getVarOrDirectWord(0x80);
 
 	if (obj < 1) {
@@ -1455,7 +1455,7 @@ void Scumm_v2::o2_pickupObject() {
 	runInventoryScript(1);
 }
 
-void Scumm_v2::o2_setObjectName() {
+void ScummEngine_v2::o2_setObjectName() {
 	int obj = getVarOrDirectWord(0x80);
 	int size = 0;
 	int a;
@@ -1503,7 +1503,7 @@ void Scumm_v2::o2_setObjectName() {
 	runInventoryScript(0);
 }
 
-void Scumm_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
+void ScummEngine_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
 	uint16 cmd = getVarOrDirectWord(0x80);
 	byte state = cmd >> 8;
 
@@ -1514,7 +1514,7 @@ void Scumm_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
 	setUserState(state);
 }
 
-void Scumm_v2::setUserState(byte state) {
+void ScummEngine_v2::setUserState(byte state) {
 	if (state & 4) {						// Userface
 		_userState = state & (32 | 64 | 128);
 	}
@@ -1549,20 +1549,20 @@ void Scumm_v2::setUserState(byte state) {
 	runInventoryScript(1);
 }
 
-void Scumm_v2::o2_getActorWalkBox() {
+void ScummEngine_v2::o2_getActorWalkBox() {
 	Actor *a;
 	getResultPos();
 	a = derefActor(getVarOrDirectByte(0x80), "o2_getActorWalkbox");
 	setResult(a->walkbox);
 }
 
-void Scumm_v2::o2_dummy() {
+void ScummEngine_v2::o2_dummy() {
 	// Opcode 238 is used in Zak but has no purpose
 	if (!(_gameId == GID_ZAK && _opcode == 238))
 		warning("o2_dummy invoked (opcode %d)", _opcode);
 }
 
-void Scumm_v2::o2_switchCostumeSet() {
+void ScummEngine_v2::o2_switchCostumeSet() {
 	// NES version of maniac uses this to switch between the two
 	// groups of costumes it has
 	if (_features & GF_NES) {
@@ -1572,7 +1572,7 @@ void Scumm_v2::o2_switchCostumeSet() {
 		o2_dummy();
 }
 
-void Scumm_v2::resetSentence() {
+void ScummEngine_v2::resetSentence() {
 	VAR(VAR_SENTENCE_VERB) = VAR(VAR_BACKUP_VERB);
 	VAR(VAR_SENTENCE_OBJECT1) = 0;
 	VAR(VAR_SENTENCE_OBJECT2) = 0;

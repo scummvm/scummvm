@@ -44,7 +44,7 @@ struct channel_data_v1 {
 
 class Player_V1 : public Player_V2 {
 public:
-	Player_V1(Scumm *scumm);
+	Player_V1(ScummEngine *scumm);
 	~Player_V1();
 
 	void startSound(int nr);

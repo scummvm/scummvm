@@ -46,20 +46,20 @@ struct SaveGameHeader {
 };
 
 
-void Scumm::requestSave(int slot, const char *name) {
+void ScummEngine::requestSave(int slot, const char *name) {
 	_saveLoadSlot = slot;
 	_saveLoadCompatible = false;
 	_saveLoadFlag = 1;		// 1 for save
 	strcpy(_saveLoadName, name);
 }
 
-void Scumm::requestLoad(int slot) {
+void ScummEngine::requestLoad(int slot) {
 	_saveLoadSlot = slot;
 	_saveLoadCompatible = false;
 	_saveLoadFlag = 2;		// 2 for load
 }
 
-bool Scumm::saveState(int slot, bool compat, SaveFileManager *mgr) {
+bool ScummEngine::saveState(int slot, bool compat, SaveFileManager *mgr) {
 	char filename[256];
 	SaveFile *out;
 	SaveGameHeader hdr;
@@ -84,7 +84,7 @@ bool Scumm::saveState(int slot, bool compat, SaveFileManager *mgr) {
 	return true;
 }
 
-bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
+bool ScummEngine::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	char filename[256];
 	SaveFile *out;
 	int i, j;
@@ -225,18 +225,18 @@ bool Scumm::loadState(int slot, bool compat, SaveFileManager *mgr) {
 	return true;
 }
 
-void Scumm::makeSavegameName(char *out, int slot, bool compatible) {
+void ScummEngine::makeSavegameName(char *out, int slot, bool compatible) {
 	sprintf(out, "%s.%c%.2d", _game_name, compatible ? 'c' : 's', slot);
 }
 
-void Scumm::listSavegames(bool *marks, int num, SaveFileManager *mgr) {
+void ScummEngine::listSavegames(bool *marks, int num, SaveFileManager *mgr) {
 	char prefix[256];
 	makeSavegameName(prefix, 99, false);
 	prefix[strlen(prefix)-2] = 0;
 	mgr->list_savefiles(prefix, getSavePath(), marks, num);
 }
 
-bool Scumm::getSavegameName(int slot, char *desc, SaveFileManager *mgr) {
+bool ScummEngine::getSavegameName(int slot, char *desc, SaveFileManager *mgr) {
 	char filename[256];
 	SaveFile *out;
 	SaveGameHeader hdr;
@@ -267,7 +267,7 @@ bool Scumm::getSavegameName(int slot, char *desc, SaveFileManager *mgr) {
 	return true;
 }
 
-void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
+void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	const SaveLoadEntry objectEntries[] = {
 		MKLINE(ObjectData, OBIMoffset, sleUint32, VER(8)),
 		MKLINE(ObjectData, OBCDoffset, sleUint32, VER(8)),
@@ -317,154 +317,154 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	};
 
 	const SaveLoadEntry mainEntries[] = {
-		MKLINE(Scumm, _roomWidth, sleUint16, VER(8)),
-		MKLINE(Scumm, _roomHeight, sleUint16, VER(8)),
-		MKLINE(Scumm, _ENCD_offs, sleUint32, VER(8)),
-		MKLINE(Scumm, _EXCD_offs, sleUint32, VER(8)),
-		MKLINE(Scumm, _IM00_offs, sleUint32, VER(8)),
-		MKLINE(Scumm, _CLUT_offs, sleUint32, VER(8)),
-		MK_OBSOLETE(Scumm, _EPAL_offs, sleUint32, VER(8), VER(9)),
-		MKLINE(Scumm, _PALS_offs, sleUint32, VER(8)),
-		MKLINE(Scumm, _curPalIndex, sleByte, VER(8)),
-		MKLINE(Scumm, _currentRoom, sleByte, VER(8)),
-		MKLINE(Scumm, _roomResource, sleByte, VER(8)),
-		MKLINE(Scumm, _numObjectsInRoom, sleByte, VER(8)),
-		MKLINE(Scumm, _currentScript, sleByte, VER(8)),
-		MKARRAY(Scumm, _localScriptList[0], sleUint32, NUM_LOCALSCRIPT, VER(8)),
+		MKLINE(ScummEngine, _roomWidth, sleUint16, VER(8)),
+		MKLINE(ScummEngine, _roomHeight, sleUint16, VER(8)),
+		MKLINE(ScummEngine, _ENCD_offs, sleUint32, VER(8)),
+		MKLINE(ScummEngine, _EXCD_offs, sleUint32, VER(8)),
+		MKLINE(ScummEngine, _IM00_offs, sleUint32, VER(8)),
+		MKLINE(ScummEngine, _CLUT_offs, sleUint32, VER(8)),
+		MK_OBSOLETE(ScummEngine, _EPAL_offs, sleUint32, VER(8), VER(9)),
+		MKLINE(ScummEngine, _PALS_offs, sleUint32, VER(8)),
+		MKLINE(ScummEngine, _curPalIndex, sleByte, VER(8)),
+		MKLINE(ScummEngine, _currentRoom, sleByte, VER(8)),
+		MKLINE(ScummEngine, _roomResource, sleByte, VER(8)),
+		MKLINE(ScummEngine, _numObjectsInRoom, sleByte, VER(8)),
+		MKLINE(ScummEngine, _currentScript, sleByte, VER(8)),
+		MKARRAY(ScummEngine, _localScriptList[0], sleUint32, NUM_LOCALSCRIPT, VER(8)),
 
 
 		// vm.localvar grew from 25 to 40 script entries and then from
 		// 16 to 32 bit variables (but that wasn't reflect here)... and
 		// THEN from 16 to 25 variables.
-		MKARRAY2_OLD(Scumm, vm.localvar[0][0], sleUint16, 17, 25, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(8), VER(8)),
-		MKARRAY2_OLD(Scumm, vm.localvar[0][0], sleUint16, 17, 40, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(9), VER(14)),
+		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 17, 25, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(8), VER(8)),
+		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 17, 40, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(9), VER(14)),
 
 		// We used to save 25 * 40 = 1000 blocks; but actually, each 'row consisted of 26 entry,
 		// i.e. 26 * 40 = 1040. Thus the last 40 blocks of localvar where not saved at all. To be
 		// able to load this screwed format, we use a trick: We load 26 * 38 = 988 blocks.
 		// Then, we mark the followin 12 blocks (24 bytes) as obsolete.
-		MKARRAY2_OLD(Scumm, vm.localvar[0][0], sleUint16, 26, 38, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(15), VER(17)),
-		MK_OBSOLETE_ARRAY(Scumm, vm.localvar[39][0], sleUint16, 12, VER(15), VER(17)),
+		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 26, 38, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(15), VER(17)),
+		MK_OBSOLETE_ARRAY(ScummEngine, vm.localvar[39][0], sleUint16, 12, VER(15), VER(17)),
 
 		// This was the first proper multi dimensional version of the localvars, with 32 bit values
-		MKARRAY2_OLD(Scumm, vm.localvar[0][0], sleUint32, 26, 40, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(18), VER(19)),
+		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint32, 26, 40, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(18), VER(19)),
 
 		// Then we doubled the script slots again, from 40 to 80
-		MKARRAY2(Scumm, vm.localvar[0][0], sleUint32, 26, NUM_SCRIPT_SLOT, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(20)),
+		MKARRAY2(ScummEngine, vm.localvar[0][0], sleUint32, 26, NUM_SCRIPT_SLOT, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(20)),
 
 
-		MKARRAY(Scumm, _resourceMapper[0], sleByte, 128, VER(8)),
-		MKARRAY(Scumm, _charsetColorMap[0], sleByte, 16, VER(8)),
+		MKARRAY(ScummEngine, _resourceMapper[0], sleByte, 128, VER(8)),
+		MKARRAY(ScummEngine, _charsetColorMap[0], sleByte, 16, VER(8)),
 		
 		// _charsetData grew from 10*16 to 15*16 bytes
-		MKARRAY_OLD(Scumm, _charsetData[0][0], sleByte, 10 * 16, VER(8), VER(9)),
-		MKARRAY(Scumm, _charsetData[0][0], sleByte, 15 * 16, VER(10)),
+		MKARRAY_OLD(ScummEngine, _charsetData[0][0], sleByte, 10 * 16, VER(8), VER(9)),
+		MKARRAY(ScummEngine, _charsetData[0][0], sleByte, 15 * 16, VER(10)),
 
-		MKLINE(Scumm, _curExecScript, sleUint16, VER(8)),
+		MKLINE(ScummEngine, _curExecScript, sleUint16, VER(8)),
 
-		MKLINE(Scumm, camera._dest.x, sleInt16, VER(8)),
-		MKLINE(Scumm, camera._dest.y, sleInt16, VER(8)),
-		MKLINE(Scumm, camera._cur.x, sleInt16, VER(8)),
-		MKLINE(Scumm, camera._cur.y, sleInt16, VER(8)),
-		MKLINE(Scumm, camera._last.x, sleInt16, VER(8)),
-		MKLINE(Scumm, camera._last.y, sleInt16, VER(8)),
-		MKLINE(Scumm, camera._accel.x, sleInt16, VER(8)),
-		MKLINE(Scumm, camera._accel.y, sleInt16, VER(8)),
-		MKLINE(Scumm, _screenStartStrip, sleInt16, VER(8)),
-		MKLINE(Scumm, _screenEndStrip, sleInt16, VER(8)),
-		MKLINE(Scumm, camera._mode, sleByte, VER(8)),
-		MKLINE(Scumm, camera._follows, sleByte, VER(8)),
-		MKLINE(Scumm, camera._leftTrigger, sleInt16, VER(8)),
-		MKLINE(Scumm, camera._rightTrigger, sleInt16, VER(8)),
-		MKLINE(Scumm, camera._movingToActor, sleUint16, VER(8)),
+		MKLINE(ScummEngine, camera._dest.x, sleInt16, VER(8)),
+		MKLINE(ScummEngine, camera._dest.y, sleInt16, VER(8)),
+		MKLINE(ScummEngine, camera._cur.x, sleInt16, VER(8)),
+		MKLINE(ScummEngine, camera._cur.y, sleInt16, VER(8)),
+		MKLINE(ScummEngine, camera._last.x, sleInt16, VER(8)),
+		MKLINE(ScummEngine, camera._last.y, sleInt16, VER(8)),
+		MKLINE(ScummEngine, camera._accel.x, sleInt16, VER(8)),
+		MKLINE(ScummEngine, camera._accel.y, sleInt16, VER(8)),
+		MKLINE(ScummEngine, _screenStartStrip, sleInt16, VER(8)),
+		MKLINE(ScummEngine, _screenEndStrip, sleInt16, VER(8)),
+		MKLINE(ScummEngine, camera._mode, sleByte, VER(8)),
+		MKLINE(ScummEngine, camera._follows, sleByte, VER(8)),
+		MKLINE(ScummEngine, camera._leftTrigger, sleInt16, VER(8)),
+		MKLINE(ScummEngine, camera._rightTrigger, sleInt16, VER(8)),
+		MKLINE(ScummEngine, camera._movingToActor, sleUint16, VER(8)),
 
-		MKLINE(Scumm, _actorToPrintStrFor, sleByte, VER(8)),
-		MKLINE(Scumm, _charsetColor, sleByte, VER(8)),
+		MKLINE(ScummEngine, _actorToPrintStrFor, sleByte, VER(8)),
+		MKLINE(ScummEngine, _charsetColor, sleByte, VER(8)),
 
 		// _charsetBufPos was changed from byte to int
-		MKLINE_OLD(Scumm, _charsetBufPos, sleByte, VER(8), VER(9)),
-		MKLINE(Scumm, _charsetBufPos, sleInt16, VER(10)),
+		MKLINE_OLD(ScummEngine, _charsetBufPos, sleByte, VER(8), VER(9)),
+		MKLINE(ScummEngine, _charsetBufPos, sleInt16, VER(10)),
 
-		MKLINE(Scumm, _haveMsg, sleByte, VER(8)),
-		MKLINE(Scumm, _useTalkAnims, sleByte, VER(8)),
+		MKLINE(ScummEngine, _haveMsg, sleByte, VER(8)),
+		MKLINE(ScummEngine, _useTalkAnims, sleByte, VER(8)),
 
-		MKLINE(Scumm, _talkDelay, sleInt16, VER(8)),
-		MKLINE(Scumm, _defaultTalkDelay, sleInt16, VER(8)),
-		MKLINE(Scumm, _numInMsgStack, sleInt16, VER(8)),
-		MKLINE(Scumm, _sentenceNum, sleByte, VER(8)),
+		MKLINE(ScummEngine, _talkDelay, sleInt16, VER(8)),
+		MKLINE(ScummEngine, _defaultTalkDelay, sleInt16, VER(8)),
+		MKLINE(ScummEngine, _numInMsgStack, sleInt16, VER(8)),
+		MKLINE(ScummEngine, _sentenceNum, sleByte, VER(8)),
 
-		MKLINE(Scumm, vm.cutSceneStackPointer, sleByte, VER(8)),
-		MKARRAY(Scumm, vm.cutScenePtr[0], sleUint32, 5, VER(8)),
-		MKARRAY(Scumm, vm.cutSceneScript[0], sleByte, 5, VER(8)),
-		MKARRAY(Scumm, vm.cutSceneData[0], sleInt16, 5, VER(8)),
-		MKLINE(Scumm, vm.cutSceneScriptIndex, sleInt16, VER(8)),
+		MKLINE(ScummEngine, vm.cutSceneStackPointer, sleByte, VER(8)),
+		MKARRAY(ScummEngine, vm.cutScenePtr[0], sleUint32, 5, VER(8)),
+		MKARRAY(ScummEngine, vm.cutSceneScript[0], sleByte, 5, VER(8)),
+		MKARRAY(ScummEngine, vm.cutSceneData[0], sleInt16, 5, VER(8)),
+		MKLINE(ScummEngine, vm.cutSceneScriptIndex, sleInt16, VER(8)),
 
-		MKLINE(Scumm, vm.numNestedScripts, sleByte, VER(8)),
-		MKLINE(Scumm, _userPut, sleByte, VER(8)),
-		MKLINE(Scumm, _userState, sleUint16, VER(17)),
-		MKLINE(Scumm, _cursor.state, sleByte, VER(8)),
-		MK_OBSOLETE(Scumm, gdi._cursorActive, sleByte, VER(8), VER(20)),
-		MKLINE(Scumm, _currentCursor, sleByte, VER(8)),
-		MKARRAY(Scumm, _grabbedCursor[0], sleByte, 8192, VER(20)),
-		MKLINE(Scumm, _cursor.width, sleInt16, VER(20)),
-		MKLINE(Scumm, _cursor.height, sleInt16, VER(20)),
-		MKLINE(Scumm, _cursor.hotspotX, sleInt16, VER(20)),
-		MKLINE(Scumm, _cursor.hotspotY, sleInt16, VER(20)),
-		MKLINE(Scumm, _cursor.animate, sleByte, VER(20)),
-		MKLINE(Scumm, _cursor.animateIndex, sleByte, VER(20)),
-		MKLINE(Scumm, _mouse.x, sleInt16, VER(20)),
-		MKLINE(Scumm, _mouse.y, sleInt16, VER(20)),
+		MKLINE(ScummEngine, vm.numNestedScripts, sleByte, VER(8)),
+		MKLINE(ScummEngine, _userPut, sleByte, VER(8)),
+		MKLINE(ScummEngine, _userState, sleUint16, VER(17)),
+		MKLINE(ScummEngine, _cursor.state, sleByte, VER(8)),
+		MK_OBSOLETE(ScummEngine, gdi._cursorActive, sleByte, VER(8), VER(20)),
+		MKLINE(ScummEngine, _currentCursor, sleByte, VER(8)),
+		MKARRAY(ScummEngine, _grabbedCursor[0], sleByte, 8192, VER(20)),
+		MKLINE(ScummEngine, _cursor.width, sleInt16, VER(20)),
+		MKLINE(ScummEngine, _cursor.height, sleInt16, VER(20)),
+		MKLINE(ScummEngine, _cursor.hotspotX, sleInt16, VER(20)),
+		MKLINE(ScummEngine, _cursor.hotspotY, sleInt16, VER(20)),
+		MKLINE(ScummEngine, _cursor.animate, sleByte, VER(20)),
+		MKLINE(ScummEngine, _cursor.animateIndex, sleByte, VER(20)),
+		MKLINE(ScummEngine, _mouse.x, sleInt16, VER(20)),
+		MKLINE(ScummEngine, _mouse.y, sleInt16, VER(20)),
 
-		MKLINE(Scumm, _doEffect, sleByte, VER(8)),
-		MKLINE(Scumm, _switchRoomEffect, sleByte, VER(8)),
-		MKLINE(Scumm, _newEffect, sleByte, VER(8)),
-		MKLINE(Scumm, _switchRoomEffect2, sleByte, VER(8)),
-		MKLINE(Scumm, _BgNeedsRedraw, sleByte, VER(8)),
+		MKLINE(ScummEngine, _doEffect, sleByte, VER(8)),
+		MKLINE(ScummEngine, _switchRoomEffect, sleByte, VER(8)),
+		MKLINE(ScummEngine, _newEffect, sleByte, VER(8)),
+		MKLINE(ScummEngine, _switchRoomEffect2, sleByte, VER(8)),
+		MKLINE(ScummEngine, _BgNeedsRedraw, sleByte, VER(8)),
 
 		// The state of palManipulate is stored only since V10
-		MKLINE(Scumm, _palManipStart, sleByte, VER(10)),
-		MKLINE(Scumm, _palManipEnd, sleByte, VER(10)),
-		MKLINE(Scumm, _palManipCounter, sleUint16, VER(10)),
+		MKLINE(ScummEngine, _palManipStart, sleByte, VER(10)),
+		MKLINE(ScummEngine, _palManipEnd, sleByte, VER(10)),
+		MKLINE(ScummEngine, _palManipCounter, sleUint16, VER(10)),
 
 		// gfxUsageBits grew from 200 to 410 entries. Then 3 * 410 entries:
-		MKARRAY_OLD(Scumm, gfxUsageBits[0], sleUint32, 200, VER(8), VER(9)),
-		MKARRAY_OLD(Scumm, gfxUsageBits[0], sleUint32, 410, VER(10), VER(13)),
-		MKARRAY(Scumm, gfxUsageBits[0], sleUint32, 3 * 410, VER(14)),
+		MKARRAY_OLD(ScummEngine, gfxUsageBits[0], sleUint32, 200, VER(8), VER(9)),
+		MKARRAY_OLD(ScummEngine, gfxUsageBits[0], sleUint32, 410, VER(10), VER(13)),
+		MKARRAY(ScummEngine, gfxUsageBits[0], sleUint32, 3 * 410, VER(14)),
 
-		MKLINE(Scumm, gdi._transparentColor, sleByte, VER(8)),
-		MKARRAY(Scumm, _currentPalette[0], sleByte, 768, VER(8)),
+		MKLINE(ScummEngine, gdi._transparentColor, sleByte, VER(8)),
+		MKARRAY(ScummEngine, _currentPalette[0], sleByte, 768, VER(8)),
 
-		MKARRAY(Scumm, _proc_special_palette[0], sleByte, 256, VER(8)),
+		MKARRAY(ScummEngine, _proc_special_palette[0], sleByte, 256, VER(8)),
 
-		MKARRAY(Scumm, _charsetBuffer[0], sleByte, 256, VER(8)),
+		MKARRAY(ScummEngine, _charsetBuffer[0], sleByte, 256, VER(8)),
 
-		MKLINE(Scumm, _egoPositioned, sleByte, VER(8)),
+		MKLINE(ScummEngine, _egoPositioned, sleByte, VER(8)),
 
 		// gdi._imgBufOffs grew from 4 to 5 entries :
-		MKARRAY_OLD(Scumm, gdi._imgBufOffs[0], sleUint16, 4, VER(8), VER(9)),
-		MKARRAY(Scumm, gdi._imgBufOffs[0], sleUint16, 5, VER(10)),
+		MKARRAY_OLD(ScummEngine, gdi._imgBufOffs[0], sleUint16, 4, VER(8), VER(9)),
+		MKARRAY(ScummEngine, gdi._imgBufOffs[0], sleUint16, 5, VER(10)),
 
-		MKLINE(Scumm, gdi._numZBuffer, sleByte, VER(8)),
+		MKLINE(ScummEngine, gdi._numZBuffer, sleByte, VER(8)),
 
-		MKLINE(Scumm, _screenEffectFlag, sleByte, VER(8)),
+		MKLINE(ScummEngine, _screenEffectFlag, sleByte, VER(8)),
 
-		MK_OBSOLETE(Scumm, _randSeed1, sleUint32, VER(8), VER(9)),
-		MK_OBSOLETE(Scumm, _randSeed2, sleUint32, VER(8), VER(9)),
+		MK_OBSOLETE(ScummEngine, _randSeed1, sleUint32, VER(8), VER(9)),
+		MK_OBSOLETE(ScummEngine, _randSeed2, sleUint32, VER(8), VER(9)),
 
 		// Converted _shakeEnabled to boolean and added a _shakeFrame field.
-		MKLINE_OLD(Scumm, _shakeEnabled, sleInt16, VER(8), VER(9)),
-		MKLINE(Scumm, _shakeEnabled, sleByte, VER(10)),
-		MKLINE(Scumm, _shakeFrame, sleUint32, VER(10)),
+		MKLINE_OLD(ScummEngine, _shakeEnabled, sleInt16, VER(8), VER(9)),
+		MKLINE(ScummEngine, _shakeEnabled, sleByte, VER(10)),
+		MKLINE(ScummEngine, _shakeFrame, sleUint32, VER(10)),
 
-		MKLINE(Scumm, _keepText, sleByte, VER(8)),
+		MKLINE(ScummEngine, _keepText, sleByte, VER(8)),
 
-		MKLINE(Scumm, _screenB, sleUint16, VER(8)),
-		MKLINE(Scumm, _screenH, sleUint16, VER(8)),
+		MKLINE(ScummEngine, _screenB, sleUint16, VER(8)),
+		MKLINE(ScummEngine, _screenH, sleUint16, VER(8)),
 
-		MK_OBSOLETE(Scumm, _cd_track, sleInt16, VER(9), VER(9)),
-		MK_OBSOLETE(Scumm, _cd_loops, sleInt16, VER(9), VER(9)),
-		MK_OBSOLETE(Scumm, _cd_frame, sleInt16, VER(9), VER(9)),
-		MK_OBSOLETE(Scumm, _cd_end, sleInt16, VER(9), VER(9)),
+		MK_OBSOLETE(ScummEngine, _cd_track, sleInt16, VER(9), VER(9)),
+		MK_OBSOLETE(ScummEngine, _cd_loops, sleInt16, VER(9), VER(9)),
+		MK_OBSOLETE(ScummEngine, _cd_frame, sleInt16, VER(9), VER(9)),
+		MK_OBSOLETE(ScummEngine, _cd_end, sleInt16, VER(9), VER(9)),
 		
 		MKEND()
 	};
@@ -679,7 +679,7 @@ void Scumm::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	}
 }
 
-void Scumm::saveLoadResource(Serializer *ser, int type, int idx) {
+void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 	byte *ptr;
 	uint32 size;
 

@@ -90,7 +90,7 @@ public:
 
 
 
-Sound::Sound(Scumm *parent) {
+Sound::Sound(ScummEngine *parent) {
 	memset(this,0,sizeof(Sound));	// palmos
 	
 	_scumm = parent;
@@ -640,7 +640,7 @@ int Sound::isSoundRunning(int sound) const {
 
 /**
  * Check whether the sound resource with the specified ID is still
- * used. This is invoked by Scumm::isResourceInUse, to determine
+ * used. This is invoked by ScummEngine::isResourceInUse, to determine
  * which resources can be expired from memory.
  * Technically, this works very similar to isSoundRunning, however it
  * calls IMuse::get_sound_active() instead of IMuse::getSoundStatus().
@@ -1060,7 +1060,7 @@ void Sound::stopBundleMusic() {
 	_musicBundleToBeRemoved = true;
 }
 
-void Sound::bundleMusicHandler(Scumm *scumm) {
+void Sound::bundleMusicHandler(ScummEngine *scumm) {
 	byte *ptr;
 	int32 l, num = _numberSamplesBundleMusic, length, k;
 	int32 rate = 22050;
@@ -1399,7 +1399,7 @@ void Sound::playSfxSound_Vorbis(File *file, uint32 size, PlayingSoundHandle *han
 // necessary for games like Loom CD.
 
 static void cd_timer_handler(void *refCon) {
-	Scumm *scumm = (Scumm *)refCon;
+	ScummEngine *scumm = (ScummEngine *)refCon;
 
 	// FIXME: Turn off the timer when it's no longer needed. In theory, it
 	// should be possible to check with pollCD(), but since CD sound isn't

@@ -193,7 +193,7 @@ static inline uint colorWeight(int red, int green, int blue) {
 	return 3 * red * red + 6 * green * green + 2 * blue * blue;
 }
 
-void Scumm::getGraphicsPerformance() {
+void ScummEngine::getGraphicsPerformance() {
 	int i;
 
 	for (i = 10; i != 0; i--) {
@@ -217,7 +217,7 @@ void Scumm::getGraphicsPerformance() {
 		initScreens(0, 16, _screenWidth, 144);
 }
 
-void Scumm::initScreens(int a, int b, int w, int h) {
+void ScummEngine::initScreens(int a, int b, int w, int h) {
 	int i;
 
 	for (i = 0; i < 3; i++) {
@@ -241,7 +241,7 @@ void Scumm::initScreens(int a, int b, int w, int h) {
 
 }
 
-void Scumm::initVirtScreen(int slot, int number, int top, int width, int height, bool twobufs,
+void ScummEngine::initVirtScreen(int slot, int number, int top, int width, int height, bool twobufs,
 													 bool scrollable) {
 	VirtScreen *vs = &virtscr[slot];
 	int size;
@@ -286,7 +286,7 @@ void Scumm::initVirtScreen(int slot, int number, int top, int width, int height,
 	}
 }
 
-VirtScreen *Scumm::findVirtScreen(int y) {
+VirtScreen *ScummEngine::findVirtScreen(int y) {
 	VirtScreen *vs = virtscr;
 	int i;
 
@@ -298,7 +298,7 @@ VirtScreen *Scumm::findVirtScreen(int y) {
 	return NULL;
 }
 
-void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, int dirtybit) {
+void ScummEngine::updateDirtyRect(int virt, int left, int right, int top, int bottom, int dirtybit) {
 	VirtScreen *vs = &virtscr[virt];
 	int lp, rp;
 
@@ -353,7 +353,7 @@ void Scumm::updateDirtyRect(int virt, int left, int right, int top, int bottom, 
 	}
 }
 
-void Scumm::drawDirtyScreenParts() {
+void ScummEngine::drawDirtyScreenParts() {
 	int i;
 	VirtScreen *vs;
 	byte *src;
@@ -386,7 +386,7 @@ void Scumm::drawDirtyScreenParts() {
 	}
 }
 
-void Scumm::updateDirtyScreen(int slot) {
+void ScummEngine::updateDirtyScreen(int slot) {
 	gdi.updateDirtyScreen(&virtscr[slot]);
 }
 
@@ -501,7 +501,7 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	}
 }
 
-void Scumm::blit(byte *dst, const byte *src, int w, int h) {
+void ScummEngine::blit(byte *dst, const byte *src, int w, int h) {
 	assert(h > 0);
 	assert(src != NULL);
 	assert(dst != NULL);
@@ -518,7 +518,7 @@ void Scumm::blit(byte *dst, const byte *src, int w, int h) {
 	}
 }
 
-void Scumm::drawBox(int x, int y, int x2, int y2, int color) {
+void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	int width, height;
 	VirtScreen *vs;
 	byte *backbuff, *bgbuff;
@@ -581,7 +581,7 @@ void Scumm::drawBox(int x, int y, int x2, int y2, int color) {
 
 #pragma mark -
 
-void Scumm::initBGBuffers(int height) {
+void ScummEngine::initBGBuffers(int height) {
 	const byte *ptr;
 	int size, itemsize, i;
 	byte *room;
@@ -635,7 +635,7 @@ void Scumm::initBGBuffers(int height) {
 	}
 }
 
-void Scumm::drawFlashlight() {
+void ScummEngine::drawFlashlight() {
 	int i, j, offset, x, y;
 
 	// Remove the flash light first if it was previously drawn
@@ -723,7 +723,7 @@ void Scumm::drawFlashlight() {
  * Redraw background as needed, i.e. the left/right sides if scrolling took place etc.
  * Note that this only updated the virtual screen, not the actual display.
  */
-void Scumm::redrawBGAreas() {
+void ScummEngine::redrawBGAreas() {
 	int i;
 	int val;
 	int diff;
@@ -773,7 +773,7 @@ void Scumm::redrawBGAreas() {
 	_BgNeedsRedraw = false;
 }
 
-void Scumm::redrawBGStrip(int start, int num) {
+void ScummEngine::redrawBGStrip(int start, int num) {
 	int s = _screenStartStrip + start;
 
 	assert(s >= 0 && (size_t) s < sizeof(gfxUsageBits) / (3 * sizeof(gfxUsageBits[0])));
@@ -788,7 +788,7 @@ void Scumm::redrawBGStrip(int start, int num) {
 	               &virtscr[0], s, 0, _roomWidth, virtscr[0].height, s, num, 0, _roomStrips);
 }
 
-void Scumm::restoreCharsetBg() {
+void ScummEngine::restoreCharsetBg() {
 	if (_charset->_hasMask) {
 		restoreBG(gdi._mask);
 		_charset->_hasMask = false;
@@ -802,7 +802,7 @@ void Scumm::restoreCharsetBg() {
 	_charset->_nextTop = _string[0].ypos;
 }
 
-void Scumm::restoreBG(Common::Rect rect, byte backColor) {
+void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 	VirtScreen *vs;
 	int topline, height, width;
 	byte *backbuff, *bgbak;
@@ -872,13 +872,13 @@ void Scumm::restoreBG(Common::Rect rect, byte backColor) {
 	}
 }
 
-bool Scumm::hasCharsetMask(int left, int top, int right, int bottom) {
+bool ScummEngine::hasCharsetMask(int left, int top, int right, int bottom) {
 	Common::Rect rect(left, top, right, bottom);
 	
 	return _charset->_hasMask && rect.intersects(gdi._mask);
 }
 
-byte *Scumm::getMaskBuffer(int x, int y, int z) {
+byte *ScummEngine::getMaskBuffer(int x, int y, int z) {
 	return getResourceAddress(rtBuffer, 9)
 			+ _screenStartStrip + (x / 8) + y * gdi._numStrips + gdi._imgBufOffs[z];
 }
@@ -2172,7 +2172,7 @@ void Gdi::unkDecode11(byte *dst, const byte *src, int height) {
 #pragma mark --- Transition effects ---
 #pragma mark -
 
-void Scumm::fadeIn(int effect) {
+void ScummEngine::fadeIn(int effect) {
 	updatePalette();
 
 	switch (effect) {
@@ -2216,7 +2216,7 @@ void Scumm::fadeIn(int effect) {
 	_screenEffectFlag = true;
 }
 
-void Scumm::fadeOut(int effect) {
+void ScummEngine::fadeOut(int effect) {
 	VirtScreen *vs = &virtscr[0];
 
 	vs->setDirtyRange(0, 0);
@@ -2274,7 +2274,7 @@ void Scumm::fadeOut(int effect) {
  * in a certain order; the exact order determines how the effect appears to the user.
  * @param a		the transition effect to perform
  */
-void Scumm::transitionEffect(int a) {
+void ScummEngine::transitionEffect(int a) {
 	int delta[16];								// Offset applied during each iteration
 	int tab_2[16];
 	int i, j;
@@ -2335,7 +2335,7 @@ void Scumm::transitionEffect(int a) {
  * dissolveEffect(8, 8) produces a square-by-square dissolve
  * dissolveEffect(virtsrc[0].width, 1) produces a line-by-line dissolve
  */
-void Scumm::dissolveEffect(int width, int height) {
+void ScummEngine::dissolveEffect(int width, int height) {
 	VirtScreen *vs = &virtscr[0];
 	int *offsets;
 	int blits_before_refresh, blits;
@@ -2441,7 +2441,7 @@ void Scumm::dissolveEffect(int width, int height) {
 	}
 }
 
-void Scumm::scrollEffect(int dir) {
+void ScummEngine::scrollEffect(int dir) {
 	VirtScreen *vs = &virtscr[0];
 
 	int x, y;
@@ -2518,7 +2518,7 @@ void Scumm::scrollEffect(int dir) {
 	}
 }
 
-void Scumm::unkScreenEffect6() {
+void ScummEngine::unkScreenEffect6() {
 	// CD Loom (but not EGA Loom!) uses a more fine-grained dissolve
 	if (_gameId == GID_LOOM256)
 		dissolveEffect(1, 1);
@@ -2526,7 +2526,7 @@ void Scumm::unkScreenEffect6() {
 		dissolveEffect(8, 4);
 }
 
-void Scumm::unkScreenEffect5(int a) {
+void ScummEngine::unkScreenEffect5(int a) {
 	// unkScreenEffect5(0), which is used by FOA during the opening
 	// cutscene when Indy opens the small statue, has been replaced by
 	// dissolveEffect(1, 1).
@@ -2537,7 +2537,7 @@ void Scumm::unkScreenEffect5(int a) {
 	warning("stub unkScreenEffect(%d)", a);
 }
 
-void Scumm::setShake(int mode) {
+void ScummEngine::setShake(int mode) {
 	if (_shakeEnabled != (mode != 0))
 		_fullRedraw = true;
 
@@ -2550,7 +2550,7 @@ void Scumm::setShake(int mode) {
 #pragma mark --- Palette ---
 #pragma mark -
 
-void Scumm::setupAmigaPalette() {
+void ScummEngine::setupAmigaPalette() {
 	setPalColor( 0,   0,   0,   0);
 	setPalColor( 1,   0,   0, 187);
 	setPalColor( 2,   0, 187,   0);
@@ -2569,7 +2569,7 @@ void Scumm::setupAmigaPalette() {
 	setPalColor(15, 255, 255, 255);
 }
 
-void Scumm::setupEGAPalette() {
+void ScummEngine::setupEGAPalette() {
 	setPalColor( 0,   0,   0,   0);
 	setPalColor( 1,   0,   0, 168);
 	setPalColor( 2,   0, 168,   0);
@@ -2588,7 +2588,7 @@ void Scumm::setupEGAPalette() {
 	setPalColor(15, 252, 252, 252);
 }
 
-void Scumm::setupV1ManiacPalette() {
+void ScummEngine::setupV1ManiacPalette() {
 	setPalColor( 0,   0,   0,   0); 
 	setPalColor( 1, 252, 252, 252); 
 	setPalColor( 2, 168,   0,   0);
@@ -2607,7 +2607,7 @@ void Scumm::setupV1ManiacPalette() {
 	setPalColor(15,  84,  84,  84);
 }
 
-void Scumm::setupV1ZakPalette() {
+void ScummEngine::setupV1ZakPalette() {
 	setPalColor( 0,   0,   0,   0); 
 	setPalColor( 1, 252, 252, 252); 
 	setPalColor( 2, 168,   0,   0);
@@ -2626,7 +2626,7 @@ void Scumm::setupV1ZakPalette() {
 	setPalColor(15, 168, 168, 168);
 }
 
-void Scumm::setPaletteFromPtr(const byte *ptr) {
+void ScummEngine::setPaletteFromPtr(const byte *ptr) {
 	int i;
 	byte *dest, r, g, b;
 	int numcolor;
@@ -2668,20 +2668,20 @@ void Scumm::setPaletteFromPtr(const byte *ptr) {
 	setDirtyColors(0, numcolor - 1);
 }
 
-void Scumm::setPaletteFromRes() {
+void ScummEngine::setPaletteFromRes() {
 	byte *ptr;
 	ptr = getResourceAddress(rtRoom, _roomResource) + _CLUT_offs;
 	setPaletteFromPtr(ptr);
 }
 
-void Scumm::setDirtyColors(int min, int max) {
+void ScummEngine::setDirtyColors(int min, int max) {
 	if (_palDirtyMin > min)
 		_palDirtyMin = min;
 	if (_palDirtyMax < max)
 		_palDirtyMax = max;
 }
 
-void Scumm::initCycl(const byte *ptr) {
+void ScummEngine::initCycl(const byte *ptr) {
 	int j;
 	ColorCycle *cycl;
 
@@ -2724,7 +2724,7 @@ void Scumm::initCycl(const byte *ptr) {
 	}
 }
 
-void Scumm::stopCycle(int i) {
+void ScummEngine::stopCycle(int i) {
 	ColorCycle *cycl;
 
 	checkRange(16, 0, i, "Stop Cycle %d Out Of Range");
@@ -2782,7 +2782,7 @@ static void cycleIndirectPalette(byte *palette, int cycleStart, int cycleEnd, bo
 }
 
 
-void Scumm::cyclePalette() {
+void ScummEngine::cyclePalette() {
 	ColorCycle *cycl;
 	int valueToAdd;
 	int i, j;
@@ -2834,7 +2834,7 @@ void Scumm::cyclePalette() {
  * Perform color cycling on the palManipulate data, too, otherwise
  * color cycling will be disturbed by the palette fade.
  */
-void Scumm::moveMemInPalRes(int start, int end, byte direction) {
+void ScummEngine::moveMemInPalRes(int start, int end, byte direction) {
 	if (!_palManipCounter)
 		return;
 
@@ -2842,7 +2842,7 @@ void Scumm::moveMemInPalRes(int start, int end, byte direction) {
 	::cyclePalette(_palManipIntermediatePal, start, end, 6, !direction);
 }
 
-void Scumm::palManipulateInit(int start, int end, int string_id, int time) {
+void ScummEngine::palManipulateInit(int start, int end, int string_id, int time) {
 	byte *pal, *target, *between;
 	byte *string1, *string2, *string3;
 	int i;
@@ -2888,7 +2888,7 @@ void Scumm::palManipulateInit(int start, int end, int string_id, int time) {
 	_palManipCounter = time;
 }
 
-void Scumm::palManipulate() {
+void ScummEngine::palManipulate() {
 	byte *target, *pal, *between;
 	int i, j;
 
@@ -2914,7 +2914,7 @@ void Scumm::palManipulate() {
 	_palManipCounter--;
 }
 
-void Scumm::setupShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor) {
+void ScummEngine::setupShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor) {
 	byte *table;
 	int i;
 	byte *curpal;
@@ -2940,7 +2940,7 @@ void Scumm::setupShadowPalette(int slot, int redScale, int greenScale, int blueS
 	}
 }
 
-void Scumm::setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
+void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
 	const byte *basepal = getPalettePtr();
 	const byte *pal = basepal;
 	const byte *compareptr;
@@ -3014,7 +3014,7 @@ void Scumm::setupShadowPalette(int redScale, int greenScale, int blueScale, int 
 }
 
 /** This function create the specialPalette used for semi-transparency in SamnMax */
-void Scumm::createSpecialPalette(int16 from, int16 to, int16 redScale, int16 greenScale, int16 blueScale,
+void ScummEngine::createSpecialPalette(int16 from, int16 to, int16 redScale, int16 greenScale, int16 blueScale,
 			int16 startColor, int16 endColor) {
 	const byte *palPtr, *curPtr;
 	const byte *searchPtr;
@@ -3065,7 +3065,7 @@ void Scumm::createSpecialPalette(int16 from, int16 to, int16 redScale, int16 gre
 	}
 }
 
-void Scumm::darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
+void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
 	if (_roomResource == 0) // FIXME - HACK to get COMI demo working
 		return;
 
@@ -3121,7 +3121,7 @@ static int value(int n1, int n2, int hue) {
  * components of the palette colors. It's used in CMI when Guybrush
  * walks from the beach towards the swamp.
  */
-void Scumm::desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor) {
+void ScummEngine::desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor) {
 
 	if (startColor <= endColor) {
 		const byte *cptr;
@@ -3195,7 +3195,7 @@ void Scumm::desaturatePalette(int hueScale, int satScale, int lightScale, int st
 }
 
 
-int Scumm::remapPaletteColor(int r, int g, int b, uint threshold) {
+int ScummEngine::remapPaletteColor(int r, int g, int b, uint threshold) {
 	int i;
 	int ar, ag, ab;
 	uint sum, bestsum, bestitem = 0;
@@ -3244,7 +3244,7 @@ int Scumm::remapPaletteColor(int r, int g, int b, uint threshold) {
 	return bestitem;
 }
 
-void Scumm::swapPalColors(int a, int b) {
+void ScummEngine::swapPalColors(int a, int b) {
 	byte *ap, *bp;
 	byte t;
 
@@ -3268,7 +3268,7 @@ void Scumm::swapPalColors(int a, int b) {
 	setDirtyColors(b, b);
 }
 
-void Scumm::copyPalColor(int dst, int src) {
+void ScummEngine::copyPalColor(int dst, int src) {
 	byte *dp, *sp;
 
 	if ((uint) dst >= 256 || (uint) src >= 256)
@@ -3284,14 +3284,14 @@ void Scumm::copyPalColor(int dst, int src) {
 	setDirtyColors(dst, dst);
 }
 
-void Scumm::setPalColor(int idx, int r, int g, int b) {
+void ScummEngine::setPalColor(int idx, int r, int g, int b) {
 	_currentPalette[idx * 3 + 0] = r;
 	_currentPalette[idx * 3 + 1] = g;
 	_currentPalette[idx * 3 + 2] = b;
 	setDirtyColors(idx, idx);
 }
 
-void Scumm::setPalette(int palindex) {
+void ScummEngine::setPalette(int palindex) {
 	const byte *pals;
 
 	_curPalIndex = palindex;
@@ -3299,7 +3299,7 @@ void Scumm::setPalette(int palindex) {
 	setPaletteFromPtr(pals);
 }
 
-const byte *Scumm::findPalInPals(const byte *pal, int idx) {
+const byte *ScummEngine::findPalInPals(const byte *pal, int idx) {
 	const byte *offs;
 	uint32 size;
 
@@ -3319,7 +3319,7 @@ const byte *Scumm::findPalInPals(const byte *pal, int idx) {
 	return offs + READ_LE_UINT32(offs + idx * sizeof(uint32));
 }
 
-const byte *Scumm::getPalettePtr() {
+const byte *ScummEngine::getPalettePtr() {
 	const byte *cptr;
 
 	cptr = getResourceAddress(rtRoom, _roomResource);
@@ -3333,7 +3333,7 @@ const byte *Scumm::getPalettePtr() {
 	return cptr;
 }
 
-void Scumm::updatePalette() {
+void ScummEngine::updatePalette() {
 	if (_palDirtyMax == -1)
 		return;
 
@@ -3388,7 +3388,7 @@ void Scumm::updatePalette() {
 #pragma mark --- Cursor ---
 #pragma mark -
 
-void Scumm::setupCursor() {
+void ScummEngine::setupCursor() {
 	_cursor.animate = 1;
 	if (_gameId == GID_TENTACLE && res.roomno[rtRoom][60]) {
 		// HACK: For DOTT we manually set the default cursor. See also bug #786994
@@ -3397,7 +3397,7 @@ void Scumm::setupCursor() {
 	}
 }
 
-void Scumm::grabCursor(int x, int y, int w, int h) {
+void ScummEngine::grabCursor(int x, int y, int w, int h) {
 	VirtScreen *vs = findVirtScreen(y);
 
 	if (vs == NULL) {
@@ -3409,7 +3409,7 @@ void Scumm::grabCursor(int x, int y, int w, int h) {
 
 }
 
-void Scumm::grabCursor(byte *ptr, int width, int height) {
+void ScummEngine::grabCursor(byte *ptr, int width, int height) {
 	uint size;
 	byte *dst;
 
@@ -3431,7 +3431,7 @@ void Scumm::grabCursor(byte *ptr, int width, int height) {
 	updateCursor();
 }
 
-void Scumm::useIm01Cursor(const byte *im, int w, int h) {
+void ScummEngine::useIm01Cursor(const byte *im, int w, int h) {
 	VirtScreen *vs = &virtscr[0];
 	byte *buf, *dst;
 	const byte *src;
@@ -3471,14 +3471,14 @@ void Scumm::useIm01Cursor(const byte *im, int w, int h) {
 	free(buf);
 }
 
-void Scumm::setCursor(int cursor) {
+void ScummEngine::setCursor(int cursor) {
 	if (cursor >= 0 && cursor <= 3)
 		_currentCursor = cursor;
 	else
 		warning("setCursor(%d)", cursor);
 }
 
-void Scumm::setCursorHotspot(int x, int y) {
+void ScummEngine::setCursorHotspot(int x, int y) {
 	_cursor.hotspotX = x;
 	_cursor.hotspotY = y;
 	// FIXME this hacks around offset cursor in the humongous games
@@ -3488,12 +3488,12 @@ void Scumm::setCursorHotspot(int x, int y) {
 	}
 }
 
-void Scumm::updateCursor() {
+void ScummEngine::updateCursor() {
 	_system->set_mouse_cursor(_grabbedCursor, _cursor.width, _cursor.height,
 	                          _cursor.hotspotX, _cursor.hotspotY);
 }
 
-void Scumm::animateCursor() {
+void ScummEngine::animateCursor() {
 	if (_cursor.animate) {
 		if (!(_cursor.animateIndex & 0x1)) {
 			decompressDefaultCursor((_cursor.animateIndex >> 1) & 3);
@@ -3502,7 +3502,7 @@ void Scumm::animateCursor() {
 	}
 }
 
-void Scumm::useBompCursor(const byte *im, int width, int height) {
+void ScummEngine::useBompCursor(const byte *im, int width, int height) {
 	uint size;
 
 	width <<= 3;
@@ -3527,7 +3527,7 @@ void Scumm::useBompCursor(const byte *im, int width, int height) {
 	updateCursor();
 }
 
-void Scumm::decompressDefaultCursor(int idx) {
+void ScummEngine::decompressDefaultCursor(int idx) {
 	int i, j;
 	byte color;
 
@@ -3620,7 +3620,7 @@ void Scumm::decompressDefaultCursor(int idx) {
 	updateCursor();
 }
 
-void Scumm::makeCursorColorTransparent(int a) {
+void ScummEngine::makeCursorColorTransparent(int a) {
 	int i, size;
 
 	size = _cursor.width * _cursor.height;

@@ -55,7 +55,7 @@ ScummDebugger::ScummDebugger() {
 }
 
 // Initialisation Functions
-void ScummDebugger::attach(Scumm *s, char *entry) {
+void ScummDebugger::attach(ScummEngine *s, char *entry) {
 
 #ifdef _WIN32_WCE
 	force_keyboard(true);
@@ -850,7 +850,7 @@ void ScummDebugger::printBox(int box) {
 static int gfxPrimitivesCompareInt(const void *a, const void *b);
 
 
-static void hlineColor(Scumm *scumm, int x1, int x2, int y, byte color)
+static void hlineColor(ScummEngine *scumm, int x1, int x2, int y, byte color)
 {
 	VirtScreen *vs = &scumm->virtscr[0];
 	byte *ptr;
@@ -884,7 +884,7 @@ static int gfxPrimitivesCompareInt(const void *a, const void *b)
 	return (*(const int *)a) - (*(const int *)b);
 }
 
-static void fillQuad(Scumm *scumm, int16 vx[4], int16 vy[4], int color)
+static void fillQuad(ScummEngine *scumm, int16 vx[4], int16 vy[4], int color)
 {
 	const int N = 4;
 	int i;

@@ -24,7 +24,7 @@
 #include "scumm.h"
 #include "intern.h"
 
-void Scumm_v4::loadCharset(int no) {
+void ScummEngine_v4::loadCharset(int no) {
 	uint32 size;
 	memset(_charsetData, 0, sizeof(_charsetData));
 

@@ -694,7 +694,7 @@ void IMuseDigital::timer_handler(void *refCon) {
 	imuseDigital->musicTimer();
 }
 
-IMuseDigital::IMuseDigital(Scumm *scumm)
+IMuseDigital::IMuseDigital(ScummEngine *scumm)
 	: _scumm(scumm) {
 	memset(_channel, 0, sizeof(Channel) * MAX_DIGITAL_CHANNELS);
 	for (int l = 0; l < MAX_DIGITAL_CHANNELS; l++) {

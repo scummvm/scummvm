@@ -24,7 +24,7 @@
 #include "nut_renderer.h"
 #include "base/gameDetector.h"
 
-CharsetRenderer::CharsetRenderer(Scumm *vm) {
+CharsetRenderer::CharsetRenderer(ScummEngine *vm) {
 
 	_nextLeft = 0;
 	_nextTop = 0;
@@ -1219,7 +1219,7 @@ void CharsetRendererCommon::drawBits1(VirtScreen *vs, byte *dst, const byte *src
 	}
 }
 
-CharsetRendererNut::CharsetRendererNut(Scumm *vm)
+CharsetRendererNut::CharsetRendererNut(ScummEngine *vm)
 	 : CharsetRenderer(vm) {
 	_current = 0;
 

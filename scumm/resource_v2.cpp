@@ -27,7 +27,7 @@
 #include "resource.h"
 #include "sound/mididrv.h"
 
-void Scumm_v2::readClassicIndexFile() {
+void ScummEngine_v2::readClassicIndexFile() {
 	int i;
 
 	if (_gameId == GID_MANIAC) {
@@ -104,7 +104,7 @@ void Scumm_v2::readClassicIndexFile() {
 	}
 }
 
-void Scumm_v2::readEnhancedIndexFile() {
+void ScummEngine_v2::readEnhancedIndexFile() {
 
 	if (!(_features & GF_AMIGA))
 		_musicEngine = _playerV2 = new Player_V2(this);
@@ -143,7 +143,7 @@ void Scumm_v2::readEnhancedIndexFile() {
 	readResTypeList(rtSound, MKID('SOUN'), "sound");
 }
 
-void Scumm_v2::readIndexFile() {
+void ScummEngine_v2::readIndexFile() {
 	int magic = 0;
 	debug(9, "readIndexFile()");
 
@@ -177,7 +177,7 @@ void Scumm_v2::readIndexFile() {
 	closeRoom();
 }
 
-void Scumm_v2::readMAXS() {
+void ScummEngine_v2::readMAXS() {
 	// FIXME - I'm not sure for those values yet, they will have to be rechecked
 
 	_numVariables = 800;				// 800
@@ -199,6 +199,6 @@ void Scumm_v2::readMAXS() {
 	allocateArrays();
 }
 
-void Scumm_v2::loadCharset(int num) {
+void ScummEngine_v2::loadCharset(int num) {
 	// Stub, V2 font resources are hardcoded into the engine.
 }

@@ -41,7 +41,7 @@ struct CostumeInfo {
 #endif
 
 class Actor;
-class Scumm;
+class ScummEngine;
 
 /**
  * Base class for both CostumeRenderer and AkosRenderer.
@@ -64,7 +64,7 @@ public:
 	uint _outwidth, _outheight;
 
 protected:
-	Scumm *_vm;
+	ScummEngine *_vm;
 	int32 _numStrips;
 
 	// Source pointer
@@ -95,7 +95,7 @@ protected:
 	} v1;
 
 public:
-	BaseCostumeRenderer(Scumm *scumm) {
+	BaseCostumeRenderer(ScummEngine *scumm) {
 		_dirty_id = 0;
 		_shadow_mode = 0;
 		_shadow_table = 0;

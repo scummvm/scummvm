@@ -30,14 +30,14 @@
 
 #define	V2A_MAXSLOTS 8
 
-class Scumm;
+class ScummEngine;
 class SoundMixer;
 
 class V2A_Sound;
 
 class Player_V2A : public MusicEngine {
 public:
-	Player_V2A(Scumm *scumm);
+	Player_V2A(ScummEngine *scumm);
 	virtual ~Player_V2A();
 
 	virtual void setMasterVolume(int vol);
@@ -49,7 +49,7 @@ public:
 
 private:
 	OSystem *_system;
-	Scumm *_scumm;
+	ScummEngine *_scumm;
 	Player_MOD *_mod;
 
 	struct soundSlot

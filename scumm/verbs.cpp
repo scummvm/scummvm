@@ -33,7 +33,7 @@ enum {
 	kSentenceLine = 6
 };
 
-void Scumm::initV2MouseOver() {
+void ScummEngine::initV2MouseOver() {
 	int i;
 	int arrow_color, color, hi_color;
 
@@ -99,7 +99,7 @@ void Scumm::initV2MouseOver() {
 	v2_mouseover_boxes[kSentenceLine].hicolor = hi_color;
 }
 
-void Scumm::checkV2MouseOver(Common::Point pos) {
+void ScummEngine::checkV2MouseOver(Common::Point pos) {
 	VirtScreen *vs = &virtscr[2];
 	Common::Rect rect;
 	byte *ptr, *dst;
@@ -159,7 +159,7 @@ void Scumm::checkV2MouseOver(Common::Point pos) {
 	}
 }
 
-void Scumm::checkV2Inventory(int x, int y) {
+void ScummEngine::checkV2Inventory(int x, int y) {
 	int object = 0;
 
 	y -= virtscr[2].topline;
@@ -194,7 +194,7 @@ void Scumm::checkV2Inventory(int x, int y) {
 	}
 }
 
-void Scumm::redrawV2Inventory() {
+void ScummEngine::redrawV2Inventory() {
 	int i;
 	int max_inv;
 	Common::Rect inventoryBox;
@@ -259,7 +259,7 @@ void Scumm::redrawV2Inventory() {
 	}
 }
 
-void Scumm::redrawVerbs() {
+void ScummEngine::redrawVerbs() {
 	if (_version <= 2 && !(_userState & 128)) // Don't draw verbs unless active
 		return;
 
@@ -274,7 +274,7 @@ void Scumm::redrawVerbs() {
 	_verbMouseOver = verb;
 }
 
-void Scumm::checkExecVerbs() {
+void ScummEngine::checkExecVerbs() {
 	int i, over;
 	VerbSlot *vs;
 
@@ -317,7 +317,7 @@ void Scumm::checkExecVerbs() {
 	}
 }
 
-void Scumm::verbMouseOver(int verb) {
+void ScummEngine::verbMouseOver(int verb) {
 	// Don't do anything unless verbs are active
 	if (_version <= 2 && !(_userState & 128))
 		return;
@@ -336,7 +336,7 @@ void Scumm::verbMouseOver(int verb) {
 	}
 }
 
-int Scumm::checkMouseOver(int x, int y) const {
+int ScummEngine::checkMouseOver(int x, int y) const {
 	VerbSlot *vs;
 	int i = _maxVerbs - 1;
 
@@ -358,7 +358,7 @@ int Scumm::checkMouseOver(int x, int y) const {
 	return 0;
 }
 
-void Scumm::drawVerb(int verb, int mode) {
+void ScummEngine::drawVerb(int verb, int mode) {
 	VerbSlot *vs;
 	bool tmp;
 
@@ -418,7 +418,7 @@ void Scumm::drawVerb(int verb, int mode) {
 	}
 }
 
-void Scumm::restoreVerbBG(int verb) {
+void ScummEngine::restoreVerbBG(int verb) {
 	VerbSlot *vs;
 
 	vs = &_verbs[verb];
@@ -429,7 +429,7 @@ void Scumm::restoreVerbBG(int verb) {
 	}
 }
 
-void Scumm::drawVerbBitmap(int verb, int x, int y) {
+void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 	VirtScreen *vs;
 	VerbSlot *vst;
 	byte twobufs;
@@ -499,7 +499,7 @@ void Scumm::drawVerbBitmap(int verb, int x, int y) {
 	vs->alloctwobuffers = twobufs;
 }
 
-int Scumm::getVerbSlot(int id, int mode) const {
+int ScummEngine::getVerbSlot(int id, int mode) const {
 	int i;
 	for (i = 1; i < _maxVerbs; i++) {
 		if (_verbs[i].verbid == id && _verbs[i].saveid == mode) {
@@ -509,7 +509,7 @@ int Scumm::getVerbSlot(int id, int mode) const {
 	return 0;
 }
 
-void Scumm::killVerb(int slot) {
+void ScummEngine::killVerb(int slot) {
 	VerbSlot *vs;
 
 	if (slot == 0)
@@ -528,7 +528,7 @@ void Scumm::killVerb(int slot) {
 	vs->saveid = 0;
 }
 
-void Scumm::setVerbObject(uint room, uint object, uint verb) {
+void ScummEngine::setVerbObject(uint room, uint object, uint verb) {
 	const byte *obimptr;
 	const byte *obcdptr;
 	uint32 size, size2;

@@ -25,7 +25,7 @@
 #include "actor.h"
 #include "charset.h"
 
-void Scumm::setCameraAtEx(int at) {
+void ScummEngine::setCameraAtEx(int at) {
 	if (!(_features & GF_NEW_CAMERA)) {
 		camera._mode = CM_NORMAL;
 		camera._cur.x = at;
@@ -34,7 +34,7 @@ void Scumm::setCameraAtEx(int at) {
 	}
 }
 
-void Scumm::setCameraAt(int pos_x, int pos_y) {
+void ScummEngine::setCameraAt(int pos_x, int pos_y) {
 	if (camera._mode != CM_FOLLOW_ACTOR || abs(pos_x - camera._cur.x) > (_screenWidth / 2)) {
 		camera._cur.x = pos_x;
 	}
@@ -59,7 +59,7 @@ void Scumm::setCameraAt(int pos_x, int pos_y) {
 		stopTalk();
 }
 
-void Scumm_v7::setCameraAt(int pos_x, int pos_y) {
+void ScummEngine_v7::setCameraAt(int pos_x, int pos_y) {
 	Common::Point old;
 
 	old = camera._cur;
@@ -83,7 +83,7 @@ void Scumm_v7::setCameraAt(int pos_x, int pos_y) {
 	}
 }
 
-void Scumm::setCameraFollows(Actor *a) {
+void ScummEngine::setCameraFollows(Actor *a) {
 
 	int t, i;
 
@@ -109,7 +109,7 @@ void Scumm::setCameraFollows(Actor *a) {
 	runInventoryScript(0);
 }
 
-void Scumm_v7::setCameraFollows(Actor *a) {
+void ScummEngine_v7::setCameraFollows(Actor *a) {
 
 	byte oldfollow = camera._follows;
 	int ax, ay;
@@ -133,7 +133,7 @@ void Scumm_v7::setCameraFollows(Actor *a) {
 }
 
 
-void Scumm::clampCameraPos(Common::Point *pt) {
+void ScummEngine::clampCameraPos(Common::Point *pt) {
 	if (pt->x < VAR(VAR_CAMERA_MIN_X))
 		pt->x = (short) VAR(VAR_CAMERA_MIN_X);
 
@@ -147,7 +147,7 @@ void Scumm::clampCameraPos(Common::Point *pt) {
 		pt->y = (short) VAR(VAR_CAMERA_MAX_Y);
 }
 
-void Scumm::moveCamera() {
+void ScummEngine::moveCamera() {
 	int pos = camera._cur.x;
 	int actorx, t;
 	Actor *a = NULL;
@@ -225,7 +225,7 @@ void Scumm::moveCamera() {
 	}
 }
 
-void Scumm_v7::moveCamera() {
+void ScummEngine_v7::moveCamera() {
 	Common::Point old = camera._cur;
 	Actor *a = NULL;
 
@@ -310,7 +310,7 @@ void Scumm_v7::moveCamera() {
 }
 
 
-void Scumm::cameraMoved() {
+void ScummEngine::cameraMoved() {
 	if (_features & GF_NEW_CAMERA) {
 		assert(camera._cur.x >= (_screenWidth / 2) && camera._cur.y >= (_screenHeight / 2));
 	} else {
@@ -349,19 +349,19 @@ void Scumm::cameraMoved() {
 	}
 }
 
-void Scumm::panCameraTo(int x, int y) {
+void ScummEngine::panCameraTo(int x, int y) {
 	camera._dest.x = x;
 	camera._mode = CM_PANNING;
 	camera._movingToActor = false;
 }
 
-void Scumm_v7::panCameraTo(int x, int y) {
+void ScummEngine_v7::panCameraTo(int x, int y) {
 	VAR(VAR_CAMERA_FOLLOWED_ACTOR) = camera._follows = 0;
 	VAR(VAR_CAMERA_DEST_X) = camera._dest.x = x;
 	VAR(VAR_CAMERA_DEST_Y) = camera._dest.y = y;
 }
 
-void Scumm::actorFollowCamera(int act) {
+void ScummEngine::actorFollowCamera(int act) {
 	if (!(_features & GF_NEW_CAMERA)) {
 		int old;
 

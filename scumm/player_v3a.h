@@ -31,12 +31,12 @@
 #define	V3A_MAXMUS	8
 #define	V3A_MAXSFX	8
 
-class Scumm;
+class ScummEngine;
 class SoundMixer;
 
 class Player_V3A : public MusicEngine {
 public:
-	Player_V3A(Scumm *scumm);
+	Player_V3A(ScummEngine *scumm);
 	virtual ~Player_V3A();
 
 	virtual void setMasterVolume(int vol);
@@ -48,7 +48,7 @@ public:
 
 private:
 	OSystem *_system;
-	Scumm *_scumm;
+	ScummEngine *_scumm;
 	Player_MOD *_mod;
 
 	struct musChan

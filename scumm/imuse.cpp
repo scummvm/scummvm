@@ -1298,7 +1298,7 @@ void *IMuseInternal::loadReference(void *me_ref, byte type, int ref) {
 	}
 }
 
-int IMuseInternal::save_or_load(Serializer *ser, Scumm *scumm) {
+int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 	const SaveLoadEntry mainEntries[] = {
 		MKLINE(IMuseInternal, _queue_end, sleUint8, VER(8)),
 		MKLINE(IMuseInternal, _queue_pos, sleUint8, VER(8)),
@@ -1415,7 +1415,7 @@ void IMuseInternal::fix_parts_after_load() {
 
 // Only call this routine from the main thread,
 // since it uses getResourceAddress
-void IMuseInternal::fix_players_after_load(Scumm *scumm) {
+void IMuseInternal::fix_players_after_load(ScummEngine *scumm) {
 	Player *player = _players;
 	int i;
 
@@ -1757,7 +1757,7 @@ inline void IMuse::out() const { _system->unlock_mutex(_mutex); }
 
 void IMuse::on_timer(MidiDriver *midi) { in(); _target->on_timer(midi); out(); }
 void IMuse::pause(bool paused) { in(); _target->pause(paused); out(); }
-int IMuse::save_or_load(Serializer *ser, Scumm *scumm) { in(); int ret = _target->save_or_load(ser, scumm); out(); return ret; }
+int IMuse::save_or_load(Serializer *ser, ScummEngine *scumm) { in(); int ret = _target->save_or_load(ser, scumm); out(); return ret; }
 int IMuse::set_music_volume(uint vol) { in(); int ret = _target->set_music_volume(vol); out(); return ret; }
 int IMuse::get_music_volume() { in(); int ret = _target->get_music_volume(); out(); return ret; }
 void IMuse::setMasterVolume(int vol) { in(); _target->setMasterVolume(vol); out(); }

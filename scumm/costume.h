@@ -25,7 +25,7 @@
 
 class LoadedCostume {
 protected:
-	Scumm *_vm;
+	ScummEngine *_vm;
 
 public:
 	int _id;
@@ -39,7 +39,7 @@ public:
 	byte _format;
 	bool _mirror;
 
-	LoadedCostume(Scumm *vm) :
+	LoadedCostume(ScummEngine *vm) :
 		_vm(vm), _id(-1), _baseptr(0), _animCmds(0), _dataOffsets(0), _palette(0),
 		_frameOffsets(0), _numColors(0), _numAnim(0), _format(0), _mirror(false) {}
 
@@ -60,7 +60,7 @@ protected:
 	byte _palette[32];
 
 public:
-	CostumeRenderer(Scumm *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
+	CostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
 
 	void setPalette(byte *palette);
 	void setFacing(Actor *a);

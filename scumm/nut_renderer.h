@@ -23,11 +23,11 @@
 
 #include "common/file.h"
 
-class Scumm;
+class ScummEngine;
 
 class NutRenderer {
 protected:
-	Scumm *_vm;
+	ScummEngine *_vm;
 	bool _initialized;
 	bool _loaded;
 	int _nbChars;
@@ -45,7 +45,7 @@ protected:
 	void draw2byte(byte *dst, byte *mask, int c, int x, int y, byte color);
 
 public:
-	NutRenderer(Scumm *vm);
+	NutRenderer(ScummEngine *vm);
 	virtual ~NutRenderer();
 	int getNbChars() { return _nbChars; }
 
