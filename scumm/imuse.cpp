@@ -862,7 +862,7 @@ void IMuseInternal::sequencer_timers() {
 }
 
 void IMuseInternal::handle_marker(uint id, byte data) {
-	uint16 *p;
+	uint16 *p = 0;
 	uint pos;
 
 	if (_queue_adding && _queue_sound == id && data == _queue_marker)
