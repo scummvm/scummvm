@@ -156,7 +156,7 @@ void hicolor555_Set_565(INT16*, int, int, int, int, int);
 
 void hicolor565_Blt(UBYTE*);
 void hicolor565_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int);
-void hicolor565_Get_565(INT16*, int, int, int, int, int);
+//void hicolor565_Get_565(INT16*, int, int, int, int, int);
 void hicolor565_Set_565(INT16*, int, int, int, int, int);
 
 void noGAPI_Cls();
@@ -164,7 +164,7 @@ void noGAPI_Blt(UBYTE*);
 void noGAPI_Blt_part(UBYTE*, int, int, int, int, UBYTE*, int);
 void noGAPI_Set_565(INT16*, int, int, int, int, int);
 
-void NULL_Get_565(INT16*, int, int, int, int, int);
+//void NULL_Get_565(INT16*, int, int, int, int, int);
 void NULL_Set_565(INT16*, int, int, int, int, int);
 
 void palette_update();
@@ -2327,8 +2327,8 @@ void Get_565(UBYTE *src, INT16 *buffer, int pitch, int x, int y, int width, int 
 
 	// Dumb conversion to 565
 
-	for (i=0; i<240; i++) {
-		for (j=0; j<320; j++) {
+	for (i=0; i<height; i++) {
+		for (j=0; j<width; j++) {
 			*buffer++ = COLORCONV565(palRed[*src], palGreen[*src], palBlue[*src]);
 			src++;
 		}
