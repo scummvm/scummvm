@@ -97,7 +97,7 @@ void TextRenderer::drawChar(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, 
 
 
 Display::Display(QueenEngine *vm, Language language, OSystem *system)
-	: _system(system), _vm(vm), _horizontalScroll(0), _curBlankingEffect(0) {
+	: _horizontalScroll(0), _curBlankingEffect(0), _system(system), _vm(vm) {
 	_dynalum.prevColMask = 0xFF;
 	_textRenderer._lang = language;
 	_textRenderer.init();
