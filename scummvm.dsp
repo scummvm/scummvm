@@ -170,6 +170,14 @@ SOURCE=.\common\engine.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\common\file.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\file.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\common\gameDetector.cpp
 # End Source File
 # Begin Source File

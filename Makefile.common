@@ -10,7 +10,7 @@ ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
 INCS	= scumm/scumm.h common/scummsys.h common/stdafx.h
 
 COMMON_OBJS = common/config-file.o common/engine.o common/gameDetector.o \
-	common/main.o common/timer.o common/util.o common/scaler.o
+	common/main.o common/timer.o common/util.o common/scaler.o common/file.o
 
 GUI_OBJS = gui/gui.o gui/newgui.o gui/widget.o gui/dialog.o gui/ListWidget.o \
 	gui/ScrollBarWidget.o 
