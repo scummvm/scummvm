@@ -157,12 +157,12 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 				atribPos = table->atribPos;
 			hookId = _attributes[DIG_STATE_OFFSET + atribPos];
 			if (table->hookId != 0) {
-				if ((hookId != 0) && (table->hookId <= 1)) {
+				if ((hookId != 0) && (table->hookId > 1)) {
+					_attributes[DIG_STATE_OFFSET + atribPos] = 2;
+				} else {
 					_attributes[DIG_STATE_OFFSET + atribPos] = hookId + 1;
 					if (table->hookId < hookId + 1)
 						_attributes[DIG_STATE_OFFSET + atribPos] = 1;
-				} else {
-					_attributes[DIG_STATE_OFFSET + atribPos] = 2;
 				}
 			}
 		}
@@ -274,12 +274,12 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 			atribPos = table->atribPos;
 		hookId = _attributes[COMI_STATE_OFFSET + atribPos];
 		if (table->hookId != 0) {
-			if ((hookId != 0) && (table->hookId <= 1)) {
+			if ((hookId != 0) && (table->hookId > 1)) {
+				_attributes[COMI_STATE_OFFSET + atribPos] = 2;
+			} else {
 				_attributes[COMI_STATE_OFFSET + atribPos] = hookId + 1;
 				if (table->hookId < hookId + 1)
 					_attributes[COMI_STATE_OFFSET + atribPos] = 1;
-			} else {
-				_attributes[COMI_STATE_OFFSET + atribPos] = 2;
 			}
 		}
 	}
