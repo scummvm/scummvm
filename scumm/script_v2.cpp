@@ -39,7 +39,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_getActorRoom),
 		/* 04 */
 		OPCODE(o5_isGreaterEqual),
-		OPCODE(o5_drawObject),
+		OPCODE(o2_drawObject),
 		OPCODE(o5_getActorElevation),
 		OPCODE(o2_setState08),
 		/* 08 */
@@ -119,7 +119,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_getActorX),
 		/* 44 */
 		OPCODE(o5_isLess),
-		OPCODE(o5_drawObject),
+		OPCODE(o2_drawObject),
 		OPCODE(o5_increment),
 		OPCODE(o2_setState08),
 		/* 48 */
@@ -199,7 +199,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_getActorRoom),
 		/* 84 */
 		OPCODE(o5_isGreaterEqual),
-		OPCODE(o5_drawObject),
+		OPCODE(o2_drawObject),
 		OPCODE(o5_getActorElevation),
 		OPCODE(o2_setState08),
 		/* 88 */
@@ -279,7 +279,7 @@ void Scumm_v2::setupOpcodes() {
 		OPCODE(o5_getActorX),
 		/* C4 */
 		OPCODE(o5_isLess),
-		OPCODE(o5_drawObject),
+		OPCODE(o2_drawObject),
 		OPCODE(o5_decrement),
 		OPCODE(o2_clearState08),
 		/* C8 */
@@ -392,7 +392,7 @@ void Scumm_v2::setStateCommon(byte type) {
 
 void Scumm_v2::clearStateCommon(byte type) {
 	int obj = getVarOrDirectWord(0x80);
-	putState(obj, getState(obj) & type);
+	putState(obj, getState(obj) & ~type);
 }
 
 void Scumm_v2::o2_setState08() {
@@ -404,7 +404,7 @@ void Scumm_v2::o2_setState08() {
 
 void Scumm_v2::o2_clearState08() {
 	int obj = getVarOrDirectWord(0x80);
-	putState(obj, getState(obj) & 0x08);
+	putState(obj, getState(obj) & 0xF7);
 	removeObjectFromRoom(obj);
 	clearDrawObjectQueue();
 }
@@ -630,4 +630,39 @@ void Scumm_v2::o2_waitForSentence() {
 void Scumm_v2::o2_restart() {
 }
 
+void Scumm_v2::o2_drawObject() {
+	int obj, idx, i;
+	ObjectData *od;
+	uint16 x, y, w, h;
+	int xpos, ypos;
 
+	obj = getVarOrDirectWord(0x80);
+	xpos = getVarOrDirectWord(0x40);
+	ypos = getVarOrDirectWord(0x20);
+
+	idx = getObjectIndex(obj);
+	if (idx == -1)
+		return;
+
+	od = &_objs[idx];
+	if (xpos != 0xFF) {
+		od->walk_x += (xpos << 3) - od->x_pos;
+		od->x_pos = xpos << 3;
+		od->walk_y += (ypos << 3) - od->y_pos;
+		od->y_pos = ypos << 3;
+	}
+	addObjectToDrawQue(idx);
+
+	x = od->x_pos;
+	y = od->y_pos;
+	w = od->width;
+	h = od->height;
+
+	i = _numLocalObjects;
+	do {
+		if (_objs[i].obj_nr && _objs[i].x_pos == x && _objs[i].y_pos == y && _objs[i].width == w && _objs[i].height == h)
+			putState(_objs[i].obj_nr, getState(_objs[i].obj_nr) & 0xF7);
+	} while (--i);
+
+	putState(obj, getState(_objs[obj].obj_nr) | 0x08);
+}

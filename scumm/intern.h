@@ -235,6 +235,7 @@ protected:
 	void o2_waitForActor();
 	void o2_waitForSentence();
 	void o2_restart();
+	void o2_drawObject();
 
 };
 
