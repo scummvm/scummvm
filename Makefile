@@ -109,6 +109,13 @@ credits:
 	tools/credits.pl --cpp > gui/credits.h
 	tools/credits.pl --xml > ../docs/docbook/credits.xml
 
+md5scumm: tools/md5table$(EXEEXT)
+	./tools/md5table$(EXT) --c++ < tools/scumm-md5.txt > scumm/scumm-md5.h
+	./tools/md5table$(EXT) --php < tools/scumm-md5.txt > ../web/docs/md5.inc
+
+md5simon: tools/md5table$(EXEEXT)
+	./tools/md5table$(EXT) --c++ < tools/simon-md5.txt > simon/simon-md5.h
+
 #######################################################################
 # Unit/regression tests                                               #
 # In order to use 'make test' you have to install cxxtest inside the  #
