@@ -74,12 +74,12 @@ void SkyGmMusic::setupChannels(uint8 *channelData) {
 
 void SkyGmMusic::startDriver(void) {
 
-	_midiDrv->send(0xFF);
+	//_midiDrv->send(0xFF);  //ALSA can't handle this.
 	// skip all sysEx as it can't be handled anyways.
 }
 
-// each section has its own custom instruments setup, so we need one translation table
-// per section. Need an MT32 to make correct tables, though.
+// not sure about these tables. Now it's just 6 copies of jamiesons table in the
+// instruments.cpp, but I still think that there must be something to be done to them.
 
 byte SkyGmMusic::_mt32_to_gm[6*128] = {
 // Section 0:
@@ -89,10 +89,9 @@ byte SkyGmMusic::_mt32_to_gm[6*128] = {
 	 88,  95,  52,  98,  97,  99,  14,  54, 102,  96,  53, 102,  81, 100,  14,  80, // 2x
 	 48,  48,  49,  45,  41,  40,  42,  42,  43,  46,  45,  24,  25,  28,  27, 104, // 3x
 	 32,  32,  34,  33,  36,  37,  35,  35,  79,  73,  72,  72,  74,  75,  64,  65, // 4x
-	 66,  67,  71,  71,  57,  69,  70,  22,  56,  59,  57,  57,  60,  60,  60,  63, // 5x
+	 66,  67,  71,  71,  68,  69,  70,  22,  56,  59,  57,  57,  60,  60,  58,  61, // 5x
 	 61,  11,  11,  98,  14,   9,  14,  13,  12, 107, 107,  77,  78,  78,  76,  76, // 6x
 	 47, 117, 127, 118, 118, 116, 115, 119, 115, 112,  55, 124, 123,   0,  14, 117, // 7x
-
 // Section 1:
 //    0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
 	  0,   1,   0,   2,   4,   4,   5,   3,  16,  17,  18,  16,  16,  19,  20,  21, // 0x

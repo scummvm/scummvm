@@ -114,9 +114,6 @@ void SkyState::initialise(void) {
 	} else {
 		_skyMusic = new SkyGmMusic(_detector->createMidi(), _skyDisk);
 	}
-	// TODO: Add option for users with real MT32 to use it. Driver is done.
-	// _skyMusic = new SkyMT32Music(_detector->createMidi(), _skyDisk);
-
 
 	_gameVersion = _skyDisk->determineGameVersion();
 	_skyText = new SkyText(_skyDisk, _gameVersion, _language);

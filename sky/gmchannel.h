@@ -44,6 +44,7 @@ public:
 	virtual void updateVolume(uint16 pVolume);
 private:
 	byte *_mt32_to_gm;
+	static uint8 _veloTab[128];
 	MidiDriver *_midiDrv;
 	uint8 *_musicData;
 	uint16 _musicVolume;
