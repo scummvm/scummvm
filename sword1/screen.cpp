@@ -837,6 +837,11 @@ void SwordScreen::bsubline_4(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
     }
 }
 
+#ifdef __FreeBSD__
+#define min(a,b) ((a) < (b) ? (a) : (b))
+#define max(a,b) ((a) > (b) ? (a) : (b))
+#endif
+
 void SwordScreen::drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	if ((x1 == x2) && (y1 == y2)) {
 		_screenBuf[x1 + y1 * _scrnSizeX] = 0;
