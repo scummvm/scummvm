@@ -49,6 +49,11 @@ MODULE_OBJS := \
 	scumm/imuse_digi/dimuse_music.o \
 	scumm/imuse_digi/dimuse_sndmgr.o \
 	scumm/imuse_digi/dimuse_tables.o \
+	scumm/insane/insane.o \
+	scumm/insane/insane_ben.o \
+	scumm/insane/insane_enemy.o \
+	scumm/insane/insane_scenes.o \
+	scumm/insane/insane_iact.o \
 	scumm/smush/chunk.o \
 	scumm/smush/codec1.o \
 	scumm/smush/codec37.o \
@@ -57,15 +62,12 @@ MODULE_OBJS := \
 	scumm/smush/smush_player.o \
 	scumm/smush/saud_channel.o \
 	scumm/smush/smush_mixer.o \
-	scumm/smush/smush_font.o \
-	scumm/insane/insane.o \
-	scumm/insane/insane_ben.o \
-	scumm/insane/insane_enemy.o \
-	scumm/insane/insane_scenes.o \
-	scumm/insane/insane_iact.o
+	scumm/smush/smush_font.o
 
 MODULE_DIRS += \
 	scumm \
+	scumm/imuse_digi \
+	scumm/insane \
 	scumm/smush
 
 # This module can be built as a plugin
