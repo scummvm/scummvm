@@ -179,7 +179,7 @@ AudioStream *makeRAWStream(const char *filename, uint32 pos, int size, bool loop
 	return audioStream;
 }
 
-MusicPlayer::MusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false)  {
+MusicPlayer::MusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false), _passThrough(false)  {
 	memset(_channel, 0, sizeof(_channel));
 	_masterVolume = 0;
 	this->open();
