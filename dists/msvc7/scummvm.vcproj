@@ -300,6 +300,24 @@
 				<File
 					RelativePath="..\..\common\scaler\intern.h">
 				</File>
+				<File
+					RelativePath="..\..\common\scaler\scale2x.cpp">
+				</File>
+				<File
+					RelativePath="..\..\common\scaler\scale2x.h">
+				</File>
+				<File
+					RelativePath="..\..\common\scaler\scale3x.cpp">
+				</File>
+				<File
+					RelativePath="..\..\common\scaler\scale3x.h">
+				</File>
+				<File
+					RelativePath="..\..\common\scaler\scalebit.cpp">
+				</File>
+				<File
+					RelativePath="..\..\common\scaler\scalebit.h">
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -506,6 +524,9 @@
 			</File>
 			<File
 				RelativePath="..\..\gui\console.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\consolefont.cpp">
 			</File>
 			<File
 				RelativePath="..\..\gui\console.h">
