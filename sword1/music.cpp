@@ -34,19 +34,23 @@ namespace Sword1 {
 // assume that if locking is needed it has already been taken care of.
 
 void MusicHandle::fadeDown() {
-	if (_fading < 0)
-		_fading = -_fading;
-	else if (_fading == 0)
-		_fading = FADE_LENGTH * getRate();
-	_fadeSamples = FADE_LENGTH * getRate();
+	if (streaming()) {
+		if (_fading < 0)
+			_fading = -_fading;
+		else if (_fading == 0)
+			_fading = FADE_LENGTH * getRate();
+		_fadeSamples = FADE_LENGTH * getRate();
+	}
 }
 
 void MusicHandle::fadeUp() {
-	if (_fading > 0)
-		_fading = -_fading;
-	else if (_fading == 0)
-		_fading = -1;
-	_fadeSamples = FADE_LENGTH * getRate();
+	if (streaming()) {
+		if (_fading > 0)
+			_fading = -_fading;
+		else if (_fading == 0)
+			_fading = -1;
+		_fadeSamples = FADE_LENGTH * getRate();
+	}
 }
 
 bool MusicHandle::endOfData() const {
@@ -76,7 +80,7 @@ int MusicHandle::readBuffer(int16 *buffer, const int numSamples) {
 		} else if (_fading < 0) {
 			_fading--;
 			sample = -(sample * _fading) / _fadeSamples;
-			if (_fading == -_fadeSamples)
+			if (_fading <= -_fadeSamples)
 				_fading = 0;
 		}
 		*buffer++ = sample;
