@@ -149,6 +149,7 @@ void SkyState::go() {
 		/*if ((_key_pressed == 27) && (!_systemVars.pastIntro))
 			_skyControl->restartGame();*/
 
+		_skySound->checkFxQueue();
 		_skyMouse->mouseEngine((uint16)_sdl_mouse_x, (uint16)_sdl_mouse_y);
 		_skyLogic->engine();
 		if (!_skyLogic->checkProtection()) { // don't let copy prot. screen flash up
@@ -202,7 +203,7 @@ void SkyState::initialise(void) {
 	_timer = Engine::_timer; // initialize timer *after* _skyScreen has been initialized.
 	_timer->installProcedure(&timerHandler, 1000000 / 50); //call 50 times per second
 
-	_skyControl = new SkyControl(_skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _system, getSavePath());
+	_skyControl = new SkyControl(_skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _skySound, _system, getSavePath());
 	_skyLogic->useControlInstance(_skyControl);
 
 	if (_systemVars.gameVersion == 288)

@@ -115,7 +115,7 @@ void SkyTextResource::drawToScreen(bool doMask) {
 	_system->copy_rect(_screen + _y * GAME_SCREEN_WIDTH + _x, GAME_SCREEN_WIDTH, _x, _y, cpWidth, PAN_CHAR_HEIGHT);
 }
 
-SkyControl::SkyControl(SkyScreen *screen, SkyDisk *disk, SkyMouse *mouse, SkyText *text, SkyMusicBase *music, SkyLogic *logic, OSystem *system, const char *savePath) {
+SkyControl::SkyControl(SkyScreen *screen, SkyDisk *disk, SkyMouse *mouse, SkyText *text, SkyMusicBase *music, SkyLogic *logic, SkySound *sound, OSystem *system, const char *savePath) {
 
 	_skyScreen = screen;
 	_skyDisk = disk;
@@ -123,6 +123,7 @@ SkyControl::SkyControl(SkyScreen *screen, SkyDisk *disk, SkyMouse *mouse, SkyTex
 	_skyText = text;
 	_skyMusic = music;
 	_skyLogic = logic;
+	_skySound = sound;
 	_system = system;
 	_savePath = savePath;
 	_memListRoot = NULL;
@@ -993,9 +994,11 @@ uint32 SkyControl::prepareSaveData(uint8 *destBuf) {
 	uint8 *destPos = destBuf + 4;
 	STOSD(destPos, SAVE_FILE_REVISION);
 
-	STOSD(destPos, _skyMusic->giveCurrentMusic());
+	STOSD(destPos, SkyState::_systemVars.gameVersion);
+	STOSW(destPos, _skySound->_saveSounds[0]);
+	STOSW(destPos, _skySound->_saveSounds[1]);
 
-	//TODO: save queued sfx
+    STOSD(destPos, _skyMusic->giveCurrentMusic());
 	STOSD(destPos, _skyText->giveCurrentCharSet());
 	STOSD(destPos, _savedMouse);
 	STOSD(destPos, SkyState::_systemVars.currentPalette);
@@ -1174,7 +1177,19 @@ uint16 SkyControl::parseSaveData(uint8 *srcBuf) {
 	
 	freeMemList(); // memory from last restore isn't needed anymore
 
-	uint32 music, charSet, mouseType, palette;
+	uint32 music, charSet, mouseType, palette, gameVersion;
+	
+	if (saveRev >= 3) {
+		LODSD(srcPos, gameVersion);
+		if (gameVersion != SkyState::_systemVars.gameVersion) {
+			printf("This savegame was created by Beneath a Steel Sky V.0.0%03d\n",gameVersion);
+			printf("It cannot be loaded by this version (%0.0%3d)\n",SkyState::_systemVars.gameVersion);
+			return RESTORE_FAILED;
+		}
+		LODSW(srcPos, _skySound->_saveSounds[0]);
+		LODSW(srcPos, _skySound->_saveSounds[1]);
+		_skySound->restoreSfx();
+	}
 	LODSD(srcPos, music);
 	LODSD(srcPos, charSet);
 	LODSD(srcPos, mouseType);
@@ -1315,9 +1330,12 @@ void SkyControl::showGameQuitMsg(bool useScreen) {
 	uint8 *textBuf2 = (uint8*)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(dataFileHeader));
 	uint8 textNum;
 	uint8 *screenData;
-	if (useScreen)
+	if (useScreen) {
+		if (_skyScreen->sequenceRunning())
+			_skyScreen->stopSequence();
+
 		screenData = _skyScreen->giveCurrent();
-	else
+	} else
 		screenData = _screenBuf;
 	switch (SkyState::_systemVars.language) {
 		case DE_DEU: textNum = 1; break;

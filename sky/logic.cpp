@@ -2373,7 +2373,8 @@ bool SkyLogic::fnSetFont(uint32 font, uint32 b, uint32 c) {
 }
 
 bool SkyLogic::fnStartFx(uint32 sound, uint32 b, uint32 c) {
-	return _skySound->fnStartFx(sound);
+	_skySound->fnStartFx(sound, (uint8)(b & 1));
+	return true;
 }
 
 bool SkyLogic::fnStopFx(uint32 a, uint32 b, uint32 c) {

@@ -1005,6 +1005,13 @@ static Sfx *musicList[] = {
 	&fx_25_weld // 394            my anchor weld bodge
 };
 
+SfxQueue SkySound::_sfxQueue[MAX_QUEUED_FX] = {
+	{ 0, 0, 0, 0},
+	{ 0, 0, 0, 0},
+	{ 0, 0, 0, 0},
+	{ 0, 0, 0, 0}
+};
+
 SkySound::SkySound(SoundMixer *mixer, SkyDisk *pDisk) {
 	_skyDisk = pDisk;
 	_soundData = NULL;
@@ -1012,9 +1019,10 @@ SkySound::SkySound(SoundMixer *mixer, SkyDisk *pDisk) {
 	_voiceHandle = 0;
 	_effectHandle = 0;
 	_bgSoundHandle = 0;
-	_ingameSound = 0;
 	_ingameSpeech = 0;
-	_sfxPaused = false;
+	_ingameSound0 = _ingameSound1 = 0;
+	_slot0 = _slot1 = -1;
+	_saveSounds[0] = _saveSounds[1] = 0xFFFF;
 }
 
 SkySound::~SkySound(void) {
@@ -1048,8 +1056,8 @@ int SkySound::playSound(byte *sound, uint32 size, PlayingSoundHandle *handle) {
 
 void SkySound::loadSection(uint8 pSection) {
 
-	if (_ingameSound) _mixer->stop(_ingameSound - 1);
-	_ingameSound = 0;
+	fnStopFx();
+
 	if (_soundData) free(_soundData);
 	_soundData = _skyDisk->loadFile(pSection * 4 + SOUND_FILE_BASE, NULL);
 	if ((_soundData[0x7E] != 0x3C) || (_soundData[0xA5] != 0x8D) || (_soundData[0xA6] != 0x1E) ||
@@ -1060,9 +1068,23 @@ void SkySound::loadSection(uint8 pSection) {
 	_sfxBaseOfs = (_soundData[0xB0] << 8) | _soundData[0xAF];
 	_sampleRates = _soundData + sRateTabOfs;
 	_sfxInfo = _soundData + _sfxBaseOfs;
+	for (uint8 cnt = 0; cnt < 4; cnt++)
+		_sfxQueue[cnt].count = 0;
 }
 
-void SkySound::playSound(uint16 sound, uint16 volume) {
+void SkySound::playSound(uint16 sound, uint16 volume, uint8 channel) {
+
+	if (channel == 0) {
+		if (_slot0 >= 0) {
+			_mixer->stop(_slot0);
+			_slot0 = -1;
+		}
+	} else {
+		if (_slot1 >= 0) {
+			_mixer->stop(_slot1);
+			_slot1 = -1;
+		}
+	}
 
 	if (!_soundData) {
 		warning("SkySound::playSound(%04X, %04X) called with a section having been loaded.\n", sound, volume);
@@ -1070,8 +1092,7 @@ void SkySound::playSound(uint16 sound, uint16 volume) {
 	}
 	
 	if (sound > _soundsTotal) {
-		if (sound & 0x80) warning("SkySound::playSound(%04X, %04X) not implemented.\n", sound, volume);
-		else warning("SkySound::playSound(%04X, %04X) ignored.\n", sound, volume);
+		debug(5, "SkySound::playSound %d ignored, only %d sfx in file.\n", sound, _soundsTotal);
 		return ;
 	}
 
@@ -1080,30 +1101,28 @@ void SkySound::playSound(uint16 sound, uint16 volume) {
 	
 	// note: all those tables are big endian. Don't ask me why. *sigh*
 	uint16 sampleRate = (_sampleRates[sound << 2] << 8) | _sampleRates[(sound << 2) | 1];
-	uint16 dataOfs = ((_sfxInfo[sound << 3] << 8) | _sfxInfo[(sound << 3) | 1]) << 4;
+	uint32 dataOfs = ((_sfxInfo[sound << 3] << 8) | _sfxInfo[(sound << 3) | 1]) << 4;
 	dataOfs += _sfxBaseOfs;
 	uint16 dataSize = (_sfxInfo[(sound << 3) | 2] << 8) | _sfxInfo[(sound << 3) | 3];
 	uint16 dataLoop = (_sfxInfo[(sound << 3) | 6] << 8) | _sfxInfo[(sound << 3) | 7];
 
 	byte flags = SoundMixer::FLAG_UNSIGNED;
-	if (dataSize == dataLoop) {
-		//flags |= SoundMixer::FLAG_LOOP;
-	}
+
+	if (dataSize == dataLoop)
+		flags |= SoundMixer::FLAG_LOOP;
 	
-	if (_ingameSound > 0) _mixer->stop(_ingameSound - 1);
 	_mixer->setVolume(volume);
-	_mixer->playRaw(&_ingameSound, _soundData + dataOfs, dataSize, sampleRate, flags);
+	if (channel == 0)
+		_slot0 = _mixer->playRaw(&_ingameSound0, _soundData + dataOfs, dataSize, sampleRate, flags);
+	else
+		_slot1 = _mixer->playRaw(&_ingameSound1, _soundData + dataOfs, dataSize, sampleRate, flags);
 }
 
-void SkySound::fnPauseFx(void) {
+void SkySound::fnStartFx(uint32 sound, uint8 channel) {
 
-	if (_ingameSound) _mixer->stop(_ingameSound - 1);
-	_sfxPaused = true;
-}
-
-bool SkySound::fnStartFx(uint32 sound) {
-	if (sound < 256 || sound > MAX_FX_NUMBER || _sfxPaused || (SkyState::_systemVars.systemFlags & SF_FX_OFF))
-		return true;
+	_saveSounds[channel] = 0xFFFF;
+	if (sound < 256 || sound > MAX_FX_NUMBER || (SkyState::_systemVars.systemFlags & SF_FX_OFF))
+		return;
 
 	uint8 screen = (uint8)(SkyLogic::_scriptVariables[SCREEN] & 0xff);
 	if (sound == 278 && screen == 25) // is this weld in room 25
@@ -1119,7 +1138,7 @@ bool SkySound::fnStartFx(uint32 sound) {
 		while (roomList[i].room != screen) { // check rooms
 			i++;
 			if (roomList[i].room == 0xff)	
-				return true;
+				return;
 		}
 
 	// get fx volume
@@ -1137,14 +1156,59 @@ bool SkySound::fnStartFx(uint32 sound) {
 
 	// Check the flags, the sound may come on after a delay.
 	if (sfx->flags & SFXF_START_DELAY) {
-		// queue sound
+		for (uint8 cnt = 0; cnt < MAX_QUEUED_FX; cnt++) {
+			if (_sfxQueue[cnt].count == 0) {
+				_sfxQueue[cnt].chan = channel;
+				_sfxQueue[cnt].fxNo = sfx->soundNo;
+				_sfxQueue[cnt].vol = volume;
+				_sfxQueue[cnt].count = sfx->flags & 0x7F;
+				return;
+			}
+		}
+		return; // ignore sound if it can't be queued
 	}
 
-	//if (sfx->flags & SFXF_SAVE)
-	//	save_fx_0[stfx_cur_chn] = sound;
+	if (sfx->flags & SFXF_SAVE)
+		_saveSounds[channel] = sfx->soundNo | (volume << 8);
 
-	playSound(sfx->soundNo, volume);
-	return true;
+	playSound(sfx->soundNo, volume, channel);
+}
+
+void SkySound::checkFxQueue(void) {
+	for (uint8 cnt = 0; cnt < MAX_QUEUED_FX; cnt++) {
+		if (_sfxQueue[cnt].count) {
+			_sfxQueue[cnt].count--;
+			if (_sfxQueue[cnt].count == 0)
+				playSound(_sfxQueue[cnt].fxNo, _sfxQueue[cnt].vol, _sfxQueue[cnt].chan);
+		}
+	}
+}
+
+void SkySound::restoreSfx(void) {
+	
+	// queue sfx, so they will be started when the player exits the control panel
+	memset(_sfxQueue, 0, sizeof(_sfxQueue));
+	uint8 queueSlot = 0;
+	if (_saveSounds[0] != 0xFFFF) {
+		_sfxQueue[queueSlot].fxNo = (uint8)_saveSounds[0];
+		_sfxQueue[queueSlot].vol = (uint8)(_saveSounds[0] >> 8);
+		_sfxQueue[queueSlot].chan = 0;
+		_sfxQueue[queueSlot].count = 1;
+		queueSlot++;
+	}
+	if (_saveSounds[1] != 0xFFFF) {
+		_sfxQueue[queueSlot].fxNo = (uint8)_saveSounds[1];
+		_sfxQueue[queueSlot].vol = (uint8)(_saveSounds[1] >> 8);
+		_sfxQueue[queueSlot].chan = 1;
+		_sfxQueue[queueSlot].count = 1;
+	}
+}
+
+void SkySound::fnStopFx(void) {
+	if (_slot0 >= 0) _mixer->stop(_slot0);
+	if (_slot1 >= 0) _mixer->stop(_slot1);
+	_slot0 = _slot1 = -1;
+	_saveSounds[0] = _saveSounds[1] = 0xFFFF;
 }
 
 bool SkySound::startSpeech(uint16 textNum) {
@@ -1168,6 +1232,6 @@ bool SkySound::startSpeech(uint16 textNum) {
 
     // TODO: implement pre_after_table_area to find and prefetch file for next speech
 	
-	_mixer->playRaw(&_ingameSpeech, playBuffer, speechSize - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
+	int slt = _mixer->playRaw(&_ingameSpeech, playBuffer, speechSize - 64, 11025, SoundMixer::FLAG_UNSIGNED | SoundMixer::FLAG_AUTOFREE);
 	return true;
 }

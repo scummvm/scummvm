@@ -492,7 +492,7 @@ void SkyState::removeText(uint32 *&cmdPtr) {
 void SkyState::introFx(uint32 *&cmdPtr) {
 
 	_mixer->stopAll();
-	_skySound->playSound((uint16)cmdPtr[2], (uint16)cmdPtr[3]);
+	_skySound->playSound((uint16)cmdPtr[2], (uint16)cmdPtr[3], 0);
 	cmdPtr += 4;
 }
 
@@ -501,6 +501,6 @@ void SkyState::introVol(uint32 *&cmdPtr) {
 	// HACK: for some reason, the mixer will only stop playing 
 	// looping sounds if you do it using SoundMixer::stopAll();
 	_mixer->stopAll();
-	_skySound->playSound(1, (uint16)(cmdPtr[2] & 0x7F));
+	_skySound->playSound(1, (uint16)(cmdPtr[2] & 0x7F), 0);
 	cmdPtr += 3;
 }

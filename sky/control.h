@@ -106,7 +106,7 @@ class SkyMouse;
 #define SAVE_GRAFX	32
 #define SAVE_TURNP	64
 
-#define SAVE_FILE_REVISION 2
+#define SAVE_FILE_REVISION 3
 
 struct AllocedMem {
 	uint16 *mem;
@@ -145,7 +145,7 @@ private:
 
 class SkyControl {
 public:
-	SkyControl(SkyScreen *screen, SkyDisk *disk, SkyMouse *mouse, SkyText *text, SkyMusicBase *music, SkyLogic *logic, OSystem *system, const char *savePath);
+	SkyControl(SkyScreen *screen, SkyDisk *disk, SkyMouse *mouse, SkyText *text, SkyMusicBase *music, SkyLogic *logic, SkySound *sound, OSystem *system, const char *savePath);
 	void doControlPanel(void);
 	void doLoadSavePanel(void);
 	void restartGame(void);
@@ -205,6 +205,7 @@ private:
 	SkyText *_skyText;
 	SkyMusicBase *_skyMusic;
 	SkyLogic *_skyLogic;
+	SkySound *_skySound;
 	OSystem *_system;
 	int _mouseX, _mouseY;
 	bool _mouseClicked;

@@ -26,6 +26,12 @@
 #include "sky/disk.h"
 #include "common/engine.h"
 
+struct SfxQueue {
+	uint8 count, fxNo, chan, vol;
+};
+
+#define MAX_QUEUED_FX 4
+
 class SkySound {
 protected:
 
@@ -35,7 +41,9 @@ public:
 	PlayingSoundHandle _voiceHandle;
 	PlayingSoundHandle _effectHandle;
 	PlayingSoundHandle _bgSoundHandle;
-	PlayingSoundHandle _ingameSound, _ingameSpeech;
+	PlayingSoundHandle _ingameSound0, _ingameSound1, _ingameSpeech;
+
+	uint16 _saveSounds[2];
 
 protected:
 
@@ -48,23 +56,26 @@ public:
 	int playBgSound(byte *sound, uint32 size);
 
 	void loadSection(uint8 pSection);
-	void playSound(uint16 sound, uint16 volume);
-	bool fnStartFx(uint32 sound);
+	void playSound(uint16 sound, uint16 volume, uint8 channel);
+	void fnStartFx(uint32 sound, uint8 channel);
 	bool startSpeech(uint16 textNum);
 	bool speechFinished(void) { return _ingameSpeech == 0; };
-	void fnPauseFx(void);
-	void fnUnPauseFx(void) { _sfxPaused = false; };
-	void fnStopFx(void) { if (_ingameSound) _mixer->stop(_ingameSound - 1); };
+	void fnPauseFx(void) { _mixer->pause(true); };
+	void fnUnPauseFx(void) { _mixer->pause(false); };
+	void fnStopFx(void);
+	void checkFxQueue(void);
+	void restoreSfx(void);
+	uint8 _soundsTotal;
 
 private:
 	SkyDisk *_skyDisk;
-	uint8 _soundsTotal;
 	uint16 _sfxBaseOfs;
 	uint8 *_soundData;
 	uint8 *_sampleRates, *_sfxInfo;
-	bool _sfxPaused;
+	int _slot0, _slot1;
 
 	static uint16 _speechConvertTable[8];
+	static SfxQueue _sfxQueue[MAX_QUEUED_FX];
 };
 
 #endif
