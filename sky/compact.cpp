@@ -396,7 +396,7 @@ uint8 *SkyCompact::createResetData(uint16 gameVersion) {
 		if (version == gameVersion) {
 			for (uint16 diffCnt = 0; diffCnt < diffFields; diffCnt++) {
 				uint16 pos = _cptFile->readUint16LE();
-				resetBuf[pos] = _cptFile->readUint16LE();
+				resetBuf[pos] = TO_LE_16(_cptFile->readUint16LE());
 			}
 			return (uint8*)resetBuf;
 		} else
