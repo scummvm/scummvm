@@ -304,10 +304,9 @@ int Interface::draw() {
 
 	// Erase background of status bar
 	rect.left = 0;
-	rect.top = _iDesc.status_h - 1;
-
-	rect.right = g_di.logical_w - 1;
-	rect.bottom = _iDesc.status_y;
+	rect.top = _iDesc.status_y;
+	rect.right = g_di.logical_w;
+	rect.bottom = _iDesc.status_y + _iDesc.status_h;
 
 	_vm->_gfx->drawRect(back_buf, &rect, _iDesc.status_bgcol);
 
@@ -403,8 +402,8 @@ int Interface::drawStatusBar(R_SURFACE *ds) {
 	// Erase background of status bar
 	rect.left = 0;
 	rect.top = _iDesc.status_y;
-	rect.right = g_di.logical_w - 1;
-	rect.bottom = _iDesc.status_y + _iDesc.status_h - 1;
+	rect.right = g_di.logical_w;
+	rect.bottom = _iDesc.status_y + _iDesc.status_h;
 
 	_vm->_gfx->drawRect(ds, &rect, _iDesc.status_bgcol);
 

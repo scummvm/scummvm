@@ -205,8 +205,8 @@ int Console::draw(R_SURFACE *ds) {
 
 	fill_rect.top = 0;
 	fill_rect.left = 0;
-	fill_rect.bottom = _yPos;
-	fill_rect.right = ds->buf_w - 1;
+	fill_rect.bottom = _yPos + 1;
+	fill_rect.right = ds->buf_w;
 
 	_vm->_gfx->drawRect(ds, &fill_rect, _vm->_gfx->matchColor(R_CONSOLE_BGCOLOR));
 	txt_fgcolor = _vm->_gfx->matchColor(R_CONSOLE_TXTCOLOR);

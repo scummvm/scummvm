@@ -331,13 +331,13 @@ int Sprite::drawOccluded(R_SURFACE *ds, R_SPRITELIST *sprite_list, int sprite_nu
 
 	spr_src_rect.left = 0;
 	spr_src_rect.top = 0;
-	spr_src_rect.right = s_width - 1;
-	spr_src_rect.bottom = s_height - 1;
+	spr_src_rect.right = s_width;
+	spr_src_rect.bottom = s_height;
 
 	spr_dst_rect.left = 0;
 	spr_dst_rect.top = 0;
 	spr_dst_rect.right = ds->clip_rect.right;
-	spr_dst_rect.bottom = MIN(ds->clip_rect.bottom, (int16)(mask_h - 1));
+	spr_dst_rect.bottom = MIN(ds->clip_rect.bottom, (int16)mask_h);
 
 	spr_pt.x = spr_x + x_align;
 	spr_pt.y = spr_y + y_align;
