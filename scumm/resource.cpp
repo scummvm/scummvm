@@ -504,6 +504,9 @@ void ScummEngine::readResTypeList(int id, uint32 tag, const char *name) {
 		}
 		for (i = 0; i < num; i++) {
 			res.roomoffs[id][i] = _fileHandle.readUint32LE();
+
+			if (id == rtRoom && _heversion >= 70)
+				_HEV7RoomIntOffsets[i] = res.roomoffs[id][i];
 		}
 
 		if (_heversion >= 70) {
@@ -534,8 +537,12 @@ void ScummEngine::allocResTypeData(int id, uint32 tag, int num, const char *name
 		res.roomoffs[id] = (uint32 *)calloc(num, sizeof(uint32));
 	}
 
-	if (_heversion >= 70)
+	if (_heversion >= 70) {
 		res.globsize[id] = (uint32 *)calloc(num, sizeof(uint32));
+
+		if (id == rtRoom)
+			_HEV7RoomIntOffsets = (uint32 *)calloc(num, sizeof(uint32));
+	}
 }
 
 void ScummEngine::loadCharset(int no) {
@@ -622,9 +629,11 @@ int ScummEngine::loadResource(int type, int idx) {
 	if (roomNr == 0)
 		roomNr = _roomResource;
 
-	if (type == rtRoom && _heversion < 70) {
+	if (type == rtRoom) {
 		if (_version == 8)
 			fileOffs = 8;
+		if (_heversion >= 70)
+			fileOffs = _HEV7RoomIntOffsets[idx];
 		else
 			fileOffs = 0;
 	} else {
@@ -653,11 +662,6 @@ int ScummEngine::loadResource(int type, int idx) {
 		if ((type == rtSound) && !(_features & GF_AMIGA) && !(_features & GF_FMTOWNS)) {
 			return readSoundResourceSmallHeader(type, idx);
 		}
-	} else if (_heversion >= 70) {
-		tag = _fileHandle.readUint32LE();
-		size = _fileHandle.readUint32BE() + 8;
-
-		_fileHandle.seek(-8, SEEK_CUR);
 	} else {
 		if (type == rtSound) {
 			return readSoundResource(type, idx);
@@ -665,7 +669,7 @@ int ScummEngine::loadResource(int type, int idx) {
 
 		tag = fileReadDword();
 
-		if (tag != res.tags[type]) {
+		if (tag != res.tags[type] && _heversion < 70) {
 			error("%s %d not in room %d at %d+%d in file %s",
 					res.name[type], idx, roomNr,
 					_fileOffset, fileOffs, _fileHandle.name());
@@ -1970,6 +1974,10 @@ void ScummEngine::freeResources() {
 		if (_heversion >= 70)
 			free(res.globsize[i]);
 	}
+	if (_heversion >= 70) {
+		free(_HEV7RoomIntOffsets);
+		free(_HEV7RoomOffsets);
+	}
 }
 
 void ScummEngine::loadPtrToResource(int type, int resindex, const byte *source) {
@@ -2278,6 +2286,8 @@ const byte *ResourceIterator::findNext(uint32 tag) {
 const byte *findResource(uint32 tag, const byte *searchin) {
 	uint32 curpos, totalsize, size;
 
+	// It seems that in HE games if searchin == NULL, it continues
+	// search from last position
 	assert(searchin);
 
 	searchin += 4;

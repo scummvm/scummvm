@@ -625,6 +625,7 @@ protected:
 	uint32 _allocatedSize;
 	byte _expire_counter;
 	byte *_HEV7RoomOffsets;
+	uint32 *_HEV7RoomIntOffsets;
 
 	void allocateArrays();
 	void openRoom(int room);
