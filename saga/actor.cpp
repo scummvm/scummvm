@@ -41,8 +41,6 @@
 
 namespace Saga {
 
-static R_ACTOR_MODULE ActorModule;
-
 static int zCompare(const void *elem1, const void *elem2);
 static void CF_actor_add(int argc, char *argv[], void *refCon);
 static void CF_actor_del(int argc, char *argv[], void *refCon);
