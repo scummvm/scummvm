@@ -85,7 +85,7 @@ void Journal::use() {
 		system->delay_msecs(20);
 	}
 
-	_vm->logic()->writeOptionSettings();
+	_vm->writeOptionSettings();
 
 	_vm->graphics()->textClear(0, GAME_SCREEN_HEIGHT - 1);
 	_vm->graphics()->putCameraOnBob(0);
@@ -451,7 +451,7 @@ void Journal::drawYesNoPanel(int titleNum) {
 
 
 void Journal::drawConfigPanel() {
-	_vm->logic()->checkOptionSettings();
+	_vm->checkOptionSettings();
 
 	drawSlideBar(_vm->logic()->talkSpeed(), 130, 100, BOB_TALK_SPEED, 136 - 4, 164, FRAME_BLUE_PIN);
 	// XXX music_volume

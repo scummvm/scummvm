@@ -98,6 +98,7 @@ QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
 	_system->init_size(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 }
 
+
 QueenEngine::~QueenEngine() {
 	_timer->removeTimerProc(&timerHandler);
 	delete _bam;
@@ -114,6 +115,61 @@ QueenEngine::~QueenEngine() {
 	delete _walk;	
 }
 
+
+void QueenEngine::registerDefaultSettings() {
+	ConfMan.registerDefault("master_volume", 255);
+	ConfMan.registerDefault("music_mute", false);
+	ConfMan.registerDefault("sfx_mute", false);
+	ConfMan.registerDefault("talkspeed", Logic::DEFAULT_TALK_SPEED);
+	ConfMan.registerDefault("speech_mute", _resource->isFloppy());
+	ConfMan.registerDefault("subtitles", true);
+}
+
+
+void QueenEngine::checkOptionSettings() {
+	// check talkspeed value
+	if (_logic->talkSpeed() < 4) {
+		_logic->talkSpeed(4);
+	} else if (_logic->talkSpeed() > 95) {
+		_logic->talkSpeed(100);
+	}
+
+	// XXX check master_volume value
+
+	// only CD-ROM version has speech
+	if (_resource->isFloppy() && _sound->speechOn()) {
+		_sound->speechToggle(false);
+	}
+
+	// ensure text is always on when voice is off
+	if (!_sound->speechOn()) {
+		_logic->subtitles(true);
+	}
+}
+
+
+void QueenEngine::readOptionSettings() {
+	// XXX master_volume
+	_sound->musicToggle(!ConfMan.getBool("music_mute"));
+	_sound->sfxToggle(!ConfMan.getBool("sfx_mute"));
+	_logic->talkSpeed(ConfMan.getInt("talkspeed"));
+	_sound->speechToggle(!ConfMan.getBool("speech_mute"));
+	_logic->subtitles(ConfMan.getBool("subtitles"));
+	checkOptionSettings();
+}
+
+
+void QueenEngine::writeOptionSettings() {
+	// XXX master_volume
+	ConfMan.set("music_mute", !_sound->musicOn());
+	ConfMan.set("sfx_mute", !_sound->sfxOn());
+	ConfMan.set("talkspeed", _logic->talkSpeed());
+	ConfMan.set("speech_mute", !_sound->speechOn());
+	ConfMan.set("subtitles", _logic->subtitles());
+	ConfMan.flushToDisk();
+}
+
+
 void QueenEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
 	if (_debugger && !_debugger->isAttached()) {
@@ -126,8 +182,8 @@ void QueenEngine::errorString(const char *buf1, char *buf2) {
 void QueenEngine::go() {
 	initialise();
 
-	_logic->registerDefaultSettings();
-	_logic->readOptionSettings();
+	registerDefaultSettings();
+	readOptionSettings();
 
 	_logic->oldRoom(0);
 	_logic->newRoom(_logic->currentRoom());
@@ -159,6 +215,7 @@ void QueenEngine::go() {
 	}
 }
 
+
 void QueenEngine::initialise(void) {
 	_bam = new BamScene(this);
 	_resource = new Resource(_gameDataPath, _system->get_savefile_manager(), getSavePath());
@@ -168,7 +225,14 @@ void QueenEngine::initialise(void) {
 	_display = new Display(this, _system);
 	_graphics = new Graphics(this);
 	_input = new Input(_resource->getLanguage(), _system);
-	_logic = new Logic(this);
+
+	if (_resource->isDemo()) {
+		_logic = new LogicDemo(this);
+	} else if (_resource->isInterview()) {
+		_logic = new LogicInterview(this);
+	} else {
+		_logic = new LogicGame(this);
+	}
 
 	MidiDriver *driver = GameDetector::createMidi(GameDetector::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE));
 	if (!driver)

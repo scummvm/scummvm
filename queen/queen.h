@@ -62,6 +62,11 @@ public:
 
 	Common::RandomSource randomizer;
 
+	void registerDefaultSettings();
+	void checkOptionSettings();
+	void readOptionSettings();
+	void writeOptionSettings();
+
 protected:
 
 	void errorString(const char *buf_input, char *buf_output);
@@ -69,6 +74,7 @@ protected:
 	void go();
 
 	void initialise();
+
 
 	static void timerHandler(void *ptr);
 	void gotTimerTick();

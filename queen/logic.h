@@ -60,7 +60,7 @@ class Logic {
 
 public:
 	Logic(QueenEngine *vm);
-	~Logic();
+	virtual ~Logic();
 
 	uint16 currentRoom() const { return _currentRoom; }
 	void currentRoom(uint16 room) { 
@@ -241,18 +241,6 @@ public:
 	bool subtitles() const { return _subtitles; }
 	void subtitles(bool enable) { _subtitles = enable; }
 
-	void registerDefaultSettings();
-	void checkOptionSettings();
-	void readOptionSettings();
-	void writeOptionSettings();
-
-	bool preChangeRoom_Demo();
-	bool preChangeRoom_Interview();
-	bool preChangeRoom_Game();
-
-	bool executeSpecialMove_Demo(uint16 sm);
-	bool executeSpecialMove_Interview(uint16 sm);
-	bool executeSpecialMove_Game(uint16 sm);
 	void executeSpecialMove(uint16 sm);
 
 	void asmMakeJoeUseDress();
@@ -299,9 +287,6 @@ public:
 	void startCredits(const char *filename);
 	void stopCredits();
 
-	typedef bool (Logic::*ExecuteSpecialMoveProc)(uint16);
-	typedef bool (Logic::*PreChangeRoomProc)();
-
 	enum {
 		MAX_ZONES_NUMBER    = 32,
 		MAX_AREAS_NUMBER    = 11,
@@ -314,6 +299,10 @@ public:
 protected:
 
 	void initialise();
+
+	virtual bool preChangeRoom() = 0;
+	virtual bool handleSpecialMove(uint16 sm) = 0;
+
 
 	LineReader *_queen2jas;
 
@@ -438,11 +427,32 @@ protected:
 
 	bool _subtitles;
 
-	ExecuteSpecialMoveProc _executeSpecialMove;
-	PreChangeRoomProc _preChangeRoom;
-
 	QueenEngine *_vm;
 	Credits *_credits;
+};
+
+class LogicDemo : public Logic {
+public:
+	LogicDemo(QueenEngine *vm) : Logic(vm) {}
+protected:
+	bool preChangeRoom();
+	bool handleSpecialMove(uint16 sm);
+};
+
+class LogicInterview : public Logic {
+public:
+	LogicInterview(QueenEngine *vm) : Logic(vm) {}
+protected:
+	bool preChangeRoom();
+	bool handleSpecialMove(uint16 sm);
+};
+
+class LogicGame : public Logic {
+public:
+	LogicGame(QueenEngine *vm) : Logic(vm) {}
+protected:
+	bool preChangeRoom();
+	bool handleSpecialMove(uint16 sm);
 };
 
 

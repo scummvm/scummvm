@@ -50,16 +50,6 @@ Logic::Logic(QueenEngine *vm)
 	memset(_talkSelected, 0, sizeof(_talkSelected));
 	_puzzleAttemptCount = 0;
 	initialise();
-	if (_vm->resource()->isDemo()) {
-		_preChangeRoom = &Logic::preChangeRoom_Demo;
-		_executeSpecialMove = &Logic::executeSpecialMove_Demo;
-	} else if (_vm->resource()->isInterview()) {
-		_preChangeRoom = &Logic::preChangeRoom_Interview;
-		_executeSpecialMove = &Logic::executeSpecialMove_Interview;
-	} else {
-		_preChangeRoom = &Logic::preChangeRoom_Game;
-		_executeSpecialMove = &Logic::executeSpecialMove_Game;
-	}
 }
 
 Logic::~Logic() {
@@ -2169,7 +2159,7 @@ void Logic::sceneStop() {
 
 
 void Logic::changeRoom() {
-	if (!(this->*_preChangeRoom)()) 
+	if (!preChangeRoom()) 
 		roomDisplay(currentRoom(), RDM_FADE_JOE, 100, 1, false);
 	_vm->display()->showMouseCursor(true);
 }
@@ -2188,227 +2178,9 @@ void Logic::useJournal() {
 }
 
 
-void Logic::registerDefaultSettings() {
-	ConfMan.registerDefault("master_volume", 255);
-	ConfMan.registerDefault("music_mute", false);
-	ConfMan.registerDefault("sfx_mute", false);
-	ConfMan.registerDefault("talkspeed", DEFAULT_TALK_SPEED);
-	ConfMan.registerDefault("speech_mute", _vm->resource()->isFloppy());
-	ConfMan.registerDefault("subtitles", true);
-}
-
-
-void Logic::checkOptionSettings() {
-	// check talkspeed value
-	if (_talkSpeed < 4) {
-		_talkSpeed = 4;
-	} else if (_talkSpeed > 95) {
-		_talkSpeed = 100;
-	}
-
-	// XXX check master_volume value
-
-	// only CD-ROM version has speech
-	if (_vm->resource()->isFloppy() && _vm->sound()->speechOn()) {
-		_vm->sound()->speechToggle(false);
-	}
-
-	// ensure text is always on when voice is off
-	if (!_vm->sound()->speechOn()) {
-		_subtitles = true;
-	}
-}
-
-
-void Logic::readOptionSettings() {
-	// XXX master_volume
-	_vm->sound()->musicToggle(!ConfMan.getBool("music_mute"));
-	_vm->sound()->sfxToggle(!ConfMan.getBool("sfx_mute"));
-	_talkSpeed = ConfMan.getInt("talkspeed");
-	_vm->sound()->speechToggle(!ConfMan.getBool("speech_mute"));
-	_subtitles = ConfMan.getBool("subtitles");
-
-	checkOptionSettings();
-}
-
-
-void Logic::writeOptionSettings() {
-	// XXX master_volume
-	ConfMan.set("music_mute", !_vm->sound()->musicOn());
-	ConfMan.set("sfx_mute", !_vm->sound()->sfxOn());
-	ConfMan.set("talkspeed", _talkSpeed);
-	ConfMan.set("speech_mute", !_vm->sound()->speechOn());
-	ConfMan.set("subtitles", _subtitles);
-
-	ConfMan.flushToDisk();
-}
-
-
-bool Logic::preChangeRoom_Demo() {
-	if (currentRoom() == FOTAQ_LOGO && gameState(VAR_INTRO_PLAYED) == 0) {
-		currentRoom(79);
-		roomDisplay(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
-		playCutaway("clogo.cut");
-		sceneReset();
-		currentRoom(ROOM_HOTEL_LOBBY);
-		entryObj(584);
-		roomDisplay(currentRoom(), RDM_FADE_JOE, 100, 2, true);
-		playCutaway("c70d.cut");
-		gameState(VAR_INTRO_PLAYED, 1);
-		inventorySetup();
-		inventoryRefresh();
-		return true;
-	}
-	return false;
-}
-
-
-bool Logic::preChangeRoom_Interview() {
-	if (currentRoom() == 2 && gameState(2) == 0) {
-		currentRoom(6);
-		roomDisplay(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
-		playCutaway("start.cut");
-		gameState(2, 1);
-		inventorySetup();
-		inventoryRefresh();
-		return true;
-	}
-	return false;
-}
-
-
-bool Logic::preChangeRoom_Game() {
-	if (currentRoom() == ROOM_JUNGLE_PINNACLE) {
-		handlePinnacleRoom();
-		return true;
-	} else if (currentRoom() == FOTAQ_LOGO && gameState(VAR_INTRO_PLAYED) == 0) {
-		roomDisplay(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
-		playCutaway("copy.cut");
-		playCutaway("clogo.cut");
-
-		// XXX enable talking for talkie version
-
-		if (ConfMan.getBool("alt_intro")) {
-			_vm->graphics()->loadPanel();
-			playCutaway("cintr.cut");
-		} else {
-			playCutaway("cdint.cut");
-			_vm->graphics()->loadPanel();
-		}
-
-		playCutaway("cred.cut");
-		sceneReset();
-		currentRoom(ROOM_HOTEL_LOBBY);
-		entryObj(584);
-		roomDisplay(currentRoom(), RDM_FADE_JOE, 100, 2, true);
-		playCutaway("c70d.cut");
-		gameState(VAR_INTRO_PLAYED, 1);
-		inventorySetup();
-		inventoryRefresh();
-		return true;
-	}
-	return false;
-}
-
-
-bool Logic::executeSpecialMove_Demo(uint16 sm) {
-	switch (sm) {
-	case 4:
-		asmMakeJoeUseUnderwear();
-		break;
-	case 5:
-		asmSwitchToDressPalette();
-		break;
-	case 14:
-		asmEndDemo();
-		break;
-	default:
-		return false;
-	}
-	return true;
-}
-
-
-bool Logic::executeSpecialMove_Interview(uint16 sm) {
-	switch (sm) {
-	case 1:
-		asmInterviewIntro();
-		break;
-	case 2:
-		asmEndInterview();
-		break;
-	default:
-		return false;
-	}
-	return true;
-}
-
-
-bool Logic::executeSpecialMove_Game(uint16 sm) {
-	typedef void (Logic::*SpecialMoveProc)();
-	static const SpecialMoveProc asmTable[] = {
-		/* 00 */
-		NULL,
-		NULL,
-		&Logic::asmMakeJoeUseDress,
-		&Logic::asmMakeJoeUseNormalClothes,
-		/* 04 */
-		&Logic::asmMakeJoeUseUnderwear,
-		&Logic::asmSwitchToDressPalette,
-		&Logic::asmSwitchToNormalPalette,
-		&Logic::asmStartCarAnimation,       // room 74
-		/* 08 */
-		&Logic::asmStopCarAnimation,        // room 74
-		&Logic::asmStartFightAnimation,     // room 69
-		&Logic::asmWaitForFrankPosition,    // c69e.cut
-		&Logic::asmMakeFrankGrowing,        // c69z.cut
-		/* 12 */
-		&Logic::asmMakeRobotGrowing,        // c69z.cut
-		&Logic::asmShrinkRobot,
-		&Logic::asmEndGame,
-		&Logic::asmPutCameraOnDino,
-		/* 16 */
-		&Logic::asmPutCameraOnJoe,
-		&Logic::asmAltIntroPanRight,        // cintr.cut
-		&Logic::asmAltIntroPanLeft,         // cintr.cut
-		&Logic::asmSetAzuraInLove,
-		/* 20 */
-		&Logic::asmPanRightFromJoe,
-		&Logic::asmSetLightsOff,
-		&Logic::asmSetLightsOn,
-		&Logic::asmSetManequinAreaOn,
-		/* 24 */
-		&Logic::asmPanToJoe,
-		&Logic::asmTurnGuardOn,
-		&Logic::asmPanLeft320To144,
-		&Logic::asmSmooch,
-		/* 28 */
-		&Logic::asmMakeLightningHitPlane,
-		&Logic::asmScaleBlimp,
-		&Logic::asmScaleEnding,
-		&Logic::asmWaitForCarPosition,
-		/* 32 */
-		&Logic::asmShakeScreen,
-		&Logic::asmAttemptPuzzle,
-		&Logic::asmScaleTitle,
-		NULL,
-		/* 36 */
-		&Logic::asmPanRightToHugh,
-		&Logic::asmMakeWhiteFlash,
-		&Logic::asmPanRightToJoeAndRita,
-		&Logic::asmPanLeftToBomb            // cdint.cut
-	};
-	if (sm >= ARRAYSIZE(asmTable) || asmTable[sm] == NULL)
-		return false;
-	(this->*asmTable[sm])();
-	return true;
-}
-
-
 void Logic::executeSpecialMove(uint16 sm) {
-	
 	debug(6, "Special move: %d", sm);
-	if (!(this->*_executeSpecialMove)(sm))
+	if (!handleSpecialMove(sm))
 		warning("unhandled / invalid special move : %d", sm);
 }
 
@@ -3052,6 +2824,166 @@ void Logic::stopCredits() {
 	}
 }
 
+
+bool LogicDemo::preChangeRoom() {
+	if (currentRoom() == FOTAQ_LOGO && gameState(VAR_INTRO_PLAYED) == 0) {
+		currentRoom(79);
+		roomDisplay(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
+		playCutaway("clogo.cut");
+		sceneReset();
+		currentRoom(ROOM_HOTEL_LOBBY);
+		entryObj(584);
+		roomDisplay(currentRoom(), RDM_FADE_JOE, 100, 2, true);
+		playCutaway("c70d.cut");
+		gameState(VAR_INTRO_PLAYED, 1);
+		inventorySetup();
+		inventoryRefresh();
+		return true;
+	}
+	return false;
+}
+
+
+bool LogicInterview::preChangeRoom() {
+	if (currentRoom() == 2 && gameState(2) == 0) {
+		currentRoom(6);
+		roomDisplay(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
+		playCutaway("start.cut");
+		gameState(2, 1);
+		inventorySetup();
+		inventoryRefresh();
+		return true;
+	}
+	return false;
+}
+
+
+bool LogicGame::preChangeRoom() {
+	if (currentRoom() == ROOM_JUNGLE_PINNACLE) {
+		handlePinnacleRoom();
+		return true;
+	} else if (currentRoom() == FOTAQ_LOGO && gameState(VAR_INTRO_PLAYED) == 0) {
+		roomDisplay(currentRoom(), RDM_FADE_NOJOE, 100, 2, true);
+		playCutaway("copy.cut");
+		playCutaway("clogo.cut");
+
+		// XXX enable talking for talkie version
+
+		if (ConfMan.getBool("alt_intro")) {
+			_vm->graphics()->loadPanel();
+			playCutaway("cintr.cut");
+		} else {
+			playCutaway("cdint.cut");
+			_vm->graphics()->loadPanel();
+		}
+
+		playCutaway("cred.cut");
+		sceneReset();
+		currentRoom(ROOM_HOTEL_LOBBY);
+		entryObj(584);
+		roomDisplay(currentRoom(), RDM_FADE_JOE, 100, 2, true);
+		playCutaway("c70d.cut");
+		gameState(VAR_INTRO_PLAYED, 1);
+		inventorySetup();
+		inventoryRefresh();
+		return true;
+	}
+	return false;
+}
+
+
+bool LogicDemo::handleSpecialMove(uint16 sm) {
+	switch (sm) {
+	case 4:
+		asmMakeJoeUseUnderwear();
+		break;
+	case 5:
+		asmSwitchToDressPalette();
+		break;
+	case 14:
+		asmEndDemo();
+		break;
+	default:
+		return false;
+	}
+	return true;
+}
+
+
+bool LogicInterview::handleSpecialMove(uint16 sm) {
+	switch (sm) {
+	case 1:
+		asmInterviewIntro();
+		break;
+	case 2:
+		asmEndInterview();
+		break;
+	default:
+		return false;
+	}
+	return true;
+}
+
+
+bool LogicGame::handleSpecialMove(uint16 sm) {
+	typedef void (Logic::*SpecialMoveProc)();
+	static const SpecialMoveProc asmTable[] = {
+		/* 00 */
+		0,
+		0,
+		&Logic::asmMakeJoeUseDress,
+		&Logic::asmMakeJoeUseNormalClothes,
+		/* 04 */
+		&Logic::asmMakeJoeUseUnderwear,
+		&Logic::asmSwitchToDressPalette,
+		&Logic::asmSwitchToNormalPalette,
+		&Logic::asmStartCarAnimation,       // room 74
+		/* 08 */
+		&Logic::asmStopCarAnimation,        // room 74
+		&Logic::asmStartFightAnimation,     // room 69
+		&Logic::asmWaitForFrankPosition,    // c69e.cut
+		&Logic::asmMakeFrankGrowing,        // c69z.cut
+		/* 12 */
+		&Logic::asmMakeRobotGrowing,        // c69z.cut
+		&Logic::asmShrinkRobot,
+		&Logic::asmEndGame,
+		&Logic::asmPutCameraOnDino,
+		/* 16 */
+		&Logic::asmPutCameraOnJoe,
+		&Logic::asmAltIntroPanRight,        // cintr.cut
+		&Logic::asmAltIntroPanLeft,         // cintr.cut
+		&Logic::asmSetAzuraInLove,
+		/* 20 */
+		&Logic::asmPanRightFromJoe,
+		&Logic::asmSetLightsOff,
+		&Logic::asmSetLightsOn,
+		&Logic::asmSetManequinAreaOn,
+		/* 24 */
+		&Logic::asmPanToJoe,
+		&Logic::asmTurnGuardOn,
+		&Logic::asmPanLeft320To144,
+		&Logic::asmSmooch,
+		/* 28 */
+		&Logic::asmMakeLightningHitPlane,
+		&Logic::asmScaleBlimp,
+		&Logic::asmScaleEnding,
+		&Logic::asmWaitForCarPosition,
+		/* 32 */
+		&Logic::asmShakeScreen,
+		&Logic::asmAttemptPuzzle,
+		&Logic::asmScaleTitle,
+		0,
+		/* 36 */
+		&Logic::asmPanRightToHugh,
+		&Logic::asmMakeWhiteFlash,
+		&Logic::asmPanRightToJoeAndRita,
+		&Logic::asmPanLeftToBomb            // cdint.cut
+	};
+	if (sm >= ARRAYSIZE(asmTable) || asmTable[sm] == 0)
+		return false;
+	(this->*asmTable[sm])();
+	return true;
+}
 
 
 } // End of namespace Queen
