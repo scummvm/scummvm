@@ -115,11 +115,12 @@ enum ActorFlagsEx {
 
 enum PathCellType {
 	kPathCellEmpty = -1,
+	//kDirUp = 0 .... kDirUpLeft = 7 
 	kPathCellBarrier = 0x57
 };
 
 struct PathDirectionData {
-	int direction;
+	int8 direction;
 	int	x;
 	int y;
 };
@@ -319,13 +320,13 @@ private:
 		return !((testPoint.x < 0) || (testPoint.x >= _xCellCount) ||
 			(testPoint.y < 0) || (testPoint.y >= _yCellCount));
 	}
-	void setPathCell(const Point &testPoint, int value) {		
+	void setPathCell(const Point &testPoint, int8 value) {		
 		if (!validPathCellPoint(testPoint)) {
 			error("Actor::setPathCell wrong point");
 		}
 		_pathCell[testPoint.x + testPoint.y * _xCellCount] = value;
 	}
-	int getPathCell(const Point &testPoint) {
+	int8 getPathCell(const Point &testPoint) {
 		if (!validPathCellPoint(testPoint)) {
 			error("Actor::getPathCell wrong point");
 		}
@@ -351,7 +352,7 @@ private:
 //path stuff
 	Rect _barrierList[ACTOR_BARRIERS_MAX];
 	int _barrierCount;
-	int *_pathCell;
+	int8 *_pathCell;
 
 	int _xCellCount;
 	int _yCellCount;

@@ -153,7 +153,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_yCellCount = _vm->getStatusYOffset() + 1;
 	_xCellCount = _vm->getDisplayWidth();
 
-	_pathCell = (int*) malloc(_yCellCount * _xCellCount * sizeof(*_pathCell));
+	_pathCell = (int8*) malloc(_yCellCount * _xCellCount * sizeof(*_pathCell));
 	
 
 	_pathRect.left = 0;
@@ -1353,7 +1353,6 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 	Point iteratorPoint;
 	Point bestPoint;
 	int maskType;
-	int cellValue;
 	int i;
 	Rect intersect;
 	
@@ -1368,8 +1367,7 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 	for (iteratorPoint.y = 0; iteratorPoint.y < _yCellCount; iteratorPoint.y++) {
 		for (iteratorPoint.x = 0; iteratorPoint.x < _xCellCount; iteratorPoint.x++) {
 			maskType = _vm->_scene->getBGMaskType(iteratorPoint);
-			cellValue = maskType ? kPathCellBarrier : kPathCellEmpty;
-			setPathCell(iteratorPoint, cellValue);			
+			setPathCell(iteratorPoint,  maskType ? kPathCellBarrier : kPathCellEmpty);			
 		}
 	}
 
@@ -1406,29 +1404,6 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 	
 
 	i = fillPathArray(fromPoint, toPoint, bestPoint);
-
-#if 0
-	{
-		Point iteratorPoint;
-		int cellValue;
-		FILE	*fp =	fopen("d:\\FINDPATH.DAT", "w");
-		char	c;
-
-		fprintf(fp, "from = (%d,%d)\n", fromPoint.x, fromPoint.y);
-		fprintf(fp, "to = (%d,%d)\n", toPoint.x, toPoint.y);
-		fprintf(fp, "bestPoint = (%d,%d)\n", bestPoint.x, bestPoint.y);
-
-		for (iteratorPoint.y = 0; iteratorPoint.y < _yCellCount; iteratorPoint.y++) {
-			for (iteratorPoint.x = 0; iteratorPoint.x < _xCellCount; iteratorPoint.x++) {
-				cellValue = getPathCell(iteratorPoint);
-				c = (cellValue < 0) ? ' ' : (cellValue == kPathCellBarrier) ? kPathCellBarrier : (cellValue < 8) ? "^>v<?jLP"[cellValue] : '.';
-				putc(c, fp);
-			}
-			putc('\n', fp);
-		}
-		fclose(fp);
-	}
-#endif
 
 	if (fromPoint == bestPoint) {
 		actor->addWalkStepPoint(bestPoint);
@@ -1506,6 +1481,7 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 	PathDirectionData *samplePathDirection;
 	PathDirectionList::iterator pathDirectionIterator;
 	PathDirectionList::iterator newPathDirectionIterator;
+	Point nextPoint;
 	int directionCount;
 
 	pointCounter = 0;
@@ -1521,7 +1497,7 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 	}
 
 	if (validPathCellPoint(fromPoint)) {
-		setPathCell(fromPoint, 0);
+		setPathCell(fromPoint, kDirUp);
 		
 		addDebugPoint(fromPoint, 24+36);
 	}	
@@ -1532,29 +1508,34 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 		pathDirection = pathDirectionIterator.operator->();
 		for (directionCount = 0; directionCount < 3; directionCount++) {
 			samplePathDirection = &pathDirectionLUT[pathDirection->direction][directionCount];
-			Point nextPoint;
 			nextPoint.x = samplePathDirection->x + pathDirection->x;
 			nextPoint.y = samplePathDirection->y + pathDirection->y;
-			if (validPathCellPoint(nextPoint) && 
-				(getPathCell(nextPoint) == kPathCellEmpty)) {
-				setPathCell(nextPoint, samplePathDirection->direction);
-				
-				addDebugPoint(nextPoint, samplePathDirection->direction + 96);
-				newPathDirectionIterator = pathDirectionList.pushBack();
-				pathDirection = newPathDirectionIterator.operator->();
-				pathDirection->x = nextPoint.x;
-				pathDirection->y = nextPoint.y;
-				pathDirection->direction = samplePathDirection->direction;
-				++pointCounter;
-				if (nextPoint == toPoint) {
-					bestPoint = toPoint;
-					return pointCounter;
-				}
-				currentRating = quickDistance(nextPoint, toPoint);
-				if (currentRating  < bestRating) {
-					bestRating = currentRating;
-					bestPath = nextPoint;
-				}
+			
+			if (!validPathCellPoint(nextPoint)) {
+				continue; 
+			}
+
+			if (getPathCell(nextPoint) != kPathCellEmpty) {
+				continue;
+			}
+
+			setPathCell(nextPoint, samplePathDirection->direction);
+
+			addDebugPoint(nextPoint, samplePathDirection->direction + 96);
+			newPathDirectionIterator = pathDirectionList.pushBack();
+			pathDirection = newPathDirectionIterator.operator->();
+			pathDirection->x = nextPoint.x;
+			pathDirection->y = nextPoint.y;
+			pathDirection->direction = samplePathDirection->direction;
+			++pointCounter;
+			if (nextPoint == toPoint) {
+				bestPoint = toPoint;
+				return pointCounter;
+			}
+			currentRating = quickDistance(nextPoint, toPoint);
+			if (currentRating  < bestRating) {
+				bestRating = currentRating;
+				bestPath = nextPoint;
 			}
 		}
 		++pathDirectionIterator;
@@ -1566,7 +1547,7 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 
 void Actor::setActorPath(ActorData *actor, const Point &fromPoint, const Point &toPoint) {
 	Point nextPoint;
-	int direction;
+	int8 direction;
 	int i;
 
 	_pathListIndex = -1;
@@ -1575,7 +1556,7 @@ void Actor::setActorPath(ActorData *actor, const Point &fromPoint, const Point &
 
 	while ( !(nextPoint == fromPoint)) {
 		direction = getPathCell(nextPoint);
-		if ((direction < 0) || (direction > 8)) {
+		if ((direction < 0) || (direction >= 8)) {
 			error("Actor::setActorPath error direction 0x%X", direction);
 		}
 		nextPoint.x -= pathDirectionLUT2[direction][0];
