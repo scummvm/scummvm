@@ -635,6 +635,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_switchRoomEffect2 = 0;
 	_switchRoomEffect = 0;
 	_scrollBuffer = NULL;
+
 	_doEffect = false;
 	memset(&_flashlight, 0, sizeof(_flashlight));
 	_roomStrips = 0;
@@ -2482,11 +2483,7 @@ void ScummEngine::confirmrestartDialog() {
 }
 
 char ScummEngine::displayMessage(const char *altButton, const char *message, ...) {
-#ifdef __PALM_OS__
-	char buf[256]; // 1024 is too big overflow the stack
-#else
-	char buf[1024];
-#endif
+	char buf[STRINGBUFLEN];
 	va_list va;
 
 	va_start(va, message);

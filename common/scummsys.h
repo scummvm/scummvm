@@ -169,6 +169,8 @@
 	#include "globals.h"
 	#include "extend.h"
 	
+	#define STRINGBUFLEN 256
+
 	#define __PALM_OS__
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp strnicmp
@@ -438,6 +440,10 @@ FORCEINLINE uint32 READ_BE_UINT24(const void *ptr) {
 #else
 	// 15/16 bit color mode everywhere else...
 	typedef int16 OverlayColor;
+#endif
+
+#ifndef STRINGBUFLEN
+#define STRINGBUFLEN 1024
 #endif
 
 /*

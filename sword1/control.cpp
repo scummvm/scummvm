@@ -698,11 +698,7 @@ void Control::readSavegameDescriptions(void) {
 }
 
 int Control::displayMessage(const char *altButton, const char *message, ...) {
-#ifdef __PALM_OS__
-	char buf[256]; // 1024 is too big overflow the stack
-#else
-	char buf[1024];
-#endif
+	char buf[STRINGBUFLEN];
 	va_list va;
 
 	va_start(va, message);

@@ -28,6 +28,7 @@
 #include "queen/resource.h"
 
 #if defined(__PALM_OS__)
+#include "init_arm.h"
 #include "arm/native.h"
 #include "arm/macros.h"
 #endif
@@ -52,18 +53,12 @@ Display::Display(QueenEngine *vm, OSystem *system)
 
 	initFont();
 
-#ifndef __PALM_OS__
 	_screenBuf   = new uint8[SCREEN_W * SCREEN_H];
 	_panelBuf    = new uint8[PANEL_W * PANEL_H];
 	_backdropBuf = new uint8[BACKDROP_W * BACKDROP_H];
 	memset(_screenBuf,   0, SCREEN_W * SCREEN_H);
 	memset(_panelBuf,    0, PANEL_W * PANEL_H);
 	memset(_backdropBuf, 0, BACKDROP_W * BACKDROP_H);
-#else
-	_screenBuf   = (uint8 *)calloc(SCREEN_W * SCREEN_H, sizeof(uint8));
-	_panelBuf    = (uint8 *)calloc(PANEL_W * PANEL_H, sizeof(uint8));
-	_backdropBuf = (uint8 *)calloc(BACKDROP_W * BACKDROP_H, sizeof(uint8));
-#endif
 
 	_fullRefresh = 1;
 	_dirtyBlocksWidth  = SCREEN_W / D_BLOCK_W;
@@ -85,15 +80,9 @@ Display::Display(QueenEngine *vm, OSystem *system)
 }
 
 Display::~Display() {
-#ifndef __PALM_OS__
 	delete[] _backdropBuf;
 	delete[] _panelBuf;
 	delete[] _screenBuf;
-#else
-	free(_backdropBuf);
-	free(_panelBuf);
-	free(_screenBuf);
-#endif
 
 	delete[] _pal.room;
 	delete[] _pal.screen;

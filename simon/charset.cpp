@@ -218,11 +218,7 @@ void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint
 }
 
 void SimonEngine::showMessageFormat(const char *s, ...) {
-#ifndef __PALM_OS__
-	char buf[1024];
-#else
-	char buf[256];
-#endif
+	char buf[STRINGBUFLEN];
 	char *str;
 	va_list va;
 

@@ -40,11 +40,7 @@ extern uint16 g_debugLevel;
 namespace Scumm {
 
 void CDECL debugC(int channel, const char *s, ...) {
-#ifdef __PALM_OS__
-	char buf[256]; // 1024 is too big overflow the stack
-#else
-	char buf[1024];
-#endif
+	char buf[STRINGBUFLEN];
 	va_list va;
 
 	// FIXME: Still spew all debug at -d9, for crashes in startup etc.

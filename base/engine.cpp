@@ -99,13 +99,8 @@ const char *Engine::getGameDataPath() const {
 }
 
 void NORETURN CDECL error(const char *s, ...) {
-#ifdef __PALM_OS__
-	char buf_input[256]; // 1024 is too big overflow the stack
-	char buf_output[256];
-#else
-	char buf_input[1024];
-	char buf_output[1024];
-#endif
+	char buf_input[STRINGBUFLEN];
+	char buf_output[STRINGBUFLEN];
 	va_list va;
 
 	va_start(va, s);
@@ -152,11 +147,7 @@ void NORETURN CDECL error(const char *s, ...) {
 }
 
 void CDECL warning(const char *s, ...) {
-#ifdef __PALM_OS__
-	char buf[256]; // 1024 is too big overflow the stack
-#else
-	char buf[1024];
-#endif
+	char buf[STRINGBUFLEN];
 	va_list va;
 
 	va_start(va, s);
@@ -183,11 +174,7 @@ void CDECL warning(const char *s, ...) {
 }
 
 void CDECL debug(int level, const char *s, ...) {
-#ifdef __PALM_OS__
-	char buf[256]; // 1024 is too big overflow the stack
-#else
-	char buf[1024];
-#endif
+	char buf[STRINGBUFLEN];
 	va_list va;
 
 	if (level > g_debugLevel)
@@ -215,11 +202,7 @@ void CDECL debug(int level, const char *s, ...) {
 }
 
 void CDECL debug(const char *s, ...) {
-#ifdef __PALM_OS__
-	char buf[256]; // 1024 is too big overflow the stack
-#else
-	char buf[1024];
-#endif
+	char buf[STRINGBUFLEN];
 	va_list va;
 
 	va_start(va, s);

@@ -105,15 +105,13 @@ uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, uint32 *size, 
 		*size = sz;
 	}
 	byte *dstBuf;
-#ifndef __PALM_OS__
+
 	if (useMalloc) {
 		dstBuf = (byte *)malloc(sz);
 	} else {
 		dstBuf = new byte[sz];
 	}
-#else
-	dstBuf = (byte *)calloc(sz, sizeof(byte));
-#endif
+
 	_resourceFile->seek(re->offset + skipBytes);
 	_resourceFile->read(dstBuf, sz);
 	return dstBuf;
