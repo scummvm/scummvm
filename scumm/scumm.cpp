@@ -372,7 +372,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	  _version(gs.version),
 	  _heversion(gs.heversion),
 	  _features(gs.features),
-	  gdi(this), _pauseDialog(0), _optionsDialog(0), _mainMenuDialog(0),
+	  gdi(this), _pauseDialog(0), _optionsDialog(0), _mainMenuDialog(0), _versionDialog(0),
 	  _targetName(detector->_targetName) {
 
 	// Add default file directories.
@@ -437,6 +437,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_pauseDialog = NULL;
 	_optionsDialog = NULL;
 	_mainMenuDialog = NULL;
+	_versionDialog = NULL;
 	_fastMode = 0;
 	_actors = NULL;
 	_inventory = NULL;
@@ -946,6 +947,7 @@ ScummEngine::~ScummEngine() {
 	delete _pauseDialog;
 	delete _optionsDialog;
 	delete _mainMenuDialog;
+	delete _versionDialog;
 
 	delete _sound;
 	free(_languageBuffer);
@@ -2009,6 +2011,13 @@ void ScummEngine::processKbd(bool smushMode) {
 		return;
 	}
 
+	// COMI version string is hard coded
+	// FT version strings are partly hard coded too
+	if (_gameId == GID_DIG && _lastKeyHit == VAR(VAR_VERSION)) {
+		versionDialog();
+		return;
+	}
+
 	if ((_version <= 2) || (_features & GF_FMTOWNS))
 		saveloadkey = 5;	// F5
 	else if ((_version <= 3) || (_gameId == GID_SAMNMAX) || (_gameId == GID_CMI))
@@ -2694,8 +2703,14 @@ int ScummEngine::runDialog(Dialog &dialog) {
 
 void ScummEngine::pauseDialog() {
 	if (!_pauseDialog)
-		_pauseDialog = new PauseDialog(this);
+		_pauseDialog = new PauseDialog(this, 10);
 	runDialog(*_pauseDialog);
+}
+
+void ScummEngine::versionDialog() {
+	if (!_versionDialog)
+		_versionDialog = new PauseDialog(this, 11);
+	runDialog(*_versionDialog);
 }
 
 void ScummEngine::mainMenuDialog() {

@@ -77,7 +77,8 @@ static ResString string_map_table_v7[] = {
 	{73, "cancel"}, //boot11
 	{74, "quit"}, //boot12
 	{75, "ok"}, //boot13
-	{85, "game paused"}, // boot3					
+	{85, "game paused"}, // boot3
+	{96, "the dig v1.0"},
 
 	/* this is the almost complete string map for v7
 	{63, "how may I serve you?"},
@@ -602,8 +603,8 @@ void InfoDialog::setInfoText(const String& message) {
 
 #pragma mark -
 
-PauseDialog::PauseDialog(ScummEngine *scumm)
-	: InfoDialog(scumm, 10) {
+PauseDialog::PauseDialog(ScummEngine *scumm, int res)
+	: InfoDialog(scumm, res) {
 }
 
 void PauseDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {

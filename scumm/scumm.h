@@ -418,6 +418,7 @@ public:
 
 protected:
 	Dialog *_pauseDialog;
+	Dialog *_versionDialog;
 	Dialog *_optionsDialog;
 	Dialog *_mainMenuDialog;
 
@@ -426,6 +427,7 @@ protected:
 	void confirmexitDialog();
 	void confirmrestartDialog();
 	void pauseDialog();
+	void versionDialog();
 	void mainMenuDialog();
 public:
 	void optionsDialog();	// Used by MainMenuDialog::handleCommand()

@@ -141,7 +141,7 @@ protected:
 
 class PauseDialog : public InfoDialog {
 public:
-	PauseDialog(ScummEngine *scumm);
+	PauseDialog(ScummEngine *scumm, int res);
 	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 };
 
