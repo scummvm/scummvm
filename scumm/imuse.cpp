@@ -4902,11 +4902,8 @@ void IMuseDigital::handler() {
 				}
 			} else if (_channel[l]._bits == 8) {
 				for(i = 0; i < (mixer_size / 2); i++) {
-					byte sample1 = buf[i * 2 + 0];
-					byte sample2 = buf[i * 2 + 1];
-					uint16 sample_a = (uint16)(((int16)((sample1 << 8) | sample2) * _channel[l]._volumeLeft) >> 8);
-					buf[i * 2 + 0] = (byte)(sample_a >> 8);
-					buf[i * 2 + 1] = (byte)(sample_a & 0xff);
+					buf[i * 2 + 0] = (byte)(((int16)(buf[i * 2 + 0] * _channel[l]._volumeLeft)) >> 8);
+					buf[i * 2 + 1] = (byte)(((int16)(buf[i * 2 + 1] * _channel[l]._volumeRight)) >> 8);
 				}
 			}
 
@@ -5045,7 +5042,7 @@ void IMuseDigital::startSound(int sound) {
 			if (_channel[l]._bits == 12) {
 				_channel[l]._mixerSize *= 2;
 				_channel[l]._mixerFlags |= SoundMixer::FLAG_16BITS;
-				_channel[l]._size = _scumm->_sound->decode12BitsSample(ptr, &_channel[l]._data, size, (_channel[l]._channels == 1) ? false : true);
+				_channel[l]._size = _scumm->_sound->decode12BitsSample(ptr, &_channel[l]._data, size, (_channel[l]._channels == 2) ? false : true);
 			}
 			if (_channel[l]._bits == 8) {
 				_channel[l]._mixerFlags |= SoundMixer::FLAG_UNSIGNED;
