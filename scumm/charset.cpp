@@ -181,6 +181,18 @@ void CharsetRendererOld256::printChar(int chr) {
 	unsigned int buffer = 0, mask = 0, x = 0, y = 0;
 	unsigned char color;
 
+	// FIXME: When playing with the original interpreter, Much of the
+	// text in Loom is drawn with a drop-shadow. But is it all of it, or
+	// just some? It's hard to tell with a black background.
+	bool drop_shadow = (_vm->_gameId == GID_LOOM);
+	int w, h;
+
+	if (!drop_shadow) {
+		w = h = 8;
+	} else {
+		w = h = 9;
+	}
+	
 	_vm->checkRange(_vm->_maxCharsets - 1, 0, _curId, "Printing with bad charset %d");
 
 	if ((vs = _vm->findVirtScreen(_top)) == NULL)
@@ -199,7 +211,7 @@ void CharsetRendererOld256::printChar(int chr) {
 
 	char_ptr = _fontPtr + chr * 8;
 	dest_ptr = vs->screenPtr + vs->xstart + (_top - vs->topline) * _vm->_realWidth + _left;
-	_vm->updateDirtyRect(vs->number, _left, _left + 8, _top - vs->topline, _top - vs->topline + 8, 0);
+	_vm->updateDirtyRect(vs->number, _left, _left + w, _top - vs->topline, _top - vs->topline + h, 0);
 
 	for (y = 0; y < 8; y++) {
 		for (x = 0; x < 8; x++) {
@@ -208,19 +220,28 @@ void CharsetRendererOld256::printChar(int chr) {
 				mask = 0x80;
 			}
 			color = ((buffer & mask) != 0);
-			if (color)
+			if (color) {
+				if (drop_shadow)
+					*(dest_ptr + (y + 1) * _vm->_realWidth + x + 1) = 0;
 				*(dest_ptr + y * _vm->_realWidth + x) = _color;
+			}
 		}
 	}
 
 	// FIXME
+	if (_left < _strLeft)
+		_strLeft = _left;
+
 	_left += getCharWidth(chr);
 
-	if (_left > _strRight)
+	if (_left > _strRight) {
 		_strRight = _left;
+		if (drop_shadow)
+			_strRight++;
+	}
 
-	if (_top + 8 > _strBottom)
-		_strBottom = _top + 8;
+	if (_top + h > _strBottom)
+		_strBottom = _top + h;
 }
 
 void CharsetRendererClassic::printChar(int chr) {

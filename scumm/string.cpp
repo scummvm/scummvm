@@ -188,7 +188,7 @@ void Scumm::CHARSET_1() {
 	_talkDelay = _defaultTalkDelay;
 
 	if (!_keepText) {
-		if (_features & GF_AFTER_V3) {
+		if (_features & GF_AFTER_V3 && _gameId != GID_LOOM) {
 			gdi._mask_left = _string[0].xpos;
 			gdi._mask_top = _string[0].ypos;
 			gdi._mask_bottom = _string[0].ypos + 8;

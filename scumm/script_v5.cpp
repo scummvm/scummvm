@@ -451,6 +451,8 @@ void Scumm_v5::o5_actorSet() {
 			break;
 		case 12:										/* talk color */
 			a->talkColor = getVarOrDirectByte(0x80);
+			if (_features & GF_16COLOR)
+				a->talkColor &= 0x0f;	// FIXME
 			break;
 		case 13:										/* name */
 			loadPtrToResource(rtActorName, a->number, NULL);
@@ -2482,9 +2484,14 @@ void Scumm_v5::decodeParseString() {
 			// FIXME: Store positions, this is needed for Indy3 (Grail Diary)..
 			// I don't believe this is the correct fix, may cause other problems
 			// later in the game.
-			if ((_gameId == GID_INDY3_256) || (_gameId == GID_INDY3)) {
+ 			//
+ 			// It's also needed for Loom, or the lines Bobbin
+ 			// speaks during the intro are put at position 0,0.
+ 			// In addition, Loom needs to remember the text colour.
+			if (_gameId == GID_INDY3_256 || _gameId == GID_INDY3 || _gameId == GID_LOOM) {
 				_string[textSlot].t_xpos = _string[textSlot].xpos;
 				_string[textSlot].t_ypos = _string[textSlot].ypos;
+ 				_string[textSlot].t_color = _string[textSlot].color;
 			}
 
 			_scriptPointer = _messagePtr;
