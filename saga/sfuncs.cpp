@@ -1301,12 +1301,19 @@ int Script::SF_eraseDelta(SCRIPTFUNC_PARAMS) {
 
 // Script function #63 (0x3F)
 int Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
-	ScriptDataWord param = thread->pop() + 9;
+	if (_vm->getGameType() == GType_ITE) {
+		ScriptDataWord param = thread->pop() + 9;
 
-	if (param >= 9 && param <= 34)
-		_vm->_music->play(param);
-	else
-		_vm->_music->stop();
+		if (param >= 9 && param <= 34)
+			_vm->_music->play(param);
+		else
+			_vm->_music->stop();
+	} else {
+		ScriptDataWord param1 = thread->pop();
+		ScriptDataWord param2 = thread->pop();
+
+		debug(1, "Stub: sfPlayMusic(%d, %d)", param1, param2);
+	}
 
 	return SUCCESS;
 }
