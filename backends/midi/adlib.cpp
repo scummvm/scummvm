@@ -503,6 +503,8 @@ public:
 	void send(uint32 b);
 	void pause(bool p) { }
 	void set_stream_callback(void *param, StreamCallback *sc) { } // No streaming support. Use MidiStreamer wrapper
+	uint32 property (int prop, uint32 param);
+
 	void setPitchBendRange (byte channel, uint range); 
 	void sysEx_customInstrument (byte channel, uint32 type, byte *instr);
 
@@ -520,6 +522,7 @@ public:
 
 private:
 	int _mode;
+	bool _game_SmallHeader;
 
 	FM_OPL *_opl;
 	byte *_adlib_reg_cache;
@@ -726,6 +729,7 @@ MidiDriver_ADLIB::MidiDriver_ADLIB()
 	for (i = 0; i < ARRAYSIZE(_parts); ++i) {
 		_parts[i].init (this);
 	}
+	_game_SmallHeader = false;
 }
 
 int MidiDriver_ADLIB::open (int mode)
@@ -809,6 +813,17 @@ void MidiDriver_ADLIB::send (uint32 b)
 	default:
 		warning ("MidiDriver_ADLIB: Unknown send() command 0x%02X", cmd);
 	}
+}
+
+uint32 MidiDriver_ADLIB::property (int prop, uint32 param)
+{
+	switch (prop) {
+		case PROP_SMALLHEADER: // Indicates older game, use different operator volume algorithm
+			_game_SmallHeader = (param > 0);
+			return 1;
+	}
+
+	return 0;
 }
 
 void MidiDriver_ADLIB::setPitchBendRange (byte channel, uint range)
@@ -1302,9 +1317,7 @@ void MidiDriver_ADLIB::adlib_setup_channel(int chan, Instrument * instr, byte vo
 	port = channel_mappings[chan];
 	adlib_write(port + 0x20, instr->flags_1);
 
-	// FIXME: Without using g_scumm, this may make older games sound weird.
-	// Gotta transform the volume *before* it gets sent here.
-	if (/*!(g_scumm->_features & GF_SMALL_HEADER)*/true ||(instr->feedback & 1))
+	if (!_game_SmallHeader ||(instr->feedback & 1))
 		adlib_write(port + 0x40, (instr->oplvl_1 | 0x3F) - vol_1 );
 	else
 		adlib_write(port + 0x40, instr->oplvl_1);

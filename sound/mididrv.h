@@ -69,6 +69,7 @@ public:
 
 	enum {
 		PROP_TIMEDIV = 1,
+		PROP_SMALLHEADER = 2,
 	};
 
 

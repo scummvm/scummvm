@@ -696,7 +696,7 @@ class IMuseGM : public IMuseDriver {
 	void midiEffectLevel(byte chan, byte level);
 	void midiChorus(byte chan, byte chorus);
 	void midiControl0(byte chan, byte value);
-	void midiProgram(byte chan, byte program, bool mt32emulate);
+	void midiProgram(MidiChannel *mc, byte program, bool mt32emulate);
 	void midiPan(byte chan, int8 pan);
 	void midiNoteOn(byte chan, byte note, byte velocity);
 	void midiNoteOff(byte chan, byte note);
@@ -2501,7 +2501,7 @@ void Player::parse_sysex(byte *p, uint len)
 
 	case 33:											/* param adjust */
 		a = *p++ & 0x0F;
-		if (_se->_hardware_type != *p++)
+		if (_se->_hardware_type != *p++ && false)
 			break;
 		decode_sysex_bytes(p, buf, len - 3);
 		part = get_part(a);
@@ -2572,7 +2572,7 @@ void Player::parse_sysex(byte *p, uint len)
 		break;
 
 	default:
-		debug(6, "unknown sysex %d", code);
+		warning ("Unknown SysEx command %d", (int) code);
 	}
 }
 
@@ -4857,14 +4857,12 @@ void IMuseGM::midiControl0(byte chan, byte value)
 }
 
 
-void IMuseGM::midiProgram(byte chan, byte program, bool mt32emulate)
+void IMuseGM::midiProgram(MidiChannel *mc, byte program, bool mt32emulate)
 {
-	if (mt32emulate) {	/* Don't convert the percussion channel, it is the same in GM and MT32 */
-		if (chan != PERCUSSION_CHANNEL)
-			program = mt32_to_gmidi[program];
-	}
-
-	_md->send(program << 8 | 0xC0 | chan);
+	if (mt32emulate)
+		program = mt32_to_gmidi[program];
+	mc->programChange (program);
+//	_md->send(program << 8 | 0xC0 | chan);
 }
 
 void IMuseGM::midiPan(byte chan, int8 pan)
@@ -5179,11 +5177,13 @@ void IMuseGM::part_changed(Part *part, uint16 what)
 //					midiProgram(mc->_chan, part->_program, part->_player->_mt32emulate);
 //					midiControl0(mc->_chan, 0);
 					mc->controlChange (0, part->_bank);
-					mc->programChange (part->_program /*, part->_player->_mt32emulate*/);
+					midiProgram (mc, part->_program, part->_player->_mt32emulate);
+//					mc->programChange (part->_program /*, part->_player->_mt32emulate*/);
 					mc->controlChange (0, 0);
 				} else {
 //					midiProgram(mc->_chan, part->_program, part->_player->_mt32emulate);
 					mc->programChange (part->_program /*, part->_player->_mt32emulate*/);
+					midiProgram (mc, part->_program, part->_player->_mt32emulate);
 				}
 			}
 		} else {
@@ -5227,6 +5227,8 @@ void IMuseGM::part_off(Part *part)
 IMuse *IMuse::create(OSystem *syst, MidiDriver *midi, SoundMixer *mixer)
 {
 	IMuse *engine = (IMuse *) IMuseInternal::create (syst, midi, mixer);
+	if (midi)
+		midi->property (MidiDriver::PROP_SMALLHEADER, (g_scumm->_features & GF_SMALL_HEADER) ? 1 : 0);
 	return (IMuse *) new IMuseMonitor (syst, engine);
 }
 
