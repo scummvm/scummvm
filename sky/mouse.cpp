@@ -91,10 +91,6 @@ SkyMouse::SkyMouse(OSystem *system, SkyDisk *skyDisk) {
 	fixMouseTransparency(_miceData, _skyDisk->_lastLoadedFileSize);
 	_mouseData2 = _miceData;
 
-	uint16 width = FROM_LE_16(((struct dataFileHeader *)_miceData)->s_width);
-	uint16 height = FROM_LE_16(((struct dataFileHeader *)_miceData)->s_height);
-	_savedData = (byte *)malloc((width * height) + sizeof(struct dataFileHeader));
-
 	//load in the object mouse file
 	_objectMouseData = _skyDisk->loadFile(MICE_FILE + 1, NULL);
 	fixMouseTransparency(_objectMouseData, _skyDisk->_lastLoadedFileSize);
@@ -105,7 +101,6 @@ SkyMouse::SkyMouse(OSystem *system, SkyDisk *skyDisk) {
 
 SkyMouse::~SkyMouse( ){
 	free (_miceData);
-	free (_savedData);
 	free (_objectMouseData);
 }
 
@@ -208,7 +203,7 @@ void SkyMouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 	_mouseHeight = ((struct dataFileHeader *)mouseData)->s_height;
 
 	//_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, mouseX, mouseY);
-	// there's something wrong about the mouse's hotspot. using 0/0 works fine.
+	// there's something wrong about the mouse's hotspot. using 0/0 works fine. (but the cursor is still a couple of pixels off)
 	_system->set_mouse_cursor(_mouseData2, _mouseWidth, _mouseHeight, 0, 0);
 	if (frameNum == MOUSE_BLANK) _system->show_mouse(false);
 	else _system->show_mouse(true);

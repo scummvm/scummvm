@@ -84,8 +84,6 @@ protected:
 	uint16 _maskWidth;	//width on screen
 	uint16 _maskHeight;	//height on screen
 
-	byte *_savedData;	//place for saved data
-
 	uint32 _mouseFlag;	//bit 0 set when in handler
 				//bit 1 set when screen data has been saved
 				//bit 2 set when we don't want to show mouse
