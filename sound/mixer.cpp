@@ -463,12 +463,12 @@ void SoundMixer::setMusicVolume(int volume) {
 
 
 Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, bool isMusic, byte volume, int8 pan, int id)
-	: _mixer(mixer), _handle(handle), _isMusic(isMusic), _volume(volume), _pan(pan), _paused(false), _converter(0), _input(0), _id(id) {
+	: _mixer(mixer), _handle(handle), _isMusic(isMusic), _volume(volume), _pan(pan), _paused(false), _id(id), _converter(0), _input(0) {
 	assert(mixer);
 }
 
 Channel::Channel(SoundMixer *mixer, PlayingSoundHandle *handle, AudioInputStream *input, bool isMusic, byte volume, int8 pan, bool reverseStereo, int id)
-	: _mixer(mixer), _handle(handle), _isMusic(isMusic), _volume(volume), _pan(pan), _paused(false), _converter(0), _input(input), _id(id) {
+	: _mixer(mixer), _handle(handle), _isMusic(isMusic), _volume(volume), _pan(pan), _paused(false), _id(id), _converter(0), _input(input) {
 	assert(mixer);
 	assert(input);
 
