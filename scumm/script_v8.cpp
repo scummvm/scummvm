@@ -937,12 +937,18 @@ void Scumm_v8::o8_roomOps()
 {
 	// TODO
 	byte subOp = fetchScriptByte();
-	int a;
+	int a, b, c, d, e;
 	
 	switch (subOp) {
 	case 0x52:		// SO_ROOM_PALETTE Set room palette
-	case 0x55:		// SO_ROOM_INTENSITY Set room intensity
 		error("o8_roomOps: default case %d", subOp);
+		break;
+	case 0x55:		// SO_ROOM_INTENSITY Set room intensity
+		// Not used in CMI???
+		c = pop();
+		b = pop();
+		a = pop();
+		darkenPalette(a, a, a, b, c);
 		break;
 	case 0x57:		// SO_ROOM_FADE Fade room
 		a = pop();
@@ -953,13 +959,13 @@ void Scumm_v8::o8_roomOps()
 			fadeIn(_newEffect);
 		}
 		break;
-	case 0x58: 		// SO_ROOM_RGB_INTENSITY Set room color intensity
-		pop();
-		pop();
-		pop();
-		pop();
-		pop();
-		warning("o8_roomOps: SO_ROOM_RGB_INTENSITY unimplemented");
+	case 0x58:		// SO_ROOM_RGB_INTENSITY Set room color intensity
+		e = pop();
+		d = pop();
+		c = pop();
+		b = pop();
+		a = pop();
+		darkenPalette(a, b, c, d, e);
 		break;
 	case 0x59:		// SO_ROOM_TRANSFORM Transform room
 	case 0x5A:		// SO_ROOM_CYCLE_SPEED Set palette cycling speed
