@@ -467,13 +467,7 @@ void Scumm::setResult(int value) {
 	writeVar(_resultVarNumber, value);
 }
 
-int my_dummy_global = 0;
-
 void Scumm::push(int a) {
-// HACK to aid valgrind
-if (a > 0)
-	my_dummy_global++;
-
 	assert(_scummStackPos >= 0 && (unsigned int)_scummStackPos < ARRAYSIZE(_scummStack));
 	_scummStack[_scummStackPos++] = a;
 }
@@ -483,13 +477,7 @@ int Scumm::pop() {
 		error("No items on stack to pop() for %s (0x%X) at [%d-%d]", getOpcodeDesc(_opcode), _opcode, _roomResource, vm.slot[_currentScript].number);
 	}
 
-	int a = _scummStack[--_scummStackPos];
-
-// HACK to aid valgrind
-if (a > 0)
-	my_dummy_global++;
-
-	return a;
+	return _scummStack[--_scummStackPos];
 }
 
 void Scumm::drawBox(int x, int y, int x2, int y2, int color) {
