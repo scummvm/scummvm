@@ -36,7 +36,7 @@
 
 namespace Saga {
 
-SndRes::SndRes(SagaEngine *vm) {
+SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 	int result;
 
 	/* Load sound module resource file contexts */
@@ -53,7 +53,6 @@ SndRes::SndRes(SagaEngine *vm) {
 	// Grab sound resource information for the current game
 	GAME_GetSoundInfo(&_snd_info);
 
-	_vm = vm;
 	_init = 1;
 }
 

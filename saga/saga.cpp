@@ -37,7 +37,7 @@
 #include "timer.h"
 
 #include "rscfile_mod.h"
-#include "render_mod.h"
+#include "render.h"
 #include "actor_mod.h"
 #include "animation.h"
 #include "console_mod.h"
@@ -117,10 +117,8 @@ void SagaEngine::go() {
 	// Register engine modules
 	CON_Register(); // Register console cvars first
 
-	RENDER_Register();
 	GAME_Register();
 
-	_anim->reg();
 	ACTIONMAP_Register();
 	OBJECTMAP_Register();
 	SCRIPT_Register();
@@ -196,7 +194,8 @@ void SagaEngine::go() {
 	}
 
 	// Initialize graphics
-	if (RENDER_Init(_system) != R_SUCCESS) {
+	_render = new Render(_system);
+	if (!_render->initialized()) {
 		return;
 	}
 
@@ -206,6 +205,9 @@ void SagaEngine::go() {
 		debug(0, "Sound disabled.");
 	}
 
+	_render->reg();
+	_anim->reg();
+
 	SYSTIMER_ResetMSCounter();
 
 	// Begin Main Engine Loop
@@ -213,7 +215,7 @@ void SagaEngine::go() {
 	SCENE_Start();
 
 	for (;;) {
-		if (RENDER_GetFlags() & RF_RENDERPAUSE) {
+		if (_render->getFlags() & RF_RENDERPAUSE) {
 			// Freeze time while paused
 			SYSTIMER_ResetMSCounter();
 		} else {
@@ -226,7 +228,7 @@ void SagaEngine::go() {
 			STHREAD_ExecThreads(msec);
 		}
 		// Per frame processing
-		RENDER_DrawScene();
+		_render->drawScene();
 		SYSTIMER_Sleep(0);
 	}
 }
@@ -242,6 +244,7 @@ void SagaEngine::shutdown() {
 	CVAR_Shutdown();
 	EVENT_Shutdown();
 
+	delete _render;
 	delete _sndRes;
 	// Shutdown system modules */
 	delete _music;

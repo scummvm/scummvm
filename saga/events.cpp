@@ -36,7 +36,7 @@
 #include "interface_mod.h"
 #include "text_mod.h"
 #include "palanim_mod.h"
-#include "render_mod.h"
+#include "render.h"
 #include "game_mod.h"
 #include "sndres.h"
 #include "music.h"
@@ -174,7 +174,7 @@ int HandleContinuous(R_EVENT *event) {
 	case R_TRANSITION_EVENT:
 		switch (event->op) {
 		case EVENT_DISSOLVE:
-			RENDER_GetBufferInfo(&buf_info);
+			_vm->_render->getBufferInfo(&buf_info);
 			SCENE_GetBGInfo(&bg_info);
 			TRANSITION_Dissolve(buf_info.r_bg_buf, buf_info.r_bg_buf_w, buf_info.r_bg_buf_h,
 								buf_info.r_bg_buf_w, bg_info.bg_buf, bg_info.bg_p, 0, event_pc);
@@ -251,7 +251,7 @@ static int HandleOneShot(R_EVENT *event) {
 
 				back_buf = GFX_GetBackBuffer();
 
-				RENDER_GetBufferInfo(&rbuf_info);
+				_vm->_render->getBufferInfo(&rbuf_info);
 				SCENE_GetBGInfo(&bginfo);
 
 				bg_pt.x = bginfo.bg_x;

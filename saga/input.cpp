@@ -26,7 +26,7 @@
 #include "saga/actor_mod.h"
 #include "saga/console_mod.h"
 #include "saga/interface_mod.h"
-#include "saga/render_mod.h"
+#include "saga/render.h"
 #include "saga/scene_mod.h"
 #include "saga/script_mod.h"
 
@@ -81,16 +81,16 @@ int SYSINPUT_ProcessInput() {
 				INTERFACE_Draw();
 				break;
 			case 282: // F1
-				RENDER_ToggleFlag(RF_SHOW_FPS);
+				_vm->_render->toggleFlag(RF_SHOW_FPS);
 				break;
 			case 283: // F2
-				RENDER_ToggleFlag(RF_PALETTE_TEST);
+				_vm->_render->toggleFlag(RF_PALETTE_TEST);
 				break;
 			case 284: // F3
-				RENDER_ToggleFlag(RF_TEXT_TEST);
+				_vm->_render->toggleFlag(RF_TEXT_TEST);
 				break;
 			case 285: // F4
-				RENDER_ToggleFlag(RF_OBJECTMAP_TEST);
+				_vm->_render->toggleFlag(RF_OBJECTMAP_TEST);
 				break;
 			case 9: // Tab
 				STHREAD_DebugStep();
@@ -102,7 +102,7 @@ int SYSINPUT_ProcessInput() {
 				break;
 			case 19:  // pause
 			case 112: // p
-				RENDER_ToggleFlag(RF_RENDERPAUSE);
+				_vm->_render->toggleFlag(RF_RENDERPAUSE);
 				break;
 			case 27: // Esc
 				// Skip to next scene skip target

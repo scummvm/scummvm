@@ -106,7 +106,6 @@ public:
 
 private:
 
-	SagaEngine *_vm;
 	SoundMixer *_mixer;
 
 	MusicPlayer *_player;

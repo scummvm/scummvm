@@ -38,7 +38,7 @@
 #include "script_mod.h"
 #include "objectmap_mod.h"
 #include "palanim_mod.h"
-#include "render_mod.h"
+#include "render.h"
 #include "rscfile_mod.h"
 #include "text_mod.h"
 
@@ -725,7 +725,7 @@ int SCENE_Draw(R_SURFACE *dst_s) {
 
 	assert(SceneModule.init);
 
-	RENDER_GetBufferInfo(&buf_info);
+	_vm->_render->getBufferInfo(&buf_info);
 	GAME_GetDisplayInfo(&disp_info);
 
 	bg_pt.x = 0;

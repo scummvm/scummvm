@@ -40,21 +40,17 @@
 #include "actionmap_mod.h"
 #include "objectmap_mod.h"
 
-#include "render_mod.h"
 #include "render.h"
 
 namespace Saga {
 
-static R_RENDER_MODULE RenderModule;
-static OSystem *_system;
-
 const char *test_txt = "The quick brown fox jumped over the lazy dog. She sells sea shells down by the sea shore.";
 
-int RENDER_Register() {
+int Render::reg(void) {
 	return R_SUCCESS;
 }
 
-int RENDER_Init(OSystem *system) {
+Render::Render(OSystem *system) : _system(system), _initialized(false) {
 	R_GAME_DISPLAYINFO disp_info;
 	int tmp_w, tmp_h, tmp_bytepp;
 
@@ -62,19 +58,19 @@ int RENDER_Init(OSystem *system) {
 	GAME_GetDisplayInfo(&disp_info);
 
 	if (GFX_Init(system, disp_info.logical_w, disp_info.logical_h) != R_SUCCESS) {
-		return R_FAILURE;
+		return;
 	}
 
 	// Initialize FPS timer callback
-	g_timer->installTimerProc(&RENDER_FpsTimer, 1000, _vm);
+	g_timer->installTimerProc(&fpsTimerCallback, 1000000, this);
 
 	// Create background buffer 
-	RenderModule.r_bg_buf_w = disp_info.logical_w;
-	RenderModule.r_bg_buf_h = disp_info.logical_h;
-	RenderModule.r_bg_buf = (byte *)calloc(disp_info.logical_w, disp_info.logical_h);
+	_bg_buf_w = disp_info.logical_w;
+	_bg_buf_h = disp_info.logical_h;
+	_bg_buf = (byte *)calloc(disp_info.logical_w, disp_info.logical_h);
 
-	if (RenderModule.r_bg_buf == NULL) {
-		return R_MEM;
+	if (_bg_buf == NULL) {
+		return;
 	}
 
 	// Allocate temp buffer for animation decoding, 
@@ -83,25 +79,30 @@ int RENDER_Init(OSystem *system) {
 	tmp_h = disp_info.logical_h + 4; // BG unbanking requres extra rows
 	tmp_bytepp = 1;
 
-	RenderModule.r_tmp_buf = (byte *)calloc(1, tmp_w * tmp_h * tmp_bytepp);
-	if (RenderModule.r_tmp_buf == NULL) {
-
-		free(RenderModule.r_bg_buf);
-		return R_MEM;
+	_tmp_buf = (byte *)calloc(1, tmp_w * tmp_h * tmp_bytepp);
+	if (_tmp_buf == NULL) {
+		free(_bg_buf);
+		return;
 	}
 
-	RenderModule.r_tmp_buf_w = tmp_w;
-	RenderModule.r_tmp_buf_h = tmp_h;
+	_tmp_buf_w = tmp_w;
+	_tmp_buf_h = tmp_h;
 
-	RenderModule.r_backbuf_surface = GFX_GetBackBuffer();
+	_backbuf_surface = GFX_GetBackBuffer();
 
-	_system = system;
-	RenderModule.initialized = 1;
-
-	return R_SUCCESS;
+	_initialized = true;
 }
 
-int RENDER_DrawScene() {
+Render::~Render(void) {
+	free(_bg_buf);
+	free(_tmp_buf);
+}
+
+bool Render::initialized() {
+	return _initialized;
+}
+
+int Render::drawScene() {
 	R_SURFACE *backbuf_surface;
 	R_GAME_DISPLAYINFO disp_info;
 	R_SCENE_INFO scene_info;
@@ -111,13 +112,13 @@ int RENDER_DrawScene() {
 	int fps_width;
 	R_POINT mouse_pt;
 
-	if (!RenderModule.initialized) {
+	if (!_initialized) {
 		return R_FAILURE;
 	}
 
-	RenderModule.r_framecount++;
+	_framecount++;
 
-	backbuf_surface = RenderModule.r_backbuf_surface;
+	backbuf_surface = _backbuf_surface;
 
 	// Get mouse coordinates
 	mouse_pt = SYSINPUT_GetMousePos();
@@ -131,7 +132,7 @@ int RENDER_DrawScene() {
 	SCENE_Draw(backbuf_surface);
 
 	// Display scene maps, if applicable
-	if (RENDER_GetFlags() & RF_OBJECTMAP_TEST) {
+	if (getFlags() & RF_OBJECTMAP_TEST) {
 		OBJECTMAP_Draw(backbuf_surface, &mouse_pt, GFX_GetWhite(), GFX_GetBlack());
 		ACTIONMAP_Draw(backbuf_surface, GFX_MatchColor(R_RGB_RED));
 	}
@@ -148,15 +149,15 @@ int RENDER_DrawScene() {
 	SYSINPUT_ProcessInput();
 
 	// Display rendering information
-	if (RenderModule.r_flags & RF_SHOW_FPS) {
-		sprintf(txt_buf, "%d", RenderModule.r_fps);
+	if (_flags & RF_SHOW_FPS) {
+		sprintf(txt_buf, "%d", _fps);
 		fps_width = FONT_GetStringWidth(SMALL_FONT_ID, txt_buf, 0, FONT_NORMAL);
 		FONT_Draw(SMALL_FONT_ID, backbuf_surface, txt_buf, 0, backbuf_surface->buf_w - fps_width, 2,
 					GFX_GetWhite(), GFX_GetBlack(), FONT_OUTLINE);
 	}
 
 	// Display "paused game" message, if applicable
-	if (RenderModule.r_flags & RF_RENDERPAUSE) {
+	if (_flags & RF_RENDERPAUSE) {
 		int msg_len = strlen(R_PAUSEGAME_MSG);
 		int msg_w = FONT_GetStringWidth(BIG_FONT_ID, R_PAUSEGAME_MSG, msg_len, FONT_OUTLINE);
 		FONT_Draw(BIG_FONT_ID, backbuf_surface, R_PAUSEGAME_MSG, msg_len,
@@ -168,13 +169,13 @@ int RENDER_DrawScene() {
 	INTERFACE_Update(&mouse_pt, UPDATE_MOUSEMOVE);
 
 	// Display text formatting test, if applicable
-	if (RenderModule.r_flags & RF_TEXT_TEST) {
+	if (_flags & RF_TEXT_TEST) {
 		TEXT_Draw(MEDIUM_FONT_ID, backbuf_surface, test_txt, mouse_pt.x, mouse_pt.y,
 				GFX_GetWhite(), GFX_GetBlack(), FONT_OUTLINE | FONT_CENTERED);
 	}
 
 	// Display palette test, if applicable
-	if (RenderModule.r_flags & RF_PALETTE_TEST) {
+	if (_flags & RF_PALETTE_TEST) {
 		GFX_DrawPalette(backbuf_surface);
 	}
 
@@ -188,47 +189,49 @@ int RENDER_DrawScene() {
 	return R_SUCCESS;
 }
 
-unsigned int RENDER_GetFrameCount() {
-	return RenderModule.r_framecount;
+unsigned int Render::getFrameCount() {
+	return _framecount;
 }
 
-unsigned int RENDER_ResetFrameCount() {
-	unsigned int framecount = RenderModule.r_framecount;
+unsigned int Render::resetFrameCount() {
+	unsigned int framecount = _framecount;
 
-	RenderModule.r_framecount = 0;
+	_framecount = 0;
 
 	return framecount;
 }
 
-void RENDER_FpsTimer(void *refCon) {
-	RenderModule.r_fps = RenderModule.r_framecount;
-	RenderModule.r_framecount = 0;
-
-	return;
+void Render::fpsTimerCallback(void *refCon) {
+	((Render *)refCon)->fpsTimer();
 }
 
-unsigned int RENDER_GetFlags() {
-	return RenderModule.r_flags;
+void Render::fpsTimer(void) {
+	_fps = _framecount;
+	_framecount = 0;
 }
 
-void RENDER_SetFlag(unsigned int flag) {
-	RenderModule.r_flags |= flag;
+unsigned int Render::getFlags() {
+	return _flags;
 }
 
-void RENDER_ToggleFlag(unsigned int flag) {
-	RenderModule.r_flags ^= flag;
+void Render::setFlag(unsigned int flag) {
+	_flags |= flag;
 }
 
-int RENDER_GetBufferInfo(R_BUFFER_INFO *r_bufinfo) {
+void Render::toggleFlag(unsigned int flag) {
+	_flags ^= flag;
+}
+
+int Render::getBufferInfo(R_BUFFER_INFO *r_bufinfo) {
 	assert(r_bufinfo != NULL);
 
-	r_bufinfo->r_bg_buf = RenderModule.r_bg_buf;
-	r_bufinfo->r_bg_buf_w = RenderModule.r_bg_buf_w;
-	r_bufinfo->r_bg_buf_h = RenderModule.r_bg_buf_h;
+	r_bufinfo->r_bg_buf = _bg_buf;
+	r_bufinfo->r_bg_buf_w = _bg_buf_w;
+	r_bufinfo->r_bg_buf_h = _bg_buf_h;
 
-	r_bufinfo->r_tmp_buf = RenderModule.r_tmp_buf;
-	r_bufinfo->r_tmp_buf_w = RenderModule.r_tmp_buf_w;
-	r_bufinfo->r_tmp_buf_h = RenderModule.r_tmp_buf_h;
+	r_bufinfo->r_tmp_buf = _tmp_buf;
+	r_bufinfo->r_tmp_buf_w = _tmp_buf_w;
+	r_bufinfo->r_tmp_buf_h = _tmp_buf_h;
 
 	return R_SUCCESS;
 }

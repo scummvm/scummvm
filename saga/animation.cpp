@@ -29,7 +29,7 @@
 #include "console_mod.h"
 #include "game_mod.h"
 #include "events_mod.h"
-#include "render_mod.h"
+#include "render.h"
 
 #include "animation.h"
 
@@ -180,7 +180,7 @@ int Anim::play(uint16 anim_id, int vector_time) {
 
 	GAME_GetDisplayInfo(&disp_info);
 
-	RENDER_GetBufferInfo(&buf_info);
+	_vm->_render->getBufferInfo(&buf_info);
 	display_buf = buf_info.r_bg_buf;
 
 	anim = AnimInfo.anim_tbl[anim_id];
