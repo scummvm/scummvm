@@ -380,6 +380,8 @@ int SndRes::getVoiceLength(uint32 voice_rn) {
 			return -1;
 		}
 
+		free(snd_buffer.s_buf);
+
 		ms_f = (double)snd_buffer.s_buf_len;
 		if (snd_buffer.s_samplebits == 16) {
 			ms_f /= 2.0;
