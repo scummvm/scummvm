@@ -65,7 +65,7 @@ bool AnimationState::init(const char *name) {
 
 #ifdef BACKEND_8BIT
 
-	int i, p;
+	uint i, p;
 
 	// Load lookup palettes
 	// TODO: Binary format so we can use File class
@@ -336,22 +336,19 @@ bool AnimationState::decodeFrame() {
 		case STATE_END:
 			if (info->display_fbuf) {
 				/* simple audio video sync code:
-				 * we calculate the actual frame by taking the delivered audio samples
-				 * we add 2 frames as the number of samples delivered is higher than the
-				 * number actually played due to buffering
-				 *
-				 * we then try to stay inside +- 1 frame of this calculated frame number by
-				 * dropping frames if we run behind and delaying if we are too fast
+				 * we calculate the actual frame by taking the elapsed audio time and try
+				 * to stay inside +- 1 frame of this calculated frame number by dropping
+				 * frames if we run behind and delaying if we are too fast
 				 */
 
 #ifdef BACKEND_8BIT
 				if (checkPaletteSwitch() || (bgSoundStream == NULL) ||
-					(bgSoundStream->getSamplesPlayed() * 12 / bgSoundStream->getRate()) < (framenum + 3)){
+					((_vm->_mixer->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1)) {
 
 					_vm->_graphics->plotYUV(lut, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
 					if (bgSoundStream) {
-						while ((bgSoundStream->getSamplesPlayed() * 12 / bgSoundStream->getRate()) < framenum + 1)
+						while ((_vm->_mixer->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum)
 							_vm->_system->delay_msecs(10);
 					} else {
 						ticks += 83;
@@ -368,12 +365,12 @@ bool AnimationState::decodeFrame() {
 #else
 
 				if ((bgSoundStream == NULL) ||
-					(bgSoundStream->getSamplesPlayed() * 12 / bgSoundStream->getRate()) < (framenum+3)){
+					((_vm->_mixer->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum + 1)) {
 
 					plotYUV(lookup, sequence_i->width, sequence_i->height, info->display_fbuf->buf);
 
 					if (bgSoundStream) {
-						while ((bgSoundStream->getSamplesPlayed() * 12 / bgSoundStream->getRate()) < framenum + 1)
+						while ((_vm->_mixer->getChannelElapsedTime(bgSound) * 12) / 1000 < framenum)
 							_vm->_system->delay_msecs(10);
 					} else {
 						ticks += 83;
