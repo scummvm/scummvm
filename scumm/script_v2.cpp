@@ -468,14 +468,14 @@ void ScummEngine_v2::clearStateCommon(byte type) {
 void ScummEngine_v2::o2_setState08() {
 	int obj = getVarOrDirectWord(PARAM_1);
 	putState(obj, getState(obj) | 0x08);
-	forceObjectRedraw(obj);
+	markObjectRectAsDirty(obj);
 	clearDrawObjectQueue();
 }
 
 void ScummEngine_v2::o2_clearState08() {
 	int obj = getVarOrDirectWord(PARAM_1);
 	putState(obj, getState(obj) & ~0x08);
-	forceObjectRedraw(obj);
+	markObjectRectAsDirty(obj);
 	clearDrawObjectQueue();
 }
 
@@ -1449,7 +1449,7 @@ void ScummEngine_v2::o2_pickupObject() {
 		return;											/* object twice */
 
 	addObjectToInventory(obj, _roomResource);
-	forceObjectRedraw(obj);
+	markObjectRectAsDirty(obj);
 	putOwner(obj, VAR(VAR_EGO));
 	putState(obj, getState(obj) | 0xA);
 	clearDrawObjectQueue();

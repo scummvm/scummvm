@@ -486,7 +486,7 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 		_vm->putOwner(obj, _vm->VAR(_vm->VAR_EGO));
 		_vm->putClass(obj, kObjectClassUntouchable, 1);
 		_vm->putState(obj, 1);
-		_vm->forceObjectRedraw(obj);
+		_vm->markObjectRectAsDirty(obj);
 		_vm->clearDrawObjectQueue();
 		_vm->runInventoryScript(obj);
 	} else if (!strcmp(argv[2], "state")) {

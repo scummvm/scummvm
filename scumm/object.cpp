@@ -851,25 +851,19 @@ void ScummEngine::clearOwnerOf(int obj) {
 }
 
 /**
- * Force a screen redraw at the location of the specifed object. This is
- * typically called when an object was just removed from the room, or when its
- * state changed.
+ * Mark the rectangle covered by the given object as dirty, thus eventually
+ * ensuring a redraw of that area. This function is typically invoked when an
+ * object gets removed from the current room, or when its state changed.
  */
-void ScummEngine::forceObjectRedraw(int obj) {
-	int i, j, strip;
+void ScummEngine::markObjectRectAsDirty(int obj) {
+	int i, strip;
 
 	for (i = 1; i < _numLocalObjects; i++) {
 		if (_objs[i].obj_nr == (uint16)obj) {
 			if (_objs[i].width != 0) {
-				for (j = 0; j < _objs[i].width / 8; j++) {
-					strip = (_objs[i].x_pos / 8) + j;
-
-					// Clip value
-					if (strip < _screenStartStrip)
-						continue;
-					if (strip > _screenEndStrip)
-						break;
-
+				const int minStrip = MAX(_screenStartStrip, _objs[i].x_pos / 8);
+				const int maxStrip = MIN(_screenEndStrip+1, _objs[i].x_pos / 8 + _objs[i].width / 8);
+				for (strip = minStrip; strip < maxStrip; strip++) {
 					setGfxUsageBit(strip, USAGE_BIT_DIRTY);
 				}
 			}

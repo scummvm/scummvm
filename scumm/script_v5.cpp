@@ -1592,7 +1592,7 @@ void ScummEngine_v5::o5_pickupObject() {
 	putOwner(obj, VAR(VAR_EGO));
 	putClass(obj, kObjectClassUntouchable, 1);
 	putState(obj, 1);
-	forceObjectRedraw(obj);
+	markObjectRectAsDirty(obj);
 	clearDrawObjectQueue();
 	runInventoryScript(1);
 }
@@ -2174,7 +2174,7 @@ void ScummEngine_v5::o5_setState() {
 	obj = getVarOrDirectWord(PARAM_1);
 	state = getVarOrDirectByte(PARAM_2);
 	putState(obj, state);
-	forceObjectRedraw(obj);
+	markObjectRectAsDirty(obj);
 	if (_BgNeedsRedraw)
 		clearDrawObjectQueue();
 }
@@ -2911,7 +2911,7 @@ void ScummEngine_v5::o5_pickupObjectOld() {
 
 	// warning("adding %d from %d to inventoryOld", obj, _currentRoom);
 	addObjectToInventory(obj, _roomResource);
-	forceObjectRedraw(obj);
+	markObjectRectAsDirty(obj);
 	putOwner(obj, VAR(VAR_EGO));
 	putClass(obj, kObjectClassUntouchable, 1);
 	putState(obj, 1);
