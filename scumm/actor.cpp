@@ -1329,13 +1329,14 @@ void Actor::walkActor() {
 			break;
 
 		box = _vm->getPathToDestBox(walkbox, walkdata.destbox);
-		if (box < 0 || box > 0xF0) {
+		if (box < 0) {
 			walkdata.destbox = walkbox;
 			moving |= MF_LAST_LEG;
 			return;
 		}
 
 		walkdata.curbox = box;
+		
 		if (_vm->findPathTowards(this, walkbox, box, walkdata.destbox, foundPathX, foundPathY))
 			break;
 
@@ -1356,23 +1357,50 @@ void Actor::walkActorOld() {
 	if (!moving)
 		return;
 
-	if (moving & MF_NEW_LEG) {
-	restart:
+	if (!(moving & MF_NEW_LEG)) {
+	
+		if (moving & MF_IN_LEG && actorWalkStep())
+			return;
+	
+		if (moving & MF_LAST_LEG) {
+			moving = 0;
+			startWalkAnim(3, walkdata.destdir);
+			return;
+		}
+	
+		if (moving & MF_TURN) {
+			new_dir = updateActorDirection(false);
+			if (facing != new_dir)
+				setDirection(new_dir);
+			else
+				moving = 0;
+			return;
+		}
+	
+		if (walkdata.point3x != 32000) {
+			if (calcMovementFactor(walkdata.point3x, walkdata.point3y)) {
+				walkdata.point3x = 32000;
+				return;
+			}
+			walkdata.point3x = 32000;
+		}
+	
+		walkbox = walkdata.curbox;
+		moving &= MF_IN_LEG;
+		moving |= MF_NEW_LEG;
+	}
+
+	do {
 		moving &= ~MF_NEW_LEG;
 
 		if (walkbox == INVALID_BOX) {
 			walkbox = walkdata.destbox;
 			walkdata.curbox = walkdata.destbox;
-			moving |= MF_LAST_LEG;
-			calcMovementFactor(walkdata.destx, walkdata.desty);
-			return;
+			break;
 		}
 
-		if (walkbox == walkdata.destbox) {
-			moving |= MF_LAST_LEG;
-			calcMovementFactor(walkdata.destx, walkdata.desty);
-			return;
-		}
+		if (walkbox == walkdata.destbox)
+			break;
 
 		next_box = _vm->getPathToDestBox(walkbox, walkdata.destbox);
 
@@ -1385,9 +1413,7 @@ void Actor::walkActorOld() {
 
 		_vm->findPathTowardsOld(this, walkbox, next_box, walkdata.destbox, gateLoc);
 		if (gateLoc[2].x == 32000 && gateLoc[3].x == 32000) {
-			moving |= MF_LAST_LEG;
-			calcMovementFactor(walkdata.destx, walkdata.desty);
-			return;
+			break;
 		}
 
 		if (gateLoc[2].x != 32000) {
@@ -1402,40 +1428,10 @@ void Actor::walkActorOld() {
 			return;
 
 		walkbox = walkdata.destbox;
-		goto restart;
+	} while(1);
 
-	}
-
-	if (moving & MF_IN_LEG && actorWalkStep())
-		return;
-
-	if (moving & MF_LAST_LEG) {
-		moving = 0;
-		startWalkAnim(3, walkdata.destdir);
-		return;
-	}
-
-	if (moving & MF_TURN) {
-		new_dir = updateActorDirection(false);
-		if (facing != new_dir)
-			setDirection(new_dir);
-		else
-			moving = 0;
-		return;
-	}
-
-	if (walkdata.point3x != 32000) {
-		if (calcMovementFactor(walkdata.point3x, walkdata.point3y)) {
-			walkdata.point3x = 32000;
-			return;
-		}
-		walkdata.point3x = 32000;
-	}
-
-	walkbox = walkdata.curbox;
-	moving &= MF_IN_LEG;
-	moving |= MF_NEW_LEG;
-	goto restart;
+	moving |= MF_LAST_LEG;
+	calcMovementFactor(walkdata.destx, walkdata.desty);
 }
 
 byte *Actor::getActorName() {
