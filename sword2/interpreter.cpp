@@ -333,7 +333,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		case CP_RESTART_SCRIPT:
 			// Start the script again
 			debug(5, "Restart script");
-			ip = READ_LE_UINT32(&offsetTable[scriptNumber]);
+			ip = FROM_LE_32(offsetTable[scriptNumber]);
 			break;
 
 		// Stack-related opcodes
