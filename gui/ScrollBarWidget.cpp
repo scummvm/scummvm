@@ -75,7 +75,7 @@ void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount)
 	int old_pos = _currentPos;
 
 	// Do nothing if there are less items than fit on one page
-	if (_numEntries < _entriesPerPage)
+	if (_numEntries <= _entriesPerPage)
 		return;
 
 	if (y <= UP_DOWN_BOX_HEIGHT) {
@@ -107,7 +107,7 @@ void ScrollBarWidget::handleMouseUp(int x, int y, int button, int clickCount)
 void ScrollBarWidget::handleMouseMoved(int x, int y, int button)
 {
 	// Do nothing if there are less items than fit on one page
-	if (_numEntries < _entriesPerPage)
+	if (_numEntries <= _entriesPerPage)
 		return;
 
 	if (_draggingPart == kSliderPart) {
@@ -165,7 +165,7 @@ void ScrollBarWidget::handleTickle()
 
 void ScrollBarWidget::checkBounds(int old_pos)
 {
-	if (_numEntries < _entriesPerPage || _currentPos < 0)
+	if (_numEntries <= _entriesPerPage || _currentPos < 0)
 		_currentPos = 0;
 	else if (_currentPos > _numEntries - _entriesPerPage)
 		_currentPos = _numEntries - _entriesPerPage;
@@ -179,14 +179,19 @@ void ScrollBarWidget::checkBounds(int old_pos)
 
 void ScrollBarWidget::recalc()
 {
-	_sliderHeight = (_h - 2 * UP_DOWN_BOX_HEIGHT) * _entriesPerPage / _numEntries;
-	if (_sliderHeight < UP_DOWN_BOX_HEIGHT)
-		_sliderHeight = UP_DOWN_BOX_HEIGHT;
+	if (_numEntries > _entriesPerPage) {
+		_sliderHeight = (_h - 2 * UP_DOWN_BOX_HEIGHT) * _entriesPerPage / _numEntries;
+		if (_sliderHeight < UP_DOWN_BOX_HEIGHT)
+			_sliderHeight = UP_DOWN_BOX_HEIGHT;
 
-	_sliderPos =
-		UP_DOWN_BOX_HEIGHT + (_h - 2 * UP_DOWN_BOX_HEIGHT - _sliderHeight) * _currentPos / (_numEntries - _entriesPerPage);
-	if (_sliderPos < 0)
-		_sliderPos = 0;
+		_sliderPos =
+			UP_DOWN_BOX_HEIGHT + (_h - 2 * UP_DOWN_BOX_HEIGHT - _sliderHeight) * _currentPos / (_numEntries - _entriesPerPage);
+		if (_sliderPos < 0)
+			_sliderPos = 0;
+	} else {
+		_sliderHeight = _h - 2 * UP_DOWN_BOX_HEIGHT;
+		_sliderPos = UP_DOWN_BOX_HEIGHT;
+	}
 }
 
 
@@ -194,7 +199,7 @@ void ScrollBarWidget::drawWidget(bool hilite)
 {
 	NewGui *gui = _boss->getGui();
 	int bottomY = _y + _h;
-	bool isSinglePage = (_numEntries < _entriesPerPage);
+	bool isSinglePage = (_numEntries <= _entriesPerPage);
 
 	gui->frameRect(_x, _y, _w, _h, gui->_shadowcolor);
 
