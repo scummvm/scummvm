@@ -175,7 +175,7 @@ void OSystem_SDL::load_gfx_mode() {
 
 	// keyboard cursor control, some other better place for it?
 	km.x_max = _screenWidth * _scaleFactor - 1;
-	km.y_max = _screenHeight * _scaleFactor - 1;
+	km.y_max = (_adjustAspectRatio ? 240 : _screenHeight) * _scaleFactor - 1;
 	km.delay_time = 25;
 	km.last_time = 0;
 }
