@@ -44,7 +44,7 @@ const uint8 note_lengths[] = {
 	9, 12, 16,
 	18, 24, 32,
 	36, 48, 64,
-	96
+	72, 96
 };
 
 static const uint16 hull_offsets[] = {
