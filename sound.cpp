@@ -791,7 +791,7 @@ void Scumm::decompressBundleSound(int index) {
 	COMP_table table[50];
 	unsigned char *CompInput, *CompOutput, *CompFinal, *Final;
 	int outputSize, finalSize;
-	uint32 offset1, offset2, offset3, length, k, c, s, j, r, t;
+	int32 offset1, offset2, offset3, length, k, c, s, j, r, t;
 	byte * src, * t_table;
 	byte t_tmp1, t_tmp2;
 
