@@ -258,6 +258,7 @@ fi
 
 if test "$_cxx_major" -ge "3" ; then
 	CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
+	_make_def_HAVE_GCC3='HAVE_GCC3 = 1'
 fi;
 
 #
@@ -539,8 +540,10 @@ CXXFLAGS := $CXXFLAGS
 LIBS := $LIBS
 RANLIB := $_ranlib
 BACKEND := $_backend
-
 MODULES += $MODULES
+
+$_make_def_HAVE_GCC3
+
 INCLUDES += $INCLUDES
 OBJS += $OBJS
 DEFINES += $DEFINES

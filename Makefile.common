@@ -87,6 +87,7 @@ clean:
 #$(OBJS): $(INCS)
 
 
+ifndef HAVE_GCC3
 # If you use GCC, disable the above and enable this for intelligent
 # dependency tracking. 
 DEPDIRS = $(addsuffix /$(DEPDIR),$(MODULES))
@@ -98,15 +99,15 @@ DEPFILES = $(wildcard $(addsuffix /*.d,$(DEPDIRS)))
 	$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
 	$(CAT) "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
 	$(RM) "$(*D)/$(DEPDIR)/$(*F).d2"
-
+else
 # If you even have GCC 3.x, you can use this build rule, which is safer; the above
 # rule can get you into a bad state if you Ctrl-C at the wrong moment.
 # Also, with this GCC inserts additional dummy rules for the involved headers,
 # which ensures a smooth compilation even if said headers become obsolete.
 #.cpp.o:
-#	$(MKDIR) $(*D)/$(DEPDIR)
-#	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-
+	$(MKDIR) $(*D)/$(DEPDIR)
+	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+endif
 -include $(DEPFILES) /dev/null
 
 distclean: clean

@@ -63,6 +63,8 @@ LIBS    += -lmad
 # Uncomment this to cause warnings to be treated as errors
 # CXXFLAGS+= -Werror
 
+# Uncomment this to use GCC 3.x specific dependency tracking (recommended)
+# HAVE_GCC3 = 1
 
 #######################################################################
 # Control which modules are built - uncomment any to disable module   #
