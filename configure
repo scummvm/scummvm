@@ -93,9 +93,9 @@ EOF
 
 if test -n "$_host"; then
     # In cross-compiling mode, we cannot run the result
-    eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && rm -f tmp_cxx_compiler tmp_cxx_compiler.cpp
+    eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 else
-    eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler tmp_cxx_compiler.cpp
+    eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 fi
 }
 
@@ -170,7 +170,7 @@ if eval "$CXX -o tmp_find_type_with_size tmp_find_type_with_size.cpp"; then
 	exit 1
   fi
 fi
-rm -f tmp_find_type_with_size tmp_find_type_with_size.cpp
+rm -f tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp
 echo $datatype
 }
 
@@ -344,6 +344,18 @@ else
     _host_os=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
     _host_vendor=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
 fi
+
+#
+# Determine extension used for executables
+#
+case $_host_os in
+mingw* | cygwin*)
+	EXEEXT=".exe"
+	;;
+*)
+	EXEEXT=""
+	;;
+esac
 
 #
 # Determine the C++ compiler
@@ -565,7 +577,7 @@ EOF
 	    exit 1
 	    ;;
     esac
-    rm -f tmp_endianness_check tmp_endianness_check.cpp
+    rm -f tmp_endianness_check$EXEEXT tmp_endianness_check.cpp
 
     #
     # Check whether memory alignment is required
@@ -912,6 +924,7 @@ RANLIB := $_ranlib
 BACKEND := $_backend
 MODULES += $MODULES
 MODULE_DIRS += $MODULE_DIRS
+EXEEXT := $EXEEXT
 
 $_mak_plugins
 $_make_def_HAVE_GCC3
