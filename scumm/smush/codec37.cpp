@@ -288,14 +288,56 @@ void Codec37Decoder::proc3WithFDFE(byte *dst, byte *src, int32 next_offs, int32 
 		do {
 			int32 code = *src++;
 			if (code == 0xFD) {
+#if defined(SCUMM_NEED_ALIGNMENT)
+				t = *src++;
+				(dst + pitch * 0)[0] = t;
+				(dst + pitch * 0)[1] = t;
+				(dst + pitch * 0)[2] = t;
+				(dst + pitch * 0)[3] = t;
+				(dst + pitch * 1)[0] = t;
+				(dst + pitch * 1)[1] = t;
+				(dst + pitch * 1)[2] = t;
+				(dst + pitch * 1)[3] = t;
+				(dst + pitch * 2)[0] = t;
+				(dst + pitch * 2)[1] = t;
+				(dst + pitch * 2)[2] = t;
+				(dst + pitch * 2)[3] = t;
+				(dst + pitch * 3)[0] = t;
+				(dst + pitch * 3)[1] = t;
+				(dst + pitch * 3)[2] = t;
+				(dst + pitch * 3)[3] = t;
+#else
 				t = *src++;
 				t += (t << 8) + (t << 16) + (t << 24);
 				*(uint32*)(dst + pitch * 0) = t;
 				*(uint32*)(dst + pitch * 1) = t;
 				*(uint32*)(dst + pitch * 2) = t;
 				*(uint32*)(dst + pitch * 3) = t;
+#endif
 				dst += 4;
 			} else if (code == 0xFE) {
+#if defined(SCUMM_NEED_ALIGNMENT)
+				t = *src++;
+				(dst + pitch * 0)[0] = t;
+				(dst + pitch * 0)[1] = t;
+				(dst + pitch * 0)[2] = t;
+				(dst + pitch * 0)[3] = t;
+				t = *src++;
+				(dst + pitch * 1)[0] = t;
+				(dst + pitch * 1)[1] = t;
+				(dst + pitch * 1)[2] = t;
+				(dst + pitch * 1)[3] = t;
+				t = *src++;
+				(dst + pitch * 2)[0] = t;
+				(dst + pitch * 2)[1] = t;
+				(dst + pitch * 2)[2] = t;
+				(dst + pitch * 2)[3] = t;
+				t = *src++;
+				(dst + pitch * 3)[0] = t;
+				(dst + pitch * 3)[1] = t;
+				(dst + pitch * 3)[2] = t;
+				(dst + pitch * 3)[3] = t;
+#else
 				t = *src++;
 				t += (t << 8) + (t << 16) + (t << 24);
 				*(uint32*)(dst + pitch * 0) = t;
@@ -308,8 +350,27 @@ void Codec37Decoder::proc3WithFDFE(byte *dst, byte *src, int32 next_offs, int32 
 				t = *src++;
 				t += (t << 8) + (t << 16) + (t << 24);
 				*(uint32*)(dst + pitch * 3) = t;
+#endif
 				dst += 4;
 			} else if (code == 0xFF) {
+#if defined(SCUMM_NEED_ALIGNMENT)
+				(dst + pitch * 0)[0] = *src++;
+				(dst + pitch * 0)[1] = *src++;
+				(dst + pitch * 0)[2] = *src++;
+				(dst + pitch * 0)[3] = *src++;
+				(dst + pitch * 1)[0] = *src++;
+				(dst + pitch * 1)[1] = *src++;
+				(dst + pitch * 1)[2] = *src++;
+				(dst + pitch * 1)[3] = *src++;
+				(dst + pitch * 2)[0] = *src++;
+				(dst + pitch * 2)[1] = *src++;
+				(dst + pitch * 2)[2] = *src++;
+				(dst + pitch * 2)[3] = *src++;
+				(dst + pitch * 3)[0] = *src++;
+				(dst + pitch * 3)[1] = *src++;
+				(dst + pitch * 3)[2] = *src++;
+				(dst + pitch * 3)[3] = *src++;
+#else
 				*(uint32*)(dst + pitch * 0) = *(uint32*)src;
 				src += 4;
 				*(uint32*)(dst + pitch * 1) = *(uint32*)src;
@@ -318,13 +379,33 @@ void Codec37Decoder::proc3WithFDFE(byte *dst, byte *src, int32 next_offs, int32 
 				src += 4;
 				*(uint32*)(dst + pitch * 3) = *(uint32*)src;
 				src += 4;
+#endif
 				dst += 4;
 			} else {
 				byte *dst2 = dst + _offsetTable[code] + next_offs;
+#if defined(SCUMM_NEED_ALIGNMENT)
+				(dst + pitch * 0)[0] = (dst2 + pitch * 0)[0];
+				(dst + pitch * 0)[1] = (dst2 + pitch * 0)[1];
+				(dst + pitch * 0)[2] = (dst2 + pitch * 0)[2];
+				(dst + pitch * 0)[3] = (dst2 + pitch * 0)[3];
+				(dst + pitch * 1)[0] = (dst2 + pitch * 1)[0];
+				(dst + pitch * 1)[1] = (dst2 + pitch * 1)[1];
+				(dst + pitch * 1)[2] = (dst2 + pitch * 1)[2];
+				(dst + pitch * 1)[3] = (dst2 + pitch * 1)[3];
+				(dst + pitch * 2)[0] = (dst2 + pitch * 2)[0];
+				(dst + pitch * 2)[1] = (dst2 + pitch * 2)[1];
+				(dst + pitch * 2)[2] = (dst2 + pitch * 2)[2];
+				(dst + pitch * 2)[3] = (dst2 + pitch * 2)[3];
+				(dst + pitch * 3)[0] = (dst2 + pitch * 3)[0];
+				(dst + pitch * 3)[1] = (dst2 + pitch * 3)[1];
+				(dst + pitch * 3)[2] = (dst2 + pitch * 3)[2];
+				(dst + pitch * 3)[3] = (dst2 + pitch * 3)[3];
+#else
 				*(uint32*)(dst + pitch * 0) = *(uint32*)(dst2 + pitch * 0);
 				*(uint32*)(dst + pitch * 1) = *(uint32*)(dst2 + pitch * 1);
 				*(uint32*)(dst + pitch * 2) = *(uint32*)(dst2 + pitch * 2);
 				*(uint32*)(dst + pitch * 3) = *(uint32*)(dst2 + pitch * 3);
+#endif
 				dst += 4;
 			}
 		} while (--i);
@@ -338,6 +419,24 @@ void Codec37Decoder::proc3WithoutFDFE(byte *dst, byte *src, int32 next_offs, int
 		do {
 			int32 code = *src++;
 			if (code == 0xFF) {
+#if defined(SCUMM_NEED_ALIGNMENT)
+				(dst + pitch * 0)[0] = *src++;
+				(dst + pitch * 0)[1] = *src++;
+				(dst + pitch * 0)[2] = *src++;
+				(dst + pitch * 0)[3] = *src++;
+				(dst + pitch * 1)[0] = *src++;
+				(dst + pitch * 1)[1] = *src++;
+				(dst + pitch * 1)[2] = *src++;
+				(dst + pitch * 1)[3] = *src++;
+				(dst + pitch * 2)[0] = *src++;
+				(dst + pitch * 2)[1] = *src++;
+				(dst + pitch * 2)[2] = *src++;
+				(dst + pitch * 2)[3] = *src++;
+				(dst + pitch * 3)[0] = *src++;
+				(dst + pitch * 3)[1] = *src++;
+				(dst + pitch * 3)[2] = *src++;
+				(dst + pitch * 3)[3] = *src++;
+#else
 				*(uint32*)(dst + pitch * 0) = *(uint32*)src;
 				src += 4;
 				*(uint32*)(dst + pitch * 1) = *(uint32*)src;
@@ -346,13 +445,33 @@ void Codec37Decoder::proc3WithoutFDFE(byte *dst, byte *src, int32 next_offs, int
 				src += 4;
 				*(uint32*)(dst + pitch * 3) = *(uint32*)src;
 				src += 4;
+#endif
 				dst += 4;
 			} else {
 				byte *dst2 = dst + _offsetTable[code] + next_offs;
+#if defined(SCUMM_NEED_ALIGNMENT)
+				(dst + pitch * 0)[0] = (dst2 + pitch * 0)[0];
+				(dst + pitch * 0)[1] = (dst2 + pitch * 0)[1];
+				(dst + pitch * 0)[2] = (dst2 + pitch * 0)[2];
+				(dst + pitch * 0)[3] = (dst2 + pitch * 0)[3];
+				(dst + pitch * 1)[0] = (dst2 + pitch * 1)[0];
+				(dst + pitch * 1)[1] = (dst2 + pitch * 1)[1];
+				(dst + pitch * 1)[2] = (dst2 + pitch * 1)[2];
+				(dst + pitch * 1)[3] = (dst2 + pitch * 1)[3];
+				(dst + pitch * 2)[0] = (dst2 + pitch * 2)[0];
+				(dst + pitch * 2)[1] = (dst2 + pitch * 2)[1];
+				(dst + pitch * 2)[2] = (dst2 + pitch * 2)[2];
+				(dst + pitch * 2)[3] = (dst2 + pitch * 2)[3];
+				(dst + pitch * 3)[0] = (dst2 + pitch * 3)[0];
+				(dst + pitch * 3)[1] = (dst2 + pitch * 3)[1];
+				(dst + pitch * 3)[2] = (dst2 + pitch * 3)[2];
+				(dst + pitch * 3)[3] = (dst2 + pitch * 3)[3];
+#else
 				*(uint32*)(dst + pitch * 0) = *(uint32*)(dst2 + pitch * 0);
 				*(uint32*)(dst + pitch * 1) = *(uint32*)(dst2 + pitch * 1);
 				*(uint32*)(dst + pitch * 2) = *(uint32*)(dst2 + pitch * 2);
 				*(uint32*)(dst + pitch * 3) = *(uint32*)(dst2 + pitch * 3);
+#endif
 				dst += 4;
 			}
 		} while (--i);
@@ -368,14 +487,56 @@ void Codec37Decoder::proc4WithFDFE(byte *dst, byte *src, int32 next_offs, int32 
 		do {
 			int32 code = *src++;
 			if (code == 0xFD) {
+#if defined(SCUMM_NEED_ALIGNMENT)
+				t = *src++;
+				(dst + pitch * 0)[0] = t;
+				(dst + pitch * 0)[1] = t;
+				(dst + pitch * 0)[2] = t;
+				(dst + pitch * 0)[3] = t;
+				(dst + pitch * 1)[0] = t;
+				(dst + pitch * 1)[1] = t;
+				(dst + pitch * 1)[2] = t;
+				(dst + pitch * 1)[3] = t;
+				(dst + pitch * 2)[0] = t;
+				(dst + pitch * 2)[1] = t;
+				(dst + pitch * 2)[2] = t;
+				(dst + pitch * 2)[3] = t;
+				(dst + pitch * 3)[0] = t;
+				(dst + pitch * 3)[1] = t;
+				(dst + pitch * 3)[2] = t;
+				(dst + pitch * 3)[3] = t;
+#else
 				t = *src++;
 				t += (t << 8) + (t << 16) + (t << 24);
 				*(uint32*)(dst + pitch * 0) = t;
 				*(uint32*)(dst + pitch * 1) = t;
 				*(uint32*)(dst + pitch * 2) = t;
 				*(uint32*)(dst + pitch * 3) = t;
+#endif
 				dst += 4;
 			} else if (code == 0xFE) {
+#if defined(SCUMM_NEED_ALIGNMENT)
+				t = *src++;
+				(dst + pitch * 0)[0] = t;
+				(dst + pitch * 0)[1] = t;
+				(dst + pitch * 0)[2] = t;
+				(dst + pitch * 0)[3] = t;
+				t = *src++;
+				(dst + pitch * 1)[0] = t;
+				(dst + pitch * 1)[1] = t;
+				(dst + pitch * 1)[2] = t;
+				(dst + pitch * 1)[3] = t;
+				t = *src++;
+				(dst + pitch * 2)[0] = t;
+				(dst + pitch * 2)[1] = t;
+				(dst + pitch * 2)[2] = t;
+				(dst + pitch * 2)[3] = t;
+				t = *src++;
+				(dst + pitch * 3)[0] = t;
+				(dst + pitch * 3)[1] = t;
+				(dst + pitch * 3)[2] = t;
+				(dst + pitch * 3)[3] = t;
+#else
 				t = *src++;
 				t += (t << 8) + (t << 16) + (t << 24);
 				*(uint32*)(dst + pitch * 0) = t;
@@ -388,8 +549,27 @@ void Codec37Decoder::proc4WithFDFE(byte *dst, byte *src, int32 next_offs, int32 
 				t = *src++;
 				t += (t << 8) + (t << 16) + (t << 24);
 				*(uint32*)(dst + pitch * 3) = t;
+#endif
 				dst += 4;
 			} else if (code == 0xFF) {
+#if defined(SCUMM_NEED_ALIGNMENT)
+				(dst + pitch * 0)[0] = *src++;
+				(dst + pitch * 0)[1] = *src++;
+				(dst + pitch * 0)[2] = *src++;
+				(dst + pitch * 0)[3] = *src++;
+				(dst + pitch * 1)[0] = *src++;
+				(dst + pitch * 1)[1] = *src++;
+				(dst + pitch * 1)[2] = *src++;
+				(dst + pitch * 1)[3] = *src++;
+				(dst + pitch * 2)[0] = *src++;
+				(dst + pitch * 2)[1] = *src++;
+				(dst + pitch * 2)[2] = *src++;
+				(dst + pitch * 2)[3] = *src++;
+				(dst + pitch * 3)[0] = *src++;
+				(dst + pitch * 3)[1] = *src++;
+				(dst + pitch * 3)[2] = *src++;
+				(dst + pitch * 3)[3] = *src++;
+#else
 				*(uint32*)(dst + pitch * 0) = *(uint32*)src;
 				src += 4;
 				*(uint32*)(dst + pitch * 1) = *(uint32*)src;
@@ -398,15 +578,35 @@ void Codec37Decoder::proc4WithFDFE(byte *dst, byte *src, int32 next_offs, int32 
 				src += 4;
 				*(uint32*)(dst + pitch * 3) = *(uint32*)src;
 				src += 4;
+#endif
 				dst += 4;
 			} else if (code == 0x00) {
 				int32 length = *src++ + 1;
 				for (int32 l = 0; l < length; l++) {
 					byte *dst2 = dst + next_offs;
+#if defined(SCUMM_NEED_ALIGNMENT)
+					(dst + pitch * 0)[0] = (dst2 + pitch * 0)[0];
+					(dst + pitch * 0)[1] = (dst2 + pitch * 0)[1];
+					(dst + pitch * 0)[2] = (dst2 + pitch * 0)[2];
+					(dst + pitch * 0)[3] = (dst2 + pitch * 0)[3];
+					(dst + pitch * 1)[0] = (dst2 + pitch * 1)[0];
+					(dst + pitch * 1)[1] = (dst2 + pitch * 1)[1];
+					(dst + pitch * 1)[2] = (dst2 + pitch * 1)[2];
+					(dst + pitch * 1)[3] = (dst2 + pitch * 1)[3];
+					(dst + pitch * 2)[0] = (dst2 + pitch * 2)[0];
+					(dst + pitch * 2)[1] = (dst2 + pitch * 2)[1];
+					(dst + pitch * 2)[2] = (dst2 + pitch * 2)[2];
+					(dst + pitch * 2)[3] = (dst2 + pitch * 2)[3];
+					(dst + pitch * 3)[0] = (dst2 + pitch * 3)[0];
+					(dst + pitch * 3)[1] = (dst2 + pitch * 3)[1];
+					(dst + pitch * 3)[2] = (dst2 + pitch * 3)[2];
+					(dst + pitch * 3)[3] = (dst2 + pitch * 3)[3];
+#else
 					*(uint32*)(dst + pitch * 0) = *(uint32*)(dst2 + pitch * 0);
 					*(uint32*)(dst + pitch * 1) = *(uint32*)(dst2 + pitch * 1);
 					*(uint32*)(dst + pitch * 2) = *(uint32*)(dst2 + pitch * 2);
 					*(uint32*)(dst + pitch * 3) = *(uint32*)(dst2 + pitch * 3);
+#endif
 					dst += 4;
 					i--;
 					if (i == 0) {
@@ -421,10 +621,29 @@ void Codec37Decoder::proc4WithFDFE(byte *dst, byte *src, int32 next_offs, int32 
 				i++;
 			} else {
 				byte *dst2 = dst + _offsetTable[code] + next_offs;
+#if defined(SCUMM_NEED_ALIGNMENT)
+				(dst + pitch * 0)[0] = (dst2 + pitch * 0)[0];
+				(dst + pitch * 0)[1] = (dst2 + pitch * 0)[1];
+				(dst + pitch * 0)[2] = (dst2 + pitch * 0)[2];
+				(dst + pitch * 0)[3] = (dst2 + pitch * 0)[3];
+				(dst + pitch * 1)[0] = (dst2 + pitch * 1)[0];
+				(dst + pitch * 1)[1] = (dst2 + pitch * 1)[1];
+				(dst + pitch * 1)[2] = (dst2 + pitch * 1)[2];
+				(dst + pitch * 1)[3] = (dst2 + pitch * 1)[3];
+				(dst + pitch * 2)[0] = (dst2 + pitch * 2)[0];
+				(dst + pitch * 2)[1] = (dst2 + pitch * 2)[1];
+				(dst + pitch * 2)[2] = (dst2 + pitch * 2)[2];
+				(dst + pitch * 2)[3] = (dst2 + pitch * 2)[3];
+				(dst + pitch * 3)[0] = (dst2 + pitch * 3)[0];
+				(dst + pitch * 3)[1] = (dst2 + pitch * 3)[1];
+				(dst + pitch * 3)[2] = (dst2 + pitch * 3)[2];
+				(dst + pitch * 3)[3] = (dst2 + pitch * 3)[3];
+#else
 				*(uint32*)(dst + pitch * 0) = *(uint32*)(dst2 + pitch * 0);
 				*(uint32*)(dst + pitch * 1) = *(uint32*)(dst2 + pitch * 1);
 				*(uint32*)(dst + pitch * 2) = *(uint32*)(dst2 + pitch * 2);
 				*(uint32*)(dst + pitch * 3) = *(uint32*)(dst2 + pitch * 3);
+#endif
 				dst += 4;
 			}
 		} while (--i);
@@ -438,6 +657,24 @@ void Codec37Decoder::proc4WithoutFDFE(byte *dst, byte *src, int32 next_offs, int
 		do {
 			int32 code = *src++;
 			if (code == 0xFF) {
+#if defined(SCUMM_NEED_ALIGNMENT)
+				(dst + pitch * 0)[0] = *src++;
+				(dst + pitch * 0)[1] = *src++;
+				(dst + pitch * 0)[2] = *src++;
+				(dst + pitch * 0)[3] = *src++;
+				(dst + pitch * 1)[0] = *src++;
+				(dst + pitch * 1)[1] = *src++;
+				(dst + pitch * 1)[2] = *src++;
+				(dst + pitch * 1)[3] = *src++;
+				(dst + pitch * 2)[0] = *src++;
+				(dst + pitch * 2)[1] = *src++;
+				(dst + pitch * 2)[2] = *src++;
+				(dst + pitch * 2)[3] = *src++;
+				(dst + pitch * 3)[0] = *src++;
+				(dst + pitch * 3)[1] = *src++;
+				(dst + pitch * 3)[2] = *src++;
+				(dst + pitch * 3)[3] = *src++;
+#else
 				*(uint32*)(dst + pitch * 0) = *(uint32*)src;
 				src += 4;
 				*(uint32*)(dst + pitch * 1) = *(uint32*)src;
@@ -446,15 +683,35 @@ void Codec37Decoder::proc4WithoutFDFE(byte *dst, byte *src, int32 next_offs, int
 				src += 4;
 				*(uint32*)(dst + pitch * 3) = *(uint32*)src;
 				src += 4;
+#endif
 				dst += 4;
 			} else if (code == 0x00) {
 				int32 length = *src++ + 1;
 				for (int32 l = 0; l < length; l++) {
 					byte *dst2 = dst + next_offs;
+#if defined(SCUMM_NEED_ALIGNMENT)
+					(dst + pitch * 0)[0] = (dst2 + pitch * 0)[0];
+					(dst + pitch * 0)[1] = (dst2 + pitch * 0)[1];
+					(dst + pitch * 0)[2] = (dst2 + pitch * 0)[2];
+					(dst + pitch * 0)[3] = (dst2 + pitch * 0)[3];
+					(dst + pitch * 1)[0] = (dst2 + pitch * 1)[0];
+					(dst + pitch * 1)[1] = (dst2 + pitch * 1)[1];
+					(dst + pitch * 1)[2] = (dst2 + pitch * 1)[2];
+					(dst + pitch * 1)[3] = (dst2 + pitch * 1)[3];
+					(dst + pitch * 2)[0] = (dst2 + pitch * 2)[0];
+					(dst + pitch * 2)[1] = (dst2 + pitch * 2)[1];
+					(dst + pitch * 2)[2] = (dst2 + pitch * 2)[2];
+					(dst + pitch * 2)[3] = (dst2 + pitch * 2)[3];
+					(dst + pitch * 3)[0] = (dst2 + pitch * 3)[0];
+					(dst + pitch * 3)[1] = (dst2 + pitch * 3)[1];
+					(dst + pitch * 3)[2] = (dst2 + pitch * 3)[2];
+					(dst + pitch * 3)[3] = (dst2 + pitch * 3)[3];
+#else
 					*(uint32*)(dst + pitch * 0) = *(uint32*)(dst2 + pitch * 0);
 					*(uint32*)(dst + pitch * 1) = *(uint32*)(dst2 + pitch * 1);
 					*(uint32*)(dst + pitch * 2) = *(uint32*)(dst2 + pitch * 2);
 					*(uint32*)(dst + pitch * 3) = *(uint32*)(dst2 + pitch * 3);
+#endif
 					dst += 4;
 					i--;
 					if (i == 0) {
@@ -469,10 +726,29 @@ void Codec37Decoder::proc4WithoutFDFE(byte *dst, byte *src, int32 next_offs, int
 				i++;
 			} else {
 				byte *dst2 = dst + _offsetTable[code] + next_offs;
+#if defined(SCUMM_NEED_ALIGNMENT)
+				(dst + pitch * 0)[0] = (dst2 + pitch * 0)[0];
+				(dst + pitch * 0)[1] = (dst2 + pitch * 0)[1];
+				(dst + pitch * 0)[2] = (dst2 + pitch * 0)[2];
+				(dst + pitch * 0)[3] = (dst2 + pitch * 0)[3];
+				(dst + pitch * 1)[0] = (dst2 + pitch * 1)[0];
+				(dst + pitch * 1)[1] = (dst2 + pitch * 1)[1];
+				(dst + pitch * 1)[2] = (dst2 + pitch * 1)[2];
+				(dst + pitch * 1)[3] = (dst2 + pitch * 1)[3];
+				(dst + pitch * 2)[0] = (dst2 + pitch * 2)[0];
+				(dst + pitch * 2)[1] = (dst2 + pitch * 2)[1];
+				(dst + pitch * 2)[2] = (dst2 + pitch * 2)[2];
+				(dst + pitch * 2)[3] = (dst2 + pitch * 2)[3];
+				(dst + pitch * 3)[0] = (dst2 + pitch * 3)[0];
+				(dst + pitch * 3)[1] = (dst2 + pitch * 3)[1];
+				(dst + pitch * 3)[2] = (dst2 + pitch * 3)[2];
+				(dst + pitch * 3)[3] = (dst2 + pitch * 3)[3];
+#else
 				*(uint32*)(dst + pitch * 0) = *(uint32*)(dst2 + pitch * 0);
 				*(uint32*)(dst + pitch * 1) = *(uint32*)(dst2 + pitch * 1);
 				*(uint32*)(dst + pitch * 2) = *(uint32*)(dst2 + pitch * 2);
 				*(uint32*)(dst + pitch * 3) = *(uint32*)(dst2 + pitch * 3);
+#endif
 				dst += 4;
 			}
 		} while (--i);
