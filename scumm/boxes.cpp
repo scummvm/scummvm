@@ -163,7 +163,7 @@ int Scumm::getScale(int box, int x, int y) {
 		} else
 			return FROM_LE_32(ptr->v8.scale);
 	} else {
-		uint16 scale = FROM_LE_16(ptr->old.scale);
+		uint16 scale = READ_LE_UINT16(&ptr->old.scale);
 
 		if (scale & 0x8000) {
 			scale = (scale & 0x7FFF) + 1;
@@ -190,7 +190,7 @@ int Scumm::getBoxScale(int box) {
 	if (_features & GF_AFTER_V8)
 		return FROM_LE_32(ptr->v8.scale);
 	else
-		return FROM_LE_16(ptr->old.scale);
+		return READ_LE_UINT16(&ptr->old.scale);
 }
 
 byte Scumm::getNumBoxes() {
@@ -325,15 +325,15 @@ void Scumm::getBoxCoordinates(int boxnum, BoxCoords *box) {
 			SWAP(box->ll.y, box->lr.y);
 		}
 	} else {
-		box->ul.x = (int16)FROM_LE_16(bp->old.ulx);
-		box->ul.y = (int16)FROM_LE_16(bp->old.uly);
-		box->ur.x = (int16)FROM_LE_16(bp->old.urx);
-		box->ur.y = (int16)FROM_LE_16(bp->old.ury);
+		box->ul.x = (int16)READ_LE_UINT16(&bp->old.ulx);
+		box->ul.y = (int16)READ_LE_UINT16(&bp->old.uly);
+		box->ur.x = (int16)READ_LE_UINT16(&bp->old.urx);
+		box->ur.y = (int16)READ_LE_UINT16(&bp->old.ury);
 	
-		box->ll.x = (int16)FROM_LE_16(bp->old.llx);
-		box->ll.y = (int16)FROM_LE_16(bp->old.lly);
-		box->lr.x = (int16)FROM_LE_16(bp->old.lrx);
-		box->lr.y = (int16)FROM_LE_16(bp->old.lry);
+		box->ll.x = (int16)READ_LE_UINT16(&bp->old.llx);
+		box->ll.y = (int16)READ_LE_UINT16(&bp->old.lly);
+		box->lr.x = (int16)READ_LE_UINT16(&bp->old.lrx);
+		box->lr.y = (int16)READ_LE_UINT16(&bp->old.lry);
 	}
 }
 
