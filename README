@@ -233,7 +233,7 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * Run 'make deb'.
         * Finally run 'dpkg -i ../scummvm-cvs*deb', and you're done.
         
-    Mac OS X
+    Mac OS X:
         * Make sure you have the developer tools installed.
         * Edit backends/sdl/build.rules, and enable the Mac OS X specific line(s).
         * Depending on where you have installed SDL, you have to add the location
@@ -258,6 +258,7 @@ under Windows, you would make a shortcut calling this command:
   C:\Games\LucasArts\scummvm.exe -f -pC:\Games\LucasArts\monkey\ monkey
 
 Under BSD, Linux, or similar, the commandline would be:
+
   /path/to/scummvm -f -p/games/LucasArts/monkey/ monkey
 
 Or, if you have, for example, Full Throttle on CD, and your CD drive is D:,
@@ -274,6 +275,7 @@ file can be found near the end of this readme.
 The short game name ('game target') you see at the end of the command
 line is very important. A short list is contained at the top of this
 file. You can also get the current list of games and game names at:
+
         http://www.scummvm.org/compatibility.php
 
 For the adventurous, who like to live on the edge... you can download
@@ -533,6 +535,7 @@ this task, and ScummVM must be compiled with MAD support.
 
 Make a backup file of your MONSTER.SOU before attempting this. Copy your
 MONSTER.SOU file to a temporary folder. Then run:
+
   extract monster.sou
 
 In about 30 minutes or so, you will have a much smaller monster.so3 file,
@@ -542,14 +545,15 @@ copy this file to your game dir. You can safely remove the monster.sou file.
 Compressing MONSTER.SOU with Ogg Vorbis:
 ----------------------------------------
 As above but run:
+
   extract --vorbis monster.sou
 
 This should produce a smaller monster.sog file, which you should copy to your
 game dir.
 
 
-Using data files from Macintosh game versions
----------------------------------------------
+Using data files from Macintosh game versions:
+----------------------------------------------
 All LucasArts Scumm based adventures except CMI also exist in versions for the
 Macintosh. ScummVM can use most (all?) of them, however, in some case some
 additional work is required. First off, if you are not using a Macintoh for
@@ -560,23 +564,11 @@ Secondly, most of the newer games shipped only with a  single data file on the
 Macintosh. You first have to run the 'rescumm' tool from the scummvm-tools
 package to extract the data files ScummVM excpects. You invoke rescumm like
 this (where DATAFILE is the path to the single big data file):
+
    rescumm DATAFILE
 
 It will extract the data into the current directory, so make sure to run it from
 a writable directory.
-
-
-Coding style:
-------------
-For ScummVM coding, we use hugging braces, and two-space tab indents.
-We occasionally run the following 'indent' parameters to ensure everything
-is kept standard:
-
--br -bap -nbc -lp -ce -cdw -brs -nbad -nbc -npsl -nip -ts2 -ncs -nbs
--npcs -nbap -Tbyte -Tvoid -Tuint32 -Tuint8 -Tuint16 -Tint -Tint8
--Tint16 -Tint32 -TArrayHeader -TMemBlkHeader -TVerbSlot -TObjectData
--TImageHeader -TRoomHeader -TCodeHeader -TResHdr -TBompHeader
--TMidiChannelAdl -TGui -TScumm -TSoundEngine -TPart -TPlayer
 
 
 Configuration file:
