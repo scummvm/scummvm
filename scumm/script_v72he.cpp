@@ -872,21 +872,31 @@ void ScummEngine_v72he::o72_printWizImage() {
 void ScummEngine_v72he::o72_getArrayDimSize() {
 	int subOp = fetchScriptByte();
 	int32 val1, val2;
-	ArrayHeader *ah;
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(fetchScriptWord()));
 
 	switch (subOp) {
 	case 1:
 	case 3:
-		ah = (ArrayHeader *)getResourceAddress(rtString, readVar(fetchScriptWord()));
 		val1 = FROM_LE_32(ah->dim1end);
 		val2 = FROM_LE_32(ah->dim1start);
 		push(val1 - val2 + 1);
 		break;
 	case 2:
-		ah = (ArrayHeader *)getResourceAddress(rtString, readVar(fetchScriptWord()));
 		val1 = FROM_LE_32(ah->dim2end);
 		val2 = FROM_LE_32(ah->dim2start);
 		push(val1 - val2 + 1);
+		break;
+	case 4:
+		push(FROM_LE_32(ah->dim1start));
+		break;
+	case 5:
+		push(FROM_LE_32(ah->dim1end));
+		break;
+	case 6:
+		push(FROM_LE_32(ah->dim2start));
+		break;
+	case 7:
+		push(FROM_LE_32(ah->dim2end));
 		break;
 	default:
 		error("o72_getArrayDimSize: default case %d", subOp);
@@ -1844,8 +1854,24 @@ void ScummEngine_v72he::o72_openFile() {
 			break;
 	}
 	
-	debug(1,"File %s", filename + r);
-	
+	debug(0,"Filename %s", filename + r);
+
+	// HACK: Convert paths
+	if (filename[0] == ':') {
+		int len = resStrLen(filename) + 1;
+		int i = 1, j = 0;
+		while(len--) {
+			if (filename[i] == ':')
+				filename[j] = '/';
+			else
+				filename[j] = filename[i];
+
+			i++;
+			j++;
+		}
+		debug(0,"Converted Filename %s", filename + r);
+	}
+
 	slot = -1;
 	for (l = 0; l < 17; l++) {
 		if (_hFileTable[l].isOpen() == false) {

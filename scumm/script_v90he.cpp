@@ -106,8 +106,8 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_unknown2F),
 		/* 30 */
 		OPCODE(o90_mod),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
+		OPCODE(o90_unknown31),
+		OPCODE(o90_unknown32),
 		OPCODE(o6_invalid),
 		/* 34 */
 		OPCODE(o90_unknown34),
@@ -748,6 +748,9 @@ void ScummEngine_v90he::o90_unknown26() {
 	case 52: // HE 98+
 		pop();
 		break;
+	case 63: // HE 98+
+		pop();
+		break;
 	case 64:
 		pop();
 		break;
@@ -925,6 +928,16 @@ void ScummEngine_v90he::o90_unknown2F() {
 		error("o90_unknown28: Unknown case %d", subOp);
 	}
 	debug(1,"o90_unknown2F stub (%d)", subOp);
+}
+
+void ScummEngine_v90he::o90_unknown31() {
+	int a = pop() << 2;
+	push(pop() << a);
+}
+
+void ScummEngine_v90he::o90_unknown32() {
+	int a = pop() << 2;
+	push(pop() >> a);
 }
 
 void ScummEngine_v90he::o90_mod() {
